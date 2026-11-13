@@ -84,17 +84,6 @@ enum StatBoostSheet {
 /// 8n + 52 and the picture, with a sound, from 8n + 80. The canvas is shown
 /// at 1.25 times its width (canvas x is 4/5 of screen x).
 /// PARTICLES holds the gathering flares, 64 for each target.
-///
-/// Reached through the six wrappers above, Impact to Zephyr. Copies the mode's
-/// palette over the first 128 bytes of BG palette RAM (all but Zephyr), writes
-/// REG_BG2PA and REG_BG2X, and ends with the transfer task removed and the
-/// canvas layer closed; the blitters are built and freed within each frame.
-///
-/// args: the targets. With prelude 1, a Djinni appears first, sways and
-///         rises.
-/// mode: the picture and its palette (enum StatBoostMode). The Djinni is
-///       Venus for Granite, Jupiter for Ward and Zephyr, Mars otherwise;
-///       its sheet lends the palette in every mode but Zephyr.
 void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -116,9 +105,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
 
-  // Bring out the Djinni of the mode's element; origin
-  // receives where it appears, and x is scaled to the canvas, shown 1.25
-  // times as wide.
+  // Bring out the Djinni of the mode's element.
   if (work->args->prelude == 1) {
     if (mode == STAT_BOOST_GRANITE)
       BattleEffect_RunDjinniEntrance(args, ELEMENT_VENUS, work->args->side ^ 1,
@@ -136,8 +123,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   }
   REG_BG2PA = Q_8_8(0.8); // 1.25 times the width
 
-  // Pictures and palette: the flares, the burst, the mode's picture, then the
-  // Djinni, whose sheet also lends its palette in every mode but Zephyr.
+  // Pictures and palette.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,
                              work->sheet + STAT_BOOST_FLARES, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet,
@@ -185,9 +171,8 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSheet,
                                work->sheet + STAT_BOOST_DJINNI, 1, 0);
 
-  // Scatter the flares around the centre: x and z within 25 pixels, y
-  // within 50. All 512 are placed, though each target draws only its first
-  // 32 of 64.
+  // Scatter the flares around the centre: x and z within 25 pixels, y within
+  // 50.
   for (i = 0; i != 512; i++) {
     struct Particle *flare = &PARTICLES[i];
 
@@ -197,8 +182,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
     flare->variant = 0;
   }
 
-  // With one target, shift the canvas so that target is at its centre
-  // (64); with several, show the half of the screen on the targets' side.
+  // With one target, shift the canvas so that target is at its centre (64).
   if (work->args->targetCount == 1) {
     Projection_ScaledUnit(work->args->targets[0], &base);
     canvasShiftX = -base.x * 4 / 5 + 64;
@@ -229,7 +213,6 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
     // The Djinni, facing the other way from the flares, sways 20 pixels from
     // side to side over 32 frames and, after frame 32, rises 2 pixels a frame.
-    // For the first 4 frames it is also added on top, a flash as it appears.
     if (work->args->prelude == 1) {
       s32 x =
           ((Trig_Sin(frame << 11) * 20) >> 16) + originX + canvasShiftX - 20;
@@ -267,10 +250,8 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
                                  SPRITE_COLOR_WHITE, TINT_KEEP, member, 16);
 
       // Turn the flares and move them 2 pixels a frame towards the centre
-      // (distance is half the distance in pixels, the root's 8.8 >> 9); flare
-      // i appears i frames after the target's turn starts. Impact turns them
-      // by pitch, Guard not at all, Ward by yaw, the others by yaw and roll,
-      // 1/64 turn a frame.
+      // (distance is half the distance in pixels, the root's 8.8 >> 9); flare i
+      // appears i frames after the target's turn starts.
       if (frame > member * 8) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
         draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
@@ -407,9 +388,6 @@ void BattleEffect_RunDull(struct BattleEffectParams *args) {
 ///
 /// Abilities: Impair, Debilitate (BATTLE_EFFECT_IMPAIR); none
 /// (BATTLE_EFFECT_UNUSED_IMPAIR).
-///
-/// Meltdown's casting impact (CASTING_IMPACT_IMPACT_MELTDOWN) also ends by
-/// calling it.
 void BattleEffect_RunImpair(struct BattleEffectParams *args) {
   BattleEffect_RunStatReduction(args, STAT_REDUCTION_IMPAIR);
 }
@@ -436,13 +414,6 @@ BattleEffect_RunUnusedStatReduction(struct BattleEffectParams *args) {
 /// through the darker copies. In each target's own frames the picture plays
 /// until about frame 24, then breaks with a sound; the shards darken from frame
 /// 29 and are gone after frame 60.
-///
-/// Reached through Dull, Impair, Weaken and the unused wrapper above.
-/// Copies the mode's palette over the first 128 bytes of BG palette RAM,
-/// writes REG_BG2PA and REG_BG2X.
-///
-/// args: the targets.
-/// mode: the picture and its palette (enum StatReductionMode).
 void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -495,11 +466,9 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
     xOffset = 0;
   }
 
-  // The shards start in a grid of eight rows and four columns and fly
-  // away from the user's side, scattering in a random direction; variant
-  // is a random start in their turning. All 512 are placed, enough for 16
-  // targets of 32 slots. Each flies 2 pixels a frame across, up to 3 either
-  // way in depth and -2 to 4 up, keeping 60/64 of its speed each frame.
+  // The shards start in a grid of eight rows and four columns and fly away from
+  // the user's side, scattering in a random direction; variant is a random
+  // start in their turning.
   for (i = 0; i != 512; i++) {
     struct Particle *shard = &PARTICLES[i];
     s32 radius = 192;

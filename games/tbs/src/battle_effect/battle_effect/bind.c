@@ -19,8 +19,6 @@
 /// 63 lines late, and the edge speeds up a little every frame; after 27 frames
 /// the picture moves onto a second blue ramp at colours 96 to 127. Takes 256
 /// random numbers, one a column.
-///
-/// Nothing calls it or takes its address.
 UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
   s32 i, x, y, row, end, speed;
   s32 red, green, blue;
@@ -55,9 +53,7 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
           if (y <= 119) {
             pixel = BLUE_RAMP_PIXELS + ((x & 7) + ((x / 8) << 6) +
                                         ((y & 7) << 3) + ((y / 8) << 11));
-            // Column x reaches line row - delays[x]; the pixel there becomes
-            // the brightest of its colour's channels, inverted, as an index
-            // into the ramp.
+            // Column x reaches line row - delays[x].
             color = ((s16 *)BG_PLTT)[*pixel];
             red = color & 31;
             green = (color >> 5) & 31;
@@ -77,7 +73,6 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
     wait(1);
     // Every column (120 lines, at most 63 late) is done once the edge passes
     // line 182.
-    // Never true: by the 27th frame the edge reaches only line 186.
     if (end > 248)
       break;
   }
@@ -101,16 +96,6 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
 /// target; the battle shows the result on frame 64.
 ///
 /// Abilities: Bind (BATTLE_EFFECT_BIND); Luff (BATTLE_EFFECT_LUFF).
-///
-/// When args->prelude is 1 a Jupiter Djinni first appears over the first
-/// target, sways and rises away. The canvas darkens a little faster every 16
-/// frames.
-///
-/// Runs BattleEffect_RunDjinniEntrance first when args->prelude is 1. Moves
-/// BG2X so the canvas's x 64 is on the first target, cycles the palette
-/// each frame through BattleEffect_UpdatePhasePalette, raises
-/// work->transferValue every 16 frames, keeps the triangle's corners in
-/// work->particles 0 to 2, and builds and frees its blitters every frame.
 void BattleEffect_RunBind(struct BattleEffectParams *args) {
   struct ScreenPoint anchor;
   /* FAKEMATCH(temporary): one workspace for the target's position and each
@@ -152,8 +137,6 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
                                    &originY);
   REG_BG2PA = Q_8_8(1);
 
-  // Setup. The rune, the flares at 4096 and the Djinni at 8192, in the
-  // rune's colours; the Djinni sheet's palette is skipped.
   palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
@@ -182,8 +165,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
                                     TRIG_TURN / 3, 0);
 
     // The Djinni sways 20 pixels either way, once every 32 frames, and from
-    // frame 33 rises 2 pixels a frame. For its first four frames it is drawn
-    // a second time, additively, so it flashes in.
+    // frame 33 rises 2 pixels a frame.
     if (work->args->prelude == 1) {
       s32 x;
       s32 y;
@@ -224,11 +206,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
         // projected y is kept.
         screen.x = anchor.x + shift;
         screen.y -= 24;
-        // The triangle: its three corners, turned a third of a circle apart and
-        // shrinking as they spin, are projected into the particles' velocity
-        // fields; each side is 24 flares. Over 64 frames the scale falls from
-        // 2.625 by 3/128 a frame while its roll and yaw turn steadily back
-        // from half a turn to 0; frames 64 to 67 hold it still.
+        // The triangle.
         if (memberFrame <= 67) {
           for (j = 0; j != 3; j++) {
             point = &work->particles[member * 32 + j];
@@ -288,9 +266,6 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
 /// the first target.
 ///
 /// Abilities: none (BATTLE_EFFECT_UNUSED_TRIANGLE_STRIKE).
-///
-/// It reads its own copy of the vertex, gBind_TriangleStrikeVertex, which holds
-/// the same point as Bind's (gBind_Vertex).
 void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   struct ScreenPoint anchor;
   /* FAKEMATCH(temporary): one workspace for the target's position and each

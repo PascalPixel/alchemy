@@ -20,17 +20,6 @@ enum BeamKind {
 /// A plain attack's picture: the slash or streak args->kind picks plays from
 /// the user over its first target; from frame 4 the target is hit, a yellow orb
 /// flashes over it and sparks fly off, for 32 frames in all.
-///
-/// Reached through BattleEffect_RunByIdRange for kinds from
-/// EFFECT_RANGE_BEAM to below EFFECT_RANGE_RING_AND_SPARK and,
-/// through its unsigned test, every kind below EFFECT_RANGE_CASTING_IMPACT;
-/// BattleStaging_RunAttack (battle/staging.c) sends every plain attack that is
-/// not a critical hit there. Only the kinds of enum BeamKind have pictures.
-/// Shows the canvas on BG1 (BattleEffect_SetupCanvasTileMap), loads palette
-/// colours 0 to 63, scrolls BG1 through gBgScroll[1] and uses work->particles 0
-/// to 63 (only 0 to 31 fly) and both blitter slots; at the end it removes the
-/// transfer task, frees the blitters, sets gBgScroll[1].y back to 32 and hides
-/// BG1 again (BattleEffect_HideBg1AndRestoreBackdrop).
 void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   struct ScreenPoint screenPosition;
   struct ScreenPoint anchor;
@@ -103,9 +92,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     draw[1] = blitters[HEAP_SLOT_RAM_CODE_2];
   }
   wait(1);
-  // The picture, by BeamKind. An enemy user (unit id past PIERS) takes the
-  // small Mars Djinni's palette, a party member the crescent's. The sparks and
-  // the yellow orb follow.
+  // The picture, by BeamKind.
   if (kind == BEAM_WAVE) {
     Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, work->sheet, 1, 1);
   } else if (kind == BEAM_IMAGE) {
@@ -155,10 +142,8 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   gBgScroll[1].x = scrollX;
   gBgScroll[1].y = 80;
   wait(1);
-  // 64 sparks start at the first target's middle and fly away from the
-  // centre of the field at random speeds, mostly rising; variant is a
-  // spark's life in moves, 16 to 79, so the later sparks are larger and last
-  // longer. Only the first 32 fly (see the frame loop).
+  // 64 sparks start at the first target's middle and fly away from the centre
+  // of the field at random speeds, mostly rising.
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   half = BattleUnit_GetEffectHeightFar(work->args->targets[0]) / 2;
   for (i = 0; i != 64; i++) {
@@ -178,8 +163,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   // 32 frames: the picture plays from frame 0, the hit lands on frame 4.
   for (frame = 0; frame != 32; frame++) {
     // On frame 5 the battle shows the damage, with the heavy impact if the
-    // user's class is flagged in the summon table and SE_IMPACT otherwise. On
-    // frame 4 the target takes KNOCKBACK_NUDGE.
+    // user's class is flagged in the summon table and SE_IMPACT otherwise.
     if (frame == 5) {
       if (BattleSprite_HasHeavyImpactFar(unit->id))
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -238,10 +222,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
       draw[0](canvas, Ram_MapGridCellBuffer + (frame - 4) / 2 * (40 * 48),
               anchor.x - 16, anchor.y - 24, 40, 48);
     EFFECT_VIEW_FROM_CAMERA(camera);
-    // From frame 4 the sparks fly. Only the first 32 move: each is drawn
-    // and moved twice a frame, so it flies at double speed and its life
-    // runs out twice as fast. Even ones add, odd ones take the brighter
-    // pixel.
+    // From frame 4 the sparks fly.
     if (frame >= 4 && frame <= 31) {
       for (i = 0; i != 64; i++) {
         s32 pair = i / 2;
@@ -273,18 +254,6 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
 /// on the attacker for 32 frames while it hangs still in its leap; then a
 /// crescent slash sweeps across the first target, sparks fly from it for 32
 /// frames, and the background palette fades back in.
-///
-/// Reached through BattleEffect_RunByIdRange for kinds from
-/// EFFECT_RANGE_RING_AND_SPARK, which BattleStaging_RunAttack
-/// (battle/staging.c) makes by adding EFFECT_ID_CRITICAL_OFFSET to the kind of
-/// a critical hit; so the gathering always plays. Shows the canvas on BG1,
-/// keeps the battle's transition centred between the user and the first target
-/// while it loads, scrolls BG1 through gBgScroll[1] and uses work->particles 0
-/// to 63, work->imageStorage, Ram_MapGridCellBuffer and both blitter slots.
-/// While the motes gather it adds Palette_StepFadeTransfer and stops the user's
-/// motion, and restores both after. At the end it removes the transfer task,
-/// frees the blitters, sets gBgScroll[1].y back to 32, steps the background
-/// palette level from 6 back to 0 and hides BG1 again.
 void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   struct ScreenPoint screenPosition;
   struct ScreenPoint anchor;
@@ -321,10 +290,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     big = 0;
   work->args = args;
   // Load the blitters and pictures a step a frame, keeping the transition
-  // centred between the user and the first target meanwhile. The star
-  // burst goes to the image storage and the crescent to the map grid cell
-  // buffer; an enemy user (unit id past PIERS) also takes the small Mars
-  // Djinni's palette.
+  // centred between the user and the first target meanwhile.
   BattleCamera_SetViewAtPairMidpointFar(args->user, args->firstTarget, 130);
   wait(1);
   BattleEffect_SetupCanvasTileMap();
@@ -372,11 +338,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   wait(1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 
-  // The gathering: 64 motes, each in its own random rotation around the
-  // user, close in 4 a frame, mote i from frame i / 4, while the palette
-  // fades over 24 frames. The user is held still meanwhile: its
-  // velocities, acceleration and vertical strength are saved, zeroed and
-  // restored after.
+  // The gathering.
   if (big == 1) {
     actor = GetBattleObjectSlotFar(work->args->user)->actor;
     for (i = 0; i != 64; i++) {
@@ -438,10 +400,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     actor->gravity = strength;
   }
 
-  // The strike: clear the canvas, scroll BG1 so the first target is on
-  // screen, and start 64 sparks at its middle, rising and flying towards the
-  // centre of the field (unlike the beam's, whose x speed is
-  // turned around once more).
+  // The strike.
   Iwram_ClearWords(canvas, CANVAS_BYTES);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);

@@ -24,11 +24,6 @@ enum BurstShowerMode {
 
 /// Arms DMA 0 to copy one word of gBattleEffectWork's bg2xLines table into BG2X
 /// at each horizontal blank, bending BG2 line by line.
-///
-/// Runs each VBlank as a task in the VBlank pass, added by the target motes,
-/// the casting impacts, Condemn, the gathering lights, Torch and Planet Diver,
-/// each of which removes it before it returns. Stops DMA 0 and restarts it
-/// from the top of the table.
 void BattleEffect_ArmBg2AffineHBlankDma(void) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   volatile u16 *channel = REG_DMA0;
@@ -92,16 +87,6 @@ void BattleEffect_RunDeadlyGas(struct BattleEffectParams *args) {
 /// the targets, taking them in turn, and each target is hit every 8 frames.
 /// Each burst lives 24 frames. A sound plays on frame 4 and the battle shows
 /// the damage on frame 24 (frame 60 in the grey mode).
-///
-/// Each burst is one of work->particles, its variant counting the frames it has
-/// lived (-1 when free).
-///
-/// args: the user and the targets.
-/// mode: the burst and its palette (enum BurstShowerMode). The grey mode turns
-///       the targets solid black and keeps them so. BURST_SHOWER_MODE_LIGHTNING
-///       fires no bursts: a violet lightning bolt stands between the user and
-///       the targets, on a canvas shown at three times its width. No effect
-///       kind in the effect table uses BURST_SHOWER_MODE_ICE.
 void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -139,9 +124,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
     BattleEffect_FetchRectangleBlitters(work->args->side, draw);
   }
 
-  // The pictures and the palette. The tornado sheet is loaded first in every
-  // mode, but nothing here draws from it: the burst pictures are loaded over
-  // its tornado strips, after the six glints that open it.
+  // The pictures and the palette.
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   if (mode == BURST_SHOWER_MODE_LIGHTNING) {
     Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetA,
@@ -198,8 +181,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
     work->particles[i].variant = -1;
   }
 
-  // Where the bursts start: the user, moved for some modes. The lightning's
-  // canvas is shown at three times its width, so its x is a third.
+  // Where the bursts start: the user, moved for some modes.
   Projection_Sprite(work->args->user, &origin);
   if (mode == BURST_SHOWER_MODE_PINK) {
     origin.y -= 16;
@@ -280,8 +262,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
     }
 
     // Move and draw the bursts; each lasts 24 frames and steps through the
-    // 32x64 pictures (2048 bytes apart) every 4. The faces have one picture,
-    // mirrored on EFFECT_SIDE_PARTY.
+    // 32x64 pictures (2048 bytes apart) every 4.
     i = 0;
     do {
       struct Particle *spark = &work->particles[i];

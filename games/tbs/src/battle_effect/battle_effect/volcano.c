@@ -26,17 +26,6 @@
 ///
 /// Abilities: Volcano, Eruption, Pyroclasm, Lava Shower, Molten Bath, Magma
 /// Storm (BATTLE_EFFECT_VOLCANO).
-///
-/// The battle shows the damage on frame 16. Volcano and Lava Shower are red,
-/// Pyroclasm and Magma Storm orange, and those two also swing the camera round
-/// over the first 64 frames.
-///
-/// work->particles 0 to 3 are the pillars' feet, battle positions in 16.16;
-/// only gVolcano_Counts' first one, two or four are drawn.
-/// Sets REG_BLDALPHA, loads the red or orange palette into the first 64
-/// background colours (Eruption and Molten Bath keep the fire pillar sheet's),
-/// turns the camera's yaw (the strongest variant) and sets work->shakeFrames
-/// at each eruption.
 void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -133,10 +122,8 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
                     screen.y - 24, 20, 37);
           }
         }
-        // Sparks: 200 at the start, living 48 to 55 frames, then 4 a frame
-        // from 16 frames on, living 24 to 31; anywhere in the upper half
-        // circle, twice as hard up as across: up to about 8 pixels a frame
-        // across and 16 up. They start 16 pixels below the column's foot.
+        // Sparks: 200 at the start, living 48 to 55 frames, then 4 a frame from
+        // 16 frames on, living 24 to 31.
         if (frame == gVolcano_StartFrames[pillar] ||
             frame >= gVolcano_StartFrames[pillar] + 16) {
           s32 spawned = 0;
@@ -178,10 +165,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
       }
     }
 
-    // The sparks, in 24.8 fixed point (z holds the speed across): slow to
-    // 60/64 a frame while pulled up by 1/16 pixel a frame, so they settle
-    // at a rise of 1 pixel a frame; one below y 120 bounces back at half
-    // speed instead of being drawn. A spark shrinks with its life.
+    // The sparks, in 24.8 fixed point (z holds the speed across).
     for (i = 0; i != VOLCANO_SPARK_POOL; i++) {
       struct Particle *spark = &PARTICLES[i];
       s32 life = spark->variant;

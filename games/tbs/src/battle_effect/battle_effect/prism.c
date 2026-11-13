@@ -13,17 +13,6 @@
 /// and the canvas darkens away over the last 8.
 ///
 /// Abilities: Prism, Hail Prism, Freeze Prism (BATTLE_EFFECT_PRISM).
-///
-/// args->variant picks the volley from gPrism_Counts (crystals and frames: 1
-/// in 110, 4 in 134, 12 in 166); for Freeze Prism the camera also swings round
-/// for the first 104 frames. The crystals are particles[]: z is 1 once
-/// shattered, variant is the frame it starts to fall. The shards are 16 per
-/// crystal in PARTICLES: z is how fast it spins.
-///
-/// Positions are canvas pixels in 16.16. Loads the crystal palette into the
-/// first 64 background colours and sets REG_BLDALPHA, the camera's yaw
-/// (Freeze Prism) and work->shakeFrames, and flashes the targets at each
-/// shatter.
 void BattleEffect_RunPrism(struct BattleEffectParams *args) {
   BlitterPair draw;
   struct BattleEffectWork *work;
@@ -49,10 +38,9 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
   // Trails keep half of each pixel a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  // Line the crystals up above the screen, each starting 8 frames after
-  // the last and drifting towards the middle as it falls: each starts 18
-  // frames' drift short of its random x. They start at y -64, a crystal's
-  // height above the canvas, drifting up to 4 pixels a frame across.
+  // Line the crystals up above the screen, each starting 8 frames after the
+  // last and drifting towards the middle as it falls: each starts 18 frames'
+  // drift short of its random x.
   for (j = 0; j != gPrism_Counts[work->args->variant][PRISM_CRYSTAL_COUNT];
        j++) {
     seed = &work->particles[j];
@@ -122,8 +110,6 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
                 Q_16_16_TO_INT(shard->y) - gPrism_ShardHeights[picture] / 2,
                 gPrism_ShardWidths[picture], gPrism_ShardHeights[picture]);
             // Shards gain 1/8 pixel a frame of downward speed each frame.
-            // Their spin starts at 32 and slows by 1 every other frame, down
-            // to 1.
             Particle_AdvanceWithGravity2D(shard, 64, px(1) / 8);
             shard->variant += shard->z;
             if (shard->z > 1 && (frame & 1))
@@ -164,9 +150,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
         }
       }
     }
-    // Shake ranges 4 by 8, 6 by 12 and 8 by 16 pixels by variant. Hail
-    // Prism's are not powers of two, so BattleCamera_Shake's masks (range - 1)
-    // leave gaps in its offsets.
+    // Shake ranges 4 by 8, 6 by 12 and 8 by 16 pixels by variant.
     BattleCamera_Shake(work->args->variant * 2 + 4,
                        work->args->variant * 4 + 8);
     EFFECT_END_FRAME(work);
@@ -185,17 +169,6 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
 /// Rebuilds the background palette's first ramp as a grey ramp whose red,
 /// green and blue each sway with the frame, out of step by their phases
 /// (1/65536ths of a turn), so the effect shimmers through colours.
-///
-/// Called each frame by BattleEffect_RunBind and
-/// BattleEffect_RunUnusedTriangleStrike (bind.c), BattleEffect_RunShiningStar
-/// (stars.c) and BattleEffect_RunThor (thor.c), which all pass phases a third
-/// of a turn apart (TRIG_TURN - TRIG_TURN / 3, TRIG_TURN / 3 and 0); Thor
-/// passes twice its frame, for a faster shimmer. Level n's channel is (n +
-/// sway) / 2, the sway up to 32 levels either way, clamped to 0 to 31. Rewrites
-/// background colours 1 to 64.
-///
-/// frame      : the effect's frame; the sway turns 1/64 of a circle a frame
-/// redPhase, greenPhase, bluePhase : each channel's offset in the sway
 void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
                                      s32 bluePhase) {
   u16 palette[64];

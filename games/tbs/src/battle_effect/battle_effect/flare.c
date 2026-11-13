@@ -10,12 +10,6 @@
 /// over 80 frames.
 ///
 /// Abilities: Flare, Flare Wall, Flare Storm (BATTLE_EFFECT_FLARE).
-///
-/// Each target flashes red in turn, 8 frames apart from frame 16.
-///
-/// args: the targets. Flare Wall, the stronger variant, adds a second flame
-///         16 pixels above each one, and Flare Storm, the strongest, a third
-///         32 pixels above (and longer trails).
 void BattleEffect_RunFlare(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -48,8 +42,6 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
   // The arc: from -90 to 90 degrees in steps of 22.5, half an ellipse with
   // radii of 32 pixels across and 16 up and down, centred on x 20 (84 on the
   // party's side) and dipping from y 40 at its ends to 56 at its middle.
-  // Against enemies (ids from FIRST_ENEMY_UNIT) it runs from the left,
-  // otherwise from the right.
   if (work->args->targets[0] >= FIRST_ENEMY_UNIT) {
     originX = 0;
     direction = 1;
@@ -92,8 +84,7 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
     }
 
     // Each flame shows six pictures, 4 frames each, and goes out; the last
-    // flame (delay -32) is out after frame 55. Each puff picture stands on its
-    // own baseline (gBattleEffect_PuffArcPictureBiasY) and is centred across x.
+    // flame (delay -32) is out after frame 55.
     i = 0;
     flame = work->particles;
     do {
@@ -167,9 +158,6 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
 /// Lists the indices within indexRadius of where currentValue sits in values,
 /// keeping only those from 0 to entryLimit - 1. Writes the indices to output
 /// and returns how many there are.
-///
-/// Only the first indexRadius * 2 + 1 values are searched, and with no match
-/// the window centres on index 0. Nothing calls it.
 UNUSED s32 BattleEffect_BuildCenteredIndexList(BattleEffectIndexWindow *window,
                                                s16 *output) {
   s32 windowLength = window->indexRadius * 2 + 1;

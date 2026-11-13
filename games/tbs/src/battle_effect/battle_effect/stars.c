@@ -17,12 +17,6 @@
 /// third lets the battle show the damage.
 ///
 /// Abilities: Astral Blast (BATTLE_EFFECT_ASTRAL_BLAST).
-///
-/// work->particles 0 to 2 are the stars, battle positions in 16.16. Loads the
-/// rune palette into the first 64 background colours, sets the user's
-/// effect (2, at speed 48, three times the usual, and does not set it
-/// back), turns the camera's yaw, sends the target back with its motion
-/// fields and sets work->shakeFrames.
 void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   struct ScreenPoint screenPosition;
 #ifndef UBFIX
@@ -118,10 +112,8 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
           size = 10;
         EFFECT_VIEW_FROM_CAMERA(camera);
         Transform_ApplyPosition(Particle_Coordinates(step));
-        // The star's ten corners, tips and notches in turn,
-        // projected onto the canvas; peak is the largest projection scale
-        // (16.16), that of the point nearest the camera. The star spins 1/64
-        // turn a frame and grows from 1/16 of its size to full by 15 frames.
+        // The star's ten corners, tips and notches in turn, projected onto the
+        // canvas.
         peak = 0;
         for (j = 0; j != 10; j++) {
           s32 depth;
@@ -172,10 +164,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
         step->y += step->velocityY;
         step->z += step->velocityZ;
         // Star i hits 10 + i frames after its launch: knock the target 40
-        // pixels back, away from the middle, and shake the screen. The third
-        // star lets the battle show the damage; the others flash the target.
-        // The target hops at 5 pixels a frame under the usual gravity and
-        // slides at up to 8 pixels a frame.
+        // pixels back, away from the middle, and shake the screen.
         if (frame == start + i + 10) {
           target->acceleration = px(2);
           target->speedLimit = px(8);
@@ -213,11 +202,6 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
 /// damage on frame 96.
 ///
 /// Abilities: Shining Star (BATTLE_EFFECT_SHINING_STAR).
-///
-/// It lasts 128 frames. work->particles 0 to 7 are the stars, battle positions
-/// in 16.16, each variant the frame it starts. Rebuilds the background ramp
-/// each frame (BattleEffect_UpdatePhasePalette, after loading the rune palette)
-/// and sets work->shakeFrames at each bounce.
 void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -300,9 +284,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
         EFFECT_VIEW_FROM_CAMERA(camera);
         Projection_Point(step, &screenPosition);
         screenPosition.x >>= 1;
-        // On the canvas, draw the star: its ten corners, tips and notches in
-        // turn, turning 1/32 turn a frame as it falls, joined by 12 motes
-        // each; x is halved for the canvas.
+        // On the canvas, draw the star.
         if (screenPosition.x >= -8 && screenPosition.x <= 127 &&
             screenPosition.y <= 127 && screenPosition.y >= -8) {
           for (j = 0; j != 10; j++) {
@@ -332,8 +314,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
             }
           }
         }
-        // Bounce below 30 pixels up, losing half the speed across. There is
-        // no gravity: after a bounce a star rises as fast as it fell.
+        // Bounce below 30 pixels up, losing half the speed across.
         if (step->y <= px(30) - 1) {
           step->velocityY = -step->velocityY;
           step->velocityX /= 2;

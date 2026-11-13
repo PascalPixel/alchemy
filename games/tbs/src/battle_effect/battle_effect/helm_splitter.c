@@ -52,9 +52,8 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(work->args->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  // Free the spark pool before moving the user: the pointer walks the
-  // variant word of each seven-word Particle. Only the first 16 sparks are
-  // ever launched, and the first 128 moved.
+  // Free the spark pool before moving the user: the pointer walks the variant
+  // word of each seven-word Particle.
   particleLife = &PARTICLES->variant;
   for (i = 0; i != HELM_SPLITTER_CLEARED_SLOTS; i++) {
     *particleLife = 0;
@@ -62,10 +61,8 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   }
   sparks = PARTICLES;
 
-  // The user leaps 80% of the way to the first target over 20 frames,
-  // jumping at 7 pixels a frame. The distance is taken in 1/256 pixels so
-  // the squares fit in 32 bits, and a twentieth of it is both the
-  // acceleration and the top speed.
+  // The user leaps 80% of the way to the first target over 20 frames, jumping
+  // at 7 pixels a frame.
   {
     struct Actor *actor = GetBattleObjectSlotFar(work->args->user)->actor;
     struct Actor *target =
@@ -102,8 +99,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
     // kept under the user.
     Projection_Unit(work->args->user, &position);
     REG_BG2X = (80 - position.x) << 8;
-    // Frames 8 to 23: the swirl plays its seven pictures, two frames each,
-    // at the user's height, placed from the other edge on EFFECT_SIDE_PARTY.
+    // Frames 8 to 23.
     if (frame >= 8 && frame <= 23) {
       s32 picture = (frame - 8) / 2;
 
@@ -124,10 +120,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
                 gHelmSplitter_PictureHeights[picture]);
       }
     }
-    // The strike: the battle shows the damage, the target flashes and
-    // reels, the camera shakes and 16 sparks fly from (64, 80), each living
-    // 16 to 31 frames, in random directions at 2 to 2.5 pixels a frame, the
-    // vertical part doubled.
+    // The strike.
     if (frame == HELM_SPLITTER_STRIKE_FRAME) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
@@ -146,10 +139,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
         spark->variant = (Random16() & 15) + 16;
       }
     }
-    // Sparks fly straight, with no gravity, their speed damped to 60/64. A
-    // spark below row 104 has its vertical speed reversed and halved
-    // instead of being drawn; one on the canvas is drawn with the pink star
-    // effect, each spark at its own point of the six-picture cycle.
+    // Sparks fly straight, with no gravity, their speed damped to 60/64.
     for (i = 0; i != HELM_SPLITTER_SPARK_SLOTS; i++) {
       spark = &sparks[i];
       if (spark->variant > 0) {
@@ -178,14 +168,6 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
 
 /// Arranges work->effects in a formation; x and z are its origin in 16.16
 /// pixels.
-///
-/// Each summon that ends in an impact burst keeps its sprites in its own
-/// formation, every frame while it plays and then through
-/// BattleEffect_RunImpactBurst. Places the sprites through
-/// Actor_ApplyProjectedPlacementFar and changes nothing else.
-///
-/// formation: the summon's layout (enum SummonFormation); any other value
-///            places nothing.
 void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   static struct SpriteScale normalScale = {{{Q16_ONE, Q16_ONE}}};
   static struct SpriteScale largeScale = {{{Q16_ONE * 5 / 4, Q16_ONE * 5 / 4}}};
@@ -247,18 +229,6 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 
 /// Opens an impact flash and scatters sparks and fragments, keeping the
 /// effect's sprites in formation for the first 36 frames.
-///
-/// The close of four summons: Thor, Nereid, Cybele and Tiamat's
-/// BattleEffect_RunDragonFire call it once their own frames are over,
-/// each with its own formation. Builds and frees both blitters, starts and
-/// stops the canvas transfer, sets REG_BG2PA, REG_BG2X and REG_BLDCNT, loads
-/// pictures into the sheet slot and work->sheet and overwrites
-/// work->particles 0 to 63 and PARTICLES 0 to 63. It leaves the canvas's
-/// VRAM cleared; ending the canvas layer is left to the caller.
-///
-/// formation: the layout for BattleEffect_PlaceFormationObjects.
-/// x, y: the formation's origin in 16.16 pixels; the burst is drawn 40 pixels
-/// right of x, halved for the wide canvas.
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   void **slots;
   void **cursor;
@@ -300,8 +270,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // Large sparks fly in random directions at 2 to 4 pixels a frame, the
-  // vertical part doubled, and live 16 to 31 frames; only the first 30 are
-  // drawn.
+  // vertical part doubled, and live 16 to 31 frames.
   for (i = 0; i != IMPACT_BURST_LARGE_SPARKS; i++) {
     s32 speed = (Random16() & 255) + 256;
     s32 angle = Random16() & TRIG_ANGLE_MASK;
@@ -339,8 +308,6 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   }
 
   // Frames 0 to 47 show the flash, and the large sparks join from frame 1.
-  // From frame 36 the formation stays where it is, the small sparks fly and
-  // the fragments tumble until frame 63.
   for (frame = 0; frame != IMPACT_BURST_FRAMES; frame++) {
     if (frame == 4)
       Sound_PlayFar(SE_CAST);
@@ -375,8 +342,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
 #endif
     }
 
-    // Large sparks: the first 30 join two each frame, their motes shrinking
-    // with the life they have left (size 4, then 3 below 16 frames).
+    // Large sparks.
     for (i = 0, particle = work->particles; i != IMPACT_BURST_DRAWN_LARGE;
          i++, particle++) {
       if (frame > i / 2 && particle->variant > 0) {

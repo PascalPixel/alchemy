@@ -17,13 +17,6 @@
 /// tumbling shards, hitting every target as each lands.
 ///
 /// Abilities: Spire, Clay Spire, Stone Spire (BATTLE_EFFECT_SPIRE).
-///
-/// The boulders are work->particles, of which only y and its speed move; their
-/// shards are PARTICLES, SPIRE_SHARDS for each boulder. Each transfer clears
-/// the canvas, so everything is redrawn every frame.
-///
-/// args: the targets; its variant picks the number of boulders
-///         (gSpire_RockCounts: 1, 3 or 5).
 void BattleEffect_RunSpire(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -64,9 +57,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
     rock->y = -px(64);
     rock->velocityY = 0;
   }
-  // Each rock breaks into 21 shards, thrown up from where it lands: under a
-  // pixel a frame to either side and 1 to 5 pixels a frame up. z is the
-  // shard's tumbling speed and variant how far it has tumbled.
+  // Each rock breaks into 21 shards, thrown up from where it lands.
   for (i = 0; i != rockCount; i++) {
     for (j = 0; j != SPIRE_SHARDS; j++) {
       struct Particle *shard = &PARTICLES[i * SPIRE_SHARDS + j];
@@ -95,9 +86,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
         for (j = 0; j != SPIRE_SHARDS; j++) {
           shard = &PARTICLES[i * SPIRE_SHARDS + j];
           // Five shard shapes, each tumbling through three pictures; z is the
-          // tumbling speed, slowing by one every other frame down to 1. The
-          // shards gain 1/4 pixel a frame of downward speed each frame,
-          // undamped.
+          // tumbling speed, slowing by one every other frame down to 1.
           picture = (j % 5) * 3 + shard->variant / 96 % 3;
           // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX

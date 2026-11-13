@@ -45,22 +45,6 @@ void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
 /// A blast of fire sweeps across the targets from frame 129, they reel on
 /// frame 138, the screen flares white over frames 160 to 175 and fades out
 /// after, and the battle shows the damage on frame 178.
-///
-/// Four kinds of particle, in canvas coordinates with y growing downwards,
-/// 16.16 except the fireballs, which are whole pixels:
-///   PARTICLES[0..511]  embers: rise from y 112, speeding up; one a frame
-///                      over frames 33 to 103, eight a frame over 104 to 175
-///   particles[40..63]  sparks: one on each odd frame from 41 to 127,
-///                      thrown up at a slant
-///   particles[0..23]   breath: one puff a frame over 129 to 175, thrown
-///                      across the targets
-///   particles[24..39]  fireballs: fall at a slant from the top and, below
-///                      y 55, burn with their flames over and over
-/// An idle particle's variant is -1; a live one's counts its age up until it
-/// goes out. A fireball is never idle: its variant starts at minus its wait (0
-/// to 31 frames) and counts up to 0, when it starts to fall.
-///
-/// mode: Tiamat's or Dragon Driver's (enum DragonFireMode).
 void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint origin;
   void *canvas;
@@ -159,9 +143,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   for (frame = 0; frame != DRAGON_FIRE_FRAMES; frame++) {
     // A or B skips to frame 160.
     if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 48 && frame <= 159) {
-      // Tiamat's open mouth of frame 128 and the targets' reel of frame 138;
-      // when the skip comes before frame 128, that frame's sound, shake and
-      // shorter trails are skipped with it.
+      // Tiamat's open mouth of frame 128 and the targets' reel of frame 138.
       if (mode == DRAGON_FIRE_TIAMAT) {
         Sprite_StartAnimationFar(work->sprites[0], 8);
         Sprite_StartAnimationFar(work->sprites[1], 9);
@@ -179,10 +161,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
     if (frame == 178)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
-    // From frame 128 the trails keep only half; over frames 160 to 175 the
-    // canvas is filled each frame, with level 16 and on the last two frames at
-    // its brightest, while the palette brightens; from 176 the pixels fade 2
-    // levels a frame.
+    // From frame 128 the trails keep only half.
     if (frame == 128)
       work->transferValue = CANVAS_FADE_HALF;
     if (frame == 176) {
@@ -198,10 +177,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
     // Start new particles.
 
-    // Embers: from y 112 at x -32 to 223, moving up; a random 0 to 127 plus
-    // a base from gTiamat_EmberSpeeds by index gives the speed, in 128ths of
-    // a pixel a frame across and 32nds up, so they climb four times as fast
-    // as they drift.
+    // Embers: from y 112 at x -32 to 223, moving up.
     if (frame >= 33 && frame <= 175) {
       s32 spawned = 0;
       s32 limit = 1;
@@ -372,9 +348,6 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       work->shakeFrames = 8;
 
     // Over frames 40 to 47 Tiamat swoops 8 pixels left and 16 down a frame.
-    // From 128 to 175 her head, neck, lower jaw and chest (sprites 0, 1, 3
-    // and 4) show the open-mouthed pictures 8 to 11 of SPRITE_TIAMAT, then
-    // their own again.
     if (frame >= 40 && frame <= 47) {
       focus.x += -px(8);
       focus.y += px(16);
@@ -403,9 +376,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       }
     }
 
-    // Fireballs: after their wait, fall 6 pixels across and 6 down a frame,
-    // a glowing ball whose fading trail streaks behind it; below y 55 they
-    // burn with six flames, two frames each, over and over.
+    // Fireballs.
     if (frame <= 175) {
       for (i = 0; i != DRAGON_FIRE_FIREBALLS; i++) {
         struct Particle *fireball =

@@ -10,11 +10,6 @@
 /// target as they go, and fall away below line 112.
 ///
 /// Abilities: Break (BATTLE_EFFECT_BREAK).
-///
-/// Target n's 128 shards are PARTICLES n * 128 onwards, screen positions on
-/// the half-width canvas in 16.16; a shard's variant counts its frames and is
-/// -1 once it has gone. Loads the ice block palette into the first 64 colours
-/// of the background palette.
 void BattleEffect_RunBreak(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -79,9 +74,8 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  // Target n starts on frame n * 20 with a sound and a 20-frame tint; the
-  // last target's shards get 56 frames to fall. The battle shows the damage
-  // on frame 32, whatever the number of targets.
+  // Target n starts on frame n * 20 with a sound and a 20-frame tint; the last
+  // target's shards get 56 frames to fall.
   for (frame = 0; frame != work->args->targetCount * 20 + 56; frame++) {
     if (frame == 32)
       EFFECT_SHOW_DAMAGE(0);
@@ -94,9 +88,9 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
         BattleEffect_TintBattler(work->args->targets[member],
                                  SPRITE_COLOR_WHITE, TINT_KEEP, member, 20);
       }
-      // A shard falls with one of four gravities by its index (1/8 to 1/2
-      // pixel a frame per frame, gDrain_Gravities) and goes out once it
-      // falls back past y = 112. Its size, 1 to 3, also follows its index.
+      // A shard falls with one of four gravities by its index (1/8 to 1/2 pixel
+      // a frame per frame, gDrain_Gravities) and goes out once it falls back
+      // past y = 112.
       if (frame > member * 20) {
         struct Particle *shard;
 
@@ -130,15 +124,6 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
 /// pulled into the centre of the user's body.
 ///
 /// Abilities: Drain, Psy Drain (BATTLE_EFFECT_DRAIN).
-///
-/// Each target flashes in its damage pose for 42 frames as its motes burst, and
-/// the user glows from frame 40 until 20 frames before the end. Target n's
-/// motes are PARTICLES n * 128 onwards, battle positions in 16.16; only the
-/// first 32 of each 128 are moved and drawn. A negative variant marks a mote
-/// that has gone out.
-///
-/// args: the targets; Drain's basic variant takes the ice block palette,
-///         any stronger one (Psy Drain's) the blast palette.
 void BattleEffect_RunDrain(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -199,8 +184,7 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
   Sound_PlayFar(SE_SWIRL);
 
   // Frame 0 plays the drain sound; target n bursts on frame n * 20; frame 40
-  // starts the user's glow and frame 64 shows the damage. The last target's
-  // motes get 72 frames to reach the user.
+  // starts the user's glow and frame 64 shows the damage.
   for (frame = 0; frame != work->args->targetCount * 20 + 72; frame++) {
     struct Actor *user;
     s32 halfHeight;

@@ -13,11 +13,6 @@
 /// Then, for each target in turn, 8 frames apart, sparkles spiral in on it
 /// with the recovery sound and a glow, while the Djinni sways and finally
 /// flies off. No effect table entry points here, and nothing calls it.
-///
-/// PARTICLES 0 to 63 hold the swirl's motes (the first 32 drawn), then 0 to
-/// 511 the healing sparkles, 64 for each target; both are offsets from the
-/// point the transform is centred on, in 16.16. work->sheet holds the
-/// Djinni, the battle sheet slot first the motes and then the sparkle dots.
 UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -64,10 +59,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  // The swirl: frame 8 plays its sound, frames 30 to 69 carry it in 40
-  // equal steps from the user's feet to 90 pixels up at the first target's
-  // x and depth 0, frame 80 plays the Djinni's sound and frame 83 shows it.
-  // target keeps that point for the healing.
+  // The swirl.
   SET_VECTOR(position, actor->x.fixed, 0, actor->z.fixed);
   SET_VECTOR(target, goal->x.fixed, 180 << 15, 0);
   SET_VECTOR(delta, (target[0] - position[0]) / 40,
@@ -92,11 +84,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
     if (frame == 24)
       BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_NORMAL, TINT_KEEP,
                                TINT_KEEP, 0);
-    // The swirl: 32 motes, mote i from frame i + 1, each turning about its
-    // own axis (by i & 3: yaw, pitch, roll, or pitch and roll), its speed
-    // damped to 60/64 each frame and, from 30 frames after it appears,
-    // pulled back towards the centre by 1/256 of its offset a frame. Their
-    // size runs 9 to 3 over depths 250 to 634.
+    // The swirl.
     for (i = 0; i != DJINN_HEAL_SWIRL_MOTES; i++) {
       struct Particle *spark = &PARTICLES[i];
       if (frame > i && spark->variant == 0) {
@@ -145,9 +133,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
     }
     EFFECT_PRESENT_CANVAS(work);
   }
-  // The healing: sparkles scattered round each target, x and z within 64
-  // pixels and 32 to 95 up, as BattleEffect_RunHealingMotes scatters them for
-  // Ply. Target n starts on frame n * 8; the last gets 72 frames.
+  // The healing.
   for (i = 0; i != 512; i++) {
     struct Particle *spark = &PARTICLES[i];
     SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
@@ -175,11 +161,8 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(position, object->x.fixed, 160 << 14, object->z.fixed);
       Transform_ApplyPosition(position);
-      // 30 frames into its turn the target hears the recovery sound, and
-      // it glows from 40 to 64; its 64 sparkles spiral in, sparkle i from
-      // frame i / 2 + 1 of the turn, centred 40 pixels above it. The view
-      // turns 1/128 of a circle a frame, and each sparkle steps 2 pixels
-      // towards the centre (distance counts 2-pixel steps) until within 2.
+      // 30 frames into its turn the target hears the recovery sound, and it
+      // glows from 40 to 64.
       if (frame == start + 30)
         Sound_PlayFar(SE_RECOVERY);
       if (frame == start + 40)
@@ -241,14 +224,6 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
 // effect's frame runs long; the code shows the effect, not the reason.
 /// Turns the battle camera's yaw by work->cameraDelta, or by half of it on a
 /// VBlank the effect has not marked.
-///
-/// Runs each VBlank as a task in the VBlank pass, added by BattleEffect_RunFire
-/// (fire.c) and BattleEffect_RunFroth (vortices.c), which remove it before they
-/// return. Each of them moves cameraPhase from CAMERA_PHASE_IDLE to
-/// CAMERA_PHASE_FRAME_DONE at the end of its own frame. Then the task turns the
-/// whole delta and clears the phase; otherwise it turns half the delta and
-/// moves the phase between CAMERA_PHASE_IDLE and CAMERA_PHASE_HALF_TURNED,
-/// which the effects leave unmarked.
 void BattleCamera_ApplyPhasedDelta(void) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);

@@ -22,11 +22,6 @@ void BattleEffect_ConfigureEffectDisplay(void) {
 
 /// Scrolls BG1 by (scrollStepX, scrollStepY) once every scrollInterval
 /// VBlanks.
-///
-/// Runs each VBlank as a task in the VBlank pass, added by
-/// BattleEffect_RunAtalanta and BattleEffect_RunThor, which set the work
-/// block's scroll fields first and remove it before they return. Counts
-/// work->scrollTimer and moves gBgScroll[1].
 void BattleEffect_AdvanceScrollOnInterval(void) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   u32 *timer = (u32 *)&work->scrollTimer;
@@ -42,10 +37,6 @@ void BattleEffect_AdvanceScrollOnInterval(void) {
 /// Slides the affine BG2 in steps: once every scrollInterval VBlanks, writes
 /// the work block's reference point (bg2x, bg2y) to BG2X and BG2Y, then moves
 /// it by (scrollStepX, scrollStepY).
-///
-/// Runs each VBlank as a task in the VBlank pass, added by
-/// BattleEffect_RunParticleStreams, which removes it before it returns. Counts
-/// work->scrollTimer.
 void BattleEffect_AdvanceBg2OnInterval(void) {
   s32 timer;
   struct BattleEffectWork *work;
@@ -66,11 +57,6 @@ void BattleEffect_AdvanceBg2OnInterval(void) {
 /// Restarts DMA 0 as an HBlank transfer of one WIN0H value a line from
 /// PARTICLES (Ram_MapGridCellBuffer), so window 0's edges follow the per-line
 /// table the effect drew there.
-///
-/// Runs each VBlank as a task in the VBlank pass, added by BattleEffect_RunIce
-/// and BattleEffect_RunDouse, which remove it before they return. Stopping the
-/// channel first makes each VBlank's transfer start again from the table's
-/// first line.
 void BattleEffect_ArmWin0HBlankDma(void) {
   volatile u16 *channel = REG_DMA0;
 

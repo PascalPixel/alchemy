@@ -402,18 +402,6 @@ u8 gTargetMotes_GlintFlips[] = GLINT_FLIPS;
 /// The effect handlers, indexed by effect kind minus one, which
 /// BattleEffect_RunFromTable calls; BATTLE_EFFECT_NONE is no effect, for
 /// which it only clears args->variant.
-///
-/// Each handler is named for the first ability, by ability id, whose entry in
-/// gAbilityBattleEffects (battle/ability_staging.c) selects its kind, with that
-/// ability's English name (MsgAbilityName + id): BATTLE_EFFECT_QUAKE is Quake,
-/// Earthquake and Quake Sphere, so BattleEffect_RunQuake. A handler several
-/// kinds share takes the name of its lowest kind's first ability, and a name
-/// another handler has already taken passes to the next ability
-/// (BATTLE_EFFECT_NOVA is BattleEffect_RunNova, as its first ability is a
-/// second Blast). Kinds that no ability uses keep descriptive names. Each row
-/// gives the kind's name, the part of battle_effect.c that defines its handler
-/// and its first ability; the handler's own comment there lists every ability
-/// that reaches it.
 BattleEffectHandler gBattleEffect_Handlers[BATTLE_EFFECT_COUNT - 1] = {
     [BATTLE_EFFECT_QUAKE - 1] = BattleEffect_RunQuake,     // quake.c: Quake
     [BATTLE_EFFECT_SPIRE - 1] = BattleEffect_RunSpire,     // spire.c: Spire

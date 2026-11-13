@@ -79,13 +79,6 @@ UNUSED void BattleEffect_RunLimeStreaks(struct BattleEffectParams *args) {
 /// later; each target's volley starts 32 frames after the previous one's.
 /// A streak image is 20x40 and drawn twice, mirrored upwards, as a 20x80
 /// streak that leaves a fading trail.
-///
-/// Loads the style's colours over the first 64 of the background palette,
-/// writes work->bg2xLines and, over the last 16 frames, BLDALPHA; sets
-/// work->shakeFrames on a recoiling hit, and moves a trembling target's x.
-///
-/// mode : the style, 0 to 4: the streak colour (ember, lime, violet, red,
-///        cyan) and the row of gStreaks_Styles that says how a hit looks.
 void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint position;
   struct BattleEffectWork *work;
@@ -129,8 +122,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   }
 
   // The streak images, and the style's colour as the first 128 bytes of the
-  // background palette. The sheet holds three colour rows of six images,
-  // 4800 bytes a row and 800 (20x40) an image.
+  // background palette.
   Resource_LoadAndDecompress((s32)&ResourceId_FiveModeImage, work->sheet, 0, 0);
   switch (mode) {
   case STREAKS_STYLE_EMBER:
@@ -159,9 +151,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
     // The length counts 6 frames for every streak although targets are 32
     // frames apart: with four targets the fourth's hit (frame 120) would fall
     // on the frame the loop stops at, and with three the loop would stop at
-    // 102, before the third target's second flash (104). Neither happens:
-    // every ability that plays a streak volley has a range of 1 in
-    // ability_table.c, so it has one target.
+    // 102, before the third target's second flash (104).
     s32 totalFrames = streaks * work->args->targetCount * STREAKS_SPACING + 48;
 
     // Every streak starts 20 pixels above the user and moves in a straight
@@ -230,9 +220,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
           }
 
           // From 6 frames after the first streak hits, for 32 frames, the
-          // target trembles from side to side. The tremble sums to nothing
-          // over its 8 frames, but each frame also moves the target half a
-          // pixel further from the middle (x 0), 16 pixels in all.
+          // target trembles from side to side.
           if (STREAKS_VALUE(mode, STREAKS_SHAKE) &&
               frame >= k * STREAKS_TARGET_DELAY + 30 &&
               frame < k * STREAKS_TARGET_DELAY + 62) {
@@ -309,16 +297,6 @@ void BattleEffect_RunSoothingStar(struct BattleEffectParams *args) {
 /// Motes burst out of the user in every direction and float upwards,
 /// wobbling, for 128 frames; a new group of 32 joins every 8 frames. Each
 /// target in turn reacts from frame 48, 8 frames apart.
-///
-/// Fills PARTICLES 0 to 255 and loads the mode's colours over the first 64 of
-/// the background palette; the healing mode opens the canvas layer with BG
-/// control 0 and the drifting mode with 1.
-///
-/// mode: MOTE_FOUNTAIN_FOUNTAIN_HEALING throws orange motes that stay close to
-///       the user, and each target plays the recovery sound and glows (a
-///       healing effect); MOTE_FOUNTAIN_DRIFTING throws motes on the earth
-///       palette that drift across towards the far side of the field, and
-///       each target flinches (an attack).
 void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   s32 worldPoint[3];
   struct ScreenPoint position;
@@ -359,8 +337,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
 
   // Every mote starts 5 pixels above the user with a random direction and
   // speed, mostly upwards, and a life of 48 to 79 frames; the healing mode
-  // halves the spread across the ground. In pixels a frame: up to 4 across,
-  // up to 8 in depth, and -0.25 to 1.75 up.
+  // halves the spread across the ground.
   source = GetBattleObjectSlotFar(work->args->user)->actor;
   for (i = 0; i != MOTE_FOUNTAIN_INITIALIZED_COUNT; i++) {
     s32 speed;

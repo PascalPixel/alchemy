@@ -48,27 +48,9 @@
 /// again, and Thor drifts back in crackling lightning.
 ///
 /// Abilities: Thor (SUMMON_EFFECT_THOR).
-///
-/// The effect plays in two parts on the effect canvas. In the dusk part
-/// (170 frames, which A or B cuts short) a circle of 128 dots and three
-/// lines across it form over scrolling dusk clouds; the circle turns, sinks
-/// into the sky and a beam of light falls from it. In the lightning part
-/// (192 frames) a pillar of lightning strikes the targets and throws
-/// sparks, Thor appears, 30 violet bolts follow while a violet mote
-/// sways above, and Thor drifts back in crackling lightning until an impact
-/// burst ends the effect. The sparks live in THOR_PARTICLES; a spark whose
-/// variant is 0 is free, and a positive variant counts the frames it has left.
-///
-/// Loads the dusk clouds as the battle background (BattleBackground_LoadFar),
-/// and for the dusk part sets view->busy and moves gProjection.centerY to
-/// 240 (BattleEffect_SetupBlendedDisplay puts the centre back). Spawns Thor's
-/// nine sprites and releases them at the end; the closing
-/// BattleEffect_RunImpactBurst builds and frees its own blitters and transfer
-/// and overwrites work->particles and PARTICLES 0 to 63. Closes the canvas
-/// layer.
 void BattleEffect_RunThor(struct BattleEffectParams *args) {
   // The three lines' end points, in pairs: x and z on a plane, 96 being its
-  // centre. One line runs across at z 135 and two meet at (96, 32).
+  // centre.
   static s16 points[6][2] = {
       {8, 135}, {184, 135}, {128, 135}, {96, 32}, {96, 32}, {64, 135},
   };
@@ -101,8 +83,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
-  // Open the canvas and load the pictures. The light fan sheet is loaded
-  // twice, to the same place; the second load changes nothing.
+  // Open the canvas and load the pictures.
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
   Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
@@ -169,9 +150,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
 
-  // First part, 170 frames (A or B skips it): a circle of dots and
-  // three lines across it form and turn over dusk clouds, the circle shrinks
-  // into the sky, and a beam of light falls from it.
+  // First part, 170 frames (A or B skips it).
   for (frame = 0; frame != 170; frame++) {
     size = 2;
     count = frame * 2;
@@ -199,10 +178,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE,
                           CANVAS_FADE_THREE_QUARTERS);
     }
-    // Place the circle and lines: they turn over the clouds until frame
-    // 128, then sink and shrink into the sky with growing dots (past 22
-    // frames the sink holds at 20, not 22); after frame 150 they grow
-    // again, with dots of size 5.
+    // Place the circle and lines.
     Projection_Set(BATTLE_CAMERA_DISTANCE,
                    Iwram_RatioMulQ14(BATTLE_CAMERA_DISTANCE, Q16_ONE * 3 / 4),
                    0x7fff0000);
@@ -238,10 +214,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       Transform_ApplyPitch(frame << 8);
     }
 
-    // The three lines, drawn dot by dot between pairs of points: line i
-    // appears from frame 64 + 12 * i and grows 4 dots a frame, up to 48.
-    // Each point is projected and halved in x for the double-width canvas,
-    // and dot j sits j/48 of the way along (Q16_ONE / 48).
+    // The three lines, drawn dot by dot between pairs of points.
     if (frame <= 149) {
       for (i = 0; i != 6; i++) {
         SET_VECTOR(point, px(points[i][0] - 96), 0, px(points[i][1] - 96));
@@ -268,11 +241,10 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       }
     }
 
-    // The circle of up to 128 dots, two more each frame, darkening once
-    // the beam has fallen: from frame 140 it takes the brighter pixel
-    // instead of adding, and from frame 157 each frame draws it with a
-    // darker copy of the dots, down to the seventh.
-    // Always true: this part ends at frame 169.
+    // The circle of up to 128 dots, two more each frame, darkening once the
+    // beam has fallen: from frame 140 it takes the brighter pixel instead of
+    // adding, and from frame 157 each frame draws it with a darker copy of the
+    // dots, down to the seventh.
     if (frame <= 179) {
       DrawRectangle drawAlt;
       s32 level = 0;
@@ -314,10 +286,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
     }
 
-    // The beam, frames 151 to 167: rows of the ramp narrowing at its top,
-    // a column of full rows growing 20 pixels a frame and narrowing a
-    // pixel each side a frame from frame 152, and the light fan falling
-    // down it in two mirrored halves.
+    // The beam, frames 151 to 167.
     if ((u32)(frame - 151) <= 16) {
       s32 inset = 0;
       s32 beamHeight = (frame - 151) * 20 + 44;
@@ -358,9 +327,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(work);
   }
 
-  // Second part, 192 frames: a pillar of lightning strikes the targets,
-  // throwing sparks, then violet bolts strike again and again while Thor
-  // drifts back in crackling lightning, ending in an impact burst.
+  // Second part, 192 frames.
   view->busy = 0;
   Task_Remove(BattleEffect_AdvanceScrollOnInterval);
   BattleEffect_SetupBlendedDisplay();
@@ -452,11 +419,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                                          KNOCKBACK_HURL);
         }
       }
-      // Frames 80 to 143: thirty violet bolts, 2 frames apart, each shown
-      // for 2 frames with a jitter, throwing 16 sparks and striking every
-      // target in a random colour; the canvas flashes every 8 frames for
-      // the first six; and the violet mote sways in four mirrored copies,
-      // shedding 4 sparks a frame.
+      // Frames 80 to 143.
       if ((u32)stormFrame <= 63) {
         s32 moteX;
         s32 moteY;
@@ -574,9 +537,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       }
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
 
-      // Thor is placed from frame 16 at (80, 64) and pushed back from frame
-      // 32: right 4 pixels a frame and up 1/4, the push slowing by 1/16 each
-      // frame.
+      // Thor is placed from frame 16 at (80, 64) and pushed back from frame 32.
       if (frame > 15) {
         if (frame == 32) {
           thorSpeedX = px(4);
@@ -590,10 +551,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         }
         BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_THOR, thorX, thorY);
       }
-      // Frames 16 to 143: three crackles of lightning a frame around Thor,
-      // the first three glint pictures, placed and flipped at random, up to 8
-      // pixels across and 40 up or down from canvas line 56, clipped at the
-      // canvas edges and drawn where brighter.
+      // Frames 16 to 143.
       if ((u32)(frame - 16) <= 127) {
         s32 thorScreenX;
         for (i = 0, thorScreenX = thorX >> 17; i != 3; i++) {

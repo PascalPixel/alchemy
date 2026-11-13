@@ -30,18 +30,6 @@
 /// bursts into embers and flashes.
 ///
 /// Abilities: Dragon Cloud (BATTLE_EFFECT_DRAGON_CLOUD).
-///
-/// The trail's last nine copies are darker versions of the trail picture, each
-/// DRAGON_CLOUD_TRAIL_PICTURE_BYTES long. The camera turns a quarter turn about
-/// the field's centre over the first 64 of the DRAGON_CLOUD_FRAMES frames,
-/// one way or the other by args->side:
-///
-///   0 to 17    a pair of puffs, one mirrored, bursts in front of the user
-///   18 to 58   the flame follows its stored path
-///   50         the first target flashes, the screen shakes and eight puffs
-///              rise in an arc
-///   78 to 83   the flame dives in again
-///   83         the target is struck; embers and flashes burst from it
 void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   struct Point2D trail[20];
   struct ScreenPoint position;
@@ -93,10 +81,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
 
   // Seed the embers (particles 8 to 47) and flashes (48 to 63) thrown at the
   // strike, and the eight puffs (0 to 7) on an arc, each starting two frames
-  // after the last. Embers and flashes burst from a fixed point of the
-  // field, x -56 (56 on EFFECT_SIDE_PARTY) at depth 0, the flashes 20 pixels
-  // up: up to 8 pixels a frame across and in depth, and up at up to 8 (embers)
-  // or 4 (flashes).
+  // after the last.
   for (j = 0; j != DRAGON_CLOUD_EMBERS; j++) {
     struct Particle *ember = &work->particles[DRAGON_CLOUD_FIRST_EMBER + j];
 
@@ -164,8 +149,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
                              gBattleEffect_PuffArcPictureBiasY[picture] + 60);
     }
     // The path gives two 16-bit coordinates on frame 18, then a signed byte
-    // step for each axis every frame through frame 58. From frame 78 the
-    // flame starts again at (-56, 48) and dives 16 pixels a frame.
+    // step for each axis every frame through frame 58.
     if (frame >= 18 && frame <= 58) {
       if (frame == 18) {
         x = (path[0] << 8) + (u8)path[1];
@@ -185,8 +169,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
         y -= 16;
       }
     }
-    // Shift the trail back by one and draw it: copy j follows the flame from
-    // frame j + 19 to frame j + 83, and copies past the tenth are darker.
+    // Shift the trail back by one and draw it.
     for (j = 19; j != 0; j--) {
       if (frame > j + 18 && frame <= j + 83) {
         trail[j].x = trail[j - 1].x;
@@ -202,10 +185,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       }
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
-    // The flame leans with its smoothed vertical motion (drift, -8 to 8):
-    // one of five 24x48 pictures, from rising to falling. Its position is the
-    // path's, halved across for the wide canvas and mirrored on
-    // EFFECT_SIDE_PARTY.
+    // The flame leans with its smoothed vertical motion (drift, -8 to 8): one
+    // of five 24x48 pictures, from rising to falling.
     if (frame >= 18 && frame <= DRAGON_CLOUD_STRIKE_FRAME) {
       s32 lift;
 
@@ -240,9 +221,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     // pixel a frame per frame (px(1) / 8), undamped, until they drop below
     // the ground.
     if (frame > DRAGON_CLOUD_STRIKE_FRAME) {
-      // Embers are motes sized by depth. Only entries 56 to 63 play the
-      // six flash pictures, two frames each; the first eight flashes, at 48
-      // to 55, are drawn as motes.
+      // Embers are motes sized by depth.
       for (i = 0; i != DRAGON_CLOUD_EMBERS + DRAGON_CLOUD_FLASHES; i++) {
         struct Particle *ember = &work->particles[DRAGON_CLOUD_FIRST_EMBER + i];
 
@@ -255,12 +234,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
             position.depth = 160;
           if (position.depth > 799)
             position.depth = 799;
-          // Nearer is larger: 9 pixels at depth 160 or less. From depth 736
-          // on the size is 0: EFFECT_DRAW_MOTE reads the halfword before
-          // gBattleEffect_MotePictures and asks for a picture 0 by 0, which the
-          // blitter leaves undrawn, its rows used up before the first. Embers
-          // get that far: in a cast eight of the motes do, for up to half of
-          // their frames (render probe effect-depth).
+          // Nearer is larger: 9 pixels at depth 160 or less.
           size = 9 - (position.depth - 160) / 64;
           if (i > 47) {
             if (ember->variant <= 11) {

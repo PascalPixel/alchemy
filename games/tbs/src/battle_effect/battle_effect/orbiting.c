@@ -17,8 +17,6 @@
 /// smaller the further away they are. The effect runs for 160 frames. All
 /// 256 stars of the pool are seeded, at rest in a cube 255 pixels across,
 /// though only 64 are drawn.
-///
-/// Nothing calls it. Draws through the side's blitters mirrored (side ^ 1).
 UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -110,10 +108,6 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
 /// apart, for 64 frames each, a third of a turn apart on a circle of 8
 /// pixels around the target. Runs with the effect already in
 /// gBattleEffectWork.
-///
-/// Nothing calls it. Copies the skull palette over the first 128 bytes of BG
-/// palette RAM; writes REG_BG2PA, REG_BG2X and REG_BLDALPHA; keeps each
-/// skull's angle in velocityX of work->particles, three to a target.
 UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -149,9 +143,7 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
-  // Put the canvas on the targets' side of the screen: at one texel a pixel
-  // it covers screen x 0 to 127 for enemy targets and 112 to 239 for the
-  // party.
+  // Put the canvas on the targets' side of the screen.
   if (work->args->side == EFFECT_SIDE_ENEMIES)
     xOffset = 0;
   else
@@ -196,9 +188,8 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
          * instructions differ in tbs-en. */
         do {
         } while (0);
-        // Three skulls a third of a turn apart, each turning 1/128 of a turn
-        // a frame; skull i is the i-th 24x24 picture, drawn with its bottom
-        // 4 pixels above its point on the circle.
+        // Three skulls a third of a turn apart, each turning 1/128 of a turn a
+        // frame.
         for (i = 0; i != 3; i++) {
           struct Particle *spark = &work->particles[member * 3 + i];
           s32 x;
@@ -226,9 +217,6 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
 /// Target bursts: on each target in turn, 8 frames apart, a burst flares up
 /// in the middle while five puffs of smoke scatter around it, for 40
 /// frames.
-///
-/// Nothing calls it. Copies the pink burst palette over the first 128 bytes
-/// of BG palette RAM, uses work->particles six to a target.
 UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -257,9 +245,7 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
                       COMPOSITE_LIGHTEN);
   drawSmoke = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
 
-  // Six puffs for each target: five scatter at random, up to 2 pixels a
-  // frame across and half a pixel vertically, and the sixth (the burst)
-  // stays in the middle. The burst draws its two random numbers too, unused.
+  // Six puffs for each target.
   for (i = 0; i != 64; i++) {
     s32 angle;
     s32 speed;

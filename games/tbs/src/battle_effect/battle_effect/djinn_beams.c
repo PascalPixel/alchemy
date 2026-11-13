@@ -31,13 +31,6 @@ void BattleEffect_RunDew(struct BattleEffectParams *args) {
 /// sight. Over each target in turn, 16 frames apart, eight motes drift down,
 /// and from 72 frames after its turn starts a column of light falls on it
 /// and narrows away; the battle shows the result on frame 80.
-///
-/// Runs BattleEffect_RunDjinniEntrance first when args->prelude is 1. Loads
-/// three palettes over the first 64 background colours in turn, so the
-/// Djinni's is the one shown; fills PARTICLES 0 to 511, sets BG2PA and BG2X,
-/// and builds and frees its blitters every frame.
-///
-/// element: the Djinni's, Venus or Mercury.
 void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
   struct ScreenPoint one;
   struct ScreenPoint screenPosition;
@@ -58,9 +51,6 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  // Setup. The entrance (over the first target) mirrors the Djinni when the
-  // targets are enemies (side ^ 1), and returns where it ends in djinnX and
-  // djinnY.
   if (work->args->prelude == 1)
     BattleEffect_RunDjinniEntrance(args, element,
                                    work->args->side ^ work->args->prelude,
@@ -84,7 +74,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
   Decompress_TaggedLz(palette, work->sheet + DJINN_BEAMS_DJINNI_PICTURE);
 
   // The motes start 80 pixels up, up to 8 pixels off in z, each at a random
-  // point of its sway. Target k uses PARTICLES 64k to 64k + 7 of the 512.
+  // point of its sway.
   for (i = 0; i != 512; i++) {
     PARTICLES[i].x = 0;
     PARTICLES[i].y = px(80);
@@ -92,10 +82,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
     PARTICLES[i].variant = Random16() & 255;
   }
 
-  // With one target, scroll BG2 so the target is at the canvas's x 64;
-  // with several, the canvas covers the targets' side of the field: from
-  // screen x 112 for the party (EFFECT_SIDE_PARTY), from x 0 for enemies.
-  // offsetX is added to every screen x drawn, turning it into a canvas x.
+  // With one target, scroll BG2 so the target is at the canvas's x 64.
   REG_BG2PA = Q_8_8(1);
   if (work->args->targetCount == 1) {
     Projection_ScaledUnit(work->args->targets[0], &one);
@@ -113,19 +100,13 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
   for (frame = 0; frame != work->args->targetCount * 16 + 116; frame++) {
     struct BattleCamera *camera = gBattleCamera;
 
-    // Frame loop. The last target's column is gone by frame count * 16 +
-    // 88, and the loop runs 28 frames past that, while that target's last
-    // motes sink out (the eighth at count * 16 + 112) and the trails fade.
-    // The sound on 64 and the damage on 80 come at fixed frames, whatever
-    // the number of targets.
     if (frame == 64)
       Sound_PlayFar(SE_POWER_UP);
     if (frame == 80)
       EFFECT_SHOW_DAMAGE(0);
 
-    // The Djinni sways 20 pixels either way and from frame 32 rises 2
-    // pixels a frame; it is drawn twice over its first four frames, which
-    // with additive drawing makes it brighter as it appears.
+    // The Djinni sways 20 pixels either way and from frame 32 rises 2 pixels a
+    // frame.
     k = work->args->prelude;
     if (k == 1) {
       s32 angle = frame << 11;
@@ -149,9 +130,8 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
                         COMPOSITE_LIGHTEN);
     draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
 
-    // Motes: one every 8 frames, swaying up to 16 pixels either way (odd
-    // motes mirrored) as they sink a pixel a frame; they go out 8 pixels
-    // above the ground. Each is placed relative to its target.
+    // Motes: one every 8 frames, swaying up to 16 pixels either way (odd motes
+    // mirrored) as they sink a pixel a frame.
     EFFECT_FOR_EACH_TARGET(k, work->args) {
       struct Actor *target =
           GetBattleObjectSlotFar(work->args->targets[k])->actor;
@@ -187,11 +167,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
       }
     }
 
-    // The column: drawn in two mirrored halves from the top of the canvas
-    // down to the target's feet, 6 pixels each, narrowing by a pixel every
-    // 3 frames from 16 frames after it falls. The target glows meanwhile.
-    // The glow at its feet goes 28 frames after the column falls, the
-    // column itself at 32.
+    // The column.
     EFFECT_FOR_EACH_TARGET(i, work->args) {
       s32 start = i * 16;
 

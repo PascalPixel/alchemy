@@ -44,31 +44,11 @@ void BattleEffect_RunGrowth(struct BattleEffectParams *args) {
 /// Green pillars grow from the ground, scattering dust from each root.
 ///
 /// Abilities: Punji, Punji Trap, Punji Strike (BATTLE_EFFECT_PUNJI).
-///
-/// Punji Strike's row of gAbilityBattleEffects gives the stronger variant, as
-/// Punji Trap's does, so no ability plays BATTLE_EFFECT_PUNJI's strongest
-/// variant.
 void BattleEffect_RunPunji(struct BattleEffectParams *args) {
   BattleEffect_RunGrowingColumns(args, GROWING_COLUMNS_PILLARS);
 }
 /// Vines or green pillars grow one every 4 frames,
 /// alternately mirrored, each throwing up dust from its root.
-///
-/// Column i appears on frame 4i + 9, shaking the screen, and grows 8 pixels a
-/// frame to a random length capped by its shape (i % 3); a pillar also stops
-/// at its gGrowth_PillarHeights. On frame 4i + 12 the targets react (even
-/// columns with a sound), and on frames 4i + 12 and 4i + 16 the column throws
-/// up a puff of dust. The battle moves on to the results 64 frames before the
-/// end; the effect fades out over 16 frames, and nothing grows in its
-/// last 4.
-///
-/// Called by BattleEffect_RunGrowth and BattleEffect_RunPunji. work->particles
-/// holds the 16 columns (struct GrowingColumn) and PARTICLES the dust.
-///
-/// args: the targets; variant picks the number of columns
-///         (gGrowth_ColumnCounts): 4 for Growth and Punji, 8 for Mad Growth,
-///         Punji Trap and Punji Strike, 12 for Wild Growth. The effect runs
-///         4 frames a column and 56 more.
 void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   void **slots;
   void **cursor;
@@ -148,9 +128,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
     variantCursor += sizeof(struct Particle);
   } while (i != 1024);
 
-  // The 16 columns' roots and lengths: each root up to 4 pixels either side
-  // of its gGrowth_ColumnX, each length random and capped by its shape. All
-  // 16 are placed, whatever the variant's count.
+  // The 16 columns' roots and lengths.
   i = 0;
   setup = (struct GrowingColumn *)work->particles;
   do {
@@ -200,8 +178,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
             }
 
             // Grow 8 pixels a frame (odd columns mirrored), standing on the
-            // root and centred across it. A pillar also stops at its
-            // gGrowth_PillarHeights entry.
+            // root and centred across it.
             if (frame > start) {
               u32 shape = i % 3;
 
@@ -323,14 +300,6 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
 /// apart, and shrink back.
 ///
 /// Abilities: Vine (BATTLE_EFFECT_VINE).
-///
-/// Vine i appears on frame 2i + 5 and grows 4 pixels a frame up to 32,
-/// cycling through five 32x32 pictures, then shrinks away from frame 2i + 32;
-/// odd vines are mirrored. Vine i shakes the screen on frame 4i + 5. On frame
-/// 32 the targets react together, with a sound.
-///
-/// A Djinni appears first (BattleEffect_RunDjinniEntrance). work->particles
-/// holds the 16 vines' x.
 void BattleEffect_RunVine(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -388,9 +357,8 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
       if (frame == i * 4 + 5)
         work->shakeFrames = 2;
 
-      // Grow 4 pixels a frame up to 32, and shrink from frame i * 2 + 32,
-      // gone by i * 2 + 40. Each vine stands on row 104 + (i & 7) and steps
-      // through the five 32x32 pictures every 4 frames from its own start.
+      // Grow 4 pixels a frame up to 32, and shrink from frame i * 2 + 32, gone
+      // by i * 2 + 40.
       offset = i * 2;
       if (frame > offset + 4) {
         picture = (frame / 4 + i) % 5;
@@ -418,18 +386,6 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
 /// their roots.
 ///
 /// Abilities: Thorn, Briar, Nettle (BATTLE_EFFECT_THORN).
-///
-/// Thorn i appears on frame 8i + 9, shaking the screen, and throws up a puff
-/// of dust on each of its first two frames; on frame 8i + 12 the targets
-/// react with a sound. The battle moves on to the results 64 frames before
-/// the end, and the effect fades out over its last 16 frames.
-///
-/// args: the targets; variant picks the number of thorns
-///         (gGrowth_Counts): 3 for Thorn, 5 for Briar, 8 for Nettle; the
-///         effect runs 8 frames a thorn and 56 more. gGrowth_Kinds gives
-///         each thorn's size and direction.
-///
-/// PARTICLES holds the dust, 64 puffs.
 void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   void *canvas;
   s32 frame;
@@ -488,9 +444,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
         s32 height;
         s32 lean;
 
-        // A thorn leans sideways as it grows: a big
-        // one 16 pixels up and 6 across a frame to 80 and 30, a small one 8
-        // up and 1 across to 64 and 8. Both stand on row 108.
+        // A thorn leans sideways as it grows.
         if (gGrowth_Kinds[i] < THORN_SMALL) {
           height = age * 16;
           lean = age * 6;

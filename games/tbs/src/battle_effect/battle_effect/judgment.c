@@ -72,18 +72,6 @@ struct JudgmentWork {
 /// motes gather into it, bursts in a flash and sends out a ring of light.
 ///
 /// Abilities: Judgment (SUMMON_EFFECT_JUDGMENT).
-///
-/// The effect then cuts to an aerial view where the blast spreads in rings,
-/// to a beach, and to a forest swept by an explosion front, before brightening
-/// back into the battle. The folder README describes both parts.
-///
-/// Reached through BattleEffect_RunSummon, whose sheet slot holds the
-/// mote sheet here. The effect projects with gProjection.centerY at 240
-/// until BattleEffect_SetupBlendedDisplay, on frame 280 of the sweep, puts it
-/// back at 120, and holds BG1's scroll from the battle camera until that frame
-/// too. It releases its formation and then its debris sprites (16 each), and
-/// before it returns removes its transfer task and closes the canvas
-/// layer.
 void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
   s32 anchor[3];
@@ -125,8 +113,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   work = HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_BATTLE_EFFECT);
   view = HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS,
                         HEAP_SLOT_BATTLE_BACKGROUND);
-  // The sheet slot is one mote set (MOTE_SET_BYTES): the undimmed motes. The
-  // dimmed copies are built in the work block.
+  // The sheet slot is one mote set (MOTE_SET_BYTES): the undimmed motes.
   ramp = HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_CAMERA);
   work->args = args;
@@ -170,9 +157,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                              work->sheet + JUDGMENT_SHEET_TORNADO, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, ramp, 0, 0);
 
-  // Eight ever darker copies of the particle sprites, for fading: copy i
-  // caps every colour level at 64 - 7i, and the ring of motes from frame 144
-  // steps through them.
+  // Eight ever darker copies of the particle sprites, for fading.
   for (i = 0; i != 8; i++) {
     u8 *src = ramp;
     for (j = 0; j != MOTE_SET_BYTES; j++) {
@@ -190,8 +175,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
   for (i = 0; i != 128; i++) {
     // A mote's radius is its x, 72 to 87 pixels as a plain integer, and its
-    // angles its velocities. It takes four random numbers: the fourth
-    // overwrites velocityY, losing the third.
+    // angles its velocities.
     PARTICLES[i].x = (Random16() & 15) + 72;
     PARTICLES[i].velocityX = Random16() & TRIG_ANGLE_MASK;
     PARTICLES[i].velocityY = Random16() & 0xffff;
@@ -199,9 +183,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   }
 
   for (i = 0; i != 128; i++) {
-    // Sparks on a ring of radius 63.75 pixels (255 / 4), 32 to 95 pixels
-    // up; only the dead stage in the frame loop reads them, but their
-    // random numbers still count.
+    // Sparks on a ring of radius 63.75 pixels (255 / 4), 32 to 95 pixels up.
     s32 angle = Random16() & TRIG_ANGLE_MASK;
     s32 amp = 255;
     s32 speed = 0;
@@ -218,8 +200,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
 
-  // The gathering. A or B ends it after frame 4; on frame 143 the whole
-  // canvas flashes to level 42.
+  // The gathering.
   for (frame = 0; frame != JUDGMENT_GATHER_FRAMES &&
                   (frame <= 4 || !(gKeysRepeat & (KEY_A | KEY_B)));
        frame++) {
@@ -278,14 +259,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       work->fadeStep = 0;
     }
 
-    // Motes 0 to 63 are drawn flat, without perspective: from frame
-    // 81 + i / 4, mote i spins about the formation's centre on its own axes
-    // while its radius shrinks by 2 a frame to nothing, and nearer motes are
-    // drawn larger. The radius is a plain integer, at most 87, below the near
-    // depth of the projection BattleEffect_StartCanvasLayer sets (96 in the
-    // same units), so Transform_ProjectPoint does not project the rotated
-    // point: its x, its y less 16 and its depth, which grows towards the
-    // viewer, are used as pixels.
+    // Motes 0 to 63 are drawn flat, without perspective.
     anchor[2] = 0;
     anchor[1] = 0;
     for (i = 0; i != 64; i++) {
@@ -318,9 +292,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
 
     // Place the 4x4 formation at its natural size, 32 pixels apart, then move
-    // it: it slows over the first 48 frames and eases towards a stop from
-    // frame 33, jumps back on frame 144 and drifts forward from 146. Frames 72
-    // and 76 switch sprite i from animation i to i + 16 and then i + 32.
+    // it: it slows over the first 48 frames and eases towards a stop from frame
+    // 33, jumps back on frame 144 and drifts forward from 146.
     pair = unitScale;
     place.groundHeight = 0;
     place.height = 0;
@@ -355,11 +328,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
     }
 
-    // Frames 116 to 143: the burst grows a picture every 4 frames at
-    // (60, 80), drawn as four mirrored quarters, and six shards scatter
-    // 16 pixels around it each frame. Each quarter is high pixels wide and
-    // twice as tall, so on the doubled-width screen the burst is as wide as
-    // it is tall.
+    // Frames 116 to 143.
     if (frame >= 116 && frame < 144) {
       s32 high;
       s32 picture;
@@ -406,11 +375,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
     }
 
-    // From frame 144: a mirrored beam slides down from y 32 by 16 pixels a
-    // frame, the canvas keeps 75% of each frame, and for 14 frames a ring of
-    // 128 motes spreads from (60, 72) by 10 pixels a frame from radius 16,
-    // half as tall as wide on the canvas, a dimmer copy every 2 frames. Each
-    // draw loads the alternate blitter and releases it at once.
+    // From frame 144.
     if (frame > 143) {
       s32 top = (frame << 4) - 2272;
       s32 n;
@@ -449,9 +414,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(work);
   }
 
-  // The sweep's setup: replace the formation with 16 debris sprites in three
-  // effects, load the crescent sheet and show the aerial view at the
-  // canvas's own width.
+  // The sweep's setup.
   Iwram_FillWords(canvas, CANVAS_BYTES, 0);
 
   for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
@@ -488,9 +451,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
   }
 
-  // Stop the battle background fade; the canvas, one texel a pixel, starts 60
-  // pixels from the left, so the 120-pixel wave picture is centred on the
-  // screen.
+  // Stop the battle background fade.
   work->fadeFrames = 0;
   work->fadeStep = 0;
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
@@ -519,10 +480,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   fill = shift;
   Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
 
-  // The sweep, on its own frame clock: the impact on the aerial view (0 to
-  // 149), the beach (150 to 213), the forest (214 to 279), and from 280 the
-  // battle again, brightening a step every frame. On frame 300 the battle
-  // shows the damage.
+  // The sweep, on its own frame clock.
   for (frame = 0; frame != JUDGMENT_SWEEP_FRAMES; frame++) {
     if (frame == 66) {
       Sound_PlayFar(SE_CRASH);
@@ -541,9 +499,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(SE_CRASH);
     }
 
-    // A or B jumps to the next part: 150, 214 or 280. The jump to the beach
-    // also does the part of frame 64's change it would pass over: the wide
-    // BG2 and the explosion pictures.
+    // A or B jumps to the next part: 150, 214 or 280.
     if (gKeysRepeat & (KEY_A | KEY_B)) {
       if (frame >= 5 && frame < 150) {
         frame = 150;
@@ -559,10 +515,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
     }
 
-    // Frame 64: BG2 back to twice the width, with BG2PA and BG2X queued as a
-    // halfword and a word (IO_WRITE_16 and IO_WRITE_32), which VBlank writes
-    // once this frame is finished; clear the canvas and load the explosion
-    // and flash pictures.
+    // Frame 64.
     if (frame == 64) {
       IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_16);
       IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, 0, IO_WRITE_32);
@@ -612,9 +565,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                                (s32)&ResourceId_BeachBackdrop, 0);
     }
 
-    // Frame 214, the forest: 16 debris pieces start rising from the forest
-    // floor at 8 to 15 pixels a frame, those further right drawn smaller;
-    // variant 1 marks a piece live.
+    // Frame 214, the forest.
     if (frame == 214) {
       fill = 0;
       Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
@@ -633,9 +584,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
 
     if (frame == 280) {
-      // Back to the battle: blend the canvas over it again, fill the canvas
-      // with colour 1 and restart the debris off the right of the screen,
-      // where the explosion front now scrolls back from.
+      // Back to the battle.
       BattleEffect_SetupBlendedDisplay();
       fill = 0;
       Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
@@ -718,8 +667,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
     }
 
-    // Frames 64 to 85: the flash plays twice: a small picture, a large one,
-    // then four glows that close in (68 to 75) or spread out (82 to 85).
+    // Frames 64 to 85.
     if (frame >= 64 && frame < 66) {
       draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_SMALL, 52, 51, 16, 17);
     }
@@ -755,8 +703,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
               d + 38, 22, 44);
     }
 
-    // Frames 72 to 75: a ring of 256 of the largest motes grows around
-    // (60, 50), from radius 16 to 64 by 16 a frame, half as tall as wide.
+    // Frames 72 to 75.
     if (frame >= 72 && frame < 76) {
       s32 r2 = (frame << 4) - 1136;
       s32 size = 10;
@@ -777,13 +724,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           s32 radius = ring;
           s32 slope = 0;
           s32 err = ring;
-          // A midpoint circle, one point plotting all eight octants, scaled
-          // by sx and squash. The rise above the centre takes sx, not
-          // squash, so the rings are lopsided; each point is plotted again
-          // with half unscaled, one pixel to the right. Offsets across are
-          // halved for the doubled-width canvas. Each point is set to level
-          // 20, and the picture keeps every ring until its next clear (frames
-          // 150 and 214).
+          // A midpoint circle, one point plotting all eight octants, scaled by
+          // sx and squash.
           while (radius >= slope) {
             s32 half;
             s32 halfSlope;
@@ -862,9 +804,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
     }
 
-    // Frames 86 to 149: nine animated explosions fan out downward from the
-    // impact, a sixteenth of a turn apart from left to right, cycling their
-    // four pictures every 2 frames.
+    // Frames 86 to 149.
     if (frame >= 86 && frame < 150) {
       s32 angle = -TRIG_TURN / 4;
       for (i = 0; i != 9; i++, angle += TRIG_TURN / 16) {
@@ -904,9 +844,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
     }
 
-    // Frames 214 to 279: the forest scrolls 8 pixels a frame, and from 246
-    // the explosion front follows it over a plain canvas copy; from 280 the
-    // front scrolls back.
+    // Frames 214 to 279.
     if (frame >= 214 && frame < 280) {
       gBgScroll[1].x += 8;
     }
@@ -916,12 +854,9 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY, CANVAS_FADE_THREE_QUARTERS);
     }
 
-    // From frame 214 each live debris sprite is placed from its particle (x
-    // and y on the field, 255 pixels below the ground line, scaled by z plus
-    // 1/128 of y but never below 1/32) and rises. One that leaves the top
-    // comes back near the explosion front, ahead of it while it scrolls right
-    // and behind it after; after frame 301 it stays gone. Then the front:
-    // eight jittering explosions in two columns, leaning the way it scrolls.
+    // From frame 214 each live debris sprite is placed from its particle (x and
+    // y on the field, 255 pixels below the ground line, scaled by z plus 1/128
+    // of y but never below 1/32) and rises.
     if (frame > 213) {
       debrisPlace.groundHeight = 0;
       debrisPlace.height = 0;

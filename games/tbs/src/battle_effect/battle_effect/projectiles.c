@@ -7,22 +7,6 @@
 /// Sparks swirl around a point that travels from the user to the goal and
 /// gather into a Djinni, which sways for 16 frames and bursts into motes.
 /// Leaves the canvas cleared for the effect that follows.
-///
-/// The prelude of the stat boosts, the projectile volleys, the healing motes,
-/// the Djinn beams, the flurry, Bind, Hail, Ground, Torch and Vine,
-/// called with the work block they then use. Opens the canvas layer but does
-/// not close it: it removes the transfer and palette fade tasks, frees
-/// both blitters, clears the canvas and its VRAM, and sets REG_BLDALPHA back
-/// to 16/16. Copies the Djinni's palette over the first 128 bytes of BG
-/// palette RAM, starts a 24-frame battle background fade (work->fadeFrames),
-/// and uses PARTICLES 0 to 63 for the sparks and work->particles for the motes.
-///
-/// args: the user and the targets.
-/// element: the Djinni's element, plus DJINNI_ENTRANCE_LONG for the 84-frame
-///          entrance instead of the 64-frame one.
-/// side: EFFECT_SIDE_PARTY mirrors the pictures.
-/// anchor: where the Djinni appears (enum DjinniEntranceAnchor).
-/// outX, outY: receive the Djinni's last screen position.
 void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
                                     s32 element, s32 side, s32 anchor,
                                     s32 *outX, s32 *outY) {
@@ -151,13 +135,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     if (frame == 24)
       BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_NORMAL, TINT_KEEP,
                                TINT_KEEP, 0);
-    // Only the first 32 sparks are drawn. Spark i appears on frame i / 8 and
-    // spins about the centre on one of four axes, (8 + i) / 2048 turn a
-    // frame, drawn larger the nearer it is. From 24 frames after appearing
-    // its speed gains 1/128 of its offset towards the centre each frame, then
-    // keeps 62/64 of itself (on top of the step's own 60/64), and it goes out
-    // once it is within 4 pixels of the centre across and in depth (height
-    // is not tested).
+    // Only the first 32 sparks are drawn.
     for (i = 0; i != 32; i++) {
       struct Particle *spark = &PARTICLES[i];
 
@@ -215,8 +193,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     }
     // On frame 64 (long version only), 64 motes burst from the Djinni, each
     // lasting 9 to 24 frames, thrown in a random direction at 2 to 6 pixels a
-    // frame (speed / 64) with the vertical part doubled. The Djinni's x is a
-    // screen position, halved for the canvas.
+    // frame (speed / 64) with the vertical part doubled.
     if (frame == 64) {
       for (i = 0; i != 64; i++) {
         struct Particle *mote = &work->particles[i];
@@ -305,8 +282,6 @@ void BattleEffect_RunWingBeat(struct BattleEffectParams *args) {
 }
 /// Puts the user into its leap pose and fires the volley in this mode
 /// while its effect runs fast.
-///
-/// Leaves the user in its action pose, its animation back at the usual speed.
 static inline void
 BattleEffect_RunVolleyWithAction(struct BattleEffectParams *args, s32 mode) {
   struct Actor *user;
@@ -384,16 +359,6 @@ enum VolleyField {
 
 /// Shots fly from the user to each target and burst into a flash and sparks
 /// when they pass it. The hit sound plays at most once every 8 frames.
-///
-/// With more than 63 shots in all it fires at the first target only, writing
-/// work->args->targetCount. The second blitter is built and freed for each
-/// picture that needs it.
-///
-/// args: the user and the targets. variant picks Slash's comet (Cutting
-///         Edge always fires PROJECTILE_VOLLEY_COMET_C, the impact's comets
-///         PROJECTILE_VOLLEY_COMET_A); with prelude 1 a Mercury Djinni
-///         enters first.
-/// mode: the shot and its flight (enum ProjectileVolleyMode).
 void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                       s32 mode) {
   struct ScreenPoint position;
@@ -414,8 +379,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   s32 steps;
   struct Actor *user;
   s32 k;
-  // The trail particles placed, and later the sparks' speed shift: one
-  // local for both, as separate locals change the register allocation.
+  // The trail particles placed, and later the sparks' speed shift.
   s32 trailsOrShift;
   s32 hit;
   s32 x;
@@ -427,8 +391,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   soundCooldown = 0;
   work->args = args;
   comet = args->variant;
-  // The canvas's BG priority: 0 for Ice Blessing, 1 for the others. A
-  // Djinni prelude then opens the layer again at priority 0.
+  // The canvas's BG priority: 0 for Ice Blessing, 1 for the others.
   if (mode == PROJECTILE_VOLLEY_ICE_BLESSING)
     BattleEffect_StartCanvasLayer(0);
   else
@@ -458,8 +421,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   }
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 
-  // The shot pictures, and how long each mode's trails last: comets keep
-  // three quarters of each level a frame, shurikens none, the rest half.
+  // The shot pictures, and how long each mode's trails last.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (mode == PROJECTILE_VOLLEY_SLASH ||
       mode == PROJECTILE_VOLLEY_CUTTING_EDGE ||
@@ -538,18 +500,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
     if (work->args->targetCount * shots > 63)
       work->args->targetCount = 1;
 
-    // Each shot starts at the user, at a height its mode picks, and is aimed
-    // to reach its target in `steps` frames: straight across for sparks and
+    // Each shot starts at the user, at a height its mode picks, and is aimed to
+    // reach its target in `steps` frames: straight across for sparks and
     // Cutting Edge, at a random height near the target for the others.
-    //
-    // Heights above the feet, in pixels, h being the unit's table height
-    // (BattleUnit_GetEffectHeightFar): a shot starts at 58 to 73 for Sleet,
-    // h / 2 for Cutting Edge, Heat Wave and Ice Blessing, h / 2 - 15 to
-    // h / 2 + 16 for Wing Flutter, Wing Beat and Blizzard, h / 2 - 31 to
-    // h / 2 + 32 for Wing Stroke, and h for the rest. It aims at -12 to 51
-    // above the target for Sleet, 22 to 29 for the impact's comets, 1 to 64
-    // for Blizzard, 4 to 35 for Ice Blessing, h / 2 to h / 2 + 15 for Heat
-    // Wave and h - 15 to h for Slash, Shuriken and Crazy Voice.
 
     EFFECT_FOR_EACH_TARGET(i, work->args) {
       struct Actor *target =
@@ -644,8 +597,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
       // Prelude: the small Djinni circles, 4 pixels across and 2 up and down
       // every 32 frames, and from frame 70 rises away 2 pixels a frame; it is
-      // drawn twice on the first four frames. Its blitter is built and freed
-      // each frame.
+      // drawn twice on the first four frames.
       if (work->args->prelude == 1) {
         s32 x = ((-Trig_Sin(frame * (TRIG_TURN / 32)) * 4) >> 16) +
                 screenX / 2 - 10;
@@ -669,9 +621,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       }
 
-      // The shots: shot j at target i launches after frame
-      // j * stagger + i * delay. index counts every shot, so each has its own
-      // hit flash in PARTICLES.
+      // The shots.
       EFFECT_VIEW_FROM_CAMERA(camera);
       index = 0;
       EFFECT_FOR_EACH_TARGET(i, work->args) {
@@ -777,8 +727,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                                    KNOCKBACK_SKID);
                 }
                 // Sparks: the mode's count, in the first free slots from 100,
-                // living 16 to 23 frames, at up to 4 pixels a frame each way;
-                // Cutting Edge's fly twice as fast.
+                // living 16 to 23 frames, at up to 4 pixels a frame each way.
                 trailsOrShift =
                     mode == PROJECTILE_VOLLEY_CUTTING_EDGE ? 12 : 11;
                 for (k = PROJECTILE_VOLLEY_FIRST_SPARK;
@@ -869,9 +818,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         }
       }
 
-      // Hit flashes, 12 frames: half a picture, drawn again flipped for the
-      // other half (odd flashes use the pictures turned on their side). A
-      // flash's z counts its frames, stepping the picture every 2.
+      // Hit flashes, 12 frames.
       if (mode == PROJECTILE_VOLLEY_SLASH ||
           mode == PROJECTILE_VOLLEY_CUTTING_EDGE ||
           mode == PROJECTILE_VOLLEY_IMPACT_COMETS) {
@@ -977,11 +924,6 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 }
 
 /// Sends a unit back to its place (its anchor) with a hop.
-///
-/// Nothing calls it; BattleMotion_ReturnToSpot (battle/motion.c) sets the same
-/// motion without the hop. Sets the unit's actor to move at up to 8
-/// pixels a frame, jumping at 4 pixels a frame under the usual gravity, and
-/// selects POSE_STANDING.
 UNUSED void BattleEffect_InitializeRisingObject(s32 id) {
   struct BattleObject *slot = GetBattleObjectSlotFar(id);
   struct Actor *actor = slot->actor;

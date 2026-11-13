@@ -32,15 +32,6 @@ void BattleEffect_RunSpinningBeat(struct BattleEffectParams *args) {
 /// A swirl sweeps across the first target from the user's side in six images of
 /// four frames each: the first four from the swirl sheet, the last two from the
 /// tail sheet. The swipe lands on frame 8.
-///
-/// Decodes the tail sheet into Ram_MapGridCellBuffer, moves BG2X so the swipe
-/// crosses the target, and sets work->shakeFrames on the hit; Poison Beat
-/// loads its lime colours over the first 64 of the background palette, and the
-/// battle shows its damage at once as the target recoils; in Spinning Beat the
-/// target flashes, its actor is thrown up on frame 13 and the battle shows the
-/// damage as it lands on frame 65.
-///
-/// mode: the swipe (enum SwirlSwipeMode).
 void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -83,8 +74,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   actor = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   Projection_ScaledUnit(work->args->targets[0], &position);
-  // Line the canvas up so the swipe crosses the target: the target's x
-  // lands at canvas x 16 against the enemies and 112 against the party.
+  // Line the canvas up so the swipe crosses the target.
   if (work->args->side == EFFECT_SIDE_ENEMIES)
     REG_BG2X = (16 - position.x) << 8;
   else
@@ -93,8 +83,6 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
   if (mode != SWIRL_SWIPE_SPINNING_BEAT)
     frames = 48;
   for (frame = 0; frame != frames; frame++) {
-    // Frame loop. The swipe's six images, from x columns chosen by the
-    // side (six a side in gSpiderWeb_PictureX); the trail fades after them.
     picture = frame / 4;
     if (picture <= 5) {
       if (picture <= 3)
@@ -122,10 +110,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
       work->shakeFrames = 8;
     }
     // Spinning Beat throws the target up at 12 pixels a frame on frame 13, and
-    // shows the damage as it lands on frame 65. Its gravity, Q16_ONE * 47 /
-    // 100, takes about 0.47 pixel a frame off its speed each frame, and
-    // verticalMotionPhase Q16_ONE / 4 is the quarter of its speed a bounce
-    // keeps.
+    // shows the damage as it lands on frame 65.
     if (mode == SWIRL_SWIPE_SPINNING_BEAT) {
       if (frame == 13) {
         actor->velocityY = px(12);
@@ -149,12 +134,6 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
 /// around the point between the first and last target.
 ///
 /// Abilities: Spider Web (BATTLE_EFFECT_SPIDER_WEB).
-///
-/// It fades in over 8 frames; the targets flash on frame 10, the battle shows
-/// the damage on frame 32, and it fades out from frame 54.
-///
-/// Builds and frees its blitter four times a frame, one for each quarter's
-/// flip.
 void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
   struct ScreenPoint first;
   struct ScreenPoint last;
@@ -181,10 +160,6 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Sound_PlayFar(SE_CRACK);
   for (frame = 0; frame != SPIDER_WEB_FRAMES; frame++) {
-    // Frame loop. The quarters meet near (64, 72): top left, top right
-    // mirrored, bottom left flipped, bottom right both. The web's share of
-    // the blend rises 2 sixteenths a frame to all of it by frame 8, and from
-    // frame 55 falls as fast, to none on frame 62.
     if (frame <= 8)
       REG_BLDALPHA = BLEND_ALPHA(frame << 1, 16);
     if (frame > 53)

@@ -12,9 +12,9 @@ enum ParticleStreamsMode {
 };
 
 /// The pictures in the flame sheet (ResourceId_FlameSheetB), each starting
-/// where the one before ends: six 32x32 flames, then three 24x24 and three
-/// 8x8 glows, each glow brighter at its centre than the one before. The fall
-/// draws only the six and the brightest glow of each size.
+/// where the one before ends: six 32x32 flames, then three 24x24 and three 8x8
+/// glows, each glow brighter at its centre than the one before. The fall draws
+/// only the six and the brightest glow of each size.
 enum ParticleStreamsSheetPicture {
   /// The six 32x32 flames, in a row
   PARTICLE_STREAMS_FLAMES = 0,
@@ -29,12 +29,8 @@ enum ParticleStreamsSheetPicture {
   PARTICLE_STREAMS_BACKDROP_LINES = PARTICLE_STREAMS_SMALL_GLOW + 8 * 8
 };
 
-/// Adds per-channel steps to background colours 1 to 63, capped at 31.
-/// Colour 0, the backdrop, is left alone.
-///
-/// Called once a frame to whiten the colours over a few frames: by
-/// BattleEffect_RunParticleStreams from frame 36 of its burst, and by Tiamat's
-/// BattleEffect_RunDragonFire. Rewrites background palette RAM.
+/// Adds per-channel steps to background colours 1 to 63, capped at 31. Colour
+/// 0, the backdrop, is left alone.
 void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
   u16 *color = (u16 *)&BG_PLTT[1];
   s32 i;
@@ -60,11 +56,6 @@ void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
 /// Arms DMA 0 to write one halfword of the table at work->sheet +
 /// PARTICLE_STREAMS_BACKDROP_LINES into background colour 0 at each horizontal
 /// blank, so the backdrop colour changes line by line.
-///
-/// Runs each VBlank as a task (priority TASK_PASS_VBLANK + 126) that
-/// BattleEffect_RunParticleStreams adds for its fall and removes after it; the
-/// fall rewrites the 160 colours every frame. Stops DMA 0 and sets it up
-/// again, so the table is read from line 0.
 void BattleEffect_ArmPaletteHBlankDma(void) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   volatile u16 *channel = REG_DMA0;
@@ -77,9 +68,6 @@ void BattleEffect_ArmPaletteHBlankDma(void) {
 /// flames among falling fireballs, then bursts into embers and flashes.
 ///
 /// Abilities: Meteor (SUMMON_EFFECT_METEOR).
-///
-/// BattleEffect_RunSummon also plays it for a summon effect of 0, which
-/// no row selects.
 void BattleEffect_RunMeteor(struct BattleEffectParams *args) {
   BattleEffect_RunParticleStreams(args, PARTICLE_STREAMS_METEOR);
 }
@@ -101,29 +89,11 @@ void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
 #define PARTICLE_STREAMS_MOTE_PICTURES (16 * 16 + 32 * 32 + 5 * 48 * 48)
 
 /// The stream runs in two halves. The fall dissolves the battle map into a
-/// starfield, then for up to 192 frames brings the falling sprite (two in
-/// Outer Space) down the screen while flames, orbiting sparks and falling
-/// fireballs are drawn into the map buffer over a backdrop coloured line by
-/// line. The burst then switches to a blended half-scale canvas and throws
-/// embers, screen motes and growing flashes from the origin for 54 shaking
-/// frames.
-///
-/// Particle slots: the burst's flashes use PARTICLES 0 to 127 and its embers
-/// the 512 after them (PARTICLE_STREAMS_EMBERS); work->particles holds the
-/// fall's flames (0 to 31) and landings (32 to 47), then the burst's screen
-/// motes (0 to 63), in whole pixels.
-///
-/// The fall shows Ram_MapGridCellBuffer on BG1 through
-/// BattleEffect_FlushPendingGraphicsTransfer, scrolls BG2 with
-/// BattleEffect_AdvanceBg2OnInterval and colours the backdrop with
-/// BattleEffect_ArmPaletteHBlankDma, and removes all three after; it sets the
-/// background view's active flag while it runs. The projection centre moves
-/// down to line 240 from the dissolve on, until the burst's
-/// BattleEffect_SetupBlendedDisplay puts it back at line 120; the burst's
-/// shake then keeps it within 4 pixels of (120, 120) until
-/// BattleEffect_EndCanvasLayer puts it back there at the end. The burst sets
-/// BG2 back to the half-scale canvas and ends the canvas layer. Releases the
-/// falling sprites it spawned (Outer Space's on frame 48 of the burst).
+/// starfield, then for up to 192 frames brings the falling sprite (two in Outer
+/// Space) down the screen while flames, orbiting sparks and falling fireballs
+/// are drawn into the map buffer over a backdrop coloured line by line. The
+/// burst then switches to a blended half-scale canvas and throws embers, screen
+/// motes and growing flashes from the origin for 54 shaking frames.
 void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                                      s32 mode) {
   volatile u32 fill;
@@ -135,8 +105,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   struct BattleEffectWork *work;
   void *colors = (void *)BG_PLTT;
 
-  /// Starts a landing in the first free particle slot from 32 to 47; called
-  /// for each fireball that reaches rows 94 and 95. A landing is never drawn.
+  /// Starts a landing in the first free particle slot from 32 to 47; called for
+  /// each fireball that reaches rows 94 and 95. A landing is never drawn.
   void ParticleStreams_SpawnLanding(s32 x, s32 y, s32 velocityX) {
     s32 i;
 
@@ -153,8 +123,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     }
   }
 
-  /// Starts a flame in the first free particle slot from 0 to 31. Nothing
-  /// calls it: the fall starts its flames inline.
+  /// Starts a flame in the first free particle slot from 0 to 31. Nothing calls
+  /// it: the fall starts its flames inline.
   UNUSED void ParticleStreams_SpawnFlame(s32 x, s32 y) {
     s32 i;
 
@@ -183,8 +153,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   canvas = cache[0];
   work = cache[-1];
 
-  // Begin: in Outer Space the user leaps up with a sound. The stream's
-  // direction is 1 when that user stands on EFFECT_SIDE_PARTY, otherwise -1.
+  // Begin: in Outer Space the user leaps up with a sound.
   work->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
   // direction holds mode for this test before it takes the direction.
@@ -203,8 +172,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     direction = -1;
   }
   BattleEffect_ConfigureEffectDisplay();
-  // The backdrop and colour 1 go black: the wipe below
-  // sweeps the canvas to colour 1, top to bottom.
+  // The backdrop and colour 1 go black: the wipe below sweeps the canvas to
+  // colour 1, top to bottom.
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
@@ -228,16 +197,14 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   } else {
     BattleEffect_SpawnObjects(1, SPRITE_METEOR, 3);
   }
-  // The starfield: load the flame sheet (and in Outer Space the bolt's
-  // palette), fill the screen map, give palette entries 128 to 190 random
-  // bright colours and scatter 256 random dots over the 128x128 canvas.
+  // The starfield.
   Resource_LoadAndDecompress((s32)&ResourceId_FlameSheetB, work->sheet, 1, 1);
   if (mode == PARTICLE_STREAMS_OUTER_SPACE)
     Iwram_CopyWords(colors,
                     Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
                     128);
   // The map picture, 32x16 tiles of 8x8 pixels (256x128, 8192 words), all
-  // colour 1; its first BATTLE_BACKGROUND_BYTES are what BG1 shows.
+  // colour 1.
   fill = CANVAS_FILL_WORD(1);
   Dma_Set((void *)&fill, Ram_MapGridCellBuffer, DMA_FILL_WORDS(256 * 128 / 4),
           REG_DMA3);
@@ -268,9 +235,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     ((u8 *)canvas)[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = shade;
   }
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), canvas, CANVAS_BYTES);
-  // Dissolve: start the background scroll, then erase the map from the top
-  // in ragged columns, each lagging by one of 128 random offsets of 0 to 63
-  // rows. The erased band grows faster every frame until it passes row 191.
+  // Dissolve.
   gProjection.centerY = 240;
   BattleEffect_SelectLivingTargets(work->args);
   // Every second frame BG2's reference point (20.8 fixed point) moves half a
@@ -290,8 +255,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     s32 step = 1;
     s32 row = 0;
 
-    // The band erases 0, 2, 4, 6 and so on more rows each frame. A column
-    // lagging the full 63 rows erases its last row, 127, at row 190.
+    // The band erases 0, 2, 4, 6 and so on more rows each frame.
     do {
       limit += step / 2;
       step += 4;
@@ -301,8 +265,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         for (x = 0; x != 256; x++) {
           s32 y = row - offsets[x & 127];
 
-          // Columns x and x + 128 share a lag. The map is tiled like the
-          // canvas, but 32 tiles a row.
+          // Columns x and x + 128 share a lag.
           if (y >= 0)
             if (y <= 127)
               Ram_MapGridCellBuffer[((y / 8 * 32 + x / 8) * 8 + (y & 7)) * 8 +
@@ -312,10 +275,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       EFFECT_PRESENT_CANVAS(work);
     } while (limit <= 191);
   }
-  // The fall: blend the map over the backdrop, colour the backdrop line by
-  // line, and draw flames, orbiting sparks and fireballs into the map for up
-  // to 192 frames. A or B skips ahead after frame 16 in Outer Space, after
-  // frame 4 otherwise. The backdrop's scroll is restored afterwards.
+  // The fall.
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   {
@@ -329,8 +289,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7, EFFECT_CLIP_BOUNDS,
                               COMPOSITE_LIGHTEN);
     draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-    // Each copy darkens every pixel of the map by 2 levels (four bytes of 2
-    // in one word, as the other darkening effects write theirs).
+    // Each copy darkens every pixel of the map by 2 levels (four bytes of 2 in
+    // one word, as the other darkening effects write theirs).
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
     Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_VBLANK + 126);
     EFFECT_FREE_PARTICLES(i, work->particles, 64);
@@ -396,8 +356,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       // streams in one a line: black on lines 0 to 14 and 135 to 159, and
       // between them a blue glow, brightest at the bottom, that climbs and
       // pales as the fall goes on: a line's level is (line - 16) / 4 plus a
-      // level every 4 frames, its blue that less 32, its green that less 80
-      // and its red half the green.
+      // level every 4 frames, its blue that less 32, its green that less 80 and
+      // its red half the green.
       for (i = 0; i != 15; i++)
         *line++ = 0;
       for (; i != 135; i++) {
@@ -451,8 +411,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         Actor_ApplyProjectedPlacementFar(work->sprites[0], &position, &scale,
                                          0);
       }
-      // A new flame starts at a random point on the lower half of a circle
-      // of radius 30 * size beneath the falling sprite.
+      // A new flame starts at a random point on the lower half of a circle of
+      // radius 30 * size beneath the falling sprite.
       for (i = 0, y = 32 - y; i != 32; i++) {
         struct Particle *flame = &work->particles[i];
 
@@ -466,12 +426,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         }
       }
       // The seven orbiting sparks, 8x8, turning with the frame and falling a
-      // pixel a frame. Angles are in 1/65536 turns: the orbit is tilted 1/32
-      // turn and turns once every 256 frames. The sparks never project: moved
-      // 512 pixels along z, with the yaw turning them at most 43 pixels from
-      // that, they lie behind the view, nearer than gProjection's near depth,
-      // so Transform_ProjectPoint leaves the transformed point, read back
-      // as 16.16 and centred by hand.
+      // pixel a frame.
       screen.x = 0;
       screen.y = 0;
       screen.depth = px(512);
@@ -495,8 +450,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         x = frame / 4 - 16;
       else
         x = 16 - frame / 4;
-      // The seven falling fireballs, 24x24; a fireball reaching rows 94 and
-      // 95 becomes a landing instead.
+      // The seven falling fireballs, 24x24; a fireball reaching rows 94 and 95
+      // becomes a landing instead.
       y = frame - 96;
       for (i = 0; i != 7; i++) {
         s32 fireballY = gParticleStreams_FireballPoints[i][1] + y;
@@ -540,9 +495,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     gBgScroll[1].y = savedY;
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  // The burst, 54 frames: switch to the blended half-scale display, load the
-  // blast sheet and seed 32 screen motes, 128 flashes and 512 embers, the
-  // flashes and embers leaving the origin with random velocities.
+  // The burst, 54 frames.
   BattleEffect_SetupBlendedDisplay();
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
@@ -554,8 +507,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                       COMPOSITE_LIGHTEN);
   draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
-  // Screen motes keep whole canvas pixels, not 16.16: x 0 to 127 and y 127
-  // to 254, from the canvas's last row down, from where they rise.
+  // Screen motes keep whole canvas pixels, not 16.16.
   for (i = 0; i != 32; i++) {
     struct Particle *mote = &work->particles[i];
 
@@ -584,8 +536,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
 
   // The burst shakes while the falling sprite (two in Outer Space) keeps
-  // falling and growing. The background brightens from frame 36; on frame 48
-  // Outer Space's sprites are released and the battle shows the damage.
+  // falling and growing.
   for (frame = 0; frame != 54; frame++) {
     s32 size = (frame + 464) << 8;
     struct BattleCamera *camera = gBattleCamera;
@@ -611,8 +562,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
     for (i = 0; i != 64; i++) {
-      // The first 64 embers, sized by depth and falling under gravity; one
-      // that falls to height 20 restarts there with a new velocity.
+      // The first 64 embers, sized by depth and falling under gravity; one that
+      // falls to height 20 restarts there with a new velocity.
       struct Particle *ember = &PARTICLE_STREAMS_EMBERS[i];
 
       if (ember->y >= 0) {
@@ -649,9 +600,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     for (i = 0; i != 64; i++) {
       struct Particle *mote = &work->particles[i];
       // 64 screen motes rise 8 pixels a frame plus their index's low three
-      // bits, wrapping back to row 128 above the top. Only 0 to 31 were
-      // seeded; 32 to 63 keep what the slots held, such as a landing's 16.16
-      // position, far off the canvas.
+      // bits, wrapping back to row 128 above the top.
       u32 rise = i & 7;
       s32 size = rise + 3;
 
@@ -666,9 +615,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         mote->y = 128;
     }
     for (i = 0; i != 64; i++) {
-      // The first 64 flashes, three more released each frame from frame 17:
-      // seven growing pictures, two frames each, then a restart at height 20
-      // with a random depth and upward speed.
+      // The first 64 flashes, three more released each frame from frame 17.
       struct Particle *flash = &PARTICLES[i];
 
       if (i / 3 < elapsed && flash->y >= 0) {

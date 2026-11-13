@@ -58,10 +58,6 @@ void BattleEffect_RunCure(struct BattleEffectParams *args) {
 ///
 /// Abilities: Cure Poison, Restore, Antidote, Elixir
 /// (BATTLE_EFFECT_CURE_POISON).
-///
-/// Cure Poison and Antidote play HEALING_MODE_CURE_POISON; Restore and Elixir,
-/// the stronger variant, play HEALING_MODE_RESTORE, whose sparkles also turn
-/// on a second axis.
 void BattleEffect_RunCurePoison(struct BattleEffectParams *args) {
   if (args->variant == EFFECT_VARIANT_BASIC) {
     BattleEffect_RunHealingMotes(args, HEALING_MODE_CURE_POISON);
@@ -94,18 +90,6 @@ void BattleEffect_RunPsyCrystal(struct BattleEffectParams *args) {
 /// Motes of light scattered around each target swirl in towards it, one target
 /// every 8 frames, with the recovery sound on each target's 20th frame and a
 /// tint on its 36th.
-///
-/// args: the targets. With prelude 1, a Djinni (Mars for Psy Crystal,
-///         Mercury otherwise) appears first, sways and rises. variant picks
-///         the motes per target (32 for the basic variant, 128 for the
-///         strongest, otherwise 64) and, in every mode but Cure and Psy
-///         Crystal, the resource (the ice shard for the basic variant, the
-///         ice block otherwise).
-/// mode: how the motes scatter and turn. Only Ply shows the canvas at its
-///       own width, centred on the first target. Cure Poison, Restore and
-///       Tonic put the motes out one by one instead of drawing them in;
-///       they and Ply draw sparkle dots. Psy Crystal takes the Mars
-///       resource, Cure the blast resource.
 void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -133,8 +117,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   BattleEffect_StartCanvasLayer(0);
 
   // Bring out the Djinni, Mars for Psy Crystal and Mercury otherwise; origin
-  // receives where it ends. Ply and Psy Crystal place it over the first
-  // target, the others at the first target's x at depth 0.
+  // receives where it ends.
   if (work->args->prelude == 1) {
     s32 element =
         mode == HEALING_MODE_PSY_CRYSTAL ? ELEMENT_MARS : ELEMENT_MERCURY;
@@ -196,9 +179,8 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   Decompress_TaggedLz(resource, work->sheet + HEALING_DJINNI_PICTURE);
   BattleEffect_FetchRectangleBlitters(work->args->side, blit);
 
-  // Scatter the motes around the centre (16.16, relative to the point the
-  // frame loop centres on). Cure Poison, Restore and Tonic end 16 frames sooner
-  // than the others, as their motes go out rather than travel in.
+  // Scatter the motes around the centre (16.16, relative to the point the frame
+  // loop centres on).
   if (mode == HEALING_MODE_PLY || mode == HEALING_MODE_PSY_CRYSTAL) {
     // x and z within 64 pixels, y 32 to 95 pixels up.
     for (i = 0; i != 512; i++) {
@@ -278,8 +260,8 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     if (frame == 40)
       EFFECT_SHOW_DAMAGE(0);
 
-    // The Djinni sways from side to side and, after 32 frames, rises 2 pixels
-    // a frame. For the first 4 frames it is also added on top.
+    // The Djinni sways from side to side and, after 32 frames, rises 2 pixels a
+    // frame.
     if (work->args->prelude == 1) {
       if (doubleWidth == 0) {
         s32 x =
@@ -318,9 +300,8 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
         BattleEffect_TintBattler(work->args->targets[member],
                                  SPRITE_COLOR_WHITE, TINT_KEEP, member, 28);
 
-      // From the target's start, its frame of reference turns 1/128 of a
-      // circle a frame. Cure offsets the yaw by 40 frames a target where the
-      // others offset it by their start, and Wish does not offset it.
+      // From the target's start, its frame of reference turns 1/128 of a circle
+      // a frame.
       if (frame > start) {
         if (mode == HEALING_MODE_PLY || mode == HEALING_MODE_PSY_CRYSTAL) {
           Transform_ApplyYaw((frame - start) << 9);

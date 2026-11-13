@@ -13,10 +13,6 @@
 /// 10.
 ///
 /// Abilities: Undead Sword (BATTLE_EFFECT_UNDEAD_SWORD).
-///
-/// The effect runs 54 frames. BG2 is moved so that the canvas's centre line
-/// stands on the target. The sparks are work->particles 0 to 15, variant their
-/// age in frames.
 void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   void **slots;
   void **slot;
@@ -83,11 +79,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
     }
 
     // The columns grow 12 pixels a frame from frame 8 and shrink 6 a frame
-    // after frame 31, held at 80 pixels between. Held, they are drawn
-    // brightest-wins, otherwise additive. The two 14-pixel halves stand on
-    // line 112 at x 50 and 64, the second mirrored, so the light is one
-    // 28-pixel column about x 64; each half builds its own blitter and
-    // releases it at once.
+    // after frame 31, held at 80 pixels between.
     if (frame > 7) {
       if (frame <= 31)
         height = frame * 12 - 96;
@@ -114,11 +106,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
       }
     }
 
-    // Two more sparks start each frame from frame 8; each advances to the
-    // next of seven pictures every three frames and drifts upward, pulled by
-    // 1/8 pixel a frame each frame and slowed to 62/64, until it is 29 frames
-    // old. The blitters are fetched and released each frame, as the columns
-    // took the slot.
+    // Two more sparks start each frame from frame 8.
     BattleEffect_FetchRectangleBlitters(work->args->side, draw);
     for (i = 0, particle = work->particles; i != 16; i++) {
       if (frame >= i / 2 + 8 && particle->variant <= 28) {

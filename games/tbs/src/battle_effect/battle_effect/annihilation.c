@@ -10,21 +10,6 @@
 /// shards.
 ///
 /// Abilities: Annihilation (BATTLE_EFFECT_ANNIHILATION).
-///
-/// Its frames play out like this:
-///
-///   4 on       64 shards scatter from the target and fall
-///   6 to 11    a fire streak flares in front of the user
-///   8          the target is struck; the canvas is filled
-///   16 to 47   a fire burst grows over the target in three steps
-///
-/// work->particles 0 to 63 hold the shards and Ram_MapGridCellBuffer the
-/// burst's pictures. Each drawing builds the blitters it needs and frees them
-/// the same frame; the effect ends with the transfer task removed and
-/// the canvas layer closed.
-///
-/// args: the user and the target; a nonzero variant gives the burst its
-/// second picture and a sound.
 void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -60,8 +45,8 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   targetActor = GetBattleObjectSlotFar(work->args->targets[0])->actor;
 
   for (i = 0; i != 64; i++) {
-    // 64 shards start at the target, flying across towards the middle of
-    // the field; each group of four lives two frames longer than the last.
+    // 64 shards start at the target, flying across towards the middle of the
+    // field.
     struct Particle *seed = &work->particles[i];
 
     SET_POSITION(seed, targetActor->x.fixed, targetActor->y.fixed,
@@ -104,9 +89,8 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
                     position.x / 2, position.y - 24, 48, 72);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     }
-    // The fire burst over the target grows a step every two frames up to
-    // the third (frame 20) and holds it to frame 47; a nonzero variant takes
-    // the second strip of pictures.
+    // The fire burst over the target grows a step every two frames up to the
+    // third (frame 20) and holds it to frame 47.
     if (frame >= 16 && frame <= 47) {
       s32 step = (frame - 16) / 2;
       s32 strip;
@@ -137,10 +121,8 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
                  CANVAS_BYTES);
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
-    // Shards shrink as their lives run down, from mote size 7 to 2, and fall
-    // at 1/64 pixel a frame per frame. Pairs of shards alternate between the
-    // brightest-wins and the additive blitter, both mirrored on
-    // EFFECT_SIDE_PARTY.
+    // Shards shrink as their lives run down, from mote size 7 to 2, and fall at
+    // 1/64 pixel a frame per frame.
     if (frame > 3) {
       BattleEffect_FetchRectangleBlitters(work->args->side, blitters);
       for (i = 0; i != 64; i++) {

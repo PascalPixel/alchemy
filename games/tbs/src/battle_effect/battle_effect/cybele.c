@@ -35,29 +35,6 @@ enum ThornVineSheetPicture {
 /// drop, each landing on a spreading ring in a cloud of dust.
 ///
 /// Abilities: Cybele (SUMMON_EFFECT_CYBELE).
-///
-/// The effect runs for 366 frames, in these stages:
-///
-/// - 0 to 127: Cybele drops in, landing on frame 31; from 72 a thorn flies
-///   in from the right each frame.
-/// - 128 to 224: vines grow out of the ground, shaking the screen, while
-///   chips fly; sparks flash around the targets, which rise from 161.
-/// - 224 to 247: the first 64 background colours fade to grey.
-/// - 233 on: the canvas dissolves from the top, two rows a frame.
-/// - 286 on: the targets drop, 5 frames apart.
-/// - 302 on: each target lands 16 frames after it drops, on a spreading ring
-///   in a cloud of dust.
-///
-/// Pressing A or B between frames 191 and 285 skips to the drop. At the end
-/// the battle shows the damage and an impact burst
-/// (BattleEffect_RunImpactBurst) explodes at Cybele.
-///
-/// Besides the canvas and work->particles (above), it writes the dissolve
-/// order into the first 1024 bytes of Ram_MapGridCellBuffer, greys the first 64
-/// background colours, lifts and drops the targets' actors (their y and
-/// gravity), and sets REG_BG2X, REG_BG2PA, REG_BLDCNT and work->shakeFrames.
-/// It spawns Cybele's eight sprites and releases them, the transfer task
-/// and the blitters before it closes the canvas layer.
 void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   u8 *canvas;
@@ -78,8 +55,6 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   work->args = args;
   BattleEffect_SpawnObjects(8, SPRITE_CYBELE, 1);
 
-  // Setup. The dissolve order: eight shuffled runs of the columns 0 to 127,
-  // each shuffled by 128 random swaps.
   order = Ram_MapGridCellBuffer;
   for (i = 0; i != 1024; i++)
     order[i] = i & 127;
@@ -111,9 +86,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   REG_BG2X = -(32 << 8); // -32 in 20.8: the canvas shows 32 pixels right
 
   // Vines (0 to 15): x, the y of the root, the growth speed and the frames
-  // before the vine starts to grow. Vines 0 to 4 stand 20 pixels apart from
-  // x 0, rooted at y 104 to 111; the rest sit 10 pixels further right and 4
-  // lower, so the ten drawn make two staggered rows.
+  // before the vine starts to grow.
   for (i = 0; i != 16; i++) {
     struct Particle *vine = &work->particles[i];
 
@@ -215,9 +188,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
         }
       }
     }
-    // Frame 128: throw the chips (16 to 63) up from the ground, each
-    // waiting 16 to 31 frames to appear, and undo the canvas's 32-pixel
-    // shift.
+    // Frame 128.
     if (frame == 128) {
       for (i = 0; i != 48; i++) {
         struct Particle *chip = &work->particles[CYBELE_FIRST_CHIP + i];
@@ -231,11 +202,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       REG_BG2X = 0;
     }
 
-    // Frames 128 to 224: grow the vines, shaking the screen while they
-    // grow. A vine is a 24x8 tip on a stem of three 24x64 pieces; its
-    // height wraps every 64 pixels past 184, so a grown vine keeps its
-    // length. Odd vines are mirrored and carry a flower; vines 6 to 9 are the
-    // thinner vine.
+    // Frames 128 to 224: grow the vines, shaking the screen while they grow.
     phase = frame - 128;
     if (phase >= 0 && phase <= 96) {
       rise = phase;
@@ -349,9 +316,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       }
     }
 
-    // Frames 128 to 300: six sparks keep flashing around each target's
-    // body. Each lasts five frames, then until frame 199 waits up to 7
-    // frames and flashes somewhere else.
+    // Frames 128 to 300: six sparks keep flashing around each target's body.
     if (phase >= 0 && phase <= 172) {
       EFFECT_FOR_EACH_TARGET(i, work->args) {
         struct Actor *actor =
@@ -453,10 +418,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       }
     }
 
-    // Frame 302: load the yellow ring and blast sheets, brightest-wins
-    // blitters and a canvas that keeps 75% of each frame, and give each
-    // target ten dust clouds, 72 degrees apart (two sets of five), of which
-    // only the first set is drawn.
+    // Frame 302.
     if (frame == 302) {
       EFFECT_RELEASE_BLITTERS();
       Resource_LoadAndDecompress((s32)&ResourceId_YellowRingSheet, work->sheet,
@@ -491,12 +453,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
         }
       }
     }
-    // Target i's ring spreads from frame 302 + 4i: six 40x24 pictures of the
-    // yellow ring sheet, two frames each, drawn as two mirrored halves. Six
-    // frames in, the first five of its dust clouds billow for 27 frames. The 2D
-    // step leaves z alone, so they spread only across, and rise: their speed up
-    // and the 1/16 pixel added each frame both point up in the projection. The
-    // canvas is now shown at twice its width, so x positions are halved.
+    // Target i's ring spreads from frame 302 + 4i.
     if (frame > 301) {
       EFFECT_FOR_EACH_TARGET(i, work->args) {
         s32 start = i * 4 + 302;

@@ -110,13 +110,6 @@ enum { TARGET_MOTES_GLINT_PICTURES = 9600 };
 /// the target flashes until the end; the battle shows the damage 32 frames
 /// before the end. The effect layer ripples, except for Taint's smokes and
 /// Paralyze.
-///
-/// Lasts 8 frames a target plus 64 (the wide styles) or 32. It builds both
-/// blitters afresh for each target every frame and releases them again,
-/// Paralyze a mirrored one for each glint too, so it ends with none held. Demon
-/// Fire sets work->shakeFrames.
-///
-/// mode: the style (enum TargetMotesMode).
 void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -170,9 +163,8 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
                                work->sheet + TARGET_MOTES_GLINT_PICTURES, 1, 0);
 
-  // Wide styles scatter the motes within 64 pixels across and in depth and
-  // 32 up or down; the others within 16 across and in depth and up to 32
-  // below.
+  // Wide styles scatter the motes within 64 pixels across and in depth and 32
+  // up or down.
   for (i = 0; i != TARGET_MOTES; i++) {
     struct Particle *mote = &PARTICLES[i];
 
@@ -203,8 +195,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   for (frame = 0; frame != total; frame++) {
     struct BattleCamera *camera = gBattleCamera;
 
-    // Demon Fire: the user steps up to the first target 46 frames before the
-    // end and strikes it 32 frames before the end, shaking the screen.
+    // Demon Fire.
     if (mode == TARGET_MOTES_DEMON_FIRE) {
       if (frame == total - 46)
         BattleMotion_ApproachTargetFar(work->args->user, work->args->targets[0],
@@ -217,9 +208,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     } else if (frame == total - 32) {
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     }
-    // Ripple the canvas sideways, line by line: BG2's x (20.8) sways 0 to 2
-    // pixels, a wave of 1/32 turn a line that moves 1/16 turn a frame. The
-    // table is filled in every mode but read only where the HBlank DMA runs.
+    // Ripple the canvas sideways, line by line.
     row = work->bg2xLines;
     for (i = 0; i != DISPLAY_HEIGHT; i++)
       *row++ = ((4 << 16) -
@@ -270,8 +259,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
       SET_VECTOR(point, actor->x.fixed, 160 << 13, actor->z.fixed);
       Transform_ApplyPosition(point);
       // Turn the group about the vertical axis, and for Taint's smokes and
-      // Heartrender about the horizontal one too; mote i joins i frames after
-      // the target's turn starts and takes a new image every 4 frames.
+      // Heartrender about the horizontal one too.
       if (frame > member * 8) {
         Transform_ApplyYaw(frame << 9);
         if (mode <= TARGET_MOTES_PINK_SMOKE || mode == TARGET_MOTES_HEARTRENDER)
@@ -294,8 +282,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
               Projection_Point(mote, &screen);
               screen.x >>= 1;
               // Orbs 40x40, vortex motes 12x24, a heart 22x42, smoke 24x48;
-              // smoke draws one mote in four additively. A mote that has
-              // reached the centre is no longer drawn.
+              // smoke draws one mote in four additively.
               if (mode == TARGET_MOTES_MYSTIC_FLAME ||
                   mode == TARGET_MOTES_DEMON_FIRE)
                 draw[1](canvas, work->sheet + picture * (40 * 40),
@@ -310,8 +297,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
                 draw[(i & 3) != 0](canvas, work->sheet + picture * (24 * 48),
                                    screen.x - 12, screen.y - 24, 24, 48);
               // Closing motes step 2 pixels towards the centre and start their
-              // cycle again where they are; rising motes rise 1 pixel a frame
-              // and start again at a new random point below.
+              // cycle again where they are.
               if (TARGET_MOTES_CLOSE_IN(mode)) {
                 mote->x -= mote->x / distance;
                 mote->y -= mote->y / distance;
@@ -366,11 +352,6 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 /// frame 80.
 ///
 /// Abilities: Sleep (BATTLE_EFFECT_SLEEP).
-///
-/// It lasts SLEEP_FRAMES. PARTICLES 0 to 31 are the sheep, canvas pixels in
-/// 16.16; only the first twelve fall. Loads the sheep palette into the first
-/// 64 background colours and sets REG_BLDCNT and BG2's affine registers (the
-/// narrow canvas, moved over the party's side when side is EFFECT_SIDE_PARTY).
 void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -398,11 +379,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
                       COMPOSITE_TRANSPARENT);
   drawFlipped = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
 
-  // Seed SLEEP_SEEDED sheep, of which SLEEP_SHEEP fall. Each starts 32
-  // pixels above the canvas at a random x from 32 to 95, with a random
-  // tumble speed (z, 0 to 3) and starting image; the fall speed draws a
-  // random number but always starts at 0, and gravity adds 1/8 pixel a frame
-  // each frame.
+  // Seed SLEEP_SEEDED sheep, of which SLEEP_SHEEP fall.
   for (particleIndex = 0; particleIndex != SLEEP_SEEDED; particleIndex++) {
     current = &sheep[particleIndex];
     current->x = ((Random16() & 63) + 32) << 16;
@@ -481,13 +458,6 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
 ///
 /// Abilities: Curse (BATTLE_EFFECT_CURSE); Lucid Prophecy
 /// (BATTLE_EFFECT_LUCID_PROPHECY).
-///
-/// Lasts 32 frames a target plus 32, so with one target the flame is cut off
-/// after 64 frames. work->particles' variants, 0 to 63, give each flame its
-/// starting point in its effect. Loads the flame column palette into the
-/// first 64 background colours and sets REG_BLDCNT and BG2's affine registers
-/// (the narrow canvas, moved over the party's side when side is
-/// EFFECT_SIDE_PARTY).
 void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

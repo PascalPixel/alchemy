@@ -29,10 +29,6 @@ struct RockWallHeights {
 /// throwing the targets standing on them into the air.
 ///
 /// Abilities: Quake, Earthquake, Quake Sphere (BATTLE_EFFECT_QUAKE).
-///
-/// Each pillar is capped with a strip of ground cut from the background.
-///
-/// args: the targets; variant picks the row of gQuake_Timings.
 void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   static s32 wallHeights[4] = {
       -32,
@@ -143,10 +139,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
         draw(canvas, work->sheet, column * QUAKE_PILLAR_WIDTH + 8, 96 - height,
              QUAKE_PILLAR_WIDTH, 16);
 
-        // Throw up the targets standing on the pillar: those whose projected
-        // point, 16 pixels above the feet, lies in its 41 columns (both edges
-        // count) and at or below its top. A target below the ground takes its
-        // damage pose.
+        // Throw up the targets standing on the pillar.
         EFFECT_FOR_EACH_TARGET(member, work->args) {
           struct Actor *actor;
 

@@ -13,9 +13,6 @@
 /// Moves each RGB555 channel of background colours 0 to 63 one level towards
 /// the resource palette. Colour 0 always goes towards black, whatever the
 /// resource holds.
-///
-/// Called once a frame, so a palette arrives in at most 31 frames: by the
-/// casting impacts, Ragnarok, the Titan Blade and Ground (hail.c).
 void BattleEffect_StepPaletteToResource(s32 resourceId) {
   u16 target[64];
   u16 *color = (u16 *)BG_PLTT;
@@ -50,12 +47,6 @@ void BattleEffect_StepPaletteToResource(s32 resourceId) {
 
 /// Clears the prelude image, stops its tasks and releases its blitters
 /// before the next effect takes over.
-///
-/// Called by BattleEffect_RunCastingImpact for the impacts that hand off after
-/// the gathering (15, 17, 24, 26 and Severe Blow); Meltdown's end does the
-/// same inline. Clears the canvas and its VRAM (character block 1) and
-/// work->args->prelude, removes Palette_StepFadeTransfer and the canvas
-/// transfer, and frees both blitters.
 static inline void CastingImpact_EndPrelude(struct BattleEffectWork *work,
                                             void *canvas) {
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
@@ -70,13 +61,6 @@ static inline void CastingImpact_EndPrelude(struct BattleEffectWork *work,
 /// is named for the first ability whose gAbilityBattleEffects entry selects it;
 /// the four no ability selects are named UNUSED_ and for the effect they
 /// hand off to.
-///
-/// The trailing comments give each impact's own effect, drawn over the
-/// target after the orb and sparks. Most effects use the 64 particles at
-/// Ram_MapGridCellBuffer + 16384, which start at the target; their pictures
-/// are in Ram_MapGridCellBuffer. "Smoke" is puffs of smoke rising from the
-/// target; "hands off" impacts stop after gathering and hand the canvas to
-/// another effect.
 enum CastingImpact {
   CASTING_IMPACT_IMPACT_BANE = 0,      ///< smoke
   CASTING_IMPACT_IMPACT_SMOG,          ///< smoke
@@ -176,19 +160,6 @@ enum CastingImpact {
 /// (CASTING_IMPACT_IMPACT_UNUSED_GATHERING); none
 /// (CASTING_IMPACT_IMPACT_UNUSED_MYSTIC_FLAME); none
 /// (CASTING_IMPACT_IMPACT_UNUSED_COMETS).
-///
-/// The phases, the hand-offs and the particle ranges are in the folder README
-/// under "Effect families". Opens the canvas layer (tiled for Terra Strike,
-/// Mortal Danger and Asura), writes the background palette, BG2's scale and
-/// reference and REG_BLDALPHA, holds the caster still while the sparks gather,
-/// and adds BattleEffect_ArmBg2AffineHBlankDma for the waving impacts; it
-/// releases all of them before it returns, or hands them on.
-///
-/// mode: the impact, an enum CastingImpact (the effect kind less
-///       EFFECT_RANGE_CASTING_IMPACT). The tests for mode 100, written as
-///       EFFECT_RANGE_CASTING_IMPACT, the same number, never hold, as this
-///       game's dispatcher passes only the 36 impacts; The Lost Age's
-///       dispatcher passes modes up to 100.
 void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   void **slots;
   void **slot;
@@ -397,10 +368,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   casterPos.x = casterPos.x / 2;
   Sound_PlayFar(SE_POWER_UP);
 
-  // Phase 1, the gathering (CASTING_IMPACT_GATHER_FRAMES): four more sparks
-  // each frame, their radii shrinking by 4 towards the caster; a spark goes
-  // out once its radius passes 0. The Djinni impacts (0 to 7) show the
-  // Djinni once fewer than 64 sparks are left.
+  // Phase 1, the gathering (CASTING_IMPACT_GATHER_FRAMES).
   frame = 0;
   do {
     n = 0;
@@ -453,11 +421,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
    * assignment, 150 of 3070 instructions differ in tbs-en. */
   position = &djinnPos;
 
-  // Phase 2: place BG2 for the impacts that need it, at its unstretched
-  // scale with the impact over the target: canvas x 32 (96 on
-  // EFFECT_SIDE_PARTY), or 64 for Terra Strike, falls on the target's screen x.
-  // Asura's BG2X starts at -128 (8 on EFFECT_SIDE_PARTY) instead and starts
-  // scrolling 12 pixels a frame, slowing from frame 7.
+  // Phase 2: place BG2 for the impacts that need it, at its unstretched scale
+  // with the impact over the target: canvas x 32 (96 on EFFECT_SIDE_PARTY), or
+  // 64 for Terra Strike, falls on the target's screen x.
   if (mode == CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
     REG_BG2PA = Q_8_8(1);
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
@@ -542,9 +508,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     particle = &work->particles[i];
     particle->variant = 0;
   }
-  // 32 sparks scatter from half the target's height, mostly upwards; variant
-  // is a spark's life in visits, 32 to 47, two visits a frame (below). Aqua
-  // Sock throws its own later, and Psyphon Seal's rise more slowly.
+  // 32 sparks scatter from half the target's height, mostly upwards.
   if (mode != CASTING_IMPACT_IMPACT_AQUA_SOCK) {
     s32 height = BattleUnit_GetEffectHeightFar(work->args->targets[0]) / 2;
     for (i = 0; i != 32; i++) {
@@ -578,9 +542,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                                0);
     REG_BLDALPHA = BLEND_ALPHA(16, 14);
   }
-  // The 64 particles of the impact's own effect start at the target, 20
-  // pixels up (on the ground for Bad Omen), flying outwards. The returning
-  // motes start theirs on frame 12; Mortal Danger and Asura use none.
+  // The 64 particles of the impact's own effect start at the target, 20 pixels
+  // up (on the ground for Bad Omen), flying outwards.
   if (mode != CASTING_IMPACT_IMPACT_SAP &&
       mode != CASTING_IMPACT_IMPACT_LIFE_NOURISH &&
       mode != CASTING_IMPACT_IMPACT_LIFE_LEECH &&
@@ -657,15 +620,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   } else {
     duration = 80;
   }
-  // Phase 3, the impact, for duration frames. Each frame: the wave table,
-  // the caster's overlay, the palette step, the orb and the scattering
-  // sparks, the impact's own effect, the Djinni's flight, then the cues
-  // for the target.
+  // Phase 3, the impact, for duration frames.
   frame = 0;
   while (frame != duration) {
-    // BG2 wave table: BG2X for each scanline. It is built for every impact
-    // but Mortal Danger and Asura, and shows only for the six waving impacts,
-    // for which BattleEffect_ArmBg2AffineHBlankDma was added above.
+    // BG2 wave table: BG2X for each scanline.
     if (mode != CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
       if (mode != CASTING_IMPACT_IMPACT_ASURA) {
         s32 base;
@@ -794,11 +752,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         mode == CASTING_IMPACT_IMPACT_LIFE_LEECH ||
         mode == CASTING_IMPACT_IMPACT_PSY_LEECH) {
       // Motes burst from the target on frame 12 and fly back into the caster,
-      // who glows white from frame 50 to 79. Mote i steers towards the
-      // caster's middle from frame i + 23, by a 256th of the distance more
-      // each frame, and goes out once it is within 16 pixels of the caster
-      // across and in depth (a 256th of the distance under 4096); only the
-      // first 32 are drawn.
+      // who glows white from frame 50 to 79.
       if (frame == 50) {
         BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_WHITE,
                                  TINT_KEEP, TINT_KEEP, 0);
@@ -853,9 +807,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     } else if (mode == CASTING_IMPACT_IMPACT_SQUALL ||
                mode == CASTING_IMPACT_IMPACT_STUN_VOLTAGE) {
       // Two 24x104 bolts strike the target from frame 6 to 19, three frames
-      // apart in their four-picture cycle; from frame 8 to 23 three glints a
-      // frame flash at random points around it, each randomly flipped. Each
-      // glint takes a blitter of its own, so the pair is fetched again after.
+      // apart in their four-picture cycle.
       if (frame >= 6 && frame <= 19) {
         phase = frame;
         i = 0;
@@ -899,12 +851,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         }
       }
     } else if (mode == CASTING_IMPACT_IMPACT_AQUA_SOCK) {
-      // Over the first 24 frames a flame column falls onto the target: a
-      // 17x104 picture tiled down the screen, scrolling 16 pixels a frame,
-      // its head falling 32 pixels a frame until it lands on frame 8, and the
-      // 34x65 flame at its foot. The landing shakes the screen for 8 frames,
-      // and from frame 2 up to four more sparks a frame rise from the target
-      // into free slots.
+      // Over the first 24 frames a flame column falls onto the target.
       s32 fall;
       s32 scroll;
       EFFECT_RELEASE_BLITTERS();
@@ -985,9 +932,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       BattleEffect_FetchRectangleBlitters(work->args->side, blitters);
     } else if (mode == CASTING_IMPACT_IMPACT_CYCLONE_SLASH) {
       // From frame 6 a tornado of three stacked 40x32 strips stands over the
-      // target, cycling three pictures of two frames each; from frame 16 it
-      // fades. After the sheet's six glints (GLINT_SET_BYTES) come each
-      // picture's top and bottom strips in pairs, then the three middles.
+      // target, cycling three pictures of two frames each.
       s32 image;
       if (frame > 15) {
         REG_BLDALPHA = BLEND_ALPHA(32 - frame, 16);
@@ -1030,12 +975,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     } else if (mode == CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
       s32 imageY;
       s32 sway;
-      // Condemn's reaper and crescent: the reaper with its scythe raised
-      // shows until frame 7 and swung from frame 4; the canvas flashes white
-      // on frames 4 and 5, and from frame 6 the crescent fades through five
-      // pictures, two frames each.
-      // The sine is taken and dropped; only the cosine sways the pictures,
-      // up to 4 pixels.
+      // Condemn's reaper and crescent.
       Trig_Sin(frame * (TRIG_TURN / 128));
       sway = Trig_Cos(frame * (TRIG_TURN / 128));
       sway <<= 2;
@@ -1088,10 +1028,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       }
     } else if (mode == CASTING_IMPACT_IMPACT_ASURA) {
       // The swordsman slides in on the scrolling canvas, slowing from frame 7
-      // until he stops: his sword low until frame 7 and swung up from frame
-      // 4, the canvas flashing white on frames 4 and 5, and from frame 6 the
-      // red crescent his stroke leaves fading through five pictures, two
-      // frames each. It all fades from frame 16.
+      // until he stops: his sword low until frame 7 and swung up from frame 4,
+      // the canvas flashing white on frames 4 and 5, and from frame 6 the red
+      // crescent his stroke leaves fading through five pictures, two frames
+      // each.
       scrollPos += scrollSpeed;
       if (frame > 6) {
         scrollSpeed = (scrollSpeed * 48) / 64;
@@ -1149,9 +1089,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       }
     } else if (mode == CASTING_IMPACT_IMPACT_BROIL) {
       // Twelve ember streaks, one starting each frame from frame 6, each six
-      // pictures of two frames. Odd streaks step right of the target and even
-      // ones left, 3 pixels further each pair; the first, and each whose
-      // (i - 1) % 4 is 2 or 3, draws additively.
+      // pictures of two frames.
       for (i = 0; i != 12; i++) {
         if (frame >= i + 6 && frame < i + 18) {
           s32 image = (frame - i - 6) / 2;
@@ -1177,8 +1115,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       }
     } else if (mode == CASTING_IMPACT_IMPACT_FROST_BITE) {
       // 64 ice chips close in on the target in straight lines from 32 to 159
-      // pixels out, two more each frame, 6 pixels a frame. The target
-      // flinches, with a sound, as each eighth chip and the last arrive.
+      // pixels out, two more each frame, 6 pixels a frame.
       if (frame == 0) {
         for (i = 0; i != CASTING_IMPACT_IMPACT_PARTICLE_COUNT; i++) {
           particle = &CASTING_IMPACT_IMPACT_PARTICLES[i];
@@ -1313,10 +1250,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         position->z += velocity.z;
       }
     }
-    // The cues: the damage shows on frame 3 with no sound of its own (a sound
-    // of -1 is never played), the heavy impact sounds on frame 4, frame 6
-    // gives some impacts a reaction and a shake, and the target flashes on
-    // frames 6 and 14.
+    // The cues.
     if (frame == 3) {
       EFFECT_SHOW_DAMAGE(-1);
     }
@@ -1361,9 +1295,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     EFFECT_END_FRAME(work);
     frame++;
   }
-  // Phase 4: Meltdown hands the cleared canvas to the stat reduction
-  // (Impair), as CastingImpact_EndPrelude does; the others stop the wave
-  // task and release the canvas.
+  // Phase 4: Meltdown hands the cleared canvas to the stat reduction (Impair),
+  // as CastingImpact_EndPrelude does.
   if (mode == CASTING_IMPACT_IMPACT_MELTDOWN) {
     Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
     Iwram_ClearWords(canvas, CANVAS_BYTES);

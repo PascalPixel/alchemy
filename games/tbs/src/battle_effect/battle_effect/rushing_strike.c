@@ -6,15 +6,6 @@
 
 /// Packs 288 rows of 40 bytes to half width, keeping every second byte
 /// (the bytes of the odd columns win).
-///
-/// Called by BattleEffect_RunRushingStrike and once by
-/// BattleEffect_RunCastingImpact, both to squeeze the yellow orb's
-/// 40-pixel-wide sheet into six 20x48 pictures.
-///
-/// src: the rows to pack.
-/// dst: receives the packed rows, half the stride apart.
-/// stride: the bytes in one row of src.
-/// rowCount: ignored; 288 rows are always packed.
 void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
   s32 row = 0;
   s32 rows = 288;
@@ -72,13 +63,6 @@ void BattleEffect_RunHeadbutt(struct BattleEffectParams *args) {
 
 /// The user rushes at the first target and strikes it on frame 10; a ring
 /// flares where it hits and 64 sparks scatter.
-///
-/// Moves the user with BattleEffect_SetApproachMotion and does not bring it
-/// back. Copies the mode's palette over the first 128 bytes of BG palette RAM,
-/// sets work->shakeFrames on the strike.
-///
-/// args: the user and the targets.
-/// mode: the sparks' palette (enum RushingStrikeMode).
 void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -123,9 +107,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
 
-  // Pictures and palette: the ring is the yellow orb packed to half width,
-  // six 20x48 pictures, into the map grid cell buffer, so that the blue burst
-  // can take its place in the sheet.
+  // Pictures and palette.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work->sheet, 1,
                              0);
@@ -149,10 +131,8 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(paletteId), 128);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  // Send the user in, 80% of the way over 10 frames, and ready the sparks
-  // at the target (they fly towards the middle of the field). Spark i lives
-  // 16 + i / 2 frames. In 16.16 pixels a frame: 0 to 16 across, -2 to 6 up
-  // and up to 4 either way in depth.
+  // Send the user in, 80% of the way over 10 frames, and ready the sparks at
+  // the target (they fly towards the middle of the field).
   BattleEffect_SetApproachMotion(work->args->user, work->args->targets[0], 10);
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   for (i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++) {

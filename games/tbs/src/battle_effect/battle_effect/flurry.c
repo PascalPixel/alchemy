@@ -92,16 +92,6 @@ enum FlurryColumn {
 /// 4) and ends the attack.
 /// The motes wait above the target until their strike releases them, then
 /// bounce off the ground and die out.
-///
-/// Uses PARTICLES 0 to 767 for the motes, 32 a strike, and both blitter slots,
-/// rebuilt twice a frame; loads palette colours 0 to 63 from the row's palette
-/// resource. Sets work->shakeFrames on each hit, and ends with the transfer
-/// task removed and the canvas layer closed.
-///
-/// args: the user and the targets; prelude 1 first brings in a Jupiter
-///         Djinni over the user, the 84-frame entrance
-///         (DJINNI_ENTRANCE_LONG).
-/// mode: the row of gFlurry_Styles (enum FlurryMode).
 void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint actorPos;
   struct ScreenPoint targetPos;
@@ -178,9 +168,8 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   // Trails: each transfer keeps 3/4 of every canvas level.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  // Motes wait 25 pixels above the target, set to fly towards the middle
-  // of the field at up to 16 pixels a frame. Strike i releases PARTICLES
-  // i * 32 onwards, as many as its row's FLURRY_MOTES.
+  // Motes wait 25 pixels above the target, set to fly towards the middle of the
+  // field at up to 16 pixels a frame.
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   for (i = 0; i != 768; i++) {
     struct Particle *mote = &PARTICLES[i];
@@ -197,9 +186,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   BattleMotion_ApproachTargetFar(work->args->user, work->args->targets[0], 4,
                                  0);
 
-  // Each frame draws the strikes in progress, then the motes. Strike i
-  // starts on frame i * interval: its arc or wave plays for 6 frames, it
-  // hits on its third frame, and its flash plays for the 12 after that.
+  // Each frame draws the strikes in progress, then the motes.
   for (frame = 0; frame != gFlurry_Styles[mode][FLURRY_FRAMES]; frame++) {
     s32 bursts = gFlurry_Styles[mode][FLURRY_STRIKES];
 
@@ -251,7 +238,6 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
       }
       if (frame == start + 2) {
         // The hit; the last strike ends the attack.
-        // A flash row fills the canvas with level 47.
         if (gFlurry_Styles[mode][FLURRY_FLASH] == 1)
           Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(47));
         BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
@@ -280,11 +266,8 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     }
     EFFECT_RELEASE_BLITTERS();
 
-    // Motes: a released mote's variant is its life, 15 to 22 frames, and
-    // it shrinks from mote size 3 (or 2) to 1 as the life runs out. It falls
-    // at 1/64 pixel a frame per frame and bounces at half speed when it
-    // drops below 8 pixels over the ground.
-    // Only the first 512 are drawn; strikes never reach past 288.
+    // Motes: a released mote's variant is its life, 15 to 22 frames, and it
+    // shrinks from mote size 3 (or 2) to 1 as the life runs out.
     EFFECT_VIEW_FROM_CAMERA(camera);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);

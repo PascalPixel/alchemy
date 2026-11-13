@@ -43,12 +43,6 @@ enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 /// land.
 ///
 /// Abilities: Ice, Ice Horn, Ice Missile (BATTLE_EFFECT_ICE).
-///
-/// The canvas shows only inside a slanted band of window 0, so the shards
-/// stream out of the sky above the targets. args->variant picks the size of
-/// the volley from gFalling_IceCounts (shards and frames: 16 for 46 frames
-/// for Ice, 20 for 52 for Ice Horn, 32 for 80 for Ice Missile); Ice Horn
-/// leaves longer trails and Ice Missile draws additively.
 void BattleEffect_RunIce(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -75,9 +69,8 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
 
-  // Line the shards up above the screen, each one 8 pixels higher and
-  // further back along the slant than the one before; x is a random 24 to
-  // 94 shifted onto the targets' half.
+  // Line the shards up above the screen, each one 8 pixels higher and further
+  // back along the slant than the one before.
   {
     s32 y;
     s32 slant;
@@ -115,10 +108,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   draw[1] = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2];
 
-  // Window 0's edges, one per scanline: a 128-pixel band slanting one pixel
-  // a line the way the shards fall (on line 8 from x 104 against the
-  // enemies, moving left; from x 32 against the party, moving right), then a
-  // fixed span down to line 135.
+  // Window 0's edges, one per scanline.
   if (work->args->side == EFFECT_SIDE_ENEMIES) {
     line = (u16 *)Ram_MapGridCellBuffer;
     FALLING_BUILD_SLANTED_WINDOW(line, i, 103, (240 - i) | ((112 - i) << 8),
@@ -178,9 +168,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
         s32 x = shard->x / 8;
         s32 y = shard->y / 8;
 
-        // Shattering: frames 1 to 14 step through the sheet's 32x32 images
-        // 1 to 5, three frames each (32 * 32 bytes a picture); frame 15 ends
-        // it.
+        // Shattering.
         if (shard->variant >= 1 && shard->variant <= 14) {
           draw[work->args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0](
               canvas, work->sheet + 32 * 32 + ((shard->variant / 3) << 10), x,
@@ -265,12 +253,6 @@ struct BoltSparkBuffer {
 /// flash.
 ///
 /// Abilities: Douse, Drench, Deluge (BATTLE_EFFECT_DOUSE).
-///
-/// Like the falling shards, the canvas shows only inside a slanted band of
-/// window 0. args->variant picks the volley from gFalling_Counts: 6 bolts of
-/// 8 sparks (Douse), 8 of 16 (Drench) or 32 of 4 (Deluge), spaced 32, 24 or 8
-/// pixels apart, over 80 frames; it also picks how the canvas fades (see
-/// below).
 void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -287,7 +269,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   // Setup: the bolt pictures go after the spark pictures, which the particle
-  // sheet decodes at the start of work->sheet; window 1 hides BG2.
+  // sheet decodes at the start of work->sheet.
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet,
                              work->sheet + DOUSE_FALLING_PICTURE, 1, 1);
@@ -307,8 +289,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
                         FALLING_BOLT_SPARK_COUNT);
 
   // Line the bolts up above the screen along the slant, FALLING_BOLT_SPACING
-  // apart; all 64 are placed, though a variant drops only its first
-  // FALLING_BOLT_WAVE_COUNT.
+  // apart.
   for (i = 0; i != FALLING_BOLT_COUNT; i++) {
     s32 x;
     s32 y;
@@ -325,8 +306,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
     bolt->variant = -1; // still falling
   }
 
-  // Window 0's edges, one per scanline: a 128-pixel band slanting half a
-  // pixel a line, as the bolts fall, then a fixed span down to line 135.
+  // Window 0's edges, one per scanline.
   if (work->args->side == EFFECT_SIDE_ENEMIES) {
     line = (u16 *)Ram_MapGridCellBuffer;
     FALLING_BUILD_SLANTED_WINDOW(
@@ -358,8 +338,8 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
         gFalling_Counts[work->args->variant][FALLING_BOLT_DURATION] - 64)
       EFFECT_SHOW_DAMAGE(SE_WATER);
 
-    // Bolts: fall 8 pixels a frame (4 across) until they pass y 80, then
-    // flash for frames 0 to 3 and burst for 4 to 7; the count stops at 15.
+    // Bolts: fall 8 pixels a frame (4 across) until they pass y 80, then flash
+    // for frames 0 to 3 and burst for 4 to 7.
     for (i = 0;
          i != gFalling_Counts[work->args->variant][FALLING_BOLT_WAVE_COUNT];
          i++) {
@@ -378,10 +358,9 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
             bolt->x += 32;
           bolt->y += 64;
         } else {
-          // Landed: throw this bolt's sparks out from its tip, up to 1
-          // pixel a frame sideways and up at 0 to 4 (Deluge's from 6 up to 2
-          // down, so some fall), each living 16 to 31 frames. Bolt i owns its
-          // own run of sparks.
+          // Landed: throw this bolt's sparks out from its tip, up to 1 pixel a
+          // frame sideways and up at 0 to 4 (Deluge's from 6 up to 2 down, so
+          // some fall), each living 16 to 31 frames.
           bolt->variant = 0;
           for (k = 0; k != gFalling_Counts[work->args->variant]
                                           [FALLING_BOLT_SPARKS_PER_BOLT];

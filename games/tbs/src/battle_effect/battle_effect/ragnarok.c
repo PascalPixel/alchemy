@@ -19,16 +19,6 @@
 /// them twice.
 ///
 /// Abilities: Ragnarok (BATTLE_EFFECT_RAGNAROK).
-///
-/// The sword is drawn for 40 frames: it swings down over 10 frames, pauses
-/// until frame 20, then creeps on. The bursts come at frames 16 and 24 and
-/// scatter sparks six frames later, as the targets recoil; the battle shows the
-/// damage on frame 40. Each burst stands at a strike column of
-/// gRagnarok_StrikeColumns, the first two of three per side. work->particles
-/// holds 16 flashes a column and PARTICLES 340 sparks a column.
-///
-/// Leaves args->variant at EFFECT_VARIANT_STRONGER, and the user in its
-/// action pose with its animation back at the usual speed.
 void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -78,8 +68,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       flash->variant = i / 2 + 25;
     }
 
-    // Sparks: random direction and speed from column y = 88, lifetime 32-39;
-    // speeds of 0.5 to 8.5 pixels a frame (speed / 64), doubled vertically.
+    // Sparks: random direction and speed from column y = 88, lifetime 32-39.
     for (i = 0; i != RAGNAROK_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[col * RAGNAROK_SPARKS + i];
 
@@ -114,9 +103,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
 
-    // Frames 0 to 39, the blade: it swings down 16 pixels and 10 across a
-    // frame for 10 frames, pauses until frame 20, then creeps on, 2 pixels
-    // down and 1 across a frame. It is cut off at line 104.
+    // Frames 0 to 39, the blade.
     if (frame <= 39) {
       s32 height;
       s32 x;
@@ -169,9 +156,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       }
       if (frame >= start) {
         // Large flash (picture 0) for the first two frames, then 12 small
-        // flashes. Each small one shows for the last 18 frames of its life,
-        // stepping through gRagnarok_FlashPictures' six entries three frames
-        // apiece: pictures 1 to 4, then 5 for six frames.
+        // flashes.
         if (frame < start + 2) {
           blit[0](canvas, work->sheet + RAGNAROK_FLASH_PICTURES,
                   gRagnarok_StrikeColumns[work->args->side][col] - 16, 56, 32,
@@ -200,9 +185,8 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
         }
       }
 
-      // Sparks gain 1/16 pixel a frame of downward speed each frame,
-      // undamped, and bounce below y = 108 at half speed; draw only within
-      // x = 0-126.
+      // Sparks gain 1/16 pixel a frame of downward speed each frame, undamped,
+      // and bounce below y = 108 at half speed.
       if (frame > start + 5) {
         for (i = 0; i != RAGNAROK_DRAWN_SPARKS; i++) {
           struct Particle *spark = &PARTICLES[col * RAGNAROK_SPARKS + i];

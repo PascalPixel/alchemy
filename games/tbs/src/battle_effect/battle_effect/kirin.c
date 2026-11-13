@@ -13,25 +13,6 @@
 /// over them and leaves them black.
 ///
 /// Abilities: Kirin (SUMMON_EFFECT_KIRIN).
-///
-/// The effect runs in two stages. In the sweep (120 frames; A or B ends it
-/// after frame 16), Kirin, nine sprites of SPRITE_KIRIN, bounds in on
-/// a sine wave while the battle background scrolls, a hoop of motes opens in
-/// front of it and a trail of fire follows. In the charge (96 frames) Kirin
-/// slides across the targets behind the battle background; each target it
-/// passes throws a burst of 32 motes and plays its hit reaction, and the fire
-/// sheet slides off behind it. The battle shows the damage at the end.
-///
-/// Reached through BattleEffect_RunSummon, whose sheet slot holds the
-/// mote sheet here. The sweep projects with gProjection.centerY at 240 and
-/// holds BG1's scroll from the battle camera; the charge gives BG1's x back and
-/// BattleEffect_SetupBlendedDisplay puts the centre back at 120, which the
-/// charge's BattleCamera_Shake then moves while the screen shakes. The nine
-/// sprites are released before the effect returns.
-///
-/// work->particles 0 to 47 are the fire trail (x in pixels, y 16.16, variant
-/// the frames before it starts); PARTICLES 32i to 32i + 31 are target i's
-/// burst motes, variant their frames left.
 void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   static struct SpriteScale sweepScale = {{{Q16_ONE, Q16_ONE}}};
   static struct SpriteScale chargeScale = {{{Q16_ONE, Q16_ONE}}};
@@ -67,10 +48,8 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
-  // Setup: wipe the battle away from left to right, swap in the forest
-  // battle background and wipe back. Window 0 narrows to x 0 to 201; right of
-  // it only window 1 applies, which shows no sprites, so Kirin bounds in from
-  // behind that edge until the charge opens window 0 again.
+  // Setup: wipe the battle away from left to right, swap in the forest battle
+  // background and wipe back.
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   BattleEffect_SpawnObjects(9, SPRITE_KIRIN, 1);
   gProjection.centerY = 240;
@@ -99,11 +78,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
     struct Particle *fire = &work->particles[i];
 
     // 64 fire particles get a delay of 2 to 49 frames; only the first 48 are
-    // ever drawn. The places and speeds set here are never used, though their
-    // random numbers still count: the frame loop places each particle again
-    // behind Kirin a frame before its delay runs out, with a vertical
-    // speed of up to 8 pixels a frame either way that loses a quarter each
-    // frame it moves.
+    // ever drawn.
     fire->x = (Random16() & 31) + 16;
     fire->y = px((Random16() & 31) + 48);
     fire->velocityY = px((Random16() & 31) - 16);
@@ -153,11 +128,10 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       grow += shift;
     }
 
-    // From frame 8 Kirin bounds on a sine wave (32 pixels high, 96 after
-    // frame 104) and shakes the screen on frames 8, 40, 72 and 104, the last
-    // three with the cast sound; after frame 103 it lifts away to the left,
-    // 16 pixels a frame.
-    // Always true: the loop ends at frame 119.
+    // From frame 8 Kirin bounds on a sine wave (32 pixels high, 96 after frame
+    // 104) and shakes the screen on frames 8, 40, 72 and 104, the last three
+    // with the cast sound; after frame 103 it lifts away to the left, 16 pixels
+    // a frame.
     if (frame <= 149) {
       struct SpriteScale pair = sweepScale;
       s32 lift;
@@ -226,11 +200,8 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
                    BGCNT_SCREEN_BASE(7);
     }
 
-    // From frame 18 the 48 fire particles trail Kirin, moving 2 pixels
-    // right a frame; each waits out its delay first, and one that leaves the
-    // canvas restarts behind Kirin. Variant 1, a frame before the delay
-    // ends, places it there too, so each particle starts behind Kirin as it
-    // is then.
+    // From frame 18 the 48 fire particles trail Kirin, moving 2 pixels right a
+    // frame.
     if (frame > 17) {
       for (i = 0; i != 48; i++) {
         struct Particle *fire = &work->particles[i];
@@ -284,8 +255,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(work);
   }
 
-  // The charge: restore the battle background and display, put Kirin's
-  // sprites behind the background, and clear the hit marks and the burst motes.
+  // The charge.
   gBgScroll[1].x = savedX;
   view->busy = 0;
   BattleEffect_SetupBlendedDisplay();
@@ -362,11 +332,10 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       }
 
       EFFECT_FOR_EACH_TARGET(i, work->args) {
-        // A target Kirin passes for the first time throws a burst of 32
-        // motes from 16 pixels above its projected point (x halved for the wide
+        // A target Kirin passes for the first time throws a burst of 32 motes
+        // from 16 pixels above its projected point (x halved for the wide
         // canvas), each already four frames along its path, and plays its hit
-        // reaction. A mote flies up to 2 pixels a frame across and from 6 up
-        // to 2 down, for 8 to 23 frames.
+        // reaction.
         if (hitRow[i] == 0) {
           Projection_Unit(work->args->targets[i], &unit);
           if (unit.x > rowX) {

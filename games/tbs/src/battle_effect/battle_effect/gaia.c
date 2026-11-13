@@ -22,14 +22,6 @@ enum EarthWallSheetPicture {
 ///
 /// Abilities: Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide, Avalanche
 /// (BATTLE_EFFECT_GAIA).
-///
-/// The wall is symmetric: its left half is drawn, then mirrored for the right.
-/// Its centre is at canvas x 64 + wallX. The rocks are 11 sprites,
-/// moved by particles[10] to particles[20].
-///
-/// args: the targets; the variant widens the wall: narrowest for Gaia and
-///         Rockfall, wider for Mother Gaia and Rockslide, widest for Grand
-///         Gaia and Avalanche.
 void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
   struct BattleEffectWork *work;
@@ -54,8 +46,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
 
-  // The higher the variant, the wider the wall: BG2 stretches the canvas 1.25
-  // or 1.5 times, or twice as BattleEffect_StartCanvasLayer left it.
+  // The higher the variant, the wider the wall.
   if (work->args->variant == EFFECT_VARIANT_BASIC)
     REG_BG2PA = Q_8_8(0.8);
   else if (work->args->variant == EFFECT_VARIANT_STRONGER)
@@ -270,9 +261,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     }
 
     // Rocks (from frame 5): six at half size, then from frame 72 all 11, each
-    // larger than the last and larger with the variant. The sprites take
-    // turns showing the rocks, moving on every 2 frames; four sprites play
-    // each of animations 0 and 1, three animation 2.
+    // larger than the last and larger with the variant.
     if (frame > 4) {
       s32 rocks = 6;
 

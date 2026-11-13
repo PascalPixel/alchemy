@@ -88,16 +88,6 @@ void BattleEffect_RunRottenBlood(struct BattleEffectParams *args) {
 /// tumbles through ten images as it flies and, when it lands, the target
 /// flashes and the battle shows the damage; the shell bursts into 4 smoke
 /// puffs that drift up or 16 shards that fly up and fall.
-///
-/// Loads three palettes over the first 64 background colours in turn, the
-/// style's last; frees PARTICLES 0 to 1023, then gives the shells 16 a target
-/// from 0 and the bursts 32 a target from LOBBED_SHELLS_BURSTS. Runs 8 frames a
-/// target plus 72 for smoke or 56 for shards, and before it returns removes its
-/// transfer task, frees its blitters and closes the canvas layer.
-///
-/// mode: the style (enum LobbedShellsMode): its colours and its row of
-///       gLobbedShells_Styles, which makes Rotten Blood's and Mad Spatter's
-///       shells burst into shards.
 void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint position;
   BlitterPair draw;
@@ -119,8 +109,6 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
-  // Setup. The shell images, the smoke at LOBBED_SHELLS_SMOKE_PICTURES and the
-  // style's palette; Decompose shares Rotten Blood's green.
   palette = Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
@@ -166,8 +154,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   }
   EFFECT_FREE_PARTICLES(i, LOBBED_SHELLS_BURSTS, LOBBED_SHELLS_BURST_SLOTS);
 
-  // draw[0] draws the shells facing their flight; draw[1] draws the smoke
-  // additively, or the shards mirrored the other way from draw[0].
+  // draw[0] draws the shells facing their flight.
   if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
@@ -197,7 +184,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
       draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
     }
   }
-  // Trails keep 3/4 a frame. Smoke lingers 16 frames longer than shards.
+  // Trails keep 3/4 a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER)
     total = work->args->targetCount * 8 + 72;
@@ -209,9 +196,6 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
     struct Particle *burst;
 
     EFFECT_VIEW_FROM_CAMERA(camera);
-    // Frame loop. The shells: target k's shell flies from frame 8k, and the
-    // target is hit on frame 8k + 17, about when its shell lands; a shell's
-    // variant turns 1 when it does.
     k = 0;
     if (work->args->targetCount != 0) {
       do {
@@ -289,11 +273,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
         k++;
       } while (k != work->args->targetCount);
     }
-    // The bursts, for 45 frames: smoke through six 24x48 images, eight
-    // frames each, drifting up; or shards that tumble through nine images,
-    // five frames each, the odd shards from a second set, and fall. A burst
-    // that sinks below the ground is no longer drawn or moved. The unsigned
-    // test also skips the free slots, whose variant is -1.
+    // The bursts, for 45 frames.
     for (i = 0, burst = LOBBED_SHELLS_BURSTS; i != LOBBED_SHELLS_BURST_SLOTS;
          burst++, i++) {
       if ((u32)burst->variant <= 44 && burst->y >= 0) {
@@ -310,8 +290,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
 
           if (i & 1)
             picture += 9;
-          // Each shard faces the way it flies. The shard pictures follow the
-          // ten 768-byte shell images (10 * 768 bytes) in the sheet.
+          // Each shard faces the way it flies.
           flip = args->side;
           draw[burst->velocityX > 0 ? flip ^ 1 : flip](
               canvas,

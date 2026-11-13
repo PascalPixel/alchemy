@@ -38,16 +38,6 @@ void BattleEffect_RunHaunting(struct BattleEffectParams *args) {
 /// within 32 pixels across and in depth. Each light takes one of three
 /// images. Each target is struck 70 frames after its turn starts, and the
 /// battle shows the damage at frame 80. The effect layer ripples throughout.
-///
-/// Loads its colours over the first 64 of the background palette, uses
-/// PARTICLES 0 to 1023, writes work->bg2xLines each frame and adds
-/// BattleEffect_ArmBg2AffineHBlankDma to feed it to BG2X; removes both its
-/// tasks before it returns.
-///
-/// mode: the colours (enum GatheringLightsMode) and the row of
-///       gGatheringLights_Counts: lights per target and frames, 16 and 88,
-///       8 and 72, or 12 and 80, the effect running 20 frames more for each
-///       target.
 void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
                                      s32 mode) {
   struct ScreenPoint screenPosition;
@@ -65,8 +55,6 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  // Setup. The sheet is the first field of the work block, so the pictures
-  // decode to `work` itself: three 20x32 lights.
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_MemberBurstImage),
                       work);
   if (mode == GATHERING_LIGHTS_DEMON_NIGHT)
@@ -107,8 +95,6 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
        frame++) {
     s32 *row;
 
-    // Frame loop. The damage shows on frame 80 whatever the number of
-    // targets, with the mode's hit sound.
     if (frame == 80) {
       if (mode == GATHERING_LIGHTS_DEMON_NIGHT)
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -117,9 +103,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
 
-    // Ripple the canvas sideways, line by line: 4 texels either way about a
-    // 4-texel offset (16.16 >> 10 is a quarter in BG2X's 20.8), in a wave 64
-    // lines long that moves up a line each frame.
+    // Ripple the canvas sideways, line by line.
     row = work->bg2xLines;
     for (i = 0; i != DISPLAY_HEIGHT; i++)
       *row++ = ((16 << 16) - Trig_Sin((frame + i) << 10) * 16) >> 10;

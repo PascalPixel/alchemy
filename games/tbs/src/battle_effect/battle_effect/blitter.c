@@ -274,26 +274,6 @@
 
 /// Writes a drawing routine for the canvas into heap slot `slot`, built from
 /// the template gBlitterTemplate for one clip, mirroring and blend mode.
-///
-/// Called through EFFECT_LOAD_BLITTER by nearly every canvas effect and by
-/// BattleEffect_FetchRectangleBlitters, directly by the particle streams for a
-/// canvas 256 pixels wide, and from other banks through its far stub,
-/// BattleEffect_BuildBlitterFar (the star field in battle/element_glow.c and
-/// field/lucky_wheels.c).
-///
-/// It allocates the slot's block (from IWRAM when it fits) at exactly the
-/// routine's size. A slot that already holds a block keeps it, whatever its
-/// size, and the routine is written over it: callers release the slot first
-/// when the new routine may be longer. The caller calls the slot's block as a
-/// DrawRectangle.
-///
-/// widthShift, heightShift: the canvas's width and height as powers of two.
-/// flags: the COMPOSITE_CLIP_ and COMPOSITE_FLIP_ bits.
-/// mode: how source pixels combine with the canvas (COMPOSITE_COPY,
-/// COMPOSITE_TRANSPARENT, COMPOSITE_LIGHTEN or COMPOSITE_ADDITIVE).
-///
-/// Returns nonzero when the walk ended exactly at gBattleEffect_MotePictures,
-/// the end of the template; no caller reads it.
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode) {
   const u32 *templateWords;
@@ -323,10 +303,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
 #define MARK(site)
 #define PATCH(site)
 
-  // First walk: count the words selected by clipping, mirroring and blend
-  // mode. Branch sites are only marked in the second walk, so this one needs
-  // no buffer.
-  // It moves templateWords as the second walk does, though it reads no word.
+  // First walk: count the words selected by clipping, mirroring and blend mode.
   wordCount = 0;
   templateWords = gBlitterTemplate;
 
@@ -371,9 +348,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   } while (0)
 
   // Second walk: allocate, copy the selected fragments with DMA 3 and patch
-  // their branches. A forward branch is written with its template word, its
-  // site marked, and its displacement ORed in when the walk reaches its
-  // target; a backward branch is written whole at once.
+  // their branches.
   codeWords = (u32 *)HeapSlot_Alloc(slot, wordCount << 2);
   templateWords = gBlitterTemplate;
 

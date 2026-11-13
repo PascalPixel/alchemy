@@ -19,17 +19,6 @@
 /// camera swings round over frames 17 to 63.
 ///
 /// Abilities: Froth, Froth Sphere, Froth Spiral (BATTLE_EFFECT_FROTH).
-///
-/// args->variant picks the volley from gVortices_Counts (bubbles and frames)
-/// and how hard the screen shakes.
-///
-/// work->particles 0 to 29 are the bubbles, battle positions in 16.16 until a
-/// bubble strikes and then its vortex's canvas pixels; from 32, one seat for
-/// each target. The first 30 bytes of Ram_MapGridCellBuffer mark the bubbles
-/// that have struck. Loads the vortex palette into the first 64 background
-/// colours, sets REG_BLDALPHA and work->shakeFrames, and turns the camera
-/// through BattleCamera_ApplyPhasedDelta (work->cameraDelta and cameraPhase),
-/// which it removes before it returns.
 void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   struct ScreenPoint screenPosition;
   struct BattleEffectWork *work;
@@ -115,10 +104,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
         point->y += point->velocityY;
         point->z += point->velocityZ;
       }
-      // Bubble i appears after frame 2i; 48 frames later it starts to home in
-      // on target i modulo the target count, gaining 1/512 of the distance
-      // to it a frame and damped to 60/64 until frame 2i + 85. Seats are on
-      // the ground (y 0), so a bubble strikes when it falls below it.
+      // Bubble i appears after frame 2i.
       if (frame > i * 2 + 48 && flags[i] == 0) {
         target = &work->particles[32 + i % work->args->targetCount];
         point->velocityX += (target->x - point->x) >> 9;
@@ -128,9 +114,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
           SET_VELOCITY(point, point->velocityX * 60 / 64,
                        point->velocityY * 60 / 64, point->velocityZ * 60 / 64);
         }
-        // On the ground it strikes: its vortex starts where it was last
-        // drawn, a little up or down at random, and the target flashes and
-        // recoils.
+        // On the ground it strikes.
         if (point->y < 0) {
           flags[i] = 1;
           point->variant = 0;
@@ -174,15 +158,6 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
 ///
 /// Abilities: Whirlwind, Tornado, Tempest, Gale, Typhoon, Hurricane
 /// (BATTLE_EFFECT_WHIRLWIND).
-///
-/// args->variant picks the shape from gVortices_Shapes: how many tornadoes,
-/// how far they sway and how hard the screen shakes.
-///
-/// work->particles 0 to 15 are the glints, four for each tornado (so at most
-/// four tornadoes), offsets in pixels from its top left. Loads the tornado
-/// palette into the first 64 background colours, fades the canvas in and out
-/// through REG_BLDALPHA and keeps work->shakeFrames at 1 so the screen shakes
-/// every frame.
 void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
   BlitterPair draw;
   struct BattleEffectWork *work;
@@ -249,10 +224,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
       REG_BLDALPHA = BLEND_ALPHA(frame, 16);
     if (frame > 63)
       REG_BLDALPHA = BLEND_ALPHA(79 - frame, 16);
-    // Each tornado: three sections stacked, swaying about the sweep by its
-    // row's WHIRLWIND_SWAY pixels once every 32 frames, a quarter turn apart
-    // and bobbing 2 pixels, with four glints; the sections change picture
-    // every 2 frames.
+    // Each tornado.
     for (i = 0; i != gVortices_Shapes[work->args->variant][WHIRLWIND_TORNADOES];
          i++) {
       x = ((gVortices_Shapes[work->args->variant][WHIRLWIND_SWAY] *
@@ -276,8 +248,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
               x, y + 80, 40, 32);
       for (j = 0; j != 4; j++) {
         point = &work->particles[i * 4 + j];
-        // A glint plays three pictures, two frames each: glints 0 and 1 the
-        // first three, glints 2 and 3 the last three; 1 and 3 are mirrored.
+        // A glint plays three pictures, two frames each.
         if (point->variant >= 0) {
           picture = point->variant / 2 + (j / 2) * 3;
           draw[j & 1](canvas,

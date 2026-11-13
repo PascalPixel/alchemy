@@ -12,14 +12,6 @@
 /// over the last 16 frames.
 ///
 /// Abilities: Hail (BATTLE_EFFECT_HAIL).
-///
-/// The 64 chips start together and are let go four a frame from frame 4,
-/// alternately mirrored; the battle shows the damage on frame 8. The chips live
-/// in PARTICLES, since work holds the waves' sheet.
-///
-/// The Djinni entrance plays whatever the prelude.
-///
-/// args: the user and the targets; prelude 1 keeps the Djinni circling.
 void BattleEffect_RunHail(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -95,9 +87,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
         draw[1](canvas, work->sheet + HAIL_DJINNI_PICTURE, x, y, 20, 40);
     }
 
-    // The chips, four more each frame from frame 4, odd ones mirrored; they
-    // fall under a gravity of 1/16 pixel a frame per frame, damped to 63/64,
-    // and are never retired.
+    // The chips, four more each frame from frame 4, odd ones mirrored.
     for (i = 0, chip = PARTICLES; i != 64; i++, chip++) {
       if (frame >= i / 4 + 4) {
         s32 picture;
@@ -168,13 +158,6 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
 /// palette, from frame 17, steps to the portal sheet's violet.
 ///
 /// Abilities: Ground (BATTLE_EFFECT_GROUND).
-///
-/// A portal's variant is 1 while it flies and 0 once it has struck; its
-/// crackles are particles 32 to 63, four for each portal, each with its picture
-/// in velocityX and its blitter flags in velocityY. The Djinni entrance plays
-/// whatever the prelude.
-///
-/// args: the user and the targets; prelude 1 keeps the Djinni circling.
 void BattleEffect_RunGround(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -211,9 +194,9 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   user = GetBattleObjectSlotFar(work->args->user)->actor;
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
-  // The portals leave the user 66 pixels up, fanning out towards the middle
-  // of the field, portal i at 2.5 i pixels a frame across, up to 1 up or
-  // down and up to 4 in depth. Eight are set up, the first six drawn.
+  // The portals leave the user 66 pixels up, fanning out towards the middle of
+  // the field, portal i at 2.5 i pixels a frame across, up to 1 up or down and
+  // up to 4 in depth.
   for (i = 0; i != 8; i++) {
     struct Particle *portal = &work->particles[i];
 
@@ -229,8 +212,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
     if (frame > 16)
       BattleEffect_StepPaletteToResource((s32)&ResourceId_PortalSheet);
     // Prelude: the Djinni circles above the user and from frame 17 rises 2
-    // pixels a frame. For its first four frames it is drawn additively
-    // first, so it flashes in.
+    // pixels a frame.
     if (work->args->prelude == 1) {
       s32 angle = frame << 11;
       s32 x = (((-Trig_Sin(angle) * 4)) >> 16) + screenX / 2 - 10;
@@ -287,9 +269,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
             draw[0](canvas, work->sheet + gHail_PortalPictures[2],
                     x + gHail_PortalX[2], y + gHail_PortalY[2],
                     gHail_PortalWidths[2], gHail_PortalHeights[2]);
-          // The four crackles: each loads a blitter with its own flip, and a
-          // flipped crackle is placed from the portal's opposite edge so it
-          // stays on the portal.
+          // The four crackles.
           for (j = 0; j != 4; j++) {
             struct Particle *crackle = &work->particles[32 + i * 4 + j];
             s32 crackleX;
@@ -349,14 +329,6 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
 /// BG1 and the projection centre by a random offset; once the shake runs
 /// out, BG1 returns to its saved position and the centre to (120, 120). It
 /// takes two random numbers each shaking frame, x first.
-///
-/// Called once a frame by nearly every effect, before it presents the frame.
-/// The x offset is centred on half of rangeY too, so with rangeX smaller
-/// (Hail's 4 and 8) the x offset is never positive.
-///
-/// rangeX: the horizontal range, a power of two.
-/// rangeY: the vertical range, a power of two; both offsets are centred on
-///         half of it.
 void BattleCamera_Shake(s32 rangeX, u32 rangeY) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 

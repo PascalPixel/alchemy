@@ -21,19 +21,6 @@
 /// them in a burst of RAMSES_SPARKS sparks from PARTICLES.
 ///
 /// Abilities: Ramses (SUMMON_EFFECT_RAMSES).
-///
-/// The effect plays for up to RAMSES_FRAMES frames, and A or B ends it
-/// early.
-///
-///   0 to 90     the fist circles beside the statue
-///   91 to 196   it slams down three times, 40 frames apart, throwing dust,
-///               and rises again; the screen shakes over frames 96 to 251
-///   244 to 259  it flies off to the left at the targets, speeding up
-///   260         the targets are struck and the sparks burst out
-///
-/// After frame 96 the rocks fall and bounce. Within a frame the order of the
-/// steps matters: later steps draw over earlier ones, and several of them
-/// consume random numbers.
 void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   // Every sprite of the effect takes this scale.
   static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
@@ -55,8 +42,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
-  // A wipe to black (colour 1) hides the battle; the desert battle background
-  // loads behind it, and a second wipe clears the canvas to show it.
+  // A wipe to black (colour 1) hides the battle.
   PLTT_BACKDROP = 0;
   BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
@@ -112,8 +98,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
     rock->variant = 0;
   }
   // A puff's variant counts up and from 24 it is no longer drawn; every puff
-  // and spark starts finished. The puffs end at particle 41, but the clear
-  // runs to 63.
+  // and spark starts finished.
   for (i = 0; i != 58; i++)
     work->particles[RAMSES_FIRST_PUFF + i].variant = 24;
   EFFECT_FREE_PARTICLES(i, PARTICLES, 1024);
@@ -124,9 +109,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
 
   for (frame = 0; frame != RAMSES_FRAMES && !(gKeysRepeat & (KEY_A | KEY_B));
        frame++) {
-    // A sound with each of the fist's blows: the first as it lands (frame 94,
-    // its blow starting on 91), the second and third 2 and 4 frames after
-    // theirs land (134 and 174).
+    // A sound with each of the fist's blows.
     if (frame == 94)
       Sound_PlayFar(SE_SWITCH_MECHANISM);
     if (frame == 136)
@@ -156,8 +139,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
       fist.y = Trig_Cos(frame << 9) * 16 + px(92);
     }
     // Then it slams down 32 pixels three times, 40 frames apart, throwing four
-    // puffs of dust as it lands and rising back over 16 frames. The puffs start
-    // at canvas (64, 96), drifting up to 2 pixels a frame each way.
+    // puffs of dust as it lands and rising back over 16 frames.
     if (frame <= 196) {
       s32 start;
 
@@ -200,10 +182,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
     }
     position.height = 0;
     // The rocks fall after frame 96, gaining 1/4 pixel a frame of speed each
-    // frame. Past row 120 a rock bounces back at half speed, throwing two
-    // puffs; on its next landing it starts again from the top until frame
-    // 199, and after that it is left where it lands. Rocks are placed in
-    // screen pixels; their puffs halve x for the canvas.
+    // frame.
     for (i = 0; i != RAMSES_ROCKS; i++) {
       struct Particle *rock = &work->particles[i];
 
@@ -290,8 +269,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
       }
     }
     // Sparks shrink as their lives run down; alternate sparks are drawn
-    // additively, the others brightest-wins. They gain 1/16 pixel a frame of
-    // downward speed each frame, keeping 62/64 of their speed.
+    // additively, the others brightest-wins.
     for (i = 0; i != RAMSES_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[i];
 

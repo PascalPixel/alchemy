@@ -23,20 +23,6 @@ enum {
 /// A bolt of lightning strikes each target in turn, 8 frames apart.
 ///
 /// Abilities: Bolt, Flash Bolt, Blue Bolt (BATTLE_EFFECT_BOLT).
-///
-/// Target i's turn starts on frame 8i with a flash of the canvas. The bolt
-/// drops from the top, 64 pixels a frame down to y 104, and the screen shakes
-/// the frame after; on frame 8i + 2 sparks fly up from its foot and glints
-/// flicker there for 22 frames; on frame 8i + 4 the target recoils. The
-/// battle moves on to the results on frame 24.
-///
-/// PARTICLES holds the sparks, 128 for each target. Sets work->shakeFrames on
-/// each strike, and ends with the transfer task removed, the blitter
-/// freed and the canvas layer closed; the glints' blitter is built and freed
-/// for each glint.
-///
-/// args: the targets; variant picks the row of gBolt_Counts
-///         and the glints' blend.
 void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -66,8 +52,8 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
                              work->sheet + BOLT_PICTURES, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  // A spark's variant is its life left, 0 when free. work->particles is
-  // marked free too, though nothing here uses it.
+  // A spark's variant is its life left, 0 when free. work->particles is marked
+  // free too, though nothing here uses it.
   for (j = 0; j != 1024; j++)
     PARTICLES[j].variant = 0;
   EFFECT_FREE_PARTICLES(j, work->particles, 64);
@@ -96,10 +82,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
                                        KNOCKBACK_BOUNCE);
       }
 
-      // The bolt (24 wide) grows 64 pixels a frame and stops at 104; it is
-      // drawn the variant's number of times over itself, each pass picking
-      // one of the four pictures by target, frame and pass, so the picture
-      // changes every 2 frames.
+      // The bolt (24 wide) grows 64 pixels a frame and stops at 104.
       if (frame >= start && frame < start + 16) {
         s32 height = (frame - start) << 6;
 
@@ -114,10 +97,8 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
                   screen.x - 12, 0, 24, height);
         }
 
-        // Throw sparks up from the foot (y = 104), within a quarter turn
-        // either side of straight up. With speed 64 to 575, a spark starts at
-        // sin * speed / 32 pixels a frame across and cos * speed / 64 up (at
-        // most 18 and 9), and lives 32 to 39 frames.
+        // Throw sparks up from the foot (y = 104), within a quarter turn either
+        // side of straight up.
         if (frame == start + 2) {
           for (j = 0; j != gBolt_Counts[work->args->variant][BOLT_SPARKS];
                j++) {
@@ -134,10 +115,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
         }
       }
 
-      // Glints for 22 frames: at random spots above the foot, flipped at
-      // random, in the variant's blend (gBolt_GlintModes: brightest-wins,
-      // or additive for Blue Bolt); the higher a glint, the narrower the band
-      // it may fall in across.
+      // Glints for 22 frames.
       if (frame >= start + 2 && frame < start + 24) {
         for (j = 0; j != gBolt_Counts[work->args->variant][BOLT_GLINTS]; j++) {
           s32 kind = j & 3;

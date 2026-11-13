@@ -115,14 +115,6 @@ void BattleEffect_RunDrainFang(struct BattleEffectParams *args) {
 /// Strikes the first target TARGET_STRIKE_HITS times with a sideways slash or a
 /// bite of closing fangs, with the extras its flags choose, and lets the
 /// battle show the damage on the hits.
-///
-/// Loads the style's colours over the first 64 of the background palette; uses
-/// work->particles 0 to 63 for smoke, PARTICLES 0 to 127 for motes and
-/// TARGET_STRIKE_SPARKS for sparks; builds and frees its blitters in both slots
-/// every frame, sets work->shakeFrames on each hit and lights the user while an
-/// absorb runs. Leaves the canvas layer closed.
-///
-/// mode: the style (enum TargetStrikeStyle), a row of gTargetStrike_Styles.
 void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint ground;
   struct ScreenPoint targetPosition;
@@ -154,9 +146,6 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   // The canvas adds its full colour to everything under it.
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
-  // Setup. The images: glints at the start of the sheet, the slashes or the
-  // fangs at 3200, smoke at TARGET_STRIKE_SMOKE_PICTURES, and the style's
-  // palette.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, particleSheet,
                              0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
@@ -191,9 +180,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
                              work->sheet + TARGET_STRIKE_SMOKE_PICTURES, 1, 0);
 
-  // Park every particle, idle, where it will start: smoke at the target's
-  // feet, motes and sparks 20 pixels up its body, each with a random
-  // velocity.
+  // Park every particle, idle, where it will start.
   /* LEFTOVER(template): a per-target loop whose count is 1, the first target
    * only; Camelot's template: the sibling effects BattleEffect_RunStreakVolley
    * and BattleEffect_RunDjinnBeams open the same loop, run to the target count,
@@ -212,10 +199,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                    ((Random16() & 255) - 128) << 9, 0);
       step->variant = -1;
     }
-    // Motes and sparks work in battle space, projected each frame, from 20
-    // up at the target. Motes and a bite's sparks fly up to 4 a frame
-    // along each axis; a slash's sparks up to 8 across, towards the middle,
-    // and the heavy slash's twice as fast as that.
+    // Motes and sparks work in battle space, projected each frame, from 20 up
+    // at the target.
     for (i = 0; i != 128; i++) {
       struct Particle *step = &PARTICLES[k * 128 + i];
 
@@ -265,9 +250,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
 
   for (frame = 0; frame != TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FRAMES);
        frame++) {
-    // Frame loop: the strike, then glints, then smoke, motes and sparks,
-    // each drawn over the last. Hit n lights particle group n, found as
-    // frame / (6 * TARGET_STRIKE_PICTURE_FRAMES).
+    // Frame loop: the strike, then glints, then smoke, motes and sparks, each
+    // drawn over the last.
     s32 span = TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_HITS) *
                TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_FRAMES);
     s32 length = span * 4;
@@ -313,9 +297,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             Sound_PlayFar(SE_IMPACT);
             EFFECT_SHOW_DAMAGE(SE_IMPACT);
           }
-          // A heavy hit lights every spark at once; otherwise the hit
-          // lights the next 32. Each hit also starts 8 smoke puffs, the
-          // first half of its group of 16.
+          // A heavy hit lights every spark at once; otherwise the hit lights
+          // the next 32.
           if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_HEAVY) {
             work->shakeFrames = 8;
             EFFECT_STRIKE_TARGET(work->args, 0, 12, KNOCKBACK_HURL);
@@ -390,14 +373,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
               (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_FRAMES) * 4) ==
           TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_FRAMES) * 3) {
         // A hit: the target flashes; the last hit lets the battle show the
-        // damage, the others only play the hit sound. Each hit lights a
-        // group of 64 sparks, 8 smoke puffs and 16 motes.
-        // The group is frame / (6 * PICTURE_FRAMES), a slash's period, though
-        // bite hits are four images apart, so a three-hit bite's third
-        // hit relights its second's group. Lighting sets only the lives, not
-        // the positions, so the third hit throws nothing new: Acid Bite's
-        // third puffs (frame 66) start again from where its second's,
-        // 24 frames old, have risen to.
+        // damage, the others only play the hit sound.
         BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 8);
         work->shakeFrames = 4;
@@ -442,11 +418,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
         glint = 1;
     }
 
-    // Glints: three a frame, scattered at random around the target in
-    // random flips; a blitter is built for one flip, so each glint builds
-    // its own. radius is 4 to 35 and the >> 17 halves it, so a
-    // glint lands 2 to 17 canvas pixels from the strike point each way,
-    // twice that across on the wide screen.
+    // Glints: three a frame, scattered at random around the target in random
+    // flips.
     if ((TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_GLINTS) &&
         glint) {
       for (i = 0; i != 3; i++) {
@@ -504,10 +477,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           }
         }
       }
-      // Motes burst out of the target, then after 10 frames are pulled
-      // into the user, who glows from frame 55 to 90; a mote goes out when
-      // it is within 16 pixels of the user across the ground (dx and dz are
-      // 1/256 of the distance).
+      // Motes burst out of the target, then after 10 frames are pulled into the
+      // user, who glows from frame 55 to 90.
       if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_ABSORB) {
         s32 size = 3;
 

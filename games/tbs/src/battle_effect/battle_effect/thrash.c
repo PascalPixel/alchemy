@@ -20,10 +20,6 @@ enum FlashingStrikeMode {
 /// beneath it.
 ///
 /// Abilities: Thrash (BATTLE_EFFECT_THRASH).
-///
-/// The leap takes the user three quarters of the way in 24 steps, starting up
-/// at 12.2 pixels a frame (16.16); after 29 frames the spark group plays with
-/// args->variant set to SPARK_GROUPS_THRASH, overriding the ability's own.
 void BattleEffect_RunThrash(struct BattleEffectParams *args) {
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24, px(61) / 5);
   wait(29);
@@ -39,10 +35,6 @@ void BattleEffect_RunThrash(struct BattleEffectParams *args) {
 /// impact.
 ///
 /// Abilities: none (BATTLE_EFFECT_UNUSED_SEVERE_BLOW_LEAP).
-///
-/// A lower leap than Thrash's (7.2 pixels a frame up), and the spark group
-/// after 12 frames with args->variant set to SPARK_GROUPS_SEVERE_BLOW,
-/// overriding the ability's own.
 void BattleEffect_RunUnusedSevereBlowLeap(struct BattleEffectParams *args) {
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24, px(36) / 5);
   wait(12);
@@ -68,18 +60,6 @@ void BattleEffect_RunVorpalSlash(struct BattleEffectParams *args) {
 
 /// Plays a flashing strike, the runner of BattleEffect_RunQuickStrike and
 /// BattleEffect_RunVorpalSlash; nothing passes FLASHING_STRIKE_UNUSED.
-///
-/// The user steps up to the first target over 16 frames. Then four 120x120
-/// pictures show for four frames each (mirrored when args->side is
-/// EFFECT_SIDE_PARTY), the canvas fills at its brightest on frames 16 to 19,
-/// the battle shows the damage on frame 18, and on frame 20 the target reels
-/// and the screen shakes. 21 frames.
-///
-/// Opens and closes the canvas layer; the pictures take work->imageStorage
-/// and the start of Ram_MapGridCellBuffer.
-///
-/// mode: picks the pictures (enum FlashingStrikeMode); Quick Strike also
-///       makes the step a hop.
 void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -92,8 +72,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDCNT = 0;
 
-  // Each resource holds two pictures: the first fills work->imageStorage, up
-  // to the particles, and the second the start of Ram_MapGridCellBuffer.
+  // Each resource holds two pictures.
   if (mode == FLASHING_STRIKE_UNUSED) {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskE, work->imageStorage,
                                1, 0);

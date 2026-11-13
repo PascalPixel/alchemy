@@ -12,17 +12,6 @@
 /// hits the ground shows an impact flare for 12 frames as its target flinches.
 ///
 /// Abilities: Fire, Fireball, Inferno (BATTLE_EFFECT_FIRE).
-///
-/// The camera swings round over frames 17 to 79, and the battle shows the
-/// damage 24 frames before the end.
-///
-/// Adds BattleCamera_ApplyPhasedDelta as a task for the swing and drives it
-/// through work->cameraDelta and work->cameraPhase; sets work->shakeFrames on
-/// each hit and writes REG_BLDALPHA. Ends with both tasks removed, the
-/// blitters freed and the canvas layer closed.
-///
-/// args: the targets; variant picks the number of embers
-///         (gFire_Counts): 16 for Fire, 32 for Fireball, 64 for Inferno.
 void BattleEffect_RunFire(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -122,8 +111,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
       }
 
       // Accelerate towards the target by 1/512 of the distance, damping the
-      // speed to 60/64 until 85 frames after the ember appeared. Embers are
-      // dealt to the targets in turn (i % count).
+      // speed to 60/64 until 85 frames after the ember appeared.
       if (frame > launchFrame + 48 && ember->variant == -1) {
         struct Actor *target;
         s32 vx;
@@ -140,9 +128,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
           SET_VELOCITY(ember, vx * 60 / 64, vy * 60 / 64, vz * 60 / 64);
         }
 
-        // Below the ground it hits: keep its screen position (from this
-        // frame's drawing above) for the impact flare, tint the target red in
-        // its damage pose for 4 frames, and shake the screen for 2 frames.
+        // Below the ground it hits.
         if (ember->y < 0) {
           ember->variant = 0;
           ember->x = screen.x;

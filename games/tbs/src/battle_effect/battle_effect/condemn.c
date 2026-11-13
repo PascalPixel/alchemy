@@ -21,12 +21,6 @@
 /// back, bouncing on frame 120.
 ///
 /// Abilities: Condemn (BATTLE_EFFECT_CONDEMN).
-///
-/// Opens the tiled canvas (BattleEffect_StartTiledCanvas) and adds
-/// BattleEffect_ArmBg2AffineHBlankDma to feed work->bg2xLines to BG2X; decodes
-/// the fading crescent into Ram_MapGridCellBuffer; moves the target's actor;
-/// and reloads the battle background on BG1 before it closes the layer. It
-/// never calls EFFECT_SHOW_DAMAGE, and leaves the flash timers alone.
 void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   void **slots;
   void **cursor;
@@ -61,10 +55,6 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
-  // Setup. The reaper and the crescent in work->sheet (enum
-  // ReaperSheetPicture), with their palette; the fading crescent in
-  // Ram_MapGridCellBuffer (enum RedCrescentPicture), whose own palette is
-  // skipped.
   sheet = Resource_GetTableEntry((s32)&ResourceId_CounterRevealSheet);
   Iwram_CopyWords((void *)BG_PLTT, sheet, 128);
   sheet = sheet + 128;
@@ -102,8 +92,6 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     s32 i;
     s32 *scanline;
 
-    // Frame loop. The reaper sways 16 pixels across and 4 up and down about
-    // swayCenter, a full turn every 128 frames.
     spin = frame * (TRIG_TURN / 128);
     screenX = (swayCenter[0] >> 16) + (((Trig_Sin(spin) * 16)) >> 16) + 48;
     screenY = (swayCenter[1] >> 16) + (((Trig_Cos(spin) * 4)) >> 16) + 16;
@@ -159,9 +147,8 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       ripple = 0;
     }
 
-    // Every line's BG2X carries the sway, so the reaper moves by scrolling
-    // the canvas rather than by where it is drawn. The ripple is a wave 32
-    // lines long that moves up a line a frame.
+    // Every line's BG2X carries the sway, so the reaper moves by scrolling the
+    // canvas rather than by where it is drawn.
     i = 0;
     lineOffset = (6 - screenX) << 8;
     angle = frame * (TRIG_TURN / 32);
@@ -179,10 +166,8 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
          * instructions differ in tbs-en. */
         pictureRow = i >> 31;
       }
-      // The reaper with its scythe raised until frame 91, and swung from
-      // frame 88; a white flash (the brightest level over the whole canvas,
-      // covering what was drawn) on frames 88 and 89; then the crescent,
-      // fading through five pictures, two frames each.
+      // The reaper with its scythe raised until frame 91, and swung from frame
+      // 88.
       if (frame <= 87) {
         draw[work->args->side](
             canvas, work->sheet, CONDEMN_PICTURE_X(pictureColumn, 0),
@@ -247,9 +232,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       BattleEffect_TintBattler(work->args->targets[0], TINT_KEEP, POSE_DAMAGE,
                                TINT_KEEP, 0);
     }
-    // Frame 120: the target, sent up at a pixel a frame with no gravity on
-    // frame 88, gets the battle units' usual gravity back (BATTLE_UNIT_GRAVITY,
-    // as battle/motion.c sets).
+    // Frame 120.
     if (frame == CONDEMN_BOUNCE_FRAME) {
       GetBattleObjectSlotFar(work->args->targets[0])->actor->gravity =
           BATTLE_UNIT_GRAVITY;

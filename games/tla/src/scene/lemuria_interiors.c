@@ -38,7 +38,11 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-void Func_02000058(s32 arg0) {
+/// Piers's uncle asks whether the party came with Piers, then, once Piers has
+/// visited him, is relieved Piers is alive, and later sends the party to
+/// Lunpa's tower.
+/// "Are you the travelers that came here with Piers?"
+void LemuriaInteriors_TalkToPiersUncle(s32 arg0) {
   s32 result0;
   s32 result1;
   s32 result2;
@@ -69,7 +73,7 @@ L_020080ba:
   result3 = FieldEvent_AskYesNoWithActorAnimation(result2, 0);
   if (result3 != 0)
     goto L_020080dc;
-  Func_0200031c();
+  LemuriaInteriors_PiersVisitsUncle();
   goto L_020080f6;
 L_020080dc:
   Event_Wait(20);
@@ -79,7 +83,7 @@ L_020080f6:
   return;
 }
 
-void Func_02000104(s32 unused, s32 id) {
+void LemuriaInteriors_MindReadPiersUncle(s32 unused, s32 id) {
   if (Event_GetFlag(0x966)) {
     Event_SetMessageId((s32)MsgLemuriaInteriors12);
     Event_ShowMessage(id, 0);
@@ -92,7 +96,8 @@ void Func_02000104(s32 unused, s32 id) {
   }
 }
 
-void Func_02000154(s32 arg0) {
+/// "Are you the warriors from beyond the Sea of Time who returned with Piers?"
+void LemuriaInteriors_AskFromBeyondSeaOfTime(s32 arg0) {
   s32 result0;
   s32 result1;
 
@@ -113,7 +118,9 @@ L_02008190:
   return;
 }
 
-void Func_020001a0(s32 arg0) {
+/// "Do you seek to know more about the draughts that provide us with such
+/// longevity?"
+void LemuriaInteriors_AskAboutDraughts(s32 arg0) {
   s32 result0;
   s32 result1;
 
@@ -134,7 +141,8 @@ L_020081dc:
   return;
 }
 
-void Func_020001ec(s32 arg0, s32 arg1) {
+/// "Was that some form of Psynergy?"
+void LemuriaInteriors_ScoffAtMindRead(s32 arg0, s32 arg1) {
   struct Actor *object0;
   s32 value1;
   s32 result2;
@@ -200,7 +208,9 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_0200031c(void) {
+/// Piers comes home to his uncle, who is relieved to find him alive.
+/// "I am sorry it has taken me so long to visit, Uncle."
+void LemuriaInteriors_PiersVisitsUncle(void) {
   struct Actor *object0;
   struct Actor *object1;
   s32 result2;
@@ -427,7 +437,8 @@ L_02008a36:
    } *)(base))                                                                 \
        ->v)
 
-void Func_02000a5c(s32 a0, s32 a1, s32 a2) {
+/// "Wait... I ask that you leave Piers to his mourning for now..."
+void LemuriaInteriors_LeavePiersToMourn(s32 a0, s32 a1, s32 a2) {
   struct Actor *actor;
   s32 startBuf[3], targetBuf[3], posBuf[3];
   s32 *start, *target, *pos;

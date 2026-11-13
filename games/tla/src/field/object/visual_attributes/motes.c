@@ -176,14 +176,6 @@ struct SparkleWork {
   s32 stopped;
 };
 
-/* VIEW(motes): routine Oam_AddSpriteAtDepthClamped as void
- * Oam_AddSpriteAtDepthClamped(void *entry, s32 priority); f0d6674 has void
- * Oam_AddSpriteAtDepthClamped(struct GroundParticle *sprite, s32 depth); not
- * tried: Oam_AddSpriteAtDepthClamped's bound declaration was not found. */
-extern void
-Func_080140d8__motes(void *entry,
-                     s32 priority) __asm__("Oam_AddSpriteAtDepthClamped");
-
 void FieldEffect_UpdateSparkles(void) {
   struct SparkleWork *work;
   u32 spawned;
@@ -246,7 +238,7 @@ void FieldEffect_UpdateSparkles(void) {
 #endif
         sparkle->y = sy;
         sparkle->matrix = ((frames >> 1) & 1) << 3;
-        Func_080140d8__motes(sparkle, 240);
+        Oam_AddSpriteAtDepthClamped(sparkle, 240);
       }
       sparkle->timer--;
     }

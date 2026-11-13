@@ -373,15 +373,6 @@ struct GroundParticleWork {
   struct GroundParticle__visual_attributes particles[64];
 };
 
-/* VIEW(visual_attributes): routine Oam_AddSpriteAtDepthClamped as void
- * Oam_AddSpriteAtDepthClamped(struct GroundParticle *sprite, s32 depth);
- * module/system/system.h has void Oam_AddSpriteAtDepthClamped(void *entry, s32
- * slot); not tried: Oam_AddSpriteAtDepthClamped's bound declaration was not
- * found. */
-extern void Func_080140d8__visual_attributes(
-    struct GroundParticle__visual_attributes *sprite,
-    s32 depth) __asm__("Oam_AddSpriteAtDepthClamped");
-
 /// Task of GroundParticles_Start: The Broken Seal's Weather_UpdateRain, kept
 /// whole. Each particle plays its 16 frames of
 /// gFieldEffect_GroundParticleFrames on a random spot near the leader, held
@@ -415,7 +406,7 @@ void GroundParticles_Update(void) {
       frame++;
       particle->shape = *(u8 *)frame;
       particle->size = *(u8 *)(frame + 1);
-      Func_080140d8__visual_attributes(particle, 240);
+      Oam_AddSpriteAtDepthClamped(particle, 240);
     }
     if (particle->timer == 0) {
       s32 *focus = *(s32 **)map;

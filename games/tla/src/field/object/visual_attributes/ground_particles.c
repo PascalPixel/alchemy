@@ -69,13 +69,6 @@ void GroundParticles_Start(void) {
   Task_Add(GroundParticles_Update, TASK_PASS_VBLANK);
 }
 
-/* VIEW(ground_particles): routine Oam_AddSpriteAtDepthClamped as void
- * Oam_AddSpriteAtDepthClamped(void *sprite, s32 depth); f0d6674 has void
- * Oam_AddSpriteAtDepthClamped(struct GroundParticle *sprite, s32 depth); not
- * tried: Oam_AddSpriteAtDepthClamped's bound declaration was not found. */
-extern void Func_080140d8__ground_particles(void *sprite, s32 depth) __asm__(
-    "Oam_AddSpriteAtDepthClamped");
-
 /// Task of RisingParticles_Start: updates the 64 rising particles; each starts
 /// on the ground at a random point of the strip for 120 frames, drifts right by
 /// a random amount each frame, rises with its age, and is drawn at priority 3,
@@ -121,7 +114,7 @@ void RisingParticles_Update(void) {
       particle->sprite.attributes.priority = 3;
       particle->sprite.attributes.blendMode = 1;
       particle->sprite.attributes.y = y;
-      Func_080140d8__ground_particles(particle, 240);
+      Oam_AddSpriteAtDepthClamped(particle, 240);
     }
     particle->timer--;
   }
@@ -222,7 +215,7 @@ void FieldMotes_Update(void) {
         mote->y = y - (mote->delay >> 2);
         mote->shape = 0;
         mote->size = 1;
-        Func_080140d8__ground_particles(mote, 240);
+        Oam_AddSpriteAtDepthClamped(mote, 240);
       } else {
         mote->timer = 0;
       }

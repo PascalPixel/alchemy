@@ -713,36 +713,35 @@ failure:
 }
 
 /// Returns the nearest tied rope node within reach of position, or NULL.
-struct Work9cItem *Rope_FindNodeNear(s32 *position) {
-  struct Work9cItem *found;
-  struct Work9c *work;
-  struct Work9cItem *item;
+struct RopeNode *Rope_FindNodeNear(s32 *position) {
+  struct RopeNode *found;
+  struct RopeWork *work;
+  struct RopeNode *node;
   s32 best;
   s32 i;
 
   found = NULL;
-  work = WORK_9C;
+  work = ROPE_WORK;
   if (work == NULL)
     return NULL;
-  /* FAKEMATCH(barrier): an empty asm keeps the loop's set-up (the item
+  /* FAKEMATCH(barrier): an empty asm keeps the loop's set-up (the node
    * pointer, the best distance, the count and the IWRAM entry) after the
    * workspace test, where if-conversion would hoist it; without it, 29 of 85
    * instructions differ in tla-en. */
   asm("");
-  item = work->items;
+  node = work->nodes;
   best = 0x10000000;
-  for (i = 0; i < 128; i++, item++) {
-    if (item->used == 1) {
-      struct Work9cItemPosition *at = (struct Work9cItemPosition *)item;
-      s32 dx = (position[0] - at->x) >> 8;
-      s32 dy = (position[1] - at->y) >> 8;
-      s32 dz = (position[2] - at->z) >> 8;
+  for (i = 0; i < 128; i++, node++) {
+    if (node->kind == 1) {
+      s32 dx = (position[0] - node->x) >> 8;
+      s32 dy = (position[1] - node->y) >> 8;
+      s32 dz = (position[2] - node->z) >> 8;
       s32 distance =
           Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) + Iwram_MulQ16(dz, dz);
 
       if (distance <= 0x400 && best > distance) {
         best = distance;
-        found = item;
+        found = node;
       }
     }
   }
@@ -754,19 +753,19 @@ struct Work9cItem *Rope_FindNodeNear(s32 *position) {
 s32 Leader_StepOntoRope(void) {
   struct Actor *leader = ObjectTable_Get(gMainRoutineWork.currentOwner);
   struct FieldSprite *sprite = leader->sprite;
-  struct Work9cItemPosition *item = Rope_FindNodeNear(&leader->x);
+  struct RopeNode *node = Rope_FindNodeNear(&leader->x);
   u8 *flags;
 
   ((struct EventWorkGrab *)Ram_HeapSlots->eventWork)->grabState = 0;
-  if (item == NULL)
+  if (node == NULL)
     return 0;
   Sound_PlayFar(152);
   leader->acceleration = 0x10000;
   leader->speedLimit = 0x20000;
   leader->velocityY = 0x40000;
-  leader->watchedObject = (struct Actor *)item;
+  leader->watchedObject = (struct Actor *)node;
   Actor_SelectAnimationFar(leader, 2);
-  Actor_SetMoveTargetFar(leader, item->x, item->y, item->z);
+  Actor_SetMoveTargetFar(leader, node->x, node->y, node->z);
   Actor_WaitForMoveFar(leader);
   leader->timer = leader->motionFlags;
   flags = &leader->priorityFlags;
@@ -821,35 +820,35 @@ s32 Leader_StepOffRope(void) {
 }
 
 /// Returns the nearest tightrope node within reach of position, or NULL.
-struct WorkA0Node *Tightrope_FindNodeNear(s32 *position) {
-  struct WorkA0Node *found;
-  struct WorkA0 *work;
-  struct WorkA0Node *item;
+struct TightropeNode *Tightrope_FindNodeNear(s32 *position) {
+  struct TightropeNode *found;
+  struct TightropeWork *work;
+  struct TightropeNode *node;
   s32 best;
   s32 i;
 
   found = NULL;
-  work = WORK_A0;
+  work = TIGHTROPE_WORK;
   if (work == NULL)
     return NULL;
-  /* FAKEMATCH(barrier): an empty asm keeps the loop's set-up (the item
+  /* FAKEMATCH(barrier): an empty asm keeps the loop's set-up (the node
    * pointer, the best distance, the count and the IWRAM entry) after the
    * workspace test, where if-conversion would hoist it; without it, 29 of 84
    * instructions differ in tla-en. */
   asm("");
-  item = work->items;
+  node = work->nodes;
   best = 0x10000000;
-  for (i = 0; i < 128; i++, item++) {
-    if (item->used == 1) {
-      s32 dx = (position[0] - item->x) >> 8;
-      s32 dy = (position[1] - item->y) >> 8;
-      s32 dz = (position[2] - item->z) >> 8;
+  for (i = 0; i < 128; i++, node++) {
+    if (node->kind == 1) {
+      s32 dx = (position[0] - node->x) >> 8;
+      s32 dy = (position[1] - node->y) >> 8;
+      s32 dz = (position[2] - node->z) >> 8;
       s32 distance =
           Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) + Iwram_MulQ16(dz, dz);
 
       if (distance <= 0x400 && best > distance) {
         best = distance;
-        found = item;
+        found = node;
       }
     }
   }
@@ -862,19 +861,19 @@ s32 Leader_StepOntoTightrope(void) {
   struct MainRoutineWork *work = &gMainRoutineWork;
   struct Actor *leader = ObjectTable_Get(work->currentOwner);
   struct FieldSprite *sprite = leader->sprite;
-  struct Work9cItemPosition *item = Tightrope_FindNodeNear(&leader->x);
+  struct TightropeNode *node = Tightrope_FindNodeNear(&leader->x);
   u8 *flags;
 
   ((struct EventWorkGrab *)Ram_HeapSlots->eventWork)->grabState = 0;
-  if (item == NULL)
+  if (node == NULL)
     return 0;
   Sound_PlayFar(152);
   leader->acceleration = 0x10000;
   leader->speedLimit = 0x20000;
   leader->velocityY = 0x40000;
-  leader->watchedObject = (struct Actor *)item;
+  leader->watchedObject = (struct Actor *)node;
   Actor_SelectAnimationFar(leader, 2);
-  Actor_SetMoveTargetFar(leader, item->x, item->y, item->z);
+  Actor_SetMoveTargetFar(leader, node->x, node->y, node->z);
   Actor_WaitForMoveFar(leader);
   leader->timer = leader->motionFlags;
   leader->unk66 = sprite->nextFrame;

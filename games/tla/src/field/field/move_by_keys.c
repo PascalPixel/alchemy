@@ -124,56 +124,19 @@ s32 Actor_MoveByKeys(struct Actor *object) {
   return 1;
 }
 
-/* VIEW(resource_slot): tag struct ChainSlot as struct ChainSlot__resource_slot;
- * module/field/field.h has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/field.c:7200: structure has no member named `unk00'. */
-struct ChainSlot__resource_slot {
-  s16 unk00;
-  s16 unk02;
-  u8 unk04[8];
-  s32 unk0c;
-  u8 unk10[8];
-  s32 unk18;
-  u8 unk1c[4];
-};
-
-/* VIEW(resource_slot): tag struct ChainNode as struct ChainNode__resource_slot;
- * module/field/field.h has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/field.c:7179: structure has no member named `visible'. */
-struct ChainNode__resource_slot {
-  u8 unk00[4];
-  s32 x;
-  s32 y;
-  s32 z;
-  u16 unk10;
-  s8 visible;
-  s8 unk13;
-  u8 unk14[12];
-};
-
-struct ChainWork {
-  u8 unk000[12];
-  struct ChainSlot__resource_slot slots[8];
-  struct ChainNode__resource_slot nodes[128];
-};
-
-#define CHAIN_WORK (*(struct ChainWork **)&Ram_HeapSlots->unk84[6])
-
 /// Script command 0x1c, the leader's control on a tied rope (render mode 3):
 /// the pad moves it from node to node along the rope, a half cell a step.
 s32 Actor_CrossRope(struct Actor *object) {
   struct FieldPosition position;
   s32 collisionFlags;
   struct SpriteAngle *sprite;
-  struct ChainWork *chain;
+  struct RopeWork *rope;
   s32 bestDistance;
   s32 value;
   s32 speed;
-  struct ChainNode__resource_slot *best;
-  struct ChainNode__resource_slot *node;
-  struct ChainSlot__resource_slot *slot;
+  struct RopeNode *best;
+  struct RopeNode *node;
+  struct RopeSlot *slot;
   s32 count;
   u16 angle;
   s32 turn;
@@ -182,7 +145,7 @@ s32 Actor_CrossRope(struct Actor *object) {
   struct EventWork *work;
 
   sprite = object->sprite;
-  chain = CHAIN_WORK;
+  rope = *(struct RopeWork **)&Ram_HeapSlots->unk84[6];
   speed = 0x10000;
   collisionFlags = 0;
   object->speedLimit = 0x8000;
@@ -190,7 +153,7 @@ s32 Actor_CrossRope(struct Actor *object) {
   object->motionFlags = 0;
   angle = gData_0802ec5c__move_by_keys[(INPUT_HELD >> 4) & 15];
   if (angle == 0xffff) {
-    best = (struct ChainNode__resource_slot *)object->watchedObject;
+    best = (struct RopeNode *)object->watchedObject;
     value = 0;
   } else {
     value = 16;
@@ -201,11 +164,11 @@ s32 Actor_CrossRope(struct Actor *object) {
     position.x += object->x;
     position.y = object->y - position.z;
     position.z = object->z;
-    chain = CHAIN_WORK;
-    node = chain->nodes;
+    rope = *(struct RopeWork **)&Ram_HeapSlots->unk84[6];
+    node = rope->nodes;
     best = NULL;
     bestDistance = 0x10000000;
-    if (chain == NULL) {
+    if (rope == NULL) {
       collisionFlags = 1;
       /* FAKEMATCH(dead): the event work slot copied onto itself, a second
        * store in the null branch that keeps the loop count from being lifted
@@ -215,7 +178,7 @@ s32 Actor_CrossRope(struct Actor *object) {
       goto done;
     }
     for (count = 0; count < 128; count++, node++) {
-      if (node->visible == 1) {
+      if (node->kind == 1) {
         s32 dx = (position.x - node->x) >> 8;
         s32 dy = (position.y - node->y) >> 8;
         s32 dz = (position.z - node->z) >> 8;
@@ -234,13 +197,13 @@ s32 Actor_CrossRope(struct Actor *object) {
     // keeps it.
     collisionFlags |= 1;
   } else {
-    slot = &chain->slots[best->unk13 - 1];
-    first = Actor_GetByIdFar(slot->unk00);
-    second = Actor_GetByIdFar(slot->unk02);
+    slot = &rope->slots[best->slot - 1];
+    first = Actor_GetByIdFar(slot->first);
+    second = Actor_GetByIdFar(slot->second);
     if (first->x > second->x)
       speed = -speed;
-    first = Actor_GetByIdFar(slot->unk00);
-    second = Actor_GetByIdFar(slot->unk02);
+    first = Actor_GetByIdFar(slot->first);
+    second = Actor_GetByIdFar(slot->second);
     if (first->y > second->y) {
       speed = -speed;
       turn = 0xc000;
@@ -251,15 +214,15 @@ s32 Actor_CrossRope(struct Actor *object) {
     if (best->x == object->x && best->y == object->y && best->z == object->z) {
       collisionFlags = 1;
     } else {
-      slot->unk18 = 1;
-      slot->unk0c += 0x8000;
-      if (slot->unk0c > 0x20000)
-        slot->unk0c = 0x20000;
+      slot->swinging = 1;
+      slot->amplitude += 0x8000;
+      if (slot->amplitude > 0x20000)
+        slot->amplitude = 0x20000;
       object->watchedObject = (struct Actor *)best;
       position.x = best->x;
       position.y = best->y;
       position.z = best->z;
-      sprite->angle = best->unk10 + turn;
+      sprite->angle = best->angle + turn;
     }
   }
 done:
@@ -305,10 +268,10 @@ s32 Actor_CrossTightrope(struct Actor *object) {
   s32 collisionFlags;
   struct ObjectAnimationState *sprite;
   s32 argument;
-  struct WorkA0 *workA0;
-  struct WorkA0Node *best;
-  struct WorkA0Node *point;
-  struct WorkA0Slot *slot;
+  struct TightropeWork *tightrope;
+  struct TightropeNode *best;
+  struct TightropeNode *point;
+  struct TightropeSlot *slot;
   s32 bestDistance;
   u16 angle;
   s32 count;
@@ -323,7 +286,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
   angle = gData_0802ec5c__move_by_keys[(gInput.held >> 4) & 15];
   if (angle == 0xffff) {
     collisionFlags = 4;
-    best = (struct WorkA0Node *)object->watchedObject;
+    best = (struct TightropeNode *)object->watchedObject;
     position.x = object->x;
     position.y = best->y;
     position.z = object->z;
@@ -334,11 +297,11 @@ s32 Actor_CrossTightrope(struct Actor *object) {
     Vector_AddPolarOffset(0x80000, angle, &position);
     // Read through the slot's address: as Ram_HeapSlots->unk84[7], 44 of 324
     // instructions differ in tla-en.
-    workA0 = *(struct WorkA0 **)&Ram_HeapSlots->unk84[7];
-    point = workA0->items;
+    tightrope = *(struct TightropeWork **)&Ram_HeapSlots->unk84[7];
+    point = tightrope->nodes;
     best = NULL;
     bestDistance = 0x10000000;
-    if (workA0 == NULL) {
+    if (tightrope == NULL) {
       collisionFlags = 1;
       /* FAKEMATCH(dead): the event work slot copied onto itself, a second
        * store in the null branch that keeps the loop count from being lifted
@@ -347,7 +310,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
       Ram_HeapSlots->eventWork = Ram_HeapSlots->eventWork;
     } else {
       for (count = 0; count < 128; count++, point++) {
-        if (point->used == 1) {
+        if (point->kind == 1) {
           s32 dx = (position.x - point->x) >> 8;
           s32 dy = (position.y - point->y) >> 8;
           s32 dz = (position.z - point->z) >> 8;
@@ -366,11 +329,9 @@ s32 Actor_CrossTightrope(struct Actor *object) {
                  best->z == object->z) {
         collisionFlags = 1;
       } else {
-        // The slot index, a signed byte (ldrsb) that worka0.h's unk11 does not
-        // yet type.
-        if ((s8)best->unk11[0] != 0) {
-          slot = &workA0->slots[(s8)best->unk11[0] - 1];
-          slot->tail = (struct WorkA0Node *)1;
+        if (best->slot != 0) {
+          slot = &tightrope->slots[best->slot - 1];
+          slot->wobbling = 1;
           slot->amplitude += 0x8000;
           if (slot->amplitude > 0x20000)
             slot->amplitude = 0x20000;

@@ -3,38 +3,21 @@
 
 #include "types.h"
 #include "system/ram_buffer.h"
+#include "field/sprite.h"
 
-/// Heap-slot 0xa0 workspace: eight slots and 128 nodes.
-struct WorkA0Node {
-  struct WorkA0Node *next;
+/// One link of a hanging vine: a point on the vine and its sprite.
+struct HangingVineLink {
+  struct HangingVineLink *next;
   s32 x;
   s32 y;
   s32 z;
-  s8 used;
-  u8 unk11[15];
+  u16 angle;
+  s8 kind; ///< 0 or 1: not drawn; else its picture, from 2
+  u8 unk13;
+  struct AnimationSpritePart sprite;
 };
 
-struct WorkA0Slot {
-  s16 first;
-  s16 second;
-  u8 unk04[4];
-  s32 amplitude; ///< the wobble's size, decaying each frame
-  u8 unk0c[4];
-  s32 angle;
-  struct WorkA0Node *tail;
-  struct WorkA0Node *head;
-};
-
-struct WorkA0 {
-  u8 unk000[8];
-  s32 vramEntry;
-  struct WorkA0Slot slots[8];
-  struct WorkA0Node items[128];
-};
-
-#define WORK_A0 ((struct WorkA0 *)Ram_HeapSlots->unk84[7])
-
-/// Heap-slot 0xa4 workspace: eight chains, each hanging from an actor.
+/// One of the eight hanging vines: the actor it hangs from and its swing.
 struct WorkA4Slot {
   s16 id; ///< the actor the chain hangs from
   u8 unk02[2];
@@ -43,20 +26,14 @@ struct WorkA4Slot {
   u8 unk0c[4];
   s32 phase; ///< where the swing is in its arc, an angle
   s32 active;
-  struct ChainLink
+  struct HangingVineLink
       *root; ///< the first link HangingVine_Hang hangs; NULL if free
 };
 
-struct WorkA4Item {
-  u8 unk00[18];
-  s8 used;
-  u8 unk13[13];
-};
-
 struct WorkA4 {
-  u8 unk000[4];
+  s32 vramEntry; ///< the links' picture
   struct WorkA4Slot slots[8];
-  struct WorkA4Item items[128];
+  struct HangingVineLink links[128];
 };
 
 #define WORK_A4 ((struct WorkA4 *)Ram_HeapSlots->unk84[8])

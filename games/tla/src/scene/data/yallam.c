@@ -6,10 +6,10 @@
 #include "module/scene/yallam.h"
 
 void Func_02000044(void);
-void Func_02000270(void);
+void Yallam_EnterDoor(void);
 void Func_0200038c(void);
 void Func_0200043c(void);
-void Func_02000584(void);
+void Yallam_TalkAboutSongCircles(void);
 
 extern s32 gData_020025f8[];
 
@@ -257,15 +257,15 @@ s32 gData_02002ce4[] = {
     0x6005a,
 };
 
-struct Trigger gData_02002d24[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_02000270)},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_02000270)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_02000270)},
-    {0xc602, 4, CONDITION_ALWAYS, EVENT(Func_02000270)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Func_02000270)},
-    {0xc602, 6, CONDITION_ALWAYS, EVENT(Func_02000270)},
-    {0xc602, 7, CONDITION_ALWAYS, EVENT(Func_02000270)},
-    {0xc602, 8, CONDITION_ALWAYS, EVENT(Func_02000270)},
+struct Trigger gYallam_Triggers[] = {
+    {0xc602, 1, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
+    {0xc602, 2, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
+    {0xc602, 3, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
+    {0xc602, 4, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
+    {0xc602, 5, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
+    {0xc602, 6, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
+    {0xc602, 7, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
+    {0xc602, 8, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
     {0xc401, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
@@ -298,25 +298,25 @@ struct Trigger gData_02002d24[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02002eec[] = {
+struct Trigger gYallam_RoomTwoTriggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {0xc401, 7, CONDITION_ALWAYS, 7},
     {TRIGGERS_END},
 };
 // clang-format on
 
-struct Trigger gData_02002f10[] = {
+struct Trigger gYallam_EntranceFifteenTriggers[] = {
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
-    {0x400, 8, CONDITION_ALWAYS, EVENT(Func_02000544)},
-    {0x2400, 8, CONDITION_ALWAYS, EVENT(Func_02000544)},
-    {0xe400, 8, CONDITION_ALWAYS, EVENT(Func_02000544)},
-    {0xc400, 8, CONDITION_ALWAYS, EVENT(Func_02000544)},
-    {0x4400, 8, CONDITION_ALWAYS, EVENT(Func_02000544)},
+    {0x400, 8, CONDITION_ALWAYS, EVENT(Yallam_OfferYeppSong)},
+    {0x2400, 8, CONDITION_ALWAYS, EVENT(Yallam_OfferYeppSong)},
+    {0xe400, 8, CONDITION_ALWAYS, EVENT(Yallam_OfferYeppSong)},
+    {0xc400, 8, CONDITION_ALWAYS, EVENT(Yallam_OfferYeppSong)},
+    {0x4400, 8, CONDITION_ALWAYS, EVENT(Yallam_OfferYeppSong)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgYeppSSongs)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02000584)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT(Func_02000584)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_02000614)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, EVENT(Func_02000614)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Yallam_TalkAboutSongCircles)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT(Yallam_TalkAboutSongCircles)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Yallam_TalkAboutSongGame)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, EVENT(Yallam_TalkAboutSongGame)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgYeppWroteAll)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTheStoryIs)},
     {TRIGGERS_END},

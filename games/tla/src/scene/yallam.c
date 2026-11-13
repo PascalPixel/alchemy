@@ -36,7 +36,7 @@ extern const u8 MsgThereSAGame[];
 extern const u8 MsgIOnceHeard[];
 
 void Func_020006bc(s32 id);
-void Func_02001944(void);
+void Yallam_ShowSongGame(void);
 void Event_End(void);
 
 struct YallamSaved {
@@ -197,7 +197,9 @@ const u8 *Scene_GetPlacements(void) {
   return gData_02002ac4;
 }
 
-void Func_02000270(void) {
+/// The party leader walks into one of Yallam's doors, which opens with its cell
+/// animation, and leaves by the exit of the door's number.
+void Yallam_EnterDoor(void) {
   u8 *event = Ram_HeapSlots->eventWork;
   u32 i;
   s32 index;
@@ -291,32 +293,37 @@ void Func_0200043c(void) {
 
 void Func_020004cc(void) { Yallam_02002598(67, 25, 2, 2, 87, 8, 1); }
 
-extern const u8 gData_02002d24[];
-extern const u8 gData_02002eec[];
-extern const u8 gData_02002f10[];
+extern const u8 gYallam_Triggers[];
+extern const u8 gYallam_RoomTwoTriggers[];
+extern const u8 gYallam_EntranceFifteenTriggers[];
 
 const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room1 &&
       gMainRoutineWork.entrance == 15)
-    return gData_02002f10;
+    return gYallam_EntranceFifteenTriggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room2)
-    return gData_02002eec;
-  return gData_02002d24;
+    return gYallam_RoomTwoTriggers;
+  return gYallam_Triggers;
 }
 
-void Func_02000544(void) {
+/// The child at the playground, spoken to from any side, offers to show one of
+/// Yepp's songs and its game.
+/// "Do you want to hear one of the songs Yepp wrote?"
+void Yallam_OfferYeppSong(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(MsgDoYouWant);
   Event_OpenMessage(8, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(0, 0) == 0)
-    Func_02001944();
+    Yallam_ShowSongGame();
   else
     Event_ShowMessage(8, 0);
   Event_End();
 }
 
-void Func_02000584(void) {
+/// "Running around in circles here while singing one of Yepp's songs is pretty
+/// tough."
+void Yallam_TalkAboutSongCircles(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct TalkActor *object = (struct TalkActor *)Actor_Get(9);
   s16 angle = object->angle;
@@ -337,7 +344,9 @@ void Func_02000584(void) {
   Event_End();
 }
 
-void Func_02000614(void) {
+/// "There's a game that goes along with the song, but it's tough. I want to
+/// play something else."
+void Yallam_TalkAboutSongGame(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct TalkActor *object = (struct TalkActor *)Actor_Get(10);
   s16 angle = object->angle;
@@ -1348,7 +1357,9 @@ extern const u8 gData_02002998[];
 extern const u8 gData_020029c0[];
 extern const u8 gData_02002a04[];
 
-void Func_02001944(void) {
+/// The child shows the party the song's game.
+/// "Here, let me show you!"
+void Yallam_ShowSongGame(void) {
   struct Actor *actor = Actor_Get(8);
   struct Actor *leader;
   FieldEvent_SetMessageId(MsgHereLetMe);
@@ -1464,7 +1475,7 @@ wait3:
   Event_OpenMessage(8, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
       0) {
-    Func_02001d14();
+    Yallam_SingMoonSong();
   } else {
     FieldEvent_ShowMessageThenWait(8, 0, 20);
     Event_FinishScreenTransition();
@@ -1484,7 +1495,8 @@ wait3:
 
 extern u8 MsgIfYouWant[];
 
-void Func_02001d14(void) {
+/// "If you want to go to the moon, if you want to go to the moon."
+void Yallam_SingMoonSong(void) {
   s32 t1, t33, v5, v6, v7;
 
   t1 = ((s32)Actor_Get(8));
@@ -1549,7 +1561,7 @@ L_02009de8:
   t33 = FieldEvent_AskYesNoWithActorAnimation(FIELD_AT(v5, s32, 0), 0);
   if (t33 != 0)
     goto L_02009e90;
-  Func_02001ec0();
+  Yallam_SingSunSong();
   goto L_02009eb4;
 L_02009e90:
   FieldEvent_ShowMessageThenWait(8, 0, 20);
@@ -1563,7 +1575,8 @@ L_02009eb4:
 
 extern u8 MsgIfYouWantTo[];
 
-void Func_02001ec0(void) {
+/// "If you want to go to the sun, if you want to go to the sun."
+void Yallam_SingSunSong(void) {
   s32 t1, t24, t25, t33, t34, t42, t43, t51, t52, t63, t64, t65, t66, v5, v6,
       v7, v8;
 

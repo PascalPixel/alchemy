@@ -11,7 +11,7 @@
 extern u32 gSceneExits[];
 
 void Actor_SetActionCallback(struct Actor *object, s32 a);
-void Func_02000800(void);
+void SuhallaGate_AfterThievesBattle(void);
 void Func_02000a90(s32 id, s32 a);
 void Func_02000a98(s32 id, s32 a, s32 b);
 void Event_End(void);
@@ -116,7 +116,7 @@ void Func_02000168(void) {
 
 void Func_02000264(void) {
   if (Event_GetFlag(0x109) == 0 && gMainRoutineWork.entrance == 99)
-    Func_02000800();
+    SuhallaGate_AfterThievesBattle();
 }
 
 s32 Scene_Initialize(void) {
@@ -167,7 +167,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// Places the leader and the camera after a message, runs actor 8's motions
 /// and sends the party to Suhalla Gate 1, entrance 99. The message is
 /// "Waahhh".
-void Func_020003ac(void) {
+void SuhallaGate_ThievesSpotParty(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWaahhhItS);
@@ -200,7 +200,8 @@ void Func_020003ac(void) {
 
 #include "actor.h"
 
-void Func_02000494(void) {
+/// "Ha! That was a good idea, waiting here for 'em!"
+void SuhallaGate_ThievesAmbushParty(void) {
   struct MainRoutineWork *work;
   s32 *owner;
 
@@ -310,7 +311,8 @@ void Func_0200071c(void) {
   Func_020005e8();
 }
 
-void Func_02000800(void) {
+/// "My! That was invigorating! He wasn't too strong..."
+void SuhallaGate_AfterThievesBattle(void) {
   struct Actor *leader;
 
   Event_Start();
@@ -340,7 +342,8 @@ void Func_02000800(void) {
   Event_End();
 }
 
-void Func_020008cc(void) {
+/// "Not that way, Jenna! The meeting spot is down this way."
+void SuhallaGate_PointToMeetingSpot(void) {
   struct Actor *leader;
 
   Event_Start();
@@ -473,8 +476,8 @@ struct Trigger gData_02001078[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {0xc602, 3, CONDITION_ALWAYS, EVENT(SuhallaGate_EnterHouse)},
-    {TRIGGER_STEP, 20, 0x894, EVENT(Func_020003ac)},
-    {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(Func_020008cc)},
+    {TRIGGER_STEP, 20, 0x894, EVENT(SuhallaGate_ThievesSpotParty)},
+    {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(SuhallaGate_PointToMeetingSpot)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgOoooogMaybeI)},
     {TRIGGERS_END},
 };
@@ -484,9 +487,9 @@ struct Trigger gData_020010e4[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_STEP, 5, 0x895, EVENT(Func_02000494)},
+    {TRIGGER_STEP, 5, 0x895, EVENT(SuhallaGate_ThievesAmbushParty)},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Func_020008cc)},
+    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(SuhallaGate_PointToMeetingSpot)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgMaybeIShould)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAllRightSo)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgOhManThere)},

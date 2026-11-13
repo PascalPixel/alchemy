@@ -134,9 +134,9 @@ MapGrid_SetScreenShake:
 	.thumb_func
 MapGrid_WaitForShakeToSettle:
 	overlay_veneer MapGrid_WaitForShakeToSettleFar
-	.global Func_02003ba8
+	.global Actor_HasArrived
 	.thumb_func
-Func_02003ba8:
+Actor_HasArrived:
 	overlay_veneer Actor_HasArrivedFar
 	.global FieldMessage_Show
 	.thumb_func
@@ -242,9 +242,9 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_02003c80
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_02003c80:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
@@ -258,25 +258,25 @@ Sprite_ShareVramCacheEntry:
 	.thumb_func
 Event_NoOp:
 	overlay_veneer Event_NoOpFar
-	.global Func_02003ca0
+	.global FlagBlock_PlaceAll
 	.thumb_func
-Func_02003ca0:
+FlagBlock_PlaceAll:
 	overlay_veneer FlagBlock_PlaceAllFar
-	.global Func_02003ca8
+	.global FlagBlock_ApplyFlags
 	.thumb_func
-Func_02003ca8:
+FlagBlock_ApplyFlags:
 	overlay_veneer FlagBlock_ApplyFlagsFar
-	.global Func_02003cb0
+	.global Actor_PlaceBlocks
 	.thumb_func
-Func_02003cb0:
+Actor_PlaceBlocks:
 	overlay_veneer Actor_PlaceBlocksFar
-	.global Func_02003cb8
+	.global Actor_LiftTargetBlock
 	.thumb_func
-Func_02003cb8:
+Actor_LiftTargetBlock:
 	overlay_veneer Actor_LiftTargetBlockFar
-	.global Func_02003cc0
+	.global Actor_PlaceMovedBlock
 	.thumb_func
-Func_02003cc0:
+Actor_PlaceMovedBlock:
 	overlay_veneer Actor_PlaceMovedBlockFar
 	.global Party_GetLeaderActor
 	.thumb_func

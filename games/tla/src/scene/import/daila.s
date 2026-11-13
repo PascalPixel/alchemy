@@ -142,21 +142,21 @@ Event_ResolvePendingActions:
 	.thumb_func
 Actor_LaunchFromLeader:
 	overlay_veneer Actor_LaunchFromLeaderFar
-	.global Func_02000d50
+	.global FlagBlock_PlaceAll
 	.thumb_func
-Func_02000d50:
+FlagBlock_PlaceAll:
 	overlay_veneer FlagBlock_PlaceAllFar
-	.global Func_02000d58
+	.global FlagBlock_ApplyFlags
 	.thumb_func
-Func_02000d58:
+FlagBlock_ApplyFlags:
 	overlay_veneer FlagBlock_ApplyFlagsFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_02000d68
+	.global Actor_FallOverById
 	.thumb_func
-Func_02000d68:
+Actor_FallOverById:
 	overlay_veneer Actor_FallOverByIdFar
 	.global Import_ShopRun
 	.thumb_func

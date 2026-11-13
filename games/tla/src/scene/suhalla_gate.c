@@ -14,8 +14,8 @@ extern u32 gSceneExits[];
 
 void Actor_SetActionCallback(struct Actor *object, s32 a);
 void SuhallaGate_AfterThievesBattle(void);
-void Func_02000a90(s32 id, s32 a);
-void Func_02000a98(s32 id, s32 a, s32 b);
+void Actor_FallOverById(s32 id, s32 a);
+void Actor_FallOverWithAnimationById(s32 id, s32 a, s32 b);
 void Event_End(void);
 void FieldCamera_WaitForArrival(void);
 /// The Punch Ant hops at the leader and its battle begins.
@@ -89,7 +89,7 @@ void SuhallaGate_SetUpRoom1(void) {
     Event_SetFlag(0x894);
   if (Event_GetFlag(0x894)) {
     Actor_SetPosition(8, PIXELS(456), PIXELS(312));
-    Func_02000a98(8, 0x4000, 0);
+    Actor_FallOverWithAnimationById(8, 0x4000, 0);
     Actor_SetActionCallback(Actor_GetById(8), 8);
   }
 }
@@ -104,11 +104,11 @@ void SuhallaGate_SetUpRoom2(void) {
     Actor_SetPosition(14, PIXELS(624), PIXELS(939));
     Actor_SetPosition(15, PIXELS(632), PIXELS(920));
     Actor_GetById(13)->facing = 0x4000;
-    Func_02000a90(13, 0x6000);
+    Actor_FallOverById(13, 0x6000);
     Actor_GetById(14)->facing = 0;
-    Func_02000a90(14, 0);
+    Actor_FallOverById(14, 0);
     Actor_GetById(15)->facing = 0xc000;
-    Func_02000a90(15, 0);
+    Actor_FallOverById(15, 0);
     Actor_GetById(13)->collisionFlags = 1;
     Actor_GetById(14)->collisionFlags = 1;
     Actor_GetById(15)->collisionFlags = 1;

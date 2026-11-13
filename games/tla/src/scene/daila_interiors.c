@@ -101,12 +101,12 @@ void Sanctum_Run(s32 actor);
 
 extern s16 gDailaInteriors_PillarFrozenFlags[];
 
-void Func_02000dcc(const s16 *flags);
+void FlagBlock_ApplyFlags(const s16 *flags);
 
 s32 DailaInteriors_GiveItem(s32 item, s32 mode);
 void Scene_FadeInAndClearFlag(void);
 
-void Func_02000dac(s32 mode);
+void FieldEffect_StartBlankOverlay(s32 mode);
 
 void DailaInteriors_TalkToArmorMerchantOnceTaviIsRescued(s32 a0);
 
@@ -432,7 +432,7 @@ void DailaInteriors_TalkCaughtPracticing(void) {
   Import_EventEnd();
 }
 
-DEFINE_SCENE_RAISE_HELD_ACTOR(Scene_RaiseHeldActor, Func_02000dcc,
+DEFINE_SCENE_RAISE_HELD_ACTOR(Scene_RaiseHeldActor, FlagBlock_ApplyFlags,
                               gDailaInteriors_PillarFrozenFlags)
 
 // ---- games/tla/src/scene/daila_interiors/item.c ----
@@ -630,7 +630,7 @@ extern void
 Actor_SetSingleChildFlags__arrival(struct DailaStartActor *object,
                                    s32 value) __asm__("Actor_SetSpriteFlags");
 void Actor_SetItemIcon(struct DailaStartActor *object, s32 item);
-void Func_02000dc4(const s16 *flags);
+void FlagBlock_PlaceAll(const s16 *flags);
 
 s32 DailaInteriors_Start(void) {
   struct DailaMapWork *map;
@@ -661,7 +661,7 @@ s32 DailaInteriors_Start(void) {
     Import_EventResolvePendingActions(0);
     Actor_SetSingleChildFlags__arrival(Actor_GetById__arrival(ACTOR_TEAR_SPOT),
                                        0);
-    Func_02000dac(0);
+    FieldEffect_StartBlankOverlay(0);
     if (!GameFlag_Get(FLAG_SEA_GODS_TEAR_TAKEN)) {
       Actor_SetItemIcon(Actor_GetById__arrival(ACTOR_SEA_GODS_TEAR), 458);
       Actor_SetSingleChildFlags__arrival(
@@ -682,7 +682,7 @@ s32 DailaInteriors_Start(void) {
       Actor_SetHorizontalPositionWithTerrain(ACTOR_THIRD_PILLAR, 0, 0);
       map->mode17 = 1;
     } else {
-      Func_02000dc4(gDailaInteriors_PillarFrozenFlags);
+      FlagBlock_PlaceAll(gDailaInteriors_PillarFrozenFlags);
     }
     Import_EventEnd();
   }

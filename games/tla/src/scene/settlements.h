@@ -34,10 +34,10 @@ void Scene_QueueMusic(s32 a);
 // The rope routine is called with no prototype in scope, as its bytes need:
 // called as returning int, the two post ids load before the first argument.
 // A current GCC gets it here.
-void Func_02002178(s32 a, s32 b, s32 c);
+void Rope_Lash(s32 a, s32 b, s32 c);
 #endif
-void Func_02002190(const void *data);
-void Func_02002198(void);
+void Actor_LiftTargetBlock(const void *data);
+void Actor_PlaceMovedBlock(void);
 void Settlements_EnterDoor(void);
 void Settlements_DriftSmoke(struct Actor *object);
 void Import_ActorSelectAnimation(struct Actor *object, s32 a);
@@ -50,13 +50,13 @@ void Layer_TrackScroll(void);
 void Irq_SetHandler(s32 a, s32 b, void (*callback)(void));
 void Event_End(void);
 void ItemDisplay_ShowItem(s32 a, s32 b);
-void Func_020021a0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
 extern u32 gSettlements_Room5Regions[];
 extern u32 gSettlements_Room3Regions[];
 
 static __inline__ void Window(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g) {
-  Func_020021a0(a, b, c, d, e, f, g);
+  TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
 #endif

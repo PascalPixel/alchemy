@@ -134,13 +134,13 @@ Event_ResolvePendingActions:
 	.thumb_func
 Djinn_JoinParty:
 	overlay_veneer Djinn_JoinPartyFar
-	.global Func_0200105c
+	.global Tightrope_Initialize
 	.thumb_func
-Func_0200105c:
+Tightrope_Initialize:
 	overlay_veneer Tightrope_InitializeFar
-	.global Func_02001064
+	.global Tightrope_Place
 	.thumb_func
-Func_02001064:
+Tightrope_Place:
 	overlay_veneer Tightrope_PlaceFar
 	.global Sound_Play
 	.thumb_func

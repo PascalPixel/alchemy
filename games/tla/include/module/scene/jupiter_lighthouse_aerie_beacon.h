@@ -28,7 +28,7 @@ extern void Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
 /// leader steps on.
 extern struct CellTarget gTeleporters;
 
-void Func_0200581c(void);
+void Event_End(void);
 
 void Teleporter_Uncover(struct CellTarget *table,
                         struct CellTargetEntry *entry);
@@ -111,14 +111,14 @@ void Func_02003c58(s32 mode);
 
 extern s32 Data_02006a1c;
 
-s32 Func_020059b4();
+s32 HangingVine_Place();
 
 extern u16 gPaletteCycleColors[];
 extern u16 gLighthousePalette13[];
 extern u16 gLighthouseUnlitColors[];
 
-void Func_020059ec();
-s32 Func_020059e4();
+void MapGrid_SetAttributeBAt();
+s32 MapGrid_GetCellBehavior();
 
 extern s32 Data_02006a28;
 

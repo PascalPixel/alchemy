@@ -57,7 +57,7 @@ void JupiterLighthouse_LeaveByCyclone(void);
 extern u16 gPaletteCycleColors[];
 extern u16 gPaletteCycleUnlitPalette[];
 
-void Func_02001b34();
+void MapGrid_SetAttributeBAt();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -71,26 +71,26 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 #include "call.h"
 #include "event_inline.h"
-s32 Func_02001b1c();
+s32 TileCopies_CopyTouchedCells();
 
 void JupiterLighthouse_CycloneFirstPatch(void) {
-  Call7(Func_02001b1c, 0x38, 0, 4, 2, 0x46, 0x13, 1);
+  Call7(TileCopies_CopyTouchedCells, 0x38, 0, 4, 2, 0x46, 0x13, 1);
 }
 
 void JupiterLighthouse_CycloneSecondPatch(void) {
-  Call7(Func_02001b1c, 0x38, 0, 4, 2, 0x45, 0x16, 1);
+  Call7(TileCopies_CopyTouchedCells, 0x38, 0, 4, 2, 0x45, 0x16, 1);
 }
 
 void JupiterLighthouse_CycloneThirdPatch(void) {
-  Call7(Func_02001b1c, 0x38, 0, 3, 3, 0x4f, 0x19, 1);
+  Call7(TileCopies_CopyTouchedCells, 0x38, 0, 3, 3, 0x4f, 0x19, 1);
 }
 
 void JupiterLighthouse_CycloneFourthPatch(void) {
-  Call7(Func_02001b1c, 0x38, 0, 5, 3, 0x55, 0x1a, 1);
+  Call7(TileCopies_CopyTouchedCells, 0x38, 0, 5, 3, 0x55, 0x1a, 1);
 }
 
 void JupiterLighthouse_CycloneFifthPatch(void) {
-  Call7(Func_02001b1c, 0x38, 0, 5, 3, 0x5e, 0x1a, 1);
+  Call7(TileCopies_CopyTouchedCells, 0x38, 0, 5, 3, 0x5e, 0x1a, 1);
 }
 
 #include "main_routine_work.h"
@@ -98,7 +98,7 @@ void JupiterLighthouse_CycloneFifthPatch(void) {
 void JupiterLighthouse_CycloneUncoversTheSpot(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
 
-  Call7(Func_02001b1c, 0x38, 0, 3, 3, 0x4f, 0x19, 1);
+  Call7(TileCopies_CopyTouchedCells, 0x38, 0, 3, 3, 0x4f, 0x19, 1);
   if (!Event_GetFlag(0xfe2)) {
     Actor_SetPosition(64, PIXELS(280), PIXELS(440));
     if (leader->x >> 20 == 17 && leader->z >> 20 == 27) {
@@ -128,7 +128,7 @@ s32 Scene_Initialize(void) {
   clear = Event_GetFlag(FLAG_KEEP_PARTY_POSITION);
   if (clear == 0) {
     if (gMainRoutineWork.entrance == 4)
-      Func_02001b3c(gMainRoutineWork.currentOwner);
+      Actor_ArriveInRing(gMainRoutineWork.currentOwner);
   }
   gMainRoutineWork.savedScene = (s32)&SceneId_Ov694Room2;
   gMainRoutineWork.savedEntrance = 6;
@@ -165,7 +165,7 @@ DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gPaletteCycleFrame,
 
 #include "field_event.h"
 
-void Func_02001a6c();
+void MapGrid_SetCellHeight();
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
                                         gPaletteCyclePausesInEvents,
@@ -174,7 +174,7 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
                                         PaletteCycle_StepAt,
                                         gLighthouseUnlitColors)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02001a6c, Func_02001b34)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight, MapGrid_SetAttributeBAt)
 
 #include "actor.h"
 #include "frame.h"
@@ -186,10 +186,10 @@ DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 extern s32 gWhirlwindEndScript[];
 extern s32 gWhirlwindRiding;
 
-s32 Func_02001b2c(s32 x, s32 z, s32 layer);
+s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, Func_02001b2c,
+DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, MapGrid_GetCellBehavior,
                               Position_FlatDistance, gWhirlwindEndScript,
                               gWhirlwindRiding)
 

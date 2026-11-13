@@ -590,7 +590,7 @@ loop:
 }
 
 void Func_02000f18(s32 actor) {
-  Func_02003aa0(actor);
+  Actor_DisableById(actor);
   Actor_GetById(actor)->priorityFlags |= 0x20;
 }
 
@@ -612,12 +612,12 @@ void ShrineOfTheSeaGod_FreezeThirdPuddle(void) {
   GameFlag_Set(0x202);
 }
 
-void Func_02000fa8(void) { Func_02003b38(gData_02003cbc); }
+void Func_02000fa8(void) { Actor_LiftTargetBlock(gData_02003cbc); }
 
 void Func_02000fb8(void) {
   struct ShrineOfTheSeaGodObject *object;
 
-  Func_02003b40();
+  Actor_PlaceMovedBlock();
   object = Actor_GetById(8);
   if (object->x >> 20 == 21 && object->z >> 20 == 13)
     GameFlag_Set(0x207);
@@ -628,7 +628,7 @@ void Func_02000fb8(void) {
 void Func_02000fec(void) {
   struct ShrineOfTheSeaGodObject *object = Actor_GetById(8);
 
-  Func_02003b40();
+  Actor_PlaceMovedBlock();
   if (object->x >> 20 == 12)
     GameFlag_Set(0x84c);
 }
@@ -680,7 +680,7 @@ void Func_020010e8(void) {
   struct ShrineOfTheSeaGodObject *leader =
       Actor_GetById(gMainRoutineWork.currentOwner);
 
-  Func_02003b28();
+  Actor_GetCellIndex();
   if (leader->y < 0x100000)
     gMainRoutineWork.unk2c3 = 0;
   else

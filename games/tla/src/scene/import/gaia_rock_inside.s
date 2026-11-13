@@ -126,9 +126,9 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 MapGrid_CopyCellPictureCellsRect:
 	overlay_veneer MapGrid_CopyCellPictureCellsRectFar
-	.global Func_02004e0c
+	.global Map_CopyRawCellsRect
 	.thumb_func
-Func_02004e0c:
+Map_CopyRawCellsRect:
 	overlay_veneer Map_CopyRawCellsRectFar
 	.global Actor_SetSpriteFlags
 	.thumb_func
@@ -346,9 +346,9 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_02004fc4
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_02004fc4:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
@@ -366,27 +366,27 @@ ObjectTable_Snapshot:
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_02004fec
+	.global HangingVine_Place
 	.thumb_func
-Func_02004fec:
+HangingVine_Place:
 	overlay_veneer HangingVine_PlaceFar
-	.global Func_02004ff4
+	.global Cyclone_CopyTouchedCells
 	.thumb_func
-Func_02004ff4:
+Cyclone_CopyTouchedCells:
 	overlay_veneer Cyclone_CopyTouchedCellsFar
 	.global Actor_ResetTargetsAndVelocity
 	.thumb_func
 Actor_ResetTargetsAndVelocity:
 	overlay_veneer Actor_ResetTargetsAndVelocityFar
 	.ifndef TLA_EDITION_JA
-	.global Func_02005004
+	.global WorldMap_SetReturnLeavingScene
 	.thumb_func
-Func_02005004:
+WorldMap_SetReturnLeavingScene:
 	overlay_veneer WorldMap_SetReturnLeavingSceneFar
 	.endif
-	.global Func_0200500c
+	.global FieldItem_JumpToLeader
 	.thumb_func
-Func_0200500c:
+FieldItem_JumpToLeader:
 	overlay_veneer FieldItem_JumpToLeaderFar
 	.global Sound_Play
 	.thumb_func

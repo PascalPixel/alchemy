@@ -24,7 +24,7 @@ s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
 void Animation_ApplyChildArgument(void *sprite, s32 a);
 void KandoreanTemple_PuffSteam(struct Actor *object);
 void KandoreanTemple_PushNorth(struct Actor *object, s32 dz);
-void Func_020052c0(s32 id);
+void Actor_DisableById(s32 id);
 void BattleEffect_CleanupSceneObjects(void);
 void KandoreanTemple_BlowSteam(s32 *position, s32 value);
 void KandoreanTemple_BlowStreamSteam(void);
@@ -37,12 +37,12 @@ extern u32 gKandoreanTemple_StreamPuffScript[];
 
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-s32 Func_020053b0(void);
-void Func_020053c0(const void *data);
-void Func_020053c8(void);
-void Func_020053d0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+s32 Actor_GetCellIndex(void);
+void Actor_LiftTargetBlock(const void *data);
+void Actor_PlaceMovedBlock(void);
+void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
-void Func_02005338(s32 a);
+void FieldEffect_StartBlankOverlay(s32 a);
 void KandoreanTemple_StartLiftRoom(void);
 void KandoreanTemple_StartRoom2(void);
 void KandoreanTemple_StartChestbeaterRoom(void);
@@ -63,8 +63,8 @@ extern char SceneId_Ov653Room8;
 extern char SceneId_Ov653Room9;
 void KandoreanTemple_ShrinkColumn(s32 id, s32 dy, s32 scale);
 void Scene_QueueMusic(s32 a);
-void Func_02005390(void);
-void Func_020053a8(s32 a, s32 b, s32 c, s32 d);
+void Rope_Initialize(void);
+void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 void Actor_MoveToObject(s32 id, s32 target);
 void *HeapSlot_Alloc(s32 slot, s32 size);
 extern struct Actor *gKandoreanTemple_LashPebble;
@@ -104,13 +104,13 @@ static __inline__ void Func_020053d0_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
   /* FAKEMATCH(wrapper): the call through this inline, whose parameters give
    * each stack argument its own register, as in The Broken Seal's scene layer;
-   * as a direct call to Func_020053d0, which builds them all in r3, 8 of
+   * as a direct call to TileCopies_CopyTouchedCells, which builds them all in r3, 8 of
    * 15 instructions differ in tla-en (KandoreanTemple_CycloneFirstPatch). */
-  Func_020053d0(a, b, c, d, e, f, g);
+  TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
 static __inline__ void Func_020053a8_(s32 a, s32 b, s32 c, s32 d) {
-  Func_020053a8(a, b, c, d);
+  Rope_Place(a, b, c, d);
 }
 
 #endif

@@ -158,13 +158,13 @@ Actor_WalkByAndWaitById:
 	.thumb_func
 Actor_SetActionCallback:
 	overlay_veneer Actor_SetActionCallbackFar
-	.global Func_02000a90
+	.global Actor_FallOverById
 	.thumb_func
-Func_02000a90:
+Actor_FallOverById:
 	overlay_veneer Actor_FallOverByIdFar
-	.global Func_02000a98
+	.global Actor_FallOverWithAnimationById
 	.thumb_func
-Func_02000a98:
+Actor_FallOverWithAnimationById:
 	overlay_veneer Actor_FallOverWithAnimationByIdFar
 	.global Sound_Play
 	.thumb_func

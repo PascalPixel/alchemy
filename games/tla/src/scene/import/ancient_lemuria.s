@@ -186,9 +186,9 @@ Actor_WalkByById:
 	.thumb_func
 Actor_WalkByAndWaitById:
 	overlay_veneer Actor_WalkByAndWaitByIdFar
-	.global Func_02001a24
+	.global TileCopies_CopyTouchedCells
 	.thumb_func
-Func_02001a24:
+TileCopies_CopyTouchedCells:
 	overlay_veneer TileCopies_CopyTouchedCellsFar
 	.global Sound_Play
 	.thumb_func

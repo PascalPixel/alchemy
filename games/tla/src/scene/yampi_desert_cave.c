@@ -21,11 +21,11 @@
 #include "module/scene/yampi_desert_cave.h"
 #include "scene_ids.h"
 
-struct Actor *Func_02001948(s32 *position, s32 mode);
+struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 extern u16 *gYampiDesertCave_MarkColors;
 extern u16 *gYampiDesertCave_MarkDimColors;
 extern u16 *gYampiDesertCave_MarkCycleSlots;
-void Func_020018c8(s32 id);
+void Actor_DisableById(s32 id);
 
 extern s8 gYampiDesertCave_LogFootprints[];
 
@@ -276,7 +276,7 @@ s32 List_CountEntries(u16 *list);
 void PaletteCycle_Fade(void);
 void Statue_Sink(u16 *list, s32 mode, s32 count);
 void Actor_ReturnHome(s32 a, s32 b, s32 c);
-void Func_02001958(void);
+void Teleport_PlaySparks(void);
 
 static inline void YampiDesertCave_Call1920(s32 a, s32 b, s32 c) {
   Actor_ReturnHome(a, b, c);
@@ -389,7 +389,7 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *object) {
   position[1] = object->y;
   position[2] = object->z;
   Vector_AddPolarOffset(0x100000, angle, position);
-  hit = Func_02001948(position, 1);
+  hit = Actor_FindAtCell(position, 1);
   if (hit != 0) {
     i = 0;
   next:
@@ -496,7 +496,7 @@ void YampiDesertCave_ArriveByTeleport(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   YampiDesertCave_StartMarkFlash();
-  Func_02001950();
+  Teleport_PlayWhirl();
   wait(40);
   YampiDesertCave_StopMarkGlow();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
@@ -543,9 +543,9 @@ DEFINE_STATUE_SINK(Statue_Sink, YampiDesertCave_SetStakeCell)
 
 #include "field_event.h"
 
-s32 Func_02001940(struct Actor *object);
+s32 Actor_GetCellIndex(struct Actor *object);
 
-DEFINE_ACTOR_SET_CELL_OPEN(YampiDesertCave_SetStakeCell, Func_02001940,
+DEFINE_ACTOR_SET_CELL_OPEN(YampiDesertCave_SetStakeCell, Actor_GetCellIndex,
                            Import_ActorSelectAnimation)
 
 #include "battle.h"
@@ -602,7 +602,7 @@ void YampiDesertCave_TryPushLog(void) {
 #define DEFINE_TELEPORT_FROM_MARK(name, n1)                                    \
   void name(void) {                                                            \
     YampiDesertCave_StartMarkGlow();                                           \
-    Func_02001958();                                                           \
+    Teleport_PlaySparks();                                                           \
     {                                                                          \
       u8 *party = (u8 *)&gMainRoutineWork;                                     \
                                                                                \
@@ -878,14 +878,14 @@ void Actor_SetWideSprite(s32 id, s32 wide);
 /// priorities, and in each room the objects its flags place.
 s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
-  Func_02001928(0);
+  FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room1) {
     YampiDesertCave_SetMarkColors(
         gYampiDesertCave_MarkPaletteSlots, gYampiDesertCave_MarkColorsLit,
         gYampiDesertCave_MarkColorsDim, gYampiDesertCave_MarkCycle);
-    Func_020018c8(8);
-    Func_020018c8(9);
-    Func_020018c8(10);
+    Actor_DisableById(8);
+    Actor_DisableById(9);
+    Actor_DisableById(10);
     YampiDesertCave_SetLogCells(8);
     YampiDesertCave_SetLogCells(9);
     YampiDesertCave_SetLogCells(10);
@@ -926,10 +926,10 @@ s32 Scene_Initialize(void) {
       REG_BG3CNT &= ~3;
       REG_BG3CNT |= 3;
     }
-    Func_020018c8(8);
-    Func_020018c8(9);
-    Func_020018c8(10);
-    Func_020018c8(11);
+    Actor_DisableById(8);
+    Actor_DisableById(9);
+    Actor_DisableById(10);
+    Actor_DisableById(11);
     YampiDesertCave_SetLogCells(8);
     YampiDesertCave_SetLogCells(9);
     YampiDesertCave_SetLogCells(10);
@@ -976,7 +976,7 @@ s32 Scene_Initialize(void) {
       }
     }
   }
-  Func_02001928(0);
+  FieldEffect_StartBlankOverlay(0);
   return 0;
 }
 

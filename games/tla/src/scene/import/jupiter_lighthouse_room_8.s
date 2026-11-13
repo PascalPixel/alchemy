@@ -142,9 +142,9 @@ MapGrid_WaitForShakeToSettle:
 	.thumb_func
 Actor_SetSpriteColorMode:
 	overlay_veneer Actor_SetSpriteColorModeFar
-	.global Func_020021e0
+	.global MapGrid_SetCellHeight
 	.thumb_func
-Func_020021e0:
+MapGrid_SetCellHeight:
 	overlay_veneer MapGrid_SetCellHeightFar
 	.global Event_Wait
 	.thumb_func
@@ -194,9 +194,9 @@ Actor_SetSpriteColor:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_02002248
+	.global Actor_DisableById
 	.thumb_func
-Func_02002248:
+Actor_DisableById:
 	overlay_veneer Actor_DisableByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func
@@ -242,21 +242,21 @@ Camera_WorldToScreen:
 	.thumb_func
 Event_NoOp:
 	overlay_veneer Event_NoOpFar
-	.global Func_020022a8
+	.global Actor_FindAtCell
 	.thumb_func
-Func_020022a8:
+Actor_FindAtCell:
 	overlay_veneer Actor_FindAtCellFar
 	.global BattleEffect_GetObjectPriority
 	.thumb_func
 BattleEffect_GetObjectPriority:
 	overlay_veneer BattleEffect_GetObjectPriorityFar
-	.global Func_020022b8
+	.global MapGrid_GetCellBehavior
 	.thumb_func
-Func_020022b8:
+MapGrid_GetCellBehavior:
 	overlay_veneer MapGrid_GetCellBehaviorFar
-	.global Func_020022c0
+	.global MapGrid_SetAttributeBAt
 	.thumb_func
-Func_020022c0:
+MapGrid_SetAttributeBAt:
 	overlay_veneer MapGrid_SetAttributeBAtFar
 	.global Sound_Play
 	.thumb_func

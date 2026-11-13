@@ -141,12 +141,12 @@ void Func_020004e4(s32 a, s32 b) {
 
 void Func_02000534(s32 a) {
   struct MainRoutineWork *party;
-  s32 held = Func_02000d4c();
+  s32 held = Leader_CanPushObjectAhead();
 
   party = &gMainRoutineWork;
   if (held) {
     if (Field_FindNearbyTalkTarget(party->currentOwner) != -1) {
-      Func_02000d54();
+      Leader_PushObjectAhead();
       Func_020004e4(0, a);
     }
   } else {

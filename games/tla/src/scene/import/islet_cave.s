@@ -162,25 +162,25 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_0200131c
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_0200131c:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_0200132c
+	.global Teleport_PlayWhirl
 	.thumb_func
-Func_0200132c:
+Teleport_PlayWhirl:
 	overlay_veneer Teleport_PlayWhirlFar
-	.global Func_02001334
+	.global Teleport_PlaySparks
 	.thumb_func
-Func_02001334:
+Teleport_PlaySparks:
 	overlay_veneer Teleport_PlaySparksFar
-	.global Func_0200133c
+	.global BattleEffect_PackTargetBuffer
 	.thumb_func
-Func_0200133c:
+BattleEffect_PackTargetBuffer:
 	overlay_veneer BattleEffect_PackTargetBufferFar
 	.global Sound_Play
 	.thumb_func

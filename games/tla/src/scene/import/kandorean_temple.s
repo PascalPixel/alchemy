@@ -262,9 +262,9 @@ Actor_FaceDirectionById:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_020052c0
+	.global Actor_DisableById
 	.thumb_func
-Func_020052c0:
+Actor_DisableById:
 	overlay_veneer Actor_DisableByIdFar
 	.global Actor_ShowEmoteById
 	.thumb_func
@@ -322,9 +322,9 @@ Event_WaitTransitionFrames:
 	.thumb_func
 ItemDisplay_ShowPicture:
 	overlay_veneer ItemDisplay_ShowPictureFar
-	.global Func_02005338
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_02005338:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global FieldPsynergy_RunHandler
 	.thumb_func
@@ -366,41 +366,41 @@ Actor_WatchAndSetScript:
 	.thumb_func
 Scene_QueueMusic:
 	overlay_veneer Scene_QueueMusicFar
-	.global Func_02005390
+	.global Rope_Initialize
 	.thumb_func
-Func_02005390:
+Rope_Initialize:
 	overlay_veneer Rope_InitializeFar
-	.global Func_02005398
+	.global Tightrope_Initialize
 	.thumb_func
-Func_02005398:
+Tightrope_Initialize:
 	overlay_veneer Tightrope_InitializeFar
-	.global Func_020053a0
+	.global Tightrope_Place
 	.thumb_func
-Func_020053a0:
+Tightrope_Place:
 	overlay_veneer Tightrope_PlaceFar
-	.global Func_020053a8
+	.global Rope_Place
 	.thumb_func
-Func_020053a8:
+Rope_Place:
 	overlay_veneer Rope_PlaceFar
-	.global Func_020053b0
+	.global Actor_GetCellIndex
 	.thumb_func
-Func_020053b0:
+Actor_GetCellIndex:
 	overlay_veneer Actor_GetCellIndexFar
-	.global Func_020053b8
+	.global Actor_PlaceBlocks
 	.thumb_func
-Func_020053b8:
+Actor_PlaceBlocks:
 	overlay_veneer Actor_PlaceBlocksFar
-	.global Func_020053c0
+	.global Actor_LiftTargetBlock
 	.thumb_func
-Func_020053c0:
+Actor_LiftTargetBlock:
 	overlay_veneer Actor_LiftTargetBlockFar
-	.global Func_020053c8
+	.global Actor_PlaceMovedBlock
 	.thumb_func
-Func_020053c8:
+Actor_PlaceMovedBlock:
 	overlay_veneer Actor_PlaceMovedBlockFar
-	.global Func_020053d0
+	.global TileCopies_CopyTouchedCells
 	.thumb_func
-Func_020053d0:
+TileCopies_CopyTouchedCells:
 	overlay_veneer TileCopies_CopyTouchedCellsFar
 	.global Sound_Play
 	.thumb_func

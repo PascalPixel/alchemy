@@ -226,21 +226,21 @@ Event_ResolvePendingActions:
 	.thumb_func
 Actor_WatchAndSetScript:
 	overlay_veneer Actor_WatchAndSetScriptFar
-	.global Func_020012f4
+	.global Rope_Initialize
 	.thumb_func
-Func_020012f4:
+Rope_Initialize:
 	overlay_veneer Rope_InitializeFar
-	.global Func_020012fc
+	.global Tightrope_Initialize
 	.thumb_func
-Func_020012fc:
+Tightrope_Initialize:
 	overlay_veneer Tightrope_InitializeFar
-	.global Func_02001304
+	.global Tightrope_Place
 	.thumb_func
-Func_02001304:
+Tightrope_Place:
 	overlay_veneer Tightrope_PlaceFar
-	.global Func_0200130c
+	.global Rope_Place
 	.thumb_func
-Func_0200130c:
+Rope_Place:
 	overlay_veneer Rope_PlaceFar
 	.global Party_GetLeaderActor
 	.thumb_func

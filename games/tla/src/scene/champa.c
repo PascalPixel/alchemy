@@ -32,13 +32,13 @@
 struct Actor;
 extern s16 gChampa_ActorPlacementsOnceBriggsSailed[];
 extern s32 gChampa_Doors[];
-s32 Func_02002a5c();
+s32 Event_PickUpItem();
 extern struct Trigger gChampa_Triggers[];
 extern struct Trigger gChampa_TriggersOnceBriggsSailed[];
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 extern s16 gChampa_NoDoorEdit[];
 extern s16 gChampa_DoorEdit[];
-s32 Func_02002bac();
+s32 Tightrope_Place();
 s32 Window_CloseMatchingId();
 
 /// Sends an actor walking to where another stands, if it is on the map.
@@ -297,7 +297,7 @@ void Champa_TakeFeizhisGift(s32 a0) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  t2 = Value3(Func_02002a5c, a0, 0x19f, -1);
+  t2 = Value3(Event_PickUpItem, a0, 0x19f, -1);
   if (t2 == 0) {
     Event_ClearFlag(FLAG_FEIZHIS_GIFT_WAITING);
   }
@@ -521,7 +521,7 @@ void Champa_RotatePaletteColors(void) {
   }
 }
 
-s32 Func_02002ba4();
+s32 Tightrope_Initialize();
 
 s32 Scene_Initialize(void) {
   s32 t12;
@@ -536,8 +536,8 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpritePriority(13, 3);
   Actor_Get(23)->scaleX = 0x8000;
   Actor_Get(23)->scaleY = 0x8000;
-  Func_02002ba4();
-  Func_02002bac(0, 8, 9);
+  Tightrope_Initialize();
+  Tightrope_Place(0, 8, 9);
   Map_SetLayerEntryFlag(3);
   t12 = Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA);
   if (t12 != 0) {

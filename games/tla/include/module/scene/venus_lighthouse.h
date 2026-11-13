@@ -48,7 +48,7 @@ extern s32 gPushLeaderSteps[];
 
 void VenusLighthouse_FelixLeaves(void);
 
-void Func_02001cd4(s32 actor);
+void Actor_VanishInSparks(s32 actor);
 
 void VenusLighthouse_RepelLeader(void);
 

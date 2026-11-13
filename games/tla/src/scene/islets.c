@@ -1300,7 +1300,7 @@ void Func_02002430(void) {
     ((u8 *)first)[0x62] = 0;
     ((void (*)())Func_020020ec)(gData_0200519c, gData_02005194, 2);
   }
-  Func_02003fe4();
+  Leader_PushObjectAhead();
   Func_020021d0();
   Event_End();
 }
@@ -1355,32 +1355,32 @@ void Func_020025b0(void) {
 // The following six are from patch 1.
 #if TLA_PATCH_1
 void Func_020025bc(void) {
-  Call7((void (*)())Func_02003fec, 65, 0, 4, 4, 65, 10, 1);
+  Call7((void (*)())TileCopies_CopyTouchedCells, 65, 0, 4, 4, 65, 10, 1);
   return;
 }
 
 void Func_020025dc(void) {
-  Call7((void (*)())Func_02003fec, 65, 0, 2, 2, 71, 10, 1);
+  Call7((void (*)())TileCopies_CopyTouchedCells, 65, 0, 2, 2, 71, 10, 1);
   return;
 }
 
 void Func_020025fc(void) {
-  Call7((void (*)())Func_02003fec, 65, 0, 1, 1, 68, 15, 1);
+  Call7((void (*)())TileCopies_CopyTouchedCells, 65, 0, 1, 1, 68, 15, 1);
   return;
 }
 
 void Func_0200261c(void) {
-  Call7((void (*)())Func_02003fec, 65, 0, 2, 3, 75, 20, 1);
+  Call7((void (*)())TileCopies_CopyTouchedCells, 65, 0, 2, 3, 75, 20, 1);
   return;
 }
 
 void Func_0200263c(void) {
-  Call7((void (*)())Func_02003fec, 65, 0, 4, 1, 78, 22, 1);
+  Call7((void (*)())TileCopies_CopyTouchedCells, 65, 0, 4, 1, 78, 22, 1);
   return;
 }
 
 void Func_0200265c(void) {
-  Call7((void (*)())Func_02003fec, 65, 0, 1, 1, 79, 23, 1);
+  Call7((void (*)())TileCopies_CopyTouchedCells, 65, 0, 1, 1, 79, 23, 1);
   return;
 }
 #endif
@@ -1803,8 +1803,8 @@ void Func_02003164(void) {
     FieldActor_SetSpritePriority(10, 1);
   }
   Actor_SetPosition(11, 0, 0);
-  Func_02003f4c(12);
-  Func_02003f4c(13);
+  Actor_DisableById(12);
+  Actor_DisableById(13);
   set = Event_GetFlag(0x212);
   if (set) {
     struct Actor *first = Actor_Get(12);
@@ -1828,7 +1828,7 @@ void Func_02003164(void) {
     Func_020020ec(first->x, first->z, 3, 255);
     Func_020020ec(second->x, second->z, 3, 255);
   }
-  Func_02003f4c(14);
+  Actor_DisableById(14);
   last = Actor_Get(14);
   {
     // A local that holds 0, as the native keeps its own register for it.

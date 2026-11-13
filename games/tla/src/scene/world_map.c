@@ -40,14 +40,14 @@
 #include "module/game/game.h"
 #include "scene_ids.h"
 
-s32 Func_02004c38(s32 a, s32 b, s32 c);
-void Func_02004b28(void);
+s32 Event_PickUpItem(s32 a, s32 b, s32 c);
+void Actor_StartRenderModeScript(void);
 void Import_WorldMapFreeze(void);
-void Func_02004db0(void);
+void WorldMap_ReloadPendingAreaGraphics(void);
 s32 Field_FindNearbyTalkTarget(s32 owner);
 s32 WorldMap_IsWalkable(struct Actor *object, s32 *position);
 void Import_SceneTalkToActor(s32 value);
-void Func_02004c00(void);
+void Party_GivePiersDjinn(void);
 void Event_WaitForZoomTransition(void);
 void DjinnMenu_Run(void);
 void Party_RestoreHpPp(s32 value);
@@ -230,7 +230,7 @@ void WorldMap_SetUpFlyingShip(void) {
     Message_ShowCentered((s32)MsgBlank2, 4);
   }
   if (Actor_Get(FieldParty_GetLeaderActor()) != NULL)
-    Func_02004b28();
+    Actor_StartRenderModeScript();
   Func_02003bf0();
   if (Event_GetFlag(0x147))
     work[3387] = 0;
@@ -238,7 +238,7 @@ void WorldMap_SetUpFlyingShip(void) {
     work[3387] = 1;
   if (Event_GetFlag(0x147)) {
     Message_CloseFinishedWindows();
-    Func_02004db0();
+    WorldMap_ReloadPendingAreaGraphics();
   }
   Func_020049bc();
   {
@@ -479,7 +479,7 @@ void WorldMap_RefuseToRunAway(void) {
       Import_WorldMapFreeze();
       FieldEvent_SetMessageId((s32)MsgWeShouldnT);
       Event_ShowMessage(5, 0);
-      Func_02004db0();
+      WorldMap_ReloadPendingAreaGraphics();
       Actor_JoinLeader(5);
       System_Wait(1);
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 7312, 8192);
@@ -499,7 +499,7 @@ void WorldMap_RefuseToRunAway(void) {
       Import_WorldMapFreeze();
       FieldEvent_SetMessageId((s32)MsgYouReNot);
       Event_ShowMessage(5, 0);
-      Func_02004db0();
+      WorldMap_ReloadPendingAreaGraphics();
       Actor_FaceDirection(5, west, 0);
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 258);
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, x + 12, besideZ);
@@ -511,7 +511,7 @@ void WorldMap_RefuseToRunAway(void) {
       Event_ShowMessage(5, 0);
       Actor_SetAnimation(5, 3);
       Event_ShowMessage(5, 0);
-      Func_02004db0();
+      WorldMap_ReloadPendingAreaGraphics();
       Actor_JoinLeader(5);
       System_Wait(1);
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 7312, 8192);
@@ -587,7 +587,7 @@ void WorldMap_GazeIntoPond(void) {
 void Func_02000d1c(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (Value3((s32 (*)())Func_02004c38, 19, 0x198, -1) == 0)
+  if (Value3((s32 (*)())Event_PickUpItem, 19, 0x198, -1) == 0)
     Event_ClearFlag(0xa77);
   Event_End();
 }
@@ -679,7 +679,7 @@ s32 Scene_Initialize(void) {
     WorldMap_DriftNorthOfContinent();
     break;
   case 70:
-    Func_02004c00();
+    Party_GivePiersDjinn();
     break;
   case 2:
     if (GameFlag_Get(55) == 0) {
@@ -735,7 +735,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// ★ Named from the game: "To give your Djinni to someone else, move it like
 /// this." (MsgDjinnGiveTutorialA)
 void WorldMap_ExplainGivingDjinn(void) {
-  Func_02004db0();
+  WorldMap_ReloadPendingAreaGraphics();
   FieldEffect_ScheduleRatioTransition(0x10000, 6);
   Event_WaitForZoomTransition();
   Import_WorldMapFreeze();
@@ -793,7 +793,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Import_WorldMapFreeze();
     Event_SetMessageId((s32)MsgHeyWaitA);
     FieldEvent_ShowMessageThenWait(20, 0, 5);
-    Func_02004db0();
+    WorldMap_ReloadPendingAreaGraphics();
     FieldEffect_ScheduleRatioTransition(0x18ccc, 16);
     Actor_ShowEmote(4, 0x102, 30);
     Actor_WalkByAndWait(4, 0, 32);
@@ -902,7 +902,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
       FieldEvent_SetAfterBattleDestination(worldMap, 73);
       Party_SetFields1f2And1f4(worldMap, 74);
     }
-    Func_02004db0();
+    WorldMap_ReloadPendingAreaGraphics();
     FieldCamera_MoveTo(-1, -1, -1, 0);
     Field_RequestBattleFromEncounterTable(102, 3);
   } else if (entrance == 74) {
@@ -1093,7 +1093,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     }
     Actor_WaitForMoveById(23);
     Actor_SetPosition(23, 0, 0);
-    Func_02004db0();
+    WorldMap_ReloadPendingAreaGraphics();
     FieldEffect_ScheduleRatioTransition(0x10000, 15);
     Event_End();
   }
@@ -1156,7 +1156,7 @@ void WorldMap_DeliverLohoCannon(void) {
   FieldActor_RefreshSelectorById(16);
   FieldActor_RefreshSelectorById(17);
   FieldActor_RefreshSelectorById(18);
-  Func_02004db0();
+  WorldMap_ReloadPendingAreaGraphics();
   FieldEvent_Wait(30);
   FieldEffect_ScheduleRatioTransition(0x10000, 6);
   Event_End();
@@ -1236,7 +1236,7 @@ void WorldMap_MeetEcho(void) {
     Event_SetMessageId(TUTORIAL_SET_MESSAGE(flag, MsgHey2));
     i = 15;
     Event_ShowMessageAndWait(9, 0);
-    Func_02004db0();
+    WorldMap_ReloadPendingAreaGraphics();
     FieldEffect_ScheduleRatioTransition(0x13333, 6);
     Event_WaitForZoomTransition();
     Import_WorldMapFreeze();
@@ -1404,7 +1404,7 @@ void WorldMap_MeetEcho(void) {
   Actor_WalkToAndWait(9, x >> 16, z >> 16);
 tutorial:
   WorldMap_ExplainGivingDjinn();
-  Func_02004db0();
+  WorldMap_ReloadPendingAreaGraphics();
   return;
 refused:
   Actor_SetModeById(owner, 22);
@@ -1419,7 +1419,7 @@ refused:
   DjinnMenu_Run();
   Actor_Jump(9, 2, 20);
   Event_ShowMessageAndWait(9, 0);
-  Func_02004db0();
+  WorldMap_ReloadPendingAreaGraphics();
   // The constant local: with a plain 0 here, the zero that motionFlags = 2
   // leaves is shared by the first visit's stores of 0 and its reloads take
   // other registers (differ 26).
@@ -1498,7 +1498,7 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   MapGrid_SetShake(0x40000, 0x40000, 0x10000);
   FieldEvent_Wait(30);
   Event_ShowMessage(5, 0);
-  Func_02004db0();
+  WorldMap_ReloadPendingAreaGraphics();
   Event_PlaySound(145);
   PaletteFade_ApplySource(0x7fff, 0);
   PaletteFade_ApplyTarget(0x10000, 0);
@@ -1511,7 +1511,7 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   Import_WorldMapFreeze();
   MapGrid_SetShake(0x30000, 0x30000, 0x10000);
   Event_ShowMessage(9, 0);
-  Func_02004db0();
+  WorldMap_ReloadPendingAreaGraphics();
   MapGrid_SetShake(0x70000, 0x70000, 0x10000);
   FieldCamera_MoveTo(PIXELS(1988), -1, PIXELS(7553), 1);
   FieldEffect_ScheduleRatioTransition(0x9999, 60);
@@ -1520,7 +1520,7 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   Import_WorldMapFreeze();
   Event_ShowMessage(5, 0);
   Event_ShowMessage(8, 0);
-  Func_02004db0();
+  WorldMap_ReloadPendingAreaGraphics();
   Event_PlaySound(145);
   Func_02002640(0, 128, 0, 0);
   Actor_SetAnimation(5, 19);
@@ -1538,7 +1538,7 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   MapGrid_SetShake(0x30000, 0x30000, 0x10000);
   Event_ShowMessage(9, 0);
   Event_ShowMessage(5, 0);
-  Func_02004db0();
+  WorldMap_ReloadPendingAreaGraphics();
   MapGrid_SetShake(0x30000, 0x30000, 0x10000);
   Func_02002640(96, 128, 32, 0);
   System_Wait(20);
@@ -1675,7 +1675,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   Event_ShowMessage(gMainRoutineWork.currentOwner, 0);
   Event_ShowMessage(8, 0);
   Event_PlaySound(61);
-  Func_02004db0();
+  WorldMap_ReloadPendingAreaGraphics();
   FieldCamera_SetSpeed(0x40000, 0x8000);
   FieldCamera_MoveTo(0x283f0000, -1, 0x1e8c0000, 1);
   for (i = 31; i >= 0; i--) {
@@ -1692,7 +1692,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   Event_ShowMessage(6, 0);
   Event_ShowMessage(8, 0);
   MapGrid_SetShake(0x10000, 0x20000, 0x10000);
-  Func_02004db0();
+  WorldMap_ReloadPendingAreaGraphics();
   FieldEffect_ScheduleRatioTransition(0x9999, 1);
   map->unk11e = 0;
   map->unk11c = 0xe000;
@@ -1817,7 +1817,7 @@ void WorldMap_TakeTheTiller(void) {
     Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
     gMainRoutineWork.renderMode = 7;
     gMainRoutineWork.ownerOverride = 1;
-    Func_02004db0();
+    WorldMap_ReloadPendingAreaGraphics();
     Event_SetFlag(0x8de);
     Actor_SetPosition(7, 0, 0);
     Actor_SetPosition(6, 0, 0);
@@ -1930,7 +1930,7 @@ void WorldMap_TakeOff(void) {
   FieldEvent_Wait(40);
   Event_ShowMessage(23, 0);
   Scene_PlayMusic();
-  Func_02004db0();
+  WorldMap_ReloadPendingAreaGraphics();
   i = 0;
   {
   restore:

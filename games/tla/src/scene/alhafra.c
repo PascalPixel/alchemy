@@ -32,7 +32,7 @@
 void Alhafra_LookoutSeesMadrasMayor(s32 a0);
 void Alhafra_TalkToHungryBoy(s32 a);
 void Alhafra_TakeLeadersLayer();
-s32 Func_02001d3c();
+s32 Actor_TakeLeaderLayer();
 void Alhafra_ReadLookoutsMind(void);
 void Alhafra_DrawLookoutBehind(void);
 void Alhafra_DrawLookoutInFront(void);
@@ -186,12 +186,12 @@ void Alhafra_DrawLookoutInFront(void) {
   FieldActor_SetSpritePriority(ACTOR_LOOKOUT, 3);
 }
 
-s32 Func_02001d2c();
+s32 FlagBlock_ApplyFlags();
 extern s16 gAlhafra_Puddles[];
 
 void Alhafra_FreezePuddle(s32 a0, s32 a1) {
 
-  Func_02001d2c((s32)gAlhafra_Puddles);
+  FlagBlock_ApplyFlags((s32)gAlhafra_Puddles);
   Actor_GetById(a1)->priorityFlags = 0;
 }
 
@@ -437,7 +437,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(14, PIXELS(536), PIXELS(760));
     if (GameFlag_Get(FLAG_LOOKOUT_LEFT))
       Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
-    Func_02001d24((s32)&gAlhafra_Puddles);
+    FlagBlock_PlaceAllMarkingEdges((s32)&gAlhafra_Puddles);
     Actor_SetActionCallback(Actor_GetById(26), 9);
     Actor_SetActionCallback(Actor_GetById(27), 9);
     Actor_SetActionCallback(Actor_GetById(28), 9);
@@ -476,7 +476,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-void Alhafra_TakeLeadersLayer(void) { Func_02001d3c(); }
+void Alhafra_TakeLeadersLayer(void) { Actor_TakeLeaderLayer(); }
 
 extern s32 gAlhafra_OfficialStepsBackScript[];
 extern u32 gAlhafra_PasserbyWalksOffScript[];

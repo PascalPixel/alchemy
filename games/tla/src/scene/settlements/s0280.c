@@ -128,7 +128,7 @@ void Settlements_CutStairsBush(void) {
     FieldActor_Jump(gMainRoutineWork.currentOwner, 2, 0);
     Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 88, 296);
   }
-  Func_020021a0(5, 70, 9, 7, 5, 43, 1);
+  TileCopies_CopyTouchedCells(5, 70, 9, 7, 5, 43, 1);
   MapGrid_CopyCellsTo(4, 25, 5, 17, 1, 1);
   MapGrid_CopyCellAttributes(4, 25, 1, 1, 5, 17);
   Event_SetFlag(0xa60);
@@ -283,10 +283,10 @@ s32 Settlements_CircleCentre(s32 *p) {
   return 0;
 }
 
-void Func_02002180(s32 a, s32 b, s32 c, s32 d);
+void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 
 static __inline__ void Settlements_Func_02002180(s32 a, s32 b, s32 c, s32 d) {
-  Func_02002180(a, b, c, d);
+  Rope_Place(a, b, c, d);
 }
 
 void Settlements_SetUpKaltIsland(void) {
@@ -301,8 +301,8 @@ void Settlements_SetUpKaltIsland(void) {
 
     FieldTask_AddFrame(Settlements_PuffChimneySmoke, priority);
   }
-  Func_02002170();
-  Func_02002170();
+  Rope_Initialize();
+  Rope_Initialize();
   Settlements_Func_02002180(1, 0x203, 8, 9);
   if (Event_GetFlag(0xf5d)) {
     Actor_SetPosition(11, 0, 0);
@@ -343,8 +343,8 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room7)
     Settlements_SetUpKaltIsland();
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room9) {
-    Func_02002140(0);
-    Func_02002188(gSettlements_FallsObjects);
+    FieldEffect_StartBlankOverlay(0);
+    Actor_PlaceBlocks(gSettlements_FallsObjects);
     if (Event_GetFlag(0x206))
       Actor_SetPosition(10, 0, 0);
     Actor_GetById(10)->priorityFlags |= 2;
@@ -372,12 +372,12 @@ s32 Scene_Initialize(void) {
       Event_ClearFlag(0x220);
       Settlements_StepOntoWall();
     }
-    Func_02002188(gSettlements_WallCrate);
+    Actor_PlaceBlocks(gSettlements_WallCrate);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room3)
-    Func_02002140(0);
+    FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room6)
-    Func_02002140(0);
+    FieldEffect_StartBlankOverlay(0);
   return 0;
 }
 
@@ -456,7 +456,7 @@ loop:
 }
 
 void Settlements_LashRope(void) {
-  Func_02002178(1, 8, 9);
+  Rope_Lash(1, 8, 9);
   Event_SetFlag(0x203);
 }
 
@@ -534,12 +534,12 @@ DEFINE_LAYER_TRACK_SCROLL(Layer_TrackScroll, gSettlements_WaterfallLine,
 DEFINE_SCROLL_START_HBLANK(Scroll_StartHBlank, Scroll_HBlank, Layer_TrackScroll)
 
 void Settlements_UnblockFallsObjects(void) {
-  Func_02002190(gSettlements_FallsObjects);
+  Actor_LiftTargetBlock(gSettlements_FallsObjects);
 }
 
 void Settlements_BlockFallsObject(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 2;
-  Func_02002190(gSettlements_FallsObjects);
+  Actor_LiftTargetBlock(gSettlements_FallsObjects);
 }
 
 void Settlements_SplashCrate(s32 id);
@@ -630,17 +630,17 @@ void Settlements_SlideCrateDownFalls(void) {
 }
 
 void Settlements_MovePillar(void) {
-  Func_02002198();
+  Actor_PlaceMovedBlock();
   Settlements_SinkPillar();
 }
 
 void Settlements_MoveCrate(void) {
-  Func_02002198();
+  Actor_PlaceMovedBlock();
   Settlements_SlideCrateDownFalls();
 }
 
 void Settlements_PushIntoFalls(void) {
-  Func_02002198();
+  Actor_PlaceMovedBlock();
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags += 254;
   Settlements_SinkPillar();
   Settlements_SlideCrateDownFalls();
@@ -679,7 +679,7 @@ void Settlements_UnblockCrate(void) {
   s32 z = object->z >> 20;
 
   Settlements_SaveWallCells();
-  Func_02002190(gSettlements_WallCrate);
+  Actor_LiftTargetBlock(gSettlements_WallCrate);
   if (x == 12 && z == 15) {
     MapGrid_CopyCellAttributes(42, 3, 7, 3, 42, 14);
     MapGrid_CopyCellAttributes(42, 9, 10, 10, 11, 73);
@@ -757,7 +757,7 @@ void Settlements_DropCrate(void) {
 }
 
 void Settlements_BlockCrate(void) {
-  Func_02002198();
+  Actor_PlaceMovedBlock();
   Settlements_RestoreWallCells();
   Settlements_DropCrate();
 }

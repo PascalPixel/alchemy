@@ -106,9 +106,9 @@ Import_ActorSelectAnimation:
 	.thumb_func
 Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
-	.global Func_02004b28
+	.global Actor_StartRenderModeScript
 	.thumb_func
-Func_02004b28:
+Actor_StartRenderModeScript:
 	overlay_veneer Actor_StartRenderModeScriptFar
 	.global Import_ActorCreate
 	.thumb_func
@@ -158,9 +158,9 @@ Actor_SetSpriteColorMode:
 	.thumb_func
 WorldMap_IsWalkable:
 	overlay_veneer WorldMap_IsWalkableFar
-	.global Func_02004b90
+	.global WorldMap_GetBlockPlace
 	.thumb_func
-Func_02004b90:
+WorldMap_GetBlockPlace:
 	overlay_veneer WorldMap_GetBlockPlaceFar
 	.global WorldMap_GetCollision
 	.thumb_func
@@ -214,17 +214,17 @@ DjinnRecovery_AddStandby:
 	.thumb_func
 Party_RestoreHpPp:
 	overlay_veneer Party_RestoreHpPpFar
-	.global Func_02004c00
+	.global Party_GivePiersDjinn
 	.thumb_func
-Func_02004c00:
+Party_GivePiersDjinn:
 	overlay_veneer Party_GivePiersDjinnFar
-	.global Func_02004c08
+	.global Party_DrainPp
 	.thumb_func
-Func_02004c08:
+Party_DrainPp:
 	overlay_veneer Party_DrainPpFar
-	.global Func_02004c10
+	.global Party_GetPpRatio
 	.thumb_func
-Func_02004c10:
+Party_GetPpRatio:
 	overlay_veneer Party_GetPpRatioFar
 	.global Event_Wait
 	.thumb_func
@@ -242,9 +242,9 @@ Event_End:
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
 	overlay_veneer Event_AskYesNoWithActorAnimationFar
-	.global Func_02004c38
+	.global Event_PickUpItem
 	.thumb_func
-Func_02004c38:
+Event_PickUpItem:
 	overlay_veneer Event_PickUpItemFar
 	.global Actor_GetById
 	.thumb_func
@@ -430,9 +430,9 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Import_WorldMapFreeze:
 	overlay_veneer WorldMap_FreezeFar
-	.global Func_02004db0
+	.global WorldMap_ReloadPendingAreaGraphics
 	.thumb_func
-Func_02004db0:
+WorldMap_ReloadPendingAreaGraphics:
 	overlay_veneer WorldMap_ReloadPendingAreaGraphicsFar
 	.global Event_ResolvePendingActions
 	.thumb_func

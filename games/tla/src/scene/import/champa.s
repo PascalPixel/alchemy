@@ -86,9 +86,9 @@ Event_End:
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
 	overlay_veneer Event_AskYesNoWithActorAnimationFar
-	.global Func_02002a5c
+	.global Event_PickUpItem
 	.thumb_func
-Func_02002a5c:
+Event_PickUpItem:
 	overlay_veneer Event_PickUpItemFar
 	.global Actor_GetById
 	.thumb_func
@@ -250,13 +250,13 @@ Actor_GetSpriteById:
 	.thumb_func
 Actor_SetActionCallback:
 	overlay_veneer Actor_SetActionCallbackFar
-	.global Func_02002ba4
+	.global Tightrope_Initialize
 	.thumb_func
-Func_02002ba4:
+Tightrope_Initialize:
 	overlay_veneer Tightrope_InitializeFar
-	.global Func_02002bac
+	.global Tightrope_Place
 	.thumb_func
-Func_02002bac:
+Tightrope_Place:
 	overlay_veneer Tightrope_PlaceFar
 	.global Party_GetLeaderActor
 	.thumb_func

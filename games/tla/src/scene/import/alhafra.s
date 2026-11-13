@@ -186,21 +186,21 @@ Actor_WatchAndSetScript:
 	.thumb_func
 Actor_SetActionCallback:
 	overlay_veneer Actor_SetActionCallbackFar
-	.global Func_02001d24
+	.global FlagBlock_PlaceAllMarkingEdges
 	.thumb_func
-Func_02001d24:
+FlagBlock_PlaceAllMarkingEdges:
 	overlay_veneer FlagBlock_PlaceAllMarkingEdgesFar
-	.global Func_02001d2c
+	.global FlagBlock_ApplyFlags
 	.thumb_func
-Func_02001d2c:
+FlagBlock_ApplyFlags:
 	overlay_veneer FlagBlock_ApplyFlagsFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_02001d3c
+	.global Actor_TakeLeaderLayer
 	.thumb_func
-Func_02001d3c:
+Actor_TakeLeaderLayer:
 	overlay_veneer Actor_TakeLeaderLayerFar
 	.global Shop_Run
 	.thumb_func

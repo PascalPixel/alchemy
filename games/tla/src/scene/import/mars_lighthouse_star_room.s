@@ -150,9 +150,9 @@ Map_GetTerrainHeight:
 	.thumb_func
 MapGrid_GetCellBehaviorAt:
 	overlay_veneer MapGrid_GetCellBehaviorAtFar
-	.global Func_0200422c
+	.global MapGrid_GetCellAttributeLowNibbleOrBump
 	.thumb_func
-Func_0200422c:
+MapGrid_GetCellAttributeLowNibbleOrBump:
 	overlay_veneer MapGrid_GetCellAttributeLowNibbleOrBumpFar
 	.global Map_CopyCellsRect
 	.thumb_func
@@ -194,9 +194,9 @@ Actor_SetSpriteColorMode:
 	.thumb_func
 Actor_SetSpritePriorityDirect:
 	overlay_veneer Actor_SetSpritePriorityDirectFar
-	.global Func_02004284
+	.global Actor_HasArrived
 	.thumb_func
-Func_02004284:
+Actor_HasArrived:
 	overlay_veneer Actor_HasArrivedFar
 	.global Import_FieldCheckSpheresOverlap
 	.thumb_func
@@ -414,9 +414,9 @@ Event_WaitTransitionFrames:
 	.thumb_func
 ObjectTable_Get:
 	overlay_veneer ObjectTable_GetFar
-	.global Func_0200443c
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_0200443c:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolveAllPendingActions
 	.thumb_func

@@ -137,7 +137,7 @@ struct LemurianShipEventWork {
 
 void Event_Start(void);
 void Event_End(void);
-void Func_02002dc0(const void *script);
+void FlagBlock_ApplyFlags(const void *script);
 void Actor_SelectAnimation(struct LemurianShipObject *object, s32 mode);
 void Actor_SetSpriteFlags(struct LemurianShipObject *object, u32 value);
 void Actor_SetBlendMode(struct LemurianShipObject *object, s32 flags);
@@ -145,7 +145,7 @@ void FieldPsynergy_RunHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
-void Func_02002db8(const void *script);
+void FlagBlock_PlaceAll(const void *script);
 void Event_StartScreenTransition(void);
 
 void Actor_MoveToObject(s32 actor, s32 target);
@@ -154,8 +154,8 @@ void Actor_MoveToObject(s32 actor, s32 target);
 
 void Map_CenterOnFollowedPoint(void);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
-void Func_02002dd0(const void *script);
-void Func_02002dd8(void);
+void Actor_LiftTargetBlock(const void *script);
+void Actor_PlaceMovedBlock(void);
 
 // ---- this overlay
 
@@ -176,7 +176,7 @@ extern s16 gData_0200304e[];
 void Func_02001a04(void);
 void LemurianShip_FindMonstersAboard(void);
 void Actor_StartScript(struct LemurianShipObject *object, const void *script);
-void Func_02002dc8(const void *script);
+void Actor_PlaceBlocks(const void *script);
 extern u32 gData_02003ef8[];
 #undef Actor_SetBlendMode
 #undef Actor_SetSpriteFlags
@@ -442,11 +442,11 @@ void LemurianShip_ExamineEngine(void) {
   Event_End();
 }
 
-void Func_02000770(void) { Func_02002dd0(gData_02003010); }
+void Func_02000770(void) { Actor_LiftTargetBlock(gData_02003010); }
 
-void Func_02000780(void) { Func_02002dd8(); }
+void Func_02000780(void) { Actor_PlaceMovedBlock(); }
 
-void Func_02000788(void) { Func_02002dd0(gData_02003010); }
+void Func_02000788(void) { Actor_LiftTargetBlock(gData_02003010); }
 
 void Func_02000798(void) {
   struct LemurianShipObject *object;
@@ -454,7 +454,7 @@ void Func_02000798(void) {
   u8 *flags;
   s32 moving;
 
-  Func_02002dd8();
+  Actor_PlaceMovedBlock();
   object = ((struct LemurianShipObject *)Actor_GetById(8));
   x = object->x >> 20;
   if (x == 16) {
@@ -477,16 +477,16 @@ void Func_02000798(void) {
   }
 }
 
-void Func_02000818(void) { Func_02002dc0(gData_02003014); }
+void Func_02000818(void) { FlagBlock_ApplyFlags(gData_02003014); }
 
-void Func_02000828(void) { Func_02002dc0(gData_0200301e); }
+void Func_02000828(void) { FlagBlock_ApplyFlags(gData_0200301e); }
 
 void Func_02000838(void) {
   MapGrid_CopyCellAttributes(110, 1, 3, 1, 110, 4);
   Event_SetFlag(0x212);
 }
 
-void Func_02000860(void) { Func_02002dc0(gData_02003034); }
+void Func_02000860(void) { FlagBlock_ApplyFlags(gData_02003034); }
 
 void Func_02000870(void) {
   struct LemurianShipObject *leader;
@@ -760,10 +760,10 @@ void Func_02000e2c(void) {
   }
 }
 
-void Func_020010bc(void) { Func_02002dd0(gData_0200304e); }
+void Func_020010bc(void) { Actor_LiftTargetBlock(gData_0200304e); }
 
 void Func_020010cc(void) {
-  Func_02002dd8();
+  Actor_PlaceMovedBlock();
   Func_02000e2c();
 }
 
@@ -1237,7 +1237,7 @@ void Func_02001c88(void) {
     Actor_SetSpritePriority(11, 1);
     wait(1);
   }
-  Func_02002db8(gData_02003014);
+  FlagBlock_PlaceAll(gData_02003014);
   if (Event_GetFlag(0x220)) {
     Func_02001944(8, 10);
     Event_ClearFlag(0x220);
@@ -1269,7 +1269,7 @@ void Func_02001dc8(s32 id) {
 void Func_02001e0c(void) {
   ((struct LemurianShipObject *)Actor_GetById(gMainRoutineWork.currentOwner))
       ->priorityFlags |= 32;
-  Func_02002dc8(gData_02003010);
+  Actor_PlaceBlocks(gData_02003010);
   ((struct LemurianShipObject *)Actor_GetById(8))->priorityFlags |= 32;
   Actor_SetSpritePriority(8, 1);
   ((struct LemurianShipObject *)Actor_GetById(9))->priorityFlags |= 32;
@@ -1327,7 +1327,7 @@ void Func_02001e0c(void) {
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 47, 8);
     RAISE(17, 190 << 18, 152 << 16)
     if (block->x >> 20 == 47 && block->z >> 20 == 8)
-      Func_02002dc8(gData_02003010);
+      Actor_PlaceBlocks(gData_02003010);
     if (!Event_GetFlag(0x224))
       Actor_SetPosition(11, 0, 0);
   } else {
@@ -1346,7 +1346,7 @@ void Func_02001e0c(void) {
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 49, 8);
     RAISE(18, 198 << 18, 240 << 15)
     if ((x == 48 && z == 7) || (x == 49 && z == 8))
-      Func_02002dc8(gData_02003010);
+      Actor_PlaceBlocks(gData_02003010);
     if (!Event_GetFlag(0x225))
       Actor_SetPosition(12, 0, 0);
   } else {
@@ -1372,7 +1372,7 @@ void Func_02001e0c(void) {
   } else {
     Func_02001dc8(14);
   }
-  Func_02002db8(gData_0200301e);
+  FlagBlock_PlaceAll(gData_0200301e);
   Task_Add(Func_020013f0, 0x480);
   if (Event_GetFlag(0x222)) {
     Func_02001944(9, 15);
@@ -1407,7 +1407,7 @@ void Func_020023f8(void) {
 void Func_0200241c(void) {
   if (Event_GetFlag(8))
     MapGrid_CopyCellAttributes(14, 46, 1, 1, 16, 46);
-  Func_02002dc8(gData_02003010);
+  Actor_PlaceBlocks(gData_02003010);
   LEMURIAN_SHIP_TASK_ADD(Func_020023f8, 0x480);
 }
 
@@ -1427,7 +1427,7 @@ void Func_0200245c(s32 id) {
 void Func_02002498(void) {
   ((struct LemurianShipObject *)Actor_GetById(gMainRoutineWork.currentOwner))
       ->priorityFlags |= 32;
-  Func_02002dc8(gData_02003010);
+  Actor_PlaceBlocks(gData_02003010);
   ((struct LemurianShipObject *)Actor_GetById(8))->priorityFlags |= 32;
   Actor_SetSpritePriority(8, 1);
   if (Event_GetFlag(0x938)) {
@@ -1496,7 +1496,7 @@ void Func_02002498(void) {
   } else {
     Func_0200245c(15);
   }
-  Func_02002db8(gData_02003034);
+  FlagBlock_PlaceAll(gData_02003034);
   FieldTask_AddFrame(Func_0200143c, 0x480);
   if (Event_GetFlag(0x228)) {
     Func_02001944(9, 16);
@@ -1578,7 +1578,7 @@ void Func_02002970(void) {
 
   ((struct LemurianShipObject *)Actor_GetById(gMainRoutineWork.currentOwner))
       ->priorityFlags |= 32;
-  Func_02002dc8(gData_0200304e);
+  Actor_PlaceBlocks(gData_0200304e);
   if (Event_GetFlag(0x982)) {
     MapGrid_CopyCellsTo(4, 124, 31, 64, 3, 2);
     Event_SetFlag(0x202);
@@ -1624,7 +1624,7 @@ void Func_02002970(void) {
       Actor_SetAnimation(9, 2);
   }
   wait(1);
-  Func_02002db8(gData_02003014);
+  FlagBlock_PlaceAll(gData_02003014);
   FieldTask_AddFrame(Func_02001464, 0x480);
   if (!Event_GetFlag(0x210))
     FieldActor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(10)),

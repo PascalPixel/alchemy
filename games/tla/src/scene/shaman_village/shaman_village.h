@@ -60,8 +60,8 @@ void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void FieldCamera_WaitForArrival(void);
 
-void Func_02004a44(void);
-void Func_02004a4c(s32 a, s32 b, s32 c, s32 d);
+void Rope_Initialize(void);
+void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 void Event_StartScreenTransition(void);
 
 void Actor_MoveToObject(s32 actor, s32 target);

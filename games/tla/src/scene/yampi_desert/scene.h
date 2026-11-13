@@ -54,18 +54,18 @@ void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z,
                                                     s32 angle);
 s32 Event_AskYesNoAndShowResponse(s32 speaker, s32 flags);
-void Func_020040f8(s32 actor);
+void Actor_DisableById(s32 actor);
 void Import_FieldRequestDjinnBattle(s32 a, s32 b);
 void Actor_ReturnHome(s32 a, s32 b, s32 c);
-void Func_02004180(s32 value);
+void FieldEffect_StartBlankOverlay(s32 value);
 void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
 void FieldPsynergy_SetupActorPair(s32 a, s32 b);
 void BattleEffect_StopMainActor(void);
 void BattleEffect_CleanupSceneObjects(void);
 void Scene_QueueMusic(s32 cue);
-void Func_020041d0(void);
-void Func_020041d8(s32 a, s32 b, s32 c, s32 d);
-s32 Func_020041e0(struct Actor *object);
+void Rope_Initialize(void);
+void Rope_Place(s32 a, s32 b, s32 c, s32 d);
+s32 Actor_GetCellIndex(struct Actor *object);
 void YampiDesert_ElderRefusesToQuit(void);
 void YampiDesert_BlockPoundedStakes(u16 *list);
 void YampiDesert_UnblockStakes(u16 *list);
@@ -123,7 +123,7 @@ static inline void Scene_Call4000(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
 }
 
 static inline void Scene_Call41d8(s32 a, s32 b, s32 c, s32 d) {
-  Func_020041d8(a, b, c, d);
+  Rope_Place(a, b, c, d);
 }
 
 static inline void Scene_SetSpeed(s32 id, s32 speed, s32 acceleration) {

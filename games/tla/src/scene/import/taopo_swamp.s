@@ -236,9 +236,9 @@ Actor_SetWideSprite:
 	.thumb_func
 Actor_ReturnHome:
 	overlay_veneer Actor_ReturnHomeFar
-	.global Func_02002960
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_02002960:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
@@ -252,17 +252,17 @@ Actor_WalkByAndWaitById:
 	.thumb_func
 Scene_QueueMusic:
 	overlay_veneer Scene_QueueMusicFar
-	.global Func_02002980
+	.global Rope_Initialize
 	.thumb_func
-Func_02002980:
+Rope_Initialize:
 	overlay_veneer Rope_InitializeFar
-	.global Func_02002988
+	.global Rope_Place
 	.thumb_func
-Func_02002988:
+Rope_Place:
 	overlay_veneer Rope_PlaceFar
-	.global Func_02002990
+	.global TileCopies_CopyTouchedCells
 	.thumb_func
-Func_02002990:
+TileCopies_CopyTouchedCells:
 	overlay_veneer TileCopies_CopyTouchedCellsFar
 	.global Party_GetLeaderActor
 	.thumb_func
@@ -272,9 +272,9 @@ Party_GetLeaderActor:
 	.thumb_func
 Func_020029a0:
 	overlay_veneer Func_080c8898
-	.global Func_020029a8
+	.global FieldItem_JumpToLeader
 	.thumb_func
-Func_020029a8:
+FieldItem_JumpToLeader:
 	overlay_veneer FieldItem_JumpToLeaderFar
 	.global Sound_Play
 	.thumb_func

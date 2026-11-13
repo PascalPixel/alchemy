@@ -39,8 +39,8 @@ void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
 void Import_FieldCameraWaitForArrival(void);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void Actor_ReturnHome(s32 a, s32 b, s32 c);
-void Func_02002990(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
-void Func_020029a8(s32 a, s32 b, s32 c);
+void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+void FieldItem_JumpToLeader(s32 a, s32 b, s32 c);
 void Actor_StartScript(struct Actor *object, const void *data);
 void Actor_SetBlendMode(struct Actor *object, u32 value);
 
@@ -148,7 +148,7 @@ static __inline__ void TaopoSwamp_ReturnHome(s32 a, s32 b, s32 c) {
 
 static __inline__ void Func_02002990_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
-  Func_02002990(a, b, c, d, e, f, g);
+  TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
 static __inline__ struct Actor *TaopoSwamp_CreateActor(s32 type, s32 x, s32 y,
@@ -157,7 +157,7 @@ static __inline__ struct Actor *TaopoSwamp_CreateActor(s32 type, s32 x, s32 y,
 }
 
 static __inline__ void Func_020029a8_(s32 a, s32 b, s32 c) {
-  Func_020029a8(a, b, c);
+  FieldItem_JumpToLeader(a, b, c);
 }
 #include "types.h"
 #include "actor.h"
@@ -178,8 +178,8 @@ static __inline__ void Func_020029a8_(s32 a, s32 b, s32 c) {
 #include "module/tla.h"
 
 s32 MapGrid_CheckCollision(struct Actor *object, struct Vector3 *position);
-void Func_02002960(s32 a);
-void Func_02002988(s32 a, s32 flag, s32 b, s32 c);
+void FieldEffect_StartBlankOverlay(s32 a);
+void Rope_Place(s32 a, s32 flag, s32 b, s32 c);
 
 /// Talking to Flower, the Venus Djinni, starts its battle.
 void TaopoSwamp_FightFlower(void) { Field_RequestDjinnBattle(8, 11); }
@@ -1224,11 +1224,11 @@ s32 Scene_Initialize(void) {
     if (!Event_GetFlag(769))
       Actor_SetWideSprite(65, 1);
   } else if (scene == (s32)&SceneId_Ov678Room4) {
-    Func_02002960(0);
+    FieldEffect_StartBlankOverlay(0);
     if (!Event_GetFlag(0x310))
       Actor_SetPosition(8, 0, 0);
   } else if (scene == (s32)&SceneId_Ov678Room5) {
-    Func_02002960(0);
+    FieldEffect_StartBlankOverlay(0);
     if (Event_GetFlag(0x310))
       Actor_SetPosition(8, 0, 0);
     if (Event_GetFlag(0xa6d))
@@ -1240,7 +1240,7 @@ s32 Scene_Initialize(void) {
     TaopoSwamp_StartVents(gTaopoSwamp_Room5Vents, gTaopoSwamp_Room5VentPair,
                           TaopoSwamp_CycleDjinniVents);
   } else if (scene == (s32)&SceneId_Ov678Room7) {
-    Func_02002960(0);
+    FieldEffect_StartBlankOverlay(0);
     Task_Add(TaopoSwamp_DripInRoom7, 0x480);
     if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5)
       TaopoSwamp_StartVents(gTaopoSwamp_Room7Vents, 0,
@@ -1270,8 +1270,8 @@ s32 Scene_Initialize(void) {
   } else if (scene == (s32)&SceneId_Ov678Room8) {
     if (gMainRoutineWork.entrance != 2 && gMainRoutineWork.entrance != 4 &&
         gMainRoutineWork.entrance != 9) {
-      Func_02002980();
-      Call4(Func_02002988, 0, 776, 8, 9);
+      Rope_Initialize();
+      Call4(Rope_Place, 0, 776, 8, 9);
     } else {
       Value3((s32 (*)())TaopoSwamp_StartVents, (s32)gTaopoSwamp_Room8Vents, 0,
              (s32)TaopoSwamp_CycleDripVent);
@@ -1427,12 +1427,12 @@ s32 Scene_Initialize(void) {
       Actor_SetWideSprite(65, 1);
   } else if (scene == (s32)&SceneId_Ov678Room4) {
     *effect = 516;
-    Func_02002960(0);
+    FieldEffect_StartBlankOverlay(0);
     if (!Event_GetFlag(0x310))
       Actor_SetPosition(8, 0, 0);
   } else if (scene == (s32)&SceneId_Ov678Room5) {
     *effect = 516;
-    Func_02002960(0);
+    FieldEffect_StartBlankOverlay(0);
     if (Event_GetFlag(0x310))
       Actor_SetPosition(8, 0, 0);
     if (Event_GetFlag(0xa6d))
@@ -1447,7 +1447,7 @@ s32 Scene_Initialize(void) {
     *effect = 516;
   } else if (scene == (s32)&SceneId_Ov678Room7) {
     *effect = 516;
-    Func_02002960(0);
+    FieldEffect_StartBlankOverlay(0);
     Task_Add(TaopoSwamp_DripInRoom7, 0x480);
     if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5)
       TaopoSwamp_StartVents(gTaopoSwamp_Room7Vents, 0,
@@ -1478,8 +1478,8 @@ s32 Scene_Initialize(void) {
     *effect = 516;
     if (gMainRoutineWork.entrance != 2 && gMainRoutineWork.entrance != 4 &&
         gMainRoutineWork.entrance != 9) {
-      Func_02002980();
-      Call4(Func_02002988, 0, 776, 8, 9);
+      Rope_Initialize();
+      Call4(Rope_Place, 0, 776, 8, 9);
     } else {
       Value3((s32 (*)())TaopoSwamp_StartVents, (s32)gTaopoSwamp_Room8Vents, 0,
              (s32)TaopoSwamp_CycleDripVent);

@@ -281,7 +281,7 @@ void StatusScreen_Run(void);
   {                                                                            \
     (party)->scene = (party)->savedScene;                                      \
     (party)->entrance = (party)->savedEntrance;                                \
-    Func_020023e0((party)->scene, (party)->entrance);                          \
+    WorldMap_SetReturnLeavingScene((party)->scene, (party)->entrance);                          \
     Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);                                                    \
   }
 
@@ -375,7 +375,7 @@ top:
         RESTORE_CELLS()
         if (status == -1)
           goto enter;
-        Func_02002370(MAP_CELL_BACKUP, 0, 0);
+        DataTransfer_Apply(MAP_CELL_BACKUP, 0, 0);
       } else if (result == 0) {
         SAVE_CELLS();
         Import_MainRoutineWorkInitializeDefaults();
@@ -388,10 +388,10 @@ top:
         Func_02000e44();
         RESTORE_CELLS()
 #endif
-        Func_02002370(MAP_CELL_BACKUP, 1, 0);
+        DataTransfer_Apply(MAP_CELL_BACKUP, 1, 0);
       }
     } else {
-      Func_02002398();
+      DataTransfer_GiveDefaultDjinn();
     }
     i = 0;
     limit = 1;
@@ -427,7 +427,7 @@ top:
 
             WindowColor_Apply(party->paletteGlow[0], party->paletteGlow[1]);
             RESTORE_CELLS()
-            Func_020023a0(MAP_CELL_BACKUP);
+            ClearData_Apply(MAP_CELL_BACKUP);
             party->unk284[3] = 1;
           }
           goto leave;
@@ -538,7 +538,7 @@ again:
     RESTORE_CELLS()
     if (status == -1)
       goto again;
-    Func_02002370(MAP_CELL_BACKUP, 0, 1);
+    DataTransfer_Apply(MAP_CELL_BACKUP, 0, 1);
   } else if (result == 0) {
     SAVE_CELLS();
     Import_MainRoutineWorkInitializeDefaults();
@@ -546,7 +546,7 @@ again:
     RESTORE_CELLS()
     if (status == -1)
       goto again;
-    Func_02002370(MAP_CELL_BACKUP, 1, 1);
+    DataTransfer_Apply(MAP_CELL_BACKUP, 1, 1);
   }
   if (gData_020024f6 != 0 || gData_020024f8 != 0) {
     i = 0;
@@ -1008,7 +1008,7 @@ s32 Func_02000e44(void) {
     y = i / 10 * 16 + 2;
     if (col > 4)
       x = col * 12 + 18;
-    work->cells[i] = Func_02002330(grid, work->glyphs[i], x, y);
+    work->cells[i] = Glyph_AddBlankSprite(grid, work->glyphs[i], x, y);
     work->shown[i] = 99;
     Iwram_ClearWordsEntry(work->cells[i], 128);
   }
@@ -1294,7 +1294,7 @@ s32 Func_02000e44(void) {
           Iwram_ClearWordsEntry(work->cells[i], 128);
         } else {
           Func_02000a70(entered[index], glyph);
-          Func_02002328(glyph[0], work->cells[i]);
+          Glyph_DrawToTiles(glyph[0], work->cells[i]);
         }
       }
     }

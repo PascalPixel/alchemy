@@ -21,9 +21,9 @@ struct WarpEntry {
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Event_End(void);
-void Func_0200059c(s32 id);
-void Func_020005cc(void);
-void Func_020005d4(s32 a, s32 b, s32 c, s32 d);
+void Actor_DisableById(s32 id);
+void Rope_Initialize(void);
+void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 void Shop_Run(s32 a, s32 b);
 void Sanctum_Run(s32 a);
 void Naribwe_HideStone(void);
@@ -271,10 +271,10 @@ s32 Scene_Initialize(void) {
   Naribwe_HideStone();
   if (Event_GetFlag(0x201))
     Actor_SetPosition(23, 0, 0);
-  Func_020005cc();
-  Func_020005d4(0, 0x202, 24, 25);
+  Rope_Initialize();
+  Rope_Place(0, 0x202, 24, 25);
   Actor_SetSpriteFlags(Actor_GetById(24), 0);
-  Func_0200059c(25);
+  Actor_DisableById(25);
   return 0;
 }
 

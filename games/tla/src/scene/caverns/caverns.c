@@ -102,8 +102,8 @@ loop:
   object->bounce = 0;
   Actor_SetSpriteFlags((struct Actor *)object, 0);
   height = (Map_GetTerrainHeight(0, object->x, object->z) >> 19) + 2;
-  Func_020010cc(object->x, object->z, 0, height);
-  Func_020010cc(object->x, object->z, 2, height);
+  MapGrid_SetCellHeight(object->x, object->z, 0, height);
+  MapGrid_SetCellHeight(object->x, object->z, 2, height);
   cell = Func_020003b4(0, object->x >> 20, object->z >> 20);
   object->unk4c = cell;
   Func_020003f0(0, object->x >> 20, object->z >> 20, cell | 0x80);
@@ -126,7 +126,7 @@ static __inline__ s32 GetHeight(s32 x, s32 z) {
 }
 
 static __inline__ void SetHeight(s32 x, s32 z, s32 height) {
-  Func_020010cc(x, z, 2, height);
+  MapGrid_SetCellHeight(x, z, 2, height);
 }
 
 static __inline__ s32 Half(u8 *base, s32 offset) {
@@ -205,8 +205,8 @@ void Func_020006a8(void) {
     Func_0200053c(1);
   }
   height = (Map_GetTerrainHeight(0, object->x, object->z) >> 19) - 2;
-  Func_020010cc(object->x, object->z, 0, height);
-  Func_020010cc(object->x, object->z, 2, height);
+  MapGrid_SetCellHeight(object->x, object->z, 0, height);
+  MapGrid_SetCellHeight(object->x, object->z, 2, height);
   Func_020003f0(0, object->x >> 20, object->z >> 20, object->unk4c);
 }
 
@@ -333,7 +333,7 @@ void Func_0200087c(void) {
       velocity[0] = object->x;
       velocity[1] = object->y - (16 << 16);
       velocity[2] = object->z;
-      other = Func_0200115c(velocity, 1);
+      other = Actor_FindAtCell(velocity, 1);
       if (other != NULL) {
         object->update = (void (*)(void))Func_02000848;
         object->riseCounter = 1;
@@ -343,8 +343,8 @@ void Func_0200087c(void) {
     }
   }
   height = (Map_GetTerrainHeight(0, object->x, object->z) >> 19) + 2;
-  Func_020010cc(object->x, object->z, 0, height);
-  Func_020010cc(object->x, object->z, 2, height);
+  MapGrid_SetCellHeight(object->x, object->z, 0, height);
+  MapGrid_SetCellHeight(object->x, object->z, 2, height);
   value = Func_020003b4(0, object->x >> 20, object->z >> 20);
   object->unk4c = value;
   Func_020003f0(0, object->x >> 20, object->z >> 20, value | 128);
@@ -388,8 +388,8 @@ void Func_02000ba8(void) {
   s32 arg;
 
   Actor_GetById(4)->priorityFlags |= 0x20;
-  Func_0200114c();
-  Func_02001154(0, 0x200, 8, 9);
+  Rope_Initialize();
+  Rope_Place(0, 0x200, 8, 9);
   object = Actor_GetById(10);
   object->motionFlags = 0;
 

@@ -459,15 +459,15 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
                                         PaletteCycle_StepAt,
                                         gPaletteCycleUnlitColors)
 
-void Func_0200223c();
-/* VIEW(jupiter_lighthouse_room_2): routine Func_0200230c as void
- * Func_0200230c(); module/scene/scene.h has void Func_0200230c(s32 actor);
+void MapGrid_SetCellHeight();
+/* VIEW(jupiter_lighthouse_room_2): routine MapGrid_SetAttributeBAt as void
+ * MapGrid_SetAttributeBAt(); module/scene/scene.h has void MapGrid_SetAttributeBAt(s32 actor);
  * tried as the rest of the object declares it, it does not compile in tla-ja:
  * games/tla/src/scene/jupiter_lighthouse_room_2.c:525: too many arguments to
- * function `Func_0200230c'. */
-extern void Func_0200230c__jupiter_lighthouse_room_2() __asm__("Func_0200230c");
+ * function `MapGrid_SetAttributeBAt'. */
+extern void Func_0200230c__jupiter_lighthouse_room_2() __asm__("MapGrid_SetAttributeBAt");
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_0200223c,
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
                              Func_0200230c__jupiter_lighthouse_room_2)
 
 #include "frame.h"

@@ -157,9 +157,9 @@ void BlendScript_Resume(void);
 void BlendScript_Suspend(void);
 void Actor_SetSpritePriorityDirect();
 void Event_End(void);
-void Func_02004fc4();
-void Func_02004fec();
-void Func_02005004();
+void FieldEffect_StartBlankOverlay();
+void HangingVine_Place();
+void WorldMap_SetReturnLeavingScene();
 void Actor_SetAnimationSpeed();
 void Actor_SetSpriteColorMode();
 void Event_FinishScreenTransition(void);
@@ -663,7 +663,7 @@ s32 Scene_Initialize(void) {
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();
       C2(Event_SetDestination, (s16)room->savedScene, (s16)room->savedEntrance);
-      C2(Func_02005004, room->scene, *entrance);
+      C2(WorldMap_SetReturnLeavingScene, room->scene, *entrance);
       Event_End();
     }
   } else if (work->scene == (s32)&SceneId_Ov681Room2) {
@@ -774,7 +774,7 @@ s32 Scene_Initialize(void) {
     if (!Test(0x109) && gMainRoutineWork.entrance == 3)
       Func_0200042c();
   } else if (work->scene == (s32)&SceneId_Ov681Room5) {
-    C2(Func_02004fec, 10, 1);
+    C2(HangingVine_Place, 10, 1);
     C2(Func_02002ac8, 8, 9);
     if (work->entrance == 1 || work->entrance == 3 || work->entrance == 5)
       Func_02004d00();
@@ -806,14 +806,14 @@ s32 Scene_Initialize(void) {
     }
   }
 end:
-  C1(Func_02004fc4, 0);
+  C1(FieldEffect_StartBlankOverlay, 0);
   return 0;
 }
 
 #else
 
 // The Japanese release's older form: room 1's entrances 11 and 12 end without
-// Func_02005004, room 3 has no flag 0x109 check calling Func_0200042c, and the
+// WorldMap_SetReturnLeavingScene, room 3 has no flag 0x109 check calling Func_0200042c, and the
 // room pointer is a plain local.
 
 #include "call.h"
@@ -872,9 +872,9 @@ void Event_End(void);
 void FieldCamera_WaitForArrival(void);
 void FieldCamera_MoveToActorById();
 void Event_SetDestination();
-void Func_02004fc4();
-void Func_02004fec();
-void Func_02005004();
+void FieldEffect_StartBlankOverlay();
+void HangingVine_Place();
+void WorldMap_SetReturnLeavingScene();
 void Actor_SetAnimationSpeed();
 void Actor_SetSpriteColorMode();
 void Event_FinishScreenTransition(void);
@@ -1485,7 +1485,7 @@ s32 Scene_Initialize(void) {
     if (!Test(0x9c4))
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0, 0);
   } else if (work->scene == (s32)&SceneId_Ov681Room5) {
-    C2(Func_02004fec, 10, 1);
+    C2(HangingVine_Place, 10, 1);
     C2(Func_02002ac8, 8, 9);
     if (work->entrance == 1 || work->entrance == 3 || work->entrance == 5)
       Func_02004d00();
@@ -1517,7 +1517,7 @@ s32 Scene_Initialize(void) {
     }
   }
 end:
-  C1(Func_02004fc4, 0);
+  C1(FieldEffect_StartBlankOverlay, 0);
   return 0;
 }
 
@@ -1899,7 +1899,7 @@ void Func_0200485c(s32 direction) {
 
 extern s8 gData_020053fc[][2];
 
-/// From the third state on, for each of the two map layers: Func_02004e0c
+/// From the third state on, for each of the two map layers: Map_CopyRawCellsRect
 /// with the state's origin plus the layer's cell, a 15 by 10 size and the
 /// layer's cell plus one.
 void Func_020048a0(void) {
@@ -1920,7 +1920,7 @@ void Func_020048a0(void) {
       register s32 x asm("r2") = layer->x >> 20;
       s32 z = layer->z >> 20;
 
-      Func_02004e0c(originX + x, originZ + z, 15, 10, x + 1, z + 1);
+      Map_CopyRawCellsRect(originX + x, originZ + z, 15, 10, x + 1, z + 1);
     }
   }
 }

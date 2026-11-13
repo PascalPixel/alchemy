@@ -83,8 +83,8 @@ struct WarpTarget {
 };
 
 void Actor_ReturnHome(s32 a, s32 b, s32 c);
-void Func_02001d44(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
-s32 Func_02001d5c(s32 x, s32 z, s32 layer);
+void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+s32 MapGrid_GetAttributeBAt(s32 x, s32 z, s32 layer);
 
 extern struct WarpTarget gLemuria_FirstDoor;
 extern struct WarpTarget gLemuria_SecondDoor;
@@ -228,7 +228,7 @@ void Lemuria_TalkToLonelyChild(void) {
 
 static __inline__ void Func_02001d44_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
-  Func_02001d44(a, b, c, d, e, f, g);
+  TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
 void Lemuria_DigFirstSpot(void) { Func_02001d44_(37, 72, 2, 2, 39, 71, 2); }
@@ -257,12 +257,12 @@ void Lemuria_DigFifthSpot(void) {
   }
 }
 
-void Func_02001d74(void);
+void Teleport_PlaySparksAndFade(void);
 
 void Lemuria_LeaveForAncientLemuria(void) {
   struct MainRoutineWork *party;
 
-  Func_02001d74();
+  Teleport_PlaySparksAndFade();
   Event_SetDestination((s32)&SceneId_Ov68b, 2);
   party = &gMainRoutineWork;
 
@@ -284,14 +284,14 @@ void Lemuria_GrowVine(void) {
   x = 0x3580000;
   z = 0x3f80000;
   Event_SetFlag(flag + 0x63);
-  value = Func_02001d5c(x, z, 0);
+  value = MapGrid_GetAttributeBAt(x, z, 0);
   /* FAKEMATCH(temporary): the first z copied to old, so the second z starts
    * before the first store call's arguments; as z reassigned after that call,
    * its shift comes late, 2 of 33 instructions differ in tla-en. */
   old = z;
   z = 0x4080000;
-  Func_02001d64(x, old, 0, value | 64);
-  Func_02001d64(x, z, 0, Func_02001d5c(x, z, 0) | 64);
+  MapGrid_SetAttributeBAt(x, old, 0, value | 64);
+  MapGrid_SetAttributeBAt(x, z, 0, MapGrid_GetAttributeBAt(x, z, 0) | 64);
 }
 
 /// Scoop digs up a buried treasure (Actor_ReturnHome): the helper, our name,
@@ -326,7 +326,7 @@ void Lemuria_ScoopEighthTreasure(s32 a) { Lemuria_DigUpTreasure(a, 72, 0x308); }
        ->v)
 
 s32 Party_FindOwnerWithAction();
-void Func_02001d2c();
+void Rope_Coil();
 
 /// A door that will not open, until a Lemurian inside takes Piers's companions
 /// in another way.
@@ -394,8 +394,8 @@ void Lemuria_KnockAtBrokenDoor(void) {
   FieldEvent_ShowMessageThenWait(12, 0, 5);
   Actor_SetPosition(28, PIXELS(840), PIXELS(920));
   Actor_SetPosition(27, PIXELS(840), PIXELS(936));
-  Value3((s32 (*)())Func_02001d2c, 1, 28, 27);
-  Func_02001d34(1, 28, 27);
+  Value3((s32 (*)())Rope_Coil, 1, 28, 27);
+  Rope_Lash(1, 28, 27);
   FieldEvent_Wait(30);
   FieldEvent_ShowMessageThenWait(12, 0, 5);
   Actor_WalkByAndWait(12, 32, 0);
@@ -546,8 +546,8 @@ void Lemuria_StartRipple(void) {
   Task_AddFrame(Lemuria_StartRippleDma, priority);
 }
 
-void Func_02001cfc();
-void Func_02001d4c();
+void FieldEffect_StartBlankOverlay();
+void HangingVine_Place();
 void Actor_SetWideSprite();
 
 s32 Scene_Initialize(void) {
@@ -555,7 +555,7 @@ s32 Scene_Initialize(void) {
 
   FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x201;
   FieldTask_AddFrame((s32)Lemuria_CycleWaterColors, 0xc80);
-  Func_02001cfc(0);
+  FieldEffect_StartBlankOverlay(0);
   Actor_SetSpriteFlags(Actor_Get(11), 0);
   FieldActor_SetSpritePriority(9, 3);
   FieldActor_SetSpritePriority(29, 3);
@@ -587,8 +587,8 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(7, PIXELS(56), PIXELS(1016));
     Actor_SetAnimation(7, 9);
   }
-  Func_02001d24();
-  Func_02001d3c(0, 0x962, 8, 9);
+  Rope_Initialize();
+  Rope_Place(0, 0x962, 8, 9);
   Actor_Get(8)->priorityFlags |= 32;
   Actor_Get(9)->priorityFlags |= 32;
   if (Event_GetFlag(0x96f)) {
@@ -596,11 +596,11 @@ s32 Scene_Initialize(void) {
     FieldActor_SetSpritePriority(27, 2);
     Actor_SetPosition(28, PIXELS(840), PIXELS(920));
     Actor_SetPosition(27, PIXELS(840), PIXELS(936));
-    Call4(Func_02001d3c, 1, 0x96f, 28, 27);
+    Call4(Rope_Place, 1, 0x96f, 28, 27);
   }
   Actor_SetSpriteFlags(Actor_Get(28), 0);
   if (Event_GetFlag(0x963)) {
-    Func_02001d4c(10, 1);
+    HangingVine_Place(10, 1);
     Lemuria_GrowVine();
   }
   if (!Event_GetFlag(0x303)) {
@@ -1008,10 +1008,10 @@ void Lemuria_MarvelAtCity(void) {
   Event_End();
 }
 
-void Func_02001d6c(void);
+void Actor_TakeLeaderLayer(void);
 
 /// An actor's per-frame hook: it is drawn on the party leader's layer.
-void Lemuria_TakeLeaderLayer(void) { Func_02001d6c(); }
+void Lemuria_TakeLeaderLayer(void) { Actor_TakeLeaderLayer(); }
 
 #include "objcmd.h"
 

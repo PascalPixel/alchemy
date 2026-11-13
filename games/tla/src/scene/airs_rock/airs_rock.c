@@ -25,7 +25,7 @@
 #include "resource.h"
 #include "text/msg_ids.h"
 
-void Func_02003cc0(s32 id);
+void Actor_PlaceMovedBlock(s32 id);
 
 DEFINE_BLOCKS_MARK_CELLS(Blocks_MarkCells, Func_02000348)
 
@@ -283,13 +283,13 @@ void Func_0200092c(struct Actor *object) {
 
 extern s16 gData_02004674[][4];
 void Actor_StartScript(struct Actor *object, const u8 *script);
-/* VIEW(airs_rock): routine Func_02003ba8 as s32 Func_02003ba8(struct Actor
- * *object); module/scene/scene.h has void Func_02003ba8(struct Actor *object,
+/* VIEW(airs_rock): routine Actor_HasArrived as s32 Actor_HasArrived(struct Actor
+ * *object); module/scene/scene.h has void Actor_HasArrived(struct Actor *object,
  * const void *script); tried as the rest of the object declares it, it does not
  * compile in tla-ja: games/tla/src/scene/airs_rock.c:411: too few arguments to
- * function `Func_02003ba8'. */
+ * function `Actor_HasArrived'. */
 extern s32
-Func_02003ba8__airs_rock(struct Actor *object) __asm__("Func_02003ba8");
+Func_02003ba8__airs_rock(struct Actor *object) __asm__("Actor_HasArrived");
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
@@ -971,16 +971,16 @@ void Func_02001b54(struct Actor *object) {
 void Func_02001ca4(void) {
   struct AirsRockEventWork *work = Ram_HeapSlots->eventWork;
 
-  Func_02003cb8(gData_02003d94);
+  Actor_LiftTargetBlock(gData_02003d94);
   Func_02000468(work->valueCbc);
 }
 
-/* VIEW(airs_rock): routine Func_02003cc0 as void Func_02003cc0(void);
- * module/scene/scene.h has void Func_02003cc0(s32 id); tried as the rest of the
+/* VIEW(airs_rock): routine Actor_PlaceMovedBlock as void Actor_PlaceMovedBlock(void);
+ * module/scene/scene.h has void Actor_PlaceMovedBlock(s32 id); tried as the rest of the
  * object declares it, it does not compile in tla-ja:
  * games/tla/src/scene/airs_rock.c:1014: too few arguments to function
- * `Func_02003cc0'. */
-extern void Func_02003cc0__airs_rock(void) __asm__("Func_02003cc0");
+ * `Actor_PlaceMovedBlock'. */
+extern void Func_02003cc0__airs_rock(void) __asm__("Actor_PlaceMovedBlock");
 
 void Func_02001cc8(void) {
   struct Actor *object =
@@ -1015,12 +1015,12 @@ void Func_02001cc8(void) {
   Event_End();
 }
 
-s32 Func_02003ca8();
+s32 FlagBlock_ApplyFlags();
 
 void Func_02001da8(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Func_02003ca8((s32)((u8 *)gData_02003e4c));
+  FlagBlock_ApplyFlags((s32)((u8 *)gData_02003e4c));
   Event_End();
 }
 
@@ -1600,9 +1600,9 @@ s32 Scene_Initialize(void) {
         Actor_SetPosition(15, 0x1580000, 0x3080000);
       if (GameFlag_Get(0x862))
         Actor_SetPosition(0x10, 0x2780000, 0x3180000);
-      Func_02003cb0(gData_02003d94);
+      Actor_PlaceBlocks(gData_02003d94);
       Blocks_MarkCells(gData_02003d94);
-      Func_02003ca0(gData_02003e4c);
+      FlagBlock_PlaceAll(gData_02003e4c);
       break;
     case 11:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
@@ -1616,7 +1616,7 @@ s32 Scene_Initialize(void) {
     case 12:
       if (GameFlag_Get(0x887))
         Actor_SetPosition(22, 0x3180000, 0x1280000);
-      Func_02003cb0(gData_02003d94);
+      Actor_PlaceBlocks(gData_02003d94);
       Blocks_MarkCells(gData_02003d94);
       HANG(17, 0x100000, 60);
       HANG(19, 0x500000, 90);
@@ -1703,7 +1703,7 @@ s32 Scene_Initialize(void) {
       REG_BG3CNT &= ~3;
       REG_BG3CNT |= 3;
       Actor_GetById(12)->priorityFlags |= 2;
-      Func_02003c80(0);
+      FieldEffect_StartBlankOverlay(0);
       if (GameFlag_Get(0x879))
         Actor_SetPosition(13, 0xb80000, 0x1180000);
       if (!GameFlag_Get(0x87a)) {

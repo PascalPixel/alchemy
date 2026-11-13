@@ -258,7 +258,7 @@ const u8 *Scene_GetEvents(void) {
 #include "version.h"
 
 void Func_02000af0(void);
-void Func_02001174(void);
+void Rope_Initialize(void);
 
 #if !TLA_PATCH_1
 #define EVENT_WORK_VALUE 0x201
@@ -316,8 +316,8 @@ s32 Scene_Initialize(void) {
   } else if (scene == (s32)&SceneId_Ov66fRoom2) {
     Actor_SetSpritePriority(8, 1);
     Actor_SetSpritePriority(9, 1);
-    Func_02001174();
-    Func_0200117c(0, 0x9e8, 8, 9);
+    Rope_Initialize();
+    Rope_Place(0, 0x9e8, 8, 9);
     if (GameFlag_Get(0x210))
       MapGrid_CopyCellAttributes(6, 16, 1, 1, 4, 16);
     if (GameFlag_Get(0x211))

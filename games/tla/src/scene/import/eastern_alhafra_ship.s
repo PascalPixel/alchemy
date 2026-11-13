@@ -50,9 +50,9 @@ Event_End:
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
 	overlay_veneer Event_AskYesNoWithActorAnimationFar
-	.global Func_02003148
+	.global Event_PickUpItem
 	.thumb_func
-Func_02003148:
+Event_PickUpItem:
 	overlay_veneer Event_PickUpItemFar
 	.global Actor_GetById
 	.thumb_func

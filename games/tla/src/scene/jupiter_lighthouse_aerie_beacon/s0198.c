@@ -28,7 +28,7 @@
 #include "module/tla.h"
 #include "system.h"
 
-void Func_020057c4(void);
+void MapGrid_SetCellHeight(void);
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -163,11 +163,11 @@ void Func_02000198(void) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(s0198): routine Func_0200581c as s32 Func_0200581c();
- * module/scene/jupiter_lighthouse_aerie_beacon.h has void Func_0200581c(void);
+/* VIEW(s0198): routine Event_End as s32 Event_End();
+ * module/scene/jupiter_lighthouse_aerie_beacon.h has void Event_End(void);
  * tried as the rest of the object declares it, Func_020040f4 moves: 1 of 216
  * instructions in tla-ja. */
-extern s32 Func_0200581c__s0198() __asm__("Func_0200581c");
+extern s32 Func_0200581c__s0198() __asm__("Event_End");
 
 void Func_0200045c(void) {
   s32 t0;
@@ -2204,8 +2204,8 @@ s32 Scene_Initialize(void) {
   s32 t25;
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
-  Call2(Func_020059b4, 0xf, 1);
-  Func_020059b4(0x10, 1);
+  Call2(HangingVine_Place, 0xf, 1);
+  HangingVine_Place(0x10, 1);
   t2 = Actor_Get(gMainRoutineWork.currentOwner);
   FIELD_AT((t2 + 0x23), u8, 0) = (0x40 | FIELD_AT((t2 + 0x23), u8, 0));
   t3 = Actor_Get(17);
@@ -2297,12 +2297,12 @@ static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame,
                           gPaletteCyclePausesInEvents, gPaletteCycleColors)
 
-/* VIEW(s0198): routine Func_020057c4 as void Func_020057c4();
- * module/scene/scene.h has void Func_020057c4(void); tried as the rest of the
+/* VIEW(s0198): routine MapGrid_SetCellHeight as void MapGrid_SetCellHeight();
+ * module/scene/scene.h has void MapGrid_SetCellHeight(void); tried as the rest of the
  * object declares it, it does not compile in tla-ja:
  * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2369: too many
- * arguments to function `Func_020057c4'. */
-extern void Func_020057c4__s0198() __asm__("Func_020057c4");
+ * arguments to function `MapGrid_SetCellHeight'. */
+extern void Func_020057c4__s0198() __asm__("MapGrid_SetCellHeight");
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
                                         gPaletteCyclePausesInEvents,
@@ -2311,7 +2311,7 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
                                         gLighthouseUnlitColors)
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_020057c4__s0198,
-                             Func_020059ec)
+                             MapGrid_SetAttributeBAt)
 
 #include "vector3.h"
 #include "main_routine_work.h"
@@ -2423,7 +2423,7 @@ void Whirlwind_Update(struct Object6a5 *object) {
     s32 priority = from[9] & 12;
     to[9] = (to[9] & ~12) | priority;
   }
-  if (Func_020059e4(object->x, object->z, 2) != 255) {
+  if (MapGrid_GetCellBehavior(object->x, object->z, 2) != 255) {
     position.x = object->x;
     position.y = object->y;
     position.z = object->z;

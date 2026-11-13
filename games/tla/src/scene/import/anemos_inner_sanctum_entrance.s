@@ -178,13 +178,13 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02000d4c
+	.global Leader_CanPushObjectAhead
 	.thumb_func
-Func_02000d4c:
+Leader_CanPushObjectAhead:
 	overlay_veneer Leader_CanPushObjectAheadFar
-	.global Func_02000d54
+	.global Leader_PushObjectAhead
 	.thumb_func
-Func_02000d54:
+Leader_PushObjectAhead:
 	overlay_veneer Leader_PushObjectAheadFar
 	.global BattleEffect_GetObjectPriority
 	.thumb_func

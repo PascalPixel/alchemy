@@ -97,7 +97,7 @@ void Func_02000328(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_02000178();
-  Func_020034a8();
+  Teleport_PlayWhirl();
   System_Wait(40);
   Func_02000158();
   PaletteFade_ApplyTarget(0x10000, 1);

@@ -66,8 +66,8 @@ extern u16 gData_02001a14;
 extern u16 gData_02001a20;
 extern u16 gData_02001a30;
 extern u16 gData_02001a34;
-void Func_02001334(void);
-void Func_0200131c(s32 mode);
-void Func_0200133c(void);
+void Teleport_PlaySparks(void);
+void FieldEffect_StartBlankOverlay(s32 mode);
+void BattleEffect_PackTargetBuffer(void);
 
 #endif

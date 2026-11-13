@@ -17,14 +17,14 @@
 void AncientLemuria_StillTheStatue(s32 id);
 void AncientLemuria_MeetTheLemurians(void);
 void Field_TryJumpForward(void);
-void Func_02001a24(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
+void TileCopies_CopyTouchedCells(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY, s32 layer);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void MapCopy(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                            s32 destY, s32 layer) {
-  Func_02001a24(srcX, srcY, width, height, destX, destY, layer);
+  TileCopies_CopyTouchedCells(srcX, srcY, width, height, destX, destY, layer);
 }
 #include "battle.h"
 #include "field.h"

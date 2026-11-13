@@ -12,7 +12,7 @@ extern struct Trigger gNaribweInteriors_TriggersOnReturn[];
 
 void NaribweInteriors_ReadFortune(void);
 
-s32 Func_020011a0(s32 *unit, s32 *slot);
+s32 ItemPicker_RunMode1(s32 *unit, s32 *slot);
 
 void NaribweInteriors_ReadProng(void);
 

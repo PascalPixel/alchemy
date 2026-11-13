@@ -300,7 +300,7 @@ s32 AlhafraInteriors_DrawSecondGuestSprite(s32 a0) {
 // no actors 31 and 32.
 #if TLA_PATCH_1
 void BattleEffect_FillOverlayTiles(s32 mode);
-void Func_02000bb4();
+void EffectSprite_InitFromSlot94();
 
 s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
@@ -311,9 +311,9 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpritePriority(14, 3);
   FieldActor_SetSpritePriority(15, 3);
   BattleEffect_FillOverlayTiles(0);
-  Call4(Func_02000bb4, (s32)gAlhafraInteriors_FirstGuestSprite, 8, 15,
+  Call4(EffectSprite_InitFromSlot94, (s32)gAlhafraInteriors_FirstGuestSprite, 8, 15,
         0x40000000);
-  Call4(Func_02000bb4, (s32)gAlhafraInteriors_SecondGuestSprite, 8, 15,
+  Call4(EffectSprite_InitFromSlot94, (s32)gAlhafraInteriors_SecondGuestSprite, 8, 15,
         0x40000000);
   *(s32 *)(gAlhafraInteriors_SecondGuestSprite + 24) = 0x18000;
   Actor_Get(14)->update = AlhafraInteriors_DrawFirstGuestSprite;
@@ -345,7 +345,7 @@ s32 Scene_Initialize(void) {
 }
 #else
 void BattleEffect_FillOverlayTiles(s32 mode);
-void Func_02000bb4();
+void EffectSprite_InitFromSlot94();
 
 s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
@@ -356,9 +356,9 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpritePriority(14, 3);
   FieldActor_SetSpritePriority(15, 3);
   BattleEffect_FillOverlayTiles(0);
-  Call4(Func_02000bb4, (s32)gAlhafraInteriors_FirstGuestSprite, 8, 15,
+  Call4(EffectSprite_InitFromSlot94, (s32)gAlhafraInteriors_FirstGuestSprite, 8, 15,
         0x40000000);
-  Call4(Func_02000bb4, (s32)gAlhafraInteriors_SecondGuestSprite, 8, 15,
+  Call4(EffectSprite_InitFromSlot94, (s32)gAlhafraInteriors_SecondGuestSprite, 8, 15,
         0x40000000);
   *(s32 *)(gAlhafraInteriors_SecondGuestSprite + 24) = 0x18000;
   Actor_Get(14)->update = AlhafraInteriors_DrawFirstGuestSprite;

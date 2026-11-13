@@ -61,7 +61,7 @@ extern u8 gData_02006330__s12a8[] __asm__("gData_02006330");
 void Actor_StartScript(struct SpawnObject *object, const void *script);
 
 void Func_0200132c(void) {
-  Func_02005354(1, 10, 11);
+  Rope_Lash(1, 10, 11);
   Flag_Set(0x203);
 }
 
@@ -78,7 +78,7 @@ void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer) {
   object = (struct SpawnObject *)FieldActor_Create(0x1e8, x, y, z);
   if (object != 0) {
     sprite = object->sprite;
-    Func_02005164(object, 1);
+    Actor_SelectAnimation(object, 1);
     Actor_StartScript(object, gData_02006330__s12a8);
     object->motionFlags = 0;
     /* FAKEMATCH(barrier): an empty asm, so the stack argument is loaded before

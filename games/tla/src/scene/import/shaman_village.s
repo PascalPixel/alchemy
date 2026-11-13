@@ -394,13 +394,13 @@ Djinn_JoinParty:
 	.thumb_func
 Actor_WatchAndSetScript:
 	overlay_veneer Actor_WatchAndSetScriptFar
-	.global Func_02004a44
+	.global Rope_Initialize
 	.thumb_func
-Func_02004a44:
+Rope_Initialize:
 	overlay_veneer Rope_InitializeFar
-	.global Func_02004a4c
+	.global Rope_Place
 	.thumb_func
-Func_02004a4c:
+Rope_Place:
 	overlay_veneer Rope_PlaceFar
 	.global BattleEffect_StartArcEffect
 	.thumb_func

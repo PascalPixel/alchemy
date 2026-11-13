@@ -242,7 +242,7 @@ void Func_02000ac8(void) {
       MapGrid_CopyCellsTo(52, 7, 33, 7, 1, 2);
       System_Wait(5);
       MapGrid_CopyCellsTo(54, 7, 33, 7, 1, 2);
-      Func_02003380(0x2180000, 0x880000, 0, 0);
+      MapGrid_SetCellHeight(0x2180000, 0x880000, 0, 0);
       System_Wait(60);
     }
   }
@@ -270,14 +270,14 @@ extern u8 gData_020036f6[];
 
 void Func_0200109c(void) {
   if (gMainRoutineWork.scene == (s32)MsgHat) {
-    Func_02003498((s32)gData_020036e4);
+    Actor_LiftTargetBlock((s32)gData_020036e4);
   } else {
     if (gMainRoutineWork.scene == (s32)MsgCrownBoostsLuck) {
-      Func_02003498((s32)gData_020036ea);
+      Actor_LiftTargetBlock((s32)gData_020036ea);
       Field_SetCellBehaviorAt(2, 0x480000, 0x1b80000, 0xff);
     } else {
       if (gMainRoutineWork.scene == (s32)MsgHatBoostsAgility) {
-        Func_02003498((s32)gData_020036f6);
+        Actor_LiftTargetBlock((s32)gData_020036f6);
         Field_SetCellBehaviorAt(2, 0x1180000, 0x1580000, 0xff);
         Field_SetCellBehaviorAt(2, 0x1180000, 0x1780000, 0xff);
         Field_SetCellBehaviorAt(2, 0x1280000, 0x1680000, 0xff);
@@ -304,7 +304,7 @@ void Func_02001160(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Func_020034a0();
+  Actor_PlaceMovedBlock();
   x = leader->x >> 19;
   z = leader->z >> 19;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room3) {
@@ -338,7 +338,7 @@ void Func_02001160(void) {
       FieldEvent_Wait(5);
       MapGrid_CopyCellsTo(51, 20, 31, 20, 1, 2);
       FieldEvent_Wait(5);
-      Func_02003380(0x1f00000, 0x1500000, 0, 0);
+      MapGrid_SetCellHeight(0x1f00000, 0x1500000, 0, 0);
       GameFlag_Set(0xa83);
     }
     if (x == 93 && z == 57)

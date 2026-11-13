@@ -234,13 +234,13 @@ Event_NoOp:
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_02001ccc
+	.global Exit_PrepareActorAnimation
 	.thumb_func
-Func_02001ccc:
+Exit_PrepareActorAnimation:
 	overlay_veneer Exit_PrepareActorAnimationFar
-	.global Func_02001cd4
+	.global Actor_VanishInSparks
 	.thumb_func
-Func_02001cd4:
+Actor_VanishInSparks:
 	overlay_veneer Actor_VanishInSparksFar
 	.global Sound_Play
 	.thumb_func

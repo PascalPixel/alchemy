@@ -199,7 +199,7 @@ void Func_02000af8(s32 unused, u32 id) {
 void Func_02000b6c(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
 
-  Call7(Func_02004ff4, 37, 26, 0, 3, 3, 61, 0);
+  Call7(Cyclone_CopyTouchedCells, 37, 26, 0, 3, 3, 61, 0);
   if (FieldMapGrid_GetCellBehaviorAt(2, 152 << 18, 200 << 17) == 0) {
     MapGrid_CopyCellAttributes(36, 23, 1, 1, 38, 25);
     Event_Start();
@@ -229,7 +229,7 @@ void Func_02002cb4(s32 a);
 static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
 
 static __inline__ void Func_0200500c_(s32 a, s32 b, s32 c) {
-  Func_0200500c(a, b, c);
+  FieldItem_JumpToLeader(a, b, c);
 }
 
 struct MainRoutineWork254 {
@@ -239,7 +239,7 @@ struct MainRoutineWork254 {
 
 static __inline__ void Func_02004ff4_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
-  Func_02004ff4(a, b, c, d, e, f, g);
+  Cyclone_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
 void Func_02000c38(void) {
@@ -260,7 +260,7 @@ void Func_02000c74(void) {
   }
 }
 
-void Func_02000cd8(void) { Call7(Func_02004ff4, 0x13, 0x18, 0, 4, 3, 0x1f, 4); }
+void Func_02000cd8(void) { Call7(Cyclone_CopyTouchedCells, 0x13, 0x18, 0, 4, 3, 0x1f, 4); }
 
 #include "iwram_call.h"
 
@@ -277,7 +277,7 @@ void Func_02000d18(void) {
   s32 sourceX = 117;
   s32 sourceY = 20;
 
-  Func_02004ff4(104, sourceY, 1, height, height, sourceX, sourceY);
+  Cyclone_CopyTouchedCells(104, sourceY, 1, height, height, sourceX, sourceY);
   if (GameFlag_Get(0x9c4))
     return;
   count = 0;

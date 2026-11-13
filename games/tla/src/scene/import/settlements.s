@@ -114,9 +114,9 @@ Actor_SetSpriteFlags:
 	.thumb_func
 Actor_SetBlendMode:
 	overlay_veneer Actor_SetBlendModeFar
-	.global Func_02002048
+	.global Actor_HasArrived
 	.thumb_func
-Func_02002048:
+Actor_HasArrived:
 	overlay_veneer Actor_HasArrivedFar
 	.global Field_CheckSpheresOverlap
 	.thumb_func
@@ -238,9 +238,9 @@ ItemDisplay_ShowItem:
 	.thumb_func
 ObjectTable_Get:
 	overlay_veneer ObjectTable_GetFar
-	.global Func_02002140
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_02002140:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolveAllPendingActions
 	.thumb_func
@@ -262,33 +262,33 @@ Actor_WalkByAndWaitById:
 	.thumb_func
 Scene_QueueMusic:
 	overlay_veneer Scene_QueueMusicFar
-	.global Func_02002170
+	.global Rope_Initialize
 	.thumb_func
-Func_02002170:
+Rope_Initialize:
 	overlay_veneer Rope_InitializeFar
-	.global Func_02002178
+	.global Rope_Lash
 	.thumb_func
-Func_02002178:
+Rope_Lash:
 	overlay_veneer Rope_LashFar
-	.global Func_02002180
+	.global Rope_Place
 	.thumb_func
-Func_02002180:
+Rope_Place:
 	overlay_veneer Rope_PlaceFar
-	.global Func_02002188
+	.global Actor_PlaceBlocks
 	.thumb_func
-Func_02002188:
+Actor_PlaceBlocks:
 	overlay_veneer Actor_PlaceBlocksFar
-	.global Func_02002190
+	.global Actor_LiftTargetBlock
 	.thumb_func
-Func_02002190:
+Actor_LiftTargetBlock:
 	overlay_veneer Actor_LiftTargetBlockFar
-	.global Func_02002198
+	.global Actor_PlaceMovedBlock
 	.thumb_func
-Func_02002198:
+Actor_PlaceMovedBlock:
 	overlay_veneer Actor_PlaceMovedBlockFar
-	.global Func_020021a0
+	.global TileCopies_CopyTouchedCells
 	.thumb_func
-Func_020021a0:
+TileCopies_CopyTouchedCells:
 	overlay_veneer TileCopies_CopyTouchedCellsFar
 	.global Party_GetLeaderActor
 	.thumb_func

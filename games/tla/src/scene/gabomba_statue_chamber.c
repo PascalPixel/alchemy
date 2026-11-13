@@ -926,9 +926,9 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 void Func_02001b14(void) {
-  Func_02001e80(8);
-  Func_02001e80(9);
-  Func_02001e80(10);
+  Actor_DisableById(8);
+  Actor_DisableById(9);
+  Actor_DisableById(10);
   wait(1);
   if (GameFlag_Get(0x8fd)) {
     Func_02001010();
@@ -996,7 +996,7 @@ void Func_02001ba8(void) {
 
 #include "version.h"
 
-/// Gives actors 15 to 32 action variant 2, runs Func_02001e80 for actor 8 and
+/// Gives actors 15 to 32 action variant 2, runs Actor_DisableById for actor 8 and
 /// grounds it, then Func_02001094 with actor 10 placed when flag 0x8ff is set,
 /// else Func_02000f88; arriving by entrance 2 it sets the retreat to
 /// Ov671Room7's entrance 1 (flag 0xa27) or Ov672Room1's entrance 3 (flag
@@ -1007,7 +1007,7 @@ void Func_02001c44(void) {
 
   for (i = 0; i <= 17; i++)
     Actor_SetSpritePriority(i + 15, 2);
-  Func_02001e80(8);
+  Actor_DisableById(8);
   Actor_GetById(8)->y = 0;
   if (GameFlag_Get(0x8ff)) {
     Func_02001094();

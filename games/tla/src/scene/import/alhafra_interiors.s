@@ -164,9 +164,9 @@ Party_GetLeaderActor:
 	.thumb_func
 BattleEffect_FillOverlayTiles:
 	overlay_veneer BattleEffect_FillOverlayTilesFar
-	.global Func_02000bb4
+	.global EffectSprite_InitFromSlot94
 	.thumb_func
-Func_02000bb4:
+EffectSprite_InitFromSlot94:
 	overlay_veneer EffectSprite_InitFromSlot94Far
 	.global BattleEffect_DrawSpriteAtWorldPosition
 	.thumb_func

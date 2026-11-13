@@ -74,7 +74,7 @@ s32 MapGrid_SetCellWord(u32 layer, s32 x, s32 y, s32 value) {
   return old;
 }
 
-void Func_02001480(s32 x, s32 z, s32 layer, s32 height);
+void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 
 /// Updates the cells under a pillar object by its flag (the object's action):
 /// set, the upper layer's cell is marked 0xff in its high byte, the lower
@@ -82,7 +82,7 @@ void Func_02001480(s32 x, s32 z, s32 layer, s32 height);
 /// the map's and the sprite takes priority 3; clear, the upper cell's high byte
 /// becomes 232 where the lower cell's is 232 and 0xff otherwise, the lower cell
 /// gains bit 7, the height rises 4 and the sprite takes priority 2. Both cells
-/// are written back and Func_02001480 is given the cell's position and height.
+/// are written back and MapGrid_SetCellHeight is given the cell's position and height.
 void IzumoRuins_ShowPillarState(struct Actor *object) {
   s32 column = object->x >> 20;
   s32 row = object->z >> 20;
@@ -108,7 +108,7 @@ void IzumoRuins_ShowPillarState(struct Actor *object) {
   }
   MapGrid_SetCellWord(0, column, row, lower);
   MapGrid_SetCellWord(2, column, row, upper);
-  Func_02001480(column << 20, row << 20, object->terrainId, height);
+  MapGrid_SetCellHeight(column << 20, row << 20, object->terrainId, height);
 }
 
 void IzumoRuins_PlacePillars(u16 *list) {
@@ -174,7 +174,7 @@ void IzumoRuins_FreezePuddle(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Func_02001500(gIzumoRuins_Puddles);
+  FlagBlock_ApplyFlags(gIzumoRuins_Puddles);
   object = work->objectCbc;
   object->priorityFlags |= 1;
   object->priorityFlags &= ~2;
@@ -201,7 +201,7 @@ DEFINE_LEADER_SET_LAYER(Leader_SetLayer, 0)
 /// to 0xff; then starts the room's effect.
 void IzumoRuins_StartMovingPillar(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_IzumoRuinsFirstRoom) {
-    Func_02001518(gIzumoRuins_FirstRoomMovablePillars);
+    Actor_LiftTargetBlock(gIzumoRuins_FirstRoomMovablePillars);
   } else {
     /* FAKEMATCH(signature): the cell read through an s16 return type, so the
      * old cell is masked in r3 and 0xff00 built in r2; read as s32 the two
@@ -211,14 +211,14 @@ void IzumoRuins_StartMovingPillar(void) {
         2, 50, 13,
         0xff00 |
             (((s16 (*)(u32, s32, s32))MapGrid_GetCellWord)(2, 50, 13) & 255));
-    Func_02001518(gIzumoRuins_SecondRoomMovablePillars);
+    Actor_LiftTargetBlock(gIzumoRuins_SecondRoomMovablePillars);
   }
 }
 
 void IzumoRuins_FinishMovingPillar(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Func_02001520();
+  Actor_PlaceMovedBlock();
   if (gMainRoutineWork.scene == (s32)&SceneId_IzumoRuinsSecondRoom)
     MapGrid_SetCellWord(2, 50, 13, MapGrid_GetCellWord(2, 50, 13) & 255);
   Event_End();
@@ -247,15 +247,15 @@ s32 Scene_Initialize(void) {
 
   work->field1ac = 0x204;
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
-  Func_020014e0(0);
+  FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_IzumoRuinsFirstRoom) {
-    Func_02001510(gIzumoRuins_FirstRoomMovablePillars);
+    Actor_PlaceBlocks(gIzumoRuins_FirstRoomMovablePillars);
     IzumoRuins_PlacePillars((u16 *)gIzumoRuins_FirstRoomPoundPillars);
-    Func_020014f8(gIzumoRuins_Puddles);
+    FlagBlock_PlaceAll(gIzumoRuins_Puddles);
   } else {
     Actor_Get(10)->priorityFlags |= 0x20;
     Actor_Get(11)->priorityFlags |= 0x20;
-    Func_02001510(gIzumoRuins_SecondRoomMovablePillars);
+    Actor_PlaceBlocks(gIzumoRuins_SecondRoomMovablePillars);
     IzumoRuins_PlacePillars((u16 *)gIzumoRuins_SecondRoomPoundPillars);
     if (Event_GetFlag(FLAG_IZUMO_RUINS_POOL_PARCHED)) {
       MapGrid_CopyCellAttributes(7, 2, 8, 7, 7, 12);

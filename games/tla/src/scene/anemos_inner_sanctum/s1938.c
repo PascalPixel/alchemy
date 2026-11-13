@@ -13,7 +13,7 @@
 #include "text/msg_ids.h"
 #include "scene_ids.h"
 
-void Func_02003490(void);
+void Actor_PlaceBlocks(void);
 
 void Func_02000178(void);
 void Func_020017b4(void);
@@ -123,7 +123,7 @@ void Func_02001a94(void) {
   System_Wait(5);
   MapGrid_CopyCellsTo(18, 7, column, 4, 1, 2);
   System_Wait(5);
-  Func_02003380(column << 20, 0x580000, 0, 0);
+  MapGrid_SetCellHeight(column << 20, 0x580000, 0, 0);
   Event_End();
 }
 
@@ -172,7 +172,7 @@ const struct Trigger *Scene_GetEvents(void) {
 
 void Func_02001c60(void) {
   Func_020000f4();
-  Func_020034b0();
+  Teleport_PlaySparks();
   {
     struct MainRoutineWork2c2 *party =
         (struct MainRoutineWork2c2 *)&gMainRoutineWork;
@@ -346,7 +346,7 @@ s32 Scene_Initialize(void) {
     if (t15 == 0)
       goto L_0200a6e6;
     MapGrid_CopyCellsTo(54, 7, 33, 7, 1, 2);
-    Func_02003380(0x2180000, 0x880000, 0, 0);
+    MapGrid_SetCellHeight(0x2180000, 0x880000, 0, 0);
     goto L_0200a6e6;
   }
   if (v_r1 != (s32)&SceneId_Ov6B0Room2)
@@ -359,7 +359,7 @@ s32 Scene_Initialize(void) {
   if ((Event_GetFlag(0xa81)) != 0) {
     Actor_SetPosition(10, 0x1b80000, 0x2f80000);
   }
-  Call1((void (*)())Func_02003490, (s32)gData_020036e4);
+  Call1((void (*)())Actor_PlaceBlocks, (s32)gData_020036e4);
   FIELD_AT(((s32)Actor_Get((FIELD_AT(v_r6, s32, 532)))), u8, 35) |= 64;
   FIELD_AT(((s32)Actor_Get(9)), u8, 85) = 0;
   FIELD_AT(((s32)Actor_Get(9)), u8, 35) |= 128;
@@ -425,7 +425,7 @@ L_0200a1b4:
   if ((Event_GetFlag(0xa83)) != 0) {
     Actor_SetPosition(10, 0x2180000, 0x1680000);
     MapGrid_CopyCellsTo(51, 20, 31, 20, v_r5, v_two);
-    Func_02003380(0x1f00000, 0x1500000, 0, 0);
+    MapGrid_SetCellHeight(0x1f00000, 0x1500000, 0, 0);
   }
   if ((Event_GetFlag(0xa84)) != 0) {
     Actor_SetPosition(13, 0x2e80000, 0x1c80000);
@@ -443,7 +443,7 @@ L_0200a1b4:
 L_0200a2b8:
   Actor_SetPosition(12, 0x2d80000, 0x1d80000);
 L_0200a2c6:
-  Call1((void (*)())Func_02003490, (s32)gData_020036ea);
+  Call1((void (*)())Actor_PlaceBlocks, (s32)gData_020036ea);
   goto L_0200a6e6;
 L_0200a2ce:
   if (v_r1 != (s32)&SceneId_Ov6B0Room4)
@@ -451,7 +451,7 @@ L_0200a2ce:
   if ((Event_GetFlag(0xa86)) != 0) {
     Actor_SetPosition(9, 0x1080000, 0x1680000);
   }
-  Call1((void (*)())Func_02003490, (s32)gData_020036f6);
+  Call1((void (*)())Actor_PlaceBlocks, (s32)gData_020036f6);
   v_r3 = (FIELD_AT(v_r6, u16, 482));
   v_r2 = (FIELD_AT(v_r6, s16, 482));
   if (v_r2 != 1)
@@ -603,7 +603,7 @@ L_0200a660:
   v_r1 = 176;
   v_r0 = 0x1a80000;
 L_0200a67a:
-  Func_02003380(v_r0, (v_r1 << 15), 0, 2);
+  MapGrid_SetCellHeight(v_r0, (v_r1 << 15), 0, 2);
   goto L_0200a6e6;
 L_0200a686:
   if ((Event_GetFlag(0x303)) != 0) {
@@ -612,7 +612,7 @@ L_0200a686:
     goto L_0200a6d0;
   }
   MapGrid_CopyCellsTo(18, 1, 53, 4, 1, 2);
-  Func_02003380(0x3580000, 0x580000, 0, 2);
+  MapGrid_SetCellHeight(0x3580000, 0x580000, 0, 2);
 L_0200a6d0:
   FIELD_AT(v_r5, s32, 236) = ((FIELD_AT(v_r5, s32, 236)) + 0x80000);
   FIELD_AT(v_r5, s32, 244) = ((FIELD_AT(v_r5, s32, 244)) + 0x80000);

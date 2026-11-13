@@ -87,7 +87,7 @@ void KandoreanTemple_ArriveOnWestLift(void);
 extern s32 gKandoreanTemple_LeftTimer;
 extern u16 gKandoreanTemple_LeftBobPhase;
 extern u16 gKandoreanTemple_RightBobPhase;
-void Func_02005398(void);
-void Func_020053b8(const void *data);
+void Tightrope_Initialize(void);
+void Actor_PlaceBlocks(const void *data);
 
 #endif

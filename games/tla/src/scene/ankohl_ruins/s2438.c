@@ -24,7 +24,7 @@ struct AnkohlRuinsFloatWork {
 extern struct AnkohlRuinsFloatWork Data_02004030;
 void Func_020010f4(void);
 void Func_020023d0(void);
-void Func_02002ed4();
+void FieldEffect_StartBlankOverlay();
 void Func_02000418(void);
 void Event_StartScreenTransition(void);
 void Func_02001420(s32 a0);
@@ -36,7 +36,7 @@ s32 Scene_Initialize(s32 a0) {
   struct Actor *object;
 
   if (scene == (s32)&SceneId_Ov686Room1) {
-    Call1((void (*)())Func_02002ed4, 0);
+    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
     if (GameFlag_Get(0x9d2))
       Actor_SetPosition(10, 0, 0);
     if (GameFlag_Get(0x9d3))
@@ -306,7 +306,7 @@ struct AnkohlRuinsFloatWork {
 extern struct AnkohlRuinsFloatWork Data_02004030;
 void Func_020010f4(void);
 void Func_020023d0(void);
-void Func_02002ed4();
+void FieldEffect_StartBlankOverlay();
 void Event_Start(void);
 void Event_StartScreenTransition(void);
 void Func_02001420(s32 a0);
@@ -318,7 +318,7 @@ s32 Scene_Initialize(s32 a0) {
   struct Actor *object;
 
   if (scene == (s32)&SceneId_Ov686Room1) {
-    Call1((void (*)())Func_02002ed4, 0);
+    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
     if (GameFlag_Get(0x9d2))
       Actor_SetPosition(10, 0, 0);
     if (GameFlag_Get(0x9d3))

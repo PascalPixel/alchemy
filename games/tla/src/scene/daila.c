@@ -92,8 +92,8 @@ extern s16 gDaila_PuddleFrozenFlags[];
 extern s32 gDaila_FallenOldManScript[];
 extern u32 gDaila_PuddleChildScript[];
 void Field_TryJumpForward(void);
-void Func_02000d68(s32 a, s32 b);
-void Func_02000d58(s16 *data);
+void Actor_FallOverById(s32 a, s32 b);
+void FlagBlock_ApplyFlags(s16 *data);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gDailaEntrances; }
 
@@ -476,15 +476,15 @@ DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchSixthPuddle, 16, 23, 17, 31,
 
 void Actor_SetWideSprite(s32 actor, s32 flag);
 
-DEFINE_SCENE_RAISE_HELD_ACTOR(Scene_RaiseHeldActor, Func_02000d58,
+DEFINE_SCENE_RAISE_HELD_ACTOR(Scene_RaiseHeldActor, FlagBlock_ApplyFlags,
                               gDaila_PuddleFrozenFlags)
 
 s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila1)
-    Func_02000d68(12, 0);
+    Actor_FallOverById(12, 0);
   else if (gMainRoutineWork.scene == (s32)&SceneId_Daila2)
-    Func_02000d50(gDaila_PuddleFrozenFlags);
+    FlagBlock_PlaceAll(gDaila_PuddleFrozenFlags);
   Actor_SetSpritePriority(21, 1);
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila2 &&
       GameFlag_Get(FLAG_DAILA_PSY_CRYSTAL_DUG) == 0)

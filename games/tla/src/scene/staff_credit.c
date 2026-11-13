@@ -40,9 +40,9 @@ extern u8 Data_020020bc[];
 extern u8 Data_0200213c[];
 extern u8 Data_0200217c[];
 extern u8 Data_02002469[];
-void Func_0200207c(void);
+void WorldMap_ReloadPendingAreaGraphics(void);
 void Func_020020ac(s32 value);
-s32 Func_02002004(s32 *position);
+s32 WorldMap_GetBlockPlace(s32 *position);
 extern s16 gData_02003fc6;
 extern u8 gData_020040d8[][32];
 extern u32 Data_02003fcc[3];
@@ -219,7 +219,7 @@ void Func_0200020c(s32 stage) {
     }
     wait(1);
   }
-  Func_02002074();
+  WorldMap_Freeze();
   if (stage == 4) {
     u8 *frames = buffer + 0x2000;
 
@@ -433,7 +433,7 @@ void Func_0200020c(s32 stage) {
   FieldTask_Remove(Func_0200005c);
   if (stage != 4) {
     FieldCamera_SetSpeed(0x60000, 0xc000);
-    Func_0200207c();
+    WorldMap_ReloadPendingAreaGraphics();
     Camera_MoveWithinMapBounds_(gData_02003d48[stage][0] << 16,
                                 gData_02003d48[stage][1] << 16, 1);
     FieldEffect_ScheduleRatioTransition(0xb333, 60);
@@ -585,7 +585,7 @@ DEFINE_ACTOR_CYCLE_CHILD_VALUES(Func_0200122c, gData_02002eac, gData_02003db8,
 
 DEFINE_ACTOR_SET_FLIGHT_MODE(Func_02001274, Func_020011f4, Func_0200122c)
 
-DEFINE_LEADER_SEARCH(Func_020012ac, Func_02001274, Func_02002004)
+DEFINE_LEADER_SEARCH(Func_020012ac, Func_02001274, WorldMap_GetBlockPlace)
 
 void Func_020012f8(void) {
   Func_02001274(Actor_Get(FieldParty_GetLeaderActor()), 0);
@@ -638,7 +638,7 @@ void Func_02001400(s32 mode) {
     MapGrid_SetShake(0x20000, 0x30000, 0x10000);
     Event_PlaySound(141);
   }
-  Func_02002074();
+  WorldMap_Freeze();
   buffer = Heap_AllocEwram(0x4000);
   Decompress_TaggedLz(gWorldMapPackedTiles, buffer);
   Decompress_TaggedLz(gWorldMapPackedPictures, buffer + 0x1000);
@@ -827,11 +827,11 @@ void Func_02001d90(void) {
 
   if ((gInput & 3) != 0 && Event_GetFlag(0x106) == 0 && leader->y > 0x40000) {
     if (--gData_02003fc8 <= 0) {
-      Func_0200200c(1);
+      Party_DrainPp(1);
       gData_02003fc8 = 10;
     }
   }
-  Func_02001be0(Func_02002014());
+  Func_02001be0(Party_GetPpRatio());
   attributes = 0x80004000;
   Call2((void (*)())Render_ProjectPoint, (s32)(&leader->x), (s32)(screen));
   {
@@ -842,7 +842,7 @@ void Func_02001d90(void) {
     *oam++ = (y | (x << 16)) | attributes;
   }
   *oam = tile | 0x400;
-  Func_02001f7c(Data_02003fcc, 255);
+  Oam_AddSpriteAtDepthClamped(Data_02003fcc, 255);
 }
 
 DEFINE_GAUGE_INIT(Func_02001e58, gData_020040d8, gData_02003fc6, gData_02003fc4,

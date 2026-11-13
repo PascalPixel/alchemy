@@ -18,19 +18,19 @@ Actor_GetById:
 	.thumb_func
 Actor_SetModeById:
 	overlay_veneer Actor_SetModeByIdFar
-	.global Func_02000190
+	.global Rope_Initialize
 	.thumb_func
-Func_02000190:
+Rope_Initialize:
 	overlay_veneer Rope_InitializeFar
-	.global Func_02000198
+	.global Rope_Tie
 	.thumb_func
-Func_02000198:
+Rope_Tie:
 	overlay_veneer Rope_TieFar
-	.global Func_020001a0
+	.global Rope_Lash
 	.thumb_func
-Func_020001a0:
+Rope_Lash:
 	overlay_veneer Rope_LashFar
-	.global Func_020001a8
+	.global Rope_Place
 	.thumb_func
-Func_020001a8:
+Rope_Place:
 	overlay_veneer Rope_PlaceFar

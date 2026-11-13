@@ -21,8 +21,8 @@ s32 MapGrid_CheckCollision(struct Actor *object,
 void Event_End(void);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void Scene_TalkToActor(s32 a);
-void Func_02001274(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
-void Func_0200127c(s32 a, s32 b, s32 c);
+void Cyclone_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+void FieldItem_JumpToLeader(s32 a, s32 b, s32 c);
 
 extern u32 gData_0200128c[];
 
@@ -36,11 +36,11 @@ extern char SceneId_Ov673Room5;
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02001274_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
-  Func_02001274(a, b, c, d, e, f, g);
+  Cyclone_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
 static __inline__ void Func_0200127c_(s32 a, s32 b, s32 c) {
-  Func_0200127c(a, b, c);
+  FieldItem_JumpToLeader(a, b, c);
 }
 
 struct GabombaCatacombsVec {
@@ -465,7 +465,7 @@ const struct Trigger *Scene_GetEvents(void) {
 #endif
 
 extern char SceneId_Ov671Room7, SceneId_Ov672Room1;
-void Func_02001254(s32 a);
+void FieldEffect_StartBlankOverlay(s32 a);
 
 s32 Scene_Initialize(void) {
   s32 entrance;
@@ -473,7 +473,7 @@ s32 Scene_Initialize(void) {
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect =
       CATACOMBS_SCREEN_EFFECT;
-  Func_02001254(0);
+  FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room1 &&
       (entrance = gMainRoutineWork.entrance) == 1) {
     if (GameFlag_Get(0xa27)) {
@@ -487,7 +487,7 @@ s32 Scene_Initialize(void) {
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
       gMainRoutineWork.scene == (s32)&SceneId_Ov673Room2 &&
       gMainRoutineWork.entrance > 2)
-    Func_0200126c(gMainRoutineWork.currentOwner);
+    Actor_DepartInRing(gMainRoutineWork.currentOwner);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room3) {
     if (GameFlag_Get(0x200))
       MapGrid_CopyCellAttributes(6, 23, 1, 1, 8, 23);

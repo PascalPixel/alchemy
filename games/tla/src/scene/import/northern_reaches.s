@@ -178,9 +178,9 @@ Event_SetDestination:
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_02000b08
+	.global RisingParticles_Start
 	.thumb_func
-Func_02000b08:
+RisingParticles_Start:
 	overlay_veneer RisingParticles_StartFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
@@ -206,9 +206,9 @@ Event_ResolvePendingActions:
 	.thumb_func
 Actor_WalkByById:
 	overlay_veneer Actor_WalkByByIdFar
-	.global Func_02000b40
+	.global EffectSprite_Init
 	.thumb_func
-Func_02000b40:
+EffectSprite_Init:
 	overlay_veneer EffectSprite_InitFar
 	.global EffectSprite_DrawAtWorldPosition
 	.thumb_func

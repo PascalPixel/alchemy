@@ -118,9 +118,9 @@ Actor_SetSpritePriority:
 	.thumb_func
 ItemDisplay_ShowItem:
 	overlay_veneer ItemDisplay_ShowItemFar
-	.global Func_02000a48
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_02000a48:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
@@ -130,9 +130,9 @@ Event_ResolvePendingActions:
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_02000a60
+	.global Actor_FallOverById
 	.thumb_func
-Func_02000a60:
+Actor_FallOverById:
 	overlay_veneer Actor_FallOverByIdFar
 	.global Shop_Run
 	.thumb_func

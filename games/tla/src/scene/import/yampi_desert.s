@@ -250,9 +250,9 @@ Actor_FaceDirectionById:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_020040f8
+	.global Actor_DisableById
 	.thumb_func
-Func_020040f8:
+Actor_DisableById:
 	overlay_veneer Actor_DisableByIdFar
 	.global Import_ActorShowEmoteById
 	.thumb_func
@@ -318,9 +318,9 @@ Actor_SetWideSprite:
 	.thumb_func
 Actor_ReturnHome:
 	overlay_veneer Actor_ReturnHomeFar
-	.global Func_02004180
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_02004180:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global FieldPsynergy_RunHandler
 	.thumb_func
@@ -358,21 +358,21 @@ Actor_WatchAndSetScript:
 	.thumb_func
 Scene_QueueMusic:
 	overlay_veneer Scene_QueueMusicFar
-	.global Func_020041d0
+	.global Rope_Initialize
 	.thumb_func
-Func_020041d0:
+Rope_Initialize:
 	overlay_veneer Rope_InitializeFar
-	.global Func_020041d8
+	.global Rope_Place
 	.thumb_func
-Func_020041d8:
+Rope_Place:
 	overlay_veneer Rope_PlaceFar
-	.global Func_020041e0
+	.global Actor_GetCellIndex
 	.thumb_func
-Func_020041e0:
+Actor_GetCellIndex:
 	overlay_veneer Actor_GetCellIndexFar
-	.global Func_020041e8
+	.global MapCollision_FindOrAddTag
 	.thumb_func
-Func_020041e8:
+MapCollision_FindOrAddTag:
 	overlay_veneer MapCollision_FindOrAddTagFar
 	.global Party_GetLeaderActor
 	.thumb_func

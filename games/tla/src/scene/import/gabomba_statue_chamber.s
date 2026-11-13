@@ -202,9 +202,9 @@ Actor_FaceDirectionById:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_02001e80
+	.global Actor_DisableById
 	.thumb_func
-Func_02001e80:
+Actor_DisableById:
 	overlay_veneer Actor_DisableByIdFar
 	.global Actor_ShowEmoteById
 	.thumb_func

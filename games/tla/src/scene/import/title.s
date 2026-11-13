@@ -102,9 +102,9 @@ Title_ShowNintendoLogo:
 	.thumb_func
 Title_ShowCamelotLogo:
 	overlay_veneer Title_ShowCamelotLogoFar
-	.global Func_0200063c
+	.global TitleIntro_Run
 	.thumb_func
-Func_0200063c:
+TitleIntro_Run:
 	overlay_veneer TitleIntro_RunFar
 	.global Sound_Play
 	.thumb_func

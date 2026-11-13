@@ -79,8 +79,8 @@ void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Event_ShowMessageThenWait(s32 actor, s32 a, s32 b);
 void Event_ShowMessageAndWait(s32 speaker, s32 flags);
 void Actor_FaceDirectionById(s32 actor, s32 angle);
-void Func_02005b8c(s32 actor);
-void Func_02005c6c(const void *script);
+void Actor_DisableById(s32 actor);
+void FlagBlock_ApplyFlags(const void *script);
 void Shop_Run(s32 shop, s32 keeper);
 void Sanctum_Run(s32 keeper);
 void Inn_CheckIn(s32 shop, s32 keeper);
@@ -101,10 +101,10 @@ s32 Import_FieldPsynergySetupActorPair(s32 a, s32 b);
 void BattleEffect_StopMainActor(void);
 
 void Field_TryJumpForward(void);
-void Func_02005c04(s32 a);
-void Func_02005c54(void);
-void Func_02005c5c(s32 a, s32 b, s32 c, s32 d);
-void Func_02005c64(const void *script);
+void FieldEffect_StartBlankOverlay(s32 a);
+void Rope_Initialize(void);
+void Rope_Place(s32 a, s32 b, s32 c, s32 d);
+void FlagBlock_PlaceAll(const void *script);
 void Actor_SetMoveTarget(struct KibomboObject *object, s32 x, s32 y, s32 z);
 void Actor_WaitForMove(struct KibomboObject *object);
 

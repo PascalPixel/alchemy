@@ -25,9 +25,9 @@ void Import_ResourceDecodeByteLzInRam(const void *source, void *destination);
 void Actor_StartScript(struct Actor *object, const void *data);
 s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
 void Field_TryJumpForward(void);
-void Func_02001dfc(void);
-void Func_02001e04(s32 a, s32 b, s32 c, s32 d);
-void Func_02001e0c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+void Rope_Initialize(void);
+void Rope_Place(s32 a, s32 b, s32 c, s32 d);
+void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Shop_Run(s32 a, s32 b);
 void Inn_CheckIn(s32 a, s32 b);
 
@@ -102,7 +102,7 @@ static __inline__ void Func_02001d04_(s32 id, s32 x, s32 z) {
 
 static __inline__ void Func_02001e0c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
-  Func_02001e0c(a, b, c, d, e, f, g);
+  TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
 #endif

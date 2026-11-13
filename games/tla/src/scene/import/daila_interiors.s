@@ -154,9 +154,9 @@ Field_TryJumpForward:
 	.thumb_func
 ItemDisplay_ShowPicture:
 	overlay_veneer ItemDisplay_ShowPictureFar
-	.global Func_02000dac
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_02000dac:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Import_EventResolvePendingActions
 	.thumb_func
@@ -166,13 +166,13 @@ Import_EventResolvePendingActions:
 	.thumb_func
 FieldYesNo_Ask:
 	overlay_veneer FieldYesNo_AskFar
-	.global Func_02000dc4
+	.global FlagBlock_PlaceAll
 	.thumb_func
-Func_02000dc4:
+FlagBlock_PlaceAll:
 	overlay_veneer FlagBlock_PlaceAllFar
-	.global Func_02000dcc
+	.global FlagBlock_ApplyFlags
 	.thumb_func
-Func_02000dcc:
+FlagBlock_ApplyFlags:
 	overlay_veneer FlagBlock_ApplyFlagsFar
 	.global Party_GetLeaderActor
 	.thumb_func

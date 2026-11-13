@@ -243,7 +243,7 @@ void YampiDesert_StepOntoStakeTops(void) {
       struct MapCell *cells = map->layers[layer].cells;
       u8 *shapes =
           (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
-      s32 index = Func_020041e0(object);
+      s32 index = Actor_GetCellIndex(object);
       s32 shape = MapGrid_GetTerrainKind(layer, object->x, object->z);
       s32 height = Map_GetTerrainHeight(layer, object->x, object->z);
 
@@ -252,7 +252,7 @@ void YampiDesert_StepOntoStakeTops(void) {
       object->motionFlags = 0;
       cells->collisionCode = 0;
       cells->attributeB |= 128;
-      *shapes = Func_020041e8(layer, shape, (height >> 19) + 4);
+      *shapes = MapCollision_FindOrAddTag(layer, shape, (height >> 19) + 4);
     }
     list++;
   }
@@ -288,7 +288,7 @@ next:
           (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
       /* FAKEMATCH(pin): the index in r10; as a plain local, 32 of 130
        * instructions differ in tla-en. */
-      register s32 index asm("r10") = Func_020041e0(object);
+      register s32 index asm("r10") = Actor_GetCellIndex(object);
       s32 shape = MapGrid_GetTerrainKind(layer, object->x, object->z);
       s32 height = Map_GetTerrainHeight(layer, object->x, object->z);
       struct MapCell *cell = cells + index;
@@ -296,7 +296,7 @@ next:
       object->motionFlags = set;
       cell->collisionCode = 255;
       cell->attributeB &= 127;
-      shapes[index] = Func_020041e8(layer, shape, (height >> 19) - 4);
+      shapes[index] = MapCollision_FindOrAddTag(layer, shape, (height >> 19) - 4);
     }
   }
   list++;
@@ -324,7 +324,7 @@ void YampiDesert_BlockPoundedStakes(u16 *list) {
     asm("" : "+l"(list));
     object = Actor_GetById(list[0]);
     if (GameFlag_Get(list[2]))
-      *(u8 *)((u32)map->layers[2].cells + (Func_020041e0(object) << 2) + 2) =
+      *(u8 *)((u32)map->layers[2].cells + (Actor_GetCellIndex(object) << 2) + 2) =
           255;
     list += 3;
   next:
@@ -341,7 +341,7 @@ void YampiDesert_UnblockStakes(u16 *list) {
 
   if (*list != 0xffff) {
   loop:
-    cell = &map->layers[2].cells[Func_020041e0(Actor_GetById(*list))];
+    cell = &map->layers[2].cells[Actor_GetCellIndex(Actor_GetById(*list))];
     collisionCode = 232;
     /* FAKEMATCH(dead): the advance in a once-only block, so the store waits for
      * it; as list += 3, 2 of 25 instructions differ in tla-en. */

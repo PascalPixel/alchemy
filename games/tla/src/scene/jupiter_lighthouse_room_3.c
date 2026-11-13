@@ -63,12 +63,12 @@ enum { ACTOR_LEDGE_LOG = ACTOR_FIRST_PLACED + 2 };
 
 void Scene_SetArrivalFlags(s32 a);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 a);
-void Func_02002368();
-void Func_020023d0(s32 id);
+void MapGrid_SetCellHeight();
+void Actor_DisableById(s32 id);
 void Field_TryJumpForward(void);
-void Func_02002440(s32 id, s32 a);
-void Func_02002460(s32 x, s32 z, s32 a, s32 b);
-void Func_02002468(s32 id);
+void HangingVine_Place(s32 id, s32 a);
+void MapGrid_SetAttributeBAt(s32 x, s32 z, s32 a, s32 b);
+void Actor_DepartInRing(s32 id);
 s32 PushTarget_FillFootprint(s32 id);
 s32 PushTarget_FindSlide(struct PushTarget *target);
 void PushTarget_PushFill(struct PushTarget target);
@@ -76,7 +76,7 @@ void PushTarget_PushFill(struct PushTarget target);
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Lift_(s32 x, s32 z, s32 a, s32 b) {
-  Func_02002368(x, z, a, b);
+  MapGrid_SetCellHeight(x, z, a, b);
 }
 
 static __inline__ void Func_020023b0_(s32 id, s32 x, s32 z) {
@@ -141,7 +141,7 @@ void JupiterLighthouse_PushLogOffTheLedge(void) {
       Lift_(0x1000000, x, 0, 0);
       MapGrid_SetCellBehavior(0x1000000, x, 0, 0);
       if (i <= 1)
-        Func_02002460(0x1000000, x, 0, 128);
+        MapGrid_SetAttributeBAt(0x1000000, x, 0, 128);
     }
   }
   object->update = 0;
@@ -173,7 +173,7 @@ void JupiterLighthouse_FinishMovingPillar(s32 unused, s32 id) {
       System_Wait(1);
     }
     object->motionFlags = 0;
-    Func_02002368(object->x, object->z, 0, 0);
+    MapGrid_SetCellHeight(object->x, object->z, 0, 0);
   }
 }
 
@@ -183,14 +183,14 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
-  Func_02002440(12, 1);
-  Func_02002440(13, 1);
+  HangingVine_Place(12, 1);
+  HangingVine_Place(13, 1);
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0 &&
       gMainRoutineWork.entrance == 12)
-    Func_02002468(gMainRoutineWork.currentOwner);
+    Actor_DepartInRing(gMainRoutineWork.currentOwner);
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0 &&
       gMainRoutineWork.entrance == 13)
-    Func_02002468(gMainRoutineWork.currentOwner);
+    Actor_DepartInRing(gMainRoutineWork.currentOwner);
   return 0;
 }
 
@@ -206,7 +206,7 @@ s32 Scene_PrepareMap(void) {
     object->terrainHeight = PIXELS(-32);
     object->y = PIXELS(-32);
     Func_020023b0_(14, PIXELS(328), PIXELS(584));
-    Func_02002368(object->x, object->z, 0, 0);
+    MapGrid_SetCellHeight(object->x, object->z, 0, 0);
   }
   if (Event_GetFlag(FLAG_RIGHT_PILLAR_IN_GAP)) {
     object = Actor_Get(15);
@@ -214,7 +214,7 @@ s32 Scene_PrepareMap(void) {
     object->terrainHeight = PIXELS(-32);
     object->y = PIXELS(-32);
     Func_020023b0_(15, PIXELS(520), PIXELS(584));
-    Func_02002368(object->x, object->z, 0, 0);
+    MapGrid_SetCellHeight(object->x, object->z, 0, 0);
   }
   Actor_Get(8)->priorityFlags |= 32;
   Actor_Get(9)->priorityFlags |= 32;
@@ -225,10 +225,10 @@ s32 Scene_PrepareMap(void) {
   FieldActor_SetSpritePriority(9, 3);
   FieldActor_SetSpritePriority(11, 3);
   Actor_Get(ACTOR_LEDGE_LOG)->priorityFlags |= 2;
-  Func_020023d0(8);
-  Func_020023d0(9);
-  Func_020023d0(10);
-  Func_020023d0(11);
+  Actor_DisableById(8);
+  Actor_DisableById(9);
+  Actor_DisableById(10);
+  Actor_DisableById(11);
   PushTarget_FillFootprint(8);
   PushTarget_FillFootprint(9);
   PushTarget_FillFootprint(10);
@@ -238,7 +238,7 @@ s32 Scene_PrepareMap(void) {
       Lift_(0x1000000, x, 0, 0);
       MapGrid_SetCellBehavior(0x1000000, x, 0, 0);
       if (i <= 1)
-        Func_02002460(0x1000000, x, 0, 128);
+        MapGrid_SetAttributeBAt(0x1000000, x, 0, 128);
     }
   }
   return 0;
@@ -264,7 +264,7 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(
     gPaletteCycleColors, gPaletteCycleUnlitPalette, gPaletteCycleFrame,
     PaletteCycle_StepAt, gPaletteCycleUnlitColors)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02002368, Func_02002460)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight, MapGrid_SetAttributeBAt)
 
 #include "frame.h"
 
@@ -281,10 +281,10 @@ s32 Position_FlatDistance(s32 *a, s32 *b) {
 
 extern const s32 gWhirlwindEndScript[];
 
-s32 Func_02002450(s32 x, s32 z, s32 layer);
+s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, Func_02002450,
+DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, MapGrid_GetCellBehavior,
                               Position_FlatDistance, gWhirlwindEndScript,
                               gWhirlwindRiding)
 
@@ -387,11 +387,11 @@ DEFINE_PUSH_TARGET_PUSH_FILL(PushTarget_PushFill, gPushFootprints,
                              PushTarget_UpdatePusher, Actor_SelectAnimation,
                              gPushLeaderSteps)
 
-struct Actor *Func_02002438(s32 *position, s32 mode);
+struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 
 /// Stops the object where it stands (Actor_SetPositionAndResetMotion) when
 /// the point a cell ahead along its facing holds another object
-/// (Func_02002438) whose sprite shape is not in the footprint table, and again
+/// (Actor_FindAtCell) whose sprite shape is not in the footprint table, and again
 /// when its own cell test (MapGrid_CheckCollision) is positive.
 void PushTarget_UpdatePusher(struct Actor *object) {
   s32 position[3];
@@ -405,7 +405,7 @@ void PushTarget_UpdatePusher(struct Actor *object) {
   position[1] = object->y;
   position[2] = object->z;
   FieldVector_AddPolarOffset(0x100000, angle, position);
-  other = Func_02002438(position, 1);
+  other = Actor_FindAtCell(position, 1);
   if (other != NULL) {
     i = 0;
   next:

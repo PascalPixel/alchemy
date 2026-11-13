@@ -29,10 +29,10 @@ extern u16 gLightSpritePriority;
 void JupiterLighthouse_OpenDoor(s32 value);
 void JupiterLighthouse_CloseDoor(void);
 void JupiterLighthouse_CheckBlockOnCell(void);
-void Func_02002b54(s32 x, s32 z, s32 a, s32 b);
-void Func_02002c54(s32 x, s32 z, s32 a, s32 b);
+void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
+void MapGrid_ClearAttributeBBitsAt(s32 x, s32 z, s32 a, s32 b);
 void Func_02001a48(const u8 *data, s32 a, s32 b);
-void Func_02002bec(void);
+void Field_TryJumpForward(void);
 
 void Func_02000038(void) { Field_RequestDjinnBattle(21, 74); }
 
@@ -172,18 +172,18 @@ void Func_020002f0(void) {
    * calls, 63 of 303 instructions differ in tla-en, the coordinates and flags
    * shared in saved registers. */
   MapGrid_CopyCellsLayered(0x5e, 0x3c, 9, 8, 0x5e, 0xa);
-  Call4((void (*)())Func_02002b54, 0x2300000, 0xf00000, 0, -2);
-  Call4((void (*)())Func_02002b54, 0x1f00000, 0x1000000, 0, -2);
-  Call4((void (*)())Func_02002b54, 0x2100000, 0xa00000, 0, -2);
+  Call4((void (*)())MapGrid_SetCellHeight, 0x2300000, 0xf00000, 0, -2);
+  Call4((void (*)())MapGrid_SetCellHeight, 0x1f00000, 0x1000000, 0, -2);
+  Call4((void (*)())MapGrid_SetCellHeight, 0x2100000, 0xa00000, 0, -2);
   FieldMapGrid_SetCellBehavior(0x2600000, 0xa00000, 2, 0);
   FieldMapGrid_SetCellBehavior(0x1f00000, 0xa00000, 2, 0);
   FieldMapGrid_SetCellBehavior(0x1f00000, 0xe00000, 2, 0);
   if (Event_GetFlag(0xa10) || Event_GetFlag(0xa11))
-    Func_02002b54(0x2300000, 0xf00000, 0, 0);
+    MapGrid_SetCellHeight(0x2300000, 0xf00000, 0, 0);
   if (Event_GetFlag(0xa12) || Event_GetFlag(0xa13))
-    Func_02002b54(0x1f00000, 0x1000000, 0, 0);
+    MapGrid_SetCellHeight(0x1f00000, 0x1000000, 0, 0);
   if (Event_GetFlag(0xa14) || Event_GetFlag(0xa15))
-    Func_02002b54(0x2100000, 0xa00000, 0, 0);
+    MapGrid_SetCellHeight(0x2100000, 0xa00000, 0, 0);
   if (Event_GetFlag(0xa10)) {
     MapGrid_CopyCellsLayered(0x60, 0x38, 7, 2, 0x60, 0xf);
     MapGrid_CopyCellsLayered(0x6f, 0x33, 1, 1, 0x63, 0xf);
@@ -236,7 +236,7 @@ void Func_020005e8(s32 mode) {
     MapGrid_CopyCellsLayered(80, 46, 1, 7, 72, 9);
     MapGrid_CopyCellsLayered(80, 53, 8, 5, 72, 16);
     MapGrid_CopyCellsLayered(78, 47, 1, 1, 8, 74);
-    Func_02002b54(0x800000, 0xc00000, 0, 4);
+    MapGrid_SetCellHeight(0x800000, 0xc00000, 0, 4);
     if (mode == 1) {
       frame = 0;
     L_0200864c:
@@ -271,7 +271,7 @@ void Func_020005e8(s32 mode) {
     MapGrid_CopyCellsLayered(72, 46, 1, 7, 72, 9);
     MapGrid_CopyCellsLayered(72, 53, 8, 5, 72, 16);
     MapGrid_CopyCellsLayered(70, 47, 1, 1, 8, 74);
-    Func_02002b54(0x800000, 0xc00000, 0, 6);
+    MapGrid_SetCellHeight(0x800000, 0xc00000, 0, 6);
     FieldActor_Stop(gMainRoutineWork.currentOwner);
     Actor_SetPosition(20, 0, 0);
     if (mode == 1) {
@@ -307,8 +307,8 @@ void Func_02000778(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (id == 20) {
-    Func_02002b54(object->x, object->z, 0, 6);
-    Func_02002c54(object->x, object->z, 0, 128);
+    MapGrid_SetCellHeight(object->x, object->z, 0, 6);
+    MapGrid_ClearAttributeBBitsAt(object->x, object->z, 0, 128);
   }
 }
 
@@ -323,7 +323,7 @@ void Func_02000778(s32 unused, s32 id) {
 // and sound calls go through the call layer, each as the native has it.
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_02002c4c(s32 x, s32 z, s32 a, s32 b);
+void MapGrid_SetAttributeBBitsAt(s32 x, s32 z, s32 a, s32 b);
 
 void Func_020007a4(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
@@ -401,8 +401,8 @@ void Func_020007a4(s32 unused, s32 id) {
     object->priorityFlags &= ~2;
     FieldMapGrid_SetCellBehavior(object->x, object->z, object->terrainId, 255);
   } else {
-    Func_02002b54(object->x, object->z, 0, 8);
-    Func_02002c4c(object->x, object->z, 0, 128);
+    MapGrid_SetCellHeight(object->x, object->z, 0, 8);
+    MapGrid_SetAttributeBBitsAt(object->x, object->z, 0, 128);
   }
 }
 
@@ -504,7 +504,7 @@ void Func_02000c7c(void) {
   object->motionFlags = 0;
 }
 
-void Func_02002c24(void);
+void Leader_PushObjectAhead(void);
 
 void Func_02000cec(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -535,15 +535,15 @@ void Func_02000cec(void) {
     if (x == 33 && z == 10 && (Event_GetFlag(2580) || Event_GetFlag(2581)))
       found = 2;
     if (found == 0) {
-      Func_02002bec();
+      Field_TryJumpForward();
       return;
     }
   }
   if (found == 1)
-    Func_02002c24();
+    Leader_PushObjectAhead();
 }
 
-void Func_02000e20(void) { Func_02002bec(); }
+void Func_02000e20(void) { Field_TryJumpForward(); }
 
 #include "ram_buffer.h"
 
@@ -628,7 +628,7 @@ L_02008f46:
 }
 
 void JupiterLighthouse_LoadPalettes(s32 mode);
-s32 Func_02002b5c(s32 x, s32 z, s32 layer);
+s32 MapGrid_GetCellHeight(s32 x, s32 z, s32 layer);
 
 s32 Scene_PrepareMap(void) {
   struct Actor *object;
@@ -666,9 +666,9 @@ s32 Scene_PrepareMap(void) {
   Func_020002f0();
   if (!Event_GetFlag(0xa1a)) {
     object = Actor_Get(20);
-    value = Func_02002b5c(object->x, object->z, 0);
-    Func_02002b54(object->x, object->z, 0, value + 2);
-    Func_02002c4c(object->x, object->z, 0, 0x80);
+    value = MapGrid_GetCellHeight(object->x, object->z, 0);
+    MapGrid_SetCellHeight(object->x, object->z, 0, value + 2);
+    MapGrid_SetAttributeBBitsAt(object->x, object->z, 0, 0x80);
   }
   Func_020005e8(0);
   return 0;
@@ -697,7 +697,7 @@ DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame,
 extern u16 gLighthousePalette13[];
 extern u16 gLighthouseUnlitColors[];
 
-void Func_02002c44();
+void MapGrid_SetAttributeBAt();
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
                                         gPaletteCyclePausesInEvents,
@@ -705,7 +705,7 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
                                         gLighthousePalette13, PaletteCycle_Step,
                                         gLighthouseUnlitColors)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02002b54, Func_02002c44)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight, MapGrid_SetAttributeBAt)
 
 #include "frame.h"
 #include "field_sprite.h"
@@ -723,9 +723,9 @@ DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 extern const s32 gWhirlwindEndScript[];
 extern s32 gWhirlwindRiding;
 
-s32 Func_02002c34(s32 x, s32 z, s32 layer);
+s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 s32 Trig_Cos(s32 angle);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_02002c34, Position_FlatDistance,
+DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior, Position_FlatDistance,
                         gWhirlwindEndScript, gWhirlwindRiding)

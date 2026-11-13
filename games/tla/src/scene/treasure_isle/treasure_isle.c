@@ -408,7 +408,7 @@ s32 Scene_Initialize(void) {
 
   ((struct TreasureIsleEventWork__s0cf4 *)Ram_HeapSlots->eventWork)->route =
       0x204;
-  Func_0200105c();
+  Tightrope_Initialize();
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom1) {
     Event_SetFlag(0x300);
     Event_SetFlag(0x301);
@@ -422,7 +422,7 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom2) {
     Task_AddFrame(TreasureIsle_CycleWaterColors, TASK_PASS_VBLANK);
-    Func_02001064(0, 8, 9);
+    Tightrope_Place(0, 8, 9);
     if (Event_GetFlag(0x308))
       Actor_SetPosition(10, PIXELS(264), PIXELS(184));
     if (Event_GetFlag(0x303))
@@ -438,7 +438,7 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom3) {
     Task_AddFrame(TreasureIsle_CycleWaterColors, TASK_PASS_VBLANK);
-    Func_02001064(0, 8, 9);
+    Tightrope_Place(0, 8, 9);
     if (Event_GetFlag(0x309))
       Actor_SetPosition(10, PIXELS(664), PIXELS(248));
     if (Event_GetFlag(0x30a))
@@ -451,9 +451,9 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom4) {
     if (Event_GetFlag(0x30d))
       Actor_SetPosition(8, PIXELS(696), PIXELS(600));
-    Func_02001064(0, 17, 18);
-    Func_02001064(1, 19, 20);
-    Func_02001064(2, 21, 22);
+    Tightrope_Place(0, 17, 18);
+    Tightrope_Place(1, 19, 20);
+    Tightrope_Place(2, 21, 22);
     i = 0;
   next:
     {

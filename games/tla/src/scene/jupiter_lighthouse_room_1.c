@@ -59,9 +59,9 @@ enum { ACTOR_GATES_PILLAR = ACTOR_FIRST_PLACED + 2 };
 
 struct Actor;
 struct LightOam;
-void Func_02001bcc(s32 owner);
+void Actor_ArriveInRing(s32 owner);
 extern s32 gWhirlwindRiding;
-s32 Func_02001bbc(s32 x, s32 z, s32 layer);
+s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 extern s16 gLightSpriteTile;
 extern s16 gLightSpriteCount;
 extern struct Actor *gLightSpriteActors[];
@@ -133,7 +133,7 @@ s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
       gMainRoutineWork.entrance == 6)
-    Func_02001bcc(gMainRoutineWork.currentOwner);
+    Actor_ArriveInRing(gMainRoutineWork.currentOwner);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED)) {
     Actor_SetPosition(ACTOR_GATES_PILLAR, PIXELS(280), PIXELS(536));
     JupiterLighthouse_OpenDoor(0);
@@ -172,8 +172,8 @@ DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gPaletteCycleFrame,
                              gPaletteCyclePausesInEvents, gPaletteCycleColors,
                              0x05000184)
 
-void Func_02001b14();
-void Func_02001bc4();
+void MapGrid_SetCellHeight();
+void MapGrid_SetAttributeBAt();
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
                                         gPaletteCyclePausesInEvents,
@@ -182,7 +182,7 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
                                         PaletteCycle_StepAt,
                                         gPaletteCycleUnlitColors)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02001b14, Func_02001bc4)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight, MapGrid_SetAttributeBAt)
 
 #include "actor.h"
 #include "frame.h"
@@ -196,7 +196,7 @@ extern s32 gWhirlwindEndScript[];
 s32 Position_FlatDistance(s32 *from, s32 *to);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, Func_02001bbc,
+DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, MapGrid_GetCellBehavior,
                               Position_FlatDistance, gWhirlwindEndScript,
                               gWhirlwindRiding)
 

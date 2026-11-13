@@ -88,9 +88,9 @@ extern u16 gData_02004070[];
 void Func_020020ec(s32 x, s32 z, s32 layers, s32 value);
 void Func_020021d0(void);
 void Func_02002bd8(void);
-void Func_02003fe4(void);
+void Leader_PushObjectAhead(void);
 s32 MapGrid_CheckCollision(struct Actor *object, struct Vector3 *position);
-struct Actor *Func_02003fdc(struct Vector3 *position, s32 mode);
+struct Actor *Actor_FindAtCell(struct Vector3 *position, s32 mode);
 s32 Func_020037d8(struct PushTarget *target);
 void PushTarget_Push(struct PushTarget target);
 

@@ -142,9 +142,9 @@ MapGrid_WaitForShakeToSettle:
 	.thumb_func
 Actor_SetSpriteColorMode:
 	overlay_veneer Actor_SetSpriteColorModeFar
-	.global Func_0200223c
+	.global MapGrid_SetCellHeight
 	.thumb_func
-Func_0200223c:
+MapGrid_SetCellHeight:
 	overlay_veneer MapGrid_SetCellHeightFar
 	.global Event_Wait
 	.thumb_func
@@ -238,17 +238,17 @@ Actor_Spawn:
 	.thumb_func
 BattleEffect_GetObjectPriority:
 	overlay_veneer BattleEffect_GetObjectPriorityFar
-	.global Func_020022fc
+	.global MapGrid_GetCellBehavior
 	.thumb_func
-Func_020022fc:
+MapGrid_GetCellBehavior:
 	overlay_veneer MapGrid_GetCellBehaviorFar
 	.global MapGrid_SetCellBehavior
 	.thumb_func
 MapGrid_SetCellBehavior:
 	overlay_veneer MapGrid_SetCellBehaviorFar
-	.global Func_0200230c
+	.global MapGrid_SetAttributeBAt
 	.thumb_func
-Func_0200230c:
+MapGrid_SetAttributeBAt:
 	overlay_veneer MapGrid_SetAttributeBAtFar
 	.global BattleEffect_FillOverlayTiles
 	.thumb_func

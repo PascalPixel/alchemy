@@ -142,9 +142,9 @@ BattleEffect_ApplyColorToSourceBuffer:
 	.thumb_func
 PaletteFade_StartInterpolation:
 	overlay_veneer PaletteFade_StartInterpolationFar
-	.global Func_02001254
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_02001254:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
@@ -154,17 +154,17 @@ Event_ResolvePendingActions:
 	.thumb_func
 Scene_PlayMusic:
 	overlay_veneer Scene_PlayMusicFar
-	.global Func_0200126c
+	.global Actor_DepartInRing
 	.thumb_func
-Func_0200126c:
+Actor_DepartInRing:
 	overlay_veneer Actor_DepartInRingFar
-	.global Func_02001274
+	.global Cyclone_CopyTouchedCells
 	.thumb_func
-Func_02001274:
+Cyclone_CopyTouchedCells:
 	overlay_veneer Cyclone_CopyTouchedCellsFar
-	.global Func_0200127c
+	.global FieldItem_JumpToLeader
 	.thumb_func
-Func_0200127c:
+FieldItem_JumpToLeader:
 	overlay_veneer FieldItem_JumpToLeaderFar
 	.global Sound_Play
 	.thumb_func

@@ -74,9 +74,9 @@ MapGrid_SetScreenShake:
 	.thumb_func
 MapGrid_GetTerrainKind:
 	overlay_veneer MapGrid_GetTerrainKindFar
-	.global Func_02001480
+	.global MapGrid_SetCellHeight
 	.thumb_func
-Func_02001480:
+MapGrid_SetCellHeight:
 	overlay_veneer MapGrid_SetCellHeightFar
 	.global Event_Start
 	.thumb_func
@@ -106,9 +106,9 @@ Actor_SetModeById:
 	.thumb_func
 Actor_SetSpriteColor:
 	overlay_veneer Actor_SetSpriteColorFar
-	.global Func_020014c0
+	.global Actor_DisableById
 	.thumb_func
-Func_020014c0:
+Actor_DisableById:
 	overlay_veneer Actor_DisableByIdFar
 	.global Actor_CopyGraphics
 	.thumb_func
@@ -122,9 +122,9 @@ FieldCamera_FollowActor:
 	.thumb_func
 Import_FieldTryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
-	.global Func_020014e0
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_020014e0:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
@@ -134,37 +134,37 @@ Event_ResolvePendingActions:
 	.thumb_func
 Sprite_ShareVramCacheEntry:
 	overlay_veneer Sprite_ShareVramCacheEntryFar
-	.global Func_020014f8
+	.global FlagBlock_PlaceAll
 	.thumb_func
-Func_020014f8:
+FlagBlock_PlaceAll:
 	overlay_veneer FlagBlock_PlaceAllFar
-	.global Func_02001500
+	.global FlagBlock_ApplyFlags
 	.thumb_func
-Func_02001500:
+FlagBlock_ApplyFlags:
 	overlay_veneer FlagBlock_ApplyFlagsFar
-	.global Func_02001508
+	.global Actor_GetCellIndex
 	.thumb_func
-Func_02001508:
+Actor_GetCellIndex:
 	overlay_veneer Actor_GetCellIndexFar
-	.global Func_02001510
+	.global Actor_PlaceBlocks
 	.thumb_func
-Func_02001510:
+Actor_PlaceBlocks:
 	overlay_veneer Actor_PlaceBlocksFar
-	.global Func_02001518
+	.global Actor_LiftTargetBlock
 	.thumb_func
-Func_02001518:
+Actor_LiftTargetBlock:
 	overlay_veneer Actor_LiftTargetBlockFar
-	.global Func_02001520
+	.global Actor_PlaceMovedBlock
 	.thumb_func
-Func_02001520:
+Actor_PlaceMovedBlock:
 	overlay_veneer Actor_PlaceMovedBlockFar
-	.global Func_02001528
+	.global MapCollision_FindOrAddTag
 	.thumb_func
-Func_02001528:
+MapCollision_FindOrAddTag:
 	overlay_veneer MapCollision_FindOrAddTagFar
-	.global Func_02001530
+	.global Actor_FindAtCell
 	.thumb_func
-Func_02001530:
+Actor_FindAtCell:
 	overlay_veneer Actor_FindAtCellFar
 	.global Sound_Play
 	.thumb_func

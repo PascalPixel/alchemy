@@ -77,10 +77,10 @@ void Import_ActorRelease(struct Actor *object);
 void Import_FieldPsynergyGreyMindReadPalette(void);
 void Import_FieldPsynergyRestoreMindReadPalette(void);
 void Import_FieldCameraWaitForArrival(void);
-void Func_02003fec();
+void TileCopies_CopyTouchedCells();
 
 s32 Func_02003684(s32 id);
 
-void Func_02003f4c(s32 actor);
+void Actor_DisableById(s32 actor);
 
 #endif

@@ -23,7 +23,7 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 ArcTan2(s32 y, s32 x);
 void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-s32 Func_02002048(struct Actor *object);
+s32 Actor_HasArrived(struct Actor *object);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
 void Settlements_SlideOnIceFromEdge(void) {
@@ -97,7 +97,7 @@ retry:
   Actor_SetMoveTarget(object, x, object->y, z);
   Import_ActorSelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
-  for (i = 0; i <= 179 && Func_02002048(object) == 0; i++) {
+  for (i = 0; i <= 179 && Actor_HasArrived(object) == 0; i++) {
     if (gSettlements_SlideStopped != 0)
       goto end;
     System_Wait(1);
@@ -137,7 +137,7 @@ next:
   System_Wait(1);
   i++;
 test:
-  if (i <= 179 && Func_02002048(object) == 0 && gSettlements_SlideStopped == 0)
+  if (i <= 179 && Actor_HasArrived(object) == 0 && gSettlements_SlideStopped == 0)
     goto next;
   if (gSettlements_SlideStopped != 0)
     goto end;
@@ -188,7 +188,7 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 ArcTan2(s32 y, s32 x);
 void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-s32 Func_02002048(struct Actor *object);
+s32 Actor_HasArrived(struct Actor *object);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
 void Settlements_SlideOnIceFromEdge(void) {
@@ -297,7 +297,7 @@ next:
   System_Wait(1);
   i++;
 test:
-  if (i <= 179 && Func_02002048(object) == 0 && gSettlements_SlideStopped == 0)
+  if (i <= 179 && Actor_HasArrived(object) == 0 && gSettlements_SlideStopped == 0)
     goto next;
   if (gSettlements_SlideStopped != 0)
     goto end;

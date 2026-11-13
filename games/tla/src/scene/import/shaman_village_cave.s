@@ -46,9 +46,9 @@ Event_End:
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
 	overlay_veneer Event_AskYesNoWithActorAnimationFar
-	.global Func_02001098
+	.global Event_PickUpItem
 	.thumb_func
-Func_02001098:
+Event_PickUpItem:
 	overlay_veneer Event_PickUpItemFar
 	.global Actor_GetById
 	.thumb_func
@@ -231,9 +231,9 @@ Actor_WalkByById:
 Actor_ShowItemIconById:
 	overlay_veneer Actor_ShowItemIconByIdFar
 	.ifndef TLA_EDITION_JA
-	.global Func_02001208
+	.global WorldMap_SetReturnLeavingScene
 	.thumb_func
-Func_02001208:
+WorldMap_SetReturnLeavingScene:
 	overlay_veneer WorldMap_SetReturnLeavingSceneFar
 	.endif
 	.global Sound_Play

@@ -145,7 +145,7 @@ void Func_02003184(void) {
 
 #include "scene_tables.h"
 
-DEFINE_ACTOR_HIDE(Actor_Hide, Func_02005b8c)
+DEFINE_ACTOR_HIDE(Actor_Hide, Actor_DisableById)
 
 DEFINE_SCENE_RUN_UNLESS_FLAG(Scene_RunUnlessFlag, 0x200, Func_0200057c)
 
@@ -1396,11 +1396,11 @@ s32 Scene_PrepareMap(void) { return 0; }
 void Func_020050ac(void) {
   Actor_SetSpriteFlags(Actor_GetById(9), 0);
   Actor_SetSpriteFlags(Actor_GetById(10), 0);
-  Func_02005c04(0);
-  Func_02005c64(gData_02006324);
+  FieldEffect_StartBlankOverlay(0);
+  FlagBlock_PlaceAll(gData_02006324);
   Actor_SetSpritePriority(8, 3);
-  Func_02005c54();
-  Func_02005c5c(0, 0x9e9, 12, 13);
+  Rope_Initialize();
+  Rope_Place(0, 0x9e9, 12, 13);
   Actor_GetById(22)->collisionFlags |= 0x80;
   Actor_GetById(23)->collisionFlags |= 0x80;
 }
@@ -1411,7 +1411,7 @@ void Func_02005114(void) {
   Actor_GetById(11)->scaleY = 0x8000;
   Func_020050ac();
   GameFlag_Clear(0x86b);
-  Func_02005b8c(25);
+  Actor_DisableById(25);
   Actor_SetModeById(25, 2);
   KIBOMBO_TASK_ADD(Func_02003030, 0x480)
   Func_02003184();
@@ -1576,7 +1576,7 @@ void Func_0200538c(void) {
   Func_0200324c();
   if (!GameFlag_Get(0x869))
     GameFlag_Set(0x201);
-  Func_02005c64(gData_02006324);
+  FlagBlock_PlaceAll(gData_02006324);
   Actor_SetSpritePriority(8, 2);
   Actor_SetSpriteFlags(Actor_GetById(11), 0);
   Actor_GetById(11)->motionFlags = 0;
@@ -1596,9 +1596,9 @@ void Func_0200538c(void) {
     Func_020006ac();
   if (GameFlag_Get(0x207))
     Func_020006f0();
-  Func_02005b8c(12);
-  Func_02005b8c(13);
-  Func_02005b8c(14);
+  Actor_DisableById(12);
+  Actor_DisableById(13);
+  Actor_DisableById(14);
   Actor_SetSpritePriority(12, 1);
   Actor_SetSpritePriority(13, 1);
   Actor_SetSpritePriority(14, 1);
@@ -1754,7 +1754,7 @@ void Func_020057e0(void) {
 #include "version.h"
 #include "fixed_math.h"
 
-void Func_02005c74(s32 actor, s32 angle);
+void Actor_FallOverById(s32 actor, s32 angle);
 
 void Func_02005898(void) {
   struct KibomboObject *object;
@@ -1784,7 +1784,7 @@ void Func_02005898(void) {
     object->z -= PIXELS(8);
   }
 #endif
-  Func_02005c74(16, 0);
+  Actor_FallOverById(16, 0);
   object = Actor_GetById(16);
   object->sprite->rotation = 0;
   object->scaleX = Q16_ONE;

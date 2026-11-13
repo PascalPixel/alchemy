@@ -174,13 +174,13 @@ Event_ResolvePendingActions:
 	.thumb_func
 Actor_WatchAndSetScript:
 	overlay_veneer Actor_WatchAndSetScriptFar
-	.global Func_02001174
+	.global Rope_Initialize
 	.thumb_func
-Func_02001174:
+Rope_Initialize:
 	overlay_veneer Rope_InitializeFar
-	.global Func_0200117c
+	.global Rope_Place
 	.thumb_func
-Func_0200117c:
+Rope_Place:
 	overlay_veneer Rope_PlaceFar
 	.global Party_GetLeaderActor
 	.thumb_func

@@ -82,9 +82,9 @@ Actor_SetSpriteFlags:
 	.thumb_func
 Actor_SetBlendMode:
 	overlay_veneer Actor_SetBlendModeFar
-	.global Func_020010cc
+	.global MapGrid_SetCellHeight
 	.thumb_func
-Func_020010cc:
+MapGrid_SetCellHeight:
 	overlay_veneer MapGrid_SetCellHeightFar
 	.global Event_Wait
 	.thumb_func
@@ -146,17 +146,17 @@ Event_ResolvePendingActions:
 	.thumb_func
 Actor_WalkByAndWaitById:
 	overlay_veneer Actor_WalkByAndWaitByIdFar
-	.global Func_0200114c
+	.global Rope_Initialize
 	.thumb_func
-Func_0200114c:
+Rope_Initialize:
 	overlay_veneer Rope_InitializeFar
-	.global Func_02001154
+	.global Rope_Place
 	.thumb_func
-Func_02001154:
+Rope_Place:
 	overlay_veneer Rope_PlaceFar
-	.global Func_0200115c
+	.global Actor_FindAtCell
 	.thumb_func
-Func_0200115c:
+Actor_FindAtCell:
 	overlay_veneer Actor_FindAtCellFar
 	.global Sound_Play
 	.thumb_func

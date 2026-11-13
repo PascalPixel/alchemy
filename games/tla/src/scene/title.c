@@ -103,7 +103,7 @@ s32 Title_Run(void) {
       Title_ShowCamelotLogo(0);
       if (Save_ScanFileSummaries() > 0) {
         Event_PlaySound(40);
-        Func_0200063c(1);
+        TitleIntro_Run(1);
         if (Title_ShowIntro(1) == 0) {
           Event_PlaySound(78);
           ScreenFade_ToBlack(30);
@@ -132,7 +132,7 @@ s32 Title_Run(void) {
   } else {
     if (gMainRoutineWork.entrance == 2) {
       Event_PlaySound(40);
-      Func_0200063c(0);
+      TitleIntro_Run(0);
       FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                              gMainRoutineWork.paletteGlow[1]);
       Party_SetLeaderJenna();

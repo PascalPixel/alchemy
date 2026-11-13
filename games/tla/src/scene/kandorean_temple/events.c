@@ -379,7 +379,7 @@ void KandoreanTemple_StartRoom5(void) {
 
   gKandoreanTemple_SteamCounter = 0;
   map->mode = 1;
-  Func_02005338(0);
+  FieldEffect_StartBlankOverlay(0);
 #if TLA_PATCH_1
   if (gMainRoutineWork.entrance == 1 || gMainRoutineWork.entrance == 2)
     GameFlag_Clear(0x12f);
@@ -392,12 +392,12 @@ void KandoreanTemple_StartRoom6(void) {
   gKandoreanTemple_SteamCounter = 0;
   Scene_QueueMusic(170);
   map->mode = 1;
-  Func_02005338(0);
+  FieldEffect_StartBlankOverlay(0);
 }
 
 void KandoreanTemple_StartFogRoom(void) {
-  Func_02005390();
-  Func_020053a8(0, 0x20f, 8, 9);
+  Rope_Initialize();
+  Rope_Place(0, 0x20f, 8, 9);
   if (GameFlag_Get(0x849)) {
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
   } else {
@@ -405,7 +405,7 @@ void KandoreanTemple_StartFogRoom(void) {
     Actor_SetModeById(10, 6);
     Actor_SetMovementTypeById(10, gKandoreanTemple_LevitateScript);
   }
-  Func_02005338(0);
+  FieldEffect_StartBlankOverlay(0);
 }
 
 void KandoreanTemple_StartMeditating(s32 id, s32 base) {
@@ -423,7 +423,7 @@ void KandoreanTemple_StartGate(void) {
     Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 5, 13);
   } else {
-    Func_020052c0(8);
+    Actor_DisableById(8);
   }
   if (GameFlag_Get(0x849)) {
     MapGrid_CopyCellAttributes(2, 0, 2, 3, 17, 24);
@@ -471,9 +471,9 @@ void KandoreanTemple_MatchLiftPriority(void);
 
 void KandoreanTemple_StartPoisHall(void) {
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
-  Func_02005390();
+  Rope_Initialize();
   Func_020053a8_(0, 527, 8, 9);
-  Func_020053a8(1, 528, 10, 11);
+  Rope_Place(1, 528, 10, 11);
   if (Event_GetFlag(0x849) == 0) {
     Actor_SetModeById(13, 5);
     Actor_SetModeById(15, 5);

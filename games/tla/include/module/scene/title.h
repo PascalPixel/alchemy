@@ -12,7 +12,7 @@ void Credits_Run(s32 value);
 
 s32 Title_ShowIntro(s32 value);
 
-void Func_0200063c(s32 value);
+void TitleIntro_Run(s32 value);
 
 void Title_LoadBackground(void);
 

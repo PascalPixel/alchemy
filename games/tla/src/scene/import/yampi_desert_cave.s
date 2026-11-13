@@ -120,9 +120,9 @@ Actor_StartRepeatedMotion:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_020018c8
+	.global Actor_DisableById
 	.thumb_func
-Func_020018c8:
+Actor_DisableById:
 	overlay_veneer Actor_DisableByIdFar
 	.global Actor_ShowEmoteById
 	.thumb_func
@@ -168,9 +168,9 @@ Actor_SetWideSprite:
 	.thumb_func
 Actor_ReturnHome:
 	overlay_veneer Actor_ReturnHomeFar
-	.global Func_02001928
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_02001928:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
@@ -180,21 +180,21 @@ Event_ResolvePendingActions:
 	.thumb_func
 Event_NoOp:
 	overlay_veneer Event_NoOpFar
-	.global Func_02001940
+	.global Actor_GetCellIndex
 	.thumb_func
-Func_02001940:
+Actor_GetCellIndex:
 	overlay_veneer Actor_GetCellIndexFar
-	.global Func_02001948
+	.global Actor_FindAtCell
 	.thumb_func
-Func_02001948:
+Actor_FindAtCell:
 	overlay_veneer Actor_FindAtCellFar
-	.global Func_02001950
+	.global Teleport_PlayWhirl
 	.thumb_func
-Func_02001950:
+Teleport_PlayWhirl:
 	overlay_veneer Teleport_PlayWhirlFar
-	.global Func_02001958
+	.global Teleport_PlaySparks
 	.thumb_func
-Func_02001958:
+Teleport_PlaySparks:
 	overlay_veneer Teleport_PlaySparksFar
 	.global Sound_Play
 	.thumb_func

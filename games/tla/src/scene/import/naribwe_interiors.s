@@ -122,9 +122,9 @@ Event_ShowMessageAndWait:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_02001158
+	.global Actor_DisableById
 	.thumb_func
-Func_02001158:
+Actor_DisableById:
 	overlay_veneer Actor_DisableByIdFar
 	.global Actor_ShowEmoteById
 	.thumb_func
@@ -158,9 +158,9 @@ Shop_Run:
 	.thumb_func
 Inn_CheckIn:
 	overlay_veneer Inn_CheckInFar
-	.global Func_020011a0
+	.global ItemPicker_RunMode1
 	.thumb_func
-Func_020011a0:
+ItemPicker_RunMode1:
 	overlay_veneer ItemPicker_RunMode1Far
 	.global Sound_Play
 	.thumb_func

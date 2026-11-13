@@ -70,9 +70,9 @@ VramCache_FindFreeEntry:
 	.thumb_func
 DebugText_Clear:
 	overlay_veneer DebugText_ClearFar
-	.global Func_02001f7c
+	.global Oam_AddSpriteAtDepthClamped
 	.thumb_func
-Func_02001f7c:
+Oam_AddSpriteAtDepthClamped:
 	overlay_veneer Oam_AddSpriteAtDepthClampedFar
 	.global Render_ProjectPoint
 	.thumb_func
@@ -138,17 +138,17 @@ MapGrid_SetScreenShake:
 	.thumb_func
 Actor_SetSpriteColorMode:
 	overlay_veneer Actor_SetSpriteColorModeFar
-	.global Func_02002004
+	.global WorldMap_GetBlockPlace
 	.thumb_func
-Func_02002004:
+WorldMap_GetBlockPlace:
 	overlay_veneer WorldMap_GetBlockPlaceFar
-	.global Func_0200200c
+	.global Party_DrainPp
 	.thumb_func
-Func_0200200c:
+Party_DrainPp:
 	overlay_veneer Party_DrainPpFar
-	.global Func_02002014
+	.global Party_GetPpRatio
 	.thumb_func
-Func_02002014:
+Party_GetPpRatio:
 	overlay_veneer Party_GetPpRatioFar
 	.global Event_Wait
 	.thumb_func
@@ -194,13 +194,13 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_02002074
+	.global WorldMap_Freeze
 	.thumb_func
-Func_02002074:
+WorldMap_Freeze:
 	overlay_veneer WorldMap_FreezeFar
-	.global Func_0200207c
+	.global WorldMap_ReloadPendingAreaGraphics
 	.thumb_func
-Func_0200207c:
+WorldMap_ReloadPendingAreaGraphics:
 	overlay_veneer WorldMap_ReloadPendingAreaGraphicsFar
 	.global Event_ResolvePendingActions
 	.thumb_func

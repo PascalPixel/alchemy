@@ -278,13 +278,13 @@ Actor_LaunchFromLeader:
 	.thumb_func
 Actor_WalkByAndWaitById:
 	overlay_veneer Actor_WalkByAndWaitByIdFar
-	.global Func_020020c4
+	.global FlagBlock_PlaceAll
 	.thumb_func
-Func_020020c4:
+FlagBlock_PlaceAll:
 	overlay_veneer FlagBlock_PlaceAllFar
-	.global Func_020020cc
+	.global FlagBlock_ApplyFlags
 	.thumb_func
-Func_020020cc:
+FlagBlock_ApplyFlags:
 	overlay_veneer FlagBlock_ApplyFlagsFar
 	.global Sound_Play
 	.thumb_func

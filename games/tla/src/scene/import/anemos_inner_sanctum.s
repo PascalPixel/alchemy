@@ -158,9 +158,9 @@ MapGrid_WaitForShakeToSettle:
 	.thumb_func
 MapGrid_SetCellBehaviorAt:
 	overlay_veneer MapGrid_SetCellBehaviorAtFar
-	.global Func_02003380
+	.global MapGrid_SetCellHeight
 	.thumb_func
-Func_02003380:
+MapGrid_SetCellHeight:
 	overlay_veneer MapGrid_SetCellHeightFar
 	.global FieldMessage_ShowCentered
 	.thumb_func
@@ -294,25 +294,25 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02003490
+	.global Actor_PlaceBlocks
 	.thumb_func
-Func_02003490:
+Actor_PlaceBlocks:
 	overlay_veneer Actor_PlaceBlocksFar
-	.global Func_02003498
+	.global Actor_LiftTargetBlock
 	.thumb_func
-Func_02003498:
+Actor_LiftTargetBlock:
 	overlay_veneer Actor_LiftTargetBlockFar
-	.global Func_020034a0
+	.global Actor_PlaceMovedBlock
 	.thumb_func
-Func_020034a0:
+Actor_PlaceMovedBlock:
 	overlay_veneer Actor_PlaceMovedBlockFar
-	.global Func_020034a8
+	.global Teleport_PlayWhirl
 	.thumb_func
-Func_020034a8:
+Teleport_PlayWhirl:
 	overlay_veneer Teleport_PlayWhirlFar
-	.global Func_020034b0
+	.global Teleport_PlaySparks
 	.thumb_func
-Func_020034b0:
+Teleport_PlaySparks:
 	overlay_veneer Teleport_PlaySparksFar
 	.global Sound_Play
 	.thumb_func

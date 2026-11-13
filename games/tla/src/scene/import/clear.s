@@ -184,13 +184,13 @@ YesNoMenu_Run:
 	.thumb_func
 Graphics_ExpandVramTilesByColorTable:
 	overlay_veneer Graphics_ExpandVramTilesByColorTableFar
-	.global Func_02002328
+	.global Glyph_DrawToTiles
 	.thumb_func
-Func_02002328:
+Glyph_DrawToTiles:
 	overlay_veneer Glyph_DrawToTilesFar
-	.global Func_02002330
+	.global Glyph_AddBlankSprite
 	.thumb_func
-Func_02002330:
+Glyph_AddBlankSprite:
 	overlay_veneer Glyph_AddBlankSpriteFar
 	.global Djinn_GetRecoveryTable
 	.thumb_func
@@ -222,9 +222,9 @@ Party_RemoveMember:
 Unit_GetExperienceForLevel:
 	overlay_veneer Unit_GetExperienceForLevelFar
 	.endif
-	.global Func_02002370
+	.global DataTransfer_Apply
 	.thumb_func
-Func_02002370:
+DataTransfer_Apply:
 	overlay_veneer DataTransfer_ApplyFar
 	.global Djinn_GiveToParty
 	.thumb_func
@@ -242,13 +242,13 @@ BuildStamp_GetTime:
 	.thumb_func
 InventorySnapshot_Restore:
 	overlay_veneer InventorySnapshot_RestoreFar
-	.global Func_02002398
+	.global DataTransfer_GiveDefaultDjinn
 	.thumb_func
-Func_02002398:
+DataTransfer_GiveDefaultDjinn:
 	overlay_veneer DataTransfer_GiveDefaultDjinnFar
-	.global Func_020023a0
+	.global ClearData_Apply
 	.thumb_func
-Func_020023a0:
+ClearData_Apply:
 	overlay_veneer ClearData_ApplyFar
 	.global Event_Wait
 	.thumb_func
@@ -278,9 +278,9 @@ Event_WaitTransitionFrames:
 	.thumb_func
 FieldYesNo_Ask:
 	overlay_veneer FieldYesNo_AskFar
-	.global Func_020023e0
+	.global WorldMap_SetReturnLeavingScene
 	.thumb_func
-Func_020023e0:
+WorldMap_SetReturnLeavingScene:
 	overlay_veneer WorldMap_SetReturnLeavingSceneFar
 	.global StatusScreen_Run
 	.thumb_func

@@ -1376,8 +1376,8 @@ void ShamanVillage_SetUpRoom2(void) {
     MapGrid_CopyCellsTo(48, 40, 77, 21, width, height);
     MapGrid_CopyCellsTo(48, 40, 81, 25, width, height);
   }
-  Func_02004a44();
-  Func_02004a4c(0, 0x204, 19, 20);
+  Rope_Initialize();
+  Rope_Place(0, 0x204, 19, 20);
   if (Event_GetFlag(0x205))
     ShamanVillage_GrowVine();
   REG_BLDALPHA = 0xc08;

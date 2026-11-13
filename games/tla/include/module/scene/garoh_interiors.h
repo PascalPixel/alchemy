@@ -10,6 +10,6 @@ void GarohInteriors_WakeAtInn(void);
 
 void MapGrid_SetShownLayers(s32 value);
 
-void Func_0200087c(s32 value);
+void FieldEffect_StartBlankOverlay(s32 value);
 
 #endif

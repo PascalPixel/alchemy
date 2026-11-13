@@ -41,16 +41,16 @@ struct Window;
 
 s32 Import_SaveScanFileSummaries(void);
 void Import_MainRoutineWorkInitializeDefaults(void);
-void Func_02002370(void *data, s32 a, s32 b);
-void Func_02002398(void);
-void Func_020023a0(void *data);
-void Func_020023e0(s32 scene, s32 entrance);
+void DataTransfer_Apply(void *data, s32 a, s32 b);
+void DataTransfer_GiveDefaultDjinn(void);
+void ClearData_Apply(void *data);
+void WorldMap_SetReturnLeavingScene(s32 scene, s32 entrance);
 extern u8 gData_02002440[];
 extern u8 gData_02002454[];
 extern u8 gData_02002468[];
 extern u8 Data_0200274a[];
 extern u8 Data_0200288a[];
 extern u8 Data_0200284e[];
-void *Func_02002330(struct Window *window, void *glyph, s32 x, s32 y);
+void *Glyph_AddBlankSprite(struct Window *window, void *glyph, s32 x, s32 y);
 
 #endif

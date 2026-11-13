@@ -79,7 +79,7 @@ extern s32 gData_02006584[];
 
 extern u32 gData_02004fc8[];
 
-s32 Func_02004b90(s32 *position);
+s32 WorldMap_GetBlockPlace(s32 *position);
 
 extern u16 gData_02006e08;
 
@@ -95,8 +95,8 @@ extern u8 Data_02006e20[][32];
 extern s16 gData_02006e10;
 extern u32 Data_02006e14[3];
 
-void Func_02004c08(s32 value);
-s32 Func_02004c10(void);
+void Party_DrainPp(s32 value);
+s32 Party_GetPpRatio(void);
 void Import_OamAddSpriteAtDepthClamped(u32 *oam, s32 priority);
 
 void WorldMap_WatchVenusLighthouseCollapse(void);

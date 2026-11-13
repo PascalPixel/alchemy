@@ -146,17 +146,17 @@ Event_ResolvePendingActions:
 	.thumb_func
 Actor_Spawn:
 	overlay_veneer Actor_SpawnFar
-	.global Func_02000f04
+	.global TileCopies_CopyTouchedCells
 	.thumb_func
-Func_02000f04:
+TileCopies_CopyTouchedCells:
 	overlay_veneer TileCopies_CopyTouchedCellsFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_02000f14
+	.global HangingVine_Place
 	.thumb_func
-Func_02000f14:
+HangingVine_Place:
 	overlay_veneer HangingVine_PlaceFar
 	.global Func_02000f1c
 	.thumb_func

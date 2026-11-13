@@ -142,13 +142,13 @@ MapGrid_WaitForShakeToSettle:
 	.thumb_func
 Actor_SetSpriteColorMode:
 	overlay_veneer Actor_SetSpriteColorModeFar
-	.global Func_02002b54
+	.global MapGrid_SetCellHeight
 	.thumb_func
-Func_02002b54:
+MapGrid_SetCellHeight:
 	overlay_veneer MapGrid_SetCellHeightFar
-	.global Func_02002b5c
+	.global MapGrid_GetCellHeight
 	.thumb_func
-Func_02002b5c:
+MapGrid_GetCellHeight:
 	overlay_veneer MapGrid_GetCellHeightFar
 	.global Event_Wait
 	.thumb_func
@@ -218,9 +218,9 @@ FieldCamera_GetActor:
 	.thumb_func
 Field_RequestDjinnBattle:
 	overlay_veneer Field_RequestDjinnBattleFar
-	.global Func_02002bec
+	.global Field_TryJumpForward
 	.thumb_func
-Func_02002bec:
+Field_TryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
 	.global Event_StartScreenTransition
 	.thumb_func
@@ -242,37 +242,37 @@ Event_ResolvePendingActions:
 	.thumb_func
 Camera_WorldToScreen:
 	overlay_veneer Camera_WorldToScreenFar
-	.global Func_02002c1c
+	.global Actor_GetCellIndex
 	.thumb_func
-Func_02002c1c:
+Actor_GetCellIndex:
 	overlay_veneer Actor_GetCellIndexFar
-	.global Func_02002c24
+	.global Leader_PushObjectAhead
 	.thumb_func
-Func_02002c24:
+Leader_PushObjectAhead:
 	overlay_veneer Leader_PushObjectAheadFar
 	.global BattleEffect_GetObjectPriority
 	.thumb_func
 BattleEffect_GetObjectPriority:
 	overlay_veneer BattleEffect_GetObjectPriorityFar
-	.global Func_02002c34
+	.global MapGrid_GetCellBehavior
 	.thumb_func
-Func_02002c34:
+MapGrid_GetCellBehavior:
 	overlay_veneer MapGrid_GetCellBehaviorFar
 	.global MapGrid_SetCellBehavior
 	.thumb_func
 MapGrid_SetCellBehavior:
 	overlay_veneer MapGrid_SetCellBehaviorFar
-	.global Func_02002c44
+	.global MapGrid_SetAttributeBAt
 	.thumb_func
-Func_02002c44:
+MapGrid_SetAttributeBAt:
 	overlay_veneer MapGrid_SetAttributeBAtFar
-	.global Func_02002c4c
+	.global MapGrid_SetAttributeBBitsAt
 	.thumb_func
-Func_02002c4c:
+MapGrid_SetAttributeBBitsAt:
 	overlay_veneer MapGrid_SetAttributeBBitsAtFar
-	.global Func_02002c54
+	.global MapGrid_ClearAttributeBBitsAt
 	.thumb_func
-Func_02002c54:
+MapGrid_ClearAttributeBBitsAt:
 	overlay_veneer MapGrid_ClearAttributeBBitsAtFar
 	.global Sound_Play
 	.thumb_func

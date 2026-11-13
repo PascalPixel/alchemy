@@ -10,7 +10,7 @@
 #include "module/scene/scene.h"
 #include "module/scene/yallam.h"
 
-void Func_02002598(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6);
+void TileCopies_CopyTouchedCells(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6);
 
 s32 Yallam_ClearSpriteTile(struct Actor *object) {
   struct TileSprite *sprite = object->sprite;
@@ -247,13 +247,13 @@ void Yallam_EnterDoor(void) {
 
 static inline void Yallam_EditMap(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
                                   s32 a5, s32 a6) {
-  Func_02002598(a0, a1, a2, a3, a4, a5, a6);
+  TileCopies_CopyTouchedCells(a0, a1, a2, a3, a4, a5, a6);
 }
 
 /// Scoop at one of the village's six spots digs into the ground; the third and
 /// fifth bring up a buried item the first time, throwing the leader back.
 void Yallam_DigFirstHole(void) {
-  Func_02002598(67, 25, 5, 5, 67, 5, 1);
+  TileCopies_CopyTouchedCells(67, 25, 5, 5, 67, 5, 1);
   MapGrid_CopyCellsTo(23, 29, 5, 6, 1, 1);
   MapGrid_CopyCellAttributes(23, 29, 1, 1, 5, 8);
 }

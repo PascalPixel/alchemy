@@ -374,7 +374,7 @@ void Func_02000590(s32 show, s32 first, u32 count) {
   }
 }
 
-void Func_020005d0(void) { Func_02005c6c(gData_02006324); }
+void Func_020005d0(void) { FlagBlock_ApplyFlags(gData_02006324); }
 
 void Func_020005e0(void) {
   MapGrid_CopyCellPictureIndicesRect(34, 33, 23, 18, 1, 1);
@@ -872,7 +872,7 @@ extern s32 Task_Add__s1318(TaskFunc func, s32 order) __asm__("Task_Add");
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
-void Func_02005a8c(void);
+void Party_GivePiersDjinn(void);
 extern const u8 gData_02005e88[];
 extern const u8 gData_02005eec[];
 extern const u8 gData_02005f14[];
@@ -883,7 +883,7 @@ extern const u8 gData_02005fe0[];
 /// A scene in Kibombo: actor 7 speaks, the camera pans, actors 26, 5, 6 and 7
 /// move, turn and speak around the controlled character, two yes-or-no
 /// questions count up the event work's halfword 0x1c4, and the scene ends with
-/// Func_02005a8c. Each call goes through the call layer (call.h).
+/// Party_GivePiersDjinn. Each call goes through the call layer (call.h).
 void Func_02001318(void) {
   Actor_ArmCallback(7, FACING_NORTH, 0);
   Event_SetMessageId(MsgBlank7);
@@ -1190,7 +1190,7 @@ void Func_02001318(void) {
   GameFlag_Set(0x8f4);
   GameFlag_Set(0x92e);
   Event_PrepareObjectAndApplyValue(7, 1);
-  Func_02005a8c(); // arity?
+  Party_GivePiersDjinn(); // arity?
 }
 #undef EVENT_WORK
 

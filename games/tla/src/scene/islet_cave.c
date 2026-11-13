@@ -66,7 +66,7 @@ void Func_02000328(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   IsletCave_StartFastPaletteCycle();
-  Func_0200132c();
+  Teleport_PlayWhirl();
   wait(40);
   IsletCave_StopPaletteCycle();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
@@ -163,7 +163,7 @@ void Func_020004ac(void) {
   s32 effect = work->screenEffect;
 
   IsletCave_StartFastPaletteCycle();
-  Func_0200132c();
+  Teleport_PlayWhirl();
   wait(40);
   IsletCave_StopPaletteCycle();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
@@ -178,7 +178,7 @@ void Func_020004ac(void) {
 #define DEFINE_ISLET_CAVE_ARRIVE_AT(name, n1, n2)                              \
   void name(void) {                                                            \
     IsletCave_StartSlowPaletteCycle();                                         \
-    Func_02001334();                                                           \
+    Teleport_PlaySparks();                                                           \
                                                                                \
     gMainRoutineWork.unk2c2 = 1;                                               \
     Event_Wait(40);                                                            \
@@ -282,7 +282,7 @@ s32 Scene_Initialize(void) {
   s32 scene, dim;
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
-  Func_0200131c(0);
+  FieldEffect_StartBlankOverlay(0);
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov675Room1) {
     Func_020008c8();
@@ -314,7 +314,7 @@ other:
     else
       dim = 3;
     Func_02000580(0x400 - (dim << 7));
-    Func_0200133c();
+    BattleEffect_PackTargetBuffer();
     PaletteFade_StartInterpolation(1);
     Event_WaitTransitionFrames();
   }

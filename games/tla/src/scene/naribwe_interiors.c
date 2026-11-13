@@ -212,11 +212,11 @@ ask:
 #if !TLA_PATCH_1
   Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
   // Before patch 1 the item variable first holds the choice's result.
-  item = Func_020011a0(&unit, &slot);
+  item = ItemPicker_RunMode1(&unit, &slot);
   if (item == -1) {
 #else
   Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
-  if (Func_020011a0(&unit, &slot) == -1) {
+  if (ItemPicker_RunMode1(&unit, &slot) == -1) {
 #endif
     refuse = MsgShallIGive;
     FieldEvent_SetMessageId(refuse);
@@ -777,15 +777,15 @@ u8 *NaribweInteriors_GetDjinniHint(void) {
 
 #include "ram_buffer.h"
 
-void Func_02001158(s32 id);
+void Actor_DisableById(s32 id);
 
 s32 Scene_Initialize(void) {
   struct Actor *object;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
-  Func_02001158(17);
-  Func_02001158(18);
+  Actor_DisableById(17);
+  Actor_DisableById(18);
   FieldActor_SetSpritePriority(10, 2);
   Actor_Get(12)->collisionFlags |= 4;
   FieldActor_SetSpritePriority(16, 2);

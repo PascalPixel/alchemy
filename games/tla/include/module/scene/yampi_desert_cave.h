@@ -18,7 +18,7 @@ void YampiDesertCave_ArriveByTeleport(void);
 
 extern u16 gYampiDesertCave_MarkCycle[];
 
-void Func_02001928(s32 value);
+void FieldEffect_StartBlankOverlay(s32 value);
 
 void YampiDesertCave_FightCrystal(void);
 
@@ -35,6 +35,6 @@ void YampiDesertCave_EndSand(void);
 
 extern u32 gYampiDesertCave_Settle[];
 
-void Func_02001950(void);
+void Teleport_PlayWhirl(void);
 
 #endif

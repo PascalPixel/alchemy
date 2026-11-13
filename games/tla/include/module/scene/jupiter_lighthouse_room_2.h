@@ -22,7 +22,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode);
 
 extern s32 gWhirlwindRiding;
 
-s32 Func_020022fc(s32 x, s32 z, s32 layer);
+s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 s32 Position_FlatDistance(s32 *a, s32 *b);
 
@@ -53,7 +53,7 @@ extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 
-void Func_0200230c(s32 actor);
+void MapGrid_SetAttributeBAt(s32 actor);
 extern s32 gData_02002b88[3];
 extern const u8 gData_02002b60[];
 void Func_02002324(const void *script, s32 a, s32 b, s32 c);

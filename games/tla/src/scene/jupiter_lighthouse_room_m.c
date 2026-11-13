@@ -165,17 +165,17 @@ void Func_020000c4(void) {
   MapGrid_SetShake(0, 0, 0);
 }
 
-/* VIEW(jupiter_lighthouse_room_m): routine Func_02004774 as void
- * Func_02004774(s32 x, s32 z, s32 a, s32 b); module/scene/eastern_alhafra.h has
- * void Func_02004774(struct Actor *object); tried as the definition's void
- * Func_02004774(struct Actor *object), which the object already declares, it
+/* VIEW(jupiter_lighthouse_room_m): routine MapGrid_SetCellHeight as void
+ * MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b); module/scene/eastern_alhafra.h has
+ * void MapGrid_SetCellHeight(struct Actor *object); tried as the definition's void
+ * MapGrid_SetCellHeight(struct Actor *object), which the object already declares, it
  * does not compile in tla-ja:
  * games/tla/src/scene/jupiter_lighthouse_room_m.c:183:
  * `Func_02004774__jupiter_lighthouse_room_m' undeclared (first use in this
  * function). */
 extern void
 Func_02004774__jupiter_lighthouse_room_m(s32 x, s32 z, s32 a,
-                                         s32 b) __asm__("Func_02004774");
+                                         s32 b) __asm__("MapGrid_SetCellHeight");
 
 void Func_0200039c(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
@@ -1541,16 +1541,16 @@ s32 Scene_Initialize(void) {
   struct Actor *object;
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 516;
-  Func_02004994(8, 1);
-  Func_02004994(9, 1);
-  Func_02004994(10, 1);
-  Func_02004994(11, 1);
-  Func_02004994(12, 1);
-  Func_02004994(13, 1);
-  Func_02004994(14, 1);
-  Func_02004994(15, 1);
-  Func_02004984();
-  Func_0200498c(0, 512, 21, 22);
+  HangingVine_Place(8, 1);
+  HangingVine_Place(9, 1);
+  HangingVine_Place(10, 1);
+  HangingVine_Place(11, 1);
+  HangingVine_Place(12, 1);
+  HangingVine_Place(13, 1);
+  HangingVine_Place(14, 1);
+  HangingVine_Place(15, 1);
+  Rope_Initialize();
+  Rope_Place(0, 512, 21, 22);
   gWhirlwindRiding = 0;
   object = Actor_Get(24);
   object->motionFlags = 0;
@@ -1659,7 +1659,7 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell,
                              Func_02004774__jupiter_lighthouse_room_m,
-                             Func_020049b4)
+                             MapGrid_SetAttributeBAt)
 
 DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
@@ -1669,5 +1669,5 @@ extern const s32 gWhirlwindEndScript[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_020049a4, Position_FlatDistance,
+DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior, Position_FlatDistance,
                         gWhirlwindEndScript, gWhirlwindRiding)

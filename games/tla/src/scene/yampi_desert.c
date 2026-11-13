@@ -787,7 +787,7 @@ void YampiDesert_UpdateSandSlide(void) {
     return;
   }
   map = Ram_HeapSlots->mapWork;
-  index = Func_020041e0(leader);
+  index = Actor_GetCellIndex(leader);
   column = leader->x / 0x100000;
   row = (leader->z + 0x40000) / 0x100000;
   cells = map->layers[0].cells;
@@ -885,7 +885,7 @@ void YampiDesert_TrackUpperLevelFromBelow(void) {
 void YampiDesert_TrackUpperLevelOnRamp(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  s32 index = Func_020041e0(leader);
+  s32 index = Actor_GetCellIndex(leader);
   struct MapCell *cell = map->layers[0].cells + index;
   struct MainRoutineWork *party;
   s32 y;
@@ -1007,13 +1007,13 @@ void YampiDesert_SetUpRoom4Scorpion(void) {
   *followed = (struct Actor *)object;
   object->scaleX = 0x14ccc;
   object->scaleY = 0x14ccc;
-  Func_020040f8(17);
+  Actor_DisableById(17);
   (*followed)->motionFlags = 3;
   Actor_SetSpritePriority(17, 3);
   Scene_SetSpeed(16, 0x19999, 0xcccc);
   Actor_SetSpriteColor((struct Actor *)leader, 15);
   Actor_SetSpritePriority(16, 3);
-  Func_020040f8(16);
+  Actor_DisableById(16);
   Actor_GetById(16)->motionFlags = 3;
   if (!GameFlag_Get(0x109)) {
     *((u8 *)leader + 98) = 0;
@@ -1108,13 +1108,13 @@ void YampiDesert_SetUpRoom5Scorpion(void) {
   *followed = (struct Actor *)object;
   object->scaleX = 0x14ccc;
   object->scaleY = 0x14ccc;
-  Func_020040f8(22);
+  Actor_DisableById(22);
   (*followed)->motionFlags = 3;
   Actor_SetSpritePriority(22, 3);
   Scene_SetSpeed(21, 0x19999, 0xcccc);
   Actor_SetSpriteColor((struct Actor *)leader, 15);
   Actor_SetSpritePriority(21, 3);
-  Func_020040f8(21);
+  Actor_DisableById(21);
   Actor_GetById(21)->motionFlags = 3;
   if (!GameFlag_Get(0x109)) {
     Scene_Call4098(21, 232 << 16, 664 << 16, 0);
@@ -1219,13 +1219,13 @@ void YampiDesert_SetUpTrappedScorpion(void) {
   object->scaleX = 0x14ccc;
   object->scaleY = 0x14ccc;
   *followed = (struct Actor *)object;
-  Func_020040f8(22);
+  Actor_DisableById(22);
   Actor_SetSpritePriority(22, 3);
   (*followed)->motionFlags = 3;
   Scene_SetSpeed(21, 0x19999, 0xcccc);
   Actor_SetSpriteColor((struct Actor *)leader, 15);
   Actor_SetSpritePriority(21, 3);
-  Func_020040f8(21);
+  Actor_DisableById(21);
   Actor_GetById(21)->motionFlags = 3;
   if (GameFlag_Get(0x88b)) {
     angle = 0x4000;
@@ -1258,7 +1258,7 @@ void YampiDesert_ScorpionUsesScoop(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
-DEFINE_ACTOR_HIDE(Actor_Hide, Func_020040f8)
+DEFINE_ACTOR_HIDE(Actor_Hide, Actor_DisableById)
 
 DEFINE_SCENE_RUN_UNLESS_FLAG(Scene_RunUnlessFlag, 0x20d,
                              YampiDesert_HideSlideActors)
@@ -1433,7 +1433,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 void YampiDesert_SetUpRoom1(void) {
   YampiDesert_PlaceStakes(gYampiDesert_Room1Stakes);
-  Func_02004180(0);
+  FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.entrance == 1) {
     GameFlag_Set(0xa29);
     GameFlag_Clear(0xa2a);
@@ -1500,12 +1500,12 @@ void YampiDesert_SetUpRoom3(void) {
 void YampiDesert_ReadyStake(s32 id) {
   Actor_GetById(id)->priorityFlags |= 2;
   Actor_SetSpritePriority(id, 3);
-  Func_020040f8(id);
+  Actor_DisableById(id);
   Actor_SetModeById(id, 2);
 }
 
 void YampiDesert_SetUpRoom4(void) {
-  Func_02004180(0);
+  FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 4) {
     if (Scene_FlagTest(0x889))
       Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
@@ -1528,7 +1528,7 @@ void YampiDesert_SetUpRoom4(void) {
 /// Room 5's setup: from entrances other than 1 and 2 it places actors 11 to
 /// 20 and copies the map cells flags 0x88c and 0x8ed select.
 void YampiDesert_SetUpRoom5(void) {
-  Func_02004180(0);
+  FieldEffect_StartBlankOverlay(0);
   YampiDesert_PlaceStakes(gYampiDesert_Room5Stakes);
   YampiDesert_ReadyStake(11);
   YampiDesert_ReadyStake(12);
@@ -1574,7 +1574,7 @@ void YampiDesert_SetUpRoom5(void) {
   (*(u16 *)((u8 *)&gMainRoutineWork + (offset)))
 
 void YampiDesert_SetUpRoom6(void) {
-  Func_02004180(0);
+  FieldEffect_StartBlankOverlay(0);
   if (GameFlag_Get(0x302) == 0)
     Actor_SetWideSprite(64, 0);
 }
@@ -1594,7 +1594,7 @@ void YampiDesert_SetUpRoom8(void) {
   s32 scene;
 
   Scene_QueueMusic(137);
-  Func_020041d0();
+  Rope_Initialize();
   Scene_Call41d8(0, 524, 8, 9);
   if (object != NULL)
     Actor_SetHorizontalPositionWithTerrain(64, 0, 0);
@@ -1705,7 +1705,7 @@ DEFINE_STATUE_SINK(Statue_Sink, YampiDesert_SetStakeCell)
 
 #include "iwram_call.h"
 
-DEFINE_ACTOR_SET_CELL_OPEN(YampiDesert_SetStakeCell, Func_020041e0,
+DEFINE_ACTOR_SET_CELL_OPEN(YampiDesert_SetStakeCell, Actor_GetCellIndex,
                            Import_ActorSelectAnimation)
 
 /// The whole-pixel half of a 16.16 coordinate.

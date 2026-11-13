@@ -126,9 +126,9 @@ MapGrid_WaitForShakeToSettle:
 	.thumb_func
 Actor_SetSpriteColorMode:
 	overlay_veneer Actor_SetSpriteColorModeFar
-	.global Func_02001a6c
+	.global MapGrid_SetCellHeight
 	.thumb_func
-Func_02001a6c:
+MapGrid_SetCellHeight:
 	overlay_veneer MapGrid_SetCellHeightFar
 	.global Event_Wait
 	.thumb_func
@@ -214,25 +214,25 @@ Event_ResolvePendingActions:
 	.thumb_func
 Camera_WorldToScreen:
 	overlay_veneer Camera_WorldToScreenFar
-	.global Func_02001b1c
+	.global TileCopies_CopyTouchedCells
 	.thumb_func
-Func_02001b1c:
+TileCopies_CopyTouchedCells:
 	overlay_veneer TileCopies_CopyTouchedCellsFar
 	.global BattleEffect_GetObjectPriority
 	.thumb_func
 BattleEffect_GetObjectPriority:
 	overlay_veneer BattleEffect_GetObjectPriorityFar
-	.global Func_02001b2c
+	.global MapGrid_GetCellBehavior
 	.thumb_func
-Func_02001b2c:
+MapGrid_GetCellBehavior:
 	overlay_veneer MapGrid_GetCellBehaviorFar
-	.global Func_02001b34
+	.global MapGrid_SetAttributeBAt
 	.thumb_func
-Func_02001b34:
+MapGrid_SetAttributeBAt:
 	overlay_veneer MapGrid_SetAttributeBAtFar
-	.global Func_02001b3c
+	.global Actor_ArriveInRing
 	.thumb_func
-Func_02001b3c:
+Actor_ArriveInRing:
 	overlay_veneer Actor_ArriveInRingFar
 	.global Sound_Play
 	.thumb_func

@@ -60,19 +60,19 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 // The rope routine is called with no prototype in scope, as its bytes need:
 // called as returning int, the two post ids load before the first argument.
 // A current GCC gets it here.
-void Func_020001a0(s32 a, s32 b, s32 c);
+void Rope_Lash(s32 a, s32 b, s32 c);
 #endif
 
 /// The party lashes the second rope, from post ACTOR_THIRD_ROPE_POST to
 /// ACTOR_FOURTH_ROPE_POST, and it stays tied for the rest of the visit.
 void OseniaCliffs_LashRope(void) {
-  Func_020001a0(1, 13, 14);
+  Rope_Lash(1, 13, 14);
   Event_SetFlag(FLAG_ROPE_LASHED);
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-void Func_02000190(void);
+void Rope_Initialize(void);
 
 s32 Scene_Initialize(void) {
   struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapWork;
@@ -93,8 +93,8 @@ s32 Scene_Initialize(void) {
     __asm__("" : "+l"(bit));
     *flags = bit | value;
   }
-  Func_02000190();
-  Func_02000198(0, 12, 11);
+  Rope_Initialize();
+  Rope_Tie(0, 12, 11);
   Actor_SetAnimation(ACTOR_SECOND_ROPE_POST, 4);
   Actor_SetAnimation(ACTOR_FIRST_ROPE_POST, 4);
   {
@@ -104,10 +104,10 @@ s32 Scene_Initialize(void) {
     a0 = 1;
     /* FAKEMATCH(barrier): the asm on the first argument keeps its load right
      * after the first half of flag + 0xff, where without it it loads last; as
-     * Func_020001a8(1, flag + 0xff, 13, 14), 2 of 55 instructions differ in
+     * Rope_Place(1, flag + 0xff, 13, 14), 2 of 55 instructions differ in
      * tla-en. */
     asm volatile("" : "+l"(a0));
-    Func_020001a8(a0, flag + 0xff, 13, 14);
+    Rope_Place(a0, flag + 0xff, 13, 14);
   }
   return 0;
 }

@@ -20,11 +20,11 @@
 
 struct EpilogueSprite;
 
-void Func_0200083c(struct EpilogueSprite *sprite);
+void EffectSprite_Draw(struct EpilogueSprite *sprite);
 
 s32 Import_EventSetDestination();
 
-s32 Func_02000864();
+s32 EndingPicture_LowerTopStrip();
 
 extern s32 gEpilogueMessage; ///< the next line to show
 /// Nonzero while a speaker's name is shown on the green panel.
@@ -38,7 +38,7 @@ extern s32 gEpilogueNamePanelTile;  ///< the panel's first tile
 extern const u16 gEpilogueNamePanelPalette[];
 extern char ResourceId_GreenPanel;
 
-s32 Func_0200084c();
+s32 EndingPicture_Show();
 #include "module/scene/scene.h"
 #include "module/window/window.h"
 #include "resource.h"
@@ -63,7 +63,7 @@ void Epilogue_PlaceNamePanel(void) {
   if (gEpilogueNameShown != 0) {
     gEpilogueNamePanel.unk0c = gEpilogueNameX << 16;
     gEpilogueNamePanel.unk10 = gEpilogueNameY << 16;
-    Func_0200083c(&gEpilogueNamePanel);
+    EffectSprite_Draw(&gEpilogueNamePanel);
   }
 }
 
@@ -94,14 +94,14 @@ struct Trigger gSceneEvents[] = {
 #include "system/input.h"
 #include "system/ram_buffer.h"
 
-void Func_02000834(struct EpilogueSprite *sprite, s32 a, s32 b, u32 c,
+void EffectSprite_Init(struct EpilogueSprite *sprite, s32 a, s32 b, u32 c,
                    s32 tile);
 
 static __inline__ void Set(struct EpilogueSprite *sprite, s32 a, s32 b, u32 c,
                            s32 tile) {
   /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 6 of 69
    * instructions differ in tla-en. */
-  Func_02000834(sprite, a, b, c, tile);
+  EffectSprite_Init(sprite, a, b, c, tile);
 }
 
 /// Loads the green panel the speakers' names are written on, and starts
@@ -250,7 +250,7 @@ void Epilogue_ShowLine(s32 message, s32 position, s32 frames) {
 }
 
 s32 SceneState_SetScrollTarget();
-s32 Func_0200085c();
+s32 EndingPicture_WaitForScroll();
 s32 WindowSystem_InitField();
 extern char ResourceId_EndingCliffDayPicture,
     ResourceId_EndingCliffSunsetPicture, ResourceId_EndingVillagersPictureA,
@@ -282,7 +282,7 @@ s32 Scene_Initialize(void) {
   actor[85] = zero;
   one = 1;
   *eventMode = one;
-  Func_02000844();
+  EndingPicture_Start();
   WindowSystem_InitField();
   tiles = Ram_HeapSlots->windowTiles;
   tiles[6] = one;
@@ -313,7 +313,7 @@ s32 Scene_Initialize(void) {
   scroll = gBgScroll;
   scroll[3].y = 16;
   scroll[2].y = 16;
-  Call3((void (*)())Func_0200084c, (s32)&ResourceId_EndingCliffDayPicture,
+  Call3((void (*)())EndingPicture_Show, (s32)&ResourceId_EndingCliffDayPicture,
         (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(100);
   Call3((void (*)())Epilogue_ShowLine, 60, 2, 30);
@@ -327,9 +327,9 @@ s32 Scene_Initialize(void) {
   Epilogue_ShowLine(5, 2, 40);
   SceneState_SetScrollTarget(120);
   System_Wait(1);
-  Func_0200085c();
+  EndingPicture_WaitForScroll();
   FieldEvent_Wait(30);
-  Call3((void (*)())Func_0200084c, (s32)&ResourceId_EndingCliffSunsetPicture,
+  Call3((void (*)())EndingPicture_Show, (s32)&ResourceId_EndingCliffSunsetPicture,
         (s32)Ram_MapCellBuffer, 120);
   FieldEvent_Wait(120);
   Call3((void (*)())Epilogue_ShowLine, 5, 2, 30);
@@ -364,7 +364,7 @@ s32 Scene_Initialize(void) {
   Call3((void (*)())Epilogue_ShowLine, 0, 2, 30);
   Call3((void (*)())Epilogue_ShowLine, 0x8045, 2, 30);
   Call3((void (*)())Epilogue_ShowLine, 1, 2, 30);
-  Call3((void (*)())Func_0200084c, (s32)&ResourceId_EndingVillagersPictureA,
+  Call3((void (*)())EndingPicture_Show, (s32)&ResourceId_EndingVillagersPictureA,
         (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
   Event_PlaySound(73);
@@ -383,19 +383,19 @@ s32 Scene_Initialize(void) {
   Epilogue_ShowLine(56, 2, 40);
   SceneState_SetScrollTarget(200);
   System_Wait(1);
-  Func_0200085c();
+  EndingPicture_WaitForScroll();
   FieldEvent_Wait(30);
   Call3((void (*)())Epilogue_ShowLine, 62, 2, 20);
   Call3((void (*)())Epilogue_ShowLine, 0, 2, 40);
   Call3((void (*)())Epilogue_ShowLine, 66, 2, 20);
   Call3((void (*)())Epilogue_ShowLine, 62, 2, 30);
   Call3((void (*)())Epilogue_ShowLine, 66, 2, 40);
-  Call3((void (*)())Func_0200084c, 0, (s32)Ram_MapCellBuffer, 0);
+  Call3((void (*)())EndingPicture_Show, 0, (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
   scroll[3].y = zero;
   scroll[2].y = zero;
-  Func_02000864(0);
-  Func_0200084c((s32)&ResourceId_EndingEmbracePicture, (s32)Ram_MapCellBuffer,
+  EndingPicture_LowerTopStrip(0);
+  EndingPicture_Show((s32)&ResourceId_EndingEmbracePicture, (s32)Ram_MapCellBuffer,
                 0);
   FieldEvent_Wait(60);
   goto L_02008692;
@@ -405,17 +405,17 @@ L_02008692:
   p = &gInput;
   if (((struct InputState *)p)->pressed == 0)
     goto L_0200868c;
-  Call3((void (*)())Func_0200084c, (s32)&ResourceId_EndingReunionPicture,
+  Call3((void (*)())EndingPicture_Show, (s32)&ResourceId_EndingReunionPicture,
         (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(120);
   SceneState_SetScrollTarget(120);
   System_Wait(1);
-  Func_0200085c();
+  EndingPicture_WaitForScroll();
   FieldEvent_Wait(180);
-  Call3((void (*)())Func_0200084c, (s32)&ResourceId_EndingSunsetPlainPicture,
+  Call3((void (*)())EndingPicture_Show, (s32)&ResourceId_EndingSunsetPlainPicture,
         (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(300);
-  Func_0200084c((s32)&ResourceId_EndingTheEndPicture, (s32)Ram_MapCellBuffer,
+  EndingPicture_Show((s32)&ResourceId_EndingTheEndPicture, (s32)Ram_MapCellBuffer,
                 0);
   FieldEvent_Wait(180);
   Event_PlaySound(78);
@@ -433,7 +433,7 @@ L_02008704:
   if (gInput.pressed == 0)
     goto L_02008704;
 L_0200871e:
-  Func_0200084c(0, (s32)Ram_MapCellBuffer, 0);
+  EndingPicture_Show(0, (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
   value = 0;
   /* FAKEMATCH(dead): the store in a once-only block; as a plain store, 2 of 426

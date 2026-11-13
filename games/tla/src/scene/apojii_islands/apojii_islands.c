@@ -500,8 +500,8 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 void Func_02001054(void) {
   Task_AddFrame(Func_020003e8, TASK_PASS_VBLANK);
-  Func_02001dfc();
-  Func_02001e04(0, 0x200, 8, 9);
+  Rope_Initialize();
+  Rope_Place(0, 0x200, 8, 9);
   Scene_QueueMusic(170);
   Scroll_StartHBlank();
   if (gMainRoutineWork.entrance == 3)

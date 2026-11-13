@@ -222,9 +222,9 @@ Actor_SetWideSprite:
 	.thumb_func
 Actor_ReturnHome:
 	overlay_veneer Actor_ReturnHomeFar
-	.global Func_02001cfc
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_02001cfc:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
@@ -242,49 +242,49 @@ Actor_WalkByAndWaitById:
 	.thumb_func
 Actor_WatchAndSetScript:
 	overlay_veneer Actor_WatchAndSetScriptFar
-	.global Func_02001d24
+	.global Rope_Initialize
 	.thumb_func
-Func_02001d24:
+Rope_Initialize:
 	overlay_veneer Rope_InitializeFar
-	.global Func_02001d2c
+	.global Rope_Coil
 	.thumb_func
-Func_02001d2c:
+Rope_Coil:
 	overlay_veneer Rope_CoilFar
-	.global Func_02001d34
+	.global Rope_Lash
 	.thumb_func
-Func_02001d34:
+Rope_Lash:
 	overlay_veneer Rope_LashFar
-	.global Func_02001d3c
+	.global Rope_Place
 	.thumb_func
-Func_02001d3c:
+Rope_Place:
 	overlay_veneer Rope_PlaceFar
-	.global Func_02001d44
+	.global TileCopies_CopyTouchedCells
 	.thumb_func
-Func_02001d44:
+TileCopies_CopyTouchedCells:
 	overlay_veneer TileCopies_CopyTouchedCellsFar
-	.global Func_02001d4c
+	.global HangingVine_Place
 	.thumb_func
-Func_02001d4c:
+HangingVine_Place:
 	overlay_veneer HangingVine_PlaceFar
 	.global BattleEffect_GetObjectPriority
 	.thumb_func
 BattleEffect_GetObjectPriority:
 	overlay_veneer BattleEffect_GetObjectPriorityFar
-	.global Func_02001d5c
+	.global MapGrid_GetAttributeBAt
 	.thumb_func
-Func_02001d5c:
+MapGrid_GetAttributeBAt:
 	overlay_veneer MapGrid_GetAttributeBAtFar
-	.global Func_02001d64
+	.global MapGrid_SetAttributeBAt
 	.thumb_func
-Func_02001d64:
+MapGrid_SetAttributeBAt:
 	overlay_veneer MapGrid_SetAttributeBAtFar
-	.global Func_02001d6c
+	.global Actor_TakeLeaderLayer
 	.thumb_func
-Func_02001d6c:
+Actor_TakeLeaderLayer:
 	overlay_veneer Actor_TakeLeaderLayerFar
-	.global Func_02001d74
+	.global Teleport_PlaySparksAndFade
 	.thumb_func
-Func_02001d74:
+Teleport_PlaySparksAndFade:
 	overlay_veneer Teleport_PlaySparksAndFadeFar
 	.global Sound_Play
 	.thumb_func

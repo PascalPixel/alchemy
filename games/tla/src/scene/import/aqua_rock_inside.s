@@ -318,9 +318,9 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_02003ea4
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_02003ea4:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
@@ -346,13 +346,13 @@ Scene_QueueMusic:
 	.thumb_func
 Event_NoOp:
 	overlay_veneer Event_NoOpFar
-	.global Func_02003edc
+	.global Tightrope_Initialize
 	.thumb_func
-Func_02003edc:
+Tightrope_Initialize:
 	overlay_veneer Tightrope_InitializeFar
-	.global Func_02003ee4
+	.global Tightrope_Place
 	.thumb_func
-Func_02003ee4:
+Tightrope_Place:
 	overlay_veneer Tightrope_PlaceFar
 	.global Actor_ShowItemIconById
 	.thumb_func

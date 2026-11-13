@@ -262,25 +262,25 @@ Event_ResolvePendingActions:
 	.thumb_func
 Actor_WatchAndSetScript:
 	overlay_veneer Actor_WatchAndSetScriptFar
-	.global Func_02002db8
+	.global FlagBlock_PlaceAll
 	.thumb_func
-Func_02002db8:
+FlagBlock_PlaceAll:
 	overlay_veneer FlagBlock_PlaceAllFar
-	.global Func_02002dc0
+	.global FlagBlock_ApplyFlags
 	.thumb_func
-Func_02002dc0:
+FlagBlock_ApplyFlags:
 	overlay_veneer FlagBlock_ApplyFlagsFar
-	.global Func_02002dc8
+	.global Actor_PlaceBlocks
 	.thumb_func
-Func_02002dc8:
+Actor_PlaceBlocks:
 	overlay_veneer Actor_PlaceBlocksFar
-	.global Func_02002dd0
+	.global Actor_LiftTargetBlock
 	.thumb_func
-Func_02002dd0:
+Actor_LiftTargetBlock:
 	overlay_veneer Actor_LiftTargetBlockFar
-	.global Func_02002dd8
+	.global Actor_PlaceMovedBlock
 	.thumb_func
-Func_02002dd8:
+Actor_PlaceMovedBlock:
 	overlay_veneer Actor_PlaceMovedBlockFar
 	.global Sound_Play
 	.thumb_func

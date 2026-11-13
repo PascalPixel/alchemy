@@ -36,7 +36,7 @@ extern u32 gFieldEffect_LongScript[];
 
 void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer);
 
-s32 Func_02002c1c(struct Actor *object);
+s32 Actor_GetCellIndex(struct Actor *object);
 
 extern s16 gLightSpriteTile;
 extern struct LightOam gLightSpriteOams[];
@@ -50,8 +50,8 @@ void Teleporter_Uncover(struct CellTarget *table,
 void Teleporter_Sink(struct CellTarget *table, struct CellTargetEntry *entry);
 
 extern s16 gLightSpriteCount;
-void Func_02002b54(s32 x, s32 z, s32 a, s32 b);
-void Func_02002c54(s32 x, s32 z, s32 a, s32 b);
-void Func_02002bec(void);
+void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
+void MapGrid_ClearAttributeBBitsAt(s32 x, s32 z, s32 a, s32 b);
+void Field_TryJumpForward(void);
 
 #endif

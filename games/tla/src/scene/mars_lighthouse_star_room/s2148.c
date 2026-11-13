@@ -40,7 +40,7 @@ extern u8 gInventorySnapshot[];
 #define SHARED_F02002148_ID2 Func_02001fcc
 #define SHARED_F02002148_ID3 Func_02002120
 #define SHARED_F02002148_ID4 Import_ActorSelectAnimation
-#define SHARED_F02002148_ID5 Func_0200422c
+#define SHARED_F02002148_ID5 MapGrid_GetCellAttributeLowNibbleOrBump
 #define SHARED_F02002148_ID6 MapGrid_CheckCollision
 #define SHARED_F02002148_ID7 Import_FieldCheckSpheresOverlap
 #include "../shared/func_02002148.c"
@@ -176,7 +176,7 @@ s32 MarsLighthouseStarRoom_SlideOnIce(void) {
   leader->facing = 0x4000;
   Import_ActorSelectAnimation(leader, 49);
   while (ride->car->stopped == 0) {
-    if (Func_0200422c(0, leader->x, leader->z) != 7) {
+    if (MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x, leader->z) != 7) {
       leader->x += ride->car->stepX;
       leader->z += ride->car->stepZ;
     } else {
@@ -344,7 +344,7 @@ struct WorkEvent {
   s16 unk166;
 };
 
-DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_0200274c, Work020023c4__s236c, Func_0200422c,
+DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_0200274c, Work020023c4__s236c, MapGrid_GetCellAttributeLowNibbleOrBump,
                               Func_02002658, Func_020024d4)
 #undef WORK
 #undef ABS
@@ -434,7 +434,7 @@ DEFINE_LEADER_SLIDE_ON_ICE(Func_02002dc4, Func_02002d90, gData_0200483c,
 extern volatile s16 gData_02004cf0__s3070 __asm__("gData_02004cf0");
 extern s16 gData_0200483c[];
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 Func_02004284(struct Actor *object);
+s32 Actor_HasArrived(struct Actor *object);
 /* VIEW(s3070): routine Import_FieldCheckSpheresOverlap as s32
  * Import_FieldCheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
  * s2dc4 has s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 radiusA, struct
@@ -451,7 +451,7 @@ Func_0200428c__s3070(s32 *a, s32 aRadius, s32 *b,
 #define SHARED_F02003070_ID3 Func_02002d90
 #define SHARED_F02003070_ID4 gData_0200483c
 #define SHARED_F02003070_ID5 Import_ActorSelectAnimation
-#define SHARED_F02003070_ID6 Func_02004284
+#define SHARED_F02003070_ID6 Actor_HasArrived
 #define SHARED_F02003070_ID7 Func_02002d04
 #define SHARED_F02003070_ID8 Func_0200428c__s3070
 #include "../shared/func_02003070.c"

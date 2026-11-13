@@ -9,7 +9,7 @@
 
 struct Actor;
 
-s32 Func_020011f4(s32 layer, s32 shape, s32 height);
+s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
 extern struct SceneEntrance gMadraCatacombs_Entrances[];
 extern struct SceneEntrance gMadraCatacombs_Room4Entrances[];
@@ -50,16 +50,16 @@ extern s32 gMadraCatacombs_GreatFlameFlaresUp[];
 extern s16 gMadraCatacombs_ClimbablePillar[];
 extern s32 gMadraCatacombs_WalkIntoDoorway[];
 
-void Func_0200115c(s32 id);
+void Actor_DisableById(s32 id);
 
 s32 Field_FindNearbyTalkTarget(s32 owner);
 
-s32 Func_020011fc(void);
+s32 Leader_CanPushObjectAhead(void);
 
 void MadraCatacombs_RockChestWithBookshelf(void);
 
 void MadraCatacombs_LeaveBlockedVillage(void);
 
-void Func_020011bc(s32 a, s32 b, s32 c, s32 d);
+void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 
 #endif

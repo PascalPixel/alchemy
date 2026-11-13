@@ -1378,7 +1378,7 @@ s32 Scene_Initialize(void) {
     } while (0);                                                               \
   }
 
-void Func_02003edc();
+void Tightrope_Initialize();
 
 /// Aqua Rock's map preparation: for each room and entrance it sets the water
 /// level, places the statues and boulders the flags have moved, opens or
@@ -1459,7 +1459,7 @@ s32 Scene_PrepareMap(void) {
     actor->terrainHeight = 0;
     actor->y = 0;
   } else if (scene == (s32)&SceneId_Ov67cRoom3) {
-    Call1((void (*)())Func_02003ea4, 0);
+    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
     Call2((void (*)())Actor_SetSpriteFlags, (s32)Actor_GetById(9), 0);
     Call2((void (*)())Actor_SetSpriteFlags, (s32)Actor_GetById(10), 0);
     Func_020032d4(33, 8, -2);
@@ -1483,7 +1483,7 @@ s32 Scene_PrepareMap(void) {
       MapGrid_CopyCellAttributes(17, 32, 5, 1, 17, 31);
     }
   } else if (scene == (s32)&SceneId_Ov67cRoom4) {
-    Call1((void (*)())Func_02003ea4, 0);
+    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
     if ((u32)(entrance - 6) <= 1)
       goto statues;
     goto no_statues;
@@ -1532,7 +1532,7 @@ s32 Scene_PrepareMap(void) {
   } else if (scene == (s32)&SceneId_Ov67cRoom5) {
     Func_020032d4(33, 0, -2);
     Call3((void (*)())Func_020032d4, 40, 0, 0);
-    Call1((void (*)())Func_02003ea4, 0);
+    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
     if (((u32)(entrance - 1) <= 3 || entrance == 7) && GameFlag_Get(0xa67)) {
       Func_02003628();
       Value4((s32 (*)())Func_02003688, 44, 0, 34, 2);
@@ -1540,7 +1540,7 @@ s32 Scene_PrepareMap(void) {
         Func_020036b8(33, 55);
     }
   } else if (scene == (s32)&SceneId_Ov67cRoom6) {
-    Call1((void (*)())Func_02003ea4, 0);
+    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
     if (entrance == 1 || entrance == 13) {
       Func_020032d4(33, 0, -2);
     } else if (entrance == 9 || entrance == 11 || entrance == 12) {
@@ -1572,10 +1572,10 @@ s32 Scene_PrepareMap(void) {
   } else if (scene == (s32)&SceneId_Ov67cRoom7) {
     Func_020032d4(33, 0, -2);
   } else if (scene == (s32)&SceneId_Ov67cRoom8) {
-    Call1((void (*)())Func_02003ea4, 0);
+    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
     Func_020032d4(33, 0, -2);
-    Func_02003edc();
-    Call3((void (*)())Func_02003ee4, 0, 8, 9);
+    Tightrope_Initialize();
+    Call3((void (*)())Tightrope_Place, 0, 8, 9);
   } else if (scene == (s32)&SceneId_Ov67cRoom9) {
     if ((u32)(entrance - 3) <= 1) {
       Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
@@ -1625,10 +1625,10 @@ s32 Scene_PrepareMap(void) {
     actor = Actor_GetById(19);
     MapGrid_CopyCellAttributes(23, 39, 1, 1, actor->x >> 20, 39);
     if ((u32)(entrance - 1) <= 1) {
-      Call1((void (*)())Func_02003ea4, 0);
+      Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
     }
   } else if (scene == (s32)&SceneId_Ov67cRoom10) {
-    Call1((void (*)())Func_02003ea4, 0);
+    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
     Func_020032d4(33, 0, -2);
     Event_SetFlag(0x144);
     if (GameFlag_Get(0x349)) {

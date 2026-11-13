@@ -282,17 +282,17 @@ Scene_QueueMusic:
 	.thumb_func
 Event_NoOp:
 	overlay_veneer Event_NoOpFar
-	.global Func_02001dfc
+	.global Rope_Initialize
 	.thumb_func
-Func_02001dfc:
+Rope_Initialize:
 	overlay_veneer Rope_InitializeFar
-	.global Func_02001e04
+	.global Rope_Place
 	.thumb_func
-Func_02001e04:
+Rope_Place:
 	overlay_veneer Rope_PlaceFar
-	.global Func_02001e0c
+	.global TileCopies_CopyTouchedCells
 	.thumb_func
-Func_02001e0c:
+TileCopies_CopyTouchedCells:
 	overlay_veneer TileCopies_CopyTouchedCellsFar
 	.global Party_GetLeaderActor
 	.thumb_func

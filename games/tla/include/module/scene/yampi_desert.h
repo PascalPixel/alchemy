@@ -68,7 +68,7 @@ extern u32 gYampiDesert_TravelerLooksAround[];
 extern u32 gYampiDesert_OtherTravelerLooksAround[];
 
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
-s32 Func_020041e8(s32 layer, s32 shape, s32 height);
+s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
 void YampiDesert_StartRisingSand(s32 unused, s32 value);
 

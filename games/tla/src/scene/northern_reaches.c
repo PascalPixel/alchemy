@@ -347,7 +347,7 @@ s32 Scene_Initialize(void) {
     state->ownerOverride = 1;
     Event_SetDestination((s32)&SceneId_Ov6a7Room1, 4);
   }
-  Func_02000b08();
+  RisingParticles_Start();
   return 0;
 }
 
@@ -387,7 +387,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
   particle = work->particles;
   sprite = work->sprites;
   for (; i <= 53; i++) {
-    Func_02000b40(sprite, 0, 0, 0x40000000, (i & 3) * 8 + tiles);
+    EffectSprite_Init(sprite, 0, 0, 0x40000000, (i & 3) * 8 + tiles);
     zero = 0;
     sprite->depth = 250;
     sprite->oam.priority = zero;

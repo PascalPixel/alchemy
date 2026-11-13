@@ -8,9 +8,9 @@
 
 struct Actor;
 
-void Func_020010cc(s32 x, s32 z, s32 layer, s32 height);
+void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 
-struct Actor *Func_0200115c(s32 *position, s32 mode);
+struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 
 extern u32 gData_0200116c[];
 

@@ -38,9 +38,9 @@ GameFlag_Set:
 	.thumb_func
 GameFlag_Clear:
 	overlay_veneer GameFlag_ClearFar
-	.global Func_02005164
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_02005164:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func
@@ -238,9 +238,9 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_020052f4
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_020052f4:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global FieldPsynergy_RunHandler
 	.thumb_func
@@ -286,37 +286,37 @@ Actor_WalkByAndWaitById:
 	.thumb_func
 Actor_WatchAndSetScript:
 	overlay_veneer Actor_WatchAndSetScriptFar
-	.global Func_02005354
+	.global Rope_Lash
 	.thumb_func
-Func_02005354:
+Rope_Lash:
 	overlay_veneer Rope_LashFar
-	.global Func_0200535c
+	.global Tightrope_Initialize
 	.thumb_func
-Func_0200535c:
+Tightrope_Initialize:
 	overlay_veneer Tightrope_InitializeFar
-	.global Func_02005364
+	.global Tightrope_Place
 	.thumb_func
-Func_02005364:
+Tightrope_Place:
 	overlay_veneer Tightrope_PlaceFar
-	.global Func_0200536c
+	.global Actor_PlaceBlocks
 	.thumb_func
-Func_0200536c:
+Actor_PlaceBlocks:
 	overlay_veneer Actor_PlaceBlocksFar
-	.global Func_02005374
+	.global Actor_LiftTargetBlock
 	.thumb_func
-Func_02005374:
+Actor_LiftTargetBlock:
 	overlay_veneer Actor_LiftTargetBlockFar
-	.global Func_0200537c
+	.global Actor_PlaceMovedBlock
 	.thumb_func
-Func_0200537c:
+Actor_PlaceMovedBlock:
 	overlay_veneer Actor_PlaceMovedBlockFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_0200538c
+	.global BattleEffect_PackTargetBuffer
 	.thumb_func
-Func_0200538c:
+BattleEffect_PackTargetBuffer:
 	overlay_veneer BattleEffect_PackTargetBufferFar
 	.global Sound_Play
 	.thumb_func

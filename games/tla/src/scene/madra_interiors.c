@@ -351,7 +351,7 @@ s32 Scene_Initialize(void) {
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
-  Func_02001e80(0);
+  FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room1) {
     event = Ram_HeapSlots->eventWork;
     FIELD_AT(event, u16, 0xd4c) = 3;

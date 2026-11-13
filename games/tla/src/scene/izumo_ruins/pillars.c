@@ -18,7 +18,7 @@
 struct Actor;
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 s32 Import_FieldTryJumpForward(void);
-struct Actor *Func_02001530(s32 *position, s32 flags);
+struct Actor *Actor_FindAtCell(s32 *position, s32 flags);
 void Leader_SetCellShapeAt(s32 a, s32 b);
 
 void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
@@ -87,10 +87,10 @@ top:
     goto top;
 }
 
-DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Func_02001508,
+DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
                            Actor_SelectAnimation)
 
-s32 Func_02001528(s32 layer, s32 shape, s32 height);
+s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
 void CrumblingPillars_Place(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -108,7 +108,7 @@ void CrumblingPillars_Place(u16 *list) {
     if (Event_GetFlag(next)) {
       Actor_SetPosition(id, 0, 0);
     } else {
-      s32 index = Func_02001508(object);
+      s32 index = Actor_GetCellIndex(object);
       struct MapCell *cell;
       u8 *slot;
       s32 shape, ground;
@@ -118,9 +118,9 @@ void CrumblingPillars_Place(u16 *list) {
       shape = MapGrid_GetTerrainKind(object->terrainId, object->x, object->z);
       ground = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
 
-      Func_020014c0(id);
+      Actor_DisableById(id);
       cell->attributeB = 128;
-      *slot = Func_02001528(object->terrainId, shape, (ground >> 19) + 4);
+      *slot = MapCollision_FindOrAddTag(object->terrainId, shape, (ground >> 19) + 4);
       if (Event_GetFlag(flag))
         Actor_SelectAnimation(object, 0);
     }
@@ -145,7 +145,7 @@ void CrumblingPillars_Step(u16 *list) {
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;
-  pillar = Func_02001530(position, 0);
+  pillar = Actor_FindAtCell(position, 0);
   if (pillar != 0)
     goto test;
   return;
@@ -247,7 +247,7 @@ void CrumblingPillar_Collapse(const void *data, s32 id) {
 
 void CrumblingPillar_Prepare(s32 id) {
   Actor_Get(id)->unk5c[0] = 3;
-  Func_020014c0(id);
+  Actor_DisableById(id);
 }
 
 void Actor_MoveToObject(s32 id, s32 target);
@@ -282,7 +282,7 @@ void CrumblingPillars_PlaceWithStandIns(u16 *list) {
     if (Event_GetFlag(next)) {
       Actor_SetPosition(id, 0, 0);
     } else {
-      s32 index = Func_02001508(actor);
+      s32 index = Actor_GetCellIndex(actor);
       struct MapCell *cell = cells + index;
       u8 *shape = shapes + index;
       s32 kind, ground;
@@ -290,11 +290,11 @@ void CrumblingPillars_PlaceWithStandIns(u16 *list) {
       kind = MapGrid_GetTerrainKind(actor->terrainId, actor->x, actor->z);
       ground = Map_GetTerrainHeight(actor->terrainId, actor->x, actor->z);
 
-      Func_020014c0(id);
+      Actor_DisableById(id);
       cell->attributeB = 128;
       // Read through the actor, not actor->terrainId: the native reloads it
       // after the cell store.
-      *shape = Func_02001528(actor->terrainId, kind, (ground >> 19) + 4);
+      *shape = MapCollision_FindOrAddTag(actor->terrainId, kind, (ground >> 19) + 4);
       if (Event_GetFlag(flag))
         Actor_CopyGraphics(id, 9);
     }
@@ -321,7 +321,7 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;
-  pillar = Func_02001530(position, 0);
+  pillar = Actor_FindAtCell(position, 0);
   if (pillar != 0)
     goto test;
   return;

@@ -34,7 +34,7 @@ extern s32 gEasternAlhafraShip_SecondPirateRunsScript[];
 
 void EasternAlhafraShip_ShakeDownTheBread(void);
 
-void Func_02003148();
+void Event_PickUpItem();
 #include "module/scene/scene.h"
 #include "module/field/event_commands.h"
 
@@ -94,7 +94,7 @@ void EasternAlhafraShip_ShakeDownTheBread(void) {
 }
 
 void EasternAlhafraShip_TakeTheBread(s32 arg0) {
-  Func_02003148(arg0, 0x1c9, 0x902);
+  Event_PickUpItem(arg0, 0x1c9, 0x902);
   return;
 }
 

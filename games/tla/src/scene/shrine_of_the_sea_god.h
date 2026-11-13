@@ -78,14 +78,14 @@ void Actor_SetModeById(u32 actorId, s32 animation);
 void Event_Start(void);
 void Event_End(void);
 void Event_ResolvePendingActions(s32 skip);
-void Func_02003aa0(s32 actor);
+void Actor_DisableById(s32 actor);
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 width,
                                         s32 height, s32 destX, s32 destY);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Field_RequestDjinnBattle(s32 actor, s32 value);
-void Func_02003b28(void);
-void Func_02003b38(const void *script);
-void Func_02003b40(void);
+void Actor_GetCellIndex(void);
+void Actor_LiftTargetBlock(const void *script);
+void Actor_PlaceMovedBlock(void);
 void Sound_Play(s32 cue);
 void Func_02001200(s32 show);
 void Func_0200142c(struct ShrineOfTheSeaGodObject *object);

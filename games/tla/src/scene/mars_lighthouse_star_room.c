@@ -224,7 +224,7 @@ void Func_02001d7c(void);
 void Func_02001df0(s32 a, s32 b, s32 c, s32 d);
 void Func_02003e04(void);
 void Map_CenterOnFollowedPoint(void);
-void Func_0200443c(s32 a);
+void FieldEffect_StartBlankOverlay(s32 a);
 extern struct Actor *gMarsLighthouseStarRoom_MarsStar;
 extern char SceneId_Ov6abRoom1;
 
@@ -238,7 +238,7 @@ s32 Scene_Initialize(void) {
   Func_02001d7c();
   Func_02001df0(0, 0, 0, 88);
   if (scene == (s32)&SceneId_Ov6abRoom1) {
-    Func_0200443c(0);
+    FieldEffect_StartBlankOverlay(0);
     if (Event_GetFlag(0xa30)) {
       MapGrid_CopyCellAttributes(65, 65, 9, 21, 38, 24);
       MapGrid_CopyCellsLayered(65, 65, 9, 21, 38, 24);

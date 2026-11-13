@@ -202,9 +202,9 @@ Event_StartScreenTransition:
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
 	.endif
-	.global Func_02002ed4
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_02002ed4:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func

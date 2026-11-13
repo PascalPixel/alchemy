@@ -22,7 +22,7 @@ void Func_02002118(void) {
     Iwram_ClearWordsEntry(work, 116);
   object = (struct Actor *)FieldActor_Create(365, 1, 0, 0);
   object->unk5c[0] = 2;
-  Func_02003118(object, 1);
+  Actor_SelectAnimation(object, 1);
   animation = object->sprite;
   work->handle = object;
   work->value0c = animation->value10;
@@ -134,7 +134,7 @@ DEFINE_ACTOR_BLINK(Func_020024bc, 10, 4, 0)
 #include "vector3.h"
 #include "fixed_math.h"
 
-s32 Func_02003168(s32 terrain, s32 x, s32 z);
+s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 terrain, s32 x, s32 z);
 /* VIEW(s2118): routine MapGrid_CheckCollision as s32
  * MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
  * module/scene/scene.h has s32 MapGrid_CheckCollision(s32 layer, s32 shape, s32
@@ -148,8 +148,8 @@ extern s32 Func_02003180__s2118(
 #define SHARED_F02002148_NAME Func_020024e4
 #define SHARED_F02002148_ID2 Func_02002368
 #define SHARED_F02002148_ID3 Func_020024bc
-#define SHARED_F02002148_ID4 Func_02003118
-#define SHARED_F02002148_ID5 Func_02003168
+#define SHARED_F02002148_ID4 Actor_SelectAnimation
+#define SHARED_F02002148_ID5 MapGrid_GetCellAttributeLowNibbleOrBump
 #define SHARED_F02002148_ID6 Func_02003180__s2118
 #define SHARED_F02002148_ID7 Import_FieldCheckSpheresOverlap
 #include "../shared/func_02002148.c"

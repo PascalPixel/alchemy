@@ -840,14 +840,14 @@ extern const u8 gData_02003cbc[];
 extern const u8 gData_02003c10[];
 
 void Actor_SetSpriteColor(struct ShrineOfTheSeaGodObject *object, s32 value);
-void Func_02003b20(s32 a, s32 b, s32 c, s32 d);
-void Func_02003b30(const void *script);
+void Rope_Place(s32 a, s32 b, s32 c, s32 d);
+void Actor_PlaceBlocks(const void *script);
 void Func_02001128(void);
 
 void Func_02002e70(void) {
   Actor_SetModeById(8, 2);
   Actor_SetModeById(9, 0);
-  Func_02003aa0(9);
+  Actor_DisableById(9);
 }
 
 void Func_02002e8c(void) {
@@ -892,11 +892,11 @@ struct ShrineOfTheSeaGodObject *Func_02002f88(s32 id) {
 
   object->priorityFlags |= 2;
   object->y = 0xc0000;
-  Func_02003aa0(id);
+  Actor_DisableById(id);
   return object;
 }
 
-DEFINE_ACTOR_HIDE(Actor_Hide, Func_02003aa0)
+DEFINE_ACTOR_HIDE(Actor_Hide, Actor_DisableById)
 
 DEFINE_SCENE_RUN_UNLESS_FLAG(Scene_RunUnlessFlag, 0x208, Func_0200123c)
 
@@ -911,7 +911,7 @@ void Func_02003024(void) {
     struct ShrineOfTheSeaGodObject *object = Actor_GetById(id);
     struct ShrineOfTheSeaGodSprite *sprite;
 
-    Func_02003aa0(id);
+    Actor_DisableById(id);
     Actor_SetModeById(id, 0);
     Actor_SetSpritePriority(id, 3);
     object->priorityFlags |= 2;
@@ -938,8 +938,8 @@ void Func_02003094(void) {
     priority = 0x480;
     Task_Add(Func_020010e8, priority);
   }
-  Func_02003b18();
-  Func_02003b20(0, 515, 10, 11);
+  Rope_Initialize();
+  Rope_Place(0, 515, 10, 11);
   if (GameFlag_Get(0x872)) {
     Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
@@ -961,11 +961,11 @@ void Func_02003134(void) {
 
   Func_02002f88(10)->y = -0x100000;
   Actor_SetSpritePriority(10, 3);
-  Func_02003b30(gData_02003cbc);
+  Actor_PlaceBlocks(gData_02003cbc);
   Func_02002e70();
   ShrineOfTheSeaGod_TaskAdd(Func_020011a0, 0x480);
-  Func_02003aa0(11);
-  Func_02003aa0(12);
+  Actor_DisableById(11);
+  Actor_DisableById(12);
   Actor_GetById(12)->motionFlags = 0;
   ShrineOfTheSeaGod_BlendStart(3, 15, 1, 1, 6, 15);
   if (GameFlag_Get(0x873)) {
@@ -1011,13 +1011,13 @@ void Func_0200320c(void) {
   }
   if (GameFlag_Get(0x84c))
     ShrineOfTheSeaGod_ObjSetPos(Actor_GetById(8), 200 << 16, 0, 296 << 16);
-  Func_02003b30(gData_02003cbc);
+  Actor_PlaceBlocks(gData_02003cbc);
   if (GameFlag_Get(0x875))
     Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
   else if (GameFlag_Get(0x874)) {
     ShrineOfTheSeaGod_ObjPlaceTurn(15, 580 << 16, 344 << 16, 0x4000);
   }
-  Func_02003b00(0);
+  FieldEffect_StartBlankOverlay(0);
   wait(1);
 }
 
@@ -1060,7 +1060,7 @@ void Func_0200338c(void) {
   if (GameFlag_Get(0x202))
     ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 10, 17);
   ShrineOfTheSeaGod_TaskAdd(Func_02001128, 0x480);
-  Func_02003b30(gData_02003cbc);
+  Actor_PlaceBlocks(gData_02003cbc);
   Func_02002e70();
   ShrineOfTheSeaGod_TaskAdd(Func_020011a0, 0x480);
   if (GameFlag_Get(115) || GameFlag_Get(0x340)) {
@@ -1090,7 +1090,7 @@ void Func_02003504(void) {
     Actor_SetSpritePriority(8, 3);
     Actor_GetById(8)->motionFlags = 0;
     ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 15, 16);
-    Func_02003aa0(8);
+    Actor_DisableById(8);
   } else {
     Actor_SetSpritePriority(8, 1);
     Actor_GetById(8)->motionFlags = open;
@@ -1133,22 +1133,22 @@ void Func_02003598(void) {
                                     PIXELS(390));
     Actor_SetSpritePriority(16, 3);
   }
-  Func_02003b18();
-  Call4((void (*)())Func_02003b20, 0, 0x203, 17, 18);
-  Func_02003b20(1, 0x204, 19, 20);
-  Func_02003aa0(21);
+  Rope_Initialize();
+  Call4((void (*)())Rope_Place, 0, 0x203, 17, 18);
+  Rope_Place(1, 0x204, 19, 20);
+  Actor_DisableById(21);
   Actor_GetById(21)->motionFlags = 0;
   object = Actor_GetById(22);
-  Func_02003aa0(22);
+  Actor_DisableById(22);
   object->priorityFlags |= 2;
   object->motionFlags = 0;
-  Func_02003aa0(23);
+  Actor_DisableById(23);
   Actor_GetById(23)->motionFlags = 0;
   /* FAKEMATCH(temporary): actor 24 fetched into its own variable; as
    * object = Actor_GetById(24), 51 of 171 instructions differ in tla-en. */
   lastObject = Actor_GetById(24);
   object = lastObject;
-  Func_02003aa0(24);
+  Actor_DisableById(24);
   object->priorityFlags |= 2;
   object->motionFlags = 0;
 }
@@ -1206,7 +1206,7 @@ void Func_02003854(s32 id) {
   struct ShrineOfTheSeaGodObject *object = Actor_GetById(id);
 
   Actor_SetSpritePriority(id, 3);
-  Func_02003aa0(id);
+  Actor_DisableById(id);
   object->priorityFlags |= 2;
   object->motionFlags = 0;
   object->field18 = 0xcccc;

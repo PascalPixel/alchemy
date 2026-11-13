@@ -34,9 +34,9 @@ void TreasureIsle_SetSpikyRock(struct TreasureIsleCell *cells, s16 index);
 
 void TreasureIsle_CycleWaterColors(void);
 
-void Func_0200105c(void);
+void Tightrope_Initialize(void);
 
-s32 Func_02001064(s32 a, s32 b, s32 c);
+s32 Tightrope_Place(s32 a, s32 b, s32 c);
 
 s32 Field_TryJumpForward();
 

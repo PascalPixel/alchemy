@@ -36,7 +36,7 @@ DEFINE_ACTOR_CYCLE_CHILD_VALUES(Func_02003b70, gData_02004fc8, gData_02006be4,
 
 DEFINE_ACTOR_SET_FLIGHT_MODE(Func_02003bb8, Func_02003b38, Func_02003b70)
 
-DEFINE_LEADER_SEARCH(Func_02003bf0, Func_02003bb8, Func_02004b90)
+DEFINE_LEADER_SEARCH(Func_02003bf0, Func_02003bb8, WorldMap_GetBlockPlace)
 
 u32 __umodsi3(u32 a, u32 b);
 
@@ -346,11 +346,11 @@ void Func_020048f4(void) {
   if ((gInput.held & 3) != 0 && Event_GetFlag(0x106) == 0 &&
       leader->y > 0x40000) {
     if (--gData_02006e10 <= 0) {
-      Func_02004c08(1);
+      Party_DrainPp(1);
       gData_02006e10 = 10;
     }
   }
-  Func_02004744(Func_02004c10());
+  Func_02004744(Party_GetPpRatio());
   attributes = 0x80004000;
   Call2((void (*)())Render_ProjectPoint, (s32)(&leader->x), (s32)(screen));
   {

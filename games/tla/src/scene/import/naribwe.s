@@ -62,9 +62,9 @@ FieldMessage_ShowAtActor:
 	.thumb_func
 Event_ShowMessageAndWait:
 	overlay_veneer Event_ShowMessageAndWaitFar
-	.global Func_0200059c
+	.global Actor_DisableById
 	.thumb_func
-Func_0200059c:
+Actor_DisableById:
 	overlay_veneer Actor_DisableByIdFar
 	.global Import_EventSetExitRequest
 	.thumb_func
@@ -86,13 +86,13 @@ ObjectEvent_PlaceOnGround:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_020005cc
+	.global Rope_Initialize
 	.thumb_func
-Func_020005cc:
+Rope_Initialize:
 	overlay_veneer Rope_InitializeFar
-	.global Func_020005d4
+	.global Rope_Place
 	.thumb_func
-Func_020005d4:
+Rope_Place:
 	overlay_veneer Rope_PlaceFar
 	.global Party_GetLeaderActor
 	.thumb_func

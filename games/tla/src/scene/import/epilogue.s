@@ -86,33 +86,33 @@ Import_EventSetDestination:
 	.thumb_func
 Speaker_GetVoice:
 	overlay_veneer Speaker_GetVoiceFar
-	.global Func_02000834
+	.global EffectSprite_Init
 	.thumb_func
-Func_02000834:
+EffectSprite_Init:
 	overlay_veneer EffectSprite_InitFar
-	.global Func_0200083c
+	.global EffectSprite_Draw
 	.thumb_func
-Func_0200083c:
+EffectSprite_Draw:
 	overlay_veneer EffectSprite_DrawFar
-	.global Func_02000844
+	.global EndingPicture_Start
 	.thumb_func
-Func_02000844:
+EndingPicture_Start:
 	overlay_veneer EndingPicture_StartFar
-	.global Func_0200084c
+	.global EndingPicture_Show
 	.thumb_func
-Func_0200084c:
+EndingPicture_Show:
 	overlay_veneer EndingPicture_ShowFar
 	.global SceneState_SetScrollTarget
 	.thumb_func
 SceneState_SetScrollTarget:
 	overlay_veneer SceneState_SetScrollTargetFar
-	.global Func_0200085c
+	.global EndingPicture_WaitForScroll
 	.thumb_func
-Func_0200085c:
+EndingPicture_WaitForScroll:
 	overlay_veneer EndingPicture_WaitForScrollFar
-	.global Func_02000864
+	.global EndingPicture_LowerTopStrip
 	.thumb_func
-Func_02000864:
+EndingPicture_LowerTopStrip:
 	overlay_veneer EndingPicture_LowerTopStripFar
 	.global Sound_Play
 	.thumb_func

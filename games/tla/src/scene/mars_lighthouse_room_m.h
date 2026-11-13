@@ -56,7 +56,7 @@ extern char SceneId_Ov6ACRoom4;
 extern char SceneId_Ov6ACRoom5;
 extern char SceneId_Ov6ACRoom6;
 
-void Func_02003118(struct Actor *object, s32 value);
+void Actor_SelectAnimation(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const void *script);
 
 void Func_02001988(struct Actor *object);
@@ -92,7 +92,7 @@ void Func_02001ed4(struct Actor *object);
 void Func_020012a4(s32 x, s32 z, s32 kind);
 void Func_02002ad4(struct Actor *object);
 void Event_End(void);
-void Func_020032a0(void);
+void Teleport_PlayWhirl(void);
 s32 Trig_Cos(s32 angle);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);

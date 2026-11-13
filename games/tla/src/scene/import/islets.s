@@ -222,9 +222,9 @@ Actor_FaceDirectionById:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_02003f4c
+	.global Actor_DisableById
 	.thumb_func
-Func_02003f4c:
+Actor_DisableById:
 	overlay_veneer Actor_DisableByIdFar
 	.global Actor_ShowEmoteById
 	.thumb_func
@@ -294,18 +294,18 @@ Actor_WatchAndSetScript:
 	.thumb_func
 Event_NoOp:
 	overlay_veneer Event_NoOpFar
-	.global Func_02003fdc
+	.global Actor_FindAtCell
 	.thumb_func
-Func_02003fdc:
+Actor_FindAtCell:
 	overlay_veneer Actor_FindAtCellFar
-	.global Func_02003fe4
+	.global Leader_PushObjectAhead
 	.thumb_func
-Func_02003fe4:
+Leader_PushObjectAhead:
 	overlay_veneer Leader_PushObjectAheadFar
 	.ifndef TLA_EDITION_JA
-	.global Func_02003fec
+	.global TileCopies_CopyTouchedCells
 	.thumb_func
-Func_02003fec:
+TileCopies_CopyTouchedCells:
 	overlay_veneer TileCopies_CopyTouchedCellsFar
 	.endif
 	.global Sanctum_Run

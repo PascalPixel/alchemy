@@ -34,11 +34,11 @@ void FieldCamera_WaitForArrival(void);
 
 extern s16 gLemurianShipDeck_Puddles[];
 
-void Func_020020c4(const void *data);
+void FlagBlock_PlaceAll(const void *data);
 
 void LemurianShipDeck_ShowArrival(void);
 
-void Func_020020cc(const void *data);
+void FlagBlock_ApplyFlags(const void *data);
 
 extern u32 gLemurianShipDeck_SparkleFades[];
 extern u32 gLemurianShipDeck_ReturnToShipScript[];

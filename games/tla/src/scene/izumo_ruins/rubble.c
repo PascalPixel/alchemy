@@ -109,10 +109,10 @@ void Rubble_Burst(void) {
   } while (i <= 16);
 }
 
-s32 Func_02001528(s32 terrainId, s32 value, s32 height);
+s32 MapCollision_FindOrAddTag(s32 terrainId, s32 value, s32 height);
 
 DEFINE_ACTOR_SET_CELL_SHAPE_AT(Actor_SetCellShapeAt, MapGrid_GetTerrainKind,
-                               Func_02001528)
+                               MapCollision_FindOrAddTag)
 
 void Leader_SetCellShapeAt(s32 a, s32 b) {
   Actor_SetCellShapeAt(a, b, gMainRoutineWork.currentOwner);

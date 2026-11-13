@@ -64,8 +64,8 @@ extern s32 gWhirlwindRiding;
 extern u16 gPaletteCycleColors[];
 extern u16 gPaletteCycleUnlitPalette[];
 extern u16 gPaletteCycleUnlitColors[];
-void Func_02001bd8();
-void Func_02001c98();
+void MapGrid_SetCellHeight();
+void MapGrid_SetAttributeBAt();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -253,7 +253,7 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
                                         PaletteCycle_Step,
                                         gPaletteCycleUnlitColors)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02001bd8, Func_02001c98)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight, MapGrid_SetAttributeBAt)
 
 #include "frame.h"
 #include "field_sprite.h"
@@ -264,10 +264,10 @@ DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 extern s32 gWhirlwindEndScript[];
 
-s32 Func_02001c88(s32 x, s32 z, s32 layer);
+s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_02001c88, Position_FlatDistance,
+DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior, Position_FlatDistance,
                         gWhirlwindEndScript, gWhirlwindRiding)
 
 extern u8 gLightSpriteCount[];

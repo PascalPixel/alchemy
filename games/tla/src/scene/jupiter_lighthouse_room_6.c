@@ -64,13 +64,13 @@ void JupiterLighthouse_FinishMovingBlock(void);
 extern s16 gLightSpriteCount;
 extern s16 gLightSpritePriority;
 extern u16 gPaletteCycleColors[];
-void Func_02001be4();
+void MapGrid_SetAttributeBAt();
 extern u16 gPaletteCycleUnlitPalette[];
 extern u16 gPaletteCycleUnlitColors[];
 extern s32 gWhirlwindRiding;
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
-void Func_02001b34();
+void MapGrid_SetCellHeight();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -196,8 +196,8 @@ UNUSED void JupiterLighthouse_FloatAboveGround(s32 id) {
   object->y = height + 0x200000;
   object->priorityFlags |= 128;
   height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
-  Func_02001b34(object->x, object->z, 0, (height >> 19) + 6);
-  Func_02001be4(object->x, object->z, 0, 128);
+  MapGrid_SetCellHeight(object->x, object->z, 0, (height >> 19) + 6);
+  MapGrid_SetAttributeBAt(object->x, object->z, 0, 128);
 }
 
 #include "frame.h"
@@ -212,7 +212,7 @@ extern s32 gWhirlwindEndScript[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_02001bdc, Position_FlatDistance,
+DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior, Position_FlatDistance,
                         gWhirlwindEndScript, gWhirlwindRiding)
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

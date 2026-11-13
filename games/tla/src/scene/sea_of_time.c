@@ -11,7 +11,7 @@
 #include "module/scene/scene.h"
 #include "module/scene/sea_of_time.h"
 
-s32 Func_02001f9c(struct Actor *actor);
+s32 Actor_HasArrived(struct Actor *actor);
 void Actor_SelectAnimation(struct Actor *object, s32 value);
 extern u16 gSeaOfTime_RippleLines[160];
 
@@ -317,7 +317,7 @@ void SeaOfTime_FollowChannel(void) {
     targetX += dx << 20;
     targetZ += dz << 20;
     Actor_SetMoveTarget(actor, targetX, actor->y, targetZ);
-    while (Func_02001f9c(actor) == 0) {
+    while (Actor_HasArrived(actor) == 0) {
       s32 phase = 3;
       phase &= gFrameCount;
       if (phase == 0) {
@@ -642,7 +642,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-/// Sends actor 8 to a point 8 pixels along z and, until Func_02001f9c says it
+/// Sends actor 8 to a point 8 pixels along z and, until Actor_HasArrived says it
 /// is done, raises a pair of effects at its two sides every fourth frame.
 void SeaOfTime_SinkIntoWhirlpool(void) {
   s32 sides[4];
@@ -656,9 +656,9 @@ void SeaOfTime_SinkIntoWhirlpool(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetMoveTarget(actor, actor->x, actor->y, actor->z + 0x80000);
-  // A goto loop: as while (Func_02001f9c(actor) == 0), loop.c moves 0xb0000
+  // A goto loop: as while (Actor_HasArrived(actor) == 0), loop.c moves 0xb0000
   // out of the loop and 191 of 165 instructions differ.
-  while (Func_02001f9c(actor) == 0) {
+  while (Actor_HasArrived(actor) == 0) {
     if ((gFrameCount & 3) == 0) {
       options.priority = 2;
       options.palette = 7;

@@ -74,15 +74,15 @@ s32 List_CountEntries(u16 *list);
 
 void PaletteCycle_Fade(void);
 
-void Func_020034a8(void);
-void Func_02003380(s32 x, s32 z, s32 a, s32 b);
-s32 Func_02003498();
+void Teleport_PlayWhirl(void);
+void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
+s32 Actor_LiftTargetBlock();
 
 extern char SceneId_Ov6B0Room2;
 extern char SceneId_Ov6B0Room3;
 extern char SceneId_Ov6B0Room4;
 
-void Func_020034a0(void);
+void Actor_PlaceMovedBlock(void);
 
 void Func_02000158(void);
 
@@ -92,7 +92,7 @@ extern char SceneId_Ov6B0Room5;
 
 void Func_020000f4(void);
 
-void Func_020034b0(void);
+void Teleport_PlaySparks(void);
 
 void Leader_CenterInCell(void);
 

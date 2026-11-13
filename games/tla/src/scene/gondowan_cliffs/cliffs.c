@@ -57,10 +57,10 @@ void GondowanCliffs_BlowAwayFoliage(void);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-void Func_02001304(s32 a, s32 b, s32 c);
-void Func_020012f4(void);
+void Tightrope_Place(s32 a, s32 b, s32 c);
+void Rope_Initialize(void);
 void Geysers_Start(s32 a, s32 b);
-void Func_020012fc(void);
+void Tightrope_Initialize(void);
 
 void GondowanCliffs_RollPillar(struct Actor *object) {
   struct TileSprite *sprite = object->sprite;
@@ -243,8 +243,8 @@ void GondowanCliffs_SetUpPass(void) {
     gMainRoutineWork.ownerOverride = 1;
     Event_SetDestination((s32)&SceneId_GondowanCliffsPass, 1);
   }
-  Func_020012fc();
-  Value3((s32 (*)())Func_02001304, 0, 9, 10);
+  Tightrope_Initialize();
+  Value3((s32 (*)())Tightrope_Place, 0, 9, 10);
   Value3((s32 (*)())Iwram_CopyWordsEntry, (s32)gGondowanCliffs_SavedWaterColors,
          0x05000018, 8);
   Task_AddFrame(GondowanCliffs_CycleWaterColors, 0x480);
@@ -307,7 +307,7 @@ void GondowanCliffs_TurnBackToHelpPiers(void) {
   FieldEvent_SetExitRequest(1);
 }
 
-void Func_0200130c(s32 a, s32 b, s32 c, s32 d);
+void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high);
 
 /// Gondowan Cliffs' setup: Ov66bRoom2 runs GondowanCliffs_SetUpPass and
@@ -336,11 +336,11 @@ s32 Scene_Initialize(void) {
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
   if (gMainRoutineWork.scene != (s32)&SceneId_GondowanCliffs)
     goto done;
-  Func_020012f4();
-  Func_0200130c(0, 0x200, 10, 11);
+  Rope_Initialize();
+  Rope_Place(0, 0x200, 10, 11);
   if (GameFlag_Get(0x8ab)) {
-    Func_020012fc();
-    Func_02001304(0, 8, 9);
+    Tightrope_Initialize();
+    Tightrope_Place(0, 8, 9);
   }
   if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN))
     Actor_SetPosition(14, 0, 0);

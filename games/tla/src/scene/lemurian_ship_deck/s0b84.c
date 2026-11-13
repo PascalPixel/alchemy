@@ -316,7 +316,7 @@ s32 Scene_Initialize(void) {
     } while (0);
     Actor_Get(party->currentOwner)->priorityFlags |= 0x20;
     Actor_SetAnimation(8, 1);
-    Func_020020c4(gLemurianShipDeck_Puddles);
+    FlagBlock_PlaceAll(gLemurianShipDeck_Puddles);
     FieldTask_AddFrame(LemurianShipDeck_RotateColors12To15, 0x480);
     if (party->entrance == 99)
       LemurianShipDeck_ShowArrival();
@@ -442,7 +442,7 @@ void LemurianShipDeck_SightMenardisShip(void) {
 
 /// Frost freezes the deck's puddle (flag 0x200).
 void LemurianShipDeck_FreezePuddle(void) {
-  Func_020020cc(gLemurianShipDeck_Puddles);
+  FlagBlock_ApplyFlags(gLemurianShipDeck_Puddles);
 }
 
 void Actor_MoveToObject(s32 id, s32 target);

@@ -81,7 +81,7 @@ void FieldPsynergy_RunHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
-void Func_02000a48(s32 a);
+void FieldEffect_StartBlankOverlay(s32 a);
 void Event_StartScreenTransition(void);
 
 extern struct ActorPlacement gYallamInteriors_Placements[];
@@ -357,7 +357,7 @@ void YallamInteriors_OfferToForge(void) {
 }
 
 s32 Forge_GetItem(void);
-void Func_02000a60(s32 actor, s32 angle);
+void Actor_FallOverById(s32 actor, s32 angle);
 
 /// Whether anyone in the party carries a material Sunshine can forge: items 417
 /// to 427 or 429 to 437.
@@ -412,7 +412,7 @@ void YallamInteriors_TalkToSunshine(void) {
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_SetMessageId(message + 1);
       Event_ShowMessage(14, 0);
-      Func_02000a60(14, 0xc000);
+      Actor_FallOverById(14, 0xc000);
       Actor_SetSpriteFlags(((struct YallamInteriorsObject *)Actor_GetById(14)),
                            1);
       Actor_SetDestination(gMainRoutineWork.currentOwner, 488, 408);
@@ -450,7 +450,7 @@ void YallamInteriors_TalkToSunshine(void) {
         Actor_FaceDirection(14, FACING_SOUTH, 0);
         Actor_SetSpriteFlags(
             ((struct YallamInteriorsObject *)Actor_GetById(14)), 0);
-        Func_02000a60(14, 0);
+        Actor_FallOverById(14, 0);
       }
     } else {
       Event_SetMessageId(message + 2);
@@ -525,14 +525,14 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(17, 0, 0);
 #endif
     } else {
-      Func_02000a60(14, 0);
+      Actor_FallOverById(14, 0);
     }
     Actor_SetSpriteFlags(((struct YallamInteriorsObject *)Actor_GetById(17)),
                          0);
     Actor_SetSpritePriority(11, 2);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov677Room2) {
-    Func_02000a48(0);
+    FieldEffect_StartBlankOverlay(0);
     Actor_SetSpritePriority(12, 2);
     ((struct YallamInteriorsObject *)Actor_GetById(12))->collisionFlags |= 4;
     Actor_SetSpritePriority(10, 2);

@@ -174,9 +174,9 @@ Actor_WatchAndSetScript:
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_020015e8
+	.global Actor_TakeLeaderLayer
 	.thumb_func
-Func_020015e8:
+Actor_TakeLeaderLayer:
 	overlay_veneer Actor_TakeLeaderLayerFar
 	.global Func_020015f0
 	.thumb_func

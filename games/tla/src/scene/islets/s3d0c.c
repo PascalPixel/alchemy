@@ -15,7 +15,7 @@ void Actor_StopAtPushTarget(struct Actor *object) {
   position.y = object->y;
   position.z = object->z;
   FieldVector_AddPolarOffset(0x100000, angle, &position);
-  hit = Func_02003fdc(&position, 1);
+  hit = Actor_FindAtCell(&position, 1);
   if (hit != 0) {
     i = 0;
   next:

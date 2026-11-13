@@ -164,7 +164,7 @@ void Func_02000164(s32 unused, s32 id) {
   }
 }
 
-void Func_02000f04(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
 void Func_02000258(void) {
   MapGrid_CopyCellAttributes(13, 18, 1, 1, 13, Actor_Get(8)->z >> 20);
@@ -175,7 +175,7 @@ void Func_0200027c(void) {
 }
 
 void Func_020002a0(void) {
-  Call7((void (*)())Func_02000f04, 110, 64, 14, 12, 110, 47, 1);
+  Call7((void (*)())TileCopies_CopyTouchedCells, 110, 64, 14, 12, 110, 47, 1);
 }
 
 void Func_020002c0(void) {
@@ -405,7 +405,7 @@ void Func_02000670(void) {
 #define SCREEN_EFFECT 0x204
 #endif
 
-s32 Func_02000f14();
+s32 HangingVine_Place();
 
 s32 Scene_Initialize(void) {
   struct Actor *actor;
@@ -417,14 +417,14 @@ s32 Scene_Initialize(void) {
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room1) {
     Task_Add((s32)Func_02000670, 0x480);
-    Call2((void (*)())Func_02000f14, 8, 1);
-    Call2((void (*)())Func_02000f14, 9, 1);
-    Call2((void (*)())Func_02000f14, 10, 1);
-    Call2((void (*)())Func_02000f14, 11, 1);
-    Call2((void (*)())Func_02000f14, 12, 1);
-    Call2((void (*)())Func_02000f14, 13, 1);
-    Call2((void (*)())Func_02000f14, 14, 1);
-    Func_02000f14(15, 1);
+    Call2((void (*)())HangingVine_Place, 8, 1);
+    Call2((void (*)())HangingVine_Place, 9, 1);
+    Call2((void (*)())HangingVine_Place, 10, 1);
+    Call2((void (*)())HangingVine_Place, 11, 1);
+    Call2((void (*)())HangingVine_Place, 12, 1);
+    Call2((void (*)())HangingVine_Place, 13, 1);
+    Call2((void (*)())HangingVine_Place, 14, 1);
+    HangingVine_Place(15, 1);
     if (GameFlag_Get(0x920)) {
       actor = Actor_GetById(16);
       actor->motionFlags = 0;
@@ -471,13 +471,13 @@ s32 Scene_Initialize(void) {
       }
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room2) {
-    Call2((void (*)())Func_02000f14, 8, 1);
-    Call2((void (*)())Func_02000f14, 9, 1);
-    Call2((void (*)())Func_02000f14, 10, 1);
-    Call2((void (*)())Func_02000f14, 11, 1);
-    Call2((void (*)())Func_02000f14, 12, 1);
-    Call2((void (*)())Func_02000f14, 13, 1);
-    Func_02000f14(14, 1);
+    Call2((void (*)())HangingVine_Place, 8, 1);
+    Call2((void (*)())HangingVine_Place, 9, 1);
+    Call2((void (*)())HangingVine_Place, 10, 1);
+    Call2((void (*)())HangingVine_Place, 11, 1);
+    Call2((void (*)())HangingVine_Place, 12, 1);
+    Call2((void (*)())HangingVine_Place, 13, 1);
+    HangingVine_Place(14, 1);
     if ((u16)(gMainRoutineWork.entrance - 3) <= 1) {
       Func_02000dd0();
     }

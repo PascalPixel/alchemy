@@ -74,7 +74,7 @@ void Teleporter_DropIn(void) {
   leader->bounce = 0x4000;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  Func_0200581c();
+  Event_End();
 }
 
 void GameFlag_SetByte(s32 flag, s32 value);

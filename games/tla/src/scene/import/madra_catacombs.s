@@ -102,9 +102,9 @@ Actor_SetSpriteColor:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_0200115c
+	.global Actor_DisableById
 	.thumb_func
-Func_0200115c:
+Actor_DisableById:
 	overlay_veneer Actor_DisableByIdFar
 	.global Camera_SetSpeedParameters
 	.thumb_func
@@ -146,53 +146,53 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_020011b4
+	.global Rope_Initialize
 	.thumb_func
-Func_020011b4:
+Rope_Initialize:
 	overlay_veneer Rope_InitializeFar
-	.global Func_020011bc
+	.global Rope_Place
 	.thumb_func
-Func_020011bc:
+Rope_Place:
 	overlay_veneer Rope_PlaceFar
-	.global Func_020011c4
+	.global FlagBlock_PlaceAll
 	.thumb_func
-Func_020011c4:
+FlagBlock_PlaceAll:
 	overlay_veneer FlagBlock_PlaceAllFar
-	.global Func_020011cc
+	.global FlagBlock_ApplyFlags
 	.thumb_func
-Func_020011cc:
+FlagBlock_ApplyFlags:
 	overlay_veneer FlagBlock_ApplyFlagsFar
-	.global Func_020011d4
+	.global Actor_GetCellIndex
 	.thumb_func
-Func_020011d4:
+Actor_GetCellIndex:
 	overlay_veneer Actor_GetCellIndexFar
-	.global Func_020011dc
+	.global Actor_PlaceBlocks
 	.thumb_func
-Func_020011dc:
+Actor_PlaceBlocks:
 	overlay_veneer Actor_PlaceBlocksFar
-	.global Func_020011e4
+	.global Actor_LiftTargetBlock
 	.thumb_func
-Func_020011e4:
+Actor_LiftTargetBlock:
 	overlay_veneer Actor_LiftTargetBlockFar
-	.global Func_020011ec
+	.global Actor_PlaceMovedBlock
 	.thumb_func
-Func_020011ec:
+Actor_PlaceMovedBlock:
 	overlay_veneer Actor_PlaceMovedBlockFar
-	.global Func_020011f4
+	.global MapCollision_FindOrAddTag
 	.thumb_func
-Func_020011f4:
+MapCollision_FindOrAddTag:
 	overlay_veneer MapCollision_FindOrAddTagFar
-	.global Func_020011fc
+	.global Leader_CanPushObjectAhead
 	.thumb_func
-Func_020011fc:
+Leader_CanPushObjectAhead:
 	overlay_veneer Leader_CanPushObjectAheadFar
-	.global Func_02001204
+	.global Leader_PushObjectAhead
 	.thumb_func
-Func_02001204:
+Leader_PushObjectAhead:
 	overlay_veneer Leader_PushObjectAheadFar
-	.global Func_0200120c
+	.global Leader_FindActorAhead
 	.thumb_func
-Func_0200120c:
+Leader_FindActorAhead:
 	overlay_veneer Leader_FindActorAheadFar
 	.global Sound_Play
 	.thumb_func

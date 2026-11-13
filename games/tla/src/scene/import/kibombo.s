@@ -122,9 +122,9 @@ Actor_SetBlendMode:
 	.thumb_func
 Icon_DrawItem:
 	overlay_veneer Icon_DrawItemFar
-	.global Func_02005a8c
+	.global Party_GivePiersDjinn
 	.thumb_func
-Func_02005a8c:
+Party_GivePiersDjinn:
 	overlay_veneer Party_GivePiersDjinnFar
 	.global Event_Wait
 	.thumb_func
@@ -250,9 +250,9 @@ Actor_FaceDirectionById:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_02005b8c
+	.global Actor_DisableById
 	.thumb_func
-Func_02005b8c:
+Actor_DisableById:
 	overlay_veneer Actor_DisableByIdFar
 	.global Actor_ShowEmoteById
 	.thumb_func
@@ -310,9 +310,9 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_02005c04
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_02005c04:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global FieldPsynergy_RunHandler
 	.thumb_func
@@ -350,25 +350,25 @@ Sprite_ShareVramCacheEntry:
 	.thumb_func
 Actor_WatchAndSetScript:
 	overlay_veneer Actor_WatchAndSetScriptFar
-	.global Func_02005c54
+	.global Rope_Initialize
 	.thumb_func
-Func_02005c54:
+Rope_Initialize:
 	overlay_veneer Rope_InitializeFar
-	.global Func_02005c5c
+	.global Rope_Place
 	.thumb_func
-Func_02005c5c:
+Rope_Place:
 	overlay_veneer Rope_PlaceFar
-	.global Func_02005c64
+	.global FlagBlock_PlaceAll
 	.thumb_func
-Func_02005c64:
+FlagBlock_PlaceAll:
 	overlay_veneer FlagBlock_PlaceAllFar
-	.global Func_02005c6c
+	.global FlagBlock_ApplyFlags
 	.thumb_func
-Func_02005c6c:
+FlagBlock_ApplyFlags:
 	overlay_veneer FlagBlock_ApplyFlagsFar
-	.global Func_02005c74
+	.global Actor_FallOverById
 	.thumb_func
-Func_02005c74:
+Actor_FallOverById:
 	overlay_veneer Actor_FallOverByIdFar
 	.global Func_02005c7c
 	.thumb_func

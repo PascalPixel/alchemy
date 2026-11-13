@@ -198,9 +198,9 @@ Actor_FaceDirectionById:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_02003aa0
+	.global Actor_DisableById
 	.thumb_func
-Func_02003aa0:
+Actor_DisableById:
 	overlay_veneer Actor_DisableByIdFar
 	.global Actor_ShowEmoteById
 	.thumb_func
@@ -246,9 +246,9 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_02003b00
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_02003b00:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
@@ -258,29 +258,29 @@ Event_ResolvePendingActions:
 	.thumb_func
 Actor_WatchAndSetScript:
 	overlay_veneer Actor_WatchAndSetScriptFar
-	.global Func_02003b18
+	.global Rope_Initialize
 	.thumb_func
-Func_02003b18:
+Rope_Initialize:
 	overlay_veneer Rope_InitializeFar
-	.global Func_02003b20
+	.global Rope_Place
 	.thumb_func
-Func_02003b20:
+Rope_Place:
 	overlay_veneer Rope_PlaceFar
-	.global Func_02003b28
+	.global Actor_GetCellIndex
 	.thumb_func
-Func_02003b28:
+Actor_GetCellIndex:
 	overlay_veneer Actor_GetCellIndexFar
-	.global Func_02003b30
+	.global Actor_PlaceBlocks
 	.thumb_func
-Func_02003b30:
+Actor_PlaceBlocks:
 	overlay_veneer Actor_PlaceBlocksFar
-	.global Func_02003b38
+	.global Actor_LiftTargetBlock
 	.thumb_func
-Func_02003b38:
+Actor_LiftTargetBlock:
 	overlay_veneer Actor_LiftTargetBlockFar
-	.global Func_02003b40
+	.global Actor_PlaceMovedBlock
 	.thumb_func
-Func_02003b40:
+Actor_PlaceMovedBlock:
 	overlay_veneer Actor_PlaceMovedBlockFar
 	.global Sound_Play
 	.thumb_func

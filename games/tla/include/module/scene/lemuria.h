@@ -8,9 +8,9 @@
 
 void FieldCamera_WaitForArrival();
 
-void Func_02001d34();
+void Rope_Lash();
 
-void Func_02001d3c();
+void Rope_Place();
 
 void Lemuria_TakeLeaderLayer(void);
 extern u32 gLemuria_FirstWalkerPaces[];

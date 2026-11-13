@@ -82,9 +82,9 @@ MapGrid_SetScreenShake:
 	.thumb_func
 MapGrid_WaitForShakeToSettle:
 	overlay_veneer MapGrid_WaitForShakeToSettleFar
-	.global Func_02001f9c
+	.global Actor_HasArrived
 	.thumb_func
-Func_02001f9c:
+Actor_HasArrived:
 	overlay_veneer Actor_HasArrivedFar
 	.global Event_Wait
 	.thumb_func

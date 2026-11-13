@@ -62,9 +62,9 @@ GameFlag_Clear:
 	.thumb_func
 SpriteAnimation_Clear:
 	overlay_veneer SpriteAnimation_ClearFar
-	.global Func_02003118
+	.global Actor_SelectAnimation
 	.thumb_func
-Func_02003118:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func
@@ -102,9 +102,9 @@ BlendScript_Suspend:
 	.thumb_func
 Map_GetTerrainHeight:
 	overlay_veneer MapGrid_GetTerrainHeightFar
-	.global Func_02003168
+	.global MapGrid_GetCellAttributeLowNibbleOrBump
 	.thumb_func
-Func_02003168:
+MapGrid_GetCellAttributeLowNibbleOrBump:
 	overlay_veneer MapGrid_GetCellAttributeLowNibbleOrBumpFar
 	.global Map_CopyCellAttributeRect
 	.thumb_func
@@ -240,9 +240,9 @@ Event_WaitTransitionFrames:
 	.thumb_func
 LineScroll_InitWave:
 	overlay_veneer LineScroll_InitWaveFar
-	.global Func_02003278
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_02003278:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
@@ -260,13 +260,13 @@ Scene_PlayMusic:
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_020032a0
+	.global Teleport_PlayWhirl
 	.thumb_func
-Func_020032a0:
+Teleport_PlayWhirl:
 	overlay_veneer Teleport_PlayWhirlFar
-	.global Func_020032a8
+	.global Teleport_PlaySparks
 	.thumb_func
-Func_020032a8:
+Teleport_PlaySparks:
 	overlay_veneer Teleport_PlaySparksFar
 	.global Weather_StartRain
 	.thumb_func

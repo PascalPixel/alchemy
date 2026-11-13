@@ -116,15 +116,15 @@ extern char SceneId_Ov690Room8;
 extern char SceneId_Ov690Room9;
 extern char SceneId_Ov690Room10;
 
-void Func_02002170(void);
+void Rope_Initialize(void);
 
 extern char SceneId_Ov690Room6;
 
 void Settlements_StepOntoWall(void);
 
-void Func_02002140(s32 a);
+void FieldEffect_StartBlankOverlay(s32 a);
 
-void Func_02002188(const void *data);
+void Actor_PlaceBlocks(const void *data);
 
 extern u16 gSettlements_WaterColors[];
 extern u16 gSettlements_WaterColorsSaved[];

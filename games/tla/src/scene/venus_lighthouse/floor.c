@@ -19,7 +19,7 @@
 #include "system.h"
 #include "module/game/game.h"
 
-void Func_02001ccc(s32 actor, s32 value);
+void Exit_PrepareActorAnimation(s32 actor, s32 value);
 
 extern s32 gVenusLighthouse_LeaderFlashes[];
 extern u8 gMapCellBuffer[];
@@ -339,7 +339,7 @@ s32 VenusLighthouse_Start(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 static inline void Venus_ObjEffectSet(s32 actor, s32 value) {
-  Func_02001ccc(actor, value);
+  Exit_PrepareActorAnimation(actor, value);
 }
 
 /// The prologue's opening: Felix moves the statue aside with Psynergy and
@@ -394,7 +394,7 @@ void VenusLighthouse_FelixLeaves(void) {
   Actor_WalkToAndWait(4, 744, 816);
   Actor_WalkToAndWait(4, 744, 780);
   Event_PlaySound(129);
-  Func_02001ccc(4, -1);
+  Exit_PrepareActorAnimation(4, -1);
   FieldEvent_Wait(50);
   Actor_FaceDirection(5, FACING_NORTH, 0);
   Actor_FaceDirection(8, FACING_NORTH, 0);
@@ -463,7 +463,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   Event_PlaySound(198);
   Actor_SetPosition(9, PIXELS(680), PIXELS(920));
   Actor_FaceDirection(9, 0xb000, 0);
-  Func_02001cd4(9);
+  Actor_VanishInSparks(9);
   Actor_FaceDirection(9, 0xb000, 0);
   FieldEvent_Wait(20);
   Actor_FaceDirection(5, FACING_SOUTH, 0);

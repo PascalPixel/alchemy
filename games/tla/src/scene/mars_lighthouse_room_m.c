@@ -27,7 +27,7 @@ extern u16 gData_02004cf0[];
 void Actor_Release(void *handle);
 void Import_FieldCameraMoveToActorById(s32 a, s32 b);
 void Import_FieldCameraWaitForArrival(void);
-void Func_020032a8(void);
+void Teleport_PlaySparks(void);
 extern u16 Data_020039bc[];
 extern volatile u16 Data_020039dc[];
 extern u16 Data_02003a1c[];
@@ -39,7 +39,7 @@ extern s16 gData_02003a82;
 void TileMap_ConvertBuffer(s32 scene, s32 a1);
 u32 Map_ClearLayerEntryFlag(struct FieldSprite *sprite, u32 frame);
 
-void Func_02003278(void);
+void FieldEffect_StartBlankOverlay(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -104,7 +104,7 @@ void Func_02000058(s32 id, s32 value) {
   object->motionFlags = 0;
   object->y = PIXELS(14);
   Actor_SetSpriteFlags(object, 0);
-  Func_02003118(object, value);
+  Actor_SelectAnimation(object, value);
 }
 
 #include "mars_lighthouse_room_m.h"
@@ -413,7 +413,7 @@ void Func_02000934(s32 entrance) {
 
 void Func_02000abc(void) {
   Func_02001608();
-  Func_020032a8();
+  Teleport_PlaySparks();
   {
     u8 *party = (u8 *)&gMainRoutineWork;
 
@@ -466,7 +466,7 @@ s32 Scene_Initialize(void) {
   Call4((void (*)())Func_0200154c, (s32)gData_0200338c, (s32)gData_0200339c,
         (s32)gData_020033c8, (s32)gData_020033f4);
   if (scene != (s32)&SceneId_Ov6ACRoom6 && scene == (s32)&SceneId_Ov6ACRoom1) {
-    Call1((void (*)())Func_02003278, 0);
+    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
     *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x204;
     if ((u32)(entrance - 1) <= 1 || entrance == 8 || entrance == 10 ||
         entrance == 12 || entrance == 14) {
@@ -733,7 +733,7 @@ void Func_020012a4(s32 x, s32 z, s32 kind) {
 
   if (object != 0) {
     Actor_SetSpriteFlags(object, 0);
-    Func_02003118(object, 3);
+    Actor_SelectAnimation(object, 3);
     if (kind != 0) {
       ((struct MarsLighthouseRoomMAnimation *)object->sprite)->layer = 2;
       Actor_StartScript(object, gData_0200387c);
@@ -861,11 +861,11 @@ void Func_020024e4(void);
 s32 MarsLighthouseRoomM_SlideOnIce(void);
 void Func_02002e6c(struct Actor *self);
 
-void Func_02003118(struct Actor *object, s32 value);
+void Actor_SelectAnimation(struct Actor *object, s32 value);
 void Import_FieldCameraMoveToActorById(s32 a, s32 b);
 void Import_FieldCameraWaitForArrival(void);
 void Func_02001608(void);
-void Func_020032a8(void);
+void Teleport_PlaySparks(void);
 void Func_0200166c(void);
 void Func_0200055c(void);
 void PaletteCycle_Fade(void);
@@ -907,7 +907,7 @@ void Func_0200183c(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_0200168c();
-  Func_020032a0();
+  Teleport_PlayWhirl();
   System_Wait(40);
   Func_0200166c();
   PaletteFade_ApplyTarget(0x10000, 1);
@@ -996,7 +996,7 @@ void Func_02001b1c(struct MarsLighthouseRoomMVector *position, s32 value,
     object->update = Func_02001988;
     if (flag != 0)
       object->unk5c[0] = 2;
-    Func_02003118(object, 2);
+    Actor_SelectAnimation(object, 2);
   }
 }
 
@@ -1062,7 +1062,7 @@ void Func_02001d08(struct MarsLighthouseRoomMVector *position, s32 value,
     object->update = Func_02001988;
     if (flag != 0)
       object->unk5c[0] = 2;
-    Func_02003118(object, 2);
+    Actor_SelectAnimation(object, 2);
   }
 }
 
@@ -1079,7 +1079,7 @@ void Func_02001d50(struct MarsLighthouseRoomMVector *position, s32 value,
     object->update = Func_02001b64;
     if (flag != 0)
       object->unk5c[0] = 2;
-    Func_02003118(object, 2);
+    Actor_SelectAnimation(object, 2);
   }
 }
 
@@ -1096,7 +1096,7 @@ void Func_02001d98(struct MarsLighthouseRoomMVector *position, s32 value,
     object->update = Func_02001b64;
     if (flag != 0)
       object->unk5c[0] = 2;
-    Func_02003118(object, 2);
+    Actor_SelectAnimation(object, 2);
   }
 }
 
@@ -1139,7 +1139,7 @@ void Func_02001e38(struct Actor *object) {
   }
 }
 
-DEFINE_ACTOR_SETUP_SCRIPTED(Func_02001ed4, Func_02003118, gData_020032d4)
+DEFINE_ACTOR_SETUP_SCRIPTED(Func_02001ed4, Actor_SelectAnimation, gData_020032d4)
 
 void Func_02001f14(struct MarsLighthouseRoomMVector *position, s32 value) {
   struct Actor *object = FieldActor_Create(285, position->x, position->y,

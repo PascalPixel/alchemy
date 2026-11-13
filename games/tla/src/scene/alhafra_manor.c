@@ -643,9 +643,9 @@ void AlhafraManor_BriggsEscapes(void) {
   GameFlag_Clear(303);
 }
 
-void Func_020015e8(void);
+void Actor_TakeLeaderLayer(void);
 
-void AlhafraManor_KeepToTheLeadersLayer(void) { Func_020015e8(); }
+void AlhafraManor_KeepToTheLeadersLayer(void) { Actor_TakeLeaderLayer(); }
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

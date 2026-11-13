@@ -62,7 +62,7 @@ void Func_02001d40(void);
 void Func_02002ca4(void);
 
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
-void Func_02003ea4();
-void Func_02003ee4();
+void FieldEffect_StartBlankOverlay();
+void Tightrope_Place();
 
 #endif

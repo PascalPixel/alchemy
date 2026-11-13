@@ -22,8 +22,8 @@
 #include "module/scene/scene.h"
 #include "module/scene/shaman_village_cave.h"
 
-void Func_02001208();
-s32 Func_02001098();
+void WorldMap_SetReturnLeavingScene();
+s32 Event_PickUpItem();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -230,7 +230,7 @@ void ShamanVillageCave_TakeGoldenShirt(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  result0 = Value3((s32 (*)())Func_02001098, 22, 0x190, -1);
+  result0 = Value3((s32 (*)())Event_PickUpItem, 22, 0x190, -1);
   if (result0 != 0)
     goto taken;
   Event_ClearFlag(0xa73);
@@ -461,7 +461,7 @@ void ShamanVillageCave_LoseToColossoFans(void) {
   Event_SetDestination((s16)gMainRoutineWork.savedScene,
                        (s16)gMainRoutineWork.savedEntrance);
 #if TLA_PATCH_1
-  Func_02001208(gMainRoutineWork.scene, gMainRoutineWork.entrance);
+  WorldMap_SetReturnLeavingScene(gMainRoutineWork.scene, gMainRoutineWork.entrance);
 #endif
   ((struct {
      u8 unk000[0x1ac];

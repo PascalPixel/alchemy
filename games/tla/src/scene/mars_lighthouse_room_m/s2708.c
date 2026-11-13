@@ -14,7 +14,7 @@
 // it here.
 void Func_02002368();
 #endif
-s32 Func_02003168(s32 layer, s32 x, s32 z);
+s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 layer, s32 x, s32 z);
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 struct RideEvent {
@@ -77,9 +77,9 @@ s32 MarsLighthouseRoomM_SlideOnIce(void) {
   Event_ClearFlag(0x106);
   leader->update = (void (*)(void))Func_020024bc;
   leader->facing = 0x4000;
-  Func_02003118(leader, 49);
+  Actor_SelectAnimation(leader, 49);
   while (ride->car->stopped == 0) {
-    s32 kind = Func_02003168(0, leader->x, leader->z);
+    s32 kind = MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x, leader->z);
 
     if (kind != 7) {
       leader->x += ride->car->stepX;
@@ -146,7 +146,7 @@ void Actor_Release(void *handle);
 
 void Import_FieldCameraMoveToActorById(s32 a, s32 b);
 void Import_FieldCameraWaitForArrival(void);
-void Func_020032a8(void);
+void Teleport_PlaySparks(void);
 
 DEFINE_RIDE_IF_ACTIVE(MarsLighthouseRoomM_ContinueSlide,
                       MarsLighthouseRoomM_SlideOnIce)
@@ -288,7 +288,7 @@ struct WorkEvent {
   s16 unk166;
 };
 
-DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_02002ae8, Work020023c4, Func_02003168,
+DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_02002ae8, Work020023c4, MapGrid_GetCellAttributeLowNibbleOrBump,
                               Func_020029f4, Func_02002870)
 
 void Func_02002df4(s32 sourceId, s32 id, s32 value, s32 angle,
@@ -300,7 +300,7 @@ void Func_02002df4(s32 sourceId, s32 id, s32 value, s32 angle,
   Actor_StartScript(object, script);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
-  Func_02003118(object, 1);
+  Actor_SelectAnimation(object, 1);
   object->watchedObject = source;
   object->timer = 0;
   object->unk66 = angle;
@@ -321,9 +321,9 @@ DEFINE_ACTOR_LAUNCH_AHEAD(Func_02002e6c, Func_02002ae8)
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
 
-DEFINE_ACTOR_POP_UP_SLOW(Func_02002f34, Func_02003118)
+DEFINE_ACTOR_POP_UP_SLOW(Func_02002f34, Actor_SelectAnimation)
 
-DEFINE_ACTOR_POP_UP(Func_02002fe0, Func_02003118)
+DEFINE_ACTOR_POP_UP(Func_02002fe0, Actor_SelectAnimation)
 
 #include "macros.h"
 

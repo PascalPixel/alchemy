@@ -461,7 +461,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPositionAndFacing(10, PIXELS(328), PIXELS(162), angle);
     }
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
-    Func_020052f4(0);
+    FieldEffect_StartBlankOverlay(0);
     if (gMainRoutineWork.entrance == 6) {
       work = Ram_HeapSlots->eventWork;
       work->screenEffect = 0x209;
@@ -502,7 +502,7 @@ void Func_02000be4(void) {
       PaletteFade_ApplyTarget(0x10003, 2);
     PaletteFade_Interpolate(1);
     Event_WaitTransitionFrames();
-    Func_0200538c();
+    BattleEffect_PackTargetBuffer();
     {
       u8 *palette = *(u8 **)((u8 *)Ram_HeapSlots + 0x80);
 
@@ -534,8 +534,8 @@ void Func_02000d30(void) {
   s32 t4;
 
   Task_AddFrame(Func_02000a68, 0x480);
-  Func_0200535c();
-  Func_02005364(0, 10, 11);
+  Tightrope_Initialize();
+  Tightrope_Place(0, 10, 11);
   t4 = Event_GetFlag(FLAG_GAROH_NIGHT);
   if (t4 == 0)
     goto L_02008da6;
@@ -548,7 +548,7 @@ L_02008d72:
 L_02008d7e:
   PaletteFade_Interpolate(1);
   Event_WaitTransitionFrames();
-  Func_0200538c();
+  BattleEffect_PackTargetBuffer();
   Func_020003d8();
   PaletteFade_ApplyTarget(0x10000, 1);
   Task_AddFrame((s32)Func_020002a4, 0xc80);
@@ -573,14 +573,14 @@ void Func_02000e00(void) {
     else
       PaletteFade_ApplyTarget(0x10007, 1);
   }
-  Func_0200536c(gData_02005450);
+  Actor_PlaceBlocks(gData_02005450);
   PaletteFade_Interpolate(1);
   Event_WaitTransitionFrames();
 }
 
-void Func_02000e58(void) { Func_02005374(gData_02005450); }
+void Func_02000e58(void) { Actor_LiftTargetBlock(gData_02005450); }
 
-void Func_02000e68(void) { Func_02005374(gData_02005450); }
+void Func_02000e68(void) { Actor_LiftTargetBlock(gData_02005450); }
 
 void Func_02000e78(s32 id, struct Actor *object) {
   s32 i;
@@ -632,27 +632,27 @@ void Func_02000f3c(void) {
 }
 
 void Func_02000f74(void) {
-  Func_0200537c();
+  Actor_PlaceMovedBlock();
   Func_02000eb0();
 }
 
 void Func_02000f80(void) {
-  Func_0200537c();
+  Actor_PlaceMovedBlock();
   Func_02000eec();
 }
 
 void Func_02000f8c(void) {
-  Func_0200537c();
+  Actor_PlaceMovedBlock();
   Func_02000f28();
 }
 
 void Func_02000f98(void) {
-  Func_0200537c();
+  Actor_PlaceMovedBlock();
   Func_02000f3c();
 }
 
 void Func_02000fa4(void) {
-  Func_0200537c();
+  Actor_PlaceMovedBlock();
   Func_02000eb0();
   Func_02000eec();
   Func_02000f28();

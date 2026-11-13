@@ -123,8 +123,8 @@ extern struct ActorPlacement gData_02005b8c[];
 extern struct ActorPlacement gData_02005c7c[];
 extern s32 gData_02005d6c[];
 
-void Func_02004ff4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
-void Func_0200500c(s32 a, s32 b, s32 c);
+void Cyclone_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+void FieldItem_JumpToLeader(s32 a, s32 b, s32 c);
 
 extern u32 gData_020051b8[];
 extern s32 gData_02005118[];
@@ -159,7 +159,8 @@ void Func_020044f8(s32 level);
 void Func_020048a0(void);
 s32 Func_02004904(void);
 
-void Func_02004e0c(s32 x, s32 z, s32 width, s32 height, s32 cellX, s32 cellZ);
+void Map_CopyRawCellsRect(s32 x, s32 z, s32 width, s32 height, s32 cellX,
+                          s32 cellZ);
 
 void Func_0200036c(void);
 

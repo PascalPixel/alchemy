@@ -174,9 +174,9 @@ Djinn_JoinParty:
 	.thumb_func
 Actor_WatchAndSetScript:
 	overlay_veneer Actor_WatchAndSetScriptFar
-	.global Func_02001120
+	.global TileCopies_CopyTouchedCells
 	.thumb_func
-Func_02001120:
+TileCopies_CopyTouchedCells:
 	overlay_veneer TileCopies_CopyTouchedCellsFar
 	.global Sound_Play
 	.thumb_func

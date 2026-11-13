@@ -35,16 +35,16 @@
 #include "sound.h"
 #include "system.h"
 
-struct Actor *Func_0200120c(void);
-void Func_020011ec(void);
-void Func_02001204(void);
+struct Actor *Leader_FindActorAhead(void);
+void Actor_PlaceMovedBlock(void);
+void Leader_PushObjectAhead(void);
 
-s32 Func_020011d4(struct Actor *object);
+s32 Actor_GetCellIndex(struct Actor *object);
 
 // Raises each listed actor's cells: the shape grid and the cell flags under it,
 // then lifts the leader if the new terrain is above the leader.
 DEFINE_PILLARS_RAISE(MadraCatacombs_RaisePillarCells, MapGrid_GetTerrainKind,
-                     Func_020011d4, Func_020011f4)
+                     Actor_GetCellIndex, MapCollision_FindOrAddTag)
 
 #define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
 
@@ -57,7 +57,7 @@ DEFINE_PILLARS_RAISE(MadraCatacombs_RaisePillarCells, MapGrid_GetTerrainKind,
 /// and the cell flags under it are cleared; the actor is kept at 0xcbc of the
 /// event work.
 void MadraCatacombs_LowerHeldPillarCells(u16 *list) {
-  struct Actor *held = Func_0200120c();
+  struct Actor *held = Leader_FindActorAhead();
   void *work = Ram_HeapSlots->eventWork;
   u8 *grid;
 
@@ -78,8 +78,8 @@ void MadraCatacombs_LowerHeldPillarCells(u16 *list) {
           grid + ((struct MapCell *)cell - (struct MapCell *)Ram_MapCellBuffer);
       s32 kind = MapGrid_GetTerrainKind(*layer, held->x, held->z);
       s32 height = Map_GetTerrainHeight(*layer, held->x, held->z);
-      s32 index = Func_020011d4(held);
-      s32 result = Func_020011f4(*layer, kind, (height >> 19) - 4);
+      s32 index = Actor_GetCellIndex(held);
+      s32 result = MapCollision_FindOrAddTag(*layer, kind, (height >> 19) - 4);
 
       shape += index;
       // The index goes on as the cell offset, four bytes a cell.
@@ -101,7 +101,7 @@ void MadraCatacombs_LowerHeldPillarCells(u16 *list) {
 // it past the cell read; a plain store keeps its order.
 
 DEFINE_HELD_ACTOR_RAISE_CELL(HeldActor_RaiseCell, MapGrid_GetTerrainKind,
-                             Func_020011d4, Func_020011f4)
+                             Actor_GetCellIndex, MapCollision_FindOrAddTag)
 
 struct SceneWork {
   u8 unk000[0x1ac];
@@ -158,8 +158,8 @@ const struct Trigger *Scene_GetEvents(void) {
   return gMadraCatacombs_Triggers;
 }
 
-void Func_020011e4(const void *data);
-void Func_020011cc(const void *data);
+void Actor_LiftTargetBlock(const void *data);
+void FlagBlock_ApplyFlags(const void *data);
 
 /// ★ Named from the game: "The door won't budge. ...Must be locked."
 /// (MsgFieldDoorWontBudge)
@@ -195,20 +195,20 @@ void MadraCatacombs_DropPillarIntoHole(void) {
 }
 
 void MadraCatacombs_StartMovingPushedPillar(void) {
-  Func_020011e4(gMadraCatacombs_PushedPillar);
+  Actor_LiftTargetBlock(gMadraCatacombs_PushedPillar);
 }
 
 /// The second pillar, moved onto cell (44, 26), stays there (flag 0x8ca).
 void MadraCatacombs_FinishMovingPushedPillar(void) {
   struct Actor *object = Actor_GetById(12);
 
-  Func_020011ec();
+  Actor_PlaceMovedBlock();
   if ((object->x >> 20) == 44 && (object->z >> 20) == 26)
     Event_SetFlag(0x8ca);
 }
 
 void MadraCatacombs_FreezePuddle(void) {
-  Func_020011cc(gMadraCatacombs_Puddles);
+  FlagBlock_ApplyFlags(gMadraCatacombs_Puddles);
 }
 
 void FieldCamera_WaitForArrival(void);
@@ -278,9 +278,9 @@ struct EventWork1ac {
 };
 
 void Actor_MoveToObject(s32 id, s32 value);
-void Func_020011b4(void);
-void Func_020011c4(const void *data);
-void Func_020011dc(const void *data);
+void Rope_Initialize(void);
+void FlagBlock_PlaceAll(const void *data);
+void Actor_PlaceBlocks(const void *data);
 /// The climbable pillar settles where Move left it, its cells raised; on cell
 /// (35, 17) it stays there (flag 0x9ef).
 void MadraCatacombs_SettleClimbablePillar(struct Actor *object);
@@ -356,10 +356,10 @@ void MadraCatacombs_SettleClimbablePillar(struct Actor *object) {
     Event_SetFlag(0x9ef);
 }
 
-DEFINE_SCENE_RUN_IF_HELD(Scene_RunIfHeld, Func_020011fc,
+DEFINE_SCENE_RUN_IF_HELD(Scene_RunIfHeld, Leader_CanPushObjectAhead,
                          Field_FindNearbyTalkTarget,
                          MadraCatacombs_LowerHeldPillarCells,
-                         gMadraCatacombs_ClimbablePillar, Func_02001204,
+                         gMadraCatacombs_ClimbablePillar, Leader_PushObjectAhead,
                          MadraCatacombs_SettleClimbablePillar)
 
 void MadraCatacombs_StartMovingClimbablePillar(void) {
@@ -550,15 +550,15 @@ void MadraCatacombs_SetUpVillage(void) {
 
   Event_ClearFlag(0x203);
   Actor_SetSpritePriority(64, 3);
-  Func_020011b4();
+  Rope_Initialize();
   b = 0x102;
   a = 1;
   /* FAKEMATCH(barrier): a and b held at an empty asm, so the first argument is
    * set before the second is finished; as no asm, 2 of 142 instructions
    * differ in tla-en. */
   __asm__("" : "+r"(a), "+r"(b));
-  Func_020011bc(a, b + 255, 9, 10);
-  Func_0200115c(11);
+  Rope_Place(a, b + 255, 9, 10);
+  Actor_DisableById(11);
   if (Event_GetFlag(0x8c8) != 0) {
     MapGrid_CopyCellAttributes(41, 13, 2, 1, 39, 13);
     object = Actor_GetById(11);
@@ -574,12 +574,12 @@ void MadraCatacombs_SetUpVillage(void) {
   }
   if (Event_GetFlag(0x8ca) != 0)
     Actor_SetPosition(12, PIXELS(712), PIXELS(424));
-  Func_020011dc(gMadraCatacombs_PushedPillar);
+  Actor_PlaceBlocks(gMadraCatacombs_PushedPillar);
   if (Event_GetFlag(0x9ef) != 0)
     Actor_SetPosition(8, PIXELS(568), PIXELS(280));
   Actor_GetById(8)->priorityFlags &= 0xfe;
   MadraCatacombs_RaisePillarCells(gMadraCatacombs_ClimbablePillar);
-  Func_020011c4(gMadraCatacombs_Puddles);
+  FlagBlock_PlaceAll(gMadraCatacombs_Puddles);
   if (Event_GetFlag(0x8cb) != 0) {
     MapGrid_CopyCellsTo(75, 66, 97, 39, 2, 2);
     MapGrid_CopyCellAttributes(33, 37, 2, 2, 33, 39);
@@ -596,8 +596,8 @@ void MadraCatacombs_SetUpVillage(void) {
 }
 
 void MadraCatacombs_SetUpChampaTunnel(void) {
-  Func_020011b4();
-  Func_020011bc(0, 0x200, 8, 9);
+  Rope_Initialize();
+  Rope_Place(0, 0x200, 8, 9);
   if (Event_GetFlag(0x8ab) != 0) {
     Actor_SetPosition(10, 0, 0);
     MapGrid_CopyCellsTo(68, 70, 113, 11, 5, 3);

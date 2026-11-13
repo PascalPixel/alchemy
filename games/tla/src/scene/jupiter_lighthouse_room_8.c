@@ -56,8 +56,8 @@ struct IsletsVector {
   s32 z;
 };
 s32 Teleporters_Step(void);
-void Func_020022c0(s32 x, s32 z, s32 a, s32 b);
-void Func_02002248(s32 id);
+void MapGrid_SetAttributeBAt(s32 x, s32 z, s32 a, s32 b);
+void Actor_DisableById(s32 id);
 void Teleporter_PlaceArrival(s32 x, s32 z, s32 effect);
 void JupiterLighthouse_PushBlock(void);
 struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind);
@@ -66,7 +66,7 @@ extern s16 gLightSpriteCount;
 extern s16 gLightSpritesLarge;
 extern s16 gLightSpritePriority;
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
-void Func_020021e0(s32 x, s32 z, s32 a, s32 b);
+void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 extern u16 gPaletteCycleColors[];
 extern u16 gPaletteCycleUnlitColors[];
 extern s32 gWhirlwindRiding;
@@ -141,9 +141,9 @@ void JupiterLighthouse_DropBlockIntoHole(s32 unused, s32 id) {
       s32 cleared = 0;
 
       object->motionFlags = cleared;
-      Func_020021e0(object->x, object->z, 0, 0);
+      MapGrid_SetCellHeight(object->x, object->z, 0, 0);
     }
-    Func_020022c0(object->x, object->z, 0, 128);
+    MapGrid_SetAttributeBAt(object->x, object->z, 0, 128);
   }
 }
 
@@ -158,11 +158,11 @@ s32 Scene_Initialize(void) {
   Actor_Get(ACTOR_ARCHER_STATUE)->scaleY = 0xc000;
   FieldActor_SetSpritePriority(ACTOR_FIRST_LOG + 1, 3);
   FieldActor_SetSpritePriority(ACTOR_FIRST_LOG + 3, 3);
-  Func_02002248(ACTOR_FIRST_LOG);
-  Func_02002248(ACTOR_FIRST_LOG + 1);
-  Func_02002248(ACTOR_FIRST_LOG + 2);
-  Func_02002248(ACTOR_FIRST_LOG + 3);
-  Func_02002248(ACTOR_FIRST_LOG + 4);
+  Actor_DisableById(ACTOR_FIRST_LOG);
+  Actor_DisableById(ACTOR_FIRST_LOG + 1);
+  Actor_DisableById(ACTOR_FIRST_LOG + 2);
+  Actor_DisableById(ACTOR_FIRST_LOG + 3);
+  Actor_DisableById(ACTOR_FIRST_LOG + 4);
   PushTarget_FillFootprint(ACTOR_FIRST_LOG);
   PushTarget_FillFootprint(ACTOR_FIRST_LOG + 1);
   PushTarget_FillFootprint(ACTOR_FIRST_LOG + 2);
@@ -187,8 +187,8 @@ s32 Scene_PrepareMap(void) {
     object->terrainHeight = -0x200000;
     object->y = -0x200000;
     Actor_SetPosition(ACTOR_PILLAR, PIXELS(104), PIXELS(232));
-    Func_020021e0(object->x, object->z, 0, 0);
-    Func_020022c0(object->x, object->z, 0, 128);
+    MapGrid_SetCellHeight(object->x, object->z, 0, 0);
+    MapGrid_SetAttributeBAt(object->x, object->z, 0, 128);
   }
   return 0;
 }
@@ -223,7 +223,7 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
                                         gLighthousePalette13, PaletteCycle_Step,
                                         gPaletteCycleUnlitColors)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_020021e0, Func_020022c0)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight, MapGrid_SetAttributeBAt)
 
 #include "frame.h"
 #include "field_sprite.h"
@@ -234,10 +234,10 @@ DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 extern s32 gWhirlwindEndScript[];
 
-s32 Func_020022b8(s32 x, s32 z, s32 layer);
+s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_020022b8, Position_FlatDistance,
+DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior, Position_FlatDistance,
                         gWhirlwindEndScript, gWhirlwindRiding)
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -337,7 +337,7 @@ void PushTarget_UpdatePusher(struct Actor *object) {
   position.y = object->y;
   position.z = object->z;
   FieldVector_AddPolarOffset(0x100000, angle, &position);
-  hit = Func_020022a8(&position, 1);
+  hit = Actor_FindAtCell(&position, 1);
   if (hit != 0) {
     i = 0;
   next:

@@ -3,6 +3,7 @@
 
 // ---- games/tla/src/scene/dehkan_plateau.c ----
 
+#include "flags.h"
 #include "../shared/map_cells.h"
 #include "../shared/actors.h"
 #include "types.h"
@@ -326,7 +327,7 @@ loop:
     const u16 *dest;                                                           \
                                                                                \
     for (i = 0; i <= n1; i++) {                                                \
-      if (GameFlag_Test(0x109) != 0) {                                         \
+      if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0) {                                         \
         if (GameFlag_Test(flag) != 0) {                                        \
           s32 x;                                                               \
           s32 y;                                                               \
@@ -347,7 +348,7 @@ loop:
       }                                                                        \
       flag++;                                                                  \
     }                                                                          \
-    if (GameFlag_Test(0x109) == 0)                                             \
+    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0)                                             \
       Func_02001804();                                                         \
   }
 
@@ -372,7 +373,7 @@ void Func_020019b8(void) {
   u32 i;
 
   for (i = 0; i <= 15; flag++, i++) {
-    if (GameFlag_Test(0x109)) {
+    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
       if (GameFlag_Test(flag)) {
         s32 x;
         s32 y;
@@ -588,7 +589,7 @@ void Func_02001ee8(void) {
 DEFINE_ACTOR_HIDE(Actor_Hide, Func_02003cc0)
 
 void Scene_RunUnlessFlag(void) {
-  if (GameFlag_Test(0x109) != 0) {
+  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0) {
     if (GameFlag_Test(0x200) == 0)
       Func_02001500();
   } else {

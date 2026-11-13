@@ -1,6 +1,7 @@
 /// @file
 /// Scene code of overlay 0x664, in ROM order.
 
+#include "flags.h"
 #include "../shared/tables.h"
 #include "types.h"
 #include "system.h"
@@ -114,7 +115,7 @@ s32 Scene_Initialize(void) {
     Func_02002770();
     // The Japanese release arrives here whatever flag 265 says.
     if (gMainRoutineWork.entrance == 16 &&
-        (!TLA_PATCH_1 || !GameFlag_Test(265))) {
+        (!TLA_PATCH_1 || !GameFlag_Test(FLAG_KEEP_PARTY_POSITION))) {
       Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 1;
       wait(8);
       Map_CenterOnFollowedPoint();
@@ -155,7 +156,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_GetById(8), 0);
     Actor_SetSpriteFlags(Actor_GetById(9), 0);
     Actor_SetSpriteFlags(Actor_GetById(12), 0);
-    if (gMainRoutineWork.entrance == 11 && !GameFlag_Test(265))
+    if (gMainRoutineWork.entrance == 11 && !GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
       Func_0200505c();
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room2) {
     REG_BLDALPHA = 0x1008;
@@ -176,7 +177,7 @@ s32 Scene_Initialize(void) {
       Call6(MapGrid_CopyCellPictureIndicesRect, 68, 84, 12, 77, 3, 6);
     }
     Actor_SetSpriteFlags(Actor_GetById(8), 0);
-    if (gMainRoutineWork.entrance == 3 && !GameFlag_Test(265))
+    if (gMainRoutineWork.entrance == 3 && !GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
       Func_02004cc8();
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room3) {
     Func_02002770();
@@ -293,7 +294,7 @@ s32 Scene_Initialize(void) {
     ((u8 *)Actor_GetById(13))[98] = one;
     ((u8 *)Actor_GetById(14))[98] = one;
     ((u8 *)Actor_GetById(15))[98] = one;
-    if (!GameFlag_Test(265)) {
+    if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
       GameFlag_SetBit(513);
       GameFlag_SetBit(514);
     }

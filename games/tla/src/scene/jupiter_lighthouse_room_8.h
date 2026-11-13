@@ -7,7 +7,7 @@
 #include "scene_tables.h"
 
 // Set once Move has dropped the pillar into the gap in the floor; cleared as
-// the party comes back unless flag 0x109 is set.
+// the party comes back unless the party comes back from a battle (FLAG_KEEP_PARTY_POSITION).
 #define FLAG_PILLAR_DROPPED 0xa18
 
 /// The room's statue, pillar and logs, numbering the rows of gActorPlacements.

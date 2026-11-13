@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x6a0, in ROM order.
 
+#include "flags.h"
 #include "shared/whirlwind.h"
 #include "shared/jupiter_lighthouse.h"
 #include "shared/actors.h"
@@ -643,7 +644,7 @@ s32 Scene_PrepareMap(void) {
     Actor_SetPosition(14, PIXELS(136), PIXELS(328));
     Actor_SetPosition(15, PIXELS(168), PIXELS(328));
   }
-  if (!Event_GetFlag(0x109) && Func_02000290() != 2) {
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) && Func_02000290() != 2) {
     Event_ClearFlag(0xa10);
     Event_ClearFlag(0xa12);
     Event_ClearFlag(0xa14);

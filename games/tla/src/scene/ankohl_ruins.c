@@ -2,6 +2,7 @@
 /// The scene code of overlay 0x686 that its scene tables belong to, in ROM
 /// order; the rest of the overlay is in ankohl_ruins/.
 
+#include "flags.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -675,7 +676,7 @@ void Func_02001420(void) {
   struct AnkohlRuinsSprite *sprite = work->sprites;
   s32 i;
 
-  if (Event_GetFlag(0x109) == 0)
+  if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
     Iwram_ClearWordsEntry(work, 240);
   i = 31;
 fill:

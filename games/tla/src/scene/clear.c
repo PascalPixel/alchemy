@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x64a, in ROM order.
 
+#include "flags.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -281,7 +282,7 @@ void StatusScreen_Run(void);
     (party)->scene = (party)->savedScene;                                      \
     (party)->entrance = (party)->savedEntrance;                                \
     Func_020023e0((party)->scene, (party)->entrance);                          \
-    Event_ClearFlag(0x109);                                                    \
+    Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);                                                    \
   }
 
 s32 Scene_Initialize(void) {
@@ -454,7 +455,7 @@ top:
     result = Save_ChooseAndLoadFile(1);
     if (result == -1)
       goto top;
-    Event_SetFlag(0x109);
+    Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
     {
       struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -509,7 +510,7 @@ top:
       if (Event_GetFlag(0x9ff))
         InventorySnapshot_Restore();
       WindowColor_Apply(party->paletteGlow[0], party->paletteGlow[1]);
-      Event_ClearFlag(0x109);
+      Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
       Event_ClearFlag(0x106);
       party->ownerOverride = 0;
       gSleepDisabled = 1;
@@ -565,7 +566,7 @@ again:
       goto shut;
   }
 #if TLA_PATCH_1
-  Event_SetFlag(0x109);
+  Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
 #endif
 finish:
   ((struct EventWork *)Ram_HeapSlots->eventWork)->countdown = 999;

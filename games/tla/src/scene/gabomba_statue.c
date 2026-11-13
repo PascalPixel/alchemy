@@ -3,6 +3,7 @@
 
 // ---- games/tla/src/scene/gabomba_statue.c ----
 
+#include "flags.h"
 #include "field/field.h"
 
 #include "types.h"
@@ -1212,7 +1213,7 @@ void Func_02001adc(s32 id) {
 }
 
 void Func_02001b0c(void) {
-  if (Event_GetFlag(265)) {
+  if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     if (!Event_GetFlag(512))
       Func_0200193c();
   } else {

@@ -1,6 +1,7 @@
 /// @file
 /// Scene code of overlay 0x6a9, in ROM order.
 
+#include "flags.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -110,7 +111,7 @@ loop:
   if (*ids != 0xffff)
     goto loop;
 done:
-  if (GameFlag_Test(0x109)) {
+  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
     wait(1);
     leader->y = leader->terrainHeight =
         Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);

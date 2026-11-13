@@ -1,6 +1,7 @@
 /// @file
 /// Scene code of overlay 0x67c, in ROM order.
 
+#include "flags.h"
 #include "../shared/vents.h"
 #include "../shared/tables.h"
 #include "../aqua_rock_inside.h"
@@ -45,7 +46,7 @@ void Func_02003ab0(const u16 *spots, const u16 *levels, void (*handler)(void)) {
   struct WaterWork *work = (struct WaterWork *)(gInventorySnapshot + 0x188);
   struct WaterOutlet *outlet = work->outlets;
 
-  if (!Event_GetFlag(0x109)) {
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     s32 x;
     s32 i;
 

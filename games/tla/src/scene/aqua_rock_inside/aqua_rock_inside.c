@@ -3,6 +3,7 @@
 
 // ---- games/tla/src/scene/aqua_rock_inside.c ----
 
+#include "flags.h"
 #include "../shared/effects.h"
 #include "event_work.h"
 #include "../aqua_rock_inside.h"
@@ -1342,7 +1343,7 @@ s32 Scene_Initialize(void) {
     object->collisionFlags = 0;
     object->priorityFlags |= 2;
     object->update = (void (*)(void))Func_02001ea0;
-    if (!GameFlag_Test(0x109) && entrance == 13)
+    if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION) && entrance == 13)
       Func_02001f04();
   } else if (scene == (s32)&SceneId_Ov67cRoom9) {
     if (GameFlag_Test(0x24b)) {

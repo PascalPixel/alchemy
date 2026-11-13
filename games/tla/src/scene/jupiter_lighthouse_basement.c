@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x699, in ROM order.
 
+#include "flags.h"
 #include "shared/whirlwind.h"
 #include "shared/jupiter_lighthouse.h"
 #include "shared/actors.h"
@@ -192,9 +193,9 @@ s32 Scene_Initialize(void) {
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x204;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov699Room1) {
     JupiterLighthouse_LoadPalettes(1);
-    if (!Event_GetFlag(0x109) && gMainRoutineWork.entrance == 4)
+    if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) && gMainRoutineWork.entrance == 4)
       Func_02001d3c(gMainRoutineWork.currentOwner);
-    if (!Event_GetFlag(0x109) && gMainRoutineWork.entrance == 6)
+    if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) && gMainRoutineWork.entrance == 6)
       Func_02001d3c(gMainRoutineWork.currentOwner);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov699Room2) {

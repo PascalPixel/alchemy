@@ -21,7 +21,7 @@ void Func_02002cb4(u8 mode) {
   u16 *state = gSceneState;
   u16 *pending = state + 1;
 
-  if (!Event_GetFlag(265)) {
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     s32 i;
     s32 id;
 
@@ -1681,7 +1681,7 @@ void Func_020044f8(s32 seed) {
   saved = gRandomState;
   path = gPath;
   steps = path->steps;
-  if (GameFlag_Test(0x109))
+  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
     return;
   if (GameFlag_Test(0x3f0))
     return;

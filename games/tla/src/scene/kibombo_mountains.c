@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x66f, in ROM order.
 
+#include "flags.h"
 #include "shared/map_cells.h"
 #include "shared/actors.h"
 #include "field/field.h"
@@ -345,7 +346,7 @@ s32 Scene_Initialize(void) {
     Func_020004f4(15, 8, 17);
     Func_020004f4(16, 22, 33);
     Func_020004f4(17, 22, 33);
-    if (!GameFlag_Test(0x109) && gMainRoutineWork.entrance == 8)
+    if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION) && gMainRoutineWork.entrance == 8)
       Func_02000af0();
   }
   return 0;

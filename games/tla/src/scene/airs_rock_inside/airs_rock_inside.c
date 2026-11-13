@@ -1,6 +1,7 @@
 /// @file
 /// Scene code of overlay 0x664, in ROM order.
 
+#include "flags.h"
 #include "../shared/actors.h"
 #include "../airs_rock_inside.h"
 #include "system.h"
@@ -553,7 +554,7 @@ void Func_02000f34(struct Actor *object) {
 }
 
 void Func_02001084(struct Actor *object, s16 timer, u8 value) {
-  if (!GameFlag_Test(265)) {
+  if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
     BYTE_AT(object, 90) = 0;
     object->timer = timer;
     BYTE_AT(object, 98) = value;
@@ -688,7 +689,7 @@ void Func_02001290(struct Actor *object) {
 }
 
 void Func_02001420(struct Actor *object, s16 timer, u8 value) {
-  if (!GameFlag_Test(265)) {
+  if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
     BYTE_AT(object, 90) = 0;
     object->timer = timer;
     BYTE_AT(object, 98) = value;

@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x673, in ROM order.
 
+#include "flags.h"
 #include "shared/tables.h"
 #include "event_work.h"
 #include "types.h"
@@ -483,7 +484,7 @@ s32 Scene_Initialize(void) {
       gMainRoutineWork.retreatEntrance = 3;
     }
   }
-  if (!GameFlag_Test(265) &&
+  if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION) &&
       gMainRoutineWork.scene == (s32)&SceneId_Ov673Room2 &&
       gMainRoutineWork.entrance > 2)
     Func_0200126c(gMainRoutineWork.currentOwner);
@@ -507,7 +508,7 @@ s32 Scene_Initialize(void) {
       GameFlag_Test(0x200))
     MapGrid_CopyCellAttributes(15, 18, 1, 1, 17, 18);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room4 &&
-      GameFlag_Test(0x9ce) && !GameFlag_Test(0xf93) && !GameFlag_Test(265)) {
+      GameFlag_Test(0x9ce) && !GameFlag_Test(0xf93) && !GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
     statue = Actor_GetById(0x40);
     Actor_SetPosition(0x40, 0xa80000, 0x980000);
     statue->motionFlags = 6;

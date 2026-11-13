@@ -14,13 +14,14 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "module/scene/jupiter_lighthouse_room_4.h"
 #include "module/scene/mars_lighthouse_entrance.h"
 #include "module/scene/scene.h"
 #include "module/scene/treasure_isle.h"
 #include "scene_ids.h"
 #include "module/field/event_commands.h"
 #include "text/msg_ids.h"
+
+#include "field/cell_target.h"
 
 extern u16 Data_02001aa8[];
 extern volatile u16 Data_02001ae8[];

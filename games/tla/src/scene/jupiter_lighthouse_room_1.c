@@ -131,7 +131,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
-  if (!Event_GetFlag(0x109) && gMainRoutineWork.entrance == 6)
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) && gMainRoutineWork.entrance == 6)
     Func_02001bcc(gMainRoutineWork.currentOwner);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED)) {
     Actor_SetPosition(ACTOR_GATES_PILLAR, PIXELS(280), PIXELS(536));

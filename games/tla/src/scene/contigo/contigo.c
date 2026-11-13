@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x694, in ROM order.
 
 // ---- games/tla/src/scene/contigo.c ----
+#include "flags.h"
 #include "../shared/tables.h"
 #include "../shared/actors.h"
 #include "types.h"
@@ -963,7 +964,7 @@ void Func_02001938(s32 spoken) {
   }
   Event_SetMessageId((s32)MsgContigo13);
   Event_ShowMessageAndWait(18, 0);
-  GameFlag_SetBit(265);
+  GameFlag_SetBit(FLAG_KEEP_PARTY_POSITION);
   GameFlag_SetBit(0x9e5);
   wait(1);
   Event_LeaveFor(508, 0);
@@ -1024,7 +1025,7 @@ void Func_02001abc(void) {
     *state = gMainRoutineWork.coins;
     ObjectTable_Snapshot();
     Event_ShowMessageAndWait(14, 0);
-    GameFlag_SetBit(0x109);
+    GameFlag_SetBit(FLAG_KEEP_PARTY_POSITION);
     GameFlag_SetBit(0x9e5);
     wait(1);
     Event_LeaveFor(0x1fd, 0);
@@ -1058,7 +1059,7 @@ void Func_02001b84(void) {
     *state = gMainRoutineWork.coins;
     ObjectTable_Snapshot();
     Event_ShowMessageAndWait(8, 0);
-    GameFlag_SetBit(0x109);
+    GameFlag_SetBit(FLAG_KEEP_PARTY_POSITION);
     GameFlag_SetBit(0x9e5);
     wait(1);
     Event_LeaveFor(0x1fb, 0);
@@ -1882,7 +1883,7 @@ void Func_02003720(void) {
     Actor_SetSpriteColor(Actor_GetById(17), 15);
     Actor_SetSpriteFlags(Actor_GetById(17), 0);
   }
-  if (GameFlag_Test(0x109) == 0) {
+  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:

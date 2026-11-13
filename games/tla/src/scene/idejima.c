@@ -1508,7 +1508,7 @@ s32 Scene_Initialize(void) {
   }
   switch (entrance) {
   case 2:
-    if (Event_GetFlag(0x109) == 0)
+    if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
       Party_RestoreHpPp(1);
   case 4: {
     struct MainRoutineWork *party = &gMainRoutineWork;

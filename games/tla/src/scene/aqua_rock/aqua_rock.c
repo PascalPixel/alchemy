@@ -3,6 +3,7 @@
 
 // ---- games/tla/src/scene/aqua_rock.c ----
 
+#include "flags.h"
 #include "../shared/actors.h"
 #include "event_work.h"
 #include "../shared/effects.h"
@@ -823,7 +824,7 @@ settle:
   }
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  GameFlag_SetBit(0x109);
+  GameFlag_SetBit(FLAG_KEEP_PARTY_POSITION);
   GameFlag_ClearBit(0x12f);
   Import_EventSetExitRequest(77);
   Event_End();
@@ -976,7 +977,7 @@ s32 Scene_Initialize(void) {
         Map_CopyCellAttributeRect(64, 68, 5, 8, 14, 34);
       }
     }
-    if (!GameFlag_Test(265)) {
+    if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
       if (gMainRoutineWork.entrance == 1)
         Func_02001460();
       entrance = &gMainRoutineWork.entrance;
@@ -1145,7 +1146,7 @@ void Func_020020bc(s32 entrance) {
 
 void Func_02002158(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  s32 flag = GameFlag_Test(0x109);
+  s32 flag = GameFlag_Test(FLAG_KEEP_PARTY_POSITION);
   s32 *owner = &gMainRoutineWork.currentOwner;
   s32 offset;
 

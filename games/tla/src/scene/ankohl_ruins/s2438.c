@@ -1,3 +1,4 @@
+#include "flags.h"
 #include "version.h"
 #include "event_inline.h"
 #include "module/scene/ankohl_ruins.h"
@@ -149,7 +150,7 @@ s32 Scene_Initialize(s32 a0) {
       object = Actor_GetById(10);
       Actor_SetPosition(10, 0xe80000, 0x2d80000);
       object->motionFlags = 3;
-    } else if (GameFlag_Test(0x9db) && !GameFlag_Test(0x109)) {
+    } else if (GameFlag_Test(0x9db) && !GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
       Actor_SetPosition(10, 0x1480000, 0x2f80000);
     }
     if (GameFlag_Test(0x9da) && GameFlag_Test(0x9d9)) {
@@ -161,7 +162,7 @@ s32 Scene_Initialize(s32 a0) {
       MapGrid_CopyCells(16, 27, 3, 13, width, 47);
       MapGrid_CopyCells(16, 91, 3, 13, width, 111);
     }
-    if (!GameFlag_Test(0x109) && gMainRoutineWork.entrance == 17) {
+    if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION) && gMainRoutineWork.entrance == 17) {
       Func_02000418();
 #if TLA_PATCH_4
       Event_ClearFlag(0x122);
@@ -192,7 +193,7 @@ s32 Scene_Initialize(s32 a0) {
         }
         Event_PlaySound(188);
         FieldEvent_Wait(60);
-        Event_SetFlag(0x109);
+        Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
         FieldEvent_SetExitRequest(20);
       }
     }
@@ -227,7 +228,7 @@ s32 Scene_Initialize(s32 a0) {
       MapGrid_CopyCells(26, 67, 1, 3, x, 83);
       MapGrid_CopyCellAttributes(1, 23, 1, 1, x, 23);
     }
-    if (GameFlag_Test(0x109) && GameFlag_Test(0x204)) {
+    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) && GameFlag_Test(0x204)) {
       s32 level = 0x200000;
 
       Data_02004030.level = level;
@@ -431,7 +432,7 @@ s32 Scene_Initialize(s32 a0) {
       object = Actor_GetById(10);
       Actor_SetPosition(10, 0xe80000, 0x2d80000);
       object->motionFlags = 3;
-    } else if (GameFlag_Test(0x9db) && !GameFlag_Test(0x109)) {
+    } else if (GameFlag_Test(0x9db) && !GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
       Actor_SetPosition(10, 0x1480000, 0x2f80000);
     }
     if (GameFlag_Test(0x9da) && GameFlag_Test(0x9d9)) {
@@ -468,7 +469,7 @@ s32 Scene_Initialize(s32 a0) {
         }
         Event_PlaySound(188);
         FieldEvent_Wait(60);
-        Event_SetFlag(0x109);
+        Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
         FieldEvent_SetExitRequest(20);
       }
     }
@@ -503,7 +504,7 @@ s32 Scene_Initialize(s32 a0) {
       MapGrid_CopyCells(26, 67, 1, 3, x, 83);
       MapGrid_CopyCellAttributes(1, 23, 1, 1, x, 23);
     }
-    if (GameFlag_Test(0x109) && GameFlag_Test(0x204)) {
+    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) && GameFlag_Test(0x204)) {
       s32 level = 0x200000;
 
       Data_02004030.level = level;

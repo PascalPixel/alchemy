@@ -5,6 +5,12 @@
 /// Game flags, named where their meaning is shown, as The Broken Seal's
 /// flags.h names its own.
 
+/// The next field scene starts where the party was, as after a battle: the
+/// scene's flags are not reset, the actors come back from their snapshot,
+/// and the music saved in gMainRoutineWork.returnMusic resumes if there is
+/// one. The scenes skip their arrival events while it is set.
+#define FLAG_KEEP_PARTY_POSITION 0x109
+
 /// Set once the old werewolf of Garoh's inn has asked the party whether they
 /// learned Reveal; he then only sighs about his wasted years.
 /// ★ Named from the game: "You... Is it true that you learned Reveal?"
@@ -97,6 +103,24 @@
 /// Set once the pillar on the floor below Jupiter Lighthouse's aerie stands on
 /// the button by its door: the door stays open, a shortcut.
 #define FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED 0xa19
+
+/// Set as Hover cast on the raised platform in Jupiter Lighthouse wakes the
+/// lighthouse: its hover platforms and blocks rise in every room.
+#define FLAG_JUPITER_LIGHTHOUSE_ACTIVATED 0xa00
+
+/// Set as the left tower's archer statue shoots its arrow at the left angel on
+/// Jupiter Lighthouse's aerie, which starts to lift its half of the lid.
+#define FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED 0xa0a
+/// The same for the right tower's archer and the right angel.
+#define FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED 0xa0b
+
+/// Set as the left tower's archer statue shoots its arrow at the left angel
+/// on Jupiter Lighthouse's aerie, which starts to lift its half of the lid.
+/// ★ Named from what the player sees: the arrow and the rising angel
+/// (the aerie's JupiterLighthouse events)
+#define FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED 0xa0a
+/// The same for the right tower's archer and the right angel.
+#define FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED 0xa0b
 
 /// Set once Felix has woken on Idejima's shore.
 /// ★ Named from the game: "Do you want to check yourself for injuries?"

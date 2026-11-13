@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x69c, in ROM order.
 
+#include "flags.h"
 #include "shared/whirlwind.h"
 #include "shared/jupiter_lighthouse.h"
 #include "shared/effects.h"
@@ -93,9 +94,9 @@ s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Func_02002440(12, 1);
   Func_02002440(13, 1);
-  if (Event_GetFlag(0x109) == 0 && gMainRoutineWork.entrance == 12)
+  if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0 && gMainRoutineWork.entrance == 12)
     Func_02002468(gMainRoutineWork.currentOwner);
-  if (Event_GetFlag(0x109) == 0 && gMainRoutineWork.entrance == 13)
+  if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0 && gMainRoutineWork.entrance == 13)
     Func_02002468(gMainRoutineWork.currentOwner);
   return 0;
 }

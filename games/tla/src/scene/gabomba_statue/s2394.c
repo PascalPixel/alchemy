@@ -3,6 +3,7 @@
 
 // ---- games/tla/src/scene/gabomba_statue/s2394.c ----
 
+#include "flags.h"
 #include "../shared/tables.h"
 #include "../shared/map_cells.h"
 #include "types.h"
@@ -468,7 +469,7 @@ void Func_02002f70(void) {
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0, 0);
   PaletteFade_Interpolate(60);
-  Event_ClearFlag(265);
+  Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
   System_Wait(60);
   FieldEvent_SetExitRequest(18);
 }
@@ -528,7 +529,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov671Room7 &&
-      gMainRoutineWork.entrance == 1 && !Event_GetFlag(0x109)) {
+      gMainRoutineWork.entrance == 1 && !Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     Event_ClearFlag(0x8cd);
     Event_ClearFlag(0x8ce);
     Event_ClearFlag(0x8cf);
@@ -562,7 +563,7 @@ void Func_020034f4(void) {
 void Func_0200359c(void) {
   Func_02005824();
   Func_0200583c(0, 513, 31, 32);
-  if (!Event_GetFlag(0x109)) {
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     s32 entrance = (u16)gMainRoutineWork.entrance;
 
     if ((u16)(entrance - 7) <= 1)
@@ -1505,7 +1506,7 @@ s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id) {
   struct SceneState *state = &gSceneState;
   s32 count;
 
-  if (Event_GetFlag(0x109)) {
+  if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     Func_020038ac();
     Func_02003974();
     count = state->count;
@@ -1975,7 +1976,7 @@ void Func_020052a4(s32 mode) {
   struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
   u8 *tiles;
 
-  if (!Event_GetFlag(0x109)) {
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     Iwram_ClearWordsEntry(clock, sizeof(struct ClockWork));
     clock->timer = 3600;
     clock->ringing = 1;

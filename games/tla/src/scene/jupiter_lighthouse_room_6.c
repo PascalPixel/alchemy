@@ -157,7 +157,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   JupiterLighthouse_LoadPalettes(0);
-  if (!Event_GetFlag(265))
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     Event_ClearFlag(FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED);
   return 0;
 }

@@ -125,7 +125,7 @@ s32 Scene_Initialize(void) {
   s32 clear;
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
-  clear = Event_GetFlag(0x109);
+  clear = Event_GetFlag(FLAG_KEEP_PARTY_POSITION);
   if (clear == 0) {
     if (gMainRoutineWork.entrance == 4)
       Func_02001b3c(gMainRoutineWork.currentOwner);

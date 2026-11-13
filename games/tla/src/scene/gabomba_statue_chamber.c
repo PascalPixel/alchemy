@@ -3,6 +3,7 @@
 
 // ---- games/tla/src/scene/gabomba_statue_chamber.c ----
 
+#include "flags.h"
 #include "text/msg_ids.h"
 
 #include "battle.h"
@@ -777,7 +778,7 @@ void Func_020010d4(void) {
   *(s32 *)(EVENT_WORK + 0x1ac) = 514;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  GameFlag_SetBit(265);
+  GameFlag_SetBit(FLAG_KEEP_PARTY_POSITION);
   Import_EventSetExitRequest(2);
 }
 
@@ -961,7 +962,7 @@ void Func_02001b14(void) {
 #include "../../include/system/io_reg.h"
 
 void Func_02001ba8(void) {
-  if (GameFlag_Test(265)) {
+  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
     if (GameFlag_Test(519)) {
       struct GabombaStatueChamberMapWork *map =
           (struct GabombaStatueChamberMapWork *)Ram_HeapSlots->mapWork;

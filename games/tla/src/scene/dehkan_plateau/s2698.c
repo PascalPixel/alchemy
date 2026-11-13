@@ -3,6 +3,7 @@
 
 // ---- games/tla/src/scene/dehkan_plateau/s2698.c ----
 
+#include "flags.h"
 #include "types.h"
 #include "system.h"
 #include "actor.h"
@@ -510,7 +511,7 @@ static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
 }
 
 void Func_02003164(void) {
-  if (GameFlag_Test(265) == 0) {
+  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
     if (gMainRoutineWork.entrance == 5) {
       Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
@@ -568,7 +569,7 @@ void Func_02003284(void) {
   struct Actor *object;
   s32 zero, value;
 
-  if (GameFlag_Test(265) == 0) {
+  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
     Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
@@ -720,7 +721,7 @@ void Func_0200369c(void) {
     }
   }
   Func_0200353c();
-  if (GameFlag_Test(265) == 0) {
+  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (gMainRoutineWork.entrance > 10) {
       if (gMainRoutineWork.entrance <= 39)
         Func_02003764();
@@ -838,7 +839,7 @@ void Func_0200390c(void) {
   if (Flag_Test(0x871) != 0)
     Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
   Func_020035ec();
-  if (GameFlag_Test(265) == 0) {
+  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (gMainRoutineWork.entrance > 16) {
       if (gMainRoutineWork.entrance == 37 && GameFlag_Test(0x871) == 0)
         Func_02002c14();
@@ -891,7 +892,7 @@ void Func_02003aa0(void) {
     wait(10);
   }
   Func_02001ff4();
-  if (GameFlag_Test(265) == 0) {
+  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (gMainRoutineWork.entrance > 5) {
       if (gMainRoutineWork.entrance <= 39)
         Func_02003764();

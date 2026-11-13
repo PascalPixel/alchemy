@@ -1,6 +1,7 @@
 /// @file
 /// Scene code of overlay 0x66b, in ROM order.
 
+#include "flags.h"
 #include "../shared/map_cells.h"
 #include "types.h"
 #include "actor.h"
@@ -558,7 +559,7 @@ void Func_02000fcc(s32 unused, s32 value) {
       (struct GondowanCliffsWork *)(gInventorySnapshot + 0x188);
   void *buffer;
 
-  if (!Event_GetFlag(0x109))
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     Call2((void (*)())Iwram_ClearWordsEntry, (s32)work, 456);
   buffer = (void *)Value1((s32 (*)())Heap_AllocEwram, 0x800);
   Decompress_TaggedLz(gField_Tiles64D, buffer);
@@ -581,7 +582,7 @@ struct RideEntry *Func_02001068(s32 slot, s32 id, s32 timer, s32 low,
 
   Actor_Get(id);
   Actor_SetSpriteFlags(object, 0);
-  if (!Event_GetFlag(0x109)) {
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     if (high < low) {
       s32 swap = low;
 

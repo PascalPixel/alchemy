@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x66a, in ROM order.
 
+#include "flags.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -379,7 +380,7 @@ void Func_0200051c(void) {
     Actor_SetPosition(24, 0, 0);
     Actor_Get(23)->update = Func_02001220;
   }
-  if (gMainRoutineWork.entrance == 9 && !Event_GetFlag(0x109)) {
+  if (gMainRoutineWork.entrance == 9 && !Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Actor_SetSpeed(8, 0x4ccc, 0x2666);

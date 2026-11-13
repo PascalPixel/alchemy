@@ -2,6 +2,7 @@
 /// The scene code of overlay 0x67f that its scene tables belong to, in ROM
 /// order, and the overlay's data; the rest of the overlay is in izumo_ruins/.
 
+#include "flags.h"
 #include "shared/actors.h"
 #include "shared/tables.h"
 #include "izumo_ruins/izumo_ruins.h"
@@ -245,7 +246,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellsTo(7, 66, 7, 76, 8, 9);
       Map_CenterOnFollowedPoint();
       System_Wait(1);
-      if (Event_GetFlag(0x109)) {
+      if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
         object = Actor_Get(gMainRoutineWork.currentOwner);
         height = Map_GetTerrainHeight(object->terrainId, object->x,
                                       object->z - object->y);

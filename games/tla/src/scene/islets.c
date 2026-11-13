@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x674, in ROM order.
 
+#include "flags.h"
 #include "shared/actors.h"
 #include "shared/effects.h"
 #include "battle.h"
@@ -1721,7 +1722,7 @@ void Func_02002f1c(void) {
   } while (i <= 18);
   state = gSceneState;
   next = &gSceneState[1];
-  if (!Event_GetFlag(0x109)) {
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     *state = 0;
     *next = 0;
   }
@@ -1743,7 +1744,7 @@ void Func_02002f1c(void) {
     FieldActor_WatchAndSetScript(9, 19);
     Actor_SetAnimation(19, 0);
     Actor_Get(19)->actionFlags &= ~1;
-  } else if (!Event_GetFlag(0x109)) {
+  } else if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     other = Actor_Get(9);
     other->facing = FACING_SOUTH + FACING_STEP;
     other->collisionFlags |= 0x80;
@@ -1797,7 +1798,7 @@ void Func_02003164(void) {
   map->value194 = zero;
   if (gMainRoutineWork.entrance == 11)
     Event_ClearFlag(0x12f);
-  if (!Event_GetFlag(0x109)) {
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     object->motionFlags = zero;
     FieldActor_SetSpritePriority(10, 1);
   }
@@ -1875,7 +1876,7 @@ void Func_0200329c(void) {
     PaletteCycle_Add(a0, a1, a2, a3);
   }
   PaletteCycle_Add(4, 12, 5, 4);
-  if (Event_GetFlag(0xaa5) && (done = Event_GetFlag(265)) == 0) {
+  if (Event_GetFlag(0xaa5) && (done = Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) == 0) {
     Actor_SetPosition(10, 0x1180000, 0x1d40000);
     Actor_Get(10)->motionFlags = done;
     {
@@ -1890,7 +1891,7 @@ void Func_0200329c(void) {
   FieldTask_AddFrame(Func_02001c4c, 0x480);
   if ((u16)(gMainRoutineWork.entrance - 4) <= 1) {
     Event_SetFlag(0x217);
-    if (!Event_GetFlag(265)) {
+    if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
       {
         s32 a3 = 0x4000;
 
@@ -1900,7 +1901,7 @@ void Func_0200329c(void) {
       System_Wait(1);
     }
   }
-  if (!Event_GetFlag(265)) {
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     s32 entrance = gMainRoutineWork.entrance;
 
     if (entrance == 3) {
@@ -1946,7 +1947,7 @@ void Func_0200329c(void) {
   Func_02003410();
   PaletteCycle_Add(3, 12, 5, 4);
   PaletteCycle_Add(4, 12, 5, 4);
-  if (Event_GetFlag(0xaa5) && (done = Event_GetFlag(265)) == 0) {
+  if (Event_GetFlag(0xaa5) && (done = Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) == 0) {
     Actor_SetPosition(10, 0x1180000, 0x1d40000);
     Actor_Get(10)->motionFlags = done;
     {
@@ -1961,7 +1962,7 @@ void Func_0200329c(void) {
   FieldTask_AddFrame(Func_02001c4c, 0x480);
   if ((u16)(gMainRoutineWork.entrance - 4) <= 1) {
     Event_SetFlag(0x217);
-    if (!Event_GetFlag(265)) {
+    if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
       {
         s32 a3 = 0x4000;
 
@@ -1971,7 +1972,7 @@ void Func_0200329c(void) {
       System_Wait(1);
     }
   }
-  if (!Event_GetFlag(265)) {
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     s32 entrance = gMainRoutineWork.entrance;
 
     if (entrance == 3) {

@@ -1,6 +1,7 @@
 /// @file
 /// Scene code of overlay 0x663, in ROM order.
 
+#include "flags.h"
 #include "../shared/map_cells.h"
 #include "../shared/actors.h"
 #include "system/main_routine_work.h"
@@ -1568,18 +1569,18 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov663Room2) {
     switch (gMainRoutineWork.entrance) {
     case 3:
-      if (!GameFlag_Test(265))
+      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
         LEADER()->z += 0x100000;
       Leader_Lift(0xffb80000);
       goto swaying;
     case 1:
     case 2:
-      if (!GameFlag_Test(265))
+      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
         LEADER()->z += 0x100000;
       Leader_Lift(0xffd80000);
       goto swaying;
     case 5:
-      if (!GameFlag_Test(265)) {
+      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
         LEADER()->x += 0x300000;
         LEADER()->y += 0x100000;
       }
@@ -1604,12 +1605,12 @@ s32 Scene_Initialize(void) {
       Func_02003ca0(gData_02003e4c);
       break;
     case 11:
-      if (!GameFlag_Test(265)) {
+      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
         LEADER()->x += 0x100000;
         LEADER()->y += 0xfff00000;
       }
     case 10:
-      if (!GameFlag_Test(265))
+      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
         LEADER()->z += 0x100000;
       Leader_Lift(0xffc80000);
     case 12:
@@ -1675,7 +1676,7 @@ s32 Scene_Initialize(void) {
       System_Wait(1);
       break;
     case 6:
-      if (!GameFlag_Test(265))
+      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
         LEADER()->y += 0x180000;
     case 7:
       Leader_Lift(0x480000);
@@ -1685,12 +1686,12 @@ s32 Scene_Initialize(void) {
       break;
     case 8:
     case 9:
-      if (!GameFlag_Test(265))
+      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
         LEADER()->z += 0x100000;
       Leader_Lift(0xffe80000);
       goto beam;
     case 10:
-      if (!GameFlag_Test(265))
+      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
         LEADER()->x += 0x300000;
     case 11:
       Leader_Lift(0x900000);
@@ -1733,10 +1734,10 @@ s32 Scene_Initialize(void) {
       }
       break;
     case 12:
-      if (!GameFlag_Test(265))
+      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
         LEADER()->y += 0xffe00000;
     case 13:
-      if (!GameFlag_Test(265))
+      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
         LEADER()->z += 0x100000;
       Leader_Lift(0xffd00000);
     case 14:
@@ -1759,7 +1760,7 @@ s32 Scene_Initialize(void) {
       Actor_SetSpritePriority(14, 1);
       Map_CenterOnFollowedPoint();
       System_Wait(1);
-      if (GameFlag_Test(265)) {
+      if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
         leader = LEADER();
         leader->terrainId = 0;
         leader->y = leader->terrainHeight =

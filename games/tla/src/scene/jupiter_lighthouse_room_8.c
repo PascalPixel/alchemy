@@ -178,7 +178,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
-  if (Event_GetFlag(0x109) == 0)
+  if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
     Event_ClearFlag(FLAG_PILLAR_DROPPED);
   if (Event_GetFlag(FLAG_PILLAR_DROPPED)) {
     struct Actor *object = Actor_Get(ACTOR_PILLAR);

@@ -2,6 +2,7 @@
 /// The Kandorean Temple's rooms: their tables' getters, the steam, vents and
 /// lifts.
 
+#include "flags.h"
 #include "../kandorean_temple.h"
 #include "field.h"
 #include "module/scene/kandorean_temple.h"
@@ -1582,7 +1583,7 @@ void KandoreanTemple_StartLiftRoom(void) {
   gKandoreanTemple_RightTimer = 0;
   gKandoreanTemple_LeftBobPhase = 0;
   gKandoreanTemple_RightBobPhase = 0;
-  if (GameFlag_Test(0x109) == 0) {
+  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (gMainRoutineWork.entrance == 5)
       KandoreanTemple_ArriveOnWestLift();
     else if (gMainRoutineWork.entrance == 6)
@@ -1638,7 +1639,7 @@ void KandoreanTemple_StartChestbeaterRoom(void) {
     Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
   }
-  if (GameFlag_Test(0x109) == 0) {
+  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (gMainRoutineWork.entrance == 2) {
       Actor_GetById(gMainRoutineWork.currentOwner)->y = 0x400000;
     } else if (gMainRoutineWork.entrance == 3 && Event_GetFlag(0x92d) == 0) {
@@ -1661,7 +1662,7 @@ void KandoreanTemple_RiseOnRightVent();
 void KandoreanTemple_StartVentRoom(void) {
   s32 t1, t2, t9, t19, t21, t39, t44, p_r3;
 
-  t1 = GameFlag_Test(0x109);
+  t1 = GameFlag_Test(FLAG_KEEP_PARTY_POSITION);
   if (t1 == 0)
     goto L_0200acd2;
   t2 = ((s32)Actor_GetById(9));
@@ -1713,7 +1714,7 @@ L_0200ad0a:
   KandoreanTemple_PrepareLiftBase(19);
   KandoreanTemple_PrepareLiftBase(20);
   Func_020053b8(gKandoreanTemple_PillarActors);
-  t39 = GameFlag_Test(0x109);
+  t39 = GameFlag_Test(FLAG_KEEP_PARTY_POSITION);
   if (t39 != 0)
     goto L_0200adda;
   if (gMainRoutineWork.entrance != 3) {
@@ -1733,7 +1734,7 @@ L_0200adda:
   gKandoreanTemple_RightBobPhase = 0;
   Task_AddFrame(KandoreanTemple_RunLeftVent, 0x480);
   Task_Add((s32)KandoreanTemple_RunRightVent, 0x480);
-  t44 = GameFlag_Test(0x109);
+  t44 = GameFlag_Test(FLAG_KEEP_PARTY_POSITION);
   if (t44 != 0)
     goto L_0200ae24;
   if (gMainRoutineWork.entrance != 5)

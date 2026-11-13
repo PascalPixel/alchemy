@@ -1,6 +1,7 @@
 /// @file
 /// Scene code of overlay 0x6b0, in ROM order.
 
+#include "flags.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -431,7 +432,7 @@ L_0200a1b4:
   }
   if ((Event_GetFlag(0xa85)) == 0)
     goto L_0200a2c6;
-  if ((Event_GetFlag(0x109)) != 0)
+  if ((Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) != 0)
     goto L_0200a2b8;
   if ((Event_GetFlag(0xa84)) != 0)
     goto L_0200a2b8;
@@ -511,7 +512,7 @@ L_0200a4a2:
   if (v_r2 != 12)
     goto L_0200a4f4;
   Teleporters_Find(35, 0x280, 0x380, 18, 68);
-  if ((Event_GetFlag(0x109)) != 0)
+  if ((Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) != 0)
     goto L_0200a6e6;
   Teleporter_PlaceArrival(36, -0x24, v_r7);
   goto L_0200a6e6;

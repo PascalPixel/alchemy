@@ -3,6 +3,7 @@
 
 // ---- games/tla/src/scene/kibombo/s2f34.c ----
 
+#include "flags.h"
 #include "../shared/actors.h"
 #include "../shared/tables.h"
 #include "../kibombo.h"
@@ -1008,7 +1009,7 @@ void Func_02004424(void) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   GameFlag_SetBit(0x8fc);
-  GameFlag_SetBit(0x109);
+  GameFlag_SetBit(FLAG_KEEP_PARTY_POSITION);
   Import_EventSetExitRequest(12);
 }
 
@@ -1125,7 +1126,7 @@ void Func_020047e4(void) {
   Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
   Event_ShowMessageAndWait(0x4011, 0);
   GameFlag_SetBit(0x8fc);
-  GameFlag_SetBit(265);
+  GameFlag_SetBit(FLAG_KEEP_PARTY_POSITION);
   Import_EventSetExitRequest(12);
 }
 
@@ -1151,7 +1152,7 @@ void Func_0200489c(void) {
   Event_Wait(120);
   Func_020045d0();
   GameFlag_SetBit(0x8fc);
-  GameFlag_SetBit(265);
+  GameFlag_SetBit(FLAG_KEEP_PARTY_POSITION);
   Import_EventSetExitRequest(12);
 }
 
@@ -1174,7 +1175,7 @@ void Func_02004978(void) {
   Event_Wait(120);
   Func_020045d0();
   GameFlag_SetBit(0x8fc);
-  GameFlag_SetBit(265);
+  GameFlag_SetBit(FLAG_KEEP_PARTY_POSITION);
   Import_EventSetExitRequest(12);
 }
 
@@ -1490,7 +1491,7 @@ void Func_0200516c(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  done = GameFlag_Test(265);
+  done = GameFlag_Test(FLAG_KEEP_PARTY_POSITION);
   if (!done) {
     actor->motionFlags = done;
     actor->y = PIXELS(42);
@@ -1777,7 +1778,7 @@ void Func_02005898(void) {
     }
   }
 #if TLA_PATCH_1
-  if (GameFlag_Test(0x109)) {
+  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
     object = Actor_GetById(16);
     object->x -= PIXELS(14);
     object->z -= PIXELS(8);

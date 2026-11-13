@@ -442,7 +442,7 @@ s32 Scene_Initialize(void) {
       Actor_SetSpriteFlags(actor, 0);
       MapGrid_CopyCellAttributes(33, 102, 1, 2, 37, 102);
       MapGrid_CopyCellAttributes(27, 44, 1, 1, 40, 46);
-    } else if (GameFlag_Test(0x109)) {
+    } else if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
       if ((actor->x >> 19) != 75) {
         MapGrid_CopyCellAttributes(33, 102, 1, 2, 37, 102);
       }

@@ -179,7 +179,7 @@ s32 Scene_Initialize(void) {
   Actor_GetById(13)->priorityFlags |= 32;
   Actor_ShowItemIconById(15, 457);
   if (!GameFlag_Test(0x901)) {
-    if (!GameFlag_Test(0x109)) {
+    if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
       Actor_GetById(14)->priorityFlags |= 128;
       object = Actor_GetById(15);
       object->priorityFlags |= 64;

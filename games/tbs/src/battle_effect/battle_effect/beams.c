@@ -97,9 +97,10 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     }
   }
   {
+    DrawRectangle *blitters = EFFECT_BLITTERS;
 
-    draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+    draw[0] = blitters[HEAP_SLOT_RAM_CODE];
+    draw[1] = blitters[HEAP_SLOT_RAM_CODE_2];
   }
   wait(1);
   // The picture, by BeamKind. An enemy user (unit id past PIERS) takes the
@@ -343,9 +344,10 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
                         COMPOSITE_LIGHTEN);
   }
   {
+    DrawRectangle *blitters = EFFECT_BLITTERS;
 
-    draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+    draw[0] = blitters[HEAP_SLOT_RAM_CODE];
+    draw[1] = blitters[HEAP_SLOT_RAM_CODE_2];
   }
   BattleCamera_SetViewAtPairMidpointFar(work->args->user,
                                         work->args->firstTarget, 130);

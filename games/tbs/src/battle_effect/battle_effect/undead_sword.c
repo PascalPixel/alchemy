@@ -19,6 +19,7 @@
 /// age in frames.
 void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   void **slots;
+  void **slot;
   struct BattleEffectWork *work;
   void *canvas;
   void *sprites;
@@ -37,10 +38,13 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   s32 picture;
   s32 size;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
+  slot = slots;
+  work = *slot++;
+  canvas = *slot;
   work->args = args;
-  sprites = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sprites =
+      HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_EFFECT, HEAP_SLOT_BATTLE_SHEET);
   EFFECT_START_NARROW_CANVAS(0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LimeColumnSheet, work->sheet, 1,

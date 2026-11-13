@@ -39,6 +39,7 @@
 /// nine sprites on frame 160 and releases them before closing the canvas.
 void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
+  void **slots;
   void *canvas;
   struct BattleCamera *camera;
   struct BattleEffectWork *work;
@@ -72,19 +73,24 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   struct SpritePlacement place;
   struct SpriteScale scale;
 
-  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
+  canvas = slots[0];
+  camera = HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_CAMERA);
+  work =
+      HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_BATTLE_EFFECT);
+  graphics =
+      HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
 
   BattleEffect_StartCanvasLayer(0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
+  draw[0] = (DrawRectangle)HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_CANVAS,
+                                          HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+  draw[1] = (DrawRectangle)HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_CANVAS,
+                                          HEAP_SLOT_RAM_CODE_2);
 
   resource = Resource_GetTableEntry((s32)&ResourceId_WhirlwindSheet);
   Iwram_CopyWords((void *)BG_PLTT, resource, 128);
@@ -166,8 +172,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       if (frame > index * 16) {
         battleObject = GetBattleObjectSlotFar(work->args->targets[index]);
         actor = battleObject->actor;
-        actor->x.fixed = (radius[index] * Trig_Sin(heading[index])) >> 1;
-        actor->z.fixed = (radius[index] * Trig_Cos(heading[index])) >> 1;
+        actor->x.fixed = radius[index] * Trig_Sin(heading[index]) >> 1;
+        actor->z.fixed = radius[index] * Trig_Cos(heading[index]) >> 1;
 
         // The spin gains 48/65536 turn a frame each frame. Within 16 pixels
         // of the middle a target rises 6 pixels a frame, else half a pixel,

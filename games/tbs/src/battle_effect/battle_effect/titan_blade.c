@@ -37,6 +37,7 @@
 /// (BattleEffect_StepPaletteToResource), one level a frame.
 void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
   void **slots;
+  void **slot;
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle blitters[2];
@@ -48,9 +49,12 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
   s32 sparkOriginX;
   s32 i;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
+  slot = slots;
+  work = *slot++;
+  canvas = *slot;
+  sheet =
+      HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_EFFECT, HEAP_SLOT_BATTLE_SHEET);
 
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
@@ -60,10 +64,12 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
 
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  blitters[0] = slots[HEAP_SLOT_RAM_CODE - HEAP_SLOT_BATTLE_EFFECT];
+  blitters[0] =
+      HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_EFFECT, HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  blitters[1] = slots[HEAP_SLOT_RAM_CODE_2 - HEAP_SLOT_BATTLE_EFFECT];
+  blitters[1] =
+      HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_EFFECT, HEAP_SLOT_RAM_CODE_2);
 
   Resource_LoadAndDecompress((s32)&ResourceId_SwordSheet,
                              work->sheet + TITAN_BLADE_SWORD_PICTURE, 1, 1);

@@ -28,7 +28,7 @@ extern char SceneId_Ov678Room10;
 extern char SceneId_Ov678Room11;
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Func_02002764(s32 id, s32 a);
+void Vent_SetGust(s32 id, s32 a);
 void Func_02002778(s32 a, s32 b);
 void Event_End(void);
 void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
@@ -40,17 +40,22 @@ void Func_020029a8(s32 a, s32 b, s32 c);
 void Actor_StartScript(struct Actor *object, const void *data);
 void Animation_SetStateFlags(struct Actor *object, u32 value);
 
-extern s32 gData_02003458;
-extern s32 gData_0200345c;
-extern s32 gData_02003460;
+extern s32 gTaopoSwamp_SteamPuffs;
+extern s32 gTaopoSwamp_PassageRows;
+extern s32 gTaopoSwamp_PoolFrames;
 extern const u8 gData_020029c8[];
 void Func_02002948(void);
-void Func_02002084(s32 a);
+void TaopoSwamp_DarkenRoom(s32 a);
 void Func_020029a0(s32 message);
 void Func_020027f8(struct Actor *object, s32 a);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 a);
 s32 Func_02002730(void);
-void Func_0200271c(s32 a, s32 b);
+#ifdef MODERN
+// The vent cycles call Vent_SetActive with no prototype in scope, as their
+// bytes need: the implicit int return sets its flag before its index. A
+// current GCC gets it here.
+void Vent_SetActive(s32 index, s32 active);
+#endif
 s32 Func_0200273c(s32 a);
 void Func_02002978(s32 a);
 
@@ -104,24 +109,24 @@ extern u8 gData_020023c4[];
 s32 Math_Cosine(s32 angle);
 void Func_02002400(struct Actor *object);
 extern const u8 gData_02002af4[];
-extern s32 gData_020035f0;
+extern s32 gTaopoSwamp_SparkleFrame;
 extern u8 gMapShapeGrid[];
 void Map_CenterOnFollowedPoint(void);
 void DisplayBlend_EnableRunScript(void);
-void Func_02001eb8(void);
+void TaopoSwamp_TwinkleStarDust(void);
 void Func_02001ff0(s32 x, s32 z);
-void Func_0200237c(void);
-void Func_02000920(s32 a, s32 id);
+void TaopoSwamp_SaveFirmGround(void);
+void TaopoSwamp_FillDripSpot(s32 a, s32 id);
 extern const u8 gData_02002a60[];
 extern const u8 gData_02002a6c[];
-void Func_02000810(s32 id);
-void Func_020008d8(s32 id);
+void TaopoSwamp_ShatterIcePillar(s32 id);
+void TaopoSwamp_BlowAwayPuddle(s32 id);
 extern const u8 gData_02002a48[];
 extern const u8 gData_02002a54[];
 extern u8 MsgIThoughtI;
-void Func_02000c24(void);
-void Func_02000ca0(void);
-void Func_02000cec(void);
+void TaopoSwamp_PuffSteam(void);
+void TaopoSwamp_OpenPassage(void);
+void TaopoSwamp_FlickerPool(void);
 
 // DEFINE_ macros in shared/routines.h call it by this name.
 static __inline__ void Func_02002840_(s32 a, s32 b, s32 c, s32 d, s32 e,
@@ -209,9 +214,12 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return (const struct ActorPlacement *)gData_02002c54;
 }
 
-void Func_02000104(s32 a, s32 b) { GameFlag_SetBit(b + 0x8d8); }
+/// Whirlwind on one of the bushes 8 to 12: its flag (0x8d8 plus its id) keeps
+/// it gone.
+void TaopoSwamp_BlowAwayBush(s32 a, s32 b) { GameFlag_SetBit(b + 0x8d8); }
 
-void Func_02000118(void) {
+/// Growth on the sprout, actor 13: the vine's cells become climbable.
+void TaopoSwamp_GrowVine(void) {
   MapGrid_CopyCellAttributes(50, 16, 1, 2, 47, 16);
   Event_SetFlag(0x220);
 }
@@ -223,7 +231,9 @@ void Animation_ApplyChildValue(struct ChildGroup *group, s32 value);
 
 // When actor id stands at x 12, inside an event: the actor drops in place, then
 // for 25 frames throws splashes, then two sparks, and sets flag 0x8e5.
-void Func_0200013c(s32 unused, s32 id) {
+/// Move on the small pillar, actor 14, once it stands at cell x 12: it sinks
+/// into the mud with splashes and two sparks, and flag 0x8e5 keeps it gone.
+void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
   struct Actor *actor = Actor_GetById(id);
   struct Actor *splash, *spark;
   struct FieldSprite *sprite, *splashSprite, *sparkSprite;
@@ -328,7 +338,9 @@ struct MainRoutineWork254 {
   u16 value;
 };
 
-void Func_020003c4(void) {
+/// Until flag 0x9b6 is set, the bush hides the Mad Plant, which the party
+/// fights from encounter table 106.
+void TaopoSwamp_StartMadPlantBattle(void) {
   Func_02002990_(76, 70, 14, 8, 14, 37, 0);
   if (!Event_GetFlag(0x9b6)) {
     Func_020029a8_(249, 344, 648);
@@ -338,7 +350,8 @@ void Func_020003c4(void) {
   }
 }
 
-void Func_02000428(s32 a) {
+/// The leader drops through a hole in the floor to the room below.
+void TaopoSwamp_FallThroughHole(s32 a) {
   FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
   Func_020028e0_(gMainRoutineWork.currentOwner, 6, 0x1000);
   Event_PlaySound(310);
@@ -346,19 +359,21 @@ void Func_02000428(s32 a) {
   FieldEvent_SetExitRequest(a);
 }
 
-void Func_02000464(s32 a, s32 id) {
+/// Move on pillar 9 or 10 to the cell over its vent: the vent's gust is
+/// redirected, and flag 0xa6d or 0xa6e keeps the pillar there.
+void TaopoSwamp_PushPillarOverVent(s32 a, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (id == 9) {
     if (object->x >> 20 == 17) {
       object->z += 0x10000;
-      Func_02002764(2, 0x80000);
+      Vent_SetGust(2, 0x80000);
       Event_SetFlag(0xa6d);
     }
   } else if (id == 10) {
     if (object->x >> 20 == 29) {
       object->z += 0x10000;
-      Func_02002764(8, 0x80000);
+      Vent_SetGust(8, 0x80000);
       Event_SetFlag(0xa6e);
     }
   }
@@ -367,13 +382,15 @@ void Func_02000464(s32 a, s32 id) {
 extern u8 gData_020029b8[];
 extern u8 gData_020029c0[];
 
-void Func_020004c8(s32 hole) {
+/// Stepping on a working vent: the gust pushes the leader back until a wall
+/// stops them, or down the hole.
+void TaopoSwamp_StepOnVent(s32 hole) {
   struct Actor *leader;
   struct Vector3 position;
   s32 found, result, slip;
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov678Room5) {
-    found = Func_02002708(gData_020029b8[hole - 10]);
+    found = Vent_IsActive(gData_020029b8[hole - 10]);
     if (hole == 12 && Event_GetFlag(0xa6e))
       return;
     if (hole == 18 && Event_GetFlag(0xa6d))
@@ -382,19 +399,19 @@ void Func_020004c8(s32 hole) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov678Room7) {
     u8 *table = gData_020029c0 + 1;
     s32 at = hole - 10;
-    found = Func_02002708(table[at]);
+    found = Vent_IsActive(table[at]);
     if (hole == 10 && Event_GetFlag(545))
       return;
     if (hole == 12 && Event_GetFlag(545))
       return;
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov678Room8) {
-    found = Func_02002708(hole - 10);
+    found = Vent_IsActive(hole - 10);
     if (hole == 10 && Event_GetFlag(545))
       return;
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov678Room9)
-    found = Func_02002708(hole - 10);
+    found = Vent_IsActive(hole - 10);
   if (found == 0)
     return;
   leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -404,7 +421,7 @@ void Func_020004c8(s32 hole) {
 sink:
   if (result < 0) {
     leader->facing = 0x4000;
-    Func_02000428(hole);
+    TaopoSwamp_FallThroughHole(hole);
     return;
   }
   leader->z += 0x20000;
@@ -430,7 +447,9 @@ test:
     goto sink;
 }
 
-void Func_0200065c(void) {
+/// The gust from the covered vent knocks the Venus Djinni, actor 8, down one
+/// level in three hops (flag 0x310).
+void TaopoSwamp_BlowFlowerOffLedge(void) {
   struct Actor *object = Actor_Get(8);
   s32 speed;
   s32 i;
@@ -472,7 +491,9 @@ void Func_02000744(s32 a, s32 id) {
   }
 }
 
-void Func_02000784(s32 a, s32 id) {
+/// Douse on the circular spot, actor 8: a puddle the next gust blows away
+/// unless Frost turns it to an ice pillar first.
+void TaopoSwamp_DouseVentSpot(s32 a, s32 id) {
   FieldActor_SetSpritePriority(id, 3);
   Actor_Get(id)->priorityFlags |= 2;
   Actor_SetAnimation(id, 1);
@@ -480,9 +501,11 @@ void Func_02000784(s32 a, s32 id) {
   Event_SetFlag(0x222);
 }
 
-DEFINE_FUNC_020007BC(Func_020007bc, 28, 8, 26)
+DEFINE_FUNC_020007BC(TaopoSwamp_FreezeVentSpot, 28, 8, 26)
 
-void Func_02000810(s32 id) {
+/// The gust breaks the ice pillar on the vent spot, and a leader standing on it
+/// hops off.
+void TaopoSwamp_ShatterIcePillar(s32 id) {
   struct Actor *leader;
   struct Actor *object;
   s32 zero = 0;
@@ -508,7 +531,8 @@ void Func_02000810(s32 id) {
   MapGrid_CopyCellAttributes(22, 8, 1, 1, 26, 8);
 }
 
-void Func_020008d8(s32 id) {
+/// The gust blows the puddle off the vent spot.
+void TaopoSwamp_BlowAwayPuddle(s32 id) {
   Actor_SetAnimation(id, 7);
   FieldActor_SetSpritePriority(id, 3);
   Actor_Get(id)->priorityFlags |= 2;
@@ -518,7 +542,9 @@ void Func_020008d8(s32 id) {
   Event_ClearFlag(0x222);
 }
 
-void Func_02000920(s32 a, s32 id) {
+/// A drop or Douse on the spot under the drip: the puddle is frozen solid by
+/// Frost once it is full (Douse, or more than three drops).
+void TaopoSwamp_FillDripSpot(s32 a, s32 id) {
   FieldActor_SetSpritePriority(id, 3);
   Actor_Get(id)->priorityFlags |= 2;
   Actor_SetAnimation(id, 1);
@@ -528,9 +554,11 @@ void Func_02000920(s32 a, s32 id) {
   }
 }
 
-DEFINE_FUNC_020007BC(Func_0200096c, 23, 27, 25)
+DEFINE_FUNC_020007BC(TaopoSwamp_FreezeDripSpot, 23, 27, 25)
 
-void Func_020009c0(s32 id) {
+/// As TaopoSwamp_ShatterIcePillar, for the spot the ceiling drips onto, whose
+/// puddle size (byte flag 0x230) starts again.
+void TaopoSwamp_ShatterDripIcePillar(s32 id) {
   struct Actor *leader;
   struct Actor *object;
 
@@ -556,7 +584,8 @@ void Func_020009c0(s32 id) {
   MapGrid_CopyCellAttributes(1, 1, 1, 1, 25, 27);
 }
 
-void Func_02000a94(s32 id) {
+/// As TaopoSwamp_BlowAwayPuddle, for the spot the ceiling drips onto.
+void TaopoSwamp_BlowAwayDripPuddle(s32 id) {
   s32 zero = 0;
 
   Actor_SetAnimation(id, 7);
@@ -568,13 +597,17 @@ void Func_02000a94(s32 id) {
   GameFlag_SetByte(0x230, 0);
 }
 
-void Func_02000adc(s32 a, s32 id) {
+/// Douse on the red glowing rock by the lava, actor 9: it cools, and Move can
+/// push it.
+void TaopoSwamp_CoolLavaRock(s32 a, s32 id) {
   Actor_SetAnimation(id, 2);
   Event_SetFlag(0x331);
   Event_ClearFlag(0x332);
 }
 
-void Func_02000afc(s32 a, s32 id) {
+/// Move on the cooled rock at cell x 7: it sinks into the lava as a stepping
+/// stone.
+void TaopoSwamp_PushLavaRockIn(s32 a, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (object->x >> 20 == 7) {
@@ -587,14 +620,17 @@ void Func_02000afc(s32 a, s32 id) {
   }
 }
 
-void Func_02000b58(s32 a, s32 id) {
+/// Douse on the red rock Tremor knocked out of the pillar, actor 10.
+void TaopoSwamp_CoolPillarRock(s32 a, s32 id) {
   Actor_SetAnimation(id, 2);
   Event_SetFlag(0x334);
   Event_ClearFlag(0x335);
   MapGrid_CopyCellAttributes(27, 14, 1, 1, 27, 13);
 }
 
-void Func_02000b90(s32 a, s32 id) {
+/// Move on the cooled pillar rock at cell z 16: it slides two cells and sinks
+/// into the lava.
+void TaopoSwamp_PushPillarRockIn(s32 a, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (object->z >> 20 == 16) {
@@ -611,17 +647,18 @@ void Func_02000b90(s32 a, s32 id) {
   }
 }
 
-void Func_02000c14(struct Actor *object) {
+void TaopoSwamp_SpinBoulder(struct Actor *object) {
   *(s16 *)((u8 *)object->sprite + 18) -= 0x800;
 }
 
-void Func_02000c24(void) {
+/// One puff of steam from the cooling lava, until the count runs out.
+void TaopoSwamp_PuffSteam(void) {
   s32 a;
   s32 x;
   s32 z;
   struct Actor *object;
 
-  gData_02003458--;
+  gTaopoSwamp_SteamPuffs--;
   a = Random16Far() * 32;
   x = Random16Far() * 16 + a + 0x12c0000;
   z = Random16Far() * 16 + a + 0x1040000;
@@ -629,30 +666,35 @@ void Func_02000c24(void) {
   Actor_StartScript(object, gData_020029c8);
   Actor_SetSingleChildFlags(object, 0);
   Animation_SetStateFlags(object, 1);
-  if (gData_02003458 == 0)
-    FieldTask_Remove(Func_02000c24);
+  if (gTaopoSwamp_SteamPuffs == 0)
+    FieldTask_Remove(TaopoSwamp_PuffSteam);
 }
 
-void Func_02000ca0(void) {
-  s32 timer = --gData_0200345c;
+/// The passage behind the pillar opens, a row of cells at a time.
+void TaopoSwamp_OpenPassage(void) {
+  s32 timer = --gTaopoSwamp_PassageRows;
   s32 step = timer / 8;
 
   MapGrid_CopyCells(47 - (timer & 1) * 2, 64 - step, 2, step, 29, 15 - step);
-  if (gData_0200345c == 0)
-    FieldTask_Remove(Func_02000ca0);
+  if (gTaopoSwamp_PassageRows == 0)
+    FieldTask_Remove(TaopoSwamp_OpenPassage);
 }
 
-void Func_02000cec(void) {
-  s32 n = --gData_02003460;
+/// The drained pool's two frames in turn, until the count runs out.
+void TaopoSwamp_FlickerPool(void) {
+  s32 n = --gTaopoSwamp_PoolFrames;
 
   MapGrid_CopyCells(50, (n & 1) * 5 + 59, 13, 5, 18, 15);
-  if (gData_02003460 == 0)
-    FieldTask_Remove(Func_02000cec);
+  if (gTaopoSwamp_PoolFrames == 0)
+    FieldTask_Remove(TaopoSwamp_FlickerPool);
 }
 
 extern u8 gData_02002a04[];
 
-void Func_02000d2c(void) {
+/// Tremor on the pillar with the huge rock on top, actor 19: the rock rolls off
+/// and lands, a red rock pops out, clods burst, the pool drains and the passage
+/// opens (flag 0x330).
+void TaopoSwamp_TremorPillar(void) {
   struct Actor *rock = Actor_Get(19);
   struct Actor *clod;
   s32 i, row, cosine;
@@ -668,7 +710,7 @@ void Func_02000d2c(void) {
     rock->x -= Math_Cosine(((struct FieldSprite *)rock->sprite)->rotation) / 2;
     rock->targetX = 0x80000000;
   }
-  rock->update = Func_02000c14;
+  rock->update = TaopoSwamp_SpinBoulder;
   Actor_SetSpeed(19, 0x20000, 0x10000);
   Actor_SetDestination(19, 492, 246);
   rock->gravity = 0xcccc;
@@ -713,7 +755,7 @@ next:
   if (i >= 0)
     goto burst;
   MapGrid_WaitForShakeToSettle();
-  Task_AddFrame(Func_02000ca0, 0x480);
+  Task_AddFrame(TaopoSwamp_OpenPassage, 0x480);
   System_Wait(40);
   FieldCamera_SetSpeed(0xe666, 0x1ccc);
   FieldCamera_MoveTo(0x1500000, -1, 0x1180000, 1);
@@ -726,22 +768,25 @@ drain:
   i--;
   if (i > 0)
     goto drain;
-  Task_AddFrame(Func_02000c24, 0x480);
+  Task_AddFrame(TaopoSwamp_PuffSteam, 0x480);
   System_Wait(60);
-  Task_AddFrame(Func_02000cec, 0x480);
+  Task_AddFrame(TaopoSwamp_FlickerPool, 0x480);
   System_Wait(24);
   FieldEvent_Wait(120);
   Event_End();
   Event_SetFlag(0x330);
 }
 
-void Func_02000f9c(s32 a, s32 id) {
+/// Douse on the red rock in the lower left corner, actor 8, on the way to the
+/// Vial's chest.
+void TaopoSwamp_CoolChestRock(s32 a, s32 id) {
   Actor_SetAnimation(id, 2);
   Event_SetFlag(0x338);
   Event_ClearFlag(0x339);
 }
 
-void Func_02000fbc(s32 a, s32 id) {
+/// Move on the cooled rock at cell z 21: it sinks into the lava.
+void TaopoSwamp_PushChestRockIn(s32 a, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (object->z >> 20 == 21) {
@@ -754,13 +799,17 @@ void Func_02000fbc(s32 a, s32 id) {
   }
 }
 
-void Func_02001018(s32 a, s32 id) {
+/// Douse on the red rock in the upper right corner, actor 9, by the other way
+/// out.
+void TaopoSwamp_CoolExitRock(s32 a, s32 id) {
   Actor_SetAnimation(id, 2);
   Event_SetFlag(0x33b);
   Event_ClearFlag(0x33c);
 }
 
-void Func_02001038(s32 a, s32 id) {
+/// Move on the cooled rock at cell x 31: it slides two cells and sinks into the
+/// lava.
+void TaopoSwamp_PushExitRockIn(s32 a, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (object->x >> 20 == 31) {
@@ -781,24 +830,28 @@ void Func_02001038(s32 a, s32 id) {
 void Func_020010bc(void) { Func_02002948(); }
 #endif
 
-void Func_020010c4(s32 a, s32 id) {
+/// Douse on the glowing rock that lights the dark room, actor 8: the lights go
+/// out and Move can push it aside.
+void TaopoSwamp_CoolDarkRock(s32 a, s32 id) {
   Actor_SetAnimation(id, 2);
   Event_SetFlag(0x340);
   Event_ClearFlag(0x341);
   MapGrid_CopyCellAttributes(7, 39, 1, 1, 7, 38);
-  Func_02002084(1);
+  TaopoSwamp_DarkenRoom(1);
 }
 
-void Func_02001100(s32 a, s32 id) {
+/// Douse on the glowing rock of the last chamber, actor 9: the lights go out
+/// and the Star Dust's sparkle shows in the dark.
+void TaopoSwamp_CoolLastRock(s32 a, s32 id) {
   Actor_SetAnimation(id, 2);
   Event_SetFlag(0x342);
   Event_ClearFlag(0x343);
-  Func_02002084(1);
+  TaopoSwamp_DarkenRoom(1);
 }
 
 void Func_02001128(s32 a) { Func_02002958_(a, 64, 0x348); }
 
-void Func_02001138(void) { Func_020029a0((s32)&MsgIThoughtI); }
+void TaopoSwamp_ShowSparkleMessage(void) { Func_020029a0((s32)&MsgIThoughtI); }
 
 extern const u8 gData_0200302c[];
 extern const u8 gData_02003038[];
@@ -841,7 +894,8 @@ const struct Trigger *Scene_GetEvents(void) {
   return (const struct Trigger *)gData_0200302c;
 }
 
-s32 Func_02001228(struct Actor *object) {
+/// A falling drop splashes where it lands.
+s32 TaopoSwamp_LandDrop(struct Actor *object) {
   s32 y = object->y;
   struct Actor *spark;
   s32 scale;
@@ -864,7 +918,8 @@ s32 Func_02001228(struct Actor *object) {
   return 1;
 }
 
-void Func_02001288(void) {
+/// Now and then a drop falls at a random place along the swamp's edge.
+void TaopoSwamp_DripAtRandom(void) {
   if ((gFrameCount & 7) == 0 && (u32)Random16Far() < 0x4000) {
     s32 x = (Random16Far() << 5) + 0x2080000;
     s32 z = 0xb00000 - (Random16Far() << 3);
@@ -883,19 +938,11 @@ void Func_02001288(void) {
   }
 }
 
-// The vent setter called through a function type returning s32; each caller's
-// tag says why.
-#define Vent_SetActive(index, active)                                          \
-  ((s32 (*)(s32, s32))Func_0200271c)(index, active)
-
-void Func_02001304(void) {
+/// The vent room's cycle of 480 frames: two sets of vents blow in turn, and
+/// while the second blows over the covered vent the Djinni is knocked down.
+void TaopoSwamp_CycleDjinniVents(void) {
   s32 timer = Func_02002730();
 
-  /* FAKEMATCH(signature): Func_0200271c called through Vent_SetActive as
-   * returning s32, so the arguments are set up as for a call whose value is
-   * used (flag before index); as a call to the void setter local.h declares
-   * for the modules that match with it, 32 of 117 instructions differ in
-   * tla-en. */
   switch (timer) {
   case 0:
     Vent_SetActive(0, 1);
@@ -936,14 +983,60 @@ void Func_02001304(void) {
   Func_0200273c(480);
 }
 
-DEFINE_FUNC_02001424(Func_02001424, Func_02000810, 8, Func_020008d8)
+/// The cycle of the vent under the circular spot: 120 frames of gust in 480
+/// that break its ice pillar or blow its puddle away.
+void TaopoSwamp_CycleSpotVent(void) {
+  s32 timer = Func_02002730();
 
-DEFINE_FUNC_02001424(Func_020014a0, Func_020009c0, 10, Func_02000a94)
+  switch (timer) {
+  case 0:
+    Vent_SetActive(0, 1);
+    Vent_SetActive(1, 1);
+    Func_02002978(170);
+    break;
+  case 120:
+    Vent_SetActive(0, 0);
+    Vent_SetActive(1, 0);
+    Func_02002978(-1);
+    break;
+  }
+  if ((u32)(timer - 11) <= 118) {
+    if (Event_GetFlag(0x221))
+      TaopoSwamp_ShatterIcePillar(8);
+    else if (Event_GetFlag(0x220))
+      TaopoSwamp_BlowAwayPuddle(8);
+  }
+  Func_0200273c(480);
+}
 
-void Func_0200151c(void) {
-  /* FAKEMATCH(signature): Func_0200271c called as returning s32, as in
-   * Func_02001304; as a call to the void setter, 4 of 28 instructions differ in
-   * tla-en. */
+/// As TaopoSwamp_CycleSpotVent, for the spot the ceiling drips onto.
+void TaopoSwamp_CycleDripVent(void) {
+  s32 timer = Func_02002730();
+
+  switch (timer) {
+  case 0:
+    Vent_SetActive(0, 1);
+    Vent_SetActive(1, 1);
+    Func_02002978(170);
+    break;
+  case 120:
+    Vent_SetActive(0, 0);
+    Vent_SetActive(1, 0);
+    Func_02002978(-1);
+    break;
+  }
+  if ((u32)(timer - 11) <= 118) {
+    if (Event_GetFlag(0x221))
+      TaopoSwamp_ShatterDripIcePillar(10);
+    else if (Event_GetFlag(0x220))
+      TaopoSwamp_BlowAwayDripPuddle(10);
+  }
+  Func_0200273c(480);
+}
+
+/// The cycle of the two vents in the room of the cooled rocks: 180 frames of
+/// gust in 240.
+void TaopoSwamp_CycleRockRoomVents(void) {
   switch (Func_02002730()) {
   case 0:
     Vent_SetActive(0, 1);
@@ -959,7 +1052,9 @@ void Func_0200151c(void) {
   Func_0200273c(240);
 }
 
-s32 Func_02001564(struct Actor *object) {
+/// A drop from the ceiling lands: it splashes and grows the puddle below by
+/// one, up to four.
+s32 TaopoSwamp_LandDrip(struct Actor *object) {
   s32 flag;
   s32 count;
   struct Actor *spark;
@@ -990,7 +1085,7 @@ s32 Func_02001564(struct Actor *object) {
         GameFlag_SetByte(0x230, count);
       }
       if (count != 0)
-        Func_02000920(0, 10);
+        TaopoSwamp_FillDripSpot(0, 10);
       object = Actor_Get(10);
       object->scaleX = count << 14;
       object->scaleY = count << 14;
@@ -1000,7 +1095,8 @@ s32 Func_02001564(struct Actor *object) {
   return 1;
 }
 
-void Func_02001618(void) {
+/// Every 64 frames a drop falls from the ceiling onto the vent spot.
+void TaopoSwamp_DripFromCeiling(void) {
   if ((gFrameCount & 63) == 0) {
     s32 x = 0x1980000;
     s32 z = 0x1b80000;
@@ -1030,9 +1126,9 @@ DEFINE_FUNC_02001684(Func_020016fc, 0x1a00000, 0x1600000)
 
 extern const u8 gData_02002a78[], gData_02002ab6[], gData_02002abc[],
     gData_02002aca[], gData_02002ad8[];
-void Func_02002120(void);
+void TaopoSwamp_ResetMud(void);
 void Actor_SetWideSprite(s32 id, s32 wide);
-void Func_02002614(u16 *points, u16 *values, s32 arg);
+void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg);
 
 #if !TLA_PATCH_1
 s32 Scene_Initialize(void) {
@@ -1045,7 +1141,7 @@ s32 Scene_Initialize(void) {
   if (scene == (s32)&SceneId_Ov678Room2) {
     gMainRoutineWork.retreatScene = (s32)&SceneId_Ov678Room1;
     gMainRoutineWork.retreatEntrance = 1;
-    Func_02002120();
+    TaopoSwamp_ResetMud();
     for (id = 8; id <= 12; id++) {
       if (Event_GetFlag(id + 0x8d8))
         Actor_SetPosition(id, 0, 0);
@@ -1062,7 +1158,7 @@ s32 Scene_Initialize(void) {
       dummy->scaleY = 0xc000;
       dummy->motionFlags = 0;
     }
-    Task_Add(Func_02001288, 0x480);
+    Task_Add(TaopoSwamp_DripAtRandom, 0x480);
     ((s8 *)map)[23] = (((s8 *)map)[23] & ~12) | 8;
     gDecodeFillByte = 93;
   } else if (scene == (s32)&SceneId_Ov678Room3) {
@@ -1084,12 +1180,12 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(0xa6e))
       Call3(Actor_SetHorizontalPositionWithTerrain, 10, PIXELS(472),
             PIXELS(248));
-    Func_02002614(gData_02002a78, gData_02002ab6, Func_02001304);
+    TaopoSwamp_StartVents(gData_02002a78, gData_02002ab6, TaopoSwamp_CycleDjinniVents);
   } else if (scene == (s32)&SceneId_Ov678Room7) {
     Func_02002960(0);
     Task_Add(Func_02001684, 0x480);
     if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5)
-      Func_02002614(gData_02002abc, 0, Func_02001424);
+      TaopoSwamp_StartVents(gData_02002abc, 0, TaopoSwamp_CycleSpotVent);
     piece = Actor_GetById(8);
     piece->motionFlags = 0;
     Actor_SetSingleChildFlags(piece, 0);
@@ -1118,11 +1214,11 @@ s32 Scene_Initialize(void) {
       Func_02002980();
       Call4(Func_02002988, 0, 776, 8, 9);
     } else {
-      Value3((s32 (*)())Func_02002614, (s32)gData_02002aca, 0,
-             (s32)Func_020014a0);
+      Value3((s32 (*)())TaopoSwamp_StartVents, (s32)gData_02002aca, 0,
+             (s32)TaopoSwamp_CycleDripVent);
       Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
       Call2(Task_Add, Func_020016fc, 0x480);
-      Call2(Task_Add, Func_02001618, 0x480);
+      Call2(Task_Add, TaopoSwamp_DripFromCeiling, 0x480);
       object = Actor_GetById(10);
       object->motionFlags = 0;
       Actor_SetSingleChildFlags(object, 0);
@@ -1137,7 +1233,7 @@ s32 Scene_Initialize(void) {
       Call6(Map_CopyCellsRect, 50, 36, 13, 13, 60, 5);
     }
   } else if (scene == (s32)&SceneId_Ov678Room9) {
-    Func_02002614(gData_02002ad8, 0, Func_0200151c);
+    TaopoSwamp_StartVents(gData_02002ad8, 0, TaopoSwamp_CycleRockRoomVents);
     if (!Event_GetFlag(824)) {
       Event_SetFlag(825);
     } else if (Event_GetFlag(826)) {
@@ -1216,13 +1312,13 @@ s32 Scene_Initialize(void) {
     entrance = gMainRoutineWork.entrance;
     if ((u32)(entrance - 2) <= 1) {
       if (Event_GetFlag(0x340))
-        Func_02002084(0);
+        TaopoSwamp_DarkenRoom(0);
       else
         Func_02002114(0);
     }
     if (entrance == 6) {
       if (Event_GetFlag(834))
-        Func_02002084(0);
+        TaopoSwamp_DarkenRoom(0);
       else
         Func_02002114(0);
     }
@@ -1243,7 +1339,7 @@ s32 Scene_Initialize(void) {
   if (scene == (s32)&SceneId_Ov678Room2) {
     gMainRoutineWork.retreatScene = (s32)&SceneId_Ov678Room1;
     gMainRoutineWork.retreatEntrance = 1;
-    Func_02002120();
+    TaopoSwamp_ResetMud();
     for (id = 8; id <= 12; id++) {
       if (Event_GetFlag(id + 0x8d8))
         Actor_SetPosition(id, 0, 0);
@@ -1260,7 +1356,7 @@ s32 Scene_Initialize(void) {
       dummy->scaleY = 0xc000;
       dummy->motionFlags = 0;
     }
-    Task_Add(Func_02001288, 0x480);
+    Task_Add(TaopoSwamp_DripAtRandom, 0x480);
     ((s8 *)map)[23] = (((s8 *)map)[23] & ~12) | 8;
     gDecodeFillByte = 93;
   } else if (scene == (s32)&SceneId_Ov678Room3) {
@@ -1285,7 +1381,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(0xa6e))
       Call3(Actor_SetHorizontalPositionWithTerrain, 10, PIXELS(472),
             PIXELS(248));
-    Func_02002614(gData_02002a78, gData_02002ab6, Func_02001304);
+    TaopoSwamp_StartVents(gData_02002a78, gData_02002ab6, TaopoSwamp_CycleDjinniVents);
   } else if (scene == (s32)&SceneId_Ov678Room6) {
     *effect = 516;
   } else if (scene == (s32)&SceneId_Ov678Room7) {
@@ -1293,7 +1389,7 @@ s32 Scene_Initialize(void) {
     Func_02002960(0);
     Task_Add(Func_02001684, 0x480);
     if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5)
-      Func_02002614(gData_02002abc, 0, Func_02001424);
+      TaopoSwamp_StartVents(gData_02002abc, 0, TaopoSwamp_CycleSpotVent);
     piece = Actor_GetById(8);
     piece->motionFlags = 0;
     Actor_SetSingleChildFlags(piece, 0);
@@ -1323,11 +1419,11 @@ s32 Scene_Initialize(void) {
       Func_02002980();
       Call4(Func_02002988, 0, 776, 8, 9);
     } else {
-      Value3((s32 (*)())Func_02002614, (s32)gData_02002aca, 0,
-             (s32)Func_020014a0);
+      Value3((s32 (*)())TaopoSwamp_StartVents, (s32)gData_02002aca, 0,
+             (s32)TaopoSwamp_CycleDripVent);
       Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
       Call2(Task_Add, Func_020016fc, 0x480);
-      Call2(Task_Add, Func_02001618, 0x480);
+      Call2(Task_Add, TaopoSwamp_DripFromCeiling, 0x480);
       object = Actor_GetById(10);
       object->motionFlags = 0;
       Actor_SetSingleChildFlags(object, 0);
@@ -1343,7 +1439,7 @@ s32 Scene_Initialize(void) {
     }
   } else if (scene == (s32)&SceneId_Ov678Room9) {
     *effect = 516;
-    Func_02002614(gData_02002ad8, 0, Func_0200151c);
+    TaopoSwamp_StartVents(gData_02002ad8, 0, TaopoSwamp_CycleRockRoomVents);
     if (!Event_GetFlag(824)) {
       Event_SetFlag(825);
     } else if (Event_GetFlag(826)) {
@@ -1419,13 +1515,13 @@ s32 Scene_Initialize(void) {
     entrance = gMainRoutineWork.entrance;
     if ((u32)(entrance - 2) <= 1) {
       if (Event_GetFlag(0x340))
-        Func_02002084(0);
+        TaopoSwamp_DarkenRoom(0);
       else
         Func_02002114(0);
     }
     if (entrance == 6) {
       if (Event_GetFlag(834))
-        Func_02002084(0);
+        TaopoSwamp_DarkenRoom(0);
       else
         Func_02002114(0);
     }
@@ -1438,13 +1534,14 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_02001eb8(void) {
+/// The Star Dust's sparkle in the dark, until it is dug up (flag 0x348).
+void TaopoSwamp_TwinkleStarDust(void) {
   s32 frame = -1;
 
   if (Event_GetFlag(0x348)) {
     frame = 62;
   } else {
-    switch (gData_020035f0) {
+    switch (gTaopoSwamp_SparkleFrame) {
     case 0:
       frame = 59;
       break;
@@ -1460,8 +1557,8 @@ void Func_02001eb8(void) {
       frame = 50;
       break;
     }
-    if (++gData_020035f0 > 59)
-      gData_020035f0 = 0;
+    if (++gTaopoSwamp_SparkleFrame > 59)
+      gTaopoSwamp_SparkleFrame = 0;
   }
   if (frame != -1)
     MapGrid_CopyCellsLayered(45, frame, 3, 3, 76, 61);
@@ -1500,7 +1597,9 @@ static __inline__ void Blend_SetAlpha(s32 value) {
   REG_BLDALPHA->value = value;
 }
 
-void Func_02002084(s32 fade) {
+/// The lights go out (fading over 50 frames when asked) and the sparkle starts
+/// in the last chamber.
+void TaopoSwamp_DarkenRoom(s32 fade) {
   DisplayBlend_EnableRunScript();
   if (fade) {
     Blend_SetAlpha(0xe06);
@@ -1522,12 +1621,12 @@ void Func_02002084(s32 fade) {
   Func_02001ff0(100, 50);
   Blend_SetAlpha(0xc07);
   if (gMainRoutineWork.entrance == 6)
-    FieldTask_AddFrame(Func_02001eb8, 0x480);
+    FieldTask_AddFrame(TaopoSwamp_TwinkleStarDust, 0x480);
 }
 
 void Func_02002114(void) { Func_02001ff0(100, 100); }
 
-void Func_02002120(void) {
+void TaopoSwamp_ResetMud(void) {
   struct SceneState *state = &gSceneState;
 
   if (Event_GetFlag(0x109) == 0)
@@ -1535,10 +1634,12 @@ void Func_02002120(void) {
 }
 
 // volatile: the VBlank handler sets the held keys, as gKeysHeld in The Broken Seal.
-/* VIEW(taopo_swamp): variable gInput as volatile u32 gInput; input.h has struct InputState gInput; tried as the 3 declarations' extern u32 gInput, Func_02002144 moves: 5 of 159 instructions in tla-ja. */
+/* VIEW(taopo_swamp): variable gInput as volatile u32 gInput; input.h has struct InputState gInput; tried as the 3 declarations' extern u32 gInput, TaopoSwamp_SinkInMud moves: 5 of 159 instructions in tla-ja. */
 extern volatile u32 gInput__taopo_swamp __asm__("gInput");
 
-void Func_02002144(void) {
+/// Each step on the mud sinks the leader deeper; sunk to the top, they are
+/// pulled out to the last firm cell.
+void TaopoSwamp_SinkInMud(void) {
   struct SceneState *state = &gSceneState;
   struct Actor *actor = Actor_Get(FieldParty_GetLeaderActor());
   struct SpriteWork *sprite = actor->sprite;
@@ -1594,7 +1695,8 @@ void Func_02002144(void) {
   state->timer = 0;
 }
 
-void Func_020022ac(void) {
+/// A bubble in the mud lifts the leader back to full height.
+void TaopoSwamp_RiseOnBubble(void) {
   struct SceneState *state = &gSceneState;
   struct Actor *object;
   struct SpriteWork *sprite;
@@ -1620,11 +1722,12 @@ void Func_020022ac(void) {
   }
 }
 
-void Func_02002334(void) {
+/// Off the mud: the leader stands at full height again.
+void TaopoSwamp_StepOnFirmGround(void) {
   struct SceneState *state = &gSceneState;
   struct SpriteWork *sprite;
 
-  Func_0200237c();
+  TaopoSwamp_SaveFirmGround();
   if (state->mode != 0) {
     sprite = Actor_Get(FieldParty_GetLeaderActor())->sprite;
     if (sprite->child)
@@ -1637,7 +1740,8 @@ void Func_02002334(void) {
   }
 }
 
-void Func_0200237c(void) {
+/// Keeps the cell the leader stands on as the one the mud returns them to.
+void TaopoSwamp_SaveFirmGround(void) {
   struct SceneState *state = &gSceneState;
   struct Actor *object = Actor_Get(FieldParty_GetLeaderActor());
 
@@ -1651,7 +1755,7 @@ void Func_0200237c(void) {
 
 DEFINE_FUNC_020024F8(Func_020024f8, Func_020027f8, gData_02002af4)
 
-void Func_02002554(s32 *position, s32 base) {
+void TaopoSwamp_PuffVent(s32 *position, s32 base) {
   struct Actor *object =
       Func_02002808_(0x11d, position[0], position[1], position[2] - 0x20000);
   s32 angle;
@@ -1673,14 +1777,15 @@ void Func_02002554(s32 *position, s32 base) {
   }
 }
 
-DEFINE_FUNC_020025D4(Func_020025d4, Func_02002554)
+DEFINE_FUNC_020025D4(TaopoSwamp_UpdateVents, TaopoSwamp_PuffVent)
 
 // The registers by io_reg.h's names from here on: local.h names the blend
-// register its own way for Func_02002084 above.
+// register its own way for TaopoSwamp_DarkenRoom above.
 #undef REG_BLDALPHA
 #include "system/io_reg.h"
 
-void Func_02002614(u16 *points, u16 *values, s32 arg) {
+/// Places a room's vents from its tables and starts their cycle.
+void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg) {
   struct SwingWork *work = (struct SwingWork *)(gData_020023c4 + 0x188);
   struct SwingPoint *point = work->points;
 
@@ -1733,7 +1838,7 @@ void Func_02002614(u16 *points, u16 *values, s32 arg) {
       REG_BLDCNT = cnt;
     }
   }
-  Task_AddFrame(Func_020025d4, 0x480);
+  Task_AddFrame(TaopoSwamp_UpdateVents, 0x480);
 }
 
 /// The accessors step the work pointer by whole entries and then take entry 0:
@@ -1741,14 +1846,14 @@ void Func_02002614(u16 *points, u16 *values, s32 arg) {
 #define VENT_AT(work, index)                                                   \
   ((struct VentWork *)((u8 *)(work) + (index) * sizeof(struct VentEntry)))
 
-s32 Func_02002708(s32 index) {
+s32 Vent_IsActive(s32 index) {
   struct VentWork *work;
 
   work = VENT_WORK;
   return VENT_AT(work, index)->entries[0].active;
 }
 
-void Func_0200271c(s32 index, s32 active) {
+void Vent_SetActive(s32 index, s32 active) {
   struct VentWork *work;
 
   work = VENT_WORK;
@@ -1762,7 +1867,7 @@ DEFINE_FUNC_0200273C(Func_0200273c)
 /// The accessors step the work pointer by whole entries and then take entry 0:
 /// the bytes add the base to index * 20 before the field offset.
 
-void Func_02002764(s32 index, s32 value) {
+void Vent_SetGust(s32 index, s32 value) {
   struct VentWork *work;
 
   work = VENT_WORK;

@@ -5,34 +5,34 @@
 #include "module/scene/taopo_swamp.h"
 
 void Func_02000038(void);
-void Func_02000104(void);
-void Func_0200013c(void);
+void TaopoSwamp_BlowAwayBush(void);
+void TaopoSwamp_SinkPillar(void);
 void Func_020002f4(void);
 void Func_02000304(void);
 void Func_02000314(void);
-void Func_02000428(void);
-void Func_02000464(void);
-void Func_020004c8(void);
-void Func_0200065c(void);
+void TaopoSwamp_FallThroughHole(void);
+void TaopoSwamp_PushPillarOverVent(void);
+void TaopoSwamp_StepOnVent(void);
+void TaopoSwamp_BlowFlowerOffLedge(void);
 void Func_02000744(void);
-void Func_02000784(void);
-void Func_020007bc(void);
-void Func_02000920(void);
-void Func_0200096c(void);
-void Func_02000adc(void);
-void Func_02000afc(void);
-void Func_02000b58(void);
-void Func_02000b90(void);
-void Func_02000f9c(void);
-void Func_02000fbc(void);
-void Func_02001018(void);
-void Func_02001038(void);
-void Func_020010c4(void);
-void Func_02001100(void);
+void TaopoSwamp_DouseVentSpot(void);
+void TaopoSwamp_FreezeVentSpot(void);
+void TaopoSwamp_FillDripSpot(void);
+void TaopoSwamp_FreezeDripSpot(void);
+void TaopoSwamp_CoolLavaRock(void);
+void TaopoSwamp_PushLavaRockIn(void);
+void TaopoSwamp_CoolPillarRock(void);
+void TaopoSwamp_PushPillarRockIn(void);
+void TaopoSwamp_CoolChestRock(void);
+void TaopoSwamp_PushChestRockIn(void);
+void TaopoSwamp_CoolExitRock(void);
+void TaopoSwamp_PushExitRockIn(void);
+void TaopoSwamp_CoolDarkRock(void);
+void TaopoSwamp_CoolLastRock(void);
 void Func_02001128(void);
-void Func_02001138(void);
-void Func_02001228(void);
-void Func_02001564(void);
+void TaopoSwamp_ShowSparkleMessage(void);
+void TaopoSwamp_LandDrop(void);
+void TaopoSwamp_LandDrip(void);
 void Func_0200166c(void);
 
 u32 gData_020029b8[] = {
@@ -64,13 +64,13 @@ u32 gData_02002a48[] = {
 
 s32 gData_02002a54[] = {
     46,
-    (s32)Func_02001228,
+    (s32)TaopoSwamp_LandDrop,
     38,
 };
 
 s32 gData_02002a60[] = {
     46,
-    (s32)Func_02001564,
+    (s32)TaopoSwamp_LandDrip,
     38,
 };
 
@@ -269,16 +269,16 @@ struct Trigger gData_02003068[] = {
     {0xce01, 3, 0x18e0, 3},
     {0xce01, 4, 0x18e3, 4},
     {0xce01, 5, 0x18e4, 5},
-    {TRIGGER_STEP, 60, CONDITION_ALWAYS, EVENT(Func_02002144)},
-    {TRIGGER_STEP, 61, CONDITION_ALWAYS, EVENT(Func_020022ac)},
-    {TRIGGER_STEP, 62, CONDITION_ALWAYS, EVENT(Func_02002334)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS, EVENT(Func_02000104)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 9, CONDITION_ALWAYS, EVENT(Func_02000104)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, EVENT(Func_02000104)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, CONDITION_ALWAYS, EVENT(Func_02000104)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 12, CONDITION_ALWAYS, EVENT(Func_02000104)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 13, CONDITION_ALWAYS, EVENT(Func_02000118)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT(Func_0200013c)},
+    {TRIGGER_STEP, 60, CONDITION_ALWAYS, EVENT(TaopoSwamp_SinkInMud)},
+    {TRIGGER_STEP, 61, CONDITION_ALWAYS, EVENT(TaopoSwamp_RiseOnBubble)},
+    {TRIGGER_STEP, 62, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnFirmGround)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS, EVENT(TaopoSwamp_BlowAwayBush)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 9, CONDITION_ALWAYS, EVENT(TaopoSwamp_BlowAwayBush)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, EVENT(TaopoSwamp_BlowAwayBush)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, CONDITION_ALWAYS, EVENT(TaopoSwamp_BlowAwayBush)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 12, CONDITION_ALWAYS, EVENT(TaopoSwamp_BlowAwayBush)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 13, CONDITION_ALWAYS, EVENT(TaopoSwamp_GrowVine)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT(TaopoSwamp_SinkPillar)},
     {TRIGGERS_END},
 };
 
@@ -300,7 +300,7 @@ struct Trigger gData_02003194[] = {
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000038)},
     {0x50008905, 30, CONDITION_ALWAYS, EVENT(Func_02000314)},
     {0x50008905, 31, CONDITION_ALWAYS, EVENT(Func_02000334)},
-    {0x50008905, 32, CONDITION_ALWAYS, EVENT(Func_020003c4)},
+    {0x50008905, 32, CONDITION_ALWAYS, EVENT(TaopoSwamp_StartMadPlantBattle)},
     {TRIGGERS_END},
 };
 
@@ -309,26 +309,26 @@ struct Trigger gData_020031e8[] = {
     {33, 2, CONDITION_ALWAYS, 2},
     {49, 3, CONDITION_ALWAYS, 3},
     {49, 4, CONDITION_ALWAYS, 4},
-    {0x4602, 10, CONDITION_ALWAYS, EVENT(Func_02000428)},
-    {0x4602, 11, CONDITION_ALWAYS, EVENT(Func_02000428)},
-    {0x4602, 12, CONDITION_ALWAYS, EVENT(Func_02000428)},
-    {0x4602, 13, CONDITION_ALWAYS, EVENT(Func_02000428)},
-    {0x4602, 14, CONDITION_ALWAYS, EVENT(Func_02000428)},
-    {0x4602, 15, CONDITION_ALWAYS, EVENT(Func_02000428)},
-    {0x4602, 16, CONDITION_ALWAYS, EVENT(Func_02000428)},
-    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_020004c8)},
-    {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Func_020004c8)},
-    {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(Func_020004c8)},
-    {TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(Func_020004c8)},
-    {TRIGGER_STEP, 14, CONDITION_ALWAYS, EVENT(Func_020004c8)},
-    {TRIGGER_STEP, 15, CONDITION_ALWAYS, EVENT(Func_020004c8)},
-    {TRIGGER_STEP, 16, CONDITION_ALWAYS, EVENT(Func_020004c8)},
-    {TRIGGER_STEP, 17, CONDITION_ALWAYS, EVENT(Func_020004c8)},
-    {TRIGGER_STEP, 18, CONDITION_ALWAYS, EVENT(Func_020004c8)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0xa6d, EVENT(Func_02000464)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0xa6e, EVENT(Func_02000464)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000464)},
-    {TRIGGER_RAISED, 100, 0x310, EVENT(Func_0200065c)},
+    {0x4602, 10, CONDITION_ALWAYS, EVENT(TaopoSwamp_FallThroughHole)},
+    {0x4602, 11, CONDITION_ALWAYS, EVENT(TaopoSwamp_FallThroughHole)},
+    {0x4602, 12, CONDITION_ALWAYS, EVENT(TaopoSwamp_FallThroughHole)},
+    {0x4602, 13, CONDITION_ALWAYS, EVENT(TaopoSwamp_FallThroughHole)},
+    {0x4602, 14, CONDITION_ALWAYS, EVENT(TaopoSwamp_FallThroughHole)},
+    {0x4602, 15, CONDITION_ALWAYS, EVENT(TaopoSwamp_FallThroughHole)},
+    {0x4602, 16, CONDITION_ALWAYS, EVENT(TaopoSwamp_FallThroughHole)},
+    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {TRIGGER_STEP, 14, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {TRIGGER_STEP, 15, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {TRIGGER_STEP, 16, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {TRIGGER_STEP, 17, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {TRIGGER_STEP, 18, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0xa6d, EVENT(TaopoSwamp_PushPillarOverVent)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0xa6e, EVENT(TaopoSwamp_PushPillarOverVent)},
+    {9, 0, CONDITION_ALWAYS, EVENT(TaopoSwamp_PushPillarOverVent)},
+    {TRIGGER_RAISED, 100, 0x310, EVENT(TaopoSwamp_BlowFlowerOffLedge)},
     {TRIGGERS_END},
 };
 
@@ -345,14 +345,14 @@ struct Trigger gData_02003338[] = {
     {49, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {0x4602, 10, CONDITION_ALWAYS, EVENT(Func_02000428)},
-    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_020004c8)},
-    {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(Func_020004c8)},
-    {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Func_020004c8)},
+    {0x4602, 10, CONDITION_ALWAYS, EVENT(TaopoSwamp_FallThroughHole)},
+    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0xa6f, EVENT(Func_02000744)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02000744)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, PSYNERGY_PHASE_ACTS), 8, 0x220, EVENT(Func_02000784)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, 0x1222, EVENT(Func_020007bc)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, PSYNERGY_PHASE_ACTS), 8, 0x220, EVENT(TaopoSwamp_DouseVentSpot)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, 0x1222, EVENT(TaopoSwamp_FreezeVentSpot)},
     {TRIGGERS_END},
 };
 
@@ -362,22 +362,22 @@ struct Trigger gData_020033e0[] = {
     {33, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_020004c8)},
+    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x308, 0},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, PSYNERGY_PHASE_ACTS), 10, 0x220, EVENT(Func_02000920)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 10, 0x1222, EVENT(Func_0200096c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, PSYNERGY_PHASE_ACTS), 10, 0x220, EVENT(TaopoSwamp_FillDripSpot)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 10, 0x1222, EVENT(TaopoSwamp_FreezeDripSpot)},
     {TRIGGERS_END},
 };
 
-u32 gData_02003458[] = {
+u32 gTaopoSwamp_SteamPuffs[] = {
     112,
 };
 
-u32 gData_0200345c[] = {
+u32 gTaopoSwamp_PassageRows[] = {
     120,
 };
 
-u32 gData_02003460[] = {
+u32 gTaopoSwamp_PoolFrames[] = {
     24,
 };
 
@@ -386,12 +386,12 @@ struct Trigger gData_02003464[] = {
     {49, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0x331, EVENT(Func_02000adc)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 10, 0x334, EVENT(Func_02000b58)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x332, EVENT(Func_02000afc)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x335, EVENT(Func_02000b90)},
-    {9, 0, 0x335, EVENT(Func_02000b90)},
-    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 11, 0x330, EVENT(Func_02000d2c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0x331, EVENT(TaopoSwamp_CoolLavaRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 10, 0x334, EVENT(TaopoSwamp_CoolPillarRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x332, EVENT(TaopoSwamp_PushLavaRockIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x335, EVENT(TaopoSwamp_PushPillarRockIn)},
+    {9, 0, 0x335, EVENT(TaopoSwamp_PushPillarRockIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 11, 0x330, EVENT(TaopoSwamp_TremorPillar)},
     {TRIGGERS_END},
 };
 
@@ -404,10 +404,10 @@ s32 gData_020034e8[] = {
     4,
     2,
     (s32)0xffff000a,
-    (s32)Func_020004c8,
+    (s32)TaopoSwamp_StepOnVent,
     2,
     (s32)0xffff000b,
-    (s32)Func_020004c8,
+    (s32)TaopoSwamp_StepOnVent,
 #if TLA_PATCH_1 /* Absent from the Japanese edition. */
     0x602,
     (s32)0xffff0040,
@@ -415,16 +415,16 @@ s32 gData_020034e8[] = {
 #endif
     0x2115,
     0x3380008,
-    (s32)Func_02000f9c,
+    (s32)TaopoSwamp_CoolChestRock,
     0x2115,
     0x33b0009,
-    (s32)Func_02001018,
+    (s32)TaopoSwamp_CoolExitRock,
     0x8c15,
     0x3390008,
-    (s32)Func_02000fbc,
+    (s32)TaopoSwamp_PushChestRockIn,
     0x8c15,
     0x33c0009,
-    (s32)Func_02001038,
+    (s32)TaopoSwamp_PushExitRockIn,
     -1,
     0,
     0,
@@ -436,15 +436,15 @@ struct Trigger gData_02003560[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {83, 50, 0x348, EVENT(Func_02001138)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0x340, EVENT(Func_020010c4)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0x342, EVENT(Func_02001100)},
+    {83, 50, 0x348, EVENT(TaopoSwamp_ShowSparkleMessage)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0x340, EVENT(TaopoSwamp_CoolDarkRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0x342, EVENT(TaopoSwamp_CoolLastRock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x341, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x343, 0},
     {0x50008805, 50, 0x348, EVENT(Func_02001128)},
     {TRIGGERS_END},
 };
 
-u32 gData_020035f0[] = {
+u32 gTaopoSwamp_SparkleFrame[] = {
     0,
 };

@@ -110,36 +110,45 @@ s32 ColossoMenu_Choose(s32 unused) {
 /// frame and frees the portrait's VRAM slot.
 void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   struct WindowWork *work = WINDOW_WORK;
+  s32 speaker;
   struct Window *window;
   s32 portrait[3];
+  s32 *entry;
   s32 palette, handle;
+  s32 *word;
+  u32 cleared;
 
+  window = NULL;
+  cleared = 0;
+  speaker = gDjinn_ElementSprites[element & 3];
+  entry = portrait;
   window = Window_Create(DJINN_JOIN_X, 1, DJINN_JOIN_WIDTH, 5, 0);
   if (window == NULL)
     return;
   Window_DrawDividerLine(window, 4, 0, 4, 4);
   work->dirty = 1;
-  Icon_LoadWithPalette(
-      Portrait_GetForSpeaker(gDjinn_ElementSprites[element & 3]), 0, &handle,
-      &palette, PORTRAIT_PALETTE, 0);
-  // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
-  // a link word, attributes 0 and 1 and attribute 2.
-  portrait[0] = 0;
-  portrait[1] = OBJ_SIZE_32X32 | ((DJINN_JOIN_X * 8 + 4) << 16) | 12;
-  portrait[2] = palette | OBJ_PALETTE(PORTRAIT_PALETTE);
+  Icon_LoadWithPalette(Portrait_GetForSpeaker(speaker), cleared, &handle,
+                       &palette, PORTRAIT_PALETTE, cleared);
+  // The portrait as a bare OAM entry, pushed onto draw layer 250 each
+  // frame: a link word, attributes 0 and 1 and attribute 2.
+  word = entry;
+  *word++ = cleared;
+  *word++ = OBJ_SIZE_32X32 | ((DJINN_JOIN_X * 8 + 4) << 16) | 12;
+  *word = palette | OBJ_PALETTE(PORTRAIT_PALETTE);
   // No voice blips while the message types.
-  work->voiceSound = 0;
-  work->voiceCountdown = 0;
-  // The message's arguments: the party member and the Djinni, by its ability.
+  work->voiceSound = cleared;
+  work->voiceCountdown = cleared;
+  // The message's arguments: the party member and the Djinni, by its
+  // ability.
   MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
   MessageArgument_Push(element * DJINN_PER_ELEMENT + djinn +
                            ABILITY_DJINNI_FIRST,
                        MESSAGE_ARGUMENT_ABILITY);
   JOINED_QUEUE_TEXT(window, Message_DecodeMode1(element + MsgVenusDjinnJoined),
-                    36, 2, 0);
+                    36, 2, cleared);
   Sound_PlayFar(MUS_JOINED);
   do {
-    Oam_AddSpriteAtDepth(portrait, 250);
+    Oam_AddSpriteAtDepth(entry, 250);
     wait(1);
   } while (Sound_GetBgmRestoreDelayFar() != 0 &&
            (gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);

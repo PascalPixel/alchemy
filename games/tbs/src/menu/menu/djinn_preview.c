@@ -595,12 +595,12 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     menu->memberY[side] = 200;
   WindowSprite_ClearListFar(menu->listWindow);
   wait(1);
-  // Count the party member's Psynergy by diffing their list with itself; saved
-  // is taken and given back unused.
+  // Count the party member's Psynergy by diffing their list with itself; saved,
+  // room for a copy of the unit, is taken and given back unused.
   counts = pageCounts;
   counts[1] = counts[0] = 1;
   listedActions = Heap_AllocEwram(96);
-  saved = Heap_AllocEwram(332);
+  saved = Heap_AllocEwram(sizeof(struct Unit));
   unit = Unit_GetFar(menu->shownMember[0]);
   counts[1] = counts[0] = PsynergyList_Diff(unit->psynergy, unit->psynergy,
                                             listedActions, &gained, &lost);

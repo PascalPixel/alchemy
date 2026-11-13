@@ -70,6 +70,9 @@ enum HeapSlot {
   HEAP_SLOT_BATTLE = 9,
   /// The battle background's scanline work (struct BattleAffineHdma).
   HEAP_SLOT_BATTLE_SCANLINES = 10,
+  /// Unused: 640 bytes Battle_Run allocates with the battle's other blocks,
+  /// which nothing reads or writes.
+  HEAP_SLOT_BATTLE_UNUSED = 11,
   /// The 3D camera (struct BattleCamera, gBattleCamera) of a battle, the world
   /// map or Lucky Dice.
   HEAP_SLOT_CAMERA = 12,

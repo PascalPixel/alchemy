@@ -66,8 +66,9 @@ s32 Battle_Run(s32 enemyGroup) {
   camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
   battle = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE, sizeof(struct BattleWork));
   enemyUnits = HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, ENEMY_UNITS_SIZE);
-  view = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_BACKGROUND, 32);
-  HeapSlot_AllocEwram(11, 640);
+  view = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_BACKGROUND,
+                             sizeof(struct BattleBackgroundWork));
+  HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_UNUSED, 640);
   focus = camera->focus;
   // Default: 0 until the battle's outcome is known.
   result = 0;

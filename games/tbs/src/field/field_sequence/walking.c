@@ -502,7 +502,8 @@ void WorldMap_Freeze(void) {
 
   work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(*work));
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    state = HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, 1344);
+    state = HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION,
+                                sizeof(struct ScreenTransitionState));
     if ((state != NULL) && (state->step != 0)) {
       state->start = 0;
       state->end = 0;

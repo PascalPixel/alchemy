@@ -391,7 +391,6 @@ static void McCoyPalaceGrounds_RestoreStory(void) {
 /// stop the party, ask whether they broke the curse of the holy tree until
 /// they answer yes, and march them into the palace to McCoy.
 static void McCoyPalaceGrounds_GuardsArrestParty(void) {
-
   // Bring the leader into view before the guards interrupt.
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);

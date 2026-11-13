@@ -146,6 +146,7 @@
 #include "sounds.h"
 #include "sound_driver_symbols.h"
 #include "macros.h"
+#include "shared/walk_into_leader.h"
 
 #if TBS_PATCH_1
 #define MERCURY_LIGHTHOUSE_MOVE_LEADER_TO_ENTRY Actor_MoveToAndWait
@@ -1233,7 +1234,6 @@ static void MercuryLighthouse_SprayAboveStatue(void) {
 
 /// The slide scripts start the sparkles as the statue sets off.
 static s32 MercuryLighthouse_StartStatueSpray(struct Actor *interpreter) {
-
   Task_AddFrame(MercuryLighthouse_SprayAboveStatue, TASK_PASS_FRAME);
   return 0;
 }
@@ -2077,7 +2077,6 @@ static void MercuryLighthouse_InspectLockedDoor(void) {
 ///
 /// Carrying an Empty Bottle, the item menu then opens.
 static void MercuryLighthouse_InspectHealingFountain(void) {
-
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) == 0)
@@ -2743,7 +2742,6 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   s32 firstMessage;
   s32 pillarColumn;
   s32 questionMessage;
-  struct Actor *leader;
 
   pillarColumn = Actor_Get(ACTOR_STATUE_BLOCKING_MIA)->x.fixed / px(16);
   if (pillarColumn != 48) {
@@ -2828,13 +2826,7 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Djinn_Give(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
   Djinn_Set(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
   Unit_Calculate(MIA);
-  Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
-    Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_MIA);
-  Actor_SetPosition(ACTOR_MIA, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_MIA);
   MapGrid_CopyCellAttributes(110, 39, 5, 1, 46, 39);
   GameFlag_Set(FLAG_MIA_JOINED_PARTY);
   Event_End();

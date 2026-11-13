@@ -90,6 +90,7 @@
 #include "io_write.h"
 #include "ground_mask.h"
 #include "macros.h"
+#include "shared/walk_into_leader.h"
 
 #define NULL ((void *)0)
 #include "heap_slots.h"
@@ -1352,7 +1353,6 @@ static void VenusLighthouse_SearchStatue(void) {
 /// what Carry then does.
 static void VenusLighthouse_MovePillarTowardWall(void) {
   struct Actor *actor;
-  struct Actor *leader;
   s32 talked = FLAG_VENUS_LIGHTHOUSE_PILLAR_AT_WALL;
   s32 walkSpeed;
   s32 walkAcceleration;
@@ -1393,14 +1393,7 @@ static void VenusLighthouse_MovePillarTowardWall(void) {
       Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
       Event_Wait(30);
       Actor_WalkToAndWait(ACTOR_GARET, 824, 88);
-      Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-      leader = Actor_Get(ACTOR_PARTY_LEADER);
-      if (leader != 0) {
-        Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                             leader->z.part.pixel);
-      }
-      Actor_WaitForMoveById(ACTOR_GARET);
-      Actor_SetPosition(ACTOR_GARET, 0, 0);
+      Scene_WalkIntoLeader(ACTOR_GARET);
       Event_End();
     }
   }
@@ -1409,7 +1402,6 @@ static void VenusLighthouse_MovePillarTowardWall(void) {
 /// In VenusLighthouseGroundFloor, pushing the pillar by the wall (cell
 /// behavior 50) works as Move does, with Garet's remark at the wall.
 static void VenusLighthouse_PushPillarTowardWall(void) {
-
   Event_Start();
   VenusLighthouse_PushAdjacentPillar();
   Event_Wait(20);
@@ -1550,7 +1542,6 @@ static void VenusLighthouse_FallThroughFloor(void) {
 /// The floor under each pillar is solid again and the nearer pillar draws in
 /// front.
 static void VenusLighthouse_MoveCappedPillar(void) {
-
   u32 pillarIndex;
   struct Actor *pillar;
   s32 destinationColumn;
@@ -1581,7 +1572,6 @@ static void VenusLighthouse_MoveCappedPillar(void) {
 
 /// In VenusLighthouseFirstFloor, pushing one of the three capped pillars.
 static void VenusLighthouse_PushCappedPillar(void) {
-
   Event_Start();
   MapGrid_CopyCellAttributes(19, 44, 4, 1, 12, 44);
   VenusLighthouse_PushAdjacentPillar();
@@ -1623,7 +1613,6 @@ static void VenusLighthouse_MoveCarryPillar(void) {
 /// In VenusLighthouseFirstFloor, the leader walks into a gap or a pillar by
 /// it. He jumps the gap, else pushes the pillar.
 static void VenusLighthouse_JumpOrPushCarryPillar(void) {
-
   Event_Start();
   if (VenusLighthouse_JumpAcrossGap() == 0) {
     VenusLighthouse_LiftCarryPillar();
@@ -1846,7 +1835,6 @@ static void VenusLighthouse_MoveGatePillar(void) {
 /// before the gate. He jumps the gap, else pushes the pillar, which may sink
 /// into its socket.
 static void VenusLighthouse_JumpOrPushGatePillar(void) {
-
   Event_Start();
   if (VenusLighthouse_JumpAcrossGap() == 0) {
     MapGrid_CopyCellAttributes(109, 43, 7, 5, 45, 43);
@@ -2044,7 +2032,6 @@ static void VenusLighthouse_LowerFloatingPillars(s32 waitFrames) {
 
 /// Moves a floating pillar atop the highest support in its map cell.
 static void VenusLighthouse_StackFloatingPillar(s32 pillarId) {
-
   struct Actor *candidate;
   s32 supportHeight = -px(80);
   struct Actor *pillar = 0;
@@ -2205,7 +2192,6 @@ static void VenusLighthouse_CarryFloatingPillar(void) {
 /// In VenusLighthouseFourthFloor, pushing a floating pillar
 /// (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FLOATING_PILLARS and the gaps beside it).
 static void VenusLighthouse_PushPuzzlePillar(void) {
-
   Event_Start();
   VenusLighthouse_PushAdjacentPillar();
   Event_End();
@@ -2523,7 +2509,6 @@ static void VenusLighthouse_MoveSocketPillar(void) {
 /// pillar-room pillar. He jumps the gap, else pushes the pillar, which may
 /// sink into a socket.
 static void VenusLighthouse_JumpOrPushSocketPillar(void) {
-
   Event_Start();
   if (VenusLighthouse_JumpAcrossGap() == 0) {
     MapGrid_CopyCellAttributes(69, 48, 4, 2, 5, 48);

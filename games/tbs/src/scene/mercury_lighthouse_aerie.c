@@ -992,7 +992,6 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
 /// Sets FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED and
 /// FLAG_SATUROS_BEATEN_AT_MERCURY.
 static void MercuryLighthouseAerie_AlexAppears(void) {
-
   Event_Start();
   Actor_Get(ACTOR_LIFT_STATUE)->motionFlags = 0;
   Actor_SetPosition(ACTOR_PARTY_LEADER, 344, 224);

@@ -101,6 +101,7 @@
 #include "heap.h"
 #include "map_grid.h"
 #include "fixed_math.h"
+#include "shared/walk_into_leader.h"
 
 /// Storms doused in the first and second scenes, one flag per storm from the
 /// first.
@@ -475,14 +476,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     // "We must step carefully if we hope to escape the desert."
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_SetSpeed(ACTOR_IODEM, 1);
-    Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
-    partyLeader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (partyLeader != 0) {
-      Actor_SetDestination(ACTOR_IODEM, partyLeader->x.part.pixel,
-                           partyLeader->z.part.pixel);
-    }
-    Actor_WaitForMoveById(ACTOR_IODEM);
-    Actor_SetPosition(ACTOR_IODEM, 0, 0);
+    Scene_WalkIntoLeader(ACTOR_IODEM);
   }
   Event_End();
 }
@@ -587,14 +581,7 @@ static void SuhallaDesert_IodemAsksWhetherToPressOn(void) {
     // "Well, perhaps we should head there first, then."
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
-      Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
-                           leader->z.part.pixel);
-    }
-    Actor_WaitForMoveById(ACTOR_IODEM);
-    Actor_SetPosition(ACTOR_IODEM, 0, 0);
+    Scene_WalkIntoLeader(ACTOR_IODEM);
     Event_End();
   }
 }

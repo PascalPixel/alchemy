@@ -860,7 +860,6 @@ static void TolbiShipDeck_OpenSecondDoor(void) {
 ///
 /// Leaves by the exit numbered as the cell behavior.
 static void TolbiShipDeck_GoBelow(void) {
-
   s32 throughDoor;
   struct FieldWork *work;
 
@@ -1039,7 +1038,6 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
 ///
 /// Runs until the party has confronted the crewman.
 static void TolbiShipDeck_CatchCrewmanFromEast(void) {
-
   if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0) {
       Event_Start();
@@ -1073,7 +1071,6 @@ static void TolbiShipDeck_CatchCrewmanFromEast(void) {
 /// The same, approaching from the west side
 /// (CELL_BEHAVIOR_TOLBI_SHIP_DECK_WEST_OF_DOOR).
 static void TolbiShipDeck_CatchCrewmanFromWest(void) {
-
   if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0) {
       Event_Start();
@@ -1612,7 +1609,6 @@ static void TolbiShipDeck_MonstersBoard(void) {
 ///
 /// It plays at TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK.
 static void TolbiShipDeck_MonstersAttackCrew(void) {
-
   Event_Start();
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);

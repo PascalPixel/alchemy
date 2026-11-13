@@ -345,8 +345,6 @@ static void SolSanctumStatue_OpenCentralHole(void) {
 /// until FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED is set, which the caller
 /// sets. Clears FLAG_SHOW_AREA_NAME.
 static void SolSanctumStatue_ExplainTrapDisarmed(void) {
-  struct Actor *leader;
-
   Event_Start();
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 32;
@@ -479,14 +477,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_JENNA, 1);
   Scene_WalkIntoLeader(ACTOR_GARET);
-  Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_JENNA, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_JENNA);
-  Actor_SetPosition(ACTOR_JENNA, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_JENNA);
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   gFieldWork->transitionFrames = 16;
@@ -512,7 +503,6 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
 /// Clears FLAG_SHOW_AREA_NAME.
 static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   struct FieldWork *work;
-  struct Actor *leader;
 
   Event_Start();
   work = gFieldWork;
@@ -689,22 +679,8 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_JENNA, 1);
-  Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
-    Actor_SetDestination(ACTOR_JENNA, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_JENNA);
-  Actor_SetPosition(ACTOR_JENNA, 0, 0);
-  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
-    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_JENNA);
+  Scene_WalkIntoLeader(ACTOR_GARET);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   work = gFieldWork;
   work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);

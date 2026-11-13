@@ -287,7 +287,6 @@ const struct Trigger *SolSanctumEntrance_GetTriggers(void) {
 /// Takes SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS, into Sol Sanctum at
 /// SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE.
 static void SolSanctumEntrance_OpenDoorAndEnter(void) {
-
   Event_Start();
   // The door opens over three frames.
   Sound_Play(SE_BOOM);
@@ -318,7 +317,6 @@ static void SolSanctumEntrance_OpenDoorAndEnter(void) {
 /// Once the first Small Jewel is found, and until it is set, the File Screen
 /// opens as the search ends, so that the jewel can be used.
 static void SolSanctumEntrance_InspectFirstMinotaurRelief(void) {
-
   Event_Start();
 
   if (GameFlag_Get(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET) != 0) {
@@ -394,7 +392,6 @@ static void SolSanctumEntrance_SetFirstSmallJewel(void) {
 /// Once the second Small Jewel is found, and until it is set, it opens the File
 /// Screen.
 static void SolSanctumEntrance_InspectSecondMinotaurRelief(void) {
-
   struct FieldWork *work;
 
   Event_Start();

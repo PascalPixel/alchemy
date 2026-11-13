@@ -86,6 +86,7 @@
 #include "character_ids.h"
 #include "sounds.h"
 #include "heap.h"
+#include "shared/walk_into_leader.h"
 
 enum { VAULT_DRIFT_RATE = px(1) / 10 };
 
@@ -312,7 +313,6 @@ static void Vault_AskAboutEruption(void) {
 /// - Yes: two women and four men, the girl and old man unhappy to be there.
 /// - No: maybe they left earlier.
 static void Vault_AskAboutFleeingTravelers(void) {
-
   Event_Start();
   Event_SetMessageId(MsgVaultThoseTravelersLeftInBig);
   Actor_SetAnimation(ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, ANIM_STAND);
@@ -326,7 +326,6 @@ static void Vault_AskAboutFleeingTravelers(void) {
 /// accuses them. Either answer gets a denial.
 /// "Are you accusing us of stealing Hammet's treasured Shaman's Rod?"
 static void Vault_ThiefDeniesTheft(void) {
-
   Event_Start();
   Event_SetMessageId(MsgVaultAccusingUsStealingHammetsTreasured);
   Vault_FaceActorAndWait(ACTOR_THIEF_IN_TOWN, ACTOR_PARTY_LEADER, 2);
@@ -342,7 +341,6 @@ static void Vault_ThiefDeniesTheft(void) {
 /// - Yes: impressive for youngsters.
 /// - No: see the Sanctum while you're here.
 static void Vault_AskAboutAdventure(void) {
-
   Event_Start();
   Event_SetMessageId(MsgVaultOffOnAdventure);
   Vault_FaceActorAndWait(ACTOR_STRANDED_TRAVELER, ACTOR_PARTY_LEADER, 2);
@@ -917,14 +915,7 @@ s32 Scene_Initialize(void) {
           Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
           Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
           Actor_SetSpeed(ACTOR_IVAN, 0.8);
-          Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
-          actor = Actor_Get(ACTOR_PARTY_LEADER);
-          if (actor != 0) {
-            Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel,
-                                 actor->z.part.pixel);
-          }
-          Actor_WaitForMoveById(ACTOR_IVAN);
-          Actor_SetPosition(ACTOR_IVAN, 0, 0);
+          Scene_WalkIntoLeader(ACTOR_IVAN);
           Event_AddPartyMember(IVAN, 0);
           Event_End();
         }
@@ -951,14 +942,7 @@ s32 Scene_Initialize(void) {
           Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
           Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
           Actor_SetSpeed(ACTOR_IVAN, 0.8);
-          Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
-          actor = Actor_Get(ACTOR_PARTY_LEADER);
-          if (actor != 0) {
-            Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel,
-                                 actor->z.part.pixel);
-          }
-          Actor_WaitForMoveById(ACTOR_IVAN);
-          Actor_SetPosition(ACTOR_IVAN, 0, 0);
+          Scene_WalkIntoLeader(ACTOR_IVAN);
           Event_AddPartyMember(IVAN, 0);
           Event_End();
         }

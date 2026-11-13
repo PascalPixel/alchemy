@@ -198,7 +198,6 @@ static void VaultRevisit_RecognizeThiefCatchers(void) {
 /// There are rumors of thieves from Lunpa running wild, yet they have been
 /// quiet.
 static void VaultRevisit_TalkOfLunpaThieves(void) {
-
   Event_SetMessageId(MsgVaultRumorsThievesLunpa);
   Actor_TurnToFaceEachOther(ACTOR_WOMAN_ON_LUNPAS_THIEVES, ACTOR_PARTY_LEADER,
                             2);
@@ -210,7 +209,6 @@ static void VaultRevisit_TalkOfLunpaThieves(void) {
 /// FLAG_VAULT_REVISIT_PARTY_PRAISED and FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES
 /// (0x868).
 static void VaultRevisit_PraisePartyStrength(void) {
-
   Event_Start();
   Actor_FaceActor(ACTOR_MAYORS_VISITOR, ACTOR_PARTY_LEADER, 2);
   GameFlag_Set(FLAG_VAULT_REVISIT_PARTY_PRAISED);
@@ -224,7 +222,6 @@ static void VaultRevisit_PraisePartyStrength(void) {
 /// If the volcano stays calm and the southern bridge stays fixed, there is
 /// nothing to worry about.
 static void VaultRevisit_HopeVolcanoStaysCalm(void) {
-
   Event_SetMessageId(MsgVaultVolcanoStaysCalm);
   Actor_TurnToFaceEachOther(ACTOR_OLD_WOMAN_ON_THE_VOLCANO, ACTOR_PARTY_LEADER,
                             2);
@@ -594,7 +591,6 @@ static void VaultRevisit_GiveBoneToDog(void) {
 /// Covers the hidden passage again, tiles and cell behaviors, when Reveal
 /// ends.
 static void VaultRevisit_HidePassage(void) {
-
   MapGrid_CopyCellAttributes(41, 43, 1, 1, 13, 25);
   MapGrid_CopyCellsTo(40, 42, 12, 22, 3, 3);
 }
@@ -603,7 +599,6 @@ static void VaultRevisit_HidePassage(void) {
 /// and the cell behavior of cell (13, 25), which lets the party step onto
 /// cell behavior 40 and down into Vault Cave.
 static void VaultRevisit_RevealPassage(void) {
-
   MapGrid_CopyCellAttributes(37, 43, 1, 1, 13, 25);
   MapGrid_CopyCellsTo(36, 42, 12, 22, 3, 3);
 }
@@ -673,7 +668,6 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 /// (VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE) clears FLAG_ARRIVAL_STAIRS_UP, so
 /// the leader's arrival animation does not play.
 s32 Scene_Initialize(void) {
-
   struct Actor *actor;
 
   // Keep the bridge deck after a battle, and mend the inn's roof.

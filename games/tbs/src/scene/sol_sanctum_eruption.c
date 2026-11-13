@@ -1727,7 +1727,6 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
 ///
 /// Run each frame as a task while SolSanctumEruption_RaiseElementalArcs runs.
 static void SolSanctumEruption_UpdateElementalArcs(void) {
-
   u32 arcIndex;
   s32 age;
   struct Actor *actor;
@@ -1781,7 +1780,6 @@ static void SolSanctumEruption_FadeCameraTo(s32 x, s32 z) {
 
 /// Restores eight corner-cell cell behaviors from the chamber placements.
 static void SolSanctumEruption_RestoreCornerCellAttributes(void) {
-
   MapGrid_CopyCellAttributes(14, 8, 1, 1, 10, 0);
   MapGrid_CopyCellAttributes(14, 28, 1, 1, 11, 0);
   MapGrid_CopyCellAttributes(44, 8, 1, 1, 12, 0);

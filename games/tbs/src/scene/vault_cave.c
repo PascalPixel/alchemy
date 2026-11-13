@@ -838,7 +838,6 @@ static void VaultCave_UpdateTimedFallingActors(void) {
 /// Drops a random actor every 64 frames, with reset height set by its puddle
 /// (frozen or not).
 static void VaultCave_UpdateFrostControlledFallingActors(void) {
-
   s32 fallingIndex;
   struct Actor *fallingActor;
   s32 stateValue;

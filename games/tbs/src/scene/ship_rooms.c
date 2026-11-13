@@ -134,6 +134,7 @@
 #include "actor_script.h"
 #include "fixed_math.h"
 #include "scene.h"
+#include "shared/walk_into_leader.h"
 
 /// The visible anchor charm has been created this visit.
 /// ★ Named from the game: "Anchor Charm" (MsgItemName)
@@ -1011,19 +1012,6 @@ static void ShipRooms_TalkToWaitingMuscleAdmirer(void) {
   Event_End();
 }
 
-/// Walks the rower back to the leader and hides its separate actor.
-static inline void ShipRooms_RejoinParty(s32 rowerId) {
-  struct Actor *leader;
-
-  Actor_SetAnimation(rowerId, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
-    Actor_SetDestination(rowerId, leader->x.part.pixel, leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(rowerId);
-  Actor_SetPosition(rowerId, 0, 0);
-}
-
 /// A passenger in the hold under sail, when an oar needs a rower.
 ///
 /// If someone has already been chosen this round, the chosen passenger steps
@@ -1041,7 +1029,7 @@ static inline void ShipRooms_RejoinParty(s32 rowerId) {
     ShipRooms_StepBesideLeader(rowerId);                                       \
     Event_SetMessageId(chosenMessage);                                         \
     ShipRooms_Say(speaker);                                                    \
-    ShipRooms_RejoinParty(rowerId);                                            \
+    Scene_WalkIntoLeader(rowerId);                                             \
     Event_End();                                                               \
   } else if (GameFlag_Get(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {             \
     ShipRooms_AskToRow(speaker, question,                                      \
@@ -1095,7 +1083,6 @@ static void ShipRooms_AskLadyToRow(void) {
 /// It is written out in full rather than through ShipRooms_AskToRow.
 static void ShipRooms_AskStaredAtPassengerToRow(void) {
   s32 rowerId;
-  struct Actor *actor;
 
   Event_Start();
   if (Event_GetFlag(FLAG_TOLBI_SHIP_ROWER_CHOSEN) != 0) {
@@ -1103,7 +1090,7 @@ static void ShipRooms_AskStaredAtPassengerToRow(void) {
     ShipRooms_StepBesideLeader(rowerId);
     Event_SetMessageId(MsgTolbiShipGivesMeChillsThinkCould);
     ShipRooms_Say(ACTOR_SEA_HOLD_STARED_AT_PASSENGER);
-    ShipRooms_RejoinParty(rowerId);
+    Scene_WalkIntoLeader(rowerId);
   } else {
     Actor_RunRepeatedMotion(ACTOR_SEA_HOLD_STARED_AT_PASSENGER, 2);
     Event_Wait(20);
@@ -1112,14 +1099,7 @@ static void ShipRooms_AskStaredAtPassengerToRow(void) {
     Event_OpenMessage(ACTOR_SEA_HOLD_STARED_AT_PASSENGER, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       ShipRooms_Say(ACTOR_SEA_HOLD_STARED_AT_PASSENGER);
-      Actor_SetAnimation(ACTOR_SEA_HOLD_STARED_AT_PASSENGER, ANIM_WALK);
-      actor = Actor_Get(ACTOR_PARTY_LEADER);
-      if (actor != 0) {
-        Actor_SetDestination(ACTOR_SEA_HOLD_STARED_AT_PASSENGER,
-                             actor->x.part.pixel, actor->z.part.pixel);
-      }
-      Actor_WaitForMoveById(ACTOR_SEA_HOLD_STARED_AT_PASSENGER);
-      Actor_SetPosition(ACTOR_SEA_HOLD_STARED_AT_PASSENGER, 0, 0);
+      Scene_WalkIntoLeader(ACTOR_SEA_HOLD_STARED_AT_PASSENGER);
       GameFlag_Set(FLAG_TOLBI_SHIP_ROWER_CHOSEN);
       if (GameFlag_Get(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
         GameFlag_Set(FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS + PASSENGER_STARED_AT);
@@ -1141,7 +1121,6 @@ static void ShipRooms_AskStaredAtPassengerToRow(void) {
 /// The second guide in the hold under sail, written out in full as well.
 static void ShipRooms_AskSecondGuideToRow(void) {
   s32 rowerId;
-  struct Actor *actor;
 
   Event_Start();
   if (Event_GetFlag(FLAG_TOLBI_SHIP_ROWER_CHOSEN) != 0) {
@@ -1149,7 +1128,7 @@ static void ShipRooms_AskSecondGuideToRow(void) {
     ShipRooms_StepBesideLeader(rowerId);
     Event_SetMessageId(MsgTolbiShipIsaacYouveGotGoodEye);
     ShipRooms_Say(ACTOR_SEA_HOLD_SECOND_GUIDE);
-    ShipRooms_RejoinParty(rowerId);
+    Scene_WalkIntoLeader(rowerId);
   } else {
     Event_SetMessageId(MsgTolbiShipHaHaHaRowingFeel);
     // "Ha ha ha. Rowing, right? Feel free to choose whomever you like."
@@ -1159,14 +1138,7 @@ static void ShipRooms_AskSecondGuideToRow(void) {
     Event_OpenMessage(ACTOR_SEA_HOLD_SECOND_GUIDE, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       ShipRooms_Say(ACTOR_SEA_HOLD_SECOND_GUIDE);
-      Actor_SetAnimation(ACTOR_SEA_HOLD_SECOND_GUIDE, ANIM_WALK);
-      actor = Actor_Get(ACTOR_PARTY_LEADER);
-      if (actor != 0) {
-        Actor_SetDestination(ACTOR_SEA_HOLD_SECOND_GUIDE, actor->x.part.pixel,
-                             actor->z.part.pixel);
-      }
-      Actor_WaitForMoveById(ACTOR_SEA_HOLD_SECOND_GUIDE);
-      Actor_SetPosition(ACTOR_SEA_HOLD_SECOND_GUIDE, 0, 0);
+      Scene_WalkIntoLeader(ACTOR_SEA_HOLD_SECOND_GUIDE);
       GameFlag_Set(FLAG_TOLBI_SHIP_ROWER_CHOSEN);
       if (GameFlag_Get(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
         GameFlag_Set(FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS +
@@ -1518,20 +1490,12 @@ static void ShipRooms_ReadMuscleAdmirerMindAtOars(void) {
 /// this passenger (seatFlag) and FLAG_TOLBI_SHIP_ROWER_CHOSEN are set. On no
 /// the next message refuses.
 static void ShipRooms_AskToRow(s32 speaker, s32 question, s32 seatFlag) {
-  struct Actor *leader;
-
   Event_Start();
   Event_SetMessageId(question);
   Event_OpenMessage(speaker, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     ShipRooms_Say(speaker);
-    Actor_SetAnimation(speaker, ANIM_WALK);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
-      Actor_SetDestination(speaker, leader->x.part.pixel, leader->z.part.pixel);
-    }
-    Actor_WaitForMoveById(speaker);
-    Actor_SetPosition(speaker, 0, 0);
+    Scene_WalkIntoLeader(speaker);
     GameFlag_Set(FLAG_TOLBI_SHIP_ROWER_CHOSEN);
     GameFlag_Set(seatFlag);
   } else {
@@ -1588,7 +1552,6 @@ static void ShipRooms_TalkToHealer(void) {
 /// battles. The slot, and the entrance the party comes back to, are chosen by
 /// how far the voyage has gone.
 static void ShipRooms_FightRowingDeckMonsters(void) {
-
   Event_Start();
   Field_EndBusyAndReveal();
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
@@ -2317,13 +2280,7 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
-  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
-    Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET);
   Actor_SetScript(ACTOR_QUARTERS_SECOND_GUIDE, action);
   Actor_WalkToAndWait(ACTOR_QUARTERS_CAPTAIN, 456, 648);
   ShipRooms_Turn(ACTOR_QUARTERS_CAPTAIN, 0);

@@ -864,7 +864,6 @@ static u8 WestLunpaCave_GaretAsksAboutThingsToDo(void) {
 
 /// Sends Hammet and Bunza ahead, then returns the companions to the leader.
 static void Party_StaysBehind(void) {
-  struct Actor *leader;
   s32 farewell;
 
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
@@ -943,14 +942,7 @@ static void Party_StaysBehind(void) {
   // Merge the companions back into the leader and restore player camera
   // control.
   Scene_WalkIntoLeader(ACTOR_GARET);
-  Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_IVAN);
-  Actor_SetPosition(ACTOR_IVAN, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_IVAN);
   Scene_WalkIntoLeader(ACTOR_MIA);
   Event_Wait(30);
   FieldCamera_MoveToActorById(ACTOR_PARTY_LEADER, 1);
@@ -961,7 +953,6 @@ static void Party_StaysBehind(void) {
 
 /// Leads everyone down the passage and requests the wagon departure exit.
 static void Party_RidesWagon(void) {
-  struct Actor *leader;
   s32 departure;
 
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 0);
@@ -1020,14 +1011,7 @@ static void Party_RidesWagon(void) {
   Actor_SetPosition(ACTOR_BUNZA, 0, 0);
 
   Scene_WalkIntoLeader(ACTOR_GARET);
-  Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_IVAN);
-  Actor_SetPosition(ACTOR_IVAN, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_IVAN);
   Scene_WalkIntoLeader(ACTOR_MIA);
   Event_Wait(30);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, -16, 0);

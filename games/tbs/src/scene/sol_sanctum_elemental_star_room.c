@@ -1042,7 +1042,6 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   u32 i;
   struct Actor *actor;
   struct Actor *alex;
-  struct Actor *leader;
 
   Actor_RunRepeatedMotion(ACTOR_GARET, 3);
   Event_Wait(10);
@@ -1205,15 +1204,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET);
   PartyInventory_Discard(ITEM_VENUS_STAR);
   PartyInventory_Discard(ITEM_MERCURY_STAR);
   PartyInventory_Discard(ITEM_JUPITER_STAR);

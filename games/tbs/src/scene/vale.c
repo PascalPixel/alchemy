@@ -1816,13 +1816,7 @@ static void Vale_GaretMeetsHisSister(void) {
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_GARETS_SISTER_AFTER_KALAY, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
-    Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET);
   GameFlag_Set(FLAG_VALE_GARET_MET_SISTER);
   Event_End();
 }
@@ -1915,13 +1909,7 @@ static void Vale_GaretAsksToProtectFamily(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST_SOUTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
-    Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET);
   GameFlag_Set(FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY);
   Event_End();
 }
@@ -3288,7 +3276,6 @@ static void Vale_AdjustPillarPriorityForLeaderHeight(void) {
 /// Someone calling up Psynergy. They are drawn SPRITE_COLOR_WHITE (7) for two
 /// frames in four, with the World Map's attached sparks every 16 frames.
 static void Vale_FlashActorAndSpawnEffects(struct Actor *actor) {
-
   if ((gFrameCount & 2) != 0)
     Actor_SetColorMode(actor, 7);
   else

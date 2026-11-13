@@ -76,6 +76,7 @@
 #include "sounds.h"
 #include "item_ids.h"
 #include "fixed_math.h"
+#include "shared/walk_into_leader.h"
 
 /// Gateway Cave's Psynergy Stone has been found.
 ///
@@ -444,14 +445,7 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH_SOUTHWEST, 10);
   // "We're going after them, right, Isaac!"
   Event_ShowMessageThenWait(ACTOR_IODEM, 0, 10);
-  Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
-    Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_IODEM);
-  Actor_SetPosition(ACTOR_IODEM, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_IODEM);
 #if TBS_PATCH_3
   MapGrid_CopyCellAttributes(6, 27, 1, 1, 7, 27);
   MapGrid_CopyCellAttributes(11, 26, 1, 1, 7, 26);

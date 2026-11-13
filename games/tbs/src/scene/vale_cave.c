@@ -459,7 +459,6 @@ static void ValeCave_PushEastCratesIntoWater(void) {
 /// Reached by walking south into cell behavior 21 in the second room. Returns 1
 /// when the leader hopped, 0 when the landing cell is blocked.
 static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
-
   union FieldCoordinate landingPosition[3];
   struct Actor *leader;
   s32 savedMotionFlags;
@@ -507,7 +506,6 @@ static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
 /// Reached by stepping on cell behavior 40 in the second room until Kite is
 /// caught (FLAG_KITE). Runs once, setting FLAG_VALE_CAVE_KITE_RAN_OFF.
 static void ValeCave_KiteRunsOff(void) {
-
   struct Actor *djinni;
 
   if (Event_GetFlag(FLAG_VALE_CAVE_KITE_RAN_OFF) == 0) {
@@ -543,7 +541,6 @@ static void ValeCave_KiteRunsOff(void) {
 /// FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE and FLAG_VALE_CAVE_KITE_BEHIND_LEDGE,
 /// and gives Kite the update routine ValeCave_FaceActorTowardLeader.
 static void ValeCave_KiteRunsBehindLedge(void) {
-
   struct Actor *djinni;
 
   if (GameFlag_Get(FLAG_VALE_CAVE_KITE_RAN_OFF) != 0) {
@@ -654,7 +651,6 @@ static void ValeCave_PushLogOverEdge(void) {
 /// Reached by walking east into cell behavior 21 in the third room. Sets
 /// FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE and clears the cells the log held.
 static void ValeCave_PushLogOffLedge(void) {
-
   struct Actor *pushedLog;
 
   Event_Start();
@@ -752,7 +748,6 @@ const struct Trigger *ValeCave_GetTriggers(void) {
 /// FLAG_SHOW_AREA_NAME, so the area name is not shown again. The two rooms of
 /// Vale Cave open with the window transition.
 s32 ValeCave_Initialize(void) {
-
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gMainRoutineWork.next == (s32)&SceneId_ValeCaveMouth) {
@@ -801,7 +796,6 @@ static void ValeCave_UpdateRidingLogPassage(void) {
 /// Reached by walking east into cell behavior 20 in the second room. Sets
 /// FLAG_VALE_CAVE_RIDING_LOG_EAST.
 static void ValeCave_RideLogEast(void) {
-
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_RIDING_LOG, 112, 0);
   Actor_PlacePairAtOffset(ACTOR_RIDING_LOG, 80, 0);
@@ -817,7 +811,6 @@ static void ValeCave_RideLogEast(void) {
 /// Reached by walking west into cell behavior 21 in the second room. Clears
 /// FLAG_VALE_CAVE_RIDING_LOG_EAST.
 static void ValeCave_RideLogWest(void) {
-
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_RIDING_LOG, -112, 0);
   Actor_PlacePairAtOffset(ACTOR_RIDING_LOG, -80, 0);

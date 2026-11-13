@@ -112,6 +112,7 @@
 #include "flags.h"
 #include "sounds.h"
 #include "sound_driver_symbols.h"
+#include "shared/walk_into_leader.h"
 
 /// The placed actors, numbered in the order of
 /// gValeKradensCottage_ActorPlacements. Garet and Jenna, placed between Kraden
@@ -947,22 +948,8 @@ static void ValeKradensCottage_OverhearKraden(void) {
     // The camera returns to Isaac, and Garet and Jenna walk back into him.
     FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 1);
     FieldCamera_WaitForMove();
-    Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
-      Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                           leader->z.part.pixel);
-    }
-    Actor_WaitForMoveById(ACTOR_GARET);
-    Actor_SetPosition(ACTOR_GARET, 0, 0);
-    Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
-      Actor_SetDestination(ACTOR_JENNA, leader->x.part.pixel,
-                           leader->z.part.pixel);
-    }
-    Actor_WaitForMoveById(ACTOR_JENNA);
-    Actor_SetPosition(ACTOR_JENNA, 0, 0);
+    Scene_WalkIntoLeader(ACTOR_GARET);
+    Scene_WalkIntoLeader(ACTOR_JENNA);
     GameFlag_Set(FLAG_KRADEN_WONDERED_ABOUT_STRANGERS);
     Event_End();
   }
@@ -1160,14 +1147,7 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
         GameFlag_Set(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED);
       }
       // Garet walks back into Isaac.
-      Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-      leader = Actor_Get(ACTOR_PARTY_LEADER);
-      if (leader != 0) {
-        Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                             leader->z.part.pixel);
-      }
-      Actor_WaitForMoveById(ACTOR_GARET);
-      Actor_SetPosition(ACTOR_GARET, 0, 0);
+      Scene_WalkIntoLeader(ACTOR_GARET);
       Event_End();
     }
   }

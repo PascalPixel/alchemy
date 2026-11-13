@@ -1301,7 +1301,6 @@ static void ValePrologue_TalkToGaret(void) {
 /// Called by ValePrologue_GaretCallsAfterIsaac and ValePrologue_TalkToGaret.
 /// Sets FLAG_VALE_STORM_GARET_JOINED.
 static void ValePrologue_GaretLeavesHisChest(void) {
-  struct Actor *leader;
   s32 agreedToLeaveBelongings;
 
   Event_OpenMessage(ACTOR_GARET_CHILD, 0);
@@ -1329,14 +1328,7 @@ static void ValePrologue_GaretLeavesHisChest(void) {
     Event_SetMessageId(MsgValeRightDitchStuff);
   }
   Event_ShowMessage(ACTOR_GARET_CHILD, 0);
-  Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
-    Actor_SetDestination(ACTOR_GARET_CHILD, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET_CHILD);
-  Actor_SetPosition(ACTOR_GARET_CHILD, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET_CHILD);
   Event_AddPartyMember(GARET, 1);
   GameFlag_Set(FLAG_VALE_STORM_GARET_JOINED);
 }
@@ -1398,14 +1390,7 @@ static void ValePrologue_UnusedGaretJoinsIsaac(void) {
     // "Everyone's gathering down south, in the town plaza."
     Event_ShowMessage(ACTOR_GARET_CHILD, 0);
     Actor_SetSpeed(ACTOR_GARET_CHILD, 1);
-    Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_WALK);
-    actor = Actor_Get(ACTOR_PARTY_LEADER);
-    if (actor != 0) {
-      Actor_SetDestination(ACTOR_GARET_CHILD, actor->x.part.pixel,
-                           actor->z.part.pixel);
-    }
-    Actor_WaitForMoveById(ACTOR_GARET_CHILD);
-    Actor_SetPosition(ACTOR_GARET_CHILD, 0, 0);
+    Scene_WalkIntoLeader(ACTOR_GARET_CHILD);
     Event_AddPartyMember(GARET, 1);
     Actor_SetAnimation(ACTOR_GARETS_CHEST, ANIM_CHEST_ROPE_DROPPED);
     GameFlag_Set(FLAG_VALE_STORM_GARET_JOINED);
@@ -1419,7 +1404,6 @@ static void ValePrologue_UnusedGaretJoinsIsaac(void) {
 /// Reached by stepping on cell behavior 33, every time. Isaac is walked
 /// back south.
 static void ValePrologue_WarnAboutMtAleph(void) {
-  struct Actor *leader;
   struct Actor *initialLeader;
 
   Event_Start();
@@ -1442,14 +1426,7 @@ static void ValePrologue_WarnAboutMtAleph(void) {
   Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_SOUTH, 0);
   // "The plaza is over that way. We need to head south."
   Event_ShowMessage(ACTOR_GARET_CHILD, 0);
-  Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
-    Actor_SetDestination(ACTOR_GARET_CHILD, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET_CHILD);
-  Actor_SetPosition(ACTOR_GARET_CHILD, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET_CHILD);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 256, 517);
   Event_End();
 }
@@ -1461,7 +1438,6 @@ static void ValePrologue_GaretCommentsOnBlockedPath(s32 x, s32 y) {
   struct Actor *leaderAtStart;
   s32 speed = px(1);
   s32 acceleration = (px(1) / 2);
-  struct Actor *leaderAtEnd;
 
   leaderAtStart = Actor_Get(ACTOR_PARTY_LEADER);
   if (leaderAtStart != 0) {
@@ -1482,14 +1458,7 @@ static void ValePrologue_GaretCommentsOnBlockedPath(s32 x, s32 y) {
   // "We'll have to find another way."
   Event_ShowMessage(ACTOR_GARET_CHILD, 0);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_WALK);
-  leaderAtEnd = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leaderAtEnd != 0) {
-    Actor_SetDestination(ACTOR_GARET_CHILD, leaderAtEnd->x.part.pixel,
-                         leaderAtEnd->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET_CHILD);
-  Actor_SetPosition(ACTOR_GARET_CHILD, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET_CHILD);
 }
 
 /// The Boulder slips toward the village and the elders tell the boys to run.
@@ -1667,14 +1636,7 @@ static void ValePrologue_WatchBoulderFall(void) {
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_GARET_CHILD, ANIM_NOD);
     Event_Wait(20);
-    Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_WALK);
-    movingActor = Actor_Get(ACTOR_PARTY_LEADER);
-    if (movingActor != 0) {
-      Actor_SetDestination(ACTOR_GARET_CHILD, movingActor->x.part.pixel,
-                           movingActor->z.part.pixel);
-    }
-    Actor_WaitForMoveById(ACTOR_GARET_CHILD);
-    Actor_SetPosition(ACTOR_GARET_CHILD, 0, 0);
+    Scene_WalkIntoLeader(ACTOR_GARET_CHILD);
     Actor_ReleaseById(ACTOR_ELDER_WEST_STAND_IN);
     Actor_ReleaseById(ACTOR_ELDER_EAST_STAND_IN);
     Actor_ReleaseById(ACTOR_ELDER_FAR_EAST);
@@ -1993,7 +1955,6 @@ static void ValePrologue_DoraGoesForHelp(void) {
   const s32 *script;
   s32 northMessage;
   s32 helpMessage;
-  struct Actor *leader;
 
   Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNAS_FATHER, FACING_NORTH_NORTHEAST, 0);

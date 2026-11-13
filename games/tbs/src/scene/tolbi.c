@@ -572,7 +572,6 @@ static void Tolbi_EnterSpring(void) {
 
 /// Leaves by the exit numbered as the cell behavior the party walked into.
 static void Tolbi_RequestTouchedExit(void) {
-
   Import_EventSetExitRequest(gFieldWork->stepTrigger);
 }
 

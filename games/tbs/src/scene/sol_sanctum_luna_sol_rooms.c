@@ -551,30 +551,9 @@ static void SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum(void) {
     Actor_SetSpeed(ACTOR_GARET, 1);
     Actor_SetSpeed(ACTOR_JENNA, 1);
     Actor_SetSpeed(ACTOR_KRADEN, 2);
-    Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
-      Actor_SetDestination(ACTOR_KRADEN, leader->x.part.pixel,
-                           leader->z.part.pixel);
-    }
-    Actor_WaitForMoveById(ACTOR_KRADEN);
-    Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-    Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
-      Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                           leader->z.part.pixel);
-    }
-    Actor_WaitForMoveById(ACTOR_GARET);
-    Actor_SetPosition(ACTOR_GARET, 0, 0);
-    Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
-      Actor_SetDestination(ACTOR_JENNA, leader->x.part.pixel,
-                           leader->z.part.pixel);
-    }
-    Actor_WaitForMoveById(ACTOR_JENNA);
-    Actor_SetPosition(ACTOR_JENNA, 0, 0);
+    Scene_WalkIntoLeader(ACTOR_KRADEN);
+    Scene_WalkIntoLeader(ACTOR_GARET);
+    Scene_WalkIntoLeader(ACTOR_JENNA);
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     GameFlag_Set(FLAG_SOL_SANCTUM_FOUND);
     Event_End();
@@ -675,7 +654,6 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
 static void SolSanctumLunaSolRooms_KradenStopsPartyLeaving(void) {
   struct Actor *kraden;
   struct Actor *leader;
-  struct Actor *destinationActor;
 
   kraden = Actor_Get(ACTOR_KRADEN);
   if (GameFlag_Get(FLAG_SOL_SANCTUM_FOUND) == 0) {
@@ -720,14 +698,7 @@ static void SolSanctumLunaSolRooms_KradenStopsPartyLeaving(void) {
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0 ||
       GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) == 0) {
-    Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-    destinationActor = Actor_Get(ACTOR_PARTY_LEADER);
-    if (destinationActor != 0) {
-      Actor_SetDestination(ACTOR_KRADEN, destinationActor->x.part.pixel,
-                           destinationActor->z.part.pixel);
-    }
-    Actor_WaitForMoveById(ACTOR_KRADEN);
-    Actor_SetPosition(ACTOR_KRADEN, 0, 0);
+    Scene_WalkIntoLeader(ACTOR_KRADEN);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 288, 232);
   } else {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 288, 248);
@@ -1120,8 +1091,6 @@ static void SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights(void) {
 ///
 /// Until FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED is set, which it sets.
 static void SolSanctumLunaSolRooms_KradenSeesLunaPictureChange(void) {
-  struct Actor *leader;
-
   if (Event_GetFlag(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) == 0) {
     if (SolSanctumLunaSolRooms_AreAllStatueLightsLit() != 0) {
       Event_Start();
@@ -1166,14 +1135,7 @@ static void SolSanctumLunaSolRooms_KradenSeesLunaPictureChange(void) {
       Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
       Event_Wait(6);
       Actor_SetSpeed(ACTOR_KRADEN, 0.5);
-      Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-      leader = Actor_Get(ACTOR_PARTY_LEADER);
-      if (leader != 0) {
-        Actor_SetDestination(ACTOR_KRADEN, leader->x.part.pixel,
-                             leader->z.part.pixel);
-      }
-      Actor_WaitForMoveById(ACTOR_KRADEN);
-      Actor_SetPosition(ACTOR_KRADEN, 0, 0);
+      Scene_WalkIntoLeader(ACTOR_KRADEN);
       GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED);
       Event_End();
     }
@@ -1585,7 +1547,6 @@ static void SolSanctumLunaSolRooms_ShowMessageAndWait(s32 speaker,
 /// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED and clears the other two tint
 /// flags.
 static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
-  struct Actor *leader;
   struct PaletteFade *palette;
 
   Event_Start();

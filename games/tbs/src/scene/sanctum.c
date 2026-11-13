@@ -323,7 +323,6 @@ static void Sanctum_TalkAboutGoldenStatue(void) {
 /// He thinks about the stolen statue or, once it is back, about Isaac awakening
 /// to the Sanctum's teachings. On the later visit, the statue is cleaned up.
 static void Sanctum_ReadMindAboutGoldenStatue(void) {
-
   Event_Start();
 
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -443,7 +442,6 @@ static void Sanctum_AskAboutNewAdepts(void) {
 /// Vale Sanctum, once the party has left Vale: talking to ACTOR_EAST_HEALER,
 /// who asks whether Isaac feels any change in his Psynergy.
 static void Sanctum_AskAboutPsynergyChanges(void) {
-
   Event_Start();
   Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_PARTY_LEADER, 0);
   Event_Wait(10);
@@ -1193,7 +1191,6 @@ static void Sanctum_RequestQuestAcceptance(void) {
 /// accepts the two, and the healer relays its guidance. They are to leave the
 /// next day.
 static void Sanctum_ReceiveWiseOnesMission(void) {
-
   u32 sparkIndex;
   struct Actor *wiseOne;
 
@@ -1743,7 +1740,6 @@ static s32 Sanctum_ChooseRestartOption(void) {
 /// Vale Sanctum, the quest's account: Isaac and Garet act out, in sepia, what
 /// happened in Sol Sanctum.
 static void Sanctum_ReenactSolSanctum(void) {
-
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
   Actor_SetSpeed(ACTOR_GARET, 1.5);
   Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 2);

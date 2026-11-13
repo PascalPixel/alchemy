@@ -143,6 +143,7 @@
 #include "sounds.h"
 #include "sound_driver_symbols.h"
 #include "item_ids.h"
+#include "shared/walk_into_leader.h"
 
 /// The falling rock of Hammet's caravan event has landed and shattered.
 /// ★ Named from the game: "being smashed by falling rocks here"
@@ -481,8 +482,8 @@ static void WorldMap_MeetVine(void) {
 /// Reached by talking to ACTOR_CORONA, or by walking onto
 /// CELL_BEHAVIOR_WORLD_MAP_CORONA until Corona is caught.
 static void WorldMap_MeetCorona(void) {
-  struct MainRoutineWork *state = &gMainRoutineWork;
-  s32 *steps = &state->encounterSteps;
+  struct MainRoutineWork *routine = &gMainRoutineWork;
+  s32 *steps = &routine->encounterSteps;
   struct FieldWork *work = gFieldWork;
 
   if (*steps >= Math_Divide(work->encounterThreshold * 9, 10)) {
@@ -497,8 +498,8 @@ static void WorldMap_MeetCorona(void) {
 /// Reached by talking to ACTOR_HAIL, or by walking onto
 /// CELL_BEHAVIOR_WORLD_MAP_HAIL until Hail is caught.
 static void WorldMap_MeetHail(void) {
-  struct MainRoutineWork *state = &gMainRoutineWork;
-  s32 *steps = &state->encounterSteps;
+  struct MainRoutineWork *routine = &gMainRoutineWork;
+  s32 *steps = &routine->encounterSteps;
   struct FieldWork *work = gFieldWork;
 
   if (*steps >= Math_Divide(work->encounterThreshold * 9, 10)) {
@@ -555,20 +556,17 @@ static void WorldMap_PulseOrbAndSpawnSparks(struct Actor *actor) {
 /// pixels up and down, facing the way he goes. WorldMap_MeetFlint stops him
 /// by setting his work to 1.
 static void WorldMap_CircleFlint(struct Actor *actor) {
-  s16 *angle;
-
   if (gFrameCount & 2)
     Actor_SetColorMode(actor, SPRITE_COLOR_RED_TINT);
   else
     Actor_SetColorMode(actor, SPRITE_COLOR_WHITE);
   if ((s16)actor->userValue == 0) {
-    angle = (s16 *)&actor->timer;
     actor->x.fixed = px(5584);
-    actor->y.fixed = Iwram_MulQ16(Trig_Sin(*angle << 3), px(4)) + px(16);
+    actor->y.fixed = Iwram_MulQ16(Trig_Sin(actor->timer << 3), px(4)) + px(16);
     actor->z.fixed = px(1328);
-    Vector_AddPolarOffset(px(16), *angle, &actor->x);
-    actor->facing = *angle + FACING_SOUTH;
-    *angle += TRIG_TURN / 64;
+    Vector_AddPolarOffset(px(16), actor->timer, &actor->x);
+    actor->facing = actor->timer + FACING_SOUTH;
+    actor->timer += TRIG_TURN / 64;
   }
 }
 
@@ -780,7 +778,6 @@ static void WorldMap_EnterGondowanPassage(void) {
 /// As WorldMap_EnterKolimaBridge, for Lalivero. From the north the exit is
 /// WORLD_MAP_TO_LALIVERO_WEST, and from the south WORLD_MAP_TO_LALIVERO_EAST.
 static void WorldMap_EnterLalivero(void) {
-
   WorldMap_SelectExitByZ(STEP_TRIGGER_AREA(ACTOR_TO_LALIVERO),
                          WORLD_MAP_TO_LALIVERO_WEST,
                          WORLD_MAP_TO_LALIVERO_EAST);
@@ -877,7 +874,6 @@ static void WorldMap_EnterVault(void) {
 /// Reached by walking east into CELL_BEHAVIOR_WORLD_MAP_TOLBI_SHIP while the
 /// ship lies at anchor off the island (FLAG_TOLBI_SHIP_AT_ISLAND).
 static void WorldMap_ReturnToTolbiShip(void) {
-
   Event_Start();
   Import_EventSetExitRequest(WORLD_MAP_TO_TOLBI_SHIP_DECK_CROSSBONE_ISLE);
 }
@@ -1383,14 +1379,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  spriteActor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (spriteActor != 0) {
-    Actor_SetDestination(ACTOR_GARET, spriteActor->x.part.pixel,
-                         spriteActor->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET);
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(5848, CAMERA_KEEP, 1608, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
@@ -2139,7 +2128,6 @@ static void WorldMap_IodemCallsIsaacBack(void) {
 ///
 /// Reached by searching CELL_BEHAVIOR_WORLD_MAP_SHIPWRECK.
 static void WorldMap_SearchShipwreck(void) {
-
   Event_Start();
 #if !TBS_PATCH_3
   WorldMap_Freeze();
@@ -2545,7 +2533,6 @@ static void WorldMap_UpdateLighthouseQuake(void) {
 ///
 /// Called by WorldMap_Initialize at WORLD_MAP_FROM_SHIP_ROOMS.
 static void WorldMap_SailTolbiShipToIsland(void) {
-
   struct Actor *actor;
 
   Event_Start();
@@ -2705,7 +2692,6 @@ static void WorldMap_ShowIslandDrifting(void) {
 /// FLAG_WORLD_MAP_STORM_FRAMES_LEFT. The count is paused while a menu is
 /// open. At the last frame it raises RAISED_STORM_TIME_UP.
 static void WorldMap_UpdateStormTimer(void) {
-
   struct Actor *actor;
   struct FieldWork *work;
   s32 progress;
@@ -2840,7 +2826,6 @@ static void WorldMap_StormDropsParty(void) {
 /// transition is drawn, over everything. BG0's own weight flickers between 12
 /// and 16 every two frames, and the rest's comes from gWorldMapBlend.
 static void WorldMap_UpdateTransitionBlend(void) {
-
   IoWriteQueue_Store16((u32)&REG_BLDCNT,
                        BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   if ((gFrameCount & 2) != 0) {
@@ -2855,7 +2840,6 @@ static void WorldMap_UpdateTransitionBlend(void) {
 /// Run each frame at the end of the lighthouse transition. Every third frame
 /// it moves the camera a pixel diagonally from the leader.
 static void WorldMap_JitterTransitionCamera(void) {
-
   struct Actor *actor;
   s32 sx;
   s32 sy;

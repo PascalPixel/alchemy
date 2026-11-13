@@ -1052,7 +1052,6 @@ static void MogallForest_ThirdArea_UpdateNorthRock(void) {
 /// Mogall Forest, the third area: Move on the south rock, which sinks into
 /// place on row 27 and stays.
 static void MogallForest_ThirdArea_UpdateSouthRock(void) {
-
   s32 column;
   s32 row;
   struct Actor *rock;
@@ -1081,7 +1080,6 @@ static void MogallForest_ThirdArea_UpdateSouthRock(void) {
 ///
 /// The ape leaps at the leader and the battle with an Ape begins.
 static void MogallForest_ThirdArea_ApeAttacks(void) {
-
   struct Actor *creature;
   struct Actor *leaderForX;
   s32 leaderX;

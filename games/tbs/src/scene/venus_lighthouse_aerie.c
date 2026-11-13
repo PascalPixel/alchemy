@@ -212,7 +212,6 @@ enum {
 /// Pulses the actor scale around the countdown, then chooses its next
 /// pause.
 static s32 VenusLighthouseAerie_PulseActorScale(struct Actor *actor) {
-
   switch (actor->timer) {
   case 6:
     actor->scaleX -= Q16_ONE / 8;
@@ -401,7 +400,6 @@ static void VenusLighthouseAerie_LandOnPlatform(void) {
 /// bobbing, as they do until the leader lands on one
 /// (VenusLighthouseAerie_LandOnPlatform).
 static void VenusLighthouseAerie_FloatPlatforms(void) {
-
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_Get(ACTOR_FIRST_PLATFORM)->motionFlags = ACTOR_FLOATS;

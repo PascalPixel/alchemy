@@ -2,10 +2,6 @@
 /// Vault, before and after the thieves are caught: the two villagers who walk
 /// about together (ACTOR_BOY_ROUND_THE_WELL and ACTOR_GIRL_ROUND_THE_WELL,
 /// as both scenes name them).
-#include "types.h"
-#include "actor.h"
-#include "heap.h"
-#include "field_work.h"
 
 // The update routine of the two children round the well. Their timer holds two
 // bits: bit 0 picks the partner (set for ACTOR_BOY_ROUND_THE_WELL, whose

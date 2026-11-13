@@ -3,10 +3,6 @@
 /// the end of the race at the arena, where each warrior walks up to a prize
 /// and holds it up. The first to arrive takes the better one
 /// (gColosso_OpponentFinishScript, gColosso_LeaderFinishScript).
-#include "types.h"
-#include "actor.h"
-#include "field.h"
-#include "colosso_gauge.h"
 
 // UB: calls a void function through an s32 function type, the call the bytes
 // show; UBFIX calls it as declared.

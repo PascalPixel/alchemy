@@ -1,10 +1,6 @@
 /// @file
 /// Mercury Lighthouse and its entrance: leaving a floor through one of its
 /// sparkling passages.
-#include "types.h"
-#include "actor.h"
-#include "event.h"
-#include "sounds.h"
 
 /// Stepping into a passage: the leader moves north with the trail of sparks,
 /// vanishes, and after half a second the screen fades and the party takes that

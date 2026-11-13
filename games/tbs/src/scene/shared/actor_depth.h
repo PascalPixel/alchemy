@@ -1,5 +1,3 @@
-#include "types.h"
-#include "actor.h"
 
 // Tunnel Ruins and Venus Lighthouse: blocks the leader can stand beside, behind
 // or on.

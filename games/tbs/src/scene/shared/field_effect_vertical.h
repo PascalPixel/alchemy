@@ -1,8 +1,3 @@
-#include "types.h"
-#include "actor.h"
-#include "field_effect.h"
-#include "scene_tables.h"
-#include "fixed_math.h"
 
 // Vale and its home, storm and Babi scenes, Sol Sanctum's eruption, the World
 // Map and Venus Lighthouse's aerie: the pair of rising particles that

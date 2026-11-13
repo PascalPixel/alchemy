@@ -1,9 +1,6 @@
 /// @file
 /// The Nuts floating in Vale, Kolima Forest, Mogall Forest, Kalay, Crossbone
 /// Isle, Lunpa and McCoy's Palace.
-#include "types.h"
-#include "event.h"
-#include "item_ids.h"
 
 /// Catch on a floating Nut: the hand takes it off the map, its flag is set so
 /// it stays gone, and the leader holds it up and the party gets it.

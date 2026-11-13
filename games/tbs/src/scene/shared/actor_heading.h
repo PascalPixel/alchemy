@@ -1,6 +1,3 @@
-#include "script_operands.h"
-#include "types.h"
-#include "actor.h"
 
 // Kalay and Venus Lighthouse's aerie: actors that look about.
 

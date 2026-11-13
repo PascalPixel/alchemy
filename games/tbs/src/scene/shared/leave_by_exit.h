@@ -1,8 +1,5 @@
 /// @file
 /// Timber Rooms A (Suhalla) and Timber Rooms B and C (Lalivero).
-#include "types.h"
-#include "event.h"
-#include "sounds.h"
 
 /// The party leaves by the touched exit, with the exit sound: the exit
 /// numbered as the step trigger the party walked into.

@@ -1,10 +1,6 @@
 /// @file
 /// Vault and its rooms: Ivan hands back Isaac's Djinni before he leaves
 /// the party. "Oh, wait, I don't want to take your Djinni."
-#include "types.h"
-#include "actor.h"
-#include "event.h"
-#include "sounds.h"
 #include "djinn_ids.h"
 
 /// Brings every Djinni back from recovery (twenty turns of it), then, if Ivan

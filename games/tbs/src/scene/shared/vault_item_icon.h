@@ -1,9 +1,6 @@
 /// @file
 /// Vault's rooms, before and after the thieves are caught: an item lying on
 /// the floor, drawn as its menu icon (the Bone, at (568, 16, 672)).
-#include "types.h"
-#include "actor.h"
-#include "event.h"
 
 /// Creates a blank actor at the 16.16 position and draws it as the item's
 /// icon: the sprite's own animation is stopped (flags and count 0,

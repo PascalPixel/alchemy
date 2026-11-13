@@ -1,18 +1,4 @@
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
-#include "sound.h"
-#include "system.h"
-#include "heap_slots.h"
-#include "event.h"
 #include "map_grid_scroll.h"
-#include "sounds.h"
 
 // Kolima and Kolima Forest (SceneId_Kolima and SceneId_KolimaForestEntrance):
 // the sparkling dust that falls over the party when Tret's curse strikes

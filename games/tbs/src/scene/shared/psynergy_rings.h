@@ -1,13 +1,6 @@
 /// @file
 /// Vale in the storm and Venus Lighthouse's aerie: the rings of light around
 /// someone using Psynergy in an event.
-#include "types.h"
-#include "actor.h"
-#include "sprite.h"
-#include "field_effect.h"
-#include "vram_cache.h"
-#include "field_psynergy_work.h"
-#include "battle_sprite_id.h"
 #include "field_effect_vertical.h"
 
 /// Spawns a pair of rings of light on the actor, one rising and one falling

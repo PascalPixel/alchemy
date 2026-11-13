@@ -1,7 +1,5 @@
 /// @file
 /// Cottage Rooms B and the world map, where nothing reaches it.
-#include "types.h"
-#include "event.h"
 
 /// Unused: an actor's update routine that steps it through the six colour
 /// modes from SPRITE_COLOR_NORMAL to SPRITE_COLOR_BRG, one every two frames.

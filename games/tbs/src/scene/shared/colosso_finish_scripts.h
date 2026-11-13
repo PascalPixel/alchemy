@@ -2,8 +2,6 @@
 /// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
 /// the warriors' scripts as each reaches his prize at the finish: he holds it
 /// up (Colosso_RaisePrize), then turns south.
-#include "types.h"
-#include "actor_script.h"
 
 /// The opponent's, from Colosso_UpdatePathOpponent.
 s32 gColosso_OpponentFinishScript[] = {

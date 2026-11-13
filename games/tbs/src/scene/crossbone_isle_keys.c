@@ -832,6 +832,9 @@ static void CrossboneIsleKeys_DodgeFifthPursuer(void) {
 /// Reveal in CrossboneIsleStatues: the translucent layer over the room
 /// vanishes while it lasts.
 static void CrossboneIsleKeys_CastRevealInStatueRoom(void) {
+  /* FAKEMATCH(temporary): the blend built in a local, 208 shifted by 4; as
+   * REG_BLDALPHA = BLEND_ALPHA(0, 13), 4 of 5 instructions differ in tbs-en.
+   */
   u32 coefficient = 208;
 
   coefficient <<= 4;

@@ -1,23 +1,3 @@
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
-#include "sound.h"
-#include "system.h"
-#include "task.h"
-#include "colosso_gauge.h"
-#include "battle_sprite_id.h"
-#include "heap_release.h"
-#include "event.h"
-#include "dma.h"
-#include "vram_cache.h"
-#include "io_reg.h"
-#include "flags.h"
 
 // The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
 // the opponent who races Isaac by running a recorded path, and the race gauge

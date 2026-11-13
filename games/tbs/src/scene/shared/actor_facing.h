@@ -1,6 +1,4 @@
 #include "script_operands.h"
-#include "types.h"
-#include "actor.h"
 
 // Altin Peak, Bilibin, Imil, Kolima, McCoy's palace and garden, Sol Sanctum's
 // Elemental Star room, and Vale's Kraden, Babi, home and rooms scenes.

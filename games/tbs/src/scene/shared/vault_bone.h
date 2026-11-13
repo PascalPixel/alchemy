@@ -2,9 +2,6 @@
 /// Vault's rooms, before and after the thieves are caught: the Bone left
 /// on the floor of the house where the dog's owner offers bones. They are
 /// "leftover bones from dinner".
-#include "types.h"
-#include "actor.h"
-#include "event.h"
 
 /// Searching CELL_BEHAVIOR_LOG_ROOMS_A_INN_BARREL beside the girl at the inn
 /// takes a Bone after the thieves are jailed.

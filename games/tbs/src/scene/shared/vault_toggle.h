@@ -8,10 +8,6 @@
 /// either way he stays 32 pixels up, and walking the path he stays on the
 /// ground). FLAG_VAULT_ON_BRIDGE remembers the deck, which each scene restores
 /// on a kept-position return, such as after battle.
-#include "types.h"
-#include "actor.h"
-#include "event.h"
-#include "flags.h"
 
 /// The cells under Vault's rope bridge have the deck's ground, so the leader is
 /// on the bridge; kept through a battle.

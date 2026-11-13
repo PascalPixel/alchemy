@@ -1,9 +1,5 @@
 /// @file
 /// Vale's storm and Vale's homes: going indoors through a door.
-#include "types.h"
-#include "actor.h"
-#include "event.h"
-#include "flags.h"
 
 /// Takes exit no in the backdrop fade over 16 frames, first stopping the
 /// storm's lightning while the storm rages (FLAG_VALE_STORM).

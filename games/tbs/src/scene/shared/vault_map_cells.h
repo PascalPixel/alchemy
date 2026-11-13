@@ -3,20 +3,6 @@
 /// which opens in two frames as the leader walks into it facing north. Both
 /// scenes number that exit 11 (VAULT_TO_SANCTUM and VAULT_REVISIT_TO_SANCTUM),
 /// so the shared code keeps the number.
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
-#include "sound.h"
-#include "system.h"
-#include "event.h"
-#include "scene_tables.h"
-#include "sounds.h"
 
 enum {
   VAULT_DOOR_OPENING_COLUMN = 42,

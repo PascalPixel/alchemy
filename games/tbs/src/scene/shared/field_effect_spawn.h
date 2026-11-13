@@ -1,10 +1,5 @@
-#include "types.h"
 #include "field_effect.h"
-#include "edition.h"
 #include "far_call.h"
-#include "scene_tables.h"
-#include "sprite_ids.h"
-#include "fixed_math.h"
 
 // Twenty-four scenes, and the main image's field Psynergy (whirlwind.c, with
 // EFFECT_SPAWN_RESIDENT): FieldEffect_Spawn, which places a small effect moving

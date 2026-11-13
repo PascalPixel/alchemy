@@ -3,8 +3,6 @@
 /// the large lettering a visit opens with, `Lend a Hand!` for the friends'
 /// turns, and for the race `The 1st Match` (or 2nd or 3rd), 3, 2, 1 and `GO`;
 /// and `WIN` or `LOSE` once the match's battle is over.
-#include "types.h"
-#include "task.h"
 
 /// Starts the lettering task on the picture last loaded, laid out in shape
 /// (enum ColossoLetteringShape) and moved by that shape's script;

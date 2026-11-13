@@ -1,5 +1,3 @@
-#include "types.h"
-#include "actor.h"
 
 // Goma Cave Entrance and Goma Cave, and the Lamakan Desert.
 

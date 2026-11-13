@@ -2,9 +2,6 @@
 /// The cell ahead of a pushed thing for each of sixteen headings, one cell
 /// (16 pixels) along x or z, which every scene with pushed things holds.
 
-#include "types.h"
-#include "pushed_actor.h"
-
 #ifndef PUSHED_ACTOR_TABLE_SECTION
 #define PUSHED_ACTOR_TABLE_SECTION
 #endif

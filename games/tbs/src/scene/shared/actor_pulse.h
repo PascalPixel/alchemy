@@ -1,6 +1,3 @@
-#include "script_operands.h"
-#include "types.h"
-#include "actor.h"
 
 // Tolbi's ship deck and Vale's storm.
 

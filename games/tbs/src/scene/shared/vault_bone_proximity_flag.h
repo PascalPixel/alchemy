@@ -2,10 +2,6 @@
 /// Vault's rooms, before and after the thieves are caught: whether the
 /// leader stands beside the Bone on the floor, which the scenes' trigger tables
 /// test through FLAG_VAULT_LEADER_BESIDE_BONE.
-#include "types.h"
-#include "actor.h"
-#include "event.h"
-#include "flags.h"
 
 /// The leader stands beside the Bone on the inn's floor, so the girl at the
 /// inn's talk row gives way and the A button searches the Bone.

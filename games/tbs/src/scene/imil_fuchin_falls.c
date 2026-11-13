@@ -340,12 +340,9 @@ static void FuchinFallsCave_Entrance_MoveFirstLogEast(void) {
 /// trigger 12) floats it 224 pixels back and clears
 /// FLAG_FUCHIN_FALLS_ENTRANCE_FIRST_LOG_EAST.
 static void FuchinFallsCave_Entrance_MoveFirstLogWest(void) {
-  s32 offset = 112;
-
-  offset = -offset;
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, offset, 0);
-  Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, offset, 0);
+  Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, -112, 0);
+  Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, -112, 0);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_ENTRANCE_FIRST_LOG_EAST);
   wait(2);

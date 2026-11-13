@@ -1,18 +1,4 @@
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
-#include "sound.h"
-#include "system.h"
-#include "heap_release.h"
 #include "dma.h"
-#include "io_reg.h"
-#include "heap.h"
 
 // Sol Sanctum's Elemental Star room and its eruption: the ten lights that float
 // in the room, actors in a row from the first the map passes, each

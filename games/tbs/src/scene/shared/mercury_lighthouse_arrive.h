@@ -1,11 +1,6 @@
 /// @file
 /// Mercury Lighthouse and its entrance: arriving on a floor through one of its
 /// sparkling passages.
-#include "types.h"
-#include "actor.h"
-#include "event.h"
-#include "flags.h"
-#include "sounds.h"
 
 /// Unless the party returns to where it was, the leader appears 16 pixels north
 /// of the entrance, hidden, as the screen opens, then comes south with the

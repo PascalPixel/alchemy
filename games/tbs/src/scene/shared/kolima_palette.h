@@ -1,18 +1,4 @@
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
-#include "sound.h"
-#include "system.h"
 #include "dma.h"
-#include "event.h"
-#include "io_reg.h"
-#include "speaker.h"
 
 // Kolima Forest, while Tret's curse lasts (FLAG_KOLIMA_CURSE_LIFTED clear):
 // the forest's colours turned redder and darker, and both sets of colours kept

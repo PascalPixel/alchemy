@@ -1,12 +1,6 @@
 /// @file
 /// Kolima Forest (SceneId_KolimaForestEntrance and SceneId_KolimaForestCliff):
 /// the hop east onto the scene's third placed actor.
-#include "types.h"
-#include "system_call.h"
-#include "actor.h"
-#include "scene.h"
-#include "main_routine_work.h"
-#include "sounds.h"
 
 /// Hops the leader to the pixel of the 16.16 position request, unless something
 /// blocks the way: the leader crouches, jumps (3 pixels a frame, rising at 4)

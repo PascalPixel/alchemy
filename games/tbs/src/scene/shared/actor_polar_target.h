@@ -1,9 +1,6 @@
 /// @file
 /// Vale's Psynergy sparkles and the main image's field Psynergy
 /// (field_psynergy.c), each with its own move-target routine.
-#include "types.h"
-#include "field.h"
-#include "fixed_math.h"
 
 /// Sends an actor toward the point magnitude (16.16 pixels) away from it in
 /// direction angle: sets its move target.

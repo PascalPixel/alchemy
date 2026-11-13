@@ -1,7 +1,3 @@
-#include "types.h"
-#include "actor.h"
-#include "scene.h"
-#include "main_routine_work.h"
 
 // The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3).
 

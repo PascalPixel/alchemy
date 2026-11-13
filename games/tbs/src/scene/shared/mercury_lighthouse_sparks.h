@@ -1,6 +1,3 @@
-#include "types.h"
-#include "actor.h"
-#include "field_effect.h"
 
 // Mercury Lighthouse and its entrance: the trail of sparks the leader leaves
 // while passing between floors.

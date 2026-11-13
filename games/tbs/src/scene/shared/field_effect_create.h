@@ -1,5 +1,3 @@
-#include "types.h"
-#include "actor.h"
 
 // Twenty-three scenes, most of those that spawn effects (field_effect_spawn.h):
 // two ways to place a still field effect of a given type, each taking whole

@@ -1,16 +1,3 @@
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
-#include "sound.h"
-#include "system.h"
-#include "frame.h"
-#include "io_reg.h"
 
 // Mercury Lighthouse and its entrance: the shimmer of the pool once it is
 // woken (FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), in colours 9 to 15 of

@@ -1,6 +1,3 @@
-#include "types.h"
-#include "actor.h"
-#include "scene.h"
 
 // Colosseum Final 1, 2 and 3, and Venus Lighthouse.
 

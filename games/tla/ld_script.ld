@@ -174,7 +174,7 @@ SECTIONS
         "*/games/tla/src/gamepak/flash/atmel.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x08020000);
         "*/games/tla/src/gamepak/far_call/field.o"(.text .rodata .data .padding)
-        "*/games/tla/src/field/field_tables.o"(.rodata)
+        "*/games/tla/src/field/sprite_color_tables.o"(.rodata)
         "*/games/tla/src/field/picture_decode.o"(.text .rodata .data .padding)
         "*/games/tla/src/field/picture_decode_data.o"(.text .rodata .data .padding)
         "*/games/tla/src/field/draw_map.o"(.text .rodata .data .padding)
@@ -239,7 +239,7 @@ SECTIONS
         . = ABSOLUTE(ROM_SHIFT + FIELD_SEQUENCE_BANK_START);
         "*/games/tla/src/gamepak/far_call/field_sequence.o"(.text .rodata .data .padding)
         "*/games/tla/src/field/field_sequence/integrate_vectors.o"(.text .rodata .data .padding)
-        "*/games/tla/src/field/field_sequence/tables2.o"(.rodata)
+        "*/games/tla/src/field/field_sequence/sprite_color_tables.o"(.rodata)
         "*/games/tla/src/field/field_sequence/decode_picture.o"(.text .rodata .data .padding)
         "*/games/tla/src/field/field_sequence/decode_picture_data.o"(.text .rodata .data .padding)
         "*/games/tla/src/system/main_routine.o"(.text)

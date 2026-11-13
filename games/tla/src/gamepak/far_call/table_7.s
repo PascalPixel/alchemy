@@ -5,9 +5,9 @@
 	.thumb_func
 Func_08020308:
 	overlay_veneer MapGrid_CheckCollisionAt
-	.global Func_08020310
+	.global MapGrid_GetTerrainHeightAboveFar
 	.thumb_func
-Func_08020310:
+MapGrid_GetTerrainHeightAboveFar:
 	overlay_veneer MapGrid_GetTerrainHeightAbove
 	.global Func_08020318
 	.thumb_func

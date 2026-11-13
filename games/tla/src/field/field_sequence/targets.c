@@ -90,12 +90,12 @@ struct DescriptorEntry *Field_GetPsynergyTargetRule(s32 id) {
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-/// Returns the absolute value MapGrid_GetTerrainHeightAbove gives for the object at position
-/// when it is within the id's table range (pixels), else -1.
-s32 Func_080cda84(s32 id, u8 *object, s32 *position) {
+/// Returns how far the ground at position lies above or below the actor's,
+/// made positive, when that is within the id's table range (pixels), else -1.
+s32 Func_080cda84(s32 id, struct Actor *actor, s32 *position) {
   struct DescriptorEntry *entry = Field_GetPsynergyTargetRule(id);
-  s32 height = Func_08020310(position[0], position[2], object[34],
-                             *(s32 *)(object + 20));
+  s32 height = MapGrid_GetTerrainHeightAboveFar(
+      position[0], position[2], actor->terrainId, actor->terrainHeight);
 
   if (ABS(height) <= entry->range << 16)
     return ABS(height);
@@ -194,7 +194,8 @@ s32 BattleEffect_FindNearestObject(s32 self, s32 effect) {
   return found;
 }
 
-s32 BattleEffect_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target, s32 mode) {
+s32 BattleEffect_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target,
+                                                s32 mode) {
   s32 object;
   s32 result;
 
@@ -317,9 +318,9 @@ void Func_080cdd80(void) {
     wait(1);
     Event_NoOp();
     Actor_SetPositionAndResetMotionFar(target, position[0], position[1],
-                                        position[2]);
-    Actor_SetPositionAndResetMotionFar(owner, S16_AT(owner, 10) << 16,
-                                        owner->y, S16_AT(owner, 18) << 16);
+                                       position[2]);
+    Actor_SetPositionAndResetMotionFar(owner, S16_AT(owner, 10) << 16, owner->y,
+                                       S16_AT(owner, 18) << 16);
     Actor_SetMode(owner, 1);
     owner->speedLimit = speed;
     owner->acceleration = acceleration;

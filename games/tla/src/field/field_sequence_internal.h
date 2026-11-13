@@ -164,7 +164,7 @@ void *HeapSlot_Alloc(s32 slot, s32 size);
 void *HeapSlot_AllocEwram(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 struct Actor *Actor_GetById(u32 objectId);
-s32 Func_08020310(s32 x, s32 z, s32 layer, s32 height);
+s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer, s32 height);
 void FieldMessage_ShowFar(s32 message, s32 mode);
 void MessageArgument_PushFar(s32 value, s32 kind);
 void BattleEffect_LoadActionEffectResources(s32 action, s32 flags);

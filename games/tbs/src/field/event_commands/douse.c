@@ -4,29 +4,6 @@
 
 #include "../event_commands_internal.h"
 
-/// An actor as Douse's rain cloud and drops use it; the notes give the
-/// Actor fields at the same offsets.
-struct ActorDouseView {
-  u8 reserved00[8];
-  s32 x, y, z;  ///< 16.16 fixed-point pixels
-  s32 altitude; ///< groundHeight: a drop's height to fall to
-  s32 scaleX, scaleY;
-  u8 reserved20[8];
-  s32 velocityY; ///< 16.16 fixed-point pixels per frame, up
-  u8 reserved2c[4];
-  s32 speed; ///< speed limit, 16.16 fixed-point pixels per frame
-  u8 reserved34[28];
-  struct WaveEffectSprite *sprite;
-  u8 reserved54;
-  u8 flag; ///< motionFlags: 2 falls, 0 free flight
-  u8 reserved56[8];
-  /// Frames its script waits before it runs on; 2 or 6 here, before
-  /// gFieldEffect_SharedParticleScript releases it.
-  s16 wait;
-  u8 reserved60[12];
-  void (*callback)(struct Actor *actor); ///< per-frame update
-};
-
 /// The field effect (struct FieldEffectWork, gFieldEffectWork) as Douse reads
 /// it; the notes give the FieldEffectWork fields at the same offsets.
 struct FieldEffectDouseView {
@@ -51,41 +28,38 @@ struct FieldEffectDouseView {
 /// frames later and scatters three half-size splashes, which hop toward
 /// points 32 pixels away and are released after 6 frames.
 void FieldEffect_UpdateDouseDrop(struct Actor *actor) {
-  struct ActorDouseView *particle = (struct ActorDouseView *)actor;
+  struct Actor *particle = (struct Actor *)actor;
   s32 i;
-  struct ActorDouseView *p;
+  struct Actor *p;
   s32 dropWait = 2;
   s16 *pp;
 
-  if (particle->y <= particle->altitude) {
+  if (particle->y.fixed <= particle->groundHeight) {
     particle->wait = dropWait;
-    Actor_StartScriptFar((struct Actor *)particle,
-                         gFieldEffect_SharedParticleScript);
+    Actor_StartScriptFar(particle, gFieldEffect_SharedParticleScript);
     p = NULL;
-    particle->callback = NULL;
+    particle->update = NULL;
 
     // Half size, hopping up at a pixel a frame, toward a random point 32 pixels
     // away.
     for (i = 0; i <= 2; i++) {
-      p = (struct ActorDouseView *)Actor_Spawn(SPRITE_DROPLET, particle->x,
-                                               particle->y, particle->z);
+      p = Actor_Spawn(SPRITE_DROPLET, particle->x.fixed, particle->y.fixed,
+                      particle->z.fixed);
       if (p == NULL) {
         break;
       }
       p->scaleY = Q16_ONE / 2;
       p->scaleX = Q16_ONE / 2;
-      p->flag = 2;
+      p->motionFlags = 2;
       p->velocityY = px(1);
-      p->speed = Random16() + px(6) / 5;
-      Actor_SetTargetPositionFromMagnitudeAngle((struct Actor *)p, px(32),
-                                                Random16());
+      p->speedLimit = Random16() + px(6) / 5;
+      Actor_SetTargetPositionFromMagnitudeAngle(p, px(32), Random16());
       pp = &p->wait;
       {
         s32 splashWait = 6;
 
         *pp = splashWait;
-        Actor_StartScriptFar((struct Actor *)p,
-                             gFieldEffect_SharedParticleScript);
+        Actor_StartScriptFar(p, gFieldEffect_SharedParticleScript);
       }
     }
   }
@@ -125,15 +99,14 @@ void FieldPsynergy_Douse(void) {
   struct Vector3 end;
   struct FieldEffectDouseView *work = gFieldEffectWork;
   struct Actor *caster = work->caster;
-  struct ActorDouseView *cloud;
+  struct Actor *cloud;
   s32 step;
   s32 steps = 11;
   s32 count;
   s32 y;
-  struct ActorDouseView *particle;
+  struct Actor *particle;
 
-  cloud =
-      (struct ActorDouseView *)Actor_Spawn(SPRITE_RAIN_CLOUD, step = 0, 0, 0);
+  cloud = Actor_Spawn(SPRITE_RAIN_CLOUD, step = 0, 0, 0);
   if (cloud == 0)
     return;
   FieldPsynergy_FadeToCastColor();
@@ -158,7 +131,7 @@ void FieldPsynergy_Douse(void) {
   for (; step < steps; step++) {
     s32 scale;
 
-    SET_POSITION(cloud, start.x + (end.x - start.x) * step / 10,
+    SET_ACTOR_POSITION(cloud, start.x + (end.x - start.x) * step / 10,
                  start.y + (end.y - start.y) * step / 10,
                  start.z + (end.z - start.z) * step / 10);
     scale = FieldEffect_Interpolate(Q16_ONE, Q16_ONE / 4, step);
@@ -175,22 +148,21 @@ void FieldPsynergy_Douse(void) {
     if ((s8)work->highArc == 0)
       count = 24;
     for (step = 0; step < count; step++) {
-      pos.x = cloud->x;
-      pos.y = cloud->y;
-      pos.z = cloud->z;
+      pos.x = cloud->x.fixed;
+      pos.y = cloud->y.fixed;
+      pos.z = cloud->z.fixed;
       Vector_AddPolarOffset(Random16() * 5 + px(3), Random16(), &pos);
       if (step == count - 1) {
         wait(25);
-        pos.x = cloud->x;
-        pos.y = cloud->y;
-        pos.z = cloud->z;
+        pos.x = cloud->x.fixed;
+        pos.y = cloud->y.fixed;
+        pos.z = cloud->z.fixed;
       }
-      particle = (struct ActorDouseView *)Actor_Spawn(SPRITE_DROPLET, pos.x,
-                                                      pos.y, pos.z);
+      particle = Actor_Spawn(SPRITE_DROPLET, pos.x, pos.y, pos.z);
       if (particle != 0) {
-        particle->altitude = pos.y - px(32);
-        particle->callback = FieldEffect_UpdateDouseDrop;
-        particle->flag = 2;
+        particle->groundHeight = pos.y - px(32);
+        particle->update = FieldEffect_UpdateDouseDrop;
+        particle->motionFlags = 2;
       }
       Sound_PlayFar(SE_WATER);
       wait(6);
@@ -204,19 +176,17 @@ void FieldPsynergy_Douse(void) {
     else
       count = 30;
     for (step = 0; step < count; step++) {
-      pos.x = cloud->x;
-      pos.y = cloud->y;
-      pos.z = cloud->z;
+      pos.x = cloud->x.fixed;
+      pos.y = cloud->y.fixed;
+      pos.z = cloud->z.fixed;
       Vector_AddPolarOffset(Random16() * 5 + px(3), Random16(), &pos);
-      particle = (struct ActorDouseView *)Actor_Spawn(SPRITE_PARTICLE, pos.x,
-                                                      pos.y, pos.z);
+      particle = Actor_Spawn(SPRITE_PARTICLE, pos.x, pos.y, pos.z);
       if (particle != 0) {
-        particle->callback = FieldEffect_UpdateDriftingFallActor;
-        particle->flag = 0;
-        particle->sprite->priority = 2;
+        particle->update = FieldEffect_UpdateDriftingFallActor;
+        particle->motionFlags = 0;
+        particle->sprite->image.priority = 2;
         Actor_SelectAnimationFar(particle, 8);
-        Actor_SetSpriteColorModeFar((struct Actor *)particle,
-                                    SPRITE_COLOR_WHITE);
+        Actor_SetSpriteColorModeFar(particle, SPRITE_COLOR_WHITE);
       }
       wait(6);
     }
@@ -228,7 +198,7 @@ void FieldPsynergy_Douse(void) {
   do {
     s32 scale;
 
-    SET_POSITION(cloud, end.x + (start.x - end.x) * step / 10,
+    SET_ACTOR_POSITION(cloud, end.x + (start.x - end.x) * step / 10,
                  end.y + (start.y - end.y) * step / 10,
                  end.z + (start.z - end.z) * step / 10);
     scale = FieldEffect_Interpolate(Q16_ONE / 4, Q16_ONE, step);
@@ -237,6 +207,6 @@ void FieldPsynergy_Douse(void) {
     wait(1);
     step++;
   } while (step < steps);
-  Actor_ReleaseFar((struct Actor *)cloud);
+  Actor_ReleaseFar(cloud);
   FieldPsynergy_FadeFromCastColor();
 }

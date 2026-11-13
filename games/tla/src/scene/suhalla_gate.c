@@ -1,5 +1,7 @@
 /// @file
-/// The scene code of overlay 0x64f, in ROM order.
+/// The Suhalla Gate, in the prologue: Jenna and Kraden cross it, fighting a
+/// Ruffian who spots them (Room1), three more who wait in ambush (Room2), and a
+/// Punch Ant in the Gateway Cave (Room3) on the way to Idejima.
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -16,7 +18,8 @@ void Func_02000a90(s32 id, s32 a);
 void Func_02000a98(s32 id, s32 a, s32 b);
 void Event_End(void);
 void FieldCamera_WaitForArrival(void);
-void Func_020005e8(void);
+/// The Punch Ant hops at the leader and its battle begins.
+void SuhallaGate_FightPunchAnt(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 extern u8 MsgMyThatWas[];
@@ -29,7 +32,8 @@ extern u8 MsgNotThatWay[];
 #include "module/scene/suhalla_gate.h"
 #include "scene_ids.h"
 
-void Func_02000038(void) { Field_RequestDjinnBattle(13, 26); }
+/// Talking to a Ruffian again starts his battle.
+void SuhallaGate_FightRuffian(void) { Field_RequestDjinnBattle(13, 26); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -79,7 +83,8 @@ const struct Trigger *Scene_GetEvents(void) {
 #include "ram_buffer.h"
 #include "event_work.h"
 
-void Func_02000110(void) {
+/// After the first battle (flag 0x894) its Ruffian lies beaten by the path.
+void SuhallaGate_SetUpRoom1(void) {
   if (gMainRoutineWork.entrance == 99)
     Event_SetFlag(0x894);
   if (Event_GetFlag(0x894)) {
@@ -89,7 +94,8 @@ void Func_02000110(void) {
   }
 }
 
-void Func_02000168(void) {
+/// After the ambush (flag 0x895) its three Ruffians lie beaten.
+void SuhallaGate_SetUpRoom2(void) {
   MapGrid_CopyCellAttributes(108, 38, 1, 1, 102, 56);
   if (gMainRoutineWork.entrance == 99)
     Event_SetFlag(0x895);
@@ -114,7 +120,8 @@ void Func_02000168(void) {
   Actor_SetAnimation(12, 3);
 }
 
-void Func_02000264(void) {
+/// Back from the Punch Ant's battle, the party talks it over.
+void SuhallaGate_SetUpRoom3(void) {
   if (Event_GetFlag(0x109) == 0 && gMainRoutineWork.entrance == 99)
     SuhallaGate_AfterThievesBattle();
 }
@@ -127,15 +134,17 @@ s32 Scene_Initialize(void) {
   work->screenEffect = 256;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_SuhallaGate1)
-    Func_02000110();
+    SuhallaGate_SetUpRoom1();
   else if (scene == (s32)&SceneId_SuhallaGate2)
-    Func_02000168();
+    SuhallaGate_SetUpRoom2();
   else if (scene == (s32)&SceneId_SuhallaGate3)
-    Func_02000264();
+    SuhallaGate_SetUpRoom3();
   return 0;
 }
 
-void Func_020002e0(void) {
+/// Unused: opens Room2's cell as its set-up does, and sets flag 0x8de; no
+/// trigger runs it.
+UNUSED void SuhallaGate_OpenRoom2Cell(void) {
   MapGrid_CopyCellAttributes(108, 38, 1, 1, 102, 56);
   Event_SetFlag(0x8de);
 }
@@ -154,7 +163,8 @@ void SuhallaGate_EnterHouse(void) {
   Import_EventSetExitRequest(value);
 }
 
-void Func_02000378(void) {
+/// The leader takes control again and the party leaves for Idejima.
+void SuhallaGate_LeaveForIdejima(void) {
   s32 value = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154);
 
   gMainRoutineWork.currentOwner = 4;
@@ -242,7 +252,7 @@ void SuhallaGate_ThievesAmbushParty(void) {
   Event_End();
 }
 
-void Func_020005e8(void) {
+void SuhallaGate_FightPunchAnt(void) {
   struct Actor *owner;
 
   Actor_Jump(8, 4, 0);
@@ -258,7 +268,9 @@ void Func_020005e8(void) {
   Event_End();
 }
 
-void Func_02000650(void) {
+/// The Punch Ant springs out and hops at the party, from either side of the
+/// cave's path.
+void SuhallaGate_PunchAntHopsFromWest(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetPosition(8, PIXELS(472), PIXELS(480));
@@ -278,10 +290,10 @@ void Func_02000650(void) {
   Actor_MoveToAndWait(8, 488, 456);
   Actor_Jump(8, 4, 0);
   Actor_MoveToAndWait(8, 496, 448);
-  Func_020005e8();
+  SuhallaGate_FightPunchAnt();
 }
 
-void Func_0200071c(void) {
+void SuhallaGate_PunchAntHopsFromEast(void) {
   s32 x, z;
 
   Event_Start();
@@ -308,7 +320,7 @@ void Func_0200071c(void) {
   Actor_MoveToAndWait(8, 520, 464);
   Actor_Jump(8, 4, 0);
   Actor_MoveToAndWait(8, 528, 456);
-  Func_020005e8();
+  SuhallaGate_FightPunchAnt();
 }
 
 /// "My! That was invigorating! He wasn't too strong..."
@@ -363,7 +375,9 @@ void SuhallaGate_PointToMeetingSpot(void) {
 }
 
 // clang-format off
-s32 gData_02000aa8[] = {
+/// Unused: a script that squashes and stretches its actor over and over;
+/// nothing runs it.
+s32 gSuhallaGate_SquashLoop[] = {
     (s32)0x80010000, 23, 9, -0x4000, 23, 10,
     0x2000, 0, 2, 23, 9, 0x2000,
     23, 10, -4096, 0, 2, 23,
@@ -491,7 +505,7 @@ struct Trigger gSuhallaGate_Room2Triggers[] = {
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgMaybeIShould)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAllRightSo)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgOhManThere)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_02000038)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(SuhallaGate_FightRuffian)},
     {19, 100, 0xfb4, 0x1000c3},
     {TRIGGER_TABLE_END},
 };
@@ -500,8 +514,8 @@ struct Trigger gSuhallaGate_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {49, 2, CONDITION_ALWAYS, 2},
     {33, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Func_02000378)},
-    {TRIGGER_STEP, 22, 0x896, EVENT(Func_02000650)},
-    {TRIGGER_STEP, 23, 0x896, EVENT(Func_0200071c)},
+    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(SuhallaGate_LeaveForIdejima)},
+    {TRIGGER_STEP, 22, 0x896, EVENT(SuhallaGate_PunchAntHopsFromWest)},
+    {TRIGGER_STEP, 23, 0x896, EVENT(SuhallaGate_PunchAntHopsFromEast)},
     {TRIGGER_TABLE_END},
 };

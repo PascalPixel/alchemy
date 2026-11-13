@@ -359,9 +359,9 @@ void BattlePlayback_Run(void) {
           struct Sprite *record;
           s32 recordIndex;
           struct Sprite **slot;
-          s32 lastPictureMask = 0xff;
+          s32 lastPictureMask;
 
-          for (recordIndex = 0, slot = records;
+          for (recordIndex = 0, slot = records, lastPictureMask = 0xff;
                (record = GetMotionRecord(
                     BattleObject_Get(events->unitId)->actor, recordIndex)) != 0;
                recordIndex++) {

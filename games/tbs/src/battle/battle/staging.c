@@ -971,15 +971,17 @@ void BattleObject_RemoveFromLists(s32 unitId) {
   }
 
   // The enemies' list.
-  for (i = 0;; i++) {
-    listedUnit = battle->enemyIds[i];
-    if (listedUnit == unitId) {
-      battle->enemyIds[i] = BATTLE_UNIT_REMOVED;
-      goto removed;
-    }
-    if (listedUnit == BATTLE_UNIT_LIST_END)
-      return;
+  i = 0;
+nextEnemy:
+  listedUnit = battle->enemyIds[i];
+  if (listedUnit == unitId) {
+    battle->enemyIds[i] = BATTLE_UNIT_REMOVED;
+    goto removed;
   }
+  i++;
+  if (listedUnit == BATTLE_UNIT_LIST_END)
+    return;
+  goto nextEnemy;
 
 removed:
   // Free the letter that told the enemy apart from others of its class.

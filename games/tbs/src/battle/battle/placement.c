@@ -424,14 +424,19 @@ void BattleUnit_RefreshPlacement(void) {
 /// @param list unit ids, ended by BATTLE_UNIT_LIST_END, UNIT_MAX at most
 /// @param place 0 to 7 a party unit id, 8 to 13 the enemies
 s32 BattlePlacement_ContainsId(s16 *list, s32 place) {
-  s32 i;
+  u32 i;
 
   // An enemy's place to its unit id.
   if (place > ALLY_MAX)
     place += FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
-  for (i = 0; i < UNIT_MAX && (u16)list[i] != BATTLE_UNIT_LIST_END; i++) {
-    if ((u16)list[i] == place)
+  i = 0;
+  do {
+    u16 unitId = *list++;
+
+    if (unitId == BATTLE_UNIT_LIST_END)
+      break;
+    if (unitId == place)
       return 1;
-  }
+  } while (++i < UNIT_MAX);
   return 0;
 }

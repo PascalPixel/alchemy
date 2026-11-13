@@ -14,11 +14,7 @@
 struct IconMenuEntry {
   /// The sprite queue's link, then OAM attributes 0 and 1 and attribute 2,
   /// written each frame by IconMenu_DrawIcons.
-  ///@{
-  u32 link;
-  u32 attr01;
-  u32 attr2;
-  ///@}
+  u32 sprite[3];
   s16 x;      ///< screen pixels; an icon at 0 is not drawn
   s16 y;      ///< screen pixels
   u16 unused; ///< no code names it

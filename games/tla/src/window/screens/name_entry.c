@@ -52,7 +52,9 @@ s32 Func_080444c4(const u8 *name) {
 UNUSED s32 Window_ReturnOne(void) { return 1; }
 #endif
 
-void Func_08044348(struct Window *window, const void *resource) {
+/// Decompresses the type-01 tilemap resource and copies it over window's
+/// rectangle, into the BG map in VRAM and the window work's mirror of it.
+void Window_CopyTilemapRegion(struct Window *window, const void *resource) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u16 *buffer = Heap_AllocEwram(0x300);
   s32 offset;
@@ -297,7 +299,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   keyboardWindow = Window_Create(3, 6, 24, NAME_KEYBOARD_HEIGHT, 2);
   nameWindow = Window_Create(8, 3, 8, 3, 2);
   Portrait_OpenWindow(member, 0, 3, 1);
-  Func_08044348(keyboardWindow, gNameEntry_KeyboardTilemap);
+  Window_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
   Window_DrawDividerLine(keyboardWindow, 18, 0, 18, NAME_DIVIDER_BOTTOM);
   render->dirty = textDirty;
   text[0] = result;
@@ -456,9 +458,10 @@ s32 NameEntry_EditMemberName(s32 member) {
     turn_page:
       page ^= 1;
       if (page)
-        Func_08044348(keyboardWindow, gNameEntry_AlternateKeyboardTilemap);
+        Window_CopyTilemapRegion(keyboardWindow,
+                                 gNameEntry_AlternateKeyboardTilemap);
       else
-        Func_08044348(keyboardWindow, gNameEntry_KeyboardTilemap);
+        Window_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
       Window_DrawDividerLine(keyboardWindow, 18, 0, 18, NAME_DIVIDER_BOTTOM);
       render->dirty = 1;
       continue;
@@ -582,7 +585,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   keyboardWindow = Window_Create(3, 6, 24, 9, 2);
   nameWindow = Window_Create(8, 3, NAME_LABEL_WIDTH, 3, 2);
   Portrait_OpenWindow(member, 0, 3, 1);
-  Func_08044348(keyboardWindow, gNameEntry_KeyboardTilemap);
+  Window_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
 #if NAME_KEY_LABELS
   Text_DrawStringInWindow(gNameEntry_DeleteKeyLabel, keyboardWindow, 144, 32);
   Text_DrawStringInWindow(gNameEntry_EndKeyLabel, keyboardWindow, 144, 40);

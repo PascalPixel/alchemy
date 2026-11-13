@@ -194,10 +194,10 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
            * height table; without it, 331 of 755 instructions differ in
            * tla-en. */
           __asm__("" : "=r"(h) : "0"(h));
-          Func_08196404(HEAP_BLITTER_ALTERNATE, 7, 7,
-                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                            Data_08197a34[Random16() & 3],
-                        BLITTER_MAX);
+          BattleEffect_BuildBlitter(HEAP_BLITTER_ALTERNATE, 7, 7,
+                                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+                                        Data_08197a34[Random16() & 3],
+                                    BLITTER_MAX);
           ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
               canvas,
               work->sheet + gBattleEffect_GlintCells[frame & 3] +

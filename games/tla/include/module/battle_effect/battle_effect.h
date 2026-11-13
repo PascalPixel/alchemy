@@ -68,7 +68,8 @@ union BattleBackgroundId {
 };
 
 // The Lost Age numbers its blitter modes in the reverse of The Broken Seal's
-// order: Func_08196404 builds additive for 0, max for 1, transparent for 2.
+// order: BattleEffect_BuildBlitter builds additive for 0, max for 1,
+// transparent for 2.
 enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 
 void BattleEffect_UpdatePhasePalette(
@@ -122,8 +123,8 @@ extern const u8 Data_08199220[];
 extern const u8 gData_08199340[]; // the quad's face
 void Func_08179e6c(void);
 void BattleEffect_AdvanceScrollOnInterval(void);
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode);
+s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
+                              s32 flags, u32 mode);
 void Func_08164abc(s32 r, s32 g, s32 b);
 void Func_08164b2c(s32 red, s32 green, s32 blue);
 void Func_081885f0(struct MeshVertex *vertices, struct MeshTriangle *triangles,
@@ -206,7 +207,8 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
 extern char ResourceId_SheepCardSheet; // directory row 0xe3
 void Func_0815e22c(struct EffectPosition *midpoint);
 void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode);
-void Func_0813d098(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
+                                  s32 mode);
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
                                     s32 percent);
 extern char ResourceId_StarCrossSheet;

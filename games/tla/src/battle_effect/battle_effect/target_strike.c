@@ -10,66 +10,98 @@
 #include "resource_ids.h"
 
 /// Abilities: Numbing Sting, Paralytail (kind 313).
-void BattleEffect_RunNumbingSting(void *object) { Func_0813d098(object, 6); }
+void BattleEffect_RunNumbingSting(void *object) {
+  BattleEffect_RunTargetStrike(object, 6);
+}
 
 /// Abilities: Cannibal Fang (kind 316).
-void BattleEffect_RunCannibalFang(void *object) { Func_0813d098(object, 3); }
+void BattleEffect_RunCannibalFang(void *object) {
+  BattleEffect_RunTargetStrike(object, 3);
+}
 
 /// Abilities: Poisonous Bite (kind 318); Poison Fang (kind 323).
-void BattleEffect_RunPoisonousBite(void *object) { Func_0813d098(object, 1); }
+void BattleEffect_RunPoisonousBite(void *object) {
+  BattleEffect_RunTargetStrike(object, 1);
+}
 
 /// Abilities: Rabid Fang (kind 336).
-void BattleEffect_RunRabidFang(void *object) { Func_0813d098(object, 10); }
+void BattleEffect_RunRabidFang(void *object) {
+  BattleEffect_RunTargetStrike(object, 10);
+}
 
 /// Abilities: Electric Bite (kind 324).
-void BattleEffect_RunElectricBite(void *object) { Func_0813d098(object, 5); }
+void BattleEffect_RunElectricBite(void *object) {
+  BattleEffect_RunTargetStrike(object, 5);
+}
 
 /// Abilities: Poison Tail (kind 325); Poison Sting (kind 440).
-void BattleEffect_RunPoisonTail(void *object) { Func_0813d098(object, 9); }
+void BattleEffect_RunPoisonTail(void *object) {
+  BattleEffect_RunTargetStrike(object, 9);
+}
 
 /// Abilities: Vampiric Fang (kind 327).
-void BattleEffect_RunVampiricFang(void *object) { Func_0813d098(object, 4); }
+void BattleEffect_RunVampiricFang(void *object) {
+  BattleEffect_RunTargetStrike(object, 4);
+}
 
 /// Abilities: Double Fang (kind 332).
-void BattleEffect_RunDoubleFang(void *object) { Func_0813d098(object, 0); }
+void BattleEffect_RunDoubleFang(void *object) {
+  BattleEffect_RunTargetStrike(object, 0);
+}
 
 /// Abilities: Mortal Blow (kind 333).
-void BattleEffect_RunMortalBlow(void *object) { Func_0813d098(object, 8); }
+void BattleEffect_RunMortalBlow(void *object) {
+  BattleEffect_RunTargetStrike(object, 8);
+}
 
 /// Abilities: Twin Beaks, Gryphon (kind 335).
-void BattleEffect_RunTwinBeaks(void *object) { Func_0813d098(object, 7); }
+void BattleEffect_RunTwinBeaks(void *object) {
+  BattleEffect_RunTargetStrike(object, 7);
+}
 
 /// Abilities: Acid Bite (kind 337).
-void BattleEffect_RunAcidBite(void *object) { Func_0813d098(object, 2); }
+void BattleEffect_RunAcidBite(void *object) {
+  BattleEffect_RunTargetStrike(object, 2);
+}
 
 /// Abilities: Drain Fang (kind 386).
-void BattleEffect_RunDrainFang(void *object) { Func_0813d098(object, 11); }
+void BattleEffect_RunDrainFang(void *object) {
+  BattleEffect_RunTargetStrike(object, 11);
+}
 
 /// Abilities: Angle Spike (kind 399).
-void BattleEffect_RunAngleSpike(void *object) { Func_0813d098(object, 16); }
+void BattleEffect_RunAngleSpike(void *object) {
+  BattleEffect_RunTargetStrike(object, 16);
+}
 
 /// Abilities: Heat Stun (kind 458).
-void BattleEffect_RunHeatStun(void *object) { Func_0813d098(object, 14); }
+void BattleEffect_RunHeatStun(void *object) {
+  BattleEffect_RunTargetStrike(object, 14);
+}
 
 /// Abilities: Maneater (kind 421).
-void BattleEffect_RunManeater(void *object) { Func_0813d098(object, 15); }
+void BattleEffect_RunManeater(void *object) {
+  BattleEffect_RunTargetStrike(object, 15);
+}
 
 /// Effect kind 438: the target strike in style 17.
 void BattleEffect_RunTargetStrikeMode17(void *object) {
-  Func_0813d098(object, 17);
+  BattleEffect_RunTargetStrike(object, 17);
 }
 
 /// Effect kind 439: the target strike in style 18.
 void BattleEffect_RunTargetStrikeMode18(void *object) {
-  Func_0813d098(object, 18);
+  BattleEffect_RunTargetStrike(object, 18);
 }
 
 /// Abilities: Kill Sting (kind 441).
-void BattleEffect_RunKillSting(void *object) { Func_0813d098(object, 19); }
+void BattleEffect_RunKillSting(void *object) {
+  BattleEffect_RunTargetStrike(object, 19);
+}
 
 /// Effect kind 456: the target strike in style 20.
 void BattleEffect_RunTargetStrikeMode20(void *object) {
-  Func_0813d098(object, 20);
+  BattleEffect_RunTargetStrike(object, 20);
 }
 
 /// Abilities: Mad Zephyr (kind 117).
@@ -78,9 +110,9 @@ void BattleEffect_RunMadZephyr(u8 *object) {
                                  20);
   wait(2);
   if (*(s32 *)(object + 24) == 0)
-    Func_0813d098(object, 12);
+    BattleEffect_RunTargetStrike(object, 12);
   else
-    Func_0813d098(object, 13);
+    BattleEffect_RunTargetStrike(object, 13);
 }
 
 #undef RECORD
@@ -120,7 +152,7 @@ void Render_DrawModelList(struct Model *model);
 
 #define BUILD_BLITTER(slot, width, height, flags, mode)                        \
   do {                                                                         \
-    Func_08196404(slot, width, height, flags, mode);                           \
+    BattleEffect_BuildBlitter(slot, width, height, flags, mode);               \
   } while (0)
 
 /// Strikes (kind 0) are six-picture slashes across the first target, one
@@ -129,7 +161,8 @@ void Render_DrawModelList(struct Model *model);
 /// starts eight wisps of smoke and a burst of sparks, and the battle moves on
 /// at the first. Around them the mode's flags add rising wisps, motes that
 /// stream back to the user, glints, sparks, a flash or a star.
-void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
+                                  s32 mode) {
   struct EffectPosition ground;
   struct EffectPosition targetPosition;
   struct EffectPosition alternate;
@@ -411,8 +444,8 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
       gBlitter(canvas, work->sheet + stage * 864 + 0xc80,
                targetPosition.x / 2 - 18, 56, 18, 48);
       HeapSlot_Release(SLOT_BLITTER);
-      Func_08196404(SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
-                    RECORD(mode, RECORD_BLEND));
+      BattleEffect_BuildBlitter(SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
+                                RECORD(mode, RECORD_BLEND));
       do {
         // Empty: its loop notes end CSE's block after the blitter call.
       } while (0);
@@ -483,8 +516,9 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
             (gData_08197492[image] / 2);
         y = center.y - (Trig_Cos(angle) * (radius + 4) >> 17) -
             (gData_08197498[image] / 2);
-        Func_08196404(SLOT_BLITTER_ALTERNATE, 7, 7,
-                      Data_08197605[Random16() & 3] | CLIP, BLIT_ADDITIVE);
+        BattleEffect_BuildBlitter(SLOT_BLITTER_ALTERNATE, 7, 7,
+                                  Data_08197605[Random16() & 3] | CLIP,
+                                  BLIT_ADDITIVE);
         do {
           // Empty: its loop notes end CSE's block after the blitter call.
         } while (0);

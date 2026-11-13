@@ -545,7 +545,8 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
           if (never || neverToo) {
             y = 0;
           }
-          Func_08196404(188, 7, 7, 3 | gThor_SmokeFlips[Random16() & 3], 1);
+          BattleEffect_BuildBlitter(188, 7, 7,
+                                    3 | gThor_SmokeFlips[Random16() & 3], 1);
           BLITTER_ALTERNATE(
               canvas, Ram_MapCellBuffer + gBattleEffect_GlintCells[cell], x,
               y + 56, gData_08197492[cell], gData_08197498[cell]);

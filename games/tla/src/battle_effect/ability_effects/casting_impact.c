@@ -236,8 +236,8 @@ extern void
 Graphics_PackTileRows__fxdisp(void *, void *, s32,
                               s32) __asm__("BattleEffect_PackTileRows");
 void Func_0818caa8(void *, s32, s32, s32);
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode);
+s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
+                              s32 flags, u32 mode);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_DrawModelList(struct Model *);
@@ -1209,7 +1209,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             // Once-only block: its loop notes keep sched2 from moving the
             // releases' argument loads, as the listing has them.
             do {
-              Func_08196404(188, 7, 7, gData_0819887e[Random16() & 3] | 3, 0);
+              BattleEffect_BuildBlitter(188, 7, 7,
+                                        gData_0819887e[Random16() & 3] | 3, 0);
             } while (0);
             IWRAM_SLOT_BC(screen, buffer + gBattleEffect_GlintCells[m], x,
                           y + 56, gData_08197492[m], gData_08197498[m]);
@@ -1230,7 +1231,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                 gData_08197492[m] / 2;
             y = ((Trig_Cos(angle) << 4) >> 16) - gData_08197498[m] / 2;
             RELEASE_BLITTERS();
-            Func_08196404(188, 7, 7, gData_08198882[Random16() & 3] | 3, 1);
+            BattleEffect_BuildBlitter(188, 7, 7,
+                                      gData_08198882[Random16() & 3] | 3, 1);
             IWRAM_SLOT_BC(screen, buffer + gBattleEffect_GlintCells[m], x,
                           y + 80, gData_08197492[m], gData_08197498[m]);
             HeapSlot_Release(188);
@@ -1922,7 +1924,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                 gData_08197492[m] / 2;
             y = ((Trig_Cos(angle) << 4) >> 16) - gData_08197498[m] / 2;
             RELEASE_BLITTERS();
-            Func_08196404(188, 7, 7, gData_0819894e[Random16() & 3] | 3, 1);
+            BattleEffect_BuildBlitter(188, 7, 7,
+                                      gData_0819894e[Random16() & 3] | 3, 1);
             IWRAM_SLOT_BC(screen, buffer + gBattleEffect_GlintCells[m], x,
                           y + 80, gData_08197492[m], gData_08197498[m]);
             HeapSlot_Release(188);

@@ -391,8 +391,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
 // Reached from the scenes through the far-call table (table_47.s). Like
 // 0813e3d0 it sets up its own heap blocks, stores work->effect and marks the
 // work active itself, and reads the actors from the argument. The corner
-// sparks' four blitters are loaded through Func_08196404 directly, with all
-// five arguments.
+// sparks' four blitters are loaded through BattleEffect_BuildBlitter directly,
+// with all five arguments.
 
 // The rising sparkles live in the map cell buffer.
 #define gSparkles ((struct EffectStep *)Ram_MapCellBuffer)
@@ -497,8 +497,8 @@ void BattleEffect_RunElementBurst(struct BattleEffectArgument *effect) {
       s32 mode;
 
       for (i = 0, mode = BLIT_MAX; i != 4; i++) {
-        Func_08196404(SLOT_BLITTER_ALTERNATE, 7, 7, Data_081976da[i] | CLIP,
-                      mode);
+        BattleEffect_BuildBlitter(SLOT_BLITTER_ALTERNATE, 7, 7,
+                                  Data_081976da[i] | CLIP, mode);
         draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
         draw[1](canvas, work->sheet + (picture << 10), gDeathPlunge_X[i] + 32,
                 ground.y + gDeathPlunge_Y[i] - 32, 32, 32);

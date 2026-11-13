@@ -63,8 +63,8 @@ void Transform_Pop(void);
 void Func_0815e22c(
     struct EffectPosition *position); // the targets' centre on screen
 void BattleEffect_StepPaletteToResource(s32 palette);
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode);
+s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
+                              s32 flags, u32 mode);
 
 extern char ResourceId_TornadoSheet;
 extern char ResourceId_Data0F8;
@@ -496,7 +496,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
            * as no block, 277 of 1122 instructions differ in tla-en. */
           do {
           } while (0);
-          Func_08196404(188, 7, 7, c, 1);
+          BattleEffect_BuildBlitter(188, 7, 7, c, 1);
         }
         ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
             canvas, work->sheet + gBattleEffect_GlintCells[k], x, y,

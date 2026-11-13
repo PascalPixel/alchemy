@@ -107,7 +107,7 @@ gStreaks_Records:
 	.global gStreaks_Tremble
 gStreaks_Tremble:
 	.byte -1, -1, 1, 1, 1, 1, -1, -1
-@ read by Func_0813d098
+@ read by BattleEffect_RunTargetStrike
 	.global Data_0819754f
 Data_0819754f:
 	.byte 1, 2, 8, 0, 6, 0, 70, 1, 1, 1, 1, 6, 1, 54, 1, 3
@@ -120,27 +120,27 @@ Data_0819754f:
 	.byte 0, 1, 40, 6, 2, 1, 50, 1, 1, 24, 4, 6, 0, 50, 1, 1
 	.byte 40, 6, 2, 1, 50, 0, 1, 64, 4, 2, 0, 22, 1, 1, 8, 0
 	.byte 6, 0, 70
-@ The Broken Seal's gTargetStrike_Widths; read by Func_0813d098
+@ The Broken Seal's gTargetStrike_Widths; read by BattleEffect_RunTargetStrike
 	.global Data_081975e2
 Data_081975e2:
 	.byte 38, 54, 71, 74, 77, 65
-@ The Broken Seal's gTargetStrike_Heights; read by Func_0813d098
+@ The Broken Seal's gTargetStrike_Heights; read by BattleEffect_RunTargetStrike
 	.global Data_081975e8
 Data_081975e8:
 	.byte 7, 9, 11, 13, 13, 11
-@ The Broken Seal's table of this name; read by Func_0813d098
+@ The Broken Seal's table of this name; read by BattleEffect_RunTargetStrike
 	.global gTargetStrike_Offsets
 gTargetStrike_Offsets:
 	.2byte 3200, 3466, 3952, 4733, 5695, 6696
-@ The Broken Seal's gTargetStrike_Reach; read by Func_0813d098
+@ The Broken Seal's gTargetStrike_Reach; read by BattleEffect_RunTargetStrike
 	.global Data_081975fa
 Data_081975fa:
 	.byte 58, 42, 25, 13, 5, 0
-@ The Broken Seal's gTargetStrike_ColumnStages; read by Func_0813d098
+@ The Broken Seal's gTargetStrike_ColumnStages; read by BattleEffect_RunTargetStrike
 	.global gTargetStrike_ColumnStages
 gTargetStrike_ColumnStages:
 	.byte 0, 1, 2, 3, 2
-@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by Func_0813d098
+@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by BattleEffect_RunTargetStrike
 	.global Data_08197605
 Data_08197605:
 	.byte 0, 4, 8, 12
@@ -2286,16 +2286,16 @@ Data_08199484:
 	.global Data_081994a8
 Data_081994a8:
 	.4byte -0x2000, -0x4000, -0x4000, -0x8000
-@ read by Func_0817e0c0
+@ read by BattleEffect_RunRushingStrike
 	.global Data_081994b8
 Data_081994b8:
 	.4byte 0x8000, 0x8000, 0x8000, 0x8000
 	.4byte 55536, 52768
-@ read by Func_0817e698
+@ read by BattleEffect_RunMirroredWall
 	.global gData_081994d0
 gData_081994d0:
 	.4byte 39768, 44152, 44152, 55536
-@ read by Func_0817e698
+@ read by BattleEffect_RunMirroredWall
 	.global gData_081994e0
 gData_081994e0:
 	.4byte -8, -8, -8, 0

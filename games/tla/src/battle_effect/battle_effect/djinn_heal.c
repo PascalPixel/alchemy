@@ -16,7 +16,8 @@ struct Model;
 #define HEAP_BLITTER 104 // ☀️ HEAP_SLOT_BLITTER
 
 // The Lost Age numbers its blitter modes in the reverse of The Broken Seal's
-// order: Func_08196404 builds additive for 0, max for 1, transparent for 2.
+// order: BattleEffect_BuildBlitter builds additive for 0, max for 1,
+// transparent for 2.
 
 #define QUAD_FRAMES 64
 #define QUAD_COUNT 16

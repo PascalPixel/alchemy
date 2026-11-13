@@ -1001,7 +1001,7 @@ s32 Scene_TalkToActor(s32 id);
 s32 Scene_RunRaisedEvent(s32 id);
 s32 Scene_RunStepTriggerOrExit(s32 value);
 s32 Field_RunPushCell(s32 keys);
-s32 Func_080cd808(s32 id);
+s32 Field_ExamineCell(s32 id);
 
 s32 Func_080cdc74(void);
 void Func_080cdd80(void);

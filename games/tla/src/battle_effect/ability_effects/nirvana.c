@@ -336,8 +336,9 @@ extern char ResourceId_OrangePaletteB;
 extern u16 Data_08198b5e[];
 extern u16 Data_08198b6c[];
 
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode); // BattleEffect_BuildBlitter
+s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
+                              s32 flags,
+                              u32 mode); // BattleEffect_BuildBlitter
 void BattleEffect_FetchRectangleBlitters(
     s32 flip, void **out); // ..FetchRectangleBlitters
 
@@ -473,9 +474,10 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
         }
         for (i = 0, x = centre - 14; i != 2; i++, x += 14) {
           if (i == 0)
-            Func_08196404(104, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, mode);
+            BattleEffect_BuildBlitter(
+                104, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, mode);
           else
-            Func_08196404(
+            BattleEffect_BuildBlitter(
                 104, 7, 7,
                 COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, mode);
           draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];

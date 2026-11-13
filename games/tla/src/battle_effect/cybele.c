@@ -1841,7 +1841,7 @@ void BattleEffect_RunStatBoostMode10(struct BattleEffectArgument *effect) {
 
 // Build a blitter in its heap slot and fetch its entry.
 #define LOAD_BLITTER(out, flags, mode)                                         \
-  Func_08196404(BLITTER_SLOT, 7, 7, flags, mode);                              \
+  BattleEffect_BuildBlitter(BLITTER_SLOT, 7, 7, flags, mode);                  \
   out = (DrawRectangle)Ram_HeapSlots->unk64[1]
 
 #define FLARES ((struct EffectStep *)Ram_MapCellBuffer)
@@ -2047,7 +2047,8 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 
       // The mode is the prelude, 1 here: BLIT_MAX.
       LOAD_BLITTER(draw[0], flags ^ flipX, prelude);
-      Func_08196404(BLITTER_SLOT_ALTERNATE, 7, 7, flags ^ flipX2, additive);
+      BattleEffect_BuildBlitter(BLITTER_SLOT_ALTERNATE, 7, 7, flags ^ flipX2,
+                                additive);
       // Read through the slot's address, which folds to one constant.
       draw[1] = *(DrawRectangle *)&Ram_HeapSlots->unkb8[1];
 
@@ -2088,7 +2089,8 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
            * register; without it, 2 of 1146 instructions differ in tla-en. */
           __asm__("" : "+h"(mode));
           LOAD_BLITTER(draw[0], flags, BLIT_MAX);
-          Func_08196404(BLITTER_SLOT_ALTERNATE, 7, 7, flags, additive);
+          BattleEffect_BuildBlitter(BLITTER_SLOT_ALTERNATE, 7, 7, flags,
+                                    additive);
           {
             void **slot = &Ram_HeapSlots->unkb8[1];
 
@@ -2195,10 +2197,11 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 
           // The lower half's flags are taken before the first entry is
           // fetched, which leaves the first entry r8 and the second sl.
-          Func_08196404(BLITTER_SLOT, 7, 7, flags, BLIT_MAX);
+          BattleEffect_BuildBlitter(BLITTER_SLOT, 7, 7, flags, BLIT_MAX);
           lowerFlags = flags | COMPOSITE_FLIP_Y;
           draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-          Func_08196404(BLITTER_SLOT_ALTERNATE, 7, 7, lowerFlags, BLIT_MAX);
+          BattleEffect_BuildBlitter(BLITTER_SLOT_ALTERNATE, 7, 7, lowerFlags,
+                                    BLIT_MAX);
           picture = work->sheet + cel * 2048 + SERIES_B_PICTURE;
           draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
           draw[0](canvas, picture, screen.x - 32, screen.y - 24, 64, 32);
@@ -4240,9 +4243,10 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
 
               HeapSlot_Release(188);
               HeapSlot_Release(104);
-              Func_08196404(188, 7, 7,
-                            gTargetStrike_GlintDrawFlags[Random16() & 3] | CLIP,
-                            BLIT_ADDITIVE);
+              BattleEffect_BuildBlitter(
+                  188, 7, 7,
+                  gTargetStrike_GlintDrawFlags[Random16() & 3] | CLIP,
+                  BLIT_ADDITIVE);
               ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
                   canvas, work->sheet + gBattleEffect_GlintCells[cel], x, y,
                   widths[cel], heights[cel]);
@@ -5610,10 +5614,10 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
           // instructions differ in tla-en.
           do {
           } while (0);
-          Func_08196404(188, 7, 7,
-                        Data_0819846e[flip & 3] | COMPOSITE_CLIP_X |
-                            COMPOSITE_CLIP_Y,
-                        Data_08198472[effect->variant]);
+          BattleEffect_BuildBlitter(188, 7, 7,
+                                    Data_0819846e[flip & 3] | COMPOSITE_CLIP_X |
+                                        COMPOSITE_CLIP_Y,
+                                    Data_08198472[effect->variant]);
           DRAW_GLINT(canvas, work->sheet + gBattleEffect_GlintCells[kind], x, y,
                      gData_08197492[kind], gData_08197498[kind]);
           HeapSlot_Release(188);

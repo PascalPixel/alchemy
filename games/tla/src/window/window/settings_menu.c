@@ -4,7 +4,7 @@
 
 #include "../window_internal.h"
 
-u16 Func_0803f974(s16 *rgb, s32 scale_r, s32 scale_g, s32 scale_b) {
+u16 Color_ScaleComponents(s16 *rgb, s32 scale_r, s32 scale_g, s32 scale_b) {
   s32 r = rgb[0] * scale_r >> 16;
   s32 g = rgb[1] * scale_g >> 16;
   s32 b = rgb[2] * scale_b >> 16;
@@ -18,7 +18,7 @@ u16 Func_0803f974(s16 *rgb, s32 scale_r, s32 scale_g, s32 scale_b) {
 
 extern const u8 gPaletteGlow_WaveTable[];
 
-u16 Func_0803f974(s16 *rgb, s32 scale_r, s32 scale_g, s32 scale_b);
+u16 Color_ScaleComponents(s16 *rgb, s32 scale_r, s32 scale_g, s32 scale_b);
 
 #define GLOW_COLOR_SET(index, value)                                           \
   do {                                                                         \
@@ -54,13 +54,13 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   rgb[0] = red;
   rgb[1] = green;
   rgb[2] = blue;
-  GLOW_COLOR_SET(4, Func_0803f974(rgb, 0xeeee, 0xcccc, 0x11110));
-  GLOW_COLOR_SET(5, Func_0803f974(rgb, 0xd555, 0xbbbb, 0xeeee));
-  GLOW_COLOR_SET(6, Func_0803f974(rgb, 0xbbbb, 0xaaaa, 0xcccc));
-  GLOW_COLOR_SET(7, Func_0803f974(rgb, 0xa221, 0x9999, 0xaaaa));
-  GLOW_COLOR_SET(8, Func_0803f974(rgb, 0x10888, 0xdddd, 0x13333));
-  GLOW_COLOR_SET(9, Func_0803f974(rgb, 0x12221, 0xeeee, 0x15555));
-  GLOW_COLOR_SET(10, Func_0803f974(rgb, 0x13bbb, 0x10000, 0x17777));
+  GLOW_COLOR_SET(4, Color_ScaleComponents(rgb, 0xeeee, 0xcccc, 0x11110));
+  GLOW_COLOR_SET(5, Color_ScaleComponents(rgb, 0xd555, 0xbbbb, 0xeeee));
+  GLOW_COLOR_SET(6, Color_ScaleComponents(rgb, 0xbbbb, 0xaaaa, 0xcccc));
+  GLOW_COLOR_SET(7, Color_ScaleComponents(rgb, 0xa221, 0x9999, 0xaaaa));
+  GLOW_COLOR_SET(8, Color_ScaleComponents(rgb, 0x10888, 0xdddd, 0x13333));
+  GLOW_COLOR_SET(9, Color_ScaleComponents(rgb, 0x12221, 0xeeee, 0x15555));
+  GLOW_COLOR_SET(10, Color_ScaleComponents(rgb, 0x13bbb, 0x10000, 0x17777));
 }
 
 struct OptionMarkerOutput {

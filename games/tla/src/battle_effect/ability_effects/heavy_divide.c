@@ -335,8 +335,9 @@ extern u8 Data_08198bc4[];
 extern u16 Data_08198bce[];
 extern u16 Data_08198bdc[];
 
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode); // BattleEffect_BuildBlitter
+s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
+                              s32 flags,
+                              u32 mode); // BattleEffect_BuildBlitter
 
 // Cool: ice columns burst up around the targets one after another, leaning
 // as they grow, and stand until they sink back; sparks of frost fly up
@@ -413,11 +414,12 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
 
         if (frame <= 23 && effect->variant > 0)
           mode = BLIT_ADDITIVE;
-        Func_08196404(104, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, mode);
+        BattleEffect_BuildBlitter(104, 7, 7,
+                                  COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, mode);
         draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-        Func_08196404(188, 7, 7,
-                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                      mode);
+        BattleEffect_BuildBlitter(
+            188, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+            mode);
         // At its address: through the slots' base it would share the base
         // above.
         draw[1] = *(DrawRectangle *)&Ram_HeapSlots->unkb8[1];

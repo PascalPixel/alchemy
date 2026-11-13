@@ -135,8 +135,8 @@ void BattleEffect_StepPaletteToResource(s32 palette);
 void Func_08164abc(s32 red, s32 green, s32 blue);
 void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows,
                    s32 cellWidth, s32 cellHeight);
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode);
+s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
+                              s32 flags, u32 mode);
 void SceneTransform_ApplyPosition(const s32 *pos);
 
 /// Meteor Blow.
@@ -264,7 +264,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
     }
   }
   mode = 3;
-  Func_08196404(SLOT_BLITTER, 8, 7, mode, 1);
+  BattleEffect_BuildBlitter(SLOT_BLITTER, 8, 7, mode, 1);
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   // DEAD: both fields are set again before anything reads them.
   work->transferMode = mode;

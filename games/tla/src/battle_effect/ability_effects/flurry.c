@@ -356,10 +356,10 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
           // instructions differ in tla-en.
           do {
           } while (0);
-          Func_08196404(HEAP_BLITTER_ALTERNATE, 7, 7,
-                        Data_0819861b[flip & 3] | COMPOSITE_CLIP_X |
-                            COMPOSITE_CLIP_Y,
-                        BLIT_ADDITIVE);
+          BattleEffect_BuildBlitter(HEAP_BLITTER_ALTERNATE, 7, 7,
+                                    Data_0819861b[flip & 3] | COMPOSITE_CLIP_X |
+                                        COMPOSITE_CLIP_Y,
+                                    BLIT_ADDITIVE);
           ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
               canvas, work->sheet + gBattleEffect_GlintCells[cel], x, y,
               gData_08197492[cel], gData_08197498[cel]);

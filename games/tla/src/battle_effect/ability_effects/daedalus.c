@@ -92,7 +92,8 @@ void BattleEffect_EndCanvasLayer(void);
 // frame 28 and is gone, while the screen shakes for all 48 frames. The
 // mode picks the palette (Mars Djinn, Mars Djinn, fireball, orange), the
 // scale, how hard the screen shakes and the target's flash colour.
-void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
+                                  s32 mode) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   struct BurstTexture texture;

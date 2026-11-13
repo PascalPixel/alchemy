@@ -496,8 +496,8 @@ extern char ResourceId_CloudSwirlSheet;
 extern char ResourceId_EmberStreakSheet;
 extern char ResourceId_BlueFlameSheet;
 
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode);
+s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
+                              s32 flags, u32 mode);
 
 void BattleEffect_FlushPendingGraphicsTransfer(void);
 
@@ -580,7 +580,7 @@ void Func_08191530(struct BattleEffectArgument *effect) {
     s32 mode = 3;
 
     enabled = 1;
-    Func_08196404(104, 8, 7, mode, mode);
+    BattleEffect_BuildBlitter(104, 8, 7, mode, mode);
   }
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Task_Add(BattleEffect_FlushPendingGraphicsTransfer, 0xc80);

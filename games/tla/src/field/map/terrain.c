@@ -217,7 +217,7 @@ void SpriteViewer_Run(void) {
   gDecodeFillByte = 3;
   Dma_Fill32Cell(zero, 0, ring, 4);
   Dma_Fill32Cell(zero, 0, layers, sizeof(layers));
-  spriteId = Func_0802e444(-1, 1);
+  spriteId = SpriteViewer_FindNextSpriteWithPictures(-1, 1);
   for (i = 0; i < 4; i++) {
     layers[i].animationIndex = 1;
     layers[i].priority = 1;
@@ -337,12 +337,14 @@ next:
         steps = 10;
       if (gInput.repeat & 0x200) {
         layers[selectedLayer].spriteId =
-            Func_0802e444(layers[selectedLayer].spriteId, -steps);
+            SpriteViewer_FindNextSpriteWithPictures(
+                layers[selectedLayer].spriteId, -steps);
         changed = 1;
       }
       if (gInput.repeat & 0x100) {
         layers[selectedLayer].spriteId =
-            Func_0802e444(layers[selectedLayer].spriteId, steps);
+            SpriteViewer_FindNextSpriteWithPictures(
+                layers[selectedLayer].spriteId, steps);
         changed = 1;
       }
       if (changed == 0)
@@ -449,7 +451,7 @@ extern const u16 gData_0802f064[];
 /// range, a larger step forward goes to the next stop above value and one back
 /// to the last stop below it (gData_0802f064, ended by 0xffff, from which a
 /// step forward wraps to 0). A delta of 0 returns value unchanged.
-s32 Func_0802e444(s32 value, s32 delta) {
+s32 SpriteViewer_FindNextSpriteWithPictures(s32 value, s32 delta) {
   s32 step;
 
   if (delta != 0) {

@@ -326,7 +326,8 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
                  * are set; without it, 2 of 571 instructions differ in
                  * tla-en. */
                 __asm__("");
-                Func_08196404(HEAP_BLITTER_ALTERNATE, 7, 7, flags, mode);
+                BattleEffect_BuildBlitter(HEAP_BLITTER_ALTERNATE, 7, 7, flags,
+                                          mode);
               }
               draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
               if (chip->velocityY & COMPOSITE_FLIP_X)

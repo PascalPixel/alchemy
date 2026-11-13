@@ -140,8 +140,8 @@ void BattleEffect_SetupBlendedDisplay(void);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 void Func_08164abc(s32 r, s32 g, s32 b);
 void Func_08164b2c(s32 r, s32 g, s32 b);
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode);
+s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
+                              s32 flags, u32 mode);
 void BattleEffect_ProcessPendingStampTransfer(
     void); // copies the 0x6780 canvas to the stamp's tiles
 
@@ -572,7 +572,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
                                               (s32 *)&req, 0);
           }
           if ((u32)(frame - 150) <= 116) {
-            Func_08196404(SLOT_ALT, 6, 6, 3, 1);
+            BattleEffect_BuildBlitter(SLOT_ALT, 6, 6, 3, 1);
             draw[1] = Ram_HeapSlots->unkb8[1];
             {
               for (i = 0; i != 8; i++) {

@@ -18,7 +18,7 @@
 
 extern u8 gWorldMapWork[];
 
-void Func_0802c58c(void) {
+void WorldMap_PreloadCurrentTileBlock(void) {
   struct MapTileWindow *window = (struct MapTileWindow *)Ram_HeapSlots->mapWork;
   s32 x = 0;
   s32 y = 0;

@@ -579,8 +579,8 @@ extern char ResourceId_StarCrescentSheet;
 extern char ResourceId_MarsDjinnSheet;
 
 void BattleEffect_StartTiledCanvas(s32 bgControl);
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode);
+s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
+                              s32 flags, u32 mode);
 
 void BattleMotion_ApproachTargetFar(s32 actorId, s32 targetId,
                                     s32 travelDivisor, s32 initialVelocityY);
@@ -621,7 +621,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
    * flags move is picked before r1 and r2; as a void function, or without the
    * call, 2 of 303 instructions differ in tla-en. */
   Nothing();
-  Func_08196404(HEAP_SLOT_BLITTER, 7, 7, flags, BLIT_MAX);
+  BattleEffect_BuildBlitter(HEAP_SLOT_BLITTER, 7, 7, flags, BLIT_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
   // Load both crescents and set the blend.

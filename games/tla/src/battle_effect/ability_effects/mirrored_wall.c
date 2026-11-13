@@ -103,7 +103,8 @@ void BattleEffect_EndCanvasLayer(void);
 // frames, and 64 sparks fly out of it to the caster's side and burn down.
 // Mode 5 adds sixteen rising flame bursts. The mode also picks the palette:
 // fire pillar, ice block, pink burst, blast (modes 3 and 5) or orange.
-void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
+                                   s32 mode) {
   struct Texture__f17e0c0 texture;
   DrawRectangle draw[2];
   u8 *flashPixels = Ram_MapCellBuffer;
@@ -338,19 +339,20 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_0817e698(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
+                                  s32 mode);
 
 /// Abilities: Spasm (kind 348).
-void BattleEffect_RunSpasm(s32 a0) { Func_0817e698(a0, 0); }
+void BattleEffect_RunSpasm(s32 a0) { BattleEffect_RunMirroredWall(a0, 0); }
 
 /// Abilities: Berserk (kind 353).
-void BattleEffect_RunBerserk(s32 a0) { Func_0817e698(a0, 1); }
+void BattleEffect_RunBerserk(s32 a0) { BattleEffect_RunMirroredWall(a0, 1); }
 
 /// Abilities: Recovery (kind 389).
-void BattleEffect_RunRecovery(s32 a0) { Func_0817e698(a0, 2); }
+void BattleEffect_RunRecovery(s32 a0) { BattleEffect_RunMirroredWall(a0, 2); }
 
 /// Abilities: Sack (kind 431).
-void BattleEffect_RunSack(s32 a0) { Func_0817e698(a0, 3); }
+void BattleEffect_RunSack(s32 a0) { BattleEffect_RunMirroredWall(a0, 3); }
 #undef HEAP_SLOT_BLITTER
 #undef HEAP_SLOT_BLITTER_ALTERNATE
 #undef LUNGE_FRAMES

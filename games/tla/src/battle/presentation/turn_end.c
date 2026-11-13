@@ -186,7 +186,7 @@ s32 BattleUnit_CountDownPsynergySeal(s32 id) {
   return expired;
 }
 
-s32 sub_08124af8(s32 id) {
+s32 BattleUnit_CountDownRegenerate(s32 id) {
   struct BattleUnit *unit = Unit_Get__f11f66c(id);
   u8 *count = &unit->refrain;
 
@@ -578,7 +578,7 @@ void Battle_ProcessTurnEnd(void) {
         ANNOUNCE_END_POSE(BattleUnit_CountDownStun, MSG_CURE_STUN);
         ANNOUNCE_END_POSE(BattleUnit_CountDownSleep, MSG_WAKES);
         ANNOUNCE_END(BattleUnit_CountDownPsynergySeal, MSG_CURE_SEAL);
-        ANNOUNCE_END(sub_08124af8, (s32)&MsgRefrainEnd);
+        ANNOUNCE_END(BattleUnit_CountDownRegenerate, (s32)&MsgRefrainEnd);
         ANNOUNCE_END(BattleUnit_CountDownReflect, MSG_REFLECT_END);
       }
     }

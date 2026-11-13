@@ -61,8 +61,8 @@ void Transform_Pop(void);
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode);
+s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
+                              s32 flags, u32 mode);
 
 extern char ResourceId_TornadoSheet;
 extern char ResourceId_Data134;
@@ -284,7 +284,7 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
         // stay in the flash loop.
         do {
         } while (0);
-        Func_08196404(188, 7, 7, flags, 1);
+        BattleEffect_BuildBlitter(188, 7, 7, flags, 1);
         ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
             canvas, work->sheet + 0x800 + gBattleEffect_GlintCells[cell],
             flashX, flashY, gData_08197492[cell], gData_08197498[cell]);
@@ -705,8 +705,9 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
               // tla-en.
               do {
               } while (0);
-              Func_08196404(188, 7, 7, 3 | Data_08198bf4[Random16() & 3],
-                            Data_08198bf8[effect->variant]);
+              BattleEffect_BuildBlitter(188, 7, 7,
+                                        3 | Data_08198bf4[Random16() & 3],
+                                        Data_08198bf8[effect->variant]);
               ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
                   canvas, PICTURES + gBattleEffect_GlintCells[k], gx - 4,
                   gy + 40, gData_08197492[k], gData_08197498[k]);
@@ -848,8 +849,8 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
   if (effect->side != 0) {
     flip = 0;
   }
-  Func_08196404(SLOT_BLITTER, 7, 7, flip | 3, 1);
-  Func_08196404(188, 7, 7, flip | 11, 1);
+  BattleEffect_BuildBlitter(SLOT_BLITTER, 7, 7, flip | 3, 1);
+  BattleEffect_BuildBlitter(188, 7, 7, flip | 11, 1);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   work->cameraDelta = 0;

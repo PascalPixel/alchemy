@@ -477,7 +477,7 @@ void WorldMap_UpdateView(void) {
     if (view->shakeX == 0 && view->shakeY == 0)
       return;
   } else {
-    Func_0802c58c();
+    WorldMap_PreloadCurrentTileBlock();
   }
   if (followedPosition != NULL) {
     s32 x = followedPosition[0];

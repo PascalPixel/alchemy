@@ -415,7 +415,7 @@ s32 FieldSequence_Run(void) {
         work->talk = 0;
       } else if (work->searchCell != 0) {
         WorldMap_Freeze();
-        Func_080cd808(work->searchCell);
+        Field_ExamineCell(work->searchCell);
         Func_080cb8a4();
         work->searchCell = 0;
       } else if (work->psynergy != 0) {

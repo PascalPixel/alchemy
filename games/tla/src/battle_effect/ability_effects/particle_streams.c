@@ -751,8 +751,9 @@ void Animation_ApplyChildArgumentFar(void *object, s32 animation);
 
 void BattleEffect_AdvanceBg2OnInterval(void);
 void BattleEffect_FlushPendingGraphicsTransfer(void);
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode); // BattleEffect_BuildBlitter
+s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
+                              s32 flags,
+                              u32 mode); // BattleEffect_BuildBlitter
 
 void SceneTransform_ApplyPosition(const s32 *pos);
 void Transform_ApplyRoll(s32 roll); // Transform_ApplyRoll
@@ -972,8 +973,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
      * work->transferMode = 3, 16 of 1591 instructions differ in tla-en. */
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 32;
-    Func_08196404(HEAP_BLITTER, 8, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                  BLIT_MAX);
+    BattleEffect_BuildBlitter(HEAP_BLITTER, 8, 7,
+                              COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_MAX);
     draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
     work->transferMode = transferMode;
     work->transferValue = 0x02020202;

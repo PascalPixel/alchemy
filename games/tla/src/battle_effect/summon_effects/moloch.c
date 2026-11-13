@@ -2635,17 +2635,18 @@ void Func_08196248(s32 vertexCount, s32 faceCount) {
   }
 }
 
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode);
+s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
+                              s32 flags, u32 mode);
 
 /// BattleEffect_BuildBlitter(slot, 7, 7, flags, mode) for a 128 by 128 canvas,
 /// with the flags and the mode packed into one word: mode << 4 | flags.
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags) {
-  return Func_08196404(slot, 7, 7, modeAndFlags & 0xf, (u32)modeAndFlags >> 4);
+  return BattleEffect_BuildBlitter(slot, 7, 7, modeAndFlags & 0xf,
+                                   (u32)modeAndFlags >> 4);
 }
 
-// Func_08196404 walks The Lost Age's blitter template once and writes the
-// blitter's ARM code into a heap slot: The Broken Seal's step list
+// BattleEffect_BuildBlitter walks The Lost Age's blitter template once and
+// writes the blitter's ARM code into a heap slot: The Broken Seal's step list
 // (battle_effect/blitter.c) with short copies as block moves and longer ones
 // by DMA, modes 0 additive, 1 max, 2 transparent, default copy, and the
 // second run copied from the first by its measured length.
@@ -2746,8 +2747,8 @@ extern const u32 BattleEffect_ColorForward[];
     *(site) |= BRANCH_FIELD(site, dst);                                        \
   } while (0)
 
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode) {
+s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
+                              s32 flags, u32 mode) {
   const u32 *src;
   u32 *dst;
   u32 *noRows;

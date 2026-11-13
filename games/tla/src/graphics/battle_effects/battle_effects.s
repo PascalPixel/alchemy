@@ -976,7 +976,7 @@ BattleEffect_LightFanSheet:
 	.incbin "games/tla/src/graphics/battle_effects/light_fan.gbapal"
 	.incbin "games/tla/src/graphics/battle_effects/light_fan.bitmap.lz"
 	.byte 0x09, 0x82, 0x76	@ PACKER: left in the buffer by BattleEffect_IceBlockSheet+0x59d
-@ A 32x32 flare with no palette of its own: Func_0817e0c0 copies it row by
+@ A 32x32 flare with no palette of its own: BattleEffect_RunRushingStrike copies it row by
 @ row, 32 bytes to a row, and colours it with a palette its argument picks,
 @ BattleEffect_BlastSheet's for two of the six values
 	.global Resource_Data181

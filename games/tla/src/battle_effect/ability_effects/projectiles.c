@@ -529,8 +529,8 @@ void BattleEffect_StartCanvasLayer(s32 control);
 /// Closes the canvas layer.
 void BattleEffect_EndCanvasLayer(void);
 // BattleEffect_BuildBlitter itself.
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode);
+s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
+                              s32 flags, u32 mode);
 
 /// BattlePlayback_Start through its far call.
 void BattlePlayback_StartFar(s32 phase);
@@ -1224,7 +1224,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
             s32 glintY = HI(p->y) - ((Trig_Cos(angle) * radius) >> 17) -
                          (gData_08197498[glint] >> 1);
 
-            Func_08196404(188, 7, 7, Data_0819850a[Random16() & 3] | CLIP, 0);
+            BattleEffect_BuildBlitter(188, 7, 7,
+                                      Data_0819850a[Random16() & 3] | CLIP, 0);
             do {
               // The empty once-only loop keeps loop.c from hoisting the glint
               // size tables (without it, 1901 of 2278 differ, 2026-11-08).

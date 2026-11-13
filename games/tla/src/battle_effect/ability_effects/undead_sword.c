@@ -109,10 +109,10 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
         }
         for (i = 0, x = 50; i != 2; i++, x += 14) {
           if (i == 0)
-            Func_08196404(HEAP_BLITTER, 7, 7,
-                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, mode);
+            BattleEffect_BuildBlitter(
+                HEAP_BLITTER, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, mode);
           else
-            Func_08196404(
+            BattleEffect_BuildBlitter(
                 HEAP_BLITTER, 7, 7,
                 COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, mode);
           (draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1])(

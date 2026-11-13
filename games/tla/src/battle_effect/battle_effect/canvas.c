@@ -425,7 +425,8 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
                 Random16() % r - r / 2 - 8;
             y = a + (cy >> 16) - (gData_08197498[t] >> 1);
           }
-          Func_08196404(SLOT_ALT, 7, 7, Data_08197744[Random16() & 3] | 3, 1);
+          BattleEffect_BuildBlitter(SLOT_ALT, 7, 7,
+                                    Data_08197744[Random16() & 3] | 3, 1);
           ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
               canvas, work->sheet + 0x2000 + gBattleEffect_GlintCells[t], x, y,
               gData_08197492[t], gData_08197498[t]);

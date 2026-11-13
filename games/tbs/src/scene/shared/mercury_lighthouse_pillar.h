@@ -126,12 +126,8 @@ static s32 MercuryLighthouse_FollowLeader(struct Actor *actor) {
   }
 
   // Alternate the light's draw parameter every two frames and redraw it.
-  // The sprite slot is read by its offset, the plain-C form of
-  // actor->sprite this site matches with (scene/README.md): through
-  // Actor's single/group union the movs r0, #1 and the sprite load swap.
   {
-    struct Sprite *sprite =
-        *(struct Sprite **)((u8 *)actor + offsetof(struct Actor, sprite));
+    struct Sprite *sprite = actor->sprite;
     struct SpriteAnimation *entry = sprite->entries[0];
 
     entry->colorMode = ((gFrameCount >> 1) & 1) * 7;
@@ -210,10 +206,7 @@ void MercuryLighthouse_ChargeLights(void) {
       Actor_StartScript(actor, gMercuryLighthouse_PillarScript);
       actor->watchedActor = leader;
       actor->motionFlags = ACTOR_FLOATS;
-      // The height is written by its offset, the plain-C form of obj->y.fixed
-      // this site matches with (scene/README.md): as the field, the sprite's
-      // reload moves after the add and store.
-      *(s32 *)((u8 *)actor + offsetof(struct Actor, y)) += -px(1) / 2;
+      actor->y.fixed -= px(1) / 2;
       if (sprite != 0) {
         sprite->flags = 0;
         sprite->image.priority = 1;

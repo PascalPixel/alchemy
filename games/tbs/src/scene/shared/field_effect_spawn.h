@@ -43,12 +43,7 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
-  // The sprite slot is read by its offset, the plain-C form of leader->sprite
-  // this site matches with (scene/README.md): as the field, the pointer's
-  // reload moves after the velocity.z store.
-  sprite->image.priority =
-      (*(struct Sprite **)((u8 *)leader + offsetof(struct Actor, sprite)))
-          ->image.priority;
+  sprite->image.priority = leader->sprite->image.priority;
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
   effect->spin = 0;

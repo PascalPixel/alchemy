@@ -65,9 +65,7 @@ static void KolimaForest_HopEast(void) {
   target.y = Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed;
   target.z = Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed;
 #else
-  // gMainRoutineWork.leaderActorId
-  s32 off = 500;
-  struct Actor *p = Actor_GetById(*(s32 *)((u8 *)&gMainRoutineWork + off));
+  struct Actor *p = Actor_GetById(gMainRoutineWork.leaderActorId);
   u32 base = p->x.fixed & FIELD_CELL_MASK;
 
   target.x = base + px(8);

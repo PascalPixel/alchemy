@@ -460,7 +460,7 @@ extern struct DescriptorEntry gData_080eff28[];
 
 void BattleEffect_StartTiledCanvas(s32 mode);
 void BattleEffect_EndCanvasLayer(void);
-void Func_0814ea58(void *effect, s32 mode);
+void BattleEffect_RunDrainMotes(void *effect, s32 mode);
 s32 MapGrid_GetAttributeBAt(s32 x, s32 z, s32 layer);
 u8 MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value);
 void Shop_InitializeWork(void);

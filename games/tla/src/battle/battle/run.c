@@ -108,7 +108,7 @@ void Battle_PlayFormChange(s32 value) {
   request.field04 = 0;
   request.field00 = 0;
   request.field18 = 0;
-  Func_08138050(&request, value);
+  BattleEffect_RunFormChangeFar(&request, value);
 }
 
 s32 Tutorial_GetDjinnGiveMessage(void) {
@@ -315,12 +315,12 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   BattleTransition_Run(enemyCount, enemyGroup);
   transition->flag = 0;
   gCpuLoadDisplayEnabled = 0;
-  Task_Add(Func_0811b9fc, 0x480);
+  Task_Add(BattleObject_UpdateSpritePriorities, 0x480);
 
   for (round = 1;; round++) {
     if (BattleUnit_ListIds(1, 0) == 0)
       BattleParty_SwapInReserves();
-    Func_0811d7e4();
+    Battle_TurnStartNoOp();
     BattleSummon_UpdateAvailability();
     if (*(u16 *)Djinn_GetRecoveryTableFar(0) != 0)
       battle->partyStatus = 3;
@@ -347,7 +347,8 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
       battle->pendingUnit = -1;
       battle->actionEnded = 0;
       if (GameFlag_Test(0x16a) == 0) {
-        if (Func_0811d9cc(&battle->actions[i], i == 0 ? 10 : 0) == 1)
+        if (BattleStaging_DispatchAction(&battle->actions[i],
+                                         i == 0 ? 10 : 0) == 1)
           goto fled;
       } else {
         if (AutoBattle_RunAction((s16 *)&battle->actions[i]) == 1)
@@ -511,7 +512,7 @@ finished:
   Func_08124cc0();
   DjinnRecovery_CountDown();
   gMainRoutineWork.battleRule24b = 0;
-  Task_Remove(Func_0811b9fc);
+  Task_Remove(BattleObject_UpdateSpritePriorities);
   BattleBackground_Free();
   return result;
 }

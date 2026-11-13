@@ -323,7 +323,7 @@ extern struct DescriptorEntry gData_080eff28[];
 
 void BattleEffect_StartTiledCanvas(s32 mode);
 void BattleEffect_EndCanvasLayer(void);
-void Func_0814ea58(void *effect, s32 mode);
+void BattleEffect_RunDrainMotes(void *effect, s32 mode);
 void PartyStatus_CreateWindow(s32 flags);
 s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer);
 s32 MapGrid_GetAttributeBAt(s32 x, s32 z, s32 layer);

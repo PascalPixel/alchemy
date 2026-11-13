@@ -1157,28 +1157,29 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
 void BattleEffect_RunDrain(u8 *effect) {
   s32 value = *(s32 *)(effect + 24);
 
-  Func_0814ea58(effect, (u32)(-value | value) >> 31);
+  BattleEffect_RunDrainMotes(effect, (u32)(-value | value) >> 31);
 }
 
 /// Abilities: True Collide (kind 451).
-void BattleEffect_RunTrueCollide(u8 *effect) { Func_0814ea58(effect, 2); }
+void BattleEffect_RunTrueCollide(u8 *effect) {
+  BattleEffect_RunDrainMotes(effect, 2);
+}
 
 #include "battle_display.h"
 
 #define MOTES_PER_MEMBER 128
 #define MOTES ((struct EffectStep *)Ram_MapCellBuffer)
 
-// Motes of light burst out of each target in turn, 20 frames apart, and
-// are drawn into the user.
-
-// Setup: each target's 128 motes start at the middle of its body with
-// random velocities; the canvas darkens by 4 a transfer (in mode 2 it
-// trails instead). Frame loop: a target flashes as its motes leave; ten
-// frames after leaving (one frame later for each mote) a mote accelerates
-// toward the middle of the user by 1/256 of the distance a frame and goes
-// out within 16 pixels of it across. The user glows from frame 40 until 20
-// frames before the end.
-void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
+/// Motes of light burst out of each target in turn, 20 frames apart, and
+/// are drawn into the user, as The Broken Seal's BattleEffect_RunDrain.
+/// Setup: each target's 128 motes start at the middle of its body with
+/// random velocities; the canvas darkens by 4 a transfer (in mode 2 it
+/// trails instead). Frame loop: a target flashes as its motes leave; ten
+/// frames after leaving (one frame later for each mote) a mote accelerates
+/// toward the middle of the user by 1/256 of the distance a frame and goes
+/// out within 16 pixels of it across. The user glows from frame 40 until 20
+/// frames before the end.
+void BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;

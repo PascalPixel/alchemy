@@ -336,13 +336,13 @@ void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height) {
   }
 }
 
-void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Dreamtide (kind 106).
-void BattleEffect_RunDreamtide(s32 a0) { Func_0816aeec(a0, 0); }
+void BattleEffect_RunDreamtide(s32 a0) { BattleEffect_RunWaterSheet(a0, 0); }
 
 /// Abilities: Watery Grave (kind 391).
-void BattleEffect_RunWateryGrave(s32 a0) { Func_0816aeec(a0, 1); }
+void BattleEffect_RunWateryGrave(s32 a0) { BattleEffect_RunWaterSheet(a0, 1); }
 
 struct FxPartyList;
 struct Model;
@@ -384,12 +384,12 @@ extern const u8 gData_08199340[]; // the splash's mesh
 // The water's mesh as triangles, two to a quad.
 #define WATER_MESH ((struct WaterTriangle *)gData_02014000)
 
-// The body of Dreamtide (mode 0) and Watery Grave (mode 1): a sheet of
-// water (a 16 by 8 grid of vertices, its mesh built here) rolls in under
-// the targets in waves while the camera turns; Dreamtide strikes the first
-// target with two splashes at frame 17, Watery Grave strikes every target
-// at frames 17 and 46 while bubbles rise from the deep.
-void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
+/// The body of Dreamtide (mode 0) and Watery Grave (mode 1): a sheet of
+/// water (a 16 by 8 grid of vertices, its mesh built here) rolls in under
+/// the targets in waves while the camera turns; Dreamtide strikes the first
+/// target with two splashes at frame 17, Watery Grave strikes every target
+/// at frames 17 and 46 while bubbles rise from the deep.
+void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   s32 frame;
   DrawRectangle blit[2]; // Unused: [1] is the rest of its two-word pseudo.
@@ -755,13 +755,13 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Waft (kind 234).
-void BattleEffect_RunWaft(s32 a0) { Func_0816b6ec(a0, 0); }
+void BattleEffect_RunWaft(s32 a0) { BattleEffect_RunWindFunnel(a0, 0); }
 
 /// Abilities: Aroma (kind 247).
-void BattleEffect_RunAroma(s32 a0) { Func_0816b6ec(a0, 1); }
+void BattleEffect_RunAroma(s32 a0) { BattleEffect_RunWindFunnel(a0, 1); }
 
 extern char ResourceId_Data0D3;
 
@@ -775,12 +775,12 @@ extern const u8 Data_08198b24[]; // the funnels per mode
 
 #define WAFT_SEGMENTS 33
 
-// The body of Waft (mode 0) and Aroma (mode 1): the djinni appears over the
-// caster, bobs and rises, while a funnel of wind (33 segments of two
-// vertices, each frame's head copied down the tail) twists up from it; Waft
-// strikes the first target at frame 28, Aroma touches each target in turn,
-// four frames apart.
-void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
+/// The body of Waft (mode 0) and Aroma (mode 1): the djinni appears over the
+/// caster, bobs and rises, while a funnel of wind (33 segments of two
+/// vertices, each frame's head copied down the tail) twists up from it; Waft
+/// strikes the first target at frame 28, Aroma touches each target in turn,
+/// four frames apart.
+void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sprites;

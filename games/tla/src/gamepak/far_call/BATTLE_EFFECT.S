@@ -13,4 +13,4 @@ Resource_FarCall00C:
 	export BattleEffect_StartElementStreaksFar, BattleEffect_StartElementStreaks
 	export BattleEffect_EndElementStreaksFar, BattleEffect_EndElementStreaks
 	export BattleEffect_LoadBlitterFar, BattleEffect_LoadBlitter
-	export Func_08138050, Func_08142944
+	export BattleEffect_RunFormChangeFar, BattleEffect_RunFormChange

@@ -12,6 +12,6 @@ struct BattlePresentationWork;
 void BattleEffect_DispatchByIdRangeFar(struct BattlePresentationWork *work);
 void BattleEffect_RunFromTableFar(struct BattlePresentationWork *work);
 void BattleEffect_RunElementPillarFar(struct BattlePresentationWork *work);
-void Func_08138050(struct BattleFxRequest *request, s32 value);
+void BattleEffect_RunFormChangeFar(struct BattleFxRequest *request, s32 value);
 
 #endif

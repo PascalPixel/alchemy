@@ -639,7 +639,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunGeyser(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Purgatory (kind 114).
 /* VIEW(f1811d4): tag struct Texture as struct Texture__f1811d4;
@@ -647,13 +647,13 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode);
  * of the object has, it does not compile in tla-ja:
  * games/tla/src/battle_effect/ability_effects.c:32640: structure has no member
  * named `size'. */
-DEFINE_EFFECT_KIND(BattleEffect_RunPurgatory, Func_08181ed4, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunPurgatory, BattleEffect_RunGeyser, 0)
 
 /// Abilities: Djinn Blast (kind 461).
-DEFINE_EFFECT_KIND(BattleEffect_RunDjinnBlast, Func_08181ed4, 2)
+DEFINE_EFFECT_KIND(BattleEffect_RunDjinnBlast, BattleEffect_RunGeyser, 2)
 
 /// Abilities: Djinn Storm (kind 462).
-DEFINE_EFFECT_KIND(BattleEffect_RunDjinnStorm, Func_08181ed4, 1)
+DEFINE_EFFECT_KIND(BattleEffect_RunDjinnStorm, BattleEffect_RunGeyser, 1)
 
 #define HEAP_SLOT_BLITTER 104           // Ram_HeapSlots->unk64[1]
 #define HEAP_SLOT_BLITTER_ALTERNATE 188 // Ram_HeapSlots->unkb8[1]
@@ -714,24 +714,25 @@ extern const u8 Data_08198df8[];
 
 static inline void CopyPalette(const void *palette) {
   // Both palette copies go through this helper; as direct calls to
-  // Iwram_CopyWords, 4 of 513 instructions of Func_08181ed4 differ in tla-en.
+  // Iwram_CopyWords, 4 of 513 instructions of BattleEffect_RunGeyser differ in
+  // tla-en.
   Iwram_CopyWordsEntry((void *)BG_PLTT, palette, 128);
 }
 
 void BattleEffect_GetTargetsMidpoint(struct EffectPosition *midpoint);
 void BattleEffect_StepPaletteToResource(s32 resourceId);
 
-// A geyser between the targets. A textured column, its texture scrolling
-// upward, stands on the floor at the targets' midpoint, and drops burst
-// from its foot, fall back under gravity and bounce once on the floor.
-// Mode 0 (kind 114): the cross texture in orange; the column rises and
-// falls on a sine and 200 drops burst at once. Mode 1 (kind 462): the
-// column keeps widening and fades from frame 32, with 200 drops and 16 more
-// each frame to frame 23. Mode 2 (kind 461): a thin column with 100 drops
-// and 2 more each frame. In modes 1 and 2 the palette also steps through
-// the Mercury, Mars and Jupiter Djinn's. At frame 20 the target is knocked
-// back and the result phase starts.
-void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
+/// A geyser between the targets. A textured column, its texture scrolling
+/// upward, stands on the floor at the targets' midpoint, and drops burst
+/// from its foot, fall back under gravity and bounce once on the floor.
+/// Mode 0 (kind 114): the cross texture in orange; the column rises and
+/// falls on a sine and 200 drops burst at once. Mode 1 (kind 462): the
+/// column keeps widening and fades from frame 32, with 200 drops and 16 more
+/// each frame to frame 23. Mode 2 (kind 461): a thin column with 100 drops
+/// and 2 more each frame. In modes 1 and 2 the palette also steps through
+/// the Mercury, Mars and Jupiter Djinn's. At frame 20 the target is knocked
+/// back and the result phase starts.
+void BattleEffect_RunGeyser(struct BattleEffectArgument *effect, s32 mode) {
   struct Texture__f1811d4 texture;
   DrawRectangle draw[2];
   struct EffectPosition midpoint;
@@ -936,13 +937,13 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_081823a8(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunStarSwarm(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Djinn Stun (kind 465).
-DEFINE_EFFECT_KIND(BattleEffect_RunDjinnStun, Func_081823a8, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunDjinnStun, BattleEffect_RunStarSwarm, 0)
 
 /// Abilities: Mystic Call (kind 466).
-DEFINE_EFFECT_KIND(BattleEffect_RunMysticCall, Func_081823a8, 1)
+DEFINE_EFFECT_KIND(BattleEffect_RunMysticCall, BattleEffect_RunStarSwarm, 1)
 
 // The Lost Age's blitter modes run the other way from The Broken Seal's:
 // additive 0, max 1, transparent 2, copy 3.
@@ -953,16 +954,16 @@ DEFINE_EFFECT_KIND(BattleEffect_RunMysticCall, Func_081823a8, 1)
 
 void SceneTransform_ApplyPosition(const s32 *position);
 
-// Swarms of stars over the targets. Each target gets a swarm, eight frames
-// after the one before: its stars burst from a point that rises out of it,
-// each turning about the point on one of four axes and drawn smaller the
-// deeper it is, and from frame 24 they are pulled back into the point,
-// each one gone once it has arrived. The palette steps through the
-// Mercury, Mars and Jupiter Djinn's. Mode 0: 16 stars a target, the
-// target flashes as its swarm starts, and the effect lasts eight frames
-// a target more than 38. Mode 1: 48 stars, a flash at the start and 55
-// frames later, 72 frames in all.
-void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
+/// Swarms of stars over the targets. Each target gets a swarm, eight frames
+/// after the one before: its stars burst from a point that rises out of it,
+/// each turning about the point on one of four axes and drawn smaller the
+/// deeper it is, and from frame 24 they are pulled back into the point,
+/// each one gone once it has arrived. The palette steps through the
+/// Mercury, Mars and Jupiter Djinn's. Mode 0: 16 stars a target, the
+/// target flashes as its swarm starts, and the effect lasts eight frames
+/// a target more than 38. Mode 1: 48 stars, a flash at the start and 55
+/// frames later, 72 frames in all.
+void BattleEffect_RunStarSwarm(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   void *canvas = Ram_HeapSlots->battleFxWork[1];
@@ -1141,12 +1142,12 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_08182898(struct BattleEffectArgument *effect);
+void BattleEffect_RunBubbleColumn(struct BattleEffectArgument *effect);
 
-/// Opens the canvas layer, sets alpha blending and a 24-frame palette fade
-/// counter (read by Palette_StepFadeTransfer), then runs the effect body
-/// Func_08182898.
-void Func_0818284c(s32 arg) {
+/// Unused: nothing calls it. Opens the canvas layer, sets alpha blending and a
+/// 24-frame palette fade counter (read by Palette_StepFadeTransfer), then runs
+/// the effect body BattleEffect_RunBubbleColumn.
+void BattleEffect_StartBubbleColumn(s32 arg) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
 
   BattleEffect_StartCanvasLayer(0);
@@ -1154,7 +1155,7 @@ void Func_0818284c(s32 arg) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   *(s32 *)(work + 0x77b4) = 24;
   *(s32 *)(work + 0x77b8) = 0;
-  Func_08182898(arg);
+  BattleEffect_RunBubbleColumn(arg);
 }
 
 // The blitter heap slots, by byte offset into Ram_HeapSlots.
@@ -1180,12 +1181,12 @@ extern u8 gData_0819966f[];
 extern u8 gData_0819967e[];
 extern u16 gData_0819968e[];
 
-// A column of bubbles. On the first frame 256 glowing ovals of random size
-// appear over the bottom left of the canvas; for 60 frames they float up
-// and drift sideways, drawn with the max blitter in the blue beam's palette,
-// and each one is gone once it has risen past the top. From frame 18 the
-// targets flash one by one, eight frames apart, each with the hit sound.
-void Func_08182898(struct BattleEffectArgument *effect) {
+/// A column of bubbles. On the first frame 256 glowing ovals of random size
+/// appear over the bottom left of the canvas; for 60 frames they float up
+/// and drift sideways, drawn with the max blitter in the blue beam's palette,
+/// and each one is gone once it has risen past the top. From frame 18 the
+/// targets flash one by one, eight frames apart, each with the hit sound.
+void BattleEffect_RunBubbleColumn(struct BattleEffectArgument *effect) {
   void *canvas = Ram_HeapSlots->battleFxWork[1];
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];

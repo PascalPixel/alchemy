@@ -10,7 +10,8 @@ struct StripQuad;
 
 /* VIEW(f173aac): tag struct RenderModel as struct RenderModel__f173aac;
  * render_model.h has another definition; tried with the definition the rest of
- * the object has, Func_08173aac moves: 13 of 4112 instructions in tla-ja. */
+ * the object has, BattleEffect_RunGaspFamily moves: 13 of 4112 instructions in
+ * tla-ja. */
 struct RenderModel__f173aac {
   s32 kind;
   s32 unk04;
@@ -159,14 +160,14 @@ void Palette_LoadBasicSpriteColors(void);
   while (*(volatile u32 *)&(work)->vblanksSinceTransfer,                       \
          *(volatile u32 *)&(work)->vblanksSinceTransfer <= 1)
 
-// The shared body of sixteen abilities' effects (its wrappers are in
-// rime.c): Gasp (mode 0), Reflux (2), Djinn Counter (3), Mold and Meld (4),
-// Shine (5), Lull (6), Counter-rush (7), Demon Eye (8), Emu and its kind's four
-// other abilities (9), Call Dullahan and Formina Sage (10), Beat Dance (11),
-// Element Swap (12), Cage (13), Clarion Cry (14) and Psy Boost (15). Mode 1 has
-// no caller. Each mode loads its own sheets, then draws a canvas layer and a
-// model layer every frame for the mode's length.
-void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
+/// The shared body of sixteen abilities' effects, named for the first (its
+/// wrappers are in rime.c): Gasp (mode 0), Reflux (2), Djinn Counter (3), Mold
+/// and Meld (4), Shine (5), Lull (6), Counter-rush (7), Demon Eye (8), Emu and
+/// its kind's four other abilities (9), Call Dullahan and Formina Sage (10),
+/// Beat Dance (11), Element Swap (12), Cage (13), Clarion Cry (14) and Psy
+/// Boost (15). Mode 1 has no caller. Each mode loads its own sheets, then draws
+/// a canvas layer and a model layer every frame for the mode's length.
+void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   u8 *canvas = Ram_HeapSlots->battleFxWork[1];

@@ -291,15 +291,15 @@ Data_081977e4:
 	.global Data_081977e8
 Data_081977e8:
 	.byte 16, 12, 4, -8
-@ read by Func_08142944
+@ read by BattleEffect_RunFormChange
 	.global Data_081977ec
 Data_081977ec:
 	.byte 0, 4, 9, 10
-@ read by Func_08142944
+@ read by BattleEffect_RunFormChange
 	.global Data_081977f0
 Data_081977f0:
 	.byte 3, 4, 3, 5
-@ read by Func_08142944
+@ read by BattleEffect_RunFormChange
 	.global Data_081977f4
 Data_081977f4:
 	.byte 3, 4, 5, 6
@@ -1137,7 +1137,7 @@ gBoreas_FallPictures:
 	.global gDrain_Gravities
 gDrain_Gravities:
 	.4byte 0x4000, 0x2000, 0x4000, 0x8000
-@ read by Func_0814ea58
+@ read by BattleEffect_RunDrainMotes
 	.global Data_081982f4
 Data_081982f4:
 	.byte 6, 6, 10
@@ -1841,7 +1841,7 @@ gData_08198afc:
 gData_08198b0a:
 	.2byte 16, 32, 48, 48, 48, 48, 48, 1536
 	.2byte 2312, 2053, 775, 8224, 8224
-@ read by Func_0816b6ec
+@ read by BattleEffect_RunWindFunnel
 	.global Data_08198b24
 Data_08198b24:
 	.byte 3, 3
@@ -1979,17 +1979,17 @@ Data_08198c14:
 	.global Data_08198c18
 Data_08198c18:
 	.4byte -0x2000, -0x1000, -2048, -1024
-@ read by Func_08173aac
+@ read by BattleEffect_RunGaspFamily
 	.global Data_08198c28
 Data_08198c28:
 	.byte 0, 0, 1, 2, 4, 6, 9, 12, 16, 0, 0, 0
-@ read by Func_08173aac
+@ read by BattleEffect_RunGaspFamily
 	.global Data_08198c34
 Data_08198c34:
 	.2byte 769, 2, 31, 7967, 7936, 0, 256, 2
 	.2byte 0, 31, 7936, 0, 0, 0, 0, 0
 	.2byte 0, 0, 0, 0, 0, 0, 0, 0
-@ read by Func_08173aac
+@ read by BattleEffect_RunGaspFamily
 	.global Data_08198c64
 Data_08198c64:
 	.byte 32, 64, 255
@@ -1997,7 +1997,7 @@ Data_08198c64:
 	.global gData_08198c67
 gData_08198c67:
 	.byte 16, 60, 108, 0, 0
-@ read by BattleEffect_RunCastingImpact and Func_08181ed4
+@ read by BattleEffect_RunCastingImpact and BattleEffect_RunGeyser
 	.global gData_08198c6c
 gData_08198c6c:
 	.4byte 0x20f800, 1505302, 63519, 15398934
@@ -2031,7 +2031,7 @@ gData_08198d2c:
 	.2byte 64, 95, 3904, 0, 2048, 15, 127, 3967
 	.2byte 3936, 0, 7, 15, 96, 127, 3936, 0
 	.2byte 0, 0, 0, 0, 0, 0
-@ read by Func_08181ed4
+@ read by BattleEffect_RunGeyser
 	.global Data_08198df8
 Data_08198df8:
 	.2byte 2305, 8, 31, 16159, 16128, 0, 256, 8
@@ -2121,7 +2121,7 @@ gData_081991b0:
 	.global Data_081991c0
 Data_081991c0:
 	.4byte 32762, 32518, 250, 6
-@ read by Func_08173aac and Func_081848ec
+@ read by BattleEffect_RunGaspFamily and BattleEffect_RunCatastrophe
 	.global Data_081991d0
 Data_081991d0:
 	.2byte 32518, 0, 32762, 0, 64518, 0, 64762, 0
@@ -2179,7 +2179,7 @@ Data_081992f8:
 	.2byte 256, 2, 0, 63, 7936, 0, 769, 2
 	.2byte 63, 7999, 7936, 0, 0, 0, 0, 0
 	.2byte 0, 0
-@ read by Func_081848ec
+@ read by BattleEffect_RunCatastrophe
 	.global Data_0819931c
 Data_0819931c:
 	.2byte 256, 2, 0, 31, 12032, 0, 769, 2
@@ -2377,23 +2377,23 @@ Data_0819962c:
 	.global Data_08199650
 Data_08199650:
 	.2byte 61615, 0, 61487, 0, 4271, 0, 4143, 0
-@ read by Func_08181ed4
+@ read by BattleEffect_RunGeyser
 	.global Data_08199660
 Data_08199660:
 	.4byte -0x4000, -0x8000, -0x8000
-@ read by Func_08181ed4
+@ read by BattleEffect_RunGeyser
 	.global Data_0819966c
 Data_0819966c:
 	.byte 1, 4, 5
-@ read by Func_08182898
+@ read by BattleEffect_RunBubbleColumn
 	.global gData_0819966f
 gData_0819966f:
 	.byte 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 4, 3
-@ read by Func_08182898
+@ read by BattleEffect_RunBubbleColumn
 	.global gData_0819967e
 gData_0819967e:
 	.byte 32, 30, 28, 26, 24, 22, 20, 18, 16, 14, 12, 10, 8, 6, 4, 0
-@ read by Func_08182898
+@ read by BattleEffect_RunBubbleColumn
 	.global gData_0819968e
 gData_0819968e:
 	.2byte 0, 512, 962, 1354, 1692, 1980, 2222, 2422
@@ -2484,80 +2484,80 @@ Data_08199760:
 	.global Data_08199764
 Data_08199764:
 	.2byte 44160, 52720
-@ read by Func_081848ec
+@ read by BattleEffect_RunCatastrophe
 	.global Data_08199768
 Data_08199768:
 	.2byte 4, 26, 30, 34, 104, 112, 116, 120
 	.2byte 150, 154, 202, 214, 244, 278, 400, 402
 	.2byte 404, 420
-@ read by Func_081848ec
+@ read by BattleEffect_RunCatastrophe
 	.global Data_0819978c
 Data_0819978c:
 	.2byte 8, 2, 2, 16, 2, 2, 2, 10
 	.2byte 2, 16, 4, 8, 10, 12, 2, 2
 	.2byte 10, 4
-@ read by Func_081848ec
+@ read by BattleEffect_RunCatastrophe
 	.global Data_081997b0
 Data_081997b0:
 	.byte 0, 32, 64, 96, 32, 64, 96, 128, 64, 96, 128, 160, 32, 64, 96, 128
 	.byte 25, 57, 89, 121, 153, 32, 64, 96, 128, 160, 48, 96
-@ read by Func_081848ec
+@ read by BattleEffect_RunCatastrophe
 	.global Data_081997cc
 Data_081997cc:
 	.byte 0, 0, 0, 0, 32, 32, 32, 32, 64, 64, 64, 64, 96, 96, 96, 96
 	.byte 128, 128, 128, 128, 128, 160, 160, 160, 160, 160, 192, 192
-@ read by Func_081848ec
+@ read by BattleEffect_RunCatastrophe
 	.global Data_081997e8
 Data_081997e8:
 	.byte 16, 0, 32, 0, 32, 16, 16, 16, 16, 16, 16, 0
-@ read by Func_081848ec
+@ read by BattleEffect_RunCatastrophe
 	.global Data_081997f4
 Data_081997f4:
 	.2byte 0, 32, 32, 64, 64, 96, 128, 160
 	.2byte 192, 224, 256
-@ read by Func_081848ec
+@ read by BattleEffect_RunCatastrophe
 	.global Data_0819980a
 Data_0819980a:
 	.byte 224, 192, 160, 128, 192, 160
-@ read by Func_081848ec
+@ read by BattleEffect_RunCatastrophe
 	.global Data_08199810
 Data_08199810:
 	.byte 0, 0, 0, 0, 32, 32
-@ read by Func_081848ec
+@ read by BattleEffect_RunCatastrophe
 	.global Data_08199816
 Data_08199816:
 	.2byte 26, 104, 116, 216, 278, 402, 416
-@ read by Func_081848ec
+@ read by BattleEffect_RunCatastrophe
 	.global Data_08199824
 Data_08199824:
 	.byte 16, 96, 20, 40, 50, 10, 96
-@ read by Func_081848ec
+@ read by BattleEffect_RunCatastrophe
 	.global Data_0819982b
 Data_0819982b:
 	.byte 64, 80, 30, 40, 80, 60, 20
-@ read by Func_081848ec
+@ read by BattleEffect_RunCatastrophe
 	.global Data_08199832
 Data_08199832:
 	.byte 0, 1, 0, 1, 0, 0, 1, 0
-@ read by Func_081848ec
+@ read by BattleEffect_RunCatastrophe
 	.global Data_0819983a
 Data_0819983a:
 	.2byte 246, 249, 254, 258, 260, 264, 266, 269
 	.2byte 272, 275, 278, 280, 282, 284, 287, 290
 	.2byte 292
-@ read by Func_081848ec
+@ read by BattleEffect_RunCatastrophe
 	.global Data_0819985c
 Data_0819985c:
 	.byte 71, 71, 71, 70, 70, 70, 70, 70, 70, 69, 69, 0, 67, 67, 67, 70
 	.byte 67, 68, 70, 69, 70, 69, 67, 0, 69, 69, 69, 68, 67, 68, 70, 69
 	.byte 69, 69, 0, 0
-@ read by Func_081848ec
+@ read by BattleEffect_RunCatastrophe
 	.global Data_08199880
 Data_08199880:
 	.byte 92, 92, 92, 120, 120, 120, 154, 154, 154, 220, 200, 0, 100, 100, 100, 120
 	.byte 120, 154, 154, 154, 154, 220, 240, 0, 120, 100, 100, 140, 120, 154, 154, 154
 	.byte 184, 220, 0, 0
-@ read by Func_081848ec
+@ read by BattleEffect_RunCatastrophe
 	.global Data_081998a4
 Data_081998a4:
 	.2byte 492, 506, 526, 528, 542, 562, 572, 578
@@ -2565,13 +2565,13 @@ Data_081998a4:
 	.2byte 546, 548, 554, 562, 564, 570, 590, 594
 	.2byte 596, 65535, 510, 524, 544, 546, 548, 558
 	.2byte 560, 580, 582, 596, 616, 65535, 0
-@ read by Func_081848ec
+@ read by BattleEffect_RunCatastrophe
 	.global Data_081998f2
 Data_081998f2:
 	.byte 6, 4, 0, 8, 8, 0, 10, 20, 0, 20, 0, 0, 6, 4, 0, 8
 	.byte 8, 0, 10, 20, 8, 20, 0, 0, 6, 4, 0, 8, 8, 20, 0, 0
 	.byte 20, 20, 0, 0
-@ read by Func_081848ec
+@ read by BattleEffect_RunCatastrophe
 	.global Data_08199916
 Data_08199916:
 	.2byte 144, 0, 0, 128, 0, 0, 180, 0
@@ -2579,7 +2579,7 @@ Data_08199916:
 	.2byte 112, 48, 0, 86, 0, 0, 112, 0
 	.2byte 96, 0, 0, 96, 0, 112, 128, 0
 	.2byte 104, 0, 0, 0
-@ read by Func_081848ec
+@ read by BattleEffect_RunCatastrophe
 	.global Data_0819995e
 Data_0819995e:
 	.2byte 256, 64, 0, 712, 500, 0, 0, 0
@@ -2587,7 +2587,7 @@ Data_0819995e:
 	.2byte -64, 256, 0, 0, -228, 356, 0, 0
 	.2byte 406, 64, -256, 0, -64, 0, 128, 0
 	.2byte 328, -356, 0, 0
-@ read by Func_081848ec
+@ read by BattleEffect_RunCatastrophe
 	.global Data_081999a6
 Data_081999a6:
 	.2byte 0, 1, -1, 0, 1, -1, 0, 1
@@ -2595,11 +2595,11 @@ Data_081999a6:
 	.2byte 2, 2, -1, 0, 1, -1, 2, -1
 	.2byte 0, 1, -1, 0, -1, 0, 1, -1
 	.2byte 0, 1, -1, 0
-@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by Func_081848ec
+@ The Broken Seal's gTargetStrike_GlintDrawFlags; read by BattleEffect_RunCatastrophe
 	.global Data_081999ee
 Data_081999ee:
 	.byte 0, 4, 8, 12
-@ read by Func_081848ec
+@ read by BattleEffect_RunCatastrophe
 	.global Data_081999f2
 Data_081999f2:
 	.2byte 14797, -1097, -8198, 4962, 15494, -5489, -9298, 3744

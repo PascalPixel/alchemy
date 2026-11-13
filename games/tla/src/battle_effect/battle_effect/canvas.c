@@ -17,7 +17,7 @@ struct Model;
 /* VIEW(f14153c): tag struct ModelTexture as struct ModelTexture__f14153c;
  * render_model.h has another definition; tried with the definition the rest of
  * the object has, BattleEffect_RunEclipse moves: 1 of 2142 instructions,
- * Func_08142944 moves: 1 of 730 instructions in tla-ja. */
+ * BattleEffect_RunFormChange moves: 1 of 730 instructions in tla-ja. */
 struct ModelTexture__f14153c {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -825,17 +825,14 @@ struct ModelDraw__f14153c {
   u8 unk1a[2];
 };
 
-// Rings and crystals gather on the user, for the scenes.
-
-// A glow on the canvas map widens over the user for 56 frames while 16
-// spinning rings rise around it, four abreast. From frame 48 the screen
-// shakes, flashes burst upward and four crystals grow out of the ground one
-// after another, spinning. The user flashes at frames 32 to 68. Kinds 78
-// and 79 stand to either side and hand over to the battle
-// (Battle_ChangeEnemyFormFar) at frame 62; kind 80 runs 100 frames, fades to
-// white and restores the scene's view itself.
-
-void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
+/// A glow on the canvas map widens over the user for 56 frames while 16
+/// spinning rings rise around it, four abreast. From frame 48 the screen
+/// shakes, flashes burst upward and four crystals grow out of the ground one
+/// after another, spinning. The user flashes at frames 32 to 68. Kinds 78
+/// and 79 stand to either side and hand over to the battle
+/// (Battle_ChangeEnemyFormFar) at frame 62; kind 80 runs 100 frames, fades to
+/// white and restores the scene's view itself.
+void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
   struct EffectPosition center;
   struct ModelTexture__f14153c texture;
   struct BattleEffectWork *work;

@@ -325,7 +325,7 @@ extern const u8 Data_08199eb4[];
 extern const u8 Data_08199ebc[];
 extern const u8 Data_08199ea4[];
 extern const u8 Data_08199ec5[];
-void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode);
 extern u8 gCybele_ObjectPoses[];
 extern u16 gCybele_ThornPictures[]; // ☀️ gCybele_ThornOffsets
 extern u8 Data_0819820c[];          // ☀️ gCybele_ThornWidths

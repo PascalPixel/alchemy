@@ -82,30 +82,21 @@ void MagmaRock_EndFallingRocks(void);
 
 void MagmaRock_BurstStatue(s32 mode, s32 cue);
 
-void Func_02003b3c(s32 id);
-
 void MagmaRock_SetActorCellShape(s32 heightOffset, s32 layer, s32 id);
 
 struct Actor *Actor_FindInCell(s32 *position, struct Actor *self);
 
 extern s16 gMagmaRock_CrumblingPillars[];
 
-void Func_02003c0c();
-
 void MagmaRock_RestoreCrumblingPillars(const u16 *table);
 
-void Func_02003bec();
 void Func_02003bf4();
-void Func_02003be4();
 s32 Func_02003c04(struct Actor *object);
 s32 Field_TryJumpForward(void);
-struct Actor *Func_02003c2c(s32 *position, s32 flags);
 
 void MagmaRock_SpawnRubble(s32 spread);
 void MagmaRock_SetLeaderCellShape(s32 a, s32 b);
 extern u32 gMagmaRock_RubbleScript[];
-
-struct ResourceEntry *Func_02003bd4(void *sprite, struct ResourceEntry *last);
 
 extern u32 gMagmaRock_DustScript[];
 

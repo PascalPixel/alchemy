@@ -18,8 +18,6 @@ void Func_020014f4(void);
 
 void Func_02001bf8(void);
 
-s32 Func_0200422c(s32 terrain, s32 x, s32 z);
-
 void Func_02001fcc(void);
 
 void Func_0200274c(struct Actor *actor);

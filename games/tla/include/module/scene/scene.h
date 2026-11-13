@@ -1246,8 +1246,6 @@ extern char SceneId_Ov6adRoom4;
 
 void Func_02005480(struct Actor *object, s32 mode);
 
-void Func_02003118(struct Actor *object, s32 value);
-
 extern char SceneId_Ov6ACRoom6;
 extern char SceneId_Ov6ACRoom1;
 

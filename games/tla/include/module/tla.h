@@ -236,7 +236,6 @@ struct Object {
   u16 rest22 : 2;
 };
 
-void *Func_02000dec(s32, s32, s32, s32);
 void Func_02000f14(s32, s32, s32);
 
 extern char ResourceId_FallingRock;
@@ -248,8 +247,6 @@ extern char ResourceId_ColouredOrbs;
 extern char ResourceId_StarSparkleFade;
 
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
-
-s32 Func_02000df4(s32 *member, s32 *slot);
 
 extern u8 gInventorySnapshot[];
 

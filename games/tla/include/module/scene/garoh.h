@@ -18,8 +18,6 @@ void Func_02000e00(void);
 
 void Func_0200538c(void);
 
-void Func_02005164(struct SpawnObject *object, s32 mode);
-
 extern u32 gData_0200545c[];
 s32 Func_02001344();
 
@@ -64,7 +62,5 @@ extern char SceneId_Ov65FRoom2;
 extern char SceneId_Ov65FRoom3;
 extern char SceneId_Ov65FRoom4;
 extern char SceneId_Ov65FRoom5;
-void Func_020052f4(s32 value);
-void Func_0200535c();
 
 #endif

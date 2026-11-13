@@ -75,7 +75,6 @@ extern u32 Data_02006b68;
 
 extern s32 gData_02006180[];
 
-s32 Func_0200557c();
 void Func_02005794();
 
 void Func_0200326c(void);
@@ -92,7 +91,6 @@ extern u16 *Data_02006cd4;
 void Func_020051e0(void);
 
 void Func_020057ac(struct SparkleSprite *sprite);
-s32 Func_020057bc(struct Actor *object);
 
 extern s32 gData_020057e4[];
 

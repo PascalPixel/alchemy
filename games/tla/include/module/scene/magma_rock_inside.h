@@ -67,11 +67,8 @@ void MagmaRockInside_SetLeaderCellShape(s32 a, s32 b);
 void MagmaRockInside_SpawnDustRing(void);
 extern u32 gMagmaRockInside_RubbleScript[];
 
-u32 Func_02004e98(struct FieldSprite *sprite, u32 frame);
-
 extern u32 gMagmaRockInside_DustScript[];
 
-void Func_02004f18(struct ParticleSprite *sprite, struct Particle *particle);
 void Func_02004c58(void *entry, void *destination);
 void Func_02004f10(struct RockSprite__s4b18 *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);

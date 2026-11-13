@@ -97,8 +97,6 @@ void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer);
 
 void Actor_SetCellShape(s32 level, s32 layer, s32 owner);
 
-struct Actor *Func_02003df0(void);
-
 void Func_02001f94(void);
 
 struct Actor;
@@ -130,14 +128,11 @@ void CrumblingPillars_Place(const void *data);
 void Func_020012d8(void);
 void Func_02001fac(void);
 
-void Func_02003db8(const void *data);
-
 void Func_020013b0(void);
 void Func_02001930(void);
 void Func_02001fc4(void);
 
 void Func_02003d90(void);
-s32 Func_02003d98(void);
 
 s32 Func_02003da0(s32 a, s32 b, s32 c);
 
@@ -159,15 +154,9 @@ void Func_02003a30(void);
 
 void Func_02001ff4(void);
 
-void Func_02003dc0(const void *data);
-void Func_02003dc8(void);
 void Func_02003de8(void);
 void Func_02003ba0(struct Actor *object, s32 mode);
-s32 Func_02003d20(void);
 s32 Func_02003db0(struct Actor *object);
-s32 Func_02003dd0(s32 layer, s32 shape, s32 height);
-struct Actor *Func_02003dd8(s32 *position, s32 mode);
 extern s32 gData_0200567c;
-s32 Func_02003de0(void);
 
 #endif

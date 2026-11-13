@@ -48,8 +48,6 @@ s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 s32 Func_0200246c(s32 index, s32 value);
 s32 Func_0200249c(s32 index);
 void Actor_StartScript(struct Actor *object, const void *script);
-void Func_02004d20(void);
-void Func_02004d40(void);
 void ObjectTable_Snapshot(void);
 void Func_02004bc0(struct Actor *object, s32 a1);
 s32 Trig_Cos(s32 angle);

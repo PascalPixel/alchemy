@@ -44,8 +44,6 @@ void Actor_StartScript(struct Actor *object, const void *script);
 void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
 s32 Field_FindNearbyTalkTarget(s32 id);
 s32 Import_FieldTryJumpForward(void);
-void Func_020059c8(void);
-s32 Func_02005a30(void);
 void Func_02005a38(void);
 
 struct MainRoutineWork254 {

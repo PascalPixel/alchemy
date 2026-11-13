@@ -84,9 +84,6 @@ void Func_020016c8(void);
 
 void Func_020018ac(void);
 
-void Func_02003b00(s32 value);
-void Func_02003b18(void);
-
 void Func_0200123c(void);
 void Func_020010e8(void);
 void Func_02001088(void);

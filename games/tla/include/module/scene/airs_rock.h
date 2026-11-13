@@ -46,8 +46,6 @@ void Func_02000ef4(void);
 extern s16 gData_02003d94[];
 extern s16 gData_02003e4c[];
 
-void Func_02005dcc(s32 a, s32 b, s32 c);
-
 extern s8 gData_02004694;
 extern s8 gData_02004695;
 extern s8 gData_02004696;
@@ -85,12 +83,6 @@ struct Actor;
 
 extern char SceneId_Ov663Room1;
 extern char SceneId_Ov663Room2;
-void Func_02003cd0(struct Actor *object, s32 cue);
-void Func_02003cb8(const void *data);
 extern char SceneId_Ov663Room3;
-void Func_02003cb0(const u8 *table);
-void Func_02003ca0(const u8 *table);
-void Func_02003c80(s32 a);
-void Func_02003ba8(struct Actor *object, const void *script);
 
 #endif

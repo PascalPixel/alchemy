@@ -85,12 +85,8 @@ void Func_02001e60();
 void Func_02001ea8();
 void Func_02001ef0();
 
-void Func_02004be0(void *handle);
-s32 Func_02004c18(s32 terrain, s32 x, s32 z);
-
 void Func_02002c40(struct Actor *actor);
 
-s32 Func_02004c70(struct Actor *object);
 s32 Func_02004c78(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
 
 extern struct CellTarget Data_020068b4;

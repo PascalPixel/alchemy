@@ -62,7 +62,6 @@ struct GabombaStatueChamberEventWork {
   u16 field1c4;
 };
 
-void Func_02001da0(void);
 void Func_02001e80(s32 actor);
 void Func_02001d30(struct GabombaStatueChamberObject *object);
 void FieldPsynergy_RunHandler(s32 type);

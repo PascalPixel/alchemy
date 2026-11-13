@@ -518,12 +518,11 @@ static void Kalay_TalkAboutLeavingHome(void) {
 /// party away either way.
 static void Kalay_AskAboutCaveAccess(void) {
   struct Actor *leader;
-  u32 relativeFacing;
-  u16 *message;
 
+  // From the north he only stands in the way.
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  relativeFacing = (leader->facing + 0xfffff000) << 16;
-  if (relativeFacing > 0x60000000) {
+  if ((u16)(leader->facing - FACING_EAST_SOUTHEAST) >
+      FACING_WEST_SOUTHWEST - FACING_EAST_SOUTHEAST) {
     Event_Start();
     Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_TUNNEL_GUARD, 0);
     Event_Wait(10);
@@ -535,8 +534,7 @@ static void Kalay_AskAboutCaveAccess(void) {
       // "I'd like to let you go, but I cannot. You'd better just turn..."
       Event_ShowMessage(ACTOR_TUNNEL_GUARD, 0);
     } else {
-      message = &gFieldWork->message;
-      *message = *message + 1;
+      gFieldWork->message++;
       Actor_SetAnimationAndWait(ACTOR_TUNNEL_GUARD, ANIM_NOD);
       Event_ShowMessage(ACTOR_TUNNEL_GUARD, 0);
     }
@@ -562,11 +560,11 @@ static void Kalay_TalkAboutLayana(void) {
 /// that Hammet sells his best weapons away.
 static void Kalay_TalkToWeaponMerchant(void) {
   struct Actor *leader;
-  u32 relativeFacing;
 
+  // Across the counter: between northwest and southeast, by way of north.
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  relativeFacing = (leader->facing - 0x2000) << 16;
-  if (relativeFacing > 0x80000000) {
+  if ((u16)(leader->facing - FACING_SOUTHEAST) >
+      FACING_NORTHWEST - FACING_SOUTHEAST) {
     Shop_Run(22, ACTOR_WEAPON_MERCHANT);
   } else {
     Event_Start();
@@ -582,11 +580,11 @@ static void Kalay_TalkToWeaponMerchant(void) {
 /// whether the party found its weapons.
 static void Kalay_TalkToArmorMerchant(void) {
   struct Actor *leader;
-  u32 relativeFacing;
 
+  // Across the counter: between southwest and northeast, by way of west.
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  relativeFacing = (leader->facing - 0x6001) << 16;
-  if (relativeFacing <= 0x7ffe0000) {
+  if ((u16)(leader->facing - (FACING_SOUTHWEST + 1)) <=
+      FACING_NORTHEAST - FACING_SOUTHWEST - 2) {
     Shop_Run(23, ACTOR_ARMOR_MERCHANT);
   } else {
     Event_Start();
@@ -604,11 +602,11 @@ static void Kalay_TalkToArmorMerchant(void) {
 /// Layana.
 static void Kalay_TalkToItemMerchant(void) {
   struct Actor *leader;
-  u32 relativeFacing;
 
+  // Across the counter: between northeast and southeast, by way of east.
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  relativeFacing = (leader->facing - 0x2000) << 16;
-  if (relativeFacing > 0xC0000000) {
+  if ((u16)(leader->facing - FACING_SOUTHEAST) >
+      FACING_NORTHEAST - FACING_SOUTHEAST) {
     Shop_Run(24, ACTOR_ITEM_MERCHANT);
   } else {
     Event_Start();
@@ -1394,104 +1392,55 @@ static void Kalay_StartWindowTransition(void) {
 /// puddle and the opened passages are restored. Once FLAG_KALAY_TUNNEL_OPEN is
 /// set the man waits here and some of the cells are redrawn.
 static void Kalay_PrepareTunnel(void) {
-#if TBS_PATCH_1
-  s32 resumedMap;
-#endif
   struct Actor *actor;
-  s32 trackingValue;
-  struct FadeOverlayWork *effectWork;
-  // HEAP_SLOT_FADE_OVERLAY is nine heap slots after HEAP_SLOT_FIELD; index
-  // the actual heap slot array, not adjacent storage reached past the scalar
-  // gFieldWork declaration.
-  void **workSlots = gHeapSlots + HEAP_SLOT_FIELD;
+  struct FadeOverlayWork *overlay = gHeapSlots[HEAP_SLOT_FADE_OVERLAY];
 
-  ((struct FieldWork *)workSlots[0])->transition =
+  gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   FieldEffect_StartFadeOverlay(0);
+  // The overlay follows the leader except on the way down from the town.
 #if TBS_PATCH_1
-  resumedMap = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
-  if (resumedMap != 0) {
-    effectWork = workSlots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD];
-    trackingValue = GameFlag_Get(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
-#ifdef UBFIX
-    if (trackingValue != 0) {
-      actor = Actor_Get(ACTOR_PARTY_LEADER);
-    } else {
-      actor = NULL;
-    }
-    effectWork->actor = actor;
-#else
-    // The original integer temporary carries an actor pointer too.
-    if (trackingValue != 0) {
-      trackingValue = Actor_Get(ACTOR_PARTY_LEADER);
-    }
-    effectWork->actor = (struct Actor *)trackingValue;
-#endif
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
+    overlay->actor = GameFlag_Get(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER)
+                         ? Actor_Get(ACTOR_PARTY_LEADER)
+                         : NULL;
   } else {
     Event_SetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
     if (gMainRoutineWork.entrance == KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
-      ((struct FadeOverlayWork *)
-           workSlots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD])
-          ->actor = NULL;
+      overlay->actor = NULL;
       GameFlag_Clear(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
     }
   }
 #else
   Event_SetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
-    effectWork = workSlots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD];
-    trackingValue = GameFlag_Get(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
-#ifdef UBFIX
-    if (trackingValue != 0) {
-      actor = Actor_Get(ACTOR_PARTY_LEADER);
-    } else {
-      actor = NULL;
-    }
-    effectWork->actor = actor;
-#else
-    // As in the earlier-edition branch, the integer also carries a pointer.
-    if (trackingValue != 0) {
-      trackingValue = Actor_Get(ACTOR_PARTY_LEADER);
-    }
-    effectWork->actor = (struct Actor *)trackingValue;
-#endif
+    overlay->actor = GameFlag_Get(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER)
+                         ? Actor_Get(ACTOR_PARTY_LEADER)
+                         : NULL;
   } else if (gMainRoutineWork.entrance ==
              KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
-    ((struct FadeOverlayWork *)
-         workSlots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD])
-        ->actor = NULL;
+    overlay->actor = NULL;
     GameFlag_Clear(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
   }
 #endif
   if (GameFlag_Get(FLAG_TUNNEL_FIRST_PASSAGE_OPEN) != 0) {
     Actor_SetPosition(ACTOR_PUDDLE, 150, 728);
     if (GameFlag_Get(FLAG_TUNNEL_PUDDLE_FROZEN) != 0) {
+      // DEAD: a lookup whose actor goes unused; the ROM keeps the call.
       Actor_Get(ACTOR_PUDDLE);
       Actor_SetAnimation(ACTOR_PUDDLE, PUDDLE_ANIMATION_PILLAR);
       MapGrid_CopyCellAttributes(0, 0, 1, 1, 9, 14);
       MapGrid_CopyCellAttributes(0, 0, 1, 1, 9, 45);
-      {
-        u8 *p = &Actor_Get(ACTOR_PUDDLE)->priorityFlags;
-        s32 v = ACTOR_PRIORITY_UNDERFOOT;
-
-        v |= *p;
-        *p = v;
-      }
+      Actor_Get(ACTOR_PUDDLE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     }
   }
-  actor = Actor_Get(ACTOR_FIRST_STATUE);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_SECOND_STATUE);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_STATUE), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_STATUE), 0);
   Task_AddFrame(Kalay_UpdateTunnelEmitters, TASK_PASS_FRAME);
+  // The man who waited for the tunnel stands here once it is open.
   if (GameFlag_Get(FLAG_KALAY_TUNNEL_OPEN) != 0) {
     Actor_SetPosition(ACTOR_WAITING_MAN, 426, 730);
-    actor = Actor_Get(ACTOR_WAITING_MAN);
-    {
-      u16 shown = FACING_SOUTH_SOUTHWEST;
-
-      actor->facing = shown;
-    }
+    Actor_Get(ACTOR_WAITING_MAN)->facing = FACING_SOUTH_SOUTHWEST;
     MapGrid_CopyCellsTo(88, 48, 88, 45, 2, 3);
     MapGrid_CopyCellsTo(24, 49, 24, 48, 2, 1);
     MapGrid_CopyCellsTo(25, 42, 25, 47, 1, 1);
@@ -1876,12 +1825,8 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
 /// the party round through the town, so the passage stays secret. The guard
 /// opens it, Hammet goes in and the party rides off.
 static void Kalay_HammetReturnsToPalace(void) {
-  u8 *leaderPhase;
-  u32 random;
-  u32 motionPhase;
   struct Actor *actor;
   struct FieldWork *work;
-  const s32 *motionActions;
   const s32 *exitActions;
 
   Event_Start();
@@ -1931,13 +1876,8 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 388, 300);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
   // Seed the party idle phases for the arrival conversation.
-  leaderPhase = (u8 *)Actor_Get(ACTOR_PARTY_LEADER);
-  random = Random_Next();
-  motionPhase = random * 5;
-  motionActions = gKalay_PartyFidgetScript;
-  leaderPhase += offsetof(struct Actor, userValue);
-  *(u16 *)leaderPhase = motionPhase >> 12;
-  Actor_SetScript(ACTOR_PARTY_LEADER, motionActions);
+  Actor_Get(ACTOR_PARTY_LEADER)->userValue = (Random_Next() * 5) >> 12;
+  Actor_SetScript(ACTOR_PARTY_LEADER, gKalay_PartyFidgetScript);
   Actor_Jump(ACTOR_BUNZA, 2, 20);
   Actor_SetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
   Event_SetMessageId(MsgKalayWeveArrivedHammet);
@@ -1967,21 +1907,12 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 40);
-  leaderPhase = (u8 *)Actor_Get(ACTOR_GARET);
-  random = Random_Next();
-  leaderPhase += offsetof(struct Actor, userValue);
-  *(u16 *)leaderPhase = (random * 5) >> 12;
-  leaderPhase = (u8 *)Actor_Get(ACTOR_IVAN);
-  random = Random_Next();
-  leaderPhase += offsetof(struct Actor, userValue);
-  *(u16 *)leaderPhase = (random * 5) >> 12;
-  leaderPhase = (u8 *)Actor_Get(ACTOR_MIA);
-  random = Random_Next();
-  leaderPhase += offsetof(struct Actor, userValue);
-  *(u16 *)leaderPhase = (random * 5) >> 12;
-  Actor_SetScript(ACTOR_GARET, motionActions);
-  Actor_SetScript(ACTOR_IVAN, motionActions);
-  Actor_SetScript(ACTOR_MIA, motionActions);
+  Actor_Get(ACTOR_GARET)->userValue = (Random_Next() * 5) >> 12;
+  Actor_Get(ACTOR_IVAN)->userValue = (Random_Next() * 5) >> 12;
+  Actor_Get(ACTOR_MIA)->userValue = (Random_Next() * 5) >> 12;
+  Actor_SetScript(ACTOR_GARET, gKalay_PartyFidgetScript);
+  Actor_SetScript(ACTOR_IVAN, gKalay_PartyFidgetScript);
+  Actor_SetScript(ACTOR_MIA, gKalay_PartyFidgetScript);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   // "Arrived where?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 2, 0, 10);
@@ -2361,16 +2292,12 @@ static s32 Kalay_UpdateTunnelParticle(struct Actor *particle) {
 #else
 static void Kalay_UpdateTunnelParticle(struct Actor *particle) {
 #endif
-  s16 *lifetime;
-  s32 remainingFrames;
   s32 velocityX;
   s32 velocityY;
 
-  lifetime = &particle->timer;
-  remainingFrames = *lifetime;
-  if (remainingFrames == 0) {
+  if (particle->timer == 0) {
     Actor_Release(particle);
-  } else if (remainingFrames == 1) {
+  } else if (particle->timer == 1) {
     particle->velocityX = 0;
     particle->velocityY = 0;
     particle->x.fixed = 0;
@@ -2385,11 +2312,7 @@ static void Kalay_UpdateTunnelParticle(struct Actor *particle) {
   velocityY = particle->velocityY;
   particle->velocityX = velocityX - velocityX / 256;
   particle->velocityY = velocityY - velocityY / 16;
-  {
-    s32 nextLifetime = *(u16 *)lifetime;
-    nextLifetime -= 1;
-    *(u16 *)lifetime = nextLifetime;
-  }
+  particle->timer--;
 #ifdef UBFIX
   return 1;
 #endif
@@ -2432,36 +2355,21 @@ static void Kalay_UpdateTunnelEmitters(void) {
 /// Creates a short-lived particle with random position and velocity offsets. It
 /// is a puff of dust (SPRITE_DUST_PUFF) with its blue raised to full.
 static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z) {
-  s32 depth;
   struct Actor *particle;
-  s32 random;
-  s32 attributeMask;
-  u8 *spriteBytes;
 
-  depth = z;
-  random = Import_RandomNext();
   particle = FieldActor_Create(
-      SPRITE_DUST_PUFF, (x - px(8)),
-      (((((u32)(random << 3) >> 16) << 16) + height) + px(16)), depth);
+      SPRITE_DUST_PUFF, x - px(8),
+      height + px((u32)(Import_RandomNext() * 8) >> 16) + px(16), z);
   if (particle != 0) {
-    ((u8 *)particle)[offsetof(struct Actor, motionFlags)] = (attributeMask = 0);
-    spriteBytes = (u8 *)particle->sprite;
-    attributeMask -= 13;
-    spriteBytes[9] = ((spriteBytes[9] & attributeMask) | 8);
+    particle->motionFlags = 0;
+    particle->sprite->image.priority = 2;
     Actor_SetSpriteColor(particle, SPRITE_COLOR_BLUE_TINT);
     Actor_SetSpriteFlags(particle, 0);
-    random = Random_Next();
-    particle->velocityX = ((((u32)(random << 1) >> 16) - 1) << 16);
-    random = Random_Next();
-    particle->velocityY =
-        ((((u32)(((random << 1) + random) << 1) >> 16) - 3) << 16);
-    {
-      u16 *target = (u16 *)&particle->timer;
-      u16 shown = 20;
-
-      *target = shown;
-      particle->frozen = 1;
-    }
+    // It drifts up to a pixel left and up to three up or down each frame.
+    particle->velocityX = px(((u32)(Random_Next() * 2) >> 16) - 1);
+    particle->velocityY = px(((u32)(Random_Next() * 6) >> 16) - 3);
+    particle->timer = 20;
+    particle->frozen = 1;
     Actor_SelectAnimation(particle, 1);
     Actor_StartScript(particle, gKalay_TunnelParticleScript);
   }

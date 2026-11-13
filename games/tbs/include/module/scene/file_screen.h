@@ -21,7 +21,7 @@ extern s16 gFileScreen_ExtraCodeUnlocked;
 extern s16 gFileScreen_CodeProgress;
 extern s16 gFileScreen_ExtraCodeProgress;
 extern s16 gFileScreen_CodeHeld;
-extern s32 gFileScreen_ExtraCodeHeld;
+extern s16 gFileScreen_ExtraCodeHeld;
 extern u32 gFileScreen_PasswordMembers[];
 extern u32 gFileScreen_PasswordFlags[];
 extern u32 gFileScreen_PasswordKeyItems[];

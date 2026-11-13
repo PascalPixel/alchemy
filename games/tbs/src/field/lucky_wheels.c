@@ -363,7 +363,53 @@ struct LuckyWheelsWonPrizesView {
   s8 wonPrizes[16];
 };
 
-#include "../graphics/lucky_wheels/reel_tables.h"
+// The Lucky Wheels tables, the same in both games; LUCKY_WHEELS_TITLE_LETTERS
+// above is the letters of the title they spell.
+
+/// Where each spark picture (a square 2 to 20 pixels on a side) starts: size s
+/// (1 to 10) is a square 2s pixels a side, after the smaller squares' pixels.
+const u16 gLuckyWheels_SparkPictures[] = {0,   4,   20,  56,  120,
+                                          220, 364, 560, 816, 1140};
+
+/// The prize of each wheel symbol, kept in gMainRoutineWork.wonPrizes for each
+/// winning line.
+const u8 gLuckyWheels_SymbolPrizes[] = {0, 3, 1, 4, 2, 5};
+
+/// The tile of each title letter, the letter's place in its sheet: jackpot.png
+/// holds `Jackpot!` and jackpot_ja.png `ジャックポト!`.
+const u8 gLuckyWheels_TitleLetterTiles[LUCKY_WHEELS_TITLE_LETTERS] = {
+#if LANGUAGE == LANGUAGE_JAPANESE
+    0, 1, 2, 3, 4,
+    2, 5, 6
+#elif LANGUAGE == LANGUAGE_SPANISH
+    7, 0, 1, 2, 3,
+    4, 5, 6, 7
+#else
+    0, 1, 2, 3, 4,
+    5, 6, 7
+#endif
+};
+
+/// The positions of the machine's fourteen sprites, in screen pixels.
+const u8 gLuckyWheels_MachineSpriteX[] = {2,   0,  232, 232, 32,  32,  200,
+                                          200, 28, 28,  208, 208, 219, 219};
+const u8 gLuckyWheels_MachineSpriteY[] = {2,   152, 0,   152, 8,   104, 8,
+                                          104, 118, 140, 118, 140, 6,   108};
+
+/// The advance of each title letter, in pixels, from LUCKY_WHEELS_TITLE_X. The
+/// last letter's advance is never used; Japanese leaves it out (0).
+const u8 gLuckyWheels_TitleLetterWidths[LUCKY_WHEELS_TITLE_LETTERS] = {
+#if LANGUAGE == LANGUAGE_JAPANESE
+    32, 24, 22, 28,
+    28, 22, 18
+#elif LANGUAGE == LANGUAGE_SPANISH
+    16, 28, 28, 26, 26,
+    28, 28, 20, 24
+#else
+    28, 28, 26, 26, 28,
+    28, 20, 24
+#endif
+};
 
 /// Lucky Wheels' VBlank task: reads the keys, runs the game's state
 /// (betting, spinning and stopping the wheels, scoring the paylines, choosing

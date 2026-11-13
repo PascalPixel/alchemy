@@ -3,11 +3,11 @@
 /// the music players, the four CGB channels, the track controls (tempo,
 /// volume, pitch, pan and modulation) and the songs' extended commands.
 
-#include "../../include/sound/sound_driver.h"
-#include "../../include/sound/sound.h"
+#include "sound/sound_driver.h"
+#include "sound/sound.h"
 #include "fixed_math.h"
 #include "types.h"
-#include "../../include/system/io_reg.h"
+#include "system/io_reg.h"
 
 /// Detaches a note through the jump table entry installed by the driver
 /// (RealClearChain).

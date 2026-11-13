@@ -2,9 +2,9 @@
 /// Erasing and programming the Atmel chip, whose small 128-byte sectors are
 /// erased thirty-two to a standard sector.
 
-#include "../../../include/gamepak/flash.h"
-#include "../../../include/gamepak/flash_data.h"
-#include "../../../include/system/io_reg.h"
+#include "gamepak/flash.h"
+#include "gamepak/flash_data.h"
+#include "system/io_reg.h"
 
 /// Erases the Atmel chip and waits for completion with its configured timing.
 u16 EraseAtmelFlashChip(void) {

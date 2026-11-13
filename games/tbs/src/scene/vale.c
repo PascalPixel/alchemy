@@ -2028,26 +2028,26 @@ static void Vale_ClimbDownRoofLadder(s32 actorId, s32 approachAnimationId,
 /// Mode 0 sets count boards from first on the roof by the hole, still and
 /// without shadows. Any other mode puts them out of sight.
 static void Vale_PlaceOrHideBoards(s32 first, u32 count, s32 mode) {
-  s32 selector = first;
+  s32 actorId = first;
   u32 i;
 
   if (mode == 0) {
     for (i = 0; i < count; i++) {
-      struct Actor *actor = Actor_Get(selector);
+      struct Actor *actor = Actor_Get(actorId);
 
       actor->motionFlags = 0;
       Actor_SetSpriteFlags(actor, 0);
       actor->x.fixed = px(390);
       actor->y.fixed = px(160);
       actor->z.fixed = px(842);
-      selector++;
+      actorId++;
     }
     return;
   }
 
   for (i = 0; i < count; i++) {
-    Actor_SetPosition(selector, 0, 0);
-    selector++;
+    Actor_SetPosition(actorId, 0, 0);
+    actorId++;
   }
 }
 

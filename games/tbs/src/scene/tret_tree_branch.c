@@ -108,15 +108,13 @@ const struct ActorPlacement *TretTreeBranch_GetActorPlacements(void) {
 /// at the ground height of its destination.
 static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
                                                        s32 cellOffsetZ) {
-  struct FieldWork *state = gFieldWork;
+  struct FieldWork *work = gFieldWork;
   struct Actor *actor;
   s32 offsetX = cellOffsetX;
   s32 offsetZ = cellOffsetZ;
   s32 groundHeight;
 
   actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  // Multiplication keeps negative cell offsets defined; every caller is within
-  // six cells, so the fixed-point result fits in s32.
   offsetX *= px(16);
   offsetZ *= px(16);
 
@@ -130,7 +128,7 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
     actor->groundHeight = groundHeight;
   }
 
-  actor = state->camera;
+  actor = work->camera;
   if (actor != 0) {
     actor->x.fixed += offsetX;
     actor->z.fixed += offsetZ;

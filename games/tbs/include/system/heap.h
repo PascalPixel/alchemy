@@ -163,7 +163,7 @@ enum HeapSlot {
   /// A RAM copy of Tile_CopyStrided, which uploads field sprite pictures to
   /// VRAM; loaded with the animation pools.
   HEAP_SLOT_PICTURE_UPLOADER = 53,
-  /// Each linked console's party (LINK_OWNER_STATES_SIZE bytes), from the
+  /// Each linked console's party (ENEMY_UNITS_SIZE bytes), from the
   /// Battle Arena and Battle_Run.
   HEAP_SLOT_ENEMY_UNITS = 54,
   /// The menu work (MENU_WORK_SIZE bytes) shared by the field menu's screens

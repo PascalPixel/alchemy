@@ -13,8 +13,8 @@
 #define DRAGON_CLOUD_TRAIL_PICTURE (5 * 24 * 48)
 #define DRAGON_CLOUD_PUFF_PICTURES 15360 ///< the puff pictures in the sheet
 #define DRAGON_CLOUD_PUFFS 8             ///< puffs, particles 0 to 7
-#define DRAGON_CLOUD_EMBERS 40           ///< embers, from FIRST_EMBER
-#define DRAGON_CLOUD_FLASHES 16          ///< flashes, from FIRST_FLASH
+#define DRAGON_CLOUD_EMBERS 40  ///< embers, from DRAGON_CLOUD_FIRST_EMBER
+#define DRAGON_CLOUD_FLASHES 16 ///< flashes, from DRAGON_CLOUD_FIRST_FLASH
 
 /// Draws puff picture number `picture` of sheet on canvas at (x, y) with blit,
 /// sized by the puff tables.

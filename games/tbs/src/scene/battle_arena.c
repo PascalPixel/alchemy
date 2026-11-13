@@ -999,7 +999,7 @@ static s32 BattleArena_EnterBattle(void) {
   // Suspend peer polling while transferring the party and entering battle.
   if (!failed) {
     // HEAP_SLOT_ENEMY_UNITS is gEnemyUnits, the battle's enemy
-    // units (LINK_OWNER_STATES_SIZE, battle/battle/run.c). While it is
+    // units (ENEMY_UNITS_SIZE, battle/battle/run.c). While it is
     // allocated, the exchange below receives the partner's party members and
     // Djinn into units 128 to 131. The copy to gActorSpriteSlots
     // (gMapGridCellBuffer

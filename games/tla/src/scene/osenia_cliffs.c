@@ -153,11 +153,11 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {0, 8, CONDITION_ALWAYS, MSGNO(MsgMadraChampaBoat)},
-    {0, 9, CONDITION_ALWAYS, MSGNO(MsgMadraSailorNotChampa)},
-    {0, 10, CONDITION_ALWAYS, MSGNO(MsgMadraWaveDamage)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgMadraChampaBoat)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMadraSailorNotChampa)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgMadraWaveDamage)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMadraCannotEscapeBySea)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMadraBriggsNewShip)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgMadraPirateAttackParties)},

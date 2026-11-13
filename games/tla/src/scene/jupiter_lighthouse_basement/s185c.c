@@ -221,10 +221,10 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gData_020022e8[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {1, 3, CONDITION_ALWAYS, 3},
-    {1, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {0x50008905, 30, CONDITION_ALWAYS, EVENT(Func_02000054)},
     {0x50008905, 31, CONDITION_ALWAYS, EVENT(Func_02000074)},
     {0x50008905, 32, CONDITION_ALWAYS, EVENT(Func_020000f8)},
@@ -235,7 +235,7 @@ struct Trigger gData_020022e8[] = {
 };
 
 struct Trigger gData_0200236c[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGERS_END},
 };
 

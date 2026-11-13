@@ -1642,15 +1642,15 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 2, CONDITION_ALWAYS, 2},
-    {2, 9, 0x892, EVENT(Func_02000440)},
-    {2, 10, 0x890, EVENT(Func_02000510)},
-    {2, 11, 0x893, EVENT(Func_02001a2c)},
-    {2, 12, CONDITION_ALWAYS, EVENT(Func_02001bb0)},
-    {0, 22, CONDITION_ALWAYS, MSGNO(MsgUggghICan)},
-    {0, 14, CONDITION_ALWAYS, EVENT(VenusLighthouseEntrance_RunActorSparkBurst)},
-    {0, 15, CONDITION_ALWAYS, EVENT(Func_020000c8)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_STEP, 9, 0x892, EVENT(Func_02000440)},
+    {TRIGGER_STEP, 10, 0x890, EVENT(Func_02000510)},
+    {TRIGGER_STEP, 11, 0x893, EVENT(Func_02001a2c)},
+    {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(Func_02001bb0)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgUggghICan)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(VenusLighthouseEntrance_RunActorSparkBurst)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_020000c8)},
     {TRIGGERS_END},
 };
 

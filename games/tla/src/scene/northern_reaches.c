@@ -552,10 +552,10 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
-    {1, 4, CONDITION_ALWAYS, 4},
-    {2, 20, 0x190a, EVENT(Func_02000108)},
-    {2, 21, 0x190a, EVENT(Func_020001d8)},
-    {2, 22, 0x90a, EVENT(Func_020000a8)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_STEP, 20, 0x190a, EVENT(Func_02000108)},
+    {TRIGGER_STEP, 21, 0x190a, EVENT(Func_020001d8)},
+    {TRIGGER_STEP, 22, 0x90a, EVENT(Func_020000a8)},
     {TRIGGERS_END},
 };

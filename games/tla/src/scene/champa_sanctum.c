@@ -63,11 +63,11 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {1, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0xc400, 8, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {0, 8, 0x197f, MSGNO(MsgChampaTreasureEncouragesLaziness)},
+    {TRIGGER_TALK, 8, 0x197f, MSGNO(MsgChampaTreasureEncouragesLaziness)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x197f, MSGNO(MsgChampaVillagersStoppedWorking)},
-    {0, 8, CONDITION_ALWAYS, MSGNO(MsgChampaCaptainLastHope)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgChampaCaptainLastHope)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgChampaNeedsCaptainTreasure)},
     {TRIGGERS_END},
 };

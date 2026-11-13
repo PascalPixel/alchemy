@@ -66,7 +66,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  count = Data_081979da[effect->variant];
+  count = gPlasma_Counts[effect->variant];
 
   for (frame = 0; frame != count * 8 - count + 42; frame++) {
     // The strongest variant pans the camera over the first 64 frames.
@@ -96,11 +96,11 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
       }
       if (frame >= start && frame < start + 9) {
         if (frame >= start + 1 && frame < start + 2)
-          draw[0](canvas, work->sheet, Data_081979cc[i + effect->side * 7] - 24,
-                  0, 48, 112);
+          draw[0](canvas, work->sheet,
+                  gPlasma_Columns[i + effect->side * 7] - 24, 0, 48, 112);
         if (frame >= start + 2 && frame < start + 4)
           draw[0](canvas, work->sheet + 0x1500,
-                  Data_081979cc[i + effect->side * 7] - 24, 0, 48, 112);
+                  gPlasma_Columns[i + effect->side * 7] - 24, 0, 48, 112);
 
         // Throw sparks up from the pillar's base, within 90 degrees of
         // straight up, and shake the camera.
@@ -116,17 +116,17 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
               speed = (Random16() & 0x3ff) + 32;
               angle = (Random16() & 0x7fff) - 0x4000;
 
-              spark->x = Data_081979cc[i + effect->side * 7] << 16;
+              spark->x = gPlasma_Columns[i + effect->side * 7] << 16;
               spark->y = PILLAR_BASE_Y << 16;
               spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
               spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
               spark->variant = (Random16() & 7) + 32;
               thrown++;
-              if (thrown == Data_081979c0[effect->variant * 2])
+              if (thrown == gPlasma_Sparks[effect->variant * 2])
                 break;
             }
           }
-          work->shakeFrames = Data_081979c0[effect->variant * 2 + 1];
+          work->shakeFrames = gPlasma_Sparks[effect->variant * 2 + 1];
         }
       }
 
@@ -156,7 +156,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
           if (spark->x >= 0 && x <= 119 && spark->y >= 0) {
             y = spark->y >> 16;
             size = spark->variant / 8 + 1;
-            draw[k & 1](canvas, sprites + gData_08197410[size - 1],
+            draw[k & 1](canvas, sprites + gBattleEffect_MoteCells[size - 1],
                         x - size / 2, y - size, size, size * 2);
           }
         }
@@ -386,7 +386,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
               s16 x = spark->x >> 16;
               s32 size = spark->variant / 5 + 1;
 
-              draw[j & 1](canvas, graphics + gData_08197410[size - 1],
+              draw[j & 1](canvas, graphics + gBattleEffect_MoteCells[size - 1],
                           x - size / 2, y - size, size, size * 2);
             }
           }

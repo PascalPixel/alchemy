@@ -96,7 +96,7 @@ extern char ResourceId_ClawSlashSheet;
 extern char ResourceId_BlueFlameSheet;
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
-extern u16 gData_08197410[];      // gBattleEffect_MoteCells
+extern u16 gBattleEffect_MoteCells[];
 extern const u8 gData_08199340[]; // a head's mesh
 extern const u8 Data_081991e0[];  // its corners
 
@@ -236,7 +236,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
         if (mote->variant >= 0) {
           s32 size = (mote->variant >> 3) + 2;
 
-          blit[0](canvas, sprites + gData_08197410[size - 1],
+          blit[0](canvas, sprites + gBattleEffect_MoteCells[size - 1],
                   HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
           BattleEffectKernels_IntegrateVector2(mote, 60, 0x1000);
           mote->variant--;

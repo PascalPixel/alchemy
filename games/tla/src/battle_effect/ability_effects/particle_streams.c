@@ -71,7 +71,7 @@ extern char ResourceId_Data134; // ☀️ ParticleSpritesA
 extern u8 gData_0819896a[];     // the pillars' feet, x and y
 // ☀️ gBattleEffect_MoteCells: the Data134 sheet's spark cells, by size - 1
 // (byte offsets).
-extern u16 gData_08197410[];
+extern u16 gBattleEffect_MoteCells[];
 extern const s32 gData_08198974[]; // ☀️ gNereid_Gravity
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
@@ -274,9 +274,9 @@ UNUSED void Func_08163e14(struct BattleEffectArgument *effect) {
             size = 9;
           if (frame > 76)
             size = 10;
-          draw[ember->velocityY > 0](canvas, cells + gData_08197410[size - 1],
-                                     HI(ember->x) - size / 2,
-                                     HI(ember->y) - size, size, size * 2);
+          draw[ember->velocityY > 0](
+              canvas, cells + gBattleEffect_MoteCells[size - 1],
+              HI(ember->x) - size / 2, HI(ember->y) - size, size, size * 2);
           ember->x += ember->velocityX;
           ember->y += ember->velocityY;
           if (frame > SPOUT_END_FRAME)
@@ -331,14 +331,14 @@ struct FormationScale {
 
 extern const struct FormationScale gData_08196e5c;
 extern const struct FormationScale gData_08196e64;
-extern const u8 gData_08198984[];
-extern const u8 gData_08198990[];
-extern const u8 gData_0819899c[];
-extern const u8 gData_081989a4[];
+extern const u8 gHelmSplitter_TwelveX[];
+extern const u8 gHelmSplitter_TwelveZ[];
+extern const u8 gHelmSplitter_RightEightX[];
+extern const u8 gHelmSplitter_RightEightZ[];
 extern const u8 gData_081989ac[];
 extern const u8 gData_081989b4[];
-extern const u8 gData_081989bc[];
-extern const u8 gData_081989c4[];
+extern const u8 gHelmSplitter_SmallEightX[];
+extern const u8 gHelmSplitter_SmallEightZ[];
 extern const s8 gData_081989cc[];
 extern const u8 gData_081989d7[];
 
@@ -377,15 +377,15 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
     break;
   case 1:
     for (i = 0; i != 12; i++) {
-      pos[0] = (gData_08198984[i] << 16) + x - (16 << 16);
-      pos[2] = (gData_08198990[i] << 16) + z - (32 << 16);
+      pos[0] = (gHelmSplitter_TwelveX[i] << 16) + x - (16 << 16);
+      pos[2] = (gHelmSplitter_TwelveZ[i] << 16) + z - (32 << 16);
       Render_ApplyProjectedPlacementFar(work->objects[i], pos, &normal.x, 0);
     }
     break;
   case 2:
     for (i = 0; i != 8; i++) {
-      pos[0] = (gData_0819899c[i] << 16) + x + (16 << 16);
-      pos[2] = (gData_081989a4[i] << 16) + z;
+      pos[0] = (gHelmSplitter_RightEightX[i] << 16) + x + (16 << 16);
+      pos[2] = (gHelmSplitter_RightEightZ[i] << 16) + z;
       Render_ApplyProjectedPlacementFar(work->objects[i], pos, &normal.x, 0);
     }
     break;
@@ -398,8 +398,8 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
     break;
   case 3:
     for (i = 0; i != 8; i++) {
-      pos[0] = (gData_081989bc[i] << 16) + x;
-      pos[2] = (gData_081989c4[i] << 16) + z;
+      pos[0] = (gHelmSplitter_SmallEightX[i] << 16) + x;
+      pos[2] = (gHelmSplitter_SmallEightZ[i] << 16) + z;
       Render_ApplyProjectedPlacementFar(work->objects[i], pos, &big.x, 0);
     }
     break;
@@ -417,9 +417,9 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 
 extern char ResourceId_FlareSheet;
 extern char ResourceId_FlareImage;
-extern u16 gData_081989f2[];
-extern u8 gData_081989e2[];
-extern u8 gData_081989ea[];
+extern u16 gHelmSplitter_ImpactBurstCells[];
+extern u8 gHelmSplitter_ImpactBurstCellWidths[];
+extern u8 gHelmSplitter_ImpactBurstCellHeights[];
 
 s32 BattleEffect_LoadBlitter(
     s32 slot,
@@ -502,10 +502,12 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
 
       if (cell < 0)
         cell = 0;
-      maxBlend(canvas, work->sheet + gData_081989f2[cell],
-               (x >> 16) - ((width = gData_081989e2[cell]) >> 1),
-               (y >> 16) - ((height = gData_081989ea[cell]) >> 1), width,
-               height);
+      maxBlend(canvas, work->sheet + gHelmSplitter_ImpactBurstCells[cell],
+               (x >> 16) -
+                   ((width = gHelmSplitter_ImpactBurstCellWidths[cell]) >> 1),
+               (y >> 16) -
+                   ((height = gHelmSplitter_ImpactBurstCellHeights[cell]) >> 1),
+               width, height);
     }
 
     for (i = 0, p = work->particles; i != 30; i++, p++) {
@@ -519,8 +521,8 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
         size = p->variant / 16 + 3;
         px = HI(p->x);
         py = HI(p->y);
-        additive(canvas, sheet + gData_08197410[size - 1], px - size / 2,
-                 py - size, size, size * 2);
+        additive(canvas, sheet + gBattleEffect_MoteCells[size - 1],
+                 px - size / 2, py - size, size, size * 2);
       }
     }
 
@@ -535,8 +537,8 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
         size = p->variant / 16 + 1;
         px = HI(p->x);
         py = HI(p->y);
-        additive(canvas, sheet + gData_08197410[size - 1], px - size / 2,
-                 py - size, size, size * 2);
+        additive(canvas, sheet + gBattleEffect_MoteCells[size - 1],
+                 px - size / 2, py - size, size, size * 2);
       }
     }
 
@@ -738,10 +740,10 @@ extern char ResourceId_FlameSheetB;
 extern char ResourceId_LightningBoltSheet;
 extern char ResourceId_BlastSheet;
 
-extern s16 Data_08198a02[][3]; // ☀️ gParticleStreams_OrbitPoints
-extern s16 Data_08198a2c[][2]; // ☀️ gParticleStreams_DropPoints
-extern u16 Data_08198a48[];    // ☀️ gParticleStreams_FlashCells
-extern u16 Data_08198a56[];    // ☀️ gParticleStreams_FlashSizes
+extern s16 gParticleStreams_OrbitPoints[][3];
+extern s16 gParticleStreams_DropPoints[][2];
+extern u16 Data_08198a48[]; // ☀️ gParticleStreams_FlashCells
+extern u16 Data_08198a56[]; // ☀️ gParticleStreams_FlashSizes
 
 void BattleEffect_ConfigureEffectDisplay(void);
 
@@ -1125,9 +1127,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       SceneTransform_ApplyRoll(0x800);
       SceneTransform_ApplyYaw(frame << 8);
       for (i = 0; i != 7; i++) {
-        vector[0] = (Data_08198a02[i][0] / 2) << 16;
-        vector[1] = (Data_08198a02[i][1] + frame) << 16;
-        vector[2] = (Data_08198a02[i][2] / 2) << 16;
+        vector[0] = (gParticleStreams_OrbitPoints[i][0] / 2) << 16;
+        vector[1] = (gParticleStreams_OrbitPoints[i][1] + frame) << 16;
+        vector[2] = (gParticleStreams_OrbitPoints[i][2] / 2) << 16;
         EffectPosition_ProjectPoint(vector, pos = &spot);
         pos->x = HI(pos->x) + 128;
         pos->y = HI(pos->y) + 60;
@@ -1142,13 +1144,14 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
         x = 16 - frame / 4;
       y = frame - 96;
       for (i = 0; i != 7; i++) {
-        s32 drop = Data_08198a2c[i][1] + y;
+        s32 drop = gParticleStreams_DropPoints[i][1] + y;
 
         if (drop <= 93)
           draw(Ram_MapCellBuffer, work->sheet + 0x1c80,
-               Data_08198a2c[i][0] + x - 12, drop - 12, 24, 24);
+               gParticleStreams_DropPoints[i][0] + x - 12, drop - 12, 24, 24);
         else if (drop <= 95)
-          AddFlame((Data_08198a2c[i][0] + x) << 16, drop << 16, 1);
+          AddFlame((gParticleStreams_DropPoints[i][0] + x) << 16, drop << 16,
+                   1);
       }
 
       // The motes drift up and away, six pictures each.
@@ -1264,7 +1267,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
           point.depth = 799;
         size = 9 - (point.depth - 160) / 64;
         draw(canvas,
-             work->sheet + (gData_08197410[size - 1] + (i & 1) * 770) + 0x3200,
+             work->sheet + (gBattleEffect_MoteCells[size - 1] + (i & 1) * 770) +
+                 0x3200,
              point.x - size / 2, point.y - size, size, size * 2);
         BattleEffectKernels_IntegrateVector3(ember, 64, -0x2000);
         if (ember->y <= 0x140000) {
@@ -1285,7 +1289,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       s32 size = rise + 3;
 
       draw(canvas,
-           work->sheet + (gData_08197410[size - 1] + (i & 1) * 770) + 0x3200,
+           work->sheet + (gBattleEffect_MoteCells[size - 1] + (i & 1) * 770) +
+               0x3200,
            mote->x - size / 2, mote->y - size, size, size * 2);
       mote->y = mote->y - rise - 8;
       if (mote->y < -10)

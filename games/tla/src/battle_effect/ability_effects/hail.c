@@ -14,8 +14,8 @@
 // The ice chip's four cels: ☀️'s gProjectileVolley_PelletOffsets,
 // gHail_CellWidths and gHail_CellHeights.
 extern u16 Data_0819851c[];
-extern u8 Data_08198513[];
-extern u8 Data_08198517[];
+extern u8 gHail_CellWidths[];
+extern u8 gHail_CellHeights[];
 
 void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
@@ -96,8 +96,8 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
 
         cel = (chip->z / 128) & 3;
         blit[i & 1](canvas, work->sheet + 0x400 + Data_0819851c[cel],
-                    HI(chip->x) - (width = Data_08198513[cel]) / 2,
-                    HI(chip->y) - (height = Data_08198517[cel]) / 2, width,
+                    HI(chip->x) - (width = gHail_CellWidths[cel]) / 2,
+                    HI(chip->y) - (height = gHail_CellHeights[cel]) / 2, width,
                     height);
         BattleEffectKernels_IntegrateVector3(chip, 63, 0x1000);
       }
@@ -179,12 +179,12 @@ extern char ResourceId_PortalSheet;
 
 // The chips: ☀️'s gHail_ChipFlips (a blitter's flags), and, by shape,
 // gHail_ChipCells, _ChipX, _ChipY, _ChipWidths and _ChipHeights.
-extern const u8 Data_08198524[];
-extern const u16 Data_0819853a[];
-extern const u8 Data_0819854c[];
-extern const u8 Data_08198555[];
-extern const u8 Data_08198528[];
-extern const u8 Data_08198531[];
+extern const u8 gHail_ChipFlips[];
+extern const u16 gHail_ChipCells[];
+extern const u8 gHail_ChipX[];
+extern const u8 gHail_ChipY[];
+extern const u8 gHail_ChipWidths[];
+extern const u8 gHail_ChipHeights[];
 
 // Steps the background colours one shade toward a resource's palette.
 void BattleEffect_StepPaletteToResource(s32 resource);
@@ -281,7 +281,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
           struct EffectStep *chip = &work->particles[FIRST_CHIP + i];
 
           chip->velocityX = Random16() % 6 + 3;
-          chip->velocityY = Data_08198524[Random16() & 3];
+          chip->velocityY = gHail_ChipFlips[Random16() & 3];
         }
       }
 
@@ -303,13 +303,13 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
             y = position.y - 24;
             draw[0](canvas, work->sheet, x, y, 24, 48);
             if ((frame & 3) <= 1)
-              draw[0](canvas, work->sheet + Data_0819853a[1],
-                      x + Data_0819854c[1], y + Data_08198555[1],
-                      Data_08198528[1], Data_08198531[1]);
+              draw[0](canvas, work->sheet + gHail_ChipCells[1],
+                      x + gHail_ChipX[1], y + gHail_ChipY[1],
+                      gHail_ChipWidths[1], gHail_ChipHeights[1]);
             else
-              draw[0](canvas, work->sheet + Data_0819853a[2],
-                      x + Data_0819854c[2], y + Data_08198555[2],
-                      Data_08198528[2], Data_08198531[2]);
+              draw[0](canvas, work->sheet + gHail_ChipCells[2],
+                      x + gHail_ChipX[2], y + gHail_ChipY[2],
+                      gHail_ChipWidths[2], gHail_ChipHeights[2]);
             for (j = 0; j != CHIPS_PER_ROCK; j++) {
               struct EffectStep *chip =
                   &work->particles[FIRST_CHIP + i * CHIPS_PER_ROCK + j];
@@ -328,18 +328,18 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
               }
               draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
               if (chip->velocityY & COMPOSITE_FLIP_X)
-                chipX = x - Data_08198528[chip->velocityX] -
-                        Data_0819854c[chip->velocityX] + 24;
+                chipX = x - gHail_ChipWidths[chip->velocityX] -
+                        gHail_ChipX[chip->velocityX] + 24;
               else
-                chipX = x + Data_0819854c[chip->velocityX];
+                chipX = x + gHail_ChipX[chip->velocityX];
               if (chip->velocityY & COMPOSITE_FLIP_Y)
-                chipY = y - Data_08198531[chip->velocityX] -
-                        Data_08198555[chip->velocityX] + 48;
+                chipY = y - gHail_ChipHeights[chip->velocityX] -
+                        gHail_ChipY[chip->velocityX] + 48;
               else
-                chipY = y + Data_08198555[chip->velocityX];
-              draw[1](canvas, work->sheet + Data_0819853a[chip->velocityX],
-                      chipX, chipY, Data_08198528[chip->velocityX],
-                      Data_08198531[chip->velocityX]);
+                chipY = y + gHail_ChipY[chip->velocityX];
+              draw[1](canvas, work->sheet + gHail_ChipCells[chip->velocityX],
+                      chipX, chipY, gHail_ChipWidths[chip->velocityX],
+                      gHail_ChipHeights[chip->velocityX]);
               HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
             }
             rock->x += rock->velocityX;

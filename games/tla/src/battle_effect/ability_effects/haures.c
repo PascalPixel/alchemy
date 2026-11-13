@@ -95,7 +95,7 @@ extern struct WingVertex Data_020104f0[];
 extern const struct WordPair Data_08196f00;
 extern const struct WordPair Data_08196f08;
 extern const struct WordPair Data_08196f10;
-extern u16 gData_08197410[];
+extern u16 gBattleEffect_MoteCells[];
 extern u8 gData_08197467[];
 extern u8 gData_0819746d[];
 extern u8 gData_08197473[];
@@ -932,7 +932,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         if (p->variant >= 0) {
           s32 n = (p->variant >> 3) + 1;
 
-          draw[0](canvas, sprites + gData_08197410[n - 1],
+          draw[0](canvas, sprites + gBattleEffect_MoteCells[n - 1],
                   HALF_HI(p->x) - n / 2, HALF_HI(p->y) - n, n, n * 2);
           BattleEffectKernels_IntegrateVector2(p, 63, -0x8000);
           p->variant--;

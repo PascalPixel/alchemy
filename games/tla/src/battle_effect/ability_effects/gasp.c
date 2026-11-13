@@ -87,7 +87,7 @@ void Transform_Pop(void);
 // A second, larger particle table, always reached at its fixed address.
 #define EXTRA_PARTICLES ((struct EffectStep *)(Ram_MapCellBuffer + 0x4000))
 
-extern u16 gData_08197410[];
+extern u16 gBattleEffect_MoteCells[];
 extern const s8 Data_08198c28[];
 extern const u8 Data_08198c34[];
 extern const u8 Data_08198c64[];
@@ -444,8 +444,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           if (p->variant >= 0) {
             s32 n = (p->variant >> 3) + 2;
 
-            draw[0](canvas, sprites + gData_08197410[n - 1], HI(p->x) - n / 2,
-                    HI(p->y) - n, n, n * 2);
+            draw[0](canvas, sprites + gBattleEffect_MoteCells[n - 1],
+                    HI(p->x) - n / 2, HI(p->y) - n, n, n * 2);
             BattleEffectKernels_IntegrateVector2(p, 60, 0x400);
             p->variant--;
           }
@@ -506,8 +506,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           p->z += 512;
           p->velocityZ -= 4;
           if (p->velocityZ > 0)
-            draw[0](canvas, sprites + gData_08197410[n - 1], x - n / 2, y - n,
-                    n, n * 2);
+            draw[0](canvas, sprites + gBattleEffect_MoteCells[n - 1], x - n / 2,
+                    y - n, n, n * 2);
         }
         p->variant--;
       }
@@ -886,8 +886,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           if (q->variant >= 0) {
             s32 n = q->variant / 4 + 3;
 
-            draw[0](canvas, sprites + gData_08197410[n - 1], HI(q->x) - n / 2,
-                    HI(q->y) - n, n, n * 2);
+            draw[0](canvas, sprites + gBattleEffect_MoteCells[n - 1],
+                    HI(q->x) - n / 2, HI(q->y) - n, n, n * 2);
             BattleEffectKernels_IntegrateVector2(q, 62, 0);
             q->variant--;
           }
@@ -1076,8 +1076,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
             for (j = 0; j != 4; j++) {
               s32 n = p->variant / 8 + 1;
 
-              draw[0](canvas, sprites + gData_08197410[n - 1], HI(p->x) - n / 2,
-                      HI(p->y) - n, n, n * 2);
+              draw[0](canvas, sprites + gBattleEffect_MoteCells[n - 1],
+                      HI(p->x) - n / 2, HI(p->y) - n, n, n * 2);
               BattleEffectKernels_IntegrateVector2(p, 63, 0x800);
               if (p->y > 0x680000) {
                 p->y = 0x680000;
@@ -1272,8 +1272,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
             s32 y = (p->x * Trig_Cos(p->y) >> 20) + 60;
             s32 n = 4;
 
-            draw[0](canvas, sprites + gData_08197410[n - 1], x - n / 2, y - n,
-                    n, n * 2);
+            draw[0](canvas, sprites + gBattleEffect_MoteCells[n - 1], x - n / 2,
+                    y - n, n, n * 2);
             p->x += p->velocityX;
           }
         }

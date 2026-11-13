@@ -40,8 +40,8 @@ struct FxControl {
 extern char ResourceId_FireBlobSheet;
 extern struct FxPair gData_08196e7c; // ☀️ gObjectRow_SweepPair
 extern struct FxPair gData_08196e84; // ☀️ gObjectRow_RisePair
-extern u8 gData_08198ada[];          // the row's x offsets
-extern u8 gData_08198ae3[];          // the row's heights
+extern u8 gKirin_Columns[];          // the row's x offsets
+extern u8 gKirin_Rows[];             // the row's heights
 
 // Summon 3: the battlefield turns to forest; a row of nine riders gallops in
 // from the right over a ring of embers, trailing fire, while flames climb at
@@ -181,8 +181,8 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
       place.y = 255 << 16;
       i = 0;
       do {
-        place.x = ((baseX + gData_08198ada[i] - lift) << 16) + (224 << 16);
-        place.z = ((gData_08198ae3[i] - wave) << 16) + (144 << 15);
+        place.x = ((baseX + gKirin_Columns[i] - lift) << 16) + (224 << 16);
+        place.z = ((gKirin_Rows[i] - wave) << 16) + (144 << 15);
         Render_ApplyProjectedPlacementFar(work->objects[i], &place.x, &pair.a,
                                           0);
         i++;
@@ -203,8 +203,8 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
         s32 x = ((Trig_Sin(ang) * (grow * 2 + 8)) >> 16) + grow + 96;
         s32 y = ((Trig_Cos(ang) * (grow * 12 + 48)) >> 16) + 64;
 
-        draw(canvas, sheet + gData_08197410[size - 1], x - size / 2, y - size,
-             size, size * 2);
+        draw(canvas, sheet + gBattleEffect_MoteCells[size - 1], x - size / 2,
+             y - size, size, size * 2);
       }
     }
 
@@ -224,7 +224,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
         if (fire->variant == 0) {
           s32 size = i % 3 + 1;
 
-          draw(canvas, sheet + gData_08197410[size - 1], fire->x,
+          draw(canvas, sheet + gBattleEffect_MoteCells[size - 1], fire->x,
                HI(fire->y) - size, size, size * 2);
           fire->x += 2;
           fire->y += fire->velocityY;
@@ -333,8 +333,8 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
         place2.y = 255 << 16;
         i = 0;
         do {
-          place2.x = (rowX + gData_08198ada[i]) << 16;
-          place2.z = ((gData_08198ae3[i] - rise) << 16) + (144 << 15);
+          place2.x = (rowX + gKirin_Columns[i]) << 16;
+          place2.z = ((gKirin_Rows[i] - rise) << 16) + (144 << 15);
           Render_ApplyProjectedPlacementFar(work->objects[i], &place2.x,
                                             &pair2.a, 0);
           i++;
@@ -386,7 +386,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
         if (burst->variant > 0) {
           s32 size = 3;
 
-          draw(canvas, sheet + gData_08197410[size - 1],
+          draw(canvas, sheet + gBattleEffect_MoteCells[size - 1],
                HI(burst->x) - size / 2, HI(burst->y) - size, size, size * 2);
           burst->x += burst->velocityX;
           burst->y += burst->velocityY;

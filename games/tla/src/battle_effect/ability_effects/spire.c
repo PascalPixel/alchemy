@@ -16,16 +16,16 @@
 
 extern char ResourceId_BoulderSheet;
 // ☀️'s gSpire_RockCounts, by variant.
-extern u8 Data_081985b0[];
+extern u8 gSpire_RockCounts[];
 // ☀️'s gSpire_ShardOffsets: x, y in the boulder for each shard.
 extern u8 Data_08198566[];
 // ☀️'s gSpire_RockX and gSpire_DropFrames, by boulder.
-extern s8 Data_081985a6[];
-extern u8 Data_081985ab[];
+extern s8 gSpire_RockX[];
+extern u8 gSpire_DropFrames[];
 // The shard cels: ☀️'s gSpire_ShardCells, _ShardWidths and
 // _ShardHeights.
-extern u16 gData_081974bc[];
-extern u8 gData_0819749e[];
+extern u16 gSpire_ShardCells[];
+extern u8 gSpire_ShardWidths[];
 extern u8 gData_081974ad[];
 
 void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
@@ -68,7 +68,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
 
   // Each boulder waits 64 pixels above the canvas; each shard sits at its
   // place in its boulder, ready to fly up at random.
-  rocks = Data_081985b0[effect->variant];
+  rocks = gSpire_RockCounts[effect->variant];
   for (i = 0; i != rocks; i++) {
     rock = &work->particles[i];
     rock->y = -0x400000;
@@ -78,7 +78,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
     for (j = 0; j != SHARDS_PER_ROCK; j++) {
       struct EffectStep *seed = &SHARDS[i * SHARDS_PER_ROCK + j];
 
-      seed->x = (Data_08198566[j * 2] + Data_081985a6[i]) << 16;
+      seed->x = (Data_08198566[j * 2] + gSpire_RockX[i]) << 16;
       seed->y = Data_08198566[j * 2 + 1] << 16;
       seed->velocityX = ((Random16() % 96) - 48) << 10;
       seed->velocityY = -((Random16() & 127) + 32) << 11;
@@ -87,14 +87,14 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
     }
   }
 
-  for (frame = 0; frame != Data_081985ab[rocks - 1] + 65; frame++) {
+  for (frame = 0; frame != gSpire_DropFrames[rocks - 1] + 65; frame++) {
     // 48 frames after the last drop the battle resumes, hit cue 133.
-    if (frame == Data_081985ab[rocks - 1] + 48)
+    if (frame == gSpire_DropFrames[rocks - 1] + 48)
       BattlePlayback_StartFar(133);
     for (i = 0; i != rocks; i++) {
       rock = &work->particles[i];
       // The crash: the first one resumes the battle, the others sound.
-      if (frame == Data_081985ab[i] + FALL_FRAMES) {
+      if (frame == gSpire_DropFrames[i] + FALL_FRAMES) {
         if (i == 0)
           BattlePlayback_StartFar(134);
         else
@@ -103,12 +103,12 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
       }
       // The shards fly, each tumbling through its kind's three cels more
       // slowly every other frame.
-      if (frame >= Data_081985ab[i] + FALL_FRAMES) {
+      if (frame >= gSpire_DropFrames[i] + FALL_FRAMES) {
         for (j = 0; j != SHARDS_PER_ROCK; j++) {
           shard = &SHARDS[i * SHARDS_PER_ROCK + j];
           cel = (j % 5) * 3 + shard->variant / 96 % 3;
-          blit(canvas, work->sheet + gData_081974bc[cel] + 0x83c,
-               HI(shard->x) - ((width = gData_0819749e[cel]) >> 1),
+          blit(canvas, work->sheet + gSpire_ShardCells[cel] + 0x83c,
+               HI(shard->x) - ((width = gSpire_ShardWidths[cel]) >> 1),
                HI(shard->y) - ((height = gData_081974ad[cel]) >> 1), width,
                height);
           BattleEffectKernels_IntegrateVector2(shard, 64, 0x4000);
@@ -119,17 +119,17 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
       }
       // Until then the boulder falls, a pixel a frame faster each frame,
       // and rests at y 50.
-      if (frame < Data_081985ab[i] + FALL_FRAMES) {
-        if (frame >= Data_081985ab[i])
-          blit(canvas, work->sheet, Data_081985a6[i] + 47, HI(rock->y), 34, 62);
+      if (frame < gSpire_DropFrames[i] + FALL_FRAMES) {
+        if (frame >= gSpire_DropFrames[i])
+          blit(canvas, work->sheet, gSpire_RockX[i] + 47, HI(rock->y), 34, 62);
         rock->y += rock->velocityY;
-        if (frame > Data_081985ab[i])
+        if (frame > gSpire_DropFrames[i])
           rock->velocityY += 0x10000;
         if (rock->y > 0x320000)
           rock->y = 0x320000;
       }
       // Every target flashes for eight frames at each crash.
-      if (frame == Data_081985ab[i] + FALL_FRAMES) {
+      if (frame == gSpire_DropFrames[i] + FALL_FRAMES) {
         for (j = 0; j != effect->count; j++)
           BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 8);
       }

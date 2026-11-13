@@ -231,7 +231,8 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
     s32 j;
 
     for (j = 0; j <= 63; j++, marker++) {
-      if (marker->script != NULL && marker->script == (s32 *)Data_080f01b8 &&
+      if (marker->script != NULL &&
+          marker->script == (s32 *)gBattleEffect_MarkerParticleScript &&
           marker->x >> 20 == picture->x >> 20 &&
           marker->z >> 20 == picture->z >> 20) {
         Actor_Destroy(marker);
@@ -407,9 +408,11 @@ void BattleEffect_SpawnRandomParticleAtPosition(
 // event has not run, a marker object goes at its event object, or at the map
 // cell of a tile event, when that point is on screen.
 
-/* VIEW(rising): variable Data_080f01b8 as extern const s32 Data_080f01b8[];
- * emitter has extern const u8 Data_080f01b8[]. */
-extern const s32 Data_080f01b8__rising[] __asm__("Data_080f01b8");
+/* VIEW(rising): variable gBattleEffect_MarkerParticleScript as extern const s32
+ * gBattleEffect_MarkerParticleScript[]; emitter has extern const u8
+ * gBattleEffect_MarkerParticleScript[]. */
+extern const s32
+    Data_080f01b8__rising[] __asm__("gBattleEffect_MarkerParticleScript");
 
 /// Places a marker at each waiting scene item event that is on screen.
 void Func_080cf554(void) {

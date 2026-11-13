@@ -72,7 +72,7 @@ extern char ResourceId_OrangePaletteB;
 #define TEXTURE_PIXELS (Ram_MapCellBuffer + 0x1000)
 #define EMBERS ((struct EffectStep *)(Ram_MapCellBuffer + 0x5000))
 // The offsets of the spark cels: cel n is n pixels wide and 2n tall.
-extern u16 gData_08197410[]; // gBattleEffect_MoteCells
+extern u16 gBattleEffect_MoteCells[];
 // Per level (effect->variant): the sparks, their spread, the rings' size
 // and the embers.
 extern const u8 Data_08199400[][4];
@@ -216,7 +216,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
           if (particle->variant >= 0) {
             s32 size = (particle->variant >> 3) + 1;
 
-            draw[0](canvas, sprites + gData_08197410[size - 1],
+            draw[0](canvas, sprites + gBattleEffect_MoteCells[size - 1],
                     HI(particle->x) - size / 2, HI(particle->y) - size, size,
                     size * 2);
             BattleEffectKernels_IntegrateVector2(particle, 60, 0x1000);
@@ -482,7 +482,7 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
       if (spark->variant >= 0) {
         s32 size = (spark->variant >> 3) + 1;
 
-        blitters[i & 1](canvas, sparkCels + gData_08197410[size - 1],
+        blitters[i & 1](canvas, sparkCels + gBattleEffect_MoteCells[size - 1],
                         HI(spark->x) - size / 2, HI(spark->y) - size, size,
                         size * 2);
         BattleEffectKernels_IntegrateVector2(spark, 60, -0x4000);

@@ -53,7 +53,7 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 extern char ResourceId_BlueFlameSheet;
 /// The frames the Djinn throws its five flames on (☀️'s
 /// gDjinnAttacks_LaunchFrames).
-extern const u8 Data_0819850e[];
+extern const u8 gDjinnAttacks_LaunchFrames[];
 
 /// Fetches the max and additive blitters, flipped or not.
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -151,7 +151,7 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
       draw[1](canvas, work->sheet, x - 10, y - 17, 20, 34);
       for (i = 0; i != FLAME_COUNT; i++) {
         // On its launch frame a free flame leaves the Djinn's hand.
-        if (frame == Data_0819850e[i]) {
+        if (frame == gDjinnAttacks_LaunchFrames[i]) {
           struct EffectStep *shot = &work->particles[i];
 
           if (shot->variant == -1) {
@@ -163,7 +163,7 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
           }
         }
         // Six frames later every target flashes and recoils.
-        if (frame == Data_0819850e[i] + 6) {
+        if (frame == gDjinnAttacks_LaunchFrames[i] + 6) {
           for (j = 0; j != effect->count; j++) {
             BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 6);
             BattleMotion_ApplyKnockbackFar(effect->actors[j], 6);
@@ -178,8 +178,8 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
       if (dot->variant != -1) {
         s32 size = dot->variant / 16 + 2;
 
-        draw[1](canvas, sheet + gData_08197410[size - 1], HI(dot->x) - size / 2,
-                HI(dot->y) - size, size, size * 2);
+        draw[1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+                HI(dot->x) - size / 2, HI(dot->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(dot, 62, 0x2000);
         dot->variant--;
       }
@@ -303,8 +303,8 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
       if (dot->variant != -1) {
         s32 size = dot->variant / 16 + 1;
 
-        draw[1](canvas, sheet + gData_08197410[size - 1], HI(dot->x) - size / 2,
-                HI(dot->y) - size, size, size * 2);
+        draw[1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+                HI(dot->x) - size / 2, HI(dot->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(dot, 62, 0x2000);
         dot->variant--;
       }
@@ -454,8 +454,8 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
       if (dot->variant != -1) {
         s32 size = dot->variant / 16 + 2;
 
-        draw[1](canvas, sheet + gData_08197410[size - 1], HI(dot->x) - size / 2,
-                HI(dot->y) - size, size, size * 2);
+        draw[1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+                HI(dot->x) - size / 2, HI(dot->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(dot, 62, 0x2000);
         dot->variant--;
       }
@@ -608,8 +608,8 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
 
         size = (member & 1) + 3;
         x = HI(spark->x) + ((Trig_Sin(spark->z) * 4) >> 16);
-        draw[1](canvas, sheet + gData_08197410[size - 1], x - ((u32)size >> 1),
-                HI(spark->y) - size, size, size * 2);
+        draw[1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+                x - ((u32)size >> 1), HI(spark->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(spark, 64, -0x2000);
         wobble = spark->z;
         spark->z = wobble + 0x800;

@@ -246,7 +246,7 @@ extern u8 Data_0812a16c[];
 
 void Unit_SetPpFar(struct BattleUnit *unit, s32 pp);
 
-extern struct DebugPartyEntry gData_0812a174[];
+extern struct DebugPartyEntry gDebug_ParameterSets[];
 
 extern u16 Data_02000436;
 
@@ -261,7 +261,7 @@ s32 BattleUnit_GetEffectHeight(s32 owner);
 
 extern const s32 gData_08128868[];
 
-extern const s32 Data_0812cacc[];
+extern const s32 gBattleObject_EmptyScript[];
 
 s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds);
 

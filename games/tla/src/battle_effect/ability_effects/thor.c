@@ -25,7 +25,7 @@ extern char ResourceId_VioletMoteSheet;
 
 extern const s16 Data_08196e2c[6][2]; // the three lines' end points
 
-extern const u8 Data_0819855e[]; // gThor_TargetPalettes
+extern const u8 gThor_TargetPalettes[];
 extern const u8 Data_08198562[]; // gThor_SmokeFlips
 
 #define STORM_PARTICLES ((struct EffectStep *)(Ram_MapCellBuffer + 0xc58))
@@ -225,8 +225,8 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
             s32 y = screen[i * 2].y +
                     Iwram_MulQ16((screen[i * 2 + 1].y - screen[i * 2].y) * j,
                                  0x555);
-            blit[0](canvas, sprites + gData_08197410[size - 1], x - size / 2,
-                    y - size, size, size * 2);
+            blit[0](canvas, sprites + gBattleEffect_MoteCells[size - 1],
+                    x - size / 2, y - size, size, size * 2);
           }
         }
       }
@@ -261,13 +261,13 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
         EffectPosition_ProjectPoint(point, &screen[0]);
         screen[0].x = (screen[0].x >> 17) + 64;
         screen[0].y = (screen[0].y >> 16) + 60;
-        drawAlt(
-            canvas,
-            work->sheet +
-                (level * STORM_DIMMED_DOT_BYTES + gData_08197410[dotSize - 1]) +
-                STORM_DIMMED_DOTS,
-            screen[0].x - dotSize / 2, screen[0].y - dotSize, dotSize,
-            dotSize * 2);
+        drawAlt(canvas,
+                work->sheet +
+                    (level * STORM_DIMMED_DOT_BYTES +
+                     gBattleEffect_MoteCells[dotSize - 1]) +
+                    STORM_DIMMED_DOTS,
+                screen[0].x - dotSize / 2, screen[0].y - dotSize, dotSize,
+                dotSize * 2);
       }
       HeapSlot_Release(188);
     }
@@ -448,8 +448,9 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
               }
               work->shakeFrames = 8;
               for (j = 0; j != effect->count; j++) {
-                BattleEffect_TintBattler(
-                    effect->actors[j], Data_0819855e[Random16() & 3], 5, j, 4);
+                BattleEffect_TintBattler(effect->actors[j],
+                                         gThor_TargetPalettes[Random16() & 3],
+                                         5, j, 4);
                 BattleMotion_ApplyKnockbackFar(effect->actors[j], 4);
               }
             }
@@ -501,7 +502,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
               s32 x = spark->x >> 16;
               s32 y = spark->y >> 16;
               s32 dotSize = spark->variant / 16 + 1;
-              draw(canvas, sprites + gData_08197410[dotSize - 1],
+              draw(canvas, sprites + gBattleEffect_MoteCells[dotSize - 1],
                    x - dotSize / 2, y - dotSize, dotSize, dotSize * 2);
             }
           }
@@ -545,8 +546,9 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
             y = 0;
           }
           Func_08196404(188, 7, 7, 3 | Data_08198562[Random16() & 3], 1);
-          BLITTER_ALTERNATE(canvas, Ram_MapCellBuffer + gData_08197486[cell], x,
-                            y + 56, gData_08197492[cell], gData_08197498[cell]);
+          BLITTER_ALTERNATE(
+              canvas, Ram_MapCellBuffer + gBattleEffect_GlintCells[cell], x,
+              y + 56, gData_08197492[cell], gData_08197498[cell]);
           HeapSlot_Release(188);
         }
       }

@@ -80,10 +80,10 @@ extern u8 Data_02011000[];
 extern u8 Data_02011400[];
 extern u8 Data_02012964[]; // 128 sparks
 extern const struct PlacementSource Data_08196f18;
-extern u16 gData_08197410[];
-extern u16 gData_08197486[]; // the glints' cells
-extern u8 gData_08197492[];  // widths
-extern u8 gData_08197498[];  // heights
+extern u16 gBattleEffect_MoteCells[];
+extern u16 gBattleEffect_GlintCells[]; // the glints' cells
+extern u8 gData_08197492[];            // widths
+extern u8 gData_08197498[];            // heights
 extern const u8 Data_08198cac[];
 extern const u8 Data_08198ec4[];
 extern const u8 gData_08199268[];
@@ -460,7 +460,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
       // The cell table's address is a local set before the walker, and each
       // spark's cell is read at its byte offset: the listing's pool order
       // and its ldrh by register offset.
-      for (i = 0, cellTable = (const u8 *)gData_08197410,
+      for (i = 0, cellTable = (const u8 *)gBattleEffect_MoteCells,
           drawn = (struct EffectStep *)Data_02012964;
            i != 128; i++, drawn++) {
         s32 spark;
@@ -499,8 +499,8 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
           Func_08196404(188, 7, 7, c, 1);
         }
         ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
-            canvas, work->sheet + gData_08197486[k], x, y, gData_08197492[k],
-            gData_08197498[k]);
+            canvas, work->sheet + gBattleEffect_GlintCells[k], x, y,
+            gData_08197492[k], gData_08197498[k]);
         HeapSlot_Release(188);
       }
     }
@@ -861,7 +861,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
         } else if ((u32)spark->x < 127 << 16 && spark->y >= 0) {
           s32 size = spark->variant / 8 + 1;
 
-          draw[0](canvas, graphics + gData_08197410[size - 1],
+          draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
                   (spark->x >> 16) - size / 2, (spark->y >> 16) - size, size,
                   size * 2);
         }

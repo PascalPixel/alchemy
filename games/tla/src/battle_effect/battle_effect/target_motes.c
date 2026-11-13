@@ -199,8 +199,9 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
                         BLITTER_MAX);
           ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
               canvas,
-              work->sheet + gData_08197486[frame & 3] + RENDER_MODE_TORNADO, x,
-              y + 16, w[frame & 3], h[frame & 3]);
+              work->sheet + gBattleEffect_GlintCells[frame & 3] +
+                  RENDER_MODE_TORNADO,
+              x, y + 16, w[frame & 3], h[frame & 3]);
           HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
         }
       }
@@ -638,7 +639,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
         if (screen.depth > 634)
           screen.depth = 634;
         size = 9 - (screen.depth - 250) / 64;
-        callbacks[0](canvas, sheet + gData_08197410[size - 1],
+        callbacks[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
                      screen.x - size / 2, screen.y - size, size, size * 2);
         BattleEffectKernels_IntegrateVector3(spark, 60, 0);
         if (frame > i + 30) {
@@ -737,8 +738,8 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
               cel = 3 - (view.depth - 314) / 128;
               cel = (i * 4 + frame) % 9;
               {
-                u8 *cell = sheet + Data_0819744c[cel];
-                u32 edge = Data_0819745e[cel];
+                u8 *cell = sheet + gBattleEffect_PuffCells[cel];
+                u32 edge = gBattleEffect_PuffSizes[cel];
                 u32 half = edge >> 1;
 
                 draw[1](canvas, cell, view.x - half, view.y - half, edge, edge);

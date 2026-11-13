@@ -1032,11 +1032,11 @@ extern char ResourceId_MagentaTailSheet;
 extern char ResourceId_LimePalette;
 // The swirl's six cels: ☀️'s gSpiderWeb_Cells, _CellX (six
 // for each side), _CellWidths, _CellBiasY and _CellHeights.
-extern const u16 gData_081986d4[];
-extern const u8 gData_081986e0[];
-extern const u8 gData_081986c8[];
+extern const u16 gSpiderWeb_Cells[];
+extern const u8 gSpiderWeb_CellX[];
+extern const u8 gSpiderWeb_CellWidths[];
 extern const s8 gData_081986ec[];
-extern const u8 gData_081986ce[];
+extern const u8 gSpiderWeb_CellHeights[];
 
 void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {
   struct HeapSlots *slots;
@@ -1098,15 +1098,15 @@ void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {
     cel = frame / 4;
     if (cel <= 5) {
       if (cel <= 3)
-        draw[0](canvas, work->sheet + gData_081986d4[cel],
-                gData_081986e0[cel + effect->side * 6],
-                gData_081986ec[cel] + 32, gData_081986c8[cel],
-                gData_081986ce[cel]);
+        draw[0](canvas, work->sheet + gSpiderWeb_Cells[cel],
+                gSpiderWeb_CellX[cel + effect->side * 6],
+                gData_081986ec[cel] + 32, gSpiderWeb_CellWidths[cel],
+                gSpiderWeb_CellHeights[cel]);
       else
-        draw[0](canvas, Ram_MapCellBuffer + gData_081986d4[cel],
-                gData_081986e0[cel + effect->side * 6],
-                gData_081986ec[cel] + 32, gData_081986c8[cel],
-                gData_081986ce[cel]);
+        draw[0](canvas, Ram_MapCellBuffer + gSpiderWeb_Cells[cel],
+                gSpiderWeb_CellX[cel + effect->side * 6],
+                gData_081986ec[cel] + 32, gSpiderWeb_CellWidths[cel],
+                gSpiderWeb_CellHeights[cel]);
     }
     // The hit.
     if (frame == 8) {

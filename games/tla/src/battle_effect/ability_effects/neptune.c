@@ -386,7 +386,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
         if (PARTICLES[i].variant >= 0) {
           s32 k = i % 3 + 2;
 
-          drawSpray(canvas, cells + gData_08197410[k - 1],
+          drawSpray(canvas, cells + gBattleEffect_MoteCells[k - 1],
                     HI(PARTICLES[i].x) - k / 2, HI(PARTICLES[i].y) - k, k,
                     k * 2);
           BattleEffectKernels_IntegrateVector2(&PARTICLES[i], 62,
@@ -506,8 +506,8 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
                    PARTICLES[i].y >= 0) {
           s32 k = PARTICLES[i].variant / 8 + 3;
 
-          draw[i & 1](canvas, cells + gData_08197410[k - 1], x - k / 2, y - k,
-                      k, k * 2);
+          draw[i & 1](canvas, cells + gBattleEffect_MoteCells[k - 1], x - k / 2,
+                      y - k, k, k * 2);
         }
       }
     }

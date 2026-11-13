@@ -89,7 +89,7 @@ extern u8 gData_02014000[];
 extern u8 Data_02012000[];
 extern const u8 Data_08198c14[];   // each mode's flags for Func_0815585c
 extern const s32 Data_08198c18[4]; // the debris's gravities
-extern u16 gData_08197410[];
+extern u16 gBattleEffect_MoteCells[];
 
 // The body of Core (mode 0) and Cannon (mode 1): the Mars Djinni flies at
 // the target. For Core it pulls back, then drives in and strikes four times
@@ -365,7 +365,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
         EffectPosition_ProjectPoint(&work->particles[i], &debris);
         size >>= 3;
         size += 2;
-        blit[0](canvas, sprites + gData_08197410[size - 1],
+        blit[0](canvas, sprites + gBattleEffect_MoteCells[size - 1],
                 debris.x / 2 - size / 2, debris.y - size, size, size * 2);
         BattleEffectKernels_IntegrateVector3(&work->particles[i], 62,
                                              Data_08198c18[i & 3]);

@@ -108,8 +108,8 @@ extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_Data0DA;
 extern char ResourceId_Data0C1;
 extern u8 gMapCellBuffer[];
-extern s32 Data_02010018[];  // the shards' variants, 28 bytes apart
-extern u16 gData_08197410[]; // gBattleEffect_MoteCells
+extern s32 Data_02010018[]; // the shards' variants, 28 bytes apart
+extern u16 gBattleEffect_MoteCells[];
 extern const struct PointPair Data_08196f20;
 extern const u8 Data_08199e70[];
 extern const u8 Data_08199e77[];
@@ -706,8 +706,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
         if (p->variant >= 0) {
           s32 n = (p->variant >> 2) + 1;
 
-          blit[0](canvas, sprites + gData_08197410[n - 1], HI(p->x) - n / 2,
-                  HI(p->y) - n, n, n * 2);
+          blit[0](canvas, sprites + gBattleEffect_MoteCells[n - 1],
+                  HI(p->x) - n / 2, HI(p->y) - n, n, n * 2);
           p->variant--;
           BattleEffectKernels_IntegrateVector2(p, 56, 0x2000);
         }

@@ -319,7 +319,7 @@ extern char ResourceId_Data0F3;
 extern char ResourceId_EffectPalette02;
 
 // The offsets of the spark cels: cel n is n pixels wide and 2n tall.
-extern u16 gData_08197410[];
+extern u16 gBattleEffect_MoteCells[];
 
 // A swing. A five-cel slash sweeps across the caster's front, six frames a
 // cel, mirrored on the far side; at frame 18 the target is knocked back and
@@ -442,7 +442,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
         if (spark->variant >= 0) {
           s32 size = (spark->variant >> 3) + 1;
 
-          draw[0](canvas, sparkCels + gData_08197410[size - 1],
+          draw[0](canvas, sparkCels + gBattleEffect_MoteCells[size - 1],
                   HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
           if (i & 1)
             BattleEffectKernels_IntegrateVector2(spark, 60, -0x2000);

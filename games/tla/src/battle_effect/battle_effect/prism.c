@@ -97,9 +97,9 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
                    (shards[i * SHARDS_PER_CRYSTAL + j].variant / 96) % 3;
             shard = &shards[i * SHARDS_PER_CRYSTAL + j];
             draw[j <= 2](canvas, work->sheet + gData_08197834[cell] + 0x800,
-                         HI(shard->x) - gData_0819781a[cell] / 2,
+                         HI(shard->x) - gPrism_ShardWidths[cell] / 2,
                          HI(shard->y) - gData_08197826[cell] / 2,
-                         gData_0819781a[cell], gData_08197826[cell]);
+                         gPrism_ShardWidths[cell], gData_08197826[cell]);
             BattleEffectKernels_IntegrateVector2(shard, 64, 0x2000);
             shard->variant += shard->z;
             if (shard->z > 1 && (frame & 1))
@@ -114,8 +114,8 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
             cry->y = GROUND_Y;
             for (j = 0; j != SHARDS_PER_CRYSTAL; j++) {
               shard = &shards[i * SHARDS_PER_CRYSTAL + j];
-              shard->x = ((gData_081977f8[j * 2] - 40) << 16) + cry->x;
-              shard->y = gData_081977f8[j * 2 + 1] << 16;
+              shard->x = ((gPrism_ShardStarts[j * 2] - 40) << 16) + cry->x;
+              shard->y = gPrism_ShardStarts[j * 2 + 1] << 16;
               shard->velocityX = ((Random16() & 127) - 64) << 11;
               shard->velocityY = -(Random16() & 127) << 11;
               if (i & 1) {

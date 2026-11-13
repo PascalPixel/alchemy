@@ -277,7 +277,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
           size = 2;
         step->variant--;
         BattleEffectKernels_IntegrateVector2(step, 60, 0x2000);
-        draw[0](canvas, sheet + gData_08197410[size - 1],
+        draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
                 HI(step->x) - size / 2, HI(step->y) - size, size, size * 2);
       }
     }
@@ -1026,7 +1026,7 @@ extern char ResourceId_Data0C1;
 
 extern u8 Data_02014e20[];         // gMapCellBuffer + 20000, the berg
 extern s32 gData_08197834[];       // the shards' cells: offsets,
-extern u8 gData_0819781a[];        // widths
+extern u8 gPrism_ShardWidths[];    // widths
 extern u8 gData_08197826[];        // and heights
 extern const u8 Data_08198ec4[];   // the ripple's mesh
 extern const u8 Data_08198cac[];   // its corners
@@ -1185,7 +1185,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
         }
         cell = i % 5 * 3 + shard->variant / 96 % 3;
         pixels = work->sheet + 0x800 + gData_08197834[cell];
-        width = gData_0819781a[cell];
+        width = gPrism_ShardWidths[cell];
         x = HI(shard->x) - (width >> 1);
         y = HI(shard->y);
         // The heights table through a local: as gData_08197826[cell] the

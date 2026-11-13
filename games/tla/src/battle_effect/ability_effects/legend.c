@@ -54,7 +54,7 @@ extern const u8 Data_081991e0[];
 extern s32 Data_08199200[];
 
 // The spark cells: offsets into the particle sheet by size.
-extern u16 gData_08197410[];
+extern u16 gBattleEffect_MoteCells[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
@@ -216,7 +216,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
       if (step->variant >= 0) {
         s32 size = (step->variant >> 2) + 1;
 
-        draw[0](canvas, graphics + gData_08197410[size - 1],
+        draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
                 HI(step->x) - size / 2, HI(step->y) - size, size, size * 2);
         if (step->y > 104 << 16) {
           step->y = 104 << 16;
@@ -388,7 +388,7 @@ extern struct SparkMotion Data_08199d64[];
 
 // The crystal shards' cells.
 extern s32 gData_08197834[];
-extern u8 gData_0819781a[];
+extern u8 gPrism_ShardWidths[];
 extern u8 gData_08197826[];
 
 extern const u8 gData_08199268[];
@@ -554,9 +554,9 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
             s32 cell = i % 5 * 3 + step->variant / 96 % 3;
 
             draw[0](canvas, work->sheet + gData_08197834[cell] + 0x1000,
-                    HI(step->x) - gData_0819781a[cell] / 2,
+                    HI(step->x) - gPrism_ShardWidths[cell] / 2,
                     HI(step->y) - gData_08197826[cell] / 2,
-                    gData_0819781a[cell], gData_08197826[cell]);
+                    gPrism_ShardWidths[cell], gData_08197826[cell]);
             BattleEffectKernels_IntegrateVector2(step, 64, 0);
             if (step->y > 96 << 16)
               step->velocityY = -step->velocityY / 2;
@@ -778,7 +778,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
         else
           size += 3;
         for (j = 0; j != Data_08199d64[mode].steps; j++) {
-          draw[0](canvas, graphics + gData_08197410[size - 1],
+          draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
                   HI(step->x) - size / 2, HI(step->y) - size, size, size * 2);
           if (step->y > 104 << 16) {
             step->y = 104 << 16;

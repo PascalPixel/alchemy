@@ -160,12 +160,12 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
           s32 span = (frame * 16 - 256 + k * 25) % COLUMN_HEIGHT;
 
           draw[0](canvas, work->sheet + COLUMN_SHEET,
-                  Data_08197990[k * 2] - COLUMN_WIDTH / 2,
-                  Data_08197990[k * 2 + 1] - span - COLUMN_HEIGHT, COLUMN_WIDTH,
-                  COLUMN_HEIGHT);
+                  gNereid_Columns[k * 2] - COLUMN_WIDTH / 2,
+                  gNereid_Columns[k * 2 + 1] - span - COLUMN_HEIGHT,
+                  COLUMN_WIDTH, COLUMN_HEIGHT);
           draw[0](canvas, work->sheet + COLUMN_SHEET,
-                  Data_08197990[k * 2] - COLUMN_WIDTH / 2,
-                  Data_08197990[k * 2 + 1] - span, COLUMN_WIDTH, span);
+                  gNereid_Columns[k * 2] - COLUMN_WIDTH / 2,
+                  gNereid_Columns[k * 2 + 1] - span, COLUMN_WIDTH, span);
         }
       }
 
@@ -198,7 +198,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
           if (frame > 76)
             size = 10;
           draw[spark->velocityY > 0](
-              canvas, graphics + gData_08197410[size - 1],
+              canvas, graphics + gBattleEffect_MoteCells[size - 1],
               HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
           spark->x += spark->velocityX;
           spark->y += spark->velocityY;

@@ -120,8 +120,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
           scale[2] = scale[0];
           SceneTransform_ApplyScale(scale);
           SceneTransform_ApplyRoll(j * 0x199a);
-          depth =
-              EffectPosition_ProjectPoint(&gData_08197924[(j & 1) * 3], &pos);
+          depth = EffectPosition_ProjectPoint(&gStar_Points[(j & 1) * 3], &pos);
           if (nearest < depth)
             nearest = depth;
           pos.x >>= 1;
@@ -146,8 +145,8 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
               s32 y =
                   from->velocityY + (to->velocityY - from->velocityY) * k / 16;
 
-              draw[0](canvas, graphics + gData_08197410[size - 1], x - size / 2,
-                      y - size, size, size * 2);
+              draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
+                      x - size / 2, y - size, size, size * 2);
             }
           }
         }
@@ -300,7 +299,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
                   s32 y = from->velocityY +
                           (to->velocityY - from->velocityY) * k / 12;
 
-                  draw[0](canvas, graphics + gData_08197410[size - 1],
+                  draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
                           x - size / 2, y - size, size, size * 2);
                 }
               }

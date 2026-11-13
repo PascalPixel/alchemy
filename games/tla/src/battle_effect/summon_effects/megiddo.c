@@ -92,7 +92,7 @@ extern u8 Data_02011000[];
 extern u8 Data_02012000[];
 extern u8 gMapCellBuffer[];
 extern u8 gData_02014000[];
-extern u16 gData_08197410[]; // gBattleEffect_MoteCells
+extern u16 gBattleEffect_MoteCells[];
 extern const u8 gData_08199364[];
 extern const u8 Data_081991e0[];
 extern const u8 gData_081991f0[];
@@ -584,7 +584,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
           if (y < 0) {
             y += 128;
           }
-          blit[0](canvas, sprites + gData_08197410[size - 1], mx, y, size, 2);
+          blit[0](canvas, sprites + gBattleEffect_MoteCells[size - 1], mx, y,
+                  size, 2);
         }
       }
     }
@@ -609,7 +610,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         s32 size = 1;
 
         Render_ProjectPoint(p, screen);
-        blit[0](canvas, sprites + gData_08197410[size - 1], screen[0],
+        blit[0](canvas, sprites + gBattleEffect_MoteCells[size - 1], screen[0],
                 screen[1], size, 4);
         p->y -= 2;
       }

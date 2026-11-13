@@ -100,7 +100,7 @@ extern struct BattleFxDefinition gData_080f0308[];
 
 extern const u8 gData_080effd8[];
 
-extern const u8 Data_080f01b8[];
+extern const u8 gBattleEffect_MarkerParticleScript[];
 
 extern const u8 gData_080f0074[];
 

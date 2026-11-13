@@ -195,7 +195,7 @@ extern const struct ScalePair Data_08196ea8;
 extern const struct ScalePair Data_08196eb0;
 extern const struct ScalePair Data_08196eb8;
 extern const struct ScalePair Data_08196ec0;
-extern u16 gData_08197410[];
+extern u16 gBattleEffect_MoteCells[];
 extern u8 gData_08198c67[];
 extern const u8 gData_08199210[];
 extern const u8 gData_08199340[];
@@ -397,7 +397,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   for (j = 0; j != 10; j++) {
     cell = 4;
     for (i = 0; i != cell * cell * 2; i++) {
-      s32 value = work->buffer[gData_08197410[cell - 1] + i];
+      s32 value = work->buffer[gBattleEffect_MoteCells[cell - 1] + i];
 
       if (value != 0) {
         value -= j * 7;
@@ -1580,7 +1580,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           s32 k;
 
           for (k = 0; k != 4; k++) {
-            routine[0](canvas, glyphs + gData_08197410[size - 1],
+            routine[0](canvas, glyphs + gBattleEffect_MoteCells[size - 1],
                        (p->x >> 16) - size / 2, (p->y >> 16) - size, size,
                        size * 2);
             BattleEffectKernels_IntegrateVector2(p, 63, 0);
@@ -1776,7 +1776,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           if (p->timer >= 0) {
             s32 size = (p->timer >> 3) + 2;
 
-            routine[0](canvas, glyphs + gData_08197410[size - 1],
+            routine[0](canvas, glyphs + gBattleEffect_MoteCells[size - 1],
                        (p->x >> 16) - size / 2, (p->y >> 16) - size, size,
                        size * 2);
             BattleEffectKernels_IntegrateVector2(p, 60, 0);

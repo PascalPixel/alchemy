@@ -151,8 +151,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
           size = pos.depth / 20 + 2;
           pos.x += 56;
           pos.y += 96;
-          draw[0](canvas, sprites + gData_08197410[size - 1], pos.x - size / 2,
-                  pos.y - size, size, size * 2);
+          draw[0](canvas, sprites + gBattleEffect_MoteCells[size - 1],
+                  pos.x - size / 2, pos.y - size, size, size * 2);
         }
       }
     }

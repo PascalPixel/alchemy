@@ -30,7 +30,7 @@
 extern char ResourceId_FlameBladeSheet;
 extern char ResourceId_FlashBurstSheet;
 
-extern u8 gData_08198a92[]; // ☀️ gRagnarok_StrikeColumns
+extern u8 gRagnarok_StrikeColumns[];
 extern u8 gData_08198a98[]; // ☀️ gPlasma_FlashCells
 
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
@@ -107,7 +107,8 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
 
       speed = (Random16() & 0x1ff) + 32;
       angle = Random16() & 0xffff;
-      spark->x = (gData_08198a92[col + effect->side * 3] + baseX) << 16;
+      spark->x = (gRagnarok_StrikeColumns[col + effect->side * 3] + baseX)
+                 << 16;
       spark->y = 88 << 16;
       spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
       spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 6;
@@ -182,8 +183,8 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
       if (frame >= start) {
         if (frame < start + 2)
           draw[0](canvas, work->sheet + FLASH_SHEET,
-                  gData_08198a92[col + effect->side * 3] + baseX - 16, 56, 32,
-                  64);
+                  gRagnarok_StrikeColumns[col + effect->side * 3] + baseX - 16,
+                  56, 32, 64);
         i = 0;
         do {
           struct EffectStep *flash =
@@ -193,7 +194,8 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
           s32 y;
 
           y = HI(flash->y);
-          x = HI(flash->x) + gData_08198a92[col + effect->side * 3] + baseX;
+          x = HI(flash->x) + gRagnarok_StrikeColumns[col + effect->side * 3] +
+              baseX;
           life = flash->variant;
           if (life >= 0 && life <= 17)
             draw[0](canvas,
@@ -232,7 +234,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
 
                 size = spark->variant / 5 + 1;
                 lane = i & 1;
-                picture = cells + gData_08197410[size - 1];
+                picture = cells + gBattleEffect_MoteCells[size - 1];
                 px -= size / 2;
                 py -= size;
                 draw[lane](canvas, picture, px, py, size, size * 2);
@@ -543,7 +545,7 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
             size = 9;
           if (frame > 76)
             size = 10;
-          draw[0](canvas, cells + gData_08197410[size - 1],
+          draw[0](canvas, cells + gBattleEffect_MoteCells[size - 1],
                   HI(dust->x) - size / 2, HI(dust->y) - size, size, size * 2);
 
           dust->x += dust->velocityX;
@@ -607,7 +609,7 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
               u8 *cell;
 
               size = spark->variant / 5 + 1;
-              cell = cells + gData_08197410[size - 1];
+              cell = cells + gBattleEffect_MoteCells[size - 1];
               x >>= 16;
               y >>= 16;
               x -= size / 2;

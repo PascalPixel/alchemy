@@ -159,7 +159,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
 
             for (; j != 2; j++) {
               (*(DrawRectangle *)((u8 *)draw + blend))(
-                  canvas, graphics + gData_08197410[size - 1],
+                  canvas, graphics + gBattleEffect_MoteCells[size - 1],
                   HI(step->x) - half, HI(step->y) - size, size, twice);
               BattleEffectKernels_IntegrateVector2(step, 64, 0);
             }
@@ -208,7 +208,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
 
             for (; j != 4; j++) {
               (*(DrawRectangle *)((u8 *)draw + blend))(
-                  canvas, graphics + gData_08197410[size - 1],
+                  canvas, graphics + gBattleEffect_MoteCells[size - 1],
                   HI(step->x) - half, HI(step->y) - size, size, twice);
               BattleEffectKernels_IntegrateVector2(step, 64, 0);
             }
@@ -581,8 +581,8 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
               s32 half = size >> 1;
               s32 y = to.y + ((Trig_Cos(step->z) * radius) >> 16);
 
-              draw[0](canvas, graphics + gData_08197410[size - 1], x - half,
-                      y - 32 - size, width, height);
+              draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
+                      x - half, y - 32 - size, width, height);
             }
           }
         }
@@ -677,7 +677,7 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
         if (spark->variant >= 0) {
           s32 size = (spark->variant >> 2) + 1;
 
-          draw[0](canvas, graphics + gData_08197410[size - 1],
+          draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
                   HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
           BattleEffectKernels_IntegrateVector2(spark, 60, 0);
           spark->variant--;

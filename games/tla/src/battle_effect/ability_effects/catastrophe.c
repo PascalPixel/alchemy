@@ -125,8 +125,8 @@ extern u8 Data_02012000[];
 extern u8 Data_02016000[];
 extern struct EffectStep Data_02016d00[];
 extern const struct WordPair Data_08196ef8;
-extern u16 gData_08197410[];
-extern u16 gData_08197486[];
+extern u16 gBattleEffect_MoteCells[];
+extern u16 gBattleEffect_GlintCells[];
 extern u8 gData_08197492[];
 extern u8 gData_08197498[];
 extern const u8 gData_081991b0[];
@@ -749,8 +749,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       if (p->variant >= 0) {
         s32 n = (p->variant >> 3) + 1;
 
-        blit[0](canvas, sprites + gData_08197410[n - 1], HALF_HI(p->x) - n / 2,
-                HALF_HI(p->y) - n, n, n * 2);
+        blit[0](canvas, sprites + gBattleEffect_MoteCells[n - 1],
+                HALF_HI(p->x) - n / 2, HALF_HI(p->y) - n, n, n * 2);
         BattleEffectKernels_IntegrateVector2(p, 63, 0);
         p->variant--;
       }
@@ -837,7 +837,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           }
           w = 10;
           h = 20;
-          src = sprites + gData_08197410[9];
+          src = sprites + gBattleEffect_MoteCells[9];
           x0 = p->x / 8 - 5;
           bx = span - drift;
           x = x0 + (bx / 2 >> 16);
@@ -1264,7 +1264,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                 Func_08196404(SLOT_ALT, 7, 7, c, 0);
               }
               {
-                s32 at = gData_08197486[n];
+                s32 at = gBattleEffect_GlintCells[n];
 
                 /* FAKEMATCH(dead): an empty once-only block between the
                  * picture's offset and the draw; as no block, 536 of 4580
@@ -1444,8 +1444,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             if ((u32)p3->variant <= 7) {
               s32 n = (Trig_Sin(p3->variant << 12) * p3->z >> 16) + 1;
 
-              blit[0](canvas, sprites + gData_08197410[n - 1], p3->x - n / 2,
-                      p3->y - n, n, n * 2);
+              blit[0](canvas, sprites + gBattleEffect_MoteCells[n - 1],
+                      p3->x - n / 2, p3->y - n, n, n * 2);
             }
             p3->variant++;
           }
@@ -1751,7 +1751,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
 
                 s32 h = n * 2;
 
-                blit[0](canvas, sprites + gData_08197410[n - 1],
+                blit[0](canvas, sprites + gBattleEffect_MoteCells[n - 1],
                         HALF_HI(d->x) - n / 2, HALF_HI(d->y) - n, n, h);
                 BattleEffectKernels_IntegrateVector2(d, 56, 0x2000);
                 d->velocityX -= work->scrollStepX << 12;

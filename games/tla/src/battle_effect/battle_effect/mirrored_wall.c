@@ -192,7 +192,8 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
               pos.x += sway;
             draw[i & 1](canvas,
                         work->sheet +
-                            Data_0819786c[mote->variant / 8 & 7] * 576 +
+                            gDjinnBeams_MotePictures[mote->variant / 8 & 7] *
+                                576 +
                             PIC_MOTE,
                         pos.x - 12, pos.y - 12, 24, 24);
             mote->y -= 1 << 16;
@@ -232,10 +233,10 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
           if (pic > 2)
             pic = (pic & 1) + 1;
           if (frame < start + 100) {
-            draw[0](canvas, work->sheet + Data_08197874[pic],
+            draw[0](canvas, work->sheet + gMirroredWall_Cells[pic],
                     pos.x - Data_0819787a[pic], pos.y - Data_0819787d[pic] + 8,
                     Data_0819787a[pic], Data_0819787d[pic]);
-            draw[1](canvas, work->sheet + Data_08197874[pic], pos.x,
+            draw[1](canvas, work->sheet + gMirroredWall_Cells[pic], pos.x,
                     pos.y - Data_0819787d[pic] + 8, Data_0819787a[pic],
                     Data_0819787d[pic]);
           }
@@ -494,10 +495,12 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
             picture += 9;
           flip = effect->side;
           draw[burst->velocityX > 0 ? flip ^ 1 : flip](
-              canvas, work->sheet + Data_081978cc[picture] + SHARD_SHEET,
-              position.x - Data_081978a8[picture] / 2,
-              position.y - Data_081978ba[picture] / 2, Data_081978a8[picture],
-              Data_081978ba[picture]);
+              canvas,
+              work->sheet + gLobbedShells_ShardOffsets[picture] + SHARD_SHEET,
+              position.x - gLobbedShells_ShardWidths[picture] / 2,
+              position.y - gLobbedShells_ShardHeights[picture] / 2,
+              gLobbedShells_ShardWidths[picture],
+              gLobbedShells_ShardHeights[picture]);
         }
         if (Data_08197880[mode * 4 + RECORD_SHARDS] == 0)
           BattleEffectKernels_IntegrateVector3(burst, 62, 0x800);

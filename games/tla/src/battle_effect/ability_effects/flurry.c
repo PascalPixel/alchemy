@@ -324,7 +324,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
         pos.x /= 2;
         size >>= 3;
         size++;
-        draw[(i / 2) & 1](canvas, sheet + gData_08197410[size - 1],
+        draw[(i / 2) & 1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
                           pos.x - size / 2, pos.y - size, size, size * 2);
         BattleEffectKernels_IntegrateVector3(mote, 60, -0x400);
         if (mote->y < 0x80000)
@@ -360,7 +360,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
                             COMPOSITE_CLIP_Y,
                         BLIT_ADDITIVE);
           ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
-              canvas, work->sheet + gData_08197486[cel], x, y,
+              canvas, work->sheet + gBattleEffect_GlintCells[cel], x, y,
               gData_08197492[cel], gData_08197498[cel]);
           HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
         }

@@ -152,21 +152,21 @@ extern char ResourceId_TwelveModeImage;
 extern char ResourceId_TornadoSheet;
 extern char ResourceId_CrystalSheet;
 
-extern u16 gData_08197410[];
+extern u16 gBattleEffect_MoteCells[];
 extern u8 gData_08197467[];
 extern u8 gData_0819746d[];
 extern u8 gData_08197473[];
 extern u16 gData_0819747a[];
-extern u16 gData_08197486[];
+extern u16 gBattleEffect_GlintCells[];
 extern u8 gData_08197492[];
 extern u8 gData_08197498[];
-extern u8 gData_0819749e[];
+extern u8 gSpire_ShardWidths[];
 extern u8 gData_081974ad[];
-extern u16 gData_081974bc[];
+extern u16 gSpire_ShardCells[];
 extern u8 gData_0819750c[];
 extern u8 gData_0819751a[];
-extern u8 gData_081977f8[];
-extern u8 gData_0819781a[];
+extern u8 gPrism_ShardStarts[];
+extern u8 gPrism_ShardWidths[];
 extern u8 gData_08197826[];
 extern s32 gData_08197834[];
 extern const u8 gData_0819887e[];
@@ -654,7 +654,8 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
             if (pos[2] > 60)
               pos[2] = 60;
             pos[2] += 60;
-            drawFuncs.draw[1](screen, (u8 *)tiles + gData_08197410[n - 1],
+            drawFuncs.draw[1](screen,
+                              (u8 *)tiles + gBattleEffect_MoteCells[n - 1],
                               pos[0] - n / 2, pos[1] - n, n, n * 2);
             p->x -= 4;
           }
@@ -1039,7 +1040,8 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
                   n = 10;
                 EffectPosition_ProjectPoint(r, point);
                 point[0] = point[0] / 2;
-                drawFuncs.draw[0](screen, (u8 *)tiles + gData_08197410[n - 1],
+                drawFuncs.draw[0](screen,
+                                  (u8 *)tiles + gBattleEffect_MoteCells[n - 1],
                                   point[0] - n / 2, point[1] - n, n, n * 2);
                 // DEAD: this arm runs only for kind 79, so the kind 89 test
                 // never holds; the source keeps it.
@@ -1063,7 +1065,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
                 EffectPosition_ProjectPoint(p, point);
                 point[0] = point[0] / 2;
                 drawFuncs.draw[(i / 2) & 1](
-                    screen, (u8 *)tiles + gData_08197410[n - 1],
+                    screen, (u8 *)tiles + gBattleEffect_MoteCells[n - 1],
                     point[0] - n / 2, point[1] - n, n, n * 2);
                 BattleEffectKernels_IntegrateVector3(p, 62, -0x800);
                 p->life--;
@@ -1120,7 +1122,8 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
               n = (i & 1) + 6;
               EffectPosition_ProjectPoint(p, point);
               point[0] = point[0] >> 1;
-              drawFuncs.draw[slot](screen, (u8 *)tiles + gData_08197410[n - 1],
+              drawFuncs.draw[slot](screen,
+                                   (u8 *)tiles + gBattleEffect_MoteCells[n - 1],
                                    point[0] - n / 2, point[1] - n, n, n * 2);
               BattleEffectKernels_IntegrateVector3(p, 62, 0);
               if (frame > i + 22) {
@@ -1212,8 +1215,8 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
             do {
               Func_08196404(188, 7, 7, gData_0819887e[Random16() & 3] | 3, 0);
             } while (0);
-            IWRAM_SLOT_BC(screen, buffer + gData_08197486[m], x, y + 56,
-                          gData_08197492[m], gData_08197498[m]);
+            IWRAM_SLOT_BC(screen, buffer + gBattleEffect_GlintCells[m], x,
+                          y + 56, gData_08197492[m], gData_08197498[m]);
             HeapSlot_Release(188);
             BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
           }
@@ -1232,8 +1235,8 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
             y = ((Trig_Cos(angle) << 4) >> 16) - gData_08197498[m] / 2;
             RELEASE_BLITTERS();
             Func_08196404(188, 7, 7, gData_08198882[Random16() & 3] | 3, 1);
-            IWRAM_SLOT_BC(screen, buffer + gData_08197486[m], x, y + 80,
-                          gData_08197492[m], gData_08197498[m]);
+            IWRAM_SLOT_BC(screen, buffer + gBattleEffect_GlintCells[m], x,
+                          y + 80, gData_08197492[m], gData_08197498[m]);
             HeapSlot_Release(188);
             BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
           }
@@ -1799,7 +1802,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
             BattleEffect_StartActorMotion(action->actors[0], 1, 0x20000,
                                           0x80000, 0x30000, 150);
             p = SPARKS;
-            table = gData_081977f8;
+            table = gPrism_ShardStarts;
             for (i = 0; i != 16; i++, p++) {
               p->x = (*table++ + x - 40) << 16;
               p->y = *table++ << 16;
@@ -1820,9 +1823,9 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
             }
             drawFuncs.draw[i > 2 ? 0 : 1](
                 screen, buffer + 0x800 + gData_08197834[m],
-                (particle->x >> 16) - gData_0819781a[m] / 2,
-                (particle->y >> 16) - gData_08197826[m] / 2, gData_0819781a[m],
-                gData_08197826[m]);
+                (particle->x >> 16) - gPrism_ShardWidths[m] / 2,
+                (particle->y >> 16) - gData_08197826[m] / 2,
+                gPrism_ShardWidths[m], gData_08197826[m]);
             BattleEffectKernels_IntegrateVector2(particle, 64, 0x2000);
             particle->life += particle->z;
             if (particle->z > 1 && (frame & 1))
@@ -1878,13 +1881,13 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
             s32 top;
             m = i % 5 * 3;
             m += particle->z / 96 % 3;
-            w = gData_0819749e[m];
+            w = gSpire_ShardWidths[m];
             left = (particle->x >> 16) - w / 2;
             top = particle->y >> 16;
             h = gData_081974ad[m];
             top -= h / 2;
-            drawFuncs.draw[0](screen, buffer + 0x83c + gData_081974bc[m], left,
-                              top, w, h);
+            drawFuncs.draw[0](screen, buffer + 0x83c + gSpire_ShardCells[m],
+                              left, top, w, h);
             BattleEffectKernels_IntegrateVector2(particle, 63, 0x8000);
             particle->z += particle->vz;
             if ((frame & 1) && particle->vz > 0)
@@ -1923,8 +1926,8 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
             y = ((Trig_Cos(angle) << 4) >> 16) - gData_08197498[m] / 2;
             RELEASE_BLITTERS();
             Func_08196404(188, 7, 7, gData_0819894e[Random16() & 3] | 3, 1);
-            IWRAM_SLOT_BC(screen, buffer + gData_08197486[m], x, y + 80,
-                          gData_08197492[m], gData_08197498[m]);
+            IWRAM_SLOT_BC(screen, buffer + gBattleEffect_GlintCells[m], x,
+                          y + 80, gData_08197492[m], gData_08197498[m]);
             HeapSlot_Release(188);
             BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
           }
@@ -2134,8 +2137,9 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
                   x = target[0] / 2 + ((Trig_Sin(p->x) * r) >> 16);
                   y = target[1] + ((Trig_Cos(p->x) * r) >> 16);
                   n = 2 - k / 8;
-                  drawFuncs.draw[0](screen, (u8 *)tiles + gData_08197410[n - 1],
-                                    x - n / 2, y - n, n, n * 2);
+                  drawFuncs.draw[0](
+                      screen, (u8 *)tiles + gBattleEffect_MoteCells[n - 1],
+                      x - n / 2, y - n, n, n * 2);
                 }
               }
               p->y += p->vy;

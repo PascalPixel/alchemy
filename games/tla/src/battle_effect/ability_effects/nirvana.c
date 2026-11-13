@@ -10,7 +10,7 @@ extern char ResourceId_Data134;
 extern char ResourceId_PinkBurstSheet;
 // The Broken Seal's gBattleEffect_MoteCells: spark cells of the
 // Data134 sheet, by size - 1.
-extern u16 gData_08197410[];
+extern u16 gBattleEffect_MoteCells[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
@@ -103,8 +103,8 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
         EffectPosition_ProjectPoint(point, &out);
         out.x >>= 1;
         Transform_Pop();
-        blit(canvas, sheet + gData_08197410[size - 1], out.x - size / 2,
-             out.y - size, size, size * 2);
+        blit(canvas, sheet + gBattleEffect_MoteCells[size - 1],
+             out.x - size / 2, out.y - size, size, size * 2);
       }
       BattleEffectKernels_IntegrateVector3(orb, 62, 0);
       if (frame > 0) {
@@ -152,10 +152,10 @@ static inline s16 *Fixed_Halves(s32 *value) {
 
 extern char ResourceId_BoulderSheet;
 
-// The Broken Seal's gSpire_ShardWidths, ShardHeights and ShardCells.
-extern u8 gData_0819749e[];
+// The Broken Seal's table of this name, ShardHeights and ShardCells.
+extern u8 gSpire_ShardWidths[];
 extern u8 gData_081974ad[];
-extern u16 gData_081974bc[];
+extern u16 gSpire_ShardCells[];
 
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_StartActorMotion(s32 actor, s32 force, s32 acceleration,
@@ -260,9 +260,9 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
 
       rock = &work->particles[i];
       cell = (i % 5) * 3 + rock->velocityZ / 96 % 3;
-      width = gData_0819749e[cell];
+      width = gSpire_ShardWidths[cell];
 
-      blit(canvas, work->sheet + gData_081974bc[cell] + 0x83c,
+      blit(canvas, work->sheet + gSpire_ShardCells[cell] + 0x83c,
            HI(rock->x) - width / 2 + scrollX,
            HI(rock->y) - gData_081974ad[cell] / 2, width, gData_081974ad[cell]);
       if (rock->variant == 0) {
@@ -530,7 +530,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
           s32 moteX;
 
           EffectPosition_ProjectPoint(&mote->x, &screen);
-          draw[0](canvas, sheet + gData_08197410[size - 1],
+          draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
                   (screen.x >> 1) - size / 2, screen.y - size, size, size * 2);
           BattleEffectKernels_IntegrateVector3(mote, 62, 0);
           if (frame > i + 32) {

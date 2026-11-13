@@ -370,7 +370,7 @@ extern char ResourceId_FlashBurstSheet;
 
 extern char ResourceId_SmokeSheet;
 
-extern u16 gData_08197410[];
+extern u16 gBattleEffect_MoteCells[];
 extern Vec2 Data_08196ed0;
 extern Vec2 Data_08196ed8;
 extern Vec2 Data_08196ee0;
@@ -540,7 +540,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         v = k * 2;
         mp = (u8 *)(v + (s32)map);
         do {
-          v = ((u8 *)work)[gData_08197410[n] + i + off];
+          v = ((u8 *)work)[gBattleEffect_MoteCells[n] + i + off];
           /* FAKEMATCH(dead): w set to 32 inside the row loop, after the load;
            * as w = 32 at its declaration before the loops, 56 of 3921
            * instructions differ in tla-en. */

@@ -72,9 +72,9 @@ extern char ResourceId_RedCrescentSheetA;
 extern char ResourceId_SmokeSheet;
 
 // The dagger's shards, ☀️'s palette ramp shards.
-extern u16 Data_081974dc[];
-extern u8 Data_081974f4[];
-extern u8 Data_08197500[];
+extern u16 gStatChange_ShardCells[];
+extern u8 gStatChange_ShardWidths[];
+extern u8 gStatChange_ShardHeights[];
 
 // The reaper's seven panels: x by side (seven each), then y.
 extern u8 gData_0819750c[];
@@ -487,10 +487,12 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
           step = &work->particles[i];
           cell = i % 4 * 3 + (step->variant + time) / 8 % 3;
           draw[0](canvas,
-                  work->sheet + 0x2580 + (fade * 696 + Data_081974dc[cell]),
-                  overflow + HI(step->x) - Data_081974f4[cell] / 2,
-                  HI(step->y) - Data_08197500[cell] / 2, Data_081974f4[cell],
-                  Data_08197500[cell]);
+                  work->sheet + 0x2580 +
+                      (fade * 696 + gStatChange_ShardCells[cell]),
+                  overflow + HI(step->x) - gStatChange_ShardWidths[cell] / 2,
+                  HI(step->y) - gStatChange_ShardHeights[cell] / 2,
+                  gStatChange_ShardWidths[cell],
+                  gStatChange_ShardHeights[cell]);
           BattleEffectKernels_IntegrateVector2(step, 60, 0);
         }
       }

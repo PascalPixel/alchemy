@@ -182,7 +182,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 
           slot = 0;
           do {
-            if (frame == Data_08197950[slot]) {
+            if (frame == gProcne_Frames[slot]) {
               object->velocityY = 0;
               BattleEffect_TintBattler(effect->actors[index], 7, 5, index, 8);
             }
@@ -322,9 +322,9 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
         place[3] = 0;
         index = 0;
         do {
-          place[0] = (Data_0819793e[index] << 16) + wave.x + 0x280000;
+          place[0] = (gProcne_GridX[index] << 16) + wave.x + 0x280000;
           place[1] = 0xff0000 + index * 0x400000;
-          place[2] = ((Data_08197947[index] + index * 64) << 16) + wave.y;
+          place[2] = ((gProcne_GridY[index] + index * 64) << 16) + wave.y;
           Render_ApplyProjectedPlacementFar(
               (struct ScaledSprite *)work->objects[index], place, &scale.x, 0);
           index++;
@@ -365,7 +365,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
                 if (screen.depth > 350)
                   screen.depth = 350;
                 span = 6 - Math_UnsignedMulHigh(screen.depth - 170, 0x071c71c8);
-                draw[1](canvas, graphics + gData_08197410[span - 1],
+                draw[1](canvas, graphics + gBattleEffect_MoteCells[span - 1],
                         screen.x - span / 2, screen.y - span, span, span * 2);
                 point->x -= point->x / dist;
                 point->y -= point->y / dist;
@@ -378,7 +378,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 
             if (alive > 0) {
               span = alive / 10 + 1;
-              draw[1](canvas, graphics + gData_08197410[span - 1],
+              draw[1](canvas, graphics + gBattleEffect_MoteCells[span - 1],
                       (wave.x >> 17) - span / 2 + 32, (wave.y >> 16) - span - 4,
                       span, span * 2);
             }
@@ -387,7 +387,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
           // Each strike throws out 96 sparks that fly and fade.
           slot = 0;
           do {
-            if (frame == Data_08197950[slot]) {
+            if (frame == gProcne_Frames[slot]) {
               s32 speed;
               s32 angle;
 
@@ -407,7 +407,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
               } while (index != 96);
             }
 
-            if (frame >= Data_08197950[0]) {
+            if (frame >= gProcne_Frames[0]) {
               spark = PARTICLES;
               index = 0;
               do {
@@ -433,7 +433,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
                     screen.depth = 350;
                   span =
                       3 - Math_UnsignedMulHigh(screen.depth - 170, 0x02d82d83);
-                  draw[0](canvas, graphics + gData_08197410[span - 1],
+                  draw[0](canvas, graphics + gBattleEffect_MoteCells[span - 1],
                           screen.x - span / 2, screen.y - span, span, span * 2);
                   spark[index].x += spark[index].velocityX;
                   spark[index].y += spark[index].velocityY;
@@ -476,9 +476,9 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
               cel = (frame - threshold) / 2;
               if (cel > 2)
                 cel = 2;
-              draw[1](canvas, work->sheet + Data_08197962[cel], mark->x,
-                      mark->y - Data_0819795e[cel], Data_08197958[cel],
-                      Data_0819795b[cel]);
+              draw[1](canvas, work->sheet + gProcne_Cells[cel], mark->x,
+                      mark->y - gProcne_CellBiasY[cel], gProcne_CellWidths[cel],
+                      gProcne_CellHeights[cel]);
               mark->x -= 8;
               mark->y += 2;
 
@@ -508,7 +508,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
                     screen.depth = 350;
                   span =
                       3 - Math_UnsignedMulHigh(screen.depth - 170, 0x02d82d83);
-                  draw[0](canvas, graphics + gData_08197410[span - 1],
+                  draw[0](canvas, graphics + gBattleEffect_MoteCells[span - 1],
                           screen.x - span / 2, screen.y - span, span, span * 2);
                   slot++;
                 } while (slot != 28);
@@ -723,8 +723,9 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
           if (grain->variant == -1) {
             grain->x = ((Random16() & 255) - 32) << 16;
             grain->y = 112 << 16;
-            grain->velocityX = ((Random16() & 127) + Data_08197968[i & 3]) << 9;
-            grain->velocityY = -((Random16() & 127) + Data_08197968[i & 3])
+            grain->velocityX = ((Random16() & 127) + gTiamat_DropSpeeds[i & 3])
+                               << 9;
+            grain->velocityY = -((Random16() & 127) + gTiamat_DropSpeeds[i & 3])
                                << 11;
             grain->variant = 0;
             spawned++;
@@ -847,10 +848,10 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
           struct EffectStep *grain = &PARTICLES[i];
 
           if (grain->variant >= 0) {
-            u8 size = Data_0819796e[i & 3];
+            u8 size = gTiamat_DropSizes[i & 3];
             s32 height = size * 2;
 
-            draw[0](canvas, sheet + gData_08197410[size - 1],
+            draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
                     HI(grain->x) - size / 2, HI(grain->y) - size, size, height);
             grain->x += grain->velocityX * dir;
             grain->y += grain->velocityY;
@@ -916,7 +917,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
 
               draw[0](canvas, work->sheet + Data_08197984[cel] + STREAK_SHEET,
                       streak->x - Data_08197972[cel] / 2,
-                      streak->y + Data_0819797e[cel], Data_08197972[cel],
+                      streak->y + gTiamat_StreakDrops[cel], Data_08197972[cel],
                       Data_08197978[cel]);
             }
             streak->variant++;
@@ -929,7 +930,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
             streak->y += 6;
             if (frame <= 47 && streak->y > 55)
               Sound_PlayFar(136);
-            draw[0](canvas, sheet + gData_08197410[size - 1],
+            draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
                     streak->x - size / 2, streak->y + 30, size, size * 2);
           } else {
             streak->variant++;

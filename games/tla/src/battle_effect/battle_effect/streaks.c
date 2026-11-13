@@ -28,7 +28,7 @@ void BattleEffect_RunLimeStreaks(void *object) { Func_0813c5f4(object, 1); }
 
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
-#define RECORD(mode, field) Data_08197533[(mode) * 4 + (field)]
+#define RECORD(mode, field) gStreaks_Records[(mode) * 4 + (field)]
 #define RECORD_ANIMATE 0 // cycle the streak through its three pictures
 #define RECORD_HIT 1     // sound the hit and flash the target
 #define RECORD_MOTION 2  // the target's recoil motion, or -1
@@ -202,7 +202,7 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
             struct MotionObject *struck =
                 GetBattleObjectSlotFar(effect->actors[k])->object;
 
-            struck->x += Data_08197547[(frame - k * 32 - 30) % 8] << 16;
+            struck->x += gStreaks_Tremble[(frame - k * 32 - 30) % 8] << 16;
             if (struck->x > 0)
               struck->x += 0x8000;
             else
@@ -380,8 +380,8 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
         if (position.depth > 634)
           position.depth = 634;
         size = 6 - (position.depth - 314) / 64;
-        draw[0](canvas, sheet + gData_08197410[size - 1], position.x - size / 2,
-                position.y - size, size, size * 2);
+        draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+                position.x - size / 2, position.y - size, size, size * 2);
 
         // Slaver's drops fall and bounce off the ground; the others rise
         // slowly. Sleep Star's drift away from the user's side.

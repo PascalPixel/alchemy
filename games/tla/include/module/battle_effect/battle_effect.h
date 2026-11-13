@@ -136,11 +136,11 @@ extern u8 Data_02011000[];
 extern u8
     Data_02012000[]; // the crystal texture and the flashes, after the map cells
 
-extern u16 gData_08197410[]; // ☀️ gBattleEffect_MoteCells: dot sizes 1 to 10,
-                             // cell offsets in the sheet
-extern u16 gData_08197486[]; // ☀️ gBattleEffect_GlintCells
-extern u8 gData_08197492[];  // ☀️ gBattleEffect_GlintCellWidths
-extern u8 gData_08197498[];  // ☀️ gBattleEffect_GlintCellHeights
+extern u16 gBattleEffect_MoteCells[]; // ☀️ gBattleEffect_MoteCells: dot sizes 1
+                                      // to 10, cell offsets in the sheet
+extern u16 gBattleEffect_GlintCells[];
+extern u8 gData_08197492[]; // ☀️ gBattleEffect_GlintCellWidths
+extern u8 gData_08197498[]; // ☀️ gBattleEffect_GlintCellHeights
 extern const u8 gData_081991b0[];
 extern const u8 Data_081991c0[];
 extern const u8 gData_08199210[]; // a quad's four corners, x y z for each
@@ -255,8 +255,8 @@ extern const u8 Data_08198cac[];
 extern const u8 Data_08198ec4[];
 // The sparkle puff's size and cell for each of its nine pictures
 // (gBattleEffect_PuffSizes and gBattleEffect_PuffCells).
-extern u8 Data_0819745e[];  // ☀️ gBattleEffect_PuffSizes
-extern u16 Data_0819744c[]; // ☀️ gBattleEffect_PuffCells
+extern u8 gBattleEffect_PuffSizes[];
+extern u16 gBattleEffect_PuffCells[];
 
 void Func_08144b14(struct BattleEffectArgument *effect, s32 mode);
 void Func_0814512c(struct BattleEffectArgument *effect, s32 mode);
@@ -271,9 +271,9 @@ void BattleEffect_ArmBg1HBlankDma(void); // arms the BG1 scroll's HBlank DMA
 void Func_0815b634(void); // mode 3 only
 
 extern s32 gData_08197834[]; // ☀️ gPrism_ShardOffsets
-extern u8 gData_0819781a[];  // ☀️ gPrism_ShardWidths
-extern u8 gData_08197826[];  // ☀️ gPrism_ShardHeights
-extern u8 gData_081977f8[];  // ☀️ gPrism_ShardStarts: x, y for each shard
+extern u8 gPrism_ShardWidths[];
+extern u8 gData_08197826[];     // ☀️ gPrism_ShardHeights
+extern u8 gPrism_ShardStarts[]; // ☀️ gPrism_ShardStarts: x, y for each shard
 
 void BattleEffect_SetupBlendedDisplay(void);
 
@@ -335,7 +335,7 @@ enum SeriesBSheet {
   SERIES_B_DJINNI = 0x65c0   // the 40x40 Djinni
 };
 
-// A row of Data_081982f7, one for each variant.
+// A row of gQuake_Timings, one for each variant.
 enum {
   TIMING_FRAMES,      // the whole effect
   TIMING_RISE_FRAMES, // how long each pillar stands
@@ -346,14 +346,14 @@ struct RockWallHeights {
   s32 column[4]; // each pillar's height in pixels
 };
 
-// A row of Data_08198348, one for each variant.
+// A row of gFrost_Timings, one for each variant.
 enum {
   RISE_MOTES,   // the rising motes
   RISE_COLUMNS, // the pillars
   RISE_FRAME    // the frame they burst
 };
 
-// A row of Data_081983a2, one for each variant.
+// A row of gEruption_Counts, one for each variant.
 enum { FIELD_MOTES, FIELD_PUFFS, FIELD_FRAMES };
 
 // Places in the sheet.
@@ -399,9 +399,9 @@ extern u8 gData_08197467[];
 extern u8 gData_0819746d[];  // gBattleEffect_PuffArcCellHeights
 extern u8 gData_08197473[];  // gBattleEffect_PuffArcCellBiasY
 extern u16 gData_0819747a[]; // gBattleEffect_PuffArcCells
-extern u8 gData_0819749e[];
+extern u8 gSpire_ShardWidths[];
 extern u8 gData_081974ad[]; // the shard heights
-extern u16 gData_081974bc[];
+extern u16 gSpire_ShardCells[];
 
 void BattleEffect_StepPaletteToResource(s32);
 
@@ -418,9 +418,9 @@ void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position);
 // The quad meshes and corners: the card, the pictures and their spread.
 extern u8 Data_081992b0[];
 // The dagger's shards, ☀️'s palette ramp shards.
-extern u16 Data_081974dc[]; // gStatChange_ShardCells
-extern u8 Data_081974f4[];  // gStatChange_ShardWidths
-extern u8 Data_08197500[];  // gStatChange_ShardHeights
+extern u16 gStatChange_ShardCells[];
+extern u8 gStatChange_ShardWidths[];
+extern u8 gStatChange_ShardHeights[];
 
 void BattleEffect_BuildWindowEdgeTable(void);
 
@@ -433,72 +433,72 @@ extern const u8 Data_08199ec5[];
 
 void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode);
 
-extern u8 Data_081981fc[];    // ☀️ gCybele_ObjectPoses
-extern u16 Data_08198202[];   // ☀️ gCybele_ThornOffsets
-extern u8 Data_0819820c[];    // ☀️ gCybele_ThornWidths
-extern u8 Data_08198211[];    // ☀️ gCybele_ThornHeights
-extern u16 Data_08198216[];   // ☀️ gCybele_LeafOffsets
-extern u8 Data_0819821c[];    // ☀️ gCybele_LeafSizes
-extern u16 Data_08198220[];   // ☀️ the second gCybele_ThornOffsets
-extern u8 Data_0819822a[];    // ☀️ the second gCybele_ThornWidths
-extern u8 Data_0819822f[];    // ☀️ the second gCybele_ThornHeights
-extern u16 Data_08198234[];   // ☀️ gCybele_SparkOffsets
-extern u8 Data_0819823e[];    // ☀️ gCybele_SparkSizes
-extern u16 Data_08198244[];   // ☀️ gCybele_EmberOffsets
-extern u16 Data_08198252[];   // ☀️ gCybele_EmberSizes
-extern u8 Data_08198260[][2]; // ☀️ gBoreas_Points
-extern s8 Data_08198280[];    // ☀️ gBoreas_ShakeOffsets
-extern u16 Data_08198284[];   // ☀️ gBoreas_RockCells
-extern u8 Data_0819828a[];    // ☀️ gBoreas_RockWidths
-extern u8 Data_0819828d[];    // ☀️ gBoreas_RockHeights
-extern u8 Data_08198290[];    // ☀️ gBoreas_Animations
+extern u8 gCybele_ObjectPoses[];
+extern u16 Data_08198202[]; // ☀️ gCybele_ThornOffsets
+extern u8 Data_0819820c[];  // ☀️ gCybele_ThornWidths
+extern u8 Data_08198211[];  // ☀️ gCybele_ThornHeights
+extern u16 gCybele_LeafOffsets[];
+extern u8 gCybele_LeafSizes[];
+extern u16 Data_08198220[]; // ☀️ the second gCybele_ThornOffsets
+extern u8 Data_0819822a[];  // ☀️ the second gCybele_ThornWidths
+extern u8 Data_0819822f[];  // ☀️ the second gCybele_ThornHeights
+extern u16 gCybele_SparkOffsets[];
+extern u8 gCybele_SparkSizes[];
+extern u16 gCybele_EmberOffsets[];
+extern u16 Data_08198252[]; // ☀️ gCybele_EmberSizes
+extern u8 gBoreas_Points[][2];
+extern s8 gBoreas_ShakeOffsets[];
+extern u16 Data_08198284[]; // ☀️ gBoreas_RockCells
+extern u8 Data_0819828a[];  // ☀️ gBoreas_RockWidths
+extern u8 Data_0819828d[];  // ☀️ gBoreas_RockHeights
+extern u8 gBoreas_Animations[];
 
 extern struct Scale Data_08196e14; // ☀️ gBattleFx10_UnitScale
 
-extern u16 Data_081982aa[];  // ☀️ gBoreas_DebrisCells
-extern u8 Data_08198294[];   // ☀️ gBoreas_DebrisWidths
-extern u8 Data_0819829f[];   // ☀️ gBoreas_DebrisHeights
-extern u16 Data_081982c6[];  // ☀️ gBoreas_SprayCells
-extern u8 Data_081982c0[];   // ☀️ gBoreas_SprayWidths
-extern u8 Data_081982c3[];   // ☀️ gBoreas_SprayHeights
-extern u16 Data_081982cc[];  // ☀️ gBoreas_BoulderCells
-extern u8 Data_081982d2[];   // ☀️ gBoreas_BoulderWidths
-extern u8 Data_081982d5[];   // ☀️ gBoreas_BoulderHeights
-extern u16 Data_081982de[];  // ☀️ gBoreas_FallCells
-extern u8 Data_081982d8[];   // ☀️ gBoreas_FallWidths
-extern u8 Data_081982db[];   // ☀️ gBoreas_FallHeights
-extern s32 gData_081982e4[]; // gDrain_Gravities
-extern u8 Data_081982f4[];   // the mote size by mode
+extern u16 gBoreas_DebrisCells[];
+extern u8 gBoreas_DebrisWidths[];
+extern u8 gBoreas_DebrisHeights[];
+extern u16 gBoreas_SprayCells[];
+extern u8 Data_081982c0[];  // ☀️ gBoreas_SprayWidths
+extern u8 Data_081982c3[];  // ☀️ gBoreas_SprayHeights
+extern u16 Data_081982cc[]; // ☀️ gBoreas_BoulderCells
+extern u8 Data_081982d2[];  // ☀️ gBoreas_BoulderWidths
+extern u8 Data_081982d5[];  // ☀️ gBoreas_BoulderHeights
+extern u16 Data_081982de[]; // ☀️ gBoreas_FallCells
+extern u8 Data_081982d8[];  // ☀️ gBoreas_FallWidths
+extern u8 Data_081982db[];  // ☀️ gBoreas_FallHeights
+extern s32 gDrain_Gravities[];
+extern u8 Data_081982f4[]; // the mote size by mode
 
 void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode);
 
-extern u8 Data_081982f7[][3]; // gQuake_Timings
+extern u8 gQuake_Timings[][3];
 
 extern struct RockWallHeights Data_08196e1c; // gRockWall_Heights
 
-extern u8 Data_08198300[];    // gFire_Counts
-extern u16 Data_08198316[];   // gFire_FlareCells
-extern u8 Data_08198303[];    // gFire_FlareWidths
-extern u8 Data_0819830f[];    // gFire_FlareBiasY
-extern u8 Data_08198309[];    // gFire_FlareHeights
-extern u8 Data_08198348[];    // gFrost_Timings
-extern u8 Data_08198322[];    // gFrost_ColumnSpots
-extern u16 Data_08198362[];   // gFrost_MoteCells
-extern u8 Data_08198351[];    // gFrost_MoteWidths
-extern u8 Data_08198359[];    // gFrost_MoteHeights
-extern u16 Data_08198372[];   // gFrost_ColumnCells
-extern u8 Data_08198378[];    // gFrost_ColumnHeights
-extern u16 Data_0819838c[];   // gFrost_ChipCells
-extern u8 Data_0819837b[];    // gFrost_ChipWidths
-extern u8 Data_08198383[];    // gFrost_ChipHeights
-extern u8 Data_0819839c[][2]; // gRay_Sparks
+extern u8 gFire_Counts[];
+extern u16 Data_08198316[]; // gFire_FlareCells
+extern u8 Data_08198303[];  // gFire_FlareWidths
+extern u8 Data_0819830f[];  // gFire_FlareBiasY
+extern u8 Data_08198309[];  // gFire_FlareHeights
+extern u8 gFrost_Timings[];
+extern u8 gFrost_ColumnSpots[];
+extern u16 Data_08198362[]; // gFrost_MoteCells
+extern u8 Data_08198351[];  // gFrost_MoteWidths
+extern u8 Data_08198359[];  // gFrost_MoteHeights
+extern u16 gFrost_ColumnCells[];
+extern u8 gFrost_ColumnHeights[];
+extern u16 Data_0819838c[]; // gFrost_ChipCells
+extern u8 Data_0819837b[];  // gFrost_ChipWidths
+extern u8 Data_08198383[];  // gFrost_ChipHeights
+extern u8 gRay_Sparks[][2];
 
 void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode);
 
-extern u8 Data_081983a2[][3]; // gEruption_Counts
-extern u16 Data_081983ac[];   // gEruption_PuffCells
-extern u16 Data_081983ba[];   // gEruption_PuffSizes
-extern u8 Data_081983c8[];    // gTargetStrike_GlintDrawFlags
+extern u8 gEruption_Counts[][3];
+extern u16 Data_081983ac[]; // gEruption_PuffCells
+extern u16 Data_081983ba[]; // gEruption_PuffSizes
+extern u8 Data_081983c8[];  // gTargetStrike_GlintDrawFlags
 
 extern char ResourceId_LeafWarriorTiles;
 
@@ -507,35 +507,35 @@ extern s32 Data_081983cc[]; // gAtalanta_UnitScale
 void Func_081548d0(struct BattleEffectArgument *effect, s32 mode);
 
 // The Broken Seal's gGrowth_* tables, in effect_table.s.
-extern u8 Data_081983ea[];  // _ColumnCounts: columns by strength
-extern u8 Data_081983ed[];  // _ColumnX: each column's root
-extern u8 Data_081983d7[];  // _HeightLimits: by i % 3
-extern u16 Data_081983da[]; // _VineCells
-extern u8 Data_081983d4[];  // _VineWidths
-extern s8 Data_081983fd[];  // _PillarHeights: by i & 7
-extern u16 Data_081983e4[]; // _PillarCells
-extern u8 Data_081983e0[];  // _PillarWidths
-extern u16 Data_08198414[]; // _PuffCells
-extern s8 Data_08198405[];  // _PuffWidths
-extern u8 Data_0819840c[];  // _PuffHeights
-// The Broken Seal's gGrowth_ColumnOffsets: each vine's x about the
+extern u8 gGrowth_ColumnCounts[];  // _ColumnCounts: columns by strength
+extern u8 gGrowth_ColumnX[];       // _ColumnX: each column's root
+extern u8 gGrowth_HeightLimits[];  // _HeightLimits: by i % 3
+extern u16 gGrowth_VineCells[];    // _VineCells
+extern u8 gGrowth_VineWidths[];    // _VineWidths
+extern s8 gGrowth_PillarHeights[]; // _PillarHeights: by i & 7
+extern u16 gGrowth_PillarCells[];  // _PillarCells
+extern u8 gGrowth_PillarWidths[];  // _PillarWidths
+extern u16 gGrowth_PuffCells[];    // _PuffCells
+extern s8 gGrowth_PuffWidths[];    // _PuffWidths
+extern u8 gGrowth_PuffHeights[];   // _PuffHeights
+// The Broken Seal's table of this name: each vine's x about the
 // middle of the targets.
-extern const s8 Data_08198422[];
-// The Broken Seal's gGrowth_Counts: thorns by strength.
-extern u8 Data_08198442[];
-// The Broken Seal's gGrowth_X: each thorn's root.
-extern s8 Data_0819843a[];
-// The Broken Seal's gGrowth_Kinds: 0-1 large, 2-3 small; odd ones
+extern const s8 gGrowth_ColumnOffsets[];
+// The Broken Seal's table of this name: thorns by strength.
+extern u8 gGrowth_Counts[];
+// The Broken Seal's table of this name: each thorn's root.
+extern s8 gGrowth_X[];
+// The Broken Seal's table of this name: 0-1 large, 2-3 small; odd ones
 // grow to the left.
-extern u8 Data_08198432[];
-// The Broken Seal's gGrowth_ThornPuffHeights, _PuffCells, _PuffWidths:
+extern u8 gGrowth_Kinds[];
+// The Broken Seal's table of this name, _PuffCells, _PuffWidths:
 // the seven dust cels.
-extern u8 Data_0819844c[];
-extern u16 Data_08198454[];
-extern s8 Data_08198445[];
-// The Broken Seal's gBolt_Counts: four bytes for each strength,
+extern u8 gGrowth_ThornPuffHeights[];
+extern u16 gGrowth_ThornPuffCells[];
+extern s8 gGrowth_ThornPuffWidths[];
+// The Broken Seal's table of this name: four bytes for each strength,
 // sparks, glints, glint spread and bolts.
-extern u8 Data_08198462[];
+extern u8 gBolt_Counts[];
 // The Broken Seal's gBolt_GlintFlips and _GlintModes.
 extern u8 Data_0819846e[];
 extern u8 Data_08198472[];
@@ -790,21 +790,21 @@ void ColorBuffer_Darken(void *source, s32 amount, void *destination, s32 size);
 void ColorBuffer_Brighten(void *source, s32 amount, void *destination,
                           s32 size);
 
-extern u8 Data_081978f0[]; // each panel's x, by side (7 a side)
-extern u8 Data_081978fe[]; // each panel's y
+extern u8 Data_081978f0[];   // each panel's x, by side (7 a side)
+extern u8 gCondemn_PanelY[]; // each panel's y
 // The 33 pieces: each one's size, place in the sheet and starting point
-// (The Broken Seal's gDeathPlunge_PieceWidths, Height, Offset, StartX and
+// (The Broken Seal's table of this name, Height, Offset, StartX and
 // StartY).
-extern u8 Data_08197609[];
+extern u8 gDeathPlunge_PieceWidths[];
 extern u8 Data_0819762a[];
 extern u16 Data_0819764c[];
-extern u8 Data_08197690[];
-extern u8 Data_081976b1[];
+extern u8 gDeathPlunge_PieceStartX[];
+extern u8 gDeathPlunge_PieceStartY[];
 // The four corner sparks: their flips and their place around the target
 // (The Broken Seal's gDeathPlunge_DrawFlags, _X and _Y).
 extern u8 Data_081976da[];
-extern s8 Data_081976d2[];
-extern s8 Data_081976d6[];
+extern s8 gDeathPlunge_X[];
+extern s8 gDeathPlunge_Y[];
 
 extern const struct WordPair Data_08196dd8;
 
@@ -843,28 +843,29 @@ s32 BattleMotion_GetSlotPaletteFar(s32 id);
 
 // Shards and frames for each variant (The Broken Seal's
 // gFalling_IceCounts).
-extern u8 Data_08197521[];
-// Four bytes for each variant (The Broken Seal's gFalling_Counts).
-extern u8 Data_08197527[];
-extern u8 Data_0819786c[];  // the mote's picture for each step of its sway
-extern u16 Data_08197874[]; // the beam's head: three pictures, offsets
-extern u8 Data_0819787a[];  // ... their widths
-extern u8 Data_0819787d[];  // ... their heights
+extern u8 gFalling_IceCounts[];
+// Four bytes for each variant (as The Broken Seal has it).
+extern u8 gFalling_Counts[];
+extern u8
+    gDjinnBeams_MotePictures[]; // the mote's picture for each step of its sway
+extern u16 gMirroredWall_Cells[]; // the beam's head: three pictures, offsets
+extern u8 Data_0819787a[];        // ... their widths
+extern u8 Data_0819787d[];        // ... their heights
 // Each mode's record: whether its shots burst into shards (else into smoke),
 // the shots' blitter, shots per target, and frames before the targets'
 // share.
 extern s8 Data_08197880[];
-extern u8 Data_081978a8[];  // shard widths
-extern u8 Data_081978ba[];  // shard heights
-extern u16 Data_081978cc[]; // shard cell offsets
-extern u8 Data_08197990[];  // the three columns' feet, x and y
-extern s32 Data_08197998[]; // a falling spark's gravity, by spark
+extern u8 gLobbedShells_ShardWidths[];   // shard widths
+extern u8 gLobbedShells_ShardHeights[];  // shard heights
+extern u16 gLobbedShells_ShardOffsets[]; // shard cell offsets
+extern u8 gNereid_Columns[];             // the three columns' feet, x and y
+extern s32 Data_08197998[];              // a falling spark's gravity, by spark
 // Per mode: how many motes each target gets, and the effect's frame count
 // before the targets' share.
 extern u8 Data_08197864[];
-extern u8 Data_081979da[];  // ☀️ gPlasma_Counts
-extern u8 Data_081979cc[];  // ☀️ gPlasma_Columns, 7 for each side
-extern u16 Data_081979c0[]; // ☀️ gPlasma_Sparks: sparks, shake
+extern u8 gPlasma_Counts[];
+extern u8 gPlasma_Columns[]; // ☀️ gPlasma_Columns, 7 for each side
+extern u16 gPlasma_Sparks[]; // ☀️ gPlasma_Sparks: sparks, shake
 // ☀️ gPlasma_Shapes, five halfwords for each variant: sparks in each
 // group, groups, and each group's x offset.
 extern u16 Data_081979de[][5];
@@ -877,26 +878,26 @@ s32 Math_UnsignedMulHighAdd(s32 value, u32 magic, s32 multiplier);
 
 extern struct Scale Data_08196df8; // the comets' unit scale
 
-extern u8 Data_0819793e[];   // the nine comets' grid: x
-extern u8 Data_08197947[];   // ... and depth
-extern u16 Data_08197950[];  // the four comet strikes' frames
-extern u8 Data_08197958[];   // a strike's three pictures: widths
-extern u8 Data_0819795b[];   // ... heights
-extern u8 Data_0819795e[];   // ... raise above the mark
-extern u16 Data_08197962[];  // ... cell offsets
-extern u8 Data_08197968[];   // a grain's added speed, by grain
-extern u8 Data_0819796c[];   // a spark's two pixels
-extern u8 Data_0819796e[];   // a grain's size, by grain
-extern u8 Data_08197972[];   // the streak's six pictures: widths
-extern u8 Data_08197978[];   // ... heights
-extern u8 Data_0819797e[];   // ... drops below the streak
-extern u16 Data_08197984[];  // ... cell offsets
-extern s32 gData_08197924[]; // the two ring points, alternating
-extern u8 gData_0819793c[];  // ring radii, alternating: 32, 16
+extern u8 gProcne_GridX[];       // the nine comets' grid: x
+extern u8 gProcne_GridY[];       // ... and depth
+extern u16 gProcne_Frames[];     // the four comet strikes' frames
+extern u8 gProcne_CellWidths[];  // a strike's three pictures: widths
+extern u8 gProcne_CellHeights[]; // ... heights
+extern u8 gProcne_CellBiasY[];   // ... raise above the mark
+extern u16 gProcne_Cells[];      // ... cell offsets
+extern u8 gTiamat_DropSpeeds[];  // a grain's added speed, by grain
+extern u8 Data_0819796c[];       // a spark's two pixels
+extern u8 gTiamat_DropSizes[];   // a grain's size, by grain
+extern u8 Data_08197972[];       // the streak's six pictures: widths
+extern u8 Data_08197978[];       // ... heights
+extern u8 gTiamat_StreakDrops[]; // ... drops below the streak
+extern u16 Data_08197984[];      // ... cell offsets
+extern s32 gStar_Points[];       // the two ring points, alternating
+extern u8 gData_0819793c[];      // ring radii, alternating: 32, 16
 // Four signed bytes for each mode (The Broken Seal's gStreaks_Styles).
-extern s8 Data_08197533[];
+extern s8 gStreaks_Records[];
 // The struck target's sideways tremble, in pixels (gStreaks_Tremble).
-extern s8 Data_08197547[];
+extern s8 gStreaks_Tremble[];
 extern u8 Data_08197a34[]; // ☀️ gTargetMotes_GlintFlips
 // Seven bytes for each mode (The Broken Seal's gTargetStrike_Styles, grown
 // from 12 modes to 21).
@@ -905,16 +906,16 @@ extern u8 Data_0819754f[][7];
 // and the column stages (gTargetStrike_ColumnStages).
 extern u8 Data_081975e2[];
 extern u8 Data_081975e8[];
-extern u16 Data_081975ee[];
+extern u16 gTargetStrike_Offsets[];
 extern u8 Data_081975fa[];
-extern u8 Data_08197600[];
+extern u8 gTargetStrike_ColumnStages[];
 extern u8 Data_08197605[];
-extern u8 Data_08197a20[];    // ☀️ gVolcano_Counts, for each variant
-extern s8 Data_08197a23[][4]; // ☀️ gVolcano_Depths
-extern u8 Data_08197a2f[];    // ☀️ gVolcano_StartFrames
+extern u8 gVolcano_Counts[]; // ☀️ gVolcano_Counts, for each variant
+extern s8 gVolcano_Depths[][4];
+extern u8 gVolcano_StartFrames[];
 // ☀️ gVortices_Counts: motes, then frames, for each variant.
-extern u8 gData_081979a8[];
+extern u8 gVortices_Counts[];
 // ☀️ gVortices_Shapes: funnels, sway radius and shake, for each variant.
-extern u8 gData_081979ae[];
+extern u8 gVortices_Shapes[];
 
 #endif

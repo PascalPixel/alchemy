@@ -176,13 +176,13 @@ Data_0812a16c:
 	.byte 4, 7, 5, 0x80, 0x81
 	.balign 4, 0
 @ Debug party members (separated by owner -1).
-@ The Broken Seal's gDebug_ParameterSets, with six item columns for its four
-	.global gData_0812a174
-gData_0812a174:
+@ The Broken Seal's table of this name, with six item columns for its four
+	.global gDebug_ParameterSets
+gDebug_ParameterSets:
 	.incbin "games/tla/src/battle/debug_parameter_sets.table"
-@ The Broken Seal's gBattleObject_EmptyScript in form (16 there)
-	.global Data_0812cacc
-Data_0812cacc:
+@ The Broken Seal's table of this name in form (16 there)
+	.global gBattleObject_EmptyScript
+gBattleObject_EmptyScript:
 	.4byte 17
 @ Resource ID | slot << 9, terminated by 0xffff.
 	.global gResource_SlotAssignments

@@ -55,7 +55,7 @@ extern const u8 gData_08199210[];
 extern u8 gData_08199d94[];
 
 // The spark cells: offsets into the particle sheet by size.
-extern u16 gData_08197410[];
+extern u16 gBattleEffect_MoteCells[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 
@@ -219,10 +219,10 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
       if (left >= 0) {
         s32 size = (left >> 2) + 3;
 
-        draw[0](canvas, graphics + gData_08197410[size - 1],
+        draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
                 HI(drawn->x) - size / 2, HI(drawn->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(drawn, 62, 0);
-        draw[0](canvas, graphics + gData_08197410[size - 1],
+        draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
                 HI(drawn->x) - size / 2, HI(drawn->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(drawn, 62, 0);
         drawn->variant--;

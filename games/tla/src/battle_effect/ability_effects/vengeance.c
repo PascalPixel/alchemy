@@ -709,7 +709,7 @@ extern const s32 Data_08199660[];
 extern const s8 Data_0819966c[];
 
 // The offsets of the spark cels: cel n is n pixels wide and 2n tall.
-extern u16 gData_08197410[];
+extern u16 gBattleEffect_MoteCells[];
 
 // The geyser: a mesh of sixteen corners and its faces.
 extern const u8 gData_08198c6c[];
@@ -875,7 +875,7 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
 
             if (size < Data_0819966c[mode])
               size = Data_0819966c[mode];
-            draw[i & 1](canvas, sparkCels + gData_08197410[size - 1],
+            draw[i & 1](canvas, sparkCels + gBattleEffect_MoteCells[size - 1],
                         x - size / 2, y - size, size, size * 2);
           }
         }
@@ -1110,7 +1110,7 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
           if (screen.depth > 0x27a)
             screen.depth = 0x27a;
           size = 9 - (screen.depth - 250) / 64;
-          draw[0](canvas, sparkCels + gData_08197410[size - 1],
+          draw[0](canvas, sparkCels + gBattleEffect_MoteCells[size - 1],
                   screen.x - size / 2, screen.y - size, size, size * 2);
           BattleEffectKernels_IntegrateVector3(star, 60, 0);
 

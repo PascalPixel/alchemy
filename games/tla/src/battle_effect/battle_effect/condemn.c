@@ -157,36 +157,36 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
       }
       if (frame <= 71) {
         draw[effect->side](canvas, work->sheet, Data_081978f0[column * 7],
-                           Data_081978fe[row * 7] + screenY, 57, 98);
+                           gCondemn_PanelY[row * 7] + screenY, 57, 98);
       } else {
         if (frame <= 75)
           draw[effect->side](canvas, work->sheet, Data_081978f0[column * 7],
-                             Data_081978fe[row * 7] + screenY, 57, 98);
+                             gCondemn_PanelY[row * 7] + screenY, 57, 98);
         draw[effect->side](canvas, work->sheet + PANEL_B,
                            Data_081978f0[column * 7 + 1],
-                           Data_081978fe[row * 7 + 1] + screenY, 99, 69);
+                           gCondemn_PanelY[row * 7 + 1] + screenY, 99, 69);
         if ((u32)(frame - 72) <= 1)
           Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
         if ((u32)(frame - 74) <= 1)
           draw[effect->side](canvas, work->sheet + PANEL_C,
                              Data_081978f0[column * 7 + 2],
-                             Data_081978fe[row * 7 + 2] + screenY, 128, 91);
+                             gCondemn_PanelY[row * 7 + 2] + screenY, 128, 91);
         if ((u32)(frame - 76) <= 1)
           draw[effect->side](canvas, gMapCellBuffer + PANEL_D,
                              Data_081978f0[column * 7 + 3],
-                             Data_081978fe[row * 7 + 3] + screenY, 128, 91);
+                             gCondemn_PanelY[row * 7 + 3] + screenY, 128, 91);
         if ((u32)(frame - 78) <= 1)
           draw[effect->side](canvas, gMapCellBuffer + PANEL_E,
                              Data_081978f0[column * 7 + 4],
-                             Data_081978fe[row * 7 + 4] + screenY, 128, 59);
+                             gCondemn_PanelY[row * 7 + 4] + screenY, 128, 59);
         if ((u32)(frame - 80) <= 1)
           draw[effect->side](canvas, gMapCellBuffer + PANEL_F,
                              Data_081978f0[column * 7 + 5],
-                             Data_081978fe[row * 7 + 5] + screenY, 122, 29);
+                             gCondemn_PanelY[row * 7 + 5] + screenY, 122, 29);
         if ((u32)(frame - 82) <= 1)
           draw[effect->side](canvas, gMapCellBuffer + PANEL_G,
                              Data_081978f0[column * 7 + 6],
-                             Data_081978fe[row * 7 + 6] + screenY, 76, 25);
+                             gCondemn_PanelY[row * 7 + 6] + screenY, 76, 25);
       }
     }
 

@@ -146,8 +146,8 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
     s32 x, y, vx, vy;
 
     piece = &work->particles[i];
-    x = Data_08197690[i] << 16;
-    y = Data_081976b1[i] << 16;
+    x = gDeathPlunge_PieceStartX[i] << 16;
+    y = gDeathPlunge_PieceStartY[i] << 16;
     piece->x = x;
     piece->y = y;
     vx = (x - 0x200000) >> 2;
@@ -308,7 +308,7 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
       for (i = 0; i != 33; i++) {
         piece = &work->particles[i];
         draw[0](canvas, work->sheet + Data_0819764c[i], HI(piece->x),
-                HI(piece->y), Data_08197609[i], Data_0819762a[i]);
+                HI(piece->y), gDeathPlunge_PieceWidths[i], Data_0819762a[i]);
         if (frame > 3)
           BattleEffectKernels_IntegrateVector2(piece, 64, 0x4000);
       }
@@ -501,8 +501,8 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
         Func_08196404(SLOT_BLITTER_ALTERNATE, 7, 7, Data_081976da[i] | CLIP,
                       mode);
         draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-        draw[1](canvas, work->sheet + (picture << 10), Data_081976d2[i] + 32,
-                ground.y + Data_081976d6[i] - 32, 32, 32);
+        draw[1](canvas, work->sheet + (picture << 10), gDeathPlunge_X[i] + 32,
+                ground.y + gDeathPlunge_Y[i] - 32, 32, 32);
         HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
       }
     }

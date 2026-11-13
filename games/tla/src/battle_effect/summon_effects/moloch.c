@@ -28,7 +28,7 @@ extern u8 gMapCellBuffer[];
 extern const u8 Data_08196f28[];
 // The particle sheet's cell offsets by size (The Broken Seal's
 // gBattleEffect_MoteCells).
-extern u16 gData_08197410[];
+extern u16 gBattleEffect_MoteCells[];
 extern const u8 Data_08198ec4[];
 extern const u8 Data_08198cac[];
 extern const u8 Data_08199f34[];
@@ -164,7 +164,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
           if (mote->variant == 0) {
             s32 size = Data_08196f28[i & 7];
 
-            draw[0](canvas, graphics + gData_08197410[size - 1],
+            draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
                     HI(mote->x) - (size >> 1), HI(mote->y) - size, size,
                     size * 2);
 
@@ -480,7 +480,8 @@ void Func_08192648(u32 frame, s32 x, s32 y, s32 small) {
 next:
   // The offset grouped before the sheet base: ungrouped, 2 instructions
   // differ (the base is added before the product).
-  draw[0](canvas, work->sheet + (gData_08197410[size - 1] + frame / 2 * 0x302),
+  draw[0](canvas,
+          work->sheet + (gBattleEffect_MoteCells[size - 1] + frame / 2 * 0x302),
           x - size / 2, trailY, size, size * 2);
   i++;
   trailY = y + i * half;
@@ -833,8 +834,8 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         py = (Iwram_MulQ16(0x50000, r * Trig_Cos(a) / 2) >> 16) + y;
         blit(canvas, ring, px - 3, py - 7, 7, 14);
       }
-      draw(canvas, work->sheet + (gData_08197410[8] + sheetOffset), x - 4,
-           y - 9, 9, 18);
+      draw(canvas, work->sheet + (gBattleEffect_MoteCells[8] + sheetOffset),
+           x - 4, y - 9, 9, 18);
     } else {
       s32 offset = 294;
       u8 *ring;
@@ -868,8 +869,8 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         py = (Iwram_MulQ16(0x50000, r * Trig_Cos(a) / 2) >> 16) + y;
         blit(canvas, ring, px - 2, py - 5, 5, 10);
       }
-      draw(canvas, work->sheet + (gData_08197410[6] + sheetOffset), x - 3,
-           y - 7, 7, 14);
+      draw(canvas, work->sheet + (gBattleEffect_MoteCells[6] + sheetOffset),
+           x - 3, y - 7, 7, 14);
     }
   } else {
     if (t < *(Data_08199f40 + small) * 2 + *(Data_08199f40 + small)) {
@@ -1069,7 +1070,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
             work->particles[i].variant = 0;
         } else {
           ((DrawRectangle)draw[0])(
-              canvas, work->sheet + (gData_08197410[n - 1] + offset),
+              canvas, work->sheet + (gBattleEffect_MoteCells[n - 1] + offset),
               px - n / 2, py - n, n, n * 2);
         }
         work->particles[i].x += work->particles[i].velocityX;
@@ -1269,7 +1270,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
             size = (i & 3) + 5;
             for (j = 0; j != 10; j++) {
               u8 *to = canvas;
-              u8 *cell = sprites + gData_08197410[size - 1];
+              u8 *cell = sprites + gBattleEffect_MoteCells[size - 1];
               struct IrisPoint *p = &STREAK(i, j);
 
               ((DrawRectangle)draw[1])(to, cell, HALF(p, 1) - (size >> 1),
@@ -1509,11 +1510,13 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         s32 px = Trig_Sin(a) * radius;
         s32 py = Trig_Cos(a) * radius;
 
-        ((DrawRectangle)draw[0])(canvas, work->sheet + gData_08197410[3],
+        ((DrawRectangle)draw[0])(canvas,
+                                 work->sheet + gBattleEffect_MoteCells[3],
                                  (px >> 16) + 58, (py * 2 >> 16) + 48, 4, 8);
       }
       for (i = 0; i != 12; i++) {
-        ((DrawRectangle)draw[0])(canvas, work->sheet + gData_08197410[1],
+        ((DrawRectangle)draw[0])(canvas,
+                                 work->sheet + gBattleEffect_MoteCells[1],
                                  (work->particles[i].x >> 16) - 2,
                                  (work->particles[i].y >> 16) - 2, 2, 4);
         work->particles[i].x += work->particles[i].velocityX;
@@ -1530,8 +1533,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         s32 next;
 
         for (j = 0; j != 10; j = next) {
-          u8 *src = work->sheet + gData_08197410[j];
-          u8 *out = work->sheet + (gData_08197410[j] + i * 0x302);
+          u8 *src = work->sheet + gBattleEffect_MoteCells[j];
+          u8 *out = work->sheet + (gBattleEffect_MoteCells[j] + i * 0x302);
           s32 off = 0;
 
           next = j + 1;
@@ -1560,7 +1563,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       dst = sprites;
       for (i = 0; i != 2; i++) {
         for (j = 0; j != 3; j++) {
-          u8 *src = work->sheet + gData_08197410[Data_0819a040[i] - 1];
+          u8 *src = work->sheet + gBattleEffect_MoteCells[Data_0819a040[i] - 1];
 
           for (m = 0; m != *(Data_0819a040 + i) * *(Data_0819a040 + i) * 2;
                m++) {
@@ -1575,7 +1578,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         }
       }
       for (j = 0; j != 8; j++) {
-        u8 *src = work->sheet + gData_08197410[1];
+        u8 *src = work->sheet + gBattleEffect_MoteCells[1];
 
         for (m = 0; m != 8; m++) {
           s32 v = *src - j * 8;
@@ -1810,8 +1813,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         s32 next;
 
         for (j = 0; j != 10; j = next) {
-          u8 *src = work->sheet + gData_08197410[j];
-          u8 *out = work->sheet + (gData_08197410[j] + i * 0x302);
+          u8 *src = work->sheet + gBattleEffect_MoteCells[j];
+          u8 *out = work->sheet + (gBattleEffect_MoteCells[j] + i * 0x302);
           s32 off = 0;
 
           next = j + 1;
@@ -2007,7 +2010,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         if (638 + j < frame && frame < 670 + j) {
           s32 t = frame - j - 638;
           s32 ry = t >> 1;
-          s32 tile = gData_08197410[0] + t / 4 * 0x302;
+          s32 tile = gBattleEffect_MoteCells[0] + t / 4 * 0x302;
 
           for (i = 0; i != 128; i++) {
             s32 a = i << 9;
@@ -2062,7 +2065,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       s32 sinT = Trig_Sin(0x5800);
       s32 cosT = Trig_Cos(0x5800);
       s32 t = frame - 758;
-      s32 tile = gData_08197410[5] + t / 4 * 0x302;
+      s32 tile = gBattleEffect_MoteCells[5] + t / 4 * 0x302;
 
       for (i = 0; i != 96; i++) {
         s32 a = i * 384;
@@ -2079,7 +2082,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       s32 sinT = Trig_Sin(0xe800);
       s32 cosT = Trig_Cos(0xe000);
       s32 t = frame - 782;
-      s32 tile = gData_08197410[5] + t / 6 * 0x302;
+      s32 tile = gBattleEffect_MoteCells[5] + t / 6 * 0x302;
 
       for (i = 0; i != 197; i++) {
         s32 a = i * 384;

@@ -54,7 +54,7 @@ extern char ResourceId_Data101;
 extern u8 gMapCellBuffer[];
 extern u8 gData_02014000[];
 extern u8 Data_02016000[];
-extern u16 gData_08197410[];
+extern u16 gBattleEffect_MoteCells[];
 extern const u8 gData_08199364[];
 extern const u8 Data_0819919c[];
 extern const u8 Data_081991e0[];
@@ -274,7 +274,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         if (step->variant >= 0) {
           s32 size = (step->variant >> 2) + 1;
 
-          draw[0](canvas, graphics + gData_08197410[size - 1],
+          draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
                   HI(step->x) - size / 2, HI(step->y) - size, size, size * 2);
           BattleEffectKernels_IntegrateVector2(step, 60, 0);
           step->variant--;

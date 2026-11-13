@@ -302,14 +302,14 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
         if (effect->side == 1) {
           BattleEffect_LoadBlitter(SLOT_BLITTER,
                                    BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
-          gBlitter(canvas, work->sheet + Data_081975ee[picture],
+          gBlitter(canvas, work->sheet + gTargetStrike_Offsets[picture],
                    targetPosition.x / 2 - (Data_081975fa[picture] / 2) -
                        Data_081975e2[picture] + 8,
                    targetPosition.y - (Data_081975e8[picture] / 2),
                    Data_081975e2[picture], Data_081975e8[picture]);
         } else {
           BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP));
-          gBlitter(canvas, work->sheet + Data_081975ee[picture],
+          gBlitter(canvas, work->sheet + gTargetStrike_Offsets[picture],
                    targetPosition.x / 2 + (Data_081975fa[picture] / 2) - 8,
                    targetPosition.y - (Data_081975e8[picture] / 2),
                    Data_081975e2[picture], Data_081975e8[picture]);
@@ -403,7 +403,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
 
         while (picture > 4)
           picture -= 4;
-        stage = Data_08197600[picture];
+        stage = gTargetStrike_ColumnStages[picture];
       } else {
         stage = 3;
       }
@@ -488,8 +488,8 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
         do {
           // Empty: its loop notes end CSE's block after the blitter call.
         } while (0);
-        gBlitterAlternate(canvas, work->sheet + gData_08197486[image], x, y,
-                          gData_08197492[image], gData_08197498[image]);
+        gBlitterAlternate(canvas, work->sheet + gBattleEffect_GlintCells[image],
+                          x, y, gData_08197492[image], gData_08197498[image]);
         HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
       }
     }
@@ -551,7 +551,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
           if (step->variant >= 0) {
             EffectPosition_ProjectPoint((s32 *)step, &position);
             position.x >>= 1;
-            draw[1](canvas, sheet + gData_08197410[size - 1],
+            draw[1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
                     position.x - ((u32)size >> 1), position.y - size, size,
                     size * 2);
             BattleEffectKernels_IntegrateVector3(step, 60, 0);
@@ -584,7 +584,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
             BattleEffectKernels_IntegrateVector3(step, 60, 0);
             size >>= 3;
             size++;
-            draw[1](canvas, sheet + gData_08197410[size - 1],
+            draw[1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
                     position.x - size / 2, position.y - size, size, size * 2);
             step->variant--;
           }

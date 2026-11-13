@@ -73,7 +73,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
     x = ((Random16() & 15) + 72) << 16;
     base->x = x;
     base->y = 0;
-    base->z = Data_08197a23[effect->variant][i] << 16;
+    base->z = gVolcano_Depths[effect->variant][i] << 16;
     if (object->x < 0)
       base->x = -x;
   }
@@ -97,16 +97,16 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
     Transform_SetLookAt(camera->eye, camera->pos);
 
     if (frame < 64) {
-      for (pillar = 0; pillar != Data_08197a20[effect->variant]; pillar++) {
+      for (pillar = 0; pillar != gVolcano_Counts[effect->variant]; pillar++) {
         EffectPosition_ProjectPoint((s32 *)&work->particles[pillar], &screen);
         screen.x /= 2;
         screen.y -= 8;
-        if (frame == Data_08197a2f[pillar])
+        if (frame == gVolcano_StartFrames[pillar])
           Sound_PlayFar(145);
 
         // Four frames after it starts the pillar burns: its flames scroll
         // up through two copies, and its base flickers between two cels.
-        if (frame >= Data_08197a2f[pillar] + 4) {
+        if (frame >= gVolcano_StartFrames[pillar] + 4) {
           s32 scroll = (frame * 16 + pillar * 25) % 104;
 
           draw[pillar & 1](canvas, work->sheet, screen.x - 17,
@@ -128,8 +128,8 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
 
         // Sparks: 200 as the pillar starts, then four a frame from its
         // sixteenth frame on.
-        if (frame == Data_08197a2f[pillar] ||
-            frame >= Data_08197a2f[pillar] + 16) {
+        if (frame == gVolcano_StartFrames[pillar] ||
+            frame >= gVolcano_StartFrames[pillar] + 16) {
           s32 spawned = 0;
 
           for (i = 0; i != SPARK_MAX; i++) {
@@ -146,7 +146,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
               spark->z = (Trig_Sin(angle) * speed) >> 15;
               spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 15;
               spawned++;
-              if (frame == Data_08197a2f[pillar]) {
+              if (frame == gVolcano_StartFrames[pillar]) {
                 spark->variant = (Random16() & 7) + 48;
                 if (spawned == 200)
                   break;
@@ -160,7 +160,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
         }
 
         // The pillar strikes every target as it starts.
-        if (frame == Data_08197a2f[pillar]) {
+        if (frame == gVolcano_StartFrames[pillar]) {
           work->shakeFrames = 2;
           for (i = 0; i != effect->count; i++) {
             BattleEffect_TintBattler(effect->actors[i], 10, 5, i, 8);
@@ -195,8 +195,8 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
 
           if (size <= 0)
             size = 1;
-          draw[i & 1](canvas, sheet + gData_08197410[size - 1], px - size / 2,
-                      py - size, size, size * 2);
+          draw[i & 1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+                      px - size / 2, py - size, size, size * 2);
         }
       }
     }

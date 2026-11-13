@@ -34,7 +34,7 @@ extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_BlueCrescentSheet;
 extern char ResourceId_Data134;
 extern char ResourceId_OrangePaletteB;
-extern u16 gData_08197410[];
+extern u16 gBattleEffect_MoteCells[];
 
 #define HI(v) (((s16 *)&(v))[1])
 #define STAR_MINE_FRAMES 144
@@ -231,7 +231,7 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
       if (particle->variant >= 0) {
         s32 size = (particle->variant >> 3) + 1;
 
-        blitters[0](canvas, sprites + gData_08197410[size - 1],
+        blitters[0](canvas, sprites + gBattleEffect_MoteCells[size - 1],
                     HI(particle->x) - size / 2, HI(particle->y) - size, size,
                     size * 2);
         BattleEffectKernels_IntegrateVector2(particle, 60, 0x1000);
@@ -735,7 +735,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
         if (size <= 0) {
           size = 1;
         }
-        blit[0](canvas, sprites + gData_08197410[size - 1],
+        blit[0](canvas, sprites + gBattleEffect_MoteCells[size - 1],
                 HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(spark, 60, gravity);
         spark->variant--;

@@ -524,7 +524,7 @@ extern char ResourceId_Data134;
 extern char ResourceId_Data0D8;
 
 extern u8 gData_02014000[];
-extern u16 gData_08197410[];      // gBattleEffect_MoteCells
+extern u16 gBattleEffect_MoteCells[];
 extern const s8 Data_08198bea[];  // the drops' bounce speeds
 extern const u8 Data_08199244[];  // the glow's and the splashes' mesh
 extern const u8 gData_08199210[]; // its four corners
@@ -679,7 +679,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
         if (frame > i * 8 && drop->variant == 0) {
           s32 dropSize = drop->z;
 
-          draw[0](canvas, sprites + gData_08197410[dropSize - 1],
+          draw[0](canvas, sprites + gBattleEffect_MoteCells[dropSize - 1],
                   HI(drop->x) - dropSize / 2, HI(drop->y) - dropSize, dropSize,
                   dropSize * 2);
           BattleEffectKernels_IntegrateVector2(drop, 64, 0x8000);

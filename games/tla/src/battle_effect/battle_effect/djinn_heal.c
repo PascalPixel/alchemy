@@ -295,7 +295,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
       for (j = 0; j != 10; j++) {
         size = 4;
         for (i = 0; i != size * size * 2; i++) {
-          s32 offset = gData_08197410[size - 1] + i + 0x700;
+          s32 offset = gBattleEffect_MoteCells[size - 1] + i + 0x700;
           s32 value = ((u8 *)work)[offset];
 
           if (value != 0) {

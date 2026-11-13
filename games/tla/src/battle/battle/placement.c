@@ -51,7 +51,7 @@ void BattleObject_Reset(struct BattleObj *actor, s32 keep) {
   object->unk59 = 3;
   object->motionFlags = 2;
   actor->visible = 1;
-  Actor_StartScriptFar((struct Actor *)object, Data_0812cacc);
+  Actor_StartScriptFar((struct Actor *)object, gBattleObject_EmptyScript);
 }
 
 void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
@@ -437,7 +437,7 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
     object->scaleX = 0x10000;
     object->scaleY = 0x10000;
   }
-  Actor_StartScriptFar((struct Actor *)object, Data_0812cacc);
+  Actor_StartScriptFar((struct Actor *)object, gBattleObject_EmptyScript);
 }
 
 void BattlePlacement_GetStepPair(s32 index, s32 *x, s32 *y) {
@@ -585,8 +585,7 @@ void BattleUnit_RefreshPlacement(void) {
     s32 id = work->enemyIds[i];
 
     if (id != 0xfe)
-      BattleObject_Make(BattleObject_Get(id), id,
-                        x[stand], z[stand]);
+      BattleObject_Make(BattleObject_Get(id), id, x[stand], z[stand]);
   }
 }
 

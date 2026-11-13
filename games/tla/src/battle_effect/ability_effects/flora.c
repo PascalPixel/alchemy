@@ -126,7 +126,7 @@ extern struct ResourceTableEntry
     gResourceTableEntries__f179f18[] __asm__("gResourceTableEntries");
 extern u8 gData_02014000[];
 extern const struct WordPair Data_08196ec8;
-extern u16 gData_08197410[];
+extern u16 gBattleEffect_MoteCells[];
 extern const u8 Data_08199421[];
 extern const u16 Data_08199426[];
 extern const u16 Data_0819942e[];
@@ -308,7 +308,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   size = 3;
   for (i = 0; i != 10; i++) {
     for (j = 0; j != 18; j++) {
-      s32 v = source[gData_08197410[size - 1] + j];
+      s32 v = source[gBattleEffect_MoteCells[size - 1] + j];
 
       if (v > 0) {
         v = 63 - i * 7;
@@ -750,8 +750,8 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         out.x >>= 1;
         x = out.x + 48;
         y = out.y + 92;
-        draw[1](canvas, sprites + gData_08197410[size - 1], x - size / 2,
-                y - size, size, size * 2);
+        draw[1](canvas, sprites + gBattleEffect_MoteCells[size - 1],
+                x - size / 2, y - size, size, size * 2);
       }
       HeapSlot_Release(SLOT_ALT);
     }

@@ -101,7 +101,7 @@ extern char ResourceId_ParticleSpritesD;
 extern char ResourceId_YellowOrbSheet;
 // The strike's six cels: ☀️'s gBeam_Cells and
 // gTargetStrike_Reach, _StrikeWidths and _StrikeHeights.
-extern u16 Data_0819886c[];
+extern u16 gBeam_Cells[];
 extern u8 Data_08198878[];
 extern u8 Data_08198860[];
 extern u8 Data_08198866[];
@@ -328,12 +328,12 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
         s32 cel = frame / 3;
 
         if (effect->side == 0)
-          draw[0](canvas, work->sheet + Data_0819886c[cel],
+          draw[0](canvas, work->sheet + gBeam_Cells[cel],
                   pos.x + Data_08198878[cel] + shake - 58,
                   pos.y - Data_08198866[cel] / 2, Data_08198860[cel],
                   Data_08198866[cel]);
         else
-          draw[0](canvas, work->sheet + Data_0819886c[cel],
+          draw[0](canvas, work->sheet + gBeam_Cells[cel],
                   pos.x - Data_08198878[cel] + shake - Data_08198860[cel] + 58,
                   pos.y - Data_08198866[cel] / 2, Data_08198860[cel],
                   Data_08198866[cel]);

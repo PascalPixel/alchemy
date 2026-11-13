@@ -15,8 +15,8 @@
 
 #define PHASE_RESULTS 133
 
-#define SHARD_COUNT(variant) Data_08197521[(variant) * 2]
-#define FRAME_COUNT(variant) Data_08197521[(variant) * 2 + 1]
+#define SHARD_COUNT(variant) gFalling_IceCounts[(variant) * 2]
+#define FRAME_COUNT(variant) gFalling_IceCounts[(variant) * 2 + 1]
 
 extern u8 gMapCellBuffer[];
 
@@ -193,12 +193,12 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
       if (puff->variant != -1) {
         if (puff->variant <= 17) {
           s32 image = puff->variant / 2;
-          s32 x = puff->x / 8 - (Data_0819745e[image] >> 1);
-          s32 y = puff->y / 8 - (Data_0819745e[image] >> 1);
+          s32 x = puff->x / 8 - (gBattleEffect_PuffSizes[image] >> 1);
+          s32 y = puff->y / 8 - (gBattleEffect_PuffSizes[image] >> 1);
 
           ((DrawRectangle)draw[effect->variant == 2 ? 1 : 0])(
-              canvas, graphics + Data_0819744c[image], x, y,
-              Data_0819745e[image], Data_0819745e[image]);
+              canvas, graphics + gBattleEffect_PuffCells[image], x, y,
+              gBattleEffect_PuffSizes[image], gBattleEffect_PuffSizes[image]);
         }
         if (puff->variant > -1)
           puff->variant--;
@@ -223,10 +223,10 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
 
 #define gDropSplashes ((struct DropSplashBuffer *)Ram_MapCellBuffer)
 
-#define DROP_COUNT(variant) Data_08197527[(variant) * 4]
-#define SPLASH_COUNT(variant) Data_08197527[(variant) * 4 + 1]
-#define DROP_SPACING(variant) Data_08197527[(variant) * 4 + 2]
-#define FRAME_COUNT(variant) Data_08197527[(variant) * 4 + 3]
+#define DROP_COUNT(variant) gFalling_Counts[(variant) * 4]
+#define SPLASH_COUNT(variant) gFalling_Counts[(variant) * 4 + 1]
+#define DROP_SPACING(variant) gFalling_Counts[(variant) * 4 + 2]
+#define FRAME_COUNT(variant) gFalling_Counts[(variant) * 4 + 3]
 
 // Douse, Drench and Deluge (effect kind 9, variants 0 to 2).
 

@@ -72,7 +72,7 @@ extern const u8 Data_081991e0[];
 extern const s32 Data_081994b8[];
 
 // The offsets of the spark cels: cel n is n pixels wide and 2n tall.
-extern u16 gData_08197410[];
+extern u16 gBattleEffect_MoteCells[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -298,7 +298,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
           EffectPosition_ProjectPoint(&spark->x, &screen);
           screen.x >>= 1;
           height = size * 2;
-          draw[i & 1](canvas, sparkCels + gData_08197410[size - 1],
+          draw[i & 1](canvas, sparkCels + gBattleEffect_MoteCells[size - 1],
                       screen.x - size / 2, screen.y - size, size, height);
           BattleEffectKernels_IntegrateVector3(spark, 60, -0x200);
           spark->variant--;

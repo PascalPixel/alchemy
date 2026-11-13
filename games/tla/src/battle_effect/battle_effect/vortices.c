@@ -84,19 +84,19 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   Sound_PlayFar(164);
 
-  for (frame = 0; frame != gData_081979a8[effect->variant * 2 + 1]; frame++) {
+  for (frame = 0; frame != gVortices_Counts[effect->variant * 2 + 1]; frame++) {
     // The camera turns between frames 17 and 63.
     camera = Ram_HeapSlots->cameraWork;
     if (frame >= 17 && frame < 64)
       work->cameraDelta = 0x180;
     else
       work->cameraDelta = 0;
-    if (frame == gData_081979a8[effect->variant * 2 + 1] - 16)
+    if (frame == gVortices_Counts[effect->variant * 2 + 1] - 16)
       BattlePlayback_StartFar(133);
     Render_ResetTransformState();
     Transform_SetLookAt(camera->eye, camera->pos);
 
-    for (i = 0; i != gData_081979a8[effect->variant * 2]; i++) {
+    for (i = 0; i != gVortices_Counts[effect->variant * 2]; i++) {
       point = &work->particles[i];
 
       // A mote leaves the caster two frames after the one before it.
@@ -236,9 +236,9 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
     if (frame > 63)
       REG_BLDALPHA = (0x4f - frame) | 0x1000;
 
-    for (i = 0; i != gData_081979ae[effect->variant * 3]; i++) {
+    for (i = 0; i != gVortices_Shapes[effect->variant * 3]; i++) {
       // Each funnel circles its own phase, a quarter turn from the next.
-      x = ((gData_081979ae[effect->variant * 3 + 1] *
+      x = ((gVortices_Shapes[effect->variant * 3 + 1] *
                 Trig_Sin((frame << 11) + i * 0x4000) +
             wave) >>
            16) +
@@ -257,8 +257,9 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
         glint = &work->particles[i * 4 + j];
         if (glint->variant >= 0) {
           cell = glint->variant / 2 + (j / 2) * 3;
-          draw[j & 1](canvas, work->sheet + gData_08197486[cell], glint->x + x,
-                      glint->y + y, gData_08197492[cell], gData_08197498[cell]);
+          draw[j & 1](canvas, work->sheet + gBattleEffect_GlintCells[cell],
+                      glint->x + x, glint->y + y, gData_08197492[cell],
+                      gData_08197498[cell]);
         }
         glint->variant++;
         if (glint->variant == GLINT_CELS) {
@@ -281,8 +282,8 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
     }
 
     work->shakeFrames = 1;
-    BattleCamera_Shake(gData_081979ae[effect->variant * 3 + 2],
-                       gData_081979ae[effect->variant * 3 + 2] * 2);
+    BattleCamera_Shake(gVortices_Shapes[effect->variant * 3 + 2],
+                       gVortices_Shapes[effect->variant * 3 + 2] * 2);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

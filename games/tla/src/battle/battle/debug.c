@@ -168,7 +168,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
     nextDjinn[i] = 0;
 
   for (row = 0;; row++) {
-    owner = gData_0812a174[row].owner;
+    owner = gDebug_ParameterSets[row].owner;
     if ((u32)row > 440) {
       done = 1;
       break;
@@ -187,7 +187,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
       continue;
 
     Party_AddMemberFar(owner);
-    Unit_LevelUpToFar(owner, gData_0812a174[row].level);
+    Unit_LevelUpToFar(owner, gDebug_ParameterSets[row].level);
     state = Unit_Get(owner);
     for (i = 0; i < 4; i++) {
       ((struct OwnerDjinnState *)state)->counts.banks.owned[i] = 0;
@@ -200,11 +200,11 @@ s32 DebugParty_LoadPreset(s32 preset) {
       // it.
       *(u16 *)&((struct OwnerActionState *)state)->actionSlots[i] = 0;
     for (i = 0; i < 2; i++) {
-      if (gData_0812a174[row].actions[i] != 0)
-        Unit_LearnPsynergyFar(owner, gData_0812a174[row].actions[i]);
+      if (gDebug_ParameterSets[row].actions[i] != 0)
+        Unit_LearnPsynergyFar(owner, gDebug_ParameterSets[row].actions[i]);
     }
     for (i = 0; i < 4; i++) {
-      for (j = 0; j < gData_0812a174[row].djinnCounts[i]; j++) {
+      for (j = 0; j < gDebug_ParameterSets[row].djinnCounts[i]; j++) {
         Djinn_GiveFar(owner, i, (nextDjinn[i] + 7) % 18);
         Djinn_SetFar(owner, i, (nextDjinn[i] + 7) % 18);
         nextDjinn[i]++;
@@ -213,9 +213,10 @@ s32 DebugParty_LoadPreset(s32 preset) {
     for (i = 0; i < 16; i++)
       Inventory_RemoveFar(owner, 0);
     for (i = 0; i < 6; i++) {
-      if (gData_0812a174[row].items[i] != 0)
+      if (gDebug_ParameterSets[row].items[i] != 0)
         Inventory_EquipFar(
-            owner, Inventory_AddItemFar(owner, gData_0812a174[row].items[i]));
+            owner,
+            Inventory_AddItemFar(owner, gDebug_ParameterSets[row].items[i]));
     }
     Unit_UpdateClassFar(owner);
   }

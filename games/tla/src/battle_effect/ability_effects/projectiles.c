@@ -31,7 +31,7 @@ extern char ResourceId_Data134; // the spark sprites
 // The Broken Seal's gBattleEffect_MoteCells, each spark size's cel; then
 // gBattleEffect_GlintCell* (offsets, widths, heights), gPrism_ShardOffsets and
 // the shards' widths and heights.
-extern u16 gData_08197410[];
+extern u16 gBattleEffect_MoteCells[];
 
 // Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
 // flags, mode), whose result it returns.
@@ -288,7 +288,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
           if (position.depth > 634)
             position.depth = 634;
           size = 8 - (position.depth - 250) / 64;
-          draw[1](canvas, sheet + gData_08197410[size - 1],
+          draw[1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
                   position.x - size / 2, position.y - size, size, size * 2);
           BattleEffectKernels_IntegrateVector3(spark, 60, 0);
           if (frame >= i / 8 + 24) {
@@ -346,7 +346,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
         if (mote->variant >= 0) {
           s32 size = (mote->variant >> 3) + 2;
 
-          draw[0](canvas, sheet + gData_08197410[size - 1],
+          draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
                   (s16)(mote->x >> 16) - size / 2, (s16)(mote->y >> 16) - size,
                   size, size * 2);
           BattleEffectKernels_IntegrateVector2(mote, 60, 0);
@@ -500,22 +500,22 @@ extern char ResourceId_BlueBeamSheet;
 extern char ResourceId_IceChipSheet;
 
 // The Broken Seal's gVolley_* tables, in effect_table.s.
-extern u8 Data_08198475[];    // _CometHeights, by kind
-extern u8 Data_08198478[][5]; // _Modes: five bytes for each mode
-extern u8 Data_081984d7[];    // _FlashWidths
-extern u8 Data_081984de[];    // _FlashHeights
-extern u8 Data_081984e5[];    // _FlashSteps
-extern u8 Data_081984ec[];    // _FlashRises
-extern u16 Data_081984f4[];   // _FlashOffsets
-extern u16 Data_08198502[];   // _PelletOffsets
-extern u8 Data_0819850a[];    // the glints' palettes
+extern u8 gProjectileVolley_CometHeights[];  // _CometHeights, by kind
+extern u8 Data_08198478[][5];                // _Modes: five bytes for each mode
+extern u8 gProjectileVolley_FlashWidths[];   // _FlashWidths
+extern u8 gProjectileVolley_FlashHeights[];  // _FlashHeights
+extern u8 gProjectileVolley_FlashSteps[];    // _FlashSteps
+extern u8 Data_081984ec[];                   // _FlashRises
+extern u16 gProjectileVolley_FlashOffsets[]; // _FlashOffsets
+extern u16 Data_08198502[];                  // _PelletOffsets
+extern u8 Data_0819850a[];                   // the glints' palettes
 // The glint's six cels: ☀️'s gBattleEffect_GlintCells, _GlintCellWidths
 // and _GlintCellHeights.
-extern u16 gData_08197486[];
+extern u16 gBattleEffect_GlintCells[];
 extern u8 gData_08197492[];
 extern u8 gData_08197498[];
 extern s32 gData_08197834[];
-extern u8 gData_0819781a[];
+extern u8 gPrism_ShardWidths[];
 extern u8 gData_08197826[];
 
 // The five bytes of a mode in Data_08198478.
@@ -1034,8 +1034,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
             else
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP);
             DRAW_ALTERNATE(canvas, work->sheet + 0x1000, pos->x - 16,
-                           pos->y - Data_08198475[kind], 32,
-                           Data_08198475[kind]);
+                           pos->y - gProjectileVolley_CometHeights[kind], 32,
+                           gProjectileVolley_CometHeights[kind]);
             HeapSlot_Release(188);
             if (effect->side == 1)
               BattleEffect_LoadBlitter(188,
@@ -1044,7 +1044,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
               BattleEffect_LoadBlitter(188,
                                        BLITTER_MAX | CLIP | COMPOSITE_FLIP_Y);
             DRAW_ALTERNATE(canvas, work->sheet + 0x1000, pos->x - 16, pos->y,
-                           32, Data_08198475[kind]);
+                           32, gProjectileVolley_CometHeights[kind]);
             RELEASE_DRAW_BLITTER();
           } else if (mode == 1) {
             if (ABS(shot->x) <= ABS(target->x))
@@ -1073,7 +1073,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
             s32 left;
             s32 top;
 
-            width = gData_0819781a[cel];
+            width = gPrism_ShardWidths[cel];
             left = pos->x - (width >> 1);
             height = gData_08197826[cel];
             top = pos->y - (height >> 1);
@@ -1098,10 +1098,12 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
 
             if (!(i & 1)) {
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP);
-              DRAW_ALTERNATE(canvas, work->sheet + Data_081984f4[step],
-                             flash->x - Data_081984d7[step],
+              DRAW_ALTERNATE(canvas,
+                             work->sheet + gProjectileVolley_FlashOffsets[step],
+                             flash->x - gProjectileVolley_FlashWidths[step],
                              flash->y - Data_081984ec[step],
-                             Data_081984d7[step], Data_081984de[step]);
+                             gProjectileVolley_FlashWidths[step],
+                             gProjectileVolley_FlashHeights[step]);
               /* FAKEMATCH(dead): an empty once-only block before the release;
                * as no block, 68 of 2278 instructions differ in tla-en. */
               do {
@@ -1109,15 +1111,18 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
               HeapSlot_Release(188);
               BattleEffect_LoadBlitter(188,
                                        BLITTER_MAX | CLIP | COMPOSITE_FLIP);
-              DRAW_ALTERNATE(
-                  canvas, work->sheet + Data_081984f4[step], flash->x,
-                  flash->y + Data_081984e5[step] - Data_081984ec[step],
-                  Data_081984d7[step], Data_081984de[step]);
+              DRAW_ALTERNATE(canvas,
+                             work->sheet + gProjectileVolley_FlashOffsets[step],
+                             flash->x,
+                             flash->y + gProjectileVolley_FlashSteps[step] -
+                                 Data_081984ec[step],
+                             gProjectileVolley_FlashWidths[step],
+                             gProjectileVolley_FlashHeights[step]);
               RELEASE_DRAW_BLITTER();
             } else {
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP);
               {
-                s32 offset = Data_081984f4[step];
+                s32 offset = gProjectileVolley_FlashOffsets[step];
                 u8 *picture;
                 s32 rise;
                 s32 left;
@@ -1131,19 +1136,22 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                   left = flash->x;
                   rise = Data_081984ec[step];
                 } while (0);
-                width = Data_081984d7[step];
+                width = gProjectileVolley_FlashWidths[step];
                 DRAW_ALTERNATE(canvas, picture, left - rise, flash->y - width,
-                               Data_081984de[step], width);
+                               gProjectileVolley_FlashHeights[step], width);
               }
               do {
               } while (0);
               HeapSlot_Release(188);
               BattleEffect_LoadBlitter(188,
                                        BLITTER_MAX | CLIP | COMPOSITE_FLIP);
-              DRAW_ALTERNATE(
-                  canvas, work->sheet + Data_081984f4[step] + 0x128a,
-                  flash->x + Data_081984e5[step] - Data_081984ec[step],
-                  flash->y, Data_081984de[step], Data_081984d7[step]);
+              DRAW_ALTERNATE(canvas,
+                             work->sheet +
+                                 gProjectileVolley_FlashOffsets[step] + 0x128a,
+                             flash->x + gProjectileVolley_FlashSteps[step] -
+                                 Data_081984ec[step],
+                             flash->y, gProjectileVolley_FlashHeights[step],
+                             gProjectileVolley_FlashWidths[step]);
               RELEASE_DRAW_BLITTER();
             }
             flash->z++;
@@ -1160,8 +1168,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
         if (p->variant > 0) {
           s32 size = (p->variant >> 3) + 1;
 
-          draw[0](canvas, sheet + gData_08197410[size - 1], HI(p->x) - size / 2,
-                  HI(p->y) - size, size, size * 2);
+          draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+                  HI(p->x) - size / 2, HI(p->y) - size, size, size * 2);
           if (mode == 13)
             BattleEffectKernels_IntegrateVector2(p, 60, 0x4000);
           else
@@ -1179,8 +1187,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
         if (p->variant > 0) {
           s32 size = (p->variant >> 4) + 1;
 
-          draw[0](canvas, sheet + gData_08197410[size - 1], HI(p->x) - size / 2,
-                  HI(p->y) - size, size, size * 2);
+          draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+                  HI(p->x) - size / 2, HI(p->y) - size, size, size * 2);
           BattleEffectKernels_IntegrateVector2(p, 60, -0x4000);
           p->variant--;
         }
@@ -1220,9 +1228,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
               // The empty once-only loop keeps loop.c from hoisting the glint
               // size tables (without it, 1901 of 2278 differ, 2026-11-08).
             } while (0);
-            DRAW_ALTERNATE(canvas, work->sheet + 0x22 + gData_08197486[glint],
-                           glintX, glintY, gData_08197492[glint],
-                           gData_08197498[glint]);
+            DRAW_ALTERNATE(
+                canvas, work->sheet + 0x22 + gBattleEffect_GlintCells[glint],
+                glintX, glintY, gData_08197492[glint], gData_08197498[glint]);
             HeapSlot_Release(188);
             p->variant++;
           }

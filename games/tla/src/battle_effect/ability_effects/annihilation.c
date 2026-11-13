@@ -159,7 +159,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
           screen.x >>= 1;
           screen.y = screen.y + origin.y - 112;
           size = (life >> 3) + 2;
-          draw[(i / 2) & 1](canvas, cells + gData_08197410[size - 1],
+          draw[(i / 2) & 1](canvas, cells + gBattleEffect_MoteCells[size - 1],
                             screen.x - size / 2, screen.y - size, size,
                             size * 2);
           BattleEffectKernels_IntegrateVector3(shard, 60, -0x400);

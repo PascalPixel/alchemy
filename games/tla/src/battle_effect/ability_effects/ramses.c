@@ -41,10 +41,10 @@ struct FxScale {
 extern char ResourceId_DesertBackdrop;
 
 extern struct FxScale gData_08196e6c; // one to one
-extern u8 gData_08198a64[];           // ☀️ gRamses_ObjectColumns
-extern u8 gData_08198a6d[];           // ☀️ gRamses_ObjectRows
-extern u16 gData_08198a76[];          // ☀️ gEruption_PuffCells
-extern u16 gData_08198a84[];          // ☀️ gCybele_EmberSizes
+extern u8 gRamses_ObjectColumns[];
+extern u8 gRamses_ObjectRows[];
+extern u16 gData_08198a76[]; // ☀️ gEruption_PuffCells
+extern u16 gData_08198a84[]; // ☀️ gCybele_EmberSizes
 
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
 
@@ -170,8 +170,8 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
     position.groundHeight = 0;
     position.height = 0;
     for (i = 0; i != 7; i++) {
-      position.x = (gData_08198a64[i] << 16) + base.x - 0x200000;
-      position.y = (gData_08198a6d[i] << 16) + base.y - 0x200000;
+      position.x = (gRamses_ObjectColumns[i] << 16) + base.x - 0x200000;
+      position.y = (gRamses_ObjectRows[i] << 16) + base.y - 0x200000;
       Render_ApplyProjectedPlacementFar(work->objects[i], &position, &scale.x,
                                         0);
     }
@@ -306,7 +306,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
       if (spark->variant >= 0) {
         s32 size = (spark->variant >> 3) + 1;
 
-        draw[i & 1](canvas, cells + gData_08197410[size - 1],
+        draw[i & 1](canvas, cells + gBattleEffect_MoteCells[size - 1],
                     HI(spark->x) - size / 2, HI(spark->y) - size, size,
                     size * 2);
         BattleEffectKernels_IntegrateVector2(spark, 62, 0x1000);

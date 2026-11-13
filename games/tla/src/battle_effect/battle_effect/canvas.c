@@ -432,7 +432,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
           }
           Func_08196404(SLOT_ALT, 7, 7, Data_08197744[Random16() & 3] | 3, 1);
           ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
-              canvas, work->sheet + 0x2000 + gData_08197486[t], x, y,
+              canvas, work->sheet + 0x2000 + gBattleEffect_GlintCells[t], x, y,
               gData_08197492[t], gData_08197498[t]);
           HeapSlot_Release(SLOT_ALT);
         }
@@ -639,7 +639,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         q->variant = (Random16() & 15) + 16;
       }
       {
-        const u16 *sizeOffsets = gData_08197410;
+        const u16 *sizeOffsets = gBattleEffect_MoteCells;
         for (i = 0; i != 512; i++) {
           p = (struct EffectStep *)(Ram_MapCellBuffer + 0x4000) + i;
           if (p->variant >= 0) {

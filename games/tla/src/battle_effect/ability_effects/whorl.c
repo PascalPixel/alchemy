@@ -103,7 +103,7 @@ extern char ResourceId_Data134, ResourceId_JupiterDjinnSmallSheet;
 extern char ResourceId_MarsDjinnSheet, ResourceId_WaterSpraySheet;
 
 extern u8 gMapCellBuffer[];
-extern u16 gData_08197410[]; // gBattleEffect_MoteCells
+extern u16 gBattleEffect_MoteCells[];
 extern const u8 gData_08199340[];
 extern const u8 gData_08199210[];
 
@@ -360,7 +360,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
                 BattleEffectKernels_IntegrateVector3(q, 62, 1024);
               }
               EffectPosition_ProjectPoint(q, &proj);
-              blit[0](canvas, sprites + gData_08197410[n - 1],
+              blit[0](canvas, sprites + gBattleEffect_MoteCells[n - 1],
                       proj.x / 2 - n / 2, proj.y - n, n, n * 2);
             }
           }

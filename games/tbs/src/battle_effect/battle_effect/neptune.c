@@ -64,7 +64,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
-  *(u16 *)&BG_PLTT[1] = 0;
+  BG_PLTT_COLOR(0, 1) = 0;
   Task_Add(BattleEffect_ResetBg2Pa, TASK_PASS_VBLANK);
   Irq_SetHandler(IRQ_VCOUNT, 0, BattleEffect_SetBg2AffineScaleHalf);
   work->transferMode = CANVAS_COPY;

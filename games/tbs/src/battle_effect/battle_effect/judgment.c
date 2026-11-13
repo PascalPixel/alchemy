@@ -63,8 +63,8 @@ struct JudgmentWork {
    work->sheet[(top) * JUDGMENT_WAVE_SIZE + (left)] = 20)
 
 /// The battle wipes away to a violet sky where Judgment flies forward while
-/// motes gather into her; she bursts in a flash, and the blast falls on the
-/// land below and spreads in rings of light.
+/// motes gather into it; it bursts in a flash, and the blast falls on the land
+/// below and spreads in rings of light.
 ///
 /// Abilities: Judgment.
 void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
@@ -114,7 +114,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
   BattleEffect_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
-  *(u16 *)&BG_PLTT[1] = 0;
+  BG_PLTT_COLOR(0, 1) = 0;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
   draw[0] = (DrawRectangle)HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS,

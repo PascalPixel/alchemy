@@ -60,7 +60,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
-  *(u16 *)&BG_PLTT[1] = 0; // background palette 0, colour 1
+  BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;

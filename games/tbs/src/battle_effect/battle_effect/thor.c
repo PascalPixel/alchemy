@@ -99,7 +99,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
 
   BattleEffect_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
-  *(u16 *)&BG_PLTT[1] = 0; // background palette 0, colour 1
+  BG_PLTT_COLOR(0, 1) = 0;
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   work->scrollTimer = 0;

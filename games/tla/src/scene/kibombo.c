@@ -33,12 +33,7 @@ s32 Func_02000048(struct KibomboObject *object) {
   return 0;
 }
 
-/* VIEW(s0038): routine gData_0200635c as this part declared it; the joined file
- * has another; tried as the definition's extern s16 gData_0200635c[], it does
- * not compile in tla-ja: games/tla/src/scene/kibombo.c:126: `gData_0200635c'
- * undeclared (first use in this function). */
-extern u8 gData_0200635c__s0038[] __asm__("gData_0200635c");
-#define gData_0200635c gData_0200635c__s0038
+extern s16 gData_0200635c[];
 
 struct KibomboWork90 {
   u8 unk00[0x18];
@@ -163,90 +158,18 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 // Scene code of overlay 0x670, in ROM order, from events_a's offset up to the
 // next object the overlay links.
 
-/* VIEW(events_a): routine gData_02006510 as this part declared it; the joined
- * file has another; tried as the definition's extern struct ActorPlacement
- * gData_02006510[], it does not compile in tla-ja:
- * games/tla/src/scene/kibombo.c:177: `gData_02006510' undeclared (first use in
- * this function). */
-extern u8 gData_02006510__events_a[] __asm__("gData_02006510");
-#define gData_02006510 gData_02006510__events_a
-/* VIEW(events_a): routine gData_020066d8 as this part declared it; the joined
- * file has another; tried as the definition's extern struct ActorPlacement
- * gData_020066d8[], it does not compile in tla-ja:
- * games/tla/src/scene/kibombo.c:179: `gData_020066d8' undeclared (first use in
- * this function). */
-extern u8 gData_020066d8__events_a[] __asm__("gData_020066d8");
-#define gData_020066d8 gData_020066d8__events_a
-/* VIEW(events_a): routine gData_020069a8 as this part declared it; the joined
- * file has another; tried as the definition's extern struct ActorPlacement
- * gData_020069a8[], it does not compile in tla-ja:
- * games/tla/src/scene/kibombo.c:181: `gData_020069a8' undeclared (first use in
- * this function). */
-extern u8 gData_020069a8__events_a[] __asm__("gData_020069a8");
-#define gData_020069a8 gData_020069a8__events_a
-/* VIEW(events_a): routine gData_02006a98 as this part declared it; the joined
- * file has another; tried as the definition's extern struct ActorPlacement
- * gData_02006a98[], it does not compile in tla-ja:
- * games/tla/src/scene/kibombo.c:183: `gData_02006a98' undeclared (first use in
- * this function). */
-extern u8 gData_02006a98__events_a[] __asm__("gData_02006a98");
-#define gData_02006a98 gData_02006a98__events_a
-/* VIEW(events_a): routine gData_02006cd8 as this part declared it; the joined
- * file has another; tried as the definition's extern struct ActorPlacement
- * gData_02006cd8[], it does not compile in tla-ja:
- * games/tla/src/scene/kibombo.c:186: `gData_02006cd8' undeclared (first use in
- * this function). */
-extern u8 gData_02006cd8__events_a[] __asm__("gData_02006cd8");
-#define gData_02006cd8 gData_02006cd8__events_a
-/* VIEW(events_a): routine gData_020064f8 as this part declared it; the joined
- * file has another; tried as the definition's extern struct ActorPlacement
- * gData_020064f8[], it does not compile in tla-ja:
- * games/tla/src/scene/kibombo.c:189: `gData_020064f8' undeclared (first use in
- * this function). */
-extern u8 gData_020064f8__events_a[] __asm__("gData_020064f8");
-#define gData_020064f8 gData_020064f8__events_a
-/* VIEW(events_a): routine gData_02006ef4 as this part declared it; the joined
- * file has another; tried as the definition's extern struct Trigger
- * gData_02006ef4[], it does not compile in tla-ja:
- * games/tla/src/scene/kibombo.c:196: `gData_02006ef4' undeclared (first use in
- * this function). */
-extern u8 gData_02006ef4__events_a[] __asm__("gData_02006ef4");
-#define gData_02006ef4 gData_02006ef4__events_a
-/* VIEW(events_a): routine gData_020070d4 as this part declared it; the joined
- * file has another; tried as the definition's extern struct Trigger
- * gData_020070d4[], it does not compile in tla-ja:
- * games/tla/src/scene/kibombo.c:198: `gData_020070d4' undeclared (first use in
- * this function). */
-extern u8 gData_020070d4__events_a[] __asm__("gData_020070d4");
-#define gData_020070d4 gData_020070d4__events_a
-/* VIEW(events_a): routine gData_02007434 as this part declared it; the joined
- * file has another; tried as the definition's extern struct Trigger
- * gData_02007434[], it does not compile in tla-ja:
- * games/tla/src/scene/kibombo.c:200: `gData_02007434' undeclared (first use in
- * this function). */
-extern u8 gData_02007434__events_a[] __asm__("gData_02007434");
-#define gData_02007434 gData_02007434__events_a
-/* VIEW(events_a): routine gData_020074dc as this part declared it; the joined
- * file has another; tried as the definition's extern struct Trigger
- * gData_020074dc[], it does not compile in tla-ja:
- * games/tla/src/scene/kibombo.c:202: `gData_020074dc' undeclared (first use in
- * this function). */
-extern u8 gData_020074dc__events_a[] __asm__("gData_020074dc");
-#define gData_020074dc gData_020074dc__events_a
-/* VIEW(events_a): routine gData_02007698 as this part declared it; the joined
- * file has another; tried as the definition's extern struct Trigger
- * gData_02007698[], it does not compile in tla-ja:
- * games/tla/src/scene/kibombo.c:204: `gData_02007698' undeclared (first use in
- * this function). */
-extern u8 gData_02007698__events_a[] __asm__("gData_02007698");
-#define gData_02007698 gData_02007698__events_a
-/* VIEW(events_a): routine gData_02006ee8 as this part declared it; the joined
- * file has another; tried as the definition's extern struct Trigger
- * gData_02006ee8[], it does not compile in tla-ja:
- * games/tla/src/scene/kibombo.c:205: `gData_02006ee8' undeclared (first use in
- * this function). */
-extern u8 gData_02006ee8__events_a[] __asm__("gData_02006ee8");
-#define gData_02006ee8 gData_02006ee8__events_a
+extern struct ActorPlacement gData_02006510[];
+extern struct ActorPlacement gData_020066d8[];
+extern struct ActorPlacement gData_020069a8[];
+extern struct ActorPlacement gData_02006a98[];
+extern struct ActorPlacement gData_02006cd8[];
+extern struct ActorPlacement gData_020064f8[];
+extern struct Trigger gData_02006ef4[];
+extern struct Trigger gData_020070d4[];
+extern struct Trigger gData_02007434[];
+extern struct Trigger gData_020074dc[];
+extern struct Trigger gData_02007698[];
+extern struct Trigger gData_02006ee8[];
 
 u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -261,7 +184,7 @@ u8 *Scene_GetPlacements(void) {
     return gData_02006a98;
   if (scene == (s32)&SceneId_Kibombo3) {
     if (GameFlag_Get(0x8ee))
-      gData_02006cd8[22] = 0;
+      gData_02006cd8[0].talkFacing = 0;
     return gData_02006cd8;
   }
   return gData_020064f8;
@@ -945,12 +868,7 @@ extern s32 Task_Add__s1318(TaskFunc func, s32 order) __asm__("Task_Add");
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
 void Party_GivePiersDjinn(void);
-/* VIEW(s1318): routine gData_02005e88 as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_02005e88[], it does
- * not compile in tla-ja: games/tla/src/scene/kibombo.c:876: `gData_02005e88'
- * undeclared (first use in this function). */
-extern const u8 gData_02005e88__s1318[] __asm__("gData_02005e88");
-#define gData_02005e88 gData_02005e88__s1318
+extern u32 gData_02005e88[];
 /* VIEW(s1318): routine gData_02005eec as this part declared it; the joined file
  * has another; tried as the definition's extern LATE_DATA u32 gData_02005eec[],
  * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:874:
@@ -975,15 +893,7 @@ extern const u8 gData_02005f58__s1318[] __asm__("gData_02005f58");
  * undeclared (first use in this function). */
 extern const u8 gData_02005f9c__s1318[] __asm__("gData_02005f9c");
 #define gData_02005f9c gData_02005f9c__s1318
-/* VIEW(s1318): routine gData_02005fe0 as this part declared it; the joined file
- * has another; tried as the definition's extern
- * DEFINE_G_DATA_02002F1C(gData_02005eec, 88, 372)
- * DEFINE_G_DATA_02003534(gData_02005f14, 48, 384, 1)
- * DEFINE_G_DATA_02003534(gData_02005..., it does not compile in tla-ja:
- * games/tla/src/scene/kibombo.c:1155: `gData_02005fe0' undeclared (first use in
- * this function). */
-extern const u8 gData_02005fe0__s1318[] __asm__("gData_02005fe0");
-#define gData_02005fe0 gData_02005fe0__s1318
+extern u32 gData_02005fe0[];
 
 /// A scene in Kibombo: actor 7 speaks, the camera pans, actors 26, 5, 6 and 7
 /// move, turn and speak around the controlled character, two yes-or-no
@@ -1327,15 +1237,7 @@ extern const u8 gData_0200609c__s1318[] __asm__("gData_0200609c");
  * `gData_020060e0' undeclared (first use in this function). */
 extern const u8 gData_020060e0__s1318[] __asm__("gData_020060e0");
 #define gData_020060e0 gData_020060e0__s1318
-/* VIEW(s1318): routine gData_02006108 as this part declared it; the joined file
- * has another; tried as the definition's extern
- * DEFINE_G_DATA_02002F88(gData_02006014, 298, 200, 1)
- * DEFINE_G_DATA_02002F88(gData_02006058, 308, 188, 1)
- * DEFINE_G_DATA_02002F88(gData_..., it does not compile in tla-ja:
- * games/tla/src/scene/kibombo.c:1441: `gData_02006108' undeclared (first use in
- * this function). */
-extern const u8 gData_02006108__s1318[] __asm__("gData_02006108");
-#define gData_02006108 gData_02006108__s1318
+extern u32 gData_02006108[];
 void Func_0200384c(void);
 
 void Func_02002050(void) {
@@ -1758,38 +1660,22 @@ void Func_02002eb0(void) {
 #undef Actor_WaitForMove
 #undef FieldCamera_GetActor
 #undef EVENT_WORK
-#undef gData_0200635c
 #undef Actor_SetPositionAndResetMotion
 #undef Actor_SetSpritePriority
-#undef gData_02006510
-#undef gData_020066d8
-#undef gData_020069a8
-#undef gData_02006a98
-#undef gData_02006cd8
-#undef gData_020064f8
-#undef gData_02006ef4
-#undef gData_020070d4
-#undef gData_02007434
-#undef gData_020074dc
-#undef gData_02007698
-#undef gData_02006ee8
 #undef Task_Add
 #undef Actor_GetById
 #undef Actor_SetMoveTarget
 #undef Import_ActorCreate
 #undef Actor_SetSpritePriority
 #undef Actor_SetPositionAndResetMotion
-#undef gData_02005e88
 #undef gData_02005eec
 #undef gData_02005f14
 #undef gData_02005f58
 #undef gData_02005f9c
-#undef gData_02005fe0
 #undef gData_02006014
 #undef gData_02006058
 #undef gData_0200609c
 #undef gData_020060e0
-#undef gData_02006108
 // @file
 // Scene code of overlay 0x670, in ROM order.
 

@@ -599,34 +599,10 @@ s32 Func_02000b38(u8 *object) {
   return 0;
 }
 
-/* VIEW(first): routine gData_0200558c as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA s32 gData_0200558c[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:604: `gData_0200558c'
- * undeclared (first use in this function). */
-extern u32 gData_0200558c__first[] __asm__("gData_0200558c");
-#define gData_0200558c gData_0200558c__first
-/* VIEW(first): routine gData_020055ec as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA s32 gData_020055ec[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:606: `gData_020055ec'
- * undeclared (first use in this function). */
-extern u32 gData_020055ec__first[] __asm__("gData_020055ec");
-#define gData_020055ec gData_020055ec__first
-/* VIEW(first): routine gData_02005644 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA s32 gData_02005644[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:605: `gData_02005644'
- * undeclared (first use in this function). */
-extern u32 gData_02005644__first[] __asm__("gData_02005644");
-#define gData_02005644 gData_02005644__first
-/* VIEW(first): routine gData_0200569c as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA s32 gData_0200569c[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:607: `gData_0200569c'
- * undeclared (first use in this function). */
-extern u32 gData_0200569c__first[] __asm__("gData_0200569c");
-#define gData_0200569c gData_0200569c__first
+extern u32 gData_0200558c[];
+extern u32 gData_020055ec[];
+extern u32 gData_02005644[];
+extern u32 gData_0200569c[];
 
 /// Places an actor at (x, z), in pixels, facing a direction.
 #define PLACE(id, x, z, facing)                                                \
@@ -671,25 +647,10 @@ void Func_02000c08(void) {
 }
 
 extern u32 gData_02005748[];
-/* VIEW(first): routine gData_0200578c as this part declared it; the joined file
- * has another; tried as the definition's extern
- * DEFINE_G_DATA_020056C4(gData_020056c4, 424, 344)
- * DEFINE_G_DATA_020056C4(gData_02005728, 512, 384) s32 gData_0200578c[], it
- * does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:713: `gData_0200578c'
- * undeclared (first use in this function). */
-extern u32 gData_0200578c__first[] __asm__("gData_0200578c");
-#define gData_0200578c gData_0200578c__first
+extern u32 gData_0200578c[];
 extern u32 gData_02005860[];
 extern u32 gData_02005890[];
-/* VIEW(first): routine gData_02005950 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA
- * DEFINE_G_DATA_020057D0(gData_02005920, 5, 708, 328) LATE_DATA s32
- * gData_02005950[], it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:732: `gData_02005950'
- * undeclared (first use in this function). */
-extern u32 gData_02005950__first[] __asm__("gData_02005950");
-#define gData_02005950 gData_02005950__first
+extern u32 gData_02005950[];
 extern u32 gData_020049dc[];
 
 static __inline__ struct Actor *I_Func_020048cc(s32 actor, s32 emote,
@@ -1825,13 +1786,7 @@ DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-/* VIEW(first): routine gWhirlwindEndScript as this part declared it; the joined
- * file has another; tried as the definition's extern u32 gWhirlwindEndScript[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:1755: `gWhirlwindEndScript'
- * undeclared (first use in this function). */
-extern const s32 gWhirlwindEndScript__first[] __asm__("gWhirlwindEndScript");
-#define gWhirlwindEndScript gWhirlwindEndScript__first
+extern s32 gWhirlwindEndScript[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
@@ -1911,15 +1866,8 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #undef ACTOR_SET_MODE_AND_WAIT
 #undef Whirlwind_SpawnUpper
 #undef Actor_EmitRisingSparks
-#undef gData_0200558c
-#undef gData_020055ec
-#undef gData_02005644
-#undef gData_0200569c
-#undef gData_0200578c
-#undef gData_02005950
 #undef gPaletteCyclePausesInEvents
 #undef gPaletteCycleFrame
-#undef gWhirlwindEndScript
 #undef FieldEffect_Spawn
 // @file
 // Scene code of overlay 0x6a3, in ROM order.
@@ -2270,7 +2218,7 @@ LATE_DATA u32 gData_02005548[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-LATE_DATA s32 gData_0200558c[] = {
+LATE_DATA u32 gData_0200558c[] = {
     SC_ARG(2),
     SC_CALL(Func_02000b38),
     SC_SYNC,
@@ -2284,7 +2232,7 @@ LATE_DATA s32 gData_0200558c[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-LATE_DATA s32 gData_020055ec[] = {
+LATE_DATA u32 gData_020055ec[] = {
     SC_ARG(2),
     SC_CALL(Func_02000b38),
     SC_SYNC,
@@ -2297,7 +2245,7 @@ LATE_DATA s32 gData_020055ec[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-LATE_DATA s32 gData_02005644[] = {
+LATE_DATA u32 gData_02005644[] = {
     SC_CALL(Func_02000b38),
     SC_MOVE_XZ(PIXELS(731), PIXELS(213)),
     SC_ARG(2),
@@ -2310,7 +2258,7 @@ LATE_DATA s32 gData_02005644[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-LATE_DATA s32 gData_0200569c[] = {
+LATE_DATA u32 gData_0200569c[] = {
     SC_ARG(2),
     SC_CALL(Func_02000b38),
     SC_MOVE_XZ(PIXELS(731), PIXELS(232)),
@@ -2335,7 +2283,7 @@ LATE_DATA u32 gData_02005748[] = {
     SC_END,
 };
 
-LATE_DATA s32 gData_0200578c[] = {
+LATE_DATA u32 gData_0200578c[] = {
     SC_ARG(5),
     SC_MOVE_BY(PIXELS(-8), 0, PIXELS(32)),
     SC_SYNC,
@@ -2380,7 +2328,7 @@ LATE_DATA u32 gData_020058d8[] = {
 
 LATE_DATA DEFINE_G_DATA_020057D0(gData_02005920, 5, 708, 328)
 
-LATE_DATA s32 gData_02005950[] = {
+LATE_DATA u32 gData_02005950[] = {
     SC_ARG(5),
     SC_MOVE_BY(PIXELS(-8), 0, 0),
     SC_SYNC,
@@ -2425,7 +2373,7 @@ LATE_DATA u32 gPaletteCyclePausesInEvents[] = {
     1,
 };
 
-LATE_DATA u32 gWhirlwindEndScript[] = {
+LATE_DATA s32 gWhirlwindEndScript[] = {
     39, 5, 0, 12, 38,
 };
 // clang-format on

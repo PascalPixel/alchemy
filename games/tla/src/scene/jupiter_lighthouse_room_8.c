@@ -267,13 +267,7 @@ DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-/* VIEW(first): routine gWhirlwindEndScript as this part declared it; the joined
- * file has another; tried as the definition's extern u32 gWhirlwindEndScript[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_8.c:255: `gWhirlwindEndScript'
- * undeclared (first use in this function). */
-extern s32 gWhirlwindEndScript__first[] __asm__("gWhirlwindEndScript");
-#define gWhirlwindEndScript gWhirlwindEndScript__first
+extern s32 gWhirlwindEndScript[];
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
@@ -468,7 +462,6 @@ DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
 #define PIXELS(value) ((value) << 16)
 #undef gPaletteCyclePausesInEvents
 #undef gPaletteCycleFrame
-#undef gWhirlwindEndScript
 #undef FieldEffect_Spawn
 // @file
 // The first room of Jupiter Lighthouse's left tower: its copy of the effect
@@ -703,7 +696,7 @@ LATE_DATA u32 gPaletteCyclePausesInEvents[] = {
     1,
 };
 
-LATE_DATA u32 gWhirlwindEndScript[] = {
+LATE_DATA s32 gWhirlwindEndScript[] = {
     39, 5, 0, 12, 38,
 };
 // clang-format on

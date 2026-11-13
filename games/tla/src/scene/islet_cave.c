@@ -192,48 +192,12 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(first): routine gData_02001548 as this part declared it; the joined file
- * has another; tried as the definition's extern struct ActorPlacement
- * gData_02001548[], it does not compile in tla-ja:
- * games/tla/src/scene/islet_cave.c:218: `gData_02001548' undeclared (first use
- * in this function). */
-extern const u8 gData_02001548__first[] __asm__("gData_02001548");
-#define gData_02001548 gData_02001548__first
-/* VIEW(first): routine gData_02001668 as this part declared it; the joined file
- * has another; tried as the definition's extern struct ActorPlacement
- * gData_02001668[], it does not compile in tla-ja:
- * games/tla/src/scene/islet_cave.c:215: `gData_02001668' undeclared (first use
- * in this function). */
-extern const u8 gData_02001668__first[] __asm__("gData_02001668");
-#define gData_02001668 gData_02001668__first
-/* VIEW(first): routine gData_02001740 as this part declared it; the joined file
- * has another; tried as the definition's extern struct ActorPlacement
- * gData_02001740[], it does not compile in tla-ja:
- * games/tla/src/scene/islet_cave.c:217: `gData_02001740' undeclared (first use
- * in this function). */
-extern const u8 gData_02001740__first[] __asm__("gData_02001740");
-#define gData_02001740 gData_02001740__first
-/* VIEW(first): routine gData_02001788 as this part declared it; the joined file
- * has another; tried as the definition's extern struct Trigger
- * gData_02001788[], it does not compile in tla-ja:
- * games/tla/src/scene/islet_cave.c:228: `gData_02001788' undeclared (first use
- * in this function). */
-extern const u8 gData_02001788__first[] __asm__("gData_02001788");
-#define gData_02001788 gData_02001788__first
-/* VIEW(first): routine gData_02001914 as this part declared it; the joined file
- * has another; tried as the definition's extern struct Trigger
- * gData_02001914[], it does not compile in tla-ja:
- * games/tla/src/scene/islet_cave.c:225: `gData_02001914' undeclared (first use
- * in this function). */
-extern const u8 gData_02001914__first[] __asm__("gData_02001914");
-#define gData_02001914 gData_02001914__first
-/* VIEW(first): routine gData_020019b0 as this part declared it; the joined file
- * has another; tried as the definition's extern struct Trigger
- * gData_020019b0[], it does not compile in tla-ja:
- * games/tla/src/scene/islet_cave.c:227: `gData_020019b0' undeclared (first use
- * in this function). */
-extern const u8 gData_020019b0__first[] __asm__("gData_020019b0");
-#define gData_020019b0 gData_020019b0__first
+extern struct ActorPlacement gData_02001548[];
+extern struct ActorPlacement gData_02001668[];
+extern struct ActorPlacement gData_02001740[];
+extern struct Trigger gData_02001788[];
+extern struct Trigger gData_02001914[];
+extern struct Trigger gData_020019b0[];
 
 const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -322,13 +286,7 @@ void Func_02000580(s32 scale) {
   } while (i < count);
 }
 
-/* VIEW(first): routine gData_020019ec as this part declared it; the joined file
- * has another; tried as the definition's extern s32 gData_020019ec[], it does
- * not compile in tla-ja: games/tla/src/scene/islet_cave.c:326: `gData_020019ec'
- * undeclared (first use in this function). */
-extern const struct IsletCaveEntry
-    gData_020019ec__first[] __asm__("gData_020019ec");
-#define gData_020019ec gData_020019ec__first
+extern struct MapGridCellAnimation gData_020019ec[];
 
 void Func_020005fc(void) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -354,16 +312,16 @@ loop:
   Sound_Play(158);
   index >>= 1;
   {
-    s32 x = gData_020019ec[index].position[0];
-    /* FAKEMATCH(temporary): position[0] read first and position[1] read
-     * through a pointer from a separate byte offset; as
-     * gData_020019ec[index].position[1] in the call, 4 of 63 instructions
+    s32 x = gData_020019ec[index].x;
+    /* FAKEMATCH(temporary): x read first and y read through a pointer
+     * to x from a separate byte offset; as
+     * gData_020019ec[index].y in the call, 4 of 63 instructions
      * differ in tla-en. */
-    u32 offset = index * sizeof(struct IsletCaveEntry) +
-                 offsetof(struct IsletCaveEntry, position);
+    u32 offset = index * sizeof(struct MapGridCellAnimation) +
+                 offsetof(struct MapGridCellAnimation, x);
     const u16 *position = (const u16 *)((const u8 *)gData_020019ec + offset);
 
-    MapGrid_AnimateCells(gData_020019ec[index].value, x, position[1]);
+    MapGrid_AnimateCells(gData_020019ec[index].steps, x, position[1]);
   }
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
@@ -384,12 +342,7 @@ extern u16 gData_020013b4[];
 #define gData_0200134c gData_0200134c__first
 #define gData_0200135c gData_0200135c__first
 #define gData_02001388 gData_02001388__first
-/* VIEW(first): routine gData_02001454 as this part declared it; the joined file
- * has another; tried as the definition's extern s32 gData_02001454[], it does
- * not compile in tla-ja: games/tla/src/scene/islet_cave.c:381: `gData_02001454'
- * undeclared (first use in this function). */
-extern u8 gData_02001454__first[] __asm__("gData_02001454");
-#define gData_02001454 gData_02001454__first
+extern s32 gData_02001454[];
 
 s32 Scene_Initialize(void) {
   s32 scene, dim;
@@ -777,17 +730,9 @@ void Func_0200115c(void) {
 #undef DEFINE_ISLET_CAVE_ARRIVE_AT
 #undef DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS
 #undef FIELD_AT
-#undef gData_02001548
-#undef gData_02001668
-#undef gData_02001740
-#undef gData_02001788
-#undef gData_02001914
-#undef gData_020019b0
-#undef gData_020019ec
 #undef gData_0200134c
 #undef gData_0200135c
 #undef gData_02001388
-#undef gData_02001454
 
 void Func_02000b4c(void);
 void Func_02000cf0(void);
@@ -961,8 +906,7 @@ s16 gData_020019d4[] = {
 };
 // clang-format on
 
-s32 gData_020019ec[] = {
-    (s32)gData_020019d4, 0x40048, (s32)gData_020019d4, 0x40054,
-    (s32)gData_020019d4, 0x40060, (s32)gData_020019d4, 0x4006b,
-    (s32)gData_020019d4, 0x40076,
+struct MapGridCellAnimation gData_020019ec[] = {
+    {gData_020019d4, 72, 4},  {gData_020019d4, 84, 4},  {gData_020019d4, 96, 4},
+    {gData_020019d4, 107, 4}, {gData_020019d4, 118, 4},
 };

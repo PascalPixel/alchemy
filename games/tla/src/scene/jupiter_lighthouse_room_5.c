@@ -122,14 +122,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-/* VIEW(jupiter_lighthouse_room_5): routine gData_02002fb8 as this part declared
- * it; the joined file has another; tried as the definition's extern
- * DEFINE_G_DATA_02002F94(gData_02002f94, 960, 140) s16 gData_02002fb8[], it
- * does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_5.c:126: `gData_02002fb8'
- * undeclared (first use in this function). */
-extern u8 gData_02002fb8__jupiter_lighthouse_room_5[] __asm__("gData_02002fb8");
-#define gData_02002fb8 gData_02002fb8__jupiter_lighthouse_room_5
+extern s16 gData_02002fb8[];
 
 void Func_02000054(void) { Actor_LiftTargetBlock(gData_02002fb8); }
 
@@ -231,16 +224,7 @@ void Func_02000294(void) {
   Func_02001650(gData_02003274);
 }
 
-/* VIEW(jupiter_lighthouse_room_5): routine gData_02002f70 as this part declared
- * it; the joined file has another; tried as the definition's extern
- * DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
- * DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44) ..., it
- * does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_5.c:236: `gData_02002f70'
- * undeclared (first use in this function). */
-extern const u8
-    gData_02002f70__jupiter_lighthouse_room_5[] __asm__("gData_02002f70");
-#define gData_02002f70 gData_02002f70__jupiter_lighthouse_room_5
+extern u32 gData_02002f70[];
 /* VIEW(jupiter_lighthouse_room_5): routine gData_02002f94 as this part declared
  * it; the joined file has another; tried as the one declaration extern const u8
  * gData_02002f94[], it does not compile in tla-ja:
@@ -685,12 +669,7 @@ DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-/* VIEW(s0cb8): routine gData_020033e0 as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_020033e0[], it does
- * not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:718:
- * `gData_020033e0' undeclared (first use in this function). */
-extern const s32 gData_020033e0__s0cb8[] __asm__("gData_020033e0");
-#define gData_020033e0 gData_020033e0__s0cb8
+extern s32 gData_020033e0[];
 extern s32 gData_02003400;
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
@@ -1073,15 +1052,12 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #include "../field/field_effect/move.c"
 
 #undef EVENT_WORK
-#undef gData_02002fb8
 #undef gData_02003274
 #undef gData_02003278
-#undef gData_02002f70
 #undef gData_02002f94
 #undef gPaletteCyclePausesInEvents
 #undef FieldEffect_Spawn
 #undef gPaletteCycleFrame
-#undef gData_020033e0
 // @file
 // Scene code of overlay 0x69e, in ROM order.
 
@@ -1341,7 +1317,7 @@ u32 gPaletteCyclePausesInEvents[] = {
     1,
 };
 
-u32 gData_020033e0[] = {
+s32 gData_020033e0[] = {
     39, 5, 0, 12, 38,
 };
 // clang-format on

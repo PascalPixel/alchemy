@@ -276,13 +276,7 @@ void Func_02000328(void) {
 
 void Actor_SelectAnimation(struct Actor *, s32);
 void Actor_StartScript(struct Actor *object, const s32 *script);
-/* VIEW(scene_tables): routine gData_02003840 as this part declared it; the
- * joined file has another; tried as the definition's extern s32
- * gData_02003840[], it does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum.c:295: `gData_02003840' undeclared
- * (first use in this function). */
-extern const s32 *gData_02003840__scene_tables[] __asm__("gData_02003840");
-#define gData_02003840 gData_02003840__scene_tables
+extern s32 gData_02003840[];
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -376,13 +370,7 @@ s32 Func_02000660(struct Actor *object) {
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-/* VIEW(scene_tables): routine gData_02003674 as this part declared it; the
- * joined file has another; tried as the definition's extern u32
- * gData_02003674[], it does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum.c:382: `gData_02003674' undeclared
- * (first use in this function). */
-extern const u8 gData_02003674__scene_tables[] __asm__("gData_02003674");
-#define gData_02003674 gData_02003674__scene_tables
+extern u32 gData_02003674[];
 
 void Func_020006a4(struct Actor *source) {
   struct Actor *object =
@@ -496,13 +484,7 @@ struct Work {
 };
 
 void Actor_StartScript();
-/* VIEW(scene_tables): routine gData_02003684 as this part declared it; the
- * joined file has another; tried as the definition's extern s32
- * gData_02003684[], it does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum.c:509: `gData_02003684' undeclared
- * (first use in this function). */
-extern u8 gData_02003684__scene_tables[] __asm__("gData_02003684");
-#define gData_02003684 gData_02003684__scene_tables
+extern s32 gData_02003684[];
 
 void Func_0200088c(struct Vector3 *from, struct Vector3 *to, s16 part) {
   struct Work *actor;
@@ -610,18 +592,8 @@ void Func_020009b8__s0ac8() __asm__("Func_020009b8");
 void Func_02000a78__s0ac8() __asm__("Func_02000a78");
 #define Func_02000a78 Func_02000a78__s0ac8
 void BlendScript_Resume(void);
-/* VIEW(s0ac8): routine gData_020035cc as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_020035cc[], it does
- * not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum.c:677:
- * `gData_020035cc' undeclared (first use in this function). */
-extern u8 gData_020035cc__s0ac8[] __asm__("gData_020035cc");
-#define gData_020035cc gData_020035cc__s0ac8
-/* VIEW(s0ac8): routine gData_02003620 as this part declared it; the joined file
- * has another; tried as the definition's extern s32 gData_02003620[], it does
- * not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum.c:731:
- * `gData_02003620' undeclared (first use in this function). */
-extern u8 gData_02003620__s0ac8[] __asm__("gData_02003620");
-#define gData_02003620 gData_02003620__s0ac8
+extern u32 gData_020035cc[];
+extern s32 gData_02003620[];
 /* VIEW(s0ac8): routine gData_020036fc as this part declared it; the joined file
  * has another; tried as the definition's extern s32 gData_020036fc[], it does
  * not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum.c:719:
@@ -854,24 +826,9 @@ void Func_02000ac8(void) {
 
 void Func_02001090(void) { GameFlag_Clear(0x200); }
 
-/* VIEW(s0ac8): routine gData_020036e4 as this part declared it; the joined file
- * has another; tried as the definition's extern s16 gData_020036e4[], it does
- * not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum.c:821:
- * `gData_020036e4' undeclared (first use in this function). */
-extern u8 gData_020036e4__s0ac8[] __asm__("gData_020036e4");
-#define gData_020036e4 gData_020036e4__s0ac8
-/* VIEW(s0ac8): routine gData_020036ea as this part declared it; the joined file
- * has another; tried as the definition's extern s16 gData_020036ea[], it does
- * not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum.c:824:
- * `gData_020036ea' undeclared (first use in this function). */
-extern u8 gData_020036ea__s0ac8[] __asm__("gData_020036ea");
-#define gData_020036ea gData_020036ea__s0ac8
-/* VIEW(s0ac8): routine gData_020036f6 as this part declared it; the joined file
- * has another; tried as the definition's extern s16 gData_020036f6[], it does
- * not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum.c:828:
- * `gData_020036f6' undeclared (first use in this function). */
-extern u8 gData_020036f6__s0ac8[] __asm__("gData_020036f6");
-#define gData_020036f6 gData_020036f6__s0ac8
+extern s16 gData_020036e4[];
+extern s16 gData_020036ea[];
+extern s16 gData_020036f6[];
 
 void Func_0200109c(void) {
   if (gMainRoutineWork.scene == (s32)MsgHat) {
@@ -961,12 +918,7 @@ void Func_02001160(void) {
   Event_End();
 }
 
-/* VIEW(s0ac8): routine gData_02003574 as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_02003574[], it does
- * not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum.c:939:
- * `gData_02003574' undeclared (first use in this function). */
-extern const s32 gData_02003574__s0ac8[] __asm__("gData_02003574");
-#define gData_02003574 gData_02003574__s0ac8
+extern s32 gData_02003574[];
 
 // An event handler from the sanctum's event table (in s2f48.c):
 // changes the cells at the leader's place, spawns an effect of type 0x15d
@@ -1130,14 +1082,7 @@ DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(Func_0200178c, 0xb)
 
 DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(Func_020017a0, 0xc)
 
-/* VIEW(s0ac8): routine gData_02003594 as this part declared it; the joined file
- * has another; tried as the definition's extern
- * DEFINE_G_DATA_02003584(gData_02003584, Func_02000660, 38, 17) u32
- * gData_02003594[], it does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum.c:1104: `gData_02003594' undeclared
- * (first use in this function). */
-extern const s32 gData_02003594__s0ac8[] __asm__("gData_02003594");
-#define gData_02003594 gData_02003594__s0ac8
+extern s32 gData_02003594[];
 
 // The update of an object that moves with the leader: once the leader is past
 // z 248 it settles on its cell and clears flag 0x200; otherwise it repeats the
@@ -1387,19 +1332,8 @@ struct EventWork154__s1938 {
   s16 value;
 };
 
-/* VIEW(s1938): routine gData_020043e4 as this part declared it; the joined file
- * has another; tried as the definition's extern s16 gData_020043e4[], it does
- * not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum.c:1358:
- * `gData_020043e4' undeclared (first use in this function). */
-extern const s16 gData_020043e4__s1938[] __asm__("gData_020043e4");
-#define gData_020043e4 gData_020043e4__s1938
-/* VIEW(s1938): routine gData_02004410 as this part declared it; the joined file
- * has another; tried as the definition's extern s32 gData_02004410[], it does
- * not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum.c:1361:
- * `gData_02004410' undeclared (first use in this function). */
-extern const struct AnemosInnerSanctumPicture
-    gData_02004410__s1938[] __asm__("gData_02004410");
-#define gData_02004410 gData_02004410__s1938
+extern s16 gData_020043e4[];
+extern struct MapGridCellAnimation gData_02004410[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -1434,8 +1368,8 @@ loop:
   } else {
     s32 index = work->value / 2 - 1;
 
-    Func_02003320_(gData_02004410[index].data, gData_02004410[index].a,
-                   gData_02004410[index].b);
+    Func_02003320_(gData_02004410[index].steps, gData_02004410[index].x,
+                   gData_02004410[index].y);
   }
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
@@ -1490,24 +1424,9 @@ void Func_02001df4(void) {
 }
 
 s32 CrackedTiles_Find();
-/* VIEW(s1938): routine gData_0200384c as this part declared it; the joined file
- * has another; tried as the definition's extern s16 gData_0200384c[], it does
- * not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum.c:1449:
- * `gData_0200384c' undeclared (first use in this function). */
-extern u8 gData_0200384c__s1938[] __asm__("gData_0200384c");
-#define gData_0200384c gData_0200384c__s1938
-/* VIEW(s1938): routine gData_0200385c as this part declared it; the joined file
- * has another; tried as the definition's extern s16 gData_0200385c[], it does
- * not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum.c:1449:
- * `gData_0200385c' undeclared (first use in this function). */
-extern u8 gData_0200385c__s1938[] __asm__("gData_0200385c");
-#define gData_0200385c gData_0200385c__s1938
-/* VIEW(s1938): routine gData_02003888 as this part declared it; the joined file
- * has another; tried as the definition's extern s16 gData_02003888[], it does
- * not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum.c:1450:
- * `gData_02003888' undeclared (first use in this function). */
-extern u8 gData_02003888__s1938[] __asm__("gData_02003888");
-#define gData_02003888 gData_02003888__s1938
+extern s16 gData_0200384c[];
+extern s16 gData_0200385c[];
+extern s16 gData_02003888[];
 /* VIEW(s1938): routine gData_020038b4 as this part declared it; the joined file
  * has another; tried as the one declaration extern u8 gData_020038b4[], it does
  * not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum.c:1450:
@@ -1858,12 +1777,7 @@ void Effect_MoveLocal(union FieldObject *object) {
   sprite->rotation += object->effect.spin;
 }
 
-/* VIEW(move): routine gData_02004428 as this part declared it; the joined file
- * has another; tried as the definition's extern s32 gData_02004428[], it does
- * not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum.c:1798:
- * `gData_02004428' undeclared (first use in this function). */
-extern const s32 *gData_02004428__move[] __asm__("gData_02004428");
-#define gData_02004428 gData_02004428__move
+extern s32 gData_02004428[];
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void Actor_SetSpritePriorityB(struct Actor *object, s32 priority);
 void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -2036,29 +1950,13 @@ void CrackedTile_Fall(struct PushEvent *event) {
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-#undef gData_02003840
-#undef gData_02003674
 #undef gData_02003c88
-#undef gData_02003684
 #undef Func_0200088c
 #undef Func_020009b8
 #undef Func_02000a78
-#undef gData_020035cc
-#undef gData_02003620
 #undef gData_020036fc
-#undef gData_020036e4
-#undef gData_020036ea
-#undef gData_020036f6
-#undef gData_02003574
-#undef gData_02003594
-#undef gData_020043e4
-#undef gData_02004410
 #undef Func_02000038
-#undef gData_0200384c
-#undef gData_0200385c
-#undef gData_02003888
 #undef gData_020038b4
-#undef gData_02004428
 #undef CrackedTile_PlaceLanding
 // @file
 // Scene code of overlay 0x6b0, in ROM order.
@@ -2180,13 +2078,13 @@ u32 gData_02003538[] = {
     1, 38, 17,
 };
 
-u32 gData_02003574[] = {
+s32 gData_02003574[] = {
     0, 20, 38, 17,
 };
 
 DEFINE_G_DATA_02003584(gData_02003584, Func_02000660, 38, 17)
 
-u32 gData_02003594[] = {
+s32 gData_02003594[] = {
     0x80010000, 23, 9, 0xffffe667, 23, 10,
     0xffffe667, 0, 1, 13, 8, 0xc0010000,
     38, 17,
@@ -2582,9 +2480,10 @@ s16 gData_020043fa[] = {
 };
 // clang-format on
 
-s32 gData_02004410[] = {
-    (s32)gData_020043fa, 0x4000b, (s32)gData_020043fa, 0x4001a,
-    (s32)gData_020043fa, 0x40035,
+struct MapGridCellAnimation gData_02004410[] = {
+    {gData_020043fa, 11, 4},
+    {gData_020043fa, 26, 4},
+    {gData_020043fa, 53, 4},
 };
 
 s32 gData_02004428[] = {

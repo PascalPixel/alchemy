@@ -123,27 +123,9 @@ void Rope_Initialize(void);
 void Tightrope_Initialize(void);
 void MapGrid_SetAttributeBAt();
 
-/* VIEW(eastern_alhafra): routine gData_02004d0c as this part declared it; the
- * joined file has another; tried as the definition's extern s16
- * gData_02004d0c[], it does not compile in tla-ja:
- * games/tla/src/scene/eastern_alhafra.c:167: `gData_02004d0c' undeclared (first
- * use in this function). */
-extern u8 gData_02004d0c__eastern_alhafra[] __asm__("gData_02004d0c");
-#define gData_02004d0c gData_02004d0c__eastern_alhafra
-/* VIEW(eastern_alhafra): routine gData_02004dbc as this part declared it; the
- * joined file has another; tried as the definition's extern s16
- * gData_02004dbc[], it does not compile in tla-ja:
- * games/tla/src/scene/eastern_alhafra.c:144: `gData_02004dbc' undeclared (first
- * use in this function). */
-extern u8 gData_02004dbc__eastern_alhafra[] __asm__("gData_02004dbc");
-#define gData_02004dbc gData_02004dbc__eastern_alhafra
-/* VIEW(eastern_alhafra): routine gData_02004fe4 as this part declared it; the
- * joined file has another; tried as the definition's extern s16
- * gData_02004fe4[], it does not compile in tla-ja:
- * games/tla/src/scene/eastern_alhafra.c:143: `gData_02004fe4' undeclared (first
- * use in this function). */
-extern u8 gData_02004fe4__eastern_alhafra[] __asm__("gData_02004fe4");
-#define gData_02004fe4 gData_02004fe4__eastern_alhafra
+extern s16 gData_02004d0c[];
+extern s16 gData_02004dbc[];
+extern s16 gData_02004fe4[];
 
 s32 Actor_HasArrived();
 
@@ -230,13 +212,7 @@ void Func_02000190(s32 unused, s32 id) {
 
 #include "text/msg_ids.h"
 
-/* VIEW(eastern_alhafra): routine gData_02005290 as this part declared it; the
- * joined file has another; tried as the definition's extern s32
- * gData_02005290[], it does not compile in tla-ja:
- * games/tla/src/scene/eastern_alhafra.c:492: `gData_02005290' undeclared (first
- * use in this function). */
-extern u8 gData_02005290__eastern_alhafra[] __asm__("gData_02005290");
-#define gData_02005290 gData_02005290__eastern_alhafra
+extern s32 gData_02005290[];
 
 /* VIEW(eastern_alhafra): routine Actor_SelectAnimation as s32
  * Actor_SelectAnimation(); module/scene/scene.h has void
@@ -557,12 +533,7 @@ check:
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-/* VIEW(s0514): routine gData_020054f0 as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_020054f0[], it does
- * not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:542:
- * `gData_020054f0' undeclared (first use in this function). */
-extern u8 gData_020054f0__s0514[] __asm__("gData_020054f0");
-#define gData_020054f0 gData_020054f0__s0514
+extern u8 gData_020054f0[];
 
 // BG1's wave: each frame the finished table of scanline offsets is handed to
 // an HBlank DMA, while the other table is filled for the next frame.
@@ -1207,12 +1178,7 @@ L_02009b74:
   return;
 }
 
-/* VIEW(s0514): routine gData_020056d4 as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_020056d4[], it does
- * not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:1191:
- * `gData_020056d4' undeclared (first use in this function). */
-extern const u8 gData_020056d4__s0514[] __asm__("gData_020056d4");
-#define gData_020056d4 gData_020056d4__s0514
+extern u32 gData_020056d4[];
 
 void Actor_StartScript(struct SpawnObject *object, const void *script);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority);
@@ -2361,12 +2327,7 @@ s32 Func_020040ec(s32 id) {
 
 #include "../field/map/cellfill.c"
 
-/* VIEW(s4004): routine gPushDirectionSteps as this part declared it; the joined
- * file has another; tried as the definition's extern s16 gPushDirectionSteps[],
- * it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:2347:
- * `gPushDirectionSteps' undeclared (first use in this function). */
-extern s32 gPushDirectionSteps__s4004[] __asm__("gPushDirectionSteps");
-#define gPushDirectionSteps gPushDirectionSteps__s4004
+extern s32 gPushDirectionSteps[];
 
 static __inline__ s32 CallFunc_02004a64(struct Actor *actor,
                                         struct Vector3 *cell) {
@@ -2595,14 +2556,7 @@ DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
 #undef FIELD_AT
 #undef PIXELS
 #define PIXELS(value) ((value) << 16)
-#undef gData_02004d0c
-#undef gData_02004dbc
-#undef gData_02004fe4
-#undef gData_02005290
-#undef gData_020054f0
-#undef gData_020056d4
 #undef gPushFootprints
-#undef gPushDirectionSteps
 #include "text/msg_ids.h"
 
 /* VIEW(data): routine Func_0200006c as this part declared it; the joined file
@@ -2623,12 +2577,10 @@ u32 gPushFootprints[] = {
     0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8,
 };
 
-s16 gPushDirectionSteps[] = {
-    0, 16, 0, 16, 0, 16, 16, 0,
-    16, 0, 16, 0, 16, 0, 0, -16,
-    0, -16, 0, -16, 0, -16, -16, 0,
-    -16, 0, -16, 0, -16, 0, 0, 16,
-    10, -1,
+s32 gPushDirectionSteps[] = {
+    0x100000, 0x100000, 0x100000, 0x10, 0x10, 0x10,
+    0x10, 0xfff00000, 0xfff00000, 0xfff00000, 0xfff00000, 0xfff0,
+    0xfff0, 0xfff0, 0xfff0, 0x100000, 0xffff000a,
 };
 
 s16 gData_02004d0c[] = {
@@ -2796,7 +2748,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-u32 gData_020054f0[] = {
+u8 gData_020054f0[] = {
     0,
 };
 

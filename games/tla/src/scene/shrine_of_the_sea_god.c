@@ -288,30 +288,9 @@ extern void Actor_SetSingleChildFlags__shrine_of_the_sea_god(
 #undef Actor_SetSpriteFlags
 #undef Actor_SetPositionAndResetMotion
 
-/* VIEW(shrine_of_the_sea_god): routine gData_02003df4 as this part declared it;
- * the joined file has another; tried as the definition's extern u32
- * gData_02003df4[], it does not compile in tla-ja:
- * games/tla/src/scene/shrine_of_the_sea_god.c:303: `gData_02003df4' undeclared
- * (first use in this function). */
-extern const u8
-    gData_02003df4__shrine_of_the_sea_god[] __asm__("gData_02003df4");
-#define gData_02003df4 gData_02003df4__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gData_02003e14 as this part declared it;
- * the joined file has another; tried as the definition's extern s16
- * gData_02003e14[], it does not compile in tla-ja:
- * games/tla/src/scene/shrine_of_the_sea_god.c:305: `gData_02003e14' undeclared
- * (first use in this function). */
-extern const u8
-    gData_02003e14__shrine_of_the_sea_god[] __asm__("gData_02003e14");
-#define gData_02003e14 gData_02003e14__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gData_02003e44 as this part declared it;
- * the joined file has another; tried as the definition's extern u32
- * gData_02003e44[], it does not compile in tla-ja:
- * games/tla/src/scene/shrine_of_the_sea_god.c:307: `gData_02003e44' undeclared
- * (first use in this function). */
-extern const u8
-    gData_02003e44__shrine_of_the_sea_god[] __asm__("gData_02003e44");
-#define gData_02003e44 gData_02003e44__shrine_of_the_sea_god
+extern u32 gData_02003df4[];
+extern s16 gData_02003e14[];
+extern u32 gData_02003e44[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -435,14 +414,7 @@ const struct Trigger *Scene_GetEvents(void) {
 
 #include "text/msg_ids.h"
 
-/* VIEW(shrine_of_the_sea_god): routine gData_02003c10 as this part declared it;
- * the joined file has another; tried as the definition's extern struct Trigger
- * gData_02003c10[], it does not compile in tla-ja:
- * games/tla/src/scene/shrine_of_the_sea_god.c:455: `gData_02003c10' undeclared
- * (first use in this function). */
-extern const u8
-    gData_02003c10__shrine_of_the_sea_god[] __asm__("gData_02003c10");
-#define gData_02003c10 gData_02003c10__shrine_of_the_sea_god
+extern u32 gData_02003c10[];
 
 /// ★ Named from the game: "This statue looks a lot like the one in Daila's
 /// Sanctum." (MsgFieldStatueLikeDailaShrine)
@@ -757,14 +729,7 @@ void Func_02000994(void) {
   Event_End();
 }
 
-/* VIEW(shrine_of_the_sea_god): routine gData_02003cbc as this part declared it;
- * the joined file has another; tried as the definition's extern s16
- * gData_02003cbc[], it does not compile in tla-ja:
- * games/tla/src/scene/shrine_of_the_sea_god.c:873: `gData_02003cbc' undeclared
- * (first use in this function). */
-extern const u8
-    gData_02003cbc__shrine_of_the_sea_god[] __asm__("gData_02003cbc");
-#define gData_02003cbc gData_02003cbc__shrine_of_the_sea_god
+extern s16 gData_02003cbc[];
 
 /// The leader is placed at y -50 and map layer 1 moved by -50; then both move
 /// by 0x8000 in y a frame for 100 frames as a screen transition starts.
@@ -1056,9 +1021,6 @@ void Func_020012b4(void) {
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
-#undef gData_02003df4
-#undef gData_02003e14
-#undef gData_02003e44
 #undef gShrineOfTheSeaGod_Placements
 #undef gShrineOfTheSeaGod_Room1Placements
 #undef gShrineOfTheSeaGod_Room2Placements
@@ -1078,8 +1040,6 @@ void Func_020012b4(void) {
 #undef gShrineOfTheSeaGod_Room7Triggers
 #undef gShrineOfTheSeaGod_Room8Triggers
 #undef gShrineOfTheSeaGod_Room9Triggers
-#undef gData_02003c10
-#undef gData_02003cbc
 // @file
 // Scene code of overlay 0x654, in ROM order.
 
@@ -1383,12 +1343,7 @@ void ShrineOfTheSeaGod_ThrowRopeAgain(void) {
   Event_End();
 }
 
-/* VIEW(s1340): routine gData_02003c58 as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_02003c58[], it does
- * not compile in tla-ja: games/tla/src/scene/shrine_of_the_sea_god.c:1536:
- * `gData_02003c58' undeclared (first use in this function). */
-extern const u8 gData_02003c58__s1340[] __asm__("gData_02003c58");
-#define gData_02003c58 gData_02003c58__s1340
+extern u32 gData_02003c58[];
 
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Actor_FaceDirectionById(s32 actor, s32 angle);
@@ -1896,26 +1851,9 @@ void Func_02002d50(void) {
   }
 }
 
-/* VIEW(s1340): routine gData_02003cc0 as this part declared it; the joined file
- * has another; tried as the definition's extern s16 gData_02003cc0[], it does
- * not compile in tla-ja: games/tla/src/scene/shrine_of_the_sea_god.c:1951:
- * `gData_02003cc0' undeclared (first use in this function). */
-extern const struct ShrineOfTheSeaGodSpot
-    gData_02003cc0__s1340[] __asm__("gData_02003cc0");
-#define gData_02003cc0 gData_02003cc0__s1340
-/* VIEW(s1340): routine gData_02003cbc as this part declared it; the joined file
- * has another; tried as the definition's extern s16 gData_02003cbc[], it does
- * not compile in tla-ja: games/tla/src/scene/shrine_of_the_sea_god.c:2010:
- * `gData_02003cbc' undeclared (first use in this function). */
-extern const u8 gData_02003cbc__s1340[] __asm__("gData_02003cbc");
-#define gData_02003cbc gData_02003cbc__s1340
-/* VIEW(s1340): routine gData_02003c10 as this part declared it; the joined file
- * has another; tried as the definition's extern struct Trigger
- * gData_02003c10[], it does not compile in tla-ja:
- * games/tla/src/scene/shrine_of_the_sea_god.c:2022: `gData_02003c10' undeclared
- * (first use in this function). */
-extern const u8 gData_02003c10__s1340[] __asm__("gData_02003c10");
-#define gData_02003c10 gData_02003c10__s1340
+extern s16 gData_02003cc0[];
+extern s16 gData_02003cbc[];
+extern u32 gData_02003c10[];
 
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 void Actor_PlaceBlocks(const void *script);
@@ -2314,10 +2252,6 @@ s32 Scene_PrepareMap(void) {
 #undef DEFINE_FUNC_02002830
 #undef DEFINE_FUNC_0200291C
 #undef DEFINE_FUNC_02002B50
-#undef gData_02003c58
-#undef gData_02003cc0
-#undef gData_02003cbc
-#undef gData_02003c10
 #include "text/msg_ids.h"
 
 void Func_02000280(void);

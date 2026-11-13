@@ -645,14 +645,7 @@ s32 TrialRoad_FollowPillar(struct Actor *object) {
   return 1;
 }
 
-/* VIEW(s0218): routine gTrialRoad_PillarTopScript as this part declared it; the
- * joined file has another; tried as the definition's extern s32
- * gTrialRoad_PillarTopScript[], it does not compile in tla-ja:
- * games/tla/src/scene/trial_road.c:633: `gTrialRoad_PillarTopScript' undeclared
- * (first use in this function). */
-extern const u8
-    gTrialRoad_PillarTopScript__s0218[] __asm__("gTrialRoad_PillarTopScript");
-#define gTrialRoad_PillarTopScript gTrialRoad_PillarTopScript__s0218
+extern s32 gTrialRoad_PillarTopScript[];
 
 void TrialRoad_AddPillarTop(s32 id) {
   struct Actor *owner = Actor_GetById(id);
@@ -1223,7 +1216,6 @@ void TrialRoad_RevealVine(void) {
 #undef gTrialRoad_Room4Placements
 #undef gTrialRoad_Room2Placements
 #undef gTrialRoad_Room1Placements
-#undef gTrialRoad_PillarTopScript
 #undef gTrialRoad_PoundPartners
 // @file
 // Trial Road's effect spawner and the sand stage's stream.
@@ -3208,14 +3200,7 @@ void TrialRoad_DriftRubble(union FieldObject *object) {
   to->bits = bits;
 }
 
-/* VIEW(s15a8): routine gTrialRoad_RubbleScript as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA u32
- * gTrialRoad_RubbleScript[], it does not compile in tla-ja:
- * games/tla/src/scene/trial_road.c:3167: `gTrialRoad_RubbleScript' undeclared
- * (first use in this function). */
-extern const s32
-    gTrialRoad_RubbleScript__s15a8[] __asm__("gTrialRoad_RubbleScript");
-#define gTrialRoad_RubbleScript gTrialRoad_RubbleScript__s15a8
+extern s32 gTrialRoad_RubbleScript[];
 
 void TrialRoad_SpawnRubble(s32 spread) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -3258,14 +3243,7 @@ void TrialRoad_SpawnRubble(s32 spread) {
   } while (i <= 7);
 }
 
-/* VIEW(s15a8): routine gTrialRoad_DustScript as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA u32
- * gTrialRoad_DustScript[], it does not compile in tla-ja:
- * games/tla/src/scene/trial_road.c:3211: `gTrialRoad_DustScript' undeclared
- * (first use in this function). */
-extern const s32
-    gTrialRoad_DustScript__s15a8[] __asm__("gTrialRoad_DustScript");
-#define gTrialRoad_DustScript gTrialRoad_DustScript__s15a8
+extern s32 gTrialRoad_DustScript[];
 
 void TrialRoad_SpawnDustRing(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -3895,17 +3873,15 @@ u32 gTrialRoad_RightKnightLeavesScript[] = {
 #undef gTrialRoad_Room1Triggers
 #undef gTrialRoad_PaletteCycleRunning
 #undef gTrialRoad_PaletteCycleFrame
-#undef gTrialRoad_RubbleScript
-#undef gTrialRoad_DustScript
 #undef gTrialRoad_HexDigits
 
 // clang-format off
-LATE_DATA u32 gTrialRoad_RubbleScript[] = {
+LATE_DATA s32 gTrialRoad_RubbleScript[] = {
     0, 33, 22, 38, 0, 2,
     0, 0, 0, 0, 1, 38,
 };
 
-LATE_DATA u32 gTrialRoad_DustScript[] = {
+LATE_DATA s32 gTrialRoad_DustScript[] = {
     0, 44, 22, 38, 0, 2,
     0, 0, 0, 0, 1, 38,
 };

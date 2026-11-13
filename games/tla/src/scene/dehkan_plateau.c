@@ -305,10 +305,7 @@ test:
     goto loop;
 }
 
-/* VIEW(first): routine gData_02003f44 as this part declared it; the joined file
- * has another; not tried: gData_02003f44's bound declaration was not found. */
-extern const u8 gData_02003f44__first[] __asm__("gData_02003f44");
-#define gData_02003f44 gData_02003f44__first
+extern s16 gData_02003f44[];
 
 void Func_02002180(void);
 void Func_02001804(void);
@@ -473,12 +470,7 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
 
 #include "../field/field_effect/advance_motion_priority.c"
 
-/* VIEW(first): routine gData_02003e00 as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_02003e00[], it does
- * not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:502:
- * `gData_02003e00' undeclared (first use in this function). */
-extern const s32 gData_02003e00__first[] __asm__("gData_02003e00");
-#define gData_02003e00 gData_02003e00__first
+extern s32 gData_02003e00[];
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
@@ -525,12 +517,7 @@ void Rubble_Spray(s32 spread) {
   } while (i <= 7);
 }
 
-/* VIEW(first): routine gData_02003e30 as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_02003e30[], it does
- * not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:547:
- * `gData_02003e30' undeclared (first use in this function). */
-extern const u8 gData_02003e30__first[] __asm__("gData_02003e30");
-#define gData_02003e30 gData_02003e30__first
+extern u32 gData_02003e30[];
 
 void Rubble_Burst(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -638,9 +625,6 @@ DEFINE_HELD_ACTOR_RAISE_CELL(HeldActor_RaiseCell, MapGrid_GetTerrainKind,
 #include "../field/field_effect/move.c"
 
 #undef HELD_OBJECT
-#undef gData_02003f44
-#undef gData_02003e00
-#undef gData_02003e30
 // @file
 // Scene code of overlay 0x655, in ROM order.
 
@@ -661,97 +645,19 @@ DEFINE_HELD_ACTOR_RAISE_CELL(HeldActor_RaiseCell, MapGrid_GetTerrainKind,
 
 void Actor_DisableById(s32 id);
 
-/* VIEW(dehkan_plateau): routine gData_02003fd2 as this part declared it; the
- * joined file has another; tried as the definition's extern u16
- * gData_02003fd2[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:1028: `gData_02003fd2' undeclared (first
- * use in this function). */
-extern const u16 gData_02003fd2__dehkan_plateau[] __asm__("gData_02003fd2");
-#define gData_02003fd2 gData_02003fd2__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02004066 as this part declared it; the
- * joined file has another; tried as the definition's extern u16
- * gData_02004066[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:1027: `gData_02004066' undeclared (first
- * use in this function). */
-extern const struct CellRecord
-    gData_02004066__dehkan_plateau[] __asm__("gData_02004066");
-#define gData_02004066 gData_02004066__dehkan_plateau
+extern u16 gData_02003fd2[];
+extern u16 gData_02004066[][6];
 
-/* VIEW(dehkan_plateau): routine gData_02003f44 as this part declared it; the
- * joined file has another; not tried: gData_02003f44's bound declaration was
- * not found. */
-extern const u8 gData_02003f44__dehkan_plateau[] __asm__("gData_02003f44");
-#define gData_02003f44 gData_02003f44__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02003f52 as this part declared it; the
- * joined file has another; tried as the definition's extern s16
- * gData_02003f52[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:810: `gData_02003f52' undeclared (first
- * use in this function). */
-extern const u8 gData_02003f52__dehkan_plateau[] __asm__("gData_02003f52");
-#define gData_02003f52 gData_02003f52__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02003f80 as this part declared it; the
- * joined file has another; tried as the definition's extern s16
- * gData_02003f80[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:830: `gData_02003f80' undeclared (first
- * use in this function). */
-extern const u8 gData_02003f80__dehkan_plateau[] __asm__("gData_02003f80");
-#define gData_02003f80 gData_02003f80__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02003f92 as this part declared it; the
- * joined file has another; tried as the definition's extern s16
- * gData_02003f92[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:841: `gData_02003f92' undeclared (first
- * use in this function). */
-extern const u8 gData_02003f92__dehkan_plateau[] __asm__("gData_02003f92");
-#define gData_02003f92 gData_02003f92__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02003f98 as this part declared it; the
- * joined file has another; tried as the definition's extern s16
- * gData_02003f98[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:879: `gData_02003f98' undeclared (first
- * use in this function). */
-extern const u8 gData_02003f98__dehkan_plateau[] __asm__("gData_02003f98");
-#define gData_02003f98 gData_02003f98__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02003fa0 as this part declared it; the
- * joined file has another; tried as the definition's extern s16
- * gData_02003fa0[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:881: `gData_02003fa0' undeclared (first
- * use in this function). */
-extern const u8 gData_02003fa0__dehkan_plateau[] __asm__("gData_02003fa0");
-#define gData_02003fa0 gData_02003fa0__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02003fa8 as this part declared it; the
- * joined file has another; tried as the definition's extern s16
- * gData_02003fa8[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:883: `gData_02003fa8' undeclared (first
- * use in this function). */
-extern const u8 gData_02003fa8__dehkan_plateau[] __asm__("gData_02003fa8");
-#define gData_02003fa8 gData_02003fa8__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02003fb0 as this part declared it; the
- * joined file has another; tried as the definition's extern s16
- * gData_02003fb0[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:885: `gData_02003fb0' undeclared (first
- * use in this function). */
-extern const u8 gData_02003fb0__dehkan_plateau[] __asm__("gData_02003fb0");
-#define gData_02003fb0 gData_02003fb0__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02003fb8 as this part declared it; the
- * joined file has another; tried as the definition's extern u32
- * gData_02003fb8[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:887: `gData_02003fb8' undeclared (first
- * use in this function). */
-extern const u8 gData_02003fb8__dehkan_plateau[] __asm__("gData_02003fb8");
-#define gData_02003fb8 gData_02003fb8__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02003fc0 as this part declared it; the
- * joined file has another; tried as the definition's extern s16
- * gData_02003fc0[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:906: `gData_02003fc0' undeclared (first
- * use in this function). */
-extern const u8 gData_02003fc0__dehkan_plateau[] __asm__("gData_02003fc0");
-#define gData_02003fc0 gData_02003fc0__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02003fc4 as this part declared it; the
- * joined file has another; tried as the definition's extern s16
- * gData_02003fc4[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:925: `gData_02003fc4' undeclared (first
- * use in this function). */
-extern const u8 gData_02003fc4__dehkan_plateau[] __asm__("gData_02003fc4");
-#define gData_02003fc4 gData_02003fc4__dehkan_plateau
+extern s16 gData_02003f52[];
+extern s16 gData_02003f80[];
+extern s16 gData_02003f92[];
+extern s16 gData_02003f98[];
+extern s16 gData_02003fa0[];
+extern s16 gData_02003fa8[];
+extern s16 gData_02003fb0[];
+extern s16 gData_02003fb8[];
+extern s16 gData_02003fc0[];
+extern s16 gData_02003fc4[];
 
 void Func_0200118c(void) {
   GameFlag_Set(0x209);
@@ -764,104 +670,20 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(dehkan_plateau): routine gData_020045e0 as this part declared it; the
- * joined file has another; tried as the definition's extern struct
- * ActorPlacement gData_020045e0[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:766: `gData_020045e0' undeclared (first
- * use in this function). */
-extern const u8 gData_020045e0__dehkan_plateau[] __asm__("gData_020045e0");
-#define gData_020045e0 gData_020045e0__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_020045f8 as this part declared it; the
- * joined file has another; tried as the definition's extern s16
- * gData_020045f8[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:755: `gData_020045f8' undeclared (first
- * use in this function). */
-extern const u8 gData_020045f8__dehkan_plateau[] __asm__("gData_020045f8");
-#define gData_020045f8 gData_020045f8__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_020047d8 as this part declared it; the
- * joined file has another; tried as the definition's extern struct
- * ActorPlacement gData_020047d8[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:757: `gData_020047d8' undeclared (first
- * use in this function). */
-extern const u8 gData_020047d8__dehkan_plateau[] __asm__("gData_020047d8");
-#define gData_020047d8 gData_020047d8__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02004ac0 as this part declared it; the
- * joined file has another; tried as the definition's extern u32
- * gData_02004ac0[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:759: `gData_02004ac0' undeclared (first
- * use in this function). */
-extern const u8 gData_02004ac0__dehkan_plateau[] __asm__("gData_02004ac0");
-#define gData_02004ac0 gData_02004ac0__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02004d78 as this part declared it; the
- * joined file has another; tried as the definition's extern struct
- * ActorPlacement gData_02004d78[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:761: `gData_02004d78' undeclared (first
- * use in this function). */
-extern const u8 gData_02004d78__dehkan_plateau[] __asm__("gData_02004d78");
-#define gData_02004d78 gData_02004d78__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02004dd8 as this part declared it; the
- * joined file has another; tried as the definition's extern struct
- * ActorPlacement gData_02004dd8[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:763: `gData_02004dd8' undeclared (first
- * use in this function). */
-extern const u8 gData_02004dd8__dehkan_plateau[] __asm__("gData_02004dd8");
-#define gData_02004dd8 gData_02004dd8__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02004e20 as this part declared it; the
- * joined file has another; tried as the definition's extern struct
- * ActorPlacement gData_02004e20[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:765: `gData_02004e20' undeclared (first
- * use in this function). */
-extern const u8 gData_02004e20__dehkan_plateau[] __asm__("gData_02004e20");
-#define gData_02004e20 gData_02004e20__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02004f10 as this part declared it; the
- * joined file has another; tried as the definition's extern struct Trigger
- * gData_02004f10[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:784: `gData_02004f10' undeclared (first
- * use in this function). */
-extern const u8 gData_02004f10__dehkan_plateau[] __asm__("gData_02004f10");
-#define gData_02004f10 gData_02004f10__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02004f1c as this part declared it; the
- * joined file has another; tried as the definition's extern struct Trigger
- * gData_02004f1c[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:773: `gData_02004f1c' undeclared (first
- * use in this function). */
-extern const u8 gData_02004f1c__dehkan_plateau[] __asm__("gData_02004f1c");
-#define gData_02004f1c gData_02004f1c__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02005078 as this part declared it; the
- * joined file has another; tried as the definition's extern struct Trigger
- * gData_02005078[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:775: `gData_02005078' undeclared (first
- * use in this function). */
-extern const u8 gData_02005078__dehkan_plateau[] __asm__("gData_02005078");
-#define gData_02005078 gData_02005078__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_020051bc as this part declared it; the
- * joined file has another; tried as the definition's extern struct Trigger
- * gData_020051bc[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:777: `gData_020051bc' undeclared (first
- * use in this function). */
-extern const u8 gData_020051bc__dehkan_plateau[] __asm__("gData_020051bc");
-#define gData_020051bc gData_020051bc__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_020053b4 as this part declared it; the
- * joined file has another; tried as the definition's extern struct Trigger
- * gData_020053b4[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:779: `gData_020053b4' undeclared (first
- * use in this function). */
-extern const u8 gData_020053b4__dehkan_plateau[] __asm__("gData_020053b4");
-#define gData_020053b4 gData_020053b4__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_02005450 as this part declared it; the
- * joined file has another; tried as the definition's extern struct Trigger
- * gData_02005450[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:781: `gData_02005450' undeclared (first
- * use in this function). */
-extern const u8 gData_02005450__dehkan_plateau[] __asm__("gData_02005450");
-#define gData_02005450 gData_02005450__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_020055b8 as this part declared it; the
- * joined file has another; tried as the definition's extern struct Trigger
- * gData_020055b8[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:783: `gData_020055b8' undeclared (first
- * use in this function). */
-extern const u8 gData_020055b8__dehkan_plateau[] __asm__("gData_020055b8");
-#define gData_020055b8 gData_020055b8__dehkan_plateau
+extern struct ActorPlacement gData_020045e0[];
+extern s16 gData_020045f8[];
+extern struct ActorPlacement gData_020047d8[];
+extern struct ActorPlacement gData_02004ac0[];
+extern struct ActorPlacement gData_02004d78[];
+extern struct ActorPlacement gData_02004dd8[];
+extern struct ActorPlacement gData_02004e20[];
+extern struct Trigger gData_02004f10[];
+extern struct Trigger gData_02004f1c[];
+extern struct Trigger gData_02005078[];
+extern struct Trigger gData_020051bc[];
+extern struct Trigger gData_020053b4[];
+extern struct Trigger gData_02005450[];
+extern struct Trigger gData_020055b8[];
 
 const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -1108,7 +930,7 @@ loop:
 
 #define DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(name, data1, n1, data2)            \
   void name(void) {                                                            \
-    const u16 *cell = &data1[0].present;                                       \
+    const u16 *cell = &data1[0][0];                                            \
     s32 flag = 0x240;                                                          \
     u32 i;                                                                     \
     const u16 *dest;                                                           \
@@ -1119,7 +941,7 @@ loop:
           s32 x;                                                               \
           s32 y;                                                               \
                                                                                \
-          cell = &data1[i].x;                                                  \
+          cell = &data1[i][1];                                                 \
           x = *cell++;                                                         \
           y = *cell++;                                                         \
           /* FAKEMATCH(temporary): the destination table through a local set   \
@@ -1142,40 +964,14 @@ loop:
 DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(Func_02001820, gData_02004066, 13,
                                     gData_02003fd2)
 
-/* VIEW(dehkan_plateau): routine gData_02003fda as this part declared it; the
- * joined file has another; tried as the definition's extern u16
- * gData_02003fda[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:1036: `gData_02003fda' undeclared (first
- * use in this function). */
-extern const u16 gData_02003fda__dehkan_plateau[] __asm__("gData_02003fda");
-#define gData_02003fda gData_02003fda__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_0200410e as this part declared it; the
- * joined file has another; tried as the definition's extern u16
- * gData_0200410e[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:1038: `gData_0200410e' undeclared (first
- * use in this function). */
-extern const struct CellRecord
-    gData_0200410e__dehkan_plateau[] __asm__("gData_0200410e");
-#define gData_0200410e gData_0200410e__dehkan_plateau
+extern u16 gData_02003fda[];
+extern u16 gData_0200410e[][6];
 
 DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(Func_020018a8, gData_0200410e, 7,
                                     gData_02003fda)
 
-/* VIEW(dehkan_plateau): routine gData_02003fe2 as this part declared it; the
- * joined file has another; tried as the definition's extern u16
- * gData_02003fe2[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:1047: `gData_02003fe2' undeclared (first
- * use in this function). */
-extern const u16 gData_02003fe2__dehkan_plateau[] __asm__("gData_02003fe2");
-#define gData_02003fe2 gData_02003fe2__dehkan_plateau
-/* VIEW(dehkan_plateau): routine gData_0200416e as this part declared it; the
- * joined file has another; tried as the definition's extern u16
- * gData_0200416e[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:1049: `gData_0200416e' undeclared (first
- * use in this function). */
-extern const struct CellRecord
-    gData_0200416e__dehkan_plateau[] __asm__("gData_0200416e");
-#define gData_0200416e gData_0200416e__dehkan_plateau
+extern u16 gData_02003fe2[];
+extern u16 gData_0200416e[][6];
 
 DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(Func_02001930, gData_0200416e, 5,
                                     gData_02003fe2)
@@ -1233,15 +1029,15 @@ void Func_02001a30(void) {
   if (gMainRoutineWork.scene == SCENE(Ov655Room1)) {
     n = work->exit - 11;
     flag = work->exit + 0x235;
-    record = &gData_02004068[n * 6];
+    record = &gData_02004066[n][1];
   } else if (gMainRoutineWork.scene == SCENE(Ov655Room2)) {
     n = work->exit - 14;
     flag = work->exit + 0x232;
-    record = &gData_02004110[n * 6];
+    record = &gData_0200410e[n][1];
   } else if (gMainRoutineWork.scene == SCENE(Ov655Room3)) {
     n = work->exit - 12;
     flag = work->exit + 0x234;
-    record = &gData_02004170[n * 6];
+    record = &gData_0200416e[n][1];
   } else if (gMainRoutineWork.scene == SCENE(Ov655Room5)) {
     n = work->exit - 18;
     flag = work->exit + 0x22e;
@@ -1465,13 +1261,7 @@ void Func_0200200c(struct Actor *object) {
   }
 }
 
-/* VIEW(dehkan_plateau): routine gData_02003fc8 as this part declared it; the
- * joined file has another; tried as the definition's extern s16
- * gData_02003fc8[], it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:1333: `gData_02003fc8' undeclared (first
- * use in this function). */
-extern const u8 gData_02003fc8__dehkan_plateau[] __asm__("gData_02003fc8");
-#define gData_02003fc8 gData_02003fc8__dehkan_plateau
+extern s16 gData_02003fc8[];
 
 DEFINE_SCENE_RUN_IF_HELD(Scene_RunIfHeld, Leader_CanPushObjectAhead,
                          Field_FindNearbyTalkTarget, Func_02000d78,
@@ -1701,41 +1491,9 @@ void Func_02002604(void) {
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
-#undef gData_02003fd2
-#undef gData_02004066
-#undef gData_02003f44
-#undef gData_02003f52
-#undef gData_02003f80
-#undef gData_02003f92
-#undef gData_02003f98
-#undef gData_02003fa0
-#undef gData_02003fa8
-#undef gData_02003fb0
-#undef gData_02003fb8
-#undef gData_02003fc0
-#undef gData_02003fc4
-#undef gData_020045e0
-#undef gData_020045f8
-#undef gData_020047d8
-#undef gData_02004ac0
-#undef gData_02004d78
-#undef gData_02004dd8
-#undef gData_02004e20
-#undef gData_02004f10
-#undef gData_02004f1c
-#undef gData_02005078
-#undef gData_020051bc
-#undef gData_020053b4
-#undef gData_02005450
-#undef gData_020055b8
-#undef gData_02003fda
-#undef gData_0200410e
-#undef gData_02003fe2
-#undef gData_0200416e
 #undef gData_02004420
 #undef HeldActor_RaiseCell
 #undef Func_02000d78
-#undef gData_02003fc8
 #undef CrumblingPillars_StepWithStandIn
 // @file
 // Scene code of overlay 0x655, in ROM order.
@@ -1758,12 +1516,7 @@ void Actor_StartScript(struct Actor *object, const void *script);
 extern void Effect_AdvanceMotion__s2698(struct Actor *object) __asm__(
     "FieldEffect_AdvanceMotion");
 
-/* VIEW(s2698): routine gData_02003f14 as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_02003f14[], it does
- * not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:1638:
- * `gData_02003f14' undeclared (first use in this function). */
-extern const u8 gData_02003f14__s2698[] __asm__("gData_02003f14");
-#define gData_02003f14 gData_02003f14__s2698
+extern u32 gData_02003f14[];
 
 // Flashes actor id, then raises eight puffs over actor center, then sets
 // flag and waits 20 frames.
@@ -1929,66 +1682,16 @@ void Func_02002b68(void) {
   }
 }
 
-/* VIEW(events_i): routine gData_02003f44 as this part declared it; the joined
- * file has another; not tried: gData_02003f44's bound declaration was not
- * found. */
 // ---- games/tla/src/scene/dehkan_plateau/events_i.c ----
-extern const u8 gData_02003f44__events_i[] __asm__("gData_02003f44");
-#define gData_02003f44 gData_02003f44__events_i
-/* VIEW(events_i): routine gData_02003f52 as this part declared it; the joined
- * file has another; tried as the definition's extern s16 gData_02003f52[], it
- * does not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:2076:
- * `gData_02003f52' undeclared (first use in this function). */
-extern const u8 gData_02003f52__events_i[] __asm__("gData_02003f52");
-#define gData_02003f52 gData_02003f52__events_i
-/* VIEW(events_i): routine gData_02003f80 as this part declared it; the joined
- * file has another; tried as the definition's extern s16 gData_02003f80[], it
- * does not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:2194:
- * `gData_02003f80' undeclared (first use in this function). */
-extern const u8 gData_02003f80__events_i[] __asm__("gData_02003f80");
-#define gData_02003f80 gData_02003f80__events_i
-/* VIEW(events_i): routine gData_02003f92 as this part declared it; the joined
- * file has another; tried as the definition's extern s16 gData_02003f92[], it
- * does not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:2423:
- * `gData_02003f92' undeclared (first use in this function). */
-extern const u8 gData_02003f92__events_i[] __asm__("gData_02003f92");
-#define gData_02003f92 gData_02003f92__events_i
-/* VIEW(events_i): routine gData_02003f98 as this part declared it; the joined
- * file has another; tried as the definition's extern s16 gData_02003f98[], it
- * does not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:2026:
- * `gData_02003f98' undeclared (first use in this function). */
-extern const u8 gData_02003f98__events_i[] __asm__("gData_02003f98");
-#define gData_02003f98 gData_02003f98__events_i
-/* VIEW(events_i): routine gData_02003fa0 as this part declared it; the joined
- * file has another; tried as the definition's extern s16 gData_02003fa0[], it
- * does not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:2078:
- * `gData_02003fa0' undeclared (first use in this function). */
-extern const u8 gData_02003fa0__events_i[] __asm__("gData_02003fa0");
-#define gData_02003fa0 gData_02003fa0__events_i
-/* VIEW(events_i): routine gData_02003fb0 as this part declared it; the joined
- * file has another; tried as the definition's extern s16 gData_02003fb0[], it
- * does not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:2367:
- * `gData_02003fb0' undeclared (first use in this function). */
-extern const u8 gData_02003fb0__events_i[] __asm__("gData_02003fb0");
-#define gData_02003fb0 gData_02003fb0__events_i
-/* VIEW(events_i): routine gData_02003fb8 as this part declared it; the joined
- * file has another; tried as the definition's extern u32 gData_02003fb8[], it
- * does not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:2422:
- * `gData_02003fb8' undeclared (first use in this function). */
-extern const u8 gData_02003fb8__events_i[] __asm__("gData_02003fb8");
-#define gData_02003fb8 gData_02003fb8__events_i
-/* VIEW(events_i): routine gData_02003fc0 as this part declared it; the joined
- * file has another; tried as the definition's extern s16 gData_02003fc0[], it
- * does not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:2084:
- * `gData_02003fc0' undeclared (first use in this function). */
-extern const u8 gData_02003fc0__events_i[] __asm__("gData_02003fc0");
-#define gData_02003fc0 gData_02003fc0__events_i
-/* VIEW(events_i): routine gData_02003fc4 as this part declared it; the joined
- * file has another; tried as the definition's extern s16 gData_02003fc4[], it
- * does not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:2139:
- * `gData_02003fc4' undeclared (first use in this function). */
-extern const u8 gData_02003fc4__events_i[] __asm__("gData_02003fc4");
-#define gData_02003fc4 gData_02003fc4__events_i
+extern s16 gData_02003f52[];
+extern s16 gData_02003f80[];
+extern s16 gData_02003f92[];
+extern s16 gData_02003f98[];
+extern s16 gData_02003fa0[];
+extern s16 gData_02003fb0[];
+extern s16 gData_02003fb8[];
+extern s16 gData_02003fc0[];
+extern s16 gData_02003fc4[];
 
 #define CrumblingPillars_StepWithStandIn CrumblingPillars_StepWithStandIn
 void Func_02002180(void);
@@ -2302,12 +2005,7 @@ void Func_02003164(void) {
 // Scene code of overlay 0x655, in ROM order, from s3284's offset up to the next
 // object the overlay links.
 
-/* VIEW(s3284): routine gData_02003fc8 as this part declared it; the joined file
- * has another; tried as the definition's extern s16 gData_02003fc8[], it does
- * not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:2155:
- * `gData_02003fc8' undeclared (first use in this function). */
-extern const u8 gData_02003fc8__s3284[] __asm__("gData_02003fc8");
-#define gData_02003fc8 gData_02003fc8__s3284
+extern s16 gData_02003fc8[];
 extern s32 gData_02005678;
 
 void Func_02001ee8(void);
@@ -2411,12 +2109,7 @@ void Func_02003284(void) {
   Task_Add(Func_02001ee8, TASK_PASS_VBLANK);
 }
 
-/* VIEW(s3284): routine gData_02004276 as this part declared it; the joined file
- * has another; tried as the definition's extern u16 gData_02004276[], it does
- * not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:2248:
- * `gData_02004276' undeclared (first use in this function). */
-extern const u16 gData_02004276__s3284[] __asm__("gData_02004276");
-#define gData_02004276 gData_02004276__s3284
+extern u16 gData_02004276[];
 
 #define DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(name, n1, n2, n3, n4, n5, n6)      \
   void name(void) {                                                            \
@@ -2647,27 +2340,11 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 #undef DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG
 #undef gData_02004420
-#undef gData_02003f14
-#undef gData_02003f44
-#undef gData_02003f52
-#undef gData_02003f80
-#undef gData_02003f92
-#undef gData_02003f98
-#undef gData_02003fa0
-#undef gData_02003fa8
-#undef gData_02003fb0
-#undef gData_02003fb8
-#undef gData_02003fc0
-#undef gData_02003fc4
 #undef CrumblingPillars_Step
 #undef CrumblingPillars_StepWithStandIn
-#undef gData_02003fd2
-#undef gData_02004066
 #undef Pillars_Place
 #undef CrumblingPillars_PlaceWithStandIns
-#undef gData_02003fc8
 #undef Pillars_Raise
-#undef gData_02004276
 #undef Actor_PlaceFacing
 
 void Func_020016b0(void);
@@ -2678,7 +2355,7 @@ void Func_020022e0(void);
 extern u32 gData_02003ed8[];
 
 // clang-format off
-u32 gData_02003e00[] = {
+s32 gData_02003e00[] = {
     0, 33, 22, 38, 0, 2,
     0, 0, 0, 0, 1, 38,
 };
@@ -2804,47 +2481,41 @@ u16 gData_02004052[] = {
     68, 66,
 };
 
-u16 gData_02004066[] = {
-    0,
+u16 gData_02004066[][6] = {
+    {0, 76, 12, 0, 76, 48},
+    {0, 77, 13, 0, 77, 49},
+    {1, 79, 12, 0, 79, 48},
+    {0, 79, 14, 1, 79, 50},
+    {0, 81, 12, 0, 81, 48},
+    {0, 118, 17, 4, 118, 53},
+    {1, 119, 16, 0, 119, 52},
+    {0, 119, 18, 7, 119, 54},
+    {1, 120, 12, 7, 120, 48},
+    {0, 120, 14, 7, 120, 50},
+    {0, 120, 17, 2, 120, 53},
+    {0, 122, 12, 7, 122, 48},
+    {1, 122, 16, 0, 122, 52},
+    {0, 122, 18, 5, 122, 54},
 };
 
-u16 gData_02004068[] = {
-    76, 12, 0, 76, 48, 0, 77, 13,
-    0, 77, 49, 1, 79, 12, 0, 79,
-    48, 0, 79, 14, 1, 79, 50, 0,
-    81, 12, 0, 81, 48, 0, 118, 17,
-    4, 118, 53, 1, 119, 16, 0, 119,
-    52, 0, 119, 18, 7, 119, 54, 1,
-    120, 12, 7, 120, 48, 0, 120, 14,
-    7, 120, 50, 0, 120, 17, 2, 120,
-    53, 0, 122, 12, 7, 122, 48, 1,
-    122, 16, 0, 122, 52, 0, 122, 18,
-    5, 122, 54,
+u16 gData_0200410e[][6] = {
+    {1, 105, 4, 0, 41, 36},
+    {0, 109, 17, 0, 45, 49},
+    {0, 110, 19, 3, 46, 51},
+    {0, 111, 17, 3, 47, 49},
+    {0, 112, 21, 0, 48, 53},
+    {0, 113, 20, 3, 49, 52},
+    {0, 114, 18, 0, 50, 50},
+    {0, 105, 6, 0, 41, 38},
 };
 
-u16 gData_0200410e[] = {
-    1,
-};
-
-u16 gData_02004110[] = {
-    105, 4, 0, 41, 36, 0, 109, 17,
-    0, 45, 49, 0, 110, 19, 3, 46,
-    51, 0, 111, 17, 3, 47, 49, 0,
-    112, 21, 0, 48, 53, 0, 113, 20,
-    3, 49, 52, 0, 114, 18, 0, 50,
-    50, 0, 105, 6, 0, 41, 38,
-};
-
-u16 gData_0200416e[] = {
-    1,
-};
-
-u16 gData_02004170[] = {
-    91, 11, 0, 27, 43, 0, 92, 11,
-    0, 28, 43, 1, 93, 9, 0, 29,
-    41, 1, 93, 12, 0, 29, 44, 1,
-    109, 7, 0, 45, 39, 1, 112, 6,
-    0, 48, 38,
+u16 gData_0200416e[][6] = {
+    {1, 91, 11, 0, 27, 43},
+    {0, 92, 11, 0, 28, 43},
+    {1, 93, 9, 0, 29, 41},
+    {1, 93, 12, 0, 29, 44},
+    {1, 109, 7, 0, 45, 39},
+    {1, 112, 6, 0, 48, 38},
 };
 
 u16 gData_020041b6[] = {

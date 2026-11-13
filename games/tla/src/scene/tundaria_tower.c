@@ -147,18 +147,8 @@ loop:
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-/* VIEW(first): routine gData_020033d0 as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_020033d0[], it does
- * not compile in tla-ja: games/tla/src/scene/tundaria_tower.c:156:
- * `gData_020033d0' undeclared (first use in this function). */
-extern const u8 gData_020033d0__first[] __asm__("gData_020033d0");
-#define gData_020033d0 gData_020033d0__first
-/* VIEW(first): routine gData_020033f0 as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_020033f0[], it does
- * not compile in tla-ja: games/tla/src/scene/tundaria_tower.c:158:
- * `gData_020033f0' undeclared (first use in this function). */
-extern const u8 gData_020033f0__first[] __asm__("gData_020033f0");
-#define gData_020033f0 gData_020033f0__first
+extern u32 gData_020033d0[];
+extern u32 gData_020033f0[];
 
 const struct ActorPlacement *Func_02000488(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom6)
@@ -170,27 +160,9 @@ const struct ActorPlacement *Func_02000488(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(first): routine gData_02003618 as this part declared it; the joined file
- * has another; tried as the definition's extern struct ActorPlacement
- * gData_02003618[], it does not compile in tla-ja:
- * games/tla/src/scene/tundaria_tower.c:185: `gData_02003618' undeclared (first
- * use in this function). */
-extern const u8 gData_02003618__first[] __asm__("gData_02003618");
-#define gData_02003618 gData_02003618__first
-/* VIEW(first): routine gData_02003648 as this part declared it; the joined file
- * has another; tried as the definition's extern struct ActorPlacement
- * gData_02003648[], it does not compile in tla-ja:
- * games/tla/src/scene/tundaria_tower.c:187: `gData_02003648' undeclared (first
- * use in this function). */
-extern const u8 gData_02003648__first[] __asm__("gData_02003648");
-#define gData_02003648 gData_02003648__first
-/* VIEW(first): routine gData_02003660 as this part declared it; the joined file
- * has another; tried as the definition's extern struct ActorPlacement
- * gData_02003660[], it does not compile in tla-ja:
- * games/tla/src/scene/tundaria_tower.c:189: `gData_02003660' undeclared (first
- * use in this function). */
-extern const u8 gData_02003660__first[] __asm__("gData_02003660");
-#define gData_02003660 gData_02003660__first
+extern struct ActorPlacement gData_02003618[];
+extern struct ActorPlacement gData_02003648[];
+extern struct ActorPlacement gData_02003660[];
 /* VIEW(first): routine gData_02003690 as this part declared it; the joined file
  * has another; tried as the one declaration extern const u8 gData_02003690[],
  * it does not compile in tla-ja: games/tla/src/scene/tundaria_tower.c:191:
@@ -204,12 +176,7 @@ extern const u8 gData_02003690__first[] __asm__("gData_02003690");
  * use in this function). */
 extern const u8 gData_02003708__first[] __asm__("gData_02003708");
 #define gData_02003708 gData_02003708__first
-/* VIEW(first): routine gData_020037c8 as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_020037c8[], it does
- * not compile in tla-ja: games/tla/src/scene/tundaria_tower.c:195:
- * `gData_020037c8' undeclared (first use in this function). */
-extern const u8 gData_020037c8__first[] __asm__("gData_020037c8");
-#define gData_020037c8 gData_020037c8__first
+extern struct ActorPlacement gData_020037c8[];
 
 const struct Trigger *Func_020004c8(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom2)
@@ -429,12 +396,7 @@ void Func_02000920(void) {
 
 void Func_0200095c(void) { Func_0200189c(); }
 
-/* VIEW(first): routine gData_02003370 as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_02003370[], it does
- * not compile in tla-ja: games/tla/src/scene/tundaria_tower.c:424:
- * `gData_02003370' undeclared (first use in this function). */
-extern const u8 gData_02003370__first[] __asm__("gData_02003370");
-#define gData_02003370 gData_02003370__first
+extern u32 gData_02003370[];
 
 /// Actor 8 is placed and given its script while the screen flashes, and three
 /// map cells change.
@@ -740,15 +702,8 @@ void Func_020010d4(struct Actor *object) {
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef gData_020033d0
-#undef gData_020033f0
-#undef gData_02003618
-#undef gData_02003648
-#undef gData_02003660
 #undef gData_02003690
 #undef gData_02003708
-#undef gData_020037c8
-#undef gData_02003370
 // ---- games/tla/src/scene/tundaria_tower/s11e0.c ----
 /* VIEW(events_f): routines Func_020010d4, Func_02000404, Func_020007dc,
  * Func_02000f0c and Func_02000fb8 as module/scene/tundaria_tower.h declares

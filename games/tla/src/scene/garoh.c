@@ -129,18 +129,8 @@ void Func_020002a4(void) {
   }
 }
 
-/* VIEW(first): routine gData_020054ee as this part declared it; the joined file
- * has another; tried as the definition's extern u16 gData_020054ee[], it does
- * not compile in tla-ja: games/tla/src/scene/garoh.c:161: `gData_020054ee'
- * undeclared (first use in this function). */
-extern const u16 gData_020054ee__first[] __asm__("gData_020054ee");
-#define gData_020054ee gData_020054ee__first
-/* VIEW(first): routine gData_020054b8 as this part declared it; the joined file
- * has another; tried as the definition's extern u16 gData_020054b8[], it does
- * not compile in tla-ja: games/tla/src/scene/garoh.c:164: `gData_020054b8'
- * undeclared (first use in this function). */
-extern const u16 gData_020054b8__first[] __asm__("gData_020054b8");
-#define gData_020054b8 gData_020054b8__first
+extern u16 gData_020054ee[];
+extern u16 gData_020054b8[];
 
 // Build BG palette 1 colors 8-15 from the table.
 #define DEFINE_GAROH_LOAD_PALETTE(name, data1, n1, n2)                         \
@@ -183,56 +173,14 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(first): routine gData_020056dc as this part declared it; the joined file
- * has another; tried as the definition's extern struct ActorPlacement
- * gData_020056dc[], it does not compile in tla-ja:
- * games/tla/src/scene/garoh.c:218: `gData_020056dc' undeclared (first use in
- * this function). */
-extern u32 gData_020056dc__first[] __asm__("gData_020056dc");
-#define gData_020056dc gData_020056dc__first
-/* VIEW(first): routine gData_020056f4 as this part declared it; the joined file
- * has another; tried as the definition's extern struct ActorPlacement
- * gData_020056f4[], it does not compile in tla-ja:
- * games/tla/src/scene/garoh.c:208: `gData_020056f4' undeclared (first use in
- * this function). */
-extern u32 gData_020056f4__first[] __asm__("gData_020056f4");
-#define gData_020056f4 gData_020056f4__first
-/* VIEW(first): routine gData_020059dc as this part declared it; the joined file
- * has another; tried as the definition's extern struct ActorPlacement
- * gData_020059dc[], it does not compile in tla-ja:
- * games/tla/src/scene/garoh.c:213: `gData_020059dc' undeclared (first use in
- * this function). */
-extern u32 gData_020059dc__first[] __asm__("gData_020059dc");
-#define gData_020059dc gData_020059dc__first
-/* VIEW(first): routine gData_02005a54 as this part declared it; the joined file
- * has another; tried as the definition's extern struct ActorPlacement
- * gData_02005a54[], it does not compile in tla-ja:
- * games/tla/src/scene/garoh.c:215: `gData_02005a54' undeclared (first use in
- * this function). */
-extern s32 gData_02005a54__first[] __asm__("gData_02005a54");
-#define gData_02005a54 gData_02005a54__first
-/* VIEW(first): routine gData_02005b5c as this part declared it; the joined file
- * has another; tried as the definition's extern struct ActorPlacement
- * gData_02005b5c[], it does not compile in tla-ja:
- * games/tla/src/scene/garoh.c:211: `gData_02005b5c' undeclared (first use in
- * this function). */
-extern u32 gData_02005b5c__first[] __asm__("gData_02005b5c");
-#define gData_02005b5c gData_02005b5c__first
-/* VIEW(first): routine gData_02005c1c as this part declared it; the joined file
- * has another; tried as the definition's extern struct ActorPlacement
- * gData_02005c1c[], it does not compile in tla-ja:
- * games/tla/src/scene/garoh.c:217: `gData_02005c1c' undeclared (first use in
- * this function). */
-extern s32 gData_02005c1c__first[] __asm__("gData_02005c1c");
-#define gData_02005c1c gData_02005c1c__first
+extern struct ActorPlacement gData_020056dc[];
+extern struct ActorPlacement gData_020056f4[];
+extern struct ActorPlacement gData_020059dc[];
+extern struct ActorPlacement gData_02005a54[];
+extern struct ActorPlacement gData_02005b5c[];
+extern struct ActorPlacement gData_02005c1c[];
 
-/* VIEW(first): routine gData_02005de0 as this part declared it; the joined file
- * has another; tried as the definition's extern s32 gData_02005de0[], it does
- * not compile in tla-ja: games/tla/src/scene/garoh.c:246: `gData_02005de0'
- * undeclared (first use in this function). */
-extern const struct GarohPicture
-    gData_02005de0__first[] __asm__("gData_02005de0");
-#define gData_02005de0 gData_02005de0__first
+extern struct MapGridCellAnimation gData_02005de0[];
 
 /// Return the table for the current room.
 const void *Scene_GetPlacements(void) {
@@ -280,8 +228,8 @@ loop:
   index = *(s16 *)(work + 0x154);
   Event_PlaySound(158);
   index--;
-  MapGrid_AnimateCells(gData_02005de0[index].data, gData_02005de0[index].a,
-                       gData_02005de0[index].b);
+  MapGrid_AnimateCells(gData_02005de0[index].steps, gData_02005de0[index].x,
+                       gData_02005de0[index].y);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   {
@@ -473,48 +421,12 @@ void Func_02000808(void) {
   }
 }
 
-/* VIEW(first): routine gData_02005e10 as this part declared it; the joined file
- * has another; tried as the definition's extern struct Trigger
- * gData_02005e10[], it does not compile in tla-ja:
- * games/tla/src/scene/garoh.c:500: `gData_02005e10' undeclared (first use in
- * this function). */
-extern s32 gData_02005e10__first[] __asm__("gData_02005e10");
-#define gData_02005e10 gData_02005e10__first
-/* VIEW(first): routine gData_02005e34 as this part declared it; the joined file
- * has another; tried as the definition's extern struct Trigger
- * gData_02005e34[], it does not compile in tla-ja:
- * games/tla/src/scene/garoh.c:490: `gData_02005e34' undeclared (first use in
- * this function). */
-extern s32 gData_02005e34__first[] __asm__("gData_02005e34");
-#define gData_02005e34 gData_02005e34__first
-/* VIEW(first): routine gData_02005f78 as this part declared it; the joined file
- * has another; tried as the definition's extern struct Trigger
- * gData_02005f78[], it does not compile in tla-ja:
- * games/tla/src/scene/garoh.c:489: `gData_02005f78' undeclared (first use in
- * this function). */
-extern s32 gData_02005f78__first[] __asm__("gData_02005f78");
-#define gData_02005f78 gData_02005f78__first
-/* VIEW(first): routine gData_020060d4 as this part declared it; the joined file
- * has another; tried as the definition's extern struct Trigger
- * gData_020060d4[], it does not compile in tla-ja:
- * games/tla/src/scene/garoh.c:493: `gData_020060d4' undeclared (first use in
- * this function). */
-extern s32 gData_020060d4__first[] __asm__("gData_020060d4");
-#define gData_020060d4 gData_020060d4__first
-/* VIEW(first): routine gData_020061d0 as this part declared it; the joined file
- * has another; tried as the definition's extern struct Trigger
- * gData_020061d0[], it does not compile in tla-ja:
- * games/tla/src/scene/garoh.c:497: `gData_020061d0' undeclared (first use in
- * this function). */
-extern s32 gData_020061d0__first[] __asm__("gData_020061d0");
-#define gData_020061d0 gData_020061d0__first
-/* VIEW(first): routine gData_02006278 as this part declared it; the joined file
- * has another; tried as the definition's extern struct Trigger
- * gData_02006278[], it does not compile in tla-ja:
- * games/tla/src/scene/garoh.c:499: `gData_02006278' undeclared (first use in
- * this function). */
-extern s32 gData_02006278__first[] __asm__("gData_02006278");
-#define gData_02006278 gData_02006278__first
+extern struct Trigger gData_02005e10[];
+extern struct Trigger gData_02005e34[];
+extern struct Trigger gData_02005f78[];
+extern struct Trigger gData_020060d4[];
+extern struct Trigger gData_020061d0[];
+extern struct Trigger gData_02006278[];
 
 /* VIEW(first): routine gData_0200632c as this part declared it; the joined file
  * has another; tried as the definition's extern u32 gData_0200632c[], it does
@@ -689,13 +601,7 @@ L_02008da6:
 L_02008dea:
 }
 
-/* VIEW(first): routine gData_02005450 as this part declared it; the joined file
- * has another; tried as the definition's extern struct Trigger
- * gData_02005450[], it does not compile in tla-ja:
- * games/tla/src/scene/garoh.c:641: `gData_02005450' undeclared (first use in
- * this function). */
-extern u8 gData_02005450__first[] __asm__("gData_02005450");
-#define gData_02005450 gData_02005450__first
+extern s16 gData_02005450[];
 
 void Func_02000e00(void) {
   FieldTask_AddFrame(Func_02000a68, 1152);
@@ -894,23 +800,7 @@ void Func_020011c8(void) {
 #undef EFFECT_SCRIPTS
 #undef DEFINE_GAROH_LOAD_PALETTE
 #undef DEFINE_GAROH_TRIGGER_AT_CELL
-#undef gData_020054ee
-#undef gData_020054b8
-#undef gData_020056dc
-#undef gData_020056f4
-#undef gData_020059dc
-#undef gData_02005a54
-#undef gData_02005b5c
-#undef gData_02005c1c
-#undef gData_02005de0
-#undef gData_02005e10
-#undef gData_02005e34
-#undef gData_02005f78
-#undef gData_020060d4
-#undef gData_020061d0
-#undef gData_02006278
 #undef gData_0200632c
-#undef gData_02005450
 // @file
 // Scene code of overlay 0x65f, in ROM order.
 
@@ -3384,19 +3274,13 @@ s16 gData_02005dc8[] = {
     2, 6, -1, 0,
 };
 
-s32 gData_02005de0[] = {
-    (s32)gData_02005d9c,
-    0x15004e,
-    (s32)gData_02005d9c,
-    0,
-    (s32)gData_02005d9c,
-    0xa0048,
-    (s32)gData_02005db2,
-    0x16004a,
-    (s32)gData_02005d9c,
-    0x170055,
-    (s32)gData_02005dc8,
-    0xd004e,
+struct MapGridCellAnimation gData_02005de0[] = {
+    {gData_02005d9c, 78, 21},
+    {gData_02005d9c, 0, 0},
+    {gData_02005d9c, 72, 10},
+    {gData_02005db2, 74, 22},
+    {gData_02005d9c, 85, 23},
+    {gData_02005dc8, 78, 13},
 };
 
 struct Trigger gData_02005e10[] = {

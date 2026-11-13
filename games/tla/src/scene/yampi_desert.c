@@ -275,38 +275,10 @@ void Icon_DrawItem(s32 item);
 void FieldEffect_SetAttached(s32 actor, s32 a);
 void FieldCamera_WaitForArrival();
 
-/* VIEW(first): routine gYampiDesert_Entrances as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA struct
- * SceneEntrance gYampiDesert_Entrances[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert.c:294: `gYampiDesert_Entrances' undeclared
- * (first use in this function). */
-extern const u8
-    gYampiDesert_Entrances__first[] __asm__("gYampiDesert_Entrances");
-#define gYampiDesert_Entrances gYampiDesert_Entrances__first
-/* VIEW(first): routine gYampiDesert_Room11Entrances as this part declared it;
- * the joined file has another; tried as the definition's extern LATE_DATA
- * struct SceneEntrance gYampiDesert_Room11Entrances[], it does not compile in
- * tla-ja: games/tla/src/scene/yampi_desert.c:293:
- * `gYampiDesert_Room11Entrances' undeclared (first use in this function). */
-extern const u8 gYampiDesert_Room11Entrances__first[] __asm__(
-    "gYampiDesert_Room11Entrances");
-#define gYampiDesert_Room11Entrances gYampiDesert_Room11Entrances__first
-/* VIEW(first): routine gYampiDesert_Room10Regions as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA u32
- * gYampiDesert_Room10Regions[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert.c:301: `gYampiDesert_Room10Regions'
- * undeclared (first use in this function). */
-extern const u8
-    gYampiDesert_Room10Regions__first[] __asm__("gYampiDesert_Room10Regions");
-#define gYampiDesert_Room10Regions gYampiDesert_Room10Regions__first
-/* VIEW(first): routine gYampiDesert_Room11Regions as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA s16
- * gYampiDesert_Room11Regions[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert.c:303: `gYampiDesert_Room11Regions'
- * undeclared (first use in this function). */
-extern const u8
-    gYampiDesert_Room11Regions__first[] __asm__("gYampiDesert_Room11Regions");
-#define gYampiDesert_Room11Regions gYampiDesert_Room11Regions__first
+extern struct SceneEntrance gYampiDesert_Entrances[];
+extern struct SceneEntrance gYampiDesert_Room11Entrances[];
+extern u32 gYampiDesert_Room10Regions[];
+extern s16 gYampiDesert_Room11Regions[];
 
 void YampiDesert_FightBlitz(void) { Field_RequestDjinnBattle(19, 68); }
 
@@ -330,82 +302,19 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "text/msg_ids.h"
 
-/* VIEW(first): routine gYampiDesert_Placements as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA struct
- * ActorPlacement gYampiDesert_Placements[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert.c:373: `gYampiDesert_Placements' undeclared
- * (first use in this function). */
-extern const u8
-    gYampiDesert_Placements__first[] __asm__("gYampiDesert_Placements");
-#define gYampiDesert_Placements gYampiDesert_Placements__first
-/* VIEW(first): routine gYampiDesert_Room1Placements as this part declared it;
- * the joined file has another; tried as the definition's extern LATE_DATA
- * struct ActorPlacement gYampiDesert_Room1Placements[], it does not compile in
- * tla-ja: games/tla/src/scene/yampi_desert.c:355:
- * `gYampiDesert_Room1Placements' undeclared (first use in this function). */
-extern const u8 gYampiDesert_Room1Placements__first[] __asm__(
-    "gYampiDesert_Room1Placements");
-#define gYampiDesert_Room1Placements gYampiDesert_Room1Placements__first
-/* VIEW(first): routine gYampiDesert_Room2Placements as this part declared it;
- * the joined file has another; tried as the definition's extern LATE_DATA
- * struct ActorPlacement gYampiDesert_Room2Placements[], it does not compile in
- * tla-ja: games/tla/src/scene/yampi_desert.c:359:
- * `gYampiDesert_Room2Placements' undeclared (first use in this function). */
-extern const u8 gYampiDesert_Room2Placements__first[] __asm__(
-    "gYampiDesert_Room2Placements");
-#define gYampiDesert_Room2Placements gYampiDesert_Room2Placements__first
+extern struct ActorPlacement gYampiDesert_Placements[];
+extern struct ActorPlacement gYampiDesert_Room1Placements[];
+extern struct ActorPlacement gYampiDesert_Room2Placements[];
 extern LATE_DATA struct ActorPlacement
     gYampiDesert_Room2PlacementsAfterMeeting[];
 #define gYampiDesert_Room2PlacementsAfterMeeting                               \
   gYampiDesert_Room2PlacementsAfterMeeting
-/* VIEW(first): routine gYampiDesert_Room3Placements as this part declared it;
- * the joined file has another; tried as the definition's extern LATE_DATA
- * struct ActorPlacement gYampiDesert_Room3Placements[], it does not compile in
- * tla-ja: games/tla/src/scene/yampi_desert.c:362:
- * `gYampiDesert_Room3Placements' undeclared (first use in this function). */
-extern const u8 gYampiDesert_Room3Placements__first[] __asm__(
-    "gYampiDesert_Room3Placements");
-#define gYampiDesert_Room3Placements gYampiDesert_Room3Placements__first
-/* VIEW(first): routine gYampiDesert_Room4Placements as this part declared it;
- * the joined file has another; tried as the definition's extern LATE_DATA
- * struct ActorPlacement gYampiDesert_Room4Placements[], it does not compile in
- * tla-ja: games/tla/src/scene/yampi_desert.c:364:
- * `gYampiDesert_Room4Placements' undeclared (first use in this function). */
-extern const u8 gYampiDesert_Room4Placements__first[] __asm__(
-    "gYampiDesert_Room4Placements");
-#define gYampiDesert_Room4Placements gYampiDesert_Room4Placements__first
-/* VIEW(first): routine gYampiDesert_Room5Placements as this part declared it;
- * the joined file has another; tried as the definition's extern LATE_DATA
- * struct ActorPlacement gYampiDesert_Room5Placements[], it does not compile in
- * tla-ja: games/tla/src/scene/yampi_desert.c:366:
- * `gYampiDesert_Room5Placements' undeclared (first use in this function). */
-extern const u8 gYampiDesert_Room5Placements__first[] __asm__(
-    "gYampiDesert_Room5Placements");
-#define gYampiDesert_Room5Placements gYampiDesert_Room5Placements__first
-/* VIEW(first): routine gYampiDesert_Room8Placements as this part declared it;
- * the joined file has another; tried as the definition's extern LATE_DATA
- * struct ActorPlacement gYampiDesert_Room8Placements[], it does not compile in
- * tla-ja: games/tla/src/scene/yampi_desert.c:368:
- * `gYampiDesert_Room8Placements' undeclared (first use in this function). */
-extern const u8 gYampiDesert_Room8Placements__first[] __asm__(
-    "gYampiDesert_Room8Placements");
-#define gYampiDesert_Room8Placements gYampiDesert_Room8Placements__first
-/* VIEW(first): routine gYampiDesert_Room10Placements as this part declared it;
- * the joined file has another; tried as the definition's extern LATE_DATA
- * struct ActorPlacement gYampiDesert_Room10Placements[], it does not compile in
- * tla-ja: games/tla/src/scene/yampi_desert.c:370:
- * `gYampiDesert_Room10Placements' undeclared (first use in this function). */
-extern const u8 gYampiDesert_Room10Placements__first[] __asm__(
-    "gYampiDesert_Room10Placements");
-#define gYampiDesert_Room10Placements gYampiDesert_Room10Placements__first
-/* VIEW(first): routine gYampiDesert_Room12Placements as this part declared it;
- * the joined file has another; tried as the definition's extern LATE_DATA
- * struct ActorPlacement gYampiDesert_Room12Placements[], it does not compile in
- * tla-ja: games/tla/src/scene/yampi_desert.c:372:
- * `gYampiDesert_Room12Placements' undeclared (first use in this function). */
-extern const u8 gYampiDesert_Room12Placements__first[] __asm__(
-    "gYampiDesert_Room12Placements");
-#define gYampiDesert_Room12Placements gYampiDesert_Room12Placements__first
+extern struct ActorPlacement gYampiDesert_Room3Placements[];
+extern struct ActorPlacement gYampiDesert_Room4Placements[];
+extern struct ActorPlacement gYampiDesert_Room5Placements[];
+extern struct ActorPlacement gYampiDesert_Room8Placements[];
+extern struct ActorPlacement gYampiDesert_Room10Placements[];
+extern struct ActorPlacement gYampiDesert_Room12Placements[];
 
 const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -434,109 +343,19 @@ const u8 *Scene_GetPlacements(void) {
 
 void YampiDesert_ScoopTreasurePit(s32 a) { Scene_Call4178(a, 64, 0x302); }
 
-/* VIEW(first): routine gYampiDesert_Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA struct
- * Trigger gYampiDesert_Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert.c:460: `gYampiDesert_Triggers' undeclared
- * (first use in this function). */
-extern const u8 gYampiDesert_Triggers__first[] __asm__("gYampiDesert_Triggers");
-#define gYampiDesert_Triggers gYampiDesert_Triggers__first
-/* VIEW(first): routine gYampiDesert_Room1Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA struct
- * Trigger gYampiDesert_Room1Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert.c:436: `gYampiDesert_Room1Triggers'
- * undeclared (first use in this function). */
-extern const u8
-    gYampiDesert_Room1Triggers__first[] __asm__("gYampiDesert_Room1Triggers");
-#define gYampiDesert_Room1Triggers gYampiDesert_Room1Triggers__first
-/* VIEW(first): routine gYampiDesert_Room2Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA struct
- * Trigger gYampiDesert_Room2Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert.c:438: `gYampiDesert_Room2Triggers'
- * undeclared (first use in this function). */
-extern const u8
-    gYampiDesert_Room2Triggers__first[] __asm__("gYampiDesert_Room2Triggers");
-#define gYampiDesert_Room2Triggers gYampiDesert_Room2Triggers__first
-/* VIEW(first): routine gYampiDesert_Room3Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA struct
- * Trigger gYampiDesert_Room3Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert.c:440: `gYampiDesert_Room3Triggers'
- * undeclared (first use in this function). */
-extern const u8
-    gYampiDesert_Room3Triggers__first[] __asm__("gYampiDesert_Room3Triggers");
-#define gYampiDesert_Room3Triggers gYampiDesert_Room3Triggers__first
-/* VIEW(first): routine gYampiDesert_Room4Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA struct
- * Trigger gYampiDesert_Room4Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert.c:442: `gYampiDesert_Room4Triggers'
- * undeclared (first use in this function). */
-extern const u8
-    gYampiDesert_Room4Triggers__first[] __asm__("gYampiDesert_Room4Triggers");
-#define gYampiDesert_Room4Triggers gYampiDesert_Room4Triggers__first
-/* VIEW(first): routine gYampiDesert_Room5Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA struct
- * Trigger gYampiDesert_Room5Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert.c:444: `gYampiDesert_Room5Triggers'
- * undeclared (first use in this function). */
-extern const u8
-    gYampiDesert_Room5Triggers__first[] __asm__("gYampiDesert_Room5Triggers");
-#define gYampiDesert_Room5Triggers gYampiDesert_Room5Triggers__first
-/* VIEW(first): routine gYampiDesert_Room6Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA struct
- * Trigger gYampiDesert_Room6Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert.c:446: `gYampiDesert_Room6Triggers'
- * undeclared (first use in this function). */
-extern const u8
-    gYampiDesert_Room6Triggers__first[] __asm__("gYampiDesert_Room6Triggers");
-#define gYampiDesert_Room6Triggers gYampiDesert_Room6Triggers__first
-/* VIEW(first): routine gYampiDesert_Room7Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA struct
- * Trigger gYampiDesert_Room7Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert.c:448: `gYampiDesert_Room7Triggers'
- * undeclared (first use in this function). */
-extern const u8
-    gYampiDesert_Room7Triggers__first[] __asm__("gYampiDesert_Room7Triggers");
-#define gYampiDesert_Room7Triggers gYampiDesert_Room7Triggers__first
-/* VIEW(first): routine gYampiDesert_Room8Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA struct
- * Trigger gYampiDesert_Room8Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert.c:450: `gYampiDesert_Room8Triggers'
- * undeclared (first use in this function). */
-extern const u8
-    gYampiDesert_Room8Triggers__first[] __asm__("gYampiDesert_Room8Triggers");
-#define gYampiDesert_Room8Triggers gYampiDesert_Room8Triggers__first
-/* VIEW(first): routine gYampiDesert_Room9Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA struct
- * Trigger gYampiDesert_Room9Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert.c:452: `gYampiDesert_Room9Triggers'
- * undeclared (first use in this function). */
-extern const u8
-    gYampiDesert_Room9Triggers__first[] __asm__("gYampiDesert_Room9Triggers");
-#define gYampiDesert_Room9Triggers gYampiDesert_Room9Triggers__first
-/* VIEW(first): routine gYampiDesert_Room10Triggers as this part declared it;
- * the joined file has another; tried as the definition's extern LATE_DATA
- * struct Trigger gYampiDesert_Room10Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert.c:454: `gYampiDesert_Room10Triggers'
- * undeclared (first use in this function). */
-extern const u8
-    gYampiDesert_Room10Triggers__first[] __asm__("gYampiDesert_Room10Triggers");
-#define gYampiDesert_Room10Triggers gYampiDesert_Room10Triggers__first
-/* VIEW(first): routine gYampiDesert_Room11Triggers as this part declared it;
- * the joined file has another; tried as the definition's extern LATE_DATA
- * struct Trigger gYampiDesert_Room11Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert.c:456: `gYampiDesert_Room11Triggers'
- * undeclared (first use in this function). */
-extern const u8
-    gYampiDesert_Room11Triggers__first[] __asm__("gYampiDesert_Room11Triggers");
-#define gYampiDesert_Room11Triggers gYampiDesert_Room11Triggers__first
-/* VIEW(first): routine gYampiDesert_Room12Triggers as this part declared it;
- * the joined file has another; tried as the definition's extern LATE_DATA
- * struct Trigger gYampiDesert_Room12Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert.c:458: `gYampiDesert_Room12Triggers'
- * undeclared (first use in this function). */
-extern const u8
-    gYampiDesert_Room12Triggers__first[] __asm__("gYampiDesert_Room12Triggers");
-#define gYampiDesert_Room12Triggers gYampiDesert_Room12Triggers__first
+extern struct Trigger gYampiDesert_Triggers[];
+extern struct Trigger gYampiDesert_Room1Triggers[];
+extern struct Trigger gYampiDesert_Room2Triggers[];
+extern struct Trigger gYampiDesert_Room3Triggers[];
+extern struct Trigger gYampiDesert_Room4Triggers[];
+extern struct Trigger gYampiDesert_Room5Triggers[];
+extern struct Trigger gYampiDesert_Room6Triggers[];
+extern struct Trigger gYampiDesert_Room7Triggers[];
+extern struct Trigger gYampiDesert_Room8Triggers[];
+extern struct Trigger gYampiDesert_Room9Triggers[];
+extern struct Trigger gYampiDesert_Room10Triggers[];
+extern struct Trigger gYampiDesert_Room11Triggers[];
+extern struct Trigger gYampiDesert_Room12Triggers[];
 
 /// Returns the current room's table.
 // As ☀️'s Scene_GetEntrances picks one.
@@ -857,33 +676,7 @@ void YampiDesert_WatchScorpionStop(void) {
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 #undef DEFINE_POUND_STAKE_STOPPING_SCORPION
-#undef gYampiDesert_Entrances
-#undef gYampiDesert_Room11Entrances
-#undef gYampiDesert_Room10Regions
-#undef gYampiDesert_Room11Regions
-#undef gYampiDesert_Placements
-#undef gYampiDesert_Room1Placements
-#undef gYampiDesert_Room2Placements
 #undef gYampiDesert_Room2PlacementsAfterMeeting
-#undef gYampiDesert_Room3Placements
-#undef gYampiDesert_Room4Placements
-#undef gYampiDesert_Room5Placements
-#undef gYampiDesert_Room8Placements
-#undef gYampiDesert_Room10Placements
-#undef gYampiDesert_Room12Placements
-#undef gYampiDesert_Triggers
-#undef gYampiDesert_Room1Triggers
-#undef gYampiDesert_Room2Triggers
-#undef gYampiDesert_Room3Triggers
-#undef gYampiDesert_Room4Triggers
-#undef gYampiDesert_Room5Triggers
-#undef gYampiDesert_Room6Triggers
-#undef gYampiDesert_Room7Triggers
-#undef gYampiDesert_Room8Triggers
-#undef gYampiDesert_Room9Triggers
-#undef gYampiDesert_Room10Triggers
-#undef gYampiDesert_Room11Triggers
-#undef gYampiDesert_Room12Triggers
 // @file
 // The Yampi Desert, between Osenia's south and Alhafra: twelve rooms of sand.
 // Pound sinks its wooden stakes and Sand lets the party slip under them; a

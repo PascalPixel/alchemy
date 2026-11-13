@@ -423,14 +423,7 @@ void KandoreanTemple_KradenSuspectsTheWall(void) {
   }
 }
 
-/* VIEW(kandorean_temple): routine gKandoreanTemple_Events as this part declared
- * it; the joined file has another; tried as the definition's extern struct
- * Trigger gKandoreanTemple_Events[], it does not compile in tla-ja:
- * games/tla/src/scene/kandorean_temple.c:465: `gKandoreanTemple_Events'
- * undeclared (first use in this function). */
-extern s32 gKandoreanTemple_Events__kandorean_temple[] __asm__(
-    "gKandoreanTemple_Events");
-#define gKandoreanTemple_Events gKandoreanTemple_Events__kandorean_temple
+extern struct Trigger gKandoreanTemple_Events[];
 extern struct Trigger gKandoreanTemple_LiftRoomEvents[];
 #define gKandoreanTemple_LiftRoomEvents gKandoreanTemple_LiftRoomEvents
 extern struct Trigger gKandoreanTemple_ChestbeaterRoomEvents[];
@@ -2027,7 +2020,6 @@ L_0200ae24:
 #undef gKandoreanTemple_ChestbeaterRoomPlacements
 #undef gKandoreanTemple_VentRoomPlacements
 #undef gKandoreanTemple_FogRoomPlacements
-#undef gKandoreanTemple_Events
 #undef gKandoreanTemple_LiftRoomEvents
 #undef gKandoreanTemple_ChestbeaterRoomEvents
 #undef gKandoreanTemple_VentRoomEvents

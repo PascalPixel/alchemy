@@ -105,20 +105,8 @@ struct MainRoutineWork254 {
   u16 value;
 };
 
-/* VIEW(first): routine gData_020022e8 as this part declared it; the joined file
- * has another; tried as the definition's extern struct Trigger
- * gData_020022e8[], it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_basement.c:148: `gData_020022e8'
- * undeclared (first use in this function). */
-extern const u8 gData_020022e8__first[] __asm__("gData_020022e8");
-#define gData_020022e8 gData_020022e8__first
-/* VIEW(first): routine gData_0200236c as this part declared it; the joined file
- * has another; tried as the definition's extern struct Trigger
- * gData_0200236c[], it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_basement.c:147: `gData_0200236c'
- * undeclared (first use in this function). */
-extern const u8 gData_0200236c__first[] __asm__("gData_0200236c");
-#define gData_0200236c gData_0200236c__first
+extern struct Trigger gData_020022e8[];
+extern struct Trigger gData_0200236c[];
 
 void FieldItem_JumpToLeader(s32 a, s32 b, s32 c);
 
@@ -323,13 +311,7 @@ DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Whirlwind_CarryLeaderLower)
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-/* VIEW(first): routine gWhirlwindEndScript as this part declared it; the joined
- * file has another; tried as the definition's extern u32 gWhirlwindEndScript[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_basement.c:297: `gWhirlwindEndScript'
- * undeclared (first use in this function). */
-extern const s32 gWhirlwindEndScript__first[] __asm__("gWhirlwindEndScript");
-#define gWhirlwindEndScript gWhirlwindEndScript__first
+extern s32 gWhirlwindEndScript[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
@@ -469,11 +451,8 @@ void Func_02001008(s32 value) { gData_020024f6 = value; }
 #include "../field/field_effect/move.c"
 
 #undef OBJECT_BYTE
-#undef gData_020022e8
-#undef gData_0200236c
 #undef gPaletteCyclePausesInEvents
 #undef gPaletteCycleFrame
-#undef gWhirlwindEndScript
 // @file
 // Scene code of overlay 0x699, in ROM order.
 
@@ -701,7 +680,7 @@ u32 gPaletteCyclePausesInEvents[] = {
     1,
 };
 
-u32 gWhirlwindEndScript[] = {
+s32 gWhirlwindEndScript[] = {
     39, 5, 0, 12, 38,
 };
 // clang-format on

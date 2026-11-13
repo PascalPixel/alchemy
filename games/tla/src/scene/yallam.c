@@ -125,12 +125,7 @@ struct YallamStop {
 };
 
 extern struct YallamSaved gYallam_SavedSongGame[5];
-/* VIEW(first): routine gYallam_Doors as this part declared it; the joined file
- * has another; tried as the definition's extern s32 gYallam_Doors[], it does
- * not compile in tla-ja: games/tla/src/scene/yallam.c:273: `gYallam_Doors'
- * undeclared (first use in this function). */
-extern const struct YallamStop gYallam_Doors__first[] __asm__("gYallam_Doors");
-#define gYallam_Doors gYallam_Doors__first
+extern struct MapGridCellAnimation gYallam_Doors[];
 
 s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b);
 s32 ArcTan2(s32 y, s32 x);
@@ -248,28 +243,9 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(first): routine gYallam_Placements as this part declared it; the joined
- * file has another; tried as the definition's extern s32 gYallam_Placements[],
- * it does not compile in tla-ja: games/tla/src/scene/yallam.c:248:
- * `gYallam_Placements' undeclared (first use in this function). */
-extern const u8 gYallam_Placements__first[] __asm__("gYallam_Placements");
-#define gYallam_Placements gYallam_Placements__first
-/* VIEW(first): routine gYallam_Room2Placements as this part declared it; the
- * joined file has another; tried as the definition's extern struct
- * ActorPlacement gYallam_Room2Placements[], it does not compile in tla-ja:
- * games/tla/src/scene/yallam.c:246: `gYallam_Room2Placements' undeclared (first
- * use in this function). */
-extern const u8
-    gYallam_Room2Placements__first[] __asm__("gYallam_Room2Placements");
-#define gYallam_Room2Placements gYallam_Room2Placements__first
-/* VIEW(first): routine gYallam_SongGamePlacements as this part declared it; the
- * joined file has another; tried as the definition's extern struct
- * ActorPlacement gYallam_SongGamePlacements[], it does not compile in tla-ja:
- * games/tla/src/scene/yallam.c:244: `gYallam_SongGamePlacements' undeclared
- * (first use in this function). */
-extern const u8
-    gYallam_SongGamePlacements__first[] __asm__("gYallam_SongGamePlacements");
-#define gYallam_SongGamePlacements gYallam_SongGamePlacements__first
+extern s32 gYallam_Placements[];
+extern struct ActorPlacement gYallam_Room2Placements[];
+extern struct ActorPlacement gYallam_SongGamePlacements[];
 
 const u8 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room1 &&
@@ -302,8 +278,8 @@ void Yallam_EnterDoor(void) {
   index = *(s16 *)(event + 340);
   Event_PlaySound(158);
   index--;
-  MapGrid_AnimateCells(gYallam_Doors[index].a, gYallam_Doors[index].b,
-                       gYallam_Doors[index].c);
+  MapGrid_AnimateCells(gYallam_Doors[index].steps, gYallam_Doors[index].x,
+                       gYallam_Doors[index].y);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   {
@@ -376,29 +352,9 @@ void Yallam_DigFifthHole(void) {
 
 void Yallam_DigSixthHole(void) { Yallam_EditMap(67, 25, 2, 2, 87, 8, 1); }
 
-/* VIEW(first): routine gYallam_Triggers as this part declared it; the joined
- * file has another; tried as the definition's extern struct Trigger
- * gYallam_Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/yallam.c:365: `gYallam_Triggers' undeclared (first use in
- * this function). */
-extern const u8 gYallam_Triggers__first[] __asm__("gYallam_Triggers");
-#define gYallam_Triggers gYallam_Triggers__first
-/* VIEW(first): routine gYallam_RoomTwoTriggers as this part declared it; the
- * joined file has another; tried as the definition's extern struct Trigger
- * gYallam_RoomTwoTriggers[], it does not compile in tla-ja:
- * games/tla/src/scene/yallam.c:363: `gYallam_RoomTwoTriggers' undeclared (first
- * use in this function). */
-extern const u8
-    gYallam_RoomTwoTriggers__first[] __asm__("gYallam_RoomTwoTriggers");
-#define gYallam_RoomTwoTriggers gYallam_RoomTwoTriggers__first
-/* VIEW(first): routine gYallam_EntranceFifteenTriggers as this part declared
- * it; the joined file has another; tried as the definition's extern struct
- * Trigger gYallam_EntranceFifteenTriggers[], it does not compile in tla-ja:
- * games/tla/src/scene/yallam.c:361: `gYallam_EntranceFifteenTriggers'
- * undeclared (first use in this function). */
-extern const u8 gYallam_EntranceFifteenTriggers__first[] __asm__(
-    "gYallam_EntranceFifteenTriggers");
-#define gYallam_EntranceFifteenTriggers gYallam_EntranceFifteenTriggers__first
+extern struct Trigger gYallam_Triggers[];
+extern struct Trigger gYallam_RoomTwoTriggers[];
+extern struct Trigger gYallam_EntranceFifteenTriggers[];
 
 const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room1 &&
@@ -1461,77 +1417,15 @@ void Yallam_StartRunner(s32 id) {
  * (first use in this function). */
 extern const u8 MsgHereLetMe__first[] __asm__("MsgHereLetMe");
 #define MsgHereLetMe MsgHereLetMe__first
-/* VIEW(first): routine gYallam_SongGameGather9 as this part declared it; the
- * joined file has another; tried as the definition's extern
- * DEFINE_G_DATA_02002634(gYallam_FirstVillagerPaces, 0x1480000, 0x2f00000,
- * 0x1680000, 0x1780000, 0x3080000, 0x1680000, 0x3180000, 0x148..., it does not
- * compile in tla-ja: games/tla/src/scene/yallam.c:1465:
- * `gYallam_SongGameGather9' undeclared (first use in this function). */
-extern const u8
-    gYallam_SongGameGather9__first[] __asm__("gYallam_SongGameGather9");
-#define gYallam_SongGameGather9 gYallam_SongGameGather9__first
-/* VIEW(first): routine gYallam_SongGameGather10 as this part declared it; the
- * joined file has another; tried as the definition's extern u32
- * gYallam_SongGameGather10[], it does not compile in tla-ja:
- * games/tla/src/scene/yallam.c:1466: `gYallam_SongGameGather10' undeclared
- * (first use in this function). */
-extern const u8
-    gYallam_SongGameGather10__first[] __asm__("gYallam_SongGameGather10");
-#define gYallam_SongGameGather10 gYallam_SongGameGather10__first
-/* VIEW(first): routine gYallam_SongGameForm8 as this part declared it; the
- * joined file has another; tried as the definition's extern u32
- * gYallam_SongGameForm8[], it does not compile in tla-ja:
- * games/tla/src/scene/yallam.c:1482: `gYallam_SongGameForm8' undeclared (first
- * use in this function). */
-extern const u8 gYallam_SongGameForm8__first[] __asm__("gYallam_SongGameForm8");
-#define gYallam_SongGameForm8 gYallam_SongGameForm8__first
-/* VIEW(first): routine gYallam_SongGameForm9 as this part declared it; the
- * joined file has another; tried as the definition's extern u32
- * gYallam_SongGameForm9[], it does not compile in tla-ja:
- * games/tla/src/scene/yallam.c:1483: `gYallam_SongGameForm9' undeclared (first
- * use in this function). */
-extern const u8 gYallam_SongGameForm9__first[] __asm__("gYallam_SongGameForm9");
-#define gYallam_SongGameForm9 gYallam_SongGameForm9__first
-/* VIEW(first): routine gYallam_SongGameForm10 as this part declared it; the
- * joined file has another; tried as the definition's extern u32
- * gYallam_SongGameForm10[], it does not compile in tla-ja:
- * games/tla/src/scene/yallam.c:1483: `gYallam_SongGameForm10' undeclared (first
- * use in this function). */
-extern const u8
-    gYallam_SongGameForm10__first[] __asm__("gYallam_SongGameForm10");
-#define gYallam_SongGameForm10 gYallam_SongGameForm10__first
-/* VIEW(first): routine gYallam_SongGameForm11 as this part declared it; the
- * joined file has another; tried as the definition's extern u32
- * gYallam_SongGameForm11[], it does not compile in tla-ja:
- * games/tla/src/scene/yallam.c:1484: `gYallam_SongGameForm11' undeclared (first
- * use in this function). */
-extern const u8
-    gYallam_SongGameForm11__first[] __asm__("gYallam_SongGameForm11");
-#define gYallam_SongGameForm11 gYallam_SongGameForm11__first
-/* VIEW(first): routine gYallam_SongGameStart8 as this part declared it; the
- * joined file has another; tried as the definition's extern u32
- * gYallam_SongGameStart8[], it does not compile in tla-ja:
- * games/tla/src/scene/yallam.c:1508: `gYallam_SongGameStart8' undeclared (first
- * use in this function). */
-extern const u8
-    gYallam_SongGameStart8__first[] __asm__("gYallam_SongGameStart8");
-#define gYallam_SongGameStart8 gYallam_SongGameStart8__first
-/* VIEW(first): routine gYallam_SongGameStart10 as this part declared it; the
- * joined file has another; tried as the definition's extern u32
- * gYallam_SongGameStart10[], it does not compile in tla-ja:
- * games/tla/src/scene/yallam.c:1509: `gYallam_SongGameStart10' undeclared
- * (first use in this function). */
-extern const u8
-    gYallam_SongGameStart10__first[] __asm__("gYallam_SongGameStart10");
-#define gYallam_SongGameStart10 gYallam_SongGameStart10__first
-/* VIEW(first): routine gYallam_SongGameStart9 as this part declared it; the
- * joined file has another; tried as the definition's extern u32
- * gYallam_SongGameStart9[], it does not compile in tla-ja:
- * games/tla/src/scene/yallam.c:1510: `gYallam_SongGameStart9' undeclared (first
- * use in this function). */
-extern const u8
-    gYallam_SongGameStart9__first[] __asm__("gYallam_SongGameStart9");
-#define gYallam_SongGameStart9 gYallam_SongGameStart9__first
+extern u32 gYallam_SongGameGather9[];
+extern u32 gYallam_SongGameGather10[];
+extern u32 gYallam_SongGameForm8[];
+extern u32 gYallam_SongGameForm9[];
+extern u32 gYallam_SongGameForm10[];
+extern u32 gYallam_SongGameForm11[];
+extern u32 gYallam_SongGameStart8[];
+extern u32 gYallam_SongGameStart10[];
+extern u32 gYallam_SongGameStart9[];
 
 /// The child shows the party the song's game.
 /// "Here, let me show you!"
@@ -1971,23 +1865,7 @@ void Yallam_StartWatchers(void) {
 #undef MsgThereSALot
 #undef MsgThereSAGame
 #undef MsgIOnceHeard
-#undef gYallam_Doors
-#undef gYallam_Placements
-#undef gYallam_Room2Placements
-#undef gYallam_SongGamePlacements
-#undef gYallam_Triggers
-#undef gYallam_RoomTwoTriggers
-#undef gYallam_EntranceFifteenTriggers
 #undef MsgHereLetMe
-#undef gYallam_SongGameGather9
-#undef gYallam_SongGameGather10
-#undef gYallam_SongGameForm8
-#undef gYallam_SongGameForm9
-#undef gYallam_SongGameForm10
-#undef gYallam_SongGameForm11
-#undef gYallam_SongGameStart8
-#undef gYallam_SongGameStart10
-#undef gYallam_SongGameStart9
 #include "text/msg_ids.h"
 
 void Yallam_EnterDoor(void);
@@ -2222,23 +2100,15 @@ s16 gYallam_FourthDoorOpening[] = {
     2, 6, -1,
 };
 
-s32 gYallam_Doors[] = {
-    (s32)gYallam_DoorOpening,
-    0x130062,
-    (s32)gYallam_SecondDoorOpening,
-    0x14005c,
-    (s32)gYallam_ThirdDoorOpening,
-    0x120054,
-    (s32)gYallam_DoorOpening,
-    0x7004f,
-    (s32)gYallam_ThirdDoorOpening,
-    0x100050,
-    (s32)gYallam_ThirdDoorOpening,
-    0x11004d,
-    (s32)gYallam_SecondDoorOpening,
-    0x80063,
-    (s32)gYallam_FourthDoorOpening,
-    0x6005a,
+struct MapGridCellAnimation gYallam_Doors[] = {
+    {gYallam_DoorOpening, 98, 19},
+    {gYallam_SecondDoorOpening, 92, 20},
+    {gYallam_ThirdDoorOpening, 84, 18},
+    {gYallam_DoorOpening, 79, 7},
+    {gYallam_ThirdDoorOpening, 80, 16},
+    {gYallam_ThirdDoorOpening, 77, 17},
+    {gYallam_SecondDoorOpening, 99, 8},
+    {gYallam_FourthDoorOpening, 90, 6},
 };
 
 struct Trigger gYallam_Triggers[] = {

@@ -48,22 +48,8 @@
 #include "graphics/vram_tab.h"
 #include "macros.h"
 
-/* VIEW(first): routine gGondowanCliffs_Entrances as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA s16
- * gGondowanCliffs_Entrances[], it does not compile in tla-ja:
- * games/tla/src/scene/gondowan_cliffs.c:63: `gGondowanCliffs_Entrances'
- * undeclared (first use in this function). */
-extern const u8
-    gGondowanCliffs_Entrances__first[] __asm__("gGondowanCliffs_Entrances");
-#define gGondowanCliffs_Entrances gGondowanCliffs_Entrances__first
-/* VIEW(first): routine gGondowanCliffs_PassEntrances as this part declared it;
- * the joined file has another; tried as the definition's extern LATE_DATA
- * struct ActorPlacement gGondowanCliffs_PassEntrances[], it does not compile in
- * tla-ja: games/tla/src/scene/gondowan_cliffs.c:62:
- * `gGondowanCliffs_PassEntrances' undeclared (first use in this function). */
-extern const u8 gGondowanCliffs_PassEntrances__first[] __asm__(
-    "gGondowanCliffs_PassEntrances");
-#define gGondowanCliffs_PassEntrances gGondowanCliffs_PassEntrances__first
+extern s16 gGondowanCliffs_Entrances[];
+extern struct ActorPlacement gGondowanCliffs_PassEntrances[];
 
 DEFINE_TILE_SPRITE_RESET(TileSprite_Reset)
 
@@ -79,14 +65,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(first): routine gGondowanCliffs_ActorPlacements as this part declared
- * it; the joined file has another; tried as the definition's extern LATE_DATA
- * struct ActorPlacement gGondowanCliffs_ActorPlacements[], it does not compile
- * in tla-ja: games/tla/src/scene/gondowan_cliffs.c:81:
- * `gGondowanCliffs_ActorPlacements' undeclared (first use in this function). */
-extern const u8 gGondowanCliffs_ActorPlacements__first[] __asm__(
-    "gGondowanCliffs_ActorPlacements");
-#define gGondowanCliffs_ActorPlacements gGondowanCliffs_ActorPlacements__first
+extern struct ActorPlacement gGondowanCliffs_ActorPlacements[];
 extern LATE_DATA struct ActorPlacement gGondowanCliffs_PassActorPlacements[];
 #define gGondowanCliffs_PassActorPlacements gGondowanCliffs_PassActorPlacements
 
@@ -112,9 +91,6 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 
 #include "../field/field_effect/move.c"
 
-#undef gGondowanCliffs_Entrances
-#undef gGondowanCliffs_PassEntrances
-#undef gGondowanCliffs_ActorPlacements
 #undef gGondowanCliffs_PassActorPlacements
 // @file
 // The Gondowan Cliffs' events and set-up, and the geysers Scoop digs up out of
@@ -315,14 +291,7 @@ void GondowanCliffs_TalkToDog(void) {
 extern const u8 gGondowanCliffs_PassTriggers__effect_spawn[] __asm__(
     "gGondowanCliffs_PassTriggers");
 #define gGondowanCliffs_PassTriggers gGondowanCliffs_PassTriggers__effect_spawn
-/* VIEW(effect_spawn): routine gGondowanCliffs_Triggers as this part declared
- * it; the joined file has another; tried as the definition's extern LATE_DATA
- * struct Trigger gGondowanCliffs_Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/gondowan_cliffs.c:312: `gGondowanCliffs_Triggers'
- * undeclared (first use in this function). */
-extern const u8 gGondowanCliffs_Triggers__effect_spawn[] __asm__(
-    "gGondowanCliffs_Triggers");
-#define gGondowanCliffs_Triggers gGondowanCliffs_Triggers__effect_spawn
+extern struct Trigger gGondowanCliffs_Triggers[];
 
 void GondowanCliffs_GrindTheRock(s32 unused, s32 id) {
   Actor_SetPosition(id, 0, 0);
@@ -492,14 +461,7 @@ done:
   return 0;
 }
 
-/* VIEW(effect_spawn): routine gGondowanCliffs_MapRects as this part declared
- * it; the joined file has another; tried as the definition's extern LATE_DATA
- * s32 gGondowanCliffs_MapRects[], it does not compile in tla-ja:
- * games/tla/src/scene/gondowan_cliffs.c:479: `gGondowanCliffs_MapRects'
- * undeclared (first use in this function). */
-extern const u8 gGondowanCliffs_MapRects__effect_spawn[] __asm__(
-    "gGondowanCliffs_MapRects");
-#define gGondowanCliffs_MapRects gGondowanCliffs_MapRects__effect_spawn
+extern s32 gGondowanCliffs_MapRects[];
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_GondowanCliffs)
@@ -749,8 +711,6 @@ struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
 #undef PIXELS
 #define PIXELS(value) ((value) << 16)
 #undef gGondowanCliffs_PassTriggers
-#undef gGondowanCliffs_Triggers
-#undef gGondowanCliffs_MapRects
 
 // @file
 // The Gondowan Cliffs' tables, which the scene's getters return.

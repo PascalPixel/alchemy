@@ -111,24 +111,9 @@ void Func_02000100(void) {
  * `gData_02002058' undeclared (first use in this function). */
 extern struct Actor *gData_02002058__first __asm__("gData_02002058");
 #define gData_02002058 gData_02002058__first
-/* VIEW(first): routine gData_02001f78 as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_02001f78[], it does
- * not compile in tla-ja: games/tla/src/scene/gabomba_statue_chamber.c:206:
- * `gData_02001f78' undeclared (first use in this function). */
-extern const u8 gData_02001f78__first[] __asm__("gData_02001f78");
-#define gData_02001f78 gData_02001f78__first
-/* VIEW(first): routine gData_02001f9c as this part declared it; the joined file
- * has another; tried as the definition's extern s32 gData_02001f9c[], it does
- * not compile in tla-ja: games/tla/src/scene/gabomba_statue_chamber.c:218:
- * `gData_02001f9c' undeclared (first use in this function). */
-extern const u8 gData_02001f9c__first[] __asm__("gData_02001f9c");
-#define gData_02001f9c gData_02001f9c__first
-/* VIEW(first): routine gData_02001fe4 as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_02001fe4[], it does
- * not compile in tla-ja: games/tla/src/scene/gabomba_statue_chamber.c:260:
- * `gData_02001fe4' undeclared (first use in this function). */
-extern const u8 gData_02001fe4__first[] __asm__("gData_02001fe4");
-#define gData_02001fe4 gData_02001fe4__first
+extern u32 gData_02001f78[];
+extern s32 gData_02001f9c[];
+extern u32 gData_02001fe4[];
 /* VIEW(first): routine gData_0200200c as this part declared it; the joined file
  * has another; tried as the one declaration extern const u8 gData_0200200c[],
  * it does not compile in tla-ja:
@@ -638,12 +623,7 @@ void Func_02001094(void) {
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
-/* VIEW(first): routine gData_02001f18 as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_02001f18[], it does
- * not compile in tla-ja: games/tla/src/scene/gabomba_statue_chamber.c:797:
- * `gData_02001f18' undeclared (first use in this function). */
-extern const u8 gData_02001f18__first[] __asm__("gData_02001f18");
-#define gData_02001f18 gData_02001f18__first
+extern u32 gData_02001f18[];
 
 /// Places the party around the statue object (its sprite reloaded with item
 /// 242's picture), raises and moves the statue while the camera follows, has
@@ -827,12 +807,7 @@ void Func_020010d4(void) {
   Import_EventSetExitRequest(2);
 }
 
-/* VIEW(first): routine gData_02001f4c as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_02001f4c[], it does
- * not compile in tla-ja: games/tla/src/scene/gabomba_statue_chamber.c:922:
- * `gData_02001f4c' undeclared (first use in this function). */
-extern u8 gData_02001f4c__first[] __asm__("gData_02001f4c");
-#define gData_02001f4c gData_02001f4c__first
+extern u32 gData_02001f4c[];
 
 void Func_02001710(void) {
   s32 *owner;
@@ -1086,12 +1061,7 @@ void Func_02001c44(void) {
 #undef OBJECT
 #undef DEFINE_GABOMBA_STATUE_CHAMBER_SHOW_ITEM
 #undef gData_02002058
-#undef gData_02001f78
-#undef gData_02001f9c
-#undef gData_02001fe4
 #undef gData_0200200c
-#undef gData_02001f18
-#undef gData_02001f4c
 #include "text/msg_ids.h"
 
 void Func_02000e50(void);

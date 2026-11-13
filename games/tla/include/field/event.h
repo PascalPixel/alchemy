@@ -30,6 +30,23 @@ struct Actor;
 #define SPEAKER_WINDOW_ABOVE 0x4000   ///< the message window above the speaker
 #define SPEAKER_WINDOW_BELOW 0x8000   ///< the message window never above it
 
+/// One step of a cell animation: copy the width by height cells at sourceX,
+/// sourceY over the destination, then wait frames.
+#define MAPGRID_ANIMATION_STEP(sourceX, sourceY, width, height, frames)        \
+  (sourceX), (sourceY), (width), (height), (frames)
+#define MAPGRID_ANIMATION_STEPS_END                                            \
+  0xffff ///< a source column that ends the steps
+
+/// A cell animation, such as a door opening: its steps and the cell they are
+/// copied to (MapGrid_PlayMapEdit, which blocks until the last).
+struct MapGridCellAnimation {
+  /// MAPGRID_ANIMATION_STEP entries, ended by MAPGRID_ANIMATION_STEPS_END, for
+  /// MapGrid_PlayMapEdit.
+  const u16 *steps;
+  u16 x; ///< destination cell column
+  u16 y; ///< destination cell row
+};
+
 void Event_ShowMessageAndWait(s32 actor, s32 flags);
 void Event_ResolvePendingActions(s32 skip);
 s32 Party_GetLeaderActor(void);

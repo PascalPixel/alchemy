@@ -66,14 +66,7 @@ void Leader_CenterInCell(void);
 #include "shared/tables.h"
 #include "objcmd.h"
 
-/* VIEW(first): routine gData_020031c4 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA
- * DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22) LATE_DATA
- * DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffec..., it does not compile in
- * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_7.c:452: `gData_020031c4'
- * undeclared (first use in this function). */
-extern const u8 gData_020031c4__first[] __asm__("gData_020031c4");
-#define gData_020031c4 gData_020031c4__first
+extern s16 gData_020031c4[];
 /* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it;
  * the joined file has another; tried as the definition's extern s32
  * gPaletteCyclePausesInEvents, it does not compile in tla-ja:
@@ -768,13 +761,7 @@ DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-/* VIEW(first): routine gWhirlwindEndScript as this part declared it; the joined
- * file has another; tried as the definition's extern u32 gWhirlwindEndScript[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_7.c:762: `gWhirlwindEndScript'
- * undeclared (first use in this function). */
-extern const s32 gWhirlwindEndScript__first[] __asm__("gWhirlwindEndScript");
-#define gWhirlwindEndScript gWhirlwindEndScript__first
+extern s32 gWhirlwindEndScript[];
 extern s32 gWhirlwindRiding;
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
@@ -950,10 +937,8 @@ void LightSprites_SetPriority(u16 value) {
 #include "../field/field_effect/move.c"
 
 #undef FIELD_AT
-#undef gData_020031c4
 #undef gPaletteCyclePausesInEvents
 #undef gPaletteCycleFrame
-#undef gWhirlwindEndScript
 #undef FieldEffect_Spawn
 // @file
 // Scene code of overlay 0x6a0, in ROM order.
@@ -1282,7 +1267,7 @@ LATE_DATA u32 gPaletteCyclePausesInEvents[] = {
     1,
 };
 
-LATE_DATA u32 gWhirlwindEndScript[] = {
+LATE_DATA s32 gWhirlwindEndScript[] = {
     39, 5, 0, 12, 38,
 };
 // clang-format on

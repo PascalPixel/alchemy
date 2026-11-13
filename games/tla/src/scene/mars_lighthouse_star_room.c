@@ -140,13 +140,7 @@ static __inline__ struct Actor *ObjectCreate_(s32 kind, s32 x, s32 y, s32 z) {
 
 void Actor_StartScript(struct Actor *object, const void *script);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-/* VIEW(first): routine gData_020047fc as this part declared it; the joined file
- * has another; tried as the one declaration extern const s16 gData_020047fc[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_star_room.c:1974: `gData_020047fc'
- * undeclared (first use in this function). */
-extern const s16 gData_020047fc__first[] __asm__("gData_020047fc");
-#define gData_020047fc gData_020047fc__first
+extern s16 gData_020047fc[];
 
 #endif
 
@@ -449,26 +443,10 @@ void Event_End();
 void Actor_MoveToObject();
 void Scene_PlayMusic();
 extern u8 MsgMarsStar01[];
-/* VIEW(first): routine gData_0200491c as this part declared it; the joined file
- * has another; not tried: gData_0200491c's declaration holds a FAKEMATCH tag.
- */
-extern u8 gData_0200491c__first[] __asm__("gData_0200491c");
-#define gData_0200491c gData_0200491c__first
-/* VIEW(first): routine gData_02004958 as this part declared it; the joined file
- * has another; not tried: gData_02004958's declaration holds a FAKEMATCH tag.
- */
-extern u8 gData_02004958__first[] __asm__("gData_02004958");
-#define gData_02004958 gData_02004958__first
-/* VIEW(first): routine gData_020049a0 as this part declared it; the joined file
- * has another; not tried: gData_020049a0's declaration holds a FAKEMATCH tag.
- */
-extern u8 gData_020049a0__first[] __asm__("gData_020049a0");
-#define gData_020049a0 gData_020049a0__first
-/* VIEW(first): routine gData_020049dc as this part declared it; the joined file
- * has another; not tried: gData_020049dc's declaration holds a FAKEMATCH tag.
- */
-extern u8 gData_020049dc__first[] __asm__("gData_020049dc");
-#define gData_020049dc gData_020049dc__first
+extern s32 gData_0200491c[];
+extern s32 gData_02004958[];
+extern s32 gData_020049a0[];
+extern s32 gData_020049dc[];
 
 /// After the Flame Dragons' battle, the two Adepts lie wounded.
 /// ★ Named from the game: "Why... Why am I lying here?" (MsgMarsStar01)
@@ -1199,16 +1177,8 @@ void Func_02001424(void) {
   }
 }
 
-/* VIEW(first): routine gData_020044b8 as this part declared it; the joined file
- * has another; not tried: gData_020044b8's declaration holds a FAKEMATCH tag.
- */
-extern const u8 gData_020044b8__first[] __asm__("gData_020044b8");
-#define gData_020044b8 gData_020044b8__first
-/* VIEW(first): routine gData_020045b8 as this part declared it; the joined file
- * has another; not tried: gData_020045b8's declaration holds a FAKEMATCH tag.
- */
-extern const u8 gData_020045b8__first[] __asm__("gData_020045b8");
-#define gData_020045b8 gData_020045b8__first
+extern s32 gData_020044b8[];
+extern s32 gData_020045b8[];
 
 /* VIEW(mars_lighthouse_star_room): routine Func_02002a58 as s32
  * Func_02002a58(s32 id, s32 a, s32 b, s32 angle, const void *path);
@@ -1886,12 +1856,7 @@ struct Work {
   struct Actor *owner;
 };
 
-/* VIEW(s2148): routine gData_02004774 as this part declared it; the joined file
- * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:1870:
- * `gData_02004774' undeclared (first use in this function). */
-extern u8 gData_02004774__s2148[] __asm__("gData_02004774");
-#define gData_02004774 gData_02004774__s2148
+extern u32 gData_02004774[];
 
 #define WORK ((struct Work *)(gInventorySnapshot + 0x188))
 
@@ -1959,12 +1924,7 @@ void Func_020024d4(struct Actor *actor) {
   }
 }
 
-/* VIEW(s2148): routine gData_020047b8 as this part declared it; the joined file
- * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:1906:
- * `gData_020047b8' undeclared (first use in this function). */
-extern const u8 gData_020047b8__s2148[] __asm__("gData_020047b8");
-#define gData_020047b8 gData_020047b8__s2148
+extern u32 gData_020047b8[];
 
 /// Throws two sparks (object kind 325) from (x, y, z), each upward at about
 /// speed plus 0x14000 with a random spread, at a random angle and size.
@@ -2067,12 +2027,7 @@ struct Position {
 };
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-/* VIEW(s2148): routine gData_0200483c as this part declared it; the joined file
- * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:2003:
- * `gData_0200483c' undeclared (first use in this function). */
-extern s16 gData_0200483c__s2148[] __asm__("gData_0200483c");
-#define gData_0200483c gData_0200483c__s2148
+extern s16 gData_0200483c[];
 
 DEFINE_LEADER_SLIDE_ON_ICE(Func_02002dc4, Func_02002d90, gData_0200483c,
                            Actor_SelectAnimation, Func_02002d04,
@@ -2172,35 +2127,19 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003390, Func_02002d90,
 #undef SHARED_F02003070_ID6
 #undef SHARED_F02003070_ID7
 #undef SHARED_F02003070_ID8
-#undef gData_020047fc
 #undef gMarsLighthouseStarRoom_ScatterIceChipsScript
 #undef Func_02001df0
-#undef gData_0200491c
-#undef gData_02004958
-#undef gData_020049a0
-#undef gData_020049dc
-#undef gData_020044b8
-#undef gData_020045b8
 #undef Func_02002a58
 #undef gData_02004744
 #undef gData_02004744
 #undef Unit_Get
-#undef gData_02004774
-#undef gData_020047b8
 #undef Position
-#undef gData_0200483c
-#undef gData_0200483c
 #undef Position
 // @file
 // Scene code of overlay 0x6ab, in ROM order.
 
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
-/* VIEW(s363c): routine gData_02004ce0 as this part declared it; the joined file
- * has another; tried as the rest of the object declares it, it does not compile
- * in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:2133:
- * `gData_02004ce0' undeclared (first use in this function). */
-extern const s32 *gData_02004ce0__s363c[] __asm__("gData_02004ce0");
-#define gData_02004ce0 gData_02004ce0__s363c
+extern s32 gData_02004ce0[];
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void Func_0200363c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -2297,7 +2236,6 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-#undef gData_02004ce0
 // @file
 // Scene code of overlay 0x6ab, in ROM order.
 
@@ -2539,15 +2477,16 @@ u32 gData_020047b8[] = {
     1, 13, 10, 0xc0010000, 38,
 };
 
-s32 gData_020047fc[] = {
-    0xffff, -0x8000, (s32)0xe000c000, (s32)0xc000a000, 0x20004000, 0x40006000,
-    0xffff, -0x8000, 0xffff, -0x8000, -0x4000, (s32)0xc000ffff,
-    -0xc000, 0x4000ffff, 0xffff, -0x8000,
+s16 gData_020047fc[] = {
+    -1, 0, -32768, -1, -16384, -8192, -24576, -16384,
+    16384, 8192, 24576, 16384, -1, 0, -32768, -1,
+    -1, 0, -32768, -1, -16384, -1, -1, -16384,
+    16384, -1, -1, 16384, -1, 0, -32768, -1,
 };
 
-s32 gData_0200483c[] = {
-    0xffff, -0x8000, 0xc000, (s32)0xc0008000, 0x4000, 0x40008000,
-    0xffff, -0x8000,
+s16 gData_0200483c[] = {
+    -1, 0, -32768, -1, -16384, 0, -32768, -16384,
+    16384, 0, -32768, 16384, -1, 0, -32768, -1,
 };
 
 DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_0200485c, 22)

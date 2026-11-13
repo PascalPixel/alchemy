@@ -306,14 +306,7 @@ void MarsLighthouseEntrance_StartPoundIceCone(void) {
   Func_02000338__mars_lighthouse_entrance();
 }
 
-/* VIEW(mars_lighthouse_entrance): routine gData_02005394 as this part declared
- * it; the joined file has another; tried as the definition's extern u32
- * gData_02005394[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:329: `gData_02005394'
- * undeclared (first use in this function). */
-extern const u8
-    gData_02005394__mars_lighthouse_entrance[] __asm__("gData_02005394");
-#define gData_02005394 gData_02005394__mars_lighthouse_entrance
+extern u32 gData_02005394[];
 
 void Func_02000414(s32 id) {
   struct Actor *source = Actor_Get(id);
@@ -764,14 +757,7 @@ next:
   FieldEvent_SetExitRequest(arg);
 }
 
-/* VIEW(mars_lighthouse_entrance): routine gData_0200503c as this part declared
- * it; the joined file has another; tried as the definition's extern
- * DEFINE_G_DATA_02004FF0(gData_02004ff0, 0) s32 gData_0200503c[], it does not
- * compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:794:
- * `gData_0200503c' undeclared (first use in this function). */
-extern const u8
-    gData_0200503c__mars_lighthouse_entrance[] __asm__("gData_0200503c");
-#define gData_0200503c gData_0200503c__mars_lighthouse_entrance
+extern s32 gData_0200503c[];
 extern struct Trigger gMarsLighthouseEntrance_Triggers[];
 #define gMarsLighthouseEntrance_Triggers gMarsLighthouseEntrance_Triggers
 extern struct Trigger gMarsLighthouseEntrance_Room1Triggers[];
@@ -1029,127 +1015,23 @@ s32 Func_0200248c__mars_lighthouse_entrance() __asm__("Func_0200248c");
 s32 Func_020045f8__first() __asm__("Func_020045f8");
 #define Func_020045f8 Func_020045f8__first
 void Func_0200196c(void);
-/* VIEW(mars_lighthouse_entrance): routine gData_02005314 as this part declared
- * it; the joined file has another; tried as the definition's extern u32
- * gData_02005314[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1264: `gData_02005314'
- * undeclared (first use in this function). */
-extern u8 gData_02005314__mars_lighthouse_entrance[] __asm__("gData_02005314");
-#define gData_02005314 gData_02005314__mars_lighthouse_entrance
-/* VIEW(mars_lighthouse_entrance): routine gData_020053d8 as this part declared
- * it; the joined file has another; tried as the definition's extern u32
- * gData_020053d8[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1087: `gData_020053d8'
- * undeclared (first use in this function). */
-extern u8 gData_020053d8__mars_lighthouse_entrance[] __asm__("gData_020053d8");
-#define gData_020053d8 gData_020053d8__mars_lighthouse_entrance
-/* VIEW(mars_lighthouse_entrance): routine gData_020053e6 as this part declared
- * it; the joined file has another; tried as the definition's extern u16
- * gData_020053e6[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1101: `gData_020053e6'
- * undeclared (first use in this function). */
-extern u8 gData_020053e6__mars_lighthouse_entrance[] __asm__("gData_020053e6");
-#define gData_020053e6 gData_020053e6__mars_lighthouse_entrance
-/* VIEW(mars_lighthouse_entrance): routine gData_020053f8 as this part declared
- * it; the joined file has another; tried as the definition's extern u16
- * gData_020053f8[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1101: `gData_020053f8'
- * undeclared (first use in this function). */
-extern u8 gData_020053f8__mars_lighthouse_entrance[] __asm__("gData_020053f8");
-#define gData_020053f8 gData_020053f8__mars_lighthouse_entrance
-/* VIEW(mars_lighthouse_entrance): routine gData_020053fe as this part declared
- * it; the joined file has another; tried as the definition's extern s16
- * gData_020053fe[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1103: `gData_020053fe'
- * undeclared (first use in this function). */
-extern u8 gData_020053fe__mars_lighthouse_entrance[] __asm__("gData_020053fe");
-#define gData_020053fe gData_020053fe__mars_lighthouse_entrance
-/* VIEW(mars_lighthouse_entrance): routine gData_0200540c as this part declared
- * it; the joined file has another; tried as the definition's extern u16
- * gData_0200540c[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1200: `gData_0200540c'
- * undeclared (first use in this function). */
-extern u8 gData_0200540c__mars_lighthouse_entrance[] __asm__("gData_0200540c");
-#define gData_0200540c gData_0200540c__mars_lighthouse_entrance
-/* VIEW(mars_lighthouse_entrance): routine gData_02005412 as this part declared
- * it; the joined file has another; tried as the definition's extern u16
- * gData_02005412[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1200: `gData_02005412'
- * undeclared (first use in this function). */
-extern u8 gData_02005412__mars_lighthouse_entrance[] __asm__("gData_02005412");
-#define gData_02005412 gData_02005412__mars_lighthouse_entrance
-/* VIEW(mars_lighthouse_entrance): routine gData_02005418 as this part declared
- * it; the joined file has another; tried as the definition's extern s16
- * gData_02005418[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1204: `gData_02005418'
- * undeclared (first use in this function). */
-extern u8 gData_02005418__mars_lighthouse_entrance[] __asm__("gData_02005418");
-#define gData_02005418 gData_02005418__mars_lighthouse_entrance
-/* VIEW(mars_lighthouse_entrance): routine gData_02005438 as this part declared
- * it; the joined file has another; tried as the definition's extern u16
- * gData_02005438[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1250: `gData_02005438'
- * undeclared (first use in this function). */
-extern u8 gData_02005438__mars_lighthouse_entrance[] __asm__("gData_02005438");
-#define gData_02005438 gData_02005438__mars_lighthouse_entrance
-/* VIEW(mars_lighthouse_entrance): routine gData_0200543e as this part declared
- * it; the joined file has another; tried as the definition's extern u16
- * gData_0200543e[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1250: `gData_0200543e'
- * undeclared (first use in this function). */
-extern u8 gData_0200543e__mars_lighthouse_entrance[] __asm__("gData_0200543e");
-#define gData_0200543e gData_0200543e__mars_lighthouse_entrance
-/* VIEW(mars_lighthouse_entrance): routine gData_02005448 as this part declared
- * it; the joined file has another; tried as the definition's extern u16
- * gData_02005448[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1259: `gData_02005448'
- * undeclared (first use in this function). */
-extern u8 gData_02005448__mars_lighthouse_entrance[] __asm__("gData_02005448");
-#define gData_02005448 gData_02005448__mars_lighthouse_entrance
-/* VIEW(mars_lighthouse_entrance): routine gData_0200544e as this part declared
- * it; the joined file has another; tried as the definition's extern u16
- * gData_0200544e[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1259: `gData_0200544e'
- * undeclared (first use in this function). */
-extern u8 gData_0200544e__mars_lighthouse_entrance[] __asm__("gData_0200544e");
-#define gData_0200544e gData_0200544e__mars_lighthouse_entrance
-/* VIEW(mars_lighthouse_entrance): routine gData_02005454 as this part declared
- * it; the joined file has another; tried as the definition's extern s16
- * gData_02005454[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1273: `gData_02005454'
- * undeclared (first use in this function). */
-extern u8 gData_02005454__mars_lighthouse_entrance[] __asm__("gData_02005454");
-#define gData_02005454 gData_02005454__mars_lighthouse_entrance
-/* VIEW(mars_lighthouse_entrance): routine gData_0200586c as this part declared
- * it; the joined file has another; tried as the definition's extern
- * DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_020057b8, 22)
- * DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_020057f4, 44)
- * DEFINE_FIELD_EFFECT_D..., it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1318: `gData_0200586c'
- * undeclared (first use in this function). */
-extern u8 gData_0200586c__mars_lighthouse_entrance[] __asm__("gData_0200586c");
-#define gData_0200586c gData_0200586c__mars_lighthouse_entrance
-/* VIEW(mars_lighthouse_entrance): routine gData_0200587c as this part declared
- * it; the joined file has another; tried as the definition's extern s16
- * gData_0200587c[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1318: `gData_0200587c'
- * undeclared (first use in this function). */
-extern u8 gData_0200587c__mars_lighthouse_entrance[] __asm__("gData_0200587c");
-#define gData_0200587c gData_0200587c__mars_lighthouse_entrance
-/* VIEW(mars_lighthouse_entrance): routine gData_020058a8 as this part declared
- * it; the joined file has another; tried as the definition's extern s16
- * gData_020058a8[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1319: `gData_020058a8'
- * undeclared (first use in this function). */
-extern u8 gData_020058a8__mars_lighthouse_entrance[] __asm__("gData_020058a8");
-#define gData_020058a8 gData_020058a8__mars_lighthouse_entrance
-/* VIEW(mars_lighthouse_entrance): routine gData_020058d4 as this part declared
- * it; the joined file has another; tried as the definition's extern u32
- * gData_020058d4[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1319: `gData_020058d4'
- * undeclared (first use in this function). */
-extern u8 gData_020058d4__mars_lighthouse_entrance[] __asm__("gData_020058d4");
-#define gData_020058d4 gData_020058d4__mars_lighthouse_entrance
+extern u32 gData_02005314[];
+extern s16 gData_020053d8[];
+extern u16 gData_020053e6[];
+extern u16 gData_020053f8[];
+extern s16 gData_020053fe[];
+extern u16 gData_0200540c[];
+extern u16 gData_02005412[];
+extern s16 gData_02005418[];
+extern u16 gData_02005438[];
+extern u16 gData_0200543e[];
+extern u16 gData_02005448[];
+extern u16 gData_0200544e[];
+extern s16 gData_02005454[];
+extern s16 gData_0200586c[];
+extern s16 gData_0200587c[];
+extern s16 gData_020058a8[];
+extern u32 gData_020058d4[];
 /* VIEW(s138c): variable gMainRoutineWork as extern u8 gMainRoutineWork[];
  * main_routine_work.h has extern struct MainRoutineWork gMainRoutineWork; tried
  * as the 4 declarations' extern u8 gMainRoutineWork[], it does not compile in
@@ -1460,15 +1342,7 @@ extern const u8
 extern const u8
     gData_02005578__mars_lighthouse_entrance[] __asm__("gData_02005578");
 #define gData_02005578 gData_02005578__mars_lighthouse_entrance
-/* VIEW(mars_lighthouse_entrance): routine gData_020055d4 as this part declared
- * it; the joined file has another; tried as the definition's extern
- * DEFINE_G_DATA_0200547C(gData_0200547c, Func_0200308c, 112, 728, 22, 128, 728,
- * Func_020031dc) DEFINE_G_DATA_020054CC(gData_020054cc, F..., it does not
- * compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1400:
- * `gData_020055d4' undeclared (first use in this function). */
-extern const u8
-    gData_020055d4__mars_lighthouse_entrance[] __asm__("gData_020055d4");
-#define gData_020055d4 gData_020055d4__mars_lighthouse_entrance
+extern s32 gData_020055d4[];
 /* VIEW(mars_lighthouse_entrance): routine gData_02005644 as this part declared
  * it; the joined file has another; tried as the definition's extern LATE_DATA
  * s32 gData_02005644[], it does not compile in tla-ja:
@@ -2029,14 +1903,7 @@ struct Work {
   struct Actor *owner;
 };
 
-/* VIEW(s263c): routine gData_020056d0 as this part declared it; the joined file
- * has another; tried as the definition's extern
- * DEFINE_G_DATA_020054CC(gData_02005644, Func_02003138, 0x700000, 0x200000,
- * 0x2a80000, 0x160000, 0x800000, 0x2a80000, Func_02000808, Fu..., it does not
- * compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1874:
- * `gData_020056d0' undeclared (first use in this function). */
-extern u8 gData_020056d0__s263c[] __asm__("gData_020056d0");
-#define gData_020056d0 gData_020056d0__s263c
+extern u32 gData_020056d0[];
 
 #define WORK ((struct Work *)(gInventorySnapshot + 0x188))
 
@@ -2098,12 +1965,7 @@ void Func_020029c8(struct Actor *actor) {
   }
 }
 
-/* VIEW(s263c): routine gData_02005714 as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_02005714[], it does
- * not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1907:
- * `gData_02005714' undeclared (first use in this function). */
-extern const u8 gData_02005714__s263c[] __asm__("gData_02005714");
-#define gData_02005714 gData_02005714__s263c
+extern u32 gData_02005714[];
 
 /// Throws two sparks (object kind 325) from (x, y, z), each upward at about
 /// speed plus 0x14000 with a random spread, at a random angle and size.
@@ -2193,12 +2055,7 @@ DEFINE_ACTOR_POP_UP(Func_02003138, Func_02004bc0)
 
 DEFINE_ACTOR_PARK(Func_020031dc, Func_02002fc4)
 
-/* VIEW(s263c): routine gData_02005758 as this part declared it; the joined file
- * has another; tried as the definition's extern s32 gData_02005758[], it does
- * not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1987:
- * `gData_02005758' undeclared (first use in this function). */
-extern const s16 gData_02005758__s263c[] __asm__("gData_02005758");
-#define gData_02005758 gData_02005758__s263c
+extern s16 gData_02005758[];
 
 DEFINE_ACTOR_STEER_BY_PAD(Func_020031f8, gData_02005758, Func_02004bc0)
 
@@ -2219,12 +2076,7 @@ struct Position {
 
 void Func_02004bc0(struct Actor *actor, s32 mode);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-/* VIEW(s263c): routine gData_02005798 as this part declared it; the joined file
- * has another; tried as the definition's extern s32 gData_02005798[], it does
- * not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:2013:
- * `gData_02005798' undeclared (first use in this function). */
-extern s16 gData_02005798__s263c[] __asm__("gData_02005798");
-#define gData_02005798 gData_02005798__s263c
+extern s16 gData_02005798[];
 
 DEFINE_LEADER_SLIDE_ON_ICE(Func_020032b8, Func_02003284, gData_02005798,
                            Func_02004bc0, Func_020031f8, Func_02004c78)
@@ -2314,13 +2166,10 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003884, Func_02003284, Func_02004bc0,
 #undef gMarsLighthouseEntrance_Room6Placements
 #undef gMarsLighthouseEntrance_Room7Placements
 #undef Func_02003b30
-#undef gData_02005394
-#undef gData_0200503c
 #undef gData_0200547c
 #undef gData_020054cc
 #undef gData_02005528
 #undef gData_02005578
-#undef gData_020055d4
 #undef gData_02005644
 #undef gMarsLighthouseEntrance_Triggers
 #undef gMarsLighthouseEntrance_Room1Triggers
@@ -2333,12 +2182,10 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003884, Func_02003284, Func_02004bc0,
 #undef gData_02006868
 #undef Func_02002c2c
 #undef gData_02006868
-#undef gData_0200503c
 #undef gData_0200547c
 #undef gData_020054cc
 #undef gData_02005528
 #undef gData_02005578
-#undef gData_020055d4
 #undef gData_02005644
 #undef gMarsLighthouseEntrance_Triggers
 #undef gMarsLighthouseEntrance_Room1Triggers
@@ -2351,29 +2198,10 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003884, Func_02003284, Func_02004bc0,
 #undef gData_02006868
 #undef Func_020022e4
 #undef Func_0200248c
-#undef gData_02005314
-#undef gData_020053d8
-#undef gData_020053e6
-#undef gData_020053f8
-#undef gData_020053fe
-#undef gData_0200540c
-#undef gData_02005412
-#undef gData_02005418
-#undef gData_02005438
-#undef gData_0200543e
-#undef gData_02005448
-#undef gData_0200544e
-#undef gData_02005454
-#undef gData_0200586c
-#undef gData_0200587c
-#undef gData_020058a8
-#undef gData_020058d4
-#undef gData_0200503c
 #undef gData_0200547c
 #undef gData_020054cc
 #undef gData_02005528
 #undef gData_02005578
-#undef gData_020055d4
 #undef gData_02005644
 #undef gMarsLighthouseEntrance_Triggers
 #undef gMarsLighthouseEntrance_Room1Triggers
@@ -2390,14 +2218,10 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003884, Func_02003284, Func_02004bc0,
 #undef Func_0200246c
 #undef Unit_Get
 #undef Func_02002614
-#undef gData_020056d0
-#undef gData_02005714
-#undef gData_0200503c
 #undef gData_0200547c
 #undef gData_020054cc
 #undef gData_02005528
 #undef gData_02005578
-#undef gData_020055d4
 #undef gData_02005644
 #undef gMarsLighthouseEntrance_Triggers
 #undef gMarsLighthouseEntrance_Room1Triggers
@@ -2408,21 +2232,13 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003884, Func_02003284, Func_02004bc0,
 #undef gMarsLighthouseEntrance_Room6Triggers
 #undef gMarsLighthouseEntrance_Room7Triggers
 #undef gData_02006868
-#undef gData_02005758
 #undef Position
-#undef gData_02005798
-#undef gData_02005798
 #undef Position
 #undef Func_020045f8
 // @file
 // Scene code of overlay 0x6aa, in ROM order.
 
-/* VIEW(s3b30): routine gData_0200686c as this part declared it; the joined file
- * has another; tried as the definition's extern s32 gData_0200686c[], it does
- * not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:2078:
- * `gData_0200686c' undeclared (first use in this function). */
-extern const s32 *gData_0200686c__s3b30[] __asm__("gData_0200686c");
-#define gData_0200686c gData_0200686c__s3b30
+extern s32 gData_0200686c[];
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
@@ -2569,7 +2385,6 @@ void Func_02004160(struct PushEvent *event) {
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-#undef gData_0200686c
 // @file
 // Scene code of overlay 0x6aa, in ROM order.
 
@@ -2993,15 +2808,16 @@ u32 gData_02005714[] = {
     1, 13, 10, 0xc0010000, 38,
 };
 
-s32 gData_02005758[] = {
-    0xffff, -0x8000, (s32)0xe000c000, (s32)0xc000a000, 0x20004000, 0x40006000,
-    0xffff, -0x8000, 0xffff, -0x8000, -0x4000, (s32)0xc000ffff,
-    -0xc000, 0x4000ffff, 0xffff, -0x8000,
+s16 gData_02005758[] = {
+    -1, 0, -32768, -1, -16384, -8192, -24576, -16384,
+    16384, 8192, 24576, 16384, -1, 0, -32768, -1,
+    -1, 0, -32768, -1, -16384, -1, -1, -16384,
+    16384, -1, -1, 16384, -1, 0, -32768, -1,
 };
 
-s32 gData_02005798[] = {
-    0xffff, -0x8000, 0xc000, (s32)0xc0008000, 0x4000, 0x40008000,
-    0xffff, -0x8000,
+s16 gData_02005798[] = {
+    -1, 0, -32768, -1, -16384, 0, -32768, -16384,
+    16384, 0, -32768, 16384, -1, 0, -32768, -1,
 };
 
 DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_020057b8, 22)

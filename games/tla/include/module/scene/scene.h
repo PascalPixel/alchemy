@@ -503,12 +503,6 @@ struct GabombaStatueChamberMapWork {
   struct GabombaStatueChamberLayer layers[3];
 };
 
-struct GarohPicture {
-  const void *data;
-  u16 a;
-  u16 b;
-};
-
 struct GarohEventWork {
   u8 unk000[0xca4];
   s8 fadeLock;
@@ -539,11 +533,6 @@ struct FadePalette {
 struct IsletCaveEventWork {
   u8 unk000[0x1ac];
   s32 value1ac;
-};
-
-struct IsletCaveEntry {
-  s32 value;
-  u16 position[2];
 };
 
 struct TrapEntry {

@@ -150,12 +150,7 @@ void Func_020034ec(void);
 void Func_02001cac(void);
 void Func_02001cfc(void);
 
-/* VIEW(first): routine gSmokeScript as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gSmokeScript[], it does not
- * compile in tla-ja: games/tla/src/scene/islets.c:739: `gSmokeScript'
- * undeclared (first use in this function). */
-extern const u8 gSmokeScript__first[] __asm__("gSmokeScript");
-#define gSmokeScript gSmokeScript__first
+extern u32 gSmokeScript[];
 extern struct Trigger gData_02004b14[];
 extern struct Trigger gData_02004b20[];
 extern struct Trigger gData_02004bb0[];
@@ -750,18 +745,8 @@ struct Actor *Func_02000da0(struct Actor *object, s32 value) {
 
 DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 3, Actor_SelectAnimation, gSmokeScript)
 
-/* VIEW(first): routine gData_020043f8 as this part declared it; the joined file
- * has another; tried as the definition's extern s32 gData_020043f8[], it does
- * not compile in tla-ja: games/tla/src/scene/islets.c:779: `gData_020043f8'
- * undeclared (first use in this function). */
-extern const u8 gData_020043f8__first[] __asm__("gData_020043f8");
-#define gData_020043f8 gData_020043f8__first
-/* VIEW(first): routine gData_02004300 as this part declared it; the joined file
- * has another; tried as the definition's extern s32 gData_02004300[], it does
- * not compile in tla-ja: games/tla/src/scene/islets.c:789: `gData_02004300'
- * undeclared (first use in this function). */
-extern const u8 gData_02004300__first[] __asm__("gData_02004300");
-#define gData_02004300 gData_02004300__first
+extern s32 gData_020043f8[];
+extern s32 gData_02004300[];
 
 #define STEP(actor, x, z)                                                      \
   (Actor_GetById(actor)->actionFlags &= ~1, Actor_WalkToAndWait(actor, x, z),  \
@@ -1941,12 +1926,7 @@ void Func_02002d7c(void) {
   } while (--*owed != 0);
 }
 
-/* VIEW(first): routine gData_02004274 as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_02004274[], it does
- * not compile in tla-ja: games/tla/src/scene/islets.c:1962: `gData_02004274'
- * undeclared (first use in this function). */
-extern const u8 gData_02004274__first[] __asm__("gData_02004274");
-#define gData_02004274 gData_02004274__first
+extern u32 gData_02004274[];
 
 /// The room's setup: flags, the objects' places and the scene state.
 void Func_02002f1c(void) {
@@ -2642,17 +2622,13 @@ void Actor_StopAtPushTarget(struct Actor *object) {
 #undef EVENT_S16
 #undef HI
 #undef ABS
-#undef gSmokeScript
 #undef gData_02004028
 #undef gData_020046bc
-#undef gData_020043f8
-#undef gData_02004300
 #undef gData_02004004
 #undef gData_020045a4
 #undef gData_020045f0
 #undef gData_02004508
 #undef gData_02004554
-#undef gData_02004274
 #undef gPushFootprints
 #include "text/msg_ids.h"
 

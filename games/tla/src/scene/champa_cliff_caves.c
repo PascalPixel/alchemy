@@ -145,20 +145,8 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gData_0200381c[];
 extern struct ActorPlacement gData_02003864[];
-/* VIEW(champa_cliff_caves): routine gData_020039cc as this part declared it;
- * the joined file has another; tried as the definition's extern LATE_DATA s16
- * gData_020039cc[], it does not compile in tla-ja:
- * games/tla/src/scene/champa_cliff_caves.c:171: `gData_020039cc' undeclared
- * (first use in this function). */
-extern u32 gData_020039cc__champa_cliff_caves[] __asm__("gData_020039cc");
-#define gData_020039cc gData_020039cc__champa_cliff_caves
-/* VIEW(champa_cliff_caves): routine gData_02003c84 as this part declared it;
- * the joined file has another; tried as the definition's extern LATE_DATA s16
- * gData_02003c84[], it does not compile in tla-ja:
- * games/tla/src/scene/champa_cliff_caves.c:160: `gData_02003c84' undeclared
- * (first use in this function). */
-extern u32 gData_02003c84__champa_cliff_caves[] __asm__("gData_02003c84");
-#define gData_02003c84 gData_02003c84__champa_cliff_caves
+extern s16 gData_020039cc[];
+extern s16 gData_02003c84[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s32 scene;
@@ -1048,30 +1036,10 @@ void Func_02001774(void) {
                        (s16)gMainRoutineWork.savedEntrance);
 }
 
-/* VIEW(s0a34): routine gData_020041e8 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA u32 gData_020041e8[],
- * it does not compile in tla-ja: games/tla/src/scene/champa_cliff_caves.c:1175:
- * `gData_020041e8' undeclared (first use in this function). */
-extern const u8 gData_020041e8__s0a34[] __asm__("gData_020041e8");
-#define gData_020041e8 gData_020041e8__s0a34
-/* VIEW(s0a34): routine gData_02004254 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA u32 gData_02004254[],
- * it does not compile in tla-ja: games/tla/src/scene/champa_cliff_caves.c:1180:
- * `gData_02004254' undeclared (first use in this function). */
-extern const u8 gData_02004254__s0a34[] __asm__("gData_02004254");
-#define gData_02004254 gData_02004254__s0a34
-/* VIEW(s0a34): routine gData_0200432c as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA u32 gData_0200432c[],
- * it does not compile in tla-ja: games/tla/src/scene/champa_cliff_caves.c:1183:
- * `gData_0200432c' undeclared (first use in this function). */
-extern const u8 gData_0200432c__s0a34[] __asm__("gData_0200432c");
-#define gData_0200432c gData_0200432c__s0a34
-/* VIEW(s0a34): routine gData_020042d4 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA u32 gData_020042d4[],
- * it does not compile in tla-ja: games/tla/src/scene/champa_cliff_caves.c:1186:
- * `gData_020042d4' undeclared (first use in this function). */
-extern const u8 gData_020042d4__s0a34[] __asm__("gData_020042d4");
-#define gData_020042d4 gData_020042d4__s0a34
+extern u32 gData_020041e8[];
+extern u32 gData_02004254[];
+extern u32 gData_0200432c[];
+extern u32 gData_020042d4[];
 
 /// The scene that opens with MsgMySalamanderYou: persons 8 and 11 talk and
 /// move with the party through three yes-or-no answers (each counted in the
@@ -2112,13 +2080,7 @@ u32 gData_02003634[] = {
 #undef WORD_AT
 #undef FIELD_AT
 #undef gData_02003d10
-#undef gData_020039cc
-#undef gData_02003c84
 #undef gData_02003d18
-#undef gData_020041e8
-#undef gData_02004254
-#undef gData_0200432c
-#undef gData_020042d4
 
 #include "text/msg_ids.h"
 

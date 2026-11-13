@@ -37,16 +37,7 @@ void Naribwe_HideStone(void);
  * in this function). */
 extern const u8 gNaribwe_Placements__first[] __asm__("gNaribwe_Placements");
 #define gNaribwe_Placements gNaribwe_Placements__first
-/* VIEW(first): routine gNaribwe_Entrance10Placements as this part declared it;
- * the joined file has another; tried as the definition's extern
- * DEFINE_G_SCENE_EXITS_4(105, 106, 2, 23, 24)
- * DEFINE_NARIBWE_PLACEMENTS(gNaribwe_Placements) struct ActorPlacement
- * gNaribwe_Entrance10P..., it does not compile in tla-ja:
- * games/tla/src/scene/naribwe.c:87: `gNaribwe_Entrance10Placements' undeclared
- * (first use in this function). */
-extern const u8 gNaribwe_Entrance10Placements__first[] __asm__(
-    "gNaribwe_Entrance10Placements");
-#define gNaribwe_Entrance10Placements gNaribwe_Entrance10Placements__first
+extern struct ActorPlacement gNaribwe_Entrance10Placements[];
 /* VIEW(first): routine gNaribwe_PlacementsOnReturn as this part declared it;
  * the joined file has another; tried as the one declaration extern const u8
  * gNaribwe_PlacementsOnReturn[], it does not compile in tla-ja:
@@ -55,22 +46,8 @@ extern const u8 gNaribwe_Entrance10Placements__first[] __asm__(
 extern const u8
     gNaribwe_PlacementsOnReturn__first[] __asm__("gNaribwe_PlacementsOnReturn");
 #define gNaribwe_PlacementsOnReturn gNaribwe_PlacementsOnReturn__first
-/* VIEW(first): routine gNaribwe_Triggers as this part declared it; the joined
- * file has another; tried as the definition's extern
- * DEFINE_NARIBWE_PLACEMENTS(gNaribwe_PlacementsOnReturn) struct Trigger
- * gNaribwe_Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/naribwe.c:109: `gNaribwe_Triggers' undeclared (first use
- * in this function). */
-extern const u8 gNaribwe_Triggers__first[] __asm__("gNaribwe_Triggers");
-#define gNaribwe_Triggers gNaribwe_Triggers__first
-/* VIEW(first): routine gNaribwe_TriggersOnReturn as this part declared it; the
- * joined file has another; tried as the definition's extern struct Trigger
- * gNaribwe_TriggersOnReturn[], it does not compile in tla-ja:
- * games/tla/src/scene/naribwe.c:107: `gNaribwe_TriggersOnReturn' undeclared
- * (first use in this function). */
-extern const u8
-    gNaribwe_TriggersOnReturn__first[] __asm__("gNaribwe_TriggersOnReturn");
-#define gNaribwe_TriggersOnReturn gNaribwe_TriggersOnReturn__first
+extern struct Trigger gNaribwe_Triggers[];
+extern struct Trigger gNaribwe_TriggersOnReturn[];
 /* VIEW(first): routine gNaribwe_Doors as this part declared it; the joined file
  * has another; tried as the one declaration extern const struct WarpEntry
  * gNaribwe_Doors[], it does not compile in tla-ja:
@@ -367,10 +344,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 #undef gNaribwe_Placements
-#undef gNaribwe_Entrance10Placements
 #undef gNaribwe_PlacementsOnReturn
-#undef gNaribwe_Triggers
-#undef gNaribwe_TriggersOnReturn
 #undef gNaribwe_Doors
 #undef MsgNaribwe02
 #undef MsgNaribwe03

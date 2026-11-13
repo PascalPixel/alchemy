@@ -399,13 +399,7 @@ void Func_0200045c(void) {
   }
 }
 
-/* VIEW(s0198): routine gData_020068b0 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA s32 gData_020068b0[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:435: `gData_020068b0'
- * undeclared (first use in this function). */
-extern const u8 gData_020068b0__s0198[] __asm__("gData_020068b0");
-#define gData_020068b0 gData_020068b0__s0198
+extern s32 gData_020068b0[];
 
 // Every third frame, or every frame once flag 0x201 is set, spawns a particle
 // at a random height above object 31 that circles it (Func_02000090).
@@ -489,14 +483,7 @@ void Func_020005b8(void) {
 s32 Actor_MoveToObject();
 s32 PartyInventory_Remove(s32 item_id);
 
-/* VIEW(s0198): routine gData_02006338 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA
- * DEFINE_G_DATA_02006088(gData_02006088, 409, 376, 344, 312, 278) LATE_DATA
- * DEFINE_G_DATA_02006088(gData_020061e0, 616, 648, ..., it does not compile in
- * tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:665:
- * `gData_02006338' undeclared (first use in this function). */
-extern u8 gData_02006338__s0198[] __asm__("gData_02006338");
-#define gData_02006338 gData_02006338__s0198
+extern s32 gData_02006338[];
 
 void Func_0200065c(void) {
   s32 answer, state;
@@ -1239,20 +1226,8 @@ void Func_02001ac4(s32 a0, s32 a1) {
   Actor_SetAnimation(a1, 1);
 }
 
-/* VIEW(s0198): routine gData_02005ff0 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA u32 gData_02005ff0[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:1588: `gData_02005ff0'
- * undeclared (first use in this function). */
-extern u8 gData_02005ff0__s0198[] __asm__("gData_02005ff0");
-#define gData_02005ff0 gData_02005ff0__s0198
-/* VIEW(s0198): routine gData_02005ff8 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA u32 gData_02005ff8[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:1382: `gData_02005ff8'
- * undeclared (first use in this function). */
-extern u8 gData_02005ff8__s0198[] __asm__("gData_02005ff8");
-#define gData_02005ff8 gData_02005ff8__s0198
+extern u32 gData_02005ff0[];
+extern u32 gData_02005ff8[];
 /* VIEW(s0198): routine gData_02006088 as this part declared it; the joined file
  * has another; tried as the definition's extern u32 gData_02006088[], it does
  * not compile in tla-ja:
@@ -2264,43 +2239,11 @@ struct Iwram {
   u8 pad0[32];
   struct FieldWork__s0198 *field;
 };
-/* VIEW(s0198): routine gData_020059fc as this part declared it; the joined file
- * has another; tried as the definition's extern
- * DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles,
- * CrackedTile_Crack, CrackedTile_FallEvent) DEFINE_CRACKED_TILE_PLACE_LANDI...,
- * it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2267: `gData_020059fc'
- * undeclared (first use in this function). */
-extern s32 gData_020059fc__s0198[] __asm__("gData_020059fc");
-#define gData_020059fc gData_020059fc__s0198
-/* VIEW(s0198): routine gData_02005a0c as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_02005a0c[], it does
- * not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2270: `gData_02005a0c'
- * undeclared (first use in this function). */
-extern s32 gData_02005a0c__s0198[] __asm__("gData_02005a0c");
-#define gData_02005a0c gData_02005a0c__s0198
-/* VIEW(s0198): routine gData_02005a14 as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_02005a14[], it does
- * not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2273: `gData_02005a14'
- * undeclared (first use in this function). */
-extern s32 gData_02005a14__s0198[] __asm__("gData_02005a14");
-#define gData_02005a14 gData_02005a14__s0198
-/* VIEW(s0198): routine gData_02005a1c as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_02005a1c[], it does
- * not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2276: `gData_02005a1c'
- * undeclared (first use in this function). */
-extern s32 gData_02005a1c__s0198[] __asm__("gData_02005a1c");
-#define gData_02005a1c gData_02005a1c__s0198
-/* VIEW(s0198): routine gData_020069dc as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA u32 gData_020069dc[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2287: `gData_020069dc'
- * undeclared (first use in this function). */
-extern s32 gData_020069dc__s0198[] __asm__("gData_020069dc");
-#define gData_020069dc gData_020069dc__s0198
+extern s32 gData_020059fc[];
+extern s32 gData_02005a0c[];
+extern s32 gData_02005a14[];
+extern s32 gData_02005a1c[];
+extern s32 gData_020069dc[];
 
 void Func_02003a6c(s32 mode) {
   s32 speed;
@@ -2398,13 +2341,7 @@ struct HeapSlotWords__s0198 {
   u8 *map;
 };
 
-/* VIEW(s0198): routine gData_02005a20 as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_02005a20[], it does
- * not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2353: `gData_02005a20'
- * undeclared (first use in this function). */
-extern s32 gData_02005a20__s0198[] __asm__("gData_02005a20");
-#define gData_02005a20 gData_02005a20__s0198
+extern s32 gData_02005a20[];
 
 void Func_02003c58(s32 mode) {
   struct ScrollWork *work =
@@ -2656,13 +2593,7 @@ DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 extern void
 Func_02005764__s3f54(struct Object6a5 *object,
                      const void *script) __asm__("Actor_StartScript");
-/* VIEW(s3f54): routine gData_020069fc as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA u32 gData_020069fc[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2648: `gData_020069fc'
- * undeclared (first use in this function). */
-extern u8 gData_020069fc__s3f54[] __asm__("gData_020069fc");
-#define gData_020069fc gData_020069fc__s3f54
+extern u32 gData_020069fc[];
 
 void Whirlwind_Update(struct Object6a5 *object) {
   struct EventWork6a5 *work = Ram_HeapSlots->eventWork;
@@ -2851,22 +2782,11 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #undef ACTOR_SET_MODE_AND_WAIT
 #undef SET_MODE_AND_WAIT
 #undef Func_020000ec
-#undef gData_020068b0
 #undef Func_02000090
-#undef gData_02006338
-#undef gData_02005ff0
-#undef gData_02005ff8
 #undef gData_02006088
 #undef gData_020061e0
-#undef gData_020059fc
-#undef gData_02005a0c
-#undef gData_02005a14
-#undef gData_02005a1c
-#undef gData_020069dc
-#undef gData_02005a20
 #undef gPaletteCyclePausesInEvents
 #undef gPaletteCycleFrame
-#undef gData_020069fc
 #undef FieldEffect_Spawn
 // @file
 // Scene code of overlay 0x6a5, in ROM order.
@@ -3063,26 +2983,26 @@ DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
                                   CrackedTile_DropIn)
 
 // clang-format off
-u32 gData_020059fc[] = {
+s32 gData_020059fc[] = {
     29, 27, 28, 64,
 };
 // clang-format on
 
-u32 gData_02005a0c[] = {
+s32 gData_02005a0c[] = {
     0,
     64,
 };
 
-u32 gData_02005a14[] = {
+s32 gData_02005a14[] = {
     4,
     64,
 };
 
-u32 gData_02005a1c[] = {
+s32 gData_02005a1c[] = {
     64,
 };
 
-u32 gData_02005a20[] = {
+s32 gData_02005a20[] = {
     64,
 };
 
@@ -3280,7 +3200,7 @@ LATE_DATA struct Trigger gSceneEvents[] = {
 };
 
 // clang-format off
-LATE_DATA u32 gData_020069dc[] = {
+LATE_DATA s32 gData_020069dc[] = {
     17, 18, 19, 20, 21, 22,
 };
 

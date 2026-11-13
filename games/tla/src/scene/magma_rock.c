@@ -192,29 +192,9 @@ void MagmaRock_SettleBlocks(u16 *ids) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-/* VIEW(magma_rock): routine gMagmaRock_Regions as this part declared it; the
- * joined file has another; tried as the definition's extern s16
- * gMagmaRock_Regions[], it does not compile in tla-ja:
- * games/tla/src/scene/magma_rock.c:209: `gMagmaRock_Regions' undeclared (first
- * use in this function). */
-extern const u8 gMagmaRock_Regions__magma_rock[] __asm__("gMagmaRock_Regions");
-#define gMagmaRock_Regions gMagmaRock_Regions__magma_rock
-/* VIEW(magma_rock): routine gMagmaRock_Room2Regions as this part declared it;
- * the joined file has another; tried as the definition's extern s16
- * gMagmaRock_Room2Regions[], it does not compile in tla-ja:
- * games/tla/src/scene/magma_rock.c:205: `gMagmaRock_Room2Regions' undeclared
- * (first use in this function). */
-extern const u8
-    gMagmaRock_Room2Regions__magma_rock[] __asm__("gMagmaRock_Room2Regions");
-#define gMagmaRock_Room2Regions gMagmaRock_Room2Regions__magma_rock
-/* VIEW(magma_rock): routine gMagmaRock_Room3Regions as this part declared it;
- * the joined file has another; tried as the definition's extern s16
- * gMagmaRock_Room3Regions[], it does not compile in tla-ja:
- * games/tla/src/scene/magma_rock.c:207: `gMagmaRock_Room3Regions' undeclared
- * (first use in this function). */
-extern const u8
-    gMagmaRock_Room3Regions__magma_rock[] __asm__("gMagmaRock_Room3Regions");
-#define gMagmaRock_Room3Regions gMagmaRock_Room3Regions__magma_rock
+extern s16 gMagmaRock_Regions[];
+extern s16 gMagmaRock_Room2Regions[];
+extern s16 gMagmaRock_Room3Regions[];
 
 const struct SceneEntrance *Scene_GetRegions(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2)
@@ -226,36 +206,15 @@ const struct SceneEntrance *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(magma_rock): routine gMagmaRock_Placements as this part declared it; the
- * joined file has another; tried as the definition's extern struct
- * ActorPlacement gMagmaRock_Placements[], it does not compile in tla-ja:
- * games/tla/src/scene/magma_rock.c:247: `gMagmaRock_Placements' undeclared
- * (first use in this function). */
-extern const u8
-    gMagmaRock_Placements__magma_rock[] __asm__("gMagmaRock_Placements");
-#define gMagmaRock_Placements gMagmaRock_Placements__magma_rock
+extern struct ActorPlacement gMagmaRock_Placements[];
 extern struct ActorPlacement gMagmaRock_Room2LowerPlacements[];
 #define gMagmaRock_Room2LowerPlacements gMagmaRock_Room2LowerPlacements
 extern struct ActorPlacement gMagmaRock_Room2MiddlePlacements[];
 #define gMagmaRock_Room2MiddlePlacements gMagmaRock_Room2MiddlePlacements
 extern struct ActorPlacement gMagmaRock_Room2UpperPlacements[];
 #define gMagmaRock_Room2UpperPlacements gMagmaRock_Room2UpperPlacements
-/* VIEW(magma_rock): routine gMagmaRock_Room2TopPlacements as this part declared
- * it; the joined file has another; tried as the definition's extern struct
- * ActorPlacement gMagmaRock_Room2TopPlacements[], it does not compile in
- * tla-ja: games/tla/src/scene/magma_rock.c:243: `gMagmaRock_Room2TopPlacements'
- * undeclared (first use in this function). */
-extern const u8 gMagmaRock_Room2TopPlacements__magma_rock[] __asm__(
-    "gMagmaRock_Room2TopPlacements");
-#define gMagmaRock_Room2TopPlacements gMagmaRock_Room2TopPlacements__magma_rock
-/* VIEW(magma_rock): routine gMagmaRock_Room3Placements as this part declared
- * it; the joined file has another; tried as the definition's extern struct
- * ActorPlacement gMagmaRock_Room3Placements[], it does not compile in tla-ja:
- * games/tla/src/scene/magma_rock.c:246: `gMagmaRock_Room3Placements' undeclared
- * (first use in this function). */
-extern const u8 gMagmaRock_Room3Placements__magma_rock[] __asm__(
-    "gMagmaRock_Room3Placements");
-#define gMagmaRock_Room3Placements gMagmaRock_Room3Placements__magma_rock
+extern struct ActorPlacement gMagmaRock_Room2TopPlacements[];
+extern struct ActorPlacement gMagmaRock_Room3Placements[];
 
 const struct Trigger *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
@@ -381,14 +340,7 @@ struct MagmaRockEffectParams {
   u8 unk20[8];
 };
 
-/* VIEW(magma_rock): routine gMagmaRock_FlameEmberScript as this part declared
- * it; the joined file has another; tried as the definition's extern u32
- * gMagmaRock_FlameEmberScript[], it does not compile in tla-ja:
- * games/tla/src/scene/magma_rock.c:378: `gMagmaRock_FlameEmberScript'
- * undeclared (first use in this function). */
-extern const u8 gMagmaRock_FlameEmberScript__magma_rock[] __asm__(
-    "gMagmaRock_FlameEmberScript");
-#define gMagmaRock_FlameEmberScript gMagmaRock_FlameEmberScript__magma_rock
+extern u32 gMagmaRock_FlameEmberScript[];
 
 void MagmaRock_ThrowEmbers(struct Actor *object) {
   struct Actor *linked = object->watchedObject;
@@ -1479,53 +1431,12 @@ void MagmaRock_BlastOpenWall(s32 mode, s32 cue) {
     MagmaRock_EndFallingRocks();
 }
 
-/* VIEW(s0ff4): routine gMagmaRock_Triggers as this part declared it; the joined
- * file has another; tried as the definition's extern struct Trigger
- * gMagmaRock_Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/magma_rock.c:1450: `gMagmaRock_Triggers' undeclared
- * (first use in this function). */
-extern const u8 gMagmaRock_Triggers__s0ff4[] __asm__("gMagmaRock_Triggers");
-#define gMagmaRock_Triggers gMagmaRock_Triggers__s0ff4
-/* VIEW(s0ff4): routine gMagmaRock_Room2LowerTriggers as this part declared it;
- * the joined file has another; tried as the definition's extern struct Trigger
- * gMagmaRock_Room2LowerTriggers[], it does not compile in tla-ja:
- * games/tla/src/scene/magma_rock.c:1440: `gMagmaRock_Room2LowerTriggers'
- * undeclared (first use in this function). */
-extern const u8 gMagmaRock_Room2LowerTriggers__s0ff4[] __asm__(
-    "gMagmaRock_Room2LowerTriggers");
-#define gMagmaRock_Room2LowerTriggers gMagmaRock_Room2LowerTriggers__s0ff4
-/* VIEW(s0ff4): routine gMagmaRock_Room2MiddleTriggers as this part declared it;
- * the joined file has another; tried as the definition's extern struct Trigger
- * gMagmaRock_Room2MiddleTriggers[], it does not compile in tla-ja:
- * games/tla/src/scene/magma_rock.c:1442: `gMagmaRock_Room2MiddleTriggers'
- * undeclared (first use in this function). */
-extern const u8 gMagmaRock_Room2MiddleTriggers__s0ff4[] __asm__(
-    "gMagmaRock_Room2MiddleTriggers");
-#define gMagmaRock_Room2MiddleTriggers gMagmaRock_Room2MiddleTriggers__s0ff4
-/* VIEW(s0ff4): routine gMagmaRock_Room2UpperTriggers as this part declared it;
- * the joined file has another; tried as the definition's extern struct Trigger
- * gMagmaRock_Room2UpperTriggers[], it does not compile in tla-ja:
- * games/tla/src/scene/magma_rock.c:1444: `gMagmaRock_Room2UpperTriggers'
- * undeclared (first use in this function). */
-extern const u8 gMagmaRock_Room2UpperTriggers__s0ff4[] __asm__(
-    "gMagmaRock_Room2UpperTriggers");
-#define gMagmaRock_Room2UpperTriggers gMagmaRock_Room2UpperTriggers__s0ff4
-/* VIEW(s0ff4): routine gMagmaRock_Room2TopTriggers as this part declared it;
- * the joined file has another; tried as the definition's extern struct Trigger
- * gMagmaRock_Room2TopTriggers[], it does not compile in tla-ja:
- * games/tla/src/scene/magma_rock.c:1445: `gMagmaRock_Room2TopTriggers'
- * undeclared (first use in this function). */
-extern const u8
-    gMagmaRock_Room2TopTriggers__s0ff4[] __asm__("gMagmaRock_Room2TopTriggers");
-#define gMagmaRock_Room2TopTriggers gMagmaRock_Room2TopTriggers__s0ff4
-/* VIEW(s0ff4): routine gMagmaRock_Room3Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern struct Trigger
- * gMagmaRock_Room3Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/magma_rock.c:1448: `gMagmaRock_Room3Triggers' undeclared
- * (first use in this function). */
-extern const u8
-    gMagmaRock_Room3Triggers__s0ff4[] __asm__("gMagmaRock_Room3Triggers");
-#define gMagmaRock_Room3Triggers gMagmaRock_Room3Triggers__s0ff4
+extern struct Trigger gMagmaRock_Triggers[];
+extern struct Trigger gMagmaRock_Room2LowerTriggers[];
+extern struct Trigger gMagmaRock_Room2MiddleTriggers[];
+extern struct Trigger gMagmaRock_Room2UpperTriggers[];
+extern struct Trigger gMagmaRock_Room2TopTriggers[];
+extern struct Trigger gMagmaRock_Room3Triggers[];
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
@@ -1565,27 +1476,14 @@ const struct Trigger *Scene_GetEvents(void) {
 #undef TLA_MAGMA_ROCK_H
 #undef BYTE_AT
 #undef HALF_AT
-#undef gMagmaRock_Regions
-#undef gMagmaRock_Room2Regions
-#undef gMagmaRock_Room3Regions
-#undef gMagmaRock_Placements
 #undef gMagmaRock_Room2LowerPlacements
 #undef gMagmaRock_Room2MiddlePlacements
 #undef gMagmaRock_Room2UpperPlacements
-#undef gMagmaRock_Room2TopPlacements
-#undef gMagmaRock_Room3Placements
-#undef gMagmaRock_FlameEmberScript
 #undef MagmaRockEventWork
 #undef MagmaRock_PlayBurst
 #undef Position
 #undef MagmaRockEffectConfig
 #undef MagmaRock_SetCellShape
-#undef gMagmaRock_Triggers
-#undef gMagmaRock_Room2LowerTriggers
-#undef gMagmaRock_Room2MiddleTriggers
-#undef gMagmaRock_Room2UpperTriggers
-#undef gMagmaRock_Room2TopTriggers
-#undef gMagmaRock_Room3Triggers
 /* VIEW(s22ac): tag struct MagmaRockEventWork as this part has it; the joined
  * file has another; tried with the definition the rest of the object has, it
  * does not compile in tla-ja: games/tla/src/scene/magma_rock.c:1504:

@@ -85,29 +85,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 DEFINE_ACTOR_BOB(Actor_Bob)
 
-/* VIEW(first): routine gData_02001294 as this part declared it; the joined file
- * has another; tried as the definition's extern struct ActorPlacement
- * gData_02001294[], it does not compile in tla-ja:
- * games/tla/src/scene/kibombo_mountains.c:100: `gData_02001294' undeclared
- * (first use in this function). */
-extern const u8 gData_02001294__first[] __asm__("gData_02001294");
-#define gData_02001294 gData_02001294__first
-/* VIEW(first): routine gData_020015f0 as this part declared it; the joined file
- * has another; tried as the definition's extern struct ActorPlacement
- * gData_020015f0[], it does not compile in tla-ja:
- * games/tla/src/scene/kibombo_mountains.c:99: `gData_020015f0' undeclared
- * (first use in this function). */
-extern const u8 gData_020015f0__first[] __asm__("gData_020015f0");
-#define gData_020015f0 gData_020015f0__first
-/* VIEW(first): routine gData_020018c8 as this part declared it; the joined file
- * has another; tried as the definition's extern
- * DEFINE_G_DATA_02001334(gData_02001728, 184, 296, 248)
- * DEFINE_G_DATA_02001334(gData_020017f8, 248, 448, 264) struct ActorPlacement
- * gDa..., it does not compile in tla-ja:
- * games/tla/src/scene/kibombo_mountains.c:101: `gData_020018c8' undeclared
- * (first use in this function). */
-extern const u8 gData_020018c8__first[] __asm__("gData_020018c8");
-#define gData_020018c8 gData_020018c8__first
+extern struct ActorPlacement gData_02001294[];
+extern struct ActorPlacement gData_020015f0[];
+extern struct ActorPlacement gData_020018c8[];
 
 const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -134,13 +114,7 @@ void Func_02000190(s32 unused, s32 id) {
     FieldActor_SetSpritePriority(15, 1);
 }
 
-/* VIEW(first): routine gData_02001404 as this part declared it; the joined file
- * has another; tried as the definition's extern
- * DEFINE_G_DATA_02001334(gData_02001334, 856, 584, 792) s32 gData_02001404[],
- * it does not compile in tla-ja: games/tla/src/scene/kibombo_mountains.c:176:
- * `gData_02001404' undeclared (first use in this function). */
-extern const u8 gData_02001404__first[] __asm__("gData_02001404");
-#define gData_02001404 gData_02001404__first
+extern s32 gData_02001404[];
 
 void Actor_StartScript(struct Actor *object, const u8 *script);
 void Actor_StartIdle(struct Actor *object);
@@ -304,33 +278,10 @@ void Func_0200051c(s32 unused, s32 cell) {
   }
 }
 
-/* VIEW(first): routine gData_02001ad8 as this part declared it; the joined file
- * has another; tried as the definition's extern struct Trigger
- * gData_02001ad8[], it does not compile in tla-ja:
- * games/tla/src/scene/kibombo_mountains.c:308: `gData_02001ad8' undeclared
- * (first use in this function). */
-extern const u8 gData_02001ad8__first[] __asm__("gData_02001ad8");
-#define gData_02001ad8 gData_02001ad8__first
-/* VIEW(first): routine gData_02001ae4 as this part declared it; the joined file
- * has another; tried as the definition's extern struct Trigger
- * gData_02001ae4[], it does not compile in tla-ja:
- * games/tla/src/scene/kibombo_mountains.c:303: `gData_02001ae4' undeclared
- * (first use in this function). */
-extern const u8 gData_02001ae4__first[] __asm__("gData_02001ae4");
-#define gData_02001ae4 gData_02001ae4__first
-/* VIEW(first): routine gData_02001c58 as this part declared it; the joined file
- * has another; tried as the definition's extern struct Trigger
- * gData_02001c58[], it does not compile in tla-ja:
- * games/tla/src/scene/kibombo_mountains.c:305: `gData_02001c58' undeclared
- * (first use in this function). */
-extern const u8 gData_02001c58__first[] __asm__("gData_02001c58");
-#define gData_02001c58 gData_02001c58__first
-/* VIEW(first): routine gData_02001db4 as this part declared it; the joined file
- * has another; tried as the definition's extern s16 gData_02001db4[], it does
- * not compile in tla-ja: games/tla/src/scene/kibombo_mountains.c:307:
- * `gData_02001db4' undeclared (first use in this function). */
-extern const u8 gData_02001db4__first[] __asm__("gData_02001db4");
-#define gData_02001db4 gData_02001db4__first
+extern struct Trigger gData_02001ad8[];
+extern struct Trigger gData_02001ae4[];
+extern struct Trigger gData_02001c58[];
+extern s16 gData_02001db4[];
 
 const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -671,14 +622,6 @@ void Func_02000ff4(void) {
 }
 
 #undef EVENT_WORK_VALUE
-#undef gData_02001294
-#undef gData_020015f0
-#undef gData_020018c8
-#undef gData_02001404
-#undef gData_02001ad8
-#undef gData_02001ae4
-#undef gData_02001c58
-#undef gData_02001db4
 #include "text/msg_ids.h"
 
 void Func_02000038(void);

@@ -1432,24 +1432,9 @@ next_column:
   Heap_Release(work);
 }
 
-/* VIEW(first): routine gData_020026a0 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA u32 gData_020026a0[],
- * it does not compile in tla-ja: games/tla/src/scene/clear.c:1477:
- * `gData_020026a0' undeclared (first use in this function). */
-extern s32 gData_020026a0__first[] __asm__("gData_020026a0");
-#define gData_020026a0 gData_020026a0__first
-/* VIEW(first): routine gData_020026b0 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA u32 gData_020026b0[],
- * it does not compile in tla-ja: games/tla/src/scene/clear.c:1534:
- * `gData_020026b0' undeclared (first use in this function). */
-extern u16 gData_020026b0__first[] __asm__("gData_020026b0");
-#define gData_020026b0 gData_020026b0__first
-/* VIEW(first): routine gData_020026c0 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA u32 gData_020026c0[],
- * it does not compile in tla-ja: games/tla/src/scene/clear.c:1576:
- * `gData_020026c0' undeclared (first use in this function). */
-extern u16 gData_020026c0__first[] __asm__("gData_020026c0");
-#define gData_020026c0 gData_020026c0__first
+extern s32 gData_020026a0[];
+extern u16 gData_020026b0[];
+extern u16 gData_020026c0[];
 
 s32 Unit_GetExperienceForLevel(s32 id, s32 level);
 
@@ -1604,24 +1589,9 @@ void Func_020018e0(s32 mode, u8 *in) {
   }
 }
 
-/* VIEW(first): routine gData_02002700 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA u32 gData_02002700[],
- * it does not compile in tla-ja: games/tla/src/scene/clear.c:1637:
- * `gData_02002700' undeclared (first use in this function). */
-extern u16 gData_02002700__first[] __asm__("gData_02002700");
-#define gData_02002700 gData_02002700__first
-/* VIEW(first): routine gData_020026f0 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA u32 gData_020026f0[],
- * it does not compile in tla-ja: games/tla/src/scene/clear.c:1643:
- * `gData_020026f0' undeclared (first use in this function). */
-extern s32 gData_020026f0__first[] __asm__("gData_020026f0");
-#define gData_020026f0 gData_020026f0__first
-/* VIEW(first): routine gData_0200270c as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA u32 gData_0200270c[],
- * it does not compile in tla-ja: games/tla/src/scene/clear.c:1696:
- * `gData_0200270c' undeclared (first use in this function). */
-extern u16 gData_0200270c__first[] __asm__("gData_0200270c");
-#define gData_0200270c gData_0200270c__first
+extern u16 gData_02002700[];
+extern s32 gData_020026f0[];
+extern u16 gData_0200270c[];
 
 s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
   s32 size;
@@ -2010,37 +1980,32 @@ s16 gData_02002500 = 0;
 #undef CURSOR_ON_SIDE_COLUMN
 #undef DRAW_TITLE
 #undef WORD
-#undef gData_020026a0
-#undef gData_020026b0
-#undef gData_020026c0
-#undef gData_02002700
-#undef gData_020026f0
-#undef gData_0200270c
 
 // clang-format off
-LATE_DATA u32 gData_020026a0[] = {
+LATE_DATA s32 gData_020026a0[] = {
     0, 1, 2, 3,
 };
 
-LATE_DATA u32 gData_020026b0[] = {
-    0xc900c8, 0xcb00ca, 0xcd00cc, 0xcf00ce,
+LATE_DATA u16 gData_020026b0[] = {
+    200, 201, 202, 203, 204, 205, 206, 207,
 };
 
-LATE_DATA u32 gData_020026c0[] = {
-    0xb500b4, 0xb700b6, 0xbb00ba, 0xbd00bc, 0xc000bf, 0xc200c1,
-    0xc400c3, 0xe300e2, 0xe500e4, 0xee00ec, 0xf000ef, 241,
+LATE_DATA u16 gData_020026c0[] = {
+    180, 181, 182, 183, 186, 187, 188, 189,
+    191, 192, 193, 194, 195, 196, 226, 227,
+    228, 229, 236, 238, 239, 240, 241, 0,
 };
 
-LATE_DATA u32 gData_020026f0[] = {
+LATE_DATA s32 gData_020026f0[] = {
     0, 1, 2, 3,
 };
 
-LATE_DATA u32 gData_02002700[] = {
-    0x9510941, 0x8d108b3, 0x868081e,
+LATE_DATA u16 gData_02002700[] = {
+    2369, 2385, 2227, 2257, 2078, 2152,
 };
 
-LATE_DATA u32 gData_0200270c[] = {
-    0xc900c8, 0xcb00ca, 0xcd00cc, 0xcf00ce,
+LATE_DATA u16 gData_0200270c[] = {
+    200, 201, 202, 203, 204, 205, 206, 207,
 };
 
 LATE_DATA u16 gData_0200271c[] = {

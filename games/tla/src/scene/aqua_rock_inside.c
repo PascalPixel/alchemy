@@ -320,83 +320,17 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(aqua_rock_inside): routine gData_02004688 as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA struct
- * ActorPlacement gData_02004688[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:377: `gData_02004688' undeclared
- * (first use in this function). */
-extern const u8 gData_02004688__aqua_rock_inside[] __asm__("gData_02004688");
-#define gData_02004688 gData_02004688__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_020046a0 as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA struct
- * ActorPlacement gData_020046a0[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:358: `gData_020046a0' undeclared
- * (first use in this function). */
-extern const u8 gData_020046a0__aqua_rock_inside[] __asm__("gData_020046a0");
-#define gData_020046a0 gData_020046a0__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_02004748 as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA struct
- * ActorPlacement gData_02004748[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:360: `gData_02004748' undeclared
- * (first use in this function). */
-extern const u8 gData_02004748__aqua_rock_inside[] __asm__("gData_02004748");
-#define gData_02004748 gData_02004748__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_020047a8 as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA struct
- * ActorPlacement gData_020047a8[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:362: `gData_020047a8' undeclared
- * (first use in this function). */
-extern const u8 gData_020047a8__aqua_rock_inside[] __asm__("gData_020047a8");
-#define gData_020047a8 gData_020047a8__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_02004808 as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA struct
- * ActorPlacement gData_02004808[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:364: `gData_02004808' undeclared
- * (first use in this function). */
-extern const u8 gData_02004808__aqua_rock_inside[] __asm__("gData_02004808");
-#define gData_02004808 gData_02004808__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_020048c8 as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA struct
- * ActorPlacement gData_020048c8[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:366: `gData_020048c8' undeclared
- * (first use in this function). */
-extern const u8 gData_020048c8__aqua_rock_inside[] __asm__("gData_020048c8");
-#define gData_020048c8 gData_020048c8__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_02004910 as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA struct
- * ActorPlacement gData_02004910[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:368: `gData_02004910' undeclared
- * (first use in this function). */
-extern const u8 gData_02004910__aqua_rock_inside[] __asm__("gData_02004910");
-#define gData_02004910 gData_02004910__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_020049e8 as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA struct
- * ActorPlacement gData_020049e8[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:370: `gData_020049e8' undeclared
- * (first use in this function). */
-extern const u8 gData_020049e8__aqua_rock_inside[] __asm__("gData_020049e8");
-#define gData_020049e8 gData_020049e8__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_02004a00 as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA struct
- * ActorPlacement gData_02004a00[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:372: `gData_02004a00' undeclared
- * (first use in this function). */
-extern const u8 gData_02004a00__aqua_rock_inside[] __asm__("gData_02004a00");
-#define gData_02004a00 gData_02004a00__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_02004a48 as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA struct
- * ActorPlacement gData_02004a48[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:374: `gData_02004a48' undeclared
- * (first use in this function). */
-extern const u8 gData_02004a48__aqua_rock_inside[] __asm__("gData_02004a48");
-#define gData_02004a48 gData_02004a48__aqua_rock_inside
-/* VIEW(aqua_rock_inside): routine gData_02004b98 as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA struct
- * ActorPlacement gData_02004b98[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:376: `gData_02004b98' undeclared
- * (first use in this function). */
-extern const u8 gData_02004b98__aqua_rock_inside[] __asm__("gData_02004b98");
-#define gData_02004b98 gData_02004b98__aqua_rock_inside
+extern struct ActorPlacement gData_02004688[];
+extern struct ActorPlacement gData_020046a0[];
+extern struct ActorPlacement gData_02004748[];
+extern struct ActorPlacement gData_020047a8[];
+extern struct ActorPlacement gData_02004808[];
+extern struct ActorPlacement gData_020048c8[];
+extern struct ActorPlacement gData_02004910[];
+extern struct ActorPlacement gData_020049e8[];
+extern struct ActorPlacement gData_02004a00[];
+extern struct ActorPlacement gData_02004a48[];
+extern struct ActorPlacement gData_02004b98[];
 
 const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -1481,82 +1415,17 @@ DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(Func_02001cd8, 280)
 
 DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(Func_02001d40, 248)
 
-/* VIEW(s1620): routine gData_02004c70 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA struct Trigger
- * gData_02004c70[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:1471: `gData_02004c70' undeclared
- * (first use in this function). */
-extern const u8 gData_02004c70__s1620[] __asm__("gData_02004c70");
-#define gData_02004c70 gData_02004c70__s1620
-/* VIEW(s1620): routine gData_02004c7c as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA struct Trigger
- * gData_02004c7c[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:1456: `gData_02004c7c' undeclared
- * (first use in this function). */
-extern const u8 gData_02004c7c__s1620[] __asm__("gData_02004c7c");
-#define gData_02004c7c gData_02004c7c__s1620
-/* VIEW(s1620): routine gData_02004d88 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA struct Trigger
- * gData_02004d88[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:1458: `gData_02004d88' undeclared
- * (first use in this function). */
-extern const u8 gData_02004d88__s1620[] __asm__("gData_02004d88");
-#define gData_02004d88 gData_02004d88__s1620
-/* VIEW(s1620): routine gData_02004e48 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA struct Trigger
- * gData_02004e48[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:1460: `gData_02004e48' undeclared
- * (first use in this function). */
-extern const u8 gData_02004e48__s1620[] __asm__("gData_02004e48");
-#define gData_02004e48 gData_02004e48__s1620
-/* VIEW(s1620): routine gData_02004ed8 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA struct Trigger
- * gData_02004ed8[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:1462: `gData_02004ed8' undeclared
- * (first use in this function). */
-extern const u8 gData_02004ed8__s1620[] __asm__("gData_02004ed8");
-#define gData_02004ed8 gData_02004ed8__s1620
-/* VIEW(s1620): routine gData_02004fb0 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA struct Trigger
- * gData_02004fb0[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:1464: `gData_02004fb0' undeclared
- * (first use in this function). */
-extern const u8 gData_02004fb0__s1620[] __asm__("gData_02004fb0");
-#define gData_02004fb0 gData_02004fb0__s1620
-/* VIEW(s1620): routine gData_0200507c as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA struct Trigger
- * gData_0200507c[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:1466: `gData_0200507c' undeclared
- * (first use in this function). */
-extern const u8 gData_0200507c__s1620[] __asm__("gData_0200507c");
-#define gData_0200507c gData_0200507c__s1620
-/* VIEW(s1620): routine gData_020051b4 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA struct Trigger
- * gData_020051b4[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:1468: `gData_020051b4' undeclared
- * (first use in this function). */
-extern const u8 gData_020051b4__s1620[] __asm__("gData_020051b4");
-#define gData_020051b4 gData_020051b4__s1620
-/* VIEW(s1620): routine gData_020051fc as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA s16 gData_020051fc[],
- * it does not compile in tla-ja: games/tla/src/scene/aqua_rock_inside.c:1470:
- * `gData_020051fc' undeclared (first use in this function). */
-extern const u8 gData_020051fc__s1620[] __asm__("gData_020051fc");
-#define gData_020051fc gData_020051fc__s1620
-/* VIEW(s1620): routine gData_02005268 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA struct Trigger
- * gData_02005268[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:1472: `gData_02005268' undeclared
- * (first use in this function). */
-extern const u8 gData_02005268__s1620[] __asm__("gData_02005268");
-#define gData_02005268 gData_02005268__s1620
-/* VIEW(s1620): routine gData_020052f8 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA struct Trigger
- * gData_020052f8[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:1474: `gData_020052f8' undeclared
- * (first use in this function). */
-extern const u8 gData_020052f8__s1620[] __asm__("gData_020052f8");
-#define gData_020052f8 gData_020052f8__s1620
+extern struct Trigger gData_02004c70[];
+extern struct Trigger gData_02004c7c[];
+extern struct Trigger gData_02004d88[];
+extern struct Trigger gData_02004e48[];
+extern struct Trigger gData_02004ed8[];
+extern struct Trigger gData_02004fb0[];
+extern struct Trigger gData_0200507c[];
+extern struct Trigger gData_020051b4[];
+extern s16 gData_020051fc[];
+extern struct Trigger gData_02005268[];
+extern struct Trigger gData_020052f8[];
 
 const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -2454,12 +2323,7 @@ s32 Func_02003688(s32 x, s32 y, s32 z, s32 kind) {
   entry->direction = kind;
 }
 
-/* VIEW(s1620): routine gData_0200534c as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA u32 gData_0200534c[],
- * it does not compile in tla-ja: games/tla/src/scene/aqua_rock_inside.c:2387:
- * `gData_0200534c' undeclared (first use in this function). */
-extern const s8 gData_0200534c__s1620[] __asm__("gData_0200534c");
-#define gData_0200534c gData_0200534c__s1620
+extern s8 gData_0200534c[];
 
 // Advances Aqua Rock's two water streams one cell along the map: each stream
 // follows the turn its cell's kind gives, leaves a splash on every open cell
@@ -2796,32 +2660,9 @@ u32 gWaterDropScript[] = {
 #undef BG1_SET_PRIORITY_1
 #undef LAYER_S32
 #undef BYTE_AT
-#undef gData_02004688
-#undef gData_020046a0
-#undef gData_02004748
-#undef gData_020047a8
-#undef gData_02004808
-#undef gData_020048c8
-#undef gData_02004910
-#undef gData_020049e8
-#undef gData_02004a00
-#undef gData_02004a48
-#undef gData_02004b98
 #undef gData_02003fb8
 #undef gData_02004004
 #undef gData_02004014
-#undef gData_02004c70
-#undef gData_02004c7c
-#undef gData_02004d88
-#undef gData_02004e48
-#undef gData_02004ed8
-#undef gData_02004fb0
-#undef gData_0200507c
-#undef gData_020051b4
-#undef gData_020051fc
-#undef gData_02005268
-#undef gData_020052f8
-#undef gData_0200534c
 #undef Func_02003ab0
 #undef Orbiter_Spiral
 
@@ -3219,9 +3060,11 @@ LATE_DATA struct Trigger gData_020052f8[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA u32 gData_0200534c[] = {
-    0x8000808, 0x80108ff, 0xff080008, 0x8080801, 0x1000808, 0x808ff08,
-    0x8080008, 0x8ff0108,
+LATE_DATA s8 gData_0200534c[] = {
+    8, 8, 0, 8, -1, 8, 1, 8,
+    8, 0, 8, -1, 1, 8, 8, 8,
+    8, 8, 0, 1, 8, -1, 8, 8,
+    8, 0, 8, 8, 8, 1, -1, 8,
 };
 // clang-format on
 #undef Data_020005f4

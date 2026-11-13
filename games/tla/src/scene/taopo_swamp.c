@@ -75,14 +75,7 @@ extern s32 gTaopoSwamp_PassageRows__first __asm__("gTaopoSwamp_PassageRows");
  * (first use in this function). */
 extern s32 gTaopoSwamp_PoolFrames__first __asm__("gTaopoSwamp_PoolFrames");
 #define gTaopoSwamp_PoolFrames gTaopoSwamp_PoolFrames__first
-/* VIEW(first): routine gTaopoSwamp_PuffSteamScript as this part declared it;
- * the joined file has another; tried as the definition's extern u32
- * gTaopoSwamp_PuffSteamScript[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:765: `gTaopoSwamp_PuffSteamScript'
- * undeclared (first use in this function). */
-extern const u8
-    gTaopoSwamp_PuffSteamScript__first[] __asm__("gTaopoSwamp_PuffSteamScript");
-#define gTaopoSwamp_PuffSteamScript gTaopoSwamp_PuffSteamScript__first
+extern u32 gTaopoSwamp_PuffSteamScript[];
 void Field_TryJumpForward(void);
 void TaopoSwamp_DarkenRoom(s32 a);
 void Func_020029a0(s32 message);
@@ -147,13 +140,7 @@ extern u8 gInventorySnapshot[];
 
 s32 Trig_Cos(s32 angle);
 void Vent_Bounce(struct Actor *object);
-/* VIEW(first): routine gTaopoSwamp_PuffRises as this part declared it; the
- * joined file has another; tried as the definition's extern u32
- * gTaopoSwamp_PuffRises[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:1943: `gTaopoSwamp_PuffRises' undeclared
- * (first use in this function). */
-extern const u8 gTaopoSwamp_PuffRises__first[] __asm__("gTaopoSwamp_PuffRises");
-#define gTaopoSwamp_PuffRises gTaopoSwamp_PuffRises__first
+extern u32 gTaopoSwamp_PuffRises[];
 /* VIEW(first): routine gTaopoSwamp_SparkleFrame as this part declared it; the
  * joined file has another; tried as the definition's extern u32
  * gTaopoSwamp_SparkleFrame[], it does not compile in tla-ja:
@@ -170,31 +157,11 @@ void TaopoSwamp_SaveFirmGround(void);
 void TaopoSwamp_FillDripSpot(s32 a, s32 id);
 extern s32 gTaopoSwamp_DripFromCeilingScript[];
 #define gTaopoSwamp_DripFromCeilingScript gTaopoSwamp_DripFromCeilingScript
-/* VIEW(first): routine gTaopoSwamp_DropFalls as this part declared it; the
- * joined file has another; tried as the definition's extern s32
- * gTaopoSwamp_DropFalls[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:1286: `gTaopoSwamp_DropFalls' undeclared
- * (first use in this function). */
-extern const u8 gTaopoSwamp_DropFalls__first[] __asm__("gTaopoSwamp_DropFalls");
-#define gTaopoSwamp_DropFalls gTaopoSwamp_DropFalls__first
+extern s32 gTaopoSwamp_DropFalls[];
 void TaopoSwamp_ShatterIcePillar(s32 id);
 void TaopoSwamp_BlowAwayPuddle(s32 id);
-/* VIEW(first): routine gTaopoSwamp_SparkFades as this part declared it; the
- * joined file has another; tried as the definition's extern u32
- * gTaopoSwamp_SparkFades[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:1047: `gTaopoSwamp_SparkFades' undeclared
- * (first use in this function). */
-extern const u8
-    gTaopoSwamp_SparkFades__first[] __asm__("gTaopoSwamp_SparkFades");
-#define gTaopoSwamp_SparkFades gTaopoSwamp_SparkFades__first
-/* VIEW(first): routine gTaopoSwamp_DripAtRandomScript as this part declared it;
- * the joined file has another; tried as the definition's extern s32
- * gTaopoSwamp_DripAtRandomScript[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:1072: `gTaopoSwamp_DripAtRandomScript'
- * undeclared (first use in this function). */
-extern const u8 gTaopoSwamp_DripAtRandomScript__first[] __asm__(
-    "gTaopoSwamp_DripAtRandomScript");
-#define gTaopoSwamp_DripAtRandomScript gTaopoSwamp_DripAtRandomScript__first
+extern u32 gTaopoSwamp_SparkFades[];
+extern s32 gTaopoSwamp_DripAtRandomScript[];
 extern u8 MsgIThoughtI;
 void TaopoSwamp_PuffSteam(void);
 void TaopoSwamp_OpenPassage(void);
@@ -262,78 +229,15 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(first): routine gTaopoSwamp_Placements as this part declared it; the
- * joined file has another; tried as the definition's extern struct
- * ActorPlacement gTaopoSwamp_Placements[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:282: `gTaopoSwamp_Placements' undeclared
- * (first use in this function). */
-extern const u8
-    gTaopoSwamp_Placements__first[] __asm__("gTaopoSwamp_Placements");
-#define gTaopoSwamp_Placements gTaopoSwamp_Placements__first
-/* VIEW(first): routine gTaopoSwamp_Room2Placements as this part declared it;
- * the joined file has another; tried as the definition's extern struct
- * ActorPlacement gTaopoSwamp_Room2Placements[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:267: `gTaopoSwamp_Room2Placements'
- * undeclared (first use in this function). */
-extern const u8
-    gTaopoSwamp_Room2Placements__first[] __asm__("gTaopoSwamp_Room2Placements");
-#define gTaopoSwamp_Room2Placements gTaopoSwamp_Room2Placements__first
-/* VIEW(first): routine gTaopoSwamp_Room4Placements as this part declared it;
- * the joined file has another; tried as the definition's extern struct
- * ActorPlacement gTaopoSwamp_Room4Placements[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:269: `gTaopoSwamp_Room4Placements'
- * undeclared (first use in this function). */
-extern const u8
-    gTaopoSwamp_Room4Placements__first[] __asm__("gTaopoSwamp_Room4Placements");
-#define gTaopoSwamp_Room4Placements gTaopoSwamp_Room4Placements__first
-/* VIEW(first): routine gTaopoSwamp_Room5Placements as this part declared it;
- * the joined file has another; tried as the definition's extern struct
- * ActorPlacement gTaopoSwamp_Room5Placements[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:271: `gTaopoSwamp_Room5Placements'
- * undeclared (first use in this function). */
-extern const u8
-    gTaopoSwamp_Room5Placements__first[] __asm__("gTaopoSwamp_Room5Placements");
-#define gTaopoSwamp_Room5Placements gTaopoSwamp_Room5Placements__first
-/* VIEW(first): routine gTaopoSwamp_Room7Placements as this part declared it;
- * the joined file has another; tried as the definition's extern struct
- * ActorPlacement gTaopoSwamp_Room7Placements[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:273: `gTaopoSwamp_Room7Placements'
- * undeclared (first use in this function). */
-extern const u8
-    gTaopoSwamp_Room7Placements__first[] __asm__("gTaopoSwamp_Room7Placements");
-#define gTaopoSwamp_Room7Placements gTaopoSwamp_Room7Placements__first
-/* VIEW(first): routine gTaopoSwamp_Room8Placements as this part declared it;
- * the joined file has another; tried as the definition's extern struct
- * ActorPlacement gTaopoSwamp_Room8Placements[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:275: `gTaopoSwamp_Room8Placements'
- * undeclared (first use in this function). */
-extern const u8
-    gTaopoSwamp_Room8Placements__first[] __asm__("gTaopoSwamp_Room8Placements");
-#define gTaopoSwamp_Room8Placements gTaopoSwamp_Room8Placements__first
-/* VIEW(first): routine gTaopoSwamp_Room10Placements as this part declared it;
- * the joined file has another; tried as the definition's extern struct
- * ActorPlacement gTaopoSwamp_Room10Placements[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:279: `gTaopoSwamp_Room10Placements'
- * undeclared (first use in this function). */
-extern const u8 gTaopoSwamp_Room10Placements__first[] __asm__(
-    "gTaopoSwamp_Room10Placements");
-#define gTaopoSwamp_Room10Placements gTaopoSwamp_Room10Placements__first
-/* VIEW(first): routine gTaopoSwamp_Room9Placements as this part declared it;
- * the joined file has another; tried as the definition's extern struct
- * ActorPlacement gTaopoSwamp_Room9Placements[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:277: `gTaopoSwamp_Room9Placements'
- * undeclared (first use in this function). */
-extern const u8
-    gTaopoSwamp_Room9Placements__first[] __asm__("gTaopoSwamp_Room9Placements");
-#define gTaopoSwamp_Room9Placements gTaopoSwamp_Room9Placements__first
-/* VIEW(first): routine gTaopoSwamp_Room11Placements as this part declared it;
- * the joined file has another; tried as the definition's extern struct
- * ActorPlacement gTaopoSwamp_Room11Placements[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:281: `gTaopoSwamp_Room11Placements'
- * undeclared (first use in this function). */
-extern const u8 gTaopoSwamp_Room11Placements__first[] __asm__(
-    "gTaopoSwamp_Room11Placements");
-#define gTaopoSwamp_Room11Placements gTaopoSwamp_Room11Placements__first
+extern struct ActorPlacement gTaopoSwamp_Placements[];
+extern struct ActorPlacement gTaopoSwamp_Room2Placements[];
+extern struct ActorPlacement gTaopoSwamp_Room4Placements[];
+extern struct ActorPlacement gTaopoSwamp_Room5Placements[];
+extern struct ActorPlacement gTaopoSwamp_Room7Placements[];
+extern struct ActorPlacement gTaopoSwamp_Room8Placements[];
+extern struct ActorPlacement gTaopoSwamp_Room10Placements[];
+extern struct ActorPlacement gTaopoSwamp_Room9Placements[];
+extern struct ActorPlacement gTaopoSwamp_Room11Placements[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -371,13 +275,7 @@ struct AnimationGroup;
 struct ActorSpriteView;
 struct ChildGroup;
 
-/* VIEW(first): routine gTaopoSwamp_SplashFades as this part declared it; the
- * joined file has another; tried as the definition's extern u32
- * gTaopoSwamp_SplashFades[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:343: `gTaopoSwamp_SplashFades' undeclared
- * (first use in this function). */
-extern u8 gTaopoSwamp_SplashFades__first[] __asm__("gTaopoSwamp_SplashFades");
-#define gTaopoSwamp_SplashFades gTaopoSwamp_SplashFades__first
+extern u32 gTaopoSwamp_SplashFades[];
 s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags);
 void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *record,
                                         u32 value);
@@ -539,22 +437,8 @@ void TaopoSwamp_PushPillarOverVent(s32 a, s32 id) {
   }
 }
 
-/* VIEW(first): routine gTaopoSwamp_Room5HoleVents as this part declared it; the
- * joined file has another; tried as the definition's extern u32
- * gTaopoSwamp_Room5HoleVents[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:480: `gTaopoSwamp_Room5HoleVents'
- * undeclared (first use in this function). */
-extern u8
-    gTaopoSwamp_Room5HoleVents__first[] __asm__("gTaopoSwamp_Room5HoleVents");
-#define gTaopoSwamp_Room5HoleVents gTaopoSwamp_Room5HoleVents__first
-/* VIEW(first): routine gTaopoSwamp_Room7HoleVents as this part declared it; the
- * joined file has another; tried as the definition's extern u32
- * gTaopoSwamp_Room7HoleVents[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:487: `gTaopoSwamp_Room7HoleVents'
- * undeclared (first use in this function). */
-extern u8
-    gTaopoSwamp_Room7HoleVents__first[] __asm__("gTaopoSwamp_Room7HoleVents");
-#define gTaopoSwamp_Room7HoleVents gTaopoSwamp_Room7HoleVents__first
+extern u8 gTaopoSwamp_Room5HoleVents[];
+extern u8 gTaopoSwamp_Room7HoleVents[];
 
 /// Stepping on a working vent: the gust pushes the leader back until a wall
 /// stops them, or down the hole.
@@ -875,14 +759,7 @@ void TaopoSwamp_FlickerPool(void) {
     FieldTask_Remove(TaopoSwamp_FlickerPool);
 }
 
-/* VIEW(first): routine gTaopoSwamp_TremorPillarScript as this part declared it;
- * the joined file has another; tried as the definition's extern u32
- * gTaopoSwamp_TremorPillarScript[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:842: `gTaopoSwamp_TremorPillarScript'
- * undeclared (first use in this function). */
-extern u8 gTaopoSwamp_TremorPillarScript__first[] __asm__(
-    "gTaopoSwamp_TremorPillarScript");
-#define gTaopoSwamp_TremorPillarScript gTaopoSwamp_TremorPillarScript__first
+extern u32 gTaopoSwamp_TremorPillarScript[];
 
 /// Tremor on the pillar with the huge rock on top, actor 19: the rock rolls off
 /// and lands, a red rock pops out, clods burst, the pool drains and the passage
@@ -1047,101 +924,18 @@ void TaopoSwamp_ScoopStarDust(s32 a) { TaopoSwamp_ReturnHome(a, 64, 0x348); }
 
 void TaopoSwamp_ShowSparkleMessage(void) { Func_020029a0((s32)&MsgIThoughtI); }
 
-/* VIEW(first): routine gTaopoSwamp_Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern struct Trigger
- * gTaopoSwamp_Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:1033: `gTaopoSwamp_Triggers' undeclared
- * (first use in this function). */
-extern const u8 gTaopoSwamp_Triggers__first[] __asm__("gTaopoSwamp_Triggers");
-#define gTaopoSwamp_Triggers gTaopoSwamp_Triggers__first
-/* VIEW(first): routine gTaopoSwamp_Room1Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern struct Trigger
- * gTaopoSwamp_Room1Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:1011: `gTaopoSwamp_Room1Triggers'
- * undeclared (first use in this function). */
-extern const u8
-    gTaopoSwamp_Room1Triggers__first[] __asm__("gTaopoSwamp_Room1Triggers");
-#define gTaopoSwamp_Room1Triggers gTaopoSwamp_Room1Triggers__first
-/* VIEW(first): routine gTaopoSwamp_Room2Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern struct Trigger
- * gTaopoSwamp_Room2Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:1013: `gTaopoSwamp_Room2Triggers'
- * undeclared (first use in this function). */
-extern const u8
-    gTaopoSwamp_Room2Triggers__first[] __asm__("gTaopoSwamp_Room2Triggers");
-#define gTaopoSwamp_Room2Triggers gTaopoSwamp_Room2Triggers__first
-/* VIEW(first): routine gTaopoSwamp_Room3Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern struct Trigger
- * gTaopoSwamp_Room3Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:1015: `gTaopoSwamp_Room3Triggers'
- * undeclared (first use in this function). */
-extern const u8
-    gTaopoSwamp_Room3Triggers__first[] __asm__("gTaopoSwamp_Room3Triggers");
-#define gTaopoSwamp_Room3Triggers gTaopoSwamp_Room3Triggers__first
-/* VIEW(first): routine gTaopoSwamp_Room4Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern struct Trigger
- * gTaopoSwamp_Room4Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:1017: `gTaopoSwamp_Room4Triggers'
- * undeclared (first use in this function). */
-extern const u8
-    gTaopoSwamp_Room4Triggers__first[] __asm__("gTaopoSwamp_Room4Triggers");
-#define gTaopoSwamp_Room4Triggers gTaopoSwamp_Room4Triggers__first
-/* VIEW(first): routine gTaopoSwamp_Room5Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern struct Trigger
- * gTaopoSwamp_Room5Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:1019: `gTaopoSwamp_Room5Triggers'
- * undeclared (first use in this function). */
-extern const u8
-    gTaopoSwamp_Room5Triggers__first[] __asm__("gTaopoSwamp_Room5Triggers");
-#define gTaopoSwamp_Room5Triggers gTaopoSwamp_Room5Triggers__first
-/* VIEW(first): routine gTaopoSwamp_Room6Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern struct Trigger
- * gTaopoSwamp_Room6Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:1021: `gTaopoSwamp_Room6Triggers'
- * undeclared (first use in this function). */
-extern const u8
-    gTaopoSwamp_Room6Triggers__first[] __asm__("gTaopoSwamp_Room6Triggers");
-#define gTaopoSwamp_Room6Triggers gTaopoSwamp_Room6Triggers__first
-/* VIEW(first): routine gTaopoSwamp_Room7Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern struct Trigger
- * gTaopoSwamp_Room7Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:1023: `gTaopoSwamp_Room7Triggers'
- * undeclared (first use in this function). */
-extern const u8
-    gTaopoSwamp_Room7Triggers__first[] __asm__("gTaopoSwamp_Room7Triggers");
-#define gTaopoSwamp_Room7Triggers gTaopoSwamp_Room7Triggers__first
-/* VIEW(first): routine gTaopoSwamp_Room8Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern struct Trigger
- * gTaopoSwamp_Room8Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:1025: `gTaopoSwamp_Room8Triggers'
- * undeclared (first use in this function). */
-extern const u8
-    gTaopoSwamp_Room8Triggers__first[] __asm__("gTaopoSwamp_Room8Triggers");
-#define gTaopoSwamp_Room8Triggers gTaopoSwamp_Room8Triggers__first
-/* VIEW(first): routine gTaopoSwamp_Room10Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern struct Trigger
- * gTaopoSwamp_Room10Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:1029: `gTaopoSwamp_Room10Triggers'
- * undeclared (first use in this function). */
-extern const u8
-    gTaopoSwamp_Room10Triggers__first[] __asm__("gTaopoSwamp_Room10Triggers");
-#define gTaopoSwamp_Room10Triggers gTaopoSwamp_Room10Triggers__first
-/* VIEW(first): routine gTaopoSwamp_Room9Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern s32
- * gTaopoSwamp_Room9Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:1027: `gTaopoSwamp_Room9Triggers'
- * undeclared (first use in this function). */
-extern const u8
-    gTaopoSwamp_Room9Triggers__first[] __asm__("gTaopoSwamp_Room9Triggers");
-#define gTaopoSwamp_Room9Triggers gTaopoSwamp_Room9Triggers__first
-/* VIEW(first): routine gTaopoSwamp_Room11Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern struct Trigger
- * gTaopoSwamp_Room11Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:1031: `gTaopoSwamp_Room11Triggers'
- * undeclared (first use in this function). */
-extern const u8
-    gTaopoSwamp_Room11Triggers__first[] __asm__("gTaopoSwamp_Room11Triggers");
-#define gTaopoSwamp_Room11Triggers gTaopoSwamp_Room11Triggers__first
+extern struct Trigger gTaopoSwamp_Triggers[];
+extern struct Trigger gTaopoSwamp_Room1Triggers[];
+extern struct Trigger gTaopoSwamp_Room2Triggers[];
+extern struct Trigger gTaopoSwamp_Room3Triggers[];
+extern struct Trigger gTaopoSwamp_Room4Triggers[];
+extern struct Trigger gTaopoSwamp_Room5Triggers[];
+extern struct Trigger gTaopoSwamp_Room6Triggers[];
+extern struct Trigger gTaopoSwamp_Room7Triggers[];
+extern struct Trigger gTaopoSwamp_Room8Triggers[];
+extern struct Trigger gTaopoSwamp_Room10Triggers[];
+extern s32 gTaopoSwamp_Room9Triggers[];
+extern struct Trigger gTaopoSwamp_Room11Triggers[];
 
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -2218,38 +2012,8 @@ DEFINE_VENTS_SET_ID(Vents_SetId)
 #undef gTaopoSwamp_SteamPuffs
 #undef gTaopoSwamp_PassageRows
 #undef gTaopoSwamp_PoolFrames
-#undef gTaopoSwamp_PuffSteamScript
-#undef gTaopoSwamp_PuffRises
 #undef gTaopoSwamp_SparkleFrame
 #undef gTaopoSwamp_DripFromCeilingScript
-#undef gTaopoSwamp_DropFalls
-#undef gTaopoSwamp_SparkFades
-#undef gTaopoSwamp_DripAtRandomScript
-#undef gTaopoSwamp_Placements
-#undef gTaopoSwamp_Room2Placements
-#undef gTaopoSwamp_Room4Placements
-#undef gTaopoSwamp_Room5Placements
-#undef gTaopoSwamp_Room7Placements
-#undef gTaopoSwamp_Room8Placements
-#undef gTaopoSwamp_Room10Placements
-#undef gTaopoSwamp_Room9Placements
-#undef gTaopoSwamp_Room11Placements
-#undef gTaopoSwamp_SplashFades
-#undef gTaopoSwamp_Room5HoleVents
-#undef gTaopoSwamp_Room7HoleVents
-#undef gTaopoSwamp_TremorPillarScript
-#undef gTaopoSwamp_Triggers
-#undef gTaopoSwamp_Room1Triggers
-#undef gTaopoSwamp_Room2Triggers
-#undef gTaopoSwamp_Room3Triggers
-#undef gTaopoSwamp_Room4Triggers
-#undef gTaopoSwamp_Room5Triggers
-#undef gTaopoSwamp_Room6Triggers
-#undef gTaopoSwamp_Room7Triggers
-#undef gTaopoSwamp_Room8Triggers
-#undef gTaopoSwamp_Room10Triggers
-#undef gTaopoSwamp_Room9Triggers
-#undef gTaopoSwamp_Room11Triggers
 #undef gTaopoSwamp_Room7Vents
 #undef gTaopoSwamp_RockRoomVents
 #undef gTaopoSwamp_Room5Vents
@@ -2261,14 +2025,12 @@ void TaopoSwamp_DigHole(void);
 void TaopoSwamp_BlowFlowerOffLedge(void);
 void TaopoSwamp_ShowSparkleMessage(void);
 
-u32 gTaopoSwamp_Room5HoleVents[] = {
-    0x6090200,
-    0x1050604,
+u8 gTaopoSwamp_Room5HoleVents[] = {
+    0, 2, 9, 6, 4, 6, 5, 1,
 };
 
-u32 gTaopoSwamp_Room7HoleVents[] = {
-    0x10003,
-    1,
+u8 gTaopoSwamp_Room7HoleVents[] = {
+    3, 0, 1, 0, 1, 0, 0, 0,
 };
 
 // clang-format off

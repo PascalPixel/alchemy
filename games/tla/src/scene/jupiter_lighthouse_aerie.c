@@ -499,14 +499,7 @@ void Func_02000930(void) {
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-/* VIEW(jupiter_lighthouse_aerie): routine gData_0200331c as this part declared
- * it; the joined file has another; tried as the definition's extern u32
- * gData_0200331c[], it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie.c:582: `gData_0200331c'
- * undeclared (first use in this function). */
-extern const s32
-    gData_0200331c__jupiter_lighthouse_aerie[] __asm__("gData_0200331c");
-#define gData_0200331c gData_0200331c__jupiter_lighthouse_aerie
+extern s32 gData_0200331c[];
 extern s32 gData_0200333c;
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
@@ -1019,7 +1012,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #include "../field/field_effect/move.c"
 
 #undef LERP
-#undef gData_0200331c
 // @file
 // Scene code of overlay 0x6a4, in ROM order.
 
@@ -1268,7 +1260,7 @@ s32 gPaletteCycleFrame = -1;
 
 s32 gPaletteCyclePausesInEvents = 1;
 
-u32 gData_0200331c[] = {
+s32 gData_0200331c[] = {
     39, 5, 0, 12, 38,
 };
 // clang-format on

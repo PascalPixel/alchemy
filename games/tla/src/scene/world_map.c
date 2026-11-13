@@ -304,42 +304,11 @@ s32 Func_020003b4(struct Actor *object) {
   return 0;
 }
 
-/* VIEW(first): routine gData_02006338 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA
- * DEFINE_G_DATA_02006088(gData_02006088, 409, 376, 344, 312, 278) LATE_DATA
- * DEFINE_G_DATA_02006088(gData_020061e0, 616, 648, ..., it does not compile in
- * tla-ja: games/tla/src/scene/world_map.c:330: `gData_02006338' undeclared
- * (first use in this function). */
-extern u8 gData_02006338__first[] __asm__("gData_02006338");
-#define gData_02006338 gData_02006338__first
-/* VIEW(first): routine gData_02006500 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA struct ActorPlacement
- * gData_02006500[], it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:321: `gData_02006500' undeclared (first use
- * in this function). */
-extern u8 gData_02006500__first[] __asm__("gData_02006500");
-#define gData_02006500 gData_02006500__first
-/* VIEW(first): routine gData_02006598 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA struct ActorPlacement
- * gData_02006598[], it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:323: `gData_02006598' undeclared (first use
- * in this function). */
-extern u8 gData_02006598__first[] __asm__("gData_02006598");
-#define gData_02006598 gData_02006598__first
-/* VIEW(first): routine gData_02006700 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA struct ActorPlacement
- * gData_02006700[], it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:326: `gData_02006700' undeclared (first use
- * in this function). */
-extern u8 gData_02006700__first[] __asm__("gData_02006700");
-#define gData_02006700 gData_02006700__first
-/* VIEW(first): routine gData_02006790 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA struct ActorPlacement
- * gData_02006790[], it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:328: `gData_02006790' undeclared (first use
- * in this function). */
-extern u8 gData_02006790__first[] __asm__("gData_02006790");
-#define gData_02006790 gData_02006790__first
+extern struct ActorPlacement gData_02006338[];
+extern struct ActorPlacement gData_02006500[];
+extern struct ActorPlacement gData_02006598[];
+extern struct ActorPlacement gData_02006700[];
+extern struct ActorPlacement gData_02006790[];
 
 void Func_02003bf0(void);
 
@@ -757,12 +726,7 @@ void Func_02000db0(s32 id) { Func_02003654(id, 3, 2); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-/* VIEW(first): routine gData_0200632c as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_0200632c[], it does
- * not compile in tla-ja: games/tla/src/scene/world_map.c:801: `gData_0200632c'
- * undeclared (first use in this function). */
-extern u8 gData_0200632c__first[] __asm__("gData_0200632c");
-#define gData_0200632c gData_0200632c__first
+extern s32 gData_0200632c[];
 
 s32 Scene_Initialize(void) {
   struct EventWork *work;
@@ -1577,12 +1541,7 @@ refused:
   Event_ClearFlag(0x171);
 }
 
-/* VIEW(first): routine gData_02006bc8 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA u32 gData_02006bc8[],
- * it does not compile in tla-ja: games/tla/src/scene/world_map.c:1577:
- * `gData_02006bc8' undeclared (first use in this function). */
-extern const u8 gData_02006bc8__first[] __asm__("gData_02006bc8");
-#define gData_02006bc8 gData_02006bc8__first
+extern u32 gData_02006bc8[];
 
 /// Spawns object 285 at a random spot with a random scale and starts its
 /// script.
@@ -2632,13 +2591,6 @@ u32 gData_02004fc8[] = {
 #undef TUTORIAL_SET_MESSAGE
 #undef TUTORIAL_MESSAGE
 #undef Actor_SetSpriteColorMode
-#undef gData_02006338
-#undef gData_02006500
-#undef gData_02006598
-#undef gData_02006700
-#undef gData_02006790
-#undef gData_0200632c
-#undef gData_02006bc8
 #undef gData_02006c08
 #undef gData_02006be4
 #undef Animation_ApplyChildArgument

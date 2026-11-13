@@ -555,13 +555,7 @@ DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 /// Scene code of overlay 0x69b, in ROM order.
 
-/* VIEW(s0d94): routine gWhirlwindEndScript as this part declared it; the joined
- * file has another; tried as the definition's extern u32 gWhirlwindEndScript[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_2.c:552: `gWhirlwindEndScript'
- * undeclared (first use in this function). */
-extern const s32 gWhirlwindEndScript__s0d94[] __asm__("gWhirlwindEndScript");
-#define gWhirlwindEndScript gWhirlwindEndScript__s0d94
+extern s32 gWhirlwindEndScript[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
@@ -652,7 +646,6 @@ void Func_020015d0(s32 a0) { gLightSpritePriority = a0; }
 #undef DEFINE_JUPITER_LIGHTHOUSE_ROOM_2_SET_STATE
 #undef gPaletteCyclePausesInEvents
 #undef gPaletteCycleFrame
-#undef gWhirlwindEndScript
 #undef FieldEffect_Spawn
 // @file
 // Scene code of overlay 0x69b, in ROM order.
@@ -889,7 +882,7 @@ u32 gPaletteCyclePausesInEvents[] = {
     1,
 };
 
-u32 gWhirlwindEndScript[] = {
+s32 gWhirlwindEndScript[] = {
     39, 5, 0, 12, 38,
 };
 // clang-format on

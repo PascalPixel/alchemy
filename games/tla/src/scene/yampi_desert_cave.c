@@ -75,14 +75,7 @@ extern u16 *gYampiDesertCave_MarkDimColors;
 extern u16 *gYampiDesertCave_MarkCycleSlots;
 void Actor_DisableById(s32 id);
 
-/* VIEW(first): routine gYampiDesertCave_LogFootprints as this part declared it;
- * the joined file has another; tried as the definition's extern u32
- * gYampiDesertCave_LogFootprints[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert_cave.c:108: `gYampiDesertCave_LogFootprints'
- * undeclared (first use in this function). */
-extern s8 gYampiDesertCave_LogFootprints__first[] __asm__(
-    "gYampiDesertCave_LogFootprints");
-#define gYampiDesertCave_LogFootprints gYampiDesertCave_LogFootprints__first
+extern s8 gYampiDesertCave_LogFootprints[];
 
 /// Makes a log's cells solid where it lies: its footprint's cells take the
 /// raised layers' attributes and block the ground; returns 0 for an actor that
@@ -300,64 +293,13 @@ extern u16 gYampiDesertCave_MarkPeriod;
 extern u16 *gYampiDesertCave_MarkSlots;
 extern u16 gYampiDesertCave_MarkCount;
 extern u16 gYampiDesertCave_MarkCycleIndex;
-/* VIEW(first): routine gYampiDesertCave_Placements as this part declared it;
- * the joined file has another; tried as the definition's extern struct
- * ActorPlacement gYampiDesertCave_Placements[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert_cave.c:629: `gYampiDesertCave_Placements'
- * undeclared (first use in this function). */
-extern u32
-    gYampiDesertCave_Placements__first[] __asm__("gYampiDesertCave_Placements");
-#define gYampiDesertCave_Placements gYampiDesertCave_Placements__first
-/* VIEW(first): routine gYampiDesertCave_Room2Placements as this part declared
- * it; the joined file has another; tried as the definition's extern struct
- * ActorPlacement gYampiDesertCave_Room2Placements[], it does not compile in
- * tla-ja: games/tla/src/scene/yampi_desert_cave.c:626:
- * `gYampiDesertCave_Room2Placements' undeclared (first use in this function).
- */
-extern s32 gYampiDesertCave_Room2Placements__first[] __asm__(
-    "gYampiDesertCave_Room2Placements");
-#define gYampiDesertCave_Room2Placements gYampiDesertCave_Room2Placements__first
-/* VIEW(first): routine gYampiDesertCave_Room3Placements as this part declared
- * it; the joined file has another; tried as the definition's extern struct
- * ActorPlacement gYampiDesertCave_Room3Placements[], it does not compile in
- * tla-ja: games/tla/src/scene/yampi_desert_cave.c:628:
- * `gYampiDesertCave_Room3Placements' undeclared (first use in this function).
- */
-extern s32 gYampiDesertCave_Room3Placements__first[] __asm__(
-    "gYampiDesertCave_Room3Placements");
-#define gYampiDesertCave_Room3Placements gYampiDesertCave_Room3Placements__first
-/* VIEW(first): routine gYampiDesertCave_Room3Stakes as this part declared it;
- * the joined file has another; tried as the definition's extern u32
- * gYampiDesertCave_Room3Stakes[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert_cave.c:777: `gYampiDesertCave_Room3Stakes'
- * undeclared (first use in this function). */
-extern const u8 gYampiDesertCave_Room3Stakes__first[] __asm__(
-    "gYampiDesertCave_Room3Stakes");
-#define gYampiDesertCave_Room3Stakes gYampiDesertCave_Room3Stakes__first
-/* VIEW(first): routine gYampiDesertCave_Triggers as this part declared it; the
- * joined file has another; tried as the definition's extern struct Trigger
- * gYampiDesertCave_Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert_cave.c:903: `gYampiDesertCave_Triggers'
- * undeclared (first use in this function). */
-extern const u8
-    gYampiDesertCave_Triggers__first[] __asm__("gYampiDesertCave_Triggers");
-#define gYampiDesertCave_Triggers gYampiDesertCave_Triggers__first
-/* VIEW(first): routine gYampiDesertCave_Room2Triggers as this part declared it;
- * the joined file has another; tried as the definition's extern struct Trigger
- * gYampiDesertCave_Room2Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert_cave.c:900: `gYampiDesertCave_Room2Triggers'
- * undeclared (first use in this function). */
-extern const u8 gYampiDesertCave_Room2Triggers__first[] __asm__(
-    "gYampiDesertCave_Room2Triggers");
-#define gYampiDesertCave_Room2Triggers gYampiDesertCave_Room2Triggers__first
-/* VIEW(first): routine gYampiDesertCave_Room3Triggers as this part declared it;
- * the joined file has another; tried as the definition's extern struct Trigger
- * gYampiDesertCave_Room3Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert_cave.c:902: `gYampiDesertCave_Room3Triggers'
- * undeclared (first use in this function). */
-extern const u8 gYampiDesertCave_Room3Triggers__first[] __asm__(
-    "gYampiDesertCave_Room3Triggers");
-#define gYampiDesertCave_Room3Triggers gYampiDesertCave_Room3Triggers__first
+extern struct ActorPlacement gYampiDesertCave_Placements[];
+extern struct ActorPlacement gYampiDesertCave_Room2Placements[];
+extern struct ActorPlacement gYampiDesertCave_Room3Placements[];
+extern u32 gYampiDesertCave_Room3Stakes[];
+extern struct Trigger gYampiDesertCave_Triggers[];
+extern struct Trigger gYampiDesertCave_Room2Triggers[];
+extern struct Trigger gYampiDesertCave_Room3Triggers[];
 
 s32 YampiDesertCave_FindLogSlide(s32 *position);
 /// The leader pushes a log to where YampiDesertCave_FindLogSlide stopped it,
@@ -816,14 +758,7 @@ void YampiDesertCave_PoundStake(s32 a, s32 b) {
   MapGrid_CopyCellAttributes(47, 12, 1, 1, 46, 12);
 }
 
-/* VIEW(first): routine gYampiDesertCave_RipplePath as this part declared it;
- * the joined file has another; tried as the definition's extern
- * DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps) u32 gYampiDesertCave_RipplePath[],
- * it does not compile in tla-ja: games/tla/src/scene/yampi_desert_cave.c:795:
- * `gYampiDesertCave_RipplePath' undeclared (first use in this function). */
-extern const s16
-    gYampiDesertCave_RipplePath__first[] __asm__("gYampiDesertCave_RipplePath");
-#define gYampiDesertCave_RipplePath gYampiDesertCave_RipplePath__first
+extern s16 gYampiDesertCave_RipplePath[];
 
 static __inline__ s32 GameFlag_GetByte_(s32 flag) {
   return ((s32)GameFlag_GetByte(flag));
@@ -951,22 +886,8 @@ const u8 *Scene_GetEvents(void) {
 
 extern s16 gYampiDesertCave_MarkPaletteSlots[];
 #define gYampiDesertCave_MarkPaletteSlots gYampiDesertCave_MarkPaletteSlots
-/* VIEW(first): routine gYampiDesertCave_MarkColorsLit as this part declared it;
- * the joined file has another; tried as the definition's extern s16
- * gYampiDesertCave_MarkColorsLit[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert_cave.c:932: `gYampiDesertCave_MarkColorsLit'
- * undeclared (first use in this function). */
-extern u16 gYampiDesertCave_MarkColorsLit__first[] __asm__(
-    "gYampiDesertCave_MarkColorsLit");
-#define gYampiDesertCave_MarkColorsLit gYampiDesertCave_MarkColorsLit__first
-/* VIEW(first): routine gYampiDesertCave_MarkColorsDim as this part declared it;
- * the joined file has another; tried as the definition's extern s16
- * gYampiDesertCave_MarkColorsDim[], it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert_cave.c:933: `gYampiDesertCave_MarkColorsDim'
- * undeclared (first use in this function). */
-extern u16 gYampiDesertCave_MarkColorsDim__first[] __asm__(
-    "gYampiDesertCave_MarkColorsDim");
-#define gYampiDesertCave_MarkColorsDim gYampiDesertCave_MarkColorsDim__first
+extern u16 gYampiDesertCave_MarkColorsLit[];
+extern u16 gYampiDesertCave_MarkColorsDim[];
 
 void Actor_SetWideSprite(s32 id, s32 wide);
 
@@ -1084,18 +1005,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 #undef DEFINE_TELEPORT_FROM_MARK
 #undef DEFINE_BURST_PILLAR
 #undef FIELD_AT
-#undef gYampiDesertCave_LogFootprints
-#undef gYampiDesertCave_Placements
-#undef gYampiDesertCave_Room2Placements
-#undef gYampiDesertCave_Room3Placements
-#undef gYampiDesertCave_Room3Stakes
-#undef gYampiDesertCave_Triggers
-#undef gYampiDesertCave_Room2Triggers
-#undef gYampiDesertCave_Room3Triggers
-#undef gYampiDesertCave_RipplePath
 #undef gYampiDesertCave_MarkPaletteSlots
-#undef gYampiDesertCave_MarkColorsLit
-#undef gYampiDesertCave_MarkColorsDim
 
 #define YampiDesertCave_StartMovingPillar YampiDesertCave_StartMovingPillar
 #define YampiDesertCave_FinishMovingPillar YampiDesertCave_FinishMovingPillar
@@ -1106,28 +1016,30 @@ u16 gYampiDesertCave_LogSprites[] = {
     258, 259, 293, 294, 332, 331,
 };
 
-u32 gYampiDesertCave_LogFootprints[] = {
-    0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8,
+s8 gYampiDesertCave_LogFootprints[] = {
+    -32, -8, 32, 8, -8, -32, 8, 32,
+    -32, -16, 32, 0, -8, -32, 8, 32,
+    -32, -8, 32, 8, -8, -32, 8, 32,
 };
 
 DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
 
-u32 gYampiDesertCave_RipplePath[] = {
-    0x270065, 0, 0x230061, 0, 0x250063, 0,
-    0x21005f, 0,
+s16 gYampiDesertCave_RipplePath[] = {
+    101, 39, 0, 0, 97, 35, 0, 0,
+    99, 37, 0, 0, 95, 33, 0, 0,
 };
 
 s16 gYampiDesertCave_MarkPaletteSlots[] = {
     9, 10, 11, 12, 13, 14, 15, -1,
 };
 
-s16 gYampiDesertCave_MarkColorsLit[] = {
+u16 gYampiDesertCave_MarkColorsLit[] = {
     23, 25, 22, 23, 25, 22, 23, 25,
     22, 23, 25, 22, 23, 25, 22, 23,
     25, 22, 23, 25, 22, -1,
 };
 
-s16 gYampiDesertCave_MarkColorsDim[] = {
+u16 gYampiDesertCave_MarkColorsDim[] = {
     30, 27, 31, 22, 21, 31, 20, 18,
     31, 13, 11, 27, 11, 8, 24, 8,
     5, 21, 31, 31, 31, -1,

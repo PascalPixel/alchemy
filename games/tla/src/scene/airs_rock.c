@@ -902,18 +902,8 @@ DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 DEFINE_POSITION_DISTANCE_ABOVE(Position_DistanceAbove)
 
-/* VIEW(airs_rock): routine gData_02003de0 as this part declared it; the joined
- * file has another; tried as the definition's extern u32 gData_02003de0[], it
- * does not compile in tla-ja: games/tla/src/scene/airs_rock.c:923:
- * `gData_02003de0' undeclared (first use in this function). */
-extern u8 gData_02003de0__airs_rock[] __asm__("gData_02003de0");
-#define gData_02003de0 gData_02003de0__airs_rock
-/* VIEW(airs_rock): routine gData_02003dcc as this part declared it; the joined
- * file has another; tried as the definition's extern u32 gData_02003dcc[], it
- * does not compile in tla-ja: games/tla/src/scene/airs_rock.c:929:
- * `gData_02003dcc' undeclared (first use in this function). */
-extern u8 gData_02003dcc__airs_rock[] __asm__("gData_02003dcc");
-#define gData_02003dcc gData_02003dcc__airs_rock
+extern u32 gData_02003de0[];
+extern u32 gData_02003dcc[];
 
 void Func_02001908(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -1096,12 +1086,7 @@ void Func_02001da8(void) {
   Event_End();
 }
 
-/* VIEW(airs_rock): routine gData_02003dfc as this part declared it; the joined
- * file has another; tried as the definition's extern s32 gData_02003dfc[], it
- * does not compile in tla-ja: games/tla/src/scene/airs_rock.c:1117:
- * `gData_02003dfc' undeclared (first use in this function). */
-extern u8 gData_02003dfc__airs_rock[] __asm__("gData_02003dfc");
-#define gData_02003dfc gData_02003dfc__airs_rock
+extern s32 gData_02003dfc[];
 
 void Func_02001dc4(s32 x, s32 z) {
   struct Actor *first, *rock;
@@ -1886,9 +1871,6 @@ s32 Scene_PrepareMap(void) {
 #undef EFFECT_SCRIPTS
 #undef EFFECT_SPRITE_PRIORITY
 #undef gData_02004674
-#undef gData_02003de0
-#undef gData_02003dcc
-#undef gData_02003dfc
 #undef gData_02004698
 
 void Func_02000620(void);

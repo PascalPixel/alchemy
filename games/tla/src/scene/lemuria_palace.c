@@ -216,14 +216,7 @@ void LemuriaPalace_CastMapSparks(void) {
 }
 
 extern u8 gLemuriaPalace_MapMode[];
-/* VIEW(first): routine gLemuriaPalace_MapCrossfade as this part declared it;
- * the joined file has another; tried as the definition's extern LATE_DATA u32
- * gLemuriaPalace_MapCrossfade[], it does not compile in tla-ja:
- * games/tla/src/scene/lemuria_palace.c:248: `gLemuriaPalace_MapCrossfade'
- * undeclared (first use in this function). */
-extern u8
-    gLemuriaPalace_MapCrossfade__first[] __asm__("gLemuriaPalace_MapCrossfade");
-#define gLemuriaPalace_MapCrossfade gLemuriaPalace_MapCrossfade__first
+extern u32 gLemuriaPalace_MapCrossfade[];
 s32 __modsi3();
 
 /// A task: draws the maps the hall shows, fading between them by the map mode
@@ -1353,7 +1346,6 @@ u32 gLemuriaPalace_GlowColors[] = {
 
 #undef BLEND_SET_ALPHA
 #undef FIELD_AT
-#undef gLemuriaPalace_MapCrossfade
 
 // clang-format off
 LATE_DATA u32 gLemuriaPalace_MapCrossfade[] = {

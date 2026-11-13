@@ -30,7 +30,7 @@ enum TargetMotesMode {
 
 /// Lime smoke swirls in on each target, or pink smoke for a stronger variant.
 ///
-/// Abilities: Taint, Poison (BATTLE_EFFECT_TAINT).
+/// Abilities: Taint, Poison.
 void BattleEffect_RunTaint(struct BattleEffectParams *args) {
   if (args->variant == EFFECT_VARIANT_BASIC) {
     BattleEffect_RunTargetMotes(args, TARGET_MOTES_TAINT);
@@ -47,39 +47,38 @@ UNUSED void BattleEffect_RunUnusedPinkSmoke(struct BattleEffectParams *args) {
 
 /// Cyan smoke rises around each target.
 ///
-/// Abilities: Delude, Confuse, Mist (BATTLE_EFFECT_DELUDE).
+/// Abilities: Delude, Confuse, Mist.
 void BattleEffect_RunDelude(struct BattleEffectParams *args) {
   BattleEffect_RunTargetMotes(args, TARGET_MOTES_DELUDE);
 }
 /// Smoke rises around each target, and glints sparkle near it.
 ///
-/// Abilities: Paralyze (BATTLE_EFFECT_PARALYZE).
+/// Abilities: Paralyze.
 void BattleEffect_RunParalyze(struct BattleEffectParams *args) {
   BattleEffect_RunTargetMotes(args, TARGET_MOTES_PARALYZE);
 }
 /// Hearts close in on each target, turning as they come.
 ///
-/// Abilities: Heartrender (BATTLE_EFFECT_HEARTRENDER); none
-/// (BATTLE_EFFECT_UNUSED_HEARTRENDER).
+/// Abilities: Heartrender.
 void BattleEffect_RunHeartrender(struct BattleEffectParams *args) {
   BattleEffect_RunTargetMotes(args, TARGET_MOTES_HEARTRENDER);
 }
 /// Glowing orbs spiral in on each target.
 ///
-/// Abilities: Mystic Flame (BATTLE_EFFECT_MYSTIC_FLAME).
+/// Abilities: Mystic Flame.
 void BattleEffect_RunMysticFlame(struct BattleEffectParams *args) {
   BattleEffect_RunTargetMotes(args, TARGET_MOTES_MYSTIC_FLAME);
 }
 /// Glowing orbs in Mars Djinn colours rise around each target, and then the
 /// user steps up to the first target and strikes it.
 ///
-/// Abilities: Demon Fire (BATTLE_EFFECT_DEMON_FIRE).
+/// Abilities: Demon Fire.
 void BattleEffect_RunDemonFire(struct BattleEffectParams *args) {
   BattleEffect_RunTargetMotes(args, TARGET_MOTES_DEMON_FIRE);
 }
 /// Thirty-two vortex motes spiral in on each target.
 ///
-/// Abilities: Drown (BATTLE_EFFECT_DROWN).
+/// Abilities: Drown.
 void BattleEffect_RunDrown(struct BattleEffectParams *args) {
   BattleEffect_RunTargetMotes(args, TARGET_MOTES_DROWN);
 }
@@ -351,7 +350,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 /// its damage pose in turn from frame 64, and the battle shows the result on
 /// frame 80.
 ///
-/// Abilities: Sleep (BATTLE_EFFECT_SLEEP).
+/// Abilities: Sleep.
 void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -456,8 +455,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
 /// 72 frames each, over a marker at its feet; the battle shows the result on
 /// frame 32.
 ///
-/// Abilities: Curse (BATTLE_EFFECT_CURSE); Lucid Prophecy
-/// (BATTLE_EFFECT_LUCID_PROPHECY).
+/// Abilities: Curse; Lucid Prophecy.
 void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

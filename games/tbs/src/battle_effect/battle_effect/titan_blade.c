@@ -23,7 +23,7 @@
 /// A huge gold-hilted sword drops onto the first target and is driven into the
 /// ground amid flashes, golden dust and sparks.
 ///
-/// Abilities: Titan Blade (BATTLE_EFFECT_TITAN_BLADE).
+/// Abilities: Titan Blade.
 void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
   void **slots;
   void **slot;

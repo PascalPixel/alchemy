@@ -31,7 +31,7 @@
 /// while a ring of flashes bursts from the user and, with its trails, swells
 /// into a ball of fire over the two.
 ///
-/// Abilities: Death Plunge (BATTLE_EFFECT_DEATH_PLUNGE).
+/// Abilities: Death Plunge.
 void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

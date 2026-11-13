@@ -20,8 +20,7 @@ enum EarthWallSheetPicture {
 /// which widens into a glowing wall and stands while rocks tumble up through it
 /// and the targets are battered, then narrows away again.
 ///
-/// Abilities: Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide, Avalanche
-/// (BATTLE_EFFECT_GAIA).
+/// Abilities: Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide, Avalanche.
 void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
   struct BattleEffectWork *work;

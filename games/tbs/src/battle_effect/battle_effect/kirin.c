@@ -12,7 +12,7 @@
 /// targets, each bursting into motes as it passes, and a wall of fire sweeps
 /// over them and leaves them black.
 ///
-/// Abilities: Kirin (SUMMON_EFFECT_KIRIN).
+/// Abilities: Kirin.
 void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   static struct SpriteScale sweepScale = {{{Q16_ONE, Q16_ONE}}};
   static struct SpriteScale chargeScale = {{{Q16_ONE, Q16_ONE}}};

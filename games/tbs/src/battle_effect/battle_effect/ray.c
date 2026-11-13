@@ -12,7 +12,7 @@
 /// Four bolts close in, turning towards the centre for 16 frames and
 /// scattering sparks from their roots; the sparks fly on until frame 64.
 ///
-/// Abilities: Ray, Storm Ray, Destruct Ray (BATTLE_EFFECT_RAY).
+/// Abilities: Ray, Storm Ray, Destruct Ray.
 void BattleEffect_RunRay(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

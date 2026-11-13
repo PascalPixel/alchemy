@@ -28,7 +28,7 @@ struct RockWallHeights {
 /// Three rock pillars rise from the left, 4 frames apart, and sink again,
 /// throwing the targets standing on them into the air.
 ///
-/// Abilities: Quake, Earthquake, Quake Sphere (BATTLE_EFFECT_QUAKE).
+/// Abilities: Quake, Earthquake, Quake Sphere.
 void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   static s32 wallHeights[4] = {
       -32,

@@ -51,7 +51,7 @@ enum MercurySheetPicture {
 /// washed white, firing five blue flames to the left; trailing like comets,
 /// each bursts into a spray of motes over the targets and hits them all.
 ///
-/// Abilities: Mercury (BATTLE_EFFECT_MERCURY).
+/// Abilities: Mercury.
 void BattleEffect_RunMercury(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -179,7 +179,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
 /// flameballs fall from the top right onto the targets, 4 frames apart; each
 /// bursts into 32 motes and hits every target.
 ///
-/// Abilities: Jupiter (BATTLE_EFFECT_JUPITER).
+/// Abilities: Jupiter.
 void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -312,7 +312,7 @@ enum VenusSheetPicture {
 /// yellow, while ten columns of yellow fire shoot up from the ground beneath
 /// them one after another, each bursting into motes and hitting every target.
 ///
-/// Abilities: Venus (BATTLE_EFFECT_VENUS).
+/// Abilities: Venus.
 void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -426,7 +426,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
 /// appears where it was and dives onto them, nine flames erupt in a row along
 /// the ground beneath them and embers stream up.
 ///
-/// Abilities: Mars (BATTLE_EFFECT_MARS).
+/// Abilities: Mars.
 void BattleEffect_RunMars(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

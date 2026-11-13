@@ -47,7 +47,7 @@
 /// appears in a spray of sparks, violet bolts strike the targets again and
 /// again, and Thor drifts back in crackling lightning.
 ///
-/// Abilities: Thor (SUMMON_EFFECT_THOR).
+/// Abilities: Thor.
 void BattleEffect_RunThor(struct BattleEffectParams *args) {
   // The three lines' end points, in pairs: x and z on a plane, 96 being its
   // centre.

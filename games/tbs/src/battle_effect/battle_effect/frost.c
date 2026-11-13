@@ -15,7 +15,7 @@ enum {
 /// every 3 frames from frame 36; at the burst frame the motes spread and rise,
 /// chips fly up and sparkles rise over the heights they span.
 ///
-/// Abilities: Frost, Tundra, Glacier (BATTLE_EFFECT_FROST).
+/// Abilities: Frost, Tundra, Glacier.
 void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

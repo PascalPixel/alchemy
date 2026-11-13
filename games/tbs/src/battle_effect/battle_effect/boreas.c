@@ -32,7 +32,7 @@ enum IceBlockSheetPicture {
 /// sweeps down over the targets, crystals rise among them and burst, and a
 /// streak of ice falls through them.
 ///
-/// Abilities: Boreas (SUMMON_EFFECT_BOREAS).
+/// Abilities: Boreas.
 void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
   UNUSED s32 crystalPoints[32][2];

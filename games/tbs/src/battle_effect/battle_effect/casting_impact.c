@@ -130,36 +130,12 @@ enum CastingImpact {
 /// Gathers sparks around the caster, launches the Djinni and draws the
 /// impact on the first target.
 ///
-/// Abilities: Bane (CASTING_IMPACT_IMPACT_BANE); Smog
-/// (CASTING_IMPACT_IMPACT_SMOG); Mist (CASTING_IMPACT_IMPACT_MIST); Fever
-/// (CASTING_IMPACT_IMPACT_FEVER); Flint (CASTING_IMPACT_IMPACT_FLINT); Scorch
-/// (CASTING_IMPACT_IMPACT_SCORCH); Squall (CASTING_IMPACT_IMPACT_SQUALL); Sap
-/// (CASTING_IMPACT_IMPACT_SAP); Terra Strike
-/// (CASTING_IMPACT_IMPACT_TERRA_STRIKE); Poison Cloud
-/// (CASTING_IMPACT_IMPACT_POISON_CLOUD); Deadly Poison
-/// (CASTING_IMPACT_IMPACT_DEADLY_POISON); Mortal Danger, Death Size
-/// (CASTING_IMPACT_IMPACT_MORTAL_DANGER); Bad Omen
-/// (CASTING_IMPACT_IMPACT_BAD_OMEN); Life Nourish
-/// (CASTING_IMPACT_IMPACT_LIFE_NOURISH); Aqua Sock
-/// (CASTING_IMPACT_IMPACT_AQUA_SOCK); Frost Bite
-/// (CASTING_IMPACT_IMPACT_FROST_BITE); Life Leech
-/// (CASTING_IMPACT_IMPACT_LIFE_LEECH); Psy Leech
-/// (CASTING_IMPACT_IMPACT_PSY_LEECH); Broil (CASTING_IMPACT_IMPACT_BROIL);
-/// Meltdown (CASTING_IMPACT_IMPACT_MELTDOWN); Heat Mirage, Heat Flash
-/// (CASTING_IMPACT_IMPACT_HEAT_MIRAGE); Barrage
-/// (CASTING_IMPACT_IMPACT_BARRAGE); Acid Bath
-/// (CASTING_IMPACT_IMPACT_ACID_BATH); Stun Voltage
-/// (CASTING_IMPACT_IMPACT_STUN_VOLTAGE); Blinding Smog
-/// (CASTING_IMPACT_IMPACT_BLINDING_SMOG); Murk (CASTING_IMPACT_IMPACT_MURK);
-/// Cyclone Slash (CASTING_IMPACT_IMPACT_CYCLONE_SLASH); Psyphon Seal
-/// (CASTING_IMPACT_IMPACT_PSYPHON_SEAL); Asura (CASTING_IMPACT_IMPACT_ASURA);
-/// Forcible Arm (CASTING_IMPACT_IMPACT_FORCIBLE_ARM); Truncheon Fist
-/// (CASTING_IMPACT_IMPACT_TRUNCHEON_FIST); Severe Blow
-/// (CASTING_IMPACT_IMPACT_SEVERE_BLOW); none
-/// (CASTING_IMPACT_IMPACT_UNUSED_ICE_CHIPS); none
-/// (CASTING_IMPACT_IMPACT_UNUSED_GATHERING); none
-/// (CASTING_IMPACT_IMPACT_UNUSED_MYSTIC_FLAME); none
-/// (CASTING_IMPACT_IMPACT_UNUSED_COMETS).
+/// Abilities: Bane; Smog; Mist; Fever; Flint; Scorch; Squall; Sap; Terra
+/// Strike; Poison Cloud; Deadly Poison; Mortal Danger, Death Size; Bad Omen;
+/// Life Nourish; Aqua Sock; Frost Bite; Life Leech; Psy Leech; Broil; Meltdown;
+/// Heat Mirage, Heat Flash; Barrage; Acid Bath; Stun Voltage; Blinding Smog;
+/// Murk; Cyclone Slash; Psyphon Seal; Asura; Forcible Arm; Truncheon Fist;
+/// Severe Blow.
 void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   void **slots;
   void **slot;

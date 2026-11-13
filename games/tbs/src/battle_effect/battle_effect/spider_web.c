@@ -19,13 +19,13 @@ enum SwirlSwipeMode {
 
 /// A lime swirl sweeps across the first target and knocks it back.
 ///
-/// Abilities: Poison Beat (BATTLE_EFFECT_POISON_BEAT).
+/// Abilities: Poison Beat.
 void BattleEffect_RunPoisonBeat(struct BattleEffectParams *args) {
   BattleEffect_RunSwirlSwipe(args, SWIRL_SWIPE_POISON_BEAT);
 }
 /// A magenta swirl sweeps across the first target and throws it into the air.
 ///
-/// Abilities: Spinning Beat (BATTLE_EFFECT_SPINNING_BEAT).
+/// Abilities: Spinning Beat.
 void BattleEffect_RunSpinningBeat(struct BattleEffectParams *args) {
   BattleEffect_RunSwirlSwipe(args, SWIRL_SWIPE_SPINNING_BEAT);
 }
@@ -133,7 +133,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
 /// A spider web spreads over the targets, drawn as four mirrored 32x32 quarters
 /// around the point between the first and last target.
 ///
-/// Abilities: Spider Web (BATTLE_EFFECT_SPIDER_WEB).
+/// Abilities: Spider Web.
 void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
   struct ScreenPoint first;
   struct ScreenPoint last;

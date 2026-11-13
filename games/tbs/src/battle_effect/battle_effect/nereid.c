@@ -21,7 +21,7 @@
 /// Nereid rides in on her turtle over rising waves, columns of water and spray
 /// rise over the targets, and she bursts away.
 ///
-/// Abilities: Nereid (SUMMON_EFFECT_NEREID).
+/// Abilities: Nereid.
 void BattleEffect_RunNereid(struct BattleEffectParams *args) {
   BlitterPair draw;
   void *canvas;

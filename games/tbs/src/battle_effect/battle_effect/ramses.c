@@ -20,7 +20,7 @@
 /// while rocks rain down, then launches the fist at the targets, which strikes
 /// them in a burst of RAMSES_SPARKS sparks from PARTICLES.
 ///
-/// Abilities: Ramses (SUMMON_EFFECT_RAMSES).
+/// Abilities: Ramses.
 void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   // Every sprite of the effect takes this scale.
   static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};

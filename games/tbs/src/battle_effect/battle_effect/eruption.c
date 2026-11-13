@@ -14,14 +14,14 @@ enum EruptionMode {
 /// A fountain of grey motes and puffs of smoke bursts up beside the targets and
 /// falls back, flashing each target.
 ///
-/// Abilities: Smoke Bomb, Sleep Bomb (BATTLE_EFFECT_SMOKE_BOMB).
+/// Abilities: Smoke Bomb, Sleep Bomb.
 void BattleEffect_RunSmokeBomb(struct BattleEffectParams *args) {
   BattleEffect_RunEruption(args, ERUPTION_SMOKE_BOMB);
 }
 /// A fountain of fire-coloured motes and puffs of smoke bursts up beside the
 /// targets and falls back, flashing each target and making it recoil.
 ///
-/// Abilities: Blast, Mad Blast, Fiery Blast (BATTLE_EFFECT_BLAST).
+/// Abilities: Blast, Mad Blast, Fiery Blast.
 void BattleEffect_RunBlast(struct BattleEffectParams *args) {
   BattleEffect_RunEruption(args, ERUPTION_BLAST);
 }

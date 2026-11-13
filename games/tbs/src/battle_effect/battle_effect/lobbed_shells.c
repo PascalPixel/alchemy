@@ -25,49 +25,49 @@ enum LobbedShellsMode {
 /// Gold shells arc from the user onto each target in turn and burst into
 /// shards.
 ///
-/// Abilities: Mad Spatter (BATTLE_EFFECT_MAD_SPATTER).
+/// Abilities: Mad Spatter.
 void BattleEffect_RunMadSpatter(struct BattleEffectParams *args) {
   BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_MAD_SPATTER);
 }
 /// Green shells arc from the user onto each target in turn and burst into
 /// smoke.
 ///
-/// Abilities: Decompose (BATTLE_EFFECT_DECOMPOSE).
+/// Abilities: Decompose.
 void BattleEffect_RunDecompose(struct BattleEffectParams *args) {
   BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_DECOMPOSE);
 }
 /// Blue shells arc from the user onto each target in turn and burst into
 /// smoke.
 ///
-/// Abilities: Bone Chiller (BATTLE_EFFECT_BONE_CHILLER).
+/// Abilities: Bone Chiller.
 void BattleEffect_RunBoneChiller(struct BattleEffectParams *args) {
   BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_BONE_CHILLER);
 }
 /// Shells in the spider web's colours arc from the user onto each target in
 /// turn and burst into smoke.
 ///
-/// Abilities: Sticky Goo (BATTLE_EFFECT_STICKY_GOO).
+/// Abilities: Sticky Goo.
 void BattleEffect_RunStickyGoo(struct BattleEffectParams *args) {
   BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_STICKY_GOO);
 }
 /// Shells in Mars Djinn colours arc from the user onto each target in turn
 /// and burst into smoke.
 ///
-/// Abilities: Poison Ink (BATTLE_EFFECT_POISON_INK).
+/// Abilities: Poison Ink.
 void BattleEffect_RunPoisonInk(struct BattleEffectParams *args) {
   BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_POISON_INK);
 }
 /// Lime shells arc from the user onto each target in turn and burst into
 /// smoke.
 ///
-/// Abilities: Sticky Poison (BATTLE_EFFECT_STICKY_POISON).
+/// Abilities: Sticky Poison.
 void BattleEffect_RunStickyPoison(struct BattleEffectParams *args) {
   BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_STICKY_POISON);
 }
 /// Green shells arc from the user onto each target in turn and burst into
 /// shards.
 ///
-/// Abilities: Rotten Blood (BATTLE_EFFECT_ROTTEN_BLOOD).
+/// Abilities: Rotten Blood.
 void BattleEffect_RunRottenBlood(struct BattleEffectParams *args) {
   BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_ROTTEN_BLOOD);
 }

@@ -19,7 +19,7 @@ enum FlashingStrikeMode {
 /// The user leaps high at the first target, then a burst of 32 sparks rises
 /// beneath it.
 ///
-/// Abilities: Thrash (BATTLE_EFFECT_THRASH).
+/// Abilities: Thrash.
 void BattleEffect_RunThrash(struct BattleEffectParams *args) {
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24, px(61) / 5);
   wait(29);
@@ -33,8 +33,6 @@ void BattleEffect_RunThrash(struct BattleEffectParams *args) {
 /// beneath it and the canvas flash. It is Severe Blow's effect in The Lost Age,
 /// whose row for Severe Blow names this kind; here Severe Blow plays a casting
 /// impact.
-///
-/// Abilities: none (BATTLE_EFFECT_UNUSED_SEVERE_BLOW_LEAP).
 void BattleEffect_RunUnusedSevereBlowLeap(struct BattleEffectParams *args) {
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24, px(36) / 5);
   wait(12);
@@ -45,7 +43,7 @@ void BattleEffect_RunUnusedSevereBlowLeap(struct BattleEffectParams *args) {
 /// The user leaps at the first target, four pictures flash across the effect
 /// layer, then it fills with one colour as the target is struck.
 ///
-/// Abilities: Quick Strike (BATTLE_EFFECT_QUICK_STRIKE).
+/// Abilities: Quick Strike.
 void BattleEffect_RunQuickStrike(struct BattleEffectParams *args) {
   BattleEffect_RunFlashingStrike(args, FLASHING_STRIKE_QUICK_STRIKE);
 }
@@ -53,7 +51,7 @@ void BattleEffect_RunQuickStrike(struct BattleEffectParams *args) {
 /// The user steps up to the first target, four pictures flash across the
 /// effect layer, then it fills with one colour as the target is struck.
 ///
-/// Abilities: Vorpal Slash (BATTLE_EFFECT_VORPAL_SLASH).
+/// Abilities: Vorpal Slash.
 void BattleEffect_RunVorpalSlash(struct BattleEffectParams *args) {
   BattleEffect_RunFlashingStrike(args, FLASHING_STRIKE_VORPAL_SLASH);
 }

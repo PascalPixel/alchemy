@@ -9,7 +9,7 @@
 /// A fiery disc fades in, its rings running outward while every line of
 /// the display ripples, then fades out.
 ///
-/// Abilities: Torch (BATTLE_EFFECT_TORCH).
+/// Abilities: Torch.
 void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -143,7 +143,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
 /// target, mirrored from the usual side; the Djinni's entrance is the whole
 /// effect.
 ///
-/// Abilities: Kite (BATTLE_EFFECT_KITE).
+/// Abilities: Kite.
 void BattleEffect_RunKite(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   s32 originX;

@@ -12,7 +12,7 @@
 /// A whirlwind lifts the targets, then Procne, a great bird in a violet sky,
 /// strikes them with comets.
 ///
-/// Abilities: Procne (SUMMON_EFFECT_PROCNE).
+/// Abilities: Procne.
 void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
   void **slots;

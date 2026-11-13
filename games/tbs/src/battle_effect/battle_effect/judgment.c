@@ -71,7 +71,7 @@ struct JudgmentWork {
 /// The battle wipes away to a violet sky where a formation flies forward while
 /// motes gather into it, bursts in a flash and sends out a ring of light.
 ///
-/// Abilities: Judgment (SUMMON_EFFECT_JUDGMENT).
+/// Abilities: Judgment.
 void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
   s32 anchor[3];

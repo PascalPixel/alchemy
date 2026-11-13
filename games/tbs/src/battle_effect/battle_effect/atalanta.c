@@ -46,7 +46,7 @@ enum SlashSheetPicture {
 /// diagonally on the targets and burst in light, hitting each target as they
 /// land.
 ///
-/// Abilities: Atalanta (SUMMON_EFFECT_ATALANTA).
+/// Abilities: Atalanta.
 void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   s32 point[3];
   struct ScreenPoint screen;

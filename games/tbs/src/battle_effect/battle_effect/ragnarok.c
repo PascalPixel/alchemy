@@ -18,7 +18,7 @@
 /// A huge flaming blade swings down over the targets and light bursts over
 /// them twice.
 ///
-/// Abilities: Ragnarok (BATTLE_EFFECT_RAGNAROK).
+/// Abilities: Ragnarok.
 void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

@@ -95,7 +95,7 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
 /// changing colour and leaving a fading trail, then a rune stands on the
 /// target; the battle shows the result on frame 64.
 ///
-/// Abilities: Bind (BATTLE_EFFECT_BIND); Luff (BATTLE_EFFECT_LUFF).
+/// Abilities: Bind; Luff.
 void BattleEffect_RunBind(struct BattleEffectParams *args) {
   struct ScreenPoint anchor;
   /* FAKEMATCH(temporary): one workspace for the target's position and each
@@ -264,8 +264,6 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
 /// so the player never sees it. Its frame loop is BattleEffect_RunBind's,
 /// without the Djinni prelude, and on frame 46 it starts the user's approach to
 /// the first target.
-///
-/// Abilities: none (BATTLE_EFFECT_UNUSED_TRIANGLE_STRIKE).
 void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   struct ScreenPoint anchor;
   /* FAKEMATCH(temporary): one workspace for the target's position and each

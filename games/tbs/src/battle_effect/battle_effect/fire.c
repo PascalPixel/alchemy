@@ -11,7 +11,7 @@
 /// targets, turning towards them 48 frames after they appear, and each one that
 /// hits the ground shows an impact flare for 12 frames as its target flinches.
 ///
-/// Abilities: Fire, Fireball, Inferno (BATTLE_EFFECT_FIRE).
+/// Abilities: Fire, Fireball, Inferno.
 void BattleEffect_RunFire(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

@@ -67,7 +67,7 @@ void BattleEffect_ArmPaletteHBlankDma(void) {
 /// The battle dissolves into a starfield, where one spawned sprite falls in
 /// flames among falling fireballs, then bursts into embers and flashes.
 ///
-/// Abilities: Meteor (SUMMON_EFFECT_METEOR).
+/// Abilities: Meteor.
 void BattleEffect_RunMeteor(struct BattleEffectParams *args) {
   BattleEffect_RunParticleStreams(args, PARTICLE_STREAMS_METEOR);
 }
@@ -76,7 +76,7 @@ void BattleEffect_RunMeteor(struct BattleEffectParams *args) {
 /// falling fireballs, then burst into embers and flashes, in the lightning
 /// bolt's colours.
 ///
-/// Abilities: Outer Space (BATTLE_EFFECT_OUTER_SPACE), the Fusion Dragon's.
+/// Abilities: Outer Space, the Fusion Dragon's.
 void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
   BattleEffect_RunParticleStreams(args, PARTICLE_STREAMS_OUTER_SPACE);
 }

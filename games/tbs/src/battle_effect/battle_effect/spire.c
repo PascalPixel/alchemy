@@ -16,7 +16,7 @@
 /// Boulders drop along the row of targets, centred on it, and shatter into
 /// tumbling shards, hitting every target as each lands.
 ///
-/// Abilities: Spire, Clay Spire, Stone Spire (BATTLE_EFFECT_SPIRE).
+/// Abilities: Spire, Clay Spire, Stone Spire.
 void BattleEffect_RunSpire(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

@@ -25,7 +25,7 @@
 /// shows the damage on frame 32.
 ///
 /// Abilities: Plasma, Shine Plasma, Spark Plasma, Thunderclap, Thunderbolt,
-/// Thunderstorm (BATTLE_EFFECT_PLASMA).
+/// Thunderstorm.
 void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
   BlitterPair draw;
   struct BattleEffectWork *work;
@@ -181,14 +181,13 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
 /// Bursts go off at (60, 48), with the canvas behind the battle's first layer
 /// (priority 1).
 ///
-/// Abilities: Blast, Nova, Supernova, Fire Bomb, Cluster Bomb, Carpet Bomb
-/// (BATTLE_EFFECT_NOVA).
+/// Abilities: Blast, Nova, Supernova, Fire Bomb, Cluster Bomb, Carpet Bomb.
 void BattleEffect_RunNova(struct BattleEffectParams *args) {
   BattleEffect_RunSparkGroups(args, SPARK_GROUPS_NOVA);
 }
 /// Orange bursts go off at (60, 64), with the canvas in front (priority 0).
 ///
-/// Abilities: Dynamite (BATTLE_EFFECT_DYNAMITE).
+/// Abilities: Dynamite.
 void BattleEffect_RunDynamite(struct BattleEffectParams *args) {
   BattleEffect_RunSparkGroups(args, SPARK_GROUPS_DYNAMITE);
 }

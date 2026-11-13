@@ -26,7 +26,7 @@ void BattleEffect_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 /// splash there; then five columns of water crash down on the targets,
 /// throwing up drops.
 ///
-/// Abilities: Neptune (SUMMON_EFFECT_NEPTUNE).
+/// Abilities: Neptune.
 void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   static struct SpriteScale unitScale = {{{Q16_ONE * 3 / 2, Q16_ONE * 3 / 2}}};
   struct SpritePlacement pos;

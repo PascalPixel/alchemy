@@ -22,7 +22,7 @@ enum {
 
 /// A bolt of lightning strikes each target in turn, 8 frames apart.
 ///
-/// Abilities: Bolt, Flash Bolt, Blue Bolt (BATTLE_EFFECT_BOLT).
+/// Abilities: Bolt, Flash Bolt, Blue Bolt.
 void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

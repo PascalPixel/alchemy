@@ -18,7 +18,7 @@
 /// into a swirling vortex, flashing and knocking back its target, while the
 /// camera swings round over frames 17 to 63.
 ///
-/// Abilities: Froth, Froth Sphere, Froth Spiral (BATTLE_EFFECT_FROTH).
+/// Abilities: Froth, Froth Sphere, Froth Spiral.
 void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   struct ScreenPoint screenPosition;
   struct BattleEffectWork *work;
@@ -156,8 +156,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
 /// canvas flashes and the targets reel seven times, 8 frames apart, from frame
 /// 16, and the battle shows the damage on frame 32.
 ///
-/// Abilities: Whirlwind, Tornado, Tempest, Gale, Typhoon, Hurricane
-/// (BATTLE_EFFECT_WHIRLWIND).
+/// Abilities: Whirlwind, Tornado, Tempest, Gale, Typhoon, Hurricane.
 void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
   BlitterPair draw;
   struct BattleEffectWork *work;

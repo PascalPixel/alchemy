@@ -17,14 +17,14 @@ enum DragonFireMode {
 /// Fireballs rain on the targets and a blast of fire sweeps across them, in
 /// the LightningBolt colours.
 ///
-/// Abilities: Dragon Driver (BATTLE_EFFECT_DRAGON_DRIVER), the Fusion Dragon's.
+/// Abilities: Dragon Driver, the Fusion Dragon's.
 void BattleEffect_RunDragonDriver(struct BattleEffectParams *args) {
   BattleEffect_RunDragonFire(args, DRAGON_FIRE_DRAGON_DRIVER);
 }
 /// Tiamat lands while fireballs rain on the targets, breathes fire across
 /// them, and bursts away.
 ///
-/// Abilities: Tiamat (SUMMON_EFFECT_TIAMAT).
+/// Abilities: Tiamat.
 void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
   BattleEffect_RunDragonFire(args, DRAGON_FIRE_TIAMAT);
 }

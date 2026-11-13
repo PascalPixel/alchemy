@@ -23,37 +23,34 @@
 /// variant grows with a double or triple blow, and each strike fills the
 /// canvas with light.
 ///
-/// Abilities: Gust (BATTLE_EFFECT_GUST); Rapid Smash, Sonic Smash, Slice
-/// (BATTLE_EFFECT_RAPID_SMASH).
+/// Abilities: Gust; Rapid Smash, Sonic Smash, Slice.
 FLURRY_DEFINE_BY_VARIANT(BattleEffect_RunGust, FLURRY_GUST, FLURRY_GUST_DOUBLE,
                          FLURRY_GUST_TRIPLE)
 
 /// The user strikes the first target five times.
 ///
-/// Abilities: Bear Claw (BATTLE_EFFECT_BEAR_CLAW); Counterstrike
-/// (BATTLE_EFFECT_COUNTERSTRIKE).
+/// Abilities: Bear Claw; Counterstrike.
 void BattleEffect_RunBearClaw(struct BattleEffectParams *args) {
   BattleEffect_RunFlurry(args, FLURRY_BEAR_CLAW);
 }
 
 /// Ransack plays the same five strikes as Bear Claw.
 ///
-/// Abilities: Ransack (BATTLE_EFFECT_RANSACK); Mad Dash
-/// (BATTLE_EFFECT_MAD_DASH).
+/// Abilities: Ransack; Mad Dash.
 void BattleEffect_RunRansack(struct BattleEffectParams *args) {
   BattleEffect_RunFlurry(args, FLURRY_BEAR_CLAW);
 }
 
 /// Seven strikes land on the first target in the lime palette.
 ///
-/// Abilities: Bacteria Rush (BATTLE_EFFECT_BACTERIA_RUSH).
+/// Abilities: Bacteria Rush.
 void BattleEffect_RunBacteriaRush(struct BattleEffectParams *args) {
   BattleEffect_RunFlurry(args, FLURRY_BACTERIA_RUSH);
 }
 
 /// Nine strikes land on the first target in the blue palette.
 ///
-/// Abilities: Freebite Rush (BATTLE_EFFECT_FREEBITE_RUSH).
+/// Abilities: Freebite Rush.
 void BattleEffect_RunFreebiteRush(struct BattleEffectParams *args) {
   BattleEffect_RunFlurry(args, FLURRY_FREEBITE_RUSH);
 }
@@ -61,8 +58,7 @@ void BattleEffect_RunFreebiteRush(struct BattleEffectParams *args) {
 /// One, two or three strikes land on the first target as the variant grows
 /// with a double or triple blow.
 ///
-/// Abilities: Flying Attack (BATTLE_EFFECT_FLYING_ATTACK); Swift Strike
-/// (BATTLE_EFFECT_SWIFT_STRIKE).
+/// Abilities: Flying Attack; Swift Strike.
 FLURRY_DEFINE_BY_VARIANT(BattleEffect_RunFlyingAttack, FLURRY_FLYING_ATTACK,
                          FLURRY_FLYING_ATTACK_DOUBLE,
                          FLURRY_FLYING_ATTACK_TRIPLE)

@@ -12,7 +12,7 @@
 /// shaking the screen; the battle shows the damage 80 frames before the end,
 /// and the canvas darkens away over the last 8.
 ///
-/// Abilities: Prism, Hail Prism, Freeze Prism (BATTLE_EFFECT_PRISM).
+/// Abilities: Prism, Hail Prism, Freeze Prism.
 void BattleEffect_RunPrism(struct BattleEffectParams *args) {
   BlitterPair draw;
   struct BattleEffectWork *work;

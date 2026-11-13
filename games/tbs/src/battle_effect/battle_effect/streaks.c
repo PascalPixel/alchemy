@@ -32,35 +32,35 @@ enum StreakStyle {
 /// Three streaks of ember light fly from the user at each target in turn; each
 /// target flashes and recoils.
 ///
-/// Abilities: Sonic Wave (BATTLE_EFFECT_SONIC_WAVE).
+/// Abilities: Sonic Wave.
 void BattleEffect_RunSonicWave(struct BattleEffectParams *args) {
   BattleEffect_RunStreakVolley(args, STREAKS_STYLE_EMBER);
 }
 /// Three streaks of lime light fly from the user at each target in turn; each
 /// target flashes and recoils.
 ///
-/// Abilities: Shriek (BATTLE_EFFECT_SHRIEK).
+/// Abilities: Shriek.
 void BattleEffect_RunShriek(struct BattleEffectParams *args) {
   BattleEffect_RunStreakVolley(args, STREAKS_STYLE_LIME);
 }
 /// Three streaks of violet light fly from the user at each target in turn; each
 /// target flashes and trembles.
 ///
-/// Abilities: Banshee Howl (BATTLE_EFFECT_BANSHEE_HOWL).
+/// Abilities: Banshee Howl.
 void BattleEffect_RunBansheeHowl(struct BattleEffectParams *args) {
   BattleEffect_RunStreakVolley(args, STREAKS_STYLE_VIOLET);
 }
 /// Three flickering cyan streaks, cycling through three colour rows, fly from
 /// the user at each target in turn; each target flashes and recoils.
 ///
-/// Abilities: War Cry (BATTLE_EFFECT_WAR_CRY).
+/// Abilities: War Cry.
 void BattleEffect_RunWarCry(struct BattleEffectParams *args) {
   BattleEffect_RunStreakVolley(args, STREAKS_STYLE_CYAN);
 }
 /// Three flickering red streaks, cycling through three colour rows, fly from
 /// the user at each target in turn; each target flashes and trembles.
 ///
-/// Abilities: Wicked Howl (BATTLE_EFFECT_WICKED_HOWL).
+/// Abilities: Wicked Howl.
 void BattleEffect_RunWickedHowl(struct BattleEffectParams *args) {
   BattleEffect_RunStreakVolley(args, STREAKS_STYLE_RED);
 }
@@ -281,14 +281,14 @@ enum { MOTE_FOUNTAIN_INITIALIZED_COUNT = 256, MOTE_VISIBLE_COUNT = 128 };
 /// Motes burst out of the user and float up, wobbling, as they drift across the
 /// field onto the targets, and each target flinches in turn.
 ///
-/// Abilities: Sleep Star (BATTLE_EFFECT_SLEEP_STAR).
+/// Abilities: Sleep Star.
 void BattleEffect_RunSleepStar(struct BattleEffectParams *args) {
   BattleEffect_RunMoteFountain(args, MOTE_FOUNTAIN_DRIFTING);
 }
 /// Orange healing motes burst out of the user and float up close to it, and
 /// each target glows in turn with the recovery sound.
 ///
-/// Abilities: Soothing Star (BATTLE_EFFECT_SOOTHING_STAR).
+/// Abilities: Soothing Star.
 void BattleEffect_RunSoothingStar(struct BattleEffectParams *args) {
   BattleEffect_RunMoteFountain(args, MOTE_FOUNTAIN_FOUNTAIN_HEALING);
 }

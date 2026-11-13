@@ -12,7 +12,7 @@
 /// again, scattering 16 sparks that drift upward; the target is struck on frame
 /// 10.
 ///
-/// Abilities: Undead Sword (BATTLE_EFFECT_UNDEAD_SWORD).
+/// Abilities: Undead Sword.
 void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   void **slots;
   void **slot;

@@ -11,7 +11,7 @@
 /// waves of water rise along the bottom of the screen; the canvas fades out
 /// over the last 16 frames.
 ///
-/// Abilities: Hail (BATTLE_EFFECT_HAIL).
+/// Abilities: Hail.
 void BattleEffect_RunHail(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -157,7 +157,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
 /// it as it arrives. They glow in the Djinni's yellow until the background
 /// palette, from frame 17, steps to the portal sheet's violet.
 ///
-/// Abilities: Ground (BATTLE_EFFECT_GROUND).
+/// Abilities: Ground.
 void BattleEffect_RunGround(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

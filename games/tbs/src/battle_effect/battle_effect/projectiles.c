@@ -243,40 +243,40 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
 /// Six comets fly at each target, three frames apart, and burst into a flash
 /// and sparks; the effect's variant picks one of three comets.
 ///
-/// Abilities: Slash, Wind Slash, Sonic Slash (BATTLE_EFFECT_SLASH).
+/// Abilities: Slash, Wind Slash, Sonic Slash.
 void BattleEffect_RunSlash(struct BattleEffectParams *args) {
   BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_SLASH);
 }
 /// Four spinning shurikens fly at each target, five frames apart, and vanish
 /// once past it.
 ///
-/// Abilities: Shuriken (BATTLE_EFFECT_SHURIKEN).
+/// Abilities: Shuriken.
 void BattleEffect_RunShuriken(struct BattleEffectParams *args) {
   BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_SHURIKEN);
 }
 /// Ten pellets fly slowly at each target and bounce off it, up or down at
 /// random.
 ///
-/// Abilities: Crazy Voice (BATTLE_EFFECT_CRAZY_VOICE).
+/// Abilities: Crazy Voice.
 void BattleEffect_RunCrazyVoice(struct BattleEffectParams *args) {
   BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_CRAZY_VOICE);
 }
 /// Five yellow sparks fly level at each target, five frames apart.
 ///
-/// Abilities: Wing Flutter (BATTLE_EFFECT_WING_FLUTTER).
+/// Abilities: Wing Flutter.
 void BattleEffect_RunWingFlutter(struct BattleEffectParams *args) {
   BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_WING_FLUTTER);
 }
 /// Ten large yellow sparks stream level at each target, one a frame, spread up
 /// and down.
 ///
-/// Abilities: Wing Stroke (BATTLE_EFFECT_WING_STROKE).
+/// Abilities: Wing Stroke.
 void BattleEffect_RunWingStroke(struct BattleEffectParams *args) {
   BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_WING_STROKE);
 }
 /// Ten small yellow sparks stream level at each target, one a frame.
 ///
-/// Abilities: Wing Beat (BATTLE_EFFECT_WING_BEAT).
+/// Abilities: Wing Beat.
 void BattleEffect_RunWingBeat(struct BattleEffectParams *args) {
   BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_WING_BEAT);
 }
@@ -296,14 +296,14 @@ BattleEffect_RunVolleyWithAction(struct BattleEffectParams *args, s32 mode) {
 /// From the user's action pose, one large comet in ice colours flies at each
 /// target and bursts into 80 sparks.
 ///
-/// Abilities: Cutting Edge (BATTLE_EFFECT_CUTTING_EDGE).
+/// Abilities: Cutting Edge.
 void BattleEffect_RunCuttingEdge(struct BattleEffectParams *args) {
   BattleEffect_RunVolleyWithAction(args, PROJECTILE_VOLLEY_CUTTING_EDGE);
 }
 /// From the user's action pose, seven fireballs trailing embers fly at each
 /// target, two frames apart, each bursting into 40 sparks.
 ///
-/// Abilities: Heat Wave (BATTLE_EFFECT_HEAT_WAVE).
+/// Abilities: Heat Wave.
 void BattleEffect_RunHeatWave(struct BattleEffectParams *args) {
   BattleEffect_RunVolleyWithAction(args, PROJECTILE_VOLLEY_HEAT_WAVE);
 }
@@ -311,21 +311,21 @@ void BattleEffect_RunHeatWave(struct BattleEffectParams *args) {
 /// shaking the screen or knocking the target back; the battle shows the damage
 /// on frame 48.
 ///
-/// Abilities: Sleet (BATTLE_EFFECT_SLEET).
+/// Abilities: Sleet.
 void BattleEffect_RunSleet(struct BattleEffectParams *args) {
   BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_SLEET);
 }
 /// Sixty ice chips stream at each target, one a frame, without knocking it
 /// back.
 ///
-/// Abilities: Ice Blessing (BATTLE_EFFECT_ICE_BLESSING).
+/// Abilities: Ice Blessing.
 void BattleEffect_RunIceBlessing(struct BattleEffectParams *args) {
   BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_ICE_BLESSING);
 }
 /// From the user's action pose, sixty ice chips stream at each target, one a
 /// frame, scattered up and down, without knocking it back.
 ///
-/// Abilities: Blizzard (BATTLE_EFFECT_BLIZZARD).
+/// Abilities: Blizzard.
 void BattleEffect_RunBlizzard(struct BattleEffectParams *args) {
   BattleEffect_RunVolleyWithAction(args, PROJECTILE_VOLLEY_BLIZZARD);
 }

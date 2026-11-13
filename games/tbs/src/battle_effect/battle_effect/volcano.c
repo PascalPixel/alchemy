@@ -25,7 +25,7 @@
 /// spitting more, and each eruption knocks the targets back.
 ///
 /// Abilities: Volcano, Eruption, Pyroclasm, Lava Shower, Molten Bath, Magma
-/// Storm (BATTLE_EFFECT_VOLCANO).
+/// Storm.
 void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

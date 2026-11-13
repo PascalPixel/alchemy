@@ -36,25 +36,25 @@ enum RushingStrikeMode {
 
 /// Rushes the target and scatters sparks in the fire pillar palette.
 ///
-/// Abilities: Bone Charge (BATTLE_EFFECT_BONE_CHARGE).
+/// Abilities: Bone Charge.
 void BattleEffect_RunBoneCharge(struct BattleEffectParams *args) {
   BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_BONE_CHARGE);
 }
 /// Rushes the target and scatters sparks in the ice-block palette.
 ///
-/// Abilities: Brute Force (BATTLE_EFFECT_BRUTE_FORCE).
+/// Abilities: Brute Force.
 void BattleEffect_RunBruteForce(struct BattleEffectParams *args) {
   BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_BRUTE_FORCE);
 }
 /// Rushes the target and scatters sparks in the pink-burst palette.
 ///
-/// Abilities: Onslaught (BATTLE_EFFECT_ONSLAUGHT).
+/// Abilities: Onslaught.
 void BattleEffect_RunOnslaught(struct BattleEffectParams *args) {
   BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_ONSLAUGHT);
 }
 /// Rushes the target and scatters sparks in the blast palette.
 ///
-/// Abilities: Headbutt (BATTLE_EFFECT_HEADBUTT).
+/// Abilities: Headbutt.
 void BattleEffect_RunHeadbutt(struct BattleEffectParams *args) {
   BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_HEADBUTT);
 }

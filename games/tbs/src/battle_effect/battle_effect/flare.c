@@ -9,7 +9,7 @@
 /// Nine flames rise one after another, 4 frames apart, along half an ellipse,
 /// over 80 frames.
 ///
-/// Abilities: Flare, Flare Wall, Flare Storm (BATTLE_EFFECT_FLARE).
+/// Abilities: Flare, Flare Wall, Flare Storm.
 void BattleEffect_RunFlare(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

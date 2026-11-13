@@ -12,21 +12,21 @@
 /// Sixteen pink lights burst out of the user and are pulled into each target,
 /// with the heavy impact sound.
 ///
-/// Abilities: Demon Night (BATTLE_EFFECT_DEMON_NIGHT).
+/// Abilities: Demon Night.
 void BattleEffect_RunDemonNight(struct BattleEffectParams *args) {
   BattleEffect_RunGatheringLights(args, GATHERING_LIGHTS_DEMON_NIGHT);
 }
 /// Eight lights in Mars Djinn colours burst out of the user and are pulled into
 /// each target.
 ///
-/// Abilities: Rumble (BATTLE_EFFECT_RUMBLE).
+/// Abilities: Rumble.
 void BattleEffect_RunRumble(struct BattleEffectParams *args) {
   BattleEffect_RunGatheringLights(args, GATHERING_LIGHTS_RUMBLE);
 }
 /// Twelve lights in Mercury Djinn colours burst out of the user and are pulled
 /// into each target.
 ///
-/// Abilities: Haunting (BATTLE_EFFECT_HAUNTING).
+/// Abilities: Haunting.
 void BattleEffect_RunHaunting(struct BattleEffectParams *args) {
   BattleEffect_RunGatheringLights(args, GATHERING_LIGHTS_HAUNTING);
 }

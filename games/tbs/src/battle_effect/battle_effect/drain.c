@@ -9,7 +9,7 @@
 /// Ice shards burst up from each target in turn, 20 frames apart, tinting the
 /// target as they go, and fall away below line 112.
 ///
-/// Abilities: Break (BATTLE_EFFECT_BREAK).
+/// Abilities: Break.
 void BattleEffect_RunBreak(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -123,7 +123,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
 /// Motes of light burst from each target in turn, 20 frames apart, and are
 /// pulled into the centre of the user's body.
 ///
-/// Abilities: Drain, Psy Drain (BATTLE_EFFECT_DRAIN).
+/// Abilities: Drain, Psy Drain.
 void BattleEffect_RunDrain(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

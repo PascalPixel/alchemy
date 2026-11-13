@@ -29,7 +29,7 @@
 /// behind it, then strikes the first target on DRAGON_CLOUD_STRIKE_FRAME and
 /// bursts into embers and flashes.
 ///
-/// Abilities: Dragon Cloud (BATTLE_EFFECT_DRAGON_CLOUD).
+/// Abilities: Dragon Cloud.
 void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   struct Point2D trail[20];
   struct ScreenPoint position;

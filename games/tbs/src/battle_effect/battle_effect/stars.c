@@ -16,7 +16,7 @@
 /// the camera swings round; each knocks the target back on arrival, and the
 /// third lets the battle show the damage.
 ///
-/// Abilities: Astral Blast (BATTLE_EFFECT_ASTRAL_BLAST).
+/// Abilities: Astral Blast.
 void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   struct ScreenPoint screenPosition;
 #ifndef UBFIX
@@ -201,7 +201,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
 /// bounce shaking the screen and flashing the targets; the battle shows the
 /// damage on frame 96.
 ///
-/// Abilities: Shining Star (BATTLE_EFFECT_SHINING_STAR).
+/// Abilities: Shining Star.
 void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

@@ -37,13 +37,13 @@ struct GrowingColumn {
 
 /// Vines grow from the ground, scattering dust from each root.
 ///
-/// Abilities: Growth, Mad Growth, Wild Growth (BATTLE_EFFECT_GROWTH).
+/// Abilities: Growth, Mad Growth, Wild Growth.
 void BattleEffect_RunGrowth(struct BattleEffectParams *args) {
   BattleEffect_RunGrowingColumns(args, GROWING_COLUMNS_VINES);
 }
 /// Green pillars grow from the ground, scattering dust from each root.
 ///
-/// Abilities: Punji, Punji Trap, Punji Strike (BATTLE_EFFECT_PUNJI).
+/// Abilities: Punji, Punji Trap, Punji Strike.
 void BattleEffect_RunPunji(struct BattleEffectParams *args) {
   BattleEffect_RunGrowingColumns(args, GROWING_COLUMNS_PILLARS);
 }
@@ -299,7 +299,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
 /// Sixteen green vines grow from the middle of the row of targets, 2 frames
 /// apart, and shrink back.
 ///
-/// Abilities: Vine (BATTLE_EFFECT_VINE).
+/// Abilities: Vine.
 void BattleEffect_RunVine(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -385,7 +385,7 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
 /// Thorns burst from the ground one every 8 frames, throwing up dust from
 /// their roots.
 ///
-/// Abilities: Thorn, Briar, Nettle (BATTLE_EFFECT_THORN).
+/// Abilities: Thorn, Briar, Nettle.
 void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   void *canvas;
   s32 frame;

@@ -20,7 +20,7 @@
 /// red crescent its scythe leaves fades away while the target is knocked
 /// back, bouncing on frame 120.
 ///
-/// Abilities: Condemn (BATTLE_EFFECT_CONDEMN).
+/// Abilities: Condemn.
 void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   void **slots;
   void **cursor;

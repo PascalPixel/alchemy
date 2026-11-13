@@ -34,7 +34,7 @@ enum ThornVineSheetPicture {
 /// them; then the picture greys and dissolves pixel by pixel, and the targets
 /// drop, each landing on a spreading ring in a cloud of dust.
 ///
-/// Abilities: Cybele (SUMMON_EFFECT_CYBELE).
+/// Abilities: Cybele.
 void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   u8 *canvas;

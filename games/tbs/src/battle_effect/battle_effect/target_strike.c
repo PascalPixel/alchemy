@@ -34,80 +34,79 @@ enum {
 
 /// One slash strikes the first target among glints, in lightning colours.
 ///
-/// Abilities: Numbing Sting (BATTLE_EFFECT_NUMBING_STING).
+/// Abilities: Numbing Sting.
 void BattleEffect_RunNumbingSting(struct BattleEffectParams *args) {
   BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_LIGHTNING_GLINT_SLASH);
 }
 /// Fangs bite the first target three times, in ember colours, and drain it
 /// into the user.
 ///
-/// Abilities: Cannibal Fang (BATTLE_EFFECT_CANNIBAL_FANG).
+/// Abilities: Cannibal Fang.
 void BattleEffect_RunCannibalFang(struct BattleEffectParams *args) {
   BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_EMBER_DRAIN_BITES);
 }
 /// Fangs bite the first target once, in lime, with smoke.
 ///
-/// Abilities: Poisonous Bite (BATTLE_EFFECT_POISONOUS_BITE); Poison Fang
-/// (BATTLE_EFFECT_POISON_FANG).
+/// Abilities: Poisonous Bite; Poison Fang.
 void BattleEffect_RunPoisonousBite(struct BattleEffectParams *args) {
   BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_LIME_SMOKE_BITE);
 }
 /// Fangs bite the first target once, with smoke, in Mars Djinn colours.
 ///
-/// Abilities: Rabid Fang (BATTLE_EFFECT_RABID_FANG).
+/// Abilities: Rabid Fang.
 void BattleEffect_RunRabidFang(struct BattleEffectParams *args) {
   BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_MARS_SMOKE_BITE);
 }
 /// Fangs bite the first target three times among glints, in lightning
 /// colours.
 ///
-/// Abilities: Electric Bite (BATTLE_EFFECT_ELECTRIC_BITE).
+/// Abilities: Electric Bite.
 void BattleEffect_RunElectricBite(struct BattleEffectParams *args) {
   BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_LIGHTNING_GLINT_BITES);
 }
 /// One lime slash strikes the first target, with smoke.
 ///
-/// Abilities: Poison Tail (BATTLE_EFFECT_POISON_TAIL).
+/// Abilities: Poison Tail.
 void BattleEffect_RunPoisonTail(struct BattleEffectParams *args) {
   BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_LIME_SMOKE_SLASH);
 }
 /// Fangs bite the first target three times and drain it, in Mars Djinn
 /// colours.
 ///
-/// Abilities: Vampiric Fang (BATTLE_EFFECT_VAMPIRIC_FANG).
+/// Abilities: Vampiric Fang.
 void BattleEffect_RunVampiricFang(struct BattleEffectParams *args) {
   BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_MARS_DRAIN_BITES);
 }
 /// Fangs bite the first target twice, in blue, with sparks.
 ///
-/// Abilities: Double Fang (BATTLE_EFFECT_DOUBLE_FANG).
+/// Abilities: Double Fang.
 void BattleEffect_RunDoubleFang(struct BattleEffectParams *args) {
   BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_BLUE_SPARK_BITES);
 }
 /// One heavy slash strikes the first target, with sparks, in Mars Djinn
 /// colours.
 ///
-/// Abilities: Mortal Blow (BATTLE_EFFECT_MORTAL_BLOW).
+/// Abilities: Mortal Blow.
 void BattleEffect_RunMortalBlow(struct BattleEffectParams *args) {
   BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH);
 }
 /// Two slashes strike the first target, with sparks, in lightning colours.
 ///
-/// Abilities: Twin Beaks (BATTLE_EFFECT_TWIN_BEAKS).
+/// Abilities: Twin Beaks.
 void BattleEffect_RunTwinBeaks(struct BattleEffectParams *args) {
   BattleEffect_RunTargetStrike(args,
                                TARGET_STRIKE_STYLE_LIGHTNING_SPARK_SLASHES);
 }
 /// Fangs bite the first target three times, in pink, with smoke.
 ///
-/// Abilities: Acid Bite (BATTLE_EFFECT_ACID_BITE).
+/// Abilities: Acid Bite.
 void BattleEffect_RunAcidBite(struct BattleEffectParams *args) {
   BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_PINK_SMOKE_BITES);
 }
 /// Fangs bite the first target three times, added to what lies under them,
 /// and drain it with large motes, in Mars Djinn colours.
 ///
-/// Abilities: Drain Fang (BATTLE_EFFECT_DRAIN_FANG).
+/// Abilities: Drain Fang.
 void BattleEffect_RunDrainFang(struct BattleEffectParams *args) {
   BattleEffect_RunTargetStrike(args,
                                TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_BITES);

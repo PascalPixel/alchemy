@@ -42,7 +42,7 @@ struct ImpactChip {
 /// The user flashes and leaps into the air, turns into a ball of fire, falls
 /// onto the first target and bursts into chips that bounce on the ground.
 ///
-/// Abilities: Planet Diver (BATTLE_EFFECT_PLANET_DIVER).
+/// Abilities: Planet Diver.
 void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
   struct ScreenPoint screenPosition;
   BlitterPair draw;
@@ -223,7 +223,7 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
 
 /// Skulls close in on each target in turn.
 ///
-/// Abilities: Haunt (BATTLE_EFFECT_HAUNT).
+/// Abilities: Haunt.
 void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
   struct ScreenPoint screenPosition;
   s32 point[3];
@@ -343,8 +343,6 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
 /// target in turn, 16 frames apart, for 59 frames each, 16 pixels out from
 /// the centre; each target would take its damage pose 32 frames into its
 /// turn.
-///
-/// Abilities: none (BATTLE_EFFECT_UNUSED_ORBITING_SPIRALS).
 void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   // XXX: do these spirals circle each target as the doc above says? Staging
   // this function, which render guide --only unused has no stage for yet,

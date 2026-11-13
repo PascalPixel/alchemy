@@ -42,7 +42,7 @@ enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 /// shatter into puffs of sparkle, flashing and shaking each target as they
 /// land.
 ///
-/// Abilities: Ice, Ice Horn, Ice Missile (BATTLE_EFFECT_ICE).
+/// Abilities: Ice, Ice Horn, Ice Missile.
 void BattleEffect_RunIce(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -252,7 +252,7 @@ struct BoltSparkBuffer {
 /// bursting into a fountain of falling sparks where it lands, while the targets
 /// flash.
 ///
-/// Abilities: Douse, Drench, Deluge (BATTLE_EFFECT_DOUSE).
+/// Abilities: Douse, Drench, Deluge.
 void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

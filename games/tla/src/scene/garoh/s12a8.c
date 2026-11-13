@@ -61,14 +61,7 @@ extern u8 gData_02006330__s12a8[] __asm__("gData_02006330");
 void Actor_StartScript(struct SpawnObject *object, const void *script);
 
 void Func_0200132c(void) {
-  s32 b = 10;
-  s32 c = 11;
-
-  /* FAKEMATCH(barrier): an empty asm on b and c, so the first argument is built
-   * last, after the second and third; without it, 2 of 10 instructions differ
-   * in tla-en. */
-  __asm__ volatile("" : "+r"(b), "+r"(c));
-  Func_02005354(1, b, c);
+  Func_02005354(1, 10, 11);
   Flag_Set(0x203);
 }
 

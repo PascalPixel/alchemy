@@ -56,19 +56,17 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
+#ifdef MODERN
+// The rope routine is called with no prototype in scope, as its bytes need:
+// called as returning int, the two post ids load before the first argument.
+// A current GCC gets it here.
 void Func_020001a0(s32 a, s32 b, s32 c);
+#endif
 
 /// The party lashes the second rope, from post ACTOR_THIRD_ROPE_POST to
 /// ACTOR_FOURTH_ROPE_POST, and it stays tied for the rest of the visit.
 void OseniaCliffs_LashRope(void) {
-  s32 a1 = 13;
-  s32 a2 = 14;
-
-  /* FAKEMATCH(barrier): the asm on the later arguments loads them before the
-   * first, as the native does, where without it the first loads earlier; as
-   * Func_020001a0(1, 13, 14), 2 of 10 instructions differ in tla-en. */
-  asm volatile("" : "+l"(a1), "+l"(a2));
-  Func_020001a0(1, a1, a2);
+  Func_020001a0(1, 13, 14);
   Event_SetFlag(FLAG_ROPE_LASHED);
 }
 
@@ -96,16 +94,7 @@ s32 Scene_Initialize(void) {
     *flags = bit | value;
   }
   Func_02000190();
-  {
-    s32 a2 = 11;
-    s32 a1 = 12;
-
-    /* FAKEMATCH(barrier): the asm on the arguments loads them last to first, as
-     * the native does, where without it the first loads before the second; as
-     * Func_02000198(0, 12, 11), 2 of 55 instructions differ in tla-en. */
-    asm volatile("" : "+l"(a2), "+l"(a1));
-    Func_02000198(0, a1, a2);
-  }
+  Func_02000198(0, 12, 11);
   Actor_SetAnimation(ACTOR_SECOND_ROPE_POST, 4);
   Actor_SetAnimation(ACTOR_FIRST_ROPE_POST, 4);
   {

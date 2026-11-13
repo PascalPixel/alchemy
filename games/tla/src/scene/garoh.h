@@ -6,7 +6,12 @@
 #include "actor.h"
 #include "flag_call.h"
 
+#ifdef MODERN
+// The rope routine is called with no prototype in scope, as its bytes need:
+// called as returning int, the two post ids load before the first argument.
+// A current GCC gets it here.
 void Func_02005354(s32 a, s32 b, s32 c);
+#endif
 void Func_0200536c(const void *data);
 void Func_02005374(const void *data);
 void Func_0200537c(void);

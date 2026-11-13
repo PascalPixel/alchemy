@@ -30,7 +30,12 @@ void Func_02001770(void);
 void Leader_StopMoving(void);
 void Event_ResolveAllPendingActions(void);
 void Scene_QueueMusic(s32 a);
+#ifdef MODERN
+// The rope routine is called with no prototype in scope, as its bytes need:
+// called as returning int, the two post ids load before the first argument.
+// A current GCC gets it here.
 void Func_02002178(s32 a, s32 b, s32 c);
+#endif
 void Func_02002190(const void *data);
 void Func_02002198(void);
 void Func_0200052c(void);

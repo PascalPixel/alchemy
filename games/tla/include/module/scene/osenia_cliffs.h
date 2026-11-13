@@ -8,7 +8,12 @@
 
 extern u32 gOseniaCliffs_PaletteCycleStep[];
 
+#ifdef MODERN
+// The rope routine is called with no prototype in scope, as its bytes need:
+// called as returning int, the two post ids load before the first argument.
+// A current GCC gets it here.
 void Func_02000198(s32 a, s32 b, s32 c);
+#endif
 
 void Func_020001a8(s32 a, s32 flag, s32 b, s32 c);
 

@@ -8,8 +8,7 @@
 /// equipped and quantity bits are ignored. Every bank that shows or uses an
 /// item calls it, through GAME.S as Item_GetDirectFar.
 struct ItemDefinition *Item_GetDirect(s32 item) {
-  return (struct ItemDefinition *)gItem_DefinitionTable +
-         (item & INVENTORY_ITEM_ID_MASK);
+  return &gItem_DefinitionTable[item & INVENTORY_ITEM_ID_MASK];
 }
 
 /// Returns whether the character can equip `itemId`: bit classId of the item's
@@ -18,62 +17,49 @@ struct ItemDefinition *Item_GetDirect(s32 item) {
 s32 Item_CanUnitEquipDirect(s32 unitId, s32 itemId) {
   struct Unit *unit = Unit_Get(unitId);
   struct ItemDefinition *item = Item_GetDirect(itemId);
-  s32 equipMask = item->equipMask;
 
-  if (unit->id >= 8) {
+  if (unit->id >= PARTY_UNIT_COUNT)
     return 0;
-  }
-  return (equipMask >> unit->id) & 1;
+  return (item->equipMask >> unit->id) & 1;
 }
 
 /// Returns 1 for an item that is not a weapon or armor, and for those whether
 /// the character can equip it. The shop's buy screen calls it to grey out the
 /// party members who could not use an item.
 s32 Item_IsCompatibleWithUnit(s32 unit, s32 item) {
-  if (Item_GetEquipmentGroup(item) == EQUIPMENT_GROUP_NONE) {
+  if (Item_GetEquipmentGroup(item) == EQUIPMENT_GROUP_NONE)
     return 1;
-  }
   return Item_CanUnitEquipDirect(unit, item);
 }
 
 /// Returns what kind of thing an item is, an enum EquipmentGroup. Called by
 /// the shops to choose the comparison they show.
 s32 Item_GetEquipmentGroup(s32 itemId) {
-  s32 group;
-  struct ItemDefinition *item;
+  struct ItemDefinition *item = Item_GetDirect(itemId);
 
-  item = Item_GetDirect(itemId);
-  group = EQUIPMENT_GROUP_NONE;
-  if (item->type == ITEM_TYPE_WEAPON)
-    group = EQUIPMENT_GROUP_WEAPON;
-  else if (item->type == ITEM_TYPE_ARMOR)
-    group = EQUIPMENT_GROUP_ARMOR;
-  else if (item->type == ITEM_TYPE_SHIELD)
-    group = EQUIPMENT_GROUP_ARMOR;
-  else if (item->type == ITEM_TYPE_HELM)
-    group = EQUIPMENT_GROUP_ARMOR;
-  else if (item->type == ITEM_TYPE_BOOTS)
-    group = EQUIPMENT_GROUP_ARMOR;
-  else if (item->type == ITEM_TYPE_SHIRT)
-    group = EQUIPMENT_GROUP_ARMOR;
-  return group;
+  switch (item->type) {
+  case ITEM_TYPE_WEAPON:
+    return EQUIPMENT_GROUP_WEAPON;
+  case ITEM_TYPE_ARMOR:
+  case ITEM_TYPE_SHIELD:
+  case ITEM_TYPE_HELM:
+  case ITEM_TYPE_BOOTS:
+  case ITEM_TYPE_SHIRT:
+    return EQUIPMENT_GROUP_ARMOR;
+  default:
+    return EQUIPMENT_GROUP_NONE;
+  }
 }
 
 /// Returns how many of the item in `slot` the unit carries (0 for an empty
 /// slot). The entry stores one less than the count. Reached through GAME.S as
 /// Shop_GetSelectionState; nothing in this image calls it by name.
 s32 Inventory_GetQuantity(s32 unitId, s32 slot) {
-  s32 itemId;
+  u32 entry = Unit_Get(unitId)->inventory[slot];
 
-  unitId = Unit_Get(unitId)->inventory[slot];
-  itemId = INVENTORY_ITEM_ID_MASK;
-  itemId &= unitId;
-  unitId = (u32)unitId >> INVENTORY_QUANTITY_SHIFT;
-  unitId++;
-  if (itemId == 0) {
-    unitId = 0;
-  }
-  return unitId;
+  if ((entry & INVENTORY_ITEM_ID_MASK) == 0)
+    return 0;
+  return (entry >> INVENTORY_QUANTITY_SHIFT) + 1;
 }
 
 /// Counts filled inventory slots up to the first empty slot; the inventory is
@@ -81,14 +67,11 @@ s32 Inventory_GetQuantity(s32 unitId, s32 slot) {
 /// shops before they add an item and to lay out their item grids.
 s32 Inventory_Count(s32 unitId) {
   struct Unit *unit = Unit_Get(unitId);
-  s32 count = 0;
+  s32 count;
 
-  if (unit->inventory[count] != 0) {
-    do {
-      count++;
-      if (count > 14)
-        break;
-    } while (unit->inventory[count] != 0);
+  for (count = 0; count < INVENTORY_SLOTS; count++) {
+    if (unit->inventory[count] == 0)
+      break;
   }
   return count;
 }
@@ -99,15 +82,13 @@ s32 Inventory_Count(s32 unitId) {
 s32 PartyInventory_HasSpace(void) {
   s16 unitIds[10];
   s32 unitCount;
-  s32 unitIndex;
-  s16 *unitCursor;
+  s32 i;
 
   if (Inventory_Count(gMainRoutineWork.leaderActorId) != INVENTORY_SLOTS)
     return 1;
   unitCount = Party_ListMembers(unitIds);
-  unitCursor = unitIds;
-  for (unitIndex = 0; unitIndex < unitCount; unitIndex++) {
-    if (Inventory_Count(*unitCursor++) != INVENTORY_SLOTS)
+  for (i = 0; i < unitCount; i++) {
+    if (Inventory_Count(unitIds[i]) != INVENTORY_SLOTS)
       return 1;
   }
   return 0;
@@ -119,16 +100,10 @@ s32 PartyInventory_CountFreeSlots(void) {
   s16 unitIds[10];
   s32 unitCount = Party_ListMembers(unitIds);
   s32 freeSlots = 0;
-  s16 *unitCursor = unitIds;
+  s32 i;
 
-  if (freeSlots < unitCount) {
-    s32 remainingUnits = unitCount;
-
-    do {
-      freeSlots = freeSlots - Inventory_Count(*unitCursor++) + INVENTORY_SLOTS;
-      remainingUnits--;
-    } while (remainingUnits != 0);
-  }
+  for (i = 0; i < unitCount; i++)
+    freeSlots += INVENTORY_SLOTS - Inventory_Count(unitIds[i]);
   return freeSlots;
 }
 
@@ -142,29 +117,20 @@ s32 Inventory_AddItem(s32 unitId, s32 itemId) {
   struct ItemDefinition *item = Item_GetDirect(itemId);
   s32 slot;
 
-  if ((item->flags & ITEM_STACKABLE) != 0) {
-    slot = 0;
-    if (((unit->inventory[slot] ^ itemId) & INVENTORY_ITEM_ID_MASK) != 0) {
-      do {
-        slot++;
-        if (slot >= INVENTORY_SLOTS)
-          break;
-      } while (((unit->inventory[slot] ^ itemId) & INVENTORY_ITEM_ID_MASK) !=
-               0);
+  if (item->flags & ITEM_STACKABLE) {
+    for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+      if (((unit->inventory[slot] ^ itemId) & INVENTORY_ITEM_ID_MASK) == 0)
+        break;
     }
     if (slot != INVENTORY_SLOTS) {
-      s32 entry = unit->inventory[slot];
-      u32 count = ((u32)entry >> INVENTORY_QUANTITY_SHIFT) + 1;
+      u32 entry = unit->inventory[slot];
+      u32 count = (entry >> INVENTORY_QUANTITY_SHIFT) + 1;
 
+      // A stack holds 30 at most.
       if (count > 29)
         return -1;
-      {
-        s32 value = INVENTORY_ENTRY_MASK;
-
-        value &= entry;
-        value |= count << INVENTORY_QUANTITY_SHIFT;
-        unit->inventory[slot] = value;
-      }
+      unit->inventory[slot] =
+          (entry & INVENTORY_ENTRY_MASK) | (count << INVENTORY_QUANTITY_SHIFT);
       return slot;
     }
   }
@@ -183,17 +149,12 @@ s32 Inventory_AddItem(s32 unitId, s32 itemId) {
 /// the events that give items.
 s32 PartyInventory_Add(s32 itemId) {
   s16 unitIds[10];
-  s32 unitCount;
-  s32 unitIndex;
-  s16 *unitCursor;
+  s32 unitCount = Party_ListMembers(unitIds);
+  s32 i;
 
-  unitCount = Party_ListMembers(unitIds);
-  unitCursor = unitIds;
-  for (unitIndex = 0; unitIndex < unitCount; unitIndex++) {
-    s16 unitId = *unitCursor++;
-
-    if (Inventory_AddItem(unitId, itemId) >= 0)
-      return unitId;
+  for (i = 0; i < unitCount; i++) {
+    if (Inventory_AddItem(unitIds[i], itemId) >= 0)
+      return unitIds[i];
   }
   return -1;
 }
@@ -201,16 +162,13 @@ s32 PartyInventory_Add(s32 itemId) {
 /// Returns the first slot holding `itemId` (any quantity, equipped or not),
 /// or -1. Called by the shops and the events that check for an item.
 s32 Inventory_Find(s32 unitId, s32 itemId) {
-  struct Unit *inv = Unit_Get(unitId);
-  s32 slot = 0;
-  u16 *entry = inv->inventory;
+  struct Unit *unit = Unit_Get(unitId);
+  s32 slot;
 
-  do {
-    if (((*entry++) & INVENTORY_ITEM_ID_MASK) == itemId) {
+  for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+    if ((unit->inventory[slot] & INVENTORY_ITEM_ID_MASK) == itemId)
       return slot;
-    }
-    slot++;
-  } while (slot < INVENTORY_SLOTS);
+  }
   return -1;
 }
 
@@ -220,18 +178,14 @@ s32 Inventory_Find(s32 unitId, s32 itemId) {
 s32 PartyInventory_FindMember(s32 itemId) {
   s16 unitIds[10];
   s32 unitCount;
-  s32 unitIndex;
-  s16 *unitCursor;
-  s16 unitId;
+  s32 i;
 
   if (Inventory_Find(gMainRoutineWork.leaderActorId, itemId) != -1)
     return gMainRoutineWork.leaderActorId;
   unitCount = Party_ListMembers(unitIds);
-  unitCursor = unitIds;
-  for (unitIndex = 0; unitIndex < unitCount; unitIndex++) {
-    unitId = *unitCursor++;
-    if (Inventory_Find(unitId, itemId) != -1)
-      return unitId;
+  for (i = 0; i < unitCount; i++) {
+    if (Inventory_Find(unitIds[i], itemId) != -1)
+      return unitIds[i];
   }
   return -1;
 }
@@ -421,22 +375,22 @@ s32 PartyInventory_Discard(s32 itemId) {
 /// Marks the item in `slot` broken; returns -1 for an empty slot. Called when
 /// a used item breaks, in battle or from the item menu.
 s32 Inventory_Break(s32 unitId, s32 slot) {
-  struct Unit *inv = Unit_Get(unitId);
-  if (inv->inventory[slot] == 0) {
+  struct Unit *unit = Unit_Get(unitId);
+
+  if (unit->inventory[slot] == 0)
     return -1;
-  }
-  inv->inventory[slot] |= INVENTORY_BROKEN;
+  unit->inventory[slot] |= INVENTORY_BROKEN;
   return 0;
 }
 
 /// Clears the broken mark of the item in `slot`; returns -1 for an empty
 /// slot. Called by the shop's repair.
 s32 Inventory_Repair(s32 unitId, s32 slot) {
-  struct Unit *inv = Unit_Get(unitId);
-  if (inv->inventory[slot] == 0) {
+  struct Unit *unit = Unit_Get(unitId);
+
+  if (unit->inventory[slot] == 0)
     return -1;
-  }
-  inv->inventory[slot] &= ~INVENTORY_BROKEN;
+  unit->inventory[slot] &= ~INVENTORY_BROKEN;
   return 0;
 }
 
@@ -449,26 +403,17 @@ u8 Item_GetTargetMode(s32 itemId) {
 /// Adds `delta` to rare item counter `index`, kept between 0 and 99, and
 /// returns the new count (0 for an index past 127).
 s32 RareItemStock_Adjust(s32 index, s32 delta) {
-  s32 counter_slot = index;
-  u8 *data = gRareItemStock;
+  s32 value;
 
-  index = 0;
-  if (counter_slot <= 127) {
-    s32 value = data[counter_slot];
-
-    value += delta;
-
-    if (value < 0) {
-      value = 0;
-    } else if (value > 99) {
-      value = 99;
-      index = 99;
-    } else {
-      index = value;
-    }
-    data[counter_slot] = value;
-  }
-  return index;
+  if (index > 127)
+    return 0;
+  value = gRareItemStock[index] + delta;
+  if (value < 0)
+    value = 0;
+  else if (value > 99)
+    value = 99;
+  gRareItemStock[index] = value;
+  return value;
 }
 
 /// Adds `delta` to the counter of a rare item; ordinary items have none.
@@ -476,17 +421,13 @@ s32 RareItemStock_Adjust(s32 index, s32 delta) {
 /// the shops may sell: buying one takes one, discarding or selling puts one
 /// back.
 s32 Item_AdjustCounter(s32 itemId, s32 delta) {
-  s32 itemIdMask = INVENTORY_ITEM_ID_MASK;
-  u8 counter;
-  s32 result = 0;
-
   // The table holds a rare item's counter number plus one, and 0 for an
-  // ordinary item
-  counter = gItem_ArtifactSlotTable[itemId & itemIdMask];
-  if (counter != 0) {
-    result = RareItemStock_Adjust(counter - 1, delta);
-  }
-  return result;
+  // ordinary item.
+  u8 counter = gItem_ArtifactSlotTable[itemId & INVENTORY_ITEM_ID_MASK];
+
+  if (counter == 0)
+    return 0;
+  return RareItemStock_Adjust(counter - 1, delta);
 }
 
 /// Counts matching nonstackable items, or the quantity in the first matching
@@ -495,21 +436,16 @@ s32 Item_AdjustCounter(s32 itemId, s32 delta) {
 s32 Inventory_CountItem(s32 unitId, s32 itemId) {
   struct Unit *unit = Unit_Get(unitId);
   s32 count = 0;
-  s32 itemIdOnly = itemId & INVENTORY_ITEM_ID_MASK;
-  s32 slot = 0;
+  s32 slot;
 
-  do {
-    if ((unit->inventory[slot] & INVENTORY_ITEM_ID_MASK) == itemIdOnly) {
-      struct ItemDefinition *item = Item_GetDirect(itemIdOnly);
-
-      if (item->flags & ITEM_STACKABLE) {
-        count = (unit->inventory[slot] >> INVENTORY_QUANTITY_SHIFT) + 1;
-        break;
-      }
+  itemId &= INVENTORY_ITEM_ID_MASK;
+  for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+    if ((unit->inventory[slot] & INVENTORY_ITEM_ID_MASK) == itemId) {
+      if (Item_GetDirect(itemId)->flags & ITEM_STACKABLE)
+        return (unit->inventory[slot] >> INVENTORY_QUANTITY_SHIFT) + 1;
       count++;
     }
-    slot++;
-  } while (slot < INVENTORY_SLOTS);
+  }
   return count;
 }
 
@@ -517,17 +453,11 @@ s32 Inventory_CountItem(s32 unitId, s32 itemId) {
 /// Tickets) and the Tolbi spring game.
 s32 PartyInventory_CountItem(s32 itemId) {
   u16 unitIds[16];
-  s32 itemCount = 0;
   s32 unitCount = Party_ListMembers(unitIds);
+  s32 count = 0;
+  s32 i;
 
-  if (itemCount < unitCount) {
-    u16 *unitCursor = unitIds;
-    s32 remainingUnits = unitCount;
-
-    do {
-      itemCount += Inventory_CountItem(*unitCursor++, itemId);
-      remainingUnits--;
-    } while (remainingUnits != 0);
-  }
-  return itemCount;
+  for (i = 0; i < unitCount; i++)
+    count += Inventory_CountItem(unitIds[i], itemId);
+  return count;
 }

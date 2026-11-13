@@ -194,12 +194,8 @@ const struct ActorPlacement *Lalivero_GetActorPlacements(void) {
 static void Lalivero_TalkToVillagerTheyTookSheba(s32 actorId) {
   void Actor_FaceDirection();
 
-  struct Actor *actor;
-
-  actor = Actor_Get(actorId);
-  actor->scaleX = Q16_ONE;
-  actor = Actor_Get(actorId);
-  actor->scaleY = Q16_ONE;
+  Actor_Get(actorId)->scaleX = Q16_ONE;
+  Actor_Get(actorId)->scaleY = Q16_ONE;
   Event_SetMessageId(MsgLaliveroOhhTheyTookShebaHeaded);
   // "Ohh... They took Sheba and headed for the ruins."
   Event_ShowMessage(actorId, 0);

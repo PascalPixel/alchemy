@@ -2321,7 +2321,6 @@ static void LogRoomsA_FaceSuspectsTowardLeader(void) {
 /// LOG_ROOMS_A_TO_SANCTUM to the Vault Sanctum (SceneId_Sanctum,
 /// SANCTUM_FROM_LOG_ROOMS_A).
 static void LogRoomsA_LoseToThieves(void) {
-  struct Actor *actor;
   s32 priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 
   // The party lies on the floor (animation 19) before the three thieves.
@@ -2343,12 +2342,9 @@ static void LogRoomsA_LoseToThieves(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags = priorityFlags;
   Actor_Get(ACTOR_GARET)->priorityFlags = priorityFlags;
   Actor_Get(ACTOR_IVAN)->priorityFlags = priorityFlags;
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_IVAN);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_GARET);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_IVAN), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 0);
   Actor_FaceDirection(ACTOR_TIED_UP_VILLAGER, FACING_NORTH_NORTHWEST, 0);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -2452,25 +2448,20 @@ static s32 LogRoomsA_GetIvanVenusDjinnCount(void) {
 /// the battle's victory destination, unless the party is only coming back to
 /// where it was. Then LogRoomsA_ReturnStolenGoods follows.
 static void LogRoomsA_DefeatThieves(void) {
-  struct Actor *actor;
   struct FieldWork *work;
   const s32 *actions;
   struct Sprite *thirdThiefSprite;
 
-  actor = Actor_Get(ACTOR_SECOND_THIEF);
-  thirdThiefSprite = actor->sprite;
+  thirdThiefSprite = Actor_Get(ACTOR_SECOND_THIEF)->sprite;
   // The beaten thieves lie heaving (the action table's squash) before the
   // party.
   Event_Start();
   Actor_SetPosition(ACTOR_THIEF_LEADER, 792, 416);
   Actor_SetPosition(ACTOR_FIRST_THIEF, 800, 400);
   Actor_SetPosition(ACTOR_SECOND_THIEF, 776, 392);
-  actor = Actor_Get(ACTOR_THIEF_LEADER);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_FIRST_THIEF);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_SECOND_THIEF);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_THIEF_LEADER), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_THIEF), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_THIEF), 0);
   Actor_SetAnimation(ACTOR_THIEF_LEADER, ANIM_THIEF_BEATEN);
   Actor_SetAnimation(ACTOR_FIRST_THIEF, ANIM_THIEF_BEATEN);
   Actor_SetAnimation(ACTOR_SECOND_THIEF, ANIM_THIEF_BEATEN);
@@ -2722,12 +2713,9 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_FaceActor(ACTOR_FIRST_THIEF, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_THIEF_LEADER, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_SECOND_THIEF, ACTOR_PARTY_LEADER, 0);
-  actor = Actor_Get(ACTOR_THIEF_LEADER);
-  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
-  actor = Actor_Get(ACTOR_FIRST_THIEF);
-  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
-  actor = Actor_Get(ACTOR_SECOND_THIEF);
-  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_THIEF_LEADER), SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_THIEF), SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_THIEF), SPRITE_FLAG_SHADOW);
   Actor_SetPosition(ACTOR_LOFT_ESCORT, 768, 408);
   Actor_SetPosition(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 768, 424);
   Actor_MoveToAndWait(ACTOR_LOFT_MAYOR, 784, 424);

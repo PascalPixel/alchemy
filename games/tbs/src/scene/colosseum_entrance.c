@@ -1126,12 +1126,9 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   Actor_SetAnimation(ACTOR_FAILING_WARRIOR, ANIM_STILL);
   Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, ANIM_STILL);
   Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR + 4, ANIM_STILL);
-  actor = Actor_Get(ACTOR_TRIAL_PILLAR);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_FIRST_FLAG_BEARER);
-  actor->scaleX = -Q16_ONE;
-  actor = Actor_Get(ACTOR_FIRST_FLAG_BEARER + 1);
-  actor->scaleX = -Q16_ONE;
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_TRIAL_PILLAR), 0);
+  Actor_Get(ACTOR_FIRST_FLAG_BEARER)->scaleX = -Q16_ONE;
+  Actor_Get(ACTOR_FIRST_FLAG_BEARER + 1)->scaleX = -Q16_ONE;
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   wait(1);
@@ -1263,7 +1260,6 @@ static void ColosseumEntrance_ExplainTrial(void) {
 static void ColosseumEntrance_ShowClearedTrial(void) {
   u32 counter;
   struct Actor *trialEffect;
-  struct Actor *actor;
 
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -1279,12 +1275,9 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Actor_SetPosition(ACTOR_FAILING_WARRIOR, 0, 0);
   Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, ANIM_STILL);
   Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR + 4, ANIM_STILL);
-  actor = Actor_Get(ACTOR_TRIAL_PILLAR);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_FIRST_FLAG_BEARER);
-  actor->scaleX = -Q16_ONE;
-  actor = Actor_Get(ACTOR_FIRST_FLAG_BEARER + 1);
-  actor->scaleX = -Q16_ONE;
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_TRIAL_PILLAR), 0);
+  Actor_Get(ACTOR_FIRST_FLAG_BEARER)->scaleX = -Q16_ONE;
+  Actor_Get(ACTOR_FIRST_FLAG_BEARER + 1)->scaleX = -Q16_ONE;
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   wait(1);
@@ -1354,8 +1347,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   Actor_Stop(ACTOR_CLEARING_WARRIOR);
   Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, ANIM_STAND);
-  actor = Actor_Get(ACTOR_CLEARING_WARRIOR);
-  actor->facing = FACING_NORTH_NORTHEAST;
+  Actor_Get(ACTOR_CLEARING_WARRIOR)->facing = FACING_NORTH_NORTHEAST;
   trialEffect->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   trialEffect->scaleX = Q16_ONE;
   trialEffect->scaleY = Q16_ONE;

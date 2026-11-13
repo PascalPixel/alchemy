@@ -442,7 +442,6 @@ static void CottageRoomsA_LeaveToValePlazaNorth(void) {
 /// is set. From COTTAGE_ROOMS_A_FROM_VALE_NORTH, once the party has left
 /// Vale, Jenna's grandmother lies sick in bed.
 s32 CottageRoomsA_Initialize(void) {
-  struct Actor *actor;
   // The heap slots from the field's on.
   void **slots = (void **)&gFieldWork;
 
@@ -492,8 +491,7 @@ s32 CottageRoomsA_Initialize(void) {
   if (gMainRoutineWork.entrance == COTTAGE_ROOMS_A_FROM_VALE_NORTH) {
     if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
       Actor_SetPosition(ACTOR_JENNAS_GRANDMOTHER, 454, 150);
-      actor = Actor_Get(ACTOR_JENNAS_GRANDMOTHER);
-      Actor_SetSpriteFlags(actor, 0);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_JENNAS_GRANDMOTHER), 0);
       Actor_SetAnimation(ACTOR_JENNAS_GRANDMOTHER, ANIM_GRANDMOTHER_IN_BED);
       TilesetAnim_Resume(4);
     }

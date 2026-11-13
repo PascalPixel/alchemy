@@ -559,7 +559,6 @@ static void CottageRoomsB_ExitToValePrologueEast(void) {
 /// CottageRoomsB_DoraWakesIsaac. Back from Kalay, Dora is put back in her
 /// sickbed unless FLAG_VALE_DORA_OUT_OF_BED says she got up.
 s32 CottageRoomsB_Initialize(void) {
-  struct Actor *actor;
 
   if (gMainRoutineWork.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
@@ -578,8 +577,7 @@ s32 CottageRoomsB_Initialize(void) {
     }
     Actor_SetSpritePriority(ACTOR_INNKEEPER, 1);
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
-      actor = Actor_Get(ACTOR_INVISIBLE_AFTER_KALAY);
-      Actor_SetSpriteFlags(actor, 0);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_INVISIBLE_AFTER_KALAY), 0);
       if (gMainRoutineWork.entrance == COTTAGE_ROOMS_B_FROM_VALE ||
           gMainRoutineWork.entrance ==
               COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS) {
@@ -589,8 +587,7 @@ s32 CottageRoomsB_Initialize(void) {
           }
         } else {
           TilesetAnim_Resume(11);
-          actor = Actor_Get(ACTOR_DORA);
-          Actor_SetSpriteFlags(actor, 0);
+          Actor_SetSpriteFlags(Actor_Get(ACTOR_DORA), 0);
           Actor_SetAnimation(ACTOR_DORA, DORA_ANIMATION_IN_BED);
         }
       }

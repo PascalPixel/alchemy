@@ -735,20 +735,17 @@ static void CrossboneIsle_RestoreIvy(void) {
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 8, 21);
     Actor_SetPosition(ACTOR_FIRST_IVY, 968, 968);
   } else {
-    actor = Actor_Get(ACTOR_FIRST_IVY);
-    actor->scaleY = 8 * Q16_ONE / 5;
+    Actor_Get(ACTOR_FIRST_IVY)->scaleY = 8 * Q16_ONE / 5;
   }
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1) != 0) {
     Actor_SetPosition(ACTOR_FIRST_IVY + 1, 968, 968);
   } else {
-    actor = Actor_Get(ACTOR_FIRST_IVY + 1);
-    actor->scaleY = 8 * Q16_ONE / 5;
+    Actor_Get(ACTOR_FIRST_IVY + 1)->scaleY = 8 * Q16_ONE / 5;
   }
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2) != 0) {
     Actor_SetPosition(ACTOR_FIRST_IVY + 2, 968, 968);
   } else {
-    actor = Actor_Get(ACTOR_FIRST_IVY + 2);
-    actor->scaleY = 8 * Q16_ONE / 5;
+    Actor_Get(ACTOR_FIRST_IVY + 2)->scaleY = 8 * Q16_ONE / 5;
   }
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3) != 0) {
     Actor_SetPosition(ACTOR_FIRST_IVY + 3, 968, 968);

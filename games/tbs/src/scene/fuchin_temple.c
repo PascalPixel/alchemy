@@ -1084,8 +1084,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Actor_RunRepeatedMotion(ACTOR_MESSENGER_STUDENT, 2);
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_MESSENGER_STUDENT, 1.5);
-  actor = Actor_Get(ACTOR_MESSENGER_STUDENT);
-  actor->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_MESSENGER_STUDENT)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_MESSENGER_STUDENT, 308, 272);
   Event_Wait(1);
   actor = Actor_Get(ACTOR_MESSENGER_STUDENT);
@@ -1267,12 +1266,9 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Actor_SetPosition(ACTOR_TRAINING_TREE, 232, 168);
   Actor_SetPosition(ACTOR_TRAINING_TREE_TARGET, 232, 168);
   // Restore the tree before leaving the group ready for another demonstration.
-  actor = Actor_Get(ACTOR_TRAINING_TREE);
-  actor->y.fixed = px(12);
-  actor = Actor_Get(ACTOR_TRAINING_TREE);
-  actor->targetY = ACTOR_NO_TARGET;
-  actor = Actor_Get(ACTOR_TRAINING_TREE);
-  actor->scaleX = 4 * Q16_ONE / 5;
+  Actor_Get(ACTOR_TRAINING_TREE)->y.fixed = px(12);
+  Actor_Get(ACTOR_TRAINING_TREE)->targetY = ACTOR_NO_TARGET;
+  Actor_Get(ACTOR_TRAINING_TREE)->scaleX = 4 * Q16_ONE / 5;
   actor = Actor_Get(ACTOR_TRAINING_TREE);
   {
     struct Sprite *sprite = actor->sprite;
@@ -1373,16 +1369,11 @@ static void FuchinTemple_FehSeesChi(void) {
 
   // Stop the temporary facing update routines while the group reacts to the
   // tree.
-  actor = Actor_Get(ACTOR_FEH);
-  actor->update = 0;
-  actor = Actor_Get(ACTOR_PROUD_STUDENT);
-  actor->update = 0;
-  actor = Actor_Get(ACTOR_WATCHING_STUDENT);
-  actor->update = 0;
-  actor = Actor_Get(ACTOR_TREE_STUDENT);
-  actor->update = 0;
-  actor = Actor_Get(ACTOR_MESSENGER_STUDENT);
-  actor->update = 0;
+  Actor_Get(ACTOR_FEH)->update = 0;
+  Actor_Get(ACTOR_PROUD_STUDENT)->update = 0;
+  Actor_Get(ACTOR_WATCHING_STUDENT)->update = 0;
+  Actor_Get(ACTOR_TREE_STUDENT)->update = 0;
+  Actor_Get(ACTOR_MESSENGER_STUDENT)->update = 0;
   Actor_SetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_STAND);
   FieldCamera_SetSpeed(0.5);
   FieldCamera_MoveTo(232, CAMERA_KEEP, 200, 1);
@@ -1581,10 +1572,8 @@ static void FuchinTemple_FehSeesChi(void) {
   Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_NORTH, 20);
   Actor_RunRepeatedMotion(ACTOR_TREE_STUDENT, 3);
   Actor_SetPosition(ACTOR_TRAINING_TREE, 232, 168);
-  actor = Actor_Get(ACTOR_TRAINING_TREE);
-  actor->y.fixed = px(12);
-  actor = Actor_Get(ACTOR_TRAINING_TREE);
-  actor->targetY = ACTOR_NO_TARGET;
+  Actor_Get(ACTOR_TRAINING_TREE)->y.fixed = px(12);
+  Actor_Get(ACTOR_TRAINING_TREE)->targetY = ACTOR_NO_TARGET;
   actor = Actor_Get(ACTOR_TRAINING_TREE);
   {
     struct Sprite *sprite = actor->sprite;

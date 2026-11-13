@@ -545,7 +545,6 @@ static void GondowanCave_LiftBoulder(void) {
 /// travels with the party. Gondowan Cave's GondowanCave puts the stump and the
 /// pillar where the party left them.
 s32 Scene_Initialize(void) {
-  struct Actor *actor;
 
   if (gMainRoutineWork.next == (s32)&SceneId_GondowanPassage) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
@@ -567,8 +566,7 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED) != 0) {
       GondowanCave_PlaceDroppedPillar(STUMP_ANIMATION_SINK);
     }
-    actor = Actor_Get(ACTOR_BOULDER_GAP);
-    Actor_SetSpriteFlags(actor, 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_BOULDER_GAP), 0);
   }
   return 0;
 }

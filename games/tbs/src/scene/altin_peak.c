@@ -1302,7 +1302,6 @@ static __inline__ void AltinPeak_PlayLandingShake(s32 amplitude,
 static void AltinPeak_ShowFirstBeastRoute(void) {
   struct Actor *beast;
   struct Actor *leader;
-  struct Actor *actor;
   s32 jumpSpeed;
 
   beast = (struct Actor *)Actor_Get(ACTOR_FIRST_WATER_BEAST);
@@ -1353,8 +1352,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_EAST_NORTHEAST, 20);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_NORTH_NORTHEAST, 40);
   Sound_Play(SE_HIGH_JUMP);
-  actor = Actor_Get(ACTOR_FIRST_WATER_BEAST);
-  actor->velocityY = px(4);
+  Actor_Get(ACTOR_FIRST_WATER_BEAST)->velocityY = px(4);
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIMATION_LEAP);
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 380, 248);
   Event_Wait(10);
@@ -1382,22 +1380,18 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   MapGrid_CopyCellAttributes(3, 0, 1, 1, 18, 13);
   MapGrid_CopyCellAttributes(3, 0, 1, 1, 19, 13);
   Actor_SetSpeed(ACTOR_FIRST_WATER_BEAST, 1.4);
-  actor = Actor_Get(ACTOR_FIRST_WATER_BEAST);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_WATER_BEAST), 0);
   Sound_Play(SE_HIGH_JUMP);
   jumpSpeed = px(5);
-  actor = Actor_Get(ACTOR_FIRST_WATER_BEAST);
-  actor->velocityY = jumpSpeed;
+  Actor_Get(ACTOR_FIRST_WATER_BEAST)->velocityY = jumpSpeed;
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 295, 215);
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
-  actor = Actor_Get(ACTOR_FIRST_WATER_BEAST);
-  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_WATER_BEAST), SPRITE_FLAG_SHADOW);
   AltinPeak_PlayLandingShake(1, 4);
   Event_Wait(40);
   Sound_Play(SE_HIGH_JUMP);
-  actor = Actor_Get(ACTOR_FIRST_WATER_BEAST);
-  actor->velocityY = jumpSpeed;
+  Actor_Get(ACTOR_FIRST_WATER_BEAST)->velocityY = jumpSpeed;
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 260, 215);
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
@@ -1543,8 +1537,6 @@ s32 Scene_Initialize(void) {
 /// beast stays where its routes left it while the water is up, and the frozen
 /// puddles are restored once it is down.
 static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
-  s32 opened;
-  s32 flag;
   struct Actor *actor;
   struct MapGridScrollWork *grid;
 
@@ -1568,22 +1560,17 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
     actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetSpriteFlags(actor, 0);
   }
-  opened = GameFlag_Get(FLAG_ALTIN_MINE_FIRST_DRAIN);
-  if (opened == 0) {
+  if (GameFlag_Get(FLAG_ALTIN_MINE_FIRST_DRAIN) == 0) {
     Actor_SetSpriteColorById(ACTOR_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
-    flag = GameFlag_Get(FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN);
-    if (flag != 0) {
+    if (GameFlag_Get(FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN) != 0) {
       Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE, 0);
-      actor = Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
-      actor->update = FieldEffect_UpdateFrostGlint;
-      Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->motionFlags =
-          opened;
-      actor = Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
-      actor->y.fixed = px(32);
+      Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->update =
+          FieldEffect_UpdateFrostGlint;
+      Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->motionFlags = 0;
+      Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->y.fixed = px(32);
       MapGrid_CopyCellAttributes(2, 0, 1, 1, 18, 13);
       Actor_SetPosition(ACTOR_FIRST_WATER_BEAST, 120, 215);
-      actor = Actor_Get(ACTOR_FIRST_WATER_BEAST);
-      actor->facing = opened;
+      Actor_Get(ACTOR_FIRST_WATER_BEAST)->facing = FACING_EAST;
       Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
       AltinPeak_StartSpitting(130, 0, 168, FACING_EAST);
       return;
@@ -1592,11 +1579,10 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
       return;
     }
     Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE, 0);
-    actor = Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
-    actor->update = FieldEffect_UpdateFrostGlint;
-    Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->motionFlags = flag;
-    actor = Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
-    actor->y.fixed = px(32);
+    Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->update =
+        FieldEffect_UpdateFrostGlint;
+    Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->motionFlags = 0;
+    Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->y.fixed = px(32);
     MapGrid_CopyCellAttributes(2, 0, 1, 1, 18, 13);
     Actor_SetPosition(ACTOR_FIRST_WATER_BEAST, 260, 215);
     FieldActor_WatchAndStartScript(10,
@@ -1858,7 +1844,6 @@ static void AltinPeak_RestoreFallingRocksRoom(void) {
 static void AltinPeak_RestoreHydrosStatueRoom(void) {
   s32 statuesDefeated;
   struct Actor *leader;
-  struct Actor *actor;
   s16 entrance;
 
   statuesDefeated = GameFlag_Get(FLAG_HYDROS_STATUES_DEFEATED);
@@ -1866,11 +1851,9 @@ static void AltinPeak_RestoreHydrosStatueRoom(void) {
     Actor_SetPosition(ACTOR_STATUE, 0, 0);
     Actor_SetPosition(ACTOR_STATUE_SHADOW, 0, 0);
   } else {
-    actor = Actor_Get(ACTOR_STATUE);
-    Actor_SetSpriteFlags(actor, 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_STATUE), 0);
     Actor_SetSpritePriority(ACTOR_STATUE_SHADOW, 3);
-    actor = Actor_Get(ACTOR_STATUE_SHADOW);
-    Actor_SetSpriteFlags(actor, 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_STATUE_SHADOW), 0);
     Actor_Get(ACTOR_STATUE_SHADOW)->collisionFlags = statuesDefeated;
   }
   entrance = gMainRoutineWork.entrance;
@@ -1893,10 +1876,8 @@ static void AltinPeak_RestoreHydrosStatueRoom(void) {
 /// ALTIN_PEAK_WEST_EXIT_TUNNEL_FROM_CHEST_ROOM the pillar stands at its pushed
 /// place.
 static void AltinPeak_RestoreWestExitRoom(void) {
-  struct Actor *actor;
 
-  actor = Actor_Get(ACTOR_WEST_EXIT_ROOM_PILLAR);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_WEST_EXIT_ROOM_PILLAR), 0);
   if (gMainRoutineWork.entrance ==
       ALTIN_PEAK_WEST_EXIT_TUNNEL_FROM_CHEST_ROOM) {
     Actor_SetPosition(ACTOR_WEST_EXIT_ROOM_PILLAR, 184, 328);
@@ -2316,13 +2297,8 @@ UNUSED static void AltinPeak_RequestPsynergy(void) {
 /// second pillar is drawn under the party and the third further back.
 static void AltinPeak_UpdateFrostPillarPriority(void) {
   if (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed > px(48)) {
-    {
-      u8 *flag = &Actor_Get(ACTOR_SPRITZ_ROOM_SECOND_PUDDLE)->priorityFlags;
-      s32 bit = 2;
-
-      bit |= *flag;
-      *flag = bit;
-    }
+    Actor_Get(ACTOR_SPRITZ_ROOM_SECOND_PUDDLE)->priorityFlags |=
+        ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetSpritePriority(ACTOR_SPRITZ_ROOM_THIRD_PUDDLE, 3);
   } else {
     Actor_SetSpritePriority(ACTOR_SPRITZ_ROOM_THIRD_PUDDLE, 2);

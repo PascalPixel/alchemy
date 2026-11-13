@@ -443,11 +443,9 @@ static void ColosseumNavampaMatch_FreezeOnScales(void) {
   actor->scaleX = Q16_ONE;
   actor->scaleY = Q16_ONE;
 
-  actor = Actor_Get(ACTOR_SCALES_EAST_LEDGE);
-  ColosseumNavampaMatch_MoveOnScales(actor, 32);
+  ColosseumNavampaMatch_MoveOnScales(Actor_Get(ACTOR_SCALES_EAST_LEDGE), 32);
 
-  actor = Actor_Get(ACTOR_SCALES_WEST_LEDGE);
-  ColosseumNavampaMatch_MoveOnScales(actor, 4);
+  ColosseumNavampaMatch_MoveOnScales(Actor_Get(ACTOR_SCALES_WEST_LEDGE), 4);
 
   GameFlag_Set(FLAG_SCALES_FROZEN);
   MapGrid_CopyCellAttributes(15, 12, 1, 1, 13, 12);
@@ -561,11 +559,9 @@ static void ColosseumNavampaMatch_PushWeight(void) {
 /// Its column is kept in the byte of flags from FLAG_STONE_COLUMN, and its
 /// cell is rebuilt.
 static void ColosseumNavampaMatch_MoveStone(void) {
-  struct Actor *actor;
   s32 x;
 
-  actor = Actor_Get(ACTOR_STONE);
-  x = FIELD_CELL(actor->x.fixed);
+  x = FIELD_CELL(Actor_Get(ACTOR_STONE)->x.fixed);
   FieldGameFlag_SetByte(FLAG_STONE_COLUMN, x);
   MapGrid_CopyCellAttributes(18, 10, 3, 1, 18, 11);
   MapGrid_CopyCellAttributes(17, 11, 1, 1, x, 11);
@@ -1317,7 +1313,6 @@ static void ColosseumNavampaMatch_SpawnPeriodicParticle(void) {
 /// The entrance is COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON or _LOST. They call
 /// his name, but he falls asleep, exhausted, and they leave him to sleep.
 static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
-  struct Actor *actor;
   const s32 *leaderScaleScript;
   TaskFunc particleFunc;
 
@@ -1335,8 +1330,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   }
   Actor_SetScript(ACTOR_OPPONENT, gColosseumNavampaMatch_OpponentAfterBattle);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 1504, 192);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->facing = FACING_EAST;
+  Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_EAST;
   Actor_SetScript(ACTOR_PARTY_LEADER, gColosseumNavampaMatch_LeaderActionA);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CROUCH);
   Actor_SetSpeed(ACTOR_GARET, 1);
@@ -1345,12 +1339,9 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Actor_SetPosition(ACTOR_GARET, 1464, 184);
   Actor_SetPosition(ACTOR_IVAN, 1464, 200);
   Actor_SetPosition(ACTOR_MIA, 1448, 192);
-  actor = Actor_Get(ACTOR_GARET);
-  actor->facing = FACING_EAST;
-  actor = Actor_Get(ACTOR_IVAN);
-  actor->facing = FACING_EAST;
-  actor = Actor_Get(ACTOR_MIA);
-  actor->facing = FACING_EAST;
+  Actor_Get(ACTOR_GARET)->facing = FACING_EAST;
+  Actor_Get(ACTOR_IVAN)->facing = FACING_EAST;
+  Actor_Get(ACTOR_MIA)->facing = FACING_EAST;
   wait(1);
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -1361,16 +1352,12 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Event_Wait(60);
   leaderScaleScript = gColosseumNavampaMatch_LeaderScaleScript;
   Actor_SetScript(ACTOR_PARTY_LEADER, leaderScaleScript);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->scaleX = Q16_ONE;
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->scaleY = Q16_ONE;
+  Actor_Get(ACTOR_PARTY_LEADER)->scaleX = Q16_ONE;
+  Actor_Get(ACTOR_PARTY_LEADER)->scaleY = Q16_ONE;
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_LEADER_FALL);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->x.fixed += px(3);
+  Actor_Get(ACTOR_PARTY_LEADER)->x.fixed += px(3);
   Event_Wait(10);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Event_Wait(20);
   Actor_SetScript(ACTOR_PARTY_LEADER, gColosseumNavampaMatch_LeaderActionB);
   // Let each companion react before the leader settles back to sleep.
@@ -1536,8 +1523,7 @@ static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
   Actor_SetPositionFixed(ACTOR_IVAN, px(guideX) + px(16), px(guideZ) - px(40));
   Actor_SetPositionFixed(ACTOR_MIA, px(guideX), (px(guideZ) - px(32)));
   Actor_SetPositionFixed(guideId, px(guideX), (px(guideZ) - px(80)));
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->facing = FACING_NORTH;
+  Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_NORTH;
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

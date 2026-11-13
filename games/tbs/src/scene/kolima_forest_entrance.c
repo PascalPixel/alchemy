@@ -184,8 +184,6 @@ static void KolimaForestEntrance_PushLog(void) {
     Actor_MoveAndRedraw(res);
     if (res.actorSlot == ACTOR_RIVER_LOG &&
         (FIELD_CELL(res.position.x)) == 20) {
-      struct Actor *actor;
-
       Actor_SetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_ROLL_WEST);
       Actor_SetDestinationOffset(ACTOR_RIVER_LOG, -18, 6);
       Event_Wait(30);
@@ -196,8 +194,7 @@ static void KolimaForestEntrance_PushLog(void) {
       PushedActor_FillGridAttributeRectangle(2, 20, 17, 1, 4,
                                              CELL_BEHAVIOR_NORMAL);
       GameFlag_Set(FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER);
-      actor = Actor_Get(ACTOR_RIVER_LOG);
-      Actor_SetSpriteFlags(actor, 0);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_RIVER_LOG), 0);
     }
   }
 

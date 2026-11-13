@@ -257,11 +257,9 @@ static inline void GomaCavePillar_CopyWestPillarCells(s32 sourceColumn) {
 /// Move on the west pillar in Goma Cave: it slides between its two places,
 /// and the map grid cells follow it.
 static void GomaCavePillar_MoveWestPillar(void) {
-  struct Actor *actor;
   s32 x;
 
-  actor = Actor_Get(ACTOR_WEST_PILLAR);
-  x = actor->x.fixed;
+  x = Actor_Get(ACTOR_WEST_PILLAR)->x.fixed;
   if (x < 0)
     x += px(16) - 1;
   x >>= 20;
@@ -609,7 +607,6 @@ static void GomaCavePillar_WitnessCheersForgeCaught(void) {
 /// ENTRANCE_STUMP_FALL plays the stump's fall. After a won battle with Forge,
 /// the man's reaction starts.
 s32 Scene_Initialize(void) {
-  struct Actor *actor;
   struct FieldWork *work;
 
   work = gFieldWork;
@@ -636,8 +633,7 @@ s32 Scene_Initialize(void) {
         gMainRoutineWork.entrance ==
             GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST) {
       Actor_Get(ACTOR_EAST_PILLAR)->layer = 2;
-      actor = Actor_Get(ACTOR_EAST_PILLAR);
-      actor->y.fixed--;
+      Actor_Get(ACTOR_EAST_PILLAR)->y.fixed--;
       Actor_Get(ACTOR_EAST_PILLAR)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       MapGrid_CopyCellAttributes(36, 48, 5, 1, 36, 14);
     }

@@ -302,44 +302,36 @@ static void Ship_UpdateSwell(void) {
 /// boarding scripts call their own copies below.
 static s32 LemurianShip_LeaderStepOnDeck(struct Actor *interpreter) {
   s32 *deckY;
-  struct Actor *actor;
 
   deckY = &gLeaderDeckY;
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  *deckY = actor->y.fixed;
+  *deckY = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
   return 0;
 }
 
 /// Remembers Garet's boarding height for the swell task.
 static s32 LemurianShip_GaretStepOnDeck(struct Actor *interpreter) {
   s32 *deckY;
-  struct Actor *actor;
 
   deckY = &gGaretDeckY;
-  actor = Actor_Get(ACTOR_GARET);
-  *deckY = actor->y.fixed;
+  *deckY = Actor_Get(ACTOR_GARET)->y.fixed;
   return 0;
 }
 
 /// Remembers Mia's boarding height for the swell task.
 static s32 LemurianShip_MiaStepOnDeck(struct Actor *interpreter) {
   s32 *deckY;
-  struct Actor *actor;
 
   deckY = &gMiaDeckY;
-  actor = Actor_Get(ACTOR_MIA);
-  *deckY = actor->y.fixed;
+  *deckY = Actor_Get(ACTOR_MIA)->y.fixed;
   return 0;
 }
 
 /// Remembers Ivan's boarding height for the swell task.
 static s32 Ivan_StepOnDeck(struct Actor *interpreter) {
   s32 *deckY;
-  struct Actor *actor;
 
   deckY = &gIvanDeckY;
-  actor = Actor_Get(ACTOR_IVAN);
-  *deckY = actor->y.fixed;
+  *deckY = Actor_Get(ACTOR_IVAN)->y.fixed;
   return 0;
 }
 

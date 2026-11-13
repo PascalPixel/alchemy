@@ -1370,7 +1370,6 @@ static void BabiLighthouse_MatchLeaderPriority(struct Actor *updated) {
 /// vine and the four lying on the ground, BabiLighthouseLuff's arrivals by
 /// falling, and BabiLighthouseStoneDoor's door and onlookers are restored.
 s32 BabiLighthouse_SetupMap(void) {
-  struct Actor *actor;
   struct Actor *placedActor;
   s32 sceneId;
   s32 mapCopy;
@@ -1416,8 +1415,8 @@ s32 BabiLighthouse_SetupMap(void) {
       Actor_SetPosition(ACTOR_RIGHT_PILLAR, 312, 328);
     }
     BabiLighthouse_RedrawLedgePillarCells();
-    actor = Actor_Get(ACTOR_RIGHT_PILLAR);
-    actor->y.fixed = Actor_Get(ACTOR_RIGHT_PILLAR)->groundHeight;
+    Actor_Get(ACTOR_RIGHT_PILLAR)->y.fixed =
+        Actor_Get(ACTOR_RIGHT_PILLAR)->groundHeight;
     if (GameFlag_Get(FLAG_GROWTH_PASSAGE_OPEN) != 0) {
       Actor_SetAnimation(ACTOR_PLANT, 4);
       Actor_Get(ACTOR_PLANT)->collisionFlags = 0xff & ~ACTOR_SOLID;

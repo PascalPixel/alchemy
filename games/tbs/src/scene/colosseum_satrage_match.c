@@ -1177,8 +1177,7 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
                          ((attendantZ << 16) - px(32)));
   Actor_SetPositionFixed(attendantId, (attendantX << 16),
                          ((attendantZ << 16) - px(80)));
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->facing = FACING_NORTH;
+  Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_NORTH;
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1236,7 +1235,6 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
 /// cheering instead.
 static void ColosseumSatrageMatch_TalkToMiniMazeAttendant(s32 attendant) {
   s32 result;
-  struct Actor *actor;
 
   if (gMainRoutineWork.entrance ==
       COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
@@ -1260,8 +1258,7 @@ static void ColosseumSatrageMatch_TalkToMiniMazeAttendant(s32 attendant) {
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1224, 248);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1192, 248);
       Event_Wait(3);
-      actor = Actor_Get(ACTOR_PARTY_LEADER);
-      actor->velocityY = px(4);
+      Actor_Get(ACTOR_PARTY_LEADER)->velocityY = px(4);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
       Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);

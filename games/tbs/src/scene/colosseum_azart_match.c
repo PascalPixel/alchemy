@@ -466,21 +466,18 @@ static void ColosseumAzartMatch_RollLogNorthSouth(void) {
 /// It's the Lumber Water Crossing Area's east-west log, and walking into it
 /// rolls it, with the leader.
 static void ColosseumAzartMatch_RollLogEastWest(void) {
-  struct Actor *actor;
   s32 column;
   s32 offset;
   s32 direction;
 
-  actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  column = FIELD_CELL(actor->x.fixed);
+  column = FIELD_CELL(Actor_Get(gMainRoutineWork.leaderActorId)->x.fixed);
   if ((gKeysHeld & KEY_LEFT) != 0) {
     direction = -1;
   }
   if ((gKeysHeld & KEY_RIGHT) != 0) {
     direction = 1;
   }
-  actor = Actor_Get(ACTOR_LOG_NORTH_SOUTH);
-  offset = FIELD_CELL(actor->z.fixed);
+  offset = FIELD_CELL(Actor_Get(ACTOR_LOG_NORTH_SOUTH)->z.fixed);
   if (column == 63) {
     if (offset == 11) {
       return;
@@ -501,8 +498,7 @@ static void ColosseumAzartMatch_RollLogEastWest(void) {
   }
   MapGrid_CopyCellAttributes(72, 9, 1, 3, column, 9);
   ColosseumAzartMatch_MoveActorPairByOffset(ACTOR_LOG_EAST_WEST, offset, 0);
-  actor = Actor_Get(ACTOR_LOG_EAST_WEST);
-  column = FIELD_CELL(actor->x.fixed);
+  column = FIELD_CELL(Actor_Get(ACTOR_LOG_EAST_WEST)->x.fixed);
   MapGrid_CopyCellAttributes(63, 25, 1, 3, column, 9);
 }
 

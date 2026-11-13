@@ -735,7 +735,6 @@ s32 Bilibin_Initialize(void) {
 ///   guard.
 static void Bilibin_RestoreVillageActors(void) {
 
-  struct Actor *actor;
   s16 entrance;
 
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
@@ -745,13 +744,11 @@ static void Bilibin_RestoreVillageActors(void) {
     Actor_FaceDirection(ACTOR_OLD_WOMAN_ROAD_BLOCKED, FACING_SOUTH_SOUTHWEST,
                         0);
   } else {
-    actor = Actor_Get(ACTOR_TREE_MAN);
-    Actor_SetSpriteFlags(actor, 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_TREE_MAN), 0);
     Actor_SetPosition(ACTOR_FORMER_TREE_MAN, 0, 0);
   }
   // Apply arrival-specific changes after restoring the population.
-  actor = Actor_Get(ACTOR_IVY);
-  actor->scaleY = 3 * Q16_ONE / 2;
+  Actor_Get(ACTOR_IVY)->scaleY = 3 * Q16_ONE / 2;
   entrance = gMainRoutineWork.entrance;
   if (entrance == BILIBIN_FROM_BILIBIN_TREASURY_WEST) {
     Actor_SetPosition(ACTOR_IVY, 0, 0);
@@ -827,13 +824,11 @@ static void Bilibin_RestoreRiverActors(void) {
   struct Actor *jillTree;
   s32 populationState;
   struct Actor *fallenTree;
-  struct Actor *actor;
   s32 crossingState;
 
   fallenTree = Actor_Get(ACTOR_MIDDLE_TREE);
   jillTree = Actor_Get(ACTOR_JILL_TREE);
-  actor = Actor_Get(ACTOR_BARRICADE_CRATES);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_BARRICADE_CRATES), 0);
   populationState = GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED);
   if (populationState != 0) {
     // The curse is lifted: the trees are gone.
@@ -856,12 +851,9 @@ static void Bilibin_RestoreRiverActors(void) {
     Actor_SetPosition(ACTOR_GANG_MEMBER_EAST, 0, 0);
     Actor_SetPosition(ACTOR_GANG_MEMBER_WEST, 0, 0);
     Actor_SetPosition(ACTOR_JILL, 0, 0);
-    actor = Actor_Get(ACTOR_BOTTOM_TREE);
-    Actor_SetSpriteFlags(actor, 0);
-    actor = Actor_Get(ACTOR_MIDDLE_TREE);
-    Actor_SetSpriteFlags(actor, 0);
-    actor = Actor_Get(ACTOR_JILL_TREE);
-    Actor_SetSpriteFlags(actor, 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_BOTTOM_TREE), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_MIDDLE_TREE), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_JILL_TREE), 0);
     fallenTree->motionFlags = populationState;
     // Once FLAG_SATUROS_BEATEN_AT_MERCURY is set ("They crossed the river
     // after pushing us down"), the middle tree lies on its side and Jill is in
@@ -873,8 +865,7 @@ static void Bilibin_RestoreRiverActors(void) {
           ACTOR_NEAR_PSYNERGY;
       Actor_Get(ACTOR_JILL_TREE)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
       Actor_SetPosition(ACTOR_FALLEN_TREE_STAND_IN, 142, 156);
-      actor = Actor_Get(ACTOR_FALLEN_TREE_STAND_IN);
-      Actor_SetSpriteFlags(actor, 0);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_FALLEN_TREE_STAND_IN), 0);
       Actor_SetPosition(ACTOR_MIDDLE_TREE, 142, 156);
       fallenTree->sprite->rotation = TRIG_TURN / 4;
       fallenTree->y.fixed += -px(8);

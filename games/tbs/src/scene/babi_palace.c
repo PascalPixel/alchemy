@@ -1238,7 +1238,6 @@ static void BabiPalace_HearSoldiersReport(void) {
 /// Waking in the palace after the finals, the leader has slept long after
 /// fighting to the end. Babi wants to see the party.
 static void BabiPalace_WakeAfterFinals(void) {
-  struct Actor *actor;
   s32 step;
   s32 pick;
   struct FieldWork *work;
@@ -1247,8 +1246,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiCallsName);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_LYING);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Actor_SetPosition(ACTOR_GARET, 104, 104);
   Actor_SetPosition(ACTOR_MIA, 88, 120);
   Actor_SetPosition(ACTOR_IVAN, 120, 120);
@@ -1309,10 +1307,8 @@ static void BabiPalace_WakeAfterFinals(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
   Event_Wait(10);
   Event_ShowMessage(ACTOR_MIA, 0);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->z.fixed -= px(3);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->targetZ -= px(3);
+  Actor_Get(ACTOR_PARTY_LEADER)->z.fixed -= px(3);
+  Actor_Get(ACTOR_PARTY_LEADER)->targetZ -= px(3);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_SITTING_UP);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);
@@ -1455,8 +1451,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.9);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, -32, -8);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);

@@ -84,12 +84,12 @@ const struct ActorPlacement *KolimaForestCliff_GetActorPlacements(void) {
 /// FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER).
 static void KolimaForestCliff_PushLog(void) {
   struct PushedActorProbe result;
+
   Event_Start();
   if (PushedActor_FindClearPosition(&result)) {
     Actor_MoveAndRedraw(result);
     if (result.actorSlot == ACTOR_RIVER_LOG &&
         (FIELD_CELL(result.position.x)) == 12) {
-      struct Actor *actor;
       Actor_SetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_ROLL_WEST);
       Actor_SetDestinationOffset(ACTOR_RIVER_LOG, -18, 6);
       Event_Wait(30);
@@ -100,8 +100,7 @@ static void KolimaForestCliff_PushLog(void) {
       PushedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4,
                                              CELL_BEHAVIOR_NORMAL);
       GameFlag_Set(FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER);
-      actor = Actor_Get(ACTOR_RIVER_LOG);
-      Actor_SetSpriteFlags(actor, 0);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_RIVER_LOG), 0);
     }
   }
   Event_End();

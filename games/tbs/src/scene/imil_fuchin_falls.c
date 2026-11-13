@@ -1411,11 +1411,9 @@ s32 ImilFuchinFalls_Initialize(void) {
 
 /// Shows Fever, in Imil Falls Cave, and walks the leader toward it.
 static void Imil_WalkTowardFever(void) {
-  struct Actor *actor;
 
   Event_Start();
-  actor = Actor_Get(ACTOR_FEVER);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FEVER), 0);
   Event_StartScreenTransition();
   Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 2, 0.1);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 264, 196);

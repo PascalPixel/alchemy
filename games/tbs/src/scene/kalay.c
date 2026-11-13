@@ -344,8 +344,8 @@ enum KalayTunnelFlag {
 static void Kalay_PrepareTown(void);
 static void Kalay_PrepareHammetPalace(void);
 static void Kalay_PrepareTunnelEntrance(void);
-static void Kalay_StartWindowTransition(void);
-static void Kalay_PrepareTunnel(void);
+static void Kalay_PrepareTunnelPassage(void);
+static void Kalay_PrepareTunnelTreasureRoom(void);
 static void Kalay_StartTouristsFidgeting(void);
 static void Kalay_StartTouristFidgeting(s32 actorId);
 static void Kalay_StartGuidesPacing(void);
@@ -1195,11 +1195,11 @@ static void Kalay_StopTrackingLeader(void) {
 /// Touching step trigger 11 in the Kalay Tunnel (KalayTunnelTreasureRoom) makes
 /// the fade overlay follow the leader.
 static void Kalay_StartTrackingLeader(void) {
-  struct FadeOverlayWork *work;
+  struct FadeOverlayWork *overlay;
 
   if (Event_GetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER) == 0) {
-    work = gFadeOverlayWork;
-    work->actor = Actor_Get(ACTOR_PARTY_LEADER);
+    overlay = gFadeOverlayWork;
+    overlay->actor = Actor_Get(ACTOR_PARTY_LEADER);
     GameFlag_Set(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
   }
 }
@@ -1207,25 +1207,13 @@ static void Kalay_StartTrackingLeader(void) {
 /// Touching step trigger 19 in the Kalay Tunnel (KalayTunnelTreasureRoom) lets
 /// the leader's depth priority follow his position.
 static void Kalay_EnableLeaderAutomaticPriority(void) {
-  u8 *priorityFlags;
-  s32 flags;
-
-  priorityFlags = &Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags;
-  flags = ACTOR_PRIORITY_AUTOMATIC;
-  flags |= *priorityFlags;
-  *priorityFlags = flags;
+  Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 }
 
 /// Touching step trigger 18 in the Kalay Tunnel (KalayTunnelTreasureRoom) keeps
 /// the leader's depth priority fixed.
 static void Kalay_DisableLeaderAutomaticPriority(void) {
-  u8 *priorityFlags;
-  s32 flags;
-
-  priorityFlags = &Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags;
-  flags = (u8)~ACTOR_PRIORITY_AUTOMATIC;
-  flags &= *priorityFlags;
-  *priorityFlags = flags;
+  Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 }
 
 /// Catch in Kalay pulls in the Nut circling there, until it is caught.
@@ -1252,9 +1240,9 @@ s32 Kalay_Initialize(void) {
   } else if (sceneId == (s32)&SceneId_KalayTunnelEntrance) {
     Kalay_PrepareTunnelEntrance();
   } else if (sceneId == (s32)&SceneId_KalayTunnelPassage) {
-    Kalay_StartWindowTransition();
+    Kalay_PrepareTunnelPassage();
   } else if (sceneId == (s32)&SceneId_KalayTunnelTreasureRoom) {
-    Kalay_PrepareTunnel();
+    Kalay_PrepareTunnelTreasureRoom();
   }
   return 0;
 }
@@ -1272,7 +1260,6 @@ s32 Kalay_Initialize(void) {
 /// air.
 static void Kalay_PrepareTown(void) {
   OrbitingMapActor *nut;
-  s32 found;
   u8 *heap;
   OrbitingMapActorSprite *sprite;
 
@@ -1291,8 +1278,7 @@ static void Kalay_PrepareTown(void) {
   // The second guide shares the first's sprite, drawn with its green and blue
   // swapped to tell them apart.
   Actor_SetSpriteColorById(ACTOR_SECOND_GUIDE, SPRITE_COLOR_RBG);
-  found = GameFlag_Get(FLAG_KALAY_TOWN_NUT_CAUGHT);
-  if (found != 0) {
+  if (GameFlag_Get(FLAG_KALAY_TOWN_NUT_CAUGHT) != 0) {
     Actor_SetPosition(ACTOR_TOWN_NUT, 0, 0);
   } else {
     nut = (OrbitingMapActor *)Actor_Get(ACTOR_TOWN_NUT);
@@ -1300,16 +1286,16 @@ static void Kalay_PrepareTown(void) {
     sprite->priority = 1;
     sprite->fullColor = 0;
     sprite->paletteNumber = 0;
-    sprite->state = found;
+    sprite->state = 0;
     nut->active = 1;
-    nut->mode = found;
+    nut->mode = 0;
     nut->y = px(10);
     nut->visible = 1;
     heap = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Icon_DrawItem(ITEM_NUT);
     VramCache_Load(sprite->palette, 128, heap + 1024);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
-    nut->orbitAngle = found;
+    nut->orbitAngle = 0;
     nut->orbitCenterX = nut->x;
     nut->orbitCenterY = nut->y;
     nut->orbitCenterZ = nut->z;
@@ -1366,7 +1352,7 @@ static void Kalay_PrepareTunnelEntrance(void) {
 /// from the north-east room
 /// (KALAY_TUNNEL_PASSAGE_LONG_PATH_FROM_NORTHEAST_ROOM) starts
 /// SE_AMBIENT_WATER.
-static void Kalay_StartWindowTransition(void) {
+static void Kalay_PrepareTunnelPassage(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (GameFlag_Get(FLAG_KALAY_TUNNEL_OPEN) != 0) {
@@ -1387,7 +1373,7 @@ static void Kalay_StartWindowTransition(void) {
 /// (KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY). The pushed statues, the frozen
 /// puddle and the opened passages are restored. Once FLAG_KALAY_TUNNEL_OPEN is
 /// set the man waits here and some of the cells are redrawn.
-static void Kalay_PrepareTunnel(void) {
+static void Kalay_PrepareTunnelTreasureRoom(void) {
 #if TBS_PATCH_1
   s32 resumed;
 #endif
@@ -1633,10 +1619,8 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 192, 278);
   Actor_SetSpeed(ACTOR_PALACE_GUARD, 1);
   Actor_SetSpeed(ACTOR_SECOND_PALACE_GUARD, 1);
-  actor = Actor_Get(ACTOR_PALACE_GUARD);
-  actor->facing = FACING_SOUTH_SOUTHEAST;
-  actor = Actor_Get(ACTOR_SECOND_PALACE_GUARD);
-  actor->facing = FACING_SOUTH_SOUTHWEST;
+  Actor_Get(ACTOR_PALACE_GUARD)->facing = FACING_SOUTH_SOUTHEAST;
+  Actor_Get(ACTOR_SECOND_PALACE_GUARD)->facing = FACING_SOUTH_SOUTHWEST;
   wait(1);
   Actor_Get(ACTOR_PALACE_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_Get(ACTOR_SECOND_PALACE_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -1788,10 +1772,8 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Actor_SetSpeed(ACTOR_PALACE_GUARD, 0.8);
   Actor_SetSpeed(ACTOR_SECOND_PALACE_GUARD, 0.8);
-  actor = Actor_Get(ACTOR_PALACE_GUARD);
-  actor->facing = FACING_EAST;
-  actor = Actor_Get(ACTOR_SECOND_PALACE_GUARD);
-  actor->facing = FACING_WEST;
+  Actor_Get(ACTOR_PALACE_GUARD)->facing = FACING_EAST;
+  Actor_Get(ACTOR_SECOND_PALACE_GUARD)->facing = FACING_WEST;
   Actor_Get(ACTOR_PALACE_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_Get(ACTOR_SECOND_PALACE_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkTo(ACTOR_PALACE_GUARD, 168, 232);
@@ -1845,8 +1827,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   Actor_SetPosition(ACTOR_WAGON, 440, 522);
-  actor = Actor_Get(ACTOR_WAGON);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_WAGON), 0);
   FieldCamera_MoveTo(440, CAMERA_KEEP, 522, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
@@ -2079,8 +2060,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Actor_SetPosition(ACTOR_WAGON, 440, 340);
-  actor = Actor_Get(ACTOR_WAGON);
-  actor->facing = FACING_SOUTH;
+  Actor_Get(ACTOR_WAGON)->facing = FACING_SOUTH;
   FieldCamera_MoveTo(380, CAMERA_KEEP, 280, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(10);

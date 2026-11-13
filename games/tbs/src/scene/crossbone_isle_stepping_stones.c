@@ -1627,8 +1627,7 @@ s32 Scene_Initialize(void) {
     CrossboneIsleSteppingStones_RestoreFlaggedPillar(ACTOR_FIRST_PUDDLE);
     CrossboneIsleSteppingStones_RestoreFlaggedPillar(ACTOR_SECOND_PUDDLE);
     CrossboneIsleSteppingStones_RestoreFlaggedPillar(ACTOR_THIRD_PUDDLE);
-    actor = Actor_Get(ACTOR_THIRD_PUDDLE);
-    actor->update = 0;
+    Actor_Get(ACTOR_THIRD_PUDDLE)->update = 0;
     CrossboneIsleSteppingStones_PrepLoweredActor(ACTOR_RISING_PILLAR);
     Actor_Get(ACTOR_RISING_PILLAR)->collisionFlags |= ACTOR_NOT_TARGETED;
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN +

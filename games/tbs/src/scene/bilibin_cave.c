@@ -502,7 +502,6 @@ static inline void BilibinCave_ClearActorSpriteFlags(s32 actorId) {
 /// It places its torches, puddles and pillars, with the steps of its puzzle
 /// already solved.
 static void BilibinCave_RestoreIceRoom(void) {
-  struct Actor *actor;
   s32 destinationCellX;
 
   gFieldWork->transition =
@@ -560,8 +559,7 @@ static void BilibinCave_RestoreIceRoom(void) {
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 18, 14);
   } else {
     Actor_SetAnimation(ACTOR_ICE_ROOM_FIRE, 2);
-    actor = Actor_Get(ACTOR_ICE_ROOM_FIRE);
-    Actor_SetSpriteFlags(actor, 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_ICE_ROOM_FIRE), 0);
     Actor_SetAnimation(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
   }
   // Rebuild the Frost target and return moved actors to their saved

@@ -55,7 +55,7 @@ extern u8 gData_020023c4[];
 
 #include "../mars_lighthouse_entrance.h"
 
-void Func_02002848(void) {
+void MarsLighthouseEntrance_ContinueSlide(void) {
   if (RIDE_WORK->active)
     Func_0200263c();
 }
@@ -98,7 +98,9 @@ struct RideState {
   struct RideCar *car;
 };
 
-int Func_02002860(void) {
+/// Stepping onto ice (cell behavior 90, as Imil's ice slide is in The Broken
+/// Seal): the leader slides until the ice stops.
+int MarsLighthouseEntrance_SlideOnIce(void) {
   struct RideEvent *event = Ram_HeapSlots->eventWork;
   struct RideState *ride;
   struct Actor *leader;
@@ -156,7 +158,7 @@ int Func_02002860(void) {
 
 s32 Func_020029a0(void) {
   if (RIDE_WORK->active) {
-    Func_02002860();
+    MarsLighthouseEntrance_SlideOnIce();
     return 1;
   }
   return 0;

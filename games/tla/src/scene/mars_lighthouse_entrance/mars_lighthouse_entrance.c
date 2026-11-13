@@ -22,7 +22,7 @@ s32 Func_0200012c();
 s32 Map_GetTerrainHeight();
 void Scene_SetActorSpritePriority();
 
-void Func_020001f8(struct Actor *object) {
+void MarsLighthouseEntrance_SetIceConeCells(struct Actor *object) {
   s32 t1, t2, t3, t4, v10, v6, v7, v8, v9;
   struct Actor *v5;
   u8 *v11;
@@ -63,7 +63,9 @@ L_02008282:
 
 void Func_02004bc0();
 
-void Func_020002bc(u16 *table) {
+/// Each row: an ice cone's actor, its first animation and the flag set once
+/// Pound has flattened it.
+void MarsLighthouseEntrance_PlaceIceCones(u16 *table) {
   u16 *row;
   struct FieldActor *object;
   s16 flag;
@@ -82,7 +84,7 @@ loop:
   object->motionFlags = 0;
   object->collisionFlags &= 0xfe;
   object->timer = flag;
-  Func_020001f8(object);
+  MarsLighthouseEntrance_SetIceConeCells(object);
   row += 3;
   if (row[0] != 0xffff)
     goto loop;
@@ -96,9 +98,9 @@ void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 /// While index is at most 7, spawns effect type 0x117 index steps below the
 /// object the effect work names and shrinks the object a little; mode 1
-/// restores its size, sets its flag, hands it to Func_020001f8 and clears its
+/// restores its size, sets its flag, hands it to MarsLighthouseEntrance_SetIceConeCells and clears its
 /// position.
-void Func_02000338(s32 mode, s32 index) {
+void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index) {
   struct EffectHolder *holder = Ram_HeapSlots->effectWork;
   struct Actor *object = Actor_Get(holder->objectId);
 
@@ -118,16 +120,16 @@ void Func_02000338(s32 mode, s32 index) {
   if (mode == 1) {
     object->scaleY = 0x10000;
     Event_SetFlag(object->timer);
-    Func_020001f8(Actor_Get(holder->objectId));
+    MarsLighthouseEntrance_SetIceConeCells(Actor_Get(holder->objectId));
     object->x = object->y = object->z = 0;
   }
 }
 
 // ---- games/tla/src/scene/mars_lighthouse_entrance.c ----
-/* VIEW(mars_lighthouse_entrance): routine Func_02000338 as void Func_02000338(void); the definition has void Func_02000338(s32 mode, s32 index); tried as the definition's void Func_02000338(struct Actor *object), it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:123: conflicting types for `Func_02000338'. */
-extern void Func_02000338__mars_lighthouse_entrance(void) __asm__("Func_02000338");
+/* VIEW(mars_lighthouse_entrance): routine MarsLighthouseEntrance_PoundIceCone as void MarsLighthouseEntrance_PoundIceCone(void); the definition has void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index); tried as the definition's void MarsLighthouseEntrance_PoundIceCone(struct Actor *object), it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:123: conflicting types for `MarsLighthouseEntrance_PoundIceCone'. */
+extern void Func_02000338__mars_lighthouse_entrance(void) __asm__("MarsLighthouseEntrance_PoundIceCone");
 
-void Func_0200040c(void) { Func_02000338__mars_lighthouse_entrance(); }
+void MarsLighthouseEntrance_StartPoundIceCone(void) { Func_02000338__mars_lighthouse_entrance(); }
 
 #include "iwram_call.h"
 
@@ -183,7 +185,9 @@ extern const u8 gData_02005eb4[];
 extern const u8 gData_02005f74[];
 extern const u8 gData_020060c4[];
 
-void Func_0200051c(void) {
+/// Grind on the ice at the dead end, actor 10: the crack runs to the ice sheet
+/// a floor below.
+void MarsLighthouseEntrance_GrindIce(void) {
   s32 x;
   s32 count;
 
@@ -206,7 +210,8 @@ step:
 
 #include "ram_buffer.h"
 
-void Func_02000564(void) {
+/// ★ Named from the game: " checked the ice." (MsgCheckedTheIce)
+void MarsLighthouseEntrance_CheckIce(void) {
   FieldMessage_Show((s32)MsgCheckedTheIce, 1);
   FieldMessage_Show((s32)MsgCheckedTheIce + 1, 1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->unk15a = 1;
@@ -214,7 +219,9 @@ void Func_02000564(void) {
 
 #include "scene_tables.h"
 
-void Func_02000590(void) {
+/// Teleport on the circle: the first time the camera follows the leader across;
+/// after, the leader leaves at once.
+void MarsLighthouseEntrance_Teleport(void) {
   if (!Flag_IsSet(0xa36)) {
     Func_020046b4();
     Event_Start();
@@ -249,7 +256,9 @@ void Func_02000590(void) {
 DEFINE_FUNC_020001A0(Func_02000648, Func_020046b4, Func_02004dd0, 17,
     Func_02004718)
 
-void Func_02000678(s32 state, s32 frame) {
+/// Burst on the cracked ice sheet, actor 18: a flash, the sheet gone, chips
+/// flying (flag 0xa3f).
+void MarsLighthouseEntrance_BurstIceSheet(s32 state, s32 frame) {
   if (state == 1) {
     Event_PlaySound(0x23e);
     PaletteFade_ApplyTarget(0x10000, 0);
@@ -309,7 +318,9 @@ void Func_02000808(void) {
 
 DEFINE_FUNC_0200085C(Func_0200085c, 28, 92, 8, 100, 92, 38, 8, 20, 0xa47)
 
-void Func_020008f4(s32 unused, s32 id) {
+/// Move on the statue, actor 8, to cell x 20: it blocks the last flame thrower
+/// (flag 0xa4f).
+void MarsLighthouseEntrance_PushStatueIntoFlames(s32 unused, s32 id) {
   if (id == 8) {
     struct Actor *object = Actor_Get(8);
 
@@ -849,7 +860,7 @@ L_020093dc:
   MapGrid_CopyCellsLayered(35, 41, 24, 10, 3, 53);
   MapGrid_CopyCellsLayered(35, 105, 24, 10, 3, 117);
 L_02009420:
-  Call1((void (*)())Func_020002bc, (s32)gData_020053d8);
+  Call1((void (*)())MarsLighthouseEntrance_PlaceIceCones, (s32)gData_020053d8);
   t12 = Event_GetFlag(0xa3e);
   if (t12 != 0)
     goto L_02009436;
@@ -865,7 +876,7 @@ L_02009454:
   Call1((void (*)())Func_02004d88, 0);
   Call4((void (*)())Func_020022e4, (s32)gData_020053e6, (s32)gData_020053f8, 0,
         88);
-  Call1((void (*)())Func_020002bc, (s32)gData_020053fe);
+  Call1((void (*)())MarsLighthouseEntrance_PlaceIceCones, (s32)gData_020053fe);
   t17 = Event_GetFlag(0xa3f);
   if (t17 == 0)
     goto L_020094ae;
@@ -966,7 +977,7 @@ L_02009694:
         (s32)Func_020019a4, 88);
   Call2((void (*)())Func_0200248c, 0, 1);
 L_020096a8:
-  Call1((void (*)())Func_020002bc, (s32)gData_02005418);
+  Call1((void (*)())MarsLighthouseEntrance_PlaceIceCones, (s32)gData_02005418);
   goto L_020098be;
 L_020096b0:
   if (v_r8 != (s32)&SceneId_Ov6aaRoom5)
@@ -1035,7 +1046,7 @@ L_020097fa:
   t93 = (s32)Actor_Get(11);
   FIELD_AT(t93, s32, 108) = (s32)Func_020012bc;
   Func_020022d8(1);
-  Call1((void (*)())Func_020002bc, (s32)gData_02005454);
+  Call1((void (*)())MarsLighthouseEntrance_PlaceIceCones, (s32)gData_02005454);
   t96 = (s32)Actor_Get(20);
   t97 = (s32)Actor_Get(13);
   FIELD_AT(t97, s32, 108) = (s32)Func_02001344;

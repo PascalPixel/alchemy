@@ -44,9 +44,9 @@ DEFINE_FUNC_020018BC(Func_0200404c, gData_02004cf4, Func_02003e04)
 #include "objcmd.h"
 
 void Func_02000038(void);
-void Func_0200024c(void);
-void Func_02000e50(void);
-void Func_0200236c(void);
+void MarsLighthouseStarRoom_BurstIce(void);
+void MarsLighthouseStarRoom_ExamineStatue(void);
+void MarsLighthouseStarRoom_SlideOnIce(void);
 void Func_02002c44(void);
 void Func_02002ce8(void);
 
@@ -335,18 +335,18 @@ struct Trigger gSceneEvents[] = {
     {33, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {TRIGGER_STEP, 90, 0x1a4b, EVENT(Func_0200236c)},
+    {TRIGGER_STEP, 90, 0x1a4b, EVENT(MarsLighthouseStarRoom_SlideOnIce)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(Func_02000060)},
     {0x60009a15, 9, CONDITION_ALWAYS, EVENT(Func_02000074)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 9, CONDITION_ALWAYS, (u32)(Func_0200007c)},
     {TRIGGER_RAISED, 20, CONDITION_ALWAYS, EVENT(Func_020005b0)},
-    {0x50009705, 20, 0x1233, EVENT(Func_0200024c)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_02000ba4)},
+    {0x50009705, 20, 0x1233, EVENT(MarsLighthouseStarRoom_BurstIce)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(MarsLighthouseStarRoom_HoldWarmHand)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgMarsStar05)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_02000bd8)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(MarsLighthouseStarRoom_TakeMarsStar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgMarsStar04)},
-    {TRIGGER_EXAMINE, 21, CONDITION_ALWAYS, EVENT(Func_02000e50)},
-    {0xde04, 1045, CONDITION_ALWAYS, EVENT(Func_02000e80)},
+    {TRIGGER_EXAMINE, 21, CONDITION_ALWAYS, EVENT(MarsLighthouseStarRoom_ExamineStatue)},
+    {0xde04, 1045, CONDITION_ALWAYS, EVENT(MarsLighthouseStarRoom_UseMarsStar)},
     {TRIGGERS_END},
 };
 

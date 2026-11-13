@@ -137,7 +137,9 @@ struct RideState {
   struct RideCar *car;
 };
 
-s32 Func_0200236c(void) {
+/// Stepping onto ice (cell behavior 90, as Imil's ice slide is in The Broken
+/// Seal): the leader slides until the ice stops.
+s32 MarsLighthouseStarRoom_SlideOnIce(void) {
   struct RideEvent *event = Ram_HeapSlots->eventWork;
   struct RideState *ride;
   struct Actor *leader;
@@ -197,9 +199,9 @@ s32 Func_0200236c(void) {
 
 extern u16 gData_02004cf0[];
 
-DEFINE_FUNC_020024AC(Func_020024ac, Func_0200236c)
+DEFINE_FUNC_020024AC(MarsLighthouseStarRoom_ContinueSlide, MarsLighthouseStarRoom_SlideOnIce)
 
-s32 Func_020024c8(void) {
+s32 MarsLighthouseStarRoom_IsSliding(void) {
   return ((struct RideWork *)(gData_020023c4 + 0x188))->active;
 }
 

@@ -50,7 +50,7 @@ struct RideWork {
 };
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-void Func_0200236c(void);
+void MarsLighthouseStarRoom_SlideOnIce(void);
 
 s32 Func_02000038(struct Actor *object) {
   Actor_SetSingleChildFlags(object, 0);
@@ -91,7 +91,8 @@ void Func_0200007c(void) {}
 
 extern const u8 gData_02004474[];
 
-void Func_02000080(s32 id) {
+/// Six chips of ice burst from an actor and bounce away.
+void MarsLighthouseStarRoom_ScatterIceChips(s32 id) {
   struct Actor *source = Actor_Get(id);
   s32 i;
 
@@ -181,7 +182,9 @@ struct EventDelay {
   u16 frames;
 };
 
-void Func_0200024c(s32 phase, s32 frame) {
+/// Burst on the frozen dragons, actor 10: a flash, the ice gone, chips flying
+/// (flag 0x238).
+void MarsLighthouseStarRoom_BurstIce(s32 phase, s32 frame) {
   if (phase == 1) {
     Event_PlaySound(574);
     PaletteFade_ApplyTarget(0x10000, 0);
@@ -194,7 +197,7 @@ void Func_0200024c(s32 phase, s32 frame) {
     ((struct EventDelay *)Ram_HeapSlots->eventWork)->frames = 20;
   }
   if ((u32)(frame - 97) <= 174 && frame % 30 == 0)
-    Func_02000080(10);
+    MarsLighthouseStarRoom_ScatterIceChips(10);
   if (frame == 276) {
     PaletteFade_ApplyTarget(0x7fff, 0);
     PaletteFade_Interpolate(20);
@@ -214,7 +217,7 @@ struct Overlay6abEventWork {
   struct Actor *unk1cc;
 };
 
-void Func_02000714(void);
+void MarsLighthouseStarRoom_WakeAfterBattle(void);
 void Func_02000ae4(s32 a);
 void Func_02000db8(s32 actor);
 void Func_02001d7c(void);
@@ -300,7 +303,7 @@ s32 Scene_Initialize(void) {
           MapGrid_CopyCellAttributes(31, 21, 2, 2, 40, 12);
         }
       } else if (entrance == 20) {
-        Func_02000714();
+        MarsLighthouseStarRoom_WakeAfterBattle();
       }
     }
   }
@@ -381,7 +384,9 @@ extern u8 gData_02004958[];
 extern u8 gData_020049a0[];
 extern u8 gData_020049dc[];
 
-void Func_02000714(void) {
+/// After the Flame Dragons' battle, the two Adepts lie wounded.
+/// ★ Named from the game: "Why... Why am I lying here?" (MsgMarsStar01)
+void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   s32 t1, t2, t3, t8, t10, t12, t14, t28, t30, t32, t34, t50, t52, t87, v5, v6,
       v8;
 
@@ -594,7 +599,9 @@ void Func_02000ae4(s32 rise) {
 void Event_Start(void);
 void Event_End(void);
 
-void Func_02000ba4(void) {
+/// ★ Named from the game: "Your hand...so warm... People have such warm
+/// hands... I had forgotten..." (MsgMarsStar03)
+void MarsLighthouseStarRoom_HoldWarmHand(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(14, 5);
@@ -611,7 +618,10 @@ void Inventory_Equip(s32 owner, s32 slot);
 void Actor_Release(struct Actor *object);
 void FieldCamera_WaitForArrival(void);
 
-void Func_02000bd8(void) {
+/// Actor 13 hands over the Mars Star, which Felix puts in the Mythril Bag, and
+/// the voice of the statue speaks.
+/// ★ Named from the game: " got the Mars Star!" (MsgMarsStar08)
+void MarsLighthouseStarRoom_TakeMarsStar(void) {
   struct Actor *leader;
   struct Actor *object;
   s32 i;
@@ -709,7 +719,9 @@ struct EventNote {
   u16 unk15a;
 };
 
-void Func_02000e50(void) {
+/// ★ Named from the game: "There's a space for you to place something."
+/// (MsgMarsStar07)
+void MarsLighthouseStarRoom_ExamineStatue(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   Event_Start();
@@ -729,7 +741,8 @@ void Func_02001424(void);
 
 #if !TLA_PATCH_1
 
-void Func_02000e80(void) {
+/// ★ Named from the game: " used the Mars Star!" (MsgMarsStar09)
+void MarsLighthouseStarRoom_UseMarsStar(void) {
   struct Actor **slot;
   struct Actor *object;
   struct FieldSprite *sprite;
@@ -844,7 +857,7 @@ void Func_02000e80(void) {
 
 #else
 
-void Func_02000e80(void) {
+void MarsLighthouseStarRoom_UseMarsStar(void) {
   s32 flag;
   struct Actor **slot, **slot2;
   struct Actor *object, *object2;

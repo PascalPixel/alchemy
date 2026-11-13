@@ -50,7 +50,7 @@ struct RideWork {
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Actor_Release(struct Actor *object);
-void Func_0200236c(void);
+void MarsLighthouseStarRoom_SlideOnIce(void);
 
 DEFINE_FUNC_02001DD0(Func_02001dd0, Actor_Release)
 

@@ -347,7 +347,7 @@ void Window_MarkVisibleTextTiles(void) {
   // The cursor never skips the two hidden columns that end each 32-entry
   // row, so the scan covers the tilemap's first 600 entries in order: row 18
   // from column 24 on and row 19 are never marked shown.
-  for (row = 0; row < 20; row++) {
+  for (row = 20; row != 0; row--) {
     for (x = 0; x < width; x++) {
       u32 tileId = *cursor++ & TILE_NUMBER_MASK;
 

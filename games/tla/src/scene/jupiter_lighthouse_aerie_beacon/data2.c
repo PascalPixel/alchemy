@@ -290,8 +290,8 @@ struct Trigger gSceneEvents[] = {
     {2, 101, 0xa21, EVENT(Func_0200065c)},
     {0, 28, CONDITION_ALWAYS, MSGNO(MsgOnceYouVe)},
     {0, 27, CONDITION_ALWAYS, MSGNO(MsgOnceJupiterIs)},
-    {0x8d15, 28, CONDITION_ALWAYS, MSGNO(MsgOnceJupiterIsLit)},
-    {0x8d15, 27, CONDITION_ALWAYS, MSGNO(MsgDoEvenThink)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgOnceJupiterIsLit)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgDoEvenThink)},
     {TRIGGERS_END},
 };
 

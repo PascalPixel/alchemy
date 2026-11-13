@@ -66,8 +66,8 @@ struct Trigger gSceneEvents[] = {
     {1, 1, CONDITION_ALWAYS, 1},
     {0xc400, 8, CONDITION_ALWAYS, EVENT(Func_02000054)},
     {0, 8, 0x197f, MSGNO(MsgChampaTreasureEncouragesLaziness)},
-    {0x8d15, 8, 0x197f, MSGNO(MsgChampaVillagersStoppedWorking)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x197f, MSGNO(MsgChampaVillagersStoppedWorking)},
     {0, 8, CONDITION_ALWAYS, MSGNO(MsgChampaCaptainLastHope)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgChampaNeedsCaptainTreasure)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgChampaNeedsCaptainTreasure)},
     {TRIGGERS_END},
 };

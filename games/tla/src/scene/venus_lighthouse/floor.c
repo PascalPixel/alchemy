@@ -1098,9 +1098,9 @@ struct Trigger gSceneEvents[] = {
     {3, 38, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
     {3, 39, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
     {3, 40, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadTrueHeart)},
-    {0x50009085, 0, CONDITION_ALWAYS,
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS,
      EVENT(SceneState_ApplySixRectsAfterFlag161)},
-    {0x40009085, 0, CONDITION_ALWAYS,
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
      EVENT(SceneState_ApplySixRectsAfter161)},
     {TRIGGERS_END},
 };

@@ -158,9 +158,9 @@ struct Trigger gSceneEvents[] = {
     {0, 8, CONDITION_ALWAYS, MSGNO(MsgMadraChampaBoat)},
     {0, 9, CONDITION_ALWAYS, MSGNO(MsgMadraSailorNotChampa)},
     {0, 10, CONDITION_ALWAYS, MSGNO(MsgMadraWaveDamage)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgMadraCannotEscapeBySea)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgMadraBriggsNewShip)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgMadraPirateAttackParties)},
-    {0x8515, 13, 0x203, EVENT(Func_02000054)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMadraCannotEscapeBySea)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMadraBriggsNewShip)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgMadraPirateAttackParties)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 13, 0x203, EVENT(Func_02000054)},
     {TRIGGERS_END},
 };

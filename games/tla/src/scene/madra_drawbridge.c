@@ -132,9 +132,9 @@ struct Trigger gSceneEvents[] = {
     {0, 8, CONDITION_ALWAYS, MSGNO(MsgMadraMikasallaVillage)},
     {0, 9, 0x913, MSGNO(MsgMadraCanCrossWithPermission)},
     {0, 9, CONDITION_ALWAYS, MSGNO(MsgMadraAvoidYampiDesert)},
-    {0x8d15, 8, 0x913, MSGNO(MsgMadraForTheirSafety)},
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgMadraWouldNeedBoat)},
-    {0x8d15, 9, 0x913, MSGNO(MsgMadraElderReturn)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgMadraRatherStayHome)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x913, MSGNO(MsgMadraForTheirSafety)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMadraWouldNeedBoat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x913, MSGNO(MsgMadraElderReturn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMadraRatherStayHome)},
     {TRIGGERS_END},
 };

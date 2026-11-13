@@ -1055,7 +1055,7 @@ struct Trigger gData_020023f8[] = {
     {3, 14, 0x985, EVENT(Func_02000168)},
     {2, 15, 0x985, EVENT(Func_02001074)},
     {2, 16, 0x985, EVENT(Func_02001178)},
-    {0x1815, 8, 0x200, EVENT(Func_02001064)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, 0x200, EVENT(Func_02001064)},
     {TRIGGERS_END},
 };
 

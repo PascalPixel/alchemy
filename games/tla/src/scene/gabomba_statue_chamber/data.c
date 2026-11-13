@@ -163,7 +163,7 @@ struct Trigger gData_020024dc[] = {
     {0x202, 2, CONDITION_ALWAYS, EVENT(Func_02000b70)},
     {2, 10, 0x8fe, EVENT(Func_02000e60)},
     {0, 10, CONDITION_ALWAYS, MSGNO(MsgYourBlackOrb)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgOeiaWhatAm)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgOeiaWhatAm)},
     {0xc403, 11, 0x8ff, EVENT(Func_02000184)},
     {TRIGGERS_END},
 };

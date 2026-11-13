@@ -32,4 +32,10 @@
 /// thief." (MsgBriggs2)
 #define FLAG_BRIGGS_SAILED_FROM_ALHAFRA 0x97f
 
+/// The first of four flags, one for each patch of overgrowth in the Apojii
+/// Islands' cave that Whirlwind has blown away, by its placed actor id.
+#define FLAG_APOJII_CAVE_FOLIAGE_FIRST 0x8e9
+#define FLAG_APOJII_CAVE_FOLIAGE_BLOWN(actor)                                  \
+  (FLAG_APOJII_CAVE_FOLIAGE_FIRST - ACTOR_FIRST_PLACED + (actor))
+
 #endif

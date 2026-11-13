@@ -218,9 +218,9 @@ struct ActorPlacement gData_02006338[] = {
     {154, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_EAST, 2, 0},
     {221, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_WEST, 2, 0},
     {489, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTH, 2, 0},
-    {240, 0x1a76, 1, 0, 0, 0, FACING_NORTH, 2, 0},
-    {241, 0x1a76, 1, 0, 0, 0, FACING_NORTH, 2, 0},
-    {241, 0x1a76, 1, 0, 0, 0, FACING_NORTH, 2, 0},
+    {240, IF_FLAG_SET(0xa76), 1, 0, 0, 0, FACING_NORTH, 2, 0},
+    {241, IF_FLAG_SET(0xa76), 1, 0, 0, 0, FACING_NORTH, 2, 0},
+    {241, IF_FLAG_SET(0xa76), 1, 0, 0, 0, FACING_NORTH, 2, 0},
     {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };

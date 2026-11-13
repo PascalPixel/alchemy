@@ -6,6 +6,6 @@
 
 #include "types.h"
 
-extern u32 gData_02000090[];
+extern u32 gApojiiIslandsCave_FoliageScript[];
 
 #endif

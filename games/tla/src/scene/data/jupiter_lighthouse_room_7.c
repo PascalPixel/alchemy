@@ -60,7 +60,7 @@ struct Trigger gSceneEvents[] = {
     {49, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {514, 30, 0x1a1a, EVENT(Func_02000e20)},
+    {514, 30, IF_FLAG_SET(0xa1a), EVENT(Func_02000e20)},
     {TRIGGER_STEP, 20, 0xa1b, EVENT(Scene_RunOnce)},
     {TRIGGER_STEP, 21, 0xa1b, EVENT(Scene_RunIfFlagCleared)},
     {0x8602, 40, CONDITION_ALWAYS, EVENT(Func_02000cec)},

@@ -10,6 +10,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
+#include "flags.h"
 #include "scene_tables.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -65,8 +66,10 @@ struct ActorPlacement gActorPlacements[] = {
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0xc400, 8, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {TRIGGER_TALK, 8, 0x197f, MSGNO(MsgChampaTreasureEncouragesLaziness)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x197f,
+    {TRIGGER_TALK, 8, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
+     MSGNO(MsgChampaTreasureEncouragesLaziness)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8,
+     IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
      MSGNO(MsgChampaVillagersStoppedWorking)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgChampaCaptainLastHope)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,

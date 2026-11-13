@@ -34,6 +34,13 @@ enum { FACING_STEP = 0x1000 };
 
 enum { SCENE_TABLE_END = -1, CONDITION_ALWAYS = -1 };
 
+/// A table row's condition: CONDITION_ALWAYS, a flag number that must be
+/// clear, or IF_FLAG_SET of a flag that must be set, as The Broken Seal's.
+enum { CONDITION_FLAG_SET = 0x1000 };
+
+/// A condition that holds while flag is set.
+#define IF_FLAG_SET(flag) ((flag) | CONDITION_FLAG_SET)
+
 /// Entrance positions.
 struct SceneEntrance {
   s16 entrance;     ///< the entrance number; SCENE_TABLE_END ends the table
@@ -137,7 +144,7 @@ enum TriggerKind {
   TRIGGER_EXAMINE = 3, ///< the A button on what is ahead, when it is no actor
   TRIGGER_ITEM = 4,    ///< an item used on a cell or an actor
   TRIGGER_PSYNERGY = 5,
-  TRIGGER_RAISED = 6, ///< raised by code
+  TRIGGER_RAISED = 6,     ///< raised by code
   TRIGGER_TALK_HALTED = 7 ///< talking to an actor Halt has stopped
 };
 

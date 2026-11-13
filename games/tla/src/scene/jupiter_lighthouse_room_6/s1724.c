@@ -28,9 +28,10 @@ void Teleporter_Uncover(struct CellTarget *work, struct CellTargetEntry *entry);
 void Teleporter_Sink(struct CellTarget *work, struct CellTargetEntry *entry);
 
 DEFINE_TELEPORTERS_STEP(Teleporters_Step, gTeleporters, Teleporter_Uncover,
-    Teleporter_Sink)
+                        Teleporter_Sink)
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gTeleporters, Teleporter_DropIn)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gTeleporters,
+                                Teleporter_DropIn)
 
 #include "scene_tables.h"
 #include "objcmd.h"
@@ -87,8 +88,8 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {TRIGGER_EXIT, 1, 0x1a23, 21},
-    {TRIGGER_EXIT, 2, 0x1a23, 22},
+    {TRIGGER_EXIT, 1, IF_FLAG_SET(0xa23), 21},
+    {TRIGGER_EXIT, 2, IF_FLAG_SET(0xa23), 22},
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},

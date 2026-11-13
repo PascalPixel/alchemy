@@ -65,9 +65,9 @@ struct ActorPlacement gData_0200178c[] = {
     {83, 0x8ab, 1, PIXELS(888), 0, PIXELS(232), FACING_WEST, 1, 0},
     {424, 0x8e6, 1, PIXELS(816), 0, PIXELS(232), FACING_WEST, 2, 0},
     {245, 0x61, 1, PIXELS(1336), 0, PIXELS(648), FACING_SOUTH, 0, 0},
-    {5, 0x18f3, 1, 0, 0, 0, FACING_EAST, 0, 0},
-    {6, 0x18f3, 1, 0, 0, 0, FACING_EAST, 0, 0},
-    {56, 0x18f3, 1, 0, 0, 0, FACING_EAST, 0, 0},
+    {5, IF_FLAG_SET(0x8f3), 1, 0, 0, 0, FACING_EAST, 0, 0},
+    {6, IF_FLAG_SET(0x8f3), 1, 0, 0, 0, FACING_EAST, 0, 0},
+    {56, IF_FLAG_SET(0x8f3), 1, 0, 0, 0, FACING_EAST, 0, 0},
     {SCENE_TABLE_END},
 };
 
@@ -95,7 +95,7 @@ struct Trigger gData_020019c0[] = {
 struct Trigger gData_020019f0[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {0x51, 3, 0x1885, 3},
+    {0x51, 3, IF_FLAG_SET(0x885), 3},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_02000660)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x886, MSGNO(MsgDigHereYou)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgIKnewIt)},

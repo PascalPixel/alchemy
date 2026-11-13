@@ -1,11 +1,11 @@
 /// @file
 /// The spoils: coins, experience, items and level ups.
-// Part of f11e3ac.c.
+// Part of presentation.c.
 
-#include "../f11e3ac_internal.h"
+#include "../presentation_internal.h"
 #include "gamepak/far_call/game.h"
 #include "module/battle/battle.h"
-#include "module/battle/f11e3ac.h"
+#include "module/battle/presentation.h"
 
 // XXX: what this encodes, and whether item ids here are wider than The Broken
 // Seal's 9 bits; its callers would settle it.

@@ -1,13 +1,13 @@
 /// @file
 /// Whether a unit stands in its side's formation and how many Djinn a side has
 /// on standby, and one routine not yet understood.
-// Part of f11e3ac.c.
+// Part of presentation.c.
 
-#include "../f11e3ac_internal.h"
+#include "../presentation_internal.h"
 #include "flag_call.h"
 #include "gamepak/far_call/game.h"
 #include "module/battle/battle.h"
-#include "module/battle/f11e3ac.h"
+#include "module/battle/presentation.h"
 #include "module/battle/presentation.h"
 #include "module/tla.h"
 

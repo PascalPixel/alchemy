@@ -1,11 +1,11 @@
 /// @file
 /// Enemy formations: the enemies chosen, levelled and lettered, and each enemy
 /// class's sprite, palette, size and attack effect.
-// Part of f11e3ac.c.
+// Part of presentation.c.
 
-#include "../f11e3ac_internal.h"
+#include "../presentation_internal.h"
 #include "flag_call.h"
-#include "module/battle/f11e3ac.h"
+#include "module/battle/presentation.h"
 
 u8 GameFlag_GetByte(s32 flag);
 
@@ -113,8 +113,9 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   return result;
 }
 
-/* VIEW(f11e3ac): tag struct OwnerStats as struct OwnerStats__f11e3ac; module/tla.h has another definition. */
-struct OwnerStats__f11e3ac {
+/* VIEW(f11e3ac): tag struct OwnerStats as struct OwnerStats__presentation;
+ * module/tla.h has another definition. */
+struct OwnerStats__presentation {
   s16 maxHp;
   s16 maxPp;
   s16 hp;
@@ -130,24 +131,24 @@ struct OwnerStats__f11e3ac {
 struct OwnerState {
   u8 unk00[15];
   u8 level;
-  struct OwnerStats__f11e3ac stats;
+  struct OwnerStats__presentation stats;
 };
 
 /// Raises an enemy by levels, The Broken Seal's BattleEnemy_AdjustLevel with
 /// HP capped at 16383 instead of 9999. Returns nothing, though declared s32 as
 /// there.
 s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
-  struct OwnerStats__f11e3ac *base;
+  struct OwnerStats__presentation *base;
   struct OwnerState *state;
-  struct OwnerStats__f11e3ac *stats;
+  struct OwnerStats__presentation *stats;
   s32 value;
   s32 floor;
   s32 i;
 
-  base = Heap_AllocEwram(sizeof(struct OwnerStats__f11e3ac));
+  base = Heap_AllocEwram(sizeof(struct OwnerStats__presentation));
   state = Unit_Get__f11f66c(owner);
   stats = &state->stats;
-  Iwram_CopyWordsEntry(base, stats, sizeof(struct OwnerStats__f11e3ac));
+  Iwram_CopyWordsEntry(base, stats, sizeof(struct OwnerStats__presentation));
 
   value = stats->maxHp;
   value += __divsi3(levels * 97, 10);
@@ -212,8 +213,9 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   Heap_Release(base);
 }
 
-/* VIEW(f11e3ac): tag struct UnitBaseStats as struct UnitBaseStats__f11e3ac; module/tla.h has another definition. */
-struct UnitBaseStats__f11e3ac {
+/* VIEW(f11e3ac): tag struct UnitBaseStats as struct
+ * UnitBaseStats__presentation; module/tla.h has another definition. */
+struct UnitBaseStats__presentation {
   s16 hp;
   s16 pp;
   s16 hpGauge;
@@ -228,7 +230,7 @@ struct UnitBaseStats__f11e3ac {
 /// base block, then recalculates its stats.
 // No ☀️ twin found.
 void Func_08127a0c(s32 unitId) {
-  struct UnitBaseStats__f11e3ac *saved = Heap_AllocEwram(36);
+  struct UnitBaseStats__presentation *saved = Heap_AllocEwram(36);
   struct BattleUnit *unit = Unit_Get__f11f66c(unitId);
   s32 value;
   s32 floor;
@@ -556,7 +558,8 @@ s32 Func_08127cd4(s32 recordId) {
   battle->firstDefeated = 6;
   battle->defeatState = 0;
   for (memberOrEnemyIndex = 128; memberOrEnemyIndex < 134; memberOrEnemyIndex++)
-    Iwram_ClearWordsEntry(Unit_Get__f11f66c(memberOrEnemyIndex), BATTLE_UNIT_SIZE);
+    Iwram_ClearWordsEntry(Unit_Get__f11f66c(memberOrEnemyIndex),
+                          BATTLE_UNIT_SIZE);
 
   memberOrEnemyIndex = 0;
   if (enemyClasses[0] == 0)

@@ -1,10 +1,10 @@
 /// @file
 /// Battle playback: starting it, scheduling its phases, resetting it and
 /// waiting until it is ready.
-// Part of f11e3ac.c.
+// Part of presentation.c.
 
-#include "../f11e3ac_internal.h"
-#include "module/battle/f11e3ac.h"
+#include "../presentation_internal.h"
+#include "module/battle/presentation.h"
 #include "module/battle/presentation.h"
 #include "module/tla.h"
 
@@ -38,8 +38,9 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
 #define OBJ_VRAM 0x06010000
 #define KEYS_HELD (*(volatile u32 *)&gInput.held)
 
-/* VIEW(f11e3ac): tag struct ArrowSprite as struct ArrowSprite__f11e3ac; module/tla.h has another definition. */
-struct ArrowSprite__f11e3ac {
+/* VIEW(f11e3ac): tag struct ArrowSprite as struct ArrowSprite__presentation;
+ * module/tla.h has another definition. */
+struct ArrowSprite__presentation {
   void *next;
   u16 y : 8;
   u16 flags : 8;
@@ -55,7 +56,7 @@ struct PlaybackEvents {
   s32 phase;
   s32 eventIndex;
   s32 timer;
-  struct ArrowSprite__f11e3ac arrow;
+  struct ArrowSprite__presentation arrow;
   s32 arrowResource;
   s32 actorId;
   s16 pendingCue;
@@ -227,7 +228,7 @@ void BattleEvent_Playback(void) {
         events->timer = gVBlankCount;
       }
     } else if (events->phase == 5) {
-      struct ArrowSprite__f11e3ac *prompt = &events->arrow;
+      struct ArrowSprite__presentation *prompt = &events->arrow;
       u8 *arrowTiles = Data_0812996c;
       s32 pictureTiles = (s32)arrowTiles + ((gFrameCount >> 2) & 7) * 128;
       struct BattleMessageDisplay *display =
@@ -294,7 +295,8 @@ void BattleEvent_Playback(void) {
 
         if (events->timer == 0 && events->flags != 0) {
           s32 kind = BattleClass_GetDefeatSoundKind(
-              ((struct BattleUnit *)Unit_Get__f11f66c(events->actorId))->enemyId);
+              ((struct BattleUnit *)Unit_Get__f11f66c(events->actorId))
+                  ->enemyId);
 
           if (kind >= 0) {
             kind--;
@@ -308,7 +310,8 @@ void BattleEvent_Playback(void) {
           events->timer = 0;
         if (events->timer == 0) {
           s32 kind = BattleClass_GetDefeatSoundKind(
-              ((struct BattleUnit *)Unit_Get__f11f66c(events->actorId))->enemyId);
+              ((struct BattleUnit *)Unit_Get__f11f66c(events->actorId))
+                  ->enemyId);
 
           if (kind >= 0)
             Sound_PlayFar(146 + kind);

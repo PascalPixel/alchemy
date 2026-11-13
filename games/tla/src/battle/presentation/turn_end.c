@@ -1,11 +1,11 @@
 /// @file
 /// The end of a turn: each unit's modifiers and conditions counted down, the
 /// Djinn recovering, and the extras an action applies.
-// Part of f11e3ac.c.
+// Part of presentation.c.
 
-#include "../f11e3ac_internal.h"
+#include "../presentation_internal.h"
 #include "gamepak/far_call/game.h"
-#include "module/battle/f11e3ac.h"
+#include "module/battle/presentation.h"
 #include "module/battle/presentation.h"
 
 s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
@@ -266,7 +266,8 @@ s32 DjinnRecovery_CountDown(void) {
     timedEntry = list->entries;
     do {
       if (timedEntry->turns > 0 &&
-          ((struct BattleUnit *)Unit_Get__f11f66c(timedEntry->unitId))->hp != 0) {
+          ((struct BattleUnit *)Unit_Get__f11f66c(timedEntry->unitId))->hp !=
+              0) {
         timedEntry->turns--;
       }
       index++;
@@ -327,7 +328,8 @@ s32 Func_08124cc4(s32 side) {
     do {
       if (timedEntry->turns > 0 &&
           BattleParty_IsUnitListed(timedEntry->unitId) &&
-          ((struct BattleUnit *)Unit_Get__f11f66c(timedEntry->unitId))->hp != 0) {
+          ((struct BattleUnit *)Unit_Get__f11f66c(timedEntry->unitId))->hp !=
+              0) {
         timedEntry->turns--;
         result = 1;
       }
@@ -413,7 +415,7 @@ s32 Func_08124cc4(s32 side) {
   if (test(unitId) != 0) {                                                     \
     BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));             \
     MessageArgument_PushFar(unitId, 1);                                        \
-    BattleMessage_ShowAndWaitFar(message);                                       \
+    BattleMessage_ShowAndWaitFar(message);                                     \
     BattleMessage_WaitForAdvance();                                            \
   }
 
@@ -422,7 +424,7 @@ s32 Func_08124cc4(s32 side) {
     BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));             \
     MessageArgument_PushFar(unitId, 1);                                        \
     BattleObject_UpdatePose(unitId);                                           \
-    BattleMessage_ShowAndWaitFar(message);                                       \
+    BattleMessage_ShowAndWaitFar(message);                                     \
     BattleMessage_WaitForAdvance();                                            \
   }
 
@@ -446,7 +448,8 @@ void Battle_ProcessTurnEnd(void) {
       do {
         if (timedEntry->turns > 0 &&
             BattleObject_Get(timedEntry->unitId) != 0 &&
-            ((struct BattleUnit *)Unit_Get__f11f66c(timedEntry->unitId))->hp != 0) {
+            ((struct BattleUnit *)Unit_Get__f11f66c(timedEntry->unitId))->hp !=
+                0) {
           timedEntry->turns--;
         }
         recoveryIndex++;

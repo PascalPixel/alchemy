@@ -1,15 +1,15 @@
 /// @file
 /// Applying an ability to each of its targets, the battle events queued on the
 /// way, and the wait for the player to advance a battle message.
-// Part of f11e3ac.c.
+// Part of presentation.c.
 
-#include "../f11e3ac_internal.h"
+#include "../presentation_internal.h"
 #include "gamepak/far_call/game.h"
 #include "gamepak/far_call/window.h"
 #include "item_icon.h"
 #include "menu_list.h"
 #include "module/battle/battle.h"
-#include "module/battle/f11e3ac.h"
+#include "module/battle/presentation.h"
 #include "module/battle/presentation.h"
 #include "module/tla.h"
 #include "resource.h"
@@ -22,7 +22,13 @@
 #define PLACE_PARTY 0x100
 #define PLACE_ENEMY 0x180
 
-/* VIEW(f11f66c): routine Unit_Get as void *Unit_Get(s32 owner); strongest_unit has struct BattleUnit *Unit_Get(s32 unitId); tried as the definition's void *Unit_Get(s32 owner), which the object already declares, BattleAI_ChooseTarget moves: 5 of 776 instructions, BattleActor_ResetRuntimeFields moves: 1 of 97 instructions, BattleActor_DestroyTemporaryObject moves: 1 of 24 instructions, 32 more in tla-ja. */
+/* VIEW(f11f66c): routine Unit_Get as void *Unit_Get(s32 owner); strongest_unit
+ * has struct BattleUnit *Unit_Get(s32 unitId); tried as the definition's void
+ * *Unit_Get(s32 owner), which the object already declares,
+ * BattleAI_ChooseTarget moves: 5 of 776 instructions,
+ * BattleActor_ResetRuntimeFields moves: 1 of 97 instructions,
+ * BattleActor_DestroyTemporaryObject moves: 1 of 24 instructions, 32 more in
+ * tla-ja. */
 extern void *Unit_Get__f11f66c(s32 owner) __asm__("Unit_Get");
 
 #define COUNT_PARTIAL_CURES(unit, count)                                       \
@@ -306,7 +312,8 @@ s32 BattleAI_ChooseTarget(s32 actorId, struct BattleAct *action) {
     return -1;
 
   if (action->targetMode == TARGET_MODE_FOES && action->range == 1 &&
-      Enemy_GetDefinitionFar(((struct BattleUnit *)Unit_Get__f11f66c(actorId))->enemyId)
+      Enemy_GetDefinitionFar(
+          ((struct BattleUnit *)Unit_Get__f11f66c(actorId))->enemyId)
               ->targetStrategy != STRATEGY_RANDOM &&
       (u32)((action->flags & ABILITY_KIND_MASK) - ABILITY_KIND_ATTACK) <= 2) {
     selected = -1;
@@ -533,8 +540,15 @@ void BattleEvent_GrantDjinnBonus(struct BattleEventFlagWork *runtime,
   runtime->flags |= 1;
 }
 
-/* VIEW(f11f66c): routine BattleMotion_FlashHit as void BattleMotion_FlashHit(u32 unitId, s32 a, s32 b); the definition has void BattleMotion_FlashHit(s32 id); tried as the definition's void BattleMotion_FlashHit(s32 id), which the object already declares, it does not compile in tla-ja: games/tla/src/battle/presentation/f11e3ac.c:1720: too many arguments to function `BattleMotion_FlashHit'. */
-extern void BattleMotion_FlashHit__f11f66c(u32 unitId, s32 a, s32 b) __asm__("BattleMotion_FlashHit");
+/* VIEW(f11f66c): routine BattleMotion_FlashHit as void
+ * BattleMotion_FlashHit(u32 unitId, s32 a, s32 b); the definition has void
+ * BattleMotion_FlashHit(s32 id); tried as the definition's void
+ * BattleMotion_FlashHit(s32 id), which the object already declares, it does not
+ * compile in tla-ja: games/tla/src/battle/presentation.c:1720: too many
+ * arguments to function `BattleMotion_FlashHit'. */
+extern void
+BattleMotion_FlashHit__f11f66c(u32 unitId, s32 a,
+                               s32 b) __asm__("BattleMotion_FlashHit");
 
 /// Runs the queued battle events in order, then resets the queue.
 u32 BattleEvent_DispatchQueued(void) {
@@ -1066,7 +1080,9 @@ power_end:
           if (abilityId == 312 || abilityId == 316) {
             atk = ((struct BattleUnit *)Unit_Get__f11f66c(plan->actorId))->atk;
             if (abilityId == 312)
-              atk += ((struct BattleUnit *)Unit_Get__f11f66c(plan->actorId2))->atk / 4;
+              atk += ((struct BattleUnit *)Unit_Get__f11f66c(plan->actorId2))
+                         ->atk /
+                     4;
           }
           dmg = Battle_CalculateAttackDamageFar(atk, scale, ap, bonus);
         }

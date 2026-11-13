@@ -1,12 +1,12 @@
 /// @file
 /// The battle's screen transitions: the mosaic fade to black, and the rows of
 /// tiles that close in, with the HBlank scroll they run on.
-// Part of f11e3ac.c.
+// Part of presentation.c.
 
-#include "../f11e3ac_internal.h"
+#include "../presentation_internal.h"
 #include "gamepak/far_call/window.h"
 #include "module/battle/battle.h"
-#include "module/battle/f11e3ac.h"
+#include "module/battle/presentation.h"
 #include "module/system/system.h"
 
 /// Fades the screen to black over sixteen frames as every background's

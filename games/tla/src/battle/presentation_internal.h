@@ -1,9 +1,9 @@
-#ifndef ALCHEMY_F11E3AC_INTERNAL_H
-#define ALCHEMY_F11E3AC_INTERNAL_H
+#ifndef ALCHEMY_PRESENTATION_INTERNAL_H
+#define ALCHEMY_PRESENTATION_INTERNAL_H
 
 /// @file
-/// What every part of the f11e3ac object shares: its includes. f11e3ac.c
-/// includes it before the parts, and each part includes it too.
+/// What every part of the presentation object shares: its includes.
+/// presentation.c includes it before the parts, and each part includes it too.
 
 #include "types.h"
 #include "actor.h"
@@ -64,4 +64,4 @@
 #include "battle_formation.h"
 #include "tla_edition.h"
 
-#endif // ALCHEMY_F11E3AC_INTERNAL_H
+#endif // ALCHEMY_PRESENTATION_INTERNAL_H

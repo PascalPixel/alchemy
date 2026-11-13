@@ -2,11 +2,11 @@
 /// A unit's motion graphics in battle: setting its records' frames, the flash
 /// when it is hit, its removal from the formations and the graphics of a
 /// defeated unit, with routines around them not yet understood.
-// Part of f11e3ac.c.
+// Part of presentation.c.
 
-#include "../f11e3ac_internal.h"
+#include "../presentation_internal.h"
 #include "module/battle/battle.h"
-#include "module/battle/f11e3ac.h"
+#include "module/battle/presentation.h"
 #include "module/battle/presentation.h"
 #include "module/system/system.h"
 #include "module/tla.h"
@@ -304,9 +304,10 @@ void Func_0811e830(struct SavedBattleObj *saved) {
  * BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) { s32 span = 0x01fe0000;
  * s32 zoom; struc...; tried as the one declaration s32
  * BattleClass_GetAttackHop(s32 classId), it does not compile in tla-ja:
- * games/tla/src/battle/presentation/f11e3ac.c:7982: conflicting types for
+ * games/tla/src/battle/presentation.c:7982: conflicting types for
  * `BattleClass_GetAttackHop'. */
-extern s32 BattleClass_GetAttackHop__f11e3ac(s32 classId) __asm__("BattleClass_GetAttackHop");
+extern s32 BattleClass_GetAttackHop__presentation(s32 classId) __asm__(
+    "BattleClass_GetAttackHop");
 
 s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
   struct BattlePresentationWork work;
@@ -369,8 +370,9 @@ s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
   if (work.kind == 10)
     Actor_SetMode(object, 2);
   else
-    BattleMotion_ApproachTarget(work.actor, work.actors[0], frames,
-                                BattleClass_GetAttackHop__f11e3ac(unit->enemyId) << 16);
+    BattleMotion_ApproachTarget(
+        work.actor, work.actors[0], frames,
+        BattleClass_GetAttackHop__presentation(unit->enemyId) << 16);
   if ((mode & 32) && plan->actorId != plan->actorId2 &&
       plan->actorId2 != (work.actors[0] & 0x80)) {
     object = BattleObject_Get(plan->actorId2);
@@ -380,7 +382,7 @@ s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
         animation->entries[0]->animationId, 2, 1);
     BattleMotion_ApproachTarget(
         plan->actorId2, work.actors[0], frames,
-        BattleClass_GetAttackHop__f11e3ac(
+        BattleClass_GetAttackHop__presentation(
             ((struct BattleUnit *)Unit_Get(plan->actorId2))->enemyId)
             << 16);
     Actor_SetAnimationSpeedFar(

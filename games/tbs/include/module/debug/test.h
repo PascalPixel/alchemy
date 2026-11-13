@@ -17,7 +17,7 @@ extern struct SceneEntrance gMenuTest_Entrances[];
 extern u32 gMenuTest_Exits[];
 extern struct ActorPlacement gMenuTest_ActorPlacements[];
 extern struct Trigger gMenuTest_Triggers[];
-extern s32 gMenuTest_SlotOffsets;
+extern s32 gMenuTest_NextLevel;
 extern s32 gMenuTest_FillLetter;
 
 #endif

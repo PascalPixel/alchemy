@@ -64,7 +64,6 @@ enum MenuTestActorId {
 };
 
 /// Recalculates the four heroes after a debug inventory or stat change.
-/// Preserve the original Isaac, Garet, Mia, Ivan order.
 static __inline__ void MenuTest_RecalculateParty(void) {
   Unit_Calculate(ISAAC);
   Unit_Calculate(GARET);
@@ -222,7 +221,7 @@ static void MenuTest_RaisePartyLevels(void) {
   s32 *targetLevel;
 
   FieldMessage_Show(MsgDebugWentLevel, FIELD_MESSAGE_ZOOM);
-  targetLevel = &gMenuTest_SlotOffsets;
+  targetLevel = &gMenuTest_NextLevel;
   Unit_LevelUpTo(ISAAC, *targetLevel);
   Unit_LevelUpTo(GARET, *targetLevel);
   Unit_LevelUpTo(MIA, *targetLevel);
@@ -454,7 +453,6 @@ static void MenuTest_GivePartyDjinn(void) {
     }
   }
 #endif
-  // Add and set each element in separate passes, preserving recovery updates.
   FieldMessage_Show(MsgDebugGotDjinni, FIELD_MESSAGE_ZOOM);
   Djinn_Give(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_FLINT));
   Djinn_Give(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_GRANITE));
@@ -515,8 +513,9 @@ static void MenuTest_GivePartyDjinn(void) {
 
 /// Reduces HP and PP, then poisons and haunts Isaac and binds and venoms Garet.
 static void MenuTest_DamageAndAfflictParty(void) {
-  // The statuses are set through the unit's bytes: poison (0x131), haunt
-  // (0x140) and curse (0x130).
+  /* FAKEMATCH(temporary): the unit written through a byte pointer moved on to
+   * haunt; as unit->poison, unit->haunt and unit->curse, 5 of 68 instructions
+   * differ in tbs-en. */
   u8 *record;
 
   FieldMessage_Show(MsgDebugBodyTornApart, FIELD_MESSAGE_ZOOM);
@@ -623,7 +622,6 @@ static void MenuTest_SelectItem(void) {
         Text_DrawStringInWindow(gDebugItemFullLabel, window, 0, 32);
       }
     }
-    // These are independent tests: a single frame can add and move the cursor.
     if (gKeysPressed & KEY_A) {
       if (PartyInventory_Add(selectedItemId) == -1) {
         Sound_Play(SE_MENU_CANCEL);
@@ -675,11 +673,9 @@ static void MenuTest_SelectItem(void) {
 
 UNUSED static void MenuTest_OpenItemBrowser(void) { MenuTest_SelectItem(); }
 
-/// Adds the original treasure test stock, retaining duplicate tickets and
-/// medals. Talking to ACTOR_MENARDI: `You got treasure!`.
+/// Gives the party treasure: key items, eleven Game Tickets and eight Lucky
+/// Medals. Talking to ACTOR_MENARDI: `You got treasure!`.
 static void MenuTest_GiveTreasureTestStock(void) {
-  // Sharing the duplicate grants through a counted loop shrinks this function
-  // from 404 to 288; retain the original calls.
   FieldMessage_Show(MsgDebugGotTreasure, FIELD_MESSAGE_ZOOM);
   Inventory_AddItem(ISAAC, ITEM_HERMES_WATER);
   Inventory_AddItem(ISAAC, ITEM_HALT_GEM);
@@ -730,15 +726,13 @@ static void MenuTest_GiveTreasureTestStock(void) {
 
 /// Sets the debug party, stock counters and levels; returns zero.
 s32 MenuTest_Initialize(void) {
-  // Assemble the test party before adding stock and setting levels: Jenna
-  // leaves, Garet, Mia and Ivan join.
+  // Jenna leaves; Garet, Mia and Ivan join.
   Party_RemoveMember(JENNA);
   Party_AddMember(GARET);
   Party_AddMember(MIA);
   Party_AddMember(IVAN);
-  // Populate the original shop counters, retaining repeated increments: how
-  // many of each rare item the shops may sell, here three Shamshirs, two
-  // Silver Blades, a Masamune and eight rare pieces of armor.
+  // How many of each rare item the shops may sell: three Shamshirs, two Silver
+  // Blades, a Masamune and eight rare pieces of armor.
   Item_AdjustCounter(ITEM_SHAMSHIR, 1);
   Item_AdjustCounter(ITEM_SHAMSHIR, 1);
   Item_AdjustCounter(ITEM_SHAMSHIR, 1);
@@ -794,7 +788,7 @@ struct SceneEntrance gMenuTest_Entrances[] = {
     {SCENE_TABLE_END},
 };
 
-/// No exits: 511 is SCENE_EXITS_END's value.
+/// No exits.
 u32 gMenuTest_Exits[] = {
     SCENE_EXITS_END,
 };
@@ -903,7 +897,7 @@ struct Trigger gMenuTest_Triggers[] = {
 
 /// The level MenuTest_RaisePartyLevels levels the four to next: 10 at first,
 /// ten more after each use.
-s32 gMenuTest_SlotOffsets = 10;
+s32 gMenuTest_NextLevel = 10;
 
 /// One less than the character the Japanese loop of MenuTest_GivePartyDjinn
 /// fills with: 65 at first, so 'B', one more each pass, back to 65 after 96.

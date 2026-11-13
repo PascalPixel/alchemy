@@ -53,7 +53,7 @@ s32 ReadFlashId(void) {
   return result;
 }
 
-/// Selects matching chip handlers, falling back to the final table entry when
+/// Installs the handlers of the chip the cartridge holds; returns 1 if it is
 /// unknown.
 s32 IdentifyFlash(void) {
   u16 missing;
@@ -65,14 +65,14 @@ s32 IdentifyFlash(void) {
   chip = gFlash_Chips;
   missing = 1;
   // Only the last entry, gFlash_ChipDefault, has a maker byte of 0.
-  while (((u8 *)&(*chip)->type.id)[0] != 0) {
-    if (id == (*chip)->type.id) {
+  while ((*chip)->type.id.separate.maker != 0) {
+    if (id == (*chip)->type.id.joined) {
       missing = 0;
       break;
     }
     chip++;
   }
-  // Install the selected entry, including the fallback when no ID matched.
+  // An unknown chip gets the last entry.
   gProgramFlashSector = (*chip)->program;
   gEraseFlashChip = (*chip)->eraseChip;
   gEraseFlashSector = (*chip)->eraseSector;
@@ -111,10 +111,9 @@ s32 SetFlashTimerIntr(u8 timerIndex, void (**callback)(void)) {
 /// Starts the selected operation timeout, saving the interrupt-enable state.
 /// timingIndex is the operation's phase (WaitForFlashWrite).
 void StartFlashTimer(u8 timingIndex) {
-  // Row timingIndex of the chip's max-time table (flashsst.s, flashat.s,
-  // flashmx.s, in flashset.s's flash_max_time form): interrupts to count, the
+  // Row timingIndex of the chip's wait-time table: interrupts to count, the
   // timer's reload and its control.
-  u16 *timing = (u16 *)((u8 *)gFlashMaxTime + timingIndex * 6);
+  u16 *timing = gFlashMaxTime + timingIndex * 3;
   u16 *timerRegister;
 
   gFlashSavedIme = REG_IME;
@@ -185,11 +184,11 @@ u16 WaitForFlashWrite(u8 timingIndex, volatile u8 *address, u8 expected) {
   StartFlashTimer(timingIndex);
   while ((u8)gFlashReadRoutine((u8 *)address) != expected) {
     if (gFlashTimeoutFlag) {
-      // Allow a final successful read at the timeout boundary.
+      // One last read, in case the write finished as time ran out.
       if ((u8)gFlashReadRoutine((u8 *)address) == expected)
         break;
       // A Macronix chip (0x1cc2) is sent FLASH_COMMAND_RESET.
-      if (gFlash->id == 0x1cc2)
+      if (gFlash->id.joined == 0x1cc2)
         FLASH_WRITE(FLASH_COMMAND_ADDRESS, FLASH_COMMAND_RESET);
       result = timingIndex | FLASH_ERROR_TIMEOUT;
       break;

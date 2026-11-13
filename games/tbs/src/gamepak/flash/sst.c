@@ -6,14 +6,10 @@
 #include "../../../include/gamepak/flash_data.h"
 #include "../../../include/system/io_reg.h"
 
-u16 _call_via_r3(s32 mode, u8 *address, u8 expected,
-                 FlashWaitProc waitForWrite);
-
 /// Issues the chip-erase command and waits for an erased byte.
 u16 EraseFlashChip(void) {
   u8 savedCode[64];
   u16 result;
-  FlashWaitProc *waitForWrite;
 
   REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | gFlash->wait[0];
 
@@ -22,9 +18,8 @@ u16 EraseFlashChip(void) {
 
   CopyFlashReadRoutineToRam(savedCode);
 
-  waitForWrite = &gWaitForFlashWrite;
-  result = _call_via_r3(FLASH_PHASE_ERASE_CHIP, (u8 *)FLASH_BASE,
-                        FLASH_ERASED_BYTE, *waitForWrite);
+  result = gWaitForFlashWrite(FLASH_PHASE_ERASE_CHIP, (u8 *)FLASH_BASE,
+                           FLASH_ERASED_BYTE);
 
   REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | WAITCNT_SRAM_8;
 
@@ -36,41 +31,27 @@ u16 EraseFlashChip(void) {
 u16 EraseFlashSector(u16 sector) {
   u8 savedCode[64];
   u16 result;
-  u16 setting;
-  FlashWaitProc *waitForWrite;
-  const struct FlashType *chip;
-  volatile u16 *waitcnt;
-  volatile u8 *command;
-  volatile u8 *unlock;
   volatile u8 *target;
 
   if (sector > FLASH_LAST_SECTOR) {
     return FLASH_ERROR_NO_SECTOR;
   }
 
-  waitcnt = &REG_WAITCNT;
-  setting = *waitcnt & 0xFFFC;
-  chip = gFlash;
-  *waitcnt = setting | chip->wait[0];
+  REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | gFlash->wait[0];
 
-  target = (volatile u8 *)((sector << chip->sector.shift) + FLASH_BASE);
+  target = (volatile u8 *)((sector << gFlash->sector.shift) + FLASH_BASE);
 
-  command = (volatile u8 *)(FLASH_BASE + FLASH_COMMAND_ADDRESS);
-  *command = FLASH_UNLOCK_1;
-  unlock = (volatile u8 *)(FLASH_BASE + FLASH_UNLOCK_ADDRESS);
-  *unlock = FLASH_UNLOCK_2;
-  *command = FLASH_COMMAND_ERASE;
-  *command = FLASH_UNLOCK_1;
-  *unlock = FLASH_UNLOCK_2;
+  FLASH_SEND_COMMAND(FLASH_COMMAND_ERASE);
+  FLASH_WRITE(FLASH_COMMAND_ADDRESS, FLASH_UNLOCK_1);
+  FLASH_WRITE(FLASH_UNLOCK_ADDRESS, FLASH_UNLOCK_2);
   *target = FLASH_COMMAND_ERASE_SECTOR;
 
   CopyFlashReadRoutineToRam(savedCode);
 
-  waitForWrite = &gWaitForFlashWrite;
-  result = _call_via_r3(FLASH_PHASE_ERASE_SECTOR, (u8 *)target,
-                        FLASH_ERASED_BYTE, *waitForWrite);
+  result = gWaitForFlashWrite(FLASH_PHASE_ERASE_SECTOR, (u8 *)target,
+                           FLASH_ERASED_BYTE);
 
-  *waitcnt = (*waitcnt & 0xFFFC) | WAITCNT_SRAM_8;
+  REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | WAITCNT_SRAM_8;
 
   return result;
 }
@@ -78,12 +59,10 @@ u16 EraseFlashSector(u16 sector) {
 /// Issues a byte-program command and waits for its destination to match.
 /// Returns 0, or a program timeout when the byte does not read back in time.
 u16 ProgramFlashByte(u8 *source, u8 *destination) {
-  FlashWaitProc *waitForWrite;
 
   FLASH_SEND_COMMAND(FLASH_COMMAND_PROGRAM);
   *destination = *source;
-  waitForWrite = &gWaitForFlashWrite;
-  return (*waitForWrite)(FLASH_PHASE_PROGRAM, destination, *source);
+  return gWaitForFlashWrite(FLASH_PHASE_PROGRAM, destination, *source);
 }
 
 /// Erases and verifies a sector with retries, then programs its bytes.
@@ -93,13 +72,9 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
   u16 remaining;
   u16 *sourceCode;
   u16 *destinationCode;
-  u16 *counter;
   u8 attempt;
   u8 index;
   u8 rounds;
-  const struct FlashType *chip;
-  volatile u16 *waitcnt;
-  u16 setting;
   u8 *destination;
 
   if (sector > FLASH_LAST_SECTOR) {
@@ -151,20 +126,16 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
 
   CopyFlashReadRoutineToRam(ramCode);
 
-  waitcnt = &REG_WAITCNT;
-  setting = *waitcnt & 0xFFFC;
-  chip = gFlash;
-  *waitcnt = setting | chip->wait[0];
+  REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | gFlash->wait[0];
 
   // Program the verified sector, stopping at the first failed byte.
-  gFlashNumRemainingBytes = chip->sector.size;
-  counter = &gFlashNumRemainingBytes;
-  while (*counter != 0) {
+  gFlashNumRemainingBytes = gFlash->sector.size;
+  while (gFlashNumRemainingBytes != 0) {
     status = ProgramFlashByte(source, destination);
     if (status != 0) {
       break;
     }
-    *counter = *counter - 1;
+    gFlashNumRemainingBytes -= 1;
     source++;
     destination++;
   }

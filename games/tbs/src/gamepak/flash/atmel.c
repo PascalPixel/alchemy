@@ -10,21 +10,13 @@
 u16 EraseAtmelFlashChip(void) {
   u8 savedCode[64];
   u16 result;
-  volatile u8 *command;
-  volatile u8 *unlock;
 
   CopyFlashReadRoutineToRam(savedCode);
 
   REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | gFlash_ChipAtmelLayout.type.wait[0];
 
-  command = (volatile u8 *)(FLASH_BASE + FLASH_COMMAND_ADDRESS);
-  *command = FLASH_UNLOCK_1;
-  unlock = (volatile u8 *)(FLASH_BASE + FLASH_UNLOCK_ADDRESS);
-  *unlock = FLASH_UNLOCK_2;
-  *command = FLASH_COMMAND_ERASE;
-  *command = FLASH_UNLOCK_1;
-  *unlock = FLASH_UNLOCK_2;
-  *command = FLASH_COMMAND_ERASE_CHIP;
+  FLASH_SEND_COMMAND(FLASH_COMMAND_ERASE);
+  FLASH_SEND_COMMAND(FLASH_COMMAND_ERASE_CHIP);
 
   result = gWaitForFlashWrite(FLASH_PHASE_ERASE_CHIP, (u8 *)FLASH_BASE,
                               FLASH_ERASED_BYTE);

@@ -111,8 +111,7 @@ static void IncreaseItemAndLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {
   Unit_Calculate(ownerId);
 }
 
-/// Applies the level change to the party members returned by the active-party
-/// service (FieldParty_ListMembers): every party member.
+/// Changes every party member's level by amount.
 static void IncreaseItemAndLevel_AdjustPartyLevels(s32 amount) {
   u16 ownerIds[16];
   u16 *owner;
@@ -156,7 +155,7 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
       Text_DrawNumberInWindow(unit->level, 0, window, 72, 48);
     }
 
-    // Start/Select add five levels; A adds one. Tests remain independent.
+    // Start or Select adds five levels, A one.
     if ((gKeysPressed & KEY_START) != 0 || (gKeysPressed & KEY_SELECT) != 0) {
       IncreaseItemAndLevel_AdjustPartyLevels(5);
       Sound_Play(MUS_JINGLE_LARGE);
@@ -189,7 +188,6 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
 /// Browses nonempty item definitions and gives the selected item to the party.
 /// Talking to ACTOR_ITEM_BROWSER.
 static void IncreaseItemAndLevel_SelectItem(void) {
-  // Preserve independent key tests and the direction-specific empty-icon scans.
   struct Window *window;
   struct Window *details;
   s32 selectedItemId;
@@ -285,8 +283,7 @@ static void IncreaseItemAndLevel_SelectItem(void) {
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
-    // Skip definitions with no icon/availability byte in the chosen direction:
-    // for an item, its definition's icon.
+    // Step on past numbers with no item, in the direction moved.
     if (seekDirection == -1) {
       selectedItemId = (selectedItemId + ITEM_COUNT) % entryCount;
       goto check_back;
@@ -334,7 +331,7 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
   Sound_Play(SE_MENU_CONFIRM);
   redraw = 1;
   window = Window_Create(0, 0, 30, 12, WINDOW_FLAG_INSTANT);
-  // Copy the existing sprite palette into the debug window palettes.
+  // Lend HIGHLIGHT_PALETTE to the icons, as the item browser does.
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
@@ -397,8 +394,7 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
-    // Skip definitions with no icon/availability byte in the chosen direction:
-    // byte 4 of an ability is the icon the menus draw (AbilityDefinition).
+    // Step on past numbers with no ability, in the direction moved.
     if (seekDirection == -1) {
       selectedAbilityId = (selectedAbilityId + ABILITY_COUNT) % entryCount;
       goto check_back;
@@ -424,8 +420,7 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
   wait(1);
   Window_Close(window, 1);
 #ifndef UBFIX
-  // The original never initializes details or creates a second window.
-  // Reading this indeterminate pointer is UB; modern builds omit that call.
+  // UB: details is never created, but the browser closes it.
   Window_Close(details, 1);
 #endif
 }
@@ -439,8 +434,7 @@ UNUSED static void IncreaseItemAndLevel_RequestExit(void) {
   Import_EventSetExitRequest();
 }
 
-/// Starts the window transition and edition-specific actor scale/animation
-/// setup. Returns zero through the exported scene entry.
+/// Sets up the scene: the window transition in, and the level editor's size.
 s32 IncreaseItemAndLevel_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   gFieldWork->transitionFrames = 24;
@@ -540,7 +534,7 @@ struct SceneEntrance gIncreaseItemAndLevel_Entrances[] = {
     {SCENE_TABLE_END},
 };
 
-/// No exits: 511 is SCENE_EXITS_END's value.
+/// No exits.
 u32 gIncreaseItemAndLevel_Exits[] = {
     SCENE_EXITS_END,
 };

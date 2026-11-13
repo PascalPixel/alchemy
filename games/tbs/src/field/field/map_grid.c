@@ -192,10 +192,9 @@ struct MapHeader {
   s32 markers; ///< the chests and Psynergy stones (Field_PlaceTreasureSpots)
 };
 
-/// A map resource: one of a layout's packed things, by its row from
-/// ResourceId_Map001.
-#define MAPGRID_RESOURCE(map, n)                                               \
-  Resource_GetTableEntry((map)->resources[n] + (u32)&ResourceId_Map001)
+/// One of a layout's resources, from its row of gMaps.
+#define MAPGRID_RESOURCE(offset)                                               \
+  Resource_GetTableEntry((offset) + (u32)&ResourceId_Map001)
 
 /// Loads layout index from gMaps: its cell pictures, shapes, cells, tileset
 /// animations, blend script and treasure spots; sets up the three background
@@ -224,7 +223,7 @@ s32 MapGrid_LoadMap(s32 index) {
   grid =
       HeapSlot_AllocEwram(HEAP_SLOT_MAP_GRID, sizeof(struct MapGridScrollWork));
   Iwram_ClearWords(grid, sizeof(struct MapGridScrollWork));
-  mapHeader = MAPGRID_RESOURCE(mapResources, 0);
+  mapHeader = MAPGRID_RESOURCE(mapResources->header);
   // The header's offsets count from the header itself.
   packed = (u8 *)mapHeader + mapHeader->cellPictures;
   TileMap_DecodeStagedBuffer(
@@ -320,21 +319,21 @@ s32 MapGrid_LoadMap(s32 index) {
     if (graphicsBuffer != NULL) {
       // Colour 0 of BG palette 0 is the backdrop; it survives the new palette.
       backdrop = *(s16 *)PLTT;
-      Decompress_TaggedLz(MAPGRID_RESOURCE(mapResources, 1), graphicsBuffer);
+      Decompress_TaggedLz(MAPGRID_RESOURCE(mapResources->palette), graphicsBuffer);
       *(s16 *)graphicsBuffer = backdrop;
       // These four copies call the IWRAM routine at its fixed address, not
       // through Iwram_CopyWords.
       Iwram_CopyWordsEntry((void *)BG_PLTT, graphicsBuffer, 448);
-      Decompress_MoveToFrontLz(MAPGRID_RESOURCE(mapResources, 2),
+      Decompress_MoveToFrontLz(MAPGRID_RESOURCE(mapResources->tiles[0]),
                                graphicsBuffer);
       Iwram_CopyWordsEntry(BG_CHAR_BLOCK(1), graphicsBuffer, BG_CHAR_SIZE);
-      Decompress_MoveToFrontLz(MAPGRID_RESOURCE(mapResources, 3),
+      Decompress_MoveToFrontLz(MAPGRID_RESOURCE(mapResources->tiles[1]),
                                graphicsBuffer);
       Iwram_CopyWordsEntry(BG_CHAR_BLOCK(2), graphicsBuffer, BG_CHAR_SIZE);
-      Decompress_MoveToFrontLz(MAPGRID_RESOURCE(mapResources, 4),
+      Decompress_MoveToFrontLz(MAPGRID_RESOURCE(mapResources->tiles[2]),
                                graphicsBuffer);
       Iwram_CopyWordsEntry(BG_CHAR_BLOCK(3), graphicsBuffer, BG_CHAR_SIZE);
-      Decompress_MoveToFrontLz(MAPGRID_RESOURCE(mapResources, 5),
+      Decompress_MoveToFrontLz(MAPGRID_RESOURCE(mapResources->animationTiles),
                                gMapGridAnimTiles);
       Heap_Release(graphicsBuffer);
     }

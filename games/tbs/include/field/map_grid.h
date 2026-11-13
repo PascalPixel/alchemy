@@ -112,14 +112,12 @@ extern u8 gBgTileBuffer[];
 /// world map keeps its struct WorldMapAffineWork in the slot.
 #define gWorldMapAffineWork (*(u8 **)&gHeapSlots[HEAP_SLOT_WORLD_MAP_AFFINE])
 
-/// A row of gMaps: a layout's resources, counted from
-/// ResourceId_Map001: its header, palette, three tilesets and the tileset
-/// animations' tiles.
+/// A row of gMaps: a layout's resources, each counted from ResourceId_Map001.
 struct MapResources {
-  /// Offsets from ResourceId_Map001: the header, the palette, the
-  /// tilesets for char blocks 1, 2 and 3, and the tileset animations' tiles
-  /// (gMapGridAnimTiles).
-  u16 resources[6];
+  u16 header;
+  u16 palette;
+  u16 tiles[3];       ///< For char blocks 1, 2 and 3.
+  u16 animationTiles; ///< Into gMapGridAnimTiles.
 };
 /// Every layout's resources, by map number (maps.c).
 extern const struct MapResources gMaps[];

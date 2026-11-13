@@ -9,11 +9,8 @@
 #include "flags.h"
 #include "djinn_ids.h"
 
-/// The placed actors, numbered in the order of
-/// gTest_ActorPlacements:
-/// the first Djinni of each element, which Test_GiveDjinniForTesting
-/// gives, placed while its flag (FLAG_DJINN_FIRST + element *
-/// DJINN_PER_ELEMENT) is clear.
+/// The placed actors: the first Djinni of each element, each there while its
+/// flag is clear.
 enum TestActorId {
   ACTOR_FLINT = ACTOR_FIRST_PLACED,
   ACTOR_FIZZ,
@@ -28,13 +25,9 @@ s32 Scene_GetExitRegions(void) { return 0; }
 
 u8 *Test_GetExits(void) { return (u8 *)gTest_Exits; }
 
-/// Places one Djinni of each element in the test scenes, Flint, Fizz, Forge and
-/// Gust, each placed while its caught flag (the placement's condition)
-/// is clear.
 u8 *Test_GetActorPlacements(void) { return (u8 *)gTest_ActorPlacements; }
 
-/// Grants the first Djinni of an element, then clears its found flag for
-/// testing.
+/// Gives the first Djinni of an element, then clears its flag so it stays.
 static __inline__ void Test_GiveDjinniForTesting(s32 actorId, s32 element) {
   Djinn_JoinParty(actorId, element, 0);
   GameFlag_Clear(FLAG_DJINN_FIRST + element * DJINN_PER_ELEMENT);
@@ -56,12 +49,9 @@ static void Test_ReceiveGust(void) {
   Test_GiveDjinniForTesting(ACTOR_GUST, ELEMENT_JUPITER);
 }
 
-/// The scene's events: talking to Flint, Fizz, Forge or Gust gives that
-/// Djinni.
 u8 *Test_GetTriggers(void) { return (u8 *)gTest_Triggers; }
 
-/// The scene's initialize entry, which FieldSequence_Run runs on entry: nothing
-/// to set up.
+/// Nothing to set up.
 s32 Test_Initialize(void) { return 0; }
 
 #include "test_rows.h"

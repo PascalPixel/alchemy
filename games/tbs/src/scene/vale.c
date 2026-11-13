@@ -89,7 +89,7 @@
 
 #include "main_routine_work.h"
 #include "vram_cache.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -123,15 +123,15 @@ extern s32 gVale_GuardFromFirstPausePath[];
 extern s32 gVale_LeaderPushedBackPath[];
 extern s32 gVale_GuardFromSecondPausePath[];
 
-#include "module/scene/shared/actor_orbit.h"
-#include "module/scene/shared/event_psynergy.h"
-#include "module/scene/shared/world_map_attached_effects.h"
-#include "module/field/field_sequence.h"
-#include "module/system/main_routine.h"
-#include "module/field/event_commands.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/system/system.h"
+#include "scene/actor_orbit.h"
+#include "scene/event_psynergy.h"
+#include "scene/world_map_attached_effects.h"
+#include "field/field_sequence.h"
+#include "system/main_routine.h"
+#include "field/event_commands.h"
+#include "window/window.h"
+#include "window/screens.h"
+#include "system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

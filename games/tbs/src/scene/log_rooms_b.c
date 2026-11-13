@@ -61,9 +61,9 @@ extern struct ActorPlacement gLogRoomsB_ActorPlacements[];
 extern struct Trigger gLogRoomsB_Triggers[];
 
 #include "log_rooms_a.h"
-#include "module/scene/shared/vault_item_icon.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
+#include "scene/vault_item_icon.h"
+#include "field/event_commands.h"
+#include "game/game.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

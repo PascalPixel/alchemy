@@ -82,7 +82,7 @@
 /// only from the third patch on.
 
 #include "main_routine_work.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -103,10 +103,10 @@ extern struct Trigger gValeKradensCottage_StormTriggers[];
 extern struct Trigger gValeKradensCottage_TriggersAfterKalay[];
 extern u16 gValeKradensCottage_DoorOpens[];
 
-#include "module/field/field_sequence.h"
-#include "module/system/main_routine.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
+#include "field/field_sequence.h"
+#include "system/main_routine.h"
+#include "field/event_commands.h"
+#include "system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

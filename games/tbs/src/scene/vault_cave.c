@@ -72,7 +72,7 @@
 /// The water drops run as tasks started by Scene_Initialize.
 
 #include "main_routine_work.h"
-#include "module/field/field.h"
+#include "field/field.h"
 #include "system_call.h"
 #include "types.h"
 #include "scene_tables.h"

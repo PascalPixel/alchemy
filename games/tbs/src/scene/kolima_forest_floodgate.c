@@ -29,7 +29,7 @@
 
 #include "speaker.h"
 #include "flags.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -71,9 +71,9 @@ extern u32 gKolimaForestFloodgateExits[];
 extern struct ActorPlacement gKolimaForestFloodgateActorPlacements[];
 extern struct Trigger gKolimaForestFloodgateTriggers[];
 
-#include "module/scene/shared/kolima_palette.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
+#include "scene/kolima_palette.h"
+#include "field/event_commands.h"
+#include "system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

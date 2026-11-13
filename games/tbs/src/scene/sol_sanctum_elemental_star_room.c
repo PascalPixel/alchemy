@@ -41,7 +41,7 @@
 /// shadow.
 
 #include "main_routine_work.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -64,13 +64,13 @@ extern s8 gSolSanctum_RingDirection[][3];
 extern s32 gSolSanctum_RingMaxScales[];
 extern s32 gSolSanctum_RingScaleSteps[];
 
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/scene/shared/sol_sanctum_elemental_star_ring_setup.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/system/system.h"
+#include "scene/field_effect_spawn.h"
+#include "scene/sol_sanctum_elemental_star_ring_setup.h"
+#include "field/event_commands.h"
+#include "game/game.h"
+#include "window/window.h"
+#include "window/screens.h"
+#include "system/system.h"
 #include "actor.h"
 #include "event.h"
 #include "create_configured_actor.h"

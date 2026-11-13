@@ -182,8 +182,8 @@ For readers of the code: the source is many files, and a file can only use
 what another file has announced. A module header is the short file where
 one file of code makes its announcements. The main routine's header is
 where the rest of the game learns that `MainRoutine_Run` exists. A header
-sits at the same path under `include/module/` as its code has under `src/`:
-`src/system/main_routine.c` has `include/module/system/main_routine.h`
+sits in `include/` under its code's folder, named for its code:
+`src/system/main_routine.c` has `include/system/main_routine.h`
 ([Source](src/README.md#headers)).
 
 Evidence: plain English; the project's own word.

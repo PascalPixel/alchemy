@@ -7,7 +7,7 @@
 /// and each part includes it too, so that a part read on its own resolves. It
 /// places no bytes.
 
-#include "module/system/system.h"
+#include "system/system.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -25,7 +25,7 @@
 #include "item_ids.h"
 #include "macros.h"
 #include "flags.h"
-#include "module/window/message_speed.h"
+#include "window/message_speed.h"
 #include "ability_ids.h"
 
 /// AbilityDefinition.flags: where an ability or item can be used, as the

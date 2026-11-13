@@ -115,7 +115,7 @@
 /// actor placements, and an empty set serves any other scene.
 
 #include "main_routine_work.h"
-#include "module/field/field.h"
+#include "field/field.h"
 #include "system_call.h"
 #include "scene_ids.h"
 #include "types.h"
@@ -166,9 +166,9 @@ extern u16 gKalay_DoorCellSteps[];
 extern struct MapGridCellAnimation gKalay_DoorCells[];
 extern s32 gKalay_TunnelParticleScript[];
 
-#include "module/scene/shared/actor_orbit.h"
-#include "module/system/main_routine.h"
-#include "module/window/screens.h"
+#include "scene/actor_orbit.h"
+#include "system/main_routine.h"
+#include "window/screens.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

@@ -51,7 +51,7 @@
 /// before it plain ground.
 
 #include "main_routine_work.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -79,7 +79,7 @@ extern struct Trigger gSolSanctumReliefs_FirstReliefRoomTriggers[];
 extern struct Trigger gSolSanctumReliefs_SecondReliefRoomTriggers[];
 extern s32 gSolSanctumPushSteps[];
 
-#include "module/field/event_commands.h"
+#include "field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

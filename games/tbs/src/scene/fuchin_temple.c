@@ -78,9 +78,9 @@ extern struct Trigger gFuchinTempleTriggers[];
 extern struct Trigger gFuchinTempleTriggersFromLamaTemple[];
 extern s32 gFuchinTemple_ShotScript[];
 
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
+#include "scene/field_effect_spawn.h"
+#include "field/event_commands.h"
+#include "system/system.h"
 #include "actor.h"
 #include "script_operands.h"
 #include "event.h"

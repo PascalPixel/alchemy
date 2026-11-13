@@ -19,7 +19,7 @@ extern u32 gSolSanctumCorridorExits[];
 extern struct ActorPlacement gSolSanctumCorridorActorPlacements[];
 extern struct Trigger gSolSanctumCorridorTriggers[];
 
-#include "module/scene/shared/sol_sanctum_init_zoom.h"
+#include "scene/sol_sanctum_init_zoom.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

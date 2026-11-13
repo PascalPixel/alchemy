@@ -3,7 +3,7 @@
 /// every sound number, the music's volume and tempo ramps, the music's return
 /// after a jingle, and a sound test nothing in the game names.
 
-#include "module/system/system.h"
+#include "system/system.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"

@@ -55,7 +55,7 @@
 
 #include "script_operands.h"
 #include "main_routine_work.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -100,9 +100,9 @@ extern u16 gValePrologue_WestHouseDoorOpens[];
 extern u16 gValePrologue_IsaacsDoorCloses[];
 extern u16 gValePrologue_GrandparentsDoorCloses[];
 
-#include "module/scene/shared/event_psynergy.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
+#include "scene/event_psynergy.h"
+#include "field/event_commands.h"
+#include "system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

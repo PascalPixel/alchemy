@@ -75,11 +75,11 @@ extern struct ActorPlacement gKolimaForestTreeActorPlacements[];
 extern struct Trigger gKolimaForestTreeTriggers[];
 extern s32 gKolimaForestTreeEffectScript[];
 
-#include "module/scene/shared/kolima_palette.h"
-#include "module/system/main_routine.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/system/system.h"
+#include "scene/kolima_palette.h"
+#include "system/main_routine.h"
+#include "field/event_commands.h"
+#include "game/game.h"
+#include "system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

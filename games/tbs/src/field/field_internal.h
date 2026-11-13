@@ -7,10 +7,10 @@
 /// each part includes it too, so that a part read on its own still resolves.
 /// It places no bytes.
 
-#include "module/field/facing.h"
-#include "module/field/actor_script.h"
-#include "module/field/actor_script_operands.h"
-#include "module/field/map_grid_data.h"
+#include "field/facing.h"
+#include "field/actor_script.h"
+#include "field/actor_script_operands.h"
+#include "field/map_grid_data.h"
 #include "battle.h"
 #include "field.h"
 #include "graphics.h"
@@ -36,10 +36,10 @@
 #include "curve.h"
 #include "vram_cache.h"
 #include "event.h"
-#include "module/field/actor_update_arm.h"
-#include "module/field/world_map_lines.h"
-#include "module/field/terrain_tables.h"
-#include "module/field/sprite_viewer_scale.h"
+#include "field/actor_update_arm.h"
+#include "field/world_map_lines.h"
+#include "field/terrain_tables.h"
+#include "field/sprite_viewer_scale.h"
 #include "actor_script.h"
 #include "macros.h"
 

@@ -32,11 +32,11 @@ extern u32 gFileScreen_PasswordFlags[];
 extern u32 gFileScreen_PasswordKeyItems[];
 extern u16 gFileScreen_PasswordStackItems[];
 
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/system/system.h"
+#include "field/event_commands.h"
+#include "game/game.h"
+#include "window/window.h"
+#include "window/screens.h"
+#include "system/system.h"
 #include "battle.h"
 #include "input.h"
 #include "debug.h"

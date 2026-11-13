@@ -110,8 +110,10 @@ the build writes each overlay's import table from one list,
 
 [`include/`](../include) holds the names the whole game shares. A C
 file's own declarations for other files are in its
-[module header](../glossary.md#module-header), at the same path under
-`include/module` as the file has under `src/`.
+[module header](../glossary.md#module-header), in the same folder under
+`include/` as the file has under `src/`. A scene's own declarations are in
+its `.c`; the routines several scenes keep a copy of are declared in
+`include/scene/`.
 
 ### C and assembly
 

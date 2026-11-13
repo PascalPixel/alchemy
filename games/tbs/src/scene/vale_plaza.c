@@ -138,13 +138,13 @@ extern struct Trigger gValePlaza_TriggersAfterLeaving[];
 extern struct Trigger gValePlaza_TriggersAfterKalay[];
 extern u16 gValePlaza_DoorOpens[];
 
-#include "module/scene/shared/event_psynergy.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/game/game.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/system/system.h"
+#include "scene/event_psynergy.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "window/window.h"
+#include "window/screens.h"
+#include "system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

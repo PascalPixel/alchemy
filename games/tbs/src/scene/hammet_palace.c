@@ -61,8 +61,8 @@ extern struct ActorPlacement gHammetPalaceActorPlacements[];
 extern struct Trigger gHammetPalaceTriggersOther[];
 extern struct Trigger gHammetPalaceTriggers[];
 
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
+#include "field/event_commands.h"
+#include "field/field.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

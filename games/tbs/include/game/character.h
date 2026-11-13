@@ -5,7 +5,7 @@
 /// The definitions of characters, classes, Djinn and enemies, and a level up's
 /// result.
 
-#include "module/game/game.h"
+#include "game/game.h"
 #include "types.h"
 #include "edition.h"
 #include "far_call.h"

@@ -82,7 +82,7 @@ extern u16 gTolbiDoorOpening[];
 extern struct MapGridCellAnimation gTolbiDoors[];
 
 #include "djinn_ids.h"
-#include "module/window/screens.h"
+#include "window/screens.h"
 #include "edition.h"
 
 #include "types.h"

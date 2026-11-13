@@ -4,7 +4,7 @@
 /// @file
 /// BattleWork, the battle's own work, and the battle message window's work.
 
-#include "module/battle/battle.h"
+#include "battle/battle.h"
 #include "types.h"
 #include "static_assert.h"
 #include "battle_action_run.h"

@@ -37,7 +37,7 @@ extern const struct ActorPlacement gStoneRooms_PrisonerActorPlacements[];
 extern const struct Trigger gStoneRooms_ThiefTriggers[];
 extern const struct Trigger gStoneRooms_PrisonerTriggers[];
 
-#include "module/field/event_commands.h"
+#include "field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

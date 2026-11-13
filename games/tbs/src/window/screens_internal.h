@@ -7,7 +7,7 @@
 /// parts, and each part includes it too, so that a part read on its own still
 /// resolves.
 
-#include "module/window/glyph_arm.h"
+#include "window/glyph_arm.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -35,14 +35,14 @@
 #include "serial.h"
 #include "shop.h"
 #include "display_transition.h"
-#include "module/window/scales.h"
+#include "window/scales.h"
 #include "ability_ids.h"
 #include "djinn_ids.h"
 #include "enemy_ids.h"
 
 #ifdef MODERN
 // The menu object calls these window functions with no prototype in scope, so
-// their arguments take the old promotions (module/window/window.h says why for
+// their arguments take the old promotions (window/window.h says why for
 // each); a current GCC, which refuses implicit declarations, gets them here.
 void WindowSprite_AppendToList(struct WindowSpriteList *list,
                                struct WindowSprite *node);

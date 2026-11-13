@@ -44,7 +44,7 @@
 #include "script_operands.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "scene.h"
@@ -67,8 +67,8 @@ extern struct Trigger gTimberRoomsB_TriggersAfterLighthouse[];
 extern struct Trigger gTimberRoomsC_Triggers[];
 extern struct Trigger gTimberRoomsC_TriggersAfterLighthouse[];
 
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
+#include "field/event_commands.h"
+#include "game/game.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

@@ -62,7 +62,7 @@ extern struct ActorPlacement gCottageRoomsCActorPlacements[];
 extern struct Trigger gCottageRoomsCTriggers[];
 
 #include "flags.h"
-#include "module/field/event_commands.h"
+#include "field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

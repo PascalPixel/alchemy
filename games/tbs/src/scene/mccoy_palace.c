@@ -61,9 +61,9 @@ extern struct ActorPlacement gMcCoyPalaceActorPlacements[];
 extern struct Trigger gMcCoyPalaceNoTriggers[];
 extern struct Trigger gMcCoyPalaceTriggers[];
 
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/system/system.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

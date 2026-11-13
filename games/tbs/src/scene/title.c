@@ -21,12 +21,12 @@ extern struct ActorPlacement gTitleActorPlacements[];
 extern struct Trigger gTitleTriggers[];
 extern s16 gTitleVramBlock;
 
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/menu/title_intro.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/system/system.h"
+#include "field/event_commands.h"
+#include "game/game.h"
+#include "menu/title_intro.h"
+#include "window/window.h"
+#include "window/screens.h"
+#include "system/system.h"
 #include "battle.h"
 #include "input.h"
 #include "debug.h"

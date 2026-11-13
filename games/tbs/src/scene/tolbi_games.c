@@ -64,12 +64,12 @@ extern const u8 gTolbiSpring_ActorPixelX[];
 extern const u8 gTolbiSpring_ActorPixelZ[];
 extern const u16 gTolbiSpring_ActorHeadings[];
 
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/game/game.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/shop/shop.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "window/window.h"
+#include "window/screens.h"
+#include "shop/shop.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

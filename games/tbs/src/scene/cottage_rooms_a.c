@@ -60,7 +60,7 @@
 
 #include "script_operands.h"
 #include "main_routine_work.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 

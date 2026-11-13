@@ -1,7 +1,7 @@
 /// @file
 /// The characters a new game gives their starting equipment.
 
-#include "module/game/starting_equipment.h"
+#include "game/starting_equipment.h"
 #include "types.h"
 #include "character_ids.h"
 

@@ -52,7 +52,7 @@
 /// reaches, plays the stump being pushed to the edge and falling.
 #include "script_operands.h"
 #include "heap_slots.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "field_effect.h"

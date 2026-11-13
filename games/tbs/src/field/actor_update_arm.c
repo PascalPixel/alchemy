@@ -2,8 +2,8 @@
 /// Unused: an ARM copy of the actors' update, made to run from RAM. Nothing
 /// runs it; the field moves its actors with Actor_UpdateAllThumb.
 
-#include "module/field/actor_update_arm.h"
-#include "module/field/actor_script.h"
+#include "field/actor_update_arm.h"
+#include "field/actor_script.h"
 #include "types.h"
 #include "irq.h"
 #include "iwram_call.h"

@@ -72,8 +72,8 @@ extern struct ActorPlacement gSolSanctumStatue_ActorPlacements[];
 extern struct Trigger gSolSanctumStatue_Triggers[];
 extern s32 gSolSanctumStatue_ScrollPhase;
 
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
+#include "field/event_commands.h"
+#include "system/system.h"
 #include "battle_sprite_id.h"
 #include "heap_release.h"
 #include "heap_slots.h"

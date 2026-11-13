@@ -91,7 +91,7 @@
 #include "main_routine_work.h"
 #include "heap.h"
 #include "vram_cache.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -146,12 +146,12 @@ extern struct Trigger gWorldTriggers[];
 extern u32 gWorldMapPassengerRowValues[];
 extern s32 gIslandWakeScript[];
 
-#include "module/scene/shared/world_map_attached_effects.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/system/system.h"
+#include "scene/world_map_attached_effects.h"
+#include "field/event_commands.h"
+#include "game/game.h"
+#include "window/window.h"
+#include "window/screens.h"
+#include "system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

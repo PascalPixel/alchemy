@@ -69,12 +69,12 @@ extern s32 gGaretBoardsShip[];
 extern s32 gIvanBoardsShip[];
 extern s32 gMiaBoardsShip[];
 
-#include "module/scene/shared/scroll_initialize_hblank_dma.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/shop/shop.h"
-#include "module/sound/sound.h"
-#include "module/system/system.h"
+#include "scene/scroll_initialize_hblank_dma.h"
+#include "field/event_commands.h"
+#include "game/game.h"
+#include "shop/shop.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

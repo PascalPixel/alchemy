@@ -5,7 +5,7 @@
 
 #include "field.h"
 #include "item.h"
-#include "module/menu/menu.h"
+#include "menu/menu.h"
 
 /// The hand cursor's bobbing offsets in pixels, which MenuCursor_Position
 /// adds to its x at step (gFrameCount >> 1) & 7; the ninth entry is never

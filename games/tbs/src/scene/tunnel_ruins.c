@@ -69,7 +69,7 @@
 #include "script_operands.h"
 #include "main_routine_work.h"
 #include "heap_slots.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "field_coordinate.h"
@@ -97,9 +97,9 @@ extern struct ActorPlacement gTunnelRuinsActorPlacementsOther[];
 extern struct Trigger gTunnelRuinsGreatStatueTriggers[];
 extern struct Trigger gTunnelRuinsTriggersOther[];
 
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
+#include "scene/field_effect_spawn.h"
+#include "field/event_commands.h"
+#include "system/system.h"
 #include "ground_mask.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS

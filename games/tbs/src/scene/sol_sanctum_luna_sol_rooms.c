@@ -70,8 +70,8 @@ extern u32 gSolSanctumLunaSolRoomsExits[];
 extern struct ActorPlacement gSolSanctumLunaSolRoomsActorPlacements[];
 extern struct Trigger gSolSanctumLunaSolRoomsTriggers[];
 
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
+#include "field/event_commands.h"
+#include "field/field.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

@@ -7,8 +7,8 @@
 /// parts, and each part includes it too, so that a part read on its own
 /// resolves. It places no bytes.
 
-#include "module/field/battle_music.h"
-#include "module/field/world_map_encounter_rules.h"
+#include "field/battle_music.h"
+#include "field/world_map_encounter_rules.h"
 #include "vram_cache.h"
 #include "battle.h"
 #include "debug.h"

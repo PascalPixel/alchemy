@@ -62,8 +62,8 @@ extern struct Trigger gLunpaReopenedTriggers[];
 extern struct Trigger gGateTriggers[];
 extern u32 gLunpaUnusedWord;
 
-#include "module/scene/shared/actor_orbit.h"
-#include "module/scene/shared/field_effect_spawn.h"
+#include "scene/actor_orbit.h"
+#include "scene/field_effect_spawn.h"
 #include "field_effect.h"
 #include "system_call.h"
 #include "scene.h"

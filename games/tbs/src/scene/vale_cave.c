@@ -81,7 +81,7 @@ extern struct Trigger gValeCave_MouthTriggers[];
 extern struct Trigger gValeCave_KiteTriggers[];
 extern struct Trigger gValeCave_LogsTriggers[];
 
-#include "module/scene/shared/field_effect_spawn.h"
+#include "scene/field_effect_spawn.h"
 
 #include "actor.h"
 #include "event.h"

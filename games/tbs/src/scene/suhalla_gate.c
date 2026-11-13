@@ -68,7 +68,7 @@ extern struct Trigger gSuhallaGateTriggersOther[];
 extern struct Trigger gSuhallaGateDewTriggers[];
 extern struct Trigger gGatewayCaveTriggers[];
 
-#include "module/field/event_commands.h"
+#include "field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

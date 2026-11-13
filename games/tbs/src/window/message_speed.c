@@ -2,7 +2,7 @@
 /// The message speed tables, indexed by the player's message speed setting
 /// (gMainRoutineWork.messageSpeed, enum MessageSpeed).
 
-#include "module/window/message_speed.h"
+#include "window/message_speed.h"
 #include "types.h"
 
 /// Frames to wait after each glyph while no button is held.

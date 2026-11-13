@@ -5,7 +5,7 @@
 /// name MsgAbilityName gives those ids.
 
 #include "ability_staging.h"
-#include "module/battle_effect/battle_effect.h"
+#include "battle_effect/battle_effect.h"
 
 // clang-format off
 /// Up to ABILITY_SEVERE_BLOW; 0 leaves the choice to BattleActionRun_Build.

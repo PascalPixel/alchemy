@@ -114,10 +114,10 @@ extern struct Trigger gKalayTolbiDocks_RoomTriggers[];
 extern struct Trigger gKalayTolbiDocks_RoomTriggersShipGone[];
 extern struct Trigger gKalayTolbiDocks_RoomTriggersStranded[];
 
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
+#include "field/event_commands.h"
+#include "game/game.h"
+#include "window/window.h"
+#include "window/screens.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

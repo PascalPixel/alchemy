@@ -57,7 +57,7 @@ extern u32 gLogRoomsC_Exits[];
 extern struct ActorPlacement gLogRoomsC_ActorPlacements[];
 extern struct Trigger gLogRoomsC_Triggers[];
 
-#include "module/field/event_commands.h"
+#include "field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

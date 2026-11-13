@@ -1,7 +1,7 @@
 /// @file
 /// The German counted nouns, singular and plural, by kind.
 
-#include "module/window/articles.h"
+#include "window/articles.h"
 #include "types.h"
 
 #if (LANGUAGE == LANGUAGE_GERMAN)

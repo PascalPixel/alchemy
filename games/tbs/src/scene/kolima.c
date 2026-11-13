@@ -105,12 +105,12 @@ extern s32 gKolima_GoldenRingsScript[];
 extern s32 gKolima_RegionScript[];
 extern s32 gFallingEffectScript[];
 
-#include "module/scene/shared/kolima_forest_bridge_falling_effect.h"
-#include "module/field/field_sequence.h"
-#include "module/system/main_routine.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/system/system.h"
+#include "scene/kolima_forest_bridge_falling_effect.h"
+#include "field/field_sequence.h"
+#include "system/main_routine.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

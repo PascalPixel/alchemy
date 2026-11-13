@@ -92,7 +92,7 @@
 #include "macros.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "scene.h"
@@ -154,10 +154,10 @@ extern s32 gAltinPeak_SprayDirection;
 extern s32 gAltinPeak_SprayOrigin[3];
 extern u16 gAltinPeak_FlickerTimer;
 
-#include "module/field/field_sequence.h"
-#include "module/system/main_routine.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
+#include "field/field_sequence.h"
+#include "system/main_routine.h"
+#include "field/event_commands.h"
+#include "system/system.h"
 #include "battle.h"
 #include "input.h"
 #include "debug.h"

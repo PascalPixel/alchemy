@@ -56,7 +56,7 @@
 /// Feizhi thank Master Hama alone.
 
 #include "vram_cache.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -87,9 +87,9 @@ extern s16 gHeatGaugeLevel;
 extern s16 gHeatGaugeSlide;
 extern s16 gHeatGaugeFlash;
 
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
+#include "scene/field_effect_spawn.h"
+#include "field/event_commands.h"
+#include "system/system.h"
 #include "actor.h"
 #include "event.h"
 #include "fixed_point_position.h"

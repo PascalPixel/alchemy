@@ -61,7 +61,7 @@
 
 #include "main_routine_work.h"
 #include "scene_ids.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 

@@ -4,8 +4,8 @@
 /// line up matching icons. It draws its own wheels and lines, and keeps an
 /// unused LZ packer.
 
-#include "module/field/lucky_wheels.h"
-#include "module/system/system.h"
+#include "field/lucky_wheels.h"
+#include "system/system.h"
 #include "battle.h"
 #include "field.h"
 #include "system.h"

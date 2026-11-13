@@ -50,7 +50,7 @@ extern struct ActorPlacement gLacquerRoomsB_SchoolRoomActorPlacements[];
 extern struct Trigger gLacquerRoomsB_Triggers[];
 extern struct Trigger gLacquerRoomsB_SchoolRoomTriggers[];
 
-#include "module/scene/shared/field_effect_spawn.h"
+#include "scene/field_effect_spawn.h"
 #include "event.h"
 #include "battle.h"
 #include "debug.h"

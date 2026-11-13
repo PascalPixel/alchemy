@@ -2,7 +2,7 @@
 /// The main routine and scene changes: exits, returns from battle, entering.
 /// It is the first code of bank 04, linked before the field sequence's object.
 
-#include "module/system/main_routine.h"
+#include "system/main_routine.h"
 #include "scene.h"
 #include "battle.h"
 #include "system.h"

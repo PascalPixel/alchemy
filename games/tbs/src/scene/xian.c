@@ -53,7 +53,7 @@
 /// not shown again.
 #include "main_routine_work.h"
 #include "djinn_ids.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -77,9 +77,9 @@ extern u32 gXian_Exits[];
 extern struct ActorPlacement gXian_ActorPlacements[];
 extern struct Trigger gXian_Triggers[];
 
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
+#include "scene/field_effect_spawn.h"
+#include "field/event_commands.h"
+#include "system/system.h"
 #include "macros.h"
 
 #include "actor.h"

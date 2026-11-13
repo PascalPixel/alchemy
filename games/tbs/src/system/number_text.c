@@ -1,7 +1,7 @@
 /// @file
 /// The digit characters and place values numbers are written with.
 
-#include "module/system/number_text.h"
+#include "system/number_text.h"
 #include "types.h"
 #include "system.h"
 

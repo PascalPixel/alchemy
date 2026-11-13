@@ -2,7 +2,7 @@
 /// The ARM immediate operands for powers of two, which the blitter builder
 /// (battle_effect/blitter.c) adds to its clip words to fit the canvas width.
 
-#include "module/battle_effect/blitter_operands.h"
+#include "battle_effect/blitter_operands.h"
 #include "types.h"
 
 /// The 12-bit operand field that makes an ARM data-processing immediate equal

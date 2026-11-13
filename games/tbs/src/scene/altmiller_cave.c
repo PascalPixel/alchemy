@@ -61,7 +61,7 @@
 
 #include "main_routine_work.h"
 #include "heap_slots.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -93,7 +93,7 @@ extern struct Trigger gAltmillerCave_CookieChestTriggers[];
 extern struct Trigger gAltmillerCave_DraughtTriggers[];
 
 #include "shared/walk_into_leader.h"
-#include "module/system/main_routine.h"
+#include "system/main_routine.h"
 #include "io_write.h"
 #include "macros.h"
 

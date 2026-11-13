@@ -2,8 +2,8 @@
 /// The title intro, the Nintendo and Camelot logos, and the palette fade the
 /// intro uses.
 
-#include "module/menu/title_intro.h"
-#include "module/system/system.h"
+#include "menu/title_intro.h"
+#include "system/system.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"

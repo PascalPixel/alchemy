@@ -18,11 +18,11 @@
 // call.
 
 #include "types.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
-#include "module/window/window.h"
-#include "module/game/game.h"
-#include "module/import.h"
+#include "field/event_commands.h"
+#include "system/system.h"
+#include "window/window.h"
+#include "game/game.h"
+#include "scene/import.h"
 
 struct Actor;
 struct FieldPosition;

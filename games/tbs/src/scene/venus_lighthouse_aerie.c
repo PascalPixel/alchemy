@@ -59,7 +59,7 @@
 #include "script_operands.h"
 #include "main_routine_work.h"
 #include "vram_cache.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -93,14 +93,14 @@ extern s32 gVenusLighthouseAerie_LandedPlatform;
 extern struct Trigger gVenusLighthouseAerieTriggers[];
 extern s32 gVenusLighthouseAerie_BesideParticleScript[];
 
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/scene/shared/actor_nearest.h"
-#include "module/scene/shared/event_psynergy.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/system/system.h"
+#include "scene/field_effect_spawn.h"
+#include "scene/actor_nearest.h"
+#include "scene/event_psynergy.h"
+#include "field/event_commands.h"
+#include "game/game.h"
+#include "window/window.h"
+#include "window/screens.h"
+#include "system/system.h"
 #include "macros.h"
 
 #include "actor.h"

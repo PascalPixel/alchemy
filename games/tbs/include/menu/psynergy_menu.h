@@ -4,7 +4,7 @@
 /// @file
 /// The Psynergy menu's state.
 
-#include "module/menu/menu.h"
+#include "menu/menu.h"
 #include "heap_slots.h"
 #include "static_assert.h"
 #include "paged_list.h"

@@ -3,8 +3,8 @@
 /// into a ring of sprite tiles, scroll up over battle backgrounds that
 /// crossfade behind them.
 
-#include "module/menu/credits.h"
-#include "module/system/system.h"
+#include "menu/credits.h"
+#include "system/system.h"
 #include "flash.h"
 #include "flash_data.h"
 #include "battle.h"

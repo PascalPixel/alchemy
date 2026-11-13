@@ -6,8 +6,8 @@
 /// helper two parts use. game.c includes it before the parts, and each part
 /// includes it too, so that a part read on its own still resolves.
 
-#include "module/game/game.h"
-#include "module/system/system.h"
+#include "game/game.h"
+#include "system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -43,7 +43,7 @@
 #include "battle_random.h"
 #include "battle_side.h"
 #include "event.h"
-#include "module/game/starting_equipment.h"
+#include "game/starting_equipment.h"
 #include "flags.h"
 #include "character_ids.h"
 #include "ability_ids.h"

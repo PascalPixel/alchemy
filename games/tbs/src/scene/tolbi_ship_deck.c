@@ -119,10 +119,10 @@ extern const struct Trigger gTolbiShipDeckTriggersArrived[];
 extern const struct Trigger gTolbiShipDeckTriggersAtIsland[];
 extern const s32 gTolbiShipDeckRowerStrokes[];
 
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "window/window.h"
+#include "window/screens.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

@@ -49,9 +49,9 @@ extern struct ActorPlacement gMcCoyPalaceGroundsActorPlacements[];
 extern struct Trigger gMcCoyPalaceGroundsNoTriggers[];
 extern struct Trigger gMcCoyPalaceGroundsTriggers[];
 
-#include "module/scene/shared/actor_orbit.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
+#include "scene/actor_orbit.h"
+#include "field/event_commands.h"
+#include "system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

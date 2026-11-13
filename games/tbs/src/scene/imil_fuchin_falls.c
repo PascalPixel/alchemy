@@ -105,7 +105,7 @@
 #include "main_routine_work.h"
 #include "input.h"
 #include "scene_ids.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "field_effect.h"
@@ -151,7 +151,7 @@ extern s32 gImilFuchinFalls_ShortDustScript[];
 extern s32 gImilFuchinFalls_MediumDustScript[];
 extern s32 gImilFuchinFalls_LongDustScript[];
 
-#include "module/system/main_routine.h"
+#include "system/main_routine.h"
 #include "battle.h"
 #include "event_inline.h"
 #include "debug.h"

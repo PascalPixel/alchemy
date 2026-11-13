@@ -2,7 +2,7 @@
 /// Map ground: the height curve of each cell kind and the world map's battle
 /// environments.
 
-#include "module/field/map_grid_data.h"
+#include "field/map_grid_data.h"
 #include "field.h"
 
 /// Ground height functions, by enum TerrainKind, called with (the remaining

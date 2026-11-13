@@ -2,7 +2,7 @@
 /// The debug room Increase item and level, whose actors raise the party's
 /// levels, give any item and show the game's icons and portraits.
 
-#include "module/debug/level.h"
+#include "debug/level.h"
 #include "battle.h"
 #include "input.h"
 #include "game.h"

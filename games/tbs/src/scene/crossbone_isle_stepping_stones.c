@@ -50,7 +50,7 @@
 #include "main_routine_work.h"
 #include "map_grid_scroll.h"
 #include "scene_ids.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -80,9 +80,9 @@ extern struct Trigger gCrossboneIsleFloodgateTriggers[];
 extern struct Trigger gCrossboneIsleStackedPillarsTriggers[];
 extern struct Trigger gCrossboneIsleDragonStatueTriggers[];
 
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
+#include "scene/field_effect_spawn.h"
+#include "field/event_commands.h"
+#include "system/system.h"
 #include "actor.h"
 #include "field_effect.h"
 #include "create_configured_actor.h"

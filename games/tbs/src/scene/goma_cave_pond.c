@@ -28,7 +28,7 @@ extern u32 gGomaCavePondExits[];
 extern struct ActorPlacement gGomaCavePondActorPlacements[];
 extern struct Trigger gGomaCavePondTriggers[];
 
-#include "module/field/event_commands.h"
+#include "field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

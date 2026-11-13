@@ -104,7 +104,7 @@ extern struct Trigger gTreeRoomsTriggers[];
 extern s32 gTreeRooms_TintIndex;
 
 #include "shared/walk_into_leader.h"
-#include "module/scene/shared/field_effect_spawn.h"
+#include "scene/field_effect_spawn.h"
 #include "macros.h"
 
 #include "create_configured_actor.h"

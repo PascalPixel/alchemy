@@ -60,7 +60,7 @@
 #include "main_routine_work.h"
 #include "heap_slots.h"
 #include "scene_ids.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "scene.h"
@@ -84,7 +84,7 @@ extern struct Trigger gBabiLighthouse_LuffTriggers[];
 extern struct Trigger gBabiLighthouse_StoneDoorTriggers[];
 extern struct Trigger gBabiLighthouse_RoadTriggers[];
 
-#include "module/scene/shared/field_effect_spawn.h"
+#include "scene/field_effect_spawn.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS
 #include "event.h"

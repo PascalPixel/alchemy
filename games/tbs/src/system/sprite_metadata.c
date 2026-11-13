@@ -1,7 +1,7 @@
 /// @file
 /// Finding a sprite animation's metadata row.
 
-#include "module/system/sprite_metadata.h"
+#include "system/sprite_metadata.h"
 #include "sprite_metadata.h"
 
 /// Looks up animation metadata using the descriptor ID in the low twelve bits:

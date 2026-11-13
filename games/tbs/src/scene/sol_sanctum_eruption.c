@@ -61,11 +61,11 @@ extern s8 gSolSanctum_RingDirection[][3];
 extern s32 gSolSanctum_RingMaxScales[];
 extern s32 gSolSanctum_RingScaleSteps[];
 
-#include "module/scene/shared/event_psynergy.h"
-#include "module/scene/shared/sol_sanctum_elemental_star_ring_setup.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/system/system.h"
+#include "scene/event_psynergy.h"
+#include "scene/sol_sanctum_elemental_star_ring_setup.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

@@ -4,9 +4,9 @@
 /// @file
 /// The Status screen's state, and the statuses it shows.
 
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/menu/menu.h"
+#include "window/window.h"
+#include "window/screens.h"
+#include "menu/menu.h"
 #include "types.h"
 #include "heap_slots.h"
 #include "static_assert.h"

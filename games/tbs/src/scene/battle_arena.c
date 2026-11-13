@@ -2,7 +2,7 @@
 /// The Battle Arena overlay: starting linked and monster battles, the exchange
 /// of the two parties, the attendant and the records of wins.
 
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -20,12 +20,12 @@ extern struct ActorPlacement gBattleArenaActorPlacements[];
 extern struct ActorPlacement gBattleArenaBattleActorPlacements[];
 extern struct Trigger gBattleArenaTriggers[];
 
-#include "module/field/event_commands.h"
-#include "module/battle/battle.h"
-#include "module/game/game.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/system/system.h"
+#include "field/event_commands.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "window/window.h"
+#include "window/screens.h"
+#include "system/system.h"
 #include "battle.h"
 #include "input.h"
 #include "debug.h"

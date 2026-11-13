@@ -44,7 +44,7 @@
 
 #include "main_routine_work.h"
 #include "event.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "scene.h"
@@ -57,7 +57,7 @@ extern struct ActorPlacement gTimberRoomsAActorPlacementsAfterAudience[];
 extern struct Trigger gTimberRoomsATriggers[];
 extern struct Trigger gTimberRoomsATriggersAfterAudience[];
 
-#include "module/system/main_routine.h"
+#include "system/main_routine.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"

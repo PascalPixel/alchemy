@@ -45,7 +45,7 @@ extern u16 gSuhallaWideDoorOpenSteps[];
 extern struct Trigger gSuhallaTriggers[];
 extern struct Trigger gSuhallaTriggersLater[];
 
-#include "module/field/event_commands.h"
+#include "field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

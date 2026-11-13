@@ -8,7 +8,7 @@
 /// resolves. It places no bytes.
 
 #include "vram_cache.h"
-#include "module/field/world_map_lines.h"
+#include "field/world_map_lines.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"

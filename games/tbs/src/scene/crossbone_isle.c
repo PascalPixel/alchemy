@@ -83,7 +83,7 @@
 
 #include "main_routine_work.h"
 #include "heap_slots.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -105,10 +105,10 @@ extern struct Trigger gCrossboneIsle_FloatingLogsTriggers[];
 extern struct Trigger gCrossboneIsle_PierTriggers[];
 extern struct Trigger gCrossboneIsle_PirateShipTriggers[];
 
-#include "module/scene/shared/actor_orbit.h"
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
+#include "scene/actor_orbit.h"
+#include "scene/field_effect_spawn.h"
+#include "field/event_commands.h"
+#include "system/system.h"
 #include "battle.h"
 #include "field.h"
 #include "menu.h"

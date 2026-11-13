@@ -94,12 +94,12 @@ extern s32 gSanctum_CursorBob[];
 extern s32 gSanctum_OwnerEffectScript[];
 extern s32 gSanctum_SparkEndScript[];
 
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/sound/sound.h"
-#include "module/system/system.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "window/window.h"
+#include "window/screens.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "battle.h"
 #include "input.h"
 #include "debug.h"

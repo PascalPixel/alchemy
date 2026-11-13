@@ -2,8 +2,8 @@
 /// Actor scripts: the ones the field starts itself, and the command
 /// table.
 
-#include "module/field/actor_script.h"
-#include "module/field/field.h"
+#include "field/actor_script.h"
+#include "field/field.h"
 #include "actor_script.h"
 
 /// The script Actor_Create gives every new actor: it does nothing and

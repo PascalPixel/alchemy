@@ -92,8 +92,8 @@ extern struct ActorPlacement gAlpineCrossing_ActorPlacements[];
 extern struct Trigger gLamaTemple_Triggers[];
 extern struct Trigger gAlpineCrossing_Triggers[];
 
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
+#include "field/event_commands.h"
+#include "system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

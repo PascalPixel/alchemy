@@ -71,12 +71,12 @@ extern s32 gVault_DriftScriptA[];
 extern s32 gVault_DriftScriptB[];
 
 #include "vault.h"
-#include "module/scene/shared/vault_range.h"
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/event_commands.h"
-#include "module/battle/battle.h"
-#include "module/game/game.h"
-#include "module/system/system.h"
+#include "scene/vault_range.h"
+#include "scene/field_effect_spawn.h"
+#include "field/event_commands.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "system/system.h"
 #include "actor.h"
 #include "event.h"
 #include "battle.h"

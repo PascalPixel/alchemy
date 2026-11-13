@@ -52,9 +52,9 @@ extern struct ActorPlacement gTretTreeBranch_ActorPlacements[];
 extern struct Trigger gTretTreeBranch_Triggers[];
 extern u16 gTretTreeBranch_UnusedCellSteps[];
 
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/system/system.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "system/system.h"
 #include "battle.h"
 #include "input.h"
 #include "debug.h"

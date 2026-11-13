@@ -4,7 +4,7 @@
 /// camera's lean, a floating actor's bob, how long a footprint lasts and the
 /// order a sprite dissolves in.
 
-#include "module/field/facing.h"
+#include "field/facing.h"
 #include "actor_script.h"
 
 /// Facing tables: for each enum AnimationFacingKind, the picture to draw for

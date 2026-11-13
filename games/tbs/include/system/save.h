@@ -4,8 +4,8 @@
 /// @file
 /// The save workspace: sector headers and file summaries.
 
-#include "module/window/window.h"
-#include "module/window/screens.h"
+#include "window/window.h"
+#include "window/screens.h"
 #include "types.h"
 #include "static_assert.h"
 #include "dma.h"

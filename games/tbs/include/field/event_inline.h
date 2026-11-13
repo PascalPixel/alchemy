@@ -11,10 +11,10 @@
 /// name, the routine keeps it and the inline takes the FieldActor_ prefix, as
 /// FieldActor_JumpDownLedge does.
 
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/system/system.h"
+#include "field/field_sequence.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "system/system.h"
 #include "event.h"
 #include "system_call.h"
 #include "far_call.h"

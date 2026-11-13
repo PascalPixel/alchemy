@@ -60,7 +60,7 @@
 
 #include "main_routine_work.h"
 #include "scene_ids.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -77,12 +77,12 @@ extern struct Trigger gMercuryLighthouseAerieTriggers[];
 extern s32 gMercuryLighthouseAerie_PlatformUnderfoot;
 extern s32 gMercuryLighthouseAerie_SparkScript[];
 
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/scene/shared/actor_nearest.h"
-#include "module/field/field_sequence.h"
-#include "module/system/main_routine.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
+#include "scene/field_effect_spawn.h"
+#include "scene/actor_nearest.h"
+#include "field/field_sequence.h"
+#include "system/main_routine.h"
+#include "field/event_commands.h"
+#include "game/game.h"
 #include "event.h"
 #include "system_call.h"
 #include "create_configured_actor.h"

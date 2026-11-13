@@ -7,10 +7,10 @@
 /// parts, and each part includes it too, so that a part read on its own still
 /// resolves.
 
-#include "module/window/scales.h"
-#include "module/window/articles.h"
-#include "module/window/message_speed.h"
-#include "module/window/glyph_arm.h"
+#include "window/scales.h"
+#include "window/articles.h"
+#include "window/message_speed.h"
+#include "window/glyph_arm.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"

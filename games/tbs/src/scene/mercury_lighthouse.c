@@ -89,7 +89,7 @@
 #include "iwram_call.h"
 #include "input.h"
 #include "scene_ids.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -133,15 +133,15 @@ extern struct Trigger gMercuryLighthouseMiddleTriggers[];
 extern struct Trigger gMercuryLighthouseUpperTriggers[];
 extern struct Trigger gMercuryLighthouseTriggersOther[];
 
-#include "module/scene/shared/field_effect_spawn.h"
+#include "scene/field_effect_spawn.h"
 #include "pushed_actor.h"
-#include "module/scene/shared/mercury_lighthouse_lights.h"
-#include "module/scene/shared/mercury_lighthouse_pillar.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/system/system.h"
+#include "scene/mercury_lighthouse_lights.h"
+#include "scene/mercury_lighthouse_pillar.h"
+#include "field/event_commands.h"
+#include "game/game.h"
+#include "window/window.h"
+#include "window/screens.h"
+#include "system/system.h"
 #include "heap_release.h"
 #include "shared/mercury_lighthouse.h"
 #include "field_effect.h"

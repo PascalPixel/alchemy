@@ -2,8 +2,8 @@
 /// The debug room Menu test, whose actors each run a test of the menus, the
 /// shops or the bags when talked to.
 
-#include "module/debug/test.h"
-#include "module/window/screens.h"
+#include "debug/test.h"
+#include "window/screens.h"
 #include "battle.h"
 #include "game.h"
 #include "system.h"
@@ -26,7 +26,7 @@
 #include "dma.h"
 #include "item_ids.h"
 #include "ability_ids.h"
-#include "module/sound/sound.h"
+#include "sound/sound.h"
 #include "djinn_ids.h"
 
 /// The debug item browser covers IDs 0 through 269.

@@ -60,7 +60,7 @@
 #include "main_routine_work.h"
 #include "heap_slots.h"
 #include "scene_ids.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -80,8 +80,8 @@ extern struct Trigger gGondowanPassageTriggersWithIodem[];
 extern struct Trigger gGondowanCaveRiverTriggers[];
 extern struct Trigger gGondowanCaveTriggers[];
 
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/event_commands.h"
+#include "scene/field_effect_spawn.h"
+#include "field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

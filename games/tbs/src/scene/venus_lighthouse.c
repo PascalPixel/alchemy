@@ -80,7 +80,7 @@
 
 #include "script_operands.h"
 #include "main_routine_work.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "field.h"
 #include "scene_tables.h"
@@ -175,9 +175,9 @@ extern s32 *gVenusFourthFloorSouthwestPaths[];
 extern s32 *gVenusFourthFloorSoutheastPaths[];
 extern s32 **gVenusFourthFloorSocketPaths[];
 
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
+#include "scene/field_effect_spawn.h"
+#include "field/event_commands.h"
+#include "system/system.h"
 #include "io_write.h"
 #include "ground_mask.h"
 #include "shared/walk_into_leader.h"

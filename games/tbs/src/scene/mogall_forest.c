@@ -90,8 +90,8 @@ extern struct Trigger gMogallForestQuartz_Triggers[];
 extern struct Trigger gMogallForestKillerApe_Triggers[];
 extern struct Trigger gMogallForestSidePaths_Triggers[];
 
-#include "module/scene/shared/actor_orbit.h"
-#include "module/scene/shared/field_effect_spawn.h"
+#include "scene/actor_orbit.h"
+#include "scene/field_effect_spawn.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS
 #include "actor.h"

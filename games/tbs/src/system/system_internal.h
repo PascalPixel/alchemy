@@ -27,8 +27,8 @@
 #include "projection.h"
 #include "save.h"
 #include "sound_driver_symbols.h"
-#include "module/system/math_table.h"
-#include "module/system/number_text.h"
+#include "system/math_table.h"
+#include "system/number_text.h"
 #include "savedata.h"
 
 /// The compiler library's call through r3, which oam.c uses to run code

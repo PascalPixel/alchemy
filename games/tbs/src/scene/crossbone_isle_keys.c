@@ -47,7 +47,7 @@
 #include "djinn_ids.h"
 #include "heap_slots.h"
 #include "scene_ids.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -69,9 +69,9 @@ extern struct Trigger gCrossboneIsleBaneTriggers[];
 extern u32 gCrossboneIsleKeys_SlotColumns[];
 extern s32 gCrossboneIsleKeys_IconTimer;
 
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/system/system.h"
+#include "field/event_commands.h"
+#include "game/game.h"
+#include "system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

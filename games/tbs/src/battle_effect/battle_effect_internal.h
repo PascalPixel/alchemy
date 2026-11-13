@@ -5,11 +5,11 @@
 /// What every part of the battle effect object shares: its includes, macros and
 /// frame-loop helpers.
 
-#include "module/battle_effect/battle_effect_table.h"
-#include "module/battle_effect/battle_effect.h"
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
+#include "battle_effect/battle_effect_table.h"
+#include "battle_effect/battle_effect.h"
+#include "field/field_sequence.h"
+#include "field/event_commands.h"
+#include "system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -56,7 +56,7 @@
 #include "battle_side.h"
 #include "fixed_point_position.h"
 #include "irq.h"
-#include "module/battle_effect/blitter_operands.h"
+#include "battle_effect/blitter_operands.h"
 #include "macros.h"
 #include "sprite_ids.h"
 

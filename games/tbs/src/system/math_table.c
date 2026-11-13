@@ -1,7 +1,7 @@
 /// @file
 /// Trigonometry tables: a quarter-wave sine, tangents and the quadrants' sines.
 
-#include "module/system/math_table.h"
+#include "system/math_table.h"
 #include "types.h"
 #include "system.h"
 

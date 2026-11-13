@@ -46,9 +46,9 @@ extern u32 gGomaCaveEntranceExits[];
 extern struct ActorPlacement gGomaCaveEntranceActorPlacements[];
 extern struct Trigger gGomaCaveEntranceTriggers[];
 
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
+#include "scene/field_effect_spawn.h"
+#include "field/event_commands.h"
+#include "game/game.h"
 #include "battle.h"
 #include "field.h"
 #include "menu.h"

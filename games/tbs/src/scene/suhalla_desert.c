@@ -83,7 +83,7 @@ extern s32 gSuhallaDesertChaseScript[];
 extern struct Trigger gSuhallaDesertTriggersOther[];
 extern struct Trigger gSuhallaDesertCavesTriggers[];
 
-#include "module/scene/shared/field_effect_spawn.h"
+#include "scene/field_effect_spawn.h"
 #include "actor.h"
 #include "event.h"
 #include "djinn_ids.h"

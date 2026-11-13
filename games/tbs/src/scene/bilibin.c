@@ -108,7 +108,7 @@
 #include "djinn_ids.h"
 #include "flags.h"
 #include "scene_ids.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -148,8 +148,8 @@ extern u8 gBilibin_CratesLaneCells[];
 extern s32 gPushedActor_DirectionSteps[];
 extern s32 gBilibin_RippleScript[];
 
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
+#include "field/event_commands.h"
+#include "system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

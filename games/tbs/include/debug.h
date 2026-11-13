@@ -4,10 +4,10 @@
 /// @file
 /// The main-image calls the debug menus import, and their palette swatch tiles.
 
-#include "module/field/field_sequence.h"
-#include "module/menu/menu.h"
-#include "module/game/game.h"
-#include "module/window/window.h"
+#include "field/field_sequence.h"
+#include "menu/menu.h"
+#include "game/game.h"
+#include "window/window.h"
 #include "types.h"
 #include "edition.h"
 #include "far_call.h"

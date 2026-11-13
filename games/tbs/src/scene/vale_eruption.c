@@ -52,7 +52,7 @@ extern struct ActorPlacement gValeEruption_ActorPlacements[];
 extern struct Trigger gValeEruption_Triggers[];
 extern u16 gValeEruption_SanctumDoorOpens[];
 
-#include "module/field/event_commands.h"
+#include "field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

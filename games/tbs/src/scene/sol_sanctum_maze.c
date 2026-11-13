@@ -29,7 +29,7 @@ extern u32 gSolSanctumMazeExits[];
 extern struct ActorPlacement gSolSanctumMazeActorPlacements[];
 extern struct Trigger gSolSanctumMazeTriggers[];
 
-#include "module/scene/shared/sol_sanctum_init_zoom.h"
+#include "scene/sol_sanctum_init_zoom.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

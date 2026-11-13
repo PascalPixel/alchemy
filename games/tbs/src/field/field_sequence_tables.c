@@ -3,7 +3,7 @@
 /// bank.
 
 #include "speaker.h"
-#include "module/field/event_commands.h"
+#include "field/event_commands.h"
 #include "actor_script.h"
 #include "scene_tables.h"
 

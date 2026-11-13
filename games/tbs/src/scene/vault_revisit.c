@@ -62,11 +62,11 @@ extern u16 gVaultRevisit_JailDoorCells[];
 extern struct Trigger gVaultRevisit_Triggers[];
 
 #include "vault.h"
-#include "module/scene/shared/vault_range.h"
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/system/system.h"
+#include "scene/vault_range.h"
+#include "scene/field_effect_spawn.h"
+#include "field/event_commands.h"
+#include "game/game.h"
+#include "system/system.h"
 #include "actor.h"
 #include "event.h"
 #include "battle.h"

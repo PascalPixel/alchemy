@@ -102,7 +102,7 @@
 #include "sound_driver_symbols.h"
 #include "macros.h"
 #include "main_routine_work.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -157,12 +157,12 @@ extern struct Trigger gShipRooms_RowingDeckTriggersMonstersAboard[];
 extern struct Trigger gShipRooms_RowingDeckTriggersKrakenAboard[];
 extern struct Trigger gShipRooms_RowingDeckTriggersArrived[];
 
-#include "module/field/field_sequence.h"
-#include "module/system/main_routine.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
+#include "field/field_sequence.h"
+#include "system/main_routine.h"
+#include "field/event_commands.h"
+#include "game/game.h"
+#include "window/window.h"
+#include "window/screens.h"
 #include "event.h"
 #include "battle.h"
 #include "debug.h"

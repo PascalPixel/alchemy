@@ -1,7 +1,7 @@
 /// @file
 /// Lucky Dice, the dice game in Tolbi, drawn with the battles' 3D camera.
 
-#include "module/field/lucky_dice.h"
+#include "field/lucky_dice.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"

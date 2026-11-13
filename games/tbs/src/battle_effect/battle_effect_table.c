@@ -4,8 +4,8 @@
 /// gBattleEffect_ tables, which many parts share. Picture offsets are byte
 /// offsets from the sheet start, accumulated as width times height.
 
-#include "module/battle_effect/battle_effect_table.h"
-#include "module/battle_effect/battle_effect.h"
+#include "battle_effect/battle_effect_table.h"
+#include "battle_effect/battle_effect.h"
 #include "types.h"
 #include "vector3.h"
 #include "render_placement.h"

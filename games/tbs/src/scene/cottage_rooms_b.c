@@ -135,12 +135,12 @@ extern struct Trigger gCottageRoomsB_TriggersAfterKalay[];
 extern struct Trigger gCottageRoomsB_BabiScholarsTriggers[];
 extern struct Trigger gCottageRoomsB_BabiScholarsLaterTriggers[];
 
-#include "module/scene/shared/event_psynergy.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/system/system.h"
+#include "scene/event_psynergy.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "window/window.h"
+#include "window/screens.h"
+#include "system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

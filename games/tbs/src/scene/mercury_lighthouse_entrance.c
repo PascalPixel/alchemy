@@ -87,7 +87,7 @@
 #include "main_routine_work.h"
 #include "heap_slots.h"
 #include "input.h"
-#include "module/import.h"
+#include "scene/import.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -115,13 +115,13 @@ extern struct ActorPlacement gMercuryLighthouseEntrance_ActorPlacements[];
 extern struct Trigger gMercuryLighthouseEntrance_Triggers[];
 extern s32 gGlint_TwinkleScript[];
 
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/scene/shared/mercury_lighthouse_lights.h"
-#include "module/scene/shared/mercury_lighthouse_pillar.h"
-#include "module/field/event_commands.h"
-#include "module/window/window.h"
-#include "module/window/screens.h"
-#include "module/system/system.h"
+#include "scene/field_effect_spawn.h"
+#include "scene/mercury_lighthouse_lights.h"
+#include "scene/mercury_lighthouse_pillar.h"
+#include "field/event_commands.h"
+#include "window/window.h"
+#include "window/screens.h"
+#include "system/system.h"
 #include "io_write.h"
 
 #include "actor.h"

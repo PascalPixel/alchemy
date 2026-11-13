@@ -47,9 +47,9 @@ extern struct ActorPlacement gGomaCaveBridgeActorPlacements[];
 extern struct Trigger gGomaCaveStreamTriggers[];
 extern struct Trigger gGomaCaveBridgeTriggers[];
 
-#include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
+#include "scene/field_effect_spawn.h"
+#include "field/event_commands.h"
+#include "field/field.h"
 #include "actor.h"
 #include "event.h"
 #include "battle.h"

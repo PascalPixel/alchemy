@@ -4,7 +4,7 @@
 /// @file
 /// The world map's scanlines and affine lines.
 
-#include "module/field/field.h"
+#include "field/field.h"
 #include "types.h"
 #include "static_assert.h"
 

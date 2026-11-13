@@ -48,7 +48,7 @@ struct RideState {
   struct RideCar *car;
 };
 
-s32 Func_02002708(void) {
+s32 MarsLighthouseRoomM_SlideOnIce(void) {
   struct RideEvent *event = Ram_HeapSlots->eventWork;
   struct RideState *ride;
   struct Actor *leader;
@@ -148,7 +148,7 @@ void Func_02003230(s32 a, s32 b);
 void Func_02003228(void);
 void Func_020032a8(void);
 
-DEFINE_FUNC_020024AC(Func_02002848, Func_02002708)
+DEFINE_FUNC_020024AC(MarsLighthouseRoomM_ContinueSlide, MarsLighthouseRoomM_SlideOnIce)
 
 s32 Func_02002864(void) {
   return ((struct RideWork *)(gData_020023c4 + 0x188))->active;
@@ -487,11 +487,11 @@ struct Trigger gMarsLighthouseRoomM_Room1Triggers[] = {
     {TRIGGER_STEP, 26, 0x1a30, EVENT(Func_020006c8)},
     {TRIGGER_STEP, 27, 0x1a30, EVENT(Func_020006c8)},
     {0x9c05, 1, CONDITION_ALWAYS, EVENT(Func_02000abc)},
-    {TRIGGER_EXAMINE, 30, CONDITION_ALWAYS, EVENT(Func_020010e4)},
-    {TRIGGER_EXAMINE, 31, CONDITION_ALWAYS, EVENT(Func_02001154)},
-    {TRIGGER_EXAMINE, 32, CONDITION_ALWAYS, EVENT(Func_020011c4)},
-    {TRIGGER_EXAMINE, 33, CONDITION_ALWAYS, EVENT(Func_02001234)},
-    {TRIGGER_STEP, 34, 0xa2e, EVENT(Func_020013a0)},
+    {TRIGGER_EXAMINE, 30, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_ReadEarthInscription)},
+    {TRIGGER_EXAMINE, 31, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_ReadWaterInscription)},
+    {TRIGGER_EXAMINE, 32, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_ReadFireInscription)},
+    {TRIGGER_EXAMINE, 33, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_ReadWindInscription)},
+    {TRIGGER_STEP, 34, 0xa2e, EVENT(MarsLighthouseRoomM_HearDragonStatue)},
     {TRIGGERS_END},
 };
 

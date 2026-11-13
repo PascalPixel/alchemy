@@ -612,7 +612,9 @@ s32 Scene_PrepareMap(void) {
 
 #include "version.h"
 
-void Func_020010e4(void) {
+/// ★ Named from the game: "Mankind... With the power of wisdom, they ruled the
+/// earth." (MsgMankindWithThe)
+void MarsLighthouseRoomM_ReadEarthInscription(void) {
   u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 15);
 
   Event_Start();
@@ -630,7 +632,9 @@ void Func_020010e4(void) {
   Event_End();
 }
 
-void Func_02001154(void) {
+/// ★ Named from the game: "Fish... With cold courage, they ruled the water."
+/// (MsgFishWithCold)
+void MarsLighthouseRoomM_ReadWaterInscription(void) {
   u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 15);
 
   Event_Start();
@@ -648,7 +652,9 @@ void Func_02001154(void) {
   Event_End();
 }
 
-void Func_020011c4(void) {
+/// ★ Named from the game: "Dragons... Burning with might, they ruled the
+/// fires." (MsgDragonsBurningWith)
+void MarsLighthouseRoomM_ReadFireInscription(void) {
   u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 15);
 
   Event_Start();
@@ -666,7 +672,9 @@ void Func_020011c4(void) {
   Event_End();
 }
 
-void Func_02001234(void) {
+/// ★ Named from the game: "Bird... On the wings of truth, they ruled the
+/// winds." (MsgBirdOnThe)
+void MarsLighthouseRoomM_ReadWindInscription(void) {
   u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 15);
 
   Event_Start();
@@ -726,8 +734,8 @@ void Func_02001324(s32 x, s32 z, s32 c, s32 d, s32 e, s32 f) {
 /// No one holding item 222: MsgIfYouDo, once (flag 0xa2f). Someone holding it
 /// (and flag 0xa30 set, from patch 1): MsgYouWhoHold and the
 /// message after it, the camera moves on and Func_0200080c runs, then flag
-/// 0xa2e is set. Each opens as Func_020010e4 does.
-void Func_020013a0(void) {
+/// 0xa2e is set. Each opens as MarsLighthouseRoomM_ReadEarthInscription does.
+void MarsLighthouseRoomM_HearDragonStatue(void) {
   if (PartyInventory_FindMember(222) == -1) {
     if (!Event_GetFlag(0xa2f)) {
       u16 *color = (volatile u16 *)&OBJ_PLTT_COLOR(0, 15);
@@ -811,7 +819,7 @@ extern u16 gData_02004cf0[];
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Func_02003130(void *handle);
 void Func_020024e4(void);
-s32 Func_02002708(void);
+s32 MarsLighthouseRoomM_SlideOnIce(void);
 void Func_02002e6c(struct Actor *self);
 
 void Func_02003118(struct Actor *object, s32 value);

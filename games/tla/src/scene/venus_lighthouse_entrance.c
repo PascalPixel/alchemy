@@ -103,7 +103,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
        ->v)
 
 void Func_0200030c(void);
-void Func_02001c30(void);
+void VenusLighthouseEntrance_WakeUp(void);
 
 s32 Scene_Initialize(void) {
   s32 t37;
@@ -153,7 +153,7 @@ s32 Scene_Initialize(void) {
     gMainRoutineWork.secondary = 1;
     gMainRoutineWork.entrance = 1;
     Party_RestoreHpPp(1);
-    Func_02001c30();
+    VenusLighthouseEntrance_WakeUp();
   }
   if (gMainRoutineWork.entrance == 0x63) {
     Event_SetFlag(0x893);
@@ -1001,7 +1001,8 @@ void VenusLighthouseEntrance_PointToMeetingSpot(void) {
 
 #include "iwram_call.h"
 
-void Func_02001c30(void) {
+/// ★ Named from the game: " ... Are... Are you all right?" (MsgAreAreYou)
+void VenusLighthouseEntrance_WakeUp(void) {
   s32 t96;
 
   Event_Start();

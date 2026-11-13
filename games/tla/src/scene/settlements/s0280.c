@@ -97,7 +97,9 @@ void Func_02000404(void) {
   Event_End();
 }
 
-void Func_0200043c(s32 actor) {
+/// ★ Named from the game: "Don't tell me, you're here to solve the riddle of
+/// the rock!" (MsgSettlements01)
+void Settlements_WarnOfRiddleOfRock(s32 actor) {
   s32 msg = (s32)MsgSettlements01;
 
   FieldEvent_SetMessageId(msg);

@@ -133,7 +133,7 @@ void Func_02000280(void);
 void Func_020002a0(void);
 void Func_020002b0(void);
 void Func_020002bc(void);
-void Func_0200043c(void);
+void Settlements_WarnOfRiddleOfRock(void);
 void Func_020005cc(void);
 void Func_02000644(void);
 void Func_02000c44(void);
@@ -360,7 +360,7 @@ struct Trigger gSettlements_Room1Triggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0x4602, 3, CONDITION_ALWAYS, EVENT(Func_02000624)},
     {0x602, 4, CONDITION_ALWAYS, EVENT(Func_020005cc)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_0200043c)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Settlements_WarnOfRiddleOfRock)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSettlements03)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSettlements04)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgSettlements06)},

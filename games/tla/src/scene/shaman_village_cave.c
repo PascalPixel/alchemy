@@ -246,7 +246,10 @@ void Func_02000404(void) {
 #include "edition.h"
 #include "version.h"
 
-void Func_02000430(void) {
+/// The fighters from Colosso, after a linked game, find the party and challenge
+/// it.
+/// ★ Named from the game: "I found !" (MsgIFound2)
+void ShamanVillageCave_MeetColossoFans(void) {
   s32 angle;
 
   if (Event_GetFlag(0x821) == 0)
@@ -390,7 +393,9 @@ void Event_SetDestination();
     } *)Ram_HeapSlots->eventWork)                                              \
        ->message)
 
-void Func_0200087c(void) {
+/// ★ Named from the game: "Hey, these guys aren't very strong at all!"
+/// (MsgHeyTheseGuys)
+void ShamanVillageCave_LoseToColossoFans(void) {
   s32 angle = 0xa000;
 
   Event_Start();
@@ -445,7 +450,8 @@ void Func_0200087c(void) {
       ->value = 0;
 }
 
-void Func_02000a24(void) {
+/// ★ Named from the game: "These guys were phenomenal!" (MsgTheseGuysWere)
+void ShamanVillageCave_BeatColossoFans(void) {
   s16 *target;
   s32 angle = 0xe000;
 
@@ -612,10 +618,10 @@ s32 Scene_Initialize(void) {
       Event_GetFlag(0xa71)) {
     Func_020003cc();
     if (!Event_GetFlag(265) && gMainRoutineWork.entrance == 20) {
-      Func_02000a24();
+      ShamanVillageCave_BeatColossoFans();
     } else if (!Event_GetFlag(265) && gMainRoutineWork.entrance == 21) {
       Event_SetFlag(0xa71);
-      Func_0200087c();
+      ShamanVillageCave_LoseToColossoFans();
     }
   }
   if (Event_GetFlag(0xa73))
@@ -713,7 +719,7 @@ struct Trigger gSceneEvents[] = {
     {0x8602, 42, 0x201, EVENT(Func_02001038)},
     {0x602, 43, 0x202, EVENT(Func_02001038)},
     {0x8602, 44, 0x202, EVENT(Func_02001038)},
-    {TRIGGER_STEP, 100, 0xa70, EVENT(Func_02000430)},
+    {TRIGGER_STEP, 100, 0xa70, EVENT(ShamanVillageCave_MeetColossoFans)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_0200030c)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_0200083c)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Func_0200083c)},

@@ -9,7 +9,7 @@ void Func_02000e68(void);
 void Func_02000f10(void);
 void Func_020011b4(void);
 void Func_02001238(void);
-void Func_0200130c(void);
+void YampiDesertCave_MeetGuardianOfFire(void);
 void Func_020013c8(void);
 
 // clang-format off
@@ -152,7 +152,7 @@ struct Trigger gYampiDesertCave_Room2Triggers[] = {
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {33, 17, CONDITION_ALWAYS, 17},
-    {TRIGGER_STEP, 52, 0x9cd, EVENT(Func_0200130c)},
+    {TRIGGER_STEP, 52, 0x9cd, EVENT(YampiDesertCave_MeetGuardianOfFire)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x303, EVENT(Func_02000e68)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x303, EVENT(Func_02000f10)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Func_02001040)},

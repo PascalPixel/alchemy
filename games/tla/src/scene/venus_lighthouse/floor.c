@@ -247,7 +247,7 @@ s32 VenusLighthouse_Start(void) {
     Import_EventStart();
     FieldEvent_ResolvePendingActions(0);
     Func_02000b2c();
-    Func_02000d30();
+    VenusLighthouse_DoubtLeaving();
     Import_EventEnd();
   } else {
     Actor_SetSpriteColor(Actor_Get(10), 6);
@@ -265,7 +265,7 @@ s32 VenusLighthouse_Start(void) {
 }
 #endif
 
-void Func_02000d30(void);
+void VenusLighthouse_DoubtLeaving(void);
 
 // The Japanese edition has no form of this function here.
 #if TLA_PATCH_1
@@ -281,7 +281,7 @@ s32 VenusLighthouse_Start(void) {
     Import_EventStart();
     FieldEvent_ResolvePendingActions(0);
     Func_02000b2c();
-    Func_02000d30();
+    VenusLighthouse_DoubtLeaving();
     Import_EventEnd();
   } else {
     Actor_SetSpriteColor(Actor_Get(10), 6);
@@ -362,7 +362,9 @@ void Func_02000b2c(void) {
   Actor_SetPosition(4, 0, 0);
 }
 
-void Func_02000d30(void) {
+/// ★ Named from the game: "Are you sure we should be leaving like this?"
+/// (MsgVenusLighthouseAreYouSureWeShouldBeLeaving)
+void VenusLighthouse_DoubtLeaving(void) {
   struct VenusActor *actor;
   struct EventWork *work;
 

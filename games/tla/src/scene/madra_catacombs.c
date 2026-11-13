@@ -152,7 +152,9 @@ const struct Trigger *Scene_GetEvents(void) {
 void Func_020011e4(const void *data);
 void Func_020011cc(const void *data);
 
-void Func_02000474(void) {
+/// ★ Named from the game: "The door won't budge. ...Must be locked."
+/// (MsgFieldDoorWontBudge)
+void MadraCatacombs_TryLockedDoor(void) {
   struct EventWork15a *work = Ram_HeapSlots->eventWork;
 
   Event_Start();
@@ -278,7 +280,9 @@ void Func_02000778(void) {
   Event_ClearFlag(0x203);
 }
 
-void Func_020007a0(void) {
+/// ★ Named from the game: "Look upon me with eyes of truth... Then the door
+/// will open..." (MsgFieldEyesOfTruth)
+void MadraCatacombs_HearEyesOfTruth(void) {
   if (Event_GetFlag(0x203) != 0 && Event_GetFlag(0x8cb) == 0) {
     Event_Start();
     Event_ResolvePendingActions(1);
@@ -798,7 +802,7 @@ struct Trigger gMadraCatacombs_Room1Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x202, EVENT(Func_02000558)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_0200072c)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_02000778)},
-    {0xc403, 10, CONDITION_ALWAYS, EVENT(Func_020007a0)},
+    {0xc403, 10, CONDITION_ALWAYS, EVENT(MadraCatacombs_HearEyesOfTruth)},
     {TRIGGERS_END},
 };
 
@@ -860,6 +864,6 @@ struct Trigger gMadraCatacombs_Room6Triggers[] = {
     {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_02000c78)},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {0x1cb04, 10, CONDITION_ALWAYS, EVENT(Func_02000568)},
-    {TRIGGER_EXAMINE, 10, 0x8c9, EVENT(Func_02000474)},
+    {TRIGGER_EXAMINE, 10, 0x8c9, EVENT(MadraCatacombs_TryLockedDoor)},
     {TRIGGERS_END},
 };

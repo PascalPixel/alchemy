@@ -722,7 +722,7 @@ void Func_02001238(s32 mode) {
 
 /// The guardian speaks, then the party leaves for overlay 664's fourth room.
 /// Overlay 6af's Func_02000a8c is the same scene for actor 8.
-void Func_0200130c(void) {
+void YampiDesertCave_MeetGuardianOfFire(void) {
   s32 leader;
 
   Event_Start();

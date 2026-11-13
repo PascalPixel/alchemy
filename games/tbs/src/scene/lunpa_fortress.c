@@ -111,6 +111,8 @@
 #include "sound.h"
 #include "system.h"
 #include "heap_slots.h"
+#include "heap.h"
+#include "io_write.h"
 #include "edition.h"
 #include "lunpa_fortress.h"
 #include "pushed_actor.h"
@@ -871,7 +873,7 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
   struct MapGridLayerScroll *patrolLayer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
            ->layers[MAPGRID_LAYER_OVERHEAD];
-  struct FieldWork *work = gFieldWork;
+  struct FieldWork *work = gMapGridWork[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID];
 
   if (gFrameCount & 1) {
     patrolLayer->speedX = 1;
@@ -978,7 +980,7 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
   struct MapGridLayerScroll *patrolLayer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
            ->layers[MAPGRID_LAYER_OVERHEAD];
-  struct FieldWork *work = gFieldWork;
+  struct FieldWork *work = gMapGridWork[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID];
 
   FieldCamera_GetActor();
   if (gFrameCount & 1) {
@@ -1052,7 +1054,7 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
   struct MapGridLayerScroll *patrolLayer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
            ->layers[MAPGRID_LAYER_OVERHEAD];
-  struct FieldWork *work = gFieldWork;
+  struct FieldWork *work = gMapGridWork[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID];
 
   if (gFrameCount & 1) {
     patrolLayer->speedX = 1;
@@ -1152,7 +1154,7 @@ static void LunpaFortress_CheckEntranceGuard(void) {
 
     Task_Remove(LunpaFortress_CheckEntranceGuard);
     raisedTrigger = &work->raisedTrigger;
-    *raisedTrigger = RAISED_ENTRANCE_GUARD_SPOTTED;
+    Io_Write16(RAISED_ENTRANCE_GUARD_SPOTTED, raisedTrigger);
   }
 }
 

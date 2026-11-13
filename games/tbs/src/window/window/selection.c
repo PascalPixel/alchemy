@@ -33,13 +33,13 @@ void SelectionMenu_Create(void) {
   // chosen icons, 14 the pointing hand and 15 the large icon.
   i = 0;
   do {
-    screen->records[i + 2].kind = ICON_KIND_NONE;
-    screen->records[i + 9].kind = ICON_KIND_NONE;
+    screen->records[i + SELECTION_RECORD_ROW].kind = ICON_KIND_NONE;
+    screen->records[i + SELECTION_RECORD_CHOSEN].kind = ICON_KIND_NONE;
     i++;
   } while (i != 5);
   /* FAKEMATCH(temporary): i, left at 5 by the loop, indexes records 7 and 8;
    * as records[7] and records[8], 6 of 124 instructions differ in tbs-en. */
-  screen->records[i + 2].kind = ICON_KIND_NONE;
+  screen->records[i + SELECTION_RECORD_ROW].kind = ICON_KIND_NONE;
   screen->records[i + 3].kind = ICON_KIND_NONE;
   screen->records[0].kind = FALSE;
   screen->records[1].kind = FALSE;
@@ -47,13 +47,13 @@ void SelectionMenu_Create(void) {
   screen->records[1].y = 0;
   // The hand: a 16x16 sprite of 256 colours, 256 bytes a frame.
   table = gMenu_AnimatedCursorTiles;
-  screen->records[14].slot = VramCache_FindFreeEntry();
-  screen->records[14].tile =
-      VramCache_Load(screen->records[14].slot, 256, table);
-  screen->records[14].kind = 0;
-  screen->records[14].scale = 0;
-  screen->records[15].kind = ICON_KIND_NONE;
-  visual = &screen->records[14].sprite;
+  screen->records[SELECTION_RECORD_HAND].slot = VramCache_FindFreeEntry();
+  screen->records[SELECTION_RECORD_HAND].tile =
+      VramCache_Load(screen->records[SELECTION_RECORD_HAND].slot, 256, table);
+  screen->records[SELECTION_RECORD_HAND].kind = 0;
+  screen->records[SELECTION_RECORD_HAND].scale = 0;
+  screen->records[SELECTION_RECORD_LARGE_ICON].kind = ICON_KIND_NONE;
+  visual = &screen->records[SELECTION_RECORD_HAND].sprite;
   visual->mode = 0;
   visual->mosaic = 0;
   visual->colors = 1;
@@ -169,13 +169,13 @@ struct SelectionNode *SelectionMenu_FindFreeIcon(s32 kind) {
 
   if (kind != SELECTION_ICON_ROW) {
     for (i = 0; i != 5; i++) {
-      if (state->records[i + 9].kind == ICON_KIND_NONE)
-        return &state->records[i + 9];
+      if (state->records[i + SELECTION_RECORD_CHOSEN].kind == ICON_KIND_NONE)
+        return &state->records[i + SELECTION_RECORD_CHOSEN];
     }
   } else {
     for (i = 0; i != 7; i++) {
-      if (state->records[i + 2].kind == ICON_KIND_NONE)
-        return &state->records[i + 2];
+      if (state->records[i + SELECTION_RECORD_ROW].kind == ICON_KIND_NONE)
+        return &state->records[i + SELECTION_RECORD_ROW];
     }
   }
   return NULL;
@@ -199,9 +199,10 @@ void SelectionMenu_StopDrawing(void) { Task_Remove(SelectionMenu_Draw); }
 /// icon always.
 void SelectionMenu_Draw(void) {
   struct SelectionMenuWork *state = gSelectionMenuWork;
-  struct SelectionSprite *cursorEntry = &state->records[14].sprite;
-  struct SelectionNode *cursor = &state->records[14];
-  struct SelectionNode *transfer = &state->records[15];
+  struct SelectionSprite *cursorEntry =
+      &state->records[SELECTION_RECORD_HAND].sprite;
+  struct SelectionNode *cursor = &state->records[SELECTION_RECORD_HAND];
+  struct SelectionNode *transfer = &state->records[SELECTION_RECORD_LARGE_ICON];
   struct SelectionNode *node;
   struct SelectionSprite *sprite;
   struct SelectionSprite *commandSprite;
@@ -255,7 +256,7 @@ void SelectionMenu_Draw(void) {
     }
     if (node->scale != 0) {
       if (GameFlag_GetFar(FLAG_IN_BATTLE) != 0) {
-        if (state->records[14].kind == ICON_KIND_COMMAND) {
+        if (state->records[SELECTION_RECORD_HAND].kind == ICON_KIND_COMMAND) {
           sprite->mode = 1;
         } else {
           sprite->mode = 0;
@@ -331,7 +332,7 @@ void SelectionMenu_Draw(void) {
       sprite->matrix = 0;
     }
     if (GameFlag_GetFar(FLAG_IN_BATTLE) != 0) {
-      if (state->records[14].kind == ICON_KIND_COMMAND) {
+      if (state->records[SELECTION_RECORD_HAND].kind == ICON_KIND_COMMAND) {
         sprite->mode = 1;
       } else {
         sprite->mode = 0;
@@ -372,7 +373,7 @@ void SelectionMenu_Draw(void) {
         cursor->y + gMenuCursor_BobOffsets[(gVBlankCount >> 2) & 15] - 32;
     cursorEntry->x = cursor->x - 4;
     if (GameFlag_GetFar(FLAG_IN_BATTLE) != 0) {
-      if (state->records[14].kind == ICON_KIND_COMMAND) {
+      if (state->records[SELECTION_RECORD_HAND].kind == ICON_KIND_COMMAND) {
         cursorEntry->mode = 1;
       } else {
         cursorEntry->mode = 0;
@@ -409,7 +410,7 @@ void SelectionMenu_DrawArrow(struct SelectionMenuWork *state, s32 side) {
   tmp = arrowTiles + animationStep * 128;
   arrow->tile = VramCache_Load(state->records[side].slot, 128, tmp);
   if (GameFlag_GetFar(FLAG_IN_BATTLE)) {
-    if (state->records[14].kind == ICON_KIND_COMMAND)
+    if (state->records[SELECTION_RECORD_HAND].kind == ICON_KIND_COMMAND)
       arrow->mode = 1;
     else
       arrow->mode = 0;
@@ -508,7 +509,7 @@ void SelectionMenu_Close(void) {
       VramCache_FreeEntry(state->records[1].slot);
     }
   }
-  VramCache_FreeEntry(state->records[14].slot);
+  VramCache_FreeEntry(state->records[SELECTION_RECORD_HAND].slot);
   HeapSlot_Release(HEAP_SLOT_SELECTION_MENU);
 }
 
@@ -1204,8 +1205,8 @@ u32 Menu_ConfirmSelection(struct SelectionMenuWork *screen) {
   wait(1);
   screen->records[0].kind = 0;
   screen->records[1].kind = 0;
-  screen->records[14].kind = 0;
-  screen->records[14].scale = 0;
+  screen->records[SELECTION_RECORD_HAND].kind = 0;
+  screen->records[SELECTION_RECORD_HAND].scale = 0;
   Resource_ResetPendingTransfer();
   node = screen->head;
   while (node != NULL && screen->cursorIndex != nodeIndex) {
@@ -1346,7 +1347,7 @@ void SelectionMenu_LoadLargeIcon(void) {
     return;
 
   buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
-  transfer = &state->records[15];
+  transfer = &state->records[SELECTION_RECORD_LARGE_ICON];
   resourceId = selected->base;
   // The resource starts with a halfword offset per command icon.
   table = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
@@ -1371,7 +1372,8 @@ void SelectionMenu_LoadLargeIcon(void) {
 /// Frees the large command icon, if it is shown.
 /// The large preview owns a cache slot independently of the visible row icons.
 void Resource_ResetPendingTransfer(void) {
-  struct SelectionNode *largeIcon = &gSelectionMenuWork->records[15];
+  struct SelectionNode *largeIcon =
+      &gSelectionMenuWork->records[SELECTION_RECORD_LARGE_ICON];
 
   if (largeIcon->kind != ICON_KIND_NONE) {
     VramCache_FreeEntry(largeIcon->slot);

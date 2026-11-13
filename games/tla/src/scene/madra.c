@@ -281,16 +281,11 @@ void Madra_AskComingThroughSealedHole(void) {
   Event_ShowMessage(26, 0);
 }
 
-#define PLACE(id, x, z, angle)                                                 \
-  {                                                                            \
-    /* FAKEMATCH(temporary): the angle held in a block local, as overlay       \
-     * 6a3's PLACE has it, so it is built first and shifted before the         \
-     * positions; as the angle passed straight to the call, 8 of 60            \
-     * instructions of Madra_WorkerBlocksHole differ in tla-en, and 8 of 51 of \
-     * Madra_WorkerBlocksSealedHole. */                                        \
-    s32 angle_ = (angle);                                                      \
-    Actor_SetPositionAndFacing(id, x, z, angle_);                              \
-  }
+/// Places an actor facing an angle, the angle taken as the u16 an actor's
+/// facing is; the hole's four placements, named by us.
+static inline void Madra_PlaceFacing(s32 actorId, s32 x, s32 z, u16 facing) {
+  Actor_SetPositionAndFacing(actorId, x, z, facing);
+}
 
 /// The worker pops up out of the hole the first time the party steps on it,
 /// until the gate inspection is over (flag 0x910); afterwards the hole leads
@@ -302,12 +297,12 @@ void Madra_WorkerBlocksHole(void) {
   } else if (!Event_GetFlag(0x280)) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    PLACE(26, PIXELS(744), PIXELS(257), FACING_SOUTH);
+    Madra_PlaceFacing(26, PIXELS(744), PIXELS(257), FACING_SOUTH);
     Actor_GetById(4)->velocityY = PIXELS(5);
     Actor_SetSpeed(4, 0x20000, 0x10000);
     Actor_WalkToAndWait(4, 720, 244);
     Actor_FaceDirectionAndWait(4, FACING_SOUTHEAST);
-    PLACE(4, PIXELS(720), PIXELS(244), FACING_SOUTHEAST);
+    Madra_PlaceFacing(4, PIXELS(720), PIXELS(244), FACING_SOUTHEAST);
     Event_SetFlag(0x280);
     Madra_AskComingThroughHole();
     Event_End();
@@ -319,12 +314,12 @@ void Madra_WorkerBlocksSealedHole(void) {
   if (!Event_GetFlag(0x280)) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    PLACE(26, PIXELS(744), PIXELS(256), FACING_SOUTH);
+    Madra_PlaceFacing(26, PIXELS(744), PIXELS(256), FACING_SOUTH);
     Actor_GetById(4)->velocityY = PIXELS(5);
     Actor_SetSpeed(4, 0x20000, 0x10000);
     Actor_WalkToAndWait(4, 720, 244);
     Actor_FaceDirectionAndWait(4, FACING_SOUTHEAST);
-    PLACE(4, PIXELS(720), PIXELS(244), FACING_SOUTHEAST);
+    Madra_PlaceFacing(4, PIXELS(720), PIXELS(244), FACING_SOUTHEAST);
     Event_SetFlag(0x280);
     Madra_AskComingThroughSealedHole();
     Event_End();

@@ -1954,9 +1954,7 @@ static void AltinPeak_InitializeSpray(struct Actor *spray) {
 /// It grows while drifting away from the beast, then curls and flattens when
 /// its movement timer runs low. The timer can start another curl, but the
 /// separate lifetime still ends after 20 updates.
-static void AltinPeak_DriftSpray(struct Actor *updated) {
-  struct Actor *spray = updated;
-
+static void AltinPeak_DriftSpray(struct Actor *spray) {
   switch (gAltinPeak_SprayDirection) {
   case FACING_EAST:
     spray->x.fixed +=
@@ -1991,7 +1989,7 @@ static void AltinPeak_DriftSpray(struct Actor *updated) {
     spray->timer -= 2;
   else
     spray->timer = ((u32)(Import_RandomNext() * 5) >> 16) * 2 + 2;
-  if (--((struct FieldEffect *)updated)->countdown == 0)
+  if (--((struct FieldEffect *)spray)->countdown == 0)
     Actor_Release(spray);
 }
 

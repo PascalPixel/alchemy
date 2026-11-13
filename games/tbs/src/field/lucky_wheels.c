@@ -1407,16 +1407,14 @@ void LzPack_RemoveSlotNode(s32 slot) {
 /// the bytes they replace from their chains; past the end of the input the
 /// positions are marked empty (-1).
 void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
-  s32 limit = count;
   s32 current = 0;
-  u32 base = start;
 
-  if (current < limit) {
+  if (current < count) {
     u32 mask = PACK_WINDOW_MASK;
-    u32 removal = base + 292;
+    u32 removal = start + 292;
 
     do {
-      u32 slot = base + current;
+      u32 slot = start + current;
       struct LzPackWork *state;
       u32 readOffset;
       u32 nextOffset;
@@ -1437,24 +1435,24 @@ void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
       current++;
       LzPack_InsertSlotNode(slot & mask);
       removal++;
-    } while (current < limit);
+    } while (current < count);
   }
 
   current++;
-  if (current < limit) {
+  if (current < count) {
     u32 mask = PACK_WINDOW_MASK;
     struct LzPackWork **root = &gWaitForFlashWrite;
     s32 empty = -1;
 
     do {
-      u32 slot = (base + current) & mask;
+      u32 slot = (start + current) & mask;
       struct LzPackWork *state;
 
       LzPack_RemoveSlotNode(slot);
       state = *root;
       current++;
       state->bucketBySlot[slot] = empty;
-    } while (current < limit);
+    } while (current < count);
   }
 }
 

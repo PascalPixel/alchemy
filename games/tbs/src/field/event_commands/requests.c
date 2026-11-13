@@ -13,9 +13,7 @@
 /// About 35 scenes reach it through Field_RequestBattleFromEncounterTableFar,
 /// and the Battle Arena calls it directly. The battle starts only once the
 /// event that asked for it has returned.
-void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
-  s32 zone = zoneNo;
-  s32 slot = slotNo;
+void Field_RequestBattleFromEncounterTable(s32 zone, s32 slot) {
   struct FieldWork *work = gFieldWork;
 
   work->encounter = Encounter_GetFormationAtSlot(zone, slot);

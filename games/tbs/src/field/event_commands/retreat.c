@@ -273,8 +273,7 @@ struct DescendingArcSprite {
 /// The upside-down arc draws in front of everything (priority 0), the other at
 /// the caster's priority, as FieldEffect_SpawnScaledArcActors does. Called by
 /// FieldEffect_UpdateAvoidCaster, so arc is Avoid's caster.
-void FieldEffect_SpawnDescendingArcParticles(struct Actor *arc) {
-  struct Actor *source = arc;
+void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *leader = effectWork->mainActor;
   struct Actor *actors[2];

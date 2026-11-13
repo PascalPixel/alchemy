@@ -405,7 +405,7 @@ void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
 /// column, when shown, lies left of them). Returns 0.
 /// Battle_CollectPartyCommands calls it.
 s32 PartyStatus_HighlightMembers(u16 *ids) {
-  struct BattleWork *battle = gBattleWork;
+  struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   s32 count;
   s32 i;
   s32 j;

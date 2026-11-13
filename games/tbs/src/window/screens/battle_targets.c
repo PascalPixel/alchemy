@@ -85,7 +85,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   struct SelectionSprite *firstSprite;
   struct Unit *target;
 
-  battle = gBattleWork;
+  battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   targetCount = 0;
   redraw = 0xFFFF;
   cursorSlot = VramCache_AllocEntry(256);

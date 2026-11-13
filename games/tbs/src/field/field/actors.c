@@ -389,7 +389,7 @@ ACTOR_DEFINE_APPLY(Actor_SetAnimationSpeed, struct Actor *,
 void Actor_SetAnimationAndSpeed(struct Actor *actor, s32 animation, s32 step) {
   void **sprites;
   void *sprite;
-  s32 spritesRemaining;
+  s32 part;
 
   if (actor != 0) {
     switch (actor->spriteStorageKind & 15) {
@@ -399,7 +399,7 @@ void Actor_SetAnimationAndSpeed(struct Actor *actor, s32 animation, s32 step) {
       break;
     case ACTOR_SPRITE_GROUP:
       sprites = (void **)actor->sprite;
-      for (spritesRemaining = 0; spritesRemaining < 4; spritesRemaining++) {
+      for (part = 0; part < 4; part++) {
         sprite = *sprites++;
         if (sprite != 0) {
           Sprite_StartAnimation(sprite, animation);

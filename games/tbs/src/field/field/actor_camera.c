@@ -191,7 +191,7 @@ void ActorSystem_ProjectSprites(void) {
   struct ActorCameraPoint *target;
   struct Actor *actor;
   s32 angle;
-  s32 spritesRemaining;
+  s32 part;
   s32 kind;
   s32 *objectPosition;
   void **sprites;
@@ -263,7 +263,7 @@ void ActorSystem_ProjectSprites(void) {
         // A group's sprite field points to its four sprite pointers; empty
         // ones are null.
         sprites = (void **)actor->sprite;
-        for (spritesRemaining = 0; spritesRemaining < 4; spritesRemaining++) {
+        for (part = 0; part < 4; part++) {
           sprite = *sprites++;
           if (sprite != NULL)
             Render_PlaceProjectedSprite(sprite, &actor->x.fixed, groupScale,

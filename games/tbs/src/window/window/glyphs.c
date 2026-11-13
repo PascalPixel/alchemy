@@ -114,7 +114,7 @@ s32 Text_DrawGlyphPair(u32 code, u32 *out) {
   s32 tileColumn;
   s32 tileRow;
   s32 line;
-  s32 pixelsLeft;
+  s32 column;
   u32 tileLine;
 
   work = WINDOW_WORK;

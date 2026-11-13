@@ -14,13 +14,13 @@
 // last three. `out` needs room for 14 halfwords.
 UNREAD_RESULT String_FormatNumberToHalfwords(s16 *out, s32 value) {
   s16 *destination;
-  s32 remaining;
+  s32 i;
   u8 *source;
 
   destination = out;
   String_FormatDecimal(value);
   source = gNumberBuffer;
-  for (remaining = 0; remaining < NUMBER_TEXT_WIDE_LENGTH; remaining++) {
+  for (i = 0; i < NUMBER_TEXT_WIDE_LENGTH; i++) {
     *destination++ = *source++;
   }
 }

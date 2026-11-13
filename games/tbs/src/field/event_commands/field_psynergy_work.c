@@ -126,7 +126,7 @@ void FieldPsynergy_End(void) {
   struct FieldWork *runtime;
   struct MapGridScrollWork *grid;
   struct FieldParticle *effectSlot;
-  s32 remaining;
+  s32 i;
 
 #ifdef UBFIX
   effectWork = gFieldEffectWork;
@@ -139,8 +139,8 @@ void FieldPsynergy_End(void) {
   runtime = *(struct FieldWork **)((u8 *)effectWorkCell - 116);
   grid = *(struct MapGridScrollWork **)((u8 *)effectWorkCell - 192);
 #endif
-  for (remaining = 0; remaining < 24; remaining++) {
-    effectSlot = &effectWork->particles[remaining];
+  for (i = 0; i < 24; i++) {
+    effectSlot = &effectWork->particles[i];
     if (effectSlot->active != 0)
       FieldEffect_ClearOwnedSlot(effectSlot);
   }
@@ -159,15 +159,15 @@ void FieldPsynergy_End(void) {
       struct Actor *slot = SETUP_OBJECT_SLOTS;
 
       active = 0;
-      remaining = 0;
-      while (remaining <= 63) {
+      i = 0;
+      while (i <= 63) {
         void (*update)(struct Actor *) = slot->update;
 
         if (update == firstActiveUpdate || update == secondActiveUpdate) {
           active = 1;
           break;
         }
-        remaining++;
+        i++;
         slot++;
       }
 

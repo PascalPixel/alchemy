@@ -487,9 +487,6 @@ static void Bilibin_OpenDoorAndLeave(void) {
   u32 actorSlot;
   struct Actor *actor;
   s32 exitIndex;
-  u8 *originBytes;
-  s32 originOffset;
-  s32 rowOffset;
   s32 column;
   s32 row;
   struct FieldWork *work;
@@ -504,18 +501,15 @@ static void Bilibin_OpenDoorAndLeave(void) {
       actor->motionFlags = 0;
     }
   }
-  exitIndex = (((u16)work->stepTrigger - BILIBIN_TO_INN) << 16) >> 16;
+  exitIndex = (s16)(work->stepTrigger - BILIBIN_TO_INN);
   if (exitIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
     Sound_Play(SE_THUMP);
   } else {
     Sound_Play(SE_DOOR_OPEN);
   }
   // Each door has its cell and the steps that draw it opening.
-  originOffset = exitIndex << 2;
-  originBytes = (u8 *)gBilibin_DoorCells;
-  column = *(s16 *)(originBytes + originOffset);
-  rowOffset = originOffset + 2;
-  row = *(s16 *)(originBytes + rowOffset);
+  column = gBilibin_DoorCells[exitIndex].column;
+  row = gBilibin_DoorCells[exitIndex].row;
   MapGrid_PlayMapEdit(gBilibin_DoorSteps[exitIndex], column, row);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
@@ -907,17 +901,15 @@ static void Bilibin_UpdateCratesCells(void) {
   struct Actor *actor;
   s32 cratesColumn;
   s32 cratesRow;
-  u32 cellOffset;
+  u32 i;
 
   actor = Actor_Get(ACTOR_BARRICADE_CRATES);
   cratesColumn = FIELD_CELL(actor->x.fixed);
   cratesRow = FIELD_CELL(actor->z.fixed);
 
-  // The packed table stores ten byte-sized column/row pairs.
-  for (cellOffset = 0; cellOffset < 20; cellOffset += 2) {
-    s32 column = ((u8 *)gBilibin_CratesLaneCells)[cellOffset];
-    s32 row = ((u8 *)gBilibin_CratesLaneCells)[cellOffset + 1];
-    MapGrid_CopyCellAttributes(1, 0, 1, 1, column, row);
+  for (i = 0; i < 10; i++) {
+    MapGrid_CopyCellAttributes(1, 0, 1, 1, gBilibin_CratesLaneCells[i][0],
+                               gBilibin_CratesLaneCells[i][1]);
   }
 
   MapGrid_CopyCellAttributes(0, 0, 1, 1, cratesColumn, cratesRow);
@@ -1382,26 +1374,16 @@ u16 *gBilibin_DoorSteps[] = {
     gBilibin_SanctumDoorSteps,
 };
 
-/// A door's cell, with its column in the low halfword and its row in the high
-/// one.
-#define DOOR_CELL(column, row) (((row) << 16) | (column))
-
 /// Each door's cell, in the order of gBilibin_DoorSteps.
-u32 gBilibin_DoorCells[] = {
-    DOOR_CELL(54, 20), DOOR_CELL(43, 18), DOOR_CELL(37, 19), DOOR_CELL(41, 11),
-    DOOR_CELL(35, 11), DOOR_CELL(49, 9),  DOOR_CELL(55, 6),
+struct BilibinDoorCell gBilibin_DoorCells[] = {
+    {54, 20}, {43, 18}, {37, 19}, {41, 11}, {35, 11}, {49, 9}, {55, 6},
 };
 
-/// Two cells as the bytes column, row, column, row.
-#define CELL_PAIR(firstColumn, firstRow, secondColumn, secondRow) \
-  (((u32)(secondRow) << 24) | ((secondColumn) << 16) | ((firstRow) << 8) | \
-   (firstColumn))
-
-/// The ten cells of the crates' lane at the Bilibin Barricade.
-u32 gBilibin_CratesLaneCells[] = {
-    CELL_PAIR(8, 18, 9, 18),  CELL_PAIR(10, 18, 8, 19),
-    CELL_PAIR(9, 19, 10, 19), CELL_PAIR(11, 19, 9, 20),
-    CELL_PAIR(10, 20, 11, 20),
+/// The ten cells of the crates' lane at the Bilibin Barricade, as column and
+/// row.
+u8 gBilibin_CratesLaneCells[][2] = {
+    {8, 18}, {9, 18}, {10, 18}, {8, 19}, {9, 19},
+    {10, 19}, {11, 19}, {9, 20}, {10, 20}, {11, 20},
 };
 // clang-format on
 

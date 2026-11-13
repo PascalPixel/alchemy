@@ -574,8 +574,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   stump->motionFlags = 0;
   for (i = 0; i <= 17; i++) {
     wait(1);
-    // The corresponding signed halfword view retains the negative literal.
-    *(s16 *)&stump->sprite->rotation += -256;
+    stump->sprite->rotation -= TRIG_TURN / 256;
     stump->x.fixed -= Trig_Cos(stump->sprite->rotation) / 2;
     stump->targetX = ACTOR_NO_TARGET;
   }
@@ -602,12 +601,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   Actor_SetDestination(stumpId, 139, 196);
   Actor_WaitForMoveById(stumpId);
   Actor_WaitBelowHeight(stump, px(32));
-  // UB: the integer store aliases the update pointer.
-#ifdef UBFIX
   stump->update = NULL;
-#else
-  *(s32 *)&stump->update = 0;
-#endif
   stump->sprite->rotation = TRIG_TURN / 16;
   params.type = SPRITE_SPLASH;
   params.startScaleX = Q16_ONE / 2;

@@ -33,8 +33,14 @@ extern u16 gBilibin_InnDoorSteps[];
 extern u16 gBilibin_HouseWestDoorSteps[];
 extern u16 gBilibin_HouseNorthDoorSteps[];
 extern u16 *gBilibin_DoorSteps[];
-extern u32 gBilibin_DoorCells[];
-extern u32 gBilibin_CratesLaneCells[];
+/// A door's cell.
+struct BilibinDoorCell {
+  s16 column;
+  s16 row;
+};
+
+extern struct BilibinDoorCell gBilibin_DoorCells[];
+extern u8 gBilibin_CratesLaneCells[][2];
 extern s32 gPushedActor_DirectionSteps[];
 extern s32 gBilibin_RippleScript[];
 

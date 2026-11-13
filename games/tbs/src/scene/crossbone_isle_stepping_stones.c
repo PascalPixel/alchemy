@@ -408,17 +408,6 @@ static void CrossboneIsleSteppingStones_SetCellAttributes(
   struct MapGridScrollWork *grid = gMapGridWork[0];
 
   if (grid != 0) {
-    // UB: the bitfield view aliases MapGridCell storage; UBFIX writes the
-    // bytes.
-#ifdef UBFIX
-    u8 *cell = (u8 *)grid->layers[layer].cells;
-
-    cell += sizeof(struct MapGridCell) * (x + (y << 7));
-    cell[1] = (source->bits.lowFlags << 4) | (cell[1] & ~0x30);
-    cell[1] = (source->bits.highFlags << 6) | (cell[1] & ~0xc0);
-    cell[2] = source->cell.behavior;
-    cell[3] = source->cell.shape;
-#else
     struct CrossboneIslePillarCellBits *cell =
         (struct CrossboneIslePillarCellBits *)grid->layers[layer].cells;
 
@@ -427,7 +416,6 @@ static void CrossboneIsleSteppingStones_SetCellAttributes(
     cell->highFlags = source->bits.highFlags;
     cell->behavior = source->bits.behavior;
     cell->shape = source->bits.shape;
-#endif
   }
 }
 
@@ -476,11 +464,6 @@ static s32 CrossboneIsleSteppingStones_LowerActorToLedge(s32 id, s32 far) {
       }
       temporaryActor = Actor_PrepareFixed(x, y, z, kind);
       height = actor->z.fixed - z + y;
-      /* FAKEMATCH(dead): an empty once-only loop after the height arithmetic,
-       * which keeps found's constant after it; as no loop, 2 of 117
-       * instructions differ in tbs-en. */
-      do {
-      } while (0);
       found = 1;
       break;
     }
@@ -1085,12 +1068,9 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
     if (*flags & 1) {
       if (MapGrid_GetCellBehaviorAt(2, actor->x.fixed, actor->z.fixed) == 50) {
         Sound_Play(SE_STONE_GRIND);
-        // Both u8 accesses are alias set 0, and the view is no struct reference
-        // (MEM_IN_STRUCT_P); as field stores, the loop is reallocated (100 of
-        // 265 instructions differ in tbs-en).
-        *(u8 *)&actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+        actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
         CrossboneIsleSteppingStones_LowerActorToLedge(id, 1);
-        *(u8 *)&actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+        actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       } else if (MapGrid_GetCellBehaviorAt(2, actor->x.fixed, actor->z.fixed) ==
                  51) {
         CrossboneIsleSteppingStones_StopAtGroundOrHeight(actor, 0);
@@ -1117,11 +1097,8 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
       CrossboneIsleSteppingStones_SetCellAttributes(
           0, FIELD_CELL(actor->x.fixed), FIELD_CELL(actor->z.fixed), &cell);
       cell.bits.highFlags = sPillarSlots[i].cell.bits.highFlags;
-      // x and z read by their offsets: through Actor's single/group
-      // union, as actor->x.fixed, a load moves.
       CrossboneIsleSteppingStones_SetCellAttributes(
-          2, *(s32 *)((u8 *)actor + offsetof(struct Actor, x)) >> 20,
-          *(s32 *)((u8 *)actor + offsetof(struct Actor, z)) >> 20, &cell);
+          2, FIELD_CELL(actor->x.fixed), FIELD_CELL(actor->z.fixed), &cell);
     }
     sPillarSlots[i].x = FIELD_CELL(actor->x.fixed);
     sPillarSlots[i].y = FIELD_CELL(actor->y.fixed);
@@ -1600,17 +1577,12 @@ s32 Scene_Initialize(void) {
                                                          2);
     CrossboneIsleSteppingStones_InitializePillarPriority(ACTOR_FIRST_PILLAR +
                                                          3);
-    {
-      s32 *entry = (s32 *)sPillarSlots;
-
-      for (i = 0; i < 4; i++) {
-        entry[0] = 0;
-        entry[1] = 0;
-        entry[2] = 0;
-        entry[4] =
-            i + FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER;
-        entry += 5;
-      }
+    for (i = 0; i < 4; i++) {
+      sPillarSlots[i].x = 0;
+      sPillarSlots[i].y = 0;
+      sPillarSlots[i].z = 0;
+      sPillarSlots[i].flag =
+          i + FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER;
     }
     CrossboneIsleSteppingStones_MovePillar();
     Event_Wait(1);

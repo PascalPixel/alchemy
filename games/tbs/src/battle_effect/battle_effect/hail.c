@@ -209,7 +209,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
-  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                              work->sheet + GROUND_DJINNI_PICTURE, 1, 1);
@@ -251,7 +251,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_ADDITIVE);
       if (frame <= 3)
-        ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
+        EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
             canvas, work->sheet + GROUND_DJINNI_PICTURE, x, y, 20, 40);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       draw[0](canvas, work->sheet + GROUND_DJINNI_PICTURE, x, y, 20, 40);
@@ -302,7 +302,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
 
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, crackle->velocityY,
                                 COMPOSITE_LIGHTEN);
-            draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+            draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
             if (crackle->velocityY & 4)
               crackleX = x - gHail_PortalWidths[crackle->velocityX] -
                          gHail_PortalX[crackle->velocityX] + 24;

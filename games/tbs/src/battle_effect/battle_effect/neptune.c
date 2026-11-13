@@ -70,7 +70,6 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   s32 j;
   s32 emittedDrops;
   s32 dropOriginX;
-  u32 *cache;
   struct BattleEffectWork *work;
   s32 frame;
   s32 t;
@@ -85,8 +84,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   struct SpriteScale scale;
   s32 ground = 112; // where the columns land
 
-  cache = (u32 *)&gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
-  canvas = (void *)cache[0];
+  canvas = (void *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work = (struct BattleEffectWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   particleSheet = (u8 *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
@@ -134,10 +132,10 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   view->busy = 1;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  blit[0] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
+  blit[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  blit[1] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
+  blit[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
 

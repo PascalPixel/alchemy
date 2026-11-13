@@ -115,8 +115,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   s32 zoom;
   s32 minimumDepth;
   s32 maximumDepth;
-  void **cache;
-  DrawRectangle *slots;
   s32 cx;
   s32 cy;
   s32 squash;
@@ -130,9 +128,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   DrawRectangle blit;
   volatile u16 *ime;
 
-  cache = &gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
   ime = (u16 *)&REG_IME;
-  canvas = cache[0];
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   // The sheet slot is one mote set (MOTE_SET_BYTES): the undimmed motes. The
@@ -148,7 +145,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   *(u16 *)&BG_PLTT[1] = 0;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[0] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   // Setup: wipe the battle away, change the battle background behind it, wipe
@@ -233,7 +230,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                   (frame <= 4 || !(gKeysRepeat & (KEY_A | KEY_B)));
        frame++) {
     // The heap slot table, read as blitters by the frames after 143.
-    slots = (DrawRectangle *)gHeapSlots;
     if (frame == 143) {
       Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(42));
       Sound_PlayFar(SE_CRASH);
@@ -381,28 +377,28 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
-      ((DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2))(
-          canvas, work->sheet + picture, 60 - high, 80 - high * 2, high,
-          high * 2);
+      EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(canvas, work->sheet + picture,
+                                           60 - high, 80 - high * 2, high,
+                                           high * 2);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
-      ((DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2))(
-          canvas, work->sheet + picture, 60, 80 - high * 2, high, high * 2);
+      EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(canvas, work->sheet + picture, 60,
+                                           80 - high * 2, high, high * 2);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
-      ((DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2))(
-          canvas, work->sheet + picture, 60 - high, 80, high, high * 2);
+      EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(canvas, work->sheet + picture,
+                                           60 - high, 80, high, high * 2);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
                               COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
-      ((DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2))(
-          canvas, work->sheet + picture, 60, 80, high, high * 2);
+      EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(canvas, work->sheet + picture, 60,
+                                           80, high, high * 2);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
 
       for (i = 0; i != 6; i++) {
@@ -426,12 +422,14 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       s32 r;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_ADDITIVE);
-      (slots[HEAP_SLOT_RAM_CODE_2])(canvas, work->sheet, 36, top, 24, 64);
+      EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(canvas, work->sheet, 36, top, 24,
+                                           64);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_ADDITIVE);
-      (slots[HEAP_SLOT_RAM_CODE_2])(canvas, work->sheet, 60, top, 24, 64);
+      EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(canvas, work->sheet, 60, top, 24,
+                                           64);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
 
       n = (frame - 144) / 2;
@@ -444,7 +442,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         s32 high = 8;
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_LIGHTEN);
-        blit = slots[HEAP_SLOT_RAM_CODE_2];
+        blit = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
         for (i = 0; i != 128; i++) {
           s32 angle = i * (TRIG_TURN / 128);
           s32 x = ((r * Trig_Sin(angle)) >> 16) - high / 2;
@@ -480,7 +478,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueCrescentSheet,
                              work->sheet + JUDGMENT_SHEET_FLARE_A, 1, 1);
 
@@ -708,27 +706,23 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
-      ((DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2))(canvas, sheet, 36,
-                                                             top - 24, 24, 24);
+      EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(canvas, sheet, 36, top - 24, 24, 24);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
-      ((DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2))(canvas, sheet, 59,
-                                                             top - 24, 24, 24);
+      EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(canvas, sheet, 59, top - 24, 24, 24);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
-      ((DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2))(canvas, sheet, 36,
-                                                             top - 1, 24, 24);
+      EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(canvas, sheet, 36, top - 1, 24, 24);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
                               COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
-      ((DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2))(canvas, sheet, 59,
-                                                             top - 1, 24, 24);
+      EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(canvas, sheet, 59, top - 1, 24, 24);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
     }
 
@@ -850,7 +844,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
-    draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
     if (frame > 85) {
       // From frame 86 add the wave picture over the canvas.
       draw[1](canvas, work->sheet, 0, 0, JUDGMENT_WAVE_SIZE,

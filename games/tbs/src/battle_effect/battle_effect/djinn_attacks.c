@@ -400,8 +400,8 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
                       COMPOSITE_LIGHTEN);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[0] = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
-  draw[1] = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, work->sheet,
                              1, 1);

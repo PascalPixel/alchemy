@@ -221,9 +221,8 @@ void BattleEffect_SelectLivingTargets(struct BattleEffectParams *args) {
 /// with every layer off, then writes REG_BLDALPHA, REG_BLDCNT and
 /// REG_DISPCNT and gProjection.centerY.
 void BattleEffect_SetupBlendedDisplay(void) {
-  void **slots = &gHeapSlots[HEAP_SLOT_BATTLE];
-  u8 *canvas = slots[HEAP_SLOT_BATTLE_CANVAS - HEAP_SLOT_BATTLE];
-  struct BattleWork *battle = slots[0];
+  u8 *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   volatile u32 fill;
 
   REG_DISPCNT = DISPCNT_MODE_1;

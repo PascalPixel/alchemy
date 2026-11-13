@@ -33,8 +33,6 @@ enum {
 ///         85 for Frost, 48, 12 and 97 for Tundra, 64, 19 and 109 for
 ///         Glacier.
 void BattleEffect_RunFrost(struct BattleEffectParams *args) {
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -46,8 +44,6 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   struct Particle *mote;
   s32 i;
 
-  slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
-  cursor = slots;
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   sparkleSheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);

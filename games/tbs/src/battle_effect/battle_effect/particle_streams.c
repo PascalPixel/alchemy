@@ -324,7 +324,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     gBgScroll[1].y = 32;
     BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7, EFFECT_CLIP_BOUNDS,
                               COMPOSITE_LIGHTEN);
-    draw = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
+    draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
     // Each copy darkens every pixel of the map by 2 levels (four bytes of 2
     // in one word, as the other darkening effects write theirs).
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
@@ -497,7 +497,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw = gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
   // Screen motes keep whole canvas pixels, not 16.16: x 0 to 127 and y 127
   // to 254, from the canvas's last row down, from where they rise.

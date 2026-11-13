@@ -35,7 +35,6 @@
 void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   static struct SpriteScale sweepScale = {{{Q16_ONE, Q16_ONE}}};
   static struct SpriteScale chargeScale = {{{Q16_ONE, Q16_ONE}}};
-  void **cursor;
   struct SpritePlacement place;
   struct ScreenPoint unit;
   u8 jitterRow[16];
@@ -54,10 +53,9 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  cursor = &gBattleEffectWork[1];
-  canvas = cursor[0];
-  work = cursor[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
-  sheet = cursor[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
@@ -91,7 +89,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   baseX = 0;
   grow = 0;
   savedX = gBgScroll[1].x;
-  view = cursor[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE_CANVAS];
+  view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   shift = 0;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   // The effect owns BG1's scroll until the charge.
@@ -116,7 +114,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
 
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  blit = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  blit = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   // The canvas sits behind Kirin until frame 28.
   REG_BG2CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);

@@ -106,7 +106,6 @@ void BattleEffect_RunDeadlyGas(struct BattleEffectParams *args) {
 ///       the targets, on a canvas shown at three times its width. No effect
 ///       kind in the effect table uses BURST_SHOWER_MODE_ICE.
 void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
-  u32 *slots;
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sprites;
@@ -123,8 +122,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
   s32 width;
 
   // The slots are read from the canvas's, not the work block's.
-  slots = (u32 *)&gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
-  canvas = (void *)slots[0];
+  canvas = (void *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work = (struct BattleEffectWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   sprites = (u8 *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
@@ -136,11 +134,11 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
   if (mode == BURST_SHOWER_MODE_FACES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
-    draw[0] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
+    draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_LIGHTEN);
-    draw[1] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
+    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   } else {
     BattleEffect_FetchRectangleBlitters(work->args->side, draw);
   }

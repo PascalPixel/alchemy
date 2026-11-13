@@ -59,7 +59,6 @@ enum ThornVineSheetPicture {
 /// It spawns Cybele's eight sprites and releases them, the transfer task
 /// and the blitters before it closes the canvas layer.
 void BattleEffect_RunCybele(struct BattleEffectParams *args) {
-  void **cursor;
   struct BattleEffectWork *work;
   u8 *canvas;
   s32 frame;
@@ -74,7 +73,6 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   struct ScreenPoint screen;
   BlitterPair draw;
 
-  cursor = gBattleEffectWork;
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
@@ -104,11 +102,11 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
                              1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
-  draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   REG_BG2X = -(32 << 8); // -32 in 20.8: the canvas shows 32 pixels right
 
@@ -467,11 +465,11 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
                                  work->sheet + CYBELE_BLAST_PICTURES, 1, 1);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
-      draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+      draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
-      draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+      draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
       REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND |
                    BLDCNT_TGT2_ALL;
       REG_BG2PA = Q_8_8(0.5);

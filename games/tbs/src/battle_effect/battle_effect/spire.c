@@ -48,7 +48,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  blit = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
+  blit = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   // BG2 is scrolled so that canvas column 64 is the middle of the row of
   // targets.
   Projection_ScaledUnit(work->args->targets[0], &first);

@@ -123,7 +123,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  rectangle[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
+  rectangle[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
@@ -333,7 +333,6 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
 /// holds the 16 vines' x. Writes REG_BG2PA, REG_BLDCNT and REG_BG2X, sets
 /// work->shakeFrames.
 void BattleEffect_RunVine(struct BattleEffectParams *args) {
-  u32 *slots, *cursor;
   struct BattleEffectWork *work;
   void *canvas;
   BlitterPair draw;
@@ -342,10 +341,8 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
   s32 i, frame, picture, height, offset, middle;
   struct Particle *column;
 
-  slots = (u32 *)(gHeapSlots + HEAP_SLOT_BATTLE_EFFECT);
-  cursor = slots;
-  work = (struct BattleEffectWork *)*cursor++;
-  canvas = (void *)*cursor;
+  work = (struct BattleEffectWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = (void *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_RunDjinniEntrance(args, ELEMENT_VENUS + DJINNI_ENTRANCE_LONG,
                                  args->side, DJINNI_ANCHOR_CENTRE, &originX,
@@ -367,11 +364,11 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
   REG_BG2X = (64 - first.x) << 8;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  draw[0] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
-  draw[1] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   column = work->particles;
   i = 0;
   do {
@@ -446,18 +443,14 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   DrawRectangle drawFlip;
   DrawRectangle draw;
   s32 frameCount;
-  u32 *slots;
-  u32 *cursor;
   struct BattleEffectWork *work;
   s32 i;
   s32 j;
   s32 age;
   s32 start;
 
-  slots = (u32 *)(gHeapSlots + HEAP_SLOT_BATTLE_EFFECT);
-  cursor = slots;
-  work = (struct BattleEffectWork *)*cursor++;
-  canvas = (void *)*cursor;
+  work = (struct BattleEffectWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = (void *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
@@ -469,14 +462,13 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  draw = ((DrawRectangle *)slots)[HEAP_SLOT_RAM_CODE - HEAP_SLOT_BATTLE_EFFECT];
+  draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
   work->transferMode = CANVAS_COPY_AND_CLEAR; // clear the canvas every frame
   work->transferValue = 0;
-  drawFlip =
-      ((DrawRectangle *)slots)[HEAP_SLOT_RAM_CODE_2 - HEAP_SLOT_BATTLE_EFFECT];
+  drawFlip = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   frameCount = gGrowth_Counts[work->args->variant] * 8 + 56;
 

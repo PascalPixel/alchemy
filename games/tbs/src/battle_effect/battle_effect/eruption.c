@@ -52,7 +52,6 @@ enum {
 ///       Blast, and Smoke Bomb and Sleep Bomb) and 128, 32 and 88 (Fiery
 ///       Blast).
 void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   /* LEFTOVER(frame): draw[1], the idle half of the pair; the ROM's frame
@@ -67,7 +66,6 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   s32 i;
 
-  cursor = gBattleEffectWork;
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
@@ -123,7 +121,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
 
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != gEruption_Counts[variant][ERUPTION_FIELD_FRAMES];

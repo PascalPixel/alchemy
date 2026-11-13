@@ -88,8 +88,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
   }
-  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
-  draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   user = GetBattleObjectSlotFar(work->args->user)->actor;
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   // Sparks spread out flat from the centre, 20 to 51 pixels up, at 4 to 12
@@ -464,7 +464,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_ADDITIVE);
   }
-  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 
   // The shot pictures, and how long each mode's trails last: comets keep
   // three quarters of each level a frame, shurikens none, the rest half.
@@ -668,7 +668,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         else
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                               COMPOSITE_ADDITIVE);
-        draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+        draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
         if (frame <= 3)
           draw[1](canvas, work->sheet + PROJECTILE_VOLLEY_DJINNI_PICTURE, x, y,
                   20, 40);
@@ -824,7 +824,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               else
                 EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                                     COMPOSITE_LIGHTEN);
-              ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
+              EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
                   canvas, work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
                   position.x - 16,
                   position.y - gProjectileVolley_CometHeights[comet], 32,
@@ -838,7 +838,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                 EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                     EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                                     COMPOSITE_LIGHTEN);
-              ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
+              EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
                   canvas, work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
                   position.x - 16, position.y, 32,
                   gProjectileVolley_CometHeights[comet]);
@@ -892,7 +892,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             if (!(i & 1)) {
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                                   COMPOSITE_LIGHTEN);
-              ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
+              EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
                   canvas, work->sheet + gProjectileVolley_FlashPictures[step],
                   flash->x - gProjectileVolley_FlashWidths[step],
                   flash->y - gProjectileVolley_FlashRises[step],
@@ -902,7 +902,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                   COMPOSITE_LIGHTEN);
-              ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
+              EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
                   canvas, work->sheet + gProjectileVolley_FlashPictures[step],
                   flash->x,
                   flash->y + gProjectileVolley_FlashSteps[step] -
@@ -913,7 +913,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             } else {
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                                   COMPOSITE_LIGHTEN);
-              ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
+              EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
                   canvas,
                   work->sheet + gProjectileVolley_FlashPictures[step] +
                       PROJECTILE_VOLLEY_FLASH_TURNED,
@@ -925,7 +925,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                   COMPOSITE_LIGHTEN);
-              ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
+              EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
                   canvas,
                   work->sheet + gProjectileVolley_FlashPictures[step] +
                       PROJECTILE_VOLLEY_FLASH_TURNED,

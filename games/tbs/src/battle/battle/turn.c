@@ -65,10 +65,9 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
   struct BattleBackgroundWork *view =
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
 #else
-  void **slots = (void **)&gBattleCamera;
-  struct BattleCamera *camera = slots[0];
+  struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   struct BattleBackgroundWork *view =
-      slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_CAMERA];
+      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
 #endif
   struct FixedPointPosition eyeOffset;
   u32 result;

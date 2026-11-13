@@ -194,8 +194,6 @@ enum CastingImpact {
 ///       game's dispatcher passes only the 36 impacts; The Lost Age's
 ///       dispatcher passes modes up to 100.
 void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
-  void **slots;
-  void **slot;
   s32 pictureOffset;
   struct ScreenPoint casterPos;
   struct ScreenPoint targetPos;
@@ -205,7 +203,6 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   s32 *scanline;
   s32 n;
   s32 djinnX;
-  DrawRectangle *slotDraw;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -234,10 +231,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint projected;
   u8 *pictures;
 
-  slots = gHeapSlots + HEAP_SLOT_BATTLE_EFFECT;
-  slot = slots;
-  work = (struct BattleEffectWork *)*slot++;
-  canvas = *slot;
+  work = (struct BattleEffectWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   sprites = (u8 *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   pictures = Ram_MapGridCellBuffer;
@@ -902,7 +897,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                               gCastingImpact_GlintDrawFlags[drawFlags & 3] |
                                   EFFECT_CLIP_BOUNDS,
                               COMPOSITE_LIGHTEN);
-          ((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2](
+          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
               canvas, pictures + gBattleEffect_GlintPictures[image], imageX,
               imageY + 56, gBattleEffect_GlintPictureWidths[image],
               gBattleEffect_GlintPictureHeights[image]);
@@ -921,7 +916,6 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       s32 scroll;
       EFFECT_RELEASE_BLITTERS();
       if (frame >= 0 && frame <= 23) {
-        DrawRectangle *draw;
         s32 width;
         s32 columnX;
         s32 columnY;
@@ -937,16 +931,17 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           scroll -= 104;
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_LIGHTEN);
-        draw = (DrawRectangle *)gHeapSlots;
-        draw += HEAP_SLOT_RAM_CODE_2;
         columnX = originX - 8;
         columnY = fall + scroll;
         top = columnY - 104;
         width = 17;
-        (*draw)(canvas, pictures, columnX, top, width, 104);
-        (*draw)(canvas, pictures, columnX, columnY, width, 104 - scroll);
-        (*draw)(canvas, pictures + (17 * 104), originX - width, fall + 47,
-                width * 2, 65);
+        EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(canvas, pictures, columnX, top,
+                                             width, 104);
+        EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(canvas, pictures, columnX, columnY,
+                                             width, 104 - scroll);
+        EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(canvas, pictures + (17 * 104),
+                                             originX - width, fall + 47,
+                                             width * 2, 65);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         if (frame == 8) {
           work->shakeFrames = frame;
@@ -980,14 +975,14 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         height = 48;
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_LIGHTEN);
-        slotDraw = (DrawRectangle *)gHeapSlots;
-        slotDraw[HEAP_SLOT_RAM_CODE_2](canvas, pictures, pairX - 24, 48, 24,
-                                       height);
+        EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(canvas, pictures, pairX - 24, 48,
+                                             24, height);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             COMPOSITE_LIGHTEN);
-        slotDraw[HEAP_SLOT_RAM_CODE_2](canvas, pictures, pairX, 48, 24, height);
+        EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(canvas, pictures, pairX, 48, 24,
+                                             height);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       }
       BattleEffect_FetchRectangleBlitters(work->args->side, blitters);

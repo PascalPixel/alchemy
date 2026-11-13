@@ -39,7 +39,7 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
     *palette++ = RGB(half, half, i);
     i++;
   } while (i != 32);
-  delays = *(u8 **)&gHeapSlots[HEAP_SLOT_BATTLE_SHEET];
+  delays = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   // The edge moves speed / 4 lines a frame, speed rising by one a frame
   // from 16.
   end = 0;
@@ -217,11 +217,11 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
     // frame 32 the canvas darkens one level faster every 16 frames.
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
-    draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+    draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_LIGHTEN);
-    draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += CANVAS_FILL_WORD(1);
 
@@ -371,11 +371,11 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
                                     TRIG_TURN / 3, 0);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
-    draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+    draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_LIGHTEN);
-    draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += CANVAS_FILL_WORD(1);
 

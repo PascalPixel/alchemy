@@ -375,9 +375,8 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   struct BattleStagingWork burstLaunch;
   // The heap slots read from the camera's, as the battle effects read theirs
   // from the effect's (EFFECT_SLOT).
-  void **slots = &gHeapSlots[HEAP_SLOT_CAMERA];
   volatile u16 *ime;
-  struct BattleWork *battle = slots[HEAP_SLOT_BATTLE - HEAP_SLOT_CAMERA];
+  struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   struct SparkWork *work;
   s32 frame;
   s32 *brightness;

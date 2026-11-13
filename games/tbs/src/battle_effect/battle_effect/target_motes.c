@@ -123,7 +123,6 @@ enum { TARGET_MOTES_GLINT_PICTURES = 9600 };
 ///
 /// mode: the style (enum TargetMotesMode).
 void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -138,7 +137,6 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   s32 *row;
   s32 i;
 
-  cursor = gBattleEffectWork;
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   // Motes drawn for each target: 16, but 24 for Demon Fire and 32 for Drown.
@@ -258,7 +256,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
                               EFFECT_CLIP_BOUNDS |
                                   gTargetMotes_GlintFlips[Random16() & 3],
                               COMPOSITE_LIGHTEN);
-          ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
+          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
               canvas,
               work->sheet + gBattleEffect_GlintPictures[frame & 3] +
                   TARGET_MOTES_GLINT_PICTURES,
@@ -269,10 +267,10 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
       }
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_ADDITIVE);
-      draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
+      draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
-      draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+      draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(point, actor->x.fixed, 160 << 13, actor->z.fixed);
       Transform_ApplyPosition(point);
@@ -400,10 +398,10 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_SheepSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  drawUpright = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
+  drawUpright = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                       COMPOSITE_TRANSPARENT);
-  drawFlipped = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
+  drawFlipped = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
 
   // Seed SLEEP_SEEDED sheep, of which SLEEP_SHEEP fall. Each starts 32
   // pixels above the canvas at a random x from 32 to 95, with a random
@@ -496,7 +494,6 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
 /// (the narrow canvas, moved over the party's side when side is
 /// EFFECT_SIDE_PARTY).
 void BattleEffect_RunCurse(struct BattleEffectParams *args) {
-  void **slot;
   struct BattleEffectWork *work;
   void *canvas;
   /* LEFTOVER(frame): draw[1], the idle half of the pair; the ROM's frame
@@ -514,9 +511,8 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   s32 y;
   struct ScreenPoint screenPosition;
 
-  slot = &gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
-  canvas = slot[0];
-  work = slot[-1];
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   work->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   // Drawn solid.
@@ -533,7 +529,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   // Redraw from blank each frame.
   work->transferMode = CANVAS_COPY_AND_CLEAR;
   work->transferValue = 0;
-  draw[0] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   // Each flame starts at a random point of its effect.
   EFFECT_FOR_EACH_TARGET(i, work->args) {

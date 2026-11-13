@@ -22,7 +22,6 @@
 /// bytes of Ram_MapGridCellBuffer; adds and removes the HBlank DMA
 /// task.
 void BattleEffect_RunTorch(struct BattleEffectParams *args) {
-  void **slots;
   struct BattleEffectWork *work;
   void *canvas;
   s32 screenY;
@@ -46,7 +45,6 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   s32 angle;
   s32 *line;
 
-  slots = gBattleEffectWork;
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;

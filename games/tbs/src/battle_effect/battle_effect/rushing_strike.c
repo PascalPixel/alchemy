@@ -123,8 +123,8 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, COMPOSITE_LIGHTEN);
   }
-  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
-  draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
 
   // Pictures and palette: the ring is the yellow orb packed to half width,
   // six 20x48 pictures, into the map grid cell buffer, so that the blue burst

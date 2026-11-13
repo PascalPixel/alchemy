@@ -26,11 +26,10 @@ void BattleCamera_Update(void) {
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   struct BattleWork *battle = gBattleWork;
 #else
-  void **slot = (void **)&gBattleCamera;
-  struct BattleCamera *camera = slot[0];
+  struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   struct BattleBackgroundWork *view =
-      slot[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_CAMERA];
-  struct BattleWork *battle = slot[HEAP_SLOT_BATTLE - HEAP_SLOT_CAMERA];
+      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
 #endif
   struct FixedPointPosition eyeOffset;
   s32 *focus;

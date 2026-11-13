@@ -59,11 +59,11 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   Decompress_TaggedLz(palette, work->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                       COMPOSITE_LIGHTEN);
   REG_BLDALPHA = BLEND_ALPHA(15, 15);
-  draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   source = GetBattleObjectSlotFar(work->args->user)->actor;
   y = source->y.fixed + BattleUnit_GetEffectHeightFar(work->args->user);
   // The bubbles start at the top of the user, flying out up to 4 pixels a
@@ -185,8 +185,6 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
 /// every frame.
 void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
   BlitterPair draw;
-  void **slots;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 wave;
@@ -200,8 +198,6 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
   s32 i;
   s32 j;
 
-  slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
-  cursor = slots;
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
@@ -213,10 +209,10 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
   Decompress_TaggedLz(palette, work->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw[0] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
-  draw[1] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
 
   // The glints: each waits up to 15 frames, then plays at a random spot on
   // its tornado.

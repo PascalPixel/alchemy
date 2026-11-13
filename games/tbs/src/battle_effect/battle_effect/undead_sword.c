@@ -102,9 +102,9 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
           else
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                                 EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, mode);
-          draw[0] = ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE]);
-          ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE])(
-              canvas, work->sheet, x, 112 - height, 14, height);
+          draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
+          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE)(canvas, work->sheet, x,
+                                             112 - height, 14, height);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       }

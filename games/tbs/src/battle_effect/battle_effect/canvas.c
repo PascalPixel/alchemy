@@ -105,8 +105,7 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
 /// one more on each VBlank that did not. No effect reads that count;
 /// field/lucky_wheels.c keeps the same count for its own transfer.
 void BattleEffect_ProcessPendingGraphicsTransfer(void) {
-  void **slots = gHeapSlots + HEAP_SLOT_BATTLE_EFFECT;
-  struct BattleEffectWork *work = slots[0];
+  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   void *source;
   s32 *counter;
   s32 nextCounter;
@@ -162,13 +161,11 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
 void BattleEffect_FlushPendingGraphicsTransfer(void) {
   // This switch stays apart from BattleEffect_ProcessPendingGraphicsTransfer's:
   // shared, both compile differently.
-  void **slots;
   struct BattleEffectWork *work;
   void *source;
   s32 transferMode;
 
-  slots = gHeapSlots + HEAP_SLOT_BATTLE_EFFECT;
-  work = slots[0];
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   source = Ram_MapGridCellBuffer;
   if (work->transferPending != 1)
     return;
@@ -655,7 +652,7 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
   s32 dx = x1 - x0;
   s32 dy = y1 - y0;
   s32 frac = 128; // 0.5 in 8-bit fixed point
-  u8 *canvas = ((u8 **)gBattleEffectWork)[1];
+  u8 *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   s32 step;
   s32 i;
   s32 x;

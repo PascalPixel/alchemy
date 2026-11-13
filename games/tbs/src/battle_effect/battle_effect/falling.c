@@ -112,7 +112,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, BLITTER_CLIP_Y | COMPOSITE_FLIP_X,
                         COMPOSITE_ADDITIVE);
   }
-  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   draw[1] = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2];
 
   // Window 0's edges, one per scanline: a 128-pixel band slanting one pixel

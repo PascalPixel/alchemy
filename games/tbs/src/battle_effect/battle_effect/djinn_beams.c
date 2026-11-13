@@ -47,7 +47,6 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
   s32 djinnX;
   s32 djinnY;
   BlitterPair draw;
-  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -56,7 +55,6 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
   s32 i;
   s32 k;
 
-  cursor = gBattleEffectWork;
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
@@ -146,11 +144,11 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
     }
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
-    draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+    draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_LIGHTEN);
-    draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
 
     // Motes: one every 8 frames, swaying up to 16 pixels either way (odd
     // motes mirrored) as they sink a pixel a frame; they go out 8 pixels

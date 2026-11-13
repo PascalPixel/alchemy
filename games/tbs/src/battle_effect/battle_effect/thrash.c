@@ -81,13 +81,11 @@ void BattleEffect_RunVorpalSlash(struct BattleEffectParams *args) {
 /// mode: picks the pictures (enum FlashingStrikeMode); Quick Strike also
 ///       makes the step a hop.
 void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
-  void **slots;
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle draw[2];
   s32 frame;
 
-  slots = gBattleEffectWork;
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
@@ -127,7 +125,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_COPY);
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_COPY);
-  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Sound_PlayFar(SE_POWER_UP);
   for (frame = 0; frame != 21; frame++) {
     if (frame <= 3)

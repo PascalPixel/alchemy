@@ -253,8 +253,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
 void BattleCamera_ApplyPhasedDelta(void) {
   // Both come from the one heap slot table; a separate camera base compiles 4
   // bytes longer.
-  void **slots = gHeapSlots + HEAP_SLOT_BATTLE_EFFECT;
-  struct BattleEffectWork *work = slots[0];
+  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   s32 *phase = &work->cameraPhase;
 

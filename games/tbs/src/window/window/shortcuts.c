@@ -330,17 +330,17 @@ void Menu_RunSelectionHook(void) { Debug_SelectShortcuts(); }
 /// VRAM cache entries with their flags and a window, among fields nothing here
 /// uses. Only the two unused functions below touch it.
 struct SelectionWorkspace {
-  u8 unusedBeforeFirst[0x46]; ///< no code names it
+  u8 unusedBeforeFirst[0x46];
   /// Nonzero when firstResource is a VRAM cache entry to free on release.
   u16 firstActive;
-  u16 firstResource;                       ///< a VRAM cache entry
-  u8 unusedBetweenResources[0x352 - 0x4a]; ///< no code names it
+  u16 firstResource; ///< a VRAM cache entry
+  u8 unusedBetweenResources[0x352 - 0x4a];
   /// Nonzero when secondResource is a VRAM cache entry to free on release.
   u16 secondActive;
-  u16 secondResource;                   ///< a VRAM cache entry
-  u8 unusedBeforeWindow[0xff4 - 0x356]; ///< no code names it
-  struct Window *window;                ///< closed, and waited for, on release
-  u8 unusedAfterWindow[12];             ///< no code names it
+  u16 secondResource; ///< a VRAM cache entry
+  u8 unusedBeforeWindow[0xff4 - 0x356];
+  struct Window *window; ///< closed, and waited for, on release
+  u8 unusedAfterWindow[12];
 };
 
 STATIC_ASSERT(sizeof(struct SelectionWorkspace) == 0x1004);

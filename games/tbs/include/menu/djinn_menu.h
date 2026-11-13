@@ -108,7 +108,7 @@ struct DjinnMenuWork {
   ///@{
   u8 pairIndex[2];
   u8 pairElement[2];
-  u8 pairMember[2]; ///< not named by TBS code
+  u8 pairMember[2];
   ///@}
 };
 

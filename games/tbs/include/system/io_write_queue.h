@@ -12,7 +12,7 @@
 /// frame; IoWriteQueue_FlushPending empties it.
 struct IoWriteQueue {
   u16 count; ///< Entries waiting, at most 32.
-  u16 pad;   ///< not named by TBS code
+  u16 pad;
   /// Each entry is the value, the address and the control word, in that order.
   /// A control word with a width (IO_WRITE_8 to IO_WRITE_32) is a register
   /// write; one without is a DMA, whose three words go to DMA3's source,

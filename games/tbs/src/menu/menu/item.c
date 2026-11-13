@@ -1194,7 +1194,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
       window = menu->itemWindow;
       Unit_GetFar(menu->memberIds[memberIndex]);
       // The marker over the chosen party member, three tiles a party member.
-      // Nothing in TBS stores sideIcons[1], so it is still NULL from
+      // Nothing stores sideIcons[1], so it is still NULL from
       // Window_InitializeWork: these writes go to the BIOS area at address
       // 0, which ignores them, and no marker is drawn.
       targetMarker = menu->sideIcons[1];

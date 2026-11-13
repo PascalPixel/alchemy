@@ -41,7 +41,7 @@ struct ItemMenuWork {
   struct Window *unopenedWindow; ///< never given a window; only closed
   struct Window *modalWindow;
   struct Window *secondUnopenedWindow; ///< never given a window; only closed
-  struct WindowSprite *gridCursor;     ///< only prepared by name in TBS
+  struct WindowSprite *gridCursor;     ///< only prepared by name
   struct WindowSprite *entryIcons[32];
   struct WindowSprite *categoryIcons[8];
   u8 unusedAfterIcons[36]; ///< no view of the menu work names it

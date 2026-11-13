@@ -87,7 +87,7 @@ struct ScreenTransitionState {
   s16 mask;
   /// WININ, or WINOUT by mode: 1 when a transition starts.
   s16 active;
-  u8 unused;   ///< no code names it
+  u8 unused;
   u8 page;     ///< the pages entry shown; the next is built in the other
   s8 start;    ///< the value's first step
   s8 end;      ///< the value's last step; 64 hides BG1 to BG3 and sprites

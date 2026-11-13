@@ -102,7 +102,7 @@ struct SelectionMenuWork {
   /// Menu_RunSelectionForValue. While 0, an ICON_KIND_YES_NO row and its window
   /// sit at the top of the screen instead of the bottom.
   u16 locked;
-  u8 unused[42]; ///< no code names it
+  u8 unused[42];
 };
 
 /// The bit of SelectionMenuWork.cursorIndex set as an entry is chosen, on

@@ -181,7 +181,7 @@ struct WindowSpriteCellView {
   u8 active;         ///< its WINDOW_SPRITE_MOTION_ motion
   u16 x;             ///< screen pixels, where the motion is centred
   u16 y;             ///< screen pixels, where the motion is centred
-  u16 unused;        ///< WindowSprite's; no code names it
+  u16 unused;        ///< WindowSprite's
   u16 animationStep; ///< step of its motion's animation
   u8 index;
   u8 sentinel;              ///< depth slot it is drawn at

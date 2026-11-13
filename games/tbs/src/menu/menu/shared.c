@@ -528,7 +528,7 @@ struct Window *MenuCursor_Create(void *source) {
   sentinel = 254;
   cursor->sentinel = sentinel;
   sentinel -= 255;
-  // sideIcon[1] gets slot 255. Nothing in TBS stores sideIcon[1], so it is
+  // sideIcon[1] gets slot 255. Nothing stores sideIcon[1], so it is
   // still NULL from Window_InitializeWork and this byte goes to address 0xf,
   // in the BIOS, which ignores writes.
   menu->sideIcon[1]->sentinel = sentinel; // -1

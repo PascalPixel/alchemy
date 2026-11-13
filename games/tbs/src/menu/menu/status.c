@@ -1917,7 +1917,7 @@ s32 ItemMenu_SelectItem(void) {
 }
 
 /// Moves through the status grid's irregular rows and returns row * 9 + column.
-/// Nothing in TBS calls it.
+/// Nothing calls it.
 s32 Menu_MoveGridCursor(s32 *columnOut, s32 *rowOut, s32 direction) {
   s32 row;
   s32 column;

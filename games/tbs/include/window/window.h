@@ -76,7 +76,7 @@ struct Message {
   u16 ended;       ///< 1 once a TEXT_END code is reached
   u16 glyphDelay;  ///< frames to wait after a glyph while no button is held
   u16 flags;       ///< nonzero keeps the window's size from page to page
-  u16 unused;      ///< no code names it
+  u16 unused;
 };
 
 STATIC_ASSERT(sizeof(struct Message) == 0x28);

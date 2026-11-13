@@ -50,7 +50,7 @@ struct FieldParticle {
                    ///< frame
   s8 render;       ///< nonzero: drawn each frame
   s8 active;       ///< nonzero while the sprite is in use
-  u8 randomValue;  ///< random when filled; not read by name in TBS
+  u8 randomValue;  ///< random when filled
   /// bits: 2 z also lifts the sprite (set when it is filled)
   u8 flags;
 };

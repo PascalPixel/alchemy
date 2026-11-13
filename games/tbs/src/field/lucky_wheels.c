@@ -362,13 +362,13 @@ struct LuckyWheelsWork {
   u16 direction;
   u16 pressed;
   u16 repeat;
-  u8 unused[4]; ///< no code names it
+  u8 unused[4];
   s32 timer;
   s32 winningLines[LUCKY_WHEELS_PAYLINES];
   struct OamWords oam[128];
   struct Window *window;
   struct Window *subWindow;
-  u8 unusedAfterWindows[8]; ///< no code names it
+  u8 unusedAfterWindows[8];
   u16 scanlineOffsets[160];
 #if TBS_PATCH_1
   s32 phase;
@@ -392,8 +392,6 @@ struct LuckyWheelsWonPrizesView {
 /// title letters of a win, the frame, the hold lamps, the spin counter, the
 /// paylines, the wheel symbols, the lever and the bottom bar.
 void LuckyWheels_Update(void) {
-  // struct OamWords's volatile words (oam_words.h) keep each list loop's
-  // offset givs.
   struct LuckyWheelsWork *work;
   struct BattleEffectWork *fx;
   volatile u16 *dma;
@@ -1367,10 +1365,10 @@ void LzPack_ResetSlotBuckets(void) {
   struct LzPackNode **bucket;
 
   for (index = 0; index < 1024; index++) {
-    gWaitForFlashWrite->nodes[index].slot = index;
-    gWaitForFlashWrite->nodes[index].previous = NULL;
+    gLzPackWork->nodes[index].slot = index;
+    gLzPackWork->nodes[index].previous = NULL;
   }
-  bucket = gWaitForFlashWrite->bucket;
+  bucket = gLzPackWork->bucket;
   for (index = 0; index < 256; index++) {
     *bucket++ = NULL;
   }
@@ -1378,7 +1376,7 @@ void LzPack_ResetSlotBuckets(void) {
 
 /// Adds window position index to the chain of the byte it holds.
 void LzPack_InsertSlotNode(s32 index) {
-  struct LzPackWork *work = gWaitForFlashWrite;
+  struct LzPackWork *work = gLzPackWork;
 
   work->nodes[index].previous =
       (struct LzPackNode *)&work->bucket[work->bucketBySlot[index]];
@@ -1390,12 +1388,11 @@ void LzPack_InsertSlotNode(s32 index) {
 
 /// Removes window position slot from its chain.
 void LzPack_RemoveSlotNode(s32 slot) {
-  if (gWaitForFlashWrite->nodes[slot].previous != NULL) {
-    if (gWaitForFlashWrite->nodes[slot].next != NULL)
-      gWaitForFlashWrite->nodes[slot].next->previous =
-          gWaitForFlashWrite->nodes[slot].previous;
-    gWaitForFlashWrite->nodes[slot].previous->next =
-        gWaitForFlashWrite->nodes[slot].next;
+  if (gLzPackWork->nodes[slot].previous != NULL) {
+    if (gLzPackWork->nodes[slot].next != NULL)
+      gLzPackWork->nodes[slot].next->previous =
+          gLzPackWork->nodes[slot].previous;
+    gLzPackWork->nodes[slot].previous->next = gLzPackWork->nodes[slot].next;
   }
 }
 
@@ -1417,7 +1414,7 @@ void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
       u8 value;
 
       LzPack_RemoveSlotNode(removal & mask);
-      state = gWaitForFlashWrite;
+      state = gLzPackWork;
       readOffset = state->inputCursor;
       value = input[readOffset];
       nextOffset = readOffset + 1;
@@ -1437,7 +1434,7 @@ void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
   current++;
   if (current < count) {
     u32 mask = PACK_WINDOW_MASK;
-    struct LzPackWork **root = &gWaitForFlashWrite;
+    struct LzPackWork **root = &gLzPackWork;
 
     do {
       u32 slot = (start + current) & mask;
@@ -1454,7 +1451,7 @@ void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
 /// Appends the finished group (a flag byte and up to eight items) to the
 /// output.
 void LzPack_CopyBufferedBytes(u8 *destination) {
-  struct LzPackWork *work = gWaitForFlashWrite;
+  struct LzPackWork *work = gLzPackWork;
   s32 index;
 
   for (index = 0; index != work->outCount; index++) {
@@ -1470,27 +1467,26 @@ static __inline__ void LzPack_FindWindowMatch(s32 start) {
   struct LzPackNode *node;
   s32 len;
 
-  gWaitForFlashWrite->matchLength = 1;
-  if (gWaitForFlashWrite->bucketBySlot[start] == -1) {
+  gLzPackWork->matchLength = 1;
+  if (gLzPackWork->bucketBySlot[start] == -1) {
     return;
   }
-  node = gWaitForFlashWrite->bucket[gWaitForFlashWrite->bucketBySlot[start]];
+  node = gLzPackWork->bucket[gLzPackWork->bucketBySlot[start]];
   if (start + PACK_MATCH_MAX > PACK_WINDOW_MASK) {
     while (node != NULL) {
       s32 dist = (start - node->slot) & PACK_WINDOW_MASK;
 
       if (dist > 0 && dist <= PACK_DISTANCE_MAX) {
         for (len = 1; len < PACK_MATCH_MAX; len++) {
-          if (gWaitForFlashWrite
-                  ->bucketBySlot[(start + len) & PACK_WINDOW_MASK] !=
-              gWaitForFlashWrite
+          if (gLzPackWork->bucketBySlot[(start + len) & PACK_WINDOW_MASK] !=
+              gLzPackWork
                   ->bucketBySlot[(node->slot + len) & PACK_WINDOW_MASK]) {
             break;
           }
         }
-        if (gWaitForFlashWrite->matchLength < len) {
-          gWaitForFlashWrite->matchOffset = dist;
-          gWaitForFlashWrite->matchLength = len;
+        if (gLzPackWork->matchLength < len) {
+          gLzPackWork->matchOffset = dist;
+          gLzPackWork->matchLength = len;
           if (len == PACK_MATCH_MAX) {
             return;
           }
@@ -1504,15 +1500,15 @@ static __inline__ void LzPack_FindWindowMatch(s32 start) {
 
       if (dist > 0 && dist <= PACK_DISTANCE_MAX) {
         for (len = 1; len < PACK_MATCH_MAX; len++) {
-          if (gWaitForFlashWrite->bucketBySlot[start + len] !=
-              gWaitForFlashWrite
+          if (gLzPackWork->bucketBySlot[start + len] !=
+              gLzPackWork
                   ->bucketBySlot[(node->slot + len) & PACK_WINDOW_MASK]) {
             break;
           }
         }
-        if (gWaitForFlashWrite->matchLength < len) {
-          gWaitForFlashWrite->matchOffset = dist;
-          gWaitForFlashWrite->matchLength = len;
+        if (gLzPackWork->matchLength < len) {
+          gLzPackWork->matchOffset = dist;
+          gLzPackWork->matchLength = len;
           if (len == PACK_MATCH_MAX) {
             return;
           }
@@ -1538,83 +1534,79 @@ UNUSED s32 LzPack_PackStream(const u8 *input, u8 *dst, s32 size) {
   s16 code;
 
   defer = 0;
-  gWaitForFlashWrite = (struct LzPackWork *)gMapGridCellBuffer;
+  gLzPackWork = (struct LzPackWork *)gMapGridCellBuffer;
   LzPack_ResetSlotBuckets();
-  gWaitForFlashWrite->inputLimit = size;
-  gWaitForFlashWrite->position = 0;
-  gWaitForFlashWrite->inputCursor = 0;
-  gWaitForFlashWrite->outTotal = 0;
-  gWaitForFlashWrite->flagMask = 0x80;
-  gWaitForFlashWrite->outBuffer[0] = 0;
-  gWaitForFlashWrite->outCount = 1;
+  gLzPackWork->inputLimit = size;
+  gLzPackWork->position = 0;
+  gLzPackWork->inputCursor = 0;
+  gLzPackWork->outTotal = 0;
+  gLzPackWork->flagMask = 0x80;
+  gLzPackWork->outBuffer[0] = 0;
+  gLzPackWork->outCount = 1;
   LzPack_ConsumeSlotBytes(0, PACK_LOOKAHEAD, input);
 
-  while (gWaitForFlashWrite->bucketBySlot[gWaitForFlashWrite->position] != -1) {
-    LzPack_FindWindowMatch(gWaitForFlashWrite->position);
+  while (gLzPackWork->bucketBySlot[gLzPackWork->position] != -1) {
+    LzPack_FindWindowMatch(gLzPackWork->position);
     if (defer == 0) {
-      len = gWaitForFlashWrite->matchLength;
-      if (gWaitForFlashWrite->matchLength > 1) {
-        saveOffset = gWaitForFlashWrite->matchOffset;
+      len = gLzPackWork->matchLength;
+      if (gLzPackWork->matchLength > 1) {
+        saveOffset = gLzPackWork->matchOffset;
         saveLen = len;
-        LzPack_FindWindowMatch((gWaitForFlashWrite->position + 1) &
-                               PACK_WINDOW_MASK);
-        if (gWaitForFlashWrite->matchLength > 2) {
-          reach[0] = gWaitForFlashWrite->matchLength + 1;
-          LzPack_FindWindowMatch((gWaitForFlashWrite->position + len) &
+        LzPack_FindWindowMatch((gLzPackWork->position + 1) & PACK_WINDOW_MASK);
+        if (gLzPackWork->matchLength > 2) {
+          reach[0] = gLzPackWork->matchLength + 1;
+          LzPack_FindWindowMatch((gLzPackWork->position + len) &
                                  PACK_WINDOW_MASK);
-          reach[1] = gWaitForFlashWrite->matchLength + len;
+          reach[1] = gLzPackWork->matchLength + len;
           if (reach[0] >= reach[1]) {
             saveLen = 1;
             defer = 1;
           }
         }
-        gWaitForFlashWrite->matchOffset = saveOffset;
-        gWaitForFlashWrite->matchLength = saveLen;
+        gLzPackWork->matchOffset = saveOffset;
+        gLzPackWork->matchLength = saveLen;
       }
     }
 
-    if (gWaitForFlashWrite->matchLength > 1) {
+    if (gLzPackWork->matchLength > 1) {
       defer = 0;
-      gWaitForFlashWrite->outBuffer[0] |= gWaitForFlashWrite->flagMask;
-      if (gWaitForFlashWrite->matchLength <= 16) {
-        code = ((gWaitForFlashWrite->matchOffset << 4) & ~0xfff) |
-               (gWaitForFlashWrite->matchOffset & 0xff) |
-               (((gWaitForFlashWrite->matchLength - 1) << 8) & 0xf00);
-        gWaitForFlashWrite->outBuffer[gWaitForFlashWrite->outCount++] =
-            (u16)code >> 8;
-        gWaitForFlashWrite->outBuffer[gWaitForFlashWrite->outCount++] = code;
+      gLzPackWork->outBuffer[0] |= gLzPackWork->flagMask;
+      if (gLzPackWork->matchLength <= 16) {
+        code = ((gLzPackWork->matchOffset << 4) & ~0xfff) |
+               (gLzPackWork->matchOffset & 0xff) |
+               (((gLzPackWork->matchLength - 1) << 8) & 0xf00);
+        gLzPackWork->outBuffer[gLzPackWork->outCount++] = (u16)code >> 8;
+        gLzPackWork->outBuffer[gLzPackWork->outCount++] = code;
       } else {
-        code = ((gWaitForFlashWrite->matchOffset << 4) & ~0xfff) |
-               (gWaitForFlashWrite->matchOffset & 0xff);
-        gWaitForFlashWrite->outBuffer[gWaitForFlashWrite->outCount++] =
-            (u16)code >> 8;
-        gWaitForFlashWrite->outBuffer[gWaitForFlashWrite->outCount++] = code;
-        gWaitForFlashWrite->outBuffer[gWaitForFlashWrite->outCount++] =
-            gWaitForFlashWrite->matchLength - 17;
+        code = ((gLzPackWork->matchOffset << 4) & ~0xfff) |
+               (gLzPackWork->matchOffset & 0xff);
+        gLzPackWork->outBuffer[gLzPackWork->outCount++] = (u16)code >> 8;
+        gLzPackWork->outBuffer[gLzPackWork->outCount++] = code;
+        gLzPackWork->outBuffer[gLzPackWork->outCount++] =
+            gLzPackWork->matchLength - 17;
       }
     } else {
-      gWaitForFlashWrite->outBuffer[gWaitForFlashWrite->outCount++] =
-          gWaitForFlashWrite->bucketBySlot[gWaitForFlashWrite->position];
-      gWaitForFlashWrite->matchLength = 1;
+      gLzPackWork->outBuffer[gLzPackWork->outCount++] =
+          gLzPackWork->bucketBySlot[gLzPackWork->position];
+      gLzPackWork->matchLength = 1;
     }
 
-    LzPack_ConsumeSlotBytes(gWaitForFlashWrite->position + PACK_LOOKAHEAD,
-                            gWaitForFlashWrite->matchLength, input);
-    gWaitForFlashWrite->position =
-        (gWaitForFlashWrite->position + gWaitForFlashWrite->matchLength) &
-        PACK_WINDOW_MASK;
-    gWaitForFlashWrite->flagMask >>= 1;
-    if (gWaitForFlashWrite->flagMask == 0) {
+    LzPack_ConsumeSlotBytes(gLzPackWork->position + PACK_LOOKAHEAD,
+                            gLzPackWork->matchLength, input);
+    gLzPackWork->position =
+        (gLzPackWork->position + gLzPackWork->matchLength) & PACK_WINDOW_MASK;
+    gLzPackWork->flagMask >>= 1;
+    if (gLzPackWork->flagMask == 0) {
       LzPack_CopyBufferedBytes(dst);
-      gWaitForFlashWrite->flagMask = 0x80;
-      gWaitForFlashWrite->outBuffer[0] = 0;
-      gWaitForFlashWrite->outCount = 1;
+      gLzPackWork->flagMask = 0x80;
+      gLzPackWork->outBuffer[0] = 0;
+      gLzPackWork->outCount = 1;
     }
   }
 
-  gWaitForFlashWrite->outBuffer[0] |= gWaitForFlashWrite->flagMask;
-  gWaitForFlashWrite->outBuffer[gWaitForFlashWrite->outCount++] = 0;
-  gWaitForFlashWrite->outBuffer[gWaitForFlashWrite->outCount++] = 0;
+  gLzPackWork->outBuffer[0] |= gLzPackWork->flagMask;
+  gLzPackWork->outBuffer[gLzPackWork->outCount++] = 0;
+  gLzPackWork->outBuffer[gLzPackWork->outCount++] = 0;
   LzPack_CopyBufferedBytes(dst);
-  return gWaitForFlashWrite->outTotal;
+  return gLzPackWork->outTotal;
 }

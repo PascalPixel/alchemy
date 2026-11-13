@@ -13,7 +13,7 @@
 struct WorldMapRenderWork {
   u8 beforeActive[252]; ///< WorldMapView's fields before animationActive
   s8 active;            ///< WorldMapView's animationActive; not read by name
-  u8 unused[3];         ///< WorldMapView's; no code names it
+  u8 unused[3];         ///< WorldMapView's
   s16 first;            ///< WorldMapView's windowTop; not read by name
   s16 second;           ///< WorldMapView's windowBottom; not read by name
   u8 windowToPitch[22]; ///< WorldMapView's shown window, tiles and pitch

@@ -531,7 +531,7 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
       selection = (selection + count) % count;
       Unit_GetFar(menu->memberTable[selection]);
       // The marker over the party member, three tiles a party member. Nothing
-      // in TBS stores sideIcon[1], so it is still NULL from
+      // stores sideIcon[1], so it is still NULL from
       // Window_InitializeWork: these writes go to the BIOS area at address 0,
       // which ignores them, and no marker is drawn.
       marker = menu->sideIcon[1];

@@ -446,8 +446,8 @@ struct Trigger gTrialRoad_CrumblingStageTriggers[] = {
     {0xc602, 51, CONDITION_ALWAYS, EVENT(TrialRoad_JumpForward)},
     {0x602, 34, CONDITION_ALWAYS, EVENT(TrialRoad_CheckCrumblingPillars)},
     {0x8602, 34, CONDITION_ALWAYS, EVENT(TrialRoad_CheckCrumblingPillars)},
-    {0x50009705, 50, 0x343, EVENT(TrialRoad_CrumblePillar15)},
-    {0x50009705, 51, 0x345, EVENT(TrialRoad_CrumblePillar16)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 50, 0x343, EVENT(TrialRoad_CrumblePillar15)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 51, 0x345, EVENT(TrialRoad_CrumblePillar16)},
     {TRIGGER_TABLE_END},
 };
 

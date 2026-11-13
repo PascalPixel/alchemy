@@ -926,7 +926,7 @@ struct Trigger gAlhafranCave_CaveTriggers[] = {
     {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(AlhafranCave_CloseWayToJail)},
     {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(AlhafranCave_OpenWayToJail)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 16, 0x203, EVENT(AlhafranCave_FreezePuddle)},
-    {0x8b85, 0, CONDITION_ALWAYS, EVENT(AlhafranCave_CastSand)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AlhafranCave_CastSand)},
     {TRIGGER_TABLE_END},
 };
 

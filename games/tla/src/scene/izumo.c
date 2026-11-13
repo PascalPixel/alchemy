@@ -850,8 +850,8 @@ struct Trigger gIzumo_TriggersOnceTheSerpentIsSlain[] = {
      EVENT(Izumo_FinishMovingStone)},
     {0x8, 0, CONDITION_ALWAYS, EVENT(Izumo_StartMovingStone)},
     {0x9, 0, CONDITION_ALWAYS, EVENT(Izumo_FinishMovingStone)},
-    {0x50009085, 0, CONDITION_ALWAYS, EVENT(Izumo_RevealTheStoneCircle)},
-    {0x40009085, 0, CONDITION_ALWAYS, EVENT(Izumo_HideTheStoneCircle)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Izumo_RevealTheStoneCircle)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Izumo_HideTheStoneCircle)},
 #if TLA_PATCH_1 /* From patch 1. */
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 21,
      CONDITION_ALWAYS, EVENT(Izumo_CycloneFirstPatch)},

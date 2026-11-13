@@ -43,10 +43,18 @@ enum AbilityId {
   ABILITY_REVEAL = 144,
   /// ★ Named from the game: "Halt" (MsgAbilityName)
   ABILITY_HALT = 145,
+  /// ★ Named from the game: "Cloak" (MsgAbilityName)
+  ABILITY_CLOAK = 146,
   /// ★ Named from the game: "Carry" (MsgAbilityName)
   ABILITY_CARRY = 147,
   /// ★ Named from the game: "Catch" (MsgAbilityName)
   ABILITY_CATCH = 148,
+  /// ★ Named from the game: "Retreat" (MsgAbilityName)
+  ABILITY_RETREAT = 149,
+  /// ★ Named from the game: "Avoid" (MsgAbilityName)
+  ABILITY_AVOID = 150,
+  /// ★ Named from the game: "Burst" (MsgAbilityName)
+  ABILITY_BURST = 151,
   /// ★ Named from the game: "Grind" (MsgAbilityName)
   ABILITY_GRIND = 152,
   /// ★ Named from the game: "Hover" (MsgAbilityName)

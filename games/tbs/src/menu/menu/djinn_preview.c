@@ -32,7 +32,6 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   s32 step;
   s32 row;
   s32 result;
-  s32 zero;
   s32 index;
   s32 memberIndex;
 
@@ -202,10 +201,9 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       DJINN_ELEMENT(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
           DJINN_NUMBER(menu->pairEntries[0]) + MsgDjinnName,
       menu->helpWindow, 48, row * 8);
-  Window_SetTilemapEntryFar(menu->helpWindow,
-                            DJINN_ELEMENT(menu->pairEntries[0]) +
-                                DJINN_ELEMENT_TILE,
-                            5, row, zero = 0);
+  Window_SetTilemapEntryFar(
+      menu->helpWindow,
+      DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 5, row, 0);
   Text_SetColorFar(TEXT_COLOR_NORMAL);
 
   if (mode == DJINN_COMPARE_TRADE) {
@@ -230,9 +228,9 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         menu->helpWindow, 48, 16);
     Window_SetTilemapEntryFar(
         menu->helpWindow,
-        DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 5, 2, zero);
+        DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 5, 2, 0);
     Text_SetColorFar(TEXT_COLOR_NORMAL);
-    Window_SetTilemapEntryFar(menu->helpWindow, WINDOW_TILE(662), 7, 1, zero);
+    Window_SetTilemapEntryFar(menu->helpWindow, WINDOW_TILE(662), 7, 1, 0);
   }
 
   for (;;) {

@@ -580,7 +580,6 @@ static void LamakanDesert_BatheInOasis(void) {
   struct EffectOptions puff;
   s16 *progress;
   u16 *revealFrames;
-  s32 zero;
 
   work = (u8 *)gFieldWork;
   frames = 60;
@@ -663,24 +662,27 @@ static void LamakanDesert_BatheInOasis(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_BATHE);
   revealFrames = (u16 *)&((struct FieldWork *)work)->revealFrames;
   progress = &gMainRoutineWork.hazardSteps;
-  zero = 0;
   // A running Reveal's countdown stays full while the leader bathes,
   // at least 60 frames and until the heat has drained.
-  do {
-    s32 held = 600;
+  {
+    s32 drained = 0;
 
-    *revealFrames = held;
-    frames--;
-    if (*progress != 0) {
-      *progress -= 5;
-      if (*progress <= 0) {
-        *progress = zero;
-      } else if (frames == 0) {
-        frames = 1;
+    do {
+      s32 held = 600;
+
+      *revealFrames = held;
+      frames--;
+      if (*progress != 0) {
+        *progress -= 5;
+        if (*progress <= 0) {
+          *progress = drained;
+        } else if (frames == 0) {
+          frames = 1;
+        }
       }
-    }
-    wait(1);
-  } while (frames != 0);
+      wait(1);
+    } while (frames != 0);
+  }
   {
     struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 

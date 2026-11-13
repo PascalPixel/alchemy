@@ -1,17 +1,11 @@
 /// @file
-/// Everything drawn over the battle while an ability plays comes from this one
-/// object. battle_effect_internal.h holds what every effect shares (includes,
-/// macros and the frame-loop helpers); the effects are in the files under
-/// battle_effect/, included here in the order their code has in the ROM. That
-/// order mixes families, Djinn, summons and shared machinery, and each part is
-/// one run of it, named for what it holds. Camelot's own files are not
-/// recoverable: the ROM shows one object, and these parts are ours, cut where
-/// one family ends and the next begins.
+/// Everything drawn over the battle while an ability plays: the effects are the
+/// parts under battle_effect/, and battle_effect_internal.h holds what they
+/// share.
 
 #include "battle_effect_internal.h"
 
-// The parts, in ROM order: the order of these includes is the order of the
-// code in the ROM.
+// The parts, in ROM order (src/README.md, "Objects and parts").
 #include "battle_effect/display.c"
 #include "battle_effect/falling.c"
 #include "battle_effect/streaks.c"

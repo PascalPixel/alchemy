@@ -112,8 +112,8 @@ void FieldPsynergy_Douse(void) {
     s32 scale;
 
     SET_ACTOR_POSITION(cloud, start.x + (end.x - start.x) * step / 10,
-                 start.y + (end.y - start.y) * step / 10,
-                 start.z + (end.z - start.z) * step / 10);
+                       start.y + (end.y - start.y) * step / 10,
+                       start.z + (end.z - start.z) * step / 10);
     scale = FieldEffect_Interpolate(Q16_ONE, Q16_ONE / 4, step);
     cloud->scaleX = scale;
     cloud->scaleY = scale;
@@ -179,8 +179,8 @@ void FieldPsynergy_Douse(void) {
     s32 scale;
 
     SET_ACTOR_POSITION(cloud, end.x + (start.x - end.x) * step / 10,
-                 end.y + (start.y - end.y) * step / 10,
-                 end.z + (start.z - end.z) * step / 10);
+                       end.y + (start.y - end.y) * step / 10,
+                       end.z + (start.z - end.z) * step / 10);
     scale = FieldEffect_Interpolate(Q16_ONE / 4, Q16_ONE, step);
     cloud->scaleX = scale;
     cloud->scaleY = scale;

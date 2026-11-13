@@ -226,6 +226,6 @@ STATIC_ASSERT(offsetof(struct WindowWork, spacingAfter) ==
 STATIC_ASSERT(sizeof(struct WindowWork) == WINDOW_WORK_SIZE);
 
 /// The window renderer's work, heap slot HEAP_SLOT_WINDOW under its own name.
-#define gWindowWork (*(u8 *(*)[])&gHeapSlots[HEAP_SLOT_WINDOW])
+#define gWindowWork (*(u8 *(*)[]) & gHeapSlots[HEAP_SLOT_WINDOW])
 
 #endif

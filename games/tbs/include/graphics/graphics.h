@@ -131,10 +131,11 @@ extern const u8 PaletteFade_ScaleThreeQuartersKernel[];
 extern void *gOamDepthLists[];
 /// HEAP_SLOT_PARTY_STATUS: the party status window's layout (struct
 /// PartyStatusWindow), right after gWindowWork in IWRAM.
-#define gPartyStatusWork (*(u8(*)[])&gHeapSlots[HEAP_SLOT_PARTY_STATUS])
+#define gPartyStatusWork (*(u8 (*)[]) & gHeapSlots[HEAP_SLOT_PARTY_STATUS])
 /// HEAP_SLOT_SELECTION_WORKSPACE: struct SelectionWorkspace, which only two
 /// unused functions touch.
-#define gSelectionWorkspace (*(u8(*)[])&gHeapSlots[HEAP_SLOT_SELECTION_WORKSPACE])
+#define gSelectionWorkspace                                                    \
+  (*(u8 (*)[]) & gHeapSlots[HEAP_SLOT_SELECTION_WORKSPACE])
 extern const struct ArticleTable gArticle_Table;
 /// One row's masks for a pair of bar-pattern tiles: a word XORed into each
 /// tile's row.

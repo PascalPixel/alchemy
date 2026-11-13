@@ -113,8 +113,8 @@ void IconMenu_DrawIcons(void) {
     for (index = 24; index < lastLine; index++, line++)
       line->span = (line->span & 0xff) | span;
   } else {
-    s32 firstLine = work->entries[work->selection].y -
-                    ((pulseScale * 32 - 7937) / 512 + 1);
+    s32 firstLine =
+        work->entries[work->selection].y - ((pulseScale * 32 - 7937) / 512 + 1);
 
     line = &page->lines[firstLine];
     for (index = firstLine; index < 136; index++, line++)

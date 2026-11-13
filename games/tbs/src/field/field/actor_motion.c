@@ -102,8 +102,7 @@ void Actor_UpdateAllThumb(void) {
   u32 phase;
 
   actor = gActors;
-  for (actorsLeft = ACTOR_COUNT - 1; actorsLeft >= 0;
-       actorsLeft--, actor++) {
+  for (actorsLeft = ACTOR_COUNT - 1; actorsLeft >= 0; actorsLeft--, actor++) {
     arrivedAtTarget = 0;
 
     // The script indexed as words, which compiles as the old word-array
@@ -529,8 +528,7 @@ void Actor_UpdateAllMotion(void) {
   // Fourteen actors, as many as the battle has units (UNIT_MAX in
   // battle/battle/objects.c).
   actor = gActors;
-  for (actorsLeft = 13; actorsLeft >= 0;
-       actorsLeft--, actor++) {
+  for (actorsLeft = 13; actorsLeft >= 0; actorsLeft--, actor++) {
     if (actor->script == 0)
       continue;
     x = actor->x.fixed;

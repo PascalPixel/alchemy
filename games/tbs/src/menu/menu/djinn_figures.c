@@ -39,25 +39,24 @@ void DjinnFigures_InitializeTopRow(void *unused0, s32 unused1) {
 /// Releases the four sprites and removes their task. It defines
 /// DjinnFigures_ReleaseTopRow (the Status menu's row) and
 /// DjinnFigures_ReleaseBottomRow (the Djinn menu's).
-#define FOUR_OBJECT_MOTION_DEFINE_RELEASE(name, update)                        \
+#define DJINN_FIGURES_DEFINE_RELEASE(name, update)                             \
   void name(void) {                                                            \
-    struct ItemMenuWork *state = gMenuWork;                             \
-    s32 index = 0;                                                             \
+    struct ItemMenuWork *state = gMenuWork;                                    \
+    s32 index;                                                                 \
                                                                                \
-    do {                                                                       \
-      struct Sprite *object = state->figures[index];                        \
+    for (index = 0; index < 4; index++) {                                      \
+      struct Sprite *figure = state->figures[index];                           \
                                                                                \
-      if (object != NULL) {                                                    \
-        Sprite_DestroyFar(object);                                             \
-        state->figures[index] = NULL;                                       \
+      if (figure != NULL) {                                                    \
+        Sprite_DestroyFar(figure);                                             \
+        state->figures[index] = NULL;                                          \
       }                                                                        \
-      index++;                                                                 \
-    } while (index < 4);                                                       \
+    }                                                                          \
     Task_Remove(update);                                                       \
   }
 
-FOUR_OBJECT_MOTION_DEFINE_RELEASE(DjinnFigures_ReleaseTopRow,
-                                  DjinnFigures_UpdateAllPositions)
+DJINN_FIGURES_DEFINE_RELEASE(DjinnFigures_ReleaseTopRow,
+                             DjinnFigures_UpdateAllPositions)
 
 /// Full size, 1.0 in 16.16, and the height the figures are placed from: 482
 /// pixels, in 16.16. As for the party figures
@@ -115,8 +114,7 @@ void DjinnFigures_UpdateBottomRow(void) {
     struct Sprite *animation = menu->figures[figure];
 
     if (animation != 0) {
-      u32 projectedY =
-          (241u << 17) - px((u32)(s32)menu->memberY[figure]);
+      u32 projectedY = (241u << 17) - px((u32)(s32)menu->memberY[figure]);
       s32 phase;
       s32 limit;
       s32 rowY;
@@ -225,8 +223,8 @@ s32 DjinnFigures_ReplaceSlot(s32 index, s32 resourceKind, s32 animation) {
   return 1;
 }
 
-FOUR_OBJECT_MOTION_DEFINE_RELEASE(DjinnFigures_ReleaseBottomRow,
-                                  DjinnFigures_UpdateBottomRow)
+DJINN_FIGURES_DEFINE_RELEASE(DjinnFigures_ReleaseBottomRow,
+                             DjinnFigures_UpdateBottomRow)
 
 /// Has each party figure stand (ANIM_STAND). Nothing calls it.
 UNUSED void Menu_StartPartyFiguresStanding(void) {
@@ -238,6 +236,6 @@ UNUSED void Menu_StartPartyFiguresStanding(void) {
   }
 }
 
-#undef FOUR_OBJECT_MOTION_DEFINE_RELEASE
+#undef DJINN_FIGURES_DEFINE_RELEASE
 #undef FOUR_OBJECT_MOTION_FULL_SCALE
 #undef FOUR_OBJECT_MOTION_ORIGIN_Y

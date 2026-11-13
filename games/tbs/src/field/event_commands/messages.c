@@ -4,7 +4,6 @@
 
 #include "../event_commands_internal.h"
 
-
 /// The event command "open message": opens the event's current message in a
 /// speech window next to the speaking actor, with the speaker's portrait
 /// beside it when it has one, and moves on to the next message. The low 12

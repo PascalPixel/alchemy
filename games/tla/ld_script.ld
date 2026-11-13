@@ -194,8 +194,7 @@ SECTIONS
         "*/games/tla/src/field/object/objdata.o"(.rodata)
         "*/games/tla/src/field/curve_data.o"(.rodata)
         "*/games/tla/src/field/map_grid_data.o"(.rodata)
-        "*/games/tla/src/field/map/layered.o"(.rodata)
-        "*/games/tla/src/field/map/f030310.o"(.rodata)
+        "*/games/tla/src/field/map/maps.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x08038000);
         "*/games/tla/src/gamepak/far_call/WINDOW.o"(.text .rodata .data .padding)
         "*/games/tla/src/window/message_decode.o"(.text .rodata .data .padding)

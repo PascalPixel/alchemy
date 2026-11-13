@@ -13,13 +13,12 @@
 #include "module/system/system.h"
 #include "ram_buffer.h"
 
-/* VIEW(f02a6b8): variable gData_0802f380 as extern struct LayeredSceneEntry
- * gData_0802f380[]; f0298c0 has extern const u16 gData_0802f380[][6]. */
-extern struct LayeredSceneEntry
-    gData_0802f380__f02a6b8[] __asm__("gData_0802f380");
+/* VIEW(f02a6b8): variable gMaps as extern struct LayeredSceneEntry
+ * gMaps[]; f0298c0 has extern const u16 gMaps[][6]. */
+extern struct LayeredSceneEntry gMaps__f02a6b8[] __asm__("gMaps");
 
 /// Loads a layered map, as The Broken Seal does: from
-/// layout index's entry in gData_0802f380 it decodes the blocks, the collision
+/// layout index's entry in gMaps it decodes the blocks, the collision
 /// (filled with -1 first, which The Broken Seal does not do), the cells, the
 /// shape grid, the tile animations, the blend script and the script at
 /// 0x0202e000; sets up the three layers from the header, with their cell
@@ -42,7 +41,7 @@ s32 MapGrid_LoadMap(s32 index) {
   REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
                    DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
   ScreenFade_FromBlack(0);
-  sceneResources = &gData_0802f380__f02a6b8[index];
+  sceneResources = &gMaps__f02a6b8[index];
   work = HeapSlot_AllocEwram(32, sizeof(struct MapScrollWork));
   Iwram_ClearWordsEntry(work, sizeof(struct MapScrollWork));
   sceneHeader = (struct LayeredSceneHeader *)Resource_GetTableEntry(
@@ -921,9 +920,9 @@ next:
 void Map_GetHeaderSize(s32 map, s32 *size) {
   u8 *header;
 
-  // Indexed as gData_0802f380[map][0], the load reads [table, offset].
-  header = Resource_GetTableEntry(
-      *(const u16 *)(map * 12 + (u32)gData_0802f380) + (u32)&ResourceId_Map000);
+  // Indexed as gMaps[map][0], the load reads [table, offset].
+  header = Resource_GetTableEntry(*(const u16 *)(map * 12 + (u32)gMaps) +
+                                  (u32)&ResourceId_Map000);
   size[0] = header[0];
   if (header[2] == 0)
     size[1] = 256;
@@ -939,7 +938,7 @@ void Map_GetHeaderSize(s32 map, s32 *size) {
 void Map_LoadCellsAndShapes(void) {
   u8 *source;
   struct MapHeader *header = Resource_GetTableEntry(
-      *(const u16 *)(gMainRoutineWork.map * 12 + (u32)gData_0802f380) +
+      *(const u16 *)(gMainRoutineWork.map * 12 + (u32)gMaps) +
       (u32)&ResourceId_Map000);
 
   source = (u8 *)header + header->cells;

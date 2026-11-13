@@ -398,7 +398,7 @@ s32 Func_080c8770(s32 x, s32 z, s32 kind);
 extern u8 Render_ConvertMapCode[];
 extern u8 Render_ConvertMapCodeSize[];
 
-extern const u16 gData_0802f380[][6];
+extern const u16 gMaps[][6];
 
 extern u8 gData_0202e002[];
 

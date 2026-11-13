@@ -4,7 +4,6 @@
 // Part of menus.c.
 
 #include "../menus_internal.h"
-#include "module/window/menus.h"
 #include "gamepak/far_call/battle.h"
 #include "module/window/screens.h"
 #include "module/window/window.h"

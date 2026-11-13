@@ -18,7 +18,13 @@
 #include "event_work.h"
 #include "call.h"
 #include "item_icon.h"
-#include "module/debug/debug.h"
+
+struct EventFlags {
+  u8 unk000[0xd36];
+  u8 unkd36;
+  u8 unkd37;
+};
+
 #include "module/scene/kibombo.h"
 #include "module/tla.h"
 #include "particle.h"

@@ -55,7 +55,23 @@ s32 Func_02000ef4(struct Actor *object);
 
 #include "edition.h"
 #include "item_icon.h"
-#include "module/debug/debug.h"
+
+struct Actor;
+
+struct Vector3;
+
+void Func_02000eb4(s32 scene, s32 entrance);
+
+extern u8 gData_02001860[];
+
+void Func_02000ebc(s32, s32);
+
+void Func_02000e5c(s32, s32, s32);
+
+void Func_02000ec4(struct Vector3 *v);
+
+s32 Func_02000efc(struct Actor *object);
+
 #include "module/game/game.h"
 #include "module/tla.h"
 #include "module/window/window.h"

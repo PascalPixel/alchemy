@@ -43,7 +43,29 @@ void IncreaseItemAndLevel_OpenPortraitBrowser(void);
 
 #include "edition.h"
 #include "event_work.h"
-#include "module/debug/debug.h"
+
+/// The entrances that open a room of names in place of the debug room: each
+/// has its own actor placements and the triggers of
+/// gIncreaseItemAndLevel_NameTriggers.
+enum {
+  ENTRANCE_NAMES_FOURTH = 96,
+  ENTRANCE_NAMES_THIRD = 97,
+  ENTRANCE_NAMES_SECOND = 98,
+  ENTRANCE_NAMES_FIRST = 99
+};
+
+/// The debug room's actors, numbering the rows of
+/// gIncreaseItemAndLevel_ActorPlacements, as The Broken Seal's.
+enum IncreaseItemAndLevelActorId {
+  ACTOR_ITEM_BROWSER = 8, ///< IncreaseItemAndLevel_SelectItem
+  ACTOR_ICON_BROWSER,     ///< IncreaseItemAndLevel_OpenIconBrowser
+  /// IncreaseItemAndLevel_OpenPortraitBrowser; Force cast at it runs
+  /// IncreaseItemAndLevel_RunMotionTest.
+  ACTOR_PORTRAIT_BROWSER,
+  /// IncreaseItemAndLevel_RunLevelEditor, drawn larger than the others.
+  ACTOR_LEVEL_EDITOR
+};
+
 #include "scene_tables.h"
 #include "module/game/game.h"
 #include "module/window/screens.h"

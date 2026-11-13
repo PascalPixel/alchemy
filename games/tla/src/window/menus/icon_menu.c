@@ -14,7 +14,6 @@
 #include "item_icon.h"
 #include "menu_list.h"
 #include "module/tla.h"
-#include "module/window/menus.h"
 #include "gamepak/far_call/battle.h"
 #include "module/window/screens.h"
 #include "module/window/window.h"

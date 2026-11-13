@@ -7,7 +7,6 @@
 #include "gamepak/far_call/battle.h"
 #include "item_icon.h"
 #include "module/tla.h"
-#include "module/window/menus.h"
 #include "module/window/window.h"
 
 // Widths in tiles that fit each language's text: the "Set Djinni" window

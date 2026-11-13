@@ -4,7 +4,6 @@
 
 #include "../menus_internal.h"
 #include "gamepak/far_call/field_sequence.h"
-#include "module/window/menus.h"
 
 /* VIEW(selrow): routine WindowSprite_PrepareForRedraw as void
  * WindowSprite_PrepareForRedraw(void *window); resource_work has void

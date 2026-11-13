@@ -5,7 +5,6 @@
 
 #include "../menus_internal.h"
 #include "gamepak/far_call/battle.h"
-#include "module/window/menus.h"
 #include "motobj.h"
 
 /// Classifies an ability's effect for target selection.

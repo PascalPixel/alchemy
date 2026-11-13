@@ -5,7 +5,6 @@
 
 #include "../menus_internal.h"
 #include "item_icon.h"
-#include "module/window/menus.h"
 #include "module/window/window.h"
 
 /// Runs the save screen's selection until a choice completes: saving (refused

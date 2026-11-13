@@ -54,9 +54,9 @@ s32 GameFlag_IsConditionActive(s32 condition) {
     return 1;
   }
   if (0x1000 & condition) {
-    return GameFlag_Test(condition);
+    return GameFlag_Get(condition);
   }
-  flag_state = GameFlag_Test(condition);
+  flag_state = GameFlag_Get(condition);
   return 1 - ((u32)((0 - flag_state) | flag_state) >> 31);
 }
 
@@ -248,7 +248,7 @@ s32 Scene_TalkToActor(s32 id) {
       if (silent == 0)
         FieldMessage_ShowFar(found + (s32)&MsgKey0dc4, 1);
       if (gMainRoutineWork.scene == (s32)&SceneId_VenusLighthouse &&
-          noHint == 0 && !GameFlag_Test(flag)) {
+          noHint == 0 && !GameFlag_Get(flag)) {
         MessageArgument_PushFar(contents, 2);
         FieldMessage_ShowFar((s32)&MsgKey15b5, 1);
       }
@@ -285,18 +285,18 @@ s32 Scene_TalkToActor(s32 id) {
         FieldMessage_ShowFar((s32)&MsgKey0e19, 1);
         ObjectEvent_Remove(index);
         if (flag != -1)
-          GameFlag_SetBit(flag);
+          GameFlag_Set(flag);
         goto done;
       }
       if (type == 132) {
         Event_Start();
         Event_ResolvePendingActions(0);
         SummonTablet_PlayRunes(index);
-        Func_08038340(contents);
+        Summon_ShowLearnedMessageFar(contents);
         Class_GetSeriesFar(contents);
         ObjectEvent_Remove(index);
         if (flag != -1)
-          GameFlag_SetBit(flag);
+          GameFlag_Set(flag);
         Event_End();
         goto done;
       }
@@ -341,7 +341,7 @@ s32 Scene_TalkToActor(s32 id) {
         FieldMessage_ShowFar((s32)&MsgKey0e10, 3);
         Party_AdjustCoinsFar(contents);
         if (flag != -1)
-          GameFlag_SetBit(flag);
+          GameFlag_Set(flag);
         if (type == 131) {
           Actor_SetPositionAndResetMotionFar(shown, 0, 0, 0);
           shown->update = NULL;
@@ -352,7 +352,7 @@ s32 Scene_TalkToActor(s32 id) {
       }
       if (contents == 0) {
         if (flag != -1)
-          GameFlag_SetBit(flag);
+          GameFlag_Set(flag);
         goto empty;
       }
       if (type == 131) {
@@ -385,7 +385,7 @@ s32 Scene_TalkToActor(s32 id) {
         FieldMessage_ShowFar((s32)&MsgItemGiven, 3);
       }
       if (flag != -1)
-        GameFlag_SetBit(flag);
+        GameFlag_Set(flag);
       if (type == 131) {
         Actor_SetPositionAndResetMotionFar(shown, 0, 0, 0);
         shown->update = NULL;
@@ -651,9 +651,9 @@ s32 Field_ExamineCell(s32 id) {
     if (!(event->subject & 0x400) && kind != 0) {
       Leader_StopMoving();
       FieldMessage_ShowFar(kind + (s32)&MsgKey0dc4, 1);
-      GameFlag_SetBit(0x142);
+      GameFlag_Set(0x142);
     } else {
-      GameFlag_ClearBit(0x142);
+      GameFlag_Clear(0x142);
     }
     result = event->value;
     if ((result & 0xf000000) == 0) {
@@ -663,7 +663,7 @@ s32 Field_ExamineCell(s32 id) {
     }
     if (GameFlag_IsConditionActive(condition))
       ((void (*)(s32))event->value)(gMainRoutineWork.currentOwner);
-    if (GameFlag_Test(0x142))
+    if (GameFlag_Get(0x142))
       FieldMessage_ShowFar(kind + (s32)&MsgKey0def, 1);
     goto done;
   message:
@@ -676,6 +676,6 @@ s32 Field_ExamineCell(s32 id) {
     FieldMessage_ShowFar((s32)&MsgKey0def + 5, 1);
   }
 done:
-  GameFlag_ClearBit(0x142);
+  GameFlag_Clear(0x142);
   return 0;
 }

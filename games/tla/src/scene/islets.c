@@ -381,7 +381,7 @@ void Func_02000568(void) {
       Actor_SetModeById(gMainRoutineWork.currentOwner, 1);                     \
     }                                                                          \
     Import_FieldPsynergyGreyMindReadPalette();                                 \
-    GameFlag_SetBit(0xaa3);                                                    \
+    GameFlag_Set(0xaa3);                                                    \
   }
 
 /// The Islets' trade of item 453 with object 10. With the item in the party, if
@@ -773,7 +773,7 @@ void Func_020014e0(void) {
   FieldEvent_ResolvePendingActions(0);
   if (PartyInventory_FindMember(455) != -1) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
-    if (GameFlag_Test(513) != 0) {
+    if (GameFlag_Get(513) != 0) {
       Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
       /* FAKEMATCH(temporary): the form kept; as leader->update =
        * Actor_EmitSmoke, 94 of 569 instructions differ in tla-en. */
@@ -849,7 +849,7 @@ void Func_020014e0(void) {
         Event_SetFlag(513);
       }
     }
-  } else if (GameFlag_Test(0xaa5)) {
+  } else if (GameFlag_Get(0xaa5)) {
     Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
     Event_SetMessageId(MsgWantToGo);
     Event_ShowMessage(9, 0);
@@ -1649,7 +1649,7 @@ void Func_02002d7c(void) {
   s32 i;
   s32 count;
 
-  if (*(s16 *)(work + 0x166) != 0 || GameFlag_Test(0x218)) {
+  if (*(s16 *)(work + 0x166) != 0 || GameFlag_Get(0x218)) {
     for (i = 11; i <= 18; i++)
       Actor_GetById(i)->movementState = 1;
     return;

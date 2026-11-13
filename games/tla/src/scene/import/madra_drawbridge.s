@@ -2,14 +2,14 @@
 	.thumb
 	.include "games/tla/src/system/overlay/imports.inc"
 	.balign 4
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
 	.global Map_CopyCellAttributeRect
 	.thumb_func
 Map_CopyCellAttributeRect:

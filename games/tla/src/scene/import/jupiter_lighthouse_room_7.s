@@ -58,18 +58,18 @@ VramCache_FindFreeEntry:
 	.thumb_func
 Import_OamAddSpriteAtDepthClamped:
 	overlay_veneer Oam_AddSpriteAtDepthClampedFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global GameFlag_GetByte
 	.thumb_func
 GameFlag_GetByte:
@@ -145,11 +145,11 @@ Actor_SetSpriteColorMode:
 	.global Func_02002b54
 	.thumb_func
 Func_02002b54:
-	overlay_veneer Func_08020360
+	overlay_veneer MapGrid_SetCellHeightFar
 	.global Func_02002b5c
 	.thumb_func
 Func_02002b5c:
-	overlay_veneer Func_08020368
+	overlay_veneer MapGrid_GetCellHeightFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -245,11 +245,11 @@ Camera_WorldToScreen:
 	.global Func_02002c1c
 	.thumb_func
 Func_02002c1c:
-	overlay_veneer Func_080c8710
+	overlay_veneer Actor_GetCellIndexFar
 	.global Func_02002c24
 	.thumb_func
 Func_02002c24:
-	overlay_veneer Func_080c8748
+	overlay_veneer Leader_PushObjectAheadFar
 	.global BattleEffect_GetObjectPriority
 	.thumb_func
 BattleEffect_GetObjectPriority:
@@ -257,7 +257,7 @@ BattleEffect_GetObjectPriority:
 	.global Func_02002c34
 	.thumb_func
 Func_02002c34:
-	overlay_veneer Func_080c8830
+	overlay_veneer MapGrid_GetCellBehaviorFar
 	.global MapGrid_SetCellBehavior
 	.thumb_func
 MapGrid_SetCellBehavior:
@@ -265,15 +265,15 @@ MapGrid_SetCellBehavior:
 	.global Func_02002c44
 	.thumb_func
 Func_02002c44:
-	overlay_veneer Func_080c8848
+	overlay_veneer MapGrid_SetAttributeBAtFar
 	.global Func_02002c4c
 	.thumb_func
 Func_02002c4c:
-	overlay_veneer Func_080c8850
+	overlay_veneer MapGrid_SetAttributeBBitsAtFar
 	.global Func_02002c54
 	.thumb_func
 Func_02002c54:
-	overlay_veneer Func_080c8858
+	overlay_veneer MapGrid_ClearAttributeBBitsAtFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

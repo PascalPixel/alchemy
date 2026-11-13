@@ -16,11 +16,11 @@ void Func_02000280(void) {
     return;
   y = leader->y;
   if (y > 0xc0000) {
-    GameFlag_SetBit(0x340);
+    GameFlag_Set(0x340);
     if (*state == 4)
-      GameFlag_SetBit(0x341);
+      GameFlag_Set(0x341);
     else if (*state == 5)
-      GameFlag_SetBit(0x342);
+      GameFlag_Set(0x342);
     Field_RequestDjinnBattle(14, 67);
   }
 }
@@ -597,19 +597,19 @@ void Func_02000f18(s32 actor) {
 /// Frost on the puddle, actor 10, makes an ice pillar (flag 0x200).
 void ShrineOfTheSeaGod_FreezeFirstPuddle(void) {
   ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 8, 18);
-  GameFlag_SetBit(0x200);
+  GameFlag_Set(0x200);
 }
 
 /// Frost on the puddle, actor 11, makes an ice pillar (flag 0x201).
 void ShrineOfTheSeaGod_FreezeSecondPuddle(void) {
   ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 10, 18);
-  GameFlag_SetBit(0x201);
+  GameFlag_Set(0x201);
 }
 
 /// Frost on the puddle, actor 12, makes an ice pillar (flag 0x202).
 void ShrineOfTheSeaGod_FreezeThirdPuddle(void) {
   ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 10, 17);
-  GameFlag_SetBit(0x202);
+  GameFlag_Set(0x202);
 }
 
 void Func_02000fa8(void) { Func_02003b38(gData_02003cbc); }
@@ -620,9 +620,9 @@ void Func_02000fb8(void) {
   Func_02003b40();
   object = Actor_GetById(8);
   if (object->x >> 20 == 21 && object->z >> 20 == 13)
-    GameFlag_SetBit(0x207);
+    GameFlag_Set(0x207);
   else
-    GameFlag_ClearBit(0x207);
+    GameFlag_Clear(0x207);
 }
 
 void Func_02000fec(void) {
@@ -630,7 +630,7 @@ void Func_02000fec(void) {
 
   Func_02003b40();
   if (object->x >> 20 == 12)
-    GameFlag_SetBit(0x84c);
+    GameFlag_Set(0x84c);
 }
 
 void Func_02001010(struct ShrineOfTheSeaGodObject *object) {
@@ -654,7 +654,7 @@ void Func_02001038(void) {
     Map_CopyCellAttributeRect(0, 0, 1, 1, 15, z);
     Actor_SetSpritePriority(8, 3);
     Event_End();
-    GameFlag_SetBit(0x301);
+    GameFlag_Set(0x301);
   }
 }
 
@@ -736,12 +736,12 @@ void Func_02001200(s32 show) {
 
 void Func_02001228(void) {
   Func_02001200(1);
-  GameFlag_SetBit(0x208);
+  GameFlag_Set(0x208);
 }
 
 void Func_0200123c(void) {
   Func_02001200(0);
-  GameFlag_ClearBit(0x208);
+  GameFlag_Clear(0x208);
 }
 
 void Func_02001250(s32 show, s32 first, u32 count) {
@@ -759,11 +759,11 @@ void Func_02001250(s32 show, s32 first, u32 count) {
 
 void Func_02001290(void) {
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
-  GameFlag_SetBit(0x20a);
+  GameFlag_Set(0x20a);
 }
 
 void Func_020012b4(void) {
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
-  GameFlag_ClearBit(0x20a);
+  GameFlag_Clear(0x20a);
 }

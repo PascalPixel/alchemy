@@ -43,7 +43,7 @@ s32 Item_MatchesFilter(s32 filter, s32 item_id) {
     return 1;
   if (filter == 0x1ff)
     return 1;
-  if (filter == 0x1fe && (u32)(Item_Get(item_id)->type - 1) <= 3)
+  if (filter == 0x1fe && (u32)(Item_GetDirectFar(item_id)->type - 1) <= 3)
     return 1;
   return 0;
 }
@@ -158,8 +158,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
   event = (struct ItemTrigger *)Field_FindItemTrigger(itemId);
   if (event != 0 && event->value != 0) {
-    GameFlag_ClearBit(0x143);
-    GameFlag_ClearBit(0x142);
+    GameFlag_Clear(0x143);
+    GameFlag_Clear(0x142);
     if (!(event->trigger & 0x400)) {
       MessageArgument_PushFar(actor, 1);
       MessageArgument_PushFar(itemId, 2);
@@ -179,16 +179,16 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   } else {
     s32 actionId;
 
-    GameFlag_ClearBit(0x143);
-    GameFlag_SetBit(0x142);
-    actionId = ((struct ItemDefinitionView *)Item_Get(itemId))->actionId;
+    GameFlag_Clear(0x143);
+    GameFlag_Set(0x142);
+    actionId = ((struct ItemDefinitionView *)Item_GetDirectFar(itemId))->actionId;
     runtime = Ram_HeapSlots->eventWork;
 
     if (actionId != 0) {
-      GameFlag_SetBit(0x145);
-      GameFlag_ClearBit(0x142);
+      GameFlag_Set(0x145);
+      GameFlag_Clear(0x142);
 
-      if (actionId == 149 && !GameFlag_Test(0x144)) {
+      if (actionId == 149 && !GameFlag_Get(0x144)) {
         MessageArgument_PushFar(itemId, 2);
         FieldMessage_ShowFar((s32)&MsgUseItemQuestion, 13);
         i = FieldYesNo_Ask(1);
@@ -210,14 +210,14 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       runtime->resolvingAction = 0;
       BattleEffect_CleanupSceneObjects();
 
-      if (((struct ItemDefinitionView *)Item_Get(itemId))->useType & 1)
-        GameFlag_SetBit(0x143);
+      if (((struct ItemDefinitionView *)Item_GetDirectFar(itemId))->useType & 1)
+        GameFlag_Set(0x143);
     }
   }
 
-  if (GameFlag_Test(0x142))
+  if (GameFlag_Get(0x142))
     FieldMessage_ShowFar((s32)&MsgNothingHappens, 1);
-  if (GameFlag_Test(0x143))
+  if (GameFlag_Get(0x143))
     Inventory_RemoveFar(actor, slot);
   return result;
 }

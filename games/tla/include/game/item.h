@@ -117,7 +117,7 @@ STATIC_ASSERT(offsetof(struct ItemDefinition, element) == 0x14);
 STATIC_ASSERT(offsetof(struct ItemDefinition, effects) == 0x18);
 STATIC_ASSERT(offsetof(struct ItemDefinition, actionId) == 0x28);
 
-struct ItemDefinition *Item_Get(s32 item);
+struct ItemDefinition *Item_GetDirectFar(s32 item);
 struct ItemDefinition *Item_GetDirect(s32 item);
 s32 Equipment_GetUnleashRateBonus(struct BattleUnit *owner);
 s32 RollWeaponUnleash(struct BattleUnit *owner);

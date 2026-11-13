@@ -39,7 +39,7 @@ void WorldMap_MarkPlaceVisited(s32 id, s32 variant) {
       continue;
     if (entry->variant != -1 && variant != entry->variant)
       continue;
-    GameFlag_SetBit(entry->flag + 0x180);
+    GameFlag_Set(entry->flag + 0x180);
     break;
   }
 }
@@ -71,7 +71,7 @@ void Encounter_SelectMapZones(s32 search) {
         continue;
       if (entry->entrance != -1 && entry->entrance != entrance)
         continue;
-      if (entry->flag != -1 && GameFlag_Test(entry->flag))
+      if (entry->flag != -1 && GameFlag_Get(entry->flag))
         continue;
       first = entry->first;
       second = entry->second;
@@ -111,7 +111,7 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
       continue;
     if (rule->behavior != -1 && rule->behavior != behavior)
       continue;
-    if (rule->flag != -1 && GameFlag_Test(rule->flag) == 0)
+    if (rule->flag != -1 && GameFlag_Get(rule->flag) == 0)
       continue;
     zone = rule->zone;
     break;
@@ -139,8 +139,8 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
   asm("" : : "l"(pick));
 
   work = Ram_HeapSlots->eventWork;
-  if (GameFlag_Test(351) == 0) {
-    if (GameFlag_Test(352) != 0 || GameFlag_Test(353) != 0)
+  if (GameFlag_Get(351) == 0) {
+    if (GameFlag_Get(352) != 0 || GameFlag_Get(353) != 0)
       return 0;
     if (zone == 0)
       return 0;
@@ -246,7 +246,7 @@ void Scene_ChooseMusic(void) {
         continue;
       if (rule->entrance != -1 && rule->entrance != entrance)
         continue;
-      if (rule->flag != -1 && GameFlag_Test(rule->flag) == 0)
+      if (rule->flag != -1 && GameFlag_Get(rule->flag) == 0)
         continue;
       cue = rule->cue;
       break;
@@ -255,7 +255,7 @@ void Scene_ChooseMusic(void) {
         continue;
       if (rule->entrance != -1 && rule->entrance != entrance)
         continue;
-      if (rule->flag != -1 && GameFlag_Test(rule->flag) == 0)
+      if (rule->flag != -1 && GameFlag_Get(rule->flag) == 0)
         continue;
       cue = rule->cue;
       break;
@@ -326,7 +326,7 @@ void Scene_SetRestartPoint(void) {
 void WorldMap_SetReturnForScene(s32 scene, s32 entrance) {
   const s16 *rule = gParty_PairResolveRules;
 
-  if (GameFlag_Test(0x8de) == 0)
+  if (GameFlag_Get(0x8de) == 0)
     return;
   while (rule[0] != -1) {
     if (rule[0] == scene &&
@@ -346,7 +346,7 @@ void WorldMap_SetReturnForScene(s32 scene, s32 entrance) {
 void WorldMap_SetReturnLeavingScene(s32 scene, s32 entrance) {
   const s16 *rule = gParty_PairResolveRules;
 
-  if (GameFlag_Test(0x8de) == 0)
+  if (GameFlag_Get(0x8de) == 0)
     return;
   gMainRoutineWork.ownerOverride = 0;
   while (rule[0] != -1) {
@@ -384,7 +384,7 @@ void BattleBackground_SelectForMap(void) {
       entry = *table++;
     } while (entry != 0 && entry != target);
   }
-  if (result == (s32)&ResourceId_DragonHallBBackdrop && GameFlag_Test(0xa30))
+  if (result == (s32)&ResourceId_DragonHallBBackdrop && GameFlag_Get(0xa30))
     result = (s32)&ResourceId_DragonHallABackdrop;
   gMainRoutineWork.battleBackground = result;
 }
@@ -449,7 +449,7 @@ void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
   u16 music;
   u16 value;
 
-  if (GameFlag_Test(0x16c)) {
+  if (GameFlag_Get(0x16c)) {
     music = 79;
   } else {
     for (;;) {
@@ -463,7 +463,7 @@ void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
     }
   }
   if (music == 0) {
-    if (gMainRoutineWork.ownerOverride != 0 && !GameFlag_Test(0x8df))
+    if (gMainRoutineWork.ownerOverride != 0 && !GameFlag_Get(0x8df))
       music = 56;
     else if (Party_IsInFrontRow(4))
       music = 50;

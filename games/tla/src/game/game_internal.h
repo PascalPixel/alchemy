@@ -44,9 +44,9 @@
 
 // The game object's functions its parts call before their definitions, or
 // with declarations of their own that disagree.
-/* VIEW(game): routine GameFlag_SetBit as s32 GameFlag_SetBit(s32 flag);
- * flag_call.h has void GameFlag_SetBit(s32 flag). */
-extern s32 GameFlag_SetBit__game(s32 flag) __asm__("GameFlag_SetBit");
+/* VIEW(game): routine GameFlag_Set as s32 GameFlag_Set(s32 flag);
+ * flag_call.h has void GameFlag_Set(s32 flag). */
+extern s32 GameFlag_SetBit__game(s32 flag) __asm__("GameFlag_Set");
 struct AbilityDefinition *Ability_GetDirect(s32 actionId);
 
 /// Keeps occupied slots in order and clears the unused inventory tail, for

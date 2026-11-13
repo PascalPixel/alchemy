@@ -253,17 +253,17 @@ restart:
   Heap_Initialize();
   VramCache_Reset();
   encounter = 69;
-  GameFlag_SetBit(362);
+  GameFlag_Set(362);
   if (down) {
     preset = 0;
     loadedPreset = -1;
-    GameFlag_ClearBit(362);
+    GameFlag_Clear(362);
     input = &gInput;
     // Held for the loop's life: the backdrop id's value loads before its
     // address.
     backdropId = &Data_02000436;
     for (;;) {
-      GameFlag_ClearBit(32);
+      GameFlag_Clear(32);
       wait(1);
       for (;;) {
         if (input->repeat & 0x10)
@@ -294,13 +294,13 @@ restart:
         loadedPreset = preset;
       }
       if (input->held & 0x80)
-        GameFlag_SetBit(364);
+        GameFlag_Set(364);
       Unit_CalculateFar(0);
       *backdropId = (s32)&ResourceId_ColossoBackdrop;
       m = &gMainRoutineWork;
       if (encounter == 28)
-        GameFlag_SetBit(366);
-      GameFlag_SetBit(354);
+        GameFlag_Set(366);
+      GameFlag_Set(354);
       if (startModeSet)
         m->battleRule24b = 5;
       Battle_RunEncounter(encounter);
@@ -312,7 +312,7 @@ restart:
       VramCache_Reset();
     }
   }
-  GameFlag_SetBit(354);
+  GameFlag_Set(354);
   Battle_RunEncounter(69);
   goto restart;
 }

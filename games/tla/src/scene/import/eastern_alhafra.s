@@ -54,14 +54,14 @@ VramCache_FindFreeEntry:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
 	.global Actor_SelectAnimation
 	.thumb_func
 Actor_SelectAnimation:
@@ -121,7 +121,7 @@ Actor_SetSpritePriorityDirect:
 	.global Func_02004a7c
 	.thumb_func
 Func_02004a7c:
-	overlay_veneer Func_080202f8
+	overlay_veneer Actor_HasArrivedFar
 	.global Party_FindOwnerWithAction
 	.thumb_func
 Party_FindOwnerWithAction:
@@ -325,35 +325,35 @@ Event_NoOp:
 	.global Func_02004c14
 	.thumb_func
 Func_02004c14:
-	overlay_veneer Func_080c86a8
+	overlay_veneer Rope_InitializeFar
 	.global Func_02004c1c
 	.thumb_func
 Func_02004c1c:
-	overlay_veneer Func_080c86d0
+	overlay_veneer Tightrope_InitializeFar
 	.global Func_02004c24
 	.thumb_func
 Func_02004c24:
-	overlay_veneer Func_080c86d8
+	overlay_veneer Tightrope_PlaceFar
 	.global Func_02004c2c
 	.thumb_func
 Func_02004c2c:
-	overlay_veneer Func_080c86e8
+	overlay_veneer Rope_PlaceFar
 	.global Func_02004c34
 	.thumb_func
 Func_02004c34:
-	overlay_veneer Func_080c8710
+	overlay_veneer Actor_GetCellIndexFar
 	.global Func_02004c3c
 	.thumb_func
 Func_02004c3c:
-	overlay_veneer Func_080c8738
+	overlay_veneer Actor_FindAtCellFar
 	.global Func_02004c44
 	.thumb_func
 Func_02004c44:
-	overlay_veneer Func_080c8740
+	overlay_veneer Leader_CanPushObjectAheadFar
 	.global Func_02004c4c
 	.thumb_func
 Func_02004c4c:
-	overlay_veneer Func_080c8748
+	overlay_veneer Leader_PushObjectAheadFar
 	.global Actor_SetSpriteRotationById
 	.thumb_func
 Actor_SetSpriteRotationById:
@@ -361,11 +361,11 @@ Actor_SetSpriteRotationById:
 	.global Func_02004c5c
 	.thumb_func
 Func_02004c5c:
-	overlay_veneer Func_080c87b8
+	overlay_veneer Actor_FallOverWithAnimationByIdFar
 	.global Func_02004c64
 	.thumb_func
 Func_02004c64:
-	overlay_veneer Func_080c87c0
+	overlay_veneer EffectSprite_InitFar
 	.global EffectSprite_DrawAtWorldPosition
 	.thumb_func
 EffectSprite_DrawAtWorldPosition:
@@ -381,15 +381,15 @@ MapGrid_SetCellBehavior:
 	.global Func_02004c84
 	.thumb_func
 Func_02004c84:
-	overlay_veneer Func_080c8848
+	overlay_veneer MapGrid_SetAttributeBAtFar
 	.global Func_02004c8c
 	.thumb_func
 Func_02004c8c:
-	overlay_veneer Func_080c8868
+	overlay_veneer Tightrope_ReleaseFar
 	.global Func_02004c94
 	.thumb_func
 Func_02004c94:
-	overlay_veneer Func_080c8870
+	overlay_veneer Tightrope_SettleFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

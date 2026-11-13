@@ -93,8 +93,8 @@ void AncientLemuria_FinishMovingStatue(s32 unused, s32 id) {
   s32 z = object->z >> 20;
 
   if (x == 8 && z == 36)
-    GameFlag_SetBit(0x961);
-  if (GameFlag_Test(0x961))
+    GameFlag_Set(0x961);
+  if (GameFlag_Get(0x961))
     AncientLemuria_MeetTheLemurians();
 }
 
@@ -200,11 +200,11 @@ void AncientLemuria_TremorShakesOutRime(void) {
 
   if (Event_GetFlag(0x96d))
     return;
-  if (!GameFlag_Test(0x96c))
+  if (!GameFlag_Get(0x96c))
     return;
   object = Actor_GetById(12);
-  GameFlag_SetBit(0x96d);
-  GameFlag_ClearBit(0x96e);
+  GameFlag_Set(0x96d);
+  GameFlag_Clear(0x96e);
   AncientLemuria_StillTheStatue(13);
   Actor_SetPosition(12, 270 << 16, 184 << 16);
   object->y = 22 << 16;
@@ -237,7 +237,7 @@ void AncientLemuria_TremorShakesOutRime(void) {
 void AncientLemuria_HeadForTheDock(void) {
   struct Actor *object;
 
-  if (!GameFlag_Test(0x961) || GameFlag_Test(0x96a)) {
+  if (!GameFlag_Get(0x961) || GameFlag_Get(0x96a)) {
     Sound_Play(123);
     Import_EventSetExitRequest(2);
   } else {
@@ -247,7 +247,7 @@ void AncientLemuria_HeadForTheDock(void) {
     Actor_ArmCallback(4, FACING_NORTH, 0);
     Actor_WaitForMoveById(11);
     Event_Wait(20);
-    if (GameFlag_Test(7)) {
+    if (GameFlag_Get(7)) {
       Event_SetMessageId(MsgLemuriaStayExploring);
       Event_ShowMessageThenWait(11, 0, 10);
     } else {
@@ -308,18 +308,18 @@ s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 513;
   Task_Add(AncientLemuria_CycleWaterColors, 0xc80);
   if (gMainRoutineWork.entrance != 1)
-    GameFlag_ClearBit(0x12f);
+    GameFlag_Clear(0x12f);
   else
-    GameFlag_SetBit(0x12f);
-  if (GameFlag_Test(0x961)) {
+    GameFlag_Set(0x12f);
+  if (GameFlag_Get(0x961)) {
     Actor_SetPosition(8, 136 << 16, 584 << 16);
     Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
   }
   if (Event_GetFlag(0x96d))
     Actor_SetPosition(12, 312 << 16, 184 << 16);
-  if (gMainRoutineWork.entrance == 1 && !GameFlag_Test(0x96d) &&
-      GameFlag_Test(0x96c)) {
+  if (gMainRoutineWork.entrance == 1 && !GameFlag_Get(0x96d) &&
+      GameFlag_Get(0x96c)) {
     *(void (**)(void))(((u8 *)Actor_GetById(13)) + 108) =
         AncientLemuria_ShakeTheStatue;
     *(u16 *)(((u8 *)Actor_GetById(13)) + 100) = 0;
@@ -332,16 +332,16 @@ s32 Scene_PrepareMap(void) {
   s32 entrance = gMainRoutineWork.entrance;
 
   if (entrance == 1)
-    GameFlag_SetBit(0x960);
+    GameFlag_Set(0x960);
   else if (entrance == 2)
-    GameFlag_ClearBit(0x960);
+    GameFlag_Clear(0x960);
   else if (entrance == 3)
-    GameFlag_ClearBit(0x960);
+    GameFlag_Clear(0x960);
   else if (entrance == 4)
-    GameFlag_SetBit(0x960);
+    GameFlag_Set(0x960);
   else if (entrance == 5)
-    GameFlag_SetBit(0x960);
-  if (GameFlag_Test(0x960)) {
+    GameFlag_Set(0x960);
+  if (GameFlag_Get(0x960)) {
     MapGrid_CopyCellPictureCellsRect(38, 47, 26, 12, 8, 47);
     MapGrid_CopyCellPictureCellsRect(102, 47, 26, 12, 72, 47);
     Map_CopyCellAttributeRect(38, 47, 26, 12, 8, 47);

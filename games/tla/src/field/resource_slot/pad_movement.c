@@ -92,7 +92,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
     position.z = object->z;
     Vector_AddPolarOffset__resource_slot(0x80000, direction, &position);
     if (gDebugMode == 0 ||
-        ((gInput.held & 0x200) == 0 && GameFlag_Test(0x163) == 0)) {
+        ((gInput.held & 0x200) == 0 && GameFlag_Get(0x163) == 0)) {
       leftPosition.x = object->x;
       leftPosition.y = object->y;
       leftPosition.z = object->z;
@@ -299,7 +299,7 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
   }
   object->speedLimit = 0x10000;
   object->acceleration = 0x4000;
-  if (GameFlag_Test(0x17f) != 0 && (gInput.held & 2)) {
+  if (GameFlag_Get(0x17f) != 0 && (gInput.held & 2)) {
     object->speedLimit = 0x40000;
     object->acceleration = 0x10000;
   }
@@ -762,7 +762,7 @@ update_object:
       ((struct PartyKeys__s28534 *)&gMainRoutineWork)->keys23c) {
     struct WorldEventWork *keyWork = Ram_HeapSlots->eventWork;
     if (keyWork->unkd39 != 0) {
-      GameFlag_ClearBit(0x147);
+      GameFlag_Clear(0x147);
       ((struct EventWork *)keyWork)->unk16a = 253;
     }
   }
@@ -1121,7 +1121,7 @@ update_object:
   } else {
     object->y -= 0x4000;
   }
-  if (Func_080ad318() == 0)
+  if (Party_GetPpRatioFar() == 0)
     object->y -= 0x4000;
   if (object->y <= 0 && flightWork->climbing != 0)
     ((struct EventWork *)flightWork)->unk16a = 254;

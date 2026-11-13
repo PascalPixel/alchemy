@@ -348,7 +348,7 @@ void Rope_Update(void) {
   struct SwingSlot *slot;
   s32 i = 0;
 
-  if (!GameFlag_Test(260) && event->timer > 12) {
+  if (!GameFlag_Get(260) && event->timer > 12) {
     if (gMainRoutineWork.renderMode == 0) {
       s32 target = Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner);
 
@@ -481,7 +481,7 @@ s32 Rope_LayTied(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
   slot->amplitude = 0x10000;
   slot->phase = 0x4000;
   if (slot->flag != 0)
-    GameFlag_SetBit(slot->flag);
+    GameFlag_Set(slot->flag);
   return result;
 }
 

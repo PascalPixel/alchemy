@@ -46,18 +46,18 @@ VramCache_FreeEntry:
 	.thumb_func
 Unit_Get:
 	overlay_veneer Unit_GetFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global SpriteAnimation_Clear
 	.thumb_func
 SpriteAnimation_Clear:
@@ -105,7 +105,7 @@ Map_GetTerrainHeight:
 	.global Func_02003168
 	.thumb_func
 Func_02003168:
-	overlay_veneer Func_080201d8
+	overlay_veneer MapGrid_GetCellAttributeLowNibbleOrBumpFar
 	.global Map_CopyCellAttributeRect
 	.thumb_func
 Map_CopyCellAttributeRect:
@@ -243,7 +243,7 @@ LineScroll_InitWave:
 	.global Func_02003278
 	.thumb_func
 Func_02003278:
-	overlay_veneer Func_080c8480
+	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:
@@ -263,11 +263,11 @@ Party_GetLeaderActor:
 	.global Func_020032a0
 	.thumb_func
 Func_020032a0:
-	overlay_veneer Func_080c88d8
+	overlay_veneer Teleport_PlayWhirlFar
 	.global Func_020032a8
 	.thumb_func
 Func_020032a8:
-	overlay_veneer Func_080c88e8
+	overlay_veneer Teleport_PlaySparksFar
 	.global Weather_StartRain
 	.thumb_func
 Weather_StartRain:

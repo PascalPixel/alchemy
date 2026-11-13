@@ -30,14 +30,14 @@ Trig_Sin:
 	.thumb_func
 Trig_Cos:
 	overlay_veneer Trig_CosFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
 	.global Import_ActorSelectAnimation
 	.thumb_func
 Import_ActorSelectAnimation:
@@ -81,7 +81,7 @@ Message_CloseFinishedWindows:
 	.global Func_02001338
 	.thumb_func
 Func_02001338:
-	overlay_veneer Func_08038340
+	overlay_veneer Summon_ShowLearnedMessageFar
 	.global Menu_SelectCoinsOrMedals
 	.thumb_func
 Menu_SelectCoinsOrMedals:
@@ -181,7 +181,7 @@ Event_ResolvePendingActions:
 	.global Func_02001400
 	.thumb_func
 Func_02001400:
-	overlay_veneer Func_080c8928
+	overlay_veneer SummonTablet_PlayRunesFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

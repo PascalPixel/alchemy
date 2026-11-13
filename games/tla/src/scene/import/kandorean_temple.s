@@ -46,18 +46,18 @@ HeapSlot_Release:
 	.thumb_func
 VramCache_Load:
 	overlay_veneer VramCache_LoadFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Animation_ApplyChildArgument
 	.thumb_func
 Animation_ApplyChildArgument:
@@ -265,7 +265,7 @@ Actor_SetSpritePriority:
 	.global Func_020052c0
 	.thumb_func
 Func_020052c0:
-	overlay_veneer Func_080c8208
+	overlay_veneer Actor_DisableByIdFar
 	.global Actor_ShowEmoteById
 	.thumb_func
 Actor_ShowEmoteById:
@@ -325,7 +325,7 @@ ItemDisplay_ShowPicture:
 	.global Func_02005338
 	.thumb_func
 Func_02005338:
-	overlay_veneer Func_080c8480
+	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global FieldPsynergy_RunHandler
 	.thumb_func
 FieldPsynergy_RunHandler:
@@ -369,39 +369,39 @@ Scene_QueueMusic:
 	.global Func_02005390
 	.thumb_func
 Func_02005390:
-	overlay_veneer Func_080c86a8
+	overlay_veneer Rope_InitializeFar
 	.global Func_02005398
 	.thumb_func
 Func_02005398:
-	overlay_veneer Func_080c86d0
+	overlay_veneer Tightrope_InitializeFar
 	.global Func_020053a0
 	.thumb_func
 Func_020053a0:
-	overlay_veneer Func_080c86d8
+	overlay_veneer Tightrope_PlaceFar
 	.global Func_020053a8
 	.thumb_func
 Func_020053a8:
-	overlay_veneer Func_080c86e8
+	overlay_veneer Rope_PlaceFar
 	.global Func_020053b0
 	.thumb_func
 Func_020053b0:
-	overlay_veneer Func_080c8710
+	overlay_veneer Actor_GetCellIndexFar
 	.global Func_020053b8
 	.thumb_func
 Func_020053b8:
-	overlay_veneer Func_080c8718
+	overlay_veneer Actor_PlaceBlocksFar
 	.global Func_020053c0
 	.thumb_func
 Func_020053c0:
-	overlay_veneer Func_080c8720
+	overlay_veneer Actor_LiftTargetBlockFar
 	.global Func_020053c8
 	.thumb_func
 Func_020053c8:
-	overlay_veneer Func_080c8728
+	overlay_veneer Actor_PlaceMovedBlockFar
 	.global Func_020053d0
 	.thumb_func
 Func_020053d0:
-	overlay_veneer Func_080c8760
+	overlay_veneer TileCopies_CopyTouchedCellsFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

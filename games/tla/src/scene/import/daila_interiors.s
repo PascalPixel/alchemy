@@ -6,18 +6,18 @@
 	.thumb_func
 Unit_Get:
 	overlay_veneer Unit_GetFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Import_ActorStartIdle
 	.thumb_func
 Import_ActorStartIdle:
@@ -57,7 +57,7 @@ Unit_Calculate:
 	.global Import_ItemGet
 	.thumb_func
 Import_ItemGet:
-	overlay_veneer Item_Get
+	overlay_veneer Item_GetDirectFar
 	.global Inventory_GetQuantity
 	.thumb_func
 Inventory_GetQuantity:
@@ -157,7 +157,7 @@ ItemDisplay_ShowPicture:
 	.global Func_02000dac
 	.thumb_func
 Func_02000dac:
-	overlay_veneer Func_080c8480
+	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Import_EventResolvePendingActions
 	.thumb_func
 Import_EventResolvePendingActions:
@@ -169,11 +169,11 @@ FieldYesNo_Ask:
 	.global Func_02000dc4
 	.thumb_func
 Func_02000dc4:
-	overlay_veneer Func_080c86f8
+	overlay_veneer FlagBlock_PlaceAllFar
 	.global Func_02000dcc
 	.thumb_func
 Func_02000dcc:
-	overlay_veneer Func_080c8708
+	overlay_veneer FlagBlock_ApplyFlagsFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:

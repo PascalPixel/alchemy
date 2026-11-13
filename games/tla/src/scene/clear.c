@@ -1446,9 +1446,9 @@ void Func_020018e0(s32 mode, u8 *in) {
 
   for (i = 0; i != 6; i++) {
     if ((flagBits >> i) & 1)
-      GameFlag_SetBit(gData_02002490[i]);
+      GameFlag_Set(gData_02002490[i]);
     else
-      GameFlag_ClearBit(gData_02002490[i]);
+      GameFlag_Clear(gData_02002490[i]);
   }
 
   for (i = 0; i != 4; i++) {
@@ -1474,7 +1474,7 @@ void Func_020018e0(s32 mode, u8 *in) {
     s32 element = i / 7;
     s32 number = i % 7;
 
-    GameFlag_ClearBit(element * 20 + number + 48);
+    GameFlag_Clear(element * 20 + number + 48);
   }
 
   for (i = 0; i != 28; i++) {
@@ -1583,7 +1583,7 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
   for (i = 0; i != 8; i++)
     stats[i] = 0;
   for (i = 0; i != 6; i++) {
-    if (GameFlag_Test(gData_02002700[i]))
+    if (GameFlag_Get(gData_02002700[i]))
       flags |= 1 << i;
   }
   i = 0;

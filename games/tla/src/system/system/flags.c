@@ -23,7 +23,7 @@ void *Unit_Get(s32 owner) {
   return NULL;
 }
 
-s32 GameFlag_Test(s32 flag) {
+s32 GameFlag_Get(s32 flag) {
   s32 bit;
   u32 index;
 
@@ -33,7 +33,7 @@ s32 GameFlag_Test(s32 flag) {
   return (gGameFlagBytes[flag] >> bit) & 1;
 }
 
-s32 GameFlag_SetBit(s32 flag) {
+s32 GameFlag_Set(s32 flag) {
   s32 bit;
   s32 mask;
   u8 *bytes;
@@ -46,7 +46,7 @@ s32 GameFlag_SetBit(s32 flag) {
   return flag;
 }
 
-void GameFlag_ClearBit(s32 flag) {
+void GameFlag_Clear(s32 flag) {
   s32 bit;
   s32 mask;
   u8 *bytes;

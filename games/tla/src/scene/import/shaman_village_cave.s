@@ -6,18 +6,18 @@
 	.thumb_func
 wait:
 	overlay_veneer waitFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Map_CopyCellAttributeRect
 	.thumb_func
 Map_CopyCellAttributeRect:
@@ -49,7 +49,7 @@ Event_AskYesNoWithActorAnimation:
 	.global Func_02001098
 	.thumb_func
 Func_02001098:
-	overlay_veneer Func_080c8078
+	overlay_veneer Event_PickUpItemFar
 	.global Actor_GetById
 	.thumb_func
 Actor_GetById:
@@ -234,7 +234,7 @@ Actor_ShowItemIconById:
 	.global Func_02001208
 	.thumb_func
 Func_02001208:
-	overlay_veneer Func_080c8940
+	overlay_veneer WorldMap_SetReturnLeavingSceneFar
 	.endif
 	.global Sound_Play
 	.thumb_func

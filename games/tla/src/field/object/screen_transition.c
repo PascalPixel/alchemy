@@ -449,7 +449,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
     id = entry[0];
     flag = entry[1];
     entry += 3;
-    if (type != 128 && flag != -1 && GameFlag_Test(flag))
+    if (type != 128 && flag != -1 && GameFlag_Get(flag))
       continue;
     if (SceneItem_FindPosition(id, result))
       continue;
@@ -478,7 +478,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
     dz >>= 16;
     if ((u32)(dx + 15) > 270 || (u32)(dz + 47) > 238)
       continue;
-    if (flag == -1 || GameFlag_Test(flag))
+    if (flag == -1 || GameFlag_Get(flag))
       continue;
     object = Actor_CreateFar(673, x, y, z);
     if (object != NULL) {
@@ -1378,7 +1378,7 @@ void BattlePalette_UpdateBlend(void) {
   u16 *add = work->delta;
   s32 i;
 
-  if (GameFlag_Test(0x152) != 0) {
+  if (GameFlag_Get(0x152) != 0) {
     return;
   }
   if (work->duration == 0) {

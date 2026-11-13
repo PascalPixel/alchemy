@@ -173,7 +173,7 @@ void Func_0200036c(void) {
   Event_End();
 }
 
-void Func_02000428(void) { GameFlag_SetBit(0x882); }
+void Func_02000428(void) { GameFlag_Set(0x882); }
 
 void Func_02000438(void) { Field_TryJumpForward(); }
 
@@ -283,19 +283,19 @@ s32 Scene_Initialize(void) {
     Actor_GetById(19)->collisionFlags = 0;
     Actor_GetById(19)->priorityFlags |= 2;
     Actor_GetById(12)->collisionFlags = 0;
-    if (GameFlag_Test(0x222)) {
+    if (GameFlag_Get(0x222)) {
       Map_CopyCellAttributeRect(30, 35, 1, 1, 28, 34);
       Map_CopyCellAttributeRect(30, 34, 1, 1, 28, 33);
     }
-    if (GameFlag_Test(0x221))
+    if (GameFlag_Get(0x221))
       MapGrid_CopyCellAttributes(24, 32, 1, 1, 22, 32);
-    if (GameFlag_Test(0x223))
+    if (GameFlag_Get(0x223))
       MapGrid_CopyCellAttributes(49, 28, 1, 1, 47, 28);
     else
       Actor_SetSpritePriority(14, 1);
-    if (GameFlag_Test(0x224))
+    if (GameFlag_Get(0x224))
       MapGrid_CopyCellAttributes(53, 35, 1, 1, 53, 36);
-    flag = GameFlag_Test(0x202);
+    flag = GameFlag_Get(0x202);
     if (flag == 0) {
       struct Actor *lift;
 
@@ -309,7 +309,7 @@ s32 Scene_Initialize(void) {
       Actor_SetAttachedEffect(10, 257);
     }
     Actor_ShowItemIconById(17, 231);
-    if (GameFlag_Test(0x882))
+    if (GameFlag_Get(0x882))
       Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
     else
       Actor_GetById(13)->scaleY = 0x14000;
@@ -318,11 +318,11 @@ s32 Scene_Initialize(void) {
     Actor_SetSpritePriority(9, 1);
     Func_02001174();
     Func_0200117c(0, 0x9e8, 8, 9);
-    if (GameFlag_Test(0x210))
+    if (GameFlag_Get(0x210))
       MapGrid_CopyCellAttributes(6, 16, 1, 1, 4, 16);
-    if (GameFlag_Test(0x211))
+    if (GameFlag_Get(0x211))
       MapGrid_CopyCellAttributes(8, 30, 1, 1, 10, 30);
-    if (GameFlag_Test(0x8e7)) {
+    if (GameFlag_Get(0x8e7)) {
       object = Actor_GetById(20);
       Actor_SetPosition(20, 0x480000, 0x1c80000);
       object->motionFlags = 0;
@@ -331,7 +331,7 @@ s32 Scene_Initialize(void) {
       object->y = height;
       MapGrid_CopyCellAttributes(3, 28, 1, 1, 4, 28);
     }
-    if (GameFlag_Test(0x8e8)) {
+    if (GameFlag_Get(0x8e8)) {
       object = Actor_GetById(13);
       Actor_SetPosition(13, 0x1c80000, 0x1e80000);
       object->motionFlags = 0;
@@ -346,7 +346,7 @@ s32 Scene_Initialize(void) {
     Func_020004f4(15, 8, 17);
     Func_020004f4(16, 22, 33);
     Func_020004f4(17, 22, 33);
-    if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION) && gMainRoutineWork.entrance == 8)
+    if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) && gMainRoutineWork.entrance == 8)
       Func_02000af0();
   }
   return 0;

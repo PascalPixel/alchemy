@@ -14,10 +14,10 @@ Task_Add:
 	.thumb_func
 Random16Far:
 	overlay_veneer Func_080000f8
-	.global GameFlag_SetBit
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
 	.global Actor_SelectAnimation
 	.thumb_func
 Actor_SelectAnimation:

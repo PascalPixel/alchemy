@@ -181,7 +181,7 @@ u8 *Scene_GetPlacements(void) {
   if (scene == (s32)&SceneId_Kibombo5)
     return gData_02006a98;
   if (scene == (s32)&SceneId_Kibombo3) {
-    if (GameFlag_Test(0x8ee))
+    if (GameFlag_Get(0x8ee))
       gData_02006cd8[22] = 0;
     return gData_02006cd8;
   }
@@ -321,7 +321,7 @@ void Func_0200042c(void) {
     Event_Wait(10);
     Sanctum_Run(36);
     Kibombo_ObjArm(36, FACING_NORTHWEST + FACING_STEP, 0);
-    GameFlag_SetBit(0x9df);
+    GameFlag_Set(0x9df);
     Event_End();
   }
 }
@@ -353,12 +353,12 @@ void Func_02000524(s32 show) {
 
 void Func_02000568(void) {
   Func_02000524(1);
-  GameFlag_SetBit(0x200);
+  GameFlag_Set(0x200);
 }
 
 void Func_0200057c(void) {
   Func_02000524(0);
-  GameFlag_ClearBit(0x200);
+  GameFlag_Clear(0x200);
 }
 
 void Func_02000590(s32 show, s32 first, u32 count) {
@@ -379,7 +379,7 @@ void Func_020005d0(void) { Func_02005c6c(gData_02006324); }
 void Func_020005e0(void) {
   MapGrid_CopyCellPictureIndicesRect(34, 33, 23, 18, 1, 1);
   Kibombo_BlendStart(34, 33, 1, 1, 23, 18);
-  GameFlag_SetBit(0x86a);
+  GameFlag_Set(0x86a);
 }
 
 void Func_02000618(s32 mode) {
@@ -390,7 +390,7 @@ void Func_02000618(s32 mode) {
 void Func_02000624(void) {
   MapGrid_CopyCellPictureIndicesRect(36, 34, 16, 7, 1, 1);
   Kibombo_BlendStart(36, 34, 1, 1, 16, 7);
-  GameFlag_SetBit(0x204);
+  GameFlag_Set(0x204);
 }
 
 void Func_0200065c(s32 mode) {
@@ -401,7 +401,7 @@ void Func_0200065c(s32 mode) {
 void Func_02000668(void) {
   MapGrid_CopyCellPictureIndicesRect(38, 34, 16, 11, 1, 1);
   Kibombo_BlendStart(38, 34, 1, 1, 16, 11);
-  GameFlag_SetBit(0x205);
+  GameFlag_Set(0x205);
 }
 
 void Func_020006a0(s32 mode) {
@@ -412,7 +412,7 @@ void Func_020006a0(s32 mode) {
 void Func_020006ac(void) {
   MapGrid_CopyCellPictureIndicesRect(36, 36, 14, 9, 1, 1);
   Kibombo_BlendStart(36, 36, 1, 1, 14, 9);
-  GameFlag_SetBit(0x206);
+  GameFlag_Set(0x206);
 }
 
 void Func_020006e4(s32 mode) {
@@ -423,7 +423,7 @@ void Func_020006e4(s32 mode) {
 void Func_020006f0(void) {
   MapGrid_CopyCellPictureIndicesRect(38, 36, 18, 9, 1, 1);
   Kibombo_BlendStart(38, 36, 1, 1, 18, 9);
-  GameFlag_SetBit(0x207);
+  GameFlag_Set(0x207);
 }
 
 void Func_02000728(s32 mode) {
@@ -447,8 +447,8 @@ void Func_02000734(void) {
     object->motionFlags = 0;
     Actor_GetById(11)->motionFlags = 0;
     Kibombo_BlendStart(5, 18, 1, 1, 6, 18);
-    GameFlag_SetBit(0x9ea);
-    if (!GameFlag_Test(0x8f4))
+    GameFlag_Set(0x9ea);
+    if (!GameFlag_Get(0x8f4))
       Func_02001318();
     Event_End();
   }
@@ -481,7 +481,7 @@ void Func_020007c8(void) {
   Actor_SetMovementTypeById(5, gData_02005d5c);
   Actor_SetMovementTypeAndWaitById(6, gData_02005da0);
   Event_ShowMessageAndWait(7, 0);
-  if (GameFlag_Test(0x911))
+  if (GameFlag_Get(0x911))
     Func_02000978();
   else
     Func_02000b2c();
@@ -492,7 +492,7 @@ void Func_020007c8(void) {
   Actor_SetMovementTypeById(5, gData_02005e54);
   Actor_SetMovementTypeById(6, gData_02005e54);
   Actor_SetMovementTypeAndWaitById(26, gData_02005e54);
-  GameFlag_SetBit(0x8f3);
+  GameFlag_Set(0x8f3);
   Event_End();
 }
 
@@ -600,8 +600,8 @@ void Func_02000c90(void) {
                              *(s16 *)((u8 *)leader + 18));
   Actor_WaitForMoveById(7);
   Actor_SetHorizontalPositionWithTerrain(7, 0, 0);
-  GameFlag_ClearBit(0x92f);
-  GameFlag_SetBit(0x92e);
+  GameFlag_Clear(0x92f);
+  GameFlag_Set(0x92e);
   Event_PrepareObjectAndApplyValue(7, 0);
   Event_End();
 }
@@ -757,8 +757,8 @@ void Func_02001218(void) {
   Kibombo_ObjPlace(gMainRoutineWork.currentOwner, 80, 510);
   Event_Wait(10);
   Import_EventSetExitRequest(5);
-  GameFlag_ClearBit(0x92e);
-  GameFlag_SetBit(0x92f);
+  GameFlag_Clear(0x92e);
+  GameFlag_Set(0x92f);
   Party_RemoveMemberRestored(7);
   Event_End();
 }
@@ -1187,8 +1187,8 @@ void Func_02001318(void) {
   Actor_SetMovementTypeById(6, gData_02005fe0 + 0);
   Actor_SetMovementTypeById(26, gData_02005fe0 + 0);
   Actor_SetMovementTypeAndWaitById(7, gData_02005fe0 + 0);
-  GameFlag_SetBit(0x8f4);
-  GameFlag_SetBit(0x92e);
+  GameFlag_Set(0x8f4);
+  GameFlag_Set(0x92e);
   Event_PrepareObjectAndApplyValue(7, 1);
   Func_02005a8c(); // arity?
 }
@@ -1329,7 +1329,7 @@ ask:
   }
   Event_SetFlag(545);
   Func_0200384c();
-  GameFlag_ClearBit(545);
+  GameFlag_Clear(545);
   Actor_ShowEmote(gMainRoutineWork.currentOwner, 0x100, 0);
   Actor_ShowEmote(5, 0x100, 0);
   Actor_ShowEmote(6, 0x100, 0);
@@ -1359,17 +1359,17 @@ ask:
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_WEST);
   Event_SetFlag(0x220);
   Func_0200384c();
-  GameFlag_ClearBit(0x220);
+  GameFlag_Clear(0x220);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 232, 142);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
   Event_SetFlag(546);
   Func_0200384c();
-  GameFlag_ClearBit(546);
+  GameFlag_Clear(546);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 296, 142);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
   Event_SetFlag(547);
   Func_0200384c();
-  GameFlag_ClearBit(547);
+  GameFlag_Clear(547);
   FieldCamera_MoveTo(PIXELS(268), -1, PIXELS(188), 1);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 284, 188);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 10);
@@ -1463,7 +1463,7 @@ ask:
   Actor_SetMovementTypeById(6, gData_02006108);
   Actor_SetMovementTypeById(26, gData_02006108);
   Actor_SetMovementTypeAndWaitById(7, gData_02006108);
-  GameFlag_SetBit(0x8f5);
+  GameFlag_Set(0x8f5);
   Event_End();
 }
 

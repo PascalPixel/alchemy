@@ -73,7 +73,7 @@ void InventorySnapshot_Save(void) {
   GameFlag_SetBit__game(0x9ff);
   Party_RestoreHpPp(1);
   for (i = 0xe50; i <= 0xe59; i++)
-    GameFlag_ClearBit(i);
+    GameFlag_Clear(i);
 }
 
 void InventorySnapshot_Restore(void) {
@@ -113,5 +113,5 @@ void InventorySnapshot_Restore(void) {
     src = gData_020023c4__game;
     *src = 0;
   }
-  GameFlag_ClearBit(0x9ff);
+  GameFlag_Clear(0x9ff);
 }

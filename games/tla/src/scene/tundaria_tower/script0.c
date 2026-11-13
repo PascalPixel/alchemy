@@ -2,7 +2,7 @@
 #include "event_inline.h"
 
 void Func_02000280(void) {
-  GameFlag_SetBit(513);
+  GameFlag_Set(513);
   Event_RequestDjinnBattle(8, 52);
 }
 

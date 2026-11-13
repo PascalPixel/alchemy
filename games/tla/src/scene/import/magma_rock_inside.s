@@ -66,18 +66,18 @@ VramCache_FindFreeEntry:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Func_02004c98
 	.thumb_func
 Func_02004c98:
@@ -257,7 +257,7 @@ Actor_SetSpritePriority:
 	.global Func_02004df8
 	.thumb_func
 Func_02004df8:
-	overlay_veneer Func_080c8208
+	overlay_veneer Actor_DisableByIdFar
 	.global Actor_CopyGraphics
 	.thumb_func
 Actor_CopyGraphics:
@@ -309,7 +309,7 @@ ItemDisplay_ShowItem:
 	.global Func_02004e60
 	.thumb_func
 Func_02004e60:
-	overlay_veneer Func_080c8480
+	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global FieldPsynergy_RunHandler
 	.thumb_func
 FieldPsynergy_RunHandler:
@@ -357,35 +357,35 @@ Event_NoOp:
 	.global Func_02004ec0
 	.thumb_func
 Func_02004ec0:
-	overlay_veneer Func_080c86d0
+	overlay_veneer Tightrope_InitializeFar
 	.global Func_02004ec8
 	.thumb_func
 Func_02004ec8:
-	overlay_veneer Func_080c86d8
+	overlay_veneer Tightrope_PlaceFar
 	.global Func_02004ed0
 	.thumb_func
 Func_02004ed0:
-	overlay_veneer Func_080c8710
+	overlay_veneer Actor_GetCellIndexFar
 	.global Func_02004ed8
 	.thumb_func
 Func_02004ed8:
-	overlay_veneer Func_080c8718
+	overlay_veneer Actor_PlaceBlocksFar
 	.global Func_02004ee0
 	.thumb_func
 Func_02004ee0:
-	overlay_veneer Func_080c8720
+	overlay_veneer Actor_LiftTargetBlockFar
 	.global Func_02004ee8
 	.thumb_func
 Func_02004ee8:
-	overlay_veneer Func_080c8728
+	overlay_veneer Actor_PlaceMovedBlockFar
 	.global Func_02004ef0
 	.thumb_func
 Func_02004ef0:
-	overlay_veneer Func_080c8730
+	overlay_veneer MapCollision_FindOrAddTagFar
 	.global Func_02004ef8
 	.thumb_func
 Func_02004ef8:
-	overlay_veneer Func_080c8738
+	overlay_veneer Actor_FindAtCellFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:
@@ -393,11 +393,11 @@ Party_GetLeaderActor:
 	.global Func_02004f08
 	.thumb_func
 Func_02004f08:
-	overlay_veneer Func_080c8780
+	overlay_veneer HangingVine_PlaceFar
 	.global Func_02004f10
 	.thumb_func
 Func_02004f10:
-	overlay_veneer Func_080c87c0
+	overlay_veneer EffectSprite_InitFar
 	.global EffectSprite_DrawAtWorldPosition
 	.thumb_func
 EffectSprite_DrawAtWorldPosition:

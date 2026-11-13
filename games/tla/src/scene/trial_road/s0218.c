@@ -79,7 +79,7 @@ s32 TrialRoad_OfferToGiveUp(void) {
   return 0;
 }
 
-void TrialRoad_ClearGiveUpAsked(void) { GameFlag_ClearBit(0x281); }
+void TrialRoad_ClearGiveUpAsked(void) { GameFlag_Clear(0x281); }
 
 /// The leader reaches the door at a stage's end: the blue chests open (flags
 /// 645 and 646), the second only when the rival arrived first and twice the
@@ -690,7 +690,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
     }
     Sound_Play(298);
     Sound_Play(240);
-    GameFlag_SetBit(id + 579);
+    GameFlag_Set(id + 579);
   }
   Event_Wait(15);
   Event_End();

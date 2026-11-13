@@ -289,7 +289,7 @@ void Func_0200060c(void) {
 
   if (Event_GetFlag(2591))
     return;
-  GameFlag_SetBit(514);
+  GameFlag_Set(514);
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(124);
@@ -316,7 +316,7 @@ void Func_0200060c(void) {
   if (Event_GetFlag(2573))
     spot = 0;
   if (spot != 0)
-    GameFlag_SetBit(2573);
+    GameFlag_Set(2573);
   if ((u32)(spot - 2) <= 1) {
     FieldCamera_SetSpeed(0x40000, 0x8000);
     EventCamera_FollowActor(23, 1);

@@ -44,7 +44,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 /// Whirlwind on a patch of overgrowth blows it away for good.
 void ApojiiIslandsCave_BlowAwayFoliage(s32 unused, s32 actor) {
-  GameFlag_SetBit(FLAG_APOJII_CAVE_FOLIAGE_BLOWN(actor));
+  GameFlag_Set(FLAG_APOJII_CAVE_FOLIAGE_BLOWN(actor));
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }

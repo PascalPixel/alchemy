@@ -295,7 +295,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
 
   shop = Ram_HeapSlots->menuRuntime;
   unit = Unit_Get(unitId);
-  item = Item_Get(unit->inventory[slot]);
+  item = Item_GetDirectFar(unit->inventory[slot]);
   result = 1;
   price = Shop_SalePrice(unit->inventory[slot]);
   count = Inventory_GetQuantityFar(unitId, slot);
@@ -326,7 +326,7 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
   {
     struct BattleUnit *unit = Unit_Get(unitId);
     s32 itemId = unit->inventory[slot] & 0x1ff;
-    struct ItemDefinition *item = Item_Get(itemId);
+    struct ItemDefinition *item = Item_GetDirectFar(itemId);
     u8 rare = item->flags & 4;
     s32 all = 0;
     s32 total;

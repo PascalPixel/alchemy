@@ -1282,7 +1282,7 @@ void FieldPsynergy_Avoid(void) {
   tiles = gFieldEffect_ArcSparkTiles;
   VramCache_Load((s16)slot, 0x100, tiles);
   gMainRoutineWork.avoidDistance = 0x09600000;
-  gMainRoutineWork.avoidByItem = GameFlag_Test(0x145);
+  gMainRoutineWork.avoidByItem = GameFlag_Get(0x145);
   Animation_ApplyChildValuesFar__launch(object, 0);
   object->callback = FieldEffect_UpdateAvoidCaster;
   object->phase = 0;

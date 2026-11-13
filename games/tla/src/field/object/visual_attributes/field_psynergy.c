@@ -373,7 +373,7 @@ void Field_StartColorTransition(s32 frames, s32 color) {
     Dma_Set(buffers->target, state + 0x222, DMA_COPY_WORDS(0x150), REG_DMA3);
   Dma_Set(buffers->target, buffers->current, DMA_COPY_WORDS(0x2a0), REG_DMA3);
   BattleEffect_ApplyColorToTargetBuffer__depthend(0x200000 | color, 1);
-  GameFlag_SetBit(0x108);
+  GameFlag_Set(0x108);
   PaletteFade_StartInterpolation(frames);
 }
 
@@ -386,7 +386,7 @@ void Field_StartPaletteTransition(s32 frames) {
     BattleEffect_ApplyColorToTargetBuffer__depthend(0x10001, 1);
   else
     BattleEffect_ApplyColorToTargetBuffer__depthend(colors, 1);
-  GameFlag_ClearBit(0x108);
+  GameFlag_Clear(0x108);
   PaletteFade_StartInterpolation(frames);
 }
 
@@ -434,21 +434,21 @@ void FieldPsynergy_FadeToCastColor(void) {
   if ((s16)raw == 30)
     tint = 6;
 
-  if (GameFlag_Test(FLAG_TINT_FIRST + 0))
+  if (GameFlag_Get(FLAG_TINT_FIRST + 0))
     tint = 0;
-  if (GameFlag_Test(FLAG_TINT_FIRST + 1))
+  if (GameFlag_Get(FLAG_TINT_FIRST + 1))
     tint = 1;
-  if (GameFlag_Test(FLAG_TINT_FIRST + 2))
+  if (GameFlag_Get(FLAG_TINT_FIRST + 2))
     tint = 2;
-  if (GameFlag_Test(FLAG_TINT_FIRST + 3))
+  if (GameFlag_Get(FLAG_TINT_FIRST + 3))
     tint = 3;
-  if (GameFlag_Test(FLAG_TINT_FIRST + 4))
+  if (GameFlag_Get(FLAG_TINT_FIRST + 4))
     tint = 4;
-  if (GameFlag_Test(FLAG_TINT_FIRST + 5))
+  if (GameFlag_Get(FLAG_TINT_FIRST + 5))
     tint = 5;
-  if (GameFlag_Test(FLAG_TINT_FIRST + 6))
+  if (GameFlag_Get(FLAG_TINT_FIRST + 6))
     tint = 6;
-  if (GameFlag_Test(FLAG_TINT_FIRST + 7))
+  if (GameFlag_Get(FLAG_TINT_FIRST + 7))
     tint = 7;
   Field_StartColorTransition(8, gFieldEffect_TargetColors[tint]);
 }

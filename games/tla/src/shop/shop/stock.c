@@ -82,8 +82,8 @@ void ShopStock_AddArtifacts(s32 rowNo) {
   s32 flag = rowNo + 0x400;
   s32 i;
 
-  if (GameFlag_Test(flag) == 0) {
-    GameFlag_SetBit(flag);
+  if (GameFlag_Get(flag) == 0) {
+    GameFlag_Set(flag);
 #if TLA_PATCH_1
     // From patch 1 an empty entry is skipped; the Japanese release stops at the
     // row's first one.

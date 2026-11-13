@@ -58,18 +58,18 @@ VramCache_FindFreeEntry:
 	.thumb_func
 Import_OamAddSpriteAtDepthClamped:
 	overlay_veneer Oam_AddSpriteAtDepthClampedFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global GameFlag_GetByte
 	.thumb_func
 GameFlag_GetByte:
@@ -145,7 +145,7 @@ Actor_SetSpriteColorMode:
 	.global Func_020021e0
 	.thumb_func
 Func_020021e0:
-	overlay_veneer Func_08020360
+	overlay_veneer MapGrid_SetCellHeightFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -197,7 +197,7 @@ Actor_SetSpritePriority:
 	.global Func_02002248
 	.thumb_func
 Func_02002248:
-	overlay_veneer Func_080c8208
+	overlay_veneer Actor_DisableByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
@@ -245,7 +245,7 @@ Event_NoOp:
 	.global Func_020022a8
 	.thumb_func
 Func_020022a8:
-	overlay_veneer Func_080c8738
+	overlay_veneer Actor_FindAtCellFar
 	.global BattleEffect_GetObjectPriority
 	.thumb_func
 BattleEffect_GetObjectPriority:
@@ -253,11 +253,11 @@ BattleEffect_GetObjectPriority:
 	.global Func_020022b8
 	.thumb_func
 Func_020022b8:
-	overlay_veneer Func_080c8830
+	overlay_veneer MapGrid_GetCellBehaviorFar
 	.global Func_020022c0
 	.thumb_func
 Func_020022c0:
-	overlay_veneer Func_080c8848
+	overlay_veneer MapGrid_SetAttributeBAtFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

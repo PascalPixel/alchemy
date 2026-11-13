@@ -25,7 +25,7 @@ Resource_FarCall003:
 	export Actor_SetAnimationSpeedFar, Actor_SetAnimationSpeed
 	export Actor_SetAnimationAndSpeedFar, Actor_SetAnimationAndSpeed
 	export Actor_StartScriptFar, Actor_StartScript
-	export Func_080200b0, Actor_StartRenderModeScript
+	export Actor_StartRenderModeScriptFar, Actor_StartRenderModeScript
 	export Actor_FindFreeFar, Actor_FindFree
 	export Actor_CreateFar, Actor_Create
 	export Actor_ReleaseFar, Actor_Release
@@ -62,11 +62,11 @@ Resource_FarCall003:
 	export MapGrid_GetTerrainHeightFar, MapGrid_GetTerrainHeight
 	export MapGrid_GetCellBehaviorAtFar, MapGrid_GetCellBehaviorAt
 	export MapGrid_GetCellAttributeLowNibbleFar, MapGrid_GetCellAttributeLowNibble
-	export Func_080201d8, MapGrid_GetCellAttributeLowNibbleOrBump
+	export MapGrid_GetCellAttributeLowNibbleOrBumpFar, MapGrid_GetCellAttributeLowNibbleOrBump
 	export Map_CopyCellsRectFar, Map_CopyCellsRect
 	export Map_CopyCellAttributeRectFar, Map_CopyCellAttributeRect
 	export MapGrid_CopyCellPictureCellsRectFar, MapGrid_CopyCellPictureCellsRect
-	export Func_080201f8, Map_CopyRawCellsRect
+	export Map_CopyRawCellsRectFar, Map_CopyRawCellsRect
 	export WorldMap_SetWindowCellTileFar, WorldMap_SetWindowCellTile
 	export WorldMap_SetWindowCellTileAndDrawFar, WorldMap_SetWindowCellTileAndDraw
 	export MapGrid_CheckCollisionFar, MapGrid_CheckCollision
@@ -98,7 +98,7 @@ Resource_FarCall003:
 	export TilesetAnim_ResumeAllFar, TilesetAnim_ResumeAll
 	export ActorScript_FindOverlappingEntryFar, ActorScript_FindOverlappingEntry
 	export MapGrid_GetTerrainKindFar, MapGrid_GetTerrainKind
-	export Func_080202f8, Actor_HasArrived
+	export Actor_HasArrivedFar, Actor_HasArrived
 	export Actor_SetItemIconFar, Actor_SetItemIcon
 	export MapGrid_CheckCollisionAtFar, MapGrid_CheckCollisionAt
 	export MapGrid_GetTerrainHeightAboveFar, MapGrid_GetTerrainHeightAbove
@@ -109,10 +109,10 @@ Resource_FarCall003:
 	export Animation_WaitForTrackEndFar, Animation_WaitForTrackEnd
 	export Actor_WaitForTrackEndFar, Actor_WaitForTrackEnd
 	export Field_CheckSpheresOverlapFar, Field_CheckSpheresOverlap
-	export Func_08020350, WorldMap_GetBlockPlace
+	export WorldMap_GetBlockPlaceFar, WorldMap_GetBlockPlace
 	export WorldMap_GetCollisionFar, WorldMap_GetCollision
-	export Func_08020360, MapGrid_SetCellHeight
-	export Func_08020368, MapGrid_GetCellHeight
+	export MapGrid_SetCellHeightFar, MapGrid_SetCellHeight
+	export MapGrid_GetCellHeightFar, MapGrid_GetCellHeight
 	export Animation_SkipToStopFar, Animation_SkipToStop
 	export Map_LoadCellsAndShapesFar, Map_LoadCellsAndShapes
 	export VramBlock_Reset93Far, VramBlock_Reset93

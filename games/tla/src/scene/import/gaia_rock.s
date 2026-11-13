@@ -26,14 +26,14 @@ Trig_Cos:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
 	.global Actor_SelectAnimation
 	.thumb_func
 Actor_SelectAnimation:
@@ -149,7 +149,7 @@ Actor_Spawn:
 	.global Func_02000f04
 	.thumb_func
 Func_02000f04:
-	overlay_veneer Func_080c8760
+	overlay_veneer TileCopies_CopyTouchedCellsFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:
@@ -157,7 +157,7 @@ Party_GetLeaderActor:
 	.global Func_02000f14
 	.thumb_func
 Func_02000f14:
-	overlay_veneer Func_080c8780
+	overlay_veneer HangingVine_PlaceFar
 	.global Func_02000f1c
 	.thumb_func
 Func_02000f1c:

@@ -25,7 +25,7 @@ s32 Menu_SetFirstActorRowCoordinates(s32 arg0) {
 }
 
 s32 Menu_GetDjinnGiveMessage(void) {
-  if (GameFlag_Test(0x175))
+  if (GameFlag_Get(0x175))
     return (s32)MsgDjinnGiveTutorialB;
   return (s32)MsgDjinnGiveTutorialA;
 }
@@ -65,14 +65,14 @@ s32 DjinnMenu_Run(void) {
   menu->backdrop = backdrop;
   backdrop->tutorialTimer = 0;
   backdrop->tutorialStep = 0;
-  if (GameFlag_Test(0x16e)) {
-    if (!GameFlag_Test(0x16f)) {
-      if (!GameFlag_Test(0x171))
+  if (GameFlag_Get(0x16e)) {
+    if (!GameFlag_Get(0x16f)) {
+      if (!GameFlag_Get(0x171))
         backdrop->tutorialStep = enabled;
       else
         backdrop->tutorialStep = 14;
     } else {
-      if (!GameFlag_Test(0x171))
+      if (!GameFlag_Get(0x171))
         backdrop->tutorialStep = 27;
       else
         backdrop->tutorialStep = 28;

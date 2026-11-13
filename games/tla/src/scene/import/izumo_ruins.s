@@ -22,14 +22,14 @@ Trig_Sin:
 	.thumb_func
 Trig_Cos:
 	overlay_veneer Trig_CosFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
 	.global Actor_SelectAnimation
 	.thumb_func
 Actor_SelectAnimation:
@@ -77,7 +77,7 @@ MapGrid_GetTerrainKind:
 	.global Func_02001480
 	.thumb_func
 Func_02001480:
-	overlay_veneer Func_08020360
+	overlay_veneer MapGrid_SetCellHeightFar
 	.global Event_Start
 	.thumb_func
 Event_Start:
@@ -109,7 +109,7 @@ Actor_SetSpriteColor:
 	.global Func_020014c0
 	.thumb_func
 Func_020014c0:
-	overlay_veneer Func_080c8208
+	overlay_veneer Actor_DisableByIdFar
 	.global Actor_CopyGraphics
 	.thumb_func
 Actor_CopyGraphics:
@@ -125,7 +125,7 @@ Import_FieldTryJumpForward:
 	.global Func_020014e0
 	.thumb_func
 Func_020014e0:
-	overlay_veneer Func_080c8480
+	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:
@@ -137,35 +137,35 @@ Sprite_ShareVramCacheEntry:
 	.global Func_020014f8
 	.thumb_func
 Func_020014f8:
-	overlay_veneer Func_080c86f8
+	overlay_veneer FlagBlock_PlaceAllFar
 	.global Func_02001500
 	.thumb_func
 Func_02001500:
-	overlay_veneer Func_080c8708
+	overlay_veneer FlagBlock_ApplyFlagsFar
 	.global Func_02001508
 	.thumb_func
 Func_02001508:
-	overlay_veneer Func_080c8710
+	overlay_veneer Actor_GetCellIndexFar
 	.global Func_02001510
 	.thumb_func
 Func_02001510:
-	overlay_veneer Func_080c8718
+	overlay_veneer Actor_PlaceBlocksFar
 	.global Func_02001518
 	.thumb_func
 Func_02001518:
-	overlay_veneer Func_080c8720
+	overlay_veneer Actor_LiftTargetBlockFar
 	.global Func_02001520
 	.thumb_func
 Func_02001520:
-	overlay_veneer Func_080c8728
+	overlay_veneer Actor_PlaceMovedBlockFar
 	.global Func_02001528
 	.thumb_func
 Func_02001528:
-	overlay_veneer Func_080c8730
+	overlay_veneer MapCollision_FindOrAddTagFar
 	.global Func_02001530
 	.thumb_func
 Func_02001530:
-	overlay_veneer Func_080c8738
+	overlay_veneer Actor_FindAtCellFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

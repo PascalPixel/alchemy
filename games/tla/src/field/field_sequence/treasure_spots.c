@@ -30,7 +30,7 @@ s16 *SceneItem_GetRows(void) {
     flag = *p++;
     if (header == 0)
       break;
-    if ((header & 0x3fff) == scene && (flag == -1 || !GameFlag_Test(flag))) {
+    if ((header & 0x3fff) == scene && (flag == -1 || !GameFlag_Get(flag))) {
       found = p;
       break;
     }
@@ -74,7 +74,7 @@ void Field_PlaceTreasureSpots(void) {
     flag = rows[1];
     item = rows[2];
     rows += 3;
-    if ((type == 128 || flag == -1 || !GameFlag_Test(flag)) &&
+    if ((type == 128 || flag == -1 || !GameFlag_Get(flag)) &&
         !SceneItem_FindPosition(id, position)) {
       buried = 0;
       if ((u16)(type - 128) <= 1)
@@ -122,7 +122,7 @@ void Field_PlaceTreasureSpots(void) {
         }
         Actor_SelectAnimationFar(object, 1);
         Actor_SetSpriteFlagsFar(object, 0);
-        if (GameFlag_Test(flag))
+        if (GameFlag_Get(flag))
           Actor_SelectAnimationFar(object, 2);
         Actor_StartIdleFar(object);
         object->timer = object->x / 0x10000;
@@ -215,7 +215,7 @@ void Actor_ReturnHome(s32 mode, u32 objectId, s32 flag) {
   if (mode == 1)
     object->z = 0;
   if (mode == 2) {
-    GameFlag_SetBit(flag);
+    GameFlag_Set(flag);
     if (object->x != 0)
       Actor_SetSquareSprite(objectId);
     object->x = object->homeX << 16;

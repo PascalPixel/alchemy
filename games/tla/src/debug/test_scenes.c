@@ -31,22 +31,22 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 void Test_ReceiveFlint(void) {
   Djinn_JoinParty(8, 0, 0);
-  GameFlag_ClearBit(48);
+  GameFlag_Clear(48);
 }
 
 void Test_ReceiveFizz(void) {
   Djinn_JoinParty(9, 1, 0);
-  GameFlag_ClearBit(68);
+  GameFlag_Clear(68);
 }
 
 void Test_ReceiveForge(void) {
   Djinn_JoinParty(10, 2, 0);
-  GameFlag_ClearBit(88);
+  GameFlag_Clear(88);
 }
 
 void Test_ReceiveGust(void) {
   Djinn_JoinParty(11, 3, 0);
-  GameFlag_ClearBit(108);
+  GameFlag_Clear(108);
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }

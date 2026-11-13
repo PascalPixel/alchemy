@@ -30,18 +30,18 @@ Vector_AddPolarOffsetFar:
 	.thumb_func
 HeapSlot_AllocEwram:
 	overlay_veneer HeapSlot_AllocEwramFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Import_ActorSelectAnimation
 	.thumb_func
 Import_ActorSelectAnimation:
@@ -225,7 +225,7 @@ Actor_SetSpritePriority:
 	.global Func_02003f4c
 	.thumb_func
 Func_02003f4c:
-	overlay_veneer Func_080c8208
+	overlay_veneer Actor_DisableByIdFar
 	.global Actor_ShowEmoteById
 	.thumb_func
 Actor_ShowEmoteById:
@@ -297,16 +297,16 @@ Event_NoOp:
 	.global Func_02003fdc
 	.thumb_func
 Func_02003fdc:
-	overlay_veneer Func_080c8738
+	overlay_veneer Actor_FindAtCellFar
 	.global Func_02003fe4
 	.thumb_func
 Func_02003fe4:
-	overlay_veneer Func_080c8748
+	overlay_veneer Leader_PushObjectAheadFar
 	.ifndef TLA_EDITION_JA
 	.global Func_02003fec
 	.thumb_func
 Func_02003fec:
-	overlay_veneer Func_080c8760
+	overlay_veneer TileCopies_CopyTouchedCellsFar
 	.endif
 	.global Sanctum_Run
 	.thumb_func

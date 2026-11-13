@@ -416,9 +416,9 @@ s32 Scene_PrepareMap(void) {
 #include "system/irq_lock.h"
 #include "map.h"
 
-void Settlements_StepOntoIce(void) { GameFlag_SetBit(0x201); }
+void Settlements_StepOntoIce(void) { GameFlag_Set(0x201); }
 
-void Settlements_StepOffIce(void) { GameFlag_ClearBit(0x201); }
+void Settlements_StepOffIce(void) { GameFlag_Clear(0x201); }
 
 void Settlements_StepOnIceSlide(void) { Settlements_SlideOnIce(); }
 

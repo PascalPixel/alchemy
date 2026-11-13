@@ -26,18 +26,18 @@ Trig_Sin:
 	.thumb_func
 Trig_Cos:
 	overlay_veneer Trig_CosFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Func_02005164
 	.thumb_func
 Func_02005164:
@@ -241,7 +241,7 @@ Event_WaitTransitionFrames:
 	.global Func_020052f4
 	.thumb_func
 Func_020052f4:
-	overlay_veneer Func_080c8480
+	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global FieldPsynergy_RunHandler
 	.thumb_func
 FieldPsynergy_RunHandler:
@@ -289,27 +289,27 @@ Actor_WatchAndSetScript:
 	.global Func_02005354
 	.thumb_func
 Func_02005354:
-	overlay_veneer Func_080c86c0
+	overlay_veneer Rope_LashFar
 	.global Func_0200535c
 	.thumb_func
 Func_0200535c:
-	overlay_veneer Func_080c86d0
+	overlay_veneer Tightrope_InitializeFar
 	.global Func_02005364
 	.thumb_func
 Func_02005364:
-	overlay_veneer Func_080c86d8
+	overlay_veneer Tightrope_PlaceFar
 	.global Func_0200536c
 	.thumb_func
 Func_0200536c:
-	overlay_veneer Func_080c8718
+	overlay_veneer Actor_PlaceBlocksFar
 	.global Func_02005374
 	.thumb_func
 Func_02005374:
-	overlay_veneer Func_080c8720
+	overlay_veneer Actor_LiftTargetBlockFar
 	.global Func_0200537c
 	.thumb_func
 Func_0200537c:
-	overlay_veneer Func_080c8728
+	overlay_veneer Actor_PlaceMovedBlockFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:
@@ -317,7 +317,7 @@ Party_GetLeaderActor:
 	.global Func_0200538c
 	.thumb_func
 Func_0200538c:
-	overlay_veneer Func_080c8968
+	overlay_veneer BattleEffect_PackTargetBufferFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

@@ -88,10 +88,10 @@ void KandoreanTemple_RiseOnLeftVent(void) {
   FieldCamera_GetActor()->motionFlags = 0;
   leader->motionFlags = 0;
   wait(1);
-  GameFlag_SetBit(0x208);
-  GameFlag_ClearBit(0x209);
-  GameFlag_SetBit(0x301);
-  GameFlag_ClearBit(0x300);
+  GameFlag_Set(0x208);
+  GameFlag_Clear(0x209);
+  GameFlag_Set(0x301);
+  GameFlag_Clear(0x300);
   Sound_Play(162);
   KandoreanTemple_StartLeftVent();
   i = 0;
@@ -131,7 +131,7 @@ void KandoreanTemple_RiseOnLeftVent(void) {
 
   DEFINE_KANDOREAN_TEMPLE_SINK_STEP(11, 13, 14, 15, 16)
   gKandoreanTemple_LeftVentBlowing = 0;
-  GameFlag_ClearBit(0x20c);
+  GameFlag_Clear(0x20c);
   Sound_Play(390);
   Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
@@ -165,10 +165,10 @@ void KandoreanTemple_RiseOnRightVent(void) {
   FieldCamera_GetActor()->motionFlags = 0;
   leader->motionFlags = 0;
   wait(1);
-  GameFlag_ClearBit(0x208);
-  GameFlag_SetBit(0x209);
-  GameFlag_ClearBit(0x301);
-  GameFlag_SetBit(0x300);
+  GameFlag_Clear(0x208);
+  GameFlag_Set(0x209);
+  GameFlag_Clear(0x301);
+  GameFlag_Set(0x300);
   Sound_Play(162);
   KandoreanTemple_StartRightVent();
   i = 0;
@@ -194,7 +194,7 @@ void KandoreanTemple_RiseOnRightVent(void) {
   Event_Wait(10);
   DEFINE_KANDOREAN_TEMPLE_SINK_STEP(12, 17, 18, 19, 20)
   gKandoreanTemple_RightVentBlowing = 0;
-  GameFlag_ClearBit(0x20d);
+  GameFlag_Clear(0x20d);
   Sound_Play(390);
   Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
@@ -382,7 +382,7 @@ void KandoreanTemple_StartRoom5(void) {
   Func_02005338(0);
 #if TLA_PATCH_1
   if (gMainRoutineWork.entrance == 1 || gMainRoutineWork.entrance == 2)
-    GameFlag_ClearBit(0x12f);
+    GameFlag_Clear(0x12f);
 #endif
 }
 
@@ -398,7 +398,7 @@ void KandoreanTemple_StartRoom6(void) {
 void KandoreanTemple_StartFogRoom(void) {
   Func_02005390();
   Func_020053a8(0, 0x20f, 8, 9);
-  if (GameFlag_Test(0x849)) {
+  if (GameFlag_Get(0x849)) {
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
   } else {
     Actor_SetSpriteFlags(Actor_GetById(10), 0);
@@ -419,13 +419,13 @@ void KandoreanTemple_StartMeditating(s32 id, s32 base) {
 
 void KandoreanTemple_StartGate(void) {
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x100;
-  if (GameFlag_Test(0x842)) {
+  if (GameFlag_Get(0x842)) {
     Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 5, 13);
   } else {
     Func_020052c0(8);
   }
-  if (GameFlag_Test(0x849)) {
+  if (GameFlag_Get(0x849)) {
     MapGrid_CopyCellAttributes(2, 0, 2, 3, 17, 24);
     Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
@@ -445,13 +445,13 @@ void KandoreanTemple_StartGate(void) {
     KandoreanTemple_StartMeditating(12, 240);
     KandoreanTemple_StartMeditating(13, 480);
   }
-  if (GameFlag_Test(0x212)) {
+  if (GameFlag_Get(0x212)) {
     MapGrid_CopyCellPictureIndicesRect(77, 33, 77, 24, 2, 2);
     MapGrid_CopyCellAttributes(32, 30, 2, 1, 17, 25);
   }
 #if TLA_PATCH_1 /* From patch 1. */
   if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 4)
-    GameFlag_ClearBit(0x12f);
+    GameFlag_Clear(0x12f);
 #endif
 }
 
@@ -482,45 +482,45 @@ void KandoreanTemple_StartPoisHall(void) {
   Task_Add(KandoreanTemple_MatchLiftPriority, TASK_PASS_VBLANK);
   if ((gMainRoutineWork.entrance >= 4 && gMainRoutineWork.entrance <= 6) ||
       gMainRoutineWork.entrance == 14) {
-    if (GameFlag_Test(0x84a)) {
+    if (GameFlag_Get(0x84a)) {
       s32 angle = 0x5000;
 
       Actor_SetPositionAndFacing(12, PIXELS(432), PIXELS(394), angle);
     } else {
       KandoreanTemple_CreateLashPebble();
-      if (GameFlag_Test(0x849))
+      if (GameFlag_Get(0x849))
         KandoreanTemple_PlaceTheLevitator();
     }
   }
   if ((gMainRoutineWork.entrance >= 1 && gMainRoutineWork.entrance <= 3) ||
       gMainRoutineWork.entrance == 9) {
-    if (GameFlag_Test(0x212))
+    if (GameFlag_Get(0x212))
       KandoreanTemple_OpenTheTrapdoor();
-    if (GameFlag_Test(0x849)) {
+    if (GameFlag_Get(0x849)) {
       Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
       {
         s32 facing = FACING_NORTHWEST + FACING_STEP;
 
         Actor_SetPositionAndFacing(15, PIXELS(408), PIXELS(664), facing);
       }
-    } else if (GameFlag_Test(0x848)) {
+    } else if (GameFlag_Get(0x848)) {
       Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
     } else {
       KandoreanTemple_TestTheStudents();
     }
   } else if (gMainRoutineWork.entrance == 6) {
-    if (GameFlag_Test(0x849) == 0)
+    if (GameFlag_Get(0x849) == 0)
       KandoreanTemple_PraiseTheLevitator();
   } else if (gMainRoutineWork.entrance == 13) {
     KandoreanTemple_FindTheRopeOnTheFloor();
   } else if (gMainRoutineWork.entrance == 14) {
-    if (GameFlag_Test(0x849) == 0)
+    if (GameFlag_Get(0x849) == 0)
       KandoreanTemple_MeetPoi();
   }
 #if TLA_PATCH_1 /* From patch 1. */
   if (gMainRoutineWork.entrance >= 8 && gMainRoutineWork.entrance <= 9)
-    GameFlag_ClearBit(0x12f);
+    GameFlag_Clear(0x12f);
 #endif
 }
 
@@ -731,7 +731,7 @@ fall15:
   FieldCamera_WaitForArrival();
   Task_Add(KandoreanTemple_MatchLiftPriority, 0x480);
   Event_End();
-  GameFlag_SetBit(0x848);
+  GameFlag_Set(0x848);
 }
 
 void KandoreanTemple_PraiseTheLevitator(void) {
@@ -1017,7 +1017,7 @@ void KandoreanTemple_MeetPoi(void) {
   }
   Actor_WaitForMoveById(16);
   Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
-  GameFlag_SetBit(0x849);
+  GameFlag_Set(0x849);
 #if TLA_PATCH_1
   WORK->screenEffect = 0x209;
 #endif
@@ -1063,7 +1063,7 @@ void KandoreanTemple_LowerTheLadder(void) {
   Event_Wait(10);
   MapGrid_CopyCellPictureIndicesRect(41, 3, 20, 3, 1, 1);
   Event_Wait(10);
-  GameFlag_SetBit(0x92d);
+  GameFlag_Set(0x92d);
   Event_End();
 }
 

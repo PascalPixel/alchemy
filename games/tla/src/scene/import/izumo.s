@@ -6,18 +6,18 @@
 	.thumb_func
 Task_Add:
 	overlay_veneer Task_AddFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global MapGrid_CopyCellPictureIndicesRect
 	.thumb_func
 MapGrid_CopyCellPictureIndicesRect:
@@ -149,19 +149,19 @@ Actor_WalkByAndWaitById:
 	.global Func_02000de0
 	.thumb_func
 Func_02000de0:
-	overlay_veneer Func_080c8718
+	overlay_veneer Actor_PlaceBlocksFar
 	.global Func_02000de8
 	.thumb_func
 Func_02000de8:
-	overlay_veneer Func_080c8720
+	overlay_veneer Actor_LiftTargetBlockFar
 	.global Func_02000df0
 	.thumb_func
 Func_02000df0:
-	overlay_veneer Func_080c8728
+	overlay_veneer Actor_PlaceMovedBlockFar
 	.global Func_02000df8
 	.thumb_func
 Func_02000df8:
-	overlay_veneer Func_080c8760
+	overlay_veneer TileCopies_CopyTouchedCellsFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:

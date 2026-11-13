@@ -122,7 +122,7 @@ void WindowSprite_Pulse(struct Object *obj) {
 }
 
 s32 Djinn_GetGiveTutorialMessage(void) {
-  if (GameFlag_Test(0x175))
+  if (GameFlag_Get(0x175))
     return (s32)MsgDjinnGiveTutorialB;
   return (s32)MsgDjinnGiveTutorialA;
 }

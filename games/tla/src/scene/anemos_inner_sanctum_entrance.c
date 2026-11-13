@@ -60,7 +60,7 @@ void Func_02000388(void) {
   party->battleGroup = 0x1a9f;
   party->battleRule = 2;
   Field_RequestBattleFromEncounterTable(103, 3);
-  GameFlag_SetBit(0x201);
+  GameFlag_Set(0x201);
 }
 
 void Func_02000408(void) {
@@ -133,7 +133,7 @@ void Func_020004e4(s32 a, s32 b) {
         return;
     }
   }
-  GameFlag_SetBit(0x200);
+  GameFlag_Set(0x200);
   Sound_Play(201);
   Func_02000be0(1);
   Func_02000494();
@@ -166,7 +166,7 @@ void Func_02000588(void) {
   if (object->z >> 20 <= 9)
     shift = -shift;
   Event_ResolvePendingActions(0);
-  if (!GameFlag_Test(0x200))
+  if (!GameFlag_Get(0x200))
     return;
   if (MapGrid_GetCellBehaviorAt(object->terrainId, object->x, object->z) != 77)
     return;
@@ -229,7 +229,7 @@ land:
   wait(3);
   Sound_Play(188);
   wait(10);
-  if (!GameFlag_Test(0xa9f) && shift > 0)
+  if (!GameFlag_Get(0xa9f) && shift > 0)
     Func_02000388();
 }
 
@@ -246,7 +246,7 @@ const struct Trigger *Scene_GetEvents(void) {
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Test(flag); }
+static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Get(flag); }
 
 static __inline__ void SetObjectValue(s32 id, s32 value) {
   /* FAKEMATCH(pin): the value pinned to r1, which the ROM loads before the id
@@ -289,7 +289,7 @@ s32 Scene_Initialize(void) {
     Actor_GetById(12)->priorityFlags |= 0x80;
     Actor_GetById(13)->priorityFlags |= 0x80;
     Actor_GetById(14)->priorityFlags |= 0x80;
-    if (GameFlag_Test(0x200)) {
+    if (GameFlag_Get(0x200)) {
       Func_02000be0(1);
       Func_02000494();
     }
@@ -298,7 +298,7 @@ s32 Scene_Initialize(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Func_02000408();
-    GameFlag_ClearBit(0x201);
+    GameFlag_Clear(0x201);
   }
   return 0;
 }

@@ -39,7 +39,7 @@ void Weather_UpdateRain(void) {
 
     if (--particle->timer == 0xffff)
       continue;
-    if (GameFlag_Test(358))
+    if (GameFlag_Get(358))
       particle->timer++;
     frame = &Data_080f0b50[2 * particle->timer];
     x = (particle->posX - originX) / 0x10000 + *frame++;
@@ -76,7 +76,7 @@ void Weather_UpdateLightning(void) {
 
   if (*timer < 0)
     return;
-  if (GameFlag_Test(358))
+  if (GameFlag_Get(358))
     work->timer = 128;
   switch ((*timer)--) {
   case 0:

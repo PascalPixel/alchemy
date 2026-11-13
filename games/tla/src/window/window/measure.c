@@ -191,7 +191,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
 #else
       // UB: with flag 0xc00 clear the line's count is never stored, and the
       // spacing below reads what the stack held there.
-      if (GameFlag_Test(0xc00))
+      if (GameFlag_Get(0xc00))
         lineSpacingCounts[lines] = count;
 #ifdef UBFIX
       else

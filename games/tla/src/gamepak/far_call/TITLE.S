@@ -8,4 +8,4 @@ Resource_FarCall00B:
 	export Title_NoOpPaletteFar, Title_NoOpPalette
 	export Title_ShowNintendoLogoFar, Title_ShowNintendoLogo
 	export Title_ShowCamelotLogoFar, Title_ShowCamelotLogo
-	export Func_081a6028, TitleIntro_Run
+	export TitleIntro_RunFar, TitleIntro_Run

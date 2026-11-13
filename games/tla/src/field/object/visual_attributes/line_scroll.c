@@ -45,12 +45,12 @@ void Exit_PrepareAnimation(s32 animation) {
 
 void Exit_StartStairsUp(void) {
   Exit_PrepareAnimation(0x1A);
-  GameFlag_SetBit(0x120);
+  GameFlag_Set(0x120);
 }
 
 void Exit_StartStairsDown(void) {
   Exit_PrepareAnimation(0x19);
-  GameFlag_SetBit(0x121);
+  GameFlag_Set(0x121);
 }
 
 void Entrance_EndArrivalAnimation(s32 mode) {
@@ -89,23 +89,23 @@ s32 Entrance_PlayArrival(void) {
   s32 result = 0;
   s32 flag = 0x120;
 
-  if (GameFlag_Test(flag) != 0) {
+  if (GameFlag_Get(flag) != 0) {
     Entrance_EndArrivalAnimation(24);
-    GameFlag_ClearBit(flag);
+    GameFlag_Clear(flag);
     result = 1;
   } else {
     flag = 0x121;
-    if (GameFlag_Test(flag) != 0) {
+    if (GameFlag_Get(flag) != 0) {
       Entrance_EndArrivalAnimation(23);
-      GameFlag_ClearBit(flag);
+      GameFlag_Clear(flag);
       result = 2;
     } else {
       flag = 0x122;
-      if (GameFlag_Test(flag) != 0) {
+      if (GameFlag_Get(flag) != 0) {
         s32 id;
         struct Actor *object;
 
-        GameFlag_ClearBit(flag);
+        GameFlag_Clear(flag);
         id = gMainRoutineWork.currentOwner;
         object = ObjectTable_Get(id);
         object->y += 0x00a00000;
@@ -397,7 +397,7 @@ void GroundParticles_Update(void) {
 
     if (--particle->timer == 0xffff)
       continue;
-    if (GameFlag_Test(358))
+    if (GameFlag_Get(358))
       particle->timer++;
     frame = &gFieldEffect_GroundParticleFrames[particle->timer * 5];
     x = (particle->posX - originX) / 0x10000 + *frame++;

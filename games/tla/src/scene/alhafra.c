@@ -81,12 +81,12 @@ extern struct ActorPlacement gAlhafra_ActorPlacementsOnceTheMastIsCleared[];
 extern struct DoorStep gAlhafra_Doors[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (GameFlag_Test(FLAG_ALHAFRA_MAST_CLEARED)) {
-    if (GameFlag_Test(FLAG_ALHAFRA_SHIP_GONE) == 0)
+  if (GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED)) {
+    if (GameFlag_Get(FLAG_ALHAFRA_SHIP_GONE) == 0)
       return gAlhafra_ActorPlacementsOnceTheMastIsCleared;
     return gAlhafra_ActorPlacementsOnceTheShipIsStolen;
   }
-  if (GameFlag_Test(FLAG_BRIGGS_CAUGHT))
+  if (GameFlag_Get(FLAG_BRIGGS_CAUGHT))
     return gAlhafra_ActorPlacementsOnceBriggsIsCaught;
   return gAlhafra_ActorPlacements;
 }
@@ -131,7 +131,7 @@ void Alhafra_AskWhetherIndraMoved(s32 actor) {
     FieldMessage_ShowAtActor(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_SetMessageId(msg + 1);
-      GameFlag_SetBit(FLAG_TOLD_INDRA_MOVED);
+      GameFlag_Set(FLAG_TOLD_INDRA_MOVED);
     } else {
       Event_SetMessageId(msg + 2);
     }
@@ -210,7 +210,7 @@ void Alhafra_SailorToldToWork(void) {
 }
 
 void Alhafra_GiveBreadToHungryBoy(void) {
-  GameFlag_SetBit(FLAG_HUNGRY_BOY_FED);
+  GameFlag_Set(FLAG_HUNGRY_BOY_FED);
   PartyInventory_Remove(0x1c9);
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -232,7 +232,7 @@ void Alhafra_GiveBreadToHungryBoy(void) {
 #include "ram_buffer.h"
 
 void Alhafra_TalkToHungryBoy(s32 id) {
-  if (!GameFlag_Test(FLAG_HUNGRY_BOY_FED)) {
+  if (!GameFlag_Get(FLAG_HUNGRY_BOY_FED)) {
     ((struct AlhafraEventWork *)Ram_HeapSlots->eventWork)->value15a = 1;
     Event_SetMessageId(MsgAlhafra65);
     Event_ShowMessageAndWait(id, 0);
@@ -248,7 +248,7 @@ void Alhafra_TalkToHungryBoy(s32 id) {
     FieldMessage_ShowAtActor(id, 0);
     Event_Wait(10);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
-      GameFlag_SetBit(FLAG_BOY_TOLD_OF_CAVE);
+      GameFlag_Set(FLAG_BOY_TOLD_OF_CAVE);
       Event_Wait(20);
       Event_ShowMessageThenWait(id, 0, 10);
       ((struct AlhafraEventWork *)Ram_HeapSlots->eventWork)->value1c4++;
@@ -261,7 +261,7 @@ void Alhafra_TalkToHungryBoy(s32 id) {
 }
 
 void Alhafra_FindGoldCoins(void) {
-  GameFlag_SetBit(FLAG_GOLD_COINS_FOUND);
+  GameFlag_Set(FLAG_GOLD_COINS_FOUND);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAlhafra74);
@@ -336,7 +336,7 @@ void Alhafra_FatherLetsPartyToCave(s32 actor) {
       Event_SetMessageId(message + 1);
       Event_ShowMessageAndWait(actor, 0);
     } else {
-      GameFlag_SetBit(FLAG_LET_INTO_CAVE);
+      GameFlag_Set(FLAG_LET_INTO_CAVE);
       Event_Wait(20);
       Event_SetMessageId(message + 2);
       Event_ShowMessage(actor, 0);
@@ -367,20 +367,20 @@ extern struct Trigger gAlhafra_TriggersOnceTheShipIsStolen[];
 extern struct Trigger gAlhafra_TriggersOnceTheMastIsCleared[];
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (GameFlag_Test(FLAG_ALHAFRA_MAST_CLEARED)) {
-    if (GameFlag_Test(FLAG_ALHAFRA_SHIP_GONE) == 0)
+  if (GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED)) {
+    if (GameFlag_Get(FLAG_ALHAFRA_SHIP_GONE) == 0)
       return gAlhafra_TriggersOnceTheMastIsCleared;
     return gAlhafra_TriggersOnceTheShipIsStolen;
   }
-  if (GameFlag_Test(FLAG_BRIGGS_CAUGHT))
+  if (GameFlag_Get(FLAG_BRIGGS_CAUGHT))
     return gAlhafra_TriggersOnceBriggsIsCaught;
   return gAlhafra_Triggers;
 }
 
 s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
-  if (GameFlag_Test(FLAG_ALHAFRA_MAST_CLEARED)) {
-    if (!GameFlag_Test(FLAG_ALHAFRA_SHIP_GONE)) {
+  if (GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED)) {
+    if (!GameFlag_Get(FLAG_ALHAFRA_SHIP_GONE)) {
       Actor_GetById(24)->update = (void (*)(void))Alhafra_TakeLeadersLayer;
       Actor_GetById(19)->update = (void (*)(void))Alhafra_TakeLeadersLayer;
       Actor_SetSpritePriority(20, 2);
@@ -403,7 +403,7 @@ s32 Scene_Initialize(void) {
       Actor_SetSpritePriority(12, 3);
       Actor_SetSpritePriority(10, 3);
     }
-  } else if (GameFlag_Test(FLAG_BRIGGS_CAUGHT)) {
+  } else if (GameFlag_Get(FLAG_BRIGGS_CAUGHT)) {
     Actor_GetById(14)->update = (void (*)(void))Alhafra_TakeLeadersLayer;
     Actor_GetById(20)->update = (void (*)(void))Alhafra_TakeLeadersLayer;
     Actor_SetSpritePriority(13, 2);
@@ -418,13 +418,13 @@ s32 Scene_Initialize(void) {
     Actor_SetSpritePriority(31, 3);
     Actor_SetSpritePriority(12, 3);
     Actor_SetActionCallback(Actor_GetById(26), 9);
-    if (!GameFlag_Test(FLAG_HUNGRY_BOY_FED))
+    if (!GameFlag_Get(FLAG_HUNGRY_BOY_FED))
       Actor_SetModeById(27, 5);
-    if (GameFlag_Test(FLAG_GOLD_COINS_FOUND)) {
+    if (GameFlag_Get(FLAG_GOLD_COINS_FOUND)) {
       Actor_SetModeById(30, 6);
       Actor_SetModeById(31, 6);
     }
-    if (GameFlag_Test(FLAG_LET_INTO_CAVE)) {
+    if (GameFlag_Get(FLAG_LET_INTO_CAVE)) {
       Actor_SetPosition(12, PIXELS(56), PIXELS(328));
       Actor_ArmCallback(12, FACING_EAST, 0);
     }
@@ -433,9 +433,9 @@ s32 Scene_Initialize(void) {
     Actor_SetSpritePriority(23, 2);
     Actor_SetSpritePriority(10, 3);
     Actor_GetById(24)->update = (void (*)(void))Alhafra_TakeLeadersLayer;
-    if (GameFlag_Test(FLAG_ALHAFRA_MADRANS_ARRIVED))
+    if (GameFlag_Get(FLAG_ALHAFRA_MADRANS_ARRIVED))
       Actor_SetPosition(14, PIXELS(536), PIXELS(760));
-    if (GameFlag_Test(FLAG_LOOKOUT_LEFT))
+    if (GameFlag_Get(FLAG_LOOKOUT_LEFT))
       Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
     Func_02001d24((s32)&gAlhafra_Puddles);
     Actor_SetActionCallback(Actor_GetById(26), 9);
@@ -446,7 +446,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (GameFlag_Test(FLAG_BRIGGS_CAUGHT)) {
+  if (GameFlag_Get(FLAG_BRIGGS_CAUGHT)) {
     u16 *src = (u16 *)0x5000116;
 
     u32 c;
@@ -498,7 +498,7 @@ extern s32 gAlhafra_SecondMadranFollowsFromCell20Script[];
 extern u32 gAlhafra_SecondSoldierFollowsFromCell20Script[];
 
 void Alhafra_MadransArrive(s32 a0) {
-  GameFlag_SetBit(FLAG_ALHAFRA_MADRANS_ARRIVED);
+  GameFlag_Set(FLAG_ALHAFRA_MADRANS_ARRIVED);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAlhafra10);

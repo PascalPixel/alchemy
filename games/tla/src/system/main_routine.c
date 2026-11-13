@@ -105,7 +105,7 @@ void Scene_TakeExit(s32 exitKind) {
           goto take;
         if (flag == -1)
           goto take;
-        if (GameFlag_Test(flag))
+        if (GameFlag_Get(flag))
           continue;
       take:
         nextScene = scene;
@@ -169,7 +169,7 @@ void Scene_ReturnFromSequence(s32 result) {
     } else {
       gMainRoutineWork.scene = gMainRoutineWork.primary;
       gMainRoutineWork.entrance = gMainRoutineWork.secondary;
-      GameFlag_SetBit(0x109);
+      GameFlag_Set(0x109);
     }
   }
 }
@@ -223,8 +223,8 @@ void MainRoutine_Run(s32 mode) {
   Task_ResetAll();
   Task_ResetAll();
   for (;;) {
-    if (GameFlag_Test(0x101))
-      GameFlag_ClearBit(0x101);
+    if (GameFlag_Get(0x101))
+      GameFlag_Clear(0x101);
     else
       Sound_PlayFar(0x120);
     record = &table[gMainRoutineWork.scene];
@@ -262,11 +262,11 @@ void MainRoutine_Run(s32 mode) {
       continue;
     }
 
-    Scene_Arrive(gMainRoutineWork.scene, GameFlag_Test(0x109));
+    Scene_Arrive(gMainRoutineWork.scene, GameFlag_Get(0x109));
     Scene_ChooseMusic();
-    if (!GameFlag_Test(0x109)) {
-      if (GameFlag_Test(0x11a) || GameFlag_Test(0x11b))
-        GameFlag_ClearBit(0x11a);
+    if (!GameFlag_Get(0x109)) {
+      if (GameFlag_Get(0x11a) || GameFlag_Get(0x11b))
+        GameFlag_Clear(0x11a);
       else
         Scene_PlayMusic();
     } else if (gMainRoutineWork.returnCue != -1) {
@@ -298,42 +298,42 @@ void Scene_Arrive(s32 unused, s32 keep) {
 
   if (keep == 0) {
     for (flag = 0x200; flag <= 0x2ff; flag++)
-      GameFlag_ClearBit(flag);
+      GameFlag_Clear(flag);
     if (group != gMainRoutineWork.sceneGroup) {
       for (flag = 0x300; flag <= 0x3ff; flag++)
-        GameFlag_ClearBit(flag);
-      GameFlag_SetBit(0x12f);
+        GameFlag_Clear(flag);
+      GameFlag_Set(0x12f);
       gMainRoutineWork.encounterSteps = 0;
       gMainRoutineWork.hazardSteps = 0;
-      GameFlag_ClearBit(0x110);
-      GameFlag_ClearBit(0x111);
-      GameFlag_ClearBit(0x112);
-      GameFlag_ClearBit(0x113);
+      GameFlag_Clear(0x110);
+      GameFlag_Clear(0x111);
+      GameFlag_Clear(0x112);
+      GameFlag_Clear(0x113);
       gMainRoutineWork.retreatScene = gMainRoutineWork.scene;
       gMainRoutineWork.retreatEntrance = gMainRoutineWork.entrance;
     }
     for (flag = 0x80; flag <= 0xdf; flag++)
-      GameFlag_ClearBit(flag);
-    GameFlag_ClearBit(0x16c);
-    GameFlag_ClearBit(0x144);
-    GameFlag_ClearBit(0x161);
-    GameFlag_ClearBit(0x123);
-    GameFlag_ClearBit(0x11c);
-    GameFlag_ClearBit(0x146);
-    GameFlag_ClearBit(0x17c);
-    GameFlag_ClearBit(0x17d);
-    GameFlag_ClearBit(0x17e);
+      GameFlag_Clear(flag);
+    GameFlag_Clear(0x16c);
+    GameFlag_Clear(0x144);
+    GameFlag_Clear(0x161);
+    GameFlag_Clear(0x123);
+    GameFlag_Clear(0x11c);
+    GameFlag_Clear(0x146);
+    GameFlag_Clear(0x17c);
+    GameFlag_Clear(0x17d);
+    GameFlag_Clear(0x17e);
     if (gMainRoutineWork.ownerOverride != 0)
-      GameFlag_SetBit(0x176);
+      GameFlag_Set(0x176);
     else
-      GameFlag_ClearBit(0x176);
+      GameFlag_Clear(0x176);
     gMainRoutineWork.returnCue = -1;
   }
   gMainRoutineWork.sceneGroup = group;
   WorldMap_MarkPlaceVisited(gMainRoutineWork.scene, gMainRoutineWork.entrance);
   gMainRoutineWork.sceneVariant = SCENE_RECORD(gMainRoutineWork.scene)->variant;
   if (gMainRoutineWork.sceneVariant == 2)
-    GameFlag_SetBit(0x123);
+    GameFlag_Set(0x123);
   GameFlag_RefreshLureCapFar();
 }
 

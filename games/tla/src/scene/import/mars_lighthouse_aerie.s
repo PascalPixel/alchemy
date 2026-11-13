@@ -54,18 +54,18 @@ VramCache_Load:
 	.thumb_func
 VramCache_FindFreeEntry:
 	overlay_veneer VramCache_FindFreeEntryFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Actor_StartScript
 	.thumb_func
 Actor_StartScript:
@@ -353,11 +353,11 @@ Camera_WorldToScreen:
 	.global Func_020057a4
 	.thumb_func
 Func_020057a4:
-	overlay_veneer Func_080c87c0
+	overlay_veneer EffectSprite_InitFar
 	.global Func_020057ac
 	.thumb_func
 Func_020057ac:
-	overlay_veneer Func_080c87c8
+	overlay_veneer EffectSprite_DrawFar
 	.global BattleEffect_GetObjectPriority
 	.thumb_func
 BattleEffect_GetObjectPriority:
@@ -369,11 +369,11 @@ Func_020057bc:
 	.global Func_020057c4
 	.thumb_func
 Func_020057c4:
-	overlay_veneer Func_080c88d8
+	overlay_veneer Teleport_PlayWhirlFar
 	.global Func_020057cc
 	.thumb_func
 Func_020057cc:
-	overlay_veneer Func_080c88e8
+	overlay_veneer Teleport_PlaySparksFar
 	.global Weather_StartRain
 	.thumb_func
 Weather_StartRain:

@@ -10,18 +10,18 @@ wait:
 	.thumb_func
 Task_Add:
 	overlay_veneer Task_AddFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Actor_SelectAnimation
 	.thumb_func
 Actor_SelectAnimation:
@@ -89,7 +89,7 @@ Event_AskYesNoWithActorAnimation:
 	.global Func_02002a5c
 	.thumb_func
 Func_02002a5c:
-	overlay_veneer Func_080c8078
+	overlay_veneer Event_PickUpItemFar
 	.global Actor_GetById
 	.thumb_func
 Actor_GetById:
@@ -253,11 +253,11 @@ Actor_SetActionCallback:
 	.global Func_02002ba4
 	.thumb_func
 Func_02002ba4:
-	overlay_veneer Func_080c86d0
+	overlay_veneer Tightrope_InitializeFar
 	.global Func_02002bac
 	.thumb_func
 Func_02002bac:
-	overlay_veneer Func_080c86d8
+	overlay_veneer Tightrope_PlaceFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:

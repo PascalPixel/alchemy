@@ -588,7 +588,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
 
   unit = Unit_Get(selection->unitId);
   inventoryEntry = unit->inventory[selection->parameter];
-  itemDefinition = Item_Get(inventoryEntry);
+  itemDefinition = Item_GetDirectFar(inventoryEntry);
   if (itemDefinition->useType == 1) {
     s32 result = Inventory_RemoveFar(selection->unitId, selection->parameter);
     s32 index = selection->parameter;

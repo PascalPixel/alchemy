@@ -219,7 +219,7 @@ void FieldEffect_UpdateSparkles(void) {
     if (sparkle->timer != 0) {
       cameraX = camera[0];
       cameraZ = camera[1];
-      if (GameFlag_Test(0x166) != 0)
+      if (GameFlag_Get(0x166) != 0)
         sparkle->timer++;
       frame = (const u16 *)&gFieldEffect_SparklePictures[sparkle->timer >> 1];
       a = Random16();

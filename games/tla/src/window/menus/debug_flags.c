@@ -183,7 +183,7 @@ void DebugFlagEditor_DrawTable(s32 window, s32 startFlag) {
     Text_DrawStringInWindow__menus((s32)gMenu_ColonString, window, 32, y);
 
     for (i = 0; i < 16; i++) {
-      s32 val = GameFlag_Test(flag);
+      s32 val = GameFlag_Get(flag);
       bits[i] = (val != 0) + 48;
       flag++;
     }
@@ -203,10 +203,10 @@ s32 DebugFlagEditor_HandleInput(s32 window, s32 *page, s32 *cursor) {
   if (gInput.repeat & 1) {
     s32 flag = ((*page << 4) + *row << 4) + cursor[0];
 
-    if (GameFlag_Test(flag))
-      GameFlag_ClearBit(flag);
+    if (GameFlag_Get(flag))
+      GameFlag_Clear(flag);
     else
-      GameFlag_SetBit(flag);
+      GameFlag_Set(flag);
     return 1;
   }
   if ((gInput.pressed & 2) || (gInput.repeat & 4))
@@ -248,6 +248,6 @@ s32 DebugFlagEditor_HandleInput(s32 window, s32 *page, s32 *cursor) {
 void Menu_ReservedNoOp(void) {}
 
 void Djinn_SetFoundFlagAndAdd(s32 arg0, s32 arg1, s32 arg2) {
-  GameFlag_SetBit((arg1 * 0x14) + arg2 + 0x30);
+  GameFlag_Set((arg1 * 0x14) + arg2 + 0x30);
   Djinn_GiveFar(arg0, arg1, arg2);
 }

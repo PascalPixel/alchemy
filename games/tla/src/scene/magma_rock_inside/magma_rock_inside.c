@@ -132,7 +132,7 @@ void MagmaRockInside_PausePlatform(struct Actor *object) {
 
 void Func_02004c98();
 void Actor_StartScript();
-s32 GameFlag_Test();
+s32 GameFlag_Get();
 /* VIEW(s0800): routine Actor_GetById as s32 Actor_GetById(); event.h has struct
  * Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor
  * *Actor_GetById(u32 objectId), which the object already declares, it does not
@@ -1984,7 +1984,7 @@ void MagmaRockInside_PressGateSwitch2(void) {
 
 void MagmaRockInside_PressGateSwitch3(void) {
   // Event_SetFlag, event.h's command, keeps 0x302 from being shared with the
-  // script calls, which build it again after the scene test; GameFlag_SetBit
+  // script calls, which build it again after the scene test; GameFlag_Set
   // called directly differs in 56 instructions.
   Event_SetFlag(0x302);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room4) {

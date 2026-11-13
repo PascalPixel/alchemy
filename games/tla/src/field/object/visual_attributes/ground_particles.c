@@ -202,7 +202,7 @@ void FieldMotes_Update(void) {
       u32 firstJitterDraw;
       u32 secondJitterDraw;
 
-      if (GameFlag_Test(0x166)) {
+      if (GameFlag_Get(0x166)) {
         mote->timer++;
         mote->delay--;
       }

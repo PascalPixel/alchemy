@@ -41,7 +41,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "event_inline.h"
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (GameFlag_Test(2219))
+  if (GameFlag_Get(2219))
     return gPlacementsWithoutWarriors;
   return gPlacementsWithWarriors;
 }
@@ -51,7 +51,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 /// Felix walks in on the four warriors: they jump, turn to him and talk over
 /// one another, once, until the scene's flag 2447 is set.
 void GondowanCliffsHideout_WarriorsAreFound(void) {
-  if (!GameFlag_Test(2219)) {
+  if (!GameFlag_Get(2219)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgKibomboWarriorsFound);
@@ -91,7 +91,7 @@ void GondowanCliffsHideout_WarriorsAreFound(void) {
     Event_ShowMessageAndWait(ACTOR_WARRIOR_AWAITING_FRIENDS, 0);
     Event_End();
   }
-  GameFlag_SetBit(2447);
+  GameFlag_Set(2447);
 }
 
 s32 Scene_Initialize(void) {

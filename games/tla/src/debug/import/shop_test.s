@@ -14,14 +14,14 @@ wait:
 	.thumb_func
 Unit_Get:
 	overlay_veneer Unit_GetFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
 	.global Import_ActorCreate
 	.thumb_func
 Import_ActorCreate:
@@ -113,7 +113,7 @@ Func_02000d30:
 	.global Func_02000d38
 	.thumb_func
 Func_02000d38:
-	overlay_veneer Func_08038340
+	overlay_veneer Summon_ShowLearnedMessageFar
 	.global Unit_Calculate
 	.thumb_func
 Unit_Calculate:
@@ -121,7 +121,7 @@ Unit_Calculate:
 	.global Func_02000d48
 	.thumb_func
 Func_02000d48:
-	overlay_veneer Item_Get
+	overlay_veneer Item_GetDirectFar
 	.global Inventory_AddItem
 	.thumb_func
 Inventory_AddItem:
@@ -173,7 +173,7 @@ PartyInventory_HasSpace:
 	.global Func_02000db0
 	.thumb_func
 Func_02000db0:
-	overlay_veneer Func_080ad240
+	overlay_veneer Party_AddIsaacsPartyFar
 	.ifndef TLA_EDITION_JA
 	.global Djinn_GiveToParty
 	.thumb_func
@@ -263,7 +263,7 @@ Func_02000e58:
 	.global Func_02000e60
 	.thumb_func
 Func_02000e60:
-	overlay_veneer Func_08108070
+	overlay_veneer ItemPicker_RunMode1Far
 	.global Func_02000e68
 	.thumb_func
 Func_02000e68:

@@ -62,18 +62,18 @@ VramCache_FindFreeEntry:
 	.thumb_func
 Oam_AddSpriteAtDepth:
 	overlay_veneer Oam_AddSpriteAtDepthClampedFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Animation_ApplyChildArgument
 	.thumb_func
 Animation_ApplyChildArgument:
@@ -285,15 +285,15 @@ Event_NoOp:
 	.global Func_02001dfc
 	.thumb_func
 Func_02001dfc:
-	overlay_veneer Func_080c86a8
+	overlay_veneer Rope_InitializeFar
 	.global Func_02001e04
 	.thumb_func
 Func_02001e04:
-	overlay_veneer Func_080c86e8
+	overlay_veneer Rope_PlaceFar
 	.global Func_02001e0c
 	.thumb_func
 Func_02001e0c:
-	overlay_veneer Func_080c8760
+	overlay_veneer TileCopies_CopyTouchedCellsFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:

@@ -50,14 +50,14 @@ VramCache_FindFreeEntry:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
 	.global MapGrid_PlayMapEdit
 	.thumb_func
 MapGrid_PlayMapEdit:
@@ -81,7 +81,7 @@ MapGrid_SetScreenShake:
 	.global Func_0200343c
 	.thumb_func
 Func_0200343c:
-	overlay_veneer Func_08020360
+	overlay_veneer MapGrid_SetCellHeightFar
 	.global PartyInventory_FindMember
 	.thumb_func
 PartyInventory_FindMember:
@@ -109,7 +109,7 @@ Event_AskYesNoWithActorAnimation:
 	.global Func_02003474
 	.thumb_func
 Func_02003474:
-	overlay_veneer Func_080c8078
+	overlay_veneer Event_PickUpItemFar
 	.global Actor_GetById
 	.thumb_func
 Actor_GetById:
@@ -265,7 +265,7 @@ Event_WaitTransitionFrames:
 	.global Func_020035ac
 	.thumb_func
 Func_020035ac:
-	overlay_veneer Func_080c8480
+	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:
@@ -305,11 +305,11 @@ Party_GetLeaderActor:
 	.global Func_020035fc
 	.thumb_func
 Func_020035fc:
-	overlay_veneer Func_080c87c0
+	overlay_veneer EffectSprite_InitFar
 	.global Func_02003604
 	.thumb_func
 Func_02003604:
-	overlay_veneer Func_080c87c8
+	overlay_veneer EffectSprite_DrawFar
 	.global Field_StartColorTransition
 	.thumb_func
 Field_StartColorTransition:
@@ -325,7 +325,7 @@ Actor_ShowItemIconById:
 	.global Func_02003624
 	.thumb_func
 Func_02003624:
-	overlay_veneer Func_080c88f0
+	overlay_veneer Actor_WatchActorFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

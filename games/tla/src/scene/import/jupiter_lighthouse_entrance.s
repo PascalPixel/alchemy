@@ -54,14 +54,14 @@ VramCache_FindFreeEntry:
 	.thumb_func
 Import_OamAddSpriteAtDepthClamped:
 	overlay_veneer Oam_AddSpriteAtDepthClampedFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_GetByte
 	.thumb_func
 GameFlag_GetByte:
@@ -129,7 +129,7 @@ Actor_SetSpriteColorMode:
 	.global Func_02001a6c
 	.thumb_func
 Func_02001a6c:
-	overlay_veneer Func_08020360
+	overlay_veneer MapGrid_SetCellHeightFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -217,7 +217,7 @@ Camera_WorldToScreen:
 	.global Func_02001b1c
 	.thumb_func
 Func_02001b1c:
-	overlay_veneer Func_080c8760
+	overlay_veneer TileCopies_CopyTouchedCellsFar
 	.global BattleEffect_GetObjectPriority
 	.thumb_func
 BattleEffect_GetObjectPriority:
@@ -225,15 +225,15 @@ BattleEffect_GetObjectPriority:
 	.global Func_02001b2c
 	.thumb_func
 Func_02001b2c:
-	overlay_veneer Func_080c8830
+	overlay_veneer MapGrid_GetCellBehaviorFar
 	.global Func_02001b34
 	.thumb_func
 Func_02001b34:
-	overlay_veneer Func_080c8848
+	overlay_veneer MapGrid_SetAttributeBAtFar
 	.global Func_02001b3c
 	.thumb_func
 Func_02001b3c:
-	overlay_veneer Func_080c8888
+	overlay_veneer Actor_ArriveInRingFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

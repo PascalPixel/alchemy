@@ -128,9 +128,9 @@ extern u8 gDecodeBuffer[];
 
 void TilesetAnim_Update(void);
 
-s32 Func_080c8730(s32 layer, s32 unused, s32 value);
+s32 MapCollision_FindOrAddTagFar(s32 layer, s32 unused, s32 value);
 
-s32 Func_080c8720(s32 layer, s32 unused, s32 value);
+s32 Actor_LiftTargetBlockFar(s32 layer, s32 unused, s32 value);
 
 extern const u8 Render_DrawMapCode[];
 extern u8 Render_DrawMapCodeSize[];

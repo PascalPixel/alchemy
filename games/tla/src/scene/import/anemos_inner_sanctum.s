@@ -58,18 +58,18 @@ VramCache_FindFreeEntry:
 	.thumb_func
 Oam_AddSpriteAtDepth:
 	overlay_veneer Oam_AddSpriteAtDepthClampedFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global GameFlag_GetByte
 	.thumb_func
 GameFlag_GetByte:
@@ -161,7 +161,7 @@ MapGrid_SetCellBehaviorAt:
 	.global Func_02003380
 	.thumb_func
 Func_02003380:
-	overlay_veneer Func_08020360
+	overlay_veneer MapGrid_SetCellHeightFar
 	.global FieldMessage_ShowCentered
 	.thumb_func
 FieldMessage_ShowCentered:
@@ -297,23 +297,23 @@ Event_ResolvePendingActions:
 	.global Func_02003490
 	.thumb_func
 Func_02003490:
-	overlay_veneer Func_080c8718
+	overlay_veneer Actor_PlaceBlocksFar
 	.global Func_02003498
 	.thumb_func
 Func_02003498:
-	overlay_veneer Func_080c8720
+	overlay_veneer Actor_LiftTargetBlockFar
 	.global Func_020034a0
 	.thumb_func
 Func_020034a0:
-	overlay_veneer Func_080c8728
+	overlay_veneer Actor_PlaceMovedBlockFar
 	.global Func_020034a8
 	.thumb_func
 Func_020034a8:
-	overlay_veneer Func_080c88d8
+	overlay_veneer Teleport_PlayWhirlFar
 	.global Func_020034b0
 	.thumb_func
 Func_020034b0:
-	overlay_veneer Func_080c88e8
+	overlay_veneer Teleport_PlaySparksFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

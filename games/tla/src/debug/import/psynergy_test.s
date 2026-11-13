@@ -30,18 +30,18 @@ VramCache_FindFreeEntry:
 	.thumb_func
 Unit_Get:
 	overlay_veneer Unit_GetFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Import_ActorCreate
 	.thumb_func
 Import_ActorCreate:
@@ -137,7 +137,7 @@ Event_Wait:
 	.global Func_02000e5c
 	.thumb_func
 Func_02000e5c:
-	overlay_veneer Func_080c8078
+	overlay_veneer Event_PickUpItemFar
 	.global Actor_GetById
 	.thumb_func
 Actor_GetById:
@@ -193,23 +193,23 @@ Func_02000ec4:
 	.global Func_02000ecc
 	.thumb_func
 Func_02000ecc:
-	overlay_veneer Func_080c8760
+	overlay_veneer TileCopies_CopyTouchedCellsFar
 	.global Func_02000ed4
 	.thumb_func
 Func_02000ed4:
-	overlay_veneer Func_080c87b0
+	overlay_veneer Actor_FallOverByIdFar
 	.global Func_02000edc
 	.thumb_func
 Func_02000edc:
-	overlay_veneer Func_080c87b8
+	overlay_veneer Actor_FallOverWithAnimationByIdFar
 	.global Func_02000ee4
 	.thumb_func
 Func_02000ee4:
-	overlay_veneer Func_080c87c0
+	overlay_veneer EffectSprite_InitFar
 	.global Func_02000eec
 	.thumb_func
 Func_02000eec:
-	overlay_veneer Func_080c87c8
+	overlay_veneer EffectSprite_DrawFar
 	.global Func_02000ef4
 	.thumb_func
 Func_02000ef4:
@@ -221,15 +221,15 @@ Func_02000efc:
 	.global Func_02000f04
 	.thumb_func
 Func_02000f04:
-	overlay_veneer Func_080c8880
+	overlay_veneer Actor_DepartInRingFar
 	.global Func_02000f0c
 	.thumb_func
 Func_02000f0c:
-	overlay_veneer Func_080c8888
+	overlay_veneer Actor_ArriveInRingFar
 	.global Func_02000f14
 	.thumb_func
 Func_02000f14:
-	overlay_veneer Func_080c8948
+	overlay_veneer FieldItem_JumpToLeaderFar
 	.global Func_02000f1c
 	.thumb_func
 Func_02000f1c:

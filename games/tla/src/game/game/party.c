@@ -99,7 +99,7 @@ s32 Party_CountMembers(void) {
 
   count = 0;
   for (i = 0; i <= 7; i++) {
-    if (GameFlag_Test(i))
+    if (GameFlag_Get(i))
       count++;
   }
   return count;
@@ -134,7 +134,7 @@ s32 Party_RemoveMember(s32 value) {
   s32 i;
   s32 j;
 
-  GameFlag_ClearBit(value);
+  GameFlag_Clear(value);
   for (i = 0; i < count; i++) {
     if (gMainRoutineWork.activeOwners[i] == value)
       break;

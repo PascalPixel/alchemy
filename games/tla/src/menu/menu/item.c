@@ -206,7 +206,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   state = 0;
   menu = Ram_HeapSlots->menuRuntime;
 
-  while (done == 0 && GameFlag_Test(0x150) == 0) {
+  while (done == 0 && GameFlag_Get(0x150) == 0) {
     switch (state) {
     case 0:
       menu->selectedSlots[0] = 0;
@@ -364,7 +364,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 
     case 5:
       ItemMenu_HideAllIcons();
-      item = Item_Get(menu->selectedItems[0] & 0x1ff);
+      item = Item_GetDirectFar(menu->selectedItems[0] & 0x1ff);
       result = 0;
       if ((item->flags & 16) != 0) {
         qty = (menu->selectedItems[0] >> 11) + 1;
@@ -417,7 +417,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 
     case 4:
       aborted = 0;
-      item = Item_Get(menu->selectedItems[0] & 0x1ff);
+      item = Item_GetDirectFar(menu->selectedItems[0] & 0x1ff);
       if ((item->flags & 16) != 0) {
         qty = ItemMenu_GetItemQuantity(menu->sideMember[1],
                                        menu->selectedItems[0] & 0x1ff);
@@ -487,7 +487,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         ItemMenu_DrawItemHead();
         result = ItemMenu_ConfirmEquip(0);
       }
-      if (GameFlag_Test(0x150) != 0) {
+      if (GameFlag_Get(0x150) != 0) {
         break;
       }
       ItemMenu_RefreshMember(menu->sideMember[1], 1);
@@ -504,7 +504,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           ItemMenu_DrawEquipPreview(menu->sideMember[1], menu->selectedSlots[1],
                                     0, menu->sideMember[1]);
           ItemMenu_ShowMessage((s32)MsgEquippedIt, 15, 14);
-          item = Item_Get(menu->selectedItems[0]);
+          item = Item_GetDirectFar(menu->selectedItems[0]);
           if ((item->flags & 1) != 0) {
             Sound_PlayFar(0x67);
             WindowSprite_ClearListFar(menu->infoWindow);
@@ -550,7 +550,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       movedTarget = 0;
       while (movedTarget <= 29) {
         if ((menu->selectedItems[1] & 0x200) != 0) {
-          item = Item_Get(menu->selectedItems[1] & 0x1ff);
+          item = Item_GetDirectFar(menu->selectedItems[1] & 0x1ff);
           if ((item->flags & 2) != 0) {
             aborted = 1;
           }
@@ -611,7 +611,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         menu->selectedItems[0] &= 0x1ff;
         ItemMenu_DrawItemHead();
         result = ItemMenu_ConfirmEquip(0);
-        if (GameFlag_Test(0x150) == 0) {
+        if (GameFlag_Get(0x150) == 0) {
           WindowSprite_ClearListFar(menu->infoWindow);
           ItemMenu_SetItemWindowRow5();
           ItemMenu_RefreshMember(menu->sideMember[1], 1);
@@ -620,7 +620,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
                                       menu->selectedSlots[1], 0,
                                       menu->sideMember[1]);
             ItemMenu_ShowMessage((s32)MsgEquippedIt, 15, 14);
-            item = Item_Get(menu->selectedItems[0]);
+            item = Item_GetDirectFar(menu->selectedItems[0]);
             if ((item->flags & 1) != 0) {
               Sound_PlayFar(0x67);
               WindowSprite_ClearListFar(menu->infoWindow);
@@ -664,7 +664,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
                                 menu->sideMember[0]);
       WindowSprite_ClearListFar(menu->infoWindow);
       ItemMenu_ShowMessage((s32)MsgEquippedIt, 15, 8);
-      item = Item_Get(menu->selectedItems[0]);
+      item = Item_GetDirectFar(menu->selectedItems[0]);
       if ((item->flags & 1) != 0) {
         Sound_PlayFar(0x67);
         WindowSprite_ClearListFar(menu->infoWindow);
@@ -717,7 +717,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
     }
   }
 
-  if (GameFlag_Test(0x150) != 0) {
+  if (GameFlag_Get(0x150) != 0) {
     ret = -1;
   }
   return ret;
@@ -994,7 +994,7 @@ s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items) {
                              menu->buttonHelpWindow, 0, 8);
 #endif
   menu->sideIcons[0]->active = 1;
-  while (!GameFlag_Test(0x150)) {
+  while (!GameFlag_Get(0x150)) {
     if (redraw) {
       sortMode = 0;
       window = menu->statusWindow;
@@ -1156,7 +1156,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
   Unit_Get(menu->ownerIds[menu->paneIndex[0]]);
   Task_Add(EquipmentMenu_UpdateCompatibilityIndicators, 0x480);
   redraw = 2;
-  while (!GameFlag_Test(0x150)) {
+  while (!GameFlag_Get(0x150)) {
     if (redraw) {
       window = menu->itemWindow;
       Unit_Get(menu->ownerIds[selection]);
@@ -1212,14 +1212,14 @@ s32 ItemMenu_SelectTarget(s32 mode) {
         else
           StatusPanel_Draw(menu->statusWindow, menu->ownerIds[selection],
                            menu->selectedSlots[0], 0);
-        if (!GameFlag_Test(0x151) && !descriptionShown) {
+        if (!GameFlag_Get(0x151) && !descriptionShown) {
           ITEM_INFO_CLEAR(menu->infoWindow);
           ITEM_INFO_DRAW((menu->selectedItems[0] & 0x1ff) +
                              (s32)MsgItemPlainName,
                          menu->infoWindow, 0, 0);
           descriptionShown = 1;
         } else {
-          GameFlag_ClearBit(0x151);
+          GameFlag_Clear(0x151);
         }
       }
       redraw = 0;
@@ -1478,7 +1478,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
   s32 entry = unit->inventory[slot];
   s32 previewSlot;
   void *buffer;
-  struct PreviewItem *item = Item_Get(entry & 0x1ff);
+  struct PreviewItem *item = Item_GetDirectFar(entry & 0x1ff);
 
   if (mode == 1)
     style = 0x100;
@@ -1728,7 +1728,7 @@ s32 ItemMenu_ChooseCommand(void) {
                    COMMAND_CURSOR_Y(column, row));
 
   for (;;) {
-    if (GameFlag_Test(0x150) != 0)
+    if (GameFlag_Get(0x150) != 0)
       break;
     if (redraw != 0) {
       redraw = 0;
@@ -1835,7 +1835,7 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
   struct ItemDefinition *item;
 
   menu = Ram_HeapSlots->menuRuntime;
-  item = Item_Get(ITEM_ID_MASK & menu->selectedItems[0]);
+  item = Item_GetDirectFar(ITEM_ID_MASK & menu->selectedItems[0]);
 
   if (item->type == 0) {
     commandStates[0] = COMMAND_AVAILABLE;
@@ -1957,7 +1957,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
   s32 result = -1;
 
   masked &= 0x1ff;
-  itemData = Item_Get(masked);
+  itemData = Item_GetDirectFar(masked);
 
   if (BattleEffect_HasTriggerFar(masked) != 0) {
     return 0;
@@ -2009,7 +2009,7 @@ void ItemMenu_TryBreak(void) {
 
   mask = 0x1ff;
   mask &= item;
-  if (((u8 *)Item_Get(mask))[12] == 2 && Random16() < 0x2000) {
+  if (((u8 *)Item_GetDirectFar(mask))[12] == 2 && Random16() < 0x2000) {
     Inventory_BreakFar(work[0x216], *(u16 *)(work + 0x168));
     Sound_PlayFar(138);
     ItemMenu_ShowMessage((s32)MsgItBroke, 0, -1);
@@ -2089,7 +2089,7 @@ s32 ItemMenu_ShowDetails(s32 value) {
   wait(1);
 
   for (;;) {
-    if (GameFlag_Test(336) != 0)
+    if (GameFlag_Get(336) != 0)
       break;
 
     if (changed != 0) {
@@ -2206,7 +2206,7 @@ void ItemMenu_DrawItemDetailsWithCount(s32 window, s32 item, s32 count) {
 
   row = 0;
   consumable = 0;
-  def = Item_Get(item & 0x1ff);
+  def = Item_GetDirectFar(item & 0x1ff);
   if (def->type != 0) {
     found = 0;
     if (def->primaryBonus == 0 && def->secondaryBonus == 0) {
@@ -2571,7 +2571,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
     arrow = WindowSprite_CreateFar(entry, 0x40004000, window, 80, 32);
     arrow->tile = arrow->tile + 4;
     MenuCursor_Slide(CURSOR_X, 40);
-    while (!GameFlag_Test(0x150)) {
+    while (!GameFlag_Get(0x150)) {
       if (changed) {
         changed = 0;
         value = (value + quantityRange) % quantityRange;
@@ -2632,7 +2632,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
   WindowSprite_ClearListFar(window);
   HeapSlot_Release(56);
   menu->selectedItemIcon->state = 13;
-  if (GameFlag_Test(0x150))
+  if (GameFlag_Get(0x150))
     value = -1;
   return value;
 }
@@ -2680,7 +2680,7 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
 
   window = Window_CreateFar(13, 3, 17, 10, 2);
   itemId = item & 0x1ff;
-  Item_Get(itemId);
+  Item_GetDirectFar(itemId);
   Text_DrawMessageAsTilesFar(itemId + (s32)MsgItemName, window, 24, 0);
   question = (s32)MsgConfirmDrop;
   Text_DrawMessageAsTilesFar(question, window, ITEM_DROP_QUESTION_X, 16);
@@ -2692,7 +2692,7 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
   Text_DrawMessageAsTilesFar(answer, window, 24, 56);
   MenuCursor_Slide(104, 86);
   for (;;) {
-    if (GameFlag_Test(336))
+    if (GameFlag_Get(336))
       break;
     if (changed) {
       changed = 0;
@@ -2720,7 +2720,7 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
     }
     wait(1);
   }
-  if (GameFlag_Test(336)) {
+  if (GameFlag_Get(336)) {
     selection = 1;
   }
   Window_CloseFar(window, 1);
@@ -2804,7 +2804,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
     Text_DrawMessageAsTilesFar(EQUIP_QUESTION, window, EQUIP_QUESTION_X, 16);
     MenuCursor_Slide(EQUIP_CURSOR_X(0), EQUIP_CURSOR_Y(0));
     for (;;) {
-      if (GameFlag_Test(336))
+      if (GameFlag_Get(336))
         break;
       if (changed) {
         changed = 0;
@@ -2833,7 +2833,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
       wait(1);
     }
   }
-  if (GameFlag_Test(336))
+  if (GameFlag_Get(336))
     selection = 1;
   if (selection == 1)
     Iwram_CopyWordsEntry(unit, saved, size);
@@ -3088,7 +3088,7 @@ s32 ItemMenu_RunList(s32 pane) {
   window = menu->listWindow;
   done = 0;
 
-  while (done == 0 && GameFlag_Test(0x150) == 0) {
+  while (done == 0 && GameFlag_Get(0x150) == 0) {
     owner = Unit_Get(menu->paneOwner[pane]);
     menu->itemCount = ItemMenu_CollectItems(owner, menu->items, 0);
     ItemMenu_DrawIcons(menu->items, 0);
@@ -3098,7 +3098,7 @@ s32 ItemMenu_RunList(s32 pane) {
     changed = 1;
     redraw = 1;
 
-    while (GameFlag_Test(0x150) == 0) {
+    while (GameFlag_Get(0x150) == 0) {
       MenuCursor_Position(98, state.row * 16 + 36);
 
       if (changed != 0) {
@@ -3202,7 +3202,7 @@ s32 ItemMenu_RunList(s32 pane) {
   menu->selectedSlots[pane] = state.selectedIndex;
   menu->selectedIndexByOwner[menu->paneOwner[pane]] = state.selectedIndex;
   menu->selectedItems[pane] = result;
-  if (GameFlag_Test(0x150) != 0)
+  if (GameFlag_Get(0x150) != 0)
     result = -1;
   wait(1);
   return result;

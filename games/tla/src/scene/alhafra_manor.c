@@ -38,7 +38,7 @@ extern struct ActorPlacement gActorPlacements[];
 extern s16 gAlhafraManor_ActorPlacementsOnceTheMastIsCleared[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (GameFlag_Test(FLAG_ALHAFRA_MAST_CLEARED))
+  if (GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED))
     return gAlhafraManor_ActorPlacementsOnceTheMastIsCleared;
   return gActorPlacements;
 }
@@ -105,7 +105,7 @@ void AlhafraManor_AskIfTheHeroes(s32 actor) {
 void AlhafraManor_GrumbleAboutTheMayor(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
-  GameFlag_SetBit(0x8ba);
+  GameFlag_Set(0x8ba);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgAlhafraManor18);
@@ -125,7 +125,7 @@ void AlhafraManor_GrumbleAboutTheMayor(void) {
 void AlhafraManor_DefendTheMayor(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
-  GameFlag_SetBit(0x8bb);
+  GameFlag_Set(0x8bb);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgAlhafraManor23);
@@ -165,7 +165,7 @@ void AlhafraManor_TellOfTheEasternSea(void) {
     Actor_FaceActorById(9, gMainRoutineWork.currentOwner, 0);
     Event_Wait(10);
   }
-  GameFlag_SetBit(0x8bc);
+  GameFlag_Set(0x8bc);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgAlhafraManor24);
@@ -227,14 +227,14 @@ s32 Scene_Initialize(void) {
     Event_Wait(10);
     Event_SetMessageId((s32)&MsgAlhafraManor10);
     Event_ShowMessageAndWait(14, 0);
-    GameFlag_ClearBit(0x12f);
+    GameFlag_Clear(0x12f);
   }
   entrance = &gMainRoutineWork.entrance;
   if (*entrance == 81) {
     gMainRoutineWork.entrance = gMainRoutineWork.secondary = 8;
     AlhafraManor_BriggsEscapes();
   }
-  if (!GameFlag_Test(FLAG_ALHAFRA_MAST_CLEARED) && GameFlag_Test(0x8ff)) {
+  if (!GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED) && GameFlag_Get(0x8ff)) {
     Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
   }
@@ -640,7 +640,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Event_End();
   EVENT_WORD(0x1b4) = 16;
   EVENT_WORD(0x1ac) = 521;
-  GameFlag_ClearBit(303);
+  GameFlag_Clear(303);
 }
 
 void Func_020015e8(void);

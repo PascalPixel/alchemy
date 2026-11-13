@@ -335,7 +335,7 @@ s32 Field_RequestShortcut(u32 value) {
   u32 kind = value >> 14;
   s32 code = value & 0x3fff;
 
-  if (GameFlag_Test(0x107) != 0) {
+  if (GameFlag_Get(0x107) != 0) {
     event->result = 250;
   } else if (event->mode == 3) {
     // The held keys, read again for the second test through a volatile

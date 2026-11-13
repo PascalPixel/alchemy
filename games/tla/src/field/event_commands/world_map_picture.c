@@ -57,7 +57,7 @@ void WorldPicture_StepToPlace(s32 *screenX, s32 *screenY, s32 step) {
     flag = place->flag + 0x180;
     state = Func_080ec298(place);
 
-    if (state != 0 && state != 15 && GameFlag_Test(flag)) {
+    if (state != 0 && state != 15 && GameFlag_Get(flag)) {
       s32 sx = PLACE_SCREEN_X(place);
       s32 sy = PLACE_SCREEN_Y(place);
       s32 dx = sx - cursorX;
@@ -91,7 +91,7 @@ void WorldPicture_StepToPlace(s32 *screenX, s32 *screenY, s32 step) {
           flag = next->flag + 0x180;
           state = Func_080ec298(next);
 
-          if (state != 0 && state != 15 && GameFlag_Test(flag)) {
+          if (state != 0 && state != 15 && GameFlag_Get(flag)) {
             place = next;
             break;
           }
@@ -333,7 +333,7 @@ void WorldPicture_UpdateMarkers(void) {
       if (tile == 0)
         continue;
       if (tile == 15) {
-        if (!GameFlag_Test(0x8de))
+        if (!GameFlag_Get(0x8de))
           continue;
         if (gMainRoutineWork.ownerOverride != 0)
           continue;
@@ -343,7 +343,7 @@ void WorldPicture_UpdateMarkers(void) {
         placeX = (gMainRoutineWork.savedX >> 16) * 853 / 16384 - 269;
         placeY = (gMainRoutineWork.savedZ >> 16) * 640 / 16384 - 112;
       } else {
-        if (!GameFlag_Test(flag))
+        if (!GameFlag_Get(flag))
           continue;
         always = 1;
         placeX = place->x * 853 / 16384 - 269;
@@ -916,7 +916,7 @@ s32 WorldPicture_Show(s32 mode) {
     wait(1);
     Io_Write16(0x8682, &REG_BG1CNT);
     Io_Write16(0x1340, &REG_DISPCNT);
-    if ((GameFlag_Test(284) || GameFlag_Test(286)) && !messageShown) {
+    if ((GameFlag_Get(284) || GameFlag_Get(286)) && !messageShown) {
       FieldMessage_ShowFar((s32)MsgNotOnMap, 1);
       messageShown = 1;
     }
@@ -1027,7 +1027,7 @@ done:
   Io_Write16(64, &REG_DISPCNT);
   if (mode != 0 || event->controlMode != 3) {
     event->countdown = 999;
-    GameFlag_SetBit(265);
+    GameFlag_Set(265);
   } else {
     WorldMap_LoadAreaGraphicsFar();
     IO_WRITE_QUEUE_PUSH(0x04000052, (u16)blend, 0x20000);

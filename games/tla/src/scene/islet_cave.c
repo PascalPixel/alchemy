@@ -292,12 +292,12 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_GetById(9), 0);
     if (gMainRoutineWork.entrance == 2) {
       Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
-      GameFlag_SetBit(0x9cf);
+      GameFlag_Set(0x9cf);
     }
   } else if (scene == (s32)&SceneId_Ov675Room2) {
-    if (GameFlag_Test(85) || GameFlag_Test(165)) {
-      GameFlag_SetBit(0x230);
-    } else if (!GameFlag_Test(0x230)) {
+    if (GameFlag_Get(85) || GameFlag_Get(165)) {
+      GameFlag_Set(0x230);
+    } else if (!GameFlag_Get(0x230)) {
       Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
       Actor_SetMovementTypeById(8, gData_02001454);
     }
@@ -330,7 +330,7 @@ void Func_020007dc(s32 id, s32 a, s32 b, s32 x, s32 z, s32 unused, s32 flag) {
   struct Actor *object = Actor_GetById(id);
 
   if (object != NULL) {
-    if (GameFlag_Test(flag))
+    if (GameFlag_Get(flag))
       Actor_SetHorizontalPositionWithTerrain(id, x << 16, z << 16);
     Actor_SetSpritePriority(id, 3);
     object->priorityFlags |= 2;
@@ -346,7 +346,7 @@ void Func_02000848(s32 id, s32 a, s32 bArg, s32 x, s32 z, s32 unused,
 
   if (Actor_GetById(id) != 0) {
     Actor_SetSpritePriority(id, 3);
-    if (GameFlag_Test(flag))
+    if (GameFlag_Get(flag))
       Actor_SetHorizontalPositionWithTerrain(id, x << 16, z << 16);
     object = Actor_GetById(id);
     object->priorityFlags |= 2;
@@ -475,10 +475,10 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
     flagCall(flag);                                                            \
   }
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000aec, 8, 32, GameFlag_ClearBit,
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000aec, 8, 32, GameFlag_Clear,
                                   0x280)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000b4c, 8, -32, GameFlag_SetBit, 0x280)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000b4c, 8, -32, GameFlag_Set, 0x280)
 
 void Func_02000bb0(void) {
   struct Actor *object0;
@@ -498,7 +498,7 @@ void Func_02000bb0(void) {
   Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,
                             (object4->x >> 20), ((value3 >> 20) - 1));
   Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
-  GameFlag_ClearBit(0x281);
+  GameFlag_Clear(0x281);
   return;
 }
 
@@ -520,30 +520,30 @@ void Func_02000c1c(void) {
   Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,
                             (object4->x >> 20), ((value3 >> 20) - 1));
   Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
-  GameFlag_SetBit(0x281);
+  GameFlag_Set(0x281);
   return;
 }
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000c8c, 10, 80, GameFlag_SetBit, 0x282)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000c8c, 10, 80, GameFlag_Set, 0x282)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000cf0, 10, -80, GameFlag_ClearBit,
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000cf0, 10, -80, GameFlag_Clear,
                                   0x282)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000d54, 11, 80, GameFlag_ClearBit,
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000d54, 11, 80, GameFlag_Clear,
                                   0x283)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000db8, 11, -80, GameFlag_ClearBit,
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000db8, 11, -80, GameFlag_Clear,
                                   0x283)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000e1c, 12, 80, GameFlag_SetBit, 0x284)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000e1c, 12, 80, GameFlag_Set, 0x284)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000e7c, 12, -80, GameFlag_ClearBit,
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000e7c, 12, -80, GameFlag_Clear,
                                   0x284)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000ee0, 13, 80, GameFlag_ClearBit,
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000ee0, 13, 80, GameFlag_Clear,
                                   0x285)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000f44, 13, -80, GameFlag_SetBit,
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000f44, 13, -80, GameFlag_Set,
                                   0x285)
 
 void Func_02000fa8(void) {
@@ -572,7 +572,7 @@ void Func_02000fa8(void) {
   v5 = (v5 - 1);
   MapGrid_CopyCellAttributes(v5, v8, 3, 1, v5, (object3->z >> 20));
   Map_CopyCellAttributeRect(0, 0, 3, 1, v5, v8);
-  GameFlag_SetBit(0x286);
+  GameFlag_Set(0x286);
   return;
 }
 
@@ -601,7 +601,7 @@ void Func_02001034(void) {
   v6 = (v6 >> 20);
   MapGrid_CopyCellAttributes(v5, v6, 3, 1, v5, (object4->z >> 20));
   Map_CopyCellAttributeRect(0, 0, 3, 1, v5, v6);
-  GameFlag_ClearBit(0x286);
+  GameFlag_Clear(0x286);
   return;
 }
 

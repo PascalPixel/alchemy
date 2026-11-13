@@ -26,18 +26,18 @@ Trig_Cos:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Actor_SelectAnimation
 	.thumb_func
 Actor_SelectAnimation:
@@ -85,7 +85,7 @@ Actor_SetBlendMode:
 	.global Func_020010cc
 	.thumb_func
 Func_020010cc:
-	overlay_veneer Func_08020360
+	overlay_veneer MapGrid_SetCellHeightFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -149,15 +149,15 @@ Actor_WalkByAndWaitById:
 	.global Func_0200114c
 	.thumb_func
 Func_0200114c:
-	overlay_veneer Func_080c86a8
+	overlay_veneer Rope_InitializeFar
 	.global Func_02001154
 	.thumb_func
 Func_02001154:
-	overlay_veneer Func_080c86e8
+	overlay_veneer Rope_PlaceFar
 	.global Func_0200115c
 	.thumb_func
 Func_0200115c:
-	overlay_veneer Func_080c8738
+	overlay_veneer Actor_FindAtCellFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

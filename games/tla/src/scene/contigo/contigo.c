@@ -134,7 +134,7 @@ void Func_020005f8(void) { Djinn_JoinParty(16, 0, 14); }
 
 void Func_02000608(void) {
   Djinn_JoinParty(17, 2, 15);
-  GameFlag_SetBit(2534);
+  GameFlag_Set(2534);
 }
 
 DEFINE_POSITION_DISTANCE(Position_Distance)
@@ -214,9 +214,9 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
     return gData_02004d90;
   if (scene == (s32)&SceneId_Ov694Room2) {
     if (gMainRoutineWork.entrance == 4) {
-      if (GameFlag_Test(0x9b2) != 0)
+      if (GameFlag_Get(0x9b2) != 0)
         return gData_02005318;
-      if (GameFlag_Test(0xa21) != 0 && GameFlag_Test(0x9d0) == 0)
+      if (GameFlag_Get(0xa21) != 0 && GameFlag_Get(0x9d0) == 0)
         return gData_02005228;
     }
     return gData_02005018;
@@ -365,7 +365,7 @@ void Func_02000af4(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (GameFlag_Test(0x9b2))
+  if (GameFlag_Get(0x9b2))
     FieldMessage_Show((s32)MsgContigo163, 1);
   else
     FieldMessage_Show((s32)MsgContigo64, 1);
@@ -413,7 +413,7 @@ void Func_02000af4(void) {
   BattleEffect_EndArcEffect();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
   PaletteFade_StartInterpolation(16);
-  if (GameFlag_Test(0x9b2))
+  if (GameFlag_Get(0x9b2))
     Event_SetMessageId((s32)MsgContigo164);
   else
     Event_SetMessageId((s32)MsgContigo65);
@@ -444,7 +444,7 @@ void Contigo_TalkToItemMerchant(void) {
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
-    if (GameFlag_Test(0x9b2))
+    if (GameFlag_Get(0x9b2))
       Event_SetMessageId((s32)MsgContigo176);
     else
       Event_SetMessageId((s32)MsgContigo74);
@@ -459,7 +459,7 @@ void Contigo_TalkToWeaponMerchant(void) {
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
-    if (GameFlag_Test(0x9b2))
+    if (GameFlag_Get(0x9b2))
       Event_SetMessageId((s32)MsgContigo172);
     else
       Event_SetMessageId((s32)MsgContigo70);
@@ -474,7 +474,7 @@ void Contigo_TalkToArmorMerchant(void) {
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
-    if (GameFlag_Test(0x9b2))
+    if (GameFlag_Get(0x9b2))
       Event_SetMessageId((s32)MsgContigo174);
     else
       Event_SetMessageId((s32)MsgContigo72);
@@ -489,9 +489,9 @@ void Contigo_TalkToInnkeeper(void) {
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
-    if (GameFlag_Test(0x9b2))
+    if (GameFlag_Get(0x9b2))
       Event_SetMessageId((s32)MsgContigo178);
-    else if (GameFlag_Test(0xa21))
+    else if (GameFlag_Get(0xa21))
       Event_SetMessageId((s32)MsgContigo128);
     else
       Event_SetMessageId((s32)MsgContigo76);
@@ -506,9 +506,9 @@ void Contigo_TalkToHealer(void) {
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
-    if (GameFlag_Test(0x9b2))
+    if (GameFlag_Get(0x9b2))
       Event_SetMessageId((s32)MsgContigo186);
-    else if (GameFlag_Test(0xa21))
+    else if (GameFlag_Get(0xa21))
       Event_SetMessageId((s32)MsgContigo136);
     else
       Event_SetMessageId((s32)MsgContigo88);
@@ -638,16 +638,16 @@ void Func_02001094(void) {
   object->unk63 = 1;
   if (work->unk166 == 0) {
     Actor_FaceActorById(14, gMainRoutineWork.currentOwner, 0);
-    if (GameFlag_Test(0x9b2) != 0)
+    if (GameFlag_Get(0x9b2) != 0)
       Event_SetMessageId((s32)MsgContigo203);
-    else if (GameFlag_Test(0xa21) != 0)
+    else if (GameFlag_Get(0xa21) != 0)
       Event_SetMessageId((s32)MsgContigo199);
     else
       Event_SetMessageId((s32)MsgContigo41);
   } else {
-    if (GameFlag_Test(0x9b2) != 0)
+    if (GameFlag_Get(0x9b2) != 0)
       Event_SetMessageId((s32)MsgContigo205);
-    else if (GameFlag_Test(0xa21) != 0)
+    else if (GameFlag_Get(0xa21) != 0)
       Event_SetMessageId((s32)MsgContigo201);
     else
       Event_SetMessageId((s32)MsgContigo49);
@@ -676,12 +676,12 @@ void Func_0200118c(void) {
   object->unk63 = 1;
   if (event->unk166 == 0) {
     Actor_FaceActorById(15, gMainRoutineWork.currentOwner, 0);
-    if (GameFlag_Test(0x9b2) != 0)
+    if (GameFlag_Get(0x9b2) != 0)
       Event_SetMessageId((s32)MsgContigo143);
     else
       Event_SetMessageId((s32)MsgContigo42);
   } else {
-    if (GameFlag_Test(0x9b2) != 0)
+    if (GameFlag_Get(0x9b2) != 0)
       Event_SetMessageId((s32)MsgContigo149);
     else
       Event_SetMessageId((s32)MsgContigo50);
@@ -725,7 +725,7 @@ void Func_020012c4(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_0200423c_(16, 37, 1, 1, 17, 37, 0);
-  if (GameFlag_Test(0xfc7) == 0) {
+  if (GameFlag_Get(0xfc7) == 0) {
     Actor_SetPosition(66, PIXELS(280), PIXELS(664));
     if (leader->x >> 20 == 17 && leader->z >> 20 == 41) {
       Event_Start();
@@ -762,16 +762,16 @@ void Func_02001474(void) { Contigo_Tiles(32, 55, 3, 1, 40, 61, 0); }
 
 void Func_02001494(void) {
   Field_SetCameraBounds(0, 0x2000000, 0x3700000, 0x4000000);
-  GameFlag_SetBit(512);
+  GameFlag_Set(512);
 }
 
 void Func_020014b4(void) {
   Field_SetCameraBounds(0, 0x2000000, 0x2000000, 0x4000000);
-  GameFlag_ClearBit(512);
+  GameFlag_Clear(512);
 }
 
 void Func_020014d4(void) {
-  if (!GameFlag_Test(62)) {
+  if (!GameFlag_Get(62)) {
     struct EventWork *work = Ram_HeapSlots->eventWork;
 
     Event_Start();
@@ -836,7 +836,7 @@ void Func_020015ac(void) {
   MapGrid_SetScreenShake(0, 0, 0);
   Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, 17, 0);
   Event_Wait(10);
-  GameFlag_SetBit(2535);
+  GameFlag_Set(2535);
   Event_End();
 }
 
@@ -964,8 +964,8 @@ void Func_02001938(s32 spoken) {
   }
   Event_SetMessageId((s32)MsgContigo13);
   Event_ShowMessageAndWait(18, 0);
-  GameFlag_SetBit(FLAG_KEEP_PARTY_POSITION);
-  GameFlag_SetBit(0x9e5);
+  GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
+  GameFlag_Set(0x9e5);
   wait(1);
   Event_LeaveFor(508, 0);
   Event_SetAfterBattleDestination((s32)&SceneId_Ov694Room3, 20);
@@ -1025,8 +1025,8 @@ void Func_02001abc(void) {
     *state = gMainRoutineWork.coins;
     ObjectTable_Snapshot();
     Event_ShowMessageAndWait(14, 0);
-    GameFlag_SetBit(FLAG_KEEP_PARTY_POSITION);
-    GameFlag_SetBit(0x9e5);
+    GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
+    GameFlag_Set(0x9e5);
     wait(1);
     Event_LeaveFor(0x1fd, 0);
     Event_SetAfterBattleDestination((s32)&SceneId_Ov694Room3, 19);
@@ -1059,8 +1059,8 @@ void Func_02001b84(void) {
     *state = gMainRoutineWork.coins;
     ObjectTable_Snapshot();
     Event_ShowMessageAndWait(8, 0);
-    GameFlag_SetBit(FLAG_KEEP_PARTY_POSITION);
-    GameFlag_SetBit(0x9e5);
+    GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
+    GameFlag_Set(0x9e5);
     wait(1);
     Event_LeaveFor(0x1fb, 0);
     Event_SetAfterBattleDestination((s32)&SceneId_Ov694Room3, 18);
@@ -1599,14 +1599,14 @@ void Func_02001d50(void) {
   Actor_SetMovementTypeById(6, gData_020049c4__contigo);
   Actor_SetMovementTypeAndWaitById(7, gData_020049c4__contigo);
   Func_02004044();
-  GameFlag_SetBit(2512);
+  GameFlag_Set(2512);
   Event_End();
 }
 
 extern u32 gData_02004ac0[];
 
 void Func_02002e18(void) {
-  if (GameFlag_Test(0x9b2)) {
+  if (GameFlag_Get(0x9b2)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldCamera_SetSpeed(0xcccc, 0x1999);
@@ -1810,7 +1810,7 @@ void Func_02002e18(void) {
     Actor_SetMovementTypeById(2, gData_02004b18);
     Actor_SetMovementTypeById(0, gData_02004b18);
     Actor_SetMovementTypeAndWaitById(9, gData_02004b18);
-    GameFlag_SetBit(2513);
+    GameFlag_Set(2513);
     Event_End();
   }
 }
@@ -1866,7 +1866,7 @@ void Func_02003720(void) {
   BYTE_AT(object, 98) = 1;
   BYTE_AT(object, 99) = zero;
   *(void **)((u8 *)object + 108) = Func_020006d0;
-  if (GameFlag_Test(0xa21) != 0 && GameFlag_Test(0x9b2) == 0) {
+  if (GameFlag_Get(0xa21) != 0 && GameFlag_Get(0x9b2) == 0) {
     Actor_Stop(15);
     Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
@@ -1877,26 +1877,26 @@ void Func_02003720(void) {
     BYTE_AT(object, 99) = 0;
     *(void **)((u8 *)object + 108) = Func_020006d0;
   }
-  if (GameFlag_Test(0x9e7) != 0 && GameFlag_Test(0x9e6) == 0) {
+  if (GameFlag_Get(0x9e7) != 0 && GameFlag_Get(0x9e6) == 0) {
     Actor_SetPosition(17, PIXELS(32), PIXELS(708));
   } else {
     Actor_SetSpriteColor(Actor_GetById(17), 15);
     Actor_SetSpriteFlags(Actor_GetById(17), 0);
   }
-  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:
     case 3:
     case 4:
-      GameFlag_SetBit(0x200);
+      GameFlag_Set(0x200);
       break;
     default:
       Field_SetCameraBounds(0, 0x2000000, 0x2000000, 0x4000000);
       break;
     }
   }
-  if (GameFlag_Test(0x200) != 0) {
+  if (GameFlag_Get(0x200) != 0) {
     Field_SetCameraBounds(0, 0x2000000, 0x3700000, 0x4000000);
     FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
     Map_CenterOnFollowedPoint();
@@ -1908,7 +1908,7 @@ void Func_02003720(void) {
 
 void Func_02003880(void) {
   Func_02001c44(18);
-  if (GameFlag_Test(0xa21) != 0) {
+  if (GameFlag_Get(0xa21) != 0) {
     MapGrid_CopyCellAttributes(44, 40, 8, 3, 44, 36);
     Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
@@ -1930,7 +1930,7 @@ void Func_02003880(void) {
     Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
-    if (GameFlag_Test(0x9b2) == 0) {
+    if (GameFlag_Get(0x9b2) == 0) {
       Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
@@ -1953,16 +1953,16 @@ struct ContigoEventWork {
 void Func_020039d4(void) {
   ((struct ContigoEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x209;
   if (gMainRoutineWork.entrance == 4) {
-    if (GameFlag_Test(0xa21) != 0 && GameFlag_Test(0x9d0) == 0)
+    if (GameFlag_Get(0xa21) != 0 && GameFlag_Get(0x9d0) == 0)
       Func_02001d50();
   } else if (gMainRoutineWork.entrance == 21) {
-    GameFlag_ClearBit(0x12f);
+    GameFlag_Clear(0x12f);
   } else {
     Actor_SetModeById(17, 2);
     Actor_SetSpriteFlags(Actor_GetById(17), 0);
-    if (GameFlag_Test(0x9b2) != 0)
+    if (GameFlag_Get(0x9b2) != 0)
       Actor_SetMovementTypeById(11, gData_02004a1c);
-    if (GameFlag_Test(0x9d0) != 0) {
+    if (GameFlag_Get(0x9d0) != 0) {
       Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(26, 0, 0);
@@ -2016,7 +2016,7 @@ void Func_02003a8c(void) {
   Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(9)), 3);
   if (!Event_GetFlag(0x9e5))
     return;
-  GameFlag_ClearBit(0x9e5);
+  GameFlag_Clear(0x9e5);
   if (gMainRoutineWork.entrance == 18) {
     diff = gMainRoutineWork.coins - *(s32 *)gSceneState;
     Event_Start();

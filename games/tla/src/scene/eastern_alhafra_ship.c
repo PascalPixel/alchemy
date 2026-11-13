@@ -58,9 +58,9 @@ void EasternAlhafraShip_FinishMovingCrate(s32 unused, s32 id) {
   s32 z = object->z >> 20;
 
   if (x == 24 && z == 40)
-    GameFlag_SetBit(0x900);
+    GameFlag_Set(0x900);
   if (x == 23 && z == 40)
-    GameFlag_ClearBit(0x900);
+    GameFlag_Clear(0x900);
 }
 
 void EasternAlhafraShip_ShakeDownTheBread(void) {
@@ -69,7 +69,7 @@ void EasternAlhafraShip_ShakeDownTheBread(void) {
   s32 v6;
   struct Actor *object1;
 
-  GameFlag_SetBit(0x901);
+  GameFlag_Set(0x901);
   v5 = &gMainRoutineWork;
   v5 = (v5 + 0x214);
   object0 = Actor_GetById(*(s32 *)((u8 *)v5 + 0));
@@ -128,7 +128,7 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
   Event_Wait(5);
   Sound_Play(132);
   if (Event_GetFlag(0x8ae) == 0) {
-    GameFlag_SetBit(0x8ae);
+    GameFlag_Set(0x8ae);
     Event_Wait(30);
     Actor_ArmCallback(10, 0x3000, 0);
     Event_Wait(30);
@@ -152,21 +152,21 @@ s32 Scene_Initialize(void) {
 
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   if (gMainRoutineWork.entrance == 99) {
-    GameFlag_SetBit(0x8aa);
-    GameFlag_SetBit(FLAG_BRIGGS_CAUGHT);
+    GameFlag_Set(0x8aa);
+    GameFlag_Set(FLAG_BRIGGS_CAUGHT);
     gMainRoutineWork.secondary = 3;
     gMainRoutineWork.entrance = 3;
     EasternAlhafraShip_BriggsIsCaught();
   }
-  if (GameFlag_Test(FLAG_ALHAFRA_MAST_CLEARED)) {
+  if (GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED)) {
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
-  } else if (GameFlag_Test(FLAG_BRIGGS_CAUGHT)) {
+  } else if (GameFlag_Get(FLAG_BRIGGS_CAUGHT)) {
     Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
-    if (!GameFlag_Test(0x8bd)) {
+    if (!GameFlag_Get(0x8bd)) {
       Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
     }
@@ -174,12 +174,12 @@ s32 Scene_Initialize(void) {
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
   }
-  if (GameFlag_Test(0x900))
+  if (GameFlag_Get(0x900))
     Actor_SetPosition(13, 0x1880000, 0x2880000);
   Actor_GetById(13)->priorityFlags |= 32;
   Actor_ShowItemIconById(15, 457);
-  if (!GameFlag_Test(0x901)) {
-    if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+  if (!GameFlag_Get(0x901)) {
+    if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Actor_GetById(14)->priorityFlags |= 128;
       object = Actor_GetById(15);
       object->priorityFlags |= 64;
@@ -188,7 +188,7 @@ s32 Scene_Initialize(void) {
     }
   } else {
     Actor_SetHorizontalPositionWithTerrain(14, 0x880000, 0x1db0000);
-    if (!GameFlag_Test(0x902))
+    if (!GameFlag_Get(0x902))
       Actor_SetPosition(15, 0x780000, 0x1d80000);
     else
       Actor_SetHorizontalPositionWithTerrain(15, 0, 0);

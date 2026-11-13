@@ -335,7 +335,7 @@ void Idejima_WakeSheba(void) {
   Actor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetHorizontalPositionWithTerrain(ACTOR_SHEBA, 0, 0);
   Event_PrepareObjectAndApplyValue(ACTOR_SHEBA, 1);
-  GameFlag_SetBit(FLAG_IDEJIMA_SHEBA_JOINED);
+  GameFlag_Set(FLAG_IDEJIMA_SHEBA_JOINED);
   Import_EventEnd();
 }
 
@@ -528,7 +528,7 @@ void Idejima_CatchUpWithFelix(void) {
     Actor_RunScriptAndWait(ACTOR_SHEBA, (s32)gIdejima_JoinTheLeaderScript);
     Event_PrepareObjectAndApplyValue(ACTOR_SHEBA, 1);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 20);
-    GameFlag_SetBit(FLAG_IDEJIMA_SHEBA_JOINED);
+    GameFlag_Set(FLAG_IDEJIMA_SHEBA_JOINED);
     Import_EventEnd();
   }
 }

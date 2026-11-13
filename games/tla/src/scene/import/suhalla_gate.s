@@ -6,14 +6,14 @@
 	.thumb_func
 wait:
 	overlay_veneer waitFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
 	.global MapGrid_CopyCellPictureIndicesRect
 	.thumb_func
 MapGrid_CopyCellPictureIndicesRect:
@@ -161,11 +161,11 @@ Actor_SetActionCallback:
 	.global Func_02000a90
 	.thumb_func
 Func_02000a90:
-	overlay_veneer Func_080c87b0
+	overlay_veneer Actor_FallOverByIdFar
 	.global Func_02000a98
 	.thumb_func
 Func_02000a98:
-	overlay_veneer Func_080c87b8
+	overlay_veneer Actor_FallOverWithAnimationByIdFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

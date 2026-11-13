@@ -190,7 +190,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
   if (actor->hp == 0)
     return -2;
 
-  if (gDebugMode && GameFlag_Test(365) && (gInput.held & 0x100)) {
+  if (gDebugMode && GameFlag_Get(365) && (gInput.held & 0x100)) {
     s32 enemy = 1;
     s32 index;
     s32 id;
@@ -340,7 +340,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       BattleMessage_ShowAndWaitFar((s32)&MsgItemAlreadyUsed);
       return -1;
     }
-    item = Item_Get(actor->inventory[request->parameter]);
+    item = Item_GetDirectFar(actor->inventory[request->parameter]);
     abilityId = item->actionId;
     if (abilityId == 0 || (actor->inventory[request->parameter] & 0x400)) {
       MessageArgument_PushFar(request->unitId, 1);
@@ -586,7 +586,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       if ((Battle_RandomFar() & 31) == 0)
         plan->targetMultiplier[0] = 0;
     } while (0);
-    if (GameFlag_Test(366))
+    if (GameFlag_Get(366))
       plan->targetMultiplier[0] = 0;
     if (target->hp != 0) {
       if ((Battle_RandomFar() & 31) == 0)

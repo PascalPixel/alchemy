@@ -74,14 +74,14 @@ Import_OamAddSpriteAtDepthClamped:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_GetByte
 	.thumb_func
 GameFlag_GetByte:
@@ -161,7 +161,7 @@ Actor_SetSpriteColorMode:
 	.global Func_02002a78
 	.thumb_func
 Func_02002a78:
-	overlay_veneer Func_08020360
+	overlay_veneer MapGrid_SetCellHeightFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -249,15 +249,15 @@ Camera_WorldToScreen:
 	.global Func_02002b28
 	.thumb_func
 Func_02002b28:
-	overlay_veneer Func_080c8780
+	overlay_veneer HangingVine_PlaceFar
 	.global Func_02002b30
 	.thumb_func
 Func_02002b30:
-	overlay_veneer Func_080c87c0
+	overlay_veneer EffectSprite_InitFar
 	.global Func_02002b38
 	.thumb_func
 Func_02002b38:
-	overlay_veneer Func_080c87c8
+	overlay_veneer EffectSprite_DrawFar
 	.global EffectSprite_DrawAtWorldPosition
 	.thumb_func
 EffectSprite_DrawAtWorldPosition:
@@ -269,11 +269,11 @@ BattleEffect_GetObjectPriority:
 	.global Func_02002b50
 	.thumb_func
 Func_02002b50:
-	overlay_veneer Func_080c8830
+	overlay_veneer MapGrid_GetCellBehaviorFar
 	.global Func_02002b58
 	.thumb_func
 Func_02002b58:
-	overlay_veneer Func_080c8848
+	overlay_veneer MapGrid_SetAttributeBAtFar
 	.global Sound_WaitForJingle
 	.thumb_func
 Sound_WaitForJingle:

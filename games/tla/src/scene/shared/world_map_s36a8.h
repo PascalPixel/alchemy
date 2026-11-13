@@ -93,7 +93,7 @@ void Func_020036a8(void) {
       if (flag == -1)
         shown = 1;
       else if (flag & 0x1000)
-        shown = GameFlag_Test(flag);
+        shown = GameFlag_Get(flag);
       else
         shown = Flag_IsClear(flag);
       if (shown) {
@@ -125,7 +125,7 @@ void Func_020036a8(void) {
           dz = object->z - leader->z;
           if (dz >= 0 ? dx + dz < reach
                       : dx + (leader->z - object->z) < reach) {
-            if (GameFlag_Test(0x104) == 0) {
+            if (GameFlag_Get(0x104) == 0) {
               if (gMainRoutineWork.renderMode == 9)
                 work->unk166 = 0x208b;
               else

@@ -36,13 +36,13 @@ struct ResourceObjectWork {
   void *children[4];
 };
 
-s32 Func_080ad318(void);
+s32 Party_GetPpRatioFar(void);
 extern char ResourceId_Map000;
 extern const u8 Transform_UpdateVerticesCode[];
 s32 MapGrid_IsClimbableCellFar(s32 x, s32 z, s32 kind);
 extern const u16 gMaps[][6];
-s32 Func_080c8710(struct Actor *object);
-s32 Func_080c8700(struct Actor *object);
+s32 Actor_GetCellIndexFar(struct Actor *object);
+s32 FlagBlock_PlaceAllMarkingEdgesFar(struct Actor *object);
 s32 Actor_CheckBlockedFar(s32 arg);
 void SpriteAnimation_Reset(struct AnimationEntry *work);
 

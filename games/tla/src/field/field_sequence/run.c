@@ -71,7 +71,7 @@ s32 FieldSequence_Run(void) {
 
   work = HeapSlot_AllocEwram(108, 0xd50);
   Iwram_ClearWordsEntry(work, 0xd50);
-  GameFlag_ClearBit(259);
+  GameFlag_Clear(259);
   gMainRoutineWork.primary = gMainRoutineWork.scene;
   gMainRoutineWork.secondary = gMainRoutineWork.entrance;
   gMainRoutineWork.pair1ee[0] = -1;
@@ -92,7 +92,7 @@ s32 FieldSequence_Run(void) {
     Encounter_SelectMapZones(1);
   }
   work->eventMode = mode;
-  if (!GameFlag_Test(265))
+  if (!GameFlag_Get(265))
     gData_02001000[0x194c] = 0;
   else
     TileCopies_Restore();
@@ -103,7 +103,7 @@ s32 FieldSequence_Run(void) {
   BattleMap_ApplySceneEntranceView();
   Actor_ResetForLeader(OVERLAY_CALL(7));
   Field_PlaceTreasureSpots();
-  if (GameFlag_Test(265))
+  if (GameFlag_Get(265))
     Actor_Restore();
   if (gMainRoutineWork.pendingDjinnEvent != 0)
     Djinn_RestoreActorAfterBattle();
@@ -116,7 +116,7 @@ s32 FieldSequence_Run(void) {
     OVERLAY_CALL(13);
     Map_CenterOnFollowedPointFar();
   }
-  GameFlag_ClearBit(287);
+  GameFlag_Clear(287);
   BattleEffect_InitializeBuffers();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   work->transition = 0x100;
@@ -126,10 +126,10 @@ s32 FieldSequence_Run(void) {
   work->walkingDistance = 0;
   if (gMainRoutineWork.sceneVariant == 2) {
     work->walkingScale = 0;
-    GameFlag_SetBit(324);
+    GameFlag_Set(324);
   }
   work->previousCell = gMapCellBuffer;
-  if (!GameFlag_Test(265)) {
+  if (!GameFlag_Get(265)) {
     Scene_SetRestartPoint();
     HAZARD.limit = 16;
     HAZARD.mode = 0;
@@ -158,7 +158,7 @@ s32 FieldSequence_Run(void) {
     work->warp = 0;
     goto done;
   }
-  GameFlag_ClearBit(265);
+  GameFlag_Clear(265);
   if (Field_CountRequests() == 0) {
     value = work->transitionActive;
     if (value == 0) {
@@ -208,8 +208,8 @@ s32 FieldSequence_Run(void) {
       ARRIVAL.state = 0;
       Teleport_PlayWhirl();
     }
-    if (GameFlag_Test(303)) {
-      GameFlag_ClearBit(303);
+    if (GameFlag_Get(303)) {
+      GameFlag_Clear(303);
       AreaNameWindow_ShowFar(gMainRoutineWork.scene);
     }
     if (gMainRoutineWork.pendingDjinnEvent != 0) {
@@ -244,7 +244,7 @@ s32 FieldSequence_Run(void) {
   entrance = &gMainRoutineWork.entrance;
   turn = &gMainRoutineWork.turn;
   for (;;) {
-    GameFlag_SetBit(260);
+    GameFlag_Set(260);
     leader = WorldMap_Unfreeze();
     Actor_StartIdleFar(leader);
     party->x = leader->x;
@@ -393,11 +393,11 @@ s32 FieldSequence_Run(void) {
         Leader_StopMoving();
         Sound_PlayFar(111);
         WorldMap_Freeze();
-        GameFlag_SetBit(262);
+        GameFlag_Set(262);
         if (gDebugMode && (*(volatile u32 *)&gInput.held & 2) != 0 &&
             ((*(volatile u32 *)&gInput.held & 4) != 0)) {
           DebugFlagEditor_RunFar();
-        } else if (GameFlag_Test(263)) {
+        } else if (GameFlag_Get(263)) {
           work->raisedEvent = 250;
         } else {
           work->effectTimerRunning = 0;
@@ -406,7 +406,7 @@ s32 FieldSequence_Run(void) {
           Field_UpdateHoverReady();
         }
         WorldMap_ReloadPendingAreaGraphics();
-        GameFlag_ClearBit(262);
+        GameFlag_Clear(262);
         GameFlag_RefreshLureCapFar();
         work->menu = 0;
       } else if (work->talk != 0) {
@@ -440,18 +440,18 @@ s32 FieldSequence_Run(void) {
         Sound_PlayFar(111);
         Leader_StopMoving();
         WorldMap_Freeze();
-        GameFlag_SetBit(262);
+        GameFlag_Set(262);
         if (*(volatile u8 *)&gDebugMode && (gInput.held & 2)) {
           DebugSceneSelect_RunFar();
         } else if (*(volatile u8 *)&gDebugMode && (gInput.held & 0x200)) {
           PaletteEditor_Run();
-        } else if (GameFlag_Test(263)) {
+        } else if (GameFlag_Get(263)) {
           work->raisedEvent = 250;
         } else {
           Event_ResolveAllPendingActions();
           AreaNameWindow_HideFar();
           party->returnCue = Sound_GetCurrentBgmFar();
-          if (!GameFlag_Test(382)) {
+          if (!GameFlag_Get(382)) {
             u8 *objects = (u8 *)Ram_HeapSlots->objectSystem;
             u8 *owner = gResourceBlockOwners;
             s32 freeBlocks = 0;
@@ -472,18 +472,18 @@ s32 FieldSequence_Run(void) {
           }
         }
         WorldMap_ReloadPendingAreaGraphics();
-        GameFlag_ClearBit(262);
+        GameFlag_Clear(262);
         work->start = 0;
       }
     }
-    GameFlag_ClearBit(260);
+    GameFlag_Clear(260);
     if (WorldMap_Unfreeze() != NULL)
-      Func_080200b0();
+      Actor_StartRenderModeScriptFar();
     pending = &gMainRoutineWork.pendingThird;
     do {
       wait(1);
       leader = WorldMap_Unfreeze();
-      if (gDebugMode == 0 || !GameFlag_Test(355)) {
+      if (gDebugMode == 0 || !GameFlag_Get(355)) {
         // unk66 read signed (ldrsh), as its other readers read it; as
         // leader->unk66 == 0, 39 of 1300 instructions differ in tla-en.
         if (*pending == 0 ||
@@ -589,7 +589,7 @@ s32 Scene_ApplyEntrance(s32 findEntrance) {
   if (findEntrance) {
     while (entry->entrance != -1) {
       if (entry->entrance == entrance &&
-          (entry->requiredFlag == -1 || GameFlag_Test(entry->requiredFlag))) {
+          (entry->requiredFlag == -1 || GameFlag_Get(entry->requiredFlag))) {
         found = 1;
         break;
       }
@@ -599,7 +599,7 @@ s32 Scene_ApplyEntrance(s32 findEntrance) {
       return 0;
   }
 
-  if (!GameFlag_Test(0x109)) {
+  if (!GameFlag_Get(0x109)) {
     gMainRoutineWork.x = entry->x << 16;
     gMainRoutineWork.y = entry->y << 16;
     gMainRoutineWork.z = entry->z << 16;
@@ -673,7 +673,7 @@ s32 Field_PlaceAtEntrance(void) {
       height = MapGrid_GetTerrainHeightFar(0, xFixed, zFixed) >> 16;
       flags = *cursor;
       base = (s32)gData_0202e000;
-      if (!GameFlag_Test(0x109)) {
+      if (!GameFlag_Get(0x109)) {
         gMainRoutineWork.x = xFixed;
         gMainRoutineWork.z = zFixed;
         *angle = (flags & 15) << 12;

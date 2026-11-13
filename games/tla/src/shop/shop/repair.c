@@ -8,7 +8,7 @@
 /// Returns what a repair costs: a quarter of the price for a broken item,
 /// nothing for one that is not broken.
 s32 Shop_RepairPrice(s32 item) {
-  s32 price = (u16)Item_Get(item)->price >> 2;
+  s32 price = (u16)Item_GetDirectFar(item)->price >> 2;
 
   if ((item & 0x400) == 0)
     price = 0;
@@ -26,7 +26,7 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   struct BattleUnit *unit = Unit_Get(unitId);
   s32 itemId = unit->inventory[slot] & 0x1ff;
-  struct ItemDefinition *item = Item_Get(itemId);
+  struct ItemDefinition *item = Item_GetDirectFar(itemId);
   s32 equipped = Inventory_FindEquippedFar(unitId, item->type);
   u32 price;
   s32 message;

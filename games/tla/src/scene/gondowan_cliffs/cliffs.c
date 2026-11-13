@@ -155,7 +155,7 @@ void GondowanCliffs_FreezeSecondPuddle(void) {
 }
 
 void GondowanCliffs_BlowAwayFoliage(void) {
-  GameFlag_SetBit(FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN);
+  GameFlag_Set(FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN);
 }
 
 void GondowanCliffs_ScoopUpGeyser(s32 unused, s32 cell) {
@@ -329,7 +329,7 @@ s32 Scene_Initialize(void) {
     GondowanCliffs_SetUpPass();
     return 0;
   }
-  if (GameFlag_Test(0x8f3) && !GameFlag_Test(0x8ef)) {
+  if (GameFlag_Get(0x8f3) && !GameFlag_Get(0x8ef)) {
     GondowanCliffs_TurnBackToHelpPiers();
     return 0;
   }
@@ -338,21 +338,21 @@ s32 Scene_Initialize(void) {
     goto done;
   Func_020012f4();
   Func_0200130c(0, 0x200, 10, 11);
-  if (GameFlag_Test(0x8ab)) {
+  if (GameFlag_Get(0x8ab)) {
     Func_020012fc();
     Func_02001304(0, 8, 9);
   }
-  if (GameFlag_Test(FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN))
+  if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN))
     Actor_SetPosition(14, 0, 0);
   else
     Actor_GetById(14)->scaleY = 0x14000;
-  if (GameFlag_Test(FLAG_FIRST_PUDDLE_FROZEN))
+  if (GameFlag_Get(FLAG_FIRST_PUDDLE_FROZEN))
     MapGrid_CopyCellAttributes(79, 28, 1, 1, 81, 28);
-  if (GameFlag_Test(FLAG_SECOND_PUDDLE_FROZEN))
+  if (GameFlag_Get(FLAG_SECOND_PUDDLE_FROZEN))
     MapGrid_CopyCellAttributes(115, 35, 1, 1, 117, 35);
   Geysers_Start(0, 240);
   Geyser_Add(0, 17, 0, 0, 64);
-  if (GameFlag_Test(FLAG_GONDOWAN_CLIFFS_GEYSER_DUG)) {
+  if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_GEYSER_DUG)) {
     actor = Actor_GetById(17);
     MapGrid_CopyCellsLayered(124, 1, 1, 1, 119, 43);
     Actor_SetPosition(17, PIXELS(1912), PIXELS(728));
@@ -361,7 +361,7 @@ s32 Scene_Initialize(void) {
     actor->terrainHeight = height;
   }
   Actor_SetAnimation(16, 4);
-  if (GameFlag_Test(FLAG_GONDOWAN_CLIFFS_PILLAR_IN_WATER)) {
+  if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_PILLAR_IN_WATER)) {
     MapGrid_CopyCellAttributes(74, 31, 1, 1, 74, 33);
     Actor_SetPosition(15, PIXELS(1193), PIXELS(530));
     Actor_GetById(15)->priorityFlags |= 2;
@@ -436,7 +436,7 @@ void Geysers_Update(void) {
         entry->phase = 0;
       }
     }
-    if (!GameFlag_Test(0x104)) {
+    if (!GameFlag_Get(0x104)) {
       if (++entry->timer >= entry->period)
         entry->timer = 0;
     }

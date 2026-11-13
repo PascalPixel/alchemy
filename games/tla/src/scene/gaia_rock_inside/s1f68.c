@@ -201,7 +201,7 @@ void Func_0200225c(void) {
   Actor_SetModeById(8, 3);
   Event_Wait(40);
   Sound_Play(191);
-  if (!GameFlag_Test(0x9bd)) {
+  if (!GameFlag_Get(0x9bd)) {
     for (i = 19; i >= 0; i--) {
       object->velocityY = Random16Far();
       wait(1);
@@ -234,13 +234,13 @@ void Func_0200225c(void) {
     partner->velocityY = PIXELS(6);
     Actor_WaitForMoveById(12);
     Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
-    if (!GameFlag_Test(FLAG_SERPENT_SLAIN)) {
-      GameFlag_SetBit(0x308);
+    if (!GameFlag_Get(FLAG_SERPENT_SLAIN)) {
+      GameFlag_Set(0x308);
       Event_Wait(30);
       ObjectTable_Snapshot();
       Import_EventSetExitRequest(20);
     } else {
-      GameFlag_SetBit(0x9bd);
+      GameFlag_Set(0x9bd);
       Event_End();
     }
   } else {
@@ -289,7 +289,7 @@ void Func_020024b8(void) {
   Actor_SetModeById(9, 3);
   Event_Wait(40);
   Sound_Play(191);
-  if (!GameFlag_Test(0x9be)) {
+  if (!GameFlag_Get(0x9be)) {
     for (i = 19; i >= 0; i--) {
       object->velocityY = Random16Far();
       wait(1);
@@ -322,13 +322,13 @@ void Func_020024b8(void) {
     partner->velocityY = PIXELS(6);
     Actor_WaitForMoveById(12);
     Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
-    if (!GameFlag_Test(FLAG_SERPENT_SLAIN)) {
-      GameFlag_SetBit(0x309);
+    if (!GameFlag_Get(FLAG_SERPENT_SLAIN)) {
+      GameFlag_Set(0x309);
       Event_Wait(30);
       ObjectTable_Snapshot();
       Import_EventSetExitRequest(20);
     } else {
-      GameFlag_SetBit(0x9be);
+      GameFlag_Set(0x9be);
       Event_End();
     }
   } else {
@@ -377,7 +377,7 @@ void Func_02002718(void) {
   Actor_SetModeById(8, 3);
   Event_Wait(40);
   Sound_Play(191);
-  if (!GameFlag_Test(0x9bc)) {
+  if (!GameFlag_Get(0x9bc)) {
     for (i = 19; i >= 0; i--) {
       object->velocityY = Random16Far();
       wait(1);
@@ -410,13 +410,13 @@ void Func_02002718(void) {
     partner->velocityY = PIXELS(6);
     Actor_WaitForMoveById(14);
     Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
-    if (!GameFlag_Test(FLAG_SERPENT_SLAIN)) {
-      GameFlag_SetBit(0x307);
+    if (!GameFlag_Get(FLAG_SERPENT_SLAIN)) {
+      GameFlag_Set(0x307);
       Event_Wait(30);
       ObjectTable_Snapshot();
       Import_EventSetExitRequest(20);
     } else {
-      GameFlag_SetBit(0x9bc);
+      GameFlag_Set(0x9bc);
       Event_End();
     }
   } else {

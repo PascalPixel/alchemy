@@ -47,7 +47,7 @@ s32 Battle_CollectPartyCommandsFar(struct BattleActionRecord *entries,
                                    void *buffer, s32 mode);
 void AreaNameWindow_ShowFar(s32 scene);
 void PauseMenu_RunFar(s32 mode);
-void Func_08038340(s32 value);
+void Summon_ShowLearnedMessageFar(s32 value);
 
 void Message_ResetIdleFar(void);
 s32 YesNoMenu_RunAtFar(s32 x, s32 y, s32 selection);

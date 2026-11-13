@@ -47,7 +47,7 @@ s32 Field_CountRequests(void) {
 void Field_UpdateHoverReady(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 
-  if (GameFlag_Test(0x8df) && Party_FindOwnerWithActionFar(153) != -1)
+  if (GameFlag_Get(0x8df) && Party_FindOwnerWithActionFar(153) != -1)
     work[0xd39] = 1;
   else
     work[0xd39] = 0;
@@ -222,7 +222,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
       leader != NULL && leader->targetX != (s32)0x80000000) {
     zone = 0;
     speed = leader->speedLimit;
-    if (GameFlag_Test(0x167))
+    if (GameFlag_Get(0x167))
       speed <<= 1;
     if (*((s8 *)work + 0x18a) == 3) {
       work->encounterEnemyGroup =

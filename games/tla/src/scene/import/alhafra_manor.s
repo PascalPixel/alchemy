@@ -6,18 +6,18 @@
 	.thumb_func
 wait:
 	overlay_veneer waitFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -177,7 +177,7 @@ Party_GetLeaderActor:
 	.global Func_020015e8
 	.thumb_func
 Func_020015e8:
-	overlay_veneer Func_080c8878
+	overlay_veneer Actor_TakeLeaderLayerFar
 	.global Func_020015f0
 	.thumb_func
 Func_020015f0:

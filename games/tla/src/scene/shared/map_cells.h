@@ -13,7 +13,7 @@
     struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;        \
                                                                                \
     cell += call1(object);                                                     \
-    if (GameFlag_Test(flag)) {                                                 \
+    if (GameFlag_Get(flag)) {                                                 \
       cell->collisionCode = 0;                                                 \
       object->priorityFlags |= 2;                                              \
       switch (kind) {                                                          \
@@ -73,7 +73,7 @@
     {                                                                          \
       flag = table[1];                                                         \
       Event_Start();                                                           \
-      if (!GameFlag_Test(flag)) {                                              \
+      if (!GameFlag_Get(flag)) {                                              \
         Sound_Play(125);                                                       \
         Actor_SetSpriteColor(Actor_GetById(id), 7);                            \
         wait(2);                                                               \
@@ -84,10 +84,10 @@
         wait(4);                                                               \
         Actor_SetSpriteColor(Actor_GetById(id), 0);                            \
         call4(0);                                                              \
-        GameFlag_SetBit(flag);                                                 \
+        GameFlag_Set(flag);                                                 \
       } else {                                                                 \
         second = flag + 1;                                                     \
-        if (!GameFlag_Test(second)) {                                          \
+        if (!GameFlag_Get(second)) {                                          \
           leader->motionFlags = 0;                                             \
           Sound_Play(185);                                                     \
           MapGrid_SetShake(0x10000, 0x40000, 0x10000);                         \
@@ -108,7 +108,7 @@
           Sound_Play(188);                                                     \
           call6();                                                             \
           wait(20);                                                            \
-          GameFlag_SetBit(second);                                             \
+          GameFlag_Set(second);                                             \
         }                                                                      \
       }                                                                        \
       Event_End();                                                             \
@@ -401,7 +401,7 @@
         if (count < 8)                                                         \
           object->scaleY -= 0x1f00;                                            \
         if (mode == 1) {                                                       \
-          GameFlag_SetBit(flag);                                               \
+          GameFlag_Set(flag);                                               \
           call1(id, a, flag, object->terrainId);                               \
           object->scaleY = 0x10000;                                            \
         }                                                                      \

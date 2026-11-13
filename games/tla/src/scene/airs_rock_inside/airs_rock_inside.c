@@ -138,7 +138,7 @@ void Func_020006cc(struct Actor *object) {
   s32 cell = Func_02000690(2, x, z);
   s32 height =
       Map_GetTerrainHeight(object->terrainId, object->x, object->z) >> 19;
-  s32 set = GameFlag_Test(object->timer);
+  s32 set = GameFlag_Get(object->timer);
   u8 *flags = &object->priorityFlags;
   s32 px = x << 20;
   s32 pz = z << 20;
@@ -211,8 +211,8 @@ void Func_020007b4(s32 mode, s32 step) {
   if (mode == 1) {
     first->scaleY = 0x10000;
     second->y = second->terrainHeight;
-    GameFlag_SetBit(first->timer);
-    GameFlag_ClearBit(second->timer);
+    GameFlag_Set(first->timer);
+    GameFlag_Clear(second->timer);
     Import_ActorSelectAnimation(
         first, ((struct FieldSprite *)first->sprite)->frame + 1);
     Import_ActorSelectAnimation(
@@ -242,7 +242,7 @@ void Func_02000908(u16 *list) {
     flag = ((s16 *)entry)[2];
     Actor_SetSpriteFlags(object, 0);
     {
-      s32 choice = GameFlag_Test((u16)flag);
+      s32 choice = GameFlag_Get((u16)flag);
 
       // The two shifts stay statements: as (u16)base, base loses its rank.
       base <<= 16;
@@ -282,7 +282,7 @@ void Func_02000988(void) {
   motion = &leader->motionFlags;
   *motion = 4;
   Actor_SetSpriteFlags(leader, 0);
-  GameFlag_SetBit(0x250);
+  GameFlag_Set(0x250);
   Sound_Play(137);
   riding = (u8 *)ride + 99;
   rise = 0;
@@ -408,7 +408,7 @@ void Func_02000988(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
-  GameFlag_ClearBit(0x250);
+  GameFlag_Clear(0x250);
   wait(10);
   Event_End();
 }
@@ -477,7 +477,7 @@ void Func_02000d48(struct Actor *shot) {
           leader->y >> 20 == shot->y >> 20)
         near = 1;
     }
-    if (near && !GameFlag_Test(0x104)) {
+    if (near && !GameFlag_Get(0x104)) {
       leader->facing = shot->facing;
       leader->watchedObject = shot;
       leader->priorityFlags &= ~1;
@@ -519,7 +519,7 @@ void Func_02000f34(struct Actor *object) {
       *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0)
     return;
   if (object->timer == 240) {
-    if (!GameFlag_Test(0x250))
+    if (!GameFlag_Get(0x250))
       Func_02005f8c(object, 202);
     if (object->facing == 0xc000) {
       position.x = object->x;
@@ -554,7 +554,7 @@ void Func_02000f34(struct Actor *object) {
 }
 
 void Func_02001084(struct Actor *object, s16 timer, u8 value) {
-  if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+  if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     BYTE_AT(object, 90) = 0;
     object->timer = timer;
     BYTE_AT(object, 98) = value;
@@ -607,7 +607,7 @@ void Func_020010b4(struct Actor *shot) {
           leader->y >> 20 == shot->y >> 20)
         near = 1;
     }
-    if (near && !GameFlag_Test(0x104)) {
+    if (near && !GameFlag_Get(0x104)) {
       leader->facing = shot->facing;
       leader->watchedObject = shot;
       leader->priorityFlags &= ~1;
@@ -647,7 +647,7 @@ void Func_02001290(struct Actor *object) {
     Actor_GetById(13 + i++);
   if (object->timer == 240) {
     shot = 0;
-    if (!GameFlag_Test(0x250))
+    if (!GameFlag_Get(0x250))
       Func_02005f8c(object, 202);
     if (object->facing == 0xc000) {
       position.x = object->x;
@@ -689,7 +689,7 @@ void Func_02001290(struct Actor *object) {
 }
 
 void Func_02001420(struct Actor *object, s16 timer, u8 value) {
-  if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+  if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     BYTE_AT(object, 90) = 0;
     object->timer = timer;
     BYTE_AT(object, 98) = value;
@@ -803,7 +803,7 @@ void Func_02001690(void) {
   if (scene == (s32)&SceneId_Ov664Room3) {
     s32 x;
 
-    if ((frame & 1) && !GameFlag_Test(0x89b))
+    if ((frame & 1) && !GameFlag_Get(0x89b))
       x = 0x1780000;
     else
       x = 0x1180000;
@@ -814,7 +814,7 @@ void Func_02001690(void) {
         if (Actor_GetById(gMainRoutineWork.currentOwner)->x >> 19 <= 44)
         dripA8:
           Func_0200160c(0xa80000, 0, 0x25b0000);
-        else if (!GameFlag_Test(0x201))
+        else if (!GameFlag_Get(0x201))
           Func_0200160c(0x1f80000, 0, 0x1c80000);
         else
           goto drip228;
@@ -827,11 +827,11 @@ void Func_02001690(void) {
         if (Actor_GetById(gMainRoutineWork.currentOwner)->x >> 19 > 49)
         drip228:
           Func_0200160c(0x2280000, 0, 0x1c80000);
-        else if (GameFlag_Test(0x200))
+        else if (GameFlag_Get(0x200))
           goto dripA8;
         else
           Func_0200160c(0x1080000, 0, 0x2580000);
-      } else if (GameFlag_Test(0x202)) {
+      } else if (GameFlag_Get(0x202)) {
         goto drip268;
       } else {
         Func_0200160c(0x2880000, -0x200000, 0x880000);
@@ -1029,7 +1029,7 @@ void Func_02001828(void) {
     if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room6) {
       object->terrainHeight = 0xffe00000;
       Call6(Map_CopyCellAttributeRect, 19, 16, 1, 1, 19, 18);
-      GameFlag_SetBit(0x89f);
+      GameFlag_Set(0x89f);
     } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room8) {
       Call6(Map_CopyCellAttributeRect, 19, 38, 1, 1, 20, 38);
       OverlayObject_WaitUntilIdle(object);
@@ -1048,7 +1048,7 @@ void Func_02001828(void) {
       object->terrainHeight = 0;
       object->y = 0;
       Func_02005df4(0x780000, 0x1980000, 0, 4);
-      if (GameFlag_Test(0x899))
+      if (GameFlag_Get(0x899))
         Func_02001084(object, 60, 0);
     }
   }
@@ -1085,7 +1085,7 @@ void Func_02001828(void) {
       }
       if ((gFrameCount & 3) == 0) {
         if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room4) {
-          GameFlag_SetBit(0x300);
+          GameFlag_Set(0x300);
           cell.x = (gust->x >> 20) + 64;
           cell.z = gust->z >> 20;
           MapGrid_CopyCellPictureIndicesRect(90, 25, cell.x + 1, cell.z, 1, 3);
@@ -1096,19 +1096,19 @@ void Func_02001828(void) {
           cell.x = gust->x >> 20;
           cell.z = ((gust->z - gust->y) >> 20) + 64;
           if (hit == 0) {
-            GameFlag_SetBit(772);
+            GameFlag_Set(772);
             MapGrid_CopyCellPictureIndicesRect(39, 82, cell.x, cell.z, 1, 1);
             Map_CopyCellAttributeRect(39, 82, 1, 1, 38, 82);
             Call6(Map_CopyCellAttributeRect, 38, 19, 1, 1, 38, 18);
           } else {
-            GameFlag_SetBit(773);
+            GameFlag_Set(773);
             Call6(MapGrid_CopyCellPictureIndicesRect, 39, 82, cell.x, cell.z, 1,
                   1);
             Call6(Map_CopyCellAttributeRect, 38, 98, 1, 1, 38, 99);
             Call6(Map_CopyCellAttributeRect, 38, 35, 1, 1, 38, 37);
           }
         } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room9) {
-          GameFlag_SetBit(774);
+          GameFlag_Set(774);
           cell.x = gust->x >> 20;
           Call6(MapGrid_CopyCellPictureIndicesRect, 15, 80, cell.x, 77, 1, 3);
           Call6(Map_CopyCellAttributeRect, 15, 80, 1, 1, 15, 79);
@@ -1143,7 +1143,7 @@ shrink:
       Call6(Map_CopyCellAttributeRect, 46, 20, 5, 5, 29, 21);
       Call6(Map_CopyCellAttributeRect, 0x20, 89, 1, 1, 31, 89);
       Call6(Map_CopyCellAttributeRect, 50, 86, 1, 1, 33, 87);
-      GameFlag_SetBit(769);
+      GameFlag_Set(769);
     } else if (hit == 6) {
       SHAKE();
       Call6(MapGrid_CopyCellPictureIndicesRect, 74, 0x40, 29, 85, 5, 7);
@@ -1153,7 +1153,7 @@ shrink:
       Call6(Map_CopyCellAttributeRect, 52, 20, 5, 5, 29, 21);
       Call6(Map_CopyCellAttributeRect, 33, 88, 1, 1, 33, 87);
       Call6(Map_CopyCellAttributeRect, 0x30, 88, 1, 1, 31, 89);
-      GameFlag_ClearBit(769);
+      GameFlag_Clear(769);
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room6) {
     if (hit == 5) {
@@ -1182,7 +1182,7 @@ shrink:
         Call6(Map_CopyCellAttributeRect, 49, 15, 5, 5, 0x20, 15);
         Call6(Map_CopyCellAttributeRect, 33, 82, 1, 1, 34, 82);
         Call6(Map_CopyCellAttributeRect, 52, 81, 1, 1, 36, 81);
-        GameFlag_ClearBit(770);
+        GameFlag_Clear(770);
       }
     } else if (hit == 6) {
       SHAKE();
@@ -1207,7 +1207,7 @@ shrink:
         Call6(Map_CopyCellAttributeRect, 49, 21, 5, 5, 0x20, 15);
         Call6(Map_CopyCellAttributeRect, 35, 81, 1, 1, 36, 81);
         Call6(Map_CopyCellAttributeRect, 50, 82, 1, 1, 34, 82);
-        GameFlag_SetBit(770);
+        GameFlag_Set(770);
       }
     }
   }

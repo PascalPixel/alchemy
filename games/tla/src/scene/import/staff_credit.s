@@ -86,18 +86,18 @@ Resource_ReservedNoOp:
 	.thumb_func
 IoWriteQueue_Store16:
 	overlay_veneer IoWriteQueue_Store16Far
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Animation_ApplyChildArgument
 	.thumb_func
 Animation_ApplyChildArgument:
@@ -141,15 +141,15 @@ Actor_SetSpriteColorMode:
 	.global Func_02002004
 	.thumb_func
 Func_02002004:
-	overlay_veneer Func_08020350
+	overlay_veneer WorldMap_GetBlockPlaceFar
 	.global Func_0200200c
 	.thumb_func
 Func_0200200c:
-	overlay_veneer Func_080ad310
+	overlay_veneer Party_DrainPpFar
 	.global Func_02002014
 	.thumb_func
 Func_02002014:
-	overlay_veneer Func_080ad318
+	overlay_veneer Party_GetPpRatioFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -201,7 +201,7 @@ Func_02002074:
 	.global Func_0200207c
 	.thumb_func
 Func_0200207c:
-	overlay_veneer Func_080c8438
+	overlay_veneer WorldMap_ReloadPendingAreaGraphicsFar
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:

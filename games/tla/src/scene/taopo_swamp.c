@@ -224,7 +224,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 /// Whirlwind on one of the bushes 8 to 12: its flag (0x8d8 plus its id) keeps
 /// it gone.
-void TaopoSwamp_BlowAwayBush(s32 a, s32 b) { GameFlag_SetBit(b + 0x8d8); }
+void TaopoSwamp_BlowAwayBush(s32 a, s32 b) { GameFlag_Set(b + 0x8d8); }
 
 /// Growth on the sprout, actor 13: the vine's cells become climbable.
 void TaopoSwamp_GrowVine(void) {

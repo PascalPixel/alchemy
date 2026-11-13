@@ -6,14 +6,14 @@
 	.thumb_func
 __divsi3:
 	overlay_veneer IwramSignedDivide
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
 	.global MapGrid_PlayMapEdit
 	.thumb_func
 MapGrid_PlayMapEdit:

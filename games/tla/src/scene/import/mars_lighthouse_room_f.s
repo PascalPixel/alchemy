@@ -70,18 +70,18 @@ Import_OamAddSpriteAtDepthClamped:
 	.thumb_func
 Unit_Get:
 	overlay_veneer Unit_GetFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global GameFlag_GetByte
 	.thumb_func
 GameFlag_GetByte:
@@ -141,7 +141,7 @@ MapGrid_GetCellBehaviorAt:
 	.global Func_020054d8
 	.thumb_func
 Func_020054d8:
-	overlay_veneer Func_080201d8
+	overlay_veneer MapGrid_GetCellAttributeLowNibbleOrBumpFar
 	.global Map_CopyCellsRect
 	.thumb_func
 Map_CopyCellsRect:
@@ -185,7 +185,7 @@ Actor_SetSpritePriorityDirect:
 	.global Func_02005530
 	.thumb_func
 Func_02005530:
-	overlay_veneer Func_080202f8
+	overlay_veneer Actor_HasArrivedFar
 	.global Import_FieldCheckSpheresOverlap
 	.thumb_func
 Import_FieldCheckSpheresOverlap:
@@ -193,7 +193,7 @@ Import_FieldCheckSpheresOverlap:
 	.global Func_02005540
 	.thumb_func
 Func_02005540:
-	overlay_veneer Func_08020360
+	overlay_veneer MapGrid_SetCellHeightFar
 	.global TileMap_ConvertBuffer
 	.thumb_func
 TileMap_ConvertBuffer:
@@ -253,7 +253,7 @@ Actor_SetSpriteColor:
 	.global Func_020055b8
 	.thumb_func
 Func_020055b8:
-	overlay_veneer Func_080c8208
+	overlay_veneer Actor_DisableByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
@@ -317,7 +317,7 @@ ObjectTable_Get:
 	.global Func_02005638
 	.thumb_func
 Func_02005638:
-	overlay_veneer Func_080c8480
+	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolveAllPendingActions
 	.thumb_func
 Event_ResolveAllPendingActions:
@@ -345,19 +345,19 @@ Event_NoOp:
 	.global Func_02005670
 	.thumb_func
 Func_02005670:
-	overlay_veneer Func_080c86d0
+	overlay_veneer Tightrope_InitializeFar
 	.global Func_02005678
 	.thumb_func
 Func_02005678:
-	overlay_veneer Func_080c86d8
+	overlay_veneer Tightrope_PlaceFar
 	.global Func_02005680
 	.thumb_func
 Func_02005680:
-	overlay_veneer Func_080c8738
+	overlay_veneer Actor_FindAtCellFar
 	.global Func_02005688
 	.thumb_func
 Func_02005688:
-	overlay_veneer Func_080c8748
+	overlay_veneer Leader_PushObjectAheadFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:
@@ -369,19 +369,19 @@ BattleEffect_GetObjectPriority:
 	.global Func_020056a0
 	.thumb_func
 Func_020056a0:
-	overlay_veneer Func_080c8830
+	overlay_veneer MapGrid_GetCellBehaviorFar
 	.global Func_020056a8
 	.thumb_func
 Func_020056a8:
-	overlay_veneer Func_080c8848
+	overlay_veneer MapGrid_SetAttributeBAtFar
 	.global Func_020056b0
 	.thumb_func
 Func_020056b0:
-	overlay_veneer Func_080c8880
+	overlay_veneer Actor_DepartInRingFar
 	.global Func_020056b8
 	.thumb_func
 Func_020056b8:
-	overlay_veneer Func_080c8888
+	overlay_veneer Actor_ArriveInRingFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

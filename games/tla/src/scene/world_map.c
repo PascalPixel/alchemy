@@ -294,7 +294,7 @@ void WorldMap_BoardShip(void) {
   struct Actor *ship;
   s32 kind, dx, dz, distance;
 
-  if (GameFlag_Test(0x8de) == 0)
+  if (GameFlag_Get(0x8de) == 0)
     return;
   kind = Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -621,7 +621,7 @@ extern u8 gData_0200632c[];
 s32 Scene_Initialize(void) {
   struct EventWork *work;
 
-  if (GameFlag_Test(0x109) == 0 && GameFlag_Test(0x8de) != 0 &&
+  if (GameFlag_Get(0x109) == 0 && GameFlag_Get(0x8de) != 0 &&
       gMainRoutineWork.ownerOverride == 0 && gMainRoutineWork.savedX != 0) {
     struct Actor *ship = Actor_GetById(8);
 
@@ -633,31 +633,31 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.ownerOverride != 0)
     FieldEffect_ScheduleRatioTransition(0x10000, 1);
-  GameFlag_SetBit(0x144);
+  GameFlag_Set(0x144);
   work = Ram_HeapSlots->eventWork;
   work->screenEffect = 0x400;
   work->delay = 16;
   wait(1);
   FieldCamera_SetSpeed(0x80000, 0x10000);
-  GameFlag_ClearBit(0x12f);
+  GameFlag_Clear(0x12f);
   Func_02003960();
-  if (GameFlag_Test(0x90f))
+  if (GameFlag_Get(0x90f))
     Field_SetWorldMapWindowCellTile(0, 240, 336, 288);
-  if (GameFlag_Test(0xa21)) {
+  if (GameFlag_Get(0xa21)) {
     Field_SetWorldMapWindowCellTile(0, 224, 208, 256);
     Field_SetWorldMapWindowCellTile(16, 224, 224, 256);
   }
-  if (GameFlag_Test(0xa77))
+  if (GameFlag_Get(0xa77))
     Func_02000d4c();
   switch (gMainRoutineWork.entrance) {
   case 39:
-    if (GameFlag_Test(0x927))
-      GameFlag_SetBit(0x9ab);
+    if (GameFlag_Get(0x927))
+      GameFlag_Set(0x9ab);
     break;
   case 9:
   case 73:
   case 74:
-    if (GameFlag_Test(0xa76))
+    if (GameFlag_Get(0xa76))
       WorldMap_FightBanditAndThieves(gMainRoutineWork.entrance);
     break;
   case 77:
@@ -667,8 +667,8 @@ s32 Scene_Initialize(void) {
     Func_02003490();
     break;
   case 59:
-    if (!Event_GetFlag(0x90a) && GameFlag_Test(0xa5f) != 0) {
-      GameFlag_SetBit(0x90a);
+    if (!Event_GetFlag(0x90a) && GameFlag_Get(0xa5f) != 0) {
+      GameFlag_Set(0x90a);
       WorldMap_DeliverLohoCannon();
     }
     break;
@@ -682,7 +682,7 @@ s32 Scene_Initialize(void) {
     Func_02004c00();
     break;
   case 2:
-    if (GameFlag_Test(55) == 0) {
+    if (GameFlag_Get(55) == 0) {
       Actor_SetScript(9, gData_0200632c);
       WorldMap_MeetEcho();
     }
@@ -718,8 +718,8 @@ s32 Scene_Initialize(void) {
     Event_SetDestination((s32)&SceneId_WorldMap, 61);
     break;
   case 99:
-    GameFlag_SetBit(0x163);
-    GameFlag_SetBit(0x11d);
+    GameFlag_Set(0x163);
+    GameFlag_Set(0x11d);
     break;
   }
   return 0;
@@ -1196,7 +1196,7 @@ void WorldMap_MeetEcho(void) {
    * `if (Event_GetFlag(0x16e) == 0)` with TUTORIAL_MESSAGE(MsgHey2), 53 of 714
    * instructions differ in tla-en. */
   flag = 0x16e;
-  flag = GameFlag_Test(flag);
+  flag = GameFlag_Get(flag);
   if (flag == 0) {
     if (gInput.held & 64)
       Event_SetFlag(0x175);
@@ -1845,7 +1845,7 @@ void Func_0200310c(void) {
 void WorldMap_TakeOff(void) {
   s32 x, z, i;
 
-  if (GameFlag_Test(0x8df) == 0)
+  if (GameFlag_Get(0x8df) == 0)
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);

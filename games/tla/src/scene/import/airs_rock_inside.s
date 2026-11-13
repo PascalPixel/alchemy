@@ -54,18 +54,18 @@ Window_LoadGraphics:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Import_ActorSelectAnimation
 	.thumb_func
 Import_ActorSelectAnimation:
@@ -141,11 +141,11 @@ TilesetAnim_ResumeAll:
 	.global Func_02005dec
 	.thumb_func
 Func_02005dec:
-	overlay_veneer Func_080202f8
+	overlay_veneer Actor_HasArrivedFar
 	.global Func_02005df4
 	.thumb_func
 Func_02005df4:
-	overlay_veneer Func_08020360
+	overlay_veneer MapGrid_SetCellHeightFar
 	.global FieldMessage_Show
 	.thumb_func
 FieldMessage_Show:
@@ -321,27 +321,27 @@ Import_SceneQueueMusic:
 	.global Func_02005f54
 	.thumb_func
 Func_02005f54:
-	overlay_veneer Func_080c86d0
+	overlay_veneer Tightrope_InitializeFar
 	.global Func_02005f5c
 	.thumb_func
 Func_02005f5c:
-	overlay_veneer Func_080c86d8
+	overlay_veneer Tightrope_PlaceFar
 	.global Func_02005f64
 	.thumb_func
 Func_02005f64:
-	overlay_veneer Func_080c8710
+	overlay_veneer Actor_GetCellIndexFar
 	.global Func_02005f6c
 	.thumb_func
 Func_02005f6c:
-	overlay_veneer Func_080c8718
+	overlay_veneer Actor_PlaceBlocksFar
 	.global Func_02005f74
 	.thumb_func
 Func_02005f74:
-	overlay_veneer Func_080c8720
+	overlay_veneer Actor_LiftTargetBlockFar
 	.global Func_02005f7c
 	.thumb_func
 Func_02005f7c:
-	overlay_veneer Func_080c8728
+	overlay_veneer Actor_PlaceMovedBlockFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:

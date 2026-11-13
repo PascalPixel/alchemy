@@ -486,7 +486,7 @@ void LemurianShipDeck_LeaveToFindCrew(void) {
 
 /// Stepping back off the gangway clears flag 0x212, so the crew is sought
 /// again.
-void LemurianShipDeck_ResetCrewSearch(void) { GameFlag_ClearBit(0x212); }
+void LemurianShipDeck_ResetCrewSearch(void) { GameFlag_Clear(0x212); }
 
 void Actor_SelectAnimation(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const void *data);

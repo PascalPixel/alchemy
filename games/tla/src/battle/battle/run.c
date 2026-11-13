@@ -112,7 +112,7 @@ void Battle_PlayFormChange(s32 value) {
 }
 
 s32 Tutorial_GetDjinnGiveMessage(void) {
-  if (GameFlag_Test(0x175))
+  if (GameFlag_Get(0x175))
     return (s32)MsgDjinnGiveTutorialB;
   return (s32)MsgDjinnGiveTutorialA;
 }
@@ -202,8 +202,8 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   transition->unk18 = 0;
   transition->unk1c = 0;
   *(volatile u16 *)0x04000000 = 1;
-  GameFlag_SetBit(0x103);
-  GameFlag_SetBit(0x169);
+  GameFlag_Set(0x103);
+  GameFlag_Set(0x169);
   Transform_Reset();
 
   // The camera's fill in a once-only block keeps its entry's load after the
@@ -225,7 +225,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   HeapSlot_AllocEwram(16, 0xe00);
   HeapSlot_AllocEwram(12, 0x600);
   ActorSystem_InitializeFar(4);
-  if (GameFlag_Test(0x16e) != 0)
+  if (GameFlag_Get(0x16e) != 0)
     WindowSystem_InitBattleFar(1);
   else
     WindowSystem_InitBattleFar(0);
@@ -233,7 +233,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   BattleCamera_Create();
   enemyCount = BattleFormation_BuildEnemyList(battle->enemyGroup);
 
-  if (GameFlag_Test(0x16c) != 0) {
+  if (GameFlag_Get(0x16c) != 0) {
     battle->twoSided = 1;
     /* FAKEMATCH(dead): an empty once-only block after the twoSided store, so
      * battleStart's address is started after it; without it, 4 of 885
@@ -271,7 +271,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   cue = gMainRoutineWork.sceneCue;
   if (cue != 0) {
     Sound_PlayFar(cue);
-    if (GameFlag_Test(0x16c) != 0) {
+    if (GameFlag_Get(0x16c) != 0) {
       Sound_PlayFar(55);
       Sound_LoadReverbCode(4);
     }
@@ -302,7 +302,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   battle->promptSlot = VramCache_AllocEntry(128);
 
   battle->encounterMode = 0;
-  if (GameFlag_Test(0x16e) != 0) {
+  if (GameFlag_Get(0x16e) != 0) {
     battle->encounterMode = 1;
   } else if (gMainRoutineWork.battleRule24b == 0) {
     if ((Battle_RandomFar() & 15) == 0)
@@ -332,7 +332,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
 
     Iwram_ClearWordsEntry(battle->actions, sizeof(battle->actions));
     VramCache_FreeEntry(battle->promptSlot);
-    if (GameFlag_Test(0x16a) == 0)
+    if (GameFlag_Get(0x16a) == 0)
       actionCount = Battle_GatherActions(battle->actions);
     else
       actionCount = AutoBattle_BuildActions(
@@ -346,7 +346,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
       actingUnit = battle->actions[i].unitId;
       battle->pendingUnit = -1;
       battle->actionEnded = 0;
-      if (GameFlag_Test(0x16a) == 0) {
+      if (GameFlag_Get(0x16a) == 0) {
         if (BattleStaging_DispatchAction(&battle->actions[i],
                                          i == 0 ? 10 : 0) == 1)
           goto fled;
@@ -425,7 +425,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     } else {
       wait(20);
     }
-    if (GameFlag_Test(0x16e) == 0)
+    if (GameFlag_Get(0x16e) == 0)
       continue;
 
     window = Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() + 7, 0, 4, 1);
@@ -445,7 +445,7 @@ won:
 won_scripted:
   Battle_ClearSerialTransferPayload();
   if ((u32)scripted > 1) {
-    if (enemyGroup != 80 && GameFlag_Test(0x16e) == 0) {
+    if (enemyGroup != 80 && GameFlag_Get(0x16e) == 0) {
       if (battle->twoSided != 0)
         Sound_PlayFar(58);
       if (battle->defeated != 0) {
@@ -475,7 +475,7 @@ aborted_scripted:
   Task_SuspendAll(0);
   *(volatile u16 *)0x04000000 = 1;
   result = battle->defeated;
-  GameFlag_SetBit(1000);
+  GameFlag_Set(1000);
   goto finished;
 
 party_lost:
@@ -580,7 +580,7 @@ s32 BattleEnemy_List(s16 *unit_ids) {
   limit = 6;
   count = 0;
   if (output != NULL) {
-    if (GameFlag_Test(0x16c) != 0)
+    if (GameFlag_Get(0x16c) != 0)
       limit = 3;
     id = 0x80;
     limit += 0x80;
@@ -614,7 +614,7 @@ s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
   output = unitIds;
   livingCount = 0;
   enemyCapacity = 6;
-  if (GameFlag_Test(0x16C) != 0) {
+  if (GameFlag_Get(0x16C) != 0) {
     enemyCapacity = 3;
   }
   if (sideMask & BATTLE_SIDE_PARTY) {
@@ -680,7 +680,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   output = unitIds;
   livingCount = 0;
   enemyCapacity = 6;
-  if (GameFlag_Test(0x16C) != 0) {
+  if (GameFlag_Get(0x16C) != 0) {
     enemyCapacity = 3;
   }
   if (sideMask & BATTLE_SIDE_PARTY) {

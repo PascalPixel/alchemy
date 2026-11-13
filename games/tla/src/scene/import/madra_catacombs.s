@@ -6,18 +6,18 @@
 	.thumb_func
 wait:
 	overlay_veneer waitFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Actor_SetPositionAndResetMotion
 	.thumb_func
 Actor_SetPositionAndResetMotion:
@@ -105,7 +105,7 @@ Actor_SetSpritePriority:
 	.global Func_0200115c
 	.thumb_func
 Func_0200115c:
-	overlay_veneer Func_080c8208
+	overlay_veneer Actor_DisableByIdFar
 	.global Camera_SetSpeedParameters
 	.thumb_func
 Camera_SetSpeedParameters:
@@ -149,51 +149,51 @@ Event_ResolvePendingActions:
 	.global Func_020011b4
 	.thumb_func
 Func_020011b4:
-	overlay_veneer Func_080c86a8
+	overlay_veneer Rope_InitializeFar
 	.global Func_020011bc
 	.thumb_func
 Func_020011bc:
-	overlay_veneer Func_080c86e8
+	overlay_veneer Rope_PlaceFar
 	.global Func_020011c4
 	.thumb_func
 Func_020011c4:
-	overlay_veneer Func_080c86f8
+	overlay_veneer FlagBlock_PlaceAllFar
 	.global Func_020011cc
 	.thumb_func
 Func_020011cc:
-	overlay_veneer Func_080c8708
+	overlay_veneer FlagBlock_ApplyFlagsFar
 	.global Func_020011d4
 	.thumb_func
 Func_020011d4:
-	overlay_veneer Func_080c8710
+	overlay_veneer Actor_GetCellIndexFar
 	.global Func_020011dc
 	.thumb_func
 Func_020011dc:
-	overlay_veneer Func_080c8718
+	overlay_veneer Actor_PlaceBlocksFar
 	.global Func_020011e4
 	.thumb_func
 Func_020011e4:
-	overlay_veneer Func_080c8720
+	overlay_veneer Actor_LiftTargetBlockFar
 	.global Func_020011ec
 	.thumb_func
 Func_020011ec:
-	overlay_veneer Func_080c8728
+	overlay_veneer Actor_PlaceMovedBlockFar
 	.global Func_020011f4
 	.thumb_func
 Func_020011f4:
-	overlay_veneer Func_080c8730
+	overlay_veneer MapCollision_FindOrAddTagFar
 	.global Func_020011fc
 	.thumb_func
 Func_020011fc:
-	overlay_veneer Func_080c8740
+	overlay_veneer Leader_CanPushObjectAheadFar
 	.global Func_02001204
 	.thumb_func
 Func_02001204:
-	overlay_veneer Func_080c8748
+	overlay_veneer Leader_PushObjectAheadFar
 	.global Func_0200120c
 	.thumb_func
 Func_0200120c:
-	overlay_veneer Func_080c8750
+	overlay_veneer Leader_FindActorAheadFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

@@ -2,14 +2,14 @@
 	.thumb
 	.include "games/tla/src/system/overlay/imports.inc"
 	.balign 4
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
 	.global Map_CopyCellAttributeRect
 	.thumb_func
 Map_CopyCellAttributeRect:
@@ -145,11 +145,11 @@ Actor_LaunchFromLeader:
 	.global Func_02000d50
 	.thumb_func
 Func_02000d50:
-	overlay_veneer Func_080c86f8
+	overlay_veneer FlagBlock_PlaceAllFar
 	.global Func_02000d58
 	.thumb_func
 Func_02000d58:
-	overlay_veneer Func_080c8708
+	overlay_veneer FlagBlock_ApplyFlagsFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:
@@ -157,7 +157,7 @@ Party_GetLeaderActor:
 	.global Func_02000d68
 	.thumb_func
 Func_02000d68:
-	overlay_veneer Func_080c87b0
+	overlay_veneer Actor_FallOverByIdFar
 	.global Import_ShopRun
 	.thumb_func
 Import_ShopRun:

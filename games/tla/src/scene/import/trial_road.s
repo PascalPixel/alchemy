@@ -82,18 +82,18 @@ Resource_GetTableEntry:
 	.thumb_func
 Unit_Get:
 	overlay_veneer Unit_GetFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global GameFlag_GetByte
 	.thumb_func
 GameFlag_GetByte:
@@ -149,7 +149,7 @@ MapGrid_CopyCellPictureCellsRect:
 	.global Func_02005828
 	.thumb_func
 Func_02005828:
-	overlay_veneer Func_080201f8
+	overlay_veneer Map_CopyRawCellsRectFar
 	.global Actor_SetSpriteFlags
 	.thumb_func
 Actor_SetSpriteFlags:
@@ -185,7 +185,7 @@ InventorySnapshot_Restore:
 	.global Func_02005870
 	.thumb_func
 Func_02005870:
-	overlay_veneer Func_080ad308
+	overlay_veneer Inventory_ClearSlotFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -301,7 +301,7 @@ Actor_FaceDirectionById:
 	.global Func_02005958
 	.thumb_func
 Func_02005958:
-	overlay_veneer Func_080c8208
+	overlay_veneer Actor_DisableByIdFar
 	.global Actor_ShowEmoteById
 	.thumb_func
 Actor_ShowEmoteById:
@@ -357,7 +357,7 @@ Import_FieldTryJumpForward:
 	.global Func_020059c8
 	.thumb_func
 Func_020059c8:
-	overlay_veneer Func_080c82e8
+	overlay_veneer Field_ClimbDownFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
@@ -389,31 +389,31 @@ Actor_WalkByAndWaitById:
 	.global Func_02005a08
 	.thumb_func
 Func_02005a08:
-	overlay_veneer Func_080c86d0
+	overlay_veneer Tightrope_InitializeFar
 	.global Func_02005a10
 	.thumb_func
 Func_02005a10:
-	overlay_veneer Func_080c86d8
+	overlay_veneer Tightrope_PlaceFar
 	.global Func_02005a18
 	.thumb_func
 Func_02005a18:
-	overlay_veneer Func_080c8710
+	overlay_veneer Actor_GetCellIndexFar
 	.global Func_02005a20
 	.thumb_func
 Func_02005a20:
-	overlay_veneer Func_080c8730
+	overlay_veneer MapCollision_FindOrAddTagFar
 	.global Func_02005a28
 	.thumb_func
 Func_02005a28:
-	overlay_veneer Func_080c8738
+	overlay_veneer Actor_FindAtCellFar
 	.global Func_02005a30
 	.thumb_func
 Func_02005a30:
-	overlay_veneer Func_080c8740
+	overlay_veneer Leader_CanPushObjectAheadFar
 	.global Func_02005a38
 	.thumb_func
 Func_02005a38:
-	overlay_veneer Func_080c8748
+	overlay_veneer Leader_PushObjectAheadFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:
@@ -425,7 +425,7 @@ Actor_SetSpriteRotationById:
 	.global Func_02005a50
 	.thumb_func
 Func_02005a50:
-	overlay_veneer Func_080c88d0
+	overlay_veneer Cyclone_CopyTouchedCellsFar
 	.global Exit_StartStairsUp
 	.thumb_func
 Exit_StartStairsUp:
@@ -433,7 +433,7 @@ Exit_StartStairsUp:
 	.global Func_02005a60
 	.thumb_func
 Func_02005a60:
-	overlay_veneer Func_080c8948
+	overlay_veneer FieldItem_JumpToLeaderFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

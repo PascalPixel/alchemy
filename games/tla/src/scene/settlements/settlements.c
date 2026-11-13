@@ -44,7 +44,7 @@ void Settlements_SpawnSplashRing(s32 objectId) {
   }
 }
 
-void Settlements_LiftBoulder(void) { GameFlag_SetBit(0x208); }
+void Settlements_LiftBoulder(void) { GameFlag_Set(0x208); }
 
 /* VIEW(s1620): variable gInput as extern u32 gInput; input.h has extern struct
  * InputState gInput; tried as the 3 declarations' extern u32 gInput, it does

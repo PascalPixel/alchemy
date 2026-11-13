@@ -40,7 +40,7 @@ static __inline__ void Func_02001c10_(s32 id, s32 x, s32 z) {
   Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 
-static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Test(flag); }
+static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
 
 void Func_02004644(void) {
   struct Actor *left = Actor_GetById(9);

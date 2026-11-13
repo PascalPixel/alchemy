@@ -628,7 +628,7 @@ DEFINE_TELEPORT_FROM_MARK(YampiDesertCave_TeleportFromSecondMark, 9)
     if (arg0 != 3)                                                             \
       goto done;                                                               \
     Actor_SetHorizontalPositionWithTerrain(n2, 0, 0);                          \
-    GameFlag_SetBit(n1);                                                       \
+    GameFlag_Set(n1);                                                       \
   done:                                                                        \
     return;                                                                    \
   }

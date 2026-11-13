@@ -113,8 +113,8 @@ void Izumo_FinishMovingStone(void) {
 
   /* FAKEMATCH(wrapper): the flag commands go through flag_call.h's inlines,
    * which build each flag id again, and the block copies through call.h's
-   * Call6; as direct calls to GameFlag_Test, GameFlag_SetBit,
-   * GameFlag_ClearBit and Map_CopyCellAttributeRect, 27 of 135 instructions
+   * Call6; as direct calls to GameFlag_Get, GameFlag_Set,
+   * GameFlag_Clear and Map_CopyCellAttributeRect, 27 of 135 instructions
    * differ in tla-en. */
   Func_02000df0();
   Sound_Play(132);
@@ -161,7 +161,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (GameFlag_Test(FLAG_SERPENT_SLAIN))
+  if (GameFlag_Get(FLAG_SERPENT_SLAIN))
     return gIzumo_ActorPlacementsOnceTheSerpentIsSlain;
   return gIzumo_ActorPlacements;
 }
@@ -174,7 +174,7 @@ void Izumo_CycloneSecondPatch(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Call7((void (*)())Func_02000df8, 53, 5, 8, 9, 23, 30, 0);
-  if (!GameFlag_Test(3999)) {
+  if (!GameFlag_Get(3999)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 64, PIXELS(456),
           PIXELS(584));
     if (object->x >> 20 == 28 && object->z >> 20 == 36) {
@@ -193,7 +193,7 @@ void Izumo_CycloneThirdPatch(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Call7((void (*)())Func_02000df8, 53, 5, 8, 9, 23, 30, 0);
-  if (!GameFlag_Test(4000)) {
+  if (!GameFlag_Get(4000)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 65, PIXELS(472),
           PIXELS(552));
     if (object->x >> 20 == 29 && object->z >> 20 == 34) {
@@ -225,7 +225,7 @@ void Izumo_CycloneSeventhPatch(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Call7((void (*)())Func_02000df8, 42, 0, 6, 2, 9, 18, 0);
-  if (!GameFlag_Test(4001)) {
+  if (!GameFlag_Get(4001)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 66, PIXELS(168),
           PIXELS(328));
     if (object->x >> 20 == 10 && object->z >> 20 == 20) {
@@ -264,7 +264,7 @@ void Izumo_EnterDoor(void) {
 }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (GameFlag_Test(FLAG_SERPENT_SLAIN))
+  if (GameFlag_Get(FLAG_SERPENT_SLAIN))
     return gIzumo_TriggersOnceTheSerpentIsSlain;
   return gIzumo_Triggers;
 }
@@ -272,10 +272,10 @@ const struct Trigger *Scene_GetEvents(void) {
 static inline s32 GameFlag_Test_(s32 flag) {
   /* FAKEMATCH(wrapper): the flag test forwarded through the inline, as overlay
    * 679's GameFlag_Test_ does, keeps the actor in r5 and the message in r6; as
-   * a direct call to GameFlag_Test the two swap; as that direct call, 16 of 42
+   * a direct call to GameFlag_Get the two swap; as that direct call, 16 of 42
    * instructions of Izumo_TalkToStoneCircleGuard differ in tla-en, as do 16 of
    * 42 of Izumo_TalkToFestivalStoneCircleGuard. */
-  return GameFlag_Test(flag);
+  return GameFlag_Get(flag);
 }
 
 /// The ring of stones: one line after the flag is set, otherwise the full talk
@@ -393,7 +393,7 @@ void Izumo_StopThePartyToThankThem(void) {
    * Actor_ShowEmoteById as returning a value), so each call's arguments are set
    * up in the native's order; as all six direct calls, 12 of 140 instructions
    * differ in tla-en. */
-  GameFlag_SetBit(FLAG_STOPPED_TO_THANK_THE_PARTY);
+  GameFlag_Set(FLAG_STOPPED_TO_THANK_THE_PARTY);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId(MsgWait2);
@@ -433,7 +433,7 @@ void Izumo_StopThePartyToThankThem(void) {
     Event_ShowMessageAndWait(32, 0);
     Actor_SetSpritePriority(32, 3);
     Actor_GetById(32)->motionFlags |= 2;
-    GameFlag_SetBit(FLAG_THANKFUL_ONE_WAITS);
+    GameFlag_Set(FLAG_THANKFUL_ONE_WAITS);
   } else {
     Izumo_TellTheCloudBrandLegend();
   }
@@ -474,12 +474,12 @@ void Izumo_TellTheCloudBrandLegend(void) {
   Actor_WalkToById(32, 200, 208);
   Actor_WaitForMoveById(32);
   Actor_SetHorizontalPositionWithTerrain(32, 0, 0);
-  GameFlag_SetBit(FLAG_TOKEN_OFFERED);
-  GameFlag_ClearBit(FLAG_THANKFUL_ONE_WAITS);
+  GameFlag_Set(FLAG_TOKEN_OFFERED);
+  GameFlag_Clear(FLAG_THANKFUL_ONE_WAITS);
 }
 
 void Izumo_OfferATokenOfGratitude(void) {
-  if (!GameFlag_Test(FLAG_TOKEN_OFFERED)) {
+  if (!GameFlag_Get(FLAG_TOKEN_OFFERED)) {
     const u8 *message;
 
     Event_Start();
@@ -506,11 +506,11 @@ void Izumo_OfferATokenOfGratitude(void) {
 }
 
 s32 Scene_Initialize(void) {
-  GameFlag_ClearBit(FLAG_THANKFUL_ONE_WAITS);
+  GameFlag_Clear(FLAG_THANKFUL_ONE_WAITS);
   WORD_AT(Ram_HeapSlots->eventWork, 428) = 0x100;
   Task_Add(Izumo_RotateWaterColors, TASK_PASS_FRAME);
   Func_02000de0(gIzumo_MovableStones);
-  if (GameFlag_Test(FLAG_SERPENT_SLAIN)) {
+  if (GameFlag_Get(FLAG_SERPENT_SLAIN)) {
     BYTE_AT(Actor_GetById(15), 90) = 2;
     Actor_SetModeById(25, 5);
     Actor_SetModeById(26, 5);
@@ -520,19 +520,19 @@ s32 Scene_Initialize(void) {
     Actor_SetModeById(30, 6);
     Actor_SetModeById(31, 5);
     if (gMainRoutineWork.entrance == 8 &&
-        GameFlag_Test(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
-        !GameFlag_Test(FLAG_STOPPED_TO_THANK_THE_PARTY) &&
-        !GameFlag_Test(FLAG_TOKEN_OFFERED)) {
+        GameFlag_Get(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
+        !GameFlag_Get(FLAG_STOPPED_TO_THANK_THE_PARTY) &&
+        !GameFlag_Get(FLAG_TOKEN_OFFERED)) {
       Event_StartScreenTransition();
       Izumo_StopThePartyToThankThem();
     }
-    if (GameFlag_Test(FLAG_STOPPED_TO_THANK_THE_PARTY) &&
-        !GameFlag_Test(FLAG_TOKEN_OFFERED)) {
+    if (GameFlag_Get(FLAG_STOPPED_TO_THANK_THE_PARTY) &&
+        !GameFlag_Get(FLAG_TOKEN_OFFERED)) {
       Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 32, PIXELS(200),
             PIXELS(216));
       Actor_SetSpritePriority(32, 3);
       Actor_GetById(32)->motionFlags |= 2;
-      GameFlag_SetBit(FLAG_THANKFUL_ONE_WAITS);
+      GameFlag_Set(FLAG_THANKFUL_ONE_WAITS);
     }
   }
   Actor_SetSpritePriority(24, 3);
@@ -547,8 +547,8 @@ void Izumo_RevealTheStoneCircle(void) {
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
 
-  GameFlag_SetBit(FLAG_REVEALING);
-  if (GameFlag_Test(FLAG_STONE_IN_PLACE)) {
+  GameFlag_Set(FLAG_REVEALING);
+  if (GameFlag_Get(FLAG_STONE_IN_PLACE)) {
     MapGrid_CopyCellPictureIndicesRect(36, 12, 22, 8, 3, 3);
     Call6((void (*)())Map_CopyCellAttributeRect, 36, 12, 3, 3, 22, 8);
     if (x == 23 && z == 9)
@@ -561,7 +561,7 @@ void Izumo_RevealTheStoneCircle(void) {
 }
 
 void Izumo_HideTheStoneCircle(void) {
-  GameFlag_ClearBit(FLAG_REVEALING);
+  GameFlag_Clear(FLAG_REVEALING);
   MapGrid_CopyCellPictureIndicesRect(40, 8, 22, 8, 3, 3);
   Call6((void (*)())Map_CopyCellAttributeRect, 40, 8, 3, 3, 22, 8);
 }

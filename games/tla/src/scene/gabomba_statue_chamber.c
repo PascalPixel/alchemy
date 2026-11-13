@@ -354,9 +354,9 @@ void Func_02000184(void) {
   ActorSystem_SuspendProjectionAndShowSprites();
   FieldMessage_ShowCentered(MsgCarriedTheMessage, 0, 3);
   ActorSystem_ResumeProjectionAndHideLayers();
-  GameFlag_SetBit(0x8ff);
-  GameFlag_ClearBit(0x86b);
-  GameFlag_ClearBit(0x8f2);
+  GameFlag_Set(0x8ff);
+  GameFlag_Clear(0x86b);
+  GameFlag_Clear(0x8f2);
   gMainRoutineWork.retreatScene = (s32)&SceneId_Kibombo1;
   gMainRoutineWork.retreatEntrance = 1;
   gMainRoutineWork.savedScene = (s32)&SceneId_Kibombo3;
@@ -464,7 +464,7 @@ void Func_02000be8(void) {
   wait(1);
   Sound_Play(125);
   Event_Wait(20);
-  GameFlag_SetBit(0x206);
+  GameFlag_Set(0x206);
   Event_End();
 }
 
@@ -502,12 +502,12 @@ void Func_02000d3c(void) {
   Sound_Play(125);
   Event_Wait(20);
   Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 1;
-  GameFlag_SetBit(0x206);
-  GameFlag_SetBit(0x207);
+  GameFlag_Set(0x206);
+  GameFlag_Set(0x207);
   Event_End();
 }
 
-void Func_02000e50(void) { GameFlag_ClearBit(518); }
+void Func_02000e50(void) { GameFlag_Clear(518); }
 
 void Func_02000e60(void) {
   Event_Start();
@@ -525,7 +525,7 @@ void Func_02000e60(void) {
   Actor_FaceDirectionAndWait(10, FACING_NORTH + FACING_STEP);
   Motion_SetModeAndWaitAnimation(10, 4);
   Event_ShowMessageAndWait(10, 0);
-  GameFlag_SetBit(0x8fe);
+  GameFlag_Set(0x8fe);
   Event_End();
 }
 
@@ -778,7 +778,7 @@ void Func_020010d4(void) {
   *(s32 *)(EVENT_WORK + 0x1ac) = 514;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  GameFlag_SetBit(FLAG_KEEP_PARTY_POSITION);
+  GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   Import_EventSetExitRequest(2);
 }
 
@@ -930,7 +930,7 @@ void Func_02001b14(void) {
   Func_02001e80(9);
   Func_02001e80(10);
   wait(1);
-  if (GameFlag_Test(0x8fd)) {
+  if (GameFlag_Get(0x8fd)) {
     Func_02001010();
     Func_02001064();
     Actor_SetPosition(8, PIXELS(424), PIXELS(152));
@@ -953,8 +953,8 @@ void Func_02001b14(void) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
     if (party->entrance == 3) {
-      GameFlag_ClearBit(0xa27);
-      GameFlag_SetBit(0xa28);
+      GameFlag_Clear(0xa27);
+      GameFlag_Set(0xa28);
     }
   }
 }
@@ -962,8 +962,8 @@ void Func_02001b14(void) {
 #include "../../include/system/io_reg.h"
 
 void Func_02001ba8(void) {
-  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
-    if (GameFlag_Test(519)) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
+    if (GameFlag_Get(519)) {
       struct GabombaStatueChamberMapWork *map =
           (struct GabombaStatueChamberMapWork *)Ram_HeapSlots->mapWork;
       struct GabombaStatueChamberLayer *front = &map->layers[0];
@@ -1009,7 +1009,7 @@ void Func_02001c44(void) {
     Actor_SetSpritePriority(i + 15, 2);
   Func_02001e80(8);
   Actor_GetById(8)->y = 0;
-  if (GameFlag_Test(0x8ff)) {
+  if (GameFlag_Get(0x8ff)) {
     Func_02001094();
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
   } else {
@@ -1017,14 +1017,14 @@ void Func_02001c44(void) {
   }
 #if TLA_PATCH_1 /* The Japanese edition does not set the retreat. */
   if (gMainRoutineWork.entrance == 2) {
-    if (GameFlag_Test(0xa27)) {
+    if (GameFlag_Get(0xa27)) {
       /* FAKEMATCH(temporary): the scene id through a local, which issues its
        * literal load first; as plain stores, 4 of 71 instructions differ in
        * tla-en. */
       scene = &SceneId_Ov671Room7;
       gMainRoutineWork.retreatScene = (s32)scene;
       gMainRoutineWork.retreatEntrance = 1;
-    } else if (GameFlag_Test(0xa28)) {
+    } else if (GameFlag_Get(0xa28)) {
       /* FAKEMATCH(temporary): the scene id through a local, as in the first
        * branch; as plain stores, 4 of 71 instructions differ in tla-en. */
       scene = &SceneId_Ov672Room1;

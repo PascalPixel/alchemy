@@ -370,7 +370,7 @@ s32 Scene_Initialize(void) {
   Actor_SetAnimation(9, 2);
   Actor_SetPosition(9, 0x2d80000, 0x780000);
 L_0200a03c:
-  if (gMainRoutineWork.entrance == 18 && GameFlag_Test(0x300) == 0)
+  if (gMainRoutineWork.entrance == 18 && GameFlag_Get(0x300) == 0)
     Func_02001d68();
   {
     struct MainRoutineWork *work = &gMainRoutineWork;

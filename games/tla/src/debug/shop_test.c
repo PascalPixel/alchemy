@@ -486,7 +486,7 @@ void Func_02000520(void) {
 }
 
 void Func_020005fc(s32 owner, s32 element, s32 djinn, s32 activate) {
-  GameFlag_SetBit(element * 20 + djinn + 48);
+  GameFlag_Set(element * 20 + djinn + 48);
   Djinn_Give(owner, element, djinn);
   if (activate == 1)
     Djinn_Set(owner, element, djinn);

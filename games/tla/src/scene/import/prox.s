@@ -58,18 +58,18 @@ VramCache_FindFreeEntry:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Import_ActorSelectAnimation
 	.thumb_func
 Import_ActorSelectAnimation:
@@ -141,7 +141,7 @@ MapGrid_SetScreenShake:
 	.global Func_0200444c
 	.thumb_func
 Func_0200444c:
-	overlay_veneer Func_080202f8
+	overlay_veneer Actor_HasArrivedFar
 	.global Import_FieldCheckSpheresOverlap
 	.thumb_func
 Import_FieldCheckSpheresOverlap:
@@ -341,7 +341,7 @@ ObjectTable_Get:
 	.global Func_020045dc
 	.thumb_func
 Func_020045dc:
-	overlay_veneer Func_080c8480
+	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolveAllPendingActions
 	.thumb_func
 Event_ResolveAllPendingActions:
@@ -361,7 +361,7 @@ Actor_WatchAndSetScript:
 	.global Func_02004604
 	.thumb_func
 Func_02004604:
-	overlay_veneer Func_080c87c0
+	overlay_veneer EffectSprite_InitFar
 	.global EffectSprite_DrawAtWorldPosition
 	.thumb_func
 EffectSprite_DrawAtWorldPosition:

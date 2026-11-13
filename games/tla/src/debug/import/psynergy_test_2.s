@@ -50,14 +50,14 @@ VramCache_FindFreeEntry:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
 	.global Import_ActorCreate
 	.thumb_func
 Import_ActorCreate:
@@ -97,15 +97,15 @@ Func_020005d8:
 	.global Func_020005e0
 	.thumb_func
 Func_020005e0:
-	overlay_veneer Func_080c86a8
+	overlay_veneer Rope_InitializeFar
 	.global Func_020005e8
 	.thumb_func
 Func_020005e8:
-	overlay_veneer Func_080c86b8
+	overlay_veneer Rope_CoilFar
 	.global Func_020005f0
 	.thumb_func
 Func_020005f0:
-	overlay_veneer Func_080c87c0
+	overlay_veneer EffectSprite_InitFar
 	.global Func_020005f8
 	.thumb_func
 Func_020005f8:

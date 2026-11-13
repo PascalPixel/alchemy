@@ -58,18 +58,18 @@ VramCache_Load:
 	.thumb_func
 Unit_Get:
 	overlay_veneer Unit_GetFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Actor_SelectAnimation
 	.thumb_func
 Actor_SelectAnimation:
@@ -125,7 +125,7 @@ Icon_DrawItem:
 	.global Func_02005a8c
 	.thumb_func
 Func_02005a8c:
-	overlay_veneer Func_080ad228
+	overlay_veneer Party_GivePiersDjinnFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -253,7 +253,7 @@ Actor_SetSpritePriority:
 	.global Func_02005b8c
 	.thumb_func
 Func_02005b8c:
-	overlay_veneer Func_080c8208
+	overlay_veneer Actor_DisableByIdFar
 	.global Actor_ShowEmoteById
 	.thumb_func
 Actor_ShowEmoteById:
@@ -313,7 +313,7 @@ Event_WaitTransitionFrames:
 	.global Func_02005c04
 	.thumb_func
 Func_02005c04:
-	overlay_veneer Func_080c8480
+	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global FieldPsynergy_RunHandler
 	.thumb_func
 FieldPsynergy_RunHandler:
@@ -353,23 +353,23 @@ Actor_WatchAndSetScript:
 	.global Func_02005c54
 	.thumb_func
 Func_02005c54:
-	overlay_veneer Func_080c86a8
+	overlay_veneer Rope_InitializeFar
 	.global Func_02005c5c
 	.thumb_func
 Func_02005c5c:
-	overlay_veneer Func_080c86e8
+	overlay_veneer Rope_PlaceFar
 	.global Func_02005c64
 	.thumb_func
 Func_02005c64:
-	overlay_veneer Func_080c86f8
+	overlay_veneer FlagBlock_PlaceAllFar
 	.global Func_02005c6c
 	.thumb_func
 Func_02005c6c:
-	overlay_veneer Func_080c8708
+	overlay_veneer FlagBlock_ApplyFlagsFar
 	.global Func_02005c74
 	.thumb_func
 Func_02005c74:
-	overlay_veneer Func_080c87b0
+	overlay_veneer Actor_FallOverByIdFar
 	.global Func_02005c7c
 	.thumb_func
 Func_02005c7c:

@@ -157,7 +157,7 @@ const struct Trigger *Scene_GetEvents(void) {
 void Daila_TalkBeenBefore(void) {
   s32 msg;
 
-  if (GameFlag_Test(FLAG_DAILA_GREETER_ASKED) == 0) {
+  if (GameFlag_Get(FLAG_DAILA_GREETER_ASKED) == 0) {
     Import_EventStart();
     Event_ResolvePendingActions(0);
     msg = (s32)MsgDailaBeenBefore;
@@ -171,7 +171,7 @@ void Daila_TalkBeenBefore(void) {
       Event_SetMessageId(msg + 2);
     }
     Event_ShowMessageAndWait(ACTOR_GREETER, 0);
-    GameFlag_SetBit(FLAG_DAILA_GREETER_ASKED);
+    GameFlag_Set(FLAG_DAILA_GREETER_ASKED);
     Import_EventEnd();
   } else {
     Event_SetMessageId((s32)MsgDailaWaveNoInjuries);
@@ -284,11 +284,11 @@ static inline void Actor_JoinLeader(s32 actor) {
 void Daila_MeetAlex(void) {
   s32 msg;
 
-  if (GameFlag_Test(FLAG_DAILA_MET_ALEX))
+  if (GameFlag_Get(FLAG_DAILA_MET_ALEX))
     return;
-  if (GameFlag_Test(0x910))
+  if (GameFlag_Get(0x910))
     return;
-  if (GameFlag_Test(7))
+  if (GameFlag_Get(7))
     return;
   Import_EventStart();
   Event_ResolvePendingActions(0);
@@ -437,7 +437,7 @@ void Daila_MeetAlex(void) {
   Actor_JoinLeader(ACTOR_SHEBA);
   Actor_JoinLeader(ACTOR_KRADEN);
   Import_EventEnd();
-  GameFlag_SetBit(FLAG_DAILA_MET_ALEX);
+  GameFlag_Set(FLAG_DAILA_MET_ALEX);
 }
 
 /// Parch on a puddle's cell dries it for the visit: the dry cell at column
@@ -449,7 +449,7 @@ void Daila_MeetAlex(void) {
     Event_ResolvePendingActions(0);                                            \
     MapGrid_CopyCellAttributes(fromX, y, 1, 1, toX, y);                        \
     Actor_SetHorizontalPositionWithTerrain(actor, 0, 0);                       \
-    GameFlag_SetBit(flag);                                                     \
+    GameFlag_Set(flag);                                                     \
     Import_EventEnd();                                                         \
   }
 
@@ -487,24 +487,24 @@ s32 Scene_Initialize(void) {
     Func_02000d50(gDaila_PuddleFrozenFlags);
   Actor_SetSpritePriority(21, 1);
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila2 &&
-      GameFlag_Test(FLAG_DAILA_PSY_CRYSTAL_DUG) == 0)
+      GameFlag_Get(FLAG_DAILA_PSY_CRYSTAL_DUG) == 0)
     Actor_SetWideSprite(ACTOR_PSY_CRYSTAL, 0);
   return 0;
 }
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila2) {
-    if (GameFlag_Test(FLAG_DAILA_FIRST_PUDDLE_PARCHED))
+    if (GameFlag_Get(FLAG_DAILA_FIRST_PUDDLE_PARCHED))
       MapGrid_CopyCellAttributes(10, 19, 1, 1, 11, 19);
-    if (GameFlag_Test(FLAG_DAILA_SECOND_PUDDLE_PARCHED))
+    if (GameFlag_Get(FLAG_DAILA_SECOND_PUDDLE_PARCHED))
       MapGrid_CopyCellAttributes(25, 20, 1, 1, 26, 20);
-    if (GameFlag_Test(FLAG_DAILA_THIRD_PUDDLE_PARCHED))
+    if (GameFlag_Get(FLAG_DAILA_THIRD_PUDDLE_PARCHED))
       MapGrid_CopyCellAttributes(28, 23, 1, 1, 29, 23);
-    if (GameFlag_Test(FLAG_DAILA_FOURTH_PUDDLE_PARCHED))
+    if (GameFlag_Get(FLAG_DAILA_FOURTH_PUDDLE_PARCHED))
       MapGrid_CopyCellAttributes(17, 11, 1, 1, 18, 11);
-    if (GameFlag_Test(FLAG_DAILA_FIFTH_PUDDLE_PARCHED))
+    if (GameFlag_Get(FLAG_DAILA_FIFTH_PUDDLE_PARCHED))
       MapGrid_CopyCellAttributes(30, 17, 1, 1, 31, 17);
-    if (GameFlag_Test(FLAG_DAILA_SIXTH_PUDDLE_PARCHED))
+    if (GameFlag_Get(FLAG_DAILA_SIXTH_PUDDLE_PARCHED))
       MapGrid_CopyCellAttributes(16, 23, 1, 1, 17, 23);
   }
   return 0;

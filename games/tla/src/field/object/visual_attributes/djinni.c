@@ -178,9 +178,9 @@ void Djinn_JoinParty(s32 actor, s32 element, s32 djinni) {
       return;
     djinni = recorded - 1;
   }
-  if (GameFlag_Test(366)) {
+  if (GameFlag_Get(366)) {
     owner = gMainRoutineWork.currentOwner;
-    GameFlag_SetBit(element * 20 + djinni + 48);
+    GameFlag_Set(element * 20 + djinni + 48);
   } else {
     owner = Djinn_GiveToPartyFar(element, djinni);
   }
@@ -223,7 +223,7 @@ void Djinn_RestoreActorAfterBattle(void) {
   s32 id;
 
   scene &= raw;
-  if (GameFlag_Test(0x109) != 0 && flags == 0) {
+  if (GameFlag_Get(0x109) != 0 && flags == 0) {
     flags = scene & 0x800;
     scene &= 0x7ff;
     if (scene - 300 <= 80 && party->sequenceResult > 0) {
@@ -270,12 +270,12 @@ void Djinn_ResolvePending(s32 shown) {
         return;
       if (st->sequenceResult > 0 && st->sequenceResult != 999)
         return;
-      GameFlag_SetBit(flag - 172);
+      GameFlag_Set(flag - 172);
       *pending = kind;
       return;
     } else if (kind == 0x1000) {
       if (st->sequenceResult > 0 && st->sequenceResult != 999)
-        GameFlag_SetBit(flag);
+        GameFlag_Set(flag);
     } else
       return;
   } else if (kind == 0) {

@@ -349,7 +349,7 @@ static inline struct A4SlotValues *FindSlot(s32 id) {
   struct A4SlotValues *found = NULL;
   s32 i;
 
-  // Default: as Func_080dae70, the index zero is copied from found.
+  // Default: as HangingVine_FindSlot, the index zero is copied from found.
   i = 0;
 
   for (i = 0; i < 8; i++) {
@@ -425,7 +425,7 @@ s32 Scene_Initialize(void) {
     Call2((void (*)())Func_02000f14, 13, 1);
     Call2((void (*)())Func_02000f14, 14, 1);
     Func_02000f14(15, 1);
-    if (GameFlag_Test(0x920)) {
+    if (GameFlag_Get(0x920)) {
       actor = Actor_GetById(16);
       actor->motionFlags = 0;
       actor->x = 0x580000;
@@ -435,14 +435,14 @@ s32 Scene_Initialize(void) {
     }
     actor = Actor_GetById(19);
     actor->priorityFlags = 0;
-    if (GameFlag_Test(0x921)) {
+    if (GameFlag_Get(0x921)) {
       actor->motionFlags = 0;
       actor->x = 0x2880000;
       actor->y = 0x400000;
       Actor_SetSpriteFlags(actor, 0);
       MapGrid_CopyCellAttributes(33, 102, 1, 2, 37, 102);
       MapGrid_CopyCellAttributes(27, 44, 1, 1, 40, 46);
-    } else if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+    } else if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       if ((actor->x >> 19) != 75) {
         MapGrid_CopyCellAttributes(33, 102, 1, 2, 37, 102);
       }
@@ -451,7 +451,7 @@ s32 Scene_Initialize(void) {
         MapGrid_CopyCellAttributes(38, 46, 1, 1, 39, 46);
       }
     }
-    if (GameFlag_Test(FLAG_SERPENT_SLAIN) && !GameFlag_Test(0x9ab)) {
+    if (GameFlag_Get(FLAG_SERPENT_SLAIN) && !GameFlag_Get(0x9ab)) {
       Actor_SetPosition(20, 0x31e0000, 0x3200000);
       Map_CopyCellAttributeRect(53, 52, 1, 1, 49, 49);
       Map_CopyCellAttributeRect(53, 52, 1, 1, 50, 49);
@@ -481,13 +481,13 @@ s32 Scene_Initialize(void) {
     if ((u16)(gMainRoutineWork.entrance - 3) <= 1) {
       Func_02000dd0();
     }
-    if (GameFlag_Test(0x300)) {
+    if (GameFlag_Get(0x300)) {
       Func_02000b2c(17, 0x2fc0000, -0x1870000, 0x1a80000);
     }
-    if (GameFlag_Test(0x301)) {
+    if (GameFlag_Get(0x301)) {
       Func_02000b2c(18, 0x3150000, -0xf80000, 0x1a80000);
     }
-    if (GameFlag_Test(0x302)) {
+    if (GameFlag_Get(0x302)) {
       Func_02000b2c(19, 0x30a0000, -0x770000, 0x1a80000);
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room3) {

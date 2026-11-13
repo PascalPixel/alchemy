@@ -54,7 +54,7 @@ void AttekaInlet_SetUpTheShore(void);
 
 void AttekaInlet_GeodeJoins(void) {
   Djinn_JoinParty(14, 0, 15);
-  GameFlag_ClearBit(0x300);
+  GameFlag_Clear(0x300);
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -67,14 +67,14 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov693Room1) {
-    if (GameFlag_Test(FLAG_SET_OUT_WITH_WINGS))
+    if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
       return gAttekaInlet_HarbourActorPlacementsOnceFlown;
-    if (GameFlag_Test(0x9d0))
+    if (GameFlag_Get(0x9d0))
       return gAttekaInlet_HarbourActorPlacementsOnceWinged;
     return gAttekaInlet_HarbourActorPlacements;
   }
   if (scene == (s32)&SceneId_Ov693Room2) {
-    if (GameFlag_Test(0x9d0))
+    if (GameFlag_Get(0x9d0))
       return gAttekaInlet_ShoreActorPlacementsOnceWinged;
     return gAttekaInlet_ShoreActorPlacements;
   }
@@ -108,8 +108,8 @@ void AttekaInlet_AskPiersToSetSail(void) {
     Event_ShowMessageAndWait(18, 0);
     gMainRoutineWork.ownerOverride = 1;
     if (Event_GetFlag(0x9d0)) {
-      GameFlag_SetBit(FLAG_SHIP_FLIES);
-      GameFlag_SetBit(FLAG_SET_OUT_WITH_WINGS);
+      GameFlag_Set(FLAG_SHIP_FLIES);
+      GameFlag_Set(FLAG_SET_OUT_WITH_WINGS);
     }
     Import_EventSetExitRequest(4);
   } else {
@@ -123,7 +123,7 @@ void AttekaInlet_AskPiersToSetSail(void) {
                                *(s16 *)((u8 *)object + 18));
     Actor_WaitForMoveById(18);
     Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
-    GameFlag_SetBit(0x201);
+    GameFlag_Set(0x201);
     Event_End();
   }
 }
@@ -132,7 +132,7 @@ void AttekaInlet_AskPiersToSetSail(void) {
 /// objects 9 and 10 are placed, jump in and talk, four cells of the map change
 /// and flag FLAG_SHIPWRIGHTS_STOPPED_PARTY is set.
 void AttekaInlet_ShipwrightsStopTheParty(void) {
-  if (GameFlag_Test(0x9d0) && !GameFlag_Test(FLAG_SET_OUT_WITH_WINGS)) {
+  if (GameFlag_Get(0x9d0) && !GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldCamera_MoveWithinMapBounds(96 << 16, -1, 308 << 16, 1);
@@ -178,7 +178,7 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
     Map_CopyCellAttributeRect(1, 16, 1, 1, 4, 19);
     Map_CopyCellAttributeRect(1, 16, 1, 1, 4, 20);
     Map_CopyCellAttributeRect(1, 16, 1, 1, 4, 21);
-    GameFlag_SetBit(FLAG_SHIPWRIGHTS_STOPPED_PARTY);
+    GameFlag_Set(FLAG_SHIPWRIGHTS_STOPPED_PARTY);
     Event_End();
   }
 }
@@ -187,7 +187,7 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
 /// party, turns, talks and walks to its place; flag FLAG_HAMMA_SHOWED_THE_WINGS
 /// is set.
 void AttekaInlet_HammaShowsTheWings(void) {
-  if (GameFlag_Test(0x9d0)) {
+  if (GameFlag_Get(0x9d0)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -243,7 +243,7 @@ void AttekaInlet_HammaShowsTheWings(void) {
     Actor_FaceDirectionById(23, 0x3000);
     Motion_SetModeAndWaitAnimation(23, 3);
     Event_ShowMessageAndWait(23, 0);
-    GameFlag_SetBit(FLAG_HAMMA_SHOWED_THE_WINGS);
+    GameFlag_Set(FLAG_HAMMA_SHOWED_THE_WINGS);
     Event_End();
   }
 }
@@ -270,8 +270,8 @@ void AttekaInlet_PiersAsksToSetSail(void) {
     Event_ShowMessageAndWait(18, 0);
     gMainRoutineWork.ownerOverride = 1;
     if (Event_GetFlag(0x9d0)) {
-      GameFlag_SetBit(FLAG_SHIP_FLIES);
-      GameFlag_SetBit(FLAG_SET_OUT_WITH_WINGS);
+      GameFlag_Set(FLAG_SHIP_FLIES);
+      GameFlag_Set(FLAG_SET_OUT_WITH_WINGS);
     }
     Import_EventSetExitRequest(4);
   } else {
@@ -302,8 +302,8 @@ static inline void MapCopy(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
 }
 
 void AttekaInlet_CheckForHammetsMessenger(void) {
-  if (GameFlag_Test(0x820) && GameFlag_Test(FLAG_HAMMA_SHOWED_THE_WINGS) &&
-      !GameFlag_Test(FLAG_HAMMETS_GIFT_DELIVERED))
+  if (GameFlag_Get(0x820) && GameFlag_Get(FLAG_HAMMA_SHOWED_THE_WINGS) &&
+      !GameFlag_Get(FLAG_HAMMETS_GIFT_DELIVERED))
     AttekaInlet_HammetsMessengerArrives();
 }
 
@@ -312,7 +312,7 @@ void AttekaInlet_CycloneUncoversGeode(void) {
   s32 moved;
 
   MapCopy(9, 23, 1, 1, 7, 23, 0);
-  if (!GameFlag_Test(63)) {
+  if (!GameFlag_Get(63)) {
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -325,7 +325,7 @@ void AttekaInlet_CycloneUncoversGeode(void) {
     Actor_SetHorizontalPositionWithTerrain(14, 120 << 16, 376 << 16);
     wait(1);
     Actor_Jump(14, 4, 10);
-    GameFlag_SetBit(0x300);
+    GameFlag_Set(0x300);
     if (moved)
       Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_EAST);
     Event_End();
@@ -406,7 +406,7 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Motion_SetModeAndWaitAnimation(23, 3);
   Actor_ShowEmoteById(23, 264, 0);
   Event_ShowMessageAndWait(23, 0);
-  GameFlag_SetBit(FLAG_HAMMETS_GIFT_DELIVERED);
+  GameFlag_Set(FLAG_HAMMETS_GIFT_DELIVERED);
   Event_End();
 }
 
@@ -493,7 +493,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov693Room1 && GameFlag_Test(0x9d0)) {
+  if (scene == (s32)&SceneId_Ov693Room1 && GameFlag_Get(0x9d0)) {
     MapGrid_CopyCellPictureIndicesRect(54, 47, 4, 15, 10, 4);
     MapGrid_CopyCellPictureIndicesRect(54, 38, 73, 7, 10, 4);
     MapGrid_CopyCellPictureIndicesRect(54, 43, 21, 55, 10, 3);
@@ -515,8 +515,8 @@ void AttekaInlet_SetUpTheHarbour(void) {
   struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapWork;
   struct MainRoutineWork *party;
 
-  GameFlag_SetBit(0x9b4);
-  if (!GameFlag_Test(FLAG_HAMMETS_GIFT_DELIVERED))
+  GameFlag_Set(0x9b4);
+  if (!GameFlag_Get(FLAG_HAMMETS_GIFT_DELIVERED))
     Actor_SetHorizontalPositionWithTerrain(65, 0, 0);
   map->mode = 1;
   party = &gMainRoutineWork;
@@ -525,14 +525,14 @@ void AttekaInlet_SetUpTheHarbour(void) {
   Task_Add_(AttekaInlet_ShareLeadersPriority, 0x480);
   Actor_SetSpriteFlags(Actor_GetById(17), 0);
   *((u8 *)Actor_GetById(17) + 85) = 0;
-  if (GameFlag_Test(FLAG_SET_OUT_WITH_WINGS)) {
+  if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
     Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(21, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(22, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
   } else {
-    if (GameFlag_Test(FLAG_HAMMA_SHOWED_THE_WINGS)) {
+    if (GameFlag_Get(FLAG_HAMMA_SHOWED_THE_WINGS)) {
       s32 speed = 0xc0;
 
       Actor_SetPositionAndFacing(23, PIXELS(504), PIXELS(360), speed << 6);
@@ -546,12 +546,12 @@ void AttekaInlet_SetUpTheHarbour(void) {
 
 void AttekaInlet_SetUpTheShore(void) {
   if (gMainRoutineWork.entrance == 3)
-    GameFlag_ClearBit(0x12f);
-  if (GameFlag_Test(FLAG_SET_OUT_WITH_WINGS)) {
+    GameFlag_Clear(0x12f);
+  if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
     Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
-  } else if (GameFlag_Test(FLAG_SHIPWRIGHTS_STOPPED_PARTY)) {
+  } else if (GameFlag_Get(FLAG_SHIPWRIGHTS_STOPPED_PARTY)) {
     Actor_SetPositionAndFacing(9, 70 << 16, 308 << 16, FACING_EAST);
     Actor_SetPositionAndFacing(10, 80 << 16, 316 << 16, FACING_EAST);
     Map_CopyCellAttributeRect(1, 16, 1, 1, 3, 19);
@@ -560,7 +560,7 @@ void AttekaInlet_SetUpTheShore(void) {
     Map_CopyCellAttributeRect(1, 16, 1, 1, 4, 21);
     wait(1);
   }
-  if (GameFlag_Test(0x300))
+  if (GameFlag_Get(0x300))
     Actor_SetPosition(14, 120 << 16, 376 << 16);
   {
     s32 priority = 0x480;

@@ -161,7 +161,7 @@ body:
       s32 flag = list[1];
 
       Event_Start();
-      if (!GameFlag_Test(flag)) {
+      if (!GameFlag_Get(flag)) {
         Sound_Play(125);
         Actor_SetSpriteColor(Actor_GetById(id), 7);
         wait(2);
@@ -172,8 +172,8 @@ body:
         wait(4);
         Actor_SetSpriteColor(Actor_GetById(id), 0);
         Rubble_Spray(0);
-        GameFlag_SetBit(flag);
-      } else if (!GameFlag_Test(flag + 1)) {
+        GameFlag_Set(flag);
+      } else if (!GameFlag_Get(flag + 1)) {
         u8 *flags = &leader->motionFlags;
 
         *flags = 0;
@@ -196,7 +196,7 @@ body:
         Sound_Play(188);
         Rubble_Burst();
         wait(20);
-        GameFlag_SetBit(flag + 1);
+        GameFlag_Set(flag + 1);
       }
       Event_End();
       return;
@@ -337,7 +337,7 @@ body:
       s32 flag = list[1];
 
       Event_Start();
-      if (!GameFlag_Test(flag)) {
+      if (!GameFlag_Get(flag)) {
         Actor_SelectAnimation(helper, 1);
         Actor_TakePlaceOf(helper, pillar);
         wait(1);
@@ -354,8 +354,8 @@ body:
         Rubble_Spray(0);
         Actor_TakePlaceOf(pillar, helper);
         wait(1);
-        GameFlag_SetBit(flag);
-      } else if (!GameFlag_Test(flag + 1)) {
+        GameFlag_Set(flag);
+      } else if (!GameFlag_Get(flag + 1)) {
         u8 *flags;
 
         Actor_SelectAnimation(helper, 0);
@@ -382,7 +382,7 @@ body:
         Sound_Play(188);
         Rubble_Burst();
         wait(20);
-        GameFlag_SetBit(flag + 1);
+        GameFlag_Set(flag + 1);
       }
       Event_End();
       return;

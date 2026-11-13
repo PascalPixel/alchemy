@@ -330,21 +330,21 @@ s32 ActorScript_TestFlag(struct ScriptInterpreter *interpreter) {
   s32 done;
 
   interpreter->conditionResult =
-      GameFlag_Test(interpreter->script[interpreter->cursor + 1]);
+      GameFlag_Get(interpreter->script[interpreter->cursor + 1]);
   done = 1;
   interpreter->cursor = (u16)interpreter->cursor + 2;
   return done;
 }
 
-/* VIEW(f02493c): routine GameFlag_SetBit as s32 GameFlag_SetBit(s32);
- * flag_call.h has void GameFlag_SetBit(s32 flag). */
-extern s32 GameFlag_SetBit__f02493c(s32) __asm__("GameFlag_SetBit");
+/* VIEW(f02493c): routine GameFlag_Set as s32 GameFlag_Set(s32);
+ * flag_call.h has void GameFlag_Set(s32 flag). */
+extern s32 GameFlag_SetBit__f02493c(s32) __asm__("GameFlag_Set");
 
 s32 ActorScript_SetFlagAndTest(struct ScriptInterpreter *interpreter) {
   s32 value;
 
   value = interpreter->script[interpreter->cursor + 1];
-  interpreter->conditionResult = GameFlag_Test(value);
+  interpreter->conditionResult = GameFlag_Get(value);
   GameFlag_SetBit__f02493c(value);
   interpreter->cursor += 2;
   return 1;
@@ -354,8 +354,8 @@ s32 ActorScript_ClearFlagAndTest(struct ScriptInterpreter *interpreter) {
   s32 value;
 
   value = interpreter->script[interpreter->cursor + 1];
-  interpreter->conditionResult = GameFlag_Test(value);
-  GameFlag_ClearBit(value);
+  interpreter->conditionResult = GameFlag_Get(value);
+  GameFlag_Clear(value);
   interpreter->cursor += 2;
   return 1;
 }
@@ -364,9 +364,9 @@ s32 ActorScript_ToggleFlagAndTest(struct ScriptInterpreter *interpreter) {
   s32 value;
 
   value = interpreter->script[interpreter->cursor + 1];
-  interpreter->conditionResult = GameFlag_Test(value);
+  interpreter->conditionResult = GameFlag_Get(value);
   if (interpreter->conditionResult == 1)
-    GameFlag_ClearBit(value);
+    GameFlag_Clear(value);
   else
     GameFlag_SetBit__f02493c(value);
   interpreter->cursor += 2;

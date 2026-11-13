@@ -409,7 +409,7 @@ void Func_02000940(s32 countdown) {
 
 void Func_02000954(void) {}
 
-void Func_02000958(void) { GameFlag_SetBit(0x8be); }
+void Func_02000958(void) { GameFlag_Set(0x8be); }
 
 void Func_02000968(void) {
   struct Actor *leader;
@@ -1014,7 +1014,7 @@ L_020098ea:
   Actor_SetAnimationAndWait(5, 4);
   FieldEvent_ShowMessageThenWait(5, 0, 10);
 L_02009938:
-  result2 = ((s32 (*)())GameFlag_Test)(7);
+  result2 = ((s32 (*)())GameFlag_Get)(7);
   if (result2 == 0)
     goto L_0200996c;
   Actor_FaceDirection(4, FACING_NORTH, 0);

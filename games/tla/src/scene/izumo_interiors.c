@@ -81,7 +81,7 @@ static inline void LeaderAnimate(s32 animation, s32 frames) {
 }
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (GameFlag_Test(FLAG_SERPENT_SLAIN))
+  if (GameFlag_Get(FLAG_SERPENT_SLAIN))
     return gIzumoInteriors_ActorPlacementsOnceTheSerpentIsSlain;
   if (gMainRoutineWork.entrance == 7)
     return gIzumoInteriors_SusasHouseActorPlacements;
@@ -89,7 +89,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (GameFlag_Test(FLAG_SERPENT_SLAIN))
+  if (GameFlag_Get(FLAG_SERPENT_SLAIN))
     return gIzumoInteriors_TriggersOnceTheSerpentIsSlain;
   if (gMainRoutineWork.entrance == 7)
     return gIzumoInteriors_SusasHouseTriggers;
@@ -104,7 +104,7 @@ void IzumoInteriors_TalkToHealer(s32 actor) {
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
-    if (GameFlag_Test(FLAG_SERPENT_SLAIN)) {
+    if (GameFlag_Get(FLAG_SERPENT_SLAIN)) {
       Event_SetMessageId((s32)MsgNowThatPeace);
       Event_ShowMessageAndWait(12, 0);
     } else {
@@ -123,7 +123,7 @@ void IzumoInteriors_TalkToInnkeeper(s32 actor) {
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
-    if (GameFlag_Test(FLAG_SERPENT_SLAIN))
+    if (GameFlag_Get(FLAG_SERPENT_SLAIN))
       Event_SetMessageId((s32)MsgBriggsFromChampa);
     else
       Event_SetMessageId((s32)MsgOfCourseI);
@@ -140,7 +140,7 @@ void IzumoInteriors_TalkToMerchant(s32 actor) {
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
-    if (GameFlag_Test(FLAG_SERPENT_SLAIN))
+    if (GameFlag_Get(FLAG_SERPENT_SLAIN))
       Event_SetMessageId((s32)MsgYouMustSee);
     else
       Event_SetMessageId((s32)MsgIzumoSLeaders);
@@ -168,7 +168,7 @@ void IzumoInteriors_AskAfterSusa(void) {
     Event_Wait(60);
     Event_ShowMessageAndWait(8, 0);
     Event_Wait(30);
-    GameFlag_SetBit(0x922);
+    GameFlag_Set(0x922);
   }
   Actor_SetModeById(8, 4);
   Event_Wait(60);
@@ -178,7 +178,7 @@ void IzumoInteriors_AskAfterSusa(void) {
 }
 
 void IzumoInteriors_ReadPrayerForSusa(void) {
-  GameFlag_SetBit(0x923);
+  GameFlag_Set(0x923);
   Event_SetMessageId((s32)MsgIPrayThat);
   Event_ShowMessageAndWait(8, 0);
 }
@@ -189,7 +189,7 @@ void IzumoInteriors_TalkToUzume(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_FaceActorById(15, gMainRoutineWork.currentOwner, 0);
-  if (GameFlag_Test(FLAG_UZUME_HAS_THE_DOLL)) {
+  if (GameFlag_Get(FLAG_UZUME_HAS_THE_DOLL)) {
     Event_SetMessageId((s32)MsgWithThisDancing);
     Event_ShowMessageAndWait(15, 0);
   } else {
@@ -231,7 +231,7 @@ void IzumoInteriors_ReadUzumesMind(void) {
   } else {
     Event_SetMessageId((s32)MsgAndWhatWere);
     Event_ShowMessageAndWait(15, 0);
-    if (GameFlag_Test(0x923)) {
+    if (GameFlag_Get(0x923)) {
       LeaderAnimate(256, 30);
       Actor_ShowEmoteById(15, 259, 30);
       Event_ShowMessageAndWait(15, 0);
@@ -240,7 +240,7 @@ void IzumoInteriors_ReadUzumesMind(void) {
       Event_Wait(30);
       Event_ShowMessageAndWait(15, 0);
     }
-    GameFlag_SetBit(0x92b);
+    GameFlag_Set(0x92b);
   }
   Actor_FaceDirection(15, FACING_SOUTH, 0);
   Event_End();
@@ -989,8 +989,8 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
                              ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(23);
   Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
-  GameFlag_SetBit(FLAG_IZUMO_RECOGNIZED_THE_HEROES);
-  GameFlag_SetBit(0x350);
+  GameFlag_Set(FLAG_IZUMO_RECOGNIZED_THE_HEROES);
+  GameFlag_Set(0x350);
   Event_End();
 }
 
@@ -1085,7 +1085,7 @@ L_02009e48:
   Event_Wait(30);
   Event_ShowMessageAndWait(15, 0);
   Event_Wait(60);
-  GameFlag_SetBit(FLAG_UZUME_HAS_THE_DOLL);
+  GameFlag_Set(FLAG_UZUME_HAS_THE_DOLL);
   PartyInventory_Remove(0x1c3);
   Event_End();
 }
@@ -1094,8 +1094,8 @@ s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
   if (gMainRoutineWork.entrance != 7)
     Event_ClearFlag(0x350);
-  if (GameFlag_Test(FLAG_SERPENT_SLAIN) &&
-      !GameFlag_Test(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
+  if (GameFlag_Get(FLAG_SERPENT_SLAIN) &&
+      !GameFlag_Get(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
       gMainRoutineWork.entrance == 7) {
     Event_PlaySound(7);
     Actor_SetPosition(22, 0x900000, 0x2380000);
@@ -1105,20 +1105,20 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(18, 0, 0);
     Actor_SetPosition(19, 0, 0);
   }
-  if (GameFlag_Test(FLAG_SERPENT_SLAIN) &&
-      GameFlag_Test(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
-      gMainRoutineWork.entrance == 7 && GameFlag_Test(0x350)) {
+  if (GameFlag_Get(FLAG_SERPENT_SLAIN) &&
+      GameFlag_Get(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
+      gMainRoutineWork.entrance == 7 && GameFlag_Get(0x350)) {
     Event_PlaySound(7);
     Actor_SetPosition(16, 0, 0);
     Actor_SetPosition(17, 0, 0);
     Actor_SetPosition(18, 0, 0);
     Actor_SetPosition(19, 0, 0);
   }
-  if (gMainRoutineWork.entrance == 5 && !GameFlag_Test(FLAG_SERPENT_SLAIN)) {
+  if (gMainRoutineWork.entrance == 5 && !GameFlag_Get(FLAG_SERPENT_SLAIN)) {
     Actor_SetAnimation(17, 5);
     Actor_SetAttachedEffect(17, 0x101);
   }
-  if (gMainRoutineWork.entrance == 7 && !GameFlag_Test(FLAG_SERPENT_SLAIN)) {
+  if (gMainRoutineWork.entrance == 7 && !GameFlag_Get(FLAG_SERPENT_SLAIN)) {
     struct Actor *object;
 
     Actor_SetAnimation(9, 5);

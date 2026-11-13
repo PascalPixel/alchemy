@@ -107,7 +107,7 @@ Resource_FarCall004:
 	export Djinn_ShowJoinedMessageFar, Djinn_ShowJoinedMessage
 	export Party_ShowJoinedMessageFar, Party_ShowJoinedMessage
 	export Party_ShowPairJoinedMessageFar, Party_ShowPairJoinedMessage
-	export Func_08038340, Summon_ShowLearnedMessage
+	export Summon_ShowLearnedMessageFar, Summon_ShowLearnedMessage
 	export WindowColor_ApplyFar, WindowColor_Apply
 	export SettingsMenu_RunFar, SettingsMenu_Run
 	export PauseMenu_RunFar, PauseMenu_Run
@@ -136,5 +136,5 @@ Resource_FarCall004:
 	export Icon_CopyResourceToSlotFar, Icon_CopyResourceToSlot
 	export Text_DrawMessageToCanvasFar, Text_DrawMessageToCanvas
 	export Glyph_DrawAsSpriteFar, Glyph_DrawAsSprite
-	export Func_08038428, Glyph_DrawToTiles
-	export Func_08038430, Glyph_AddBlankSprite
+	export Glyph_DrawToTilesFar, Glyph_DrawToTiles
+	export Glyph_AddBlankSpriteFar, Glyph_AddBlankSprite

@@ -6,8 +6,8 @@
 
 struct Actor *Actor_GetById(u32 objectId);
 s32 Actor_GetCellIndex(struct Actor *object);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_ClearBit(s32 flag);
+s32 GameFlag_Get(s32 flag);
+void GameFlag_Clear(s32 flag);
 void FlagBlock_ApplyFlags(struct ActorFlag *list);
 /* VIEW(f0ea8d4): routine MapGrid_MarkRaisedIfOpen as void
  * MapGrid_MarkRaisedIfOpen(s32 x, s32 z, s32 layer, s32 height); the definition
@@ -55,9 +55,9 @@ void FlagBlock_PlaceAllMarkingEdges(struct ActorFlag *list) {
                            object->terrainHeight);
     Func_080ea8a8__f0ea8d4(object->x, object->z - 0x100000, object->terrainId,
                            object->terrainHeight);
-    if (GameFlag_Test(flag)) {
+    if (GameFlag_Get(flag)) {
       Actor_SelectAnimationFar(object, 0);
-      GameFlag_ClearBit(flag);
+      GameFlag_Clear(flag);
     } else {
       Actor_SelectAnimationFar(object, 1);
     }
@@ -90,7 +90,7 @@ struct RestoreMap {
 
 extern u8 gMapShapeGrid[];
 
-void GameFlag_SetBit(s32 flag);
+void GameFlag_Set(s32 flag);
 u32 MapGrid_GetTerrainKindFar(s32 terrain, s32 x, s32 z);
 s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value);
 
@@ -108,7 +108,7 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
     u8 frame = ((u8 *)object->sprite)[24];
     u16 flag = list->flag;
 
-    if (GameFlag_Test(flag)) {
+    if (GameFlag_Get(flag)) {
       if (frame != 0)
         change = 1;
     } else {
@@ -132,19 +132,19 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
                19;
 
       *(struct Actor **)(event + 0xcbc) = object;
-      if (GameFlag_Test(flag)) {
+      if (GameFlag_Get(flag)) {
         height -= 4;
-        GameFlag_ClearBit(flag);
+        GameFlag_Clear(flag);
       } else {
         height += 4;
-        GameFlag_SetBit(flag);
+        GameFlag_Set(flag);
       }
       if ((object->x | object->z) != 0) {
 
         cells += slot;
         shapes += slot;
         *shapes = MapCollision_FindOrAddTag(object->terrainId, key, height);
-        if (GameFlag_Test(flag)) {
+        if (GameFlag_Get(flag)) {
           s32 bits;
 
           cells->block = 0;

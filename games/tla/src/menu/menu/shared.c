@@ -12,18 +12,18 @@
 /// cancel sound and text colours.
 // Part of menu.c.
 
-s32 GameFlag_SetBit(s32 flag_no);
+s32 GameFlag_Set(s32 flag_no);
 
 void Menu_ResumeFieldTasks(void) {
   Task_ResumeOverlayTasks();
   TilesetAnim_ResumeAllFar();
-  GameFlag_ClearBit(0x166);
-  GameFlag_ClearBit(0x152);
+  GameFlag_Clear(0x166);
+  GameFlag_Clear(0x152);
 }
 
 s32 Menu_SuspendFieldTasks(void) {
-  GameFlag_SetBit(0x152);
-  GameFlag_SetBit(0x166);
+  GameFlag_Set(0x152);
+  GameFlag_Set(0x166);
   TilesetAnim_SuspendAllFar();
   return Task_SuspendOverlayTasks();
 }
@@ -164,7 +164,7 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
   state = (struct ItemMenuWork *)Ram_HeapSlots->menuRuntime;
   unit = Unit_Get(owner);
   item = unit->inventory[slot];
-  def = Item_Get(item & ITEM_ID_MASK);
+  def = Item_GetDirectFar(item & ITEM_ID_MASK);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
     created =
         Window_UpdateOrCreate((s32 *)&state->statusWindow, 0, 5, 13, 12, 0x102);
@@ -795,7 +795,7 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
              !(INPUT->pressed & KEY_START));
     WindowSprite_ClearListFar(window);
   } else {
-    GameFlag_SetBit(337);
+    GameFlag_Set(337);
   }
   menu->completionFlag = 1;
   menu->sideIcons[0]->active = 1;
@@ -845,7 +845,7 @@ s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
       for (i = 0; i < count; i++) {
         if (items[i] == 0)
           continue;
-        item = Item_Get(items[i]);
+        item = Item_GetDirectFar(items[i]);
         if ((order[pass] & 0x7f) != item->type)
           continue;
         if ((order[pass] & 0x80) && (items[i] & 0x200) == 0)
@@ -1181,7 +1181,7 @@ void Menu_UpdateCancelSound(void) {
   mask = 8;
   if (input->pressed & mask) {
     Sound_PlayFar(113);
-    GameFlag_SetBit(0x150);
+    GameFlag_Set(0x150);
     Task_Remove((u32)((s32)Menu_UpdateCancelSound));
   }
   node = (u32 *)(Ram_HeapSlots->windowTiles + 0xE30);
@@ -1190,12 +1190,12 @@ void Menu_UpdateCancelSound(void) {
 }
 
 void Menu_StartWatchingStart(void) {
-  GameFlag_ClearBit(0x150);
+  GameFlag_Clear(0x150);
   Task_Add((s32)Menu_UpdateCancelSound, TASK_PASS_VBLANK);
 }
 
 void Menu_StopWatchingStart(void) {
-  if (GameFlag_Test(0x150) == 0) {
+  if (GameFlag_Get(0x150) == 0) {
     Task_Remove((u32)((s32)Menu_UpdateCancelSound));
   }
 }

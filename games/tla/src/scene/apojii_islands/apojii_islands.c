@@ -251,8 +251,8 @@ blend:
   i++;
   if (i <= 6)
     goto blend;
-  GameFlag_SetBit(0x95f);
-  GameFlag_SetBit(0x95e);
+  GameFlag_Set(0x95f);
+  GameFlag_Set(0x95e);
   Camera_SetSpeedParameters(0x10000, 0x2000);
   /* FAKEMATCH(wrapper): the camera moves forwarded through
    * ApojiiIslands_CamMove, so each builds its own -1; as direct calls, 25 of

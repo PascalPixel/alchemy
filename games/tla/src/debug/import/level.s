@@ -73,7 +73,7 @@ Unit_Calculate:
 	.global Item_GetDirect
 	.thumb_func
 Item_GetDirect:
-	overlay_veneer Item_Get
+	overlay_veneer Item_GetDirectFar
 	.global PartyInventory_Add
 	.thumb_func
 PartyInventory_Add:

@@ -10,14 +10,14 @@ wait:
 	.thumb_func
 Trig_Cos:
 	overlay_veneer Trig_CosFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
 	.global Actor_SelectAnimation
 	.thumb_func
 Actor_SelectAnimation:
@@ -177,11 +177,11 @@ Actor_WatchAndSetScript:
 	.global Func_02001174
 	.thumb_func
 Func_02001174:
-	overlay_veneer Func_080c86a8
+	overlay_veneer Rope_InitializeFar
 	.global Func_0200117c
 	.thumb_func
 Func_0200117c:
-	overlay_veneer Func_080c86e8
+	overlay_veneer Rope_PlaceFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:

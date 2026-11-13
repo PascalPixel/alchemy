@@ -71,7 +71,7 @@ void Func_02000ac8(void) {
     base = 48;
     targetX = 0x208;
     targetZ = 48;
-    if (GameFlag_Test(0xa87))
+    if (GameFlag_Get(0xa87))
       goto seen;
     break;
   case 51:
@@ -79,7 +79,7 @@ void Func_02000ac8(void) {
     base = 68;
     targetX = 0x228;
     targetZ = 48;
-    if (GameFlag_Test(0xa88))
+    if (GameFlag_Get(0xa88))
       goto seen;
     break;
   case 52:
@@ -87,7 +87,7 @@ void Func_02000ac8(void) {
     base = 88;
     targetX = 0x1f8;
     targetZ = 40;
-    if (GameFlag_Test(0xa89))
+    if (GameFlag_Get(0xa89))
       goto seen;
     break;
   case 53:
@@ -95,9 +95,9 @@ void Func_02000ac8(void) {
     base = 108;
     targetX = 0x238;
     targetZ = 40;
-    if (GameFlag_Test(0xa8a)) {
+    if (GameFlag_Get(0xa8a)) {
     seen:
-      GameFlag_SetBit(0x200);
+      GameFlag_Set(0x200);
       return;
     }
     break;
@@ -106,7 +106,7 @@ void Func_02000ac8(void) {
   i = (u16)base;
   if (i != (u16)base + 18) {
   scan:
-    if (GameFlag_Test(i)) {
+    if (GameFlag_Get(i)) {
       found[count] = i - base;
       count++;
     }
@@ -235,8 +235,8 @@ void Func_02000ac8(void) {
     Event_PlaySound(0x23e);
     Func_02000a78(targetX, targetZ, part);
     FieldEvent_Wait(80);
-    if (GameFlag_Test(0xa87) && GameFlag_Test(0xa88) && GameFlag_Test(0xa89) &&
-        GameFlag_Test(0xa8a)) {
+    if (GameFlag_Get(0xa87) && GameFlag_Get(0xa88) && GameFlag_Get(0xa89) &&
+        GameFlag_Get(0xa8a)) {
       Event_SetFlag(0xa8b);
       Event_PlaySound(188);
       MapGrid_CopyCellsTo(52, 7, 33, 7, 1, 2);
@@ -262,7 +262,7 @@ void Func_02000ac8(void) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_02001090(void) { GameFlag_ClearBit(0x200); }
+void Func_02001090(void) { GameFlag_Clear(0x200); }
 
 extern u8 gData_020036e4[];
 extern u8 gData_020036ea[];
@@ -320,14 +320,14 @@ void Func_02001160(void) {
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room2) {
     if (x == 37 && z == 31) {
-      GameFlag_SetBit(0xa80);
+      GameFlag_Set(0xa80);
       Actor_SetSpritePriority(8, 2);
     }
     if (x == 55 && z == 95)
-      GameFlag_SetBit(0xa81);
+      GameFlag_Set(0xa81);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room3) {
     if (x == 7 && z == 53)
-      GameFlag_SetBit(0xa82);
+      GameFlag_Set(0xa82);
     if (x == 67 && z == 45) {
       MapGrid_CopyCellsTo(50, 22, 33, 22, 1, 1);
       Actor_SetPosition(14, 0, 0);
@@ -339,10 +339,10 @@ void Func_02001160(void) {
       MapGrid_CopyCellsTo(51, 20, 31, 20, 1, 2);
       FieldEvent_Wait(5);
       Func_02003380(0x1f00000, 0x1500000, 0, 0);
-      GameFlag_SetBit(0xa83);
+      GameFlag_Set(0xa83);
     }
     if (x == 93 && z == 57)
-      GameFlag_SetBit(0xa84);
+      GameFlag_Set(0xa84);
     if (x == 91 && z == 59) {
       if (!Event_GetFlag(0xa84)) {
         s32 fromX = (Actor_Get(12)->x >> 16) << 16;
@@ -350,11 +350,11 @@ void Func_02001160(void) {
         Actor_SetPosition(13, fromX, (Actor_Get(12)->z >> 16) << 16);
         Actor_SetPosition(12, PIXELS(728), PIXELS(472));
       }
-      GameFlag_SetBit(0xa85);
+      GameFlag_Set(0xa85);
     }
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4 && x == 33 && z == 45)
-    GameFlag_SetBit(0xa86);
+    GameFlag_Set(0xa86);
   Event_End();
 }
 

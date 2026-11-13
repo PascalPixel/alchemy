@@ -19,7 +19,7 @@
 #include "task.h"
 #include "heap_slots.h"
 
-void TrialRoad_LiftCaveRock(void) { GameFlag_SetBit(0x289); }
+void TrialRoad_LiftCaveRock(void) { GameFlag_Set(0x289); }
 
 void TrialRoad_CutBushes(void) { Func_02005a50_(68, 6, 1, 21, 13, 64, 64); }
 
@@ -577,7 +577,7 @@ void TrialRoad_UpdateRival(void) {
   }
   if (state->timer == 0)
     return;
-  if (GameFlag_Test(260))
+  if (GameFlag_Get(260))
     return;
   if (state->current == state->stage) {
     switch (state->timer) {
@@ -661,14 +661,14 @@ s32 Scene_PrepareMap(void) {
     u32 i;
 
     if ((u32)(entrance - 31) <= 1) {
-      if (!GameFlag_Test(896)) {
+      if (!GameFlag_Get(896)) {
         unit = Unit_Get(gMainRoutineWork.currentOwner);
         Iwram_ClearWordsEntry(state, 32);
         value = 0;
         for (n = 0; n <= 13; n++)
           value += unit[n];
         TrialRoad_DealStageOrder(value);
-        GameFlag_SetBit(896);
+        GameFlag_Set(896);
       }
       state->mirrored = (entrance - 1) & 1;
       state->field16[0] = 0;
@@ -681,14 +681,14 @@ s32 Scene_PrepareMap(void) {
       n = entrance % 10;
       Event_SetDestination((s32)&SceneId_Ov697Room1, n);
     } else if ((u32)(entrance - 33) <= 1) {
-      if (!GameFlag_Test(896)) {
+      if (!GameFlag_Get(896)) {
         unit = Unit_Get(gMainRoutineWork.currentOwner);
         Iwram_ClearWordsEntry(state, 32);
         value = 0;
         for (n = 0; n <= 13; n++)
           value += unit[n];
         TrialRoad_DealStageOrder(value);
-        GameFlag_SetBit(896);
+        GameFlag_Set(896);
       }
       {
         /* FAKEMATCH(temporary): side, for both the store and its flip; as
@@ -826,24 +826,24 @@ s32 Scene_PrepareMap(void) {
           goto hideUnused;
         Map_CenterOnFollowedPoint();
         leader = Actor_GetById(gMainRoutineWork.currentOwner);
-        if (!GameFlag_Test(265))
+        if (!GameFlag_Get(265))
           leader->y = leader->terrainHeight =
               Map_GetTerrainHeight(0, leader->x, leader->z);
-        if (GameFlag_Test(2559)) {
+        if (GameFlag_Get(2559)) {
           struct TrialRoadState *road;
 
-          GameFlag_SetBit(324);
+          GameFlag_Set(324);
           // A pointer of its own keeps the state's address in r5 across the
           // calls; through gTrialRoadState each test reloads it (5 more).
           road = gTrialRoadState;
           // The call's argument reads through the other struct: through the
           // same one GCSE moves the load into both predecessors (11 more of
           // gap).
-          if (road->field16[0] < road->field1a || GameFlag_Test(642)) {
+          if (road->field16[0] < road->field1a || GameFlag_Get(642)) {
             TrialRoad_OpenLeaderDoor(
                 road->mirrored, ((struct TrialRoadDeal *)road)->field16[0]);
-            GameFlag_SetBit(642);
-            GameFlag_SetBit(644);
+            GameFlag_Set(642);
+            GameFlag_Set(644);
           }
           if (road->field16[0] < road->field1c)
             TrialRoad_OpenRivalDoor(road->mirrored, road->field16[0]);
@@ -852,16 +852,16 @@ s32 Scene_PrepareMap(void) {
           Task_Add(TrialRoad_UpdateRival, 0x480);
         } else {
           TrialRoad_OpenLeaderDoor(state->mirrored, state->field16[0]);
-          GameFlag_SetBit(642);
-          GameFlag_SetBit(644);
+          GameFlag_Set(642);
+          GameFlag_Set(644);
           TrialRoad_OpenRivalDoor(state->mirrored, state->field16[0]);
         }
       }
     }
   } else if (scene == (s32)&SceneId_Ov697Room3) {
   } else if (scene == (s32)&SceneId_Ov697Room4) {
-  } else if (scene == (s32)&SceneId_Ov697Room2 && GameFlag_Test(2559) &&
-             !GameFlag_Test(901)) {
+  } else if (scene == (s32)&SceneId_Ov697Room2 && GameFlag_Get(2559) &&
+             !GameFlag_Get(901)) {
     if (gTrialRoadState->mirrored != 0)
       MapGrid_CopyCellsLayered(26, 79, 1, 2, 13, 79);
     else
@@ -1455,7 +1455,7 @@ void TrialRoad_UpdateFountains(void) {
         mover->bob = 0;
       }
     }
-    if (!GameFlag_Test(260)) {
+    if (!GameFlag_Get(260)) {
       if (++mover->phase >= mover->period)
         mover->phase = 0;
     }
@@ -1764,7 +1764,7 @@ void TrialRoad_StepOnTrap(const u16 *table) {
     }
     flag = table[1];
     Event_Start();
-    if (!GameFlag_Test(flag)) {
+    if (!GameFlag_Get(flag)) {
       Actor_SelectAnimation(partner, 1);
       TrialRoad_TakePlaceOf(partner, trap);
       wait(1);
@@ -1781,10 +1781,10 @@ void TrialRoad_StepOnTrap(const u16 *table) {
       TrialRoad_SpawnRubble(0);
       TrialRoad_TakePlaceOf(trap, partner);
       wait(1);
-      GameFlag_SetBit(flag);
+      GameFlag_Set(flag);
     } else {
       second = flag + 1;
-      if (!GameFlag_Test(second)) {
+      if (!GameFlag_Get(second)) {
         Actor_SelectAnimation(partner, 0);
         TrialRoad_TakePlaceOf(partner, trap);
         motion = &leader->motionFlags;
@@ -1809,7 +1809,7 @@ void TrialRoad_StepOnTrap(const u16 *table) {
         Sound_Play(188);
         TrialRoad_SpawnDustRing();
         wait(20);
-        GameFlag_SetBit(second);
+        GameFlag_Set(second);
       }
     }
     Event_End();
@@ -2058,14 +2058,14 @@ void TrialRoad_MoveRival(void) {
     st = *signature++;
     link = st >> 8;
     ok = st & 0xff;
-    if (GameFlag_Test(dz = 529) && link != 0) {
+    if (GameFlag_Get(dz = 529) && link != 0) {
       state->mode = 9;
       Actor_SelectAnimation(rival, 1);
       if (work->linkX < rival->x)
         x = work->linkX + 0xc0000;
       else
         x = work->linkX - 0xc0000;
-      if (!GameFlag_Test(530)) {
+      if (!GameFlag_Get(530)) {
         z = work->linkZ + 0x100000;
         rival->timer = work->linkAngle;
       } else {
@@ -2106,7 +2106,7 @@ void TrialRoad_MoveRival(void) {
     }
     x = work->path[state->point];
     z = work->path[state->point + 1];
-    if (!GameFlag_Test(260))
+    if (!GameFlag_Get(260))
       state->point += 2;
     if (x == 0 && z == 0) {
       state->mode = 9;
@@ -2145,7 +2145,7 @@ void TrialRoad_MoveRival(void) {
     z = rival->z >> 16;
     work->path[state->point] = x;
     work->path[state->point + 1] = z;
-    if (!GameFlag_Test(260))
+    if (!GameFlag_Get(260))
       state->point += 2;
     if (state->point == 7198) {
       // A u16 read back as s16 at its use: the same value, the spelling that
@@ -2259,7 +2259,7 @@ void TrialRoad_DrawProgress(void) {
 
   if (work->unke0 != 0) {
     work->fade = 2;
-  } else if (GameFlag_Test(262) || event->unk166 != 0) {
+  } else if (GameFlag_Get(262) || event->unk166 != 0) {
     if (work->fade > 0)
       work->fade--;
   } else if (work->fade <= 1) {

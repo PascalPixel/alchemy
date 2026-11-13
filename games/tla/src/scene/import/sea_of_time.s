@@ -30,18 +30,18 @@ Trig_Sin:
 	.thumb_func
 Trig_Cos:
 	overlay_veneer Trig_CosFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Actor_SelectAnimation
 	.thumb_func
 Actor_SelectAnimation:
@@ -85,7 +85,7 @@ MapGrid_WaitForShakeToSettle:
 	.global Func_02001f9c
 	.thumb_func
 Func_02001f9c:
-	overlay_veneer Func_080202f8
+	overlay_veneer Actor_HasArrivedFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:

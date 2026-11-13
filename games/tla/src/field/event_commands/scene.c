@@ -243,7 +243,7 @@ void EventObject_Initialize(void) {
     Actor_SetOthersPaused(object, 0, 16);
     work->messageShown = zero;
   }
-  if (GameFlag_Test(320)) {
+  if (GameFlag_Get(320)) {
     if (work->sound != 0)
       BattleEffect_SetObjectUpdateMode(object, 2);
     Actor_SelectAnimationFar(object, 21);

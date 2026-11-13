@@ -58,14 +58,14 @@ VramCache_FindFreeEntry:
 	.thumb_func
 Import_OamAddSpriteAtDepthClamped:
 	overlay_veneer Oam_AddSpriteAtDepthClampedFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
 	.global GameFlag_GetByte
 	.thumb_func
 GameFlag_GetByte:
@@ -145,7 +145,7 @@ Actor_SetSpriteColorMode:
 	.global Func_0200223c
 	.thumb_func
 Func_0200223c:
-	overlay_veneer Func_08020360
+	overlay_veneer MapGrid_SetCellHeightFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -241,7 +241,7 @@ BattleEffect_GetObjectPriority:
 	.global Func_020022fc
 	.thumb_func
 Func_020022fc:
-	overlay_veneer Func_080c8830
+	overlay_veneer MapGrid_GetCellBehaviorFar
 	.global MapGrid_SetCellBehavior
 	.thumb_func
 MapGrid_SetCellBehavior:
@@ -249,7 +249,7 @@ MapGrid_SetCellBehavior:
 	.global Func_0200230c
 	.thumb_func
 Func_0200230c:
-	overlay_veneer Func_080c8848
+	overlay_veneer MapGrid_SetAttributeBAtFar
 	.global BattleEffect_FillOverlayTiles
 	.thumb_func
 BattleEffect_FillOverlayTiles:

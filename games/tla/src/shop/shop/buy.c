@@ -86,7 +86,7 @@ next_page:
     stockCount = shop->stockCount;
     if (redraw != 0) {
       itemId = stockIds[selectionIndex];
-      stockDefinition = Item_Get(itemId);
+      stockDefinition = Item_GetDirectFar(itemId);
       MenuCursor_Place(stockWindow, selectionIndex % 7 * 32 - 8, 8);
       shop->mode = 4;
       Shop_DrawStock(stockWindow, selectionIndex);
@@ -116,7 +116,7 @@ next_page:
 #if TLA_PATCH_1
       stockCount = stockIds[selectionIndex];
       held = PartyInventory_CountItemFar(stockCount);
-      heldDefinition = Item_Get(stockCount);
+      heldDefinition = Item_GetDirectFar(stockCount);
 #else
       heldItem = stockIds[selectionIndex];
       held = PartyInventory_CountItemFar(heldItem);
@@ -153,7 +153,7 @@ next_page:
 
   shop->selectedItem = shop->stockItemIds[selected];
   Shop_ShowKeeperMessage((s32)MsgWhoGetsThis);
-  selectedDefinition = Item_Get(shop->selectedItem);
+  selectedDefinition = Item_GetDirectFar(shop->selectedItem);
   quantity = 1;
   unitId = 0;
   repromptRecipient = 0;
@@ -306,7 +306,7 @@ void Shop_DrawStock(struct RenderInput *window, s32 selected) {
       for (; (u32)pageSlot < 7 && stockIndex < (u32)itemCount;
            priceX += 32, pageSlot++, stockCursor++, stockIndex++) {
         itemId = *stockCursor;
-        definition = Item_Get(itemId);
+        definition = Item_GetDirectFar(itemId);
         icon =
             WindowSprite_CreateLoadedFar(itemId, 1, window, pageSlot * 32, 0);
         icon->sentinel = 252;
@@ -496,7 +496,7 @@ void Shop_DrawParty(struct RenderInput *window, s32 selected, s32 itemId) {
 void Shop_DrawEquipComparison(s32 window, s32 unitId, s32 itemId) {
   struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
   struct BattleUnit *unit = Unit_Get(unitId);
-  struct ItemDefinition *item = Item_Get(itemId);
+  struct ItemDefinition *item = Item_GetDirectFar(itemId);
   s32 replaced = -1;
   s32 slot;
   s32 saved;
@@ -519,7 +519,7 @@ void Shop_DrawEquipComparison(s32 window, s32 unitId, s32 itemId) {
     }
     if (i == 15) {
       for (i = 0; i <= 14; i++) {
-        if (Item_Get(unit->inventory[i])->type == 6)
+        if (Item_GetDirectFar(unit->inventory[i])->type == 6)
           break;
       }
       if (i == 15)
@@ -612,7 +612,7 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
 
   shop = Ram_HeapSlots->menuRuntime;
   unit = Unit_Get(unitId);
-  item = Item_Get(itemId);
+  item = Item_GetDirectFar(itemId);
   result = 1;
   if (item->flags & 0x10) {
     Shop_ShowKeeperMessage((s32)MsgHowManyToBuy);
@@ -789,7 +789,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   struct ItemDefinition *item;
 
   remaining = quantity;
-  item = Item_Get(itemId);
+  item = Item_GetDirectFar(itemId);
   addedSlot = 0;
   replacedSlot = Inventory_FindEquippedFar(unitId, item->type);
   Sound_PlayFar(101);
@@ -818,7 +818,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
 
   itemId = 0x1ff;
   itemId &= raw;
-  info = Item_Get(itemId);
+  info = Item_GetDirectFar(itemId);
 
   if (unit->inventory[slot] & 0x200)
     return 0;
@@ -828,7 +828,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
 
   replaced = Inventory_FindEquippedFar(unitId, info->type);
   if (replaced != -1) {
-    struct ItemDefinition *oldInfo = Item_Get(unit->inventory[replaced]);
+    struct ItemDefinition *oldInfo = Item_GetDirectFar(unit->inventory[replaced]);
 
     if (oldInfo->flags & 2)
       return 0;
@@ -875,9 +875,9 @@ s32 Shop_SellOld(s32 unitId, s32 slot) {
   raw = *(u16 *)(unit + itemOffset);
   itemId = 0x1ff;
   itemId &= raw;
-  if (Item_Get(itemId)->type == 6)
+  if (Item_GetDirectFar(itemId)->type == 6)
     return 0;
-  if (Item_Get(itemId)->flags & 8)
+  if (Item_GetDirectFar(itemId)->flags & 8)
     return 0;
   Shop_SellItem(unitId, slot, -1);
   return 1;
@@ -886,8 +886,8 @@ s32 Shop_SellOld(s32 unitId, s32 slot) {
 s32 Shop_SalePrice(s32 item_id) {
   s32 price;
 
-  price = (u16)Item_Get(item_id)->price;
-  if (Item_Get(item_id)->flags & 8)
+  price = (u16)Item_GetDirectFar(item_id)->price;
+  if (Item_GetDirectFar(item_id)->flags & 8)
     price = 0;
   else if (item_id & 0x400)
     price /= 2;

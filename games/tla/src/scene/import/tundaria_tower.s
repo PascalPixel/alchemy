@@ -66,18 +66,18 @@ VramCache_FindFreeEntry:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Import_ActorSelectAnimation
 	.thumb_func
 Import_ActorSelectAnimation:
@@ -157,7 +157,7 @@ MapGrid_GetTerrainKind:
 	.global Func_02003018
 	.thumb_func
 Func_02003018:
-	overlay_veneer Func_080202f8
+	overlay_veneer Actor_HasArrivedFar
 	.global Actor_SetItemIcon
 	.thumb_func
 Actor_SetItemIcon:
@@ -169,7 +169,7 @@ Import_FieldCheckSpheresOverlap:
 	.global Func_02003030
 	.thumb_func
 Func_02003030:
-	overlay_veneer Func_08020360
+	overlay_veneer MapGrid_SetCellHeightFar
 	.global FieldMessage_Show
 	.thumb_func
 FieldMessage_Show:
@@ -241,7 +241,7 @@ Actor_SetSpritePriority:
 	.global Func_020030c0
 	.thumb_func
 Func_020030c0:
-	overlay_veneer Func_080c8208
+	overlay_veneer Actor_DisableByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
@@ -321,31 +321,31 @@ Actor_WatchAndSetScript:
 	.global Func_02003160
 	.thumb_func
 Func_02003160:
-	overlay_veneer Func_080c8710
+	overlay_veneer Actor_GetCellIndexFar
 	.global Func_02003168
 	.thumb_func
 Func_02003168:
-	overlay_veneer Func_080c8718
+	overlay_veneer Actor_PlaceBlocksFar
 	.global Func_02003170
 	.thumb_func
 Func_02003170:
-	overlay_veneer Func_080c8720
+	overlay_veneer Actor_LiftTargetBlockFar
 	.global Func_02003178
 	.thumb_func
 Func_02003178:
-	overlay_veneer Func_080c8728
+	overlay_veneer Actor_PlaceMovedBlockFar
 	.global Func_02003180
 	.thumb_func
 Func_02003180:
-	overlay_veneer Func_080c8730
+	overlay_veneer MapCollision_FindOrAddTagFar
 	.global Func_02003188
 	.thumb_func
 Func_02003188:
-	overlay_veneer Func_080c8738
+	overlay_veneer Actor_FindAtCellFar
 	.global Func_02003190
 	.thumb_func
 Func_02003190:
-	overlay_veneer Func_080c87c0
+	overlay_veneer EffectSprite_InitFar
 	.global EffectSprite_DrawAtWorldPosition
 	.thumb_func
 EffectSprite_DrawAtWorldPosition:

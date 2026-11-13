@@ -106,7 +106,7 @@ void Func_080d2cc4(s32 message) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_ShowFar(message, 1);
-  GameFlag_ClearBit(0x142);
+  GameFlag_Clear(0x142);
   Event_End();
   if (Party_FindOwnerWithActionFar(136) != -1)
     ((struct EventWork15a *)Ram_HeapSlots->eventWork)->flag = 1;

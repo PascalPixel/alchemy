@@ -280,8 +280,8 @@ struct ActorFlag {
 
 struct Actor *Actor_GetById(u32 objectId);
 s32 Actor_GetCellIndex(struct Actor *object);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_ClearBit(s32 flag);
+s32 GameFlag_Get(s32 flag);
+void GameFlag_Clear(s32 flag);
 void FlagBlock_ApplyFlags(struct ActorFlag *list);
 
 /// Sets up a scene's flag blocks (pairs of actor and game flag, ended by
@@ -308,9 +308,9 @@ void FlagBlock_PlaceAll(struct ActorFlag *actors) {
     object->collisionFlags &= ~1;
     Actor_SetSpriteFlagsFar(object, 0);
     cell->collisionCode = 0xff;
-    if (GameFlag_Test(flag)) {
+    if (GameFlag_Get(flag)) {
       Actor_SelectAnimationFar(object, 0);
-      GameFlag_ClearBit(flag);
+      GameFlag_Clear(flag);
     } else {
       Actor_SelectAnimationFar(object, 1);
     }

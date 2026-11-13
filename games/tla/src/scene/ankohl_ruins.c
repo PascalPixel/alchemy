@@ -397,7 +397,7 @@ void Func_02000c24(s32 unused, s32 id) {
     Event_SetFlag(0x9da);
     Call2((void (*)())Func_02000b30, 10, 181);
   }
-  if (!GameFlag_Test(0x9da) || !GameFlag_Test(0x9d9))
+  if (!GameFlag_Get(0x9da) || !GameFlag_Get(0x9d9))
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1011,7 +1011,7 @@ void Func_02001f7c(void) {
   s32 column;
   s32 row;
 
-  if (GameFlag_Test(0x104) && work->unk154 != 40)
+  if (GameFlag_Get(0x104) && work->unk154 != 40)
     return;
   raft->z += 0xcccc;
   column = leader->x >> 20;
@@ -1142,9 +1142,9 @@ void Func_020022e0(void) {
   MapGrid_CopyCells(40, 98, 3, 3, 25, 98);
 }
 
-void Func_02002318(void) { GameFlag_SetBit(0x205); }
+void Func_02002318(void) { GameFlag_Set(0x205); }
 
-void Func_02002328(void) { GameFlag_ClearBit(0x205); }
+void Func_02002328(void) { GameFlag_Clear(0x205); }
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1)

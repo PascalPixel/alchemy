@@ -105,7 +105,7 @@ Title_ShowCamelotLogo:
 	.global Func_0200063c
 	.thumb_func
 Func_0200063c:
-	overlay_veneer Func_081a6028
+	overlay_veneer TitleIntro_RunFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

@@ -456,9 +456,9 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   /* FAKEMATCH(wrapper): 79 calls forwarded through call.h's Call2, Call3,
    * Call4 and Value3; as direct calls, 221 of 993 instructions differ in
    * tla-en (any one alone, 2 to 71). */
-  if (GameFlag_Test(FLAG_BRIGGS_CAUGHT) == 0)
+  if (GameFlag_Get(FLAG_BRIGGS_CAUGHT) == 0)
     return;
-  if (GameFlag_Test(FLAG_ALHAFRA_MAST_CLEARED) == 1)
+  if (GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED) == 1)
     return;
   Event_SetFlag(FLAG_FAMILY_VISITED_BRIGGS);
   Event_Start();

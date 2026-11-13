@@ -5,7 +5,7 @@
 Resource_FarCall005:
 	export Djinn_GetRecoveryTableFar, Djinn_GetRecoveryTable
 	export Unit_CalculateFar, Unit_Calculate
-	export Item_Get, Item_GetDirect
+	export Item_GetDirectFar, Item_GetDirect
 	export Inventory_GetQuantityFar, Inventory_GetQuantity
 	export Inventory_AddItemFar, Inventory_AddItem
 	export PartyInventory_AddFar, PartyInventory_Add
@@ -72,10 +72,10 @@ Resource_FarCall005:
 	export Party_RestorePpOfLitElementsFar, Party_RestorePpOfLitElements
 	export Party_SetLeaderJennaFar, Party_SetLeaderJenna
 	export Party_SetLeaderFelixFar, Party_SetLeaderFelix
-	export Func_080ad228, Party_GivePiersDjinn
+	export Party_GivePiersDjinnFar, Party_GivePiersDjinn
 	export Unit_ReservedNoOpFar, Unit_ReservedNoOp
-	export Func_080ad238, DataTransfer_Apply
-	export Func_080ad240, Party_AddIsaacsParty
+	export DataTransfer_ApplyFar, DataTransfer_Apply
+	export Party_AddIsaacsPartyFar, Party_AddIsaacsParty
 	export Djinn_GiveToPartyFar, Djinn_GiveToParty
 	export Party_SumDjinnCountsFar, Party_SumDjinnCounts
 	export Party_AdjustShopCreditFar, Party_AdjustShopCredit
@@ -100,9 +100,9 @@ Resource_FarCall005:
 	export PartyInventory_FindRoomFar, PartyInventory_FindRoom
 	export Class_GetSeriesFar, Class_GetSeries
 	export Djinn_ActivateOfferedForPartyFar, Djinn_ActivateOfferedForParty
-	export Func_080ad308, Inventory_ClearSlot
-	export Func_080ad310, Party_DrainPp
-	export Func_080ad318, Party_GetPpRatio
-	export Func_080ad320, DataTransfer_GiveDefaultDjinn
+	export Inventory_ClearSlotFar, Inventory_ClearSlot
+	export Party_DrainPpFar, Party_DrainPp
+	export Party_GetPpRatioFar, Party_GetPpRatio
+	export DataTransfer_GiveDefaultDjinnFar, DataTransfer_GiveDefaultDjinn
 	export Owner_SumDjinnCountsFar, Owner_SumDjinnCounts
-	export Func_080ad330, ClearData_Apply
+	export ClearData_ApplyFar, ClearData_Apply

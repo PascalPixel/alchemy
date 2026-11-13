@@ -126,7 +126,7 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
   if ((u32)(leader->xPixel - 676) > 7 || z < 788 || z >= 796) {
     MapGrid_CopyCellPictureIndicesRect(53, 50, 42, 49, 1, 1);
     MapGrid_CopyCellsTo(55, 117, 41, 117, 3, 5);
-    GameFlag_ClearBit(0x201);
+    GameFlag_Clear(0x201);
     leader->motionFlags |= 1;
     leader->terrainHeight = 0;
     leader->y = 0;
@@ -136,7 +136,7 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
     Event_Wait(5);
     MapGrid_CopyCellPictureIndicesRect(52, 50, 42, 49, 1, 1);
     MapGrid_CopyCellsTo(52, 117, 41, 117, 3, 5);
-    GameFlag_SetBit(0x201);
+    GameFlag_Set(0x201);
     Sound_Play(161);
     leader->motionFlags &= ~1;
     leader->terrainHeight = -0x20000;

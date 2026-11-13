@@ -177,7 +177,7 @@ top:
       if (count < 8)
         object->scaleY -= 0x1f00;
       if (mode == 1) {
-        GameFlag_SetBit(flag);
+        GameFlag_Set(flag);
         Func_02002184(id, a, flag, object->terrainId);
         object->scaleY = 0x10000;
       }
@@ -223,7 +223,7 @@ next:
   nextFlag = flag + 1;
   cells = map->layers[object->terrainId].cells;
   shapes = Ram_MapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
-  if (GameFlag_Test(nextFlag)) {
+  if (GameFlag_Get(nextFlag)) {
     Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
   } else {
     s32 shape;
@@ -238,7 +238,7 @@ next:
     Func_020030c0(id);
     cell->attributeB = 128;
     *slot = Func_02003180(object->terrainId, shape, (height >> 19) + 4);
-    if (GameFlag_Test(flag))
+    if (GameFlag_Get(flag))
       Import_ActorSelectAnimation(object, 0);
   }
   table += 2;
@@ -280,7 +280,7 @@ next:
   {
     flag = table[1];
     Func_02003048();
-    if (!GameFlag_Test(flag)) {
+    if (!GameFlag_Get(flag)) {
       Sound_Play(125);
       Actor_SetSpriteColor(Actor_GetById(id), 7);
       wait(2);
@@ -291,10 +291,10 @@ next:
       wait(4);
       Actor_SetSpriteColor(Actor_GetById(id), 0);
       Func_020029d0(0);
-      GameFlag_SetBit(flag);
+      GameFlag_Set(flag);
     } else {
       second = flag + 1;
-      if (!GameFlag_Test(second)) {
+      if (!GameFlag_Get(second)) {
         leader->motionFlags = 0;
         Sound_Play(185);
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
@@ -315,7 +315,7 @@ next:
         Sound_Play(188);
         Func_02002b04();
         wait(20);
-        GameFlag_SetBit(second);
+        GameFlag_Set(second);
       }
     }
     Func_02003050();
@@ -341,7 +341,7 @@ loop:
   flag = row[1];
   Func_02003048();
   nextFlag = flag + 1;
-  if (!GameFlag_Test(nextFlag)) {
+  if (!GameFlag_Get(nextFlag)) {
     Sound_Play(185);
     TundariaTower_SetWork(0x10000, 0x40000, 0x10000);
     Func_020029d0(0);
@@ -357,8 +357,8 @@ loop:
     Sound_Play(188);
     Func_02002b04();
     wait(20);
-    GameFlag_SetBit(flag);
-    GameFlag_SetBit(nextFlag);
+    GameFlag_Set(flag);
+    GameFlag_Set(nextFlag);
   }
   Func_02003050();
   return;
@@ -413,7 +413,7 @@ next:
   cells = map->layers[object->terrainId].cells;
   shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
   object->unk5c[0] = 3;
-  if (GameFlag_Test(nextFlag)) {
+  if (GameFlag_Get(nextFlag)) {
     Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
   } else {
     s32 shape;
@@ -428,7 +428,7 @@ next:
     Func_020030c0(id);
     cell->attributeB = 128;
     *slot = Func_02003180(object->terrainId, shape, (height >> 19) + 4);
-    if (GameFlag_Test(flag))
+    if (GameFlag_Get(flag))
       Actor_CopyGraphics(id, 9);
   }
   list += 2;
@@ -471,7 +471,7 @@ void Func_02002764(const u16 *table) {
     }
     flag = table[1];
     Func_02003048();
-    if (!GameFlag_Test(flag)) {
+    if (!GameFlag_Get(flag)) {
       Import_ActorSelectAnimation(partner, 1);
       Func_02002748(partner, trap);
       wait(1);
@@ -488,10 +488,10 @@ void Func_02002764(const u16 *table) {
       Func_020029d0(0);
       Func_02002748(trap, partner);
       wait(1);
-      GameFlag_SetBit(flag);
+      GameFlag_Set(flag);
     } else {
       second = flag + 1;
-      if (!GameFlag_Test(second)) {
+      if (!GameFlag_Get(second)) {
         Import_ActorSelectAnimation(partner, 0);
         Func_02002748(partner, trap);
         motion = &leader->motionFlags;
@@ -516,7 +516,7 @@ void Func_02002764(const u16 *table) {
         Sound_Play(188);
         Func_02002b04();
         wait(20);
-        GameFlag_SetBit(second);
+        GameFlag_Set(second);
       }
     }
     Func_02003050();

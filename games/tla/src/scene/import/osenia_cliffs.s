@@ -6,10 +6,10 @@
 	.thumb_func
 Task_Add:
 	overlay_veneer Task_AddFar
-	.global GameFlag_SetBit
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
 	.global Actor_GetById
 	.thumb_func
 Actor_GetById:
@@ -21,16 +21,16 @@ Actor_SetModeById:
 	.global Func_02000190
 	.thumb_func
 Func_02000190:
-	overlay_veneer Func_080c86a8
+	overlay_veneer Rope_InitializeFar
 	.global Func_02000198
 	.thumb_func
 Func_02000198:
-	overlay_veneer Func_080c86b0
+	overlay_veneer Rope_TieFar
 	.global Func_020001a0
 	.thumb_func
 Func_020001a0:
-	overlay_veneer Func_080c86c0
+	overlay_veneer Rope_LashFar
 	.global Func_020001a8
 	.thumb_func
 Func_020001a8:
-	overlay_veneer Func_080c86e8
+	overlay_veneer Rope_PlaceFar

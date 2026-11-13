@@ -344,24 +344,24 @@ void Unit_Calculate(s32 owner) {
     flag = 0;
     switch (st->id) {
     case 1:
-      flag = GameFlag_Test(0x112);
+      flag = GameFlag_Get(0x112);
       break;
     case 3:
-      flag = GameFlag_Test(0x111);
+      flag = GameFlag_Get(0x111);
       break;
     case 5:
-      flag = GameFlag_Test(0x112);
+      flag = GameFlag_Get(0x112);
       break;
     case 0:
     case 4:
-      flag = GameFlag_Test(0x110);
+      flag = GameFlag_Get(0x110);
       break;
     case 2:
     case 6:
-      flag = GameFlag_Test(0x113);
+      flag = GameFlag_Get(0x113);
       break;
     case 7:
-      flag = GameFlag_Test(0x111);
+      flag = GameFlag_Get(0x111);
       break;
     }
     if (flag)
@@ -474,7 +474,7 @@ void GameFlag_RefreshLureCap(void) {
   s32 partySize;
   s32 partyIndex;
 
-  GameFlag_ClearBit(0x167);
+  GameFlag_Clear(0x167);
   partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
     struct OwnerInventoryState *unit;
@@ -857,11 +857,11 @@ void Party_RestorePpOfLitElements(void) {
     group = gCharacter_ElementGroupTable[ownerId];
     doRefresh = 0;
     if (group == 0) {
-      if (GameFlag_Test(0x110) || GameFlag_Test(0x112)) {
+      if (GameFlag_Get(0x110) || GameFlag_Get(0x112)) {
         doRefresh = 1;
       }
     } else {
-      if (GameFlag_Test(0x111) || GameFlag_Test(0x113)) {
+      if (GameFlag_Get(0x111) || GameFlag_Get(0x113)) {
         doRefresh = 1;
       }
     }
@@ -1014,7 +1014,7 @@ void DataTransfer_Apply(u8 *save, s32 keepSettings) {
       if (FlagBits_Test(flags, 0x30 + i * 20 + j))
         GameFlag_SetBit__game(flag);
       else
-        GameFlag_ClearBit(flag);
+        GameFlag_Clear(flag);
       /* FAKEMATCH(barrier): an empty asm reading j, which keeps the counter
        * the native's one long-lived register; without it, 105 of 219
        * instructions differ in tla-en. */
@@ -1025,10 +1025,10 @@ void DataTransfer_Apply(u8 *save, s32 keepSettings) {
     if (FlagBits_Test(flags, Data_080b1284[i]))
       GameFlag_SetBit__game(0x820 + i);
     else
-      GameFlag_ClearBit(0x820 + i);
+      GameFlag_Clear(0x820 + i);
   }
-  if (GameFlag_Test(0x822))
-    GameFlag_ClearBit(0x822);
+  if (GameFlag_Get(0x822))
+    GameFlag_Clear(0x822);
   else
     GameFlag_SetBit__game(0x822);
 
@@ -1126,7 +1126,7 @@ void Party_AddIsaacsParty(void) {
     s32 j;
 
     for (j = 0; j < 7; j++) {
-      if (GameFlag_Test(0x800 + k + j))
+      if (GameFlag_Get(0x800 + k + j))
         GameFlag_SetBit__game(0x30 + i * 20 + j);
       /* FAKEMATCH(barrier): an empty asm reading j keeps loop.c from
        * reversing the signed counter; as the same loop without it, 8 of
@@ -1154,7 +1154,7 @@ void Party_AddIsaacsParty(void) {
   for (i = 0; i < 4; i++) {
     count = 0;
     for (djinni = 0; djinni < 7; djinni++) {
-      if (!GameFlag_Test(0x30 + i * 20 + djinni))
+      if (!GameFlag_Get(0x30 + i * 20 + djinni))
         missing[count++] = djinni;
     }
     if (count != 0)
@@ -1204,7 +1204,7 @@ void DataTransfer_GiveDefaultDjinn(void) {
   s32 i;
   s32 k;
 
-  if (GameFlag_Test(0x800))
+  if (GameFlag_Get(0x800))
     return;
 
   count = Party_CountMembers();
@@ -1225,7 +1225,7 @@ void DataTransfer_GiveDefaultDjinn(void) {
   do {
     element = (Random16() * 4) >> 16;
     djinn = (Random16() * 7) >> 16;
-    if (!GameFlag_Test(element * 20 + djinn + 0x30)) {
+    if (!GameFlag_Get(element * 20 + djinn + 0x30)) {
       s8 low;
       s8 high;
 
@@ -1254,14 +1254,14 @@ void DataTransfer_GiveDefaultDjinn(void) {
     s32 flag;
 
     for (j = 0; j < 7; j++) {
-      /* FAKEMATCH(temporary): the form kept; as GameFlag_SetBit(0x800 + k + j),
+      /* FAKEMATCH(temporary): the form kept; as GameFlag_Set(0x800 + k + j),
          8 of 206 instructions differ in tla-en. */
       flag = 0x800 + k + j;
       // element carries the flag to read after the one to set.
       element = 0x30 + i * 20 + j;
-      if (GameFlag_Test(element))
+      if (GameFlag_Get(element))
         GameFlag_SetBit__game(flag);
-      GameFlag_ClearBit(element);
+      GameFlag_Clear(element);
     }
   }
   for (i = 0; i < 4; i++)

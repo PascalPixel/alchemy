@@ -551,7 +551,7 @@ s32 BattleCamera_ApplyTransform(void) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
 
   Transform_Reset();
-  if (GameFlag_Test(0x16B) != 0) {
+  if (GameFlag_Get(0x16B) != 0) {
     Iwram_TransformMatrix(gData_08128868);
     return Transform_ApplyLookAt__battle(state, state->pos);
   } else {

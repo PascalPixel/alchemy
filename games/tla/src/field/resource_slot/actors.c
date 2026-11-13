@@ -947,7 +947,7 @@ void Actor_PlaceSprites(struct PlacedObject *object, s32 angle) {
   void **sprites;
   s32 remaining;
 
-  if (GameFlag_Test(363))
+  if (GameFlag_Get(363))
     scale = gData_0802eb90;
   switch (object->kind & 15) {
   case 1:
@@ -1004,7 +1004,7 @@ void ObjectSystem_UpdateCameraFixed(void) {
     target = camera->targetOverride;
   angle = (s16)ArcTan2((eye->x - target->x) >> 16, (eye->z - target->z) >> 16);
   system->used = 0;
-  if (GameFlag_Test(363)) {
+  if (GameFlag_Get(363)) {
     Transform_Reset();
     angle += 0xffffe000;
     Iwram_TransformMatrixEntry(gCamera_FixedViewMatrix);

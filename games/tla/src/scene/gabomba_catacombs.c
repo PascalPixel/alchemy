@@ -94,7 +94,7 @@ void Func_02000100(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_02001274_(22, 15, 0, 5, 5, 63, 52);
-  if (GameFlag_Test(0xf53) == 0) {
+  if (GameFlag_Get(0xf53) == 0) {
     Actor_SetPosition(64, PIXELS(392), PIXELS(344));
     if (leader->x >> 20 == 24 && leader->z >> 20 == 21) {
       LEADER_HOP();
@@ -188,7 +188,7 @@ void Func_020005e8(void) { Func_02001274_(7, 23, 0, 4, 5, 60, 56); }
 
 void Func_02000608(void) {
   Func_02001274_(7, 23, 0, 4, 5, 60, 56);
-  if (GameFlag_Test(0x9b5) == 0) {
+  if (GameFlag_Get(0x9b5) == 0) {
     Func_0200127c_(249, 168, 424);
     ((struct GabombaCatacombsParty *)&gMainRoutineWork)->value254 = 0x19b5;
     gMainRoutineWork.battleRule24b = 2;
@@ -210,7 +210,7 @@ void Func_0200069c(void) {
   void name(void) {                                                            \
     struct Actor *object = Actor_GetById(n1);                                  \
                                                                                \
-    GameFlag_SetBit(n2);                                                       \
+    GameFlag_Set(n2);                                                       \
     object->motionFlags = 0;                                                   \
     object->priorityFlags = 0;                                                 \
     MapGrid_CopyCellAttributes(n3, n4, 1, 1, n5, n6);                          \
@@ -390,7 +390,7 @@ void Func_020009d4(void) {
   Actor_WaitForMoveById(9);
   Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
   Actor_WaitForMoveById(9);
-  GameFlag_SetBit(0x9ce);
+  GameFlag_Set(0x9ce);
   Scene_PlayMusic();
   PaletteFade_ApplyTarget(speed, 0);
   PaletteFade_StartInterpolation(60);
@@ -476,39 +476,39 @@ s32 Scene_Initialize(void) {
   Func_02001254(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room1 &&
       (entrance = gMainRoutineWork.entrance) == 1) {
-    if (GameFlag_Test(0xa27)) {
+    if (GameFlag_Get(0xa27)) {
       gMainRoutineWork.retreatScene = (s32)&SceneId_Ov671Room7;
       gMainRoutineWork.retreatEntrance = entrance;
-    } else if (GameFlag_Test(0xa28)) {
+    } else if (GameFlag_Get(0xa28)) {
       gMainRoutineWork.retreatScene = (s32)&SceneId_Ov672Room1;
       gMainRoutineWork.retreatEntrance = 3;
     }
   }
-  if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION) &&
+  if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
       gMainRoutineWork.scene == (s32)&SceneId_Ov673Room2 &&
       gMainRoutineWork.entrance > 2)
     Func_0200126c(gMainRoutineWork.currentOwner);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room3) {
-    if (GameFlag_Test(0x200))
+    if (GameFlag_Get(0x200))
       MapGrid_CopyCellAttributes(6, 23, 1, 1, 8, 23);
-    if (GameFlag_Test(513))
+    if (GameFlag_Get(513))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 8, 15);
-    if (GameFlag_Test(514))
+    if (GameFlag_Get(514))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 9, 0x10);
-    if (GameFlag_Test(515))
+    if (GameFlag_Get(515))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 8, 17);
-    if (GameFlag_Test(516))
+    if (GameFlag_Get(516))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 17);
-    if (GameFlag_Test(517))
+    if (GameFlag_Get(517))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 5, 0x10);
-    if (GameFlag_Test(518))
+    if (GameFlag_Get(518))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 15);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room5 &&
-      GameFlag_Test(0x200))
+      GameFlag_Get(0x200))
     MapGrid_CopyCellAttributes(15, 18, 1, 1, 17, 18);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room4 &&
-      GameFlag_Test(0x9ce) && !GameFlag_Test(0xf93) && !GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+      GameFlag_Get(0x9ce) && !GameFlag_Get(0xf93) && !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     statue = Actor_GetById(0x40);
     Actor_SetPosition(0x40, 0xa80000, 0x980000);
     statue->motionFlags = 6;

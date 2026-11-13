@@ -273,7 +273,7 @@
     struct EventWork *work = Ram_HeapSlots->eventWork;                         \
                                                                                \
     work->screenEffect = 0x209;                                                \
-    GameFlag_ClearBit(0x12f);                                                  \
+    GameFlag_Clear(0x12f);                                                  \
   }
 
 /// "The entrance is locked" (MsgShamanEntranceLocked).
@@ -316,11 +316,11 @@
 /// place.
 #define DEFINE_SCENE_RUN_UNLESS_FLAG(name, n1, call1)                          \
   void name(void) {                                                            \
-    if (GameFlag_Test(265)) {                                                  \
-      if (GameFlag_Test(n1) == 0)                                              \
+    if (GameFlag_Get(265)) {                                                  \
+      if (GameFlag_Get(n1) == 0)                                              \
         call1();                                                               \
     } else {                                                                   \
-      GameFlag_SetBit(n1);                                                     \
+      GameFlag_Set(n1);                                                     \
     }                                                                          \
   }
 

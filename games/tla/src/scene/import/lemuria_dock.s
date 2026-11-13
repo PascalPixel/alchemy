@@ -6,14 +6,14 @@
 	.thumb_func
 Task_Add:
 	overlay_veneer Task_AddFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_ClearBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global MapGrid_PlayMapEdit
 	.thumb_func
 MapGrid_PlayMapEdit:

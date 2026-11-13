@@ -22,14 +22,14 @@ ArcTan2:
 	.thumb_func
 Trig_Sin:
 	overlay_veneer Trig_SinFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
 	.global Import_ActorSelectAnimation
 	.thumb_func
 Import_ActorSelectAnimation:
@@ -225,7 +225,7 @@ Actor_ReturnHome:
 	.global Func_02001cfc
 	.thumb_func
 Func_02001cfc:
-	overlay_veneer Func_080c8480
+	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:
@@ -245,27 +245,27 @@ Actor_WatchAndSetScript:
 	.global Func_02001d24
 	.thumb_func
 Func_02001d24:
-	overlay_veneer Func_080c86a8
+	overlay_veneer Rope_InitializeFar
 	.global Func_02001d2c
 	.thumb_func
 Func_02001d2c:
-	overlay_veneer Func_080c86b8
+	overlay_veneer Rope_CoilFar
 	.global Func_02001d34
 	.thumb_func
 Func_02001d34:
-	overlay_veneer Func_080c86c0
+	overlay_veneer Rope_LashFar
 	.global Func_02001d3c
 	.thumb_func
 Func_02001d3c:
-	overlay_veneer Func_080c86e8
+	overlay_veneer Rope_PlaceFar
 	.global Func_02001d44
 	.thumb_func
 Func_02001d44:
-	overlay_veneer Func_080c8760
+	overlay_veneer TileCopies_CopyTouchedCellsFar
 	.global Func_02001d4c
 	.thumb_func
 Func_02001d4c:
-	overlay_veneer Func_080c8780
+	overlay_veneer HangingVine_PlaceFar
 	.global BattleEffect_GetObjectPriority
 	.thumb_func
 BattleEffect_GetObjectPriority:
@@ -273,19 +273,19 @@ BattleEffect_GetObjectPriority:
 	.global Func_02001d5c
 	.thumb_func
 Func_02001d5c:
-	overlay_veneer Func_080c8838
+	overlay_veneer MapGrid_GetAttributeBAtFar
 	.global Func_02001d64
 	.thumb_func
 Func_02001d64:
-	overlay_veneer Func_080c8848
+	overlay_veneer MapGrid_SetAttributeBAtFar
 	.global Func_02001d6c
 	.thumb_func
 Func_02001d6c:
-	overlay_veneer Func_080c8878
+	overlay_veneer Actor_TakeLeaderLayerFar
 	.global Func_02001d74
 	.thumb_func
 Func_02001d74:
-	overlay_veneer Func_080c88e0
+	overlay_veneer Teleport_PlaySparksAndFadeFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

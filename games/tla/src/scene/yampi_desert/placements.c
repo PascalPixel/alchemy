@@ -66,7 +66,7 @@ const u8 *Scene_GetPlacements(void) {
   if (scene == (s32)&SceneId_Ov661Room1)
     return gYampiDesert_Room1Placements;
   if (scene == (s32)&SceneId_Ov661Room2) {
-    if (GameFlag_Test(0x8f0))
+    if (GameFlag_Get(0x8f0))
       return gYampiDesert_Room2PlacementsAfterMeeting;
     return gYampiDesert_Room2Placements;
   }
@@ -167,7 +167,7 @@ void YampiDesert_TalkToElderAboutWay(void) {
   Actor_FaceActorById(12, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgAsYouCan);
   Event_ShowMessageAndWait(12, 0);
-  GameFlag_SetBit(0x88f);
+  GameFlag_Set(0x88f);
   Event_End();
 }
 
@@ -181,7 +181,7 @@ void YampiDesert_TalkToElder(void) {
   Actor_FaceActorById(13, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgThisIsWhere);
   Event_ShowMessageAndWait(13, 0);
-  GameFlag_SetBit(0x88f);
+  GameFlag_Set(0x88f);
   Event_End();
 }
 
@@ -238,7 +238,7 @@ void YampiDesert_StepOntoStakeTops(void) {
     struct Actor *object = Actor_GetById(*list);
 
     list += 2;
-    if (!GameFlag_Test(*list)) {
+    if (!GameFlag_Get(*list)) {
       s32 layer = object->terrainId;
       struct MapCell *cells = map->layers[layer].cells;
       u8 *shapes =
@@ -256,7 +256,7 @@ void YampiDesert_StepOntoStakeTops(void) {
     }
     list++;
   }
-  GameFlag_SetBit(0x20b);
+  GameFlag_Set(0x20b);
 }
 
 void YampiDesert_StepOffStakeTops(void) {
@@ -280,7 +280,7 @@ next:
     s32 set;
 
     list += 2;
-    set = GameFlag_Test(*list);
+    set = GameFlag_Get(*list);
     if (!set) {
       s32 layer = object->terrainId;
       struct MapCell *cells = map->layers[layer].cells;
@@ -303,7 +303,7 @@ next:
   if (*list != 0xffff)
     goto next;
 done:
-  GameFlag_ClearBit(0x20b);
+  GameFlag_Clear(0x20b);
 }
 
 /// For each six-byte record (actor, unused, flag) up to an actor of 0xffff:
@@ -323,7 +323,7 @@ void YampiDesert_BlockPoundedStakes(u16 *list) {
      * it, 19 of 31 instructions differ in tla-en. */
     asm("" : "+l"(list));
     object = Actor_GetById(list[0]);
-    if (GameFlag_Test(list[2]))
+    if (GameFlag_Get(list[2]))
       *(u8 *)((u32)map->layers[2].cells + (Func_020041e0(object) << 2) + 2) =
           255;
     list += 3;

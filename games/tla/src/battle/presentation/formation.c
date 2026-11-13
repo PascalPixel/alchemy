@@ -46,30 +46,30 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
        candidateOrUnitIndex++)
     pool[candidateOrUnitIndex].score = -1;
 
-  if (GameFlag_Test(0x65b))
-    GameFlag_SetBit(0x65f);
-  if (GameFlag_Test(0x65c))
-    GameFlag_SetBit(0x65f);
-  if (GameFlag_Test(0x65d))
-    GameFlag_SetBit(0x65f);
-  if (GameFlag_Test(0x65e))
-    GameFlag_SetBit(0x65f);
-  if (GameFlag_Test(0x66b))
-    GameFlag_SetBit(0x66c);
-  if (GameFlag_Test(0x668))
-    GameFlag_SetBit(0x66a);
-  if (GameFlag_Test(0x669))
-    GameFlag_SetBit(0x66a);
-  GameFlag_ClearBit(0x771);
-  if (GameFlag_Test(0x778))
-    GameFlag_SetBit(0x771);
+  if (GameFlag_Get(0x65b))
+    GameFlag_Set(0x65f);
+  if (GameFlag_Get(0x65c))
+    GameFlag_Set(0x65f);
+  if (GameFlag_Get(0x65d))
+    GameFlag_Set(0x65f);
+  if (GameFlag_Get(0x65e))
+    GameFlag_Set(0x65f);
+  if (GameFlag_Get(0x66b))
+    GameFlag_Set(0x66c);
+  if (GameFlag_Get(0x668))
+    GameFlag_Set(0x66a);
+  if (GameFlag_Get(0x669))
+    GameFlag_Set(0x66a);
+  GameFlag_Clear(0x771);
+  if (GameFlag_Get(0x778))
+    GameFlag_Set(0x771);
 
   for (candidateOrUnitIndex = 0; (u32)candidateOrUnitIndex <= 86;
        candidateOrUnitIndex++)
-    GameFlag_ClearBit(Data_08130c5c[candidateOrUnitIndex] + 0x600);
-  GameFlag_SetBit(71);
-  GameFlag_SetBit(230);
-  GameFlag_SetBit(117);
+    GameFlag_Clear(Data_08130c5c[candidateOrUnitIndex] + 0x600);
+  GameFlag_Set(71);
+  GameFlag_Set(230);
+  GameFlag_Set(117);
 
   for (candidateOrUnitIndex = 0; (u32)candidateOrUnitIndex < 660;
        candidateOrUnitIndex++) {
@@ -439,7 +439,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   // Through a byte pointer, which keeps the level adjustment stored first.
   *(u8 *)&battle->unk40 = 0;
   enemyClasses = listBuffer;
-  if (GameFlag_Test(0x173))
+  if (GameFlag_Get(0x173))
     recordId = BattleFormation_SelectLevelMatchedCandidate(&levelAdjustment);
   if ((u32)recordId >= 660)
     recordId = 1;
@@ -577,7 +577,7 @@ assign_enemy:
     unit = Unit_Get__f11f66c(memberOrEnemyIndex + 128);
     if (levelAdjustment != 0)
       BattleEnemy_AdjustLevel(memberOrEnemyIndex + 128, levelAdjustment);
-    else if (!GameFlag_Test(0x173) && GameFlag_Test(0x2e))
+    else if (!GameFlag_Get(0x173) && GameFlag_Get(0x2e))
       BattleUnit_Strengthen(memberOrEnemyIndex + 128);
     battle->unk868 = 0;
     enemyId = unit->enemyId;
@@ -585,7 +585,7 @@ assign_enemy:
     case 101:
     case 102:
     case 103:
-      if (!GameFlag_Test(0x173))
+      if (!GameFlag_Get(0x173))
         battle->unk868 = 1;
       break;
     }

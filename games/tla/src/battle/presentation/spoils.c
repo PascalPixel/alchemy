@@ -15,7 +15,7 @@ u32 BattleSpoils_RankItem(u32 value) {
   if (base == 0)
     return 0;
   {
-    u8 flags = Item_Get(base)->flags;
+    u8 flags = Item_GetDirectFar(base)->flags;
 
     if (flags & 8)
       bank = 1;
@@ -148,10 +148,10 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
       battle->defeatState = 1;
   }
   spoils->defeated++;
-  if (GameFlag_Test(0x173))
+  if (GameFlag_Get(0x173))
     return 0;
   if (unit->enemyId < 0x200)
-    GameFlag_SetBit(unit->enemyId + 0x600);
+    GameFlag_Set(unit->enemyId + 0x600);
   enemy = Enemy_GetDefinitionFar(unit->enemyId);
   if (djinnBonus != 0) {
     if (enemy->coins != 0)

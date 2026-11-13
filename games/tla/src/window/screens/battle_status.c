@@ -535,13 +535,13 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       j = -1;
       for (index = 0; index != 15 && (item = unit->items[index]) != 0;
            index++) {
-        Item_Get(item);
+        Item_GetDirectFar(item);
         if (Item_ClassifyUseAbility(member, item) == 0)
           entries[count++] = item;
       }
       for (index = 0; index != 15 && (item = unit->items[index]) != 0;
            index++) {
-        Item_Get(item);
+        Item_GetDirectFar(item);
         if (Item_ClassifyUseAbility(member, item) != 0)
           entries[count++] = item;
       }
@@ -570,7 +570,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       if (rowBase != j) {
         Window_DrawDividerLine(statusWindow, 0, 16, 29, 16);
         for (j = 0; j <= 3 && (item = entries[rowBase + j]) != 0; j++) {
-          Item_Get(item);
+          Item_GetDirectFar(item);
           Text_SetColor(15);
           if (Item_ClassifyUseAbility(member, item) != 0)
             Text_SetColor(4);

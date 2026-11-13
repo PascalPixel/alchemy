@@ -12,9 +12,9 @@
 
 #include "types.h"
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
+s32 GameFlag_Get(s32 flag);
+void GameFlag_Set(s32 flag);
+void GameFlag_Clear(s32 flag);
 void FieldEvent_Wait(s32 frames);
 void Import_EventStart(void);
 void Import_EventEnd(void);

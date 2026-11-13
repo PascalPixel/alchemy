@@ -51,7 +51,7 @@ extern const u8 gData_02003fc0[];
 extern const u8 gData_02003fc4[];
 
 void Func_0200118c(void) {
-  GameFlag_SetBit(0x209);
+  GameFlag_Set(0x209);
   Field_RequestDjinnBattle(16, 47);
 }
 
@@ -122,13 +122,13 @@ static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
 void Func_020012c8(void) { CrumblingPillars_Step(gData_02003f44); }
 
 void Func_020012d8(void) {
-  if (GameFlag_Test(0x213) == 0)
+  if (GameFlag_Get(0x213) == 0)
     Map_CopyAttributes(0, 0, 1, 1, 9, 18);
-  if (GameFlag_Test(0x215) == 0)
+  if (GameFlag_Get(0x215) == 0)
     Map_CopyAttributes(0, 0, 1, 1, 11, 18);
-  if (GameFlag_Test(0x221) == 0)
+  if (GameFlag_Get(0x221) == 0)
     Map_CopyAttributes(0, 0, 1, 1, 14, 28);
-  if (GameFlag_Test(0x223) == 0)
+  if (GameFlag_Get(0x223) == 0)
     Map_CopyAttributes(0, 0, 1, 1, 16, 28);
 }
 
@@ -148,9 +148,9 @@ void Func_02001368(void) {
 // event_inline.h's are, a layer and not a compiler-steering device.
 
 void Func_020013b0(void) {
-  if (GameFlag_Test(0x213) == 0)
+  if (GameFlag_Get(0x213) == 0)
     Map_CopyAttributes(63, 0, 1, 1, 50, 20);
-  if (GameFlag_Test(0x215) == 0)
+  if (GameFlag_Get(0x215) == 0)
     Map_CopyAttributes(63, 0, 1, 1, 52, 20);
 }
 
@@ -191,12 +191,12 @@ void Func_02001474(s32 show) {
 
 void Func_020014ec(void) {
   Func_02001474(1);
-  GameFlag_SetBit(0x200);
+  GameFlag_Set(0x200);
 }
 
 void Func_02001500(void) {
   Func_02001474(0);
-  GameFlag_ClearBit(0x200);
+  GameFlag_Clear(0x200);
 }
 
 DEFINE_ACTORS_SET_HIDDEN(Actors_SetHidden)
@@ -226,7 +226,7 @@ void Func_020015e0(void) {
     Event_ResolvePendingActions(0);
     Actor_DropAndWait(object);
     Map_CopyCellAttributeRect(54, 32, 2, 1, x, 64);
-    GameFlag_SetBit(0x301);
+    GameFlag_Set(0x301);
     Event_End();
   }
 }
@@ -245,7 +245,7 @@ void Func_02001640(void) {
     wait(1);
     Actor_DropAndWait(object);
     Map_CopyCellAttributeRect(50, 7, 1, 1, x, 7);
-    GameFlag_SetBit(0x840);
+    GameFlag_Set(0x840);
     Event_End();
   }
 }
@@ -280,7 +280,7 @@ void Func_0200172c(void) {
   Map_CopyAttributes(38, 32, 1, 1, 37, 33);
   Map_CopyAttributes(30, 32, 1, 2, 38, 32);
   Map_CopyAttributes(40, 64, 4, 3, 36, 64);
-  GameFlag_SetBit(0x841);
+  GameFlag_Set(0x841);
 }
 
 void Func_02001788(void) {
@@ -305,14 +305,14 @@ void Func_020017a0(void) {
   }
 }
 
-void Func_020017f4(void) { GameFlag_ClearBit(0x201); }
+void Func_020017f4(void) { GameFlag_Clear(0x201); }
 
 void Func_02001804(void) {
   s32 flag;
 
   flag = 0x320;
 loop:
-  GameFlag_ClearBit(flag);
+  GameFlag_Clear(flag);
   if (flag != 0x35f) {
     flag++;
     goto loop;
@@ -327,8 +327,8 @@ loop:
     const u16 *dest;                                                           \
                                                                                \
     for (i = 0; i <= n1; i++) {                                                \
-      if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0) {                                         \
-        if (GameFlag_Test(flag) != 0) {                                        \
+      if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {                                         \
+        if (GameFlag_Get(flag) != 0) {                                        \
           s32 x;                                                               \
           s32 y;                                                               \
                                                                                \
@@ -343,12 +343,12 @@ loop:
         }                                                                      \
       } else {                                                                 \
         if (*cell != 0)                                                        \
-          GameFlag_SetBit(flag);                                               \
+          GameFlag_Set(flag);                                               \
         cell += 6;                                                             \
       }                                                                        \
       flag++;                                                                  \
     }                                                                          \
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0)                                             \
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0)                                             \
       Func_02001804();                                                         \
   }
 
@@ -373,8 +373,8 @@ void Func_020019b8(void) {
   u32 i;
 
   for (i = 0; i <= 15; flag++, i++) {
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
-      if (GameFlag_Test(flag)) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
+      if (GameFlag_Get(flag)) {
         s32 x;
         s32 y;
 
@@ -386,7 +386,7 @@ void Func_020019b8(void) {
       }
     } else {
       if (*record != 0)
-        GameFlag_SetBit(flag);
+        GameFlag_Set(flag);
       record += 6;
     }
   }
@@ -428,7 +428,7 @@ void Func_02001a30(void) {
     n = work->exit - 18;
     flag = work->exit + 0x22e;
     record = &gData_020041b8[n * 6];
-    if (GameFlag_Test(0x33a))
+    if (GameFlag_Get(0x33a))
       gData_020041b8[26] = 3;
   } else {
     return;
@@ -442,7 +442,7 @@ void Func_02001a30(void) {
   Event_Wait(4);
   FieldCamera_GetActor()->y += -0x80000;
   next = record + 1;
-  if (GameFlag_Test(flag)) {
+  if (GameFlag_Get(flag)) {
     s32 x, y, index, toX, toZ;
 
     Sound_Play(229);
@@ -492,8 +492,8 @@ void Func_02001a30(void) {
                                              height);
         }
       } else if (scene == SCENE(Ov655Room5)) {
-        if ((n == 0 && GameFlag_Test(0x241)) ||
-            (n == 11 && GameFlag_Test(0x24c))) {
+        if ((n == 0 && GameFlag_Get(0x241)) ||
+            (n == 11 && GameFlag_Get(0x24c))) {
           s32 srcX = gData_02004052[8], srcY = gData_02004052[9], width = 1,
               height = 2;
           MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
@@ -558,8 +558,8 @@ void Func_02001a30(void) {
                                            x, y, 1, 1);
     }
     Event_Wait(12);
-    GameFlag_SetBit(flag);
-    GameFlag_SetBit(0x201);
+    GameFlag_Set(flag);
+    GameFlag_Set(0x201);
     {
       s16 scene = gMainRoutineWork.scene;
       if (scene == SCENE(Ov655Room5) || scene == SCENE(Ov655Room3)) {
@@ -573,7 +573,7 @@ void Func_02001a30(void) {
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Test(flag); }
+static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Get(flag); }
 
 void Func_02001ee8(void) {
   struct Actor *object;
@@ -582,18 +582,18 @@ void Func_02001ee8(void) {
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (gData_0200567c != (object->x >> 20) ||
         gData_02005678 != (object->z >> 20))
-      GameFlag_ClearBit(0x201);
+      GameFlag_Clear(0x201);
   }
 }
 
 DEFINE_ACTOR_HIDE(Actor_Hide, Func_02003cc0)
 
 void Scene_RunUnlessFlag(void) {
-  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0) {
-    if (GameFlag_Test(0x200) == 0)
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
+    if (GameFlag_Get(0x200) == 0)
       Func_02001500();
   } else {
-    GameFlag_SetBit(0x200);
+    GameFlag_Set(0x200);
   }
 }
 
@@ -660,19 +660,19 @@ void Func_02002124(void) {
 // event_inline.h's are, a layer and not a compiler-steering device.
 
 void Func_02002140(void) {
-  s32 set = GameFlag_Test(0x207);
+  s32 set = GameFlag_Get(0x207);
 
   if (set == 0) {
     Actor_GetById(8)->motionFlags = set;
     Map_CopyAttributes(51, 12, 1, 1, 47, 12);
-    GameFlag_SetBit(0x202);
+    GameFlag_Set(0x202);
   }
 }
 
 void Func_02002180(void) {
-  if (GameFlag_Test(0x207) == 0) {
+  if (GameFlag_Get(0x207) == 0) {
     Map_CopyAttributes(48, 11, 1, 1, 47, 12);
-    GameFlag_ClearBit(0x202);
+    GameFlag_Clear(0x202);
   }
 }
 
@@ -755,7 +755,7 @@ void Func_020021e8(void) {
   MapGrid_CopyCellPictureIndicesRect(68, 33, 105, 6, 1, 1);
   Sound_Play(161);
   Func_020021b4();
-  GameFlag_SetBit(0x247);
+  GameFlag_Set(0x247);
   Actor_MoveTo(24, 664, 104);
   MapGrid_CopyCellPictureIndicesRect(69, 33, 105, 4, 1, 1);
   Sound_Play(229);
@@ -764,7 +764,7 @@ void Func_020021e8(void) {
   Actor_Jump(24, 6, 16);
   Actor_PlaceFacing(24, 222 << 18, 168 << 16, FACING_SOUTH);
   Event_Wait(20);
-  GameFlag_SetBit(0x86c);
+  GameFlag_Set(0x86c);
   Event_End();
 }
 
@@ -783,7 +783,7 @@ void Func_020022e0(void) {
   Actor_MoveTo(24, 1040, 152);
   Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
   Event_Wait(20);
-  GameFlag_SetBit(0x86d);
+  GameFlag_Set(0x86d);
   Event_End();
 }
 
@@ -804,7 +804,7 @@ void Func_02002390(void) {
   Actor_SetSpriteFlags(Actor_GetById(25), 1);
   Actor_MoveTo(25, 294, 104);
   Actor_PlaceFacing(25, 212 << 17, 208 << 15, FACING_SOUTH);
-  GameFlag_SetBit(0x86e);
+  GameFlag_Set(0x86e);
   Event_End();
 }
 
@@ -825,14 +825,14 @@ void Func_02002458(void) {
   Actor_MoveTo(25, 440, 152);
   Actor_MoveTo(25, 456, 168);
   Actor_MoveTo(25, 456, 184);
-  GameFlag_SetBit(0x241);
+  GameFlag_Set(0x241);
   MapGrid_CopyCellPictureIndicesRect(69, 51, 92, 11, 1, 1);
   Sound_Play(161);
   Func_020021b4();
   Actor_MoveTo(25, 456, 216);
   Actor_MoveTo(25, 584, 216);
   Actor_PlaceFacing(25, 154 << 18, 140 << 17, FACING_SOUTH);
-  GameFlag_SetBit(0x86f);
+  GameFlag_Set(0x86f);
   Event_End();
 }
 
@@ -851,7 +851,7 @@ void Func_02002574(void) {
     object->priorityFlags |= 2;
     ((u8 *)object)[89] &= 0xfe;
     object->scaleY = 0x10000;
-    GameFlag_SetBit(0x205);
+    GameFlag_Set(0x205);
   }
 }
 

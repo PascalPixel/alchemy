@@ -147,10 +147,10 @@ void GarohInteriors_TalkToWeaponMerchant(s32 actor) {
 
   u16 facing = (leader->facing + 0x2000) & ~0x3fff;
 
-  if (facing == FACING_NORTH && GameFlag_Test(FLAG_GAROH_SECRET_SHARED)) {
+  if (facing == FACING_NORTH && GameFlag_Get(FLAG_GAROH_SECRET_SHARED)) {
     Shop_Run(10, actor);
   } else {
-    if (GameFlag_Test(FLAG_GAROH_SECRET_SHARED))
+    if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
       // "What do you think? I'll bet these weapons suit you better than any
       // fangs would!"
       Event_SetMessageId((s32)MsgGarohInteriors52);
@@ -169,10 +169,10 @@ void GarohInteriors_TalkToArmorMerchant(s32 actor) {
 
   u16 facing = (leader->facing + 0x2000) & ~0x3fff;
 
-  if (facing == FACING_NORTH && GameFlag_Test(FLAG_GAROH_SECRET_SHARED)) {
+  if (facing == FACING_NORTH && GameFlag_Get(FLAG_GAROH_SECRET_SHARED)) {
     Shop_Run(11, actor);
   } else {
-    if (GameFlag_Test(FLAG_GAROH_SECRET_SHARED))
+    if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
       // "When we change form, it's best to be unclothed."
       Event_SetMessageId((s32)MsgGarohInteriors54);
     else
@@ -191,7 +191,7 @@ void GarohInteriors_TalkToItemMerchant(s32 actor) {
 
   if (facing == FACING_NORTH) {
     Shop_Run(12, actor);
-  } else if (GameFlag_Test(FLAG_GAROH_SECRET_SHARED)) {
+  } else if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED)) {
     // "I've heard stories about other mountains like our own Air's Rock..."
     Event_SetMessageId((s32)MsgGarohInteriors56);
     Event_ShowMessageAndWait(actor, 0);
@@ -223,7 +223,7 @@ void GarohInteriors_TalkToInnkeeper(s32 actor) {
   if (facing == FACING_NORTH) {
     Inn_CheckIn(3, actor);
   } else {
-    if (GameFlag_Test(FLAG_GAROH_SECRET_SHARED))
+    if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
       // "If you can pass the tests of Air's Rock, you can do anything!"
       Event_SetMessageId((s32)MsgGarohInteriors58);
     else
@@ -244,7 +244,7 @@ void GarohInteriors_TalkToHealer(void) {
   if ((u16)facing == FACING_NORTH) {
     Sanctum_Run(ACTOR_HEALER);
   } else {
-    if (GameFlag_Test(FLAG_GAROH_SECRET_SHARED))
+    if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
       // "I've heard about you. They say you're special, like the people in this
       // town."
       Event_SetMessageId((s32)MsgGarohInteriors66);
@@ -289,7 +289,7 @@ void GarohInteriors_AskWhatTheWanderersSeek(s32 actor) {
 void GarohInteriors_TalkToDisappointedTraveler(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (GameFlag_Test(FLAG_GAROH_SECRET_SHARED))
+  if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
     // "Those wolves were really noisy last night, too."
     Event_SetMessageId((s32)MsgGarohInteriors60);
   else
@@ -303,7 +303,7 @@ void GarohInteriors_TalkToDisappointedTraveler(void) {
 void GarohInteriors_TalkToStubbornTraveler(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (GameFlag_Test(FLAG_GAROH_SECRET_SHARED))
+  if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
     // "Maybe we should stay and try climbing Air's Rock one more time."
     Event_SetMessageId((s32)MsgGarohInteriors61);
   else
@@ -317,7 +317,7 @@ void GarohInteriors_TalkToStubbornTraveler(void) {
 void GarohInteriors_ReadDisappointedTravelersMind(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (GameFlag_Test(FLAG_GAROH_SECRET_SHARED))
+  if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
     // "I'm scared of wolves, so I don't go out much at night..."
     Event_SetMessageId((s32)MsgGarohInteriors64);
   else
@@ -331,7 +331,7 @@ void GarohInteriors_ReadDisappointedTravelersMind(void) {
 void GarohInteriors_ReadStubbornTravelersMind(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (GameFlag_Test(FLAG_GAROH_SECRET_SHARED))
+  if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
     // "If I used a lever, I could probably make that rock spin..."
     Event_SetMessageId((s32)MsgGarohInteriors65);
   else
@@ -357,13 +357,13 @@ void GarohInteriors_AskAboutReveal(void) {
     Event_SetMessageId(message + 2);
   }
   Event_ShowMessageAndWait(ACTOR_REVEAL_SEEKER, 0);
-  GameFlag_SetBit(FLAG_GAROH_ASKED_ABOUT_REVEAL);
+  GameFlag_Set(FLAG_GAROH_ASKED_ABOUT_REVEAL);
 }
 
 /// Returns the room's triggers: the night's until the secret is shared, the
 /// morning's after, and the inn's morning ones as the party wakes there.
 const struct Trigger *Scene_GetEvents(void) {
-  s32 shared = GameFlag_Test(FLAG_GAROH_SECRET_SHARED);
+  s32 shared = GameFlag_Get(FLAG_GAROH_SECRET_SHARED);
   struct MainRoutineWork *party = &gMainRoutineWork;
   s32 room1 = (s32)&SceneId_Ov660Room1;
   s32 scene;
@@ -396,7 +396,7 @@ s32 Scene_Initialize(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   Func_0200087c(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov660Room1) {
-    if (GameFlag_Test(FLAG_GAROH_SECRET_SHARED) ||
+    if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED) ||
         gMainRoutineWork.entrance == 99) {
       Actor_SetHorizontalPositionWithTerrain(ACTOR_DISAPPOINTED_TRAVELERS_BED,
                                              0, 0);
@@ -442,12 +442,12 @@ s32 Scene_Initialize(void) {
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_STUBBORN_TRAVELER), 0);
     }
     if (gMainRoutineWork.entrance == 99 &&
-        !GameFlag_Test(FLAG_GAROH_SECRET_SHARED))
+        !GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
       GarohInteriors_WakeAtInn();
   }
-  if (GameFlag_Test(FLAG_GAROH_SECRET_SHARED))
-    GameFlag_ClearBit(FLAG_GAROH_NIGHT);
-  if (GameFlag_Test(FLAG_GAROH_NIGHT))
+  if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
+    GameFlag_Clear(FLAG_GAROH_NIGHT);
+  if (GameFlag_Get(FLAG_GAROH_NIGHT))
     MapGrid_SetShownLayers(0xa00);
   return 0;
 }
@@ -457,7 +457,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// The morning after the night with Maha: the party wakes at the inn, the
 /// secret is shared, and the inn's people say the stay is on the house.
 void GarohInteriors_WakeAtInn(void) {
-  GameFlag_SetBit(FLAG_GAROH_SECRET_SHARED);
+  GameFlag_Set(FLAG_GAROH_SECRET_SHARED);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_Wait(30);

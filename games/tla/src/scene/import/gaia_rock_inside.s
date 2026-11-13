@@ -46,18 +46,18 @@ Heap_Release:
 	.thumb_func
 Unit_Get:
 	overlay_veneer Unit_GetFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global GameFlag_GetByte
 	.thumb_func
 GameFlag_GetByte:
@@ -129,7 +129,7 @@ MapGrid_CopyCellPictureCellsRect:
 	.global Func_02004e0c
 	.thumb_func
 Func_02004e0c:
-	overlay_veneer Func_080201f8
+	overlay_veneer Map_CopyRawCellsRectFar
 	.global Actor_SetSpriteFlags
 	.thumb_func
 Actor_SetSpriteFlags:
@@ -349,7 +349,7 @@ Event_WaitTransitionFrames:
 	.global Func_02004fc4
 	.thumb_func
 Func_02004fc4:
-	overlay_veneer Func_080c8480
+	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:
@@ -369,11 +369,11 @@ Party_GetLeaderActor:
 	.global Func_02004fec
 	.thumb_func
 Func_02004fec:
-	overlay_veneer Func_080c8780
+	overlay_veneer HangingVine_PlaceFar
 	.global Func_02004ff4
 	.thumb_func
 Func_02004ff4:
-	overlay_veneer Func_080c88d0
+	overlay_veneer Cyclone_CopyTouchedCellsFar
 	.global Actor_ResetTargetsAndVelocity
 	.thumb_func
 Actor_ResetTargetsAndVelocity:
@@ -382,12 +382,12 @@ Actor_ResetTargetsAndVelocity:
 	.global Func_02005004
 	.thumb_func
 Func_02005004:
-	overlay_veneer Func_080c8940
+	overlay_veneer WorldMap_SetReturnLeavingSceneFar
 	.endif
 	.global Func_0200500c
 	.thumb_func
 Func_0200500c:
-	overlay_veneer Func_080c8948
+	overlay_veneer FieldItem_JumpToLeaderFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

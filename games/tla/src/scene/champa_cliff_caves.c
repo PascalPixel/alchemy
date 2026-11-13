@@ -99,7 +99,7 @@ extern u32 gData_02003c84[];
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s32 scene;
 
-  if (GameFlag_Test(0x97e)) {
+  if (GameFlag_Get(0x97e)) {
     scene = gMainRoutineWork.scene;
     if (scene == (s32)&SceneId_Ov685Room1)
       return gData_02003aec;
@@ -110,7 +110,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
     if (scene == (s32)&SceneId_Ov685Room4)
       return gData_02003c84;
   } else {
-    if (GameFlag_Test(FLAG_BRIGGS_SAILED_FROM_ALHAFRA)) {
+    if (GameFlag_Get(FLAG_BRIGGS_SAILED_FROM_ALHAFRA)) {
       scene = gMainRoutineWork.scene;
       if (scene == (s32)&SceneId_Ov685Room1)
         return gData_020038ac;
@@ -300,15 +300,15 @@ s32 Scene_Initialize(void) {
       party->entrance = 23;
       Func_02001868();
     }
-    if (GameFlag_Test(0x977) && !GameFlag_Test(0x978)) {
+    if (GameFlag_Get(0x977) && !GameFlag_Get(0x978)) {
       FieldActor_ShowItemIconById(10, 326);
       Actor_SetPosition(10, 0x2980000, 0xe80000);
       Actor_GetById(10)->motionFlags = 4;
     }
-    if (GameFlag_Test(0x977))
+    if (GameFlag_Get(0x977))
       Actor_SetPosition(8, 0x2980000, 0xc80000);
   } else if (party->scene == (s32)&SceneId_Ov685Room3) {
-    if (GameFlag_Test(0x97e)) {
+    if (GameFlag_Get(0x97e)) {
       Actor_SetModeById(8, 11);
       Actor_SetSpriteFlags(Actor_GetById(8), 0);
     }
@@ -659,7 +659,7 @@ void Func_0200343c(s32 x, s32 z, s32 a, s32 b);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Test(flag); }
+static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
 
 static __inline__ void Func_0200343c_(s32 x, s32 z, s32 a, s32 b) {
   /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 32 of
@@ -701,13 +701,13 @@ first:
 chosen:
   if (item != -1) {
     if (!GameFlag_Test_(0x975)) {
-      GameFlag_SetBit(0x975);
+      GameFlag_Set(0x975);
       Func_02000804(item);
     } else if (!GameFlag_Test_(0x976)) {
-      GameFlag_SetBit(0x976);
+      GameFlag_Set(0x976);
       Func_02000978(item);
     } else if (!GameFlag_Test_(0x977)) {
-      GameFlag_SetBit(0x977);
+      GameFlag_Set(0x977);
       Func_0200343c_(164 << 18, 208 << 16, 0, -4);
       Func_0200343c_(164 << 18, 224 << 16, 0, -4);
       Func_0200343c_(164 << 18, 240 << 16, 0, -4);
@@ -1475,7 +1475,7 @@ void Func_02001868(void) {
                              ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(15);
   Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
-  GameFlag_SetBit(0x97e);
+  GameFlag_Set(0x97e);
   Event_End();
 }
 

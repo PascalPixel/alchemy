@@ -76,7 +76,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
     position.y = object->y - position.z;
     position.z = object->z;
     map = Ram_HeapSlots->mapWork;
-    sourceCell = &map->layers[object->terrainId].cells[Func_080c8710(object)];
+    sourceCell = &map->layers[object->terrainId].cells[Actor_GetCellIndexFar(object)];
     destinationCell =
         &map->layers[object->terrainId]
              .cells[position.x / 0x100000 + (position.z / 0x100000) * 128];
@@ -453,7 +453,7 @@ s32 Sand_CheckEndKeys(s32 arg) {
   if (pressed) {
     if (Actor_CheckBlockedFar(arg)) {
       Sound_PlayFar(113);
-    } else if (!GameFlag_Test(0x146)) {
+    } else if (!GameFlag_Get(0x146)) {
       work->unk166 = 0x208b;
       return 1;
     }

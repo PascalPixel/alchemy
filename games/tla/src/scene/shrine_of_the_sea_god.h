@@ -63,9 +63,9 @@ struct ShrineOfTheSeaGodMapWork {
 
 struct ShrineOfTheSeaGodObject *Actor_GetById(s32 id);
 void Event_Wait(s32 frames);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
+s32 GameFlag_Get(s32 flag);
+void GameFlag_Set(s32 flag);
+void GameFlag_Clear(s32 flag);
 void FieldMessage_Show(s32 message, s32 position);
 void Actor_SetSpritePriority(s32 actor, s32 variant);
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
@@ -204,7 +204,7 @@ static inline void ShrineOfTheSeaGod_TaskAdd(void (*func)(void), s32 priority) {
   } while (0)
 
 static inline s32 ShrineOfTheSeaGod_FlagCheck(s32 flag) {
-  return GameFlag_Test(flag);
+  return GameFlag_Get(flag);
 }
 
 static inline void ShrineOfTheSeaGod_ObjPlaceAt(s32 actor, s32 x, s32 z,

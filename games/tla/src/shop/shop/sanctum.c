@@ -366,7 +366,7 @@ done:
 #undef SERVICE_PRICE_WINDOW_WIDTH
 #undef SERVICE_PRICE_WINDOW_WIDTH
 
-#define Item_Get ((u8 *(*)(u16))Item_Get)
+#define Item_GetDirectFar ((u8 *(*)(u16))Item_GetDirectFar)
 
 void Sanctum_ApplyService(s32 id, s32 mode) {
   struct BattleUnit *unit;
@@ -384,7 +384,7 @@ void Sanctum_ApplyService(s32 id, s32 mode) {
 
     for (i = 0; i < 15; i++) {
       if (unit->inventory[i] & 0x200) {
-        if (Item_Get(unit->inventory[i])[3] & 1) {
+        if (Item_GetDirectFar(unit->inventory[i])[3] & 1) {
           unit->inventory[i] ^= 0x200;
           Unit_CalculateFar(id);
         }
@@ -393,7 +393,7 @@ void Sanctum_ApplyService(s32 id, s32 mode) {
   }
 }
 
-#undef Item_Get
+#undef Item_GetDirectFar
 
 // Sanctum_HighlightMembers draws the sanctum's party page, four members at a
 // time with page arrows: The Broken Seal's Shop_DrawParty

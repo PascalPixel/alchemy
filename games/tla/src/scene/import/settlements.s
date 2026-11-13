@@ -50,18 +50,18 @@ HeapSlot_Release:
 	.thumb_func
 VramCache_Load:
 	overlay_veneer VramCache_LoadFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Import_ActorSelectAnimation
 	.thumb_func
 Import_ActorSelectAnimation:
@@ -117,7 +117,7 @@ Actor_SetBlendMode:
 	.global Func_02002048
 	.thumb_func
 Func_02002048:
-	overlay_veneer Func_080202f8
+	overlay_veneer Actor_HasArrivedFar
 	.global Field_CheckSpheresOverlap
 	.thumb_func
 Field_CheckSpheresOverlap:
@@ -241,7 +241,7 @@ ObjectTable_Get:
 	.global Func_02002140
 	.thumb_func
 Func_02002140:
-	overlay_veneer Func_080c8480
+	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolveAllPendingActions
 	.thumb_func
 Event_ResolveAllPendingActions:
@@ -265,31 +265,31 @@ Scene_QueueMusic:
 	.global Func_02002170
 	.thumb_func
 Func_02002170:
-	overlay_veneer Func_080c86a8
+	overlay_veneer Rope_InitializeFar
 	.global Func_02002178
 	.thumb_func
 Func_02002178:
-	overlay_veneer Func_080c86c0
+	overlay_veneer Rope_LashFar
 	.global Func_02002180
 	.thumb_func
 Func_02002180:
-	overlay_veneer Func_080c86e8
+	overlay_veneer Rope_PlaceFar
 	.global Func_02002188
 	.thumb_func
 Func_02002188:
-	overlay_veneer Func_080c8718
+	overlay_veneer Actor_PlaceBlocksFar
 	.global Func_02002190
 	.thumb_func
 Func_02002190:
-	overlay_veneer Func_080c8720
+	overlay_veneer Actor_LiftTargetBlockFar
 	.global Func_02002198
 	.thumb_func
 Func_02002198:
-	overlay_veneer Func_080c8728
+	overlay_veneer Actor_PlaceMovedBlockFar
 	.global Func_020021a0
 	.thumb_func
 Func_020021a0:
-	overlay_veneer Func_080c8760
+	overlay_veneer TileCopies_CopyTouchedCellsFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:

@@ -70,18 +70,18 @@ VramCache_FindFreeEntry:
 	.thumb_func
 Oam_AddSpriteAtDepthClamped:
 	overlay_veneer Oam_AddSpriteAtDepthClampedFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Import_ActorSelectAnimation
 	.thumb_func
 Import_ActorSelectAnimation:
@@ -253,7 +253,7 @@ Actor_SetSpritePriority:
 	.global Func_020040f8
 	.thumb_func
 Func_020040f8:
-	overlay_veneer Func_080c8208
+	overlay_veneer Actor_DisableByIdFar
 	.global Import_ActorShowEmoteById
 	.thumb_func
 Import_ActorShowEmoteById:
@@ -321,7 +321,7 @@ Actor_ReturnHome:
 	.global Func_02004180
 	.thumb_func
 Func_02004180:
-	overlay_veneer Func_080c8480
+	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global FieldPsynergy_RunHandler
 	.thumb_func
 FieldPsynergy_RunHandler:
@@ -361,19 +361,19 @@ Scene_QueueMusic:
 	.global Func_020041d0
 	.thumb_func
 Func_020041d0:
-	overlay_veneer Func_080c86a8
+	overlay_veneer Rope_InitializeFar
 	.global Func_020041d8
 	.thumb_func
 Func_020041d8:
-	overlay_veneer Func_080c86e8
+	overlay_veneer Rope_PlaceFar
 	.global Func_020041e0
 	.thumb_func
 Func_020041e0:
-	overlay_veneer Func_080c8710
+	overlay_veneer Actor_GetCellIndexFar
 	.global Func_020041e8
 	.thumb_func
 Func_020041e8:
-	overlay_veneer Func_080c8730
+	overlay_veneer MapCollision_FindOrAddTagFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:

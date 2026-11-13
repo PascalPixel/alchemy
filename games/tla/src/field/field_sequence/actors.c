@@ -24,7 +24,7 @@ s32 Party_GetCharacterSprite(s32 character) {
       sprite = 9;
       if (gMainRoutineWork.map != (s32)&SceneId_Ov64a)
         sprite = 11;
-      if (GameFlag_Test(0x8df))
+      if (GameFlag_Get(0x8df))
         sprite++;
     }
   }
@@ -134,7 +134,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
       }
       if (work->mode == 3) {
         object->motionFlags &= 0xfe;
-        if (!GameFlag_Test(33))
+        if (!GameFlag_Get(33))
           sprite->scale = Iwram_MulQ16(sprite->scale, 0xc000);
       } else {
         object->terrainHeight =
@@ -301,8 +301,8 @@ s32 Actor_FindLastActiveId(void) {
 void Scene_AssignViewFlags(struct SceneRegionEntry *entry) {
   struct MapViewBounds *view = (struct MapViewBounds *)Ram_HeapSlots->mapWork;
 
-  GameFlag_ClearBit(0x164);
-  GameFlag_SetBit(0x165);
+  GameFlag_Clear(0x164);
+  GameFlag_Set(0x165);
   while (entry->id != -1) {
     s32 x;
     s32 z;

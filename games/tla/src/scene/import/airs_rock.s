@@ -58,18 +58,18 @@ Window_LoadGraphics:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Actor_SelectAnimation
 	.thumb_func
 Actor_SelectAnimation:
@@ -137,7 +137,7 @@ MapGrid_WaitForShakeToSettle:
 	.global Func_02003ba8
 	.thumb_func
 Func_02003ba8:
-	overlay_veneer Func_080202f8
+	overlay_veneer Actor_HasArrivedFar
 	.global FieldMessage_Show
 	.thumb_func
 FieldMessage_Show:
@@ -245,7 +245,7 @@ Event_WaitTransitionFrames:
 	.global Func_02003c80
 	.thumb_func
 Func_02003c80:
-	overlay_veneer Func_080c8480
+	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:
@@ -261,23 +261,23 @@ Event_NoOp:
 	.global Func_02003ca0
 	.thumb_func
 Func_02003ca0:
-	overlay_veneer Func_080c86f8
+	overlay_veneer FlagBlock_PlaceAllFar
 	.global Func_02003ca8
 	.thumb_func
 Func_02003ca8:
-	overlay_veneer Func_080c8708
+	overlay_veneer FlagBlock_ApplyFlagsFar
 	.global Func_02003cb0
 	.thumb_func
 Func_02003cb0:
-	overlay_veneer Func_080c8718
+	overlay_veneer Actor_PlaceBlocksFar
 	.global Func_02003cb8
 	.thumb_func
 Func_02003cb8:
-	overlay_veneer Func_080c8720
+	overlay_veneer Actor_LiftTargetBlockFar
 	.global Func_02003cc0
 	.thumb_func
 Func_02003cc0:
-	overlay_veneer Func_080c8728
+	overlay_veneer Actor_PlaceMovedBlockFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:

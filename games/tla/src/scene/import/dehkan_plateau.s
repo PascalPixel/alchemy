@@ -42,18 +42,18 @@ HeapSlot_Release:
 	.thumb_func
 VramCache_Load:
 	overlay_veneer VramCache_LoadFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Func_02003ba0
 	.thumb_func
 Func_02003ba0:
@@ -201,7 +201,7 @@ Actor_SetSpritePriority:
 	.global Func_02003cc0
 	.thumb_func
 Func_02003cc0:
-	overlay_veneer Func_080c8208
+	overlay_veneer Actor_DisableByIdFar
 	.global Actor_ShowEmoteById
 	.thumb_func
 Actor_ShowEmoteById:
@@ -305,55 +305,55 @@ Actor_WatchAndSetScript:
 	.global Func_02003d90
 	.thumb_func
 Func_02003d90:
-	overlay_veneer Func_080c86a8
+	overlay_veneer Rope_InitializeFar
 	.global Func_02003d98
 	.thumb_func
 Func_02003d98:
-	overlay_veneer Func_080c86d0
+	overlay_veneer Tightrope_InitializeFar
 	.global Func_02003da0
 	.thumb_func
 Func_02003da0:
-	overlay_veneer Func_080c86d8
+	overlay_veneer Tightrope_PlaceFar
 	.global Func_02003da8
 	.thumb_func
 Func_02003da8:
-	overlay_veneer Func_080c86e8
+	overlay_veneer Rope_PlaceFar
 	.global Func_02003db0
 	.thumb_func
 Func_02003db0:
-	overlay_veneer Func_080c8710
+	overlay_veneer Actor_GetCellIndexFar
 	.global Func_02003db8
 	.thumb_func
 Func_02003db8:
-	overlay_veneer Func_080c8718
+	overlay_veneer Actor_PlaceBlocksFar
 	.global Func_02003dc0
 	.thumb_func
 Func_02003dc0:
-	overlay_veneer Func_080c8720
+	overlay_veneer Actor_LiftTargetBlockFar
 	.global Func_02003dc8
 	.thumb_func
 Func_02003dc8:
-	overlay_veneer Func_080c8728
+	overlay_veneer Actor_PlaceMovedBlockFar
 	.global Func_02003dd0
 	.thumb_func
 Func_02003dd0:
-	overlay_veneer Func_080c8730
+	overlay_veneer MapCollision_FindOrAddTagFar
 	.global Func_02003dd8
 	.thumb_func
 Func_02003dd8:
-	overlay_veneer Func_080c8738
+	overlay_veneer Actor_FindAtCellFar
 	.global Func_02003de0
 	.thumb_func
 Func_02003de0:
-	overlay_veneer Func_080c8740
+	overlay_veneer Leader_CanPushObjectAheadFar
 	.global Func_02003de8
 	.thumb_func
 Func_02003de8:
-	overlay_veneer Func_080c8748
+	overlay_veneer Leader_PushObjectAheadFar
 	.global Func_02003df0
 	.thumb_func
 Func_02003df0:
-	overlay_veneer Func_080c8750
+	overlay_veneer Leader_FindActorAheadFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

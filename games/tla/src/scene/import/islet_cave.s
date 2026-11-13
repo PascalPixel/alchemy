@@ -18,18 +18,18 @@ Task_RemoveFar:
 	.thumb_func
 Trig_Cos:
 	overlay_veneer Trig_CosFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Actor_SelectAnimation
 	.thumb_func
 Actor_SelectAnimation:
@@ -165,7 +165,7 @@ Event_WaitTransitionFrames:
 	.global Func_0200131c
 	.thumb_func
 Func_0200131c:
-	overlay_veneer Func_080c8480
+	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:
@@ -173,15 +173,15 @@ Event_ResolvePendingActions:
 	.global Func_0200132c
 	.thumb_func
 Func_0200132c:
-	overlay_veneer Func_080c88d8
+	overlay_veneer Teleport_PlayWhirlFar
 	.global Func_02001334
 	.thumb_func
 Func_02001334:
-	overlay_veneer Func_080c88e8
+	overlay_veneer Teleport_PlaySparksFar
 	.global Func_0200133c
 	.thumb_func
 Func_0200133c:
-	overlay_veneer Func_080c8968
+	overlay_veneer BattleEffect_PackTargetBufferFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

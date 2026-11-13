@@ -1117,7 +1117,7 @@ power_end:
               dmg = 1;
           }
         }
-        if (GameFlag_Test(366) != 0 && plan->command == 5 && hp <= dmg) {
+        if (GameFlag_Get(366) != 0 && plan->command == 5 && hp <= dmg) {
           dmg = hp - 1;
         }
         pass++;
@@ -1360,7 +1360,7 @@ power_end:
         dmg += Battle_RandomFar() & 3;
         GUARD_CUT();
         if ((gMainRoutineWork.battleRule24b == 6 ||
-             (GameFlag_Test(366) != 0 && plan->command == 6)) &&
+             (GameFlag_Get(366) != 0 && plan->command == 6)) &&
             cur > dmg) {
           dmg = cur;
         }
@@ -2331,7 +2331,7 @@ select_again:
       }
     }
     if (useItem != 0) {
-      item = Item_Get(unit->inventory[0]);
+      item = Item_GetDirectFar(unit->inventory[0]);
       if (item->useType != 1) {
         useItem = 0;
       } else {

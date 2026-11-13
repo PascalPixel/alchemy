@@ -959,13 +959,13 @@
       actor = entry->actor;                                                    \
       if (actor == 0)                                                          \
         continue;                                                              \
-      flag = GameFlag_Test(0x106);                                             \
+      flag = GameFlag_Get(0x106);                                             \
       if (*(s16 *)(saved[0] + 358) != 0)                                       \
         flag |= 1;                                                             \
       mark = &actor->flag5b;                                                   \
       *mark = flag;                                                            \
       if (state->unk_e != 0)                                                   \
-        *mark = GameFlag_Test(0x106);                                          \
+        *mark = GameFlag_Get(0x106);                                          \
       dx = actor->x;                                                           \
       dz = actor->z;                                                           \
       dx -= cameraX;                                                           \

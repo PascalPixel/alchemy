@@ -111,7 +111,7 @@ loop:
   if (*ids != 0xffff)
     goto loop;
 done:
-  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     wait(1);
     leader->y = leader->terrainHeight =
         Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
@@ -338,7 +338,7 @@ void Func_0200087c(void) {
         object->update = (void (*)(void))Func_02000848;
         object->riseCounter = 1;
         other->riseCounter = 1;
-        GameFlag_SetBit(0x212);
+        GameFlag_Set(0x212);
       }
     }
   }
@@ -519,7 +519,7 @@ void Func_02000e88(s32 arg0) {
   if (arg0 != 1)
     goto L_02008e9c;
   Func_02000d28();
-  GameFlag_SetBit(0x9af);
+  GameFlag_Set(0x9af);
 L_02008e9c:
   return;
 }
@@ -543,7 +543,7 @@ void Func_02000ef4(void) {
   MapGrid_CopyCellAttributes(31, 43, 9, 11, 48, 47);
   MapGrid_CopyCellsTo(30, 110, 48, 110, 9, 13);
   MapGrid_CopyCellAttributes(52, 110, 1, 1, 52, 111);
-  GameFlag_SetBit(0x917);
+  GameFlag_Set(0x917);
   Event_End();
   return;
 }

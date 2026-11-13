@@ -88,7 +88,7 @@ void Func_02002698(s32 id, s32 center, s32 flag) {
       effect->update = Effect_AdvanceMotion__s2698;
     }
   }
-  GameFlag_SetBit(flag);
+  GameFlag_Set(flag);
   Event_Wait(20);
 }
 
@@ -153,7 +153,7 @@ void Func_020027e0(void) {
   Actor_Jump(25, 6, 16);
   Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
   Event_Wait(20);
-  GameFlag_SetBit(0x870);
+  GameFlag_Set(0x870);
   Event_End();
 }
 
@@ -170,7 +170,7 @@ void Func_02002a5c(void) {
         gMainRoutineWork.currentOwner, PIXELS(248), PIXELS(136), facing);
   }
   MapGrid_CopyCellPictureIndicesRect(65, 64, 15, 8, 1, 1);
-  GameFlag_SetBit(0x245);
+  GameFlag_Set(0x245);
   Sound_Play(161);
   Func_020021b4();
   Actor_FaceActorById(9, gMainRoutineWork.currentOwner, 0);
@@ -327,7 +327,7 @@ void Func_02002c14(void) {
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 15, 5);
     wait(1);
   }
-  GameFlag_SetBit(0x871);
+  GameFlag_Set(0x871);
   Event_End();
 }
 
@@ -399,11 +399,11 @@ static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
 }
 
 void Func_02002f74(void) {
-  if (GameFlag_Test(0x207) != 0)
+  if (GameFlag_Get(0x207) != 0)
     Func_02002f08();
   else
     Func_02002dd4();
-  GameFlag_SetBit(0x209);
+  GameFlag_Set(0x209);
 }
 
 void Func_02002f9c(void) {
@@ -415,7 +415,7 @@ void Func_02002f9c(void) {
   if (gData_02004420 != 0)
     Import_ActorRelease(gData_02004420);
   Map_CopyAttributes(1, 0, 1, 1, 15, 5);
-  GameFlag_SetBit(0x878);
+  GameFlag_Set(0x878);
   Event_End();
 }
 
@@ -468,7 +468,7 @@ void Func_020030e4(void) {
   Actor_SetSpritePriority(8, 3);
   Pillars_Place(gData_02003f98);
   Func_02003cc0(12);
-  if (GameFlag_Test(0x301) != 0) {
+  if (GameFlag_Get(0x301) != 0) {
     Map_CopyAttributes(54, 32, 2, 1, 56, 64);
     Actor_SetPositionAndResetMotion(Actor_GetById(12), 226 << 18, 128 << 15,
                                     130 << 18);
@@ -511,7 +511,7 @@ static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
 }
 
 void Func_02003164(void) {
-  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
     if (gMainRoutineWork.entrance == 5) {
       Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
@@ -521,7 +521,7 @@ void Func_02003164(void) {
   CrumblingPillars_PlaceWithStandIns(gData_02003f52);
   Func_020012d8();
   Pillars_Place(gData_02003fa0);
-  if (GameFlag_Test(0x840) != 0) {
+  if (GameFlag_Get(0x840) != 0) {
     Func_02003cc0(23);
     Map_CopyAttributes(50, 7, 1, 1, 52, 7);
     Actor_SetPosition__s3164(Actor_GetById(23), 210 << 18, 0, 240 << 15);
@@ -529,15 +529,15 @@ void Func_02003164(void) {
     Func_02003db8(gData_02003fc0);
   }
   Func_020018a8();
-  if (GameFlag_Test(0x86c) != 0) {
+  if (GameFlag_Get(0x86c) != 0) {
     s32 angle = 0x4000;
 
     Actor_PlaceFacing(24, 222 << 18, 168 << 16, angle);
     MapGrid_CopyCellPictureIndicesRect(68, 33, 105, 6, 1, 1);
     MapGrid_CopyCellPictureIndicesRect(69, 33, 105, 4, 1, 1);
-    GameFlag_SetBit(583);
+    GameFlag_Set(583);
   }
-  if (GameFlag_Test(0x86d) != 0)
+  if (GameFlag_Get(0x86d) != 0)
     Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
   Func_02001fac();
 }
@@ -569,7 +569,7 @@ void Func_02003284(void) {
   struct Actor *object;
   s32 zero, value;
 
-  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
     Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
@@ -597,7 +597,7 @@ void Func_02003284(void) {
   Func_02003cc0(20);
   Actor_GetById(20)->priorityFlags |= 32;
   Actor_SetSpritePriority(20, 2);
-  if (GameFlag_Test(0x841) != 0)
+  if (GameFlag_Get(0x841) != 0)
     Func_0200172c();
   else
     MapGrid_CopyCellAttributes(38, 32, 1, 1, 38, 33);
@@ -618,20 +618,20 @@ void Func_02003284(void) {
   Actor_SetSpritePriority(14, 1);
   Actor_SetSpritePriority(15, 1);
   Func_02001930();
-  if (GameFlag_Test(0x86e) != 0) {
+  if (GameFlag_Get(0x86e) != 0) {
     s32 angle = 0x4000;
 
     Actor_SetPositionAndFacing(25, 212 << 17, 208 << 15, angle);
   }
   Actor_SetModeById(18, 3);
-  if (GameFlag_Test(0x86f) != 0) {
+  if (GameFlag_Get(0x86f) != 0) {
     object = Actor_GetById(18);
     MapGrid_CopyCellAttributes(27, 8, 1, 1, 27, 9);
     Actor_SetModeById(18, 4);
     object->priorityFlags |= 2;
     *((u8 *)object + 89) &= ~1;
-    GameFlag_SetBit(517);
-    GameFlag_SetBit(577);
+    GameFlag_Set(517);
+    GameFlag_Set(577);
     MapGrid_CopyCellPictureIndicesRect(69, 51, 92, 11, 1, 1);
     {
       s32 angle = 0x4000;
@@ -639,9 +639,9 @@ void Func_02003284(void) {
       Actor_SetPositionAndFacing(25, 154 << 18, 140 << 17, angle);
     }
   }
-  if (GameFlag_Test(0x870) != 0) {
-    GameFlag_SetBit(528);
-    GameFlag_SetBit(534);
+  if (GameFlag_Get(0x870) != 0) {
+    GameFlag_Set(528);
+    GameFlag_Set(534);
     Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
   }
   CrumblingPillars_Place(gData_02003f80);
@@ -668,7 +668,7 @@ extern const u16 gData_02004276[];
     s32 offset = 0;                                                            \
                                                                                \
     while (1) {                                                                \
-      if (GameFlag_Test(flag)) {                                               \
+      if (GameFlag_Get(flag)) {                                               \
         u16 *entry = (u16 *)((u8 *)gData_02004276 + offset);                   \
         s32 y;                                                                 \
         s32 x;                                                                 \
@@ -704,7 +704,7 @@ void Func_0200369c(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   Func_02001fdc();
-  if (GameFlag_Test(0x86c) != 0) {
+  if (GameFlag_Get(0x86c) != 0) {
     MapGrid_CopyCellPictureIndicesRect(3, 8, 30, 33, 1, 1);
     MapGrid_CopyCellPictureIndicesRect(67, 3, 94, 28, 1, 5);
     MapGrid_CopyCellPictureIndicesRect(3, 69, 30, 93, 1, 4);
@@ -717,11 +717,11 @@ void Func_0200369c(void) {
       entrance <<= 16;
       entrance >>= 16;
       entrance += 789;
-      GameFlag_SetBit(entrance);
+      GameFlag_Set(entrance);
     }
   }
   Func_0200353c();
-  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (gMainRoutineWork.entrance > 10) {
       if (gMainRoutineWork.entrance <= 39)
         Func_02003764();
@@ -801,7 +801,7 @@ loop:
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Test(flag); }
+static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Get(flag); }
 
 /* VIEW(s390c): static Actor_SetPosition as Actor_SetPosition__s390c; the
  * definition has static inline void Actor_SetPosition(s32 actorId, s32 fixed_x,
@@ -819,9 +819,9 @@ void Func_0200390c(void) {
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   owner->priorityFlags |= 32;
-  if (GameFlag_Test(0x878) == 0) {
+  if (GameFlag_Get(0x878) == 0) {
     Func_02003a30();
-    if (GameFlag_Test(0x871) != 0) {
+    if (GameFlag_Get(0x871) != 0) {
       Map_CopyAttributes(0, 0, 1, 1, 15, 5);
       if (gData_02004420 != NULL) {
         Actor_SetPosition__s390c(gData_02004420, 248 << 16, 0, 176 << 15);
@@ -834,14 +834,14 @@ void Func_0200390c(void) {
   entrance = gMainRoutineWork.entrance;
   if (entrance > 10) {
     Func_02001804();
-    GameFlag_SetBit(entrance + 789);
+    GameFlag_Set(entrance + 789);
   }
   if (Flag_Test(0x871) != 0)
     Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
   Func_020035ec();
-  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (gMainRoutineWork.entrance > 16) {
-      if (gMainRoutineWork.entrance == 37 && GameFlag_Test(0x871) == 0)
+      if (gMainRoutineWork.entrance == 37 && GameFlag_Get(0x871) == 0)
         Func_02002c14();
       else
         Func_02003764();
@@ -883,16 +883,16 @@ void Func_02003a30(void) {
 void Func_02003aa0(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
-  if (GameFlag_Test(95) != 0)
-    GameFlag_SetBit(521);
+  if (GameFlag_Get(95) != 0)
+    GameFlag_Set(521);
   Pillars_Place(gData_02003fb8);
   CrumblingPillars_Place(gData_02003f92);
-  if (GameFlag_Test(519) == 0) {
+  if (GameFlag_Get(519) == 0) {
     Func_02002140();
     wait(10);
   }
   Func_02001ff4();
-  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (gMainRoutineWork.entrance > 5) {
       if (gMainRoutineWork.entrance <= 39)
         Func_02003764();

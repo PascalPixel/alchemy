@@ -26,8 +26,8 @@ struct TundariaTowerPosition {
   s32 z;
 };
 
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
+void GameFlag_Set(s32 flag);
+void GameFlag_Clear(s32 flag);
 void Task_RemoveFar(void (*func)(void));
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

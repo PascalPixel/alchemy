@@ -22,10 +22,10 @@ HeapSlot_Release:
 	.thumb_func
 Unit_Get:
 	overlay_veneer Unit_GetFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
 	.global Actor_SetSpriteFlags
 	.thumb_func
 Actor_SetSpriteFlags:
@@ -45,7 +45,7 @@ MessageArgument_Push:
 	.global Import_ItemGet
 	.thumb_func
 Import_ItemGet:
-	overlay_veneer Item_Get
+	overlay_veneer Item_GetDirectFar
 	.global PartyInventory_FindMember
 	.thumb_func
 PartyInventory_FindMember:
@@ -125,7 +125,7 @@ Actor_SetSpritePriority:
 	.global Func_02001158
 	.thumb_func
 Func_02001158:
-	overlay_veneer Func_080c8208
+	overlay_veneer Actor_DisableByIdFar
 	.global Actor_ShowEmoteById
 	.thumb_func
 Actor_ShowEmoteById:
@@ -161,7 +161,7 @@ Inn_CheckIn:
 	.global Func_020011a0
 	.thumb_func
 Func_020011a0:
-	overlay_veneer Func_08108070
+	overlay_veneer ItemPicker_RunMode1Far
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

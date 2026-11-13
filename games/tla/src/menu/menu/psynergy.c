@@ -146,7 +146,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
   menu = Ram_HeapSlots->menuRuntime;
   useResult = 0;
 
-  while (done == 0 && GameFlag_Test(FLAG_MENU_START_PRESSED) == 0) {
+  while (done == 0 && GameFlag_Get(FLAG_MENU_START_PRESSED) == 0) {
     switch (step) {
     // Choose whose Psynergy to look at.
     case PSYNERGY_STEP_MEMBER: {
@@ -325,7 +325,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
     }
   }
 
-  if (GameFlag_Test(FLAG_MENU_START_PRESSED) != 0)
+  if (GameFlag_Get(FLAG_MENU_START_PRESSED) != 0)
     useResult = -1;
   return useResult;
 }
@@ -467,7 +467,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
         2, 0, menu->shortcutWindow, 0, result);
     menu->cursorIcon->active = 13;
   }
-  while (!GameFlag_Test(0x150)) {
+  while (!GameFlag_Get(0x150)) {
     if (redraw) {
       window = menu->statusWindow;
       unit = Unit_Get(ownerIds[selection]);
@@ -480,7 +480,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
         wait(1);
       }
       Menu_HighlightPageEntry(menu->rowWindow, selection, count);
-      if (!GameFlag_Test(0x151) && !shown) {
+      if (!GameFlag_Get(0x151) && !shown) {
         WindowSprite_ClearListFar(menu->infoWindow);
 #if TLA_PATCH_1
         // Japanese does not redraw the info window here.
@@ -489,7 +489,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
         Menu_DrawCoins(menu->infoWindow);
         shown = 1;
       } else {
-        GameFlag_ClearBit(0x151);
+        GameFlag_Clear(0x151);
       }
     }
     MenuCursor_Position((selection % 4) * 24 - 10, 16);
@@ -577,7 +577,7 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
   Unit_Get(menu->ownerIds[menu->tabIndex[0]]);
   redraw = 2;
   MenuCursor_Slide(selection * 24 - 10, 16);
-  while (!GameFlag_Test(0x150)) {
+  while (!GameFlag_Get(0x150)) {
     if (redraw) {
       Unit_Get(menu->ownerIds[selection]);
       icon = menu->sideIcons[1];
@@ -591,7 +591,7 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
           wait(1);
         }
         Menu_HighlightPageEntry(menu->rowWindow, selection, count);
-        if (!GameFlag_Test(0x151) && !shown) {
+        if (!GameFlag_Get(0x151) && !shown) {
           // The Japanese release clears the info window; from patch 1 it
           // redraws the window's saved rectangle.
 #if TLA_PATCH_1
@@ -611,7 +611,7 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
 #endif
           shown = 1;
         } else {
-          GameFlag_ClearBit(0x151);
+          GameFlag_Clear(0x151);
         }
       }
     }
@@ -935,7 +935,7 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
   combined += state->row;
   state->selectedIndex = combined;
 
-  if (GameFlag_Test(0x151) == 0) {
+  if (GameFlag_Get(0x151) == 0) {
     // As in the item list: the Japanese release clears the info window, and
     // from patch 1 it redraws the window's saved rectangle.
 #if TLA_PATCH_1
@@ -962,7 +962,7 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
 #endif
     }
   } else {
-    GameFlag_ClearBit(0x2ff);
+    GameFlag_Clear(0x2ff);
   }
 
   row = 0;
@@ -1117,7 +1117,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
   window = menu->listWindow;
   done = 0;
 
-  while (done == 0 && !GameFlag_Test(0x150)) {
+  while (done == 0 && !GameFlag_Get(0x150)) {
     owner = Unit_Get(menu->memberIds[paneIndex]);
     if (menu->mode != 0)
       menu->psynergyCount =
@@ -1131,7 +1131,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
     redraw = 1;
     menu->sideIcons[paneIndex]->active = 1;
 
-    while (!GameFlag_Test(0x150)) {
+    while (!GameFlag_Get(0x150)) {
       MenuCursor_Position(CURSOR_X, state.row * 16 + 36);
 
       if (changed != 0) {
@@ -1302,7 +1302,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
   menu->paneRow[paneIndex] = state.selectedIndex;
   menu->selectedIndexByOwner[menu->memberIds[paneIndex]] = state.selectedIndex;
   menu->paneAction[paneIndex] = result;
-  if (GameFlag_Test(0x150) != 0)
+  if (GameFlag_Get(0x150) != 0)
     result = -1;
   wait(1);
   return result;

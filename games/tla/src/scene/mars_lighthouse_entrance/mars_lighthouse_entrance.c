@@ -371,7 +371,7 @@ void MarsLighthouseEntrance_PushStatueIntoFlames(s32 unused, s32 id) {
   }
 }
 
-void Func_02000930(void) { GameFlag_SetBit(0x144); }
+void Func_02000930(void) { GameFlag_Set(0x144); }
 
 DEFINE_SCENE_LEAVE_BY_EXIT(Func_0200093c, Func_020046b4, Func_02004dd0, 14,
                            Func_02004718)

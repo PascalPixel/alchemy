@@ -30,18 +30,18 @@ Trig_Sin:
 	.thumb_func
 Trig_Cos:
 	overlay_veneer Trig_CosFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global GameFlag_GetByte
 	.thumb_func
 GameFlag_GetByte:
@@ -239,7 +239,7 @@ Actor_ReturnHome:
 	.global Func_02002960
 	.thumb_func
 Func_02002960:
-	overlay_veneer Func_080c8480
+	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:
@@ -255,15 +255,15 @@ Scene_QueueMusic:
 	.global Func_02002980
 	.thumb_func
 Func_02002980:
-	overlay_veneer Func_080c86a8
+	overlay_veneer Rope_InitializeFar
 	.global Func_02002988
 	.thumb_func
 Func_02002988:
-	overlay_veneer Func_080c86e8
+	overlay_veneer Rope_PlaceFar
 	.global Func_02002990
 	.thumb_func
 Func_02002990:
-	overlay_veneer Func_080c8760
+	overlay_veneer TileCopies_CopyTouchedCellsFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:
@@ -275,7 +275,7 @@ Func_020029a0:
 	.global Func_020029a8
 	.thumb_func
 Func_020029a8:
-	overlay_veneer Func_080c8948
+	overlay_veneer FieldItem_JumpToLeaderFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

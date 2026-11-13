@@ -286,9 +286,9 @@ void DebugWarp_Jupiter(void) {
 }
 
 void DebugWarp_Arafura2(void) {
-  GameFlag_SetBit(0x8ab);
-  GameFlag_ClearBit(0x8a7);
-  GameFlag_SetBit(0x8aa);
+  GameFlag_Set(0x8ab);
+  GameFlag_Clear(0x8a7);
+  GameFlag_Set(0x8aa);
   Inventory_AddItemFar(4, 457);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
@@ -301,9 +301,9 @@ void DebugWarp_Arafura2(void) {
 void DebugWarp_EnergySample(void) {}
 
 void DebugWarp_Arafura3(void) {
-  GameFlag_SetBit(0x8ab);
-  GameFlag_SetBit(0x8a7);
-  GameFlag_SetBit(0x8aa);
+  GameFlag_Set(0x8ab);
+  GameFlag_Set(0x8a7);
+  GameFlag_Set(0x8aa);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -316,7 +316,7 @@ void DebugWarp_Champa2(void) {
   PartyInventory_AddFar(439);
   PartyInventory_AddFar(440);
   PartyInventory_AddFar(441);
-  GameFlag_SetBit(0x97f);
+  GameFlag_Set(0x97f);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -326,21 +326,21 @@ void DebugWarp_Champa2(void) {
 }
 
 void DebugWarp_KaoruSpecial4(void) {
-  GameFlag_SetBit(0x9fe);
-  GameFlag_SetBit(0x94c);
-  GameFlag_SetBit(0x9e1);
-  GameFlag_SetBit(0x94f);
+  GameFlag_Set(0x9fe);
+  GameFlag_Set(0x94c);
+  GameFlag_Set(0x9e1);
+  GameFlag_Set(0x94f);
   Event_SetDestinationFar((s32)&SceneId_ShamanVillage4, 30);
 }
 
 void DebugWarp_KaoruSpecial3(void) {
-  GameFlag_SetBit(0x824);
-  GameFlag_SetBit(0x17c);
-  GameFlag_SetBit(0x9c5);
-  GameFlag_SetBit(0xa3d);
-  GameFlag_SetBit(0x9c0);
-  GameFlag_SetBit(0x9c1);
-  GameFlag_SetBit(0x9c2);
+  GameFlag_Set(0x824);
+  GameFlag_Set(0x17c);
+  GameFlag_Set(0x9c5);
+  GameFlag_Set(0xa3d);
+  GameFlag_Set(0x9c0);
+  GameFlag_Set(0x9c1);
+  GameFlag_Set(0x9c2);
   Event_SetDestinationFar((s32)&SceneId_Ov6a8Room2, 1);
 }
 

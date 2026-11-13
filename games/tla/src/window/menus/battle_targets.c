@@ -300,7 +300,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   if (targetIndex < 0)
     targetIndex = (targetCount - 1) / 2;
   while (candidateIds[targetIndex] == 254 ||
-         (GameFlag_Test(0x16c) && mode == 1 &&
+         (GameFlag_Get(0x16c) && mode == 1 &&
           Unit_Get__menus(candidateIds[targetIndex])->hp == 0)) {
     targetIndex = targetIndex + targetCount - 1;
     targetIndex %= targetCount;

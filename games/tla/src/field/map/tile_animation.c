@@ -529,12 +529,12 @@ void WorldMap_UpdateRegionTint(s32 region, s32 gradual) {
     work->region = region;
     if (region == 9)
       work->target = 12;
-    else if (region == 18 && !GameFlag_Test(0x8ef))
+    else if (region == 18 && !GameFlag_Get(0x8ef))
       work->target = -6;
     else
       work->target = 0;
   }
-  if (GameFlag_Test(0x106))
+  if (GameFlag_Get(0x106))
     return;
   if (gradual == 0) {
     work->tint = work->target;
@@ -916,7 +916,7 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height) {
   shape = gMapShapeGrid +
           (work->layers[layer & 3].cells - (struct MapCell *)Ram_MapCellBuffer);
   shape += (x >> 20) + ((z >> 20) << 7);
-  *shape = Func_080c8730(layer, 0, height);
+  *shape = MapCollision_FindOrAddTagFar(layer, 0, height);
 }
 
 /// The ground height at (x, z) of layer, in 8-pixel steps.

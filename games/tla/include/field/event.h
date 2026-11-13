@@ -60,9 +60,9 @@ void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dst_x,
 void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
                                s32 dst_x, s32 dst_y);
 void MapGrid_SetScreenShake(s32 horizontal, s32 vertical, s32 decay);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
+s32 GameFlag_Get(s32 flag);
+void GameFlag_Set(s32 flag);
+void GameFlag_Clear(s32 flag);
 void Sound_Play(s32 sound);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
@@ -266,14 +266,14 @@ static inline void MapGrid_SetShake(s32 horizontal, s32 vertical, s32 decay) {
   MapGrid_SetScreenShake(horizontal, vertical, decay);
 }
 
-/// GameFlag_Test, from an event: 1 when the flag is set.
-static inline s32 Event_GetFlag(s32 flag) { return GameFlag_Test(flag); }
+/// GameFlag_Get, from an event: 1 when the flag is set.
+static inline s32 Event_GetFlag(s32 flag) { return GameFlag_Get(flag); }
 
-/// GameFlag_SetBit, from an event.
-static inline void Event_SetFlag(s32 flag) { GameFlag_SetBit(flag); }
+/// GameFlag_Set, from an event.
+static inline void Event_SetFlag(s32 flag) { GameFlag_Set(flag); }
 
-/// GameFlag_ClearBit, from an event.
-static inline void Event_ClearFlag(s32 flag) { GameFlag_ClearBit(flag); }
+/// GameFlag_Clear, from an event.
+static inline void Event_ClearFlag(s32 flag) { GameFlag_Clear(flag); }
 
 /// Plays a sound effect or music from an event: the SE command of script.h.
 static inline void Event_PlaySound(s32 sound) { Sound_Play(sound); }

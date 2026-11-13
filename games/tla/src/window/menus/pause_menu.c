@@ -18,11 +18,11 @@ again:
   if (selection == -1)
     return -1;
   if (selection == 0) {
-    if (GameFlag_Test(0x17c)) {
+    if (GameFlag_Get(0x17c)) {
       FieldMessage_Show((s32)MsgCannotSaveHere, 1);
       goto again;
     }
-    if (GameFlag_Test(0x17d)) {
+    if (GameFlag_Get(0x17d)) {
       FieldMessage_Show((s32)MsgNoPlaceForThat, 1);
       goto again;
     }

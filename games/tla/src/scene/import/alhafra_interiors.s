@@ -2,19 +2,19 @@
 	.thumb
 	.include "games/tla/src/system/overlay/imports.inc"
 	.balign 4
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
 	.ifndef TLA_EDITION_JA
-	.global GameFlag_ClearBit
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.endif
 	.global Event_Wait
 	.thumb_func
@@ -167,7 +167,7 @@ BattleEffect_FillOverlayTiles:
 	.global Func_02000bb4
 	.thumb_func
 Func_02000bb4:
-	overlay_veneer Func_080c88a8
+	overlay_veneer EffectSprite_InitFromSlot94Far
 	.global BattleEffect_DrawSpriteAtWorldPosition
 	.thumb_func
 BattleEffect_DrawSpriteAtWorldPosition:

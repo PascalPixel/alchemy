@@ -22,11 +22,11 @@ s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
   entry = unit->inventory[slot];
   itemId = ITEM_ID_MASK;
   itemId &= entry;
-  item = Item_Get(itemId);
+  item = Item_GetDirectFar(itemId);
   useResult = Ability_ApplyToTargets(OWNER_ACTION_ID_MASK & item->actionId,
                                      memberId, targetId, 1);
   if (useResult != -1) {
-    item = Item_Get(unit->inventory[slot]);
+    item = Item_GetDirectFar(unit->inventory[slot]);
     if (item->useType == 1) {
       Inventory_RemoveFar(memberId, slot);
       menu->itemCount = ItemMenu_CollectItems(unit, menu->items, 0);
@@ -306,7 +306,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 /// Plays the use sound of item's action (Ability_PlayUseAnimation). Called by
 /// ItemMenu_Use after a use that changed something.
 s32 Item_PlayUseAnimation(s32 item) {
-  return Ability_PlayUseAnimation(Item_Get(item)->actionId & 0x3fff);
+  return Ability_PlayUseAnimation(Item_GetDirectFar(item)->actionId & 0x3fff);
 }
 
 /// Plays the sound of action used from the menu, and returns at once: no

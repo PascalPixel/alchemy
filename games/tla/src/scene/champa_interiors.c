@@ -107,7 +107,7 @@ const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov683 &&
       (u16)(gMainRoutineWork.entrance - 8) <= 1)
     return gChampaInteriors_IsletHouseTriggers;
-  if (GameFlag_Test(FLAG_BRIGGS_SAILED_FROM_ALHAFRA))
+  if (GameFlag_Get(FLAG_BRIGGS_SAILED_FROM_ALHAFRA))
     return gChampaInteriors_TriggersOnceBriggsSailed;
   return gChampaInteriors_Triggers;
 }

@@ -70,18 +70,18 @@ Import_OamAddSpriteAtDepthClamped:
 	.thumb_func
 Unit_Get:
 	overlay_veneer Unit_GetFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global GameFlag_GetByte
 	.thumb_func
 GameFlag_GetByte:
@@ -141,7 +141,7 @@ MapGrid_GetCellBehaviorAt:
 	.global Func_02004c18
 	.thumb_func
 Func_02004c18:
-	overlay_veneer Func_080201d8
+	overlay_veneer MapGrid_GetCellAttributeLowNibbleOrBumpFar
 	.global Map_CopyCellsRect
 	.thumb_func
 Map_CopyCellsRect:
@@ -185,7 +185,7 @@ Actor_SetSpritePriorityDirect:
 	.global Func_02004c70
 	.thumb_func
 Func_02004c70:
-	overlay_veneer Func_080202f8
+	overlay_veneer Actor_HasArrivedFar
 	.global Func_02004c78
 	.thumb_func
 Func_02004c78:
@@ -193,7 +193,7 @@ Func_02004c78:
 	.global Func_02004c80
 	.thumb_func
 Func_02004c80:
-	overlay_veneer Func_08020360
+	overlay_veneer MapGrid_SetCellHeightFar
 	.global TileMap_ConvertBuffer
 	.thumb_func
 TileMap_ConvertBuffer:
@@ -325,7 +325,7 @@ ObjectTable_Get:
 	.global Func_02004d88
 	.thumb_func
 Func_02004d88:
-	overlay_veneer Func_080c8480
+	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global FieldPsynergy_FadeFromCastColor
 	.thumb_func
 FieldPsynergy_FadeFromCastColor:
@@ -349,7 +349,7 @@ ObjectTable_Snapshot:
 	.global Func_02004db8
 	.thumb_func
 Func_02004db8:
-	overlay_veneer Func_080c8710
+	overlay_veneer Actor_GetCellIndexFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:
@@ -357,11 +357,11 @@ Party_GetLeaderActor:
 	.global Func_02004dc8
 	.thumb_func
 Func_02004dc8:
-	overlay_veneer Func_080c88d8
+	overlay_veneer Teleport_PlayWhirlFar
 	.global Func_02004dd0
 	.thumb_func
 Func_02004dd0:
-	overlay_veneer Func_080c88e8
+	overlay_veneer Teleport_PlaySparksFar
 	.global Weather_StartRain
 	.thumb_func
 Weather_StartRain:

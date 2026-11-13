@@ -18,14 +18,14 @@ Task_RemoveFar:
 	.thumb_func
 ArcTan2:
 	overlay_veneer ArcTan2Far
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
 	.global Actor_SelectAnimation
 	.thumb_func
 Actor_SelectAnimation:
@@ -197,7 +197,7 @@ Event_ResolvePendingActions:
 	.global Func_02002598
 	.thumb_func
 Func_02002598:
-	overlay_veneer Func_080c8760
+	overlay_veneer TileCopies_CopyTouchedCellsFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

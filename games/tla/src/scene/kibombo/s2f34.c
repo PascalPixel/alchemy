@@ -557,13 +557,13 @@ void Func_020037e4(void) {
   struct KibomboEffectWork *work = Ram_HeapSlots->effectWork;
 
   if (work->field7c4 != 0) {
-    if (GameFlag_Test(0x220))
+    if (GameFlag_Get(0x220))
       Func_02000624();
-    else if (GameFlag_Test(0x221))
+    else if (GameFlag_Get(0x221))
       Func_02000668();
-    else if (GameFlag_Test(0x222))
+    else if (GameFlag_Get(0x222))
       Func_020006ac();
-    else if (GameFlag_Test(0x223))
+    else if (GameFlag_Get(0x223))
       Func_020006f0();
   }
 }
@@ -595,7 +595,7 @@ void Func_020038ec(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (GameFlag_Test(0x202))
+  if (GameFlag_Get(0x202))
     Func_02003898();
   Sound_Play(123);
   Event_FinishScreenTransition();
@@ -627,7 +627,7 @@ void Func_02003948(void) {
   Actor_SetMoveTarget(leader, ((8 - px % 16) << 16) + x, leader->y, leader->z);
   Actor_WaitForMove(leader);
   leader->facing = 0xc000;
-  if (GameFlag_Test(0x202))
+  if (GameFlag_Get(0x202))
     Func_02003898();
   Actor_SetMovementTypeById(gMainRoutineWork.currentOwner, gData_02005cd0);
   wait(12);
@@ -696,7 +696,7 @@ DEFINE_KIBOMBO_STEP_WHEN_HELD(Func_02003b20, 38, 23, 25, 24, 39, 392, 608)
 DEFINE_KIBOMBO_STEP_WHEN_HELD(Func_02003b88, 54, 42, 44, 43, 55, 696, 864)
 
 void Func_02003bf0(void) {
-  if (GameFlag_Test(0x202))
+  if (GameFlag_Get(0x202))
     Func_02003898();
   Func_02003a08(376, 288);
 }
@@ -818,7 +818,7 @@ void Func_02003dec(void) {
   Kibombo_ObjArm(17, FACING_SOUTHEAST + FACING_STEP, 20);
   Event_ShowMessageAndWait(0x4000 + 17, 0);
   Sound_Play(11);
-  GameFlag_SetBit(0x8f2);
+  GameFlag_Set(0x8f2);
   Sound_Play(148);
   Actor_GetById(18)->velocityY = PIXELS(4);
   wait(5);
@@ -861,7 +861,7 @@ void Func_02003dec(void) {
                              ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(26);
   Actor_SetHorizontalPositionWithTerrain(26, 0, 0);
-  GameFlag_SetBit(0x8f1);
+  GameFlag_Set(0x8f1);
 }
 
 void Func_02002eb0(void);
@@ -971,7 +971,7 @@ void Func_02004294(void) {
   Event_ShowMessageAndWait(17, 0);
   Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
   Event_ShowMessageAndWait(0x4000 + 17, 0);
-  GameFlag_ClearBit(0x8f7);
+  GameFlag_Clear(0x8f7);
   Sound_Play(11);
   Event_Wait(80);
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
@@ -1008,8 +1008,8 @@ void Func_02004424(void) {
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = effect;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  GameFlag_SetBit(0x8fc);
-  GameFlag_SetBit(FLAG_KEEP_PARTY_POSITION);
+  GameFlag_Set(0x8fc);
+  GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   Import_EventSetExitRequest(12);
 }
 
@@ -1125,8 +1125,8 @@ void Func_020047e4(void) {
   Event_ShowMessageAndWait(17, 0);
   Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
   Event_ShowMessageAndWait(0x4011, 0);
-  GameFlag_SetBit(0x8fc);
-  GameFlag_SetBit(FLAG_KEEP_PARTY_POSITION);
+  GameFlag_Set(0x8fc);
+  GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   Import_EventSetExitRequest(12);
 }
 
@@ -1151,8 +1151,8 @@ void Func_0200489c(void) {
   Actor_SetSpriteColor(Actor_GetById(13), 12);
   Event_Wait(120);
   Func_020045d0();
-  GameFlag_SetBit(0x8fc);
-  GameFlag_SetBit(FLAG_KEEP_PARTY_POSITION);
+  GameFlag_Set(0x8fc);
+  GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   Import_EventSetExitRequest(12);
 }
 
@@ -1174,8 +1174,8 @@ void Func_02004978(void) {
   Task_Add(Func_02002f34, 0x480);
   Event_Wait(120);
   Func_020045d0();
-  GameFlag_SetBit(0x8fc);
-  GameFlag_SetBit(FLAG_KEEP_PARTY_POSITION);
+  GameFlag_Set(0x8fc);
+  GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   Import_EventSetExitRequest(12);
 }
 
@@ -1276,7 +1276,7 @@ void Func_02004a28(void) {
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x203;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  GameFlag_SetBit(0x8fb);
+  GameFlag_Set(0x8fb);
   Import_EventSetExitRequest(13);
 }
 
@@ -1369,7 +1369,7 @@ void Func_02004cf4(void) {
   work = Ram_HeapSlots->eventWork;
   work->field1b4 = 16;
   work->screenEffect = 0x209;
-  GameFlag_SetBit(0x8ef);
+  GameFlag_Set(0x8ef);
   Event_End();
 }
 
@@ -1410,7 +1410,7 @@ void Func_02005114(void) {
   Actor_SetSpriteFlags(Actor_GetById(11), 0);
   Actor_GetById(11)->scaleY = 0x8000;
   Func_020050ac();
-  GameFlag_ClearBit(0x86b);
+  GameFlag_Clear(0x86b);
   Func_02005b8c(25);
   Actor_SetModeById(25, 2);
   KIBOMBO_TASK_ADD(Func_02003030, 0x480)
@@ -1491,14 +1491,14 @@ void Func_0200516c(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  done = GameFlag_Test(FLAG_KEEP_PARTY_POSITION);
+  done = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
   if (!done) {
     actor->motionFlags = done;
     actor->y = PIXELS(42);
     actor->z += PIXELS(-42);
     Actor_SetSingleChildFlags__s516c(Actor_GetById(11), 0);
     Actor_SetSpritePriority(11, 1);
-    if (gMainRoutineWork.entrance == 19 && GameFlag_Test(7)) {
+    if (gMainRoutineWork.entrance == 19 && GameFlag_Get(7)) {
       unit = Unit_Get(7);
       *(u16 *)(unit + 0x38) = *(u16 *)(unit + 0x34);
       *(u16 *)(unit + 0x3a) = *(u16 *)(unit + 0x36);
@@ -1522,12 +1522,12 @@ void Func_0200516c(void) {
       }
       unit[0x131] = 0;
       unit[0x140] = 0;
-      GameFlag_SetBit(0x92f);
-      GameFlag_ClearBit(0x92e);
+      GameFlag_Set(0x92f);
+      GameFlag_Clear(0x92e);
       Party_RemoveMemberRestored(7);
     }
   }
-  GameFlag_SetBit(0x202);
+  GameFlag_Set(0x202);
   gData_02007948[0] = *(u16 *)&BG_PLTT_COLOR(0, 9);
   gData_02007948[1] = *(u16 *)&BG_PLTT_COLOR(5, 7);
   gData_02007948[2] = *(u16 *)&BG_PLTT_COLOR(6, 7);
@@ -1539,19 +1539,19 @@ void Func_0200516c(void) {
   Actor_SetSingleChildFlags__s516c(Actor_GetById(33), 0);
   Actor_SetSingleChildFlags__s516c(Actor_GetById(34), 0);
   Actor_SetSingleChildFlags__s516c(Actor_GetById(35), 0);
-  GameFlag_SetBit(0x209);
+  GameFlag_Set(0x209);
   actor = Actor_GetById(29);
   actor->motionFlags = 0;
   actor->y = 0;
   Actor_Hide(29);
   Actor_SetSpritePriority(30, 3);
-  if (GameFlag_Test(0x8fd)) {
+  if (GameFlag_Get(0x8fd)) {
     Actor_SetHorizontalPositionWithTerrain(26, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(27, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(28, 0, 0);
     Actor_SetPosition(21, PIXELS(302), PIXELS(172));
   }
-  GameFlag_SetBit(0x86b);
+  GameFlag_Set(0x86b);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   {
@@ -1571,30 +1571,30 @@ void Func_02002de0(void);
 void Func_0200538c(void) {
   Actor_SetSpriteFlags(Actor_GetById(9), 0);
   Actor_SetSpriteFlags(Actor_GetById(10), 0);
-  if (!GameFlag_Test(0x8fb))
+  if (!GameFlag_Get(0x8fb))
     Func_02002de0();
   Func_0200324c();
-  if (!GameFlag_Test(0x869))
-    GameFlag_SetBit(0x201);
+  if (!GameFlag_Get(0x869))
+    GameFlag_Set(0x201);
   Func_02005c64(gData_02006324);
   Actor_SetSpritePriority(8, 2);
   Actor_SetSpriteFlags(Actor_GetById(11), 0);
   Actor_GetById(11)->motionFlags = 0;
-  if (GameFlag_Test(0x9ea)) {
+  if (GameFlag_Get(0x9ea)) {
     Kibombo_ObjSetPos(Actor_GetById(11), 208 << 15, 0, 148 << 17);
     Kibombo_BlendStart(5, 18, 1, 1, 6, 18);
     wait(10);
   }
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
-  if (GameFlag_Test(0x86a))
+  if (GameFlag_Get(0x86a))
     Func_020005e0();
-  if (GameFlag_Test(0x204))
+  if (GameFlag_Get(0x204))
     Func_02000624();
-  if (GameFlag_Test(0x205))
+  if (GameFlag_Get(0x205))
     Func_02000668();
-  if (GameFlag_Test(0x206))
+  if (GameFlag_Get(0x206))
     Func_020006ac();
-  if (GameFlag_Test(0x207))
+  if (GameFlag_Get(0x207))
     Func_020006f0();
   Func_02005b8c(12);
   Func_02005b8c(13);
@@ -1608,7 +1608,7 @@ void Func_020054e0(void) {
   s16 entrance;
 
   Func_0200538c();
-  if (GameFlag_Test(0x8fb)) {
+  if (GameFlag_Get(0x8fb)) {
     Func_02003640(1, 0);
     Func_020036e0(1, 5);
   }
@@ -1639,14 +1639,14 @@ void Func_02005594(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  GameFlag_SetBit(0x869);
-  GameFlag_SetBit(0x202);
+  GameFlag_Set(0x869);
+  GameFlag_Set(0x202);
   gData_02007948[0] = BG_PLTT[9];
   gData_02007948[1] = BG_PLTT[7];
   gData_02007948[2] = BG_PLTT[6];
   gData_02007948[3] = BG_PLTT[76];
   Func_0200538c();
-  if (GameFlag_Test(0x8fb)) {
+  if (GameFlag_Get(0x8fb)) {
     Func_02003640(1, 1);
     Func_020036e0(1, 4);
   }
@@ -1679,14 +1679,14 @@ void Func_02005594(void) {
   Actor_SetSpritePriority(26, 2);
   Actor_SetSpritePriority(5, 2);
   Actor_SetSpritePriority(6, 2);
-  if (GameFlag_Test(0x92e))
+  if (GameFlag_Get(0x92e))
     Actor_SetHorizontalPositionWithTerrain(7, 0, 0);
-  else if (GameFlag_Test(0x92f)) {
+  else if (GameFlag_Get(0x92f)) {
     s32 angle = 0x2000;
 
     Kibombo_ObjPlaceFacing(7, 152 << 17, 176 << 15, angle);
   }
-  if (GameFlag_Test(0x8fd)) {
+  if (GameFlag_Get(0x8fd)) {
     Func_020036e0(1, 6);
     Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
   }
@@ -1699,8 +1699,8 @@ void Func_02005594(void) {
 
     *field = value;
   }
-  if (GameFlag_Test(0x8f1)) {
-    if (!GameFlag_Test(0x8fd))
+  if (GameFlag_Get(0x8f1)) {
+    if (!GameFlag_Get(0x8fd))
       Func_020032b0();
   } else if (gMainRoutineWork.entrance == 5) {
     Func_02003dec();
@@ -1731,7 +1731,7 @@ void Func_02005594(void) {
 void Func_020057e0(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  GameFlag_SetBit(514);
+  GameFlag_Set(514);
   gData_02007948[0] = PALETTE_WORD(169);
   gData_02007948[1] = PALETTE_WORD(167);
   gData_02007948[2] = PALETTE_WORD(166);
@@ -1762,9 +1762,9 @@ void Func_02005898(void) {
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   Func_02003288();
   if (gMainRoutineWork.entrance == 9) {
-    if (GameFlag_Test(0x8ef)) {
+    if (GameFlag_Get(0x8ef)) {
       Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
-      if (GameFlag_Test(0x8ee)) {
+      if (GameFlag_Get(0x8ee)) {
         s32 angle = FACING_NORTHWEST + FACING_STEP;
 
         Kibombo_ObjPlaceFacing(8, PIXELS(434), PIXELS(634), angle);
@@ -1778,7 +1778,7 @@ void Func_02005898(void) {
     }
   }
 #if TLA_PATCH_1
-  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     object = Actor_GetById(16);
     object->x -= PIXELS(14);
     object->z -= PIXELS(8);
@@ -1793,7 +1793,7 @@ void Func_02005898(void) {
   object->z += PIXELS(8);
   Actor_SetModeById(16, 6);
   if (gMainRoutineWork.entrance == 14)
-    GameFlag_SetBit(0x8ee);
+    GameFlag_Set(0x8ee);
 }
 
 void Func_02005994(void) { Field_TryJumpForward(); }

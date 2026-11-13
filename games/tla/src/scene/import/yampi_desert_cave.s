@@ -18,19 +18,19 @@ Task_RemoveFar:
 	.thumb_func
 Vector_AddPolarOffsetFar:
 	overlay_veneer Func_08000128
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
 	.ifndef TLA_EDITION_JA
-	.global GameFlag_ClearBit
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.endif
 	.global GameFlag_GetByte
 	.thumb_func
@@ -123,7 +123,7 @@ Actor_SetSpritePriority:
 	.global Func_020018c8
 	.thumb_func
 Func_020018c8:
-	overlay_veneer Func_080c8208
+	overlay_veneer Actor_DisableByIdFar
 	.global Actor_ShowEmoteById
 	.thumb_func
 Actor_ShowEmoteById:
@@ -171,7 +171,7 @@ Actor_ReturnHome:
 	.global Func_02001928
 	.thumb_func
 Func_02001928:
-	overlay_veneer Func_080c8480
+	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:
@@ -183,19 +183,19 @@ Event_NoOp:
 	.global Func_02001940
 	.thumb_func
 Func_02001940:
-	overlay_veneer Func_080c8710
+	overlay_veneer Actor_GetCellIndexFar
 	.global Func_02001948
 	.thumb_func
 Func_02001948:
-	overlay_veneer Func_080c8738
+	overlay_veneer Actor_FindAtCellFar
 	.global Func_02001950
 	.thumb_func
 Func_02001950:
-	overlay_veneer Func_080c88d8
+	overlay_veneer Teleport_PlayWhirlFar
 	.global Func_02001958
 	.thumb_func
 Func_02001958:
-	overlay_veneer Func_080c88e8
+	overlay_veneer Teleport_PlaySparksFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

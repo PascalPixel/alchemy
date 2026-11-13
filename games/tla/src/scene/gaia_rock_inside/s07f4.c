@@ -226,7 +226,7 @@ void Func_02002cb4(s32 a);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Test(flag); }
+static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
 
 static __inline__ void Func_0200500c_(s32 a, s32 b, s32 c) {
   Func_0200500c(a, b, c);
@@ -278,7 +278,7 @@ void Func_02000d18(void) {
   s32 sourceY = 20;
 
   Func_02004ff4(104, sourceY, 1, height, height, sourceX, sourceY);
-  if (GameFlag_Test(0x9c4))
+  if (GameFlag_Get(0x9c4))
     return;
   count = 0;
   for (i = 0; i <= 11; i++) {

@@ -388,10 +388,10 @@ s32 Save_BuildFileSummary(void) {
   summary->sendFlag = gMainRoutineWork.unk22d[2];
   summary->flagCount = 0;
   for (i = 48; i <= 127; i++) {
-    if (GameFlag_Test(i))
+    if (GameFlag_Get(i))
       summary->flagCount++;
   }
-  summary->hasFlag34 = GameFlag_Test(34) != 0;
+  summary->hasFlag34 = GameFlag_Get(34) != 0;
   {
     s32 n;
     u32 frames;

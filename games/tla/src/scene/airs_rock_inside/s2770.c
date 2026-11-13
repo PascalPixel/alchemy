@@ -382,7 +382,7 @@ fade:
   REG_DISPCNT |= DISPCNT_BG0_ON;
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;
-  GameFlag_SetBit(0x89a);
+  GameFlag_Set(0x89a);
   Event_End();
 }
 
@@ -486,27 +486,27 @@ void Func_0200332c(void) {
   z = pushed->z >> 19;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room1) {
     if (x == 103 && z == 41)
-      GameFlag_SetBit(0xa8e);
+      GameFlag_Set(0xa8e);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room2) {
     if (x == 13 && z == 49)
-      GameFlag_SetBit(0x898);
+      GameFlag_Set(0x898);
     else if (x == 41 && z == 49)
-      GameFlag_SetBit(0x897);
+      GameFlag_Set(0x897);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room3) {
     if (x == 33 && z == 79)
-      GameFlag_SetBit(0x89b);
+      GameFlag_Set(0x89b);
     else if (x == 77 && z == 71)
-      GameFlag_SetBit(0x89c);
+      GameFlag_Set(0x89c);
     else if (x == 59 && z == 65)
-      GameFlag_SetBit(0x89d);
+      GameFlag_Set(0x89d);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room4) {
     if (x == 81 && z == 37)
-      GameFlag_SetBit(0x89e);
+      GameFlag_Set(0x89e);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room7) {
     Call4((void (*)())Func_02005df4, 0x2600000, 0x1500000, 2, -4);
     Call4((void (*)())Func_02005df4, 0x2700000, 0x1500000, 2, -4);
     if (x == 43 && z == 87)
-      GameFlag_SetBit(0x8d0);
+      GameFlag_Set(0x8d0);
     if ((Actor_GetById(9)->x >> 19 == 73 && Actor_GetById(9)->z >> 19 == 43) ||
         (Actor_GetById(10)->x >> 19 == 73 && Actor_GetById(10)->z >> 19 == 43))
       ((u8 *)Actor_GetById(13))[99] = 1;
@@ -521,26 +521,26 @@ void Func_0200332c(void) {
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room8) {
     if (x == 35 && z == 59)
-      GameFlag_SetBit(0x8d1);
+      GameFlag_Set(0x8d1);
     if (x == 45 && z == 105)
-      GameFlag_SetBit(0x8d2);
+      GameFlag_Set(0x8d2);
     if (x == 23 && z == 77) {
-      GameFlag_SetBit(0x200);
-      GameFlag_SetBit(0xa8f);
+      GameFlag_Set(0x200);
+      GameFlag_Set(0xa8f);
     }
     if (z == 59 && (x == 67 || x == 71 || x == 73))
-      GameFlag_SetBit(513);
+      GameFlag_Set(513);
     if (z == 19 && (x == 75 || x == 79))
-      GameFlag_SetBit(514);
+      GameFlag_Set(514);
     if (x == 69 && z == 59)
-      GameFlag_ClearBit(513);
+      GameFlag_Clear(513);
     if (x == 77 && z == 19)
-      GameFlag_ClearBit(514);
+      GameFlag_Clear(514);
     Func_0200062c(2, Actor_GetById(8)->x >> 20, Actor_GetById(8)->z >> 20, 0);
     Func_0200062c(2, Actor_GetById(9)->x >> 20, Actor_GetById(9)->z >> 20, 0);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room9) {
     if (x == 45 && z == 33)
-      GameFlag_SetBit(0x8d3);
+      GameFlag_Set(0x8d3);
     Func_0200062c(2, Actor_GetById(10)->x >> 20, Actor_GetById(10)->z >> 20, 0);
   }
   Event_End();
@@ -694,7 +694,7 @@ fade:
   REG_DISPCNT |= DISPCNT_BG0_ON;
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;
-  GameFlag_SetBit(0x899);
+  GameFlag_Set(0x899);
   Event_End();
 }
 
@@ -790,10 +790,10 @@ void Func_02003cac(void) {
   if (cell != 1 && cell != 7) {
     Func_02002790();
     Func_02003b7c(0x108, row * 8 + 10);
-    if (!Value1((s32 (*)())GameFlag_Test, 0x200))
-      GameFlag_SetBit(0x200);
-    GameFlag_SetBit(*(s16 *)work + 312);
-  } else if (GameFlag_Test(0x200)) {
+    if (!Value1((s32 (*)())GameFlag_Get, 0x200))
+      GameFlag_Set(0x200);
+    GameFlag_Set(*(s16 *)work + 312);
+  } else if (GameFlag_Get(0x200)) {
     Func_02003b7c(0x108, row * 8 + 10);
   }
 }
@@ -1097,7 +1097,7 @@ void Func_02004534(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show(MsgCheckedTheTablet, 1);
-  if (Value1(GameFlag_Test, 0x8d4) != 0) {
+  if (Value1(GameFlag_Get, 0x8d4) != 0) {
     Event_End();
   } else {
     Func_02005ea4((s32)MsgCheckedTheTablet);
@@ -1138,7 +1138,7 @@ void Func_02004534(void) {
     Call0(MapGrid_WaitForShakeToSettle);
     Call2(Func_02004138, 8, 6);
     Party_LearnAbility(6, 0x90);
-    GameFlag_SetBit(0x8d4);
+    GameFlag_Set(0x8d4);
     Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, 6, 0);
     FieldEvent_Wait(10);
     Actor_SetModeById(6, 3);
@@ -1158,7 +1158,7 @@ void Func_02004534(void) {
 }
 
 void Func_02004740(void) {
-  if (GameFlag_Test(0x8d4)) {
+  if (GameFlag_Get(0x8d4)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldMessage_Show(MsgCheckedTheTablet, 1);
@@ -1175,7 +1175,7 @@ void Func_02004740(void) {
 
 #define DEFINE_AIRS_ROCK_INSIDE_READ_TABLET(name, n1)                          \
   void name(void) {                                                            \
-    if (GameFlag_Test(0x8d4)) {                                                \
+    if (GameFlag_Get(0x8d4)) {                                                \
       Event_Start();                                                           \
       Event_ResolvePendingActions(0);                                          \
       FieldMessage_Show(MsgCheckedTheTablet, 1);                               \
@@ -1201,9 +1201,9 @@ void Func_02004884(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (Actor_GetById(8)->x >> 19 == 65)
-    GameFlag_SetBit(771);
+    GameFlag_Set(771);
   else
-    GameFlag_ClearBit(771);
+    GameFlag_Clear(771);
   Event_End();
 }
 
@@ -1276,8 +1276,8 @@ step:
   leader->motionFlags = 3;
   first->scaleY = 0x10000;
   second->y = second->terrainHeight;
-  GameFlag_SetBit(first->timer);
-  GameFlag_ClearBit(second->timer);
+  GameFlag_Set(first->timer);
+  GameFlag_Clear(second->timer);
   Import_ActorSelectAnimation(first,
                               ((struct FieldSprite *)first->sprite)->frame + 1);
   Import_ActorSelectAnimation(
@@ -1350,7 +1350,7 @@ void Func_02004bb4(void) {
   Sound_Play(126);
   Party_AddPp(999, 0);
   FieldEvent_Wait(10);
-  GameFlag_ClearBit(322);
+  GameFlag_Clear(322);
   FieldMessage_Show(message + 1, 1);
   Event_End();
 }

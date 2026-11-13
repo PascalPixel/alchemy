@@ -60,7 +60,7 @@ void WorldPicture_Initialize(void) {
     *oam++ = tileAttributes;
   }
   Heap_Release(markerTiles);
-  if (GameFlag_Test(284)) {
+  if (GameFlag_Get(284)) {
     work->x = 264 << 16;
     work->z = 16 << 16;
   } else {
@@ -148,7 +148,7 @@ void WorldPicture_GetLeaderPoint(s32 *screenX, s32 *screenY) {
   s32 x;
   s32 z;
 
-  GameFlag_ClearBit(286);
+  GameFlag_Clear(286);
   if (*(s8 *)(state + 394) == 3) {
     object = ObjectTable_Get(leader);
     if (object == 0)
@@ -157,7 +157,7 @@ void WorldPicture_GetLeaderPoint(s32 *screenX, s32 *screenY) {
     z = *(s16 *)(object + 18);
     if (z < 1832) {
       if (x < 12000) {
-        GameFlag_SetBit(286);
+        GameFlag_Set(286);
         // From patch 1 this case is offset from the leader's position; the
         // Japanese release puts it at one fixed point.
 #if TLA_PATCH_1

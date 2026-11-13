@@ -59,7 +59,7 @@ void Event_Start(void) {
   state->choice = -1;
   state->messageState = -1;
   Task_Add((s32)Event_UpdateDebugSkip, TASK_PASS_VBLANK);
-  GameFlag_ClearBit(0x132);
+  GameFlag_Clear(0x132);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
     state->currentOwner = party->currentOwner;
@@ -119,7 +119,7 @@ s32 Party_CheckShortcut(u32 packed_id) {
 
   if (group > 7)
     return -1;
-  if (GameFlag_Test(group) == 0)
+  if (GameFlag_Get(group) == 0)
     return -2;
   if (Unit_KnowsPsynergyFar(group, entry) == 0)
     return -3;
@@ -226,7 +226,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       FieldMessage_ShowFar((s32)&MsgItemDropPrompt, 1);
       result = ItemPicker_RunToDropFar(&member, &slot);
       if (result == -1) {
-        if (((struct ItemHead *)Item_Get(item))->flags & 8) {
+        if (((struct ItemHead *)Item_GetDirectFar(item))->flags & 8) {
           MessageArgument_PushFar(item, 2);
           FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 4, 1);
           goto retry;
@@ -390,7 +390,7 @@ s32 Event_PickUpItem(s32 actor, s32 item, s32 flag) {
   ItemDisplay_ShowItem(item, 3);
   PartyInventory_GiveItem(item, 0);
   if (flag != -1)
-    GameFlag_SetBit(flag);
+    GameFlag_Set(flag);
   return 0;
 }
 

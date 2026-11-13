@@ -64,7 +64,7 @@ void Pillars_Pound(const void *data, s32 mode, s32 timer) {
       if (timer <= 7)
         object->scaleY += -0x1f00;
       if (mode == 1) {
-        GameFlag_SetBit(flag);
+        GameFlag_Set(flag);
         Actor_SetCellOpen(active, kind, flag, object->terrainId);
         object->scaleY = 0x10000;
       }
@@ -79,7 +79,7 @@ void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer) {
   struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
 
   cell += Func_02003db0(object);
-  if (GameFlag_Test(flag)) {
+  if (GameFlag_Get(flag)) {
     /* FAKEMATCH(temporary): the flags read into a local before the cell store
      * and ORed into the register that holds 2, as the native does; as one |=,
      * which builds the 0 for the cell before the read, 8 of 75 instructions
@@ -138,7 +138,7 @@ void CrumblingPillars_Place(const void *data) {
       u8 *shapes =
           gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
 
-      if (GameFlag_Test(nextFlag)) {
+      if (GameFlag_Get(nextFlag)) {
         Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
       } else {
         s32 index = Func_02003db0(object);
@@ -153,7 +153,7 @@ void CrumblingPillars_Place(const void *data) {
         cell->attributeB = 128;
         *shapeCell =
             Func_02003dd0(object->terrainId, shape, (terrainHeight >> 19) + 4);
-        if (GameFlag_Test(flag))
+        if (GameFlag_Get(flag))
           Func_02003ba0(object, 0);
       }
       list += 2;
@@ -192,7 +192,7 @@ void CrumblingPillars_Step(u16 *list) {
       }
       flag = list[1];
       Event_Start();
-      if (GameFlag_Test(flag) == 0) {
+      if (GameFlag_Get(flag) == 0) {
         Sound_Play(125);
         Actor_SetSpriteColor(Actor_GetById(id), 7);
         wait(2);
@@ -203,10 +203,10 @@ void CrumblingPillars_Step(u16 *list) {
         wait(4);
         Actor_SetSpriteColor(Actor_GetById(id), 0);
         Rubble_Spray(0);
-        GameFlag_SetBit(flag);
+        GameFlag_Set(flag);
       } else {
         s32 done = flag + 1;
-        s32 result = GameFlag_Test(done);
+        s32 result = GameFlag_Get(done);
 
         if (result == 0) {
           leader->motionFlags = result;
@@ -229,7 +229,7 @@ void CrumblingPillars_Step(u16 *list) {
           Sound_Play(188);
           Rubble_Burst();
           wait(20);
-          GameFlag_SetBit(done);
+          GameFlag_Set(done);
         }
       }
       Event_End();
@@ -258,7 +258,7 @@ loop:
   }
   flag = list[1];
   Event_Start();
-  if (!GameFlag_Test(flag + 1)) {
+  if (!GameFlag_Get(flag + 1)) {
     Sound_Play(185);
     MapGrid_SetShake(0x10000, 0x40000, 0x10000);
     Rubble_Spray(0);
@@ -274,8 +274,8 @@ loop:
     Sound_Play(188);
     Rubble_Burst();
     wait(20);
-    GameFlag_SetBit(flag);
-    GameFlag_SetBit(flag + 1);
+    GameFlag_Set(flag);
+    GameFlag_Set(flag + 1);
   }
   Event_End();
   return;
@@ -342,7 +342,7 @@ void CrumblingPillars_PlaceWithStandIns(u16 *list) {
     u8 *shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
 
     actor->unk5c[0] = 3;
-    if (GameFlag_Test(next)) {
+    if (GameFlag_Get(next)) {
       Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
     } else {
       s32 index = Func_02003db0(actor);
@@ -358,7 +358,7 @@ void CrumblingPillars_PlaceWithStandIns(u16 *list) {
       Func_02003cc0(id);
       cell->attributeB = 128;
       *slot = Func_02003dd0(actor->terrainId, shape, (ground >> 19) + 4);
-      if (GameFlag_Test(flag))
+      if (GameFlag_Get(flag))
         Actor_CopyGraphics(id, 9);
     }
     list += 2;
@@ -400,7 +400,7 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
       }
       flag = list[1];
       Event_Start();
-      if (GameFlag_Test(flag) == 0) {
+      if (GameFlag_Get(flag) == 0) {
         Func_02003ba0(helper, 1);
         Actor_TakePlaceOf(helper, target);
         wait(1);
@@ -417,10 +417,10 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
         Rubble_Spray(0);
         Actor_TakePlaceOf(target, helper);
         wait(1);
-        GameFlag_SetBit(flag);
+        GameFlag_Set(flag);
       } else {
         s32 done = flag + 1;
-        s32 result = GameFlag_Test(done);
+        s32 result = GameFlag_Get(done);
 
         if (result == 0) {
           Func_02003ba0(helper, 0);
@@ -446,7 +446,7 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
           Sound_Play(188);
           Rubble_Burst();
           wait(20);
-          GameFlag_SetBit(done);
+          GameFlag_Set(done);
         }
       }
       Event_End();

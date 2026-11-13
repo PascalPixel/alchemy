@@ -2,18 +2,18 @@
 	.thumb
 	.include "games/tla/src/system/overlay/imports.inc"
 	.balign 4
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Actor_SetSpriteFlags
 	.thumb_func
 Actor_SetSpriteFlags:
@@ -25,7 +25,7 @@ MessageArgument_Push:
 	.global Import_ItemGet
 	.thumb_func
 Import_ItemGet:
-	overlay_veneer Item_Get
+	overlay_veneer Item_GetDirectFar
 	.global PartyInventory_FindMember
 	.thumb_func
 PartyInventory_FindMember:
@@ -121,7 +121,7 @@ ItemDisplay_ShowItem:
 	.global Func_02000a48
 	.thumb_func
 Func_02000a48:
-	overlay_veneer Func_080c8480
+	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:
@@ -133,7 +133,7 @@ Party_GetLeaderActor:
 	.global Func_02000a60
 	.thumb_func
 Func_02000a60:
-	overlay_veneer Func_080c87b0
+	overlay_veneer Actor_FallOverByIdFar
 	.global Shop_Run
 	.thumb_func
 Shop_Run:

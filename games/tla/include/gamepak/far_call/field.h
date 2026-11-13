@@ -20,7 +20,7 @@ void WorldMap_InitializePerspectiveFar(void);
 void MapGrid_LoadMapFar(s32 map);
 void WorldMap_UpdateCurrentTileBlockFar(void);
 void Map_ApplySetFlagEditsFar(void);
-void Func_080200b0(void);
+void Actor_StartRenderModeScriptFar(void);
 void MapAnimation_StartFar();
 void WorldMap_LoadAreaGraphicsFar(void);
 

@@ -629,7 +629,7 @@ fade:
   if (changed)
     goto fade;
   gSeaOfTime_WaveState = 1;
-  GameFlag_ClearBit(0x200);
+  GameFlag_Clear(0x200);
   /* FAKEMATCH(signature): typed to return s32, passing on Event_End's,
    * though its target Event_End returns nothing; as void, 6 of 150 instructions
    * differ in tla-en. */
@@ -756,7 +756,7 @@ void SeaOfTime_CrossToLemuria(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  GameFlag_SetBit(0x8dd);
+  GameFlag_Set(0x8dd);
   Actor_SetSpeed(8, 0x10000, 0x8000);
   Actor_GetById(8)->facing = FACING_NORTH;
   Actor_WalkTo(8, 352, 264);
@@ -901,7 +901,7 @@ void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor) {
     Event_ResolvePendingActions(0);                                            \
     object = Actor_GetById(n1);                                                \
     SeaOfTime_RemoveRock(object->x, Actor_GetById(n1)->z, n1);                 \
-    GameFlag_SetBit(n2);                                                       \
+    GameFlag_Set(n2);                                                       \
     Event_End();                                                               \
   }
 
@@ -987,7 +987,7 @@ void SeaOfTime_AnimateSea(void) {
       s32 red = color & 31;
       s32 green = (color >> 5) & 31;
       s32 blue = (color >> 10) & 31;
-      s32 flag = GameFlag_Test(0x200);
+      s32 flag = GameFlag_Get(0x200);
       /* FAKEMATCH(temporary): each channel shifted up after the flag test; as
        * (u16)green << 5 and so on in the store, 167 of 272 instructions differ
        * in tla-en. */
@@ -1217,7 +1217,7 @@ s32 Scene_Initialize(void) {
     gSeaOfTime_WaveState = 1;
     Dma_Set((const void *)0x05000062, gSeaOfTime_SavedColors.colors, 0x8000000e,
             (volatile u32 *)0x040000d4);
-    if (GameFlag_Test(0x200)) {
+    if (GameFlag_Get(0x200)) {
       u32 *state = gSceneState;
       u32 offset, i;
 
@@ -1237,17 +1237,17 @@ s32 Scene_Initialize(void) {
     gSeaOfTime_WaveStartFrame = gFrameCount;
     gSeaOfTime_WaveState = 0;
     if (gMainRoutineWork.entrance <= 4) {
-      if (!GameFlag_Test(0x940)) {
+      if (!GameFlag_Get(0x940)) {
         Dma_Set((const void *)0x05000062, gSeaOfTime_SavedColors.colors,
                 0x8000000e, (volatile u32 *)0x040000d4);
       } else {
-        if (!GameFlag_Test(0xa90))
+        if (!GameFlag_Get(0xa90))
           SeaOfTime_PlaceRock(21, 23, 9);
-        if (!GameFlag_Test(0xa91))
+        if (!GameFlag_Get(0xa91))
           SeaOfTime_PlaceRock(37, 17, 10);
-        if (!GameFlag_Test(0xa93))
+        if (!GameFlag_Get(0xa93))
           SeaOfTime_PlaceRock(47, 27, 12);
-        if (!GameFlag_Test(0xa94))
+        if (!GameFlag_Get(0xa94))
           SeaOfTime_PlaceRock(59, 19, 13);
         {
           void *block = Ram_HeapSlots->block32;
@@ -1258,10 +1258,10 @@ s32 Scene_Initialize(void) {
         }
         BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
       }
-      if (gMainRoutineWork.entrance == 4 && !GameFlag_Test(265))
+      if (gMainRoutineWork.entrance == 4 && !GameFlag_Get(265))
         SeaOfTime_Open();
     } else {
-      if (!GameFlag_Test(0xa95))
+      if (!GameFlag_Get(0xa95))
         SeaOfTime_PlaceRock(89, 85, 9);
     }
   }

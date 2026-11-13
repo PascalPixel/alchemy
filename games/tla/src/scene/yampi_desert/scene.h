@@ -24,9 +24,9 @@ extern const u8 gYampiDesert_Room12Stakes[];
 extern s32 gYampiDesert_RaisedEvent;
 
 struct Actor *Actor_GetById(u32 objectId);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
+s32 GameFlag_Get(s32 flag);
+void GameFlag_Set(s32 flag);
+void GameFlag_Clear(s32 flag);
 void FieldMessage_Show(s32 message, s32 position);
 void Actor_SetSpriteColor(struct Actor *object, s32 attribute);
 void Actor_SetWideSprite(s32 actor, s32 value);
@@ -105,7 +105,7 @@ static inline void Scene_TaskAdd(void (*func)(void), s32 priority) {
   Task_Add(func, priority);
 }
 
-static inline s32 Scene_FlagTest(s32 flag) { return GameFlag_Test(flag); }
+static inline s32 Scene_FlagTest(s32 flag) { return GameFlag_Get(flag); }
 
 static inline void Scene_ArmCallback(s32 id, s32 angle, s32 flags) {
   Actor_ArmCallback(id, angle, flags);

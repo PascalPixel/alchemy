@@ -45,7 +45,7 @@ void Func_02000338(struct Actor *object) {
   s32 height =
       Map_GetTerrainHeight(object->terrainId, object->x, object->z) >> 19;
 
-  if (GameFlag_Test(object->timer)) {
+  if (GameFlag_Get(object->timer)) {
     attr2 &= 0xffff00ff;
     attr0 &= ~128;
     if ((object->terrainHeight >> 19) != height)
@@ -92,7 +92,7 @@ loop:
 
   Actor_SetSpriteFlags(object, 0);
   Import_ActorSelectAnimation(object,
-                              (u16)animation + GameFlag_Test((u16)flag));
+                              (u16)animation + GameFlag_Get((u16)flag));
   object->motionFlags = 0;
   object->collisionFlags &= 0xfe;
   object->timer = flag;
@@ -158,7 +158,7 @@ void Func_02000548(void) {
   Func_02003048();
   TundariaTower_02002fe8(19, 55, 7, 8, 24, 46);
   TundariaTower_02002fc0(24, 102, 24, 110, 7, 8);
-  GameFlag_SetBit(2370);
+  GameFlag_Set(2370);
   Func_02003050();
 }
 
@@ -166,7 +166,7 @@ void Func_0200058c(void) {
   Func_02003048();
   TundariaTower_02002fe8(37, 55, 7, 8, 32, 46);
   TundariaTower_02002fc0(32, 102, 32, 110, 7, 8);
-  GameFlag_SetBit(2371);
+  GameFlag_Set(2371);
   Func_02003050();
 }
 
@@ -324,7 +324,7 @@ void Func_020008a8(void) {
 
   Func_02003048();
   Event_ResolvePendingActions(0);
-  GameFlag_SetBit(0x944);
+  GameFlag_Set(0x944);
   Call6((void (*)())Map_CopyCellAttributeRect, 11, 22, 3, 2, 20, 22);
   object->gravity = 0x8000;
   object->motionFlags = 3;
@@ -339,7 +339,7 @@ void Func_02000920(void) {
   Func_02003048();
   Event_ResolvePendingActions(0);
   FieldMessage_Show(MsgThereSSomething, 1);
-  if (GameFlag_Test(0x949)) {
+  if (GameFlag_Get(0x949)) {
     struct EventWork *work = Ram_HeapSlots->eventWork;
 
     work->unk15a = 1;
@@ -374,7 +374,7 @@ void Func_02000964(void) {
   Actor_SetDestination(8, 424, 536);
   Func_02002f90(object, gData_02003370);
   Actor_WaitForMoveById(8);
-  GameFlag_SetBit(0x200);
+  GameFlag_Set(0x200);
   Actor_WatchAndSetScript(8, gMainRoutineWork.currentOwner);
   MapCell_SetAttributes(0, 21, 33, 0x3200);
   MapCell_SetAttributes(0, 22, 33, 0x3200);
@@ -403,7 +403,7 @@ void Func_02000a48(s32 arg0, s32 arg1) {
   }
   if (arg0 == 1) {
     object->scaleY = 0x10000;
-    GameFlag_SetBit(object->timer);
+    GameFlag_Set(object->timer);
     Func_02000338(Actor_GetById(effectWork[13]));
     MapGrid_CopyCellPictureIndicesRect(67, 23, (object->x >> 20) + 64,
                                        object->z >> 20, 1, 1);
@@ -521,16 +521,16 @@ void Func_02000d2c(void) {
     struct Actor *o = object;
 
     if (o->x >> 19 == 27)
-      GameFlag_SetBit(0x947);
-    if (o->x >> 19 == 25 && GameFlag_Test(0x947))
-      GameFlag_SetBit(0x946);
+      GameFlag_Set(0x947);
+    if (o->x >> 19 == 25 && GameFlag_Get(0x947))
+      GameFlag_Set(0x946);
   }
   Func_02003050();
 }
 
 void Func_02000de4(void) {
   Func_02002fc8();
-  GameFlag_ClearBit(0x212);
+  GameFlag_Clear(0x212);
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
     MapGrid_CopyCellPictureIndicesRect(39, 100, 53, 100, 3, 3);
     Call6((void (*)())Map_CopyCellAttributeRect, 43, 41, 3, 3, 53, 37);
@@ -548,7 +548,7 @@ void Func_02000de4(void) {
 
 void Func_02000e78(void) {
   Func_02002fd0();
-  GameFlag_SetBit(0x212);
+  GameFlag_Set(0x212);
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
     MapGrid_CopyCellPictureIndicesRect(43, 100, 53, 100, 3, 3);
     Call6((void (*)())Map_CopyCellAttributeRect, 43, 37, 3, 3, 53, 37);
@@ -569,7 +569,7 @@ void Func_02000f0c(s32 step) {
     MapGrid_CopyCellPictureIndicesRect(18, 97, 6, 97, 3, 4);
     MapGrid_CopyCellPictureIndicesRect(82, 34, 70, 34, 3, 2);
     Call6((void (*)())Map_CopyCellAttributeRect, 7, 36, 1, 1, 7, 35);
-    GameFlag_SetBit(0x94b);
+    GameFlag_Set(0x94b);
     break;
   case 2:
     position.x = 0x780000;
@@ -596,7 +596,7 @@ void Func_02000fb8(s32 mode, s32 cue) {
   if (mode == 1) {
     MapGrid_CopyCellPictureIndicesRect(13, 26, 13, 16, 3, 3);
     Call6((void (*)())Map_CopyCellAttributeRect, 13, 26, 3, 3, 13, 16);
-    GameFlag_SetBit(0x948);
+    GameFlag_Set(0x948);
   }
   if (mode == 2)
     Rocks_Spawn(0xe80000, 0x100000, 0x1180000, 2);
@@ -637,7 +637,7 @@ void Func_020010d4(struct Actor *object) {
   } else {
     REG_BG2CNT &= 0xfffc;
     REG_BG2CNT |= 2;
-    if (GameFlag_Test(0x212)) {
+    if (GameFlag_Get(0x212)) {
       object->z = 0;
       object->x = 0;
     } else {

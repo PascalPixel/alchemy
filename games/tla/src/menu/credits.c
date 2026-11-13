@@ -667,9 +667,9 @@ s32 Credits_DrawLine(const u8 *text, s32 slot, s32 align) {
 
   if (text == NULL)
     return -1;
-  if (!GameFlag_Test(0x200)) {
+  if (!GameFlag_Get(0x200)) {
     Iwram_FillWordsEntry(buf, 0x900, 0);
-    GameFlag_SetBit(0x200);
+    GameFlag_Set(0x200);
   } else {
     Iwram_CopyWords(buf, buf + 0x800, 0x100);
     Iwram_FillWordsEntry(buf + 0x100, 0x800, 0);

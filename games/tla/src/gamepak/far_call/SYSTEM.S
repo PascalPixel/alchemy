@@ -100,9 +100,9 @@ FarCall_RuntimeTable:
 	export Serial_StepBlockTransferFar, Serial_StepBlockTransfer
 	export Task_SetFlagsFar, Task_SetFlags
 	export Unit_GetFar, Unit_Get
-	export GameFlag_TestFar, GameFlag_Test
-	export GameFlag_SetBitFar, GameFlag_SetBit
-	export GameFlag_ClearBitFar, GameFlag_ClearBit
+	export GameFlag_GetFar, GameFlag_Get
+	export GameFlag_SetFar, GameFlag_Set
+	export GameFlag_ClearFar, GameFlag_Clear
 	export GameFlag_ToggleFar, GameFlag_Toggle
 	export GameFlag_GetByteFar, GameFlag_GetByte
 	export GameFlag_SetByteFar, GameFlag_SetByte

@@ -660,7 +660,7 @@ void Champa_CloseTwoMessages(s32 a0, s32 a1) {
   Window_CloseMatchingId(t1);
 }
 
-void Champa_ApproachTheCliff(void) { GameFlag_SetBit(FLAG_NEAR_THE_CLIFF); }
+void Champa_ApproachTheCliff(void) { GameFlag_Set(FLAG_NEAR_THE_CLIFF); }
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

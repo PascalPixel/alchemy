@@ -77,7 +77,7 @@
                                                                                \
       if (--particle->timer == 0xffff)                                         \
         continue;                                                              \
-      if (GameFlag_Test(0x166))                                                \
+      if (GameFlag_Get(0x166))                                                \
         particle->timer++;                                                     \
       frame = &data1[5 * particle->timer];                                     \
       x = (particle->posX - cameraX) / 0x10000 + *frame++;                     \

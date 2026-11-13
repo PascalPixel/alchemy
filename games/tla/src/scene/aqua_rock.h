@@ -13,8 +13,8 @@
 #include "field_sprite.h"
 #include "frame.h"
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_ClearBit(s32 flag);
+s32 GameFlag_Get(s32 flag);
+void GameFlag_Clear(s32 flag);
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Animation_ApplyChildArgument(void *animation, s32 value);
 u8 *ResourceMetadata_Register(void *animation, s32 id);
@@ -76,9 +76,9 @@ extern const u8 gData_020032d4[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Test(flag); }
+static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
 
-static __inline__ void GameFlag_ClearBit_(s32 flag) { GameFlag_ClearBit(flag); }
+static __inline__ void GameFlag_ClearBit_(s32 flag) { GameFlag_Clear(flag); }
 
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
                                                     s32 z) {

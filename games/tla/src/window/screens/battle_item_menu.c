@@ -34,7 +34,7 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 item) {
   if (item == 0) {
     return 1;
   }
-  def = Item_Get(item);
+  def = Item_GetDirectFar(item);
   ret = 1;
   if (def->useType == 3) // Equipment that grants Psynergy.
   {
@@ -226,7 +226,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
           item = entries[firstEntry + i];
           if (item == 0)
             break;
-          Item_Get(item);
+          Item_GetDirectFar(item);
           Text_SetColor(15);
           if (Item_ClassifyUseAbility(member, item) != 0)
             Text_SetColor(4);
@@ -301,7 +301,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     if (gInput.pressed & 1) {
       if (count != 0) {
         result = firstEntry + selectedRow;
-        Item_Get(entries[result]);
+        Item_GetDirectFar(entries[result]);
         unusableReason = 0;
         if ((entries[result] & ITEM_BROKEN) == 0) {
           unusableReason = Item_ClassifyUseAbility(member, entries[result]);

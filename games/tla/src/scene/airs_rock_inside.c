@@ -56,7 +56,7 @@ void Func_020000a4(u16 *list, s32 mode, s32 count) {
       if (count < 8)
         object->scaleY -= 0x1f00;
       if (mode == 1) {
-        GameFlag_SetBit(flag);
+        GameFlag_Set(flag);
         Actor_SetCellOpen(id, a, flag, object->terrainId);
         object->scaleY = 0x10000;
       }

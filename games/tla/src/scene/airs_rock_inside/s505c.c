@@ -109,13 +109,13 @@ s32 Scene_Initialize(void) {
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 516;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
-  GameFlag_SetBit(0x300);
-  GameFlag_SetBit(0x89f);
+  GameFlag_Set(0x300);
+  GameFlag_Set(0x89f);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room1) {
     Func_02002770();
     // The Japanese release arrives here whatever flag 265 says.
     if (gMainRoutineWork.entrance == 16 &&
-        (!TLA_PATCH_1 || !GameFlag_Test(FLAG_KEEP_PARTY_POSITION))) {
+        (!TLA_PATCH_1 || !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))) {
       Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 1;
       wait(8);
       Map_CenterOnFollowedPoint();
@@ -128,7 +128,7 @@ s32 Scene_Initialize(void) {
       Func_02004eb0();
     }
     if (gMainRoutineWork.entrance > 13) {
-      if (GameFlag_Test(0xa8e))
+      if (GameFlag_Get(0xa8e))
         Call3(Actor_SetHorizontalPositionWithTerrain, 12, PIXELS(824),
               PIXELS(328));
       Func_02005f6c(gData_02006050);
@@ -137,14 +137,14 @@ s32 Scene_Initialize(void) {
     Actor_GetById(10)->y = 0;
     Actor_GetById(10)->priorityFlags = 2;
     Actor_SetSpritePriority(10, 3);
-    if (!GameFlag_Test(0x89a)) {
+    if (!GameFlag_Get(0x89a)) {
       Actor_SetSpriteColor(Actor_GetById(10), 6);
     } else {
       Func_02001084(Actor_GetById(10), 8, 0);
       Actor_SetSpriteColor(Actor_GetById(11), 6);
       Call6(MapGrid_CopyCellPictureIndicesRect, 64, 78, 18, 105, 3, 5);
     }
-    if (!GameFlag_Test(0x899)) {
+    if (!GameFlag_Get(0x899)) {
       Actor_SetSpriteColor(Actor_GetById(8), 6);
       Actor_SetSpriteColor(Actor_GetById(9), 6);
       Actor_SetSpriteColor(Actor_GetById(12), 6);
@@ -156,20 +156,20 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_GetById(8), 0);
     Actor_SetSpriteFlags(Actor_GetById(9), 0);
     Actor_SetSpriteFlags(Actor_GetById(12), 0);
-    if (gMainRoutineWork.entrance == 11 && !GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
+    if (gMainRoutineWork.entrance == 11 && !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
       Func_0200505c();
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room2) {
     REG_BLDALPHA = 0x1008;
     REG_BLDCNT = 0x3f10;
     Func_02002770();
-    if (GameFlag_Test(0x897))
+    if (GameFlag_Get(0x897))
       Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(328),
             PIXELS(392));
-    if (GameFlag_Test(0x898))
+    if (GameFlag_Get(0x898))
       Call3(Actor_SetHorizontalPositionWithTerrain, 11, PIXELS(104),
             PIXELS(392));
     Func_02005f6c(gData_02006054);
-    if (!GameFlag_Test(0x899)) {
+    if (!GameFlag_Get(0x899)) {
       Actor_SetSpriteColor(Actor_GetById(8), 6);
     } else {
       Func_02001084(Actor_GetById(8), 60, 0);
@@ -177,7 +177,7 @@ s32 Scene_Initialize(void) {
       Call6(MapGrid_CopyCellPictureIndicesRect, 68, 84, 12, 77, 3, 6);
     }
     Actor_SetSpriteFlags(Actor_GetById(8), 0);
-    if (gMainRoutineWork.entrance == 3 && !GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
+    if (gMainRoutineWork.entrance == 3 && !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
       Func_02004cc8();
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room3) {
     Func_02002770();
@@ -185,17 +185,17 @@ s32 Scene_Initialize(void) {
     REG_BLDALPHA = 0xc08;
     REG_BLDCNT = 0x3f10;
     Task_Add(Func_02001690, 0x480);
-    if (GameFlag_Test(0x89b))
+    if (GameFlag_Get(0x89b))
       Call3(Actor_SetHorizontalPositionWithTerrain, 8, PIXELS(264),
             PIXELS(632));
-    if (GameFlag_Test(0x89c))
+    if (GameFlag_Get(0x89c))
       Call3(Actor_SetHorizontalPositionWithTerrain, 11, PIXELS(616),
             PIXELS(568));
-    if (GameFlag_Test(0x89d))
+    if (GameFlag_Get(0x89d))
       Call3(Actor_SetHorizontalPositionWithTerrain, 12, PIXELS(472),
             PIXELS(520));
     Func_02005f6c(gData_0200605a);
-    if (!GameFlag_Test(0x899)) {
+    if (!GameFlag_Get(0x899)) {
       Actor_SetSpriteColor(Actor_GetById(9), 6);
       Actor_SetSpriteColor(Actor_GetById(10), 6);
       Actor_SetSpriteColor(Actor_GetById(13), 6);
@@ -218,7 +218,7 @@ s32 Scene_Initialize(void) {
     Func_02005f5c(3, 17, 18);
     Func_02005f5c(4, 19, 20);
     ((u8 *)Actor_GetById(18))[98] = 1;
-    if (GameFlag_Test(769)) {
+    if (GameFlag_Get(769)) {
       Call6(MapGrid_CopyCellPictureIndicesRect, 69, 64, 29, 85, 5, 7);
       Call6(Map_CopyCellAttributeRect, 46, 20, 5, 5, 29, 21);
       Call6(Map_CopyCellAttributeRect, 32, 89, 1, 1, 31, 89);
@@ -229,22 +229,22 @@ s32 Scene_Initialize(void) {
       Call6(Map_CopyCellAttributeRect, 33, 88, 1, 1, 33, 87);
       Call6(Map_CopyCellAttributeRect, 48, 88, 1, 1, 31, 89);
     }
-    if (GameFlag_Test(0x300)) {
+    if (GameFlag_Get(0x300)) {
       Call6(MapGrid_CopyCellPictureIndicesRect, 90, 25, 86, 25, 4, 3);
       Call6(MapGrid_CopyCellPictureIndicesRect, 21, 88, 24, 89, 1, 2);
       Call6(Map_CopyCellAttributeRect, 23, 92, 2, 1, 23, 89);
       Call6(Map_CopyCellAttributeRect, 18, 33, 2, 1, 23, 25);
     }
-    if (GameFlag_Test(0x89e))
+    if (GameFlag_Get(0x89e))
       Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(648),
             PIXELS(296));
     Func_02005f6c(gData_02006064);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room5) {
-    GameFlag_SetBit(324);
+    GameFlag_Set(324);
     Func_02002770();
     i = 0;
   loop:
-    if (GameFlag_Test(514 + i)) {
+    if (GameFlag_Get(514 + i)) {
       z = 24 - (i << 1);
       Call6(MapGrid_CopyCellPictureIndicesRect, 65, 1, 80, z, 1, 2);
       Call4((void (*)())Func_0200062c, 0, 16, z, 0xff00);
@@ -263,7 +263,7 @@ s32 Scene_Initialize(void) {
     Func_02005f5c(0, 11, 12);
     Func_02005f5c(1, 13, 14);
     Func_02005f5c(2, 15, 0x10);
-    if (!GameFlag_Test(770)) {
+    if (!GameFlag_Get(770)) {
       Call6(MapGrid_CopyCellPictureIndicesRect, 69, 64, 32, 79, 5, 7);
       Call6(Map_CopyCellAttributeRect, 49, 15, 5, 5, 32, 15);
       Call6(Map_CopyCellAttributeRect, 33, 82, 1, 1, 34, 82);
@@ -274,10 +274,10 @@ s32 Scene_Initialize(void) {
       Call6(Map_CopyCellAttributeRect, 35, 81, 1, 1, 36, 81);
       Call6(Map_CopyCellAttributeRect, 50, 82, 1, 1, 34, 82);
     }
-    if (GameFlag_Test(771))
+    if (GameFlag_Get(771))
       Call3(Actor_SetHorizontalPositionWithTerrain, 8, PIXELS(520),
             PIXELS(296));
-    if (GameFlag_Test(0x89f)) {
+    if (GameFlag_Get(0x89f)) {
       Call3(Actor_SetHorizontalPositionWithTerrain, 8, PIXELS(312),
             PIXELS(296));
       Actor_SetSpritePriority(8, 2);
@@ -294,21 +294,21 @@ s32 Scene_Initialize(void) {
     ((u8 *)Actor_GetById(13))[98] = one;
     ((u8 *)Actor_GetById(14))[98] = one;
     ((u8 *)Actor_GetById(15))[98] = one;
-    if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
-      GameFlag_SetBit(513);
-      GameFlag_SetBit(514);
+    if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
+      GameFlag_Set(513);
+      GameFlag_Set(514);
     }
     Func_02000908(gData_0200621c);
-    if (GameFlag_Test(0x8d0))
+    if (GameFlag_Get(0x8d0))
       Call3(Actor_SetHorizontalPositionWithTerrain, 8, PIXELS(344),
             PIXELS(696));
     Func_02005f6c(gData_02006068);
-    if (GameFlag_Test(772)) {
+    if (GameFlag_Get(772)) {
       Call6(MapGrid_CopyCellPictureIndicesRect, 39, 82, 38, 82, one, 3);
       Call6(Map_CopyCellAttributeRect, 39, 82, 1, 1, 38, 82);
       Call6(Map_CopyCellAttributeRect, 38, 19, 1, 1, 38, 18);
     }
-    if (GameFlag_Test(773)) {
+    if (GameFlag_Get(773)) {
       Call6(MapGrid_CopyCellPictureIndicesRect, 39, 82, 38, 99, one, 3);
       Call6(Map_CopyCellAttributeRect, 38, 98, 1, 1, 38, 99);
       Call6(Map_CopyCellAttributeRect, 38, 35, 1, 1, 38, 37);
@@ -318,40 +318,40 @@ s32 Scene_Initialize(void) {
     REG_BLDALPHA = 0xc08;
     REG_BLDCNT = 0x3f10;
     Task_Add(Func_02001690, 0x480);
-    if (GameFlag_Test(0x8d1))
+    if (GameFlag_Get(0x8d1))
       Call3(Actor_SetHorizontalPositionWithTerrain, 8, PIXELS(280),
             PIXELS(472));
-    if (GameFlag_Test(0x8d2))
+    if (GameFlag_Get(0x8d2))
       Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(360),
             PIXELS(840));
-    if (GameFlag_Test(0xa8f)) {
+    if (GameFlag_Get(0xa8f)) {
       Call3(Actor_SetHorizontalPositionWithTerrain, 12, PIXELS(184),
             PIXELS(616));
-      GameFlag_SetBit(0x200);
+      GameFlag_Set(0x200);
     }
     Actor_SetSpritePriority(9, 2);
     Func_02005f6c(gData_02006072);
     Func_0200062c(2, Actor_GetById(8)->x >> 20, Actor_GetById(8)->z >> 20, 0);
     Func_0200062c(2, Actor_GetById(9)->x >> 20, Actor_GetById(9)->z >> 20, 0);
-    if (!GameFlag_Test(0x899))
+    if (!GameFlag_Get(0x899))
       Actor_SetSpriteColor(Actor_GetById(11), 6);
     else
       Func_02001084(Actor_GetById(11), 8, 0);
     Actor_SetSpriteFlags(Actor_GetById(11), 0);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room9) {
     Func_02002770();
-    if (GameFlag_Test(0x8d3))
+    if (GameFlag_Get(0x8d3))
       Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(360),
             PIXELS(264));
     Func_02005f6c(gData_0200607e);
     Func_0200062c(2, Actor_GetById(10)->x >> 20, Actor_GetById(10)->z >> 20, 0);
     Actor_GetById(10)->actionFlags = 0;
-    if (!GameFlag_Test(0x899))
+    if (!GameFlag_Get(0x899))
       Actor_SetSpriteColor(Actor_GetById(10), 6);
     else
       Func_02001084(Actor_GetById(10), 60, 0);
     Actor_SetSpriteFlags(Actor_GetById(10), 0);
-    if (GameFlag_Test(774)) {
+    if (GameFlag_Get(774)) {
       Call6(MapGrid_CopyCellPictureIndicesRect, 15, 80, 15, 77, 2, 3);
       Call6(Map_CopyCellAttributeRect, 15, 80, 1, 1, 15, 79);
       Call6(Map_CopyCellAttributeRect, 17, 15, 2, 1, 15, 15);

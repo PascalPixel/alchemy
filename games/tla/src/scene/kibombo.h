@@ -63,8 +63,8 @@ struct KibomboEventWork {
   u16 field1c4;
 };
 
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
+void GameFlag_Set(s32 flag);
+void GameFlag_Clear(s32 flag);
 struct KibomboObject *Actor_GetById(s32 id);
 void Actor_SetPositionAndResetMotion(struct KibomboObject *object, s32 x, s32 y,
                                      s32 z);
@@ -123,7 +123,7 @@ static inline void Kibombo_BlendStart(s32 a, s32 b, s32 c, s32 d, s32 e,
   Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
-static inline s32 Kibombo_FlagCheck(s32 flag) { return GameFlag_Test(flag); }
+static inline s32 Kibombo_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
 
 static inline void Kibombo_ObjArm(s32 actor, s32 angle, s32 frames) {
   Actor_ArmCallback(actor, angle, frames);

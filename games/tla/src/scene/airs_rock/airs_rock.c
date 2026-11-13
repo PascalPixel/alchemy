@@ -712,7 +712,7 @@ void Func_02001560(void) {
   motion = &leader->motionFlags;
   *motion = 4;
   Actor_SetSpriteFlags(leader, 0);
-  GameFlag_SetBit(0x250);
+  GameFlag_Set(0x250);
   Sound_Play(137);
   riding = (u8 *)ride + 99;
   rise = 0;
@@ -884,7 +884,7 @@ void Func_02001908(struct Actor *shot) {
           leader->y >> 20 == shot->y >> 20)
         i = 1;
     }
-    if (i && !GameFlag_Test(0x104)) {
+    if (i && !GameFlag_Get(0x104)) {
       leader->facing = shot->facing;
       leader->watchedObject = shot;
       leader->priorityFlags &= ~1;
@@ -1519,47 +1519,47 @@ s32 Scene_Initialize(void) {
     case 4:
       Leader_Lift(0x580000);
     }
-    if (GameFlag_Test(0x850)) {
+    if (GameFlag_Get(0x850)) {
       MapGrid_CopyCellsTo(0x40, 0, 113, 11, 3, 3);
       MapGrid_CopyCellAttributes(0x40, 0, 3, 2, 113, 12);
       MapGrid_CopyCellAttributes(0x40, 0, 3, 2, 49, 12);
     }
-    if (GameFlag_Test(0x851)) {
+    if (GameFlag_Get(0x851)) {
       MapGrid_CopyCellsTo(0x40, 0, 70, 39, 1, 4);
       MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 70, 40);
       MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 6, 40);
     }
-    if (GameFlag_Test(0x852)) {
+    if (GameFlag_Get(0x852)) {
       MapGrid_CopyCellsTo(0x40, 0, 103, 38, 1, 4);
       MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 103, 39);
       MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 39, 39);
     }
-    if (GameFlag_Test(0x853)) {
+    if (GameFlag_Get(0x853)) {
       MapGrid_CopyCellsTo(0x40, 0, 87, 43, 1, 4);
       MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 87, 44);
       MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 23, 44);
     }
-    if (GameFlag_Test(0x854)) {
+    if (GameFlag_Get(0x854)) {
       MapGrid_CopyCellsTo(0x40, 0, 70, 52, 1, 4);
       MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 70, 52);
       MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 6, 53);
     }
-    if (GameFlag_Test(0x855)) {
+    if (GameFlag_Get(0x855)) {
       MapGrid_CopyCellsTo(0x40, 0, 79, 49, 3, 3);
       MapGrid_CopyCellAttributes(0x40, 0, 3, 2, 79, 50);
       MapGrid_CopyCellAttributes(0x40, 0, 3, 2, 15, 50);
     }
-    if (GameFlag_Test(0x856)) {
+    if (GameFlag_Get(0x856)) {
       MapGrid_CopyCellsTo(0x40, 0, 103, 0x30, 1, 4);
       MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 103, 49);
       MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 39, 49);
     }
-    if (GameFlag_Test(0x857)) {
+    if (GameFlag_Get(0x857)) {
       MapGrid_CopyCellsTo(0x40, 0, 111, 52, 3, 3);
       MapGrid_CopyCellAttributes(0x40, 0, 3, 2, 111, 53);
       MapGrid_CopyCellAttributes(0x40, 0, 3, 2, 47, 53);
     }
-    if (GameFlag_Test(0x858)) {
+    if (GameFlag_Get(0x858)) {
       MapGrid_CopyCellsTo(68, 0, 79, 0, 11, 10);
       MapGrid_CopyCellAttributes(38, 9, 1, 1, 0x10, 9);
       MapGrid_CopyCellAttributes(38, 9, 1, 1, 24, 9);
@@ -1569,18 +1569,18 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov663Room2) {
     switch (gMainRoutineWork.entrance) {
     case 3:
-      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
+      if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
         LEADER()->z += 0x100000;
       Leader_Lift(0xffb80000);
       goto swaying;
     case 1:
     case 2:
-      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
+      if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
         LEADER()->z += 0x100000;
       Leader_Lift(0xffd80000);
       goto swaying;
     case 5:
-      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+      if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         LEADER()->x += 0x300000;
         LEADER()->y += 0x100000;
       }
@@ -1592,29 +1592,29 @@ s32 Scene_Initialize(void) {
       SWAY(9, 180);
       SWAY(10, 0);
       SWAY(11, 60);
-      if (GameFlag_Test(0x85f))
+      if (GameFlag_Get(0x85f))
         Actor_SetPosition(12, 0x1080000, 0x2b80000);
-      if (GameFlag_Test(0x860))
+      if (GameFlag_Get(0x860))
         Actor_SetPosition(13, 0x2d80000, 0x2d80000);
-      if (GameFlag_Test(0x861))
+      if (GameFlag_Get(0x861))
         Actor_SetPosition(15, 0x1580000, 0x3080000);
-      if (GameFlag_Test(0x862))
+      if (GameFlag_Get(0x862))
         Actor_SetPosition(0x10, 0x2780000, 0x3180000);
       Func_02003cb0(gData_02003d94);
       Blocks_MarkCells(gData_02003d94);
       Func_02003ca0(gData_02003e4c);
       break;
     case 11:
-      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+      if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         LEADER()->x += 0x100000;
         LEADER()->y += 0xfff00000;
       }
     case 10:
-      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
+      if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
         LEADER()->z += 0x100000;
       Leader_Lift(0xffc80000);
     case 12:
-      if (GameFlag_Test(0x887))
+      if (GameFlag_Get(0x887))
         Actor_SetPosition(22, 0x3180000, 0x1280000);
       Func_02003cb0(gData_02003d94);
       Blocks_MarkCells(gData_02003d94);
@@ -1661,9 +1661,9 @@ s32 Scene_Initialize(void) {
       Actor_SetSpritePriority(11, 1);
       Actor_GetById(11)->y = 0xd00000;
       Actor_GetById(11)->terrainHeight = Actor_GetById(11)->y;
-      if (GameFlag_Test(0x310))
+      if (GameFlag_Get(0x310))
         Actor_SetPosition(10, 0x1f80000, 0x3680000);
-      if (GameFlag_Test(785))
+      if (GameFlag_Get(785))
         Actor_SetPosition(11, 0x2080000, 0x3680000);
       Func_02000620();
       beam = (s32 *)Ram_HeapSlots->mapWork;
@@ -1676,7 +1676,7 @@ s32 Scene_Initialize(void) {
       System_Wait(1);
       break;
     case 6:
-      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
+      if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
         LEADER()->y += 0x180000;
     case 7:
       Leader_Lift(0x480000);
@@ -1686,12 +1686,12 @@ s32 Scene_Initialize(void) {
       break;
     case 8:
     case 9:
-      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
+      if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
         LEADER()->z += 0x100000;
       Leader_Lift(0xffe80000);
       goto beam;
     case 10:
-      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
+      if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
         LEADER()->x += 0x300000;
     case 11:
       Leader_Lift(0x900000);
@@ -1704,9 +1704,9 @@ s32 Scene_Initialize(void) {
       REG_BG3CNT |= 3;
       Actor_GetById(12)->priorityFlags |= 2;
       Func_02003c80(0);
-      if (GameFlag_Test(0x879))
+      if (GameFlag_Get(0x879))
         Actor_SetPosition(13, 0xb80000, 0x1180000);
-      if (!GameFlag_Test(0x87a)) {
+      if (!GameFlag_Get(0x87a)) {
         ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
         REG_BLDALPHA = 0x1008;
         REG_BLDCNT = 0x3f42;
@@ -1734,10 +1734,10 @@ s32 Scene_Initialize(void) {
       }
       break;
     case 12:
-      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
+      if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
         LEADER()->y += 0xffe00000;
     case 13:
-      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
+      if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
         LEADER()->z += 0x100000;
       Leader_Lift(0xffd00000);
     case 14:
@@ -1747,7 +1747,7 @@ s32 Scene_Initialize(void) {
       beam[3] = 0x3200000;
       beam[4] = 0xd000;
       beam[5] = 0xd000;
-      if (!GameFlag_Test(0x87b)) {
+      if (!GameFlag_Get(0x87b)) {
         MapGrid_CopyCellsTo(29, 9, 62, 2, 9, 9);
         MapGrid_CopyCellAttributes(29, 9, 9, 9, 62, 2);
         MapGrid_CopyCellsTo(29, 73, 62, 66, 9, 9);
@@ -1760,7 +1760,7 @@ s32 Scene_Initialize(void) {
       Actor_SetSpritePriority(14, 1);
       Map_CenterOnFollowedPoint();
       System_Wait(1);
-      if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+      if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         leader = LEADER();
         leader->terrainId = 0;
         leader->y = leader->terrainHeight =

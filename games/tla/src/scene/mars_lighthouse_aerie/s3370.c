@@ -892,7 +892,7 @@ void MarsLighthouseAerie_OfferToCastMarsStar(void) {
 
 #include "version.h"
 
-void Func_02004d14(void) { GameFlag_ClearBit(0x202); }
+void Func_02004d14(void) { GameFlag_Clear(0x202); }
 
 // From patch 1, as is Func_02004d50.
 #if TLA_PATCH_1

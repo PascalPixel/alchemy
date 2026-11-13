@@ -82,18 +82,18 @@ IoWriteQueue_Store16:
 	.thumb_func
 Unit_Get:
 	overlay_veneer Unit_GetFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Animation_ApplyChildArgument
 	.thumb_func
 Animation_ApplyChildArgument:
@@ -109,7 +109,7 @@ Actor_StartScript:
 	.global Func_02004b28
 	.thumb_func
 Func_02004b28:
-	overlay_veneer Func_080200b0
+	overlay_veneer Actor_StartRenderModeScriptFar
 	.global Import_ActorCreate
 	.thumb_func
 Import_ActorCreate:
@@ -161,7 +161,7 @@ WorldMap_IsWalkable:
 	.global Func_02004b90
 	.thumb_func
 Func_02004b90:
-	overlay_veneer Func_08020350
+	overlay_veneer WorldMap_GetBlockPlaceFar
 	.global WorldMap_GetCollision
 	.thumb_func
 WorldMap_GetCollision:
@@ -217,15 +217,15 @@ Party_RestoreHpPp:
 	.global Func_02004c00
 	.thumb_func
 Func_02004c00:
-	overlay_veneer Func_080ad228
+	overlay_veneer Party_GivePiersDjinnFar
 	.global Func_02004c08
 	.thumb_func
 Func_02004c08:
-	overlay_veneer Func_080ad310
+	overlay_veneer Party_DrainPpFar
 	.global Func_02004c10
 	.thumb_func
 Func_02004c10:
-	overlay_veneer Func_080ad318
+	overlay_veneer Party_GetPpRatioFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -245,7 +245,7 @@ Event_AskYesNoWithActorAnimation:
 	.global Func_02004c38
 	.thumb_func
 Func_02004c38:
-	overlay_veneer Func_080c8078
+	overlay_veneer Event_PickUpItemFar
 	.global Actor_GetById
 	.thumb_func
 Actor_GetById:
@@ -433,7 +433,7 @@ Import_WorldMapFreeze:
 	.global Func_02004db0
 	.thumb_func
 Func_02004db0:
-	overlay_veneer Func_080c8438
+	overlay_veneer WorldMap_ReloadPendingAreaGraphicsFar
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:

@@ -293,7 +293,7 @@ void Func_0200065c(void) {
   u8 *buffer;
   u8 *flags;
 
-  if (GameFlag_Test(0xa23) != 0) {
+  if (GameFlag_Get(0xa23) != 0) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Message_ShowCentered((s32)MsgThereSeemsTo, 5);
@@ -566,7 +566,7 @@ static __inline__ void Func_02005904_(s32 id, s32 emote) {
 static __inline__ void Actor_StartRepeatedMotion_(s32 id, s32 motion) {
   Actor_StartRepeatedMotion(id, motion);
 }
-static __inline__ void GameFlag_SetBit_(s32 flag) { GameFlag_SetBit(flag); }
+static __inline__ void GameFlag_SetBit_(s32 flag) { GameFlag_Set(flag); }
 static __inline__ void Func_0200593c_(s32 a, s32 b) {
   Field_RequestBattleFromEncounterTable(a, b);
 }

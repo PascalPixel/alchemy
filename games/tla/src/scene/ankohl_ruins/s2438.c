@@ -37,60 +37,60 @@ s32 Scene_Initialize(s32 a0) {
 
   if (scene == (s32)&SceneId_Ov686Room1) {
     Call1((void (*)())Func_02002ed4, 0);
-    if (GameFlag_Test(0x9d2))
+    if (GameFlag_Get(0x9d2))
       Actor_SetPosition(10, 0, 0);
-    if (GameFlag_Test(0x9d3))
+    if (GameFlag_Get(0x9d3))
       Actor_SetPosition(11, 0, 0);
-    if (GameFlag_Test(0x9d4))
+    if (GameFlag_Get(0x9d4))
       Actor_SetPosition(12, 0, 0);
-    if (GameFlag_Test(0x9d5))
+    if (GameFlag_Get(0x9d5))
       Actor_SetPosition(13, 0, 0);
-    if (GameFlag_Test(0x9d6))
+    if (GameFlag_Get(0x9d6))
       Actor_SetPosition(14, 0, 0);
-    if (GameFlag_Test(0x9d7))
+    if (GameFlag_Get(0x9d7))
       Actor_SetPosition(15, 0, 0);
-    if (GameFlag_Test(0x9d8))
+    if (GameFlag_Get(0x9d8))
       Actor_SetPosition(16, 0, 0);
-    if (GameFlag_Test(0x990))
+    if (GameFlag_Get(0x990))
       Actor_SetPosition(17, 0, 0);
-    if (GameFlag_Test(0x991))
+    if (GameFlag_Get(0x991))
       Actor_SetPosition(18, 0, 0);
-    if (GameFlag_Test(0x992))
+    if (GameFlag_Get(0x992))
       Actor_SetPosition(19, 0, 0);
-    if (GameFlag_Test(0x993))
+    if (GameFlag_Get(0x993))
       Actor_SetPosition(20, 0, 0);
-    if (GameFlag_Test(0x994))
+    if (GameFlag_Get(0x994))
       Actor_SetPosition(21, 0, 0);
-    if (GameFlag_Test(0x995))
+    if (GameFlag_Get(0x995))
       Actor_SetPosition(22, 0, 0);
-    if (GameFlag_Test(0x996))
+    if (GameFlag_Get(0x996))
       Actor_SetPosition(23, 0, 0);
-    if (GameFlag_Test(0x997))
+    if (GameFlag_Get(0x997))
       Actor_SetPosition(24, 0, 0);
-    if (GameFlag_Test(0x998))
+    if (GameFlag_Get(0x998))
       Actor_SetPosition(25, 0, 0);
-    if (GameFlag_Test(0x999))
+    if (GameFlag_Get(0x999))
       Actor_SetPosition(26, 0, 0);
-    if (GameFlag_Test(0x99a))
+    if (GameFlag_Get(0x99a))
       Actor_SetPosition(27, 0, 0);
-    if (GameFlag_Test(0x99b))
+    if (GameFlag_Get(0x99b))
       Actor_SetPosition(28, 0, 0);
-    if (GameFlag_Test(0x99c))
+    if (GameFlag_Get(0x99c))
       Actor_SetPosition(29, 0, 0);
-    if (GameFlag_Test(0x99d))
+    if (GameFlag_Get(0x99d))
       Actor_SetPosition(30, 0, 0);
-    if (GameFlag_Test(0x9c6)) {
+    if (GameFlag_Get(0x9c6)) {
       Actor_SetPosition(8, 0x480000, 0x580000);
       MapGrid_CopyCellAttributes(4, 68, 1, 1, 2, 69);
     }
   } else if (scene == (s32)&SceneId_Ov686Room2) {
-    if (GameFlag_Test(0x99e))
+    if (GameFlag_Get(0x99e))
       Actor_SetPosition(9, 0, 0);
-    if (GameFlag_Test(0x99f))
+    if (GameFlag_Get(0x99f))
       Actor_SetPosition(10, 0, 0);
-    if (GameFlag_Test(0x9a0))
+    if (GameFlag_Get(0x9a0))
       Actor_SetPosition(11, 0, 0);
-    if (GameFlag_Test(0x9dc)) {
+    if (GameFlag_Get(0x9dc)) {
       s32 width;
 
       object = Actor_GetById(8);
@@ -103,15 +103,15 @@ s32 Scene_Initialize(s32 a0) {
         Event_PlaySound(0x23f);
     }
   } else if (scene == (s32)&SceneId_Ov686Room3) {
-    if (GameFlag_Test(0x9c7)) {
+    if (GameFlag_Get(0x9c7)) {
       Actor_SetPosition(8, 0x2080000, 0x680000);
       MapGrid_CopyCellAttributes(32, 69, 1, 1, 33, 69);
     }
-    if (GameFlag_Test(0x9dd)) {
+    if (GameFlag_Get(0x9dd)) {
       Actor_SetPosition(10, 0, 0);
       Actor_SetAnimation(9, 4);
     }
-    if (GameFlag_Test(0x201)) {
+    if (GameFlag_Get(0x201)) {
       s32 width = 13;
 
       MapGrid_CopyCellAttributes(13, 30, 3, 2, width, 24);
@@ -119,41 +119,41 @@ s32 Scene_Initialize(s32 a0) {
       MapGrid_CopyCellAttributes(41, 48, 3, 2, width, 41);
     }
   } else if (scene == (s32)&SceneId_Ov686Room4) {
-    if (GameFlag_Test(0x9a1))
+    if (GameFlag_Get(0x9a1))
       Actor_SetPosition(11, 0, 0);
-    if (GameFlag_Test(0x9a2))
+    if (GameFlag_Get(0x9a2))
       Actor_SetPosition(12, 0, 0);
-    if (GameFlag_Test(0x9a3))
+    if (GameFlag_Get(0x9a3))
       Actor_SetPosition(13, 0, 0);
-    if (GameFlag_Test(0x9a4))
+    if (GameFlag_Get(0x9a4))
       Actor_SetPosition(14, 0, 0);
-    if (GameFlag_Test(0x9a5))
+    if (GameFlag_Get(0x9a5))
       Actor_SetPosition(15, 0, 0);
-    if (GameFlag_Test(0x9a6))
+    if (GameFlag_Get(0x9a6))
       Actor_SetPosition(16, 0, 0);
-    if (GameFlag_Test(0x9a7))
+    if (GameFlag_Get(0x9a7))
       Actor_SetPosition(17, 0, 0);
-    if (GameFlag_Test(0x9c8))
+    if (GameFlag_Get(0x9c8))
       Actor_SetPosition(8, 0x280000, 0x3080000);
-    if (GameFlag_Test(0x9c9))
+    if (GameFlag_Get(0x9c9))
       Actor_SetPosition(18, 0x2780000, 0x1c80000);
-    if (GameFlag_Test(0x9ca)) {
+    if (GameFlag_Get(0x9ca)) {
       Actor_SetPosition(19, 0x2680000, 0x880000);
       MapGrid_CopyCells(37, 70, 1, 1, 37, 71);
     }
-    if (GameFlag_Test(0x9d9)) {
+    if (GameFlag_Get(0x9d9)) {
       object = Actor_GetById(9);
       object->motionFlags = 3;
       Actor_SetPosition(9, 0xc80000, 0x2d80000);
     }
-    if (GameFlag_Test(0x9da)) {
+    if (GameFlag_Get(0x9da)) {
       object = Actor_GetById(10);
       Actor_SetPosition(10, 0xe80000, 0x2d80000);
       object->motionFlags = 3;
-    } else if (GameFlag_Test(0x9db) && !GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+    } else if (GameFlag_Get(0x9db) && !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Actor_SetPosition(10, 0x1480000, 0x2f80000);
     }
-    if (GameFlag_Test(0x9da) && GameFlag_Test(0x9d9)) {
+    if (GameFlag_Get(0x9da) && GameFlag_Get(0x9d9)) {
       s32 width;
 
       if ((u16)(gMainRoutineWork.entrance - 13) <= 4)
@@ -162,7 +162,7 @@ s32 Scene_Initialize(s32 a0) {
       MapGrid_CopyCells(16, 27, 3, 13, width, 47);
       MapGrid_CopyCells(16, 91, 3, 13, width, 111);
     }
-    if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION) && gMainRoutineWork.entrance == 17) {
+    if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) && gMainRoutineWork.entrance == 17) {
       Func_02000418();
 #if TLA_PATCH_4
       Event_ClearFlag(0x122);
@@ -200,9 +200,9 @@ s32 Scene_Initialize(s32 a0) {
     if ((u16)(gMainRoutineWork.entrance - 13) <= 3)
       goto task;
   } else if (scene == (s32)&SceneId_Ov686Room5) {
-    if (GameFlag_Test(0x9db))
+    if (GameFlag_Get(0x9db))
       Actor_SetPosition(9, 0, 0);
-    if (GameFlag_Test(0x9cb)) {
+    if (GameFlag_Get(0x9cb)) {
       Actor_SetPosition(8, 0x1180000, 0x1380000);
       MapGrid_CopyCellAttributes(16, 84, 1, 1, 18, 84);
     }
@@ -216,19 +216,19 @@ s32 Scene_Initialize(s32 a0) {
 
     if (work->entrance <= 4)
       Func_02001420(a0);
-    if (GameFlag_Test(0x9e2)) {
+    if (GameFlag_Get(0x9e2)) {
       s32 x = 14;
 
       MapGrid_CopyCells(26, 67, 1, 3, x, 65);
       MapGrid_CopyCellAttributes(15, 5, 1, 1, x, 5);
     }
-    if (GameFlag_Test(0x9e3)) {
+    if (GameFlag_Get(0x9e3)) {
       s32 x = 2;
 
       MapGrid_CopyCells(26, 67, 1, 3, x, 83);
       MapGrid_CopyCellAttributes(1, 23, 1, 1, x, 23);
     }
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) && GameFlag_Test(0x204)) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) && GameFlag_Get(0x204)) {
       s32 level = 0x200000;
 
       Data_02004030.level = level;
@@ -319,60 +319,60 @@ s32 Scene_Initialize(s32 a0) {
 
   if (scene == (s32)&SceneId_Ov686Room1) {
     Call1((void (*)())Func_02002ed4, 0);
-    if (GameFlag_Test(0x9d2))
+    if (GameFlag_Get(0x9d2))
       Actor_SetPosition(10, 0, 0);
-    if (GameFlag_Test(0x9d3))
+    if (GameFlag_Get(0x9d3))
       Actor_SetPosition(11, 0, 0);
-    if (GameFlag_Test(0x9d4))
+    if (GameFlag_Get(0x9d4))
       Actor_SetPosition(12, 0, 0);
-    if (GameFlag_Test(0x9d5))
+    if (GameFlag_Get(0x9d5))
       Actor_SetPosition(13, 0, 0);
-    if (GameFlag_Test(0x9d6))
+    if (GameFlag_Get(0x9d6))
       Actor_SetPosition(14, 0, 0);
-    if (GameFlag_Test(0x9d7))
+    if (GameFlag_Get(0x9d7))
       Actor_SetPosition(15, 0, 0);
-    if (GameFlag_Test(0x9d8))
+    if (GameFlag_Get(0x9d8))
       Actor_SetPosition(16, 0, 0);
-    if (GameFlag_Test(0x990))
+    if (GameFlag_Get(0x990))
       Actor_SetPosition(17, 0, 0);
-    if (GameFlag_Test(0x991))
+    if (GameFlag_Get(0x991))
       Actor_SetPosition(18, 0, 0);
-    if (GameFlag_Test(0x992))
+    if (GameFlag_Get(0x992))
       Actor_SetPosition(19, 0, 0);
-    if (GameFlag_Test(0x993))
+    if (GameFlag_Get(0x993))
       Actor_SetPosition(20, 0, 0);
-    if (GameFlag_Test(0x994))
+    if (GameFlag_Get(0x994))
       Actor_SetPosition(21, 0, 0);
-    if (GameFlag_Test(0x995))
+    if (GameFlag_Get(0x995))
       Actor_SetPosition(22, 0, 0);
-    if (GameFlag_Test(0x996))
+    if (GameFlag_Get(0x996))
       Actor_SetPosition(23, 0, 0);
-    if (GameFlag_Test(0x997))
+    if (GameFlag_Get(0x997))
       Actor_SetPosition(24, 0, 0);
-    if (GameFlag_Test(0x998))
+    if (GameFlag_Get(0x998))
       Actor_SetPosition(25, 0, 0);
-    if (GameFlag_Test(0x999))
+    if (GameFlag_Get(0x999))
       Actor_SetPosition(26, 0, 0);
-    if (GameFlag_Test(0x99a))
+    if (GameFlag_Get(0x99a))
       Actor_SetPosition(27, 0, 0);
-    if (GameFlag_Test(0x99b))
+    if (GameFlag_Get(0x99b))
       Actor_SetPosition(28, 0, 0);
-    if (GameFlag_Test(0x99c))
+    if (GameFlag_Get(0x99c))
       Actor_SetPosition(29, 0, 0);
-    if (GameFlag_Test(0x99d))
+    if (GameFlag_Get(0x99d))
       Actor_SetPosition(30, 0, 0);
-    if (GameFlag_Test(0x9c6)) {
+    if (GameFlag_Get(0x9c6)) {
       Actor_SetPosition(8, 0x480000, 0x580000);
       MapGrid_CopyCellAttributes(4, 68, 1, 1, 2, 69);
     }
   } else if (scene == (s32)&SceneId_Ov686Room2) {
-    if (GameFlag_Test(0x99e))
+    if (GameFlag_Get(0x99e))
       Actor_SetPosition(9, 0, 0);
-    if (GameFlag_Test(0x99f))
+    if (GameFlag_Get(0x99f))
       Actor_SetPosition(10, 0, 0);
-    if (GameFlag_Test(0x9a0))
+    if (GameFlag_Get(0x9a0))
       Actor_SetPosition(11, 0, 0);
-    if (GameFlag_Test(0x9dc)) {
+    if (GameFlag_Get(0x9dc)) {
       s32 width;
 
       object = Actor_GetById(8);
@@ -385,15 +385,15 @@ s32 Scene_Initialize(s32 a0) {
         Event_PlaySound(0x23f);
     }
   } else if (scene == (s32)&SceneId_Ov686Room3) {
-    if (GameFlag_Test(0x9c7)) {
+    if (GameFlag_Get(0x9c7)) {
       Actor_SetPosition(8, 0x2080000, 0x680000);
       MapGrid_CopyCellAttributes(32, 69, 1, 1, 33, 69);
     }
-    if (GameFlag_Test(0x9dd)) {
+    if (GameFlag_Get(0x9dd)) {
       Actor_SetPosition(10, 0, 0);
       Actor_SetAnimation(9, 4);
     }
-    if (GameFlag_Test(0x201)) {
+    if (GameFlag_Get(0x201)) {
       s32 width = 13;
 
       MapGrid_CopyCellAttributes(13, 30, 3, 2, width, 24);
@@ -401,41 +401,41 @@ s32 Scene_Initialize(s32 a0) {
       MapGrid_CopyCellAttributes(41, 48, 3, 2, width, 41);
     }
   } else if (scene == (s32)&SceneId_Ov686Room4) {
-    if (GameFlag_Test(0x9a1))
+    if (GameFlag_Get(0x9a1))
       Actor_SetPosition(11, 0, 0);
-    if (GameFlag_Test(0x9a2))
+    if (GameFlag_Get(0x9a2))
       Actor_SetPosition(12, 0, 0);
-    if (GameFlag_Test(0x9a3))
+    if (GameFlag_Get(0x9a3))
       Actor_SetPosition(13, 0, 0);
-    if (GameFlag_Test(0x9a4))
+    if (GameFlag_Get(0x9a4))
       Actor_SetPosition(14, 0, 0);
-    if (GameFlag_Test(0x9a5))
+    if (GameFlag_Get(0x9a5))
       Actor_SetPosition(15, 0, 0);
-    if (GameFlag_Test(0x9a6))
+    if (GameFlag_Get(0x9a6))
       Actor_SetPosition(16, 0, 0);
-    if (GameFlag_Test(0x9a7))
+    if (GameFlag_Get(0x9a7))
       Actor_SetPosition(17, 0, 0);
-    if (GameFlag_Test(0x9c8))
+    if (GameFlag_Get(0x9c8))
       Actor_SetPosition(8, 0x280000, 0x3080000);
-    if (GameFlag_Test(0x9c9))
+    if (GameFlag_Get(0x9c9))
       Actor_SetPosition(18, 0x2780000, 0x1c80000);
-    if (GameFlag_Test(0x9ca)) {
+    if (GameFlag_Get(0x9ca)) {
       Actor_SetPosition(19, 0x2680000, 0x880000);
       MapGrid_CopyCells(37, 70, 1, 1, 37, 71);
     }
-    if (GameFlag_Test(0x9d9)) {
+    if (GameFlag_Get(0x9d9)) {
       object = Actor_GetById(9);
       object->motionFlags = 3;
       Actor_SetPosition(9, 0xc80000, 0x2d80000);
     }
-    if (GameFlag_Test(0x9da)) {
+    if (GameFlag_Get(0x9da)) {
       object = Actor_GetById(10);
       Actor_SetPosition(10, 0xe80000, 0x2d80000);
       object->motionFlags = 3;
-    } else if (GameFlag_Test(0x9db) && !GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+    } else if (GameFlag_Get(0x9db) && !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Actor_SetPosition(10, 0x1480000, 0x2f80000);
     }
-    if (GameFlag_Test(0x9da) && GameFlag_Test(0x9d9)) {
+    if (GameFlag_Get(0x9da) && GameFlag_Get(0x9d9)) {
       s32 width;
 
       if ((u16)(gMainRoutineWork.entrance - 13) <= 3)
@@ -476,9 +476,9 @@ s32 Scene_Initialize(s32 a0) {
     if ((u16)(gMainRoutineWork.entrance - 13) <= 3)
       goto task;
   } else if (scene == (s32)&SceneId_Ov686Room5) {
-    if (GameFlag_Test(0x9db))
+    if (GameFlag_Get(0x9db))
       Actor_SetPosition(9, 0, 0);
-    if (GameFlag_Test(0x9cb)) {
+    if (GameFlag_Get(0x9cb)) {
       Actor_SetPosition(8, 0x1180000, 0x1380000);
       MapGrid_CopyCellAttributes(16, 84, 1, 1, 18, 84);
     }
@@ -492,19 +492,19 @@ s32 Scene_Initialize(s32 a0) {
 
     if (work->entrance <= 4)
       Func_02001420(a0);
-    if (GameFlag_Test(0x9e2)) {
+    if (GameFlag_Get(0x9e2)) {
       s32 x = 14;
 
       MapGrid_CopyCells(26, 67, 1, 3, x, 65);
       MapGrid_CopyCellAttributes(15, 5, 1, 1, x, 5);
     }
-    if (GameFlag_Test(0x9e3)) {
+    if (GameFlag_Get(0x9e3)) {
       s32 x = 2;
 
       MapGrid_CopyCells(26, 67, 1, 3, x, 83);
       MapGrid_CopyCellAttributes(1, 23, 1, 1, x, 23);
     }
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) && GameFlag_Test(0x204)) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) && GameFlag_Get(0x204)) {
       s32 level = 0x200000;
 
       Data_02004030.level = level;

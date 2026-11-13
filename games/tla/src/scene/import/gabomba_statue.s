@@ -90,18 +90,18 @@ Resource_GetTableEntry:
 	.thumb_func
 Unit_Get:
 	overlay_veneer Unit_GetFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Func_0200561c
 	.thumb_func
 Func_0200561c:
@@ -285,7 +285,7 @@ Actor_SetSpritePriority:
 	.global Func_02005784
 	.thumb_func
 Func_02005784:
-	overlay_veneer Func_080c8208
+	overlay_veneer Actor_DisableByIdFar
 	.global Actor_ShowEmoteById
 	.thumb_func
 Actor_ShowEmoteById:
@@ -365,23 +365,23 @@ ObjectTable_Snapshot:
 	.global Func_02005824
 	.thumb_func
 Func_02005824:
-	overlay_veneer Func_080c86a8
+	overlay_veneer Rope_InitializeFar
 	.global Func_0200582c
 	.thumb_func
 Func_0200582c:
-	overlay_veneer Func_080c86b8
+	overlay_veneer Rope_CoilFar
 	.global Func_02005834
 	.thumb_func
 Func_02005834:
-	overlay_veneer Func_080c86e0
+	overlay_veneer Rope_GetStateFar
 	.global Func_0200583c
 	.thumb_func
 Func_0200583c:
-	overlay_veneer Func_080c86e8
+	overlay_veneer Rope_PlaceFar
 	.global Func_02005844
 	.thumb_func
 Func_02005844:
-	overlay_veneer Func_080c8710
+	overlay_veneer Actor_GetCellIndexFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:

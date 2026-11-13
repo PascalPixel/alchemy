@@ -174,7 +174,7 @@ s32 StatusScreen_RunPages(void) {
   s32 result = 0;
   u32 changed;
 
-  while (!finished && !GameFlag_Test(0x150)) {
+  while (!finished && !GameFlag_Get(0x150)) {
     switch (step) {
     case 0:
       state->selectedSlots[0] = finished;
@@ -214,7 +214,7 @@ s32 StatusScreen_RunPages(void) {
     }
   }
 
-  if (GameFlag_Test(0x150))
+  if (GameFlag_Get(0x150))
     result = -1;
 
   return result;
@@ -244,7 +244,7 @@ s32 StatusScreen_SelectMember(s32 slot) {
   cursor->active = 1;
   cursor->animStep = 0;
   WindowSprite_RedrawSavedRectFar(menu->auxiliaryWindow);
-  if (GameFlag_Test(0x172))
+  if (GameFlag_Get(0x172))
     Window_DrawDividerLineFar(menu->auxiliaryWindow, 9, 1, 9, 3);
   Window_DrawDividerLineFar(menu->auxiliaryWindow, 0, 3, 12, 3);
   if (index == -1)
@@ -290,7 +290,7 @@ void DjinnMenu_ShowCurrentList(void) {
     menu->memberY[i] = 26;
   }
   wait(1);
-  while (!GameFlag_Test(0x150)) {
+  while (!GameFlag_Get(0x150)) {
     if (redraw) {
       window = menu->window;
       WindowSprite_RedrawSavedRectFar(window);
@@ -300,7 +300,7 @@ void DjinnMenu_ShowCurrentList(void) {
       for (element = 0; element < 4; element++) {
         for (row = 0; row <= 8; row++) {
           djinn = element * 20 + (row + (page * 8 + page) + 7) % 18;
-          if (GameFlag_Test(djinn + 48)) {
+          if (GameFlag_Get(djinn + 48)) {
             Window_SetTilemapEntryFar(window, element + 0x1001, element * 7 + 1,
                                       row + 1, 0);
             Text_DrawMessageAsTilesFar(djinn + MsgDjinnName, window,
@@ -404,11 +404,11 @@ s32 PartyMemberChooser_RunRearrange(void) {
           REG_DMA3);
   Dma_Set((void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(1, 14),
           DMA_ENABLE << 16 | 1, REG_DMA3);
-  while (!GameFlag_Test(0x150)) {
+  while (!GameFlag_Get(0x150)) {
     if (redraw) {
       WindowSprite_RedrawSavedRectFar(menu->selectorWindow);
       Text_DrawMessageAsTilesFar(MsgRearrangeHelp, menu->selectorWindow, 0, 0);
-      if (GameFlag_Test(55))
+      if (GameFlag_Get(55))
         Text_DrawMessageAsTilesFar(MsgDjinnListHelp, menu->selectorWindow, 0,
                                    16);
       Text_DrawMessageAsTilesFar(MsgRearrangeHelp - 3, menu->selectorWindow, 0,
@@ -457,7 +457,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
         Sound_PlayFar(114);
       }
       wait(1);
-    } else if ((KEYS_PRESSED & 4) && GameFlag_Test(55)) {
+    } else if ((KEYS_PRESSED & 4) && GameFlag_Get(55)) {
       DjinnMenu_ShowCurrentList();
       redraw = 1;
     } else {
@@ -727,7 +727,7 @@ s32 StatusScreen_SelectCommand(void) {
   done = 0;
   MenuCursor_Slide(-10, 88);
 
-  while (done == 0 && !GameFlag_Test(0x150)) {
+  while (done == 0 && !GameFlag_Get(0x150)) {
     Unit_Get(menu->selectedIds[0]);
     StatusScreen_DrawStatusAilments(window, menu->selectedIds[0], 1);
     count = StatusScreen_BuildAvailability(entries, 1, menu->selectedIds[0]);
@@ -738,7 +738,7 @@ s32 StatusScreen_SelectCommand(void) {
       hasAilments = 1;
     redraw = 1;
 
-    while (!GameFlag_Test(0x150)) {
+    while (!GameFlag_Get(0x150)) {
       if (redraw) {
         s32 limit;
 
@@ -1551,7 +1551,7 @@ s32 PsynergyMenu_SelectAction(void) {
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp + 2, window, 0, -24);
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp, window, 64, -24);
   Menu_BuildPatternTiles();
-  while (!GameFlag_Test(0x150)) {
+  while (!GameFlag_Get(0x150)) {
     if (refresh) {
       if (refresh == 2) {
         menu->psynergyCount = PsynergyMenu_CollectActions(
@@ -1681,7 +1681,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
       entry = menu->items[state->selectedIndex];
       mask = ITEM_ID_MASK;
       mask &= entry;
-      item = Item_Get(mask);
+      item = Item_GetDirectFar(mask);
       if (item->element != 4) {
         Window_SetTilemapEntryFar(window, item->element + 1, 27, row * 2 + 1,
                                   0);
@@ -1693,7 +1693,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
       entry = menu->items[base + row];
       mask = ITEM_ID_MASK;
       mask &= entry;
-      item = Item_Get(mask);
+      item = Item_GetDirectFar(mask);
       if (item->element != 4) {
         Window_SetTilemapEntryFar(window, item->element + 1, 27, row * 2 + 1,
                                   4);
@@ -1709,7 +1709,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
                               EQUIP_SLOT_WIDTH, 1, 15);
 
   if (menu->items[state->selectedIndex] & INVENTORY_EQUIPPED) {
-    item = Item_Get(menu->items[state->selectedIndex] & ITEM_ID_MASK);
+    item = Item_GetDirectFar(menu->items[state->selectedIndex] & ITEM_ID_MASK);
     switch (item->type) {
     case 1:
       Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 1,
@@ -1864,7 +1864,7 @@ s32 ItemMenu_SelectItem(void) {
   Menu_SpawnIconEntries(menu, menu->messageWindow);
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp + 3, window, 0, -24);
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp, window, 64, -24);
-  while (!GameFlag_Test(0x150)) {
+  while (!GameFlag_Get(0x150)) {
     if (refresh) {
       if (refresh == 2) {
         owner = Unit_Get(menu->paneOwner[0]);
@@ -1980,7 +1980,7 @@ void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items) {
   for (i = 0; i < INVENTORY_SLOTS; i++) {
     if (items[i] & INVENTORY_EQUIPPED) {
       item = items[i] & ITEM_ID_MASK;
-      switch (Item_Get(item)->type) {
+      switch (Item_GetDirectFar(item)->type) {
       case 1:
         Text_DrawMessageAsTilesFar(item + MsgItemName, window, 16, 8);
         break;
@@ -2055,7 +2055,7 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
     if (items[i] != 0 && (items[i] & 0x200) != 0) {
       icon = state->icons[i];
       if (icon != 0) {
-        switch (Item_Get(items[i] & 0x1ff)->type) {
+        switch (Item_GetDirectFar(items[i] & 0x1ff)->type) {
         case 1:
           icon->x = 216;
           icon->y = 32;

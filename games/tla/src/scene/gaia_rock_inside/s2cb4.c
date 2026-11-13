@@ -45,13 +45,13 @@ void Func_02002cb4(u8 mode) {
 // flags (0x9bc and 0x9bd, 0x9be and 0x9bf) are set: both open the wide way, one
 // a side way, and a single side opened alone also opens its connecting cells.
 void Func_02002d30(void) {
-  u8 a = GameFlag_Test(0x9bc);
-  u8 third = GameFlag_Test(0x9be);
-  s32 b = GameFlag_Test(0x9bd);
+  u8 a = GameFlag_Get(0x9bc);
+  u8 third = GameFlag_Get(0x9be);
+  s32 b = GameFlag_Get(0x9bd);
   s8 first = a;
   s8 sideThird = third;
   u8 sumLeft = b + first;
-  s32 d = GameFlag_Test(0x9bf);
+  s32 d = GameFlag_Get(0x9bf);
   u8 sumRight = sideThird + d;
   s8 left = sumLeft;
   s8 right = sumRight;
@@ -201,23 +201,23 @@ s32 Scene_Initialize(void) {
       {
         s32 ending = 20;
         if (Test(0x307)) {
-          C1(GameFlag_ClearBit, 0x307);
-          C1(GameFlag_SetBit, 0x9bc);
+          C1(GameFlag_Clear, 0x307);
+          C1(GameFlag_Set, 0x9bc);
           ending = 21;
         }
         if (Test(0x308)) {
-          C1(GameFlag_ClearBit, 0x308);
-          C1(GameFlag_SetBit, 0x9bd);
+          C1(GameFlag_Clear, 0x308);
+          C1(GameFlag_Set, 0x9bd);
           ending = 22;
         }
         if (Test(0x309)) {
-          C1(GameFlag_ClearBit, 0x309);
-          C1(GameFlag_SetBit, 0x9be);
+          C1(GameFlag_Clear, 0x309);
+          C1(GameFlag_Set, 0x9be);
           ending = 23;
         }
         if (Test(0x30a)) {
-          C1(GameFlag_ClearBit, 0x30a);
-          C1(GameFlag_SetBit, 0x9bf);
+          C1(GameFlag_Clear, 0x30a);
+          C1(GameFlag_Set, 0x9bf);
           ending = 24;
         }
         C1(Sound_Play, 564);
@@ -230,12 +230,12 @@ s32 Scene_Initialize(void) {
         C1(Event_Wait, 120);
         Actor_SetModeById(8, 1);
         C1(Event_Wait, 60);
-        C1(GameFlag_SetBit, 0x109);
+        C1(GameFlag_Set, 0x109);
         C1(Import_EventSetExitRequest, ending);
       }
     }
     if ((u16)(gMainRoutineWork.entrance - 9) <= 1) {
-      C1(GameFlag_SetBit, 0x144);
+      C1(GameFlag_Set, 0x144);
       if (Test(FLAG_SERPENT_SLAIN)) {
         C2(Actor_SetModeById, 8, 4);
         C6(MapGrid_CopyCellPictureCellsRect, 85, 72, 5, 2, 30, 19);
@@ -284,8 +284,8 @@ s32 Scene_Initialize(void) {
         dragon = Actor_GetById(10);
         partner = Actor_GetById(8);
         C1(Sound_Play, 390);
-        C1(GameFlag_SetBit, 0x9ac);
-        C1(GameFlag_SetBit, 0x9de);
+        C1(GameFlag_Set, 0x9ac);
+        C1(GameFlag_Set, 0x9de);
         Event_Start();
         C1(Event_ResolvePendingActions, 0);
         C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
@@ -457,7 +457,7 @@ s32 Scene_Initialize(void) {
         goto end;
       Event_Start();
       C1(Event_ResolvePendingActions, 0);
-      C1(GameFlag_SetBit, FLAG_SERPENT_SLAIN);
+      C1(GameFlag_Set, FLAG_SERPENT_SLAIN);
       C1(Event_SetMessageId, (s32)MsgFieldItLooksLikeTheDragon);
       C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
       Actor_SetModeById(8, 3);
@@ -611,7 +611,7 @@ s32 Scene_Initialize(void) {
         other->z += -0x10000;
         C1(Event_Wait, 2);
       }
-      C1(GameFlag_SetBit, 0x9ee);
+      C1(GameFlag_Set, 0x9ee);
       C3(MapGrid_SetScreenShake, -1, -1, 0xe666);
       object->x = 0;
       object->z = 0;
@@ -766,7 +766,7 @@ s32 Scene_Initialize(void) {
       }
       C1(Sound_Play, 188);
       C1(Event_Wait, 30);
-      C1(GameFlag_SetBit, 0x109);
+      C1(GameFlag_Set, 0x109);
       C1(Import_EventSetExitRequest, 3);
     }
     if (!Test(0x9c4))
@@ -913,23 +913,23 @@ s32 Scene_Initialize(void) {
       {
         s32 ending = 20;
         if (Test(0x307)) {
-          C1(GameFlag_ClearBit, 0x307);
-          C1(GameFlag_SetBit, 0x9bc);
+          C1(GameFlag_Clear, 0x307);
+          C1(GameFlag_Set, 0x9bc);
           ending = 21;
         }
         if (Test(0x308)) {
-          C1(GameFlag_ClearBit, 0x308);
-          C1(GameFlag_SetBit, 0x9bd);
+          C1(GameFlag_Clear, 0x308);
+          C1(GameFlag_Set, 0x9bd);
           ending = 22;
         }
         if (Test(0x309)) {
-          C1(GameFlag_ClearBit, 0x309);
-          C1(GameFlag_SetBit, 0x9be);
+          C1(GameFlag_Clear, 0x309);
+          C1(GameFlag_Set, 0x9be);
           ending = 23;
         }
         if (Test(0x30a)) {
-          C1(GameFlag_ClearBit, 0x30a);
-          C1(GameFlag_SetBit, 0x9bf);
+          C1(GameFlag_Clear, 0x30a);
+          C1(GameFlag_Set, 0x9bf);
           ending = 24;
         }
         C1(Sound_Play, 564);
@@ -942,12 +942,12 @@ s32 Scene_Initialize(void) {
         C1(Event_Wait, 120);
         Actor_SetModeById(8, 1);
         C1(Event_Wait, 60);
-        C1(GameFlag_SetBit, 0x109);
+        C1(GameFlag_Set, 0x109);
         C1(Import_EventSetExitRequest, ending);
       }
     }
     if ((u16)(gMainRoutineWork.entrance - 9) <= 1) {
-      C1(GameFlag_SetBit, 0x144);
+      C1(GameFlag_Set, 0x144);
       if (Test(FLAG_SERPENT_SLAIN)) {
         C2(Actor_SetModeById, 8, 4);
         C6(MapGrid_CopyCellPictureCellsRect, 85, 72, 5, 2, 30, 19);
@@ -996,8 +996,8 @@ s32 Scene_Initialize(void) {
         dragon = Actor_GetById(10);
         partner = Actor_GetById(8);
         C1(Sound_Play, 390);
-        C1(GameFlag_SetBit, 0x9ac);
-        C1(GameFlag_SetBit, 0x9de);
+        C1(GameFlag_Set, 0x9ac);
+        C1(GameFlag_Set, 0x9de);
         Event_Start();
         C1(Event_ResolvePendingActions, 0);
         C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
@@ -1169,7 +1169,7 @@ s32 Scene_Initialize(void) {
         goto end;
       Event_Start();
       C1(Event_ResolvePendingActions, 0);
-      C1(GameFlag_SetBit, FLAG_SERPENT_SLAIN);
+      C1(GameFlag_Set, FLAG_SERPENT_SLAIN);
       C1(Event_SetMessageId, (s32)MsgFieldItLooksLikeTheDragon);
       C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
       Actor_SetModeById(8, 3);
@@ -1323,7 +1323,7 @@ s32 Scene_Initialize(void) {
         other->z += -0x10000;
         C1(Event_Wait, 2);
       }
-      C1(GameFlag_SetBit, 0x9ee);
+      C1(GameFlag_Set, 0x9ee);
       C3(MapGrid_SetScreenShake, -1, -1, 0xe666);
       object->x = 0;
       object->z = 0;
@@ -1479,7 +1479,7 @@ s32 Scene_Initialize(void) {
       }
       C1(Sound_Play, 188);
       C1(Event_Wait, 30);
-      C1(GameFlag_SetBit, 0x109);
+      C1(GameFlag_Set, 0x109);
       C1(Import_EventSetExitRequest, 3);
     }
     if (!Test(0x9c4))
@@ -1568,11 +1568,11 @@ s32 Scene_PrepareMap(void) {
       }
       Func_020048a0();
       stage = (s32 *)(gInventorySnapshot + 0x288);
-      if (*stage == 3 && !GameFlag_Test(0x3f6))
+      if (*stage == 3 && !GameFlag_Get(0x3f6))
         Actor_SetPosition(64, 0x680000, 0x580000);
       if (*stage == 9)
         Actor_SetPosition(65, 0x680000, 0x480000);
-      if (GameFlag_Test(*stage + 0xa50)) {
+      if (GameFlag_Get(*stage + 0xa50)) {
         struct Actor *climber = Actor_GetById(8);
         u32 angle = Func_02004904();
 
@@ -1580,7 +1580,7 @@ s32 Scene_PrepareMap(void) {
         Actor_SelectAnimation(climber, ((angle & 0xc000) >> 14) + 2);
         climber->update = (angle & 0x4000) != 0 ? Func_02000aac : Func_02000a60;
         climber->collisionFlags = 1;
-        GameFlag_SetBit(0x200);
+        GameFlag_Set(0x200);
       }
     } else if (gMainRoutineWork.entrance > 8) {
       u8 *layer;
@@ -1681,9 +1681,9 @@ void Func_020044f8(s32 seed) {
   saved = gRandomState;
   path = gPath;
   steps = path->steps;
-  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
     return;
-  if (GameFlag_Test(0x3f0))
+  if (GameFlag_Get(0x3f0))
     return;
   gRandomState = seed;
 restart:

@@ -28,7 +28,7 @@ s32 Djinn_GiveToParty(s32 index, s32 bit) {
   s32 result;
   u8 *owners;
 
-  if (GameFlag_Test(flag) != 0)
+  if (GameFlag_Get(flag) != 0)
     return -1;
 
   result = Party_CountMembers();

@@ -35,7 +35,7 @@ void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static inline s32 Daila_FlagCheck(s32 flag) { return GameFlag_Test(flag); }
+static inline s32 Daila_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
 
 static inline void Daila_ObjWalk(s32 actor, s32 x, s32 z) {
   Actor_WalkToAndWaitById(actor, x, z);
@@ -131,7 +131,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 extern s32 gDailaInteriorsExits[];
 
 const void *Scene_GetExits(void) {
-  if (GameFlag_Test(FLAG_TAVI_RESCUED))
+  if (GameFlag_Get(FLAG_TAVI_RESCUED))
     return gDailaInteriorsExitsOnceTaviIsRescued;
   return gDailaInteriorsExits;
 }
@@ -139,7 +139,7 @@ const void *Scene_GetExits(void) {
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_DailaInteriors2)
     return gDailaInteriors2Placements;
-  if (GameFlag_Test(FLAG_TAVI_RESCUED))
+  if (GameFlag_Get(FLAG_TAVI_RESCUED))
     return gDailaInteriors1PlacementsOnceTaviIsRescued;
   return gDailaInteriors1Placements;
 }
@@ -157,13 +157,13 @@ UNUSED void DailaInteriors_PracticeShout(s32 unused, s32 actor) {
     Import_EventShowMessageAndWait(actor, 0);
     Daila_ObjWalk(actor, 360, 72);
     Actor_ArmCallback(actor, FACING_SOUTH, 0);
-    GameFlag_SetBit(FLAG_DAILA_PRACTICE_AT_DOOR);
+    GameFlag_Set(FLAG_DAILA_PRACTICE_AT_DOOR);
   } else {
     Import_EventSetMessageId((s32)MsgDailaInteriorsYarg);
     Import_EventShowMessageAndWait(actor, 0);
     Daila_ObjWalk(actor, 392, 104);
     Actor_ArmCallback(actor, FACING_WEST, 0);
-    GameFlag_ClearBit(FLAG_DAILA_PRACTICE_AT_DOOR);
+    GameFlag_Clear(FLAG_DAILA_PRACTICE_AT_DOOR);
   }
   FieldEvent_Wait(20);
 }
@@ -208,7 +208,7 @@ void DailaInteriors_StartLeaderEvent(void) {
 extern struct Trigger gDailaInteriors1Events[];
 
 const struct Trigger *Scene_GetEvents(void) {
-  s32 flag = GameFlag_Test(FLAG_TAVI_RESCUED);
+  s32 flag = GameFlag_Get(FLAG_TAVI_RESCUED);
   struct MainRoutineWork *party = &gMainRoutineWork;
   s32 id = (s32)&SceneId_DailaInteriors2;
 
@@ -281,7 +281,7 @@ void DailaInteriors_TalkToHealer(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    if (GameFlag_Test(FLAG_DAILA_HEALER_SENT_TO_POI) == 0) {
+    if (GameFlag_Get(FLAG_DAILA_HEALER_SENT_TO_POI) == 0) {
       Import_EventStart();
       Import_EventResolvePendingActions(0);
       msg = (s32)MsgDailaInteriorsTravelersFreeTime;
@@ -296,7 +296,7 @@ void DailaInteriors_TalkToHealer(s32 actor) {
       }
       Import_EventShowMessageAndWait(actor, 0);
       Import_EventEnd();
-      GameFlag_SetBit(FLAG_DAILA_HEALER_SENT_TO_POI);
+      GameFlag_Set(FLAG_DAILA_HEALER_SENT_TO_POI);
     } else {
       Sanctum_Run(actor);
     }
@@ -315,7 +315,7 @@ void DailaInteriors_TalkToHealer(s32 actor) {
     }
     Import_EventShowMessageAndWait(actor, 0);
     Import_EventEnd();
-    GameFlag_SetBit(FLAG_DAILA_HEALER_SENT_TO_POI);
+    GameFlag_Set(FLAG_DAILA_HEALER_SENT_TO_POI);
   }
 }
 
@@ -499,7 +499,7 @@ void DailaInteriors_TakeSeaGodsTear(void) {
     Actor_SetHorizontalPositionWithTerrain(ACTOR_SEA_GODS_TEAR, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(ACTOR_TEAR_SPOT, 232 << 16,
                                            194 << 16);
-    GameFlag_SetBit(FLAG_SEA_GODS_TEAR_TAKEN);
+    GameFlag_Set(FLAG_SEA_GODS_TEAR_TAKEN);
   } else {
     ItemDisplay_ShowPicture(Actor_GetById__item(ACTOR_SEA_GODS_TEAR), 3);
     Sound_Play(83);
@@ -507,7 +507,7 @@ void DailaInteriors_TakeSeaGodsTear(void) {
       Actor_SetHorizontalPositionWithTerrain(ACTOR_SEA_GODS_TEAR, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(ACTOR_TEAR_SPOT, 232 << 16,
                                              196 << 16);
-      GameFlag_SetBit(FLAG_SEA_GODS_TEAR_TAKEN);
+      GameFlag_Set(FLAG_SEA_GODS_TEAR_TAKEN);
     } else {
       Actor_SetHorizontalPositionWithTerrain(ACTOR_SEA_GODS_TEAR, 0, 0);
       FieldEvent_Wait(1);
@@ -642,7 +642,7 @@ s32 DailaInteriors_Start(void) {
     if (gMainRoutineWork.entrance == 7) {
       Scene_FadeInAndClearFlag();
     } else {
-      if (GameFlag_Test(FLAG_TAVI_RESCUED)) {
+      if (GameFlag_Get(FLAG_TAVI_RESCUED)) {
         Actor_SetModeById(24, 5);
         Actor_SetSingleChildFlags__arrival(Actor_GetById__arrival(24), 0);
         Actor_SetModeById(25, 5);
@@ -662,7 +662,7 @@ s32 DailaInteriors_Start(void) {
     Actor_SetSingleChildFlags__arrival(Actor_GetById__arrival(ACTOR_TEAR_SPOT),
                                        0);
     Func_02000dac(0);
-    if (!GameFlag_Test(FLAG_SEA_GODS_TEAR_TAKEN)) {
+    if (!GameFlag_Get(FLAG_SEA_GODS_TEAR_TAKEN)) {
       Actor_SetItemIcon(Actor_GetById__arrival(ACTOR_SEA_GODS_TEAR), 458);
       Actor_SetSingleChildFlags__arrival(
           Actor_GetById__arrival(ACTOR_SEA_GODS_TEAR), 0);
@@ -676,7 +676,7 @@ s32 DailaInteriors_Start(void) {
       Actor_SetSingleChildFlags__arrival(
           Actor_GetById__arrival(ACTOR_SEA_GODS_TEAR), 0);
     }
-    if (!GameFlag_Test(FLAG_TAVI_RESCUED)) {
+    if (!GameFlag_Get(FLAG_TAVI_RESCUED)) {
       Actor_SetHorizontalPositionWithTerrain(ACTOR_FIRST_PILLAR, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(ACTOR_SECOND_PILLAR, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(ACTOR_THIRD_PILLAR, 0, 0);
@@ -691,7 +691,7 @@ s32 DailaInteriors_Start(void) {
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_DailaInteriors2 &&
-      GameFlag_Test(FLAG_TAVI_RESCUED)) {
+      GameFlag_Get(FLAG_TAVI_RESCUED)) {
     Map_SetLayerEntryFlag(0);
     Daila_CopyCells(29, 33, 10, 6, 10, 12);
   }

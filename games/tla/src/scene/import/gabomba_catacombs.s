@@ -2,14 +2,14 @@
 	.thumb
 	.include "games/tla/src/system/overlay/imports.inc"
 	.balign 4
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
 	.global Actor_SelectAnimation
 	.thumb_func
 Actor_SelectAnimation:
@@ -145,7 +145,7 @@ PaletteFade_StartInterpolation:
 	.global Func_02001254
 	.thumb_func
 Func_02001254:
-	overlay_veneer Func_080c8480
+	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:
@@ -157,15 +157,15 @@ Scene_PlayMusic:
 	.global Func_0200126c
 	.thumb_func
 Func_0200126c:
-	overlay_veneer Func_080c8880
+	overlay_veneer Actor_DepartInRingFar
 	.global Func_02001274
 	.thumb_func
 Func_02001274:
-	overlay_veneer Func_080c88d0
+	overlay_veneer Cyclone_CopyTouchedCellsFar
 	.global Func_0200127c
 	.thumb_func
 Func_0200127c:
-	overlay_veneer Func_080c8948
+	overlay_veneer FieldItem_JumpToLeaderFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

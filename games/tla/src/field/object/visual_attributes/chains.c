@@ -412,7 +412,7 @@ s32 Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   slot->unk0c = 0x40000;
   slot->unk14 = 0x4000;
   if (slot->flag != 0)
-    GameFlag_SetBit(slot->flag);
+    GameFlag_Set(slot->flag);
   Heap_Release(nodes);
   return 0;
 }
@@ -528,7 +528,7 @@ s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
   cursor = nodes = Heap_Alloc(0x200);
   slot->unk18 = zero;
   if (slot->flag != 0)
-    GameFlag_ClearBit(slot->flag);
+    GameFlag_Clear(slot->flag);
   if (segments >= 0) {
     i = segments + 1;
     do {
@@ -683,7 +683,7 @@ void Rope_Place(s32 index, s32 flag, s32 a2, s32 a3) {
 
   slot = &work->slots[index];
   slot->flag = flag;
-  if (!GameFlag_Test(flag))
+  if (!GameFlag_Get(flag))
     Rope_Coil(index, a2, a3);
   else
     Rope_Tie(index, a2, a3);
@@ -838,7 +838,7 @@ void Tightrope_Update(void) {
   struct WorkA0Slot *slot;
   s32 i = 0;
 
-  if (!GameFlag_Test(260) && event->counter > 12) {
+  if (!GameFlag_Get(260) && event->counter > 12) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
     if (party->renderMode == 0) {

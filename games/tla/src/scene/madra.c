@@ -670,7 +670,7 @@ void Madra_InspectPartyAtGate(void) {
 /// is counted in the event work either way, and flag 0x913 is set. The talk
 /// includes "... has escaped".
 void Madra_GrantPassageToOsenia(void) {
-  if (!GameFlag_Test(0x911))
+  if (!GameFlag_Get(0x911))
     return;
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -817,7 +817,7 @@ void Madra_GrantPassageToOsenia(void) {
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(33, 3);
   Event_Wait(20);
-  GameFlag_SetBit(0x913);
+  GameFlag_Set(0x913);
   Actor_WalkByAndWaitById(33, 30, 0);
   Actor_WalkToAndWait(33, 164, 316);
   Event_Wait(20);
@@ -986,8 +986,8 @@ void Madra_MeetKarst(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
-  if (GameFlag_Test(0x825) || GameFlag_Test(0x826))
-    GameFlag_SetBit(0xa76);
+  if (GameFlag_Get(0x825) || GameFlag_Get(0x826))
+    GameFlag_Set(0xa76);
   Event_SetMessageId(MsgWait3);
   Event_ShowMessageThenWait(34, 0, 0);
   Actor_WalkToAndWait(4, 150, 280);
@@ -1068,7 +1068,7 @@ void Madra_MeetKarst(void) {
     PartyInventory_GiveItem(210, 0);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     Actor_ArmCallback(4, FACING_NORTH, 0);
-    GameFlag_SetBit(0x918);
+    GameFlag_Set(0x918);
   } else {
     s32 count = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4) + 1;
 
@@ -1453,15 +1453,15 @@ void Madra_MeetKarst(void) {
     Actor_SetDestinationById(7, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(7);
   Actor_SetHorizontalPositionWithTerrain(7, 0, 0);
-  GameFlag_SetBit(0x980);
-  GameFlag_SetBit(0x98e);
+  GameFlag_Set(0x980);
+  GameFlag_Set(0x98e);
   Event_End();
 }
 #undef SET_MODE
 
-void Madra_SkipGateInspection(void) { GameFlag_SetBit(0x910); }
+void Madra_SkipGateInspection(void) { GameFlag_Set(0x910); }
 
-void Madra_SkipRaidQuestioning(void) { GameFlag_SetBit(0x914); }
+void Madra_SkipRaidQuestioning(void) { GameFlag_Set(0x914); }
 
 /// The leader, already beside a ladder top, turns north, steps onto the rungs
 /// and climbs down out of sight, then leaves by exit 16, or 15 from the door

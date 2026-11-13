@@ -46,14 +46,14 @@ VramCache_Load:
 	.thumb_func
 VramCache_FindFreeEntry:
 	overlay_veneer VramCache_FindFreeEntryFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
 	.global Actor_Release
 	.thumb_func
 Actor_Release:
@@ -237,11 +237,11 @@ Actor_Spawn:
 	.global Func_02002104
 	.thumb_func
 Func_02002104:
-	overlay_veneer Func_080c87c0
+	overlay_veneer EffectSprite_InitFar
 	.global Func_0200210c
 	.thumb_func
 Func_0200210c:
-	overlay_veneer Func_080c87c8
+	overlay_veneer EffectSprite_DrawFar
 	.global Field_StartColorTransition
 	.thumb_func
 Field_StartColorTransition:

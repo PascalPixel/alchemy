@@ -30,10 +30,10 @@ s32 Field_UsePsynergy(u32 code) {
   Leader_StopMoving();
   event[0xd30] = 255;
   *(s16 *)(event + 0xd48) = retreat;
-  GameFlag_ClearBit(325);
+  GameFlag_Clear(325);
   if (userId == 15)
     userId = 0;
-  if (GameFlag_Test(382)) {
+  if (GameFlag_Get(382)) {
     FIELD_PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dbb);
     return 0;
   }
@@ -43,8 +43,8 @@ s32 Field_UsePsynergy(u32 code) {
       return 0;
     }
     if (abilityId == 153) {
-      if (gMainRoutineWork.ownerOverride != 0 && GameFlag_Test(0x8df)) {
-        GameFlag_SetBit(327);
+      if (gMainRoutineWork.ownerOverride != 0 && GameFlag_Get(0x8df)) {
+        GameFlag_Set(327);
         ((struct EventWork *)event)->unk16a = 253;
         return 0;
       }
@@ -57,7 +57,7 @@ s32 Field_UsePsynergy(u32 code) {
     return 0;
   }
   if (abilityId == 149) {
-    if (GameFlag_Test(324)) {
+    if (GameFlag_Get(324)) {
       FIELD_PSYNERGY_MESSAGE(userId, 149, MsgKey0dbd);
       return 0;
     }
@@ -122,16 +122,16 @@ s32 Field_UsePsynergy(u32 code) {
       during = NULL;
     }
   }
-  GameFlag_SetBit(320);
-  GameFlag_ClearBit(321);
+  GameFlag_Set(320);
+  GameFlag_Clear(321);
   target = -1;
   if (before != NULL || after != NULL || during != NULL) {
     if (selector != -1 && (selector & 0x100))
       target = selector & 0xff;
-    GameFlag_SetBit(321);
+    GameFlag_Set(321);
     if (after != NULL && (after->flags & 0x400)) {
-      GameFlag_ClearBit(320);
-      GameFlag_ClearBit(321);
+      GameFlag_Clear(320);
+      GameFlag_Clear(321);
     }
   }
   BattleEffect_LoadActionEffectResources(abilityId, 0);
@@ -158,8 +158,8 @@ s32 Field_UsePsynergy(u32 code) {
   FieldPsynergy_SetupActorPair(Party_GetLeaderActor(), target);
   EventObject_Initialize();
   Field_RunPsynergyEvent(before, userId, target);
-  if (GameFlag_Test(320)) {
-    if (GameFlag_Test(321))
+  if (GameFlag_Get(320)) {
+    if (GameFlag_Get(321))
       FieldPsynergy_Dispatch();
     else
       FieldPsynergy_Run();
@@ -173,12 +173,12 @@ s32 Field_UsePsynergy(u32 code) {
       Field_RunPsynergyEvent(pending, userId, ((s8 *)event)[0xd30]);
   }
   Field_RunPsynergyEvent(after, userId, target);
-  if (GameFlag_Test(320))
+  if (GameFlag_Get(320))
     FieldPsynergy_FinishMindRead();
   event[0xcb6] = 0;
   BattleEffect_CleanupSceneObjects();
-  GameFlag_ClearBit(320);
-  GameFlag_ClearBit(321);
+  GameFlag_Clear(320);
+  GameFlag_Clear(321);
   return 0;
 }
 
@@ -194,7 +194,7 @@ s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target) {
         ((void (*)(s32, s32))event->action)(mode, target);
       }
     }
-    if (GameFlag_Test(0x142)) {
+    if (GameFlag_Get(0x142)) {
       Event_Start();
       FieldMessage_ShowFar((s32)MsgNothingHappens, 1);
       Event_End();

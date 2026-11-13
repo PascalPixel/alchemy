@@ -66,18 +66,18 @@ Serial_StartReceive:
 	.thumb_func
 Unit_Get:
 	overlay_veneer Unit_GetFar
-	.global GameFlag_Test
+	.global GameFlag_Get
 	.thumb_func
-GameFlag_Test:
-	overlay_veneer GameFlag_TestFar
-	.global GameFlag_SetBit
+GameFlag_Get:
+	overlay_veneer GameFlag_GetFar
+	.global GameFlag_Set
 	.thumb_func
-GameFlag_SetBit:
-	overlay_veneer GameFlag_SetBitFar
-	.global GameFlag_ClearBit
+GameFlag_Set:
+	overlay_veneer GameFlag_SetFar
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global Window_Create
 	.thumb_func
 Window_Create:
@@ -187,11 +187,11 @@ Graphics_ExpandVramTilesByColorTable:
 	.global Func_02002328
 	.thumb_func
 Func_02002328:
-	overlay_veneer Func_08038428
+	overlay_veneer Glyph_DrawToTilesFar
 	.global Func_02002330
 	.thumb_func
 Func_02002330:
-	overlay_veneer Func_08038430
+	overlay_veneer Glyph_AddBlankSpriteFar
 	.global Djinn_GetRecoveryTable
 	.thumb_func
 Djinn_GetRecoveryTable:
@@ -225,7 +225,7 @@ Unit_GetExperienceForLevel:
 	.global Func_02002370
 	.thumb_func
 Func_02002370:
-	overlay_veneer Func_080ad238
+	overlay_veneer DataTransfer_ApplyFar
 	.global Djinn_GiveToParty
 	.thumb_func
 Djinn_GiveToParty:
@@ -245,11 +245,11 @@ InventorySnapshot_Restore:
 	.global Func_02002398
 	.thumb_func
 Func_02002398:
-	overlay_veneer Func_080ad320
+	overlay_veneer DataTransfer_GiveDefaultDjinnFar
 	.global Func_020023a0
 	.thumb_func
 Func_020023a0:
-	overlay_veneer Func_080ad330
+	overlay_veneer ClearData_ApplyFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -281,7 +281,7 @@ FieldYesNo_Ask:
 	.global Func_020023e0
 	.thumb_func
 Func_020023e0:
-	overlay_veneer Func_080c8940
+	overlay_veneer WorldMap_SetReturnLeavingSceneFar
 	.global StatusScreen_Run
 	.thumb_func
 StatusScreen_Run:

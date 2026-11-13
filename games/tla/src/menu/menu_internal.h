@@ -295,8 +295,8 @@ struct MenuPanel;
 struct OwnerList;
 
 // What several parts call, declared once here for all of them.
-s32 GameFlag_Test(s32);
-void GameFlag_ClearBit(s32 flag_no);
+s32 GameFlag_Get(s32);
+void GameFlag_Clear(s32 flag_no);
 s32 Inventory_EquipFar(s32 owner, s32 slot);
 void Window_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
 void Window_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);

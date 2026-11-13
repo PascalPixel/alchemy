@@ -138,8 +138,8 @@ s32 MapGrid_LoadMap(s32 index) {
   Io_Write16(work->enabled[2] | BGCNT_CHAR_BASE(sceneHeader->charBase[2]) |
                  BGCNT_SCREEN_BASE(7),
              &REG_BG1CNT);
-  if (GameFlag_Test(0x170) != 0) {
-    GameFlag_ClearBit(0x170);
+  if (GameFlag_Get(0x170) != 0) {
+    GameFlag_Clear(0x170);
   } else {
     graphicsBuffer = Heap_Alloc(0x4000);
     if (graphicsBuffer != NULL) {
@@ -853,7 +853,7 @@ next:
   entry = (u16)Map_ReadEditU16(&cursor);
   if (((entry + 1) & 0xffff) == 0)
     return;
-  if (GameFlag_Test(entry & 0xfff) != 0) {
+  if (GameFlag_Get(entry & 0xfff) != 0) {
     srcX = *cursor++;
     srcY = *cursor++;
     dstX = *cursor++;
@@ -879,13 +879,13 @@ u32 Map_ReadEditU16(u8 **cursor) {
 
 void Map_SetFlagAndApplyEdits(s32 flag) {
   flag &= 0xfff;
-  GameFlag_SetBit(flag);
+  GameFlag_Set(flag);
   Map_ApplyFlagEdits(flag, 0);
 }
 
 void Map_SetFlagAndApplyAttributeEdits(s32 flag) {
   flag &= 0xfff;
-  GameFlag_SetBit(flag);
+  GameFlag_Set(flag);
   Map_ApplyFlagEdits(flag, 1);
 }
 

@@ -42,10 +42,10 @@ Window_LoadGraphics:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
-	.global GameFlag_ClearBit
+	.global GameFlag_Clear
 	.thumb_func
-GameFlag_ClearBit:
-	overlay_veneer GameFlag_ClearBitFar
+GameFlag_Clear:
+	overlay_veneer GameFlag_ClearFar
 	.global WindowSystem_InitField
 	.thumb_func
 WindowSystem_InitField:
@@ -89,19 +89,19 @@ Speaker_GetVoice:
 	.global Func_02000834
 	.thumb_func
 Func_02000834:
-	overlay_veneer Func_080c87c0
+	overlay_veneer EffectSprite_InitFar
 	.global Func_0200083c
 	.thumb_func
 Func_0200083c:
-	overlay_veneer Func_080c87c8
+	overlay_veneer EffectSprite_DrawFar
 	.global Func_02000844
 	.thumb_func
 Func_02000844:
-	overlay_veneer Func_081a0008
+	overlay_veneer EndingPicture_StartFar
 	.global Func_0200084c
 	.thumb_func
 Func_0200084c:
-	overlay_veneer Func_081a0010
+	overlay_veneer EndingPicture_ShowFar
 	.global SceneState_SetScrollTarget
 	.thumb_func
 SceneState_SetScrollTarget:
@@ -109,11 +109,11 @@ SceneState_SetScrollTarget:
 	.global Func_0200085c
 	.thumb_func
 Func_0200085c:
-	overlay_veneer Func_081a0020
+	overlay_veneer EndingPicture_WaitForScrollFar
 	.global Func_02000864
 	.thumb_func
 Func_02000864:
-	overlay_veneer Func_081a0028
+	overlay_veneer EndingPicture_LowerTopStripFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

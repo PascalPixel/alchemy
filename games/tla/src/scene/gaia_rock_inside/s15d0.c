@@ -339,7 +339,7 @@ void Func_02001d14(void) {
   volatile u16 level;
   s32 i;
 
-  if (GameFlag_Test(0x9ee) || GameFlag_Test(0x9ba))
+  if (GameFlag_Get(0x9ee) || GameFlag_Get(0x9ba))
     return;
   person = Actor_Get(12);
   level = REG_BLDALPHA;

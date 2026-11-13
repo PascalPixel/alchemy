@@ -226,7 +226,9 @@ static void OrbGlow_Fade(void) {
 /// part runs while its flag (gOrbGlowActive, gSwellActive, gSprayActive) is
 /// set.
 static void Ship_UpdateSwell(void) {
-  u16 blend;
+  /* FAKEMATCH(volatile): the blend passes through a halfword on the stack;
+   * as a plain u16, 5 of 225 instructions differ in tbs-en. */
+  volatile u16 blend;
   struct FixedPointPosition sprayPosition;
   struct MapGridScrollWork *grid;
   struct Actor *actor;
@@ -601,7 +603,7 @@ static void LemurianShip_SetSail(void) {
   FieldCamera_MoveTo(808, CAMERA_KEEP, 168, 1);
   Event_Wait(300);
   // Fade out to the clear screen.
-  work = gFieldWork;
+  work = gMapGridWork[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID];
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Io_Write16(0, &PLTT_BACKDROP);
   work->transitionFrames = 96;
@@ -653,7 +655,9 @@ static void LemurianShip_RaiseTheShip(void) {
   s32 white;
   s32 dark;
   s32 risen;
-  u16 cnt;
+  /* FAKEMATCH(volatile): each control passes through a halfword on the stack;
+   * as a plain u16, 6 of 231 instructions differ in tbs-en. */
+  volatile u16 cnt;
 
   grid = gMapGridWork[0];
 
@@ -668,7 +672,7 @@ static void LemurianShip_RaiseTheShip(void) {
     Io_Write16(RGB(0, i, i * 2), &PLTT_BACKDROP);
     Event_Wait(10);
   }
-  PLTT_BACKDROP = RGB(0, 16, 31);
+  Io_Write16(RGB(0, 16, 31), &PLTT_BACKDROP);
   {
     u16 bright = BLEND_ALPHA(16, 16);
 
@@ -745,13 +749,16 @@ static void LemurianShip_RaiseTheShip(void) {
 /// Orb.
 s32 LemurianShip_SetupMap(void) {
   struct MapGridScrollWork *grid;
-  u16 cnt;
+  /* FAKEMATCH(volatile): each control passes through a halfword on the stack;
+   * as a plain u16, 2 of 165 instructions differ in tbs-en. */
+  volatile u16 cnt;
 
   grid = gMapGridWork[0];
   if (gMainRoutineWork.entrance == LEMURIAN_SHIP_WITH_BLACK_ORB) {
     Inventory_AddItem(ACTOR_PARTY_LEADER, ITEM_BLACK_ORB);
   }
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  ((struct FieldWork *)gMapGridWork[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID])
+      ->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Actor_Get(ACTOR_GANGWAY_NORTH)->collisionFlags = 0;
   Actor_Get(ACTOR_GANGWAY_NORTH)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   Actor_Get(ACTOR_GANGWAY_SOUTH)->collisionFlags = 0;
@@ -899,34 +906,52 @@ static s16 sCurtainVramSlot;
 
 /// Moves the curtains a step closer and queues their 24 sprites.
 /// Run each frame from Curtain_Start to the end of the game.
+// Each part is three words: the queue link, attributes 0 and 1, and
+// attribute 2.
+#ifdef UBFIX
+#define CURTAIN_PART(attributes, tile)                                         \
+  (part->next = NULL, part->oam.word.attr01 = (attributes),                    \
+   part->oam.word.attr23 = (tile), part++)
+#else
+// UB: the parts are written through a word cursor, the link among them.
+#define CURTAIN_PART(attributes, tile)                                         \
+  (*word++ = 0, *word++ = (attributes), *word++ = (tile))
+#endif
+
 static void Curtain_Close(void) {
-  struct MenuSprite *sprite = sCurtainSprites;
+#ifdef UBFIX
+  struct MenuSprite *part;
+#else
+  u32 *word;
+#endif
   u32 tile;
+  s32 gap;
   s32 edge;
   u32 i;
 
   tile = gVramCacheEntries[sCurtainVramSlot].offset >> 5;
+#ifdef UBFIX
+  part = sCurtainSprites;
+#else
+  word = (u32 *)sCurtainSprites;
+#endif
   if (sCurtainGap != 0)
     sCurtainGap--;
-  // Three columns of eight, each part a queue link and its attributes.
-  edge = (-sCurtainGap / 2) & 0xff;
-  for (i = 0; i < 8; i++, sprite++) {
-    sprite->next = NULL;
-    sprite->oam.word.attr01 = edge | (i << 21) | OBJ_SIZE_32X16;
-    sprite->oam.word.attr23 = tile;
+  // Three columns of eight.
+  for (i = 0; i < 8; i++) {
+    s32 leftEdge;
+
+    gap = sCurtainGap;
+    leftEdge = -gap / 2;
+    CURTAIN_PART((leftEdge & 0xff) | (i << 21) | OBJ_SIZE_32X16, tile);
   }
-  edge = (sCurtainGap / 2 + 136) & 0xff;
-  for (i = 0; i < 8; i++, sprite++) {
-    sprite->next = NULL;
-    sprite->oam.word.attr01 = edge | (i << 21) | OBJ_SIZE_32X16;
-    sprite->oam.word.attr23 = tile;
-  }
+  edge = (gap / 2 + 136) & 0xff;
+  for (i = 0; i < 8; i++)
+    CURTAIN_PART((i << 21) | edge | OBJ_SIZE_32X16, tile);
+  i = 0;
   edge = (sCurtainGap / 2 + 152) & 0xff;
-  for (i = 0; i < 8; i++, sprite++) {
-    sprite->next = NULL;
-    sprite->oam.word.attr01 = edge | (i << 21) | OBJ_SIZE_32X16;
-    sprite->oam.word.attr23 = tile;
-  }
+  for (; i < 8; i++)
+    CURTAIN_PART((i << 21) | edge | OBJ_SIZE_32X16, tile);
   for (i = 0; i < 24; i++)
     Oam_AddSpriteAtDepth(&sCurtainSprites[i], 255);
 }

@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x699, in ROM order.
+
 #include "../shared/routines.h"
 #include "types.h"
 #include "field_effect.h"

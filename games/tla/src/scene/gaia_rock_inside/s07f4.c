@@ -1,6 +1,5 @@
 /// @file
-/// Scene code of overlay 0x681, in ROM order, from s07f4's offset up to the
-/// next object the overlay links.
+/// Scene code of overlay 0x681, in ROM order.
 
 // ---- games/tla/src/scene/gaia_rock_inside/s07f4.c ----
 

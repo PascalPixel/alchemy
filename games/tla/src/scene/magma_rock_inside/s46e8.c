@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x692, in ROM order.
+
 // ---- games/tla/src/scene/magma_rock_inside/s46e8.c ----
 #include "../shared/routines.h"
 #include "../shared/tables.h"
@@ -110,7 +113,7 @@ s32 Func_02004ef0(s32 layer, s32 shape, s32 height);
 
 DEFINE_FUNC_02000BC0(Func_02004934, Func_02004d20, Func_02004ef0)
 
-#include "local.h"
+#include "../shared/magma_rock_inside.h"
 
 void Func_020049c0(s32 a, s32 b) {
   Func_02004934(a, b, gMainRoutineWork.currentOwner);

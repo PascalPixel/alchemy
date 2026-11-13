@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x698, in ROM order.
+
 #include "../shared/routines.h"
 #include "types.h"
 #include "system.h"

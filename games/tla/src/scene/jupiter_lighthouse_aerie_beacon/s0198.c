@@ -1,6 +1,5 @@
 /// @file
-/// Scene code of overlay 0x6a5, in ROM order, from s0198's offset up to the
-/// next object the overlay links.
+/// Scene code of overlay 0x6a5, in ROM order.
 
 // ---- games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c ----
 
@@ -2273,7 +2272,7 @@ extern s32 gData_020069f8;
 
 void Func_02003f54(s32 a0) { gData_020069f8 = a0; }
 
-#include "../../../../games/tla/src/scene/jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
+#include "../shared/jupiter_lighthouse_aerie.h"
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"

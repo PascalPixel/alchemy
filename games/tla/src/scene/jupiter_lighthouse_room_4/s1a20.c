@@ -1,5 +1,5 @@
 /// @file
-/// Scene code of overlay 0x69d, in ROM order, from s1a20's offset up to the next object the overlay links, and the overlay's data.
+/// Scene code of overlay 0x69d, in ROM order.
 
 #include "../shared/tables.h"
 #include "../shared/routines.h"

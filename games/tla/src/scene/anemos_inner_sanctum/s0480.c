@@ -1,5 +1,5 @@
 /// @file
-/// Overlay 0x6b0's code between field/field_effect/move and field/object/wait_until_idle, in ROM order.
+/// Scene code of overlay 0x6b0, in ROM order.
 
 #include "types.h"
 #include "main_routine_work.h"

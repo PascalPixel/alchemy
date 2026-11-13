@@ -1,5 +1,5 @@
 /// @file
-/// Scene code of overlay 0x668, in ROM order, from s4004's offset up to the next object the overlay links.
+/// Scene code of overlay 0x668, in ROM order.
 
 #include "../shared/routines.h"
 #include "types.h"

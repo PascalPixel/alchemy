@@ -1,5 +1,8 @@
+/// @file
+/// Scene code of overlay 0x690, in ROM order.
+
 #include "../shared/tables.h"
-#include "local.h"
+#include "../shared/settlements.h"
 #include "call.h"
 #include "types.h"
 #include "actor.h"

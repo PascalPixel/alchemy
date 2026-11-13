@@ -1,5 +1,5 @@
 /// @file
-/// The scene code of overlay 0x672 that its scene tables belong to, in ROM order; the rest of the overlay is in gabomba_statue_chamber/.
+/// The scene code of overlay 0x672, in ROM order.
 
 // ---- games/tla/src/scene/gabomba_statue_chamber.c ----
 
@@ -23,7 +23,7 @@
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-#include "gabomba_statue_chamber/gabomba_statue_chamber.h"
+#include "shared/gabomba_statue_chamber.h"
 
 u8 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;

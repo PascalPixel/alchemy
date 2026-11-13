@@ -1,5 +1,5 @@
 /// @file
-/// Scene code of overlay 0x65f, in ROM order, from s12a8's offset up to the next object the overlay links.
+/// Scene code of overlay 0x65f, in ROM order.
 
 // ---- games/tla/src/scene/garoh/s12a8.c ----
 
@@ -9,7 +9,7 @@
 #include "field_effect.h"
 #include "actor.h"
 #include "event_inline.h"
-#include "garoh.h"
+#include "../shared/garoh.h"
 #include "field_sprite.h"
 #include "field.h"
 #include "module/field/event_commands.h"

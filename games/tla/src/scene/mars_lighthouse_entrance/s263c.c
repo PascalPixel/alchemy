@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x6aa, in ROM order.
+
 // ---- games/tla/src/scene/mars_lighthouse_entrance/s263c.c ----
 #include "../shared/routines.h"
 #include "version.h"
@@ -50,7 +53,7 @@ extern u8 gData_020023c4[];
 #undef SHARED_F02002148_ID6
 #undef SHARED_F02002148_ID7
 
-#include "ride.h"
+#include "../shared/mars_lighthouse_entrance_ride.h"
 
 void Func_02002848(void) {
   if (RIDE_WORK->active)
@@ -58,7 +61,7 @@ void Func_02002848(void) {
 }
 
 // ---- games/tla/src/scene/mars_lighthouse_entrance/s2860.c ----
-#include "room.h"
+#include "../shared/mars_lighthouse_entrance_room.h"
 
 /* VIEW(s2860): routine Func_020024c0 as s32 Func_020024c0(s32 a, s32 b); s263c has void Func_020024c0(); tried as the definition's void Func_020024c0(void), it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance/s263c.c:261: too many arguments to function `Func_020024c0'. */
 extern s32 Func_020024c0__s2860(s32 a, s32 b) __asm__("Func_020024c0");

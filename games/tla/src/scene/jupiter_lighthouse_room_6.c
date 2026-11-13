@@ -1,5 +1,5 @@
 /// @file
-/// The scene code of overlay 0x69f that its scene tables belong to, in ROM order; the rest of the overlay is in jupiter_lighthouse_room_6/.
+/// The scene code of overlay 0x69f, in ROM order.
 
 #include "shared/routines.h"
 #include "battle.h"
@@ -46,7 +46,7 @@ void Func_02000084(s32 value) {
     FieldEvent_SetExitRequest(14);
 }
 
-#include "jupiter_lighthouse_room_6/jupiter_lighthouse_room_6.h"
+#include "shared/jupiter_lighthouse_room_6.h"
 
 DEFINE_FUNC_02000060(Func_020000b4, 84, 36, 2, 78, 40, 84, 39, 20, 38, 14, 42)
 
@@ -117,7 +117,7 @@ s32 Scene_PrepareMap(void) {
 
 #include "shared/scene_set_arrival_flags.h"
 
-#include "jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
+#include "shared/jupiter_lighthouse_aerie.h"
 #include "ram_buffer.h"
 #include "field_event.h"
 

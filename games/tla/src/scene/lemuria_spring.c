@@ -1,3 +1,6 @@
+/// @file
+/// The scene code of overlay 0x68e, in ROM order.
+
 // ---- games/tla/src/scene/lemuria_spring.c ----
 #include "battle.h"
 #include "field.h"

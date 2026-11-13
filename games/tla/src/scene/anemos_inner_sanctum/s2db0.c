@@ -1,4 +1,7 @@
-#include "../../../../games/tla/src/scene/jupiter_lighthouse_room_3/local.h"
+/// @file
+/// Scene code of overlay 0x6b0, in ROM order.
+
+#include "../shared/jupiter_lighthouse_room_3.h"
 #include "io_reg.h"
 #include "event_work.h"
 #include "field.h"

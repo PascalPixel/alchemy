@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x6a9, in ROM order.
+
 #define EFFECT_SPAWN Func_0200015c
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Func_02001074

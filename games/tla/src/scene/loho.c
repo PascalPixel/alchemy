@@ -1,5 +1,5 @@
 /// @file
-/// Overlay 0x6a6's scene: its code, then its tables, in ROM order.
+/// The scene code of overlay 0x6a6, in ROM order.
 
 #include "shared/routines.h"
 #include "shared/tables.h"

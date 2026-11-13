@@ -1,5 +1,5 @@
 /// @file
-/// Scene code of overlay 0x663, in ROM order, from s015c's offset up to the next object the overlay links.
+/// Scene code of overlay 0x663, in ROM order.
 
 #include "module/scene/airs_rock.h"
 

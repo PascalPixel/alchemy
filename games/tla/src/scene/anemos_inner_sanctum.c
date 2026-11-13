@@ -1,0 +1,116 @@
+/// @file
+/// The scene code of overlay 0x6b0, in ROM order.
+
+#include "shared/routines.h"
+#include "dma.h"
+#include "io_reg.h"
+#include "event_inline.h"
+#include "types.h"
+#include "task.h"
+#include "ram_buffer.h"
+#include "actor.h"
+
+#include "main_routine_work.h"
+#include "event_work.h"
+#include "module/scene/anemos_inner_sanctum.h"
+
+/// Writes one background palette entry from its red, green and blue.
+// A statement macro, written do { } while (0): this store matches through that
+// shape (see the header).
+#define BG_PLTT_SET_RGB(index, r, g, b)                                        \
+  do {                                                                         \
+    int value = RGB(r, g, b);                                                  \
+                                                                               \
+    BG_PLTT[index] = value;                                                    \
+  } while (0)
+
+void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b) {
+  u8 *saved = Ram_HeapSlots->block32;
+
+  gData_02004444 = slots;
+  Data_02004448 = colours;
+  Data_0200444c = a;
+  Data_02004438 = b;
+  if (*slots != 0xffff && *colours != 0xffff) {
+  next:
+    {
+      int index = *slots++;
+      int red = *colours++;
+      int green = *colours++;
+      int blue = *colours++;
+
+      BG_PLTT_SET_RGB(index, red, green, blue);
+    }
+    if (*slots != 0xffff && *colours != 0xffff)
+      goto next;
+  }
+  Dma_Set((const void *)0x05000000, saved, 0x84000070, REG_DMA3);
+  Dma_Set((const void *)0x05000200, saved + 448, 0x84000070, REG_DMA3);
+  PaletteFade_ApplyTarget(0x10000, 0);
+  if ((s8)gMainRoutineWork.unk2c2 == 2)
+    Func_02000328();
+}
+
+DEFINE_FUNC_020000F4(Func_020000f4, gData_02004454, gData_02004450,
+    Func_020001d4, gData_02004444, gData_02004440, 15, gData_0200443c, 16,
+    gData_02004434, Func_020001f8)
+
+#define FIELD_AT(base, type, off)                                              \
+  (((struct {                                                                  \
+     u8 pad[off];                                                              \
+     type v;                                                                   \
+   } *)(base))                                                                 \
+       ->v)
+
+void Func_02000158(void) {
+  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x100;
+  FieldTask_Remove((s32)Func_020001f8);
+}
+
+DEFINE_FUNC_020000F4(Func_02000178, gData_02004454, gData_02004450,
+    Func_020001d4, gData_02004444, gData_02004440, 2, gData_0200443c, 2,
+    gData_02004434, Func_020001f8)
+
+DEFINE_FUNC_020001D4(Func_020001d4)
+
+DEFINE_FUNC_020001F8(Func_020001f8, gData_0200443c, gData_02004440,
+    Data_0200444c, gData_02004450, Data_02004438, gData_02004454,
+    gData_02004444, gData_02004434, Data_02004448)
+
+void Func_020017b4(void);
+
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static __inline__ void Func_02003458_(s32 a, s32 b) {
+  BattleEffect_ApplyColorToTargetBuffer(a, b);
+}
+
+void Func_02000328(void) {
+  struct AnemosInnerSanctumEventWork *work = Ram_HeapSlots->eventWork;
+  s32 saved;
+
+  saved = work->value1ac;
+  PaletteFade_ApplyTarget(0x202108, 1);
+  Func_02003458_(0x10000, 2);
+  ((struct AnemosInnerSanctumEventWork *)Ram_HeapSlots->eventWork)->value1ac =
+      0x100;
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Func_02000178();
+  Func_020034a8();
+  System_Wait(40);
+  Func_02000158();
+  PaletteFade_ApplyTarget(0x10000, 1);
+  PaletteFade_Interpolate(16);
+  System_Wait(16);
+  {
+    struct MainRoutineWork *party = &gMainRoutineWork;
+
+    party->unk2c2 = 0;
+  }
+  work->value1ac = saved;
+}
+
+#include "../field/object/set_sprite_priority.c"
+
+#include "../field/object/prepare_object.c"

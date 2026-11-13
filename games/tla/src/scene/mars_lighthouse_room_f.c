@@ -1,3 +1,6 @@
+/// @file
+/// The scene code of overlay 0x6ad, in ROM order.
+
 // ---- games/tla/src/scene/mars_lighthouse_room_f.c ----
 #include "shared/routines.h"
 #include "battle.h"
@@ -25,7 +28,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-#include "mars_lighthouse_room_f/room.h"
+#include "shared/mars_lighthouse_room_f_room.h"
 
 extern const u8 gData_02006518[];
 extern const u8 gData_02006530[];
@@ -827,7 +830,7 @@ extern s32 gData_02007040;
 
 void Func_020014dc(s32 value) { gData_02007040 = value; }
 
-#include "jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
+#include "shared/jupiter_lighthouse_aerie.h"
 #include "dma.h"
 #include "io_reg.h"
 
@@ -1067,7 +1070,7 @@ DEFINE_FUNC_02001A80_117(Func_02001dc0)
 #define MapLayer MapLayer__s1e20
 #define SceneWork SceneWork__s1e20
 #define Camera_SetBounds Camera_SetBounds__s1e20
-#include "mars_lighthouse_entrance/room.h"
+#include "shared/mars_lighthouse_entrance_room.h"
 #undef Camera_SetBounds
 /* VIEW(s1e20): static Camera_SetBounds as Camera_SetBounds__s1e20; room.h has static inline void Camera_SetBounds(s32 x, s32 y, s32 z, s32 use_setter) { Camera_MoveWithinMapBounds(x, y, z, use_setter); }; not tried: Camera_SetBounds__s1e20 was not found. */
 #undef SceneWork
@@ -1167,7 +1170,7 @@ DEFINE_FUNC_02001C74(Func_02001fb4, Func_02005498_, Func_02001f84, 2,
     Func_02001e20, Func_02005480)
 
 // ---- games/tla/src/scene/mars_lighthouse_room_f/s1ffc.c ----
-#include "../../../../games/tla/src/scene/mars_lighthouse_entrance/room.h"
+#include "shared/mars_lighthouse_entrance_room.h"
 
 struct RideDirection {
   u16 unk00;

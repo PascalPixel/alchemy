@@ -1,9 +1,9 @@
 /// @file
-/// Scene code of overlay 0x67c, in ROM order, from s3844's offset up to the next object the overlay links and the overlay's data.
+/// Scene code of overlay 0x67c, in ROM order.
 
 #include "../shared/routines.h"
 #include "../shared/tables.h"
-#include "local.h"
+#include "../shared/aqua_rock_inside.h"
 #include "types.h"
 #include "iwram_call.h"
 #include "system/io_reg.h"

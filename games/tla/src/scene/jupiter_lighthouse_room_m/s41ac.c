@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x6a3, in ROM order.
+
 #include "../shared/routines.h"
 #include "types.h"
 #include "ram_buffer.h"
@@ -7,7 +10,7 @@
 #include "event_inline.h"
 #include "field.h"
 #include "event_work.h"
-#include "jupiter_lighthouse_room_m.h"
+#include "../shared/jupiter_lighthouse_room_m.h"
 
 struct CellTargetEntry;
 

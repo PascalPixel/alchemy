@@ -1,5 +1,5 @@
 /// @file
-/// The scene code of overlay 0x69e that its scene tables belong to, in ROM order; the rest of the overlay is in jupiter_lighthouse_room_5/.
+/// The scene code of overlay 0x69e, in ROM order.
 
 // ---- games/tla/src/scene/jupiter_lighthouse_room_5.c ----
 
@@ -511,7 +511,7 @@ s32 Scene_PrepareMap(void) {
 // Scene code of overlay 0x69e, in ROM order, from s0cb8's offset up to the
 // next object the overlay links.
 
-#include "../../../../games/tla/src/scene/jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
+#include "shared/jupiter_lighthouse_aerie.h"
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"

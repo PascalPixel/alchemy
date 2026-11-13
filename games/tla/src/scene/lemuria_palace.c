@@ -1,3 +1,6 @@
+/// @file
+/// The scene code of overlay 0x68d, in ROM order.
+
 // ---- games/tla/src/scene/lemuria_palace.c ----
 #include "shared/tables.h"
 #include "battle.h"

@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x655, in ROM order.
+
 #define EFFECT_SPAWN Func_02000fc4
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Func_02003ba0

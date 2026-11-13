@@ -1,5 +1,5 @@
 /// @file
-/// Scene code of overlay 0x69c, in ROM order, from s1788's offset up to the next object the overlay links.
+/// Scene code of overlay 0x69c, in ROM order.
 
 #include "types.h"
 #include "field_effect.h"

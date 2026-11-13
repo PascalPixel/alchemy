@@ -1,5 +1,5 @@
 /// @file
-/// Overlay 0x6b2's scene: its code, then its tables, in the order the ROM has them.
+/// The scene code of overlay 0x6b2, in ROM order.
 
 #include "types.h"
 #include "main_routine_work.h"

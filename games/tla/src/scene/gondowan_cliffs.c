@@ -1,5 +1,5 @@
 /// @file
-/// The scene code of overlay 0x66b that its scene tables belong to and the routine after it, in ROM order, then its data; the rest of the overlay is in gondowan_cliffs/.
+/// The scene code of overlay 0x66b, in ROM order.
 
 #include "shared/tables.h"
 #include "shared/routines.h"

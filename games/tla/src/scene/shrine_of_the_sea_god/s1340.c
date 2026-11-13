@@ -1,8 +1,8 @@
 /// @file
-/// Scene code of overlay 0x654, in ROM order, from s1340's offset up to the next object the overlay links.
+/// Scene code of overlay 0x654, in ROM order.
 
 #include "../shared/routines.h"
-#include "shrine_of_the_sea_god.h"
+#include "../shared/shrine_of_the_sea_god.h"
 #include "system.h"
 #include "macros.h"
 #include "call.h"

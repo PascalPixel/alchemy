@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x681, in ROM order.
+
 #include "../shared/tables.h"
 #include "types.h"
 #include "module/scene/gaia_rock_inside.h"

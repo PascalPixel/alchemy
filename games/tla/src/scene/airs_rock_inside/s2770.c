@@ -1,10 +1,10 @@
 /// @file
-/// Scene code of overlay 0x664, in ROM order, from s2770's offset up to the next object the overlay links.
+/// Scene code of overlay 0x664, in ROM order.
 
 // ---- games/tla/src/scene/airs_rock_inside/s2770.c ----
 
 #include "../shared/routines.h"
-#include "airs_rock_inside.h"
+#include "../shared/airs_rock_inside.h"
 #include "system.h"
 #include "task.h"
 #include "event_work.h"

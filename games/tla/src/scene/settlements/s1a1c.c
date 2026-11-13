@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x690, in ROM order.
+
 #include "version.h"
 #include "event_inline.h"
 

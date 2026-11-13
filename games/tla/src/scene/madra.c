@@ -1,5 +1,5 @@
 /// @file
-/// The scene code of overlay 0x658 that its scene tables belong to, in ROM order; the rest of the overlay is in madra/.
+/// The scene code of overlay 0x658, in ROM order.
 
 // ---- games/tla/src/scene/madra.c ----
 

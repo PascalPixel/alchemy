@@ -1,6 +1,5 @@
 /// @file
-/// Scene code of overlay 0x69c, in ROM order, from s0dcc's offset up to the
-/// next object the overlay links.
+/// Scene code of overlay 0x69c, in ROM order.
 
 #include "../shared/routines.h"
 #include "types.h"

@@ -1,5 +1,5 @@
 /// @file
-/// Overlay 0x683's scene: its code, then its tables, in the order the ROM has them.
+/// The scene code of overlay 0x683, in ROM order.
 
 #include "shared/routines.h"
 #include "battle.h"

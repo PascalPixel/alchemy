@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x6ab, in ROM order.
+
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s2148.c ----
 #include "../shared/routines.h"
 #include "version.h"
@@ -14,7 +17,7 @@
 #include "event_work.h"
 #include "field.h"
 #include "item_icon.h"
-#include "mars_lighthouse_star_room.h"
+#include "../shared/mars_lighthouse_star_room.h"
 #include "module/field/field.h"
 #include "module/scene/mars_lighthouse_star_room.h"
 #include "module/system/system.h"
@@ -95,7 +98,7 @@ void Func_02002354(void) {
 }
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s236c.c ----
-#include "mars_lighthouse_star_room.h"
+#include "../shared/mars_lighthouse_star_room.h"
 
 extern u8 gData_020023c4[];
 void Animation_ApplyChildValues(struct Actor *object, s32 value);

@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x6aa, in ROM order.
+
 #include "../shared/routines.h"
 #include "types.h"
 #include "actor.h"

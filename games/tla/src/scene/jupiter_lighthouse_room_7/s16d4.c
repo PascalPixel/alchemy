@@ -1,5 +1,5 @@
 /// @file
-/// Scene code of overlay 0x6a0, in ROM order, from s16d4's offset up to the next object the overlay links.
+/// Scene code of overlay 0x6a0, in ROM order.
 
 #include "../shared/routines.h"
 #include "types.h"
@@ -8,7 +8,7 @@
 #include "actor.h"
 #include "field_effect.h"
 #include "event_inline.h"
-#include "../../../../games/tla/src/scene/jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
+#include "../shared/jupiter_lighthouse_aerie.h"
 #include "field_coordinate.h"
 #include "field_sprite.h"
 #include "ram_buffer.h"

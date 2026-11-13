@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x697, in ROM order.
+
 #include "types.h"
 #include "field_effect.h"
 #include "main_routine_work.h"

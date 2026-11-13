@@ -1,5 +1,5 @@
 /// @file
-/// The scene code of overlay 0x657 that its scene tables belong to, in ROM order; the rest of the overlay is in lemurian_ship_deck/.
+/// The scene code of overlay 0x657, in ROM order.
 
 #include "shared/routines.h"
 #include "battle.h"

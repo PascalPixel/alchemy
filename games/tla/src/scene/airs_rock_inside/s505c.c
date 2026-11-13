@@ -1,6 +1,5 @@
 /// @file
-/// Scene code of overlay 0x664, in ROM order, from s505c's offset up to the
-/// next object the overlay links, and the overlay's data.
+/// Scene code of overlay 0x664, in ROM order.
 
 #include "../shared/tables.h"
 #include "types.h"
@@ -13,7 +12,7 @@
 #include "system/vector3.h"
 #include "call.h"
 #include "field.h"
-#include "airs_rock_inside.h"
+#include "../shared/airs_rock_inside.h"
 #include "event_work.h"
 #include "flag_call.h"
 #include "module/field/field_effect.h"
@@ -350,7 +349,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "airs_rock_inside.h"
+#include "../shared/airs_rock_inside.h"
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room1)

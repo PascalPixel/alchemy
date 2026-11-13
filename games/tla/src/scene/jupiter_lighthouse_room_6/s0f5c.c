@@ -1,6 +1,5 @@
 /// @file
-/// Scene code of overlay 0x69f, in ROM order, from s0f5c's offset up to the
-/// next object the overlay links.
+/// Scene code of overlay 0x69f, in ROM order.
 
 #include "../shared/routines.h"
 #include "types.h"
@@ -10,7 +9,7 @@
 #include "heap_release.h"
 #include "item_icon.h"
 #include "module/scene/scene.h"
-#include "jupiter_lighthouse_room_6.h"
+#include "../shared/jupiter_lighthouse_room_6.h"
 
 extern const s32 *gData_020023d8[];
 

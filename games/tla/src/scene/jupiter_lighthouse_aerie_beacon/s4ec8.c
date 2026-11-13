@@ -1,5 +1,5 @@
 /// @file
-/// Scene code of overlay 0x6a5, in ROM order, from s4ec8's offset up to the next object the overlay links.
+/// Scene code of overlay 0x6a5, in ROM order.
 
 #include "../shared/routines.h"
 #include "types.h"
@@ -9,7 +9,7 @@
 #include "iwram_call.h"
 #include "event_inline.h"
 #include "scene_tables.h"
-#include "../../../../games/tla/src/scene/jupiter_lighthouse_room_3/local.h"
+#include "../shared/jupiter_lighthouse_room_3.h"
 #include "io_reg.h"
 #include "cell_target.h"
 #include "event_work.h"

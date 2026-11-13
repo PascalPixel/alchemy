@@ -1,6 +1,5 @@
 /// @file
-/// The scene code of overlay 0x650 that its scene tables belong to, in ROM
-/// order; the rest of the overlay is in idejima/.
+/// The scene code of overlay 0x650, in ROM order.
 
 #include "battle.h"
 #include "field.h"

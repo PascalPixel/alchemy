@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x6ae, in ROM order.
+
 // ---- games/tla/src/scene/mars_lighthouse_aerie/s3370.c ----
 #include "../shared/routines.h"
 #include "../shared/tables.h"
@@ -114,7 +117,7 @@ void Func_02003370(void) {
     FieldTask_Remove(Func_02003370);
 }
 
-#include "mars_lighthouse_aerie.h"
+#include "../shared/mars_lighthouse_aerie.h"
 #include "scene_tables.h"
 
 void Func_020035ec(s32 id) {

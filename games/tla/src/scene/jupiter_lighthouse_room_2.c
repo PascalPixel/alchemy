@@ -1,6 +1,5 @@
 /// @file
-/// The scene code of overlay 0x69b that its scene tables belong to, in ROM
-/// order; the rest of the overlay is in jupiter_lighthouse_room_2/.
+/// The scene code of overlay 0x69b, in ROM order.
 
 #include "shared/routines.h"
 #include "battle.h"
@@ -436,7 +435,7 @@ extern s32 gData_02002b38;
 
 void Func_020009dc(s32 a0) { gData_02002b38 = a0; }
 
-#include "jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
+#include "shared/jupiter_lighthouse_aerie.h"
 #include "dma.h"
 
 extern s32 gData_02002b34;

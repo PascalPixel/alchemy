@@ -1,5 +1,5 @@
 /// @file
-/// Scene code of overlay 0x6a1, in ROM order, from s1dc8's offset up to the next object the overlay links, and the overlay's data.
+/// Scene code of overlay 0x6a1, in ROM order.
 
 #include "../shared/routines.h"
 #include "../shared/tables.h"

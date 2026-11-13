@@ -1,9 +1,9 @@
 /// @file
-/// Scene code of overlay 0x653, in ROM order, from s2ec4's offset up to the next object the overlay links, and the overlay's data.
+/// Scene code of overlay 0x653, in ROM order.
 
 #include "../shared/routines.h"
 #include "../shared/tables.h"
-#include "local.h"
+#include "../shared/kandorean_temple.h"
 #include "field_effect.h"
 #include "event_work.h"
 #include "event_inline.h"

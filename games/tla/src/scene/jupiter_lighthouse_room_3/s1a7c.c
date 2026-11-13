@@ -1,5 +1,5 @@
 /// @file
-/// Scene code of overlay 0x69c, in ROM order, from s1a7c's offset up to the next object the overlay links.
+/// Scene code of overlay 0x69c, in ROM order.
 
 #include "../shared/routines.h"
 #include "types.h"
@@ -8,7 +8,7 @@
 #include "main_routine_work.h"
 #include "iwram_call.h"
 #include "event_inline.h"
-#include "local.h"
+#include "../shared/jupiter_lighthouse_room_3.h"
 #include "io_reg.h"
 #include "cell_target.h"
 #include "event_work.h"

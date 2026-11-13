@@ -1,5 +1,5 @@
 /// @file
-/// Overlay 0x695's scene: its code, then its tables, in the order the ROM has them.
+/// The scene code of overlay 0x695, in ROM order.
 
 #include "battle.h"
 #include "field.h"
@@ -41,7 +41,32 @@ L_02008094:
   return;
 }
 
-#include "shaman_village_cave/local.h"
+#include "types.h"
+#include "ram_buffer.h"
+#include "actor.h"
+#include "main_routine_work.h"
+#include "field_sprite.h"
+#include "event_inline.h"
+
+struct ShamanVillageCaveEventWork {
+  u8 unk000[0x154];
+  s16 value154;
+};
+
+void Event_FinishScreenTransition(void);
+void Event_WaitTransitionFrames(void);
+void Event_Start(void);
+void Event_End(void);
+void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
+
+void Func_02000098(s32 id);
+
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static __inline__ void Func_02001060_(s32 a, s32 b, s32 c, s32 d, s32 e,
+                                      s32 f) {
+  Map_CopyCellAttributeRect(a, b, c, d, e, f);
+}
 
 void Func_02000098(s32 id) {
   struct Actor *object = Actor_Get(id);

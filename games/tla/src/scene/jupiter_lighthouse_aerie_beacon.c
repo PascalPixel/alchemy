@@ -1,5 +1,5 @@
 /// @file
-/// The scene code of overlay 0x6a5 that its scene tables belong to, in ROM order; the rest of the overlay is in jupiter_lighthouse_aerie_beacon/.
+/// The scene code of overlay 0x6a5, in ROM order.
 
 #include "types.h"
 #include "event_inline.h"

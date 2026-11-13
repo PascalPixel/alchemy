@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x6ab, in ROM order.
+
 #include "types.h"
 #include "main_routine_work.h"
 #include "field_sprite.h"

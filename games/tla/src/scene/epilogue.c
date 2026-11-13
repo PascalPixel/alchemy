@@ -1,5 +1,5 @@
 /// @file
-/// Overlay 0x6b3's scene: its code and its tables, in ROM order.
+/// The scene code of overlay 0x6b3, in ROM order.
 
 #include "battle.h"
 #include "field.h"

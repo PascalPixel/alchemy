@@ -1,6 +1,5 @@
 /// @file
-/// Scene code of overlay 0x6a3, in ROM order, from s3b7c's offset up to the
-/// next object the overlay links.
+/// Scene code of overlay 0x6a3, in ROM order.
 
 #include "../shared/routines.h"
 #include "types.h"
@@ -96,7 +95,7 @@ void Func_02003b7c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "ram_buffer.h"
 #include "actor.h"
 #include "iwram_call.h"
-#include "jupiter_lighthouse_room_m.h"
+#include "../shared/jupiter_lighthouse_room_m.h"
 #include "scene_tables.h"
 #include "cell_target.h"
 

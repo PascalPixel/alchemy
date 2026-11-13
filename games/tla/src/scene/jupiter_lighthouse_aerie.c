@@ -1,5 +1,5 @@
 /// @file
-/// The scene code of overlay 0x6a4 that its scene tables belong to, in ROM order; the rest of the overlay is in jupiter_lighthouse_aerie/.
+/// The scene code of overlay 0x6a4, in ROM order.
 
 // ---- games/tla/src/scene/jupiter_lighthouse_aerie.c ----
 
@@ -17,7 +17,7 @@
 #include "event_inline.h"
 #include "actor.h"
 #include "main_routine_work.h"
-#include "jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
+#include "shared/jupiter_lighthouse_aerie.h"
 #include "event_work.h"
 #include "module/field/field.h"
 #include "module/scene/jupiter_lighthouse_aerie.h"

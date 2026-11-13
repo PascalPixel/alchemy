@@ -1,8 +1,8 @@
 /// @file
-/// Scene code of overlay 0x69c, in ROM order, from s1300's offset up to the next object the overlay links.
+/// Scene code of overlay 0x69c, in ROM order.
 
 #include "../shared/routines.h"
-#include "local.h"
+#include "../shared/jupiter_lighthouse_room_3.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"

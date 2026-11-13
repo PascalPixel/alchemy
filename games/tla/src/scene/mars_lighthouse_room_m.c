@@ -1,3 +1,6 @@
+/// @file
+/// The scene code of overlay 0x6ac, in ROM order.
+
 // ---- games/tla/src/scene/mars_lighthouse_room_m.c ----
 #include "shared/routines.h"
 #include "battle.h"
@@ -86,7 +89,7 @@ void Func_02000058(s32 id, s32 value) {
   Func_02003118(object, value);
 }
 
-#include "mars_lighthouse_room_m/mars_lighthouse_room_m.h"
+#include "shared/mars_lighthouse_room_m.h"
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -897,7 +900,7 @@ s32 Func_02001928(struct Actor *a, struct Actor *b) {
 }
 
 // ---- games/tla/src/scene/mars_lighthouse_room_m/s1988.c ----
-#include "mars_lighthouse_entrance/room.h"
+#include "shared/mars_lighthouse_entrance_room.h"
 #include "field/event_work.h"
 
 /* VIEW(s1988): tag struct RideSlot as struct RideSlot__s1988; mars_lighthouse_room_m.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:1088: structure has no member named `id'. */
@@ -946,7 +949,7 @@ void Func_02001b1c(struct MarsLighthouseRoomMVector *position, s32 value, s32 fl
 }
 
 // ---- games/tla/src/scene/mars_lighthouse_room_m/s1b64.c ----
-#include "../../../../games/tla/src/scene/mars_lighthouse_entrance/room.h"
+#include "shared/mars_lighthouse_entrance_room.h"
 
 /* VIEW(s1b64): tag struct RideSlot as struct RideSlot__s1b64; mars_lighthouse_room_m.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:1202: structure has no member named `id'. */
 struct RideSlot__s1b64 {

@@ -38,7 +38,22 @@ void *Scene_GetPlacements(void) {
   return gData_020010c0;
 }
 
-#include "mikasalla/local.h"
+#include "types.h"
+#include "ram_buffer.h"
+#include "actor.h"
+#include "main_routine_work.h"
+#include "scene_tables.h"
+#include "event_inline.h"
+
+extern u32 gSceneExits[];
+
+void Func_02000620(s32 a);
+void Event_Start(void);
+void Event_End(void);
+
+void Func_02000438(void);
+
+extern u8 MsgFieldAreYouLookingForSomeone[];
 #include "event_inline.h"
 
 /* VIEW(mikasalla): tag struct WarpEntry as struct WarpEntry__mikasalla; module/scene/scene.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mikasalla.c:67: invalid use of undefined type `struct WarpEntry'. */

@@ -1,5 +1,8 @@
+/// @file
+/// Scene code of overlay 0x692, in ROM order.
+
 #include "../shared/routines.h"
-#include "local.h"
+#include "../shared/magma_rock_inside.h"
 #include "io_reg.h"
 #include "call.h"
 #include "event_work.h"
@@ -281,7 +284,7 @@ s32 Func_02004ef0(s32 unused, s32 key, s32 value);
 DEFINE_FUNC_02002D08(Func_02003f44, Func_02004ed0, Func_02004d20, Func_02004df8,
     Func_02004ef0, Func_02004c98)
 
-#include "../trial_road/trial_road.h"
+#include "../shared/trial_road.h"
 
 DEFINE_FUNC_0200406C(Func_0200406c, Func_02004e38, Func_02004ef8, Func_02004c98,
     Func_020046e8, Func_020049c0, Func_0200481c)

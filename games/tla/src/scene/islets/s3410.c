@@ -1,5 +1,5 @@
 /// @file
-/// Scene code of overlay 0x674, in ROM order, from s3410's offset up to the next object the overlay links.
+/// Scene code of overlay 0x674, in ROM order.
 
 #include "../shared/routines.h"
 #include "types.h"
@@ -147,7 +147,7 @@ void Func_0200367c(void) {
 // layers there is filled with 255 (Func_02003790). Returns 1, or 0 for a shape
 // with no footprint. The twin of overlay 668's Func_020040ec.
 
-#include "islets.h"
+#include "../shared/islets.h"
 
 extern s8 gData_0200407c[][4];
 

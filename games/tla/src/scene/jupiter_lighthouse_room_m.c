@@ -1,5 +1,5 @@
 /// @file
-/// The scene code of overlay 0x6a3 that its scene tables belong to, in ROM order; the rest of the overlay is in jupiter_lighthouse_room_m/.
+/// The scene code of overlay 0x6a3, in ROM order.
 
 #include "shared/routines.h"
 #include "types.h"
@@ -15,7 +15,7 @@
 #include "main_routine_work.h"
 #include "field_event.h"
 #include "event_inline.h"
-#include "jupiter_lighthouse_room_m/jupiter_lighthouse_room_m.h"
+#include "shared/jupiter_lighthouse_room_m.h"
 #include "io_reg.h"
 #include "dma.h"
 #include "io_write.h"
@@ -1649,7 +1649,7 @@ s32 Scene_PrepareMap(void) {
 
 #include "shared/scene_set_arrival_flags.h"
 
-#include "jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
+#include "shared/jupiter_lighthouse_aerie.h"
 #include "iwram_call.h"
 
 extern s32 gData_02005a18;

@@ -1,5 +1,5 @@
 /// @file
-/// Scene code of overlay 0x668, in ROM order, from s44c4's offset up to the next object the overlay links.
+/// Scene code of overlay 0x668, in ROM order.
 
 #include "../shared/routines.h"
 #include "types.h"
@@ -153,4 +153,3 @@ DEFINE_FUNC_02004868(Func_02004868, Func_020048ec)
 #include "field_event.h"
 
 DEFINE_FUNC_02000128__S00A4(Func_020048ec, Func_02004c34, Func_02004a0c)
-

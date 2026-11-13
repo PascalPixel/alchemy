@@ -1,5 +1,5 @@
 /// @file
-/// Overlay 0x6b4's code after field/field_effect/advance_motion, in ROM order.
+/// Scene code of overlay 0x6b4, in ROM order.
 
 #include "types.h"
 #include "system.h"

@@ -1,5 +1,8 @@
+/// @file
+/// Scene code of overlay 0x697, in ROM order.
+
 #include "../shared/routines.h"
-#include "trial_road.h"
+#include "../shared/trial_road.h"
 #include "event_inline.h"
 #include "types.h"
 #include "ram_buffer.h"

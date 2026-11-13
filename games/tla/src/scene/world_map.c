@@ -1,5 +1,5 @@
 /// @file
-/// The scene code of overlay 0x64b that its scene tables belong to, in ROM order; the rest of the overlay is in world_map/.
+/// The scene code of overlay 0x64b, in ROM order.
 
 #include "shared/routines.h"
 #include "types.h"

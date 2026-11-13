@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x6ab, in ROM order.
+
 #include "../shared/routines.h"
 #include "event_work.h"
 #include "field.h"
@@ -33,7 +36,7 @@ DEFINE_FUNC_020013E4(Func_02003b74)
 /// one of the table's cells.
 DEFINE_FUNC_0200146C(Func_02003bfc, Func_02003b74)
 
-#include "../../../../games/tla/src/scene/jupiter_lighthouse_room_3/local.h"
+#include "../shared/jupiter_lighthouse_room_3.h"
 #include "io_reg.h"
 
 DEFINE_FUNC_02003BE8(Func_02003c6c, Func_02003b74)

@@ -1,5 +1,5 @@
 /// @file
-/// Scene code of overlay 0x671, in ROM order, from s2394's offset up to the next object the overlay links.
+/// Scene code of overlay 0x671, in ROM order.
 
 // ---- games/tla/src/scene/gabomba_statue/s2394.c ----
 

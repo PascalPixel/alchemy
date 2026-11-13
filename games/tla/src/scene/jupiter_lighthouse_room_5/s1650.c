@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x69e, in ROM order.
+
 #include "../shared/routines.h"
 #include "types.h"
 #include "system.h"

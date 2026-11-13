@@ -1,5 +1,8 @@
+/// @file
+/// Scene code of overlay 0x6ad, in ROM order.
+
 #include "../shared/routines.h"
-#include "room.h"
+#include "../shared/mars_lighthouse_room_f_room.h"
 #include "field.h"
 #include "module/scene/mars_lighthouse_star_room.h"
 

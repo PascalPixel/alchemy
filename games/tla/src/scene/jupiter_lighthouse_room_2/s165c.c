@@ -1,6 +1,5 @@
 /// @file
-/// Scene code of overlay 0x69b, in ROM order, from s165c's offset up to the
-/// next object the overlay links.
+/// Scene code of overlay 0x69b, in ROM order.
 
 #include "../shared/routines.h"
 #include "types.h"

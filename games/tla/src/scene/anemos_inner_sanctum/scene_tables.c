@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x6b0, in ROM order.
+
 #include "battle.h"
 #include "field.h"
 #include "game.h"

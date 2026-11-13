@@ -1,5 +1,5 @@
 /// @file
-/// Scene code of overlay 0x64b, in ROM order, from s3b38's offset up to the next object the overlay links, and the overlay's data.
+/// Scene code of overlay 0x64b, in ROM order.
 
 #include "../shared/routines.h"
 #include "types.h"

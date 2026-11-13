@@ -1,4 +1,7 @@
-#include "trial_road/trial_road.h"
+/// @file
+/// The scene code of overlay 0x697, in ROM order.
+
+#include "shared/trial_road.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"

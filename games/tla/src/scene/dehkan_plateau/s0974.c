@@ -1,5 +1,5 @@
 /// @file
-/// Scene code of overlay 0x655, in ROM order, from s0974's offset up to the next object the overlay links.
+/// Scene code of overlay 0x655, in ROM order.
 
 #include "types.h"
 #include "system.h"

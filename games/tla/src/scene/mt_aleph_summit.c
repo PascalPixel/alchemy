@@ -1,5 +1,5 @@
 /// @file
-/// Overlay 0x6b4's scene: its code between field/field_effect/move and field/field_effect/advance_motion, then its tables, in ROM order.
+/// The scene code of overlay 0x6b4, in ROM order.
 
 #include "shared/tables.h"
 #include "types.h"

@@ -1,6 +1,5 @@
 /// @file
-/// Scene code of overlay 0x6a4, in ROM order, from s1e78's offset up to the
-/// next object the overlay links.
+/// Scene code of overlay 0x6a4, in ROM order.
 
 #include "../shared/routines.h"
 #include "types.h"
@@ -97,7 +96,7 @@ void Func_02001e78(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 DEFINE_FUNC_02001250(Func_0200216c, gData_02003488, Func_02002040)
 
-#include "jupiter_lighthouse_aerie.h"
+#include "../shared/jupiter_lighthouse_aerie.h"
 #include "scene_tables.h"
 
 DEFINE_FUNC_020013E4(Func_020023b0)

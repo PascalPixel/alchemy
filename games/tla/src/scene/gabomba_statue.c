@@ -1,5 +1,5 @@
 /// @file
-/// The scene code of overlay 0x671 that its scene tables belong to, in ROM order; the rest of the overlay is in gabomba_statue/.
+/// The scene code of overlay 0x671, in ROM order.
 
 // ---- games/tla/src/scene/gabomba_statue.c ----
 
@@ -879,7 +879,7 @@ const u8 *Scene_GetEvents(void) {
   return table;
 }
 
-#include "gabomba_statue_chamber/gabomba_statue_chamber.h"
+#include "shared/gabomba_statue_chamber.h"
 
 void Func_020011bc(s32 x, s32 z) {
   struct GabombaStatueChamberEventWork *work = Ram_HeapSlots->eventWork;

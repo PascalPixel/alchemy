@@ -1,5 +1,5 @@
 /// @file
-/// Scene code of overlay 0x655, in ROM order, from s0bc0's offset up to the next object the overlay links.
+/// Scene code of overlay 0x655, in ROM order.
 
 #include "../shared/routines.h"
 #include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"

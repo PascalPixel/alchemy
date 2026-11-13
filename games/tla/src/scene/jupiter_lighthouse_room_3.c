@@ -1,8 +1,8 @@
 /// @file
-/// The scene code of overlay 0x69c that its scene tables belong to, in ROM order; the rest of the overlay is in jupiter_lighthouse_room_3/.
+/// The scene code of overlay 0x69c, in ROM order.
 
 #include "shared/routines.h"
-#include "jupiter_lighthouse_room_3/local.h"
+#include "shared/jupiter_lighthouse_room_3.h"
 #include "event_work.h"
 #include "field.h"
 
@@ -146,7 +146,7 @@ void Func_020003c4(void) { Func_02002400(); }
 
 #include "shared/scene_set_arrival_flags.h"
 
-#include "jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
+#include "shared/jupiter_lighthouse_aerie.h"
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"

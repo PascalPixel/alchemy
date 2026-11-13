@@ -1,3 +1,6 @@
+/// @file
+/// The scene code of overlay 0x6b5, in ROM order.
+
 // ---- games/tla/src/scene/lobby/lobby.c ----
 #include "battle.h"
 #include "field.h"

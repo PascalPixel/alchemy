@@ -1,5 +1,5 @@
 /// @file
-/// The scene code of overlay 0x64c that its scene tables belong to, in ROM order; the rest of the overlay is in staff_credit/.
+/// The scene code of overlay 0x64c, in ROM order.
 
 #include "shared/routines.h"
 #include "battle.h"
@@ -513,7 +513,7 @@ DEFINE_FUNC_02000038_58(Func_02000c9c)
 #define Func_02003654 Func_02000d10
 #define Func_02004e30 Sound_Play
 #define gData_02006c08 gData_02003dc0
-#include "world_map/s3600.c"
+#include "shared/world_map_s3600.h"
 
 /// The world map's placed objects (overlay 64b), shown and hidden as the view
 /// moves, under this overlay's names.
@@ -526,13 +526,13 @@ DEFINE_FUNC_02000038_58(Func_02000c9c)
 #define Func_02004b18 Func_02001fbc
 #define Func_02004b38 Func_02001fd4
 #define gData_02006bd4 gData_02003da8
-#include "world_map/s36a8.c"
+#include "shared/world_map_s36a8.h"
 
 /// The blend queue and the cell table reset the world map (overlay 64b) also
 /// has, under this overlay's names.
 #define Func_020038e4 Func_02000fa0
 #define Func_02003960 Func_0200101c
-#include "world_map/s3960.c"
+#include "shared/world_map_s3960.h"
 
 s32 Func_02001044(s32 x, s32 z) { return x / 0x100000 + (z / 0x100000) * 128; }
 
@@ -560,7 +560,7 @@ s32 Func_02001064(struct Actor *object) {
 #define Func_02003aac Func_02001168
 #define gData_02004f90 gData_02002e74
 #define gData_02004f9c gData_02002e80
-#include "world_map/s39f4.c"
+#include "shared/world_map_s39f4.h"
 
 DEFINE_FUNC_020011F4(Func_020011f4, Func_020010b0)
 

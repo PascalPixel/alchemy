@@ -1,5 +1,5 @@
 /// @file
-/// The scene code of overlay 0x668 that its scene tables belong to, in ROM order; the rest of the overlay is in eastern_alhafra/.
+/// The scene code of overlay 0x668, in ROM order.
 
 // ---- games/tla/src/scene/eastern_alhafra.c ----
 

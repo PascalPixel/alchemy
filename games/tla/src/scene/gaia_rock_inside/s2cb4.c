@@ -1,6 +1,5 @@
 /// @file
-/// Scene code of overlay 0x681, in ROM order, from s2cb4's offset up to the
-/// next object the overlay links.
+/// Scene code of overlay 0x681, in ROM order.
 
 #include "types.h"
 #include "system.h"

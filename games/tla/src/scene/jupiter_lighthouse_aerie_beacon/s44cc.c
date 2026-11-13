@@ -1,5 +1,5 @@
 /// @file
-/// Scene code of overlay 0x6a5, in ROM order, from s44cc's offset up to the next object the overlay links.
+/// Scene code of overlay 0x6a5, in ROM order.
 
 #include "../shared/routines.h"
 #include "types.h"

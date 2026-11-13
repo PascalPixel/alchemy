@@ -1,5 +1,5 @@
 /// @file
-/// Overlay 0x65e's scene: its code, then its tables, in the order the ROM has them.
+/// The scene code of overlay 0x65e, in ROM order.
 
 #include "shared/tables.h"
 #include "battle.h"

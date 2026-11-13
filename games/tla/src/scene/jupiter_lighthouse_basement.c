@@ -1,3 +1,6 @@
+/// @file
+/// The scene code of overlay 0x699, in ROM order.
+
 #include "shared/routines.h"
 #include "battle.h"
 #include "field.h"
@@ -204,7 +207,7 @@ s32 Scene_PrepareMap(void) {
 
 #include "shared/scene_set_arrival_flags.h"
 
-#include "jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
+#include "shared/jupiter_lighthouse_aerie.h"
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"

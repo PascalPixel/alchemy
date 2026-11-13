@@ -1,6 +1,5 @@
 /// @file
-/// Scene code of overlay 0x69b, in ROM order, from s0d94's offset up to the
-/// next object the overlay links.
+/// Scene code of overlay 0x69b, in ROM order.
 
 #include "../shared/routines.h"
 #include "types.h"
@@ -14,7 +13,7 @@
 #include "event_inline.h"
 #include "call.h"
 #include "field_effect.h"
-#include "../jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
+#include "../shared/jupiter_lighthouse_aerie.h"
 #include "field_coordinate.h"
 #include "map.h"
 #include "field_event.h"

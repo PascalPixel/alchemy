@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x6aa, in ROM order.
+
 #include "../shared/routines.h"
 #include "types.h"
 #include "actor.h"
@@ -26,7 +29,7 @@ void Func_02002270(void) {
   animation->flag11 = 1;
 }
 
-#include "ride.h"
+#include "../shared/mars_lighthouse_entrance_ride.h"
 
 void Func_020022c4(void) {
   struct RideWork *work = RIDE_WORK;

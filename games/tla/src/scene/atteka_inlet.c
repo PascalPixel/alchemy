@@ -1,3 +1,6 @@
+/// @file
+/// The scene code of overlay 0x693, in ROM order.
+
 #include "shared/tables.h"
 #include "battle.h"
 #include "field.h"

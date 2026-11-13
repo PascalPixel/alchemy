@@ -1,6 +1,5 @@
 /// @file
-/// The scene code of overlay 0x6a0 that its scene tables belong to, in ROM
-/// order; the rest of the overlay is in jupiter_lighthouse_room_7/.
+/// The scene code of overlay 0x6a0, in ROM order.
 
 #include "shared/routines.h"
 #include "types.h"
@@ -43,7 +42,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-#include "jupiter_lighthouse_room_7/jupiter_lighthouse_room_7.h"
+#include "shared/jupiter_lighthouse_room_7.h"
 #include "main_routine_work.h"
 #include "call.h"
 
@@ -668,7 +667,7 @@ s32 Scene_PrepareMap(void) {
 
 #include "shared/scene_set_arrival_flags.h"
 
-#include "jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
+#include "shared/jupiter_lighthouse_aerie.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "field_event.h"

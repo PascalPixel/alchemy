@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x6ad, in ROM order.
+
 // ---- games/tla/src/scene/mars_lighthouse_room_f/flash.c ----
 #include "../shared/routines.h"
 #include "types.h"
@@ -220,7 +223,7 @@ void Func_02002b88(void) {
     Func_0200297c();
 }
 
-#include "room.h"
+#include "../shared/mars_lighthouse_room_f_room.h"
 #include "event_work.h"
 
 void ScreenTransition_Start(s32 mode, s32 frames);

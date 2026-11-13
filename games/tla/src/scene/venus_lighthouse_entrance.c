@@ -1,5 +1,5 @@
 /// @file
-/// The scene code of overlay 0x64d that its scene tables belong to, in ROM order; the rest of the overlay is in venus_lighthouse_entrance/.
+/// The scene code of overlay 0x64d, in ROM order.
 
 // ---- games/tla/src/scene/venus_lighthouse_entrance.c ----
 

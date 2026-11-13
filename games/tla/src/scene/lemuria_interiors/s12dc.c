@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x68c, in ROM order.
+
 #include "../shared/routines.h"
 #include "types.h"
 #include "field_event.h"

@@ -1,10 +1,10 @@
 /// @file
-/// Scene code of overlay 0x670, in ROM order, from s0038's offset up to the next object the overlay links.
+/// The scene code of overlay 0x670, in ROM order.
 
 // ---- games/tla/src/scene/kibombo/s0038.c ----
 
 #include "shared/routines.h"
-#include "kibombo/kibombo.h"
+#include "shared/kibombo.h"
 #include "event_work.h"
 #include "gamepak/far_call/system.h"
 #include "module/field/event_commands.h"

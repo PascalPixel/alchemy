@@ -1,4 +1,7 @@
-#include "islets.h"
+/// @file
+/// Scene code of overlay 0x674, in ROM order.
+
+#include "../shared/islets.h"
 #include "event_inline.h"
 
 void Func_02003d0c(struct Actor *object) {

@@ -1,3 +1,6 @@
+/// @file
+/// The scene code of overlay 0x6ab, in ROM order.
+
 // ---- games/tla/src/scene/mars_lighthouse_star_room.c ----
 #include "shared/routines.h"
 #include "types.h"
@@ -83,7 +86,7 @@ void Func_02000074(void) { Func_020014f4(); }
 
 void Func_0200007c(void) {}
 
-#include "mars_lighthouse_star_room/mars_lighthouse_star_room.h"
+#include "shared/mars_lighthouse_star_room.h"
 #include "iwram_call.h"
 
 extern const u8 gData_02004474[];
@@ -1141,7 +1144,7 @@ s32 Func_0200158c(struct Actor *a, struct Actor *b) {
   return 0;
 }
 
-#include "mars_lighthouse_entrance/room.h"
+#include "shared/mars_lighthouse_entrance_room.h"
 #include "field/event_work.h"
 
 /* VIEW(s1424): tag struct RideSlot as struct RideSlot__s1424; mars_lighthouse_star_room.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:1223: structure has no member named `id'. */
@@ -1192,7 +1195,7 @@ void Func_02001780(s32 *position, s32 speed, s32 flag) {
   }
 }
 
-#include "../../../../games/tla/src/scene/mars_lighthouse_entrance/room.h"
+#include "shared/mars_lighthouse_entrance_room.h"
 
 /* VIEW(spawn): tag struct RideSlot as struct RideSlot__spawn; mars_lighthouse_star_room.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:1340: structure has no member named `id'. */
 struct RideSlot__spawn {

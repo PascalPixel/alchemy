@@ -1,3 +1,6 @@
+/// @file
+/// The scene code of overlay 0x698, in ROM order.
+
 #include "shared/routines.h"
 #include "battle.h"
 #include "field.h"
@@ -104,7 +107,7 @@ extern s32 gData_02002198;
 
 void Func_0200022c(s32 a0) { gData_02002198 = a0; }
 
-#include "jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
+#include "shared/jupiter_lighthouse_aerie.h"
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"

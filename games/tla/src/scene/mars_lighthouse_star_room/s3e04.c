@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x6ab, in ROM order.
+
 #include "../shared/tables.h"
 #include "../shared/routines.h"
 #include "types.h"

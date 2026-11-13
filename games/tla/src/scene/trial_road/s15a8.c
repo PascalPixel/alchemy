@@ -1,6 +1,9 @@
+/// @file
+/// Scene code of overlay 0x697, in ROM order.
+
 // ---- games/tla/src/scene/trial_road/s15a8.c ----
 #include "../shared/routines.h"
-#include "trial_road.h"
+#include "../shared/trial_road.h"
 #include "event_inline.h"
 #include "event_work.h"
 #include "heap_release.h"
@@ -2139,7 +2142,7 @@ void TrialRoad_WaitForBalanceState(void) {
 // ---- games/tla/src/scene/trial_road/s4ddc.c ----
 // The Trial Road rival's per-frame update.
 
-#include "../../../../games/tla/src/scene/trial_road/trial_road.h"
+#include "../shared/trial_road.h"
 
 /// Updates the Trial Road rival by the scene state's mode: 4 follows the
 /// leader's position mirrored across the course; 3 places the rival and its

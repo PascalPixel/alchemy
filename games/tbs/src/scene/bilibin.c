@@ -508,8 +508,8 @@ static void Bilibin_OpenDoorAndLeave(void) {
     Sound_Play(SE_DOOR_OPEN);
   }
   // Each door has its cell and the steps that draw it opening.
-  column = gBilibin_DoorCells[exitIndex].column;
-  row = gBilibin_DoorCells[exitIndex].row;
+  column = gBilibin_DoorCells[exitIndex][0];
+  row = gBilibin_DoorCells[exitIndex][1];
   MapGrid_PlayMapEdit(gBilibin_DoorSteps[exitIndex], column, row);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
@@ -907,9 +907,9 @@ static void Bilibin_UpdateCratesCells(void) {
   cratesColumn = FIELD_CELL(actor->x.fixed);
   cratesRow = FIELD_CELL(actor->z.fixed);
 
-  for (i = 0; i < 10; i++) {
-    MapGrid_CopyCellAttributes(1, 0, 1, 1, gBilibin_CratesLaneCells[i][0],
-                               gBilibin_CratesLaneCells[i][1]);
+  for (i = 0; i < 2 * 10; i += 2) {
+    MapGrid_CopyCellAttributes(1, 0, 1, 1, gBilibin_CratesLaneCells[i],
+                               gBilibin_CratesLaneCells[i + 1]);
   }
 
   MapGrid_CopyCellAttributes(0, 0, 1, 1, cratesColumn, cratesRow);
@@ -1375,15 +1375,15 @@ u16 *gBilibin_DoorSteps[] = {
 };
 
 /// Each door's cell, in the order of gBilibin_DoorSteps.
-struct BilibinDoorCell gBilibin_DoorCells[] = {
+s16 gBilibin_DoorCells[][2] = {
     {54, 20}, {43, 18}, {37, 19}, {41, 11}, {35, 11}, {49, 9}, {55, 6},
 };
 
 /// The ten cells of the crates' lane at the Bilibin Barricade, as column and
 /// row.
-u8 gBilibin_CratesLaneCells[][2] = {
-    {8, 18}, {9, 18}, {10, 18}, {8, 19}, {9, 19},
-    {10, 19}, {11, 19}, {9, 20}, {10, 20}, {11, 20},
+u8 gBilibin_CratesLaneCells[] = {
+    8,  18, 9,  18, 10, 18, 8,  19, 9,  19,
+    10, 19, 11, 19, 9,  20, 10, 20, 11, 20,
 };
 // clang-format on
 

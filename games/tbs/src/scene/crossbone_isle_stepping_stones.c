@@ -464,6 +464,10 @@ static s32 CrossboneIsleSteppingStones_LowerActorToLedge(s32 id, s32 far) {
       }
       temporaryActor = Actor_PrepareFixed(x, y, z, kind);
       height = actor->z.fixed - z + y;
+      /* FAKEMATCH(dead): an empty once-only loop ends the block before found is
+       * set; without it, 2 of 117 instructions differ in tbs-en. */
+      do {
+      } while (0);
       found = 1;
       break;
     }
@@ -1068,9 +1072,11 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
     if (*flags & 1) {
       if (MapGrid_GetCellBehaviorAt(2, actor->x.fixed, actor->z.fixed) == 50) {
         Sound_Play(SE_STONE_GRIND);
-        actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+        /* FAKEMATCH(temporary): the priority flags changed as a plain byte; as
+         * the field, 100 of 265 instructions differ in tbs-en. */
+        *(u8 *)&actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
         CrossboneIsleSteppingStones_LowerActorToLedge(id, 1);
-        actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+        *(u8 *)&actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       } else if (MapGrid_GetCellBehaviorAt(2, actor->x.fixed, actor->z.fixed) ==
                  51) {
         CrossboneIsleSteppingStones_StopAtGroundOrHeight(actor, 0);
@@ -1097,8 +1103,11 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
       CrossboneIsleSteppingStones_SetCellAttributes(
           0, FIELD_CELL(actor->x.fixed), FIELD_CELL(actor->z.fixed), &cell);
       cell.bits.highFlags = sPillarSlots[i].cell.bits.highFlags;
+      /* FAKEMATCH(temporary): x and z read as plain words outside their unions;
+       * as actor->x.fixed and z.fixed, a load moves. */
       CrossboneIsleSteppingStones_SetCellAttributes(
-          2, FIELD_CELL(actor->x.fixed), FIELD_CELL(actor->z.fixed), &cell);
+          2, FIELD_CELL(*(s32 *)&actor->x), FIELD_CELL(*(s32 *)&actor->z),
+          &cell);
     }
     sPillarSlots[i].x = FIELD_CELL(actor->x.fixed);
     sPillarSlots[i].y = FIELD_CELL(actor->y.fixed);

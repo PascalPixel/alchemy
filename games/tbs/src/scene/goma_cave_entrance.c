@@ -601,7 +601,12 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   Actor_SetDestination(stumpId, 139, 196);
   Actor_WaitForMoveById(stumpId);
   Actor_WaitBelowHeight(stump, px(32));
+  // UB: the update routine is cleared as a word.
+#ifdef UBFIX
   stump->update = NULL;
+#else
+  *(u32 *)&stump->update = 0;
+#endif
   stump->sprite->rotation = TRIG_TURN / 16;
   params.type = SPRITE_SPLASH;
   params.startScaleX = Q16_ONE / 2;

@@ -3255,7 +3255,11 @@ LogRoomsA_SnapToNearestStop(struct LogRoomsAStop *node, s16 *requestedFacing) {
     angleDifference = (s16)(connectionFacing - *requestedFacing);
     if (angleDifference < 0)
       angleDifference = -angleDifference;
-    if (connection->stopIndex != 0xff && angleDifference < nearestDifference) {
+    /* FAKEMATCH(volatile): the stop is tested through a volatile read, so it is
+     * read again when kept; as a plain test, 9 of 49 instructions differ in
+     * tbs-en. */
+    if (*(volatile u8 *)&connection->stopIndex != 0xff &&
+        angleDifference < nearestDifference) {
       nearestDifference = angleDifference;
       stopIndex = connection->stopIndex;
       chosenFacing = (s16)connectionFacing;
@@ -3337,29 +3341,6 @@ static void LogRoomsA_MoveActorToStop(struct Actor *actor,
                                 (stop->gridZ << 19) + px(632));
 }
 
-/// Moves a suspect on to the stop his facing leads to, or back the way he
-/// came when someone stands there; with both taken he shakes his head.
-/// Returns nonzero when he is blocked.
-static inline s32 LogRoomsA_MoveSuspect(s32 actorId, struct Actor *actor,
-                                        struct LogRoomsAStop *entry,
-                                        s16 facing) {
-  struct LogRoomsAStop *destination;
-
-  destination = LogRoomsA_SnapToNearestStop(entry, &facing);
-  if (LogRoomsA_CheckStopOccupancy(destination) != 0) {
-    facing = actor->facing + TRIG_TURN / 2;
-    destination = LogRoomsA_SnapToNearestStop(entry, &facing);
-    if (LogRoomsA_CheckStopOccupancy(destination) != 0) {
-      Actor_SelectAnimation(actor, ANIM_SHAKE_HEAD);
-      return 1;
-    }
-    Actor_SetAttachedEffect(actorId, ATTACHED_EFFECT_ONCE);
-  }
-  LogRoomsA_MoveActorToStop(actor, destination);
-  Actor_SelectAnimation(actor, ANIM_WALK);
-  return 0;
-}
-
 /// Steers Ivan and both suspects through the graph and detects a sustained
 /// cornering.
 ///
@@ -3378,7 +3359,6 @@ static void LogRoomsA_UpdateActorStops(void) {
   s32 dx;
   s32 dz;
   s32 blocked;
-  s32 turn;
   u16 angle;
   s16 facing;
   s16 facingDifference;
@@ -3398,13 +3378,19 @@ static void LogRoomsA_UpdateActorStops(void) {
     angle = ArcTan2(dz, dx);
     dx >>= 16;
     dz >>= 16;
-    facingDifference = (u16)facing - angle;
-    if (!(work->blockedSteps > 0 && dx * dx + dz * dz <= 400 &&
-          facingDifference > -FACING_STEP && facingDifference < FACING_STEP)
+    if (work->blockedSteps > 0 && dx * dx + dz * dz <= 400 &&
+        (facingDifference = (u16)facing - angle) > -FACING_STEP &&
+        facingDifference < FACING_STEP) {
+      // Pushed toward from close by, he takes the leader's way.
+      /* FAKEMATCH(dead): a dead store keeps this branch through jump
+       * optimization; as an empty branch, 1 of 269 instructions differ in
+       * tbs-en. */
+      facingDifference = 0;
 #if TBS_PATCH_1
-        && dx * dx + dz * dz > 64
+    } else if (dx * dx + dz * dz > 64) {
+#else
+    } else {
 #endif
-    ) {
       facing = actor->facing;
     }
     destination = LogRoomsA_SnapToNearestStop(entry, &facing);
@@ -3417,25 +3403,57 @@ static void LogRoomsA_UpdateActorStops(void) {
   }
 
   // Each suspect tries a random turn of three sixteenths, the leader to
-  // either side and the thief to either side or straight on.
+  // either side and the thief to either side or straight on, worked in 16.16
+  // turns. Where someone stands he turns back, and with both ways taken he
+  // shakes his head.
   actor = Actor_Lookup(ACTOR_SUSPECTED_LEADER);
   entry = LogRoomsA_FindStopAtPosition(&actor->x.fixed);
   if (entry != NULL && actor->targetX == ACTOR_NO_TARGET) {
-    turn = (u32)Import_RandomNext() * 2 >> 16;
-    if (LogRoomsA_MoveSuspect(ACTOR_SUSPECTED_LEADER, actor, entry,
-                              actor->facing +
-                                  (turn * 2 - 1) * (TRIG_TURN * 3 / 16))) {
+    u32 turn = (u32)Import_RandomNext() * 2 >> 16;
+    s32 currentFacing;
+
+    turn *= TRIG_TURN * 6 / 16 << 16;
+    currentFacing = actor->facing;
+    facing = ((turn - (TRIG_TURN * 3 / 16 << 16)) >> 16) + currentFacing;
+    destination = LogRoomsA_SnapToNearestStop(entry, &facing);
+    if (LogRoomsA_CheckStopOccupancy(destination) != 0) {
+      facing = actor->facing + TRIG_TURN / 2;
+      destination = LogRoomsA_SnapToNearestStop(entry, &facing);
+      if (LogRoomsA_CheckStopOccupancy(destination) == 0) {
+        Actor_SetAttachedEffect(ACTOR_SUSPECTED_LEADER, ATTACHED_EFFECT_ONCE);
+        goto leaderMoves;
+      }
+      Actor_SelectAnimation(actor, ANIM_SHAKE_HEAD);
       blocked = 1;
+    } else {
+    leaderMoves:
+      LogRoomsA_MoveActorToStop(actor, destination);
+      Actor_SelectAnimation(actor, ANIM_WALK);
     }
   }
   actor = Actor_Lookup(ACTOR_SUSPECTED_THIEF);
   entry = LogRoomsA_FindStopAtPosition(&actor->x.fixed);
   if (entry != NULL && actor->targetX == ACTOR_NO_TARGET) {
-    turn = (u32)Import_RandomNext() * 3 >> 16;
-    if (LogRoomsA_MoveSuspect(ACTOR_SUSPECTED_THIEF, actor, entry,
-                              actor->facing +
-                                  (turn - 1) * (TRIG_TURN * 3 / 16))) {
+    u32 turn = (u32)Import_RandomNext() * 3 >> 16;
+    s32 currentFacing;
+
+    turn *= TRIG_TURN * 3 / 16 << 16;
+    currentFacing = actor->facing;
+    facing = ((turn - (TRIG_TURN * 3 / 16 << 16)) >> 16) + currentFacing;
+    destination = LogRoomsA_SnapToNearestStop(entry, &facing);
+    if (LogRoomsA_CheckStopOccupancy(destination) != 0) {
+      facing = actor->facing + TRIG_TURN / 2;
+      destination = LogRoomsA_SnapToNearestStop(entry, &facing);
+      if (LogRoomsA_CheckStopOccupancy(destination) == 0) {
+        Actor_SetAttachedEffect(ACTOR_SUSPECTED_THIEF, ATTACHED_EFFECT_ONCE);
+        goto thiefMoves;
+      }
+      Actor_SelectAnimation(actor, ANIM_SHAKE_HEAD);
       blocked += 2;
+    } else {
+    thiefMoves:
+      LogRoomsA_MoveActorToStop(actor, destination);
+      Actor_SelectAnimation(actor, ANIM_WALK);
     }
   }
 

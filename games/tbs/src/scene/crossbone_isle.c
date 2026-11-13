@@ -689,8 +689,11 @@ static void CrossboneIsle_GrowThirdPlant(s32 actorId) {
 
 /// Growth on Crossbone Isle's fourth plant, which opens two cells.
 static void CrossboneIsle_GrowFourthPlant(s32 actorId) {
+  s32 eastX = px(752);
+  s32 eastZ = px(320);
+
   CrossboneIsle_GrowPlant(actorId, 3, 144, 320);
-  MapGrid_SetCellBehaviorAt(0, px(752), px(320), CELL_BEHAVIOR_CLIMB);
+  MapGrid_SetCellBehaviorAt(0, eastX, eastZ, CELL_BEHAVIOR_CLIMB);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 3);
 }
 

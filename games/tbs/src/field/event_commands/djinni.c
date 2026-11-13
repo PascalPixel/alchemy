@@ -202,29 +202,29 @@ void Djinn_RestoreActorAfterBattle(void) {
         gMainRoutineWork.sequenceResult > 0) {
       for (id = ACTOR_FIRST_PLACED; id <= ACTOR_LAST_ID; id++) {
         struct ActorPlacement *desc = Scene_FindActorPlacement(id);
-        struct Actor *object;
+        struct Actor *actor;
 
         if (desc == NULL || desc->condition - FLAG_DJINN_FIRST !=
                                 event - DJINNI_BATTLE_EVENT_FIRST)
           continue;
-        object = Actor_Lookup(id);
-        if (object == NULL)
+        actor = Actor_Lookup(id);
+        if (actor == NULL)
           continue;
         // Without DJINN_NO_HOP, back at its placement's position in a new
         // actor's ground state: no ground height yet, following the ground and
         // falling.
         if (flags == 0) {
-          object->groundHeight = flags;
-          object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-          Actor_SetPositionAndResetMotionFar(object, desc->x, desc->y, desc->z);
+          actor->groundHeight = flags;
+          actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+          Actor_SetPositionAndResetMotionFar(actor, desc->x, desc->y, desc->z);
         } else {
           struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
 
-          Actor_SetPositionAndResetMotionFar(object, leader->x.fixed,
+          Actor_SetPositionAndResetMotionFar(actor, leader->x.fixed,
                                              leader->y.fixed,
                                              leader->z.fixed - px(32));
         }
-        Actor_SelectAnimationFar(object, ANIM_STAND);
+        Actor_SelectAnimationFar(actor, ANIM_STAND);
       }
     }
   }

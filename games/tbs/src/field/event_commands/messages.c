@@ -340,7 +340,7 @@ void Event_ShowSpeakerMessage(s32 speaker) {
   // BUG: the native lookup discards its result and leaves pos unset.
 #ifdef UBFIX
   s32 pos[3];
-  struct Actor *object;
+  struct Actor *actor;
 #else
   struct {
     s32 x, y;
@@ -354,9 +354,9 @@ void Event_ShowSpeakerMessage(s32 speaker) {
   // Actor_Lookup's legacy range also exposes the event fields after
   // them.
   if ((u32)speaker < sizeof(state->actors) / sizeof(state->actors[0]))
-    object = Actor_Lookup(speaker);
+    actor = Actor_Lookup(speaker);
   else
-    object = NULL;
+    actor = NULL;
 #else
   Actor_Lookup(speaker);
 #endif
@@ -368,11 +368,11 @@ void Event_ShowSpeakerMessage(s32 speaker) {
     // Supply the actual speaker position as FieldMessage_ShowAtActor does.
     // A missing actor or failed projection has no position to open
     // around; still consume the message, as the fast-forward path does.
-    if (object != NULL) {
+    if (actor != NULL) {
       if (state->mode == ACTOR_SYSTEM_WORLD_MAP)
         positionFound =
             Transform_ProjectPoint(
-                (const u8 *)object + offsetof(struct Actor, x), pos) != 0;
+                (const u8 *)actor + offsetof(struct Actor, x), pos) != 0;
       else
         positionFound = Actor_GetScreenPosition(speaker, pos) != -1;
     }

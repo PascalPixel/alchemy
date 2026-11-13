@@ -276,20 +276,20 @@ void Actor_WaitForMoveById(u32 actorId) {
 /// Import_ActorSetPosition (ACTOR_POSITION_SET,
 /// Actor_SetPosition); Actor_LaunchFromLeader calls it too.
 void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 groundHeight;
   s32 tileX;
   s32 tileZ;
   s32 terrainId;
 
-  object = Actor_Lookup(actorId);
-  if (object != NULL) {
-    Actor_StartIdleFar(object);
-    SET_VELOCITY(object, 0, 0, 0);
-    object->targetY = ACTOR_NO_TARGET;
-    object->targetX = ACTOR_NO_TARGET;
-    object->x.fixed = x;
-    object->z.fixed = z;
+  actor = Actor_Lookup(actorId);
+  if (actor != NULL) {
+    Actor_StartIdleFar(actor);
+    SET_VELOCITY(actor, 0, 0, 0);
+    actor->targetY = ACTOR_NO_TARGET;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->x.fixed = x;
+    actor->z.fixed = z;
     // Swap the old ground's height for the new one, so the actor's
     // height above the ground is kept. The coordinates are whole pixels,
     // rounded toward zero. MapGrid_GetTerrainHeight takes 16.16 coordinates and
@@ -299,8 +299,8 @@ void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z) {
     // from 0, for the rest of this frame; before it is drawn,
     // Actor_UpdateAllThumb's ground following adds the new ground's height,
     // so one standing on the ground lands on it there.
-    if (1 & object->motionFlags) {
-      terrainId = object->layer;
+    if (1 & actor->motionFlags) {
+      terrainId = actor->layer;
       tileX = x;
       if (tileX < 0) {
         tileX += 0xFFFF;
@@ -312,8 +312,8 @@ void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z) {
       }
       tileZ >>= 16;
       groundHeight = px(MapGrid_GetTerrainHeightFar(terrainId, tileX, tileZ));
-      object->y.fixed = (object->y.fixed - object->groundHeight) + groundHeight;
-      object->groundHeight = groundHeight;
+      actor->y.fixed = (actor->y.fixed - actor->groundHeight) + groundHeight;
+      actor->groundHeight = groundHeight;
     }
   }
 }

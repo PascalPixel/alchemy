@@ -143,12 +143,6 @@ DEFINE_FUNC_02003F48(Func_02004a5c)
 // ---- games/tla/src/scene/magma_rock_inside/s4b18.c ----
 #include "system/task.h"
 
-static __inline__ void StartTask(void (*func)(void), s32 priority) {
-  /* FAKEMATCH(wrapper): Task_Add forwarded inline; as a direct call, 6 of 83
-   * instructions differ in tla-en. */
-  Task_Add(func, priority);
-}
-
 void Func_02004b18(void) {
   struct RockWork *work = HeapSlot_AllocFar(220, sizeof(struct RockWork));
   s32 entry;
@@ -177,7 +171,7 @@ void Func_02004b18(void) {
 
     work->next = zero;
   }
-  StartTask(Func_020049d8, 0x480);
+  FieldTask_AddFrame(Func_020049d8, 0x480);
 }
 
 void Func_02004bd4(void) {

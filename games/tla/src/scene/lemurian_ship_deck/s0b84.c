@@ -26,14 +26,6 @@
 void Func_020001cc(void);
 void Func_020006e4(void);
 
-static __inline__ void AddTask(void (*func)(void), s32 priority) {
-  /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
-   * scene layer, so the arguments are set up in their own order and each call
-   * keeps its constants; as a direct call, the costly constant is built first
-   * or shared, 22 of 34 instructions of Func_02000b84 differ in tla-en. */
-  Task_Add(func, priority);
-}
-
 /// The scene run from entrance 10: the crew takes its places on deck and the
 /// leader is asked to take the tiller; it ends by setting flag 0x8de.
 void Func_020002cc(void) {
@@ -283,8 +275,8 @@ void Func_020006e4(void) {
 
 void Func_02000b84(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
-  AddTask(Func_02000188, 0x480);
-  AddTask(Func_020001cc, 0x480);
+  FieldTask_AddFrame(Func_02000188, 0x480);
+  FieldTask_AddFrame(Func_020001cc, 0x480);
   if (gMainRoutineWork.entrance == 10)
     Func_020002cc();
   if (gMainRoutineWork.entrance == 20)
@@ -319,15 +311,11 @@ s32 Scene_Initialize(void) {
     Actor_Get(party->currentOwner)->priorityFlags |= 0x20;
     Actor_SetAnimation(8, 1);
     Func_020020c4(gData_020020dc);
-    /* FAKEMATCH(wrapper): the call forwarded through AddTask above, as in ☀️'s
-     * scene layer, so the arguments are set up in their own order and each
-     * call keeps its constants; as direct calls, the costly constant is built
-     * first or shared, 18 of 62 instructions differ in tla-en. */
-    AddTask(Func_02000188, 0x480);
+    FieldTask_AddFrame(Func_02000188, 0x480);
     if (party->entrance == 99)
       Func_02000210();
     else
-      AddTask(Func_020001cc, 0x480);
+      FieldTask_AddFrame(Func_020001cc, 0x480);
   }
   return 0;
 }

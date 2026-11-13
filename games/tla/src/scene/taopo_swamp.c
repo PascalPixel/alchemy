@@ -123,12 +123,6 @@ void Func_02000c24(void);
 void Func_02000ca0(void);
 void Func_02000cec(void);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ s32 GameFlag_GetByte_(s32 flag) {
-  return GameFlag_GetByte(flag);
-}
-
 // DEFINE_ macros in shared/routines.h call it by this name.
 static __inline__ void Func_02002840_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
@@ -990,7 +984,7 @@ s32 Func_02001564(struct Actor *object) {
     object->y = object->terrainHeight;
     object->velocityY = 0;
     if (Event_GetFlag(0x104) == 0) {
-      count = GameFlag_GetByte_(0x230);
+      count = FieldGameFlag_GetByte(0x230);
       if (count <= 3) {
         count++;
         GameFlag_SetByte(0x230, count);

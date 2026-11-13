@@ -136,12 +136,6 @@ void Actor_MoveToObject(s32 actor, s32 target);
 #define LEMURIAN_SHIP_TASK_ADD(func, priority)                                 \
   Task_Add((func), (priority))
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static inline void LemurianShip_TaskAdd(void (*func)(void), s32 priority) {
-  Task_Add(func, priority);
-}
-
 void Map_CenterOnFollowedPoint(void);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void Func_02002dd0(const void *script);
@@ -1417,7 +1411,7 @@ void Func_02002498(void) {
     Func_0200245c(15);
   }
   Func_02002db8(gData_02003034);
-  LemurianShip_TaskAdd(Func_0200143c, 0x480);
+  FieldTask_AddFrame(Func_0200143c, 0x480);
   if (Event_GetFlag(0x228)) {
     Func_02001944(9, 16);
     Event_ClearFlag(0x228);
@@ -1542,7 +1536,7 @@ void Func_02002970(void) {
   }
   wait(1);
   Func_02002db8(gData_02003014);
-  LemurianShip_TaskAdd(Func_02001464, 0x480);
+  FieldTask_AddFrame(Func_02001464, 0x480);
   if (!Event_GetFlag(0x210))
     Actor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(10)),
                            15);

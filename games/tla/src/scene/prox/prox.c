@@ -2008,12 +2008,6 @@ struct RockSprite__s4254 {
 void Func_02004604(struct RockSprite__s4254 *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 
-static __inline__ void StartTask(void (*func)(void), s32 priority) {
-  /* FAKEMATCH(wrapper): Task_Add forwarded inline; as a direct call, 6 of 83
-   * instructions differ in tla-en. */
-  Task_Add(func, priority);
-}
-
 void Func_02004254(void) {
   struct RockWork *work = HeapSlot_AllocFar(220, sizeof(struct RockWork));
   s32 entry;
@@ -2042,7 +2036,7 @@ void Func_02004254(void) {
 
     work->next = zero;
   }
-  StartTask(Func_02004114, 0x480);
+  FieldTask_AddFrame(Func_02004114, 0x480);
 }
 
 struct SparkWork {

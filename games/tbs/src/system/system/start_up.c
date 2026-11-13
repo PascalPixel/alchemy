@@ -177,9 +177,8 @@ UNUSED void Code_ResolveLongBranches(u16 *entries, s32 byteLength) {
 #endif
   if (entryIndex < entryCount) {
     u32 nextMarkerMask = 0xf800;
-    u32 currentMarkerMask;
     u32 payloadMask = 0x7ff;
-    currentMarkerMask = 0xf000;
+    u32 currentMarkerMask = 0xf000;
 #ifndef UBFIX
     // UB: temporarily forms a pointer before the start of the code block.
     entries -= 2;

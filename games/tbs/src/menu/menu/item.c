@@ -905,40 +905,46 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
 void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {
   struct WindowSprite **firstIcons;
   s32 firstSlot;
-  s32 firstY;
   struct WindowSprite **secondIcons;
   s32 secondSlot;
-  s32 secondY;
   struct WindowSprite **remainingIcons;
   s32 remainingSlot;
-  s32 remainingY;
 
   firstSlot = 0;
-  firstY = 168;
-  firstIcons = &menu->entryIcons[0];
-  do {
-    *firstIcons++ = WindowSprite_CreateFromResourceFar(
-        ICON_KIND_ITEM, firstSlot, window, 248, firstY);
-    firstSlot++;
-  } while (firstSlot <= 7);
+  {
+    s32 y = 168;
+
+    firstIcons = &menu->entryIcons[0];
+    do {
+      *firstIcons++ = WindowSprite_CreateFromResourceFar(
+          ICON_KIND_ITEM, firstSlot, window, 248, y);
+      firstSlot++;
+    } while (firstSlot <= 7);
+  }
 
   secondSlot = 8;
-  secondY = 168;
-  secondIcons = &menu->entryIcons[8];
-  do {
-    *secondIcons++ = WindowSprite_CreateFromResourceFar(
-        ICON_KIND_ITEM, secondSlot, window, 256, secondY);
-    secondSlot++;
-  } while (secondSlot <= 15);
+  {
+    s32 y = 168;
+
+    secondIcons = &menu->entryIcons[8];
+    do {
+      *secondIcons++ = WindowSprite_CreateFromResourceFar(
+          ICON_KIND_ITEM, secondSlot, window, 256, y);
+      secondSlot++;
+    } while (secondSlot <= 15);
+  }
 
   remainingSlot = 16;
-  remainingY = 168;
-  remainingIcons = &menu->entryIcons[16];
-  do {
-    *remainingIcons++ = WindowSprite_CreateFromResourceFar(
-        ICON_KIND_ITEM, remainingSlot, window, 256, remainingY);
-    remainingSlot++;
-  } while (remainingSlot <= 31);
+  {
+    s32 y = 168;
+
+    remainingIcons = &menu->entryIcons[16];
+    do {
+      *remainingIcons++ = WindowSprite_CreateFromResourceFar(
+          ICON_KIND_ITEM, remainingSlot, window, 256, y);
+      remainingSlot++;
+    } while (remainingSlot <= 31);
+  }
 }
 
 /// Hides all 32 item icons.

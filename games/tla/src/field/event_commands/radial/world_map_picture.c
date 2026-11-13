@@ -46,7 +46,7 @@ void WorldPicture_StepToPlace(s32 *screenX, s32 *screenY, s32 step) {
     if (place->flag == 0)
       break;
     flag = place->flag + 0x180;
-    state = Func_080ec298(place);
+    state = WorldMapPlace_GetMarker(place);
 
     if (state != 0 && state != 15 && GameFlag_Get(flag)) {
       s32 sx = PLACE_SCREEN_X(place);
@@ -80,7 +80,7 @@ void WorldPicture_StepToPlace(s32 *screenX, s32 *screenY, s32 step) {
           wraps++;
         } else {
           flag = next->flag + 0x180;
-          state = Func_080ec298(next);
+          state = WorldMapPlace_GetMarker(next);
 
           if (state != 0 && state != 15 && GameFlag_Get(flag)) {
             place = next;
@@ -296,7 +296,7 @@ void WorldPicture_UpdateMarkers(void) {
       name = place->name;
       entrance = place->nameEntrance;
       flag = place->flag + 0x180;
-      tile = Func_080ec298(place);
+      tile = WorldMapPlace_GetMarker(place);
       if (tile == 0)
         continue;
       if (tile == 15) {

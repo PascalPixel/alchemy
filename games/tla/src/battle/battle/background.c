@@ -415,7 +415,8 @@ void BattleBackground_FadeAlphaIn(void) {
   }
 }
 
-void Func_081269ac(void) { REG_BLDCNT = 0xbf; }
+/// Unused: sets BLDCNT to brighten every layer and the backdrop.
+UNUSED void Battle_BrightenAllLayers(void) { REG_BLDCNT = 0xbf; }
 
 s32 Battle_MulQ16(s32 a, s32 b) { return Iwram_MulQ16(a, b); }
 

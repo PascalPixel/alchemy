@@ -206,7 +206,8 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
                                   s32 mode);
 extern char ResourceId_SheepCardSheet; // directory row 0xe3
 void BattleEffect_GetTargetsMidpoint(struct EffectPosition *midpoint);
-void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
+                                   s32 mode);
 void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
                                   s32 mode);
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,

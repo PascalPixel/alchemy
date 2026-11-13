@@ -39,7 +39,9 @@ void Render_DrawModelList__battle_effect(struct Model *model);
 // target, rise), three frames apart, for 64 frames; with a prelude a Djinn
 // circles over the canvas and a fan of light lines spreads from it. At
 // frame 56 every target flashes.
-void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
+// Balm, Tinder and Phoenix run it with modes 0, 1 and 2.
+void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
+                                   s32 mode) {
   s32 anchor[3];
   s32 size[3];
   struct EffectPosition pos;

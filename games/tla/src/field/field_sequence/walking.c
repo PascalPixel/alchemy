@@ -10,7 +10,8 @@
 #include "gamepak/far_call/game.h"
 #include "system/ram_buffer.h"
 
-s32 Func_080caf6c(void) { return 0; }
+/// Unused: returns 0.
+UNUSED s32 FieldSequence_ReturnZero(void) { return 0; }
 
 void Field_ClearRequests(void) {
   s16 value;

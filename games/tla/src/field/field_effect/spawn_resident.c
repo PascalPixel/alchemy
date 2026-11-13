@@ -1,3 +1,6 @@
+/// @file
+/// FieldEffect_SpawnResident, an object of its own between the event commands.
+
 #include "types.h"
 #include "field_effect.h"
 #include "objdisp.h"
@@ -22,9 +25,9 @@ extern const s32 *gData_080f3978[];
 struct Actor *Actor_GetById(u32 objectId);
 void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 
-void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options) {
+void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX,
+                               s32 velocityY, s32 velocityZ, u32 flags,
+                               const struct EffectOptions *options) {
   struct Actor *party = Actor_GetById(0);
   struct FieldEffect *effect;
   struct LayeredSprite *sprite;

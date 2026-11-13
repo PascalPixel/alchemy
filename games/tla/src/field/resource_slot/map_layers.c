@@ -1,9 +1,186 @@
 /// @file
-/// Layered maps: drawing and scrolling, copying cells, and the edits flags
-/// apply.
+/// Layered maps: loading, drawing and scrolling, copying cells, and the edits
+/// flags apply.
 // Part of resource_slot.c.
 
 #include "../resource_slot_internal.h"
+
+#include "io_write.h"
+#include "flag_call.h"
+#include "module/field/field.h"
+#include "module/field/map.h"
+#include "module/field/resource_slot.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+
+/* VIEW(f02a6b8): variable gData_0802f380 as extern struct LayeredSceneEntry
+ * gData_0802f380[]; f0298c0 has extern const u16 gData_0802f380[][6]. */
+extern struct LayeredSceneEntry
+    gData_0802f380__f02a6b8[] __asm__("gData_0802f380");
+
+/// Loads a layered map, as The Broken Seal does: from
+/// layout index's entry in gData_0802f380 it decodes the blocks, the collision
+/// (filled with -1 first, which The Broken Seal does not do), the cells, the
+/// shape grid, the tile animations, the blend script and the script at
+/// 0x0202e000; sets up the three layers from the header, with their cell
+/// positions and shape pointers; loads the palette and tiles unless flag 0x170
+/// says they are already loaded; and starts Func_0802ad84.
+s32 MapGrid_LoadMap(s32 index) {
+  struct LayeredSceneEntry *sceneResources;
+  struct MapScrollWork *work;
+  struct LayeredSceneHeader *sceneHeader;
+  struct MapLayerScroll *mapLayer;
+  struct LayeredSceneLayer *layerSource;
+  s32 *viewX;
+  s32 *viewY;
+  s32 layerIndex;
+  u8 *graphicsBuffer;
+  s32 backdrop;
+  u8 *encodedData;
+  s32 displayFlags;
+
+  REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
+                   DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
+  Fade_FromBlack(0);
+  sceneResources = &gData_0802f380__f02a6b8[index];
+  work = HeapSlot_AllocEwram(32, sizeof(struct MapScrollWork));
+  Iwram_ClearWordsEntry(work, sizeof(struct MapScrollWork));
+  sceneHeader = (struct LayeredSceneHeader *)Resource_GetTableEntry(
+      sceneResources->resources[0] + (u32)&ResourceId_Map000);
+  encodedData = (u8 *)sceneHeader + sceneHeader->tiles;
+  Tilemap_DecodeStagedBuffer(
+      Resource_DecodeType01(encodedData, Ram_MapCellBuffer + 1));
+  Dma_Fill32(-1, Ram_MapCollision, 0x2000);
+  encodedData = (u8 *)sceneHeader + sceneHeader->collision;
+  Resource_DecodeType01(encodedData, Ram_MapCollision);
+  encodedData = (u8 *)sceneHeader + sceneHeader->tilemap;
+  Resource_DecodeType01(encodedData, Ram_MapCellBuffer);
+  Tilemap_ConvertBuffer();
+  encodedData = (u8 *)sceneHeader + sceneHeader->shapes;
+  Resource_DecodeType01(encodedData, gMapShapeGrid);
+  if (sceneHeader->animation != 0) {
+    encodedData = (u8 *)sceneHeader + sceneHeader->animation;
+    Resource_DecodeType01(encodedData, Ram_MapCollision + 0x1000);
+    TilesetAnim_StartAll((const u16 *)(Ram_MapCollision + 0x1000));
+  }
+  if (sceneHeader->blend != 0) {
+    encodedData = (u8 *)sceneHeader + sceneHeader->blend;
+    Resource_DecodeType01(encodedData, Ram_MapCollision + 0x1e00);
+    DisplayBlend_StartScript((u16 *)(Ram_MapCollision + 0x1e00));
+  }
+  encodedData = (u8 *)sceneHeader + sceneHeader->script;
+  Resource_DecodeType01(encodedData, Ram_MapCollision + 0x2000);
+  work->minX = sceneHeader->origin[0] << 19;
+  work->minY = sceneHeader->origin[1] << 19;
+  work->maxX = sceneHeader->origin[2] << 19;
+  work->maxY = sceneHeader->origin[3] << 19;
+  viewX = &work->viewX;
+  *viewX = 0;
+  viewY = &work->viewY;
+  *viewY = 0;
+  work->enabled[0] = sceneHeader->priority[0];
+  work->enabled[1] = sceneHeader->priority[1];
+  work->enabled[2] = sceneHeader->priority[2];
+  work->unk101 = 2;
+  if (work->maxX == 0)
+    work->maxX = 0x8000000;
+  if (work->maxY == 0)
+    work->maxY = 0x8000000;
+  mapLayer = work->layers;
+  layerSource = sceneHeader->layers;
+  for (layerIndex = 0; layerIndex < 3; layerIndex++) {
+    u32 x = layerSource->x;
+    u32 y = layerSource->y;
+    s32 scaleX;
+    s32 cell;
+    // Set inside the loop, where the original's register allocation needs it.
+    u8 *shapeGrid;
+    u32 maskY;
+
+    mapLayer->offsetX = x << 19;
+    mapLayer->offsetY = y << 19;
+    mapLayer->scaleY = layerSource->scaleY * 4096;
+    mapLayer->speedX = layerSource->speedX * 4096;
+    mapLayer->speedY = layerSource->speedY * 4096;
+    mapLayer->maskX = layerSource->periodX & 127;
+    // Read before the phase stores, which the original makes after it.
+    maskY = layerSource->periodY & 127;
+    mapLayer->phaseX = 0;
+    mapLayer->phaseY = 0;
+    mapLayer->maskY = maskY << 7;
+    x >>= 1;
+    y = (y >> 1) * 128;
+    mapLayer->cellY = y;
+    scaleX = layerSource->scaleX * 4096;
+    cell = y + x;
+    shapeGrid = gMapShapeGrid;
+    mapLayer->cells = (struct MapCell *)Ram_MapCellBuffer + cell;
+    mapLayer->scaleX = scaleX;
+    mapLayer->cellX = x;
+    mapLayer->shapes = shapeGrid + cell;
+    mapLayer->x = Iwram_MulQ16(*viewX, scaleX) + mapLayer->offsetX;
+    mapLayer->y = Iwram_MulQ16(*viewY, mapLayer->scaleY) + mapLayer->offsetY;
+    layerSource++;
+    mapLayer++;
+  }
+  work->flags = DISPCNT_OBJ_ON;
+  if (work->enabled[0] != 0)
+    work->flags = DISPCNT_OBJ_ON | DISPCNT_BG3_ON;
+  if (work->enabled[1] != 0)
+    work->flags |= DISPCNT_BG2_ON;
+  if (work->enabled[2] != 0)
+    work->flags |= DISPCNT_BG1_ON;
+  Io_Write16(work->enabled[0] | BGCNT_CHAR_BASE(sceneHeader->charBase[0]) |
+                 BGCNT_SCREEN_BASE(5),
+             &REG_BG3CNT);
+  Io_Write16(work->enabled[1] | BGCNT_CHAR_BASE(sceneHeader->charBase[1]) |
+                 BGCNT_SCREEN_BASE(6),
+             &REG_BG2CNT);
+  Io_Write16(work->enabled[2] | BGCNT_CHAR_BASE(sceneHeader->charBase[2]) |
+                 BGCNT_SCREEN_BASE(7),
+             &REG_BG1CNT);
+  if (GameFlag_Test(0x170) != 0) {
+    GameFlag_ClearBit(0x170);
+  } else {
+    graphicsBuffer = Heap_Alloc(0x4000);
+    if (graphicsBuffer != NULL) {
+      backdrop = *(s16 *)BG_PLTT;
+      Resource_DecodeType01(
+          Resource_GetTableEntry(sceneResources->resources[1] +
+                                 (u32)&ResourceId_Map000),
+          graphicsBuffer);
+      *(s16 *)graphicsBuffer = backdrop;
+      Iwram_CopyWordsEntry((void *)BG_PLTT, graphicsBuffer, 0x1c0);
+      Resource_DecodeType2(Resource_GetTableEntry(sceneResources->resources[2] +
+                                                  (u32)&ResourceId_Map000),
+                           graphicsBuffer);
+      Iwram_CopyWordsEntry(BG_CHAR_BLOCK(1), graphicsBuffer, 0x4000);
+      Resource_DecodeType2(Resource_GetTableEntry(sceneResources->resources[3] +
+                                                  (u32)&ResourceId_Map000),
+                           graphicsBuffer);
+      Iwram_CopyWordsEntry(BG_CHAR_BLOCK(2), graphicsBuffer, 0x4000);
+      Resource_DecodeType2(Resource_GetTableEntry(sceneResources->resources[4] +
+                                                  (u32)&ResourceId_Map000),
+                           graphicsBuffer);
+      Iwram_CopyWordsEntry(BG_CHAR_BLOCK(3), graphicsBuffer, 0x4000);
+      Resource_DecodeType2(Resource_GetTableEntry(sceneResources->resources[5] +
+                                                  (u32)&ResourceId_Map000),
+                           gData_02028000);
+      Heap_Release(graphicsBuffer);
+    }
+  }
+  displayFlags = 0;
+  REG_MOSAIC = displayFlags;
+  REG_BLDCNT = displayFlags;
+  displayFlags = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
+  // A once-only block: the original builds the task order after this store.
+  do {
+    REG_DISPCNT = displayFlags;
+  } while (0);
+  Task_Add(Func_0802ad84, 0x485);
+  return 2;
+}
+
 #include "module/field/field.h"
 #include "module/field/resource_slot.h"
 #include "module/tla.h"
@@ -537,7 +714,11 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
   }
 }
 
-/* VIEW(f02aa74): variable gMapCellBuffer as extern u8 gMapCellBuffer[]; f027064 has extern struct MapCell gMapCellBuffer[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:8266: `gMapCellBuffer__f02aa74' undeclared (first use in this function). */
+/* VIEW(f02aa74): variable gMapCellBuffer as extern u8 gMapCellBuffer[]; f027064
+ * has extern struct MapCell gMapCellBuffer[]; tried as the rest of the object
+ * declares it, it does not compile in tla-ja:
+ * games/tla/src/field/resource_slot.c:8266: `gMapCellBuffer__f02aa74'
+ * undeclared (first use in this function). */
 extern u8 gMapCellBuffer__f02aa74[] __asm__("gMapCellBuffer");
 
 void Func_0802b450(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,

@@ -1,9 +1,7 @@
 /// @file
-/// The f0cf050 object.
-
-/// @file
-/// What every part of the f0cf050 object shares: its includes. f0cf050.c
-/// includes it before the parts, and each part includes it too.
+/// The field's screen transitions and palette fades, as The Broken Seal's
+/// field_sequence.c ends them, after the particle emitters and the item raised
+/// above the leader; then the fade overlay and the routines after it.
 
 #include "types.h"
 #include "actor.h"
@@ -78,7 +76,7 @@ void Func_080cf050(void) {
       }
   }
 }
-#include "module/field/f0cf050.h"
+#include "module/field/screen_transition.h"
 #include "module/field/field.h"
 #include "module/field/object.h"
 
@@ -544,11 +542,11 @@ void BattleEffect_StartWindowHBlankDma(void) {
 }
 #include "event.h"
 #include "gamepak/far_call/window.h"
-#include "module/field/f0cf050.h"
+#include "module/field/screen_transition.h"
 #include "module/field/object.h"
 #include "module/system/system.h"
 
-void Func_080cf78c(void) {
+void ScreenTransition_UpdateScanlineTable(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct ScreenTransitionState *state = Ram_HeapSlots->screenTransition;
   struct TransitionSpan *span;
@@ -587,7 +585,7 @@ void Func_080cf78c(void) {
         if (REG_DISPCNT & 0x8000)
           REG_WINOUT |= 0x1f;
         Task_Remove(BattleEffect_StartWindowHBlankDma);
-        Task_Remove(Func_080cf78c);
+        Task_Remove(ScreenTransition_UpdateScanlineTable);
         {
           volatile u16 *dma0 = (volatile u16 *)0x040000b0;
 
@@ -914,14 +912,14 @@ void ScreenTransition_InitializeBattleEffectState(s32 mode) {
   state->value = 0;
   state->mask = 0x3f3f;
   state->active = (REG_WINOUT & 0xff00) | 1;
-  Task_Add(Func_080cf78c, TASK_PASS_VBLANK);
+  Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_VBLANK);
   Task_Add(BattleEffect_StartWindowHBlankDma, TASK_PASS_FRAME - 10);
 }
 
 /// Unused: suspends the window transition's two tasks. Nothing calls it,
 /// by name, far-call entry or table.
 UNUSED void ScreenTransition_SuspendCallbacks(void) {
-  Task_SuspendAll(Func_080cf78c);
+  Task_SuspendAll(ScreenTransition_UpdateScanlineTable);
   Task_SuspendAll(BattleEffect_StartWindowHBlankDma);
 }
 
@@ -967,7 +965,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     state->value = 0;
     state->mask = 63;
     state->active = (REG_WINOUT & 0xff00) | 1;
-    Task_Add(Func_080cf78c, TASK_PASS_VBLANK);
+    Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_VBLANK);
     Task_Add(BattleEffect_StartWindowHBlankDma, TASK_PASS_FRAME - 10);
     wait(1);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
@@ -1048,7 +1046,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     state->value = 32;
     state->mask = 63;
     state->active = (REG_WINOUT & 0xff00) | 1;
-    Task_Add(Func_080cf78c, TASK_PASS_VBLANK);
+    Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_VBLANK);
     Task_Add(BattleEffect_StartWindowHBlankDma, TASK_PASS_FRAME - 10);
     wait(1);
     state->start = 32;
@@ -1343,7 +1341,7 @@ void ScreenTransition_InitializeState(s32 value) {
   wait(0x78);
 }
 #include "ground_mask.h"
-#include "module/field/f0cf050.h"
+#include "module/field/screen_transition.h"
 #include "module/field/object.h"
 #include "module/system/system.h"
 
@@ -1934,7 +1932,7 @@ void BattleEffect_StartFadeOverlay(void *object) {
     object = ObjectTable_Get(gMainRoutineWork.currentOwner);
   work[6] = (u32)object;
 }
-#include "module/field/f0cf050.h"
+#include "module/field/screen_transition.h"
 
 /// Suspends the fade overlay's drawing callback.
 void FadeOverlay_Suspend(void) { Task_SuspendAll(Func_080d1840); }
@@ -2121,7 +2119,7 @@ s32 BattleEffect_GetAnimationValue(u32 objectId) {
   return *object->animation->value28;
 }
 #include "event.h"
-#include "module/field/f0cf050.h"
+#include "module/field/screen_transition.h"
 #include "resource_ids.h"
 
 /* VIEW(definition_flags): routine BattleEffect_GetAnimationValue as s32

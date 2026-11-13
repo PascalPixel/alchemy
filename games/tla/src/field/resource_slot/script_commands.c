@@ -12,7 +12,11 @@
 
 #define TARGET_UNSET ((s32)0x80000000)
 
-/* VIEW(f02493c): tag struct MotionObject as struct MotionObject__f02493c; resource_slot.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:2499: structure has no member named `terrainHeight'. */
+/* VIEW(f02493c): tag struct MotionObject as struct MotionObject__f02493c;
+ * resource_slot.c has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/field/resource_slot.c:2499: structure has no member named
+ * `terrainHeight'. */
 struct MotionObject__f02493c {
   void *script;
   u16 scriptCursor;
@@ -45,8 +49,12 @@ struct MotionObject__f02493c {
   u8 unk62[0x1e];
 };
 
-/* VIEW(f02493c): routine ObjectList_CollectActive as void ObjectList_CollectActive(void *objects, struct MotionObject__f02493c **out); the definition has void ObjectList_CollectActive(u8 *object, u8 **out). */
-extern void ObjectList_CollectActive__f02493c(void *objects, struct MotionObject__f02493c **out) __asm__("ObjectList_CollectActive");
+/* VIEW(f02493c): routine ObjectList_CollectActive as void
+ * ObjectList_CollectActive(void *objects, struct MotionObject__f02493c **out);
+ * the definition has void ObjectList_CollectActive(u8 *object, u8 **out). */
+extern void ObjectList_CollectActive__f02493c(
+    void *objects,
+    struct MotionObject__f02493c **out) __asm__("ObjectList_CollectActive");
 
 void Func_0802493c(void) {
   struct MotionObject__f02493c *list[15];
@@ -328,7 +336,8 @@ s32 Script_TestFlag(struct ScriptInterpreter *interpreter) {
   return done;
 }
 
-/* VIEW(f02493c): routine GameFlag_SetBit as s32 GameFlag_SetBit(s32); flag_call.h has void GameFlag_SetBit(s32 flag). */
+/* VIEW(f02493c): routine GameFlag_SetBit as s32 GameFlag_SetBit(s32);
+ * flag_call.h has void GameFlag_SetBit(s32 flag). */
 extern s32 GameFlag_SetBit__f02493c(s32) __asm__("GameFlag_SetBit");
 
 s32 Script_SetFlagAndTest(struct ScriptInterpreter *interpreter) {
@@ -433,12 +442,19 @@ struct Actor *ScriptObject_FindOverlappingEntry(struct Actor *object,
 
 #include "actor_script_view.h"
 
-/* VIEW(apply_relative_position): routine Actor_SetMoveTarget as void Actor_SetMoveTarget(void *, s32, s32, s32); the definition has void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z). */
-extern void Actor_SetMoveTarget__apply_relative_position(void *, s32, s32, s32) __asm__("Actor_SetMoveTarget");
-/* VIEW(apply_relative_position): routine Actor_SetPositionAndResetMotion as void Actor_SetPositionAndResetMotion(void *, s32, s32, s32); the definition has void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z). */
-extern void Actor_SetPositionAndResetMotion__apply_relative_position(void *, s32, s32, s32) __asm__("Actor_SetPositionAndResetMotion");
+/* VIEW(apply_relative_position): routine Actor_SetMoveTarget as void
+ * Actor_SetMoveTarget(void *, s32, s32, s32); the definition has void
+ * Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z). */
+extern void Actor_SetMoveTarget__apply_relative_position(
+    void *, s32, s32, s32) __asm__("Actor_SetMoveTarget");
+/* VIEW(apply_relative_position): routine Actor_SetPositionAndResetMotion as
+ * void Actor_SetPositionAndResetMotion(void *, s32, s32, s32); the definition
+ * has void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32
+ * z). */
+extern void Actor_SetPositionAndResetMotion__apply_relative_position(
+    void *, s32, s32, s32) __asm__("Actor_SetPositionAndResetMotion");
 
-s32 Func_08024fe0(struct ActorScriptView *object) {
+s32 ActorScript_SetPositionAndResetMotion(struct ActorScriptView *object) {
   const s32 *argument = object->script + (s16)object->scriptCursor + 1;
   s32 x = *argument++;
   s32 y = *argument++;
@@ -458,7 +474,8 @@ s32 Func_08024fe0(struct ActorScriptView *object) {
 s32 Func_08025038(struct ActorScriptView *object) {
   s32 height;
 
-  Actor_SetPositionAndResetMotion__apply_relative_position(object, 0, object->y, 0);
+  Actor_SetPositionAndResetMotion__apply_relative_position(object, 0, object->y,
+                                                           0);
   if (object->flags & 1) {
     height = MapGrid_GetTerrainHeight(object->terrainId, object->x, object->z);
     object->y = object->y - object->terrainHeight + height;
@@ -496,8 +513,8 @@ s32 Script_ApplyRelativePosition(struct ActorScriptView *object) {
   s32 second = *cursor++;
   s32 third = *cursor;
 
-  Actor_SetMoveTarget__apply_relative_position(object, object->x + first, object->y + second,
-                       object->z + third);
+  Actor_SetMoveTarget__apply_relative_position(
+      object, object->x + first, object->y + second, object->z + third);
   object->scriptCursor += 4;
   return 1;
 }
@@ -516,7 +533,8 @@ s32 Script_ApplyWatchedObjectPosition(struct ActorScriptView *object) {
   struct ActorScriptView *target;
 
   target = object->watchedObject;
-  Actor_SetMoveTarget__apply_relative_position(object, target->x, target->y, target->z);
+  Actor_SetMoveTarget__apply_relative_position(object, target->x, target->y,
+                                               target->z);
   object->scriptCursor++;
   return 1;
 }
@@ -533,7 +551,7 @@ s32 Script_ApplyLocalOffsetPosition(struct Actor *object) {
 #define TARGET_UNSET ((s32)0x80000000)
 #define DISTANCE(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
-s32 Func_08025160(struct Actor *interpreter) {
+s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
   struct Actor *cameraObject = interpreter;
   struct Actor *leader;
   struct MapWork *bounds;
@@ -603,7 +621,7 @@ s32 Func_08025160(struct Actor *interpreter) {
     } else {
       dx = (x - cameraObject->x) / 0x10000;
       /* FAKEMATCH(dead): this dy, overwritten below, as in The Broken Seal's
-       * FieldCamera_FollowLeaderInBounds, which steers register allocation;
+       * twin, which steers register allocation;
        * without it, 129 of 345 instructions differ in tla-en. */
       dy = (y - cameraObject->y) / 0x10000;
       dz = (z - cameraObject->z) / 0x10000;
@@ -754,11 +772,20 @@ s32 Actor_ApproachWatchedActor(struct Actor *object) {
 
 struct ScriptObjectEntry;
 
-/* VIEW(resource_slot): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 radius, s32 angle, struct FieldPosition *position); module/system/system.h has void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position). */
-extern void Vector_AddPolarOffset__resource_slot(s32 radius, s32 angle,
-                           struct FieldPosition *position) __asm__("Vector_AddPolarOffset");
-/* VIEW(offset): routine ScriptObject_CheckOverlap as s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *position); the definition has s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values). */
-extern s32 ScriptObject_CheckOverlap__offset(struct ScriptObjectEntry *object, s32 *position) __asm__("ScriptObject_CheckOverlap");
+/* VIEW(resource_slot): routine Vector_AddPolarOffset as void
+ * Vector_AddPolarOffset(s32 radius, s32 angle, struct FieldPosition *position);
+ * module/system/system.h has void Vector_AddPolarOffset(s32 radius, s32 angle,
+ * s32 *position). */
+extern void Vector_AddPolarOffset__resource_slot(
+    s32 radius, s32 angle,
+    struct FieldPosition *position) __asm__("Vector_AddPolarOffset");
+/* VIEW(offset): routine ScriptObject_CheckOverlap as s32
+ * ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *position);
+ * the definition has s32 ScriptObject_CheckOverlap(struct Actor *object, s32
+ * *values). */
+extern s32 ScriptObject_CheckOverlap__offset(
+    struct ScriptObjectEntry *object,
+    s32 *position) __asm__("ScriptObject_CheckOverlap");
 
 /// SC_WANDER(base, range, limit), as The Broken Seal's: walks to a random
 /// point base to base + range away within 90 degrees of its heading, that
@@ -794,7 +821,7 @@ retry:
     heading = object->scriptValue + (Random16() >> 2) - (Random16() >> 2);
     Vector_AddPolarOffset__resource_slot(radius, heading, &pos);
     if (ScriptObject_CheckOverlap__offset((struct ScriptObjectEntry *)object,
-                                  (s32 *)&pos) != 0)
+                                          (s32 *)&pos) != 0)
       goto retry;
     if (MapGrid_CheckCollision((struct Actor *)object, &pos) != 0)
       goto retry;
@@ -848,16 +875,16 @@ found:
 
 struct ScriptObjectEntry;
 
-s32 MapGrid_CheckCollision(struct Actor *object, struct FieldPosition *position);
+s32 MapGrid_CheckCollision(struct Actor *object,
+                           struct FieldPosition *position);
 
-/// Moves the object to a random spot within its home radius, as The Broken
-/// Seal's ActorScript_WanderNearHome does: up to seven tries at a point a
-/// random distance away in a random turn of its heading, each refused if
-/// anything overlaps it or blocks the path or the cells beside it. An object
-/// outside its home radius (or out of tries) heads back toward home instead.
-/// Operands: the minimum distance, the distance range and the
-/// home radius.
-s32 Func_08025830(struct ActorScriptView *object) {
+/// SC_WANDER_HOME: moves the object to a random spot within its home radius: up
+/// to seven tries at a point a random distance away in a random turn of its
+/// heading, each refused if anything overlaps it or blocks the path or the
+/// cells beside it. An object outside its home radius (or out of tries) heads
+/// back toward home instead. Operands: the minimum distance, the distance range
+/// and the home radius.
+s32 ActorScript_WanderNearHome(struct ActorScriptView *object) {
   struct FieldPosition candidatePosition;
   struct FieldPosition probePosition;
   s32 minimumDistance;
@@ -890,45 +917,53 @@ s32 Func_08025830(struct ActorScriptView *object) {
       candidatePosition.x = object->x;
       candidatePosition.y = object->y;
       candidatePosition.z = object->z;
-      Vector_AddPolarOffset__resource_slot(0x80000, heading, &candidatePosition);
+      Vector_AddPolarOffset__resource_slot(0x80000, heading,
+                                           &candidatePosition);
       if (ScriptObject_CheckOverlap__offset((struct ScriptObjectEntry *)object,
-                                    (s32 *)&candidatePosition) != 0)
+                                            (s32 *)&candidatePosition) != 0)
         goto roam;
       candidatePosition.x = object->x;
       candidatePosition.y = object->y;
       candidatePosition.z = object->z;
-      Vector_AddPolarOffset__resource_slot(travelDistance, heading, &candidatePosition);
-      if (MapGrid_CheckCollision((struct Actor *)object, &candidatePosition) != 0)
+      Vector_AddPolarOffset__resource_slot(travelDistance, heading,
+                                           &candidatePosition);
+      if (MapGrid_CheckCollision((struct Actor *)object, &candidatePosition) !=
+          0)
         goto roam;
       probePosition.x = object->x;
       probePosition.y = object->y;
       travelDistance += 0x80000;
       probePosition.z = object->z;
-      Vector_AddPolarOffset__resource_slot(travelDistance, heading, &probePosition);
+      Vector_AddPolarOffset__resource_slot(travelDistance, heading,
+                                           &probePosition);
       if (MapGrid_CheckCollision((struct Actor *)object, &probePosition) != 0)
         goto roam;
       probePosition.x = object->x;
       probePosition.y = object->y;
       probePosition.z = object->z;
-      Vector_AddPolarOffset__resource_slot(travelDistance, heading + 0x2000, &probePosition);
+      Vector_AddPolarOffset__resource_slot(travelDistance, heading + 0x2000,
+                                           &probePosition);
       if (MapGrid_CheckCollision((struct Actor *)object, &probePosition) != 0)
         goto roam;
       probePosition.x = object->x;
       probePosition.y = object->y;
       probePosition.z = object->z;
-      Vector_AddPolarOffset__resource_slot(travelDistance, heading - 0x2000, &probePosition);
+      Vector_AddPolarOffset__resource_slot(travelDistance, heading - 0x2000,
+                                           &probePosition);
       if (MapGrid_CheckCollision((struct Actor *)object, &probePosition) != 0)
         goto roam;
       probePosition.x = object->x;
       probePosition.y = object->y;
       probePosition.z = object->z;
-      Vector_AddPolarOffset__resource_slot(travelDistance, heading + 0x4000, &probePosition);
+      Vector_AddPolarOffset__resource_slot(travelDistance, heading + 0x4000,
+                                           &probePosition);
       if (MapGrid_CheckCollision((struct Actor *)object, &probePosition) != 0)
         goto roam;
       probePosition.x = object->x;
       probePosition.y = object->y;
       probePosition.z = object->z;
-      Vector_AddPolarOffset__resource_slot(travelDistance, heading - 0x4000, &probePosition);
+      Vector_AddPolarOffset__resource_slot(travelDistance, heading - 0x4000,
+                                           &probePosition);
       if (MapGrid_CheckCollision((struct Actor *)object, &probePosition) != 0)
         goto roam;
       dx = candidatePosition.x / 0x10000 - object->homeX;
@@ -953,12 +988,13 @@ back:
     candidatePosition.z = object->z;
     Vector_AddPolarOffset__resource_slot(0x80000, heading, &candidatePosition);
     if (ScriptObject_CheckOverlap__offset((struct ScriptObjectEntry *)object,
-                                  (s32 *)&candidatePosition) != 0)
+                                          (s32 *)&candidatePosition) != 0)
       goto back;
     candidatePosition.x = object->x;
     candidatePosition.y = object->y;
     candidatePosition.z = object->z;
-    Vector_AddPolarOffset__resource_slot(travelDistance, heading, &candidatePosition);
+    Vector_AddPolarOffset__resource_slot(travelDistance, heading,
+                                         &candidatePosition);
     if (MapGrid_CheckCollision((struct Actor *)object, &candidatePosition) != 0)
       goto back;
     object->flags59 &= ~2;
@@ -1648,7 +1684,8 @@ void ScriptObject_SetValue(struct ScriptObject *object, s32 value) {
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gData_0802ec5c[16];
 
-s32 MapGrid_CheckCollisionAbove(struct Actor *object, struct FieldPosition *position);
+s32 MapGrid_CheckCollisionAbove(struct Actor *object,
+                                struct FieldPosition *position);
 void *Unit_Get(s32 owner);
 
 s32 Func_0802632c(struct Actor *object) {
@@ -1694,23 +1731,26 @@ s32 Func_0802632c(struct Actor *object) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset__resource_slot(0x80000, (u16)angle + 0x1000, &testPosition);
+        Vector_AddPolarOffset__resource_slot(0x80000, (u16)angle + 0x1000,
+                                             &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0) {
           testPosition.x = object->x;
           testPosition.y = object->y;
           testPosition.z = object->z;
-          Vector_AddPolarOffset__resource_slot(0x80000, (u16)angle - 0x1000, &testPosition);
+          Vector_AddPolarOffset__resource_slot(0x80000, (u16)angle - 0x1000,
+                                               &testPosition);
           if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0) {
             testPosition.x = object->x;
             testPosition.y = object->y;
             testPosition.z = object->z;
-            Vector_AddPolarOffset__resource_slot(0x80000, (u16)angle + 0x2000, &testPosition);
+            Vector_AddPolarOffset__resource_slot(0x80000, (u16)angle + 0x2000,
+                                                 &testPosition);
             if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0) {
               testPosition.x = object->x;
               testPosition.y = object->y;
               testPosition.z = object->z;
               Vector_AddPolarOffset__resource_slot(0x80000, (u16)angle - 0x2000,
-                                    &testPosition);
+                                                   &testPosition);
               if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0) {
                 heading = angle;
                 goto check_objects;
@@ -1738,25 +1778,29 @@ s32 Func_0802632c(struct Actor *object) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading + 0x1000, &testPosition);
+        Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading + 0x1000,
+                                             &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading - 0x1000, &testPosition);
+        Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading - 0x1000,
+                                             &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading + 0x2000, &testPosition);
+        Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading + 0x2000,
+                                             &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading - 0x2000, &testPosition);
+        Vector_AddPolarOffset__resource_slot(0x80000, (u16)heading - 0x2000,
+                                             &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0)
           goto check_objects;
       }

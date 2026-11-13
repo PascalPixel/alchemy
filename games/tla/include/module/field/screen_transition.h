@@ -1,9 +1,9 @@
-#ifndef ALCHEMY_MODULE_FIELD_F0CF050_H
-#define ALCHEMY_MODULE_FIELD_F0CF050_H
+#ifndef ALCHEMY_MODULE_FIELD_SCREEN_TRANSITION_H
+#define ALCHEMY_MODULE_FIELD_SCREEN_TRANSITION_H
 
 /// @file
-/// What games/tla/src/field/object/f0cf050.c declares for the files that use
-/// it, written once.
+/// What games/tla/src/field/object/screen_transition.c declares for the files
+/// that use it, written once.
 
 #include "types.h"
 #include "battle/battle.h"

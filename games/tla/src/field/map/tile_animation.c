@@ -1,3 +1,8 @@
+/// @file
+/// Timed map changes (the map animations, the blend script and the palette
+/// queue), then the ground heights and the collision of cells and the world
+/// map, as The Broken Seal's tile_animation.c and terrain.c have them.
+
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -1115,7 +1120,11 @@ s32 MapGrid_IsWallAt(s32 *position) {
   return (cell[2] != 255) - 1;
 }
 
-/* VIEW(f02c58c): variable gMapBlocks as struct WorldMapBlock gMapBlocks[]; module/tla.h has u32 gMapBlocks[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/map/f02c58c.c:1131: request for member `unk2' in something not a structure or union. */
+/* VIEW(f02c58c): variable gMapBlocks as struct WorldMapBlock gMapBlocks[];
+ * module/tla.h has u32 gMapBlocks[]; tried as the rest of the object declares
+ * it, it does not compile in tla-ja:
+ * games/tla/src/field/map/tile_animation.c:1131: request for member `unk2' in
+ * something not a structure or union. */
 extern struct WorldMapBlock gMapBlocks__f02c58c[] __asm__("gMapBlocks");
 
 /// Reads byte 2 of the world map block under position: blocks are 32 pixels

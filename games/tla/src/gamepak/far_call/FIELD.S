@@ -36,7 +36,7 @@ Resource_FarCall003:
 	export Map_RenderAnimatedTilePictureFar, Map_RenderAnimatedTilePicture
 	export Map_RenderAnimatedTilePicturesForObjectFar, Map_RenderAnimatedTilePicturesForObject
 	export Map_RenderAllAnimatedTilePicturesFar, Map_RenderAllAnimatedTilePictures
-	export Func_08020108, Func_0802a6b8
+	export Func_08020108, MapGrid_LoadMap
 	export Func_08020110, Func_0802b998
 	export Func_08020118, Func_0802af9c
 	export Map_CenterOnFollowedPointFar, Func_0802aa74

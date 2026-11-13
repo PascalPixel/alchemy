@@ -619,7 +619,7 @@ void Func_02000ac8(void) {
     targetZ = 40;
     if (GameFlag_Get(0xa8a)) {
     seen:
-      GameFlag_Set(0x200);
+      GameFlag_Set(FLAG_SCENE_TEMP_00);
       return;
     }
     break;
@@ -770,7 +770,7 @@ void Func_02000ac8(void) {
   }
 
   Actor_Release(actor);
-  Event_SetFlag(0x200);
+  Event_SetFlag(FLAG_SCENE_TEMP_00);
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(60);
@@ -784,7 +784,7 @@ void Func_02000ac8(void) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_02001090(void) { GameFlag_Clear(0x200); }
+void Func_02001090(void) { GameFlag_Clear(FLAG_SCENE_TEMP_00); }
 
 extern s16 gData_020036e4[];
 extern s16 gData_020036ea[];
@@ -910,7 +910,7 @@ void Func_02001398(void) {
   Actor_SetSpriteFlags(object, 0);
   Actor_StartScript(object, gData_02003574);
   Event_SetFlag(work->exit + 0x1ce);
-  all = Event_GetFlag(0x200);
+  all = Event_GetFlag(FLAG_SCENE_TEMP_00);
   for (i = 1; i != 7; i++)
     all &= Event_GetFlag(0x200 + i);
   if (all) {
@@ -926,7 +926,7 @@ void Func_02001398(void) {
     FieldEvent_Wait(10);
     Event_PlaySound(SE_582);
     Actor_SetAnimation(id, 2);
-    Event_SetFlag(0x207);
+    Event_SetFlag(FLAG_SCENE_TEMP_07);
     Actor_Get(id)->motionFlags = 4;
     FieldEvent_Wait(80);
     Event_End();
@@ -1000,7 +1000,7 @@ void Func_02001660(void) {
   FieldEvent_Wait(5);
   MapGrid_CopyCellsTo(51, 20, 31, 20, 1, 2);
   FieldEvent_Wait(5);
-  Event_SetFlag(0x200);
+  Event_SetFlag(FLAG_SCENE_TEMP_00);
   Event_End();
 }
 
@@ -1022,7 +1022,7 @@ void Func_020016fc(void) {
   FieldEvent_Wait(5);
   MapGrid_CopyCellsTo(52, 20, 31, 20, 1, 2);
   FieldEvent_Wait(5);
-  Event_ClearFlag(0x200);
+  Event_ClearFlag(FLAG_SCENE_TEMP_00);
   Event_End();
 }
 
@@ -1058,7 +1058,7 @@ void Func_020017b4(struct Actor *self) {
 
   if (Actor_Get(gMainRoutineWork.currentOwner)->z >> 16 > 248) {
     self->update = 0;
-    Event_ClearFlag(0x200);
+    Event_ClearFlag(FLAG_SCENE_TEMP_00);
     self->x = (self->x & 0xfff00000) + 0x80000;
     self->z = (self->z & 0xfff00000) + 0x80000;
     return;
@@ -1129,7 +1129,7 @@ void Func_02001938(void) {
     object->update = Func_020017b4;
     object->unk4c = Actor_Get(gMainRoutineWork.currentOwner)->x;
     object->acceleration = Actor_Get(gMainRoutineWork.currentOwner)->z;
-    Event_SetFlag(0x200);
+    Event_SetFlag(FLAG_SCENE_TEMP_00);
   }
 }
 
@@ -1191,15 +1191,15 @@ void Func_02001a94(void) {
 
   if (gMainRoutineWork.entrance == 1) {
     object = Actor_Get(8);
-    Event_SetFlag(0x301);
+    Event_SetFlag(FLAG_AREA_TEMP_01);
     column = 11;
   } else if (gMainRoutineWork.entrance == 3) {
     object = Actor_Get(9);
-    Event_SetFlag(0x302);
+    Event_SetFlag(FLAG_AREA_TEMP_02);
     column = 26;
   } else {
     object = Actor_Get(10);
-    Event_SetFlag(0x303);
+    Event_SetFlag(FLAG_AREA_TEMP_03);
     column = 53;
   }
   Event_Start();
@@ -1352,7 +1352,7 @@ void Func_02001d68(void) {
   object->speedLimit = 0x10000;
   FieldActor_SetMoveTarget(object, object->x, object->y + 0x300000, object->z);
   FieldActor_WaitForMove(object);
-  Event_SetFlag(0x300);
+  Event_SetFlag(FLAG_AREA_TEMP_00);
   Event_End();
 }
 
@@ -1369,7 +1369,7 @@ void Func_02001df4(void) {
   object->speedLimit = 0x10000;
   FieldActor_SetMoveTarget(object, object->x, object->y + 0x300000, object->z);
   FieldActor_WaitForMove(object);
-  Event_SetFlag(0x304);
+  Event_SetFlag(FLAG_AREA_TEMP_04);
   Event_End();
 }
 
@@ -1437,43 +1437,43 @@ s32 Scene_Initialize(void) {
   FIELD_AT(((s32)Actor_Get(9)), u8, 35) |= 128;
   if ((FIELD_AT(v_r6, s16, 482)) != 17)
     goto L_0200a03c;
-  if ((Event_GetFlag(0x300)) == 0)
+  if ((Event_GetFlag(FLAG_AREA_TEMP_00)) == 0)
     goto L_0200a03c;
   Actor_SetAnimation(9, 2);
   Actor_SetPosition(9, 0x2d80000, 0x780000);
 L_0200a03c:
-  if (gMainRoutineWork.entrance == 18 && GameFlag_Get(0x300) == 0)
+  if (gMainRoutineWork.entrance == 18 && GameFlag_Get(FLAG_AREA_TEMP_00) == 0)
     Func_02001d68();
   {
     struct MainRoutineWork *work = &gMainRoutineWork;
     if (work->entrance != 10)
       goto L_0200a6e6;
-    if ((Event_GetFlag(0x300)) != 0) {
+    if ((Event_GetFlag(FLAG_AREA_TEMP_00)) != 0) {
       Actor_SetPosition(9, 0, 0);
     }
-    if ((Event_GetFlag(0x207)) != 0) {
+    if ((Event_GetFlag(FLAG_SCENE_TEMP_07)) != 0) {
       t42 = Actor_Get(9);
       t42->motionFlags = 4;
     }
-    if ((Event_GetFlag(0x200)) != 0) {
+    if ((Event_GetFlag(FLAG_SCENE_TEMP_00)) != 0) {
       MapGrid_CopyCellsTo(54, 87, 44, 86, 1, 1);
     }
-    if ((Event_GetFlag(0x201)) != 0) {
+    if ((Event_GetFlag(FLAG_SCENE_TEMP_01)) != 0) {
       MapGrid_CopyCellsTo(54, 87, 46, 86, 1, 1);
     }
-    if ((Event_GetFlag(0x202)) != 0) {
+    if ((Event_GetFlag(FLAG_SCENE_TEMP_02)) != 0) {
       MapGrid_CopyCellsTo(54, 87, 43, 87, 1, 1);
     }
-    if ((Event_GetFlag(0x203)) != 0) {
+    if ((Event_GetFlag(FLAG_SCENE_TEMP_03)) != 0) {
       MapGrid_CopyCellsTo(54, 87, 45, 87, 1, 1);
     }
-    if ((Event_GetFlag(0x204)) != 0) {
+    if ((Event_GetFlag(FLAG_SCENE_TEMP_04)) != 0) {
       MapGrid_CopyCellsTo(54, 87, 47, 87, 1, 1);
     }
-    if ((Event_GetFlag(0x205)) != 0) {
+    if ((Event_GetFlag(FLAG_SCENE_TEMP_05)) != 0) {
       MapGrid_CopyCellsTo(54, 87, 44, 88, 1, 1);
     }
-    if ((Event_GetFlag(0x206)) != 0) {
+    if ((Event_GetFlag(FLAG_SCENE_TEMP_06)) != 0) {
       MapGrid_CopyCellsTo(54, 87, 46, 88, 1, 1);
     }
     FIELD_AT(((s32)Actor_Get((work->currentOwner))), u8, 35) |= 32;
@@ -1529,7 +1529,7 @@ L_0200a2ce:
   if (v_r2 != 1)
     goto L_0200a4a2;
   CrackedTiles_Find(33, 0x280, 0x380, 18, 68);
-  v_r5 = (Event_GetFlag(0x304));
+  v_r5 = (Event_GetFlag(FLAG_AREA_TEMP_04));
   if (v_r5 == 0) {
     t91 = FIELD_AT(v_r6, s32, 532);
     t92 = Actor_Get(t91);
@@ -1541,37 +1541,37 @@ L_0200a2ce:
     goto L_0200a3a8;
   }
   Actor_SetPosition(8, 0, 0);
-  Event_SetFlag(0x200);
-  Event_SetFlag(0x201);
-  Event_SetFlag(0x202);
-  Event_SetFlag(0x203);
+  Event_SetFlag(FLAG_SCENE_TEMP_00);
+  Event_SetFlag(FLAG_SCENE_TEMP_01);
+  Event_SetFlag(FLAG_SCENE_TEMP_02);
+  Event_SetFlag(FLAG_SCENE_TEMP_03);
   Event_SetFlag(v_r7);
-  Event_SetFlag(0x205);
-  Event_SetFlag(0x206);
+  Event_SetFlag(FLAG_SCENE_TEMP_05);
+  Event_SetFlag(FLAG_SCENE_TEMP_06);
 L_0200a3a8:
-  if ((Event_GetFlag(0x207)) != 0) {
+  if ((Event_GetFlag(FLAG_SCENE_TEMP_07)) != 0) {
     t106 = Actor_Get(8);
     t106->motionFlags = 4;
   }
-  if ((Event_GetFlag(0x200)) != 0) {
+  if ((Event_GetFlag(FLAG_SCENE_TEMP_00)) != 0) {
     MapGrid_CopyCellsTo(17, 71, 8, 69, 1, 1);
   }
-  if ((Event_GetFlag(0x205)) != 0) {
+  if ((Event_GetFlag(FLAG_SCENE_TEMP_05)) != 0) {
     MapGrid_CopyCellsTo(17, 71, 6, 71, 1, 1);
   }
-  if ((Event_GetFlag(0x201)) != 0) {
+  if ((Event_GetFlag(FLAG_SCENE_TEMP_01)) != 0) {
     MapGrid_CopyCellsTo(17, 71, 5, 75, 1, 1);
   }
-  if ((Event_GetFlag(0x202)) != 0) {
+  if ((Event_GetFlag(FLAG_SCENE_TEMP_02)) != 0) {
     MapGrid_CopyCellsTo(17, 71, 8, 75, 1, 1);
   }
-  if ((Event_GetFlag(0x203)) != 0) {
+  if ((Event_GetFlag(FLAG_SCENE_TEMP_03)) != 0) {
     MapGrid_CopyCellsTo(17, 71, 11, 75, 1, 1);
   }
-  if ((Event_GetFlag(0x204)) != 0) {
+  if ((Event_GetFlag(FLAG_SCENE_TEMP_04)) != 0) {
     MapGrid_CopyCellsTo(17, 71, 8, 73, 1, 1);
   }
-  if ((Event_GetFlag(0x206)) == 0)
+  if ((Event_GetFlag(FLAG_SCENE_TEMP_06)) == 0)
     goto L_0200a6e6;
   MapGrid_CopyCellsTo(17, 71, 10, 71, 1, 1);
   goto L_0200a6e6;
@@ -1627,7 +1627,7 @@ L_0200a52c:
     goto L_0200a596;
   }
 L_0200a580:
-  if ((Event_GetFlag(0x304)) != 0)
+  if ((Event_GetFlag(FLAG_AREA_TEMP_04)) != 0)
     goto L_0200a596;
   Actor_SetPosition(11, 0, 0);
 L_0200a596:
@@ -1638,7 +1638,7 @@ L_0200a596:
   Actor_SetAnimation(11, 2);
   /* FAKEMATCH(dead): v_r6 set again to the address it already holds. */
   v_r6 = (s32)&gMainRoutineWork;
-  if ((Event_GetFlag(0x304)) != 0)
+  if ((Event_GetFlag(FLAG_AREA_TEMP_04)) != 0)
     goto L_0200a5fa;
   if ((FIELD_AT(v_r6, s16, 482)) != 12)
     goto L_0200a5fa;
@@ -1648,7 +1648,7 @@ L_0200a5fa:
   FIELD_AT(((s32)Actor_Get(11)), s32, 12) = 0xfff00000;
   goto L_0200a6e6;
 L_0200a606:
-  if ((Event_GetFlag(0x301)) != 0) {
+  if ((Event_GetFlag(FLAG_AREA_TEMP_01)) != 0) {
     v_r2 = 240;
     v_r0 = 8;
     v_r1 = 0x780000;
@@ -1659,14 +1659,14 @@ L_0200a606:
   v_r0 = 0xb80000;
   goto L_0200a67a;
 L_0200a63a:
-  if ((Event_GetFlag(0x302)) == 0)
+  if ((Event_GetFlag(FLAG_AREA_TEMP_02)) == 0)
     goto L_0200a660;
   v_r2 = 240;
   v_r0 = 9;
   v_r1 = 0x2280000;
 L_0200a650:
   Actor_SetPosition(v_r0, v_r1, (v_r2 << 15));
-  Event_SetFlag(0x200);
+  Event_SetFlag(FLAG_SCENE_TEMP_00);
   goto L_0200a6e6;
 L_0200a660:
   MapGrid_CopyCellsTo(18, 1, 26, 4, 1, 2);
@@ -1676,9 +1676,9 @@ L_0200a67a:
   MapGrid_SetCellHeight(v_r0, (v_r1 << 15), 0, 2);
   goto L_0200a6e6;
 L_0200a686:
-  if ((Event_GetFlag(0x303)) != 0) {
+  if ((Event_GetFlag(FLAG_AREA_TEMP_03)) != 0) {
     Actor_SetPosition(10, 0x3180000, 0x780000);
-    Event_SetFlag(0x200);
+    Event_SetFlag(FLAG_SCENE_TEMP_00);
     goto L_0200a6d0;
   }
   MapGrid_CopyCellsTo(18, 1, 53, 4, 1, 2);

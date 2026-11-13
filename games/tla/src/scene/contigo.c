@@ -959,12 +959,12 @@ void Func_02001474(void) { Contigo_Tiles(32, 55, 3, 1, 40, 61, 0); }
 
 void Func_02001494(void) {
   Field_SetCameraBounds(0, 0x2000000, 0x3700000, 0x4000000);
-  GameFlag_Set(512);
+  GameFlag_Set(FLAG_SCENE_TEMP_00);
 }
 
 void Func_020014b4(void) {
   Field_SetCameraBounds(0, 0x2000000, 0x2000000, 0x4000000);
-  GameFlag_Clear(512);
+  GameFlag_Clear(FLAG_SCENE_TEMP_00);
 }
 
 void Func_020014d4(void) {
@@ -2042,14 +2042,14 @@ void Contigo_InitializeRoom1(void) {
     case 2:
     case 3:
     case 4:
-      GameFlag_Set(0x200);
+      GameFlag_Set(FLAG_SCENE_TEMP_00);
       break;
     default:
       Field_SetCameraBounds(0, 0x2000000, 0x2000000, 0x4000000);
       break;
     }
   }
-  if (GameFlag_Get(0x200) != 0) {
+  if (GameFlag_Get(FLAG_SCENE_TEMP_00) != 0) {
     Field_SetCameraBounds(0, 0x2000000, 0x3700000, 0x4000000);
     FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
     Map_CenterOnFollowedPoint();
@@ -2109,7 +2109,7 @@ void Contigo_InitializeRoom2(void) {
     if (GameFlag_Get(0xa21) != 0 && GameFlag_Get(0x9d0) == 0)
       Func_02001d50();
   } else if (gMainRoutineWork.entrance == 21) {
-    GameFlag_Clear(0x12f);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   } else {
     Actor_SetModeById(17, 2);
     Actor_SetSpriteFlags(Actor_GetById(17), 0);

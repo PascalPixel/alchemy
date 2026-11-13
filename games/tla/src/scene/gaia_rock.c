@@ -510,13 +510,13 @@ s32 Scene_Initialize(void) {
     if ((u16)(gMainRoutineWork.entrance - 3) <= 1) {
       Func_02000dd0();
     }
-    if (GameFlag_Get(0x300)) {
+    if (GameFlag_Get(FLAG_AREA_TEMP_00)) {
       Func_02000b2c(17, 0x2fc0000, -0x1870000, 0x1a80000);
     }
-    if (GameFlag_Get(0x301)) {
+    if (GameFlag_Get(FLAG_AREA_TEMP_01)) {
       Func_02000b2c(18, 0x3150000, -0xf80000, 0x1a80000);
     }
-    if (GameFlag_Get(0x302)) {
+    if (GameFlag_Get(FLAG_AREA_TEMP_02)) {
       Func_02000b2c(19, 0x30a0000, -0x770000, 0x1a80000);
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room3) {

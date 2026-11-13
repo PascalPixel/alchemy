@@ -9,6 +9,7 @@
 #include "../field/object/prepare_object.c"
 
 #include "types.h"
+#include "flags.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
 #include "system/main_routine_work.h"
@@ -369,7 +370,7 @@ void MagmaRockInside_StartLavaPlatform(s32 a0, s32 a1, s32 a2) {
     goto sunk;
   FIELD_AT(v6, s32, 20) = 0x100000;
   FIELD_AT(v6, s32, 12) = 0x100000;
-  if (Event_GetFlag(0x109))
+  if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     goto hook;
   Actor_StartScript(v6, v7);
   goto hook;
@@ -463,7 +464,7 @@ void MagmaRockInside_BlockMovedPillar(void) {
       object->terrainId = 2;
       object->motionFlags = 3;
       System_Wait(1);
-      if (Event_GetFlag(770)) {
+      if (Event_GetFlag(FLAG_AREA_TEMP_02)) {
         object->gravity = 0x1000;
         object->priorityFlags |= 2;
         REG_BLDALPHA = 0x1000;
@@ -784,9 +785,9 @@ hit:
   FieldActor_WaitForMove(flame);
   flame->update = 0;
   Actor_Release(flame);
-  Event_SetFlag(0x2f0);
+  Event_SetFlag(FLAG_SCENE_TEMP_F0);
   Func_02000ce4__s0e20((u16)id);
-  Event_ClearFlag(0x2f0);
+  Event_ClearFlag(FLAG_SCENE_TEMP_F0);
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   System_Wait(10);
@@ -926,7 +927,7 @@ void MagmaRockInside_DrainLava(void) {
     roomPosition[2] = 200 << 16;
     srcX = 20;
     srcZ = 69;
-    if (Event_GetFlag(768))
+    if (Event_GetFlag(FLAG_AREA_TEMP_00))
       t = 212;
   } else if (scene == (s32)&SceneId_Ov692Room3) {
     baseX = 232 << 16;
@@ -934,7 +935,7 @@ void MagmaRockInside_DrainLava(void) {
     roomPosition[2] = 248 << 16;
     srcX = 14;
     srcZ = 72;
-    if (Event_GetFlag(769))
+    if (Event_GetFlag(FLAG_AREA_TEMP_01))
       t = 212;
   } else if (scene == (s32)&SceneId_Ov692Room4) {
     baseX = 196 << 17;
@@ -942,7 +943,7 @@ void MagmaRockInside_DrainLava(void) {
     roomPosition[2] = 134 << 18;
     srcX = 24;
     srcZ = 90;
-    if (Event_GetFlag(770))
+    if (Event_GetFlag(FLAG_AREA_TEMP_02))
       t = 212;
   }
   i = 0;
@@ -1130,9 +1131,9 @@ void MagmaRockInside_FloodWithLava(void) {
     baseX = 160 << 17;
     ((s32 *)j)[1] = 0;
     ((s32 *)j)[2] = 212 << 17;
-    if (Event_GetFlag(768))
+    if (Event_GetFlag(FLAG_AREA_TEMP_00))
       open = 212;
-    Event_ClearFlag(768);
+    Event_ClearFlag(FLAG_AREA_TEMP_00);
     facing = 0;
     ((s32 (*)())MagmaRockInside_SwapCells)(0, 15, 13, 64);
     FieldActor_SetSpritePriority(15, 3);
@@ -1146,9 +1147,9 @@ void MagmaRockInside_FloodWithLava(void) {
     baseX = 224 << 17;
     ((s32 *)j)[1] = 0;
     ((s32 *)j)[2] = 172 << 17;
-    if (Event_GetFlag(769))
+    if (Event_GetFlag(FLAG_AREA_TEMP_01))
       open = 212;
-    Event_ClearFlag(769);
+    Event_ClearFlag(FLAG_AREA_TEMP_01);
     ((s32 (*)())MagmaRockInside_SwapCells)(0, 24, 15, 64);
     ((s32 (*)())MagmaRockInside_SwapCells)(0, 9, 16, 64);
     Actor_SetAnimation(11, 4);
@@ -1164,9 +1165,9 @@ void MagmaRockInside_FloodWithLava(void) {
       baseX = 198 << 18;
       ((s32 *)j)[1] = 0;
       ((s32 *)j)[2] = 216 << 16;
-      if (Event_GetFlag(770))
+      if (Event_GetFlag(FLAG_AREA_TEMP_02))
         open = 212;
-      Event_ClearFlag(770);
+      Event_ClearFlag(FLAG_AREA_TEMP_02);
     } else {
       srcX = 51;
       i = 104;
@@ -1175,9 +1176,9 @@ void MagmaRockInside_FloodWithLava(void) {
       baseX = 206 << 18;
       ((s32 *)j)[1] = 0;
       ((s32 *)j)[2] = 170 << 18;
-      if (Event_GetFlag(770))
+      if (Event_GetFlag(FLAG_AREA_TEMP_02))
         open = 212;
-      Event_ClearFlag(770);
+      Event_ClearFlag(FLAG_AREA_TEMP_02);
     }
   }
   Event_PlaySound(SE_BOOM);
@@ -1355,7 +1356,7 @@ void MagmaRockInside_TakeFlame(void) {
   u8 *work = (u8 *)Ram_HeapSlots->eventWork;
 
   *(work + 0xd38) = 1;
-  if (!Event_GetFlag(0x304)) {
+  if (!Event_GetFlag(FLAG_AREA_TEMP_04)) {
     FieldActor_SetSpriteColor(Actor_Get(22), 15);
     Actor_SetPosition(22, PIXELS(632), PIXELS(312));
     Actor_Get(22)->scaleX = Actor_Get(22)->scaleY = 0x1000;
@@ -1393,7 +1394,7 @@ void MagmaRockInside_GrowFlame(void) {
     i++;
   } while (i != 16);
   Event_SetFlag(((s8 *)work)[0xd30] + 0x2ee);
-  if (Event_GetFlag(0x303) && Event_GetFlag(0x304)) {
+  if (Event_GetFlag(FLAG_AREA_TEMP_03) && Event_GetFlag(FLAG_AREA_TEMP_04)) {
     other = Actor_GetById(11);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -1431,9 +1432,9 @@ void MagmaRockInside_GrowFlame(void) {
 
 void MagmaRockInside_PutOutFlames(void) {
   if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 0xd30) == -1) {
-    if (!Event_GetFlag(0x304))
+    if (!Event_GetFlag(FLAG_AREA_TEMP_04))
       Actor_SetPosition(22, 0, 0);
-    if (!Event_GetFlag(0x303))
+    if (!Event_GetFlag(FLAG_AREA_TEMP_03))
       Actor_SetPosition(21, 0, 0);
   }
 }
@@ -1630,10 +1631,10 @@ void MagmaRockInside_StepOnMarker(void) {
   if (cell != 1 && cell != 7) {
     MagmaRockInside_StampStepCell();
     MagmaRockInside_OpenFlamePassage(0x108, row * 8 + 10);
-    if (!Event_GetFlag(0x200))
-      Event_SetFlag(0x200);
+    if (!Event_GetFlag(FLAG_SCENE_TEMP_00))
+      Event_SetFlag(FLAG_SCENE_TEMP_00);
     Event_SetFlag(*(s16 *)work + 312);
-  } else if (Event_GetFlag(0x200)) {
+  } else if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
     MagmaRockInside_OpenFlamePassage(0x108, row * 8 + 10);
   }
 }
@@ -1656,7 +1657,7 @@ void MagmaRockInside_GrowTabletFlame(void) {
     System_Wait(5);
     i++;
   } while (i != 16);
-  Event_SetFlag(0x305);
+  Event_SetFlag(FLAG_AREA_TEMP_05);
   other = Actor_Get(9);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1693,7 +1694,7 @@ void MagmaRockInside_GrowTabletFlame(void) {
 
 void MagmaRockInside_PutOutTabletFlame(void) {
   if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 0xd30) == -1) {
-    if (!Event_GetFlag(0x305))
+    if (!Event_GetFlag(FLAG_AREA_TEMP_05))
       Actor_SetPosition(11, 0, 0);
   }
 }
@@ -2125,7 +2126,7 @@ const struct Trigger *Scene_GetEvents(void) {
 void MagmaRockInside_PressGateSwitch1(void) {
   s32 i;
 
-  Event_SetFlag(0x300);
+  Event_SetFlag(FLAG_AREA_TEMP_00);
   MagmaRockInside_SwapCells(0, 15, 13, 0);
   for (i = 0; i != 6; i++)
     Actor_SetAnimation(i + 9, 2);
@@ -2133,7 +2134,7 @@ void MagmaRockInside_PressGateSwitch1(void) {
 }
 
 void MagmaRockInside_PressGateSwitch2(void) {
-  Event_SetFlag(0x301);
+  Event_SetFlag(FLAG_AREA_TEMP_01);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room3) {
     MagmaRockInside_SwapCells(0, 24, 15, 0);
     MagmaRockInside_SwapCells(0, 9, 16, 0);
@@ -2147,7 +2148,7 @@ void MagmaRockInside_PressGateSwitch3(void) {
   // Event_SetFlag, event.h's command, keeps 0x302 from being shared with the
   // script calls, which build it again after the scene test; GameFlag_Set
   // called directly differs in 56 instructions.
-  Event_SetFlag(0x302);
+  Event_SetFlag(FLAG_AREA_TEMP_02);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room4) {
     s16 *script = gMagmaRockInside_PlatformPath6;
 
@@ -2269,7 +2270,7 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room1) {
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
     MagmaRockInside_StartLavaPlatform(8, gMagmaRockInside_PlatformPath1, 768);
-    if (!Event_GetFlag(768)) {
+    if (!Event_GetFlag(FLAG_AREA_TEMP_00)) {
       CLOSED_BLEND();
       MapGrid_CopyCellsTo(71, 64, 47, 98, 1, 1);
     }
@@ -2293,7 +2294,7 @@ s32 Scene_Initialize(void) {
     MagmaRockInside_RaiseActorCells(gMagmaRockInside_Statues);
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
     Raise(16);
-    if (Event_GetFlag(768))
+    if (Event_GetFlag(FLAG_AREA_TEMP_00))
       MagmaRockInside_PressGateSwitch1();
     else
       CLOSED_BLEND();
@@ -2309,7 +2310,7 @@ s32 Scene_Initialize(void) {
     Raise(9);
     MagmaRockInside_StartLavaPlatform(10, gMagmaRockInside_PlatformPath2, 769);
     MagmaRockInside_StartLavaPlatform(12, gMagmaRockInside_PlatformPath3, 769);
-    if (Event_GetFlag(769))
+    if (Event_GetFlag(FLAG_AREA_TEMP_01))
       MagmaRockInside_PressGateSwitch2();
     else
       CLOSED_BLEND();
@@ -2322,7 +2323,7 @@ s32 Scene_Initialize(void) {
                                         769);
       MagmaRockInside_StartLavaPlatform(12, gMagmaRockInside_PlatformPath5,
                                         769);
-      if (Event_GetFlag(769)) {
+      if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
         MagmaRockInside_PressGateSwitch2();
       } else {
         CLOSED_BLEND();
@@ -2367,7 +2368,7 @@ s32 Scene_Initialize(void) {
                                         770);
       MagmaRockInside_StartLavaPlatform(22, gMagmaRockInside_PlatformPath9,
                                         770);
-      if (Event_GetFlag(770))
+      if (Event_GetFlag(FLAG_AREA_TEMP_02))
         MagmaRockInside_PressGateSwitch3();
       else
         CLOSED_BLEND();
@@ -2379,7 +2380,7 @@ s32 Scene_Initialize(void) {
     HangingVine_Place(11, 1);
     Raise(8);
     Raise(9);
-    if (Event_GetFlag(770)) {
+    if (Event_GetFlag(FLAG_AREA_TEMP_02)) {
       MagmaRockInside_SwapCells(0, 22, 26, 0);
       MagmaRockInside_SwapCells(0, 25, 26, 0);
       Actor_SetSpritePriority(64, 3);
@@ -2399,7 +2400,7 @@ s32 Scene_Initialize(void) {
     MagmaRockInside_StartLavaPlatform(8, gMagmaRockInside_PlatformPath10, 770);
     MagmaRockInside_StartLavaPlatform(10, gMagmaRockInside_PlatformPath11, 770);
     MagmaRockInside_StartLavaPlatform(11, gMagmaRockInside_PlatformPath12, 770);
-    if (Event_GetFlag(770)) {
+    if (Event_GetFlag(FLAG_AREA_TEMP_02)) {
       Actor_SetAnimation(9, 4);
       if (Event_GetFlag(2550))
         Actor_SetAnimation(12, 4);
@@ -2429,11 +2430,11 @@ s32 Scene_Initialize(void) {
     }
     Actor_PlaceBlocks(gMagmaRockInside_Room7Pillars);
     FieldEffect_StartBlankOverlay(0);
-    if (!Event_GetFlag(771))
+    if (!Event_GetFlag(FLAG_AREA_TEMP_03))
       Actor_SetPosition(21, 0, 0);
-    if (!Event_GetFlag(772))
+    if (!Event_GetFlag(FLAG_AREA_TEMP_04))
       Actor_SetPosition(22, 0, 0);
-    if (Event_GetFlag(771) && Event_GetFlag(772)) {
+    if (Event_GetFlag(FLAG_AREA_TEMP_03) && Event_GetFlag(FLAG_AREA_TEMP_04)) {
       Lower(11, -0x200000);
       Actor_SetAnimation(11, 4);
     } else {
@@ -2451,7 +2452,7 @@ s32 Scene_Initialize(void) {
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room8) {
     MagmaRockInside_StartStepCells();
-    Event_SetFlag(324);
+    Event_SetFlag(FLAG_RETREAT_BLOCKED);
     i = 0;
   room8:
     if (Event_GetFlag(i + 514)) {
@@ -2464,7 +2465,7 @@ s32 Scene_Initialize(void) {
       goto room8;
     Actor_SetSpriteFlags(Actor_GetById(10), 0);
     Actor_SetSpriteFlags(Actor_GetById(11), 0);
-    if (Event_GetFlag(773)) {
+    if (Event_GetFlag(FLAG_AREA_TEMP_05)) {
       Lower(9, -0x200000);
       Actor_SetAnimation(9, 4);
     } else {
@@ -2481,12 +2482,12 @@ s32 Scene_PrepareMap(void) {
   s32 scene = gMainRoutineWork.scene;
   s32 entrance = gMainRoutineWork.entrance;
 
-  if (!Event_GetFlag(0x109)) {
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     if ((scene == (s32)&SceneId_Ov692Room2 && entrance == 8) ||
         (scene == (s32)&SceneId_Ov692Room7 && entrance == 11)) {
-      Event_ClearFlag(0x300);
-      Event_ClearFlag(0x301);
-      Event_ClearFlag(0x302);
+      Event_ClearFlag(FLAG_AREA_TEMP_00);
+      Event_ClearFlag(FLAG_AREA_TEMP_01);
+      Event_ClearFlag(FLAG_AREA_TEMP_02);
     }
   }
   return 0;

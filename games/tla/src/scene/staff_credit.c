@@ -1,5 +1,6 @@
 /// @file
 #include "shared/actors.h"
+#include "flags.h"
 #include "shared/flight.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -182,7 +183,7 @@ void Func_0200020c(s32 stage) {
   Actor_SetPosition(8, 0, 0);
   gData_02003dbe = 0;
   wait(1);
-  Event_ClearFlag(0x109);
+  Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
   palette = stage;
   buffer = Heap_AllocEwram(0x6000);
@@ -453,7 +454,7 @@ void Func_0200020c(s32 stage) {
   DebugText_Clear();
   IoWriteQueue_Store16(0x04000052, gData_02003dbc);
   IoWriteQueue_Store16(0x04000050, 0);
-  Event_SetFlag(0x101);
+  Event_SetFlag(FLAG_SKIP_SCENE_CHANGE_SOUND);
 }
 
 void WorldMap_StartPlacedActors(void);
@@ -464,13 +465,13 @@ void WorldMap_StartPlacedActors(void);
 s32 Scene_Initialize(void) {
   struct EventWork *work;
 
-  Event_SetFlag(0x144);
+  Event_SetFlag(FLAG_RETREAT_BLOCKED);
   work = Ram_HeapSlots->eventWork;
   work->screenEffect = 0;
   work->delay = 16;
   System_Wait(1);
   FieldCamera_SetSpeed(0x80000, 0x10000);
-  Event_ClearFlag(0x12f);
+  Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   WorldMap_StartPlacedActors();
   switch (gMainRoutineWork.entrance) {
   case 0:
@@ -577,7 +578,7 @@ void Func_02001400(s32 mode) {
   /* FAKEMATCH(temporary): the blend level is read into level, a u32 local,
    * before each IoWriteQueue_Store16 call. */
   System_Wait(1);
-  Event_ClearFlag(0x109);
+  Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
   Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->delay = 16;
@@ -684,7 +685,7 @@ void Func_02001400(s32 mode) {
     IoWriteQueue_Store16(0x04000050, 0);
   }
   Heap_Release(buffer);
-  Event_SetFlag(0x101);
+  Event_SetFlag(FLAG_SKIP_SCENE_CHANGE_SOUND);
 }
 
 DEFINE_ACTOR_FLICKER(Func_0200199c, Func_02001ad0)
@@ -764,7 +765,8 @@ void Func_02001d90(void) {
   s32 screen[3];
   u32 attributes;
 
-  if ((gInput & 3) != 0 && Event_GetFlag(0x106) == 0 && leader->y > 0x40000) {
+  if ((gInput & 3) != 0 && Event_GetFlag(FLAG_MENU_OPEN) == 0 &&
+      leader->y > 0x40000) {
     if (--gData_02003fc8 <= 0) {
       Party_DrainPp(1);
       gData_02003fc8 = 10;

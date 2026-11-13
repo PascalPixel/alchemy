@@ -209,7 +209,7 @@
 #define DEFINE_LEADER_RISE_FROM_WATER(name, call1)                             \
   void name(void) {                                                            \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
-    s32 flag = Event_GetFlag(0x109);                                           \
+    s32 flag = Event_GetFlag(FLAG_KEEP_PARTY_POSITION);                        \
     s32 *owner = &gMainRoutineWork.currentOwner;                               \
     s32 offset;                                                                \
                                                                                \

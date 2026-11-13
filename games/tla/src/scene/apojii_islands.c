@@ -1,5 +1,6 @@
 /// @file
 #include "shared/actors.h"
+#include "flags.h"
 #include "types.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"
@@ -628,7 +629,7 @@ void ApojiiIslands_InitializeRoom2(void) {
 
 void Func_020010b4(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
-  Event_ClearFlag(0x12f);
+  Event_ClearFlag(FLAG_SHOW_AREA_NAME);
 }
 
 void Func_020010d0(void) { Field_TryJumpForward(); }

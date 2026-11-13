@@ -6,6 +6,7 @@
 /// AncientLemuria_TremorShakesOutRime).
 
 #include "types.h"
+#include "flags.h"
 #include "map.h"
 #include "system/ram_buffer.h"
 #include "system/iwram_call.h"
@@ -296,9 +297,9 @@ s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 513;
   Task_Add(AncientLemuria_CycleWaterColors, 0xc80);
   if (gMainRoutineWork.entrance != 1)
-    GameFlag_Clear(0x12f);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   else
-    GameFlag_Set(0x12f);
+    GameFlag_Set(FLAG_SHOW_AREA_NAME);
   if (GameFlag_Get(0x961)) {
     Actor_SetPosition(8, 136 << 16, 584 << 16);
     Actor_SetHorizontalPositionWithTerrain(9, 0, 0);

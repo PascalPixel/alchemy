@@ -1,6 +1,7 @@
 
 #include "../field/object/set_sprite_priority.c"
 #include "battle/battle.h"
+#include "flags.h"
 #include "debug.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -375,17 +376,17 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
   if ((u32)(leader->xPixel - 676) > 7 || z < 788 || z >= 796) {
     MapGrid_CopyCellPictureIndicesRect(53, 50, 42, 49, 1, 1);
     MapGrid_CopyCellsTo(55, 117, 41, 117, 3, 5);
-    GameFlag_Clear(0x201);
+    GameFlag_Clear(FLAG_SCENE_TEMP_01);
     leader->motionFlags |= 1;
     leader->terrainHeight = 0;
     leader->y = 0;
-  } else if (!Event_GetFlag(0x201)) {
+  } else if (!Event_GetFlag(FLAG_SCENE_TEMP_01)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_Wait(5);
     MapGrid_CopyCellPictureIndicesRect(52, 50, 42, 49, 1, 1);
     MapGrid_CopyCellsTo(52, 117, 41, 117, 3, 5);
-    GameFlag_Set(0x201);
+    GameFlag_Set(FLAG_SCENE_TEMP_01);
     Sound_Play(SE_RATTLE);
     leader->motionFlags &= ~1;
     leader->terrainHeight = -0x20000;
@@ -414,7 +415,7 @@ void VenusLighthouse_SinkStatue(void) {
     val = 0xfffe0000;
     obj->terrainHeight = val;
     obj->y = val;
-    Event_SetFlag(0x200);
+    Event_SetFlag(FLAG_SCENE_TEMP_00);
     a = 3;
     b = 5;
     MapGrid_CopyCellsTo(44, 117, 41, 117, a, b);
@@ -1042,7 +1043,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(40);
   MapGrid_CopyCellsTo(53, 50, 42, 49, 1, 1);
   MapGrid_CopyCellsTo(55, 117, 41, 117, 3, 5);
-  Event_ClearFlag(513);
+  Event_ClearFlag(FLAG_SCENE_TEMP_01);
   Actor_SetPosition(10, PIXELS(664), PIXELS(792));
   FieldCamera_MoveTo(-1, -1, -1, 0);
   gMainRoutineWork.currentOwner = 5;

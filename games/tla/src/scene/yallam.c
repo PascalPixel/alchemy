@@ -5,6 +5,7 @@
 /// pushes down to reach the Masamune.
 
 #include "types.h"
+#include "flags.h"
 #include "text/msg_ids.h"
 #include "actor.h"
 #include "field/field.h"
@@ -1733,7 +1734,7 @@ waitFourthVerse:
 
 /// Once Force has pushed it (flag 0x300), the pillar lies where it fell.
 void Yallam_PlaceFallenPillar(void) {
-  if (Event_GetFlag(0x300)) {
+  if (Event_GetFlag(FLAG_AREA_TEMP_00)) {
     SET_POSITION(Actor_Get(9), 0xa80000, 0, 0xc00000);
   }
 }
@@ -1750,7 +1751,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room1 &&
-      Event_GetFlag(0x300))
+      Event_GetFlag(FLAG_AREA_TEMP_00))
     MapGrid_CopyCellAttributes(8, 12, 1, 1, 10, 12);
   return 0;
 }
@@ -1765,7 +1766,7 @@ void Yallam_ForcePillarDown(void) {
   struct Actor *object = Actor_Get(9);
   struct TileSprite *sprite = object->sprite;
 
-  Event_SetFlag(0x300);
+  Event_SetFlag(FLAG_AREA_TEMP_00);
   object->acceleration = 0x18000;
   object->speedLimit = 0x80000;
   Event_PlaySound(SE_TOPPLE);

@@ -1,5 +1,6 @@
 /// @file
 #include "shared/whirlwind.h"
+#include "flags.h"
 #include "shared/jupiter_lighthouse.h"
 #include "shared/actors.h"
 #include "shared/effects.h"
@@ -128,7 +129,8 @@ void Func_02000064(s32 unused, s32 id) {
 
   object = Actor_Get(id);
   if (id == 11) {
-    if (!Event_GetFlag(0xa00) || object->x >> 20 != 13 || object->z >> 20 != 34)
+    if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) ||
+        object->x >> 20 != 13 || object->z >> 20 != 34)
       return;
     object->motionFlags = 0;
     for (i = 15; i >= 0; i--) {
@@ -248,7 +250,7 @@ void Func_020002b8(void) {
 
   if (leader->x >> 20 != 42 || leader->z >> 20 != 41)
     return;
-  Event_SetFlag(2560);
+  Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED);
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
   FieldEvent_Wait(30);
@@ -526,8 +528,8 @@ void Func_020008a4(void) {
   FieldEvent_Wait(30);
   FieldEvent_ShowMessageThenWait(22, 0, 5);
   Event_SetFlag(0xa25);
-  Event_SetFlag(0x161);
-  Event_SetFlag(0x144);
+  Event_SetFlag(FLAG_NO_ENCOUNTERS_IN_AREA);
+  Event_SetFlag(FLAG_RETREAT_BLOCKED);
   Event_End();
 }
 
@@ -560,7 +562,7 @@ s32 Scene_Initialize(void) {
   object->motionFlags = 0;
   SET_POSITION(object, 0x2a80000, 0x400000, 0x2440000);
   Actor_SetSpriteFlags(Actor_Get(24), 0);
-  if (Event_GetFlag(0xa00)) {
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     MapGrid_CopyCellsLayered(58, 99, 3, 3, 41, 99);
     MapGrid_CopyCellsLayered(123, 32, 1, 5, 106, 32);
     Task_AddFrame(Orbs_SpawnRising, TASK_PASS_VBLANK);
@@ -574,9 +576,9 @@ s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   JupiterLighthouse_LoadPalettes(0);
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x40;
-  if (Event_GetFlag(0xa00))
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED))
     MapGrid_SetCellBehavior(0xd00000, 0x2a00000, 2, 236);
-  if (Event_GetFlag(0xa00)) {
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     Actor_RaiseFromCell(10);
     Actor_RaiseFromCell(12);
     Actor_RaiseFromCell(13);

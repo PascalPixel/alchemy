@@ -4,6 +4,7 @@
 /// the party, and in a linked game the three gladiators from Colosso.
 
 #include "battle/battle.h"
+#include "flags.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -113,7 +114,7 @@ void ShamanVillageCave_FinishMovingPillar(s32 unused, s32 id) {
 void ShamanVillageCave_FreezePuddle(void) {
   struct Actor *object = Actor_Get(16);
 
-  Event_SetFlag(0x302);
+  Event_SetFlag(FLAG_AREA_TEMP_02);
   object->motionFlags = 0;
   object->priorityFlags = 0;
   MapGrid_CopyCellAttributes(8, 42, 1, 1, 6, 42);
@@ -146,8 +147,8 @@ void ShamanVillageCave_EddyFlees(void) {
   dz = -1;
   if (leaderZ <= 95)
     dz = 1;
-  if (dz == 1 && Event_GetFlag(514) != 0) {
-    if (Event_GetFlag(516) != 0)
+  if (dz == 1 && Event_GetFlag(FLAG_SCENE_TEMP_02) != 0) {
+    if (Event_GetFlag(FLAG_SCENE_TEMP_04) != 0)
       return;
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -169,7 +170,7 @@ void ShamanVillageCave_EddyFlees(void) {
     Actor_ShowEmote(17, 258, 0);
     FieldEvent_Wait(30);
     Event_End();
-    Event_SetFlag(516);
+    Event_SetFlag(FLAG_SCENE_TEMP_04);
     return;
   }
   Event_Start();
@@ -191,8 +192,8 @@ void ShamanVillageCave_EddyFlees(void) {
 
 /// Talking to Eddy, the Mercury Djinni, starts its battle.
 void ShamanVillageCave_FightEddy(void) {
-  Event_SetFlag(0x205);
-  Event_SetFlag(0x206);
+  Event_SetFlag(FLAG_SCENE_TEMP_05);
+  Event_SetFlag(FLAG_SCENE_TEMP_06);
   Event_RequestDjinnBattle(17, 35);
 }
 
@@ -209,22 +210,22 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 /// Lift raises one of the four rocks (actors 11 to 14), each for good.
 void ShamanVillageCave_LiftFirstRock(void) {
-  Event_SetFlag(0x200);
+  Event_SetFlag(FLAG_SCENE_TEMP_00);
   return;
 }
 
 void ShamanVillageCave_LiftSecondRock(void) {
-  Event_SetFlag(0x201);
+  Event_SetFlag(FLAG_SCENE_TEMP_01);
   return;
 }
 
 void ShamanVillageCave_LiftThirdRock(void) {
-  Event_SetFlag(0x202);
+  Event_SetFlag(FLAG_SCENE_TEMP_02);
   return;
 }
 
 void ShamanVillageCave_LiftFourthRock(void) {
-  Event_SetFlag(0x203);
+  Event_SetFlag(FLAG_SCENE_TEMP_03);
   return;
 }
 
@@ -606,7 +607,7 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(0x9aa))
     Actor_SetPosition(10, 0, 0);
   if (Event_GetFlag(83) || Event_GetFlag(163))
-    Event_SetFlag(0x205);
+    Event_SetFlag(FLAG_SCENE_TEMP_05);
   if (Event_GetFlag(0x9a8)) {
     object = Actor_Get(15);
     object->motionFlags = 0;
@@ -618,7 +619,7 @@ s32 Scene_Initialize(void) {
   }
   Actor_SetSpriteFlags(Actor_Get(16), 0);
   Actor_SetAnimation(16, 1);
-  if (Event_GetFlag(770)) {
+  if (Event_GetFlag(FLAG_AREA_TEMP_02)) {
     object = Actor_Get(16);
     Actor_SetAnimation(16, 5);
     FieldActor_SetSpriteColor(Actor_Get(16), 0);
@@ -627,18 +628,20 @@ s32 Scene_Initialize(void) {
     object->y = 0;
     MapGrid_CopyCellAttributes(8, 42, 1, 1, 6, 42);
   }
-  if (Event_GetFlag(518))
+  if (Event_GetFlag(FLAG_SCENE_TEMP_06))
     Actor_SetPosition(17, PIXELS(328), PIXELS(792));
   FieldActor_SetSpriteColor(Actor_Get(19), 1);
   FieldActor_SetSpriteColor(Actor_Get(20), 0);
   FieldActor_SetSpriteColor(Actor_Get(21), 2);
-  if ((!Event_GetFlag(265) &&
+  if ((!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
        (gMainRoutineWork.entrance == 20 || gMainRoutineWork.entrance == 21)) ||
       Event_GetFlag(0xa71)) {
     ShamanVillageCave_PlaceGladiators();
-    if (!Event_GetFlag(265) && gMainRoutineWork.entrance == 20) {
+    if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
+        gMainRoutineWork.entrance == 20) {
       ShamanVillageCave_BeatColossoFans();
-    } else if (!Event_GetFlag(265) && gMainRoutineWork.entrance == 21) {
+    } else if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
+               gMainRoutineWork.entrance == 21) {
       Event_SetFlag(0xa71);
       ShamanVillageCave_LoseToColossoFans();
     }

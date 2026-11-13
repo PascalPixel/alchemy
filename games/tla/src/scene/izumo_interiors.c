@@ -991,7 +991,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_WaitForMoveById(23);
   Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
   GameFlag_Set(FLAG_IZUMO_RECOGNIZED_THE_HEROES);
-  GameFlag_Set(0x350);
+  GameFlag_Set(FLAG_AREA_TEMP_50);
   Event_End();
 }
 
@@ -1091,7 +1091,7 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
 s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
   if (gMainRoutineWork.entrance != 7)
-    Event_ClearFlag(0x350);
+    Event_ClearFlag(FLAG_AREA_TEMP_50);
   if (GameFlag_Get(FLAG_SERPENT_SLAIN) &&
       !GameFlag_Get(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
       gMainRoutineWork.entrance == 7) {
@@ -1105,7 +1105,7 @@ s32 Scene_Initialize(void) {
   }
   if (GameFlag_Get(FLAG_SERPENT_SLAIN) &&
       GameFlag_Get(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
-      gMainRoutineWork.entrance == 7 && GameFlag_Get(0x350)) {
+      gMainRoutineWork.entrance == 7 && GameFlag_Get(FLAG_AREA_TEMP_50)) {
     Event_PlaySound(MUS_007);
     Actor_SetPosition(16, 0, 0);
     Actor_SetPosition(17, 0, 0);

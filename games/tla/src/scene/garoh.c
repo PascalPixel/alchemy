@@ -299,7 +299,7 @@ void Func_02000698(s32 actor) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  flag = Event_GetFlag(0x300);
+  flag = Event_GetFlag(FLAG_AREA_TEMP_00);
   msg = (s32)MsgGaroh04;
   if (flag) {
     FieldEvent_SetMessageId(msg);
@@ -319,7 +319,7 @@ void Func_020006ec(void) {
   Actor_SetAnimation(13, 1);
   FieldEvent_Wait(10);
   Actor_FaceActor(13, 4, 0);
-  if (Event_GetFlag(0x301)) {
+  if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
     FieldEvent_SetMessageId((s32)MsgGaroh21);
   } else {
     FieldEvent_SetMessageId((s32)MsgGaroh20);
@@ -346,7 +346,7 @@ void Func_020006ec(void) {
     FieldEvent_ShowMessageThenWait(13, 0, 5);
   }
   FieldEvent_ShowMessageThenWait(13, 0, 10);
-  Event_SetFlag(0x301);
+  Event_SetFlag(FLAG_AREA_TEMP_01);
   Actor_SetScript(13, 2);
   Event_End();
 }
@@ -371,9 +371,9 @@ void Func_02000808(void) {
     BattleEffect_CleanupSceneObjects();
   }
 
-  flag = Event_GetFlag(0x320);
+  flag = Event_GetFlag(FLAG_AREA_TEMP_20);
   if (flag == 0) {
-    Event_SetFlag(0x320);
+    Event_SetFlag(FLAG_AREA_TEMP_20);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Actor_SetSpriteFlags(Actor_Get(22), 0);
@@ -520,7 +520,7 @@ void Func_02000be4(void) {
       Event_GetFlag(FLAG_GAROH_NIGHT) != 0) {
     Event_SetFlag(FLAG_GAROH_NIGHT);
     PaletteFade_ApplyTarget(0x10007, 1);
-    if (Event_GetFlag(0x311))
+    if (Event_GetFlag(FLAG_AREA_TEMP_11))
       PaletteFade_ApplyTarget(0x10003, 2);
     PaletteFade_Interpolate(1);
     Event_WaitTransitionFrames();
@@ -584,7 +584,7 @@ extern s16 gData_02005450[];
 void Func_02000e00(void) {
   FieldTask_AddFrame(Func_02000a68, 1152);
   if (Flag_IsSet(FLAG_GAROH_NIGHT)) {
-    if (Flag_IsSet(0x318))
+    if (Flag_IsSet(FLAG_AREA_TEMP_18))
       PaletteFade_ApplyTarget(0x10003, 1);
     else
       PaletteFade_ApplyTarget(0x10007, 1);
@@ -633,7 +633,7 @@ DEFINE_GAROH_TRIGGER_AT_CELL(Func_02000eec, 9, 0x202, 15, 28)
 
 void Func_02000f28(void) {
   Actor_Get(10);
-  Flag_IsSet(0x203);
+  Flag_IsSet(FLAG_SCENE_TEMP_03);
 }
 
 void Func_02000f3c(void) {
@@ -641,9 +641,9 @@ void Func_02000f3c(void) {
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
 
-  if (!Flag_IsSet(0x204) && x == 15 && z == 25) {
+  if (!Flag_IsSet(FLAG_SCENE_TEMP_04) && x == 15 && z == 25) {
     Func_02000e78(11, object);
-    Flag_Set(0x204);
+    Flag_Set(FLAG_SCENE_TEMP_04);
   }
 }
 
@@ -708,7 +708,7 @@ s32 Func_0200108c(void) { return Flag_IsSet(FLAG_GAROH_NIGHT); }
 
 void Func_02001098(void) {
   if (Flag_IsSet(FLAG_GAROH_NIGHT)) {
-    if (Flag_IsSet(0x318))
+    if (Flag_IsSet(FLAG_AREA_TEMP_18))
       PaletteFade_ApplyTarget(0x10003, 1);
     else
       PaletteFade_ApplyTarget(0x10007, 1);
@@ -731,15 +731,15 @@ void Func_02001144(void) {
   struct GarohEventWork *work;
 
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
-    Flag_Set(0x210);
+    Flag_Set(FLAG_SCENE_TEMP_10);
     if (gMainRoutineWork.entrance == 1) {
       PaletteFade_ApplyTarget(0x10003, 1);
       Flag_Set(FLAG_GAROH_NIGHT);
-      Flag_Set(0x318);
+      Flag_Set(FLAG_AREA_TEMP_18);
     } else {
       PaletteFade_ApplyTarget(0x10000, 1);
       Flag_Clear(FLAG_GAROH_NIGHT);
-      Flag_Clear(0x318);
+      Flag_Clear(FLAG_AREA_TEMP_18);
     }
     work = Ram_HeapSlots->eventWork;
     if (work->fadeLock == 0)
@@ -751,15 +751,15 @@ void Func_020011c8(void) {
   struct GarohEventWork *work;
 
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
-    Flag_Set(0x211);
+    Flag_Set(FLAG_SCENE_TEMP_11);
     if (gMainRoutineWork.entrance == 2) {
       PaletteFade_ApplyTarget(0x10003, 1);
       Flag_Set(FLAG_GAROH_NIGHT);
-      Flag_Set(0x318);
+      Flag_Set(FLAG_AREA_TEMP_18);
     } else {
       PaletteFade_ApplyTarget(0x10007, 1);
       Flag_Set(FLAG_GAROH_NIGHT);
-      Flag_Clear(0x318);
+      Flag_Clear(FLAG_AREA_TEMP_18);
     }
     work = Ram_HeapSlots->eventWork;
     if (work->fadeLock == 0)
@@ -815,7 +815,7 @@ void Actor_StartScript(struct SpawnObject *object, const void *script);
 
 void Func_0200132c(void) {
   Rope_Lash(1, 10, 11);
-  Flag_Set(0x203);
+  Flag_Set(FLAG_SCENE_TEMP_03);
 }
 
 s32 Func_02001344(void) {

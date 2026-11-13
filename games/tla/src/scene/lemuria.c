@@ -4,6 +4,7 @@
 /// the water's rippling scroll and cycling colours.
 
 #include "shared/tables.h"
+#include "flags.h"
 #include "shared/actors.h"
 #include "types.h"
 #include "system/iwram_call.h"
@@ -611,16 +612,16 @@ s32 Scene_Initialize(void) {
     HangingVine_Place(10, 1);
     Lemuria_GrowVine();
   }
-  if (!Event_GetFlag(0x303)) {
+  if (!Event_GetFlag(FLAG_AREA_TEMP_03)) {
     Actor_SetWideSprite(67, 0);
   }
-  if (!Event_GetFlag(0x304)) {
+  if (!Event_GetFlag(FLAG_AREA_TEMP_04)) {
     Actor_SetWideSprite(68, 0);
   }
-  if (!Event_GetFlag(0x306)) {
+  if (!Event_GetFlag(FLAG_AREA_TEMP_06)) {
     Actor_SetWideSprite(70, 0);
   }
-  if (!Event_GetFlag(0x307)) {
+  if (!Event_GetFlag(FLAG_AREA_TEMP_07)) {
     Actor_SetWideSprite(71, 0);
   }
   if (Event_GetFlag(0x966)) {

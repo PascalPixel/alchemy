@@ -556,23 +556,23 @@ void Func_02000900(struct Counted *object) {
   }
   if (object->count > 2) {
     other->movementState = 1;
-    Event_SetFlag(0x206);
+    Event_SetFlag(FLAG_SCENE_TEMP_06);
   }
   {
     u8 *otherCount = &other->count;
 
-    if (*otherCount > 2 && !Event_GetFlag(0x206) &&
+    if (*otherCount > 2 && !Event_GetFlag(FLAG_SCENE_TEMP_06) &&
         other->script != gData_020056c4 && other->script != gData_02005728) {
       object->movementState = 1;
-      Event_SetFlag(0x205);
+      Event_SetFlag(FLAG_SCENE_TEMP_05);
     }
     if (object->count == 0) {
       other->movementState = 0;
-      Event_ClearFlag(0x206);
+      Event_ClearFlag(FLAG_SCENE_TEMP_06);
     }
     if (*otherCount == 0) {
       object->movementState = 0;
-      Event_ClearFlag(0x205);
+      Event_ClearFlag(FLAG_SCENE_TEMP_05);
     }
     if (object->count > 35)
       object->count = 35;
@@ -644,7 +644,7 @@ void Func_02000af8(s32 unused, u32 id) {
     object->update = (void (*)(void))Func_02000a60;
   object->collisionFlags = 1;
   Event_SetFlag(*state + 0xa50);
-  Event_SetFlag(0x200);
+  Event_SetFlag(FLAG_SCENE_TEMP_00);
   System_Wait(20);
 }
 
@@ -666,7 +666,7 @@ void Func_02000b6c(void) {
       FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
     }
     if (!Event_GetFlag(FLAG_SERPENT_SLAIN)) {
-      Event_SetFlag(0x30a);
+      Event_SetFlag(FLAG_AREA_TEMP_0A);
       FieldEvent_Wait(30);
       ObjectTable_Snapshot();
       FieldEvent_SetExitRequest(20);
@@ -1445,7 +1445,7 @@ void Func_02001fa0(void) {
   object->z = 0x1280000;
   object->y = -1966080;
   object->terrainHeight = -2097152;
-  Event_ClearFlag(0x142);
+  Event_ClearFlag(FLAG_NOTHING_HAPPENS);
   Scene_TalkToActor(0x1042);
 }
 
@@ -1638,7 +1638,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
     Actor_WaitForMoveById(12);
     Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
     if (!GameFlag_Get(FLAG_SERPENT_SLAIN)) {
-      GameFlag_Set(0x308);
+      GameFlag_Set(FLAG_AREA_TEMP_08);
       Event_Wait(30);
       ObjectTable_Snapshot();
       Import_EventSetExitRequest(20);
@@ -1726,7 +1726,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
     Actor_WaitForMoveById(12);
     Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
     if (!GameFlag_Get(FLAG_SERPENT_SLAIN)) {
-      GameFlag_Set(0x309);
+      GameFlag_Set(FLAG_AREA_TEMP_09);
       Event_Wait(30);
       ObjectTable_Snapshot();
       Import_EventSetExitRequest(20);
@@ -1814,7 +1814,7 @@ void GaiaRockInside_PlaceDollOnRoom5Altar(void) {
     Actor_WaitForMoveById(14);
     Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
     if (!GameFlag_Get(FLAG_SERPENT_SLAIN)) {
-      GameFlag_Set(0x307);
+      GameFlag_Set(FLAG_AREA_TEMP_07);
       Event_Wait(30);
       ObjectTable_Snapshot();
       Import_EventSetExitRequest(20);
@@ -1983,7 +1983,7 @@ void Func_02002b8c(void) {
   u16 *pending = &state->pending;
   u16 *frame = &state->frame;
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  s32 stopped = Event_GetFlag(0x106);
+  s32 stopped = Event_GetFlag(FLAG_MENU_OPEN);
   s32 id;
 
   if (work->unk166 != 0)
@@ -3578,7 +3578,7 @@ s32 Scene_PrepareMap(void) {
       }
       Func_020048a0();
       stage = (s32 *)(gInventorySnapshot + 0x288);
-      if (*stage == 3 && !GameFlag_Get(0x3f6))
+      if (*stage == 3 && !GameFlag_Get(FLAG_AREA_TEMP_F6))
         Actor_SetPosition(64, 0x680000, 0x580000);
       if (*stage == 9)
         Actor_SetPosition(65, 0x680000, 0x480000);
@@ -3590,7 +3590,7 @@ s32 Scene_PrepareMap(void) {
         Actor_SelectAnimation(climber, ((angle & 0xc000) >> 14) + 2);
         climber->update = (angle & 0x4000) != 0 ? Func_02000aac : Func_02000a60;
         climber->collisionFlags = 1;
-        GameFlag_Set(0x200);
+        GameFlag_Set(FLAG_SCENE_TEMP_00);
       }
     } else if (gMainRoutineWork.entrance > 8) {
       u8 *layer;
@@ -3692,7 +3692,7 @@ void Func_020044f8(s32 seed) {
   steps = path->steps;
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
     return;
-  if (GameFlag_Get(0x3f0))
+  if (GameFlag_Get(FLAG_AREA_TEMP_F0))
     return;
   gRandomState = seed;
 restart:
@@ -3882,7 +3882,7 @@ restart:
   steps[1].unk_2 = 250;
   path->unk_0 = 1;
   Heap_Release(grid);
-  Event_SetFlag(0x3f0);
+  Event_SetFlag(FLAG_AREA_TEMP_F0);
   gRandomState = saved;
 }
 

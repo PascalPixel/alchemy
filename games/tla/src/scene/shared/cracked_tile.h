@@ -62,7 +62,7 @@
             entry->z = cz;                                                     \
             entry->flag = flag;                                                \
             flag++;                                                            \
-            if (!Event_GetFlag(0x109)) {                                       \
+            if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {                    \
               if (event == last)                                               \
                 Event_SetFlag(entry->flag);                                    \
             } else if (Event_GetFlag(entry->flag)) {                           \
@@ -83,7 +83,7 @@
       if (j < height)                                                          \
         goto row;                                                              \
     }                                                                          \
-    if (Event_GetFlag(0x109)) {                                                \
+    if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {                             \
       struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);         \
       s32 leaderX = leader->x >> 20;                                           \
       s32 leaderZ = leader->z >> 20;                                           \
@@ -339,7 +339,7 @@
             entry->z = cz;                                                     \
             entry->flag = flag;                                                \
             flag++;                                                            \
-            if (!Event_GetFlag(0x109)) {                                       \
+            if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {                    \
               if (event == last)                                               \
                 Event_SetFlag(entry->flag);                                    \
             } else if (Event_GetFlag(entry->flag)) {                           \
@@ -375,7 +375,7 @@
       if (j < height)                                                          \
         goto row;                                                              \
     }                                                                          \
-    if (Event_GetFlag(0x109)) {                                                \
+    if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {                             \
       struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);         \
       s32 leaderX = leader->x >> 20;                                           \
       s32 leaderZ = leader->z >> 20;                                           \

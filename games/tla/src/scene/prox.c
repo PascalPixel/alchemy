@@ -4,6 +4,7 @@
 #include "../field/field_effect/move.c"
 /// @file
 #include "types.h"
+#include "flags.h"
 #include "system/main_routine_work.h"
 #include "field_sprite.h"
 #include "system/field_effect.h"
@@ -568,7 +569,7 @@ void Prox_SearchForParents(void) {
     FieldEvent_ResolvePendingActions(0);
     Event_PlaySound(SE_DOOR_OPEN);
     MapGrid_CopyCellsTo(0x59, 0, 0x4d, 0x10, 1, 2);
-    Event_SetFlag(0x200);
+    Event_SetFlag(FLAG_SCENE_TEMP_00);
     FieldEvent_Wait(10);
     {
       s32 y = 0xc0;
@@ -1064,7 +1065,7 @@ void Prox_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (!Event_GetFlag(0x200)) {
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_00)) {
     if (mode == 2)
       Event_PlaySound(SE_THUMP);
     else
@@ -1422,7 +1423,7 @@ void Prox_GiveThanksForBeacon(void) {
     work->screenEffect = 0x209;
     work->delay = 0x10;
   }
-  Event_ClearFlag(0x12f);
+  Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   Event_SetFlag(0x9c5);
   Func_0200446c();
 }
@@ -1443,7 +1444,7 @@ s32 Scene_Initialize(void) {
 
   if (Event_GetFlag(0xa3d)) {
     Event_SetFlag(0x17c);
-    Event_SetFlag(0x144);
+    Event_SetFlag(FLAG_RETREAT_BLOCKED);
   }
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov6a8Room4) {
@@ -1464,8 +1465,8 @@ s32 Scene_Initialize(void) {
     FieldEffect_StartBlankOverlay(skip);
   } else {
     if (!Event_GetFlag(0xa3d))
-      Event_SetFlag(0x201);
-    if (Event_GetFlag(0x201)) {
+      Event_SetFlag(FLAG_SCENE_TEMP_01);
+    if (Event_GetFlag(FLAG_SCENE_TEMP_01)) {
       Weather_StartRain(1);
     } else {
       REG_BLDALPHA = 0xc08;
@@ -1481,13 +1482,13 @@ s32 Scene_Initialize(void) {
     }
     scene = gMainRoutineWork.scene;
     if (scene == (s32)&SceneId_Ov6a8Room2) {
-      if (!Event_GetFlag(0x300))
+      if (!Event_GetFlag(FLAG_AREA_TEMP_00))
         Actor_SetWideSprite(64, 1);
       Func_020027e4();
     } else if (scene == (s32)&SceneId_Ov6a8Room3) {
       Prox_InitializeRoom3();
     }
-    if (Event_GetFlag(0x201)) {
+    if (Event_GetFlag(FLAG_SCENE_TEMP_01)) {
       BattleEffect_ApplyColorToTargetBuffer(0x10004, 1);
       PaletteFade_StartInterpolation(16);
       wait(16);
@@ -1518,7 +1519,7 @@ void Func_0200279c(s32 actor, s32 x, s32 z, s32 frames) {
 void Func_020027e4(void) {
 
   if (Event_GetFlag(0xa3d)) {
-    if (!Event_GetFlag(0x109)) {
+    if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
       Func_0200279c(0x10, 0x218, 0x168, 0);
       Func_0200279c(0x11, 0x218, 0x1a8, 1);
       Func_0200279c(0x12, 0x244, 0x1a4, 2);
@@ -1542,7 +1543,7 @@ void Prox_InitializeRoom3(void) {
     if (!Event_GetFlag(0x9c0)) {
       Actor_SetPosition(8, 0, 0);
     }
-    if (Event_GetFlag(0x200)) {
+    if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
       MapGrid_CopyCellsTo(0x59, 0, 0x4d, 0x10, 1, 2);
     }
     if (Event_GetFlag(0x9c1)) {
@@ -1603,7 +1604,7 @@ void Func_02002a08(void) {
 void Func_02002a38(void) {
   s32 priority;
 
-  if (Event_GetFlag(0x109) == 0) {
+  if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
     s32 entrance = (u16)gMainRoutineWork.entrance;
 
     if (gMainRoutineWork.entrance == 6)
@@ -1999,10 +2000,10 @@ void Func_020038e8(void) {
   void *work = Ram_HeapSlots->eventWork;
 
   if (FIELD_AT(work, s16, 0xca2) != 0) {
-    Event_SetFlag(0x106);
+    Event_SetFlag(FLAG_MENU_OPEN);
     Leader_StopMoving();
     Event_ResolveAllPendingActions();
-    Event_ClearFlag(0x106);
+    Event_ClearFlag(FLAG_MENU_OPEN);
   }
 }
 #undef FIELD_AT

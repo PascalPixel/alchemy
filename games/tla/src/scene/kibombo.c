@@ -10,6 +10,7 @@
 /// the witch doctor (Kibombo_TalkPathToPeace).
 
 #include "shared/actors.h"
+#include "flags.h"
 #include "types.h"
 struct Actor;
 #include "kibombo.h"
@@ -291,12 +292,12 @@ void Kibombo_SetActorsHidden(s32 show) {
 
 void Kibombo_HideActors(void) {
   Kibombo_SetActorsHidden(1);
-  GameFlag_Set(0x200);
+  GameFlag_Set(FLAG_SCENE_TEMP_00);
 }
 
 void Kibombo_ShowActors(void) {
   Kibombo_SetActorsHidden(0);
-  GameFlag_Clear(0x200);
+  GameFlag_Clear(FLAG_SCENE_TEMP_00);
 }
 
 void Actors_SetHidden(s32 show, s32 first, u32 count) {
@@ -328,7 +329,7 @@ void Kibombo_ScoopVent(s32 mode) {
 void Func_02000624(void) {
   MapGrid_CopyCellPictureIndicesRect(36, 34, 16, 7, 1, 1);
   Kibombo_BlendStart(36, 34, 1, 1, 16, 7);
-  GameFlag_Set(0x204);
+  GameFlag_Set(FLAG_SCENE_TEMP_04);
 }
 
 void Func_0200065c(s32 mode) {
@@ -339,7 +340,7 @@ void Func_0200065c(s32 mode) {
 void Func_02000668(void) {
   MapGrid_CopyCellPictureIndicesRect(38, 34, 16, 11, 1, 1);
   Kibombo_BlendStart(38, 34, 1, 1, 16, 11);
-  GameFlag_Set(0x205);
+  GameFlag_Set(FLAG_SCENE_TEMP_05);
 }
 
 void Func_020006a0(s32 mode) {
@@ -350,7 +351,7 @@ void Func_020006a0(s32 mode) {
 void Func_020006ac(void) {
   MapGrid_CopyCellPictureIndicesRect(36, 36, 14, 9, 1, 1);
   Kibombo_BlendStart(36, 36, 1, 1, 14, 9);
-  GameFlag_Set(0x206);
+  GameFlag_Set(FLAG_SCENE_TEMP_06);
 }
 
 void Func_020006e4(s32 mode) {
@@ -361,7 +362,7 @@ void Func_020006e4(s32 mode) {
 void Func_020006f0(void) {
   MapGrid_CopyCellPictureIndicesRect(38, 36, 18, 9, 1, 1);
   Kibombo_BlendStart(38, 36, 1, 1, 18, 9);
-  GameFlag_Set(0x207);
+  GameFlag_Set(FLAG_SCENE_TEMP_07);
 }
 
 void Func_02000728(s32 mode) {
@@ -1165,9 +1166,9 @@ ask:
     FieldMessage_ShowAtActor(26, 0);
     goto ask;
   }
-  Event_SetFlag(545);
+  Event_SetFlag(FLAG_SCENE_TEMP_21);
   Func_0200384c();
-  GameFlag_Clear(545);
+  GameFlag_Clear(FLAG_SCENE_TEMP_21);
   Actor_ShowEmote(gMainRoutineWork.currentOwner, 0x100, 0);
   Actor_ShowEmote(5, 0x100, 0);
   Actor_ShowEmote(6, 0x100, 0);
@@ -1195,19 +1196,19 @@ ask:
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 280, 120);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_WEST);
-  Event_SetFlag(0x220);
+  Event_SetFlag(FLAG_SCENE_TEMP_20);
   Func_0200384c();
-  GameFlag_Clear(0x220);
+  GameFlag_Clear(FLAG_SCENE_TEMP_20);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 232, 142);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
-  Event_SetFlag(546);
+  Event_SetFlag(FLAG_SCENE_TEMP_22);
   Func_0200384c();
-  GameFlag_Clear(546);
+  GameFlag_Clear(FLAG_SCENE_TEMP_22);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 296, 142);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
-  Event_SetFlag(547);
+  Event_SetFlag(FLAG_SCENE_TEMP_23);
   Func_0200384c();
-  GameFlag_Clear(547);
+  GameFlag_Clear(FLAG_SCENE_TEMP_23);
   FieldCamera_MoveTo(PIXELS(268), -1, PIXELS(188), 1);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 284, 188);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 10);
@@ -1886,13 +1887,13 @@ void Func_020037e4(void) {
   struct KibomboEffectWork *work = Ram_HeapSlots->effectWork;
 
   if (work->field7c4 != 0) {
-    if (GameFlag_Get(0x220))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_20))
       Func_02000624();
-    else if (GameFlag_Get(0x221))
+    else if (GameFlag_Get(FLAG_SCENE_TEMP_21))
       Func_02000668();
-    else if (GameFlag_Get(0x222))
+    else if (GameFlag_Get(FLAG_SCENE_TEMP_22))
       Func_020006ac();
-    else if (GameFlag_Get(0x223))
+    else if (GameFlag_Get(FLAG_SCENE_TEMP_23))
       Func_020006f0();
   }
 }
@@ -1931,7 +1932,7 @@ void Kibombo_LeaveRoom(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (GameFlag_Get(0x202))
+  if (GameFlag_Get(FLAG_SCENE_TEMP_02))
     Func_02003898();
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
@@ -1963,7 +1964,7 @@ void Func_02003948(void) {
   Actor_SetMoveTarget(leader, ((8 - px % 16) << 16) + x, leader->y, leader->z);
   Actor_WaitForMove(leader);
   leader->facing = 0xc000;
-  if (GameFlag_Get(0x202))
+  if (GameFlag_Get(FLAG_SCENE_TEMP_02))
     Func_02003898();
   Actor_SetMovementTypeById(gMainRoutineWork.currentOwner, gData_02005cd0);
   wait(12);
@@ -2031,7 +2032,7 @@ DEFINE_KIBOMBO_STEP_WHEN_HELD(Func_02003b20, 38, 23, 25, 24, 39, 392, 608)
 DEFINE_KIBOMBO_STEP_WHEN_HELD(Func_02003b88, 54, 42, 44, 43, 55, 696, 864)
 
 void Kibombo_EnterVent(void) {
-  if (GameFlag_Get(0x202))
+  if (GameFlag_Get(FLAG_SCENE_TEMP_02))
     Func_02003898();
   Func_02003a08(376, 288);
 }
@@ -2817,7 +2818,7 @@ void Kibombo_InitializeRoom4(void) {
       Party_RemoveMemberRestored(7);
     }
   }
-  GameFlag_Set(0x202);
+  GameFlag_Set(FLAG_SCENE_TEMP_02);
   gData_02007948[0] = *(u16 *)&BG_PLTT_COLOR(0, 9);
   gData_02007948[1] = *(u16 *)&BG_PLTT_COLOR(5, 7);
   gData_02007948[2] = *(u16 *)&BG_PLTT_COLOR(6, 7);
@@ -2829,7 +2830,7 @@ void Kibombo_InitializeRoom4(void) {
   Actor_SetSpriteFlags(Actor_GetById(33), 0);
   Actor_SetSpriteFlags(Actor_GetById(34), 0);
   Actor_SetSpriteFlags(Actor_GetById(35), 0);
-  GameFlag_Set(0x209);
+  GameFlag_Set(FLAG_SCENE_TEMP_09);
   actor = Actor_GetById(29);
   actor->motionFlags = 0;
   actor->y = 0;
@@ -2861,7 +2862,7 @@ void Func_0200538c(void) {
     Func_02002de0();
   Func_0200324c();
   if (!GameFlag_Get(0x869))
-    GameFlag_Set(0x201);
+    GameFlag_Set(FLAG_SCENE_TEMP_01);
   FlagBlock_PlaceAll(gData_02006324);
   Actor_SetSpritePriority(8, 2);
   Actor_SetSpriteFlags(Actor_GetById(11), 0);
@@ -2874,13 +2875,13 @@ void Func_0200538c(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
   if (GameFlag_Get(0x86a))
     Kibombo_UncoverVent();
-  if (GameFlag_Get(0x204))
+  if (GameFlag_Get(FLAG_SCENE_TEMP_04))
     Func_02000624();
-  if (GameFlag_Get(0x205))
+  if (GameFlag_Get(FLAG_SCENE_TEMP_05))
     Func_02000668();
-  if (GameFlag_Get(0x206))
+  if (GameFlag_Get(FLAG_SCENE_TEMP_06))
     Func_020006ac();
-  if (GameFlag_Get(0x207))
+  if (GameFlag_Get(FLAG_SCENE_TEMP_07))
     Func_020006f0();
   Actor_DisableById(12);
   Actor_DisableById(13);
@@ -2926,7 +2927,7 @@ void Kibombo_InitializeRoom5(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   GameFlag_Set(0x869);
-  GameFlag_Set(0x202);
+  GameFlag_Set(FLAG_SCENE_TEMP_02);
   gData_02007948[0] = BG_PLTT[9];
   gData_02007948[1] = BG_PLTT[7];
   gData_02007948[2] = BG_PLTT[6];
@@ -3017,7 +3018,7 @@ void Kibombo_InitializeRoom5(void) {
 void Kibombo_InitializeRoom6(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  GameFlag_Set(514);
+  GameFlag_Set(FLAG_SCENE_TEMP_02);
   gData_02007948[0] = PALETTE_WORD(169);
   gData_02007948[1] = PALETTE_WORD(167);
   gData_02007948[2] = PALETTE_WORD(166);

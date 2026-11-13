@@ -496,22 +496,23 @@ s32 Scene_Initialize(void) {
       gMainRoutineWork.entrance > 2)
     Actor_DepartInRing(gMainRoutineWork.currentOwner);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room3) {
-    if (GameFlag_Get(0x200))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_00))
       MapGrid_CopyCellAttributes(6, 23, 1, 1, 8, 23);
-    if (GameFlag_Get(513))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_01))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 8, 15);
-    if (GameFlag_Get(514))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_02))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 9, 0x10);
-    if (GameFlag_Get(515))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_03))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 8, 17);
-    if (GameFlag_Get(516))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_04))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 17);
-    if (GameFlag_Get(517))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_05))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 5, 0x10);
-    if (GameFlag_Get(518))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_06))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 15);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room5 && GameFlag_Get(0x200))
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room5 &&
+      GameFlag_Get(FLAG_SCENE_TEMP_00))
     MapGrid_CopyCellAttributes(15, 18, 1, 1, 17, 18);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room4 &&
       GameFlag_Get(0x9ce) && !GameFlag_Get(0xf93) &&

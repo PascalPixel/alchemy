@@ -19,6 +19,7 @@
 #undef EFFECT_SPAWN
 
 #include "shared/actors.h"
+#include "flags.h"
 #include "shared/effects.h"
 #include "shared/mars_lighthouse.h"
 #include "types.h"
@@ -388,7 +389,7 @@ void Settlements_EnterDoor3(void) {
 
 void Settlements_GrowVine(void) {
   MapGrid_CopyCellAttributes(0, 3, 1, 1, 3, 15);
-  Event_SetFlag(0x230);
+  Event_SetFlag(FLAG_SCENE_TEMP_30);
 }
 
 extern struct Trigger gSettlements_Triggers[];
@@ -526,7 +527,7 @@ void Settlements_SetUpKaltIsland(void) {
   Actor_SetSpriteFlags((struct Actor *)actor, 0);
   actor->active = 0;
   actor->mode = 0;
-  if (Event_GetFlag(0x109) == 0)
+  if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
     actor->y += 0x100000;
   actor->flags23 &= 0xfe;
   actor->visible = 1;
@@ -554,17 +555,17 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room9) {
     FieldEffect_StartBlankOverlay(0);
     Actor_PlaceBlocks(gSettlements_FallsObjects);
-    if (Event_GetFlag(0x206))
+    if (Event_GetFlag(FLAG_SCENE_TEMP_06))
       Actor_SetPosition(10, 0, 0);
     Actor_GetById(10)->priorityFlags |= 2;
     Actor_SetAnimation(18, 2);
     Actor_SetAnimation(19, 2);
     Actor_SetAnimation(21, 2);
-    if (Event_GetFlag(0x205))
+    if (Event_GetFlag(FLAG_SCENE_TEMP_05))
       Actor_SetAnimation(10, 2);
     Settlements_StartWaterfall();
 #if TLA_PATCH_1
-    if (Event_GetFlag(0x204)) {
+    if (Event_GetFlag(FLAG_SCENE_TEMP_04)) {
       Actor_SetPosition(9, 0, 0);
       Actor_SetPosition(21, PIXELS(184), PIXELS(184));
       Actor_GetById(21)->motionFlags = 0;
@@ -573,12 +574,13 @@ s32 Scene_Initialize(void) {
 #endif
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room4) {
-    if (Event_GetFlag(0x230)) {
+    if (Event_GetFlag(FLAG_SCENE_TEMP_30)) {
       MapGrid_CopyCellAttributes(0, 3, 1, 1, 3, 15);
       Actor_SetAnimation(9, 4);
     }
-    if (Event_GetFlag(0x109) && Event_GetFlag(0x220)) {
-      Event_ClearFlag(0x220);
+    if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
+        Event_GetFlag(FLAG_SCENE_TEMP_20)) {
+      Event_ClearFlag(FLAG_SCENE_TEMP_20);
       Settlements_StepOntoWall();
     }
     Actor_PlaceBlocks(gSettlements_WallCrate);
@@ -592,16 +594,16 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room9) {
-    if (Event_GetFlag(0x205)) {
+    if (Event_GetFlag(FLAG_SCENE_TEMP_05)) {
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
       MapGrid_CopyCellsTo(12, 32, 11, 15, 1, 1);
       MapGrid_CopyCellsTo(77, 15, 75, 15, 1, 1);
     }
 #if !TLA_PATCH_1
-    if (Event_GetFlag(0x205))
+    if (Event_GetFlag(FLAG_SCENE_TEMP_05))
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 11);
 #else
-    if (Event_GetFlag(0x204)) {
+    if (Event_GetFlag(FLAG_SCENE_TEMP_04)) {
       Actor_SetPosition(9, 0, 0);
       Actor_SetPosition(21, PIXELS(184), PIXELS(184));
       Actor_GetById(21)->motionFlags = 0;
@@ -619,9 +621,9 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-void Settlements_StepOntoIce(void) { GameFlag_Set(0x201); }
+void Settlements_StepOntoIce(void) { GameFlag_Set(FLAG_SCENE_TEMP_01); }
 
-void Settlements_StepOffIce(void) { GameFlag_Clear(0x201); }
+void Settlements_StepOffIce(void) { GameFlag_Clear(FLAG_SCENE_TEMP_01); }
 
 void Settlements_StepOnIceSlide(void) { Settlements_SlideOnIce(); }
 
@@ -658,7 +660,7 @@ loop:
 
 void Settlements_LashRope(void) {
   Rope_Lash(1, 8, 9);
-  Event_SetFlag(0x203);
+  Event_SetFlag(FLAG_SCENE_TEMP_03);
 }
 
 extern s32 gSettlements_WaterColorFrame;
@@ -750,7 +752,7 @@ void Settlements_SinkPillar(void) {
   s32 row = object->z >> 20;
   s32 i;
 
-  if (!Event_GetFlag(0x204) && column == 11 && row == 12) {
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_04) && column == 11 && row == 12) {
     object->motionFlags = 0;
     for (i = 10; i > 0; i--) {
       object->y -= 0x20000;
@@ -762,7 +764,7 @@ void Settlements_SinkPillar(void) {
     Actor_GetById(21)->motionFlags = 0;
     Actor_GetById(21)->y -= 0x400000;
     MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
-    Event_SetFlag(0x204);
+    Event_SetFlag(FLAG_SCENE_TEMP_04);
   }
 }
 
@@ -794,7 +796,7 @@ void Settlements_SlideCrateDownFalls(void) {
     Actor_SetDestinationOffset(10, 0, 80);
     FieldActor_WaitForMoveById(10);
     Settlements_SplashCrate(10);
-    if (!Event_GetFlag(0x204)) {
+    if (!Event_GetFlag(FLAG_SCENE_TEMP_04)) {
       FieldEvent_Wait(10);
       Actor_SetSpeed(10, 0xcccc, 0x6666);
       Actor_SetDestinationOffset(10, 0, 80);
@@ -803,7 +805,7 @@ void Settlements_SlideCrateDownFalls(void) {
       Actor_SetDestinationOffset(10, 0, 80);
       FieldEvent_Wait(5);
       Actor_SetPosition(10, 0, 0);
-      Event_SetFlag(0x206);
+      Event_SetFlag(FLAG_SCENE_TEMP_06);
     } else {
       MapGrid_CopyCellsTo(12, 32, 11, 15, 1, 1);
       MapGrid_CopyCellsTo(77, 15, 75, 15, 1, 1);
@@ -813,16 +815,16 @@ void Settlements_SlideCrateDownFalls(void) {
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 11);
       Actor_SetAnimation(10, 2);
       FieldEvent_Wait(30);
-      Event_SetFlag(0x205);
+      Event_SetFlag(FLAG_SCENE_TEMP_05);
     }
     Event_End();
-  } else if (!Event_GetFlag(0x207) && column == 16 && row == 12) {
+  } else if (!Event_GetFlag(FLAG_SCENE_TEMP_07) && column == 16 && row == 12) {
     MapGrid_CopyCellAttributes(17, 12, 1, 1, column, row);
     flags = &object->motionFlags;
     *flags = 3;
     FieldEvent_Wait(30);
     *flags = 0;
-    Event_SetFlag(0x207);
+    Event_SetFlag(FLAG_SCENE_TEMP_07);
     Event_End();
   }
 }
@@ -855,19 +857,20 @@ void Settlements_RestoreWallCells(void) {
 }
 
 void Settlements_StepOntoWall(void) {
-  if (!Event_GetFlag(0x221) && !Event_GetFlag(0x220)) {
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_21) &&
+      !Event_GetFlag(FLAG_SCENE_TEMP_20)) {
     MapGrid_CopyCellAttributes(11, 73, 10, 10, 64, 50);
     MapGrid_CopyCellAttributes(42, 73, 10, 10, 64, 60);
     MapGrid_CopyCellAttributes(42, 11, 10, 4, 11, 75);
-    Event_SetFlag(0x220);
+    Event_SetFlag(FLAG_SCENE_TEMP_20);
   }
 }
 
 void Settlements_StepOffWall(void) {
-  if (Event_GetFlag(0x220)) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_20)) {
     MapGrid_CopyCellAttributes(64, 50, 10, 10, 11, 73);
     MapGrid_CopyCellAttributes(64, 60, 10, 10, 42, 73);
-    Event_ClearFlag(0x220);
+    Event_ClearFlag(FLAG_SCENE_TEMP_20);
   }
 }
 
@@ -915,22 +918,22 @@ void Settlements_DropCrate(void) {
   column = object->x >> 20;
   row = object->z >> 20;
   if (column == 12 && row == 15) {
-    Event_SetFlag(0x221);
+    Event_SetFlag(FLAG_SCENE_TEMP_21);
     object->motionFlags = 0;
     SINK(32);
     Settlements_SpawnSplashRing(10);
     FieldEvent_Wait(20);
-  } else if (!Event_GetFlag(0x205) && column == 16 && row == 15) {
+  } else if (!Event_GetFlag(FLAG_SCENE_TEMP_05) && column == 16 && row == 15) {
     object->motionFlags = 0;
-    Event_SetFlag(0x205);
-    Event_SetFlag(0x221);
+    Event_SetFlag(FLAG_SCENE_TEMP_05);
+    Event_SetFlag(FLAG_SCENE_TEMP_21);
     SINK(48);
     Settlements_SpawnSplashRing(10);
     FieldEvent_Wait(30);
   } else if (column == 19 && row == 15) {
     MapGrid_CopyCellAttributes(18, 16, 1, 1, column, row);
     object->motionFlags = 0;
-    Event_SetFlag(0x221);
+    Event_SetFlag(FLAG_SCENE_TEMP_21);
     SINK(32);
     Settlements_SpawnSplashRing(10);
     if (!Event_GetFlag(102)) {
@@ -939,14 +942,14 @@ void Settlements_DropCrate(void) {
       FieldEvent_Wait(20);
     }
     FieldEvent_Wait(20);
-  } else if (!Event_GetFlag(0x204) && column == 13 && row == 15) {
+  } else if (!Event_GetFlag(FLAG_SCENE_TEMP_04) && column == 13 && row == 15) {
     MapGrid_CopyCellAttributes(1, 3, 1, 1, 12, row);
     MapGrid_CopyCellAttributes(1, 3, 1, 1, column, row);
     object->motionFlags = 0;
     SINK(16);
     Settlements_SpawnSplashRing(10);
     FieldEvent_Wait(20);
-    Event_SetFlag(0x204);
+    Event_SetFlag(FLAG_SCENE_TEMP_04);
   } else if (column == 14 && row == 15) {
     MapGrid_CopyCellAttributes(1, 3, 1, 1, 12, row);
     MapGrid_CopyCellAttributes(1, 3, 1, 1, column, row);
@@ -1017,7 +1020,7 @@ void Settlements_SpawnSplashRing(s32 objectId) {
   }
 }
 
-void Settlements_LiftBoulder(void) { GameFlag_Set(0x208); }
+void Settlements_LiftBoulder(void) { GameFlag_Set(FLAG_SCENE_TEMP_08); }
 
 extern s16 gSettlements_SlideAngles[];
 
@@ -1028,10 +1031,10 @@ void Settlements_StopLeader(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   if (work->actionCounter != 0) {
-    Event_SetFlag(0x106);
+    Event_SetFlag(FLAG_MENU_OPEN);
     Leader_StopMoving();
     Event_ResolveAllPendingActions();
-    Event_ClearFlag(0x106);
+    Event_ClearFlag(FLAG_MENU_OPEN);
   }
 }
 

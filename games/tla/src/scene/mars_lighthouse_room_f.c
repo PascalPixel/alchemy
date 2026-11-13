@@ -5,6 +5,7 @@
 /// (CrackedTile_Crack) and pushable statues (PushTarget_Push).
 
 #include "shared/whirlwind.h"
+#include "flags.h"
 #include "shared/jupiter_lighthouse.h"
 #include "shared/mars_lighthouse.h"
 #include "shared/actors.h"
@@ -517,7 +518,7 @@ DEFINE_FUNC_02000444(Func_020004bc, 14, 78, 0xa46)
 void Func_020004f8(void) {
   Event_PlaySound(SE_584);
   Ride_SetEntry(0, 3);
-  Event_SetFlag(0x220);
+  Event_SetFlag(FLAG_SCENE_TEMP_20);
 }
 
 void Func_02000514(void) {
@@ -579,7 +580,7 @@ void Func_0200055c(s32 id) {
 
 void Func_02000670(void) {
   ((struct SceneWork *)Ram_HeapSlots->eventWork)->unk166 = 0;
-  Event_ClearFlag(0x106);
+  Event_ClearFlag(FLAG_MENU_OPEN);
   Event_ClearFlag(0x104);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -650,7 +651,7 @@ void Func_020007f0(s32 unused, s32 id) {
     MapGrid_CopyCellAttributes(7, 88, 7, 1, 7, 71);
     Event_PlaySound(SE_MAP_TRANSITION);
     Actor_SetPosition(id, 0, 0);
-    Flag_Set(0x358);
+    Flag_Set(FLAG_AREA_TEMP_58);
   }
 }
 
@@ -701,7 +702,7 @@ void Func_020009ec(void) {
   Ride_SetEntry(2, 65);
   Ride_SetEntry(1, 65);
   Ride_SetEntry(0, 65);
-  Flag_Clear(0x350);
+  Flag_Clear(FLAG_AREA_TEMP_50);
   if (Actor_Get(10)->z >> 20 != 15 && Actor_Get(9)->z >> 20 != 15) {
     Ride_SetEntry(1, 33);
     return;
@@ -714,8 +715,8 @@ void Func_020009ec(void) {
     Ride_SetEntry(2, 49);
     return;
   }
-  Flag_Set(0x350);
-  if (!Flag_IsSet(0x351)) {
+  Flag_Set(FLAG_AREA_TEMP_50);
+  if (!Flag_IsSet(FLAG_AREA_TEMP_51)) {
     FieldCamera_SetSpeed(0x20000, 0x4000);
     FieldCamera_MoveTo(PIXELS(616), -1, PIXELS(24), 1);
     FieldEvent_Wait(60);
@@ -733,11 +734,11 @@ void Func_02000aac(void) {
 void Func_02000ad8(void) {
   struct SceneWork *work = Ram_HeapSlots->eventWork;
 
-  Flag_Set(0x106);
+  Flag_Set(FLAG_MENU_OPEN);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   work->unk166 = 0;
-  Flag_Clear(0x106);
+  Flag_Clear(FLAG_MENU_OPEN);
   Flag_Clear(0x104);
   FieldEvent_Wait(60);
   FieldCamera_SetSpeed(0x30000, 0x6000);
@@ -753,22 +754,22 @@ void Func_02000b40(void) {
   if (PushTarget_FindSlide(&box)) {
     PushTarget_Push(box);
     Func_020009ec();
-    if (Func_020027dc(0) != 64 && Flag_IsSet(0x221)) {
+    if (Func_020027dc(0) != 64 && Flag_IsSet(FLAG_SCENE_TEMP_21)) {
       struct Actor *object = Actor_Get(12);
 
       object->update = NULL;
       Actor_SetSpriteColorMode(object, 0);
       Actor_SetAnimation(12, 6);
-      Flag_Clear(0x221);
+      Flag_Clear(FLAG_SCENE_TEMP_21);
       Func_02000cb8(12);
     }
-    if (Func_020027dc(2) != 64 && Flag_IsSet(0x220)) {
+    if (Func_020027dc(2) != 64 && Flag_IsSet(FLAG_SCENE_TEMP_20)) {
       struct Actor *object = Actor_Get(11);
 
       object->update = NULL;
       Actor_SetSpriteColorMode(object, 0);
       Actor_SetAnimation(11, 6);
-      Flag_Clear(0x220);
+      Flag_Clear(FLAG_SCENE_TEMP_20);
       Func_02000cb8(11);
     }
   } else {
@@ -922,7 +923,7 @@ s32 Scene_Initialize(void) {
 
   ((struct SceneWork *)heap->eventWork)->unk1ac = 516;
   value = 516;
-  Flag_Set(0x112);
+  Flag_Set(FLAG_MARS_LIGHTHOUSE_LIT);
   Func_020025b0();
   if (scene == (s32)&SceneId_Ov6adRoom1) {
     FieldEffect_StartBlankOverlay(0);
@@ -957,7 +958,7 @@ s32 Scene_Initialize(void) {
     if (entrance == 2)
       Func_02002604();
     if (entrance == 9) {
-      Flag_Set(0x351);
+      Flag_Set(FLAG_AREA_TEMP_51);
       Event_Start();
       Event_ResolvePendingActions(0);
       FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -970,15 +971,15 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(17, 0x1080000, 0x2080000);
       Event_PlaySound(SE_WHOOSH);
       Event_Wait(60);
-      Flag_Set(0x109);
+      Flag_Set(FLAG_KEEP_PARTY_POSITION);
       return ((s32 (*)())Import_EventSetExitRequest)(3);
     }
-    if (Flag_IsSet(0x350)) {
+    if (Flag_IsSet(FLAG_AREA_TEMP_50)) {
       Actor_SetPosition(8, 0x2580000, 0x900000);
       Actor_SetPosition(9, 0x2200000, 0xd00000);
       Actor_SetPosition(10, 0x2200000, 0xf00000);
-      Flag_Set(0x220);
-      Flag_Set(0x221);
+      Flag_Set(FLAG_SCENE_TEMP_20);
+      Flag_Set(FLAG_SCENE_TEMP_21);
     }
     Actor_DisableById(8);
     Actor_DisableById(9);
@@ -994,12 +995,12 @@ s32 Scene_Initialize(void) {
     flags = &Actor_GetById(12)->priorityFlags;
     bits |= *flags;
     *flags = bits;
-    if (Flag_IsSet(0x220))
+    if (Flag_IsSet(FLAG_SCENE_TEMP_20))
       Func_02000c80(11);
-    if (Flag_IsSet(0x221))
+    if (Flag_IsSet(FLAG_SCENE_TEMP_21))
       Func_02000c80(12);
     Func_020009ec();
-    if (Flag_IsSet(0x350))
+    if (Flag_IsSet(FLAG_AREA_TEMP_50))
       Actor_SetPosition(18, 0, 0);
     else
       Actor_SetPosition(17, 0, 0);
@@ -1013,7 +1014,7 @@ s32 Scene_Initialize(void) {
     LightSprites_InitB();
     Func_020053bc(2);
     LightSprites_Add(11, 6);
-    if (Flag_IsSet(0x358)) {
+    if (Flag_IsSet(FLAG_AREA_TEMP_58)) {
       MapGrid_CopyCellsLayered(71, 24, 7, 1, 71, 5);
       MapGrid_CopyCellAttributes(7, 24, 7, 1, 7, 7);
       MapGrid_CopyCellAttributes(7, 88, 7, 1, 7, 71);
@@ -1027,14 +1028,14 @@ s32 Scene_Initialize(void) {
     } else {
       Beam_Start(gData_02005c38, gData_02005c46, 0, 88);
     }
-    if (!Flag_IsSet(0x109)) {
+    if (!Flag_IsSet(FLAG_KEEP_PARTY_POSITION)) {
       if (entrance == 2 || entrance == 4 || entrance == 6 || entrance == 7 ||
           entrance == 8 || entrance == 10 || entrance == 11 || entrance == 13)
         Actor_DepartInRing(gMainRoutineWork.currentOwner);
       if (entrance == 3 || entrance == 5 || entrance == 9 || entrance == 12 ||
           entrance == 14)
         Actor_ArriveInRing(gMainRoutineWork.currentOwner);
-      if (entrance == 16 && !Flag_IsSet(0x109))
+      if (entrance == 16 && !Flag_IsSet(FLAG_KEEP_PARTY_POSITION))
         CrackedTile_DropIn();
     }
   } else if (scene == (s32)&SceneId_Ov6adRoom4) {
@@ -1053,7 +1054,7 @@ s32 Scene_Initialize(void) {
                entrance == 1 || entrance == 15) {
       Beam_Start(gData_02005c60, gData_02005c6e, 0, 88);
     }
-    if (!Flag_IsSet(0x109)) {
+    if (!Flag_IsSet(FLAG_KEEP_PARTY_POSITION)) {
       if (entrance == 15)
         Actor_SetPosition(23, 0x2980000, 0x2c80000);
       if (entrance == 11)
@@ -1263,7 +1264,7 @@ void Func_02001bcc(void) {
   actor9->y.fixed = actor9->terrainHeight;
   actor10->motionFlags = 0;
   actor10->y.fixed = actor10->terrainHeight;
-  if (Event_GetFlag(0xa0a)) {
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED)) {
     actor9->y.fixed += 0x66640;
     {
       s32 step = 0x1eb80;
@@ -1275,7 +1276,7 @@ void Func_02001bcc(void) {
     Actor_SetSpriteColorMode(Actor_GetById(9), 4);
     Actor_SetSpriteColorMode(Actor_GetById(11), 4);
   }
-  if (Event_GetFlag(0xa0b)) {
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
     actor10->y.fixed += 0x66640;
     {
       s32 step = 0x1eb80;
@@ -1287,7 +1288,8 @@ void Func_02001bcc(void) {
     Actor_SetSpriteColorMode(Actor_GetById(10), 4);
     Actor_SetSpriteColorMode(Actor_GetById(12), 4);
   }
-  if (Event_GetFlag(0xa0a) && Event_GetFlag(0xa0b)) {
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) &&
+      Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
     actor9->y.fixed += 0x199900;
     actor10->y.fixed += 0x199900;
     {
@@ -1473,7 +1475,7 @@ void Func_020025b0(void) {
   struct Actor *object;
   struct MarsLighthouseRoomFAnimation *animation;
 
-  if (!Event_GetFlag(0x109))
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     Iwram_ClearWordsEntry(work, 116);
   object = (struct Actor *)FieldActor_Create(365, 1, 0, 0);
   object->unk5c[0] = 2;
@@ -1824,7 +1826,7 @@ s32 MarsLighthouseRoomF_SlideOnIce(void) {
     ScreenTransition_Start(event->screenEffect, event->delay);
     event->screenStatus = 1;
   }
-  Flag_Clear(0x106);
+  Flag_Clear(FLAG_MENU_OPEN);
   event->unk166 = 0;
   event->unk15a = 0;
   *(u16 *)&event->unk15c[2] = 0;
@@ -1842,10 +1844,10 @@ s32 MarsLighthouseRoomF_SlideOnIce(void) {
   FieldCamera_SetSpeed(0x70000, 0xe000);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   ride = (struct RideWork *)(gInventorySnapshot + 0x188);
-  Flag_Set(0x106);
+  Flag_Set(FLAG_MENU_OPEN);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Flag_Clear(0x106);
+  Flag_Clear(FLAG_MENU_OPEN);
   leader->update = (void (*)(void))Actor_Blink;
   leader->facing = 0x4000;
   Actor_SelectAnimation(leader, 49);

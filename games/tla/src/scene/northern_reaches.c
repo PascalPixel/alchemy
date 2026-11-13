@@ -3,6 +3,7 @@
 /// Felix fires the Magma Ball at it from a safe distance.
 
 #include "shared/tables.h"
+#include "flags.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -100,10 +101,10 @@ void NorthernReaches_SightIceWall(void) {
   s32 result0;
   struct Actor *object1;
 
-  result0 = Event_GetFlag(0x200);
+  result0 = Event_GetFlag(FLAG_SCENE_TEMP_00);
   if (result0 != 0)
     goto done;
-  Event_SetFlag(0x200);
+  Event_SetFlag(FLAG_SCENE_TEMP_00);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgShipIceWallFirstApproach);

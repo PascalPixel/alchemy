@@ -4,6 +4,7 @@
 /// moving obstacles, for coins or for items.
 
 #include "battle/battle.h"
+#include "flags.h"
 #include "system/io_write.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -124,8 +125,8 @@ void LemuriaSpring_RiseAndFadeIn(void) {
 void LemuriaSpring_TossCoin(void) {
   s32 actor = FIELD_AT(&gMainRoutineWork, s32, 532);
 
-  if (!Event_GetFlag(0x200)) {
-    Event_SetFlag(0x200);
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_00)) {
+    Event_SetFlag(FLAG_SCENE_TEMP_00);
     LemuriaSpring_RiseAndFadeIn();
   }
   Event_Start();
@@ -168,7 +169,7 @@ s32 Scene_Initialize(void) {
   Event_StartScreenTransition();
   if (gMainRoutineWork.entrance == 1) {
     LemuriaSpring_InitializeTossSimulation();
-    if (Event_GetFlag(0x200)) {
+    if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
       FIELD_AT(0x4000050, u16, 0) = blend;
       FIELD_AT(0x4000052, u16, 0) = 0x1000;
     }

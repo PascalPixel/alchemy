@@ -11,6 +11,7 @@
 #include "../field/field_effect/spawn.c"
 
 #include "types.h"
+#include "flags.h"
 #include "sounds.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
@@ -245,11 +246,11 @@ void Func_02000280(void) {
     return;
   y = leader->y;
   if (y > 0xc0000) {
-    GameFlag_Set(0x340);
+    GameFlag_Set(FLAG_AREA_TEMP_40);
     if (*state == 4)
-      GameFlag_Set(0x341);
+      GameFlag_Set(FLAG_AREA_TEMP_41);
     else if (*state == 5)
-      GameFlag_Set(0x342);
+      GameFlag_Set(FLAG_AREA_TEMP_42);
     Field_RequestDjinnBattle(14, 67);
   }
 }
@@ -764,19 +765,19 @@ void Func_02000f18(s32 actor) {
 /// Frost on the puddle, actor 10, makes an ice pillar (flag 0x200).
 void ShrineOfTheSeaGod_FreezeFirstPuddle(void) {
   ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 8, 18);
-  GameFlag_Set(0x200);
+  GameFlag_Set(FLAG_SCENE_TEMP_00);
 }
 
 /// Frost on the puddle, actor 11, makes an ice pillar (flag 0x201).
 void ShrineOfTheSeaGod_FreezeSecondPuddle(void) {
   ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 10, 18);
-  GameFlag_Set(0x201);
+  GameFlag_Set(FLAG_SCENE_TEMP_01);
 }
 
 /// Frost on the puddle, actor 12, makes an ice pillar (flag 0x202).
 void ShrineOfTheSeaGod_FreezeThirdPuddle(void) {
   ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 10, 17);
-  GameFlag_Set(0x202);
+  GameFlag_Set(FLAG_SCENE_TEMP_02);
 }
 
 void Func_02000fa8(void) { Actor_LiftTargetBlock(gData_02003cbc); }
@@ -787,9 +788,9 @@ void Func_02000fb8(void) {
   Actor_PlaceMovedBlock();
   object = Actor_GetById(8);
   if (object->x >> 20 == 21 && object->z >> 20 == 13)
-    GameFlag_Set(0x207);
+    GameFlag_Set(FLAG_SCENE_TEMP_07);
   else
-    GameFlag_Clear(0x207);
+    GameFlag_Clear(FLAG_SCENE_TEMP_07);
 }
 
 void Func_02000fec(void) {
@@ -821,7 +822,7 @@ void Func_02001038(void) {
     Map_CopyCellAttributeRect(0, 0, 1, 1, 15, z);
     Actor_SetSpritePriority(8, 3);
     Event_End();
-    GameFlag_Set(0x301);
+    GameFlag_Set(FLAG_AREA_TEMP_01);
   }
 }
 
@@ -903,12 +904,12 @@ void Func_02001200(s32 show) {
 
 void Func_02001228(void) {
   Func_02001200(1);
-  GameFlag_Set(0x208);
+  GameFlag_Set(FLAG_SCENE_TEMP_08);
 }
 
 void Func_0200123c(void) {
   Func_02001200(0);
-  GameFlag_Clear(0x208);
+  GameFlag_Clear(FLAG_SCENE_TEMP_08);
 }
 
 void Func_02001250(s32 show, s32 first, u32 count) {
@@ -926,13 +927,13 @@ void Func_02001250(s32 show, s32 first, u32 count) {
 
 void Func_02001290(void) {
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
-  GameFlag_Set(0x20a);
+  GameFlag_Set(FLAG_SCENE_TEMP_0A);
 }
 
 void Func_020012b4(void) {
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
-  GameFlag_Clear(0x20a);
+  GameFlag_Clear(FLAG_SCENE_TEMP_0A);
 }
 
 #include "../field/field_effect/advance_motion.c"
@@ -1031,7 +1032,7 @@ void Func_02001474(void) {
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 408, 328);
   Func_02001340(leader, stone);
   ShrineOfTheSeaGod_BlendStart(0, 50, 3, 1, 24, 70);
-  GameFlag_Set(0x230);
+  GameFlag_Set(FLAG_SCENE_TEMP_30);
   wait(1);
   leader->motionFlags = 3;
   Actor_SetSpritePriority(14, 3);
@@ -1140,7 +1141,7 @@ void Func_020016d8(void) {
   Task_Remove(Func_020016c8);
   wait(1);
   Event_End();
-  GameFlag_Set(0x231);
+  GameFlag_Set(FLAG_SCENE_TEMP_31);
 }
 
 void Func_020018ac(void) { Func_0200142c(Actor_GetById(16)); }
@@ -1172,7 +1173,7 @@ void Func_020018bc(void) {
   Task_Remove(Func_020018ac);
   wait(1);
   Event_End();
-  GameFlag_Set(0x232);
+  GameFlag_Set(FLAG_SCENE_TEMP_32);
 }
 
 void Func_020019dc(void) {
@@ -1435,7 +1436,7 @@ void ShrineOfTheSeaGod_LashRope(void) {
     Actor_SetDestinationById(14, leader->x >> 16, leader->z >> 16);
   Actor_WaitForMoveById(14);
   ShrineOfTheSeaGod_ObjPlace(14, 0, 0);
-  GameFlag_Set(0x873);
+  GameFlag_Set(FLAG_TAVI_RESCUED);
   Event_End();
 }
 
@@ -1603,14 +1604,14 @@ DEFINE_FUNC_020027F8(Func_020027f8, 392, 216, 1)
     Func_0200279c();                                                           \
     ShrineOfTheSeaGod_CamMove(n1 << 16, 16 << 16, 216 << 16, 1);               \
     ShrineOfTheSeaGod_ObjWalk(14, n1, 216);                                    \
-    flag = GameFlag_Get(0x207);                                                \
+    flag = GameFlag_Get(FLAG_SCENE_TEMP_07);                                   \
     state = &block->state;                                                     \
     if (flag) {                                                                \
       block->facing = n2;                                                      \
       ShrineOfTheSeaGod_ObjEmote(14, 258);                                     \
       Event_Wait(20);                                                          \
       *state = n3;                                                             \
-      GameFlag_Set(0x206);                                                     \
+      GameFlag_Set(FLAG_SCENE_TEMP_06);                                        \
     } else {                                                                   \
       Event_Wait(5);                                                           \
       FieldCamera_MoveWithinMapBounds(n4 << 16, 16 << 16, 216 << 16, 1);       \
@@ -1660,14 +1661,14 @@ DEFINE_FUNC_020027F8(Func_02002b18, 392, 296, 0)
     s32 flag;                                                                  \
                                                                                \
     Func_0200279c();                                                           \
-    flag = GameFlag_Get(0x207);                                                \
+    flag = GameFlag_Get(FLAG_SCENE_TEMP_07);                                   \
     state = &block->state;                                                     \
     if (flag) {                                                                \
       block->facing = n1;                                                      \
       ShrineOfTheSeaGod_ObjEmote(14, 258);                                     \
       Event_Wait(20);                                                          \
       *state = n2;                                                             \
-      GameFlag_Set(0x206);                                                     \
+      GameFlag_Set(FLAG_SCENE_TEMP_06);                                        \
     } else {                                                                   \
       FieldCamera_MoveWithinMapBounds(n3 << 16, 16 << 16, 216 << 16, 1);       \
       Sound_Play(SE_HIGH_JUMP);                                                \
@@ -1706,7 +1707,7 @@ void Func_02002d50(void) {
   case 13:
     if (object->state == 0)
       Func_020027f8();
-    GameFlag_Clear(0x206);
+    GameFlag_Clear(FLAG_SCENE_TEMP_06);
     break;
   case 14:
     if (object->state == 0)
@@ -1717,7 +1718,7 @@ void Func_02002d50(void) {
 
     if (current == 1)
       Func_02002830();
-    else if (current == 4 && !GameFlag_Get(0x206))
+    else if (current == 4 && !GameFlag_Get(FLAG_SCENE_TEMP_06))
       Func_02002b50();
   } break;
   case 16: {
@@ -1741,7 +1742,7 @@ void Func_02002d50(void) {
 
     if (current == 2)
       Func_02002a2c();
-    else if (current == 5 && !GameFlag_Get(0x206))
+    else if (current == 5 && !GameFlag_Get(FLAG_SCENE_TEMP_06))
       Func_02002c88();
   } break;
   case 19:
@@ -1751,7 +1752,7 @@ void Func_02002d50(void) {
   case 20:
     if (object->state == 3)
       Func_020029dc();
-    GameFlag_Clear(0x206);
+    GameFlag_Clear(FLAG_SCENE_TEMP_06);
     break;
   }
 }
@@ -1888,7 +1889,7 @@ void ShrineOfTheSeaGod_InitializeRoom2(void) {
   Actor_DisableById(12);
   Actor_GetById(12)->motionFlags = 0;
   ShrineOfTheSeaGod_BlendStart(3, 15, 1, 1, 6, 15);
-  if (GameFlag_Get(0x873)) {
+  if (GameFlag_Get(FLAG_TAVI_RESCUED)) {
     Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
   } else if (GameFlag_Get(0x872)) {
     ShrineOfTheSeaGod_ObjPlaceTurn(11, 328 << 16, 200 << 16, 0x8000);
@@ -1921,7 +1922,7 @@ void ShrineOfTheSeaGod_InitializeRoom3(void) {
   Actor_SetSpritePriority(13, 1);
   Actor_SetSpritePriority(14, 1);
   ShrineOfTheSeaGod_TaskAdd(Func_02001088, 0x480);
-  if (GameFlag_Get(0x230)) {
+  if (GameFlag_Get(FLAG_SCENE_TEMP_30)) {
     ShrineOfTheSeaGod_ObjSetPos(block, 408 << 16, -(13 << 16), 336 << 16);
     ((struct ShrineOfTheSeaGodSprite *)block->sprite)->rotation = 0x1000;
     Actor_SetSpritePriority(14, 3);
@@ -1971,21 +1972,21 @@ void ShrineOfTheSeaGod_InitializeRoom5(void) {
   Func_02000f18(10);
   Func_02000f18(11);
   Func_02000f18(12);
-  if (GameFlag_Get(0x200))
+  if (GameFlag_Get(FLAG_SCENE_TEMP_00))
     ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 8, 18);
-  if (GameFlag_Get(0x201))
+  if (GameFlag_Get(FLAG_SCENE_TEMP_01))
     ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 10, 18);
-  if (GameFlag_Get(0x202))
+  if (GameFlag_Get(FLAG_SCENE_TEMP_02))
     ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 10, 17);
   ShrineOfTheSeaGod_TaskAdd(Func_02001128, 0x480);
   Actor_PlaceBlocks(gData_02003cbc);
   Func_02002e70();
   ShrineOfTheSeaGod_TaskAdd(Func_020011a0, 0x480);
-  if (GameFlag_Get(115) || GameFlag_Get(0x340)) {
-    GameFlag_Set(0x205);
+  if (GameFlag_Get(115) || GameFlag_Get(FLAG_AREA_TEMP_40)) {
+    GameFlag_Set(FLAG_SCENE_TEMP_05);
   } else if (GameFlag_Get(0x87c)) {
     struct ShrineOfTheSeaGodObject *block = Actor_GetById(14);
-    s32 moved = GameFlag_Get(265);
+    s32 moved = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
 
     if (moved == 0) {
       block->state = moved;
@@ -2002,7 +2003,7 @@ void ShrineOfTheSeaGod_InitializeRoom6(void) {
 
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
   Actor_SetSpriteFlags(Actor_GetById(8), 0);
-  open = GameFlag_Get(0x301);
+  open = GameFlag_Get(FLAG_AREA_TEMP_01);
   if (open) {
     ShrineOfTheSeaGod_ObjPlace(8, 248 << 16, 264 << 16);
     Actor_SetSpritePriority(8, 3);
@@ -2037,14 +2038,14 @@ void ShrineOfTheSeaGod_InitializeRoom7(void) {
   Actor_SetModeById(14, 0);
   Actor_SetModeById(15, 2);
   Actor_SetModeById(16, 2);
-  if (GameFlag_Get(0x231)) {
+  if (GameFlag_Get(FLAG_SCENE_TEMP_31)) {
     Map_CopyCellAttributeRect(0, 0, 3, 1, 19, 13);
     Map_CopyCellAttributeRect(40, 0, 2, 1, 19, 33);
     Actor_SetPositionAndResetMotion(Actor_GetById(15), PIXELS(320), -PIXELS(21),
                                     PIXELS(534));
     Actor_SetSpritePriority(15, 3);
   }
-  if (GameFlag_Get(0x232)) {
+  if (GameFlag_Get(FLAG_SCENE_TEMP_32)) {
     Map_CopyCellAttributeRect(0, 0, 3, 1, 24, 22);
     Map_CopyCellAttributeRect(40, 0, 2, 1, 24, 24);
     Actor_SetPositionAndResetMotion(Actor_GetById(16), PIXELS(400), -PIXELS(21),
@@ -2074,12 +2075,14 @@ void ShrineOfTheSeaGod_InitializeRoom8(void) {
   Func_02003854(8);
   Func_02003854(9);
   Func_02003854(10);
-  if (gMainRoutineWork.entrance == 3 && GameFlag_Get(265) == 0)
+  if (gMainRoutineWork.entrance == 3 &&
+      GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0)
     Func_02000994();
 }
 
 void ShrineOfTheSeaGod_InitializeRoom9(void) {
-  if (gMainRoutineWork.entrance == 1 && GameFlag_Get(265) == 0)
+  if (gMainRoutineWork.entrance == 1 &&
+      GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0)
     Func_02000ce8();
 }
 
@@ -2132,20 +2135,20 @@ void Func_02003854(s32 id) {
 
 s32 Scene_PrepareMap(void) {
 
-  if (GameFlag_Get(0x340)) {
+  if (GameFlag_Get(FLAG_AREA_TEMP_40)) {
     struct ShrineOfTheSeaGodPartyExtra *party =
         (struct ShrineOfTheSeaGodPartyExtra *)&gMainRoutineWork;
 
     if (party->value == 1) {
-      if (GameFlag_Get(0x341))
+      if (GameFlag_Get(FLAG_AREA_TEMP_41))
         ShrineOfTheSeaGod_ObjPlaceAt(14, 360 << 16, 216 << 16, 0);
-      else if (GameFlag_Get(0x342)) {
+      else if (GameFlag_Get(FLAG_AREA_TEMP_42)) {
         ShrineOfTheSeaGod_ObjPlaceTurn(14, 328 << 16, 216 << 16, 0x8000);
       }
     }
-    GameFlag_Clear(0x340);
-    GameFlag_Clear(0x341);
-    GameFlag_Clear(0x342);
+    GameFlag_Clear(FLAG_AREA_TEMP_40);
+    GameFlag_Clear(FLAG_AREA_TEMP_41);
+    GameFlag_Clear(FLAG_AREA_TEMP_42);
   }
   return 0;
 }

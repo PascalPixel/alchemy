@@ -3,6 +3,7 @@
 
 #include "../field/object/prepare_object.c"
 #include "shared/actors.h"
+#include "flags.h"
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
@@ -125,7 +126,7 @@ void Func_02000388(void) {
   party->battleGroup = 0x1a9f;
   party->battleRule = 2;
   Field_RequestBattleFromEncounterTable(103, 3);
-  GameFlag_Set(0x201);
+  GameFlag_Set(FLAG_SCENE_TEMP_01);
 }
 
 void Func_02000408(void) {
@@ -194,7 +195,7 @@ void Func_020004e4(s32 a, s32 b) {
         return;
     }
   }
-  GameFlag_Set(0x200);
+  GameFlag_Set(FLAG_SCENE_TEMP_00);
   Sound_Play(SE_ASCEND);
   Func_02000be0(1);
   Func_02000494();
@@ -224,7 +225,7 @@ void Func_02000588(void) {
   if (object->z >> 20 <= 9)
     shift = -shift;
   Event_ResolvePendingActions(0);
-  if (!GameFlag_Get(0x200))
+  if (!GameFlag_Get(FLAG_SCENE_TEMP_00))
     return;
   if (MapGrid_GetCellBehaviorAt(object->terrainId, object->x, object->z) != 77)
     return;
@@ -341,16 +342,16 @@ s32 Scene_Initialize(void) {
     Actor_GetById(12)->priorityFlags |= 0x80;
     Actor_GetById(13)->priorityFlags |= 0x80;
     Actor_GetById(14)->priorityFlags |= 0x80;
-    if (GameFlag_Get(0x200)) {
+    if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
       Func_02000be0(1);
       Func_02000494();
     }
   }
-  if (Flag_Test(0x201)) {
+  if (Flag_Test(FLAG_SCENE_TEMP_01)) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Func_02000408();
-    GameFlag_Clear(0x201);
+    GameFlag_Clear(FLAG_SCENE_TEMP_01);
   }
   return 0;
 }

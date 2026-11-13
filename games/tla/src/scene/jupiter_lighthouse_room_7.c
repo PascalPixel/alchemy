@@ -595,7 +595,7 @@ L_02008e6e:
     Actor_SetPosition(16, PIXELS(136), PIXELS(600));
     JupiterLighthouse_OpenDoor(0);
   }
-  t8 = Event_GetFlag(0x202);
+  t8 = Event_GetFlag(FLAG_SCENE_TEMP_02);
   if (t8 != 0) {
     JupiterLighthouse_OpenDoor(0);
   }

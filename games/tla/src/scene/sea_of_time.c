@@ -11,6 +11,7 @@
 
 #include "../field/object/prepare_object.c"
 #include "shared/actors.h"
+#include "flags.h"
 #include "types.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"
@@ -584,7 +585,7 @@ s32 SeaOfTime_StartWaves(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetFlag(0x200);
+  Event_SetFlag(FLAG_SCENE_TEMP_00);
   Event_PlaySound(SE_557);
   do {
     wait(10);
@@ -691,7 +692,7 @@ fade:
   if (changed)
     goto fade;
   gSeaOfTime_WaveState = 1;
-  GameFlag_Clear(0x200);
+  GameFlag_Clear(FLAG_SCENE_TEMP_00);
   /* FAKEMATCH(signature): typed to return s32, passing on Event_End's, though
    * its target Event_End returns nothing. */
   return Event_EndWithResult();
@@ -1036,7 +1037,7 @@ void SeaOfTime_AnimateSea(void) {
       s32 red = color & 31;
       s32 green = (color >> 5) & 31;
       s32 blue = (color >> 10) & 31;
-      s32 flag = GameFlag_Get(0x200);
+      s32 flag = GameFlag_Get(FLAG_SCENE_TEMP_00);
       /* FAKEMATCH(temporary): each channel shifted up after the flag test. */
       u32 greenBits = green << 16;
       u32 redBits = red << 16;
@@ -1157,7 +1158,7 @@ void SeaOfTime_Open(void) {
   MapGrid_WaitForShakeToSettle();
   FieldCamera_MoveTo(0x1600000, -1, 0xc40000, 1);
   FieldCamera_WaitForArrival();
-  Event_SetFlag(0x200);
+  Event_SetFlag(FLAG_SCENE_TEMP_00);
   ((struct EventWork687 *)Ram_HeapSlots->eventWork)->unk16a = 200;
   Event_PlaySound(SE_530);
   Event_Wait(40);
@@ -1264,7 +1265,7 @@ s32 Scene_Initialize(void) {
     gSeaOfTime_WaveState = 1;
     Dma_Set((const void *)0x05000062, gSeaOfTime_SavedColors.colors, 0x8000000e,
             (volatile u32 *)0x040000d4);
-    if (GameFlag_Get(0x200)) {
+    if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
       u32 *state = gSceneState;
       u32 offset, i;
 
@@ -1305,7 +1306,8 @@ s32 Scene_Initialize(void) {
         }
         BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
       }
-      if (gMainRoutineWork.entrance == 4 && !GameFlag_Get(265))
+      if (gMainRoutineWork.entrance == 4 &&
+          !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
         SeaOfTime_Open();
     } else {
       if (!GameFlag_Get(0xa95))

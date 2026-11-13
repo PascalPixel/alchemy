@@ -4,6 +4,7 @@
 /// shows the stone that hides the Unicorn Ring.
 
 #include "types.h"
+#include "flags.h"
 #include "text/msg_ids.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
@@ -231,7 +232,7 @@ void Naribwe_EnterDoor(void) {
 void Naribwe_BlowAwayIvy(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetFlag(0x201);
+  Event_SetFlag(FLAG_SCENE_TEMP_01);
   Event_End();
 }
 
@@ -265,7 +266,7 @@ s32 Scene_Initialize(void) {
   Actor_GetById(27)->scaleX = 0x8000;
   Actor_GetById(27)->scaleY = 0x8000;
   Naribwe_HideStone();
-  if (Event_GetFlag(0x201))
+  if (Event_GetFlag(FLAG_SCENE_TEMP_01))
     Actor_SetPosition(23, 0, 0);
   Rope_Initialize();
   Rope_Place(0, 0x202, 24, 25);

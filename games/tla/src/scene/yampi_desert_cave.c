@@ -6,6 +6,7 @@
 /// Valukar, the guardian of fire.
 
 #include "shared/map_cells.h"
+#include "flags.h"
 #include "shared/actors.h"
 #include "shared/effects.h"
 #include "types.h"
@@ -570,7 +571,7 @@ DEFINE_ACTOR_SET_CELL_OPEN(YampiDesertCave_SetStakeCell, Actor_GetCellIndex,
 /// Talking to Crystal, the Venus Djinni Scoop dug up, starts its battle
 /// (flag 0x271).
 void YampiDesertCave_FightCrystal(void) {
-  Event_SetFlag(0x271);
+  Event_SetFlag(FLAG_SCENE_TEMP_71);
   Event_RequestDjinnBattle(17, 17);
   return;
 }
@@ -680,7 +681,7 @@ void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
 
     if (row == 13) {
       object->motionFlags = 0;
-      Event_SetFlag(0x303);
+      Event_SetFlag(FLAG_AREA_TEMP_03);
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, row);
       MapGrid_CopyCellAttributes(95, 3, 3, 3, 97, 12);
     } else {
@@ -696,7 +697,7 @@ void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
       MapGrid_CopyCellAttributes(103, 16, 1, 1, 103, 15);
       column = object->x >> 20;
       if (column == 38) {
-        Event_SetFlag(0x305);
+        Event_SetFlag(FLAG_AREA_TEMP_05);
         MapGrid_CopyCellAttributes(38, 15, 1, 1, column, 16);
       } else {
         MapGrid_CopyCellAttributes(38, 15, 1, 1, 39, 16);
@@ -704,7 +705,7 @@ void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
     }
     if (id == 13) {
       if (object->x >> 20 == 10 && object->z >> 20 == 11)
-        Event_SetFlag(0x304);
+        Event_SetFlag(FLAG_AREA_TEMP_04);
       MapGrid_CopyCellAttributes(12, 11, 1, 1, object->x >> 20,
                                  object->z >> 20);
     }
@@ -811,7 +812,7 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
       *counter = value;
     }
 #if TLA_PATCH_1
-    Event_ClearFlag(0x270);
+    Event_ClearFlag(FLAG_SCENE_TEMP_70);
 #endif
   }
 }
@@ -894,7 +895,7 @@ s32 Scene_Initialize(void) {
     YampiDesertCave_SetLogCells(8);
     YampiDesertCave_SetLogCells(9);
     YampiDesertCave_SetLogCells(10);
-    if (Event_GetFlag(0x300)) {
+    if (Event_GetFlag(FLAG_AREA_TEMP_00)) {
       Actor_SetPosition(11, 0, 0);
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, 13);
     }
@@ -912,14 +913,14 @@ s32 Scene_Initialize(void) {
     }
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room2) {
-    if (Event_GetFlag(0x303)) {
+    if (Event_GetFlag(FLAG_AREA_TEMP_03)) {
       Actor_SetPosition(8, 138 << 18, 216 << 16);
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, 13);
       MapGrid_CopyCellAttributes(95, 3, 3, 3, 98, 13);
     } else {
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, 12);
     }
-    if (!Event_GetFlag(0x302))
+    if (!Event_GetFlag(FLAG_AREA_TEMP_02))
       Actor_SetWideSprite(64, 1);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3) {
@@ -940,11 +941,11 @@ s32 Scene_Initialize(void) {
     YampiDesertCave_SetLogCells(10);
     YampiDesertCave_SetLogCells(11);
     YampiDesertCave_PlaceStakes(gYampiDesertCave_Room3Stakes);
-    if (!Event_GetFlag(0x206))
+    if (!Event_GetFlag(FLAG_SCENE_TEMP_06))
       MapGrid_CopyCellAttributes(48, 12, 1, 1, 46, 12);
-    if (Event_GetFlag(0x301))
+    if (Event_GetFlag(FLAG_AREA_TEMP_01))
       Actor_SetPosition(15, 0, 0);
-    if (Event_GetFlag(0x304)) {
+    if (Event_GetFlag(FLAG_AREA_TEMP_04)) {
       Actor_SetPosition(13, 168 << 16, 184 << 16);
       MapGrid_CopyCellAttributes(12, 11, 1, 1, 10, 11);
     } else {
@@ -956,7 +957,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(12, 11, 1, 1, 8, 10);
 #endif
     }
-    if (Event_GetFlag(0x305)) {
+    if (Event_GetFlag(FLAG_AREA_TEMP_05)) {
       Actor_SetPosition(12, 154 << 18, 132 << 17);
       MapGrid_CopyCellAttributes(38, 15, 1, 1, 38, 16);
     } else {
@@ -964,7 +965,7 @@ s32 Scene_Initialize(void) {
     }
     if (!Event_GetFlag(65) && !Event_GetFlag(145)) {
       s32 step = FieldGameFlag_GetByte(0x278);
-      s32 placed = Event_GetFlag(0x271);
+      s32 placed = Event_GetFlag(FLAG_SCENE_TEMP_71);
 
       if (placed) {
         step = step / 32 * 2;
@@ -972,10 +973,10 @@ s32 Scene_Initialize(void) {
         Actor_SetPosition(17, gYampiDesertCave_RipplePath[step] << 19,
                           gYampiDesertCave_RipplePath[step + 1] << 19);
       } else {
-        if (Event_GetFlag(0x109))
+        if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
           GameFlag_SetByte(0x278, 0);
         Task_Add(YampiDesertCave_MoveSandRipple, 0x480);
-        Event_SetFlag(0x270);
+        Event_SetFlag(FLAG_SCENE_TEMP_70);
         Actor_SetSpritePriority(16, 3);
         Actor_GetById(16)->collisionFlags = 0;
       }

@@ -8,6 +8,7 @@
 /// blocked.
 
 #include "shared/map_cells.h"
+#include "flags.h"
 #include "shared/actors.h"
 #include "shared/tables.h"
 #include "types.h"
@@ -337,16 +338,16 @@ void MadraCatacombs_RevealButton(void) {
     MapGrid_CopyCellsTo(72, 63, 36, 38, 1, 2);
   else
     MapGrid_CopyCellsTo(71, 63, 36, 38, 1, 2);
-  Event_SetFlag(0x203);
+  Event_SetFlag(FLAG_SCENE_TEMP_03);
 }
 
 void MadraCatacombs_HideButton(void) {
   MapGrid_CopyCellsTo(70, 63, 36, 38, 1, 2);
-  Event_ClearFlag(0x203);
+  Event_ClearFlag(FLAG_SCENE_TEMP_03);
 }
 
 void MadraCatacombs_HearEyesOfTruth(void) {
-  if (Event_GetFlag(0x203) != 0 && Event_GetFlag(0x8cb) == 0) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_03) != 0 && Event_GetFlag(0x8cb) == 0) {
     Event_Start();
     Event_ResolvePendingActions(1);
     Event_PlaySound(SE_RATTLE);
@@ -458,14 +459,14 @@ void MadraCatacombs_RockChestWithBookshelf(void) {
   struct AnimationRecord18 *animation = rock->sprite;
 
   animation->frame = ((struct AnimationRecord18 *)lever->sprite)->frame;
-  if (Event_GetFlag(0x204) != 0 && animation->frame == 0) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_04) != 0 && animation->frame == 0) {
     Event_PlaySound(SE_535);
     rock->x += PIXELS(-2);
     rock->velocityY = PIXELS(2);
-    Event_ClearFlag(0x204);
+    Event_ClearFlag(FLAG_SCENE_TEMP_04);
   }
   if (animation->frame != 0)
-    Event_SetFlag(0x204);
+    Event_SetFlag(FLAG_SCENE_TEMP_04);
 }
 
 /// The leader steps to the middle of a doorway, walks in and leaves by the exit
@@ -588,7 +589,7 @@ void MadraCatacombs_SetUpVillage(void) {
   s32 z;
   struct Actor *object;
 
-  Event_ClearFlag(0x203);
+  Event_ClearFlag(FLAG_SCENE_TEMP_03);
   Actor_SetSpritePriority(64, 3);
   Rope_Initialize();
   b = 0x102;
@@ -622,7 +623,7 @@ void MadraCatacombs_SetUpVillage(void) {
     MapGrid_CopyCellAttributes(33, 37, 2, 2, 33, 39);
     wait(1);
   }
-  if (Event_GetFlag(0x8ab) != 0) {
+  if (Event_GetFlag(FLAG_BRIGGS_CAUGHT) != 0) {
     MapGrid_CopyCellsTo(82, 74, 116, 16, 5, 3);
     MapGrid_CopyCellAttributes(52, 11, 5, 1, 52, 18);
     if (gMainRoutineWork.entrance == 3)
@@ -635,7 +636,7 @@ void MadraCatacombs_SetUpVillage(void) {
 void MadraCatacombs_SetUpChampaTunnel(void) {
   Rope_Initialize();
   Rope_Place(0, 0x200, 8, 9);
-  if (Event_GetFlag(0x8ab) != 0) {
+  if (Event_GetFlag(FLAG_BRIGGS_CAUGHT) != 0) {
     Actor_SetPosition(10, 0, 0);
     MapGrid_CopyCellsTo(68, 70, 113, 11, 5, 3);
     MapGrid_CopyCellsTo(50, 74, 50, 75, 2, 1);
@@ -682,7 +683,7 @@ void MadraCatacombs_SetUpTabletRoom(void) {
   left->y = 0;
   right->y = 0;
   if (Event_GetFlag(0x8c9) != 0) {
-    if (Event_GetFlag(0x109) == 0) {
+    if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
       left->x += PIXELS(-12);
       right->x += 0xc0000;
     }

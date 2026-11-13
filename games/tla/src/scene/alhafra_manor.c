@@ -223,7 +223,7 @@ s32 Scene_Initialize(void) {
     Event_Wait(10);
     Event_SetMessageId((s32)&MsgAlhafraManor10);
     Event_ShowMessageAndWait(14, 0);
-    GameFlag_Clear(0x12f);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
   entrance = &gMainRoutineWork.entrance;
   if (*entrance == 81) {
@@ -635,7 +635,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Event_End();
   EVENT_WORD(0x1b4) = 16;
   EVENT_WORD(0x1ac) = 521;
-  GameFlag_Clear(303);
+  GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 }
 
 void Actor_TakeLeaderLayer(void);

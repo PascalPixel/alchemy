@@ -201,9 +201,9 @@ void Func_020005ec(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if ((object->x >> 20) == 0x1f) {
-    Event_SetFlag(0x310);
+    Event_SetFlag(FLAG_AREA_TEMP_10);
   } else {
-    Event_ClearFlag(0x310);
+    Event_ClearFlag(FLAG_AREA_TEMP_10);
   }
   Event_End();
 }
@@ -221,12 +221,12 @@ void Func_02000620(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if ((object->x >> 20) == 32) {
-    Event_SetFlag(0x311);
+    Event_SetFlag(FLAG_AREA_TEMP_11);
     value &= 0xff;
     Func_02000384(4, 70, 67, value);
     Func_02000384(2, 33, 54, value);
   } else {
-    Event_ClearFlag(0x311);
+    Event_ClearFlag(FLAG_AREA_TEMP_11);
     value = (value & 0xff) | 0xff00;
     Func_02000384(4, 70, 67, value);
     Func_02000384(2, 33, 54, value);
@@ -759,7 +759,7 @@ void Func_02001560(void) {
   motion = &leader->motionFlags;
   *motion = 4;
   Actor_SetSpriteFlags(leader, 0);
-  GameFlag_Set(0x250);
+  GameFlag_Set(FLAG_SCENE_TEMP_50);
   Sound_Play(SE_137);
   riding = (u8 *)ride + 99;
   rise = 0;
@@ -872,7 +872,7 @@ void Func_02001560(void) {
   }
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
-  Event_ClearFlag(0x250);
+  Event_ClearFlag(FLAG_SCENE_TEMP_50);
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   wait(10);
@@ -979,7 +979,7 @@ void Func_02001b54(struct Actor *object) {
       *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0)
     return;
   if (object->timer == 240) {
-    if (!Event_GetFlag(0x250))
+    if (!Event_GetFlag(FLAG_SCENE_TEMP_50))
       Event_PlayCueNearFocus(object, 202);
     if (object->facing == 0xc000) {
       position.x = object->x;
@@ -1696,9 +1696,9 @@ s32 Scene_Initialize(void) {
       Actor_SetSpritePriority(11, 1);
       Actor_GetById(11)->y = 0xd00000;
       Actor_GetById(11)->terrainHeight = Actor_GetById(11)->y;
-      if (GameFlag_Get(0x310))
+      if (GameFlag_Get(FLAG_AREA_TEMP_10))
         Actor_SetPosition(10, 0x1f80000, 0x3680000);
-      if (GameFlag_Get(785))
+      if (GameFlag_Get(FLAG_AREA_TEMP_11))
         Actor_SetPosition(11, 0x2080000, 0x3680000);
       Func_02000620();
       beam = (s32 *)Ram_HeapSlots->mapWork;

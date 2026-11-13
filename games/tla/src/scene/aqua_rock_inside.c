@@ -417,10 +417,10 @@ void Func_020004bc(s32 unused, s32 id) {
     layer[3] += 0x10000;
     System_Wait(4);
   }
-  if (Event_GetFlag(0x250))
+  if (Event_GetFlag(FLAG_SCENE_TEMP_50))
     Func_02003d1c_(41, 42, 1, 1, 43, 44);
   Event_End();
-  Event_SetFlag(0x230);
+  Event_SetFlag(FLAG_SCENE_TEMP_30);
 }
 
 void Func_02000574(s32 unused, s32 id) {
@@ -444,14 +444,14 @@ void Func_02000574(s32 unused, s32 id) {
     System_Wait(4);
   }
   Event_End();
-  Event_SetFlag(0x231);
+  Event_SetFlag(FLAG_SCENE_TEMP_31);
 }
 
 void Data_020005f4(void) {}
 
 void Func_020005f8(void) {
   Func_02003d1c_(41, 42, 1, 1, 43, 44);
-  Event_SetFlag(0x250);
+  Event_SetFlag(FLAG_SCENE_TEMP_50);
 }
 
 #if TLA_PATCH_1
@@ -523,7 +523,7 @@ void Func_0200071c(void) {
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(30);
   Event_End();
-  Event_SetFlag(0x240);
+  Event_SetFlag(FLAG_SCENE_TEMP_40);
   Func_02003d1c_(59, 16, 5, 32, 46, 16);
 }
 
@@ -697,13 +697,13 @@ void Func_02000bd4(void) {
   s32 i;
   s32 result;
 
-  if (Event_GetFlag(0x249)) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_49)) {
     Func_02000b24(12, 38);
     Func_02003628();
     Func_02003688(12, 2, 45, 1);
     for (i = 3; i >= 0; i--)
       result = Func_020036b8(33, 55);
-    Event_SetFlag(0x248);
+    Event_SetFlag(FLAG_SCENE_TEMP_48);
     if (result == 1)
       Event_SetFlag(0xa64);
   }
@@ -728,7 +728,7 @@ void Func_02000c28(s32 unused, s32 id) {
   }
   Event_End();
   Func_02000b5c();
-  Event_SetFlag(0x249);
+  Event_SetFlag(FLAG_SCENE_TEMP_49);
 }
 
 void Func_02000ca8(void) {
@@ -889,7 +889,7 @@ void Func_02000ecc(s32 unused, s32 id) {
     MapGrid_CopyCellsLayered(105, 105, 12, 13, 105, 41);
     BlendScript_Resume();
     Event_End();
-    Event_SetFlag(0x238);
+    Event_SetFlag(FLAG_SCENE_TEMP_38);
   }
 }
 
@@ -945,7 +945,7 @@ void AquaRockInside_CheckPsynergyStone(void) {
   Event_PlaySound(SE_RECOVERY);
   Party_AddPp(999, 0);
   FieldEvent_Wait(10);
-  Event_ClearFlag(0x142);
+  Event_ClearFlag(FLAG_NOTHING_HAPPENS);
   Message_ShowCentered(MsgCheckedThePsynergy + 1, 1);
   Event_End();
 }
@@ -961,7 +961,7 @@ void Func_02001170(void) {
   s32 i;
   s32 result;
 
-  if (Event_GetFlag(0x24b)) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_4B)) {
     /* FAKEMATCH(signature): these two calls go through a void function type. */
     ((void (*)(s32, s32))Func_02000b24)(12, 38);
     ((void (*)(s32, s32))Func_02000b24)(13, 39);
@@ -970,7 +970,7 @@ void Func_02001170(void) {
     Func_02003688(38, 2, 19, 1);
     for (i = 8; i >= 0; i--)
       result = Func_020036b8(33, 55);
-    Event_SetFlag(0x24a);
+    Event_SetFlag(FLAG_SCENE_TEMP_4A);
     if (result == 1)
       Event_SetFlag(0xa65);
   }
@@ -996,7 +996,7 @@ void Func_020011d4(s32 unused, s32 id) {
     System_Wait(4);
   }
   Event_End();
-  Event_SetFlag(0x24b);
+  Event_SetFlag(FLAG_SCENE_TEMP_4B);
 }
 
 void Func_0200124c(void) {
@@ -1030,13 +1030,13 @@ shake:
   MapGrid_SetShake(-1, -1, 0xe666);
   Event_End();
   Func_02003d1c_(38, 9, 7, 6, 13, 9);
-  Event_SetFlag(0x349);
+  Event_SetFlag(FLAG_AREA_TEMP_49);
 }
 
 void Func_02001328(void) {
   Func_02003d24_(70, 8, 7, 6, 77, 8);
   Func_02003d1c_(38, 17, 7, 6, 13, 9);
-  Event_ClearFlag(0x349);
+  Event_ClearFlag(FLAG_AREA_TEMP_49);
 }
 
 void Func_02001364(struct Actor *object) {
@@ -1502,20 +1502,20 @@ s32 Scene_Initialize(void) {
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   if (scene == (s32)&SceneId_Ov67cRoom1) {
-    if (GameFlag_Get(0x230)) {
+    if (GameFlag_Get(FLAG_SCENE_TEMP_30)) {
       Call1((void (*)())Func_02001e78, 8);
       Actor_SetAnimation(8, 3);
     } else {
       FieldActor_SetSpriteColor(Actor_GetById(8), 6);
     }
-    if (GameFlag_Get(0x231)) {
+    if (GameFlag_Get(FLAG_SCENE_TEMP_31)) {
       Call1((void (*)())Func_02001e78, 9);
       Actor_SetAnimation(9, 3);
     } else {
       FieldActor_SetSpriteColor(Actor_GetById(9), 6);
     }
   } else if (scene == (s32)&SceneId_Ov67cRoom2) {
-    if (GameFlag_Get(0x240)) {
+    if (GameFlag_Get(FLAG_SCENE_TEMP_40)) {
       MapGrid_CopyCellsLayered(118, 15, 5, 32, 110, 15);
       MapGrid_CopyCellAttributes(59, 16, 5, 32, 46, 16);
       FieldActor_SetSpriteColor(Actor_GetById(8), 6);
@@ -1540,7 +1540,7 @@ s32 Scene_Initialize(void) {
     Call1((void (*)())Func_02001e78, 11);
     Actor_SetAnimation(11, 3);
     if ((u32)(entrance - 6) <= 1) {
-      if (GameFlag_Get(0x249)) {
+      if (GameFlag_Get(FLAG_SCENE_TEMP_49)) {
         FieldActor_SetSpriteColor(Actor_GetById(9), 5);
         Call1((void (*)())Func_02001e78, 9);
         Actor_SetAnimation(9, 3);
@@ -1568,7 +1568,7 @@ s32 Scene_Initialize(void) {
       Scene_QueueMusic(SE_170);
       Func_0200107c(0, 10);
     }
-    if (!GameFlag_Get(0x238)) {
+    if (!GameFlag_Get(FLAG_SCENE_TEMP_38)) {
       Func_02001e78(9);
       Actor_SetAnimation(9, 3);
     }
@@ -1580,7 +1580,7 @@ s32 Scene_Initialize(void) {
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) && entrance == 13)
       Func_02001f04();
   } else if (scene == (s32)&SceneId_Ov67cRoom9) {
-    if (GameFlag_Get(0x24b)) {
+    if (GameFlag_Get(FLAG_SCENE_TEMP_4B)) {
       FieldActor_SetSpriteColor(Actor_GetById(9), 5);
       Func_02001e78(9);
       Actor_SetAnimation(9, 3);
@@ -1644,7 +1644,7 @@ s32 Scene_PrepareMap(void) {
       actor->motionFlags = i1;
       actor->terrainHeight = i1;
       actor->y = i1;
-      i2 = GameFlag_Get(0x230);
+      i2 = GameFlag_Get(FLAG_SCENE_TEMP_30);
       if (i2 == 0) {
         MapGrid_CopyCellsLayered(104, 80, 16, 10, 104, 40);
         MapGrid_CopyCellsLayered(110, 116, 18, 12, 39, 105);
@@ -1656,11 +1656,11 @@ s32 Scene_PrepareMap(void) {
         actor = Actor_GetById(12);
         Call2((void (*)())Func_0200349c, (actor->x >> 20) - 42, 0);
       }
-      if (GameFlag_Get(0x250)) {
+      if (GameFlag_Get(FLAG_SCENE_TEMP_50)) {
         MapGrid_CopyCellAttributes(41, 42, 1, 1, 43, 44);
       }
     } else if ((u32)(entrance - 9) <= 1) {
-      a = GameFlag_Get(0x231);
+      a = GameFlag_Get(FLAG_SCENE_TEMP_31);
       if (a == 0) {
         i3 = 32;
         MapGrid_CopyCellsLayered(77, 80, 23, 20, 77, i3);
@@ -1725,7 +1725,7 @@ s32 Scene_PrepareMap(void) {
       Value3((s32 (*)())Func_02003420, 13, 3, 4);
       Value3((s32 (*)())Func_02003420, 14, 4, 4);
       Func_020032d4(40, 4, 4);
-      if (!GameFlag_Get(0x249) && !Event_GetFlag(0xa64)) {
+      if (!GameFlag_Get(FLAG_SCENE_TEMP_49) && !Event_GetFlag(0xa64)) {
         map = (u8 *)Ram_HeapSlots->mapWork;
         i7 = 39;
         MapGrid_CopyCellsLayered(64, 64, 16, 13, 71, i7);
@@ -1733,7 +1733,7 @@ s32 Scene_PrepareMap(void) {
         Func_02000b84();
         map[262] = 1;
         BG1_SET_PRIORITY_1();
-      } else if (Event_GetFlag(0xa64) || GameFlag_Get(0x248)) {
+      } else if (Event_GetFlag(0xa64) || GameFlag_Get(FLAG_SCENE_TEMP_48)) {
         if (Event_GetFlag(0xa64)) {
           Actor_SetPosition(12, PIXELS(280), PIXELS(712));
         }
@@ -1742,7 +1742,7 @@ s32 Scene_PrepareMap(void) {
         Value4((s32 (*)())Func_02003688, 12, 2, 45, 1);
         for (i8 = 0; i8 < 8; i8++)
           Func_020036b8(33, 55);
-        Event_SetFlag(0x249);
+        Event_SetFlag(FLAG_SCENE_TEMP_49);
       }
       i9 = 12;
       do {
@@ -1777,7 +1777,7 @@ s32 Scene_PrepareMap(void) {
     } else if (entrance == 9 || entrance == 11 || entrance == 12) {
       Func_020032d4(33, 0, -2);
     }
-    if (!GameFlag_Get(0x238)) {
+    if (!GameFlag_Get(FLAG_SCENE_TEMP_38)) {
       i11 = 13;
       do {
         actor = Actor_GetById(i11);
@@ -1820,7 +1820,7 @@ s32 Scene_PrepareMap(void) {
       Value3((s32 (*)())Func_02003420, 17, 3, 4);
       Value3((s32 (*)())Func_02003420, 18, 6, 4);
       Func_020032d4(40, 4, 4);
-      if (!GameFlag_Get(0x24b) && !Event_GetFlag(0xa65)) {
+      if (!GameFlag_Get(FLAG_SCENE_TEMP_4B) && !Event_GetFlag(0xa65)) {
         map = (u8 *)Ram_HeapSlots->mapWork;
         i14 = 13;
         MapGrid_CopyCellsLayered(64, 64, 19, 17, 100, i14);
@@ -1828,7 +1828,7 @@ s32 Scene_PrepareMap(void) {
         MapGrid_CopyCellAttributes(100, 13, 19, 19, 36, i14);
         map[262] = 1;
         BG1_SET_PRIORITY_1();
-      } else if (Event_GetFlag(0xa65) || GameFlag_Get(0x24a)) {
+      } else if (Event_GetFlag(0xa65) || GameFlag_Get(FLAG_SCENE_TEMP_4A)) {
         if (Event_GetFlag(0xa65)) {
           Actor_SetPosition(12, PIXELS(808), PIXELS(296));
           Actor_SetPosition(13, PIXELS(680), PIXELS(360));
@@ -1841,7 +1841,7 @@ s32 Scene_PrepareMap(void) {
         Value4((s32 (*)())Func_02003688, 38, 2, 19, 1);
         for (i15 = 0; i15 < 8; i15++)
           Func_020036b8(33, 55);
-        Event_SetFlag(0x24b);
+        Event_SetFlag(FLAG_SCENE_TEMP_4B);
       }
     }
     i16 = 10;
@@ -1861,8 +1861,8 @@ s32 Scene_PrepareMap(void) {
   } else if (scene == (s32)&SceneId_Ov67cRoom10) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
     Func_020032d4(33, 0, -2);
-    Event_SetFlag(0x144);
-    if (GameFlag_Get(0x349)) {
+    Event_SetFlag(FLAG_RETREAT_BLOCKED);
+    if (GameFlag_Get(FLAG_AREA_TEMP_49)) {
       MapGrid_CopyCellAttributes(38, 9, 7, 6, 13, 9);
     } else {
       i17 = 8;

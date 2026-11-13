@@ -54,7 +54,7 @@ void AttekaInlet_SetUpTheShore(void);
 
 void AttekaInlet_GeodeJoins(void) {
   Djinn_JoinParty(14, 0, 15);
-  GameFlag_Clear(0x300);
+  GameFlag_Clear(FLAG_AREA_TEMP_00);
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -123,7 +123,7 @@ void AttekaInlet_AskPiersToSetSail(void) {
                                *(s16 *)((u8 *)object + 18));
     Actor_WaitForMoveById(18);
     Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
-    GameFlag_Set(0x201);
+    GameFlag_Set(FLAG_SCENE_TEMP_01);
     Event_End();
   }
 }
@@ -323,7 +323,7 @@ void AttekaInlet_CycloneUncoversGeode(void) {
     Actor_SetHorizontalPositionWithTerrain(14, 120 << 16, 376 << 16);
     wait(1);
     Actor_Jump(14, 4, 10);
-    GameFlag_Set(0x300);
+    GameFlag_Set(FLAG_AREA_TEMP_00);
     if (moved)
       Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_EAST);
     Event_End();
@@ -541,7 +541,7 @@ void AttekaInlet_SetUpTheHarbour(void) {
 
 void AttekaInlet_SetUpTheShore(void) {
   if (gMainRoutineWork.entrance == 3)
-    GameFlag_Clear(0x12f);
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
     Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
@@ -555,7 +555,7 @@ void AttekaInlet_SetUpTheShore(void) {
     Map_CopyCellAttributeRect(1, 16, 1, 1, 4, 21);
     wait(1);
   }
-  if (GameFlag_Get(0x300))
+  if (GameFlag_Get(FLAG_AREA_TEMP_00))
     Actor_SetPosition(14, 120 << 16, 376 << 16);
   {
     s32 priority = 0x480;

@@ -6,6 +6,7 @@
 /// race, the summit's cave and pools and Gasp the Djinni.
 
 #include "shared/trial_road.h"
+#include "flags.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -92,7 +93,7 @@ s32 TrialRoad_RivalIsAhead(s32 fallback) {
     return 1;
   if (state->leaderBest > state->rivalBest)
     return 0;
-  if (Event_GetFlag(0x284))
+  if (Event_GetFlag(FLAG_SCENE_TEMP_84))
     return 0;
   if (state->rivalTimer != 0)
     return 1;
@@ -121,7 +122,7 @@ void TrialRoad_TakeStairs(s32 direction) {
     state->stage[0]++;
     if (state->stage[0] > 3) {
       if (Event_GetFlag(2559) && TrialRoad_RivalIsAhead(0) == 0)
-        Event_SetFlag(901);
+        Event_SetFlag(FLAG_AREA_TEMP_85);
       Event_PlaySound(SE_STAIRS_UP);
       Exit_StartStairsUp();
       Import_EventSetExitRequest(direction + 4);
@@ -463,11 +464,11 @@ s32 TrialRoad_OfferToGiveUp(void) {
       return 1;
     }
   }
-  Event_SetFlag(0x281);
+  Event_SetFlag(FLAG_SCENE_TEMP_81);
   return 0;
 }
 
-void TrialRoad_ClearGiveUpAsked(void) { GameFlag_Clear(0x281); }
+void TrialRoad_ClearGiveUpAsked(void) { GameFlag_Clear(FLAG_SCENE_TEMP_81); }
 
 /// The leader reaches the door at a stage's end: the blue chests open (flags
 /// 645 and 646), the second only when the rival arrived first and twice the
@@ -489,20 +490,20 @@ void TrialRoad_OpenChests(void) {
   Event_PlaySound(SE_CHEST_OPEN);
   if (state->mirrored == 0) {
     Actor_SetAnimation(9, 6);
-    Event_SetFlag(645);
+    Event_SetFlag(FLAG_SCENE_TEMP_85);
     if (found != 0) {
       Actor_SetAnimation(10, 6);
-      Event_SetFlag(646);
+      Event_SetFlag(FLAG_SCENE_TEMP_86);
     }
   } else {
     Actor_SetAnimation(11, 6);
-    Event_SetFlag(645);
+    Event_SetFlag(FLAG_SCENE_TEMP_85);
     if (found != 0) {
       Actor_SetAnimation(12, 6);
-      Event_SetFlag(646);
+      Event_SetFlag(FLAG_SCENE_TEMP_86);
     }
   }
-  Event_SetFlag(644);
+  Event_SetFlag(FLAG_SCENE_TEMP_84);
   Event_End();
 }
 
@@ -524,13 +525,14 @@ void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
   Event_PlaySound(SE_CHEST_CLOSE);
   Actor_SetAnimationAndWait(kind, 5);
   if (kind == 9 || kind == 11)
-    Event_ClearFlag(645);
+    Event_ClearFlag(FLAG_SCENE_TEMP_85);
   else
-    Event_ClearFlag(646);
-  if (!Event_GetFlag(645) && !Event_GetFlag(646)) {
+    Event_ClearFlag(FLAG_SCENE_TEMP_86);
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_85) &&
+      !Event_GetFlag(FLAG_SCENE_TEMP_86)) {
     TrialRoad_OpenLeaderDoor(state->mirrored, state->stage[0]);
     Event_PlaySound(SE_ITEM_BREAK);
-    Event_SetFlag(642);
+    Event_SetFlag(FLAG_SCENE_TEMP_82);
   }
   Inventory_ClearSlot(owner, slot);
   Event_End();
@@ -655,7 +657,7 @@ DEFINE_TRIAL_ROAD_ON_FOOT(TrialRoad_BlockMovedPillar, TrialRoad_BlockCellUnder)
 
 void TrialRoad_BlowBushOffLonePillar(void) {
   OBJECT_BYTE(Actor_GetById(17), 98) = 0;
-  Event_SetFlag(0x307);
+  Event_SetFlag(FLAG_AREA_TEMP_07);
 }
 
 void TrialRoad_JumpForward(void) { Field_TryJumpForward(); }
@@ -671,9 +673,9 @@ void TrialRoad_TrackLeaderOnPillars(void) {
   s32 y = Actor_GetById(gMainRoutineWork.currentOwner)->y;
 
   if (y == 0x200000)
-    Event_SetFlag(0x208);
+    Event_SetFlag(FLAG_SCENE_TEMP_08);
   else
-    Event_ClearFlag(0x208);
+    Event_ClearFlag(FLAG_SCENE_TEMP_08);
 }
 
 void TrialRoad_JumpAcrossGap(void) {
@@ -765,7 +767,7 @@ void TrialRoad_RaisePillar(s32 id) {
 
 void TrialRoad_BlowBushOffPoundPillar(void) {
   OBJECT_BYTE(Actor_GetById(16), 98) = 0;
-  Event_SetFlag(0x339);
+  Event_SetFlag(FLAG_AREA_TEMP_39);
 }
 
 /* VIEW(s0218): routine gTrialRoad_PoundPartners as this part declared it; the
@@ -825,16 +827,16 @@ void TrialRoad_PoundPillar(s32 id, s32 mode, s32 frame) {
     TrialRoad_RaisePillar(other);
     switch (id) {
     case 18:
-      Event_SetFlag(821);
+      Event_SetFlag(FLAG_AREA_TEMP_35);
       break;
     case 19:
-      Event_ClearFlag(821);
+      Event_ClearFlag(FLAG_AREA_TEMP_35);
       break;
     case 20:
-      Event_SetFlag(823);
+      Event_SetFlag(FLAG_AREA_TEMP_37);
       break;
     case 21:
-      Event_ClearFlag(823);
+      Event_ClearFlag(FLAG_AREA_TEMP_37);
       break;
     }
     if (partner->x >> 20 == leader->x >> 20 &&
@@ -976,9 +978,9 @@ void TrialRoad_BlockLogs(void) {
   TrialRoad_BlockLogCells(16, 0);
   TrialRoad_BlockLogCells(17, 0);
   TrialRoad_BlockLogCells(18, 1);
-  if (Event_GetFlag(0x253))
+  if (Event_GetFlag(FLAG_SCENE_TEMP_53))
     MapGrid_CopyCellAttributes(0, 48, 1, 3, 19, 23);
-  if (Event_GetFlag(0x254))
+  if (Event_GetFlag(FLAG_SCENE_TEMP_54))
     MapGrid_CopyCellAttributes(0, 48, 1, 3, 19, 26);
 }
 
@@ -1156,7 +1158,7 @@ void TrialRoad_EndSand(void) {
 
 void TrialRoad_RevealVine(void) {
   MapGrid_CopyCellAttributes(12, 21, 1, 1, 19, 21);
-  Event_SetFlag(0x374);
+  Event_SetFlag(FLAG_AREA_TEMP_74);
 }
 
 #include "../field/object/set_sprite_priority.c"
@@ -1274,7 +1276,7 @@ void TrialRoad_DriftWithStream(void) {
 // Trial Road's rooms set up, the rival Moapa's race, the peak, the
 // fountains and crumbling pillars, the race's progress display and the tables.
 
-void TrialRoad_LiftCaveRock(void) { GameFlag_Set(0x289); }
+void TrialRoad_LiftCaveRock(void) { GameFlag_Set(FLAG_SCENE_TEMP_89); }
 
 void TrialRoad_CutBushes(void) { Func_02005a50_(68, 6, 1, 21, 13, 64, 64); }
 
@@ -1316,17 +1318,17 @@ void TrialRoad_OpenSummitGate(s32 sound) {
     if (sound)
       Event_PlaySound(SE_ITEM_BREAK);
   }
-  Event_SetFlag(0x283);
+  Event_SetFlag(FLAG_SCENE_TEMP_83);
 }
 
 void TrialRoad_ChallengeMoapa(void) {
   struct MainRoutineWork *party;
-  s32 count = Event_GetFlag(0x381);
+  s32 count = Event_GetFlag(FLAG_AREA_TEMP_81);
 
-  count += Event_GetFlag(0x382);
-  count += Event_GetFlag(0x383);
-  count += Event_GetFlag(0x384);
-  if (Event_GetFlag(0x385))
+  count += Event_GetFlag(FLAG_AREA_TEMP_82);
+  count += Event_GetFlag(FLAG_AREA_TEMP_83);
+  count += Event_GetFlag(FLAG_AREA_TEMP_84);
+  if (Event_GetFlag(FLAG_AREA_TEMP_85))
     TrialRoad_ReachPeakFirst();
   else
     TrialRoad_ReachPeakSecond();
@@ -1372,7 +1374,7 @@ const struct Trigger *Scene_GetEvents(void) {
 }
 
 void TrialRoad_SetUpPillarStage(void) {
-  if (!Event_GetFlag(0x307))
+  if (!Event_GetFlag(FLAG_AREA_TEMP_07))
     OBJECT_BYTE(Actor_GetById(17), 98) = 1;
   else
     Actor_SetPosition(20, 0, 0);
@@ -1405,30 +1407,30 @@ void TrialRoad_SetUpTorchStage(void) {
   OBJECT_BYTE(Actor_GetById(18), 98) = 1;
   OBJECT_BYTE(Actor_GetById(19), 98) = 1;
   OBJECT_BYTE(Actor_GetById(20), 98) = 1;
-  if (!Event_GetFlag(0x214))
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_14))
     Actor_SetAnimation(17, 5);
   else
     TrialRoad_SetPillarTopLift(17, -16);
-  if (!Event_GetFlag(0x215))
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_15))
     Actor_SetAnimation(18, 5);
   else
     TrialRoad_SetPillarTopLift(18, -16);
-  if (!Event_GetFlag(0x216))
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_16))
     Actor_SetAnimation(19, 5);
   else
     TrialRoad_SetPillarTopLift(19, -16);
-  if (!Event_GetFlag(0x217))
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_17))
     Actor_SetAnimation(20, 5);
   else
     TrialRoad_SetPillarTopLift(20, -16);
 }
 
 void TrialRoad_SetUpBushPillarStage(void) {
-  if (!Event_GetFlag(0x327))
+  if (!Event_GetFlag(FLAG_AREA_TEMP_27))
     OBJECT_BYTE(Actor_GetById(15), 98) = 1;
   else
     Actor_SetPosition(20, 0, 0);
-  if (!Event_GetFlag(0x328))
+  if (!Event_GetFlag(FLAG_AREA_TEMP_28))
     OBJECT_BYTE(Actor_GetById(16), 98) = 1;
   else
     Actor_SetPosition(21, 0, 0);
@@ -1449,7 +1451,7 @@ void TrialRoad_SetUpPoundStage(void) {
   OBJECT_BYTE(Actor_GetById(19), 98) = 1;
   OBJECT_BYTE(Actor_GetById(20), 98) = 1;
   OBJECT_BYTE(Actor_GetById(21), 98) = 1;
-  if (!Event_GetFlag(0x339))
+  if (!Event_GetFlag(FLAG_AREA_TEMP_39))
     OBJECT_BYTE(Actor_GetById(16), 98) = 1;
   else
     Actor_SetPosition(22, 0, 0);
@@ -1463,14 +1465,14 @@ void TrialRoad_SetUpPoundStage(void) {
   TrialRoad_BlockCellUnder(15);
   TrialRoad_BlockCellUnder(16);
   TrialRoad_BlockCellUnder(17);
-  if (!Event_GetFlag(0x335)) {
+  if (!Event_GetFlag(FLAG_AREA_TEMP_35)) {
     TrialRoad_RaisePillar(18);
     TrialRoad_LowerPillar(19);
   } else {
     TrialRoad_RaisePillar(19);
     TrialRoad_LowerPillar(18);
   }
-  if (!Event_GetFlag(0x337)) {
+  if (!Event_GetFlag(FLAG_AREA_TEMP_37)) {
     TrialRoad_RaisePillar(20);
     TrialRoad_LowerPillar(21);
   } else {
@@ -1562,15 +1564,15 @@ void TrialRoad_SetUpFountainStage(void) {
   fountain->period = 240;
   fountain->riseAt = 120;
   fountain->fallAt = 150;
-  if (!Event_GetFlag(0x363))
+  if (!Event_GetFlag(FLAG_AREA_TEMP_63))
     Actor_SetPosition(16, 0, 0);
   else
     TrialRoad_OpenSpoutCell(16);
-  if (!Event_GetFlag(0x364))
+  if (!Event_GetFlag(FLAG_AREA_TEMP_64))
     Actor_SetPosition(17, 0, 0);
   else
     TrialRoad_OpenSpoutCell(17);
-  if (!Event_GetFlag(0x365))
+  if (!Event_GetFlag(FLAG_AREA_TEMP_65))
     Actor_SetPosition(18, 0, 0);
   else
     TrialRoad_OpenSpoutCell(18);
@@ -1582,7 +1584,7 @@ void TrialRoad_SetUpFountainStage(void) {
 void TrialRoad_SetUpSandStage(void) {
   Tightrope_Initialize();
   Tightrope_Place(0, 15, 16);
-  if (!Event_GetFlag(0x374))
+  if (!Event_GetFlag(FLAG_AREA_TEMP_74))
     MapGrid_CopyCellAttributes(18, 21, 1, 1, 19, 21);
   else
     Actor_SetPosition(17, 0, 0);
@@ -1599,7 +1601,7 @@ void TrialRoad_GaspFlees(void) {
   s32 far;
   s32 y;
 
-  if (Event_GetFlag(648))
+  if (Event_GetFlag(FLAG_SCENE_TEMP_88))
     return;
   dx = (leader->x - partner->x) >> 16;
   dz = (leader->z - partner->z) >> 16;
@@ -1623,7 +1625,7 @@ void TrialRoad_GaspFlees(void) {
   Actor_SetScript(8, gTrialRoad_GaspHopScript);
   y = partner->y;
   Actor_SetMoveTarget(partner, 344 << 16, y, 264 << 16);
-  Event_SetFlag(648);
+  Event_SetFlag(FLAG_SCENE_TEMP_88);
 }
 
 /* VIEW(s15a8): routine gTrialRoad_PaletteCycleRunning as this part declared it;
@@ -1641,7 +1643,7 @@ extern s32 gTrialRoad_PaletteCycleRunning__s15a8 __asm__(
 void TrialRoad_SetUpPoolRoom(void) {
   if (!Event_GetFlag(123)) {
     struct Actor *object = Actor_GetById(8);
-    s32 started = Event_GetFlag(0x288);
+    s32 started = Event_GetFlag(FLAG_SCENE_TEMP_88);
     u8 *flags = &object->motionFlags;
 
     if (!started) {
@@ -1710,9 +1712,9 @@ void TrialRoad_SetUpPeak(void) {
     TrialRoad_LoseToMoapa();
     Import_EventSetExitRequest(5);
   } else if (Event_GetFlag(0x9ff)) {
-    if (Event_GetFlag(0x283))
+    if (Event_GetFlag(FLAG_SCENE_TEMP_83))
       TrialRoad_OpenSummitGate(0);
-    if (Event_GetFlag(0x385))
+    if (Event_GetFlag(FLAG_AREA_TEMP_85))
       TrialRoad_LeaveMoapaWaiting();
     else
       TrialRoad_PlaceMoapaAtPeak();
@@ -1743,7 +1745,7 @@ s32 Scene_Initialize(void) {
     return 0;
   if (scene == (s32)&SceneId_Ov697Room1) {
     if (entrance <= 7) {
-      Event_SetFlag(324);
+      Event_SetFlag(FLAG_RETREAT_BLOCKED);
       Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
       gTrialRoad_StageSetUps__s1fc4[pattern & 7]();
     } else if (entrance == 55) {
@@ -1755,7 +1757,7 @@ s32 Scene_Initialize(void) {
   if (scene == (s32)&SceneId_Ov697Room4)
     TrialRoad_SetUpPoolRoom();
   if (scene == (s32)&SceneId_Ov697Room2) {
-    Event_SetFlag(324);
+    Event_SetFlag(FLAG_RETREAT_BLOCKED);
     TrialRoad_SetUpPeak();
   }
   return 0;
@@ -1908,14 +1910,14 @@ s32 Scene_PrepareMap(void) {
     u32 i;
 
     if ((u32)(entrance - 31) <= 1) {
-      if (!GameFlag_Get(896)) {
+      if (!GameFlag_Get(FLAG_AREA_TEMP_80)) {
         unit = Unit_Get(gMainRoutineWork.currentOwner);
         Iwram_ClearWordsEntry(state, 32);
         value = 0;
         for (n = 0; n <= 13; n++)
           value += unit[n];
         TrialRoad_DealStageOrder(value);
-        GameFlag_Set(896);
+        GameFlag_Set(FLAG_AREA_TEMP_80);
       }
       state->mirrored = (entrance - 1) & 1;
       state->stage[0] = 0;
@@ -1928,14 +1930,14 @@ s32 Scene_PrepareMap(void) {
       n = entrance % 10;
       Event_SetDestination((s32)&SceneId_Ov697Room1, n);
     } else if ((u32)(entrance - 33) <= 1) {
-      if (!GameFlag_Get(896)) {
+      if (!GameFlag_Get(FLAG_AREA_TEMP_80)) {
         unit = Unit_Get(gMainRoutineWork.currentOwner);
         Iwram_ClearWordsEntry(state, 32);
         value = 0;
         for (n = 0; n <= 13; n++)
           value += unit[n];
         TrialRoad_DealStageOrder(value);
-        GameFlag_Set(896);
+        GameFlag_Set(FLAG_AREA_TEMP_80);
       }
       {
         /* FAKEMATCH(temporary): side, for both the store and its flip. */
@@ -2068,18 +2070,19 @@ s32 Scene_PrepareMap(void) {
           goto hideUnused;
         Map_CenterOnFollowedPoint();
         leader = Actor_GetById(gMainRoutineWork.currentOwner);
-        if (!GameFlag_Get(265))
+        if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
           leader->y = leader->terrainHeight =
               Map_GetTerrainHeight(0, leader->x, leader->z);
         if (GameFlag_Get(2559)) {
           struct TrialRoadState *road;
 
-          GameFlag_Set(324);
+          GameFlag_Set(FLAG_RETREAT_BLOCKED);
           road = gTrialRoadState;
-          if (road->stage[0] < road->leaderBest || GameFlag_Get(642)) {
+          if (road->stage[0] < road->leaderBest ||
+              GameFlag_Get(FLAG_SCENE_TEMP_82)) {
             TrialRoad_OpenLeaderDoor(road->mirrored, road->stage[0]);
-            GameFlag_Set(642);
-            GameFlag_Set(644);
+            GameFlag_Set(FLAG_SCENE_TEMP_82);
+            GameFlag_Set(FLAG_SCENE_TEMP_84);
           }
           if (road->stage[0] < road->rivalBest)
             TrialRoad_OpenRivalDoor(road->mirrored, road->stage[0]);
@@ -2088,8 +2091,8 @@ s32 Scene_PrepareMap(void) {
           Task_Add(TrialRoad_UpdateRival, 0x480);
         } else {
           TrialRoad_OpenLeaderDoor(state->mirrored, state->stage[0]);
-          GameFlag_Set(642);
-          GameFlag_Set(644);
+          GameFlag_Set(FLAG_SCENE_TEMP_82);
+          GameFlag_Set(FLAG_SCENE_TEMP_84);
           TrialRoad_OpenRivalDoor(state->mirrored, state->stage[0]);
         }
       }
@@ -2097,7 +2100,7 @@ s32 Scene_PrepareMap(void) {
   } else if (scene == (s32)&SceneId_Ov697Room3) {
   } else if (scene == (s32)&SceneId_Ov697Room4) {
   } else if (scene == (s32)&SceneId_Ov697Room2 && GameFlag_Get(2559) &&
-             !GameFlag_Get(901)) {
+             !GameFlag_Get(FLAG_AREA_TEMP_85)) {
     if (gTrialRoadState->mirrored != 0)
       MapGrid_CopyCellsLayered(26, 79, 1, 2, 13, 79);
     else
@@ -2823,7 +2826,7 @@ void TrialRoad_StartFountains(s32 unused, s32 shape) {
       (struct TrialRoadFountains *)(gInventorySnapshot + 0x188);
   void *buffer;
 
-  if (!Event_GetFlag(0x109))
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     Iwram_ClearWords(work, 0x1c8);
   buffer = Pool_Alloc(0x800);
   Decompress_TaggedLz(gField_Tiles64D, buffer);
@@ -2847,7 +2850,7 @@ struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
 
   Actor_GetById(id);
   Actor_SetSpriteFlags(object, 0);
-  if (!Event_GetFlag(0x109)) {
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     if (high < low) {
       s32 swap = low;
 
@@ -3273,7 +3276,7 @@ void TrialRoad_MoveRival(void) {
         x = work->linkX + 0xc0000;
       else
         x = work->linkX - 0xc0000;
-      if (!GameFlag_Get(530)) {
+      if (!GameFlag_Get(FLAG_SCENE_TEMP_12)) {
         z = work->linkZ + 0x100000;
         rival->timer = work->linkAngle;
       } else {
@@ -3453,7 +3456,7 @@ void TrialRoad_DrawProgress(void) {
 
   if (work->unke0 != 0) {
     work->fade = 2;
-  } else if (GameFlag_Get(262) || event->unk166 != 0) {
+  } else if (GameFlag_Get(FLAG_MENU_OPEN) || event->unk166 != 0) {
     if (work->fade > 0)
       work->fade--;
   } else if (work->fade <= 1) {
@@ -3557,7 +3560,7 @@ void TrialRoad_StartRival(s32 a) {
   u8 *work = Ram_HeapSlots->unkec[0];
   struct TrialRoadControl *control = (struct TrialRoadControl *)gSceneState;
 
-  if (Event_GetFlag(0x109) == 0) {
+  if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
     /* FAKEMATCH(temporary): a local reads the work value before the three
      * stores. */
     s32 value = *(u16 *)(work + 228);

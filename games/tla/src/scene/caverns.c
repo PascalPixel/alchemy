@@ -213,21 +213,21 @@ void Func_0200053c(s32 offset) {
   s32 height;
 
   offset <<= 3;
-  if (HALF_AT(work, 14) > 31 || Event_GetFlag(0x213)) {
+  if (HALF_AT(work, 14) > 31 || Event_GetFlag(FLAG_SCENE_TEMP_13)) {
     SET_CELL_HEIGHT(142 << 18, 134 << 18);
     SET_CELL_HEIGHT(146 << 18, 138 << 18);
     if (offset == 8)
-      Event_SetFlag(0x213);
+      Event_SetFlag(FLAG_SCENE_TEMP_13);
     else
-      Event_ClearFlag(0x213);
-  } else if (Half(work, 18) == 536 || Event_GetFlag(0x213)) {
+      Event_ClearFlag(FLAG_SCENE_TEMP_13);
+  } else if (Half(work, 18) == 536 || Event_GetFlag(FLAG_SCENE_TEMP_13)) {
     SET_CELL_HEIGHT(134 << 18, 138 << 18);
     SET_CELL_HEIGHT(138 << 18, 138 << 18);
     SET_CELL_HEIGHT(142 << 18, 138 << 18);
     if (offset == 6)
-      Event_SetFlag(0x213);
+      Event_SetFlag(FLAG_SCENE_TEMP_13);
     else
-      Event_ClearFlag(0x213);
+      Event_ClearFlag(FLAG_SCENE_TEMP_13);
   } else {
     SET_CELL_HEIGHT(134 << 18, 134 << 18);
     SET_CELL_HEIGHT(138 << 18, 134 << 18);
@@ -406,7 +406,7 @@ void Func_0200087c(void) {
         object->update = (void (*)(void))Func_02000848;
         object->riseCounter = 1;
         other->riseCounter = 1;
-        GameFlag_Set(0x212);
+        GameFlag_Set(FLAG_SCENE_TEMP_12);
       }
     }
   }

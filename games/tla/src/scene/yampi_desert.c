@@ -24,6 +24,7 @@ void PartyInventory_GiveItem__placements(s32 item, s32 flags) __asm__(
 #define Statue_Sink Statue_Sink__placements
 #define PartyInventory_GiveItem PartyInventory_GiveItem__placements
 #include "types.h"
+#include "flags.h"
 #include "system/task.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
@@ -497,7 +498,7 @@ void YampiDesert_StepOntoStakeTops(void) {
     }
     list++;
   }
-  GameFlag_Set(0x20b);
+  GameFlag_Set(FLAG_SCENE_TEMP_0B);
 }
 
 void YampiDesert_StepOffStakeTops(void) {
@@ -544,7 +545,7 @@ next:
   if (*list != 0xffff)
     goto next;
 done:
-  GameFlag_Clear(0x20b);
+  GameFlag_Clear(FLAG_SCENE_TEMP_0B);
 }
 
 /// For each six-byte record (actor, unused, flag) up to an actor of 0xffff:
@@ -1041,12 +1042,12 @@ void YampiDesert_SetSlideActorsShown(s32 show) {
 
 void YampiDesert_ShowSlideActors(void) {
   YampiDesert_SetSlideActorsShown(1);
-  GameFlag_Set(0x20d);
+  GameFlag_Set(FLAG_SCENE_TEMP_0D);
 }
 
 void YampiDesert_HideSlideActors(void) {
   YampiDesert_SetSlideActorsShown(0);
-  GameFlag_Clear(0x20d);
+  GameFlag_Clear(FLAG_SCENE_TEMP_0D);
 }
 
 DEFINE_ACTORS_SET_HIDDEN(YampiDesert_SetActorsHidden)
@@ -1523,9 +1524,9 @@ void YampiDesert_TrackLeaderInPitArea(void) {
   u32 z = leader->z >> 20;
 
   if (x > 12 && z > 10 && x <= 15 && z <= 13)
-    GameFlag_Set(263);
+    GameFlag_Set(FLAG_MENUS_RAISE_TRIGGER);
   else
-    GameFlag_Clear(263);
+    GameFlag_Clear(FLAG_MENUS_RAISE_TRIGGER);
 }
 
 void YampiDesert_PlayScorpionRumble(void) {
@@ -1589,7 +1590,7 @@ void YampiDesert_ScorpionRoamsRoom4(struct Actor *object) {
     break;
   case 7:
     if (YampiDesert_HasArrived(object)) {
-      if (GameFlag_Get(0x203)) {
+      if (GameFlag_Get(FLAG_SCENE_TEMP_03)) {
         object->update = NULL;
         gYampiDesert_RaisedEvent = 200;
       } else {
@@ -1631,7 +1632,7 @@ void YampiDesert_SetUpRoom4Scorpion(void) {
   Actor_SetSpritePriority(16, 3);
   Actor_DisableById(16);
   Actor_GetById(16)->motionFlags = 3;
-  if (!GameFlag_Get(0x109)) {
+  if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     *((u8 *)leader + 98) = 0;
     leader->update = YampiDesert_ScorpionRoamsRoom4;
   }
@@ -1664,7 +1665,7 @@ void YampiDesert_ScorpionRoamsRoom5(struct Actor *object) {
     WALK(4, 246 << 16, 182 << 18)
   case 5:
     if (YampiDesert_HasArrived(object)) {
-      if (GameFlag_Get(0x200)) {
+      if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
         object->update = NULL;
         gYampiDesert_RaisedEvent = 201;
       } else {
@@ -1685,7 +1686,7 @@ void YampiDesert_ScorpionRoamsRoom5(struct Actor *object) {
     WALK(16, 232 << 16, 186 << 18)
   case 17:
     if (YampiDesert_HasArrived(object)) {
-      if (!GameFlag_Get(0x200))
+      if (!GameFlag_Get(FLAG_SCENE_TEMP_00))
         *state = 18;
       else
         *state = 32;
@@ -1732,7 +1733,7 @@ void YampiDesert_SetUpRoom5Scorpion(void) {
   Actor_SetSpritePriority(21, 3);
   Actor_DisableById(21);
   Actor_GetById(21)->motionFlags = 3;
-  if (!GameFlag_Get(0x109)) {
+  if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     Scene_Call4098(21, 232 << 16, 664 << 16, 0);
     *((u8 *)leader + 98) = 0;
     leader->update = YampiDesert_ScorpionRoamsRoom5;
@@ -1785,7 +1786,7 @@ void YampiDesert_ScorpionRoamsToTrap(struct Actor *object) {
     WALK(14, 140 << 17, 164 << 17)
   case 15:
     if (YampiDesert_HasArrived(object)) {
-      if (GameFlag_Get(0x202)) {
+      if (GameFlag_Get(FLAG_SCENE_TEMP_02)) {
         object->update = NULL;
         gYampiDesert_RaisedEvent = 202;
       } else {
@@ -1848,7 +1849,7 @@ void YampiDesert_SetUpTrappedScorpion(void) {
     Scene_Call4098(21, 232 << 16, 168 << 16, angle);
   } else {
     Scene_TaskAdd(YampiDesert_PlayScorpionRumble, 0x480);
-    if (!GameFlag_Get(0x109)) {
+    if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Scene_Call4098(21, 200 << 16, 264 << 16, 0);
       *((u8 *)leader + 98) = 0;
       leader->update = YampiDesert_ScorpionRoamsToTrap;
@@ -2062,7 +2063,7 @@ void YampiDesert_SetUpRoom2(void) {
   s32 angleB;
   s32 angle;
 
-  if (GameFlag_Get(0x8b3)) {
+  if (GameFlag_Get(FLAG_ALHAFRA_MADRANS_ARRIVED)) {
     Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
@@ -2101,7 +2102,7 @@ void YampiDesert_MatchStakePriority(void) {
 
 void YampiDesert_SetUpRoom3(void) {
   YampiDesert_PlaceStakes(gYampiDesert_Room3Stakes);
-  if (GameFlag_Get(0x20b)) {
+  if (GameFlag_Get(FLAG_SCENE_TEMP_0B)) {
     YampiDesert_StepOntoStakeTops();
     wait(10);
   }
@@ -2187,7 +2188,7 @@ void YampiDesert_SetUpRoom5(void) {
 
 void YampiDesert_SetUpRoom6(void) {
   FieldEffect_StartBlankOverlay(0);
-  if (GameFlag_Get(0x302) == 0)
+  if (GameFlag_Get(FLAG_AREA_TEMP_02) == 0)
     Actor_SetWideSprite(64, 0);
 }
 
@@ -2254,7 +2255,7 @@ struct RideEntry *YampiDesert_AddRisingSand(s32 slot, s32 id, s32 timer,
 // Room 10's setup.
 void YampiDesert_SetUpRoom10(void) {
   ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
-  GameFlag_Set(0x144);
+  GameFlag_Set(FLAG_RETREAT_BLOCKED);
   if (gMainRoutineWork.entrance == 1 && !GameFlag_Get(0x88c)) {
     YampiDesert_LandAndFightKingScorpion();
   } else {
@@ -2515,7 +2516,7 @@ void YampiDesert_StartRisingSand(s32 unused, s32 value) {
       (struct YampiDesertRideWork *)(gInventorySnapshot + 0x188);
   void *buffer;
 
-  if (!GameFlag_Get(0x109))
+  if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
     Call2((void (*)())Iwram_ClearWordsEntry, (s32)work, 456);
   buffer = (void *)Value1((s32 (*)())Heap_AllocEwram, 0x800);
   Decompress_TaggedLz(gField_Tiles64D, buffer);
@@ -2538,7 +2539,7 @@ struct RideEntry *YampiDesert_AddRisingSand(s32 slot, s32 id, s32 timer,
 
   Actor_GetById(id);
   Actor_SetSpriteFlags(object, 0);
-  if (!GameFlag_Get(0x109)) {
+  if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     if (high < low) {
       s32 swap = low;
 

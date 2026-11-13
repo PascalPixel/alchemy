@@ -6,6 +6,7 @@
 /// household welcomes him home.
 
 #include "shared/tables.h"
+#include "flags.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -117,7 +118,7 @@ void MadraInteriors_TalkToInnkeeper(void) {
     // Before patch 1 there is no choice prompt.
     if (Event_GetFlag(0x8ff))
       FieldEvent_SetMessageId((s32)MsgMadraInteriors155);
-    else if (Event_GetFlag(0x8ab))
+    else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
       FieldEvent_SetMessageId((s32)MsgMadraInteriors87);
     else
       FieldEvent_SetMessageId((s32)MsgMadraInteriors39);
@@ -138,7 +139,7 @@ void MadraInteriors_TalkToInnkeeper(void) {
       }
       Event_ShowMessage(22, 0);
     } else {
-      if (Event_GetFlag(0x8ab))
+      if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
         FieldEvent_SetMessageId((s32)MsgMadraInteriors87);
       else
         FieldEvent_SetMessageId((s32)MsgMadraInteriors39);
@@ -158,7 +159,7 @@ void MadraInteriors_TalkToHealer(s32 actor) {
   } else {
     if (Event_GetFlag(0x8ff))
       FieldEvent_SetMessageId((s32)MsgMadraInteriors149);
-    else if (Event_GetFlag(0x8ab))
+    else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
       FieldEvent_SetMessageId((s32)MsgMadraInteriors81);
     else
       FieldEvent_SetMessageId((s32)MsgMadraInteriors33);
@@ -185,14 +186,14 @@ void MadraInteriors_TalkToMushroomLover(void) {
   s32 msg;
 
   if (Event_GetFlag(0x98a)) {
-    if (Event_GetFlag(0x310))
+    if (Event_GetFlag(FLAG_AREA_TEMP_10))
       msg = (s32)MsgMadraInteriors111;
     else
       msg = (s32)MsgMadraInteriors118;
     FieldEvent_SetMessageId(msg);
     Event_ShowMessage(10, 0);
   } else {
-    if (Event_GetFlag(0x210)) {
+    if (Event_GetFlag(FLAG_SCENE_TEMP_10)) {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors116);
       Event_ShowMessage(10, 0);
     } else {
@@ -206,14 +207,14 @@ void MadraInteriors_TalkToMushroomLover(void) {
 /// His wife, who cooks them.
 void MadraInteriors_TalkToMushroomCook(void) {
   if (Event_GetFlag(0x98a)) {
-    if (Event_GetFlag(0x310)) {
+    if (Event_GetFlag(FLAG_AREA_TEMP_10)) {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors112);
       Event_ShowMessage(11, 0);
     } else {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors119);
       Event_ShowMessage(11, 0);
     }
-  } else if (Event_GetFlag(0x210)) {
+  } else if (Event_GetFlag(FLAG_SCENE_TEMP_10)) {
     FieldEvent_SetMessageId((s32)MsgMadraInteriors117);
     Event_ShowMessage(11, 0);
   } else {
@@ -224,7 +225,7 @@ void MadraInteriors_TalkToMushroomCook(void) {
 
 void MadraInteriors_MindReadMushroomLover(void) {
   if (Event_GetFlag(0x98a)) {
-    if (Event_GetFlag(0x310)) {
+    if (Event_GetFlag(FLAG_AREA_TEMP_10)) {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors113);
       Event_ShowMessage(10, 0);
     } else {
@@ -232,7 +233,7 @@ void MadraInteriors_MindReadMushroomLover(void) {
       Event_ShowMessage(10, 0);
     }
   } else {
-    s32 flag = Event_GetFlag(0x210);
+    s32 flag = Event_GetFlag(FLAG_SCENE_TEMP_10);
     s32 msg = (s32)MsgMadraInteriors108;
 
     if (flag) {
@@ -247,7 +248,7 @@ void MadraInteriors_MindReadMushroomLover(void) {
 
 void MadraInteriors_MindReadMushroomCook(void) {
   if (Event_GetFlag(0x98a)) {
-    if (Event_GetFlag(0x310)) {
+    if (Event_GetFlag(FLAG_AREA_TEMP_10)) {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors114);
       Event_ShowMessage(11, 0);
     } else {
@@ -255,7 +256,7 @@ void MadraInteriors_MindReadMushroomCook(void) {
       Event_ShowMessage(11, 0);
     }
   } else {
-    s32 flag = Event_GetFlag(0x210);
+    s32 flag = Event_GetFlag(FLAG_SCENE_TEMP_10);
     s32 msg = (s32)MsgMadraInteriors109;
 
     if (flag) {
@@ -272,8 +273,8 @@ void MadraInteriors_MindReadMushroomCook(void) {
 /// he saw made by thinking.
 /// "Uhhhnnn... UHHHNNN!"
 void MadraInteriors_TalkToIllMan(void) {
-  if (!Event_GetFlag(0x211)) {
-    Event_SetFlag(0x211);
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_11)) {
+    Event_SetFlag(FLAG_SCENE_TEMP_11);
     FieldEvent_SetMessageId((s32)MsgUhhhnnnUhhhnnn2);
     Actor_WalkByAndWait(14, -12, 0);
     FieldEvent_Wait(20);
@@ -299,7 +300,7 @@ const struct Trigger *Scene_GetEvents(void) {
     return gMadraInteriors_JailTriggers;
   if (Event_GetFlag(0x8ff))
     return gMadraInteriors_TriggersOnReturn;
-  if (Event_GetFlag(0x8ab))
+  if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
     return gMadraInteriors_TriggersAfterRaid;
   return gMadraInteriors_TriggersBeforeRaid;
 }
@@ -307,7 +308,7 @@ const struct Trigger *Scene_GetEvents(void) {
 /// The Black Crystal (item 242) sits on the elder's mantel until it is stolen
 /// (flag 0x8ab), after which its actor is put out of sight.
 void MadraInteriors_PlaceBlackCrystal(void) {
-  if (Event_GetFlag(0x8ab)) {
+  if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
     Actor_SetPosition(26, PIXELS(888), PIXELS(8));
   } else {
     Actor_SetItemIcon(Actor_Get(26), 242);
@@ -325,7 +326,7 @@ static inline void MadraInteriors_PlaceFacing(s32 actorId, s32 x, s32 z,
 /// The jail on entrance 20: Piers' interrogation the first time, then his
 /// interrogators by the story flags.
 void MadraInteriors_SetUpJail(void) {
-  if (!Event_GetFlag(0x8ab)) {
+  if (!Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
     FIELD_AT(Ram_HeapSlots->eventWork, u16, 0xd4c) = 3;
     if (!Event_GetFlag(0x911)) {
       MadraInteriors_InterrogatePiers();
@@ -369,7 +370,7 @@ s32 Scene_Initialize(void) {
       FieldActor_SetSpriteColor(Actor_Get(29), 3);
       FieldActor_SetSpriteColor(Actor_Get(30), 5);
     }
-    if (Event_GetFlag(0x8ab)) {
+    if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
       MapGrid_CopyCellsLayered(2, 110, 16, 10, 16, 64);
       MapGrid_CopyCellAttributes(2, 46, 16, 10, 16, 0);
     }
@@ -377,7 +378,7 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.entrance == 20)
     MadraInteriors_SetUpJail();
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room2) {
-    if (Event_GetFlag(0x8ab)) {
+    if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
       Actor_SetPosition(10, 0, 0);
     } else {
       Actor_SetSpriteRotationById(10, 0xc000);
@@ -722,7 +723,7 @@ void MadraInteriors_GiveHealingFungus(void) {
   struct Actor *object;
 
   Event_SetFlag(0x98a);
-  Event_SetFlag(0x310);
+  Event_SetFlag(FLAG_AREA_TEMP_10);
   PartyInventory_Remove(0x1c0);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -812,7 +813,7 @@ void MadraInteriors_GiveHealingFungus(void) {
 void MadraInteriors_GiveLaughingFungus(void) {
   struct Actor *object0;
 
-  Event_SetFlag(0x210);
+  Event_SetFlag(FLAG_SCENE_TEMP_10);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object0 = Actor_Get(4);

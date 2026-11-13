@@ -9,6 +9,7 @@
 /// sanctum, Aroma the Djinni, and the lettering that counts the race down.
 
 #include "shared/actors.h"
+#include "flags.h"
 #include "types.h"
 #include "system/field_effect.h"
 #include "system/main_routine_work.h"
@@ -754,7 +755,7 @@ void ShamanVillage_TalkToGuard(void) {
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 182, 280);
     Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0);
     Event_ShowMessage(0x200f, 0);
-    Event_SetFlag(0x200);
+    Event_SetFlag(FLAG_SCENE_TEMP_00);
     ShamanVillage_ExplainTrialRules();
   } else {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
@@ -777,7 +778,7 @@ void ShamanVillage_TalkToOtherGuard(void) {
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 182, 280);
     Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0);
     Event_ShowMessage(0x200f, 0);
-    Event_SetFlag(0x200);
+    Event_SetFlag(FLAG_SCENE_TEMP_00);
     ShamanVillage_ExplainTrialRules();
   } else {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
@@ -957,7 +958,7 @@ void ShamanVillage_HopFortuneTeller(void) {
 void ShamanVillage_TellFortune(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (Event_GetFlag(0x301)) {
+  if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
     if (Event_GetFlag(0xa21))
       Event_SetMessageId((s32)MsgShamanFortuneAvoidNortheast);
     else
@@ -995,7 +996,7 @@ void ShamanVillage_TellFortune(void) {
       Event_ShowMessage(17, 0);
       Actor_RunRepeatedMotion(17, 1);
       Event_ShowMessage(17, 0);
-      Event_SetFlag(0x301);
+      Event_SetFlag(FLAG_AREA_TEMP_01);
     }
     Scene_PlayMusic();
   }
@@ -1003,7 +1004,7 @@ void ShamanVillage_TellFortune(void) {
 }
 
 void ShamanVillage_ExplainTrialRules(void) {
-  if (Event_GetFlag(0x200)) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
     Event_SetMessageId((s32)MsgShamanTrialRulesAreSimple);
   } else {
     Event_PlaySound(SOUND_FADE_OUT_BGM);
@@ -1088,7 +1089,7 @@ void ShamanVillage_OfferToGiveUp(void) {
     FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(368), 1);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 168, 368);
-    Event_ClearFlag(0x201);
+    Event_ClearFlag(FLAG_SCENE_TEMP_01);
   } else {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
     Event_ShowMessage(15, 0);
@@ -1123,7 +1124,7 @@ void ShamanVillage_ChallengeMoapa(void) {
         0) {
       Event_PlaySound(MUS_076);
       Event_ShowMessage(0x200f, 0);
-      Event_SetFlag(0x200);
+      Event_SetFlag(FLAG_SCENE_TEMP_00);
       ShamanVillage_ExplainTrialRules();
     } else {
       ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
@@ -1606,7 +1607,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_SetScript(7, gShamanVillage_RejoinLeaderAtHouseScript);
   Actor_RunScriptAndWait(18, gShamanVillage_RejoinLeaderAtHouseScript);
   Event_Wait(20);
-  Event_SetFlag(514);
+  Event_SetFlag(FLAG_SCENE_TEMP_02);
   Event_SetFlag(0x9e1);
   Event_End();
 }
@@ -1646,7 +1647,7 @@ void ShamanVillage_GreetFortuneSeeker(void) {
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 20);
     ShamanVillage_HopFortuneTeller();
     Actor_SetAnimation(17, 1);
-    Event_SetFlag(0x203);
+    Event_SetFlag(FLAG_SCENE_TEMP_03);
     Event_End();
   }
 }
@@ -1655,7 +1656,7 @@ void ShamanVillage_GreetFortuneSeeker(void) {
 /// Spirit Gloves' chest (flag 0x205).
 void ShamanVillage_GrowVine(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 2, 2, 17);
-  Event_SetFlag(0x205);
+  Event_SetFlag(FLAG_SCENE_TEMP_05);
 }
 
 void ShamanVillage_StepBackFromTrial(void) {
@@ -1666,7 +1667,7 @@ void ShamanVillage_StepBackFromTrial(void) {
   Actor_FaceDirection(17, FACING_SOUTH, 0);
   Actor_FaceDirection(15, FACING_SOUTH, 0);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 168, 368);
-  Event_ClearFlag(0x201);
+  Event_ClearFlag(FLAG_SCENE_TEMP_01);
 }
 
 #define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
@@ -1719,7 +1720,7 @@ void ShamanVillage_CheckTrialEntry(void) {
     Actor_WatchAndSetScript(17, gMainRoutineWork.currentOwner);
     Actor_WatchAndSetScript(15, gMainRoutineWork.currentOwner);
     Event_SetFlag(0x9e0);
-    Event_SetFlag(0x201);
+    Event_SetFlag(FLAG_SCENE_TEMP_01);
   }
 }
 
@@ -2400,7 +2401,7 @@ void ShamanVillage_EnterDoor12(void) {
 }
 
 void ShamanVillage_EnterMoapasHouse(void) {
-  if (Event_GetFlag(0x202)) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_02)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_PlaySound(SE_MAP_EXIT);
@@ -2458,7 +2459,7 @@ void ShamanVillage_RestartTrial(void) {
       Actor_SetAnimationAndWait(15, 3);
       Event_PlaySound(MUS_076);
       Event_ShowMessage(0x200f, 0);
-      Event_SetFlag(0x200);
+      Event_SetFlag(FLAG_SCENE_TEMP_00);
       ShamanVillage_ExplainTrialRules();
       return;
     }
@@ -2476,7 +2477,7 @@ void ShamanVillage_RestartTrial(void) {
     ShamanVillage_CheckTrialEntry();
   }
   Scene_PlayMusic();
-  Event_ClearFlag(0x12f);
+  Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   Event_End();
 }
 
@@ -2496,7 +2497,7 @@ void ShamanVillage_AdviseQuitting(void) {
   Event_Wait(20);
   Event_ShowMessage(0x200f, 0);
   ShamanVillage_StepBackFromTrial();
-  Event_ClearFlag(0x12f);
+  Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   Event_End();
 }
 
@@ -2523,7 +2524,7 @@ void ShamanVillage_SetUpVillage(void) {
     MapGrid_CopyCellsTo(47, 19, 38, 19, 9, 11);
     MapGrid_CopyCellAttributes(1, 5, 9, 1, 6, 29);
     FieldActor_SetSpriteColor(((struct Actor *)Actor_GetById(14)), 6);
-  } else if (!Event_GetFlag(0x109)) {
+  } else if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     s32 angle = 0x4000;
 
     Actor_SetPositionAndFacing(15, PIXELS(168), PIXELS(568), angle);
@@ -2537,7 +2538,7 @@ void ShamanVillage_SetUpVillage(void) {
   Actor_SetAnimation(11, 2);
   Actor_SetAnimation(12, 2);
   Actor_SetAnimation(13, 2);
-  if (!Event_GetFlag(0x109)) {
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     s32 entrance = gMainRoutineWork.entrance;
 
     if (entrance == 11)
@@ -2647,7 +2648,7 @@ struct IoReg16 {
 };
 
 void ShamanVillage_SetUpRoom2(void) {
-  if (!Event_GetFlag(0x109)) {
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     if (Event_GetFlag(0x9fe)) {
       Actor_SetPosition(16, PIXELS(104), PIXELS(200));
       Actor_SetPosition(17, PIXELS(136), PIXELS(200));
@@ -2658,7 +2659,7 @@ void ShamanVillage_SetUpRoom2(void) {
       wait(1);
     }
   }
-  if (Event_GetFlag(0x202))
+  if (Event_GetFlag(FLAG_SCENE_TEMP_02))
     MapGrid_CopyCellsTo(43, 40, 7, 6, 1, 2);
   if (Event_GetFlag(0x94d)) {
     s32 width = 1;
@@ -2669,7 +2670,7 @@ void ShamanVillage_SetUpRoom2(void) {
   }
   Rope_Initialize();
   Rope_Place(0, 0x204, 19, 20);
-  if (Event_GetFlag(0x205))
+  if (Event_GetFlag(FLAG_SCENE_TEMP_05))
     ShamanVillage_GrowVine();
   REG_BLDALPHA = 0xc08;
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
@@ -2704,7 +2705,7 @@ void ShamanVillage_SetUpRoom4(void) {
     Actor_SetPosition(19, 0, 0);
   }
   if ((gMainRoutineWork.entrance == 30 || gMainRoutineWork.entrance == 31) &&
-      !Event_GetFlag(0x109)) {
+      !Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     Party_RestoreHpPp(1);
     Event_Start();
     Event_ResolvePendingActions(0);

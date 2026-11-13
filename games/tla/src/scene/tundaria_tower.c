@@ -12,6 +12,7 @@
 #undef EFFECT_SET_SCRIPT
 
 #include "types.h"
+#include "flags.h"
 #include "field/event_inline.h"
 #include "system/ram_buffer.h"
 #include "map.h"
@@ -56,7 +57,7 @@
 #include "field/particle.h"
 
 void Func_02000280(void) {
-  GameFlag_Set(513);
+  GameFlag_Set(FLAG_SCENE_TEMP_01);
   Event_RequestDjinnBattle(8, 52);
 }
 
@@ -406,7 +407,7 @@ void Func_02000964(void) {
   Actor_SetDestination(8, 424, 536);
   Func_02002f90(object, gData_02003370);
   Actor_WaitForMoveById(8);
-  GameFlag_Set(0x200);
+  GameFlag_Set(FLAG_SCENE_TEMP_00);
   Actor_WatchAndSetScript(8, gMainRoutineWork.currentOwner);
   MapCell_SetAttributes(0, 21, 33, 0x3200);
   MapCell_SetAttributes(0, 22, 33, 0x3200);
@@ -559,7 +560,7 @@ void Func_02000d2c(void) {
 
 void Func_02000de4(void) {
   BlendScript_Resume();
-  GameFlag_Clear(0x212);
+  GameFlag_Clear(FLAG_SCENE_TEMP_12);
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
     MapGrid_CopyCellPictureIndicesRect(39, 100, 53, 100, 3, 3);
     Call6((void (*)())Map_CopyCellAttributeRect, 43, 41, 3, 3, 53, 37);
@@ -577,7 +578,7 @@ void Func_02000de4(void) {
 
 void Func_02000e78(void) {
   BlendScript_Suspend();
-  GameFlag_Set(0x212);
+  GameFlag_Set(FLAG_SCENE_TEMP_12);
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
     MapGrid_CopyCellPictureIndicesRect(43, 100, 53, 100, 3, 3);
     Call6((void (*)())Map_CopyCellAttributeRect, 43, 37, 3, 3, 53, 37);
@@ -666,7 +667,7 @@ void Func_020010d4(struct Actor *object) {
   } else {
     REG_BG2CNT &= 0xfffc;
     REG_BG2CNT |= 2;
-    if (GameFlag_Get(0x212)) {
+    if (GameFlag_Get(FLAG_SCENE_TEMP_12)) {
       object->z = 0;
       object->x = 0;
     } else {
@@ -887,16 +888,17 @@ s32 Scene_Initialize(void) {
     case 6:
     case 7:
       if (!GameFlag_Get(100)) {
-        if (!GameFlag_Get(0x200)) {
+        if (!GameFlag_Get(FLAG_SCENE_TEMP_00)) {
           Actor_SetPosition(8, PIXELS(344), PIXELS(536));
           MapCell_SetAttributes(0, 21, 33, 0x3300);
           MapCell_SetAttributes(0, 22, 33, 0xff00);
-        } else if (!GameFlag_Get(0x201)) {
+        } else if (!GameFlag_Get(FLAG_SCENE_TEMP_01)) {
           MapCell_SetAttributes(0, 26, 33, 0xff00);
         }
         Actor_WatchAndSetScript(8, gMainRoutineWork.currentOwner);
       }
-      if (!GameFlag_Get(0x109) && gMainRoutineWork.entrance == 7)
+      if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
+          gMainRoutineWork.entrance == 7)
         Func_020011e0();
       break;
     }
@@ -955,12 +957,12 @@ s32 Scene_Initialize(void) {
       Scene_SetActorSpritePriority(effect, 3);
     } break;
     case 10:
-      if (!GameFlag_Get(0x109))
+      if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
         Func_020011e0();
       break;
     }
   } else if (scene == (s32)&SceneId_Ov68fRoom7) {
-    GameFlag_Set(0x144);
+    GameFlag_Set(FLAG_RETREAT_BLOCKED);
     if (GameFlag_Get(0x948)) {
       MapGrid_CopyCellsTo(13, 26, 13, 16, 3, 3);
       MapGrid_CopyCellAttributes(13, 26, 3, 3, 13, 16);
@@ -986,7 +988,7 @@ void TundariaTower_StopLeader(void) {
     Call1((void (*)())GameFlag_Set, 0x106);
     Leader_StopMoving();
     Event_ResolveAllPendingActions();
-    GameFlag_Clear(0x106);
+    GameFlag_Clear(FLAG_MENU_OPEN);
   }
 }
 

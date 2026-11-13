@@ -3,6 +3,7 @@
 /// sanctum, as two scenes of one overlay.
 
 #include "shared/tables.h"
+#include "flags.h"
 #include "shared/actors.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -198,7 +199,7 @@ s32 Scene_Initialize(void) {
     if (gMainRoutineWork.entrance == 5)
       MikasallaInteriors_FadeInAndClearFlag();
     else if (!Event_GetFlag(0x821) ||
-             (Event_GetFlag(0xa39) && !Event_GetFlag(0x341)) ||
+             (Event_GetFlag(0xa39) && !Event_GetFlag(FLAG_AREA_TEMP_41)) ||
              Event_GetFlag(34))
       Actor_SetPosition(18, 0, 0);
     else
@@ -212,11 +213,11 @@ s32 Scene_Initialize(void) {
       Actor_Get(8)->collisionFlags |= 4;
       FieldActor_SetSpritePriority(8, 2);
     } else if (entrance == 5) {
-      Event_ClearFlag(0x12f);
+      Event_ClearFlag(FLAG_SHOW_AREA_NAME);
       Actor_Get(9)->collisionFlags |= 4;
       FieldActor_SetSpritePriority(9, 2);
     } else if (entrance == 4) {
-      Event_ClearFlag(0x12f);
+      Event_ClearFlag(FLAG_SHOW_AREA_NAME);
     }
   }
   return 0;
@@ -234,7 +235,7 @@ void MikasallaInteriors_MeetGalahad(void);
 /// met the party.
 void MikasallaInteriors_TalkToGalahad(void) {
   if (Event_GetFlag(0xa39)) {
-    FieldEvent_SetMessageId(Event_GetFlag(0x340)
+    FieldEvent_SetMessageId(Event_GetFlag(FLAG_AREA_TEMP_40)
                                 ? (s32)MsgMikasallaInteriors20
                                 : (s32)MsgMikasallaInteriors21);
     Event_ShowMessage(18, 0);
@@ -271,13 +272,13 @@ void MikasallaInteriors_MeetGalahad(void) {
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
       0) {
     Event_ShowMessage(18, 0);
-    Event_SetFlag(0x340);
+    Event_SetFlag(FLAG_AREA_TEMP_40);
   } else {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     Event_ShowMessage(18, 0);
   }
   Event_SetFlag(0xa39);
-  Event_SetFlag(0x341);
+  Event_SetFlag(FLAG_AREA_TEMP_41);
   Event_End();
 }
 

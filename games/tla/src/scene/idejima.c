@@ -1459,7 +1459,7 @@ void Idejima_FelixWakes(void) {
     Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
   }
   Actor_SetPosition(ACTOR_NARRATOR, 0, 0);
-  Event_ClearFlag(0x12f);
+  Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   Event_SetFlag(FLAG_IDEJIMA_FELIX_WOKE);
   Event_End();
   FelixWake_EndStep();

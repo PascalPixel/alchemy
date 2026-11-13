@@ -9,6 +9,7 @@
 /// triggers.
 
 #include "shared/actors.h"
+#include "flags.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -132,7 +133,7 @@ void Madra_TalkToWeaponMerchant(s32 arg) {
   }
   if (Event_GetFlag(0x8ff))
     Event_SetMessageId((s32)&MsgItLooksLikeThe);
-  else if (Event_GetFlag(0x8ab))
+  else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
     Event_SetMessageId((s32)&MsgTheArmorerAnd);
   else
     Event_SetMessageId((s32)&MsgAfterTheChampa);
@@ -149,7 +150,7 @@ void Madra_TalkToArmorMerchant(s32 arg) {
   }
   if (Event_GetFlag(0x8ff))
     Event_SetMessageId((s32)&MsgPeopleAreSaying);
-  else if (Event_GetFlag(0x8ab))
+  else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
     Event_SetMessageId((s32)&MsgIKnewThere);
   else
     Event_SetMessageId((s32)&MsgOwOwOw);
@@ -166,7 +167,7 @@ void Madra_TalkToItemMerchant(s32 arg) {
   }
   if (Event_GetFlag(0x8ff))
     Event_SetMessageId((s32)&MsgMyBoyfriendShin);
-  else if (Event_GetFlag(0x8ab))
+  else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
     Event_SetMessageId((s32)&MsgAllMyInjuries);
   else
     Event_SetMessageId((s32)&MsgMySisterWas);
@@ -231,14 +232,14 @@ void Madra_MindReadKarst(void) {
 /// party hears Karst call for her sister.
 /// "Where could Menardi have gone? Where are you, my sister?"
 void Madra_KarstCallsForMenardi(void) {
-  if (Event_GetFlag(0x20f) == 0) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_0F) == 0) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldActor_ShowEmote(33, 0x105, 30);
     Event_SetMessageId((s32)&MsgWhereCouldMenardi);
     Event_ShowMessageThenWait(33, 0, 10);
     Event_End();
-    Event_SetFlag(0x20f);
+    Event_SetFlag(FLAG_SCENE_TEMP_0F);
   }
 }
 
@@ -266,14 +267,14 @@ void Madra_AskComingThroughHole(void) {
   s32 msg;
 
   Actor_FaceActor(26, 4, 0);
-  if (Event_GetFlag(0x281)) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_81)) {
     Event_SetMessageId((s32)&MsgYeahWellWe);
   } else {
     msg = (s32)&MsgYouCominThrough;
     Event_SetMessageId(msg);
     Event_OpenMessage(26, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
-      Event_SetFlag(0x281);
+      Event_SetFlag(FLAG_SCENE_TEMP_81);
       Event_Wait(10);
       FieldActor_ShowEmote(26, 0x102, 0);
       Event_SetMessageId(msg + 1);
@@ -292,14 +293,14 @@ void Madra_AskComingThroughSealedHole(void) {
   s32 msg;
 
   Actor_FaceActor(26, 4, 0);
-  if (Event_GetFlag(0x281)) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_81)) {
     Event_SetMessageId((s32)&MsgYeahUhWe);
   } else {
     msg = (s32)&MsgOhUhYou;
     Event_SetMessageId(msg);
     Event_OpenMessage(26, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
-      Event_SetFlag(0x281);
+      Event_SetFlag(FLAG_SCENE_TEMP_81);
       Event_Wait(10);
       FieldActor_ShowEmote(26, 0x102, 0);
       Event_SetMessageId(msg + 1);
@@ -325,7 +326,7 @@ void Madra_WorkerBlocksHole(void) {
   if (Event_GetFlag(0x910)) {
     Event_PlaySound(SE_MAP_EXIT);
     Import_EventSetExitRequest(16);
-  } else if (!Event_GetFlag(0x280)) {
+  } else if (!Event_GetFlag(FLAG_SCENE_TEMP_80)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Madra_PlaceFacing(26, PIXELS(744), PIXELS(257), FACING_SOUTH);
@@ -334,7 +335,7 @@ void Madra_WorkerBlocksHole(void) {
     Actor_WalkToAndWait(4, 720, 244);
     Actor_FaceDirectionAndWait(4, FACING_SOUTHEAST);
     Madra_PlaceFacing(4, PIXELS(720), PIXELS(244), FACING_SOUTHEAST);
-    Event_SetFlag(0x280);
+    Event_SetFlag(FLAG_SCENE_TEMP_80);
     Madra_AskComingThroughHole();
     Event_End();
   }
@@ -342,7 +343,7 @@ void Madra_WorkerBlocksHole(void) {
 
 /// After the raid, the worker pops up out of the hole he is sealing.
 void Madra_WorkerBlocksSealedHole(void) {
-  if (!Event_GetFlag(0x280)) {
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_80)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Madra_PlaceFacing(26, PIXELS(744), PIXELS(256), FACING_SOUTH);
@@ -351,7 +352,7 @@ void Madra_WorkerBlocksSealedHole(void) {
     Actor_WalkToAndWait(4, 720, 244);
     Actor_FaceDirectionAndWait(4, FACING_SOUTHEAST);
     Madra_PlaceFacing(4, PIXELS(720), PIXELS(244), FACING_SOUTHEAST);
-    Event_SetFlag(0x280);
+    Event_SetFlag(FLAG_SCENE_TEMP_80);
     Madra_AskComingThroughSealedHole();
     Event_End();
   }
@@ -360,7 +361,7 @@ void Madra_WorkerBlocksSealedHole(void) {
 const struct Trigger *Scene_GetEvents(void) {
   if (Event_GetFlag(0x8ff))
     return gMadra_TriggersOnReturn;
-  if (Event_GetFlag(0x8ab))
+  if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
     return gMadra_TriggersAfterRaid;
   return gMadra_TriggersBeforeRaid;
 }
@@ -397,13 +398,13 @@ s32 Scene_Initialize(void) {
       sprite->unk11 = (sprite->unk11 & 3) | 32;
     }
     ((struct FieldSprite *)Actor_GetById(26)->sprite)->unk19 = 1;
-    if (Event_GetFlag(0x8ff) == 0 && Event_GetFlag(0x8ab) != 0) {
+    if (Event_GetFlag(0x8ff) == 0 && Event_GetFlag(FLAG_BRIGGS_CAUGHT) != 0) {
       Actor_SetPosition(27, 0, 0);
       Actor_SetPosition(28, 0, 0);
-      if (Event_GetFlag(0x280) == 0)
+      if (Event_GetFlag(FLAG_SCENE_TEMP_80) == 0)
         Actor_SetPosition(26, 0, 0);
     } else if (Event_GetFlag(0x8ff) != 0 || Event_GetFlag(0x910) != 0 ||
-               Event_GetFlag(0x280) == 0) {
+               Event_GetFlag(FLAG_SCENE_TEMP_80) == 0) {
       Actor_SetPosition(26, 0, 0);
     }
   }
@@ -451,7 +452,7 @@ void Madra_AskAboutBriggs(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (Event_GetFlag(0x8ab)) {
+  if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
     msg = (s32)&MsgHeyMisterAre;
     Event_SetMessageId(msg);
     Event_OpenMessage(8, 0);
@@ -464,7 +465,7 @@ void Madra_AskAboutBriggs(void) {
     }
     Event_ShowMessage(8, 0);
   } else {
-    if (Event_GetFlag(0x300) == 0)
+    if (Event_GetFlag(FLAG_AREA_TEMP_00) == 0)
       Actor_FaceActor(14, 4, 0);
     msg = (s32)&MsgDidYouCome;
     Event_SetMessageId(msg);
@@ -479,7 +480,7 @@ void Madra_AskAboutBriggs(void) {
     Event_ShowMessage(8, 0);
   }
   Actor_FaceDirection(14, FACING_SOUTH, 0);
-  Event_SetFlag(0x300);
+  Event_SetFlag(FLAG_AREA_TEMP_00);
   Event_End();
 }
 
@@ -488,7 +489,7 @@ void Madra_MindReadBriggsFan(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (Event_GetFlag(0x8ab)) {
+  if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
     msg = (s32)&MsgHeyMisterAre;
     Event_SetMessageId(msg);
     Event_OpenMessage(8, 0);
@@ -501,7 +502,7 @@ void Madra_MindReadBriggsFan(void) {
     }
     Event_ShowMessage(8, 0);
   } else {
-    if (Event_GetFlag(0x300) == 0) {
+    if (Event_GetFlag(FLAG_AREA_TEMP_00) == 0) {
       x = 0x100;
       z = 30;
       FieldActor_ShowEmote(14, x, z);
@@ -520,7 +521,7 @@ void Madra_MindReadBriggsFan(void) {
     Event_ShowMessage(8, 0);
   }
   Actor_FaceDirection(14, FACING_SOUTH, 0);
-  Event_SetFlag(0x300);
+  Event_SetFlag(FLAG_AREA_TEMP_00);
   Event_End();
 }
 
@@ -535,7 +536,7 @@ void Madra_AskAboutJenna(void) {
   flags = 0;
   Event_OpenMessage(11, flags);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
-    Event_SetFlag(0x301);
+    Event_SetFlag(FLAG_AREA_TEMP_01);
     Event_ShowMessage(11, 0);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
   } else {

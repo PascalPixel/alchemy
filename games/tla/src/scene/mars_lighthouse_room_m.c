@@ -6,6 +6,7 @@
 /// ice (MarsLighthouseRoomM_SlideOnIce).
 
 #include "shared/mars_lighthouse.h"
+#include "flags.h"
 #include "shared/actors.h"
 #include "shared/effects.h"
 #include "battle/battle.h"
@@ -618,7 +619,7 @@ s32 Scene_Initialize(void) {
   entrance = gMainRoutineWork.entrance;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x100;
-  Event_SetFlag(0x112);
+  Event_SetFlag(FLAG_MARS_LIGHTHOUSE_LIT);
   Call4((void (*)())Palette_SetColorsFade, (s32)gData_0200338c,
         (s32)gData_0200339c, (s32)gData_020033c8, (s32)gData_020033f4);
   if (scene != (s32)&SceneId_Ov6ACRoom6 && scene == (s32)&SceneId_Ov6ACRoom1) {
@@ -1364,7 +1365,7 @@ void Func_02002118(void) {
   struct Actor *object;
   struct MarsLighthouseRoomMAnimation *animation;
 
-  if (!Event_GetFlag(0x109))
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     Iwram_ClearWordsEntry(work, 116);
   object = (struct Actor *)FieldActor_Create(365, 1, 0, 0);
   object->unk5c[0] = 2;
@@ -1507,7 +1508,7 @@ s32 MarsLighthouseRoomM_SlideOnIce(void) {
     ScreenTransition_Start(event->field1ac, event->field1b4);
     event->started = 1;
   }
-  Event_ClearFlag(0x106);
+  Event_ClearFlag(FLAG_MENU_OPEN);
   event->field166 = 0;
   event->field15a = 0;
   event->field15e = 0;
@@ -1517,10 +1518,10 @@ s32 MarsLighthouseRoomM_SlideOnIce(void) {
   FieldCamera_SetSpeed(0x70000, 0xe000);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   ride = (struct RideState *)(gInventorySnapshot + 0x188);
-  Event_SetFlag(0x106);
+  Event_SetFlag(FLAG_MENU_OPEN);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_ClearFlag(0x106);
+  Event_ClearFlag(FLAG_MENU_OPEN);
   leader->update = (void (*)(void))Actor_Blink;
   leader->facing = 0x4000;
   Actor_SelectAnimation(leader, 49);

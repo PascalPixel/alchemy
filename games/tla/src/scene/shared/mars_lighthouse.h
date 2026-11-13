@@ -91,7 +91,7 @@
     s32 alpha;                                                                 \
     s32 control;                                                               \
                                                                                \
-    if (Event_GetFlag(0x109) == 0) {                                           \
+    if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {                        \
       for (i = 0; i < 4 && (id = *targets++) > 0; i++) {                       \
         flags = *targets;                                                      \
         height = flags & 15;                                                   \
@@ -300,7 +300,7 @@
       return;                                                                  \
     }                                                                          \
     *(u8 *)((u8 *)object + 0x5a) = 0;                                          \
-    if (Event_GetFlag(0x106))                                                  \
+    if (Event_GetFlag(FLAG_MENU_OPEN))                                         \
       angle = -1;                                                              \
     else                                                                       \
       angle = data1[(gInput.held >> 4) & 15];                                  \
@@ -546,10 +546,10 @@
     u8 *event = Ram_HeapSlots->eventWork;                                      \
                                                                                \
     if (S16_AT(event, 0xca2)) {                                                \
-      Flag_Set(0x106);                                                         \
+      Flag_Set(FLAG_MENU_OPEN);                                                \
       Leader_StopMoving();                                                     \
       Event_ResolveAllPendingActions();                                        \
-      Flag_Clear(0x106);                                                       \
+      Flag_Clear(FLAG_MENU_OPEN);                                              \
     }                                                                          \
   }
 
@@ -950,13 +950,13 @@
       actor = entry->actor;                                                    \
       if (actor == 0)                                                          \
         continue;                                                              \
-      flag = GameFlag_Get(0x106);                                              \
+      flag = GameFlag_Get(FLAG_MENU_OPEN);                                     \
       if (*(s16 *)(saved[0] + 358) != 0)                                       \
         flag |= 1;                                                             \
       mark = &actor->flag5b;                                                   \
       *mark = flag;                                                            \
       if (state->unk_e != 0)                                                   \
-        *mark = GameFlag_Get(0x106);                                           \
+        *mark = GameFlag_Get(FLAG_MENU_OPEN);                                  \
       dx = actor->x;                                                           \
       dz = actor->z;                                                           \
       dx -= cameraX;                                                           \
@@ -1037,7 +1037,7 @@
       struct id1 *other;                                                       \
       struct Actor *target;                                                    \
                                                                                \
-      flag = Event_GetFlag(0x106);                                             \
+      flag = Event_GetFlag(FLAG_MENU_OPEN);                                    \
       if (work->unk166 != 0)                                                   \
         flag |= 1;                                                             \
       actor->movementState = flag;                                             \

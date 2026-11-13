@@ -8,6 +8,7 @@
 /// (Mikasalla_MeetSpark).
 
 #include "shared/actors.h"
+#include "flags.h"
 #include "shared/tables.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -180,7 +181,7 @@ void Mikasalla_DigUpLadder(void) {
 /// ground, once a visit (flag 0x200), as Scene_PrepareMap redraws them on a
 /// return.
 void Mikasalla_CastParch(void) {
-  if (Event_GetFlag(0x200) == 0) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_00) == 0) {
     Map_SetLayerEntryFlag(0);
     Map_SetLayerEntryFlag(1);
     Map_SetLayerEntryFlag(2);
@@ -193,7 +194,7 @@ void Mikasalla_CastParch(void) {
     MapGrid_CopyCells(28, 90, 2, 2, 19, 91);
     MapGrid_CopyCells(28, 92, 2, 2, 15, 92);
     MapGrid_CopyCells(30, 92, 2, 2, 17, 92);
-    Event_SetFlag(0x200);
+    Event_SetFlag(FLAG_SCENE_TEMP_00);
   }
 }
 
@@ -215,7 +216,7 @@ s32 Scene_PrepareMap(void) {
   object->priorityFlags = flags;
   Actor_GetById(party->currentOwner)->priorityFlags |= 0x20;
   if (party->scene == (s32)&SceneId_Ov65dRoom2) {
-    if (Event_GetFlag(0x200)) {
+    if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
       Map_SetLayerEntryFlag(0);
       Map_SetLayerEntryFlag(1);
       Map_SetLayerEntryFlag(2);

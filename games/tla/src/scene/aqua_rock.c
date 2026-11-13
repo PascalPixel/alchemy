@@ -394,35 +394,35 @@ void Func_02000740(void) {
   if (GameFlag_Get(0x104))
     return;
   if (gData_02003204 <= 149) {
-    if (GameFlag_Get(0x320))
-      GameFlag_Set(0x200);
+    if (GameFlag_Get(FLAG_AREA_TEMP_20))
+      GameFlag_Set(FLAG_SCENE_TEMP_00);
     else
-      GameFlag_Clear(0x200);
+      GameFlag_Clear(FLAG_SCENE_TEMP_00);
   } else {
-    GameFlag_Set(0x200);
+    GameFlag_Set(FLAG_SCENE_TEMP_00);
   }
   if (++gData_02003204 > 239)
     gData_02003204 = 0;
   if (gData_02003208 <= 149) {
-    if (GameFlag_Get(0x321))
-      GameFlag_Set(0x201);
+    if (GameFlag_Get(FLAG_AREA_TEMP_21))
+      GameFlag_Set(FLAG_SCENE_TEMP_01);
     else
-      GameFlag_Clear(0x201);
+      GameFlag_Clear(FLAG_SCENE_TEMP_01);
   } else {
-    GameFlag_Set(0x201);
+    GameFlag_Set(FLAG_SCENE_TEMP_01);
   }
   if (++gData_02003208 > 239)
     gData_02003208 = 0;
   if (gData_0200320c <= 149)
-    GameFlag_Clear(0x202);
+    GameFlag_Clear(FLAG_SCENE_TEMP_02);
   else
-    GameFlag_Set(0x202);
+    GameFlag_Set(FLAG_SCENE_TEMP_02);
   if (++gData_0200320c > 239)
     gData_0200320c = 0;
   if (gData_02003210 <= 149)
-    GameFlag_Clear(0x203);
+    GameFlag_Clear(FLAG_SCENE_TEMP_03);
   else
-    GameFlag_Set(0x203);
+    GameFlag_Set(FLAG_SCENE_TEMP_03);
   if (++gData_02003210 > 239)
     gData_02003210 = 0;
 }
@@ -455,17 +455,17 @@ void Func_02000844(void) {
   UNK02003450_SET(entry, 96, 93, 108, 93, 107, 26, 43, 90, 15, 0x203);
   entry++;
   UNK02003450_SET(entry, 116, 95, 122, 95, 96, 32, 32, 96, 13, 0x1a6b);
-  if (GameFlag_Get(0x320))
-    GameFlag_Set(0x200);
+  if (GameFlag_Get(FLAG_AREA_TEMP_20))
+    GameFlag_Set(FLAG_SCENE_TEMP_00);
   else
-    GameFlag_Clear(0x200);
-  if (GameFlag_Get(0x321))
-    GameFlag_Set(0x201);
+    GameFlag_Clear(FLAG_SCENE_TEMP_00);
+  if (GameFlag_Get(FLAG_AREA_TEMP_21))
+    GameFlag_Set(FLAG_SCENE_TEMP_01);
   else
-    GameFlag_Clear(0x201);
+    GameFlag_Clear(FLAG_SCENE_TEMP_01);
   /* FAKEMATCH(temporary): each copy's five varying arguments held in locals of
    * their own scope. */
-  if (GameFlag_Get(0x200)) {
+  if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
     struct Unk02003450 *opened = &Data_02003450[0];
     {
       s32 srcX = opened->unk00 + 3, srcY = opened->unk02,
@@ -481,7 +481,7 @@ void Func_02000844(void) {
     opened->unk16[0] = 9999;
     opened->unk14 = 1;
   }
-  if (GameFlag_Get(0x201)) {
+  if (GameFlag_Get(FLAG_SCENE_TEMP_01)) {
     struct Unk02003450 *opened = &Data_02003450[1];
     {
       s32 srcX = opened->unk00 + 3, srcY = opened->unk02,
@@ -581,11 +581,11 @@ void Func_02000cd8(s32 unused, s32 id) {
     GameFlag_SetByte(0x310, column);
     GameFlag_SetByte(0x318, row);
     GameFlag_ClearBit_(0x320);
-    GameFlag_Clear(0x321);
+    GameFlag_Clear(FLAG_AREA_TEMP_21);
     if (column == 7 && row == 35)
-      GameFlag_Set(0x320);
+      GameFlag_Set(FLAG_AREA_TEMP_20);
     if (column == 15 && row == 35)
-      GameFlag_Set(0x321);
+      GameFlag_Set(FLAG_AREA_TEMP_21);
   } else if (id == 25) {
     struct Actor *object = Actor_GetById(25);
 
@@ -1002,7 +1002,7 @@ settle:
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
-  GameFlag_Clear(0x12f);
+  GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   Import_EventSetExitRequest(77);
   Event_End();
   GameFlag_Set(0x955);
@@ -1099,11 +1099,11 @@ s32 Scene_Initialize(void) {
       Func_02002158();
   } else if (scene == (s32)&SceneId_Ov67bRoom2) {
     Actor_SetSpriteFlags(Actor_GetById(14), 0);
-    if (GameFlag_Get(545))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_21))
       Call6(Map_CopyCellAttributeRect, 42, 32, 1, 1, 44, 32);
-    if (GameFlag_Get(546))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_22))
       Call6(Map_CopyCellAttributeRect, 48, 32, 1, 1, 46, 32);
-    if (GameFlag_Get(547))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_23))
       Call6(Map_CopyCellAttributeRect, 44, 44, 1, 1, 46, 44);
     Actor_SetModeById(12, 2);
     if (GameFlag_Get(0x951)) {

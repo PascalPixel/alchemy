@@ -101,7 +101,7 @@
     actor9->y.fixed = actor9->terrainHeight;                                   \
     actor10->motionFlags = 0;                                                  \
     actor10->y.fixed = actor10->terrainHeight;                                 \
-    if (Event_GetFlag(0xa0a)) {                                                \
+    if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED)) {         \
       actor9->y.fixed += 0x66640;                                              \
       {                                                                        \
         s32 step = 0x1eb80;                                                    \
@@ -113,7 +113,7 @@
       Actor_SetSpriteColorMode(((struct PositionedActor *)Actor_Get(9)), 4);   \
       Actor_SetSpriteColorMode(((struct PositionedActor *)Actor_Get(11)), 4);  \
     }                                                                          \
-    if (Event_GetFlag(0xa0b)) {                                                \
+    if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {        \
       actor10->y.fixed += 0x66640;                                             \
       {                                                                        \
         s32 step = 0x1eb80;                                                    \
@@ -125,7 +125,8 @@
       Actor_SetSpriteColorMode(((struct PositionedActor *)Actor_Get(10)), 4);  \
       Actor_SetSpriteColorMode(((struct PositionedActor *)Actor_Get(12)), 4);  \
     }                                                                          \
-    if (Event_GetFlag(0xa0a) && Event_GetFlag(0xa0b)) {                        \
+    if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) &&         \
+        Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {        \
       actor9->y.fixed += 0x199900;                                             \
       actor10->y.fixed += 0x199900;                                            \
       {                                                                        \
@@ -217,7 +218,7 @@
       Iwram_CopyWordsEntry(data2, (void *)&BG_PLTT_COLOR(12, 0), 32);          \
       Iwram_CopyWordsEntry(data3, (void *)&BG_PLTT_COLOR(13, 0), 32);          \
     }                                                                          \
-    if (Event_GetFlag(0xa00) || mode == 1) {                                   \
+    if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {       \
       Counter_Set(0);                                                          \
       Task_Add(call1, 1152);                                                   \
     } else {                                                                   \
@@ -297,7 +298,7 @@
       Iwram_CopyWordsEntry(data2, (void *)&BG_PLTT_COLOR(12, 0), 32);          \
       Iwram_CopyWordsEntry(data3, (void *)&BG_PLTT_COLOR(13, 0), 32);          \
     }                                                                          \
-    if (Event_GetFlag(0xa00) || mode == 1) {                                   \
+    if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {       \
       /* FAKEMATCH(temporary): a local holding 0. */                           \
       s32 zero = 0;                                                            \
                                                                                \

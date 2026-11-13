@@ -1,5 +1,6 @@
 /// @file
 #include "shared/whirlwind.h"
+#include "flags.h"
 #include "shared/jupiter_lighthouse.h"
 #include "shared/actors.h"
 #include "battle/battle.h"
@@ -178,14 +179,14 @@ void Func_02000054(s32 mode) {
 }
 
 void Func_020001b4(void) {
-  Event_SetFlag(0xa0a);
+  Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Func_020017a8(11, 9, 0);
   FieldEvent_Wait(40);
-  if (Event_GetFlag(0xa0b) == 0) {
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED) == 0) {
     Func_02000054(0);
     FieldEvent_Wait(40);
   } else {
@@ -202,14 +203,14 @@ void Func_020001b4(void) {
 }
 
 void Func_02000264(void) {
-  Event_SetFlag(0xa0b);
+  Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   Func_020017a8(12, 10, 1);
   FieldEvent_Wait(40);
-  if (Event_GetFlag(0xa0a) == 0) {
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) == 0) {
     Func_02000054(1);
     FieldEvent_Wait(40);
   } else {
@@ -246,7 +247,7 @@ void Func_0200032c(s32 unused, s32 id) {
 
   if (id == 13) {
     if (object->x >> 20 == 6 && *(s32 *)&object->z >> 20 == 12) {
-      Event_SetFlag(2570);
+      Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED);
       object->motionFlags = 3;
       System_Wait(2);
       i = 0;
@@ -276,7 +277,7 @@ void Func_0200032c(s32 unused, s32 id) {
   }
   if (id == 14) {
     if (object->x >> 20 == 57 && *(s32 *)&object->z >> 20 == 12) {
-      Event_SetFlag(2571);
+      Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED);
       object->motionFlags = 3;
       System_Wait(2);
       i = 0;
@@ -304,7 +305,8 @@ void Func_0200032c(s32 unused, s32 id) {
       MapGrid_SetCellHeight(object->x, object->z, 0, 6);
     }
   }
-  if (Event_GetFlag(2570) && Event_GetFlag(2571))
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) &&
+      Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED))
     Event_SetFlag(2591);
 }
 
@@ -335,7 +337,7 @@ s32 Scene_PrepareMap(void) {
 
   Scene_SetArrivalFlags(0);
   LightSprites_InitB();
-  if (Event_GetFlag(0xa0a)) {
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED)) {
     Actor_SetPosition(13, 0, 0);
     MapGrid_CopyCellsLayered(66, 39, 1, 1, 70, 10);
     MapGrid_CopyCellsLayered(5, 75, 1, 1, 6, 75);
@@ -352,7 +354,7 @@ s32 Scene_PrepareMap(void) {
 
     MapGrid_SetCellHeight(object->x, object->z, 0, last);
   }
-  if (Event_GetFlag(0xa0b)) {
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
     Actor_SetPosition(14, 0, 0);
     MapGrid_CopyCellsLayered(68, 39, 1, 1, 121, 10);
     MapGrid_CopyCellsLayered(58, 75, 1, 1, 57, 75);

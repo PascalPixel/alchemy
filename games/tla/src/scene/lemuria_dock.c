@@ -4,6 +4,7 @@
 /// the quay.
 
 #include "battle/battle.h"
+#include "flags.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -213,7 +214,7 @@ s32 Scene_Initialize(void) {
   SCENE_WORK->unk1ac = 256;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   Task_Add(LemuriaDock_CyclePalette, 0x480);
-  Flag_Clear(0x12f);
+  Flag_Clear(FLAG_SHOW_AREA_NAME);
 #if TLA_PATCH_1 /* From patch 1. */
   if (Flag_IsSet(0x90a))
     Actor_SetSpritePriority(9, 1);
@@ -224,7 +225,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (!Flag_IsSet(0x8df)) {
+  if (!Flag_IsSet(FLAG_SHIP_FLIES)) {
     MapGrid_CopyCellsTo(57, 52, 64, 15, 1, 1);
     MapGrid_CopyCellsTo(60, 53, 67, 16, 6, 3);
     MapGrid_CopyCellsTo(50, 52, 16, 16, 6, 3);

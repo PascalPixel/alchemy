@@ -4,6 +4,7 @@
 /// Punch Ant in the Gateway Cave (Room3) on the way to Idejima.
 
 #include "types.h"
+#include "flags.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
 #include "system/main_routine_work.h"
@@ -124,7 +125,8 @@ void SuhallaGate_SetUpRoom2(void) {
 
 /// Back from the Punch Ant's battle, the party talks it over.
 void SuhallaGate_SetUpRoom3(void) {
-  if (Event_GetFlag(0x109) == 0 && gMainRoutineWork.entrance == 99)
+  if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0 &&
+      gMainRoutineWork.entrance == 99)
     SuhallaGate_AfterThievesBattle();
 }
 

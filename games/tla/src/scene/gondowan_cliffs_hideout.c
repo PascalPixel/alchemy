@@ -3,6 +3,7 @@
 /// until flag 2219 is set.
 
 #include "field/field.h"
+#include "flags.h"
 #include "battle/battle.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -40,7 +41,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "text/msg_ids.h"
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (GameFlag_Get(2219))
+  if (GameFlag_Get(FLAG_BRIGGS_CAUGHT))
     return gPlacementsWithoutWarriors;
   return gPlacementsWithWarriors;
 }
@@ -50,7 +51,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 /// Felix walks in on the four warriors: they jump, turn to him and talk over
 /// one another, once, until the scene's flag 2447 is set.
 void GondowanCliffsHideout_WarriorsAreFound(void) {
-  if (!GameFlag_Get(2219)) {
+  if (!GameFlag_Get(FLAG_BRIGGS_CAUGHT)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgKibomboWarriorsFound);

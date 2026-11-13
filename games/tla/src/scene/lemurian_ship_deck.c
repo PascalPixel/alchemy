@@ -5,6 +5,7 @@
 /// and sets out for Madra (Room2).
 
 #include "battle/battle.h"
+#include "flags.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -76,7 +77,7 @@ void LemurianShipDeck_EnterCabin(void) {
     i++;
     if (i <= 63)
       goto loop;
-    if (!Event_GetFlag(0x201)) {
+    if (!Event_GetFlag(FLAG_SCENE_TEMP_01)) {
       Event_PlaySound(SE_DOOR_OPEN);
       MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
     }
@@ -643,12 +644,12 @@ void Actor_MoveToObject(s32 id, s32 target);
 void LemurianShipDeck_LeaveToFindCrew(void) {
   struct Actor *object;
 
-  if (Event_GetFlag(0x212))
+  if (Event_GetFlag(FLAG_SCENE_TEMP_12))
     return;
   if (Event_GetFlag(0x988))
     return;
-  Event_SetFlag(0x212);
-  if (Event_GetFlag(0x211)) {
+  Event_SetFlag(FLAG_SCENE_TEMP_12);
+  if (Event_GetFlag(FLAG_SCENE_TEMP_11)) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
@@ -668,16 +669,18 @@ void LemurianShipDeck_LeaveToFindCrew(void) {
     Actor_SetPosition(9, 0, 0);
     Event_SetFlag(0x988);
     Event_End();
-  } else if (Event_GetFlag(0x210)) {
-    Event_SetFlag(0x211);
+  } else if (Event_GetFlag(FLAG_SCENE_TEMP_10)) {
+    Event_SetFlag(FLAG_SCENE_TEMP_11);
   } else {
-    Event_SetFlag(0x210);
+    Event_SetFlag(FLAG_SCENE_TEMP_10);
   }
 }
 
 /// Stepping back off the gangway clears flag 0x212, so the crew is sought
 /// again.
-void LemurianShipDeck_ResetCrewSearch(void) { GameFlag_Clear(0x212); }
+void LemurianShipDeck_ResetCrewSearch(void) {
+  GameFlag_Clear(FLAG_SCENE_TEMP_12);
+}
 
 void Actor_SelectAnimation(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const void *data);
@@ -776,7 +779,7 @@ void LemurianShipDeck_ReturnToShip(void) {
   PaletteFade_Interpolate(20);
   FieldEvent_Wait(20);
   MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
-  Event_SetFlag(0x201);
+  Event_SetFlag(FLAG_SCENE_TEMP_01);
   FieldTask_Remove(func);
   if (handle != 0)
     Call1((void (*)())Actor_Release, handle);

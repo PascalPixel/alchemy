@@ -297,7 +297,7 @@ void Func_02000210(void) {
   FieldEvent_ResolvePendingActions(0);
   result0 = Event_GetFlag(0xaa2);
   if (result0 != 0) {
-    result1 = Event_GetFlag(0x200);
+    result1 = Event_GetFlag(FLAG_SCENE_TEMP_00);
     if (result1 != 0) {
       Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
       FieldEvent_SetMessageId((s32)MsgPenPenPen);
@@ -325,7 +325,7 @@ void Func_020002ac(void) {
   FieldEvent_ResolvePendingActions(0);
   result0 = Event_GetFlag(0xaa2);
   if (result0 != 0) {
-    result1 = Event_GetFlag(0x200);
+    result1 = Event_GetFlag(FLAG_SCENE_TEMP_00);
     if (result1 != 0) {
       FieldEvent_SetMessageId((s32)MsgThereIsNothing);
     } else {
@@ -348,7 +348,7 @@ void Func_0200030c(void) {
   FieldEvent_ResolvePendingActions(0);
   result0 = Event_GetFlag(0xaa2);
   if (result0 != 0) {
-    result1 = Event_GetFlag(0x200);
+    result1 = Event_GetFlag(FLAG_SCENE_TEMP_00);
     if (result1 != 0) {
       Actor_FaceActor(19, gMainRoutineWork.currentOwner, 0);
       FieldEvent_SetMessageId((s32)MsgPenPenPehnnnn);
@@ -372,7 +372,7 @@ void Func_02000380(void) {
   FieldEvent_ResolvePendingActions(0);
   result0 = Event_GetFlag(0xaa2);
   if (result0 != 0) {
-    result1 = Event_GetFlag(0x200);
+    result1 = Event_GetFlag(FLAG_SCENE_TEMP_00);
     if (result1 != 0) {
       FieldEvent_SetMessageId((s32)MsgPengusIsPretty);
     } else {
@@ -409,7 +409,7 @@ void Func_02000440(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  result0 = Event_GetFlag(0x214);
+  result0 = Event_GetFlag(FLAG_SCENE_TEMP_14);
   if (result0 == 0) {
     FieldEvent_SetMessageId((s32)MsgWeLikeThis);
     Event_ShowMessage(8, 0);
@@ -421,7 +421,7 @@ void Func_02000440(void) {
     Event_ShowMessage(9, 0);
     Actor_SetAttachedEffect(9, 0x102);
     FieldEvent_Wait(20);
-    Event_SetFlag(0x214);
+    Event_SetFlag(FLAG_SCENE_TEMP_14);
   }
   Actor_FaceActor(8, gMainRoutineWork.currentOwner, 0);
   FieldEvent_SetMessageId((s32)MsgLookWeRe);
@@ -575,7 +575,7 @@ void Func_020006f4(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (FieldPartyInventory_FindMember(453) != -1) {
-    if (Event_GetFlag(513)) {
+    if (Event_GetFlag(FLAG_SCENE_TEMP_01)) {
       FieldCamera_MoveTo(-1, -1, -1, 0);
       FieldCamera_SetSpeed(0xcccc, 0x1999);
       FieldCamera_MoveTo(0x8c0000, -1, 0xbe0000, 1);
@@ -678,7 +678,7 @@ void Func_020006f4(void) {
         if (item != 0)
           Actor_Release(item);
         Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
-        Event_SetFlag(513);
+        Event_SetFlag(FLAG_SCENE_TEMP_01);
       }
     }
   } else {
@@ -810,11 +810,11 @@ void Func_02000e38(void) {
     }
     Actor_FaceDirectionAndWait(11, 0xc000);
     Event_SetFlag(0xaa1);
-    Event_SetFlag(534);
+    Event_SetFlag(FLAG_SCENE_TEMP_16);
   } else {
     if (Event_GetFlag(0xaa1)) {
       FieldActor_WatchAndSetScript(11, gMainRoutineWork.currentOwner);
-      if (Event_GetFlag(534))
+      if (Event_GetFlag(FLAG_SCENE_TEMP_16))
         Event_SetMessageId(MsgIDonTLike);
       else
         Event_SetMessageId(MsgIDonTWantTo);
@@ -943,7 +943,7 @@ void Func_020014e0(void) {
   FieldEvent_ResolvePendingActions(0);
   if (PartyInventory_FindMember(455) != -1) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
-    if (GameFlag_Get(513) != 0) {
+    if (GameFlag_Get(FLAG_SCENE_TEMP_01) != 0) {
       Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
       /* FAKEMATCH(temporary): the form kept. */
       a = (struct Actor *)Actor_EmitSmoke;
@@ -1015,7 +1015,7 @@ void Func_020014e0(void) {
         leader->update = 0;
         if (a != 0)
           Actor_Release(a);
-        Event_SetFlag(513);
+        Event_SetFlag(FLAG_SCENE_TEMP_01);
       }
     }
   } else if (GameFlag_Get(0xaa5)) {
@@ -1301,7 +1301,7 @@ void Func_02001f74(void) {
   Actor_SetAnimation(10, 5);
   object->motionFlags = 0;
   Actor_FaceDirectionAndWait(10, FACING_EAST);
-  Event_SetFlag(0x215);
+  Event_SetFlag(FLAG_SCENE_TEMP_15);
   System_Wait(1);
   Event_End();
 }
@@ -1393,7 +1393,7 @@ void Func_020021d0(void) {
   }
   Func_020020ec(first->x, first->z, 3, 255);
   Func_020020ec(second->x, second->z, 3, 255);
-  if (!Event_GetFlag(0x210) && firstX == 12 && firstZ == 26) {
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_10) && firstX == 12 && firstZ == 26) {
     both = 0;
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -1406,18 +1406,18 @@ void Func_020021d0(void) {
     Event_PlaySound(SE_RATTLE);
     System_Wait(10);
     first->motionFlags = 0;
-    Event_SetFlag(0x210);
+    Event_SetFlag(FLAG_SCENE_TEMP_10);
     if (both) {
       Func_020020ec(first->x, first->z, 3, 0);
       Func_020020ec(second->x, second->z, 3, 0);
       MapGrid_CopyCellAttributes(7, 3, 1, 1, 12, 26);
-      Event_SetFlag(0x212);
+      Event_SetFlag(FLAG_SCENE_TEMP_12);
       ((u8 *)first)[0x62] = 1;
       ((u8 *)second)[0x62] = 1;
     }
     Event_End();
   }
-  if (!Event_GetFlag(0x211) && secondX == 7 && secondZ == 29) {
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_11) && secondX == 7 && secondZ == 29) {
     both = 0;
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -1430,12 +1430,12 @@ void Func_020021d0(void) {
     Event_PlaySound(SE_RATTLE);
     System_Wait(10);
     second->motionFlags = 0;
-    Event_SetFlag(0x211);
+    Event_SetFlag(FLAG_SCENE_TEMP_11);
     if (both) {
       Func_020020ec(first->x, first->z, 3, 0);
       Func_020020ec(second->x, second->z, 3, 0);
       MapGrid_CopyCellAttributes(7, 3, 1, 1, 7, 29);
-      Event_SetFlag(0x212);
+      Event_SetFlag(FLAG_SCENE_TEMP_12);
       ((u8 *)first)[0x62] = 1;
       ((u8 *)second)[0x62] = 1;
     }
@@ -1465,7 +1465,7 @@ void Func_02002430(void) {
 
 void Func_020024c8(void) {
   MapGrid_CopyCellAttributes(5, 2, 1, 2, 5, 28);
-  Event_SetFlag(0x213);
+  Event_SetFlag(FLAG_SCENE_TEMP_13);
 }
 
 void Func_020024f0(void) {
@@ -1501,12 +1501,12 @@ void Func_0200253c(void) {
 }
 
 void Func_020025a4(void) {
-  Event_SetFlag(0x218);
+  Event_SetFlag(FLAG_SCENE_TEMP_18);
   return;
 }
 
 void Func_020025b0(void) {
-  Event_ClearFlag(0x218);
+  Event_ClearFlag(FLAG_SCENE_TEMP_18);
   return;
 }
 
@@ -1754,7 +1754,7 @@ void Islets_InitializeRoom1(void) {
   struct Actor *spawned;
 
   if (gMainRoutineWork.entrance == 2)
-    Event_ClearFlag(0x12f);
+    Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   map->mode = 1;
   Actor_SetSpriteFlags(Actor_Get(11), 0);
   Actor_SetSpeed(10, 0xcccc, 0x6666);
@@ -1807,7 +1807,7 @@ void Func_02002d7c(void) {
   s32 i;
   s32 count;
 
-  if (*(s16 *)(work + 0x166) != 0 || GameFlag_Get(0x218)) {
+  if (*(s16 *)(work + 0x166) != 0 || GameFlag_Get(FLAG_SCENE_TEMP_18)) {
     for (i = 11; i <= 18; i++)
       Actor_GetById(i)->movementState = 1;
     return;
@@ -1873,7 +1873,7 @@ void Islets_InitializeRoom2(void) {
 
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
   if (gMainRoutineWork.entrance == 2)
-    Event_ClearFlag(0x12f);
+    Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   i = 11;
   do {
     Func_02002d0c(i++);
@@ -1916,7 +1916,7 @@ void Islets_InitializeRoom2(void) {
     Actor_SetSpeed(19, 0x19999, 0xcccc);
     Actor_SetScript(9, gData_02004274);
     Actor_SetScript(19, gData_02004274);
-    Event_SetFlag(0x200);
+    Event_SetFlag(FLAG_SCENE_TEMP_00);
   }
 }
 
@@ -1924,7 +1924,7 @@ void Islets_InitializeRoom3(void) {
   struct Actor *spawned;
 
   if (gMainRoutineWork.entrance == 3)
-    Event_ClearFlag(0x12f);
+    Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   Actor_SetSpriteFlags(Actor_Get(10), 0);
   Actor_SetAnimation(10, 4);
   if (Event_GetFlag(0xaa3)) {
@@ -1955,7 +1955,7 @@ void Islets_InitializeRoom4(void) {
   map->value190 = zero;
   map->value194 = zero;
   if (gMainRoutineWork.entrance == 11)
-    Event_ClearFlag(0x12f);
+    Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     object->motionFlags = zero;
     FieldActor_SetSpritePriority(10, 1);
@@ -1963,7 +1963,7 @@ void Islets_InitializeRoom4(void) {
   Actor_SetPosition(11, 0, 0);
   Actor_DisableById(12);
   Actor_DisableById(13);
-  set = Event_GetFlag(0x212);
+  set = Event_GetFlag(FLAG_SCENE_TEMP_12);
   if (set) {
     struct Actor *first = Actor_Get(12);
     struct Actor *second = Actor_Get(13);
@@ -1995,7 +1995,7 @@ void Islets_InitializeRoom4(void) {
     last->motionFlags = still;
   }
   Func_020020ec(last->x, last->z, 1, 255);
-  if (Event_GetFlag(0x213))
+  if (Event_GetFlag(FLAG_SCENE_TEMP_13))
     MapGrid_CopyCellAttributes(5, 2, 1, 2, 5, 28);
 }
 
@@ -2026,7 +2026,7 @@ void Islets_InitializeRoom5(void) {
   FieldEvent_ResolvePendingActions(0);
   ((struct MapLayerBits *)map)->priority = 1;
   if (gMainRoutineWork.entrance == 2)
-    Event_ClearFlag(303);
+    Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   Func_02003410();
   {
     s32 a1 = 12;
@@ -2054,7 +2054,7 @@ void Islets_InitializeRoom5(void) {
   Actor_SetSpriteFlags(Actor_Get(12), 0);
   FieldTask_AddFrame(Func_02001c4c, 0x480);
   if ((u16)(gMainRoutineWork.entrance - 4) <= 1) {
-    Event_SetFlag(0x217);
+    Event_SetFlag(FLAG_SCENE_TEMP_17);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
       {
         s32 a3 = 0x4000;
@@ -2108,7 +2108,7 @@ void Islets_InitializeRoom5(void) {
   FieldEvent_ResolvePendingActions(0);
   ((struct MapLayerBits *)map)->priority = 1;
   if (gMainRoutineWork.entrance == 2)
-    Event_ClearFlag(303);
+    Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   Func_02003410();
   PaletteCycle_Add__islets(3, 12, 5, 4);
   PaletteCycle_Add__islets(4, 12, 5, 4);
@@ -2127,7 +2127,7 @@ void Islets_InitializeRoom5(void) {
   Actor_SetSpriteFlags(Actor_Get(12), 0);
   FieldTask_AddFrame(Func_02001c4c, 0x480);
   if ((u16)(gMainRoutineWork.entrance - 4) <= 1) {
-    Event_SetFlag(0x217);
+    Event_SetFlag(FLAG_SCENE_TEMP_17);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
       {
         s32 a3 = 0x4000;

@@ -106,7 +106,7 @@ DEFINE_PILLAR_SET_MOVED(Pillar_SetMoved, 11, 24, 32, 22, 0x221)
 void Func_02000124(void) {
   MapGrid_CopyCellAttributes(30, 35, 1, 1, 28, 34);
   MapGrid_CopyCellAttributes(30, 34, 1, 1, 28, 33);
-  Event_SetFlag(0x222);
+  Event_SetFlag(FLAG_SCENE_TEMP_22);
 }
 
 DEFINE_ACTOR_WAIT_TO_LAND(Actor_WaitToLand)
@@ -131,11 +131,11 @@ void Func_020001a0(s32 unused, s32 id) {
     s32 z;
     s32 cell;
 
-    if (!Event_GetFlag(0x223) && (x = block->x >> 20) == 47 &&
+    if (!Event_GetFlag(FLAG_SCENE_TEMP_23) && (x = block->x >> 20) == 47 &&
         (z = block->z >> 20) == 28) {
       Actor_WaitToLand(14);
       MapGrid_CopyCellAttributes(49, 28, 1, 1, x, z);
-      Event_SetFlag(0x223);
+      Event_SetFlag(FLAG_SCENE_TEMP_23);
       Actor_SetSpritePriority(14, 2);
       other = Actor_GetById(10);
       cell = other->z >> 20;
@@ -147,9 +147,9 @@ void Func_020001a0(s32 unused, s32 id) {
         other->z = 236 << 17;
       }
       if (block->z < other->z)
-        Event_SetFlag(0x201);
+        Event_SetFlag(FLAG_SCENE_TEMP_01);
       else
-        Event_SetFlag(0x203);
+        Event_SetFlag(FLAG_SCENE_TEMP_03);
     } else {
       Actor_SetSpritePriority(id, 1);
     }
@@ -158,7 +158,8 @@ void Func_020001a0(s32 unused, s32 id) {
     struct Actor *block = Actor_GetById(15);
     struct Actor *other;
 
-    if (!Event_GetFlag(0x224) && block->x >> 20 == 53 && block->z >> 20 == 36) {
+    if (!Event_GetFlag(FLAG_SCENE_TEMP_24) && block->x >> 20 == 53 &&
+        block->z >> 20 == 36) {
       s32 dx;
 
       Actor_WaitToLand(15);
@@ -174,7 +175,7 @@ void Func_020001a0(s32 unused, s32 id) {
         Actor_StartIdle(other);
         other->x = 0;
         other->z = 0;
-        Event_SetFlag(0x200);
+        Event_SetFlag(FLAG_SCENE_TEMP_00);
       } else {
         Call3((void (*)())Iwram_CopyWordsEntry, (s32)&saved, (s32)other, 128);
         Actor_ResetTargetsAndVelocity(9);
@@ -190,7 +191,7 @@ void Func_020001a0(s32 unused, s32 id) {
           Iwram_CopyWordsEntry(other, from, 128);
         }
         MapGrid_CopyCellAttributes(53, 35, 1, 1, 53, 36);
-        Event_SetFlag(0x224);
+        Event_SetFlag(FLAG_SCENE_TEMP_24);
       }
     }
   }
@@ -204,14 +205,14 @@ void Func_0200036c(void) {
   Actor_Get(17)->velocityY = PIXELS(4);
   FieldActor_WaitForMoveById(17);
   Actor_Get(17)->priorityFlags |= 2;
-  if (!Event_GetFlag(0x8ff) && !Event_GetFlag(0x201)) {
+  if (!Event_GetFlag(0x8ff) && !Event_GetFlag(FLAG_SCENE_TEMP_01)) {
     FieldActor_Stop(10);
     Actor_MoveToAndWait(10, 764, 388);
     Actor_SetDestination(17, 764, 376);
     Actor_WalkToAndWait(10, 764, 380);
     Actor_SetAnimation(10, 4);
     Actor_SetAttachedEffect(10, 257);
-    Event_SetFlag(0x202);
+    Event_SetFlag(FLAG_SCENE_TEMP_02);
   }
   Event_End();
 }
@@ -323,19 +324,19 @@ s32 Scene_Initialize(void) {
     Actor_GetById(19)->collisionFlags = 0;
     Actor_GetById(19)->priorityFlags |= 2;
     Actor_GetById(12)->collisionFlags = 0;
-    if (GameFlag_Get(0x222)) {
+    if (GameFlag_Get(FLAG_SCENE_TEMP_22)) {
       Map_CopyCellAttributeRect(30, 35, 1, 1, 28, 34);
       Map_CopyCellAttributeRect(30, 34, 1, 1, 28, 33);
     }
-    if (GameFlag_Get(0x221))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_21))
       MapGrid_CopyCellAttributes(24, 32, 1, 1, 22, 32);
-    if (GameFlag_Get(0x223))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_23))
       MapGrid_CopyCellAttributes(49, 28, 1, 1, 47, 28);
     else
       Actor_SetSpritePriority(14, 1);
-    if (GameFlag_Get(0x224))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_24))
       MapGrid_CopyCellAttributes(53, 35, 1, 1, 53, 36);
-    flag = GameFlag_Get(0x202);
+    flag = GameFlag_Get(FLAG_SCENE_TEMP_02);
     if (flag == 0) {
       struct Actor *lift;
 
@@ -358,9 +359,9 @@ s32 Scene_Initialize(void) {
     Actor_SetSpritePriority(9, 1);
     Rope_Initialize();
     Rope_Place(0, 0x9e8, 8, 9);
-    if (GameFlag_Get(0x210))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_10))
       MapGrid_CopyCellAttributes(6, 16, 1, 1, 4, 16);
-    if (GameFlag_Get(0x211))
+    if (GameFlag_Get(FLAG_SCENE_TEMP_11))
       MapGrid_CopyCellAttributes(8, 30, 1, 1, 10, 30);
     if (GameFlag_Get(0x8e7)) {
       object = Actor_GetById(20);
@@ -515,11 +516,11 @@ void Func_02000af0(void) {
   Actor_SetPosition(27, 0, 0);
   Actor_SetPosition(28, 0, 0);
   Event_End();
-  Event_SetFlag(0x300);
+  Event_SetFlag(FLAG_AREA_TEMP_00);
 }
 
 void Func_02000d80(void) {
-  s32 moved = Event_GetFlag(0x300);
+  s32 moved = Event_GetFlag(FLAG_AREA_TEMP_00);
   s32 scene = (s32)&SceneId_Ov66fRoom2;
 
   if (moved)
@@ -604,22 +605,22 @@ void Func_02000f84(void) { Func_02000da8(8); }
 void Func_02000f90(void) { Func_02000da8(8); }
 
 void Func_02000f9c(void) {
-  if (!Event_GetFlag(514) && !Event_GetFlag(513))
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_02) && !Event_GetFlag(FLAG_SCENE_TEMP_01))
     Func_02000e28(10);
 }
 
 void Func_02000fc4(void) {
-  if (!Event_GetFlag(512))
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_00))
     Func_02000da8(9);
 }
 
 void Func_02000fdc(void) {
-  if (!Event_GetFlag(512))
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_00))
     Func_02000da8(9);
 }
 
 void Func_02000ff4(void) {
-  if (!Event_GetFlag(515) && !Event_GetFlag(514))
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_03) && !Event_GetFlag(FLAG_SCENE_TEMP_02))
     Func_02000e28(10);
 }
 

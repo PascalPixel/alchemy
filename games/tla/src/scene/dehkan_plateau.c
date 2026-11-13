@@ -654,7 +654,7 @@ extern s16 gData_02003fc0[];
 extern s16 gData_02003fc4[];
 
 void DehkanPlateau_FightCannon(void) {
-  GameFlag_Set(0x209);
+  GameFlag_Set(FLAG_SCENE_TEMP_09);
   Field_RequestDjinnBattle(16, 47);
 }
 
@@ -723,13 +723,13 @@ static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
 void Func_020012c8(void) { CrumblingPillars_Step(gData_02003f44); }
 
 void Func_020012d8(void) {
-  if (GameFlag_Get(0x213) == 0)
+  if (GameFlag_Get(FLAG_SCENE_TEMP_13) == 0)
     Map_CopyAttributes(0, 0, 1, 1, 9, 18);
-  if (GameFlag_Get(0x215) == 0)
+  if (GameFlag_Get(FLAG_SCENE_TEMP_15) == 0)
     Map_CopyAttributes(0, 0, 1, 1, 11, 18);
-  if (GameFlag_Get(0x221) == 0)
+  if (GameFlag_Get(FLAG_SCENE_TEMP_21) == 0)
     Map_CopyAttributes(0, 0, 1, 1, 14, 28);
-  if (GameFlag_Get(0x223) == 0)
+  if (GameFlag_Get(FLAG_SCENE_TEMP_23) == 0)
     Map_CopyAttributes(0, 0, 1, 1, 16, 28);
 }
 
@@ -746,9 +746,9 @@ void Func_02001368(void) {
 }
 
 void Func_020013b0(void) {
-  if (GameFlag_Get(0x213) == 0)
+  if (GameFlag_Get(FLAG_SCENE_TEMP_13) == 0)
     Map_CopyAttributes(63, 0, 1, 1, 50, 20);
-  if (GameFlag_Get(0x215) == 0)
+  if (GameFlag_Get(FLAG_SCENE_TEMP_15) == 0)
     Map_CopyAttributes(63, 0, 1, 1, 52, 20);
 }
 
@@ -789,12 +789,12 @@ void DehkanPlateau_SetActorsHidden(s32 show) {
 
 void DehkanPlateau_HideActors(void) {
   DehkanPlateau_SetActorsHidden(1);
-  GameFlag_Set(0x200);
+  GameFlag_Set(FLAG_SCENE_TEMP_00);
 }
 
 void DehkanPlateau_ShowActors(void) {
   DehkanPlateau_SetActorsHidden(0);
-  GameFlag_Clear(0x200);
+  GameFlag_Clear(FLAG_SCENE_TEMP_00);
 }
 
 DEFINE_ACTORS_SET_HIDDEN(Actors_SetHidden)
@@ -821,7 +821,7 @@ void Func_020015e0(void) {
     Event_ResolvePendingActions(0);
     Actor_DropAndWait(object);
     Map_CopyCellAttributeRect(54, 32, 2, 1, x, 64);
-    GameFlag_Set(0x301);
+    GameFlag_Set(FLAG_AREA_TEMP_01);
     Event_End();
   }
 }
@@ -900,7 +900,7 @@ void Func_020017a0(void) {
   }
 }
 
-void Func_020017f4(void) { GameFlag_Clear(0x201); }
+void Func_020017f4(void) { GameFlag_Clear(FLAG_SCENE_TEMP_01); }
 
 void Func_02001804(void) {
   s32 flag;
@@ -1030,7 +1030,7 @@ void DehkanPlateau_StepOnCrack(void) {
     n = work->exit - 18;
     flag = work->exit + 0x22e;
     record = &gDehkanPlateau_Room5Cracks[n][1];
-    if (GameFlag_Get(0x33a))
+    if (GameFlag_Get(FLAG_AREA_TEMP_3A))
       gDehkanPlateau_Room5Cracks[4][3] = 3;
   } else {
     return;
@@ -1101,8 +1101,8 @@ void DehkanPlateau_StepOnCrack(void) {
                                              height);
         }
       } else if (scene == SCENE(Ov655Room5)) {
-        if ((n == 0 && GameFlag_Get(0x241)) ||
-            (n == 11 && GameFlag_Get(0x24c))) {
+        if ((n == 0 && GameFlag_Get(FLAG_SCENE_TEMP_41)) ||
+            (n == 11 && GameFlag_Get(FLAG_SCENE_TEMP_4C))) {
           s32 srcX = gDehkanPlateau_Room5HolePictures[8],
               srcY = gDehkanPlateau_Room5HolePictures[9], width = 1, height = 2;
           MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
@@ -1174,7 +1174,7 @@ void DehkanPlateau_StepOnCrack(void) {
     }
     Event_Wait(12);
     GameFlag_Set(flag);
-    GameFlag_Set(0x201);
+    GameFlag_Set(FLAG_SCENE_TEMP_01);
     {
       s16 scene = gMainRoutineWork.scene;
       if (scene == SCENE(Ov655Room5) || scene == SCENE(Ov655Room3)) {
@@ -1191,11 +1191,11 @@ static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Get(flag); }
 void DehkanPlateau_ForgetCrackOnLeaving(void) {
   struct Actor *object;
 
-  if (Flag_Test(0x201) != 0) {
+  if (Flag_Test(FLAG_SCENE_TEMP_01) != 0) {
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (gDehkanPlateau_CrackX != (object->x >> 20) ||
         gDehkanPlateau_CrackZ != (object->z >> 20))
-      GameFlag_Clear(0x201);
+      GameFlag_Clear(FLAG_SCENE_TEMP_01);
   }
 }
 
@@ -1203,10 +1203,10 @@ DEFINE_ACTOR_HIDE(Actor_Hide, Actor_DisableById)
 
 void Scene_RunUnlessFlag(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
-    if (GameFlag_Get(0x200) == 0)
+    if (GameFlag_Get(FLAG_SCENE_TEMP_00) == 0)
       DehkanPlateau_ShowActors();
   } else {
-    GameFlag_Set(0x200);
+    GameFlag_Set(FLAG_SCENE_TEMP_00);
   }
 }
 
@@ -1282,19 +1282,19 @@ void Func_02002124(void) {
 }
 
 void Func_02002140(void) {
-  s32 set = GameFlag_Get(0x207);
+  s32 set = GameFlag_Get(FLAG_SCENE_TEMP_07);
 
   if (set == 0) {
     Actor_GetById(8)->motionFlags = set;
     Map_CopyAttributes(51, 12, 1, 1, 47, 12);
-    GameFlag_Set(0x202);
+    GameFlag_Set(FLAG_SCENE_TEMP_02);
   }
 }
 
 void Func_02002180(void) {
-  if (GameFlag_Get(0x207) == 0) {
+  if (GameFlag_Get(FLAG_SCENE_TEMP_07) == 0) {
     Map_CopyAttributes(48, 11, 1, 1, 47, 12);
-    GameFlag_Clear(0x202);
+    GameFlag_Clear(FLAG_SCENE_TEMP_02);
   }
 }
 
@@ -1365,7 +1365,7 @@ void DehkanPlateau_CannonFleesOverCracks(void) {
   MapGrid_CopyCellPictureIndicesRect(68, 33, 105, 6, 1, 1);
   Sound_Play(SE_RATTLE);
   DehkanPlateau_JoltCamera();
-  GameFlag_Set(0x247);
+  GameFlag_Set(FLAG_SCENE_TEMP_47);
   Actor_MoveTo(24, 664, 104);
   MapGrid_CopyCellPictureIndicesRect(69, 33, 105, 4, 1, 1);
   Sound_Play(SE_SPLASH);
@@ -1435,7 +1435,7 @@ void DehkanPlateau_CannonPoundsPillar(void) {
   Actor_MoveTo(25, 440, 152);
   Actor_MoveTo(25, 456, 168);
   Actor_MoveTo(25, 456, 184);
-  GameFlag_Set(0x241);
+  GameFlag_Set(FLAG_SCENE_TEMP_41);
   MapGrid_CopyCellPictureIndicesRect(69, 51, 92, 11, 1, 1);
   Sound_Play(SE_RATTLE);
   DehkanPlateau_JoltCamera();
@@ -1458,7 +1458,7 @@ void DehkanPlateau_SinkPoundedPillar(void) {
     object->priorityFlags |= 2;
     ((u8 *)object)[89] &= 0xfe;
     object->scaleY = 0x10000;
-    GameFlag_Set(0x205);
+    GameFlag_Set(FLAG_SCENE_TEMP_05);
   }
 }
 
@@ -1625,7 +1625,7 @@ void DehkanPlateau_CannonPoundsLeaderThrough(void) {
         gMainRoutineWork.currentOwner, PIXELS(248), PIXELS(136), facing);
   }
   MapGrid_CopyCellPictureIndicesRect(65, 64, 15, 8, 1, 1);
-  GameFlag_Set(0x245);
+  GameFlag_Set(FLAG_SCENE_TEMP_45);
   Sound_Play(SE_RATTLE);
   DehkanPlateau_JoltCamera();
   Actor_FaceActorById(9, gMainRoutineWork.currentOwner, 0);
@@ -1821,11 +1821,11 @@ void DehkanPlateau_CannonCornered(void) {
 }
 
 void DehkanPlateau_MeetCannon(void) {
-  if (GameFlag_Get(0x207) != 0)
+  if (GameFlag_Get(FLAG_SCENE_TEMP_07) != 0)
     DehkanPlateau_CannonCornered();
   else
     DehkanPlateau_CannonCrumblesLastPillar();
-  GameFlag_Set(0x209);
+  GameFlag_Set(FLAG_SCENE_TEMP_09);
 }
 
 void DehkanPlateau_TakePoundCube(void) {
@@ -1891,7 +1891,7 @@ void DehkanPlateau_InitializeRoom1(void) {
   Actor_SetSpritePriority(8, 3);
   Pillars_Place(gData_02003f98);
   Actor_DisableById(12);
-  if (GameFlag_Get(0x301) != 0) {
+  if (GameFlag_Get(FLAG_AREA_TEMP_01) != 0) {
     Map_CopyAttributes(54, 32, 2, 1, 56, 64);
     Actor_SetPositionAndResetMotion(Actor_GetById(12), 226 << 18, 128 << 15,
                                     130 << 18);
@@ -1952,7 +1952,7 @@ void DehkanPlateau_InitializeRoom2(void) {
     Actor_PlaceFacing(24, 222 << 18, 168 << 16, angle);
     MapGrid_CopyCellPictureIndicesRect(68, 33, 105, 6, 1, 1);
     MapGrid_CopyCellPictureIndicesRect(69, 33, 105, 4, 1, 1);
-    GameFlag_Set(583);
+    GameFlag_Set(FLAG_SCENE_TEMP_47);
   }
   if (GameFlag_Get(0x86d) != 0)
     Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
@@ -2035,8 +2035,8 @@ void DehkanPlateau_InitializeRoom3(void) {
     Actor_SetModeById(18, 4);
     object->priorityFlags |= 2;
     *((u8 *)object + 89) &= ~1;
-    GameFlag_Set(517);
-    GameFlag_Set(577);
+    GameFlag_Set(FLAG_SCENE_TEMP_05);
+    GameFlag_Set(FLAG_SCENE_TEMP_41);
     MapGrid_CopyCellPictureIndicesRect(69, 51, 92, 11, 1, 1);
     {
       s32 angle = 0x4000;
@@ -2045,8 +2045,8 @@ void DehkanPlateau_InitializeRoom3(void) {
     }
   }
   if (GameFlag_Get(0x870) != 0) {
-    GameFlag_Set(528);
-    GameFlag_Set(534);
+    GameFlag_Set(FLAG_SCENE_TEMP_10);
+    GameFlag_Set(FLAG_SCENE_TEMP_16);
     Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
   }
   CrumblingPillars_Place(gData_02003f80);
@@ -2268,10 +2268,10 @@ void DehkanPlateau_InitializeRoom6(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   if (GameFlag_Get(95) != 0)
-    GameFlag_Set(521);
+    GameFlag_Set(FLAG_SCENE_TEMP_09);
   Pillars_Place(gData_02003fb8);
   CrumblingPillars_Place(gData_02003f92);
-  if (GameFlag_Get(519) == 0) {
+  if (GameFlag_Get(FLAG_SCENE_TEMP_07) == 0) {
     Func_02002140();
     wait(10);
   }

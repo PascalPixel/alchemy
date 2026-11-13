@@ -3,6 +3,7 @@
 #include "../field/object/prepare_object.c"
 
 #include "types.h"
+#include "flags.h"
 #include "system/ram_buffer.h"
 #include "system/iwram_call.h"
 #include "actor.h"
@@ -413,7 +414,7 @@ void MagmaRock_TrailEmbers(struct Actor *object) {
     config.id = 403;
     config.kind = 2;
     config.data = gMagmaRock_EmberScript;
-    if ((frame & 15) == 0 && !Event_GetFlag(608))
+    if ((frame & 15) == 0 && !Event_GetFlag(FLAG_SCENE_TEMP_60))
       Event_PlayCueNearFocus(object, 136);
     dz = ((Random16() & 15) - 8) << 15;
     velocityZ = ((Random16() & 31) - 16) << 12;
@@ -484,7 +485,7 @@ void MagmaRock_PlaceVolley(u16 id, s16 first, s16 side) {
   u8 *flags;
   u8 facing;
 
-  if (Event_GetFlag(0x109))
+  if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     return;
   left = first;
   right = side;
@@ -759,9 +760,9 @@ hit:
   FieldActor_WaitForMove(object);
   object->update = NULL;
   Actor_Release(object);
-  Event_SetFlag(0x2f0);
+  Event_SetFlag(FLAG_SCENE_TEMP_F0);
   MagmaRock_PlayBurst(i);
-  Event_ClearFlag(0x2f0);
+  Event_ClearFlag(FLAG_SCENE_TEMP_F0);
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   System_Wait(10);
@@ -1103,7 +1104,7 @@ void MagmaRock_ClearSlideFlag(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   if (party->renderMode != 2)
-    Event_ClearFlag(0x2f8);
+    Event_ClearFlag(FLAG_SCENE_TEMP_F8);
 }
 
 void MagmaRock_SlideDown(void) {
@@ -1119,7 +1120,7 @@ void MagmaRock_SlideDown(void) {
     FieldEvent_SetExitRequest(2);
     Func_02003af4();
   }
-  Event_SetFlag(0x2f8);
+  Event_SetFlag(FLAG_SCENE_TEMP_F8);
 }
 
 void MagmaRock_ResolveBeforeBurst(void) { Event_ResolvePendingActions(0); }
@@ -1130,12 +1131,12 @@ void MagmaRock_CheckCrumblingPillars(void) {
 
 void MagmaRock_SetLedgeBehavior(void) {
   Field_SetCellBehaviorAt(0, 0x1080000, 0x2280000, 30);
-  Event_SetFlag(0x212);
+  Event_SetFlag(FLAG_SCENE_TEMP_12);
 }
 
 void MagmaRock_ClearLedgeBehavior(void) {
   Field_SetCellBehaviorAt(0, 0x1080000, 0x2280000, 0);
-  Event_ClearFlag(0x212);
+  Event_ClearFlag(FLAG_SCENE_TEMP_12);
 }
 
 void Actor_SetActionById(s32 id, s32 action);
@@ -1158,7 +1159,7 @@ void MagmaRock_AmplifyBurst(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetFlag(0x260);
+  Event_SetFlag(FLAG_SCENE_TEMP_60);
   Event_PlaySound(SE_IMPACT);
   FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 6);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 10);
@@ -1216,7 +1217,7 @@ second:
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 4);
   FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_WaitForAnimationChange(gMainRoutineWork.currentOwner);
-  Event_ClearFlag(0x260);
+  Event_ClearFlag(FLAG_SCENE_TEMP_60);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
   Func_02003af4();
@@ -1294,17 +1295,17 @@ void MagmaRock_PushPillarWest(void) {
 
 void MagmaRock_GrowVine1(void) {
   MapGrid_CopyCellAttributes(121, 48, 1, 3, 123, 48);
-  Event_SetFlag(0x250);
+  Event_SetFlag(FLAG_SCENE_TEMP_50);
 }
 
 void MagmaRock_GrowVine2(void) {
   MapGrid_CopyCellAttributes(121, 48, 1, 3, 125, 48);
-  Event_SetFlag(0x251);
+  Event_SetFlag(FLAG_SCENE_TEMP_51);
 }
 
 void MagmaRock_GrowVine3(void) {
   MapGrid_CopyCellAttributes(108, 56, 1, 3, 109, 56);
-  Event_SetFlag(0x252);
+  Event_SetFlag(FLAG_SCENE_TEMP_52);
 }
 
 void MagmaRock_ScatterEmbers(s32 x, s32 z) {
@@ -1506,7 +1507,7 @@ s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 void MagmaRock_LandLeader(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
 
-  if (Event_GetFlag(0x109)) {
+  if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     s32 height;
 
     System_Wait(1);
@@ -1619,7 +1620,7 @@ s32 Scene_Initialize(void) {
     Actor_GetById(8)->priorityFlags |= value1;
     Actor_GetById(10)->priorityFlags |= value1;
     MagmaRock_RaiseActorCells(gMagmaRock_Room1Statues);
-    if (Event_GetFlag(0x109) == 0)
+    if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
       Call3((void (*)())MagmaRock_PlaceVolley, 21, 13, 0);
     if (Event_GetFlag(0x8d5))
       Actor_SetPosition(8, 0x1080000, 0x1680000);
@@ -1631,7 +1632,7 @@ s32 Scene_Initialize(void) {
     MapGrid_CopyCellAttributes(98, 21, 4, 3, value2, 21);
     MapGrid_CopyCellAttributes(98, 27, 4, 3, value2, 24);
     Blocks_MarkCells(other);
-    if (Event_GetFlag(0x109) == 0) {
+    if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
       actor = Actor_GetById(20);
       actor->x += 0x10000;
       actor->motionFlags = zero;
@@ -1663,13 +1664,13 @@ s32 Scene_Initialize(void) {
       Actor_PlaceBlocks(gMagmaRock_Room2LowerPillars);
       id = *entrance;
       if (id == 1) {
-        if (Event_GetFlag(0x109) == 0) {
+        if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
           actor = Actor_GetById(*owner);
           actor->z += 0x100000;
         }
         Call1((void (*)())Leader_Lift, -0x100000);
       } else if (id == 2) {
-        if (Event_GetFlag(0x109) == 0) {
+        if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
           actor = Actor_GetById(*owner);
           actor->z += 0x100000;
         }
@@ -1679,7 +1680,7 @@ s32 Scene_Initialize(void) {
       if (*entrance <= 8) {
         s32 id;
 
-        if (Event_GetFlag(0x109) == 0) {
+        if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
           Actor_GetById(8)->motionFlags = zero;
           rise = 0x500000;
           Actor_GetById(8)->y += rise;
@@ -1703,7 +1704,7 @@ s32 Scene_Initialize(void) {
           Actor_SetPosition(16, 0x3780000, 0x2380000);
         Actor_PlaceBlocks(gMagmaRock_Room2MiddlePillars);
         MagmaRock_RaiseActorCells(gMagmaRock_Room2MiddleStatues);
-        if (Event_GetFlag(0x109) == 0) {
+        if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
           actor = Actor_GetById(15);
           other = 0x10000;
           actor->x += other;
@@ -1725,10 +1726,10 @@ s32 Scene_Initialize(void) {
         if (id == 5) {
           Call1((void (*)())Leader_Lift, 0x1200000);
         } else if (id == 6) {
-          if (Event_GetFlag(0x109) == 0)
+          if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
             MagmaRock_LaunchLeader();
         } else if (id == 7) {
-          if (Event_GetFlag(0x109) == 0) {
+          if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
             actor = Actor_GetById(*owner);
             actor->z += 0x100000;
           }
@@ -1746,7 +1747,7 @@ s32 Scene_Initialize(void) {
         Rope_Initialize();
         Call4((void (*)())Func_02003bfc, 0, 0x250, 14, 13);
         MagmaRock_RaiseActorCells(gMagmaRock_Room2UpperStatues);
-        if (Event_GetFlag(0x109) == 0) {
+        if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
           actor = Actor_GetById(10);
           other = 0x10000;
           actor->x += other;
@@ -1770,7 +1771,7 @@ s32 Scene_Initialize(void) {
         }
       } else {
         MagmaRock_RaiseActorCells(gMagmaRock_Room2TopStatues);
-        if (Event_GetFlag(0x109) == 0) {
+        if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
           actor = Actor_GetById(13);
           actor->x += 0x10000;
           actor->motionFlags = zero;
@@ -1784,16 +1785,16 @@ s32 Scene_Initialize(void) {
         if (Event_GetFlag(0x8db))
           Actor_SetPosition(9, 0x2380000, 0x2680000);
         MagmaRock_SettleBlocks(gMagmaRock_Room2TopPillars);
-        if (Event_GetFlag(0x250))
+        if (Event_GetFlag(FLAG_SCENE_TEMP_50))
           MapGrid_CopyCellAttributes(121, 48, 1, 3, 123, 48);
-        if (Event_GetFlag(0x251))
+        if (Event_GetFlag(FLAG_SCENE_TEMP_51))
           MapGrid_CopyCellAttributes(121, 48, 1, 3, 125, 48);
-        if (Event_GetFlag(0x252))
+        if (Event_GetFlag(FLAG_SCENE_TEMP_52))
           MapGrid_CopyCellAttributes(108, 56, 1, 3, 109, 56);
         if (*entrance == 14) {
           Call1((void (*)())Leader_Lift, 0x300000);
         } else if (*entrance == 16 || *entrance == 17) {
-          if (Event_GetFlag(0x109) == 0) {
+          if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
             actor = Actor_GetById(work->currentOwner);
             actor->z += 0x100000;
           }
@@ -1820,7 +1821,7 @@ s32 Scene_Initialize(void) {
     Actor_GetById(*leader)->priorityFlags |= 32;
     MagmaRock_RaiseActorCells(gMagmaRock_Room3Statues);
     if (work->entrance <= 2) {
-      if (Event_GetFlag(0x109) == 0) {
+      if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
         actor = Actor_GetById(*leader);
         actor->z += 0x100000;
       }

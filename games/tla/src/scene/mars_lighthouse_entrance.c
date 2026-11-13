@@ -10,6 +10,7 @@
 /// MarsLighthouseEntrance_FightBalm).
 
 #include "shared/map_cells.h"
+#include "flags.h"
 #include "field/event_inline.h"
 #include "field/field.h"
 #include "module/scene/mars_lighthouse_entrance.h"
@@ -425,7 +426,7 @@ void Func_02000710(void) { Func_02001a00(); }
 
 void Func_02000718(void) {
   SCENE_WORK->unk166 = 0;
-  Flag_Clear(0x106);
+  Flag_Clear(FLAG_MENU_OPEN);
   Flag_Clear(0x104);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -453,7 +454,7 @@ void Func_02000808(void) {
 
   if (!Flag_IsSet(0xa47)) {
     Event_PlaySound(SE_573);
-    Flag_Set(0x231);
+    Flag_Set(FLAG_SCENE_TEMP_31);
     object->x = S16_AT(object, 100) << 16;
     object->z = S16_AT(object, 102) << 16;
     Flag_Set(0xa48);
@@ -497,7 +498,7 @@ void MarsLighthouseEntrance_PushStatueIntoFlames(s32 unused, s32 id) {
   }
 }
 
-void Func_02000930(void) { GameFlag_Set(0x144); }
+void Func_02000930(void) { GameFlag_Set(FLAG_RETREAT_BLOCKED); }
 
 DEFINE_SCENE_LEAVE_BY_EXIT(Func_0200093c, Func_020046b4, Teleport_PlaySparks,
                            14, Func_02004718)
@@ -541,7 +542,7 @@ void Func_020009c0(void) {
 
 void Func_020009e8(void) {
   SCENE_WORK->unk166 = 0;
-  Flag_Clear(0x106);
+  Flag_Clear(FLAG_MENU_OPEN);
   Flag_Clear(0x104);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -555,7 +556,7 @@ void Func_02000a24(void) {
 
   if (!Flag_IsSet(0xa4d)) {
     Event_PlaySound(SE_573);
-    Flag_Set(0x232);
+    Flag_Set(FLAG_SCENE_TEMP_32);
     object->x = S16_AT(object, 100) << 16;
     object->z = S16_AT(object, 102) << 16;
     Flag_Set(0xa4c);
@@ -566,7 +567,7 @@ void Func_02000a74(void) { Func_020019e0(); }
 
 void Func_02000a7c(void) {
   SCENE_WORK->unk166 = 0;
-  Flag_Clear(0x106);
+  Flag_Clear(FLAG_MENU_OPEN);
   Flag_Clear(0x104);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -760,7 +761,7 @@ void Func_02000fa4(void) {
   Flag_Set(0x17d);
   Actor_SetScript(11, gData_0200503c);
   Func_0200246c(0, 3);
-  Flag_Set(0x234);
+  Flag_Set(FLAG_SCENE_TEMP_34);
 }
 
 void Func_02000fd4(void) {
@@ -954,7 +955,7 @@ s32 Scene_Initialize(void) {
 
   Data_02006878 = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
-  Event_SetFlag(0x112);
+  Event_SetFlag(FLAG_MARS_LIGHTHOUSE_LIT);
   Func_02002270();
   if (scene == (s32)&SceneId_Ov6aaRoom1) {
     Call1((void (*)())Weather_StartRain, 1);
@@ -983,7 +984,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(110, 40, 12, 4, 46, 40);
       Actor_SetPosition(18, 0, 0);
     } else if (Event_GetFlag(0xa3e)) {
-      Event_SetFlag(0x230);
+      Event_SetFlag(FLAG_SCENE_TEMP_30);
       Actor_Get(18)->priorityFlags |= 2;
     } else {
       Actor_SetPosition(18, 0, 0);
@@ -997,7 +998,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(20, 0, 0);
     } else if (Event_GetFlag(0xa48)) {
       Func_02000798();
-      Event_SetFlag(0x231);
+      Event_SetFlag(FLAG_SCENE_TEMP_31);
     } else {
       Actor_SetPosition(20, 0, 0);
     }
@@ -1032,7 +1033,7 @@ s32 Scene_Initialize(void) {
       MapGrid_SetShake(-1, -1, 0xe666);
       FieldEvent_Wait(120);
       FieldEvent_SetExitRequest(20);
-      Event_SetFlag(0x109);
+      Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
     }
   } else if (scene == (s32)&SceneId_Ov6aaRoom4) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
@@ -1051,7 +1052,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(76, 40, 8, 5, 12, 40);
       Actor_SetPosition(12, 0, 0);
     } else if (Event_GetFlag(0xa4c)) {
-      Event_SetFlag(0x232);
+      Event_SetFlag(FLAG_SCENE_TEMP_32);
     } else {
       Actor_SetPosition(12, 0, 0);
     }
@@ -1340,7 +1341,7 @@ void Func_02002270(void) {
   struct Actor *object;
   struct MarsLighthouseEntranceAnimation *animation;
 
-  if (!Event_GetFlag(0x109))
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     Iwram_ClearWordsEntry(work, 116);
   object = (struct Actor *)FieldActor_Create(365, 1, 0, 0);
   object->unk5c[0] = 2;
@@ -1534,7 +1535,7 @@ int MarsLighthouseEntrance_SlideOnIce(void) {
     ScreenTransition_Start(event->field1ac, event->field1b4);
     event->started = 1;
   }
-  Flag_Clear(0x106);
+  Flag_Clear(FLAG_MENU_OPEN);
   event->field166 = 0;
   event->field15a = 0;
   event->field15e = 0;
@@ -1546,10 +1547,10 @@ int MarsLighthouseEntrance_SlideOnIce(void) {
   FieldCamera_SetSpeed(0x70000, 0xe000);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   ride = (struct RideState *)(gInventorySnapshot + 0x188);
-  Flag_Set(0x106);
+  Flag_Set(FLAG_MENU_OPEN);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Flag_Clear(0x106);
+  Flag_Clear(FLAG_MENU_OPEN);
   leader->update = Func_02002614;
   leader->facing = 0x4000;
   Actor_SelectAnimation(leader, 49);

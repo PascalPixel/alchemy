@@ -413,7 +413,7 @@ s32 Scene_Initialize(void) {
     goto done;
   Rope_Initialize();
   Rope_Place(0, 0x200, 10, 11);
-  if (GameFlag_Get(0x8ab)) {
+  if (GameFlag_Get(FLAG_BRIGGS_CAUGHT)) {
     Tightrope_Initialize();
     Tightrope_Place(0, 8, 9);
   }

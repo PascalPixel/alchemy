@@ -8,6 +8,7 @@
 /// (MarsLighthouseAerie_WatchGoldenSunRise).
 
 #include "shared/mars_lighthouse.h"
+#include "flags.h"
 #include "shared/effects.h"
 #include "event_work.h"
 #include "module/scene/mars_lighthouse_aerie.h"
@@ -247,7 +248,7 @@ s32 Scene_Initialize(void) {
   ((struct MarsLighthouseAerieEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 0x204;
   Func_020001d8();
-  Event_SetFlag(0x112);
+  Event_SetFlag(FLAG_MARS_LIGHTHOUSE_LIT);
   if (gMainRoutineWork.entrance == 5) {
     /* FAKEMATCH(pin): the blend word pinned to r3 as a halfword loads from the
      * pool before the register address. */
@@ -1666,7 +1667,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Func_0200298c(2);
   Func_0200298c(1);
   FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
-  Event_SetFlag(0x202);
+  Event_SetFlag(FLAG_SCENE_TEMP_02);
   MapGrid_CopyCellAttributes(0x27, 0x28, 0x12, 0x10, 0x17, 0xa);
   Party_RestoreHpPp(1);
   Party_RemoveMemberRestored(7);
@@ -1691,7 +1692,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
                                        PIXELS(300));
   System_Wait(1);
   Event_SetFlag(0x17c);
-  Event_SetFlag(0x144);
+  Event_SetFlag(FLAG_RETREAT_BLOCKED);
   Event_End();
 }
 
@@ -1982,7 +1983,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   PaletteFade_Interpolate(24);
   System_Wait(60);
   Event_PlaySound(SE_RUMBLE);
-  Event_SetFlag(0x200);
+  Event_SetFlag(FLAG_SCENE_TEMP_00);
   A(((s32)Actor_Get(23)))->y = 0xffc80000;
   A(((s32)Actor_Get(24)))->y = 0xffe80000;
   FieldActor_SetSpriteColor(((s32)Actor_Get(25)), 7);
@@ -2584,11 +2585,11 @@ void MarsLighthouseAerie_OfferToCastMarsStar(void) {
   }
   Actor_SetPosition(18, 0, 0);
   System_Wait(1);
-  Event_SetFlag(0x202);
+  Event_SetFlag(FLAG_SCENE_TEMP_02);
   Event_End();
 }
 
-void Func_02004d14(void) { GameFlag_Clear(0x202); }
+void Func_02004d14(void) { GameFlag_Clear(FLAG_SCENE_TEMP_02); }
 
 // From patch 1, as is Func_02004d50.
 #if TLA_PATCH_1

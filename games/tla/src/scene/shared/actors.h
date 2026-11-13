@@ -139,7 +139,7 @@
   void name(s32 height) {                                                      \
     struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);           \
                                                                                \
-    if (!Event_GetFlag(0x109)) {                                               \
+    if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {                            \
       object->motionFlags = 0;                                                 \
       Actor_SetSpriteFlags(object, 0);                                         \
       object->y += height;                                                     \
@@ -273,7 +273,7 @@
     struct EventWork *work = Ram_HeapSlots->eventWork;                         \
                                                                                \
     work->screenEffect = 0x209;                                                \
-    GameFlag_Clear(0x12f);                                                     \
+    GameFlag_Clear(FLAG_SHOW_AREA_NAME);                                       \
   }
 
 /// "The entrance is locked" (MsgShamanEntranceLocked).
@@ -316,7 +316,7 @@
 /// place.
 #define DEFINE_SCENE_RUN_UNLESS_FLAG(name, n1, call1)                          \
   void name(void) {                                                            \
-    if (GameFlag_Get(265)) {                                                   \
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {                              \
       if (GameFlag_Get(n1) == 0)                                               \
         call1();                                                               \
     } else {                                                                   \

@@ -2,6 +2,7 @@
 /// Treasure Isle's first object: the shared actor helpers it links first.
 
 #include "shared/actors.h"
+#include "flags.h"
 #include "types.h"
 #include "actor.h"
 #include "field/event_inline.h"
@@ -194,35 +195,35 @@ void TreasureIsle_RaiseSpikyRock(struct TreasureIsleCell *cells, s16 index) {
 void TreasureIsle_PressRoom2Button(void) {
   s16 count = 0;
 
-  if (!Event_GetFlag(0x303)) {
+  if (!Event_GetFlag(FLAG_AREA_TEMP_03)) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     TreasureIsle_RaiseSpikyRock(gTreasureIsle_Room2SpikyRocks, 0);
-    Event_SetFlag(0x303);
+    Event_SetFlag(FLAG_AREA_TEMP_03);
     count = 1;
   }
-  if (!Event_GetFlag(0x304)) {
+  if (!Event_GetFlag(FLAG_AREA_TEMP_04)) {
     if (count == 0)
       Event_Start();
     FieldEvent_ResolvePendingActions(0);
     TreasureIsle_RaiseSpikyRock(gTreasureIsle_Room2SpikyRocks, 1);
-    Event_SetFlag(0x304);
+    Event_SetFlag(FLAG_AREA_TEMP_04);
     count++;
   }
-  if (!Event_GetFlag(0x305)) {
+  if (!Event_GetFlag(FLAG_AREA_TEMP_05)) {
     if (count == 0)
       Event_Start();
     FieldEvent_ResolvePendingActions(0);
     TreasureIsle_RaiseSpikyRock(gTreasureIsle_Room2SpikyRocks, 2);
-    Event_SetFlag(0x305);
+    Event_SetFlag(FLAG_AREA_TEMP_05);
     count++;
   }
-  if (!Event_GetFlag(0x306)) {
+  if (!Event_GetFlag(FLAG_AREA_TEMP_06)) {
     if (count == 0)
       Event_Start();
     FieldEvent_ResolvePendingActions(0);
     TreasureIsle_RaiseSpikyRock(gTreasureIsle_Room2SpikyRocks, 3);
-    Event_SetFlag(0x306);
+    Event_SetFlag(FLAG_AREA_TEMP_06);
     count++;
   }
   if (count != 0)
@@ -235,27 +236,27 @@ void TreasureIsle_PressRoom2Button(void) {
 void TreasureIsle_PressRoom3Button(void) {
   s16 count = 0;
 
-  if (!Event_GetFlag(0x30a)) {
+  if (!Event_GetFlag(FLAG_AREA_TEMP_0A)) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     TreasureIsle_RaiseSpikyRock(gTreasureIsle_Room3SpikyRocks, 0);
-    Event_SetFlag(0x30a);
+    Event_SetFlag(FLAG_AREA_TEMP_0A);
     count = 1;
   }
-  if (!Event_GetFlag(0x30b)) {
+  if (!Event_GetFlag(FLAG_AREA_TEMP_0B)) {
     if (count == 0)
       Event_Start();
     FieldEvent_ResolvePendingActions(0);
     TreasureIsle_RaiseSpikyRock(gTreasureIsle_Room3SpikyRocks, 1);
-    Event_SetFlag(0x30b);
+    Event_SetFlag(FLAG_AREA_TEMP_0B);
     count++;
   }
-  if (!Event_GetFlag(0x30c)) {
+  if (!Event_GetFlag(FLAG_AREA_TEMP_0C)) {
     if (count == 0)
       Event_Start();
     FieldEvent_ResolvePendingActions(0);
     TreasureIsle_RaiseSpikyRock(gTreasureIsle_Room3SpikyRocks, 2);
-    Event_SetFlag(0x30c);
+    Event_SetFlag(FLAG_AREA_TEMP_0C);
     count++;
   }
   if (count != 0)
@@ -263,11 +264,11 @@ void TreasureIsle_PressRoom3Button(void) {
 }
 
 void TreasureIsle_RaiseLastSpikyRock(void) {
-  if (!Event_GetFlag(0x307)) {
+  if (!Event_GetFlag(FLAG_AREA_TEMP_07)) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     TreasureIsle_RaiseSpikyRock(gTreasureIsle_Room2SpikyRocks, 4);
-    Event_SetFlag(0x307);
+    Event_SetFlag(FLAG_AREA_TEMP_07);
     Event_End();
   }
 }
@@ -281,25 +282,25 @@ void TreasureIsle_SettleMovedPillar(s32 unused, s32 id) {
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom1) {
     if (id == 8 && object->x >> 20 == 16)
-      Event_SetFlag(0x300);
+      Event_SetFlag(FLAG_AREA_TEMP_00);
     if (id == 9 && object->x >> 20 == 20)
-      Event_SetFlag(0x301);
+      Event_SetFlag(FLAG_AREA_TEMP_01);
     if (id == 10 && object->x >> 20 == 27)
-      Event_SetFlag(0x302);
+      Event_SetFlag(FLAG_AREA_TEMP_02);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom2) {
     if (id == 10 && object->x >> 19 == 33)
-      Event_SetFlag(0x308);
+      Event_SetFlag(FLAG_AREA_TEMP_08);
     if (id == 11 && object->x >> 19 == 85 && object->z >> 19 == 83)
       TreasureIsle_RaiseLastSpikyRock();
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom3) {
     if (id == 10 && object->x >> 19 == 83)
-      Event_SetFlag(0x309);
+      Event_SetFlag(FLAG_AREA_TEMP_09);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom4) {
     if (id == 8 && object->x >> 19 == 87)
-      Event_SetFlag(0x30d);
+      Event_SetFlag(FLAG_AREA_TEMP_0D);
   }
 }
 
@@ -478,46 +479,46 @@ s32 Scene_Initialize(void) {
       0x204;
   Tightrope_Initialize();
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom1) {
-    Event_SetFlag(0x300);
-    Event_SetFlag(0x301);
-    Event_SetFlag(0x302);
-    if (Event_GetFlag(0x300))
+    Event_SetFlag(FLAG_AREA_TEMP_00);
+    Event_SetFlag(FLAG_AREA_TEMP_01);
+    Event_SetFlag(FLAG_AREA_TEMP_02);
+    if (Event_GetFlag(FLAG_AREA_TEMP_00))
       Actor_SetPosition(8, PIXELS(264), PIXELS(440));
-    if (Event_GetFlag(0x301))
+    if (Event_GetFlag(FLAG_AREA_TEMP_01))
       Actor_SetPosition(9, PIXELS(328), PIXELS(440));
-    if (Event_GetFlag(0x302))
+    if (Event_GetFlag(FLAG_AREA_TEMP_02))
       Actor_SetPosition(10, PIXELS(440), PIXELS(344));
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom2) {
     Task_AddFrame(TreasureIsle_CycleWaterColors, TASK_PASS_VBLANK);
     Tightrope_Place(0, 8, 9);
-    if (Event_GetFlag(0x308))
+    if (Event_GetFlag(FLAG_AREA_TEMP_08))
       Actor_SetPosition(10, PIXELS(264), PIXELS(184));
-    if (Event_GetFlag(0x303))
+    if (Event_GetFlag(FLAG_AREA_TEMP_03))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room2SpikyRocks, 0);
-    if (Event_GetFlag(0x304))
+    if (Event_GetFlag(FLAG_AREA_TEMP_04))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room2SpikyRocks, 1);
-    if (Event_GetFlag(0x305))
+    if (Event_GetFlag(FLAG_AREA_TEMP_05))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room2SpikyRocks, 2);
-    if (Event_GetFlag(0x306))
+    if (Event_GetFlag(FLAG_AREA_TEMP_06))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room2SpikyRocks, 3);
-    if (Event_GetFlag(0x307))
+    if (Event_GetFlag(FLAG_AREA_TEMP_07))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room2SpikyRocks, 4);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom3) {
     Task_AddFrame(TreasureIsle_CycleWaterColors, TASK_PASS_VBLANK);
     Tightrope_Place(0, 8, 9);
-    if (Event_GetFlag(0x309))
+    if (Event_GetFlag(FLAG_AREA_TEMP_09))
       Actor_SetPosition(10, PIXELS(664), PIXELS(248));
-    if (Event_GetFlag(0x30a))
+    if (Event_GetFlag(FLAG_AREA_TEMP_0A))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room3SpikyRocks, 0);
-    if (Event_GetFlag(0x30b))
+    if (Event_GetFlag(FLAG_AREA_TEMP_0B))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room3SpikyRocks, 1);
-    if (Event_GetFlag(0x30c))
+    if (Event_GetFlag(FLAG_AREA_TEMP_0C))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room3SpikyRocks, 2);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom4) {
-    if (Event_GetFlag(0x30d))
+    if (Event_GetFlag(FLAG_AREA_TEMP_0D))
       Actor_SetPosition(8, PIXELS(696), PIXELS(600));
     Tightrope_Place(0, 17, 18);
     Tightrope_Place(1, 19, 20);

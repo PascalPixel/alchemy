@@ -8,6 +8,7 @@
 /// ice floors (MarsLighthouseStarRoom_SlideOnIce).
 
 #include "shared/mars_lighthouse.h"
+#include "flags.h"
 #include "shared/actors.h"
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -196,9 +197,9 @@ void Func_02000188(void) {
 #if !TLA_PATCH_1
   if (Event_GetFlag(0xa4b) == 0) {
 #elif !TLA_PATCH_2
-  if (Event_GetFlag(0x238) == 0 || Event_GetFlag(0xa4b) == 0) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_38) == 0 || Event_GetFlag(0xa4b) == 0) {
 #else
-  if (Event_GetFlag(0x238) == 0 && Event_GetFlag(0xa4b) == 0) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_38) == 0 && Event_GetFlag(0xa4b) == 0) {
 #endif
     Event_PlaySound(SE_573);
     object->x = object->timer << 16;
@@ -216,12 +217,12 @@ void Func_020001e8(void) {
 #if !TLA_PATCH_1
   if (Event_GetFlag(0xa4b) == 0) {
 #elif !TLA_PATCH_2
-  if (Event_GetFlag(0x238) == 0 || Event_GetFlag(0xa4b) == 0) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_38) == 0 || Event_GetFlag(0xa4b) == 0) {
 #else
-  if (Event_GetFlag(0x238) == 0 && Event_GetFlag(0xa4b) == 0) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_38) == 0 && Event_GetFlag(0xa4b) == 0) {
 #endif
     Event_PlaySound(SE_573);
-    Event_SetFlag(0x233);
+    Event_SetFlag(FLAG_SCENE_TEMP_33);
     object->x = object->timer << 16;
     object->z = *(s16 *)((u8 *)object + 0x66) << 16;
     object->scaleX = 0x10000;
@@ -247,7 +248,7 @@ void MarsLighthouseStarRoom_BurstIce(s32 phase, s32 frame) {
     Func_02000d88();
     Actor_SetPosition(10, 0, 0);
 #if TLA_PATCH_1
-    Event_SetFlag(0x238);
+    Event_SetFlag(FLAG_SCENE_TEMP_38);
 #endif
     ((struct EventDelay *)Ram_HeapSlots->eventWork)->frames = 20;
   }
@@ -286,7 +287,7 @@ s32 Scene_Initialize(void) {
 
   ((struct Overlay6abEventWork *)Ram_HeapSlots->eventWork)->unk1ac = 0x204;
   gMarsLighthouseStarRoom_MarsStar = NULL;
-  Event_SetFlag(0x112);
+  Event_SetFlag(FLAG_MARS_LIGHTHOUSE_LIT);
   Func_02001d7c();
   Func_02001df0(0, 0, 0, 88);
   if (scene == (s32)&SceneId_Ov6abRoom1) {
@@ -314,11 +315,11 @@ s32 Scene_Initialize(void) {
       other->x = x;
       other->z = leader->z;
       Map_CenterOnFollowedPoint();
-      if (!Event_GetFlag(0x109))
+      if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
         CrackedTile_DropIn();
     }
     if (entrance == 9 || entrance == 10) {
-      if (!Event_GetFlag(0x109))
+      if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
         CrackedTile_DropIn();
     }
     if (entrance == 1 || entrance == 20) {
@@ -331,7 +332,7 @@ s32 Scene_Initialize(void) {
         Func_02000d88();
         Actor_SetPosition(10, 0, 0);
       } else if (Event_GetFlag(0xa4a)) {
-        Event_SetFlag(0x233);
+        Event_SetFlag(FLAG_SCENE_TEMP_33);
       } else {
         Actor_SetPosition(10, 0, 0);
       }
@@ -344,7 +345,7 @@ s32 Scene_Initialize(void) {
         System_Wait(10);
         if (!Event_GetFlag(0xa3a)) {
           MarsLighthouseStarRoom_CreateMarsStar(0);
-          if (!Event_GetFlag(0x109)) {
+          if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
             Func_02000db8(13);
             Func_02000db8(14);
           }
@@ -1442,7 +1443,7 @@ void Func_02001d7c(void) {
   struct Actor *object;
   struct RideAnimation *animation;
 
-  if (!Event_GetFlag(0x109))
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     Iwram_ClearWordsEntry(work, 116);
   object = (struct Actor *)FieldActor_Create(365, 1, 0, 0);
   object->unk5c[0] = 2;
@@ -1484,7 +1485,7 @@ void Func_02001df0(u16 *targets, u16 *stops, s32 a2, s32 a3) {
   s32 id;
   s32 i;
 
-  if (Event_GetFlag(0x109) == 0) {
+  if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
     i = 0;
     id = *targets++;
     {
@@ -1702,7 +1703,7 @@ s32 MarsLighthouseStarRoom_SlideOnIce(void) {
     ScreenTransition_Start(event->field1ac, event->field1b4);
     event->started = 1;
   }
-  Event_ClearFlag(0x106);
+  Event_ClearFlag(FLAG_MENU_OPEN);
   event->field166 = 0;
   event->field15a = 0;
   event->field15e = 0;
@@ -1717,10 +1718,10 @@ s32 MarsLighthouseStarRoom_SlideOnIce(void) {
   FieldCamera_SetSpeed(0x70000, 0xe000);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   ride = (struct RideState *)(gInventorySnapshot + 0x188);
-  Event_SetFlag(0x106);
+  Event_SetFlag(FLAG_MENU_OPEN);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_ClearFlag(0x106);
+  Event_ClearFlag(FLAG_MENU_OPEN);
   leader->update = (void (*)(void))Actor_Blink;
   leader->facing = 0x4000;
   Actor_SelectAnimation(leader, 49);
@@ -1931,10 +1932,10 @@ void Func_02002d90(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   if (work->actionCounter != 0) {
-    Event_SetFlag(0x106);
+    Event_SetFlag(FLAG_MENU_OPEN);
     Leader_StopMoving();
     Event_ResolveAllPendingActions();
-    Event_ClearFlag(0x106);
+    Event_ClearFlag(FLAG_MENU_OPEN);
   }
 }
 

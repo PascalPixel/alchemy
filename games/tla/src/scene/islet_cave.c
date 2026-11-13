@@ -5,6 +5,7 @@
 /// and the cycling colours of its water (IsletCave_StartSlowPaletteCycle).
 
 #include "shared/actors.h"
+#include "flags.h"
 #include "shared/effects.h"
 #include "field/field.h"
 #include "system/main_routine_work.h"
@@ -354,8 +355,8 @@ s32 Scene_Initialize(void) {
     }
   } else if (scene == (s32)&SceneId_Ov675Room2) {
     if (GameFlag_Get(85) || GameFlag_Get(165)) {
-      GameFlag_Set(0x230);
-    } else if (!GameFlag_Get(0x230)) {
+      GameFlag_Set(FLAG_SCENE_TEMP_30);
+    } else if (!GameFlag_Get(FLAG_SCENE_TEMP_30)) {
       Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
       Actor_SetMovementTypeById(8, gData_02001454);
     }
@@ -555,7 +556,7 @@ void Func_02000bb0(void) {
   Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,
                             (object4->x >> 20), ((value3 >> 20) - 1));
   Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
-  GameFlag_Clear(0x281);
+  GameFlag_Clear(FLAG_SCENE_TEMP_81);
   return;
 }
 
@@ -577,7 +578,7 @@ void Func_02000c1c(void) {
   Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,
                             (object4->x >> 20), ((value3 >> 20) - 1));
   Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
-  GameFlag_Set(0x281);
+  GameFlag_Set(FLAG_SCENE_TEMP_81);
   return;
 }
 
@@ -623,7 +624,7 @@ void Func_02000fa8(void) {
   v5 = (v5 - 1);
   MapGrid_CopyCellAttributes(v5, v8, 3, 1, v5, (object3->z >> 20));
   Map_CopyCellAttributeRect(0, 0, 3, 1, v5, v8);
-  GameFlag_Set(0x286);
+  GameFlag_Set(FLAG_SCENE_TEMP_86);
   return;
 }
 
@@ -652,7 +653,7 @@ void Func_02001034(void) {
   v6 = (v6 >> 20);
   MapGrid_CopyCellAttributes(v5, v6, 3, 1, v5, (object4->z >> 20));
   Map_CopyCellAttributeRect(0, 0, 3, 1, v5, v6);
-  GameFlag_Clear(0x286);
+  GameFlag_Clear(FLAG_SCENE_TEMP_86);
   return;
 }
 
@@ -696,11 +697,11 @@ void Func_020010ac(void) {
 }
 
 void Func_0200115c(void) {
-  if (!Event_GetFlag(0x230)) {
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_30)) {
     struct Actor *object = Actor_GetById(9);
     struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
 
-    Event_SetFlag(0x230);
+    Event_SetFlag(FLAG_SCENE_TEMP_30);
     Actor_SetPosition(9, PIXELS(296), PIXELS(160));
     object->speedLimit = 0x18000;
     object->velocityY = PIXELS(15);

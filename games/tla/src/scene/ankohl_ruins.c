@@ -293,7 +293,7 @@ void Func_020006d0(s32 unused, s32 id) {
 #if !TLA_PATCH_1
     if (id == 9)
 #else
-    if (id == 9 && Event_GetFlag(0x205))
+    if (id == 9 && Event_GetFlag(FLAG_SCENE_TEMP_05))
 #endif
       AnkohlRuins_Call2df4(35, 98, 3, 5, 25, 98);
   }
@@ -674,7 +674,7 @@ void AnkohlRuins_DrawSand(void) {
   struct AnkohlRuinsSprite *sprite = work->sprites;
   s32 i;
 
-  if (Event_GetFlag(0x205) == 0 && work->level < 0x200000) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_05) == 0 && work->level < 0x200000) {
     for (i = 0; i <= 7; i++) {
       u32 kind = sprite->kind;
       s32 x = sprite->x;
@@ -884,7 +884,7 @@ void AnkohlRuins_RaiseFirstSand(void) {
     Task_AddFrame(AnkohlRuins_CountSandTime, 0x480);
   } else {
     MapGrid_CopyCellsLayered(69, 6, 1, 2, 68, 5);
-    Event_SetFlag(0x204);
+    Event_SetFlag(FLAG_SCENE_TEMP_04);
     Event_ClearFlag(0x17d);
   }
   AnkohlRuins_Call2df4(18, 66, 3, 1, 7, 66);
@@ -966,7 +966,7 @@ void AnkohlRuins_RaiseSecondSand(void) {
     Task_AddFrame(AnkohlRuins_CountSandTime, 0x480);
   } else {
     MapGrid_CopyCellsLayered(69, 24, 1, 4, 68, 23);
-    Event_SetFlag(0x204);
+    Event_SetFlag(FLAG_SCENE_TEMP_04);
     Event_ClearFlag(0x17d);
   }
   AnkohlRuins_Call2df4(18, 66, 3, 1, 7, 84);
@@ -1016,7 +1016,7 @@ void AnkohlRuins_PressFirstSandSwitch(void) {
     gAnkohlRuins_SandRoom = 1;
     Event_SetFlag(381);
     AnkohlRuins_RaiseFirstSand();
-    Event_SetFlag(0x202);
+    Event_SetFlag(FLAG_SCENE_TEMP_02);
   }
 }
 
@@ -1056,7 +1056,7 @@ void AnkohlRuins_PressSecondSandSwitch(void) {
     gAnkohlRuins_SandRoom = 2;
     Event_SetFlag(381);
     AnkohlRuins_RaiseSecondSand();
-    Event_SetFlag(0x203);
+    Event_SetFlag(FLAG_SCENE_TEMP_03);
   }
 }
 
@@ -1108,9 +1108,9 @@ void Func_02001f7c(void) {
     FieldTask_Remove(Func_02001f7c);
     AnkohlRuins_Call2e24(-1, -1, 0xe666);
     AnkohlRuins_Call2dfc(41, 48, 3, 2, 13, 41);
-    Event_SetFlag(0x201);
+    Event_SetFlag(FLAG_SCENE_TEMP_01);
     Event_ClearFlag(0x17d);
-    Event_ClearFlag(0x161);
+    Event_ClearFlag(FLAG_NO_ENCOUNTERS_IN_AREA);
     Event_PlaySound(SE_BANE_ESCAPE);
   }
 }
@@ -1136,7 +1136,7 @@ void Func_020020fc(void) {
       MapGrid_CopyCellAttributes(13, 30, 3, 2, 13, z);
       AnkohlRuins_Call2dfc(14, 87, 1, 1, 14, 88);
       Event_SetFlag(381);
-      Event_SetFlag(353);
+      Event_SetFlag(FLAG_NO_ENCOUNTERS_IN_AREA);
       Event_End();
     }
   }
@@ -1154,7 +1154,7 @@ void Func_020021d4(void) {
       MapGrid_CopyCellAttributes(13, 30, 3, 2, 13, z);
       AnkohlRuins_Call2dfc(14, 87, 1, 1, 14, 88);
       Event_SetFlag(381);
-      Event_SetFlag(353);
+      Event_SetFlag(FLAG_NO_ENCOUNTERS_IN_AREA);
       Event_End();
     }
   }
@@ -1191,7 +1191,7 @@ void Func_02002260(void) {
 
 void Func_020022a8(void) {
 #if TLA_PATCH_1 /* The Japanese edition does not touch flag 0x205. */
-  Event_SetFlag(0x205);
+  Event_SetFlag(FLAG_SCENE_TEMP_05);
 #endif
   MapGrid_CopyCells(35, 34, 3, 5, 25, 34);
   MapGrid_CopyCells(35, 98, 3, 3, 25, 98);
@@ -1199,15 +1199,15 @@ void Func_020022a8(void) {
 
 void Func_020022e0(void) {
 #if TLA_PATCH_1
-  Event_ClearFlag(0x205);
+  Event_ClearFlag(FLAG_SCENE_TEMP_05);
 #endif
   MapGrid_CopyCells(40, 34, 3, 5, 25, 34);
   MapGrid_CopyCells(40, 98, 3, 3, 25, 98);
 }
 
-void Func_02002318(void) { GameFlag_Set(0x205); }
+void Func_02002318(void) { GameFlag_Set(FLAG_SCENE_TEMP_05); }
 
-void Func_02002328(void) { GameFlag_Clear(0x205); }
+void Func_02002328(void) { GameFlag_Clear(FLAG_SCENE_TEMP_05); }
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1)
@@ -1366,7 +1366,7 @@ s32 Scene_Initialize(s32 a0) {
       Actor_SetPosition(10, 0, 0);
       Actor_SetAnimation(9, 4);
     }
-    if (GameFlag_Get(0x201)) {
+    if (GameFlag_Get(FLAG_SCENE_TEMP_01)) {
       s32 width = 13;
 
       MapGrid_CopyCellAttributes(13, 30, 3, 2, width, 24);
@@ -1484,7 +1484,8 @@ s32 Scene_Initialize(s32 a0) {
       MapGrid_CopyCells(26, 67, 1, 3, x, 83);
       MapGrid_CopyCellAttributes(1, 23, 1, 1, x, 23);
     }
-    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) && GameFlag_Get(0x204)) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
+        GameFlag_Get(FLAG_SCENE_TEMP_04)) {
       s32 level = 0x200000;
 
       gAnkohlRuins_Sand.level = level;
@@ -1638,7 +1639,7 @@ s32 Scene_Initialize(s32 a0) {
       Actor_SetPosition(10, 0, 0);
       Actor_SetAnimation(9, 4);
     }
-    if (GameFlag_Get(0x201)) {
+    if (GameFlag_Get(FLAG_SCENE_TEMP_01)) {
       s32 width = 13;
 
       MapGrid_CopyCellAttributes(13, 30, 3, 2, width, 24);
@@ -1749,7 +1750,8 @@ s32 Scene_Initialize(s32 a0) {
       MapGrid_CopyCells(26, 67, 1, 3, x, 83);
       MapGrid_CopyCellAttributes(1, 23, 1, 1, x, 23);
     }
-    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) && GameFlag_Get(0x204)) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
+        GameFlag_Get(FLAG_SCENE_TEMP_04)) {
       s32 level = 0x200000;
 
       gAnkohlRuins_Sand.level = level;

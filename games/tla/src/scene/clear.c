@@ -261,7 +261,7 @@ s32 Func_020002e0(void) {
   struct MainRoutineWork *party;
   s32 mode;
 
-  if (Event_GetFlag(324) == 0)
+  if (Event_GetFlag(FLAG_RETREAT_BLOCKED) == 0)
     return 0;
   party = &gMainRoutineWork;
 
@@ -526,7 +526,7 @@ top:
         Event_SetFlag(0x13f);
       }
     }
-    Event_ClearFlag(0x106);
+    Event_ClearFlag(FLAG_MENU_OPEN);
     goto finish;
   }
   if (result == 2) {
@@ -549,7 +549,7 @@ top:
         InventorySnapshot_Restore();
       WindowColor_Apply(party->paletteGlow[0], party->paletteGlow[1]);
       Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
-      Event_ClearFlag(0x106);
+      Event_ClearFlag(FLAG_MENU_OPEN);
       party->ownerOverride = 0;
       gSleepDisabled = 1;
       Event_SetDestination((s32)&SceneId_Ov6b5, 1);

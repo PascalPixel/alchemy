@@ -1,5 +1,6 @@
 /// @file
 #include "shared/whirlwind.h"
+#include "flags.h"
 #include "shared/jupiter_lighthouse.h"
 #include "shared/actors.h"
 #include "shared/effects.h"
@@ -378,7 +379,8 @@ void Func_02000680(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
   s32 i;
 
-  if (Event_GetFlag(0xa00) && object->x >> 20 == 18 && object->z >> 20 == 6) {
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) &&
+      object->x >> 20 == 18 && object->z >> 20 == 6) {
     object->motionFlags = 0;
     for (i = 15; i >= 0; i--) {
       object->y += 0x20000;
@@ -474,7 +476,7 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 6 ||
       gMainRoutineWork.entrance == 7)
     Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
-  if (Event_GetFlag(0xa00)) {
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     Actor_RaiseFromCell(8);
     Actor_RaiseFromCell(9);
     Actor_RaiseFromCell(10);

@@ -481,7 +481,7 @@ void Func_02000be8(void) {
   wait(1);
   Sound_Play(SE_CHEST_CLOSE);
   Event_Wait(20);
-  GameFlag_Set(0x206);
+  GameFlag_Set(FLAG_SCENE_TEMP_06);
   Event_End();
 }
 
@@ -519,12 +519,12 @@ void Func_02000d3c(void) {
   Sound_Play(SE_CHEST_CLOSE);
   Event_Wait(20);
   Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 1;
-  GameFlag_Set(0x206);
-  GameFlag_Set(0x207);
+  GameFlag_Set(FLAG_SCENE_TEMP_06);
+  GameFlag_Set(FLAG_SCENE_TEMP_07);
   Event_End();
 }
 
-void Func_02000e50(void) { GameFlag_Clear(518); }
+void Func_02000e50(void) { GameFlag_Clear(FLAG_SCENE_TEMP_06); }
 
 void Func_02000e60(void) {
   Event_Start();
@@ -969,7 +969,7 @@ void GabombaStatueChamber_InitializeRoom1(void) {
 
 void GabombaStatueChamber_InitializeRoom2(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-    if (GameFlag_Get(519)) {
+    if (GameFlag_Get(FLAG_SCENE_TEMP_07)) {
       struct GabombaStatueChamberMapWork *map =
           (struct GabombaStatueChamberMapWork *)Ram_HeapSlots->mapWork;
       struct GabombaStatueChamberLayer *front = &map->layers[0];

@@ -309,10 +309,10 @@ s32 Scene_Initialize(void) {
   Actor_Get(15)->update = AlhafraInteriors_DrawSecondGuestSprite;
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     if (Actor_Get(gMainRoutineWork.currentOwner)->x >= 0x2000000)
-      Event_SetFlag(0x200);
+      Event_SetFlag(FLAG_SCENE_TEMP_00);
     else
-      Event_ClearFlag(0x200);
-    if (Event_GetFlag(0x200) &&
+      Event_ClearFlag(FLAG_SCENE_TEMP_00);
+    if (Event_GetFlag(FLAG_SCENE_TEMP_00) &&
         Event_GetFlag(FLAG_ISAAC_CLEARED_CROSSBONE_ISLE) &&
         !Event_GetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE)) {
       Actor_SetPosition(31, PIXELS(376), PIXELS(316));
@@ -383,7 +383,7 @@ void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
   if (Event_GetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE)) {
   } else {
 #if TLA_PATCH_1 /* The Japanese edition does not check 0x200. */
-    if (!Event_GetFlag(0x200)) {
+    if (!Event_GetFlag(FLAG_SCENE_TEMP_00)) {
     } else
 #endif
     {

@@ -4,6 +4,7 @@
 /// houses' doors and the treasure Scoop digs up.
 
 #include "shared/tables.h"
+#include "flags.h"
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
@@ -541,7 +542,7 @@ DEFINE_SCOOP_TREASURE(Loho_ScoopThirdTreasure, 66, 2)
 /// Lift raises the rock (flag 0x201), and the Golem Core under it shows until
 /// it is dug up (flag 0xff7).
 void Loho_LiftRock(void) {
-  Event_SetFlag(0x201);
+  Event_SetFlag(FLAG_SCENE_TEMP_01);
   Actor_GetById(22)->collisionFlags &= 0xfe;
   if (Event_GetFlag(0xff7) == 0)
     Actor_SetPosition(66, PIXELS(520), PIXELS(136));
@@ -576,7 +577,7 @@ void Loho_TalkToInnkeeper(void) {
 /// "Commerce really took off when we started this mining colony in Loho."
 void Loho_TalkAboutCommerce(void) {
   Actor_GetById(gMainRoutineWork.currentOwner);
-  if (Event_GetFlag(800)) {
+  if (Event_GetFlag(FLAG_AREA_TEMP_20)) {
     Shop_Run(30, 8);
   } else {
     if (Event_GetFlag(0xa5f))
@@ -606,16 +607,16 @@ void Loho_TalkAboutCannon(s32 actor) {
 
 void Loho_VillagerStepsAsideNorth(void) {
   Actor_SetScript(8, gLoho_VillagerMovesNorth);
-  Event_SetFlag(800);
+  Event_SetFlag(FLAG_AREA_TEMP_20);
 }
 
 void Loho_VillagerStepsAsideWest(void) {
   Actor_SetScript(8, gLoho_VillagerMovesWest);
-  Event_SetFlag(800);
+  Event_SetFlag(FLAG_AREA_TEMP_20);
 }
 
 void Loho_VillagerStepsBack(void) {
-  Event_ClearFlag(800);
+  Event_ClearFlag(FLAG_AREA_TEMP_20);
   Actor_SetScript(8, gLoho_VillagerReturns);
 }
 
@@ -738,11 +739,11 @@ static __inline__ void Loho_PlaceFacing(s32 id, s32 x, s32 z, u16 facing) {
 
 s32 Scene_Initialize(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room1) {
-    if (!Event_GetFlag(0x300))
+    if (!Event_GetFlag(FLAG_AREA_TEMP_00))
       Actor_SetWideSprite(64, 0);
-    if (!Event_GetFlag(0x301))
+    if (!Event_GetFlag(FLAG_AREA_TEMP_01))
       Actor_SetWideSprite(65, 1);
-    if (!Event_GetFlag(0x302))
+    if (!Event_GetFlag(FLAG_AREA_TEMP_02))
       Actor_SetWideSprite(66, 1);
     Loho_SetUpTown();
   } else {

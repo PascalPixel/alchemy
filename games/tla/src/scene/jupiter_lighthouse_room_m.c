@@ -1,5 +1,6 @@
 /// @file
 #include "shared/whirlwind.h"
+#include "flags.h"
 #include "shared/jupiter_lighthouse.h"
 #include "shared/actors.h"
 #include "shared/effects.h"
@@ -364,7 +365,7 @@ void Func_0200060c(void) {
 
   if (Event_GetFlag(2591))
     return;
-  GameFlag_Set(514);
+  GameFlag_Set(FLAG_SCENE_TEMP_02);
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_CHEST_OPEN);
@@ -456,7 +457,7 @@ void Func_0200060c(void) {
 void Func_020008c8(void) {
   if (Event_GetFlag(0xa1f) != 0)
     return;
-  Event_ClearFlag(0x202);
+  Event_ClearFlag(FLAG_SCENE_TEMP_02);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_CHEST_CLOSE);
@@ -1587,7 +1588,7 @@ s32 Scene_Initialize(void) {
   object->motionFlags = 0;
   object->y = PIXELS(32);
   object->terrainHeight = PIXELS(32);
-  if (Event_GetFlag(514)) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_02)) {
     MapGrid_CopyCellsLayered(49, 106, 4, 3, 49, 76);
     MapGrid_CopyCellAttributes(49, 45, 4, 1, 49, 44);
   }

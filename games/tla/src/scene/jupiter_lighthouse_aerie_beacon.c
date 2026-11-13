@@ -1,5 +1,6 @@
 /// @file
 #include "types.h"
+#include "flags.h"
 #include "field/event_inline.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -320,7 +321,7 @@ void Func_02000198(void) {
     break;
   case 48:
     FieldActor_Stop(36);
-    Event_SetFlag(0x202);
+    Event_SetFlag(FLAG_SCENE_TEMP_02);
     break;
   }
   if (spawn) {
@@ -360,7 +361,7 @@ void Func_02000198(void) {
 void Func_0200045c(void) {
 
   if (Event_GetFlag(0xa23)) {
-    Event_SetFlag(0x200);
+    Event_SetFlag(FLAG_SCENE_TEMP_00);
     if (!Event_GetFlag(0xa21)) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
@@ -388,11 +389,11 @@ void Func_020004c8(void) {
   struct FieldSprite *sprite;
   s32 angle;
 
-  if (Event_GetFlag(0x201) == 0 && gFrameCount % 3 != 0)
+  if (Event_GetFlag(FLAG_SCENE_TEMP_01) == 0 && gFrameCount % 3 != 0)
     return;
   center = Actor_Get(31);
   /* FAKEMATCH(wrapper): both effects created through Actor_Create above. */
-  if (Event_GetFlag(0x201) != 0) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_01) != 0) {
     u32 random;
 
     random = Random16();
@@ -479,10 +480,10 @@ void Func_0200065c(void) {
       Actor_WalkToAndWait(4, 0x202, 0x135);
     } else {
       Event_SetFlag(0xa21);
-      Event_SetFlag(0x8df);
+      Event_SetFlag(FLAG_SHIP_FLIES);
       Event_ClearFlag(0xa25);
-      Event_ClearFlag(0x161);
-      Event_ClearFlag(0x144);
+      Event_ClearFlag(FLAG_NO_ENCOUNTERS_IN_AREA);
+      Event_ClearFlag(FLAG_RETREAT_BLOCKED);
       Actor_FaceDirection(27, 0xd000, 0);
       Actor_FaceDirection(28, 0xd000, 0);
       Actor_SetSpeed(4, 0x10000, 0x8000);

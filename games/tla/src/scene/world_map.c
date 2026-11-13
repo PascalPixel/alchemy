@@ -1,5 +1,6 @@
 /// @file
 #include "shared/actors.h"
+#include "flags.h"
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "system/main_routine_work.h"
@@ -263,7 +264,7 @@ s32 StoryActor_Initialize(struct Actor *actor) {
   if (Event_GetFlag(0x37) != 0) {
     return 0;
   }
-  if (Event_GetFlag(0x16E) != 0) {
+  if (Event_GetFlag(FLAG_DJINN_LESSON) != 0) {
     return 0;
   }
   actor->update = (void (*)(void))WorldMap_UpdateBobbingMarker;
@@ -287,7 +288,7 @@ s32 Func_020003a8(struct Actor *object) {
 s32 Func_020003b4(struct Actor *object) {
   s32 x, z;
 
-  if (!Event_GetFlag(0x200))
+  if (!Event_GetFlag(FLAG_SCENE_TEMP_00))
     return 1;
   Actor_SetSpriteFlags(object, 0);
   x = object->x;
@@ -716,7 +717,7 @@ extern s32 gData_0200632c[];
 s32 Scene_Initialize(void) {
   struct EventWork *work;
 
-  if (GameFlag_Get(0x109) == 0 && GameFlag_Get(0x8de) != 0 &&
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0 && GameFlag_Get(0x8de) != 0 &&
       gMainRoutineWork.ownerOverride == 0 && gMainRoutineWork.savedX != 0) {
     struct Actor *ship = Actor_GetById(8);
 
@@ -728,15 +729,15 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.ownerOverride != 0)
     FieldEffect_ScheduleRatioTransition(0x10000, 1);
-  GameFlag_Set(0x144);
+  GameFlag_Set(FLAG_RETREAT_BLOCKED);
   work = Ram_HeapSlots->eventWork;
   work->screenEffect = 0x400;
   work->delay = 16;
   wait(1);
   FieldCamera_SetSpeed(0x80000, 0x10000);
-  GameFlag_Clear(0x12f);
+  GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   WorldMap_StartPlacedActors();
-  if (GameFlag_Get(0x90f))
+  if (GameFlag_Get(FLAG_ALHAFRA_SHIP_GONE))
     Field_SetWorldMapWindowCellTile(0, 240, 336, 288);
   if (GameFlag_Get(0xa21)) {
     Field_SetWorldMapWindowCellTile(0, 224, 208, 256);
@@ -746,7 +747,7 @@ s32 Scene_Initialize(void) {
     Func_02000d4c();
   switch (gMainRoutineWork.entrance) {
   case 39:
-    if (GameFlag_Get(0x927))
+    if (GameFlag_Get(FLAG_SERPENT_SLAIN))
       GameFlag_Set(0x9ab);
     break;
   case 9:
@@ -807,13 +808,13 @@ s32 Scene_Initialize(void) {
   case 98:
     gMainRoutineWork.ownerOverride = 1;
     Event_SetFlag(0x8de);
-    Event_SetFlag(0x8df);
-    Event_SetFlag(0x163);
+    Event_SetFlag(FLAG_SHIP_FLIES);
+    Event_SetFlag(FLAG_DEBUG_STEPS_OFF);
     Event_SetFlag(0x11d);
     Event_SetDestination((s32)&SceneId_WorldMap, 61);
     break;
   case 99:
-    GameFlag_Set(0x163);
+    GameFlag_Set(FLAG_DEBUG_STEPS_OFF);
     GameFlag_Set(0x11d);
     break;
   }
@@ -840,8 +841,8 @@ void WorldMap_ExplainGivingDjinn(void) {
   FieldEvent_Wait(30);
   Event_PlaySound(SE_MENU_CURSOR_MOVE);
   Menu_AnimateSelectionToEntry(0, 2);
-  Event_ClearFlag(0x16f);
-  Event_ClearFlag(0x171);
+  Event_ClearFlag(FLAG_DJINN_LESSON_PART_A);
+  Event_ClearFlag(FLAG_DJINN_LESSON_PART_B);
   DjinnMenu_Run();
   FieldActor_Jump(9, 4, 30);
   {
@@ -853,8 +854,8 @@ void WorldMap_ExplainGivingDjinn(void) {
         base);
   }
   Event_ShowMessage(9, 0);
-  Event_ClearFlag(0x16f);
-  Event_SetFlag(0x171);
+  Event_ClearFlag(FLAG_DJINN_LESSON_PART_A);
+  Event_SetFlag(FLAG_DJINN_LESSON_PART_B);
   DjinnMenu_Run();
   FieldEvent_Wait(30);
   Field_RequestBattleFromEncounterTable(9, 5);
@@ -1293,7 +1294,7 @@ void WorldMap_MeetEcho(void) {
     Party_AddMember(6);
     owner = gMainRoutineWork.currentOwner;
     Party_RestoreHpPp(1);
-    Event_SetFlag(0x16e);
+    Event_SetFlag(FLAG_DJINN_LESSON);
     Event_Start();
     Event_ResolvePendingActions(0);
     Djinn_Give(owner, 0, 7);
@@ -1456,8 +1457,8 @@ void WorldMap_MeetEcho(void) {
   Event_ShowMessageAndWait(9, 0);
   Sound_Play(SE_MENU_CURSOR_MOVE);
   Menu_AnimateSelectionToEntry(0, 2);
-  Event_SetFlag(0x16f);
-  Event_ClearFlag(0x171);
+  Event_SetFlag(FLAG_DJINN_LESSON_PART_A);
+  Event_ClearFlag(FLAG_DJINN_LESSON_PART_B);
   DjinnMenu_Run();
   Event_SetMessageId(TUTORIAL_MESSAGE(MsgSoWeGo));
   FieldActor_SetMoveTarget(djinni, 0x27880000, 0, 0x20a40000);
@@ -1488,8 +1489,8 @@ refused:
   Event_ShowMessageAndWait(9, 0);
   Actor_ShowEmoteById(9, 0x100, 30);
   Event_ShowMessageAndWait(9, 0);
-  Event_SetFlag(0x16f);
-  Event_SetFlag(0x171);
+  Event_SetFlag(FLAG_DJINN_LESSON_PART_A);
+  Event_SetFlag(FLAG_DJINN_LESSON_PART_B);
   DjinnMenu_Run();
   Actor_Jump(9, 2, 20);
   Event_ShowMessageAndWait(9, 0);
@@ -1497,9 +1498,9 @@ refused:
   FieldDjinn_JoinParty(9, zero, 7);
   Scene_PlayMusic();
   Event_End();
-  Event_ClearFlag(0x16e);
-  Event_ClearFlag(0x16f);
-  Event_ClearFlag(0x171);
+  Event_ClearFlag(FLAG_DJINN_LESSON);
+  Event_ClearFlag(FLAG_DJINN_LESSON_PART_A);
+  Event_ClearFlag(FLAG_DJINN_LESSON_PART_B);
 }
 
 extern u32 gData_02006bc8[];
@@ -1743,7 +1744,7 @@ void WorldMap_DriftNorthOfContinent(void) {
     System_Wait(1);
   }
   WorldMap_Freeze();
-  Event_SetFlag(0x200);
+  Event_SetFlag(FLAG_SCENE_TEMP_00);
   Event_ShowMessage(5, 0);
   Event_ShowMessage(6, 0);
   Event_ShowMessage(5, 0);
@@ -1895,7 +1896,7 @@ void Func_0200310c(void) {
 void WorldMap_TakeOff(void) {
   s32 x, z, i;
 
-  if (GameFlag_Get(0x8df) == 0)
+  if (GameFlag_Get(FLAG_SHIP_FLIES) == 0)
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2118,7 +2119,7 @@ void Func_02003d44(s32 mode) {
   u32 blend;
 
   System_Wait(1);
-  Event_ClearFlag(0x109);
+  Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
   Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->delay = 16;
@@ -2211,7 +2212,7 @@ void Func_02003d44(s32 mode) {
     IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
   }
   Heap_Release(buffer);
-  Event_SetFlag(0x101);
+  Event_SetFlag(FLAG_SKIP_SCENE_CHANGE_SOUND);
 }
 
 void Func_020042e0(void) {
@@ -2345,7 +2346,7 @@ void Func_020048f4(void) {
   s32 screen[3];
   u32 attributes;
 
-  if ((gInput.held & 3) != 0 && Event_GetFlag(0x106) == 0 &&
+  if ((gInput.held & 3) != 0 && Event_GetFlag(FLAG_MENU_OPEN) == 0 &&
       leader->y > 0x40000) {
     if (--gData_02006e10 <= 0) {
       Party_DrainPp(1);

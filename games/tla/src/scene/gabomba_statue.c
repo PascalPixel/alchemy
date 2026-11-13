@@ -373,7 +373,7 @@ void GabombaStatue_LashRope(void) {
   if (Rope_GetState(0) == 1) {
     direction = gData_02005af0;
     Func_020020f0(0);
-    Event_SetFlag(515);
+    Event_SetFlag(FLAG_SCENE_TEMP_03);
     /* FAKEMATCH(temporary): the 0 stored from a u16 local holding it. */
     *(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x166) = zero;
     i = 0;
@@ -804,7 +804,7 @@ void Func_02000f6c(void) {
 void GabombaStatue_HearTheOffering(void) {
   s32 result;
 
-  Event_SetFlag(0x205);
+  Event_SetFlag(FLAG_SCENE_TEMP_05);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
@@ -1116,12 +1116,12 @@ extern s16 gData_02005d7c[];
 
 void GabombaStatue_HideActors(void) {
   GabombaStatue_SetActorsHidden(1);
-  Event_SetFlag(512);
+  Event_SetFlag(FLAG_SCENE_TEMP_00);
 }
 
 void GabombaStatue_ShowActors(void) {
   GabombaStatue_SetActorsHidden(0);
-  Event_ClearFlag(512);
+  Event_ClearFlag(FLAG_SCENE_TEMP_00);
 }
 
 void Actors_SetHidden(s32 show, s32 first, u32 count) {
@@ -1200,10 +1200,10 @@ void Func_02001adc(s32 id) {
 
 void Func_02001b0c(void) {
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-    if (!Event_GetFlag(512))
+    if (!Event_GetFlag(FLAG_SCENE_TEMP_00))
       GabombaStatue_ShowActors();
   } else {
-    Event_SetFlag(512);
+    Event_SetFlag(FLAG_SCENE_TEMP_00);
   }
 }
 #define DEFINE_GABOMBA_STATUE_RAISE_ACTORS(name, n1, n2)                       \
@@ -1234,7 +1234,7 @@ void Func_02001b98(void) {
   u8 *event = Ram_HeapSlots->eventWork;
   s32 i;
 
-  if (Event_GetFlag(262) || *(s16 *)(event + 358) != 0) {
+  if (Event_GetFlag(FLAG_MENU_OPEN) || *(s16 *)(event + 358) != 0) {
     open = 1;
     value = 0;
   }
@@ -1945,7 +1945,7 @@ s32 Scene_Initialize(void) {
 
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 521;
   if (gMainRoutineWork.scene != (s32)&SceneId_Ov671Room1) {
-    if (Event_GetFlag(515))
+    if (Event_GetFlag(FLAG_SCENE_TEMP_03))
       Func_020020f0(0);
     else if (Event_GetFlag(0x8cd))
       Func_020020f0(-1);
@@ -2013,7 +2013,7 @@ void GabombaStatue_InitializeRoom3(void) {
     if ((u16)(entrance - 7) <= 1)
       Func_02002394();
     if (gMainRoutineWork.entrance == 7)
-      Event_SetFlag(0x204);
+      Event_SetFlag(FLAG_SCENE_TEMP_04);
   }
 }
 
@@ -2146,7 +2146,7 @@ L_0200b7e4:
     goto L_0200b84a;
   GabombaStatue_FixTheChannel();
 L_0200b84a:
-  Event_ClearFlag(0x12f);
+  Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   Event_End();
 L_0200b856:
 }

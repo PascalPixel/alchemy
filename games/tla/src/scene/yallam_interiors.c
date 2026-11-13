@@ -4,6 +4,7 @@
 /// let him reach Taopo Swamp.
 
 #include "battle/battle.h"
+#include "flags.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -128,7 +129,7 @@ s32 YallamInteriors_MindReadSunshine(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (Event_GetFlag(0x301)) {
+  if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
     Event_SetMessageId((s32)MsgYallamInteriors37);
   } else {
     Event_SetMessageId((s32)MsgYallamInteriors33);
@@ -142,7 +143,7 @@ s32 YallamInteriors_MindReadSunshinesWife(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (Event_GetFlag(0x301)) {
+  if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
     Event_SetMessageId((s32)MsgYallamInteriors38);
   } else {
     Event_SetMessageId((s32)MsgYallamInteriors34);
@@ -156,7 +157,7 @@ s32 YallamInteriors_MindReadSunshinesChild(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (Event_GetFlag(0x301)) {
+  if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
     Event_SetMessageId((s32)MsgYallamInteriors39);
   } else {
     Event_SetMessageId((s32)MsgYallamInteriors35);
@@ -172,7 +173,7 @@ s32 YallamInteriors_TalkToSunshinesChild(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (Event_GetFlag(0x301)) {
+  if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
     Event_SetMessageId((s32)MsgYallamInteriors36);
   } else {
     Event_SetMessageId((s32)MsgYallamInteriors32);
@@ -302,7 +303,7 @@ void YallamInteriors_TalkToInnkeeper(s32 actor) {
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Inn_CheckIn(7, actor);
-    Event_ClearFlag(0x301);
+    Event_ClearFlag(FLAG_AREA_TEMP_01);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -377,7 +378,7 @@ void YallamInteriors_TalkToSunshine(void) {
 
   if (YallamInteriors_PartyHasForgeMaterial())
     Event_SetFlag(0x10f);
-  else if (!Event_GetFlag(0x301) && !Forge_GetItem())
+  else if (!Event_GetFlag(FLAG_AREA_TEMP_01) && !Forge_GetItem())
     Event_ClearFlag(0x10f);
 
   if (!Event_GetFlag(0x10f)) {
@@ -392,7 +393,7 @@ void YallamInteriors_TalkToSunshine(void) {
       Event_SetMessageId(message + 2);
     }
     Event_ShowMessage(14, 0);
-  } else if (Event_GetFlag(0x301)) {
+  } else if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
     Event_SetMessageId((s32)MsgICanTWait);
     Event_ShowMessage(14, 0);
   } else if (Forge_GetItem()) {
@@ -436,7 +437,7 @@ void YallamInteriors_TalkToSunshine(void) {
 #if TLA_PATCH_1
         Actor_SetPosition(17, 0, 0);
 #endif
-        Event_SetFlag(0x301);
+        Event_SetFlag(FLAG_AREA_TEMP_01);
       } else {
         Actor_SetDestination(14, 491, 398);
         Actor_WaitForMoveById(14);
@@ -461,7 +462,7 @@ void YallamInteriors_TalkToSunshinesWife(s32 actor) {
   if (!Event_GetFlag(0x10f)) {
     Event_SetMessageId((s32)MsgThisThisIs);
     Event_ShowMessage(actor, 0);
-  } else if (Event_GetFlag(0x301)) {
+  } else if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
     Event_SetMessageId((s32)MsgItTakesOur);
     Event_ShowMessage(actor, 0);
   } else if (Forge_GetItem()) {
@@ -510,7 +511,7 @@ s32 Scene_Initialize(void) {
     scene = party->scene;
   }
   if (scene == (s32)&SceneId_Ov677Room1) {
-    if (Event_GetFlag(0x301)) {
+    if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
       Actor_SetPosition(14, PIXELS(600), PIXELS(360));
       Actor_SetPosition(16, PIXELS(632), PIXELS(346));
       Actor_FaceDirection(16, FACING_SOUTH, 0);

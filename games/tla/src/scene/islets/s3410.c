@@ -141,7 +141,7 @@ void Func_0200367c(void) {
 }
 
 // Rewrites the map cells under a pushable actor. The actor's sprite
-// shape picks one of the six footprints in gData_0200407c (four signed bytes
+// shape picks one of the six footprints in gPushFootprints (four signed bytes
 // each, in sixteenths of a cell); the cells under it are copied from the
 // map's spare area (Map_CopyCellAttributeRect) and byte 2 of both collision
 // layers there is filled with 255 (Func_02003790). Returns 1, or 0 for a shape
@@ -149,12 +149,12 @@ void Func_0200367c(void) {
 
 #include "../islets.h"
 
-extern s8 gData_0200407c[][4];
+extern s8 gPushFootprints[][4];
 
 static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 
 /// Rewrites the map cells under a pushable actor. The actor's sprite shape
-/// picks one of the six footprints in gData_0200407c (four signed bytes each,
+/// picks one of the six footprints in gPushFootprints (four signed bytes each,
 /// in sixteenths of a cell); the cells under it are copied from the map's spare
 /// area (Map_CopyCellAttributeRect) and byte 2 of both collision layers there
 /// is filled with 255 (Func_02003790). Returns 1, or 0 for a shape with no
@@ -183,10 +183,10 @@ s32 Func_02003684(s32 id) {
   fromX = (u16)i;
   if (fromX == 6)
     return 0;
-  a = gData_0200407c[fromX][0];
-  width = (Abs(a) + Abs(gData_0200407c[fromX][2])) >> 4;
-  b = gData_0200407c[fromX][1];
-  height = (Abs(b) + Abs(gData_0200407c[fromX][3])) >> 4;
+  a = gPushFootprints[fromX][0];
+  width = (Abs(a) + Abs(gPushFootprints[fromX][2])) >> 4;
+  b = gPushFootprints[fromX][1];
+  height = (Abs(b) + Abs(gPushFootprints[fromX][3])) >> 4;
   x = actor->x + (a << 16);
   z = actor->z + (b << 16);
   b = *(s32 *)(map + 0x148) >> 20;
@@ -218,13 +218,13 @@ void Func_02003790(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value) {
 
 #include "system/vector3.h"
 
-extern s32 gData_02004094[];
+extern s32 gPushLeaderSteps[];
 
 static __inline__ s32 RowByte(s8 *row, s32 index) { return row[index]; }
 
 static __inline__ s32 BoxSpan(s32 kind, s32 start) {
-  return (Abs(gData_0200407c[kind][start]) +
-          Abs(gData_0200407c[kind][start + 2])) >>
+  return (Abs(gPushFootprints[kind][start]) +
+          Abs(gPushFootprints[kind][start + 2])) >>
          4;
 }
 
@@ -251,7 +251,7 @@ s32 Func_020037d8(struct PushTarget *push) {
       u8 *layer;
       s32 index;
 
-      offset = gData_02004094[direction];
+      offset = gPushLeaderSteps[direction];
       dx = offset & 0xffff0000;
       dz = offset << 16;
       push->callback = 0;
@@ -262,14 +262,14 @@ s32 Func_020037d8(struct PushTarget *push) {
       push->z = object->z + dz;
       cell.y = object->y;
       for (;;) {
-        s8 *table = gData_0200407c[0];
+        s8 *table = gPushFootprints[0];
 
         index = kind * 4;
         /* FAKEMATCH(wrapper): the read through RowByte; as table[index + 1],
          * 27 of 171 instructions differ in tla-en. */
         cell.z = push->z + (RowByte(table, index + 1) << 16);
         for (j = 0; j < height; j++) {
-          cell.x = push->x + (gData_0200407c[0][index] << 16);
+          cell.x = push->x + (gPushFootprints[0][index] << 16);
           for (i = 0; i < width; i++) {
             /* FAKEMATCH(wrapper): the call through CallFunc_02003e2c; as a
              * direct call, 2 of 171 instructions differ in tla-en. */
@@ -318,12 +318,12 @@ outer:
 inner:
   if (((struct ObjectAnimationState *)object->sprite)->value28[0] ==
       gData_02004070[k]) {
-    x = (HI(leader->x) + (gData_02004094[*direction] >> 16)) >> 4;
-    z = (HI(leader->z) + (s16)gData_02004094[*direction]) >> 4;
-    left = (HI(object->x) + gData_0200407c[k][0]) >> 4;
-    top = (HI(object->z) + gData_0200407c[k][1]) >> 4;
-    right = (HI(object->x) + gData_0200407c[k][2]) >> 4;
-    bottom = (HI(object->z) + gData_0200407c[k][3]) >> 4;
+    x = (HI(leader->x) + (gPushLeaderSteps[*direction] >> 16)) >> 4;
+    z = (HI(leader->z) + (s16)gPushLeaderSteps[*direction]) >> 4;
+    left = (HI(object->x) + gPushFootprints[k][0]) >> 4;
+    top = (HI(object->z) + gPushFootprints[k][1]) >> 4;
+    right = (HI(object->x) + gPushFootprints[k][2]) >> 4;
+    bottom = (HI(object->z) + gPushFootprints[k][3]) >> 4;
     if (left <= x && x < right && top <= z && z < bottom) {
       *kind = k;
       if (k & 1) {
@@ -353,5 +353,5 @@ void Func_02003d0c(void);
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-DEFINE_PUSH_TARGET_PUSH(PushTarget_Push, gData_0200407c, Func_02003790,
-    Func_02003d0c, Func_02003de4, gData_02004094)
+DEFINE_PUSH_TARGET_PUSH(PushTarget_Push, gPushFootprints, Func_02003790,
+    Func_02003d0c, Func_02003de4, gPushLeaderSteps)

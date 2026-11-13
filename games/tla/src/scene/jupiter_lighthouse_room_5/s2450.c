@@ -87,7 +87,7 @@ struct ActorPlacement gActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_02003214(gData_02003214)
+DEFINE_G_DATA_02003214(gOrbScript)
 
 u32 gData_02003274[] = {
     0,

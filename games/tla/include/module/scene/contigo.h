@@ -98,13 +98,13 @@ extern u16 *gPaletteCycleColors;
 
 void Func_02000328(void);
 
-extern u16 gData_02006000;
-extern u16 gData_02006008;
-extern u16 gData_0200600c;
-extern u16 gData_0200601c;
-extern u16 gData_02006020;
+extern u16 gPaletteCycleBright;
+extern u16 gPaletteCycleTimer;
+extern u16 gPaletteCycleDelay;
+extern u16 gPaletteCycleLength;
+extern u16 gPaletteCycleIndex;
 
-s32 Func_020001d4(u16 *list);
+s32 List_CountEntries(u16 *list);
 
 void PaletteCycle_Fade(void);
 

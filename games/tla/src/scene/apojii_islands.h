@@ -47,7 +47,7 @@ void Func_020006bc(void);
 void Func_02000770(struct Actor *object);
 void Actor_FlickerChild(struct Actor *object);
 void Func_02000974(void);
-void Func_02000ef8(void);
+void Scroll_HBlank(void);
 void Layer_TrackScroll(void);
 void Scroll_StartHBlank(void);
 void Func_02001054(void);
@@ -83,7 +83,7 @@ struct CellMarkers {
 
 extern struct CellMarkers gData_02002aa0;
 extern u32 gData_02001ee8[];
-extern u32 gData_02001ef4[];
+extern u32 gWaterDropScript[];
 extern const u8 gField_Tiles679[];
 
 // The scene's own event inlines: a habit of the whole game written once, as

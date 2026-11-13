@@ -7,8 +7,8 @@ gData_02001a14:
 	.global gPaletteCycleSlots
 gPaletteCycleSlots:
 	.space 0x00000004
-	.global gData_02001a1c
-gData_02001a1c:
+	.global gPaletteCycleTimer
+gPaletteCycleTimer:
 	.space 0x00000004
 	.global gData_02001a20
 gData_02001a20:

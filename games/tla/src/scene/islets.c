@@ -539,7 +539,7 @@ struct Actor *Func_02000da0(struct Actor *object, s32 value) {
   return spawned;
 }
 
-DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 3, Func_02003de4, gData_020044f0)
+DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 3, Func_02003de4, gSmokeScript)
 
 #include "call.h"
 
@@ -761,7 +761,7 @@ void Func_0200129c(struct Actor *gift) {
       b->scaleY = 0x20000;                                                     \
       Actor_SetSingleChildFlags(b, 0);                                         \
       Func_02003de4(b, 1);                                                     \
-      Actor_StartScript(b, gData_020044f0);                                        \
+      Actor_StartScript(b, gSmokeScript);                                        \
     }                                                                          \
   }
 

@@ -26,7 +26,7 @@ void Func_02002158(void);
 void Func_02001460(void);
 void Func_0200153c(void);
 
-extern s16 gData_02002cd4[];
+extern s16 gGroundParticleFrames[];
 
 s32 Func_02000478(struct Actor *object);
 void Func_02000d80(void);

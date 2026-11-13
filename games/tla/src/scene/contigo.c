@@ -23,9 +23,9 @@ extern u16 *gPaletteCycleSlots;
 DEFINE_PALETTE_SET_COLORS(Palette_SetColors, gPaletteSlots, gPaletteColors,
     gPaletteCycleColors, gPaletteCycleSlots, Func_02000328)
 
-DEFINE_PALETTE_CYCLE_START_VBLANK(Contigo_StartSlowPaletteCycle, gData_02006020, gData_0200601c,
-    Func_020001d4, gPaletteSlots, gData_0200600c, 15, gData_02006008, 16,
-    gData_02006000, PaletteCycle_Fade)
+DEFINE_PALETTE_CYCLE_START_VBLANK(Contigo_StartSlowPaletteCycle, gPaletteCycleIndex, gPaletteCycleLength,
+    List_CountEntries, gPaletteSlots, gPaletteCycleDelay, 15, gPaletteCycleTimer, 16,
+    gPaletteCycleBright, PaletteCycle_Fade)
 
 void Contigo_StopPaletteCycle(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -34,11 +34,11 @@ void Contigo_StopPaletteCycle(void) {
   Task_RemoveFar(PaletteCycle_Fade);
 }
 
-DEFINE_PALETTE_CYCLE_START_VBLANK(Contigo_StartFastPaletteCycle, gData_02006020, gData_0200601c,
-    Func_020001d4, gPaletteSlots, gData_0200600c, 2, gData_02006008, 2,
-    gData_02006000, PaletteCycle_Fade)
+DEFINE_PALETTE_CYCLE_START_VBLANK(Contigo_StartFastPaletteCycle, gPaletteCycleIndex, gPaletteCycleLength,
+    List_CountEntries, gPaletteSlots, gPaletteCycleDelay, 2, gPaletteCycleTimer, 2,
+    gPaletteCycleBright, PaletteCycle_Fade)
 
-s32 Func_020001d4(u16 *list) {
+s32 List_CountEntries(u16 *list) {
   s32 count = 0;
 
   while (list[count] != 0xffff)
@@ -47,9 +47,9 @@ s32 Func_020001d4(u16 *list) {
   return count;
 }
 
-DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gData_02006008, gData_0200600c,
-    gPaletteCycleColors, gData_0200601c, gPaletteCycleSlots, gData_02006020,
-    gPaletteSlots, gData_02006000, gPaletteColors)
+DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gPaletteCycleTimer, gPaletteCycleDelay,
+    gPaletteCycleColors, gPaletteCycleLength, gPaletteCycleSlots, gPaletteCycleIndex,
+    gPaletteSlots, gPaletteCycleBright, gPaletteColors)
 
 void Func_02004284(void);
 

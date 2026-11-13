@@ -23,7 +23,7 @@ struct PushTarget {
   void (*callback)(void);
 };
 
-extern s8 gData_020022dc[][4];
+extern s8 gPushFootprints[][4];
 extern s32 gData_020022f4[];
 
 
@@ -37,16 +37,16 @@ static inline s32 Func_020021b8_(struct Actor *object, s32 *position) {
 /// at a time in the leader's direction, until a cell of it is blocked
 /// (Func_020021b8 returns 2). Leaves the object's resting place in target and
 /// returns 1, or 0 when nothing is pushed or it cannot move at all.
-DEFINE_PUSH_TARGET_FIND_SLIDE(PushTarget_FindSlide, PushTarget_FindAhead, gData_020022dc,
+DEFINE_PUSH_TARGET_FIND_SLIDE(PushTarget_FindSlide, PushTarget_FindAhead, gPushFootprints,
     gData_020022f4, Func_020021b8_)
 
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])
 
-DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gData_020022d0, gData_020022f4,
-    gData_020022dc)
+DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gPushKinds, gData_020022f4,
+    gPushFootprints)
 
 void Func_02001178(void);
 
-DEFINE_PUSH_TARGET_PUSH_FILL(PushTarget_PushFill, gData_020022dc, Func_02001178,
+DEFINE_PUSH_TARGET_PUSH_FILL(PushTarget_PushFill, gPushFootprints, Func_02001178,
     Func_02002160, gData_020022f4)

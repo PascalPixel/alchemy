@@ -154,7 +154,7 @@ extern struct BeamWork gData_02005970;
 extern u32 gData_02003fd8[];
 extern u32 gData_020040dc[];
 extern u32 gData_0200411c[];
-extern u32 gData_02004128[];
+extern u32 gWaterDropScript[];
 extern const u8 gData_0200414c[];
 extern const u8 gData_02004351[];
 extern const u8 gData_020044c8[];

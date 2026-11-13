@@ -41,11 +41,11 @@ DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gTeleporters, Teleporte
 #include "scene_tables.h"
 
 // clang-format off
-u16 gData_02002478[] = {
+u16 gPushKinds[] = {
     258, 259, 293, 294, 332, 331,
 };
 
-u32 gData_02002484[] = {
+u32 gPushFootprints[] = {
     0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8,
 };
 

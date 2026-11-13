@@ -64,7 +64,7 @@ void Func_02004c64(struct RockSprite *sprite, s32 width, s32 height,
 
 void Particles_UpdateFalling(void);
 
-extern u16 gData_02004ca4[];
+extern u16 gPushKinds[];
 
 struct Actor *PushTarget_FindAhead(s32 *direction, s32 *number, s32 *kind);
 

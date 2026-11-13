@@ -1660,7 +1660,7 @@ void Func_02002bd4(struct Actor *object) {
   }
 }
 
-DEFINE_ACTOR_EMIT_WATER_DROP(Actor_EmitWaterDrop, gData_02004128)
+DEFINE_ACTOR_EMIT_WATER_DROP(Actor_EmitWaterDrop, gWaterDropScript)
 
 void Func_02002ca4(void) {
   struct Actor *center;

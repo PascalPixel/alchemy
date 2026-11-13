@@ -14,15 +14,15 @@ void Func_02000940(void);
 void Func_02000958(void);
 
 // clang-format off
-u16 gData_02004ca4[] = {
+u16 gPushKinds[] = {
     258, 259, 293, 294, 332, 331,
 };
 
-u32 gData_02004cb0[] = {
+u32 gPushFootprints[] = {
     0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8,
 };
 
-s16 gData_02004cc8[] = {
+s16 gPushDirectionSteps[] = {
     0, 16, 0, 16, 0, 16, 16, 0,
     16, 0, 16, 0, 16, 0, 0, -16,
     0, -16, 0, -16, 0, -16, -16, 0,

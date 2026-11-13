@@ -57,18 +57,18 @@ struct AnemosInnerSanctumPicture {
   u16 b;
 };
 
-extern u16 *gData_02004444;
-extern u16 *Data_02004448;
-extern u16 *Data_0200444c;
-extern u16 *Data_02004438;
+extern u16 *gPaletteSlots;
+extern u16 *gPaletteColors;
+extern u16 *gPaletteCycleColors;
+extern u16 *gPaletteCycleSlots;
 
 void Func_02000328(void);
 
-extern u16 gData_02004434;
-extern u16 gData_0200443c;
-extern u16 gData_02004440;
-extern u16 gData_02004450;
-extern u16 gData_02004454;
+extern u16 gPaletteCycleBright;
+extern u16 gPaletteCycleTimer;
+extern u16 gPaletteCycleDelay;
+extern u16 gPaletteCycleLength;
+extern u16 gPaletteCycleIndex;
 
 s32 List_CountEntries(u16 *list);
 

@@ -420,7 +420,7 @@ void Func_02000e98(s32 actor) {
   Event_End();
 }
 
-void Func_02000ef8(void) {
+void Scroll_HBlank(void) {
   u32 value;
 
   if (REG_VCOUNT < gData_02002a98) {
@@ -442,7 +442,7 @@ void Func_02000ef8(void) {
 DEFINE_LAYER_TRACK_SCROLL(Layer_TrackScroll, gData_02002a98, gData_02002a9c,
     gData_02002a9e)
 
-DEFINE_SCROLL_START_HBLANK(Scroll_StartHBlank, Func_02000ef8, Layer_TrackScroll)
+DEFINE_SCROLL_START_HBLANK(Scroll_StartHBlank, Scroll_HBlank, Layer_TrackScroll)
 
 /// The overlay's entry: sets the map mode and screen effect 0x202, then starts
 /// each room's own setup.
@@ -519,7 +519,7 @@ void Func_020010d8(struct Actor *object) {
 // ---- games/tla/src/scene/apojii_islands/events_h.c ----
 // Scene code of overlay 0x679, in ROM order, from events_h's offset up to the next object the overlay links.
 
-DEFINE_ACTOR_EMIT_WATER_DROP(Actor_EmitWaterDrop, gData_02001ef4)
+DEFINE_ACTOR_EMIT_WATER_DROP(Actor_EmitWaterDrop, gWaterDropScript)
 
 void Func_020011a8(void) {
   struct EventWork1cc *work = Ram_HeapSlots->eventWork;
@@ -734,9 +734,9 @@ void Func_020017f8(u32 base, s32 a, s32 b) {
   }
 }
 
-extern s16 gData_02001f18[];
+extern s16 gGroundParticleFrames[];
 
-DEFINE_GROUND_PARTICLES_DRAW(GroundParticles_Draw, gData_02001f18)
+DEFINE_GROUND_PARTICLES_DRAW(GroundParticles_Draw, gGroundParticleFrames)
 
 /// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
 /// decoded into VRAM, and GroundParticles_Draw scheduled at priority 0x480 to move
@@ -833,12 +833,12 @@ u32 gData_02001ee8[] = {
     0, 20, 38,
 };
 
-u32 gData_02001ef4[] = {
+u32 gWaterDropScript[] = {
     23, 6, 0x4000, 0, 1, 13,
     30, 0, 38,
 };
 
-DEFINE_G_DATA_02001F18(gData_02001f18)
+DEFINE_G_DATA_02001F18(gGroundParticleFrames)
 
 s32 gData_02002038[] = {
     (s32)gData_02001e34,

@@ -31,11 +31,11 @@ u16 gData_02004070[] = {
     258, 259, 293, 294, 332, 331,
 };
 
-u32 gData_0200407c[] = {
+u32 gPushFootprints[] = {
     0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8,
 };
 
-DEFINE_G_DATA_0200198C(gData_02004094)
+DEFINE_G_DATA_0200198C(gPushLeaderSteps)
 
 u32 gData_020040d4[] = {
 #if !TLA_PATCH_1
@@ -153,7 +153,7 @@ s32 gData_020043f8[] = {
     SC_END,
 };
 
-u32 gData_020044f0[] = {
+u32 gSmokeScript[] = {
     0, 15, 3, 0, 1, 38,
 };
 

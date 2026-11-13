@@ -1,32 +1,32 @@
 .syntax unified
 	.thumb
 	.section .bss,"aw",%nobits
-	.global gData_02004434
-gData_02004434:
+	.global gPaletteCycleBright
+gPaletteCycleBright:
 	.space 0x00000004
-	.global Data_02004438
-Data_02004438:
+	.global gPaletteCycleSlots
+gPaletteCycleSlots:
 	.space 0x00000004
-	.global gData_0200443c
-gData_0200443c:
+	.global gPaletteCycleTimer
+gPaletteCycleTimer:
 	.space 0x00000004
-	.global gData_02004440
-gData_02004440:
+	.global gPaletteCycleDelay
+gPaletteCycleDelay:
 	.space 0x00000004
-	.global gData_02004444
-gData_02004444:
+	.global gPaletteSlots
+gPaletteSlots:
 	.space 0x00000004
-	.global Data_02004448
-Data_02004448:
+	.global gPaletteColors
+gPaletteColors:
 	.space 0x00000004
-	.global Data_0200444c
-Data_0200444c:
+	.global gPaletteCycleColors
+gPaletteCycleColors:
 	.space 0x00000004
-	.global gData_02004450
-gData_02004450:
+	.global gPaletteCycleLength
+gPaletteCycleLength:
 	.space 0x00000004
-	.global gData_02004454
-gData_02004454:
+	.global gPaletteCycleIndex
+gPaletteCycleIndex:
 	.space 0x00000004
 	.global gTeleporters
 gTeleporters:

@@ -40,7 +40,7 @@ void Func_02001300(struct Actor *object) {
     i = 0;
   next:
     if (*((struct ObjectAnimationState *)other->sprite)->value28 ==
-        gData_02002478[i])
+        gPushKinds[i])
       return;
     i++;
     if (i < 6)

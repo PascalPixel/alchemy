@@ -2,17 +2,17 @@
 	.thumb
 	.section .bss,"aw",%nobits
 	.balign 16
-	.global gData_02006000
-gData_02006000:
+	.global gPaletteCycleBright
+gPaletteCycleBright:
 	.space 0x00000004
 	.global gPaletteCycleSlots
 gPaletteCycleSlots:
 	.space 0x00000004
-	.global gData_02006008
-gData_02006008:
+	.global gPaletteCycleTimer
+gPaletteCycleTimer:
 	.space 0x00000004
-	.global gData_0200600c
-gData_0200600c:
+	.global gPaletteCycleDelay
+gPaletteCycleDelay:
 	.space 0x00000004
 	.global gPaletteSlots
 gPaletteSlots:
@@ -23,11 +23,11 @@ gPaletteColors:
 	.global gPaletteCycleColors
 gPaletteCycleColors:
 	.space 0x00000004
-	.global gData_0200601c
-gData_0200601c:
+	.global gPaletteCycleLength
+gPaletteCycleLength:
 	.space 0x00000004
-	.global gData_02006020
-gData_02006020:
+	.global gPaletteCycleIndex
+gPaletteCycleIndex:
 	.space 0x00000010
 	.global gData_02006030
 gData_02006030:

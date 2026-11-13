@@ -1005,7 +1005,7 @@ void Func_02001d30(struct Actor *object) {
 }
 
 // ---- games/tla/src/scene/aqua_rock/events_g.c ----
-DEFINE_ACTOR_EMIT_WATER_DROP(Actor_EmitWaterDrop, gData_02002c50)
+DEFINE_ACTOR_EMIT_WATER_DROP(Actor_EmitWaterDrop, gWaterDropScript)
 
 #include "scene_ids.h"
 
@@ -1346,7 +1346,7 @@ void Func_020025a8(s32 id) {
 #include "io_reg.h"
 #include "resource.h"
 
-DEFINE_GROUND_PARTICLES_DRAW(GroundParticles_Draw, gData_02002cd4)
+DEFINE_GROUND_PARTICLES_DRAW(GroundParticles_Draw, gGroundParticleFrames)
 
 /// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
 /// decoded into VRAM, and GroundParticles_Draw scheduled at priority 0x480 to move
@@ -1503,7 +1503,7 @@ u32 gData_02002c44[] = {
     0, 20, 38,
 };
 
-u32 gData_02002c50[] = {
+u32 gWaterDropScript[] = {
     23, 6, 0x4000, 0, 1, 13,
     30, 0, 38,
 };

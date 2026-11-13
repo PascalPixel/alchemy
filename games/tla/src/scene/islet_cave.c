@@ -27,10 +27,10 @@ DEFINE_PALETTE_SET_COLORS(Palette_SetColors, gData_02001a24, gPaletteColors,
 
 #include "task.h"
 
-extern u16 gData_02001a1c;
+extern u16 gPaletteCycleTimer;
 
 DEFINE_PALETTE_CYCLE_START_VBLANK(IsletCave_StartSlowPaletteCycle, gData_02001a34, gData_02001a30,
-    List_CountEntries, gData_02001a24, gData_02001a20, 15, gData_02001a1c, 16,
+    List_CountEntries, gData_02001a24, gData_02001a20, 15, gPaletteCycleTimer, 16,
     gData_02001a14, PaletteCycle_Fade)
 
 void IsletCave_StopPaletteCycle(void) {
@@ -39,12 +39,12 @@ void IsletCave_StopPaletteCycle(void) {
 }
 
 DEFINE_PALETTE_CYCLE_START_VBLANK(IsletCave_StartFastPaletteCycle, gData_02001a34, gData_02001a30,
-    List_CountEntries, gData_02001a24, gData_02001a20, 2, gData_02001a1c, 2,
+    List_CountEntries, gData_02001a24, gData_02001a20, 2, gPaletteCycleTimer, 2,
     gData_02001a14, PaletteCycle_Fade)
 
 DEFINE_LIST_COUNT_ENTRIES(List_CountEntries)
 
-DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gData_02001a1c, gData_02001a20,
+DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gPaletteCycleTimer, gData_02001a20,
     Data_02001a2c, gData_02001a30, gPaletteCycleSlots, gData_02001a34,
     gData_02001a24, gData_02001a14, gPaletteColors)
 

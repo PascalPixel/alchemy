@@ -21,7 +21,7 @@ extern u8 gData_02002b2c[];
 extern u8 gData_02002bb4[];
 
 // clang-format off
-DEFINE_G_DATA_02001F18(gData_02002cd4)
+DEFINE_G_DATA_02001F18(gGroundParticleFrames)
 
 s32 gData_02002df4[] = {
     (s32)gData_02002a78,

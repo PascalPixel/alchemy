@@ -87,7 +87,7 @@ extern s32 Math_Cosine__jupiter_lighthouse_room_5(u32 angle) __asm__("Math_Cosin
 
 /// Circles the object around actor 23, as overlay 6a5's Func_02000090 circles
 /// actor 31.
-void Func_02000148(struct Actor *self) {
+void Orb_Update(struct Actor *self) {
   struct Actor *centre = Actor_Get(23);
   u16 angle = self->timer;
   s32 sine;
@@ -117,7 +117,7 @@ static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
 
 /// Every third frame, or every frame once flag 0x201 is set, starts a particle
 /// circling actor 23 at a random height above it.
-DEFINE_ORBS_SPAWN_RISING(Orbs_SpawnRising, 0x201, gData_02003214, Func_02000148, 1)
+DEFINE_ORBS_SPAWN_RISING(Orbs_SpawnRising, 0x201, gOrbScript, Orb_Update, 1)
 
 extern s32 gData_02003274;
 extern s32 gData_02003278;

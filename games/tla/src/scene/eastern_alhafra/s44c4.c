@@ -23,8 +23,8 @@ struct PushTarget {
   void (*callback)(void);
 };
 
-extern s8 gData_02004cb0[];
-extern s32 gData_02004cc8[];
+extern s8 gPushFootprints[];
+extern s32 gPushDirectionSteps[];
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
@@ -49,13 +49,13 @@ void Func_020044c4(struct PushTarget target) {
   acceleration = leader->acceleration;
   from[0] = object->x;
   from[2] = object->z;
-  cell[0] = (object->x + (gData_02004cb0[footprint * 4] << 16)) >> 20;
-  cell[2] = (object->z + (gData_02004cb0[footprint * 4 + 1] << 16)) >> 20;
-  width = (ABS(gData_02004cb0[footprint * 4]) +
-           ABS(gData_02004cb0[footprint * 4 + 2])) >>
+  cell[0] = (object->x + (gPushFootprints[footprint * 4] << 16)) >> 20;
+  cell[2] = (object->z + (gPushFootprints[footprint * 4 + 1] << 16)) >> 20;
+  width = (ABS(gPushFootprints[footprint * 4]) +
+           ABS(gPushFootprints[footprint * 4 + 2])) >>
           4;
-  height = (ABS(gData_02004cb0[footprint * 4 + 1]) +
-            ABS(gData_02004cb0[footprint * 4 + 3])) >>
+  height = (ABS(gPushFootprints[footprint * 4 + 1]) +
+            ABS(gPushFootprints[footprint * 4 + 3])) >>
            4;
   Map_FillCellRectByte2(0, cell[0], cell[2], width, height, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x1999);
@@ -81,8 +81,8 @@ void Func_020044c4(struct PushTarget target) {
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x4ccc, 0x1999);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner,
-                                     (gData_02004cc8[direction] << 16) >> 31,
-                                     (gData_02004cc8[direction] << 16) >> 17);
+                                     (gPushDirectionSteps[direction] << 16) >> 31,
+                                     (gPushDirectionSteps[direction] << 16) >> 17);
   if (target.callback != 0)
     target.callback();
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
@@ -95,8 +95,8 @@ void Func_020044c4(struct PushTarget target) {
   Event_PlaySound(213);
   FieldActor_SetPositionAndResetMotion(object, target.x, object->y, target.z);
   Func_02004a0c(object, 1);
-  target.x = target.x + (gData_02004cb0[footprint * 4] << 16);
-  target.z = target.z + (gData_02004cb0[footprint * 4 + 1] << 16);
+  target.x = target.x + (gPushFootprints[footprint * 4] << 16);
+  target.z = target.z + (gPushFootprints[footprint * 4 + 1] << 16);
   target.x >>= 20;
   target.z >>= 20;
   originX = *(s32 *)(map + 328) >> 20;
@@ -105,8 +105,8 @@ void Func_020044c4(struct PushTarget target) {
                              originX + target.x, originZ + target.z);
   Map_FillCellRectByte2(0, target.x, target.z, width, height, 255);
   Map_FillCellRectByte2(2, target.x, target.z, width, height, 255);
-  cell[0] = (from[0] + (gData_02004cb0[footprint * 4] << 16)) >> 20;
-  cell[2] = (from[2] + (gData_02004cb0[footprint * 4 + 1] << 16)) >> 20;
+  cell[0] = (from[0] + (gPushFootprints[footprint * 4] << 16)) >> 20;
+  cell[2] = (from[2] + (gPushFootprints[footprint * 4 + 1] << 16)) >> 20;
   originX += cell[0];
   originZ += cell[2];
   MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);
@@ -115,7 +115,7 @@ void Func_020044c4(struct PushTarget target) {
 }
 
 
-DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Actor_StopAtPushTarget, Func_02004c3c, gData_02004ca4,
+DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Actor_StopAtPushTarget, Func_02004c3c, gPushKinds,
     Func_02004a64)
 
 void Func_020047fc(const u16 *list) {

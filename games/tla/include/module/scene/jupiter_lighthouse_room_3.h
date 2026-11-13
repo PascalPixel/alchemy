@@ -24,7 +24,7 @@ struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind);
 
 s32 Func_02002338(struct Actor *object, s32 *position);
 
-extern u16 gData_02002478[];
+extern u16 gPushKinds[];
 
 extern s16 gLightSpriteCount;
 extern struct Actor *gData_02002d30[];

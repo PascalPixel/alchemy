@@ -34,7 +34,7 @@ extern u32 gData_02002820[];
 
 struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind);
 
-extern u16 gData_020022d0[];
+extern u16 gPushKinds[];
 
 extern s16 gLightSpriteCount;
 extern s16 gLightSpritesLarge;
@@ -49,6 +49,6 @@ extern struct CellTarget gTeleporters;
 void Teleporter_Uncover(struct CellTarget *table,
                         struct CellTargetEntry *entry);
 
-extern u16 gData_020022d0[];
+extern u16 gPushKinds[];
 
 #endif

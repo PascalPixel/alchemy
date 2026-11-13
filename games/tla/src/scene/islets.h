@@ -31,7 +31,7 @@ void Func_020034ec(void);
 void Func_02001cac(void);
 void Func_02001cfc(void);
 
-extern const u8 gData_020044f0[];
+extern const u8 gSmokeScript[];
 extern const u8 gData_02004b14[];
 extern const u8 gData_02004b20[];
 extern const u8 gData_02004bb0[];

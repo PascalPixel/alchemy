@@ -19,7 +19,7 @@ enum {
   EFFECT_SCRIPT_REPEAT_COUNT = 3
 };
 
-extern u32 gData_02003214[];
+extern u32 gOrbScript[];
 
 void Func_02001718(const s32 *from, const s32 *to);
 

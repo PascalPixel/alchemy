@@ -29,7 +29,7 @@ DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, Func_02001600)
 
 DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(JupiterLighthouse_PlaceRaisedActors)
 
-extern const s8 gData_020022dc[][4];
+extern const s8 gPushFootprints[][4];
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
@@ -48,20 +48,20 @@ s32 Func_02000af0(s32 id) {
   s32 toX;
   s32 toZ;
 
-  if ((u16)shape != gData_020022d0[(u16)i]) {
+  if ((u16)shape != gPushKinds[(u16)i]) {
   next:
     j = (u16)((i << 16) + 0x10000 >> 16);
     i = j;
-    if (j <= 5 && (u16)shape != gData_020022d0[j])
+    if (j <= 5 && (u16)shape != gPushKinds[j])
       goto next;
   }
   j = (u16)i;
   if (j == 6)
     return 0;
-  width = (ABS(gData_020022dc[j][0]) + ABS(gData_020022dc[j][2])) >> 4;
-  height = (ABS(gData_020022dc[j][1]) + ABS(gData_020022dc[j][3])) >> 4;
-  x = (object->x + (gData_020022dc[j][0] << 16)) >> 20;
-  z = (object->z + (gData_020022dc[j][1] << 16)) >> 20;
+  width = (ABS(gPushFootprints[j][0]) + ABS(gPushFootprints[j][2])) >> 4;
+  height = (ABS(gPushFootprints[j][1]) + ABS(gPushFootprints[j][3])) >> 4;
+  x = (object->x + (gPushFootprints[j][0] << 16)) >> 20;
+  z = (object->z + (gPushFootprints[j][1] << 16)) >> 20;
   mapX = *(s32 *)(map + 328) >> 20;
   i = mapX;
   mapZ = *(s32 *)(map + 332) >> 20;

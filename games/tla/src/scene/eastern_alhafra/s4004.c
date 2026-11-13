@@ -72,7 +72,7 @@ void Func_020040c0(void) {
 }
 
 // Rewrites the map cells under a pushable actor. The actor's sprite
-// shape picks one of the six footprints in gData_02004cb0 (four signed bytes
+// shape picks one of the six footprints in gPushFootprints (four signed bytes
 // each, in sixteenths of a cell); the cells under it are copied from the
 // map's spare area (Map_CopyCellAttributeRect) and byte 2 of both collision
 // layers there is filled with 255. Returns 1, or 0 for a shape with no
@@ -80,12 +80,12 @@ void Func_020040c0(void) {
 
 #include "actor.h"
 
-extern s8 gData_02004cb0[][4];
+extern s8 gPushFootprints[][4];
 
 static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 
 /// Rewrites the map cells under a pushable actor. The actor's sprite shape
-/// picks one of the six footprints in gData_02004cb0 (four signed bytes each,
+/// picks one of the six footprints in gPushFootprints (four signed bytes each,
 /// in sixteenths of a cell); the cells under it are copied from the map's spare
 /// area (Map_CopyCellAttributeRect) and byte 2 of both collision layers there
 /// is filled with 255. Returns 1, or 0 for a shape with no footprint.
@@ -101,22 +101,22 @@ s32 Func_020040ec(s32 id) {
   s32 width, height, x, z;
 
   // A goto loop: a C loop is strength-reduced, which the original's is not.
-  if ((u16)kind != gData_02004ca4[(u16)i]) {
+  if ((u16)kind != gPushKinds[(u16)i]) {
   again:
     next = (i + 1) * 65536;
     index = (u32)next >> 16;
     i = next >> 16;
-    if (index <= 5 && (u16)kind != gData_02004ca4[index])
+    if (index <= 5 && (u16)kind != gPushKinds[index])
       goto again;
   }
   // fromX and b are reused for the next values they hold.
   fromX = (u16)i;
   if (fromX == 6)
     return 0;
-  a = gData_02004cb0[fromX][0];
-  width = (Abs(a) + Abs(gData_02004cb0[fromX][2])) >> 4;
-  b = gData_02004cb0[fromX][1];
-  height = (Abs(b) + Abs(gData_02004cb0[fromX][3])) >> 4;
+  a = gPushFootprints[fromX][0];
+  width = (Abs(a) + Abs(gPushFootprints[fromX][2])) >> 4;
+  b = gPushFootprints[fromX][1];
+  height = (Abs(b) + Abs(gPushFootprints[fromX][3])) >> 4;
   x = actor->x + (a << 16);
   z = actor->z + (b << 16);
   b = *(s32 *)(map + 0x148) >> 20;
@@ -134,7 +134,7 @@ s32 Func_020040ec(s32 id) {
 
 #include "system/vector3.h"
 
-extern s32 gData_02004cc8[];
+extern s32 gPushDirectionSteps[];
 
 static __inline__ s32 CallFunc_02004a64(struct Actor *actor,
                                         struct Vector3 *cell) {
@@ -157,9 +157,9 @@ s32 Func_02004240(struct PushState *push) {
   actor = PushTarget_FindAhead(&direction, &push->number, &push->kind);
   if (actor != 0) {
     kind = push->kind;
-    width = (Abs(gData_02004cb0[kind][0]) + Abs(gData_02004cb0[kind][2])) >> 4;
-    height = (Abs(gData_02004cb0[kind][1]) + Abs(gData_02004cb0[kind][3])) >> 4;
-    offset = gData_02004cc8[direction];
+    width = (Abs(gPushFootprints[kind][0]) + Abs(gPushFootprints[kind][2])) >> 4;
+    height = (Abs(gPushFootprints[kind][1]) + Abs(gPushFootprints[kind][3])) >> 4;
+    offset = gPushDirectionSteps[direction];
     dx = offset & 0xffff0000;
     dz = offset << 16;
     push->unk14 = 0;
@@ -170,9 +170,9 @@ s32 Func_02004240(struct PushState *push) {
     push->z = actor->z + dz;
     cell.y = actor->y;
     for (;;) {
-      cell.z = push->z + (gData_02004cb0[kind][1] << 16);
+      cell.z = push->z + (gPushFootprints[kind][1] << 16);
       for (j = 0; j < height; j++) {
-        cell.x = push->x + (gData_02004cb0[kind][0] << 16);
+        cell.x = push->x + (gPushFootprints[kind][0] << 16);
         for (i = 0; i < width; i++) {
           /* FAKEMATCH(wrapper): the call through CallFunc_02004a64; as a direct
            * call, 2 of 171 instructions differ in tla-en. */
@@ -208,5 +208,5 @@ s32 Func_02004240(struct PushState *push) {
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])
 
-DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gData_02004ca4, gData_02004cc8,
-    gData_02004cb0)
+DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gPushKinds, gPushDirectionSteps,
+    gPushFootprints)

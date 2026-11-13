@@ -10,7 +10,7 @@ The Broken Seal.
   parts in `shop/` cut where The Broken Seal's are, in ROM order: `run.c`,
   `cursor.c`, `buy.c`, `sell.c`, `repair.c`, `stock.c`, `forge.c`,
   `sanctum.c`, `inn.c` and `item_picker.c`.
-- The bank also holds the forge (`shop/forge.c`, `forge.tsv`), which The
+- The bank also holds the forge (`shop/forge.c`, its recipes in `shop_tables.c`), which The
   Broken Seal does not have: its recipes, the materials the party holds and
   the roll for the result. Its counter lies after the inn, at the start of
   `item_picker.c`, before the item picker it uses.

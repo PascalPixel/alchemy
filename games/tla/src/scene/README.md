@@ -1,6 +1,6 @@
 # The Lost Age: scene
 
-The Lost Age's [scenes](../../../tbs/glossary.md#scene), one folder per scene
+The Lost Age's [scenes](../../../tbs/glossary.md#scene), one file per scene
 [overlay](../../../tbs/glossary.md#overlay), 109 of them, each loaded at the same address as The
 Broken Seal's. [Scenes](../../../tbs/src/scene/README.md) explains how a scene
 runs, its tables and its [events](../../../tbs/glossary.md#event).
@@ -20,8 +20,8 @@ runs, its tables and its [events](../../../tbs/glossary.md#event).
   (the tile pictures every overlay of a dungeon shares) are marked
   `LATE_DATA`, which the overlay's linker script places after it. Where the
   parts a scene was joined from still disagree about a type, each keeps its
-  own view of the name, marked `VIEW(part)`, after a `// ---- from ... ----`
-  line.
+  own view of the name, marked `VIEW(part)`. A scene's file opens with one
+  list of includes, and what only that scene reads is in its file.
 - Both games link every overlay through one `overlay.ld`, one block per
   overlay: an overlay's block names its folder's objects in ROM order, and
   where its globals are still written in assembly they are

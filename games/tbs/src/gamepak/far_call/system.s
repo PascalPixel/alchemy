@@ -1,6 +1,6 @@
 @ The System bank: frames and tasks, memory, resources and the other services
 @ every division calls.
-#include "table.inc"
+	.include "games/tbs/src/gamepak/far_call/table.inc"
 	.global FarCall_RuntimeTable
 FarCall_RuntimeTable:
 	export waitFar, wait

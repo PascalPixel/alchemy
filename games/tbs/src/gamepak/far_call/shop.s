@@ -1,5 +1,5 @@
 @ Shops, inns and the cursors used by their screens.
-#include "table.inc"
+	.include "games/tbs/src/gamepak/far_call/table.inc"
 	.global FarCall_ShopTable
 FarCall_ShopTable:
 	export Shop_OpenDebugShopFar, Shop_OpenDebugShop

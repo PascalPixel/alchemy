@@ -1,5 +1,5 @@
 @ Battle state, unit motion and presentation services.
-#include "table.inc"
+	.include "games/tbs/src/gamepak/far_call/table.inc"
 	.global FarCall_BattleTable
 FarCall_BattleTable:
 	export DebugBattle_RunMenuFar, DebugBattle_RunMenu

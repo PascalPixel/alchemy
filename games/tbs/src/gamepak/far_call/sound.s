@@ -1,5 +1,5 @@
 @ Audio mixing, playback commands and music-player updates.
-#include "table.inc"
+	.include "games/tbs/src/gamepak/far_call/table.inc"
 	.global FarCall_SoundTable
 FarCall_SoundTable:
 	export m4aSoundMainFar, m4aSoundMain

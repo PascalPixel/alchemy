@@ -1,5 +1,5 @@
 @ Party members, items, Djinn and game-state operations.
-#include "table.inc"
+	.include "games/tbs/src/gamepak/far_call/table.inc"
 	.global FarCall_GameTable
 FarCall_GameTable:
 	export Djinn_GetRecoveryTableFar, Djinn_GetRecoveryTable

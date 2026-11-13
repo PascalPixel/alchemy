@@ -146,7 +146,7 @@ void SelectionMenu_BuildEntries(u32 unused) {
 }
 
 /// An empty function, reached only through a bare entry of the window
-/// far-call table (gamepak/far_call/WINDOW.S).
+/// far-call table (gamepak/far_call/window.s).
 void SelectionMenu_ReservedNoOp(void) {}
 
 /// Returns a free selection icon record of `kind` (enum SelectionIconGroup),

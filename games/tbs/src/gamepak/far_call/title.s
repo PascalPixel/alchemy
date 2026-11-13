@@ -1,5 +1,5 @@
 @ The title, the introduction and the Nintendo and Camelot logos.
-#include "table.inc"
+	.include "games/tbs/src/gamepak/far_call/table.inc"
 	.global FarCall_TitleTable
 FarCall_TitleTable:
 	export Title_ShowIntroFar, Title_ShowIntro

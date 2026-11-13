@@ -1,5 +1,5 @@
 @ Triggers, field Psynergy, actors and field effect lifecycles.
-#include "table.inc"
+	.include "games/tbs/src/gamepak/far_call/table.inc"
 	.global FarCall_OverworldTable
 FarCall_OverworldTable:
 	export FieldSequence_RunFar, FieldSequence_Run
@@ -193,6 +193,9 @@ FarCall_OverworldTable:
 	export Scene_QueueMusicFar, Scene_QueueMusic
 	export Scene_PlayQueuedMusicFar, Scene_PlayQueuedMusic
 	export Party_RemapCharacterIdIfEnabledFar, Party_RemapCharacterIdIfEnabled
-#if TBS_PATCH_2
+	@ German, French, Spanish and Italian
+	.ifndef TBS_EDITION_JA
+	.ifndef TBS_EDITION_EN
 	export FieldEffect_ReleaseRevealSparklesFar, FieldEffect_ReleaseRevealSparkles
-#endif
+	.endif
+	.endif

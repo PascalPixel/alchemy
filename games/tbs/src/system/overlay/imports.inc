@@ -21,7 +21,7 @@
 	export __udivsi3, IwramUnsignedDivide
 	export Math_RemainderUnsigned, IwramUnsignedRemainder
 	export __umodsi3, IwramUnsignedRemainder
-@ System bank (far_call/SYSTEM.S)
+@ System bank (far_call/system.s)
 	export wait, waitFar
 	export Task_Add, Task_AddFar
 	export Task_Remove, Task_RemoveFar
@@ -61,7 +61,7 @@
 	export Serial_StartReceive, Serial_StartReceiveFar
 	export Serial_GetActiveTransfers, Serial_GetActiveTransfersFar
 	export Task_SetFlags, Task_SetFlagsFar
-@ Field bank (far_call/FIELD.S)
+@ Field bank (far_call/field.s)
 	export Sprite_StartAnimation, Sprite_StartAnimationFar
 	export Sprite_AddAnimation, Sprite_AddAnimationFar
 	export SpriteAnimation_Clear, SpriteAnimation_ClearFar
@@ -103,7 +103,7 @@
 	export Sprite_SetAnimationColorModes, Sprite_SetAnimationColorModesFar
 	export MapGrid_SetShownLayers, MapGrid_SetShownLayersFar
 	export MapGrid_SetCellBehaviorAt, MapGrid_SetCellBehaviorAtFar
-@ Window bank (far_call/WINDOW.S)
+@ Window bank (far_call/window.s)
 	export Window_Create, Window_CreateFar
 	export Window_Close, Window_CloseFar
 	export Message_DecodeRawUnbounded, Message_DecodeRawUnboundedFar
@@ -152,7 +152,7 @@
 	export Menu_AnimateSelectionToEntry, Menu_AnimateSelectionToEntryFar
 	export Save_CountFilesExcludingSent, Save_CountFilesExcludingSentFar
 	export Link_DrawPageArrows, Link_DrawPageArrowsFar
-@ Game bank (far_call/GAME.S)
+@ Game bank (far_call/game.s)
 	export Djinn_GetRecoveryTable, Djinn_GetRecoveryTableFar
 	export Unit_Get, Unit_GetFar
 	export Unit_Calculate, Unit_CalculateFar
@@ -199,7 +199,7 @@
 	export PartyInventory_CountFreeSlots, PartyInventory_CountFreeSlotsFar
 	export InventorySnapshot_Save, InventorySnapshot_SaveFar
 	export InventorySnapshot_Restore, InventorySnapshot_RestoreFar
-@ Field sequence bank (far_call/FIELD_SEQUENCE.S)
+@ Field sequence bank (far_call/field_sequence.s)
 	export Event_Wait, Event_WaitFar
 	export Event_Start, Event_StartFar
 	export Event_End, Event_EndFar
@@ -331,11 +331,11 @@
 	export Actor_SetMovementType, Actor_SetMovementTypeFar
 	export Scene_QueueMusic, Scene_QueueMusicFar
 	export Scene_PlayQueuedMusic, Scene_PlayQueuedMusicFar
-@ Menu bank (far_call/MENU.S)
+@ Menu bank (far_call/menu.s)
 	export PartyMemberChooser_Open, PartyMemberChooser_OpenFar
 	export DjinnMenu_Run, DjinnMenu_RunFar
 	export ItemMenu_DrawItemDetails, ItemMenu_DrawItemDetailsFar
-@ Shop bank (far_call/SHOP.S)
+@ Shop bank (far_call/shop.s)
 	export Shop_OpenDebugShop, Shop_OpenDebugShopFar
 	export Shop_Run, Shop_RunFar
 	export Sanctum_Run, Sanctum_RunFar
@@ -345,16 +345,16 @@
 	export ItemPicker_Run, ItemPicker_RunFar
 	export Sound_WaitForJingle, Sound_WaitForJingleFar
 	export Inn_PlaySleep, Inn_PlaySleepFar
-@ Battle bank (far_call/BATTLE.S)
+@ Battle bank (far_call/battle.s)
 	export DjinnRecovery_CountDownTwenty, DjinnRecovery_CountDownTwentyFar
 	export DebugParameterSet_Load, DebugParameterSet_LoadFar
-@ Credits bank (far_call/CREDITS.S)
+@ Credits bank (far_call/credits.s)
 	export Import_CreditsRun, Credits_RunFar
-@ Title bank (far_call/TITLE.S)
+@ Title bank (far_call/title.s)
 	export Title_ShowIntro, Title_ShowIntroFar
 	export Title_ShowNintendoLogo, Title_ShowNintendoLogoFar
 	export Import_TitleShowCamelotLogo, Title_ShowCamelotLogoFar
-@ Sound bank (far_call/SOUND.S)
+@ Sound bank (far_call/sound.s)
 	export Sound_Play, Sound_PlayFar
 	export Sound_SetBgmTempo, Sound_SetBgmTempoFar
 	export Sound_GetBgmRestoreDelay, Sound_GetBgmRestoreDelayFar

@@ -1,5 +1,5 @@
 @ Battle effect dispatch, drawing and presentation setup.
-#include "table.inc"
+	.include "games/tbs/src/gamepak/far_call/table.inc"
 	.global FarCall_BattleEffectTable
 FarCall_BattleEffectTable:
 	export BattleEffect_BuildBlitterFar, BattleEffect_BuildBlitter

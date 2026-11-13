@@ -385,7 +385,7 @@ s32 Inventory_Repair(s32 unitId, s32 slot) {
 }
 
 /// Returns how the action an item performs when used picks its targets. Only
-/// GAME.S's bare veneer reaches it; nothing calls it by name.
+/// game.s's bare veneer reaches it; nothing calls it by name.
 u8 Item_GetTargetMode(s32 itemId) {
   return Ability_GetDirect(Item_GetDirect(itemId)->abilityId)->targetMode;
 }

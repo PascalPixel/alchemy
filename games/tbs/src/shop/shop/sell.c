@@ -236,7 +236,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   item = Item_GetDirectFar(unit->inventory[slot]);
   result = 1;
   unitSalePrice = Shop_SalePrice(unit->inventory[slot]);
-  // Shop_GetSelectionState is GAME.S's name for Inventory_GetQuantity
+  // Shop_GetSelectionState is game.s's name for Inventory_GetQuantity
   stackQuantity = Shop_GetSelectionState(unitId, slot);
   if ((item->flags & ITEM_STACKABLE) && stackQuantity > 1) {
     Shop_ShowKeeperMessage(MsgHowManyToSell);

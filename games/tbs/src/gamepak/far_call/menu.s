@@ -1,5 +1,5 @@
 @ Party menus and their interactive selection screens.
-#include "table.inc"
+	.include "games/tbs/src/gamepak/far_call/table.inc"
 	.global FarCall_MenuTable
 FarCall_MenuTable:
 	export ItemMenu_RunFar, ItemMenu_Run

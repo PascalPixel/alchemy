@@ -1,5 +1,5 @@
 @ Actors, movement, map drawing and event commands.
-#include "table.inc"
+	.include "games/tbs/src/gamepak/far_call/table.inc"
 	.global FarCall_FieldTable
 FarCall_FieldTable:
 	export ActorSystem_ConfigureFar, ActorSystem_Configure

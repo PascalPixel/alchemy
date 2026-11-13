@@ -96,7 +96,7 @@
 #endif
 
 /// Lets the player choose one party member, over the field (the Colosso scenes
-/// use it, through MENU.S, and so does the debug test).
+/// use it, through menu.s, and so does the debug test).
 s32 PartyMemberChooser_Open(void) {
   struct StatusScreenWork *menu =
       HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);

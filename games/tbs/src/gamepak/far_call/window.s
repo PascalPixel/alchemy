@@ -1,5 +1,5 @@
 @ Window construction, text drawing and selection interfaces.
-#include "table.inc"
+	.include "games/tbs/src/gamepak/far_call/table.inc"
 	.global FarCall_WindowTable
 FarCall_WindowTable:
 	export WindowSystem_InitFieldFar, WindowSystem_InitField

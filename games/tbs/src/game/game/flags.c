@@ -36,7 +36,7 @@ void GameFlag_Clear(s32 flag) {
   flags[flag] &= ~bit;
 }
 
-/// Flips `flag` and returns its new value. Only GAME.S's bare veneer reaches
+/// Flips `flag` and returns its new value. Only game.s's bare veneer reaches
 /// it; nothing calls it by name.
 u32 GameFlag_Toggle(s32 flag) {
   s32 bit = GAME_FLAG_BIT(flag);
@@ -62,7 +62,7 @@ void GameFlag_SetByte(s32 flag, s32 value) {
 }
 
 /// Adds 1 to the byte `flag` is in, stopping at 255, and returns it. Only
-/// GAME.S's bare veneer reaches it; nothing calls it by name.
+/// game.s's bare veneer reaches it; nothing calls it by name.
 u8 GameFlag_IncrementByte(s32 flag) {
   u8 *flags = gGameFlagBytes;
   flag = GAME_FLAG_BYTE(flag);
@@ -73,7 +73,7 @@ u8 GameFlag_IncrementByte(s32 flag) {
 }
 
 /// Takes 1 from the byte `flag` is in, stopping at 0, and returns it. Only
-/// GAME.S's bare veneer reaches it; nothing calls it by name.
+/// game.s's bare veneer reaches it; nothing calls it by name.
 u8 GameFlag_DecrementByte(s32 flag) {
   u8 *flags = gGameFlagBytes;
   flag = GAME_FLAG_BYTE(flag);
@@ -92,7 +92,7 @@ s32 GameFlag_GetNibble(u32 flag) {
   return (gGameFlagBytes[flag] & mask) >> shift;
 }
 
-/// Sets the four bits `flag` is in. Only GAME.S's bare veneer reaches it;
+/// Sets the four bits `flag` is in. Only game.s's bare veneer reaches it;
 /// nothing calls it by name.
 void GameFlag_SetNibble(s32 flag, s32 value) {
   s32 nibble = 15;

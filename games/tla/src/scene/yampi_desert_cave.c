@@ -502,7 +502,7 @@ DEFINE_FUNC_02000128(Func_02000c44, Func_02001940, Func_02001828)
 
 void Func_02000cec(void) {
   Event_SetFlag(0x271);
-  Func_080d2b4c(17, 17);
+  Field_RequestDjinnBattle(17, 17);
   return;
 }
 

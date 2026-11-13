@@ -623,7 +623,7 @@ void Func_020010e4(void) {
   wait(20);
   *color = 0x7fff;
   wait(1);
-  Func_0803ce64((s32)MsgMankindWithThe, 0, 0);
+  FieldMessage_ShowCentered((s32)MsgMankindWithThe, 0, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   BattleEffect_StartBufferInterpolation(20);
   wait(20);
@@ -641,7 +641,7 @@ void Func_02001154(void) {
   wait(20);
   *color = 0x7fff;
   wait(1);
-  Func_0803ce64((s32)MsgFishWithCold, 0, 0);
+  FieldMessage_ShowCentered((s32)MsgFishWithCold, 0, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   BattleEffect_StartBufferInterpolation(20);
   wait(20);
@@ -659,7 +659,7 @@ void Func_020011c4(void) {
   wait(20);
   *color = 0x7fff;
   wait(1);
-  Func_0803ce64((s32)MsgDragonsBurningWith, 0, 0);
+  FieldMessage_ShowCentered((s32)MsgDragonsBurningWith, 0, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   BattleEffect_StartBufferInterpolation(20);
   wait(20);
@@ -677,7 +677,7 @@ void Func_02001234(void) {
   wait(20);
   *color = 0x7fff;
   wait(1);
-  Func_0803ce64((s32)MsgBirdOnThe, 0, 0);
+  FieldMessage_ShowCentered((s32)MsgBirdOnThe, 0, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   BattleEffect_StartBufferInterpolation(20);
   wait(20);
@@ -744,7 +744,7 @@ void Func_020013a0(void) {
       wait(20);
       *color = 0x7fff;
       wait(1);
-      Func_0803ce64((s32)MsgIfYouDo, 0, 4);
+      FieldMessage_ShowCentered((s32)MsgIfYouDo, 0, 4);
       BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
       BattleEffect_StartBufferInterpolation(20);
       wait(20);
@@ -771,9 +771,9 @@ void Func_020013a0(void) {
     wait(20);
     *color = 0x7fff;
     wait(1);
-    Func_0803ce64((s32)MsgYouWhoHold, 0, 4);
+    FieldMessage_ShowCentered((s32)MsgYouWhoHold, 0, 4);
     wait(10);
-    Func_0803ce64((s32)MsgYouWhoHold + 1, 0, 3);
+    FieldMessage_ShowCentered((s32)MsgYouWhoHold + 1, 0, 3);
     FieldCamera_MoveTo(PIXELS(224), PIXELS(88), PIXELS(216), 1);
     Func_02003228();
     FieldEvent_Wait(20);

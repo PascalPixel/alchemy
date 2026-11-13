@@ -615,7 +615,7 @@ s32 Scene_Initialize(void) {
     ship->unk66 = 0;
   }
   if (gMainRoutineWork.ownerOverride != 0)
-    Func_080d46a4(0x10000, 1);
+    FieldEffect_ScheduleRatioTransition(0x10000, 1);
   GameFlag_SetBit(0x144);
   work = Ram_HeapSlots->eventWork;
   work->screenEffect = 0x400;
@@ -773,7 +773,7 @@ void Func_020012bc(s32 entrance) {
     Event_SetMessageId((s32)MsgHeyWaitA);
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Func_02004db0();
-    Func_080d46a4(0x18ccc, 16);
+    FieldEffect_ScheduleRatioTransition(0x18ccc, 16);
     Actor_ShowEmote(4, 0x102, 30);
     Actor_WalkByAndWait(4, 0, 32);
     Actor_FaceDirection(4, west, 0);
@@ -897,7 +897,7 @@ void Func_020012bc(s32 entrance) {
     }
     Actor_SetPositionAndFacing(4, 0x27b80000, 0x25b00000, 0xa000);
     FieldCamera_FollowActor(4, 0);
-    Func_080d46a4(0x18ccc, 1);
+    FieldEffect_ScheduleRatioTransition(0x18ccc, 1);
     Actor_SetAnimation(4, 19);
     Actor_SetSingleChildFlags(Actor_Get(4), 0);
     Event_StartScreenTransition();
@@ -947,7 +947,7 @@ void Func_020012bc(s32 entrance) {
     Actor_SetPositionAndFacing(23, 0x27b00000, 0x25d00000, westB);
     Actor_SetPositionAndFacing(4, 0x27c00000, 0x25d00000, westB);
     FieldCamera_FollowActor(4, 0);
-    Func_080d46a4(0x18000, 1);
+    FieldEffect_ScheduleRatioTransition(0x18000, 1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Func_02004da8();
@@ -1072,7 +1072,7 @@ void Func_020012bc(s32 entrance) {
     Actor_WaitForMoveById(23);
     Actor_SetPosition(23, 0, 0);
     Func_02004db0();
-    Func_080d46a4(0x10000, 15);
+    FieldEffect_ScheduleRatioTransition(0x10000, 15);
     Event_End();
   }
 }
@@ -1210,7 +1210,7 @@ void Func_02001e34(void) {
     i = 15;
     Event_ShowMessageAndWait(9, 0);
     Func_02004db0();
-    Func_080d46a4(0x13333, 6);
+    FieldEffect_ScheduleRatioTransition(0x13333, 6);
     Func_02004e00();
     Func_02004da8();
     djinni->motionFlags = 2;

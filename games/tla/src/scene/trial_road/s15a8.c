@@ -44,7 +44,7 @@ void Func_02001754(s32 sound) {
       MapGrid_CopyCellsLayered(26, 79, 1, 2, 13, 79);
       MapGrid_CopyCellAttributes(78, 18, 1, 1, 77, 18);
     } else {
-      Func_0802b450(26, 79, 1, 2, 18, 79);
+      MapGrid_CopyCellsLayered(26, 79, 1, 2, 18, 79);
       MapGrid_CopyCellAttributes(81, 18, 1, 1, 82, 18);
     }
     if (sound)
@@ -1207,7 +1207,7 @@ void Func_020037c8(void) {
   Actor_SetAnimation(5, 19);
   Actor_SetAnimation(6, 19);
   Actor_SetAnimation(7, 19);
-  Func_080d3928(7, 0x4000);
+  Actor_SetSpriteRotationById(7, 0x4000);
   Actor_SetSingleChildFlags(Actor_GetById(4), 0);
   Actor_SetSingleChildFlags(Actor_GetById(5), 0);
   Actor_SetSingleChildFlags(Actor_GetById(6), 0);
@@ -1309,7 +1309,7 @@ void Func_02003900(void) {
   Actor_SetModeById(9, 5);
   Event_Wait(20);
   Sound_Play(138);
-  Func_0802b450(127, 3, 1, 2, 48, 3);
+  MapGrid_CopyCellsLayered(127, 3, 1, 2, 48, 3);
   Map_CopyCellAttributeRect(0, 127, 1, 1, 14, 8);
   Event_Wait(20);
   Actor_SetMovementTypeById(13, gData_02005dc8__s1fc4);
@@ -1344,7 +1344,7 @@ void Func_02003900(void) {
   Actor_SetModeById(12, 5);
   Event_Wait(20);
   Sound_Play(138);
-  Func_0802b450(127, 3, 1, 2, 53, 3);
+  MapGrid_CopyCellsLayered(127, 3, 1, 2, 53, 3);
   Map_CopyCellAttributeRect(0, 127, 1, 1, 19, 8);
   Event_Wait(30);
   Actor_ArmCallback(14, FACING_NORTHWEST, 0);

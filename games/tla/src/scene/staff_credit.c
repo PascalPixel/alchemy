@@ -175,7 +175,7 @@ void Func_0200020c(s32 stage) {
   Camera_MoveWithinMapBounds_(gData_02003d20[stage][0] << 16,
                               gData_02003d20[stage][1] << 16, 0);
   Map_UpdateCurrentTileBlock();
-  Func_080d46a4(gData_02003d5c[stage], 1);
+  FieldEffect_ScheduleRatioTransition(gData_02003d5c[stage], 1);
   map->yaw = 0x1000;
   map->unk11c = 0xd000;
   Iwram_ClearWordsEntry((void *)0x050001c0, 32);
@@ -191,7 +191,7 @@ void Func_0200020c(s32 stage) {
 
       map->yaw = (length - frame) << 5;
       if (frame == length - 59)
-        Func_080d46a4(gData_02003d70[stage], 60);
+        FieldEffect_ScheduleRatioTransition(gData_02003d70[stage], 60);
     }
     if (frame >= gData_02003d84[stage] - 64)
     // Pointer arithmetic folds gData_02003d88 + 1 into one literal, as the
@@ -422,7 +422,7 @@ void Func_0200020c(s32 stage) {
     Func_0200207c();
     Camera_MoveWithinMapBounds_(gData_02003d48[stage][0] << 16,
                                 gData_02003d48[stage][1] << 16, 1);
-    Func_080d46a4(0xb333, 60);
+    FieldEffect_ScheduleRatioTransition(0xb333, 60);
     for (frame = 0; frame != 124;) {
       map->yaw += 0xffe0;
       if (frame == 60) {

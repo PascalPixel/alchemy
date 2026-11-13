@@ -125,14 +125,14 @@ s32 Title_Run(void) {
     if (gMainRoutineWork.entrance == 2) {
       Event_PlaySound(40);
       Func_0200063c(0);
-      Func_0803f9c0(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
+      WindowColor_Apply(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
       Party_SetLeaderJenna();
       Event_SetDestination((s32)&SceneId_VenusLighthouse, 99);
     }
     if (gMainRoutineWork.entrance == 3) {
       Event_PlaySound(75);
       Func_02000624(0);
-      Func_0803f9c0(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
+      WindowColor_Apply(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
       Party_SetLeaderFelix();
       Event_SetDestination((s32)&SceneId_Ov650, 13);
     }

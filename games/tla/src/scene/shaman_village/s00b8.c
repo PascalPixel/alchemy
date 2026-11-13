@@ -496,7 +496,7 @@ fade:
   }
   Window_LoadGraphics();
   DebugText_Clear();
-  Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
+  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                 gMainRoutineWork.paletteGlow[1]);
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags &= ~32;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;

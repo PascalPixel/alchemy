@@ -51,11 +51,11 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 void Func_020000ac(void) {
   MapGrid_CopyCellAttributes(69, 70, 10, 12, 24, 7);
-  Func_0802b450(69, 70, 10, 12, 24, 7);
+  MapGrid_CopyCellsLayered(69, 70, 10, 12, 24, 7);
   MapGrid_CopyCellAttributes(79, 70, 10, 12, 88, 7);
-  Func_0802b450(79, 70, 10, 12, 88, 7);
+  MapGrid_CopyCellsLayered(79, 70, 10, 12, 88, 7);
   MapGrid_CopyCellAttributes(69, 82, 10, 12, 24, 71);
-  Func_0802b450(69, 82, 10, 12, 24, 71);
+  MapGrid_CopyCellsLayered(69, 82, 10, 12, 24, 71);
 }
 
 /// "Did you want this cannon?"

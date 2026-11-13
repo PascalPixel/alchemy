@@ -188,8 +188,7 @@ s32 Scene_Initialize(void) {
   s32 *owner, *leader;
   s16 *entrance;
   struct Actor *actor;
-  /* FAKEMATCH(temporary): one local for a table, a step and a size; as one
-   * local each, 92 of 732 instructions differ in tla-en. */
+  // other serves in turn as a table, a step and a size.
   s32 other, rise;
   s32 offset;
   s32 value1, value2, value3, value4;

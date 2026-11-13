@@ -1337,9 +1337,7 @@ s32 LinkLobby_RunRoundResult(void) {
     } else {
       Event_ClearFlag(0x173);
       GameFlag_SetByte(0x3f8, -1);
-      /* FAKEMATCH(temporary): one scalar holds the row address, then its score;
-       * as the row read directly in entrances 8 and 9, 36 of 438 instructions
-       * differ in tla-en. */
+      // score holds the row's address, then the score read through it.
       score = (u32)&gMainRoutineWork.linkTallies[3];
       MessageArgument_Push(*(u16 *)score, 5);
       score = *(u16 *)score;
@@ -1363,9 +1361,7 @@ s32 LinkLobby_RunRoundResult(void) {
     Event_WaitTransitionFrames();
     LinkLobby_WriteSlotValue(5);
     Actor_FaceActor(8, gMainRoutineWork.currentOwner, 0);
-    /* FAKEMATCH(temporary): one scalar holds the row address, then its score;
-     * as the row read directly in entrances 8 and 9, 36 of 438 instructions
-     * differ in tla-en. */
+    // score holds the row's address, then the score read through it.
     score = (u32)&gMainRoutineWork.linkTallies[3];
     MessageArgument_Push(*(u16 *)score, 5);
     score = *(u16 *)score;

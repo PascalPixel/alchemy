@@ -712,8 +712,7 @@ void Func_02001350(void) {
    * = 0 and srcZ = 0, 138 of 537 instructions differ in tla-en. */
   srcX = ((u32)layer & 3) >> 2;
   srcZ = ((u32)layer & 7) >> 3;
-  /* FAKEMATCH(temporary): t holds 212 for a set flag, then the frame count, in
-   * r10; as two variables, 197 of 537 instructions differ in tla-en. */
+  // t holds 212 for a set flag, then the frame count.
   t = 0;
   effectOptions = &options;
   effectOptions->type = 403;

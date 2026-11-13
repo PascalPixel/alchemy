@@ -40,7 +40,6 @@ extern const s16 gWorldMap_KeyHeadings[16];
 
 s32 WorldMap_IsWalkable(struct Actor *object, struct FieldPosition *position);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
-void Actor_StartScript(struct Actor *, const s32 *);
 /* VIEW(f0279b0): routine Animation_ApplyChildArgument as s32
  * Animation_ApplyChildArgument(struct PlayerSprite__f0279b0 *, s32); f027064
  * has s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32). */
@@ -600,7 +599,6 @@ extern const s16 gWorldMap_KeyHeadings[16];
 
 s32 Func_0802db88(struct Actor *object, struct FieldPosition *position);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
-void Actor_StartScript(struct Actor *, const s32 *);
 /* VIEW(s28534): routine Animation_ApplyChildArgument as s32
  * Animation_ApplyChildArgument(struct PlayerSprite__s28534 *, s32); f027064 has
  * s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32). */
@@ -876,7 +874,6 @@ extern const s16 gWorldMap_KeyHeadings[16];
 
 s32 Func_0802dbd0(struct Actor *object, struct FieldPosition *position);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
-void Actor_StartScript(struct Actor *, const s32 *);
 /* VIEW(f028aac): routine Animation_ApplyChildArgument as s32
  * Animation_ApplyChildArgument(struct PlayerSprite__f028aac *, s32); f027064
  * has s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32). */

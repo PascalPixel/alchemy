@@ -97,8 +97,6 @@ void Scene_PlayQueuedMusic(void) {
   }
 }
 
-s32 Party_FindOwnerWithActionFar(s32 action);
-
 struct EventWork15a {
   u8 unk000[0x15a];
   u16 flag;

@@ -763,7 +763,6 @@ void Transform_ApplyYaw(s32 yaw);
 void BattleEffect_SetupBlendedDisplay(void);
 void BattleObject_PutFar(void);
 
-void Transform_SetLookAt(s32 *eye, s32 *position);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);

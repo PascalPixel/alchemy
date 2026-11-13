@@ -345,8 +345,6 @@ void Func_0802ac90(u32 layer, s32 tileX, s32 tileY) {
 
 #include "bg_scroll.h"
 
-u32 Random16(void);
-
 void MapGrid_UpdateLayerScroll(void) {
   struct MapWork *work;
   struct MapLayerScroll *layer;
@@ -608,8 +606,6 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
     dst += 128 - width;
   }
 }
-
-void wait(s32 frames);
 
 void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
   struct MapCopyCommand *copyCommand = (struct MapCopyCommand *)steps;

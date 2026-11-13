@@ -466,7 +466,6 @@ s32 MapGrid_CheckCollision(struct Actor *object,
  * in something not a structure or union. */
 extern struct LeaderUnit *Unit_Get__f027064(s32 owner) __asm__("Unit_Get");
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
-void Actor_StartScript(struct Actor *, const s32 *);
 /* VIEW(f027064): routine Animation_ApplyChildArgument as s32
  * Animation_ApplyChildArgument(struct PlayerSprite *, s32); the definition has
  * s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags). */

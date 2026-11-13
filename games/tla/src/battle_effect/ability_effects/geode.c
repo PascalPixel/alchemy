@@ -34,7 +34,6 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY);
  * conflicting types for `BattleObject_GetFar'. */
 extern void **
 GetBattleObjectSlotFar__f16c6f8(s32 objectId) __asm__("BattleObject_GetFar");
-void *Resource_GetTableEntry(s32 resource);
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]

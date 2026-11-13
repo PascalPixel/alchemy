@@ -204,9 +204,6 @@ extern const u8 gData_08199268[];
 extern const u8 gData_08199340[];
 extern const u8 gData_08199364[];
 
-s32 Trig_Cos(s32);
-s32 Trig_Sin(s32);
-
 void SceneTransform_ApplyPosition3(s32, s32, s32);
 void SceneTransform_ApplyScale3(s32, s32, s32);
 void SceneTransform_ApplyUniformScale(s32);
@@ -219,7 +216,6 @@ void BattleEffect_StartTiledCanvas(s32);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleEffect_RunMysticFlame(struct BattleEffectArgument *);
-void BattleEffect_TintBattler(s32, s32, s32, s32, s32);
 void SummonEffect_RunCanvasMode3(void *action);
 void SummonEffect_RunCanvasMode1(void *action);
 void SummonEffect_RunCanvasMode2(void *action);

@@ -37,7 +37,6 @@ extern void BattleEffect_UpdateGrowingParticleSprite__f0e6400(
 extern void EffectSprite_DrawAtWorldPosition__f0e6400(
     struct ScreenSprite *sprite,
     s32 *position) __asm__("EffectSprite_DrawAtWorldPosition");
-u32 Random16(void);
 
 #define NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 
@@ -192,9 +191,6 @@ void FieldPsynergy_Scoop(void);
 void FieldPsynergy_Parch(void);
 void FieldPsynergy_Hover(void);
 void Func_080e74d8(void);
-void FieldPsynergy_FadeFromCastColor(void);
-void wait(s32 frames);
-s32 Party_GetLeaderActor(void);
 
 /// Effect 20 cast on a target: runs the effect, ignoring the target.
 void FieldPsynergy_ScoopOnTarget(void) { FieldPsynergy_Scoop(); }
@@ -277,12 +273,8 @@ STATIC_ASSERT(offsetof(struct FxEvent__f0e6400, unkd4c) == 0xd4c);
 extern char ResourceId_DustPuffA, ResourceId_DustPuffB, ResourceId_WhiteSparkle,
     ResourceId_Data1E9;
 
-void *HeapSlot_Alloc(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-void FieldPsynergy_FadeToCastColor(void);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Actor_ReleaseFar(struct Actor *object);
 void Func_080dba5c(void);
 void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z);
 void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z);
@@ -292,13 +284,9 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *object, s32 *position);
 s32 Func_080dbc04(s32 x, s32 z, s32 layer);
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
-void *Resource_GetTableEntry(s32 resourceId);
-s32 Decompress_TaggedLz(const void *source, void *destination);
-s32 VramCache_FindFreeEntry(void);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Camera_WorldToScreen(s32 *position);
-s32 Func_080ce31c(s32 kind);
 void Scoop_DigUpItem(void);
 
 void FieldPsynergy_Scoop(void) {

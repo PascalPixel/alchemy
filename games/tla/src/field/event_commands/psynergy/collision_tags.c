@@ -9,7 +9,6 @@ s32 Actor_GetCellIndex(struct Actor *object);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Func_080eaa14(struct ActorFlag *list);
-s32 Party_GetLeaderActor(void);
 /* VIEW(f0ea8d4): routine Func_080ea8a8 as void Func_080ea8a8(s32 x, s32 z, s32
  * layer, s32 height); the definition has void Func_080ea8a8(s32 x, s32 z, s32
  * layer); tried as the rest of the object declares it, it does not compile in

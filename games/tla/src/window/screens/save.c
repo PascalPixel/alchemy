@@ -419,7 +419,6 @@ s32 Save_BuildFileSummary(void) {
 }
 
 s32 Save_ReadPart(s32 partId, void *buffer);
-void FieldMessage_Show(s32 message, s32 position);
 
 s32 Save_WriteFile(s32 file) {
   s32 result = 0;

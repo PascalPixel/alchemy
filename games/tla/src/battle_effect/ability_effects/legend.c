@@ -80,7 +80,6 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
  * Render_DrawModelList(struct Model *model). */
 extern void Render_DrawModelList__f189b14(struct Model__f189b14 *model) __asm__(
     "Render_DrawModelList");
-void Heap_Release(void *block);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_EndCanvasLayer(void);

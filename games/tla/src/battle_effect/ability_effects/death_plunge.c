@@ -55,7 +55,6 @@ extern const u8 gData_08199210[];
 
 s32 BattleUnit_GetEffectHeightFar(s32 objectId);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void *Resource_GetTableEntry(s32 id);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 packed);
 
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
@@ -74,7 +73,6 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
  * Render_DrawModelList(struct Model *model). */
 extern void Render_DrawModelList__f188714(struct Model__f188714 *model) __asm__(
     "Render_DrawModelList");
-void Heap_Release(void *block);
 void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_EndCanvasLayer(void);

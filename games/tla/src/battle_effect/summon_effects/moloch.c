@@ -51,7 +51,6 @@ void Palette_BrightenBgEntries(s32 blue, s32 green, s32 red);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void BattlePlayback_StartFar(s32 phase);
-void Sound_PlayFar(s32 cue);
 
 void wait(s32 frames);
 u32 Random16(void);

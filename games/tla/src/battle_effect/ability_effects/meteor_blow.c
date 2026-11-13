@@ -75,8 +75,6 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 
-void *Resource_GetTableEntry(s32 resource);
-
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,

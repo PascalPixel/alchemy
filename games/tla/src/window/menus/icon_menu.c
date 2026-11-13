@@ -117,7 +117,6 @@ extern s32 BattleParty_ListActorIdsFar__battle_party_commands(
  * in tla-ja. */
 extern void Message_DecodeRaw__battle_party_commands(
     s32 message, u16 *text, s32 capacity) __asm__("Message_DecodeRaw");
-void *Unit_Get(s32 owner);
 /* VIEW(battle_party_commands): routine Window_Create as struct Window
  * *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags); menus has
  * struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32

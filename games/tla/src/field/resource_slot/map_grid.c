@@ -30,7 +30,6 @@ struct PlayerSprite__f0298c0 {
 extern const s16 gWorldMap_KeyHeadings[16];
 
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
-void Actor_StartScript(struct Actor *, const s32 *);
 /* VIEW(f0298c0): routine Animation_ApplyChildArgument as s32
  * Animation_ApplyChildArgument(struct PlayerSprite__f0298c0 *, s32); s28534 has
  * s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32). */

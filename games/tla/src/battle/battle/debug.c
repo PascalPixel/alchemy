@@ -233,8 +233,6 @@ void Func_08118954(void) {}
 
 extern u8 gDebugTextEnabled;
 
-void MainRoutineWork_InitializeDefaultsFar(void);
-
 void DebugBattle_RunMenu(void) {
   s32 startModeSet = 0;
   s32 down = gInput.held & 0x80;

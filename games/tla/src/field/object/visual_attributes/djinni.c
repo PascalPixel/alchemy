@@ -44,7 +44,6 @@ void Actor_MoveHalfwayTowardTarget(struct Actor *obj) {
 #endif
 
 struct Actor *Actor_GetById(u32 objectId);
-void Actor_Jump(s32 id, s32 speed, s32 frames);
 /* VIEW(motes): routine Actor_CreateFar as struct Actor *Actor_CreateFar(s32
  * kind, s32 x, s32 y, s32 z); visual_attributes has struct
  * BattleEffectWatchedObject *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z). */

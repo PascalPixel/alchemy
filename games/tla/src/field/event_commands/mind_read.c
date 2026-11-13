@@ -48,7 +48,6 @@
  * BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode). */
 extern void BattleEffect_ApplyColorToTargetBuffer__f0dcb44(
     u32 color, s32 mode) __asm__("BattleEffect_ApplyColorToTargetBuffer");
-struct Actor *Actor_GetById(u32 objectId);
 /* VIEW(f0dcb44): routine Scene_FindActorPlacement as struct WaveFxDescriptor
  * *Scene_FindActorPlacement(s32 id); battle.h has struct ActionDescriptor
  * *Scene_FindActorPlacement(s32 id). */

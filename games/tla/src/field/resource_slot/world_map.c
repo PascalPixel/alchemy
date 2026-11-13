@@ -454,7 +454,6 @@ void WorldMap_RenderPaletteMappedColumn(u32 tileColumn) {
   } while (row <= 63);
 }
 
-u32 Random16(void);
 void WorldMap_BuildScanlineTable(s32 ratio, s32 *position, void *affineWork);
 
 void WorldMap_UpdateView(void) {

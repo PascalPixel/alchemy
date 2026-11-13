@@ -73,10 +73,7 @@ struct EffectScene__f0e8db0 {
 // needs a name in directory.s before this adopts.
 extern char ResourceId_ShakeTiles;
 
-void FieldPsynergy_FadeToCastColor(void);
-void FieldPsynergy_FadeFromCastColor(void);
 void Animation_ApplyChildValueFar(void *sprite, s32 value);
-void wait(s32 frames);
 
 // Sways the view from side to side around the chosen object, as kind 19 does
 // with no object: the swing grows from 2 to 12 pixels, holds 40 frames,

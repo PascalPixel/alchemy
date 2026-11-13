@@ -93,7 +93,6 @@ extern const u8 Data_081991c0[];
 extern u16 gBattleEffect_MoteCells[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void *Resource_GetTableEntry(s32 id);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 packed);
 
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
@@ -114,7 +113,6 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
  * Render_DrawModelList(struct Model__f18ad40 *model). */
 extern void Render_DrawModelList__f18bc98(struct Model__f18bc98 *model) __asm__(
     "Render_DrawModelList");
-void Heap_Release(void *block);
 void BattlePlayback_StartFar(s32 phase);
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 group, s32 timerSlot,
                               s32 frames);

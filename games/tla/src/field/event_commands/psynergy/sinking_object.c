@@ -23,8 +23,6 @@ struct ModeEvent {
 
 void Camera_WorldToScreen(s32 *position);
 struct Actor *Actor_GetById(u32 objectId);
-void wait(s32 frames);
-s32 Trig_Sin(s32 angle);
 
 /// Per-frame callback: until done, moves the effect object down 2.5 pixels
 /// and shrinks it by 1/64 each frame, marking done at frame 8.
@@ -51,8 +49,6 @@ void FieldPsynergy_Scoop(void);
 void FieldPsynergy_Parch(void);
 void FieldPsynergy_Hover(void);
 void Func_080e74d8(void);
-void FieldPsynergy_FadeFromCastColor(void);
-s32 Party_GetLeaderActor(void);
 
 /// Runs field effect 18 (FieldPsynergy_Pound) for the request dispatcher.
 void FieldPsynergy_PoundOnTarget(void) { FieldPsynergy_Pound(); }

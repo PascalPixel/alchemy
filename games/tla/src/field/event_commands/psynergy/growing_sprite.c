@@ -45,7 +45,6 @@ extern void BattleEffect_IntegrateVector3__psynergy_effects_11(
     struct EffectParticle *particle, s32 frames,
     s32 flags) __asm__("BattleEffect_IntegrateVector3");
 struct Actor *Actor_GetById(u32 objectId);
-void wait(s32 frames);
 
 /// Animates a particle's sprite through 8 tiles (4 frames each), grows its
 /// scale by 0.1 a frame up to 1.0, draws it at the particle's projected

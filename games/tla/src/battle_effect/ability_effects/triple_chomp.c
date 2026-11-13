@@ -62,7 +62,6 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
                                     s32 percent);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 packed);
-void *Resource_GetTableEntry(s32 id);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 void BattlePlayback_StartFar(s32 phase);
@@ -82,7 +81,6 @@ extern void Render_DrawModelList__f18b868(struct Model__f18b868 *model) __asm__(
     "Render_DrawModelList");
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
-void Heap_Release(void *block);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_EndCanvasLayer(void);

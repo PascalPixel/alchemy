@@ -47,7 +47,6 @@ struct GlowEvent__f0e9af4 {
 
 extern char ResourceId_RingOrb;
 
-void wait(s32 frames);
 s32 Func_080dbcc0(s32 x, s32 z, s32 layer);
 s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 void HoverGlow_Update(void);
@@ -248,8 +247,6 @@ struct Chase {
 };
 
 s32 ArcTan2(s32 y, s32 x);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
 
 /// Moves toward the target by speed, stopping on it on overshoot.
 void Motion_StepTowardTarget(struct Chase *chase, s32 speed) {

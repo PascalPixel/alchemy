@@ -108,8 +108,6 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
   }
 }
 
-s32 __divsi3(s32, s32);
-
 s32 Actor_ClearChildAndCollisionFlags(struct Actor *obj) {
   Actor_SetSpriteFlagsFar((struct Actor *)obj, 0);
   obj->collisionFlags = 0;

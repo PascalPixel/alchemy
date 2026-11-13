@@ -414,8 +414,6 @@ s32 Func_08029570(struct Actor *object) {
 
 #define HALF_AT(base, offset) (*(u16 *)((u8 *)(base) + (offset)))
 
-u32 Random16(void);
-
 void Func_08029810(struct Actor *object) {
   u32 first;
   u32 second;

@@ -61,32 +61,17 @@ struct FxScene__f0e5d5c {
 
 extern char ResourceId_GlowDisc, ResourceId_GoldStar;
 
-void *HeapSlot_Alloc(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *object, s32 *position);
 s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
-void FieldPsynergy_FadeToCastColor(void);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Actor_ReleaseFar(struct Actor *object);
 void Func_080dba5c(void);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Camera_WorldToScreen(s32 *position);
-void *Resource_GetTableEntry(s32 resourceId);
-s32 Decompress_TaggedLz(const void *source, void *destination);
-s32 VramCache_FindFreeEntry(void);
-s32 VramCache_Load(u32 slot, u32 size, const void *source);
-s32 VramCache_FreeEntry(u32 slot);
-u32 Random16(void);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
-void wait(s32 frames);
 void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z);
 void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z);
 void BattleEffect_SinkAndShrinkObject(void);
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
-s32 Func_080ce31c(s32 kind);
-void FieldPsynergy_FadeFromCastColor(void);
 void Func_080e5a64(void);
 
 void FieldPsynergy_Pound(void) {

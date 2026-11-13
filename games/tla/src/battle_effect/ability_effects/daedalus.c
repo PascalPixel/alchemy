@@ -416,8 +416,6 @@ EffectSprite_Acquire__f17e698(s32, s32, u32,
                               s32) __asm__("EffectSprite_Acquire");
 
 void BattleEffect_FetchRectangleBlitters(s32, void **);
-s32 Trig_Cos(s32);
-s32 Trig_Sin(s32);
 void BattleEffect_StepPaletteToResource(s32);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);

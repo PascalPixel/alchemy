@@ -503,8 +503,6 @@ void BattleEffect_FlushPendingGraphicsTransfer(void);
 
 void BattleEffect_StepPaletteToResource(s32 resource);
 
-void *Resource_GetTableEntry(s32 id);
-
 static inline s32 Swirl_CopyPalette(const void *source) {
   return Iwram_CopyWordsEntry((void *)&BG_PLTT[96], source, 128);
 }

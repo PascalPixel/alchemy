@@ -67,7 +67,6 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
  * `BattleObject_GetFar'. */
 extern void **
 GetBattleObjectSlotFar__f173aac(s32 objectId) __asm__("BattleObject_GetFar");
-void *Resource_GetTableEntry(s32 resource);
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);

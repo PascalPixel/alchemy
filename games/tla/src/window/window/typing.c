@@ -91,7 +91,6 @@ void Message_ApplyStyle(struct UiChannelSlot *channel);
 s32 Text_CheckPauseSkipped(struct UiChannelSlot *channel);
 s32 Text_CheckTextDismissed(struct UiChannelSlot *channel);
 void WindowSprite_PrepareForRedraw(struct Window *window);
-void Sound_PlayFar(s32 cue);
 
 #define TEXT_SPEED gMainRoutineWork.eventMode
 #define ENTRY_MASK (UI_TEXT_ENTRY_COUNT - 1)

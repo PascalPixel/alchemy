@@ -620,7 +620,6 @@ extern u8 MsgChangeSettings[];
 extern u8 MsgRoughMenu[];
 extern const s8 gMenu_WorkspaceIcons[];
 
-s32 GameFlag_Test(s32 flag);
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 
 struct RenderInput *PauseMenu_Open(void) {

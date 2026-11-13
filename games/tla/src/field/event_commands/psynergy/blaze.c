@@ -46,23 +46,14 @@ extern char ResourceId_RedFlameBurst, ResourceId_VioletFlameBurst,
     ResourceId_YellowFlameBurst, ResourceId_BlueFlameBurst,
     ResourceId_DustPuffA;
 
-void *HeapSlot_Alloc(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
 s32 Func_08020330(struct Actor *object);
 void Field_StartColorTransition(s32 frames, s32 color);
-s32 Field_MeasurePsynergyReach(s32 effect, s32 from, s32 to);
 struct ObjectMetadata *Resource_GetMetadataRecordFarFar(s32 id);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Actor_ReleaseFar(struct Actor *object);
-void wait(s32 frames);
 void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target);
-void *Resource_GetTableEntry(s32 resourceId);
-s32 Decompress_TaggedLz(const void *source, void *destination);
-s32 VramCache_FindFreeEntry(void);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
-void FieldPsynergy_FadeFromCastColor(void);
 void Blaze_UpdateSpray(void);
 
 #define OBJECT_DEFINITION(object)                                              \

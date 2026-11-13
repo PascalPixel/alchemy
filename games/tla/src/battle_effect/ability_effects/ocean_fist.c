@@ -44,8 +44,6 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 
-void *Resource_GetTableEntry(s32 resource);
-
 extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_WhirlBeamSheet;
 extern char ResourceId_Data134;

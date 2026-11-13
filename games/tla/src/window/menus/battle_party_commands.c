@@ -149,7 +149,6 @@ s32 BattleParty_ChooseReserve(s32 slot) {
 }
 
 s32 BattleParty_ListLivingUnitsFar(s32 sideMask, u16 *unitIds);
-void *Unit_Get(s32 owner);
 
 s32 Func_0804babc(u16 *ready, struct BattleActionRecord **cursor,
                   s32 *forcedCount) {

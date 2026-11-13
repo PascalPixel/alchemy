@@ -696,8 +696,6 @@ void WorldMapPicture_DrawColumn(s32 column, s32 row) {
 /// The world map cursor's position (x, then y, 16.16 pixels).
 extern s32 *Data_0202a62c;
 
-s32 FixedSqrt(s32 value);
-
 #define SCROLL_X Ram_WorldMapScroll[0]
 #define SCROLL_Y Ram_WorldMapScroll[1]
 
@@ -796,15 +794,11 @@ extern s32 Data_0202a630;
 extern s32 Data_0202a634;
 
 void ObjectTable_Snapshot(void);
-void WindowSystem_InitFieldFar(void);
 void Task_ResetAll(void);
 void wait(s32 frames);
 void WorldPicture_Initialize(void);
 void WorldPicture_UpdateMarkers(void);
-void Func_080ec1d0(s32 *screenX, s32 *screenY);
 void Func_080ec2b8(s32 *screenX, s32 *screenY, s32 step);
-void FieldMessage_ShowFar(s32 message, s32 mode);
-void WindowSprite_PrepareForRedrawFar(void *window);
 void Func_080ca368(s32 scene, s32 entrance);
 void WorldPicture_Release(void);
 void WorldMap_LoadAreaGraphicsFar(void);

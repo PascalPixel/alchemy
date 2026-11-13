@@ -63,9 +63,6 @@ struct PendingEvent__f0e92b4 {
 
 extern char ResourceId_WaterSplash;
 
-void *HeapSlot_Alloc(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
-s32 Func_080ce31c(s32 kind);
 /* VIEW(f0e92b4): routine Scene_FindPsynergyTrigger as struct
  * PendingEvent__f0e92b4 *Scene_FindPsynergyTrigger(u32 kind, s32 entry, s32
  * arg); f0e5d5c has void *Scene_FindPsynergyTrigger(u32 kind, s32 entry, s32
@@ -75,18 +72,7 @@ Func_080ce458__f0e92b4(u32 kind, s32 entry,
                        s32 arg) __asm__("Scene_FindPsynergyTrigger");
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 s32 Func_08020330(struct Actor *object);
-void FieldPsynergy_FadeToCastColor(void);
-void *Resource_GetTableEntry(s32 resourceId);
-s32 Decompress_TaggedLz(const void *source, void *destination);
-s32 VramCache_FindFreeEntry(void);
-s32 VramCache_Load(u32 slot, u32 size, const void *source);
-s32 VramCache_FreeEntry(u32 slot);
 void Animation_ApplyChildValueFar(void *sprite, s32 value);
-void ViewMove_Start(s32 direction);
-void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude);
-void ViewMove_End(void);
-void wait(s32 frames);
-u32 Random16(void);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 /* VIEW(f0e92b4): routine EffectSprite_DrawAtWorldPosition as void
@@ -99,7 +85,6 @@ extern void EffectSprite_DrawAtWorldPosition__f0e92b4(
     struct SplashParticle
         *particle) __asm__("EffectSprite_DrawAtWorldPosition");
 void BattleEffect_ShiftRowsDown(u8 *base, s32 stride, s32 rows);
-void FieldPsynergy_FadeFromCastColor(void);
 
 void FieldPsynergy_GrindOnTarget(void) {
   struct SplashWork *work = HeapSlot_Alloc(92, 0x1920);
@@ -449,7 +434,6 @@ struct GlowEvent {
   s16 glowHeld;
 };
 
-s32 Party_GetLeaderActor(void);
 s32 Func_080dbcc0(s32 x, s32 z, s32 layer);
 void Camera_WorldToScreen(s32 *position);
 

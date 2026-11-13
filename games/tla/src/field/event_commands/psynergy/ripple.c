@@ -57,8 +57,6 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Camera_WorldToScreen(s32 *position);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
-u32 Random16(void);
-s32 Trig_Sin(s32 angle);
 
 void Func_080e446c(u8 *source, u8 *destination, s32 phase) {
   s32 width = 32;

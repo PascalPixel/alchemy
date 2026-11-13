@@ -39,14 +39,7 @@ struct RingEvent {
 
 extern char ResourceId_StarSparkleFade, ResourceId_RingArcs, ResourceId_Data1ED;
 
-void *HeapSlot_AllocEwram(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
-void FieldPsynergy_FadeToCastColor(void);
 void Camera_WorldToScreen(s32 *position);
-void wait(s32 frames);
-void *Resource_GetTableEntry(s32 resourceId);
-s32 Decompress_TaggedLz(const void *source, void *destination);
-s32 VramCache_FindFreeEntry(void);
 void Func_080e807c(void);
 /* VIEW(f0e82cc): routine Canvas_PlotPolarPixel as void Canvas_PlotPolarPixel(u8
  * *canvas, s32 radius, s32 angle, s32 color); the definition has void
@@ -55,8 +48,6 @@ extern void
 Canvas_PlotPolarPixel__f0e82cc(u8 *canvas, s32 radius, s32 angle,
                                s32 color) __asm__("Canvas_PlotPolarPixel");
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-u32 Random16(void);
-void FieldPsynergy_FadeFromCastColor(void);
 
 void FieldPsynergy_Unnamed28(void) {
   struct RingWork *work = HeapSlot_AllocEwram(92, 0x298c);
@@ -592,8 +583,6 @@ struct EffectScene__f0e82cc {
   s16 firstObjectId;
 };
 
-void FieldCamera_FollowActor(s32 id, s32 mode);
-
 // Ends a view move: gives the map back the view bounds ViewMove_Start kept
 // and lets the view follow the scene's first object again. Where the view
 // was held, it only stops the screen shake.
@@ -629,8 +618,6 @@ union FxSprite {
   u16 halves[10];
   u32 words[5];
 };
-
-s32 Field_MeasurePsynergyReach(s32 effect, s32 from, s32 to);
 
 /// Gathers up to eight live objects, other than the scene's main object, for
 /// which Field_MeasurePsynergyReach measures a distance from the first object,

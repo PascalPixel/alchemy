@@ -7,8 +7,6 @@
 #include "flag_call.h"
 #include "module/battle/presentation.h"
 
-u8 GameFlag_GetByte(s32 flag);
-
 /// Keeps up to thirty-two eligible formations near the party's adjusted
 /// average level, chooses one randomly and returns its level adjustment
 /// through outMargin. It first sets flags from others, clears the enemy flags

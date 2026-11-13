@@ -9,23 +9,11 @@ extern const u8 Data_080f1040[];
 extern const u8 gData_080f3614[];
 extern char ResourceId_Runes, ResourceId_Pebbles;
 
-void *HeapSlot_Alloc(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
-s32 Party_GetLeaderActor(void);
 void Field_StartColorTransition(s32 frames, s32 color);
 void Camera_WorldToScreen(s32 *position);
-void *Resource_GetTableEntry(s32 resourceId);
-s32 Decompress_TaggedLz(const void *source, void *destination);
-s32 VramCache_FindFreeEntry(void);
-s32 VramCache_Load(u32 slot, u32 size, const void *source);
-s32 VramCache_FreeEntry(u32 slot);
-u32 Random16(void);
-void wait(s32 frames);
-void Event_Wait(s32 frames);
 void Actor_StartScriptFar(struct Actor *object, const void *script);
 void Actor_ArmCallback(s32 id, s32 value, s32 flags);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-void FieldPsynergy_FadeFromCastColor(void);
 /* VIEW(f0ea14c): routine Func_080e9e8c as void Func_080e9e8c(void); the
  * definition has void Func_080e9e8c(struct Actor *object). */
 extern void Func_080e9e8c__f0ea14c(void) __asm__("Func_080e9e8c");

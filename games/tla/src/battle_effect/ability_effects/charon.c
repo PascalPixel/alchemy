@@ -205,7 +205,6 @@ void BattleEffect_StartCanvasLayer(s32);
 void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_WipeCanvas(s32, s32);
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
-void wait(s32);
 void Palette_LoadBasicSpriteColors(void);
 void BattleBackground_LoadFar(s32, s32, s32);
 void Palette_BrightenSavedBattleBg(s32, s32, s32);
@@ -226,12 +225,8 @@ extern struct SpriteObject__f175f74 *EffectSprite_CreateWithTiles__f175f74(
 extern struct SpriteObject__f175f74 *
 EffectSprite_Acquire__f175f74(s32, s32, u32,
                               u32) __asm__("EffectSprite_Acquire");
-void Resource_LoadAndDecompress(s32, void *, s32, s32);
 s32 Func_0800206c(s32, s32);
 
-s32 Trig_Sin(s32);
-s32 Trig_Cos(s32);
-s32 __divsi3(s32, s32);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void SceneTransform_ApplyScale3(s32, s32, s32);
 void SceneTransform_ApplyPosition3(s32, s32, s32);
@@ -258,7 +253,6 @@ void ColorBuffer_ScaleFar(void *, void *, s32, s32);
  * `BattleObject_GetFar'. */
 extern struct ActorPos **
 GetBattleObjectSlotFar__f175f74(s32) __asm__("BattleObject_GetFar");
-void BattleEffect_TintBattler(s32, s32, s32, s32, s32);
 void BattlePlayback_StartFar(s32);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,

@@ -417,8 +417,6 @@ void FieldPsynergy_GreyMindReadPalette(void) {
   Task_Add((TaskFunc)FieldEffect_ArmBg0HBlankDma, TASK_PASS_FRAME - 20);
 }
 
-void WindowColor_ApplyFar(s32 first, s32 second);
-
 /// Stops line scrolling and restores background palette 15.
 void FieldPsynergy_RestoreMindReadPalette(void) {
   u8 *work = Ram_HeapSlots->windowTiles;

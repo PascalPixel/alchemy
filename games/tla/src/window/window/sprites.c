@@ -468,8 +468,6 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
   }
 }
 
-s32 OamMatrix_AllocFromTransform(struct AffineTransform *transform);
-
 struct OutputSprite {
   u32 link;
   u8 y;

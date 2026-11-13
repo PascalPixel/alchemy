@@ -56,12 +56,7 @@ void Func_080dc954(void);
 void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
                            s32 action);
 void Func_080e42d4(void);
-void *Resource_GetTableEntry(s32 resourceId);
 extern char ResourceId_DustPuffA;
-s32 Decompress_TaggedLz(const void *source, void *destination);
-s32 VramCache_FindFreeEntry(void);
-s32 VramCache_Load(u32 slot, u32 size, const void *source);
-s32 VramCache_FreeEntry(u32 slot);
 /* VIEW(growing_particle): routine Func_080e45a8 as void Func_080e45a8(void
  * *sprite, void *particle, s32 index, s32 tiles, s32 high); the definition has
  * void Func_080e45a8(struct EffectSprite__f0e446c *sprite, struct
@@ -82,15 +77,12 @@ void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
 void Actor_SetFirstSpriteAnimationFar(struct Actor *object, s32 index);
 void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
 struct Actor *Actor_GetById(u32 objectId);
-void FieldCamera_FollowActor(s32 actor, s32 mode);
-s32 Func_080ce31c(s32 kind);
 /* VIEW(growing_particle): routine Scene_FindPsynergyTrigger as struct
  * PendingEvent *Scene_FindPsynergyTrigger(u32 filter, s32 kind, s32 selector);
  * battle.h has struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32
  * kind, s32 selector). */
 extern struct PendingEvent *Func_080ce458__growing_particle(
     u32 filter, s32 kind, s32 selector) __asm__("Scene_FindPsynergyTrigger");
-s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 argument);
 
 void FieldPsynergy_EndSand(void) {
   u8 *work = HeapSlot_Alloc(92, 0x192c);
@@ -234,8 +226,6 @@ void FieldPsynergy_Scoop(void);
 void FieldPsynergy_Parch(void);
 void FieldPsynergy_Hover(void);
 void Func_080e74d8(void);
-void FieldPsynergy_FadeFromCastColor(void);
-s32 Party_GetLeaderActor(void);
 
 /// Psynergy effect 23 cast on a target: runs its effect.
 void FieldPsynergy_SandOnTarget(void) { FieldPsynergy_Sand(); }

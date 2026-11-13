@@ -63,7 +63,6 @@ void Transform_ApplyYaw(s32 angle);
  * `BattleObject_GetFar'. */
 extern struct BattleObjectPosition **
 GetBattleObjectSlotFar__f16c274(s32 objectId) __asm__("BattleObject_GetFar");
-void *Resource_GetTableEntry(s32 resource);
 
 extern char ResourceId_Data0FB;
 extern char ResourceId_VenusDjinnSmallSheet;

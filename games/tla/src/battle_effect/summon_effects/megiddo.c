@@ -63,9 +63,7 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
  * `BattleObject_GetFar'. */
 extern void **GetBattleObjectSlotFar__summon_effects(s32 objectId) __asm__(
     "BattleObject_GetFar");
-void *Resource_GetTableEntry(s32 resource);
 
-void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);

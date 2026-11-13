@@ -206,8 +206,6 @@ s32 Party_CheckItemLimit(s32 item) {
 #define ITEM_GIVEN_MODE 3
 #endif
 
-s32 Inventory_GetQuantityFar(s32 member, s32 slot);
-
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   s16 saved = work->messageId;

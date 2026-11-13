@@ -51,7 +51,6 @@ struct CaptureObject__f0d8740 {
  * objectId). */
 extern struct CaptureObject__f0d8740 *
 Actor_GetById__f0d8740(s32 id) __asm__("Actor_GetById");
-void Actor_Jump(s32 id, s32 height, s32 frames);
 /* VIEW(f0d8740): routine Actor_CreateFar as struct CaptureObject__f0d8740
  * *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct
  * BattleEffectWatchedObject *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z). */

@@ -171,3 +171,20 @@ FieldEffect_GoldenTrident:
 FieldEffect_FireColumn:
 	.incbin "games/tla/src/graphics/field_effects/fire_column.8bpp.lz"
 	.byte 0xee, 0xd3	@ PACKER: left in the buffer by FieldEffect_GlowDisc+0x3fe
+	.section .rodata.d
+	.global FieldEffect_StarSparkleFade
+FieldEffect_StarSparkleFade:
+	.incbin "games/tla/src/graphics/field_effects/star_sparkle_fade.8bpp.lz"
+	.ifdef TLA_EDITION_JA
+	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
+	.else
+	.byte 0x01, 0x00, 0x00	@ PACKER: unused post-stream residue; Resource_DecodeType01 uses decoded RAM and output length; writer unknown
+	.endif
+	.global FieldEffect_WhitePuff
+FieldEffect_WhitePuff:
+	.incbin "games/tla/src/graphics/field_effects/white_puff.8bpp.lz"
+	.ifdef TLA_EDITION_JA
+	.byte 0x00, 0x0b	@ PACKER: left in the buffer by FieldEffect_Explosion+0x1d2
+	.else
+	.byte 0x12, 0x40	@ PACKER: unused post-stream residue; Resource_DecodeType01 uses decoded RAM and output length; writer unknown
+	.endif

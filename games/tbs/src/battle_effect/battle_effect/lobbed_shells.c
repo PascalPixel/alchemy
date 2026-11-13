@@ -4,9 +4,6 @@
 
 #include "../battle_effect_internal.h"
 
-// The shells take 16 slots of PARTICLES per target, of which the first
-// flies; LOBBED_SHELLS_BURSTS gives the bursts' slots.
-
 // Lobbed shells: a shell arcs from the user onto each target and bursts
 // into smoke or shards, in seven colourings.
 
@@ -71,23 +68,18 @@ void BattleEffect_RunStickyPoison(struct BattleEffectParams *args) {
 void BattleEffect_RunRottenBlood(struct BattleEffectParams *args) {
   BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_ROTTEN_BLOOD);
 }
-/// The bursts live after the shells in PARTICLES, from PARTICLES[256] (7168
-/// bytes is 256 particles of 28): 32 slots a target, of which 4 smoke puffs
-/// or 16 shards are used.
+/// The bursts, after the shells in PARTICLES.
 #define LOBBED_SHELLS_BURSTS (PARTICLES + 256)
 #define LOBBED_SHELLS_SLOTS 16        ///< particles reserved for each target
 #define LOBBED_SHELLS_BURST_SLOTS 256 ///< burst particles after the shells
 #define LOBBED_SHELLS_SMOKE_PICTURES 16000 ///< the smoke pictures in the sheet
 
-/// Nonzero when the style's shells burst into shards instead of smoke: the
-/// first of the style's two entries in gLobbedShells_Styles; the second is
-/// never read.
+/// Nonzero when the style's shells burst into shards instead of smoke.
 #define LOBBED_SHELLS_SHATTER(mode) gLobbedShells_Styles[(mode) * 2]
 
-/// Lobs a shell from the user at each target in turn, 8 frames apart. Each
-/// tumbles through ten images as it flies and, when it lands, the target
-/// flashes and the battle shows the damage; the shell bursts into 4 smoke
-/// puffs that drift up or 16 shards that fly up and fall.
+/// Lobs a shell from the user at each target in turn; when it lands the target
+/// flashes and the shell bursts into smoke that drifts up or shards that fly up
+/// and fall.
 void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint position;
   BlitterPair draw;
@@ -133,9 +125,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
     palette = Resource_GetTableEntry((s32)&ResourceId_GreenPalette);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 
-  // Each target's shells start 4 pixels up at the user, with a 16-frame
-  // flight to the target and an upward throw of 4 pixels a frame; only the
-  // first of each target's 16 is drawn.
+  // Each target's shell starts at the user.
   EFFECT_FREE_PARTICLES(i, PARTICLES, 1024);
   source = GetBattleObjectSlotFar(work->args->user)->actor;
   height = px(4);
@@ -154,7 +144,6 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   }
   EFFECT_FREE_PARTICLES(i, LOBBED_SHELLS_BURSTS, LOBBED_SHELLS_BURST_SLOTS);
 
-  // draw[0] draws the shells facing their flight.
   if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
@@ -184,7 +173,6 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
       draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
     }
   }
-  // Trails keep 3/4 a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER)
     total = work->args->targetCount * 8 + 72;
@@ -215,13 +203,10 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
              * 670 instructions differ in tbs-en. */
             do {
             } while (0);
-            // The shell tumbles through ten images, three frames each; the
-            // last five lie on their side.
+            // The shell tumbles as it flies.
             step = (frame - k * 8) / 3;
             if (step > 9)
               step = 9;
-            // shot's address spelled out, which loop.c reads from its
-            // strength-reduced register; as shot, r7 is passed (2 differ).
             Projection_Point(&PARTICLES[k * LOBBED_SHELLS_SLOTS], &position);
             position.x >>= 1;
             if (step > 4)
@@ -230,16 +215,13 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
             else
               draw[0](canvas, work->sheet + step * (24 * 32), position.x - 12,
                       position.y - 16, 24, 32);
-            // Half a pixel of gravity a frame while it flies.
             if (shot->variant == 0)
               Particle_AdvanceWithGravity3D(shot, 63, -px(1) / 2);
-            // On the ground: the shell stops, stays drawn where it lies, and
-            // bursts into target k's run of LOBBED_SHELLS_BURSTS.
+            // On the ground the shell stops and bursts.
             if (shot->y < 0) {
               s32 count;
               s8 *records = gLobbedShells_Styles;
               s32 row;
-              // Each target has four groups of eight burst slots.
               s32 groupSlots = 8;
 
               shot->y = 0;
@@ -255,8 +237,6 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
                 burst = &LOBBED_SHELLS_BURSTS[group * groupSlots + i];
 
                 SET_POSITION(burst, shot->x, shot->y, shot->z);
-                // Smoke drifts up to a pixel a frame across the ground;
-                // shards fly up to 4 across and 2 to 4 up.
                 if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER) {
                   SET_VELOCITY(burst, ((Random16() & 63) - 32) << 11, 0,
                                ((Random16() & 63) - 32) << 11);
@@ -273,7 +253,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
         k++;
       } while (k != work->args->targetCount);
     }
-    // The bursts, for 45 frames.
+    // The bursts.
     for (i = 0, burst = LOBBED_SHELLS_BURSTS; i != LOBBED_SHELLS_BURST_SLOTS;
          burst++, i++) {
       if ((u32)burst->variant <= 44 && burst->y >= 0) {
@@ -290,7 +270,6 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
 
           if (i & 1)
             picture += 9;
-          // Each shard faces the way it flies.
           flip = args->side;
           draw[burst->velocityX > 0 ? flip ^ 1 : flip](
               canvas,
@@ -300,8 +279,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
               gLobbedShells_ShardWidths[picture],
               gLobbedShells_ShardHeights[picture]);
         }
-        // Smoke rises, gaining 1/32 pixel a frame each frame; shards fall,
-        // gaining half a pixel.
+        // Smoke rises; shards fall.
         if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER)
           Particle_AdvanceWithGravity3D(burst, 62, px(1) / 32);
         else

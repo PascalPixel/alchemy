@@ -4,23 +4,12 @@
 
 #include "../battle_effect_internal.h"
 
-// Particle motion and projection into the battle view.
-//
-// Effect particles are Particles in 16.16 fixed point. The two
-// integrators move a particle one frame: they add its velocity to its
-// position, add gravity to its vertical speed and then damp every speed by a
-// factor out of 64 (64 keeps the speed, 60 loses about 6% a frame). The 3D one
-// works in field space, before projection; the 2D one works directly on the
-// screen, where a positive gravity pulls down.
-//
-// The EffectPosition_Project* helpers turn a point or a unit into an
-// ScreenPoint on the screen. Each returns a point 16 pixels higher than the
-// projection, which is where effects anchor on a unit. They differ only
-// in how the unit is projected: at its sprite's scaled height, scaled for
-// the battle view, or plainly.
+// Particle motion and projection. A particle moves a frame by its velocity,
+// gravity on its vertical speed, and a damping out of 64; the projection
+// helpers return a point 16 pixels above where a unit stands, where effects
+// anchor on it.
 
-/// Moves a particle one frame in three dimensions: adds its velocity, then
-/// gravity to its vertical speed, then damps every speed by damping / 64.
+/// Moves a particle one frame in three dimensions.
 void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
                                    s32 gravity) {
   step->x += step->velocityX;
@@ -31,8 +20,7 @@ void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
                step->velocityY * damping / 64, step->velocityZ * damping / 64);
 }
 
-/// Moves a particle one frame on the screen: adds its velocity, then
-/// gravity to its vertical speed, then damps both speeds by damping / 64.
+/// Moves a particle one frame on the screen.
 void Particle_AdvanceWithGravity2D(struct Particle *step, s32 damping,
                                    s32 gravity) {
   step->x += step->velocityX;
@@ -70,10 +58,8 @@ void Projection_Unit(s32 id, struct ScreenPoint *position) {
   position->y -= 16;
 }
 
-/// Projects a unit onto the screen, raised by half its table height (the
-/// table holds the full height in 16.16) at the sprite's scale. The view is
-/// reset to the battle camera first, so the result does not depend on the
-/// transform an effect has left behind.
+/// Projects a unit onto the screen, raised by half its height, from the battle
+/// camera.
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   struct BattleCamera *camera = gBattleCamera;
   struct Actor *actor;
@@ -89,17 +75,15 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   EFFECT_VIEW_FROM_CAMERA(camera);
   scale = Iwram_MulQ16(Transform_ProjectPoint(&actor->x.fixed, screen),
                        info->scale);
-  // The table height is 16.16: >> 17 takes half of it in whole pixels.
   screen[1] -= Iwram_MulQ16(scale, BattleUnit_GetEffectHeightFar(unit) >> 17);
   return 0;
 }
 
-// The Lost Age keeps the same empty function, and neither game calls it or
-// holds its address.
+// The Lost Age keeps the same empty function, and neither game calls it.
 // XXX (no evidence): what it was for, perhaps keys that once chose an
 // effect for enemy targets; only a debug build would show it.
-/// Reads the held keys when the first target is an enemy (FIRST_ENEMY_UNIT or
-/// more) and does nothing with them. Nothing calls it.
+/// Reads the held keys when the first target is an enemy and does nothing with
+/// them.
 void BattleEffect_ProbeKeysForExtendedActor(void) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   struct BattleEffectParams *args = work->args;
@@ -108,14 +92,12 @@ void BattleEffect_ProbeKeysForExtendedActor(void) {
     (void)gKeysHeld;
 }
 
-/// Runs a battle effect from the second range of kinds, split by enum
-/// BattleEffectIdRange: the casting impacts (kind -
-/// EFFECT_RANGE_CASTING_IMPACT), the beams and the ring and spark effects.
+/// Runs a battle effect from the second range of kinds: the casting impacts,
+/// the beams and the ring and spark effects.
 void BattleEffect_RunByIdRange(struct BattleEffectParams *args) {
   s32 kind;
   s32 value;
 
-  // One local holds the sheet size, then the kind, then the impact.
   value = 1550;
   HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SHEET, value);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BattleEffectWork));
@@ -123,8 +105,6 @@ void BattleEffect_RunByIdRange(struct BattleEffectParams *args) {
   value = args->kind;
   kind = value;
   value = kind - EFFECT_RANGE_CASTING_IMPACT;
-  // Unsigned, so kinds below EFFECT_RANGE_CASTING_IMPACT fall through to the
-  // beams too.
   if ((u32)value < EFFECT_RANGE_BEAM - EFFECT_RANGE_CASTING_IMPACT) {
     BattleEffect_RunCastingImpact(args, value);
   } else if (kind >= EFFECT_RANGE_RING_AND_SPARK) {

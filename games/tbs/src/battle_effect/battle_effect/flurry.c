@@ -80,14 +80,9 @@ enum FlurryColumn {
 /// The wave pictures, in the map grid buffer past the motes.
 #define FLURRY_WAVE_PICTURES (Ram_MapGridCellBuffer + 24064)
 
-/// The user closes on the first target and strikes it again and again; each
-/// strike shows an arc (or, with FLURRY_ARCS_AND_WAVES, a wave for the
-/// third and fourth of every four), flashes and throws motes. A
-/// strike lands 2 frames after it starts: an odd one jolts the target, and
-/// the last knocks it back, shakes the screen for longer (8 frames against
-/// 4) and ends the attack.
-/// The motes wait above the target until their strike releases them, then
-/// bounce off the ground and die out.
+/// The user closes on the first target and strikes it again and again, each
+/// strike an arc or a wave with a flash and a spray of motes; the last knocks
+/// the target back.
 void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint actorPos;
   struct ScreenPoint targetPos;
@@ -122,8 +117,6 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
 
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 
-  // Pack the flash (40x288) to half width at FLURRY_FLASH_PICTURES, as
-  // the canvas is shown at double width.
   Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work->sheet, 1,
                              0);
   for (row = 0; row != 288; row++) {
@@ -161,11 +154,9 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   wait(1);
 
   Projection_ScaledUnit(work->args->targets[0], &targetPos);
-  // Trails: each transfer keeps 3/4 of every canvas level.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  // Motes wait 25 pixels above the target, set to fly towards the middle of the
-  // field at up to 16 pixels a frame.
+  // Motes wait above the target until their strike releases them.
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   for (i = 0; i != 768; i++) {
     struct Particle *mote = &PARTICLES[i];
@@ -182,15 +173,12 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   BattleMotion_ApproachTargetFar(work->args->user, work->args->targets[0], 4,
                                  0);
 
-  // Each frame draws the strikes in progress, then the motes.
   for (frame = 0; frame != gFlurry_Styles[mode][FLURRY_FRAMES]; frame++) {
     s32 bursts = gFlurry_Styles[mode][FLURRY_STRIKES];
 
     Projection_ScaledUnit(work->args->user, &actorPos);
     actorPos.x /= 2;
 
-    // Arcs and waves; odd strikes are drawn flipped upside down, and on
-    // EFFECT_SIDE_PARTY both are mirrored.
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
@@ -215,7 +203,6 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
 
         if ((i & 3) <= 1 ||
             gFlurry_Styles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS) {
-          // The arc: six 48x72 pictures.
           if (work->args->side == EFFECT_SIDE_ENEMIES)
             draw[i & 1](canvas, work->sheet + step * (48 * 72),
                         targetPos.x / 2 - 16, targetPos.y - 40, 48, 72);
@@ -223,7 +210,6 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
             draw[i & 1](canvas, work->sheet + step * (48 * 72),
                         targetPos.x / 2 - 32, targetPos.y - 40, 48, 72);
         } else {
-          // The wave: six 48x16 pictures.
           if (work->args->side == EFFECT_SIDE_ENEMIES)
             draw[i & 1](canvas, FLURRY_WAVE_PICTURES + step * (48 * 16),
                         targetPos.x / 2 - 16, actorPos.y - 8, 48, 16);
@@ -233,7 +219,6 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
         }
       }
       if (frame == start + 2) {
-        // The hit; the last strike ends the attack.
         if (gFlurry_Styles[mode][FLURRY_FLASH] == 1)
           Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(47));
         BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
@@ -253,7 +238,6 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
         for (j = 0; j != gFlurry_Styles[mode][FLURRY_MOTES]; j++)
           PARTICLES[i * 32 + j].variant = (Random16() & 7) + 15;
       }
-      // The flash: six 20x48 pictures, 2 frames each.
       if (frame >= start + 2 && frame < start + 14)
         draw[0](canvas,
                 work->sheet + ((frame - start - 2) / 2) * (20 * 48) +
@@ -262,8 +246,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     }
     EFFECT_RELEASE_BLITTERS();
 
-    // Motes: a released mote's variant is its life, 15 to 22 frames, and it
-    // shrinks from mote size 3 (or 2) to 1 as the life runs out.
+    // Released motes fly and shrink as they die.
     EFFECT_VIEW_FROM_CAMERA(camera);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);

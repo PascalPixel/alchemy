@@ -141,7 +141,6 @@
 /// ★ Named from the game: "Anchor Charm" (MsgItemName)
 #define FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN FLAG_SCENE_TEMP_00
 
-
 /// Operations shared by the captain's quarters, passenger hold and rowing-deck
 /// events.
 enum ShipEventCommand {
@@ -1625,127 +1624,125 @@ static void ShipRooms_WatchWarriorsStormOff(void) {
   s32 seanSpeaker;
   const s32 *action;
 
-  if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) == 0) {
-    // Not yet: the party has not heard of the delay.
-  } else {
-    Event_Start();
-    Field_EndBusyAndReveal();
-    FieldCamera_SetSpeed(2.4);
-    ShipRooms_MoveCameraAndWait(1463, CAMERA_KEEP, 464,
-                                SHIP_CAMERA_WAIT_FOR_ARRIVAL | 20);
-    Actor_RunRepeatedMotion(ACTOR_HOLD_OURANOS, 1);
-    Event_SetMessageId(MsgTolbiShipIfWeArentGoingSet);
-    ShipRooms_Say(SPEAKER(ACTOR_HOLD_OURANOS, SPEAKER_PORTRAIT_RIGHT));
-    ShipRooms_Turn(ACTOR_HOLD_SECOND_GUIDE, FACING_NORTH_NORTHEAST);
-    guideSpeaker = SPEAKER(ACTOR_HOLD_SECOND_GUIDE, SPEAKER_WINDOW_BELOW);
-    Actor_ShowEmote(ACTOR_HOLD_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
-    Actor_StartRepeatedMotion(ACTOR_HOLD_SECOND_GUIDE, 2);
-    ShipRooms_Say(guideSpeaker);
-    Actor_RunRepeatedMotion(ACTOR_HOLD_SEAN, 1);
-    FieldEvent_ShowMessageThenWait(
-        SPEAKER(ACTOR_HOLD_SEAN, SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT),
-        0, 20);
-    ShipRooms_Turn(ACTOR_HOLD_SECOND_GUIDE, 0);
-    seanSpeaker =
-        SPEAKER(ACTOR_HOLD_SEAN, SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT);
-    Actor_ShowEmote(ACTOR_HOLD_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_QUESTION,
-                    40);
-    Actor_ShowEmote(ACTOR_HOLD_SEAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
-    Actor_StartRepeatedMotion(ACTOR_HOLD_SEAN, 3);
-    ShipRooms_Say(seanSpeaker);
-    Actor_SetAttachedEffect(ACTOR_HOLD_SECOND_GUIDE,
-                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Event_Wait(40);
-    Actor_StartRepeatedMotion(ACTOR_HOLD_SECOND_GUIDE, 3);
-    ShipRooms_Say(guideSpeaker);
-    Actor_RunRepeatedMotion(ACTOR_HOLD_SEAN, 1);
-    ShipRooms_Say(seanSpeaker);
-    ShipRooms_Turn(ACTOR_HOLD_SEAN, FACING_NORTH_NORTHWEST);
-    ShipRooms_Say(seanSpeaker);
-    ShipRooms_Turn(ACTOR_HOLD_SECOND_GUIDE, FACING_NORTH_NORTHEAST);
-    Actor_ShowEmote(ACTOR_HOLD_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                    30);
-    Actor_StartRepeatedMotion(ACTOR_HOLD_SECOND_GUIDE, 1);
-    ShipRooms_Say(guideSpeaker);
-    Actor_SetAnimationAndWait(ACTOR_HOLD_OURANOS, ANIM_SHAKE_HEAD);
-    ShipRooms_Say(SPEAKER(ACTOR_HOLD_OURANOS, SPEAKER_PORTRAIT_RIGHT));
-    Actor_StartRepeatedMotion(ACTOR_HOLD_OURANOS, 2);
-    ShipRooms_Say(SPEAKER(ACTOR_HOLD_OURANOS, SPEAKER_PORTRAIT_RIGHT));
-    Actor_SetAnimation(ACTOR_HOLD_SECOND_GUIDE, ANIM_SHAKE_HEAD);
-    ShipRooms_Say(guideSpeaker);
-    Actor_SetAnimationAndWait(ACTOR_HOLD_SEAN, ANIM_SHAKE_HEAD);
-    ShipRooms_Say(seanSpeaker);
-    ShipRooms_Turn(ACTOR_HOLD_SEAN, FACING_WEST);
-    Actor_StartRepeatedMotion(ACTOR_HOLD_SEAN, 2);
-    Event_ShowMessageThenWait(seanSpeaker, 0, 20);
-    Actor_FaceDirection(ACTOR_HOLD_SECOND_GUIDE, FACING_EAST, 0);
-    Actor_ShowEmote(ACTOR_HOLD_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-    Event_ShowMessageThenWait(guideSpeaker, 0, 20);
-    Actor_ShowEmote(ACTOR_HOLD_SEAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-    Actor_ShowEmote(ACTOR_HOLD_OURANOS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
-    Actor_StartRepeatedMotion(ACTOR_HOLD_SEAN, 2);
-    ShipRooms_Say(seanSpeaker);
-    ShipRooms_Turn(ACTOR_HOLD_SEAN, FACING_NORTH_NORTHWEST);
-    Actor_RunRepeatedMotion(ACTOR_HOLD_SEAN, 1);
-    ShipRooms_Say(seanSpeaker);
-    ShipRooms_Turn(ACTOR_HOLD_OURANOS, FACING_SOUTH_SOUTHEAST);
-    Actor_ShowEmote(ACTOR_HOLD_OURANOS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-    Actor_ShowEmote(ACTOR_HOLD_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_QUESTION,
-                    60);
-    Actor_RunRepeatedMotion(ACTOR_HOLD_OURANOS, 1);
-    ShipRooms_Say(ACTOR_HOLD_OURANOS);
-    Actor_ShowEmote(ACTOR_HOLD_SEAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
-    Actor_RunRepeatedMotion(ACTOR_HOLD_SEAN, 1);
-    ShipRooms_Say(seanSpeaker);
-    Actor_FaceDirection(ACTOR_HOLD_SECOND_GUIDE, FACING_NORTH_NORTHEAST, 0);
-    Actor_FaceDirection(ACTOR_HOLD_OURANOS, FACING_SOUTH_SOUTHWEST, 40);
-    Actor_FaceDirection(ACTOR_HOLD_SECOND_GUIDE, FACING_EAST, 0);
-    ShipRooms_Turn(ACTOR_HOLD_OURANOS, FACING_SOUTH_SOUTHEAST);
-    Actor_RunRepeatedMotion(ACTOR_HOLD_SECOND_GUIDE, 2);
-    Event_ShowMessageThenWait(guideSpeaker, 0, 20);
-    Actor_FaceDirection(ACTOR_HOLD_SEAN, FACING_SOUTH, 40);
-    ShipRooms_Say(seanSpeaker);
-    Actor_StartRepeatedMotion(ACTOR_HOLD_SECOND_GUIDE, 2);
-    Actor_RunRepeatedMotion(ACTOR_HOLD_OURANOS, 2);
-    Event_Wait(60);
-    Actor_RunRepeatedMotion(ACTOR_HOLD_OURANOS, 1);
-    ShipRooms_Say(ACTOR_HOLD_OURANOS);
-    Actor_SetAnimationAndWait(ACTOR_HOLD_SEAN, ANIM_NOD);
-    ShipRooms_Say(seanSpeaker);
-    Actor_ShowEmote(ACTOR_HOLD_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-    Actor_RunRepeatedMotion(ACTOR_HOLD_SECOND_GUIDE, 2);
-    ShipRooms_Say(guideSpeaker);
-    Actor_SetAnimationAndWait(ACTOR_HOLD_OURANOS, ANIM_NOD);
-    ShipRooms_Say(ACTOR_HOLD_OURANOS);
-    Actor_FaceDirection(ACTOR_HOLD_SEAN, FACING_NORTH_NORTHWEST, 40);
-    Actor_SetAnimation(ACTOR_HOLD_SEAN, ANIM_NOD);
-    Actor_SetAnimationAndWait(ACTOR_HOLD_OURANOS, ANIM_NOD);
-    Actor_SetSpeed(ACTOR_HOLD_SEAN, 1.6);
-    Actor_SetSpeed(ACTOR_HOLD_OURANOS, 1.6);
-    action = gShipRooms_LeaveHold;
-    Actor_SetScript(ACTOR_HOLD_SEAN, action);
-    Actor_SetScript(ACTOR_HOLD_OURANOS, action);
-    Event_Wait(20);
-    Actor_FaceDirection(ACTOR_HOLD_SECOND_GUIDE, FACING_SOUTH, 0);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 2.4);
-    Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 184, 520);
-    Event_Wait(1);
-    Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-    Actor_Jump(ACTOR_HOLD_SECOND_GUIDE, 4, 20);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 20);
-    Actor_StartRepeatedMotion(ACTOR_HOLD_SECOND_GUIDE, 2);
-    ShipRooms_Say(ACTOR_HOLD_SECOND_GUIDE);
-    Actor_SetSpeed(ACTOR_HOLD_SECOND_GUIDE, 1.6);
-    Actor_SetScript(ACTOR_HOLD_SECOND_GUIDE, action);
-    Event_Wait(40);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-    Actor_WaitForScriptEndById(ACTOR_HOLD_SECOND_GUIDE);
-    GameFlag_Set(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN);
-    Event_End();
-  }
+  // Not before the party has heard of the delay.
+  if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) == 0)
+    return;
+
+  Event_Start();
+  Field_EndBusyAndReveal();
+  FieldCamera_SetSpeed(2.4);
+  ShipRooms_MoveCameraAndWait(1463, CAMERA_KEEP, 464,
+                              SHIP_CAMERA_WAIT_FOR_ARRIVAL | 20);
+  Actor_RunRepeatedMotion(ACTOR_HOLD_OURANOS, 1);
+  Event_SetMessageId(MsgTolbiShipIfWeArentGoingSet);
+  ShipRooms_Say(SPEAKER(ACTOR_HOLD_OURANOS, SPEAKER_PORTRAIT_RIGHT));
+  ShipRooms_Turn(ACTOR_HOLD_SECOND_GUIDE, FACING_NORTH_NORTHEAST);
+  guideSpeaker = SPEAKER(ACTOR_HOLD_SECOND_GUIDE, SPEAKER_WINDOW_BELOW);
+  Actor_ShowEmote(ACTOR_HOLD_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
+  Actor_StartRepeatedMotion(ACTOR_HOLD_SECOND_GUIDE, 2);
+  ShipRooms_Say(guideSpeaker);
+  Actor_RunRepeatedMotion(ACTOR_HOLD_SEAN, 1);
+  FieldEvent_ShowMessageThenWait(
+      SPEAKER(ACTOR_HOLD_SEAN, SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT),
+      0, 20);
+  ShipRooms_Turn(ACTOR_HOLD_SECOND_GUIDE, 0);
+  seanSpeaker =
+      SPEAKER(ACTOR_HOLD_SEAN, SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT);
+  Actor_ShowEmote(ACTOR_HOLD_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Actor_ShowEmote(ACTOR_HOLD_SEAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
+  Actor_StartRepeatedMotion(ACTOR_HOLD_SEAN, 3);
+  ShipRooms_Say(seanSpeaker);
+  Actor_SetAttachedEffect(ACTOR_HOLD_SECOND_GUIDE,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Event_Wait(40);
+  Actor_StartRepeatedMotion(ACTOR_HOLD_SECOND_GUIDE, 3);
+  ShipRooms_Say(guideSpeaker);
+  Actor_RunRepeatedMotion(ACTOR_HOLD_SEAN, 1);
+  ShipRooms_Say(seanSpeaker);
+  ShipRooms_Turn(ACTOR_HOLD_SEAN, FACING_NORTH_NORTHWEST);
+  ShipRooms_Say(seanSpeaker);
+  ShipRooms_Turn(ACTOR_HOLD_SECOND_GUIDE, FACING_NORTH_NORTHEAST);
+  Actor_ShowEmote(ACTOR_HOLD_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  30);
+  Actor_StartRepeatedMotion(ACTOR_HOLD_SECOND_GUIDE, 1);
+  ShipRooms_Say(guideSpeaker);
+  Actor_SetAnimationAndWait(ACTOR_HOLD_OURANOS, ANIM_SHAKE_HEAD);
+  ShipRooms_Say(SPEAKER(ACTOR_HOLD_OURANOS, SPEAKER_PORTRAIT_RIGHT));
+  Actor_StartRepeatedMotion(ACTOR_HOLD_OURANOS, 2);
+  ShipRooms_Say(SPEAKER(ACTOR_HOLD_OURANOS, SPEAKER_PORTRAIT_RIGHT));
+  Actor_SetAnimation(ACTOR_HOLD_SECOND_GUIDE, ANIM_SHAKE_HEAD);
+  ShipRooms_Say(guideSpeaker);
+  Actor_SetAnimationAndWait(ACTOR_HOLD_SEAN, ANIM_SHAKE_HEAD);
+  ShipRooms_Say(seanSpeaker);
+  ShipRooms_Turn(ACTOR_HOLD_SEAN, FACING_WEST);
+  Actor_StartRepeatedMotion(ACTOR_HOLD_SEAN, 2);
+  Event_ShowMessageThenWait(seanSpeaker, 0, 20);
+  Actor_FaceDirection(ACTOR_HOLD_SECOND_GUIDE, FACING_EAST, 0);
+  Actor_ShowEmote(ACTOR_HOLD_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
+  Event_ShowMessageThenWait(guideSpeaker, 0, 20);
+  Actor_ShowEmote(ACTOR_HOLD_SEAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  Actor_ShowEmote(ACTOR_HOLD_OURANOS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
+  Actor_StartRepeatedMotion(ACTOR_HOLD_SEAN, 2);
+  ShipRooms_Say(seanSpeaker);
+  ShipRooms_Turn(ACTOR_HOLD_SEAN, FACING_NORTH_NORTHWEST);
+  Actor_RunRepeatedMotion(ACTOR_HOLD_SEAN, 1);
+  ShipRooms_Say(seanSpeaker);
+  ShipRooms_Turn(ACTOR_HOLD_OURANOS, FACING_SOUTH_SOUTHEAST);
+  Actor_ShowEmote(ACTOR_HOLD_OURANOS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_HOLD_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Actor_RunRepeatedMotion(ACTOR_HOLD_OURANOS, 1);
+  ShipRooms_Say(ACTOR_HOLD_OURANOS);
+  Actor_ShowEmote(ACTOR_HOLD_SEAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
+  Actor_RunRepeatedMotion(ACTOR_HOLD_SEAN, 1);
+  ShipRooms_Say(seanSpeaker);
+  Actor_FaceDirection(ACTOR_HOLD_SECOND_GUIDE, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_HOLD_OURANOS, FACING_SOUTH_SOUTHWEST, 40);
+  Actor_FaceDirection(ACTOR_HOLD_SECOND_GUIDE, FACING_EAST, 0);
+  ShipRooms_Turn(ACTOR_HOLD_OURANOS, FACING_SOUTH_SOUTHEAST);
+  Actor_RunRepeatedMotion(ACTOR_HOLD_SECOND_GUIDE, 2);
+  Event_ShowMessageThenWait(guideSpeaker, 0, 20);
+  Actor_FaceDirection(ACTOR_HOLD_SEAN, FACING_SOUTH, 40);
+  ShipRooms_Say(seanSpeaker);
+  Actor_StartRepeatedMotion(ACTOR_HOLD_SECOND_GUIDE, 2);
+  Actor_RunRepeatedMotion(ACTOR_HOLD_OURANOS, 2);
+  Event_Wait(60);
+  Actor_RunRepeatedMotion(ACTOR_HOLD_OURANOS, 1);
+  ShipRooms_Say(ACTOR_HOLD_OURANOS);
+  Actor_SetAnimationAndWait(ACTOR_HOLD_SEAN, ANIM_NOD);
+  ShipRooms_Say(seanSpeaker);
+  Actor_ShowEmote(ACTOR_HOLD_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Actor_RunRepeatedMotion(ACTOR_HOLD_SECOND_GUIDE, 2);
+  ShipRooms_Say(guideSpeaker);
+  Actor_SetAnimationAndWait(ACTOR_HOLD_OURANOS, ANIM_NOD);
+  ShipRooms_Say(ACTOR_HOLD_OURANOS);
+  Actor_FaceDirection(ACTOR_HOLD_SEAN, FACING_NORTH_NORTHWEST, 40);
+  Actor_SetAnimation(ACTOR_HOLD_SEAN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_HOLD_OURANOS, ANIM_NOD);
+  Actor_SetSpeed(ACTOR_HOLD_SEAN, 1.6);
+  Actor_SetSpeed(ACTOR_HOLD_OURANOS, 1.6);
+  action = gShipRooms_LeaveHold;
+  Actor_SetScript(ACTOR_HOLD_SEAN, action);
+  Actor_SetScript(ACTOR_HOLD_OURANOS, action);
+  Event_Wait(20);
+  Actor_FaceDirection(ACTOR_HOLD_SECOND_GUIDE, FACING_SOUTH, 0);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 2.4);
+  Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 184, 520);
+  Event_Wait(1);
+  Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+  Actor_Jump(ACTOR_HOLD_SECOND_GUIDE, 4, 20);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 20);
+  Actor_StartRepeatedMotion(ACTOR_HOLD_SECOND_GUIDE, 2);
+  ShipRooms_Say(ACTOR_HOLD_SECOND_GUIDE);
+  Actor_SetSpeed(ACTOR_HOLD_SECOND_GUIDE, 1.6);
+  Actor_SetScript(ACTOR_HOLD_SECOND_GUIDE, action);
+  Event_Wait(40);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+  Actor_WaitForScriptEndById(ACTOR_HOLD_SECOND_GUIDE);
+  GameFlag_Set(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN);
+  Event_End();
 }
 
 /// In the captain's quarters at Kalay: the passengers press the captain to

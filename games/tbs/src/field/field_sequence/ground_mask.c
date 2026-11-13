@@ -121,10 +121,8 @@ void FieldEffect_StartFadeOverlay(void *object) {
   work->actor = object;
 }
 
-/// Stops drawing the fade overlay, keeping its work. Reached only through a
-/// bare far-call veneer; nothing in the game names it.
+/// Stops drawing the fade overlay, keeping its work.
 void FadeOverlay_Suspend(void) { Task_SuspendAll(FadeOverlay_DrawMarks); }
 
-/// Draws the fade overlay again after FadeOverlay_Suspend. Reached only
-/// through a bare far-call veneer.
+/// Draws the fade overlay again after FadeOverlay_Suspend.
 void FadeOverlay_Resume(void) { Task_ResumeAll(FadeOverlay_DrawMarks); }

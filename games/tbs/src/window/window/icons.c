@@ -323,7 +323,7 @@ void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
           DMA_COPY_HALFWORDS(16), REG_DMA3);
 }
 
-/// An empty function. Nothing in the tree names it but its prototype.
+/// An empty function.
 void Icon_ReservedNoOp(void) {}
 
 /// Decodes a compressed icon into the glyph buffer and expands it to tiles,

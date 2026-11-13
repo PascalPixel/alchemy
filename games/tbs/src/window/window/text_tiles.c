@@ -576,8 +576,7 @@ void Text_SetColor(s32 param) {
 }
 
 /// Sets the text style (WindowWork.outline) of drawn text: 1 outlined, 2 to
-/// 5 a motion of glyph sprites. Reached only through a bare entry of the
-/// window far-call table.
+/// 5 a motion of glyph sprites.
 void Text_SetStyle(u16 value) {
   struct WindowWork *work = WINDOW_WORK;
 

@@ -131,9 +131,7 @@ UNUSED void Event_NoOpUpdateA(void) {}
 void Event_NoOpUpdate(void) {}
 
 /// Respawns the scene's actors from an actor placement table and
-/// waits one frame for them to appear. Reached only through an unnamed veneer
-/// in the field sequence bank's far-call table; nothing in The Broken Seal
-/// names it.
+/// waits one frame for them to appear.
 void Event_RunActorUpdateAndWait(struct ActorPlacement *table) {
   Event_NoOpUpdate();
   Actor_ResetForLeader(table);
@@ -371,8 +369,6 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
 }
 
 /// Gives item to one party member. Returns unit, or -1 if its bag is full.
-/// Reached only through an unnamed veneer in the field sequence bank's far-call
-/// table; nothing in The Broken Seal names it.
 s32 Inventory_TryAddAndReturnMember(s32 item, s32 unused, s32 unit) {
   if (Inventory_AddItemFar(unit, item) >= 0)
     return unit;
@@ -516,8 +512,7 @@ void Event_SetDestination(s32 sceneId, s32 entrance) {
 }
 
 /// Makes the event leave and records scene and entrance as the restart
-/// point. Reached only through an unnamed veneer in the field sequence bank's
-/// far-call table; nothing in The Broken Seal names it.
+/// point.
 void Event_SetRestartPoint(u16 sceneId, u16 entrance) {
   struct FieldWork *state = gFieldWork;
   state->exit = EXIT_KEEP_DESTINATION;

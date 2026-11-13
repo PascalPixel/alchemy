@@ -178,8 +178,7 @@ void Sound_UpdateBgmRamps(void) {
 /// Up and Down choose a row, Right and Left change its sound by 1, R and L by
 /// 10, and A plays it; B plays MUS_SILENCE, Start fades the music,
 /// and Select both steps the reverb code (SOUND_REVERB_NORMAL at first) and
-/// fades MUSIC_PLAYER_ACTION_SE. Never returns. Reached only through the sound
-/// far-call table's veneer; nothing in the game names it.
+/// fades MUSIC_PLAYER_ACTION_SE. Never returns.
 void SoundTest_Run(void) {
   // One row each for music, jingles and sound effects.
   s32 cues[3] = {0, SOUND_JINGLE_FIRST, SOUND_SE_FIRST};
@@ -273,23 +272,20 @@ void Sound_SetBgmTempo(u16 tempoScale) {
 }
 
 /// Applies a pitch offset, in 1/256 semitone, to the music's active tracks 0
-/// to 7 (TRACKS_ALL). Reached only through the sound far-call table's
-/// veneer.
+/// to 7 (TRACKS_ALL).
 void Sound_SetBgmPitch(u16 pitch) {
   m4aMPlayPitchControl(&gMPlayInfo_BGM, TRACKS_ALL, pitch);
 }
 
 /// Sets the target and per-VBlank step of the combined BGM tempo/pitch ramp
-/// (BGM_UNITY_SCALE the music's own). Reached only through the sound far-call
-/// table's veneer.
+/// (BGM_UNITY_SCALE the music's own).
 void Sound_SetBgmTempoPitchTarget(u16 targetScale, u16 step) {
   gBgmTempoPitchTarget = targetScale;
   gBgmTempoPitchStep = step;
 }
 
 /// Sets BGM volume (BGM_UNITY_SCALE full) immediately and cancels any
-/// outstanding volume ramp. Reached only through the sound far-call table's
-/// veneer.
+/// outstanding volume ramp.
 void Sound_SetBgmVolume(s16 volume) {
   m4aMPlayVolumeControl(&gMPlayInfo_BGM, TRACKS_ALL, volume);
   gBgmVolumeTarget = volume;
@@ -297,7 +293,6 @@ void Sound_SetBgmVolume(s16 volume) {
 }
 
 /// Sets the BGM volume target (BGM_UNITY_SCALE full) and its per-VBlank step.
-/// Reached only through the sound far-call table's veneer.
 void Sound_SetBgmVolumeTarget(u16 targetVolume, u16 step) {
   gBgmVolumeTarget = targetVolume;
   gBgmVolumeStep = step;
@@ -312,16 +307,13 @@ void Sound_SetBgmVolumeTarget(u16 targetVolume, u16 step) {
 s32 Sound_GetBgmRestoreDelay(void) { return gBgmRestoreDelay; }
 
 /// Stops every sound player while preserving its state for a later resume.
-/// Reached only through the sound far-call table's veneer.
 void Sound_StopAllMusicPlayers(void) { m4aMPlayAllStop(); }
 
 /// Resumes every player, each from where m4aMPlayAllStop stopped it.
-/// Reached only through the sound far-call table's veneer.
 void Sound_ResumeAllMusicPlayers(void) { m4aMPlayAllContinue(); }
 
 /// Replaces the audio command mask, or toggles its requested bits when
-/// flagged. Reached only through the sound far-call table's veneer; nothing
-/// in the game reads gSoundCommandMask by name.
+/// flagged.
 void Sound_UpdateCommandMask(u32 command) {
   u32 toggle = command & SOUND_COMMAND_MASK_TOGGLE;
 

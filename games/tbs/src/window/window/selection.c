@@ -608,8 +608,7 @@ SelectionMenu_GetCursorNode(struct SelectionMenuWork *screen) {
 
 /// Runs the selection row until the player chooses (the chosen entry's index)
 /// or, when mode allows it, cancels with B (-1). SELECTION_FIXED allows no
-/// moving or choosing; any mode but 0 allows cancelling. Reached only through
-/// a bare entry of the window far-call table.
+/// moving or choosing; any mode but 0 allows cancelling.
 s32 SelectionMenu_Run(s32 mode) {
   struct SelectionMenuWork *screen = gSelectionMenuWork;
 

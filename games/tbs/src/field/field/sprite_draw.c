@@ -331,8 +331,7 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
 /// Positions a sprite's image (part 0) and shadow (part 1) on the screen: the
 /// image centred on screenX and raised height above screenY, the shadow at
 /// groundHeight. scale is the sprite's (x, y) scale (16.16); above 1.0 both
-/// parts use the double-size affine mode. It has a bare veneer in the field
-/// far-call table, and no caller names it.
+/// parts use the double-size affine mode.
 void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
                                 s32 screenY, s32 groundHeight, s32 *scale) {
   u32 halfWidth = sprite->width >> 1;

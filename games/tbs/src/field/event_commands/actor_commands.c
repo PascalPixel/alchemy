@@ -409,7 +409,7 @@ void Actor_SetAnimationAndWait(u32 actorId, s32 animation) {
 }
 
 /// An empty function, reached only through an unnamed veneer in the object
-/// bank's far-call table; nothing in the game names it.
+/// bank's far-call table.
 void Actor_NoOp(void) {}
 
 /// The event command "actor jump": throws the actor upward at
@@ -837,8 +837,7 @@ s32 Actor_StepAngle(struct Actor *actor) {
 }
 
 /// Clears an actor's destination, puts it under script control and
-/// stands it still. Reached only through an unnamed veneer in the field
-/// sequence bank's far-call table; nothing in the game names it.
+/// stands it still.
 void Actor_ClearDestinationAndStand(u32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
 
@@ -937,8 +936,7 @@ s32 Actor_GetSpriteById(s32 actorId) {
 }
 
 /// Returns the first of the scene's actors (ACTOR_FIRST_PLACED to
-/// ACTOR_LAST_ID) showing sprite, or -1. Reached only through an unnamed veneer
-/// in the field sequence bank's far-call table; nothing in the game names it.
+/// ACTOR_LAST_ID) showing sprite, or -1.
 s32 Actor_FindBySprite(s32 sprite) {
   struct FieldWork *state = gFieldWork;
   s32 result = -1;

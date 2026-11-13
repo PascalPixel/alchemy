@@ -197,8 +197,7 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
 }
 
 /// Releases the actor in slot actorIndex, if there is one, and
-/// empties the slot. No caller names it; its far-call veneer has no exported
-/// name.
+/// empties the slot.
 void Actor_ReleaseAtIndex(s32 actorIndex) {
   struct FieldWork *work = gFieldWork;
   void *object = Actor_Lookup(actorIndex);

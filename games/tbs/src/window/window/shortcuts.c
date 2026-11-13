@@ -76,15 +76,13 @@ void AreaNameWindow_Hide(void) {
   }
 }
 
-/// Removes itemId from the party's inventory and returns 0. Reached only
-/// through a bare entry of the window far-call table
-/// (gamepak/far_call/WINDOW.S).
+/// Removes itemId from the party's inventory and returns 0.S).
 s32 Item_RemoveFromInventory(s32 unused, s32 itemId) {
   PartyInventory_RemoveFar(itemId);
   return 0;
 }
 
-/// Returns 1. Reached only through a bare entry of the window far-call table.
+/// Returns 1.
 s32 Item_ReturnTrue(void) { return 1; }
 
 /// Steps the window hue one step: back when keys contains LEFT, on
@@ -322,8 +320,7 @@ void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
   }
 }
 
-/// Runs the Psynergy shortcut picker. Reached only through a bare entry of the
-/// window far-call table.
+/// Runs the Psynergy shortcut picker.
 void Menu_RunSelectionHook(void) { Debug_SelectShortcuts(); }
 
 /// The work block of HEAP_SLOT_SELECTION_WORKSPACE (gSelectionWorkspace): two

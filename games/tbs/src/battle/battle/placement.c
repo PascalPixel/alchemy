@@ -339,7 +339,7 @@ s32 Enemy_GetFreeUnitId(void) {
 }
 
 /// Lays the enemies out again and moves each one's battle object anchor to its
-/// new place. Writes the anchorX and anchorZ of every enemy's battle object.
+/// new place.
 UNREAD_RESULT BattlePlacement_RelayoutEnemies(void) {
   struct BattleWork *battle = gBattleWork;
   u16 unitIds[UNIT_MAX];
@@ -368,8 +368,7 @@ UNREAD_RESULT BattlePlacement_RelayoutEnemies(void) {
 
 /// Places every unit at the start of a battle: numbers the places (party
 /// members 0 up in their order, enemies 8 to 13) and creates each unit's battle
-/// object at its spot. Writes gBattleWork->placement and every unit's battle
-/// object.
+/// object at its spot.
 void BattleUnit_RefreshPlacement(void) {
   struct BattleWork *battle;
   u16 unitIds[UNIT_MAX];
@@ -422,8 +421,7 @@ void BattleUnit_RefreshPlacement(void) {
   }
 }
 
-/// Returns 1 if the unit at place is in list. Called by
-/// BattleObject_SpawnObjectsForList to find the actors to release.
+/// Returns 1 if the unit at place is in list.
 /// @param list unit ids, ended by BATTLE_UNIT_LIST_END, UNIT_MAX at most
 /// @param place 0 to 7 a party unit id, 8 to 13 the enemies
 s32 BattlePlacement_ContainsId(s16 *list, s32 place) {

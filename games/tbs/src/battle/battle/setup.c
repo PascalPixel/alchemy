@@ -5,19 +5,13 @@
 
 #include "../battle_internal.h"
 
-/// Runs each frame of a battle. In a link battle it first checks the link:
-/// a connection lost for more than LINK_MAX_MISSED_FRAMES frames, or a
-/// console whose link number changed, pauses the battle. Then it turns the
-/// camera a sixteenth of the way toward gBattleBackgroundWork's targetYaw,
-/// places the camera at its position (or at the one it follows) with its yaw,
-/// pitch and distance, and, unless its flag holds the background, refreshes the
-/// background's zoom. Runs as a task that
-/// Battle_Run adds with priority TASK_PASS_FRAME - 1: in the frame
-/// pass, after the tasks of priority TASK_PASS_FRAME (the objects'
-/// camera, the sprite priorities and playback). Changes battle->linkMisses and
-/// linkPaused, the camera's yaw and gBattleBackgroundWork's frame count, the
-/// transform state, and through BattleCamera_SetRange the background's affine
-/// page.
+/// Runs each frame of a battle. In a link battle it first checks the link: a
+/// connection lost for more than LINK_MAX_MISSED_FRAMES frames, or a console
+/// whose link number changed, pauses the battle. Then it turns the camera a
+/// sixteenth of the way toward gBattleBackgroundWork's targetYaw, places the
+/// camera at its position (or at the one it follows) with its yaw, pitch and
+/// distance, and, unless its flag holds the background, refreshes the
+/// background's zoom.
 void BattleCamera_Update(void) {
   void **slots = &gHeapSlots[HEAP_SLOT_CAMERA];
   struct BattleCamera *camera = slots[0];
@@ -116,8 +110,7 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
 /// Fills the battle's two unit lists, each ended by BATTLE_UNIT_LIST_END: the
 /// party members in their order, and the enemies, left to right for a random
 /// formation or, for a fixed one, alternating out from the centre
-/// (gBattleParty_CenterOrderOffsets). Writes gBattleWork->partyUnits and
-/// enemyIds, and marks each party member's side.
+/// (gBattleParty_CenterOrderOffsets).
 void BattleUnit_Collect(void) {
   u16 unitIds[UNIT_MAX];
   struct BattleWork *battle;
@@ -222,8 +215,7 @@ UNREAD_RESULT BattleParty_ResetActiveRuntimeFields(void) {
 /// Brings the Djinn recovery list up to date as a battle starts: every Djinni a
 /// party member has on standby that the list lacks joins it. Then, outside a
 /// link battle, each Djinni waiting for a battle to end whose unit has no
-/// battle object is Set again and leaves the list. Changes the party's and the
-/// opponent's recovery lists and Djinn states.
+/// battle object is Set again and leaves the list.
 UNREAD_RESULT DjinnRecovery_Reconcile(void) {
   u16 unitIds[10];
   s32 count;
@@ -288,18 +280,13 @@ UNREAD_RESULT DjinnRecovery_Reconcile(void) {
 /// The summon ids the mask covers, one bit each.
 #define SUMMON_COUNT 32
 
-/// Works out which summons the party can call: one whose Djinn requirement
-/// of every element is met by the Djinn the party holds of that element
+/// Works out which summons the party can call: one whose Djinn requirement of
+/// every element is met by the Djinn the party holds of that element
 /// (djinnHeldCounts, set or not), all party members together. Whether enough of
 /// them are on standby is checked as the summon is chosen
-/// (BattleSummonMenu_Run, Battle_CollectPartyCommands) and again when it
-/// is built (BattleActionRun_Build). Stores the mask of them (bit n for
-/// summon n) and returns the state that holds it. Called by
-/// Battle_Run as the battle is set up and at the start of each
-/// turn, which asks for the party status window's standby Djinn column
-/// (PARTY_STATUS_SUMMONS) while the mask is not 0; PartyStatus_Draw shows it
-/// only while a Djinni is on standby. Writes the party recovery table's
-/// availableMask.
+/// (BattleSummonMenu_Run, Battle_CollectPartyCommands) and again when it is
+/// built (BattleActionRun_Build). Stores the mask of them (bit n for summon n)
+/// and returns the state that holds it.
 struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
   u8 totals[ELEMENT_COUNT];
   u16 partyMembers[10];

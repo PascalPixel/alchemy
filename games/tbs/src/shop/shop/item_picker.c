@@ -5,12 +5,7 @@
 #include "../shop_internal.h"
 
 /// Lets the player choose a party member, then one of its items that may be
-/// dropped. Writes the party member and inventory slot to `selectedUnit` and
-/// `selectedSlot` and returns 0, or writes -1 to both and returns -1 when
-/// cancelled. Holds the shop's work block while it runs. Reached through
-/// SHOP.S when an item is found with every bag full ("What will you drop?",
-/// PartyInventory_GiveItem), by the Elemental Star room's Mythril Bags and by
-/// the debug menu.
+/// dropped. Holds the shop's work block while it runs.
 s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
   struct ShopWork *shop;
   struct WindowSprite *cursorAnchor;
@@ -127,8 +122,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
 /// Lets the player choose one of the party member's items to drop, refusing an
 /// indispensable one with a message and an equipped cursed one with only the
 /// cancel sound (the game's bug; BUGFIX shows its message, see
-/// SHOP_CANNOT_REMOVE_STATUS). Returns the slot, or -1 when cancelled. Called
-/// by ItemPicker_Run.
+/// SHOP_CANNOT_REMOVE_STATUS). Returns the slot, or -1 when cancelled.
 s32 ItemPicker_SelectItem(s32 unitId) {
   struct ShopWork *shop = gMenuWork;
 

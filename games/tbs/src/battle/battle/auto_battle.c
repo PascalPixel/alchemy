@@ -205,9 +205,7 @@ s32 AutoBattle_ShowDefend(const struct BattleAction *action) {
 /// Auto battle: casts Psynergy. The camera turns to the caster's side and the
 /// caster raises its hand; the target side fades out, its living units are
 /// readied alone, the Psynergy's effect (kind action->parameter) plays on them,
-/// and everyone fades back in. Returns -1 for an invalid unit or target. Writes
-/// REG_BLDCNT and REG_BLDALPHA and the actors' colour modes, and leaves the
-/// battle objects readied again.
+/// and everyone fades back in. Returns -1 for an invalid unit or target.
 s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   u16 visibleUnits[UNIT_MAX];
   struct BattleStagingWork context;

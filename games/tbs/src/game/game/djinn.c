@@ -143,9 +143,8 @@ u32 Djinn_PutOnStandby(s32 unitId, s32 element, s32 djinnIndex) {
   return wasActive;
 }
 
-/// Takes the Djinni off its side's standby and recovery list, closing the
-/// gap. Returns 1 when it was there. Called when a Djinni is set again, by the
-/// Djinn menu and by battle's recovery.
+/// Takes the Djinni off its side's standby and recovery list, closing the gap.
+/// Returns 1 when it was there.
 s32 DjinnRecovery_Remove(s32 unitId, s32 element, s32 djinnIndex) {
   struct DjinnRecoveryList *list;
   s32 removed = 0;
@@ -169,8 +168,7 @@ s32 DjinnRecovery_Remove(s32 unitId, s32 element, s32 djinnIndex) {
 /// Puts unit unitId's Djinni at the end of its side's list on standby
 /// (DJINN_RECOVERY_AFTER_BATTLE), moving it there if it was already listed.
 /// Returns a pointer to the list's count. Nothing checks the list's 64-entry
-/// capacity. Called when a Djinni joins, by the Djinn menu's standby command,
-/// by battle and by the event where Flint joins.
+/// capacity.
 u32 *DjinnRecovery_AddStandby(u32 unitId, u32 element, u32 djinnIndex) {
   struct DjinnRecoveryList *list;
   s32 count;

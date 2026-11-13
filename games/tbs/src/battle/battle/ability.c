@@ -95,9 +95,8 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 /// once: Unit_CalculateFar recalculates a unit's stats from its stages, and
 /// Unit_RecalculateGaugesFar its HP and PP gauges after either changes.
 ///
-/// Called for each target in turn by BattlePlayback_Run (an action with an
-/// battle effect) and BattleStaging_RunActorEntries (one without). It takes
-/// Battle_RandomFar rolls, and borrows a heap block for the target's copy.
+/// It takes Battle_RandomFar rolls, and borrows a heap block for the target's
+/// copy.
 ///
 /// It runs in phases, each marked in the body:
 /// 1. Setup: a copy of the target as it was; the target's distance from the
@@ -113,7 +112,6 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 ///    revivals, statuses, drains, Break, the curse, guards.
 /// 7. Waking from damage, the recalculated stats, the redraw, and the evil
 ///    spirit's share for a haunted unit.
-///
 /// @param plan the action under way: the acting unit, the ability, its element
 /// and its targets, each with its distance from the aimed position, damage
 /// multiplier, critical hit and any hit roll made in advance

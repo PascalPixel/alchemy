@@ -11,14 +11,12 @@
 /// The curtain's map entries: tile 128 + n of CURTAIN_TILE, WINDOW_PALETTE.
 #define TRANSITION_CURTAIN_ENTRY(n) (0xf080 + (n))
 
-/// Fades the screen to black over sixteen frames as every background's
-/// mosaic grows, then shows no layer.
-/// Reached only through its entry in the battle bank's far-call table
-/// (FarCall_BattleTable), which no code in TBS names. Sets REG_BLDCNT to
-/// darken the backgrounds, leaves REG_MOSAIC at its largest and REG_DISPCNT
-/// in DISPCNT_MODE_1 with every layer off; the four BGxCNT are put back as they
-/// were. It draws four random numbers a frame, which only advances the
-/// random number generator. Returns 0.
+/// Fades the screen to black over sixteen frames as every background's mosaic
+/// grows, then shows no layer. Sets REG_BLDCNT to darken the backgrounds,
+/// leaves REG_MOSAIC at its largest and REG_DISPCNT in DISPCNT_MODE_1 with
+/// every layer off; the four BGxCNT are put back as they were. It draws four
+/// random numbers a frame, which only advances the random number generator.
+/// Returns 0.
 s32 BattleTransition_RunMosaicFadeOut(void) {
   /* FAKEMATCH(volatile): the four saved BGxCNT values kept on the stack, each
    * stored and loaded again; as plain u16 locals, 61 of 90 instructions
@@ -66,11 +64,9 @@ s32 BattleTransition_RunMosaicFadeOut(void) {
 }
 
 /// Builds the zoomed background's 32 by 32 affine map: tiles 0 to 255 in its
-/// first eight rows, 0 to 223 in the next seven, and 0xff in the rest.
-/// The two runs show the background picture's two halves, which the
-/// scanline BG2CNT values (BattleCamera_SetRange) read from character blocks 2
-/// and 3. Called with screen block 7 by BattleBackground_Load and
-/// BattleBackground_SetMode.
+/// first eight rows, 0 to 223 in the next seven, and 0xff in the rest. The two
+/// runs show the background picture's two halves, which the scanline BG2CNT
+/// values (BattleCamera_SetRange) read from character blocks 2 and 3.
 void Graphics_BuildSequentialTileTable(void *tilemap) {
   u32 *words = tilemap;
   u32 tiles;
@@ -91,12 +87,10 @@ void Graphics_BuildSequentialTileTable(void *tilemap) {
   Iwram_FillWords(words, 544, -1);
 }
 
-/// Builds BG1's flat map of the same picture: rows 0 to 3 0xffff, rows 4 and
-/// 5 tile 1023, rows 6 to 20 tiles 512 to 991 in order, then tile 1023.
-/// In 256 colours from character block 0, tile 512 is the start of block 2,
-/// where BattleBackground_Load decodes the picture. Called with screen block
-/// 31 (BATTLE_BG1CNT) by BattleBackground_Load and
-/// BattleBackground_SetMode.
+/// Builds BG1's flat map of the same picture: rows 0 to 3 0xffff, rows 4 and 5
+/// tile 1023, rows 6 to 20 tiles 512 to 991 in order, then tile 1023. In 256
+/// colours from character block 0, tile 512 is the start of block 2, where
+/// BattleBackground_Load decodes the picture.
 void BattleTransition_BuildTilemap(void *tilemap) {
   u32 *pairs = tilemap;
   u32 pair;
@@ -114,13 +108,9 @@ void BattleTransition_BuildTilemap(void *tilemap) {
   Iwram_FillWords(pairs, 640, 0x03ff03ff);
 }
 
-/// Shows the zoomed background's finished page each VBlank while the
-/// background is BATTLE_BACKGROUND_ZOOMED: its first line's BG2CNT now, the
-/// rest by HBlank DMA 0, and its affine parameters into BG2PA to BG2Y. Runs
-/// each VBlank as a task, in the VBlank pass at its highest
-/// priority (TASK_PASS_VBLANK + 127), added by BattleBackground_Load and
-/// BattleBackground_SetMode; BattleCamera_SetRange builds the
-/// pages.
+/// Shows the zoomed background's finished page each VBlank while the background
+/// is BATTLE_BACKGROUND_ZOOMED: its first line's BG2CNT now, the rest by HBlank
+/// DMA 0, and its affine parameters into BG2PA to BG2Y.
 void BattleBackground_ShowZoomedPage(void) {
   struct BattleBackgroundWork *view =
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
@@ -152,12 +142,9 @@ void BattleTransition_UploadTileVariant(void) {
 
 /// Advances the curtain opening by a frame: scrolls BG0 from 32 pixels to 0
 /// over frames 20 to 52, and over frames 0 to 80 turns the camera round to
-/// YAW_PARTY_ACTION and zooms it from 180 to 100 percent.
-/// Runs each frame as a task added by
-/// BattleTransition_Run, which removes it once the encounter
-/// is announced. Advances the timer in gBattleEntryTimer's slot
-/// (HEAP_SLOT_BATTLE_ENTRY_TIMER), and writes gBgScroll[0].y and the camera's
-/// yaw.
+/// YAW_PARTY_ACTION and zooms it from 180 to 100 percent. Advances the timer in
+/// gBattleEntryTimer's slot (HEAP_SLOT_BATTLE_ENTRY_TIMER), and writes
+/// gBgScroll[0].y and the camera's yaw.
 void BattleTransition_AdvanceTimer(void) {
   void **slots = &gHeapSlots[HEAP_SLOT_BATTLE_ENTRY_TIMER];
   u32 *timer = slots[0];
@@ -185,10 +172,7 @@ void BattleTransition_AdvanceTimer(void) {
 /// Draws the curtain opening on BG1 as it stands at the current frame: over 80
 /// frames a row moves up from row 13 to row 4 and its vertically flipped twin
 /// down to row 20, the row's tile stepping through CURTAIN_TILE(1) to (8), the
-/// last one clear. Runs each VBlank as a task in the VBlank pass, added by
-/// BattleTransition_Run, reading the frame from gBattleEntryTimer's timer,
-/// which BattleTransition_AdvanceTimer counts in the frame pass; writes BG1's
-/// map in screen block 12.
+/// last one clear.
 void BattleTransition_DrawRows(void) {
   u32 column;
   s32 transitionFrame;

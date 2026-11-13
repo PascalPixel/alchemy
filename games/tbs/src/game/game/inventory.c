@@ -55,8 +55,7 @@ s32 Item_GetEquipmentGroup(s32 itemId) {
 }
 
 /// Returns how many of the item in `slot` the unit carries (0 for an empty
-/// slot). The entry stores one less than the count. Reached through GAME.S as
-/// Shop_GetSelectionState; nothing in this image calls it by name.
+/// slot). The entry stores one less than the count.
 s32 Inventory_GetQuantity(s32 unitId, s32 slot) {
   u32 entry = Unit_Get(unitId)->inventory[slot];
 
@@ -112,8 +111,7 @@ s32 PartyInventory_CountFreeSlots(void) {
 
 /// Gives a unit one item, joining its first matching stack (up to 30) or taking
 /// the first free slot. A full matching stack fails immediately, even if
-/// another slot is free. Writes the inventory slot; returns it, or -1 when
-/// there was no room.
+/// another slot is free.
 s32 Inventory_AddItem(s32 unitId, s32 itemId) {
   struct Unit *unit = Unit_Get(unitId);
   struct ItemDefinition *item = Item_GetDirect(itemId);
@@ -153,9 +151,8 @@ s32 Inventory_AddItem(s32 unitId, s32 itemId) {
   return -1;
 }
 
-/// Gives the item to the first party member with room. Returns who took it,
-/// or -1. Called for a battle's spoils, a chest or search in the field, and
-/// the events that give items.
+/// Gives the item to the first party member with room. Returns who took it, or
+/// -1.
 s32 PartyInventory_Add(s32 itemId) {
   s16 unitIds[10];
   s32 unitCount = Party_ListMembers(unitIds);
@@ -375,8 +372,7 @@ s32 PartyInventory_Discard(s32 itemId) {
   return 0;
 }
 
-/// Marks the item in `slot` broken; returns -1 for an empty slot. Called when
-/// a used item breaks, in battle or from the item menu.
+/// Marks the item in `slot` broken; returns -1 for an empty slot.
 s32 Inventory_Break(s32 unitId, s32 slot) {
   struct Unit *unit = Unit_Get(unitId);
 

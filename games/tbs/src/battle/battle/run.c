@@ -25,14 +25,7 @@
 /// with the turn-end effects; the Djinn tutorial adds its two messages
 /// after each turn.
 ///
-/// Reached through its far stub from MainRoutine_Run's switch on the
-/// sequence (SEQUENCE_BATTLE, with the entrance as enemyGroup), and from
-/// DebugBattle_RunMenu. Allocates the battle's heap slots (the camera,
-/// gBattleWork, the enemy units, the background transition, the battle message
-/// window and others), sets FLAG_IN_BATTLE, and on its way out resets the
-/// party's battle state, sets gMainRoutineWork.battleType back to
-/// BATTLE_TYPE_NORMAL and releases heap block 10. A broken link also sets flag
-/// FLAG_AREA_TEMP_E8, which the Battle Arena reads
+/// A broken link also sets flag FLAG_AREA_TEMP_E8, which the Battle Arena reads
 /// (BattleArena_Initialize).
 s32 Battle_Run(s32 enemyGroup) {
   struct BattleCamera *camera;
@@ -381,12 +374,10 @@ finished:
   return result;
 }
 
-/// Lists the party members who fight (the first four of the party, three in
-/// a link battle) and marks each unit as a party member. unitIds, if not
-/// null, receives their ids ended by BATTLE_UNIT_LIST_END. Returns how many
-/// fight. Called across the battle parts whenever they need the party, and
-/// through its far stub by the party status window (party_status.c). Sets
-/// each fighting party member's side to BATTLE_SIDE_PARTY.
+/// Lists the party members who fight (the first four of the party, three in a
+/// link battle) and marks each unit as a party member. unitIds, if not null,
+/// receives their ids ended by BATTLE_UNIT_LIST_END. Returns how many fight.
+/// Sets each fighting party member's side to BATTLE_SIDE_PARTY.
 s32 BattleParty_PrepareMembers(u16 *unitIds) {
   s32 limit;
   s32 count;
@@ -442,9 +433,7 @@ s32 BattleEnemy_List(s16 *unitIds) {
 /// Lists the units still standing (HP above 0) on the sides in sideMask
 /// (BATTLE_SIDE_MASK_PARTY, BATTLE_SIDE_MASK_ENEMIES or both), party first.
 /// unitIds, if not null, receives them ended by BATTLE_UNIT_LIST_END. Returns
-/// how many there are. Called across the battle parts (the turn, staging, auto
-/// battle, the turn's end and spoils) to test whether a side still stands and
-/// to pick targets.
+/// how many there are.
 s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   u16 activeMembers[8];
   u16 *base;
@@ -512,13 +501,10 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   return livingCount;
 }
 
-/// Lists the units in the battle's unit lists on the sides in sideMask,
-/// party first, skipping those removed from the battle. unitIds, if not
-/// null, receives them ended by BATTLE_UNIT_LIST_END. Returns how many
-/// there are. Unlike BattleUnit_ListLiving, it does not test HP.
-/// Called across the battle parts that draw or target units, and through
-/// its far stub by the command windows (battle_command_row.c,
-/// battle_party_commands.c).
+/// Lists the units in the battle's unit lists on the sides in sideMask, party
+/// first, skipping those removed from the battle. unitIds, if not null,
+/// receives them ended by BATTLE_UNIT_LIST_END. Returns how many there are.
+/// Unlike BattleUnit_ListLiving, it does not test HP.
 s32 BattleUnit_ListIds(s32 sideMask, u16 *unitIds) {
   struct BattleWork *battle;
   s32 count;

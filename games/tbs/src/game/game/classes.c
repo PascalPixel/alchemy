@@ -191,10 +191,7 @@ struct ClassDefinition *Class_GetDefinition(s32 classId) {
 }
 
 /// Works out a character's class again after its Djinn change, then its
-/// Psynergy list and its base elements. Writes the unit's classIndex,
-/// psynergy and baseElement. Called when a Djinni is set or put on
-/// standby, at the prologue's start and end, at a new game and around the
-/// Colosso's inventory snapshot.
+/// Psynergy list and its base elements.
 void Unit_UpdateClass(s32 unitId) {
   struct Unit *unit = Unit_Get(unitId);
 

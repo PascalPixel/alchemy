@@ -101,15 +101,11 @@ struct BattleBaseStats {
 };
 
 /// Chooses a monster battle's formation for the party's level, and returns it
-/// with the levels its enemies must gain in outMargin.
-/// The target is the active party members' average level plus the monster
-/// battles won in a row (FLAG_MONSTER_BATTLE_WINS), between 1 and 99; a
-/// formation qualifies when its average level is at most 3 above it, and one of
-/// up to 32 qualifying is chosen at random. With none, it returns formation 1
-/// and a margin of 0. Called by BattleFormation_BuildEnemyList under
-/// FLAG_MONSTER_BATTLE; clears the defeated flags of the classes in
-/// gBattleFormation_LevelMatchedEnemies, which excludes those above level 3
-/// unless FLAG_MONSTER_BATTLE_ANY_ENEMY bypasses the defeated-enemy check.
+/// with the levels its enemies must gain in outMargin. The target is the active
+/// party members' average level plus the monster battles won in a row
+/// (FLAG_MONSTER_BATTLE_WINS), between 1 and 99; a formation qualifies when its
+/// average level is at most 3 above it, and one of up to 32 qualifying is
+/// chosen at random. With none, it returns formation 1 and a margin of 0.
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   s32 matchCount = 0;
   struct FormationCandidate *pool =
@@ -196,8 +192,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
 /// changes by a fixed amount a level, kept between 70 percent of what it was
 /// and its cap. A level is worth 9.7 HP, 1.5 PP, 12.3 Attack, 3.3 Defense, 5.1
 /// Agility and 15 power in each element; HP and PP are capped at UNIT_HP_MAX,
-/// the other stats at UNIT_STAT_MAX and power at UNIT_ELEMENT_MAX. Changes the
-/// unit's base stats and level and works out its stats again (Unit_Calculate).
+/// the other stats at UNIT_STAT_MAX and power at UNIT_ELEMENT_MAX.
 UNREAD_RESULT BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
   struct BattleBaseStats *base = Heap_AllocEwram(sizeof *base);
   struct Unit *unit = Unit_GetFar(unitId);
@@ -244,10 +239,7 @@ UNREAD_RESULT BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
 /// letter. Its second gets letter 1 with ENEMY_LETTER_FIRST_TOO, telling the
 /// caller to give the first letter 0 (BattleEnemy_LetterFirstOfKind); later
 /// ones take the next free letter, wrapping. Returns -1 when five classes are
-/// already listed. Changes BattleWork's enemyKinds, the up to five classes
-/// listed, and their letters: lastNameLetter each class's last letter given (-1
-/// for none yet), nameLetterMasks its letters in use (bit n for letter n), and
-/// enemyKindCount how many classes are listed.
+/// already listed.
 s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
   struct BattleWork *battle;
   s32 classCount;
@@ -331,7 +323,7 @@ UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
 }
 
 /// Gives the first enemy of the class on the field the first letter (0),
-/// appended to its name, once a second of its class arrives. Writes Unit.name.
+/// appended to its name, once a second of its class arrives.
 UNREAD_RESULT BattleEnemy_LetterFirstOfKind(s32 classId) {
   struct Unit *unit;
   s32 enemyIndex;

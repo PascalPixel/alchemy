@@ -200,8 +200,7 @@ UNUSED u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1,
 /// In a link battle, shows the "EXEC" signature to the other console and waits
 /// up to 30 frames for it to show the same. Returns 0 once both do (or outside
 /// a link battle), and -1 if the battle is paused, the link is lost for more
-/// than LINK_MAX_MISSED_FRAMES frames or the signatures never meet. Writes the
-/// first eight bytes of gSerialTransfer.payload.
+/// than LINK_MAX_MISSED_FRAMES frames or the signatures never meet.
 s32 LinkBattle_WaitSync(void) {
   struct BattleWork *battle = gBattleWork;
   u16 *peer;
@@ -242,13 +241,12 @@ s32 LinkBattle_WaitSync(void) {
 }
 
 /// In a link battle, after each action and after the end of each turn, steps
-/// both consoles through the same handshake: "ex" "TU", then "rn", "EXEC",
-/// "tu" and finally "RN". Each step shows its signature and waits for the
-/// other console to show it too, failing if the other console shows a
-/// different earlier step. Returns -1 if the battle is paused, the link is
-/// lost for more than LINK_MAX_MISSED_FRAMES frames, or the steps disagree; 0
-/// once in step, or outside a link battle. Writes the first sixteen bytes of
-/// gSerialTransfer.payload.
+/// both consoles through the same handshake: "ex" "TU", then "rn", "EXEC", "tu"
+/// and finally "RN". Each step shows its signature and waits for the other
+/// console to show it too, failing if the other console shows a different
+/// earlier step. Returns -1 if the battle is paused, the link is lost for more
+/// than LINK_MAX_MISSED_FRAMES frames, or the steps disagree; 0 once in step,
+/// or outside a link battle.
 s32 LinkBattle_SyncTurn(void) {
   struct BattleWork *battle = gBattleWork;
   u16 *peer;

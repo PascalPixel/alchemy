@@ -7,7 +7,7 @@
 
 /// Pulses HIGHLIGHT_PALETTE's colours: each takes the matching colour of
 /// WINDOW_PALETTE brightened by up to twelve steps, rising and falling with the
-/// frame count. Nothing in the source calls it. Writes BG palette RAM.
+/// frame count. Nothing in the source calls it.
 void Palette_UpdatePulseBrightness(void) {
   u16 *palette = &BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
   s32 i;
@@ -38,9 +38,7 @@ void Palette_UpdatePulseBrightness(void) {
 
 /// Sets the camera up for the fixed view the battle shows while commands are
 /// chosen, raised by verticalOffset pixels, with its projection and the
-/// background's zoom to match. Writes the camera, gBattleBackgroundWork's
-/// targetYaw and flag (left 1, so the camera task leaves the background alone),
-/// gProjection and the background's affine page.
+/// background's zoom to match.
 void BattleCamera_SetCommandView(s32 verticalOffset) {
   void **slots = &gHeapSlots[HEAP_SLOT_CAMERA];
   struct BattleCamera *camera = slots[0];
@@ -528,9 +526,7 @@ fail:
   return -1;
 }
 
-/// Copies BG palette 15 to 14 and 5 to 4, brightened or darkened. Called by
-/// Battle_GatherActions with 8, as the turn's commands are
-/// chosen.
+/// Copies BG palette 15 to 14 and 5 to 4, brightened or darkened.
 /// @param offset added to each of the red, green and blue values (held in 0
 /// to 31)
 void Palette_CopyWithBrightnessOffset(s32 offset) {
@@ -660,8 +656,7 @@ finish:
   return count;
 }
 
-/// Returns the unit id at a list place. Called by BattleActionRun_Build
-/// for a command's target.
+/// Returns the unit id at a list place.
 /// @param taggedPlace the place in the low four bits; 0x80 set for the
 /// enemies' list
 s32 Battle_GetUnitAtPlace(s32 taggedPlace) {
@@ -673,8 +668,7 @@ s32 Battle_GetUnitAtPlace(s32 taggedPlace) {
 }
 
 /// Returns the list place of unit id, or -1 if it is in neither list: the
-/// party's as PLACE_PARTY | place, the enemies' as PLACE_ENEMY | place. Called
-/// by the enemies' command choice (enemy_ai.c) to aim at a unit.
+/// party's as PLACE_PARTY | place, the enemies' as PLACE_ENEMY | place.
 /// @param unitId 0 to 7 the party, any other an enemy
 s32 Battle_FindUnitPlace(u32 unitId) {
   struct BattleWork *battle = gBattleWork;

@@ -4,11 +4,8 @@
 
 #include "../battle_internal.h"
 
-// _call_via_r0 is given the value of IwramIrqModeWord, the instruction
-// `orr r3, r3, #0x92` in irq.s, not its address, so it would branch to
-// 0xe3833092. The Lost Age's twin, between the same neighbours, calls its ARM
-// high-multiply helper with 5 and 0 before the three stops and nothing after
-// them, and nothing in either game calls the function.
+// The routine called is the word of the IRQ return instruction, not an address,
+// so it would branch into nonsense; nothing in either game calls this function.
 // XXX (no evidence): what the call was meant to run; neither game's copy
 // shows it, and no caller exists to say.
 /// Sets DMA3 three times over, stopping it, then calls the IRQ return
@@ -20,10 +17,8 @@ void Dma_StopAllThenRunHook(void) {
   _call_via_r0(IwramIrqModeWord);
 }
 
-/// Starts playback of the action's targets when the effect's blow lands.
-/// Reached as EFFECT_SHOW_DAMAGE(hitSound), through
-/// BattlePlayback_StartFar, from the battle effects (see the folder README).
-/// Only while playback is idle: sets the phase to
+/// Starts playback of the action's targets when the effect's blow lands. Only
+/// while playback is idle: sets the phase to
 /// BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET, and a nonzero cue to pendingSound; a
 /// later call before the reset does nothing.
 /// @param cue the hit's sound (an SE_ id); zero keeps the one set
@@ -40,10 +35,7 @@ void BattlePlayback_Start(s32 cue) {
 }
 
 /// Empties the playback queue and schedules playback of the commands queued
-/// next, with no targets to resolve. Called before a Djinni is set
-/// (BattleActionRun_Build) and for the Djinn the turn's and an action's end
-/// show (Battle_ProcessTurnEnd, BattleUnit_ProcessActionEnd), each followed by
-/// BattlePlayback_WaitForReady. Sets the phase to
+/// next, with no targets to resolve. Sets the phase to
 /// BATTLE_PLAYBACK_PHASE_DISPATCH and gBattleWork->actionRun's targetCount to
 /// 0, so playback goes to BATTLE_PLAYBACK_PHASE_READY once the queue is played;
 /// adds BattlePlayback_Run as a task and returns its task index (-1 when the
@@ -77,11 +69,8 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
 
 /// Plays the action's targets one at a time: resolves the next target with
 /// BattleAbility_ApplyToTarget, then plays the events it queued over the frames
-/// that follow, until every target is done. Runs each frame as a task
-/// (priority TASK_PASS_FRAME), added by the staging runners in
-/// staging.c and by BattlePlayback_SchedulePhase, and removed by
-/// BattlePlayback_WaitForReady. Idle until BattlePlayback_Start or the wait
-/// starts it. Advances gBattleWork->events (phase, eventIndex, timer,
+/// that follow, until every target is done. Idle until BattlePlayback_Start or
+/// the wait starts it. Advances gBattleWork->events (phase, eventIndex, timer,
 /// queue.targetIndex, unitId, arrowResource, arrow, flags); plays the sounds,
 /// message arguments, messages, flashes, falls and redraws as
 /// BattlePlayback_RunAll does, without waiting. Each pass of its loop handles
@@ -429,13 +418,10 @@ void BattlePlayback_Run(void) {
   }
 }
 
-/// Stops playback and empties the playback queue.
-/// Called when an action is built (BattleActionRun_Build), after a queue
-/// is played (BattlePlayback_RunAll, BattlePlayback_WaitForReady), and
-/// before playback is scheduled (BattleActionRun_Build, turn_end.c). Sets
-/// gBattleWork->events' phase to BATTLE_PLAYBACK_PHASE_IDLE, clears the queue,
-/// the event index, the timer, the target index and the flags (the Djinn
-/// bonus), and sets the hit sound back to SE_HEAVY_IMPACT.
+/// Stops playback and empties the playback queue. Sets gBattleWork->events'
+/// phase to BATTLE_PLAYBACK_PHASE_IDLE, clears the queue, the event index, the
+/// timer, the target index and the flags (the Djinn bonus), and sets the hit
+/// sound back to SE_HEAVY_IMPACT.
 void BattlePlayback_Reset(void) {
   struct BattlePlaybackWork *events;
 
@@ -449,11 +435,9 @@ void BattlePlayback_Reset(void) {
   events->flags = 0;
 }
 
-/// Waits, a frame at a time, until BattlePlayback_Run has played every
-/// target, then removes the task and resets the playback.
-/// Called after the effect by the staging runners in staging.c, and after a
-/// Djinn's effect by BattleActionRun_Build and turn_end.c. Playback still
-/// idle (the effect never called EFFECT_SHOW_DAMAGE) is started here.
+/// Waits, a frame at a time, until BattlePlayback_Run has played every target,
+/// then removes the task and resets the playback. Playback still idle (the
+/// effect never called EFFECT_SHOW_DAMAGE) is started here.
 UNREAD_RESULT BattlePlayback_WaitForReady(void) {
   s32 state;
   struct BattlePlaybackWork *events;

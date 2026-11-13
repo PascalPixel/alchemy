@@ -242,8 +242,7 @@ s32 Summon_ListLearned(u8 *output) {
   return count;
 }
 
-/// Returns summon `summonId`'s definition, or NULL past the sixteenth. Reached
-/// only through GAME.S, as SummonDefinition_Get.
+/// Returns summon `summonId`'s definition, or NULL past the sixteenth.
 const struct SummonDefinition *SummonDefinition_GetNear(u32 summonId) {
   if (summonId > 15)
     return NULL;

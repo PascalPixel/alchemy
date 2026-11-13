@@ -54,8 +54,7 @@ s32 GameFlag_GetByte(s32 flag) {
   return gGameFlagBytes[flag];
 }
 
-/// Sets the whole byte `flag` is in. Reached through FieldGameFlag_SetByte by
-/// the Colosso maps, the world map and the Battle Arena's win counts.
+/// Sets the whole byte `flag` is in.
 void GameFlag_SetByte(s32 flag, s32 value) {
   flag = GAME_FLAG_BYTE(flag);
 

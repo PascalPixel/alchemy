@@ -30,9 +30,8 @@
 /// Debug: replaces the party with the party members of parameter set number
 /// set. Each party member is raised to the row's level, given the row's Djinn
 /// (Set, in order of their numbers across the party), the row's abilities, and
-/// an emptied inventory holding the row's items, each equipped. Changes the
-/// active party and each party member's level, Djinn, abilities and inventory.
-/// Returns 1 when the table ends before that parameter set, 0 otherwise.
+/// an emptied inventory holding the row's items, each equipped. Returns 1 when
+/// the table ends before that parameter set, 0 otherwise.
 s32 DebugParameterSet_Load(s32 set) {
   // The next Djinni number of each element to hand out.
   s32 nextDjinn[ELEMENT_COUNT];

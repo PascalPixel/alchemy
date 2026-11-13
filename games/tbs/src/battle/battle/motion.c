@@ -14,9 +14,7 @@
 // (BATTLE_UNIT_GRAVITY about 0.67, px(3) / 5, and px(47) / 100).
 
 /// Sends unitId back to its spot, landing exactly there (snapToTarget), and
-/// turns it to face the centre at once. Called after an action by the
-/// staging code, the auto battle, BattleAbility_ApplyToTarget and the Quake
-/// effect.
+/// turns it to face the centre at once.
 void BattleMotion_ReturnToSpot(s32 unitId) {
   s32 z;
   struct BattleObject *battleObject;
@@ -148,11 +146,9 @@ void BattleMotion_LeapBack(s32 unitId) {
   Actor_SelectAnimationFar(actor, POSE_DAMAGE);
 }
 
-/// Knocks unit id back by the speed, hop and distance of the knockback
-/// variant (enum BattleKnockback), and puts it in POSE_DAMAGE.
-/// The Fusion Dragon only takes the pose. Reached through its far stub from
-/// the battle effects, by the EFFECT_STRIKE_TARGET macro of
-/// battle_effect_internal.h and directly.
+/// Knocks unit id back by the speed, hop and distance of the knockback variant
+/// (enum BattleKnockback), and puts it in POSE_DAMAGE. The Fusion Dragon only
+/// takes the pose.
 void BattleMotion_ApplyKnockback(s32 unitId, s32 variant) {
   struct BattleObject *battleObject;
   struct Actor *actor;
@@ -315,10 +311,9 @@ s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
   return 0;
 }
 
-/// Projects the point above unit id onto the screen, into projected: 24
-/// pixels up for a small enemy, 48 for others, scaled as the sprite is drawn.
-/// Returns 0. Reached through its far stub from BattleTarget_RunSelection, to
-/// place the target cursor.
+/// Projects the point above unit id onto the screen, into projected: 24 pixels
+/// up for a small enemy, 48 for others, scaled as the sprite is drawn. Returns
+/// 0.
 s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
   struct Actor *actor = BattleObject_Get(unitId)->actor;
   struct Sprite *record = GetMotionRecord(actor, 0);

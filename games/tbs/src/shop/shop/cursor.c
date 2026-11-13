@@ -119,8 +119,7 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
 }
 
 /// Saves the field colours in the field work and fades to `layer` over 16
-/// frames. Called before sanctum and Djinn capture effects and Altmiller's wall
-/// burst; Shop_RestoreFieldPalette restores the saved colours afterward.
+/// frames.
 void Shop_SaveAndTintFieldPalette(s32 layer) {
   // UB: slot 32 lies past scalar gFieldWork.
 #ifdef UBFIX
@@ -142,8 +141,7 @@ void Shop_SaveAndTintFieldPalette(s32 layer) {
 }
 
 /// Fades back to the colours Shop_SaveAndTintFieldPalette saved, over 16
-/// frames. Called when the sanctum, Djinn capture or Altmiller wall effect
-/// ends.
+/// frames.
 void Shop_RestoreFieldPalette(void) {
   PaletteFade_SetTargetFar((s32)gFieldWork + 0x236, 1);
   PaletteFade_StartInterpolationFar(16);
@@ -243,8 +241,7 @@ void MenuCursor_Set(struct MenuCursor *cursor, s32 targetX, s32 targetY,
 }
 
 /// Places the cursor and its sprite at (x, y) at once, with a one-frame glide
-/// that has already arrived. Called when a counter, the option and pause
-/// menus or the name entry screen opens.
+/// that has already arrived.
 void MenuCursor_SetPositionImmediate(struct MenuCursor *cursor, s32 x, s32 y) {
 
   {

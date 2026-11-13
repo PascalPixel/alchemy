@@ -41,9 +41,7 @@ s32 Sanctum_NeedsService(s32 unitId, s32 serviceKind) {
   return eligible;
 }
 
-/// Counts party members who need the service in shop->action. Called by
-/// Sanctum_Run, which says nobody needs it when the count is 0, and by
-/// Sanctum_RunPartyService, which offers another party member while any remain.
+/// Counts party members who need the service in shop->action.
 s32 Sanctum_CountMembersInNeed(void) {
   struct ShopWork *shop = gMenuWork;
   s32 eligibleCount = 0;
@@ -183,10 +181,10 @@ s32 Sanctum_Run(s32 unitId) {
 }
 
 /// Lets the player pick a party member for the service in shop->action,
-/// starting on the first who needs it, asks for the donation, then applies
-/// the service with its burst and takes the coins; offers another party member
+/// starting on the first who needs it, asks for the donation, then applies the
+/// service with its burst and takes the coins; offers another party member
 /// while any still need it, until B. A party member who needs nothing can be
-/// pointed at, but A only buzzes. Called by Sanctum_Run; returns 0.
+/// pointed at, but A only buzzes.
 s32 Sanctum_RunPartyService(void) {
   struct ShopWork *shop = gMenuWork;
   struct Window *priceWindow;

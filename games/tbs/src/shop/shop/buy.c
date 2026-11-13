@@ -299,7 +299,6 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
 }
 
 /// Draws the party's coins in the coins window, in the edition's layout.
-/// Called when a counter opens and after each purchase, sale or repair.
 void Shop_DrawMoney(void) {
   struct ShopWork *shop;
   struct Window *window;

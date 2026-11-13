@@ -6,12 +6,8 @@
 #include "../battle_internal.h"
 
 /// Runs each frame of a battle: advances every unit's status icon, gives an
-/// airborne unit's shadow (SPRITE_BATTLE_SHADOW) priority
-/// 9 and a grounded one's 0, and draws whichever side is nearer the camera in
-/// front. Runs as a task (priority TASK_PASS_FRAME)
-/// that Battle_Run adds after the entry transition and removes as
-/// the battle ends. Writes each battle object's icon state and its sprites'
-/// priorities.
+/// airborne unit's shadow (SPRITE_BATTLE_SHADOW) priority 9 and a grounded
+/// one's 0, and draws whichever side is nearer the camera in front.
 void BattleObject_UpdateSpritePriorities(void) {
   u16 unitIds[UNIT_MAX];
   // The party's, then the enemies': sprite priority 1 for the side in front,
@@ -142,11 +138,8 @@ void BattleObject_UpdateSpritePriorities(void) {
 
 #define ICON_MAX 14 ///< the kinds of icon
 
-/// Builds the status icon bits of unit id's statuses into its battle
-/// object's activeStatuses, which BattleStatusIcon_Cycle shows. Called
-/// wherever a unit's statuses may have changed: BattlePlayback_RunAll,
-/// BattlePlayback_Run, Battle_ProcessTurnEnd,
-/// BattleUnit_ClearStatuses and BattleObject_SpawnObjectsForList.
+/// Builds the status icon bits of unit id's statuses into its battle object's
+/// activeStatuses, which BattleStatusIcon_Cycle shows.
 UNREAD_RESULT BattleUnit_BuildStatusFlags(s32 unitId,
                                           struct BattleObject *battleObject) {
   struct Unit *unit = Unit_GetFar(unitId);
@@ -187,12 +180,9 @@ UNREAD_RESULT BattleUnit_BuildStatusFlags(s32 unitId,
 #define ICON_ANIMATION_NARROW SPRITE_STATUS_POISON
 #define ICON_ANIMATION_WIDE SPRITE_STATUS_WIDE_POISON
 
-/// Shows a unit's status icons one after another, each for
-/// ICON_CYCLE_FRAMES frames, switching at once when the shown status ends,
-/// and removes the icon when no status is left. Called each frame for every
-/// unit by BattleObject_UpdateSpritePriorities. Changes the battle object's
-/// cycleTimer, shownStatus, animation and animationEntry, and
-/// registers or unregisters the icon on its first sprite.
+/// Shows a unit's status icons one after another, each for ICON_CYCLE_FRAMES
+/// frames, switching at once when the shown status ends, and removes the icon
+/// when no status is left.
 UNREAD_RESULT BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
   struct SpriteAnimation *shownIcon;
   struct SpriteAnimation *icon;
@@ -329,8 +319,7 @@ void ReleaseBattleObjectRecords(s32 unitId) {
 /// lacks, then creates each listed unit's sprites (body, weapon, status icon
 /// and shadow; or the two parts of a two-part enemy) unless it has them,
 /// building its status icons and setting its pose. With refreshPoses, sets
-/// every listed unit's pose again afterwards. Writes the actors' sprites, their
-/// storage kind and height, and the battle objects' icon and shadow entries.
+/// every listed unit's pose again afterwards.
 void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
   s32 unitIndex;
   s32 unitId;
@@ -463,8 +452,8 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
   }
 }
 
-/// Returns unitId's battle object, through its place, or null for a
-/// unit with no place. Called throughout the battle parts.
+/// Returns unitId's battle object, through its place, or null for a unit with
+/// no place.
 struct BattleObject *BattleObject_Get(s32 unitId) {
   struct BattleWork *battle = gBattleWork;
   struct BattleObject *objects = battle->objects;
@@ -514,12 +503,9 @@ void ResetBattleObjectRecordGroups(struct Actor *actor) {
   }
 }
 
-/// Frees the enemy sprite slots unitId holds and marks its actor
-/// for release at the end of the action or turn
-/// (BattleObject_DestroyAll), setting its active field to 1.
-/// Returns 0. Called when a unit leaves the battle: by
-/// BattlePlayback_Run, BattleStaging_RunFlee, BattleMotion_ShowDowned,
-/// BattleObject_DestroyTemporaryObject and the auto battle.
+/// Frees the enemy sprite slots unitId holds and marks its actor for release at
+/// the end of the action or turn (BattleObject_DestroyAll), setting its active
+/// field to 1. Returns 0.
 s32 BattleObject_MarkForRelease(s32 unitId) {
   struct BattleObject *battleObject;
   BattleObject_ReleaseSpriteSlots(unitId);
@@ -577,9 +563,8 @@ UNREAD_RESULT BattleCamera_ApplyTransform(void) {
   }
 }
 
-/// Projects unit id's position onto the screen, into projected (its pixel x
-/// and y, then its depth; Transform_ProjectPoint). Returns 0. Reached through
-/// its far stub from Projection_Unit.
+/// Projects unit id's position onto the screen, into projected (its pixel x and
+/// y, then its depth; Transform_ProjectPoint). Returns 0.
 s32 BattleMotion_ProjectPosition(s32 unitId, s32 *projected) {
   struct Actor *actor = BattleObject_Get(unitId)->actor;
   struct Sprite *record = GetMotionRecord(actor, 0);
@@ -596,7 +581,7 @@ s32 BattleMotion_ProjectPosition(s32 unitId, s32 *projected) {
 }
 
 /// Returns sprite recordIndex of an actor (0 only, for a single sprite), or
-/// null when it has no such sprite. Called throughout the battle parts.
+/// null when it has no such sprite.
 void *GetMotionRecord(struct Actor *actor, s32 recordIndex) {
   s32 storageKind = actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK;
   if (storageKind == ACTOR_SPRITE_ONE) {
@@ -610,8 +595,6 @@ void *GetMotionRecord(struct Actor *actor, s32 recordIndex) {
 }
 
 /// Puts the battle camera at its default view of the battlefield's centre.
-/// Writes the camera's yaw, pitch, distance, position and eye, and the
-/// transform state.
 void BattleCamera_SetDefaultView(void) {
   struct BattleCamera *camera = gBattleCamera;
   struct FixedPointPosition eyeOffset;

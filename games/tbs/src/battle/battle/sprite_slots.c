@@ -53,13 +53,11 @@ s32 Enemy_HasSpriteRoom(s32 classId) {
 
 /// Loads an enemy unit's battle sprite into the first free enemy sprite slots
 /// (one for a small enemy, two side by side for a large one) and marks them as
-/// the unit's. Two sprites, the Kraken's and the Fusion Dragon's, take a
-/// second part, loaded the same way into further slots. The slots stay the
-/// unit's until BattleObject_ReleaseSpriteSlots frees them as it leaves the
-/// battle. Returns the first slot and the sprite as (slot << 12) | sprite, or
-/// 0 for a party member's unit or when a load fails. Writes
-/// gBattleWork->spriteSlots and the slots' 16 KB sprite buffers at
-/// Ram_EnemySpriteSlots.
+/// the unit's. Two sprites, the Kraken's and the Fusion Dragon's, take a second
+/// part, loaded the same way into further slots. The slots stay the unit's
+/// until BattleObject_ReleaseSpriteSlots frees them as it leaves the battle.
+/// Returns the first slot and the sprite as (slot << 12) | sprite, or 0 for a
+/// party member's unit or when a load fails.
 s32 EnemySprite_LoadIntoSlots(s32 unitId) {
   s32 spritePart;
   struct BattleWork *battle = gBattleWork;

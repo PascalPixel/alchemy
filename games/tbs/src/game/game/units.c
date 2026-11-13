@@ -145,11 +145,8 @@ void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
 
 /// Recomputes a unit's stats from its base stats, equipment, set Djinn, class
 /// and battle stat levels, clamps each to its range and writes them to the
-/// unit. A change of maximum HP or PP keeps the unit's current HP and PP at
-/// the same fraction of it. Also sets the unit's curse bits and
-/// equipment bonuses. Called after anything that changes those inputs:
-/// equipping, setting Djinn, levelling up, a class change, battle stat
-/// changes.
+/// unit. A change of maximum HP or PP keeps the unit's current HP and PP at the
+/// same fraction of it. Also sets the unit's curse bits and equipment bonuses.
 /// A scaling effect's number among the eight, from EQUIP_EFFECT_SCALE_HP.
 #define SCALE_EFFECT(kind) ((kind) - EQUIP_EFFECT_SCALE_HP)
 
@@ -453,10 +450,8 @@ void Unit_Calculate(s32 unitId) {
   Heap_Release(stats);
 }
 
-/// Sets FLAG_LURE_CAP when any party member has the Lure Cap (the one item
-/// with EQUIP_EFFECT_LURE) equipped, and clears it otherwise. Called on
-/// entering a scene (Scene_Arrive, FieldSequence_Run) and at the end of
-/// an event, so the encounter rate follows the cap.
+/// Sets FLAG_LURE_CAP when any party member has the Lure Cap (the one item with
+/// EQUIP_EFFECT_LURE) equipped, and clears it otherwise.
 void GameFlag_RefreshLureCap(void) {
   s32 partySize;
   s32 member;
@@ -702,9 +697,7 @@ void Party_RestorePpOfLitElements(void) {
 UNUSED void Unit_GaugeNoOp(void) {}
 
 /// Recomputes the HP and PP gauges of `unitId` from its current HP and PP, so
-/// that Unit_Calculate keeps the same fractions. Called after anything that
-/// writes HP or PP directly: Unit_AddHp, the inn, the sanctum, item use,
-/// battle.
+/// that Unit_Calculate keeps the same fractions.
 void Unit_RecalculateGauges(s32 unitId) {
   struct Unit *unit;
 

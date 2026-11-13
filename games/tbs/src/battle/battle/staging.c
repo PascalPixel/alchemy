@@ -5,16 +5,14 @@
 
 #include "../battle_internal.h"
 
-/// Plays one action of the turn, after delay frames facing the party: an
-/// enemy picks its ability now; the action is built (its targets, hits
-/// and damage) and shown the way its staging asks, then the action's end
-/// effects run and every unit returns to its spot. Returns 1 when the
-/// party got away, 0 otherwise, and -1 when the unit is already down.
-/// Called by Battle_Run for each action of the turn, with a delay
-/// of 10 for the first. Resets the camera's view (gBattleBackgroundWork's
-/// frames, flag and yaw, gBattleWork->brightness, the transform and
-/// projection), builds gBattleWork->actionRun, and marks the action done
-/// (request->unitId to BATTLE_UNIT_LIST_END) unless the party fled.
+/// Plays one action of the turn, after delay frames facing the party: an enemy
+/// picks its ability now; the action is built (its targets, hits and damage)
+/// and shown the way its staging asks, then the action's end effects run and
+/// every unit returns to its spot. Returns 1 when the party got away, 0
+/// otherwise, and -1 when the unit is already down. Resets the camera's view
+/// (gBattleBackgroundWork's frames, flag and yaw, gBattleWork->brightness, the
+/// transform and projection), builds gBattleWork->actionRun, and marks the
+/// action done (request->unitId to BATTLE_UNIT_LIST_END) unless the party fled.
 s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
   struct BattleBackgroundWork *view;
   struct BattleWork *battle;
@@ -122,9 +120,7 @@ finish:
 
 /// Fills a battle effect command from an action run: its kind and strength, the
 /// acting unit and the targets still standing (or every target, for an battle
-/// effect that revives), at least the first. Writes args' prelude (0), kind,
-/// variant, user, targets, firstTarget, targetCount and range (1); the caller
-/// sets its side.
+/// effect that revives), at least the first.
 UNREAD_RESULT BattleStaging_BuildTargetList(struct BattleActionRun *plan,
                                             struct BattleEffectParams *args) {
   s32 count = 0;
@@ -931,10 +927,8 @@ s32 BattleStaging_RunPsynergyCast(struct BattleActionRun *plan, s32 mode) {
 
 /// Flashes unit id as it is hit: puts it in its damage pose and switches its
 /// sprites between white and their own colours twice, two frames each, its
-/// status panel highlighted.
-/// Called for PLAYBACK_HIT by BattlePlayback_RunAll
-/// (BattlePlayback_Run flashes over frames itself). Waits 8 frames and
-/// redraws the party's status at the end.
+/// status panel highlighted. Waits 8 frames and redraws the party's status at
+/// the end.
 void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
   u16 selection[2];
   s32 flash;
@@ -959,16 +953,11 @@ void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
   PartyStatus_DrawFar(gBattleWork->partyStatus);
 }
 
-/// Takes unit id out of the party's or the enemies' list and out of this
-/// turn's actions, and frees its name letter.
-/// Called when a unit leaves the battle: by BattleStaging_RunFlee (an
-/// enemy that gets away), BattleMotion_ShowDowned and PLAY_FELLED in
-/// BattlePlayback_Run (a fallen enemy), and
-/// BattleObject_DestroyTemporaryObject. Sets the unit's side to
-/// BATTLE_SIDE_NONE and its list entry to BATTLE_UNIT_REMOVED, releases its
-/// name letter (BattleEnemy_ReleaseNameLetter), and ends its actions this
-/// turn (unitId BATTLE_UNIT_LIST_END). A unit in neither list only has its
-/// side changed.
+/// Takes unit id out of the party's or the enemies' list and out of this turn's
+/// actions, and frees its name letter. Sets the unit's side to BATTLE_SIDE_NONE
+/// and its list entry to BATTLE_UNIT_REMOVED, releases its name letter
+/// (BattleEnemy_ReleaseNameLetter), and ends its actions this turn (unitId
+/// BATTLE_UNIT_LIST_END). A unit in neither list only has its side changed.
 void BattleObject_RemoveFromLists(s32 unitId) {
   struct BattleWork *battle;
   s32 partyIndex;
@@ -1014,11 +1003,8 @@ removed:
 }
 
 /// Shows a downed unit: a party member lies down, an enemy keeps its damage
-/// pose, turns grey, leaves the lists after four frames and dissolves a dot
-/// at a time.
-/// Called for PLAYBACK_DEFEAT by BattlePlayback_RunAll; PLAY_FELLED in
-/// BattlePlayback_Run is its counterpart over frames. An enemy's battle object
-/// is marked for release.
+/// pose, turns grey, leaves the lists after four frames and dissolves a dot at
+/// a time. An enemy's battle object is marked for release.
 void BattleMotion_ShowDowned(s32 unitId) {
   void *records[4];
   struct Unit *unit;

@@ -12,9 +12,8 @@
 #define PSYNERGY_ACTION_AT(slots, index) (((u16 *)(slots))[(index) * 2])
 #endif
 
-/// Returns the definition of ability `abilityId` (its low 14 bits); an id
-/// past the table gives the first. Reached through GAME.S as
-/// Ability_Get, which every bank uses to read an ability.
+/// Returns the definition of ability `abilityId` (its low 14 bits); an id past
+/// the table gives the first.
 struct AbilityDefinition *Ability_GetDirect(s32 abilityId) {
   u32 entryIndex;
 
@@ -59,10 +58,6 @@ enum { PSYNERGY_FROM_CLASS = 0x8000, PSYNERGY_FROM_ITEM = 0x4000 };
 /// Rebuilds a character's Psynergy list: drops the actions its class and items
 /// gave, closes up the list, adds every class action learned by its level and
 /// the action of each equipped item that grants one, and closes it up again.
-/// Writes only the unit's psynergy; enemies (CLASS_NONE) are left
-/// alone. Called whenever the class, level or equipment changes:
-/// Inventory_Equip, Unit_UpdateClass, Unit_LevelUp, Unit_LearnPsynergy and the
-/// item menu.
 s32 Unit_RefreshPsynergy(s32 unitId) {
   struct Unit *unit;
   struct PsynergyEntry *abilities;
@@ -318,12 +313,10 @@ u32 Unit_GetExperienceForLevel(s32 unitId, s32 level) {
   return -1;
 }
 
-/// Raises a character one level (up to 99), adding to each base stat the
-/// growth between the two points of its growth curve around the new level
-/// (one point every 20 levels), a twentieth of it per level with a random
-/// part. Writes the unit's level, base stats and, if short, its experience,
-/// then rebuilds its Psynergy and stats. The gains go to `gains`, which is
-/// returned.
+/// Raises a character one level (up to 99), adding to each base stat the growth
+/// between the two points of its growth curve around the new level (one point
+/// every 20 levels), a twentieth of it per level with a random part. The gains
+/// go to `gains`, which is returned.
 struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
   struct Unit *unit;
   struct LevelUpWork *work;
@@ -415,9 +408,8 @@ struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
 }
 
 /// Levels the character up once if its experience reaches the next level.
-/// Returns `gains` filled with the gains, or NULL. Called after a battle by
-/// Battle_AwardSpoils, once for each level a party member reaches. At level 99
-/// the next level needs -1 (0xffffffff) experience, which none reaches.
+/// Returns `gains` filled with the gains, or NULL. At level 99 the next level
+/// needs -1 (0xffffffff) experience, which none reaches.
 struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains) {
   struct Unit *unit;
 

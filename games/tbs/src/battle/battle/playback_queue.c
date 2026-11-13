@@ -52,12 +52,8 @@ UNREAD_RESULT BattleUnit_ClearStatuses(s32 unitId) {
 /// sprite; with attribute 1's size 0 it is 8 by 16 pixels.
 #define ADVANCE_ARROW_ATTR0 0xa400
 
-/// Shows the bobbing arrow at the message window and waits for the player to
-/// go on (B, or one of KEY_ADVANCE), then plays the cursor sound.
-/// Called after a message by BattleStaging_DispatchAction and the
-/// staging runners, BattleActionRun_Build (a flight),
-/// BattleIntro_AnnounceEncounter, the turn's end (turn_end.c), and
-/// BattlePlayback_RunAll for each PLAYBACK_MESSAGE. Waits for the
+/// Shows the bobbing arrow at the message window and waits for the player to go
+/// on (B, or one of KEY_ADVANCE), then plays the cursor sound. Waits for the
 /// message window first. Takes a 128-byte VRAM cache entry for the arrow's
 /// tiles and frees it; each frame queues the WINOUT writes, sets REG_BLDALPHA
 /// and pushes the arrow sprite.
@@ -155,11 +151,9 @@ UNREAD_RESULT BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
 void BattlePlayback_MarkMessage(void) { gBattleMessageWork->marked = 1; }
 
 /// Takes an enemy out of the battle at once (one that leaves rather than
-/// falls): its HP to 0, out of the lists, and its actor released.
-/// Reached through the PLAYBACK_REMOVE_UNIT event, which
-/// BattleAbility_ApplyToTarget queues for a self-destructing unit, from
-/// BattlePlayback_RunAll and BattlePlayback_Run. A party unit is left as
-/// it is. Releases the battle object's actor, then clears its actor and active.
+/// falls): its HP to 0, out of the lists, and its actor released. A party unit
+/// is left as it is. Releases the battle object's actor, then clears its actor
+/// and active.
 UNREAD_RESULT BattleObject_DestroyTemporaryObject(s32 unitId) {
   struct Unit *enemy;
   struct BattleObject *slot;
@@ -180,24 +174,18 @@ UNREAD_RESULT BattleObject_DestroyTemporaryObject(s32 unitId) {
 /// fall pay the Djinn bonus (BattleEnemy_RecordDefeat).
 #define PLAYBACK_FLAG_DJINN_BONUS 1
 
-/// The PLAYBACK_DJINN_BONUS event: grants the Djinn bonus for the rest of
-/// the action. Its operand is ignored.
-/// Called for the event by BattlePlayback_RunAll and BattlePlayback_Run;
-/// BattleAbility_ApplyToTarget queues it. Sets PLAYBACK_FLAG_DJINN_BONUS in
+/// The PLAYBACK_DJINN_BONUS event: grants the Djinn bonus for the rest of the
+/// action. Its operand is ignored. Sets PLAYBACK_FLAG_DJINN_BONUS in
 /// runtime->flags, which BattlePlayback_Reset clears.
 void BattlePlayback_GrantDjinnBonus(struct BattlePlaybackWork *runtime,
                                     u32 operand) {
   runtime->flags |= PLAYBACK_FLAG_DJINN_BONUS;
 }
 
-/// Plays the queued playback at once, in order (BattlePlayback_Run
-/// plays them over frames instead): the messages with their arguments, the
-/// hit flashes, the downed units, the redraws. Then empties the queue.
-/// Called where an outcome is shown outside an effect: by the staging
-/// runners (a blocked cast, a dodge, a broken item, an action's targets one by
-/// one), BattleActionRun_Build's debug defeat, and the end of an action or a
-/// turn (turn_end.c). Each message, flash and fall waits its frames here. Ends
-/// with BattlePlayback_Reset.
+/// Plays the queued playback at once, in order (BattlePlayback_Run plays them
+/// over frames instead): the messages with their arguments, the hit flashes,
+/// the downed units, the redraws. Then empties the queue. Each message, flash
+/// and fall waits its frames here. Ends with BattlePlayback_Reset.
 #ifdef UBFIX
 void BattlePlayback_RunAll(void) {
 #else
@@ -281,9 +269,7 @@ u32 BattlePlayback_RunAll(void) {
 }
 
 /// Queues one playback command (enum BattlePlaybackCommand) with its operand,
-/// and returns the opcode. Called, directly or through PUSH_MESSAGE, by
-/// BattleAbility_ApplyToTarget for each step of an outcome, and by staging.c,
-/// action.c and turn_end.c. Appends to gBattleWork->playback.queue with no test
+/// and returns the opcode. Appends to gBattleWork->playback.queue with no test
 /// against BATTLE_PLAYBACK_CAPACITY: a caller must keep one target's commands,
 /// or one queue played at once, within it. The queue is emptied by
 /// BattlePlayback_Reset, by BattlePlayback_SchedulePhase and before each target

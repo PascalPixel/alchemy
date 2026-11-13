@@ -201,12 +201,7 @@ u32 ElementGlow_UploadStarField(void) {
 #endif
 
 /// Starts a star field of the element mode (0 to 3, enum Element order):
-/// sixteen sparks on random rings and three rings 120 degrees apart. Allocates
-/// the field's work (HEAP_SLOT_BATTLE_EFFECT) and a cleared 128 by 128 canvas
-/// (HEAP_SLOT_BATTLE_CANVAS), decodes the blue ring sheet into the work, loads
-/// the element's 64 colours over the first of BG palette RAM, sets BG2's affine
-/// parameters to no zoom, loads both blitters and adds
-/// ElementGlow_UpdateStarField and ElementGlow_UploadStarField. Also sets
+/// sixteen sparks on random rings and three rings 120 degrees apart. Also sets
 /// BattleBackgroundWork.mode to BATTLE_BACKGROUND_FIXED. Returns the upload
 /// task's task index (-1 when the task table is full), which the caller does
 /// not read.
@@ -316,10 +311,6 @@ s32 ElementGlow_End(s32 unused) {
 
 /// Copies count colours from source to destination, each channel scaled by
 /// scale (16.16, at most 1), and returns 0.
-/// Called to darken the background's palette by
-/// BattleBackground_SetPaletteLevel, BattleBackground_Load,
-/// ElementGlow_Play, the item staging (staging.c) and the
-/// battle effects' canvas (canvas.c).
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
                                 s32 count) {
   s32 i;
@@ -349,16 +340,12 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
   return 0;
 }
 
-/// Plays a glow of the element about a unit, and returns when it is over.
-/// The glow is mode (enum BattleElementGlow), GLOW_PILLAR at strength
-/// variant. Called with GLOW_STAR_FIELD by
-/// BattleStaging_HideField and BattleStaging_RunPsynergyCast,
-/// with GLOW_STREAKS by the latter, with GLOW_PILLAR by
-/// BattleUnit_ProcessActionEnd and with GLOW_BURST by Battle_ProcessTurnEnd and
-/// BattleActionRun_Build. Every glow first puts the background in
-/// BATTLE_BACKGROUND_FIXED and opens window 0 over lines 16 to 135, with BG2
-/// blended over the other layers; GLOW_STAR_FIELD leaves the background's
-/// palette and BattleWork.brightness darkened.
+/// Plays a glow of the element about a unit, and returns when it is over. The
+/// glow is mode (enum BattleElementGlow), GLOW_PILLAR at strength variant.
+/// Every glow first puts the background in BATTLE_BACKGROUND_FIXED and opens
+/// window 0 over lines 16 to 135, with BG2 blended over the other layers;
+/// GLOW_STAR_FIELD leaves the background's palette and BattleWork.brightness
+/// darkened.
 void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches: of the 240 bytes it reserves (sub sp, #240), no instruction

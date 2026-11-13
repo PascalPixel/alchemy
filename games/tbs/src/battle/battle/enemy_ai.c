@@ -19,13 +19,8 @@ struct BattleAIState {
 /// the eight in its definition, picked by its action strategy, with an item
 /// instead where its item mask says so, and a target worth the ability. A
 /// choice that cannot be made (too little PP, sealed, a forbidden flight, no
-/// worthwhile target) picks again; after 18 tries the enemy defends.
-/// Called with retry 0 for each enemy as the turn is built
-/// (Battle_BuildEnemyActions), and with retry 1 when it acts
-/// (BattleStaging_DispatchAction). Writes request's command, parameter,
-/// target and range; ACTION_STRATEGY_RANDOM_START and
-/// ACTION_STRATEGY_IN_ORDER advance the place remembered in
-/// Unit.aiActionIndex. Returns nothing.
+/// worthwhile target) picks again; after 18 tries the enemy defends. Returns
+/// nothing.
 /// @param retry 0 when the turn is built: only a guard is settled now (it
 /// must raise before anyone acts); 1 when the enemy acts: the rest
 UNREAD_RESULT BattleAI_ChooseAction(struct BattleAction *request, s32 retry) {

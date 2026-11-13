@@ -5,8 +5,7 @@
 #include "../shop_internal.h"
 
 /// Lists the current shop's artifacts: every item of the shop's type whose
-/// shared stock counter is above zero. Writes them to the work block's stock
-/// list and returns how many.
+/// shared stock counter is above zero.
 s32 Shop_ListAvailableArtifacts(void) {
   struct ShopWork *shop;
   s16 *stockItems;

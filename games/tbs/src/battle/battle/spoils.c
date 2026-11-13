@@ -80,17 +80,14 @@ static __inline__ s32 BattleEnemy_CalculateExperienceReward(struct Unit *unit,
   return bonus + base;
 }
 
-/// Counts a fallen enemy and adds its coins, experience and perhaps its item
-/// to the spoils.
-/// Returns -1 for a party unit and -2 for a party member fought as an enemy,
-/// else 0. It notes the class for the victory message (firstDefeated,
+/// Counts a fallen enemy and adds its coins, experience and perhaps its item to
+/// the spoils. Returns -1 for a party unit and -2 for a party member fought as
+/// an enemy, else 0. It notes the class for the victory message (firstDefeated,
 /// defeatState). In a monster battle it adds nothing more; otherwise it sets
 /// the class's ENEMY_DEFEATED_FLAG, adds the rewards (with the Djinn bonus,
-/// djinnBonus nonzero, the rolls above) and rolls the item: 1 in
-/// 2^(itemChance - 1), two powers likelier with the bonus. An item not yet
-/// among the four kept replaces the lowest ranked, if it ranks higher.
-/// Called as each enemy falls by BattlePlayback_RunAll and
-/// BattlePlayback_Run.
+/// djinnBonus nonzero, the rolls above) and rolls the item: 1 in 2^(itemChance
+/// - 1), two powers likelier with the bonus. An item not yet among the four
+/// kept replaces the lowest ranked, if it ranks higher.
 s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   struct Unit *unit;
   struct EnemyDefinition *enemy;
@@ -185,8 +182,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
 /// still standing, with every level gained and what it brings, then the coins,
 /// then the items best first. Each level up shows its message, every Psynergy
 /// newly learned and each stat that rose. An item the inventory cannot take
-/// goes to gOverflowItem and ends the handing out. Changes the party members'
-/// experience, levels and stats, the party's coins and inventory.
+/// goes to gOverflowItem and ends the handing out.
 void Battle_AwardSpoils(void) {
   struct BattleSpoils *spoils;
   s32 count;

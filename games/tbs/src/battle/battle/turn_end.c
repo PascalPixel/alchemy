@@ -194,12 +194,9 @@ s32 BattleUnit_CountDownAgilityStage(s32 unitId) {
 }
 
 /// Brings the party's recovering Djinn one turn nearer, setting each whose
-/// turns reach 0, and returns 1 when any was set.
-/// A Djinni counts down only while its unit has HP; one that is set is taken
-/// off the party's recovery list and its unit's stats worked out again
-/// (Unit_Calculate). Called once at the end of every battle by
-/// Battle_Run, and outside battle by Field_UpdateWalking as the party
-/// walks, by the Djinn menu's tutorial and by DjinnRecovery_CountDownTwenty.
+/// turns reach 0, and returns 1 when any was set. A Djinni counts down only
+/// while its unit has HP; one that is set is taken off the party's recovery
+/// list and its unit's stats worked out again (Unit_Calculate).
 s32 DjinnRecovery_CountDown(void) {
   struct DjinnRecoveryList *list =
       &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
@@ -255,9 +252,7 @@ struct BattleSideOrder {
 };
 
 /// Ends a turn: sets recovered Djinn, then gives each unit its regeneration and
-/// counts down its stat changes and statuses, showing each that ends. Changes
-/// HP, PP, Unit.ready, the Djinn recovery lists and the counters the CountDown
-/// functions clear, and puts the background back in BATTLE_BACKGROUND_ZOOMED.
+/// counts down its stat changes and statuses, showing each that ends.
 UNREAD_RESULT Battle_ProcessTurnEnd(void) {
   struct BattleWork *battle;
   s32 side;
@@ -466,10 +461,7 @@ UNREAD_RESULT Battle_ProcessTurnEnd(void) {
 
 /// Ends one unit's action: its Djinn on standby are taken off its set, the
 /// Djinn a summon used begin to recover, and the unit takes its summon's power
-/// boost, the haunt's damage, poison and the Grim Reaper. Changes the side's
-/// Djinn recovery list, the unit's summonBoost, HP and grimReaper, and works
-/// out its stats again (Unit_Calculate); the messages are queued and played at
-/// once (BattlePlayback_RunAll).
+/// boost, the haunt's damage, poison and the Grim Reaper.
 UNREAD_RESULT BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
   s32 unitId;
   struct Unit *unit;

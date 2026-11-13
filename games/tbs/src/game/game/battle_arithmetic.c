@@ -73,8 +73,6 @@ u32 Battle_RandomPercent(void) { return ((u32)Battle_Random() * 100) >> 16; }
 /// Scales max(attack - defense, 0) + twice the action's added power by the
 /// elemental multiplier, then halves it. elementDifference is power minus
 /// resistance; its effect here is half Psynergy's (128..384 with 256 = 1x).
-/// Reached through GAME.S as Battle_CalculateAttackDamageFar, which
-/// BattleAbility_ApplyToTarget calls for attacks and physical abilities.
 s32 Battle_CalculateAttackDamage(s32 attack, s32 defense, s32 addedPower,
                                  s32 elementDifference) {
   s32 damage;
@@ -96,9 +94,7 @@ s32 Battle_CalculateAttackDamage(s32 attack, s32 defense, s32 addedPower,
 
 /// Returns the power of Psynergy: `power` times the multiplier for the element
 /// difference (power minus resistance, 0..512 with 256 = 1x) and the supplied
-/// powerMultiplier (also 256 = 1x). Reached through GAME.S as
-/// Battle_CalculatePsynergyPowerFar, which BattleAbility_ApplyToTarget calls
-/// for Psynergy damage.
+/// powerMultiplier (also 256 = 1x).
 s32 Battle_CalculatePsynergyPower(s32 power, s32 elementDifference,
                                   s32 powerMultiplier) {
   s32 scaledPower;
@@ -282,15 +278,12 @@ s32 Battle_IsReviveEffect(s32 effectId) {
 
 /// Rolls whether effect `effectId` takes hold on `target`: it fails at once
 /// when there is nothing for it to do. The chance is the base rate, plus three
-/// times the caster's lead over the target in the element's level less half
-/// the target's luck (so every two points of luck take off three), plus
-/// 25 against a weakness, times `successScale` percent. A base rate of 0 or
-/// less counts as its magnitude, still scaled but skipping the levels, luck
-/// and weakness; 0 still succeeds when Battle_RandomPercent gives 0, about 1
-/// time in 100. Luff gets three tries.
-/// Reached through GAME.S as Battle_RollEffectSuccessFar, which
-/// BattleAbility_ApplyToTarget and BattleActionRun_Build call for each target
-/// of an ability with an effect.
+/// times the caster's lead over the target in the element's level less half the
+/// target's luck (so every two points of luck take off three), plus 25 against
+/// a weakness, times `successScale` percent. A base rate of 0 or less counts as
+/// its magnitude, still scaled but skipping the levels, luck and weakness; 0
+/// still succeeds when Battle_RandomPercent gives 0, about 1 time in 100. Luff
+/// gets three tries.
 s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
                              s32 effectId, s32 successScale) {
   struct Unit *unit = Unit_Get(target);

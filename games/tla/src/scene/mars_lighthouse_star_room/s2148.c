@@ -33,161 +33,21 @@ void Animation_ApplyChildValues(struct Actor *actor, s32 a);
 void Func_02002120(void);
 extern u8 gData_020023c4[];
 
-void Func_02002148(void) {
-  struct MainRoutineWork *main = &gMainRoutineWork;
-  struct Work020023c4 *work;
-  struct Vector3 position;
-
-  if (main->renderMode == 0) {
-    struct Actor *actor;
-
-#ifdef UBFIX
-    Func_02001fcc();
-#else
-    // UB: Func_02001fcc takes no arguments and returns nothing.
-    ((s32 (*)())Func_02001fcc)(-10, 0);
-#endif
-    actor = Actor_Get(main->currentOwner);
-    work = (struct Work020023c4 *)(gData_020023c4 + 0x188);
-    Event_Start();
-    FieldEvent_ResolvePendingActions(0);
-    actor->update = Func_02002120;
-    actor->facing = TRIG_TURN / 4;
-    Func_020041cc(actor, 49);
-    for (;;) {
-      if (Func_0200422c(actor->terrainId, actor->x, actor->z) == 7) {
-        s32 i;
-
-        /* FAKEMATCH(temporary): velocityX stored through a union, so the
-         * store aliases the work's s16 read after it; as the plain store, 2
-         * of 236 instructions differ in tla-en (2 of 186 in tla-ja). */
-        ((union {
-           s32 value;
-           u16 half;
-         } *)&actor->velocityX)
-            ->value = work->unk68 << 17;
-        actor->velocityZ = work->unk6a << 17;
-        actor->acceleration = Q16_ONE / 16;
-        for (i = 0; i <= 9; i++) {
-          position.x = actor->x + (work->unk68 << 19);
-          position.y = actor->y;
-#if TLA_PATCH_1
-          position.z = actor->z + (work->unk6a << 19);
-#else
-          // A once-only block: its start holds position's first two stores
-          // ahead of the work read.
-          do {
-            position.z = actor->z + (work->unk6a << 19);
-          } while (0);
-#endif
-          if (Func_0200424c(actor, &position) != 0) {
-            actor->velocityX = 0;
-            actor->velocityZ = 0;
-            break;
-          }
-          System_Wait(1);
-        }
-        break;
-      } else {
-        s32 result;
-#if TLA_PATCH_1
-        s32 radius;
-        struct Actor *other;
-        u8 *flags;
-        s32 x, z, off;
-        s32 i;
-#else
-        s32 x, z, off, oldZ;
-#endif
-
-        position.x = actor->x + (work->unk68 << 19);
-        position.y = actor->y;
-#if TLA_PATCH_1
-        position.z = actor->z + (work->unk6a << 19);
-        result = Func_0200424c(actor, &position);
-#else
-        // A once-only block, as in the loop above, with the call inside so
-        // the call reuses position's address.
-        do {
-          position.z = actor->z + (work->unk6a << 19);
-          result = Func_0200424c(actor, &position);
-        } while (0);
-#endif
-        if (result > 0)
-          break;
-        if (result < 0) {
-          actor->facing = TRIG_TURN / 4;
-          Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, -1);
-          break;
-        }
-#if TLA_PATCH_1
-        radius = actor->radius - 2;
-        other = Ram_HeapSlots->scriptObjects;
-        flags = &other->collisionFlags;
-        /* FAKEMATCH(wrapper): the overlap test forwarded through Value4; as a
-         * direct Func_0200428c call, 117 of 236 instructions differ in tla-en.
-         */
-        for (i = 0; i <= 63; i++, flags += 128, other++) {
-          if (other->script != 0 && (*flags & 1) && other != actor &&
-              Value4((s32 (*)())Func_0200428c, (s32)&other->x, radius,
-                     (s32)&position, other->radius - 2) >= 0) {
-            System_Wait(1);
-            goto done;
-          }
-        }
-        // A once-only block: its end holds the order around it (as the plain
-        // statement, 6 of 236 instructions differ in tla-en).
-        do {
-          x = actor->x += work->unk68 << 17;
-        } while (0);
-        z = actor->z + (work->unk6a << 17);
-#else
-        x = actor->x += work->unk68 << 17;
-        // The old z read in a once-only block, whose end keeps the read
-        // between x's store and the work read.
-        /* FAKEMATCH(temporary): oldZ carries the z read out of the block; as z
-         * = actor->z + (work->unk6a << 17), 8 of 186 instructions differ in
-         * tla-ja. */
-        do {
-          oldZ = actor->z;
-        } while (0);
-        z = oldZ + (work->unk6a << 17);
-#endif
-        actor->z = z;
-        off = (x & 0xfffff) + 0xfff80000;
-        if (off > Q16_ONE)
-          off = Q16_ONE;
-        if (off < (s32)0xffff0000)
-          off = 0xffff0000;
-        actor->x = x - off;
-        off = (z & 0xfffff) + 0xfff80000;
-        if (off > Q16_ONE)
-          off = Q16_ONE;
-        if (off < (s32)0xffff0000)
-          off = 0xffff0000;
-        actor->z = z - off;
-        work->unk04 = 0;
-        System_Wait(1);
-      }
-    }
-#if TLA_PATCH_1
-  done:
-#endif
-    actor->update = 0;
-    Animation_ApplyChildValues(actor, 0);
-  }
-#if !TLA_PATCH_1
-  /* FAKEMATCH(barrier): an empty asm reading work before the last store; as
-   * the plain store, 2 of 186 instructions differ in tla-ja. */
-  asm("" : : "r"(work));
-#endif
-  // UB: work is set only when renderMode is 0; otherwise the store goes
-  // through whatever its register holds.
-#ifdef UBFIX
-  if (main->renderMode == 0)
-#endif
-    work->unk04 = 0;
-}
+#define SHARED_F02002148_NAME Func_02002148
+#define SHARED_F02002148_ID2 Func_02001fcc
+#define SHARED_F02002148_ID3 Func_02002120
+#define SHARED_F02002148_ID4 Func_020041cc
+#define SHARED_F02002148_ID5 Func_0200422c
+#define SHARED_F02002148_ID6 Func_0200424c
+#define SHARED_F02002148_ID7 Func_0200428c
+#include "../shared/func_02002148.c"
+#undef SHARED_F02002148_NAME
+#undef SHARED_F02002148_ID2
+#undef SHARED_F02002148_ID3
+#undef SHARED_F02002148_ID4
+#undef SHARED_F02002148_ID5
+#undef SHARED_F02002148_ID6
+#undef SHARED_F02002148_ID7
 
 #include "frame.h"
 
@@ -605,156 +465,20 @@ s32 Func_02004284(struct Actor *object);
 /* VIEW(s3070): routine Func_0200428c as s32 Func_0200428c(s32 *a, s32 aRadius, s32 *b, s32 bRadius); s2dc4 has s32 Func_0200428c(s32 *a, s32 radiusA, struct Position *b, s32 radiusB); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room/s2148.c:1093: `Func_0200428c__s3070' undeclared (first use in this function). */
 extern s32 Func_0200428c__s3070(s32 *a, s32 aRadius, s32 *b, s32 bRadius) __asm__("Func_0200428c");
 
-void Func_02003070(void) {
-  struct Actor *object;
-  s32 startCell;
-  s32 targetX;
-  s32 targetZ;
-  s32 x;
-  s32 z;
-  u8 *layer;
-  s32 radius;
-  s32 position[3];
-  s32 dx, dz;
-  s32 cell;
-  s16 angle;
-  s32 i;
-  s32 j;
-  struct Actor *entry;
-  u8 *flags;
-  s32 *q;
-  s32 *p;
-
-  /* FAKEMATCH(volatile): gData_02004cf0 read as a volatile s16, reread after
-   * each test and for lsls #16; as a plain u16, 54 of 347 instructions differ
-   * in tla-en. */
-  object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  gData_02004cf0__s3070 = 0;
-retry:
-  Func_02002d90();
-  object->speedLimit = 0x10000;
-  object->acceleration = 0x8000;
-  object->targetX = 0x80000000;
-  object->targetZ = 0x80000000;
-  object->velocityX = 0;
-  object->velocityZ = 0;
-  p = position;
-  p[0] = x = (object->x & 0xfff00000) + 0x80000;
-  p[1] = object->y;
-  p[2] = z = (object->z & 0xfff00000) + 0x80000;
-  targetZ = z;
-  targetX = x;
-  layer = &object->terrainId;
-  startCell = GetMapCellCollision(*layer, targetX, targetZ);
-  dz = targetZ - object->z;
-  dx = targetX - object->x;
-  if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
-    angle = gData_0200483c[(gInput.held >> 4) & 15];
-    // -1 for no direction, tested as its halfword.
-    if ((u16)angle == 0xffff)
-#if !TLA_PATCH_1
-      return;
-#else
-      goto end;
-#endif
-  } else {
-    angle = ArcTan2(targetZ - object->z, targetX - object->x);
-    angle = (angle + 0x2000) & 0xc000;
-  }
-  FieldVector_AddPolarOffset(0x100000, angle, position);
-  cell = GetMapCellCollision(*layer, p[0], p[2]);
-  if (cell == 255 ||
-      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
-    object->facing = angle;
-    object->velocityX = 0;
-    object->velocityZ = 0;
-    object->x = x;
-    object->z = z;
-    goto end;
-  }
-  p[0] = x;
-  p[2] = z;
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  object->timer = 0;
-  Actor_SetMoveTarget(object, x, object->y, z);
-  Func_020041cc(object, 2);
-  Actor_SetAnimationSpeed(object, 48);
-#if !TLA_PATCH_1
-  Actor_WaitForMove(object);
-#else
-  for (i = 0; i <= 179 && Func_02004284(object) == 0; i++) {
-    if (gData_02004cf0__s3070 != 0)
-      goto end;
-    System_Wait(1);
-  }
-#endif
-  object->update = (void (*)(void))Func_02002d04;
-  goto walk;
-walkNext:
-  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
-    goto blocked;
-  if (gData_02004cf0__s3070 != 0)
-#if !TLA_PATCH_1
-    goto blocked;
-#else
-    goto end;
-#endif
-  radius = object->radius - 2;
-  entry = Ram_HeapSlots->scriptObjects;
-  j = 0;
-  flags = &entry->collisionFlags;
-overlap:
-  if (entry->script != NULL && (1 & *flags) && entry != object) {
-    /* FAKEMATCH(wrapper): the overlap call goes through Value4; as a direct
-     * call, 2 of 347 instructions differ in tla-en. */
-    if (Value4((s32 (*)())Func_0200428c__s3070, (s32)&entry->x, radius, (s32)position,
-               entry->radius - 2) >= 0)
-      goto blocked;
-  }
-  j++;
-  flags += sizeof(*entry);
-  entry++;
-  if (j <= 63)
-    goto overlap;
-  targetX = q[0];
-  targetZ = q[2];
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  Actor_SetMoveTarget(object, q[0], q[1], q[2]);
-  i = 0;
-  goto test;
-next:
-  System_Wait(1);
-  i++;
-test:
-  if (i <= 179 && Func_02004284(object) == 0 && gData_02004cf0__s3070 == 0)
-    goto next;
-  if (gData_02004cf0__s3070 != 0)
-    goto end;
-  if (cell != startCell)
-    goto changed;
-walk:
-  /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
-   * position's address; as no asm, 94 of 347 instructions differ in tla-en. */
-  __asm__("" : : : SFP_CLOBBER);
-  FieldVector_AddPolarOffset(0x100000, angle, position);
-  q = position;
-  cell = GetMapCellCollision(*layer, q[0], q[2]);
-  if (cell != 255)
-    goto walkNext;
-blocked:
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x10000;
-  Actor_SetMoveTarget(object, targetX, object->y, targetZ);
-  Actor_WaitForMove(object);
-  System_Wait(2);
-  goto retry;
-changed:
-  System_Wait(10);
-end:
-  object->update = NULL;
-  object->actionFlags |= 1;
-  object->acceleration = 0x4000;
-  Func_020041cc(object, 1);
-}
+#define SHARED_F02003070_NAME Func_02003070
+#define SHARED_F02003070_ID2 gData_02004cf0__s3070
+#define SHARED_F02003070_ID3 Func_02002d90
+#define SHARED_F02003070_ID4 gData_0200483c
+#define SHARED_F02003070_ID5 Func_020041cc
+#define SHARED_F02003070_ID6 Func_02004284
+#define SHARED_F02003070_ID7 Func_02002d04
+#define SHARED_F02003070_ID8 Func_0200428c__s3070
+#include "../shared/func_02003070.c"
+#undef SHARED_F02003070_NAME
+#undef SHARED_F02003070_ID2
+#undef SHARED_F02003070_ID3
+#undef SHARED_F02003070_ID4
+#undef SHARED_F02003070_ID5
+#undef SHARED_F02003070_ID6
+#undef SHARED_F02003070_ID7
+#undef SHARED_F02003070_ID8

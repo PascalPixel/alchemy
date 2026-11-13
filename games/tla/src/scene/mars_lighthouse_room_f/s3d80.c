@@ -121,159 +121,23 @@ DEFINE_FUNC_02002DC4(Func_02004140, Func_0200410c, gData_02005f38__s3d80,
 
 #include "call.h"
 
-void Func_020043ec(void) {
-  struct Actor *object;
-  s32 startCell;
-  s32 targetX;
-  s32 targetZ;
-  s32 x;
-  s32 z;
-  u8 *layer;
-  s32 radius;
-  s32 position[3];
-  s32 dx, dz;
-  s32 cell;
-  s16 angle;
-  s32 i;
-  s32 j;
-  struct Actor *entry;
-  u8 *flags;
-  s32 *q;
-  s32 *p;
-
-  /* FAKEMATCH(volatile): gData_020074c8 read as a volatile s16, reread after
-   * each test and for lsls #16; as a plain u16, 54 of 347 instructions differ
-   * in tla-en. */
-  object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  gData_020074c8 = 0;
-retry:
-  Func_0200410c();
-  object->speedLimit = 0x10000;
-  object->acceleration = 0x8000;
-  object->targetX = 0x80000000;
-  object->targetZ = 0x80000000;
-  object->velocityX = 0;
-  object->velocityZ = 0;
-  p = position;
-  p[0] = x = (object->x & 0xfff00000) + 0x80000;
-  p[1] = object->y;
-  p[2] = z = (object->z & 0xfff00000) + 0x80000;
-  targetZ = z;
-  targetX = x;
-  layer = &object->terrainId;
-  startCell = GetMapCellCollision(*layer, targetX, targetZ);
-  dz = targetZ - object->z;
-  dx = targetX - object->x;
-  if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
-    angle = gData_02005f38__s3d80[(gInput.held >> 4) & 15];
-    // -1 for no direction, tested as its halfword.
-    if ((u16)angle == 0xffff)
-#if !TLA_PATCH_1
-      return;
-#else
-      goto end;
-#endif
-  } else {
-    angle = ArcTan2(targetZ - object->z, targetX - object->x);
-    angle = (angle + 0x2000) & 0xc000;
-  }
-  FieldVector_AddPolarOffset(0x100000, angle, position);
-  cell = GetMapCellCollision(*layer, p[0], p[2]);
-  if (cell == 255 ||
-      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
-    object->facing = angle;
-    object->velocityX = 0;
-    object->velocityZ = 0;
-    object->x = x;
-    object->z = z;
-    goto end;
-  }
-  p[0] = x;
-  p[2] = z;
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  object->timer = 0;
-  Actor_SetMoveTarget(object, x, object->y, z);
-  Func_02005480(object, 2);
-  Actor_SetAnimationSpeed(object, 48);
-#if !TLA_PATCH_1
-  Actor_WaitForMove(object);
-#else
-  for (i = 0; i <= 179 && Func_02005530(object) == 0; i++) {
-    if (gData_020074c8 != 0)
-      goto end;
-    System_Wait(1);
-  }
-#endif
-  object->update = (void (*)(void))Func_02004080;
-  goto walk;
-walkNext:
-  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
-    goto blocked;
-  if (gData_020074c8 != 0)
-#if !TLA_PATCH_1
-    goto blocked;
-#else
-    goto end;
-#endif
-  radius = object->radius - 2;
-  entry = Ram_HeapSlots->scriptObjects;
-  j = 0;
-  flags = &entry->collisionFlags;
-overlap:
-  if (entry->script != NULL && (1 & *flags) && entry != object) {
-    /* FAKEMATCH(wrapper): the overlap call goes through Value4; as a direct
-     * call, 2 of 347 instructions differ in tla-en. */
-    if (Value4((s32 (*)())Func_02005538, (s32)&entry->x, radius, (s32)position,
-               entry->radius - 2) >= 0)
-      goto blocked;
-  }
-  j++;
-  flags += sizeof(*entry);
-  entry++;
-  if (j <= 63)
-    goto overlap;
-  targetX = q[0];
-  targetZ = q[2];
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  Actor_SetMoveTarget(object, q[0], q[1], q[2]);
-  i = 0;
-  goto test;
-next:
-  System_Wait(1);
-  i++;
-test:
-  if (i <= 179 && Func_02005530(object) == 0 && gData_020074c8 == 0)
-    goto next;
-  if (gData_020074c8 != 0)
-    goto end;
-  if (cell != startCell)
-    goto changed;
-walk:
-  /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
-   * position's address; as no asm, 94 of 347 instructions differ in tla-en. */
-  __asm__("" : : : SFP_CLOBBER);
-  FieldVector_AddPolarOffset(0x100000, angle, position);
-  q = position;
-  cell = GetMapCellCollision(*layer, q[0], q[2]);
-  if (cell != 255)
-    goto walkNext;
-blocked:
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x10000;
-  Actor_SetMoveTarget(object, targetX, object->y, targetZ);
-  Actor_WaitForMove(object);
-  System_Wait(2);
-  goto retry;
-changed:
-  System_Wait(10);
-end:
-  object->update = NULL;
-  object->actionFlags |= 1;
-  object->acceleration = 0x4000;
-  Func_02005480(object, 1);
-}
+#define SHARED_F02003070_NAME Func_020043ec
+#define SHARED_F02003070_ID2 gData_020074c8
+#define SHARED_F02003070_ID3 Func_0200410c
+#define SHARED_F02003070_ID4 gData_02005f38__s3d80
+#define SHARED_F02003070_ID5 Func_02005480
+#define SHARED_F02003070_ID6 Func_02005530
+#define SHARED_F02003070_ID7 Func_02004080
+#define SHARED_F02003070_ID8 Func_02005538
+#include "../shared/func_02003070.c"
+#undef SHARED_F02003070_NAME
+#undef SHARED_F02003070_ID2
+#undef SHARED_F02003070_ID3
+#undef SHARED_F02003070_ID4
+#undef SHARED_F02003070_ID5
+#undef SHARED_F02003070_ID6
+#undef SHARED_F02003070_ID7
+#undef SHARED_F02003070_ID8
 
 // ---- games/tla/src/scene/mars_lighthouse_room_f/s4700.c ----
 

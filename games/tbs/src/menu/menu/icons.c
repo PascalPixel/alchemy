@@ -50,7 +50,8 @@ s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   s32 firstTile;
   s32 allocationBits;
 
-  allocationBits = (s32)HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, 1544);
+  allocationBits =
+      (s32)HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   selectedSlot = slot;
   Ability_LoadGlyphFar(resourceId, 0, &selectedSlot, &decodedResource, 1);
   firstTile = VramCache_Reload(slot, allocationBits + 1024);

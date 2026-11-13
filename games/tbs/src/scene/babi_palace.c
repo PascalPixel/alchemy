@@ -2756,7 +2756,7 @@ s32 BabiPalace_ApplyEntryState(void) {
         sprite->image.palette = 0;
         // The icon is drawn 1,024 bytes into the glyph buffer, as the 128 bytes
         // of a 16 by 16 sprite.
-        buf = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 1544);
+        buf = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
         Item_LoadIcon(ITEM_CLOAK_BALL);
         Vram_Load(sprite->slot, 128, buf + 1024);
         HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);

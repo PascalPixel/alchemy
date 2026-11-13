@@ -1310,7 +1310,7 @@ static void Kalay_PrepareTown(void) {
     nut->mode = found;
     nut->y = px(10);
     nut->visible = 1;
-    heap = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 1544);
+    heap = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Icon_DrawItem(ITEM_NUT);
     VramCache_Load(sprite->palette, 128, heap + 1024);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);

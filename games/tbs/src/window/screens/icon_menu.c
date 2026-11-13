@@ -244,8 +244,8 @@ void IconMenu_DrawIcons(void) {
 void *IconMenu_Open(void) {
   // The matching allocation size is the complete six-entry work block.
   void *work;
-  work = HeapSlot_AllocEwram(HEAP_SLOT_ICON_MENU, 152);
-  Dma_Fill32(0, work, 152);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_ICON_MENU, sizeof(struct IconMenuWork));
+  Dma_Fill32(0, work, sizeof(struct IconMenuWork));
   Task_Add(IconMenu_DrawIcons, TASK_PASS_FRAME - 10);
   return work;
 }

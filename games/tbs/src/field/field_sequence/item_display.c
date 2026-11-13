@@ -184,7 +184,8 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
 
     // Draw the item's icon into HEAP_SLOT_GLYPH_TRANSFER, then send it to the
     // sprite's tiles: 128 bytes from byte 1,024 of the block.
-    iconBuffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 1544);
+    iconBuffer =
+        HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Icon_DrawItemFar(item);
 
     sprite->image.tile =
@@ -266,7 +267,8 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
 /// heap reset frees it).
 void ItemDisplay_ShowItem(s32 item, s32 flags) {
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  void *iconBuffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 1544);
+  void *iconBuffer =
+      HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   struct Actor *actor = Actor_CreateFar(
       SPRITE_BLANK, leader->x.fixed, leader->y.fixed + px(36), leader->z.fixed);
 

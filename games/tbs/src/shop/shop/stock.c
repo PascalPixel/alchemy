@@ -306,30 +306,15 @@ s32 ShopStock_GetRowCount(void) { return SHOP_STOCK_ROWS; }
 /// so an item listed by two shops can be bought twice once both are
 /// visited.
 void ShopStock_AddArtifacts(s32 stockRow) {
-  const s16 *stockEntries;
-  const s16 *artifactCursor;
-  s32 itemId;
-  s32 artifactIndex;
-  s32 initializedFlag;
+  const s16 *artifacts = &sStockTable[stockRow][SHOP_STOCK_ARTIFACTS];
+  s32 flag = FLAG_SHOP_ARTIFACTS_STOCKED + stockRow;
+  s32 i;
 
-  initializedFlag = stockRow + FLAG_SHOP_ARTIFACTS_STOCKED;
-  if (GameFlag_GetFar(initializedFlag) == 0) {
-    GameFlag_SetFar(initializedFlag);
-    artifactIndex = 0;
-    itemId = sStockTable[stockRow][SHOP_STOCK_ARTIFACTS];
-    if (itemId != 0) {
-      stockEntries = sStockTable[stockRow];
-      artifactCursor = stockEntries + SHOP_STOCK_ARTIFACTS;
-      do {
-        Item_AdjustCounterFar(itemId, 1);
-        artifactIndex++;
-        if (artifactIndex > SHOP_STOCK_ARTIFACT_COUNT - 1)
-          break;
-        artifactCursor++;
-        itemId = *artifactCursor;
-      } while (itemId != 0);
-    }
-  }
+  if (GameFlag_GetFar(flag) != 0)
+    return;
+  GameFlag_SetFar(flag);
+  for (i = 0; i < SHOP_STOCK_ARTIFACT_COUNT && artifacts[i] != 0; i++)
+    Item_AdjustCounterFar(artifacts[i], 1);
 }
 
 /// Copies the shop's ordinary stock, up to 24 items, to `output` with a 0

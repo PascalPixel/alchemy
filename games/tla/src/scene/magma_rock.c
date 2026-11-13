@@ -22,7 +22,7 @@ struct EventObjects {
   struct Actor *objects[64];
 };
 
-void MagmaRock_FightDjinni(void) { Field_RequestDjinnBattle(8, 56); }
+void MagmaRock_FightFury(void) { Field_RequestDjinnBattle(8, 56); }
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 

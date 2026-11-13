@@ -26,13 +26,13 @@ extern char SceneId_Ov692Room8;
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Actor_SetBlendMode(struct Actor *object, u32 value);
 
-extern u32 gData_02005534[];
+extern u32 gMagmaRockInside_FlameScript[];
 
-extern s32 gData_02006710;
+extern s32 gMagmaRockInside_LastStepCell;
 
-void Func_02001190(s32 a, s32 b);
-void Func_020024ac(void);
-void Func_02004934(s32 a, s32 b, s32 owner);
+void MagmaRockInside_BurstStatue(s32 a, s32 b);
+void MagmaRockInside_TrackStepCell(void);
+void MagmaRockInside_SetActorCellShape(s32 a, s32 b, s32 owner);
 void Func_02004c98(struct Actor *object, s32 a);
 void Actor_StartScript(struct Actor *object, const void *data);
 void Func_02004df8(s32 id);

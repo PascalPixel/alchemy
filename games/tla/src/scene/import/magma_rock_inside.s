@@ -286,9 +286,9 @@ Import_EventSetExitRequest:
 	.thumb_func
 Field_RequestDjinnBattle:
 	overlay_veneer Field_RequestDjinnBattleFar
-	.global Func_02004e38
+	.global Field_TryJumpForward
 	.thumb_func
-Func_02004e38:
+Field_TryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func

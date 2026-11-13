@@ -4,12 +4,7 @@
 
 #include "../system_internal.h"
 
-// Saving. The flash chip holds 16 sectors of 4 KB; each holds one part: a
-// 16-byte header (signature, part id, checksum of the payload,
-// counter) and its payload. A save file is parts n and n + 3, for n below
-// SAVE_FILE_COUNT. Writing a part goes to a free sector before the old copy
-// is invalidated, and the highest counter of a part id is its current
-// copy.
+// Saving.
 
 enum {
   SAVE_FLASH_TIMER = 2, ///< the hardware timer handed to the flash library
@@ -30,11 +25,7 @@ enum {
 /// tries, a frame apart) and scans all 16 sectors into the workspace's
 /// occupied, partId and counter tables: a sector counts as taken when its
 /// signature and checksum are good, and of two copies of a part only the newer
-/// stays taken. Returns 1 when no flash chip answers, 0 otherwise; either way
-/// the caller ends with Save_ReleaseWork. The workspace is EWRAM first
-/// (HeapSlot_AllocEwram) and not cleared by the allocator, so it is cleared
-/// here; the part and sector-table functions in this file read it through
-/// gSaveWork, the slot's word in gHeapSlots, and need it allocated.
+/// stays taken.
 s32 Save_InitializeWork(void) {
   struct SaveWork *work;
   struct SaveSectorHeader headerStorage;
@@ -82,9 +73,7 @@ s32 Save_InitializeWork(void) {
 
     work->occupied[index] = 1;
     work->partId[index] = part;
-    // An interrupted replacement can leave both copies valid. Retain the
-    // larger counter, preferring the earlier sector when they tie; status
-    // is the successful checksum result (0), reused as the scan cursor.
+    // An interrupted replacement can leave both copies valid.
     if (status < index) {
       do {
         if (work->partId[status] == (u8)part) {
@@ -100,9 +89,7 @@ s32 Save_InitializeWork(void) {
   return 0;
 }
 
-/// Picks the free sector to write part `mode` to, at random. The last free
-/// sector only goes to a part that already has a copy, so replacing a save
-/// always has room. Returns SAVE_SECTOR_COUNT when there is no sector to use.
+/// Picks the free sector to write part `mode` to, at random.
 u32 Save_SelectWriteSector(s32 mode) {
   u32 empty[SAVE_SECTOR_COUNT];
   s32 count;
@@ -139,8 +126,7 @@ u32 Save_SelectWriteSector(s32 mode) {
 }
 
 /// Programs the workspace's sector buffer into flash sector `sector` and
-/// verifies it, through the flash library's routine for this chip. Returns 0
-/// on success and 1 on failure.
+/// verifies it, through the flash library's routine for this chip.
 u32 Save_WriteSector(s32 sector) {
   struct SaveWork *work = gSaveWork;
   u16 index = sector;
@@ -152,9 +138,7 @@ u32 Save_WriteSector(s32 sector) {
   return (u32)(-result | result) >> 31; // 1 for any nonzero result
 }
 
-/// Reads flash sector `index` into the workspace's sector buffer. Returns 0
-/// when the payload matches the header's checksum, and the difference of the
-/// two checksums otherwise.
+/// Reads flash sector `index` into the workspace's sector buffer.
 s32 Save_ReadSector(s32 index) {
   struct SaveWork *work;
   struct SaveSectorHeader header;
@@ -174,8 +158,7 @@ UNUSED u16 Save_EraseSector(u16 sector) { return gEraseFlashSector(sector); }
 
 /// Saves 4080 bytes from `source` as part `partId`: writes the new copy with
 /// the next counter, then invalidates the old one, updating the workspace's
-/// sector tables. When the counter passes 65000 it restarts at 1, written back
-/// over the old sector. Returns 0 on success and 1 on failure.
+/// sector tables.
 s32 Save_WritePart(s32 partId, void *source) {
   struct SaveWork *work;
   struct SaveSectorHeader header;
@@ -210,9 +193,7 @@ s32 Save_WritePart(s32 partId, void *source) {
     return 1;
 
   if (header.counter > SAVE_COUNTER_LIMIT) {
-    // Counter order is ordinary, not modular. Keep the high-counter copy
-    // valid until the old sector has been rewritten and verified as 1, then
-    // invalidate the high copy so it cannot win the next scan.
+    // Counter order is ordinary, not modular.
     header.counter = 1;
     START_DMA(&header, &work->slot.part.header, DMA_COPY_WORDS(4));
     WAIT_DMA();
@@ -230,9 +211,7 @@ s32 Save_WritePart(s32 partId, void *source) {
 }
 
 /// Loads the current copy of part `partId` (4080 bytes) into `destination`.
-/// Returns 1 when there is none and 0 otherwise. The checksum result of the
-/// read is ignored: a sector counts as occupied only after the scan's checksum
-/// or a verified write.
+/// Returns 1 when there is none and 0 otherwise.
 u32 Save_ReadPart(s32 partId, void *destination) {
   struct SaveWork *work;
   u32 index;
@@ -248,9 +227,8 @@ u32 Save_ReadPart(s32 partId, void *destination) {
   return 0;
 }
 
-/// Invalidates the current copy of part `partId`. Called when the
-/// file list erases a file. Returns 0 on success and 1 when there is none or
-/// the write failed.
+/// Invalidates the current copy of part `partId`. Called when the file list
+/// erases a file.
 u32 Save_DeletePart(s32 partId) {
   s32 index;
   s32 deletionResult;
@@ -264,8 +242,7 @@ u32 Save_DeletePart(s32 partId) {
 }
 
 /// Sums the first 4072 payload bytes of the workspace's sector buffer; the
-/// final eight payload bytes are excluded. Called when a sector is read and
-/// before one is written.
+/// final eight payload bytes are excluded.
 s32 Save_ChecksumSector(void) {
   struct SaveWork *work;
   u32 limit;
@@ -370,8 +347,7 @@ u32 Save_GetLatestCounter(s32 partId) {
 /// Reads the summary at the start of each of the three save files into the
 /// workspace's summary table for the file list, and four bytes from offset
 /// 0x110 of each file's second part into its secondPartPlayTime (zero when it
-/// has none). A file with no first part keeps a cleared summary, so its level
-/// reads 0. Returns how many save files exist.
+/// has none).
 s32 Save_LoadFileSummaries(void) {
   struct SaveWork *work;
   struct SaveFileSummary *summary;
@@ -404,8 +380,7 @@ s32 Save_LoadFileSummaries(void) {
 }
 
 /// Removes the flash timer handler and frees the save workspace's heap slot,
-/// with every block allocated after it in the same pool. It returns no value,
-/// whatever its declaration says; no caller reads one.
+/// with every block allocated after it in the same pool.
 u32 Save_ReleaseWork(void) {
   Irq_SetHandler(IRQ_TIMER2, 0, NULL);
   HeapSlot_Release(HEAP_SLOT_SAVE);

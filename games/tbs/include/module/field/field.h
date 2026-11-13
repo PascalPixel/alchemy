@@ -27,8 +27,7 @@ enum ActorSystemMode {
 };
 
 /// SpriteAnimation.kind: the facing table a sprite animation's pictures follow
-/// (Sprite_ComposePicture, facing.c). Each cuts the facing angle into
-/// sectors and gives each sector a picture and whether it is mirrored.
+/// (Sprite_ComposePicture, facing.c).
 enum AnimationFacingKind {
   /// The animation script's own picture whatever the facing; zero also marks a
   /// free
@@ -98,8 +97,7 @@ enum ActorCreateKind {
 #define ACTOR_CREATE_SPRITE_MASK 0xfff
 
 /// The world map's collision values (WorldMap_GetCollision), 1 to 15; each
-/// indexes a row of gWorldMap_BattleEnvironments. Values not named here
-/// are walkable or not only by their range.
+/// indexes a row of gWorldMap_BattleEnvironments.
 enum WorldMapCollision {
   /// The party walks only on WORLD_MAP_COLLISION_WALKABLE_FIRST to
   /// WORLD_MAP_COLLISION_WALKABLE_LAST (WorldMap_IsWalkable).
@@ -132,9 +130,8 @@ enum BattleEnvironment {
   BATTLE_ENVIRONMENT_SHALLOWS = 7
 };
 
-/// A world map cell's encounter region (bits 30..24 of its block word),
-/// which picks its encounter zones
-/// (gWorldMap_EncounterRules). Only the snowfield changes anything else.
+/// A world map cell's encounter region (bits 30..24 of its block word), which
+/// picks its encounter zones (gWorldMap_EncounterRules).
 enum WorldMapEncounterRegion {
   /// Takes the second world map graphics set (WorldMap_LoadGraphics) and the
   /// snowfield's battle environments (WorldMap_GetBattleEnvironment).
@@ -142,8 +139,7 @@ enum WorldMapEncounterRegion {
 };
 
 /// A map cell's terrain kind: the low four bits of its shape's first byte,
-/// which pick its height function from gMapGrid_TerrainHeightFunctions. Samples
-/// are the shape's other bytes; x and y run 0 to 15 across the cell.
+/// which pick its height function from gMapGrid_TerrainHeightFunctions.
 enum TerrainKind {
   TERRAIN_FLAT = 0,    ///< the first sample everywhere
   TERRAIN_SLOPE_X = 1, ///< from the first sample at x 0 towards the second

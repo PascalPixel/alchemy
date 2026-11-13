@@ -11,14 +11,11 @@
 
 /// Changes the shake without restarting an axis whose argument is negative.
 /// Amplitudes are 16.16 pixels and decay is a 16.16 multiplier per frame.
-/// Event commands reach it through MapGrid_SetShake and
-/// MapGrid_SetScreenShakeFar.
 void MapGrid_SetScreenShake(s32 shakeX, s32 shakeY, s32 shakeDecay) {
   struct MapGridScrollWork *grid;
 
   // A negative argument leaves that value alone, so an event can change the
-  // decay without restarting the shake, or start one axis only. The view
-  // updates read the same three words on the world map (WorldMapView).
+  // decay without restarting the shake, or start one axis only.
   grid = gMapGridWork[0];
   if (shakeX >= 0) {
     grid->shakeX = shakeX;
@@ -32,8 +29,7 @@ void MapGrid_SetScreenShake(s32 shakeX, s32 shakeY, s32 shakeDecay) {
 }
 
 /// Waits until both shake amplitudes are below 1/256 pixel, with a 300-frame
-/// limit for a shake whose decay never settles. Scene imports reach it as
-/// MapGrid_WaitForShakeToSettleFar; it stops further shake after the wait.
+/// limit for a shake whose decay never settles.
 void MapGrid_WaitForShakeToSettle(void) {
   struct MapGridScrollWork *grid;
   s32 waitedFrames;
@@ -61,9 +57,6 @@ typedef const struct WorldMapAffinePair *(*TileMapRowDrawer)(
 
 /// Draws the current affine page into the world map's still-picture pixels.
 /// WorldMap_StartStillPicture supplies 160 pairs and a 240 by 160 byte output.
-/// The ARM kernel borrows HEAP_SLOT_RAM_CODE_TEMP for this synchronous call;
-/// it is released before returning, while both graphics buffers stay owned
-/// by the world map.
 void TileMap_DrawRowsFromRam(const struct WorldMapAffinePair *lines,
                              u8 *pixels) {
   const u8 *base;
@@ -80,10 +73,6 @@ void TileMap_DrawRowsFromRam(const struct WorldMapAffinePair *lines,
 }
 
 /// Rebuilds the ground plane's scanline terms when the world map pitch changes.
-/// WorldMap_InitializePerspective and WorldMap_UpdateView supply the pitch's
-/// sine/cosine ratio and the followed position, both in 16.16. Each screen line
-/// gets a width scale and signed ground distance, or zeros above the horizon;
-/// Transform_UpdateVertices reads them to build the frame's affine page.
 void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
                                  struct WorldMapScanline *scanline) {
   s32 groundPoint[3];
@@ -128,9 +117,7 @@ void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
       diagonal = Iwram_MulQ16(-scale, Q16_ONE / 2);
       scanline->scale = Iwram_RatioMulQ14(gProjection.focal, diagonal);
       diagonal = Iwram_MulQ16(scale, distance);
-      // The distance is the root of the two squared terms. Both are taken
-      // >> 4 first so the squares stay in range, which leaves the root
-      // >> 12; << 12 puts it back in 16.16.
+      // The distance is the root of the two squared terms.
       horizontal = (cameraCoordinates[2] - scale) >> 4;
       vertical = (diagonal - cameraCoordinates[1]) >> 4;
       horizontalSquared = Iwram_MulQ16(horizontal, horizontal);

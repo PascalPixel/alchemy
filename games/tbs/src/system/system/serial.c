@@ -4,10 +4,7 @@
 
 #include "../system_internal.h"
 
-// The link cable. Two consoles trade a 24-byte payload each VBlank in
-// multiplayer mode; the parent clocks the transfers from timer 3, a halfword
-// at a time. Bulk data rides on that exchange in 20-byte blocks (the
-// BeginTransfer functions and Serial_StepBlockTransfer).
+// The link cable.
 
 enum {
   /// A packet: its number, missing mask, checksum and the 24-byte payload.
@@ -83,8 +80,7 @@ void Serial_Initialize(void) {
 }
 
 /// Lets the timer start transfers again once a link mode is set, by setting
-/// gSerialWork.transferEnabled. Nothing in the game calls it; wait() does the
-/// same inline.
+/// gSerialWork.transferEnabled.
 void Serial_EnableTransferTimer(void) {
   struct SerialWork *state = &gSerialWork;
 
@@ -109,10 +105,7 @@ void Serial_DisableTransfer(void) {
 }
 
 /// Looks for the link partner and, once connected, does one exchange (as
-/// Serial_ExchangePayloads). When SIOCNT shows the parent's id with
-/// SIO_MULTI_SD set and SIO_MULTI_SI and SIO_START clear, and no packet is
-/// being sent, this console arms timer 3 to clock the transfers and so acts as
-/// the parent. Returns the link status (see Serial_ExchangePayloads).
+/// Serial_ExchangePayloads).
 s32 Serial_PollAndTransfer(void *send, void *receive) {
   volatile u32 *siocnt;
   u32 control;
@@ -254,8 +247,6 @@ s32 Serial_ExchangePayloads(void *send, void *receive) {
 
 /// Builds the packet to send in sendBuffer[0]: [0] the packet number, [1] the
 /// consoles not yet heard from, [2] the checksum and [4] the 24-byte payload.
-/// The checksum is the complement of the sum of the first 28 bytes as
-/// halfwords. Then restarts the send position and the timer.
 void Serial_PrepareSendPacket(void *payload) {
   struct SerialWork *sr;
   u32 i;
@@ -303,8 +294,7 @@ void Serial_PrepareSendPacket(void *payload) {
 
 /// Swaps in the packets the interrupt handler finished, then copies the payload
 /// of each one whose checksum is good to `payload` (24 bytes per console), and
-/// records the consoles heard from in currentMask and receivedMask. Returns the
-/// mask of consoles heard from this frame.
+/// records the consoles heard from in currentMask and receivedMask.
 u8 Serial_CollectReceivedPayloads(void *payload) {
   u8 flags[8];
   s32 i;
@@ -331,8 +321,7 @@ u8 Serial_CollectReceivedPayloads(void *payload) {
     for (k = 0; k < SERIAL_PACKET_HALFWORDS; k++)
       sum += packet[k];
     // A good packet's halfwords, its complemented checksum included, sum to
-    // 0xffff. Its payload is taken only when the packet completed since the
-    // last frame with SERIAL_CHANNEL_ERROR never set.
+    // 0xffff.
     if (flags[i] == SERIAL_CHANNEL_PACKET_COMPLETE && (s16)sum == -1) {
       Dma_Set(gSerialWork.pendingBuffer[i] + 2,
               (u8 *)payload + i * SERIAL_PAYLOAD_BYTES, DMA_COPY_WORDS(6),
@@ -348,10 +337,8 @@ u8 Serial_CollectReceivedPayloads(void *payload) {
   return gSerialWork.currentMask;
 }
 
-/// The serial and timer 3 interrupt, installed by Serial_Initialize:
-/// each one moves a halfword. It sends the next halfword of the outgoing
-/// packet (0xfefe between packets) and stores the halfword received from each
-/// console; a console's fourteenth halfword completes its packet.
+/// The serial and timer 3 interrupt, installed by Serial_Initialize: each one
+/// moves a halfword.
 void Serial_HandleTransferInterrupt(void) {
   u16 recv[4];
   volatile u32 *sioControl;
@@ -432,8 +419,7 @@ receive_loop:
 }
 
 /// Clears gSerialExchangeActive, which stops the per-frame exchange, and
-/// removes the link interrupt handlers. Called when the Battle Arena, the file
-/// menu's transfer or a link battle ends.
+/// removes the link interrupt handlers.
 void Serial_RemoveIrqHandlers(void) {
   gSerialExchangeActive = 0;
   Irq_SetHandler(IRQ_SERIAL, 0, 0);
@@ -453,12 +439,7 @@ u32 Serial_WaitForStatusMask(s32 mask) {
 
 /// Starts sending `size` bytes from `source` to the partner in 20-byte blocks:
 /// sets the send source, size and block number that Serial_StepBlockTransfer
-/// works from. Returns -1 when a send is already running, 0 otherwise.
-///
-/// `size` must be a multiple of 20: it falls by 20 a block, and the send ends
-/// only when it reaches exactly 0. `source` is read a block each VBlank, and
-/// may be resent from after a rewind, so it must stay unchanged until
-/// gSerialSendSource is 0 again.
+/// works from.
 s32 Serial_StartSend(void *source, s32 size) {
   struct SerialTransferState *state = &gSerialTransfer;
   u32 savedInterruptMaster;
@@ -476,10 +457,7 @@ s32 Serial_StartSend(void *source, s32 size) {
 }
 
 /// Starts receiving the partner's blocks into `destination`: sets the receive
-/// destination and clears the received size. Returns -1 when a receive is
-/// already running, 0 otherwise. Each block is stored whole, so `destination`
-/// needs room for the partner's whole send; the receive ends at the partner's
-/// last block, whatever the room.
+/// destination and clears the received size.
 s32 Serial_StartReceive(void *destination) {
   struct SerialTransferState *state = &gSerialTransfer;
   u32 savedInterruptMaster;
@@ -549,11 +527,7 @@ struct SerialHalfword {
 };
 
 /// Runs each VBlank after the exchange, called by System_VBlankHandler: moves
-/// the bulk transfer on by one 20-byte block each way. The receiver
-/// acknowledges each block's number; when the sender sees an
-/// acknowledgement behind its own count it rewinds and sends the missed
-/// blocks again. A finished send or receive clears gSerialSendSource or
-/// gSerialReceiveDestination.
+/// the bulk transfer on by one 20-byte block each way.
 void Serial_StepBlockTransfer(void) {
   struct SerialTransferState *peer;
   u32 id;
@@ -678,8 +652,7 @@ void SerialTest_Delay(void) {}
 
 /// A link cable test left in the game: it shows a row of tiles, receives blocks
 /// into the map grid cell buffer and shows them as tiles, and sends a part of
-/// the ROM when A or B is held. It never returns. Nothing in the game reaches
-/// it.
+/// the ROM when A or B is held.
 void SerialTest_Run(void) {
   u16 *tile;
   s32 value;

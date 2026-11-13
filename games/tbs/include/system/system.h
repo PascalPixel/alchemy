@@ -16,9 +16,6 @@ void Bios_SoundBiasOn(void);
 /// 1 while the CPU is stopped for sleep, until L and R wake it.
 extern u16 gSleepActive;
 
-#include "types.h"
-#include "edition.h"
-
 /// gNumberBuffer + 10, the decimal form's units digit (the form ends at
 /// + 11); DebugText_PrintDecimal starts n characters before it, so it prints
 /// n + 1.

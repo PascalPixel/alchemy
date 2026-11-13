@@ -4,11 +4,7 @@
 
 #include "../field_internal.h"
 
-/// One step of dissolving a sprite pixel by pixel. In each 8x8 tile (256
-/// colours) one pixel is cleared, in gSpriteDissolve_PixelOrder's order; each
-/// tile runs one step ahead of the last, and only tiles whose step is 64-127
-/// clear a pixel. obj is the sprite (struct Sprite), pos the step (0-127).
-/// Writes the sprite's tiles in OBJ VRAM.
+/// One step of dissolving a sprite pixel by pixel.
 void SpriteDissolve_Step(u8 *obj, u32 pos) {
   u16 *tile;
   s32 tileCount;
@@ -27,11 +23,7 @@ void SpriteDissolve_Step(u8 *obj, u32 pos) {
       u32 highMask = 0xff00;
       u32 indexMask = 0x3f;
 
-      // A tile is 64 bytes (32 halfwords) at 8 bits a pixel. The unsigned
-      // test passes only steps 64 to 127, so later tiles start clearing
-      // first and the dissolve sweeps across the sprite: tile i clears at
-      // steps 64 - i to 127 - i, and even the last of a 64x64 sprite's 64
-      // tiles has all 64 of its steps by step 127.
+      // A tile is 64 bytes (32 halfwords) at 8 bits a pixel.
       for (; i < tileCount; i++, tile += 32, pos++) {
         if ((pos - 64) <= 63) {
           u8 pixel;
@@ -39,9 +31,7 @@ void SpriteDissolve_Step(u8 *obj, u32 pos) {
           u32 isOdd;
 
           // Each tile reads the order 17 entries on from the tile before, so
-          // neighbouring tiles lose different pixels at the same step. VRAM
-          // takes no byte writes: rewrite the pixel pair, clearing one; the
-          // odd pixel is the pair's high byte.
+          // neighbouring tiles lose different pixels at the same step.
           pixel = order[(pos + i * 16) & indexMask];
           pixelPair = (u16 *)((u8 *)tile + (pixel & 0x3e));
           isOdd = 1;
@@ -106,11 +96,7 @@ void SpriteDissolve_RunMany(u8 **sprites, s32 count) {
 
 /// Writes the actor's screen position, in pixels, to screenPosition[0..1] and
 /// returns 0 when it is on or near the screen; otherwise writes 0, 0 and
-/// returns -1. The position is x and z less the view's whole pixels: where a
-/// layered map draws a point at height 0. It ignores y and the ground height,
-/// which the camera takes off z when it draws the sprite and its shadow. No
-/// code names it: its veneer in the field far-call table
-/// (gamepak/far_call/FIELD.S) is unnamed.
+/// returns -1.
 s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
                                       s32 *screenPosition) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
@@ -139,18 +125,8 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
   return -1;
 }
 
-/// Sets up the actor system: allocates and zeroes the 64 actors and
-/// registers the per-frame updates. ACTOR_SYSTEM_BATTLE moves actors with
-/// Actor_UpdateAllMotion, which runs no scripts; ACTOR_SYSTEM_WORLD_MAP and
-/// ACTOR_SYSTEM_BATTLE use the fixed camera. Both blocks are heap slots, so a
-/// later call gets the same ones back. No code releases HEAP_SLOT_ACTORS or
-/// HEAP_SLOT_ACTOR_SYSTEM by name, but FieldSequence_Run takes HEAP_SLOT_FIELD
-/// from EWRAM before them, so its release of that slot as it returns frees
-/// their memory too; Heap_Initialize clears the slots at the next
-/// scene change.
-///
-/// Allocates HEAP_SLOT_ACTOR_SYSTEM for the ActorSystemWork and
-/// HEAP_SLOT_ACTORS for the actors, and sets the sprite outline colours.
+/// Sets up the actor system: allocates and zeroes the 64 actors and registers
+/// the per-frame updates.
 void ActorSystem_Initialize(s32 controlMode) {
   struct ActorSystemWork *system;
   struct Actor *pool;
@@ -200,11 +176,8 @@ void *Actor_FindFree(void) {
   return freeActor;
 }
 
-/// Releases an actor's sprites and zeroes it, releasing its slot.
-/// Clearing the script lets Actor_FindFree hand the actor out
-/// again. Reached through SC_RELEASE (ActorScript_Release) and, as
-/// Actor_ReleaseFar, from the battle, field Psynergy and the
-/// field sequence's actor code.
+/// Releases an actor's sprites and zeroes it, releasing its slot. Clearing the
+/// script lets Actor_FindFree hand the actor out again.
 void Actor_Release(struct Actor *actor) {
   s32 spritesRemaining;
   void **sprites;
@@ -228,16 +201,9 @@ void Actor_Release(struct Actor *actor) {
   }
 }
 
-/// Creates an actor at (x, y, z), in 16.16 pixels, or returns 0 when
-/// every slot is in use. id / 4096 is its enum ActorCreateKind and the low 12
-/// bits the sprite's animation id.
-///
-/// Called as Actor_CreateFar by the battle's placement, field
-/// Psynergy, the field sequence's actor code and treasure spots and the scenes'
-/// events, and directly by the player control for footprints and ripples.
-/// Gives the actor gActor_DefaultScript (a lone SC_END), its home
-/// position and the default motion values; a group's sprite list is taken from
-/// the ActorSystemWork's group tables.
+/// Creates an actor at (x, y, z), in 16.16 pixels, or returns 0 when every slot
+/// is in use. id / 4096 is its enum ActorCreateKind and the low 12 bits the
+/// sprite's animation id.
 struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z) {
   struct Actor *actor;
   struct Sprite *sprite;
@@ -264,10 +230,6 @@ struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z) {
       break;
     case ACTOR_CREATE_GROUP:
       // Take a zeroed list of four sprites, and fill it with id and id + 1.
-      // A list is four words but the next starts a word later, so a second
-      // list would overlap the first and its zeroing clear count. No caller
-      // passes ACTOR_CREATE_GROUP: every id is a sprite below 4096, an
-      // actor placement's (0 to 504), or a kind with no sprite.
       spriteSlots =
           (void **)((u32 *)gActorSystemWork + gActorSystemWork->count++ + 2);
       actor->spriteStorageKind = spriteStorageKind;
@@ -419,16 +381,13 @@ void Actor_RegisterSpriteMetadata(struct Actor *actor, s32 animationId) {
 }
 
 /// Starts an actor on the script that approaches its watched actor
-/// (SC_APPROACH_WATCHED), watching watchedActorHandle. The functions below
-/// start the field's other scripts (actor_script.c).
+/// (SC_APPROACH_WATCHED), watching watchedActorHandle.
 void Actor_StartApproachWatched(struct Actor *actor, s32 watchedActorHandle) {
   Actor_StartScript(actor, gActor_ApproachWatchedScript);
   actor->watchedActor = (struct Actor *)watchedActorHandle;
 }
 
 /// Starts an actor on the script that runs SC_KEY_COUNT every frame.
-/// The field sequence (field/field_sequence/run.c) gives it to the
-/// leader when gMainRoutineWork.movementMode is 2.
 void Actor_StartKeyCheck(struct Actor *actor) {
   Actor_StartScript(actor, gActor_KeyCheckScript);
 }
@@ -496,8 +455,6 @@ void Actor_SetSpriteFlags(struct Actor *actor, u32 flags) {
 }
 
 /// Sets the OAM blend mode of a one-sprite actor's sprite.
-/// This one and the next two test the whole kind byte, not its low four
-/// bits, so an actor with high kind bits set is left alone.
 void Actor_SetBlendMode(struct Actor *actor, u32 mode) {
   if (actor != 0 && actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
     struct Sprite *sprite = actor->sprite;
@@ -523,8 +480,6 @@ void Actor_SetSpriteColorMode(struct Actor *actor, u32 param) {
 
 /// Suspends the actor camera updates, starts the palette back to normal and, a
 /// frame later, shows the sprites with BG1-3 hidden, leaving BG0 unchanged.
-/// The events except Colosso's pair it with
-/// ActorSystem_ResumeProjectionAndHideLayers.
 void ActorSystem_SuspendProjectionAndShowSprites(void) {
   Task_SuspendAll(ActorSystem_PlaceSprites);
   Task_SuspendAll(ActorSystem_ProjectSprites);

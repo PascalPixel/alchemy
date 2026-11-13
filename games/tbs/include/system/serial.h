@@ -11,7 +11,6 @@
 #include "io_reg.h"
 #include "dma.h"
 #include "irq.h"
-#include "dma.h"
 #include "irq_lock.h"
 
 /// A link cable packet: its packet number, the consoles not yet heard from,

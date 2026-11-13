@@ -69,9 +69,7 @@ void String_FormatDecimal(s32 number) {
 }
 
 /// Writes `count` blank characters (tile 0 in WINDOW_PALETTE) at the debug text
-/// cursor and moves it on. Unlike DebugText_Print it writes even while debug
-/// text is off, and does not wrap at the end of the screen. Reached through
-/// the far-call table.
+/// cursor and moves it on.
 void DebugText_PrintBlanks(u32 count) {
   u16 *dst = gDebugTextCursor;
   u32 index;
@@ -130,9 +128,7 @@ void DebugText_PrintHex(u32 value, s32 digits) {
 }
 
 /// Prints the last `digits` characters of `value` in signed decimal (1 to 10;
-/// anything else prints 10). The sign stands just before the first digit, so
-/// a '-' shows only when `digits` is more than the number's digit count.
-/// Reached through the far-call table.
+/// anything else prints 10).
 void DebugText_PrintDecimal(s32 value, s32 digits) {
   if (digits < 1 || digits > 10)
     digits = 10;

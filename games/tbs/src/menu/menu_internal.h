@@ -29,27 +29,18 @@
 #include "ability_ids.h"
 
 /// AbilityDefinition.flags: where an ability or item can be used, as the
-/// Psynergy list says ("Usable in the field", "Usable in battle"). The same
-/// values as enum AbilityUse (battle_unit.h), which these macros shadow here.
+/// Psynergy list says ("Usable in the field", "Usable in battle").
 #define ABILITY_USABLE_IN_FIELD 0x40
 #define ABILITY_USABLE_IN_BATTLE 0x80
 
 /// Game flags of the menus. Start was pressed: every menu screen unwinds and
-/// the whole menu closes. Menu_StartWatchingStart clears it and
-/// Menu_WatchStart sets it.
+/// the whole menu closes.
 #define FLAG_MENU_START_PRESSED 0x150
 /// The info window holds a message the next selection must not draw over.
-/// ItemMenu_ShowMessage sets it; the next chooser that would draw
-/// into the info window clears it instead (see the BUG in
-/// PsynergyMenu_DrawDetailPage).
 #define FLAG_MENU_INFO_KEPT 0x151
 
 /// The target id the Psynergy screen passes for an action whose range is
-/// ABILITY_RANGE_ALL. It is no unit's id: Ability_ApplyToTargets starts
-/// from unit 0 in its place, and visits every party member because of the
-/// range, not this id. The Item screen never passes it: a whole-party item is
-/// used with the work's sideMember[1] as it stands (ItemMenu_Use), and its
-/// range alone reaches every party member.
+/// ABILITY_RANGE_ALL.
 #define MENU_TARGET_WHOLE_PARTY 9
 
 /// The result of using an item or Psynergy from the menu: its message,
@@ -134,9 +125,8 @@ enum ItemTargetMode {
 /// Inventory icons occupy five columns in the fifteen-slot list.
 #define MENU_ITEM_GRID_COLUMNS 5
 
-/// What StatusPanel_Draw shows below the name and statuses: the low
-/// byte of its mode. The kinds go up in twos; no call passes an odd one, and of
-/// the odd values only STATUS_PANEL_EQUIP + 1 draws anything.
+/// What StatusPanel_Draw shows below the name and statuses: the low byte of its
+/// mode.
 enum StatusPanelKind {
   STATUS_PANEL_EXPERIENCE = 0, ///< class, HP, PP and experience
   /// Stats if the item were equipped, or removed when equipPreview is set.
@@ -156,9 +146,8 @@ enum StatusPanelKind {
 
 // The information side's text: outside Japanese it is drawn character by
 // character into the window's tiles, so clearing it redraws the empty window;
-// the Japanese edition decodes it into the text canvas (Text_DrawMessage),
-// so clearing it releases the canvas's window sprites. Both follow the text
-// system, so the test is on the language.
+// the Japanese edition decodes it into the text canvas (Text_DrawMessage), so
+// clearing it releases the canvas's window sprites.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define MENU_RESET_DESCRIPTION_WINDOW WindowSprite_RedrawSavedRectFar
 #define MENU_DRAW_DESCRIPTION Text_DrawMessageAsTilesFar
@@ -204,10 +193,7 @@ enum DjinnComparePage {
   DJINN_COMPARE_PAGE_BOTH = 2      ///< both party members' stats, shown first
 };
 
-/// What the Djinn menu's choosers return. DjinnMenu_SelectDjinn's Djinni
-/// chooser returns DJINN_RESULT_CHOSEN, DJINN_RESULT_STATUS or
-/// DJINN_RESULT_HELP; its action chooser one of the commands. Every Djinn menu
-/// screen returns DJINN_RESULT_BACK for B and DJINN_RESULT_START for Start.
+/// What the Djinn menu's choosers return.
 enum DjinnMenuResult {
   DJINN_RESULT_START = -2, ///< Start: the Djinn menu closes
   DJINN_RESULT_BACK = -1,
@@ -227,11 +213,7 @@ enum DjinnMenuResult {
   DJINN_RESULT_HELP = 10 ///< Select: the help
 };
 
-/// DjinnMenuBackdrop.tutorialStep: where the Djinn tutorial is. Each lesson's
-/// steps follow its first in order, each waiting, showing a message or
-/// pressing a key for the player (DjinnMenu_SelectDjinn,
-/// PsynergyList_RunCompareLoop); the flags that pick the lesson are
-/// FLAG_DJINN_LESSON_PART_A and _PART_B (DjinnMenu_Run).
+/// DjinnMenuBackdrop.tutorialStep: where the Djinn tutorial is.
 enum DjinnTutorialStep {
   DJINN_TUTORIAL_OFF = 0,
   /// Giving a Djinni and setting it: "To give your Djinni to someone else..."
@@ -267,8 +249,7 @@ enum DjinnSelectMode {
 #define DJINN_NUMBER(v) ((v) & 0x1f)
 
 /// The preview loop's four operations, as its confirmation text describes them
-/// (PsynergyList_RunCompareLoop's mode). Trade and Give, the first two, have
-/// two party members and the paged previews; Standby and Set one party member.
+/// (PsynergyList_RunCompareLoop's mode).
 enum DjinnCompareOperation {
   DJINN_COMPARE_TRADE = 0,
   DJINN_COMPARE_GIVE = 1,

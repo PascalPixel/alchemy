@@ -7,15 +7,8 @@
 /// Task: updates the 24 field effect sprites.
 void FieldEffect_UpdateAllEffectSlots(void) { FieldEffect_UpdateEffectSlots(); }
 
-/// Prepares the work of the field Psynergy for ability
-/// (HEAP_SLOT_FIELD_EFFECT) and loads its spark tiles. Called again while one
-/// resolves, it only switches the ability.
-///
-/// Field_UsePsynergy and the item uses (field_sequence/items.c) call it before
-/// a field Psynergy and FieldPsynergy_End after it, which releases the work,
-/// the spark tiles' resource entry and the task started here. Goma Cave
-/// Entrance calls it too, for Ivan's Whirlwind on the stump's ivy. The caster
-/// is the leader, with no target until FieldPsynergy_SetupActorPair names one.
+/// Prepares the work of the field Psynergy for ability (HEAP_SLOT_FIELD_EFFECT)
+/// and loads its spark tiles.
 void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
   struct FieldWork *ev = gFieldWork;
   struct MapGridScrollWork *grid = gMapGridWork[0];
@@ -58,11 +51,7 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
   Task_Add(FieldEffect_UpdateAllEffectSlots, TASK_PASS_FRAME);
 }
 
-/// Records the caster and the target of a field Psynergy. With no target, it
-/// takes place 16 pixels in front of the caster (facing to the nearest
-/// quarter turn). work->angle becomes that facing, the way field Psynergy aims.
-/// A target's update routine, script and first sprite's param are saved, for
-/// the Psynergy that takes it over to restore.
+/// Records the caster and the target of a field Psynergy.
 void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   struct Actor *user;
   struct Actor *target;
@@ -190,11 +179,6 @@ void FieldPsynergy_End(void) {
 }
 
 /// Starts casting: the caster takes its casting pose (animation 20) and stops.
-/// Unless the Psynergy is silent the caster flashes with a sound; unless it is
-/// quiet, the ability's name is shown while every other actor stands still.
-/// With FLAG_PLAY_PSYNERGY_CAST the caster's colours keep cycling and it takes
-/// pose 21; otherwise the caster's update routine stops. Sets the field work's
-/// castStarted, which FieldPsynergy_End clears.
 void FieldPsynergy_StartCast(void) {
   s32 ability;
   struct Actor *caster;
@@ -238,18 +222,15 @@ void FieldPsynergy_StartCast(void) {
 
 /// Saves the palettes for the Psynergy and fades them toward one of the eight
 /// cast colours (gFieldEffect_TargetColors), picked by the frame counter or
-/// forced by FLAG_PSYNERGY_TINT(0) to (7), over 8 frames. Most field Psynergy
-/// opens with it, and FieldPsynergy_FadeFromCastColor fades back.
+/// forced by FLAG_PSYNERGY_TINT(0) to (7), over 8 frames.
 void FieldPsynergy_FadeToCastColor(void) {
   struct FieldWork *field;
   struct PaletteFade *work;
   s32 no;
 
-  // Save the colours the buffer moves toward into the field work, 224
-  // colours of three channels a half: the sprite half and, unless Reveal is
-  // active, the BG half. While Reveal lasts
-  // the BG target is its grey (reveal.c), and the field's own colours saved
-  // before it must stay. Then show the targets at once.
+  // Save the colours the buffer moves toward into the field work, 224 colours
+  // of three channels a half: the sprite half and, unless Reveal is active, the
+  // BG half.
   field = gFieldWork;
   work = gPaletteFadeWork;
   Dma_Set(&work->target[672], &field->savedFadeTarget[672], DMA_COPY_WORDS(336),
@@ -298,9 +279,8 @@ void FieldPsynergy_FadeFromCastColor(void) {
   PaletteFade_StartInterpolation(8);
 }
 
-/// Converts a world position (16.16 pixels) to the screen: x and z receive
-/// the screen's x and y and y becomes 0. The World Map uses its perspective
-/// projection.
+/// Converts a world position (16.16 pixels) to the screen: x and z receive the
+/// screen's x and y and y becomes 0.
 void Camera_WorldToScreen(struct Vector3 *position) {
 #ifdef UBFIX
   struct FieldWork *event = gFieldWork;

@@ -23,10 +23,9 @@ enum {
 #include "../../scene/shared/field_effect_advance.h"
 #undef EFFECT_SPAWN_RESIDENT
 
-/// Spawns 17 particles that spread from origin in a flat ring, their x
-/// velocity 1.5 times their z velocity, so the ring is wider than deep as the
-/// field is drawn. Carry's FieldPsynergy_SteerLiftedTarget spawns it where it
-/// sets its load down.
+/// Spawns 17 particles that spread from origin in a flat ring, their x velocity
+/// 1.5 times their z velocity, so the ring is wider than deep as the field is
+/// drawn.
 void FieldEffect_SpawnRadialParticleRing(struct Actor *origin) {
   struct EffectOptions opt;
   s32 vel[3];
@@ -51,12 +50,9 @@ void FieldEffect_SpawnRadialParticleRing(struct Actor *origin) {
   } while (i <= WHIRLWIND_RADIAL_DIRECTIONS);
 }
 
-/// Per-frame update: wanders away from the anchor, 2 to 3 pixels a frame,
-/// now and then turning sharply; after 101 frames it hands over to the
-/// shared particle script. FieldEffect_CircleAnchor switches a particle to it.
-/// While it wanders, the field's own motion lifts the particle (the velocity
-/// and gravity FieldEffect_CircleAnchor gave it); this only moves it across the
-/// ground.
+/// Per-frame update: wanders away from the anchor, 2 to 3 pixels a frame, now
+/// and then turning sharply; after 101 frames it hands over to the shared
+/// particle script.
 void FieldEffect_WanderAroundAnchor(struct Actor *effect) {
   s32 len;
   s32 angle;
@@ -84,9 +80,8 @@ void FieldEffect_WanderAroundAnchor(struct Actor *effect) {
     Actor_StartScriptFar(effect, gFieldEffect_SharedParticleScript);
 }
 
-/// Per-frame update: circles the anchor at 8 pixels; after 121 frames it
-/// starts to wander (FieldEffect_WanderAroundAnchor). FieldPsynergy_Whirlwind
-/// gives it to each of the 16 particles it spawns round the orb.
+/// Per-frame update: circles the anchor at 8 pixels; after 121 frames it starts
+/// to wander (FieldEffect_WanderAroundAnchor).
 void FieldEffect_CircleAnchor(struct Actor *effect) {
   struct Actor *anchor;
   s32 angle;
@@ -119,8 +114,6 @@ void FieldEffect_CircleAnchor(struct Actor *effect) {
 
 /// Shrinks an event-selected Whirlwind target each frame; below half size,
 /// moves it to the origin, stops it and removes the update.
-/// The scale falls by 1/512 each frame. From unit scale the strict lower bound
-/// takes 257 updates.
 void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *actor) {
   s32 scale;
 
@@ -135,24 +128,10 @@ void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *actor) {
 
 /// Runs Whirlwind cast on a target, using the target already stored in the
 /// field effect.
-///
-/// Abilities: Whirlwind, Gale (FIELD_PSYNERGY_WHIRLWIND).
-///
-/// FieldPsynergy_Dispatch passes an argument this adapter ignores; the
-/// shared runner reads effectWork->child instead.
 void FieldPsynergy_WhirlwindOnTarget(s32 unused) { FieldPsynergy_Whirlwind(); }
 
 /// An orb is carried from the caster to 4 pixels above the Psynergy's position
 /// over 10 frames, growing from 0.25.
-///
-/// Abilities: Whirlwind, Gale (FIELD_PSYNERGY_WHIRLWIND).
-///
-/// Without effectWork->enabled the target shrinks, and 16 particles appear
-/// round the orb, one every 6 frames, and circle it.
-///
-/// Fades the palettes to a cast colour and back, and gives the target its
-/// shrinking update; the orb is released at the end, the particles finish on
-/// their own.
 void FieldPsynergy_Whirlwind(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *src = effectWork->mainActor;

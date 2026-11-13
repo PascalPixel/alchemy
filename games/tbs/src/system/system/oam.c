@@ -10,11 +10,8 @@ extern u8 IwramClearWords[];
 /// depth slots sprites are linked into.
 void Oam_ResetFrame(void) {
   gOamMatrixCount = 0;
-  // IwramClearWords(destination, bytes): 1024 bytes are the 256 slot heads.
-  // It zeroes r2 itself, so the third argument is never read.
-  // Called by its linked name: through Iwram_ClearWords, with the routine's
-  // fixed address as a constant, Save_InvalidateSector further on in system.c
-  // loads REG_DMA3's address once where the ROM loads it twice.
+  // IwramClearWords(destination, bytes): 1024 bytes are the 256 slot heads. It
+  // zeroes r2 itself, so the third argument is never read.
   _call_via_r3(((u32)&gOamDepthLists), 1024, ((u32)&gOamMatrixCount),
                (u32)IwramClearWords);
 }
@@ -27,9 +24,7 @@ enum {
 };
 
 /// Hands out the next OAM affine matrix for a sprite drawn with `source`'s
-/// scale and rotation and fills it in. Returns the matrix number, 0 to 31. When
-/// all 32 are taken it fills nothing and still returns 0, which a caller cannot
-/// tell from matrix 0: the sprite is drawn with whatever matrix 0 holds.
+/// scale and rotation and fills it in. Returns the matrix number, 0 to 31.
 s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
   union OamMatrix *matrix;
   s16 *coefficient;
@@ -82,9 +77,7 @@ s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
 }
 
 /// Links a sprite entry into depth slot `slot` (clamped to 0..255) for this
-/// frame. A higher slot is drawn in front: the OAM list is built from slot 255
-/// down, and the hardware draws an earlier entry over a later one. The entry's
-/// first word becomes its link to the next entry.
+/// frame.
 void Oam_AddSpriteAtDepth(void *slotEntry, s32 slot) {
   void **head;
   void *previousHead;

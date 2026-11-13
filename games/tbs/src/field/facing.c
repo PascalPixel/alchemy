@@ -8,13 +8,7 @@
 #include "actor_script.h"
 
 /// Facing tables: for each enum AnimationFacingKind, the picture to draw for
-/// each sector of the facing angle. Sprite_ComposePicture adds the low
-/// three bits to the animation's base picture, and bit 7 (0x80) mirrors the
-/// sprite. ANIM_FACING_TWO_PART uses ANIM_FACING_FRONT_BACK's table.
-/// gAnimationFacing_OnePicture has 16 entries, but a 16-bit angle shifted down
-/// 13 reads only the first eight. Sectors count from angle
-/// 0, which faces right; TRIG_TURN / 4 faces down the screen
-/// (gWorldMap_KeyHeadings).
+/// each sector of the facing angle.
 // clang-format off
 const u8 gAnimationFacing_OnePicture[16] = {
     0x00, 0x00, 0x00, 0x80, 0x80, 0x80, 0x80, 0x00,
@@ -91,8 +85,6 @@ const s32 gCamera_FixedViewMatrix[12] = {
 };
 
 /// One period of a triangle wave, which bobs a floating actor up and down.
-/// Actor_UpdateAllThumb reads it at half the actor's phase, scaled by its
-/// gravity.
 const s32 gActorScript_CycleTable[32] = {
     1, 2, 3, 4, 5, 6, 7, 8,
     7, 6, 5, 4, 3, 2, 1, 0,
@@ -121,8 +113,7 @@ const u16 gWorldMap_KeyHeadings[16] = {
 };
 
 /// Two scripts for the world map's footprint and dust effects: wait 120 or 30
-/// frames, then release the actor. Actor_UpdatePlayerControl starts
-/// the first and Actor_MoveOnWorldMap the second (three words in).
+/// frames, then release the actor.
 const s32 gWorldMap_FootprintActions[6] = {
     SC_WAIT(120), SC_RELEASE,
     SC_WAIT(30), SC_RELEASE,
@@ -130,10 +121,7 @@ const s32 gWorldMap_FootprintActions[6] = {
 
 /// The yaw the world map camera leans to for each state of the direction pad,
 /// in 1/65536 turns: Right -512 and Left 512, or -384 and 384 with Up or Down
-/// but not both; 0 otherwise. It is a target, not a rate: each frame
-/// Actor_MoveOnWorldMap turns the camera an eighth of the way there, at most
-/// 512, and the whole way once that step is under 16, so with the pad
-/// released it returns to 0.
+/// but not both; 0 otherwise.
 const s32 gWorldMap_KeyYaws[16] = {
     0, -512, 512, 0,
     0, -384, 384, 0,

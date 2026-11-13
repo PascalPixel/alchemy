@@ -8,11 +8,6 @@
 /// values of the shown page into WININ, WINOUT, WIN0H and WIN1H, and has DMA 0
 /// copy the rest into WIN0H and WIN1H one word each HBlank, so that every line
 /// of the screen gets its own window edges.
-///
-/// A task (priority TASK_PASS_VBLANK) that ScreenTransition_Start,
-/// ScreenTransition_Finish and ScreenTransition_InitializeBattleEffectState
-/// add for a window transition, and ScreenTransition_UpdateScanlineTable
-/// removes when it ends.
 void FieldEffect_StartWindowHBlankDma(void) {
   struct ScreenTransitionState *work = gScreenTransitionWork;
   u16 *scanlineData = work->pages[work->page];
@@ -34,16 +29,10 @@ void FieldEffect_StartWindowHBlankDma(void) {
           (volatile u32 *)dma0);
 }
 
-/// Each frame of a window transition: advances its value toward its end (and
-/// at the end turns the windows off, or moves to the next mode), then builds
-/// the next page of window edges, WININ and WINOUT first and then a
-/// (left << 8 | right) pair for each of the 160 lines. Bit 5 of the value says
-/// whether the transition opens or closes; its low 5 bits are its progress.
-/// The mode is an enum WindowTransitionMode.
-///
-/// A task (priority TASK_PASS_FRAME), added with
-/// FieldEffect_StartWindowHBlankDma; it removes both and stops DMA 0 when a
-/// transition with no next mode ends.
+/// Each frame of a window transition: advances its value toward its end (and at
+/// the end turns the windows off, or moves to the next mode), then builds the
+/// next page of window edges, WININ and WINOUT first and then a (left << 8 |
+/// right) pair for each of the 160 lines.
 void ScreenTransition_UpdateScanlineTable(void) {
   struct ScreenTransitionState *state;
   struct TransitionSpan *span;
@@ -106,17 +95,13 @@ void ScreenTransition_UpdateScanlineTable(void) {
     }
   }
 
-  // Build the page not shown. Its line pairs start as the open UI windows'
-  // edges (ScanlineWindow_FillSpansFar; with no UI work, 0xe0e0 over the
-  // first 80 lines only, as its BUG notes); each mode below then writes window
-  // 0's edge of every pair and leaves window 1's.
+  // Build the page not shown.
   scanlineData = state->pages[1 ^ state->page];
   ScanlineWindow_FillSpansFar(scanlineData + 2);
 
   // Each mode writes WININ and WINOUT first. 0x7f7f shows every layer inside
-  // both windows and 1 only background 0 outside them; a mode swaps the two
-  // to cover the screen inside the windows instead. Several modes fold the
-  // progress when bit 5 is set, so that closing runs their table backwards.
+  // both windows and 1 only background 0 outside them; a mode swaps the two to
+  // cover the screen inside the windows instead.
   switch (state->mode) {
   case WINDOW_TRANSITION_BARS:
     *scanlineData++ = 0x7f7f;
@@ -201,9 +186,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
   case WINDOW_TRANSITION_CIRCLE: {
 #ifdef UBFIX
     // Closing writes four header halfwords, then 160 pairs: its last write
-    // crosses the 322-halfword page. Keep that write into the following page
-    // or solid tile, using bytes of the whole allocated state rather than an
-    // out-of-bounds page pointer or a u16 alias of the u32 solid tile.
+    // crosses the 322-halfword page.
     u8 *pageBytes = (u8 *)state + (1 ^ state->page) * sizeof(state->pages[0]);
     const u16 header[4] = {0x7f7f, 1, 1, 0x7f7f};
     u32 headerSize = 2 * sizeof(u16);
@@ -499,12 +482,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
   state->page ^= 1;
 }
 
-/// Starts window transition mode at value 0, with no duration: the caller
-/// moves it.
-///
-/// Allocates and clears the transition state in HEAP_SLOT_SCREEN_TRANSITION and
-/// adds both window tasks; its mask (WININ_WIN0_ALL | WININ_WIN1_ALL) shows
-/// every layer in both windows.
+/// Starts window transition mode at value 0, with no duration: the caller moves
+/// it.
 void ScreenTransition_InitializeBattleEffectState(s32 mode) {
   struct ScreenTransitionState *state =
       HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
@@ -539,12 +518,6 @@ struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void) {
 /// ScreenTransitionStyle: from black, from the backdrop colour, a window
 /// transition (its low byte an enum WindowTransitionMode), a dissolve (3) or
 /// opening from the centre line (4, which a non-zero low byte makes flicker).
-/// It returns after one frame while the fade runs on: a caller that must wait
-/// for it, as FieldSequence_Run does, waits itself.
-///
-/// Every style but the fades adds a task (and the centre line the HBlank
-/// handler, IRQ 1) that runs the transition; every kind ORs the map's display
-/// bits into DISPCNT through the I/O write queue.
 void ScreenTransition_Start(s32 mode, s32 frames) {
   struct ScreenTransitionWin *display;
   s32 variant;
@@ -633,12 +606,8 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
                       IO_WRITE_16);
 }
 
-/// Fades the screen out over frames frames, as ScreenTransition_Start fades
-/// it in.
-///
-/// The window and dissolve kinds run from value 32 to 64, the centre line from
-/// 0 to 80. Like ScreenTransition_Start it does not wait for the fade:
-/// FieldSequence_Run waits transitionFrames after it.
+/// Fades the screen out over frames frames, as ScreenTransition_Start fades it
+/// in.
 void ScreenTransition_Finish(s32 mode, s32 frames) {
   s32 variant;
   s32 transitionKind;
@@ -710,8 +679,6 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
 /// Clears the map's display-control bits for backgrounds 3, 2 and 1
 /// (DISPCNT_BG3_ON, DISPCNT_BG2_ON and DISPCNT_BG1_ON) for each argument that
 /// is set.
-///
-/// ScreenTransition_Start ORs these bits into DISPCNT.
 void ScreenTransition_HideBackgrounds(s32 clearBg3, s32 clearBg2,
                                       s32 clearBg1) {
   struct ScreenTransitionWin *state;
@@ -730,12 +697,8 @@ void ScreenTransition_HideBackgrounds(s32 clearBg3, s32 clearBg2,
   }
 }
 
-/// Each frame of the centre-line transition: moves the value toward its end
-/// and sets the two lines where the screen switches between shown and blank.
-///
-/// A task added by ScreenTransition_Start and
-/// ScreenTransition_Finish for the centre line with variant 0; when its run
-/// ends it removes itself and the HBlank handler.
+/// Each frame of the centre-line transition: moves the value toward its end and
+/// sets the two lines where the screen switches between shown and blank.
 void ScreenTransition_Update(void) {
   struct ScreenTransitionDissolveState *state = *Ram_DisplayWork;
   struct ScreenTransitionWin *display =
@@ -774,8 +737,6 @@ void ScreenTransition_Update(void) {
 }
 
 /// As ScreenTransition_Update, but the lines flicker every other frame.
-///
-/// The centre line's task for a non-zero variant.
 void ScreenTransition_UpdateFromCentre(void) {
   struct ScreenTransitionDissolveState *state = *Ram_DisplayWork;
   struct ScreenTransitionWin *window =
@@ -814,15 +775,9 @@ void ScreenTransition_UpdateFromCentre(void) {
   }
 }
 
-/// The HBlank interrupt of the centre-line transition: switches the display
-/// to DISPCNT_MODE_2 (nothing shown) at the first line and back to
-/// DISPCNT_MODE_0 at the second.
-///
-/// Installed as IRQ handler 1 (IRQ_HBLANK) by ScreenTransition_Start and
-/// ScreenTransition_Finish for the centre line, so it runs after every line
-/// and reads the line from REG_VCOUNT, waiting through enum
-/// ScreenTransitionIrqPhase.
-/// The centre line's HBlank handler's phases (irqPhase).
+/// The HBlank interrupt of the centre-line transition: switches the display to
+/// DISPCNT_MODE_2 (nothing shown) at the first line and back to DISPCNT_MODE_0
+/// at the second.
 enum ScreenTransitionIrqPhase {
   DISPLAY_TRANSITION_IRQ_WAIT_SCREEN = 0, ///< waits for a line on screen
   /// Waits for whichever edge line comes first.
@@ -875,18 +830,12 @@ again:
   }
 }
 
-/// Each frame of the dissolve: moves the value toward its end and sets two
-/// more of the solid tile's 64 pixels, in the order of
-/// gScreenTransition_DitherTable: to colour 0 while the screen opens (values
-/// 1 to 32 clear the cover ScreenTransition_Start filled with colour 15), and
-/// to colour 15 while it closes (values 33 to 64 fill the clear tile
-/// ScreenTransition_Finish starts from). Each frame sets only the current
-/// value's two pixels, so over fewer than 32 frames some values, and their
-/// pixels, are skipped, and over more some repeat.
-///
-/// The dissolve's task (from ScreenTransition_Start and
-/// ScreenTransition_Finish, and ScreenTransition_InitializeState). Queues the
-/// changed tile into character block 0 each frame.
+/// Each frame of the dissolve: moves the value toward its end and sets two more
+/// of the solid tile's 64 pixels, in the order of
+/// gScreenTransition_DitherTable: to colour 0 while the screen opens (values 1
+/// to 32 clear the cover ScreenTransition_Start filled with colour 15), and to
+/// colour 15 while it closes (values 33 to 64 fill the clear tile
+/// ScreenTransition_Finish starts from).
 void ScreenTransition_UpdateDissolve(void) {
   struct ScreenTransitionDissolveState *state = *Ram_DisplayWork;
   s32 ditherIndex;
@@ -932,8 +881,7 @@ void ScreenTransition_UpdateDissolve(void) {
 }
 
 /// Fills background screen block 4 with tile 0 in WINDOW_PALETTE and, unless
-/// color is -1, makes tile 0 solid color. The fill is 1,280 bytes: the block's
-/// first 20 rows of 32 entries, the screen's height.
+/// color is -1, makes tile 0 solid color.
 void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
   struct ScreenTransitionState *work = gScreenTransitionWork;
   Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 1280);
@@ -952,9 +900,6 @@ void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
 }
 
 /// Starts a dissolve of the given mode and waits 120 frames.
-///
-/// It sets no duration, so the dissolve stays at value 0 until a caller moves
-/// it.
 void ScreenTransition_InitializeState(s32 value) {
   struct ScreenTransitionState *state;
 

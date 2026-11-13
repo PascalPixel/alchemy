@@ -92,18 +92,7 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
   }
 }
 
-/// Spins the main actor and shrinks it while 24 particles fly out, one a
-/// frame.
-///
-/// Abilities: Retreat (FIELD_PSYNERGY_RETREAT).
-///
-/// The caster turns south, plays ANIM_LEADER_ARMS_RAISED with its colours
-/// cycling, spins up for 70 frames (FieldEffect_UpdateSpinAngle), then rises
-/// and shrinks out of sight (FieldEffect_UpdateRetreatCaster) as the particles
-/// fly. It is hidden, not released, and the Psynergy opens an event
-/// (Event_Start) it does not end: the Retreat exit raised before it
-/// (EXIT_KEEP_DESTINATION, by Field_UsePsynergy or Field_UseItem) then leaves
-/// the scene.
+/// Spins the main actor and shrinks it while 24 particles fly out, one a frame.
 void FieldPsynergy_Retreat(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *actor = effectWork->mainActor;
@@ -267,9 +256,7 @@ struct DescendingArcSprite {
 };
 
 /// Spawns a pair of falling arcs (one upside down) on arc, 64 pixels above it,
-/// at 0.4 of full size, drawn with the tiles in effectWork->arcTileSlot. The
-/// upside-down arc draws in front of everything (priority 0), the other at the
-/// caster's priority, as FieldEffect_SpawnScaledArcActors does.
+/// at 0.4 of full size, drawn with the tiles in effectWork->arcTileSlot.
 void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *leader = effectWork->mainActor;

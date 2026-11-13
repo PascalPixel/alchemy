@@ -47,9 +47,7 @@ void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
 #define DJINNI_BATTLE_EVENT_FIRST 300
 
 /// gMainRoutineWork.pendingDjinni's parts, as Djinn_ResolvePending reads them.
-/// bits: 15..12 kind | 11..0 event or flag. Kind 0 is a Djinni battle, its
-/// event beside DJINN_NO_HOP; CONDITION_FLAG_SET is a mimic chest's flag
-/// (Field_ExamineCell).
+/// bits: 15..12 kind | 11..0 event or flag.
 #define DJINN_PENDING_KIND_MASK 0xf000
 #define DJINN_PENDING_EVENT_MASK 0xfff
 /// A Djinni battle's event without DJINN_NO_HOP.
@@ -65,9 +63,7 @@ static inline void FieldEffect_MoveAfterimageHalfway(struct Actor *afterimage) {
   afterimage->z.fixed += (target->z.fixed - afterimage->z.fixed) / 2;
 }
 
-/// Runs the update of each of the 24 field effect sprites. The tasks
-/// FieldEffect_UpdateAllEffectSlots (field_psynergy_work.c) and
-/// FieldEffect_UpdateAllSlots (djinni.c) run it once a frame.
+/// Runs the update of each of the 24 field effect sprites.
 static __inline__ void FieldEffect_UpdateEffectSlots(void) {
   struct FieldParticle *effect;
   s32 remainingSlots;
@@ -133,8 +129,7 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
 
 /// Defines a field Psynergy cast with no target: spawn makes a hand 16 pixels
 /// above the cast's position and 32 pixels to either side, each facing the
-/// middle; each moves 24 pixels inward, then 24 shards scatter 8 to 32
-/// pixels. Carry's and Lift's no-target casts are made with it.
+/// middle; each moves 24 pixels inward, then 24 shards scatter 8 to 32 pixels.
 #define DEFINE_ITEM_BREAK_EFFECT(name, spawn)                                  \
   void name(void) {                                                            \
     struct FieldEffectWork *effectWork;                                        \
@@ -185,10 +180,9 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
 
 #define ABOVE px(16) ///< 16 pixels up
 
-/// The states of a particle that flies out and back: Halt's,
-/// Force's and Move's (FieldEffect_UpdateHaltParticle,
-/// FieldEffect_UpdateRadialBurst, FieldEffect_UpdateOutAndBack).
-/// FieldParticle_SetCallback starts it at the first; each takes the next.
+/// The states of a particle that flies out and back: Halt's, Force's and Move's
+/// (FieldEffect_UpdateHaltParticle, FieldEffect_UpdateRadialBurst,
+/// FieldEffect_UpdateOutAndBack).
 enum OutAndBackState {
   OUT_AND_BACK_AIM_OUT = 0,    ///< picks the point it flies out to
   OUT_AND_BACK_FLYING_OUT = 1, ///< waits to arrive there

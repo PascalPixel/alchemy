@@ -20,7 +20,6 @@ extern const u8 gMessageSpeed_VoiceGaps[3];
 // tables and stay their own object: in tbs-de the speed tables start at an odd
 // address, right after item_genders.o, and in one file with
 // gLocalizedWord_CountedNouns, a word-aligned pointer table, the object would
-// start at the next word, 3 bytes later. Split evidence for
-// message_speed|counted_nouns.
+// start at the next word, 3 bytes later.
 
 #endif

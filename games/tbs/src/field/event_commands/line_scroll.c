@@ -4,10 +4,9 @@
 
 #include "../event_commands_internal.h"
 
-/// VBlank-pass task for the line scroll: restarts DMA 0 each VBlank to
-/// copy the current page's BG1 to BG3 scroll offsets into the scroll registers
-/// one scanline at a time. The first line is written directly; the DMA writes
-/// three words at each HBlank from then on.
+/// VBlank-pass task for the line scroll: restarts DMA 0 each VBlank to copy the
+/// current page's BG1 to BG3 scroll offsets into the scroll registers one
+/// scanline at a time.
 void LineScroll_ArmDma(void) {
   volatile u16 *dma;
   struct LineScrollWork *state;
@@ -38,11 +37,9 @@ void LineScroll_ArmDma(void) {
   Dma_Set(source, (void *)destination, control, (volatile u32 *)dma);
 }
 
-/// Task for the line scroll: fills the hidden page with each
-/// scanline's BG3, BG2 and BG1 offsets, the scroll plus a sine wave for x and
-/// for y (an axis with no step stays flat), then shows that page. All three
-/// layers take the same wave; LineScroll_ArmDma feeds the shown page
-/// to the scroll registers from the next frame.
+/// Task for the line scroll: fills the hidden page with each scanline's BG3,
+/// BG2 and BG1 offsets, the scroll plus a sine wave for x and for y (an axis
+/// with no step stays flat), then shows that page.
 void LineScroll_BuildPage(void) {
   struct LineScrollWork *work = gLineScroll;
   s32 x3 = (s16)gBgScroll[3].x;

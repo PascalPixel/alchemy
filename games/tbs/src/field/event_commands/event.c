@@ -21,10 +21,7 @@
 #define GIFT_RECEIVED_MESSAGE_MODE 3
 #endif
 
-/// Shows the message for an item the party has just received. The message is
-/// `Isaac got <item>.`; the German release has its own sentence for the Black
-/// Orb. flags are the message window flags of
-/// FieldMessage_Show.
+/// Shows the message for an item the party has just received.
 static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
 #if (LANGUAGE == LANGUAGE_GERMAN)
   if (item == ITEM_BLACK_ORB) {
@@ -36,11 +33,8 @@ static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
   FieldMessage_ShowFar(MsgColossoIsaacGotItem, flags);
 }
 
-/// Debug only: while debug mode is on, R makes every event wait
-/// (Event_Wait) end at once and L restores normal waits. Runs as a
-/// task for the length of an event (Event_Start). R also
-/// skips the actors' messages, which open nothing while fastForward is
-/// set (FieldMessage_ShowAtActor).
+/// Debug only: while debug mode is on, R makes every event wait (Event_Wait)
+/// end at once and L restores normal waits.
 void Event_UpdateDebugSkip(void) {
   struct FieldWork *runtime = gFieldWork;
 
@@ -55,8 +49,7 @@ void Event_UpdateDebugSkip(void) {
 }
 
 /// Waits the requested frames through wait(), unless debug fast-forward
-/// (Event_UpdateDebugSkip) is on: the wait events use. This object's actor,
-/// message, camera and climbing commands wait through it too.
+/// (Event_UpdateDebugSkip) is on: the wait events use.
 void Event_Wait(s32 frames) {
   if (gFieldWork->fastForward == 0 && frames != 0) {
     wait(frames);
@@ -85,10 +78,7 @@ void Leader_StopMoving(void) {
 
 /// Begins an event: closes any area name window, stops the leader, resets the
 /// message and timing state, and starts the debug fast-forward task with the
-/// leader as the message speaker. Every event opens with it, the field's item,
-/// Psynergy, Djinni, Retreat and climbing events too. Clears the field
-/// work's name window, fastForward and messageWindow, sets transitionFrames to
-/// 16 and the speaker to the leader.
+/// leader as the message speaker.
 void Event_Start(void) {
   struct FieldWork *runtime = gFieldWork;
 
@@ -113,8 +103,7 @@ void Event_Start(void) {
 }
 
 /// Ends an event: stops the debug fast-forward task, gives the camera back to
-/// the leader and refreshes FLAG_LURE_CAP (GameFlag_RefreshLureCap). Every
-/// event that opens with Event_Start closes with it.
+/// the leader and refreshes FLAG_LURE_CAP (GameFlag_RefreshLureCap).
 void Event_End(void) {
   Task_Remove(Event_UpdateDebugSkip);
   FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
@@ -168,10 +157,7 @@ void Event_AddPartyMemberPair(s32 first, s32 second) {
 }
 
 /// Checks an L or R button shortcut, packed as the party member in bits 10 to
-/// 13 and the Psynergy in bits 0 to 9. Returns 0 if it can still be cast, -1
-/// for no such party member, -2 when that member is not in the party and -3
-/// when the party member no longer knows the Psynergy. Only
-/// Party_ClearUnusableShortcuts calls it.
+/// 13 and the Psynergy in bits 0 to 9.
 s32 Party_CheckShortcut(u32 shortcut) {
   s32 member = (shortcut >> 10) & 0xf;
   s32 ability = shortcut & 0x3ff;
@@ -187,9 +173,7 @@ s32 Party_CheckShortcut(u32 shortcut) {
 }
 
 /// Clears each button shortcut whose Psynergy can no longer be cast: zeroes
-/// gMainRoutineWork.firstShortcut or secondShortcut. Called whenever the
-/// party or what it knows may have changed: by Party_RemoveMemberRestored,
-/// Inventory_Discard, and the field menu's item, Psynergy and Djinn screens.
+/// gMainRoutineWork.firstShortcut or secondShortcut.
 void Party_ClearUnusableShortcuts(void) {
   if (Party_CheckShortcut(gMainRoutineWork.firstShortcut) != 0)
     gMainRoutineWork.firstShortcut = 0;
@@ -198,8 +182,7 @@ void Party_ClearUnusableShortcuts(void) {
 }
 
 /// Takes unit out of the party, fully restoring its HP and PP and curing its
-/// poison. If no party member left standing has HP, the leader is given 1 HP so
-/// the party is never left all down.
+/// poison.
 void Party_RemoveMemberRestored(s32 unit) {
   struct Unit *vitals;
   s32 partyIndex;
@@ -229,11 +212,7 @@ void Party_RemoveMemberRestored(s32 unit) {
 }
 
 /// Checks whether the party can carry one more of item: each party member
-/// carries at most 30 of one item. When they are all full, says `Isaac's party
-/// cannot carry any more <item>s...` and `Isaac threw the <item> as far away as
-/// possible.` and returns -1; otherwise returns 0. FieldSequence_Run calls it
-/// before it gives gMainRoutineWork.pendingItem with
-/// PartyInventory_GiveItem.
+/// carries at most 30 of one item.
 s32 Party_CheckItemLimit(s32 item) {
   s32 partyCount;
   s32 heldQuantity = 0;
@@ -255,12 +234,7 @@ s32 Party_CheckItemLimit(s32 item) {
 }
 
 /// The event command "give item": gives item to the first party member with
-/// room for it and says so. When every bag is full, the player picks an item
-/// to drop to make room, or drops the new item instead (not allowed for an
-/// indispensable one). Returns the party member who received the item, or -1
-/// when it was left behind. Events reach it (about 24 of them);
-/// FieldSequence_Run gives the pending item and the debug test menu gives items
-/// through it. The field work's message is restored afterwards.
+/// room for it and says so.
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   struct FieldWork *work;
   s32 savedMessage;
@@ -318,7 +292,6 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       }
       // A party member who already carries 30 of the new item (the cap
       // Party_CheckItemLimit counts) cannot take it: say so and ask again.
-      // Editions at TBS_PATCH_1 alone skip the check.
 #if !(TBS_PATCH_1 && !TBS_PATCH_2)
       if (Inventory_CountItemFar(member, item) > 29) {
         MessageArgument_PushFar(member, MESSAGE_ARGUMENT_ACTOR);
@@ -372,8 +345,7 @@ void Inventory_NoOpCallback(void) {}
 void Inventory_ReservedNoOp(void) {}
 
 /// Waits, at most 90 frames, for an actor's animation to stop being animation:
-/// the actor has finished a one-off animation such as a nod. Only actors drawn
-/// as a sprite (ACTOR_SPRITE_ONE) are waited for.
+/// the actor has finished a one-off animation such as a nod.
 void Actor_WaitForAnimationEnd(s32 actorId, s32 animation) {
   struct Actor *actor = Actor_Lookup(actorId);
 
@@ -393,11 +365,7 @@ void Actor_WaitForAnimationEnd(s32 actorId, s32 animation) {
 
 /// The event command "choose yes or no": once the message on screen has been
 /// read, asks yes or no below it, or above it when the message windows reach
-/// past row 15 or forceBottom is set. The speaker nods at yes and shakes its
-/// head at no. Returns 0 for yes, 1 for no.
-/// Events reach it (about
-/// 54 of them); the Battle Arena and Event_AskYesNoAndShowResponse call
-/// it too.
+/// past row 15 or forceBottom is set.
 s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 forceBottom) {
   struct FieldWork *work = gFieldWork;
   s32 sprite = Scene_FindActorPlacement(work->speaker)->sprite;
@@ -452,8 +420,7 @@ s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 forceBottom) {
 s32 FieldYesNo_Ask(s32 atBottom) { return YesNoMenu_RunFar(atBottom, 0, 0, 0); }
 
 /// Teaches unit the Psynergy ability and says so with its jingle, waiting for
-/// the player to read it. The message is `<unit> learned <ability>.` Fuchin
-/// Temple's event calls it.
+/// the player to read it.
 void Party_LearnAbility(s32 unit, s32 ability) {
   // Declared without parameters: unit and ability pass through in r0 and r1.
   Unit_LearnPsynergyFar();
@@ -465,8 +432,7 @@ void Party_LearnAbility(s32 unit, s32 ability) {
 }
 
 /// The event command "open screen": starts the event's screen transition and
-/// sets work->transitionActive. Events reach it; the inn, the Title, the
-/// File Screen, the Battle Arena and WorldPicture_Show call it too.
+/// sets work->transitionActive.
 void Event_StartScreenTransition(void) {
   struct FieldWork *runtime = gFieldWork;
 
@@ -474,9 +440,8 @@ void Event_StartScreenTransition(void) {
   runtime->transitionActive = 1;
 }
 
-/// The event command "close screen": finishes the event's screen transition
-/// and clears work->transitionActive. Events reach it; the inn, the File
-/// Screen and WorldPicture_Show call it too.
+/// The event command "close screen": finishes the event's screen transition and
+/// clears work->transitionActive.
 void Event_FinishScreenTransition(void) {
   struct FieldWork *runtime = gFieldWork;
 
@@ -507,8 +472,7 @@ void Event_SetRestartPoint(u16 sceneId, u16 entrance) {
 }
 
 /// The event command "request exit": sets the field's exit request (999 leaves
-/// for gMainRoutineWork's next and entrance). Events reach it as
-/// Import_EventSetExitRequest (about 61 of them).
+/// for gMainRoutineWork's next and entrance).
 void Event_SetExitRequest(u16 request) {
   struct FieldWork *state = gFieldWork;
   state->exit = request;

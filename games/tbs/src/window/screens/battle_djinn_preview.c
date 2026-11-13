@@ -35,10 +35,8 @@ UNREAD_RESULT String_FormatNumberToHalfwords(s16 *out, s32 value) {
 
 /// Lists into `out` the abilities usable in battle (BATTLE_OK) of the action
 /// list `newGrid`, in its order, marking with DJINN_PREVIEW_ABILITY_GAINED
-/// those `oldGrid` lacks; then appends those of `oldGrid` that `newGrid`
-/// lacks, marked DJINN_PREVIEW_ABILITY_LOST. Both lists are 32 slots, ended
-/// early by a 0 action. Returns the entries written, and the gained and lost
-/// counts through `gained` and `lost`.
+/// those `oldGrid` lacks; then appends those of `oldGrid` that `newGrid` lacks,
+/// marked DJINN_PREVIEW_ABILITY_LOST.
 s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
                                      const struct PsynergyEntry *newGrid,
                                      u16 *out, s32 *gained, s32 *lost) {
@@ -101,17 +99,9 @@ UNREAD_RESULT WindowSprite_CreateAbilityIcon(struct Window *window, s32 x,
   }
 }
 
-/// Shows what setting or removing Djinni `encodedDjinn` (element << 8 |
-/// index) would change for `member`: closes the preview window `win`, opens a
-/// new one and returns it, or NULL when none could be opened. Page 0
-/// compares the class and stats, old against new, with an arrow by each stat
-/// that rises or falls; pages 1 on list, five a page, the unit's battle
-/// abilities after the change (unchanged ones in TEXT_COLOR_WHITE, new ones in
-/// TEXT_COLOR_YELLOW) and then those it would lose (TEXT_COLOR_RED), and
-/// *pageCount is set to their number (at least 1). The Djinni is toggled and
-/// the unit recalculated (Unit_CalculateFar) only to measure: the unit is
-/// restored from a copy before it returns. BattleDjinnMenu_Run calls it as the
-/// cursor moves.
+/// Shows what setting or removing Djinni `encodedDjinn` (element << 8 | index)
+/// would change for `member`: closes the preview window `win`, opens a new one
+/// and returns it, or NULL when none could be opened.
 struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
                                                  s32 encodedDjinn, s32 page,
                                                  s32 *pageCount) {
@@ -186,9 +176,6 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
 
   // Save the unit before the temporary Djinn toggle changes its class/stats.
   // Fourteen widened characters fit well inside the 64-halfword text buffer.
-  // With a valid refreshed old list, class rebuilding can remove at most
-  // sixteen actions, including any equipment actions displaced by the class.
-  // Its new 32-slot list and these lost entries fit the 48-entry allocation.
   numberText = Heap_Alloc(64 * sizeof(*numberText));
   savedUnit = Heap_Alloc(sizeof(*savedUnit));
   changedAbilities = Heap_AllocEwram(DJINN_PREVIEW_ABILITY_CAPACITY *

@@ -27,8 +27,7 @@
 
 /// Works out where the party status window goes for `flags`: one column per
 /// party member (those in battle when a battle is on), plus the Djinn column,
-/// right-aligned on the 30-tile screen row at the top. It is four tiles high
-/// outside battle and three in battle, plus one with the PP row.
+/// right-aligned on the 30-tile screen row at the top.
 void PartyStatus_BuildLayoutBounds(s32 flags) {
   struct PartyStatusWindow *layout = HEAP_SLOT_BLOCK(HEAP_SLOT_PARTY_STATUS);
   struct WindowWork *work = WINDOW_WORK;
@@ -64,10 +63,7 @@ void PartyStatus_BuildLayoutBounds(s32 flags) {
 
 /// Opens the party status window with `flags` (see PARTY_STATUS_*) in a new
 /// heap block, HEAP_SLOT_PARTY_STATUS, which PartyStatus_Close frees, and draws
-/// it; the tilemap upload is held back (holdTilemapUpload) while it is drawn. A
-/// battle opens it with flags 9, which lays it out with the PP row and leaves
-/// it erased until the battle draws it (Battle_Run); the field opens it with
-/// flags 1 (field/field_sequence/triggers.c).
+/// it; the tilemap upload is held back (holdTilemapUpload) while it is drawn.
 void PartyStatus_CreateWindow(s32 flags) {
   struct PartyStatusWindow *layout;
   u8 *hold;
@@ -87,8 +83,7 @@ void PartyStatus_CreateWindow(s32 flags) {
 /// Draws the vertical lines between the party members' columns of the party
 /// status `window`, with their top and bottom joints, at the offsets listed in
 /// gWindow_PartyColumnOffsets (shifted right past the Djinn column, whose own
-/// line comes first in the list). In battle it also draws the window's bottom
-/// edge.
+/// line comes first in the list).
 void Window_DrawColumnBorders(struct Window *window, u32 flags) {
   struct WindowWork *work = WINDOW_WORK;
   s32 first = 1;
@@ -137,12 +132,7 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
 }
 
 // Recolours the five bar tiles at (x, y) in `window` to show a bar `length`
-// pixels long (0-40). The bar tiles are drawn in colour 14 with a colour 1
-// shadow; each pixel left of the length becomes colour 8 (shadow 13), the rest
-// colour 2 (shadow 12). Only the bottom row of each tile changes for an empty
-// bar, the bottom three otherwise. Outside battle it first loads the basic
-// colours into HIGHLIGHT_PALETTE, its TEXT_BACKGROUND_COLOR taken from
-// WINDOW_BACKGROUND_COLOR.
+// pixels long (0-40).
 UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
                                    s32 length) {
   s32 i;
@@ -166,9 +156,7 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
   x += window->x;
   y += window->y;
   for (i = 0; i < 5; i++, x++) {
-    // This tile's eight pixels: filled up to `length`, empty after. A row is
-    // 8 nibbles, the leftmost pixel lowest, so shifting the empty pattern
-    // left by 4 * length bits leaves room for that many filled pixels.
+    // This tile's eight pixels: filled up to `length`, empty after.
     tile = work->tilemap[y * 32 + x];
     bar = PIXELS_4BPP(2);
     shadow = PIXELS_4BPP(12);
@@ -177,9 +165,8 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
       bar = PIXELS_4BPP(8);
       shadow = PIXELS_4BPP(13);
 #ifdef UBFIX
-      // At zero (including a multiple-of-eight remainder), the ROM's
-      // right shifts by 32 yield zero. Keep the empty patterns without
-      // evaluating those undefined C shifts.
+      // At zero (including a multiple-of-eight remainder), the ROM's right
+      // shifts by 32 yield zero.
     } else if (length > 0) {
 #else
     } else if (length >= 0) {
@@ -209,11 +196,9 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
   }
 }
 
-/// Draws the party status window with `flags` (see PARTY_STATUS_*): each
-/// party member's name, HP and optionally PP with their bars, and in battle the
-/// standby Djinn of each element. The HP is drawn in TEXT_COLOR_RED at zero and
-/// TEXT_COLOR_YELLOW at a quarter or less. When the flags change, the window is
-/// erased and laid out again first.
+/// Draws the party status window with `flags` (see PARTY_STATUS_*): each party
+/// member's name, HP and optionally PP with their bars, and in battle the
+/// standby Djinn of each element.
 void PartyStatus_Draw(s32 flags) {
   struct PartyStatusWindow *layout = HEAP_SLOT_BLOCK(HEAP_SLOT_PARTY_STATUS);
   struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
@@ -354,17 +339,10 @@ void PartyStatus_Close(void) {
   HeapSlot_Release(HEAP_SLOT_PARTY_STATUS);
 }
 
-/// Sets (`set` 1) or clears (0) bit 12 of the tilemap entries of the
-/// `width` x `height` tile rectangle at (x, y) inside `window`, clipped to the
-/// screen: bit 12 is the lowest bit of the entry's palette number, so this
-/// switches the rectangle between two palettes, such as 15 and 14. Nothing
-/// calls it.
-///
-/// The clip, which the other rectangle routines here repeat, tests both edges
-/// against 29: a rectangle reaching row 29 or beyond is cut to end at row 19,
-/// the tilemap's last, but one ending on rows 20 to 28 is not cut and writes
-/// past the 20-row tilemap. The row test is the column test's 29 again, while
-/// the height it sets uses the tilemap's 20 rows.
+/// Sets (`set` 1) or clears (0) bit 12 of the tilemap entries of the `width` x
+/// `height` tile rectangle at (x, y) inside `window`, clipped to the screen:
+/// bit 12 is the lowest bit of the entry's palette number, so this switches the
+/// rectangle between two palettes, such as 15 and 14.
 void Window_SetTextTileBitRect(const struct Window *window, s32 x, s32 y,
                                s32 width, s32 height, u32 set) {
   struct WindowWork *work = WINDOW_WORK;

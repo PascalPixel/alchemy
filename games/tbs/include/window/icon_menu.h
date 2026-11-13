@@ -23,8 +23,6 @@ struct IconMenuEntry {
 
 /// The icon menu: up to six command icons in a row, the windows of their
 /// labels, the icons' resource ids, the selection and the layout.
-/// It lives in heap slot 58 (gIconMenuWork) from IconMenu_Open
-/// to IconMenu_Close.
 struct IconMenuWork {
   struct IconMenuEntry entries[6];
   struct Window *window; ///< the label window naming the selected icon

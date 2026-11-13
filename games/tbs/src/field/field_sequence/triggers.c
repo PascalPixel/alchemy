@@ -56,12 +56,7 @@ found:
 
 /// Returns whether an event condition holds: -1 always holds; a condition with
 /// CONDITION_FLAG_SET holds while that flag is set, any other while its flag is
-/// clear. The flag is the low 12 bits, since GameFlag_Get ignores bit 12.
-///
-/// Used for every condition column of a scene's tables: triggers
-/// (Scene_FindTrigger, Field_ExamineCell), actor placements
-/// (Event_SpawnActorPlacements), exit regions
-/// (Field_CheckExitRegions) and item triggers.
+/// clear.
 s32 GameFlag_IsConditionActive(s32 condition) {
   s32 flagSet;
 
@@ -78,10 +73,6 @@ s32 GameFlag_IsConditionActive(s32 condition) {
 /// Returns 1 for an examine trigger (TRIGGER_EXAMINE) that holds whatever its
 /// condition: one with more flags than its kind, unless its result is a mimic
 /// battle (FIND_MIMIC).
-///
-/// Field_ExamineCell tests such an event's condition itself (a chest's flag is
-/// set once it is opened), so the event is found either way and the leader
-/// still checks the spot; a mimic is found only while its condition holds.
 u32 Scene_ExamineTriggerIgnoresCondition(s32 flags, s32 result) {
   u32 mimicDifference;
   s32 searchFlags;
@@ -101,10 +92,7 @@ u32 Scene_ExamineTriggerIgnoresCondition(s32 flags, s32 result) {
 }
 
 /// Returns the first of the scene's triggers of kind for target whose condition
-/// holds, or NULL. STEP_TRIGGER_FLAG_WALKING also needs the leader to have
-/// pushed against it for more than 12 frames (2 with control bit 11);
-/// TRIGGER_FLAG_FACING needs the leader to face within an eighth of a turn of
-/// the direction in the top four bits.
+/// holds, or NULL.
 const struct Trigger *Scene_FindTrigger(s32 kind, s32 target) {
   struct FieldWork *work = gFieldWork;
   const struct Trigger *trigger = work->triggers;
@@ -185,16 +173,8 @@ s32 Scene_FindActorTalkTrigger(s32 id) {
   return (s32)talkTrigger;
 }
 
-/// Talks to actor id: shows its event's message or calls its event
-/// function, with the actor stopped and turned as its placement says.
-/// For the actor stopped with Halt, its TRIGGER_TALK_HALTED event
-/// comes first; without one, a talk trigger that is a function gives one of two
-/// lines at random instead, from MsgPonderEllipsis on (dots spoken with
-/// pauses). Returns 0 when an event ran, -1 when there was none or such a line
-/// stood in for it; FieldSequence_Run ignores the result.
-///
-/// Resumes the stopped actor and sets gMainRoutineWork.haltedActor back to -1
-/// afterwards.
+/// Talks to actor id: shows its event's message or calls its event function,
+/// with the actor stopped and turned as its placement says.
 s32 Scene_TalkToActor(s32 id) {
   struct ActorPlacement *placement = Scene_FindActorPlacement(id);
   s32 result = -1;
@@ -320,11 +300,7 @@ s32 Scene_RunRaisedTrigger(s32 value) {
 
 /// Runs the step trigger (TRIGGER_STEP) of what the leader touched, or else
 /// takes its exit (TRIGGER_EXIT): plays the exit's sound (and effect) and
-/// records where it leads. Returns 0 when something ran, -1 when there was
-/// nothing.
-///
-/// Sets work->exit for an exit, and clears work->blockedSteps after a step
-/// trigger that needs pushing.
+/// records where it leads.
 s32 Scene_RunStepTriggerOrExit(s32 value) {
   const struct Trigger *touch;
   const struct Trigger *exit;
@@ -378,8 +354,6 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
 /// Runs the event of a cell the leader pushes against (CELL_BEHAVIOR_LEDGE to
 /// CELL_BEHAVIOR_JUMP_FORWARD, and CELL_BEHAVIOR_JUMP_FORWARD_UNREACHED), once
 /// it has pushed for more than 12 frames; the count then restarts.
-///
-/// Clears work->blockedSteps when it acts.
 s32 Field_RunPushCell(s32 behavior) {
   struct FieldWork *work = gFieldWork;
   s32 leader = gMainRoutineWork.leaderActorId;
@@ -414,12 +388,6 @@ s32 Field_RunPushCell(s32 behavior) {
 
 /// Searches the cell ahead with the given cell behavior. The fixed search
 /// spots, CELL_BEHAVIOR_JAR to CELL_BEHAVIOR_WELL, show their two messages.
-/// Otherwise the scene's examine trigger for the cell runs: a function, a
-/// message, or a chest holding a Psynergy Stone, a mimic, coins or an item;
-/// with no event, "checked the ground" and "found nothing".
-///
-/// Opening a chest sets its condition flag, and it may raise a mimic battle
-/// (work->encounter), give coins or an item, or restore all PP.
 s32 Field_ExamineCell(s32 tile) {
   const struct Trigger *trigger;
   s32 leader;

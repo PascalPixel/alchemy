@@ -22,8 +22,7 @@ struct ActorCameraPoint {
 
 /// The start of the 3D camera's work (heap slot HEAP_SLOT_CAMERA,
 /// gBattleCamera, a struct BattleCamera), as the fixed camera reads it: the eye
-/// and target it looks from and at, or the points that stand in for them. The
-/// battle, the world map or Lucky Dice owns the block.
+/// and target it looks from and at, or the points that stand in for them.
 struct ActorCameraFixed {
   struct ActorCameraPoint eye;
   struct ActorCameraPoint target;
@@ -32,14 +31,7 @@ struct ActorCameraFixed {
 };
 
 /// Each frame, with the scrolling camera: places every actor's sprite on the
-/// screen. An actor on or near the screen takes its layer and priority from
-/// the cell under it; one off screen gives up its VRAM cache entry.
-/// ActorSystem_Initialize adds it as a task (priority TASK_PASS_FRAME,
-/// after the actors move) for every mode but 3 and 4;
-/// ActorSystem_SuspendProjectionAndShowSprites suspends it. Resets the
-/// system's used count, may change an actor's layer and its sprite's
-/// priorities, and holds the picture decoder in heap slot
-/// HEAP_SLOT_FRAME_SCRATCH only while it runs.
+/// screen.
 void ActorSystem_PlaceSprites(void) {
   /* LEFTOVER(frame): three unused points the ROM's frame reserves and never
    * touches: of the 80 bytes it reserves (sub sp, #80), no instruction
@@ -128,14 +120,11 @@ void ActorSystem_PlaceSprites(void) {
         drawPosition.height = actor->y.fixed;
         drawPosition.y = dz;
         drawPosition.groundHeight = actor->groundHeight;
-        // ACTOR_PRIORITY_UNDERFOOT and bit 2 move the point 320 pixels up
-        // or down the map with its height and ground height, so the sprite and
+        // ACTOR_PRIORITY_UNDERFOOT and bit 2 move the point 320 pixels up or
+        // down the map with its height and ground height, so the sprite and
         // shadow stay where they are on screen; only the draw slot changes,
-        // which Render_ApplyProjectedPlacement takes from the point's y
-        // before its height is taken off. ACTOR_PRIORITY_UNDERFOOT, which
-        // footprints take, moves the slot 160 back, and an actor at most 220
-        // pixels up crosses that function's 100-pixel line into its lowest
-        // slot; bit 2 moves it 160 on.
+        // which Render_ApplyProjectedPlacement takes from the point's y before
+        // its height is taken off.
         if (actor->priorityFlags & ACTOR_PRIORITY_UNDERFOOT) {
           drawPosition.height += -px(320);
           drawPosition.y += -px(320);
@@ -177,12 +166,6 @@ UNUSED s32 ActorCamera_ReturnTrue(void) { return 1; }
 
 /// Each frame, with the fixed camera: places every actor's sprite, from the
 /// 64th actor down, facing them by the angle from the eye to the target.
-/// While battle commands are chosen (FLAG_CHOOSING_COMMANDS, set by
-/// Battle_GatherActions) it uses the fixed view matrix and 1.0
-/// scale. ActorSystem_Initialize adds it as a task (priority
-/// TASK_PASS_FRAME) for ACTOR_SYSTEM_WORLD_MAP and
-/// ACTOR_SYSTEM_BATTLE; ActorSystem_SuspendProjectionAndShowSprites suspends
-/// it. Resets the system's used count.
 void ActorSystem_ProjectSprites(void) {
   s32 i;
   struct ActorCameraFixed *camera;

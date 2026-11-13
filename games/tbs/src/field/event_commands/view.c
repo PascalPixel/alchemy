@@ -20,8 +20,7 @@ void MapGrid_SetCameraBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
 }
 
 // Task: moves the zoom one step from its previous value toward its target, and
-// removes itself on the last step. It waits while the camera is paused. bx r1
-// to pop {r0};
+// removes itself on the last step.
 UNREAD_RESULT WorldMap_StepZoom(void) {
   struct WorldMapView *perspective = gMapGridWork[0];
   s32 *from; // the zoom the transition starts from
@@ -47,10 +46,7 @@ UNREAD_RESULT WorldMap_StepZoom(void) {
   }
 }
 
-/// Starts a zoom to zoom (16.16) over frames frames, on the World Map only. The
-/// perspective work keeps the inverse, which scales the view's distance
-/// (farPlane times it, WorldMap_StepZoom): a zoom of 2 halves the
-/// distance. Event_WaitForZoomTransition waits for it.
+/// Starts a zoom to zoom (16.16) over frames frames, on the World Map only.
 void WorldMap_StartZoom(s32 zoom, s32 frames) {
   struct WorldMapView *perspective = gMapGridWork[0];
   s32 inverse;
@@ -112,13 +108,8 @@ UNREAD_RESULT FieldEffect_CopyWatchedActorPosition(struct Actor *actor) {
 #endif
 }
 
-/// The event command "actor show emote": shows an emote bubble (sprite
-/// 21) over an actor, then waits the given number of frames. The low 4 bits of
-/// emote pick the bubble (enum Emote; EMOTE_LIGHT_BULB also plays SE_CHIME);
-/// with EMOTE_IN_FRONT the bubble takes sprite priority 1, otherwise the
-/// actor's. The bubble rides the actor and releases itself after 46 frames
-/// (gFieldEffect_WatchedActorScript: 16 frames of squash and stretch, then 30),
-/// however long the event waits.
+/// The event command "actor show emote": shows an emote bubble (sprite 21) over
+/// an actor, then waits the given number of frames.
 void Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames) {
   struct Actor *target;
 
@@ -177,14 +168,10 @@ void Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames) {
   }
 }
 
-/// The event command "actor set attached effect", by enum
-/// AttachedEffectFlag: removes the actor attached to an actor, attaches
-/// one (SPRITE_ATTACHED_EFFECT, animation 1) or shows a one-off one (animation
-/// 2) that ends by itself (gActor_WaitScript, 40 frames). The attached
-/// actor is kept as the actor's watchedActor, so ATTACHED_EFFECT_ATTACH
-/// does nothing while the actor has one, and ATTACHED_EFFECT_REMOVE
-/// releases whatever it is; a one-off is never recorded there. The leader's
-/// walking update runs all three for hazard ground (field_sequence/walking.c).
+/// The event command "actor set attached effect", by enum AttachedEffectFlag:
+/// removes the actor attached to an actor, attaches one
+/// (SPRITE_ATTACHED_EFFECT, animation 1) or shows a one-off one (animation 2)
+/// that ends by itself (gActor_WaitScript, 40 frames).
 void FieldEffect_SetAttached(s32 actorId, s32 flags) {
   struct Actor *actor = Actor_Lookup(actorId);
   struct Actor *effect;

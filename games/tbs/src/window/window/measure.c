@@ -13,10 +13,6 @@
 /// window fits on the screen. flags: bit 0 measures every page
 /// (Text_MeasureAllPages) rather than the first; bit 1 takes the size in
 /// *windowWidth and *windowHeight as given, in tiles, instead of measuring.
-/// Measuring returns the size in tiles in *windowWidth and *windowHeight and
-/// fills spacing with each line's extra character gap. An empty text (size 0 by
-/// 0) leaves the position as it was. Under Mind Read (Japanese and English) the
-/// window is 2 tiles wider and kept off the screen's last column.
 void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
                         u32 *windowWidth, u32 *windowHeight, u16 *spacing,
                         u32 flags) {
@@ -49,9 +45,8 @@ void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
     return;
 
   // Pixels to tiles, with room for the border and a margin: + 19 is the two
-  // border tiles (16) and 3, so a width rounds up to the next tile only past
-  // 4 pixels into it. Lines are 15 pixels, so 1 to 4 lines are 3, 5, 7 and 9
-  // tiles tall.
+  // border tiles (16) and 3, so a width rounds up to the next tile only past 4
+  // pixels into it.
   if (!(flags & 2)) {
     *windowWidth = (*windowWidth + 19) >> 3;
     *windowHeight = (*windowHeight + 15) >> 3;
@@ -94,9 +89,7 @@ void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
   *windowY = y;
 }
 
-/// Decodes message and returns its text's width and height in pixels. The
-/// argument table is left as it is (clear 0), so the message can be decoded
-/// again to be shown.
+/// Decodes message and returns its text's width and height in pixels.
 void Text_MeasureMessage(s32 message, s32 *x, s32 *y) {
   Text_MeasureDecoded(Message_Decode(message, 0), (u32 *)x, (u32 *)y, 0);
 }
@@ -105,14 +98,7 @@ DEFINE_GET_RESOURCE_DIMENSIONS(Text_GetMessageSize, 0)
 DEFINE_GET_RESOURCE_DIMENSIONS(Text_GetMessageSizeAlt, 1)
 
 /// Measures decoded text from entryIndex to its first page's end: returns the
-/// width of the longest line and the height (15 pixels a line) in pixels. With
-/// spacing set, fills one entry per line with the extra gap between characters,
-/// in 1/256 pixel, that spreads the line to fill the window. spacing, when
-/// non-NULL, has room for four line entries. A page of more than four lines
-/// keeps measuring into the fourth. It sets WindowWork.outline to each
-/// TEXT_OUTLINE operand it passes and leaves it at the last, the style the
-/// next glyphs are drawn in unless the style is reset first (Window_Create
-/// resets it).
+/// width of the longest line and the height (15 pixels a line) in pixels.
 void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
                          u16 *spacing) {
   struct WindowWork *work;
@@ -145,9 +131,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     code = work->textBuffer[entryIndex];
     entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
     // A character adds its width. Spaces (in Japanese every character) are
-    // counted as the points the line can be stretched at. TEXT_STYLE_OUTLINED
-    // draws a glyph a pixel wider. TEXT_STYLE_SPIN is counted a pixel wider
-    // too, though Text_DrawGlyphPair widens only TEXT_STYLE_OUTLINED.
+    // counted as the points the line can be stretched at.
     if (code > 31) {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
       if (code == 32) {
@@ -255,8 +239,7 @@ done:
   // Each line's extra gap between characters, in 1/256 pixel, to spread it
   // across the window's inner width: the window's width in tiles, as
   // Window_FitOnScreen makes it, less the frame, in pixels, and 4 pixels of
-  // margin. Outside Japanese a gap over 12 pixels falls back to 2; in
-  // Japanese one over 8 is dropped and the rest held to at most 1.
+  // margin.
   width = (width + 19) >> 3;
   width = (width << 3) - 16;
   if (spacing != NULL) {
@@ -289,13 +272,6 @@ done:
 /// Measures decoded text from start over all its pages: the width of the first
 /// page's longest line and the height of its tallest page, in pixels, with each
 /// line's extra character gap in spacing as Text_MeasureDecoded.
-/// The text must fit 16 page-height slots; this routine does not clamp the page
-/// count. Unlike Text_MeasureDecoded it puts no ceiling on the gaps
-/// outside Japanese, and a page break restarts neither the line count nor the
-/// line's width, so the gaps past the first page do not fit their lines; its
-/// one caller, Window_FitOnScreen with flags bit 0, is reached only from
-/// Text_GetMessageSizeAlt, which passes no spacing. It changes
-/// WindowWork.outline as Text_MeasureDecoded does.
 void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
                           u16 *spacing) {
   u32 pageHeights[16];

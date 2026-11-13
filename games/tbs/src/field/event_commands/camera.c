@@ -4,11 +4,8 @@
 
 #include "../event_commands_internal.h"
 
-/// The event command "camera follow actor": the camera (the event's
-/// view centre) follows actorId. Unless keepPosition is set it jumps there
-/// at once and, off the World Map, the map is redrawn around it.
-/// Event_End calls it with the leader and keepPosition 1, so after an
-/// event the view follows the leader again from where it is, without a jump.
+/// The event command "camera follow actor": the camera (the event's view
+/// centre) follows actorId.
 void FieldCamera_FollowActor(s32 actorId, s32 keepPosition) {
   struct Actor *subject;
   struct Actor *camera;
@@ -46,8 +43,7 @@ void FieldCamera_SetSpeedParameters(s32 speedLimit, s32 acceleration) {
 
 /// The event command "camera move to": sends the camera to the requested axes,
 /// 16.16 pixels (CAMERA_KEEP keeps that axis), kept far enough inside the map
-/// that the screen never shows past its edge. With glide 0 the camera jumps
-/// there at once; otherwise it travels at its own speed.
+/// that the screen never shows past its edge.
 void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
                                      s32 requestedZ, s32 glide) {
   s32 shouldGlide;

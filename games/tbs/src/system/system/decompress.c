@@ -14,9 +14,7 @@ void Decompress_Halfwords(const void *source, void *destination) {
 }
 
 /// Each decoder copies its ARM routine `code` to RAM, runs it and frees the
-/// copy, and returns the number of bytes it decoded. The copy is a Heap_Alloc
-/// block, IWRAM when it fits, and Heap_Release puts the pool's next address
-/// back where it was.
+/// copy, and returns the number of bytes it decoded.
 #define RESOURCE_DEFINE_DECODE(name, code, bytes)                              \
   s32 name(const void *source, void *destination) {                            \
     s32 (*routine)(const void *, void *);                                      \
@@ -42,12 +40,7 @@ RESOURCE_DEFINE_DECODE(Decompress_ByteLz, Decompress_ByteLzArm,
                        Decompress_ByteLzCodeSize)
 
 // Shading of 8-bit pixel buffers whose values are steps 0 to 63 of a colour
-// ramp. Each function copies `bytes` of `buffer` to `backup`, then shades the
-// buffer in place with a stack copy of its ARM kernel, `size` bytes long.
-// `amount` is added to every byte of the four-byte groups at once, so it holds
-// the step in each byte. The Nonzero and Partial forms only write back
-// four-byte groups that can change: not all zero, or not all at the limit
-// already.
+// ramp.
 #define PALETTE_FADE_DEFINE_SHADE_BY(name, kernel, size)                       \
   void name(u8 *buffer, u32 amount, u8 *backup, u32 bytes) {                   \
     u32 words = (u32)size >> 2;                                                \

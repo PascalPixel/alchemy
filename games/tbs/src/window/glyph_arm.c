@@ -47,15 +47,6 @@ static __inline__ void Text_SetCanvasPixel(u32 windowHeight, u32 x, u32 tileY,
 /// Draws one character into a window's text canvas with its top-left corner at
 /// pixel (x, y) of the window's interior, and returns how far the text
 /// advances.
-///
-/// With font set, the character comes from that small font: the 10-row, 1bpp
-/// kana and numeral font in Japanese, or an 8x8 two-colour font elsewhere. With
-/// no font, it comes from the main font (gFont_Glyphs, and in Japanese
-/// gFont_KanjiGlyphs for codes from 256), drawn in four passes: the first
-/// three draw an outline in colour 5 (offset left, right and down when the
-/// window has WINDOW_FLAG_OUTLINED_TEXT) and the last draws the glyph itself in
-/// colour 1. In Japanese, kana marks (TEXT_MARK_VOICED and
-/// TEXT_MARK_SEMIVOICED) sit over the previous character and advance by 0.
 s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
                   const u8 *font) {
   const u16 *glyphRows;
@@ -110,10 +101,8 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
 #if (LANGUAGE == LANGUAGE_JAPANESE)
       u32 fontWidth;
 
-      // The small font: 10 rows of a byte, bit 0 the leftmost pixel, in
-      // colour 1 (0x1111 is the colour in all four nibbles). A character is
-      // drawn a pixel in and advances 8; a kana mark goes 2 further left and
-      // a row up, and advances 2.
+      // The small font: 10 rows of a byte, bit 0 the leftmost pixel, in colour
+      // 1 (0x1111 is the colour in all four nibbles).
       color = 0x1111;
       fontWidth = 8;
       x++;
@@ -160,8 +149,7 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
 
       // The 8x8 font is window tiles of 4bpp pixels: a pixel of value 1 is
       // drawn in colour 1, one of 3 in colour 3, any other is left (bits & 13
-      // is 1 only for 1 and 3). Columns past the screen's 30th tile are
-      // skipped.
+      // is 1 only for 1 and 3).
       source = font + character * 32;
       foregroundColor = 0x1111;
       secondaryColor = 0x3333;
@@ -208,11 +196,8 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
 #endif
       return fontWidth;
     }
-    // Main-font entries begin with their advance width: 26 bytes, the width
-    // and 12 rows of 16 pixels, the leftmost in the top bit. Codes from 256
-    // are kanji in Japanese, 12 rows and 10 pixels wide; elsewhere they read
-    // the font as 32-byte entries whose rows start 8 bytes in, though
-    // Glyph_Draw passes a font, which avoids both, outside Japanese.
+    // Main-font entries begin with their advance width: 26 bytes, the width and
+    // 12 rows of 16 pixels, the leftmost in the top bit.
     glyphRows = (const u16 *)((const u8 *)gFont_Glyphs + (character - 32) * 26);
     glyphWidth = *glyphRows++;
   } else {
@@ -234,11 +219,7 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
     advance = glyphWidth;
 #endif
 
-  // Draw the three outline offsets first, then the foreground pixels. With
-  // WINDOW_FLAG_OUTLINED_TEXT the passes move the pen 1 left, then 2 right,
-  // then 1 left and 1 down, then 1 up: the outline falls left, right and
-  // below, and the glyph lands where it started. At most 14 columns and 12
-  // rows are drawn.
+  // Draw the three outline offsets first, then the foreground pixels.
   for (outlinePass = 0; outlinePass <= 3; outlinePass++) {
     u32 color;
     u32 bits;
@@ -303,14 +284,8 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
 #endif
 }
 
-/// Builds the hardware window's horizontal extent for each of the screen's
-/// 160 scanlines from the UI tilemap at tilemap (32 tiles a row,
-/// 30 shown). Each scanline gets (left << 8) | right, the WINxH format, written
-/// to the second halfword of its pair in scanlineBounds. A row without a border
-/// gets 0. The rounded corner tiles trim the first or last scanline of a row by
-/// one pixel on that side, so the window follows the border's rounded corners.
-/// Each frame of a window transition calls it, through
-/// ScanlineWindow_FillSpans (screens/window_sprites.c).
+/// Builds the hardware window's horizontal extent for each of the screen's 160
+/// scanlines from the UI tilemap at tilemap (32 tiles a row, 30 shown).
 void Tile_BuildCellPictures(u16 *scanlineBounds, u16 *tilemap) {
   u32 tileRow;
   u32 tileColumn;
@@ -361,8 +336,7 @@ void Tile_BuildCellPictures(u16 *scanlineBounds, u16 *tilemap) {
           foundLeftEdge++;
           break;
         // Outside Japanese the left edge meeting a divider counts as a side
-        // too. Window tile 7, taken as either side, is blank in every
-        // edition's window tiles and no code places it, so it never matches.
+        // too.
         case WINDOW_TILE(7):
         case WINDOW_TILE_BORDER_LEFT:
 #if LANGUAGE != LANGUAGE_JAPANESE

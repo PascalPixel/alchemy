@@ -38,14 +38,10 @@
 #endif
 
 /// 120 bytes of EWRAM where scene overlays keep state of their own, such as
-/// Altmiller Cave's rock puzzle. It lies outside the heap, so a scene change
-/// leaves it alone; MainRoutineWork_InitializeDefaults clears it for a new
-/// game.
+/// Altmiller Cave's rock puzzle.
 extern u8 gSceneLocalState[];
 
 /// The Colosso race work, heap slot HEAP_SLOT_COLOSSO_RACE under its own name.
-/// Where only the gauge is read, a struct ColossoGaugeWork pointer (its first
-/// member) does as well.
 #define gColossoWork (*(u8 **)&gHeapSlots[HEAP_SLOT_COLOSSO_RACE])
 
 #include "frame.h"
@@ -79,12 +75,7 @@ struct MapGridCellAnimation {
 // Import_EventSetExitRequest, Import_ActorSetPosition, Import_ActorSetAnimation
 // and Import_RandomNext are called with differing argument counts, so they keep
 // old-style declarations; Event_SetExitRequest also takes a u16 and Random16
-// returns a u32, where the scenes pass and read an int. Imil's and Sol
-// Sanctum's Psynergy Stone room's calls of GameFlag_Set, which returns the
-// flag, compile only as calls of a void routine (Import_GameFlagSet), where
-// every other scene's match through GameFlag_Set itself, and the scenes pass
-// Event_ShowTwoMessagesAndWait eleven arguments where it takes ten
-// (Import_EventShowTwoMessagesAndWait).
+// returns a u32, where the scenes pass and read an int.
 /// Sets the field's exit request (Event_SetExitRequest); 999 leaves for
 /// gMainRoutineWork's scene and entrance.
 void Import_EventSetExitRequest();
@@ -125,18 +116,13 @@ static inline void Actor_RunScriptAndWait(s32 actorId, const s32 *script) {
 }
 
 /// Two actors speak at once, each message and portrait at its own tile
-/// position, until A, B, L or R closes both
-/// (Event_ShowTwoMessagesAndWait). The routine takes ten arguments and
-/// never reads flags.
+/// position, until A, B, L or R closes both (Event_ShowTwoMessagesAndWait).
 void Import_EventShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg,
                                         s32 extra, s32 other_speaker,
                                         s32 otherX, s32 other_y, s32 other_arg,
                                         s32 other_extra, s32 flags);
 
 #ifdef FIELD_STAGED_ACTOR_IMPORTS
-/// Declared again for the scenes that define FIELD_STAGED_ACTOR_IMPORTS in
-/// place of Event_PlaySound; nothing there calls it, as those scenes call
-/// Sound_Play.
 void Sound_PlayFar(s32 id);
 #endif
 
@@ -322,11 +308,9 @@ static inline void MapGrid_SetShakeFixed(s32 horizontal, s32 vertical,
   MapGrid_SetShakeFixed(EVENT_SHAKE_FIXED(horizontal),                         \
                         EVENT_SHAKE_FIXED(vertical), EVENT_SHAKE_FIXED(decay))
 
-// Most events call GameFlag_Get, GameFlag_Set and GameFlag_Clear
-// directly; the events that match only through an inline call spell them
-// Event_GetFlag, Event_SetFlag and Event_ClearFlag. An inline call's
-// argument is a pseudo of its own, so a flag number two calls share is loaded
-// twice instead of kept in a register.
+// Most events call GameFlag_Get, GameFlag_Set and GameFlag_Clear directly; the
+// events that match only through an inline call spell them Event_GetFlag,
+// Event_SetFlag and Event_ClearFlag.
 
 /// GameFlag_Get, from an event: 1 when the FLAG_ is set.
 static inline s32 Event_GetFlag(s32 flag) { return GameFlag_Get(flag); }

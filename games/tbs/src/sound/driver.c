@@ -32,7 +32,6 @@ void Clear64byte(void *block) {
 /// the default PCM driver: stores `work` in SOUND_INFO_PTR, points the FIFO
 /// DMAs at its two buffers, fills in the driver callbacks and command table,
 /// sets the default rate and finally sets the work's ident to ID_NUMBER.
-/// Called by m4aSoundInit.
 void SoundInit(struct SoundInfo *work) {
   u32 zero;
 
@@ -75,8 +74,7 @@ void SoundInit(struct SoundInfo *work) {
 
 /// Sets the PCM rate in samples a VBlank (`mode` bits 16 to 19 pick a
 /// gPcmSamplesPerVBlankTable entry) and the rates derived from it, and Timer
-/// 0's reload, starting playback at scanline 159. Called by SoundInit and
-/// m4aSoundMode, and by songs through the command table.
+/// 0's reload, starting playback at scanline 159.
 void SampleFreqSet(u32 mode) {
   struct SoundInfo *work = SOUND_INFO_PTR;
   u32 pcmSamplesPerVBlank;
@@ -94,8 +92,7 @@ void SampleFreqSet(u32 mode) {
       __divsi3(SOUND_VBLANK_RATE_E4 * pcmSamplesPerVBlank + 5000, 10000);
   work->rateStep = (__divsi3(16777216, work->outputRate) + 1) >> 1;
   // Timer 0 counts the CPU cycles of one sample: it overflows, and the FIFOs
-  // take their next sample, pcmSamplesPerVBlank times a VBlank. It starts at
-  // scanline 159 after the FIFO transfers restart.
+  // take their next sample, pcmSamplesPerVBlank times a VBlank.
   REG_TM0CNT_H = 0;
   timer = &REG_TM0CNT_L;
   *timer = -__divsi3(SOUND_CYCLES_PER_VBLANK, pcmSamplesPerVBlank);
@@ -109,10 +106,7 @@ void SampleFreqSet(u32 mode) {
 }
 
 /// Applies the reverb, channel-count, volume, bias and sample-rate fields of
-/// `mode` to the sound work, with its ident raised. Called by m4aSoundInit with
-/// AUDIO_INITIAL_MODE, and by MPlayStart with a song's mode byte
-/// when its bit 7 is set, which can change only the reverb: the songs' 0xb2
-/// sets it to 50 and 0x80 to 0, and a song with bit 7 clear leaves it.
+/// `mode` to the sound work, with its ident raised.
 void m4aSoundMode(u32 mode) {
   struct SoundInfo *work = SOUND_INFO_PTR;
   u32 modeField;
@@ -189,8 +183,7 @@ UNUSED void SoundClear(void) {
 }
 
 /// Stops both FIFO transfers and clears their sample buffers, raising the
-/// work's ident by 10 until m4aSoundVSyncOn. Called by m4aSoundMode around a
-/// rate change.
+/// work's ident by 10 until m4aSoundVSyncOn.
 void m4aSoundVSyncOff(void) {
   struct SoundInfo *work = SOUND_INFO_PTR;
   u32 zero;
@@ -226,9 +219,7 @@ void m4aSoundVSyncOn(void) {
 }
 
 /// Deactivates up to sixteen tracks and links the music player into the
-/// MPlayMain chain. Called by m4aSoundInit for each row of gMPlayTable; does
-/// nothing for no tracks or while the driver's ident is raised, and leaves the
-/// music player paused with its ident free (ID_NUMBER).
+/// MPlayMain chain.
 void MPlayOpen(struct MusicPlayerInfo *player, struct MusicPlayerTrack *tracks,
                u8 trackCount) {
   struct SoundInfo *work;
@@ -265,10 +256,6 @@ void MPlayOpen(struct MusicPlayerInfo *player, struct MusicPlayerTrack *tracks,
 }
 
 /// Starts a song when its priority permits, resetting its tracks and tempo.
-/// The song takes the first of the music player's tracks, as many as both
-/// have; the other tracks are stopped. Called by Sound_Play and the
-/// m4aSongNumStart family; does nothing while the music player's ident is
-/// raised.
 void MPlayStart(struct MusicPlayerInfo *player,
                 const struct SongHeader *header) {
   s32 trackIndex;
@@ -421,8 +408,7 @@ void TrkVolPitSet(struct MusicPlayerInfo *player,
     track->outVolumeB = ((127 - pan) * volume) >> 8;
   }
   // The pitch in 1/256 semitone: tune and bend * bendRange are in 1/64
-  // semitone, the key offsets in semitones and the LFO in 1/16. The signed
-  // offsets are multiplied rather than shifted.
+  // semitone, the key offsets in semitones and the LFO in 1/16.
   if (track->flags & MPT_FLG_PITSET) {
     bend = track->bend * track->bendRange;
     pitch = (track->tune + bend) * 4 + (track->keyOffsetA * 256) +
@@ -436,13 +422,7 @@ void TrkVolPitSet(struct MusicPlayerInfo *player,
 }
 
 /// Converts a key and fractional pitch to a CGB tone or noise-register value.
-/// Installed as the work's cgbFrequency callback by MPlayExtender. For
-/// the noise channel (CGB_CHANNEL_NOISE) it returns an NR43 value for keys 21
-/// to 80 (others play the nearer end) and ignores fine. For a tone channel it
-/// returns the 11-bit frequency value, 2048 minus the period, for keys 36 to
-/// 166, with fine (0 to 255) moving it towards the next key; keys below 36
-/// play key 36 and keys above 166 play key 166 at fine 255: key 36 gives 44,
-/// a period of 2004.
+/// Installed as the work's cgbFrequency callback by MPlayExtender.
 s32 MidiKeyToCgbFreq(u8 kind, u8 key, u8 fine) {
   s32 lowerFrequency;
   s32 upperFrequency;
@@ -499,9 +479,8 @@ void CgbOscOff(u8 channel) {
   }
 }
 
-/// Routes a CGB note at least twice as loud on one side to that side only
-/// (NR51 bits 0x0f right, 0xf0 left), returning whether it did. Compiled into
-/// CgbModVol, which routes any other note to both.
+/// Routes a CGB note at least twice as loud on one side to that side only (NR51
+/// bits 0x0f right, 0xf0 left), returning whether it did.
 static __inline__ s32 CgbPan(struct CgbChannel *note) {
   u32 right = note->outRight;
   u32 left = note->outLeft;
@@ -535,8 +514,7 @@ void CgbModVol(struct CgbChannel *note) {
 }
 
 /// Steps CGB note envelopes and writes changed pitch, volume and trigger
-/// registers, once a VBlank. Installed as the work's cgbUpdate callback by
-/// MPlayExtender; the mixer calls it.
+/// registers, once a VBlank.
 void CgbSound(void) {
   s32 channel;
   s32 prevC15;
@@ -905,8 +883,7 @@ void ClearModM(struct MusicPlayerTrack *track) {
 }
 
 /// Sets modulation depth on selected active tracks, resetting zero-depth
-/// modulation. Nothing in the game calls it; songs set the depth with their own
-/// command (ply_mod).
+/// modulation.
 void m4aMPlayModDepthSet(struct MusicPlayerInfo *player, s32 selectedTracks,
                          s32 depthArgument) {
   u16 mask = selectedTracks;
@@ -938,8 +915,6 @@ void m4aMPlayModDepthSet(struct MusicPlayerInfo *player, s32 selectedTracks,
 }
 
 /// Sets LFO speed on selected active tracks, resetting modulation when stopped.
-/// Nothing in the game calls it; songs set the speed with their own command
-/// (ply_lfos).
 void m4aMPlayLFOSpeedSet(struct MusicPlayerInfo *player, u32 selectedTracks,
                          u32 speedArgument) {
   u16 mask = selectedTracks;
@@ -971,12 +946,6 @@ void m4aMPlayLFOSpeedSet(struct MusicPlayerInfo *player, u32 selectedTracks,
 }
 
 /// Executes a memacc operation and consumes a branch address for comparisons.
-/// Song byte 0xB9 (MPLAY_JUMP_MEMACC): an operation (MemAccOp), the index of
-/// a byte in the music player's workBytes and an operand, which the MEMACC_MEM_
-/// operations read as the index of a second byte. A comparison that holds
-/// jumps like GOTO to the address that follows; one that fails skips it. Every
-/// music player shares gMPlayMemAccArea (m4aSoundInit), so one song can test
-/// what another has set.
 void ply_memacc(struct MusicPlayerInfo *player,
                 struct MusicPlayerTrack *track) {
   u32 operation;
@@ -1068,9 +1037,7 @@ skip:
   track->cursor += 4;
 }
 
-/// Reads an extended-command index and invokes its handler. Song byte 0xCD
-/// (MPLAY_JUMP_XCMD); the index is not checked against the 12 entries
-/// of gXcmdTable.
+/// Reads an extended-command index and invokes its handler.
 void ply_xcmd(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
   s32 command;
 

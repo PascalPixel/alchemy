@@ -20,25 +20,15 @@ typedef s32 (*GlyphRoutine)(struct Window *, u32, u32, u32, const u8 *);
 /// from offset 0x10.
 #define SPRITE_CELL(output) ((struct CursorSprite *)(output)->link)
 
-/// Draws a character of a window's text with its top-left corner at pixel
-/// (x, y) of the window's interior and returns how far the text advances. A
-/// text canvas window draws it into the canvas; other windows show it as a
-/// sprite carried by the window. GLYPH_DRAW_PAGE_ARROW shows the next-page
-/// arrow instead.
-/// A sprite glyph takes a window sprite and its four tiles from the glyph
-/// sheet (WindowWork.glyphTiles, four for each sprite); with no sprite free
-/// nothing is drawn and it returns 0. The sprite stays until its window is
-/// cleared or closed.
+/// Draws a character of a window's text with its top-left corner at pixel (x,
+/// y) of the window's interior and returns how far the text advances.
 s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
   struct WindowWork *work = WINDOW_WORK;
   u32 spacingX = work->letterSpacing;
   s32 width;
   u32 spacingY = work->lineSpacing;
 
-  // A text canvas window draws the glyph into its canvas. In the battle
-  // message window a space only advances 3 pixels; Japanese draws there with
-  // the small font, and every canvas outside Japanese with the window tiles'
-  // 8x8 font; the two lookups there whose results go unused change nothing.
+  // A text canvas window draws the glyph into its canvas.
   if (mode != 1 && (window->flags & WINDOW_FLAG_TEXT_CANVAS) != 0) {
     u8 *font;
     GlyphRoutine draw;
@@ -132,9 +122,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     }
 
     if ((u8)windowSprite->motion == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
-      // The page arrow sits in the window's bottom-right corner. Its picture
-      // is loaded each frame (WindowSprite_UpdateAll) into a VRAM cache
-      // entry of its own, taken here when none is held.
+      // The page arrow sits in the window's bottom-right corner.
       sprite = SPRITE_CELL(windowSprite);
       if (work->glyphResource == NO_GLYPH_RESOURCE)
         work->glyphResource = VramCache_FindFreeEntry();
@@ -198,10 +186,7 @@ STATIC_ASSERT(offsetof(struct WindowSpriteCellView, attr) ==
 #if (LANGUAGE != LANGUAGE_JAPANESE)
 
 /// Puts a character into a window's tilemap as a tile at tile (x, y) of its
-/// interior. GLYPH_DRAW_PAGE_ARROW shows the next-page arrow sprite in the
-/// window's corner instead. The code is the tile's number in WINDOW_PALETTE, so
-/// only codes up to TEXT_LAST_FONT_CODE are drawn; a place beyond the bottom or
-/// right frame is ignored.
+/// interior.
 void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
   void *work = gWindowWork[0];
   u8 *base = work;
@@ -310,9 +295,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     WindowSprite_AppendToList(&win->sprites, (struct WindowSprite *)out);
   } else if (tile <= TEXT_LAST_FONT_CODE) {
     if (tile - TEXT_MARK_VOICED <= 1) {
-      // A kana mark goes in the tile above the character before it. Over the
-      // frame's top edge or a divider line, it takes the mark tile drawn over
-      // that background.
+      // A kana mark goes in the tile above the character before it.
       u32 line;
 
       line = (win->y + y) * 32;
@@ -344,8 +327,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
 /// TILEMAP_ENTRY_PLAIN; TILEMAP_ENTRY_NONE writes nothing. y -1 is the border's
 /// top row, where the menus put their page numbers and arrows
 /// (menu/menu/shared.c); a place beyond the bottom or right frame, or outside
-/// the tilemap, is ignored. The entry is not uploaded until the tilemap is
-/// next marked dirty.
+/// the tilemap, is ignored.
 void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
                             u32 mode) {
   struct WindowWork *work = WINDOW_WORK;
@@ -397,9 +379,6 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
 
 /// Steps a scaling sprite's animation (WINDOW_SPRITE_MOTION_SWELL to
 /// WINDOW_SPRITE_MOTION_SHRINK_HALF) and sets its affine scale for this frame.
-/// The swells loop over gWindowSprite_BounceScales' 32 steps; the shrinks take
-/// its second half, every other entry, over 8 frames and then stay at full
-/// size.
 void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
   // Scales are 8.8 fixed point: 256 is the sprite's own size.
   s32 scale = 256;
@@ -453,9 +432,7 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
 
 /// The per-frame sprite update: moves each sprite that an open window carries
 /// by its animation mode (WINDOW_SPRITE_MOTION_) and queues it for drawing, at
-/// its depth slot (WindowSprite.sentinel). The last step of
-/// WindowSystem_Update. While a window swells (WINDOW_ANIMATION_SWELL) all its
-/// sprites pulse.
+/// its depth slot (WindowSprite.sentinel).
 void WindowSprite_UpdateAll(void) {
   struct WindowWork *work = WINDOW_WORK;
   struct Window *window = work->windows;
@@ -481,8 +458,6 @@ void WindowSprite_UpdateAll(void) {
       switch (windowSprite->active) {
       case WINDOW_SPRITE_MOTION_PAGE_ARROW:
         // VRAM_CACHE_ENTRY_COUNT means no entry was free for the arrow.
-        // Its 128-byte picture is an 8x16 sprite of 256 colours (colors 1,
-        // shape 2, size 0), bobbing over 80 frames.
         if (work->glyphResource != VRAM_CACHE_ENTRY_COUNT) {
           const u8 *tiles = &gWindowSprite_PageArrowTiles[phase * 128];
 

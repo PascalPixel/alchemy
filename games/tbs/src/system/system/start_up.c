@@ -13,10 +13,7 @@
 /// Powers the game up: stops any HBlank DMA left running, sets the cartridge
 /// wait states, clears IWRAM, installs the interrupt handlers and the resident
 /// IWRAM code, loads the window graphics and the sound driver, then enters
-/// MainRoutine_Run and never returns. The C entry point (pret's AgbMain),
-/// called once by System_Entry after it has set the stacks; it clears the debug
-/// switches, enables the OAM copy and sleep, and clears gCartridgeResetMarker,
-/// which a soft reset leaves set.
+/// MainRoutine_Run and never returns.
 void System_Initialize(void) {
   {
     volatile u16 *dma0 = REG_DMA0;
@@ -118,9 +115,7 @@ UNUSED void Stub_ReservedNoOpD(void) {}
 /// caller.
 UNUSED void Stub_ReservedNoOpE(void) {}
 
-/// An exported stub that ignores its arguments and reports 0. The sprite
-/// viewer calls it with a resource id and a far-call table, so its choice of
-/// resource set changes nothing.
+/// An exported stub that ignores its arguments and reports 0.
 s32 Stub_ReturnZero(s32 unused0, const u8 *unused1) { return 0; }
 
 /// The build stamp's twelve digit characters copied to IWRAM, and a zero word
@@ -224,11 +219,7 @@ UNUSED void Code_ResolveLongBranches(u16 *pair, s32 byteLength) {
 
 /// Decodes the compressed code resource `index` to `destination` and resolves
 /// its long branches there, with a RAM copy of the ARM routine that does what
-/// Code_ResolveLongBranches does; the copy is allocated and freed again. In the
-/// packed stream each `bl` holds its target's offset from the start of the
-/// overlay, and the patch turns that into the offset from the instruction,
-/// which the processor expects; the packer, tools/ags-overlays, does the
-/// reverse.
+/// Code_ResolveLongBranches does; the copy is allocated and freed again.
 void Overlay_Load(u32 index, void *destination) {
   void (*patchBranches)(void *, s32);
   s32 codeSize;

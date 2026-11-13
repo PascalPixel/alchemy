@@ -28,9 +28,7 @@
 #endif
 
 /// The Colosso choice of what to do: "Descriptions", "Cheer" or "Nothing",
-/// chosen with a pointing hand. Returns the choice (0-2), or -1 when
-/// cancelled with B. The Colosso scenes ask it (scene/shared/colosso_solo.h).
-/// It takes a VRAM slot for the hand and frees it before returning.
+/// chosen with a pointing hand.
 s32 ColossoMenu_Choose(s32 unused) {
   struct Window *window;
   struct MenuCursor cursor;
@@ -102,12 +100,7 @@ s32 ColossoMenu_Choose(s32 unused) {
 }
 
 /// Shows that a Djinni joined a party member while the join jingle (MUS_JOINED)
-/// plays, until it ends or A, B, L or R is pressed. The message is
-/// `The <element> Djinni <name> joined <member>.`, with the element's Djinni
-/// portrait. `djinn` is the Djinni's number in its element. The field's
-/// Djinni events reach it by far call (field/event_commands/djinni.c). It
-/// closes the window at once (Window_Close with instant set), waits a
-/// frame and frees the portrait's VRAM slot.
+/// plays, until it ends or A, B, L or R is pressed.
 void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   struct WindowWork *work = WINDOW_WORK;
   s32 speaker;
@@ -170,9 +163,7 @@ s32 Party_GetMemberPortraitSprite(u32 index) {
 }
 
 /// Shows that a party member joined the party while the join jingle
-/// (MUS_JOINED) plays, until it ends or A, B, L or R is pressed. The message is
-/// `<member> joined your party.`, with the party member's portrait. The field's
-/// party events reach it by far call (field/event_commands/event.c).
+/// (MUS_JOINED) plays, until it ends or A, B, L or R is pressed.
 void Party_ShowJoinedMessage(s32 member) {
   struct WindowWork *work = WINDOW_WORK;
   struct Window *window = NULL;
@@ -212,8 +203,7 @@ void Party_ShowJoinedMessage(s32 member) {
 }
 
 /// Shows that two party members joined the party while the join jingle (sound
-/// 81) plays, until it ends or A, B, L or R is pressed. The message is
-/// `<first> and <second> joined your party.`, with both portraits.
+/// 81) plays, until it ends or A, B, L or R is pressed.
 void Party_ShowPairJoinedMessage(s32 first, s32 second) {
   u8 *work = gWindowWork[0];
   struct Window *window;

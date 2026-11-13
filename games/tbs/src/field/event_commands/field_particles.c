@@ -25,9 +25,7 @@ void FieldParticle_Update(struct FieldParticle *effect) {
 
 /// Draws a field effect sprite at its screen position and scale, when it is
 /// near the screen: x from -32 to 272 pixels and z from -32 to 224, both
-/// exclusive. With flag 4 the slot's z also lifts it (508 pixels less z):
-/// it is placed at y 508 pixels and raised back to z, so it shows at the
-/// same point but sorts as if at 508.
+/// exclusive.
 void FieldEffect_DrawScaledActor(struct FieldParticle *particle) {
   struct Sprite *sprite;
   s32 offset;
@@ -107,9 +105,8 @@ void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
   effect->z += Iwram_MulQ16(Trig_Sin(angle), speed);
 }
 
-/// Returns 1 while a field effect sprite that stops at its target still has
-/// one (it has not arrived), 0 once it has arrived or when it never stops. The
-/// sprites' callbacks poll it each frame to step their states.
+/// Returns 1 while a field effect sprite that stops at its target still has one
+/// (it has not arrived), 0 once it has arrived or when it never stops.
 u32 FieldParticle_HasPendingTarget(struct FieldParticle *effect) {
   // A plain != changes the English instructions at the same extent.
   u32 targetX;
@@ -147,11 +144,7 @@ void FieldParticle_SetCallback(struct FieldParticle *effect,
 }
 
 /// Gives a field effect sprite a new sprite of kind at (x, z): stopping at its
-/// target, top speed 2, acceleration and scale 1, drawn, animation 1. The field
-/// effect sprite owns the sprite until FieldEffect_ClearOwnedSlot. Its turn is
-/// limited with turnStepMax 0, so it holds heading 0 until its callback clears
-/// turnStepLimited or gives a step, as the first states of the callbacks that
-/// steer to a target do.
+/// target, top speed 2, acceleration and scale 1, drawn, animation 1.
 void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
                               s32 z) {
   struct Sprite *animation;
@@ -185,9 +178,7 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
   FieldParticle_SetActorMode(effect, 1);
 }
 
-/// Frees a field effect sprite and its sprite, clearing it to zero
-/// (inactive). Its callback calls it as its last state; the update then
-/// neither moves nor draws it.
+/// Frees a field effect sprite and its sprite, clearing it to zero (inactive).
 void FieldEffect_ClearOwnedSlot(struct FieldParticle *effect) {
   if (effect->actor)
     Sprite_DestroyFar(effect->actor);

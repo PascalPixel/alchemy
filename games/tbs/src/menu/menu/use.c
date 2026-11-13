@@ -17,11 +17,7 @@ void Item_UseNoOpCallback(void) {}
 
 /// Uses the item in memberId's inventory slot on targetId, or on every party
 /// member when its action's range is ABILITY_RANGE_ALL: applies its action at
-/// its plain power (Ability_ApplyToTargets with fixedScale 1). When the action
-/// changed something, an item that is used up (ITEM_USE_CONSUMED) loses one
-/// from its stack and the menu's list is rebuilt, and Hermes' Water
-/// (ITEM_USE_EMPTIES) becomes an Empty Bottle. Returns 0, or -1 when nothing
-/// changed; the result message is left in the work's messageOffset.
+/// its plain power (Ability_ApplyToTargets with fixedScale 1).
 s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
   struct ItemMenuWork *menu;
   s32 useResult;
@@ -56,13 +52,7 @@ s32 Item_ReturnOne(void) { return 1; }
 
 /// Applies the healing, curing, revival or lasting stat rise of action
 /// effectId, used by party member sourceId, to targetId, or to every party
-/// member when the action's range is ABILITY_RANGE_ALL. Item_Use passes
-/// fixedScale 1, the action's plain power; the Psynergy screen 0, which scales
-/// HP healing by the user's Power in the action's element
-/// (Battle_CalculateRecoveryFar). Leaves the result message in the work's
-/// messageOffset, counted from MsgItemUseResult
-/// ("You recovered all HP!"). Returns 0 after recalculating every party member,
-/// or -1 when nothing changed.
+/// member when the action's range is ABILITY_RANGE_ALL.
 s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
                            s32 fixedScale) {
   struct AbilityDefinition *effect;
@@ -144,9 +134,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       }
       break;
 
-    // The stat items. The stat rises by power, less one a quarter of the time
-    // and plus one a quarter of the time (a roll of 0 to 3: 0 gives -1, 1 gives
-    // +1, 2 and 3 give 0); Luck rises by power alone.
+    // The stat items.
     case ABILITY_FORMULA_NO_POWER:
       randomAdjust = (Random16() * 4) >> 16;
       if (randomAdjust == 0) {
@@ -337,13 +325,7 @@ void Item_PlayUseAnimation(u32 item) {
 }
 
 /// Plays the sound of action used from the menu, and returns at once: no
-/// animation is drawn and nothing waits. HP and PP healing
-/// (ABILITY_FORMULA_HEAL_HP and ABILITY_FORMULA_HEAL_PP) play SE_RECOVERY, HP
-/// healing twice; otherwise Revive's effect plays MUS_REVIVE, Cure Poison's
-/// MUS_CURE, Drain, Psy Drain and the unused HP and PP restores nothing, and
-/// every other effect, ABILITY_EFFECT_NONE of the stat items among them,
-/// MUS_JINGLE_SMALL. Called after a successful use by Item_PlayUseAnimation
-/// (for ItemMenu_Use) and by the Psynergy screen.
+/// animation is drawn and nothing waits.
 void Ability_PlayUseAnimation(s32 action) {
   s32 animationType;
   u32 targetType;

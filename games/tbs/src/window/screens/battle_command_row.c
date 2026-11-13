@@ -24,19 +24,8 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
 #endif
 
 /// Runs a battle command row: the commands as icons along the bottom of the
-/// screen, the selected one pulsing as a sprite and named in a window, until
-/// a command is chosen. Returns the command chosen (enum CommandIcon), -1 when
-/// B cancels, or -2 when L or R asks for the Status screen; the last two in a
-/// party member's row only. When the link battle's time runs out the row takes
-/// its first command. Battle_CollectPartyCommands runs both rows.
-///
-/// COMMAND_ROW_PARTY is the party's row at the start of a turn: Fight, Flee
-/// and Status. COMMAND_ROW_MEMBER, as any other mode, is a party member's row:
-/// Attack, Psynergy, Djinn once the party's Djinn are enough for a summon
-/// (BattleSummonState.availableMask), Summon while any Djinni is on standby,
-/// Item and Defend. Each row remembers its choice in
-/// BattleMenuWork.commandSelection. While the Djinn tutorial runs, the row
-/// presses the keys for the player.
+/// screen, the selected one pulsing as a sprite and named in a window, until a
+/// command is chosen.
 s32 BattleCommandRow_Run(s32 mode) {
   u8 party[4];
   struct WindowWork *work;
@@ -225,10 +214,7 @@ s32 BattleCommandRow_Run(s32 mode) {
       }
     }
     // The Djinn tutorial presses keys for the player, one each delay (1 is A,
-    // 16 Right, 32 Left). In the party's row it takes Fight. Unit 1 moves left
-    // to Defend and takes it; unit 0 moves right to Summon, or to Djinn while
-    // no Djinni is on standby, shows that command's hint at tutorial step 1
-    // and takes it on the next press. Other party members take Attack.
+    // 16 Right, 32 Left). In the party's row it takes Fight.
     keys = gKeysPressed;
     repeat = gKeysRepeat;
     navigation = gBattleMenuWork;
@@ -347,12 +333,10 @@ s32 BattleCommandRow_Run(s32 mode) {
   return command;
 }
 
-/// Switches the UI tilemap entries of the `width` x `height` tile rectangle
-/// at screen tile (x, y) to WINDOW_PALETTE or HIGHLIGHT_PALETTE by bit 12,
-/// keeping the rest of each entry: the menus' row highlight. `paletteBit` is
-/// the palette, of which only the low bit counts. Clipped as
-/// Window_SetTextTileBitRect clips; each row changed is marked for
-/// upload.
+/// Switches the UI tilemap entries of the `width` x `height` tile rectangle at
+/// screen tile (x, y) to WINDOW_PALETTE or HIGHLIGHT_PALETTE by bit 12, keeping
+/// the rest of each entry: the menus' row highlight. `paletteBit` is the
+/// palette, of which only the low bit counts.
 void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
   struct WindowWork *work = WINDOW_WORK;
 
@@ -398,11 +382,7 @@ void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
 
 /// Clears the highlight from the party status window's party member columns,
 /// then highlights the columns of the units in `ids` (up to four, ended by
-/// BATTLE_UNIT_LIST_END): the party member whose commands are being chosen. A
-/// unit not in the party is skipped. The window is right-aligned on the 30-tile
-/// row, so its party member columns start at column 29 - 6 * members (the Djinn
-/// column, when shown, lies left of them). Returns 0.
-/// Battle_CollectPartyCommands calls it.
+/// BATTLE_UNIT_LIST_END): the party member whose commands are being chosen.
 s32 PartyStatus_HighlightMembers(u16 *ids) {
   struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   s32 count;

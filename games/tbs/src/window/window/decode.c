@@ -24,8 +24,7 @@ struct ArticleTable {
 #endif
 
 /// The control codes of a message as stored (the PO catalogs' names), which
-/// Message_Decode expands into decoded text. Codes it does not
-/// name here are kept as they are; an operand is stored one above its value.
+/// Message_Decode expands into decoded text.
 enum {
   MESSAGE_END = 0,        ///< kept as TEXT_END: the window stays open
   MESSAGE_PAGE_BREAK = 1, ///< kept as TEXT_PAGE
@@ -45,8 +44,7 @@ enum {
   MESSAGE_PROTAGONIST_NAME = 16,
   MESSAGE_ACTOR_NAME = 17, ///< the name of the unit its operand names
   // The argument codes write out the next message argument of their kind
-  // (MESSAGE_ARGUMENT_). Outside Japanese the actor, class and item codes have
-  // an operand, the article form.
+  // (MESSAGE_ARGUMENT_).
   MESSAGE_ARGUMENT_ACTOR_NAME = 18,
   MESSAGE_ARGUMENT_CLASS_NAME = 19,
   MESSAGE_ARGUMENT_ITEM_NAME = 20,
@@ -77,26 +75,13 @@ enum {
 };
 
 // Message_AppendArticleName copies a name into the decoded text at pos and
-// returns the position after it. A name may start with an article class
-// ({article_class:N}, MESSAGE_ARTICLE_CLASS and its class), which picks the
-// article written before it. no is the article form the message asks for (its
-// argument code's operand); plural says the last number shown was not 1;
-// suffix tracks what the text last ended with, for the suffix codes (1: an s,
-// or in German s or z; 2: the end of a sentence, so the next word is
-// capitalised; 0: anything else). With mode set (battle messages) the name is
-// set off with spaces and style codes: a space and line spacing 10 before it,
-// line spacing 8 and a space after. Only the Japanese decoder sets mode, from
-// WindowWork.battleMode's WINDOW_BATTLE_MESSAGE, which BattleMessage_Open
-// sets while it decodes; the others always pass 0. The write position wraps at
-// TEXT_BUFFER_MASK, the ring's mask.
+// returns the position after it.
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 /// The German, Spanish, French and Italian form: forms 0 and 4 take no article,
 /// the others the class's article (in Spanish, form bit 3 asks for the
 /// indefinite article), capitalised at the start of a sentence.
-/// The write position wraps in the text buffer; language grammar remains
-/// separate.
 u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
                               u16 *entries, s32 articleForm, s32 plural,
                               s32 *suffix) {
@@ -188,8 +173,6 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 /// The English form: form 1 (or 3 with a single item) takes "a" or "an" (by the
 /// name's first letter unless its class says otherwise), and form 2 (or 3 with
 /// several) adds the plural "s" or "es".
-/// The write position wraps in the text buffer; language grammar remains
-/// separate.
 u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
                               u16 *entries, s32 articleForm, s32 plural,
                               s32 *suffix) {
@@ -210,9 +193,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
     kind = 0;
     table = gArticle_Table;
     head = name[0];
-    // The class operand is stored one above its value. A name with no class
-    // takes "an" (class 2) before a capital vowel and "a" (class 1) before
-    // anything else.
+    // The class operand is stored one above its value.
     if (head == MESSAGE_ARTICLE_CLASS) {
       kind = name[1] - 1;
       name += 2;
@@ -259,8 +240,6 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 #endif
 
 /// What the decode flags of Message_SetDecodeFlags put between characters.
-/// Halting speech (haltingSpeech): a short pause before each decoded code; in
-/// English and Japanese not at a line's start or before a kana mark.
 #define ENTRY_NARROW_GAP TEXT_PAUSE_SHORT
 /// With spacingAfter (English and Japanese): TEXT_MARK_VOICED after a character
 /// of codes 128 to 256, other than the kana marks and the Japanese full stop,
@@ -289,14 +268,7 @@ extern u8 *gLocalizedWord_CountedNouns[];
 
 /// Decodes message script into the ring of decoded text (WindowWork.textBuffer)
 /// and returns where it starts; script -1 returns the last message's start
-/// again. Argument codes take their values from the argument table
-/// (MessageArgument_Push), and clear empties the table afterwards. Names,
-/// numbers and articles are written out; style codes are kept with their
-/// operands for the message to run.
-/// The message is written at WindowWork.textBufferEnd, which it leaves just
-/// past the message's terminator, and is cut at the ring's length. The decoder
-/// routine is copied into HEAP_SLOT_MESSAGE_DECODER for the call and freed at
-/// its end.
+/// again.
 s32 Message_Decode(s32 script, s32 clear) {
   struct WindowWork *work = WINDOW_WORK;
   u32 code = 0;
@@ -546,9 +518,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             form = no & 7;
 #endif
             argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, clear);
-            // The argument is an inventory code, the item in its low bits. In
-            // German, Spanish, French and Italian, forms 2 and 4, and 3 after a
-            // plural number, take the item's plural name.
+            // The argument is an inventory code, the item in its low bits.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
             argument &= INVENTORY_ITEM_ID_MASK;
@@ -798,8 +768,6 @@ s32 Message_Decode(s32 script, s32 clear) {
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 
 /// The Japanese form: Japanese has no articles, so the name is copied as it is.
-/// The write position wraps in the text buffer; language grammar remains
-/// separate.
 extern __inline__ u32 Message_AppendArticleName(s32 mode, u16 *name,
                                                 u32 writePosition, u16 *entries,
                                                 s32 articleForm, s32 plural,
@@ -823,12 +791,7 @@ extern __inline__ u32 Message_AppendArticleName(s32 mode, u16 *name,
   return writePosition;
 }
 
-/// The Japanese Message_Decode, as above with no articles or
-/// plurals. A battle message (WINDOW_BATTLE_MESSAGE) has its names set off with
-/// spaces and style codes and each space doubled, and in battle the units of
-/// classes 122 and 125 are named Mystery Man and Mystery Woman.
-/// script -1 reuses lastMessageStart; clear consumes argument slots after
-/// decoding.
+/// The Japanese Message_Decode, as above with no articles or plurals.
 s32 Message_Decode(s32 script, s32 clear) {
   struct WindowWork *work = WINDOW_WORK;
   u32 code = 0;

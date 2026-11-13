@@ -4,14 +4,8 @@
 
 #include "../event_commands_internal.h"
 
-/// A hand appears 32 pixels to either side, each moves 14 pixels in, and
-/// they lift the target 32 pixels with them.
-///
-/// Abilities: Lift (FIELD_PSYNERGY_LIFT).
-///
-/// This is Lift cast on a target, which FieldPsynergy_Dispatch calls.
-/// It leaves the target raised and floating (motion flag bit 2), with its
-/// update set to Actor_CycleSpriteColors.
+/// A hand appears 32 pixels to either side, each moves 14 pixels in, and they
+/// lift the target 32 pixels with them.
 void FieldPsynergy_LiftOnTarget(s32 unused) {
   struct FieldEffectWork *effectWork;
   struct Actor *caster;
@@ -77,21 +71,12 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
   FieldPsynergy_FadeFromCastColor();
 }
 
-/// Two hands appear 16 pixels above the spot in front of the caster, 32
-/// pixels to either side, then close in 24 pixels and scatter into shards.
-///
-/// Abilities: Lift (FIELD_PSYNERGY_LIFT).
-///
-/// This is Lift cast with no target, which FieldPsynergy_Run calls.
+/// Two hands appear 16 pixels above the spot in front of the caster, 32 pixels
+/// to either side, then close in 24 pixels and scatter into shards.
 DEFINE_ITEM_BREAK_EFFECT(FieldPsynergy_Lift, FieldEffect_SpawnLiftHand)
 
 /// Spawns a hand (SPRITE_MOVE_HAND) and grows it, spinning, from a quarter to
-/// full size over 24 frames; angle is the way it faces once grown. Makes Lift's
-/// two hands, for FieldPsynergy_LiftOnTarget and FieldPsynergy_Lift; returns
-/// NULL when no actor could be spawned. Unlike Carry's
-/// (FieldEffect_SpawnCarryHand) it takes MOVE_HAND_ANIMATION_GRIP, not
-/// MOVE_HAND_ANIMATION_OPEN, and keeps autoFaceMotion as created; both are at
-/// sprite priority 0 (Actor_Spawn).
+/// full size over 24 frames; angle is the way it faces once grown.
 struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
   struct Actor *fragment;
   s32 scale;
@@ -177,11 +162,8 @@ again:
     FieldEffect_ClearOwnedSlot(effect);
 }
 
-/// A heavy impact: places an actor of sprite 283 32 pixels below the source
-/// for 20 frames and scatters 12 shards from it. Reached through SC_CALL in
-/// gFieldEffect_HeavyImpactScript (field_sequence_tables.c), where the
-/// interpreter is the actor running the script, which Force's thrown actor runs
-/// (force.c). Returns 0, so the script moves on and releases the actor.
+/// A heavy impact: places an actor of sprite 283 32 pixels below the source for
+/// 20 frames and scatters 12 shards from it.
 s32 SpawnHeavyImpactEffect(struct Actor *source) {
   struct Vector3 pos;
   struct Actor *impact;

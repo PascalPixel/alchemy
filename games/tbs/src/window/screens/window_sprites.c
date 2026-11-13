@@ -5,11 +5,9 @@
 #include "../screens_internal.h"
 
 /// Creates a window sprite for the VRAM cache slot `slot` and attaches it to
-/// `window`, placed at (offsetX, offsetY) pixels from the window's inner
-/// corner (one tile in from its top-left border). `oamFlags` holds the OAM
-/// shape and size bits. The sprite draws on layer 255 until the caller changes
-/// it. Returns the sprite, or NULL with the VRAM slot released when all
-/// window sprites are in use.
+/// `window`, placed at (offsetX, offsetY) pixels from the window's inner corner
+/// (one tile in from its top-left border). `oamFlags` holds the OAM shape and
+/// size bits.
 struct WindowSprite *WindowSprite_Create(s32 slot, s32 oamFlags,
                                          struct Window *window, s32 offsetX,
                                          s32 offsetY) {
@@ -60,9 +58,7 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 oamFlags,
 }
 
 /// Loads resource `resource` in loading mode `mode` into a VRAM slot and shows
-/// it as a 16x16 sprite at (x, y) in `window`. Returns NULL when it cannot be
-/// loaded. The field menus' item and Psynergy icons come through here, by far
-/// call (menu/menu).
+/// it as a 16x16 sprite at (x, y) in `window`.
 struct WindowSprite *WindowSprite_CreateFromResource(s32 mode, s32 resource,
                                                      struct Window *window,
                                                      s32 x, s32 y) {
@@ -76,9 +72,7 @@ struct WindowSprite *WindowSprite_CreateFromResource(s32 mode, s32 resource,
 }
 
 /// Copies icon `icon` (with `layers` passed on to the copier) into a free VRAM
-/// slot and shows it as a 16x16 sprite at (x, y) in `window`. Returns NULL
-/// when no slot is free. The shops' item icons come through here, by far
-/// call.
+/// slot and shows it as a 16x16 sprite at (x, y) in `window`.
 struct WindowSprite *WindowSprite_CreateLoaded(s32 icon, s32 layers,
                                                struct Window *window, s32 x,
                                                s32 y) {
@@ -95,8 +89,7 @@ struct WindowSprite *WindowSprite_CreateLoaded(s32 icon, s32 layers,
 }
 
 /// Builds a 16x16 icon from frame pattern 1 with overlay pattern `icon` drawn
-/// over it, and shows it at (x, y) in `window` on draw layer 251. Returns NULL
-/// when no VRAM slot is free. Nothing calls it.
+/// over it, and shows it at (x, y) in `window` on draw layer 251.
 struct WindowSprite *WindowSprite_CreateWithTransform(s32 icon,
                                                       struct Window *window,
                                                       s32 x, s32 y) {
@@ -115,10 +108,9 @@ struct WindowSprite *WindowSprite_CreateWithTransform(s32 icon,
   return sprite;
 }
 
-/// Loads the pattern at the start of gMenuTitlePictures into a
-/// free VRAM slot and shows it as a 16x16 sprite at (x, y) in `window`.
-/// `tableEntry` is passed on to the loader, which loads that same pattern for
-/// every value. Returns NULL when no slot is free.
+/// Loads the pattern at the start of gMenuTitlePictures into a free VRAM slot
+/// and shows it as a 16x16 sprite at (x, y) in `window`. `tableEntry` is passed
+/// on to the loader, which loads that same pattern for every value.
 struct WindowSprite *WindowSprite_CreateFromTable(s32 tableEntry,
                                                   struct Window *window, s32 x,
                                                   s32 y) {
@@ -136,13 +128,7 @@ struct WindowSprite *WindowSprite_CreateFromTable(s32 tableEntry,
 
 /// Shows the 32x32 portrait of `character` at (x, y) in `window`, in portrait
 /// slot `side` (0 or 1, or any other value for the first free one; the second
-/// is tried first). Each slot has its own palette, 14 or 15. In the prologue,
-/// ISAAC and GARET speak as SPRITE_ISAAC_CHILD and SPRITE_GARET_CHILD. `unused`
-/// is passed on to the loader, which ignores it. Returns the sprite, or NULL
-/// when the character has no portrait or both slots are taken. The slot records
-/// the portrait and its VRAM slot (WindowWork.portraitPictures and
-/// portraitSprites); the message windows' speaker portraits come through here
-/// (window/messages.c).
+/// is tried first).
 struct WindowSprite *Portrait_Create(s32 character, s32 unused, s32 side,
                                      struct Window *window, s32 x, s32 y) {
   struct WindowWork *work = WINDOW_WORK;
@@ -190,10 +176,7 @@ struct WindowSprite *Portrait_Create(s32 character, s32 unused, s32 side,
 
 /// Reloads the portrait image of `character` into portrait slot `side` (0 or
 /// 1), keeping its sprite: used to change the picture of a portrait already on
-/// screen. With any other `side`, the slot already showing that character's
-/// portrait is used, and nothing happens when none does. `unused` is passed on
-/// to the loader, which ignores it. The field menus reload portrait slot 0
-/// with it by far call (menu/menu/shared.c).
+/// screen.
 void Portrait_Reload(u32 side, s32 character, s32 unused) {
   s32 tile;
   s32 slot;
@@ -245,12 +228,10 @@ void WindowSprite_SetInvertedSentinel(void *sprite, s32 priority) {
 typedef void (*WindowSpanRoutine)(u16 *spans, u16 *tilemap);
 
 /// Fills `spans`, a page of the screen transition's window edges past its WININ
-/// and WINOUT, with the windows' horizontal extent on each of the 160
-/// scan lines: (left << 8) | right in the second halfword (WIN1H) of each
-/// line's pair, read from the UI tilemap by the ARM routine
-/// Tile_BuildCellPictures, copied into RAM for the call. Each frame of a window
-/// transition calls it (ScreenTransition_UpdateScanlineTable). With no UI work
-/// it writes 0xe0e0, an empty extent, over the first 80 lines only.
+/// and WINOUT, with the windows' horizontal extent on each of the 160 scan
+/// lines: (left << 8) | right in the second halfword (WIN1H) of each line's
+/// pair, read from the UI tilemap by the ARM routine Tile_BuildCellPictures,
+/// copied into RAM for the call.
 void ScanlineWindow_FillSpans(void *spans) {
   void *tilemap = gWindowWork[0];
 
@@ -273,9 +254,8 @@ void ScanlineWindow_FillSpans(void *spans) {
   }
 }
 
-/// Fills the top-left `width` x `height` tiles of WINDOW_TILEMAP_VRAM, 32
-/// tiles wide, with the tilemap entry `value`. The first two
-/// parameters are ignored.
+/// Fills the top-left `width` x `height` tiles of WINDOW_TILEMAP_VRAM, 32 tiles
+/// wide, with the tilemap entry `value`.
 void BgScreen_FillRect(s32 unused0, s32 unused1, u32 width, u32 height,
                        s32 value) {
   u32 row = 0;

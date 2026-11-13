@@ -5,15 +5,8 @@
 #include "../event_commands_internal.h"
 
 /// The event command "open message": opens the event's current message in a
-/// speech window next to the speaking actor, with the speaker's portrait
-/// beside it when it has one, and moves on to the next message. The low 12
-/// bits of actorId are the speaker (0 to 7, a party member, speaks from the
-/// leader); its high bits place the windows: 0x1000 portrait on the left,
-/// 0x2000 on the right, 0x4000 message above the speaker, 0x8000 never above.
-/// Returns the message window once its text is typed out; the caller waits
-/// for it to be read. Records the speaker and both windows in the field work
-/// (speaker, messageWindow, sideWindow). With the debug fastForward set
-/// nothing opens and it returns NULL, but the message still advances.
+/// speech window next to the speaking actor, with the speaker's portrait beside
+/// it when it has one, and moves on to the next message.
 struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
   struct WindowWork *win;
   struct FieldWork *work;
@@ -109,10 +102,7 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
         top = y + 4;
     }
 
-    // Place the portrait beside the speaker, on the side with more room. The
-    // screen is 30 tiles wide (columns 0 to 29) and margin is the room the
-    // portrait takes, in tiles: 5 while Mind Read shows thoughts (the window
-    // mode), else 4.
+    // Place the portrait beside the speaker, on the side with more room.
     if (win->mindRead != 0)
       margin = 5;
     column = x;
@@ -197,11 +187,7 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
     else if (column + margin > 29)
       column = 29 - margin;
 
-    // Open the message and the portrait, and wait until the text is typed
-    // out.
-    // Mind Read's thoughts (window mode set) open after 8 frames with no
-    // voice; spoken messages zoom open (option bit 0) with the speaker's
-    // voice in bits 16 and up.
+    // Open the message and the portrait, and wait until the text is typed out.
     if (win->mindRead != 0) {
       wait(8);
       if (extra != 0)
@@ -233,14 +219,8 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
 }
 
 /// The event command "show message": opens the current message at actorId
-/// (FieldMessage_ShowAtActor) and waits until it has been read and its
-/// window has closed; the speaker's portrait is closed once the text is typed
-/// out. The message closes by itself after 600 frames, or at once while
-/// Select, L, R and A are all held. About 70 scenes reach it
-/// (Event_ShowMessage, MESSAGE_PUT); the trigger runner
-/// (field_sequence/triggers.c), Field_RunPsynergyEvent (field_psynergy.c),
-/// Field_UseItem for an item trigger that is a message (field_sequence/items.c)
-/// and the debug menu's message test call it too.
+/// (FieldMessage_ShowAtActor) and waits until it has been read and its window
+/// has closed; the speaker's portrait is closed once the text is typed out.
 void Event_ShowMessageAndWait(s32 actorId, s32 flags) {
   s32 member;
   struct FieldWork *runtime = gFieldWork;
@@ -283,11 +263,9 @@ void Event_ShowMessageThenWait(s32 actorId, s32 flags, s32 frames) {
   Event_Wait(frames);
 }
 
-/// The event command "ask yes or no": opens the question at actorId, lets
-/// the leader answer, then shows the next message for yes or the one after it
-/// for no. Returns 0 for yes, 1 for no. Either way the event's message number
-/// ends past both answers, so the event goes on with the same message
-/// whatever was chosen.
+/// The event command "ask yes or no": opens the question at actorId, lets the
+/// leader answer, then shows the next message for yes or the one after it for
+/// no.
 s32 Event_AskYesNoAndShowResponse(s32 actorId, s32 flags) {
   s32 answer;
   struct FieldWork *runtime;
@@ -348,8 +326,6 @@ void Event_ShowSpeakerMessage(s32 speaker) {
     s32 positionFound = 0;
 
     // Supply the actual speaker position as FieldMessage_ShowAtActor does.
-    // A missing actor or failed projection has no position to open
-    // around; still consume the message, as the fast-forward path does.
     if (actor != NULL) {
       if (state->mode == ACTOR_SYSTEM_WORLD_MAP)
         positionFound =
@@ -475,9 +451,8 @@ void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
   wait(1);
 }
 
-/// Sets the voice of the messages that follow to that of actorId's sprite,
-/// at the rate the message speed option picks (gMessageSpeed_VoiceRates). With
-/// 0x80000000 the messages are silent.
+/// Sets the voice of the messages that follow to that of actorId's sprite, at
+/// the rate the message speed option picks (gMessageSpeed_VoiceRates).
 void Message_SetVoiceFromActor(s32 actorId) {
   struct WindowWork *state = (struct WindowWork *)gWindowWork[0];
   u8 rate;

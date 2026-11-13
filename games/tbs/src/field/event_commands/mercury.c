@@ -8,10 +8,7 @@
 #define MERCURY_AFTERIMAGE_MAX 8 ///< afterimages of the rising Djinni
 /// A Mercury Djinni joins the party: the screen is tinted blue, the Djinni
 /// bounces twice and hops three times ever higher, then rises 120 pixels out of
-/// sight trailing eight afterimages. The leader turns to the camera and plays
-/// ANIM_LEADER_ARMS_RAISED while 24 droplets rain round it, one a frame
-/// (FieldEffect_UpdateRandomTargetParticle); then the colours return. Uses all
-/// 24 field effect sprites (FieldEffect_InitializeSlots).
+/// sight trailing eight afterimages.
 void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   struct Actor *djinni;
   struct Actor *copy;

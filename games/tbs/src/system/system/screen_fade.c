@@ -14,11 +14,9 @@ enum {
 };
 
 /// Steps the screen fade once a VBlank, called by System_VBlankHandler: sets
-/// BLDCNT to brighten or darken the chosen layers, moves BLDY one step from
-/// the start level to the target level and counts gScreenFadeVBlanksLeft down;
-/// at the end it clears gScreenFadeVBlanks, which ScreenFade_Wait waits on.
-/// While gScreenFadeVBlanks is 0 it writes nothing, leaving BLDCNT and BLDY as
-/// they were last written.
+/// BLDCNT to brighten or darken the chosen layers, moves BLDY one step from the
+/// start level to the target level and counts gScreenFadeVBlanksLeft down; at
+/// the end it clears gScreenFadeVBlanks, which ScreenFade_Wait waits on.
 void ScreenFade_Update(void) {
   if (gScreenFadeVBlanks != 0) {
     {

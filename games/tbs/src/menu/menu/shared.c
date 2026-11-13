@@ -34,9 +34,7 @@
 
 /// Resumes the overlay tasks and tileset animations when a menu closes, and
 /// clears FLAG_WEATHER_HELD and FLAG_PALETTE_BLEND_HELD: undoes
-/// Menu_SuspendFieldTasks. Called as DjinnMenu_Run and StatusScreen_Run close,
-/// and as ItemMenu_Run (TBS_PATCH_1) and PsynergyMenu_Run (TBS_PATCH_2) close.
-/// Returns nothing useful; callers ignore the value.
+/// Menu_SuspendFieldTasks.
 s32 Menu_ResumeFieldTasks(void) {
   Task_ResumeOverlayTasks();
   TilesetAnim_ResumeAllFar();
@@ -53,11 +51,7 @@ s32 Menu_ResumeFieldTasks(void) {
 /// Suspends the overlay tasks and tileset animations while a menu is open, and
 /// sets FLAG_PALETTE_BLEND_HELD and FLAG_WEATHER_HELD, so that the field's
 /// palette blend and weather stand still behind it (see Menu_ResumeFieldTasks,
-/// which undoes it). Returns Task_SuspendOverlayTasks' result, the last
-/// task index changed or -1; callers ignore it. The Djinn and Status screens
-/// call it in every edition, the Item screen from TBS_PATCH_1 (the
-/// international editions) and the Psynergy screen from TBS_PATCH_2 (German,
-/// French, Spanish and Italian).
+/// which undoes it).
 s32 Menu_SuspendFieldTasks(void) {
   GameFlag_SetFar(FLAG_PALETTE_BLEND_HELD);
   GameFlag_SetFar(FLAG_WEATHER_HELD);
@@ -66,9 +60,7 @@ s32 Menu_SuspendFieldTasks(void) {
 }
 
 /// Clears the whole menu work and sets its defaults: no side selected, one
-/// entry in each side, and a 1x1 cursor grid. Each screen's run function calls
-/// it once the menu work's heap block is allocated, so every window handle and
-/// icon pointer in the work starts as NULL.
+/// entry in each side, and a 1x1 cursor grid.
 void Window_InitializeWork(s32 unused) {
   struct ItemMenuWork *menu = gMenuWork;
 
@@ -81,11 +73,6 @@ void Window_InitializeWork(s32 unused) {
 }
 
 /// Opens the window kept in *handle, or redraws it if it is already open.
-///
-/// If *handle is empty, creates a window at (x, y), w by h tiles, in the style
-/// given by the low byte of flags, stores it in *handle and returns 1. If the
-/// window exists, redraws its saved rectangle (unless flags has
-/// WINDOW_KEEP_EXISTING) and returns 0.
 s32 Window_UpdateOrCreate(struct Window **handle, s32 x, s32 y, s32 w, s32 h,
                           s32 flags) {
   struct Window *window;
@@ -113,17 +100,11 @@ void Window_CloseIfOpen(struct Window **handle, s32 style) {
   }
 }
 
-/// Draws the status panel of the Item and Psynergy screens for the party
-/// party member `member` (window at tile 0,5, 13 by 12): the name, up to two
-/// statuses or the level, the party member's portrait, and below them what
-/// mode's panel kind asks for. slot is the inventory slot of the item the panel
-/// is about, for the equipment and Psynergy item panels. The first parameter,
-/// the status window, is not used: the window is the menu work's.
-///
-/// Opens the window on first use and keeps it in the work's statusWindow;
-/// unless mode has STATUS_PANEL_LOWER_ONLY, the portrait it creates replaces
-/// the work's cursor. The equipment panel equips the item on the real unit for
-/// a moment and puts the unit back from a heap copy it frees before returning.
+/// Draws the status panel of the Item and Psynergy screens for the party party
+/// member `member` (window at tile 0,5, 13 by 12): the name, up to two statuses
+/// or the level, the party member's portrait, and below them what mode's panel
+/// kind asks for. slot is the inventory slot of the item the panel is about,
+/// for the equipment and Psynergy item panels.
 void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
   s32 created;
   struct ItemDefinition *def;
@@ -288,10 +269,7 @@ void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
 #define NUMBER_PIXELS_PER_DIGIT 8
 
 /// Returns how many decimal digits number has, but at least 2: 0-99 give 2,
-/// 100-999 give 3, 1000-9999 give 4. The count starts with the units digit,
-/// adds one for each division by ten that leaves 10 or more, then adds the
-/// leading digit; a number under 10 has its one digit counted as both, which
-/// is where the minimum of 2 comes from.
+/// 100-999 give 3, 1000-9999 give 4.
 static inline s32 CountDigitsAtLeastTwo(s32 number) {
   s32 count;
 
@@ -308,24 +286,8 @@ static inline s32 CountDigitsAtLeastTwo(s32 number) {
   return count;
 }
 
-/// Draws number right-aligned in a field that ends at pixel column x and
-/// allows 8 pixels for each digit, at least two digits wide.
-///
-/// The international editions draw a character's HP and PP with it
-/// (StatusPanel_DrawHpPp). The Japanese editions draw those figures in
-/// four-character fields padded with spaces, which keeps the digits in line
-/// because the Japanese font's space is as wide as a digit (7 pixels). The
-/// Latin font's space is 5 pixels, so here each figure gets a field as wide
-/// as its digits instead.
-///
-/// The number writer draws the digits 7 pixels apart, so a number ends about
-/// a pixel per digit before x: 99 ends 2 pixels before it, 100 ends 3. A
-/// number under 10 draws as a 5-pixel space and its digit, and ends 4 pixels
-/// before x.
-///
-/// number: the value to draw, 0 or more
-/// x:      the field's right edge, in pixels within the window
-/// y:      the pixel row of the text, within the window
+/// Draws number right-aligned in a field that ends at pixel column x and allows
+/// 8 pixels for each digit, at least two digits wide.
 void Text_DrawNumberRightAligned(s32 number, struct Window *window, s32 x,
                                  s32 y) {
   s32 width = CountDigitsAtLeastTwo(number);
@@ -340,9 +302,7 @@ void Text_DrawNumberRightAligned(s32 number, struct Window *window, s32 x,
 #endif
 
 /// Draws a character's HP and PP into window as two rows, "HP current/maximum"
-/// at pixel row 40 and "PP current/maximum" at row 48. Current HP is drawn in
-/// TEXT_COLOR_LOW_HP when it is below a quarter of maximum HP and in
-/// TEXT_COLOR_NO_HP at 0; then the colour goes back to TEXT_COLOR_NORMAL.
+/// at pixel row 40 and "PP current/maximum" at row 48.
 void StatusPanel_DrawHpPp(struct Unit *unit, struct Window *window) {
   // Each figure in turn, as an s16.
   s16 value;
@@ -372,10 +332,7 @@ void StatusPanel_DrawHpPp(struct Unit *unit, struct Window *window) {
   Text_DrawNumberRightAligned(value, window, 88, 48);
 #else
   // Each row string ("HP    /" and "EP    /") holds the label and the slash,
-  // one character to an 8-pixel cell, the slash in the cell at 48. Each
-  // figure is four characters padded with spaces: the current one drawn
-  // from 16 at the font's widths, the maximum from 56 a cell a character,
-  // ending at 88.
+  // one character to an 8-pixel cell, the slash in the cell at 48.
   Text_DrawStringInWindowFar((u8 *)gStatusPanel_HpRowString, window, 0, 40);
   value = unit->hpMax;
   Text_DrawNumberInWindowFar(value, 4, window, 56, 40);
@@ -441,9 +398,7 @@ void Text_DrawStatComparison(const struct Unit *after,
 #define ICON_TILE_BYTES 128
 
 /// Creates a hand cursor sprite in window at (x, y), loading the hand's tiles
-/// into a free VRAM block. Returns the sprite, or 0 when the free block found
-/// is block 0 (see Icon_CreateWithResourceVariant).
-/// Nothing calls it; Icon_CreateWithResourceVariant is the one in use.
+/// into a free VRAM block.
 UNUSED s32 Icon_CreateWithResource(struct Window *window, s32 unused, s32 x,
                                    s32 y) {
   s32 block;
@@ -458,10 +413,7 @@ UNUSED s32 Icon_CreateWithResource(struct Window *window, s32 unused, s32 x,
 }
 
 /// Creates the menu's hand cursor sprite in window at (x, y), loading the
-/// hand's tiles into a free VRAM block. Returns the sprite, or 0 when the free
-/// block found is block 0. Reached from MenuCursor_Create, from
-/// PsynergyMenu_CreateEntryGrid, which nothing calls, and through an overlay
-/// veneer in MENU.S.
+/// hand's tiles into a free VRAM block.
 s32 Icon_CreateWithResourceVariant(struct Window *window, s32 x, s32 y) {
   s32 block;
   s32 icon;
@@ -500,13 +452,8 @@ void Menu_ReloadMemberPortrait(const void *unused, s32 unit) {
   Portrait_ReloadFar(0, unit, 0);
 }
 
-/// Opens the menu's top-left window (13 by 5 tiles) and puts the hand cursor
-/// in it, hidden for now, as sideIcon[0]. Selects no tab yet (the s8
-/// tabIndex[0] = 255 reads as -1). Returns the window, which
-/// ItemMenu_Initialize (the Item, Psynergy and Djinn screens) and
-/// StatusScreen_Initialize (the Status screen and the party
-/// member chooser) pass on to Menu_CreatePartyFigures for the party
-/// figures.
+/// Opens the menu's top-left window (13 by 5 tiles) and puts the hand cursor in
+/// it, hidden for now, as sideIcon[0].
 struct Window *MenuCursor_Create(void *source) {
   struct PsynergyMenuWork *menu = source;
   struct Window *window;
@@ -527,9 +474,7 @@ struct Window *MenuCursor_Create(void *source) {
   sentinel = 254;
   cursor->sentinel = sentinel;
   sentinel -= 255;
-  // sideIcon[1] gets slot 255. Nothing stores sideIcon[1], so it is
-  // still NULL from Window_InitializeWork and this byte goes to address 0xf,
-  // in the BIOS, which ignores writes.
+  // sideIcon[1] gets slot 255.
   menu->sideIcon[1]->sentinel = sentinel; // -1
   return window;
 }
@@ -537,10 +482,6 @@ struct Window *MenuCursor_Create(void *source) {
 /// Creates a standing figure for each active party member, side by side under
 /// the window source: origin (originX, originY) in tiles from the window's
 /// corner, each figure 16 + spacing pixels after the last, at full scale.
-/// Clears the unused figure slots and starts the task that places them
-/// every frame. Every screen of the field menu calls it as it opens, and the
-/// shops through Menu_CreatePartyFiguresFar;
-/// Menu_ReleasePartyFigures releases the figures.
 void Menu_CreatePartyFigures(void *source, s32 originX, s32 originY,
                              s32 spacing, s32 unused) {
   u16 memberIds[14];
@@ -622,10 +563,7 @@ void Menu_PlacePartyFigures(void) {
   count = (u16)Party_CountMembersFar();
   for (i = 0; i < count; i++) {
     struct Sprite *figure = menu->tabSprites[i];
-    // 482 less the row's screen y, in 16.16. The ground y is always 482,
-    // which puts every figure in the same depth slot ((482 >> 1) + 10 = 251,
-    // Render_ApplyProjectedPlacement), and raising the image by this height
-    // brings it back up to its row.
+    // 482 less the row's screen y, in 16.16.
     s32 placeY = px(482) - px(menu->rowPositions[i]);
 
     if (figure != 0) {
@@ -656,10 +594,8 @@ void MenuCursor_Position(s32 xOffset, s32 yOffset) {
                               (menu->auxiliaryWindow)->y * 8 + 8;
 }
 
-/// Slides the hand cursor from where it is to (x, y) inside the menu's
-/// top-left window over two frames, in 1/16 pixel steps. Positions carry a
-/// 64-pixel bias while moving so that they stay positive. Does nothing, once,
-/// after skipSlide is set.
+/// Slides the hand cursor from where it is to (x, y) inside the menu's top-left
+/// window over two frames, in 1/16 pixel steps.
 void MenuCursor_Slide(s32 x, s32 y) {
 
   struct PsynergyMenuWork *menu = gMenuWork;
@@ -687,10 +623,8 @@ void MenuCursor_Slide(s32 x, s32 y) {
   }
   x += 64;
   y += 64;
-  // Take the 8-pixel window border off the start, which is in screen pixels,
-  // so that it compares with the target inside the window. The window's own
-  // place is not taken off: right for the top-left window at tile 0,0 that
-  // MenuCursor_Create opens.
+  // Take the 8-pixel window border off the start, which is in screen pixels, so
+  // that it compares with the target inside the window.
   if (cursor->x - 8 > 0)
     cursor->x -= 8;
   fineY = cursor->y;
@@ -802,12 +736,6 @@ void ItemMenu_RefreshEntry(s32 layout) {
 }
 
 /// Shows message in the item menu, with the hand cursor hidden meanwhile.
-///
-/// With y == -1 the message goes into the info window; otherwise a modal
-/// window sized to the message opens at (x, y). With x == -1 the message stays
-/// up and FLAG_MENU_INFO_KEPT records that the info window holds it (the next
-/// selection keeps it instead of drawing the item name); otherwise it waits
-/// for A, B or Start and clears it again.
 void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
   struct ItemMenuWork *menu = gMenuWork;
   struct Window *window;
@@ -859,9 +787,8 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
 }
 
 /// Sorts a party member's 15 inventory slots by the list order of mode (enum
-/// ListSort): items are grouped by the order's item types and, within
-/// a type, run from the highest item id down. Empty slots go to the end.
-/// L + A in the item menu cycles through the modes. Returns 1.
+/// ListSort): items are grouped by the order's item types and, within a type,
+/// run from the highest item id down.
 s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
   u16 sorted[16];
   u16 items[16];
@@ -963,13 +890,6 @@ void Menu_CopyListOrder(s32 mode, u8 *order) {
 #define PAGE_LABEL_FIRST 49
 
 /// Moves a paged list's cursor and page with the d-pad's repeating keys.
-///
-/// count entries are shown pageSize at a time; *cursor is the row on the page
-/// and *page the page. Vertical lists (horizontal 0) move the cursor with Up
-/// and Down and turn pages with Left and Right; horizontal lists the other way
-/// round. Moving past either end wraps round; turning to a shorter page pulls
-/// the cursor up to its last entry. Returns 1 after a page turn, 0 after a
-/// cursor move and -1 when nothing moved or the list is empty.
 s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
                           s32 *page) {
   s32 pages;
@@ -1027,9 +947,8 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
   }
   if (previous) {
     Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-    // Back past the first row wraps to the page's last entry: its last row,
-    // or the list's last entry on a shorter last page. The first store is
-    // overwritten at once.
+    // Back past the first row wraps to the page's last entry: its last row, or
+    // the list's last entry on a shorter last page.
     if (--*cursor < 0) {
       *cursor = pageSize - 1;
       *cursor = count - *page * pageSize - 1;
@@ -1056,10 +975,7 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
 
 /// Copies WINDOW_PALETTE into background palette paletteNumber and lightens its
 /// WINDOW_BACKGROUND_COLOR by HIGHLIGHT_LIGHTEN_STEPS in each channel: the
-/// highlight colour of the menu's selected rows. Each screen sets up
-/// HIGHLIGHT_PALETTE as it opens, and again after the Details window has
-/// borrowed it (ItemMenu_ShowDetails); only Item_PrepareUsePalette, which
-/// nothing calls, uses palette 13.
+/// highlight colour of the menu's selected rows.
 void Palette_LightenHighlight(s32 paletteNumber) {
   u16 *palette = (u16 *)&BG_PLTT_COLOR(paletteNumber, 0);
   u32 red;
@@ -1090,8 +1006,7 @@ void Palette_LightenHighlight(s32 paletteNumber) {
 
 /// Draws a paged list's page numbers on the top border of window, ending at
 /// tile rightEdge: one digit per page between the page arrows, selectedPage in
-/// HIGHLIGHT_PALETTE and the others in WINDOW_PALETTE. Draws nothing for a
-/// single page.
+/// HIGHLIGHT_PALETTE and the others in WINDOW_PALETTE.
 void PagedList_DrawPageNumbers(struct Window *window, s32 itemCount,
                                s32 pageSize, s32 selectedPage, s32 rightEdge) {
   s32 pageCount;
@@ -1123,13 +1038,8 @@ void PagedList_DrawPageNumbers(struct Window *window, s32 itemCount,
 }
 
 /// Switches a rectangle of a window's text between WINDOW_PALETTE (normal) and
-/// HIGHLIGHT_PALETTE (the highlight made by Palette_LightenHighlight):
-/// palette is the new palette number. Only bit 12 of each map entry is cleared
-/// before it is set, so this works between those two palettes. (x, y) and the
-/// size are in tiles inside the window's border; the rectangle is clipped to
-/// the screen's 30 columns, and to its 20 rows only when it reaches row 29 (see
-/// the body). Used for the highlighted rows of the item, Psynergy and Status
-/// lists. Marks the whole tilemap for upload.
+/// HIGHLIGHT_PALETTE (the highlight made by Palette_LightenHighlight): palette
+/// is the new palette number.
 void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
                                s32 width, s32 height, u32 palette) {
   struct WindowWork *work = (struct WindowWork *)gWindowWork[0];
@@ -1149,11 +1059,9 @@ void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
     height += y;
     y = 0;
   }
-  // The test is the columns' (past 29) but the clip is to the screen's 20
-  // rows, so a rectangle ending in rows 20 to 28 would be kept whole and
-  // write past the 32 by 20 tilemap into the windows after it. No caller
-  // reaches row 20: the lowest is row 18, in the Status menu's equipment
-  // window.
+  // The test is the columns' (past 29) but the clip is to the screen's 20 rows,
+  // so a rectangle ending in rows 20 to 28 would be kept whole and write past
+  // the 32 by 20 tilemap into the windows after it.
   if (y + height > 29) {
     height = 20 - y;
   }
@@ -1179,14 +1087,9 @@ void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
   }
 }
 
-/// Lends HIGHLIGHT_PALETTE to the element icons:
-/// copies the first sprite palette, the icons' colours, into it, then
-/// WINDOW_BACKGROUND_COLOR over its TEXT_BACKGROUND_COLOR (as
-/// StatusScreen_Run does for palettes 0 and 1). The Details window draws its
-/// element icons (window tiles 1 to 4) in HIGHLIGHT_PALETTE, so
-/// ItemMenu_ShowDetails calls this first, as do ItemMenu_OpenDetail and
-/// Item_PrepareUsePalette, which nothing calls. It replaces the row highlight
-/// until Palette_LightenHighlight(HIGHLIGHT_PALETTE) makes it again.
+/// Lends HIGHLIGHT_PALETTE to the element icons: copies the first sprite
+/// palette, the icons' colours, into it, then WINDOW_BACKGROUND_COLOR over its
+/// TEXT_BACKGROUND_COLOR (as StatusScreen_Run does for palettes 0 and 1).
 void Palette_LoadIconsIntoHighlight(void) {
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
@@ -1272,8 +1175,7 @@ void Menu_WatchStart(void) {
 }
 
 /// Starts watching for Start: clears FLAG_MENU_START_PRESSED and adds
-/// Menu_WatchStart. ItemMenu_Run, PsynergyMenu_Run and StatusScreen_Run
-/// call it before their command loops and Menu_StopWatchingStart after them.
+/// Menu_WatchStart.
 void Menu_StartWatchingStart(void) {
   GameFlag_ClearFar(FLAG_MENU_START_PRESSED);
   Task_Add(Menu_WatchStart, TASK_PASS_FRAME);

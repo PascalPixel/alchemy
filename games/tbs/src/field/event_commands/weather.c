@@ -4,14 +4,7 @@
 
 #include "../event_commands_internal.h"
 
-/// Task: animates the ground particles. Each plays a 16-frame
-/// animation (gFieldEffect_GroundParticleFrames, 5 halfwords a frame: x and y
-/// offsets, tile, shape and size) on a random spot of ground within 128 pixels
-/// of the leader, then starts again elsewhere. The timer counts down, so the
-/// rows play from the last: each comes down slantwise onto its spot and stays
-/// there for its last seven frames. They freeze while FLAG_WEATHER_HELD is set.
-/// Vale runs them with the lightning while FLAG_VALE_STORM is set
-/// (vale_plaza.c).
+/// Task: animates the ground particles.
 void Weather_UpdateRain(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   struct WeatherWork *work = gWeatherWork;
@@ -49,9 +42,7 @@ void Weather_UpdateRain(void) {
     if (particle->timer == 0) {
       s32 *leader = grid->origin;
 
-      // A new spot up to 128 pixels either way of the leader. The height
-      // call passes pixels where MapGrid_GetTerrainHeight takes 16.16, as in
-      // Actor_SetHorizontalPositionWithTerrain, whose comment explains it.
+      // A new spot up to 128 pixels either way of the leader.
       x = leader[0] + (Random16() << 8) - px(128);
       y = leader[2] + (Random16() << 8) - px(128);
       particle->positionX = x;
@@ -63,13 +54,8 @@ void Weather_UpdateRain(void) {
   }
 }
 
-/// Task for the storm: lightning flashes the BG colours three
-/// times, 5 frames apart. The timer counts down to a burst's end: the lit
-/// colours show at 11, 6 and 1, each fading back over 12 frames from the
-/// next frame on. While enabled is set, the end of a burst plays a
-/// thunderclap (louder with loud set) and sets the timer to 51 to 549 frames
-/// for the next. FLAG_WEATHER_HELD holds the next burst back, and a timer below
-/// 0 stops the lightning.
+/// Task for the storm: lightning flashes the BG colours three times, 5 frames
+/// apart.
 void Weather_UpdateLightning(void) {
   struct FieldBlendWork *work = gFieldBlendWork[0];
   struct PaletteFade *target = gPaletteFadeWork;
@@ -115,10 +101,7 @@ void Weather_UpdateLightning(void) {
 
 /// Starts the ground particles (Weather_UpdateRain) with SE_AMBIENT_WATER:
 /// loads their tiles and puts 32 of them under the leader with staggered
-/// timers, drawn semi-transparent. Their work is HEAP_SLOT_WEATHER,
-/// which the motes and sparkles also take. SE_AMBIENT_WATER is queued
-/// (Scene_QueueMusic), so it plays again wherever the queued
-/// sound is replayed, as after a field Psynergy.
+/// timers, drawn semi-transparent.
 void Weather_StartRain(void) {
   struct WeatherWork *work;
   s32 *leader;
@@ -166,14 +149,7 @@ union ParticleLinkWord {
   void *link;
 };
 
-/// Task: the floating motes. Each mote is given a spot of
-/// ground within 128 pixels of the leader (at most 8 new ones a frame),
-/// starts 120 pixels above it on screen and comes down a pixel a frame,
-/// slowing to 3/4 pixel a frame for its last 90 frames and 1/4 for its last
-/// 60, jittering sideways and changing tiles as it ages. It lasts 120
-/// frames, ending about 52 pixels above its spot, or until it leaves the
-/// screen. They freeze while FLAG_WEATHER_HELD is set. Nothing in the game
-/// starts them (FieldMotes_Start has only its overlay veneer).
+/// Task: the floating motes.
 void FieldMotes_Update(void) {
   struct WeatherWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_WEATHER);
   struct MapGridScrollWork *grid = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
@@ -287,13 +263,7 @@ void FieldMotes_Start(void) {
   Task_Add(FieldMotes_Update, TASK_PASS_FRAME);
 }
 
-/// Task: the sparkles. Now and then (1 frame in 256) a sparkle
-/// appears on the ground within 128 pixels of the leader, and up to three more
-/// follow on the same spot, each 4 frames shorter. Each plays
-/// gFieldEffect_SparklePictures from the row its timer starts at down to row 0,
-/// coming down onto the spot, flipping every other frame. No new bursts start
-/// while the work's stopped is set; FLAG_WEATHER_HELD freezes them. Sol
-/// Sanctum's eruption event starts them (sol_sanctum_eruption.c).
+/// Task: the sparkles.
 void FieldEffect_UpdateSparkles(void) {
   struct WeatherWork *work;
   u32 spawned;
@@ -360,12 +330,7 @@ void FieldEffect_UpdateSparkles(void) {
     }
     if (spawned <= 3 && sparkle->timer == 0 && work->stopped == 0) {
       if (delay != 0) {
-        // The rest of a burst, on the first sparkle's spot. The height is
-        // read at sx >> 16 and sy >> 16, the last live sparkle's screen
-        // point shifted down 16 bits (0, or -1 off the left or top), where
-        // MapGrid_GetTerrainHeight takes 16.16 pixels; the burst's first
-        // sparkle reads it the same way, as
-        // Actor_SetHorizontalPositionWithTerrain's comment explains.
+        // The rest of a burst, on the first sparkle's spot.
         sparkle->positionX = spawnX;
         sparkle->positionZ = spawnZ;
         sparkle->positionY =
@@ -441,10 +406,8 @@ void FieldEffect_InitializeSparkles(void) {
 }
 
 /// Starts the storm's lightning (Weather_UpdateLightning): builds the dark
-/// (PALETTE_TINT_WARM) and lit (PALETTE_TINT_PALE)
-/// BG colours and their 12-step fade, and arms the first burst to end in 600
-/// frames, repeating. The work is heap block HEAP_SLOT_FIELD_BLEND, which the
-/// other lightning calls look up again. Vale's storm events call it.
+/// (PALETTE_TINT_WARM) and lit (PALETTE_TINT_PALE) BG colours and their 12-step
+/// fade, and arms the first burst to end in 600 frames, repeating.
 void Weather_StartLightning(void) {
   struct FieldBlendWork *work;
   struct PaletteFade *buffers;
@@ -470,9 +433,8 @@ void Weather_StopLightning(void) {
   state->enabled = 0;
 }
 
-/// One last burst of lightning, its first flash two frames from now (timer
-/// 12; Weather_UpdateLightning flashes at 11), then no more. Vale's storm
-/// and eruption events call it.
+/// One last burst of lightning, its first flash two frames from now (timer 12;
+/// Weather_UpdateLightning flashes at 11), then no more.
 void Weather_LastLightning(void) {
   struct FieldBlendWork *state =
       HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
@@ -489,11 +451,9 @@ void Weather_ResumeLightning(void) {
   state->enabled = 1;
 }
 
-/// Flashes the palette with the storm's task: one burst of three flashes
-/// of palette to, each fading back to palette from (PaletteFade_Build
-/// modes) on the BG colours, ending 120 frames from now, and no more after.
-/// Vale's eruption calls it with the warm and red tints
-/// (vale_eruption.c).
+/// Flashes the palette with the storm's task: one burst of three flashes of
+/// palette to, each fading back to palette from (PaletteFade_Build modes) on
+/// the BG colours, ending 120 frames from now, and no more after.
 void Weather_StartLightningFlash(s32 from, s32 to) {
   struct FieldBlendWork *work;
   struct PaletteFade *buffers;

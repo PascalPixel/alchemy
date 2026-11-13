@@ -14,9 +14,7 @@
 #include "fixed_math.h"
 
 /// The sixteen compass headings in 1/65536 turns, from east through south: a
-/// quarter turn is TRIG_TURN / 4, and the screen's y axis points south. The
-/// eight between the main ones (east-southeast and so on) turn an actor a
-/// little past a main heading, which picks the side its sprite leans to.
+/// quarter turn is TRIG_TURN / 4, and the screen's y axis points south.
 enum Facing {
   FACING_EAST = 0,
   FACING_EAST_SOUTHEAST = TRIG_TURN / 16,
@@ -90,16 +88,11 @@ struct SceneEntrance {
 STATIC_ASSERT(sizeof(struct SceneEntrance) == 24);
 STATIC_ASSERT(offsetof(struct SceneEntrance, cameraLeft) == 14);
 
-/// An exit table's header word: the scene whose exits follow, named by its
-/// name (`SCENE_EXITS(Bilibin)`). The table is read by Scene_TakeExit as the
-/// scene ends, with the exit kind it ended on.
+/// An exit table's header word: the scene whose exits follow, named by its name
+/// (`SCENE_EXITS(Bilibin)`).
 #define SCENE_EXITS(map) ((u32)&SceneId_##map)
 /// One exit: exit kind `exit` leads to `entrance` of the scene `scene`, both
-/// named in scene_exits.h. Kind 0xff matches any exit; kind 0 or the next
-/// header sends the party to the first exit's scene. The fields are added
-/// rather than ORed so the scene can be its SceneId_ symbol, which the linker
-/// fills in; they never overlap. bits: 27..20 exit kind | 19..12
-/// entrance | 11..0 scene
+/// named in scene_exits.h.
 #define SCENE_EXIT(exit, map, entrance)                                        \
   (((u32)(exit) << 20) + ((u32)(entrance) << 12) + (u32)&SceneId_##map)
 /// An exit with a flag word after it (bit 28): the exit is taken unless `flag`
@@ -110,8 +103,7 @@ STATIC_ASSERT(offsetof(struct SceneEntrance, cameraLeft) == 14);
 #define SCENE_EXITS_END 0x1ff
 
 /// Sequence ids above the scene table's rows: the sequences other than the
-/// field sequence, which MainRoutine_Run runs in its place. They have no row
-/// in gScenes.
+/// field sequence, which MainRoutine_Run runs in its place.
 enum {
   /// Runs nothing and returns 0; nothing in the game sends the party there.
   SEQUENCE_NONE = 507,
@@ -136,9 +128,6 @@ struct ActorPlacement {
   /// own actor slot, and -1 ends the table.
   s16 sprite;
   /// CONDITION_ALWAYS, a flag | CONDITION_FLAG_SET set, else the flag clear.
-  /// Off the world map, a Djinni's flag (from FLAG_DJINN_FIRST) also needs its
-  /// FLAG_DJINN_HIDING_FIRST flag clear: the Djinni stays hidden until the
-  /// scene is entered normally again.
   s16 condition;
   /// A movement type (enum MovementType) or an actor script, for
   /// Actor_SetMovementType.
@@ -193,8 +182,6 @@ enum ActorTalkFacing {
 #define ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE 0x01
 
 /// Actor ids: 0 to 7 the party's characters, the placed actors from 8.
-/// A party member's actor takes its character's number
-/// (character_ids.h) as its actor id.
 enum ActorId {
   ACTOR_PARTY_LEADER = 0,
   ACTOR_GARET = 1,
@@ -211,16 +198,10 @@ enum ActorId {
 /// and its value (a message or an event).
 struct Trigger {
   /// The kind and its detail, read by Scene_FindTrigger and the item, Psynergy
-  /// and examine trigger lookups; -1 ends the table. The detail bits depend on
-  /// the kind. bits: 30..28 Psynergy phase | 15..12 step facing | 15..8 item or
-  /// ability | 11 short push | 10 facing | 9 walking | 8..4 examine target | 7
-  /// Psynergy anywhere | 5..4 exit sound | 4 on an actor | 3..0 kind
+  /// and examine trigger lookups; -1 ends the table.
   u32 kind;
-  /// What the trigger answers: an actor id, a cell behavior, a treasure
-  /// spot id or a raised value. Item and Psynergy triggers read it as bits
-  /// below; bit 10 also skips an examine trigger's checking message and its
-  /// field Psynergy. bits: 15..12 facing | 11 needs facing | 10 own message
-  /// | 7..0 target
+  /// What the trigger answers: an actor id, a cell behavior, a treasure spot id
+  /// or a raised value.
   s16 subject;
   s16 condition; ///< CONDITION_ALWAYS, a flag | CONDITION_FLAG_SET set, else
                  ///< the flag clear
@@ -359,9 +340,7 @@ enum PsynergyEventTarget {
 #define TALK_TRIGGER_FACING(facing)                                            \
   (TRIGGER_TALK | TRIGGER_FLAG_FACING | (facing))
 
-/// What an examine trigger is on, EXAMINE_TRIGGER()'s control bits 8..4. Target
-/// n shows message MsgTileChecked + n as the leader checks it, unless the
-/// trigger has bit 10; target 0 shows nothing.
+/// What an examine trigger is on, EXAMINE_TRIGGER()'s control bits 8..4.
 enum ExamineTarget {
   EXAMINE_SILENT = 0,
   EXAMINE_CHEST = 1,

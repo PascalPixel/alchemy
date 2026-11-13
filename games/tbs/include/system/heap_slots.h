@@ -30,12 +30,9 @@ struct ScreenTransitionState;
 
 // EWRAM buffers
 /// The map's cells at 0x02010000, 128 by 128 words: 64 KB, so while a map is
-/// loaded they run on through gActorSpriteSlots and gDecodeBuffer. Battle
-/// effects reuse the memory as a particle array.
+/// loaded they run on through gActorSpriteSlots and gDecodeBuffer.
 extern struct Particle gMapGridCellBuffer[];
-/// 16 KB of EWRAM at 0x0201c000. The map's cells fill it while a map is
-/// loaded, and the world map's still picture keeps a copy of 8 KB of char block
-/// 1's tiles in it (WorldMap_StartStillPicture).
+/// 16 KB of EWRAM at 0x0201c000.
 extern u8 gDecodeBuffer[];
 /// 16 KB of EWRAM at 0x02018000, where the battle's actor sprite buffers
 /// start, 16 KB a slot; the map's cells fill it while a map is loaded.

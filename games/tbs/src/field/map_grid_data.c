@@ -6,8 +6,7 @@
 #include "field.h"
 
 /// Ground height functions, by enum TerrainKind, called with (the remaining
-/// samples, x within the cell, y within the cell). Each reads only the
-/// arguments it needs.
+/// samples, x within the cell, y within the cell).
 const TerrainHeightFn gMapGrid_TerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
     [TERRAIN_FLAT] = Terrain_GetFlatHeight,
     [TERRAIN_SLOPE_X] = Terrain_GetSlopeXHeight,

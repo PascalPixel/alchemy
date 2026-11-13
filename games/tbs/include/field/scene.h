@@ -13,9 +13,8 @@
 
 struct Actor;
 
-/// A scene's row in gScenes: its overlay's resource, its area,
-/// its scene type and its map. One row per scene number; field/scenes.s
-/// writes them, and its SceneId_ symbols are the row numbers.
+/// A scene's row in gScenes: its overlay's resource, its area, its scene type
+/// and its map.
 struct Scene {
   s16 resourceId; ///< the overlay Overlay_Load loads into gOverlayArea
   /// The area: entering a new one clears the FLAG_AREA_TEMP_xx flags
@@ -44,12 +43,9 @@ struct SceneExitRegion {
 
 STATIC_ASSERT(sizeof(struct SceneExitRegion) == 16);
 
-/// The entry table at the start of each scene overlay: its initialize
-/// function and the functions returning its entrances, exits,
-/// actor placements, triggers and exit regions, each behind a veneer word.
-/// The field reads each entry's veneer as the address word in its last four
-/// bytes, so member i of the six sits at 8 * i + 4; the field calls them as
-/// gOverlayArea.initialize(), gOverlayArea.events() and so on.
+/// The entry table at the start of each scene overlay: its initialize function
+/// and the functions returning its entrances, exits, actor placements, triggers
+/// and exit regions, each behind a veneer word.
 struct SceneEntryPoints {
   u32 initializeVeneer;
   s32 (*initialize)(void);
@@ -78,9 +74,8 @@ STATIC_ASSERT(sizeof(struct FieldPosition) == 12);
 
 /// Every scene's row, by scene number (field/scenes.s).
 extern const struct Scene gScenes[];
-/// The running scene's overlay, loaded into these 32 KB of EWRAM at
-/// each scene change; its code opens with its 48-byte entry table. Every
-/// overlay is linked to run at this one fixed address (0x02008000).
+/// The running scene's overlay, loaded into these 32 KB of EWRAM at each scene
+/// change; its code opens with its 48-byte entry table.
 extern struct SceneEntryPoints gOverlayArea;
 
 #endif

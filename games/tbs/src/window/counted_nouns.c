@@ -5,11 +5,7 @@
 #include "types.h"
 
 #if (LANGUAGE == LANGUAGE_GERMAN)
-/// {singular, plural}: window.c reads [(kind & 7) * 2 + plural]. The reader
-/// is the message decoder's counted-noun code (MESSAGE_LOCALIZED_WORD,
-/// window/window/decode.c), plural set unless the last number shown was -1, 0
-/// or 1.
-/// Words 5 to 7 are empty, and word 7's plural is a null pointer.
+/// {singular, plural}: window.c reads [(kind & 7) * 2 + plural].
 // clang-format off
 const u8 *const gLocalizedWord_CountedNouns[16] = {
     gLocalizedWord_Point, gLocalizedWord_Points, // Punkt, Punkte

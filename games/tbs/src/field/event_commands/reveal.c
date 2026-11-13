@@ -5,8 +5,7 @@
 #include "../event_commands_internal.h"
 
 /// Gives every live actor of the 64 whose first sprite layer shows sprite 200
-/// the sprite param value, and marks it to be redrawn. Reveal sets 6 as it
-/// starts and 0 as it ends.
+/// the sprite param value, and marks it to be redrawn.
 void Actor_SetRevealSpriteColor(s32 value) {
   struct Actor *actor = gActors;
   s32 remainingActors = 63;
@@ -30,12 +29,8 @@ void Actor_SetRevealSpriteColor(s32 value) {
   } while (remainingActors >= 0);
 }
 
-/// Task of the timed Psynergy (FIELD_PSYNERGY_REVEAL): asks for it
-/// to end once the leader is 60 pixels from its centre or its time has run out.
-/// The centre and the time are in the field work from 0xcb8 on
-/// (FieldPsynergy_Reveal). The time counts only while effectTimerRunning is
-/// set, so menus and other field Psynergy pause it. It asks every frame until
-/// FieldPsynergy_EndReveal removes it.
+/// Task of the timed Psynergy (FIELD_PSYNERGY_REVEAL): asks for it to end once
+/// the leader is 60 pixels from its centre or its time has run out.
 void FieldPsynergy_WatchLeaderDistance(void) {
   struct FieldWork *work;
   struct Actor *actor;
@@ -70,13 +65,6 @@ void FieldPsynergy_WatchLeaderDistance(void) {
 
 /// Starts a screen transition centred on the leader, runs the matching event if
 /// there is one, and puts markers round the leader.
-///
-/// Abilities: Reveal (FIELD_PSYNERGY_REVEAL).
-///
-/// The transition is WINDOW_TRANSITION_RIPPLE, a wobbling circle round the
-/// leader stepped over 19 frames, and the BG colours turn grey. Reveal lasts
-/// 600 frames of its own time, or until the leader leaves its circle
-/// (FieldPsynergy_WatchLeaderDistance), and FieldPsynergy_EndReveal ends it.
 void FieldPsynergy_Reveal(void) {
   struct FieldWork *work;
   struct ScreenTransitionState *state;
@@ -123,11 +111,8 @@ void FieldPsynergy_Reveal(void) {
   Task_Add(FieldPsynergy_WatchLeaderDistance, TASK_PASS_FRAME);
 }
 
-/// Ends Reveal if it is running: stops its watch, brings the colours back
-/// from black over 30 frames and runs the scene's PSYNERGY_PHASE_FADES
-/// event. Unless an event set childOption, the window transition is then
-/// reset at once (no next mode, one frame). Called as Reveal ends
-/// (FieldPsynergy_RunExtraHandler) and before Mind Read starts its own colours.
+/// Ends Reveal if it is running: stops its watch, brings the colours back from
+/// black over 30 frames and runs the scene's PSYNERGY_PHASE_FADES event.
 void FieldPsynergy_EndReveal(void) {
 #ifdef UBFIX
   struct FieldEffectWork *effectWork = gFieldEffectWork;

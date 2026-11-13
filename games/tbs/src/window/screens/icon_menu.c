@@ -36,15 +36,7 @@ struct WindowBuffer {
 
 /// Draws the resource-menu icons, pulsing the selected icon with one affine
 /// matrix, and updates the horizontal window spans to reveal the active icon
-/// row. A task of the command icon menus
-/// (IconMenu_Open). Each icon is a 32x32, 256-colour sprite;
-/// the selected one is double-size affine, pulsing between 1.19 and 1.31
-/// times, on layer 246, the others on 245, and one at x 0 is not drawn.
-/// While a window transition runs (gScreenTransitionWork), it widens window 1
-/// over the icon row so the icons show through: from the first icon on the
-/// row's 24 lines, keeping each line's right edge, and around the selected
-/// icon on the lines it overhangs (below a row at the top, above one at the
-/// bottom, whose lines are 136 to 159).
+/// row.
 void IconMenu_DrawIcons(void) {
   struct IconMenuWork *work;
   struct IconMenuEntry *entry;
@@ -163,9 +155,6 @@ void IconMenu_DrawIcons(void) {
 }
 
 /// Allocates and clears the resource-menu state, then schedules its icon pulse.
-/// The work (struct IconMenuWork, 152 bytes) lives in HEAP_SLOT_ICON_MENU
-/// until IconMenu_Close frees it; it is returned, and also reached
-/// as gIconMenuWork. Every command icon menu starts here.
 void *IconMenu_Open(void) {
   // The matching allocation size is the complete six-entry work block.
   void *work;
@@ -197,9 +186,7 @@ void IconMenu_Close(void) {
 }
 
 /// Selects an icon position with wrapped directional input. A returns the
-/// position; B or Start returns -1. Redraws the label only after a move. The
-/// label is message resourceBase + position when the layout set a
-/// resourceBase, else the icon's command name (MsgCommandName + its icon).
+/// position; B or Start returns -1. Redraws the label only after a move.
 s32 IconMenu_Run(s32 initial) {
   struct IconMenuWork *work = gIconMenuWork;
   s32 resource;
@@ -251,10 +238,6 @@ static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs) {
 
 /// Animates a cursor from start to goal with table-driven delays. Draws each
 /// intervening label, pauses at the destination, and returns its position.
-/// It moves one icon at a time with the cursor sound, waiting
-/// gMenu_SelectionStepDelays[icons still to go] frames at each (12 more at
-/// the first), then 48 frames on the goal before the confirm sound: a menu
-/// choice made for the player to watch (Menu_AnimateSelectionToEntry).
 s32 IconMenu_AnimateTo(s32 start, s32 goal) {
   s16 resourceBase;
   s16 selection;
@@ -318,9 +301,7 @@ void CommandIcon_LoadIntoSlot(s32 slot, s32 index) {
 }
 
 /// Appends a command icon if fewer than six are present. Its initial position
-/// is on the bottom icon row; a layout routine places the final row. The
-/// icon's number (ResourceId_CommandIcons) is also its command name's
-/// (MsgCommandName + icon). Its VRAM slot is taken unchecked.
+/// is on the bottom icon row; a layout routine places the final row.
 void IconMenu_AddIcon(s32 icon) {
   struct IconMenuWork *work;
   struct IconMenuEntry *entry;
@@ -342,11 +323,8 @@ void IconMenu_AddIcon(s32 icon) {
   }
 }
 
-/// Centers the icons and their label window together on the given tile row.
-/// A nonzero resourceBase supplies labels; otherwise command-name IDs do.
-/// The icons stand three tiles apart and the label window, `width` + 2 tiles
-/// wide and 3 tall, follows them; the centring counts two thirds of the
-/// window's width.
+/// Centers the icons and their label window together on the given tile row. A
+/// nonzero resourceBase supplies labels; otherwise command-name IDs do.
 void IconMenu_Center(s32 row, s32 width, s32 resourceBase) {
   struct IconMenuWork *work = gIconMenuWork;
   s32 x;
@@ -394,11 +372,6 @@ static __inline__ s32 IconMenu_ReadCommandPosition(s8 *table, s32 index) {
 }
 
 /// Builds the field command menu, omitting Djinn when none are owned.
-/// Translates between command IDs and visible icon positions using the two
-/// lookup rows. The icons are Psynergy, Djinn, Item and Status on row 17;
-/// `selection` is the command to start on and the result the command
-/// chosen (enum FieldMenuCommand), or -1 when cancelled. The
-/// field's menu runs it (window/window/selection.c).
 s32 FieldMenu_SelectCommand(s32 selection) {
   s32 group = 0;
   s32 offset;
@@ -444,10 +417,7 @@ s32 FieldMenu_SelectCommand(s32 selection) {
 #endif
 
 /// Opens the field command menu and animates from start to the command's icon.
-/// Returns the final icon position after closing the menu. The Djinn icon is
-/// always shown, so `command` (enum FieldMenuCommand, as
-/// FieldMenu_SelectCommand gives it) is position command - 1. The world map's
-/// events show it picking Djinn (scene/world_map.c).
+/// Returns the final icon position after closing the menu.
 s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   PartyStatus_OpenAndWait();
   IconMenu_Open();
@@ -462,24 +432,10 @@ s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   return command;
 }
 
-// With Send shown but not Battle, Send's place would map to
-// SAVE_ACTION_BATTLE, because gFileList_ActionByPosition lists Battle before
-// Send in every row. That never happens: Send needs a cleared file, and a
-// file is cleared only by saving after the credits, while Battle needs any
-// file with a Djinni found, no Djinni's flag is ever cleared, and no game
-// gets that far without Flint. Leaving
-// Vale, the party cannot walk on from the World Map's first stretch without
-// stepping onto his ground (CELL_BEHAVIOR_WORLD_MAP_FLINT), and his lesson
-// runs on through the tutorial battle until he joins (render probe flint,
-// flint-play).
+// With Send shown but not Battle, Send's place would map to SAVE_ACTION_BATTLE,
+// because gFileList_ActionByPosition lists Battle before Send in every row.
 /// Builds the File Screen's menu from the save summaries and optional send
-/// flags. Translates the chosen visible position back to its action (enum
-/// FileAction), or -1 when cancelled or the backup memory cannot be read. With
-/// no files it returns 0 at once. The icons, by Save_ScanFileSummaries' count:
-/// New Game, Continue, Copy and Erase for one or two files (starting on
-/// Continue); no New Game or Copy with three; with every file cleared no
-/// Continue, and only Erase with three such files. Battle and Send follow when
-/// enabled. The file list runs it (scene/file_screen.c).
+/// flags.
 s32 FileList_SelectAction(void) {
   s32 fileState;
   s32 result;
@@ -590,13 +546,8 @@ void Menu_DrawModeLabel(void) {
 #endif
 
 // French alone redraws the transfer help its own way: it releases the help's
-// window sprites instead of preparing them for a redraw, and draws Cable's
-// help only when coming from Password. Spanish and Italian, which take the
-// French updates (TBS_PATCH_3), keep the others' form, so the test is on
-// the language. The player sees no difference: French draws the help as
-// window sprites, so the empty window the others redraw has nothing to clear,
-// and with two methods and the menu opening on Password, every move to Cable
-// comes from Password.
+// window sprites instead of preparing them for a redraw, and draws Cable's help
+// only when coming from Password.
 #if (LANGUAGE == LANGUAGE_FRENCH)
 
 /// Redraws password/cable transfer help when the chosen method changes. A
@@ -649,10 +600,7 @@ void Menu_DrawModeIndicator(void) {
 #endif
 
 /// Selects either the transfer method or the password level (enum
-/// ResourceLayoutMode). Schedules the
-/// appropriate help redraw while the icon menu is active, then closes both
-/// help windows and the icon menu. Returns the place
-/// chosen, or -1 when cancelled. The Send screens run it (scene/file_screen.c).
+/// ResourceLayoutMode).
 s32 IconMenu_ChooseSendOption(s32 mode) {
   struct IconMenuWork *work;
   struct Window *window;
@@ -733,13 +681,11 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
   return result;
 }
 
-// Command icons arranged in a row to choose from, such as Yes and No.
-// Icon numbers refer to ResourceId_CommandIcons.
-// Each shows the name of the icon under the cursor in a window.
+// Command icons arranged in a row to choose from, such as Yes and No. Icon
+// numbers refer to ResourceId_CommandIcons.
 
-/// Selects a shop command (Buy, Sell, Artifacts, Repair),
-/// centered on row 17, starting on position `selection`. Returns the
-/// position chosen, or -1 when cancelled.
+/// Selects a shop command (Buy, Sell, Artifacts, Repair), centered on row 17,
+/// starting on position `selection`.
 s32 Menu_SelectShopCommand(s32 selection) {
   s32 result;
 
@@ -755,8 +701,7 @@ s32 Menu_SelectShopCommand(s32 selection) {
 }
 
 /// Selects a Sanctum service (Revive, Cure Poison, Repel Evil, Remove Curse),
-/// centered on row 17, starting on position `selection`. Returns the position
-/// chosen, or -1 when cancelled.
+/// centered on row 17, starting on position `selection`.
 s32 Menu_SelectSanctumService(s32 selection) {
   s32 result;
 
@@ -771,11 +716,7 @@ s32 Menu_SelectSanctumService(s32 selection) {
   return result;
 }
 
-/// Selects Yes or No, returning YES or NO; cancelling
-/// returns NO. The menu sits on row 17 when `bottom` is nonzero, else
-/// on row 0. `message` is the first of the two names to show, or 0 for the
-/// command names; `labelWidth` is the name window's width inside its frame,
-/// or 0 for 3. The cursor starts on position `selection`.
+/// Selects Yes or No, returning YES or NO; cancelling returns NO.
 s32 YesNoMenu_Run(s32 bottom, s32 message, s32 labelWidth, s32 selection) {
   s32 row;
 
@@ -828,9 +769,8 @@ s32 YesNoMenu_RunAt(s32 x, s32 y, s32 selection) {
 #define PAIR_WIDTH 9
 #endif
 
-/// Selects Coins or Lucky Medals, centered on row 17,
-/// starting on position `selection`. Returns the position chosen, or -1 when
-/// cancelled. Tolbi's spring asks it (scene/tolbi_games.c).
+/// Selects Coins or Lucky Medals, centered on row 17, starting on position
+/// `selection`. Returns the position chosen, or -1 when cancelled.
 s32 Menu_SelectCoinsOrMedals(s32 selection) {
   s32 result;
 

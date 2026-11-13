@@ -21,9 +21,7 @@
 /// The bytes between one layer's BG map and the next, from screen block 5.
 #define MAPGRID_LAYER_SCREEN_BYTES 2048
 
-/// Remaps byteCount bytes in place through gSpriteColorRemapTables. Called
-/// through SpriteColor_RemapPixelsFar by CommandIcon_Load, which
-/// remaps the colours of a command icon's first 768 bytes.
+/// Remaps byteCount bytes in place through gSpriteColorRemapTables.
 void SpriteColor_RemapPixels(u8 *bytes, s32 byteCount) {
   u8 *remapTable = (u8 *)gSpriteColorRemapTables;
 
@@ -33,14 +31,7 @@ void SpriteColor_RemapPixels(u8 *bytes, s32 byteCount) {
   }
 }
 
-/// Unpacks the staged cell picture data into gCellPictures. Byte 1 of the
-/// staged buffer (Ram_MapGridCellBuffer) is the method, and the 16-bit data
-/// follows from byte 2. size counts the method byte too (an even size means no
-/// data). The methods are enum CellPicturePacking.
-///
-/// Called by MapGrid_LoadMap with the size Decompress_TaggedLz
-/// returns; the packed stream is decoded to Ram_MapGridCellBuffer + 1 so that
-/// its method byte lands at byte 1 and the halfwords at byte 2 are aligned.
+/// Unpacks the staged cell picture data into gCellPictures.
 void TileMap_DecodeStagedBuffer(s32 size) {
   u16 *destinationWords;
   u16 *sourceWords;
@@ -107,14 +98,6 @@ UNUSED void TileMap_NumberPlaceholderCellPictures(void) {
 }
 
 /// Converts the map's cells in place with Tile_ConvertMapGrid, run from RAM.
-/// The grid is decoded as three planes: cell behaviors and shapes (16 KB each),
-/// then 32 KB of cell picture halfwords (the cell picture number with the layer
-/// and priority bits an actor standing there takes). The routine makes each
-/// cell picture halfword the low half of a cell word, numbering placeholder
-/// cell pictures (0xfff) from 0 up, and interleaves the other two planes into
-/// the high halves. The 128 by 128 cell words overwrite the first two planes,
-/// so those 32 KB are first copied to a buffer from the EWRAM pool; the buffer
-/// and the routine's RAM copy are freed when done.
 void TileMap_ConvertBuffer(void) {
   u8 *savedCells;
   TilemapConvertFn convertGrid;
@@ -214,16 +197,11 @@ struct MapHeader {
 #define MAPGRID_RESOURCE(map, n)                                               \
   Resource_GetTableEntry((map)->resources[n] + (u32)&ResourceId_Map001)
 
-/// Loads layout index from gMaps: its cell pictures, shapes,
-/// cells, tileset animations, blend script and treasure spots; sets up the
-/// three background layers' origins, parallax and wrap from the layout header;
-/// loads the palette and tile graphics unless FLAG_KEEP_LAYER_GRAPHICS says
-/// they are loaded; and starts the layer scrolling. Returns 2.
-///
-/// Allocates and clears the map work in HEAP_SLOT_MAP_GRID; writes the BG
-/// palette (keeping the backdrop colour), char blocks 1 to 3,
-/// gMapGridAnimTiles, BG1CNT to BG3CNT, REG_MOSAIC, REG_BLDCNT and REG_DISPCNT;
-/// and adds MapGrid_UpdateLayerScroll as a task.
+/// Loads layout index from gMaps: its cell pictures, shapes, cells, tileset
+/// animations, blend script and treasure spots; sets up the three background
+/// layers' origins, parallax and wrap from the layout header; loads the palette
+/// and tile graphics unless FLAG_KEEP_LAYER_GRAPHICS says they are loaded; and
+/// starts the layer scrolling.
 s32 MapGrid_LoadMap(s32 index) {
   struct MapResources *mapResources;
   struct MapGridScrollWork *grid;
@@ -314,9 +292,8 @@ s32 MapGrid_LoadMap(s32 index) {
     layerSource++;
     layer++;
   }
-  // The ground, middle and overhead layers show on BG3, BG2 and BG1, a
-  // layer only where its priority is not zero. Each BGCNT takes the priority
-  // as it is, its char block from the header and screen blocks 5, 6 and 7.
+  // The ground, middle and overhead layers show on BG3, BG2 and BG1, a layer
+  // only where its priority is not zero.
   grid->flags = DISPCNT_OBJ_ON;
   if (grid->enabled[0] != 0)
     grid->flags = DISPCNT_OBJ_ON | DISPCNT_BG3_ON;
@@ -338,10 +315,9 @@ s32 MapGrid_LoadMap(s32 index) {
   if (GameFlag_GetFar(FLAG_KEEP_LAYER_GRAPHICS) != 0) {
     GameFlag_ClearFar(FLAG_KEEP_LAYER_GRAPHICS);
   } else {
-    // One 16 KB buffer takes each resource in turn: the palette (448
-    // bytes, 14 of the 16 BG palettes), the three 16 KB tilesets, and
-    // last the tileset animations' tiles, which decode straight to
-    // gMapGridAnimTiles. Without the memory, nothing is loaded.
+    // One 16 KB buffer takes each resource in turn: the palette (448 bytes, 14
+    // of the 16 BG palettes), the three 16 KB tilesets, and last the tileset
+    // animations' tiles, which decode straight to gMapGridAnimTiles.
     graphicsBuffer = Heap_Alloc(BG_CHAR_SIZE);
     if (graphicsBuffer != NULL) {
       // Colour 0 of BG palette 0 is the backdrop; it survives the new palette.
@@ -380,11 +356,8 @@ s32 MapGrid_LoadMap(s32 index) {
   return 2;
 }
 
-/// Centres the camera on the point the map follows (origin: x, height, z),
-/// or on (0, 0) when there is none, and scrolls the layers there. Called
-/// through MapGrid_CenterOnFollowedPointFar when a layered map starts, by the
-/// camera event commands after they move the camera, and by about 35
-/// events.
+/// Centres the camera on the point the map follows (origin: x, height, z), or
+/// on (0, 0) when there is none, and scrolls the layers there.
 void MapGrid_CenterOnFollowedPoint(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   s32 x;
@@ -417,8 +390,7 @@ void MapGrid_RenderCellPictureRow(u32 layer, s32 tileX, s32 tileY) {
   u32 cellPictureIndex;
 
   // A cell picture is 2x2 tiles, so the BG map's tile row and column are kept
-  // even (& 30) and wrap at 32; the grid wraps at 128 cells. Sixteen cell
-  // pictures are the BG map's whole width.
+  // even (& 30) and wrap at 32; the grid wraps at 128 cells.
   for (cellPictureIndex = 0; cellPictureIndex < 16; cellPictureIndex++) {
     u32 *cell = MAPGRID_CELLS;
 
@@ -460,11 +432,6 @@ void MapGrid_RenderCellPictureColumn(u32 layer, s32 tileX, s32 tileY) {
 /// shake; then scrolls each of the three layers by its parallax scale and
 /// automatic scroll (wrapping at its period), draws the cell picture column or
 /// row that scrolls into view, and sets its BG scroll.
-///
-/// Added as a task by MapGrid_LoadMap (priority TASK_PASS_FRAME +
-/// 5), and called by MapGrid_CenterOnFollowedPoint. Sets map->view,
-/// decays map->shakeX and shakeY, advances each drifting layer's phase, and
-/// writes each layer's position and gBgScroll entry.
 void MapGrid_UpdateLayerScroll(void) {
   struct MapGridScrollWork *grid;
   struct MapGridLayerScroll *layer;
@@ -486,9 +453,8 @@ void MapGrid_UpdateLayerScroll(void) {
     s32 height = *origin++;
     baseY = *origin - height - FIELD_VIEW_FOCUS_Y;
   }
-  // The bounds shrink by the shake so a shaken view stays on the map; the
-  // right and bottom bounds lose the 240x160 screen. A map smaller than
-  // that keeps its top left in view.
+  // The bounds shrink by the shake so a shaken view stays on the map; the right
+  // and bottom bounds lose the 240x160 screen.
   minX = grid->minX + grid->shakeX;
   maxX = grid->maxX - grid->shakeX - FIELD_VIEW_WIDTH;
   minY = grid->minY + grid->shakeY;
@@ -534,9 +500,7 @@ void MapGrid_UpdateLayerScroll(void) {
     }
     baseX += layer->offsetX;
     baseY += layer->offsetY;
-    // x and y are in 8-pixel tiles. A new tile column (the 8-pixel bit) or
-    // cell picture row (the 16-pixel bit) has come into view: draw it at the
-    // leading edge, 30 tiles to the right or 20 below when scrolling that way.
+    // x and y are in 8-pixel tiles.
     x = baseX / px(8);
     y = baseY / px(8);
     if ((layer->x ^ baseX) & (8 << 16)) {
@@ -559,9 +523,8 @@ void MapGrid_UpdateLayerScroll(void) {
   }
 }
 
-/// Centres the view on (x, y) in 16.16 pixels, clamped to the map's bounds,
-/// and redraws every enabled layer's BG map around it. Sets map->view, and
-/// advances each drifting layer's phase by one frame.
+/// Centres the view on (x, y) in 16.16 pixels, clamped to the map's bounds, and
+/// redraws every enabled layer's BG map around it.
 void MapGrid_SetCameraCenter(s32 x, s32 y) {
   u32 layerIndex;
   u8 *screenMap;
@@ -597,9 +560,7 @@ void MapGrid_SetCameraCenter(s32 x, s32 y) {
       x += layer->offsetX;
       y += layer->offsetY;
       layer++;
-      // Divided by 8 pixels in 16.16, x and y become tiles. A cell picture
-      // is 2 by 2 tiles: the grid, 128 cell pictures a row, is read at half of
-      // them, and the screen map's offsets step 2 tiles and wrap at 32.
+      // Divided by 8 pixels in 16.16, x and y become tiles.
       x /= px(8);
       y /= px(8);
       screenMap = BG_SCREEN_BLOCK(5) + layerIndex * MAPGRID_LAYER_SCREEN_BYTES;
@@ -639,8 +600,7 @@ struct MapGridTilePosition {
 // cell 4.
 /// Copies the cell picture numbers of a rectangle of cells from (sourceX,
 /// sourceY) to (dstX, dstY), width by height cells, keeping each destination's
-/// attributes, and redraws the copied cells that are on screen. It does what
-/// MapGrid_CopyCellIndexRect does, with the destination before the size.
+/// attributes, and redraws the copied cells that are on screen.
 void MapGrid_CopyCellPictureIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
                                         u32 dstY, u32 width, u32 height) {
   u32 y;
@@ -722,14 +682,10 @@ struct MapGridCellAnimationStep {
 } __attribute__((packed, aligned(2)));
 STATIC_ASSERT(sizeof(struct MapGridCellAnimationStep) == 10);
 
-/// Plays a map edit (struct MapGridCellAnimationStep entries, ended by
-/// a source of MAPGRID_ANIMATION_STEPS_END): copies each entry's rectangle of
-/// cell picture numbers to (destinationX, destinationY) and waits its delay in
-/// frames. Doors and other changing scenery are drawn this way.
-///
-/// Called by about 30 events through MapGrid_PlayMapEditFar;
-/// it returns only when the edit ends, so it blocks the event that calls
-/// it.
+/// Plays a map edit (struct MapGridCellAnimationStep entries, ended by a source
+/// of MAPGRID_ANIMATION_STEPS_END): copies each entry's rectangle of cell
+/// picture numbers to (destinationX, destinationY) and waits its delay in
+/// frames.
 void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
   struct MapGridCellAnimationStep *step =
       (struct MapGridCellAnimationStep *)steps;
@@ -779,9 +735,7 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
 }
 
 /// Copies a rectangle of cells (16x16 pixels each) as they are, from (sourceX,
-/// sourceY) to (dstX, dstY), width by height cells. Where a copied cell lies
-/// in a layer's visible area, its cell picture goes to that layer's BG map
-/// too.
+/// sourceY) to (dstX, dstY), width by height cells.
 void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY, s32 width,
                                       s32 height, s32 dstX, s32 dstY) {
   s32 y;
@@ -853,9 +807,8 @@ void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY, s32 width,
 }
 
 /// Copies only the attributes of a rectangle of cells, from (sourceX, sourceY)
-/// to (dstX, dstY), width by height cells, keeping each destination cell's
-/// cell picture number. Nothing is redrawn: the attributes (flags, cell
-/// behavior and shape) do not show.
+/// to (dstX, dstY), width by height cells, keeping each destination cell's cell
+/// picture number.
 void MapGrid_CopyCellAttributeRect(s32 sourceX, s32 sourceY, s32 width,
                                    s32 height, s32 dstX, s32 dstY) {
   u32 *destinationCells = MAPGRID_CELLS;

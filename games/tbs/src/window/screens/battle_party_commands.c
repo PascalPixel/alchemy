@@ -5,10 +5,9 @@
 #include "../screens_internal.h"
 
 /// Classifies ability `act` for the target selection (the `kind` of
-/// BattleTarget_RunSelection, enum BattleTargetHint), which shows what it
-/// would do on a party member and, for the curing and reviving hints, starts
-/// on one who needs it. A later test wins: an effect over the ability
-/// kind, revival over all.
+/// BattleTarget_RunSelection, enum BattleTargetHint), which shows what it would
+/// do on a party member and, for the curing and reviving hints, starts on one
+/// who needs it.
 s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act) {
   s32 signedEffect;
   s32 abilityKind;
@@ -37,26 +36,10 @@ s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act) {
   return targetKind;
 }
 
-/// Collects the party's commands for a turn into `commands`, one
-/// for each of the `commandCount` units in `actors` (a party member with two
-/// actions is listed twice), and returns how many it wrote: commandCount, 1
-/// when the party flees (COMMAND_FLEE for the first actor), or -1 when the link
-/// fails. Each record gets its command (COMMAND_), parameter (the ability, the
-/// summon, the Djinni entry or the inventory place), target
-/// (BattleTarget_RunSelection's code), range and priority: the unit's
-/// Agility plus up to a sixteenth more at random, halved for its second
-/// action in a row. Attack keeps the parameter, and Defend the parameter and
-/// target, that the command chosen before it left (0 and 256 at first).
-///
-/// It runs the party's row (Fight, Flee, Status), then each party member's row
-/// and the menus its command opens; B in a menu goes back a step, B on a party
-/// member's row to the party member before, and from the first back to the
-/// party's row. In a link battle both consoles first wait for each other
-/// ("VSST" in the link signature), publish "EDVS" when done, and wait for
-/// the partner to finish ("Waiting for opponent's input."). Its work,
-/// BattleMenuWork (gBattleMenuWork), lives in HEAP_SLOT_BATTLE_MENU
-/// until it returns. Battle_BuildPartyActions calls it
-/// (battle/battle/turn.c).
+/// Collects the party's commands for a turn into `commands`, one for each of
+/// the `commandCount` units in `actors` (a party member with two actions is
+/// listed twice), and returns how many it wrote: commandCount, 1 when the party
+/// flees (COMMAND_FLEE for the first actor), or -1 when the link fails.
 s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                                 s32 commandCount) {
   struct BattleMenuWork *state;
@@ -126,11 +109,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   /* FAKEMATCH(type): cleared as a word, among the other words; as a pointer
    * store, 2 of 1841 instructions move in tbs-en. */
   *(s32 *)&state->timerWindow = 0;
-  // Both peers announce the command-entry phase before accepting commands:
-  // this side writes "VSST" into halfwords 4 to 7 of its signature, then
-  // waits for the partner's "VSST" (or "EDVS", already done) while its first
-  // four read "EXEC". A pause, 25 frames without the link, or a partner not
-  // in "EXEC" gives up (-1).
+  // Both peers announce the command-entry phase before accepting commands: this
+  // side writes "VSST" into halfwords 4 to 7 of its signature, then waits for
+  // the partner's "VSST" (or "EDVS", already done) while its first four read
+  // "EXEC".
   if (battle->isLink != 0) {
     state->linkTimer = 1;
     transferWords = (u16 *)gSerialTransfer.payload;
@@ -323,9 +305,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       }
       iconSprite->oam.f.y = 136;
       state->iconShown[0] = 1;
-      // Each command's menus; commandKind is the COMMAND_ value recorded. B in
-      // a target selection goes back to the command's list (for Attack, to the
-      // party member's row), B in a list to the row.
+      // Each command's menus; commandKind is the COMMAND_ value recorded.
       switch (mode) {
       case COMMAND_ICON_ATTACK:
         // Attack: one enemy, range 1; COMMAND_ATTACK.
@@ -549,9 +529,6 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 
         // Djinn: the party member's Djinn list; COMMAND_DJINN with the Djinni's
         // entry as parameter, kept in chosenDjinn so no later command takes it.
-        // A set Djinni is unleashed: its ability's target, then in the tutorial
-        // a hint. A standby one is set on the party member itself
-        // ("Set Djinni", target mode 4, kind 7), its name in TEXT_COLOR_RED.
         Sound_PlayFar(SE_MENU_CONFIRM);
         BATTLE_MENU_SET_CURSOR(0, 0, 0);
       djinn_list:

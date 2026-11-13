@@ -26,14 +26,7 @@
 #define BLEND_SCRIPT_BLDCNT_MASK 0xf000
 #define BLEND_SCRIPT_BLDCNT (BLDCNT_TGT2_OBJ | BLDCNT_TGT2_BD)
 
-/// Each frame: runs the 16 tileset animations. A tileset animation's script is
-/// groups of four halfwords (source tile, count, destination tile, frames to
-/// wait) that copy tiles into VRAM; TILESET_ANIM_JUMP jumps to the halfword
-/// pair its low byte names, with TILESET_ANIM_STOP it stops, and
-/// TILESET_ANIM_LOOP loops to the start. TilesetAnim_StartAll adds it as a task
-/// (priority TASK_PASS_FRAME); the world map's still view
-/// (WorldMap_StartStillPicture) suspends it. Moves each tileset animation's
-/// cursor and timer in the map work.
+/// Each frame: runs the 16 tileset animations.
 void TilesetAnim_Update(void) {
   struct MapGridScrollWork *gridState = gMapGridWork[0];
   u32 channelIndex;
@@ -77,8 +70,6 @@ void TilesetAnim_Update(void) {
       (gridState->animations + channelIndex)->timer = commands[1];
       // A source tile from TILESET_ANIM_RAM_TILE (TILESET_ANIM_RAM_WIDE_TILE
       // for 64-byte tiles) is read from RAM, at the start of gMapGridAnimTiles.
-      // A lower one is copied within VRAM. The count is in tiles, eight words
-      // each (16 when wide).
       if (gridState->wideTiles == 0) {
         if (sourceTileOrOpcode >= TILESET_ANIM_RAM_TILE)
           Dma_Set(Ram_DecodeBuffer + sourceTileOrOpcode * 32,
@@ -108,8 +99,6 @@ void TilesetAnim_Update(void) {
 }
 
 /// Resumes tileset animation channelIndex by clearing its paused byte.
-/// Events and the Battle Arena (scene/battle_arena.c, tileset animation 5)
-/// reach it through TilesetAnim_ResumeFar.
 void TilesetAnim_Resume(u32 channelIndex) {
   struct MapGridScrollWork *gridState = gMapGridWork[0];
   struct TilesetAnim *channel = &gridState->animations[channelIndex];
@@ -118,8 +107,6 @@ void TilesetAnim_Resume(u32 channelIndex) {
 }
 
 /// Pauses tileset animation channelIndex by setting its paused byte.
-/// Events and the Battle Arena (scene/battle_arena.c, tileset animation 5)
-/// reach it through TilesetAnim_PauseFar.
 void TilesetAnim_Pause(u32 channelIndex) {
   struct MapGridScrollWork *gridState = gMapGridWork[0];
   struct TilesetAnim *channel = &gridState->animations[channelIndex];
@@ -129,8 +116,7 @@ void TilesetAnim_Pause(u32 channelIndex) {
 
 /// Starts the tileset animations a map's animation script lists: each
 /// TILESET_ANIM_MARKER starts the tileset animation its low four bits name
-/// there (paused with TILESET_ANIM_MARKER_PAUSED). Clears all 16 first, and
-/// adds TilesetAnim_Update as a task when any starts.
+/// there (paused with TILESET_ANIM_MARKER_PAUSED).
 void TilesetAnim_StartAll(const u16 *script) {
   struct MapGridScrollWork *gridState;
   s32 channelsStarted;
@@ -141,8 +127,7 @@ void TilesetAnim_StartAll(const u16 *script) {
   Dma_Fill32(0, gridState->animations, sizeof(gridState->animations));
   // Each tileset animation's script starts just after its marker and runs on
   // through the rest of the stream; the scan steps over the halfwords between
-  // markers. Only the low four bits pick the tileset animation, so a marker
-  // for 16 or more reuses one of the 16.
+  // markers.
   marker = *script++;
   // The stream ends at the TILESET_ANIM_LOOP every script after a marker runs
   // on to.
@@ -168,28 +153,20 @@ void TilesetAnim_StartAll(const u16 *script) {
 }
 
 /// Suspends the tileset animations, unless the world map's still picture is
-/// shown. Menu_SuspendFieldTasks (menu/menu/shared.c) calls it through
-/// TilesetAnim_SuspendAllFar.
+/// shown.
 void TilesetAnim_SuspendAll(void) {
   if (((struct MapGridScrollWork *)gMapGridWork[0])->animationActive == 0)
     Task_SuspendAll(TilesetAnim_Update);
 }
 
 /// Resumes the tileset animations, unless the world map's still picture is
-/// shown. Menu_ResumeFieldTasks (menu/menu/shared.c) calls it through
-/// TilesetAnim_ResumeAllFar.
+/// shown.
 void TilesetAnim_ResumeAll(void) {
   if (((struct MapGridScrollWork *)gMapGridWork[0])->animationActive == 0)
     Task_ResumeAll(TilesetAnim_Update);
 }
 
-/// Each frame: runs the map's blend script. A BLEND_SCRIPT_BLDCNT command sets
-/// BLDCNT; any other sets BLDALPHA (or BLDY when not alpha blending) and waits
-/// the halfword after it in frames; BLEND_SCRIPT_JUMP jumps, with
-/// BLEND_SCRIPT_STOP it stops, and BLEND_SCRIPT_LOOP loops. BlendScript_Start
-/// adds it as a task (priority TASK_PASS_FRAME). Writes REG_BLDCNT,
-/// REG_BLDALPHA and REG_BLDY, and keeps the last BLDCNT in the map work's
-/// blendControl.
+/// Each frame: runs the map's blend script.
 void BlendScript_Run(void) {
   struct MapGridScrollWork *gridState = gMapGridWork[0];
   struct BlendScriptState *blend;
@@ -227,8 +204,7 @@ again:
     }
 
     // A BLDCNT value is told apart by its top four bits being 3, its second
-    // target's sprite and backdrop bits. A level cannot reach them: the
-    // BLDALPHA coefficients and BLDY go to 16 at most.
+    // target's sprite and backdrop bits.
     if ((instruction & BLEND_SCRIPT_BLDCNT_MASK) == BLEND_SCRIPT_BLDCNT) {
       REG_BLDCNT = instruction;
       gridState->blendControl = instruction;
@@ -354,9 +330,7 @@ UNUSED void PaletteCycle_Start(void) {
 }
 
 /// Each frame: advances each palette cycle whose timer has run out by one
-/// colour, writing the rotated colours back to the palette. Only
-/// PaletteCycle_Start adds it as a task, and nothing calls that, so no palette
-/// cycle runs in the game.
+/// colour, writing the rotated colours back to the palette.
 void PaletteCycle_Step(void) {
   struct PaletteCycleWork *paletteQueue = gPaletteCycleWork;
   u8 cycleIndex;

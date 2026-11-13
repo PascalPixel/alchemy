@@ -28,8 +28,7 @@ struct DjinnListTable {
 };
 
 /// The Djinn menu's lists, the field tiles and palette it restores on closing,
-/// and the tutorial's state. The menu allocates it outside any slot, EWRAM
-/// first, as it opens, and frees it (Heap_Release) as it closes.
+/// and the tutorial's state.
 struct DjinnMenuBackdrop {
   struct DjinnListTable list;
   u8 tiles[8192];    ///< BG character block 1's first 8 KB
@@ -57,9 +56,7 @@ struct DjinnMenuWork {
   struct Window *itemWindow;
   struct Window *window;
   /// Never given a window, so NULL from Window_InitializeWork on; the preview
-  /// still redraws it, which reads the window's place from the BIOS. Outside
-  /// the BIOS that returns the last BIOS instruction fetched, whose low half
-  /// as a width is over 30, so Window_DrawBorder draws nothing.
+  /// still redraws it, which reads the window's place from the BIOS.
   struct Window *unopenedWindow;
   struct Window *infoWindow; ///< ItemMenuWork's; not named here
   struct Window *listWindow;

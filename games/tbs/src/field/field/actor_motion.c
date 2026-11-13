@@ -29,11 +29,9 @@ s32 ActorScript_ShowSprite(struct Actor *interpreter) {
   return 1;
 }
 
-/// Waits a frame at a time until an actor has arrived at its target, at
-/// most 600 frames (ten seconds), after which it returns with the actor still
-/// on its way. It takes void * because callers pass every view of an
-/// actor. Called through Actor_WaitForMoveFar by field Psynergy
-/// and by about 50 scene overlays.
+/// Waits a frame at a time until an actor has arrived at its target, at most
+/// 600 frames (ten seconds), after which it returns with the actor still on its
+/// way.
 void Actor_WaitForMove(void *actor) {
   s32 waitedFrames;
 
@@ -69,12 +67,9 @@ s32 Actor_IsTargetUnset(struct Actor *actor) {
 
 static __inline__ s32 Actor_Square(s32 value) { return value * value; }
 
-/// Advances all 64 actors by one frame, as Actor_UpdateAll does for
-/// the eight script-driven actors, with the field's extras: free flight in 3D,
-/// following the ground, floating, and solid actors that refuse to overlap.
-/// ActorSystem_Initialize adds it as the task that updates the actors in
-/// every mode but the battle's (4). Writes each live actor's position,
-/// velocity, target, wait and facing.
+/// Advances all 64 actors by one frame, as Actor_UpdateAll does for the eight
+/// script-driven actors, with the field's extras: free flight in 3D, following
+/// the ground, floating, and solid actors that refuse to overlap.
 void Actor_UpdateAllThumb(void) {
   struct Actor *actor;
   const ActorScriptWords *script;
@@ -119,8 +114,6 @@ void Actor_UpdateAllThumb(void) {
       continue;
 
     // Count down a wait, or run commands until one waits for this frame.
-    // Words above 63 are labels and are stepped over; a command may replace
-    // the script, so it is read again after each one.
     if (actor->wait != 0) {
       actor->wait--;
     } else {
@@ -248,11 +241,9 @@ void Actor_UpdateAllThumb(void) {
           }
         }
 
-        // Follow the ground: take the ground height where the actor is
-        // going and move with its change, unless the actor is 4 or more
-        // pixels above the ground. Unless bit 4 is set, a climb or drop also
-        // slows it, by three times the change (at most half its
-        // acceleration).
+        // Follow the ground: take the ground height where the actor is going
+        // and move with its change, unless the actor is 4 or more pixels above
+        // the ground.
         if ((actor->motionFlags & ACTOR_FOLLOWS_TERRAIN) != 0) {
           velocityX = x + actor->velocityX;
           velocityZ = z + actor->velocityZ;
@@ -300,12 +291,9 @@ void Actor_UpdateAllThumb(void) {
           }
         }
 
-        // Float: bob up and down on a triangle wave (ACTOR_FLOATS_HIGH
-        // makes it bigger). The phase runs over 64 frames, each table entry
-        // held for two. The first 32 frames' velocities sum to 128 * gravity /
-        // 64, so the actor rises and falls by about 2 * gravity pixels, or 8 *
-        // gravity with ACTOR_FLOATS_HIGH (2 and 8 pixels at the default
-        // gravity of 1.0).
+        // Float: bob up and down on a triangle wave (ACTOR_FLOATS_HIGH makes it
+        // bigger). The phase runs over 64 frames, each table entry held for
+        // two.
         if ((actor->motionFlags & ACTOR_FLOATS) != 0) {
           phase = (actor->bounce & 0x3f);
           if ((actor->motionFlags & ACTOR_FLOATS_HIGH) != 0)
@@ -323,10 +311,8 @@ void Actor_UpdateAllThumb(void) {
     y += actor->velocityY;
     z += actor->velocityZ;
 
-    // An actor with ACTOR_BLOCKED_BY_SOLID does not move into an
-    // ACTOR_SOLID one; count the refusals. A refused actor keeps last
-    // frame's position and skips arrival and turning; SC_SYNC stops waiting for
-    // it after 60.
+    // An actor with ACTOR_BLOCKED_BY_SOLID does not move into an ACTOR_SOLID
+    // one; count the refusals.
     if ((actor->collisionFlags & ACTOR_BLOCKED_BY_SOLID) != 0) {
       SET_VECTOR(pos, x, y, z);
       if (ActorScript_CheckOverlap(actor, pos) != 0) {
@@ -399,9 +385,7 @@ void Actor_UpdateAllThumb(void) {
 }
 
 /// Places the actor at (x, y, z), in 16.16 pixels, clears its movement target
-/// and stops it. Reached through SC_POSITION and Actor_Create, and as
-/// Actor_SetPositionAndResetMotionFar from field Psynergy and the
-/// field sequence's actor code.
+/// and stops it.
 void Actor_SetPositionAndResetMotion(struct Actor *actor, s32 x, s32 y, s32 z) {
   actor->z.fixed = z;
   actor->targetX = TARGET_UNSET;
@@ -412,16 +396,8 @@ void Actor_SetPositionAndResetMotion(struct Actor *actor, s32 x, s32 y, s32 z) {
   SET_VELOCITY(actor, 0, 0, 0);
 }
 
-/// Sends an actor towards (x, y, z), in 16.16 pixels. Within a pixel it
-/// arrives at once. Unless it snaps to its target, the target is pulled in
-/// by half its braking distance (speed limit squared over acceleration), or
-/// to halfway when that is further, as the actor coasts on. Picks the
-/// axis to watch for arrival: the one with the furthest to go (y only for a
-/// free-flying actor).
-///
-/// Reached through SC_MOVE and the other move commands, the player control,
-/// and as Actor_SetMoveTargetFar from the battle's motion, the battle
-/// animations and field Psynergy. Sets the target and arrivalAxis.
+/// Sends an actor towards (x, y, z), in 16.16 pixels. Within a pixel it arrives
+/// at once.
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z) {
   s32 dx;
   s32 distance;
@@ -506,8 +482,6 @@ UNUSED void Actor_RunUpdateAllFromHeap(void) {
 /// Advances the first 14 actors' motion by one frame, without running their
 /// scripts: steering towards a target or braking, gravity and bouncing,
 /// arrival, and turning to face the direction of travel.
-/// ActorSystem_Initialize adds it as a task in place of Actor_UpdateAllThumb
-/// in ACTOR_SYSTEM_BATTLE.
 void Actor_UpdateAllMotion(void) {
   struct Actor *actor;
   s32 actorsLeft;

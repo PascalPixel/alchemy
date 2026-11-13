@@ -41,12 +41,7 @@
   ((entries)[position] = (code),                                               \
    (position) = ((position) + 1) & TEXT_BUFFER_MASK)
 
-// Edition-specific text and window layout values. The possessives
-// (gLocalizedWord_ItemPossessives) are by number in Spanish, singular and
-// plural, and by item gender in German and Italian; MESSAGE_EM_DASH starts with
-// TEXT_ARGUMENT_SPACE, which only the international decoder writes; a
-// space in a window of sprite glyphs advances WINDOW_SPRITE_SPACE_WIDTH pixels,
-// as Text_MeasureDecoded counts it.
+// Edition-specific text and window layout values.
 #if (LANGUAGE == LANGUAGE_SPANISH)
 #define ITEM_POSSESSIVE_TEXT_COUNT 2
 #else
@@ -67,9 +62,7 @@
 #endif
 
 #ifdef MODERN
-// In the matching build these calls precede their declarations. Prototypes
-// reorder three argument moves for ClearTileAttributesInRect and two for
-// PutGlyph in the English image.
+// In the matching build these calls precede their declarations.
 void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode);
 void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 #endif
@@ -124,9 +117,7 @@ enum {
   TEXT_SPACE = 32,
   // Characters the decoder and the measure test by code, as the fonts draw
   // them: the Japanese one by charmap_ja.tsv, the others by Latin-1 and its
-  // CP1252 extension (tools/ags-text). The English decoder keeps the Japanese
-  // one's tests of the Japanese punctuation and kana marks, codes its text
-  // never holds.
+  // CP1252 extension (tools/ags-text).
   TEXT_OPENING_QUOTE = 142,             ///< “, outside Japanese
   TEXT_INVERTED_EXCLAMATION_MARK = 161, ///< ¡, outside Japanese
   TEXT_JAPANESE_FULL_STOP = 161,        ///< 。

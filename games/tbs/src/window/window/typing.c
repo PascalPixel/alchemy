@@ -10,10 +10,8 @@
 #define CANVAS_COLUMN_WORDS 32
 #define CANVAS_KEPT_ROWS 8 ///< the top 8 pixel rows stay put
 
-/// Scrolls the battle message canvas up by 6 pixel rows per step, below its
-/// top 8 rows, and clears the rows this uncovers. A typing message calls
-/// it with step 1 on each of the two frames of a line scroll
-/// (Text_StartCanvasScroll).
+/// Scrolls the battle message canvas up by 6 pixel rows per step, below its top
+/// 8 rows, and clears the rows this uncovers.
 void Text_ScrollCanvasUp(s32 step) {
   s32 shift = step * 6;
   u32 *base = TEXT_CANVAS_VRAM;
@@ -36,11 +34,9 @@ enum {
   CHANNEL_STEP_CLOSE = 9,   ///< the text is dismissed: close the window
 };
 
-/// The per-frame message update: each message whose window is fully
-/// open runs its window animation or types more text, and on the text's end
-/// marks the window done (state 1) or closes it. A message whose window
-/// has closed is freed here. WindowSystem_Update runs it each frame after the
-/// windows' zooms.
+/// The per-frame message update: each message whose window is fully open runs
+/// its window animation or types more text, and on the text's end marks the
+/// window done (state 1) or closes it.
 void Message_UpdateAll(void) {
   struct Message *message = WINDOW_WORK->messages;
   s32 messageIndex = 0;
@@ -91,12 +87,9 @@ void Message_UpdateAll(void) {
   } while (messageIndex != 3);
 }
 
-/// Types one frame's share of a message's text: runs control codes (new
-/// line, new page, pauses, colours) and draws characters, playing the speaker's
-/// voice blips. Returns a CHANNEL_STEP_ result. The share is the message
-/// speed's glyphs a frame (gMessageSpeed_Steps) outside battle, where a space
-/// or a control code also ends it; in battle it is 8 glyphs, or 13 after a
-/// frame that took two VBlanks or more.
+/// Types one frame's share of a message's text: runs control codes (new line,
+/// new page, pauses, colours) and draws characters, playing the speaker's voice
+/// blips.
 s32 Message_Type(struct Message *message) {
   struct WindowWork *work = WINDOW_WORK;
   // The ROM reads gKeysHeld here once and never uses the value.
@@ -172,16 +165,13 @@ s32 Message_Type(struct Message *message) {
       case TEXT_PAGE:
         // The countdown only holds the message on this code while it waits: it
         // is set to 919 each frame and counted down once, so it is below 900
-        // only on the wait's first frame. Then, under Mind Read, presses
-        // latched before the wait are dropped.
+        // only on the wait's first frame.
         if (work->mindRead != 0 && message->countdown < 900)
           gKeysPressedLatch = 0;
         message->countdown = 919;
         if (Text_CheckTextDismissed(message) == 0) {
           // Until the button: show the next-page arrow in the bottom-right
-          // corner. Outside Japanese, a window with no size (as
-          // FieldMessage_ShowCentered opens with CENTERED_MESSAGE_BARE) shows
-          // none.
+          // corner.
           struct Window *side = message->window;
 
 #if TBS_PATCH_1
@@ -197,9 +187,7 @@ s32 Message_Type(struct Message *message) {
           work->pageArrowShown = 1;
           break;
         }
-        // Clear the window, and refit it to the next page's text. A text
-        // message started with flags set keeps the window's size; the frame is
-        // drawn again only when text follows the break.
+        // Clear the window, and refit it to the next page's text.
         window = message->window;
         x = window->x;
         y = window->y;

@@ -10,9 +10,7 @@
 #include "../../include/system/io_reg.h"
 
 /// Interpolates adjacent key frequencies and scales them by the wave sample
-/// frequency. Returns the wave's frequency word (offset 4) times 2^((key - 60)
-/// / 12) / 1024, with `pitch` (0 to 255) moving it in a straight line towards
-/// the next key; keys above 178 play key 178 at pitch 255.
+/// frequency.
 s32 MidiKeyToFreq(void *wave, u8 key, u8 pitch) {
   u32 keyIndex;
   u32 pitchScale;
@@ -59,8 +57,7 @@ void MPlayContinue(struct MusicPlayerInfo *player) {
 
 /// Starts a fade with the music player's ident raised, resuming the music
 /// player for fade-ins: FadeOutBody moves the level 16 of 256 every `period`
-/// VBlanks, so a whole fade takes 16 * period VBlanks. MPlayFadeOut,
-/// m4aMPlayFadeOutTemporarily and m4aMPlayFadeIn share it.
+/// VBlanks, so a whole fade takes 16 * period VBlanks.
 static __inline__ void MPlayStartFade(struct MusicPlayerInfo *player,
                                       u16 period, u16 volume) {
   if (player->ident == ID_NUMBER) {
@@ -84,8 +81,7 @@ void MPlayFadeOut(struct MusicPlayerInfo *player, u16 speed) {
 #define SOUND_MIXER_CODE_SIZE 1024
 
 /// Copies the RAM mixer to IWRAM, initializes the PCM and CGB paths and
-/// configures every music player from gMPlayTable. Unlike pret's games, it
-/// opens no extra music players for cries.
+/// configures every music player from gMPlayTable.
 void m4aSoundInit(void) {
   s32 playerIndex;
 
@@ -106,15 +102,10 @@ void m4aSoundInit(void) {
   }
 }
 
-/// Runs the sound driver for one VBlank through SoundMain. Exported first in
-/// the sound far-call table as m4aSoundMainFar; nothing in the game calls it by
-/// that name, and the VBlank handler mixes through Mixer_Enter instead.
+/// Runs the sound driver for one VBlank through SoundMain.
 void m4aSoundMain(void) { SoundMain(); }
 
-/// Starts the song on the music player its song-table entry names. Called by
-/// Sound_Play for music and jingles; it starts sound effects (songs
-/// from 100) itself, so that those naming player 7 can take a free player
-/// from 7 down to 4.
+/// Starts the song on the music player its song-table entry names.
 void m4aSongNumStart(u16 songId) {
   const struct MusicPlayer *mplayTable = gMPlayTable;
   const struct Song *songTable = gSongTable;
@@ -242,8 +233,6 @@ UNUSED void m4aMPlayImmInit(struct MusicPlayerInfo *player) {
 
 /// Resets the CGB sound hardware, installs the CGB-aware command handlers and
 /// callbacks in the sound work, and clears the four channels' `notes`.
-/// Called by m4aSoundInit. The hardware reset happens even when the driver's
-/// ident is raised; the rest is then skipped.
 void MPlayExtender(struct CgbChannel *notes) {
   struct SoundInfo *work;
   u32 ident;

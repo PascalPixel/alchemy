@@ -377,7 +377,7 @@ static s32 Kalay_UpdateTouristFidget(struct Actor *actor) {
   u32 nextTimer;
 
   if ((s16)actor->userValue == 0) {
-    action = (u32)(Import_RandomNext() * 8) >> 16;
+    action = Random_Below(8);
     switch (action) {
     case 0:
       Actor_SelectAnimation(actor, ANIM_NOD);
@@ -387,10 +387,10 @@ static s32 Kalay_UpdateTouristFidget(struct Actor *actor) {
       break;
     case 3:
     case 4:
-      actor->facing += (u32)(Import_RandomNext() << 15) >> 16;
+      actor->facing += Random_Below(32768);
       break;
     }
-    nextTimer = (u32)(Import_RandomNext() * 80) >> 16;
+    nextTimer = Random_Below(80);
     actor->userValue = nextTimer;
   }
   if ((s16)actor->userValue != 0) {
@@ -2355,8 +2355,8 @@ static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z) {
     Actor_SetSpriteColor(particle, SPRITE_COLOR_BLUE_TINT);
     Actor_SetSpriteFlags(particle, 0);
     // It drifts up to a pixel left and up to three up or down each frame.
-    particle->velocityX = px(((u32)(Random_Next() * 2) >> 16) - 1);
-    particle->velocityY = px(((u32)(Random_Next() * 6) >> 16) - 3);
+    particle->velocityX = px((Random_Below(2)) - 1);
+    particle->velocityY = px((Random_Below(6)) - 3);
     particle->timer = 20;
     particle->frozen = 1;
     Actor_SelectAnimation(particle, 1);
@@ -2379,7 +2379,7 @@ static void Kalay_UpdateNutOrbit(void) {
   sprite->rotation = Trig_Cos(effect->orbitAngle + TRIG_TURN / 2) >> 3;
   first = Import_RandomNext();
   effect->orbitAngle += ((u32)(first << 9) >> 16) +
-                        ((u32)(Import_RandomNext() << 9) >> 16) +
+                        (Random_Below(512)) +
                         TRIG_TURN / 64;
 }
 

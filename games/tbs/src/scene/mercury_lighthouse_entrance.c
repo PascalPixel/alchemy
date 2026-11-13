@@ -321,9 +321,9 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
       options.type = SPRITE_GLINT;
       options.script = gGlint_TwinkleScript;
       Sound_Play(SE_GLITTER);
-      sparkX = 208 - ((u32)Random_Next() * 16 >> 16);
-      sparkZ = 560 - ((u32)Random_Next() * 16 >> 16);
-      speedRoll = ((u32)Random_Next() * 4 >> 16);
+      sparkX = 208 - (Random_Below(16));
+      sparkZ = 560 - (Random_Below(16));
+      speedRoll = (Random_Below(4));
       velocityY = Math_Divide(px((speedRoll << 4) - speedRoll) + px(60), 100);
       FieldEffect_Spawn(px(sparkX), 0, px(sparkZ), 0, velocityY, 0,
                         EFFECT_USE_PRIORITY | EFFECT_USE_TYPE |

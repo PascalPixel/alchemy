@@ -61,7 +61,7 @@ void Kolima_UpdateCurseDust(void) {
       Sound_Play(SE_GLITTER);
     if (gFallingEffectState != KOLIMA_DUST_CENTRED)
       x = origin[0] +
-          (((u32)Import_RandomNext() * gFallingEffectWidth >> 16) << 8) +
+          ((Random_Below(gFallingEffectWidth)) << 8) +
           gFallingEffectOffset;
     else
       x = origin[0] + (Import_RandomNext() << 8) - px(128);

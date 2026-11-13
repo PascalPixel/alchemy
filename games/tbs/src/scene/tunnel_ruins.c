@@ -387,8 +387,8 @@ static UNREAD_RESULT TunnelRuins_SplashDousedPillar(struct Actor *actor) {
   options.startScaleX = 3 * Q16_ONE / 10;
   options.startScaleY = 3 * Q16_ONE / 10;
   options.palette = 5;
-  x = actor->x.fixed + ((((u32)(Random_Next() * 7) >> 16) - 3) << 16);
-  z = actor->z.fixed + ((((u32)(Random_Next() * 7) >> 16) - 3) << 16);
+  x = actor->x.fixed + (((Random_Below(7)) - 3) << 16);
+  z = actor->z.fixed + (((Random_Below(7)) - 3) << 16);
   FieldEffect_Spawn(x, actor->y.fixed + px(16), z, 0, 0, 0,
                     EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
                         EFFECT_SCRIPT_MEDIUM,

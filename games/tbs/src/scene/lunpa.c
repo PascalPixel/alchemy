@@ -817,7 +817,7 @@ static void Lunpa_KickUpLeaderDust(void) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if ((gFrameCount & 15) == 0) {
-    dustAngle = (((u32)Import_RandomNext() * 52) >> 16) * 64 + 230;
+    dustAngle = (Random_Below(52)) * 64 + 230;
     SET_VECTOR(dustVelocity, Trig_Cos(dustAngle) / 4, 0,
                Trig_Sin(dustAngle) / 2);
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,

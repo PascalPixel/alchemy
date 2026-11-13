@@ -46,7 +46,8 @@ struct MapGridScrollWork {
   u8 unused[3];
   /// Each layer's BG priority, written into its BGCNT; zero hides the layer.
   u8 enabled[3];
-  /// The last BLDCNT the blend script set (MapGridScrollAnimView.blendControl).
+  /// The last BLDCNT the blend script set; with mode 1 in bits 7..6 its values
+  /// go to BLDALPHA, else to BLDY.
   u8 blendControl;
   struct MapGridLayerScroll layers[3]; ///< BG3, BG2 and BG1, in that order
 };

@@ -544,12 +544,12 @@ static s32 ShipRooms_ResetActor(struct Actor *actor) {
 /// Returns 1.
 static s32 ShipRooms_Bob(struct Actor *actor) {
   if ((s16)actor->userValue != 0) {
-    actor->y.fixed -= ((u32)Random_Next() * 32768 >> 16) + px(1) / 2;
+    actor->y.fixed -= (Random_Below(32768)) + px(1) / 2;
     if (actor->y.fixed < 0) {
       actor->userValue = 0;
     }
   } else {
-    actor->y.fixed += ((u32)Random_Next() * 32768 >> 16) + px(1) / 2;
+    actor->y.fixed += (Random_Below(32768)) + px(1) / 2;
     if (actor->y.fixed > px(8)) {
       actor->userValue = 1;
     }
@@ -562,7 +562,7 @@ static s32 ShipRooms_Bob(struct Actor *actor) {
 ///
 /// Returns 1.
 static s32 ShipRooms_LookAround(struct Actor *actor) {
-  u32 choice = (u32)Random_Next() * 64 >> 16;
+  u32 choice = Random_Below(64);
 
   if (choice == 6) {
     actor->facing = FACING_SOUTH_SOUTHEAST;
@@ -3973,7 +3973,7 @@ static void ShipRooms_ShakeWhileKrakenAboard(void) {
   if (gShipRooms_ShakeTimer != 0) {
     if (--gShipRooms_ShakeTimer == 70)
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  } else if (((u32)(Random_Next() * 120) >> 16) == 0) {
+  } else if ((Random_Below(120)) == 0) {
     Sound_Play(SE_BOOM);
     MapGrid_SetShake(2, 2, 1);
     gShipRooms_ShakeTimer = 80;

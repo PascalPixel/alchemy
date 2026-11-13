@@ -17,7 +17,8 @@ const s32 gClass_SeriesByElements[] = {
 
 /// A character's base power and resistance in an element, by its whole element
 /// level 0 to 15; Unit_CalculateBaseElements adds the level's tenths to both.
-const struct ElementLevelBonus gElement_PowerResistByLevel[16] = {
+struct ElementLevelBonus gElement_PowerResistByLevel[16]
+    __attribute__((section(".rodata"))) = {
     {75, 85},   {80, 90},   {85, 95},   {90, 100},
     {95, 105},  {100, 110}, {105, 115}, {110, 120},
     {115, 125}, {120, 130}, {125, 135}, {130, 140},

@@ -1694,14 +1694,14 @@ static void FuchinTemple_SpawnGrottoEntryParticle(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   options.palette = SPRITE_COLOR_WHITE;
-  paletteDraw = (u32)(Import_RandomNext() * 7) >> 16;
+  paletteDraw = Random_Below(7);
   if ((paletteDraw & 7) == 0)
     options.palette = SPRITE_COLOR_BRG;
 
   options.startScaleX = 7 * Q16_ONE / 10;
   options.startScaleY = 4 * Q16_ONE / 5;
 
-  fallSpeed = ((u32)(Import_RandomNext() * 8) >> 16) * 13107;
+  fallSpeed = (Random_Below(8)) * 13107;
 
   FieldEffect_Spawn(leader->x.fixed + px(8 - (gFrameCount & 15)),
                     leader->y.fixed + (192 << 13), leader->z.fixed, 0,
@@ -2778,8 +2778,8 @@ static void FuchinTemple_AnimateRevealLesson(void) {
     particleX = hama->x.fixed +
                 ((((u32)(Import_RandomNext() * 3) << 4) >> 16) << 16) - px(12);
     particleY = hama->y.fixed +
-                ((((u32)Import_RandomNext() << 5) >> 16) << 16) - px(16);
-    riseSpeed = ((((u32)Import_RandomNext() << 2) >> 16) << 15) + (128 << 8);
+                ((Random_Below(32)) << 16) - px(16);
+    riseSpeed = ((Random_Below(4)) << 15) + (128 << 8);
     FieldEffect_Spawn(
         particleX, particleY, hama->z.fixed, 0, riseSpeed, 0,
         EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);

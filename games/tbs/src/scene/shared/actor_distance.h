@@ -1,31 +1,22 @@
+/// @file
+/// The distance between two actors, for the scenes where someone reacts to
+/// who is near: the Mercury and Venus Lighthouse aeries, Tolbi, Vault,
+/// Venus Lighthouse, Xian and every scene with staged_actor.h.
 #include "types.h"
+#include "actor.h"
 #include "iwram_call.h"
 
-// Several scenes (Mercury and Venus Lighthouses' aeries, Tolbi, Vault, Venus
-// Lighthouse, Xian, and every scene with staged_actor.h): the
-// distance between two actors.
+/// The distance in whole pixels between two positions, each given by its x
+/// and read on through the y and z that follow it, as an actor holds them.
+// UB: an actor's x, y and z are separate members, read here as an array.
+UNUSED static s32 Position_Distance(const s32 *first, const s32 *second) {
+  s32 deltaX = (*first++ - *second++) >> 16;
+  s32 deltaY = (*first++ - *second++) >> 16;
+  s32 deltaZ = (*first - *second) >> 16;
 
-/// The distance in whole pixels between two 16.16 positions of x, y and z.
-/// Callers take byte views of complete actors; their coordinate members
-/// do not form an array.
-UNUSED static s32 FixedPoint_Distance(const u8 *firstPosition,
-                                      const u8 *secondPosition) {
-  s32 deltaX =
-      (*(const s32 *)firstPosition - *(const s32 *)secondPosition) >> 16;
-  s32 deltaY;
-  s32 deltaZ;
-  s32 deltaXSquared;
-  s32 deltaYSquared;
-  s32 deltaZSquared;
-
-  firstPosition += sizeof(s32);
-  secondPosition += sizeof(s32);
-  deltaY = (*(const s32 *)firstPosition - *(const s32 *)secondPosition) >> 16;
-  firstPosition += sizeof(s32);
-  secondPosition += sizeof(s32);
-  deltaZ = (*(const s32 *)firstPosition - *(const s32 *)secondPosition) >> 16;
-  deltaXSquared = deltaX * deltaX;
-  deltaYSquared = deltaY * deltaY;
-  deltaZSquared = deltaZ * deltaZ;
-  return Iwram_Sqrt(deltaXSquared + deltaYSquared + deltaZSquared);
+  return Iwram_Sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 }
+
+/// The distance in whole pixels between two actors, in all three axes.
+#define Actor_Distance(first, second)                                          \
+  Position_Distance(&(first)->x.fixed, &(second)->x.fixed)

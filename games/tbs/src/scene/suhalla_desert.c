@@ -64,6 +64,7 @@
 #include "flags.h"
 #include "version.h"
 #include "main_routine_work.h"
+#include "map_grid_scroll.h"
 #include "system_call.h"
 #include "module/scene/suhalla_desert.h"
 #include "module/scene/shared/field_effect_spawn.h"
@@ -631,7 +632,7 @@ static s32 SuhallaDesert_ChaseLeader(struct Actor *actor) {
   if (sparkFrame == 0) {
     options.startScaleX = 4 * Q16_ONE / 5;
     options.startScaleY = 4 * Q16_ONE / 5;
-    options.spin = ((u32)Random_Next() * 4096 >> 16) + 0xf800;
+    options.spin = (Random_Below(4096)) + 0xf800;
     FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0,
                       sparkFrame, sparkFrame,
                       EFFECT_USE_SPIN | EFFECT_USE_START_SCALE |
@@ -837,7 +838,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// A capture goes on spinning, Reveal's color is saved, and the first two
 /// scenes set up their storms.
 s32 Scene_Initialize(void) {
-  struct MapGridScrollAnimView *grid;
+  struct MapGridScrollWork *grid;
 
   grid = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =

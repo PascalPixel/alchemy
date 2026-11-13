@@ -734,7 +734,7 @@ static void CrossboneIsleSteppingStones_JitterBackgroundScroll(void) {
   volatile u32 *reg = (volatile u32 *)&REG_BG1HOFS;
 
   if (line == 227 || line <= 46) {
-    if ((u32)(Import_RandomNext() * 100) >> 16 < sShakeChance) {
+    if (Random_Below(100) < sShakeChance) {
       src = ((u32 *)sShakenScroll);
     }
   }
@@ -1325,10 +1325,10 @@ CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *actor) {
   options.startScaleX = 7 * Q16_ONE / 10;
   options.startScaleY = 7 * Q16_ONE / 10;
 
-  x = actor->x.fixed + (((((u32)Import_RandomNext() * 17) >> 16) - 8) << 16);
-  y = actor->y.fixed + ((((u32)Import_RandomNext() * 17) >> 16) << 16);
-  z = actor->z.fixed + (((((u32)Import_RandomNext() * 17) >> 16) - 8) << 16);
-  scale = Math_Divide(px(((u32)Import_RandomNext() * 5) >> 16) + px(3), 10);
+  x = actor->x.fixed + (((Random_Below(17)) - 8) << 16);
+  y = actor->y.fixed + ((Random_Below(17)) << 16);
+  z = actor->z.fixed + (((Random_Below(17)) - 8) << 16);
+  scale = Math_Divide(px(Random_Below(5)) + px(3), 10);
 
   FieldEffect_Spawn(x, y, z, 0, scale, phase,
                     EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |

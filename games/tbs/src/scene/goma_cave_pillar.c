@@ -307,7 +307,7 @@ static void GomaCavePillar_SpawnStumpDust(void) {
     firstFallingSpeed -= firstBandScaled;
     firstFallingSpeed <<= 3;
     firstFallingSpeed += firstSpeedBand;
-    firstStyle = (u32)(Import_RandomNext() << 1) >> 16;
+    firstStyle = Random_Below(2);
     firstFallingSpeed = -firstFallingSpeed;
     GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, 0,
                                  firstFallingSpeed, firstStyle, framePhase);
@@ -332,7 +332,7 @@ static void GomaCavePillar_SpawnStumpDust(void) {
       secondFallingSpeed -= secondBandScaled;
       secondFallingSpeed <<= 3;
       secondFallingSpeed += secondSpeedBand;
-      secondStyle = (u32)(Import_RandomNext() << 1) >> 16;
+      secondStyle = Random_Below(2);
       secondFallingSpeed = -secondFallingSpeed;
       GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, 0,
                                    secondFallingSpeed, secondStyle, framePhase);
@@ -415,7 +415,7 @@ static void GomaCavePillar_PushStumpOver(void) {
     fallingSpeed -= bandScaled;
     fallingSpeed <<= 3;
     fallingSpeed += speedBand;
-    style = (u32)(Import_RandomNext() << 1) >> 16;
+    style = Random_Below(2);
     fallingSpeed = -fallingSpeed;
     GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, 0,
                                  fallingSpeed, style, 0);

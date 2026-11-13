@@ -779,12 +779,12 @@ static void SolSanctumEruption_StepEmbers(void) {
       Actor_StartScript(ember, gEruption_EmberScript);
       ember->x.fixed =
           Iwram_MulQ16(Trig_Cos((u16)angle),
-                       (((u32)Random_Next() * 256 >> 16) << 16) + px(256)) +
+                       ((Random_Below(256)) << 16) + px(256)) +
           px(325);
       ember->y.fixed = 0;
       ember->z.fixed =
           Iwram_MulQ16(Trig_Sin((u16)angle),
-                       (((u32)Random_Next() * 256 >> 16) << 16) + px(256)) +
+                       ((Random_Below(256)) << 16) + px(256)) +
           px(302);
       x = Iwram_MulQ16(Trig_Cos((u16)angle),
                        ((Random_Next() & 63) << 16) + px(8));
@@ -811,25 +811,25 @@ static void SolSanctumEruption_UpdateEmberFrequency(void) {
   if (gEmberLevel != 0) {
     gEmberLevel--;
   } else {
-    gEmberLevel = (u32)Random_Next() * 4 >> 16;
+    gEmberLevel = Random_Below(4);
   }
   emissionLevel = gEmberLevel;
   switch (emissionLevel) {
   case 3:
     gEmberMask = emissionLevel;
-    gEmberLevelTimer = ((u32)(Random_Next() * 20) >> 16) + 40;
+    gEmberLevelTimer = (Random_Below(20)) + 40;
     break;
   case 2:
     gEmberMask = 15;
-    gEmberLevelTimer = ((u32)(Random_Next() * 40) >> 16) + 80;
+    gEmberLevelTimer = (Random_Below(40)) + 80;
     break;
   case 1:
     gEmberMask = 63;
-    gEmberLevelTimer = ((u32)(Random_Next() * 80) >> 16) + 160;
+    gEmberLevelTimer = (Random_Below(80)) + 160;
     break;
   default:
     gEmberMask = 127;
-    gEmberLevelTimer = ((u32)(Random_Next() * 160) >> 16) + 320;
+    gEmberLevelTimer = (Random_Below(160)) + 320;
     break;
   }
 }

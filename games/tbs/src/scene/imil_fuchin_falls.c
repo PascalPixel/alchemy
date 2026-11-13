@@ -1687,8 +1687,8 @@ static void ImilFuchinFalls_BlowCaveMouthDust(void) {
   options.targetScaleY = 9 * Q16_ONE / 5;
   if ((gFrameCount & 7) == 0)
     Sound_Play(SE_WHOOSH);
-  velocityX = -px(1) - ((((u32)Import_RandomNext() << 1) >> 16) << 16);
-  velocityY = -((((u32)Import_RandomNext() * 3) >> 16) * (px(1) / 5));
+  velocityX = -px(1) - ((Random_Below(2)) << 16);
+  velocityY = -((Random_Below(3)) * (px(1) / 5));
   ImilFuchinFalls_SpawnDust(
       px(308), px(64), px(222), velocityX, velocityY, framePhase,
       1 | EFFECT_USE_PALETTE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,

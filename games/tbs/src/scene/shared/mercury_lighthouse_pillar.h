@@ -403,7 +403,7 @@ void MercuryLighthouse_RippleAroundLeader(void) {
     state->rippleTimer--;
   } else {
     MercuryLighthouse_SpawnRipple(point);
-    state->rippleTimer = ((u32)(Import_RandomNext() * 30) >> 16) + 10;
+    state->rippleTimer = (Random_Below(30)) + 10;
   }
 }
 

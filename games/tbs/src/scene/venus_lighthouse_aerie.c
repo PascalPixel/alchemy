@@ -1909,12 +1909,12 @@ static void VenusLighthouseAerie_SpawnUpperOrbitParticles(void) {
   center = Actor_Get(ACTOR_BEAM_BOTTOM);
   if (GameFlag_Get(FLAG_VENUS_AERIE_BEACON_ERUPTED) != 0) {
     effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
-                               (s32)((u32)Random_Next() * 256 >> 16 << 16) +
+                               (s32)(Random_Below(256) << 16) +
                                    center->y.fixed - px(28),
                                center->z.fixed);
   } else {
     effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
-                               (s32)((u32)Random_Next() * 64 >> 16 << 16) +
+                               (s32)(Random_Below(64) << 16) +
                                    center->y.fixed - px(28),
                                center->z.fixed);
   }
@@ -3067,7 +3067,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
     break;
   }
   if (spawnParticles) {
-    randomHeight = ((u32)(Random_Next() * 80) >> 16) << 16;
+    randomHeight = (Random_Below(80)) << 16;
     effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
                                center->y.fixed - randomHeight - px(8),
                                center->z.fixed);
@@ -3126,7 +3126,7 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
 
   center = ((struct Actor *)Actor_Get(23));
   grid = gMapGridWork[0];
-  drift = (u32)(Random_Next() * 48) >> 16 << 16;
+  drift = Random_Below(48) << 16;
   if ((s16)(grid->view[1] >> 16) <= 129) {
     if (gFrameCount & 1) {
       Actor_SetPosition(ACTOR_BEACON_ORB, 304, 164);

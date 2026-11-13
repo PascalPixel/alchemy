@@ -111,13 +111,11 @@ static void Tolbi_JoinEmber(void) {
 static s32 Tolbi_KidStopForTarget(struct Actor *kid, struct Actor *target,
                                   s32 range, s32 force) {
   s32 stopped = 0;
-  const u8 *targetPos = (const u8 *)target + offsetof(struct Actor, x);
-  const u8 *kidPos = (const u8 *)kid + offsetof(struct Actor, x);
 
-  if (FixedPoint_Distance(targetPos, kidPos) < range || force != 0) {
+  if (Actor_Distance(target, kid) < range || force != 0) {
     // The heading to the target, and the eight-way directions around it.
     u32 heading = (u16)ArcTan2(target->z.fixed - kid->z.fixed,
-                               *(const s32 *)targetPos - *(const s32 *)kidPos);
+                               target->x.fixed - kid->x.fixed);
     u32 farLeft = (heading - 2 * FACING_STEP) & 0xf000;
     u32 farRight = (heading + 2 * FACING_STEP) & 0xf000;
     u32 left = (heading - FACING_STEP) & 0xf000;

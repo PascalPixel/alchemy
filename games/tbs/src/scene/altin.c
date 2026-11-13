@@ -983,9 +983,9 @@ static void Altin_SprayInitialize(struct Actor *spray) {
 /// updates.
 static void Altin_SprayDrift(struct Actor *spray) {
   spray->x.fixed += WATER_SPRAY_LATERAL_STEP(
-      spray->timer, (s16)((s32)(((u32)Import_RandomNext() * 2) >> 16) - 1));
+      spray->timer, (s16)((s32)(Random_Below(2)) - 1));
   if (spray->timer <= 3) {
-    spray->z.fixed += -(((u32)Import_RandomNext() * (px(1) / 2)) >> 16) - px(1);
+    spray->z.fixed += -(Random_Below((px(1) / 2))) - px(1);
     spray->scaleX += 3 * Q16_ONE / 20;
     spray->scaleY += -Q16_ONE / 25;
   } else {
@@ -998,7 +998,7 @@ static void Altin_SprayDrift(struct Actor *spray) {
   if (spray->timer != 0)
     spray->timer--;
   else
-    spray->timer = (((u32)Import_RandomNext() * 5) >> 16) * 2 + 2;
+    spray->timer = (Random_Below(5)) * 2 + 2;
   if (--((struct FieldEffect *)spray)->countdown == 0) {
     spray->update = 0;
     Actor_Release(spray);

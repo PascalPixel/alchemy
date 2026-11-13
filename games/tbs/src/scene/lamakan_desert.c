@@ -238,7 +238,7 @@ static UNREAD_RESULT LamakanDesert_LeaderSpraySand(struct Actor *actor) {
   }
   params.startScaleX = 4 * Q16_ONE / 5;
   params.startScaleY = 4 * Q16_ONE / 5;
-  params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
+  params.spin = (Random_Below(4096)) + 0xf800;
   FieldEffect_Spawn(
       actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, phase, phase,
       EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | EFFECT_SCRIPT_MEDIUM, &params);
@@ -719,7 +719,7 @@ static void HeatGauge_CountStep(void) {
     params.startScaleX = Q16_ONE / 2;
     params.startScaleY = Q16_ONE / 2;
     dx = 0;
-    params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
+    params.spin = (Random_Below(4096)) + 0xf800;
     if (actor->facing != FACING_EAST && actor->facing != FACING_WEST) {
       z = actor->z.fixed;
       dx = px(2) - px(((z >> 20) & 1) * 5);
@@ -739,10 +739,10 @@ static void HeatGauge_CountStep(void) {
     gFrameCount;
     params.startScaleX = 4 * Q16_ONE / 5;
     params.startScaleY = 4 * Q16_ONE / 5;
-    params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
+    params.spin = (Random_Below(4096)) + 0xf800;
     FieldEffect_Spawn(
         actor->x.fixed, actor->y.fixed + px(2), actor->z.fixed, 0,
-        ((u32)(Import_RandomNext() * 5) >> 16) * (px(1) / 10), phase,
+        (Random_Below(5)) * (px(1) / 10), phase,
         EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | EFFECT_SCRIPT_MEDIUM,
         &params);
   }
@@ -849,11 +849,11 @@ static void LamakanDesert_SlideDownDune(void) {
   hit = FieldActor_CheckMovementCollision(actor, &probePosition);
   phase = gFrameCount & 4;
   if (phase == 0) {
-    params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
-    x = actor->x.fixed + (((u32)(Import_RandomNext() * 12) >> 16) << 16) -
+    params.spin = (Random_Below(4096)) + 0xf800;
+    x = actor->x.fixed + ((Random_Below(12)) << 16) -
         px(6);
     FieldEffect_Spawn(x, actor->y.fixed, actor->z.fixed, 0, phase,
-                      ((u32)(Import_RandomNext() * 5) >> 16) * (px(1) / 10) +
+                      (Random_Below(5)) * (px(1) / 10) +
                           5 * (px(1) / 10),
                       EFFECT_USE_SPIN, &params);
   }

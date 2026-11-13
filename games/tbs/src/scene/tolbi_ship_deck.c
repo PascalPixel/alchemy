@@ -417,7 +417,7 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
             Actor_FaceDirection(warrior, FACING_NORTH_NORTHEAST, 0);           \
           else                                                                 \
             Actor_FaceDirection(warrior, FACING_NORTH_NORTHWEST, 0);           \
-          if ((u32)Random_Next() * 4 >> 16 != 0) {                             \
+          if (Random_Below(4) != 0) {                             \
             Actor_Get(warrior)->velocityY = px(2);                             \
           } else {                                                             \
             Actor_ShowEmote(warrior, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);    \
@@ -456,11 +456,11 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
       }                                                                        \
     } else {                                                                   \
       if (actor->timer != 0) {                                                 \
-        actor->riseBaseY -= (u32)Random_Next() * 4096 >> 16;                   \
+        actor->riseBaseY -= Random_Below(4096);                   \
         if (actor->riseBaseY < -px(1) / 4)                                     \
           actor->timer = 0;                                                    \
       } else {                                                                 \
-        actor->riseBaseY += (u32)Random_Next() * 4096 >> 16;                   \
+        actor->riseBaseY += Random_Below(4096);                   \
         if (actor->riseBaseY > px(1) / 4)                                      \
           actor->timer = 1;                                                    \
       }                                                                        \
@@ -468,17 +468,17 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
         actor->x.fixed += actor->riseBaseY;                                    \
       if ((s16)actor->userValue != 0) {                                        \
         actor->y.fixed =                                                       \
-            actor->y.fixed - ((u32)Random_Next() * 32768 >> 16) - px(1) / 2;   \
+            actor->y.fixed - (Random_Below(32768)) - px(1) / 2;   \
         if (actor->y.fixed < 0)                                                \
           actor->userValue = 0;                                                \
       } else {                                                                 \
         actor->y.fixed =                                                       \
-            actor->y.fixed + ((u32)Random_Next() * 32768 >> 16) + px(1) / 2;   \
+            actor->y.fixed + (Random_Below(32768)) + px(1) / 2;   \
         if (actor->y.fixed > px(8))                                            \
           actor->userValue = 1;                                                \
       }                                                                        \
     }                                                                          \
-    if (((u32)Random_Next() * 100) >> 16 == 0)                                 \
+    if (Random_Below(100) == 0)                                 \
       actor->riseCounter = 1;                                                  \
     return 1;                                                                  \
   }
@@ -518,12 +518,12 @@ static s32 sOarDepth[8];
 /// Returns 1.
 static s32 TolbiShipDeck_Bob(struct Actor *actor) {
   if ((s16)actor->userValue != 0) {
-    actor->y.fixed -= ((u32)Random_Next() * 32768 >> 16) + px(1) / 2;
+    actor->y.fixed -= (Random_Below(32768)) + px(1) / 2;
     if (actor->y.fixed < px(4)) {
       actor->userValue = 0;
     }
   } else {
-    actor->y.fixed += ((u32)Random_Next() * 32768 >> 16) + px(1) / 2;
+    actor->y.fixed += (Random_Below(32768)) + px(1) / 2;
     if (actor->y.fixed > px(12)) {
       actor->userValue = 1;
     }
@@ -536,7 +536,7 @@ static s32 TolbiShipDeck_Bob(struct Actor *actor) {
 ///
 /// Returns 1.
 static s32 TolbiShipDeck_LookAround(struct Actor *actor) {
-  u32 roll = (u32)Random_Next() * 32 >> 16;
+  u32 roll = Random_Below(32);
 
   if (roll == 6)
     actor->facing = FACING_NORTH_NORTHEAST;
@@ -558,7 +558,7 @@ static s32 TolbiShipDeck_LookAround(struct Actor *actor) {
   static s32 name(struct Actor *actor) {                                       \
     switch (actor->timer) {                                                    \
     case 0:                                                                    \
-      if ((((u32)Random_Next() * 40) >> 16) == 0) {                            \
+      if ((Random_Below(40)) == 0) {                            \
         actor->timer++;                                                        \
       }                                                                        \
       break;                                                                   \
@@ -586,7 +586,7 @@ static s32 TolbiShipDeck_LookAround(struct Actor *actor) {
         } else {                                                               \
           Actor_FaceDirection(warrior, clearFacing, 0);                        \
         }                                                                      \
-        if ((u32)Random_Next() * 4 >> 16 != 0) {                               \
+        if (Random_Below(4) != 0) {                               \
           Actor_Get(warrior)->velocityY = px(2);                               \
         } else {                                                               \
           Actor_ShowEmote(warrior, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);      \
@@ -635,7 +635,7 @@ TOLBI_SHIP_DECK_LEAP_AT(TolbiShipDeck_LeapAtSean, ACTOR_SEA_SEAN, 176, 696,
 ///
 /// Returns 1.
 static s32 TolbiShipDeck_RandomlyStartActorHop(struct Actor *actor) {
-  if ((((u32)(Random_Next() * 40)) >> 16) == 0)
+  if ((Random_Below(40)) == 0)
     actor->velocityY = px(4);
   return 1;
 }
@@ -657,7 +657,7 @@ static s32 TolbiShipDeck_IdleTurn(struct Actor *actor) {
   if (actor->riseCounter != 0) {
     actor->riseCounter--;
   } else {
-    u32 roll = (u32)(Random_Next() * 300) >> 16;
+    u32 roll = Random_Below(300);
 
     if (roll > 200) {
       actor->facing = FACING_NORTH_NORTHEAST;
@@ -666,7 +666,7 @@ static s32 TolbiShipDeck_IdleTurn(struct Actor *actor) {
     } else {
       actor->facing = FACING_EAST;
     }
-    actor->riseCounter = ((u32)(Random_Next() * 80) >> 16) + 80;
+    actor->riseCounter = (Random_Below(80)) + 80;
   }
   return 1;
 }
@@ -2270,7 +2270,7 @@ static void TolbiShipDeck_RockDeck(void) {
   *origin++ += dx >> 1;
   *origin += dy;
   sSwayAngleX += (u32)(Random_Next() * 3 << 7) >> 16;
-  sSwayAngleY += (u32)Random_Next() * 512 >> 16;
+  sSwayAngleY += Random_Below(512);
   sSwayAngleX &= 0xffff;
   sSwayAngleY &= 0xffff;
   layer = &grid->layers[MAPGRID_LAYER_GROUND];

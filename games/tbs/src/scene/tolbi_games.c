@@ -924,7 +924,7 @@ prompt:
           prizeIndex++;
         } while (prizeIndex < result * 3 + 3);
       }
-      prizeRoll = (u32)(Random_Next() * totalWeight) >> 16;
+      prizeRoll = Random_Below(totalWeight);
       for (prizeIndex = 0; prizeIndex < 15; prizeIndex++) {
         prizeRoll -= routine->prizeWeights[prizeIndex];
         if (prizeRoll < 0) {

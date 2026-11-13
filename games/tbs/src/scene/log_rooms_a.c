@@ -3397,7 +3397,7 @@ static void LogRoomsA_UpdateActorStops(void) {
   actor = Actor_Lookup(ACTOR_SUSPECTED_LEADER);
   entry = LogRoomsA_FindStopAtPosition(&actor->x.fixed);
   if (entry != NULL && actor->targetX == ACTOR_NO_TARGET) {
-    u32 turn = (u32)Import_RandomNext() * 2 >> 16;
+    u32 turn = Random_Below(2);
     s32 currentFacing;
 
     turn *= TRIG_TURN * 6 / 16 << 16;
@@ -3422,7 +3422,7 @@ static void LogRoomsA_UpdateActorStops(void) {
   actor = Actor_Lookup(ACTOR_SUSPECTED_THIEF);
   entry = LogRoomsA_FindStopAtPosition(&actor->x.fixed);
   if (entry != NULL && actor->targetX == ACTOR_NO_TARGET) {
-    u32 turn = (u32)Import_RandomNext() * 3 >> 16;
+    u32 turn = Random_Below(3);
     s32 currentFacing;
 
     turn *= TRIG_TURN * 3 / 16 << 16;

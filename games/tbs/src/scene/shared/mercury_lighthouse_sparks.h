@@ -19,7 +19,7 @@ static UNREAD_RESULT MercuryLighthouse_TrailSparks(struct Actor *actor) {
   options.startScaleX = 4 * Q16_ONE / 5;
   options.startScaleY = 4 * Q16_ONE / 5;
   options.priority = 0;
-  velocityY = -((((u32)Import_RandomNext() * 8) >> 16) * (px(1) / 5));
+  velocityY = -((Random_Below(8)) * (px(1) / 5));
   FieldEffect_Spawn(actor->x.fixed + px(8 - (gFrameCount & 15)),
                     actor->y.fixed + px(26), actor->z.fixed, 0, velocityY, 0,
                     EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |

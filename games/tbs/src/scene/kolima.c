@@ -488,7 +488,7 @@ static void Kolima_LowerBridge(void) {
       debris->motionFlags = 0;
       Actor_SetSpriteFlags(debris, 0);
       debris->sprite->image.priority = 0;
-      debris->timer = (((u32)(Import_RandomNext() * 40)) >> 16) + 40;
+      debris->timer = (Random_Below(40)) + 40;
       debris->velocityX = (s32)((px(debrisIndex & 3) + px(1))) >> 1;
       debris->velocityZ = px(1);
       if (debrisIndex & 1) {

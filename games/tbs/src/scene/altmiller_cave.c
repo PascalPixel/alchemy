@@ -814,7 +814,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
 
     // One of the four others: 1 to 4 lights on from the last.
     puzzle[CAVE_CHOSEN_LIGHT - CAVE_PUZZLE] =
-        ((s8)(((u32)(Random_Next() * 4) >> 16) + previousLight + 1) + 5) % 5;
+        ((s8)((Random_Below(4)) + previousLight + 1) + 5) % 5;
     gAltmillerCave_LightWheel->phase = WHEEL_SPEEDING_UP;
     gAltmillerCave_LightWheel->frames = 0;
     gAltmillerCave_LightWheel->speed = TRIG_TURN / 128;

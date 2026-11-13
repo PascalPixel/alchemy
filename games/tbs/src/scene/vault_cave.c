@@ -695,7 +695,7 @@ static void VaultCave_RunRumble(void) {
   Sound_Play(SE_RUSH);
   // Scroll and shake for 480 frames before the final fade.
   for (frame = 0; frame < 480; frame++) {
-    u32 scrollDrift = (u32)Random_Next() * 2048 >> 16;
+    u32 scrollDrift = Random_Below(2048);
 
     layer->phaseY = (double)layer->phaseY - (4718.592 - (double)scrollDrift);
     Event_Wait(1);

@@ -55,15 +55,6 @@ struct MapGridCell {
   u8 shape;
 };
 
-/// A map layer's scroll state, seen from its cells.
-struct MapGridLayer {
-  struct MapGridCell
-      *cells; ///< the layer's first cell (MapGridLayerScroll's cells)
-  /// The next layer's scroll values (MapGridLayerScroll up to its cells); not
-  /// named through this view.
-  u8 nextScroll[44];
-};
-
 /// The map's running blend script, which sets the blend registers over time
 /// (BlendScript_Run, each frame from BlendScript_Start).
 struct BlendScriptState {
@@ -96,47 +87,7 @@ enum MapGridLayerIndex {
   MAPGRID_LAYER_COUNT = 3
 };
 
-/// The map work in HEAP_SLOT_MAP_GRID (struct MapGridScrollWork), seen as its
-/// tileset animations, blend script and layers' cells.
-struct MapGridScrollAnimView {
-  /// MapGridScrollWork's origin, shake and markers; not named through this
-  /// view.
-  ///@{
-  s32 *origin;
-  s32 shakeX, shakeY, shakeDecay;
-  u8 *script;
-  ///@}
-  u16 flags;     ///< REG_DISPCNT bits; MapGrid_SetShownLayers sets BG1 to BG3
-  u8 wideTiles;  ///< nonzero: tileset animations copy 64-byte tiles
-  u8 footprints; ///< MapGridScrollWork's; Bilibin Cave sets it
-  struct TilesetAnim animations[16];
-  struct BlendScriptState blend;
-  /// MapGridScrollWork's view, bounds and shown layers; not named through this
-  /// view.
-  ///@{
-  s32 view[2];
-  s32 minX, minY, maxX, maxY;
-  s8 animationActive;
-  u8 unused[3];
-  u8 enabled[3];
-  ///@}
-  /// The last BLDCNT the blend script wrote; with mode 1 in bits 7..6 its
-  /// values go to BLDALPHA, else to BLDY.
-  u8 blendControl;
-  /// The first layer's scroll values (MapGridLayerScroll up to its cells); not
-  /// named through this view.
-  u8 firstScroll[44];
-  /// Each layer's cells, at MapGridScrollWork's layers[i].cells; readers mask
-  /// the layer with 3, and the fourth entry lies past MapGridScrollWork's end.
-  struct MapGridLayer layers[4];
-};
-
 STATIC_ASSERT(sizeof(struct TilesetAnim) == 12);
-STATIC_ASSERT(offsetof(struct MapGridScrollAnimView, flags) == 0x14);
-STATIC_ASSERT(offsetof(struct MapGridScrollAnimView, wideTiles) == 0x16);
-STATIC_ASSERT(offsetof(struct MapGridScrollAnimView, animations) == 0x18);
-STATIC_ASSERT(offsetof(struct MapGridScrollAnimView, blend) == 0xd8);
-STATIC_ASSERT(offsetof(struct MapGridScrollAnimView, layers) == 0x130);
 
 /// A position on the world map, as its walkability check reads it.
 struct WorldPosition {

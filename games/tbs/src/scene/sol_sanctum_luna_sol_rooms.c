@@ -737,7 +737,7 @@ static void SolSanctumLunaSolRooms_UpdateFirstFallingLight(void) {
     }
     gSolSanctumLunaSolRooms_Light1Timer++;
     if (gSolSanctumLunaSolRooms_Light1Timer >
-        ((u32)(Random_Next() * 40) >> 16) + 90) {
+        (Random_Below(40)) + 90) {
       gSolSanctumLunaSolRooms_Light1Timer = 0;
     }
   }
@@ -785,7 +785,7 @@ static void SolSanctumLunaSolRooms_UpdateFirstFallingLight(void) {
         break;                                                                 \
       }                                                                        \
       timer++;                                                                 \
-      if (timer > ((u32)(Random_Next() * 40) >> 16) + (restart)) {             \
+      if (timer > (Random_Below(40)) + (restart)) {             \
         timer = 0;                                                             \
       }                                                                        \
     }                                                                          \
@@ -939,10 +939,10 @@ static void SolSanctumLunaSolRooms_SpringTrap(void) {
   SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN,
                                             6);
   // Each light starts falling after 20 to 79 frames.
-  gSolSanctumLunaSolRooms_Light1Timer = (((u32)Random_Next() * 60) >> 16) + 20;
-  gSolSanctumLunaSolRooms_Light2Timer = (((u32)Random_Next() * 60) >> 16) + 20;
-  gSolSanctumLunaSolRooms_Light3Timer = (((u32)Random_Next() * 60) >> 16) + 20;
-  gSolSanctumLunaSolRooms_Light4Timer = (((u32)Random_Next() * 60) >> 16) + 20;
+  gSolSanctumLunaSolRooms_Light1Timer = (Random_Below(60)) + 20;
+  gSolSanctumLunaSolRooms_Light2Timer = (Random_Below(60)) + 20;
+  gSolSanctumLunaSolRooms_Light3Timer = (Random_Below(60)) + 20;
+  gSolSanctumLunaSolRooms_Light4Timer = (Random_Below(60)) + 20;
   gSolSanctumLunaSolRooms_FlashState = 0;
   // Run the falling lights independently while the quarters keep flashing.
   Task_AddFrame(SolSanctumLunaSolRooms_UpdateFirstFallingLight,

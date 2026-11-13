@@ -3397,7 +3397,7 @@ static void LunpaFortress_ReadJailedDodonpasThoughts(void) {
 s32 Scene_Initialize(void) {
   struct Actor *mapActor;
 
-  gLunpaFortressRandomPick = (u32)Import_RandomNext() * 7 >> 16;
+  gLunpaFortressRandomPick = Random_Below(7);
   if (gMainRoutineWork.next == (s32)&SceneId_LunpaFortressGroundFloor) {
     MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     LunpaFortress_InitializeGroundFloor();

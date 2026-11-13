@@ -1652,23 +1652,23 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
   for (i = 0; i <= 31; i++) {
     Event_Wait(1);
     if (i & 1) {
-      r = ((((u32)Random_Next() * 24) >> 16) << 16);
+      r = ((Random_Below(24)) << 16);
       x = left->x.fixed;
       x += r;
       x -= px(12);
       FieldEffect_Spawn(
-          x, left->y.fixed + (((u32)Random_Next() * 32 >> 16) << 16) - px(16),
+          x, left->y.fixed + ((Random_Below(32)) << 16) - px(16),
           left->z.fixed, 0, px(4), 0,
           EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
               EFFECT_USE_PALETTE,
           &options);
     } else {
-      r = ((((u32)Random_Next() * 24) >> 16) << 16);
+      r = ((Random_Below(24)) << 16);
       x = right->x.fixed;
       x += r;
       x -= px(12);
       FieldEffect_Spawn(
-          x, right->y.fixed + (((u32)Random_Next() * 32 >> 16) << 16) - px(16),
+          x, right->y.fixed + ((Random_Below(32)) << 16) - px(16),
           right->z.fixed, 0, px(4), 0,
           EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
               EFFECT_USE_PALETTE,
@@ -1701,23 +1701,23 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
   for (i = 0; i <= 31; i++) {
     Event_Wait(1);
     if (i & 1) {
-      r = ((((u32)Random_Next() * 24) >> 16) << 16);
+      r = ((Random_Below(24)) << 16);
       x = left->x.fixed;
       x += r;
       x -= px(12);
       FieldEffect_Spawn(
-          x, left->y.fixed + (((u32)Random_Next() * 32 >> 16) << 16) + px(32),
+          x, left->y.fixed + ((Random_Below(32)) << 16) + px(32),
           left->z.fixed, 0, -px(4), 0,
           EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
               EFFECT_USE_PALETTE,
           &options);
     } else {
-      r = ((((u32)Random_Next() * 24) >> 16) << 16);
+      r = ((Random_Below(24)) << 16);
       x = right->x.fixed;
       x += r;
       x -= px(12);
       FieldEffect_Spawn(
-          x, right->y.fixed + (((u32)Random_Next() * 32 >> 16) << 16) + px(32),
+          x, right->y.fixed + ((Random_Below(32)) << 16) + px(32),
           right->z.fixed, 0, -px(4), 0,
           EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
               EFFECT_USE_PALETTE,
@@ -1890,7 +1890,7 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
 
   beacon = Actor_Get(ACTOR_BEACON);
   grid = gMapGridWork[0];
-  height = ((u32)(Random_Next() * 48) >> 16) << 16;
+  height = (Random_Below(48)) << 16;
   if (((union FieldCoordinate *)&grid->view[1])->part.pixel <= 129) {
     if (gFrameCount & 1) {
       Import_ActorSetPosition(ACTOR_BEACON, px(304), px(144));

@@ -353,6 +353,8 @@ static inline void Event_PlaySound(s32 sound) { Sound_Play(sound); }
 
 /// A random number from 0 to 65535 for an event.
 static inline s32 Random_Next(void) { return Import_RandomNext(); }
+/// A random whole number from 0 to n - 1, as an event rolls one.
+#define Random_Below(n) ((u32)Random_Next() * (n) >> 16)
 
 /// Signed division written as a call; the `/` compiles to __divsi3.
 static inline s32 Math_Divide(s32 dividend, s32 divisor) {

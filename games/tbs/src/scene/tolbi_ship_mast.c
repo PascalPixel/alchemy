@@ -206,7 +206,7 @@ static s32 TolbiShipMast_FollowCameraAndRotate(struct Actor *actor) {
 
 /// A random sample of 6 or 9 turns the lookout to either side of north.
 static s32 TolbiShipMast_RandomizeLookoutFacing(struct Actor *actor) {
-  u32 sample = (u32)Random_Next() * 64 >> 16;
+  u32 sample = Random_Below(64);
 
   if (sample == 6) {
     actor->facing = FACING_NORTH_NORTHEAST;
@@ -239,12 +239,12 @@ static s32 TolbiShipMast_SwayActor(struct Actor *actor) {
   if (actor->timer == SWAY_HELD) {
     actor->riseBaseY = 0;
   } else if (actor->timer != SWAY_INCREASING) {
-    actor->riseBaseY -= (u32)Random_Next() * 2048 >> 16;
+    actor->riseBaseY -= Random_Below(2048);
     if (actor->riseBaseY < -px(3) / 4) {
       actor->timer = SWAY_INCREASING;
     }
   } else {
-    actor->riseBaseY += (u32)Random_Next() * 2048 >> 16;
+    actor->riseBaseY += Random_Below(2048);
     if (actor->riseBaseY > px(3) / 4) {
       actor->timer = SWAY_DECREASING;
     }
@@ -867,7 +867,7 @@ static void TolbiShipMast_UpdateSway(void) {
   gTolbiShipMast_DriftX += swayX;
   gTolbiShipMast_DriftY += swayY;
   gTolbiShipMast_SwayX += (u32)(Random_Next() * 3 << 7) >> 16;
-  gTolbiShipMast_SwayY += (u32)Random_Next() * 512 >> 16;
+  gTolbiShipMast_SwayY += Random_Below(512);
   gTolbiShipMast_SwayX &= 0xffff;
   gTolbiShipMast_SwayY &= 0xffff;
 }

@@ -137,7 +137,7 @@ static s32 KolimaForestEntrance_FlashHitPsynergyFields(struct Actor *actor) {
 /// At 1200 the timer starts over.
 static s32 KolimaForestEntrance_TwinkleGroundSparkle(struct Actor *actor) {
   s16 *counter = &actor->timer;
-  *counter = (*counter + (((u32)Import_RandomNext() * 100) >> 16));
+  *counter = (*counter + (Random_Below(100)));
   if (*counter > 1000)
     Actor_SetSpriteColor(actor, SPRITE_COLOR_WHITE);
   else

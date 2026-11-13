@@ -666,7 +666,7 @@ static void AltinPeak_FlickerWaterOut(void) {
    * store; as REG_DISPCNT = control, 2 of 22 instructions differ in tbs-en. */
   u32 value;
 
-  if ((u32)(Import_RandomNext() * 100) >> 16 >= gAltinPeak_FlickerTimer)
+  if (Random_Below(100) >= gAltinPeak_FlickerTimer)
     control |= bg1;
   value = (u16)control;
   REG_DISPCNT = value;
@@ -1904,12 +1904,12 @@ static void AltinPeak_DriftSpray(struct Actor *spray) {
   case FACING_EAST:
     spray->x.fixed +=
         (spray->timer << 12) +
-        ((s32)((((u32)(Import_RandomNext() << 1) >> 16) - 1) << 16) >> 1);
+        ((s32)(((Random_Below(2)) - 1) << 16) >> 1);
     break;
   case FACING_WEST:
     spray->x.fixed -=
         (spray->timer << 12) +
-        ((s32)((((u32)(Import_RandomNext() << 1) >> 16) - 1) << 16) >> 1);
+        ((s32)(((Random_Below(2)) - 1) << 16) >> 1);
     break;
   }
   if (spray->timer <= 3) {
@@ -1933,7 +1933,7 @@ static void AltinPeak_DriftSpray(struct Actor *spray) {
   if (spray->timer != 0)
     spray->timer -= 2;
   else
-    spray->timer = ((u32)(Import_RandomNext() * 5) >> 16) * 2 + 2;
+    spray->timer = (Random_Below(5)) * 2 + 2;
   if (--((struct FieldEffect *)spray)->countdown == 0)
     Actor_Release(spray);
 }
@@ -1980,17 +1980,17 @@ static void AltinPeak_SpawnDebris(void) {
 
   if (gFrameCount % 3 == 0) {
     debris = FieldActor_Create(
-        SPRITE_ROCK, (((u32)(Import_RandomNext() * 48) >> 16) << 16) + px(765),
+        SPRITE_ROCK, ((Random_Below(48)) << 16) + px(765),
         -px(64), px(608));
     if (debris != NULL) {
       if (gFrameCount % 9 == 0) {
-        if ((u32)(Import_RandomNext() << 1) >> 16 != 0)
+        if (Random_Below(2) != 0)
           Sound_Play(SE_CRASH);
         else
           Sound_Play(SE_CLATTER);
       }
       debris->motionFlags = 0;
-      scale = ((u32)(Import_RandomNext() << 15) >> 16) + 3 * Q16_ONE / 10;
+      scale = (Random_Below(32768)) + 3 * Q16_ONE / 10;
       debris->gravity = px(2) / 5;
       debris->scaleY = scale;
       debris->scaleX = scale;
@@ -2000,8 +2000,8 @@ static void AltinPeak_SpawnDebris(void) {
       debris->sprite->image.priority = 1;
       Actor_SelectAnimation(debris, 1);
       Actor_StartScript(debris, gAltinPeak_DebrisScript);
-      SET_VELOCITY(debris, (((u32)(Import_RandomNext() * 6) >> 16) - 3) << 16,
-                   px(8), ((u32)(Import_RandomNext() * 1536) >> 16) - 768);
+      SET_VELOCITY(debris, ((Random_Below(6)) - 3) << 16,
+                   px(8), (Random_Below(1536)) - 768);
     }
   }
 }

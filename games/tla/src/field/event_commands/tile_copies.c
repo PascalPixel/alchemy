@@ -1,6 +1,6 @@
 /// @file
-/// Copying the map cells the leader's layer touches within a rectangle, and
-/// the routines after it.
+/// The Cyclone's helpers: copying the cells it touched, its arcs and its
+/// burst, and an object jumping to the leader.
 
 #include "types.h"
 #include "actor.h"
@@ -31,8 +31,14 @@ extern struct TouchCopies gData_02001000__f0e2774 __asm__("gData_02001000");
 
 struct MapCell__f0e2774 *MapGrid_GetCellAt(s32 x, s32 z, s32 layer);
 
-void Func_080e2774(s32 x, s32 z, s16 layerIndex, s16 width, s16 height, s32 toX,
-                   s32 toZ) {
+/// For each cell the Cyclone touched (the event work's point list from
+/// FieldPsynergy_GatherNearbyCells) inside the width by height rectangle at
+/// (x, z) of the layer, copies the matching cell picture from the rectangle at
+/// (toX, toZ) over it, opens it (layer 2's collision 0) and records the copy
+/// in gData_02001000, up to 64. Trial Road, Gaia Rock and the Gabomba
+/// catacombs call it after a Cyclone.
+void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
+                              s16 height, s32 toX, s32 toZ) {
   u8 *event = Ram_HeapSlots->eventWork;
   struct Actor *owner = Actor_GetById(Party_GetLeaderActor());
   struct TouchLayer *layer =
@@ -90,7 +96,13 @@ void Func_080e2774(s32 x, s32 z, s16 layerIndex, s16 width, s16 height, s32 toX,
 #include "fixed_math.h"
 #include "actor_view.h"
 
-void Func_080e28d4(s32 sprite, s32 x, s32 z) {
+/// An object (sprite) pops up at the cell (x, z), grows, turns to the leader,
+/// who raises its arms, hops twice and flies into the leader in an arc. Trial
+/// Road, Gaia Rock, the Gabomba catacombs, Jupiter Lighthouse and Taopo Swamp
+/// call it.
+// XXX: what the object is (an item the Cyclone uncovers?); a render at Trial
+// Road would settle it.
+void FieldItem_JumpToLeader(s32 sprite, s32 x, s32 z) {
   s32 ownerId = Party_GetLeaderActor();
   struct Actor *owner = Actor_GetById(ownerId);
   struct Actor *object = Actor_CreateFar(sprite, x << 16, 0, z << 16);
@@ -143,7 +155,10 @@ void Func_080e28d4(s32 sprite, s32 x, s32 z) {
   }
 }
 
-void Func_080e2a68(s32 radius, s32 angle, u16 *offsets, u8 *pixels) {
+/// Plots 30 pixels of an arc at radius (at most 31) from the middle of a 64 by
+/// 64 picture, from angle on, shading from colour 225 to 239; offsets maps
+/// each point to its byte. The Cyclone draws its swirl with it.
+void Cyclone_PlotArc(s32 radius, s32 angle, u16 *offsets, u8 *pixels) {
   s32 i;
 
   if (radius > 31)

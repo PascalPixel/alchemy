@@ -297,7 +297,7 @@ Func_080c88c8:
 	ldr r4, [pc, #0]
 	bx r4
 	.4byte Event_PlayCueNearFocus
-	export Func_080c88d0, Func_080e2774
+	export Func_080c88d0, Cyclone_CopyTouchedCells
 	.global Func_080c88d8
 	.thumb_func
 Func_080c88d8:
@@ -322,7 +322,7 @@ Func_080c88e8:
 	export Func_080c8930, Func_080d2d70
 	export Func_080c8938, Func_080ca368
 	export Func_080c8940, Func_080ca3f4
-	export Func_080c8948, Func_080e28d4
+	export Func_080c8948, FieldItem_JumpToLeader
 	export ScreenTransition_IsScanlineActiveFar, ScreenTransition_IsScanlineActive
 	export Party_CheckItemLimitFar, Party_CheckItemLimit
 	export Scene_FindTriggerFar, Scene_FindTrigger

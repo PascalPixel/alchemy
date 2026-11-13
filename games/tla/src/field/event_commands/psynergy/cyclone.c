@@ -241,7 +241,7 @@ struct WhirlWork {
 void FieldPsynergy_GatherNearbyCells(void);
 void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Func_080e2a68(s32 radius, s32 angle, u16 *offsets, u8 *pixels);
+void Cyclone_PlotArc(s32 radius, s32 angle, u16 *offsets, u8 *pixels);
 void ParticleBurst_Start(void);
 void FieldPsynergy_RunTouchedEvents(void);
 void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
@@ -315,8 +315,8 @@ void FieldPsynergy_Cyclone(void) {
   }
   for (i = 0; i < 60; i++) {
     for (j = 0; j < 4; j++)
-      Func_080e2a68((s32)(spread + Random16() * 4 - (j << 16)) >> 16,
-                    Random16(), offsets, pixels);
+      Cyclone_PlotArc((s32)(spread + Random16() * 4 - (j << 16)) >> 16,
+                      Random16(), offsets, pixels);
     spread += step;
     if (spread > 0x1c0000)
       spread = 0x1c0000;

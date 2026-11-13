@@ -352,7 +352,7 @@ extern struct Trigger gData_02003c10[];
 extern struct Trigger gData_02003d9c[];
 extern struct Trigger gData_02003dfc[];
 
-struct Trigger *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov656Room1) {
     switch (gMainRoutineWork.entrance) {
     case 3:

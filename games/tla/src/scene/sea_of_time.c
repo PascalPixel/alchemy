@@ -190,8 +190,8 @@ extern struct ActorPlacement gSeaOfTime_Placements[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room2)
-    return (const struct ActorPlacement *)gSeaOfTime_Room2Placements;
-  return (const struct ActorPlacement *)gSeaOfTime_Placements;
+    return gSeaOfTime_Room2Placements;
+  return gSeaOfTime_Placements;
 }
 
 void SeaOfTime_CircleSwirl(void) {

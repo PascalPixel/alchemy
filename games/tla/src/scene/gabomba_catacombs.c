@@ -454,16 +454,16 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room1)
-    return (const struct Trigger *)gData_0200154c;
+    return gData_0200154c;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room2)
-    return (const struct Trigger *)gData_02001594;
+    return gData_02001594;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room3)
-    return (const struct Trigger *)gData_020015c4;
+    return gData_020015c4;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room4)
-    return (const struct Trigger *)gData_020016cc;
+    return gData_020016cc;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room5)
-    return (const struct Trigger *)gData_02001714;
-  return (const struct Trigger *)gData_02001540;
+    return gData_02001714;
+  return gData_02001540;
 }
 
 #if !TLA_PATCH_1

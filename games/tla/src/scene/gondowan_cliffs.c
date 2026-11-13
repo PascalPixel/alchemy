@@ -66,10 +66,10 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gGondowanCliffs_ActorPlacements[];
-extern LATE_DATA struct ActorPlacement gGondowanCliffs_PassActorPlacements[];
+extern struct ActorPlacement gGondowanCliffs_PassActorPlacements[];
 #define gGondowanCliffs_PassActorPlacements gGondowanCliffs_PassActorPlacements
 
-const u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_GondowanCliffsPass)
     return gGondowanCliffs_PassActorPlacements;
   return gGondowanCliffs_ActorPlacements;
@@ -283,14 +283,7 @@ void GondowanCliffs_TalkToDog(void) {
   }
 }
 
-/* VIEW(effect_spawn): routine gGondowanCliffs_PassTriggers as this part
- * declared it; the joined file has another; tried as the definition's extern
- * LATE_DATA struct Trigger gGondowanCliffs_PassTriggers[], it does not compile
- * in tla-ja: games/tla/src/scene/gondowan_cliffs.c:311:
- * `gGondowanCliffs_PassTriggers' undeclared (first use in this function). */
-extern const u8 gGondowanCliffs_PassTriggers__effect_spawn[] __asm__(
-    "gGondowanCliffs_PassTriggers");
-#define gGondowanCliffs_PassTriggers gGondowanCliffs_PassTriggers__effect_spawn
+extern struct Trigger gGondowanCliffs_PassTriggers[];
 extern struct Trigger gGondowanCliffs_Triggers[];
 
 void GondowanCliffs_GrindTheRock(s32 unused, s32 id) {
@@ -298,7 +291,7 @@ void GondowanCliffs_GrindTheRock(s32 unused, s32 id) {
   Event_SetFlag(FLAG_GONDOWAN_CLIFFS_ROCK_GROUND);
 }
 
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_GondowanCliffsPass)
     return gGondowanCliffs_PassTriggers;
   return gGondowanCliffs_Triggers;
@@ -710,7 +703,6 @@ struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
 #undef FLAG_SECOND_PUDDLE_FROZEN
 #undef PIXELS
 #define PIXELS(value) ((value) << 16)
-#undef gGondowanCliffs_PassTriggers
 
 // @file
 // The Gondowan Cliffs' tables, which the scene's getters return.

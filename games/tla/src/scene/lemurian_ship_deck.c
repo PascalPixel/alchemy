@@ -46,12 +46,12 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 extern struct ActorPlacement gLemurianShipDeck_Placements[];
 extern struct ActorPlacement gLemurianShipDeck_Room1Placements[];
 
-const u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov657Room1)
-    return (const u8 *)gLemurianShipDeck_Room1Placements;
-  return (const u8 *)gLemurianShipDeck_Placements;
+    return gLemurianShipDeck_Room1Placements;
+  return gLemurianShipDeck_Placements;
 }
 
 /// Once flag 0x985 is set, the leader goes through the cabin door, the door
@@ -98,12 +98,12 @@ void LemurianShipDeck_EnterCabin(void) {
 extern struct Trigger gLemurianShipDeck_Triggers[];
 extern struct Trigger gLemurianShipDeck_Room2Triggers[];
 
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov657Room2)
-    return (const u8 *)gLemurianShipDeck_Room2Triggers;
-  return (const u8 *)gLemurianShipDeck_Triggers;
+    return gLemurianShipDeck_Room2Triggers;
+  return gLemurianShipDeck_Triggers;
 }
 
 /// ★ Named from the game: "The door is held closed by a powerful force."

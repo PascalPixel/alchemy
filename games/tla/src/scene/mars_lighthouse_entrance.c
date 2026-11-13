@@ -148,7 +148,7 @@ s32 Func_02000070(void) {
   return 0;
 }
 
-const u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom1)
     return gMarsLighthouseEntrance_Room1Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom2)
@@ -879,7 +879,7 @@ void Func_02001138(void) {
     Func_02000fe0(cell + 128);
 }
 
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom1)
     return gMarsLighthouseEntrance_Room1Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom2)

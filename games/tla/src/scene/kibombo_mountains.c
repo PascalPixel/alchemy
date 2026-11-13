@@ -89,7 +89,7 @@ extern struct ActorPlacement gData_02001294[];
 extern struct ActorPlacement gData_020015f0[];
 extern struct ActorPlacement gData_020018c8[];
 
-const u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov66fRoom1)

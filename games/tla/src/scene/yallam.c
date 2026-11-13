@@ -356,7 +356,7 @@ extern struct Trigger gYallam_Triggers[];
 extern struct Trigger gYallam_RoomTwoTriggers[];
 extern struct Trigger gYallam_EntranceFifteenTriggers[];
 
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room1 &&
       gMainRoutineWork.entrance == 15)
     return gYallam_EntranceFifteenTriggers;

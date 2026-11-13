@@ -108,7 +108,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern struct ActorPlacement gData_020019dc[];
+extern LATE_DATA struct ActorPlacement gData_020019dc[];
 extern struct ActorPlacement gData_020019f4[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {

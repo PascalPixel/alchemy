@@ -332,17 +332,7 @@ extern const u8
         "gShrineOfTheSeaGod_Room8Placements");
 #define gShrineOfTheSeaGod_Room8Placements                                     \
   gShrineOfTheSeaGod_Room8Placements__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Triggers as this part
- * declared it; the joined file has another; tried as the definition's extern
- * DEFINE_G_DATA_02001330(gShrineOfTheSeaGod_Room8Placements, 297, 160, 202,
- * 176, 298, 1, 320, 218) struct Trigger gShrineOfTheSeaGod_Tr..., it does not
- * compile in tla-ja: games/tla/src/scene/shrine_of_the_sea_god.c:345:
- * conflicting types for
- * `gShrineOfTheSeaGod_Room8Placements__shrine_of_the_sea_god'. */
-extern const u8 gShrineOfTheSeaGod_Triggers__shrine_of_the_sea_god[] __asm__(
-    "gShrineOfTheSeaGod_Triggers");
-#define gShrineOfTheSeaGod_Triggers                                            \
-  gShrineOfTheSeaGod_Triggers__shrine_of_the_sea_god
+extern struct Trigger gShrineOfTheSeaGod_Triggers[];
 extern struct Trigger gShrineOfTheSeaGod_Room1Triggers[];
 #define gShrineOfTheSeaGod_Room1Triggers gShrineOfTheSeaGod_Room1Triggers
 extern struct Trigger gShrineOfTheSeaGod_Room2Triggers[];
@@ -390,24 +380,24 @@ const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod1)
-    return (const struct Trigger *)gShrineOfTheSeaGod_Room1Triggers;
+    return gShrineOfTheSeaGod_Room1Triggers;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod2)
-    return (const struct Trigger *)gShrineOfTheSeaGod_Room2Triggers;
+    return gShrineOfTheSeaGod_Room2Triggers;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod3)
-    return (const struct Trigger *)gShrineOfTheSeaGod_Room3Triggers;
+    return gShrineOfTheSeaGod_Room3Triggers;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod4)
-    return (const struct Trigger *)gShrineOfTheSeaGod_Room4Triggers;
+    return gShrineOfTheSeaGod_Room4Triggers;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod5)
-    return (const struct Trigger *)gShrineOfTheSeaGod_Room5Triggers;
+    return gShrineOfTheSeaGod_Room5Triggers;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod6)
-    return (const struct Trigger *)gShrineOfTheSeaGod_Room6Triggers;
+    return gShrineOfTheSeaGod_Room6Triggers;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod7)
-    return (const struct Trigger *)gShrineOfTheSeaGod_Room7Triggers;
+    return gShrineOfTheSeaGod_Room7Triggers;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod8)
-    return (const struct Trigger *)gShrineOfTheSeaGod_Room8Triggers;
+    return gShrineOfTheSeaGod_Room8Triggers;
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod9)
-    return (const struct Trigger *)gShrineOfTheSeaGod_Room9Triggers;
-  return (const struct Trigger *)gShrineOfTheSeaGod_Triggers;
+    return gShrineOfTheSeaGod_Room9Triggers;
+  return gShrineOfTheSeaGod_Triggers;
 }
 
 // next object the overlay links.
@@ -1030,7 +1020,6 @@ void Func_020012b4(void) {
 #undef gShrineOfTheSeaGod_Room6Placements
 #undef gShrineOfTheSeaGod_Room7Placements
 #undef gShrineOfTheSeaGod_Room8Placements
-#undef gShrineOfTheSeaGod_Triggers
 #undef gShrineOfTheSeaGod_Room1Triggers
 #undef gShrineOfTheSeaGod_Room2Triggers
 #undef gShrineOfTheSeaGod_Room3Triggers

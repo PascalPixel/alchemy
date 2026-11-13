@@ -1164,12 +1164,9 @@ DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
                                   CrackedTile_DropIn)
 
 // clang-format off
-/* VIEW(s273c): variable gData_02002c64 as this part defines it; a header the joined file includes has another; tried as the definition's extern DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack, CrackedTile_Fall) DEFINE_CRACKED_TILE_PLACE_LANDING(Cr..., it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_7.c:1138: conflicting types for `gData_02002c64'. */
-s16 gData_02002c64__s273c[] __asm__("gData_02002c64") = {
-    8, 16, 10, 16, 11, 16, 12, 16,
-    14, 16, 15, 16, 10, 18, 12, 18,
-    13, 18, 8, 20, 10, 20, 13, 20,
-    15, 20, -1, 0,
+s16 gData_02002c64[][2] = {
+    {8, 16}, {10, 16}, {11, 16}, {12, 16}, {14, 16}, {15, 16}, {10, 18},
+    {12, 18}, {13, 18}, {8, 20},  {10, 20}, {13, 20}, {15, 20}, {-1, 0},
 };
 // clang-format on
 

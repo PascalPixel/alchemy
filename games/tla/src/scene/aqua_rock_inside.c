@@ -153,7 +153,7 @@ extern u32 gData_0200411c[];
 extern u32 gWaterDropScript[];
 extern const u8 gData_0200414c[];
 extern const u8 gData_02004351[];
-extern const u8 gData_020044c8[];
+extern u32 gData_020044c8[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -332,7 +332,7 @@ extern struct ActorPlacement gData_02004a00[];
 extern struct ActorPlacement gData_02004a48[];
 extern struct ActorPlacement gData_02004b98[];
 
-const u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov67cRoom1)
@@ -2677,8 +2677,7 @@ extern u8 Data_020005f4__data[] __asm__("Data_020005f4");
 #define Data_020005f4 Data_020005f4__data
 
 // clang-format off
-/* VIEW(data): variable gData_020044c8 as this part defines it; a header the joined file includes has another; tried as the definition's extern LATE_DATA u32 gData_020044c8[], it does not compile in tla-ja: games/tla/src/scene/aqua_rock_inside.c:2712: conflicting types for `gData_020044c8'. */
-LATE_DATA u32 gData_020044c8__data[] __asm__("gData_020044c8") = {
+LATE_DATA u32 gData_020044c8[] = {
     0, 44, 22, 38, 0, 2,
     0, 0, 0, 0, 1, 38,
 };
@@ -2907,10 +2906,7 @@ LATE_DATA struct Trigger gData_02004c7c[] = {
     {TRIGGER_TABLE_END},
 };
 
-/* VIEW(data): variable gData_02004d84 as this part defines it; a header the joined file includes has another; tried as the definition's extern LATE_DATA u32 gData_02004d84[], it does not compile in tla-ja: games/tla/src/scene/aqua_rock_inside.c:2942: conflicting types for `gData_02004d84'. */
-LATE_DATA u32 gData_02004d84__data[] __asm__("gData_02004d84") = {
-    256,
-};
+LATE_DATA s32 gData_02004d84 = 256;
 
 LATE_DATA struct Trigger gData_02004d88[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},

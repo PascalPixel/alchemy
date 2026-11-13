@@ -137,7 +137,7 @@ void Naribwe_PrepareBlaze(void) {
     *flag = 0;
 }
 
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (Event_GetFlag(0x8ff))
     return gNaribwe_TriggersOnReturn;
   return gNaribwe_Triggers;

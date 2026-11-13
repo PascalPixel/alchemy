@@ -293,49 +293,17 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gMarsLighthouseRoomF_Placements[];
-/* VIEW(first): routine gMarsLighthouseRoomF_Room4Placements as this part
- * declared it; the joined file has another; tried as the one declaration extern
- * const u8 gMarsLighthouseRoomF_Room4Placements[], it does not compile in
- * tla-ja: games/tla/src/scene/mars_lighthouse_room_f.c:2917: conflicting types
- * for `gMarsLighthouseRoomF_Room4Placements'. */
-extern const u8 gMarsLighthouseRoomF_Room4Placements__first[] __asm__(
-    "gMarsLighthouseRoomF_Room4Placements");
-#define gMarsLighthouseRoomF_Room4Placements                                   \
-  gMarsLighthouseRoomF_Room4Placements__first
-/* VIEW(first): routine gMarsLighthouseRoomF_Room1Placements as this part
- * declared it; the joined file has another; tried as the one declaration extern
- * const u8 gMarsLighthouseRoomF_Room1Placements[], it does not compile in
- * tla-ja: games/tla/src/scene/mars_lighthouse_room_f.c:2940: conflicting types
- * for `gMarsLighthouseRoomF_Room1Placements'. */
-extern const u8 gMarsLighthouseRoomF_Room1Placements__first[] __asm__(
-    "gMarsLighthouseRoomF_Room1Placements");
-#define gMarsLighthouseRoomF_Room1Placements                                   \
-  gMarsLighthouseRoomF_Room1Placements__first
-/* VIEW(first): routine gMarsLighthouseRoomF_Room3Placements as this part
- * declared it; the joined file has another; tried as the one declaration extern
- * const u8 gMarsLighthouseRoomF_Room3Placements[], it does not compile in
- * tla-ja: games/tla/src/scene/mars_lighthouse_room_f.c:2959: conflicting types
- * for `gMarsLighthouseRoomF_Room3Placements'. */
-extern const u8 gMarsLighthouseRoomF_Room3Placements__first[] __asm__(
-    "gMarsLighthouseRoomF_Room3Placements");
-#define gMarsLighthouseRoomF_Room3Placements                                   \
-  gMarsLighthouseRoomF_Room3Placements__first
-/* VIEW(first): routine gMarsLighthouseRoomF_Room2Placements as this part
- * declared it; the joined file has another; tried as the one declaration extern
- * const u8 gMarsLighthouseRoomF_Room2Placements[], it does not compile in
- * tla-ja: games/tla/src/scene/mars_lighthouse_room_f.c:2974: conflicting types
- * for `gMarsLighthouseRoomF_Room2Placements'. */
-extern const u8 gMarsLighthouseRoomF_Room2Placements__first[] __asm__(
-    "gMarsLighthouseRoomF_Room2Placements");
-#define gMarsLighthouseRoomF_Room2Placements                                   \
-  gMarsLighthouseRoomF_Room2Placements__first
+extern struct ActorPlacement gMarsLighthouseRoomF_Room4Placements[];
+extern struct ActorPlacement gMarsLighthouseRoomF_Room1Placements[];
+extern struct ActorPlacement gMarsLighthouseRoomF_Room3Placements[];
+extern struct ActorPlacement gMarsLighthouseRoomF_Room2Placements[];
 
 s32 Func_0200004c(struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);
   return 0;
 }
 
-const u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom4)
     return gMarsLighthouseRoomF_Room4Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom2)
@@ -909,7 +877,7 @@ void Func_02000df8(void) {
   MarsLighthouseRoomF_ContinueSlide();
 }
 
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom4)
     return gMarsLighthouseRoomF_Room4Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom2)
@@ -2235,10 +2203,6 @@ DEFINE_ACTOR_PARK(Func_0200351c, Func_02003304)
 #undef position
 #undef WORK
 #undef ABS
-#undef gMarsLighthouseRoomF_Room4Placements
-#undef gMarsLighthouseRoomF_Room1Placements
-#undef gMarsLighthouseRoomF_Room3Placements
-#undef gMarsLighthouseRoomF_Room2Placements
 #undef gData_02005c84
 #undef gData_02005ce0
 #undef gData_02005d3c

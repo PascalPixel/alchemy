@@ -312,7 +312,7 @@ extern struct ActorPlacement gData_02006790[];
 
 void Func_02003bf0(void);
 
-u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   switch (gMainRoutineWork.entrance) {
   case 64:
     return gData_02006500;

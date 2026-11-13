@@ -171,7 +171,7 @@ extern struct Trigger gData_020074dc[];
 extern struct Trigger gData_02007698[];
 extern struct Trigger gData_02006ee8[];
 
-u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Kibombo1)
@@ -190,7 +190,7 @@ u8 *Scene_GetPlacements(void) {
   return gData_020064f8;
 }
 
-u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Kibombo1)

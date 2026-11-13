@@ -68,14 +68,14 @@ extern struct AquaRockWork gData_020034f0;
 extern u32 gData_02002c44[];
 extern u32 gWaterDropScript[];
 extern const u8 gData_02002c74[];
-extern const u8 gData_02002e30[];
-extern const u8 gData_02002e60[];
-extern const u8 gData_02002eec[];
-extern const u8 gData_02002f04[];
-extern const u8 gData_0200312c[];
-extern const u8 gData_02003214[];
-extern const u8 gData_02003220[];
-extern const u8 gData_020032d4[];
+extern s16 gData_02002e30[];
+extern s16 gData_02002e60[];
+extern struct ActorPlacement gData_02002eec[];
+extern struct ActorPlacement gData_02002f04[];
+extern struct ActorPlacement gData_0200312c[];
+extern struct Trigger gData_02003214[];
+extern struct Trigger gData_02003220[];
+extern struct Trigger gData_020032d4[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -313,7 +313,7 @@ s32 Func_02000478(struct Actor *object) {
   return 0;
 }
 
-const u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov67bRoom1)
@@ -873,7 +873,7 @@ void Func_02001224(s32 unused, s32 id) {
   Event_End();
 }
 
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov67bRoom1)
@@ -1744,15 +1744,13 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-/* VIEW(data): variable gData_02002e30 as this part defines it; a header the joined file includes has another; tried as the definition's extern LATE_DATA s16 gData_02002e30[], it does not compile in tla-ja: games/tla/src/scene/aqua_rock.c:1730: conflicting types for `gData_02002e30'. */
-LATE_DATA s16 gData_02002e30__data[] __asm__("gData_02002e30") = {
+LATE_DATA s16 gData_02002e30[] = {
     176, 424, 544, 192, 440, 560, -1, 2,
     272, 424, 544, 288, 440, 560, -1, 3,
     -1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-/* VIEW(data): variable gData_02002e60 as this part defines it; a header the joined file includes has another; tried as the definition's extern LATE_DATA s16 gData_02002e60[], it does not compile in tla-ja: games/tla/src/scene/aqua_rock.c:1737: conflicting types for `gData_02002e60'. */
-LATE_DATA s16 gData_02002e60__data[] __asm__("gData_02002e60") = {
+LATE_DATA s16 gData_02002e60[] = {
     48, -56, 960, 64, -40, 976, -1, 2,
     144, -56, 960, 160, -40, 976, -1, 3,
     236, -108, 956, 260, -84, 980, -1, 7,
@@ -1778,13 +1776,11 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-/* VIEW(data): variable gData_02002eec as this part defines it; a header the joined file includes has another; tried as the definition's extern LATE_DATA struct ActorPlacement gData_02002eec[], it does not compile in tla-ja: games/tla/src/scene/aqua_rock.c:1764: conflicting types for `gData_02002eec'. */
-LATE_DATA struct ActorPlacement gData_02002eec__data[] __asm__("gData_02002eec") = {
+LATE_DATA struct ActorPlacement gData_02002eec[] = {
     {SCENE_TABLE_END},
 };
 
-/* VIEW(data): variable gData_02002f04 as this part defines it; a header the joined file includes has another; tried as the definition's extern LATE_DATA struct ActorPlacement gData_02002f04[], it does not compile in tla-ja: games/tla/src/scene/aqua_rock.c:1769: conflicting types for `gData_02002f04'. */
-LATE_DATA struct ActorPlacement gData_02002f04__data[] __asm__("gData_02002f04") = {
+LATE_DATA struct ActorPlacement gData_02002f04[] = {
     {380, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(551), FACING_SOUTH, 2, 0},
     {380, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(551), FACING_SOUTH, 2, 0},
     {380, CONDITION_ALWAYS, 1, PIXELS(648), 0, PIXELS(615), FACING_SOUTH, 2, 0},
@@ -1810,8 +1806,7 @@ LATE_DATA struct ActorPlacement gData_02002f04__data[] __asm__("gData_02002f04")
     {SCENE_TABLE_END},
 };
 
-/* VIEW(data): variable gData_0200312c as this part defines it; a header the joined file includes has another; tried as the definition's extern LATE_DATA struct ActorPlacement gData_0200312c[], it does not compile in tla-ja: games/tla/src/scene/aqua_rock.c:1796: conflicting types for `gData_0200312c'. */
-LATE_DATA struct ActorPlacement gData_0200312c__data[] __asm__("gData_0200312c") = {
+LATE_DATA struct ActorPlacement gData_0200312c[] = {
     {383, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(584), FACING_SOUTH, 2, 0},
     {290, CONDITION_ALWAYS, 1, PIXELS(712), 0, PIXELS(520), FACING_SOUTH, 2, 0},
     {290, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(520), FACING_SOUTH, 2, 0},
@@ -1839,13 +1834,11 @@ LATE_DATA u32 gData_02003210[] = {
     0,
 };
 
-/* VIEW(data): variable gData_02003214 as this part defines it; a header the joined file includes has another; tried as the definition's extern LATE_DATA struct Trigger gData_02003214[], it does not compile in tla-ja: games/tla/src/scene/aqua_rock.c:1825: conflicting types for `gData_02003214'. */
-LATE_DATA struct Trigger gData_02003214__data[] __asm__("gData_02003214") = {
+LATE_DATA struct Trigger gData_02003214[] = {
     {TRIGGER_TABLE_END},
 };
 
-/* VIEW(data): variable gData_02003220 as this part defines it; a header the joined file includes has another; tried as the definition's extern LATE_DATA struct Trigger gData_02003220[], it does not compile in tla-ja: games/tla/src/scene/aqua_rock.c:1830: conflicting types for `gData_02003220'. */
-LATE_DATA struct Trigger gData_02003220__data[] __asm__("gData_02003220") = {
+LATE_DATA struct Trigger gData_02003220[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0xc402, 4, CONDITION_ALWAYS, EVENT(Func_020020bc)},
     {TRIGGER_STEP, 30, 0x320, EVENT(Func_02000f8c)},
@@ -1863,8 +1856,7 @@ LATE_DATA struct Trigger gData_02003220__data[] __asm__("gData_02003220") = {
     {TRIGGER_TABLE_END},
 };
 
-/* VIEW(data): variable gData_020032d4 as this part defines it; a header the joined file includes has another; tried as the definition's extern LATE_DATA struct Trigger gData_020032d4[], it does not compile in tla-ja: games/tla/src/scene/aqua_rock.c:1849: conflicting types for `gData_020032d4'. */
-LATE_DATA struct Trigger gData_020032d4__data[] __asm__("gData_020032d4") = {
+LATE_DATA struct Trigger gData_020032d4[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_02001f90)},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},

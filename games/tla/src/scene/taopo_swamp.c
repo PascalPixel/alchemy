@@ -243,22 +243,22 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov678Room2)
-    return (const struct ActorPlacement *)gTaopoSwamp_Room2Placements;
+    return gTaopoSwamp_Room2Placements;
   if (scene == (s32)&SceneId_Ov678Room4)
-    return (const struct ActorPlacement *)gTaopoSwamp_Room4Placements;
+    return gTaopoSwamp_Room4Placements;
   if (scene == (s32)&SceneId_Ov678Room5)
-    return (const struct ActorPlacement *)gTaopoSwamp_Room5Placements;
+    return gTaopoSwamp_Room5Placements;
   if (scene == (s32)&SceneId_Ov678Room7)
-    return (const struct ActorPlacement *)gTaopoSwamp_Room7Placements;
+    return gTaopoSwamp_Room7Placements;
   if (scene == (s32)&SceneId_Ov678Room8)
-    return (const struct ActorPlacement *)gTaopoSwamp_Room8Placements;
+    return gTaopoSwamp_Room8Placements;
   if (scene == (s32)&SceneId_Ov678Room9)
-    return (const struct ActorPlacement *)gTaopoSwamp_Room9Placements;
+    return gTaopoSwamp_Room9Placements;
   if (scene == (s32)&SceneId_Ov678Room10)
-    return (const struct ActorPlacement *)gTaopoSwamp_Room10Placements;
+    return gTaopoSwamp_Room10Placements;
   if (scene == (s32)&SceneId_Ov678Room11)
-    return (const struct ActorPlacement *)gTaopoSwamp_Room11Placements;
-  return (const struct ActorPlacement *)gTaopoSwamp_Placements;
+    return gTaopoSwamp_Room11Placements;
+  return gTaopoSwamp_Placements;
 }
 
 /// Whirlwind on one of the bushes 8 to 12: its flag (0x8d8 plus its id) keeps

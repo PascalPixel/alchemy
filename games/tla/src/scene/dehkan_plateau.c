@@ -703,7 +703,7 @@ const u8 *Scene_GetPlacements(void) {
   return gData_020045e0;
 }
 
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov655Room1)

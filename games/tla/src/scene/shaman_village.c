@@ -387,15 +387,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(s00b8): variable gShamanVillage_Placements as u32
- * gShamanVillage_Placements[]; scene/shaman_village/s1fec has struct
- * ActorPlacement gShamanVillage_Placements[] = {; tried as the definition's
- * extern struct ActorPlacement gShamanVillage_Placements[], it does not compile
- * in tla-ja: games/tla/src/scene/shaman_village.c:406:
- * `gShamanVillage_Placements' undeclared (first use in this function). */
-extern u32
-    gShamanVillage_Placements__s00b8[] __asm__("gShamanVillage_Placements");
-#define gShamanVillage_Placements gShamanVillage_Placements__s00b8
+extern struct ActorPlacement gShamanVillage_Placements[];
 extern struct ActorPlacement gShamanVillage_Room1Placements[];
 extern struct ActorPlacement gShamanVillage_Room3Placements[];
 
@@ -414,7 +406,7 @@ extern struct ActorPlacement gShamanVillage_Room4Placements[];
 extern struct ActorPlacement gShamanVillage_Room5Placements[];
 extern struct ActorPlacement gShamanVillage_Room6Placements[];
 
-void *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_ShamanVillage1)
@@ -788,7 +780,7 @@ extern struct Trigger gShamanVillage_Room4Triggers[];
 extern struct Trigger gShamanVillage_Room5Triggers[];
 extern struct Trigger gShamanVillage_Room6Triggers[];
 
-void *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_ShamanVillage1)
@@ -1491,7 +1483,6 @@ void ShamanVillage_MeetMoapa(void) {
 #undef gFieldEffect_MediumScript
 #undef gShamanVillage_WalkToLeftStartScript
 #undef gShamanVillage_WalkToRightStartScript
-#undef gShamanVillage_Placements
 #undef gShamanVillage_Room2Placements
 // ---- scene/shared/drift_spawn.c ----
 
@@ -3647,6 +3638,5 @@ u32 gDriftScene_SpawnScript[] = {
 #undef gShamanVillage_WalkToLeftStartScript
 #undef gShamanVillage_WalkToRightStartScript
 #undef Import_ActorSetMode
-#undef gShamanVillage_Placements
 #undef gShamanVillage_Room2Placements
 #undef gFieldEffect_MediumScript

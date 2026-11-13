@@ -71,7 +71,7 @@ s32 TrialRoad_SettleOnGround(struct Actor *object) {
   return 0;
 }
 
-const u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s32 pattern = gTrialRoadState->pattern;
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room1)
@@ -1370,7 +1370,7 @@ extern struct Trigger gTrialRoad_Room4Triggers[];
 extern struct Trigger gTrialRoad_Room2Triggers[];
 extern s32 gTrialRoad_Room1Triggers[];
 
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s32 pattern = gTrialRoadState->pattern;
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room1)

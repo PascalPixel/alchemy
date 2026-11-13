@@ -141,7 +141,7 @@ void Func_02000118(void) { Import_EventSetExitRequest(4); }
 
 void Func_02000124(void) { Import_EventSetExitRequest(6); }
 
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov699Room2)
     return gData_0200236c;
   return gData_020022e8;

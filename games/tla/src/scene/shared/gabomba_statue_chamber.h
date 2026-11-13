@@ -75,13 +75,13 @@ void Actor_MoveToObject(s32 actor, s32 target);
 
 void Func_02000a98(s32 x, s32 z);
 
-extern u8 gData_020020f8[];
-extern u8 gData_020021e8[];
-extern u8 gData_02002458[];
-extern u8 gData_02002470[];
-extern u8 gData_020024a0[];
-extern u8 gData_020024dc[];
-extern u8 gData_02002530[];
-extern u8 gData_0200a08c[];
+extern struct ActorPlacement gData_020020f8[];
+extern struct ActorPlacement gData_020021e8[];
+extern struct ActorPlacement gData_02002458[];
+extern struct Trigger gData_02002470[];
+extern struct Trigger gData_020024a0[];
+extern struct Trigger gData_020024dc[];
+extern struct Trigger gData_02002530[];
+extern u32 gData_0200a08c[];
 
 #endif

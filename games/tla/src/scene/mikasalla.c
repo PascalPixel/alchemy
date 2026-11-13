@@ -89,7 +89,7 @@ s16 *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-void *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov65dRoom1)
@@ -158,7 +158,7 @@ void Mikasalla_EnterDoor(void) {
 /// without a fight.
 void Mikasalla_MeetSpark(void) { Djinn_JoinParty(ACTOR_SPARK, 2, 8); }
 
-struct Trigger *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov65dRoom2)

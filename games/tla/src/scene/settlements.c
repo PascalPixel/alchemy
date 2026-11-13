@@ -282,7 +282,7 @@ extern struct ActorPlacement gSettlements_Room10Placements[];
 extern struct ActorPlacement gSettlements_Room7Placements[];
 extern struct ActorPlacement gSettlements_Room8Placements[];
 
-u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov690Room1)
@@ -410,7 +410,7 @@ extern struct Trigger gSettlements_Room8Triggers[];
 extern struct Trigger gSettlements_Room9Triggers[];
 extern struct Trigger gSettlements_Room10Triggers[];
 
-u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov690Room1)

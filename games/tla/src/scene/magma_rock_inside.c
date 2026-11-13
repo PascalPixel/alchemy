@@ -431,7 +431,7 @@ extern struct ActorPlacement gMagmaRockInside_Room8Placements[];
 
 extern s16 gMagmaRockInside_Room6Pillars[];
 
-u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene != (s32)&SceneId_Ov692Room1) {
@@ -585,17 +585,7 @@ void MagmaRockInside_PlayBurst(s16 value) {
   BattleEffect_CleanupSceneObjects();
 }
 
-/* VIEW(magma_rock_inside): variable gMagmaRockInside_EmberScript as const s32
- * gMagmaRockInside_EmberScript[]; scene/magma_rock_inside/s46e8 has u32
- * gMagmaRockInside_EmberScript[] = {; tried as the definition's extern
- * DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
- * DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44) ..., it
- * does not compile in tla-ja: games/tla/src/scene/magma_rock_inside.c:710:
- * conflicting types for `gMagmaRockInside_EmberScript'. */
-extern const s32 gMagmaRockInside_EmberScript__magma_rock_inside[] __asm__(
-    "gMagmaRockInside_EmberScript");
-#define gMagmaRockInside_EmberScript                                           \
-  gMagmaRockInside_EmberScript__magma_rock_inside
+extern u32 gMagmaRockInside_EmberScript[];
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -724,7 +714,7 @@ void MagmaRockInside_DriftAndSlow(struct Actor *object) {
   object->unk4c = dz;
 }
 
-extern const s32 gMagmaRockInside_EmberScript[];
+extern u32 gMagmaRockInside_EmberScript[];
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -934,16 +924,7 @@ void MagmaRockInside_PushPillarIntoLava(void) {
   Event_End();
 }
 
-/* VIEW(magma_rock_inside): variable gMagmaRockInside_FlameEmberScript as const
- * s32 gMagmaRockInside_FlameEmberScript[]; scene/magma_rock_inside/s46e8 has
- * u32 gMagmaRockInside_FlameEmberScript[] = {; tried as the definition's extern
- * u32 gMagmaRockInside_FlameEmberScript[], it does not compile in tla-ja:
- * games/tla/src/scene/magma_rock_inside.c:1327: conflicting types for
- * `gMagmaRockInside_FlameEmberScript'. */
-extern const s32 gMagmaRockInside_FlameEmberScript__magma_rock_inside[] __asm__(
-    "gMagmaRockInside_FlameEmberScript");
-#define gMagmaRockInside_FlameEmberScript                                      \
-  gMagmaRockInside_FlameEmberScript__magma_rock_inside
+extern u32 gMagmaRockInside_FlameEmberScript[];
 
 void MagmaRockInside_DrainLava(void) {
   s32 srcX;
@@ -1349,7 +1330,7 @@ void MagmaRockInside_SmokeEmber(struct Actor *object) {
   }
 }
 
-extern const s32 gMagmaRockInside_FlameEmberScript[];
+extern u32 gMagmaRockInside_FlameEmberScript[];
 
 static __inline__ void Arrive(s32 id, s32 x, s32 z) {
   Actor_SetPosition(id, 194 << 18, 248 << 16);
@@ -2269,7 +2250,7 @@ extern struct Trigger gMagmaRockInside_Room7Triggers[];
 extern struct Trigger gMagmaRockInside_Room8Triggers[];
 #define gMagmaRockInside_Room8Triggers gMagmaRockInside_Room8Triggers
 
-u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene != (s32)&SceneId_Ov692Room1) {
@@ -2375,8 +2356,6 @@ void MagmaRockInside_LayerWithLeader(struct Actor *arg) {
 #undef FIELD_AT
 #undef EVENT_WORK
 
-#undef gMagmaRockInside_EmberScript
-#undef gMagmaRockInside_FlameEmberScript
 #undef gMagmaRockInside_Statues
 #undef gMagmaRockInside_Room4Statues
 #undef gMagmaRockInside_SparkScript
@@ -3730,9 +3709,7 @@ struct Trigger gMagmaRockInside_Room8Triggers[] = {
 #undef gMagmaRockInside_Room6Placements
 #undef gMagmaRockInside_Room7Placements
 #undef gMagmaRockInside_Room8Placements
-#undef gMagmaRockInside_EmberScript
 #undef gMagmaRockInside_Room4Statues
-#undef gMagmaRockInside_FlameEmberScript
 #undef DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR
 #undef DEFINE_MAGMA_ROCK_INSIDE_LIGHT_TORCH
 #undef BYTE_AT

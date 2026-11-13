@@ -601,11 +601,11 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-u32 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room2)
-    return (u32 *)gYampiDesertCave_Room2Placements;
+    return gYampiDesertCave_Room2Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3)
-    return (u32 *)gYampiDesertCave_Room3Placements;
+    return gYampiDesertCave_Room3Placements;
   return gYampiDesertCave_Placements;
 }
 
@@ -872,7 +872,7 @@ void YampiDesertCave_ScoopTreasure(s32 a) {
   YampiDesertCave_Call1920(a, 64, 0x302);
 }
 
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room2)
     return gYampiDesertCave_Room2Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3)

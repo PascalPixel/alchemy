@@ -216,19 +216,19 @@ extern struct ActorPlacement gMagmaRock_Room2UpperPlacements[];
 extern struct ActorPlacement gMagmaRock_Room2TopPlacements[];
 extern struct ActorPlacement gMagmaRock_Room3Placements[];
 
-const struct Trigger *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
     if (gMainRoutineWork.entrance <= 3)
-      return (const struct Trigger *)gMagmaRock_Room2LowerPlacements;
+      return gMagmaRock_Room2LowerPlacements;
     if (gMainRoutineWork.entrance <= 8)
-      return (const struct Trigger *)gMagmaRock_Room2MiddlePlacements;
+      return gMagmaRock_Room2MiddlePlacements;
     if (gMainRoutineWork.entrance <= 12)
-      return (const struct Trigger *)gMagmaRock_Room2UpperPlacements;
-    return (const struct Trigger *)gMagmaRock_Room2TopPlacements;
+      return gMagmaRock_Room2UpperPlacements;
+    return gMagmaRock_Room2TopPlacements;
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room3)
-    return (const struct Trigger *)gMagmaRock_Room3Placements;
-  return (const struct Trigger *)gMagmaRock_Placements;
+    return gMagmaRock_Room3Placements;
+  return gMagmaRock_Placements;
 }
 
 void Actor_LiftTargetBlock(s16 *table);
@@ -1441,16 +1441,16 @@ extern struct Trigger gMagmaRock_Room3Triggers[];
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
     if (gMainRoutineWork.entrance <= 3)
-      return (const struct Trigger *)gMagmaRock_Room2LowerTriggers;
+      return gMagmaRock_Room2LowerTriggers;
     if (gMainRoutineWork.entrance <= 8)
-      return (const struct Trigger *)gMagmaRock_Room2MiddleTriggers;
+      return gMagmaRock_Room2MiddleTriggers;
     if (gMainRoutineWork.entrance <= 12)
-      return (const struct Trigger *)gMagmaRock_Room2UpperTriggers;
-    return (const struct Trigger *)gMagmaRock_Room2TopTriggers;
+      return gMagmaRock_Room2UpperTriggers;
+    return gMagmaRock_Room2TopTriggers;
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room3)
-    return (const struct Trigger *)gMagmaRock_Room3Triggers;
-  return (const struct Trigger *)gMagmaRock_Triggers;
+    return gMagmaRock_Room3Triggers;
+  return gMagmaRock_Triggers;
 }
 #undef BYTE_AT
 

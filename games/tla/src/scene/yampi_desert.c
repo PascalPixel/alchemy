@@ -38,11 +38,11 @@ struct SceneEventWork {
   s32 screenEffect;
 };
 
-extern const u8 gYampiDesert_Room1Stakes[];
-extern const u8 gYampiDesert_Room3Stakes[];
-extern const u8 gYampiDesert_Room4Stakes[];
-extern const u8 gYampiDesert_Room5Stakes[];
-extern const u8 gYampiDesert_Room12Stakes[];
+extern s16 gYampiDesert_Room1Stakes[];
+extern s16 gYampiDesert_Room3Stakes[];
+extern s16 gYampiDesert_Room4Stakes[];
+extern s16 gYampiDesert_Room5Stakes[];
+extern s32 gYampiDesert_Room12Stakes[];
 extern s32 gYampiDesert_RaisedEvent;
 
 struct Actor *Actor_GetById(u32 objectId);
@@ -305,8 +305,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 extern struct ActorPlacement gYampiDesert_Placements[];
 extern struct ActorPlacement gYampiDesert_Room1Placements[];
 extern struct ActorPlacement gYampiDesert_Room2Placements[];
-extern LATE_DATA struct ActorPlacement
-    gYampiDesert_Room2PlacementsAfterMeeting[];
+extern struct ActorPlacement gYampiDesert_Room2PlacementsAfterMeeting[];
 #define gYampiDesert_Room2PlacementsAfterMeeting                               \
   gYampiDesert_Room2PlacementsAfterMeeting
 extern struct ActorPlacement gYampiDesert_Room3Placements[];
@@ -316,7 +315,7 @@ extern struct ActorPlacement gYampiDesert_Room8Placements[];
 extern struct ActorPlacement gYampiDesert_Room10Placements[];
 extern struct ActorPlacement gYampiDesert_Room12Placements[];
 
-const u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov661Room1)
@@ -359,7 +358,7 @@ extern struct Trigger gYampiDesert_Room12Triggers[];
 
 /// Returns the current room's table.
 // As ☀️'s Scene_GetEntrances picks one.
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov661Room1)
@@ -1100,7 +1099,7 @@ extern u8 gYampiDesert_FinderRunsAhead__yampi_desert[] __asm__(
 extern u8 gYampiDesert_TravelersFollow__yampi_desert[] __asm__(
     "gYampiDesert_TravelersFollow");
 #define gYampiDesert_TravelersFollow gYampiDesert_TravelersFollow__yampi_desert
-extern LATE_DATA u32 gYampiDesert_LastTravelersFollow[];
+extern u32 gYampiDesert_LastTravelersFollow[];
 #define gYampiDesert_LastTravelersFollow gYampiDesert_LastTravelersFollow
 
 // ★ Named from the game: "Hey! Look! Up there!" (MsgHeyLookUp)
@@ -2720,15 +2719,13 @@ LATE_DATA u32 gYampiDesert_LastTravelersFollow[] = {
     1, 17,
 };
 
-/* VIEW(data2): variable gYampiDesert_Room1Stakes as this part defines it; a header the joined file includes has another; tried as the definition's extern LATE_DATA s16 gYampiDesert_Room1Stakes[], it does not compile in tla-ja: games/tla/src/scene/yampi_desert.c:2815: conflicting types for `gYampiDesert_Room1Stakes'. */
-LATE_DATA s16 gYampiDesert_Room1Stakes__data2[] __asm__("gYampiDesert_Room1Stakes") = {
+LATE_DATA s16 gYampiDesert_Room1Stakes[] = {
     8, 0, 512, 9, 0, 513, 10, 0,
     514, 11, 0, 515, 12, 0, 516, 13,
     0, 517, -1,
 };
 
-/* VIEW(data2): variable gYampiDesert_Room3Stakes as this part defines it; a header the joined file includes has another; tried as the definition's extern LATE_DATA s16 gYampiDesert_Room3Stakes[], it does not compile in tla-ja: games/tla/src/scene/yampi_desert.c:2822: conflicting types for `gYampiDesert_Room3Stakes'. */
-LATE_DATA s16 gYampiDesert_Room3Stakes__data2[] __asm__("gYampiDesert_Room3Stakes") = {
+LATE_DATA s16 gYampiDesert_Room3Stakes[] = {
     8, 0, 512, 9, 0, 513, 10, 0,
     514, 11, 0, 515, 12, 0, 516, 13,
     0, 517, 14, 0, 518, 15, 0, 519,
@@ -2736,32 +2733,23 @@ LATE_DATA s16 gYampiDesert_Room3Stakes__data2[] __asm__("gYampiDesert_Room3Stake
     522, -1,
 };
 
-/* VIEW(data2): variable gYampiDesert_Room4Stakes as this part defines it; a header the joined file includes has another; tried as the definition's extern LATE_DATA s16 gYampiDesert_Room4Stakes[], it does not compile in tla-ja: games/tla/src/scene/yampi_desert.c:2831: conflicting types for `gYampiDesert_Room4Stakes'. */
-LATE_DATA s16 gYampiDesert_Room4Stakes__data2[] __asm__("gYampiDesert_Room4Stakes") = {
+LATE_DATA s16 gYampiDesert_Room4Stakes[] = {
     8, 0, 512, 9, 0, 513, 10, 0,
     514, 11, 0, 515, -1,
 };
 
-/* VIEW(data2): variable gYampiDesert_Room5Stakes as this part defines it; a header the joined file includes has another; tried as the definition's extern LATE_DATA s16 gYampiDesert_Room5Stakes[], it does not compile in tla-ja: games/tla/src/scene/yampi_desert.c:2837: conflicting types for `gYampiDesert_Room5Stakes'. */
-LATE_DATA s16 gYampiDesert_Room5Stakes__data2[] __asm__("gYampiDesert_Room5Stakes") = {
+LATE_DATA s16 gYampiDesert_Room5Stakes[] = {
     8, 0, 512, 9, 0, 513, 10, 0,
     514, -1,
 };
 
-/* VIEW(data2): variable gYampiDesert_Room12Stakes as this part defines it; a header the joined file includes has another; tried as the definition's extern LATE_DATA s32 gYampiDesert_Room12Stakes[], it does not compile in tla-ja: games/tla/src/scene/yampi_desert.c:2843: conflicting types for `gYampiDesert_Room12Stakes'. */
-LATE_DATA s32 gYampiDesert_Room12Stakes__data2[] __asm__("gYampiDesert_Room12Stakes") = {
+LATE_DATA s32 gYampiDesert_Room12Stakes[] = {
     8, -0xfe00,
 };
 
-/* VIEW(data2): variable gYampiDesert_RaisedEvent as this part defines it; a header the joined file includes has another; tried as the definition's extern LATE_DATA u32 gYampiDesert_RaisedEvent[], it does not compile in tla-ja: games/tla/src/scene/yampi_desert.c:2848: conflicting types for `gYampiDesert_RaisedEvent'. */
-LATE_DATA u32 gYampiDesert_RaisedEvent__data2[] __asm__("gYampiDesert_RaisedEvent") = {
-    0,
-};
+LATE_DATA s32 gYampiDesert_RaisedEvent = 0;
 
-/* VIEW(data2): variable gYampiDesert_SandRipple as this part defines it; a header the joined file includes has another; tried as the definition's extern LATE_DATA u32 gYampiDesert_SandRipple[], it does not compile in tla-ja: games/tla/src/scene/yampi_desert.c:2853: conflicting types for `gYampiDesert_SandRipple'. */
-LATE_DATA u32 gYampiDesert_SandRipple__data2[] __asm__("gYampiDesert_SandRipple") = {
-    0,
-};
+LATE_DATA struct Actor *gYampiDesert_SandRipple = NULL;
 
 LATE_DATA struct SceneEntrance gYampiDesert_Entrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

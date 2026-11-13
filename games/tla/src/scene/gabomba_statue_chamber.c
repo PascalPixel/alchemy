@@ -62,7 +62,7 @@ u8 *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov672Room1)
@@ -72,7 +72,7 @@ u8 *Scene_GetPlacements(void) {
   return gData_02002458;
 }
 
-u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov672Room1)
@@ -1121,8 +1121,7 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-/* VIEW(data): variable gData_0200a08c as this part defines it; a header the joined file includes has another; tried as the definition's extern u32 gData_0200a08c[], it does not compile in tla-ja: games/tla/src/scene/gabomba_statue_chamber.c:1132: conflicting types for `gData_0200a08c'. */
-u32 gData_0200a08c__data[] __asm__("gData_0200a08c") = {
+u32 gData_0200a08c[] = {
     0x1001d0, 0x1e00090, 0xa00020, 0x2ffff, 0xffff, 0,
     0, 0,
 };
@@ -1144,8 +1143,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-/* VIEW(data): variable gData_020020f8 as this part defines it; a header the joined file includes has another; tried as the definition's extern struct ActorPlacement gData_020020f8[], it does not compile in tla-ja: games/tla/src/scene/gabomba_statue_chamber.c:1155: conflicting types for `gData_020020f8'. */
-struct ActorPlacement gData_020020f8__data[] __asm__("gData_020020f8") = {
+struct ActorPlacement gData_020020f8[] = {
     {375, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(152), FACING_SOUTH, 2, 0},
     {361, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(256), FACING_EAST, 2, 0},
     {361, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(256), FACING_EAST, 2, 1},
@@ -1158,8 +1156,7 @@ struct ActorPlacement gData_020020f8__data[] __asm__("gData_020020f8") = {
     {SCENE_TABLE_END},
 };
 
-/* VIEW(data): variable gData_020021e8 as this part defines it; a header the joined file includes has another; tried as the definition's extern struct ActorPlacement gData_020021e8[], it does not compile in tla-ja: games/tla/src/scene/gabomba_statue_chamber.c:1169: conflicting types for `gData_020021e8'. */
-struct ActorPlacement gData_020021e8__data[] __asm__("gData_020021e8") = {
+struct ActorPlacement gData_020021e8[] = {
     {375, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(88), FACING_SOUTH, 2, 0},
     {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
     {26, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(136), FACING_NORTH + FACING_STEP, 2, 0},
@@ -1188,30 +1185,19 @@ struct ActorPlacement gData_020021e8__data[] __asm__("gData_020021e8") = {
     {SCENE_TABLE_END},
 };
 
-/* VIEW(data): variable gData_02002458 as this part defines it; a header the joined file includes has another; tried as the definition's extern struct ActorPlacement gData_02002458[], it does not compile in tla-ja: games/tla/src/scene/gabomba_statue_chamber.c:1199: conflicting types for `gData_02002458'. */
-struct ActorPlacement gData_02002458__data[] __asm__("gData_02002458") = {
+struct ActorPlacement gData_02002458[] = {
     {SCENE_TABLE_END},
 };
 // clang-format on
 
-/* VIEW(data): variable gData_02002470 as this part defines it; a header the
- * joined file includes has another; tried as the definition's extern struct
- * Trigger gData_02002470[], it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue_chamber.c:1205: conflicting types for
- * `gData_02002470'. */
-struct Trigger gData_02002470__data[] __asm__("gData_02002470") = {
+struct Trigger gData_02002470[] = {
     {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_02000b60)},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_TABLE_END},
 };
 
-/* VIEW(data): variable gData_020024a0 as this part defines it; a header the
- * joined file includes has another; tried as the definition's extern struct
- * Trigger gData_020024a0[], it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue_chamber.c:1213: conflicting types for
- * `gData_020024a0'. */
-struct Trigger gData_020024a0__data[] __asm__("gData_020024a0") = {
+struct Trigger gData_020024a0[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 3, 0x206, EVENT(Func_02000d3c)},
@@ -1219,12 +1205,7 @@ struct Trigger gData_020024a0__data[] __asm__("gData_020024a0") = {
     {TRIGGER_TABLE_END},
 };
 
-/* VIEW(data): variable gData_020024dc as this part defines it; a header the
- * joined file includes has another; tried as the definition's extern struct
- * Trigger gData_020024dc[], it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue_chamber.c:1222: conflicting types for
- * `gData_020024dc'. */
-struct Trigger gData_020024dc__data[] __asm__("gData_020024dc") = {
+struct Trigger gData_020024dc[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x202, 2, CONDITION_ALWAYS, EVENT(Func_02000b70)},
     {TRIGGER_STEP, 10, 0x8fe, EVENT(Func_02000e60)},
@@ -1235,11 +1216,6 @@ struct Trigger gData_020024dc__data[] __asm__("gData_020024dc") = {
     {TRIGGER_TABLE_END},
 };
 
-/* VIEW(data): variable gData_02002530 as this part defines it; a header the
- * joined file includes has another; tried as the definition's extern struct
- * Trigger gData_02002530[], it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue_chamber.c:1234: conflicting types for
- * `gData_02002530'. */
-struct Trigger gData_02002530__data[] __asm__("gData_02002530") = {
+struct Trigger gData_02002530[] = {
     {TRIGGER_TABLE_END},
 };

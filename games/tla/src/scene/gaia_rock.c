@@ -281,12 +281,12 @@ void Func_020003fc(void) {
   }
 }
 
-const struct SceneEntrance *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room1)
-    return (const struct SceneEntrance *)gData_020013c8;
+    return gData_020013c8;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room2)
-    return (const struct SceneEntrance *)gData_020014b8;
-  return (const struct SceneEntrance *)gData_02001554;
+    return gData_020014b8;
+  return gData_02001554;
 }
 
 struct OrbitEffect {

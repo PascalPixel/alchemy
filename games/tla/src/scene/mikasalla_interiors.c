@@ -46,8 +46,8 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65ERoom2)
-    return (const struct ActorPlacement *)gMikasallaInteriors_SanctumPlacements;
-  return (const struct ActorPlacement *)gMikasallaInteriors_InnPlacements;
+    return gMikasallaInteriors_SanctumPlacements;
+  return gMikasallaInteriors_InnPlacements;
 }
 
 void Event_Start();
@@ -76,8 +76,8 @@ s32 MikasallaInteriors_MindReadIslanderComplaints(void) {
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65ERoom2)
-    return (const struct Trigger *)gMikasallaInteriors_SanctumTriggers;
-  return (const struct Trigger *)gMikasallaInteriors_InnTriggers;
+    return gMikasallaInteriors_SanctumTriggers;
+  return gMikasallaInteriors_InnTriggers;
 }
 
 void Sanctum_Run();

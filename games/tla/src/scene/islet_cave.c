@@ -199,7 +199,7 @@ extern struct Trigger gData_02001788[];
 extern struct Trigger gData_02001914[];
 extern struct Trigger gData_020019b0[];
 
-const u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov675Room1)
@@ -209,7 +209,7 @@ const u8 *Scene_GetPlacements(void) {
   return gData_02001548;
 }
 
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov675Room2)

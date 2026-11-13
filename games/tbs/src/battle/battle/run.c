@@ -415,32 +415,20 @@ s32 BattleParty_PrepareMembers(u16 *unitIds) {
 /// the opponent's three places. Called by BattleIntro_AnnounceEncounter,
 /// BattleUnit_Collect and BattleAbility_ApplyToTarget.
 s32 BattleEnemy_List(s16 *unitIds) {
-  s16 *output;
-  s32 count;
-  s32 id;
-  s32 lastId;
-  s32 listed;
+  s32 enemyCapacity = ENEMY_BATTLE_SIZE;
+  s32 count = 0;
+  s32 unitId;
 
-  output = unitIds;
-  listed = 0;
-  lastId = ENEMY_BATTLE_SIZE;
-  count = 0;
-  if (output != NULL) {
-    if (GameFlag_GetFar(FLAG_LINK_BATTLE) != 0) {
-      lastId = LINK_PARTY_SIZE;
-    }
-    id = FIRST_ENEMY_UNIT;
-    lastId += FIRST_ENEMY_UNIT;
-    for (; id < lastId; id += 1) {
-      if (Unit_GetFar(id)->side != BATTLE_SIDE_NONE) {
-        *output = id;
-        listed += 1;
-        output += 1;
-      }
-    }
-    *output = BATTLE_UNIT_LIST_END;
-    count = listed;
+  if (unitIds == NULL)
+    return 0;
+  if (GameFlag_GetFar(FLAG_LINK_BATTLE) != 0)
+    enemyCapacity = LINK_PARTY_SIZE;
+  for (unitId = FIRST_ENEMY_UNIT; unitId < FIRST_ENEMY_UNIT + enemyCapacity;
+       unitId++) {
+    if (Unit_GetFar(unitId)->side != BATTLE_SIDE_NONE)
+      unitIds[count++] = unitId;
   }
+  unitIds[count] = BATTLE_UNIT_LIST_END;
   return count;
 }
 
@@ -451,70 +439,42 @@ s32 BattleEnemy_List(s16 *unitIds) {
 /// battle, the turn's end and spoils) to test whether a side still stands and
 /// to pick targets.
 s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
-  u16 activeMembers[8];
-  u16 *base;
-  s32 remaining;
-  s32 lastEnemy;
-  u16 *output;
-  s32 livingCount;
-  s32 enemyCapacity;
-  u16 *member;
+  u16 members[8];
+  s32 enemyCapacity = ENEMY_BATTLE_SIZE;
+  s32 count = 0;
   s32 unitId;
-  s16 hp;
-  s32 activeCount;
-  struct Unit *unit;
+  s32 i;
 
-  output = unitIds;
-  livingCount = 0;
-  enemyCapacity = ENEMY_BATTLE_SIZE;
-  if (GameFlag_GetFar(FLAG_LINK_BATTLE) != 0) {
+  if (GameFlag_GetFar(FLAG_LINK_BATTLE) != 0)
     enemyCapacity = LINK_PARTY_SIZE;
-  }
   // The party, in its battle order; then every enemy unit id that is
   // present, which a link battle limits to the opponent's three.
   if (sideMask & BATTLE_SIDE_MASK_PARTY) {
-    base = activeMembers;
-    activeCount = BattleParty_PrepareMembers(base);
-    if (livingCount < activeCount) {
-      member = base;
-      remaining = activeCount;
-      do {
-        unitId = *member;
-        member += 1;
-        hp = Unit_GetFar(unitId)->hp;
-        if (hp > 0) {
-          if (output != NULL) {
-            *output = unitId;
-            output += 1;
-          }
-          livingCount += 1;
-        }
-        remaining -= 1;
-      } while (remaining != 0);
+    s32 memberCount = BattleParty_PrepareMembers(members);
+
+    for (i = 0; i < memberCount; i++) {
+      if (Unit_GetFar(members[i])->hp > 0) {
+        if (unitIds != NULL)
+          unitIds[count] = members[i];
+        count++;
+      }
     }
   }
   if (sideMask & BATTLE_SIDE_MASK_ENEMIES) {
-    // remaining walks the enemy unit ids here.
-    remaining = FIRST_ENEMY_UNIT;
-    lastEnemy = enemyCapacity + FIRST_ENEMY_UNIT;
-    if (remaining < lastEnemy) {
-      do {
-        unit = Unit_GetFar(remaining);
-        if ((unit->side != BATTLE_SIDE_NONE) && (unit->hp > 0)) {
-          if (output != NULL) {
-            *output = remaining;
-            output += 1;
-          }
-          livingCount += 1;
-        }
-        remaining += 1;
-      } while (remaining < lastEnemy);
+    for (unitId = FIRST_ENEMY_UNIT; unitId < FIRST_ENEMY_UNIT + enemyCapacity;
+         unitId++) {
+      struct Unit *unit = Unit_GetFar(unitId);
+
+      if (unit->side != BATTLE_SIDE_NONE && unit->hp > 0) {
+        if (unitIds != NULL)
+          unitIds[count] = unitId;
+        count++;
+      }
     }
   }
-  if (output != NULL) {
-    *output = BATTLE_UNIT_LIST_END;
-  }
-  return livingCount;
+  if (unitIds != NULL)
+    unitIds[count] = BATTLE_UNIT_LIST_END;
+  return count;
 }
 
 /// Lists the units in the battle's unit lists on the sides in sideMask,

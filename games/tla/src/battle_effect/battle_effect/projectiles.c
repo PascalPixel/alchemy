@@ -16,14 +16,6 @@
 // The anchor whose effect runs 54 frames.
 #define ANCHOR_SHORT 8
 
-/* VIEW(ability_effects): tag struct CameraWork as struct
- * CameraWork__ability_effects; module/battle_effect/battle_effect.h has another
- * definition; not tried: struct CameraWork__ability_effects was not found. */
-struct CameraWork {
-  s32 eye[3];
-  s32 pos[3];
-};
-
 extern char ResourceId_BlastSheet;
 extern char ResourceId_MercuryDjinnSmallSheet;
 extern char ResourceId_MarsDjinnSmallSheet;
@@ -237,7 +229,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
   step[2] = (goal[2] - base[2]) / 40;
 
   for (frame = 0; frame != total; frame++) {
-    struct CameraWork *camera = Ram_HeapSlots->cameraWork;
+    struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
     if (frame > 75)
       REG_BLDALPHA = (168 - frame * 2) | 0x1000;

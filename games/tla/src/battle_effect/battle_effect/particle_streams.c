@@ -1219,7 +1219,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
 
   for (frame = 0; frame != BLAST_FRAMES; frame++) {
     s32 size = (frame + 0x1d0) << 8;
-    struct EffectCamera *camera = Ram_HeapSlots->cameraWork;
+    struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
     s32 elapsed = frame - BLAST_FLASH_FRAME;
     struct Scale scale;
     s32 x;

@@ -34,7 +34,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
   struct BattleFxWork *work;
   void *canvas;
   DrawRectangle blit;
-  struct EffectCamera *view;
+  struct BattleCamera *view;
   u8 *sheet;
   struct MotionObject *object;
   struct EffectStep *orb;

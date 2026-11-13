@@ -109,7 +109,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
   // Unused: blit[1] gives the stack frame its 4 bytes.
   BlitterPair blit;
   s32 frame;
-  s16 *camera;
+  struct BattleCamera *camera;
   u8 *sprites;
   s32 focus[3];
   struct EffectPosition screen;
@@ -125,7 +125,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
   cells = gMapCellBuffer;
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  camera = (s16 *)Ram_HeapSlots->cameraWork;
+  camera = Ram_HeapSlots->cameraWork;
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(
@@ -153,7 +153,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
     work->transferValue = 50;
     Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
     target = BattleObject_GetFar(effect->actors[0])->object;
-    savedYaw = camera[27];
+    savedYaw = (s16)camera->yaw;
     caster = BattleObject_GetFar(effect->actor)->object;
 
     // The last two particles keep the Djinni's start and its step.
@@ -188,7 +188,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
 
     for (frame = 0; frame != frames; frame++) {
       if (frame == 0) {
-        camera[27] = savedYaw;
+        camera->yaw = savedYaw;
         focus[0] = work->particles[62].x;
         focus[1] = work->particles[62].y;
         focus[2] = work->particles[62].z;
@@ -211,7 +211,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
         }
       }
       Transform_Reset();
-      Transform_SetLookAt((s32 *)camera, (s32 *)camera + 3);
+      Transform_SetLookAt(camera->eye, camera->pos);
 
       if (mode == 0) {
         if ((u32)frame <= 15) {
@@ -225,9 +225,9 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
             turn = 2560 - (frame << 5);
           }
           if (effect->side == 0) {
-            camera[27] -= turn;
+            camera->yaw -= turn;
           } else {
-            camera[27] += turn;
+            camera->yaw += turn;
           }
         }
         if (frame <= 31) {

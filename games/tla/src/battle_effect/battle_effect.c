@@ -121,7 +121,6 @@
 #define Texture Texture__ability_effects
 #define Particle Particle__ability_effects
 #define ResourceTableEntry ResourceTableEntry__ability_effects
-#define CameraWork CameraWork__ability_effects
 
 #include "battle_effect/projectiles.c"
 #include "battle_effect/djinn_attacks.c"
@@ -178,7 +177,6 @@
 #include "battle_effect/trident.c"
 #include "battle_effect/meteor_blow.c"
 
-#undef CameraWork
 #undef ResourceTableEntry
 #undef Particle
 #undef Texture

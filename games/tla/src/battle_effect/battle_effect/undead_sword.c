@@ -394,7 +394,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
   s32 frame;
   DrawRectangle blit[2]; // Unused: [1] is the rest of its two-word pseudo.
   void *canvas;
-  s16 *camera;
+  struct BattleCamera *camera;
   s16 savedYaw;
   s32 frames;
   struct EffectPosition screen;
@@ -426,8 +426,8 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
       SLOT_BLITTER,
       BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  camera = (s16 *)Ram_HeapSlots->cameraWork;
-  savedYaw = camera[27];
+  camera = Ram_HeapSlots->cameraWork;
+  savedYaw = (s16)camera->yaw;
   Resource_LoadAndDecompress((s32)&ResourceId_CrackedTextureSheet, work->sheet,
                              1, 1);
   Picture_MirrorIntoQuadrants(work->sheet, work->sheet + 0x400, 32, 32);
@@ -531,17 +531,17 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
     s32 offset;
 
     if (frame == 0) {
-      camera[27] = savedYaw;
+      camera->yaw = savedYaw;
       for (i = 0; i != 64; i++) {
         work->particles[i].variant = -1;
       }
     }
     if (effect->side == 0) {
-      if (camera[27] <= 11999) {
-        camera[27] += 128;
+      if ((s16)camera->yaw <= 11999) {
+        camera->yaw = (s16)camera->yaw + 128;
       }
-    } else if (camera[27] >= -11999) {
-      camera[27] -= 128;
+    } else if ((s16)camera->yaw >= -11999) {
+      camera->yaw = (s16)camera->yaw - 128;
     }
 
     if (mode == 0) {
@@ -645,9 +645,9 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
       Transform_ApplyPitch(4000);
     }
     if (effect->side == 0) {
-      Transform_ApplyYaw(camera[27]);
+      Transform_ApplyYaw((s16)camera->yaw);
     } else {
-      Transform_ApplyYaw(camera[27] + 0x8000);
+      Transform_ApplyYaw((s16)camera->yaw + 0x8000);
     }
     {
       s32 shift = 128 - frame * 8;
@@ -788,7 +788,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
   // stack frame its 84 bytes (the word at sp 40); as one DrawRectangle, 48
   // of 609 differ (2026-11-08).
   DrawRectangle blit[2];
-  s32 *camera;
+  struct BattleCamera *camera;
   struct EffectPosition other;
   struct EffectPosition screen;
   struct ModelTexture texture;
@@ -958,7 +958,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     Transform_Reset();
-    Transform_SetLookAt(camera, camera + 3);
+    Transform_SetLookAt(camera->eye, camera->pos);
     model = Render_AllocateModelList(1);
     vertices = Data_02010108;
     shade = 0;

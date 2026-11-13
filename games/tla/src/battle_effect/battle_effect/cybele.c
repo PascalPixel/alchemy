@@ -174,7 +174,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
   height = -(64 << 16);
   speed = 0;
   for (frame = 0; frame != 366; frame++) {
-    struct EffectCamera *camera = Ram_HeapSlots->cameraWork;
+    struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
     // A or B skips the vines to the drop.
     if ((gInput.repeat & 3) != 0 && frame > 190 && frame <= 285) {

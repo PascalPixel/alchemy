@@ -78,7 +78,7 @@ void BattleEffect_RunVengeance(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  s16 *camera;
+  struct BattleCamera *camera;
   // The plain and the flipped blitter, as one pair: as two locals the
   // blade loop no longer hoists them from memory.
   DrawRectangle draw[2];
@@ -169,13 +169,13 @@ void BattleEffect_RunVengeance(struct BattleEffectArgument *effect) {
   frames = VENGEANCE_FRAMES;
 
   for (frame = 0; frame != frames; frame++) {
-    camera = (s16 *)Ram_HeapSlots->cameraWork;
+    camera = Ram_HeapSlots->cameraWork;
     EffectPosition_ProjectScaledBattler(effect->actors[0], &pos);
     if (frame <= 31) {
       if (effect->side == 0) {
-        camera[27] -= 128;
+        camera->yaw = (s16)camera->yaw - 128;
       } else {
-        camera[27] += 128;
+        camera->yaw = (s16)camera->yaw + 128;
       }
     }
     if (frame >= frames - 16) {
@@ -972,7 +972,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectArgument *effect, s32 mode) {
   s32 member;
   u8 *sparkCels = Ram_HeapSlots->unk64[0];
   s32 frames;
-  s32 *camera;
+  struct BattleCamera *camera;
   s32 frame;
   s32 i;
   struct EffectPosition screen;
@@ -1070,7 +1070,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectArgument *effect, s32 mode) {
 
       // The swarm turns about its point, which rises from frame 4.
       Transform_Reset();
-      Transform_SetLookAt(camera, camera + 3);
+      Transform_SetLookAt(camera->eye, camera->pos);
       if (frame >= start + 4 && start < 44)
         BattleEffectKernels_IntegrateVector3(point, 64, 0);
       SceneTransform_ApplyPosition(&point->x);

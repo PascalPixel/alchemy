@@ -42,7 +42,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
   void *canvas;
   s32 frame;
   u8 *cells;
-  struct EffectCamera *view;
+  struct BattleCamera *view;
   struct MotionObject *target;
   struct EffectStep *shard;
   struct EffectPosition user;

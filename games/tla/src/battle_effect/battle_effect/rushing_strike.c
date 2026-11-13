@@ -50,7 +50,7 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
   struct EffectStep *star;
   struct EffectStep *particle;
   struct EffectStep *drop;
-  s32 *camera;
+  struct BattleCamera *camera;
   s32 delay;
   s32 member;
   s32 firstDrop;
@@ -126,7 +126,7 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
       }
     }
     Transform_Reset();
-    Transform_SetLookAt(camera, camera + 3);
+    Transform_SetLookAt(camera->eye, camera->pos);
 
     for (i = 0, star = work->particles, delay = 0, firstDrop = 0; i != STARS;
          star++, delay += 8, firstDrop += 32, i++) {
@@ -352,7 +352,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
   DrawRectangle blit[2];
   u8 *sprites;
   s32 *victim;
-  u16 *camera;
+  struct BattleCamera *camera;
   s16 savedYaw;
   s32 height;
   s32 savedMode;
@@ -389,8 +389,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   victim = BattleObject_GetFar(effect->actors[0])->object;
-  camera = (u16 *)Ram_HeapSlots->cameraWork;
-  savedYaw = camera[27];
+  camera = Ram_HeapSlots->cameraWork;
+  savedYaw = camera->yaw;
   height = 0;
   savedMode = victim[18];
   savedX = victim[2];
@@ -449,7 +449,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
           Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
     }
     if (frame == 166) {
-      camera[27] = savedYaw;
+      camera->yaw = savedYaw;
       victim[18] = savedMode;
       victim[2] = savedX;
       victim[3] = 200 << 15;
@@ -503,10 +503,10 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       gCameraSceneParameters[4] = 240;
       if (effect->side == 0) {
         yaw = 0x4000;
-        camera[27] = yaw;
+        camera->yaw = yaw;
       } else {
         yaw = 0xc000;
-        camera[27] = yaw;
+        camera->yaw = yaw;
       }
       for (i = 0; i != 256; i++) {
         SPARKS[i].variant = -1;

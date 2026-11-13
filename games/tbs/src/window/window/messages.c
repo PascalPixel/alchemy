@@ -11,11 +11,8 @@ void Message_DecodeRawUnbounded(s32 message, u16 *text) {
 }
 
 /// Decodes message into destination as a zero-terminated string of at most
-/// capacity entries, and returns its length.
-/// capacity counts halfwords including the terminator and must be at least 1.
-/// Unlike Message_DecodeRaw it goes through the ring of decoded text, from
-/// its start, so names and numbers are written out, and it uses up the
-/// message arguments; whatever decoded text the ring held is overwritten.
+/// capacity entries, and returns its length. capacity counts halfwords
+/// including the terminator and must be at least 1.
 s32 Message_CopyExpanded(s32 message, u16 *destination, u32 capacity) {
   struct WindowWork *work;
   u32 count;
@@ -37,10 +34,7 @@ s32 Message_CopyExpanded(s32 message, u16 *destination, u32 capacity) {
 #endif
 
 /// Decodes message into text as a zero-terminated string of 16-bit codes, with
-/// at most capacity entries, keeping style codes with their operands. Names
-/// and numbers stay as their codes: nothing is written out. capacity includes
-/// the terminating halfword; the unbounded wrapper,
-/// Message_DecodeRawUnbounded, supplies 0x7fffffff.
+/// at most capacity entries, keeping style codes with their operands.
 void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
   struct MessageReader reader;
   void *original;
@@ -63,10 +57,8 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
 #if !defined(DECODE_EUROPEAN)
   delta = 0xffff;
 #endif
-  // Operands are stored one above their value; adding 0xffff takes the one
-  // off in 16 bits. Code 14, whose meaning is unknown, has two operands and
-  // the codes of the next case one each. A one-operand code counts one halfword
-  // of capacity but writes two.
+  // Operands are stored one above their value; adding 0xffff takes the one off
+  // in 16 bits.
   while ((value = decode(&reader)) != 0) {
     switch (value) {
     case 14:
@@ -123,11 +115,8 @@ s32 *Memory_ClearWordIfSet(s32 *p) {
 
 // Closing the messages' windows, and the message argument table.
 
-/// Closes every window: first the messages' windows, waiting until
-/// they have closed, then the windows opened directly, which it does not wait
-/// for. A message lets go of its window only once the window has finished
-/// closing. Reached from the debug message viewer (DebugBattle_ViewMessages,
-/// battle/battle/debug.c).
+/// Closes every window: first the messages' windows, waiting until they have
+/// closed, then the windows opened directly, which it does not wait for.
 void Window_CloseAll(s32 unused) {
   struct WindowWork *work;
   struct Message *message;
@@ -190,11 +179,9 @@ void Window_CloseAll(s32 unused) {
   }
 }
 
-/// Steps a message's window animation (WINDOW_ANIMATION_SWELL): the frame
-/// is drawn a tile bigger on every side until the countdown ends, then back to
-/// normal. Any other animation is left set and does nothing, so the message
-/// types no more text. Message_UpdateAll calls it in place of typing while the
-/// window has an animation.
+/// Steps a message's window animation (WINDOW_ANIMATION_SWELL): the frame is
+/// drawn a tile bigger on every side until the countdown ends, then back to
+/// normal.
 void Window_StepSwellEffect(struct Message *message) {
   struct Window *window = message->window;
   s32 effect = window->animation;
@@ -233,11 +220,6 @@ void MessageArgument_ClearAll(void) {
 
 /// Adds a message argument of kind (MESSAGE_ARGUMENT_) with value to the first
 /// free place of the argument table; when all eight are in use it is dropped.
-/// MESSAGE_ARGUMENT_NONE marks an empty place. Callers push a message's
-/// arguments before decoding it. The decoder reads each argument code's value
-/// from the first slot of its kind (MessageArgument_Lookup); told to clear, it
-/// removes each as it reads it, so arguments of one kind are taken in the order
-/// they were pushed, and it empties the table at the end.
 void MessageArgument_Push(u32 value, u32 kind) {
   struct WindowWork *work = WINDOW_WORK;
   u32 no = 0;
@@ -254,9 +236,7 @@ void MessageArgument_Push(u32 value, u32 kind) {
 }
 
 /// Returns the value of the first message argument of kind (MESSAGE_ARGUMENT_),
-/// or 0 when there is none. With clear set the argument is removed from the
-/// table. Repeated kinds are allowed: only the first matching slot is read or
-/// consumed.
+/// or 0 when there is none.
 u32 MessageArgument_Lookup(u32 kind, u32 clear) {
   struct WindowWork *work = WINDOW_WORK;
   u32 i;
@@ -275,12 +255,8 @@ u32 MessageArgument_Lookup(u32 kind, u32 clear) {
   return value;
 }
 
-/// Ends a message's pause early: when the message waits on a sound that
-/// has finished (busy), or while A, B, L or R is held. Clears the countdown and
-/// returns 1 if it ended.
-/// This path uses held keys; dismissal below uses newly pressed keys instead.
-/// Message_Type asks it each frame of a short or longest pause;
-/// the long pause cannot be cut short.
+/// Ends a message's pause early: when the message waits on a sound that has
+/// finished (busy), or while A, B, L or R is held.
 s32 Text_CheckPauseSkipped(struct Message *message) {
   struct WindowWork *work = WINDOW_WORK;
   s32 cancelKeys = 0;
@@ -297,10 +273,7 @@ s32 Text_CheckPauseSkipped(struct Message *message) {
 }
 
 /// As Text_CheckPauseSkipped, but on a newly pressed button: the latched
-/// presses while WindowWork.mindRead is set. Returns 1 when the player has
-/// dismissed the text.
-/// Mode chooses latched presses rather than changing which buttons dismiss
-/// text.
+/// presses while WindowWork.mindRead is set.
 s32 Text_CheckTextDismissed(struct Message *message) {
   struct WindowWork *work = WINDOW_WORK;
   s32 pressedKeys;
@@ -320,9 +293,7 @@ s32 Text_CheckTextDismissed(struct Message *message) {
   return 0;
 }
 
-/// Closes each message's window whose text has ended, then waits ten
-/// frames. It does not wait for the zooms to finish, and leaves windows still
-/// typing open.
+/// Closes each message's window whose text has ended, then waits ten frames.
 void Message_CloseFinishedWindows(void) {
   s32 i;
   struct Message *message;
@@ -345,7 +316,6 @@ void Message_CloseFinishedWindows(void) {
 /// Shows a message centred across the screen and in its top 15 rows (yOffset
 /// tiles lower) and waits until it is typed out, then closes it, in the window
 /// mode (enum CenteredMessageMode) gives.
-/// The speaker's voice blips are reset afterwards.
 void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
   struct WindowWork *work;
   struct Window *messageWindow;
@@ -402,7 +372,6 @@ s32 Message_DecodeAndClearArguments(s32 message) {
 /// Points reader at the start of message (its compressed bits and first
 /// context), running the ARM lookup routine from a RAM copy, which it frees
 /// before returning.
-/// The RAM routine initializes reader state; symbols are decoded separately.
 void Message_Find(struct MessageReader *reader, s32 message) {
   void (*routine)(struct MessageReader *, s32);
 
@@ -411,12 +380,7 @@ void Message_Find(struct MessageReader *reader, s32 message) {
   Heap_Release(routine);
 }
 
-/// Decodes the next symbol of a message. Messages are Huffman coded with one
-/// tree per previous symbol: the previous code picks the tree, the message's
-/// bits walk it to a leaf, and the leaf's 12-bit symbol is returned and
-/// becomes the next context.
-/// Tree traversal consumes bytes; reader->words retains that byte position
-/// between calls.
+/// Decodes the next symbol of a message.
 UNUSED s32 Text_DecodeSymbolInC(struct MessageReader *reader) {
   u32 code;
   u32 contextBank;
@@ -436,9 +400,7 @@ UNUSED s32 Text_DecodeSymbolInC(struct MessageReader *reader) {
   text = (const u8 *)reader->words;
   textBits = reader->bits;
   treeBits = 1;
-  // The previous code's high bits pick the bank, its low byte the tree. The
-  // tree runs forwards from base; its leaves' symbols run backwards from
-  // base - 1.
+  // The previous code's high bits pick the bank, its low byte the tree.
   contextBank = code >> 8;
   code &= 0xff;
   base = Text_MessageContexts[contextBank][0];
@@ -447,10 +409,6 @@ UNUSED s32 Text_DecodeSymbolInC(struct MessageReader *reader) {
   leaves = base - 1;
   rank = 0;
   // The tree is its shape in preorder, a bit a node: 0 a branch, 1 a leaf.
-  // Bits are read from each byte's lowest up; a buffer that has shifted down
-  // to its marker bit (the 0x80 put above each byte's last bit) is empty.
-  // A text bit of 0 takes the left branch; 1 skips the left subtree,
-  // counting its leaves in rank, and takes the right.
   for (;;) {
     bit = treeBits & 1;
     treeBits >>= 1;
@@ -558,15 +516,8 @@ s32 Portrait_GetForSpeaker(u32 value) {
 }
 
 /// Opens a portrait window at tile (x, y) showing the speaker's portrait.
-/// portraitOption is passed on through Portrait_Create to
-/// Icon_LoadWithPalette, which ignores it.
-/// Returns the window, or 0 when the speaker has no portrait.
-/// Portrait offsets are in pixels; the enclosing window bounds are in tiles.
-/// The window opens at once, 5 by 5 tiles, or 6 by 5 under Mind Read with the
-/// portrait 4 pixels further right. The portrait takes the second portrait
-/// slot if it is free, else the first; with both taken the window stays
-/// empty. It is the window's first window sprite, which
-/// Portrait_CloseWindow looks for.
+/// portraitOption is passed on through Portrait_Create to Icon_LoadWithPalette,
+/// which ignores it.
 struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
                                    s32 y) {
   struct Window *window;

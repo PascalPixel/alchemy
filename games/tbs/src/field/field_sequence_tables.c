@@ -23,9 +23,7 @@ const u8 gField_ExamineTriggerMessageOffsets[6] = {
 };
 
 /// {field Psynergy kind, range in pixels}, ended by -1; a kind not listed
-/// reaches 16 pixels. Field_GetPsynergyTargetRange reads it for the search
-/// for a target: 16 pixels for Ply, Frost, Lift, Carry and Growth, 32 for
-/// Mind Read, Move, Whirlwind, Douse and Halt, 48 for Force and Catch.
+/// reaches 16 pixels.
 // clang-format off
 const s16 gFieldEffect_TargetRangeByMode[25] = {
     3, 16,
@@ -135,11 +133,9 @@ const u8 gScreenTransition_DitherTable[64] = {
     62, 45, 19, 60, 57, 49, 25, 55, 38, 14, 44, 13, 33, 37, 1, 21,
 };
 
-/// Colour channel curves of the palette tints (field_sequence/palette_fade.c): each
-/// maps a 5-bit channel (0 to 31) to a palette fade channel, shifted up 10
-/// bits, so 31 is 0x7c00. All three darken the middle tones: 16 becomes
-/// about 11.4 here (0x2dc3), 12.4 in the Light curve, 12.5 in the Contrast
-/// curve, which also reaches 31 already at 25.
+/// Colour channel curves of the palette tints (field_sequence/palette_fade.c):
+/// each maps a 5-bit channel (0 to 31) to a palette fade channel, shifted up 10
+/// bits, so 31 is 0x7c00.
 const u16 gColorBuffer_ChannelCurve[32] = {
     0x0000, 0x020c, 0x042f, 0x066b, 0x08c0, 0x0b2f, 0x0db9, 0x105f,
     0x1322, 0x1603, 0x1903, 0x1c22, 0x1f63, 0x22c5, 0x264b, 0x29f4,
@@ -163,8 +159,6 @@ const u16 gColorBuffer_ChannelCurveContrast[32] = {
 
 /// Speaker definitions: {sprite, voice, the lines it says while Halted}, each
 /// voice one of the eight that start at SE_VOICE_FIRST, four blips apart.
-/// Speaker_FindDefinition compares the first 130 and returns the last, never
-/// compared, as the default.
 const struct SpeakerDefinition gSpeakerDefinitions[131] = {
     {SPRITE_ISAAC, SPEAKER_VOICE(SE_VOICE_YOUNG_MAN_1), 0},
     {SPRITE_GARET, SPEAKER_VOICE(SE_VOICE_YOUNG_MAN_1), 0},
@@ -385,11 +379,8 @@ const s16 gLineScroll_WaveSine[256] = {
 };
 
 /// {dx, dy, tile, shape, size} for each of 16 frames of a ground particle
-/// (weather.c): dx and dy in screen pixels from its spot, tile from its
-/// first tile. Its timer counts down, so the rows play from the last: it
-/// comes down from 64 pixels right and 160 up, 8 left and 16 down a frame,
-/// then stays 8 pixels left and 12 up of its spot for seven frames while its
-/// tile goes from 8 to 20.
+/// (weather.c): dx and dy in screen pixels from its spot, tile from its first
+/// tile.
 const s16 gFieldEffect_GroundParticleFrames[80] = {
     -8, -12, 20, 0, 1,
     -8, -12, 20, 0, 1,
@@ -410,10 +401,7 @@ const s16 gFieldEffect_GroundParticleFrames[80] = {
 };
 
 /// {dy, tile} of a sparkle (weather.c): dy in screen pixels from its spot, a
-/// row every two frames. Its timer counts down, so the rows play from the
-/// one it starts at (row 15 for a burst's first sparkle, as far as row 29
-/// for the rest) to row 0: it comes down to its spot, slowing as it nears
-/// it, its tile going 0, 4, 8, 12.
+/// row every two frames.
 const struct SparklePicture gFieldEffect_SparklePictures[32] = {
     {-2, 12},
     {-4, 12},
@@ -481,10 +469,8 @@ const s32 gFieldEffect_FragmentScript[] = {
     SC_RELEASE,
 };
 
-/// An angle for each value of the right, left, up and down bits of the
-/// +Control Pad; DPAD_ANGLE_NONE for none (Input_GetDpadAngle, move.c). Opposite
-/// directions cancel, and a diagonal gives none, so Move pushes only along
-/// the four directions.
+/// An angle for each value of the right, left, up and down bits of the +Control
+/// Pad; DPAD_ANGLE_NONE for none (Input_GetDpadAngle, move.c).
 const u16 gFieldEffect_CyclePatternWords[16] = {
     DPAD_ANGLE_NONE, FACING_EAST,     FACING_WEST,     DPAD_ANGLE_NONE,
     FACING_NORTH,    DPAD_ANGLE_NONE, DPAD_ANGLE_NONE, FACING_NORTH,

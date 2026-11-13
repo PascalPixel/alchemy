@@ -6,11 +6,7 @@
 
 /// A Venus Djinni joins the party: it hops twice, spins and leaps, then shrinks
 /// away; the leader turns to the camera and plays ANIM_LEADER_ARMS_RAISED while
-/// 24 particles rise round it (FieldEffect_UpdateRadialSpread). Then 24 motes
-/// spiral down onto the leader from 120 pixels above
-/// (FieldEffect_UpdateDescendingOrbitActor) and 8 sparks burst from the leader.
-/// Uses all 24 field effect sprites, tints the field palette green and fades it
-/// back at the end.
+/// 24 particles rise round it (FieldEffect_UpdateRadialSpread).
 void Djinn_RunVenusJoinEffect(s32 djinniId) {
   struct Actor *leader;
   struct Actor *djinni;
@@ -140,10 +136,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
 /// Field effect sprite callback of a Mercury Djinni's droplets: each falls from
 /// 100 pixels above (on screen) to a random point 2 to 8 pixels round a spot 15
 /// to 20 pixels over the leader, at 3 to 6 pixels a frame, and where it lands
-/// splashes 12 pixels in a random direction, at half size, with SE_CRACK. It
-/// then falls again 6 frames later, until Djinn_RunMercuryJoinEffect
-/// sets MERCURY_DROPLET_LAST_FALL: its next splash is its last (enum
-/// MercuryDropletState).
+/// splashes 12 pixels in a random direction, at half size, with SE_CRACK.
 void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
   struct Actor *source;
   struct Vector3 position;
@@ -199,9 +192,8 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
   }
 }
 
-/// Per-frame update of an afterimage: closes half the distance to the actor
-/// it watches. Set on the Mercury Djinni's afterimages by
-/// Djinn_RunMercuryJoinEffect.
+/// Per-frame update of an afterimage: closes half the distance to the actor it
+/// watches.
 void FieldEffect_HalveDistanceToTarget(struct Actor *actor) {
   FieldEffect_MoveAfterimageHalfway(actor);
 }

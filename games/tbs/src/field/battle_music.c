@@ -8,11 +8,7 @@
 #include "sounds.h"
 
 /// Battle music: which battles have music of their own
-/// (Encounter_SelectBattleMusic). Each song marker sets the music for the
-/// encounter keys after it, up to the next marker. The search stops at the
-/// battle's key or at the end (0), so a battle the list does not hold, such as
-/// the Vault thieves or a Djinni battle, takes the last marker's music,
-/// MUS_BATTLE. Link battles skip the list and take SOUND_KEEP_BGM.
+/// (Encounter_SelectBattleMusic).
 const u16 gEncounter_BattleMusic[35] = {
     ENCOUNTER_BATTLE_MUSIC(MUS_FUSION_DRAGON_BATTLE),
     // The Fusion Dragon, Venus Lighthouse's aerie.

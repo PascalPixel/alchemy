@@ -6,16 +6,13 @@
 #include "types.h"
 #include "sound/sound.h"
 
-/// A jump table entry. The song commands take the music player and the track,
-/// and the driver's helpers at the end take what each needs, so the entry type
-/// leaves its parameters unsaid, as pret's MusicPlayer2000 tables do.
+/// A jump table entry.
 typedef void (*SoundFunc)();
 
-/// The jump table SoundInit copies into gMPlayJumpTable (MPlayJumpTableCopy,
-/// 36 entries): entries 0 to 29 run song bytes 0xB1 to 0xCE and 30 to 35 are
-/// the driver's helpers (MPLAY_JUMP_ in sound_driver_types.h); a byte with
-/// nothing to do ends the track. MPlayExtender writes nine entries again, of
-/// which only 8 (ply_memacc) and 28 (ply_xcmd) differ from these.
+/// The jump table SoundInit copies into gMPlayJumpTable (MPlayJumpTableCopy, 36
+/// entries): entries 0 to 29 run song bytes 0xB1 to 0xCE and 30 to 35 are the
+/// driver's helpers (MPLAY_JUMP_ in sound_driver_types.h); a byte with nothing
+/// to do ends the track.
 // clang-format off
 const SoundFunc gMPlayJumpTableTemplate[] = {
     ply_fine,
@@ -85,9 +82,8 @@ const u32 gFreqTable[] = {
     0xcb2ff52a, 0xd744fccb, 0xe411f03a, 0xf1a1bf39
 };
 
-/// Samples mixed a VBlank for rates 1 to 12 (mode bits 19..16,
-/// SoundInfo.rate); each, times 59.7275, is its sample rate, 5734 to 42048 a
-/// second. The game plays at 7, 352 samples (AUDIO_INITIAL_MODE).
+/// Samples mixed a VBlank for rates 1 to 12 (mode bits 19..16, SoundInfo.rate);
+/// each, times 59.7275, is its sample rate, 5734 to 42048 a second.
 const u16 gPcmSamplesPerVBlankTable[] = {
     96, 132, 176, 224, 264, 304, 352, 448, 528, 608, 672, 704
 };
@@ -125,9 +121,7 @@ const u8 gNoiseTable[] = {
     0x17, 0x16, 0x15, 0x14, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00
 };
 
-/// CGB_CHANNEL_WAVE's NR32 volume code for each envelope level 0 to 15. The channel
-/// has five volumes: 0x00 mute, 0x60 a quarter, 0x40 half, 0x80 three
-/// quarters and 0x20 full.
+/// CGB_CHANNEL_WAVE's NR32 volume code for each envelope level 0 to 15.
 const u8 gCgb3Vol[] = {
     0x00, 0x00, 0x60, 0x60, 0x60, 0x60, 0x40, 0x40, 0x40, 0x40, 0x80, 0x80, 0x80, 0x80, 0x20, 0x20
 };

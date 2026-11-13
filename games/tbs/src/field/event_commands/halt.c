@@ -7,12 +7,8 @@
 /// Field effect sprite callback (enum OutAndBackState): the particle heads for
 /// a point 40 to 70 pixels from where it appeared, then for a point 4 pixels
 /// round 8 pixels above the Psynergy's position on screen, and is freed on
-/// arrival. Set on the 16 particles of FieldPsynergy_Halt. They fly out
-/// straight at up to 4 pixels a frame and come back turning at most 1/16 turn a
-/// frame.
+/// arrival.
 void FieldEffect_UpdateHaltParticle(struct FieldParticle *effect) {
-  // Retain the immediate OUT_AND_BACK_FLYING_OUT to OUT_AND_BACK_AIM_BACK
-  // transition on arrival.
   struct FieldEffectWork *effectWork;
   struct Vector3 pos;
   s8 *statePointer;
@@ -69,12 +65,7 @@ void FieldPsynergy_HaltOnTarget(s32 unused) {
 }
 
 /// Throws an actor from the caster to the Psynergy's position over 10 frames
-/// and scatters it into 16 particles. Halt's visible part: called by
-/// FieldPsynergy_Run when no target with a talk trigger is near, and through
-/// FieldPsynergy_HaltOnTarget otherwise. Fills field effect sprites 0
-/// to 15 and sets effectWork->y to the caster's height.
-///
-/// Abilities: Halt (FIELD_PSYNERGY_HALT).
+/// and scatters it into 16 particles.
 void FieldPsynergy_Halt(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *caster = effectWork->mainActor;
@@ -157,9 +148,7 @@ void FieldPsynergy_Halt(void) {
 }
 
 /// Per-frame update of a paused actor: gives its sprite one of the table's
-/// eight params at random. FieldPsynergy_HaltActor sets it, and
-/// FieldPsynergy_ResumeHaltedActor looks for it to know the actor was paused
-/// this way.
+/// eight params at random.
 void FieldPsynergy_UpdateHaltedActor(struct Actor *actor) {
   void *object = (void *)actor;
   const s8 *table = gFieldEffect_RandomChildValues;
@@ -168,11 +157,7 @@ void FieldPsynergy_UpdateHaltedActor(struct Actor *actor) {
 }
 
 /// Pauses actor id, keeping its per-frame update and, if it is animated, its
-/// first animation's param in gMainRoutineWork. Sets
-/// gMainRoutineWork.pausedUpdate and pausedPose, the actor's update and paused
-/// fields, and stops its animation. gMainRoutineWork keeps one actor's state,
-/// so Halt resumes the one it stopped before it stops another; the paused actor
-/// flickers through random sprite params meanwhile.
+/// first animation's param in gMainRoutineWork.
 void FieldPsynergy_HaltActor(s32 actorId) {
   struct Actor *actor;
   struct SpriteAnimation *entry;
@@ -193,12 +178,7 @@ void FieldPsynergy_HaltActor(s32 actorId) {
   }
 }
 
-/// Resumes actor id with the update and param kept by
-/// FieldPsynergy_HaltActor. Called for gMainRoutineWork.haltedActor by
-/// FieldPsynergy_Run and FieldPsynergy_Dispatch before Halt stops
-/// another actor, and by Scene_TalkToActor after talking to the paused
-/// actor. Clears gMainRoutineWork.pausedUpdate and the actor's paused field,
-/// and restarts its animation at speed 16.
+/// Resumes actor id with the update and param kept by FieldPsynergy_HaltActor.
 void FieldPsynergy_ResumeHaltedActor(s32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
   if (actor != 0) {
@@ -214,10 +194,8 @@ void FieldPsynergy_ResumeHaltedActor(s32 actorId) {
 }
 
 /// Returns id, or -1 (no target) when Halt passes actor id's sprite over
-/// (SPEAKER_HALTED_LINES_NONE in gSpeakerDefinitions): the talking monsters
-/// and the things, the 20 rows before the default. Called by FieldPsynergy_Run
-/// on the nearest Halt target; an unlisted sprite takes the default row's
-/// pair 0, so Halt stops it.
+/// (SPEAKER_HALTED_LINES_NONE in gSpeakerDefinitions): the talking monsters and
+/// the things, the 20 rows before the default.
 s32 FieldPsynergy_FilterHaltTarget(s32 id) {
   if (Speaker_GetHaltedLines(id) == SPEAKER_HALTED_LINES_NONE)
     return -1;

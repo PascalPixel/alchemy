@@ -58,14 +58,8 @@ struct SaveFileSummary {
   u32 checksum; ///< the sum of the 968 words from gGameFlagBytes
 };
 
-/// The save work: which of the 16 flash sectors hold a part, their part
-/// ids and counters, one sector's buffer and the three files'
-/// summaries.
-///
-/// It lives in heap slot HEAP_SLOT_SAVE (gSaveWork) only around each
-/// save, load, copy or delete and each scan of the files, as the File Screen's
-/// (Save_ScanFileSummaries): Save_InitializeWork takes it and
-/// scans the sectors into it, and Save_ReleaseWork frees it.
+/// The save work: which of the 16 flash sectors hold a part, their part ids and
+/// counters, one sector's buffer and the three files' summaries.
 struct SaveWork {
   u8 occupied[16]; ///< 1 for a sector holding the current copy of a part
   u8 partId[16];   ///< each sector's part; 16 for none

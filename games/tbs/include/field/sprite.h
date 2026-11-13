@@ -11,10 +11,7 @@
 #include "render_placement.h"
 
 /// SpriteAnimation.colorMode: how Render_DecodePicture colours a layer's
-/// pixels. Modes 1 to 6 and 9 to 11 run them through a 256-byte table (the five
-/// gSpriteColorTables, then the four gSpriteColorRemapTables
-/// ones); the solid modes paint every drawn pixel one colour of the basic
-/// sprite palette. Mode 8 is a second white and mode 12 reads past the tables.
+/// pixels.
 enum SpriteColorMode {
   SPRITE_COLOR_NORMAL = 0,
   SPRITE_COLOR_GRB = 1,         ///< red and green swapped
@@ -42,8 +39,7 @@ enum SpriteColorMode {
 #define SPRITE_PICTURE_NONE 0xff
 
 /// An animation number's bit 7: keep the place and timer of the script already
-/// running. Sprite_StartAnimation masks it off with
-/// SPRITE_ANIMATION_INDEX_MASK; SpriteAnimation_Start keeps it in the index.
+/// running.
 #define SPRITE_ANIMATION_KEEP_PLACE 0x80
 #define SPRITE_ANIMATION_INDEX_MASK 0x7f
 
@@ -162,9 +158,8 @@ STATIC_ASSERT(offsetof(struct Sprite, width) == 0x20);
 STATIC_ASSERT(sizeof(struct Sprite) == 0x38);
 STATIC_ASSERT(offsetof(struct Sprite, entries) == 0x28);
 
-/// Animation numbers of an actor's sprite, for Import_ActorSetAnimation
-/// and Sprite_StartAnimation. The menus' and shops' party and Djinn
-/// figures are the same field sprites and play the same numbers.
+/// Animation numbers of an actor's sprite, for Import_ActorSetAnimation and
+/// Sprite_StartAnimation.
 enum ActorAnimation {
   /// Standing still: nearly every sprite's first frame held, without the
   /// blinks and small gestures of ANIM_STAND.
@@ -209,9 +204,8 @@ enum ActorAnimation {
   ANIM_LEADER_LEAN_BACK = 22, ///< leaning back, his head thrown back
   /// The arrivals and leavings of the animated exits (enum ExitStyle), each
   /// four frames of the leader turning: an arrival grows from a small figure
-  /// seen side-on to full size facing the player, a leaving turns from his
-  /// back to side-on as he shrinks and is then hidden. The alternate pair has
-  /// its own drawings of the same turns.
+  /// seen side-on to full size facing the player, a leaving turns from his back
+  /// to side-on as he shrinks and is then hidden.
   ///@{
   ANIM_LEADER_ARRIVE_ALTERNATE = 23,
   ANIM_LEADER_ARRIVE = 24,

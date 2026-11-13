@@ -82,11 +82,8 @@ void Window_CopyTilemapRegion(const struct Window *window, const void *source) {
   Heap_Release(buffer);
 }
 
-/// Like Window_SetTextTileBitRect, but ORs all of `palette` into the
-/// palette number of each entry (bits 12-15) after clearing only its lowest
-/// bit. On entries of WINDOW_PALETTE or HIGHLIGHT_PALETTE that sets them to
-/// `palette`, either 14: the name entry screen's key and the Colosso choice
-/// under the cursor flash this way.
+/// Like Window_SetTextTileBitRect, but ORs all of `palette` into the palette
+/// number of each entry (bits 12-15) after clearing only its lowest bit.
 void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
                             s32 width, s32 height, u32 palette) {
   u8 *tilemap = gWindowWork[0];
@@ -148,9 +145,7 @@ void NameEntry_LoadCaretTiles(s32 slot) {
 
 #if LANGUAGE != LANGUAGE_JAPANESE
 /// Puts the string `str` into the UI's text entries and returns its width in
-/// pixels. It overwrites the start of the decoded text ring
-/// (WindowWork.textBuffer), so any message decoded there is lost; the name
-/// entry measures the name with it to place its caret.
+/// pixels.
 s32 Text_SetString(const u8 *str) {
   struct WindowWork *work;
   u16 *dst;
@@ -228,17 +223,9 @@ void NameEntry_DrawName(struct Window *window, u8 *name) {
 #define NAME_END_KEY_WIDTH 3
 #endif
 
-/// The name entry screen for party member `member`: the player types a name
-/// of up to NAME_MAX_LETTERS letters on the keyboard and ends with End (or
-/// Start, which jumps there). A puts the key under the cursor into the name,
-/// B or Delete removes the last letter, and B on an empty name cancels. Ending
-/// with an empty name keeps the old one. Returns 0, or -1 when cancelled.
-/// The new name is written over the party member's unit name only on End. The
-/// title's new game (scene/file_screen.c) and the debug menu reach it.
-///
-/// The keyboard: letter keys in columns 0 to 16, in groups of five with gaps
-/// at columns 5, 11 and 17, rows 0 to 5; column 18 holds Delete (row 4) and
-/// End (row 5).
+/// The name entry screen for party member `member`: the player types a name of
+/// up to NAME_MAX_LETTERS letters on the keyboard and ends with End (or Start,
+/// which jumps there).
 s32 NameEntry_EditMemberName(s32 member) {
   struct Window *nameWindow;
   s32 result = 0;
@@ -507,16 +494,9 @@ s32 NameEntry_EditMemberName(s32 member) {
 }
 #else
 
-/// The name entry screen for party member `member`: the player types a name
-/// of up to NAME_MAX_LETTERS letters on the keyboard and ends with End (or
-/// Start, which jumps there). A puts the key under the cursor into the name,
-/// B or Delete removes the last letter, and B on an empty name cancels. Ending
-/// with an empty name keeps the old one. Returns 0, or -1 when cancelled.
-/// A voicing mark joins the letter before it and does not count as a letter.
-///
-/// The keyboard: letter keys in columns 0 to 16, in groups of five with gaps
-/// at columns 5, 11 and 17, on rows 0 to 4 and 6 to 10; column 18 holds the
-/// keyboard switch (row 0, or Select), Delete (row 8) and End (row 10).
+/// The name entry screen for party member `member`: the player types a name of
+/// up to NAME_MAX_LETTERS letters on the keyboard and ends with End (or Start,
+/// which jumps there).
 s32 NameEntry_EditMemberName(s32 member) {
   struct Window *nameWindow;
   s32 result = 0;

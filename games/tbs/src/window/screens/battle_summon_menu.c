@@ -17,14 +17,8 @@
 
 /// The battle summon list: the summons the party holds enough Djinn for
 /// (Summon_ListLearnedFar, BattleSummonState.availableMask), four to a page,
-/// those `standby` can pay for first, each with its Djinn cost by element,
-/// the others in TEXT_COLOR_RED. Above it the summon's description, and the
-/// standby Djinn of each element, the elements it needs blinking. `standby`
-/// is what the earlier commands this turn leave
-/// (BattleMenuWork.standbyDjinn). Returns the chosen summon, even one that
-/// cannot be paid for (Battle_CollectPartyCommands then plays the error
-/// sound and goes on), or -1 when cancelled or when the link battle's time
-/// runs out. The Djinn tutorial presses A every 120 frames.
+/// those `standby` can pay for first, each with its Djinn cost by element, the
+/// others in TEXT_COLOR_RED.
 s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   struct MenuSprite cursorStorage;
   struct MenuSprite sprites[4];
@@ -81,8 +75,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   }
 
   // Move usable summons to the front in reverse traversal; keep others in
-  // order. So the affordable ones come in reverse menu order
-  // (gSummon_OrderList), the rest after them in menu order.
+  // order.
   count = Summon_ListLearnedFar(learnedSummons);
   /* FAKEMATCH(dead): the first scan in a once-only block; as a plain block, 224
    * of 946 instructions differ in tbs-en. */

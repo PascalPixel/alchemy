@@ -47,7 +47,6 @@ void FieldEffect_UpdateDouseDrop(struct Actor *actor) {
 
 /// Per-frame update: drifts from side to side, up to a pixel a frame, as it
 /// falls 0.3 pixels a frame, and is released on reaching its ground height.
-/// Douse's swaying particles in Mercury Lighthouse.
 void FieldEffect_UpdateDriftingFallActor(struct Actor *particle) {
   s32 drift;
 
@@ -60,18 +59,11 @@ void FieldEffect_UpdateDriftingFallActor(struct Actor *particle) {
 }
 
 /// Runs Douse cast on a target, through FieldPsynergy_Douse.
-///
-/// Abilities: Douse (FIELD_PSYNERGY_DOUSE).
 void FieldPsynergy_DouseOnTarget(s32 unused) { FieldPsynergy_Douse(); }
 
 /// A rain cloud rises from 16 pixels above the caster to 32 pixels above the
 /// destination (80 with variant) over 10 frames, growing as it goes, rains
 /// particles, and returns.
-///
-/// Abilities: Douse (FIELD_PSYNERGY_DOUSE).
-///
-/// The destination is the target's position (FieldPsynergy_SetupActorPair);
-/// with no target it is 16 pixels in front of the caster, on the ground.
 void FieldPsynergy_Douse(void) {
   struct Vector3 pos;
   struct Vector3 start;

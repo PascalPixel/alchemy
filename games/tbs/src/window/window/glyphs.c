@@ -6,22 +6,14 @@
 
 // Text_DrawGlyphPair draws its glyphs into a buffer of one byte per pixel
 // (Iwram_ExpandBitRuns writes a glyph's rows there in a colour), in rows 16
-// bytes apart, then packs its top 16 rows into 4bpp tiles. Offset 32 is row 2,
-// column 0, where the glyph goes; 49 (row 3, column 1) takes its shadow, one
-// pixel down and right; 24 and 7 take a kana mark above its top right.
+// bytes apart, then packs its top 16 rows into 4bpp tiles.
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
 /// Draws a character, and a second one when the code carries it in bits 8 to
 /// 15, into a 16x16-pixel cell of four 4bpp tiles at out: in the text colour
-/// over a shadow, or with an outline when WindowWork.outline is 1. Returns
-/// the width of the text drawn in pixels.
-/// The caller supplies 32 words for four tiles, written in a 16x16 sprite's
-/// order: top left, top right, bottom left, bottom right.
+/// over a shadow, or with an outline when WindowWork.outline is 1.
 s32 Text_DrawGlyphPair(s32 code, u32 *out) {
-  // 24 rows of 16 pixels, of which the top 16 are packed. Iwram_ExpandBitRuns
-  // draws 14 rows here, so a glyph covers rows 2 to 15 and its shadow rows 3
-  // to 16; a second character starts width pixels along, and what passes
-  // column 15 runs on into the next row.
+  // 24 rows of 16 pixels, of which the top 16 are packed.
   u8 pixels[384];
   struct WindowWork *work;
   const u8 *glyph;
@@ -97,10 +89,8 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
 
 #else
 /// Draws a character into a 16x16-pixel cell of four 4bpp tiles at out: in the
-/// text colour over a shadow, or with an outline when WindowWork.outline is
-/// 1, with the kana mark in the code's top two bits above its top right.
-/// Codes from 256 are kanji. Returns the character's width in pixels.
-/// The caller supplies 32 words for four tiles, in a 16x16 sprite's order.
+/// text colour over a shadow, or with an outline when WindowWork.outline is 1,
+/// with the kana mark in the code's top two bits above its top right.
 s32 Text_DrawGlyphPair(u32 code, u32 *out) {
   u8 pixels[256];
   struct WindowWork *work;
@@ -171,9 +161,7 @@ s32 Text_DrawGlyphPair(u32 code, u32 *out) {
 #endif
 
   // Pack either font into four tiles, with the leftmost pixel in the low
-  // nibble. Each tile line reads eight bytes from right to left; the inner
-  // loops step to the next row (+24 after the eight reads) and the right half
-  // (-120), the outer one to the bottom half (+112).
+  // nibble.
   pixel = pixels + 7;
   tileColumn = 0;
   do {
@@ -199,8 +187,7 @@ s32 Text_DrawGlyphPair(u32 code, u32 *out) {
 }
 
 // From the German release on, every code up to TEXT_LAST_FONT_CODE counts as 10
-// pixels, and those above as nothing. English draws the same Latin font with
-// its glyph widths, so the change is an update, not the language's.
+// pixels, and those above as nothing.
 #if TBS_PATCH_2
 #define WIDE_WIDTH_FIXED 1
 #endif
@@ -213,9 +200,6 @@ s32 Text_DrawGlyphPair(u32 code, u32 *out) {
 /// Returns the width in pixels of a zero-terminated string of 16-bit character
 /// codes: 4 for a space, and for other codes up to TEXT_LAST_FONT_CODE the font
 /// width, but nothing for the kana marks; 10 for a kanji (any code above it).
-/// German, Spanish, French and Italian count every code up to it but the space
-/// as a flat 10, and codes above it as nothing. Control codes are counted as
-/// characters.
 s32 Text_GetWideStringWidth(u16 *text) {
   s32 width;
   u16 *cursor;
@@ -254,11 +238,7 @@ s32 Text_GetWideStringWidth(u16 *text) {
 
 /// Draws a zero-terminated string of 16-bit character codes into a text canvas
 /// window at pixel (x, y), running its colour, outline, line spacing and new
-/// line codes; other control codes are skipped with their arguments. A NULL
-/// text draws the ring of decoded text from its first entry, after writing a
-/// 0 at WindowWork.textBufferEnd to end it. Each character is drawn at once,
-/// with no typing. A new line returns to x and goes 15 pixels down. The style
-/// codes change the shared style (WindowWork), which stays changed after.
+/// line codes; other control codes are skipped with their arguments.
 void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
                                  s32 y) {
   u8 *base;
@@ -378,8 +358,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 
 /// Draws a string of 16-bit character codes straight into the UI tilemap, as
 /// tiles, inside a window at tile (offsetX, offsetY) of its interior, writing
-/// both the work block's copy and VRAM. A NULL buffer draws the decoded text
-/// in WindowWork.textBuffer.
+/// both the work block's copy and VRAM.
 UNUSED void Text_DrawGlyphTileAtWorkOffset(u16 *buffer,
                                            const struct Window *window,
                                            s32 offsetX, s32 offsetY) {
@@ -412,10 +391,6 @@ UNUSED void Text_DrawGlyphTileAtWorkOffset(u16 *buffer,
 /// Draws a zero-terminated string of 16-bit character codes into a window's
 /// tilemap at tile (x, y) of its interior, one tile per character, skipping
 /// control codes; a NULL text draws the decoded text in WindowWork.textBuffer.
-/// Control operands are skipped, not rendered as glyphs; the input is read
-/// only. The character code is the tile's number (Window_PutGlyph), so only
-/// codes up to TEXT_LAST_FONT_CODE show. The Djinn preview
-/// (screens/battle_djinn_preview.c) draws its numbers this way.
 void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
                                  s32 y) {
   struct WindowWork *work;
@@ -474,11 +449,7 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
 }
 
 /// Writes value as decimal text into buffer (14 bytes) and returns where the
-/// text starts. With width 0 the number has no padding and a minus sign when
-/// negative; otherwise it is right-aligned in width characters (up to 12;
-/// another width counts as 12), padded with spaces, and a negative number
-/// shows its magnitude with no sign. A number of more than width digits loses
-/// its leading digits.
+/// text starts.
 u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
   s32 offset;
   s32 value;

@@ -12,12 +12,8 @@
 /// ABILITY_CLOAK.
 #define CLOAK_END (0x2000 | ABILITY_CLOAK)
 
-/// Task of Cloak: when the cell under the leader is not
-/// CLOAK_TILE, requests CLOAK_END. On the World Map it reads
-/// the 32-pixel gCellPictures, elsewhere the 16-pixel cells. Runs once a
-/// frame from FieldPsynergy_StartCloak, and again from
-/// FieldPsynergy_ResumeCloakCheck when a scene loads with the leader still
-/// cloaked.
+/// Task of Cloak: when the cell under the leader is not CLOAK_TILE, requests
+/// CLOAK_END.
 void FieldPsynergy_CheckCloakTile(void) {
   struct FieldWork *work;
   struct Actor *leader;
@@ -70,12 +66,8 @@ void FieldPsynergy_CheckCloakTile(void) {
     work->psynergy = CLOAK_END;
 }
 
-/// Ends Cloak: stops the cell check and makes the leader blink back into
-/// sight, clearing cloaked. The leader is white (SPRITE_COLOR_WHITE) for the
-/// first five blinks, its outline (sprite flag bit 1) on and off; the last
-/// five alternate white and its own colours (param 0). Each half is 2
-/// frames. The leader ends with its shadow back.
-/// FieldPsynergy_RunExtraHandler runs it when the CLOAK_END request is handled.
+/// Ends Cloak: stops the cell check and makes the leader blink back into sight,
+/// clearing cloaked.
 void FieldPsynergy_EndCloak(void) {
   struct Actor *actor;
   struct Sprite *animation;
@@ -125,12 +117,6 @@ void FieldPsynergy_ResumeCloakCheck(void) {
 
 /// The leader blinks 10 times and hides (cloaked set), and the cell check
 /// starts; where the leader cannot hide it shows again at once.
-///
-/// Abilities: Cloak (FIELD_PSYNERGY_CLOAK).
-///
-/// Hidden, the leader is drawn as an outline only (SPRITE_FLAG_OUTLINED, no
-/// shadow), and while gMainRoutineWork.cloaked is set no random battles come
-/// (Encounter_CountStepsAndSelectFormation).
 void FieldPsynergy_StartCloak(void) {
   struct FieldWork *work = gFieldWork;
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);

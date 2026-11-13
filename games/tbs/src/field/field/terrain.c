@@ -14,10 +14,7 @@
 
 /// The ground height functions (gMapGrid_TerrainHeightFunctions): each takes a
 /// cell's height samples after its kind byte and a pixel (x, y) within the
-/// 16x16 cell, and returns the ground height there in 16.16 pixels. This one
-/// is flat: the first sample everywhere.
-/// Each is reached only through that table, by the cell's enum TerrainKind:
-/// this one is TERRAIN_FLAT, and the rest follow in order.
+/// 16x16 cell, and returns the ground height there in 16.16 pixels.
 s32 Terrain_GetFlatHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   return CURVE_HEIGHT_FIXED(samples[0]);
@@ -113,9 +110,8 @@ s32 Terrain_GetBendSumDiagonalHeight(const u8 *heightBytes, s32 x, s32 y) {
   firstHeight = CURVE_HEIGHT_FIXED(*samples++);
   middleHeight = CURVE_HEIGHT_FIXED(*samples);
   lastHeight = CURVE_HEIGHT_FIXED(samples[1]);
-  // x + y from 0 to 30: 15 is the diagonal, below it the first half and
-  // above it the second. Each half divides by 15, so it reaches its end
-  // sample.
+  // x + y from 0 to 30: 15 is the diagonal, below it the first half and above
+  // it the second.
   x += y;
   if (x == CURVE_FULL_STEPS - 1) {
     height = middleHeight;
@@ -132,9 +128,6 @@ s32 Terrain_GetBendSumDiagonalHeight(const u8 *heightBytes, s32 x, s32 y) {
 
 /// A slope that bends on the diagonal x = y: from sample 0 at the top right
 /// corner to sample 1 on the diagonal to sample 2 at the bottom left.
-/// It divides by 16 with a shift where TERRAIN_BEND_SUM_DIAGONAL divides by
-/// 15, so its
-/// slopes are 15/16 as steep and it never reaches sample 2 exactly.
 s32 Terrain_GetBendDifferenceDiagonalHeight(const u8 *heightBytes, s32 x,
                                             s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
@@ -240,8 +233,6 @@ s32 Terrain_GetBendXHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 }
 
 /// A slope along y that bends at the middle, as TERRAIN_BEND_X does along x.
-/// Its samples are read unsigned: 128 to 255 are heights, where the
-/// other kinds read them as -128 to -1.
 s32 Terrain_GetBendYHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const u8 *samples = heightBytes;
   u32 cellY = pixelY;
@@ -323,8 +314,7 @@ s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y) {
   if (work != NULL) {
     cell = work->layers[layer & 3].cells;
   }
-  // Cells are 16 pixels, 128 to a row. A cell's shape is four
-  // bytes: the kind, then up to three height samples.
+  // Cells are 16 pixels, 128 to a row.
   cell += x / 16 + (y / 16 << 7);
   heightBytes = Ram_MapGridShapes + cell->shape * 4;
   // UB: read the kind byte before passing the remaining samples.
@@ -409,11 +399,9 @@ UNUSED s32 MapGrid_GetCellHighFlags(s32 x, s32 y) {
   return ((u8 *)&cell->cellPictureAndFlags)[1] >> 6;
 }
 
-/// Returns whether an actor can step to position, an enum Collision:
-/// whether the cell there is a wall, or the ground too high or too low for a
-/// step from the actor's.
-///
-/// A layer past MAPGRID_LAYER_OVERHEAD reads the grid from its start.
+/// Returns whether an actor can step to position, an enum Collision: whether
+/// the cell there is a wall, or the ground too high or too low for a step from
+/// the actor's.
 s32 MapGrid_CheckCollision(struct Actor *actor,
                            struct FieldPosition *position) {
   struct MapGridScrollWork *gridState;
@@ -489,8 +477,7 @@ s32 MapGrid_IsWallAt(struct WorldPosition *position) {
 
 /// Returns the world map's collision value (1-15) at position: from the upper
 /// collision layer where it has one, else the lower, else
-/// WORLD_MAP_COLLISION_DEFAULT. Each layer is a
-/// tile map of 4-bit collision pixels.
+/// WORLD_MAP_COLLISION_DEFAULT.
 s32 WorldMap_GetCollision(struct WorldPosition *position) {
   s32 halfPixelX = position->x >> 17;
   s32 y = position->y;
@@ -501,9 +488,7 @@ s32 WorldMap_GetCollision(struct WorldPosition *position) {
   u8 packedCollisions;
   u32 result;
 
-  // Coordinates in 2-pixel units. A collision tile covers 16x16 pixels as
-  // 4x4 values of 4 bits, two to a byte, 8 bytes a tile; the maps of tile
-  // numbers are 64 tiles square and wrap.
+  // Coordinates in 2-pixel units.
   collisionCell = (((halfPixelY / 8) & 63) << 6) + ((halfPixelX / 8) & 63);
   pixelOffset = (((halfPixelY / 2) & 3) << 1) + ((halfPixelX / 4) & 1);
 
@@ -539,8 +524,7 @@ s32 WorldMap_GetCollision(struct WorldPosition *position) {
 
 /// Returns 0 when the world map at position can be walked on (collision
 /// WORLD_MAP_COLLISION_WALKABLE_FIRST to WORLD_MAP_COLLISION_WALKABLE_LAST),
-/// else -1. The first argument is not read; the player control passes its
-/// actor.
+/// else -1.
 s32 WorldMap_IsWalkable(s32 unused, struct WorldPosition *position) {
   // One unsigned compare tests the walkable range.
   if ((WorldMap_GetCollision(position) - WORLD_MAP_COLLISION_WALKABLE_FIRST) <=

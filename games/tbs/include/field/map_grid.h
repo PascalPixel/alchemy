@@ -75,11 +75,7 @@ struct TilesetAnim {
 };
 
 /// A layout's three layers, by what they hold. Most layouts give them
-/// priorities 3, 2 and 1. An actor takes its sprite's priority from the
-/// cell under it (ACTOR_PRIORITY_AUTOMATIC, ActorSystem_PlaceSprites):
-/// 2 on open ground, which puts it over the middle layer and under the overhead
-/// one, and 3 where the cells put it behind a building. Each layer shows on its
-/// own background: `BG3`, `BG2` and `BG1`.
+/// priorities 3, 2 and 1.
 enum MapGridLayerIndex {
   MAPGRID_LAYER_GROUND = 0,   ///< `BG3`: the ground, at the back
   MAPGRID_LAYER_MIDDLE = 1,   ///< `BG2`: walls and edges, under the actors
@@ -100,9 +96,7 @@ struct WorldPosition {
 /// 8 bytes, its four tile entries. MapGrid_LoadMap decodes them in.
 extern u32 gCellPictures[];
 
-/// The tileset animations' tiles, 16 KB of EWRAM at 0x02028000. A tileset
-/// animation's source tiles numbered 1536 and up (512 and up for 64-byte
-/// tiles) are read from here, tile 1536 (512) at its first byte.
+/// The tileset animations' tiles, 16 KB of EWRAM at 0x02028000.
 extern u8 gMapGridAnimTiles[];
 
 /// The map's shape table, 16 KB of EWRAM at 0x0202c000: 4-byte entries
@@ -111,22 +105,19 @@ extern u8 gMapGridShapes[];
 
 /// 32 KB of EWRAM at 0x02038000 holding background tiles, such as the world
 /// map's char blocks 2 and 3, which WorldMap_ShowBg1FromBuffer copies back
-/// after the still picture. The EWRAM pool's limit, EWRAM_END, lies past it,
-/// so the pool's blocks can reach these bytes.
+/// after the still picture.
 extern u8 gBgTileBuffer[];
 
 /// HEAP_SLOT_WORLD_MAP_AFFINE under its own name, which no code reads; the
 /// world map keeps its struct WorldMapAffineWork in the slot.
 #define gWorldMapAffineWork (*(u8 **)&gHeapSlots[HEAP_SLOT_WORLD_MAP_AFFINE])
 
-/// A row of gMaps: a layout's resources, counted from
-/// ResourceId_Map001: its header, palette, three tilesets and the tileset
-/// animations' tiles.
+/// A row of gMaps: a layout's resources, each counted from ResourceId_Map001.
 struct MapResources {
-  /// Offsets from ResourceId_Map001: the header, the palette, the
-  /// tilesets for char blocks 1, 2 and 3, and the tileset animations' tiles
-  /// (gMapGridAnimTiles).
-  u16 resources[6];
+  u16 header;
+  u16 palette;
+  u16 tiles[3];       ///< For char blocks 1, 2 and 3.
+  u16 animationTiles; ///< Into gMapGridAnimTiles.
 };
 /// Every layout's resources, by map number (maps.c).
 extern const struct MapResources gMaps[];

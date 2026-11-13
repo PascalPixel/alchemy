@@ -4,11 +4,9 @@
 
 #include "../screens_internal.h"
 
-/// Decompresses picture `picture` of gMenuTitlePictures, a 64x16
-/// heading (Save, Continue, Copy, Erase, Battle, Link, Pause, Setup) of 512
-/// bytes, into VRAM slot `slot`, through a 1 KB staging block in
-/// HEAP_SLOT_TILE_SCRATCH. The heap block is not freed when `slot` is not a
-/// valid VRAM slot.
+/// Decompresses picture `picture` of gMenuTitlePictures, a 64x16 heading (Save,
+/// Continue, Copy, Erase, Battle, Link, Pause, Setup) of 512 bytes, into VRAM
+/// slot `slot`, through a 1 KB staging block in HEAP_SLOT_TILE_SCRATCH.
 void MenuTitle_Load(s32 picture, s32 slot) {
   void *stagingBuffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   const u8 *resource = gMenuTitlePictures[picture];
@@ -20,12 +18,9 @@ void MenuTitle_Load(s32 picture, s32 slot) {
   }
 }
 
-/// Shows heading `picture` of gMenuTitlePictures as two 32x16
-/// sprites side by side at (x, y) in `window`, on draw layer 253, and
-/// returns the left one (the right one follows it in the window's list).
-/// Returns NULL when no VRAM slot is free. The file list shows its
-/// mode's heading this way (FileList_SelectFile), and window/settings_menu.c
-/// the settings menu's Setup and the Pause menu's Pause.
+/// Shows heading `picture` of gMenuTitlePictures as two 32x16 sprites side by
+/// side at (x, y) in `window`, on draw layer 253, and returns the left one (the
+/// right one follows it in the window's list).
 struct WindowSprite *MenuTitle_Create(s32 picture, struct Window *window, s32 x,
                                       s32 y) {
   s32 slot;
@@ -80,10 +75,8 @@ void CommandIcon_Load(s32 icon, s32 slot, s32 remap) {
   }
 }
 
-/// Shows command icon `icon` (see CommandIcon_Load) as a 32x32
-/// 256-colour sprite at (x, y) in `window`, on draw layer 251. Returns NULL
-/// when no VRAM slot is free. The settings menu's icons come through here
-/// (window/settings_menu.c).
+/// Shows command icon `icon` (see CommandIcon_Load) as a 32x32 256-colour
+/// sprite at (x, y) in `window`, on draw layer 251.
 struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
                                         struct Window *window, s32 x, s32 y) {
   s32 slot;
@@ -102,9 +95,7 @@ struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
 
 /// Makes the sprite `obj` pulse: scales it about its centre by
 /// gWindowSprite_PulseScales (in 1/65536, used in 1/256), one step every two
-/// frames, and puts it on draw layer 252. Does nothing when `obj` is NULL.
-/// The settings menu pulses its selected icon with it each frame
-/// (window/settings_menu.c).
+/// frames, and puts it on draw layer 252.
 void WindowSprite_Pulse(struct WindowSprite *obj) {
   s32 scale = gWindowSprite_PulseScales[(gVBlankCount >> 1) & 7];
   struct AffineTransform effect;
@@ -139,11 +130,7 @@ static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 // Builds the twelve range icons Window_DrawThreeTileColumn draws, as the 24 BG
 // tiles from RANGE_ICON_FIRST_TILE: icon n is a centre tile and an end tile,
 // filled with WINDOW_BACKGROUND_COLOR, then marked row by row by XOR with
-// gMenu_BarPatternRows (its colour 5 turns the fill to colour 1). Rows 1 to 7
-// are marked; the first set grows its pattern with the row, the second skips
-// row 1. Battle_CollectPartyCommands builds them as the command menus open.
-// Icon 10's tiles, the two from DJINN_MENU_ARROW_TILE, are also where
-// BattleDjinnMenu_Run puts its blinking arrow (gDjinnMenu_BlinkTile).
+// gMenu_BarPatternRows (its colour 5 turns the fill to colour 1).
 UNREAD_RESULT Menu_BuildLocalizedPatternTiles(void) {
   u32 *vram =
       (u32 *)(BG_CHAR_BLOCK(0) + RANGE_ICON_FIRST_TILE * TILE_SIZE_4BPP);
@@ -180,10 +167,8 @@ UNREAD_RESULT Menu_BuildLocalizedPatternTiles(void) {
 }
 
 // Draws range icon `pattern` across tiles (x, y) to (x + 2, y) of `window`'s
-// interior: its end tile mirrored, its centre tile and its end tile, in the
-// UI palette. Callers pass an ability's range less one (the aimed unit and
-// range - 1 either side), or 11 for ABILITY_RANGE_ALL: the Psynergy list and
-// the Djinn preview.
+// interior: its end tile mirrored, its centre tile and its end tile, in the UI
+// palette.
 UNREAD_RESULT Window_DrawThreeTileColumn(struct Window *window, s32 x, s32 y,
                                          s32 pattern, s32 unused) {
   s32 patternOffset = pattern * 2;
@@ -195,10 +180,9 @@ UNREAD_RESULT Window_DrawThreeTileColumn(struct Window *window, s32 x, s32 y,
   Window_SetTilemapEntry(window, rightTile, x + 2, y, 0);
 }
 
-/// Merges two 8x8 4bpp tiles row by row into `output`: `second` moved
-/// `shift` pixels (right when positive, left when negative), drawn over
-/// `first`, which shows wherever the moved pixel is colour 0. Pixels moved
-/// past the tile's edge are lost.
+/// Merges two 8x8 4bpp tiles row by row into `output`: `second` moved `shift`
+/// pixels (right when positive, left when negative), drawn over `first`, which
+/// shows wherever the moved pixel is colour 0.
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
                                    s32 shift) {
   s32 oppositeShift;
@@ -242,14 +226,9 @@ void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
   } while (row <= 7);
 }
 
-/// Draws the two page arrows (gPageArrowTiles) into the two tiles at
-/// VRAM address `offset`, sliding outward: the left arrow 2 or 3 pixels to
-/// the left, the right one as far to the right, eight frames each. They are
-/// drawn over the border's top edge tile (WINDOW_TILE_BORDER_TOP) and top-right
-/// corner tile (WINDOW_TILE_BORDER_TOP_RIGHT). The battle menus call it each
-/// frame for LIST_PAGE_ARROW_VRAM; the field menus (menu/menu, by far call) and
-/// the password pages of the title's Send (scene/file_screen.c) call it for
-/// PAGE_ARROW_VRAM.
+/// Draws the two page arrows (gPageArrowTiles) into the two tiles at VRAM
+/// address `offset`, sliding outward: the left arrow 2 or 3 pixels to the left,
+/// the right one as far to the right, eight frames each.
 void Link_DrawPageArrows(s32 offset) {
   s32 phase = (gFrameCount >> 2) & 3;
 
@@ -274,10 +253,7 @@ void Link_DrawPageArrows(s32 offset) {
 
 /// Copies the UI's ten digit tiles ('0' to '9', tiles 48 to 57) twice into
 /// `dst`, each pixel mapped through gGraphics_ExpandNibbleTable: first with
-/// colour 1 drawn as colour 10, then unchanged. The battle menus build their
-/// page numbers this way at LIST_PAGE_DIGITS_TILE (LIST_TILE_PAGE_NUMBER), as
-/// do the password pages of the title's Send (scene/file_screen.c) and the
-/// field Djinn menu (menu/menu/djinn.c).
+/// colour 1 drawn as colour 10, then unchanged.
 void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
   s32 bank = 0;
   s32 paletteOffset = 0;
@@ -322,12 +298,10 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
   } while (bank <= 1);
 }
 
-/// Builds icon `resource` (0 to 31) of gIcon_MiscIconPointers, the table
-/// the status icons come from (Icon_DrawMisc), in a
-/// transfer block taken from HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM cache entry
-/// `index` with it and returns the entry's first tile. The heap block is
-/// released before it returns. The Status screen loads its status icons
-/// this way, by status kind (1 to 18).
+/// Builds icon `resource` (0 to 31) of gIcon_MiscIconPointers, the table the
+/// status icons come from (Icon_DrawMisc), in a transfer block taken from
+/// HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM cache entry `index` with it and
+/// returns the entry's first tile.
 s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
   s32 result;
   GlyphTransfer *work;
@@ -341,9 +315,7 @@ s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
 
 /// Builds the icon of inventory item `resource` (the count above one and both
 /// marks) in a transfer block taken from HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM
-/// cache entry `index` with it and returns the entry's first tile. The heap
-/// block is released before it returns. The battle item list and the chosen
-/// item's window use it.
+/// cache entry `index` with it and returns the entry's first tile.
 s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
   s32 result;
   GlyphTransfer *work;
@@ -358,8 +330,7 @@ s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
 
 /// Builds the icon of ability `resource` in a transfer block taken from heap
 /// slot 17, reloads VRAM cache entry `index` with it and returns the entry's
-/// first tile. The heap block is released before it returns. The chosen
-/// Psynergy's and summon's windows and the Djinn preview use it.
+/// first tile.
 s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
   s32 tile;
   s32 slot;
@@ -374,11 +345,9 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
   return result;
 }
 
-/// Loads the portrait of character `member` (ISAAC to PIERS, 0 to 7; any
-/// higher value shows Isaac's) into VRAM cache entry `cacheSlot`, in
-/// PORTRAIT_PALETTE, and returns its first tile. In the prologue, Isaac and
-/// Garet use their childhood portraits. The Status screen and the battle
-/// command menus draw the party member's portrait with it.
+/// Loads the portrait of character `member` (ISAAC to PIERS, 0 to 7; any higher
+/// value shows Isaac's) into VRAM cache entry `cacheSlot`, in PORTRAIT_PALETTE,
+/// and returns its first tile.
 s32 Portrait_Load(u32 member, s32 cacheSlot) {
   s32 tile;
   s32 slot;
@@ -412,8 +381,7 @@ s32 WindowSprite_GetPointerTiles(s32 no) {
 }
 
 /// Copies the 4bpp decoder into RAM, calls it with the transfer's encoded
-/// source and byte buffer, then releases the copied code. Its ARM entry reads
-/// the stream through r0 and writes bytes through r1, as Icon_Decode does.
+/// source and byte buffer, then releases the copied code.
 UNUSED void Icon_Decompress(GlyphTransfer *work) {
   RamCode_LoadSlot(HEAP_SLOT_RAM_CODE_TEMP, Tile_Decompress4bpp,
                    Tile_Decompress4bppCodeSize);
@@ -444,9 +412,7 @@ struct Window *Link_CreateCountdownLabelWindow(void) {
 
 /// Decodes command icon `icon` (ResourceId_CommandIcons, 1 KB of 256-colour
 /// pixels) in a block taken from HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM cache
-/// entry `slotIndex` with it and returns the entry's first tile. The heap block
-/// is released before it returns. The command row and the chosen command's icon
-/// use it.
+/// entry `slotIndex` with it and returns the entry's first tile.
 s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
   GlyphTransfer *buffer =
       HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
@@ -463,12 +429,7 @@ s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
 }
 
 /// Loads command icon `glyph` as 8bpp BG tiles into character block 1 from
-/// 64-byte tile `tile` on (16 tiles, 32x32), for the command row's BG1. The
-/// row's icons share `palette`: each colour index first met takes the next
-/// BG palette entry, which gets that index's sprite palette colour. Past 64
-/// entries every new index takes entry 64, whose colour is not set here.
-/// HEAP_SLOT_GLYPH_TRANSFER holds the decoded icon and a 1 KB Heap_Alloc block
-/// the remapped pixels; both are freed before it returns.
+/// 64-byte tile `tile` on (16 tiles, 32x32), for the command row's BG1.
 void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
                                     s32 tile) {
   GlyphTransfer *decoded;
@@ -506,8 +467,7 @@ void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
 /// Loads the command row's icon `index` as command icon `icon`: as BG1 tiles
 /// from tile index * 16 (BattleCommandRow_LoadIconTiles), and into the row's
 /// shared VRAM cache entry for its 32x32 sprite, which BattleCommandRow_Run
-/// shows only for the selected icon. The icon number is also its command
-/// (BattleCommandRowIcon.kind), which names its label.
+/// shows only for the selected icon.
 void BattleCommandRow_LoadIcon(struct BattleCommandRowWork *work, s32 index,
                                u32 icon) {
   struct BattleCommandRowIcon *entry = &work->entries[index];
@@ -519,10 +479,7 @@ void BattleCommandRow_LoadIcon(struct BattleCommandRowWork *work, s32 index,
       Resource_LoadIndexedIntoBuffer(work->entries[index].resource, icon);
 }
 
-/// Puts BG1 behind the other layers (priority 3). The command row runs it as
-/// a task each VBlank, in the VBlank pass, with CommandRow_PutBg1InFront at
-/// line 136 (tile row 17, the top of the row's icons), so that BG1 is behind
-/// above the strip and in front from it down.
+/// Puts BG1 behind the other layers (priority 3).
 void CommandRow_PutBg1Behind(void) {
   u32 value = REG_BG1CNT;
 

@@ -46,12 +46,6 @@ struct BurstParticleVisualGroup {
 /// When Growth is cast on a target, particles fly from in front of the caster
 /// to points round the target, which then takes the sprite priority of the
 /// ground under it.
-///
-/// Abilities: Growth (FIELD_PSYNERGY_GROWTH).
-///
-/// The target plays animation 2, stops being solid,
-/// loses its shadow and is depth-sorted as if 320 pixels higher
-/// (ACTOR_PRIORITY_UNDERFOOT); the Psynergy leaves it so.
 void FieldPsynergy_GrowthOnTarget(s32 unused) {
   struct Actor *target;
 
@@ -72,11 +66,6 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
 /// When Growth is cast with no target, particles fly out from in front of the
 /// caster, and then five falling actors appear 4 to 10 pixels round the
 /// Psynergy's position.
-///
-/// Abilities: Growth (FIELD_PSYNERGY_GROWTH).
-///
-/// The actors (SPRITE_VINE) appear 2 or 3 frames apart and each lasts 60 frames
-/// (gFieldEffect_BurstParticleActorScript).
 void FieldPsynergy_Growth(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct BurstParticleVector pos;
@@ -106,10 +95,7 @@ void FieldPsynergy_Growth(void) {
 }
 
 /// Sends 24 particles, one every 2 frames, from in front of the caster to
-/// points round the Psynergy's position. They start 10 pixels up facing south,
-/// 24 pixels up facing north, and 10 pixels up and 10 ahead otherwise. Each
-/// flies at 1.5 pixels a frame and is released on arrival; facing north, the
-/// points are 14 pixels further north.
+/// points round the Psynergy's position.
 void FieldEffect_SpawnBurstParticleField(void) {
   struct FieldEffectWork *effectWork;
   struct Actor *caster;

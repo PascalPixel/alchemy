@@ -8,8 +8,6 @@
 // The editions outside Japanese widen the Djinn list's highlight and lay the
 // stat preview out for fewer digits; from patch 1 a trade preview shows its
 // second side in another mode.
-//
-// The highlight over a row of the Djinn list, in tiles.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define DJINN_CURSOR_WIDTH 6
 #else
@@ -67,14 +65,8 @@ s32 Menu_SetFirstActorRowCoordinates(s32 yOffset) {
 }
 
 /// Runs the Djinn menu over the field: the field menu's Djinn screen
-/// (FieldMenu_Run, FIELD_MENU_DJINN), and the Djinn tutorial, which the
-/// world map opens when Flint joins. Types messages at
-/// MESSAGE_SPEED_FAST while it runs (the tutorial's steps set
-/// MESSAGE_SPEED_NORMAL for their messages, which stays until the menu closes)
-/// and puts the player's speed back. Takes the menu work (HEAP_SLOT_MENU) and
-/// the backdrop (struct DjinnMenuBackdrop, from the EWRAM pool), and frees
-/// both before returning, after putting back the field tiles and palettes the
-/// backdrop saved. Returns 1, which makes the field menu open again.
+/// (FieldMenu_Run, FIELD_MENU_DJINN), and the Djinn tutorial, which the world
+/// map opens when Flint joins.
 s32 DjinnMenu_Run(void) {
   struct DjinnMenuWork *menu;
   u32 savedMessageSpeed;
@@ -187,10 +179,7 @@ enum DjinnMenuStep {
 };
 
 /// Chooses a Djinni, previews changes, then sets, stands by, gives or trades
-/// it. Confirmation states fall through to their matching commit states on
-/// success. Loops until the player leaves the first chooser (B or Start:
-/// returns -1) or presses Start further in (usually 0); DjinnMenu_Run ignores
-/// the result.
+/// it.
 s32 DjinnMenu_RunScreen(void) {
   struct DjinnMenuWork *menu;
   struct WindowSprite *cursor;
@@ -412,9 +401,6 @@ s32 DjinnMenu_RunScreen(void) {
 
 /// Writes copies of background palettes 15, 5 and 7, each brightnessDelta
 /// lighter in every channel (clamped to 0-31), into palettes 14, 4 and 6.
-/// Palette 7's copy is 12 darker instead. Menu_OpenBackdropScreen calls it
-/// with 8: 14 becomes the row highlight, 4 the highlighted element icons and
-/// 6 the dimmed text behind the help (DjinnMenu_ShowHelp).
 void DjinnMenu_AdjustPalettes(s32 brightnessDelta) {
   s32 copyIndex;
   s32 paletteNumber;
@@ -468,12 +454,7 @@ void DjinnMenu_AdjustPalettes(s32 brightnessDelta) {
 #define DJINN_PREVIEW_LOST 0x4000
 
 /// Draws the backdrop behind the Djinn menu's list: its window, tiles and
-/// palettes. First saves BG character block 1's first 8 KB and palettes 4 to 7
-/// in the backdrop, which DjinnMenu_Run puts back as the menu closes.
-/// BASIC_COLORS_PALETTE gets the basic sprite colours, with
-/// TEXT_BACKGROUND_COLOR the window background, for the element icons
-/// (DJINN_ELEMENT_TILE); palette 7 a copy of 15; then
-/// DjinnMenu_AdjustPalettes(8) makes 14, 4 and 6 from 15, 5 and 7.
+/// palettes.
 MenuBackdropResult Menu_OpenBackdropScreen(void) {
   // UB: the implicit int call conflicts with DrawElementList's void definition.
   // The sole caller ignores this wrapper's result.
@@ -592,10 +573,7 @@ s32 DjinnMenu_BuildLists(void *table) {
 }
 
 /// Draws each party member's Djinn column, including set and recovering
-/// entries. Rebuilds table's lists first. Each name follows its element's icon:
-/// in the normal colour when set, TEXT_COLOR_RED on standby and
-/// TEXT_COLOR_YELLOW while recovering. Holds the tilemap upload
-/// (holdTilemapUpload) until the list is drawn.
+/// entries. Rebuilds table's lists first.
 void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
   struct DjinnMenuWork *menu;
   s32 listIndex;
@@ -658,15 +636,12 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
     }
   }
   Window_DrawDividerLineFar(menu->listWindow, 0, 10, 28, 10);
-  ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->dirty = 1;
+  WINDOW_WORK->dirty = 1;
   work->holdTilemapUpload = 0;
 }
 
 /// Sets the palette of a rectangle of window's interior, (x, y) and its size in
 /// tiles from the interior's corner, through Window_HighlightRectFar.
-/// Only bit 12 of each map entry changes, so WINDOW_PALETTE and
-/// HIGHLIGHT_PALETTE swap (the row highlight) and so do 5 and 4 (the element
-/// icons).
 s32 Window_SetInteriorPaletteBitRect(const struct Window *window, s32 x, s32 y,
                                      s32 width, s32 height, s32 palette) {
   Window_HighlightRectFar(window->x + x + 1, window->y + y + 1, width, height,
@@ -677,10 +652,7 @@ s32 Window_SetInteriorPaletteBitRect(const struct Window *window, s32 x, s32 y,
 }
 
 /// Moves each tile of a screen rectangle (in tiles) that shows WINDOW_PALETTE
-/// to palette, and marks each row changed for upload. Clipped as
-/// Render_SetTilemapFlagRect clips: to the screen's columns, and to its rows
-/// only once the rectangle reaches row 29. The Djinn menu dims its windows
-/// with palette 6 behind the help and the second chooser.
+/// to palette, and marks each row changed for upload.
 void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
   struct WindowWork *work;
   u16 *tileCursor;
@@ -732,10 +704,7 @@ void Window_SetInteriorRectPalette(void *window, s32 x, s32 y, s32 width,
 
 /// The Djinn menu's help, opened by Select on the first chooser: a list of
 /// seven topics (Djinn, Set, Standby, Summon, Recovery, Class, Psynergy) with
-/// the chosen one's text typed beside it. The d-pad moves through the topics,
-/// and A moves on once the text has finished. Returns DJINN_RESULT_BACK for B
-/// or Select, back to the list, or DJINN_RESULT_START for Start, which closes
-/// the Djinn menu.
+/// the chosen one's text typed beside it.
 s32 DjinnMenu_ShowHelp(void) {
   struct Window *helpWindow;
   struct Window *statusWindow;
@@ -859,25 +828,7 @@ enum DjinnColumnFlag {
   DJINN_COLUMN_EMPTY = 4             ///< no Djinni to choose
 };
 
-/// The Djinn list's chooser. DJINN_SELECT_DJINNI chooses a Djinni in any
-/// party member's column; DJINN_SELECT_ACTION, for the Djinni chosen, chooses
-/// what to do with it: its own column's header (Set or Standby), another party
-/// member's header (Give), or a Djinni in another column to trade with. The
-/// help window says what R and Select do; the figures and the unleash text
-/// follow the cursor.
-///
-/// The Djinni chooser returns DJINN_RESULT_CHOSEN for A, DJINN_RESULT_STATUS
-/// for L and DJINN_RESULT_HELP for Select. R puts the Djinni on standby or sets
-/// it at once; holding R, Select sets every Djinni or puts every one on
-/// standby. The action chooser returns DJINN_RESULT_SET, _STANDBY, _GIVE or
-/// _TRADE (A or R). Both return DJINN_RESULT_BACK for B and DJINN_RESULT_START
-/// for Start, and record the choice in the work's selectedColumn, selection,
-/// pairEntries, pairIndex, pairElement and pairMember for mode.
-///
-/// During the tutorial (backdrop->tutorialStep) the sampled keys are replaced:
-/// each step waits a set number of frames, shows its messages (the Djinn
-/// powers' three waiting for the player's A after each), or presses a key
-/// itself; DJINN_TUTORIAL_CLOSE waits for the player's A, then presses B.
+/// The Djinn list's chooser.
 s32 DjinnMenu_SelectDjinn(s32 mode) {
   s8 columnFlags[8];
   u8 requiresTrade[16];
@@ -905,10 +856,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
   s32 tutorialStep;
   s8 *status;
 
-  // Each column's DJINN_COLUMN_ flags. The Djinni chooser skips an empty
-  // column; in the action chooser the chosen Djinni's own column offers only
-  // its header, a party member it can be given to its header too, and a party
-  // member who must trade none.
+  // Each column's DJINN_COLUMN_ flags.
   selectedRow = -1;
   status = columnFlags;
   for (i = 7; i >= 0; i--)
@@ -995,8 +943,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       WindowSprite_RedrawSavedRectFar(menu->helpWindow);
       // DJINN_SELECT_ACTION's help: `<member>'s`, the element icon and the
       // Djinni's name, an ability name argument (its action, from
-      // ABILITY_DJINNI_FIRST), then "What will you do?". Spanish, French and
-      // Italian put the icon first and the name in the one message.
+      // ABILITY_DJINNI_FIRST), then "What will you do?".
       if (mode == DJINN_SELECT_ACTION) {
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ||             \
     LANGUAGE == LANGUAGE_ITALIAN
@@ -1024,10 +971,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
                                    8);
       }
       // The Djinni's figure, its element's: standing for one on standby or
-      // recovering, walking for one that is set. A recovering one gets
-      // DjinnFigures_SetSlotPosition's negative mark, which
-      // DjinnFigures_UpdateBottomRow turns into FACING_WEST rather than
-      // FACING_SOUTH. On a header the figure goes off screen (y 200).
+      // recovering, walking for one that is set.
       if (selectedRow == -1) {
         DjinnFigures_SetSlotPosition(mode, 0, 200, 0);
       } else if (mode == DJINN_SELECT_DJINNI) {
@@ -1642,12 +1586,6 @@ static __inline__ void Unit_Copy(struct Unit *destination,
 
 /// Saves the unit, applies a hypothetical Djinn change, draws its differences
 /// and restores the original unit before returning.
-///
-/// previewMode says the change (enum DjinnPreviewMode). Page 0 shows the
-/// stats, class and set Djinn counts, with an arrow beside each stat that
-/// changes; page n the nth page of the Psynergy list, new Psynergy in
-/// TEXT_COLOR_YELLOW and lost Psynergy in TEXT_COLOR_RED. side is the portrait
-/// slot. The saved copy is a heap block freed before returning. Returns 1.
 s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
                               s32 removePairSlot, s32 addPairSlot,
                               s32 previewMode, s32 page, s32 side) {

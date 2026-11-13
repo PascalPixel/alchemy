@@ -46,8 +46,6 @@ UNUSED void SettingsMenu_ResetEntries(struct OptionMenuWork *work) {
 /// Works out the window tint (red, green and blue, 0 to 31) from the window
 /// colour settings: the hue picks a point on the colour wheel and the
 /// brightness shifts all three channels.
-/// The three wave samples are one third of the 96-step colour cycle apart.
-/// The arithmetic is WindowColor_Apply's.
 UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
   s16 phase;
   s32 bias;
@@ -148,14 +146,6 @@ u16 Color_ScaleComponents(s16 *rgb, s32 redScale, s32 greenScale,
 
 /// Sets the window colours (WINDOW_PALETTE, colours 4 to 10) for a window hue
 /// (0 to 23) and brightness (0 to 14, 7 neutral).
-/// The live palette path leaves the saved colour settings untouched. The
-/// option screen calls it as the player changes the settings, and with the
-/// saved ones when the screen is cancelled. The file list
-/// (FileList_SelectFile) shows the colours of the file under the cursor, and
-/// the saved ones for an empty file and on leaving. The File Screen
-/// (scene/file_screen.c), the main routine's start (MainRoutine_Run),
-/// the end of the Mind Read wave (FieldPsynergy_RestoreMindReadPalette) and
-/// Vale and the world map call it with the saved settings.
 void WindowColor_Apply(s32 phase, s32 brightness) {
   s16 rgb[3];
   s16 step;
@@ -165,8 +155,6 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   s16 offset;
 
   // The 24 hues are every fourth step of the 96-step wheel, hue 0 at step 48.
-  // Brightness 7 adds nothing; each step from it adds or takes one level from
-  // every channel.
   step = ((phase + WINDOW_HUE_COUNT / 2) % WINDOW_HUE_COUNT) * 4;
   offset = brightness - WINDOW_BRIGHTNESS_NEUTRAL;
   red = gWindowColor_WaveTable[(step % WINDOW_COLOR_WHEEL_STEPS)] + offset;
@@ -182,10 +170,9 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   rgb[0] = red;
   rgb[1] = green;
   rgb[2] = blue;
-  // Each colour scales the tint by channel, in 16.16 (Q16_ONE is 1): colours
-  // 4 to 7 grow darker, from about 0.93, 0.8 and 1.07 to 0.63, 0.6 and 0.67,
-  // and 8 to 10 lighter, up to about 1.23, 1 and 1.47. Colour 4 is the
-  // windows' background.
+  // Each colour scales the tint by channel, in 16.16 (Q16_ONE is 1): colours 4
+  // to 7 grow darker, from about 0.93, 0.8 and 1.07 to 0.63, 0.6 and 0.67, and
+  // 8 to 10 lighter, up to about 1.23, 1 and 1.47.
   BG_PLTT_COLOR(WINDOW_PALETTE, 4) =
       Color_ScaleComponents(rgb, Q16_ONE * 14 / 15, Q16_ONE * 4 / 5, 0x11110);
   BG_PLTT_COLOR(WINDOW_PALETTE, 5) = Color_ScaleComponents(
@@ -270,10 +257,7 @@ void SettingsMenu_SelectionNoOp(void) {}
 
 /// The settings menu's per-frame task: moves the cursor and the two slider
 /// markers, animates the marker of the slider in use, and pulses the chosen
-/// setting's icon. The markers' pictures, 256 bytes each, are loaded every
-/// frame: the marker of the row in use steps through 8 pictures of
-/// ResourceId_MenuCursorPictures, the other shows the first. Rows 2 to 4
-/// (speed, speech, sleep) pulse their chosen icon.
+/// setting's icon.
 void SettingsMenu_AnimateCursors(void) {
   s32 cursorResource;
   s32 markerResource;
@@ -312,10 +296,6 @@ void SettingsMenu_AnimateCursors(void) {
 
 /// Allocates the settings menu's work block, copies the settings into it with
 /// how many values each takes, and starts its per-frame task.
-/// The copy lets cancelling discard the edits. The block is
-/// HEAP_SLOT_SETTINGS_MENU (gOptionMenuWork), which SettingsMenu_Release frees.
-/// The rows: 0 the window hue (24 values), 1 its brightness (15), 2 the message
-/// speed (3), 3 speech (2) and 4 auto-sleep (2).
 void SettingsMenu_InitializeWork(void) {
   struct OptionMenuWork *work;
 
@@ -347,11 +327,8 @@ void SettingsMenu_Release(void) {
 /// is free.
 #define RESOURCE_SLOTS 96
 
-/// Opens the settings menu's window: the labels, the hue and brightness
-/// sliders with their markers, the cursor and the setting icons. Returns the
-/// window. Its sprites belong to the window and go when it closes. A
-/// slider's marker stands option * 60 / count pixels right of
-/// OPTION_SLIDER_X.
+/// Opens the settings menu's window: the labels, the hue and brightness sliders
+/// with their markers, the cursor and the setting icons. Returns the window.
 struct Window *SettingsMenu_Open(void) {
   struct OptionMenuWork *work;
   struct Window *window;
@@ -465,14 +442,9 @@ struct Window *SettingsMenu_Open(void) {
   return window;
 }
 
-/// Runs the settings menu (window colour and brightness, message speed,
-/// speech, auto-sleep) until A or START keeps the settings (returns 0) or B
-/// drops them (returns -1). SELECT cycles through the colour presets.
-/// Preview edits affect the live palette; only confirmation saves the settings.
-/// Every setting wraps at its ends. While sleep is held off (gSleepDisabled,
-/// as in the Battle Arena) auto-sleep shows as off and is saved so. The pause
-/// menu's Change settings runs it (PauseMenu_Run,
-/// screens/debug.c), and reopens the menu when it is cancelled.
+/// Runs the settings menu (window colour and brightness, message speed, speech,
+/// auto-sleep) until A or START keeps the settings (returns 0) or B drops them
+/// (returns -1).
 s32 SettingsMenu_Run(void) {
   struct OptionMenuWork *work;
   struct Window *settingsWindow;
@@ -667,10 +639,6 @@ void PauseMenu_AnimateCursor(void) {
 }
 
 /// Allocates the Pause menu's work block and starts its per-frame task.
-/// The Pause menu shares the settings menu's heap slot and cannot run
-/// concurrently: PauseMenu_Choose frees it before
-/// PauseMenu_Run opens the settings menu. The task runs in the
-/// frame pass.
 void PauseMenu_Initialize(void) {
   void *work;
   work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU,
@@ -688,8 +656,7 @@ void PauseMenu_Release(void) {
 
 /// Opens the Pause menu's window with its entries (Save your quest, Sleep,
 /// Change settings, and the debug entries in debug mode; only Change settings
-/// while FLAG_IN_BATTLE_ARENA is set), their icons and the cursor. Returns the
-/// window.
+/// while FLAG_IN_BATTLE_ARENA is set), their icons and the cursor.
 struct Window *PauseMenu_Open(void) {
   struct OptionMenuWork *work;
   s32 rows;
@@ -714,8 +681,7 @@ struct Window *PauseMenu_Open(void) {
   }
   if (gDebugMode != 0)
     rows += PAUSE_MENU_DEBUG_ROWS;
-  // Three tiles a row and a tile more. The window starts higher by a row for
-  // each entry, and at row 1, 19 tall, when it would reach row 19.
+  // Three tiles a row and a tile more.
   top = 8 - rows;
   height = rows * 3 + 1;
   if (top + height > 19) {
@@ -763,11 +729,8 @@ struct Window *PauseMenu_Open(void) {
   return window;
 }
 
-/// Runs the Pause menu until the player picks an entry (enum
-/// PauseMenuEntry) or cancels with B or START (-1).
-/// The result counts in the full entry table even when only Change settings is
-/// shown. The menu's window and work block are freed before it returns;
-/// PauseMenu_Run (screens/debug.c) acts on the result.
+/// Runs the Pause menu until the player picks an entry (enum PauseMenuEntry) or
+/// cancels with B or START (-1).
 s32 PauseMenu_Choose(void) {
   struct Window *window;
   s32 redraw;
@@ -795,9 +758,7 @@ s32 PauseMenu_Choose(void) {
   PauseMenu_Initialize();
   work = gOptionMenuWork;
   window = PauseMenu_Open();
-  // Picture 6 of gMenuTitlePictures, the Pause heading, above
-  // the window. Outside Japanese it sits 8 pixels lower in debug mode, over
-  // the debug menu's taller window.
+  // Picture 6 of gMenuTitlePictures, the Pause heading, above the window.
 #if TBS_PATCH_1
   y = -24;
   if (gDebugMode != 0) {

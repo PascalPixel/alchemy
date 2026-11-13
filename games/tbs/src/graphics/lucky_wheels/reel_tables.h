@@ -4,22 +4,15 @@
 
 /// Where each spark picture (a square 2 to 20 pixels on a side) starts: size s
 /// (1 to 10) is a square 2s pixels a side, after the smaller squares' pixels.
-/// A spark is drawn at size variant / 12 + 1, so it shrinks as its variant
-/// counts down.
 const u16 gLuckyWheels_SparkPictures[] = {0,   4,   20,  56,  120,
                                           220, 364, 560, 816, 1140};
 
-/// The prize of each wheel symbol, kept in gMainRoutineWork.wonPrizes for
-/// each winning line. Symbol 5 matches any other on a line, so a line is won by
-/// the symbol it shows besides 5. A line of five 5s leaves the symbol at -1
-/// and reads the byte before this table; every wheel holds three 5s
-/// (field/lucky_wheels.c), so such a line can happen.
+/// The prize of each wheel symbol, kept in gMainRoutineWork.wonPrizes for each
+/// winning line.
 const u8 gLuckyWheels_SymbolPrizes[] = {0, 3, 1, 4, 2, 5};
 
 /// The tile of each title letter, the letter's place in its sheet: jackpot.png
-/// holds `Jackpot!` and jackpot_ja.png `ジャックポト!`. Japanese uses its ッ
-/// twice for `ジャックポット!`, and Spanish opens with the `!` drawn flipped
-/// both ways for `¡Jackpot!` (field/lucky_wheels.c).
+/// holds `Jackpot!` and jackpot_ja.png `ジャックポト!`.
 const u8 gLuckyWheels_TitleLetterTiles[LUCKY_WHEELS_TITLE_LETTERS] = {
 #if LANGUAGE == LANGUAGE_JAPANESE
     0, 1, 2, 3, 4,
@@ -33,9 +26,7 @@ const u8 gLuckyWheels_TitleLetterTiles[LUCKY_WHEELS_TITLE_LETTERS] = {
 #endif
 };
 
-/// The positions of the machine's fourteen sprites, in screen pixels. Lucky
-/// Wheels gives the first four tile 0x4e0 and the rest 0x4e8
-/// (field/lucky_wheels.c).
+/// The positions of the machine's fourteen sprites, in screen pixels.
 const u8 gLuckyWheels_MachineSpriteX[] = {2,   0,  232, 232, 32,  32,  200,
                                           200, 28, 28,  208, 208, 219, 219};
 const u8 gLuckyWheels_MachineSpriteY[] = {2,   152, 0,   152, 8,   104, 8,

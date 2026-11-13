@@ -36,11 +36,7 @@
 #define Ram_FrameWaitStackTop                                                  \
   FIXED_ADDRESS((u8 *), 0x03007a00, gFrameWaitStackTop)
 
-// IWRAM variables the code reaches as constants; German moves them 16 bytes
-// up.
-// The 16 bytes are space German alone reserves before gOamDepthLists
-// (system/iwram.s), so the test is on the language: French, Spanish and
-// Italian, which take German's other changes, lay IWRAM out as English does.
+// IWRAM variables the code reaches as constants; German moves them 16 bytes up.
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define Ram_BgScroll FIXED_ADDRESS((u8 *), 0x03001ae0, gBgScroll)
 #define Ram_VramCacheEntries                                                   \

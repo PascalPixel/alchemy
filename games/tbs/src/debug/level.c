@@ -54,12 +54,10 @@ enum IncreaseItemAndLevelActorId {
   /// tests.
   ACTOR_PORTRAIT_BROWSER,
   /// IncreaseItemAndLevel_RunLevelEditor: `Raise everyone's level.` over the
-  /// leader's name and level, A raising it one and Start five. Drawn larger
-  /// than the others.
+  /// leader's name and level, A raising it one and Start five.
   ACTOR_LEVEL_EDITOR,
   /// IncreaseItemAndLevel_SelectAbility: `Psy No:` over an ability's name, with
-  /// `B:Return`. Placed outside Japanese only, like the two emote testers after
-  /// it.
+  /// `B:Return`.
   ACTOR_ABILITY_BROWSER,
   /// IncreaseItemAndLevel_ShowMessageThenEmote: its message, then a wince.
   ACTOR_FIRST_EMOTE_TESTER,
@@ -93,9 +91,7 @@ static void IncreaseItemAndLevel_ShowMessageThenEmote(void) {
 }
 
 /// Displays the other test emote before setting ACTOR_FIRST_EMOTE_TESTER's
-/// message. Talking to
-/// ACTOR_SECOND_EMOTE_TESTER, though the emote and the message are
-/// ACTOR_FIRST_EMOTE_TESTER's.
+/// message.
 static void IncreaseItemAndLevel_ShowEmoteThenMessage(void) {
   Actor_ShowEmote(ACTOR_FIRST_EMOTE_TESTER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Event_SetMessageId(MsgDebugWontStopYou);
@@ -115,8 +111,7 @@ static void IncreaseItemAndLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {
   Unit_Calculate(ownerId);
 }
 
-/// Applies the level change to the party members returned by the active-party
-/// service (FieldParty_ListMembers): every party member.
+/// Changes every party member's level by amount.
 static void IncreaseItemAndLevel_AdjustPartyLevels(s32 amount) {
   u16 ownerIds[16];
   u16 *owner;
@@ -133,11 +128,8 @@ static void IncreaseItemAndLevel_AdjustPartyLevels(s32 amount) {
   }
 }
 
-/// Displays the selected party member's level and changes the whole party.
-/// B closes the window and recalculates the original four heroes. Talking to
-/// ACTOR_LEVEL_EDITOR: under `Raise everyone's level.` it shows the leader's
-/// name and level; Start or Select raises the whole party five levels with
-/// jingle MUS_JINGLE_LARGE, A one level with MUS_JINGLE_SMALL.
+/// Displays the selected party member's level and changes the whole party. B
+/// closes the window and recalculates the original four heroes.
 static void IncreaseItemAndLevel_RunLevelEditor(void) {
   struct Unit *unit;
   struct Window *window;
@@ -163,7 +155,7 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
       Text_DrawNumberInWindow(unit->level, 0, window, 72, 48);
     }
 
-    // Start/Select add five levels; A adds one. Tests remain independent.
+    // Start or Select adds five levels, A one.
     if ((gKeysPressed & KEY_START) != 0 || (gKeysPressed & KEY_SELECT) != 0) {
       IncreaseItemAndLevel_AdjustPartyLevels(5);
       Sound_Play(MUS_JINGLE_LARGE);
@@ -194,12 +186,8 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
 }
 
 /// Browses nonempty item definitions and gives the selected item to the party.
-/// Talking to ACTOR_ITEM_BROWSER. Up and Down step one number, Right and Left
-/// ten, R and L thirty, passing over numbers whose item has no icon; A gives
-/// the item to the first party member with room (SE_NOTE_HIGH), and B, or A
-/// with every bag full, closes the browser.
+/// Talking to ACTOR_ITEM_BROWSER.
 static void IncreaseItemAndLevel_SelectItem(void) {
-  // Preserve independent key tests and the direction-specific empty-icon scans.
   struct Window *window;
   struct Window *details;
   s32 selectedItemId;
@@ -216,11 +204,9 @@ static void IncreaseItemAndLevel_SelectItem(void) {
   window = Window_Create(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
   details =
       Window_Create(0, 8, ITEM_DEBUG_DETAILS_WIDTH, 10, WINDOW_FLAG_INSTANT);
-  // Lend HIGHLIGHT_PALETTE to the item icons, as
-  // Palette_LoadIconsIntoHighlight does: sprite palette 0 into it, then BG
-  // WINDOW_BACKGROUND_COLOR over its TEXT_BACKGROUND_COLOR.
-  // ItemMenu_DrawItemDetails draws the details window's element icons in
-  // HIGHLIGHT_PALETTE.
+  // Lend HIGHLIGHT_PALETTE to the item icons, as Palette_LoadIconsIntoHighlight
+  // does: sprite palette 0 into it, then BG WINDOW_BACKGROUND_COLOR over its
+  // TEXT_BACKGROUND_COLOR.
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
@@ -297,8 +283,7 @@ static void IncreaseItemAndLevel_SelectItem(void) {
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
-    // Skip definitions with no icon/availability byte in the chosen direction:
-    // for an item, its definition's icon.
+    // Step on past numbers with no item, in the direction moved.
     if (seekDirection == -1) {
       selectedItemId = (selectedItemId + ITEM_COUNT) % entryCount;
       goto check_back;
@@ -328,10 +313,7 @@ static void IncreaseItemAndLevel_SelectItem(void) {
 
 #if TBS_PATCH_1
 /// Browses ability names and descriptions, skipping unavailable entries. B
-/// closes the sole window created by this browser. Talking to
-/// ACTOR_ABILITY_BROWSER in English and German; in French, Spanish and
-/// Italian the scene keeps the function and the actor but no event, and
-/// moves the actor to x 80.
+/// closes the sole window created by this browser.
 UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
   struct Window *window;
 #ifndef UBFIX
@@ -349,7 +331,7 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
   Sound_Play(SE_MENU_CONFIRM);
   redraw = 1;
   window = Window_Create(0, 0, 30, 12, WINDOW_FLAG_INSTANT);
-  // Copy the existing sprite palette into the debug window palettes.
+  // Lend HIGHLIGHT_PALETTE to the icons, as the item browser does.
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
@@ -412,8 +394,7 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
-    // Skip definitions with no icon/availability byte in the chosen direction:
-    // byte 4 of an ability is the icon the menus draw (AbilityDefinition).
+    // Step on past numbers with no ability, in the direction moved.
     if (seekDirection == -1) {
       selectedAbilityId = (selectedAbilityId + ABILITY_COUNT) % entryCount;
       goto check_back;
@@ -439,8 +420,7 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
   wait(1);
   Window_Close(window, 1);
 #ifndef UBFIX
-  // The original never initializes details or creates a second window.
-  // Reading this indeterminate pointer is UB; modern builds omit that call.
+  // UB: details is never created, but the browser closes it.
   Window_Close(details, 1);
 #endif
 }
@@ -454,12 +434,7 @@ UNUSED static void IncreaseItemAndLevel_RequestExit(void) {
   Import_EventSetExitRequest();
 }
 
-/// Starts the window transition and edition-specific actor
-/// scale/animation setup. Returns zero through the exported scene entry. The
-/// scene's initialize entry, which FieldSequence_Run runs on entry and whose
-/// result it ignores: ACTOR_LEVEL_EDITOR is drawn 1.6 times its size (1.7 in
-/// Japanese; 16.16 scales), and outside Japanese the two emote testers start
-/// animations 5 and 2.
+/// Sets up the scene: the window transition in, and the level editor's size.
 s32 IncreaseItemAndLevel_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   gFieldWork->transitionFrames = 24;
@@ -473,11 +448,8 @@ s32 IncreaseItemAndLevel_Initialize(void) {
 }
 
 #if !TBS_PATCH_1
-/// Runs the Japanese animation test, then moves ACTOR_LEVEL_EDITOR to its
-/// test position. Force cast at ACTOR_PORTRAIT_BROWSER: it takes
-/// ANIM_WALK and ACTOR_LEVEL_EDITOR ANIM_SHAKE_HEAD; once
-/// ACTOR_PORTRAIT_BROWSER's animation has changed, ACTOR_LEVEL_EDITOR moves
-/// to (312, 416).
+/// Runs the Japanese animation test, then moves ACTOR_LEVEL_EDITOR to its test
+/// position.
 static void IncreaseItemAndLevel_RunMotionTest(void) {
   Event_Start();
   Import_ActorSetAnimation(ACTOR_PORTRAIT_BROWSER, ANIM_WALK);
@@ -562,7 +534,7 @@ struct SceneEntrance gIncreaseItemAndLevel_Entrances[] = {
     {SCENE_TABLE_END},
 };
 
-/// No exits: 511 is SCENE_EXITS_END's value.
+/// No exits.
 u32 gIncreaseItemAndLevel_Exits[] = {
     SCENE_EXITS_END,
 };
@@ -605,14 +577,7 @@ struct ActorPlacement gIncreaseItemAndLevel_ActorPlacements[] = {
 };
 // clang-format on
 
-/// Talking to each tester runs its tool. The ability browser has a talk row
-/// only in English and German (TBS_PATCH_1 without TBS_PATCH_3); French,
-/// Spanish and Italian keep its code and its actor. Force cast at the
-/// portrait browser runs a motion test in Japanese and shows the three
-/// character-set caption rows elsewhere; in every edition a second row on the
-/// same person, run before the cast (PSYNERGY_PHASE_BEFORE_CAST), sets the
-/// effect's child mode, so Force's shot leaves the portrait browser where it
-/// stands.
+/// Talking to each tester runs its tool.
 struct Trigger gIncreaseItemAndLevel_Triggers[] = {
     {TRIGGER_TALK, ACTOR_ITEM_BROWSER, CONDITION_ALWAYS,
      EVENT(IncreaseItemAndLevel_SelectItem)},

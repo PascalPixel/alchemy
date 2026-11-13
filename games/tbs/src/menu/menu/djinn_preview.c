@@ -5,17 +5,8 @@
 
 #include "../menu_internal.h"
 
-/// Previews a give, trade, set or standby change without committing it.
-/// It saves and restores the units before polling for confirmation.
-///
-/// mode is a DjinnCompareOperation. Two 15 by 15 windows show the change and
-/// the top window asks "Is this OK?". For a give or trade R cycles three
-/// pages: both party members' stats (the first), then the giver's and then the
-/// receiver's stats beside their Psynergy list; Left and Right turn the
-/// Psynergy list's pages. A set or standby shows the party member's stats and
-/// Psynergy. Returns DJINN_RESULT_CONFIRMED for A, DJINN_RESULT_BACK for B and
-/// DJINN_RESULT_START for Start; the caller makes the change. The page counts
-/// are measured on the real units, which are put back from a copy at once.
+/// Previews a give, trade, set or standby change without committing it. It
+/// saves and restores the units before polling for confirmation.
 s32 PsynergyList_RunCompareLoop(u32 mode) {
   struct DjinnMenuWork *menu;
   struct DjinnMenuBackdrop *backdrop;
@@ -190,9 +181,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   }
 
   // The Djinni concerned, after its element icon (BASIC_COLORS_PALETTE): in
-  // TEXT_COLOR_RED when it is not set. A trade adds the other Djinni below it;
-  // a set or standby shows the same Djinni again below in its new colour, with
-  // tile 662 of WINDOW_PALETTE between the two.
+  // TEXT_COLOR_RED when it is not set.
   row = (mode == DJINN_COMPARE_GIVE);
   if ((menu->pairEntries[0] & DJINN_ENTRY_IS_SET) == 0) {
     Text_SetColorFar(TEXT_COLOR_RED);
@@ -421,9 +410,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
 
     // The Djinni figures, at a fixed 3/4 size (phase -(Q16_ONE * 3 / 4)), move
     // once a second: step runs 0 to 29 over frames 5 to 34 of each 60 and
-    // holds. A given Djinni slides right 2 pixels a step from x 34 while
-    // hopping up to 6 pixels (half a sine turn over the 30 steps); in a trade
-    // the other slides left from x 99 the same way, mirrored.
+    // holds.
     frame++;
     step = (frame % 60) - 5;
     if (step < 0) {
@@ -548,10 +535,6 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
 }
 
 /// Shows the chosen party member's current stats and paged Psynergy list.
-/// Opened by L on the Djinn list ("Char. Status"): the party member's stats on
-/// the left, their Psynergy six to a page on the right, which Left and Right
-/// turn. Returns DJINN_RESULT_BACK for A, B, L or R, and DJINN_RESULT_START for
-/// Start, which closes the Djinn menu.
 s32 DjinnMenu_ShowMemberStatus(void) {
   s32 selectedPages[2];
   s32 pageCounts[2];
@@ -710,11 +693,6 @@ s32 DjinnMenu_ShowMemberStatus(void) {
 
 /// Marks recipients that would leave unequal Djinn totals after a direct give.
 /// Returns how many recipients would need a trade instead.
-///
-/// requiresTrade[i] becomes 1 for each other party member i who cannot take one
-/// of sourceMemberColumn's Djinn without two party members' totals differing by
-/// more than one (Djinn_CheckGiveBalance), else 0. The second Djinn chooser
-/// offers such a party member only Trade.
 s32 Djinn_MarkTradeOnlyRecipients(s8 *requiresTrade, s32 sourceMemberColumn) {
   s32 tradeCount;
   s32 memberColumn;
@@ -742,9 +720,7 @@ s32 Djinn_MarkTradeOnlyRecipients(s8 *requiresTrade, s32 sourceMemberColumn) {
 }
 
 /// Tests whether a hypothetical give leaves every pair of party members within
-/// one Djinn. Returns 1 when, with one Djinni moved from sourceMemberColumn to
-/// targetMemberColumn, no two party members' totals (Djinn_CountOwned) differ
-/// by more than one; 0 otherwise.
+/// one Djinn.
 s32 Djinn_CheckGiveBalance(s32 sourceMemberColumn, s32 targetMemberColumn) {
   struct DjinnMenuWork *menu;
   s8 ownedCounts[16];

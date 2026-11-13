@@ -13,8 +13,7 @@
 #endif
 
 /// A target marker's track: where it is, its state flags and the target it
-/// follows. Track 0 follows the aimed unit, track i the unit i places after
-/// it and track 6 - i the unit i places before.
+/// follows.
 struct CursorSlot {
   u8 x; ///< screen pixels
   u8 y; ///< screen pixels
@@ -24,8 +23,8 @@ struct CursorSlot {
   s8 index; ///< the place it follows from the aimed one; 6 when unused
 };
 
-/// Lets the player choose the target of an action of unit `selection`, with
-/// a cursor over the aimed unit and smaller markers on the others its range
+/// Lets the player choose the target of an action of unit `selection`, with a
+/// cursor over the aimed unit and smaller markers on the others its range
 /// covers. `mode` is the action's targetMode: ABILITY_TARGET_ALLIES the party,
 /// ABILITY_TARGET_SELF only `selection` itself, anything else the enemies
 /// (battle_internal.h has the names, which this folder cannot see yet).
@@ -35,14 +34,7 @@ struct CursorSlot {
 /// TARGET_HINT_SET_DJINNI: on a party member it opens a window of what the
 /// action would do (its HP or PP, the statuses it cures, "Set Djinni"), and a
 /// reviving or curing action not aimed at everyone starts on the first party
-/// member who needs it. On an enemy a window across the screen names it.
-///
-/// Returns 0x100 | the party place or 0x180 | the enemy place of the unit
-/// chosen with A, or -1 when cancelled or when the link battle's time runs
-/// out. While it runs, the battle view slides (targetViewOffset of
-/// BattleMenuWork: -2 for the party, 16 for the enemies) and the covered
-/// units are marked (BattleHighlight_SetModesFar). The Djinn tutorial
-/// presses A every 60 frames.
+/// member who needs it.
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   u16 candidateIds[8];
   struct SelectionSprite cursorSprites[6];

@@ -39,9 +39,7 @@ struct SpeakerDefinition {
   u8 value;
   /// The pair of lines from MsgPonderEllipsis it says when talked to while
   /// Halted with no event for that (Scene_TalkToActor): pair n is messages
-  /// MsgPonderEllipsis + 2n and the one after, one picked at random. Every
-  /// row Halt can stop uses pair 0, dots spoken with pauses.
-  /// SPEAKER_HALTED_LINES_NONE: Halt passes it over.
+  /// MsgPonderEllipsis + 2n and the one after, one picked at random.
   u8 haltedLines;
 };
 

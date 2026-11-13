@@ -24,13 +24,9 @@ s32 Field_GetPsynergyTargetRange(s32 kind) {
   return range;
 }
 
-/// Returns the actor nearest to actor id that it could talk to,
-/// or -1: within 48 pixels of height and 32 pixels of distance and, beyond 11
-/// pixels, within 0x2fff (about 67 degrees) of the direction it faces.
-/// Actors with collision flag 8 are skipped, and those with flag 4 count as
-/// 10/13 as far, so they can be talked to from up to 41 pixels. Called with the
-/// leader by FieldSequence_Run for the A button, and by the item code (items.c)
-/// to find whom an item is used on.
+/// Returns the actor nearest to actor id that it could talk to, or -1: within
+/// 48 pixels of height and 32 pixels of distance and, beyond 11 pixels, within
+/// 0x2fff (about 67 degrees) of the direction it faces.
 s32 Field_FindNearbyTalkTarget(s32 id) {
   struct Actor *source;
   struct Actor *candidate;
@@ -110,13 +106,8 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
   return nearestActorId;
 }
 
-/// Returns the actor nearest in front of actor id that a field
-/// Psynergy of the given kind can reach, or -1. The direction is rounded to a
-/// quarter turn and the distance measured on the ground; kind sets the range,
-/// the height allowed and the width of the cone. Actors with collision
-/// ACTOR_NEAR_PSYNERGY count as 2/3 as far. Called with the leader by
-/// Field_UsePsynergy, by the item code (items.c) and by the Psynergy dispatch
-/// (event_commands/field_psynergy.c).
+/// Returns the actor nearest in front of actor id that a field Psynergy of the
+/// given kind can reach, or -1.
 s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   struct Actor *source;
   struct Actor *candidate;
@@ -219,8 +210,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
 }
 
 /// If actor target exists, plays SE_CHEST_OPEN, gives it animation 4 and, 12
-/// frames later, shows itemId in front of actor with sparkles. Returns the
-/// picture's encoded actor pointer, or 0 when the target or picture is absent.
+/// frames later, shows itemId in front of actor with sparkles.
 s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
                                                s32 itemId) {
   void *targetActor;
@@ -237,11 +227,8 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
   return emitter;
 }
 
-/// Gives every part of an actor's sprite (but those at palette 15)
-/// palette - 1, or for palette 0 the next palette of a cycle that changes every
-/// 2 frames. Sets the sprite's dirty flag so it is drawn again. Called by
-/// Mind Read's wave effect (event_commands/mind_read.c) on the caster: each
-/// frame with 0 to cycle its colours, and with 1 (palette 0) when it ends.
+/// Gives every part of an actor's sprite (but those at palette 15) palette - 1,
+/// or for palette 0 the next palette of a cycle that changes every 2 frames.
 void Actor_SetSpritePalette(struct Actor *actor, s32 palette) {
   struct Sprite *sprite;
   struct SpriteAnimation **entrySlot;
@@ -273,9 +260,7 @@ void Actor_SetSpritePalette(struct Actor *actor, s32 palette) {
 }
 
 /// Clears the field's busy flag and, while Reveal is active, ends it: Reveal
-/// used with ACT_PACKED runs its ending events. Called by Event_Start
-/// when an event starts while the field is busy, by FieldSequence_Run before
-/// the Pause menu, and by 30 scene overlays.
+/// used with ACT_PACKED runs its ending events.
 void Field_EndBusyAndReveal(void) {
   struct FieldWork *work = gFieldWork;
 

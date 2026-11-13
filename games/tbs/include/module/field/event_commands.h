@@ -22,7 +22,6 @@ enum FieldPsynergyHandler {
 
 /// A field Psynergy, as the field kind: the type column of
 /// games/tbs/src/game/ability_table.c, named for the abilities that have it.
-/// The field effect keeps it as its animation.
 enum FieldPsynergy {
   FIELD_PSYNERGY_MOVE = 1,
   FIELD_PSYNERGY_MIND_READ = 2,
@@ -99,7 +98,6 @@ void Actor_SetMovementTypeById(u32 actorId, s32 action);
 void Actor_Stop(u32 actorId);
 void Actor_WatchAndSetScript(u32 actorId, u32 watchedActorId);
 void Actor_WaitForScriptEndById(u32 actorId);
-/// Accepts a movement type or an actor script address; waits up to 300 frames.
 void Actor_SetMovementTypeAndWaitById(u32 actorId, s32 action);
 void Actor_SetDestinationById(u32 actorId, s32 x, s32 z);
 void Actor_MoveToAndWaitById(u32 actorId, s32 x, s32 z);

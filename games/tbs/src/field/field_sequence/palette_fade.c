@@ -34,10 +34,7 @@ void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
 
 /// Each frame (unless FLAG_PALETTE_BLEND_HELD is set): moves the palette fade
 /// one step toward its target, packs it into RGB555 and queues it for the BG
-/// and OBJ palettes. The packed colours are double-buffered: work->page names
-/// the page the queued DMA reads, and the other is written. Registered by
-/// PaletteFade_Initialize as a task; the menus clear
-/// and set FLAG_PALETTE_BLEND_HELD around it (menu/shared.c).
+/// and OBJ palettes.
 void PaletteFade_Update(void) {
   struct PaletteFade *work = gPaletteFadeWork;
   u16 *channelDelta = work->delta;
@@ -115,8 +112,7 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
     colorCount = COLOR_HALF;
   }
 
-  // One colour: write it once, then let DMA copy it over the rest. The copy
-  // reads three halfwords behind where it writes, so the colour repeats.
+  // One colour: write it once, then let DMA copy it over the rest.
   if (mode < PALETTE_TINT_FROM_SOURCE) {
     *dst++ = mode & 0x7c00;
     *dst++ = (mode & 0x03e0) << 5;
@@ -408,9 +404,7 @@ void PaletteFade_SetBackdrop(u32 color) {
 }
 
 /// Starts moving the shown colours to the target colours over frames frames:
-/// sets work->duration, clears work->step and fills work->delta. Called after
-/// PaletteFade_SetTarget by the same callers, and by scene
-/// overlays.
+/// sets work->duration, clears work->step and fills work->delta.
 void PaletteFade_StartInterpolation(s32 frames) {
   struct PaletteFade *work = gPaletteFadeWork;
 

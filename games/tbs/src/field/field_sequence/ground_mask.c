@@ -4,12 +4,10 @@
 
 #include "../field_sequence_internal.h"
 
-/// Each frame of the fade overlay: on each of the two cells beside the
-/// actor (left and right of it), where the ground one or two cells south rises
-/// above the actor's floor, draws a semi-transparent 16-pixel-wide
-/// sprite of colour 1 at the height of that ground. Added as a task by
-/// FieldEffect_StartFadeOverlay; reads the work in
-/// HEAP_SLOT_FADE_OVERLAY and queues the marks with Oam_AddSpriteAtDepth.
+/// Each frame of the fade overlay: on each of the two cells beside the actor
+/// (left and right of it), where the ground one or two cells south rises above
+/// the actor's floor, draws a semi-transparent 16-pixel-wide sprite of colour 1
+/// at the height of that ground.
 void FadeOverlay_DrawMarks(void) {
   struct FadeOverlayWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY);
   struct MapGridScrollWork *grid = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
@@ -41,9 +39,7 @@ void FadeOverlay_DrawMarks(void) {
   // The first tile of the solid block FieldEffect_StartFadeOverlay loaded (VRAM
   // cache entry VRAM_CACHE_ENTRY_FADE_OVERLAY; tiles are 32 bytes).
   tile = gVramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset >> 5;
-  // The left cell, 8 pixels left of the actor. The ground is read one
-  // and two cells (16 and 32 pixels) south, the further one counting 16 pixels
-  // lower, and the higher of the two is used.
+  // The left cell, 8 pixels left of the actor.
   x -= px(8);
   height = MapGrid_GetTerrainHeightFar(terrainLayer, x, z + px(16)) >> 16;
   secondHeight =
@@ -88,12 +84,7 @@ void FadeOverlay_DrawMarks(void) {
 }
 
 /// Starts the fade overlay on object (the party leader when NULL): loads its
-/// solid tiles, sets the blending and draws it each frame. Allocates
-/// HEAP_SLOT_FADE_OVERLAY for its work, borrows HEAP_SLOT_TILE_SCRATCH for the
-/// tiles (512 bytes of colour 1, VRAM_CACHE_ENTRY_FADE_OVERLAY) and registers
-/// FadeOverlay_DrawMarks. Nothing in the game stops it (FadeOverlay_Suspend has
-/// no named caller): the work and the task last until the next scene change
-/// resets the heap and the task table (MainRoutine_Run).
+/// solid tiles, sets the blending and draws it each frame.
 void FieldEffect_StartFadeOverlay(void *object) {
   struct FadeOverlayWork *work;
   u8 *tiles;

@@ -37,8 +37,6 @@ void Field_ClearRequests(void) {
 
 /// Returns the sum of the field's twelve pending requests (counting the talk
 /// request twice): non-zero while any request is pending.
-///
-/// FieldSequence_Run tests it to stop walking and to leave its request loop.
 s32 Field_CountRequests(void) {
   struct FieldWork *work = gFieldWork;
 
@@ -126,10 +124,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 /// Takes the exit of the first of the scene's exit regions that contains the
 /// position (x, y, z), in 16.16 pixels, and whose condition holds: records the
 /// region's exit value for FieldSequence_Run, plays the exit sound and starts
-/// leaving the scene. A region's bounds are whole pixels, its maxima
-/// exclusive; a table whose first minX is -1, or no table, has no exits.
-///
-/// Sets work->exit and stops the leader.
+/// leaving the scene.
 void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   s32 exitValue;
   struct FieldWork *work;
@@ -178,14 +173,7 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
 /// Handles one frame of the party leader's walking onto the cell at (x, y, z)
 /// of map grid layer: records step triggers and push cells, takes exits, and
 /// while walking advances the encounter counter, regenerates PP, hurts the
-/// party with poison and hazardous ground, and wears Avoid off. When this hurts
-/// the party, the leader flinches and characters who fall are listed in the
-/// field work.
-///
-/// Sets work->stepTrigger, pushCell, encounter, psynergy and raisedTrigger (-1
-/// when someone fell), work->currentCell and previousCell, walkingDistance,
-/// fallenOwners and survivorCount, and gMainRoutineWork's hazard and Avoid
-/// counts.
+/// party with poison and hazardous ground, and wears Avoid off.
 void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
   /* FAKEMATCH(wrapper): the party read through struct UnitHpPoisonView, whose
    * alias set; as struct Unit, 2 of 472 instructions differ in tbs-en. */
@@ -247,7 +235,6 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
       leader->targetX != ACTOR_NO_TARGET) {
     // Encounters: the zone comes from the World Map's encounter region and
     // battle environment, or from the ground the leader stands on.
-    // FLAG_LURE_CAP doubles the speed the roll counts.
     encounterSpeed = leader->speedLimit;
     if (GameFlag_GetFar(FLAG_LURE_CAP))
       encounterSpeed <<= 1;
@@ -311,10 +298,7 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
   }
 
   // With HAZARD_COUNT_FRAMES, which nothing in the game sets, the count rises
-  // by one each call, that is each frame the field sequence runs. Half way,
-  // SPRITE_ATTACHED_EFFECT is attached to the leader until removed
-  // (ATTACHED_EFFECT_ATTACH, at sprite priority 1); at the limit it is removed
-  // (ATTACHED_EFFECT_REMOVE) and the party takes the hazard's damage.
+  // by one each call, that is each frame the field sequence runs.
   if (gMainRoutineWork.hazardMode == HAZARD_COUNT_FRAMES) {
     gMainRoutineWork.hazardSteps++;
     if (gMainRoutineWork.hazardSteps == gMainRoutineWork.hazardLimit / 2)
@@ -362,10 +346,6 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
 
 /// Gives each character in the party amount PP (PP regenerates as the party
 /// walks).
-///
-/// Called by Field_UpdateWalking as the party walks, by Field_ExamineCell for a
-/// Psynergy stone (999, all PP), and by the Vale home scene through
-/// Party_AddPpFar.
 void Party_AddPp(s32 amount, s32 unused) {
   s32 partyCount = Party_CountMembersFar();
   s32 partyIndex;
@@ -374,14 +354,10 @@ void Party_AddPp(s32 amount, s32 unused) {
     Unit_AddPpFar(gMainRoutineWork.party[partyIndex], amount);
 }
 
-// The fallback drops the damage's sign, so a damaging percentage that
-// truncates to zero would heal instead. The one percentage hazard, the Lamakan
-// Desert's 25%, truncates only below 4 maximum HP, which no character has by
-// then, so the player never sees it.
+// The fallback drops the damage's sign, so a damaging percentage that truncates
+// to zero would heal instead.
 /// Changes each party member's HP by amount, or by that percentage of maximum
-/// HP when percent is set. A percentage that truncates to zero falls back to
-/// the positive magnitude of amount. Damage flashes and plays an impact sound;
-/// healing plays the recovery sound.
+/// HP when percent is set.
 void Party_AddHp(s32 amount, s32 percent) {
   s32 partyCount;
   s32 partyIndex;
@@ -420,11 +396,6 @@ void Party_AddHp(s32 amount, s32 percent) {
 /// Hurts each poisoned character in the party: poison takes a twentieth of
 /// their maximum HP and deadly poison a tenth, rounded to the nearest and at
 /// least 1.
-/// Returns 0 when nobody was hurt, else the worst status found
-/// (POISON_NORMAL or POISON_VENOM), after a flash; Field_UpdateWalking counts a
-/// non-zero result as the party being hurt.
-///
-/// Called by Field_UpdateWalking each time the distance walked passes Q16_ONE.
 s32 Party_ApplyPoisonDamage(void) {
   s32 worstPoison = 0;
   s32 partyCount = Party_CountMembersFar();
@@ -467,11 +438,7 @@ s32 Party_ApplyPoisonDamage(void) {
 
 /// Starts an event or menu on the World Map: ends any colour ratio transition
 /// in progress, pauses camera movement and freezes the perspective view as a
-/// still picture. Elsewhere it does nothing.
-///
-/// Both allocations return the slot's block when it has one; with that slot
-/// free, the World Map takes a new, uncleared block there, kept until the scene
-/// ends, whose step is then leftover memory.
+/// still picture.
 void WorldMap_Freeze(void) {
   struct FieldWork *work;
   struct ScreenTransitionState *state;

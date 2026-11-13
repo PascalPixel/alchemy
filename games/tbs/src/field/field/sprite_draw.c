@@ -14,11 +14,6 @@ typedef void (*SpriteUploadFn)(const void *src, u32 w, u32 h, void *vram);
 /// picture for the facing dir, and when any picture changed redraws the sprite:
 /// the sprite animations composed by priority into one pixel buffer, an
 /// optional outline, and the result uploaded to the sprite's VRAM tiles.
-/// Returns 1 when sprite animation 0's picture for this facing is drawn
-/// mirrored.
-///
-/// Called for each sprite drawn, every frame, by Render_ApplyProjectedPlacement
-/// and Render_PlaceProjectedSprite.
 s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
   s32 mirrored;
   u32 size;
@@ -112,9 +107,7 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
         layer->script = 0;
         picture = SPRITE_PICTURE_NONE;
         // Ending any sprite animation lowers the sprite's animation count, as
-        // if the last had ended. Only SPRITE_STAR_BURST, the impact of Lift,
-        // has animations that end, and it is a sprite of one sprite animation,
-        // so an ending always empties it.
+        // if the last had ended.
         animation->count--;
         goto select_direction;
       // Unused commands, skipped. 251 is not among them: it shows as a picture.
@@ -231,9 +224,7 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
     }
     drawCount++;
 
-    // Draw the sprite animations in that order, each by its codec. LZ pictures
-    // are unpacked first, or drawn through a scratch buffer when the sprite
-    // animation has a draw parameter.
+    // Draw the sprite animations in that order, each by its codec.
     for (i = 0; i < drawCount; i++) {
       layer = animation->entries[*(u8 *)&drawOrder[i]];
       if (layer->mode == SPRITE_PICTURE_TAGGED_LZ) {
@@ -338,9 +329,7 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
   s32 y;
   struct AnimationSpritePart *shadow;
 
-  // The margins are the 16x8 shadow's half width and height. A double-size
-  // affine sprite is drawn in a box twice as wide and tall, so both halves
-  // double.
+  // The margins are the 16x8 shadow's half width and height.
   if (scaleX > Q16_ONE || scaleY > Q16_ONE) {
     affine = 3;
     marginX = 16;
@@ -366,12 +355,7 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
   shadow->y = y;
 }
 
-/// Places a sprite for the scrolling camera and queues it for drawing. Position
-/// holds screen x, height, screen y and ground height in 16.16 pixels; scale
-/// holds its x/y factors and facing its angle. Builds an affine matrix when the
-/// sprite is mirrored, scaled or rotated, queues the shadow (when the sprite
-/// has one) and then the image in a draw slot by depth; an actor 100 pixels
-/// or more below the ground takes slot 1 instead, its shadow slot 0.
+/// Places a sprite for the scrolling camera and queues it for drawing.
 void Render_ApplyProjectedPlacement(struct Sprite *sprite,
                                     const struct SpritePlacement *position,
                                     const struct SpriteScale *scale,
@@ -462,11 +446,9 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
 }
 
 /// Places a sprite at 3D point for the fixed camera and queues it for drawing:
-/// projected to the screen and scaled by its distance (unless useOwnScale
-/// keeps its own scale), with an affine matrix as needed and its shadow on
-/// the ground below. depth 0 sorts it by distance; any other value is its draw
-/// slot. A sprite off screen gives up its VRAM cache entry unless
-/// retainCacheEntry holds it.
+/// projected to the screen and scaled by its distance (unless useOwnScale keeps
+/// its own scale), with an affine matrix as needed and its shadow on the ground
+/// below. depth 0 sorts it by distance; any other value is its draw slot.
 void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
                                  s32 facing, s32 depth) {
   s32 flip;
@@ -589,8 +571,7 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
 
 /// Sets the colour mode (SpriteColorMode) of each of a sprite's animations to
 /// value, except sprite animations drawn hidden (SPRITE_COLOR_HIDDEN), and
-/// marks the sprite for redrawing. The sprite's first count sprite animations
-/// must all be present: it does not test them for null.
+/// marks the sprite for redrawing.
 void Sprite_SetAnimationColorModes(void *rawSprite, u32 value) {
   struct Sprite *sprite = rawSprite;
   if (sprite != 0) {

@@ -7,27 +7,16 @@
 #include "../../../include/system/io_reg.h"
 
 /// Erases the Atmel chip and waits for completion with its configured timing.
-/// Returns 0, or a chip-erase timeout when byte 0 has not read erased within
-/// the chip-erase time. Atmel's erase-chip routine (gEraseFlashChip); nothing
-/// in the game calls through that cell.
 u16 EraseAtmelFlashChip(void) {
   u8 savedCode[64];
   u16 result;
-  volatile u8 *command;
-  volatile u8 *unlock;
 
   CopyFlashReadRoutineToRam(savedCode);
 
   REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | gFlash_ChipAtmelLayout.type.wait[0];
 
-  command = (volatile u8 *)(FLASH_BASE + FLASH_COMMAND_ADDRESS);
-  *command = FLASH_UNLOCK_1;
-  unlock = (volatile u8 *)(FLASH_BASE + FLASH_UNLOCK_ADDRESS);
-  *unlock = FLASH_UNLOCK_2;
-  *command = FLASH_COMMAND_ERASE;
-  *command = FLASH_UNLOCK_1;
-  *unlock = FLASH_UNLOCK_2;
-  *command = FLASH_COMMAND_ERASE_CHIP;
+  FLASH_SEND_COMMAND(FLASH_COMMAND_ERASE);
+  FLASH_SEND_COMMAND(FLASH_COMMAND_ERASE_CHIP);
 
   result = gWaitForFlashWrite(FLASH_PHASE_ERASE_CHIP, (u8 *)FLASH_BASE,
                               FLASH_ERASED_BYTE);
@@ -39,8 +28,7 @@ u16 EraseAtmelFlashChip(void) {
 
 /// Erases one small Atmel sector by programming every byte to
 /// FLASH_ERASED_BYTE: one of gFlash_ChipAtmelLayout's 512 sectors of 128 bytes,
-/// written with interrupts off. Returns 0, or the wait's error with its phase
-/// made FLASH_PHASE_ERASE_SECTOR, so that it reads as an erase error.
+/// written with interrupts off.
 u16 EraseAtmelFlashSector(u16 sector) {
   struct FlashSetupInfo *info = &gFlash_ChipAtmelLayout;
   u8 *cursor;
@@ -69,11 +57,8 @@ u16 EraseAtmelFlashSector(u16 sector) {
   }
 }
 
-/// Erases thirty-two small sectors, trying each sector at most twice: the
-/// 4 KB of standard sector `sector`. Atmel's erase-sector routine
-/// (gEraseFlashSector). Returns 0, FLASH_ERROR_NO_SECTOR for a sector above 15,
-/// or the error of a small sector's second failed try, the sectors after it
-/// left as they were.
+/// Erases thirty-two small sectors, trying each sector at most twice: the 4 KB
+/// of standard sector `sector`.
 u16 EraseAtmelFlashBlock(u16 sector) {
   u8 savedCode[64];
   u16 result;
@@ -113,9 +98,7 @@ advanceSector:
 }
 
 /// Programs a small Atmel sector with interrupts disabled, then polls its last
-/// byte. Writes 128 bytes from `source` after one program command, with no
-/// erase first. Returns 0, or a program timeout when the last byte does not
-/// read back in time.
+/// byte.
 u16 ProgramAtmelFlashSector(u32 sector, const u8 *source) {
   const u8 *input;
   volatile u8 *destination;
@@ -144,11 +127,6 @@ u16 ProgramAtmelFlashSector(u32 sector, const u8 *source) {
 }
 
 /// Programs an Atmel block in small sectors, trying each sector at most twice.
-/// Writes standard sector `sector` (4 KB) from `source` 128 bytes at a time,
-/// gFlashNumRemainingBytes counting what is left. Atmel's program routine
-/// (gProgramFlashSector), which Save_WriteSector calls. Returns 0,
-/// FLASH_ERROR_NO_SECTOR for a sector above 15, or the error of the small
-/// sector that failed twice.
 u16 ProgramAtmelFlashBlock(u16 sector, u8 *source) {
   u8 savedCode[64];
   u16 result;

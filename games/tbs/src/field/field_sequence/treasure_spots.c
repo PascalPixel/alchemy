@@ -45,9 +45,7 @@ enum {
 /// Places an actor at each of the map's treasure spots (ids 100 to 239) that
 /// the scene has an event for, up to ten: a chest for a chest event, shown open
 /// once its flag is set and gone once its mimic was beaten, and a Psynergy
-/// Stone for an examine trigger giving one, until it is taken. A treasure spot
-/// with no such event takes no slot. The actors are kept in
-/// work->treasureSpots, not in actor slots.
+/// Stone for an examine trigger giving one, until it is taken.
 void Field_PlaceTreasureSpots(void) {
   u32 id;
   struct MapGridMarkers *grid = gMapGridWork[0];
@@ -88,9 +86,8 @@ void Field_PlaceTreasureSpots(void) {
             continue;
           Actor_SnapToTerrain(markerActor);
           Actor_SetSpriteFlagsFar(markerActor, 0);
-          // An opened chest shows open; an opened mimic's chest
-          // is not placed at all. A mimic's flag is set only after its battle,
-          // when the one enemy was defeated (Djinn_ResolvePending).
+          // An opened chest shows open; an opened mimic's chest is not placed
+          // at all.
           if (GameFlag_GetFar(trigger->condition)) {
             if ((trigger->value & FIND_TYPE_MASK) == FIND_MIMIC) {
               Actor_ReleaseFar(markerActor);
@@ -152,8 +149,7 @@ void Field_PlaceTreasureSpots(void) {
 }
 
 /// Returns the treasure spot slot (below TREASURE_SPOT_MAX) whose event trigger
-/// is id, or -1. Unused slots hold id 0, which no treasure spot has (ids are
-/// 100 to 239).
+/// is id, or -1.
 s32 TreasureSpot_FindSlot(s32 id) {
   s32 slotIndex;
   s32 matchingSlot;
@@ -271,8 +267,7 @@ void TreasureSpot_Hide(s32 id) {
 }
 
 /// Moves the actor of treasure spot id to (x, z) on the ground; -1 keeps the
-/// centre of its cell on that axis. Positions are 16.16. Scene overlays call
-/// it.
+/// centre of its cell on that axis. Positions are 16.16.
 void TreasureSpot_SetActorPosition(s32 id, s32 x, s32 z) {
   s32 slotIndex;
   s32 groundHeight;

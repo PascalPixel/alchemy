@@ -26,12 +26,7 @@ STATIC_ASSERT(offsetof(struct Task, priority) == 4);
 STATIC_ASSERT(offsetof(struct Task, flags) == 6);
 
 /// A task's priority: the high byte picks the pass that runs it, the low byte
-/// ranks it within the pass (higher runs first). An odd high byte means the
-/// task is suspended, so no pass matches it.
-///
-/// The two passes: the VBlank handler runs TASK_PASS_VBLANK's tasks, and
-/// wait() runs TASK_PASS_FRAME's once a frame, the field's and every
-/// scene's own per-frame tasks among them.
+/// ranks it within the pass (higher runs first).
 #define TASK_PASS_VBLANK 0x480
 #define TASK_PASS_FRAME 0xc80
 /// An empty slot's priority, sorted last.

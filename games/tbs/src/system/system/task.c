@@ -12,8 +12,7 @@ typedef s32 (*TaskIntFunc)(void);
 // sorted by their priority (see TASK_PASS_FRAME).
 
 /// Empties the task table: every slot gets no routine, priority
-/// TASK_PRIORITY_EMPTY and no flags. Clears gTasksInitialized while it works
-/// and sets it at the end, so neither pass runs a half-cleared table.
+/// TASK_PRIORITY_EMPTY and no flags.
 void Task_ResetAll(void) {
   struct Task *task = gTasks;
   s32 i;
@@ -86,15 +85,8 @@ UNUSED s32 Task_Find(TaskFunc func) {
   return result;
 }
 
-/// Adds a task running `func` with priority `order`, or gives a task
-/// already running it the new priority, and re-sorts the table. Writes the
-/// task's routine, priority and flags (cleared for a new task) with interrupts
-/// disabled. Returns the task's index, or -1 when all 20 slots are taken.
-/// Called throughout the game to start per-frame and VBlank work; `order` is
-/// TASK_PASS_FRAME or TASK_PASS_VBLANK's high byte with a rank in
-/// the low byte. The index is the slot written before this call's own sort,
-/// which may already have moved the task; a few callers return it, but nothing
-/// in the game tests it. A task stays until Task_Remove or Task_ResetAll.
+/// Adds a task running `func` with priority `order`, or gives a task already
+/// running it the new priority, and re-sorts the table.
 s32 Task_Add(TaskFunc func, s32 order) {
   u32 savedInterruptState;
   s32 index;
@@ -140,10 +132,8 @@ UNUSED void Task_Idle(void) {}
 /// Unused: an empty routine.
 UNUSED void Task_Empty(void) {}
 
-/// Removes the task running `func`: clears its routine and gives it
-/// priority TASK_PRIORITY_REMOVED, which no pass matches. Returns its old
-/// index, or -1. Called throughout the game when the work a task did is
-/// finished.
+/// Removes the task running `func`: clears its routine and gives it priority
+/// TASK_PRIORITY_REMOVED, which no pass matches. Returns its old index, or -1.
 s32 Task_Remove(TaskFunc func) {
   struct Task *task;
   u32 savedInterruptMaster;
@@ -167,7 +157,6 @@ s32 Task_Remove(TaskFunc func) {
 
 /// Suspends the task running `func`, or every task when `func` is null, by
 /// setting bit 0 of its priority's high byte, which then matches neither pass.
-/// Returns the last index changed, or -1.
 s32 Task_SuspendAll(TaskFunc func) {
   struct Task *task;
   u32 savedInterruptMaster;
@@ -191,7 +180,6 @@ s32 Task_SuspendAll(TaskFunc func) {
 
 /// Suspends every task whose routine is in an overlay (EWRAM, 0x02xxxxxx)
 /// unless its flag bit 0 asks to keep it running, as Task_SuspendAll does.
-/// Returns the last index changed, or -1.
 s32 Task_SuspendOverlayTasks(void) {
   struct Task *task;
   u32 savedInterruptMaster;
@@ -236,8 +224,7 @@ s32 Task_SetFlags(TaskFunc func, u32 mask) {
 }
 
 /// Resumes the task running `func`, or every task when `func` is null, by
-/// clearing bit 0 of its priority's high byte. Returns the last index changed,
-/// or -1.
+/// clearing bit 0 of its priority's high byte.
 s32 Task_ResumeAll(TaskFunc func) {
   struct Task *task;
   u32 savedInterruptMaster;
@@ -280,9 +267,6 @@ s32 Task_ResumeOverlayTasks(void) {
 
 /// Runs one pass of the tasks: every task whose priority's high byte matches
 /// `pass`'s (TASK_PASS_FRAME or TASK_PASS_VBLANK), in table order.
-/// Called once a frame by wait() and once a VBlank by
-/// System_VBlankHandler. Nothing runs until Task_ResetAll has set
-/// gTasksInitialized.
 void Task_RunPass(s32 pass) {
   struct Task *task = gTasks;
   s32 i;

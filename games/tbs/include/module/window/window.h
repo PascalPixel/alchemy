@@ -34,9 +34,8 @@ enum {
   WINDOW_FLAG_FIXED_X = 0x100,
 };
 
-// The text canvas tiles in VRAM: 120 4bpp tiles from tile 296, enough for
-// the interior of a full-width window six tiles tall. The tiles run down
-// columns, each as tall as the window's interior.
+// The text canvas tiles in VRAM: 120 4bpp tiles from tile 296, enough for the
+// interior of a full-width window six tiles tall.
 #define TEXT_CANVAS_VRAM ((void *)0x06002500)
 #define TEXT_CANVAS_SIZE (120 * TILE_SIZE_4BPP)
 #define TEXT_CANVAS_FIRST_TILE 296
@@ -115,9 +114,7 @@ enum TextColor {
 #define PAGE_ARROW_LEFT WINDOW_TILE(PAGE_ARROW_TILE)
 #define PAGE_ARROW_RIGHT WINDOW_TILE(PAGE_ARROW_TILE + 1)
 
-/// The window border's tiles. While WindowWork.mindRead is set (a battle
-/// animation sets it while it greys WINDOW_PALETTE and scrolls BG0 by scanline)
-/// the corners are one rounded tile, flipped for each corner.
+/// The window border's tiles.
 enum {
   WINDOW_TILE_BLANK = WINDOW_TILE(0),
   WINDOW_TILE_BORDER_TOP_LEFT = WINDOW_TILE(16),
@@ -203,9 +200,6 @@ enum {
   WINDOW_SPRITE_MOTION_SHRINK_HALF = 12, ///< the same at half the scale
   WINDOW_SPRITE_MOTION_HIDDEN = 13,      ///< not drawn
   /// Three motions WindowSprite_UpdateAll runs alike: a hop down and back.
-  /// Only the second is set, on a shop's next-page arrow (its previous-page
-  /// arrow takes WINDOW_SPRITE_MOTION_HOP_UP); nothing sets the other two, so
-  /// they keep their place among the three as their names.
   WINDOW_SPRITE_MOTION_HOP_DOWN = 14,
   WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE = 15,
   WINDOW_SPRITE_MOTION_HOP_DOWN_3 = 16,
@@ -284,9 +278,7 @@ enum CenteredMessageMode {
   CENTERED_MESSAGE_WINDOW = 1
 };
 
-/// The flags FieldMessage_Show takes. Without
-/// FIELD_MESSAGE_LOWER or FIELD_MESSAGE_LOWEST the window goes above
-/// or below the player's character, away from where it stands on screen.
+/// The flags FieldMessage_Show takes.
 enum FieldMessageFlag {
   FIELD_MESSAGE_ZOOM = 1, ///< the window zooms open and shut
   FIELD_MESSAGE_WAITING_FOR_SOUND =
@@ -327,11 +319,7 @@ enum IconKind {
   ICON_KIND_TABLE_ENTRY = 9
 };
 
-// The layers ItemIcon_Compose draws over an item's icon. Callers combine them:
-// the count above one, equipped and broken in Resource_LoadByMode and
-// ItemIcon_LoadIntoSlot; those and the artifact mark for
-// Resource_LoadByModeIntoSlot's ICON_KIND_ITEM, and all but the equipped mark
-// for its ICON_KIND_EQUIPMENT_ITEM.
+// The layers ItemIcon_Compose draws over an item's icon.
 #define ICON_BASE 1            ///< the base under the icon
 #define ICON_COUNT_ABOVE_ONE 2 ///< the count, unless it is 1
 #define ICON_COUNT 4           ///< the count, always

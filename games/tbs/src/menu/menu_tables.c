@@ -46,8 +46,7 @@ u8 gMenu_ListOrderEquippedThenEquipment[20] = {
     ITEM_TYPE_NONE, LIST_ORDER_END,
 };
 /// LIST_SORT_EQUIPPED_THEN_ITEMS: the equipped items, the items that are not
-/// equipment, then the other equipment. ItemMenu_SelectItem's list also sorts
-/// by it.
+/// equipment, then the other equipment.
 u8 gMenu_ListOrderEquippedThenItems[20] = {
     LIST_ORDER_EQUIPPED | ITEM_TYPE_WEAPON, LIST_ORDER_EQUIPPED | ITEM_TYPE_HELM,
     LIST_ORDER_EQUIPPED | ITEM_TYPE_SHIELD, LIST_ORDER_EQUIPPED | ITEM_TYPE_ARMOR,

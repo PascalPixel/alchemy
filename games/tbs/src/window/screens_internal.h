@@ -55,13 +55,8 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
                                      s32 offsetX, s32 offsetY, s32 variant);
 #endif
 
-// Edition-specific text and window layout values: places and widths in
-// tiles, except where a note says pixels.
-//
-// The Djinn preview's columns of old values (HP and PP, then Attack, Defense
-// and Agility), and how many leading characters of the 11-character number
-// text the stats skip: 7 leaves four digits, 8 three. The help line under
-// them ("R: Psynergy Gained") is placed in pixels.
+// Edition-specific text and window layout values: places and widths in tiles,
+// except where a note says pixels.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define DJINN_PREVIEW_VITALS_X 4
 #else
@@ -141,16 +136,13 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define BATTLE_SUMMON_COST_COLUMN 11
 #endif
 
-/// BG1's tile number of the command row's first icon tile. BG1 has 256-colour
-/// tiles of 8x8 bytes from character block 0, and BattleCommandRow_LoadIcon
-/// loads the icons into character block 1, 16 tiles each.
+/// BG1's tile number of the command row's first icon tile.
 #define COMMAND_ROW_ICON_TILE (BG_CHAR_SIZE / (8 * 8))
 
 /// Places a battle menu's pointing hand at its list window's selected row:
-/// `position` takes the hand's spot, `margin` pixels left of the window and
-/// 20 below the row's top, and `sprite` becomes a plain 16x16 sprite, its
-/// position still to come. The Djinn, item, summon and Psynergy battle menus
-/// each place their cursor so.
+/// `position` takes the hand's spot, `margin` pixels left of the window and 20
+/// below the row's top, and `sprite` becomes a plain 16x16 sprite, its position
+/// still to come.
 #define MENU_PLACE_CURSOR(position, window, row, margin, sprite)               \
   do {                                                                         \
     (position).x = (window)->x * 8 - (margin);                                 \
@@ -246,8 +238,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 
 // The battle menus' message buffers, in halfwords, and the copier that fills
 // them: the Japanese edition decodes the message (Message_DecodeRaw), the
-// others copy its text (Message_CopyExpanded). The callers' buffers hold
-// 64 halfwords either way.
+// others copy its text (Message_CopyExpanded).
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define BATTLE_MENU_MESSAGE_CAPACITY 52
 #define BATTLE_MENU_MESSAGE_COPY Message_CopyExpanded
@@ -262,8 +253,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define LIST_PAGE_DIGITS_TILE 768
 
 /// Tiles the battle lists draw over their window's top edge: the page numbers
-/// and arrows, and the summon list's element icon. The digit and arrow tiles
-/// are built when the party's commands open (Battle_CollectPartyCommands).
+/// and arrows, and the summon list's element icon.
 enum {
   /// Element icon: + enum Element, in BASIC_COLORS_PALETTE.
   LIST_TILE_SUMMON_ELEMENT = (BASIC_COLORS_PALETTE << 12) | 1,
@@ -334,8 +324,6 @@ struct BattleCommandRowIcon {
 
 /// The command row's work block: the icons' shared palette, up to six icons,
 /// the label window, the pulsing icon's transform and the selection.
-/// BattleCommandRow_Run takes it from the EWRAM pool and frees it on
-/// return.
 struct BattleCommandRowWork {
   /// BG palette slots for the icons' 256-colour pixels, filled as each icon
   /// is loaded (BattleCommandRow_LoadIconTiles).
@@ -360,8 +348,7 @@ struct BattleCommandRowWork {
 // cursor is of that element, on standby and ready to summon (window_tables.s).
 /// The arrow tile BattleDjinnMenu_Run copies to the two BG tiles from
 /// DJINN_MENU_ARROW_TILE each frame: the first blinks (four frames shown, four
-/// blank), the second stays. The Djinn preview draws one of them, flipped,
-/// between the old and new class: the blinking one when the class changes.
+/// blank), the second stays.
 extern const u8 gDjinnMenu_BlinkTile[32];
 /// The two BG tiles of the Djinn menu's arrow: DJINN_MENU_ARROW_TILE blinks,
 /// the one after it stays.

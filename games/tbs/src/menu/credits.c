@@ -20,8 +20,7 @@
 #include "iwram_call.h"
 #include "flags.h"
 
-// Credits text uses six 32-pixel sprites across each 192-pixel line. Its
-// 32 tile rows form a ring, with sixteen rows visible at a time.
+// Credits text uses six 32-pixel sprites across each 192-pixel line.
 #define CREDITS_LINE_PIXELS 192
 #define CREDITS_VISIBLE_ROWS 16
 #define CREDITS_COLUMNS 6
@@ -105,12 +104,7 @@ const u32 gCredits_Backgrounds[] = {
 };
 // clang-format on
 
-/// Loads a credits battle background into one of the two tile/palette halves. A
-/// zero resource clears that half; the second half offsets its palette indices.
-/// A battle background resource is its 128 colours (256 bytes) and then its
-/// packed tiles. The decoder runs from a copy in HEAP_SLOT_RAM_CODE_TEMP,
-/// released before returning; the colours reach palette RAM at the next VBlank,
-/// through the I/O write queue.
+/// Loads a credits battle background into one of the two tile/palette halves.
 void Credits_LoadBackground(u32 resourceId, s32 alternate) {
   const u8 *resourceData;
   u32 paletteDestination;
@@ -146,12 +140,7 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
 }
 
 /// Builds the 512 tilemap words surrounding a sliding credits picture: blank
-/// margins, 240 consecutive tile pairs, then a zero-filled tail. In 32-tile
-/// rows: two rows of tile 511, the picture's tiles 0 to 479 in fifteen rows,
-/// three rows of tile 511 (160 pixels in all, the screen), then twelve rows of
-/// zeros below it. Each map follows its picture's 30 KB of tiles in the same
-/// 32 KB, so tile 511 is the map's own last 64 bytes, which the zeros keep
-/// transparent.
+/// margins, 240 consecutive tile pairs, then a zero-filled tail.
 void Credits_BuildBackgroundTilemap(u32 *destination) {
   s32 remaining;
   u32 blankTiles = 0x01FF01FF;
@@ -182,11 +171,8 @@ void Credits_BuildBackgroundTilemap(u32 *destination) {
   } while (remaining >= 0);
 }
 
-/// A VBlank task of the credits: drifts both pictures together,
-/// keeping their horizontal offsets aligned throughout the crossfade. Each
-/// fourth VBlank both scrolls fall by one (adding 0xffff to the 16-bit
-/// value), moving the pictures a pixel right; a picture is as wide as its
-/// map, 256 pixels, so it wraps without a seam.
+/// A VBlank task of the credits: drifts both pictures together, keeping their
+/// horizontal offsets aligned throughout the crossfade.
 void Credits_ScrollBackgrounds(void) {
   if ((gVBlankCount & 3) == 0) {
     u32 decrement = 0xffff;
@@ -198,13 +184,7 @@ void Credits_ScrollBackgrounds(void) {
 
 /// Crossfades the credits' battle backgrounds through alternating tile banks
 /// while the staff names scroll over it, then restores the display for the
-/// following screen. Reached through the scroll far-call table at the end of
-/// the game: Title_Run calls it as Import_CreditsRun when the ending arrives
-/// at TITLE_FROM_LEMURIAN_SHIP, MUS_ENDING playing, before the File Screen.
-/// Its waits come to 11223 frames, about 3 minutes 8 seconds, besides the
-/// loads: a 300-frame lead, then 33 slides of a 64-frame fade and a 267-frame
-/// hold, the last a fade to black. Returns 0 with BG2, BG3 and blending off
-/// and the OAM copy back on; the three tasks it adds keep running.
+/// following screen.
 s32 Credits_Run(void) {
   u32 slide;
   s32 alpha;
@@ -215,8 +195,7 @@ s32 Credits_Run(void) {
   gIdleSleepEnabled = 0;
   Task_ResetAll();
   Task_Add(Credits_ScrollBackgrounds, TASK_PASS_VBLANK);
-  // Each layer owns its map, tiles and palette half. Load the invisible
-  // half while the other remains on screen.
+  // Each layer owns its map, tiles and palette half.
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
   Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(15));
   Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(31));
@@ -236,16 +215,13 @@ s32 Credits_Run(void) {
   // Give the names a five-second lead before the first picture.
   Credits_InitTextSprites();
   wait(300);
-  // Alternate the hidden layer after each 64-frame crossfade. Loading it
-  // cannot overwrite the picture that is still showing.
+  // Alternate the hidden layer after each 64-frame crossfade.
   for (slide = 0;
        slide < sizeof(gCredits_Backgrounds) / sizeof(gCredits_Backgrounds[0]);
        slide++) {
     Credits_LoadBackground(gCredits_Backgrounds[slide], (slide & 1) ^ 1);
     // Fade the new half in: an even slide went to BG2, the first target
     // (BLDALPHA bits 4..0), an odd one to BG3, the second (bits 12..8).
-    // The two weights are written out, bottom first: through BLEND_ALPHA
-    // the operands swap and the crossfade's registers change.
     for (alpha = 1; alpha <= 16; alpha++) {
       if (slide & 1)
         Io_Write16((alpha << 8) | (16 - alpha), &REG_BLDALPHA);
@@ -942,9 +918,8 @@ const void *gCredits_Lines[] = {
 /// carry.
 #define FLAG_CREDITS_LINE_DRAWN FLAG_SCENE_TEMP_00
 
-/// A VBlank task added by Credits_InitTextSprites: maps the
-/// visible sixteen rows onto the tile ring and uploads their sprites. Advances
-/// one pixel every fourth frame until the end-of-text latch stops the scroll.
+/// A VBlank task added by Credits_InitTextSprites: maps the visible sixteen
+/// rows onto the tile ring and uploads their sprites.
 void Credits_UpdateTextSprites(void) {
   u32 frame = gCreditsScrollPosition;
   u32 scrollWithinTile = frame & 7;
@@ -996,9 +971,7 @@ void Credits_DrawEnteringLine(void) {
 }
 
 /// Allocates the credits sprites, builds the blank border and text rows, clears
-/// the tile ring and adds the scrolling and line-rendering tasks. The 1 KB
-/// sprite buffer comes from the EWRAM bump pool and is never freed; each line
-/// buffer is taken from the pool after it and given back.
+/// the tile ring and adds the scrolling and line-rendering tasks.
 void Credits_InitTextSprites(void) {
   volatile u32 dmaFill;
   u32 *oamWords;
@@ -1014,12 +987,10 @@ void Credits_InitTextSprites(void) {
                  (void *)(OBJ_VRAM0 + CREDITS_RING_BYTES), 256);
 
   // OAM attributes 0 and 1 share the first word; attribute 2 is the second.
-  // Here row counts the sprites across, 32 pixels apart (row << 21 is x).
-  // The top strip: eight 32x16 sprites over y 0 to 15. Coming first in OAM,
-  // the strips are drawn over the text.
   oamWords = (u32 *)SCROLL_OBJECTS;
   for (row = 0; row < 8; row++) {
     *oamWords++ = (row << 21) | OBJ_SIZE_32X16;
+    // Here row counts the sprites across, 32 pixels apart (row << 21 is x).
     *oamWords++ = CREDITS_RING_TILES;
   }
   // The bottom strip: eight 32x16 sprites at y 136 and eight 32x8 at y 152,
@@ -1060,11 +1031,6 @@ void Credits_InitTextSprites(void) {
   (*(u32 *)(OBJ_VRAM0 + (row) * 4 + (tile) * TILE_SIZE_4BPP))
 
 /// Centers, right-aligns or left-aligns one credits line in a 192-pixel row.
-/// Rasterizes its glyphs and shadow, packs 4-bit pixels and uploads 24 tiles
-/// beginning at firstTile. Returns -1 at the null end marker, otherwise zero.
-/// alignment 1 centres, 2 right-aligns and any other value left-aligns; every
-/// caller passes 1. The glyphs are colour 15 with a colour 1 shadow a pixel
-/// down and right.
 s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   u8 *linePixels = Heap_AllocEwram(CREDITS_BUFFER_BYTES);
   s32 startX = 0;
@@ -1097,12 +1063,7 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
 #endif
     return -1;
   }
-  // The ninth raster row holds the shadow below this line. Carry it into the
-  // next line before clearing the rest of the reused scratch buffer. The buffer
-  // comes back at the same address each call (Heap_Release rewinds the pool),
-  // so the last line's ninth row is still there. FLAG_CREDITS_LINE_DRAWN, here
-  // a line has been drawn, is clear on entering the scene (Scene_Arrive), so
-  // the first line starts from a clean buffer.
+  // The ninth raster row holds the shadow below this line.
   if (!GameFlag_GetFar(FLAG_CREDITS_LINE_DRAWN)) {
     Iwram_FillWords(linePixels, CREDITS_BUFFER_BYTES, 0);
     GameFlag_SetFar(FLAG_CREDITS_LINE_DRAWN);

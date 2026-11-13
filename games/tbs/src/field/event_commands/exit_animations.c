@@ -6,8 +6,7 @@
 #include "../event_commands_internal.h"
 
 /// Finds where an actor is on screen: position[0] and position[1] receive its x
-/// and y in pixels, y at the top of its sprite. Returns 0, or -1 if there is no
-/// such actor.
+/// and y in pixels, y at the top of its sprite.
 s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   struct Actor *actor = Actor_Lookup(actorId);
   struct MapGridScrollWork *grid;
@@ -48,10 +47,9 @@ UNREAD_RESULT Field_StartEncounterTransition(s32 unused) {
   Sound_PlayFar(SE_STOP_ACTION_SE);
   Sound_PlayFar(SE_BEAST_CRY);
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    // On the World Map the flash colours BG palette colour 243 instead, and
-    // the screen closes on the flickering centre line (style 4, variant 1);
-    // a field scene closes with WINDOW_TRANSITION_LEADER_INVERSE. Both take
-    // 16 frames.
+    // On the World Map the flash colours BG palette colour 243 instead, and the
+    // screen closes on the flickering centre line (style 4, variant 1); a field
+    // scene closes with WINDOW_TRANSITION_LEADER_INVERSE.
     Io_Write16(RGB(31, 31, 31), (u16 *)&BG_PLTT_COLOR(15, 3));
     ScreenTransition_Finish(SCENE_TRANSITION(4, 1), 16);
     work->transitionActive = 0;
@@ -79,7 +77,6 @@ UNREAD_RESULT Field_StartEncounterTransition(s32 unused) {
 
 /// Starts the leader's animation for leaving through an exit: centres it on its
 /// cell, at the cell's south edge, stops it and plays animation over 18 frames.
-/// The leader's sprite gains a second part (metadata 27) for it.
 void Exit_PrepareAnimation(s32 animation) {
   struct Actor *actor;
   struct Sprite *sprite;
@@ -96,10 +93,9 @@ void Exit_PrepareAnimation(s32 animation) {
     // No shadow as the leader leaves.
     sprite->flags = cleared;
     doorway->colorMode = hidden;
-    // Keep the cell and put the leader at its middle in x and its south edge
-    // in z.
-    /* FAKEMATCH(cast): the coordinates as plain words; through .fixed, 1 of
-     * 51 instructions moves in tbs-en. */
+    // Keep the cell and put the leader at its middle in x and its south edge in
+    // z.
+    // Each coordinate read and written as the word it is.
     *(s32 *)&actor->x = (*(s32 *)&actor->x & FIELD_CELL_MASK) + px(8);
     *(s32 *)&actor->z = (*(s32 *)&actor->z & FIELD_CELL_MASK) + px(16);
     actor->velocityX = cleared;
@@ -156,13 +152,10 @@ void Entrance_EndArrivalAnimation(s32 animation) {
 }
 
 /// Plays the leader's arrival for the way the last scene was left: through a
-/// EXIT_STYLE_STAIRS_UP exit (FLAG_ARRIVAL_STAIRS_UP,
-/// ANIM_LEADER_ARRIVE, returns 1) or a EXIT_STYLE_STAIRS_DOWN one
-/// (FLAG_ARRIVAL_STAIRS_DOWN, ANIM_LEADER_ARRIVE_ALTERNATE, returns
-/// 2), or falling in from 160 pixels above (FLAG_ARRIVE_FALLING, returns 3).
-/// Returns 0 when there is nothing to play. Called by FieldSequence_Run as the
-/// scene fades in, which waits out the fade itself only when this returns 0.
-/// Clears the flag it acts on.
+/// EXIT_STYLE_STAIRS_UP exit (FLAG_ARRIVAL_STAIRS_UP, ANIM_LEADER_ARRIVE,
+/// returns 1) or a EXIT_STYLE_STAIRS_DOWN one (FLAG_ARRIVAL_STAIRS_DOWN,
+/// ANIM_LEADER_ARRIVE_ALTERNATE, returns 2), or falling in from 160 pixels
+/// above (FLAG_ARRIVE_FALLING, returns 3).
 s32 Entrance_PlayArrival(void) {
   s32 result = 0;
   s32 flag = FLAG_ARRIVAL_STAIRS_UP;

@@ -13,9 +13,7 @@
 #include "render_input.h"
 #include "heap.h"
 
-/// Where the windows are drawn (WindowWork.battleMode). In battle, typing
-/// speeds up when a frame overruns, and the bottom rows of a cleared
-/// rectangle keep the battle tile.
+/// Where the windows are drawn (WindowWork.battleMode).
 enum WindowBattleMode {
   WINDOW_FIELD = 0,  ///< on the field; the field setup clears the block
   WINDOW_BATTLE = 1, ///< in battle, from WindowSystem_InitBattle
@@ -33,9 +31,7 @@ struct Window {
   u16 x;                           ///< tiles
   u16 y;                           ///< tiles
   u16 opened; ///< 1 once opened, 0 once freed; nothing reads it
-  /// The animation a message's TEXT_WINDOW_STATE code sets. Only
-  /// WINDOW_ANIMATION_SWELL is acted on; its message types nothing more
-  /// until the swell ends and clears it.
+  /// The animation a message's TEXT_WINDOW_STATE code sets.
   u16 animation;
   /// 0 while a message is typing into the window; 1 once its text has
   /// ended or closed the window, which frees the message for the next text.
@@ -106,21 +102,14 @@ enum { WINDOW_SPRITE_COUNT = 64 };
 
 /// The window system's work: the windows' tilemap, the windows, the three text
 /// messages, the 64 window sprites, and the decoded message and its arguments.
-///
-/// It is heap slot HEAP_SLOT_WINDOW (gWindowWork), which
-/// WindowSystem_InitField takes for the field and
-/// WindowSystem_InitBattle for battle; it lasts until the next scene change.
-/// Japanese has more windows and a shorter text ring than the other editions
-/// (WINDOW_COUNT, TEXT_BUFFER_MASK).
 struct WindowWork {
   u16 tilemap[640]; ///< the windows' BG tilemap, 32 by 20 tiles
   struct Window windows[WINDOW_COUNT]; ///< 12 in Japanese, 8 in the others
   struct Message messages[3];          ///< the messages, NULL work when free
   struct WindowSprite sprites[WINDOW_SPRITE_COUNT];
   struct WindowSpriteList freeSprites; ///< the sprites not in any window
-  /// Per text tile (tiles 128 to 255, then 512 to 639): bit 0 once
-  /// allocated, bit 1 while the tilemap shows it, 0 when free. The first
-  /// three hold the bottom border tiles' lower rows and are 4.
+  /// Per text tile (tiles 128 to 255, then 512 to 639): bit 0 once allocated,
+  /// bit 1 while the tilemap shows it, 0 when free.
   u8 textTileState[256];
   u16 nextTextTile;  ///< the text tile the next search for a free one starts at
   u8 extraTextTiles; ///< 1 lets text use 256 tiles, adding tiles 512 to 639

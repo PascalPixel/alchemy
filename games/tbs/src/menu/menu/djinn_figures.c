@@ -8,8 +8,7 @@
 /// Replaces the four displayed sprites and starts their projected-position
 /// task: one Djinni figure of each element (gDjinnFigures_SpriteIds) in
 /// ANIM_WALK, at (16, 32) until the screen moves them, placed each frame by
-/// DjinnFigures_UpdateAllPositions. The Status menu calls it when the
-/// party has Djinn; DjinnFigures_ReleaseTopRow releases them.
+/// DjinnFigures_UpdateAllPositions.
 void DjinnFigures_InitializeTopRow(void *unused0, s32 unused1) {
   struct ItemMenuWork *state = gMenuWork;
   s32 index;
@@ -36,9 +35,7 @@ void DjinnFigures_InitializeTopRow(void *unused0, s32 unused1) {
   Task_Add(DjinnFigures_UpdateAllPositions, TASK_PASS_FRAME);
 }
 
-/// Releases the four sprites and removes their task. It defines
-/// DjinnFigures_ReleaseTopRow (the Status menu's row) and
-/// DjinnFigures_ReleaseBottomRow (the Djinn menu's).
+/// Releases the four sprites and removes their task.
 #define DJINN_FIGURES_DEFINE_RELEASE(name, update)                             \
   void name(void) {                                                            \
     struct ItemMenuWork *state = gMenuWork;                                    \
@@ -59,16 +56,12 @@ DJINN_FIGURES_DEFINE_RELEASE(DjinnFigures_ReleaseTopRow,
                              DjinnFigures_UpdateAllPositions)
 
 /// Full size, 1.0 in 16.16, and the height the figures are placed from: 482
-/// pixels, in 16.16. As for the party figures
-/// (Menu_PlacePartyFigures), the height is 482 less the origin and
-/// the ground lies that far below the row, so the image stands at its row.
+/// pixels, in 16.16.
 #define FOUR_OBJECT_MOTION_FULL_SCALE ((u32)Q16_ONE)
 #define FOUR_OBJECT_MOTION_ORIGIN_Y (482u << 16)
 
 /// Projects the four sprites at full scale from their saved row positions.
-/// Task, each frame from DjinnFigures_InitializeTopRow. The
-/// image stands at (figureX, figureY); memberY, which is the
-/// party figures' memberY, only moves the depth slot.
+/// Task, each frame from DjinnFigures_InitializeTopRow.
 void DjinnFigures_UpdateAllPositions(void) {
   struct ItemMenuWork *state = gMenuWork;
   s32 index;
@@ -99,10 +92,6 @@ void DjinnFigures_UpdateAllPositions(void) {
 }
 
 /// Projects the bottom row using its saved scale or easing toward full size.
-/// Task, each frame from DjinnFigures_InitializeBottomRow
-/// (the Djinn menu); it also animates the page arrows. A figure whose y has
-/// DjinnFigures_SetSlotPosition's negative mark (a recovering Djinni)
-/// faces FACING_WEST instead of FACING_SOUTH.
 void DjinnFigures_UpdateBottomRow(void) {
   struct ItemMenuWork *menu = gMenuWork;
   s32 figure;
@@ -148,9 +137,8 @@ void DjinnFigures_UpdateBottomRow(void) {
 }
 
 /// Replaces the bottom row's four sprites and starts its easing task: one
-/// Djinni figure of each element in ANIM_WALK, at full size, at (16, 200)
-/// below the screen until the Djinn menu moves one. DjinnMenu_Run calls it
-/// and DjinnFigures_ReleaseBottomRow releases them.
+/// Djinni figure of each element in ANIM_WALK, at full size, at (16, 200) below
+/// the screen until the Djinn menu moves one.
 void DjinnFigures_InitializeBottomRow(s32 unused0, s32 unused1) {
   struct ItemMenuWork *state = gMenuWork;
   s32 index;
@@ -177,9 +165,7 @@ void DjinnFigures_InitializeBottomRow(s32 unused0, s32 unused1) {
 }
 
 /// Updates one object's saved position and its signed y marker: with negative
-/// set, y keeps its low bits but gets bit 15, which makes it negative. Does
-/// nothing to an empty slot. Returns the work offset of figureY[index]
-/// (0x23c + 2 * index), or index for an empty slot; callers ignore it.
+/// set, y keeps its low bits but gets bit 15, which makes it negative.
 s32 DjinnFigures_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative) {
   struct ItemMenuWork *state = gMenuWork;
 
@@ -192,8 +178,7 @@ s32 DjinnFigures_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative) {
 }
 
 /// Sets figure index's scale phase (16.16): negative for a fixed scale of
-/// -phase, otherwise the scale it grows from toward full size. The Djinn
-/// chooser sets 0 after each cursor move, so the figure grows in again.
+/// -phase, otherwise the scale it grows from toward full size.
 s32 DjinnFigures_SetSlotPhase(s32 index, s32 phase) {
   ((struct ItemMenuWork *)gMenuWork)->figureScales[index] = phase;
 #ifdef UBFIX

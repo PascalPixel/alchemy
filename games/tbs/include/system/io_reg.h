@@ -61,15 +61,11 @@ enum DisplayControl {
 #define REG_BG3HOFS (*(volatile u16 *)0x0400001c) ///< BG3, horizontal
 #define REG_BG3VOFS (*(volatile u16 *)0x0400001e) ///< BG3, vertical
 
-/// The BG2/BG3 affine matrix entries are signed 8.8 fixed point: texels
-/// stepped per screen pixel. Q_8_8(1) draws the layer at its own size and
-/// Q_8_8(0.5) twice as large.
+/// The BG2/BG3 affine matrix entries are signed 8.8 fixed point: texels stepped
+/// per screen pixel.
 #define Q_8_8(n) ((s16)((n) * 256))
 
-// The affine backgrounds' matrices and origins, write-only. PA and PC step
-// the map point's x and y for each pixel along a line, PB and PD for each
-// line down; X and Y, in 20.8 fixed point, are the map point drawn at the
-// screen's top left.
+// The affine backgrounds' matrices and origins, write-only.
 #define REG_BG2PA (*(volatile u16 *)0x04000020) ///< BG2: x step a pixel
 #define REG_BG2PB (*(volatile u16 *)0x04000022) ///< BG2: x step a line
 #define REG_BG2PC (*(volatile u16 *)0x04000024) ///< BG2: y step a pixel
@@ -323,8 +319,7 @@ enum ObjMode {
 
 /// A sprite's attributes 0 and 1 as one word, attr0 | attr1 << 16, the way
 /// routines that build their own sprite lists write them; x, 0 to 511, is
-/// shifted into the high half and y, 0 to 255, is the low byte. The sizes give
-/// GBATEK's shape and size bits together, width by height in pixels.
+/// shifted into the high half and y, 0 to 255, is the low byte.
 #define OBJ_SIZE_8X8 0x00000000
 #define OBJ_SIZE_16X16 0x40000000
 #define OBJ_SIZE_32X32 0x80000000

@@ -14,10 +14,7 @@
 #include "types.h"
 #include "static_assert.h"
 
-/// The heap's 64 words in IWRAM (0x03001e50), seen as union HeapState. Each
-/// part of the game names the slots it owns (gFieldWork, gWindowWork,
-/// gMapGridWork and the rest) as macros over this table, so the compiler sees
-/// one array and reaches neighbouring slots from whichever it loaded first.
+/// The heap's 64 words in IWRAM (0x03001e50), seen as union HeapState.
 extern void *gHeapSlots[64];
 
 /// Slot n's block, or null before it is allocated.
@@ -37,8 +34,7 @@ union HeapState {
     void *blocks[62]; ///< heap slots 2 to 63
   } heap;
   /// Each slot's block once allocated, else null; slots 0 and 1 are the pool
-  /// pointers. Allocating a slot that already has a block returns that block,
-  /// whatever size is asked for.
+  /// pointers.
   void *slots[64];
 };
 
@@ -46,9 +42,7 @@ STATIC_ASSERT(sizeof(union HeapState) == 0x100);
 STATIC_ASSERT(offsetof(union HeapState, heap.nextIwram) == 4);
 STATIC_ASSERT(offsetof(union HeapState, heap.blocks) == 8);
 
-/// The heap slots shared across folders, by index into gHeapSlots. Releasing a
-/// slot (HeapSlot_Release) also releases every block taken after it in
-/// the same pool.
+/// The heap slots shared across folders, by index into gHeapSlots.
 enum HeapSlot {
   HEAP_SLOT_TRANSFORM_STACK = 2, ///< The 3D transform's one saved level.
   /// The sprite animations (struct SpriteAnimation) of the actor
@@ -58,10 +52,8 @@ enum HeapSlot {
   HEAP_SLOT_SPRITES = 4,
   /// The 64 actors (struct Actor).
   HEAP_SLOT_ACTORS = 5,
-  /// The actor system's work (struct ActorSystemWork, gActorSystemWork),
-  /// taken by ActorSystem_Initialize. The item, Psynergy, Status, Djinn and
-  /// debug menus and the world map effect set its suspended field while they
-  /// are open, so sprites that are not held are not drawn and free their VRAM.
+  /// The actor system's work (struct ActorSystemWork, gActorSystemWork), taken
+  /// by ActorSystem_Initialize.
   HEAP_SLOT_ACTOR_SYSTEM = 6,
   /// The world map's affine work (struct WorldMapAffineWork).
   HEAP_SLOT_WORLD_MAP_AFFINE = 7,
@@ -173,14 +165,9 @@ enum HeapSlot {
   /// Battle Arena and Battle_Run.
   HEAP_SLOT_ENEMY_UNITS = 54,
   /// The menu work (MENU_WORK_SIZE bytes) shared by the field menu's screens
-  /// and the shop; each takes it on opening and releases it on closing. The
-  /// save screen takes it for its sprite work (struct ShopWork).
+  /// and the shop; each takes it on opening and releases it on closing.
   HEAP_SLOT_MENU = 55,
-  /// The Psynergy effect's work (struct FieldEffectWork, gFieldEffectWork). A
-  /// field Psynergy holds it from FieldPsynergy_LoadResources to
-  /// FieldPsynergy_End, a Djinni's joining from
-  /// FieldEffect_InitializeSlots to
-  /// FieldEffect_ReleaseSlots.
+  /// The Psynergy effect's work (struct FieldEffectWork, gFieldEffectWork).
   HEAP_SLOT_FIELD_EFFECT = 56,
   /// The battle command menus' work (struct BattleMenuWork).
   HEAP_SLOT_BATTLE_MENU = 57,

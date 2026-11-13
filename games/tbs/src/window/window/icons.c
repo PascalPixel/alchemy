@@ -6,10 +6,7 @@
 
 // The builders that load an icon into VRAM take HEAP_SLOT_GLYPH_TRANSFER
 // (gGlyphWork) for the build and free it before returning; ItemIcon_Compose and
-// the Icon_Draw functions draw into the slot their caller holds. An
-// icon is 2 by 2 tiles, 16x16 pixels: 2 * 2 * TILE_SIZE_4BPP bytes of sprite
-// tiles in its VRAM cache entry (a portrait, Icon_LoadWithPalette's, is 4 by
-// 4).
+// the Icon_Draw functions draw into the slot their caller holds.
 
 /// Returns how many item icons the icon table holds; Icon_BuildItemIconTiles
 /// draws icon 0 for a number past them.
@@ -19,12 +16,8 @@ s32 Icon_CountItemIcons(void) { return gItemIconsEnd - gItemIcons; }
 /// Icon_BuildAbilityIconTiles draws icon 0 for a number past them.
 s32 Icon_CountPsynergyIcons(void) { return gPsynergyIconsEnd - gPsynergyIcons; }
 
-/// Builds a command icon (overlay overlayIcon over base baseIcon) and loads
-/// it into a sprite tile slot: *slot, or a free one when reuse is 0. Returns
-/// the tile in *tileOut.
-/// The base decodes opaque; the command layer is then composited with
-/// transparency. With no free slot, *slot is VRAM_CACHE_ENTRY_COUNT and the
-/// load fails (*tileOut 0).
+/// Builds a command icon (overlay overlayIcon over base baseIcon) and loads it
+/// into a sprite tile slot: *slot, or a free one when reuse is 0.
 void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 baseIcon, s32 *slot,
                                 s32 *tileOut, s32 reuse) {
   GlyphTransfer *work;
@@ -54,9 +47,7 @@ void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
 }
 
 /// Builds the item icon glyph, over the icon base when withBase is set, and
-/// loads it into *cacheSlot (a free slot unless reuse is set). Returns the tile
-/// in *tileOut.
-/// The optional frame is decoded first and selects masked icon expansion.
+/// loads it into *cacheSlot (a free slot unless reuse is set).
 void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
                              s32 *tileOut, s32 reuse) {
   GlyphTransfer *work;
@@ -91,9 +82,7 @@ void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
 
 /// Draws an item's icon into the glyph work buffer from its inventory code
 /// (enum InventoryEncoding) with the layers asked for (ICON_ flags): the frame,
-/// the equipped, broken and artifact marks, and the count. Returns 256, or -1
-/// when there is no glyph work buffer. The caller allocates the buffer (heap
-/// slot 17, gGlyphWork) and uploads its tiles.
+/// the equipped, broken and artifact marks, and the count.
 s32 ItemIcon_Compose(u32 code, u32 layers) {
   s32 overlay;
   struct ItemDefinition *item;
@@ -166,8 +155,7 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
 }
 
 /// Composes an inventory icon with the requested layers and loads it into
-/// cacheSlot. The temporary glyph block is released after the upload. No
-/// caller reads its result.
+/// cacheSlot. The temporary glyph block is released after the upload.
 s32 Icon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot) {
   GlyphTransfer *work;
 
@@ -192,8 +180,7 @@ s32 Icon_BuildMiscIconTiles(s32 icon, s32 unused, s32 cacheSlot) {
 
 // Those bytes are the table's eight label pointers, not a picture.
 /// Loads 32 bytes, one sprite tile, from the start of gMenuTitlePictures into
-/// the VRAM cache entry slot. Every value loads the same bytes: all four cases
-/// name the table itself.
+/// the VRAM cache entry slot.
 s32 Resource_LoadTableEntry(u32 value, s32 unused, u32 slot) {
   extern const u8 *gMenuTitlePicturesCase1[] __asm__("gMenuTitlePictures"),
       *gMenuTitlePicturesCase2[] __asm__("gMenuTitlePictures"),
@@ -243,10 +230,8 @@ void Ability_LoadGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
                              reuse);
 }
 
-/// Builds the Psynergy icon glyph, over the icon base when withBase is set,
-/// and loads it into *cacheSlot (a free slot unless reuse is set).
-/// Returns the tile in *tileOut.
-/// The optional frame is decoded first and selects masked icon expansion.
+/// Builds the Psynergy icon glyph, over the icon base when withBase is set, and
+/// loads it into *cacheSlot (a free slot unless reuse is set).
 void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
                                 s32 *tileOut, s32 reuse) {
   GlyphTransfer *work;
@@ -289,10 +274,8 @@ void Icon_DrawMisc(u32 iconIndex) {
 }
 
 /// Loads a 32x32 icon from the icon resource into sprite tile slot *slot (a
-/// free slot unless reuse is set) and its colours into the sprite palette
-/// named by palette. Returns the tile in *tile.
-/// This resource stores its palette before the encoded tile payload: 16
-/// colours, 32 bytes. Portraits (Portrait_Create) come through here.
+/// free slot unless reuse is set) and its colours into the sprite palette named
+/// by palette.
 void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                           s32 palette, s32 reuse) {
   GlyphTransfer *work;
@@ -326,8 +309,7 @@ void Icon_ReservedNoOp(void) {}
 
 /// Decodes a compressed icon into the glyph buffer and expands it to tiles,
 /// opaque for the first layer or masked over what is there when outlined is
-/// set. Releases each copied decoder before loading the next routine into the
-/// same slot. glyph->width and height are the icon's size in tiles.
+/// set.
 void Icon_Decode(GlyphTransfer *glyph, s32 outlined) {
   RamCode_LoadSlot(HEAP_SLOT_RAM_CODE_TEMP, Tile_Decompress4bpp,
                    Tile_Decompress4bppCodeSize);

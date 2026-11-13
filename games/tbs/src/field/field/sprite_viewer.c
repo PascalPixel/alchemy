@@ -35,18 +35,6 @@ struct UiSpriteViewerLayer {
 
 /// A debug sprite viewer, which never returns. It shows a sprite (with up to
 /// three more sprite animations) once for each of its facings, in a ring.
-/// Start with the direction pad moves the ring; otherwise up and down choose
-/// a sprite animation and left and right what to edit (enum
-/// UiSpriteViewerEditMode): the animation, the sprite number (ten at a time
-/// with Start), the priority or the draw parameter, changed with L and R. A
-/// restarts the animation, or in the other modes turns a sprite animation on or
-/// off. Pressing Start toggles the shadows; B turns the ring when it is rebuilt
-/// with Start held. Select starts over; it passes a far-call resource set (the
-/// alternate one unless B is held) to Stub_ReturnZero, a stub that ignores it.
-///
-/// It has a bare veneer in the field far-call table, and no caller names it.
-/// Takes HEAP_SLOT_BATTLE for the ring of ten positions and runs
-/// SpriteViewer_PlaceRing each frame to draw the copies.
 void SpriteViewer_Run(void) {
   struct UiSpriteViewerLayer layers[ANIM_LAYER_COUNT];
   struct AnimationMetadata *spriteMetadata;
@@ -171,8 +159,6 @@ next:
   repeatedKeys = &gKeysRepeat;
   for (;;) {
     // Start held: the direction pad moves the ring a pixel a frame.
-    // Otherwise up and down pick the sprite animation and left and right the
-    // mode, both wrapping at four.
 
     if ((*heldKeys & KEY_START) != 0) {
       if ((*heldKeys & KEY_LEFT) != 0) {
@@ -354,9 +340,7 @@ next:
     }
 
     // A, editing the animation: restart the selected sprite animation (sprite
-    // animation 0 also restarts sprite animation 1, which follows it). In the
-    // other modes: show or hide the sprite animation; sprite animation 0 is
-    // always shown.
+    // animation 0 also restarts sprite animation 1, which follows it).
     if ((*repeatedKeys & KEY_A) != 0) {
       if (editMode == UI_SPRITE_VIEWER_EDIT_ANIMATION) {
         if (selectedLayer != 1) {
@@ -423,8 +407,7 @@ s32 SpriteViewer_FindNextSpriteWithPictures(s32 spriteId, s32 direction) {
 
 /// Lays out the sprite viewer's ring around pixel (x, z): one position per
 /// facing of the first sprite's facing kind (6, 8, 10 or 4, or two opposite
-/// pairs for ANIM_FACING_TWO_PART), 56 pixels out (40 for a two-part sprite). B
-/// held turns the ring.
+/// pairs for ANIM_FACING_TWO_PART), 56 pixels out (40 for a two-part sprite).
 void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
                                  struct SpritePlacement *positions) {
   struct SpritePlacement *pairedPositions;
@@ -440,9 +423,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   // counter, a full turn every 256 frames.
   if ((gKeysHeld & KEY_B) != 0)
     angle = (s16)(gVBlankCount << 8);
-  // The steps are a sixth, an eighth, a tenth and
-  // a quarter of a turn. Unused positions of the ten
-  // are skipped.
+  // The steps are a sixth, an eighth, a tenth and a quarter of a turn.
   switch ((u32)facingKind) {
   case ANIM_FACING_THREE_PICTURES:
     for (facingIndex = 0; facingIndex < 6; facingIndex++) {
@@ -598,14 +579,13 @@ void SpriteViewer_StartStaggeredAnimations(s32 layerIndex, s32 animationIndex) {
   } while (spriteIndex < UI_SPRITE_VIEWER_COPY_COUNT);
 }
 
-/// Sets spriteId on layerIndex of each of the viewer's ten sprites.
-/// Resets each sprite animation from its new metadata. Called by
-/// SpriteViewer_Run when a sprite animation other than 0 gets a new sprite.
+/// Sets spriteId on layerIndex of each of the viewer's ten sprites. Resets each
+/// sprite animation from its new metadata.
 void SpriteViewer_SetGridColumnNumber(s32 layerIndex, s32 spriteId) {
   struct Sprite *spriteGroup = gSprites;
   s32 spriteIndex;
 
-  // The ROM looks the metadata up here and drops the result.
+  // DEAD: the sprite's metadata looked up and not used; the ROM keeps the call.
   Resource_GetMetadataRecordFar(spriteId);
   layerIndex &= ANIM_LAYER_COUNT - 1;
   for (spriteIndex = 0; spriteIndex < UI_SPRITE_VIEWER_COPY_COUNT;
@@ -618,10 +598,8 @@ void SpriteViewer_SetGridColumnNumber(s32 layerIndex, s32 spriteId) {
   }
 }
 
-/// Each frame in the sprite viewer: places each copy of the sprite at its
-/// ring position, facing the way that position stands for. SpriteViewer_Run
-/// adds it as a task; its ring is the placements in HEAP_SLOT_BATTLE and its
-/// sprites the pool in HEAP_SLOT_SPRITES.
+/// Each frame in the sprite viewer: places each copy of the sprite at its ring
+/// position, facing the way that position stands for.
 void SpriteViewer_PlaceRing(void) {
   struct Sprite *sprite = HEAP_SLOT_BLOCK(HEAP_SLOT_SPRITES);
   u32 facingKind = sprite->entries[0]->kind;

@@ -41,9 +41,7 @@ extern const struct BattleSummaryStatCursor gBattleStatusScreen_StatCursors[];
 extern const struct BattleSummaryCursor gBattleStatusScreen_EquipmentCursors[];
 /// The eight status cursor stops, two tiles apart on row 0.
 extern const struct BattleSummaryCursor gBattleStatusScreen_ConditionCursors[];
-/// The level label: `Lv`, or `Niv` in French. The Spanish and Italian
-/// editions choose between it, gBattleStatusScreen_NivString and
-/// gBattleStatusScreen_NvString by System_GetLanguage.
+/// The level label: `Lv`, or `Niv` in French.
 extern const u8 gBattleStatusScreen_LevelString[];
 extern const u8 gBattleStatusScreen_HpString[];
 extern const u8 gBattleStatusScreen_SlashString[];

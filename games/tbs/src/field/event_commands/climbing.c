@@ -11,20 +11,7 @@
 #define TILE_CELLS_NORTH (TILE_CELLS - 128)
 
 /// Makes the leader jump two cells forward, over the cell in front, when the
-/// map allows it (MapGrid_CheckCollision). On a log (SPRITE_LOG_WEST_EAST
-/// or SPRITE_LOG_NORTH_SOUTH) the log plays its animation 7 and the leader bobs
-/// down 2 pixels and back. Each jump adds two cells to work->walkingDistance,
-/// as walking them would, and the leader keeps jumping while it lands on
-/// another jump spot (CELL_BEHAVIOR_JUMP_FORWARD_UNREACHED). Returns 0 after a
-/// jump, -1 when the leader cannot jump; a chain that is blocked after its
-/// first jump also returns -1, with the leader standing on the jump spot it
-/// reached.
-///
-/// Called by Field_RunPushCell when the leader has pushed against a jump
-/// spot (CELL_BEHAVIOR_JUMP_FORWARD_UNREACHED or CELL_BEHAVIOR_JUMP_FORWARD)
-/// for more than 12 frames, and by the gap jumps of Goma Cave's pillar and
-/// Kolima Forest's bend, which import it. Moves the leader, and takes the field
-/// over between Event_Start and Event_End.
+/// map allows it (MapGrid_CheckCollision).
 s32 Field_TryJumpForward(void) {
   // A chained jump repeats both the gap and landing probes, including their
   // failure returns, before taking control of the field again.
@@ -45,9 +32,7 @@ s32 Field_TryJumpForward(void) {
    * differ in tbs-en. */
   position = &positionStorage;
 again:
-  // The middle of the cell in front, then of the cell beyond. The cell
-  // jumped over may be a wall or a drop, but not ground too high; the landing
-  // must be open.
+  // The middle of the cell in front, then of the cell beyond.
   SET_POSITION(position, (leader->x.fixed & FIELD_CELL_MASK) + px(8),
                leader->y.fixed, (leader->z.fixed & FIELD_CELL_MASK) + px(8));
   Vector_AddPolarOffset(px(16), angle, position);
@@ -58,8 +43,7 @@ again:
   Vector_AddPolarOffset(px(32), angle, position);
   if (MapGrid_CheckCollisionFar(leader, position) == COLLISION_NONE) {
     // Suspend ground following and the shadow (sprite flag bit 0) while
-    // airborne: 4 pixels a frame up, 3 a frame across. Restore the original
-    // motion and sprite flags after landing, before returning field control.
+    // airborne: 4 pixels a frame up, 3 a frame across.
     if (leader->spriteStorageKind == ACTOR_SPRITE_ONE)
       spriteFlags = leader->sprite->flags;
     Event_Start();
@@ -115,14 +99,7 @@ again:
   return result;
 }
 
-/// Climbing down (the player presses down at a climbable wall). On the ground,
-/// when the cell south of the leader's is the same climbable cell, the leader
-/// turns round, grabs the wall and climbs down onto it (climbing pose 13).
-/// While climbing, the leader lets go and drops to the ground. Returns 0, or -1
-/// when there is nothing to climb or the way is blocked by a wall cell.
-///
-/// Sets gMainRoutineWork.movementMode: 1 while the leader is on the wall, 0 off
-/// it.
+/// Climbing down (the player presses down at a climbable wall).
 s32 Field_ClimbDown(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 gridX =
@@ -191,13 +168,7 @@ failure:
   return -1;
 }
 
-/// Climbing up (the player presses up at a climbable wall). On the ground, when
-/// the cell north of the leader's is the same climbable cell, the leader jumps
-/// onto the wall and holds on (climbing pose 12). While climbing, the leader
-/// climbs over the top onto the ground. Returns 0, or -1 when there is nothing
-/// to climb or the way is blocked by a wall cell.
-///
-/// Sets gMainRoutineWork.movementMode as Field_ClimbDown does.
+/// Climbing up (the player presses up at a climbable wall).
 s32 Field_ClimbUp(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   s16 spriteFlags = 1;

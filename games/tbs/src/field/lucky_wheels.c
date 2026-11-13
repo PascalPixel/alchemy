@@ -291,8 +291,6 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
   (LUCKY_WHEELS_REEL_SYMBOLS * LUCKY_WHEELS_SYMBOL_HEIGHT)
 #define LUCKY_WHEELS_SPIN_SPEED 8
 /// The seven paylines: the two diagonals (0 and 6) and the five rows between.
-/// A bet of n tickets plays the middle row and n - 1 lines either side of it,
-/// so a bet of LUCKY_WHEELS_BET_MAX plays all seven.
 #define LUCKY_WHEELS_PAYLINES 7
 #define LUCKY_WHEELS_MIDDLE_LINE 3
 #define LUCKY_WHEELS_BET_MAX 4

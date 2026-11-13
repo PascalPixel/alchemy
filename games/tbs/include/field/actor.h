@@ -20,10 +20,7 @@ enum ScreenTransitionStyle {
   TRANSITION_CENTRE_LINE = 4
 };
 
-/// A scene transition as FieldWork.transition holds it. For
-/// TRANSITION_WINDOW the variant is the window mode, listed at
-/// ScreenTransition_UpdateScanlineTable: 3 a circle at the centre, 9 an
-/// ellipse around the leader, and others.
+/// A scene transition as FieldWork.transition holds it.
 #define SCENE_TRANSITION(style, variant) ((style) << 8 | (variant))
 
 #include "field_coordinate.h"
@@ -35,12 +32,6 @@ struct Actor;
 /// An actor: one of the 64 people and things on the field (gActors,
 /// HEAP_SLOT_ACTORS), with its actor script, position, motion toward a target,
 /// sprites and update routine.
-///
-/// ActorSystem_Initialize takes the actors with the actor system's work
-/// (HEAP_SLOT_ACTOR_SYSTEM), so they live until the next scene change. A scene
-/// knows the actors it placed by actor id (FieldWork.actors). A field effect is
-/// an actor read as struct FieldEffect; the few other views kept for matching
-/// are listed in the field README.
 struct Actor {
   /// The actor script it runs; null when its slot is free.
   const s32 *script;
@@ -87,9 +78,7 @@ struct Actor {
     struct Sprite *sprite; ///< ACTOR_SPRITE_ONE
     void **sprites;        ///< ACTOR_SPRITE_GROUP: four, empty ones null
   };
-  /// Zero hides sprites; one draws a single sprite, two draws a group. The
-  /// field reads the low four bits (enum ActorSpriteKind); SC_SHOW_SPRITE and
-  /// SC_HIDE_SPRITES set 1 and 0.
+  /// Zero hides sprites; one draws a single sprite, two draws a group.
   u8 spriteStorageKind;
   /// ActorMotionFlag bits; none is free flight in 3D, and
   /// ACTOR_FOLLOWS_TERRAIN and ACTOR_FALLS are set on creation.
@@ -275,9 +264,7 @@ STATIC_ASSERT(offsetof(struct ActorSnapshot, priorities) == 0xe60);
 STATIC_ASSERT(sizeof(struct ActorSnapshot) == 0xe80);
 
 /// The one snapshot, in EWRAM outside the heap so that it outlives the scene
-/// change into and out of a battle. Actor_Snapshot fills it before a
-/// random battle and when saving; Actor_Restore puts the actors
-/// back when the party returns keeping its position (FLAG_KEEP_PARTY_POSITION).
+/// change into and out of a battle.
 extern struct ActorSnapshot gActorSnapshot;
 
 #endif

@@ -43,9 +43,7 @@
 #include "actor_script.h"
 #include "macros.h"
 
-/// Animation script commands. A script is pairs of bytes, a command and its
-/// argument; a command below 239 shows that frame for `arg` frames at normal
-/// speed (the timer counts sixteenths, less SpriteAnimation.step each frame).
+/// Animation script commands.
 enum AnimationCommand {
   ANIMCMD_END = 239,      ///< blank the layer and stop its script
   ANIMCMD_SET_KIND = 240, ///< use facing table `arg`

@@ -6,8 +6,6 @@
 
 /// End of the Psynergy: switches the caster's display flags between 3 and 1 on
 /// a 5-frame cycle, so its outline (bit 1) blinks beside its shadow (bit 0).
-/// FieldPsynergy_Avoid adds it as a task (priority TASK_PASS_FRAME)
-/// for its last 70 frames and removes it again.
 void FieldEffect_BlinkAvoidCaster(void) {
   struct Actor *caster;
   struct Sprite *rec;
@@ -30,9 +28,6 @@ void FieldEffect_BlinkAvoidCaster(void) {
 
 /// The caster during the Psynergy: sheds a pair of falling arcs every 5 frames
 /// (7 on the World Map), and spins in phase 1, 3/64 turn a frame.
-/// FieldPsynergy_Avoid makes it the caster's update routine; it counts the
-/// caster's step and turns its angle. The arcs draw with the tiles
-/// FieldPsynergy_Avoid loads into effectWork->arcTileSlot.
 void FieldEffect_UpdateAvoidCaster(struct Actor *caster) {
   s16 phase;
   s32 elapsedFrames;
@@ -70,16 +65,6 @@ void FieldPsynergy_ShowAvoidWoreOff(void) {
 
 /// The caster spins and flashes, then blinks, and encounters are kept away
 /// until Avoid wears off.
-///
-/// Abilities: Avoid (FIELD_PSYNERGY_AVOID).
-///
-/// Using the Sacred Feather plays it too, since the item's field action is
-/// Avoid.
-///
-/// The caster spins shedding falling arcs and flashes 20 times, then blinks for
-/// 55 frames; encounters are kept away (avoidDistance 2,400 pixels) until it
-/// wears off, and the game says "Monsters won't attack so often now.".
-/// FLAG_ITEM_USE marks it as cast from the Sacred Feather.
 void FieldPsynergy_Avoid(void) {
   struct FieldEffectWork *effectWork;
   struct Actor *actor;

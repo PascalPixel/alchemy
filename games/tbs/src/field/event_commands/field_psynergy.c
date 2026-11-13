@@ -4,14 +4,9 @@
 
 #include "../event_commands_internal.h"
 
-// The dispatchers use the shared field effect. Individual update routines use
-// their actor or FieldParticle contract; neither is an
-// event.
+// The dispatchers use the shared field effect.
 
 /// Runs one step of the current field Psynergy: an enum FieldPsynergyHandler.
-/// Exported as FieldPsynergy_RunHandlerFar; Goma Cave's entrance imports it
-/// and passes FIELD_PSYNERGY_HANDLER_ON_TARGET to play Whirlwind on the stump's
-/// ivy from its own event.
 void FieldPsynergy_RunHandler(s32 kind) {
   if (kind == FIELD_PSYNERGY_HANDLER_UNTARGETED)
     FieldPsynergy_Run();
@@ -23,10 +18,8 @@ void FieldPsynergy_RunHandler(s32 kind) {
     FieldPsynergy_RunExtraHandler();
 }
 
-/// Casts the current field Psynergy with no target: runs the body of its
-/// kind (effectWork->fieldPsynergy).
-///
-/// Halt also moves gMainRoutineWork.haltedActor to the actor it stops.
+/// Casts the current field Psynergy with no target: runs the body of its kind
+/// (effectWork->fieldPsynergy).
 void FieldPsynergy_Run(void) {
   struct FieldEffectWork *effectWork;
   struct FieldWork *runtime;
@@ -113,11 +106,6 @@ void FieldPsynergy_Run(void) {
 
 /// Casts the current field Psynergy on its target (secondActorId): runs the
 /// handler of its kind.
-///
-/// Clears effectWork->enabled first: that is how the runners FieldPsynergy_Run
-/// shares (Force, Frost, Ply, Whirlwind, Catch) tell that a trigger decides
-/// what happens to the target. Halt also moves gMainRoutineWork.haltedActor to
-/// the target.
 void FieldPsynergy_Dispatch(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct FieldWork *runtime = gFieldWork;
@@ -221,8 +209,7 @@ void FieldPsynergy_RunExtraHandler(void) {
 
 /// Runs the event tied to a field Psynergy: a result below
 /// TRIGGER_RESULT_MESSAGE_END is a message, shown at target; a larger one is a
-/// routine, called with param and target. Afterwards, with
-/// FLAG_NOTHING_HAPPENS set, says "But nothing happens.". Returns 0.
+/// routine, called with param and target.
 s32 Field_RunPsynergyEvent(const void *event, s32 param, s32 target) {
   s32 script;
 
@@ -249,10 +236,8 @@ s32 Field_RunPsynergyEvent(const void *event, s32 param, s32 target) {
   return 0;
 }
 
-/// Per-frame update: sets every part of an actor's sprite to param
-/// frame % 6, which cycles its colours. Move, Lift and Carry give it to the
-/// target they hold, Retreat to its caster. A sprite that keeps its VRAM
-/// cache entry (retainCacheEntry) is left alone.
+/// Per-frame update: sets every part of an actor's sprite to param frame % 6,
+/// which cycles its colours.
 void Actor_CycleSpriteColors(struct Actor *actor) {
   struct Sprite *sprite;
   s32 count;
@@ -278,8 +263,6 @@ DEFINE_SET_TARGET_POSITION_FROM_MAGNITUDE_ANGLE(, Actor_SetMoveTargetFar)
 // From here on actors are passed in each function's own view of them.
 
 /// Counts the free blocks (owner 0xff) of the sprite VRAM cache's 512 blocks.
-/// FieldPsynergy_LoadResources subtracts this from VRAM_BLOCK_COUNT
-/// to record the blocks already occupied before the Psynergy starts.
 s32 VramCache_CountFreeBlocks(void) {
   u8 *marker = gVramCacheBlockOwners;
   s32 freeCount = 0;
@@ -294,13 +277,8 @@ s32 VramCache_CountFreeBlocks(void) {
   return freeCount;
 }
 
-/// Makes sourceSprite share sharedSprite's VRAM block, releasing its own;
-/// with no sharedSprite it keeps its block. Retains the shared cache entry and
-/// returns the sprite whose block is shared from now on (sharedSprite, or
-/// sourceSprite when there was none), or NULL for no sourceSprite. Chains of
-/// afterimages pass one block along this way. Each sprite retains the entry
-/// so releasing an afterimage cannot free graphics still used by the others.
-/// Sprite teardown leaves the shared entry for the caller to release.
+/// Makes sourceSprite share sharedSprite's VRAM block, releasing its own; with
+/// no sharedSprite it keeps its block.
 struct Sprite *Sprite_ShareVramCacheEntry(struct Sprite *sourceSprite,
                                           struct Sprite *sharedSprite) {
   struct Sprite *shared;
@@ -323,12 +301,7 @@ struct Sprite *Sprite_ShareVramCacheEntry(struct Sprite *sourceSprite,
 }
 
 /// Creates an actor for a field Psynergy, at the caster's ground height, with
-/// sprite priority 0 and animation 1. An actor without animation is released
-/// and NULL returned. Field Psynergy spawns its orbs, hands and particles
-/// through it, and checks for NULL: gActors may be full. The actor
-/// floats (motion flags 4), is depth-sorted as if 320 pixels lower (priority
-/// flag bit 2) and has no shadow; its creator releases it, or its actor script
-/// releases it.
+/// sprite priority 0 and animation 1.
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *actor;
@@ -350,9 +323,7 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
 }
 
 /// Sets the movement state and animation timer steps of every actor but the
-/// player's and except. FieldPsynergy_StartCast pauses them
-/// (animation speed 0) while a field Psynergy plays and lets them go again at
-/// normal speed.
+/// player's and except.
 void Actor_SetOthersPaused(struct Actor *except, s32 state, s32 value) {
   s16 *player;
   struct Actor *actor;

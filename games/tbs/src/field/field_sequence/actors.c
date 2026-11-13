@@ -36,9 +36,6 @@ s32 Party_GetCharacterSprite(s32 character) {
 
 /// Returns the sprite of character as Party_GetCharacterSprite would with
 /// FLAG_CHILDHOOD set to childhood (as recorded in a save file's summary).
-///
-/// Save summaries omit the tunic flag, so this never gives sprite
-/// SPRITE_ISAAC_TUNIC.
 s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood) {
   s32 sprite;
 
@@ -56,19 +53,8 @@ s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood) {
 
 #define MAPGRID_CELLS ((struct MapGridCell *)Ram_MapGridCellBuffer)
 
-/// Creates the actors of a scene's actor placement table (ended by
-/// sprite -1), and records the table among the scene's tables. Sprites 0 to 7
-/// are the party's characters and take their own actor slot; other actor
-/// placements take the actor slots from slot on, one each, up to the last. An
-/// actor placement whose condition does not hold is skipped, as is a Djinni
-/// hidden after a lost battle outside the World Map, but it still uses up its
-/// slot: actor slot + n is always row n, counted from 0, of the table's rows of
-/// sprite 8 or more, as Scene_FindActorPlacement counts them. An existing actor
-/// is moved back to its place unless the party keeps its position. The table is
-/// kept by address, so it must last as long as the scene (the overlay's own
-/// tables do).
-///
-/// Records the table in work->tables and each actor in work->actors.
+/// Creates the actors of a scene's actor placement table (ended by sprite -1),
+/// and records the table among the scene's tables.
 void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
   struct FieldWork *work;
   struct Actor *actor;
@@ -114,10 +100,8 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
     actor = Actor_Lookup(actorIndex);
     if (actor == 0) {
       actor = Actor_CreateFar(spriteId, entry->x, entry->y, entry->z);
-      // ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE: share the previous
-      // actor's sprite resource. The new sprite draws from the previous one's
-      // VRAM cache entry, its own entry is freed, and both are marked to keep
-      // the shared entry when either is released.
+      // ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE: share the previous actor's
+      // sprite resource.
       if (entry->flags & ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE) {
         previous = Actor_Lookup(actorIndex - 1);
         if (previous->spriteStorageKind == ACTOR_SPRITE_ONE &&
@@ -143,10 +127,8 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
     if (actor) {
       Actor_SelectAnimationFar(actor, ANIM_STAND);
       // lastNo is the animation last selected, which selecting again skips: a
-      // random 0 to 29 makes the second selection below restart ANIM_STAND
-      // from its first frame, unless it happens to be ANIM_STAND. The first
-      // selection has just started it from that frame, so the idle looks the
-      // same either way.
+      // random 0 to 29 makes the second selection below restart ANIM_STAND from
+      // its first frame, unless it happens to be ANIM_STAND.
       if (actor->spriteStorageKind == ACTOR_SPRITE_ONE &&
           (sprite = actor->sprite) != 0)
         sprite->lastNo = ((u32)(Random16()) % (u32)30);
@@ -156,18 +138,15 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
       Actor_SelectAnimationFar(actor, ANIM_STAND);
       (actor)->homeX = actor->x.fixed / Q16_ONE;
       (actor)->homeZ = actor->z.fixed / Q16_ONE;
-      // An actor placement with a height is lifted half a pixel more and
-      // takes motion flags 4, floating: it neither follows the ground nor
-      // falls. Outside the World Map every height is then counted from the
-      // ground below.
+      // An actor placement with a height is lifted half a pixel more and takes
+      // motion flags 4, floating: it neither follows the ground nor falls.
       if (actor->y.fixed != 0) {
         actor->motionFlags = ACTOR_FLOATS;
         actor->y.fixed += px(1) / 2;
       }
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-        // World Map actor placements use single sprites and do not follow
-        // the ground. While the tunic flag is set, all keep their native
-        // scale; otherwise they draw at 3/4 size.
+        // World Map actor placements use single sprites and do not follow the
+        // ground.
         actor->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
         if (!GameFlag_GetFar(FLAG_ISAAC_WEARS_TUNIC)) {
           // UB: sprite creation can fail while the actor slot stays live.
@@ -212,15 +191,9 @@ void Actor_ReleaseAtIndex(s32 actorIndex) {
   }
 }
 
-/// Creates a scene's actors on entering it: the party leader where the
-/// main routine's work puts it, then the scene's actor placement table from
-/// actor slot 8, and the camera that follows the leader. A leader entering
-/// above ground where its cell and the cell north of it are climbing spots
-/// (CELL_BEHAVIOR_CLIMB) is raised by the ground height of the cell north of it
-/// less 32 pixels, and starts climbing (LEADER_MOVEMENT_CLIMB).
-///
-/// Empties every actor slot and table first, without releasing the actors in
-/// them; sets work->camera, the map's origin and gMainRoutineWork.movementMode.
+/// Creates a scene's actors on entering it: the party leader where the main
+/// routine's work puts it, then the scene's actor placement table from actor
+/// slot 8, and the camera that follows the leader.
 void Actor_ResetForLeader(struct ActorPlacement *table) {
   struct FieldWork *work;
   struct ActorPlacement *entry;
@@ -235,8 +208,7 @@ void Actor_ResetForLeader(struct ActorPlacement *table) {
   work = gFieldWork;
   leader = gMainRoutineWork.leaderActorId;
   // Build the leader's temporary actor placement before the scene's placed
-  // actors. The two-row table, the leader's row and an end row, lives in
-  // the field work's leaderPlacements and lasts with it.
+  // actors.
   entry = (struct ActorPlacement *)((u8 *)work + offsetof(struct FieldWork,
                                                           leaderPlacements));
   entry[0] = gField_DefaultActorPlacements[0];
@@ -252,9 +224,8 @@ void Actor_ResetForLeader(struct ActorPlacement *table) {
   Event_SpawnActorPlacements(table, ACTOR_FIRST_PLACED);
 
   actor = work->actors[leader];
-  // gMainRoutineWork.layer keeps the leader's map grid layer
-  // (FieldSequence_Run saves its layer there). Its cell: 16 pixels square, 128
-  // to a row, so above is the cell north of it.
+  // gMainRoutineWork.layer keeps the leader's map grid layer (FieldSequence_Run
+  // saves its layer there).
   actor->layer = gMainRoutineWork.layer;
   pos = (actor->x.fixed / px(16)) + (actor->z.fixed / px(16)) * 128;
   cell = &MAPGRID_CELLS[pos];
@@ -291,9 +262,8 @@ void Actor_ResetForLeader(struct ActorPlacement *table) {
   work->camera = camera;
 }
 
-/// Returns the slot after the last placed actor (8 when there is none),
-/// or -1 when the last slot is occupied. Earlier holes are not reused by this
-/// append scan.
+/// Returns the slot after the last placed actor (8 when there is none), or -1
+/// when the last slot is occupied.
 s32 Actor_FindLastActiveId(void) {
   struct FieldWork *work = gFieldWork;
   s32 lastActorIndex = ACTOR_FIRST_PLACED - 1;
@@ -357,13 +327,8 @@ void Scene_AssignViewFlags(struct ActorPlacement *entry) {
   }
 }
 
-/// Releases the placed actors far from the view's centre: more than 160
-/// pixels to either side, 200 pixels north or 100 pixels south. Actors
-/// at (0, 0) stay.
-///
-/// Called on the World Map before a Psynergy or a Djinni's joining plays, by
-/// Field_UsePsynergy and Djinn_JoinParty; empties the slots it releases.
-/// Actor_Respawn brings the actors back afterwards.
+/// Releases the placed actors far from the view's centre: more than 160 pixels
+/// to either side, 200 pixels north or 100 pixels south. Actors at (0, 0) stay.
 void Actor_ClearOutOfBounds(void) {
   struct FieldWork *work = gFieldWork;
   struct Actor *camera;
@@ -420,12 +385,8 @@ void Actor_ClearOutOfBounds(void) {
   }
 }
 
-/// Releases every placed actor and places the scene's actors again
-/// from its first actor placement table after the leader's.
-///
-/// Called on the World Map after one, by Field_UsePsynergy and
-/// Djinn_JoinParty. Clears work->tables 1 to 3 before the table is spawned
-/// again.
+/// Releases every placed actor and places the scene's actors again from its
+/// first actor placement table after the leader's.
 void Actor_Respawn(void) {
   struct FieldWork *work = gFieldWork;
   struct ActorPlacement *placements;
@@ -464,13 +425,7 @@ void Actor_ClearAll(void) {
   }
 }
 
-/// Returns the actor in slot index (below ACTOR_ID_COUNT), or
-/// NULL. Indices up to 191 read past the actor slots into the rest of
-/// the field work; larger ones give NULL.
-///
-/// The field's actor lookup: called across this folder and,
-/// through Actor_LookupFar, by scene
-/// overlays.
+/// Returns the actor in slot index (below ACTOR_ID_COUNT), or NULL.
 void *Actor_Lookup(u32 actorIndex) {
   u8 *workBytes = (u8 *)gFieldWork;
   u32 slotOffset;
@@ -543,11 +498,8 @@ void Actor_Snapshot(void) {
     *indices++ = ACTOR_SNAPSHOT_EMPTY;
 }
 
-/// Puts back the actors Actor_Snapshot saved, and moves the camera
-/// to the party leader's height.
-///
-/// Only actors whose slots are filled again are restored; the leader is set
-/// idle.
+/// Puts back the actors Actor_Snapshot saved, and moves the camera to the party
+/// leader's height.
 void Actor_Restore(void) {
   struct Actor *snapshot = gActorSnapshot.actors;
   u8 *indices = gActorSnapshot.slots;
@@ -572,10 +524,7 @@ void Actor_Restore(void) {
   while (actorIndex != ACTOR_SNAPSHOT_EMPTY) {
     actor = Actor_Lookup(actorIndex);
     if (actor != NULL) {
-      // The copy also brings back the sprite pointer saved with the
-      // actor. The animation and sprite flags below are set through that
-      // pointer; the priorities go to the sprite the actor has now,
-      // which is then put back.
+      // The copy also brings back the sprite pointer saved with the actor.
       sprite = actor->sprite;
       Dma_Set(snapshot, actor, DMA_COPY_WORDS(sizeof(struct Actor) / 4),
               REG_DMA3);

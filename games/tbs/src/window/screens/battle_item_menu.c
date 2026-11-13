@@ -6,10 +6,9 @@
 
 /// Says whether party member `unit` can use inventory entry `itemId` in battle:
 /// 0 yes; 1 no, "Using this will have no effect." (no item, an item that only
-/// teaches Psynergy while equipped, one with no action, or equipment the
-/// party member cannot equip); 2 not in battle, "Cannot be used during battle."
-/// (its action lacks BATTLE_OK). A broken item (INVENTORY_BROKEN) is not
-/// tested here. The item command lists the usable items first by it.
+/// teaches Psynergy while equipped, one with no action, or equipment the party
+/// member cannot equip); 2 not in battle, "Cannot be used during battle." (its
+/// action lacks BATTLE_OK).
 s32 Item_ClassifyUseAbility(s32 unit, s32 itemId) {
   struct ItemDefinition *item;
 
@@ -34,13 +33,7 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 itemId) {
 }
 
 /// Copies one 4bpp tile of BG character block 0 to another, each given as a
-/// tilemap entry whose palette and flip bits are ignored. The battle lists copy
-/// the border's top and bottom tees to tiles 512, 513, 528 and 529 as
-/// they open, and nothing shows the copies: while a list is open no entry of
-/// a shown layer names those bytes, and painting them changes no pixel. They
-/// overwrite the 256-colour tiles 256 and 264 of BG1, the layer shown with
-/// the command row, which is hidden then and gets its own tiles back when the
-/// list closes (render probe list-tees).
+/// tilemap entry whose palette and flip bits are ignored.
 void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
   Dma_Set(BG_CHAR_BLOCK(0) + (sourceTile & TILE_NUMBER_MASK) * TILE_SIZE_4BPP,
           BG_CHAR_BLOCK(0) +
@@ -52,11 +45,7 @@ void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
 /// 0), five to a page, each with its icon and name: plain when usable,
 /// TEXT_COLOR_YELLOW when Item_ClassifyUseAbility refuses it, TEXT_COLOR_RED
 /// when broken; the window above names the one under the cursor
-/// (MsgItemPlainName), or says it cannot be used in battle. Returns the chosen
-/// entry's place in `entries`, or -1 when cancelled, when the link battle's
-/// time runs out, or when there are no items. A refused item stays on the list
-/// with its reason ("It's broken.", and the classifier's messages). The
-/// item command runs it (Battle_CollectPartyCommands).
+/// (MsgItemPlainName), or says it cannot be used in battle.
 s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   struct WindowWork *work;
   s32 drawnFirstEntry;

@@ -531,15 +531,14 @@ void BattleHighlight_SetSpriteMode(s32 unitId, s32 mode) {
   }
   case ACTOR_SPRITE_GROUP: {
     records = (struct Sprite **)actor->sprite;
-    recordIndex = 0;
-    do {
+    for (recordIndex = 0; recordIndex <= ACTOR_SPRITE_GROUP_SIZE - 1;
+         recordIndex++) {
       record = *records++;
       if (record == 0)
         break;
       record->image.objectMode = mode;
       record->shadow.objectMode = mode;
-      recordIndex++;
-    } while (recordIndex <= ACTOR_SPRITE_GROUP_SIZE - 1);
+    }
     break;
   }
   }

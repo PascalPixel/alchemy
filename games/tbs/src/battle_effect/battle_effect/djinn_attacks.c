@@ -121,8 +121,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
   EFFECT_FREE_PARTICLES(i, work->particles, 8);
   EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
   Sound_PlayFar(SE_WAVE);
-  frame = 0;
-  do {
+  for (frame = 0; frame != MERCURY_FRAMES; frame++) {
     if (frame == 56)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
@@ -206,8 +205,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
     }
     BattleCamera_Shake(4, 4);
     EFFECT_END_FRAME(work);
-    frame++;
-  } while (frame != MERCURY_FRAMES);
+  }
   EFFECT_FINISH_CANVAS();
 }
 

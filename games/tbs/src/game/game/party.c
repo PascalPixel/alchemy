@@ -127,12 +127,10 @@ s32 Party_CountMembers(void) {
   s32 count;
 
   count = 0;
-  unitId = 0;
-  do {
+  for (unitId = 0; unitId <= PIERS; unitId++) {
     if (GameFlag_Get(FLAG_IN_PARTY(unitId)) != 0)
       count++;
-    unitId++;
-  } while (unitId <= PIERS);
+  }
   return count;
 }
 

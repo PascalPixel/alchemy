@@ -207,8 +207,7 @@ void Shop_DrawMemberItems(struct Window *window, s32 unitId) {
       Text_DrawMessageFar(MsgNoItems, window, SHOP_EMPTY_GRID_X,
                           SHOP_EMPTY_GRID_Y);
     } else {
-      slot = 0;
-      do {
+      for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
         if (unit->inventory[slot] != 0) {
           icon = WindowSprite_CreateLoadedFar(unit->inventory[slot], 27, window,
                                               x, y);
@@ -223,8 +222,7 @@ void Shop_DrawMemberItems(struct Window *window, s32 unitId) {
           x = 8;
           y += 16;
         }
-        slot++;
-      } while (slot < INVENTORY_SLOTS);
+      }
     }
   }
 }

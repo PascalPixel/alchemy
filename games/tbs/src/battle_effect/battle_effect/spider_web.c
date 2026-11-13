@@ -181,8 +181,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
   // Redraw from blank each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Sound_PlayFar(SE_CRACK);
-  frame = 0;
-  do {
+  for (frame = 0; frame != SPIDER_WEB_FRAMES; frame++) {
     // Frame loop. The quarters meet near (64, 72): top left, top right
     // mirrored, bottom left flipped, bottom right both. The web's share of
     // the blend rises 2 sixteenths a frame to all of it by frame 8, and from
@@ -219,8 +218,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);
-    frame++;
-  } while (frame != SPIDER_WEB_FRAMES);
+  }
   // Finish: the blitter was freed each time it drew.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();

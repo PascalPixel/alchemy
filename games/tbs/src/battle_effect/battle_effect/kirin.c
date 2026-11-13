@@ -95,8 +95,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   // The effect owns BG1's scroll until the charge.
   view->busy = 1;
 
-  i = 0;
-  do {
+  for (i = 0; i != 64; i++) {
     struct Particle *fire = &work->particles[i];
 
     // 64 fire particles get a delay of 2 to 49 frames; only the first 48 are
@@ -109,8 +108,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
     fire->y = px((Random16() & 31) + 48);
     fire->velocityY = px((Random16() & 31) - 16);
     fire->variant = Random16() % 48 + 2;
-    i++;
-  } while (i != 64);
+  }
 
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
@@ -192,13 +190,11 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       }
       place.groundHeight = 0;
       place.height = px(255);
-      i = 0;
-      do {
+      for (i = 0; i != 9; i++) {
         place.x = px(baseX + gKirin_Columns[i] - lift) + px(224);
         place.y = px(gKirin_Rows[i] - wave) + px(72);
         Actor_ApplyProjectedPlacementFar(work->sprites[i], &place, &pair, 0);
-        i++;
-      } while (i != 9);
+      }
     }
 
     // Over the first 27 frames a hoop of motes opens in front of Kirin, eight
@@ -236,8 +232,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
     // ends, places it there too, so each particle starts behind Kirin as it
     // is then.
     if (frame > 17) {
-      i = 0;
-      do {
+      for (i = 0; i != 48; i++) {
         struct Particle *fire = &work->particles[i];
 
         if (fire->variant == 0) {
@@ -256,8 +251,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
           fire->y = px((Random16() & 31) - wave + 56);
           fire->velocityY = ((Random16() & 31) - 16) << 15;
         }
-        i++;
-      } while (i != 48);
+      }
     }
 
     // From frame 32 a column of six random fire blobs, 18 pixels apart,
@@ -297,42 +291,33 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   BattleEffect_SetupBlendedDisplay();
   REG_WIN0H = WIN_RANGE(0, 240);
 
-  i = 0;
-  do {
+  for (i = 0; i != 9; i++) {
     struct Sprite *sprite = work->sprites[i];
 
     sprite->image.priority = 3;
-    i++;
-  } while (i != 9);
+  }
 
   {
     s32 rowX;
 
     rowX = 224;
-    i = 0;
-    do {
+    for (i = 0; i != 14; i++) {
       hitRow[i] = 0;
-      i++;
-    } while (i != 14);
-    i = 0;
-    do {
+    }
+    for (i = 0; i != 16; i++) {
       jitterRow[i] = Random16() & 31;
-      i++;
-    } while (i != 16);
+    }
     // 320 burst motes are cleared, though only six targets' 192 are drawn.
-    i = 0;
-    do {
+    for (i = 0; i != 320; i++) {
       PARTICLES[i].variant = 0;
-      i++;
-    } while (i != 320);
+    }
 
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
     REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
     REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
-    frame = 0;
-    do {
+    for (frame = 0; frame != 96; frame++) {
       // Kirin slides 16 pixels left a frame on a sine 64 pixels high for
       // the first nine frames and 32 after.
       if (frame <= 23) {
@@ -356,14 +341,12 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         }
         chargePlace.groundHeight = 0;
         chargePlace.height = px(255);
-        i = 0;
-        do {
+        for (i = 0; i != 9; i++) {
           chargePlace.x = px(rowX + gKirin_Columns[i]);
           chargePlace.y = px(gKirin_Rows[i] - rise) + px(72);
           Actor_ApplyProjectedPlacementFar(work->sprites[i], &chargePlace,
                                            &chargeScaleCopy, 0);
-          i++;
-        } while (i != 9);
+        }
       }
 
       // Frame 8: BattleCamera_Shake shakes the screen for 8 frames.
@@ -390,8 +373,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
             s32 k;
 
             hitRow[i] = 1;
-            k = 0;
-            do {
+            for (k = 0; k != 32; k++) {
               struct Particle *burst = &PARTICLES[i * 32 + k];
               s32 up;
 
@@ -403,8 +385,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
               burst->x += burst->velocityX * 4;
               burst->y += up << 13;
               burst->variant = (Random16() & 15) + 8;
-              k++;
-            } while (k != 32);
+            }
             BattleMotion_ApplyKnockbackFar(work->args->targets[i],
                                            KNOCKBACK_HOP);
             Sound_PlayFar(SE_HEAVY_IMPACT);
@@ -412,8 +393,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         }
       }
 
-      i = 0;
-      do {
+      for (i = 0; i != 192; i++) {
         // Each burst mote is drawn and moved until its life runs out.
         struct Particle *burst = &PARTICLES[i];
 
@@ -431,8 +411,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
           burst->y += burst->velocityY;
           burst->variant--;
         }
-        i++;
-      } while (i != 192);
+      }
 
       if (frame == 48) {
         Sound_PlayFar(SE_WHOOSH);
@@ -469,18 +448,15 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
 
       BattleCamera_Shake(8, 8);
       EFFECT_END_FRAME(work);
-      frame++;
-    } while (frame != 96);
+    }
   }
 
   // The finish: the battle shows the damage, then Kirin's sprites and the
   // canvas are released.
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-  i = 0;
-  do {
+  for (i = 0; i != 9; i++) {
     Sprite_DestroyFar(work->sprites[i]);
-    i++;
-  } while (i != 9);
+  }
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 

@@ -342,8 +342,7 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
   availableMask = 0;
 
   // The party's Djinn of each element.
-  element = 0;
-  do {
+  for (element = 0; element < ELEMENT_COUNT; element++) {
     totals[element] = 0;
     {
       s32 partySlot;
@@ -354,13 +353,11 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
         totals[element] += member->djinnHeldCounts[element];
       }
     }
-    element++;
-  } while (element < ELEMENT_COUNT);
+  }
 
   // element walks the summon ids here. The inner loop stops at the first
   // element whose requirement is not met.
-  element = 0;
-  do {
+  for (element = 0; element < SUMMON_COUNT; element++) {
     const struct SummonDefinition *summon = SummonDefinition_Get(element);
     s32 elementsMet;
 
@@ -383,8 +380,7 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
       if (elementsMet == ELEMENT_COUNT)
         availableMask |= 1u << element;
     }
-    element++;
-  } while (element < SUMMON_COUNT);
+  }
 
   {
     struct BattleSummonState *state =

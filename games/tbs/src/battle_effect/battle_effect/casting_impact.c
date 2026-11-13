@@ -397,8 +397,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   // each frame, their radii shrinking by 4 towards the caster; a spark goes
   // out once its radius passes 0. The Djinni impacts (0 to 7) show the
   // Djinni once fewer than 64 sparks are left.
-  frame = 0;
-  do {
+  for (frame = 0; frame != CASTING_IMPACT_GATHER_FRAMES; frame++) {
     n = 0;
     for (i = 0; i != CASTING_IMPACT_SPARKS; i++) {
       struct Particle *step = &work->particles[i];
@@ -443,8 +442,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       }
     }
     EFFECT_PRESENT_CANVAS(work);
-    frame++;
-  } while (frame != CASTING_IMPACT_GATHER_FRAMES);
+  }
 
   // Phase 2: place BG2 for the impacts that need it, at its unstretched
   // scale with the impact over the target: canvas x 32 (96 on

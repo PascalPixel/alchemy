@@ -125,8 +125,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   // round the axis and, doubled, its rise; velocityX the turn added to it.
   // The draw before the delay is discarded but still advances the random
   // number generator.
-  index = 0;
-  do {
+  for (index = 0; index != 64; index++) {
     point = &work->particles[index];
     point->z = 120;
     point->y = 0;
@@ -134,10 +133,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     point->velocityY = 0;
     point->velocityX = 0;
     point->variant = Random16() & 63;
-    index++;
-  } while (index != 64);
-  frame = 0;
-  do {
+  }
+  for (frame = 0; frame != 400; frame++) {
     // A or B skips ahead.
     if ((gKeysRepeat & (KEY_A | KEY_B)) != 0) {
       if (frame <= 159)
@@ -197,15 +194,13 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         if (frame == 395)
           actor->gravity = BATTLE_UNIT_GRAVITY;
 
-        slot = 0;
-        do {
+        for (slot = 0; slot != 4; slot++) {
           if (frame == gProcne_Frames[slot]) {
             actor->velocityY = 0;
             BattleEffect_TintBattler(work->args->targets[index],
                                      SPRITE_COLOR_WHITE, POSE_DAMAGE, index, 8);
           }
-          slot++;
-        } while (slot != 4);
+        }
 
         // Closes in a pixel a frame, to 8 pixels from the middle.
         if (radius[index] > 16)
@@ -303,11 +298,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       resource += 128;
       Decompress_TaggedLz(resource, work->sheet + PROCNE_COMETS);
 
-      index = 0;
-      do {
+      for (index = 0; index != 512; index++) {
         PARTICLES[index].variant = 0;
-        index++;
-      } while (index != 512);
+      }
 
       EFFECT_FOR_EACH_TARGET(index, work->args) {
         battleObject = GetBattleObjectSlotFar(work->args->targets[index]);
@@ -322,16 +315,14 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       // Each mote starts up to 127 pixels out across and up, in a random
       // direction from 225 degrees round to 45 (the angle wraps), and up to
       // 100 pixels nearer or further.
-      index = 0;
-      do {
+      for (index = 0; index != 32; index++) {
         speed = Random16() & 127;
         angle = (Random16() & 0x7fff) + 0x9fff;
         work->particles[index].x = Trig_Sin(angle) * speed;
         work->particles[index].y = Trig_Cos(angle) * speed;
         work->particles[index].z = px(Random16() % 200 - 100);
         work->particles[index].variant = 0;
-        index++;
-      } while (index != 32);
+      }
 
       // 8 pixels out, turning 6000/65536 turn a frame, about a full turn
       // every 11 frames.
@@ -366,15 +357,13 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       // which cancel on the screen but give it a draw slot 32i later
       // (Render_ApplyProjectedPlacement takes the slot from y / 2, and
       // Oam_AddSpriteAtDepth stops at 255).
-      index = 0;
-      do {
+      for (index = 0; index != 9; index++) {
         place.x = px(gProcne_GridX[index]) + wave.x + px(40);
         place.height = px(255) + index * px(64);
         place.y = px(gProcne_GridY[index] + index * 64) + wave.y;
         Actor_ApplyProjectedPlacementFar(work->sprites[index], &place, &scale,
                                          0);
-        index++;
-      } while (index != 9);
+      }
 
       // From frame 256 the motes, sparks and comets are drawn 256 pixels
       // into the effect. None of these points projects: moved 256 pixels
@@ -398,8 +387,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         // those that arrive swell one mote there, a size larger for every ten,
         // and each is drawn smaller the deeper it lies.
         if (frame <= 329) {
-          index = 0;
-          do {
+          for (index = 0; index != 32; index++) {
             s32 xx;
             s32 yy;
             s32 zz;
@@ -427,8 +415,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             } else {
               alive++;
             }
-            index++;
-          } while (index != 32);
+          }
 
           if (alive > 0) {
             span = alive / 10 + 1;
@@ -439,14 +426,12 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         }
 
         // Each strike throws out 96 sparks.
-        slot = 0;
-        do {
+        for (slot = 0; slot != 4; slot++) {
           if (frame == gProcne_Frames[slot]) {
             s32 speed;
             s32 angle;
 
-            index = 0;
-            do {
+            for (index = 0; index != 96; index++) {
               speed = (Random16() & 127) + 16;
               angle = Random16() & TRIG_ANGLE_MASK;
               spark = &PARTICLES[slot * 128 + index];
@@ -458,16 +443,14 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               spark->velocityY = ((Random16() & 255) - 128) << 10;
               SET_POSITION(spark, 0, 0, 0);
               spark->variant = (Random16() & 15) + 64;
-              index++;
-            } while (index != 96);
+            }
           }
 
           // Every live spark is drawn and moved once per comet slot, so the
           // sparks step four times a frame; z moves by velocityY as y does.
           if (frame >= gProcne_Frames[0]) {
             spark = PARTICLES;
-            index = 0;
-            do {
+            for (index = 0; index != 512; index++) {
               if (spark[index].variant > 0) {
                 Projection_Point(&spark[index].x, &screen);
                 screen.x = (screen.x >> 17) + 32;
@@ -485,18 +468,15 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                 spark[index].z += spark[index].velocityY;
                 spark[index].variant--;
               }
-              index++;
-            } while (index != 512);
+            }
           }
-          slot++;
-        } while (slot != 4);
+        }
 
         // The four comets, from frame 330 + 12i: each leaves Procne's middle,
         // flies down to the left growing through three images, and spreads a
         // ring of 28 motes for 8 frames; it pushes Procne and shakes the
         // screen.
-        index = 0;
-        do {
+        for (index = 0; index != 4; index++) {
           mark = &work->particles[index + 60];
           threshold = index * 12 + 330;
           if (frame == threshold) {
@@ -505,11 +485,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             mark->velocityX = (wave.x >> 17) + 32;
             mark->velocityY = (wave.y >> 16) - 4;
 
-            slot = 0;
-            do {
+            for (slot = 0; slot != 28; slot++) {
               work->particles[slot + 32].variant = 4;
-              slot++;
-            } while (slot != 28);
+            }
 
             drift.x = px(8);
             drift.y = -px(2);
@@ -563,14 +541,12 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               } while (slot != 28);
             }
           }
-          index++;
-        } while (index != 4);
+        }
       }
     }
 
     EFFECT_END_FRAME(work);
-    frame++;
-  } while (frame != 400);
+  }
 
   // The end.
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -590,11 +566,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
   BattleEffect_SetupBlendedDisplay();
 
-  index = 0;
-  do {
+  for (index = 0; index != 9; index++) {
     Sprite_DestroyFar(work->sprites[index]);
-    index++;
-  } while (index != 9);
+  }
 
   EFFECT_FINISH_CANVAS();
 }

@@ -59,8 +59,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   wait(1);
   targetActor = GetBattleObjectSlotFar(work->args->targets[0])->actor;
 
-  i = 0;
-  do {
+  for (i = 0; i != 64; i++) {
     // 64 shards start at the target, flying across towards the middle of
     // the field; each group of four lives two frames longer than the last.
     struct Particle *seed = &work->particles[i];
@@ -73,8 +72,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
     if (seed->x > 0)
       seed->velocityX = -seed->velocityX;
     seed->variant = i / 4 * 2 + 16;
-    i++;
-  } while (i != 64);
+  }
 
   Projection_ScaledUnit(work->args->targets[0], &origin);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);

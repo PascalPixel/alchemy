@@ -281,15 +281,12 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
                       COMPOSITE_TRANSPARENT);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   column = work->particles;
-  i = 0;
-  do {
+  for (i = 0; i != VINE_COLUMNS; i++) {
     column[i].x = gGrowth_ColumnOffsets[i] + 64;
-    i++;
-  } while (i != VINE_COLUMNS);
+  }
   // Each transfer clears the canvas: the vines are redrawn every frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  frame = 0;
-  do {
+  for (frame = 0; frame != VINE_FRAMES; frame++) {
     // No EFFECT_SHOW_DAMAGE here: the targets only flash, on frame 32.
     if (frame == 32) {
       Sound_PlayFar(SE_CRACK);
@@ -325,8 +322,7 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
     } while (i != VINE_COLUMNS);
     BattleCamera_Shake(4, 4);
     EFFECT_END_FRAME(work);
-    frame++;
-  } while (frame != VINE_FRAMES);
+  }
   EFFECT_FINISH_CANVAS();
 }
 

@@ -884,7 +884,7 @@ s32 Func_080fd6f0(struct BattleUnit *unit, u16 *actions, s32 mode) {
 // Psynergy menu workspace (known fields only).
 
 /// Split the selected slot owner's Psynergy into pages of five rows.
-s32 Func_080fd80c(struct MenuResult *result, s32 index) {
+s32 PsynergyMenu_BuildPagedList(struct MenuResult *result, s32 index) {
   s32 ownerState;
   struct PsynergyMenuState *menu = Ram_HeapSlots->menuRuntime;
   s32 entryCount;
@@ -1116,7 +1116,7 @@ s32 Func_080fdad4(s32 paneIndex) {
     else
       menu->psynergyCount = Func_080fd6f0(owner, menu->psynergies, 2);
     PsynergyMenu_DrawPsynergyIcons(menu->psynergies);
-    Func_080fd80c(&state, paneIndex);
+    PsynergyMenu_BuildPagedList(&state, paneIndex);
     changed = 1;
     redraw = 1;
     menu->sideIcons[paneIndex]->active = 1;

@@ -640,7 +640,14 @@ s32 Func_0810498c(s32 self, s32 other);
 /// Marks in table each other owner a djinn can move to from self and keep the
 /// party's djinn balanced, and returns how many there are.
 // The Broken Seal's Djinn_MarkBalancedEntries.
-s32 Func_08104928(s8 *table, s32 self) {
+/// Marks recipients that would leave unequal Djinn totals after a direct give.
+/// Returns how many recipients would need a trade instead.
+///
+/// requiresTrade[i] becomes 1 for each other party member i who cannot take one
+/// of sourceMemberColumn's Djinn without two party members' totals differing by
+/// more than one (Djinn_CheckGiveBalance), else 0. The second Djinn chooser
+/// offers such a party member only Trade.
+s32 Djinn_MarkTradeOnlyRecipients(s8 *table, s32 self) {
   s32 cnt;
   s32 i;
   s8 *p;

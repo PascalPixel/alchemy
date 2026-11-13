@@ -126,7 +126,7 @@ s32 Djinn_TransferFar(s32 owner, s32 element, s32 index, s32 recipient);
 u32 Djinn_DeactivateFar(s32 owner, s32 element, s32 index);
 s32 DjinnRecovery_AddStandbyFar(s32 owner, s32 element, s32 index);
 
-void Func_081019a4(struct OwnerList *list);
+void DjinnMenu_BuildLists(struct OwnerList *list);
 
 // Find the moved Djinni in the list and select its new position.
 #define DJINN_RESELECT_PAIR_ENTRY(menu, i)                                     \
@@ -279,7 +279,7 @@ s32 Func_0810106c(void) {
       Unit_CalculateFar(menu->shownMember[1]);
       menu->cursor->active = 13;
       WindowSprite_ClearListFar(menu->listWindow);
-      Func_081019a4(menu->backdrop);
+      DjinnMenu_BuildLists(menu->backdrop);
       DJINN_RESELECT_PAIR_ENTRY(menu, listIndex);
       menu->cursor->active = 1;
       step = 0;
@@ -326,7 +326,7 @@ s32 Func_0810106c(void) {
                                  menu->pairIndex[1], menu->shownMember[0]);
       Unit_CalculateFar(menu->shownMember[0]);
       Unit_CalculateFar(menu->shownMember[1]);
-      Func_081019a4(menu->backdrop);
+      DjinnMenu_BuildLists(menu->backdrop);
       DJINN_RESELECT_PAIR_ENTRY(menu, listIndex);
       menu->cursor->active = 1;
       step = 2;
@@ -425,7 +425,7 @@ void Graphics_AdjustPalettes(s32 d) {
 
 // Opens the Djinn menu's backdrop screen, the twin of The Broken Seal's
 // Menu_OpenBackdropScreen: saves the tiles and palettes it covers, draws the
-// backdrop, lists the owners (Func_081019a4), then makes the list's cursor and
+// backdrop, lists the owners (DjinnMenu_BuildLists), then makes the list's cursor and
 // the two page arrows and places the arrows at the list window's corners.
 
 extern char ResourceId_ShopGemTiles;
@@ -435,7 +435,7 @@ s32 Palette_GetBasicObjColors(void);
 
 /// Opens the Djinn menu's backdrop screen, the twin of The Broken Seal's
 /// Menu_OpenBackdropScreen: saves the tiles and palettes it covers, draws the
-/// backdrop, lists the owners (Func_081019a4), then makes the list's cursor and
+/// backdrop, lists the owners (DjinnMenu_BuildLists), then makes the list's cursor and
 /// the two page arrows and places the arrows at the list window's corners.
 void Func_08101638(void) {
   struct DjinnMenuWork *menu = Ram_HeapSlots->menuRuntime;
@@ -468,7 +468,7 @@ void Func_08101638(void) {
   Graphics_AdjustPalettes(8);
   BG_PLTT_COLOR(7, 4) = BG_PLTT_COLOR(15, 4);
   BG_PLTT_COLOR(6, 4) = BG_PLTT_COLOR(15, 4);
-  Func_081019a4(backdrop);
+  DjinnMenu_BuildLists(backdrop);
 
   window = menu->statusWindow;
   WindowSprite_ClearListFar(window);
@@ -577,7 +577,7 @@ s32 Djinn_ListOwnerEntries(u16 *entriesOut, s32 memberId, s32 element);
 /// of the list.
 // With the owner read as the argument the two walking pointers swap r5 and
 // r6 (differ 16).
-void Func_081019a4(struct OwnerList *list) {
+void DjinnMenu_BuildLists(struct OwnerList *list) {
   struct InventoryMenuState *menu =
       (struct InventoryMenuState *)Ram_HeapSlots->menuRuntime;
   s32 i;
@@ -657,7 +657,7 @@ void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
                                   80);
     Window_DrawDividerLineFar(window, 0, 10, 28, 10);
   }
-  Func_081019a4(backdrop);
+  DjinnMenu_BuildLists(backdrop);
   for (column = 0, x = 8; column <= 3; column++, x += 56) {
     u16 *entries = backdrop->ids[page + column];
 
@@ -940,7 +940,7 @@ struct DjinnWindowWork {
 
 extern u8 gDjinnMenu_TextLevel[];
 
-s32 Func_08104928(s8 *table, s32 self);
+s32 Djinn_MarkTradeOnlyRecipients(s8 *table, s32 self);
 
 void Menu_SetPageArrowsB(s32 index, s32 count);
 void MenuIcon_SetPicture(s32 index, s32 frame);
@@ -1010,7 +1010,7 @@ s32 Func_08102008(s32 mode) {
       }
     }
   } else {
-    Func_08104928((s8 *)requiresTrade, menu->selectedColumn[0]);
+    Djinn_MarkTradeOnlyRecipients((s8 *)requiresTrade, menu->selectedColumn[0]);
     for (i = 0; i < menu->memberCount; i++) {
       if (i == menu->selectedColumn[0]) {
         columnFlags[i] = 7;

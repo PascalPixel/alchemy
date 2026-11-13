@@ -232,7 +232,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       break;
 
     case 9:
-      command = Func_080fb104();
+      command = ItemMenu_ChooseCommand();
       if (command == -1) {
         state = 1;
         menu->completionFlag = 1;
@@ -313,7 +313,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           WindowSprite_RedrawSavedRectFar((struct Window *)menu->infoWindow);
 #endif
           menu->sideIcons[0]->active = 13;
-          Func_080fb6d4();
+          ItemMenu_TryBreak();
           state = 1;
         }
         menu->itemCount = ItemMenu_CollectItems(Unit_Get(menu->sideMember[0]),
@@ -349,7 +349,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         qty = (menu->selectedItems[0] >> 11) + 1;
         if (qty > 1) {
           Func_080fc12c();
-          result = Func_080fbe6c(0, qty, 1);
+          result = ItemMenu_SelectGiveQuantity(0, qty, 1);
         }
       }
       if (result == -1) {
@@ -420,7 +420,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
             amount = 30 - qty;
           }
           if (stack > 1) {
-            result = Func_080fbe6c(0, amount, 0);
+            result = ItemMenu_SelectGiveQuantity(0, amount, 0);
           } else {
             result = 0;
           }
@@ -466,7 +466,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 #endif
         WindowSprite_RedrawSavedRectFar((struct Window *)menu->questionWindow);
         Func_080fc12c();
-        result = Func_080fc2e0(0);
+        result = ItemMenu_ConfirmEquip(0);
       }
       if (GameFlag_Test(0x150) != 0) {
         break;
@@ -592,7 +592,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         menu->sideMember[0] = menu->sideMember[1];
         menu->selectedItems[0] &= 0x1ff;
         Func_080fc12c();
-        result = Func_080fc2e0(0);
+        result = ItemMenu_ConfirmEquip(0);
         if (GameFlag_Test(0x150) == 0) {
           WindowSprite_ClearListFar(menu->infoWindow);
           ItemMenu_SetItemWindowRow5();
@@ -686,7 +686,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       break;
 
     case 12:
-      Func_080fbe6c(0, 30, 0);
+      ItemMenu_SelectGiveQuantity(0, 30, 0);
       state = 1;
       break;
 
@@ -705,8 +705,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   return ret;
 }
 
-s32 Func_08100738(s32 slot, s32 owner, s32 target);
-s32 Func_08100d40(s32 item);
+s32 Item_Use(s32 slot, s32 owner, s32 target);
+s32 Item_PlayUseAnimation(s32 item);
 
 /// Uses the selected item from the party member in side 0 on the one in side 1.
 /// On failure plays the error sound, shows why in the info window and returns
@@ -719,7 +719,7 @@ s32 ItemMenu_Use(void) {
   u32 mask;
 
   menu = Ram_HeapSlots->menuRuntime;
-  result = Func_08100738(menu->selectedSlots[0], menu->sideMember[0],
+  result = Item_Use(menu->selectedSlots[0], menu->sideMember[0],
                          menu->sideMember[1]);
 
   if (result == -1) {
@@ -743,7 +743,7 @@ s32 ItemMenu_Use(void) {
   } while (0);
   mask = 0x1ff;
   mask &= item;
-  Func_08100d40(mask);
+  Item_PlayUseAnimation(mask);
   Unit_CalculateFar(menu->sideMember[0]);
   Unit_CalculateFar(menu->sideMember[1]);
   return 1;
@@ -1643,14 +1643,14 @@ enum ItemMenuCommand {
   ITEM_COMMAND_DROP
 };
 
-void Func_080fb410(s8 *commandStates);
+void ItemMenu_BuildCommands(s8 *commandStates);
 
 void ItemMenu_SetMessageWindowHeight7(void);
 
 void Func_080fc12c(void);
 void ItemMenu_DrawCommands(const s8 *commandStates, s32 window);
 
-s32 Func_080fb104(void) {
+s32 ItemMenu_ChooseCommand(void) {
   struct CommandMenu *menu;
   s8 commandStorage[6];
   u16 *redrawFlag;
@@ -1667,7 +1667,7 @@ s32 Func_080fb104(void) {
   row = 0;
   redraw = 1;
   commandStates = commandStorage;
-  Func_080fb410(commandStates);
+  ItemMenu_BuildCommands(commandStates);
   redrawFlag = &menu->flags;
   if (*redrawFlag != 1) {
     void *messageWindow;
@@ -1807,7 +1807,14 @@ s32 Func_080fb104(void) {
 s32 Item_ClassifyUseMode(s32 owner, s32 item);
 s32 BattleEffect_HasTriggerFar(s32 item);
 
-void Func_080fb410(s8 *commandStates) {
+/// Fills commandStates (indexed by ItemMenuCommand) with
+/// ITEM_COMMAND_STATE_AVAILABLE or _DISABLED for the selected item: Use for
+/// items Item_ClassifyUseMode accepts and are not broken, and for field items,
+/// Equip for equipment the party member can wear and is not wearing, Remove for
+/// worn equipment that is not cursed, Give with someone to give to, Drop unless
+/// the item is indispensable, and neither for cursed equipment being worn.
+/// Details is always available. Each later test overrides the earlier ones.
+void ItemMenu_BuildCommands(s8 *commandStates) {
   struct InventoryMenuState *menu;
   struct ItemDefinition *item;
 
@@ -1984,7 +1991,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
 
 void Inventory_BreakFar(s32 owner, s32 slot);
 
-void Func_080fb6d4(void) {
+void ItemMenu_TryBreak(void) {
   u8 *work = Ram_HeapSlots->menuRuntime;
   u32 item = *(u16 *)(work + 0x16c);
   u32 mask;
@@ -2525,7 +2532,7 @@ extern const u8 gMenu_QuantityTiles[];
 
 void Shop_FillSelectorFar(s32 value, s32 column, void *tiles);
 
-s32 Func_080fbe6c(s32 base, s32 range, s32 mode) {
+s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 mode) {
   s32 value = base;
   struct QuantityMenu *menu = Ram_HeapSlots->menuRuntime;
   u8 *tiles = HeapSlot_AllocEwram(56, 0x400);
@@ -2751,7 +2758,7 @@ extern u8 MsgConfirmDrop[];
 
 extern u8 MsgYes[]; // the ☀️ twin's name
 
-s32 Func_080fc2e0(s32 unused) {
+s32 ItemMenu_ConfirmEquip(s32 unused) {
   s32 rows = 2;
   s32 selection = 0;
   s32 changed = 1;

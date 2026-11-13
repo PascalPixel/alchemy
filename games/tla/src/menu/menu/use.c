@@ -5,7 +5,7 @@
 
 #include "../menu_internal.h"
 
-s32 Func_08100738(s32 slot, s32 ownerId, s32 targetId) {
+s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
   struct InventoryMenuState *menu;
   s32 useResult;
   s32 itemId;
@@ -302,7 +302,9 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   return 0;
 }
 
-s32 Func_08100d40(s32 item) {
+/// Plays the use sound of item's action (Ability_PlayUseAnimation). Called by
+/// ItemMenu_Use after a use that changed something.
+s32 Item_PlayUseAnimation(s32 item) {
   return Ability_PlayUseAnimation(Item_Get(item)->actionId & 0x3fff);
 }
 

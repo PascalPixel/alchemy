@@ -1233,15 +1233,15 @@ static void MercuryLighthouse_SprayAboveStatue(void) {
 }
 
 /// The slide scripts start the sparkles as the statue sets off.
-static s32 MercuryLighthouse_StartStatueSpray(struct Actor *interpreter) {
+static s32 MercuryLighthouse_StartStatueSpray(struct Actor *actor) {
   Task_AddFrame(MercuryLighthouse_SprayAboveStatue, TASK_PASS_FRAME);
   return 0;
 }
 
 // The sparkles stop when the statue halts; slide scripts and code call it.
-// SC_CALL passes the interpreter.
+// An actor script passes its actor, which this one does not read.
 #ifdef UBFIX
-static s32 MercuryLighthouse_StopStatueSpray(struct Actor *interpreter) {
+static s32 MercuryLighthouse_StopStatueSpray(struct Actor *actor) {
 #else
 static s32 MercuryLighthouse_StopStatueSpray(void) {
 #endif

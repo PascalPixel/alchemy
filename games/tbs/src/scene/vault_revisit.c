@@ -529,7 +529,6 @@ static void VaultRevisit_EnterMayorsHouse(void) {
   Vault_WalkThroughExit(120, 144, VAULT_REVISIT_TO_LOG_ROOMS_B_NORTHWEST);
 }
 
-// The remaining doorway helper retains its position in the overlay.
 #include "shared/vault_map_cells.h"
 #include "ability_ids.h"
 #include "item_ids.h"

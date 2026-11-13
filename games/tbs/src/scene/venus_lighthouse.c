@@ -694,8 +694,7 @@ static UNREAD_RESULT VenusLighthouse_EmitRisingParticles(struct Actor *actor) {
 }
 
 /// Clears the scripted actor's sprite flags and advances its script.
-static s32 VenusLighthouse_ClearScriptedSpriteFlags(struct Actor *interpreter) {
-  void *actor = (void *)interpreter;
+static s32 VenusLighthouse_ClearScriptedSpriteFlags(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
   return 0;
 }

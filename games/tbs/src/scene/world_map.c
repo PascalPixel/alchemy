@@ -173,7 +173,7 @@
 /// near Crossbone Isle, drawn as the Suhalla Desert's sandstorms (its render)
 #define FLAG_WORLD_MAP_STORM_FRAMES_LEFT FLAG_SCENE_TEMP_F8
 
-static s32 WorldMap_AlignToMap(struct Actor *interpreter);
+static s32 WorldMap_AlignToMap(struct Actor *actor);
 static void WorldMap_BoardBunzasWagon(void);
 static void WorldMap_ShowHammetsCaravan(void);
 static void WorldMap_ShakeCameraOverCaravan(void);

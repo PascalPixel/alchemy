@@ -33,7 +33,6 @@
 
 #include "main_routine_work.h"
 #include "module/scene/suhalla.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
@@ -41,18 +40,12 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "event.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "scene_tables.h"
 #include "item_ids.h"
-#include "sounds.h"
 #include "flags.h"
 
 /// Growth has grown the sprout.

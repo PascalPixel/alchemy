@@ -58,22 +58,14 @@
 /// Ruins (BABI_LIGHTHOUSE_STONE_DOOR_TO_TUNNEL_RUINS_GREAT_STATUE).
 
 #include "main_routine_work.h"
-#include "version.h"
 #include "heap_slots.h"
 #include "scene_ids.h"
 #include "module/import.h"
 #include "module/scene/babi_lighthouse.h"
 #include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "macros.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS
-#include "edition.h"
-#include "types.h"
 #include "event.h"
-#include "scene_tables.h"
 #include "djinn_ids.h"
 #include "field_effect.h"
 #include "pushed_actor.h"
@@ -83,17 +75,13 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "field_psynergy_work.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "actor_script.h"
-#include "actor.h"
 #include "flags.h"
-#include "sounds.h"
 #include "item_ids.h"
 
 /// BabiLighthouseStoneDoor, before the stone door: the door's two halves,

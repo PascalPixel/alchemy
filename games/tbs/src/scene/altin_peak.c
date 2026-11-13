@@ -89,7 +89,6 @@
 /// as in Altin.
 
 #include "script_operands.h"
-#include "version.h"
 #include "macros.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
@@ -98,7 +97,6 @@
 #include "module/field/field_sequence.h"
 #include "module/system/main_routine.h"
 #include "module/field/event_commands.h"
-#include "module/field/field.h"
 #include "module/system/system.h"
 #include "battle.h"
 #include "input.h"
@@ -107,13 +105,9 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "heap_slots.h"
-#include "sprite.h"
 #include "event.h"
 #include "io_reg.h"
 #include "text/msg_ids.h"
@@ -122,19 +116,12 @@
 #include "iwram_call.h"
 #include "dma.h"
 
-#include "scene_tables.h"
 #include "djinn_ids.h"
 
-#include "speaker.h"
 #include "ability_ids.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "actor_script.h"
-#include "irq.h"
-#include "fixed_math.h"
-#include "scene.h"
 #include "map_grid_scroll.h"
-#include "sounds.h"
 #include "sound_driver_symbols.h"
 
 // The rooms' floor switches, each set once flipped from its first position;

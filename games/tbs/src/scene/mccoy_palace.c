@@ -49,9 +49,7 @@
 /// McCoy speaks with his portrait (SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY).
 
 #include "main_routine_work.h"
-#include "scene_ids.h"
 #include "module/scene/mccoy_palace.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/system/system.h"
@@ -61,23 +59,14 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "flags.h"
-#include "character_ids.h"
-#include "types.h"
-#include "event.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "scene_tables.h"
 #include "item_ids.h"
 #include "actor_script.h"
-#include "fixed_math.h"
-#include "sounds.h"
 
 /// The palace's people and the treasure room's chests, numbering
 /// gMcCoyPalaceActorPlacements' rows from ACTOR_FIRST_PLACED.

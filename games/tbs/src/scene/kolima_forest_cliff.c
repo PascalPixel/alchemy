@@ -23,7 +23,6 @@
 #include "module/import.h"
 #include "module/scene/kolima_forest_cliff.h"
 #include "module/scene/shared/kolima_palette.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
@@ -31,19 +30,12 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "tbs_edition.h"
 
 #include "pushed_actor.h"
-#include "actor.h"
 #include "main_routine_work.h"
 #include "event.h"
-#include "scene_tables.h"
-#include "sounds.h"
 
 /// The scene's actors, numbering the rows of
 /// gKolimaForestCliffActorPlacements.

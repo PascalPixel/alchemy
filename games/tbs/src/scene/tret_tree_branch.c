@@ -38,7 +38,6 @@
 /// table reaches.
 
 #include "module/scene/tret_tree_branch.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/system/system.h"
@@ -49,26 +48,18 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "heap_slots.h"
-#include "types.h"
-#include "task.h"
 #include "io_reg.h"
-#include "irq.h"
 #include "main_routine_work.h"
 #include "ability_ids.h"
 #include "event.h"
 #include "system_call.h"
-#include "scene_tables.h"
 #include "djinn_ids.h"
 #include "display_transition.h"
 #include "map_grid_scroll.h"
 #include "flags.h"
-#include "sounds.h"
 
 /// Breeze, a Jupiter Djinni (DJINNI_BREEZE), is the only placed actor. Its
 /// actor placement is gone once its flag (FLAG_DJINNI(DJINNI_BREEZE)) is set.

@@ -68,11 +68,8 @@
 #include "module/system/main_routine.h"
 #include "module/field/event_commands.h"
 #include "module/game/game.h"
-#include "module/system/system.h"
-#include "types.h"
 #include "event.h"
 #include "system_call.h"
-#include "scene_tables.h"
 #include "create_configured_actor.h"
 #include "heap_slots.h"
 #include "battle.h"
@@ -81,18 +78,13 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "iwram_call.h"
 #include "map_grid_scroll.h"
 #include "text/msg_ids.h"
-#include "actor.h"
-#include "scene.h"
 #include "macros.h"
 #include "flags.h"
-#include "sounds.h"
 #include "sound_driver_symbols.h"
 #include "io_reg.h"
 #include "ability_ids.h"
@@ -158,7 +150,6 @@ static void MercuryLighthouseAerie_FlickerBeacon(void);
 #include "shared/field_effect_create.h"
 
 #include "shared/field_effect_spawn.h"
-#include "actor_script.h"
 
 const struct SceneEntrance *MercuryLighthouseAerie_GetEntrances(void) {
   return gMercuryLighthouseAerieEntrances;

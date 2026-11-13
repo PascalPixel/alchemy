@@ -19,13 +19,11 @@
 
 #include "speaker.h"
 #include "flags.h"
-#include "version.h"
 #include "heap_slots.h"
 #include "module/import.h"
 #include "module/scene/kolima_forest_glade.h"
 #include "module/scene/shared/actor_orbit.h"
 #include "module/scene/shared/kolima_palette.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
@@ -33,18 +31,13 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "event.h"
 #include "pushed_actor.h"
 #include "io_reg.h"
 #include "ability_ids.h"
-#include "scene_tables.h"
 #include "item_ids.h"
-#include "heap.h"
 
 /// Kolima Forest's actors, numbering the rows of
 /// gKolimaForestGlade_ActorPlacements.

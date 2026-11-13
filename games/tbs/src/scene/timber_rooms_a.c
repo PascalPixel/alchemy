@@ -46,18 +46,13 @@
 #include "event.h"
 #include "module/import.h"
 #include "module/scene/timber_rooms_a.h"
-#include "module/field/field_sequence.h"
 #include "module/system/main_routine.h"
-#include "module/field/event_commands.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"
-#include "types.h"
 #include "ability_ids.h"
-#include "scene_tables.h"
 #include "item_ids.h"
 #include "flags.h"
 #include "sounds.h"
-#include "scene.h"
 
 /// The actors, numbering the rows of gTimberRoomsAActorPlacements and of
 /// gTimberRoomsAActorPlacementsAfterAudience from ACTOR_FIRST_PLACED.

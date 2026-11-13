@@ -61,32 +61,22 @@
 /// from Xian paces between his pots (gCottageRoomsD_CookScript).
 
 #include "main_routine_work.h"
-#include "version.h"
 #include "scene_ids.h"
 #include "module/scene/altin.h"
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "event.h"
 #include "system_call.h"
-#include "scene_tables.h"
 #include "field_effect.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "sounds.h"
-#include "actor_script.h"
 
 #if !TBS_PATCH_3
 #define ALTIN_COOK_LAST_POT_X 384

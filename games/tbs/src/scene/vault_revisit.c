@@ -48,31 +48,23 @@
 #include "vault.h"
 #include "module/scene/shared/vault_range.h"
 #include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/game/game.h"
 #include "module/system/system.h"
 #include "actor.h"
-#include "types.h"
 #include "event.h"
-#include "scene_tables.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "iwram_call.h"
-#include "tbs_edition.h"
 #include "inventory.h"
 #include "text/msg_ids.h"
-#include "edition.h"
 #include "flags.h"
-#include "sounds.h"
 
 /// The townspeople, the dog and Sap, numbering
 /// gVaultRevisit_ActorPlacements' rows from ACTOR_FIRST_PLACED.
@@ -487,7 +479,6 @@ static void VaultRevisit_EnterMayorsHouse(void) {
 #include "shared/vault_map_cells.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "actor_script.h"
 
 /// The jail door opens and the party walks in.
 /// It's drawn behind the doorway as it goes in, to

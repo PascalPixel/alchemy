@@ -28,7 +28,6 @@
 
 #include "main_routine_work.h"
 #include "module/scene/stone_rooms.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
@@ -36,18 +35,12 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "ability_ids.h"
 #include "event.h"
-#include "scene_tables.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "sounds.h"
 #include "text/msg_ids.h"
 
 /// The cell behaviors the jail's triggers answer.

@@ -65,25 +65,14 @@
 ///   the party down.
 
 #include "main_routine_work.h"
-#include "version.h"
-#include "scene_ids.h"
 #include "module/scene/lunpa.h"
 #include "module/scene/shared/actor_orbit.h"
 #include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
-#include "types.h"
 #include "field_effect.h"
-#include "event.h"
 #include "system_call.h"
-#include "scene_tables.h"
 #include "scene.h"
-#include "edition.h"
 #include "lunpa.h"
-#include "text/msg_ids.h"
-#include "actor.h"
 #include "macros.h"
-#include "heap.h"
 
 static void Lunpa_WatchForUncloakedParty(void);
 

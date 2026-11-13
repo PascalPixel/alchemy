@@ -21,7 +21,6 @@
 /// The flag is an area temp flag, so the stump is back up in the room
 /// above once the party leaves Goma Cave's four scenes.
 #include "module/scene/goma_cave_pond.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
@@ -29,15 +28,10 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 
 #include "heap_slots.h"
-#include "scene_tables.h"
-#include "actor.h"
 
 #include "event.h"
 #include "flags.h"

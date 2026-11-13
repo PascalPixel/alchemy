@@ -36,24 +36,17 @@
 #include "main_routine_work.h"
 #include "module/scene/lacquer_rooms_b.h"
 #include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
-#include "types.h"
 #include "event.h"
-#include "scene_tables.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "field_effect.h"
 #include "text/msg_ids.h"
-#include "actor.h"
 #include "flags.h"
 
 /// The actors of the houses, shops and inn, numbered by the rows of
@@ -105,7 +98,6 @@ enum { ANIM_HSU_IN_BED = 6 };
 #include "shared/field_effect_spawn.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "actor_script.h"
 
 const struct SceneEntrance *LacquerRoomsB_GetEntrances(void) {
   return gLacquerRoomsB_Entrances;

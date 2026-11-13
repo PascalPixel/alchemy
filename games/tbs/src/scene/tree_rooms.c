@@ -82,21 +82,11 @@
 /// (examine triggers 100 to 102).
 
 #include "speaker.h"
-#include "version.h"
 #include "main_routine_work.h"
-#include "scene_ids.h"
 #include "module/scene/tree_rooms.h"
 #include "shared/walk_into_leader.h"
 #include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/system/system.h"
 
-#include "actor.h"
-#include "types.h"
-#include "event.h"
-#include "scene_tables.h"
 #include "create_configured_actor.h"
 #include "battle.h"
 #include "debug.h"
@@ -104,23 +94,16 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "battle_sprite_id.h"
 #include "heap_slots.h"
 #include "iwram_call.h"
 #include "dma.h"
 #include "event_inline.h"
-#include "io_reg.h"
 #include "text/msg_ids.h"
-#include "heap.h"
 #include "field_effect.h"
 #include "flags.h"
-#include "character_ids.h"
 #include "map_grid_scroll.h"
-#include "sounds.h"
 #include "sound_driver_symbols.h"
 
 /// Tret's face (SPRITE_TRET), the first actor placed after the party, and a
@@ -182,7 +165,6 @@ static s16 *sLastCocoon;
 #include "shared/field_effect_spawn.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "actor_script.h"
 
 /// Cocoon 21 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.

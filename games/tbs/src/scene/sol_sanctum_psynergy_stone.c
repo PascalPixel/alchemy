@@ -20,19 +20,11 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
-
-#include "scene_tables.h"
 
 #include "event.h"
 #include "flags.h"
-#include "sounds.h"
-#include "fixed_math.h"
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for

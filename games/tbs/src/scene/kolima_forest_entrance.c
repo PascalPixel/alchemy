@@ -46,23 +46,16 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "tbs_edition.h"
 #include "event.h"
 #include "system_call.h"
-#include "scene_tables.h"
 #include "kolima.h"
 #include "pushed_actor.h"
 #include "text/msg_ids.h"
 #include "actor_script.h"
-#include "sounds.h"
 #include "io_reg.h"
 #include "sound_driver_symbols.h"
-#include "fixed_math.h"
 
 /// The scene's actors after Garet's, Ivan's and Mia's party slots,
 /// numbering the rows of gKolimaForestEntrance_ActorPlacements from

@@ -37,10 +37,8 @@
 /// leads nowhere.
 
 #include "main_routine_work.h"
-#include "scene_ids.h"
 #include "module/scene/mccoy_palace_grounds.h"
 #include "module/scene/shared/actor_orbit.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/system/system.h"
 #include "battle.h"
@@ -49,22 +47,14 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "mccoy_palace_grounds.h"
-#include "types.h"
-#include "event.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "scene_tables.h"
 #include "actor_script.h"
 #include "flags.h"
-#include "sounds.h"
-#include "heap.h"
 
 // UB: this calls a void function through an s32 function type, the call the
 // bytes show; UBFIX calls it as declared.

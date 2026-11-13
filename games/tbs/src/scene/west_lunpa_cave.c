@@ -59,11 +59,8 @@
 #include "scene_ids.h"
 #include "event.h"
 #include "module/scene/west_lunpa_cave.h"
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
 #include "west_lunpa_cave.h"
 #include "text/msg_ids.h"
-#include "fixed_math.h"
 #include "shared/walk_into_leader.h"
 
 /// The gate's puddle is frozen into a pillar, propping the gate open.

@@ -55,7 +55,6 @@
 #include "module/scene/log_rooms_b.h"
 #include "log_rooms_a.h"
 #include "module/scene/shared/vault_item_icon.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/game/game.h"
 #include "battle.h"
@@ -64,20 +63,15 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "event.h"
 #include "system_call.h"
-#include "scene_tables.h"
 #include "inventory.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "flags.h"
-#include "heap.h"
 
 /// The townspeople, numbering the actor placement rows from
 /// ACTOR_FIRST_PLACED and named by what they say on the party's return.

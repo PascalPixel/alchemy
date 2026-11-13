@@ -35,7 +35,6 @@
 
 #include "main_routine_work.h"
 #include "module/scene/vale_eruption.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
@@ -43,19 +42,12 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "event.h"
-#include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "actor_script.h"
 #include "flags.h"
-#include "sounds.h"
-#include "fixed_math.h"
 
 /// The placed actors, numbered in the order of gValeEruption_ActorPlacements.
 /// Garet's row places the party's Garet and takes no number.

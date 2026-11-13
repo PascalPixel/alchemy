@@ -44,7 +44,6 @@
 #include "main_routine_work.h"
 #include "flags.h"
 #include "module/scene/log_rooms_c.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
@@ -52,16 +51,12 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "event.h"
 
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "scene_tables.h"
 #include "item_ids.h"
 
 /// Kolima's shops and inn, as Shop_Run and Inn_CheckIn number them.

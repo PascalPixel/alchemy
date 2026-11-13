@@ -49,9 +49,7 @@
 /// `Business and You` and `The Good Host`. A chest holds a Water Jacket and a
 /// barrel a Nut.
 #include "main_routine_work.h"
-#include "scene_ids.h"
 #include "module/scene/hammet_palace.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "battle.h"
@@ -60,20 +58,14 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "event.h"
-#include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "actor_script.h"
 #include "flags.h"
-#include "sounds.h"
-#include "palette_buffers.h"
 
 /// The party has heard in Lunpa that Hammet is held there, or has freed him, so
 /// Layana waits elsewhere in her room.

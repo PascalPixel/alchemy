@@ -254,23 +254,11 @@ void Func_020040b4(void) {
 /// one of the table's cells.
 void Func_0200413c(struct CellTarget *table, struct CellTargetEntry *entry) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s16 sourceX;
-  s32 leaderX = leader->x;
-  s16 sourceZBit;
   s32 x;
   s32 z;
 
-  /* FAKEMATCH(barrier): passes the source column through an asm reading the
-   * leader's x, so the x load ties the 64 mask's copy and wins on order; as
-   * (leader->x >> 20) | (s16)(table->x & 64), 2 of 49 instructions differ in
-   * tla-en. */
-  asm("" : "=r"(sourceX) : "0"(table->x), "r"(leaderX));
-  x = (leaderX >> 20) | (s16)(sourceX & 64);
-  /* FAKEMATCH(temporary): the row's 64 bit in a local of its own; as
-   * (s16)(table->z & 64) in the expression, 16 of 49 instructions differ in
-   * tla-en. */
-  sourceZBit = table->z & 64;
-  z = (leader->z >> 20) | sourceZBit;
+  x = (leader->x >> 20) | (s16)(table->x & 64);
+  z = CellTarget_CellOf(leader->z, table->z & 64);
   Func_020040b4();
   Event_PlaySound(161);
   MapGrid_CopyCells(table->x, table->z + 1, 1, 1, x, z);

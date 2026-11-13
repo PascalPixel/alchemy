@@ -1186,16 +1186,23 @@ static void BabiLighthouse_InspectTruthDoorSwitch(void) {
   Event_End();
 }
 
+/// The cell one direction-table step ahead of the actor, at its ground height.
+static inline void BabiLighthouse_FindCellAhead(struct FieldPosition *ahead,
+                                                struct Actor *actor) {
+  s32 step = gPushedActor_DirectionSteps[actor->facing >> 12];
+
+  // A step holds its x pixels in the high halfword and its z in the low.
+  ahead->x = actor->x.fixed + (step & -0x10000);
+  ahead->z = actor->z.fixed + px(step);
+  ahead->y = MapGrid_GetTerrainHeight(actor->layer, ahead->x, ahead->z);
+}
+
 /// Finds the pushed actor one direction-table step ahead, including
 /// ground height.
 static struct Actor *BabiLighthouse_FindActorAhead(struct Actor *actor) {
   struct FieldPosition ahead;
-  s32 step = gPushedActor_DirectionSteps[actor->facing >> 12];
 
-  // A step holds its x pixels in the high halfword and its z in the low.
-  ahead.x = actor->x.fixed + (step & -0x10000);
-  ahead.z = actor->z.fixed + px(step);
-  ahead.y = MapGrid_GetTerrainHeight(actor->layer, ahead.x, ahead.z);
+  BabiLighthouse_FindCellAhead(&ahead, actor);
   return PushedActor_FindAtTile(&ahead, actor);
 }
 

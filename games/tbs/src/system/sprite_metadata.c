@@ -4,8 +4,6 @@
 #include "module/system/sprite_metadata.h"
 #include "sprite_metadata.h"
 
-extern struct AnimationMetadata gSprite_AnimationMetadata[];
-
 /// Looks up animation metadata using the descriptor ID in the low twelve bits:
 /// that row of gSprite_AnimationMetadata (graphics/sprite/sprites.s), with no
 /// bounds check. The bits above are dropped, so the field's animation code

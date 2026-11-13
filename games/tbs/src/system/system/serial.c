@@ -684,8 +684,6 @@ void Serial_StepBlockTransfer(void) {
   }
 }
 
-extern const u8 Rom_Start[];
-
 /// An empty routine the link test calls to waste time.
 void SerialTest_Delay(void) {}
 

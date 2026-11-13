@@ -887,17 +887,6 @@ settle:
 }
 #undef UNK02003450_SET
 
-#undef gData_02003210
-#undef gData_0200320c
-#undef gData_02003208
-#undef gData_02003204
-#undef UNK02003450_SET
-#undef DEFINE_AQUA_ROCK_SET_MOVED
-#undef DEFINE_AQUA_ROCK_DROP_AT_COLUMN
-#undef gData_02003210
-#undef gData_0200320c
-#undef gData_02003208
-#undef gData_02003204
 // ---- games/tla/src/scene/aqua_rock/s17f4.c ----
 // Scene code of overlay 0x67b, in ROM order, from s17f4's offset up to the next
 // object the overlay links.
@@ -1571,6 +1560,17 @@ u32 gWaterDropScript[] = {
 };
 // clang-format on
 
+#undef gData_02003210
+#undef gData_0200320c
+#undef gData_02003208
+#undef gData_02003204
+#undef UNK02003450_SET
+#undef DEFINE_AQUA_ROCK_SET_MOVED
+#undef DEFINE_AQUA_ROCK_DROP_AT_COLUMN
+#undef gData_02003210
+#undef gData_0200320c
+#undef gData_02003208
+#undef gData_02003204
 // ---- scene/data/aqua_rock.c ----
 
 #include "macros.h"
@@ -1627,7 +1627,7 @@ extern u8 gData_02002bb4__data[] __asm__("gData_02002bb4");
 #define gData_02002bb4 gData_02002bb4__data
 
 // clang-format off
-DEFINE_G_DATA_02001F18(gGroundParticleFrames)
+LATE_DATA DEFINE_G_DATA_02001F18(gGroundParticleFrames)
 
 LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gData_02002a78,

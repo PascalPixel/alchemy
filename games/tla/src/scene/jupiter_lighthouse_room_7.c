@@ -1160,11 +1160,11 @@ void Func_020009e4__data_7(void) __asm__("Func_020009e4");
 void Func_02000e20(void);
 
 // clang-format off
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
+LATE_DATA DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
+LATE_DATA DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
+LATE_DATA DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
 
 LATE_DATA s16 gData_020031c4[] = {
     17, 1, 0xa16, 9, 1, 0xa17, -1, 0,
@@ -1175,7 +1175,7 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_SCENE_EXITS_3(260, 262, 260, 7, 6, 263, 10, 9, 12, 260)
+LATE_DATA DEFINE_G_SCENE_EXITS_3(260, 262, 260, 7, 6, 263, 10, 9, 12, 260)
 
 LATE_DATA struct ActorPlacement gActorPlacements[] = {
     {340, CONDITION_ALWAYS, 1, PIXELS(564), 0, PIXELS(712), FACING_SOUTHWEST, 2, 0},

@@ -361,42 +361,6 @@ const u8 *Scene_GetPlacements(void) {
 #undef REG_BLDALPHA
 #undef OBJECT_BYTE
 
-#undef gData_02006a90
-#undef gData_02006898
-#undef gData_020067e4
-#undef gData_020064cc
-#undef gData_02006244
-#undef gData_02006004
-#undef gData_02005fd4
-#undef gData_02006b20
-#undef Func_02004380
-#undef gData_02005940
-#undef gData_02005af0
-#undef gData_02005eec
-#undef gData_02005ecc
-#undef gData_02005e8c
-#undef gData_02005e4c
-#undef gData_02005e2c
-#undef gData_02005dfc
-#undef REG_BLDALPHA
-#undef OBJECT_BYTE
-#undef gData_02006a90
-#undef gData_02006898
-#undef gData_020067e4
-#undef gData_020064cc
-#undef gData_02006244
-#undef gData_02006004
-#undef gData_02005fd4
-#undef gData_02006b20
-#undef Func_02004380
-#undef gData_02005940
-#undef gData_02005af0
-#undef gData_02005eec
-#undef gData_02005ecc
-#undef gData_02005e8c
-#undef gData_02005e4c
-#undef gData_02005e2c
-#undef gData_02005dfc
 // ---- games/tla/src/scene/gabomba_statue/find_near.c ----
 // Scene code of overlay 0x671, in ROM order, from find_near's offset up to the
 // next object the overlay links.
@@ -1614,6 +1578,42 @@ void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
 #undef gData_02006e9c
 #undef gData_02006b38
 #undef gData_02005d7c
+#undef gData_02006a90
+#undef gData_02006898
+#undef gData_020067e4
+#undef gData_020064cc
+#undef gData_02006244
+#undef gData_02006004
+#undef gData_02005fd4
+#undef gData_02006b20
+#undef Func_02004380
+#undef gData_02005940
+#undef gData_02005af0
+#undef gData_02005eec
+#undef gData_02005ecc
+#undef gData_02005e8c
+#undef gData_02005e4c
+#undef gData_02005e2c
+#undef gData_02005dfc
+#undef REG_BLDALPHA
+#undef OBJECT_BYTE
+#undef gData_02006a90
+#undef gData_02006898
+#undef gData_020067e4
+#undef gData_020064cc
+#undef gData_02006244
+#undef gData_02006004
+#undef gData_02005fd4
+#undef gData_02006b20
+#undef Func_02004380
+#undef gData_02005940
+#undef gData_02005af0
+#undef gData_02005eec
+#undef gData_02005ecc
+#undef gData_02005e8c
+#undef gData_02005e4c
+#undef gData_02005e2c
+#undef gData_02005dfc
 // ---- scene/gabomba_statue/s2394.c ----
 // @file
 // Scene code of overlay 0x671, in ROM order.
@@ -2919,19 +2919,6 @@ nextColumn:
 }
 #undef FIELD_AT
 
-#undef gData_02006ea8
-#undef gData_02005ad4
-#undef gData_02005ac8
-#undef gData_02005ac0
-#undef gData_02005d7c
-#undef FieldEffect_Spawn
-#undef FIELD_AT
-#undef gData_02006ea8
-#undef gData_02005ad4
-#undef gData_02005ac8
-#undef gData_02005ac0
-#undef gData_02005d7c
-#undef FieldEffect_Spawn
 // ---- games/tla/src/scene/gabomba_statue/puzzle_turn.c ----
 
 u8 Func_02004380(s32 x, s32 z, s32 direction) {
@@ -3345,12 +3332,6 @@ done:
   }
 }
 
-#undef Actor_StartScript
-#undef gData_02006f38
-#undef gData_02006ec0
-#undef Actor_StartScript
-#undef gData_02006f38
-#undef gData_02006ec0
 // ---- games/tla/src/scene/gabomba_statue/s4d48.c ----
 // Scene code of overlay 0x671, in ROM order, from s4d48's offset up to the next
 // object the overlay links.
@@ -3761,6 +3742,25 @@ u32 gData_02005944[] = {
     38,
 };
 
+#undef gData_02006ea8
+#undef gData_02005ad4
+#undef gData_02005ac8
+#undef gData_02005ac0
+#undef gData_02005d7c
+#undef FieldEffect_Spawn
+#undef FIELD_AT
+#undef gData_02006ea8
+#undef gData_02005ad4
+#undef gData_02005ac8
+#undef gData_02005ac0
+#undef gData_02005d7c
+#undef FieldEffect_Spawn
+#undef Actor_StartScript
+#undef gData_02006f38
+#undef gData_02006ec0
+#undef Actor_StartScript
+#undef gData_02006f38
+#undef gData_02006ec0
 // ---- scene/data/gabomba_statue.c ----
 
 #include "macros.h"
@@ -3854,11 +3854,11 @@ LATE_DATA u32 gData_02005af0[] = {
     0,
 };
 
-DEFINE_G_DATA_02002F1C(gData_02005af4, 472, 184)
+LATE_DATA DEFINE_G_DATA_02002F1C(gData_02005af4, 472, 184)
 
-DEFINE_G_DATA_02005B1C(gData_02005b1c, 488)
+LATE_DATA DEFINE_G_DATA_02005B1C(gData_02005b1c, 488)
 
-DEFINE_G_DATA_02005B1C(gData_02005b60, 456)
+LATE_DATA DEFINE_G_DATA_02005B1C(gData_02005b60, 456)
 
 LATE_DATA u32 gData_02005ba4[] = {
     SC_ARG(2),
@@ -3890,9 +3890,9 @@ LATE_DATA u32 gData_02005c40[] = {
     17,
 };
 
-DEFINE_G_DATA_02005C74(gData_02005c74, 0xe000)
+LATE_DATA DEFINE_G_DATA_02005C74(gData_02005c74, 0xe000)
 
-DEFINE_G_DATA_02005C74(gData_02005ca0, 0xa000)
+LATE_DATA DEFINE_G_DATA_02005C74(gData_02005ca0, 0xa000)
 
 LATE_DATA u32 gData_02005ccc[] = {
     SC_ARG(2),

@@ -2293,18 +2293,6 @@ void Func_02003cd8(struct Actor *object) {
 #undef MSG_NEXT_PRIZE
 #undef MSG_COME_AGAIN
 
-#undef Palette_SetColors
-#undef Func_02003f54
-#undef Func_02003e54
-#undef BYTE_AT
-#undef MSG_COINS_WON
-#undef MSG_COINS_LOST
-#undef MSG_READ_SIGN
-#undef MSG_CONGRATULATIONS
-#undef MSG_FIRST_PRIZE
-#undef MSG_NEXT_PRIZE
-#undef MSG_COME_AGAIN
-#undef Palette_SetColors
 // ---- games/tla/src/scene/contigo/s3e54.c ----
 // The sparkle's setup, Func_02003f54, which sets byte 0x62 of an object, and
 // the overlay's data.
@@ -2974,3 +2962,15 @@ struct Trigger gData_02005ed0[] = {
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Func_0200102c)},
     {TRIGGER_TABLE_END},
 };
+#undef Palette_SetColors
+#undef Func_02003f54
+#undef Func_02003e54
+#undef BYTE_AT
+#undef MSG_COINS_WON
+#undef MSG_COINS_LOST
+#undef MSG_READ_SIGN
+#undef MSG_CONGRATULATIONS
+#undef MSG_FIRST_PRIZE
+#undef MSG_NEXT_PRIZE
+#undef MSG_COME_AGAIN
+#undef Palette_SetColors

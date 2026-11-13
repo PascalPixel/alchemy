@@ -514,8 +514,6 @@ stop:
   }
 }
 
-#undef gData_0200331c
-#undef gData_0200331c
 // ---- games/tla/src/scene/jupiter_lighthouse_aerie/s0d08.c ----
 #include "call.h"
 #include "field_effect.h"
@@ -767,6 +765,8 @@ void Func_02001080(void) {
 #undef LERP
 
 #undef LERP
+#undef gData_0200331c
+#undef gData_0200331c
 // ---- scene/jupiter_lighthouse_aerie/s17a8.c ----
 
 /// Scene code of overlay 0x6a4, in ROM order.

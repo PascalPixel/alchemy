@@ -2380,14 +2380,6 @@ s32 Scene_PrepareMap(void) {
 #undef SET_MODE_AND_WAIT
 
 /* VIEW(s3f54): routine gPaletteCyclePausesInEvents as this part declared it; the joined file has another. */
-#undef gData_020061e0
-#undef gData_02006088
-#undef BYTE_AT
-#undef FIELD_AT
-#undef ACTOR_SET_MODE_AND_WAIT
-#undef SET_MODE_AND_WAIT
-#undef gData_020061e0
-#undef gData_02006088
 // ---- games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s3f54.c ----
 extern s32 gPaletteCyclePausesInEvents__s3f54 __asm__("gPaletteCyclePausesInEvents");
 #define gPaletteCyclePausesInEvents gPaletteCyclePausesInEvents__s3f54
@@ -2605,6 +2597,14 @@ void Whirlwind_Update(struct Object6a5 *object) {
 #undef Func_02000090
 #undef gData_020068b0
 #undef Func_020000ec
+#undef gData_020061e0
+#undef gData_02006088
+#undef BYTE_AT
+#undef FIELD_AT
+#undef ACTOR_SET_MODE_AND_WAIT
+#undef SET_MODE_AND_WAIT
+#undef gData_020061e0
+#undef gData_02006088
 // ---- scene/jupiter_lighthouse_aerie_beacon/s44cc.c ----
 
 // Scene code of overlay 0x6a5, in ROM order.
@@ -3001,9 +3001,9 @@ void Func_02000050__data(void) __asm__("Func_02000050");
 #define Func_02000050 Func_02000050__data
 
 // clang-format off
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
+LATE_DATA DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
+LATE_DATA DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
 
 LATE_DATA s32 gData_02005f10[] = {
     SC_WAIT(1),
@@ -3054,9 +3054,9 @@ LATE_DATA u32 gData_02005ff8[] = {
     SC_END,
 };
 
-DEFINE_G_DATA_02006088(gData_02006088, 409, 376, 344, 312, 278)
+LATE_DATA DEFINE_G_DATA_02006088(gData_02006088, 409, 376, 344, 312, 278)
 
-DEFINE_G_DATA_02006088(gData_020061e0, 616, 648, 681, 712, 264)
+LATE_DATA DEFINE_G_DATA_02006088(gData_020061e0, 616, 648, 681, 712, 264)
 
 LATE_DATA s32 gData_02006338[] = {
     SC_ADD(SW_SCALE_X, 0x1000),
@@ -3085,7 +3085,7 @@ LATE_DATA s32 gData_02006338[] = {
     SC_END,
 };
 
-DEFINE_G_DATA_02005B54(gData_0200641c)
+LATE_DATA DEFINE_G_DATA_02005B54(gData_0200641c)
 
 LATE_DATA s32 gData_02006470[] = {
     SC_SET(SW_SCALE_X, 0xcccc),

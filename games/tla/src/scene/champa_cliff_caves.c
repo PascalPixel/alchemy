@@ -473,15 +473,6 @@ void Func_02000978(s32 actor) {
   Event_End();
 }
 
-#undef gData_02003d18
-#undef gData_02003c84
-#undef gData_020039cc
-#undef gData_02003d10
-#undef DEFINE_CHAMPA_CLIFF_CAVES_GROW
-#undef gData_02003d18
-#undef gData_02003c84
-#undef gData_020039cc
-#undef gData_02003d10
 // ---- games/tla/src/scene/champa_cliff_caves/s0a34.c ----
 #include "call.h"
 #include "actor.h"
@@ -1636,18 +1627,6 @@ next:
   work->field1068.value = 0;
 }
 
-#undef gData_020042d4
-#undef gData_0200432c
-#undef gData_02004254
-#undef gData_020041e8
-#undef FIELD_AT
-#undef PALETTE
-#undef BYTE_AT
-#undef WORD_AT
-#undef gData_020042d4
-#undef gData_0200432c
-#undef gData_02004254
-#undef gData_020041e8
 // ---- games/tla/src/scene/champa_cliff_caves/s2d34.c ----
 
 /* VIEW(s2d34): tag struct ChampaCliffCavesWork as struct
@@ -1897,7 +1876,6 @@ void Func_02003078(void) {
 }
 #undef FIELD_AT
 
-#undef FIELD_AT
 // ---- games/tla/src/scene/champa_cliff_caves/s3164.c ----
 #include "task.h"
 
@@ -2056,6 +2034,28 @@ u32 gData_02003634[] = {
 };
 #undef FIELD_AT
 
+#undef FIELD_AT
+#undef gData_02003d18
+#undef gData_02003c84
+#undef gData_020039cc
+#undef gData_02003d10
+#undef DEFINE_CHAMPA_CLIFF_CAVES_GROW
+#undef gData_02003d18
+#undef gData_02003c84
+#undef gData_020039cc
+#undef gData_02003d10
+#undef gData_020042d4
+#undef gData_0200432c
+#undef gData_02004254
+#undef gData_020041e8
+#undef FIELD_AT
+#undef PALETTE
+#undef BYTE_AT
+#undef WORD_AT
+#undef gData_020042d4
+#undef gData_0200432c
+#undef gData_02004254
+#undef gData_020041e8
 #undef FIELD_AT
 // ---- scene/data/champa_cliff_caves.c ----
 

@@ -1619,7 +1619,6 @@ void Func_02002cc0(struct Actor *object) {
   Actor_SetSpriteColor(object, (u8)(bit * BYTE_AT(object, 98)));
 }
 
-#undef DEFINE_AIRS_ROCK_INSIDE_TRACK_LEADER_CELL
 // ---- games/tla/src/scene/airs_rock_inside/s2cf0.c ----
 #include "bg_scroll.h"
 #include "system/io_reg.h"
@@ -2963,6 +2962,7 @@ void Func_02004f3c(void) {
 #undef gData_02006084
 #undef gData_020060c0
 #undef gData_020060b0
+#undef DEFINE_AIRS_ROCK_INSIDE_TRACK_LEADER_CELL
 // ---- scene/airs_rock_inside/s505c.c ----
 // @file
 // Scene code of overlay 0x664, in ROM order.

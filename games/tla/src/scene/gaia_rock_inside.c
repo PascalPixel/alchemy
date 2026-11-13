@@ -846,7 +846,6 @@ void Func_02001314(s32 a0) {
 }
 #undef FIELD_AT
 
-#undef FIELD_AT
 // ---- games/tla/src/scene/gaia_rock_inside/s136c.c ----
 // Scene code of overlay 0x681, in ROM order, from s136c's offset up to the next
 // object the overlay links.
@@ -896,6 +895,7 @@ DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, FieldEffect_Spawn)
 #undef BYTE_AT
 
 #undef BYTE_AT
+#undef FIELD_AT
 // ---- scene/gaia_rock_inside/s15d0.c ----
 
 // Scene code of overlay 0x681, in ROM order.
@@ -1940,7 +1940,6 @@ void Func_02002ac8(s32 a0, s32 a1) {
 }
 #undef FIELD_AT
 
-#undef FIELD_AT
 // ---- games/tla/src/scene/gaia_rock_inside/s2b04.c ----
 void Func_02002b04(u32 id, s8 mode) {
   struct Actor *object = Actor_Get(id);
@@ -1983,7 +1982,6 @@ void Func_02002b58(s32 a0, s32 a1, s32 a2) {
 }
 #undef FIELD_AT
 
-#undef FIELD_AT
 // ---- games/tla/src/scene/gaia_rock_inside/s2b8c.c ----
 // The frame callback of the room where persons 8 to 16 sway: all of them
 // stop while flag 0x106 is set or the event work holds them; otherwise, once
@@ -2043,6 +2041,8 @@ step:
     goto step;
 }
 
+#undef FIELD_AT
+#undef FIELD_AT
 // ---- scene/gaia_rock_inside/s2cb4.c ----
 
 // Scene code of overlay 0x681, in ROM order.

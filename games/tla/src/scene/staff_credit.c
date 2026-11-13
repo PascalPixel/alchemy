@@ -1084,7 +1084,7 @@ LATE_DATA u32 gData_02003d9c[] = {
     0x808,
 };
 
-DEFINE_G_DATA_02003584(gData_02003da8, TileSprite_Reset, 17, 0)
+LATE_DATA DEFINE_G_DATA_02003584(gData_02003da8, TileSprite_Reset, 17, 0)
 
 LATE_DATA u32 gData_02003db8[] = {
     0,

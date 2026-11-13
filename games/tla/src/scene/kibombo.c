@@ -64,8 +64,6 @@ s32 Func_020000c4(struct KibomboObject *object) {
   return 1;
 }
 
-#undef gData_0200635c
-#undef gData_0200635c
 // ---- games/tla/src/scene/kibombo.c ----
 // The scene code of overlay 0x670 that its scene tables belong to, in ROM
 // order; the rest of the overlay is in kibombo/.
@@ -147,11 +145,6 @@ u8 *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-#undef Actor_SetSpriteFlags
-#undef Actor_SetBlendMode
-#undef Actor_SetSpriteColor
-#undef Actor_SetSpritePriority
-#undef Actor_SetPositionAndResetMotion
 // ---- games/tla/src/scene/kibombo/events_a.c ----
 // Scene code of overlay 0x670, in ROM order, from events_a's offset up to the
 // next object the overlay links.
@@ -787,30 +780,6 @@ void Func_02001218(void) {
   Event_End();
 }
 
-#undef gData_02006ee8
-#undef gData_02007698
-#undef gData_020074dc
-#undef gData_02007434
-#undef gData_020070d4
-#undef gData_02006ef4
-#undef gData_020064f8
-#undef gData_02006cd8
-#undef gData_02006a98
-#undef gData_020069a8
-#undef gData_020066d8
-#undef gData_02006510
-#undef gData_02006ee8
-#undef gData_02007698
-#undef gData_020074dc
-#undef gData_02007434
-#undef gData_020070d4
-#undef gData_02006ef4
-#undef gData_020064f8
-#undef gData_02006cd8
-#undef gData_02006a98
-#undef gData_020069a8
-#undef gData_020066d8
-#undef gData_02006510
 // ---- games/tla/src/scene/kibombo/s1318.c ----
 // Scene code of overlay 0x670, in ROM order, from s1318's offset up to the next
 // object the overlay links.
@@ -1532,38 +1501,6 @@ ask:
 
 #undef EVENT_WORK
 
-#undef gData_02006108
-#undef gData_02005fe0
-#undef gData_02005e88
-#undef gData_020060e0
-#undef gData_0200609c
-#undef gData_02006058
-#undef gData_02006014
-#undef gData_02005f9c
-#undef gData_02005f58
-#undef gData_02005f14
-#undef gData_02005eec
-#undef Actor_SetSpriteColor
-#undef Actor_WaitForMove
-#undef FieldCamera_GetActor
-#undef Actor_SetPositionAndResetMotion
-#undef Actor_SetSpritePriority
-#undef Import_ActorCreate
-#undef Actor_SetMoveTarget
-#undef Actor_GetById
-#undef Task_Add
-#undef EVENT_WORK
-#undef gData_02006108
-#undef gData_02005fe0
-#undef gData_02005e88
-#undef gData_020060e0
-#undef gData_0200609c
-#undef gData_02006058
-#undef gData_02006014
-#undef gData_02005f9c
-#undef gData_02005f58
-#undef gData_02005f14
-#undef gData_02005eec
 // ---- games/tla/src/scene/kibombo/s2ad8.c ----
 // Scene code of overlay 0x670, in ROM order, from s2ad8's offset up to the next
 // object the overlay links.
@@ -1710,6 +1647,69 @@ void Func_02002eb0(void) {
 #include "../field/field_effect/advance_motion.c"
 
 #undef DEFINE_KIBOMBO_WOBBLE
+#undef gData_0200635c
+#undef gData_0200635c
+#undef Actor_SetSpriteFlags
+#undef Actor_SetBlendMode
+#undef Actor_SetSpriteColor
+#undef Actor_SetSpritePriority
+#undef Actor_SetPositionAndResetMotion
+#undef gData_02006ee8
+#undef gData_02007698
+#undef gData_020074dc
+#undef gData_02007434
+#undef gData_020070d4
+#undef gData_02006ef4
+#undef gData_020064f8
+#undef gData_02006cd8
+#undef gData_02006a98
+#undef gData_020069a8
+#undef gData_020066d8
+#undef gData_02006510
+#undef gData_02006ee8
+#undef gData_02007698
+#undef gData_020074dc
+#undef gData_02007434
+#undef gData_020070d4
+#undef gData_02006ef4
+#undef gData_020064f8
+#undef gData_02006cd8
+#undef gData_02006a98
+#undef gData_020069a8
+#undef gData_020066d8
+#undef gData_02006510
+#undef gData_02006108
+#undef gData_02005fe0
+#undef gData_02005e88
+#undef gData_020060e0
+#undef gData_0200609c
+#undef gData_02006058
+#undef gData_02006014
+#undef gData_02005f9c
+#undef gData_02005f58
+#undef gData_02005f14
+#undef gData_02005eec
+#undef Actor_SetSpriteColor
+#undef Actor_WaitForMove
+#undef FieldCamera_GetActor
+#undef Actor_SetPositionAndResetMotion
+#undef Actor_SetSpritePriority
+#undef Import_ActorCreate
+#undef Actor_SetMoveTarget
+#undef Actor_GetById
+#undef Task_Add
+#undef EVENT_WORK
+#undef gData_02006108
+#undef gData_02005fe0
+#undef gData_02005e88
+#undef gData_020060e0
+#undef gData_0200609c
+#undef gData_02006058
+#undef gData_02006014
+#undef gData_02005f9c
+#undef gData_02005f58
+#undef gData_02005f14
+#undef gData_02005eec
 // ---- scene/kibombo/s2f34.c ----
 // @file
 // Scene code of overlay 0x670, in ROM order.
@@ -1913,7 +1913,6 @@ void Func_020032e0(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
-#undef DEFINE_KIBOMBO_SET_CROWD_MODE
 // ---- games/tla/src/scene/kibombo/s3308.c ----
 #include "types.h"
 /* VIEW(s3308): routine Actor_SetPositionAndResetMotion as void
@@ -2143,15 +2142,6 @@ void Func_02003308(struct Actor *actor) {
   }
 }
 
-#undef Actor_SetSpritePriority
-#undef Actor_SetPositionAndResetMotion
-#undef Actor_SetSpriteColor
-#undef Actor_WaitForMove
-#undef FieldCamera_GetActor
-#undef Import_ActorCreate
-#undef Actor_SetMoveTarget
-#undef Actor_GetById
-#undef Task_Add
 // ---- games/tla/src/scene/kibombo/s3504.c ----
 // Scene code of overlay 0x670, in ROM order, from s3504's offset up to the next
 // object the overlay links.
@@ -3133,7 +3123,6 @@ void Func_02005114(void) {
   Func_02003184();
 }
 
-#undef DEFINE_KIBOMBO_STEP_WHEN_HELD
 // ---- games/tla/src/scene/kibombo/s516c.c ----
 // Kibombo's setup.
 #include "main_routine_work.h"
@@ -3270,9 +3259,6 @@ void Func_0200516c(void) {
   Event_End();
 }
 
-#undef Actor_SetSpriteFlags
-#undef Actor_SetBlendMode
-#undef Actor_SetSpriteColor
 // ---- games/tla/src/scene/kibombo/s538c.c ----
 // Scene code of overlay 0x670, in ROM order, from s538c's offset up to the next
 // object the overlay links and the overlay's data.
@@ -4286,3 +4272,17 @@ struct Trigger gData_02007698[] = {
 #undef Func_02000054
 #undef Func_02000048
 #undef Func_02000038
+#undef DEFINE_KIBOMBO_SET_CROWD_MODE
+#undef Actor_SetSpritePriority
+#undef Actor_SetPositionAndResetMotion
+#undef Actor_SetSpriteColor
+#undef Actor_WaitForMove
+#undef FieldCamera_GetActor
+#undef Import_ActorCreate
+#undef Actor_SetMoveTarget
+#undef Actor_GetById
+#undef Task_Add
+#undef DEFINE_KIBOMBO_STEP_WHEN_HELD
+#undef Actor_SetSpriteFlags
+#undef Actor_SetBlendMode
+#undef Actor_SetSpriteColor

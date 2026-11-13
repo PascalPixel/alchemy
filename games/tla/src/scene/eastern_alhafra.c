@@ -249,14 +249,6 @@ void Func_0200042c(s32 mode, s32 id) {
     EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
 }
 
-#undef gData_02005290
-#undef gData_02004fe4
-#undef gData_02004dbc
-#undef gData_02004d0c
-#undef gData_02005290
-#undef gData_02004fe4
-#undef gData_02004dbc
-#undef gData_02004d0c
 // ---- games/tla/src/scene/eastern_alhafra/s0514.c ----
 // Scene code of overlay 0x668, in ROM order, from s0514's offset up to the next
 // object the overlay links.
@@ -1146,13 +1138,6 @@ void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer) {
 #undef OBJECT
 #undef FIELD_AT
 
-#undef gData_020056d4
-#undef gData_020054f0
-#undef EVENT_WORK
-#undef OBJECT
-#undef FIELD_AT
-#undef gData_020056d4
-#undef gData_020054f0
 // ---- games/tla/src/scene/eastern_alhafra/s1bf4.c ----
 // Scene code of overlay 0x668, in ROM order, from s1bf4's offset up to the next
 // object the overlay links.
@@ -2156,6 +2141,21 @@ struct RockWork {
 /// thrown up and out along it.
 DEFINE_ROCKS_SPAWN(Rocks_Spawn)
 
+#undef gData_02005290
+#undef gData_02004fe4
+#undef gData_02004dbc
+#undef gData_02004d0c
+#undef gData_02005290
+#undef gData_02004fe4
+#undef gData_02004dbc
+#undef gData_02004d0c
+#undef gData_020056d4
+#undef gData_020054f0
+#undef EVENT_WORK
+#undef OBJECT
+#undef FIELD_AT
+#undef gData_020056d4
+#undef gData_020054f0
 // ---- scene/eastern_alhafra/s4004.c ----
 
 /// Scene code of overlay 0x668, in ROM order.

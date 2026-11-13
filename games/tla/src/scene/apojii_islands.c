@@ -580,7 +580,6 @@ void Func_020010d8(struct Actor *object) {
   }
 }
 
-#undef DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP
 // ---- games/tla/src/scene/apojii_islands/events_h.c ----
 // Scene code of overlay 0x679, in ROM order, from events_h's offset up to the
 // next object the overlay links.
@@ -1139,3 +1138,4 @@ struct Trigger gData_0200280c[] = {
 };
 #undef COPY_PICTURE
 #undef UNK_02002044_VALUE
+#undef DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP

@@ -3031,7 +3031,7 @@ LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_Room3Placements[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_02004EB8(gData_02006980, 80, 216, 512, 152)
+LATE_DATA DEFINE_G_DATA_02004EB8(gData_02006980, 80, 216, 512, 152)
 
 LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_Room2Placements[] = {
     {294, CONDITION_ALWAYS, 7, PIXELS(568), 0, PIXELS(144), FACING_SOUTH, 2, 0},

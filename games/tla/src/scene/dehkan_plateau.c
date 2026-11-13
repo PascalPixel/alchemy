@@ -1463,78 +1463,6 @@ void Func_020021b4(void) {
 }
 #undef SCENE
 
-#undef Func_02000d78
-#undef HeldActor_RaiseCell
-#undef gData_0200416e
-#undef gData_02003fe2
-#undef gData_0200410e
-#undef gData_02003fda
-#undef gData_020055b8
-#undef gData_02005450
-#undef gData_020053b4
-#undef gData_020051bc
-#undef gData_02005078
-#undef gData_02004f1c
-#undef gData_02004f10
-#undef gData_02004e20
-#undef gData_02004dd8
-#undef gData_02004d78
-#undef gData_02004ac0
-#undef gData_020047d8
-#undef gData_020045f8
-#undef gData_020045e0
-#undef gData_02003fc8
-#undef gData_02004420
-#undef gData_02003fc4
-#undef gData_02003fc0
-#undef gData_02003fb8
-#undef gData_02003fb0
-#undef gData_02003fa8
-#undef gData_02003fa0
-#undef gData_02003f98
-#undef gData_02003f92
-#undef gData_02003f80
-#undef gData_02003f52
-#undef gData_02003f44
-#undef gData_02004066
-#undef gData_02003fd2
-#undef DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS
-#undef SCENE
-#undef Func_02000d78
-#undef HeldActor_RaiseCell
-#undef gData_0200416e
-#undef gData_02003fe2
-#undef gData_0200410e
-#undef gData_02003fda
-#undef gData_020055b8
-#undef gData_02005450
-#undef gData_020053b4
-#undef gData_020051bc
-#undef gData_02005078
-#undef gData_02004f1c
-#undef gData_02004f10
-#undef gData_02004e20
-#undef gData_02004dd8
-#undef gData_02004d78
-#undef gData_02004ac0
-#undef gData_020047d8
-#undef gData_020045f8
-#undef gData_020045e0
-#undef gData_02003fc8
-#undef gData_02004420
-#undef gData_02003fc4
-#undef gData_02003fc0
-#undef gData_02003fb8
-#undef gData_02003fb0
-#undef gData_02003fa8
-#undef gData_02003fa0
-#undef gData_02003f98
-#undef gData_02003f92
-#undef gData_02003f80
-#undef gData_02003f52
-#undef gData_02003f44
-#undef gData_02004066
-#undef gData_02003fd2
 // ---- games/tla/src/scene/dehkan_plateau/events_g.c ----
 // Scene code of overlay 0x655, in ROM order, from events_g's offset up to the
 // next object the overlay links.
@@ -1717,6 +1645,78 @@ void Func_02002604(void) {
 #undef CrumblingPillars_Step
 #undef CrumblingPillars_StepWithStandIn
 #undef CrumblingPillars_Step
+#undef Func_02000d78
+#undef HeldActor_RaiseCell
+#undef gData_0200416e
+#undef gData_02003fe2
+#undef gData_0200410e
+#undef gData_02003fda
+#undef gData_020055b8
+#undef gData_02005450
+#undef gData_020053b4
+#undef gData_020051bc
+#undef gData_02005078
+#undef gData_02004f1c
+#undef gData_02004f10
+#undef gData_02004e20
+#undef gData_02004dd8
+#undef gData_02004d78
+#undef gData_02004ac0
+#undef gData_020047d8
+#undef gData_020045f8
+#undef gData_020045e0
+#undef gData_02003fc8
+#undef gData_02004420
+#undef gData_02003fc4
+#undef gData_02003fc0
+#undef gData_02003fb8
+#undef gData_02003fb0
+#undef gData_02003fa8
+#undef gData_02003fa0
+#undef gData_02003f98
+#undef gData_02003f92
+#undef gData_02003f80
+#undef gData_02003f52
+#undef gData_02003f44
+#undef gData_02004066
+#undef gData_02003fd2
+#undef DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS
+#undef SCENE
+#undef Func_02000d78
+#undef HeldActor_RaiseCell
+#undef gData_0200416e
+#undef gData_02003fe2
+#undef gData_0200410e
+#undef gData_02003fda
+#undef gData_020055b8
+#undef gData_02005450
+#undef gData_020053b4
+#undef gData_020051bc
+#undef gData_02005078
+#undef gData_02004f1c
+#undef gData_02004f10
+#undef gData_02004e20
+#undef gData_02004dd8
+#undef gData_02004d78
+#undef gData_02004ac0
+#undef gData_020047d8
+#undef gData_020045f8
+#undef gData_020045e0
+#undef gData_02003fc8
+#undef gData_02004420
+#undef gData_02003fc4
+#undef gData_02003fc0
+#undef gData_02003fb8
+#undef gData_02003fb0
+#undef gData_02003fa8
+#undef gData_02003fa0
+#undef gData_02003f98
+#undef gData_02003f92
+#undef gData_02003f80
+#undef gData_02003f52
+#undef gData_02003f44
+#undef gData_02004066
+#undef gData_02003fd2
 // ---- scene/dehkan_plateau/s2698.c ----
 // @file
 // Scene code of overlay 0x655, in ROM order.
@@ -2012,40 +2012,6 @@ void Func_02002bcc(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
-#undef gData_02004066
-#undef gData_02003fd2
-#undef gData_02003fc4
-#undef gData_02003fc0
-#undef gData_02003fb8
-#undef gData_02003fb0
-#undef gData_02003fa8
-#undef gData_02003fa0
-#undef gData_02003f98
-#undef gData_02003f92
-#undef gData_02003f80
-#undef gData_02003f52
-#undef gData_02003f44
-#undef gData_02003f14
-#undef gData_02004420
-#undef CrumblingPillars_StepWithStandIn
-#undef CrumblingPillars_Step
-#undef gData_02004066
-#undef gData_02003fd2
-#undef gData_02003fc4
-#undef gData_02003fc0
-#undef gData_02003fb8
-#undef gData_02003fb0
-#undef gData_02003fa8
-#undef gData_02003fa0
-#undef gData_02003f98
-#undef gData_02003f92
-#undef gData_02003f80
-#undef gData_02003f52
-#undef gData_02003f44
-#undef gData_02003f14
-#undef gData_02004420
-#undef CrumblingPillars_StepWithStandIn
-#undef CrumblingPillars_Step
 // ---- games/tla/src/scene/dehkan_plateau/s2c14.c ----
 // Scene code of overlay 0x655, in ROM order, from s2c14's offset up to the next
 // object the overlay links.
@@ -2265,8 +2231,6 @@ void Func_020030e4(void) {
   }
 }
 
-#undef Pillars_Place
-#undef Pillars_Place
 // ---- games/tla/src/scene/dehkan_plateau/s3164.c ----
 
 /* VIEW(s3164): routine CrumblingPillars_PlaceWithStandIns as this part declared it; the joined file has another. */
@@ -2323,8 +2287,6 @@ void Func_02003164(void) {
   Func_02001fac();
 }
 
-#undef CrumblingPillars_PlaceWithStandIns
-#undef CrumblingPillars_PlaceWithStandIns
 // ---- games/tla/src/scene/dehkan_plateau/s3284.c ----
 // Scene code of overlay 0x655, in ROM order, from s3284's offset up to the next
 // object the overlay links.
@@ -2582,13 +2544,6 @@ loop:
   Event_End();
 }
 
-#undef gData_02004276
-#undef Pillars_Raise
-#undef gData_02003fc8
-#undef DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG
-#undef gData_02004276
-#undef Pillars_Raise
-#undef gData_02003fc8
 // ---- games/tla/src/scene/dehkan_plateau/s390c.c ----
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -2683,6 +2638,51 @@ void Func_02003aa0(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
+#undef gData_02004066
+#undef gData_02003fd2
+#undef gData_02003fc4
+#undef gData_02003fc0
+#undef gData_02003fb8
+#undef gData_02003fb0
+#undef gData_02003fa8
+#undef gData_02003fa0
+#undef gData_02003f98
+#undef gData_02003f92
+#undef gData_02003f80
+#undef gData_02003f52
+#undef gData_02003f44
+#undef gData_02003f14
+#undef gData_02004420
+#undef CrumblingPillars_StepWithStandIn
+#undef CrumblingPillars_Step
+#undef gData_02004066
+#undef gData_02003fd2
+#undef gData_02003fc4
+#undef gData_02003fc0
+#undef gData_02003fb8
+#undef gData_02003fb0
+#undef gData_02003fa8
+#undef gData_02003fa0
+#undef gData_02003f98
+#undef gData_02003f92
+#undef gData_02003f80
+#undef gData_02003f52
+#undef gData_02003f44
+#undef gData_02003f14
+#undef gData_02004420
+#undef CrumblingPillars_StepWithStandIn
+#undef CrumblingPillars_Step
+#undef Pillars_Place
+#undef Pillars_Place
+#undef CrumblingPillars_PlaceWithStandIns
+#undef CrumblingPillars_PlaceWithStandIns
+#undef gData_02004276
+#undef Pillars_Raise
+#undef gData_02003fc8
+#undef DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG
+#undef gData_02004276
+#undef Pillars_Raise
+#undef gData_02003fc8
 // ---- scene/data/dehkan_plateau.c ----
 #include "types.h"
 #include "scene_tables.h"

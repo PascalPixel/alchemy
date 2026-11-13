@@ -557,7 +557,7 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_SCENE_EXITS(308, 239, 23, 303, 1, 239, 22, 24, 306, 5)
+LATE_DATA DEFINE_G_SCENE_EXITS(308, 239, 23, 303, 1, 239, 22, 24, 306, 5)
 
 LATE_DATA struct ActorPlacement gData_020019dc[] = {
     {SCENE_TABLE_END},

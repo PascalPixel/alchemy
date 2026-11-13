@@ -778,14 +778,24 @@ next:
 /* VIEW(mars_lighthouse_entrance): routine gData_0200503c as this part declared it; the joined file has another. */
 extern const u8 gData_0200503c__mars_lighthouse_entrance[] __asm__("gData_0200503c");
 #define gData_0200503c gData_0200503c__mars_lighthouse_entrance
-extern const u8 gData_0200547c[];
-extern const u8 gData_020054cc[];
-extern const u8 gData_02005528[];
-extern const u8 gData_02005578[];
+/* VIEW(mars_lighthouse_entrance): routine gData_0200547c as this part declared it; the joined file has another. */
+extern const u8 gData_0200547c__mars_lighthouse_entrance[] __asm__("gData_0200547c");
+#define gData_0200547c gData_0200547c__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_020054cc as this part declared it; the joined file has another. */
+extern const u8 gData_020054cc__mars_lighthouse_entrance[] __asm__("gData_020054cc");
+#define gData_020054cc gData_020054cc__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_02005528 as this part declared it; the joined file has another. */
+extern const u8 gData_02005528__mars_lighthouse_entrance[] __asm__("gData_02005528");
+#define gData_02005528 gData_02005528__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_02005578 as this part declared it; the joined file has another. */
+extern const u8 gData_02005578__mars_lighthouse_entrance[] __asm__("gData_02005578");
+#define gData_02005578 gData_02005578__mars_lighthouse_entrance
 /* VIEW(mars_lighthouse_entrance): routine gData_020055d4 as this part declared it; the joined file has another. */
 extern const u8 gData_020055d4__mars_lighthouse_entrance[] __asm__("gData_020055d4");
 #define gData_020055d4 gData_020055d4__mars_lighthouse_entrance
-extern const u8 gData_02005644[];
+/* VIEW(mars_lighthouse_entrance): routine gData_02005644 as this part declared it; the joined file has another. */
+extern const u8 gData_02005644__mars_lighthouse_entrance[] __asm__("gData_02005644");
+#define gData_02005644 gData_02005644__mars_lighthouse_entrance
 /* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Triggers as this part declared it; the joined file has another. */
 extern const u8 gMarsLighthouseEntrance_Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Triggers");
 #define gMarsLighthouseEntrance_Triggers gMarsLighthouseEntrance_Triggers__mars_lighthouse_entrance
@@ -1773,6 +1783,11 @@ DEFINE_BEAM_DRAW_TARGETS(Func_020020ec, Func_0200206c__s20ec, Func_02001e60,
 #undef gData_020055d4
 #undef gData_0200503c
 #undef gData_020056a0
+#undef gData_02005644
+#undef gData_02005578
+#undef gData_02005528
+#undef gData_020054cc
+#undef gData_0200547c
 #undef gData_02005644
 #undef gData_02005578
 #undef gData_02005528

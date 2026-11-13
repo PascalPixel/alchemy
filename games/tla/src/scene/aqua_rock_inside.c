@@ -527,29 +527,6 @@ void Func_02000ca8(void) {
 }
 
 #undef gData_02003fb8
-#undef gData_02004b98
-#undef gData_02004a48
-#undef gData_02004a00
-#undef gData_020049e8
-#undef gData_02004910
-#undef gData_020048c8
-#undef gData_02004808
-#undef gData_020047a8
-#undef gData_02004748
-#undef gData_020046a0
-#undef gData_02004688
-#undef gData_02003fb8
-#undef gData_02004b98
-#undef gData_02004a48
-#undef gData_02004a00
-#undef gData_020049e8
-#undef gData_02004910
-#undef gData_020048c8
-#undef gData_02004808
-#undef gData_020047a8
-#undef gData_02004748
-#undef gData_020046a0
-#undef gData_02004688
 // ---- games/tla/src/scene/aqua_rock_inside/s0cc8.c ----
 // Scene code of overlay 0x67c, in ROM order, from s0cc8's offset up to the next
 // object the overlay links.
@@ -920,7 +897,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, FieldEffect_Spawn)
 #undef BYTE_AT
 
-#undef BYTE_AT
 // ---- games/tla/src/scene/aqua_rock_inside/s1620.c ----
 // Scene code of overlay 0x67c, in ROM order, from s1620's offset up to the
 // next object the overlay links.
@@ -2294,6 +2270,30 @@ s32 Func_020036b8(s32 first, s32 target) {
 #undef gData_02004d88
 #undef gData_02004c7c
 #undef gData_02004c70
+#undef gData_02004b98
+#undef gData_02004a48
+#undef gData_02004a00
+#undef gData_020049e8
+#undef gData_02004910
+#undef gData_020048c8
+#undef gData_02004808
+#undef gData_020047a8
+#undef gData_02004748
+#undef gData_020046a0
+#undef gData_02004688
+#undef gData_02003fb8
+#undef gData_02004b98
+#undef gData_02004a48
+#undef gData_02004a00
+#undef gData_020049e8
+#undef gData_02004910
+#undef gData_020048c8
+#undef gData_02004808
+#undef gData_020047a8
+#undef gData_02004748
+#undef gData_020046a0
+#undef gData_02004688
+#undef BYTE_AT
 // ---- scene/aqua_rock_inside/s3844.c ----
 
 // Scene code of overlay 0x67c, in ROM order.

@@ -533,21 +533,6 @@ s32 Scene_PrepareMap(void) {
 #include "shared/scene_set_arrival_flags.h"
 #undef EVENT_WORK
 
-#undef FieldEffect_Spawn
-#undef gPaletteCyclePausesInEvents
-#undef gData_02002f70
-#undef gData_02003278
-#undef gData_02003274
-#undef gData_02002fb8
-#undef gData_02002f94
-#undef EVENT_WORK
-#undef FieldEffect_Spawn
-#undef gPaletteCyclePausesInEvents
-#undef gData_02002f70
-#undef gData_02003278
-#undef gData_02003274
-#undef gData_02002fb8
-#undef gData_02002f94
 // ---- games/tla/src/scene/jupiter_lighthouse_room_5/s0cb8.c ----
 // Scene code of overlay 0x69e, in ROM order, from s0cb8's offset up to the
 // next object the overlay links.
@@ -691,10 +676,6 @@ stop:
   }
 }
 
-#undef gData_020033e0
-#undef gPaletteCycleFrame
-#undef gData_020033e0
-#undef gPaletteCycleFrame
 // ---- games/tla/src/scene/jupiter_lighthouse_room_5/s1230.c ----
 // Scene code of overlay 0x69e, in ROM order, from s1230's offset up to the next
 // object the overlay links.
@@ -825,6 +806,25 @@ void Func_02001538(void) {
   }
 }
 
+#undef FieldEffect_Spawn
+#undef gPaletteCyclePausesInEvents
+#undef gData_02002f70
+#undef gData_02003278
+#undef gData_02003274
+#undef gData_02002fb8
+#undef gData_02002f94
+#undef EVENT_WORK
+#undef FieldEffect_Spawn
+#undef gPaletteCyclePausesInEvents
+#undef gData_02002f70
+#undef gData_02003278
+#undef gData_02003274
+#undef gData_02002fb8
+#undef gData_02002f94
+#undef gData_020033e0
+#undef gPaletteCycleFrame
+#undef gData_020033e0
+#undef gPaletteCycleFrame
 // ---- scene/jupiter_lighthouse_room_5/s1650.c ----
 
 /// Scene code of overlay 0x69e, in ROM order.

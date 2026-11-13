@@ -892,8 +892,7 @@ static void MercuryLighthouse_StopFountainSpray(void) {
     do {
       if ((particleIndex & 1) != 0) {
         random = Random_Next();
-        particleZ = ((584 - ((u32)((random << 2) + random) >> 16)) & 0xffff)
-                    << 16;
+        particleZ = ((584 - ((u32)(random * 5) >> 16)) & 0xffff) << 16;
         particleX = (offsetX - (row << 19)) + px(728);
         FieldEffect_Spawn(particleX, 0, particleZ, -px(1) / 4, 0, 0,
                           EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
@@ -901,7 +900,7 @@ static void MercuryLighthouse_StopFountainSpray(void) {
         Event_Wait(1);
       }
       particleIndex++;
-      offsetX = offsetX + -px(2);
+      offsetX -= px(2);
     } while ((u32)particleIndex <= 7);
     MapGrid_CopyCellsTo(111, 35, (109 - row), 36, 1, 1);
     row++;

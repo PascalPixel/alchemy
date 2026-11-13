@@ -131,42 +131,42 @@
 /// The second floor's pink floor switch has slid the wall beside it aside.
 /// ★ Named from what the player sees: the pink floor switch on the second
 /// floor and the stone wall it moves (its render)
-#define FLAG_VENUS_LIGHTHOUSE_WALL_MOVED 0x300
+#define FLAG_VENUS_LIGHTHOUSE_WALL_MOVED FLAG_AREA_TEMP_00
 /// ★ Named from what the player sees: the pink floor switch on the west side
 /// of the fourth floor (its render)
-#define FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED 0x306
+#define FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED FLAG_AREA_TEMP_06
 /// ★ Named from what the player sees: the floor switch on the east side of
 /// the fourth floor (its render)
-#define FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED 0x307
+#define FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED FLAG_AREA_TEMP_07
 // The gates the sunken pillars opened: one pillar, three pillars (and which of
 // two sets of sockets they sank into) and the pillar room's four.
 /// The light from the second floor's lady statue has opened the gate at the
 /// end of its track.
 /// ★ Named from what the player sees: the glowing arch at the end of the gold
 /// track on the second floor (its render)
-#define FLAG_VENUS_LIGHTHOUSE_GATE_OPEN 0x301
+#define FLAG_VENUS_LIGHTHOUSE_GATE_OPEN FLAG_AREA_TEMP_01
 /// The pillars stand in every socket of gVenusThirdFloorSockets but the
 /// southeast one.
 /// ★ Named from what the player sees: the square sockets in the third floor
 /// that the pillars sink into (its render)
-#define FLAG_VENUS_LIGHTHOUSE_SOUTHEAST_SOCKET_EMPTY 0x302
+#define FLAG_VENUS_LIGHTHOUSE_SOUTHEAST_SOCKET_EMPTY FLAG_AREA_TEMP_02
 /// The pillars stand in every socket of gVenusThirdFloorSockets but the
 /// northwest one.
 /// ★ Named from what the player sees: the square sockets in the third floor
 /// that the pillars sink into (its render)
-#define FLAG_VENUS_LIGHTHOUSE_NORTHWEST_SOCKET_EMPTY 0x303
+#define FLAG_VENUS_LIGHTHOUSE_NORTHWEST_SOCKET_EMPTY FLAG_AREA_TEMP_03
 /// ★ Named from what the player sees: the gate the gold track leads to in the
 /// third floor's room of three pillars and four sockets (its render)
-#define FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN 0x304
+#define FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN FLAG_AREA_TEMP_04
 /// ★ Named from what the player sees: the glowing arch over the fourth floor's
 /// room of gold track and four pillars (its render)
-#define FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN 0x308
+#define FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN FLAG_AREA_TEMP_08
 /// The first floor's Psynergy Stone, taken until the party leaves the climb.
 /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
-#define FLAG_VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE 0x350
+#define FLAG_VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE FLAG_AREA_TEMP_50
 /// The fourth floor's Psynergy Stone, as the first floor's.
 /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
-#define FLAG_VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE 0x351
+#define FLAG_VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE FLAG_AREA_TEMP_51
 
 /// The cell behaviors the floors' events answer, by floor. A number means
 /// one thing on one floor and another on the next.

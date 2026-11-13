@@ -120,7 +120,7 @@
 /// Plus the party member (0 to 3) who carried the Shaman's Rod when it was
 /// handed over before the aerie's first battle. A defeat gives it back.
 /// ★ Named from the game: "Shaman's Rod" (MsgItemName)
-#define FLAG_SHAMANS_ROD_HOLDER 0x345
+#define FLAG_SHAMANS_ROD_HOLDER FLAG_AREA_TEMP_45
 
 /// Area flags that choose the aerie's field music after each battle.
 ///

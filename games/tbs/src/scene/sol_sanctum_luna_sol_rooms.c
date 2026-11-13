@@ -111,7 +111,7 @@
 /// Set once Isaac and Garet's arrival after the Wise One's rescue has played.
 /// ★ Named from the game: "Did that floating eye thing save us?"
 /// (MsgSolSanctumFloatingEyeThing)
-#define FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN 0x309
+#define FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN FLAG_AREA_TEMP_09
 
 /// The blue tint the rooms fade to (PaletteTint's TINT form).
 #define SOL_SANCTUM_BLUE_TINT (PALETTE_TINT_CUSTOM | RGB(12, 14, 20))

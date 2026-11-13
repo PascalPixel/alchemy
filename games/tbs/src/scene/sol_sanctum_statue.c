@@ -106,11 +106,11 @@
 /// Set once Kraden has found the hole and explained the disarmed trap.
 /// ★ Named from the game: "So the statue puzzle was the trap..."
 /// (MsgSolSanctumKradenYouFoundIt)
-#define FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED 0x30a
+#define FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED FLAG_AREA_TEMP_0A
 /// Set once Kraden has explained the statue puzzle's trap.
 /// ★ Named from the game: "But if you just move one statue, you'll be caught
 /// in the sanctum's trap." (MsgSolSanctumWait)
-#define FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED 0x30b
+#define FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED FLAG_AREA_TEMP_0B
 
 // The third patch draws the back row of drifting sprites 6 pixels below the
 // other two rather than 8.

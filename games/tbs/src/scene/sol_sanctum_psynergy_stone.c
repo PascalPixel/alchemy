@@ -38,7 +38,7 @@
 // party enters another area, and other areas use the numbers for
 // their own.
 /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
-#define FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN 0x350
+#define FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN FLAG_AREA_TEMP_50
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSolSanctumPsynergyStoneEntrances;

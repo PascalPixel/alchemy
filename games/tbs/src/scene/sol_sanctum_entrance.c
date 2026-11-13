@@ -93,53 +93,53 @@
 /// in the second relief room. Both clear means the start.
 /// ★ Named from what the player sees: the stone statues of the first relief
 /// room, two of which Move pushes a cell aside (its render)
-#define FLAG_SOL_SANCTUM_EAST_STATUE_AT_EAST 0x300
+#define FLAG_SOL_SANCTUM_EAST_STATUE_AT_EAST FLAG_AREA_TEMP_00
 /// ★ Named from what the player sees: the first relief room's east statue,
 /// pushed a cell west (its render)
-#define FLAG_SOL_SANCTUM_EAST_STATUE_AT_WEST 0x301
+#define FLAG_SOL_SANCTUM_EAST_STATUE_AT_WEST FLAG_AREA_TEMP_01
 /// ★ Named from what the player sees: the first relief room's west statue,
 /// pushed a cell east (its render)
-#define FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST 0x302
+#define FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST FLAG_AREA_TEMP_02
 /// ★ Named from what the player sees: the first relief room's west statue,
 /// pushed a cell west (its render)
-#define FLAG_SOL_SANCTUM_WEST_STATUE_AT_WEST 0x303
+#define FLAG_SOL_SANCTUM_WEST_STATUE_AT_WEST FLAG_AREA_TEMP_03
 /// The second relief room's row of six statues, each two flags as above.
 /// ★ Named from the game: "More statues..."
 /// (MsgSolSanctumMoreStatuesOutOfReach)
-#define FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_EAST 0x310
+#define FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_EAST FLAG_AREA_TEMP_10
 /// ★ Named from the game: "More statues..."
 /// (MsgSolSanctumMoreStatuesOutOfReach)
-#define FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_WEST 0x311
+#define FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_WEST FLAG_AREA_TEMP_11
 /// ★ Named from the game: "More statues..."
 /// (MsgSolSanctumMoreStatuesOutOfReach)
-#define FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_EAST 0x312
+#define FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_EAST FLAG_AREA_TEMP_12
 /// ★ Named from the game: "More statues..."
 /// (MsgSolSanctumMoreStatuesOutOfReach)
-#define FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_WEST 0x313
+#define FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_WEST FLAG_AREA_TEMP_13
 /// ★ Named from the game: "More statues..."
 /// (MsgSolSanctumMoreStatuesOutOfReach)
-#define FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_EAST 0x314
+#define FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_EAST FLAG_AREA_TEMP_14
 /// ★ Named from the game: "More statues..."
 /// (MsgSolSanctumMoreStatuesOutOfReach)
-#define FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_WEST 0x315
+#define FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_WEST FLAG_AREA_TEMP_15
 /// ★ Named from the game: "More statues..."
 /// (MsgSolSanctumMoreStatuesOutOfReach)
-#define FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_EAST 0x316
+#define FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_EAST FLAG_AREA_TEMP_16
 /// ★ Named from the game: "More statues..."
 /// (MsgSolSanctumMoreStatuesOutOfReach)
-#define FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_WEST 0x317
+#define FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_WEST FLAG_AREA_TEMP_17
 /// ★ Named from the game: "More statues..."
 /// (MsgSolSanctumMoreStatuesOutOfReach)
-#define FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_EAST 0x318
+#define FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_EAST FLAG_AREA_TEMP_18
 /// ★ Named from the game: "More statues..."
 /// (MsgSolSanctumMoreStatuesOutOfReach)
-#define FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_WEST 0x319
+#define FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_WEST FLAG_AREA_TEMP_19
 /// ★ Named from the game: "More statues..."
 /// (MsgSolSanctumMoreStatuesOutOfReach)
-#define FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_EAST 0x31a
+#define FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_EAST FLAG_AREA_TEMP_1A
 /// ★ Named from the game: "More statues..."
 /// (MsgSolSanctumMoreStatuesOutOfReach)
-#define FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_WEST 0x31b
+#define FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_WEST FLAG_AREA_TEMP_1B
 
 // Scene flags, cleared on every ordinary arrival:
 // - FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM: set on entering the second relief

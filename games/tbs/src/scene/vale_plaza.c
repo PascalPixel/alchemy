@@ -140,12 +140,12 @@
 // Vale's area flags, kept while the party stays in Vale's scenes.
 /// Back from Kalay, a young man has welcomed Isaac home.
 /// ★ Named from the game: "You came back home, huh?" (MsgValeYouCameBackHome)
-#define FLAG_VALE_WELCOMED_HOME 0x302
+#define FLAG_VALE_WELCOMED_HOME FLAG_AREA_TEMP_02
 /// Back from Kalay, the old man searching for the Psynergy Stone has told
 /// Isaac it is gone.
 /// ★ Named from the game: "Where'd that Psynergy Stone go? It's gone!"
 /// (MsgValeThePsynergyStoneIsGone)
-#define FLAG_VALE_PSYNERGY_STONE_GONE_TOLD 0x306
+#define FLAG_VALE_PSYNERGY_STONE_GONE_TOLD FLAG_AREA_TEMP_06
 
 /// Each actor placement table numbers its own rows from ACTOR_FIRST_PLACED,
 /// Garet keeping his own party slot. The same people stand in several tables

@@ -597,7 +597,6 @@ extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 
 void JupiterLighthouse_StepOnCrackedTile(void);
-#define JupiterLighthouse_DropBlockIntoHole JupiterLighthouse_DropBlockIntoHole
 
 void JupiterLighthouse_StartMovingBlock(void);
 

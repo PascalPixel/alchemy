@@ -301,7 +301,6 @@ extern u32 gNaribwe_FlameRises[];
 extern u32 gNaribwe_IvyAnimation[];
 extern s16 gNaribwe_DoorOpening[];
 
-#define Naribwe_PraiseFortuneTellerOnReturn Naribwe_PraiseFortuneTellerOnReturn
 void Naribwe_HideStone(void);
 
 // The village's placements, the same before and after the return with Piers.

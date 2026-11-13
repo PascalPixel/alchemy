@@ -883,7 +883,6 @@ const struct Trigger *Scene_GetEvents(void) {
 // priorities, and in each room the objects its flags place.
 
 extern s16 gYampiDesertCave_MarkPaletteSlots[];
-#define gYampiDesertCave_MarkPaletteSlots gYampiDesertCave_MarkPaletteSlots
 extern u16 gYampiDesertCave_MarkColorsLit[];
 extern u16 gYampiDesertCave_MarkColorsDim[];
 
@@ -1005,8 +1004,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 #undef FIELD_AT
 #undef gYampiDesertCave_MarkPaletteSlots
 
-#define YampiDesertCave_StartMovingPillar YampiDesertCave_StartMovingPillar
-#define YampiDesertCave_FinishMovingPillar YampiDesertCave_FinishMovingPillar
 void YampiDesertCave_MeetGuardianOfFire(void);
 
 // clang-format off

@@ -289,7 +289,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 extern s32 gData_020036c4;
-#define gData_020036c4 gData_020036c4
 extern u16 gData_0200393c[];
 extern u16 gData_0200397c[];
 
@@ -383,7 +382,6 @@ void Func_0200030c(void) {
 }
 
 extern s32 gData_02003704;
-#define gData_02003704 gData_02003704
 extern u16 gData_02003a5c[];
 
 void Func_020003c4(void) {

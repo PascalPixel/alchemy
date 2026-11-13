@@ -589,7 +589,6 @@ void Func_02000900(struct Counted *object) {
 extern struct ActorPlacement gGaiaRockInside_Room2Placements[];
 
 extern s32 gData_02005ee4;
-#define gData_02005ee4 gData_02005ee4
 extern s32 gData_02005e28[];
 
 // Return the table for the current room.

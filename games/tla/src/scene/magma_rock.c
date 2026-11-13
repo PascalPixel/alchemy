@@ -204,11 +204,8 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gMagmaRock_Placements[];
 extern struct ActorPlacement gMagmaRock_Room2LowerPlacements[];
-#define gMagmaRock_Room2LowerPlacements gMagmaRock_Room2LowerPlacements
 extern struct ActorPlacement gMagmaRock_Room2MiddlePlacements[];
-#define gMagmaRock_Room2MiddlePlacements gMagmaRock_Room2MiddlePlacements
 extern struct ActorPlacement gMagmaRock_Room2UpperPlacements[];
-#define gMagmaRock_Room2UpperPlacements gMagmaRock_Room2UpperPlacements
 extern struct ActorPlacement gMagmaRock_Room2TopPlacements[];
 extern struct ActorPlacement gMagmaRock_Room3Placements[];
 

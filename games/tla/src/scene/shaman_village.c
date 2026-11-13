@@ -1167,11 +1167,7 @@ void ShamanVillage_ChallengeMoapa(void) {
 }
 
 extern u32 gShamanVillage_WalkToLeftStartScript[];
-#define gShamanVillage_WalkToLeftStartScript                                   \
-  gShamanVillage_WalkToLeftStartScript
 extern u32 gShamanVillage_WalkToRightStartScript[];
-#define gShamanVillage_WalkToRightStartScript                                  \
-  gShamanVillage_WalkToRightStartScript
 
 /// The leader takes the left path and Moapa the right, after the countdown.
 /// ★ Named from the game: "If you have chosen, then we shall take the other

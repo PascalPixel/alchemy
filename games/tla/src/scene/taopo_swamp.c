@@ -132,7 +132,6 @@ void TaopoSwamp_FocusMapOn(s32 x, s32 z);
 void TaopoSwamp_SaveFirmGround(void);
 void TaopoSwamp_FillDripSpot(s32 a, s32 id);
 extern s32 gTaopoSwamp_DripFromCeilingScript[];
-#define gTaopoSwamp_DripFromCeilingScript gTaopoSwamp_DripFromCeilingScript
 extern s32 gTaopoSwamp_DropFalls[];
 void TaopoSwamp_ShatterIcePillar(s32 id);
 void TaopoSwamp_BlowAwayPuddle(s32 id);

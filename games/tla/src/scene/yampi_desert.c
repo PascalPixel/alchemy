@@ -304,8 +304,6 @@ extern struct ActorPlacement gYampiDesert_Placements[];
 extern struct ActorPlacement gYampiDesert_Room1Placements[];
 extern struct ActorPlacement gYampiDesert_Room2Placements[];
 extern struct ActorPlacement gYampiDesert_Room2PlacementsAfterMeeting[];
-#define gYampiDesert_Room2PlacementsAfterMeeting                               \
-  gYampiDesert_Room2PlacementsAfterMeeting
 extern struct ActorPlacement gYampiDesert_Room3Placements[];
 extern struct ActorPlacement gYampiDesert_Room4Placements[];
 extern struct ActorPlacement gYampiDesert_Room5Placements[];
@@ -1071,10 +1069,6 @@ void YampiDesert_HideSlideActors(void) {
 
 DEFINE_ACTORS_SET_HIDDEN(YampiDesert_SetActorsHidden)
 
-#define Motion_SetModeAndWaitAnimation Motion_SetModeAndWaitAnimation
-
-#define Actor_SetMovementTypeAndWaitById Actor_SetMovementTypeAndWaitById
-
 /* VIEW(yampi_desert): routine gYampiDesert_FinderRunsAhead as this part
  * declared it; the joined file has another; tried as the definition's extern
  * LATE_DATA u32 gYampiDesert_FinderRunsAhead[], it does not compile in tla-ja:
@@ -1092,7 +1086,6 @@ extern u8 gYampiDesert_TravelersFollow__yampi_desert[] __asm__(
     "gYampiDesert_TravelersFollow");
 #define gYampiDesert_TravelersFollow gYampiDesert_TravelersFollow__yampi_desert
 extern u32 gYampiDesert_LastTravelersFollow[];
-#define gYampiDesert_LastTravelersFollow gYampiDesert_LastTravelersFollow
 
 // ★ Named from the game: "Hey! Look! Up there!" (MsgHeyLookUp)
 void YampiDesert_SeeTravelersAbove(s32 p0) {

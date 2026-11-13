@@ -808,7 +808,6 @@ extern struct Trigger gMarsLighthouseRoomF_Room4Triggers[];
 extern struct Trigger gMarsLighthouseRoomF_Room1Triggers[];
 extern struct Trigger gMarsLighthouseRoomF_Room3Triggers[];
 extern struct Trigger gMarsLighthouseRoomF_Room2Triggers[];
-#define MarsLighthouseRoomF_ContinueSlide MarsLighthouseRoomF_ContinueSlide
 void Leader_SlideOnIceFromEdge(void);
 
 void Func_02000c80(s32 id) {
@@ -2795,7 +2794,6 @@ void Func_020007b4(void);
 void Func_020007cc(void);
 void Func_02000900(void);
 void Func_02000aac(void);
-#define MarsLighthouseRoomF_ContinueSlide MarsLighthouseRoomF_ContinueSlide
 
 LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 192, 0, 192, FACING_WEST, 0, -1, -1, -1, -1, 0},

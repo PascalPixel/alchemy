@@ -91,7 +91,6 @@ struct RideWork {
 };
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
-#define MarsLighthouseStarRoom_SlideOnIce MarsLighthouseStarRoom_SlideOnIce
 
 s32 Func_02000038(struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);
@@ -1481,7 +1480,6 @@ void Func_02001d7c(void) {
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Actor_Release(struct Actor *object);
-#define MarsLighthouseStarRoom_SlideOnIce MarsLighthouseStarRoom_SlideOnIce
 
 DEFINE_RIDE_RELEASE_HANDLE(Ride_ReleaseHandle, Actor_Release)
 
@@ -2003,7 +2001,6 @@ s32 Actor_HasArrived(struct Actor *object);
 #undef SLIDE_SPHERES_OVERLAP
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
-#define MarsLighthouseStarRoom_SlideOnIce MarsLighthouseStarRoom_SlideOnIce
 
 void Leader_SetSlideStopped(s32 value) {
   gMarsLighthouseStarRoom_SlideStopped = value;
@@ -2177,7 +2174,6 @@ DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gData_02004cf4,
 #include "text/msg_ids.h"
 
 void MarsLighthouseStarRoom_ExamineStatue(void);
-#define MarsLighthouseStarRoom_SlideOnIce MarsLighthouseStarRoom_SlideOnIce
 
 extern s32 gData_02004910[];
 

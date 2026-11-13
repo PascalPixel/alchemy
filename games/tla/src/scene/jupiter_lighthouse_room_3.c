@@ -646,8 +646,6 @@ extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 
 void JupiterLighthouse_PushLogOffTheLedge(void);
-#define JupiterLighthouse_FinishMovingPillar                                   \
-  JupiterLighthouse_FinishMovingPillar
 
 // clang-format off
 LATE_DATA DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)

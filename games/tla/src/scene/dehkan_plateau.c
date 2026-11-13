@@ -1337,7 +1337,6 @@ void DehkanPlateau_JoltCamera(void) {
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
 
-#define CrumblingPillars_StepWithStandIn CrumblingPillars_StepWithStandIn
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
@@ -1701,7 +1700,6 @@ extern s16 gData_02003fb8[];
 extern s16 gData_02003fc0[];
 extern s16 gData_02003fc4[];
 
-#define CrumblingPillars_StepWithStandIn CrumblingPillars_StepWithStandIn
 void Func_02002180(void);
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
@@ -1942,7 +1940,6 @@ void DehkanPlateau_InitializeRoom1(void) {
   }
 }
 
-#define CrumblingPillars_PlaceWithStandIns CrumblingPillars_PlaceWithStandIns
 void DehkanPlateau_RestoreRoom2Cracks(void);
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);

@@ -330,13 +330,10 @@ u32 *Scene_GetRegions(void) {
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gKandoreanTemple_Placements[];
-#define gKandoreanTemple_Placements gKandoreanTemple_Placements
 extern struct ActorPlacement gKandoreanTemple_LiftRoomPlacements[];
 extern struct ActorPlacement gKandoreanTemple_ChestbeaterRoomPlacements[];
 extern struct ActorPlacement gKandoreanTemple_VentRoomPlacements[];
-#define gKandoreanTemple_VentRoomPlacements gKandoreanTemple_VentRoomPlacements
 extern struct ActorPlacement gKandoreanTemple_FogRoomPlacements[];
-#define gKandoreanTemple_FogRoomPlacements gKandoreanTemple_FogRoomPlacements
 
 void *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -402,22 +399,13 @@ void KandoreanTemple_KradenSuspectsTheWall(void) {
 
 extern struct Trigger gKandoreanTemple_Events[];
 extern struct Trigger gKandoreanTemple_LiftRoomEvents[];
-#define gKandoreanTemple_LiftRoomEvents gKandoreanTemple_LiftRoomEvents
 extern struct Trigger gKandoreanTemple_ChestbeaterRoomEvents[];
-#define gKandoreanTemple_ChestbeaterRoomEvents                                 \
-  gKandoreanTemple_ChestbeaterRoomEvents
 extern struct Trigger gKandoreanTemple_VentRoomEvents[];
-#define gKandoreanTemple_VentRoomEvents gKandoreanTemple_VentRoomEvents
 extern struct Trigger gKandoreanTemple_Room5Events[];
-#define gKandoreanTemple_Room5Events gKandoreanTemple_Room5Events
 extern struct Trigger gKandoreanTemple_Room6Events[];
-#define gKandoreanTemple_Room6Events gKandoreanTemple_Room6Events
 extern struct Trigger gKandoreanTemple_FogRoomEvents[];
-#define gKandoreanTemple_FogRoomEvents gKandoreanTemple_FogRoomEvents
 extern struct Trigger gKandoreanTemple_GateEvents[];
-#define gKandoreanTemple_GateEvents gKandoreanTemple_GateEvents
 extern struct Trigger gKandoreanTemple_PoisHallEvents[];
-#define gKandoreanTemple_PoisHallEvents gKandoreanTemple_PoisHallEvents
 
 void *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -3063,10 +3051,6 @@ void KandoreanTemple_LowerTheLadder(void) {
 }
 
 void KandoreanTemple_FightFog(void);
-#define KandoreanTemple_MeditateRestlessly KandoreanTemple_MeditateRestlessly
-#define KandoreanTemple_LevitateStudentBob KandoreanTemple_LevitateStudentBob
-#define KandoreanTemple_PlaceLevitatingStudent                                 \
-  KandoreanTemple_PlaceLevitatingStudent
 void KandoreanTemple_StartMovingPillar(void);
 void KandoreanTemple_ReceiveLash(void);
 

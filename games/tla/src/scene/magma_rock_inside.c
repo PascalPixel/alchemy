@@ -400,21 +400,13 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gMagmaRockInside_Placements[];
-#define gMagmaRockInside_Placements gMagmaRockInside_Placements
 extern struct ActorPlacement gMagmaRockInside_Room2Placements[];
-#define gMagmaRockInside_Room2Placements gMagmaRockInside_Room2Placements
 extern struct ActorPlacement gMagmaRockInside_Room3Placements[];
-#define gMagmaRockInside_Room3Placements gMagmaRockInside_Room3Placements
 extern struct ActorPlacement gMagmaRockInside_Room4Placements[];
-#define gMagmaRockInside_Room4Placements gMagmaRockInside_Room4Placements
 extern struct ActorPlacement gMagmaRockInside_Room5Placements[];
-#define gMagmaRockInside_Room5Placements gMagmaRockInside_Room5Placements
 extern struct ActorPlacement gMagmaRockInside_Room6Placements[];
-#define gMagmaRockInside_Room6Placements gMagmaRockInside_Room6Placements
 extern struct ActorPlacement gMagmaRockInside_Room7Placements[];
-#define gMagmaRockInside_Room7Placements gMagmaRockInside_Room7Placements
 extern struct ActorPlacement gMagmaRockInside_Room8Placements[];
-#define gMagmaRockInside_Room8Placements gMagmaRockInside_Room8Placements
 
 extern s16 gMagmaRockInside_Room6Pillars[];
 
@@ -640,7 +632,6 @@ void MagmaRockInside_ResolveBeforeBurst(void) {
 
 extern s32 gMagmaRockInside_Statues[];
 extern s16 gMagmaRockInside_Room4Statues[];
-#define gMagmaRockInside_Room4Statues gMagmaRockInside_Room4Statues
 
 void MagmaRockInside_FlashStatue(struct Actor *object);
 
@@ -2133,19 +2124,12 @@ DEFINE_MAGMA_ROCK_INSIDE_READ_TABLET_FROM(
 
 extern struct Trigger gMagmaRockInside_Triggers[];
 extern struct Trigger gMagmaRockInside_Room2Triggers[];
-#define gMagmaRockInside_Room2Triggers gMagmaRockInside_Room2Triggers
 extern struct Trigger gMagmaRockInside_Room3Triggers[];
-#define gMagmaRockInside_Room3Triggers gMagmaRockInside_Room3Triggers
 extern struct Trigger gMagmaRockInside_Room4Triggers[];
-#define gMagmaRockInside_Room4Triggers gMagmaRockInside_Room4Triggers
 extern struct Trigger gMagmaRockInside_Room5Triggers[];
-#define gMagmaRockInside_Room5Triggers gMagmaRockInside_Room5Triggers
 extern struct Trigger gMagmaRockInside_Room6Triggers[];
-#define gMagmaRockInside_Room6Triggers gMagmaRockInside_Room6Triggers
 extern struct Trigger gMagmaRockInside_Room7Triggers[];
-#define gMagmaRockInside_Room7Triggers gMagmaRockInside_Room7Triggers
 extern struct Trigger gMagmaRockInside_Room8Triggers[];
-#define gMagmaRockInside_Room8Triggers gMagmaRockInside_Room8Triggers
 
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -2286,7 +2270,6 @@ extern s16 gMagmaRockInside_PlatformPath11[];
 extern s16 gMagmaRockInside_PlatformPath12[];
 extern s32 gMagmaRockInside_Statues[];
 
-#define MagmaRockInside_StartLavaPlatform MagmaRockInside_StartLavaPlatform
 void Actor_PlaceBlocks(const u8 *table);
 void Tightrope_Place(s32 a, s32 b, s32 c);
 s32 MagmaRockInside_SwapCells(u32 layer, s32 x, s32 y, s32 value);
@@ -2858,8 +2841,6 @@ void MagmaRockInside_EndFallingRocks(void) {
 void MagmaRockInside_MeetDjinni(void);
 void MagmaRockInside_ResolveBeforeBurst(void);
 void MagmaRockInside_FireStatue(void);
-#define MagmaRockInside_BurstCrackedPillar1 MagmaRockInside_BurstCrackedPillar1
-#define MagmaRockInside_BurstCrackedPillar2 MagmaRockInside_BurstCrackedPillar2
 void MagmaRockInside_LightTorch(void);
 void MagmaRockInside_OpenStairs(void);
 

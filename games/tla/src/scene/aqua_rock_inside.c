@@ -543,7 +543,6 @@ void Func_020007a8(void) {
 }
 
 extern u8 gData_02003fb8[];
-#define gData_02003fb8 gData_02003fb8
 
 void Func_020007d4(void) {
   s32 priority;

@@ -67,7 +67,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gGondowanCliffs_ActorPlacements[];
 extern struct ActorPlacement gGondowanCliffs_PassActorPlacements[];
-#define gGondowanCliffs_PassActorPlacements gGondowanCliffs_PassActorPlacements
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_GondowanCliffsPass)
@@ -718,7 +717,6 @@ void GondowanCliffs_BlowAwayFoliage(void);
 extern s32 gGondowanCliffs_ResetTileSpriteScript[];
 
 void GondowanCliffs_FightKindle(void);
-#define GondowanCliffs_PushPillarIntoWater GondowanCliffs_PushPillarIntoWater
 void GondowanCliffs_FreezeFirstPuddle(void);
 void GondowanCliffs_TalkToDog(void);
 

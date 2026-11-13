@@ -3138,8 +3138,6 @@ void Func_0200505c(void) {
 }
 
 void Func_02001690(void);
-#define Actor_SetHorizontalPositionWithTerrain                                 \
-  Actor_SetHorizontalPositionWithTerrain
 void MapGrid_CopyCellPictureIndicesRect(s32 x, s32 z, s32 width, s32 height,
                                         s32 a, s32 b);
 void Map_CopyCellAttributeRect(s32 srcX, s32 srcZ, s32 width, s32 height,

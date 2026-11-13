@@ -81,7 +81,6 @@ void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Actor_Jump(s32 actor, s32 speed, s32 frames);
 void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z);
-#define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion
 void Actor_SetModeById(u32 actorId, s32 animation);
 void Event_Start(void);
 void Event_End(void);
@@ -266,7 +265,6 @@ void Func_02000280(void) {
 }
 
 struct Actor;
-#define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion
 #include "field/field.h"
 #undef Actor_SetPositionAndResetMotion
 
@@ -289,41 +287,24 @@ const struct SceneRegion *Scene_GetRegions(void) {
 }
 
 extern struct ActorPlacement gShrineOfTheSeaGod_Placements[];
-#define gShrineOfTheSeaGod_Placements gShrineOfTheSeaGod_Placements
 extern struct ActorPlacement gShrineOfTheSeaGod_Room1Placements[];
-#define gShrineOfTheSeaGod_Room1Placements gShrineOfTheSeaGod_Room1Placements
 extern struct ActorPlacement gShrineOfTheSeaGod_Room2Placements[];
-#define gShrineOfTheSeaGod_Room2Placements gShrineOfTheSeaGod_Room2Placements
 extern struct ActorPlacement gShrineOfTheSeaGod_Room3Placements[];
-#define gShrineOfTheSeaGod_Room3Placements gShrineOfTheSeaGod_Room3Placements
 extern struct ActorPlacement gShrineOfTheSeaGod_Room4Placements[];
-#define gShrineOfTheSeaGod_Room4Placements gShrineOfTheSeaGod_Room4Placements
 extern struct ActorPlacement gShrineOfTheSeaGod_Room5Placements[];
-#define gShrineOfTheSeaGod_Room5Placements gShrineOfTheSeaGod_Room5Placements
 extern struct ActorPlacement gShrineOfTheSeaGod_Room6Placements[];
-#define gShrineOfTheSeaGod_Room6Placements gShrineOfTheSeaGod_Room6Placements
 extern struct ActorPlacement gShrineOfTheSeaGod_Room7Placements[];
-#define gShrineOfTheSeaGod_Room7Placements gShrineOfTheSeaGod_Room7Placements
 extern struct ActorPlacement gShrineOfTheSeaGod_Room8Placements[];
 extern struct Trigger gShrineOfTheSeaGod_Triggers[];
 extern struct Trigger gShrineOfTheSeaGod_Room1Triggers[];
-#define gShrineOfTheSeaGod_Room1Triggers gShrineOfTheSeaGod_Room1Triggers
 extern struct Trigger gShrineOfTheSeaGod_Room2Triggers[];
-#define gShrineOfTheSeaGod_Room2Triggers gShrineOfTheSeaGod_Room2Triggers
 extern struct Trigger gShrineOfTheSeaGod_Room3Triggers[];
-#define gShrineOfTheSeaGod_Room3Triggers gShrineOfTheSeaGod_Room3Triggers
 extern struct Trigger gShrineOfTheSeaGod_Room4Triggers[];
-#define gShrineOfTheSeaGod_Room4Triggers gShrineOfTheSeaGod_Room4Triggers
 extern struct Trigger gShrineOfTheSeaGod_Room5Triggers[];
-#define gShrineOfTheSeaGod_Room5Triggers gShrineOfTheSeaGod_Room5Triggers
 extern struct Trigger gShrineOfTheSeaGod_Room6Triggers[];
-#define gShrineOfTheSeaGod_Room6Triggers gShrineOfTheSeaGod_Room6Triggers
 extern struct Trigger gShrineOfTheSeaGod_Room7Triggers[];
-#define gShrineOfTheSeaGod_Room7Triggers gShrineOfTheSeaGod_Room7Triggers
 extern struct Trigger gShrineOfTheSeaGod_Room8Triggers[];
-#define gShrineOfTheSeaGod_Room8Triggers gShrineOfTheSeaGod_Room8Triggers
 extern struct Trigger gShrineOfTheSeaGod_Room9Triggers[];
-#define gShrineOfTheSeaGod_Room9Triggers gShrineOfTheSeaGod_Room9Triggers
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -977,7 +958,6 @@ void Func_020012b4(void) {
 #include "../field/field_effect/advance_motion.c"
 
 #undef Actor_SetPositionAndResetMotion
-#define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion
 #undef EFFECT_SPAWN
 #undef EFFECT_CREATE
 #undef EFFECT_SET_MODE

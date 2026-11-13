@@ -441,7 +441,7 @@ SECTIONS
         "*/games/tbs/sound/songs/mus_jingle_small.o"(.rodata)
         "*/games/tbs/sound/songs/mus_jingle_medium.o"(.rodata)
         "*/games/tbs/sound/songs/mus_jingle_large.o"(.rodata)
-        "*/games/tbs/sound/songs/bgm_095.o"(.rodata)
+        "*/games/tbs/sound/songs/mus_095.o"(.rodata)
         "*/games/tbs/sound/songs/se_bell.o"(.rodata)
         "*/games/tbs/sound/songs/se_shop_purchase.o"(.rodata)
         "*/games/tbs/sound/songs/se_shop_sell.o"(.rodata)

@@ -29,10 +29,16 @@ extern s32 gLemurianShipDeck_BobPhase;
 void LemurianShipDeck_RotateColors4To9(void);
 void LemurianShipDeck_HoldOnToTiller(void);
 
+/// Places an actor facing an angle, the angle taken as the u16 an actor's
+/// facing is; the helper, our name, Madra's and Loho's placements use too.
+static inline void LemurianShipDeck_PlaceFacing(s32 id, s32 x, s32 z,
+                                                u16 facing) {
+  Actor_SetPositionAndFacing(id, x, z, facing);
+}
+
 /// The scene run from entrance 10: the crew takes its places on deck and the
 /// leader is asked to take the tiller; it ends by setting flag 0x8de.
 void LemurianShipDeck_TakeTheTiller(void) {
-  s32 angle;
   s32 turn;
 
   Event_Start();
@@ -42,18 +48,13 @@ void LemurianShipDeck_TakeTheTiller(void) {
   FieldCamera_MoveTo(PIXELS(342), PIXELS(48), PIXELS(408), 0);
   System_Wait(1);
   MapGrid_CopyCellsTo(60, 53, 67, 16, 7, 3);
-  Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, PIXELS(552),
-                             PIXELS(376), FACING_EAST);
-  /* FAKEMATCH(temporary): the angle held in a local, so its two-instruction
-   * constant is built ahead of the position arguments; as the constant
-   * argument, 4 of 405 instructions differ in tla-en. */
-  angle = 0xd000;
-  Actor_SetPositionAndFacing(9, PIXELS(558), PIXELS(345), angle);
-  Actor_SetPositionAndFacing(7, PIXELS(534), PIXELS(404), FACING_EAST);
+  LemurianShipDeck_PlaceFacing(gMainRoutineWork.currentOwner, PIXELS(552),
+                               PIXELS(376), FACING_EAST);
+  LemurianShipDeck_PlaceFacing(9, PIXELS(558), PIXELS(345), 0xd000);
+  LemurianShipDeck_PlaceFacing(7, PIXELS(534), PIXELS(404), FACING_EAST);
   turn = 0x2000;
-  Actor_SetPositionAndFacing(6, PIXELS(568), PIXELS(408), turn);
-  angle = 0x4000;
-  Actor_SetPositionAndFacing(5, PIXELS(546), PIXELS(440), angle);
+  LemurianShipDeck_PlaceFacing(6, PIXELS(568), PIXELS(408), turn);
+  LemurianShipDeck_PlaceFacing(5, PIXELS(546), PIXELS(440), 0x4000);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
   Actor_SetScript(5, gLemurianShipDeck_FirstCrewLooksAround);

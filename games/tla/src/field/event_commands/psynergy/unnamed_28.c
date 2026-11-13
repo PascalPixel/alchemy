@@ -630,11 +630,11 @@ union FxSprite {
   u32 words[5];
 };
 
-s32 Func_080cdac0(s32 effect, s32 from, s32 to);
+s32 Field_MeasurePsynergyReach(s32 effect, s32 from, s32 to);
 
 /// Gathers up to eight live objects, other than the scene's main object, for
-/// which Func_080cdac0 measures a distance from the first object, with each
-/// one's sprite value.
+/// which Field_MeasurePsynergyReach measures a distance from the first object,
+/// with each one's sprite value.
 void ViewMove_SaveNearbySprites(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -649,8 +649,8 @@ void ViewMove_SaveNearbySprites(void) {
     obj = *objects++;
     if (obj == NULL || obj->script == NULL || obj == scene->mainObject)
       continue;
-    if (Func_080cdac0((s16)(scene->fieldKind | 0x100), scene->firstObjectId,
-                      i) == -1)
+    if (Field_MeasurePsynergyReach((s16)(scene->fieldKind | 0x100),
+                                   scene->firstObjectId, i) == -1)
       continue;
     group->objects[group->count] = obj;
     group->values[group->count] = ((union FxSprite *)obj->sprite)->halves[9];

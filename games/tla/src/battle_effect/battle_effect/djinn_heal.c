@@ -204,7 +204,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
           across = Trig_Sin(quad->x) * ((s16 *)&quad->z)[1];
           deep = Trig_Cos(quad->x) * ((s16 *)&quad->z)[1];
           quad->x += 0x200;
-          Func_08015160(across, quad->y, deep);
+          SceneTransform_ApplyPosition3(across, quad->y, deep);
           SceneTransform_ApplyScale3(scale, scale, scale);
           Transform_ApplyPitch(quad->velocityX);
           Transform_ApplyRoll(quad->velocityZ);
@@ -589,7 +589,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
         }
         model->shade = shade;
         Transform_Reset();
-        Func_08015160(-0x100000, Data_08197a9c[k] << 16, 0);
+        SceneTransform_ApplyPosition3(-0x100000, Data_08197a9c[k] << 16, 0);
         SceneTransform_ApplyScale3(scale, scale * 4 / 3, scale);
         Transform_ApplyPitch(3000);
         model->scrollU = ((frame + k * 5) & 7) * 16;

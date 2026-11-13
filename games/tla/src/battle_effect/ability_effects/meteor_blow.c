@@ -53,8 +53,8 @@ void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -407,7 +407,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       for (; i != 5; i++) {
         model->scrollV = ~scroll & 127;
         Transform_Reset();
-        Func_08015160(-0x20000, -0x400000, 0);
+        SceneTransform_ApplyPosition3(-0x20000, -0x400000, 0);
         SceneTransform_ApplyScale3(42000, 0x24650, 0x10000);
         SceneTransform_ApplyScale3(scale, scale, scale);
         Transform_ApplyRoll(0x8000);
@@ -649,7 +649,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
 
           model->shade = shade;
           Transform_Reset();
-          Func_08015160(x0 << 16, 0x280000, 0);
+          SceneTransform_ApplyPosition3(x0 << 16, 0x280000, 0);
           SceneTransform_ApplyScale3(s, s * Data_08199e94[i], s / 4);
           Transform_ApplyPitch(1000);
           if (i & 1) {
@@ -684,7 +684,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
           model->shade = shade;
           model->scrollU = ((frame + i * 5) & 7) << 4;
           Transform_Reset();
-          Func_08015160(half << 16, Data_08199ea0[i] << 16, 0);
+          SceneTransform_ApplyPosition3(half << 16, Data_08199ea0[i] << 16, 0);
           SceneTransform_ApplyScale3(s, s * 2, s);
           Transform_ApplyPitch(2000);
           Render_TransformVertices(Data_08198cac, verts, 32);

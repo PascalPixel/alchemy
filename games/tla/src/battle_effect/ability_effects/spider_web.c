@@ -268,8 +268,8 @@ void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -747,10 +747,10 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
             // Offset first, as the listing adds it.
             texture.pixels = (u8 *)((u << 12) + (s32)portraits);
             Transform_Reset();
-            Func_08015160(mx, my, 0);
+            SceneTransform_ApplyPosition3(mx, my, 0);
             Transform_ApplyPitch(0xc000);
             Transform_ApplyYaw(step->z);
-            Func_0801521c(s);
+            SceneTransform_ApplyUniformScale(s);
             Render_TransformVertices(gData_08199210, verts, 4);
             Render_DrawModelList(model);
           }
@@ -841,7 +841,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
           s32 sc;
 
           Transform_Reset();
-          Func_08015160(0x80000, 0, 0);
+          SceneTransform_ApplyPosition3(0x80000, 0, 0);
           Transform_ApplyPitch(0x4000);
           if (j == 0) {
             sc = t * 3072 - 0x12000;
@@ -851,12 +851,12 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
                 sc = 0xc000;
               }
             }
-            Func_0801521c(sc);
+            SceneTransform_ApplyUniformScale(sc);
             Transform_ApplyYaw(-t * 512);
           } else {
             if (t > 23) {
               sc = 0x1c000 - (t << 11);
-              Func_0801521c(sc);
+              SceneTransform_ApplyUniformScale(sc);
             } else {
               Transform_ApplyPitch(0x3ff0 - t * 682);
               Transform_ApplyRoll(t * 169 + 0xf028);

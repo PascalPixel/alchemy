@@ -25,8 +25,8 @@ void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -604,7 +604,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         p = &work->particles[i];
         model->mesh = &faces[i * 3];
         Transform_Reset();
-        Func_08015160(p->x + -0x400000, p->y + -0x400000, 0);
+        SceneTransform_ApplyPosition3(p->x + -0x400000, p->y + -0x400000, 0);
         SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         switch (i & 3) {
         case 0:
@@ -726,9 +726,10 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       model->scrollU = shade;
       model->scrollV = shade;
       Transform_Reset();
-      Func_08015160(pos.x / 2 + -0x440000, pos.y + -0x500000, 0);
+      SceneTransform_ApplyPosition3(pos.x / 2 + -0x440000, pos.y + -0x500000,
+                                    0);
       SceneTransform_ApplyScale3(scale, scale * 2, scale);
-      Func_08015160(-0x280000, 0, 0);
+      SceneTransform_ApplyPosition3(-0x280000, 0, 0);
       Transform_ApplyPitch(frame << 10);
       Transform_ApplyYaw(frame << 10);
       Render_TransformVertices(sphere, verts, 256);
@@ -751,9 +752,9 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           } while (0);
           model->shade = shade;
           Transform_Reset();
-          Func_08015160(0x2c0000, 0, 0);
+          SceneTransform_ApplyPosition3(0x2c0000, 0, 0);
           Transform_ApplyYaw(0x3448);
-          Func_0801521c(size);
+          SceneTransform_ApplyUniformScale(size);
           Render_TransformVertices(Data_081991e0, verts, 4);
           Render_DrawModelList(model);
         }
@@ -768,7 +769,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         model->shade = shade;
         model->mesh = gData_08199340;
         Transform_Reset();
-        Func_08015160(-0x100000, pos.y + -0x500000, 0);
+        SceneTransform_ApplyPosition3(-0x100000, pos.y + -0x500000, 0);
         SceneTransform_ApplyScale3(size >> 1, size, size >> 1);
         Transform_ApplyRoll(frame << 11);
         Render_TransformVertices(Data_081991e0, verts, 4);

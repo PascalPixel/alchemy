@@ -99,11 +99,11 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void Func_08015160(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void Transform_ApplyRoll(s32 angle);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 /* VIEW(f18ad40): routine Render_DrawModelList as void
  * Render_DrawModelList(struct Model__f18ad40 *model); f188714 has void
@@ -347,7 +347,8 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       model->mesh = Data_081992b0;
       Transform_Reset();
       SceneTransform_ApplyScale3(0x10000, 0x10000, 0x10000);
-      Func_08015160(overflow << 16, (card.y << 16) - (64 << 16), 0);
+      SceneTransform_ApplyPosition3(overflow << 16, (card.y << 16) - (64 << 16),
+                                    0);
       if (frame <= 47) {
         if (effect->side == 0)
           Transform_ApplyRoll((frame << 10) - 0xd000);
@@ -362,7 +363,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
         Transform_ApplyPitch(0x1000);
       }
       Transform_ApplyYaw(0x1770);
-      Func_0801521c(scale);
+      SceneTransform_ApplyUniformScale(scale);
       SceneTransform_ApplyScale3(0x10000, 0x20000, 0x10000);
       Render_TransformVertices(Data_081991e0, vertices, 4);
       Render_DrawModelList__f18ad40(model);

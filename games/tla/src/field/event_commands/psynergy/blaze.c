@@ -50,7 +50,7 @@ void *HeapSlot_Alloc(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 s32 Func_08020330(struct Actor *object);
 void Field_StartColorTransition(s32 frames, s32 color);
-s32 Func_080cdac0(s32 effect, s32 from, s32 to);
+s32 Field_MeasurePsynergyReach(s32 effect, s32 from, s32 to);
 struct ObjectMetadata *Resource_GetMetadataRecordFarFar(s32 id);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Actor_ReleaseFar(struct Actor *object);
@@ -123,7 +123,8 @@ void FieldPsynergy_Blaze(void) {
       id = OBJECT_DEFINITION(cursor.object)[0];
       if (cursor.object != NULL && cursor.object->script != NULL &&
           (id == 410 || id == 304 || id == 386 || id == 418)) {
-        distance = Func_080cdac0(scene->fieldKind, scene->firstObjectId, i);
+        distance = Field_MeasurePsynergyReach(scene->fieldKind,
+                                              scene->firstObjectId, i);
         if (distance != -1 && best > distance) {
           height = Resource_GetMetadataRecordFarFar(
                        OBJECT_DEFINITION(cursor.object)[0])

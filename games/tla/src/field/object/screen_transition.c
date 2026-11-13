@@ -420,7 +420,7 @@ extern const s32
 void FieldEffect_SpawnRevealMarkers(void) {
   // The row type is s16, as the rows are: with it the copied head test stays
   // apart from the bottom one.
-  s16 *entry = Func_080ceba8();
+  s16 *entry = SceneItem_GetRows();
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   s32 *origin = (s32 *)(map + 228);
   s32 originX = origin[0] & 0xffff0000;
@@ -451,7 +451,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
     entry += 3;
     if (type != 128 && flag != -1 && GameFlag_Test(flag))
       continue;
-    if (Func_080cec24(id, result))
+    if (SceneItem_FindPosition(id, result))
       continue;
     object = ObjectEvent_GetObject(i + 64);
     if (object == NULL)

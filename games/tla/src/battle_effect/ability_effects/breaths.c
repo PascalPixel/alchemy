@@ -103,7 +103,7 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void Func_08015160(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void Transform_ApplyRoll(s32 angle);
@@ -408,15 +408,18 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
             for (i = 0; i != count; i++) {
               Transform_Reset();
               if (mode == BREATH_BLAST) {
-                Func_08015160((mouthX - 64) << 16, (mouthY - 64) << 16, 0);
+                SceneTransform_ApplyPosition3((mouthX - 64) << 16,
+                                              (mouthY - 64) << 16, 0);
                 SceneTransform_ApplyScale3(0x10000, 0x20000, 0x10000);
                 Transform_ApplyRoll((i << 14) + 0x2000);
                 Transform_ApplyPitch(-0x1000);
               } else {
                 if (effect->side == 0)
-                  Func_08015160((mouthX - 72) << 16, (mouthY - 64) << 16, 0);
+                  SceneTransform_ApplyPosition3((mouthX - 72) << 16,
+                                                (mouthY - 64) << 16, 0);
                 else
-                  Func_08015160((mouthX - 56) << 16, (mouthY - 64) << 16, 0);
+                  SceneTransform_ApplyPosition3((mouthX - 56) << 16,
+                                                (mouthY - 64) << 16, 0);
                 Transform_ApplyYaw(0x32c8);
                 Transform_ApplyPitch(0x4000);
               }
@@ -450,22 +453,22 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
                 if (mode == BREATH_PIKE) {
                   scale /= 2;
                   if (effect->side == 0)
-                    Func_08015160((mouthX + Data_08199dbb[mode * 4 + i] - 48)
-                                      << 16,
-                                  (mouthY - 64) << 16, 0);
+                    SceneTransform_ApplyPosition3(
+                        (mouthX + Data_08199dbb[mode * 4 + i] - 48) << 16,
+                        (mouthY - 64) << 16, 0);
                   else
-                    Func_08015160((mouthX - Data_08199dbb[mode * 4 + i] - 80)
-                                      << 16,
-                                  (mouthY - 64) << 16, 0);
+                    SceneTransform_ApplyPosition3(
+                        (mouthX - Data_08199dbb[mode * 4 + i] - 80) << 16,
+                        (mouthY - 64) << 16, 0);
                 } else {
                   if (effect->side == 0)
-                    Func_08015160((mouthX + Data_08199dbb[mode * 4 + i] - 64)
-                                      << 16,
-                                  (mouthY - 64) << 16, 0);
+                    SceneTransform_ApplyPosition3(
+                        (mouthX + Data_08199dbb[mode * 4 + i] - 64) << 16,
+                        (mouthY - 64) << 16, 0);
                   else
-                    Func_08015160((mouthX - Data_08199dbb[mode * 4 + i] - 64)
-                                      << 16,
-                                  (mouthY - 64) << 16, 0);
+                    SceneTransform_ApplyPosition3(
+                        (mouthX - Data_08199dbb[mode * 4 + i] - 64) << 16,
+                        (mouthY - 64) << 16, 0);
                 }
                 SceneTransform_ApplyScale3(scale, scale, scale);
                 Transform_ApplyYaw(0x36b0);
@@ -493,7 +496,8 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
           model->mesh = Data_08199220;
           texture.pixels = work->sheet;
           Transform_Reset();
-          Func_08015160((mouthX - 64) << 16, (mouthY - 64) << 16, 0);
+          SceneTransform_ApplyPosition3((mouthX - 64) << 16,
+                                        (mouthY - 64) << 16, 0);
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
           if (frame > 7)
             angle = (frame << 7) + 0x2c60;

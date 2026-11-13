@@ -351,7 +351,8 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
             {
               s32 x = ((i & 3) << 17) + 0x20000;
               s32 o = -0x400000;
-              Func_08015160(cx + x + o, cy - (((i & 3) + 2) << 16) + o, 0);
+              SceneTransform_ApplyPosition3(cx + x + o,
+                                            cy - (((i & 3) + 2) << 16) + o, 0);
             }
             SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
             Transform_ApplyRoll(work->particles[i].x);
@@ -378,7 +379,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
           model->mesh = gData_08199340;
           model->vertices = verts;
           Transform_Reset();
-          Func_08015160(cx + -0x3e0000, cy + -0x420000, 0);
+          SceneTransform_ApplyPosition3(cx + -0x3e0000, cy + -0x420000, 0);
           SceneTransform_ApplyScale3(s >> 1, s, s);
           Transform_ApplyPitch(0x2000);
           Transform_ApplyRoll(0x2800);
@@ -388,7 +389,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         }
         if (frame >= 172 && frame <= 220) {
           Transform_Reset();
-          Func_08015160(cx + -0x3e0000, cy + -0x420000, 0);
+          SceneTransform_ApplyPosition3(cx + -0x3e0000, cy + -0x420000, 0);
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
           Transform_ApplyRoll(0x2800);
           if (frame > 203) {
@@ -535,7 +536,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
           Func_0818caa8(cells, q->x >> 16, q->y >> 16, 96);
         }
         Transform_Reset();
-        Func_08015160(q->x + -0x3f0000, q->y + -0x400000, 0);
+        SceneTransform_ApplyPosition3(q->x + -0x3f0000, q->y + -0x400000, 0);
         SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         Transform_ApplyRoll(0x9800);
         SceneTransform_ApplyScale3(0xdc500, 0x29c40, 0x8000);
@@ -668,7 +669,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         model->kind = 6;
         model->texture = &texture3;
         Transform_Reset();
-        Func_08015160(-0x20000, 0x100000, 0);
+        SceneTransform_ApplyPosition3(-0x20000, 0x100000, 0);
         SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         Transform_ApplyRoll(0x9800);
         SceneTransform_ApplyScale3(s, 0x20000, 0x8000);
@@ -716,10 +717,10 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
           s = 0x10000;
         }
         Transform_Reset();
-        Func_08015160(-0x20000, 0xc0000, 0);
+        SceneTransform_ApplyPosition3(-0x20000, 0xc0000, 0);
         Transform_ApplyPitch(0x2000);
         Transform_ApplyYaw(-frame << 10);
-        Func_0801521c(s);
+        SceneTransform_ApplyUniformScale(s);
         Render_TransformVertices(Data_02010800, vertices, 128);
         Render_DrawModelList(model);
       }
@@ -749,12 +750,12 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
             }
             model->shade = shade;
             Transform_Reset();
-            Func_08015160(-0x20000, 0x200000, 0);
+            SceneTransform_ApplyPosition3(-0x20000, 0x200000, 0);
             SceneTransform_ApplyScale3(s / 4, s / 4, s / 4);
             Transform_ApplyPitch(10000);
             Transform_ApplyYaw((frame + i * 8) << 10);
             SceneTransform_ApplyScale3(0x10000, 0x60000, 0x10000);
-            Func_08015160(0, Data_081977e8[i] << 16, 0);
+            SceneTransform_ApplyPosition3(0, Data_081977e8[i] << 16, 0);
             Render_TransformVertices(Data_02012000, vertices, 64);
             Render_DrawModelList(model);
           }
@@ -1026,8 +1027,9 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
           {
             s32 column = i & 3;
 
-            Func_08015160(cx + ((column * 2 + 2) << 16) - 0x400000,
-                          cy - ((column + 2) << 16) - 0x400000, 0);
+            SceneTransform_ApplyPosition3(
+                cx + ((column * 2 + 2) << 16) - 0x400000,
+                cy - ((column + 2) << 16) - 0x400000, 0);
           }
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
           Transform_ApplyRoll(ring->x);
@@ -1059,7 +1061,8 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
 
             model->depthBias = bias;
             Transform_Reset();
-            Func_08015160((center.x / 2 - 60) << 16, 0x200000, 0);
+            SceneTransform_ApplyPosition3((center.x / 2 - 60) << 16, 0x200000,
+                                          0);
             SceneTransform_ApplyScale3(
                 growth * 2, Data_081977f4[i] * growth + 0x40000, growth / 4);
             Transform_ApplyPitch(1000);

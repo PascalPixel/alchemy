@@ -19,7 +19,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -382,7 +382,8 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
         }
         rings->shade = shade;
         Transform_Reset();
-        Func_08015160((target.x / 2 - 64) << 16, Data_08198b5a[i] << 16, 0);
+        SceneTransform_ApplyPosition3((target.x / 2 - 64) << 16,
+                                      Data_08198b5a[i] << 16, 0);
         SceneTransform_ApplyScale3(scale >> 1, scale << 2, scale >> 1);
         Transform_ApplyPitch(1000);
         if (i & 1) {

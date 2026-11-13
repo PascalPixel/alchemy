@@ -543,7 +543,7 @@ extern u16 gData_08105a50[5];
 /// Loads the five menu icons of gData_08105a50 into free VRAM entries, gives
 /// each slot its sprite attributes and tile, keeps the entries for
 /// MenuIcon_ReleaseSlots and starts MenuIcon_PushSlots.
-void Func_081053a8(void) {
+void MenuIcon_LoadSlots(void) {
   struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
   struct MenuSlotEntry *slot = menu->slots;
   u16 *ids = gData_08105a50;
@@ -617,8 +617,10 @@ struct MenuPanel {
   s16 y;
 };
 
-// Lists usable entries with icons and names, or "none" when no entries qualify.
-void Func_081054e0(struct MenuPanel *panel, s32 x, s32 y, const u8 *enabled) {
+/// Lists usable entries with icons and names, or "none" when no entries
+/// qualify.
+void MenuPanel_DrawEntryList(struct MenuPanel *panel, s32 x, s32 y,
+                             const u8 *enabled) {
   s32 count = 0;
   s32 icon_x = panel->x * 8 + x + 8;
   s32 icon_y = panel->y * 8 + y + 8;

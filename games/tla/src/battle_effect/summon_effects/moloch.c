@@ -57,7 +57,7 @@ void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 struct PoolEntry *Render_AllocateModelList(s32 count);
-void Func_08015160(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void Transform_ApplyPitch(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
@@ -309,7 +309,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
             continue;
           model->shade = shade;
           Transform_Reset();
-          Func_08015160(16 << 16, Data_08199f3c[i] << 16, 0);
+          SceneTransform_ApplyPosition3(16 << 16, Data_08199f3c[i] << 16, 0);
           SceneTransform_ApplyScale3(scale, scale, scale);
           Transform_ApplyPitch(0xbb8);
           model->scrollU = ((frame + i * 5) & 7) << 4;
@@ -571,7 +571,7 @@ void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyYaw(s32 angle);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void Transform_ApplyRoll(s32 angle);

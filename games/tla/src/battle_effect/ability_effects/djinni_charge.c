@@ -26,8 +26,8 @@ void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -432,7 +432,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
         SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         gCameraSceneParameters[3] = 60;
         SceneTransform_ApplyPosition(focus);
-        Func_08015160(0, 0x100000, 0);
+        SceneTransform_ApplyPosition3(0, 0x100000, 0);
         if (effect->side == 0) {
           Transform_ApplyRoll(20576);
         } else {
@@ -442,7 +442,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
         if (frame > 31) {
           scale = (frame << 10) + 0x2000;
         }
-        Func_0801521c(scale);
+        SceneTransform_ApplyUniformScale(scale);
         if (frame > 3) {
           s32 shade = frame * 4 - 80;
 

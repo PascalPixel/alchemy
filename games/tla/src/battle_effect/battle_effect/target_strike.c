@@ -650,8 +650,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
         s32 scale = Trig_Sin(((frame - 8) << 11) + 0x3000) * 612 >> 8;
 
         Transform_Reset();
-        Func_08015160((targetPosition.x / 2 - 64) << 16,
-                      (targetPosition.y - 64) << 16, 0);
+        SceneTransform_ApplyPosition3((targetPosition.x / 2 - 64) << 16,
+                                      (targetPosition.y - 64) << 16, 0);
         Transform_ApplyPitch(0x4000);
         Transform_ApplyYaw(0x2000);
         SceneTransform_ApplyScale3(scale, scale / 2, scale / 2);

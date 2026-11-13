@@ -297,8 +297,8 @@ void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 
@@ -613,11 +613,11 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
     Transform_Reset();
     SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
     Transform_Push();
-    Func_08015160((source.x - 128) << 16, height << 16, 0);
+    SceneTransform_ApplyPosition3((source.x - 128) << 16, height << 16, 0);
     if (effect->side == 1) {
       Transform_ApplyYaw(0x8000);
     }
-    Func_0801521c(0x21770);
+    SceneTransform_ApplyUniformScale(0x21770);
     Render_TransformVertices(cells, vertices, 66);
     Render_DrawModelList(model);
     Transform_Pop();
@@ -628,7 +628,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       model->mesh = gData_08199340;
       model->scrollU = zero;
       tex->pixels = work->sheet + 0x4000;
-      Func_08015160((target.x - 124) << 16, (height - 144) << 16, 0);
+      SceneTransform_ApplyPosition3((target.x - 124) << 16,
+                                    (height - 144) << 16, 0);
       Transform_ApplyRoll(0x4000);
       SceneTransform_ApplyScale3(0x19c40, 0x14e20, 0x10000);
       Render_TransformVertices(Data_081991e0, vertices, 4);

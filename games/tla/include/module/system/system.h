@@ -65,12 +65,12 @@ s32 ArcTan2(s32 x, s32 y);
 void ScreenFade_ToBlack(s32 vblanks);
 void ScreenFade_Wait(void);
 
-void Func_080150ac(s32 ang);
+void Transform_SetYaw(s32 ang);
 void Transform_ApplyPitch(s32 ang);
 void SceneTransform_ApplyPosition(const s32 *pos);
 void Projection_Set(u32 value0, u32 value1, u32 value2);
-void Func_08015160(s32 x, s32 y, s32 z); // translate
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z); // translate
+void SceneTransform_ApplyUniformScale(s32 scale);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void Transform_ApplyRoll(s32 ang);
 void Transform_Pop(void);

@@ -43,7 +43,7 @@ s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
 /// previewing each choice in place: left and right cycle through the reserve,
 /// A confirms and swaps the two in gMainRoutineWork.activeOwners, and B puts
 /// the slot's member back.
-s32 Func_0804b8b8(s32 slot) {
+s32 BattleParty_ChooseReserve(s32 slot) {
   u16 owners[6];
   u16 selected[2];
   struct BattleWork *battle;

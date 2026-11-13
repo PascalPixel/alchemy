@@ -82,7 +82,7 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 struct PoolEntry *Render_AllocateModelList(s32 count);
-void Func_08015160(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
@@ -378,7 +378,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
 
           model->look.shade = shade;
           Transform_Reset();
-          Func_08015160((from.x / 2 - 64) << 16, 0, 0);
+          SceneTransform_ApplyPosition3((from.x / 2 - 64) << 16, 0, 0);
           SceneTransform_ApplyScale3(scale, scale * 2, scale);
           Transform_ApplyPitch(Data_08199f2a[i]);
           Transform_ApplyYaw(Data_08199f2e[i]);
@@ -402,7 +402,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
 
         model->look.shade = 0;
         Transform_Reset();
-        Func_08015160((from.x / 2 - 64) << 16, 0, 0);
+        SceneTransform_ApplyPosition3((from.x / 2 - 64) << 16, 0, 0);
         SceneTransform_ApplyScale3(scale, scale * 2, scale);
         Transform_ApplyPitch(Data_08199f2a[i]);
         Transform_ApplyYaw(Data_08199f2e[i]);
@@ -423,7 +423,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
 
           model->look.shade = shade;
           Transform_Reset();
-          Func_08015160((to.x / 2 - 64) << 16, 0, 0);
+          SceneTransform_ApplyPosition3((to.x / 2 - 64) << 16, 0, 0);
           SceneTransform_ApplyScale3(scale, scale * 2, scale);
           Transform_ApplyPitch(Data_08199f2a[i]);
           Transform_ApplyYaw(Data_08199f2e[i]);
@@ -457,7 +457,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         x = step->x;
         y = step->y;
         center = -(64 << 16);
-        Func_08015160(x + center, y + center, 0);
+        SceneTransform_ApplyPosition3(x + center, y + center, 0);
         SceneTransform_ApplyScale3(step->variant * 3, step->variant * 6,
                                    step->variant);
         Transform_ApplyPitch(step->z);

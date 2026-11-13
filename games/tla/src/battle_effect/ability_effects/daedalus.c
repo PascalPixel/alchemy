@@ -78,8 +78,8 @@ s32 BattleEffect_LoadBlitter(s32 slot,
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 member, s32 timer,
                               s32 frames);
 struct PoolEntry *Render_AllocateModelList(s32 count);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
@@ -173,8 +173,8 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
         quad->unk14 = gData_081994e0[mode];
         quad->vertices = vertices;
         Transform_Reset();
-        Func_08015160(0, (target.y - 58) << 16, 0);
-        Func_0801521c(gData_081994d0[mode] << 1);
+        SceneTransform_ApplyPosition3(0, (target.y - 58) << 16, 0);
+        SceneTransform_ApplyUniformScale(gData_081994d0[mode] << 1);
         Render_TransformVertices(gData_081991f0, vertices, 4);
         Render_DrawModelList(quad);
         Heap_Release(quad);
@@ -1149,10 +1149,10 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         if (z >= -63) {
           beam[5] = z;
           Transform_Reset();
-          Func_08015160(camera + 0x20000, 0x80000, 0);
+          SceneTransform_ApplyPosition3(camera + 0x20000, 0x80000, 0);
           Transform_ApplyRoll(0x4300);
           Transform_ApplyPitch(-0x800);
-          Func_0801521c((v << 14) + 0x4180);
+          SceneTransform_ApplyUniformScale((v << 14) + 0x4180);
           Render_TransformVertices(gData_08199210, buffer, 4);
           Render_DrawModelList(beam);
         }
@@ -1817,8 +1817,9 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
 
           Transform_Reset();
           k = i & 3;
-          Func_08015160((k << 17) + ringX + ringOffset,
-                        discY - ((k + 2) << 16) + ringOffset, 0);
+          SceneTransform_ApplyPosition3((k << 17) + ringX + ringOffset,
+                                        discY - ((k + 2) << 16) + ringOffset,
+                                        0);
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
           Transform_ApplyRoll(ring->x);
           SceneTransform_ApplyScale3(Trig_Sin(ring->variant * 682) + 0x10000,

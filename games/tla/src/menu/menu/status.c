@@ -79,7 +79,7 @@ s32 PartyMemberChooser_Run(void) {
 
 s32 StatusScreen_RunPages(void);
 
-void Func_081053a8(void);
+void MenuIcon_LoadSlots(void);
 void MenuIcon_ReleaseSlots(void);
 
 s32 StatusScreen_Run(void) {
@@ -125,7 +125,7 @@ s32 StatusScreen_Run(void) {
   if (Party_SumDjinnCountsFar(result) != 0)
     DjinnFigures_InitializeTopRow();
   Link_DrawPageArrowsFar(0x06002500);
-  Func_081053a8();
+  MenuIcon_LoadSlots();
   Menu_StartWatchingStart();
   *page = 0;
 
@@ -976,7 +976,8 @@ extern const u8 gMenu_SlashString[];
 
 void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags);
 
-void Func_081054e0(struct MenuPanel *panel, s32 x, s32 y, const u8 *enabled);
+void MenuPanel_DrawEntryList(struct MenuPanel *panel, s32 x, s32 y,
+                             const u8 *enabled);
 
 s32 Unit_GetElementLevelFar(s32 ownerId, s32 element);
 
@@ -1009,7 +1010,7 @@ void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
   keepDrawn = mode & 0x100;
   if (keepDrawn == 0)
     Window_ClearInteriorTilesFar(window, 0, 40, 96, 96);
-  Func_081054e0(window, 0, 40, ailments);
+  MenuPanel_DrawEntryList(window, 0, 40, ailments);
   if (menu->page == 3)
     return;
   if (keepDrawn == 0) {

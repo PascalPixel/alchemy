@@ -207,7 +207,7 @@ s32 Scene_TalkToActor(s32 id) {
   object = Actor_GetById(id);
   if (id > 63) {
     if (id != 79) {
-      row = Func_080ceba8();
+      row = SceneItem_GetRows();
       if (row != NULL) {
         u8 *end = (u8 *)row + id * 8;
         s16 *p;
@@ -550,9 +550,9 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
 /// (Actor_JumpDownLedge(owner, 6, 0)); key 0x80 runs
 /// Field_TryJumpForward; key 0x40 runs Func_080d50f8 or Func_080d53b8 by the
 /// push kind and clears the push state when it returns 0; key 2 with
-/// Func_080cdc74 runs the nearby talk target's kind 8 event and then the kind 9
-/// event for keys (messages under 0x10000, otherwise a routine called with keys
-/// and the target). Always returns 0.
+/// Leader_CanPushObjectAhead runs the nearby talk target's kind 8 event and
+/// then the kind 9 event for keys (messages under 0x10000, otherwise a routine
+/// called with keys and the target). Always returns 0.
 s32 Field_RunPushCell(s32 keys) {
   struct EventWorkView *work = Ram_HeapSlots->eventWork;
   s32 owner = gMainRoutineWork.currentOwner;
@@ -585,7 +585,7 @@ s32 Field_RunPushCell(s32 keys) {
       work->unk166 = 0;
     }
   }
-  if ((keys & 2) && work->blockedSteps > 12 && Func_080cdc74()) {
+  if ((keys & 2) && work->blockedSteps > 12 && Leader_CanPushObjectAhead()) {
     target = Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner);
     if (target != -1) {
       event = Scene_FindTrigger(8, target);
@@ -595,7 +595,7 @@ s32 Field_RunPushCell(s32 keys) {
         else
           ((void (*)(s32, s32))result)(keys, target);
       }
-      Func_080cdd80();
+      Leader_PushObjectAhead();
       event = Scene_FindTrigger(9, keys);
       if (event != NULL && (result = event->result) != 0) {
         if (result < 0x10000)

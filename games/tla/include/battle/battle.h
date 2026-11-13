@@ -139,7 +139,7 @@ void BattleCamera_SetCommandView(s32 scene);
 s32 Battle_GetElementMultiplier(s32 selector, s32 mode);
 s32 Djinn_SetFar(s32 unitId, s32 element, s32 index);
 s32 Map_SetFlagAndApplyAttributeEditsFar(s32, s32, s32);
-s32 Func_080cdac0(s32 effect, s32 from, s32 to);
+s32 Field_MeasurePsynergyReach(s32 effect, s32 from, s32 to);
 s32 Func_080ce31c(s32 kind);
 struct TriggerEvent;
 struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,

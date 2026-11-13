@@ -653,7 +653,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
       if (shift < -64) {
         shift = -64;
       }
-      Func_08015160(shift << 16, 0, 0);
+      SceneTransform_ApplyPosition3(shift << 16, 0, 0);
     }
     model->kind = 7;
     model->texture = &texture;
@@ -730,12 +730,13 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
           continue;
         }
         Transform_Reset();
-        Func_08015160((target.x / 2 - 64) << 16, (target.y - 64) << 16, 0);
+        SceneTransform_ApplyPosition3((target.x / 2 - 64) << 16,
+                                      (target.y - 64) << 16, 0);
         SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         Transform_ApplyRoll((i << 14) + 0x2000);
         Transform_ApplyPitch(0x1000);
         Transform_ApplyYaw(angle);
-        Func_0801521c(t * 0x3000);
+        SceneTransform_ApplyUniformScale(t * 0x3000);
         Render_TransformVertices(gData_08199210, vertices, 4);
         Render_DrawModelList(model);
       }
@@ -986,7 +987,7 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
       if (mode == 0) {
         s32 scale;
 
-        Func_08015160((screen.x / 2 - 64) << 16, 0x280000, 0);
+        SceneTransform_ApplyPosition3((screen.x / 2 - 64) << 16, 0x280000, 0);
         Transform_ApplyPitch(k << 11);
         Transform_ApplyYaw(k * 21000 + yaw);
         scale = 85536 - Trig_Sin(frame * 964);
@@ -997,7 +998,8 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
       } else {
         s32 scale;
 
-        Func_08015160((screen.x / 2 - 64) << 16, (k << 20) + 0x100000, 0);
+        SceneTransform_ApplyPosition3((screen.x / 2 - 64) << 16,
+                                      (k << 20) + 0x100000, 0);
         Transform_ApplyPitch((k << 12) - 0x800);
         Transform_ApplyYaw(k * 21000 + yaw);
         scale = 0x10000 - Trig_Sin(frame * 682) / 4;
@@ -1241,7 +1243,8 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
         }
         model->shade = shade;
         Transform_Reset();
-        Func_08015160((centerX - 64) << 16, Data_08198b2e[k] << 16, 0);
+        SceneTransform_ApplyPosition3((centerX - 64) << 16,
+                                      Data_08198b2e[k] << 16, 0);
         SceneTransform_ApplyScale3(scale, scale, scale);
         model->scrollU = ((frame + k * 5) & 7) << 4;
         Transform_ApplyPitch(3000);
@@ -1274,12 +1277,13 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
           continue;
         }
         Transform_Reset();
-        Func_08015160((target.x / 2 - 64) << 16, (target.y - 80) << 16, 0);
+        SceneTransform_ApplyPosition3((target.x / 2 - 64) << 16,
+                                      (target.y - 80) << 16, 0);
         SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         Transform_ApplyYaw((effect->side << 15) + 0x8000);
         Transform_ApplyRoll(Data_08198b32[k]);
         Transform_ApplyPitch(Data_08198b42[k]);
-        Func_0801521c(scale);
+        SceneTransform_ApplyUniformScale(scale);
         Render_TransformVertices(gData_08199210, vertices, 4);
         Render_DrawModelList(model);
       }

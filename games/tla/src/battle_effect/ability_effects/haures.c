@@ -23,8 +23,8 @@ void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -152,7 +152,7 @@ void BattleEffect_ProcessPendingStampTransfer(
 #define HALF_HI(v) (((s16 *)&(v))[1])
 
 static __inline__ void PLACE(s32 x, s32 y) {
-  Func_08015160(x << 16, y << 16, 0);
+  SceneTransform_ApplyPosition3(x << 16, y << 16, 0);
 }
 /// Haures: shadowed wings unfold over a dark pool, the demon climbs out of a
 /// vortex and dives through the foes, scattering into black feathers.
@@ -472,14 +472,14 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           model->mesh = gData_08199340;
           model->vertices = verts;
           Transform_Reset();
-          Func_08015160(0, 0x240000, 0);
+          SceneTransform_ApplyPosition3(0, 0x240000, 0);
           Transform_ApplyPitch(4000);
           Transform_ApplyYaw(-t << 8);
           s = t << 10;
           if (s > 60000) {
             s = 60000;
           }
-          Func_0801521c(s);
+          SceneTransform_ApplyUniformScale(s);
           Render_TransformVertices(gData_08199210, verts, 4);
           Render_DrawModelList(model);
           texture.logWidth = 5;
@@ -491,12 +491,12 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           model->vertices = verts;
           model->shade = sh;
           Transform_Reset();
-          Func_08015160(0, 0x240000, 0);
+          SceneTransform_ApplyPosition3(0, 0x240000, 0);
           s = (t * 3 << 8) + 1024;
           if (s > 38768) {
             s = 38768;
           }
-          Func_0801521c(s);
+          SceneTransform_ApplyUniformScale(s);
           if (frame > 73) {
             s32 a;
             s32 b;
@@ -652,7 +652,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         model->mesh = gData_08199364;
         model->vertices = verts;
         Transform_Reset();
-        Func_08015160(0, -0x40000, 0);
+        SceneTransform_ApplyPosition3(0, -0x40000, 0);
         s = 0x1d8f0;
         if (frame > 268) {
           s = (frame << 12) - 0xef710;
@@ -677,7 +677,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             texture2.pixels = buffer;
             model->mesh = Data_08199388;
             Transform_Reset();
-            Func_08015160(0, -0x40000, 0);
+            SceneTransform_ApplyPosition3(0, -0x40000, 0);
             SceneTransform_ApplyScale3(0x1b1e0, 0x29c40, 0x20000);
             Render_TransformVertices(Data_081991e0, verts, 4);
             Render_DrawModelList(model);
@@ -812,7 +812,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             if ((u32)(HALF_HI(p->x) + 16) <= 152 && (p->y >> 16) >= -16 &&
                 (p->y >> 16) <= 136) {
               Transform_Reset();
-              Func_08015160(p->x + -0x400000, p->y + -0x400000, 0);
+              SceneTransform_ApplyPosition3(p->x + -0x400000, p->y + -0x400000,
+                                            0);
               SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
               switch (i & 3) {
               case 0:
@@ -1052,10 +1053,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           x = m * 20 - 16;
           Transform_Reset();
           if (i == 0) {
-            Func_08015160(x << 16, y << 16, 0);
+            SceneTransform_ApplyPosition3(x << 16, y << 16, 0);
             Transform_ApplyRoll(-0x2000);
           } else {
-            Func_08015160((x - 16) << 16, y << 16, 0);
+            SceneTransform_ApplyPosition3((x - 16) << 16, y << 16, 0);
             Transform_ApplyRoll(0x27d0);
           }
           SceneTransform_ApplyScale3(0x30000, amp, 0x20000);

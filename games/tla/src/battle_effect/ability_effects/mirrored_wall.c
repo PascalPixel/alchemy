@@ -81,7 +81,7 @@ void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
 
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 struct PoolEntry *Render_AllocateModelList(s32 count);
-void Func_08015160(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void Transform_ApplyYaw(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
@@ -227,7 +227,8 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
     if (frame < LUNGE_STREAK_FRAMES) {
       Transform_Reset();
       SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-      Func_08015160((caster.x - 128) << 16, (caster.y - 88) << 16, 0);
+      SceneTransform_ApplyPosition3((caster.x - 128) << 16,
+                                    (caster.y - 88) << 16, 0);
       SceneTransform_ApplyScale3(Data_081994b8[mode] << 1,
                                  Data_081994b8[mode] << 1, Data_081994b8[mode]);
       if (effect->side == 1)
@@ -257,9 +258,11 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
       Transform_Reset();
       SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
       if (effect->side == 0)
-        Func_08015160((target.x - 144) << 16, (target.y - 84) << 16, 0);
+        SceneTransform_ApplyPosition3((target.x - 144) << 16,
+                                      (target.y - 84) << 16, 0);
       else
-        Func_08015160((target.x - 112) << 16, (target.y - 84) << 16, 0);
+        SceneTransform_ApplyPosition3((target.x - 112) << 16,
+                                      (target.y - 84) << 16, 0);
       SceneTransform_ApplyScale3(scale, scale << 2, scale);
       Render_TransformVertices(Data_081991e0, vertices, 4);
       Render_DrawModelList(quad);

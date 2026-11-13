@@ -319,8 +319,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       }
       model->shade = shade;
       Transform_Reset();
-      Func_08015160(-0x40000, 0x180000, 0);
-      Func_0801521c(s);
+      SceneTransform_ApplyPosition3(-0x40000, 0x180000, 0);
+      SceneTransform_ApplyUniformScale(s);
       Transform_ApplyPitch(3000);
       Render_TransformVertices(gData_08199210, verts, 4);
       Render_DrawModelList(model);
@@ -597,8 +597,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       }
       model->shade = shade;
       Transform_Reset();
-      Func_08015160(-0x40000, 0x80000, 0);
-      Func_0801521c(s);
+      SceneTransform_ApplyPosition3(-0x40000, 0x80000, 0);
+      SceneTransform_ApplyUniformScale(s);
       Transform_ApplyPitch(5000);
       Render_TransformVertices(gData_08199210, verts, 4);
       Render_DrawModelList(model);

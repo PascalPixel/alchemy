@@ -943,7 +943,7 @@ s32 Field_CheckSpheresOverlapFar(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 
 void MapGrid_SetScreenShakeFar(s32 x, s32 y, s32 decay);
 
-s32 Func_080cda84(s32 id, struct Actor *actor, s32 *position);
+s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *actor, s32 *position);
 
 u32 MapGrid_GetTerrainKindFar(s32 terrain, s32 x, s32 z);
 
@@ -1006,12 +1006,12 @@ s32 Scene_RunStepTriggerOrExit(s32 value);
 s32 Field_RunPushCell(s32 keys);
 s32 Field_ExamineCell(s32 id);
 
-s32 Func_080cdc74(void);
-void Func_080cdd80(void);
+s32 Leader_CanPushObjectAhead(void);
+void Leader_PushObjectAhead(void);
 
 s32 Field_UsePsynergy(u32 code);
 
-s16 *Func_080ceba8(void);
+s16 *SceneItem_GetRows(void);
 void Field_PlaceTreasureSpots(void);
 s32 Actor_GetSpriteShape(u32 objectId);
 void ObjectEvent_SetMode5WithCue(u32 objectId);
@@ -1143,7 +1143,7 @@ void ActorScript_SetOrCompareRiseEnabled(struct ScriptOperands *work,
 
 void Icon_DrawItemFar(s32 item);
 
-s32 Func_080cec24(s32 value, s32 *out);
+s32 SceneItem_FindPosition(s32 value, s32 *out);
 
 void MapGrid_SetCellBehaviorAtFar(s32 terrain, s32 x, s32 z, s32 value);
 

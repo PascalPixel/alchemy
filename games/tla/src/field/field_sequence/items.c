@@ -257,7 +257,8 @@ s32 Func_080ce31c(s32 kind) {
       if (event->control & 0x80) {
         fallback = 0x200;
       } else if (event->control & 0x10) {
-        s32 distance = Func_080cdac0(kind, Party_GetLeaderActor(), target);
+        s32 distance =
+            Field_MeasurePsynergyReach(kind, Party_GetLeaderActor(), target);
 
         if (distance != -1 && best > distance) {
           nearby = target | 0x100;

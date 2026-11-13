@@ -48,8 +48,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -675,11 +675,12 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         model->shade = sh;
         if (sh > -64) {
           Transform_Reset();
-          Func_08015160(Data_08199446[i] << 16, Data_0819944a[i] << 16, 0);
+          SceneTransform_ApplyPosition3(Data_08199446[i] << 16,
+                                        Data_0819944a[i] << 16, 0);
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           Transform_ApplyRoll(Data_08199436[i]);
           Transform_ApplyPitch(Data_0819943e[i]);
-          Func_0801521c(scale);
+          SceneTransform_ApplyUniformScale(scale);
           Transform_ApplyYaw(frame << 11);
           Render_TransformVertices(gData_08199210, verts, 4);
           Render_DrawModelList(model);
@@ -1125,8 +1126,9 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
         dagger->velocityZ = 0;
       }
       Transform_Reset();
-      Func_08015160(dagger->x - (64 << 16), dagger->y - (64 << 16), 0);
-      Func_0801521c(0x8000);
+      SceneTransform_ApplyPosition3(dagger->x - (64 << 16),
+                                    dagger->y - (64 << 16), 0);
+      SceneTransform_ApplyUniformScale(0x8000);
       Transform_ApplyRoll(dagger->z);
       Render_TransformVertices(gData_08199474, vertices, 4);
       Render_DrawModelList(quad);

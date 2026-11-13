@@ -235,8 +235,8 @@ Resource_FarCall006:
 	export Func_080c8728, Func_080eadfc
 	export Func_080c8730, MapCollision_FindOrAddTag
 	export Func_080c8738, Actor_FindAtCell
-	export Func_080c8740, Func_080cdc74
-	export Func_080c8748, Func_080cdd80
+	export Func_080c8740, Leader_CanPushObjectAhead
+	export Func_080c8748, Leader_PushObjectAhead
 	export Func_080c8750, Leader_FindActorAhead
 	export Actor_SpawnFar, Actor_Spawn
 	export Func_080c8760, TileCopies_CopyTouchedCells

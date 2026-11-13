@@ -64,7 +64,7 @@ extern char ResourceId_GlowDisc, ResourceId_GoldStar;
 void *HeapSlot_Alloc(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-s32 Func_080cda84(s32 id, struct Actor *object, s32 *position);
+s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *object, s32 *position);
 s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 void FieldPsynergy_FadeToCastColor(void);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
@@ -135,7 +135,7 @@ void FieldPsynergy_Pound(void) {
   }
   if (scene->enabled != 0) {
     // As x != -1 this splits the -1 and loses the mvns.
-    spot = ~Func_080cda84(scene->fieldKind, caster, &scene->x);
+    spot = ~Field_MeasurePsynergyHeight(scene->fieldKind, caster, &scene->x);
     inReach = (u32)(-spot | spot) >> 31;
     if (inReach == 1) {
       for (j = 0; j < 80; j++) {

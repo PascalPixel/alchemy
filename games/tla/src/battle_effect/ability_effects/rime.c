@@ -66,7 +66,7 @@ void BattleEffect_StepPaletteToResource(s32 resource);
 void BattleEffect_RunDjinniEntrance(
     struct BattleEffectArgument *effect, u32 packed, s32 *screen,
     s32 *world); // BattleEffect_RunDjinniEntrance
-void Func_08015160(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -239,7 +239,7 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
           s32 size;
 
           Transform_Reset();
-          Func_08015160(star->x, star->y, 0);
+          SceneTransform_ApplyPosition3(star->x, star->y, 0);
           size = swell >> 8;
           Transform_ApplyPitch(0x4000);
           Transform_ApplyYaw(frame << 9);

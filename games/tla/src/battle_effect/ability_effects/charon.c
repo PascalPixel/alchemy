@@ -232,11 +232,11 @@ s32 Trig_Cos(s32);
 s32 __divsi3(s32, s32);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void SceneTransform_ApplyScale3(s32, s32, s32);
-void Func_08015160(s32, s32, s32);
+void SceneTransform_ApplyPosition3(s32, s32, s32);
 void Transform_ApplyPitch(s32);
 void Transform_ApplyRoll(s32);
 void Transform_ApplyYaw(s32);
-void Func_0801521c(s32);
+void SceneTransform_ApplyUniformScale(s32);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 /* VIEW(f175f74): routine Render_DrawModelList as void
  * Render_DrawModelList(struct Model__f175f74 *); f173aac has void
@@ -854,7 +854,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         if (frame <= 282) {
           Transform_Reset();
           SceneTransform_ApplyScale3(scale * 2, scale * 2, scale * 2);
-          Func_08015160(-0x100000, -0x80000, 0);
+          SceneTransform_ApplyPosition3(-0x100000, -0x80000, 0);
           Transform_ApplyPitch(0xe000);
           Transform_ApplyRoll(0x4000 - t * 256);
           Transform_ApplyYaw(-t << 10);
@@ -880,7 +880,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           model->kind = 7;
           model->texture = texture;
           Transform_Reset();
-          Func_08015160(-0x80000, -0x80000, 0);
+          SceneTransform_ApplyPosition3(-0x80000, -0x80000, 0);
           SceneTransform_ApplyScale3(scale, scale, scale);
           Transform_ApplyPitch(0xc000);
           Transform_ApplyYaw(-t << 10);
@@ -1030,7 +1030,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
               }
               model->depth = depth2;
               Transform_Reset();
-              Func_08015160(-0x80000, -0x80000, 0);
+              SceneTransform_ApplyPosition3(-0x80000, -0x80000, 0);
               SceneTransform_ApplyScale3(size / 2, size, size / 2);
               if (k == 0) {
                 Transform_ApplyRoll(0xf000);
@@ -1304,7 +1304,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       if (depth > -48) {
         model->depth = depth;
         Transform_Reset();
-        Func_08015160(0x40000, 0, 0);
+        SceneTransform_ApplyPosition3(0x40000, 0, 0);
         SceneTransform_ApplyScale3(scale112, scale112, scale112);
         Transform_ApplyPitch(0x2000);
         if (frame > 55) {
@@ -1321,8 +1321,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       }
       if (depth > -48) {
         Transform_Reset();
-        Func_08015160(0x40000, -0x100000, 0);
-        Func_0801521c(-0xa710);
+        SceneTransform_ApplyPosition3(0x40000, -0x100000, 0);
+        SceneTransform_ApplyUniformScale(-0xa710);
         Transform_ApplyPitch(0x2000);
         Transform_ApplyYaw(-frame << 9);
         Render_TransformVertices(gData_08199210, texture, 4);
@@ -1337,8 +1337,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         }
         model->depth = last;
         Transform_Reset();
-        Func_08015160(0x20000, -0x200000, 0);
-        Func_0801521c(0x58f0);
+        SceneTransform_ApplyPosition3(0x20000, -0x200000, 0);
+        SceneTransform_ApplyUniformScale(0x58f0);
         Transform_ApplyPitch(0x2000);
         Transform_ApplyYaw(frame << 10);
         Render_TransformVertices(gData_08199210, texture, 4);
@@ -1351,8 +1351,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         }
         if (frame > -48) {
           Transform_Reset();
-          Func_08015160(0x20000, -0x300000, 0);
-          Func_0801521c(-0x31e0);
+          SceneTransform_ApplyPosition3(0x20000, -0x300000, 0);
+          SceneTransform_ApplyUniformScale(-0x31e0);
           Transform_ApplyPitch(0x2000);
           Transform_ApplyYaw(-frame << 10);
           Render_TransformVertices(gData_08199210, texture, 4);
@@ -1807,8 +1807,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             member->timer = timer + 1;
             model->depth = depth;
             Transform_Reset();
-            Func_08015160((member->x / 2 - 56) << 16, (member->y - 56) << 16,
-                          0);
+            SceneTransform_ApplyPosition3((member->x / 2 - 56) << 16,
+                                          (member->y - 56) << 16, 0);
             SceneTransform_ApplyScale3(size / 3, size, size);
             Transform_ApplyPitch(0xc000);
             Render_TransformVertices(gData_08199210, texture, 4);

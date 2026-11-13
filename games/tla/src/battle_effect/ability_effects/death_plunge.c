@@ -64,7 +64,7 @@ void BattleEffect_TintBattler(s32 actor, s32 palette, s32 group, s32 timerSlot,
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 struct PoolEntry *Render_AllocateModelList(s32 count);
-void Func_08015160(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void Transform_ApplyRoll(s32 angle);
 void Transform_ApplyPitch(s32 angle);
@@ -272,7 +272,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
           model->alpha = alpha;
           for (i = 0, angle = 0x2000; i != 2; angle += 0x4000, i++) {
             Transform_Reset();
-            Func_08015160((targetScreen.x / 2 - 64) << 16, 32 << 16, 0);
+            SceneTransform_ApplyPosition3((targetScreen.x / 2 - 64) << 16,
+                                          32 << 16, 0);
             SceneTransform_ApplyScale3(scale, scale, scale);
             Transform_ApplyRoll(angle);
             Transform_ApplyPitch(-0x1000);

@@ -22,8 +22,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -252,11 +252,11 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
         Transform_Reset();
         SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         if (i == 0) {
-          Func_08015160((centerX << 16) - 0x800000, (baseY << 16) - 0x400000,
-                        0);
+          SceneTransform_ApplyPosition3((centerX << 16) - 0x800000,
+                                        (baseY << 16) - 0x400000, 0);
         } else {
-          Func_08015160((centerX << 16) - 0x800000,
-                        ((baseY + 8) << 16) - 0x400000, 0);
+          SceneTransform_ApplyPosition3((centerX << 16) - 0x800000,
+                                        ((baseY + 8) << 16) - 0x400000, 0);
         }
         Transform_ApplyPitch(2000);
         if (frame <= 47) {
@@ -283,7 +283,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
           texture.pixels = TEXTURE_PIXELS;
         }
         if (scale > 0 && shade > -64) {
-          Func_0801521c(scale);
+          SceneTransform_ApplyUniformScale(scale);
           Render_TransformVertices(gData_08199210, vertices, 4);
           Render_DrawModelList(model);
         }
@@ -430,7 +430,8 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
       s32 y;
 
       Transform_Reset();
-      Func_08015160(ring->x - (128 << 16), ring->y - (64 << 16), 0);
+      SceneTransform_ApplyPosition3(ring->x - (128 << 16), ring->y - (64 << 16),
+                                    0);
       Transform_ApplyRoll(frame * 256);
       Transform_ApplyPitch(frame * 256 + 500);
       if (i > 7)

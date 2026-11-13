@@ -243,7 +243,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           age = frame - start;
           Transform_Reset();
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-          Func_08015160((from.x - 128) << 16, (from.y - 74) << 16, 0);
+          SceneTransform_ApplyPosition3((from.x - 128) << 16,
+                                        (from.y - 74) << 16, 0);
           Transform_ApplyRoll((i << 12) - 0x3800);
           SceneTransform_ApplyScale3(
               0x5555, Trig_Sin(age << 11) * Data_08199ebc[i] / 64 * 2, 0x8000);
@@ -270,7 +271,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           model->shade = zero;
           Transform_Reset();
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-          Func_08015160(step->x - (128 << 16), step->y - (64 << 16), 0);
+          SceneTransform_ApplyPosition3(step->x - (128 << 16),
+                                        step->y - (64 << 16), 0);
           Transform_ApplyRoll(step->z);
           SceneTransform_ApplyScale3(scale, 0x10000, 0x8000);
           Render_TransformVertices(Data_081991c0, projected, 4);
@@ -300,7 +302,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           model->shade = shade;
           Transform_Reset();
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-          Func_08015160(step->x - (128 << 16), step->y - (64 << 16), 0);
+          SceneTransform_ApplyPosition3(step->x - (128 << 16),
+                                        step->y - (64 << 16), 0);
           Transform_ApplyPitch(0x3c00);
           SceneTransform_ApplyScale3(scale, scale, scale);
           Render_TransformVertices(Data_081991e0, projected, 4);
@@ -320,7 +323,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           model->shade = shade;
           Transform_Reset();
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-          Func_08015160((from.x - 128) << 16, (from.y - 80) << 16, 0);
+          SceneTransform_ApplyPosition3((from.x - 128) << 16,
+                                        (from.y - 80) << 16, 0);
           SceneTransform_ApplyScale3(scale * 2, scale * 2, scale);
           Transform_ApplyRoll(0x6000 - (i << 14));
           Transform_ApplyPitch(-0x1000);

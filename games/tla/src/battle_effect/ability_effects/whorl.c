@@ -49,8 +49,8 @@ void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -504,7 +504,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           s32 y = 64 - ((Trig_Sin(frame * 630) << 6) >> 16);
 
           Transform_Push();
-          Func_08015160(0, ((y - i * 8) << 16) + 0x300000, 0);
+          SceneTransform_ApplyPosition3(0, ((y - i * 8) << 16) + 0x300000, 0);
           if (effect->side == 1) {
             Transform_ApplyYaw(0x8000);
           }
@@ -536,12 +536,13 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
             model->shade = shade;
             if (shade > -64) {
               Transform_Reset();
-              Func_08015160((apos.x / 2 - 64) << 16, (apos.y - 64) << 16, 0);
+              SceneTransform_ApplyPosition3((apos.x / 2 - 64) << 16,
+                                            (apos.y - 64) << 16, 0);
               SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
               Transform_ApplyRoll((i << 14) + 0x2000);
               Transform_ApplyPitch(-0x1000);
               Transform_ApplyYaw(frame << 12);
-              Func_0801521c(s);
+              SceneTransform_ApplyUniformScale(s);
               Render_TransformVertices(gData_08199210, vertices, 4);
               Render_DrawModelList(model);
             }
@@ -575,7 +576,8 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           scroll &= 127;
           model->scrollU = scroll;
           Transform_Reset();
-          Func_08015160((spos.x / 2 - 64) << 16, (spos.y << 16) - 0x340000, 0);
+          SceneTransform_ApplyPosition3((spos.x / 2 - 64) << 16,
+                                        (spos.y << 16) - 0x340000, 0);
           if (effect->side == 1) {
             Transform_ApplyYaw(0x8000);
           }
@@ -605,7 +607,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           }
           model->scrollV = 0;
           SceneTransform_ApplyPosition(pos);
-          Func_08015160(0, 0x100000, 0);
+          SceneTransform_ApplyPosition3(0, 0x100000, 0);
           for (i = 0; i != 3; i++) {
             Transform_Push();
             if (effect->side == 1) {

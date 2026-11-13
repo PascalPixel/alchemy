@@ -8,7 +8,7 @@
 #include "edition.h"
 
 s32 Scene_ApplyEntrance(s32);
-s32 Func_080cc7c4(void);
+s32 Field_PlaceAtEntrance(void);
 
 extern const u8 gDebug_PaletteSwatchTiles[];
 

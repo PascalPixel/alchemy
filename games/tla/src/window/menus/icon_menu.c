@@ -87,10 +87,10 @@ extern void Link_DrawShiftedTilePair__battle_party_commands(
 void Menu_BuildLocalizedPatternTiles(void);
 /* VIEW(battle_party_commands): routine Func_0804babc as s32 Func_0804babc(u16
  * *actors, struct BattleAction **cursor, s32 *forcedCount); the definition has
- * s32 Func_0804b8b8(s32 slot) { u16 owners[6]; u16 selected[2]; struct
- * BattleWork *battle; s32 count; count = BattleParty_PrepareReserveOwners...;
- * tried as the rest of the object declares it, Battle_CollectPartyCommands
- * moves: 1 of 1909 instructions in tla-ja. */
+ * s32 BattleParty_ChooseReserve(s32 slot) { u16 owners[6]; u16 selected[2];
+ * struct BattleWork *battle; s32 count; count =
+ * BattleParty_PrepareReserveOwners...; tried as the rest of the object declares
+ * it, Battle_CollectPartyCommands moves: 1 of 1909 instructions in tla-ja. */
 extern s32
 Func_0804babc__battle_party_commands(u16 *actors, struct BattleAction **cursor,
                                      s32 *forcedCount) __asm__("Func_0804babc");
@@ -208,8 +208,9 @@ extern void Text_DrawWideStringAtOffset__battle_party_commands(
 /// Unlike The Broken Seal's, each round first appends the forced actions of
 /// statused members (Func_0804babc), whose count is added to the result; B on
 /// the party's row undoes a reserve swap; command 49 swaps a reserve member in
-/// (Func_0804b8b8 after choosing the slot); Status lists the reserve as well;
-/// Flee is command 99; and the Djinn tutorial's hint follows an unleash.
+/// (BattleParty_ChooseReserve after choosing the slot); Status lists the
+/// reserve as well; Flee is command 99; and the Djinn tutorial's hint follows
+/// an unleash.
 s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                                 s32 commandCount) {
   u16 signatureHeader[2];
@@ -372,7 +373,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       mode = BattleTarget_RunSelection(0, 2, 1, 8);
       if (mode == -1)
         continue;
-      mode = Func_0804b8b8(mode);
+      mode = BattleParty_ChooseReserve(mode);
       if (mode == -1)
         goto choose_place;
       BattleSummon_UpdateAvailabilityFar();

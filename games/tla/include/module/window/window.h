@@ -41,7 +41,7 @@ s32 SettingsMenu_Run(void);
 void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                           s32 palette, s32 reuse);
 
-s32 Func_0804b8b8(s32 slot);
+s32 BattleParty_ChooseReserve(s32 slot);
 
 void BattleDjinn_CountStandbyFar(s32 kind, u8 *counts);
 

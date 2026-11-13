@@ -50,8 +50,8 @@ void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 
@@ -235,8 +235,9 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
           }
           model->shade = 0;
           Transform_ApplyPitch(-0xbb8);
-          Func_08015160((center[0] / 2 - 64) << 16, 0x280000, 0);
-          Func_0801521c(scale >> 1);
+          SceneTransform_ApplyPosition3((center[0] / 2 - 64) << 16, 0x280000,
+                                        0);
+          SceneTransform_ApplyUniformScale(scale >> 1);
           Transform_ApplyYaw(frame << 9);
           Render_TransformVertices(gData_08199210, vertices, 4);
           Render_DrawModelList(model);

@@ -95,7 +95,7 @@ s32 Forge_OfferItem(s32 unitId, s32 slot) {
 
 // XXX: what the item picker's mode 1 chooses an item for; the callers through
 // the far-call table and Inventory_CheckUnequipFar would settle it.
-void Func_0810b79c(s32 a, s32 b) { ItemPicker_Run(a, b, 1); }
+void ItemPicker_RunMode1(s32 a, s32 b) { ItemPicker_Run(a, b, 1); }
 
 /// Runs the item picker for an item to drop, showing each item's sale price.
 void ItemPicker_RunToDrop(s32 a, s32 b) { ItemPicker_Run(a, b, 0); }

@@ -289,7 +289,7 @@ void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z);
 s32 Func_08020330(struct Actor *object);
 s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
-s32 Func_080cda84(s32 id, struct Actor *object, s32 *position);
+s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *object, s32 *position);
 s32 Func_080dbc04(s32 x, s32 z, s32 layer);
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
 void *Resource_GetTableEntry(s32 resourceId);
@@ -388,7 +388,7 @@ void FieldPsynergy_Scoop(void) {
   }
   if (MapGrid_GetCellBehavior(scene->x, scene->z, caster->terrainId) == 255)
     failed = 4;
-  if (Func_080cda84(scene->fieldKind, caster, &scene->x) == -1)
+  if (Field_MeasurePsynergyHeight(scene->fieldKind, caster, &scene->x) == -1)
     failed = 2;
   if (Func_080dbc04(scene->x, scene->z, caster->terrainId) == 0)
     failed = 3;
@@ -1096,7 +1096,7 @@ void FieldPsynergy_Parch(void) {
       goto loaded;
     }
   }
-  if (Func_080cda84(scene->fieldKind, caster, pos) == -1) {
+  if (Field_MeasurePsynergyHeight(scene->fieldKind, caster, pos) == -1) {
     result = 0;
     // DEAD: pending is already NULL; the ROM stores it again.
     pending = NULL;

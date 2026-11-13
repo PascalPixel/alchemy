@@ -149,7 +149,7 @@ s32 FieldSequence_Run(void) {
     Actor_GetById(Party_GetLeaderActor())->scaleX = 0;
     Actor_SetSpriteFlagsFar(Actor_GetById(Party_GetLeaderActor()), 0);
   }
-  Func_080cb05c();
+  Field_UpdateHoverReady();
   wait(2);
   OVERLAY_CALL(1);
   code = work->warp;
@@ -402,7 +402,7 @@ s32 FieldSequence_Run(void) {
           work->effectTimerRunning = 0;
           FieldMenu_RunFar();
           work->effectTimerRunning = 1;
-          Func_080cb05c();
+          Field_UpdateHoverReady();
         }
         WorldMap_ReloadPendingAreaGraphics();
         GameFlag_ClearBit(262);
@@ -626,7 +626,7 @@ s32 Scene_ApplyEntrance(s32 findEntrance) {
 /// Reads the map's entrance stream (gData_0202e000) for the current entrance,
 /// places the party there unless flag 0x109 keeps its position, then sets the
 /// camera bounds from the first box that holds it.
-s32 Func_080cc7c4(void) {
+s32 Field_PlaceAtEntrance(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct MainRoutineWork *work = &gMainRoutineWork;
   s32 xFixed;
@@ -739,7 +739,7 @@ void BattleMap_ApplySceneEntranceView(void) {
 
   done = Scene_ApplyEntrance(1);
   if (event->controlMode == 2 && done == 0)
-    done = Func_080cc7c4();
+    done = Field_PlaceAtEntrance();
   if (done == 0)
     Scene_ApplyEntrance(0);
 }

@@ -44,8 +44,8 @@ void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -296,13 +296,13 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
           model->mesh = strip;
           model->scrollU = 127 & ~(frame << 3);
           Transform_Reset();
-          Func_08015160((caster.x / 2 - 64) << 16,
-                        (caster.y << 16) + 0xffc00000, 0);
+          SceneTransform_ApplyPosition3((caster.x / 2 - 64) << 16,
+                                        (caster.y << 16) + 0xffc00000, 0);
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           if (effect->side == 1) {
             Transform_ApplyYaw(0x8000);
           }
-          Func_0801521c(0x40000);
+          SceneTransform_ApplyUniformScale(0x40000);
           Render_TransformVertices(corners, buffer, 66);
           Render_DrawModelList(model);
 
@@ -313,9 +313,9 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
             texture.logHeight = 6;
             model->scrollU = 0;
             texture.pixels = work->sheet + 0x4000;
-            Func_08015160(endX << 16, endY << 16, 0);
+            SceneTransform_ApplyPosition3(endX << 16, endY << 16, 0);
             Transform_ApplyRoll(0x4000 - arc.head * 32);
-            Func_0801521c(width * 28 / 32);
+            SceneTransform_ApplyUniformScale(width * 28 / 32);
             Render_TransformVertices(Data_081991e0, buffer, 4);
             Render_DrawModelList(model);
           }

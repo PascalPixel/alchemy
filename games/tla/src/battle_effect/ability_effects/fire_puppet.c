@@ -49,8 +49,8 @@ void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -258,14 +258,15 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       model->scrollV = 0;
       model->scrollU = 127 & ~(frame << 2);
       Transform_Reset();
-      Func_08015160((pos.x / 2 - 64) << 16, (pos.y << 16) + 0xffd60000, 0);
+      SceneTransform_ApplyPosition3((pos.x / 2 - 64) << 16,
+                                    (pos.y << 16) + 0xffd60000, 0);
       SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
       if (effect->side == 1) {
         Transform_ApplyYaw(0x8000);
       }
       Transform_ApplyRoll(0x4000);
       if (frame > 73) {
-        Func_0801521c((212 << 10) - (frame << 11));
+        SceneTransform_ApplyUniformScale((212 << 10) - (frame << 11));
       }
       // The buffers named directly, though cells and projected hold them:
       // with the locals, gcse's table changes size and 8 differ.
@@ -281,9 +282,9 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       model->scrollV = 0;
       texture.pixels = work->sheet + 0x4000;
       model->shade = 0;
-      Func_08015160(endX << 16, endY << 16, 0);
+      SceneTransform_ApplyPosition3(endX << 16, endY << 16, 0);
       Transform_ApplyRoll(22384 - (length << 5));
-      Func_0801521c(length * 23 + 0x8000);
+      SceneTransform_ApplyUniformScale(length * 23 + 0x8000);
       Render_TransformVertices(Data_081991e0, projected, 4);
       Render_DrawModelList(model);
       Heap_Release(model);

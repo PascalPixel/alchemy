@@ -1068,7 +1068,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
               s32 sc = 0x80000 - s;
 
               Transform_Reset();
-              Func_08015160(-0x40000, -0x2c0000, 0);
+              SceneTransform_ApplyPosition3(-0x40000, -0x2c0000, 0);
               SceneTransform_ApplyScale3(sc / 2, sc, sc);
               Transform_ApplyYaw(gSpiderWeb_PictureBiasY[i]);
               Transform_ApplyPitch(Data_081976f0[i]);
@@ -1087,7 +1087,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           }
           model->shade = shade;
           Transform_Reset();
-          Func_08015160(-0x40000, -0x2c0000, 0);
+          SceneTransform_ApplyPosition3(-0x40000, -0x2c0000, 0);
           SceneTransform_ApplyScale3(sc >> 1, sc, sc);
           Render_TransformVertices(Data_081991e0, verts, 4);
           Render_DrawModelList(model);
@@ -1112,7 +1112,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             texture.pixels = gData_02014000;
             t <<= 9;
             Transform_Reset();
-            Func_08015160(-0x40000, -0x2c0000, 0);
+            SceneTransform_ApplyPosition3(-0x40000, -0x2c0000, 0);
             SceneTransform_ApplyScale3(sc, sc / 3, sc >> 1);
             Transform_ApplyRoll(t);
             if (shade > -64) {
@@ -1130,7 +1130,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
               }
               model->shade = shade;
               Transform_Reset();
-              Func_08015160(-0x40000, -0x2c0000, 0);
+              SceneTransform_ApplyPosition3(-0x40000, -0x2c0000, 0);
               SceneTransform_ApplyScale3(sc, sc >> 1, sc >> 1);
               Transform_ApplyRoll(t);
               Render_TransformVertices(Data_081991e0, verts, 4);
@@ -1156,7 +1156,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
                 sy = 80000;
               }
               Transform_Reset();
-              Func_08015160(-0x40000, -0x2c0000, 0);
+              SceneTransform_ApplyPosition3(-0x40000, -0x2c0000, 0);
               SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
               Transform_ApplyRoll(p->z);
               SceneTransform_ApplyScale3(30384, sy, 0x8000);
@@ -1192,7 +1192,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             model->shade = shade;
             texture.pixels = work->sheet + 0x3688;
             Transform_Reset();
-            Func_08015160(q->x + -0x3f0000, q->y + -0x400000, 0);
+            SceneTransform_ApplyPosition3(q->x + -0x3f0000, q->y + -0x400000,
+                                          0);
             SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
             Transform_ApplyRoll(0xa000);
             SceneTransform_ApplyScale3(r * 9400, 0x20000, 0x8000);
@@ -1444,7 +1445,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           Transform_Reset();
           px = p->x + -0x400000;
           py = p->y + -0x400000;
-          Func_08015160(px, py, 0);
+          SceneTransform_ApplyPosition3(px, py, 0);
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           angle = Data_08197734[i];
           Transform_ApplyRoll(angle);
@@ -1515,7 +1516,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             } else if (t > 15) {
               x += (t * 7 - 112) << 16;
             }
-            Func_08015160(x, -0x100000, 0);
+            SceneTransform_ApplyPosition3(x, -0x100000, 0);
             SceneTransform_ApplyScale3(45536, 0x10000, 0x8000);
             if (i == 0) {
               Transform_ApplyRoll(-0xbe8);
@@ -1755,7 +1756,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             Func_0818caa8(work->sheet + 0x38c0, HI(q->x), HI(q->y), r);
           }
           Transform_Reset();
-          Func_08015160(q->x + -0x3f0000, q->y + -0x400000, 0);
+          SceneTransform_ApplyPosition3(q->x + -0x3f0000, q->y + -0x400000, 0);
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           Transform_ApplyRoll(0xa000);
           SceneTransform_ApplyScale3(r * 9400, 0x20000, 0x8000);

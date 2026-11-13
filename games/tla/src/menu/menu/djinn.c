@@ -608,7 +608,7 @@ s32 Djinn_IsSetFar(s32 owner, s32 element, s32 index);
 /// The state of a packed djinni entry (owner in bits 8-11, element in 5-7,
 /// index in 0-4, bit 15 set): 2 when the djinni is neither ready nor active,
 /// otherwise whether bit 15 is set. DjinnMenu_DrawPage colours each name by it.
-s32 Func_08101a04(u32 entry) {
+s32 DjinnMenu_GetEntryState(u32 entry) {
   s32 owner = (entry & 0xf00) >> 8;
   s32 element = (entry & 0xe0) >> 5;
   s32 index = entry & 31;
@@ -629,7 +629,7 @@ s32 Func_08101a04(u32 entry) {
 /// and its element's icon tile at the tile under (x, y), then resets the text
 /// colour. The names run 20 to an element.
 // As ☀️'s MsgDjinnName (games/tbs/src/menu/menu.c).
-void Func_08101a54(s32 window, s32 x, s32 y, s32 entry) {
+void DjinnMenu_DrawEntry(s32 window, s32 x, s32 y, s32 entry) {
   s32 element = (entry & 0xe0) / 32;
 
   Text_DrawMessageAsTilesFar((s32)MsgDjinnName + element * 20 + (entry & 31),
@@ -675,7 +675,7 @@ void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
       for (element = 0; element <= 3; element++) {
         for (i = 0; i < backdrop->counts[page + column]; i++) {
           if (element == (entries[i] & 0xe0) >> 5) {
-            switch (Func_08101a04(entries[i])) {
+            switch (DjinnMenu_GetEntryState(entries[i])) {
             case 0:
               Text_SetColorFar(2);
               break;
@@ -686,7 +686,7 @@ void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
               Text_SetColorFar(4);
               break;
             }
-            Func_08101a54(window, x, y, entries[i]);
+            DjinnMenu_DrawEntry(window, x, y, entries[i]);
             y += 8;
           }
         }
@@ -1102,7 +1102,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       owner = DJINN_OWNER(djinn);
       element = DJINN_ELEMENT(djinn);
       number = DJINN_NUMBER(djinn);
-      state = Func_08101a04(djinn);
+      state = DjinnMenu_GetEntryState(djinn);
       if (selectedRow == -1) {
         MenuIcon_SetPosition(mode, 0, 200);
       } else {
@@ -1474,7 +1474,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
             s32 entryElement = DJINN_ELEMENT(entry);
             s32 entryNumber = DJINN_NUMBER(entry);
 
-            switch (Func_08101a04(entry)) {
+            switch (DjinnMenu_GetEntryState(entry)) {
             case 0:
               if (setAll) {
                 Djinn_SetFar(entryOwner, entryElement, entryNumber);

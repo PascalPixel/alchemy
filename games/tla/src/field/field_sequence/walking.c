@@ -42,8 +42,9 @@ s32 Field_CountRequests(void) {
 }
 
 /// Sets event work byte 0xd39 when flag 0x8df is set and a party member
-/// has action 153; clears it otherwise.
-void Func_080cb05c(void) {
+/// knows Hover (ABILITY_HOVER); clears it otherwise. The world map's pad
+/// movement reads it.
+void Field_UpdateHoverReady(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 
   if (GameFlag_Test(0x8df) && Party_FindOwnerWithActionFar(153) != -1)

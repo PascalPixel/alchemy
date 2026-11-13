@@ -26,8 +26,8 @@ void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
@@ -573,13 +573,13 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
         model->vertices = vertices;
         model->texture = &texture;
         Transform_Reset();
-        Func_08015160(work->particles[0].x + (shift << 16),
-                      work->particles[0].y, 0);
+        SceneTransform_ApplyPosition3(work->particles[0].x + (shift << 16),
+                                      work->particles[0].y, 0);
         if (effect->side == 1) {
           Transform_ApplyYaw(0x8000);
         }
         Transform_ApplyRoll(work->particles[0].z);
-        Func_0801521c(scale);
+        SceneTransform_ApplyUniformScale(scale);
         texture.logHeight = 5;
         texture.pixels = Data_0201476b;
         texture.logWidth = width;
@@ -606,9 +606,9 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
         scale = 0x78e20 - (frame << 13);
         Transform_Reset();
         if (effect->side == 0) {
-          Func_08015160(0xfff00000, 0, 0);
+          SceneTransform_ApplyPosition3(0xfff00000, 0, 0);
         } else {
-          Func_08015160(0x100000, 0, 0);
+          SceneTransform_ApplyPosition3(0x100000, 0, 0);
         }
         SceneTransform_ApplyScale3(scale, scale, scale);
         if (effect->side == 1) {
@@ -623,7 +623,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
           Transform_Push();
           Transform_ApplyRoll(i * 0x4000 + 0x5650);
           SceneTransform_ApplyScale3(0x4000, ((i & 1) << 15) + 0xc000, 0x8000);
-          Func_0801521c(0x10000);
+          SceneTransform_ApplyUniformScale(0x10000);
           Render_TransformVertices(gData_081991f0, vertices, 4);
           Render_DrawModelList(model);
           Transform_Pop();
@@ -891,7 +891,8 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
         column->scrollU = (frame << 2) & 31;
         column->scrollV = (frame << 1) & 31;
         Transform_Reset();
-        Func_08015160((midpoint.x / 2 - 64) << 16, -16 << 16, 0);
+        SceneTransform_ApplyPosition3((midpoint.x / 2 - 64) << 16, -16 << 16,
+                                      0);
         Transform_ApplyPitch(2000);
         if (mode == 0) {
           // Up on a sine in 16 frames, held, and down again from frame 24.
@@ -1827,7 +1828,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       }
     } else {
       Transform_Reset();
-      Func_08015160(0, 0, 0x1000000);
+      SceneTransform_ApplyPosition3(0, 0, 0x1000000);
       if (frame > 539) {
         SceneTransform_ApplyScale3(frame * 1500 - 0xc4c10, 0x10000, 0x10000);
       } else if (frame > 517) {
@@ -2012,9 +2013,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         }
         model->shade = sh;
         Transform_Reset();
-        Func_08015160(0, ty, 0);
+        SceneTransform_ApplyPosition3(0, ty, 0);
         SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-        Func_0801521c(s);
+        SceneTransform_ApplyUniformScale(s);
         if (frame <= 273) {
           Transform_ApplyRoll(spin - 0x12400);
         }
@@ -2048,8 +2049,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         }
         model->shade = sh;
         Transform_Reset();
-        Func_08015160(0, 0x1c0000, 0);
-        Func_0801521c(s);
+        SceneTransform_ApplyPosition3(0, 0x1c0000, 0);
+        SceneTransform_ApplyUniformScale(s);
         Transform_ApplyPitch(4000);
         Transform_ApplyYaw(frame << 9);
         Render_TransformVertices(gData_08199210, verts, 64);
@@ -2075,7 +2076,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
               if (frame > 539) {
                 ty += (frame - 539) << 20;
               }
-              Func_08015160(-0x40000, ty, 0);
+              SceneTransform_ApplyPosition3(-0x40000, ty, 0);
               SceneTransform_ApplyScale3(s, s, s);
             } else {
               SceneTransform_ApplyScale3(s, d << 14, s);
@@ -2103,7 +2104,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
             }
             model->shade = sh;
             Transform_Reset();
-            Func_08015160(-0x40000, -0x2c0000, 0);
+            SceneTransform_ApplyPosition3(-0x40000, -0x2c0000, 0);
             SceneTransform_ApplyScale3(s, s << 1, s);
             Transform_ApplyRoll((i << 14) + 0x2000);
             Transform_ApplyPitch(-0x1000);
@@ -2131,7 +2132,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
             if (frame > 539) {
               ty = ((frame - 539) << 20) + -0x2c0000;
             }
-            Func_08015160(-0x40000, ty, 0);
+            SceneTransform_ApplyPosition3(-0x40000, ty, 0);
             SceneTransform_ApplyScale3(s, s / 2, s);
             Transform_ApplyPitch(0x4000);
             Transform_ApplyYaw(frame << 11);
@@ -2165,7 +2166,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           if (frame > 273) {
             s = s + (frame << 13) + -0x224000;
           }
-          Func_0801521c(s);
+          SceneTransform_ApplyUniformScale(s);
           if (i == 0) {
             if (frame > 209) {
               s32 v = t;
@@ -2173,7 +2174,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
               if (v > 48) {
                 v = 48;
               }
-              Func_08015160(0, v << 16, 0);
+              SceneTransform_ApplyPosition3(0, v << 16, 0);
             }
             Transform_ApplyRoll(Data_0819975c[i] - (frame << 8));
             sh = -16;
@@ -2186,7 +2187,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
             if (x > -16) {
               x = -16;
             }
-            Func_08015160(x << 16, 0, 0);
+            SceneTransform_ApplyPosition3(x << 16, 0, 0);
             Transform_ApplyRoll(Data_0819975c[i] + (frame << 8));
             if (frame > 209) {
               Transform_ApplyRoll((frame << 8) + -0xd200);
@@ -2215,8 +2216,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           }
           Transform_Reset();
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-          Func_08015160(0, 0x200000, 0);
-          Func_0801521c(s);
+          SceneTransform_ApplyPosition3(0, 0x200000, 0);
+          SceneTransform_ApplyUniformScale(s);
         }
         if (sh > -64) {
           model->shade = sh;
@@ -2331,9 +2332,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         model2->shade = sh2;
         if (sh2 > -64) {
           Transform_Reset();
-          Func_08015160(0, (112 - lift) << 16, 0);
+          SceneTransform_ApplyPosition3(0, (112 - lift) << 16, 0);
           SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
-          Func_0801521c(s);
+          SceneTransform_ApplyUniformScale(s);
           Transform_ApplyRoll((i << 14) + 0x2000);
           Transform_ApplyPitch(-0x1000);
           Transform_ApplyYaw(frame << 10);

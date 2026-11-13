@@ -106,8 +106,8 @@ s32 Class_GetSeries(s32 primaryElement, s32 secondaryElement);
 s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]);
 s32 Unit_GetElementLevel(s32 unitId, s32 element);
 s32 Enemy_GetAttackElement(struct Unit *unit);
-void Unit_CalculateBaseElements(s32 unitId,
-                                struct BattleElementStats *destination);
+UNREAD_RESULT
+Unit_CalculateBaseElements(s32 unitId, struct BattleElementStats *destination);
 s32 Class_Determine(s32 character, const u8 *djinn);
 struct ClassDefinition *Class_GetDefinition(s32 classId);
 void Unit_UpdateClass(s32 unitId);

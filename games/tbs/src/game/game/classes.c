@@ -86,8 +86,8 @@ s32 Enemy_GetAttackElement(struct Unit *unit) {
 // gElement_PowerResistByLevel for the whole level (0 to 15) plus the level's
 // tenths (Unit_GetElementLevels counts in tenths). Called by BattleUnit_Set
 // and Unit_UpdateClass.
-void Unit_CalculateBaseElements(s32 unitId,
-                                struct BattleElementStats *destination) {
+UNREAD_RESULT
+Unit_CalculateBaseElements(s32 unitId, struct BattleElementStats *destination) {
   struct Unit *state = Unit_Get(unitId);
   s32 levels[ELEMENT_COUNT];
   s32 i;
@@ -99,7 +99,7 @@ void Unit_CalculateBaseElements(s32 unitId,
       preset = 0;
     for (i = 0; i < ELEMENT_COUNT; i++)
       destination[i] = gEnemy_ElementPresetTable[preset].stats[i];
-    return;
+    RETURN_UNREAD(preset);
   }
 
   // Element levels in tenths: the whole level picks the table's row, the

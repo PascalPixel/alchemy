@@ -143,6 +143,9 @@ void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
 /// equipment bonuses. Called after anything that changes those inputs:
 /// equipping, setting Djinn, levelling up, a class change, battle stat
 /// changes.
+/// A scaling effect's number among the eight, from EQUIP_EFFECT_SCALE_HP.
+#define SCALE_EFFECT(kind) ((kind) - EQUIP_EFFECT_SCALE_HP)
+
 void Unit_Calculate(s32 unitId) {
   struct StatWork *stats;
   struct Unit *unit;
@@ -206,6 +209,11 @@ void Unit_Calculate(s32 unitId) {
       if (stats->item->flags & ITEM_CURSED)
         unit->curse |= CURSE_BOUND | CURSE_ITEM;
       stats->atk += stats->item->primaryBonus;
+      /* FAKEMATCH(dead): an empty once-only loop after the Attack bonus keeps
+       * the Defense load after the item's second bonus; as no loop, 2 of 864
+       * instructions differ in tbs-en. */
+      do {
+      } while (0);
       stats->def += stats->item->secondaryBonus;
       for (effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS; effectIndex++) {
         effectKind = stats->item->effects[effectIndex].kind;
@@ -317,30 +325,31 @@ void Unit_Calculate(s32 unitId) {
         effectKind = stats->item->effects[effectIndex].kind;
         effectAmount = stats->item->effects[effectIndex].amount;
         stats->kind = effectKind;
+        effectKind = SCALE_EFFECT(effectKind);
         stats->amount = effectAmount;
-        switch (stats->kind) {
-        case EQUIP_EFFECT_SCALE_HP:
+        switch (effectKind) {
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_HP):
           stats->hp = stats->hp * stats->amount / STAT_SCALE_ONE;
           break;
-        case EQUIP_EFFECT_SCALE_HP_REGEN:
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_HP_REGEN):
           stats->hpRegen = stats->hpRegen * stats->amount / STAT_SCALE_ONE;
           break;
-        case EQUIP_EFFECT_SCALE_PP:
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_PP):
           stats->pp = stats->pp * stats->amount / STAT_SCALE_ONE;
           break;
-        case EQUIP_EFFECT_SCALE_PP_REGEN:
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_PP_REGEN):
           stats->ppRegen = stats->ppRegen * stats->amount / STAT_SCALE_ONE;
           break;
-        case EQUIP_EFFECT_SCALE_ATTACK:
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_ATTACK):
           stats->atk = stats->atk * stats->amount / STAT_SCALE_ONE;
           break;
-        case EQUIP_EFFECT_SCALE_DEFENSE:
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_DEFENSE):
           stats->def = stats->def * stats->amount / STAT_SCALE_ONE;
           break;
-        case EQUIP_EFFECT_SCALE_AGILITY:
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_AGILITY):
           stats->agi = stats->agi * stats->amount / STAT_SCALE_ONE;
           break;
-        case EQUIP_EFFECT_SCALE_LUCK:
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_LUCK):
           stats->luck = stats->luck * stats->amount / STAT_SCALE_ONE;
           break;
         }
@@ -758,3 +767,5 @@ UNIT_DEFINE_ADD(s16, Unit_AddPp, pp, ppMax)
 #undef UNIT_DEFINE_SET
 #undef UNIT_DEFINE_ADD
 #undef UNIT_STAT_DIFF
+
+#undef SCALE_EFFECT

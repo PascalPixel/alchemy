@@ -258,9 +258,9 @@ BattleEffect_FillOverlayTiles:
 	.thumb_func
 BattleEffect_DrawSpriteAtWorldPosition:
 	overlay_veneer BattleEffect_DrawSpriteAtWorldPositionFar
-	.global Func_02002324
+	.global EffectSprite_InitFromSlot94Blended
 	.thumb_func
-Func_02002324:
+EffectSprite_InitFromSlot94Blended:
 	overlay_veneer EffectSprite_InitFromSlot94BlendedFar
 	.global Sound_Play
 	.thumb_func

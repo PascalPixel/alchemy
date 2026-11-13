@@ -860,7 +860,7 @@ void Func_02001908(struct Actor *shot) {
   Actor_SetAnimationSpeed(shot, 16);
   if (Func_02000348(2, shot->x >> 20, (shot->z - shot->y) >> 20) >> 8 == 212) {
   end:
-    Func_02003cd0(shot, cue);
+    Event_PlayCueNearFocus(shot, cue);
     ((struct Shot *)shot)->unk63 = 0;
     shot->update = 0;
     if (shot->facing == 0xc000)
@@ -936,7 +936,7 @@ void Func_02001b54(struct Actor *object) {
     return;
   if (object->timer == 240) {
     if (!Event_GetFlag(0x250))
-      Func_02003cd0(object, 202);
+      Event_PlayCueNearFocus(object, 202);
     if (object->facing == 0xc000) {
       position.x = object->x;
       position.z = object->z;

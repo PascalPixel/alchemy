@@ -56,7 +56,8 @@ extern u32 gFieldEffect_LongScript[];
 void MapGrid_SetAttributeBAt(s32 actor);
 extern s32 gData_02002b88[3];
 extern const u8 gData_02002b60[];
-void Func_02002324(const void *script, s32 a, s32 b, s32 c);
+void EffectSprite_InitFromSlot94Blended(const void *script, s32 a, s32 b,
+                                        s32 c);
 extern u16 gPaletteCycleColors[];
 extern u16 gPaletteCycleUnlitColors[];
 

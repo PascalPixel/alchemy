@@ -457,7 +457,7 @@ void Func_02000d48(struct Actor *shot) {
   if (Func_02000690(2, shot->x >> 20, (shot->z - shot->y) >> 20) >> 8 == 212) {
     ((struct Shot *)shot)->unk63 = 0;
     shot->update = 0;
-    Call2((void (*)())Func_02005f8c, (s32)shot, 539);
+    Call2((void (*)())Event_PlayCueNearFocus, (s32)shot, 539);
     if (shot->facing == 0xc000)
       Actor_StartScript(shot, gData_020061ac);
     else
@@ -520,7 +520,7 @@ void Func_02000f34(struct Actor *object) {
     return;
   if (object->timer == 240) {
     if (!GameFlag_Get(0x250))
-      Func_02005f8c(object, 202);
+      Event_PlayCueNearFocus(object, 202);
     if (object->facing == 0xc000) {
       position.x = object->x;
       position.z = object->z;
@@ -583,7 +583,7 @@ void Func_020010b4(struct Actor *shot) {
     {
       s32 cue = 284;
 
-      Func_02005f8c(shot, cue + 255);
+      Event_PlayCueNearFocus(shot, cue + 255);
     }
     ((struct Shot *)shot)->unk63 = 0;
     shot->update = 0;
@@ -648,7 +648,7 @@ void Func_02001290(struct Actor *object) {
   if (object->timer == 240) {
     shot = 0;
     if (!GameFlag_Get(0x250))
-      Func_02005f8c(object, 202);
+      Event_PlayCueNearFocus(object, 202);
     if (object->facing == 0xc000) {
       position.x = object->x;
       position.z = object->z;

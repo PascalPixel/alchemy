@@ -158,9 +158,9 @@ Party_GetLeaderActor:
 	.thumb_func
 HangingVine_Place:
 	overlay_veneer HangingVine_PlaceFar
-	.global Func_02000f1c
+	.global Event_PlayCueNearFocus
 	.thumb_func
-Func_02000f1c:
+Event_PlayCueNearFocus:
 	overlay_veneer Event_PlayCueNearFocusFar
 	.global Sound_Play
 	.thumb_func

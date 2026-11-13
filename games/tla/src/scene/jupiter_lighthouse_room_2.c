@@ -397,7 +397,7 @@ s32 Scene_Initialize(void) {
   Io_Write16(0x3f06, &REG_BLDCNT);
   Io_Write16(0x1000, &REG_BLDALPHA);
   BattleEffect_FillOverlayTiles(0);
-  Call4((void (*)())Func_02002324, (s32)gData_02002b60, 0, 0, 0x80000000);
+  Call4((void (*)())EffectSprite_InitFromSlot94Blended, (s32)gData_02002b60, 0, 0, 0x80000000);
   Func_02000054();
   Func_020007d0();
   if (Event_GetFlag(0xa02)) {

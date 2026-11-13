@@ -326,7 +326,7 @@ struct MagmaRockEffectConfig {
   u8 unk20[8];
 };
 
-void Func_02003c4c(struct Actor *object, s32 value);
+void Event_PlayCueNearFocus(struct Actor *object, s32 value);
 
 /// Every fourth frame, spawns effect 403 at the object with a random z offset
 /// and z velocity.
@@ -343,7 +343,7 @@ void MagmaRock_TrailEmbers(struct Actor *object) {
     config.kind = 2;
     config.data = gMagmaRock_EmberScript;
     if ((frame & 15) == 0 && !Event_GetFlag(608))
-      Func_02003c4c(object, 136);
+      Event_PlayCueNearFocus(object, 136);
     dz = ((Random16() & 15) - 8) << 15;
     velocityZ = ((Random16() & 31) - 16) << 12;
     z = object->z;

@@ -136,7 +136,7 @@ extern u32 gData_020061f8[];
 
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 terrain, s32 height);
 struct Actor *FieldCamera_GetActor(void);
-void Func_02005f8c(struct Actor *object, s32 cue);
+void Event_PlayCueNearFocus(struct Actor *object, s32 cue);
 s32 Actor_HasArrived(struct Actor *object);
 
 #endif

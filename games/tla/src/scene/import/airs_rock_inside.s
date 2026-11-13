@@ -346,9 +346,9 @@ Actor_PlaceMovedBlock:
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_02005f8c
+	.global Event_PlayCueNearFocus
 	.thumb_func
-Func_02005f8c:
+Event_PlayCueNearFocus:
 	overlay_veneer Event_PlayCueNearFocusFar
 	.global Sound_Play
 	.thumb_func

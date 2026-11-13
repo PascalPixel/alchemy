@@ -326,9 +326,9 @@ EffectSprite_DrawAtWorldPosition:
 	.thumb_func
 BattleEffect_StepVector3:
 	overlay_veneer BattleEffect_StepVector3Far
-	.global Func_02003c4c
+	.global Event_PlayCueNearFocus
 	.thumb_func
-Func_02003c4c:
+Event_PlayCueNearFocus:
 	overlay_veneer Event_PlayCueNearFocusFar
 	.global Sound_Play
 	.thumb_func

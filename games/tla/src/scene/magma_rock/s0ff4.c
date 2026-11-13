@@ -419,7 +419,7 @@ void MagmaRock_RaiseFlameTop(union FieldObject *object) {
 
 /// The native reads these event work halfwords signed (ldrsh).
 
-void Func_02003c4c(struct Actor *object, s32 a);
+void Event_PlayCueNearFocus(struct Actor *object, s32 a);
 
 struct AnimationEntry;
 
@@ -454,7 +454,7 @@ void MagmaRock_BurnStatue(struct Actor *object) {
   s32 type = 0x15f;
 
   if ((gFrameCount & 15) == 0)
-    Func_02003c4c(object, 136);
+    Event_PlayCueNearFocus(object, 136);
   FieldActor_SetSpriteColor(object, 10);
   if (object->timer <= 31) {
     u32 phase = gFrameCount & 3;
@@ -480,7 +480,7 @@ void MagmaRock_BurnStatue(struct Actor *object) {
     s32 id;
     s32 i;
 
-    Func_02003c4c(object, 144);
+    Event_PlayCueNearFocus(object, 144);
     parts[0] = (FieldActor_Create(type, object->x + 0x10000,
                                   object->y + 0x200000, object->z));
     for (i = 1; i != 4; i++) {

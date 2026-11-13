@@ -375,14 +375,14 @@ void Func_02000630(void) {
   slot->value04 += 128;
 }
 
-void Func_02000f1c(struct Actor *object, s32 a);
+void Event_PlayCueNearFocus(struct Actor *object, s32 a);
 
 void Func_02000670(void) {
   struct Actor *object = Actor_Get(17);
   u8 phase = gFrameCount;
 
   if (phase == 0) {
-    Func_02000f1c(object, 202);
+    Event_PlayCueNearFocus(object, 202);
     object = Actor_Spawn(0x118, object->x, object->y, object->z);
     if (object != NULL) {
       object->acceleration = 0x20000;

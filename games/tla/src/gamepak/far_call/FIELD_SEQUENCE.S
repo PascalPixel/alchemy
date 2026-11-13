@@ -303,14 +303,14 @@ Func_080c88c8:
 Func_080c88d8:
 	ldr r4, [pc, #0]
 	bx r4
-	.4byte Func_080e7238
-	export Func_080c88e0, Func_080e7804
+	.4byte Teleport_PlayWhirl
+	export Func_080c88e0, Teleport_PlaySparksAndFade
 	.global Func_080c88e8
 	.thumb_func
 Func_080c88e8:
 	ldr r4, [pc, #0]
 	bx r4
-	.4byte Func_080e74d8
+	.4byte Teleport_PlaySparks
 	export Func_080c88f0, Actor_WatchActor
 	export Actor_ResetTargetsAndVelocityFar, Actor_ResetTargetsAndVelocity
 	export Exit_StartStairsUpFar, Exit_StartStairsUp

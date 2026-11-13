@@ -57,20 +57,21 @@ void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
                            s32 action);
 void FieldPsynergy_WatchSandGround(void);
 extern char ResourceId_DustPuffA;
-/* VIEW(growing_particle): routine Func_080e45a8 as void Func_080e45a8(void
+/* VIEW(growing_particle): routine Sand_SpawnGrain as void Sand_SpawnGrain(void
  * *sprite, void *particle, s32 index, s32 tiles, s32 high); the definition has
- * void Func_080e45a8(struct EffectSprite__f0e446c *sprite, struct
+ * void Sand_SpawnGrain(struct EffectSprite__f0e446c *sprite, struct
  * EffectParticle *particle, s32 unused, s32 tiles, s32 high). */
-extern void Func_080e45a8__growing_particle(void *sprite, void *particle,
-                                            s32 index, s32 tiles,
-                                            s32 high) __asm__("Func_080e45a8");
-/* VIEW(growing_particle): routine Func_080e4510 as void Func_080e4510(void
- * *sprite, s32 tiles); the definition has void Func_080e4510(struct
- * EffectSprite__f0e446c *sprite, s32 tiles). */
-extern void Func_080e4510__growing_particle(void *sprite,
-                                            s32 tiles) __asm__("Func_080e4510");
-void Func_080e446c(u8 *source, u8 *destination, s32 phase);
-void Func_080e45a0(void *sprite);
+extern void
+Func_080e45a8__growing_particle(void *sprite, void *particle, s32 index,
+                                s32 tiles, s32 high) __asm__("Sand_SpawnGrain");
+/* VIEW(growing_particle): routine Sand_InitLeaderSprite as void
+ * Sand_InitLeaderSprite(void *sprite, s32 tiles); the definition has void
+ * Sand_InitLeaderSprite(struct EffectSprite__f0e446c *sprite, s32 tiles). */
+extern void
+Func_080e4510__growing_particle(void *sprite,
+                                s32 tiles) __asm__("Sand_InitLeaderSprite");
+void Picture_SinkColumnsByWave(u8 *source, u8 *destination, s32 phase);
+void Sand_DrawLeaderSprite(void *sprite);
 void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
                                         s32 z);
@@ -177,10 +178,10 @@ void FieldPsynergy_EndSand(void) {
     if (frame == 0)
       Sound_PlayFar(544);
     if (frame <= 64) {
-      Func_080e446c(work, rippled, 92 - ripple / 2);
+      Picture_SinkColumnsByWave(work, rippled, 92 - ripple / 2);
       ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->unk4c[2])(
           rippled, 32, 32, (u8 *)0x06010000 + pictureOffset);
-      Func_080e45a0(work + 0x1900);
+      Sand_DrawLeaderSprite(work + 0x1900);
     }
     if (frame == 66) {
       Actor_SelectAnimationFar(owner, 1);
@@ -226,7 +227,7 @@ void FieldPsynergy_Pound(void);
 void FieldPsynergy_Scoop(void);
 void FieldPsynergy_Parch(void);
 void FieldPsynergy_Hover(void);
-void Func_080e74d8(void);
+void Teleport_PlaySparks(void);
 
 /// Psynergy effect 23 cast on a target: runs its effect.
 void FieldPsynergy_SandOnTarget(void) { FieldPsynergy_Sand(); }

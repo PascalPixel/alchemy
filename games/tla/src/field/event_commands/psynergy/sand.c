@@ -25,20 +25,20 @@ s32 MapGrid_IsSandCell(s32 x, s32 z, s32 terrain);
 void BattleEffect_SetObjectUpdateMode(struct Actor *actor, s32 mode);
 void FieldPsynergy_WatchSandGround(void);
 void FieldPsynergy_EndSand(void);
-/* VIEW(f0e4a34): routine Func_080e45a8 as void Func_080e45a8(void *sprite, void
- * *particle, s32 index, s32 tiles, s32 high); the definition has void
- * Func_080e45a8(struct EffectSprite__f0e446c *sprite, struct EffectParticle
+/* VIEW(f0e4a34): routine Sand_SpawnGrain as void Sand_SpawnGrain(void *sprite,
+ * void *particle, s32 index, s32 tiles, s32 high); the definition has void
+ * Sand_SpawnGrain(struct EffectSprite__f0e446c *sprite, struct EffectParticle
  * *particle, s32 unused, s32 tiles, s32 high). */
 extern void Func_080e45a8__f0e4a34(void *sprite, void *particle, s32 index,
                                    s32 tiles,
-                                   s32 high) __asm__("Func_080e45a8");
-/* VIEW(f0e4a34): routine Func_080e4510 as void Func_080e4510(void *sprite, s32
- * tiles); the definition has void Func_080e4510(struct EffectSprite__f0e446c
- * *sprite, s32 tiles). */
+                                   s32 high) __asm__("Sand_SpawnGrain");
+/* VIEW(f0e4a34): routine Sand_InitLeaderSprite as void
+ * Sand_InitLeaderSprite(void *sprite, s32 tiles); the definition has void
+ * Sand_InitLeaderSprite(struct EffectSprite__f0e446c *sprite, s32 tiles). */
 extern void Func_080e4510__f0e4a34(void *sprite,
-                                   s32 tiles) __asm__("Func_080e4510");
-void Func_080e446c(u8 *source, u8 *destination, s32 phase);
-void Func_080e45a0(void *sprite);
+                                   s32 tiles) __asm__("Sand_InitLeaderSprite");
+void Picture_SinkColumnsByWave(u8 *source, u8 *destination, s32 phase);
+void Sand_DrawLeaderSprite(void *sprite);
 /* VIEW(f0e4a34): routine GrowingParticle_Update as void
  * GrowingParticle_Update(void *sprite, void *particle, s32 index, s32 tiles);
  * the definition has void GrowingParticle_Update(struct EffectSprite *sprite,
@@ -126,10 +126,10 @@ void FieldPsynergy_Sand(void) {
   Func_080e4510__f0e4a34(work + 0x1900, pictureTiles);
   frame = 15;
   for (; frame <= 92; frame++) {
-    Func_080e446c(work, work + 0x400, frame * 3 / 2);
+    Picture_SinkColumnsByWave(work, work + 0x400, frame * 3 / 2);
     ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->unk4c[2])(
         work + 0x400, 32, 32, (u8 *)OBJ_VRAM0 + pictureTiles * 32);
-    Func_080e45a0(work + 0x1900);
+    Sand_DrawLeaderSprite(work + 0x1900);
     i = 0;
     particle = work + 0x1200;
     sprite = work + 0x800;
@@ -495,7 +495,6 @@ void FieldPsynergy_Pound(void);
 void FieldPsynergy_Scoop(void);
 void FieldPsynergy_Parch(void);
 void FieldPsynergy_Hover(void);
-void Func_080e74d8(void);
 
 /// Runs field Psynergy animation 21 for the dispatcher's targeted path.
 void FieldPsynergy_BurstOnTarget(void) { FieldPsynergy_Burst(); }

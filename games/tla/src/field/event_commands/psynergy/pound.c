@@ -72,7 +72,7 @@ void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z);
 void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z);
 void BattleEffect_SinkAndShrinkObject(void);
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
-void Func_080e5a64(void);
+void FieldPsynergy_UpdatePound(void);
 
 void FieldPsynergy_Pound(void) {
   struct ShineWork__f0e5d5c *work = HeapSlot_Alloc(92, 0x18b4);
@@ -250,7 +250,7 @@ void FieldPsynergy_Pound(void) {
     pending =
         Scene_FindPsynergyTrigger(0x50000005, scene->fieldKind,
                                   Scene_SelectPsynergyTarget(scene->fieldKind));
-    Task_Add(Func_080e5a64, 0x480);
+    Task_Add(FieldPsynergy_UpdatePound, 0x480);
     frame = 0;
     while (work->state != 999) {
       wait(1);
@@ -262,7 +262,7 @@ void FieldPsynergy_Pound(void) {
       }
       Field_RunPsynergyEvent(pending, work->fading, frame++);
     }
-    Task_Remove(Func_080e5a64);
+    Task_Remove(FieldPsynergy_UpdatePound);
     wait(10);
     Sound_PlayFar(114);
     FieldPsynergy_ShrinkToCaster(shine, shine->x, shine->y, shine->z);
@@ -276,7 +276,12 @@ end:
   HeapSlot_Release(92);
 }
 
-void Func_080e62f4(u8 *source, u8 *destination, s32 phase) {
+/// Copies a 32 by 32 byte picture into a cleared one stretched down, its rows
+/// four pixels apart, each column slid down by phase (1.6 pixels a step, from
+/// 124 pixels up) less a sine wave across the columns; what falls outside is
+/// dropped. The
+/// Scoop draws its rising picture with it.
+void Picture_ShiftColumnsByWave(u8 *source, u8 *destination, s32 phase) {
   s32 width = 32;
   s32 height;
   s32 column;

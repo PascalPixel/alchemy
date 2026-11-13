@@ -512,7 +512,7 @@ void FieldPsynergy_Pound(void);
 void FieldPsynergy_Scoop(void);
 void FieldPsynergy_Parch(void);
 void FieldPsynergy_Hover(void);
-void Func_080e74d8(void);
+void Teleport_PlaySparks(void);
 
 /// Runs field Psynergy animation 24 for the dispatcher; the target is unused.
 void FieldPsynergy_HoverOnTarget(void) { FieldPsynergy_Hover(); }

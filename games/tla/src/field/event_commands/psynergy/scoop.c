@@ -1,5 +1,6 @@
 /// @file
-/// Field Psynergy kind 30, an object dropped at the effect's anchor, and the
+/// Scoop, Teleport (field Psynergy kind 30) and its whirl and sparks, an object
+/// dropped at the effect's anchor, and the
 /// canvas circle and image copies, with routines not yet understood.
 // Part of psynergy.c.
 
@@ -20,7 +21,7 @@ struct Work080e6400 {
   s16 mode;
 };
 
-void Func_080e62f4(u8 *source, u8 *destination, s32 phase);
+void Picture_ShiftColumnsByWave(u8 *source, u8 *destination, s32 phase);
 /* VIEW(f0e6400): routine BattleEffect_UpdateGrowingParticleSprite as void
  * BattleEffect_UpdateGrowingParticleSprite(struct EffectSprite *sprite, struct
  * EffectParticle *particle, s32 tiles); the definition has void
@@ -40,7 +41,8 @@ extern void EffectSprite_DrawAtWorldPosition__f0e6400(
 
 #define NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 
-void Func_080e6400(void) {
+/// Task of the Scoop: plays the dig on the anchor phase by phase.
+void Scoop_Update(void) {
   struct Work080e6400 *work;
   struct Actor *anchor;
   struct EffectSprite *sprite;
@@ -80,7 +82,7 @@ void Func_080e6400(void) {
     if (*phase == 2) {
       picture = work->picture;
       vram = (u8 *)OBJ_VRAM0 + work->pictureTile * TILE_SIZE_4BPP;
-      Func_080e62f4(work->tiles, picture, work->timer + 14);
+      Picture_ShiftColumnsByWave(work->tiles, picture, work->timer + 14);
       // The heap copy of Render_CopyStrided called as returning the source
       // pointer it leaves in r0, which moves picture to r0 after the width's
       // 32; called as void, 2 of 596 instructions differ in tla-en.
@@ -190,7 +192,6 @@ void FieldPsynergy_Pound(void);
 void FieldPsynergy_Scoop(void);
 void FieldPsynergy_Parch(void);
 void FieldPsynergy_Hover(void);
-void Func_080e74d8(void);
 
 /// Effect 20 cast on a target: runs the effect, ignoring the target.
 void FieldPsynergy_ScoopOnTarget(void) { FieldPsynergy_Scoop(); }
@@ -511,7 +512,7 @@ void FieldPsynergy_Scoop(void) {
     // A local holding one constant: keeps 0x480's load where the native has it.
     s32 order = 0x480;
 
-    Task_Add(Func_080e6400, order);
+    Task_Add(Scoop_Update, order);
   }
   if (work->mode == 1) {
     frame = 0;
@@ -549,7 +550,7 @@ void FieldPsynergy_Scoop(void) {
     }
     Field_RunPsynergyEvent(pending, 999, frame);
   }
-  Task_Remove(Func_080e6400);
+  Task_Remove(Scoop_Update);
   Sound_PlayFar(114);
   FieldPsynergy_ShrinkToCaster(object, object->x, object->y, object->z);
   if (particleEntry != 96)
@@ -668,7 +669,12 @@ extern char ResourceId_ColouredOrbs;
 
 void Func_080dc954(void);
 
-void Func_080e7238(void) {
+/// A whirl of coloured orbs (ResourceId_ColouredOrbs) round the leader, with
+/// sound 200. The scenes with Teleport circles call it (Mars Lighthouse, the
+/// Anemos Inner Sanctum, the Yampi Desert and Islet caves, Contigo).
+// XXX: whether the whirl is the leaving or the arriving half of a teleport;
+// a render of a Teleport circle would settle it.
+void Teleport_PlayWhirl(void) {
   s32 position[3];
   struct WhirlWork__f0e6400 *work = HeapSlot_Alloc(92, sizeof(*work));
   struct Actor *object = ObjectTable_Get(Party_GetLeaderActor());
@@ -815,7 +821,9 @@ struct SparkWork {
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Actor_ApplyRandomChildValues(void);
 
-void Func_080e74d8(void) {
+/// Sparks burst from the leader, Teleport_PlayWhirl's companion in the same
+/// scenes.
+void Teleport_PlaySparks(void) {
   struct SparkWork *work = HeapSlot_Alloc(92, sizeof(*work));
   s32 owner = Party_GetLeaderActor();
   struct Actor *object = ObjectTable_Get(Party_GetLeaderActor());
@@ -953,10 +961,10 @@ void Func_080e74d8(void) {
   HeapSlot_Release(92);
 }
 
-/// Runs Func_080e74d8, fades the palettes back to the saved ones and waits
-/// 10 frames.
-void Func_080e7804(void) {
-  Func_080e74d8();
+/// Runs Teleport_PlaySparks, fades the palettes back to the saved ones and
+/// waits 10 frames.
+void Teleport_PlaySparksAndFade(void) {
+  Teleport_PlaySparks();
   FieldPsynergy_FadeFromCastColor();
   wait(10);
 }

@@ -766,7 +766,7 @@ void FieldPsynergy_Pound(void);
 void FieldPsynergy_Scoop(void);
 void FieldPsynergy_Parch(void);
 void FieldPsynergy_Hover(void);
-void Func_080e74d8(void);
+void Teleport_PlaySparks(void);
 s32 Party_GetLeaderActor(void);
 
 /// Effect 26 cast on a target: runs the effect, ignoring the target.

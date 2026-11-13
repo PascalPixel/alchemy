@@ -48,7 +48,6 @@ void FieldPsynergy_Pound(void);
 void FieldPsynergy_Scoop(void);
 void FieldPsynergy_Parch(void);
 void FieldPsynergy_Hover(void);
-void Func_080e74d8(void);
 
 /// Runs field effect 18 (FieldPsynergy_Pound) for the request dispatcher.
 void FieldPsynergy_PoundOnTarget(void) { FieldPsynergy_Pound(); }

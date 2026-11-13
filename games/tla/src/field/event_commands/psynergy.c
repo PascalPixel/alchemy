@@ -9,7 +9,7 @@
 // The parts, in ROM order.
 #include "psynergy/cyclone.c"
 #include "psynergy/blaze.c"
-#include "psynergy/ripple.c"
+#include "psynergy/sand_sinking.c"
 #include "psynergy/growing_particle.c"
 #include "psynergy/sand.c"
 #include "psynergy/burst.c"

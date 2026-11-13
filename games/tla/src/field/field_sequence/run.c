@@ -184,11 +184,11 @@ s32 FieldSequence_Run(void) {
       // with a 0 made before the store, which then serves ownerOverride.
       *(s8 *)&ARRIVAL.state = 2;
       // Once-only: inside the block the 0's one use counts at loop depth, so
-      // it stays in a register across Func_080e7804.
+      // it stays in a register across Teleport_PlaySparksAndFade.
       do {
         s32 zero = 0;
 
-        Func_080e7804();
+        Teleport_PlaySparksAndFade();
         // (s16): the id compared as the field's own width; without it, 79 of
         // 1300 instructions differ in tla-en.
         if (ARRIVAL.scene != (s16)(s32)&SceneId_WorldMap)
@@ -206,7 +206,7 @@ s32 FieldSequence_Run(void) {
       Event_SetDestination(ARRIVAL.scene, ARRIVAL.entrance);
     } else if (arrivalState == 2) {
       ARRIVAL.state = 0;
-      Func_080e7238();
+      Teleport_PlayWhirl();
     }
     if (GameFlag_Test(303)) {
       GameFlag_ClearBit(303);

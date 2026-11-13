@@ -288,8 +288,8 @@ void Djinn_RestoreActorAfterBattle(void);
 
 void FieldPsynergy_ResumeCloakCheck(void);
 
-void Func_080e7804(void);
-void Func_080e7238(void);
+void Teleport_PlaySparksAndFade(void);
+void Teleport_PlayWhirl(void);
 
 void Field_StartEncounterTransition(s32 unused);
 

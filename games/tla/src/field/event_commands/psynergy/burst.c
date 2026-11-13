@@ -189,7 +189,8 @@ extern void BattleEffect_IntegrateVector2__f0e572c(
     s32 flags) __asm__("BattleEffect_IntegrateVector2");
 void MapGrid_SetScreenShakeFar(s32 a, s32 b, s32 c);
 
-void Func_080e5a64(void) {
+/// Task of the Pound: its shine's colours and particles, each frame.
+void FieldPsynergy_UpdatePound(void) {
   struct ShineWork *work = (struct ShineWork *)Ram_HeapSlots->battleFxWork[0];
   struct BlendWork *blend = Ram_HeapSlots->unkec[1];
   struct ShineParticle *particle;

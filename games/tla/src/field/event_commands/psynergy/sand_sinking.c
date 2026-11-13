@@ -1,5 +1,6 @@
 /// @file
-/// Routines not yet understood.
+/// The Sand sinking the leader into the ground: its picture, its sprite and
+/// the grains it throws up.
 // Part of psynergy.c.
 
 #include "../psynergy_internal.h"
@@ -58,7 +59,10 @@ s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Camera_WorldToScreen(s32 *position);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 
-void Func_080e446c(u8 *source, u8 *destination, s32 phase) {
+/// Picture_ShiftColumnsByWave as the Sand sinks the leader into the ground:
+/// each column's pixels below a wave line move down by phase (1.3 pixels a
+/// step), those above it stay.
+void Picture_SinkColumnsByWave(u8 *source, u8 *destination, s32 phase) {
   s32 width = 32;
   s32 height = 32;
   s32 column;
@@ -86,7 +90,9 @@ void Func_080e446c(u8 *source, u8 *destination, s32 phase) {
 
 #include "event_work.h"
 
-void Func_080e4510(struct EffectSprite__f0e446c *sprite, s32 tiles) {
+/// Sets up the sprite the Sand draws the sinking leader as: the leader's
+/// depth, priority, scale (three quarters on the world map) and place.
+void Sand_InitLeaderSprite(struct EffectSprite__f0e446c *sprite, s32 tiles) {
   struct EffectScene *scene = Ram_HeapSlots->effectWork;
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 position[3];
@@ -111,12 +117,15 @@ void Func_080e4510(struct EffectSprite__f0e446c *sprite, s32 tiles) {
   sprite->y = position[2];
 }
 
-/// Forwards to EffectSprite_Draw, which draws an effect sprite.
-void Func_080e45a0(void *sprite) { EffectSprite_Draw(sprite); }
+/// Draws Sand_InitLeaderSprite's sprite.
+void Sand_DrawLeaderSprite(void *sprite) { EffectSprite_Draw(sprite); }
 
-void Func_080e45a8(struct EffectSprite__f0e446c *sprite,
-                   struct EffectParticle *particle, s32 unused, s32 tiles,
-                   s32 high) {
+/// One grain of sand thrown up round the leader as it sinks: placed 2 pixels
+/// up and 2 out when the leader stands (high), else 4 out, drifting outward,
+/// drawn small just in front of the leader.
+void Sand_SpawnGrain(struct EffectSprite__f0e446c *sprite,
+                     struct EffectParticle *particle, s32 unused, s32 tiles,
+                     s32 high) {
   struct Actor *mainObject =
       ((struct EffectScene *)Ram_HeapSlots->effectWork)->mainObject;
   s32 position[3];

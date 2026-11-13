@@ -2184,7 +2184,7 @@ static void AltmillerCave_UpdateWallFragment(struct FieldParticle *fragment) {
     position[2] = startZ;
     fragment->x = startX;
     position[0] = startX;
-    Vector_AddPolarOffset(px(120), Import_RandomNext(), position);
+    Vector_AddPolarOffset(px(120), Random_Next(), position);
     fragment->targetX = position[0];
     fragment->targetZ = position[2];
     fragment->acceleration = px(5);
@@ -2227,8 +2227,8 @@ static void AltmillerCave_ReleaseWallBurst(void) {
     FieldParticle_SetCallback(fragment, AltmillerCave_UpdateWallFragment);
     FieldParticle_SetActorMode(fragment, 7);
     Sprite_SetAnimationColorModes(fragment->actor,
-                                  (u32)(Import_RandomNext() * 7) >> 16);
-    scale = Math_DivideUnsigned(Import_RandomNext(), 3) + 3 * Q16_ONE / 2;
+                                  Random_Below(7));
+    scale = Math_DivideUnsigned(Random_Next(), 3) + 3 * Q16_ONE / 2;
     fragment->scaleY = scale;
     fragment->scaleX = scale;
     wait(1);

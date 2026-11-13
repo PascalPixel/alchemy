@@ -50,7 +50,7 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   Actor_SetSpriteFlags(actor, 3);
   Actor_SelectAnimation(actor, ANIM_STILL);
   Actor_SelectAnimation(actor, ANIM_STAND);
-  Import_ActorSetPosition(id, px(x), px(z));
+  Actor_SetPositionFixed(id, px(x), px(z));
   // BUG: FACING_SOUTH is passed where an actor id belongs; no actor has
   // it, so the leader does not turn.
   Actor_FaceActorById(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
@@ -93,10 +93,10 @@ void Colosso_RestoreWarrior(s32 id) {
   actor = Actor_GetById(id);
   if (gMainRoutineWork.movementMode == 1) {
     gMainRoutineWork.movementMode = 0;
-    Import_ActorSetAnimation(id, ANIM_STAND);
+    Actor_SetAnimation(id, ANIM_STAND);
   } else {
     Actor_FaceDirection(id, FACING_SOUTH, 30);
-    Import_ActorSetAnimation(id, ANIM_NOD);
+    Actor_SetAnimation(id, ANIM_NOD);
     Event_Wait(30);
   }
   system->fill = 0;

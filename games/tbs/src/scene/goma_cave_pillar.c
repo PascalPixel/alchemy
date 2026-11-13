@@ -275,7 +275,7 @@ static void GomaCavePillar_SpawnStumpDust(void) {
   framePhase = gFrameCount & 7;
   if (framePhase == 0) {
     firstXSource = Actor_Get(ACTOR_STUMP);
-    firstRandomX = Import_RandomNext();
+    firstRandomX = Random_Next();
     fixedX = firstXSource->x.fixed;
     fixedX +=
         ((((u32)(((firstRandomX << 1) + firstRandomX) << 2)) >> 16) << 16);
@@ -283,7 +283,7 @@ static void GomaCavePillar_SpawnStumpDust(void) {
     firstZSource = Actor_Get(ACTOR_STUMP);
     fixedZ = firstZSource->z.fixed;
     fixedZ += px(6);
-    firstRandomSpeed = Import_RandomNext();
+    firstRandomSpeed = Random_Next();
     firstSpeedBand = ((u32)((firstRandomSpeed << 2) + firstRandomSpeed) >> 16);
     // These shifts produce speedBand * 6553: a tenth-pixel falling step.
     firstBandScaled =
@@ -299,7 +299,7 @@ static void GomaCavePillar_SpawnStumpDust(void) {
     framePhase = gFrameCount & 15;
     if (framePhase == 0) {
       secondXSource = Actor_Get(ACTOR_STUMP);
-      secondRandomX = Import_RandomNext();
+      secondRandomX = Random_Next();
       fixedX = secondXSource->x.fixed;
       fixedX +=
           ((((u32)(((secondRandomX << 1) + secondRandomX) << 2)) >> 16) << 16);
@@ -307,7 +307,7 @@ static void GomaCavePillar_SpawnStumpDust(void) {
       secondZSource = Actor_Get(ACTOR_STUMP);
       fixedZ = secondZSource->z.fixed;
       fixedZ += px(6);
-      secondRandomSpeed = Import_RandomNext();
+      secondRandomSpeed = Random_Next();
       secondSpeedBand =
           ((u32)((secondRandomSpeed << 2) + secondRandomSpeed) >> 16);
       // Keep the same five falling speeds for the second fragment.
@@ -385,14 +385,14 @@ static void GomaCavePillar_PushStumpOver(void) {
     Event_Wait(12);
     Sound_Play(SE_STONE_GRIND);
     xSource = Actor_Get(ACTOR_STUMP);
-    randomX = Import_RandomNext();
+    randomX = Random_Next();
     fixedX = xSource->x.fixed;
     fixedX += ((((u32)(((randomX << 1) + randomX) << 2)) >> 16) << 16);
     heightSource = Actor_Get(ACTOR_STUMP);
     zSource = Actor_Get(ACTOR_STUMP);
     fixedZ = zSource->z.fixed;
     fixedZ += px(6);
-    randomSpeed = Import_RandomNext();
+    randomSpeed = Random_Next();
     speedBand = ((u32)((randomSpeed << 2) + randomSpeed) >> 16);
     // A last piece of dust, with the same tenth-pixel speed bands.
     bandScaled = (((speedBand << 1) + speedBand) << 2) + speedBand;

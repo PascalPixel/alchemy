@@ -52,7 +52,7 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
     x += px(8);
     y <<= 20;
     y += px(8);
-    Import_ActorSetPosition(ACTOR_GARET, x, y);
+    Actor_SetPositionFixed(ACTOR_GARET, x, y);
   }
   {
     s32 x =
@@ -63,7 +63,7 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
     x += px(8);
     y <<= 20;
     y += px(8);
-    Import_ActorSetPosition(ACTOR_IVAN, x, y);
+    Actor_SetPositionFixed(ACTOR_IVAN, x, y);
   }
   {
     s32 x =
@@ -74,7 +74,7 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
     x += px(8);
     y <<= 20;
     y += px(8);
-    Import_ActorSetPosition(ACTOR_MIA, x, y);
+    Actor_SetPositionFixed(ACTOR_MIA, x, y);
   }
 }
 
@@ -472,14 +472,14 @@ L_main:
   besideX = guideX + 16;
   Actor_WalkToAndWaitById(ACTOR_PARTY_LEADER, besideX, frontZ);
   Actor_TurnToFaceEachOther(friendId, ACTOR_PARTY_LEADER, 30);
-  Import_ActorSetAnimation(friendId, ANIM_NOD);
+  Actor_SetAnimation(friendId, ANIM_NOD);
   behindZ = frontZ - 32;
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_WalkToAndWait(guide, guideX, behindZ);
   Actor_WalkToById(guide, besideX, behindZ);
   Actor_WatchAndSetScript(ACTOR_PARTY_LEADER, friendId);
   Actor_WalkToAndWait(friendId, guideX, behindZ);
-  Import_ActorSetAnimation(guide, ANIM_STAND);
+  Actor_SetAnimation(guide, ANIM_STAND);
   Actor_FaceDirection(guide, FACING_WEST, 0);
   Actor_WalkToAndWait(friendId, guideX, guideZ - 48);
   Actor_WalkToAndWait(guide, guideX, behindZ);

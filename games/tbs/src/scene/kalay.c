@@ -1473,7 +1473,7 @@ static void Kalay_StartTouristFidgeting(s32 actorId) {
 
   actor = Actor_Get(actorId);
   actor->timer = actorId;
-  random = Import_RandomNext();
+  random = Random_Next();
   actor->userValue = (random * 5) >> 12;
   Actor_StartScript(actor, gKalay_TouristFidgetScript);
 }
@@ -2273,7 +2273,7 @@ static void Kalay_UpdateTunnelEmitters(void) {
 /// is a puff of dust (SPRITE_DUST_PUFF) with its blue raised to full.
 static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z) {
   struct Actor *particle;
-  s32 random = Import_RandomNext();
+  s32 random = Random_Next();
 
   // It starts up to 7 pixels above 16 over the height.
   particle =
@@ -2307,7 +2307,7 @@ static void Kalay_UpdateNutOrbit(void) {
   effect->x = effect->orbitCenterX + Trig_Cos(effect->orbitAngle) * 2;
   effect->y = effect->orbitCenterY + offset;
   sprite->rotation = Trig_Cos(effect->orbitAngle + TRIG_TURN / 2) >> 3;
-  first = Import_RandomNext();
+  first = Random_Next();
   effect->orbitAngle +=
       ((u32)(first << 9) >> 16) + (Random_Below(512)) + TRIG_TURN / 64;
 }

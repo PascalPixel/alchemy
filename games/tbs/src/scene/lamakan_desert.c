@@ -458,7 +458,7 @@ static void LamakanDesert_ComplainAboutHeat(s32 mark) {
 
   quarter = mark;
   for (tries = 0; tries <= 2; tries++) {
-    random = Import_RandomNext();
+    random = Random_Next();
     member = (u32)((random << 1) + random) >> 16; // 0 to 2
     flag = member + FLAG_GARET_COMPLAINED;
     if (GameFlag_Get(flag) == 0) {

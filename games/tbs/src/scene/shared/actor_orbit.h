@@ -18,8 +18,8 @@ static s32 Scene_UpdateFloatingNut(OrbitingMapActor *nut) {
   nut->y = nut->orbitCenterY + dip;
   sprite->rotation = Trig_Cos(nut->orbitAngle + TRIG_TURN / 2) / 8;
   // The pace: a sixty-fourth of a turn and two random steps under 1/128 each.
-  first = Import_RandomNext();
-  second = Import_RandomNext();
+  first = Random_Next();
+  second = Random_Next();
   nut->orbitAngle = nut->orbitAngle +
                     ((((u32)first << 9) >> 16) + (((u32)second << 9) >> 16)) +
                     TRIG_TURN / 64;

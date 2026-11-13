@@ -388,7 +388,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
                                          horizontalExtent, verticalExtent,
                                          CELL_BEHAVIOR_NORMAL);
   Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 0.5, 0.1);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(15);
 
   {
@@ -418,7 +418,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   FieldActor_SetMoveTargetFixed(actor, probe.position.x, probe.position.y,
                                 probe.position.z);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 0.3, 0.1);
 
   {
@@ -430,7 +430,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
     probe.callback();
 
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_GetById(ACTOR_PARTY_LEADER)->update = NULL;
   Actor_WaitForMove(actor);
   Sound_Play(SE_STOP_ACTION_SE);

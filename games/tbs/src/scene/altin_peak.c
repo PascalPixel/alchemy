@@ -1859,7 +1859,7 @@ static void AltinPeak_DriftSpray(struct Actor *spray) {
     spray->scaleX += 3 * Q16_ONE / 100;
     spray->scaleY += 3 * Q16_ONE / 100;
   }
-  if ((u32)(spray->timer * Import_RandomNext()) >> 16 == 0)
+  if (Random_Below(spray->timer) == 0)
     Actor_SetSpriteColor(spray, SPRITE_COLOR_WHITE);
   if (spray->timer != 0)
     spray->timer -= 2;

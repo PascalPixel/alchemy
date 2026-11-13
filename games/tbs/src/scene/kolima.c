@@ -178,7 +178,7 @@ static s32 Kolima_ApplyPendingPose(struct Actor *actor) {
 /// shows its bright frame (7) past 1000 and its dim one (10) before. At 1200
 /// the timer starts over.
 static s32 Kolima_UpdateTimedAppearance(struct Actor *actor) {
-  s32 randomValue = Import_RandomNext();
+  s32 randomValue = Random_Next();
   s32 scaledRandom = randomValue * 100;
   s32 appearanceTimer = (u16)actor->timer + ((u32)scaledRandom >> 16);
   actor->timer = appearanceTimer;

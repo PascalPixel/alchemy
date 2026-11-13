@@ -46,15 +46,15 @@ static void Colosso_SparkleAroundPrize(struct Actor *prize) {
   if (prize->velocityY >= -255 && prize->velocityY <= 255) {
     prize->motionFlags = 0;
   }
-  chance = Import_RandomNext();
+  chance = Random_Next();
   if (chance * 100 >> 16 <= 9) {
     struct Actor *sparkle;
     s32 distance;
     s32 angle;
 
     SET_VECTOR(position, prize->x.fixed, prize->y.fixed, prize->z.fixed);
-    distance = Import_RandomNext();
-    angle = Import_RandomNext();
+    distance = Random_Next();
+    angle = Random_Next();
     Vector_AddPolarOffset(distance << 4, angle, position);
     {
       s32 x = position[0];

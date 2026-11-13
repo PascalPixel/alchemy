@@ -496,11 +496,11 @@ UNUSED static void CrossboneIsleSteppingStones_SpawnUnusedLeaderParticle(void) {
     options.palette = 10;
     options.startScaleX = 7 * Q16_ONE / 10;
     options.startScaleY = 7 * Q16_ONE / 10;
-    drawX = Import_RandomNext();
+    drawX = Random_Next();
     x = leader->x.fixed + px(((u32)((drawX << 4) + drawX) >> 16) - 8);
-    drawZ = Import_RandomNext();
+    drawZ = Random_Next();
     z = leader->z.fixed + px(((u32)((drawZ << 4) + drawZ) >> 16) - 8);
-    drawY = Import_RandomNext();
+    drawY = Random_Next();
     velocityY =
         Math_Divide((((u32)((drawY << 2) + drawY) >> 16) << 16) + px(3), 10);
     FieldEffect_Spawn(x, leader->y.fixed, z, 0, velocityY, cycleFrame,
@@ -1262,16 +1262,16 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
   options.startScaleY = Q16_ONE / 2;
   options.targetScaleX = 8 * Q16_ONE / 5;
   options.targetScaleY = 8 * Q16_ONE / 5;
-  draw = Import_RandomNext();
+  draw = Random_Next();
   mask = 0x0ffff000;
   mask &= draw;
   options.rotation = mask;
   options.update = CrossboneIsleSteppingStones_UpdateDampedParticle;
 
-  draw = Import_RandomNext();
+  draw = Random_Next();
   velocityX = -(px((draw * 5) >> 16) + px(6));
   velocityX /= 2;
-  draw = Import_RandomNext();
+  draw = Random_Next();
   velocityY = -(px((draw * 5) >> 16) + px(5));
 
   FieldEffect_Spawn(px(324), px(48), px(228), velocityX, velocityY, 0,

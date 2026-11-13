@@ -63,8 +63,8 @@ void Kolima_UpdateCurseDust(void) {
       x = origin[0] + ((Random_Below(gFallingEffectWidth)) << 8) +
           gFallingEffectOffset;
     else
-      x = origin[0] + (Import_RandomNext() << 8) - px(128);
-    z = origin[2] + (Import_RandomNext() << 8) - px(128);
+      x = origin[0] + (Random_Next() << 8) - px(128);
+    z = origin[2] + (Random_Next() << 8) - px(128);
     actor->motionFlags = 0;
     actor->y.fixed = px(160);
     sprite = actor->sprite;

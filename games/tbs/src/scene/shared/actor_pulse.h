@@ -23,7 +23,7 @@ static s32 Scene_SquashAndStretch(struct Actor *state) {
   case 0:
     state->scaleX = Q16_ONE;
     state->scaleY = Q16_ONE;
-    state->timer = (Math_RemainderUnsigned(Import_RandomNext(), 90) + 60);
+    state->timer = (Math_RemainderUnsigned(Random_Next(), 90) + 60);
     break;
   }
   state->timer--;

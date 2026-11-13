@@ -261,9 +261,9 @@ static s32 Imil_UpdateShiver(struct Actor *actor) {
     actor->scaleX += Q16_ONE / 16;
     actor->scaleY += -Q16_ONE / 32;
     if ((s16)actor->userValue != 0) {
-      actor->timer = (u32)Import_RandomNext() % 40 + 40;
+      actor->timer = (u32)Random_Next() % 40 + 40;
     } else {
-      actor->timer = (u32)Import_RandomNext() % 20 + 20;
+      actor->timer = (u32)Random_Next() % 20 + 20;
     }
     break;
   }
@@ -1174,8 +1174,8 @@ UNUSED static void Imil_SwayAndSpark(struct Actor *actor) {
   actor->timer = (actor->timer + 64) % 64;
   if (gFrameCount % 3 == 0) {
     SET_VECTOR(pos, actor->x.fixed, actor->y.fixed + px(2), actor->z.fixed);
-    radius = Import_RandomNext();
-    Vector_AddPolarOffset(radius * 6, Import_RandomNext(), pos);
+    radius = Random_Next();
+    Vector_AddPolarOffset(radius * 6, Random_Next(), pos);
     spark = FieldActor_Create(SPRITE_SPARKLE, pos[0], pos[1], pos[2]);
     if (spark != NULL) {
       spark->sprite->image.priority = 0;

@@ -15,7 +15,7 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
   Sound_Play(SE_SPARKLING_PASSAGE);
   v->update = (void (*)(struct Actor *))MercuryLighthouse_TrailSparks;
   v->speedLimit = px(1) / 5;
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffsetById(ACTOR_PARTY_LEADER, 0, -6);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);

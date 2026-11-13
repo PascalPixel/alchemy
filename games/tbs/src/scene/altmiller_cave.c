@@ -2226,8 +2226,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
     FieldParticle_Initialize(fragment, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(fragment, AltmillerCave_UpdateWallFragment);
     FieldParticle_SetActorMode(fragment, 7);
-    Sprite_SetAnimationColorModes(fragment->actor,
-                                  Random_Below(7));
+    Sprite_SetAnimationColorModes(fragment->actor, Random_Below(7));
     scale = Math_DivideUnsigned(Random_Next(), 3) + 3 * Q16_ONE / 2;
     fragment->scaleY = scale;
     fragment->scaleX = scale;

@@ -377,30 +377,39 @@ UNREAD_RESULT BattlePlacement_RelayoutEnemies(void) {
 /// battle object at its spot. Called by Battle_Run once the unit lists are
 /// filled. Writes gBattleWork->placement and every unit's battle object.
 void BattleUnit_RefreshPlacement(void) {
-  struct BattleWork *battle = gBattleWork;
+  struct BattleWork *battle;
   u16 unitIds[UNIT_MAX];
   s32 xPositions[ENEMY_BATTLE_SIZE];
   s32 zPositions[ENEMY_BATTLE_SIZE];
   s32 count;
   s32 i;
+  s32 partyPlace = 0;
+  s32 enemyPlace = 0;
+  s32 number;
+  s32 enemy;
+  u8 *place;
 
+  battle = gBattleWork;
+  count = BattleParty_PrepareMembers(unitIds);
   // objectIndex[0..7] is each party unit id's place and objectIndex[8..13]
   // the enemy places, numbered 8 to 13.
+  number = BATTLE_OBJECT_NONE;
   for (i = UNIT_MAX - 1; i >= 0; i--)
-    battle->objectIndex[i] = BATTLE_OBJECT_NONE;
-  for (i = UNIT_MAX - 1; i >= PARTY_UNIT_COUNT; i--)
-    battle->objectIndex[i] = i;
+    battle->objectIndex[i] = number;
+  place = &battle->objectIndex[UNIT_MAX - 1];
+  for (enemy = ENEMY_BATTLE_SIZE - 1, number = UNIT_MAX - 1; enemy >= 0;
+       enemy--, number--)
+    *place-- = number;
 
   // The party, at its fixed spots in pixels: x 80, z 48, 16, -16 and -48
   // (gBattlePlacement_StepPairs, battle_tables.s).
-  count = BattleParty_PrepareMembers(unitIds);
-  for (i = 0; i < count; i++) {
+  for (i = 0; i < count; partyPlace++, i++) {
     s32 unitId = unitIds[i];
 
-    battle->objectIndex[unitId] = i;
+    battle->objectIndex[unitId] = partyPlace;
     BattleObject_Make(BattleObject_Get(unitId), unitId,
-                      gBattlePlacement_StepPairs[i * 2],
-                      gBattlePlacement_StepPairs[i * 2 + 1]);
+                      gBattlePlacement_StepPairs[partyPlace * 2],
+                      gBattlePlacement_StepPairs[partyPlace * 2 + 1]);
   }
 
   // The enemies, laid out by size.
@@ -410,12 +419,12 @@ void BattleUnit_RefreshPlacement(void) {
     unitIds[i] = battle->enemyIds[i];
   count = i;
   BattlePlacement_LayoutEnemies(unitIds, count, xPositions, zPositions);
-  for (i = 0; i < count; i++) {
+  for (i = 0; i < count; i++, enemyPlace++) {
     s32 unitId = battle->enemyIds[i];
 
     if (unitId != BATTLE_UNIT_REMOVED)
-      BattleObject_Make(BattleObject_Get(unitId), unitId, xPositions[i],
-                        zPositions[i]);
+      BattleObject_Make(BattleObject_Get(unitId), unitId,
+                        xPositions[enemyPlace], zPositions[enemyPlace]);
   }
 }
 

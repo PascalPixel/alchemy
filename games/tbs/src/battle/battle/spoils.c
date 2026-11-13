@@ -115,11 +115,16 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
     return -1;
   if (unit->classId != CLASS_NONE)
     return -2;
-  for (i = 0; i < ENEMY_BATTLE_SIZE; i++) {
-    if (battle->enemyKinds[i] == unit->id)
-      break;
+  classSlot = 0;
+  i = 0;
+  if (battle->enemyKinds[0] != unit->id) {
+    do {
+      if (++i > ENEMY_BATTLE_SIZE - 1)
+        break;
+    } while (battle->enemyKinds[i] != unit->id);
   }
-  classSlot = i != ENEMY_BATTLE_SIZE ? i : 0;
+  if (i != ENEMY_BATTLE_SIZE)
+    classSlot = i;
   // The earliest listed class to fall names the victory message, and a
   // second defeat makes it DEFEAT_SEVERAL.
   // No defeat state is 2, so this test never fails.
@@ -150,10 +155,15 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   if (enemy->item == 0 || enemy->itemChance == 0)
     return 0;
   // An item already kept drops no second time.
-  for (i = 0; i < 4; i++) {
-    if (spoils->items[i] == enemy->item)
-      return 0;
+  i = 0;
+  if (spoils->items[0] != enemy->item) {
+    do {
+      if (++i > 3)
+        break;
+    } while (spoils->items[i] != enemy->item);
   }
+  if (i != 4)
+    return 0;
   dropShift = enemy->itemChance;
   if (djinnBonus != 0)
     dropShift -= 2;

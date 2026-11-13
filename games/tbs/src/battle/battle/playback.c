@@ -361,7 +361,7 @@ void BattlePlayback_Run(void) {
           struct Sprite **slot;
           s32 lastPictureMask;
 
-          /* FAKEMATCH(temporary): lastPictureMask set in the loop's start;
+          /* FAKEMATCH(temporary): lastPictureMask set in the loop's start; as
            * declared with its 0xff, 2 of 794 instructions differ in tbs-en. */
           for (recordIndex = 0, slot = records, lastPictureMask = 0xff;
                (record = GetMotionRecord(

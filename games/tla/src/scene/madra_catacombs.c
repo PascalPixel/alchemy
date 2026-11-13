@@ -1,5 +1,11 @@
 /// @file
-/// The scene code of overlay 0x65a, in ROM order.
+/// The Madra Catacombs, under the town: a ladder room entered from Madra's two
+/// ladders, the tunnel the Champa dug, the deserted village with its pillars,
+/// rope, puddle and the door Reveal opens, the room whose bookshelf Tremor
+/// shakes until a chest falls into the room below, and the tablet room whose
+/// red double door the Ruin Key opens, lighting its flames before Moloch's
+/// tablet. Once the Black Crystal is stolen (flag 0x8ab) the Champa's way in is
+/// blocked.
 
 #include "shared/map_cells.h"
 #include "shared/actors.h"
@@ -20,6 +26,14 @@
 #include "module/scene/scene.h"
 #include "module/tla.h"
 #include "text/msg_ids.h"
+#include "objcmd.h"
+#include "battle.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "system.h"
 
 struct Actor *Func_0200120c(void);
 void Func_020011ec(void);
@@ -29,8 +43,8 @@ s32 Func_020011d4(struct Actor *object);
 
 // Raises each listed actor's cells: the shape grid and the cell flags under it,
 // then lifts the leader if the new terrain is above the leader.
-DEFINE_PILLARS_RAISE(Func_02000038, MapGrid_GetTerrainKind, Func_020011d4,
-                     Func_020011f4)
+DEFINE_PILLARS_RAISE(MadraCatacombs_RaisePillarCells, MapGrid_GetTerrainKind,
+                     Func_020011d4, Func_020011f4)
 
 #define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
 
@@ -41,8 +55,8 @@ DEFINE_PILLARS_RAISE(Func_02000038, MapGrid_GetTerrainKind, Func_020011d4,
 /// Lowers the cells under the held actor, or the one the leader carries, for
 /// each listed actor it is: the shape grid takes the shape for its new height
 /// and the cell flags under it are cleared; the actor is kept at 0xcbc of the
-/// event work. Overlay 655's Func_02000d78 and overlay 676's copy.
-void Func_0200014c(u16 *list) {
+/// event work.
+void MadraCatacombs_LowerHeldPillarCells(u16 *list) {
   struct Actor *held = Func_0200120c();
   void *work = Ram_HeapSlots->eventWork;
   u8 *grid;
@@ -68,8 +82,7 @@ void Func_0200014c(u16 *list) {
       s32 result = Func_020011f4(*layer, kind, (height >> 19) - 4);
 
       shape += index;
-      /* FAKEMATCH(temporary): index also holds its cell offset; as cell +=
-       * index * 4, 35 of 131 instructions differ in tla-en. */
+      // The index goes on as the cell offset, four bytes a cell.
       index <<= 2;
       ((struct ShapeCell *)shape)->shape = result;
       cell += index;
@@ -84,9 +97,6 @@ void Func_0200014c(u16 *list) {
   }
 }
 
-void Func_020006ec(struct Actor *object, struct Actor *other);
-void Func_02003c00(s32 a, s32 b, s32 c);
-
 // One-field view: the shape store is memory of its own to sched2, which sinks
 // it past the cell read; a plain store keeps its order.
 
@@ -100,7 +110,7 @@ struct SceneWork {
 
 extern struct Trigger gMadraCatacombs_Triggers[];
 
-void Func_02000fbc(void);
+void MadraCatacombs_SetUpRoomBelowBookshelf(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom4)
@@ -114,17 +124,9 @@ const s16 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov65aRoom2)
-    return gData_020014a8;
+    return gMadraCatacombs_LadderRoomRegions;
   return 0;
 }
-
-#include "battle.h"
-#include "game.h"
-#include "graphics.h"
-#include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -173,7 +175,9 @@ void MadraCatacombs_TryLockedDoor(void) {
 
 DEFINE_ACTOR_DROP_AND_WAIT(Actor_DropAndWait)
 
-void Func_020004cc(void) {
+/// The pillar Move pushes onto cell (40, 13) drops into the hole there, which
+/// it fills for good (flag 0x8c8).
+void MadraCatacombs_DropPillarIntoHole(void) {
   struct Actor *object = Actor_GetById(11);
   s32 z;
 
@@ -190,9 +194,12 @@ void Func_020004cc(void) {
   }
 }
 
-void Func_0200051c(void) { Func_020011e4(gData_020013c0); }
+void MadraCatacombs_StartMovingPushedPillar(void) {
+  Func_020011e4(gMadraCatacombs_PushedPillar);
+}
 
-void Func_0200052c(void) {
+/// The second pillar, moved onto cell (44, 26), stays there (flag 0x8ca).
+void MadraCatacombs_FinishMovingPushedPillar(void) {
   struct Actor *object = Actor_GetById(12);
 
   Func_020011ec();
@@ -200,10 +207,12 @@ void Func_0200052c(void) {
     Event_SetFlag(0x8ca);
 }
 
-void Func_02000558(void) { Func_020011cc(gData_020013c4); }
+void MadraCatacombs_FreezePuddle(void) {
+  Func_020011cc(gMadraCatacombs_Puddles);
+}
 
 void FieldCamera_WaitForArrival(void);
-void Func_02000958(void);
+void MadraCatacombs_LightFlames(void);
 
 /// The Ruin Key (item 459) opens the double door, which slides apart, and the
 /// room beyond lights up.
@@ -232,32 +241,32 @@ void MadraCatacombs_UnlockWithRuinKey(void) {
   Event_PlaySound(168);
   Actor_SetPosition(14, PIXELS(136), PIXELS(258));
   Actor_SetPosition(19, PIXELS(184), PIXELS(258));
-  Actor_SetScript(14, gData_02001264);
-  Actor_SetScript(19, gData_02001264);
+  Actor_SetScript(14, gMadraCatacombs_FlameFlaresUp);
+  Actor_SetScript(19, gMadraCatacombs_FlameFlaresUp);
   Event_Wait(40);
   Event_PlaySound(168);
   Actor_SetPosition(13, PIXELS(120), PIXELS(226));
   Actor_SetPosition(18, PIXELS(200), PIXELS(226));
-  Actor_SetScript(13, gData_02001264);
-  Actor_SetScript(18, gData_02001264);
+  Actor_SetScript(13, gMadraCatacombs_FlameFlaresUp);
+  Actor_SetScript(18, gMadraCatacombs_FlameFlaresUp);
   Event_Wait(40);
   Event_PlaySound(168);
   Actor_SetPosition(12, PIXELS(120), PIXELS(194));
   Actor_SetPosition(17, PIXELS(200), PIXELS(194));
-  Actor_SetScript(12, gData_02001264);
-  Actor_SetScript(17, gData_02001264);
+  Actor_SetScript(12, gMadraCatacombs_FlameFlaresUp);
+  Actor_SetScript(17, gMadraCatacombs_FlameFlaresUp);
   Event_Wait(60);
   Event_PlaySound(229);
   Actor_SetPosition(11, PIXELS(136), PIXELS(162));
   Actor_SetPosition(16, PIXELS(184), PIXELS(162));
   Actor_SetPosition(10, PIXELS(136), PIXELS(138));
   Actor_SetPosition(15, PIXELS(184), PIXELS(138));
-  Actor_SetScript(11, gData_020012f4);
-  Actor_SetScript(16, gData_020012f4);
-  Actor_SetScript(10, gData_020012f4);
-  Actor_SetScript(15, gData_020012f4);
+  Actor_SetScript(11, gMadraCatacombs_GreatFlameFlaresUp);
+  Actor_SetScript(16, gMadraCatacombs_GreatFlameFlaresUp);
+  Actor_SetScript(10, gMadraCatacombs_GreatFlameFlaresUp);
+  Actor_SetScript(15, gMadraCatacombs_GreatFlameFlaresUp);
   Event_Wait(80);
-  Func_02000958();
+  MadraCatacombs_LightFlames();
   PartyInventory_Remove(459);
   Event_SetFlag(0x8c9);
   Event_End();
@@ -270,22 +279,16 @@ struct EventWork1ac {
 
 void Actor_MoveToObject(s32 id, s32 value);
 void Func_020011b4(void);
-/* VIEW(madra_catacombs): routine Func_020011c4 as void Func_020011c4(const void
- * *data); module/scene/mars_lighthouse_room_m.h has void Func_020011c4(void);
- * tried as the definition's void Func_020011c4(void), which the object already
- * declares, Func_02000dcc moves: 1 of 142 instructions in tla-ja. */
-extern void
-Func_020011c4__madra_catacombs(const void *data) __asm__("Func_020011c4");
-/* VIEW(madra_catacombs): routine Func_020011dc as void Func_020011dc(const void
- * *data); module/scene/trial_road.h has void Func_020011dc(void); tried as the
- * definition's void Func_020011dc(void), which the object already declares,
- * Func_02000dcc moves: 1 of 142 instructions in tla-ja. */
-extern void
-Func_020011dc__madra_catacombs(const void *data) __asm__("Func_020011dc");
-void Func_020008d0(struct Actor *object);
-void Func_02000cf4(void);
+void Func_020011c4(const void *data);
+void Func_020011dc(const void *data);
+/// The climbable pillar settles where Move left it, its cells raised; on cell
+/// (35, 17) it stays there (flag 0x9ef).
+void MadraCatacombs_SettleClimbablePillar(struct Actor *object);
+void MadraCatacombs_LeaveBlockedTunnel(void);
 
-void Func_0200072c(void) {
+/// Reveal shows the push button by the closed doorway, pressed in once the door
+/// has opened (flag 0x8cb); flag 0x203 holds while it shows.
+void MadraCatacombs_RevealButton(void) {
   if (Event_GetFlag(0x8cb) != 0)
     MapGrid_CopyCellsTo(72, 63, 36, 38, 1, 2);
   else
@@ -293,7 +296,7 @@ void Func_0200072c(void) {
   Event_SetFlag(0x203);
 }
 
-void Func_02000778(void) {
+void MadraCatacombs_HideButton(void) {
   MapGrid_CopyCellsTo(70, 63, 36, 38, 1, 2);
   Event_ClearFlag(0x203);
 }
@@ -325,7 +328,9 @@ void MadraCatacombs_HearEyesOfTruth(void) {
   }
 }
 
-void Func_02000874(void) {
+/// Tremor shakes the bookshelf; once the chest on it has rocked past its edge
+/// it falls through to the room below (flag 0x8cc).
+void MadraCatacombs_ShakeBookshelf(void) {
   struct Actor *object;
   s32 x;
 
@@ -345,30 +350,36 @@ void Func_02000874(void) {
   }
 }
 
-void Func_020008d0(struct Actor *object) {
+void MadraCatacombs_SettleClimbablePillar(struct Actor *object) {
   HeldActor_RaiseCell();
   if ((object->x >> 20) == 35 && (object->z >> 20) == 17)
     Event_SetFlag(0x9ef);
 }
 
 DEFINE_SCENE_RUN_IF_HELD(Scene_RunIfHeld, Func_020011fc,
-                         Field_FindNearbyTalkTarget, Func_0200014c,
-                         gData_020013ca, Func_02001204, Func_020008d0)
+                         Field_FindNearbyTalkTarget,
+                         MadraCatacombs_LowerHeldPillarCells,
+                         gMadraCatacombs_ClimbablePillar, Func_02001204,
+                         MadraCatacombs_SettleClimbablePillar)
 
-void Func_0200092c(void) { Func_0200014c(gData_020013ca); }
+void MadraCatacombs_StartMovingClimbablePillar(void) {
+  MadraCatacombs_LowerHeldPillarCells(gMadraCatacombs_ClimbablePillar);
+}
 
-void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+/// A door opens, sliding stone (mode 2) or swinging (mode 1), and the leader
+/// walks through it as MadraCatacombs_EnterDoorway does.
+void MadraCatacombs_OpenDoorAndEnter(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
-void Func_0200093c(void) {
+void MadraCatacombs_FinishMovingClimbablePillar(void) {
   struct EventWorkCbc *work = Ram_HeapSlots->eventWork;
 
   if (work->active != 0)
-    Func_020008d0(work->active);
+    MadraCatacombs_SettleClimbablePillar(work->active);
 }
 
-/// Places actors 10 to 19 in two columns, then sends actors 20 to 29 to them
-/// one each.
-void Func_02000958(void) {
+/// The tablet room's flames, lit: actors 10 to 19 stand in two columns and
+/// actors 20 to 29 each go to one of them.
+void MadraCatacombs_LightFlames(void) {
   u32 i;
   /* FAKEMATCH(pin): the actor pinned to r6, so the counter takes r5 as the
    * native has them (a do-while or a counter-derived actor measured 14 to
@@ -399,7 +410,9 @@ void Func_02000958(void) {
   wait(1);
 }
 
-void Func_02000a28(void) {
+/// The chest on the bookshelf shakes with it, and each shake nudges it two
+/// pixels west with a hop.
+void MadraCatacombs_RockChestWithBookshelf(void) {
   struct Actor *lever = Actor_GetById(8);
   struct Actor *rock = Actor_GetById(64);
   struct AnimationRecord18 *animation = rock->sprite;
@@ -415,7 +428,9 @@ void Func_02000a28(void) {
     Event_SetFlag(0x204);
 }
 
-void Func_02000a88(void) {
+/// The leader steps to the middle of a doorway, walks in and leaves by the exit
+/// the event work names.
+void MadraCatacombs_EnterDoorway(void) {
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct Actor *object;
@@ -432,7 +447,7 @@ void Func_02000a88(void) {
                       object->z);
   FieldActor_WaitForMove(object);
   object->facing = FACING_NORTH;
-  Actor_SetScript(party->currentOwner, gData_0200121c);
+  Actor_SetScript(party->currentOwner, gMadraCatacombs_WalkIntoDoorway);
   wait(12);
   Event_PlaySound(123);
   Event_FinishScreenTransition();
@@ -440,7 +455,8 @@ void Func_02000a88(void) {
   Import_EventSetExitRequest(work->returnEntrance);
 }
 
-void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
+void MadraCatacombs_OpenDoorAndEnter(s32 a, s32 b, s32 c, s32 d, s32 mode,
+                                     s32 f) {
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
   struct Actor *object;
   s32 cell;
@@ -462,7 +478,8 @@ void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     FieldActor_WaitForMove(object);
     object->facing = FACING_NORTH;
   }
-  Actor_SetScript(gMainRoutineWork.currentOwner, gData_0200121c);
+  Actor_SetScript(gMainRoutineWork.currentOwner,
+                  gMadraCatacombs_WalkIntoDoorway);
   wait(12);
   Event_PlaySound(123);
   Event_FinishScreenTransition();
@@ -470,15 +487,25 @@ void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   Import_EventSetExitRequest(work->returnEntrance);
 }
 
-void Func_02000c24(void) { Func_02000b38(78, 29, 78, 31, 2, 2); }
+void MadraCatacombs_SlideOpenStoneDoor(void) {
+  MadraCatacombs_OpenDoorAndEnter(78, 29, 78, 31, 2, 2);
+}
 
-void Func_02000c40(void) { Func_02000b38(109, 1, 109, 3, 1, 2); }
+void MadraCatacombs_OpenBookshelfRoomWestDoor(void) {
+  MadraCatacombs_OpenDoorAndEnter(109, 1, 109, 3, 1, 2);
+}
 
-void Func_02000c5c(void) { Func_02000b38(118, 1, 118, 3, 1, 2); }
+void MadraCatacombs_OpenBookshelfRoomEastDoor(void) {
+  MadraCatacombs_OpenDoorAndEnter(118, 1, 118, 3, 1, 2);
+}
 
-void Func_02000c78(void) { Func_02000b38(92, 29, 92, 31, 1, 2); }
+void MadraCatacombs_OpenTabletRoomDoor(void) {
+  MadraCatacombs_OpenDoorAndEnter(92, 29, 92, 31, 1, 2);
+}
 
-#define DEFINE_FUNC_02000C94(name, n1)                                         \
+/// Arriving by a way the Champa have since blocked, the leader fades out and
+/// leaves by exit n1.
+#define DEFINE_LEAVE_BLOCKED_WAY(name, n1)                                     \
   void name(void) {                                                            \
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
@@ -492,28 +519,28 @@ void Func_02000c78(void) { Func_02000b38(92, 29, 92, 31, 1, 2); }
     Import_EventSetExitRequest(n1);                                            \
   }
 
-DEFINE_FUNC_02000C94(Func_02000c94, 3)
+DEFINE_LEAVE_BLOCKED_WAY(MadraCatacombs_LeaveBlockedVillage, 3)
 
-DEFINE_FUNC_02000C94(Func_02000cf4, 8)
+DEFINE_LEAVE_BLOCKED_WAY(MadraCatacombs_LeaveBlockedTunnel, 8)
 
 s32 Scene_Initialize(void) {
   ((struct SceneWork *)Ram_HeapSlots->eventWork)->unk1ac = 0x204;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom1)
-    Func_02000dcc();
+    MadraCatacombs_SetUpVillage();
   else if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom3)
-    Func_02000f2c();
+    MadraCatacombs_SetUpChampaTunnel();
   else if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom4)
-    Func_02000fbc();
+    MadraCatacombs_SetUpRoomBelowBookshelf();
   else if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom5)
-    Func_02000fd8();
+    MadraCatacombs_SetUpBookshelfRoom();
   else if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom6)
-    Func_0200102c();
+    MadraCatacombs_SetUpTabletRoom();
   return 0;
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_02000dcc(void) {
+void MadraCatacombs_SetUpVillage(void) {
   s32 a;
   s32 b;
   s32 x;
@@ -547,12 +574,12 @@ void Func_02000dcc(void) {
   }
   if (Event_GetFlag(0x8ca) != 0)
     Actor_SetPosition(12, PIXELS(712), PIXELS(424));
-  Func_020011dc__madra_catacombs(gData_020013c0);
+  Func_020011dc(gMadraCatacombs_PushedPillar);
   if (Event_GetFlag(0x9ef) != 0)
     Actor_SetPosition(8, PIXELS(568), PIXELS(280));
   Actor_GetById(8)->priorityFlags &= 0xfe;
-  Func_02000038(gData_020013ca);
-  Func_020011c4__madra_catacombs(gData_020013c4);
+  MadraCatacombs_RaisePillarCells(gMadraCatacombs_ClimbablePillar);
+  Func_020011c4(gMadraCatacombs_Puddles);
   if (Event_GetFlag(0x8cb) != 0) {
     MapGrid_CopyCellsTo(75, 66, 97, 39, 2, 2);
     MapGrid_CopyCellAttributes(33, 37, 2, 2, 33, 39);
@@ -562,13 +589,13 @@ void Func_02000dcc(void) {
     MapGrid_CopyCellsTo(82, 74, 116, 16, 5, 3);
     MapGrid_CopyCellAttributes(52, 11, 5, 1, 52, 18);
     if (gMainRoutineWork.entrance == 3)
-      Func_02000c94();
+      MadraCatacombs_LeaveBlockedVillage();
     else
       wait(10);
   }
 }
 
-void Func_02000f2c(void) {
+void MadraCatacombs_SetUpChampaTunnel(void) {
   Func_020011b4();
   Func_020011bc(0, 0x200, 8, 9);
   if (Event_GetFlag(0x8ab) != 0) {
@@ -577,18 +604,18 @@ void Func_02000f2c(void) {
     MapGrid_CopyCellsTo(50, 74, 50, 75, 2, 1);
     MapGrid_CopyCellAttributes(49, 9, 5, 1, 49, 13);
     if (gMainRoutineWork.entrance == 8)
-      Func_02000cf4();
+      MadraCatacombs_LeaveBlockedTunnel();
     else
       wait(1);
   }
 }
 
-void Func_02000fbc(void) {
+void MadraCatacombs_SetUpRoomBelowBookshelf(void) {
   if (Event_GetFlag(0x8cc) == 0)
     Actor_SetPosition(65, 0, 0);
 }
 
-void Func_02000fd8(void) {
+void MadraCatacombs_SetUpBookshelfRoom(void) {
   struct Actor *object;
 
   if (Event_GetFlag(0x8cc) != 0) {
@@ -599,15 +626,15 @@ void Func_02000fd8(void) {
     object->motionFlags = 2;
     object->y = PIXELS(32);
     object->terrainHeight = PIXELS(32);
-    object->update = Func_02000a28;
+    object->update = MadraCatacombs_RockChestWithBookshelf;
     Actor_GetById(8)->scaleY = 0xcccc;
   }
 }
 
 /// Mirrors actors 8 and 9 and puts them on the ground; once flag 0x8c9 is set,
-/// each steps 12 pixels outward unless flag 0x109 is set too, and Func_02000958
-/// runs.
-void Func_0200102c(void) {
+/// each steps 12 pixels outward unless flag 0x109 is set too, and
+/// MadraCatacombs_LightFlames runs.
+void MadraCatacombs_SetUpTabletRoom(void) {
   struct Actor *left = Actor_GetById(8);
   struct Actor *right = Actor_GetById(9);
 
@@ -622,17 +649,14 @@ void Func_0200102c(void) {
       left->x += PIXELS(-12);
       right->x += 0xc0000;
     }
-    Func_02000958();
+    MadraCatacombs_LightFlames();
   }
 }
 
-#include "text/msg_ids.h"
-#include "objcmd.h"
-
 // clang-format off
-DEFINE_G_DATA_0200121C(gData_0200121c)
+DEFINE_G_DATA_0200121C(gMadraCatacombs_WalkIntoDoorway)
 
-u32 gData_02001264[] = {
+u32 gMadraCatacombs_FlameFlaresUp[] = {
     SC_SET(SW_SCALE_X, 0x1000),
     SC_SET(SW_SCALE_Y, 0x1000),
     SC_WAIT(1),
@@ -650,7 +674,7 @@ u32 gData_02001264[] = {
     SC_END,
 };
 
-s32 gData_020012f4[] = {
+s32 gMadraCatacombs_GreatFlameFlaresUp[] = {
     SC_SET(SW_SCALE_X, 0x1000),
     SC_SET(SW_SCALE_Y, 0x1000),
     SC_WAIT(1),
@@ -674,15 +698,15 @@ s32 gData_020012f4[] = {
     SC_END,
 };
 
-s16 gData_020013c0[] = {
+s16 gMadraCatacombs_PushedPillar[] = {
     12, -1,
 };
 
-s16 gData_020013c4[] = {
+s16 gMadraCatacombs_Puddles[] = {
     13, 514, -1,
 };
 
-s16 gData_020013ca[] = {
+s16 gMadraCatacombs_ClimbablePillar[] = {
     8, -1, 0,
 };
 
@@ -704,7 +728,7 @@ struct SceneEntrance gMadraCatacombs_Room5Entrances[] = {
     {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 };
 
-s16 gData_020014a8[] = {
+s16 gMadraCatacombs_LadderRoomRegions[] = {
     112, 48, 144, 128, 64, 160, -1, 1,
     336, 48, 144, 352, 64, 160, -1, 3,
     -1, 0, 0, 0, 0, 0, 0, 0,
@@ -819,22 +843,22 @@ struct Trigger gMadraCatacombs_Triggers[] = {
 };
 
 struct Trigger gMadraCatacombs_Room1Triggers[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_02000a88)},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_02000a88)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_02000a88)},
-    {0xc602, 4, CONDITION_ALWAYS, EVENT(Func_02000a88)},
+    {0xc602, 1, CONDITION_ALWAYS, EVENT(MadraCatacombs_EnterDoorway)},
+    {0xc602, 2, CONDITION_ALWAYS, EVENT(MadraCatacombs_EnterDoorway)},
+    {0xc602, 3, CONDITION_ALWAYS, EVENT(MadraCatacombs_EnterDoorway)},
+    {0xc602, 4, CONDITION_ALWAYS, EVENT(MadraCatacombs_EnterDoorway)},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 9, 0x201, 0},
-    {9, 10, 0x8c8, EVENT(Func_020004cc)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x8c8, EVENT(Func_020004cc)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12, 0x8ca, EVENT(Func_0200051c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x8ca, EVENT(Func_0200052c)},
+    {9, 10, 0x8c8, EVENT(MadraCatacombs_DropPillarIntoHole)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x8c8, EVENT(MadraCatacombs_DropPillarIntoHole)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12, 0x8ca, EVENT(MadraCatacombs_StartMovingPushedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x8ca, EVENT(MadraCatacombs_FinishMovingPushedPillar)},
     {0x602, 11, 0x9ef, EVENT(Scene_RunIfHeld)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x9ef, EVENT(Func_0200092c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9ef, EVENT(Func_0200093c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x202, EVENT(Func_02000558)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_0200072c)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_02000778)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x9ef, EVENT(MadraCatacombs_StartMovingClimbablePillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9ef, EVENT(MadraCatacombs_FinishMovingClimbablePillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x202, EVENT(MadraCatacombs_FreezePuddle)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(MadraCatacombs_RevealButton)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(MadraCatacombs_HideButton)},
     {0xc403, 10, CONDITION_ALWAYS, EVENT(MadraCatacombs_HearEyesOfTruth)},
     {TRIGGER_TABLE_END},
 };
@@ -871,7 +895,7 @@ struct Trigger gMadraCatacombs_Room4Triggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {0xc602, 9, CONDITION_ALWAYS, EVENT(Func_02000c24)},
+    {0xc602, 9, CONDITION_ALWAYS, EVENT(MadraCatacombs_SlideOpenStoneDoor)},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
@@ -884,19 +908,21 @@ struct Trigger gMadraCatacombs_Room5Triggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Func_02000c40)},
-    {0xc602, 6, CONDITION_ALWAYS, EVENT(Func_02000c5c)},
+    {0xc602, 5, CONDITION_ALWAYS,
+     EVENT(MadraCatacombs_OpenBookshelfRoomWestDoor)},
+    {0xc602, 6, CONDITION_ALWAYS,
+     EVENT(MadraCatacombs_OpenBookshelfRoomEastDoor)},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 8, CONDITION_ALWAYS,
-     EVENT(Func_02000874)},
+     EVENT(MadraCatacombs_ShakeBookshelf)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gMadraCatacombs_Room6Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_02000c78)},
+    {0xc602, 3, CONDITION_ALWAYS, EVENT(MadraCatacombs_OpenTabletRoomDoor)},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {0x1cb04, 10, CONDITION_ALWAYS, EVENT(MadraCatacombs_UnlockWithRuinKey)},
     {TRIGGER_EXAMINE, 10, 0x8c9, EVENT(MadraCatacombs_TryLockedDoor)},

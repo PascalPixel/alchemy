@@ -187,7 +187,6 @@ void wait(s32 frames) {
             break;
           gDebugPaused = 1;
         }
-        CAMELOT_ASM("Halt in VBlankIntrWait")
         VBlankIntrWait();
         Input_UpdateKeyRepeatAndDirection();
         if (gResetRequested) {
@@ -199,7 +198,6 @@ void wait(s32 frames) {
     // Wait for VBlank, then start the next frame
     gLastFrameVBlanks = gFrameVBlanks;
     gFrameVBlanks = 0;
-    CAMELOT_ASM("Halt in VBlankIntrWait")
     VBlankIntrWait();
     HeapSlot_Release(HEAP_SLOT_FRAME_SCRATCH);
     Oam_ResetFrame();
@@ -221,7 +219,6 @@ void wait(s32 frames) {
         Io_Write16(RGB(31, 31, 31), &PLTT_BACKDROP);
         for (delayVBlank = 0; delayVBlank < SLEEP_WHITE_VBLANKS;
              delayVBlank++) {
-          CAMELOT_ASM("Halt in VBlankIntrWait")
           VBlankIntrWait();
         }
         gSleepActive = 1;
@@ -235,7 +232,6 @@ void wait(s32 frames) {
         Io_Write16((u16)savedDisplayControl, &REG_DISPCNT);
         Io_Write16((u16)savedBackdropColor, &PLTT_BACKDROP);
         for (delayVBlank = 0; delayVBlank < SLEEP_WAKE_VBLANKS; delayVBlank++) {
-          CAMELOT_ASM("Halt in VBlankIntrWait")
           VBlankIntrWait();
         }
         gSleepRequested = 0;

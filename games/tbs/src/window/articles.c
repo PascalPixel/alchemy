@@ -2,9 +2,6 @@
 /// Window text tables: each edition's articles and possessives, the kana
 /// marks and the sprite motion curves.
 
-#include "module/window/articles.h"
-#include "types.h"
-#include "edition.h"
 #include "text_font.h"
 
 // Articles and possessives, by edition. An item or name carries an article

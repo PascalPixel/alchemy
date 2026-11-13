@@ -3,10 +3,8 @@
 /// bank.
 
 #include "speaker.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "actor_script.h"
-#include "types.h"
 #include "scene_tables.h"
 
 // Their readers declare them in battle.h, field.h, graphics.h, line_scroll.h,

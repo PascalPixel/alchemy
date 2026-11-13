@@ -3,7 +3,6 @@
 /// and its forests, take their own encounter zone.
 
 #include "module/field/world_map_encounter_rules.h"
-#include "types.h"
 #include "djinn_ids.h"
 #include "module/field/field.h"
 #include "module/field/field_sequence.h"

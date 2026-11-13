@@ -2,30 +2,16 @@
 /// Lucky Dice, the dice game in Tolbi, drawn with the battles' 3D camera.
 
 #include "module/field/lucky_dice.h"
-#include "module/system/system.h"
 #include "battle.h"
-#include "debug.h"
 #include "field.h"
 #include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "version.h"
-#include "far_call.h"
-#include "sound.h"
 #include "system.h"
 #include "io_reg.h"
 #include "battle_camera.h"
 #include "projection.h"
-#include "types.h"
 #include "iwram_call.h"
-#include "edition.h"
-#include "task.h"
 #include "system_call.h"
-#include "frame.h"
 #include "oam_words.h"
-#include "sounds.h"
 #include "macros.h"
 
 /// Starts the Lucky Dice minigame: leaves only the backdrop on screen, starts
@@ -107,20 +93,14 @@ UNUSED s16 Math_ScaleByRatio(s16 numerator, s16 denominator) {
 /// Unused: the reciprocal of an 8.8 fixed-point value.
 UNUSED s16 FixedPoint_Reciprocal(s16 value) { return Q16_ONE / value; }
 
-#include "battle_sprite_id.h"
-#include "heap_release.h"
 #include "dma.h"
 #include "ram_buffer.h"
-#include "fixed_math.h"
-#include "battle_status.h"
 #include "main_routine_work.h"
 #include "map_grid_scroll.h"
 #include "battle_effect_work.h"
 #include "transform.h"
 #include "resource_ids.h"
 #include "text/msg_ids.h"
-#include "sounds.h"
-#include "heap.h"
 
 // Lucky Dice window layout, in tiles (and pixels for text), by edition: the
 // coins window at the top, the help window (Throw / Quit) and the winnings
@@ -184,7 +164,6 @@ struct LuckyDiceSprites {
   struct Window *helpWindow;     ///< the Throw and Quit buttons
 };
 
-#include "input.h"
 #include "../graphics/lucky_dice/tables.h"
 
 #define DICE_COUNT 2

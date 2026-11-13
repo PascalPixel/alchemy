@@ -3,10 +3,7 @@
 /// environments.
 
 #include "module/field/map_grid_data.h"
-#include "module/field/field.h"
 #include "field.h"
-#include "types.h"
-#include "fixed_math.h"
 
 /// Ground height functions, by enum TerrainKind, called with (the remaining
 /// samples, x within the cell, y within the cell). Each reads only the

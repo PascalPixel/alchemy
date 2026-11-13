@@ -127,7 +127,7 @@ void Func_0200007c(void) {}
 
 s32 Trig_Cos(s32 angle);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
-void Func_02001928(struct Actor *object, s32 priority);
+void Actor_SetupScriptedPart(struct Actor *object, s32 priority);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -267,7 +267,7 @@ void MarsLighthouseStarRoom_BurstIce(s32 phase, s32 frame) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-DEFINE_ACTOR_FREEZE(Func_020002d4)
+DEFINE_ACTOR_FREEZE(Actor_Freeze)
 
 struct Overlay6abEventWork {
   u8 unk000[0x1ac];
@@ -288,7 +288,7 @@ void Func_02001d7c(void);
 void Func_02001df0__mars_lighthouse_star_room(s32 a, s32 b, s32 c,
                                               s32 d) __asm__("Func_02001df0");
 #define Func_02001df0 Func_02001df0__mars_lighthouse_star_room
-void Func_02003e04(void);
+void CrackedTile_DropIn(void);
 void Map_CenterOnFollowedPoint(void);
 void FieldEffect_StartBlankOverlay(s32 a);
 extern struct Actor *gMarsLighthouseStarRoom_MarsStar;
@@ -330,11 +330,11 @@ s32 Scene_Initialize(void) {
       other->z = leader->z;
       Map_CenterOnFollowedPoint();
       if (!Event_GetFlag(0x109))
-        Func_02003e04();
+        CrackedTile_DropIn();
     }
     if (entrance == 9 || entrance == 10) {
       if (!Event_GetFlag(0x109))
-        Func_02003e04();
+        CrackedTile_DropIn();
     }
     if (entrance == 1 || entrance == 20) {
       if (!Event_GetFlag(0xa30)) {
@@ -1240,7 +1240,7 @@ struct RideWork__s1424 {
 
 extern u8 gInventorySnapshot[];
 
-DEFINE_RIDE_UPDATE_CARRIED(Func_020015ec, RideWork__s1424, Func_02001528,
+DEFINE_RIDE_UPDATE_CARRIED(Ride_UpdateCarried, RideWork__s1424, Func_02001528,
                            Func_0200158c)
 
 /* VIEW(first): routine gData_02004744 as this part declared it; the joined file
@@ -1252,7 +1252,7 @@ extern const u8 gData_02004744__first[] __asm__("gData_02004744");
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *script);
 
-DEFINE_ACTOR_RESET_SCRIPTED(Func_02001750, gData_02004744)
+DEFINE_ACTOR_RESET_SCRIPTED(Actor_ResetScripted, gData_02004744)
 
 void Func_02001780(s32 *position, s32 speed, s32 flag) {
   struct Actor *object =
@@ -1262,8 +1262,8 @@ void Func_02001780(s32 *position, s32 speed, s32 flag) {
     object->bounce = 0;
     object->gravity = 0;
     object->unk4c = speed;
-    ((void (*)())Func_02001750)(object, 2);
-    object->update = Func_020015ec;
+    ((void (*)())Actor_ResetScripted)(object, 2);
+    object->update = Ride_UpdateCarried;
     if (flag != 0)
       object->unk5c[0] = 2;
     Actor_SelectAnimation(object, 2);
@@ -1303,15 +1303,15 @@ extern u8 gInventorySnapshot[];
 s32 Func_02001528(struct Actor *a, struct Actor *b);
 s32 Func_0200158c(struct Actor *a, struct Actor *b);
 
-DEFINE_RIDE_UPDATE_LANDING(Func_020017c8, RideWork__spawn, Func_02001528,
+DEFINE_RIDE_UPDATE_LANDING(Ride_UpdateLanding, RideWork__spawn, Func_02001528,
                            Func_0200158c)
 
-void Func_02001928(struct Actor *object, s32 priority);
+void Actor_SetupScriptedPart(struct Actor *object, s32 priority);
 
 /// Stops the object and sets its sprite part, then restarts its script at
 /// gData_02004744; Func_02001e1c of the Mars Lighthouse entrance is the same
 /// function.
-DEFINE_ACTOR_SETUP_SCRIPTED_PART(Func_02001928, gData_02004744)
+DEFINE_ACTOR_SETUP_SCRIPTED_PART(Actor_SetupScriptedPart, gData_02004744)
 
 #define DEFINE_FUNC_0200196C_97(name, call1)                                   \
   void name(s32 *position, s32 speed, s32 flag) {                              \
@@ -1322,7 +1322,7 @@ DEFINE_ACTOR_SETUP_SCRIPTED_PART(Func_02001928, gData_02004744)
       object->bounce = 0;                                                      \
       object->gravity = 0;                                                     \
       object->unk4c = -speed;                                                  \
-      Func_02001928(object, 3);                                                \
+      Actor_SetupScriptedPart(object, 3);                                      \
       object->update = call1;                                                  \
       if (flag != 0)                                                           \
         object->unk5c[0] = 2;                                                  \
@@ -1330,7 +1330,7 @@ DEFINE_ACTOR_SETUP_SCRIPTED_PART(Func_02001928, gData_02004744)
     }                                                                          \
   }
 
-DEFINE_FUNC_0200196C_97(Func_0200196c, Func_020015ec)
+DEFINE_FUNC_0200196C_97(Func_0200196c, Ride_UpdateCarried)
 
 void Func_020019b4(s32 *position, s32 speed, s32 flag) {
   struct Actor *object =
@@ -1340,15 +1340,15 @@ void Func_020019b4(s32 *position, s32 speed, s32 flag) {
     object->bounce = 0;
     object->gravity = 0;
     object->unk4c = speed;
-    Func_02001928(object, 3);
-    object->update = Func_020017c8;
+    Actor_SetupScriptedPart(object, 3);
+    object->update = Ride_UpdateLanding;
     if (flag != 0)
       object->unk5c[0] = 2;
     Actor_SelectAnimation(object, 2);
   }
 }
 
-DEFINE_FUNC_0200196C_97(Func_020019fc, Func_020017c8)
+DEFINE_FUNC_0200196C_97(Func_020019fc, Ride_UpdateLanding)
 
 s32 Func_02001a44(struct Actor *a, struct Actor *b) {
   if (DIFF(a->x, b->x) < 0xc0000) {
@@ -1362,7 +1362,7 @@ s32 Func_02001a44(struct Actor *a, struct Actor *b) {
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
-DEFINE_RIDE_UPDATE_DRIFT(Func_02001a9c, Func_02001a44)
+DEFINE_RIDE_UPDATE_DRIFT(Ride_UpdateDrift, Func_02001a44)
 
 /* VIEW(first): routine gData_02004744 as this part declared it; the joined file
  * has another; not tried: gData_02004744's declaration holds a FAKEMATCH tag.
@@ -1370,16 +1370,17 @@ DEFINE_RIDE_UPDATE_DRIFT(Func_02001a9c, Func_02001a44)
 extern const u8 gData_02004744__first[] __asm__("gData_02004744");
 #define gData_02004744 gData_02004744__first
 
-DEFINE_ACTOR_SETUP_SCRIPTED(Func_02001b38, Actor_SelectAnimation,
+DEFINE_ACTOR_SETUP_SCRIPTED(Actor_SetupScripted, Actor_SelectAnimation,
                             gData_02004744)
 
 void Actor_SetBlendMode(struct Actor *object, u32 value);
-void Func_02001a9c();
-/* VIEW(s1b78): routine Func_02001b38 as void Func_02001b38(struct Actor
- * *object, s32 priority); the definition has void Func_02001b38(struct Actor
- * *object); not tried: Func_02001b38's declaration holds a FAKEMATCH tag. */
+void Ride_UpdateDrift();
+/* VIEW(s1b78): routine Actor_SetupScripted as void Actor_SetupScripted(struct
+ * Actor *object, s32 priority); the definition has void
+ * Actor_SetupScripted(struct Actor *object); not tried: Actor_SetupScripted's
+ * declaration holds a FAKEMATCH tag. */
 extern void Func_02001b38__s1b78(struct Actor *object,
-                                 s32 priority) __asm__("Func_02001b38");
+                                 s32 priority) __asm__("Actor_SetupScripted");
 
 void Func_02001b78(s32 *position, s32 base) {
   struct Actor *object =
@@ -1397,7 +1398,7 @@ void Func_02001b78(s32 *position, s32 base) {
     angle = (u16)Random16() - 0x8000;
     object->timer = angle;
     Func_02001b38__s1b78(object, 2);
-    object->update = Func_02001a9c;
+    object->update = Ride_UpdateDrift;
     Actor_SetBlendMode(object, 1);
   }
 }
@@ -1515,7 +1516,7 @@ void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Actor_Release(struct Actor *object);
 #define MarsLighthouseStarRoom_SlideOnIce MarsLighthouseStarRoom_SlideOnIce
 
-DEFINE_RIDE_RELEASE_HANDLE(Func_02001dd0, Actor_Release)
+DEFINE_RIDE_RELEASE_HANDLE(Ride_ReleaseHandle, Actor_Release)
 
 void Func_02001de4(s16 value) {
   ((struct RideWork *)(gInventorySnapshot + 0x188))->value0e = value;
@@ -1649,9 +1650,9 @@ s32 Func_02001f44(void) {
   return ((struct RideWork *)(gInventorySnapshot + 0x188))->counter;
 }
 
-DEFINE_RIDE_ADVANCE_COUNTER(Func_02001f50)
+DEFINE_RIDE_ADVANCE_COUNTER(Ride_AdvanceCounter)
 
-DEFINE_RIDE_SET_ENTRY(Func_02001f78)
+DEFINE_RIDE_SET_ENTRY(Ride_SetEntry)
 
 void Func_02001f98(s32 index, s16 value) {
   ((struct RideWork *)(gInventorySnapshot + 0x188))->entries[index].c = value;
@@ -1661,7 +1662,7 @@ s32 Func_02001fa8(s32 index) {
   return ((struct RideRow *)(gInventorySnapshot + 0x188 + index * 16))->b;
 }
 
-DEFINE_RIDE_SET_SLOT(Func_02001fb8)
+DEFINE_RIDE_SET_SLOT(Ride_SetSlot)
 
 struct MarsLighthouseEventWork {
   u8 unk000[0x16a];
@@ -1680,11 +1681,11 @@ struct MarsLighthouseEventWork {
 struct BattleUnit *Unit_Get__ride_handle(s32 owner) __asm__("Unit_Get");
 #define Unit_Get Unit_Get__ride_handle
 
-DEFINE_PARTY_TAKE_FALL_DAMAGE(Func_02001fcc)
+DEFINE_PARTY_TAKE_FALL_DAMAGE(Party_TakeFallDamage)
 
 #include "../field/field_effect/advance_spin.c"
 
-DEFINE_ACTOR_BLINK(Func_02002120, 10, 4, 0)
+DEFINE_ACTOR_BLINK(Actor_Blink, 10, 4, 0)
 
 #undef Unit_Get
 #undef MarsLighthouseStarRoom_SlideOnIce
@@ -1697,8 +1698,8 @@ void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
 extern u8 gInventorySnapshot[];
 
 #define SHARED_F02002148_NAME Func_02002148
-#define SHARED_F02002148_ID2 Func_02001fcc
-#define SHARED_F02002148_ID3 Func_02002120
+#define SHARED_F02002148_ID2 Party_TakeFallDamage
+#define SHARED_F02002148_ID3 Actor_Blink
 #define SHARED_F02002148_ID4 Actor_SelectAnimation
 #define SHARED_F02002148_ID5 MapGrid_GetCellAttributeLowNibbleOrBump
 #define SHARED_F02002148_ID6 MapGrid_CheckCollision
@@ -1778,12 +1779,12 @@ s32 MarsLighthouseStarRoom_SlideOnIce(void) {
   event->field15c = 0;
   event->field164 = 0;
 #ifdef UBFIX
-  Func_02001fcc();
+  Party_TakeFallDamage();
 #else
-  /* FAKEMATCH(wrapper): Func_02001fcc called through a cast to
-   * s32 (*)(s32, s32) with -10 and 0; as Func_02001fcc(), 3 of 138
+  /* FAKEMATCH(wrapper): Party_TakeFallDamage called through a cast to
+   * s32 (*)(s32, s32) with -10 and 0; as Party_TakeFallDamage(), 3 of 138
    * instructions differ in tla-en. */
-  ((s32 (*)(s32, s32))Func_02001fcc)(-10, 0);
+  ((s32 (*)(s32, s32))Party_TakeFallDamage)(-10, 0);
 #endif
   FieldCamera_SetSpeed(0x70000, 0xe000);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1792,7 +1793,7 @@ s32 MarsLighthouseStarRoom_SlideOnIce(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_ClearFlag(0x106);
-  leader->update = (void (*)(void))Func_02002120;
+  leader->update = (void (*)(void))Actor_Blink;
   leader->facing = 0x4000;
   Actor_SelectAnimation(leader, 49);
   while (ride->car->stopped == 0) {
@@ -1957,7 +1958,7 @@ struct WorkEvent {
   s16 unk166;
 };
 
-DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_0200274c, Work020023c4__s236c,
+DEFINE_ACTOR_ROLL_AND_CRUMBLE(Actor_RollAndCrumble, Work020023c4__s236c,
                               MapGrid_GetCellAttributeLowNibbleOrBump,
                               Func_02002658, Func_020024d4)
 #undef WORK
@@ -1982,25 +1983,26 @@ void Func_02002a58(s32 sourceId, s32 id, s32 kind, s32 value,
 
 /// Sets up the actor whose id self keeps in byte 0x62: places it 32 pixels out
 /// from self, 12 pixels up, along self's angle (unk66), faces it that way,
-/// gives it Func_0200274c as its update hook and its speed, clears its scale
-/// and action, has it watch what self watches, and calls Event_PlaySound(104).
-/// The twin of overlay 6ac's Func_02002e6c.
-DEFINE_ACTOR_LAUNCH_AHEAD(Func_02002ad0, Func_0200274c)
+/// gives it Actor_RollAndCrumble as its update hook and its speed, clears its
+/// scale and action, has it watch what self watches, and calls
+/// Event_PlaySound(104). The twin of overlay 6ac's Func_02002e6c.
+DEFINE_ACTOR_LAUNCH_AHEAD(Actor_LaunchAhead, Actor_RollAndCrumble)
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
-DEFINE_ACTOR_POP_UP_SLOW(Func_02002b98, Actor_SelectAnimation)
+DEFINE_ACTOR_POP_UP_SLOW(Actor_PopUpSlow, Actor_SelectAnimation)
 
-DEFINE_ACTOR_POP_UP(Func_02002c44, Actor_SelectAnimation)
+DEFINE_ACTOR_POP_UP(Actor_PopUp, Actor_SelectAnimation)
 
 extern u8 gInventorySnapshot[];
 extern u16 gData_02004cf0[];
 
-DEFINE_ACTOR_PARK(Func_02002ce8, Func_02002ad0)
+DEFINE_ACTOR_PARK(Actor_Park, Actor_LaunchAhead)
 
-DEFINE_ACTOR_STEER_BY_PAD(Func_02002d04, gData_020047fc, Actor_SelectAnimation)
+DEFINE_ACTOR_STEER_BY_PAD(Actor_SteerByPad, gData_020047fc,
+                          Actor_SelectAnimation)
 
 void Func_02002d90(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -2029,8 +2031,8 @@ struct Position {
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 extern s16 gData_0200483c[];
 
-DEFINE_LEADER_SLIDE_ON_ICE(Func_02002dc4, Func_02002d90, gData_0200483c,
-                           Actor_SelectAnimation, Func_02002d04,
+DEFINE_LEADER_SLIDE_ON_ICE(Leader_SlideOnIce, Func_02002d90, gData_0200483c,
+                           Actor_SelectAnimation, Actor_SteerByPad,
                            Field_CheckSpheresOverlap)
 
 /* VIEW(s3070): variable gData_02004cf0 as extern volatile s16 gData_02004cf0;
@@ -2056,7 +2058,7 @@ Func_0200428c__s3070(s32 *a, s32 aRadius, s32 *b,
 #define SHARED_F02003070_ID4 gData_0200483c
 #define SHARED_F02003070_ID5 Actor_SelectAnimation
 #define SHARED_F02003070_ID6 Actor_HasArrived
-#define SHARED_F02003070_ID7 Func_02002d04
+#define SHARED_F02003070_ID7 Actor_SteerByPad
 #define SHARED_F02003070_ID8 Func_0200428c__s3070
 #include "shared/func_02003070.c"
 #undef SHARED_F02003070_NAME
@@ -2093,8 +2095,8 @@ struct Position {
   s32 z;
 };
 
-DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003390, Func_02002d90,
-                                 Actor_SelectAnimation, Func_02002d04,
+DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Func_02002d90,
+                                 Actor_SelectAnimation, Actor_SteerByPad,
                                  Field_CheckSpheresOverlap)
 
 #include "../field/object/set_sprite_priority.c"
@@ -2218,7 +2220,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepth
 #include "../field/map/cell_sprite.c"
 
-DEFINE_CRACKED_TILES_FIND(Func_02003930, gData_02004cf4, CrackedTiles_Update)
+DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find, gData_02004cf4,
+                          CrackedTiles_Update)
 
 DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 
@@ -2228,7 +2231,7 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 // the table's source cell over the leader's, keeping the source column's and
 // row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
 // one of the table's cells.
-DEFINE_CRACKED_TILE_CRACK(Func_02003bfc, Leader_CenterInCell)
+DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
 DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 
@@ -2241,8 +2244,8 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 // Scene code of overlay 0x6ab, in ROM order.
 
 /* VIEW(s3e04): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another; tried as the rest of the object declares it, Func_02003930
- * (gone) moves: 267 of 267 instructions in tla-ja. */
+ * file has another; tried as the rest of the object declares it,
+ * CrackedTiles_Find (gone) moves: 267 of 267 instructions in tla-ja. */
 void Func_0200363c__s3e04(
     s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
     struct EffectOptions *options) __asm__("FieldEffect_Spawn");
@@ -2256,7 +2259,7 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
   MapGrid_SetShake(a, b, c);
 }
 
-DEFINE_CRACKED_TILE_DROP_IN(Func_02003e04, FieldEffect_Spawn)
+DEFINE_CRACKED_TILE_DROP_IN(CrackedTile_DropIn, FieldEffect_Spawn)
 
 void GameFlag_SetByte(s32 flag, s32 value);
 /* VIEW(s3e04): routine CrackedTile_FallEvent as this part declared it; the
@@ -2269,11 +2272,11 @@ void CrackedTile_FallEvent__s3e04(
     struct CellTargetEntry *entry) __asm__("CrackedTile_FallEvent");
 #define CrackedTile_FallEvent CrackedTile_FallEvent__s3e04
 
-DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gData_02004cf4, Func_02003bfc,
+DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gData_02004cf4, CrackedTile_Crack,
                           CrackedTile_FallEvent)
 
 DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gData_02004cf4,
-                                  Func_02003e04)
+                                  CrackedTile_DropIn)
 
 #include "text/msg_ids.h"
 
@@ -2296,7 +2299,7 @@ u32 gMarsLighthouseStarRoom_ScatterIceChipsScript[] = {
 
 s32 gData_020044b8[] = {
     46,
-    (s32)Func_02002c44,
+    (s32)Actor_PopUp,
     4,
     0x2680000,
     0,
@@ -2357,13 +2360,13 @@ s32 gData_020044b8[] = {
     37,
     (s32)Func_02000188,
     46,
-    (s32)Func_02002ce8,
+    (s32)Actor_Park,
     17,
 };
 
 s32 gData_020045b8[] = {
     46,
-    (s32)Func_02002c44,
+    (s32)Actor_PopUp,
     4,
     0x2a80000,
     0,
@@ -2459,7 +2462,7 @@ s32 gData_020045b8[] = {
     37,
     (s32)Func_020001e8,
     46,
-    (s32)Func_02002ce8,
+    (s32)Actor_Park,
     17,
 };
 

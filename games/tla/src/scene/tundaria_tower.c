@@ -735,7 +735,7 @@ void Func_02001868(void);
 
 s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
-void Func_02002184(s32 id, u32 kind, s32 flag, s32 layer);
+void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
 s32 Actor_GetCellIndex(struct Actor *object);
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
@@ -1658,7 +1658,7 @@ loop:
 
   object->collisionFlags &= 0xfe;
   Actor_SetSpriteFlags(object, 0);
-  Func_02002184(id, (u16)x, (u16)z, BYTE_AT(object, 34));
+  Actor_SetCellOpen(id, (u16)x, (u16)z, BYTE_AT(object, 34));
   row += 3;
   if (row[0] != 0xffff)
     goto loop;
@@ -1688,7 +1688,7 @@ top:
         object->scaleY -= 0x1f00;
       if (mode == 1) {
         GameFlag_Set(flag);
-        Func_02002184(id, a, flag, object->terrainId);
+        Actor_SetCellOpen(id, a, flag, object->terrainId);
         object->scaleY = 0x10000;
       }
       return;
@@ -1699,7 +1699,7 @@ top:
     goto top;
 }
 
-DEFINE_ACTOR_SET_CELL_OPEN(Func_02002184, Actor_GetCellIndex,
+DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
                            Actor_SelectAnimation)
 
 // On entering, sets each listed pillar from its two flags (pushed: moved to its
@@ -1856,7 +1856,7 @@ loop:
     Func_020029d0(0);
     wait(8);
     Actor_SelectAnimation(object, 2);
-    Func_02002c1c(-4, object->terrainId, id);
+    Actor_SetCellShape(-4, object->terrainId, id);
     Func_020029d0(1);
     wait(16);
     TundariaTower_SetWork(-1, -1, 0xe666);
@@ -2128,11 +2128,11 @@ void Func_02002b04(void) {
   }
 }
 
-DEFINE_ACTOR_SET_CELL_SHAPE(Func_02002c1c, MapGrid_GetTerrainKind,
+DEFINE_ACTOR_SET_CELL_SHAPE(Actor_SetCellShape, MapGrid_GetTerrainKind,
                             MapCollision_FindOrAddTag)
 
 void Func_02002ca8(s32 a, s32 b) {
-  Func_02002c1c(a, b, gMainRoutineWork.currentOwner);
+  Actor_SetCellShape(a, b, gMainRoutineWork.currentOwner);
 }
 
 void Func_02002cc0(void) {

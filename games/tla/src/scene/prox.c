@@ -232,7 +232,7 @@ void Func_02001b28(void);
 void Func_02001b60(void);
 void Func_02001b7c(void);
 void Prox_SayFarewell(void);
-void Func_0200391c(void);
+void Leader_SlideOnIce(void);
 extern u32 gData_02004644[];
 extern u32 gData_02004680[];
 
@@ -2092,10 +2092,10 @@ void Actor_SelectAnimation(struct Actor *object, s32 mode);
  * the definition has s32 gData_02004740[] = { 0xffff, - 0x8000, (s32)
  * 0xe000c000, (s32) 0xc000a000, 0x20004000, 0x40006000, 0xffff, - 0x8000,
  * 0xffff, - 0x8000, -...; tried as the definition's extern s32
- * gData_02004740[], Func_0200385c moves: 7 of 60 instructions in tla-ja. */
+ * gData_02004740[], Actor_SteerByPad moves: 7 of 60 instructions in tla-ja. */
 extern const s16 gData_02004740__s1cf0[] __asm__("gData_02004740");
 
-DEFINE_ACTOR_STEER_BY_PAD(Func_0200385c, gData_02004740__s1cf0,
+DEFINE_ACTOR_STEER_BY_PAD(Actor_SteerByPad, gData_02004740__s1cf0,
                           Actor_SelectAnimation)
 
 void Func_020038e8(void) {
@@ -2124,13 +2124,13 @@ s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
 /* VIEW(s391c): variable gData_02004780 as extern s16 gData_02004780[]; the
  * definition has s32 gData_02004780[] = { 0xffff, - 0x8000, 0xc000, (s32)
  * 0xc0008000, 0x4000, 0x40008000, 0xffff, - 0x8000, }; tried as the
- * definition's extern s32 gData_02004780[], Func_0200391c moves: 4 of 302
+ * definition's extern s32 gData_02004780[], Leader_SlideOnIce moves: 4 of 302
  * instructions, Func_02003bc8 moves: 1 of 330 instructions in tla-ja. */
 extern s16 gData_02004780__s391c[] __asm__("gData_02004780");
 
-DEFINE_LEADER_SLIDE_ON_ICE(Func_0200391c, Func_020038e8, gData_02004780__s391c,
-                           Actor_SelectAnimation, Func_0200385c,
-                           Field_CheckSpheresOverlap)
+DEFINE_LEADER_SLIDE_ON_ICE(Leader_SlideOnIce, Func_020038e8,
+                           gData_02004780__s391c, Actor_SelectAnimation,
+                           Actor_SteerByPad, Field_CheckSpheresOverlap)
 
 extern volatile s16 gData_020062a4;
 
@@ -2142,7 +2142,7 @@ s32 Actor_HasArrived(struct Actor *object);
 #define SHARED_F02003070_ID4 gData_02004780__s391c
 #define SHARED_F02003070_ID5 Actor_SelectAnimation
 #define SHARED_F02003070_ID6 Actor_HasArrived
-#define SHARED_F02003070_ID7 Func_0200385c
+#define SHARED_F02003070_ID7 Actor_SteerByPad
 #define SHARED_F02003070_ID8 Field_CheckSpheresOverlap
 #include "shared/func_02003070.c"
 #undef SHARED_F02003070_NAME
@@ -2163,8 +2163,8 @@ s32 Actor_HasArrived(struct Actor *object);
 
 void Func_02003edc(s32 a0) { gData_020062a4 = a0; }
 
-DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003ee8, Func_020038e8,
-                                 Actor_SelectAnimation, Func_0200385c,
+DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Func_020038e8,
+                                 Actor_SelectAnimation, Actor_SteerByPad,
                                  Field_CheckSpheresOverlap)
 
 struct ParticleSprite {
@@ -2657,7 +2657,7 @@ struct Trigger gProx_Room3Triggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {0xc602, 4, CONDITION_ALWAYS, EVENT(Func_02001b60)},
     {TRIGGER_STEP, 9, 0xa2d, EVENT(Func_020015d0)},
-    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_0200391c)},
+    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Leader_SlideOnIce)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_BEFORE_CAST), 255, CONDITION_ALWAYS, EVENT(Func_020017e4)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_AFTER_CAST), 255, CONDITION_ALWAYS, EVENT(Func_02001800)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 8, CONDITION_ALWAYS, EVENT(Func_02001770)},

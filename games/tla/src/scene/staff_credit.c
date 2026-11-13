@@ -616,15 +616,16 @@ DEFINE_ACTOR_FLICKER(Func_020011f4, Func_020010b0)
 extern s32 gData_02003db8__first __asm__("gData_02003db8");
 #define gData_02003db8 gData_02003db8__first
 
-DEFINE_ACTOR_CYCLE_CHILD_VALUES(Func_0200122c, gData_02002eac, gData_02003db8,
-                                Func_02001168)
+DEFINE_ACTOR_CYCLE_CHILD_VALUES(Actor_CycleChildValues, gData_02002eac,
+                                gData_02003db8, Func_02001168)
 
-DEFINE_ACTOR_SET_FLIGHT_MODE(Func_02001274, Func_020011f4, Func_0200122c)
+DEFINE_ACTOR_SET_FLIGHT_MODE(Actor_SetFlightMode, Func_020011f4,
+                             Actor_CycleChildValues)
 
-DEFINE_LEADER_SEARCH(Func_020012ac, Func_02001274, WorldMap_GetBlockPlace)
+DEFINE_LEADER_SEARCH(Leader_Search, Actor_SetFlightMode, WorldMap_GetBlockPlace)
 
 void Func_020012f8(void) {
-  Func_02001274(Actor_Get(FieldParty_GetLeaderActor()), 0);
+  Actor_SetFlightMode(Actor_Get(FieldParty_GetLeaderActor()), 0);
 }
 
 extern u16 gData_02003fc0;
@@ -776,13 +777,13 @@ void Func_02001400(s32 mode) {
 
 DEFINE_ACTOR_FLICKER(Func_0200199c, Func_02001ad0)
 
-DEFINE_ACTOR_ANIMATE_AND_EMIT(Func_020019d4, Func_02001ad0)
+DEFINE_ACTOR_ANIMATE_AND_EMIT(Actor_AnimateAndEmit, Func_02001ad0)
 
-DEFINE_ACTOR_ANIMATE(Func_02001a0c)
+DEFINE_ACTOR_ANIMATE(Actor_Animate)
 
-DEFINE_ACTOR_GROW_UP(Func_02001a34, Actor_Release)
+DEFINE_ACTOR_GROW_UP(Actor_GrowUp, Actor_Release)
 
-DEFINE_ACTOR_GROW_DOWN(Func_02001a80, Actor_Release)
+DEFINE_ACTOR_GROW_DOWN(Actor_GrowDown, Actor_Release)
 
 void Func_02001ad0(struct Actor *parent) {
   struct Actor *pair[2];
@@ -823,7 +824,7 @@ void Func_02001ad0(struct Actor *parent) {
     struct Actor *p = pair[0];
     struct FieldSprite *sp = p->sprite;
 
-    p->update = (void *)Func_02001a80;
+    p->update = (void *)Actor_GrowDown;
     sp->priority = 1;
   }
   {
@@ -831,7 +832,7 @@ void Func_02001ad0(struct Actor *parent) {
     struct FieldSprite *sp = p->sprite;
 
     sp->priority = 1;
-    p->update = (void *)Func_02001a34;
+    p->update = (void *)Actor_GrowUp;
     p->priorityFlags = 2;
   }
 }

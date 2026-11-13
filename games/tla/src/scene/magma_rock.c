@@ -1648,6 +1648,8 @@ void MagmaRock_RebuildFlameParts(u16 id) {
 }
 
 void MagmaRock_SettleBlocks();
+/// The overlay's import veneer to Rope_PlaceFar.
+void Func_02003bfc();
 
 s32 Scene_Initialize(void) {
   struct MainRoutineWork *work;

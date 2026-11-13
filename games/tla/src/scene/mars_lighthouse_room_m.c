@@ -54,7 +54,7 @@ struct Vector3;
 void Func_020024e4(void);
 
 s32 MarsLighthouseRoomM_SlideOnIce(void);
-void Func_02002e6c(struct Actor *self);
+void Actor_LaunchAhead(struct Actor *self);
 
 void Func_02001608(void);
 
@@ -72,7 +72,7 @@ void Func_02002118(void);
 
 void Func_0200080c(void);
 
-void Func_020024bc(struct Actor *object);
+void Actor_Blink(struct Actor *object);
 
 extern u32 gData_02003304[];
 extern u32 gData_02003348[];
@@ -236,10 +236,10 @@ extern char SceneId_Ov6ACRoom6;
 void Actor_SelectAnimation(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const void *script);
 
-void Func_02001988(struct Actor *object);
-void Func_02001aec(struct Actor *object);
-void Func_02001cc4(struct Actor *object, s32 layer);
-void Func_02001b64(struct Actor *object);
+void Ride_UpdateCarried(struct Actor *object);
+void Actor_ResetScripted(struct Actor *object);
+void Actor_SetupScriptedPart(struct Actor *object, s32 layer);
+void Ride_UpdateLanding(struct Actor *object);
 
 extern u32 gData_020032d4[];
 extern struct ActorPlacement gMarsLighthouseRoomM_Placements[];
@@ -265,7 +265,7 @@ void Func_0200166c(void);
 void Func_0200168c(void);
 s32 Func_02001de0(struct Actor *a, struct Actor *b);
 void Func_02001e38(struct Actor *object);
-void Func_02001ed4(struct Actor *object);
+void Actor_SetupScripted(struct Actor *object);
 void Func_020012a4(s32 x, s32 z, s32 kind);
 void Func_02002ad4(struct Actor *object);
 void Event_End(void);
@@ -612,13 +612,13 @@ const struct Trigger *Scene_GetEvents(void) {
   return gMarsLighthouseRoomM_Triggers;
 }
 
-void Func_0200154c(u16 *slots, u16 *colours, u16 *a, u16 *b);
-/* VIEW(s0b64): routine Func_02002e6c as void Func_02002e6c(void);
- * mars_lighthouse_room_m has void Func_02002e6c(struct Actor *self); tried as
- * the rest of the object declares it, it does not compile in tla-ja:
+void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b);
+/* VIEW(s0b64): routine Actor_LaunchAhead as void Actor_LaunchAhead(void);
+ * mars_lighthouse_room_m has void Actor_LaunchAhead(struct Actor *self); tried
+ * as the rest of the object declares it, it does not compile in tla-ja:
  * games/tla/src/scene/mars_lighthouse_room_m.c:667: too few arguments to
- * function `Func_02002e6c'. */
-extern void Func_02002e6c__s0b64(void) __asm__("Func_02002e6c");
+ * function `Actor_LaunchAhead'. */
+extern void Func_02002e6c__s0b64(void) __asm__("Actor_LaunchAhead");
 
 extern s16 gData_0200338c[];
 extern s16 gData_0200339c[];
@@ -634,8 +634,8 @@ s32 Scene_Initialize(void) {
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x100;
   Event_SetFlag(0x112);
-  Call4((void (*)())Func_0200154c, (s32)gData_0200338c, (s32)gData_0200339c,
-        (s32)gData_020033c8, (s32)gData_020033f4);
+  Call4((void (*)())Palette_SetColorsFade, (s32)gData_0200338c,
+        (s32)gData_0200339c, (s32)gData_020033c8, (s32)gData_020033f4);
   if (scene != (s32)&SceneId_Ov6ACRoom6 && scene == (s32)&SceneId_Ov6ACRoom1) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
     *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x204;
@@ -1004,8 +1004,9 @@ void Func_0200183c(void);
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
-DEFINE_PALETTE_SET_COLORS_FADE(Func_0200154c, gData_02003928, Data_0200392c,
-                               Data_02003930, Data_0200391c, Func_0200183c)
+DEFINE_PALETTE_SET_COLORS_FADE(Palette_SetColorsFade, gData_02003928,
+                               Data_0200392c, Data_02003930, Data_0200391c,
+                               Func_0200183c)
 
 #define DEFINE_FUNC_02001608(name, n1, n2)                                     \
   void name(void) {                                                            \
@@ -1025,7 +1026,7 @@ void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Actor_Release(void *handle);
 void Func_020024e4(void);
 s32 MarsLighthouseRoomM_SlideOnIce(void);
-void Func_02002e6c(struct Actor *self);
+void Actor_LaunchAhead(struct Actor *self);
 
 void Actor_SelectAnimation(struct Actor *object, s32 value);
 void FieldCamera_MoveToActorById(s32 a, s32 b);
@@ -1135,12 +1136,12 @@ struct RideWork__s1988 {
 s32 Func_020018c4(struct Actor *a, struct Actor *b);
 s32 Func_02001928(struct Actor *a, struct Actor *b);
 
-DEFINE_RIDE_UPDATE_CARRIED(Func_02001988, RideWork__s1988, Func_020018c4,
+DEFINE_RIDE_UPDATE_CARRIED(Ride_UpdateCarried, RideWork__s1988, Func_020018c4,
                            Func_02001928)
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 
-DEFINE_ACTOR_RESET_SCRIPTED(Func_02001aec, gData_020032d4)
+DEFINE_ACTOR_RESET_SCRIPTED(Actor_ResetScripted, gData_020032d4)
 
 void Func_02001b1c(struct MarsLighthouseRoomMVector *position, s32 value,
                    s32 flag) {
@@ -1151,8 +1152,8 @@ void Func_02001b1c(struct MarsLighthouseRoomMVector *position, s32 value,
     object->bounce = 0;
     object->gravity = 0;
     object->unk4c = value;
-    ((void (*)())Func_02001aec)(object, 2);
-    object->update = Func_02001988;
+    ((void (*)())Actor_ResetScripted)(object, 2);
+    object->update = Ride_UpdateCarried;
     if (flag != 0)
       object->unk5c[0] = 2;
     Actor_SelectAnimation(object, 2);
@@ -1192,7 +1193,7 @@ extern u8 gInventorySnapshot[];
 s32 Func_020018c4(struct Actor *a, struct Actor *b);
 s32 Func_02001928(struct Actor *a, struct Actor *b);
 
-DEFINE_RIDE_UPDATE_LANDING(Func_02001b64, RideWork__s1b64, Func_020018c4,
+DEFINE_RIDE_UPDATE_LANDING(Ride_UpdateLanding, RideWork__s1b64, Func_020018c4,
                            Func_02001928)
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
@@ -1200,7 +1201,7 @@ void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 /// Stops the object and sets its sprite part, then restarts its script at
 /// gData_020032d4; Func_02001e1c of the Mars Lighthouse entrance is the same
 /// function.
-DEFINE_ACTOR_SETUP_SCRIPTED_PART(Func_02001cc4, gData_020032d4)
+DEFINE_ACTOR_SETUP_SCRIPTED_PART(Actor_SetupScriptedPart, gData_020032d4)
 
 void Func_02001d08(struct MarsLighthouseRoomMVector *position, s32 value,
                    s32 flag) {
@@ -1211,8 +1212,8 @@ void Func_02001d08(struct MarsLighthouseRoomMVector *position, s32 value,
     object->bounce = 0;
     object->gravity = 0;
     object->unk4c = -value;
-    Func_02001cc4(object, 3);
-    object->update = Func_02001988;
+    Actor_SetupScriptedPart(object, 3);
+    object->update = Ride_UpdateCarried;
     if (flag != 0)
       object->unk5c[0] = 2;
     Actor_SelectAnimation(object, 2);
@@ -1228,8 +1229,8 @@ void Func_02001d50(struct MarsLighthouseRoomMVector *position, s32 value,
     object->bounce = 0;
     object->gravity = 0;
     object->unk4c = value;
-    Func_02001cc4(object, 3);
-    object->update = Func_02001b64;
+    Actor_SetupScriptedPart(object, 3);
+    object->update = Ride_UpdateLanding;
     if (flag != 0)
       object->unk5c[0] = 2;
     Actor_SelectAnimation(object, 2);
@@ -1245,8 +1246,8 @@ void Func_02001d98(struct MarsLighthouseRoomMVector *position, s32 value,
     object->bounce = 0;
     object->gravity = 0;
     object->unk4c = -value;
-    Func_02001cc4(object, 3);
-    object->update = Func_02001b64;
+    Actor_SetupScriptedPart(object, 3);
+    object->update = Ride_UpdateLanding;
     if (flag != 0)
       object->unk5c[0] = 2;
     Actor_SelectAnimation(object, 2);
@@ -1292,7 +1293,7 @@ void Func_02001e38(struct Actor *object) {
   }
 }
 
-DEFINE_ACTOR_SETUP_SCRIPTED(Func_02001ed4, Actor_SelectAnimation,
+DEFINE_ACTOR_SETUP_SCRIPTED(Actor_SetupScripted, Actor_SelectAnimation,
                             gData_020032d4)
 
 void Func_02001f14(struct MarsLighthouseRoomMVector *position, s32 value) {
@@ -1310,7 +1311,7 @@ void Func_02001f14(struct MarsLighthouseRoomMVector *position, s32 value) {
      * of 50 instructions differ in tla-en. */
     angle = (u16)Random16() - 0x8000;
     object->timer = angle;
-    ((void (*)())Func_02001ed4)(object, 2);
+    ((void (*)())Actor_SetupScripted)(object, 2);
     object->update = Func_02001e38;
     Actor_SetBlendMode(object, 1);
   }
@@ -1410,7 +1411,7 @@ void Func_02002118(void) {
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
-DEFINE_RIDE_RELEASE_HANDLE(Func_0200216c, Actor_Release)
+DEFINE_RIDE_RELEASE_HANDLE(Ride_ReleaseHandle, Actor_Release)
 
 void Func_02002180(s16 value) {
   ((struct RideWork *)(gInventorySnapshot + 0x188))->value0e = value;
@@ -1430,9 +1431,9 @@ s32 Func_020022e0(void) {
   return ((struct RideWork *)(gInventorySnapshot + 0x188))->counter;
 }
 
-DEFINE_RIDE_ADVANCE_COUNTER(Func_020022ec)
+DEFINE_RIDE_ADVANCE_COUNTER(Ride_AdvanceCounter)
 
-DEFINE_RIDE_SET_ENTRY(Func_02002314)
+DEFINE_RIDE_SET_ENTRY(Ride_SetEntry)
 
 void Func_02002334(s32 index, s16 value) {
   ((struct RideWork *)(gInventorySnapshot + 0x188))->entries[index].c = value;
@@ -1442,7 +1443,7 @@ s32 Func_02002344(s32 index) {
   return ((struct RideRow *)(gInventorySnapshot + 0x188 + index * 16))->b;
 }
 
-DEFINE_RIDE_SET_SLOT(Func_02002354)
+DEFINE_RIDE_SET_SLOT(Ride_SetSlot)
 
 struct MarsLighthouseEventWork {
   u8 unk000[0x16a];
@@ -1460,11 +1461,11 @@ struct MarsLighthouseEventWork {
 struct BattleUnit *Unit_Get__s2118(s32 owner) __asm__("Unit_Get");
 #define Unit_Get Unit_Get__s2118
 
-DEFINE_PARTY_TAKE_FALL_DAMAGE(Func_02002368)
+DEFINE_PARTY_TAKE_FALL_DAMAGE(Party_TakeFallDamage)
 
 #include "../field/field_effect/advance_spin.c"
 
-DEFINE_ACTOR_BLINK(Func_020024bc, 10, 4, 0)
+DEFINE_ACTOR_BLINK(Actor_Blink, 10, 4, 0)
 
 s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 terrain, s32 x, s32 z);
 /* VIEW(s2118): routine MapGrid_CheckCollision as s32
@@ -1477,8 +1478,8 @@ extern s32 Func_02003180__s2118(
     struct Vector3 *position) __asm__("MapGrid_CheckCollision");
 
 #define SHARED_F02002148_NAME Func_020024e4
-#define SHARED_F02002148_ID2 Func_02002368
-#define SHARED_F02002148_ID3 Func_020024bc
+#define SHARED_F02002148_ID2 Party_TakeFallDamage
+#define SHARED_F02002148_ID3 Actor_Blink
 #define SHARED_F02002148_ID4 Actor_SelectAnimation
 #define SHARED_F02002148_ID5 MapGrid_GetCellAttributeLowNibbleOrBump
 #define SHARED_F02002148_ID6 Func_02003180__s2118
@@ -1502,13 +1503,14 @@ void Func_020026f0(void) {
 
 /// Scene code of overlay 0x6ac, in ROM order.
 
-/* VIEW(s2708): routine Func_02002368 as int Func_02002368(), called with no
- * declaration in scope as its bytes need; the definition has void
- * Func_02002368(void); tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:1521: too
- * many arguments to function `Func_02002368'. */
-s32 Func_02002368__s2708() __asm__("Func_02002368");
-#define Func_02002368 Func_02002368__s2708
+/* VIEW(s2708): routine Party_TakeFallDamage as int Party_TakeFallDamage(),
+ * called with no declaration in scope as its bytes need; the definition has
+ * void Party_TakeFallDamage(void); tried as the rest of the object declares it,
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_room_m.c:1521: too many arguments to
+ * function `Party_TakeFallDamage'. */
+s32 Func_02002368__s2708() __asm__("Party_TakeFallDamage");
+#define Party_TakeFallDamage Func_02002368__s2708
 s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 layer, s32 x, s32 z);
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
@@ -1562,7 +1564,7 @@ s32 MarsLighthouseRoomM_SlideOnIce(void) {
   event->field15e = 0;
   event->field15c = 0;
   event->field164 = 0;
-  Func_02002368(-10, 0);
+  Party_TakeFallDamage(-10, 0);
   FieldCamera_SetSpeed(0x70000, 0xe000);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   ride = (struct RideState *)(gInventorySnapshot + 0x188);
@@ -1570,7 +1572,7 @@ s32 MarsLighthouseRoomM_SlideOnIce(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_ClearFlag(0x106);
-  leader->update = (void (*)(void))Func_020024bc;
+  leader->update = (void (*)(void))Actor_Blink;
   leader->facing = 0x4000;
   Actor_SelectAnimation(leader, 49);
   while (ride->car->stopped == 0) {
@@ -1740,7 +1742,7 @@ struct WorkEvent {
   s16 unk166;
 };
 
-DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_02002ae8, Work020023c4,
+DEFINE_ACTOR_ROLL_AND_CRUMBLE(Actor_RollAndCrumble, Work020023c4,
                               MapGrid_GetCellAttributeLowNibbleOrBump,
                               Func_020029f4, Func_02002870)
 
@@ -1763,23 +1765,23 @@ void Func_02002df4(s32 sourceId, s32 id, s32 value, s32 angle,
 
 /// Sets up the actor whose id self keeps in byte 0x62: places it 32 pixels out
 /// from self, 12 pixels up, along self's angle (unk66), faces it that way,
-/// gives it Func_02002ae8 as its update hook and its speed, clears its scale
-/// and action, has it watch what self watches, and calls Event_PlaySound(104).
-/// Overlays 6aa and 6ab keep the same code.
-DEFINE_ACTOR_LAUNCH_AHEAD(Func_02002e6c, Func_02002ae8)
+/// gives it Actor_RollAndCrumble as its update hook and its speed, clears its
+/// scale and action, has it watch what self watches, and calls
+/// Event_PlaySound(104). Overlays 6aa and 6ab keep the same code.
+DEFINE_ACTOR_LAUNCH_AHEAD(Actor_LaunchAhead, Actor_RollAndCrumble)
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
 
-DEFINE_ACTOR_POP_UP_SLOW(Func_02002f34, Actor_SelectAnimation)
+DEFINE_ACTOR_POP_UP_SLOW(Actor_PopUpSlow, Actor_SelectAnimation)
 
-DEFINE_ACTOR_POP_UP(Func_02002fe0, Actor_SelectAnimation)
+DEFINE_ACTOR_POP_UP(Actor_PopUp, Actor_SelectAnimation)
 
-DEFINE_ACTOR_PARK(Func_02003084, Func_02002e6c)
+DEFINE_ACTOR_PARK(Actor_Park, Actor_LaunchAhead)
 
 /* VIEW(s2708): routine Func_0200004c as void Func_0200004c(void);
  * scene/mars_lighthouse_room_m has s32 Func_0200004c(struct Actor *object) {;
- * tried as the definition's void *Func_0200004c(void), Func_02002f34 (gone)
+ * tried as the definition's void *Func_0200004c(void), Actor_PopUpSlow (gone)
  * moves: 74 of 74 instructions in tla-ja. */
 void Func_0200004c__s2708(void) __asm__("Func_0200004c");
 #define Func_0200004c Func_0200004c__s2708
@@ -1969,4 +1971,4 @@ u32 gData_02003900[] = {
 
 #undef Work020023c4
 #undef Func_0200004c
-#undef Func_02002368
+#undef Party_TakeFallDamage

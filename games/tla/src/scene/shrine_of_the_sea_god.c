@@ -1904,7 +1904,7 @@ DEFINE_ACTOR_HIDE(Actor_Hide, Actor_DisableById)
 
 DEFINE_SCENE_RUN_UNLESS_FLAG(Scene_RunUnlessFlag, 0x208, Func_0200123c)
 
-DEFINE_ACTORS_FOR_RANGE(Func_0200300c, 2, Actor_Hide, 9, Scene_RunUnlessFlag)
+DEFINE_ACTORS_FOR_RANGE(Actors_ForRange, 2, Actor_Hide, 9, Scene_RunUnlessFlag)
 
 void Func_02003024(void) {
   const struct ShrineOfTheSeaGodSpot *spot = gData_02003cc0;
@@ -2099,7 +2099,7 @@ void Func_02003504(void) {
     Actor_SetSpritePriority(8, 1);
     Actor_GetById(8)->motionFlags = open;
   }
-  Func_0200300c();
+  Actors_ForRange();
 }
 
 // The Shrine of the Sea God's prepare step: sets up actors 8 to 24 and,

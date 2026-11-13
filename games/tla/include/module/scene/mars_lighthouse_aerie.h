@@ -77,7 +77,7 @@ extern s32 gData_02006180[];
 
 void Func_02005794();
 
-void Func_0200326c(void);
+void Orbs_SpawnRising(void);
 
 extern s32 gData_020060b4[];
 extern u32 gData_02006120[];

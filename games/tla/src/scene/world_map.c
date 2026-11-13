@@ -68,7 +68,7 @@ void Func_020048f4(void);
 
 void Func_02003654(s32 a, s32 b, s32 c);
 
-void Func_02003bb8(struct Actor *object, s32 mode);
+void Actor_SetFlightMode(struct Actor *object, s32 mode);
 
 void Func_020049bc(void);
 void Func_02003c3c(void);
@@ -310,7 +310,7 @@ extern struct ActorPlacement gData_02006598[];
 extern struct ActorPlacement gData_02006700[];
 extern struct ActorPlacement gData_02006790[];
 
-void Func_02003bf0(void);
+void Leader_Search(void);
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   switch (gMainRoutineWork.entrance) {
@@ -341,7 +341,7 @@ void WorldMap_SetUpFlyingShip(void) {
   }
   if (Actor_Get(FieldParty_GetLeaderActor()) != NULL)
     Actor_StartRenderModeScript();
-  Func_02003bf0();
+  Leader_Search();
   if (Event_GetFlag(0x147))
     work[3387] = 0;
   else
@@ -2182,15 +2182,16 @@ DEFINE_ACTOR_FLICKER(Func_02003b38, Func_020039f4)
 extern s32 gData_02006be4__s3b38 __asm__("gData_02006be4");
 #define gData_02006be4 gData_02006be4__s3b38
 
-DEFINE_ACTOR_CYCLE_CHILD_VALUES(Func_02003b70, gData_02004fc8, gData_02006be4,
-                                Func_02003aac)
+DEFINE_ACTOR_CYCLE_CHILD_VALUES(Actor_CycleChildValues, gData_02004fc8,
+                                gData_02006be4, Func_02003aac)
 
-DEFINE_ACTOR_SET_FLIGHT_MODE(Func_02003bb8, Func_02003b38, Func_02003b70)
+DEFINE_ACTOR_SET_FLIGHT_MODE(Actor_SetFlightMode, Func_02003b38,
+                             Actor_CycleChildValues)
 
-DEFINE_LEADER_SEARCH(Func_02003bf0, Func_02003bb8, WorldMap_GetBlockPlace)
+DEFINE_LEADER_SEARCH(Leader_Search, Actor_SetFlightMode, WorldMap_GetBlockPlace)
 
 void Func_02003c3c(void) {
-  Func_02003bb8(Actor_GetById(Party_GetLeaderActor()), 0);
+  Actor_SetFlightMode(Actor_GetById(Party_GetLeaderActor()), 0);
 }
 
 static inline void QueueBlend(u32 address, u32 value) {
@@ -2390,20 +2391,20 @@ void Func_020042e0(void) {
 
 DEFINE_ACTOR_FLICKER(Func_02004500, Func_02004634)
 
-DEFINE_ACTOR_ANIMATE_AND_EMIT(Func_02004538, Func_02004634)
+DEFINE_ACTOR_ANIMATE_AND_EMIT(Actor_AnimateAndEmit, Func_02004634)
 
-DEFINE_ACTOR_ANIMATE(Func_02004570)
+DEFINE_ACTOR_ANIMATE(Actor_Animate)
 
-DEFINE_ACTOR_GROW_UP(Func_02004598, Actor_Release)
+DEFINE_ACTOR_GROW_UP(Actor_GrowUp, Actor_Release)
 
-DEFINE_ACTOR_GROW_DOWN(Func_020045e4, Actor_Release)
+DEFINE_ACTOR_GROW_DOWN(Actor_GrowDown, Actor_Release)
 
 /* VIEW(s3b38): routine Animation_ApplyChildArgument as s32
  * Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags);
  * actor_view.h has s32 Animation_ApplyChildArgument(struct ActorSpriteView *,
  * s32); tried as the definition's s32 Animation_ApplyChildArgument(struct
  * AnimationGroup *state, s32 flags), it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:2416: `Func_020045e4' undeclared (first use
+ * games/tla/src/scene/world_map.c:2416: `Actor_GrowDown' undeclared (first use
  * in this function). */
 s32 Animation_ApplyChildArgument__s3b38(
     struct AnimationGroup *state,
@@ -2447,7 +2448,7 @@ void Func_02004634(struct Actor *parent) {
     struct Actor *p = pair[0];
     struct FieldSprite *sp = p->sprite;
 
-    p->update = (void *)Func_020045e4;
+    p->update = (void *)Actor_GrowDown;
     sp->priority = 1;
   }
   {
@@ -2455,7 +2456,7 @@ void Func_02004634(struct Actor *parent) {
     struct FieldSprite *sp = p->sprite;
 
     sp->priority = 1;
-    p->update = (void *)Func_02004598;
+    p->update = (void *)Actor_GrowUp;
     p->priorityFlags = 2;
   }
 }

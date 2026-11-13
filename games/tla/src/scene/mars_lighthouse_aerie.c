@@ -183,8 +183,8 @@ const struct Trigger *Scene_GetPlacements(void) {
   return (const struct Trigger *)gMarsLighthouseAerie_Placements;
 }
 
-DEFINE_SCENE_LEAVE_BY_EXIT(Func_020001a0, Func_02004fac, Teleport_PlaySparks, 1,
-                           Func_02005010)
+DEFINE_SCENE_LEAVE_BY_EXIT(Scene_LeaveByExit, Func_02004fac,
+                           Teleport_PlaySparks, 1, Func_02005010)
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
@@ -194,26 +194,28 @@ extern s16 gData_02005ae0[];
 extern u32 gData_02005b0c[];
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
-/* VIEW(mars_lighthouse_aerie): routine Func_02004ef0 as void
- * Func_02004ef0(const u8 *a, const u8 *b, const u8 *c, const u8 *d);
+/* VIEW(mars_lighthouse_aerie): routine Palette_SetColorsFade as void
+ * Palette_SetColorsFade(const u8 *a, const u8 *b, const u8 *c, const u8 *d);
  * scene/mars_lighthouse_aerie/s3370 has
- * DEFINE_PALETTE_SET_COLORS_FADE(Func_02004ef0, gData_02006ce0, Data_02006ce4,
- * Data_02006ce8, Data_02006cd4, Func_020051e0) #include "task.h"
+ * DEFINE_PALETTE_SET_COLORS_FADE(Palette_SetColorsFade, gData_02006ce0,
+ * Data_02006ce4, Data_02006ce8, Data_02006cd4, Func_020051e0) #include "task.h"
  * DEFINE_PALETTE_CYCLE_START(Func_02004fac, gData_02006cf0, gData_02006cec,
  * List_CountEntries, gData_02006ce0, gData_02006cdc, 15, gData_02006cd8, 16,
  * gData_02006cd0, PaletteCycle_Fade) void Func_02005010(void) {; tried as the
- * one declaration void Func_02004ef0(const u8 *a, const u8 *b, const u8 *c,
- * const u8 *d), Func_020001d8 moves: 3 of 124 instructions in tla-ja. */
-void Func_02004ef0__mars_lighthouse_aerie(const u8 *a, const u8 *b, const u8 *c,
-                                          const u8 *d) __asm__("Func_02004ef0");
-#define Func_02004ef0 Func_02004ef0__mars_lighthouse_aerie
+ * one declaration void Palette_SetColorsFade(const u8 *a, const u8 *b, const u8
+ * *c, const u8 *d), Func_020001d8 moves: 3 of 124 instructions in tla-ja. */
+void Func_02004ef0__mars_lighthouse_aerie(
+    const u8 *a, const u8 *b, const u8 *c,
+    const u8 *d) __asm__("Palette_SetColorsFade");
+#define Palette_SetColorsFade Func_02004ef0__mars_lighthouse_aerie
 void Func_020004a4(void);
 
 void Func_020001d8(void) {
   struct Actor *object;
   s32 i;
 
-  Func_02004ef0(gData_02005aa4, gData_02005ab4, gData_02005ae0, gData_02005b0c);
+  Palette_SetColorsFade(gData_02005aa4, gData_02005ab4, gData_02005ae0,
+                        gData_02005b0c);
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x40;
   for (i = 10; i <= 16; i++) {
     object = Actor_Get(i);
@@ -1918,13 +1920,14 @@ static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
 /// Every third frame, or every frame once flag 0x200 is set, starts a particle
 /// circling actor 23 at a random height above it, as overlay 69e's
 /// Func_020001a4 does under flag 0x201.
-DEFINE_ORBS_SPAWN_RISING(Func_0200326c, 0x200, gData_02006afc, Func_02003210, 2)
+DEFINE_ORBS_SPAWN_RISING(Orbs_SpawnRising, 0x200, gData_02006afc, Func_02003210,
+                         2)
 
 #include "../field/object/park_record.c"
 
 #undef FIELD_AT
 
-#undef Func_02004ef0
+#undef Palette_SetColorsFade
 #undef gData_02005ba8
 #undef gData_02005bd0
 #undef gData_02005bf8
@@ -2182,7 +2185,7 @@ L_0200b8ac:
   A(beam2)->scaleY = 0xffff0000;
   A(beam2)->motionFlags = zero;
   FieldActor_SetPositionAndResetMotion(beam2, 0x2000000, 0x600000, 0xcc0000);
-  Task_AddFrame(Func_0200326c, 0x480);
+  Task_AddFrame(Orbs_SpawnRising, 0x480);
   Actor_FaceDirection(7, 0xe000, 0);
   Actor_FaceDirection(5, 0xe000, 0);
   Actor_FaceDirection(6, 0xe000, 0);
@@ -2229,7 +2232,7 @@ L_0200b8ac:
   Func_020035ec(7);
   Func_020035ec(5);
   Func_020035ec(6);
-  glowTask = (s32)Func_0200326c;
+  glowTask = (s32)Orbs_SpawnRising;
   Func_020035ec(20);
   Func_020035ec(21);
   Func_020035ec(19);
@@ -2959,8 +2962,9 @@ void Func_02004ee4(void) { Func_02004e80(29, 21); }
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
-DEFINE_PALETTE_SET_COLORS_FADE(Func_02004ef0, gData_02006ce0, Data_02006ce4,
-                               Data_02006ce8, Data_02006cd4, Func_020051e0)
+DEFINE_PALETTE_SET_COLORS_FADE(Palette_SetColorsFade, gData_02006ce0,
+                               Data_02006ce4, Data_02006ce8, Data_02006cd4,
+                               Func_020051e0)
 
 DEFINE_PALETTE_CYCLE_START(Func_02004fac, gData_02006cf0, gData_02006cec,
                            List_CountEntries, gData_02006ce0, gData_02006cdc,
@@ -3149,7 +3153,7 @@ void Func_020054e4(struct Actor *object) { object->unk5c[6] = 1; }
 
 #include "text/msg_ids.h"
 
-void Func_020001a0(void);
+void Scene_LeaveByExit(void);
 void MarsLighthouseAerie_FaceDoomDragon(void);
 void Func_02004ed8(void);
 
@@ -3435,7 +3439,7 @@ s16 gData_020066bc[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {0x9c05, 1, CONDITION_ALWAYS, EVENT(Func_020001a0)},
+    {0x9c05, 1, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit)},
     {TRIGGER_STEP, 10, 0xa3d, EVENT(MarsLighthouseAerie_FaceDoomDragon)},
     {TRIGGER_TALK, 0, CONDITION_ALWAYS, MSGNO(MsgOurQuestIs)},
     {TRIGGER_TALK, 1, CONDITION_ALWAYS, MSGNO(MsgIWishICould)},

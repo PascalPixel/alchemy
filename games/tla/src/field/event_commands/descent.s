@@ -5,7 +5,28 @@ gField_ExamineTriggerMessageOffsets:
 @ 8-byte rows searched by ID by Field_GetPsynergyTargetRule; ID -1 terminates.
 	.global gData_080eff28
 gData_080eff28:
-	.incbin "games/tla/src/field/event_commands/descent.table"
+	.2byte 3, 16, 8, 6144
+	.2byte 6, 16, 8, 6144
+	.2byte 7, 16, 8, 6144
+	.2byte 11, 16, 8, 6144
+	.2byte 12, 16, 8, 6144
+	.2byte 2, 32, 16, 8192
+	.2byte 1, 32, 8, 6144
+	.2byte 14, 35, 8, 6144
+	.2byte 5, 32, 24, 6144
+	.2byte 9, 32, 8, 6144
+	.2byte 4, 48, 8, 6144
+	.2byte 13, 48, 48, 6144
+	.2byte 26, 16, 64, 6144
+	.2byte 17, 16, 0, 6144
+	.2byte 27, 32, 16, 8192
+	.2byte 19, 32, 16, 8192
+	.2byte 18, 32, 12, 8192
+	.2byte 275, 32, 32, 8192
+	.2byte 20, 16, 0, 6144
+	.2byte 22, 32, 0, 6144
+	.2byte 25, 0, 0, 0
+	.2byte -1, 16, 8, 6144
 @ Actions passed to Actor_StartScriptFar (lists of words).
 	.global gFieldEffect_ParticleEmitterScript
 gFieldEffect_ParticleEmitterScript:

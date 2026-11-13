@@ -38,4 +38,7 @@
 #define LATE_DATA __attribute__((section(".data.late")))
 #define LAST_DATA __attribute__((section(".data.last")))
 
+/// Data aligned as the ROM places it, where its own type would not.
+#define ALIGNED(n) __attribute__((aligned(n)))
+
 #endif

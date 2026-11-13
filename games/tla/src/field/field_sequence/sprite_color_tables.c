@@ -1,7 +1,7 @@
 /// @file
-/// A second copy of the ten sprite colour tables in field/sprite_color_tables.c,
-/// the five conversion tables then the five byte remap tables, in the field
-/// sequence bank.
+/// A second copy of the ten sprite colour tables in
+/// field/sprite_color_tables.c, the five conversion tables then the five byte
+/// remap tables, in the field sequence bank.
 
 #include "types.h"
 

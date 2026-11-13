@@ -80,10 +80,7 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
 
       // Each target's skulls turn about a point 20 pixels above it.
       Transform_Reset();
-      /* FAKEMATCH(dead): the look-at call in a once-only block. */
-      do {
-        Transform_SetLookAt(camera, camera + 3);
-      } while (0);
+      Transform_SetLookAt(camera, camera + 3);
       point[0] = target->x;
       point[1] = 20 << 16;
       point[2] = target->z;

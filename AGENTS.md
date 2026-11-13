@@ -10,6 +10,7 @@ This file instructs the agents that help people build with Alchemy: change the g
 
 - `games/<game>/src`, `include`, `sound`, `text`: each game owns its copy of what it uses. ☀️'s code sits in one folder per bank, grouped by the credits' divisions, with a scene's overlay one file; `games/tbs/src/README.md` maps the folders, and module headers follow the same paths under `include/module`.
 - Each game links from one linker script, `games/<game>/ld_script.ld`, run through the C preprocessor with the edition defined as its C is: it lists every object of the main image in link order, and includes `games/<game>/src/system/overlay/overlay.ld`, one block per overlay, when the build defines `OVERLAY`. An overlay's globals still written in assembly are `scene/bss/<name>.s` in both games. Neither game has a `recon/`.
+- An overlay reaches a main-image routine `X` through the far-call export `XFar` (`src/gamepak/far_call/*.S`) and its own veneer to it, named `X` (⚓️'s `src/scene/import/<name>.s`, ☀️'s `imports.inc`); a placeholder veneer is renamed once its target is named.
 - The docs start at `games/README.md` and `games/tbs/README.md`; a folder's README is its page, and `games/tbs/glossary.md` defines the words. The site, <https://alchemy.pascalpixel.com/>, is built from them in `alchemy-docs`.
 - The `Makefile` builds everything; `tools/` holds its small C programs (`ags-*`). `out/` and `tools/out/` are build output.
 

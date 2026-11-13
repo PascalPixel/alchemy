@@ -3,10 +3,11 @@
    block for that number is the overlay. The build finds the overlays from the
    lines that test OVERLAY, and each overlay's objects from its statements.
 
-   A scene's objects sit in its folder DIR. Its .text opens with its entry
-   table DIR/entry.s, and each statement names the section it places, so
-   the objects keep their order. Where its globals are written in assembly,
-   its .bss is DIR/bss.s. */
+   A scene's .text opens with its entry table, DIR/entry/NAME.s, and its
+   import table, DIR/import/NAME.s, follows its code, where DIR is src/scene
+   (or src/debug); each statement names the section it places, so the objects
+   keep their order. Where its globals are written in assembly, its .bss is
+   DIR/bss/NAME.s. */
 #if OVERLAY == 0x649
 SECTIONS
 {

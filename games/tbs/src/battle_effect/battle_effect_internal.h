@@ -2,9 +2,8 @@
 #define ALCHEMY_BATTLE_EFFECT_INTERNAL_H
 
 /// @file
-/// What every part of the battle effect object shares: its includes, macros
-/// and frame-loop helpers. battle_effect.c includes it before the parts, and
-/// each part includes it too, so that a part read on its own still resolves.
+/// What every part of the battle effect object shares: its includes, macros and
+/// frame-loop helpers.
 
 #include "module/battle_effect/battle_effect_table.h"
 #include "module/battle_effect/battle_effect.h"
@@ -61,21 +60,7 @@
 #include "macros.h"
 #include "sprite_ids.h"
 
-// Display, palette and per-line work.
-//
-// Effects change the screen around their drawing in three ways:
-//
-// - Display state: the windows that frame the battle view (lines 16 to
-//   135), the blend and display registers, and the set-up every effect
-//   starts and ends with (BattleEffect_ConfigureEffectDisplay, below).
-// - Per-frame tasks the runner adds: background scrolling, the
-//   camera shake and the battle background's palette fades that make the canvas
-//   stand out.
-// - Per-scanline work: HBlank DMA that feeds a window edge, BG2's affine
-//   reference or a palette row to the hardware line by line
-//   (BattleEffect_ArmWin0HBlankDma, BattleEffect_ArmBg2AffineHBlankDma and
-//   BattleEffect_ArmPaletteHBlankDma), and the tables those transfers read.
-//
+// Display, palette and per-line work (README.md, "Around the canvas").
 // The tasks read the current effect's work block, so the runner that
 // adds them must remove them before that block is released.
 
@@ -100,10 +85,8 @@
 /// DMA control word that fills n words from one fixed source word.
 #define DMA_FILL_WORDS(n) ((DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (n))
 
-/// Stops a DMA channel: clears its repeat and start timing bits, then its
-/// enable bit, and reads the control register back so the stop takes effect
-/// before the channel is set up again. The HBlank DMA arms in display.c,
-/// dispatch.c, burst_shower.c and particle_streams.c call it first.
+/// Stops a DMA channel and reads its control back, so the stop takes effect
+/// before the channel is set up again.
 static inline void Dma_Stop(volatile u16 *channel) {
   channel[DMA_CONTROL_HALF] &= (u16)~DMA_START_TIMING_DRQ_REPEAT;
   channel[DMA_CONTROL_HALF] &= (u16)~DMA_ENABLE;
@@ -116,15 +99,12 @@ static inline void Dma_Stop(volatile u16 *channel) {
   for ((i) = 0; (i) != (count); (i)++)                                         \
   (particles)[i].variant = -1
 
-/// Starts a frame's 3D projection from the battle camera: resets the
-/// transform, then looks from camera->eye towards camera->focus. Effects
-/// that place pictures at battle positions do this before projecting them.
+/// Starts a frame's 3D projection from the battle camera.
 #define EFFECT_VIEW_FROM_CAMERA(camera)                                        \
   (Transform_Reset(), Transform_SetLookAt((camera)->eye, (camera)->focus))
 
-/// Strikes target `i`: it flashes white in its damage pose for `frames`
-/// frames, counted by actor timer `i`, and is knocked back by `motion`, an enum
-/// BattleKnockback (BattleMotion_ApplyKnockbackFar).
+/// Strikes target `i`: it flashes white in its damage pose and is knocked back
+/// by `motion`.
 #define EFFECT_STRIKE_TARGET(effect, i, frames, motion)                        \
   (BattleEffect_TintBattler((effect)->targets[i], SPRITE_COLOR_WHITE,          \
                             POSE_DAMAGE, i, frames),                           \
@@ -132,33 +112,27 @@ static inline void Dma_Stop(volatile u16 *channel) {
 
 // The canvas life cycle, shared by every canvas effect.
 
-/// Lets the battle show the damage: resumes its paused playback, which plays
-/// hitSound (an SE_ id; 0 keeps the one already queued) as the targets react.
-/// It acts only while the playback is idle (BattlePlayback_Start),
-/// so a second use while the damage is showing changes nothing.
+/// Lets the battle show the damage, playing hitSound (0 keeps the one queued)
+/// as the targets react; a second use changes nothing.
 #define EFFECT_SHOW_DAMAGE(hitSound) BattlePlayback_StartFar(hitSound)
 
 /// The canvas: 128x128 pixels, one byte each, in its heap slot and in VRAM at
 /// BG_CHAR_BLOCK(1).
 #define CANVAS_BYTES (128 * 128)
 
-/// Opens the canvas layer at the canvas's own width, one texel per pixel,
-/// where BattleEffect_StartCanvasLayer stretches it to twice the width.
+/// Opens the canvas layer at the canvas's own width.
 #define EFFECT_START_NARROW_CANVAS(bgControl)                                  \
   (BattleEffect_StartCanvasLayer(bgControl), REG_BG2PA = Q_8_8(1))
 
-/// Builds a blitter for the 128x128 canvas (1 << 7 pixels each way) in heap
-/// slot `slot`: BattleEffect_BuildBlitter's drawing routine for one clip,
-/// mirror and blend mode. Every canvas effect draws through one or two of
-/// these.
+/// Builds a blitter for the canvas in heap slot `slot`, for one clip, mirror
+/// and blend mode.
 #define EFFECT_LOAD_BLITTER(slot, flags, mode)                                 \
   BattleEffect_BuildBlitter(slot, 7, 7, flags, mode)
 
 /// The blitter built in heap slot `slot`.
 #define EFFECT_BLITTER(slot) ((DrawRectangle)gHeapSlots[slot])
 
-/// Sets how the canvas transfer treats what is left in the canvas after each
-/// copy: `mode` with `value` (see enum CanvasTransferMode).
+/// Sets what the canvas transfer leaves in the canvas after each copy.
 #define EFFECT_SET_TRANSFER(work, mode, value)                                 \
   ((work)->transferMode = (mode), (work)->transferValue = (value))
 
@@ -167,12 +141,11 @@ static inline void Dma_Stop(volatile u16 *channel) {
   (EFFECT_SET_TRANSFER(work, mode, value),                                     \
    Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK))
 
-/// Presents the canvas: marks it ready for the transfer task, then waits for
-/// the next frame. Nearly every effect loop ends so.
+/// Presents the canvas and waits for the next frame.
 #define EFFECT_PRESENT_CANVAS(work) ((work)->transferPending = 1, wait(1))
 
-/// The usual end of an effect's frame: counts down the targets' flash timers
-/// (BattleEffect_CountDownBattlerTints), then presents the canvas.
+/// The usual end of an effect's frame: counts down the targets' flash timers,
+/// then presents the canvas.
 #define EFFECT_END_FRAME(work)                                                 \
   (BattleEffect_CountDownBattlerTints(), EFFECT_PRESENT_CANVAS(work))
 
@@ -180,8 +153,8 @@ static inline void Dma_Stop(volatile u16 *channel) {
 #define EFFECT_RELEASE_BLITTERS()                                              \
   (HeapSlot_Release(HEAP_SLOT_RAM_CODE_2), HeapSlot_Release(HEAP_SLOT_RAM_CODE))
 
-/// The usual end of a canvas effect: stops the transfer task before
-/// freeing what it reads, then the blitters, then the canvas layer.
+/// The usual end of a canvas effect: the transfer, the blitters, then the
+/// canvas layer.
 #define EFFECT_FINISH_CANVAS()                                                 \
   (Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer),                   \
    EFFECT_RELEASE_BLITTERS(), BattleEffect_EndCanvasLayer())
@@ -194,69 +167,54 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// The bytes of one set of the ten mote pictures: 2 * (1 + 4 + ... + 100).
 #define MOTE_SET_BYTES 770
 
-/// The bytes of the six glint pictures that open the tornado sheet, the sum of
-/// their pictures in gBattleEffect_GlintPictures' order (its widths by its
-/// heights). The tornado strips, and the bolts or bursts some effects decode
-/// over them, follow.
+/// The bytes of the six glint pictures that open the tornado sheet.
 #define GLINT_SET_BYTES                                                        \
   (19 * 31 + 23 * 31 + 23 * 31 + 19 * 21 + 16 * 21 + 17 * 24)
 
-/// Particle sheets hold ten mote pictures, 1x2 to 10x20 pixels. Draws mote
-/// picture `size` (size pixels wide, twice that tall) of `sheet` through
-/// blitter `draw`, centred across x and standing on y: the motes, sparks and
-/// dust of 29 parts, from the mote fountain to the summons. `size` is 1 to 10.
+/// Draws mote picture `size` (1 to 10: size pixels wide, twice that tall),
+/// centred across x and standing on y.
 #define EFFECT_DRAW_MOTE(draw, canvas, sheet, x, y, size)                      \
   (draw)(canvas, (sheet) + gBattleEffect_MotePictures[(size) - 1],             \
          (x) - (size) / 2, (y) - (size), size, (size) * 2)
 
-/// Draws flare picture `size` of `sheet`, a square `size` pixels from its
-/// centre to each edge, centred on (x, y): Douse's sparks and the glowing
-/// points of the element pillar and burst, stat boosts, beams and rings.
+/// Draws flare picture `size`, a square, centred on (x, y).
 #define EFFECT_DRAW_FLARE(draw, canvas, sheet, x, y, size)                     \
   (draw)(canvas, (sheet) + gBattleEffect_FlarePictures[(size) - 1],            \
          (x) - (size), (y) - (size), (size) * 2, (size) * 2)
 
-/// Swells a falling mote as the drops clear: from frame 69 it is at least 6
-/// pixels, growing a size every 2 frames to 10 from frame 77. Nereid's drops
-/// and Titan Blade's dust share it.
+/// Swells a falling mote as the drops clear (Nereid's drops, Titan Blade's
+/// dust).
 #define EFFECT_SWELL_MOTE(size, frame)                                         \
   ((frame) > 68 && (size) <= 5 && ((size) = 6),                                \
    (frame) > 70 && (size) <= 6 && ((size) = 7),                                \
    (frame) > 72 && (size) <= 7 && ((size) = 8),                                \
    (frame) > 74 && (size) <= 8 && ((size) = 9), (frame) > 76 && ((size) = 10))
 
-/// Moves a falling mote's vertical speed (16.16) on a frame: until frame 80
-/// it falls under `gravity`, then it rises, half a pixel a frame faster each
-/// frame.
+/// A falling mote's vertical speed: it falls under `gravity`, then from frame
+/// 80 rises.
 #define EFFECT_FALL_MOTE(velocityY, gravity, frame)                            \
   ((frame) > 80 ? ((velocityY) -= px(1) / 2) : ((velocityY) += (gravity)))
 
-/// Shows the canvas: the effect display mode, BG2 stretched to twice its
-/// width (the 128-pixel canvas shown 256 pixels wide) and blended over
-/// everything below: `top` sixteenths of the canvas's colour are added to all
-/// of what lies under it, so the canvas brightens what it covers.
+/// Shows the canvas stretched to twice its width, `top` sixteenths of its
+/// colour added over what lies under it.
 #define EFFECT_SHOW_WIDE_CANVAS(top)                                           \
   (REG_DISPCNT = EFFECT_DISPCNT, REG_BG2PA = Q_8_8(0.5),                       \
    REG_BLDALPHA = BLEND_ALPHA(top, 16),                                        \
    REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
 
-/// A WIN0H value whose left edge is past its right edge. The hardware then
-/// takes the right edge as 240, so the span is not empty in itself; the
-/// effects write it only on lines outside window 0's vertical range.
+/// A WIN0H value whose left edge is past its right edge, written only on lines
+/// outside window 0.
 #define WINDOW_SPAN_INVERTED WIN_RANGE(1, 0)
 
 /// The battle background's picture as BG1 shows it from BG character block 2:
 /// 256x120 pixels, one byte each.
 #define BATTLE_BACKGROUND_BYTES (256 * 120)
 
-/// Ram_MapGridCellBuffer as the unused BattleEffect_ConvertBackgroundToBlueRamp
-/// (bind.c) uses it: a working copy of the battle background's picture, the
-/// BATTLE_BACKGROUND_BYTES of BG character block 2.
+/// Ram_MapGridCellBuffer as the unused blue ramp uses it: a working copy of the
+/// battle background's picture.
 #define BLUE_RAMP_PIXELS Ram_MapGridCellBuffer
 
-/// Caps a colour level at cap, and at 0 from below. Fades draw from darker
-/// copies of a picture built before the first frame, copy i capped at
-/// 64 - 7i.
+/// Caps a colour level at cap, and at 0 from below.
 #define EFFECT_CAP_LEVEL(level, cap)                                           \
   {                                                                            \
     if ((level) > (cap))                                                       \
@@ -265,12 +223,9 @@ static inline void Dma_Stop(volatile u16 *channel) {
       (level) = 0;                                                             \
   }
 
-/// The reaper in CounterRevealSheet, which Condemn and Mortal Danger decode
-/// into work->sheet: the reaper with its scythe raised, then swung, then the
-/// red crescent the swing leaves. Each starts where the one before ends; the
-/// notes give the sizes the draws use. In Condemn's render a hooded skeleton
-/// swings its scythe in a white flash:
-/// https://alchemy.pascalpixel.com/abilities/condemn.gif
+/// The reaper in CounterRevealSheet, which Condemn and Mortal Danger decode:
+/// the reaper with its scythe raised, then swung, then the red crescent the
+/// swing leaves.
 enum ReaperSheetPicture {
   /// 57x98
   REAPER_SHEET_RAISED = 0,
@@ -280,9 +235,7 @@ enum ReaperSheetPicture {
   REAPER_SHEET_CRESCENT = REAPER_SHEET_SWUNG + 99 * 69
 };
 
-/// RedCrescentSheetA, which Condemn and Mortal Danger decode into
-/// Ram_MapGridCellBuffer: the swing's crescent fading in four pictures, each
-/// starting where the one before ends.
+/// RedCrescentSheetA: the swing's crescent fading in four pictures.
 enum RedCrescentPicture {
   /// 128x91
   RED_CRESCENT_FADE_1 = 0,
@@ -309,9 +262,7 @@ enum RedCrescentPicture {
   (REG_BG2X = 0, REG_BG2Y = -(16 << 8), REG_BG2PA = Q_8_8(0.5), REG_BG2PB = 0, \
    REG_BG2PC = 0, REG_BG2PD = Q_8_8(1))
 
-/// Writes one row of BG2's map for the canvas: its 16 tiles of row `row` in
-/// order. An affine map has one byte per tile, so they are written two at a
-/// time, eight halfwords from `offset` on.
+/// Writes one row of BG2's map for the canvas, two tiles at a time.
 #define EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset)                       \
   for ((column) = 0; (column) != 8; (column)++, (offset) += 2) {               \
     s32 tileIndex;                                                             \
@@ -380,11 +331,8 @@ enum CameraPhase {
   CAMERA_PHASE_HALF_TURNED ///< half a delta turned on an unmarked frame
 };
 
-/// Where each range of BattleEffect_RunByIdRange's effect kinds starts:
-/// the casting impacts (the kind less EFFECT_RANGE_CASTING_IMPACT is an enum
-/// CastingImpact), the beams, which also take every kind below the
-/// casting impacts, and the ring and spark effect, which plays critical
-/// hits.
+/// Where each range of BattleEffect_RunByIdRange's effect kinds starts: the
+/// casting impacts, the beams, and the ring and spark effect of critical hits.
 enum BattleEffectIdRange {
   EFFECT_RANGE_CASTING_IMPACT = 100,
   EFFECT_RANGE_BEAM = 136,

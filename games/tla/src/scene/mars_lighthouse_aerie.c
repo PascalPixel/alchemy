@@ -1272,8 +1272,6 @@ L_0200a47a:
   Event_ShowMessage(21, 0);
   FieldActor_SetSpritePriority(20, 2);
   FieldActor_SetSpritePriority(22, 2);
-  /* FAKEMATCH(wrapper): this call through W_Func_02005714; as Actor_ShowEmote(20,
-   * 0x100, 0), 103 of 1038 instructions differ in tla-en (as Call3, 2). */
   FieldActor_ShowEmote(20, 0x100, 0);
   Actor_SetSpeed(20, 0x19999, 0xcccc);
   Actor_WalkToAndWait(20, 0x1ea, 0x128);

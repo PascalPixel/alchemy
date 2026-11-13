@@ -21,11 +21,12 @@
 #include "system/dma.h"
 #include "gamepak/far_call/system.h"
 #include "item_icon.h"
-#include "module/scene/izumo.h"
 #include "module/scene/northern_reaches.h"
 #include "module/scene/scene.h"
 #include "render_input.h"
 #include "resource.h"
+
+void Func_02000b08(void);
 
 s32 Func_02000038(s32 arg0) {
   *(u8 *)((u8 *)*(s32 *)((u8 *)arg0 + 80) + 26) = 0;

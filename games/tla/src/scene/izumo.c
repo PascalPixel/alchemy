@@ -1,5 +1,14 @@
 /// @file
-/// The scene code of overlay 0x67e, in ROM order.
+/// Izumo, the village in the far east of the Eastern Sea, plagued by the
+/// Serpent until the party slays it. Move sets the misaligned stone of its
+/// stone circle back in place (Izumo_FinishMovingStone), and Reveal then shows
+/// the way down to the Izumo Ruins (Izumo_RevealTheStoneCircle,
+/// Izumo_DescendIntoTheRuins). Cyclone clears its bushes
+/// (Izumo_CycloneFirstPatch to Izumo_CycloneNinthPatch). Once the Serpent is
+/// slain the village holds a festival, its dancers spinning on the spot
+/// (gIzumo_FirstSpinnerScript), and as the party leaves it is stopped to be
+/// thanked and told the legend of the Cloud Brand
+/// (Izumo_StopThePartyToThankThem).
 
 #include "shared/tables.h"
 #include "event_work.h"
@@ -11,14 +20,35 @@
 #include "main_routine_work.h"
 #include "scene_tables.h"
 
+// Set as the stone circle's guard finds the misaligned stone back in place.
+#define FLAG_GUARD_SAW_STONE_MOVED 0x924
+// Set while Move has set the stone in its place, for this visit.
+#define FLAG_STONE_IN_PLACE 0x250
+// Set while Reveal is shown.
+#define FLAG_REVEALING 0x301
+// Set while the one who stopped the party waits by the gate.
+#define FLAG_THANKFUL_ONE_WAITS 0x302
+// Set as the party is stopped on its way out to be thanked.
+#define FLAG_STOPPED_TO_THANK_THE_PARTY 0x929
+// Set once the token of gratitude has been offered.
+#define FLAG_TOKEN_OFFERED 0x92a
+
+extern u32 gIzumo_FirstSpinnerScript[];
+extern u32 gIzumo_SecondSpinnerScript[];
+extern u32 gIzumo_ThirdSpinnerScript[];
+extern u32 gIzumo_FourthSpinnerScript[];
+extern u32 gIzumo_FifthSpinnerScript[];
+extern u32 gIzumo_SixthSpinnerScript[];
+void Izumo_RevealTheStoneCircle(void);
+
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-extern s16 gData_02000e10[];
-extern struct ActorPlacement gData_02001644[];
-extern struct ActorPlacement gData_02001494[];
-extern struct Trigger gData_02001b00[];
-extern struct Trigger gData_020018b4[];
+extern s16 gIzumo_MovableStones[];
+extern struct ActorPlacement gIzumo_ActorPlacementsOnceTheSerpentIsSlain[];
+extern struct ActorPlacement gIzumo_ActorPlacements[];
+extern struct Trigger gIzumo_TriggersOnceTheSerpentIsSlain[];
+extern struct Trigger gIzumo_Triggers[];
 extern u8 MsgCanYouImagine[];
 extern u8 MsgSeeThisRing[];
 extern u8 MsgButItS[];
@@ -54,9 +84,9 @@ void Func_02000de8(const s16 *data);
 void Func_02000df0(void);
 void Func_02000df8(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Sound_Play(s32 cue);
-void Func_0200060c(void);
-void Func_020006a4(void);
-void Func_02000814(void);
+void Izumo_RotateWaterColors(void);
+void Izumo_StopThePartyToThankThem(void);
+void Izumo_TellTheCloudBrandLegend(void);
 #include "call.h"
 #include "flag_call.h"
 #include "scene_tables.h"
@@ -73,11 +103,10 @@ void Func_02000814(void);
 #include "task.h"
 #include "version.h"
 #include "frame.h"
-#include "module/scene/izumo.h"
 
-void Func_02000038(void) { Func_02000de8(gData_02000e10); }
+void Izumo_StartMovingStone(void) { Func_02000de8(gIzumo_MovableStones); }
 
-void Func_02000048(void) {
+void Izumo_FinishMovingStone(void) {
   struct Actor *actor = Actor_GetById(12);
   s32 x = actor->x >> 20;
   s32 z = actor->z >> 20;
@@ -90,11 +119,11 @@ void Func_02000048(void) {
   Func_02000df0();
   Sound_Play(132);
   if (x == 20 && z == 9) {
-    if (Flag_IsSet(0x301)) {
+    if (Flag_IsSet(FLAG_REVEALING)) {
       MapGrid_CopyCellPictureIndicesRect(36, 12, 22, 8, 3, 3);
       Call6((void (*)())Map_CopyCellAttributeRect, 36, 12, 3, 3, 22, 8);
     }
-    if (!Flag_IsSet(0x924)) {
+    if (!Flag_IsSet(FLAG_GUARD_SAW_STONE_MOVED)) {
       Event_Start();
       Event_ResolvePendingActions(0);
       FieldCamera_FollowActor(22, 1);
@@ -113,12 +142,12 @@ void Func_02000048(void) {
       Event_ShowMessageAndWait(22, 0);
       Actor_ArmCallback(22, FACING_SOUTH, 0);
       Event_End();
-      Flag_Set(0x924);
+      Flag_Set(FLAG_GUARD_SAW_STONE_MOVED);
     }
-    Flag_Set(0x250);
+    Flag_Set(FLAG_STONE_IN_PLACE);
   } else if (x == 19 && z == 9) {
-    Flag_Clear(0x250);
-    if (Flag_IsSet(0x301)) {
+    Flag_Clear(FLAG_STONE_IN_PLACE);
+    if (Flag_IsSet(FLAG_REVEALING)) {
       MapGrid_CopyCellPictureIndicesRect(36, 8, 22, 8, 3, 3);
       Call6((void (*)())Map_CopyCellAttributeRect, 36, 8, 3, 3, 22, 8);
     }
@@ -132,16 +161,16 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (GameFlag_Test(2343))
-    return gData_02001644;
-  return gData_02001494;
+  if (GameFlag_Test(FLAG_SERPENT_SLAIN))
+    return gIzumo_ActorPlacementsOnceTheSerpentIsSlain;
+  return gIzumo_ActorPlacements;
 }
 
-void Func_020001cc(void) {
+void Izumo_CycloneFirstPatch(void) {
   Call7((void (*)())Func_02000df8, 53, 5, 8, 9, 23, 30, 0);
 }
 
-void Func_020001ec(void) {
+void Izumo_CycloneSecondPatch(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Call7((void (*)())Func_02000df8, 53, 5, 8, 9, 23, 30, 0);
@@ -160,7 +189,7 @@ void Func_020001ec(void) {
   }
 }
 
-void Func_0200027c(void) {
+void Izumo_CycloneThirdPatch(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Call7((void (*)())Func_02000df8, 53, 5, 8, 9, 23, 30, 0);
@@ -180,19 +209,19 @@ void Func_0200027c(void) {
   }
 }
 
-void Func_0200030c(void) {
+void Izumo_CycloneFourthPatch(void) {
   Call7((void (*)())Func_02000df8, 44, 5, 8, 5, 7, 32, 0);
 }
 
-void Func_0200032c(void) {
+void Izumo_CycloneFifthPatch(void) {
   Call7((void (*)())Func_02000df8, 55, 0, 4, 2, 16, 23, 0);
 }
 
-void Func_0200034c(void) {
+void Izumo_CycloneSixthPatch(void) {
   Call7((void (*)())Func_02000df8, 42, 0, 6, 2, 9, 18, 0);
 }
 
-void Func_0200036c(void) {
+void Izumo_CycloneSeventhPatch(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Call7((void (*)())Func_02000df8, 42, 0, 6, 2, 9, 18, 0);
@@ -211,15 +240,15 @@ void Func_0200036c(void) {
   }
 }
 
-void Func_020003f8(void) {
+void Izumo_CycloneEighthPatch(void) {
   Call7((void (*)())Func_02000df8, 49, 0, 5, 4, 24, 16, 0);
 }
 
-void Func_02000418(void) {
+void Izumo_CycloneNinthPatch(void) {
   Call7((void (*)())Func_02000df8, 36, 0, 5, 3, 16, 9, 0);
 }
 
-void Func_02000438(void) {
+void Izumo_EnterDoor(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 
   Event_Start();
@@ -235,26 +264,26 @@ void Func_02000438(void) {
 }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (GameFlag_Test(2343))
-    return gData_02001b00;
-  return gData_020018b4;
+  if (GameFlag_Test(FLAG_SERPENT_SLAIN))
+    return gIzumo_TriggersOnceTheSerpentIsSlain;
+  return gIzumo_Triggers;
 }
 
 static inline s32 GameFlag_Test_(s32 flag) {
   /* FAKEMATCH(wrapper): the flag test forwarded through the inline, as overlay
    * 679's GameFlag_Test_ does, keeps the actor in r5 and the message in r6; as
    * a direct call to GameFlag_Test the two swap; as that direct call, 16 of 42
-   * instructions of Func_020004bc differ in tla-en, as do 16 of 42 of
-   * Func_02000538. */
+   * instructions of Izumo_TalkToStoneCircleGuard differ in tla-en, as do 16 of
+   * 42 of Izumo_TalkToFestivalStoneCircleGuard. */
   return GameFlag_Test(flag);
 }
 
 /// The ring of stones: one line after the flag is set, otherwise the full talk
 /// and its answer.
-void Func_020004bc(s32 actor) {
+void Izumo_TalkToStoneCircleGuard(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (GameFlag_Test_(0x924)) {
+  if (GameFlag_Test_(FLAG_GUARD_SAW_STONE_MOVED)) {
     Event_SetMessageId(MsgCanYouImagine);
     Event_ShowMessageAndWait(actor, 0);
   } else {
@@ -274,10 +303,10 @@ void Func_020004bc(s32 actor) {
   Event_End();
 }
 
-void Func_02000538(s32 actor) {
+void Izumo_TalkToFestivalStoneCircleGuard(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (GameFlag_Test_(0x924)) {
+  if (GameFlag_Test_(FLAG_GUARD_SAW_STONE_MOVED)) {
     Event_SetMessageId(MsgButItS);
     Event_ShowMessageAndWait(actor, 0);
   } else {
@@ -297,7 +326,7 @@ void Func_02000538(s32 actor) {
   Event_End();
 }
 
-void Func_020005b4(s32 actor) {
+void Izumo_TellOfUzumesFamily(s32 actor) {
   const u8 *message;
 
   Event_Start();
@@ -317,7 +346,7 @@ void Func_020005b4(s32 actor) {
 }
 
 /// Every fourth frame, colours 1 to 14 of palettes 3, 4 and 5 rotate up by one.
-void Func_0200060c(void) {
+void Izumo_RotateWaterColors(void) {
   volatile u16 *palette;
   s16 saved;
   s32 index;
@@ -358,13 +387,13 @@ void Func_0200060c(void) {
   }
 }
 
-void Func_020006a4(void) {
+void Izumo_StopThePartyToThankThem(void) {
   /* FAKEMATCH(signature): six routines called through call.h's Call3 and Value
    * with function types they do not have (Value3 calls the void
    * Actor_ShowEmoteById as returning a value), so each call's arguments are set
    * up in the native's order; as all six direct calls, 12 of 140 instructions
    * differ in tla-en. */
-  GameFlag_SetBit(0x929);
+  GameFlag_SetBit(FLAG_STOPPED_TO_THANK_THE_PARTY);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId(MsgWait2);
@@ -404,14 +433,14 @@ void Func_020006a4(void) {
     Event_ShowMessageAndWait(32, 0);
     Actor_SetSpritePriority(32, 3);
     Actor_GetById(32)->motionFlags |= 2;
-    GameFlag_SetBit(0x302);
+    GameFlag_SetBit(FLAG_THANKFUL_ONE_WAITS);
   } else {
-    Func_02000814();
+    Izumo_TellTheCloudBrandLegend();
   }
   Event_End();
 }
 
-void Func_02000814(void) {
+void Izumo_TellTheCloudBrandLegend(void) {
   Event_SetMessageId(MsgThisTokenIsn);
   Actor_ShowEmoteById(32, 264, 30);
   Event_ShowMessageAndWait(32, 0);
@@ -445,12 +474,12 @@ void Func_02000814(void) {
   Actor_WalkToById(32, 200, 208);
   Actor_WaitForMoveById(32);
   Actor_SetHorizontalPositionWithTerrain(32, 0, 0);
-  GameFlag_SetBit(0x92a);
-  GameFlag_ClearBit(0x302);
+  GameFlag_SetBit(FLAG_TOKEN_OFFERED);
+  GameFlag_ClearBit(FLAG_THANKFUL_ONE_WAITS);
 }
 
-void Func_02000954(void) {
-  if (!GameFlag_Test(2346)) {
+void Izumo_OfferATokenOfGratitude(void) {
+  if (!GameFlag_Test(FLAG_TOKEN_OFFERED)) {
     const u8 *message;
 
     Event_Start();
@@ -465,7 +494,7 @@ void Func_02000954(void) {
     ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(32, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
-      Func_02000814();
+      Izumo_TellTheCloudBrandLegend();
     } else {
       Event_SetMessageId(message - 1);
       Event_ShowMessageAndWait(32, 0);
@@ -477,10 +506,10 @@ void Func_02000954(void) {
 }
 
 s32 Scene_Initialize(void) {
-  GameFlag_ClearBit(0x302);
+  GameFlag_ClearBit(FLAG_THANKFUL_ONE_WAITS);
   WORD_AT(Ram_HeapSlots->eventWork, 428) = 0x100;
-  Task_Add(Func_0200060c, TASK_PASS_FRAME);
-  Func_02000de0(gData_02000e10);
+  Task_Add(Izumo_RotateWaterColors, TASK_PASS_FRAME);
+  Func_02000de0(gIzumo_MovableStones);
   if (GameFlag_Test(FLAG_SERPENT_SLAIN)) {
     BYTE_AT(Actor_GetById(15), 90) = 2;
     Actor_SetModeById(25, 5);
@@ -492,16 +521,18 @@ s32 Scene_Initialize(void) {
     Actor_SetModeById(31, 5);
     if (gMainRoutineWork.entrance == 8 &&
         GameFlag_Test(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
-        !GameFlag_Test(0x929) && !GameFlag_Test(0x92a)) {
+        !GameFlag_Test(FLAG_STOPPED_TO_THANK_THE_PARTY) &&
+        !GameFlag_Test(FLAG_TOKEN_OFFERED)) {
       Event_StartScreenTransition();
-      Func_020006a4();
+      Izumo_StopThePartyToThankThem();
     }
-    if (GameFlag_Test(0x929) && !GameFlag_Test(0x92a)) {
+    if (GameFlag_Test(FLAG_STOPPED_TO_THANK_THE_PARTY) &&
+        !GameFlag_Test(FLAG_TOKEN_OFFERED)) {
       Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 32, PIXELS(200),
             PIXELS(216));
       Actor_SetSpritePriority(32, 3);
       Actor_GetById(32)->motionFlags |= 2;
-      GameFlag_SetBit(0x302);
+      GameFlag_SetBit(FLAG_THANKFUL_ONE_WAITS);
     }
   }
   Actor_SetSpritePriority(24, 3);
@@ -511,13 +542,13 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_02000b08(void) {
+void Izumo_RevealTheStoneCircle(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
 
-  GameFlag_SetBit(769);
-  if (GameFlag_Test(592)) {
+  GameFlag_SetBit(FLAG_REVEALING);
+  if (GameFlag_Test(FLAG_STONE_IN_PLACE)) {
     MapGrid_CopyCellPictureIndicesRect(36, 12, 22, 8, 3, 3);
     Call6((void (*)())Map_CopyCellAttributeRect, 36, 12, 3, 3, 22, 8);
     if (x == 23 && z == 9)
@@ -529,13 +560,13 @@ void Func_02000b08(void) {
   }
 }
 
-void Func_02000ba4(void) {
-  GameFlag_ClearBit(769);
+void Izumo_HideTheStoneCircle(void) {
+  GameFlag_ClearBit(FLAG_REVEALING);
   MapGrid_CopyCellPictureIndicesRect(40, 8, 22, 8, 3, 3);
   Call6((void (*)())Map_CopyCellAttributeRect, 40, 8, 3, 3, 22, 8);
 }
 
-void Func_02000bdc(void) {
+void Izumo_DescendIntoTheRuins(void) {
   s32 value = ((struct EventWork *)Ram_HeapSlots->eventWork)->exit;
 
   Actor_ArmCallback(4, FACING_NORTH, 0);
@@ -554,46 +585,46 @@ void Func_02000bdc(void) {
   Func_02000db0(value);
 }
 
-void Func_02000c58(void) {
+void Izumo_EnterTheRuinsFromTheLeft(void) {
   Call3((void (*)())Actor_WalkByAndWaitById, 4, 0, -14);
   Actor_WalkByAndWaitById(4, 16, 0);
   FieldEvent_Wait(10);
-  Func_02000bdc();
+  Izumo_DescendIntoTheRuins();
 }
 
-void Func_02000c7c(void) {
+void Izumo_EnterTheRuinsFromTheRight(void) {
   Call3((void (*)())Actor_WalkByAndWaitById, 4, 0, -14);
   Actor_WalkByAndWaitById(4, -16, 0);
   FieldEvent_Wait(10);
-  Func_02000bdc();
+  Izumo_DescendIntoTheRuins();
 }
 
-void Func_02000ca4(void) {
+void Izumo_EnterTheRuins(void) {
   Actor_ArmCallback(4, FACING_NORTH, 0);
   FieldEvent_Wait(10);
-  Func_02000bdc();
+  Izumo_DescendIntoTheRuins();
 }
 
 #include "text/msg_ids.h"
 #include "objcmd.h"
 
-s16 gData_02000e10[] = {
+s16 gIzumo_MovableStones[] = {
     12,
     -1,
 };
 
 // clang-format off
-DEFINE_G_DATA_02000E14(gData_02000e14)
+DEFINE_SPIN_FROM_SOUTH_SCRIPT(gIzumo_FirstSpinnerScript)
 
-DEFINE_G_DATA_02000F14(gData_02000f14)
+DEFINE_SPIN_FROM_EAST_SCRIPT(gIzumo_SecondSpinnerScript)
 
-DEFINE_G_DATA_02001014(gData_02001014, 0x3333)
+DEFINE_SPIN_FROM_NORTH_SCRIPT(gIzumo_ThirdSpinnerScript, 0x3333)
 
-DEFINE_G_DATA_02000E14(gData_02001114)
+DEFINE_SPIN_FROM_SOUTH_SCRIPT(gIzumo_FourthSpinnerScript)
 
-DEFINE_G_DATA_02000F14(gData_02001214)
+DEFINE_SPIN_FROM_EAST_SCRIPT(gIzumo_FifthSpinnerScript)
 
-DEFINE_G_DATA_02001014(gData_02001314, 0x4ccc)
+DEFINE_SPIN_FROM_NORTH_SCRIPT(gIzumo_SixthSpinnerScript, 0x4ccc)
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -614,7 +645,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_02001494[] = {
+struct ActorPlacement gIzumo_ActorPlacements[] = {
     {272, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(120), FACING_NORTH, 2, 0},
     {272, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(120), FACING_NORTH, 2, 0},
     {272, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(184), FACING_NORTH, 2, 0},
@@ -637,7 +668,7 @@ struct ActorPlacement gData_02001494[] = {
 // clang-format on
 
 // clang-format off
-struct ActorPlacement gData_02001644[] = {
+struct ActorPlacement gIzumo_ActorPlacementsOnceTheSerpentIsSlain[] = {
     {272, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(120), FACING_NORTH, 2, 0},
     {272, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(120), FACING_NORTH, 2, 0},
     {272, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(184), FACING_NORTH, 2, 0},
@@ -655,30 +686,30 @@ struct ActorPlacement gData_02001644[] = {
     {117, CONDITION_ALWAYS, 1, PIXELS(472), 0, PIXELS(117), FACING_SOUTH, 1, 0},
     {117, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(155), FACING_SOUTH, 1, 0},
     {117, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(155), FACING_SOUTH, 1, 0},
-    {120, CONDITION_ALWAYS, (s32)gData_02000e14, PIXELS(256), 0, PIXELS(424), FACING_SOUTH, 1, 0},
-    {120, CONDITION_ALWAYS, (s32)gData_02000f14, PIXELS(264), 0, PIXELS(504), FACING_SOUTH, 1, 0},
-    {120, CONDITION_ALWAYS, (s32)gData_02001014, PIXELS(360), 0, PIXELS(456), FACING_SOUTH, 1, 0},
+    {120, CONDITION_ALWAYS, (s32)gIzumo_FirstSpinnerScript, PIXELS(256), 0, PIXELS(424), FACING_SOUTH, 1, 0},
+    {120, CONDITION_ALWAYS, (s32)gIzumo_SecondSpinnerScript, PIXELS(264), 0, PIXELS(504), FACING_SOUTH, 1, 0},
+    {120, CONDITION_ALWAYS, (s32)gIzumo_ThirdSpinnerScript, PIXELS(360), 0, PIXELS(456), FACING_SOUTH, 1, 0},
     {124, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(472), FACING_NORTHEAST, 1, 0},
-    {124, CONDITION_ALWAYS, (s32)gData_02001114, PIXELS(232), 0, PIXELS(456), FACING_SOUTH, 1, 0},
-    {124, CONDITION_ALWAYS, (s32)gData_02001214, PIXELS(328), 0, PIXELS(504), FACING_SOUTH, 1, 0},
-    {125, CONDITION_ALWAYS, (s32)gData_02001314, PIXELS(336), 0, PIXELS(424), FACING_SOUTH, 1, 0},
+    {124, CONDITION_ALWAYS, (s32)gIzumo_FourthSpinnerScript, PIXELS(232), 0, PIXELS(456), FACING_SOUTH, 1, 0},
+    {124, CONDITION_ALWAYS, (s32)gIzumo_FifthSpinnerScript, PIXELS(328), 0, PIXELS(504), FACING_SOUTH, 1, 0},
+    {125, CONDITION_ALWAYS, (s32)gIzumo_SixthSpinnerScript, PIXELS(336), 0, PIXELS(424), FACING_SOUTH, 1, 0},
     {29, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 1, 0},
     {SCENE_TABLE_END},
 };
 // clang-format on
 
-struct Trigger gData_020018b4[] = {
+struct Trigger gIzumo_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_02000438)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_02000438)},
-    {0xc602, 4, CONDITION_ALWAYS, EVENT(Func_02000438)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Func_02000438)},
-    {0xc602, 6, CONDITION_ALWAYS, EVENT(Func_02000438)},
-    {0xc602, 7, CONDITION_ALWAYS, EVENT(Func_02000438)},
-    {0xc602, 8, CONDITION_ALWAYS, EVENT(Func_02000438)},
-    {0x4602, 10, CONDITION_ALWAYS, EVENT(Func_02000ca4)},
-    {0x8602, 10, CONDITION_ALWAYS, EVENT(Func_02000c7c)},
-    {0x602, 10, CONDITION_ALWAYS, EVENT(Func_02000c58)},
+    {0xc602, 2, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {0xc602, 3, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {0xc602, 4, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {0xc602, 5, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {0xc602, 6, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {0xc602, 7, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {0xc602, 8, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {0x4602, 10, CONDITION_ALWAYS, EVENT(Izumo_EnterTheRuins)},
+    {0x8602, 10, CONDITION_ALWAYS, EVENT(Izumo_EnterTheRuinsFromTheRight)},
+    {0x602, 10, CONDITION_ALWAYS, EVENT(Izumo_EnterTheRuinsFromTheLeft)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgWeVeHad)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgMyNameS)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgLadyUzumeDoesn)},
@@ -687,7 +718,7 @@ struct Trigger gData_020018b4[] = {
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgChoosingTheNext)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgTheDaughtersOf)},
     {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgABraveWarrior)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_020004bc)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Izumo_TalkToStoneCircleGuard)},
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgYeahSusaCame)},
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgEvenIfSusa)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
@@ -712,49 +743,49 @@ struct Trigger gData_020018b4[] = {
      MSGNO(MsgYouKnowI)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
      MSGNO(MsgLadyUzumeSays)},
-    {8, 0, CONDITION_ALWAYS, EVENT(Func_02000038)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000048)},
+    {8, 0, CONDITION_ALWAYS, EVENT(Izumo_StartMovingStone)},
+    {9, 0, CONDITION_ALWAYS, EVENT(Izumo_FinishMovingStone)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12,
-     CONDITION_ALWAYS, EVENT(Func_02000038)},
+     CONDITION_ALWAYS, EVENT(Izumo_StartMovingStone)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS,
-     EVENT(Func_02000048)},
+     EVENT(Izumo_FinishMovingStone)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 21,
-     CONDITION_ALWAYS, EVENT(Func_020001cc)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneFirstPatch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 22,
-     CONDITION_ALWAYS, EVENT(Func_020001ec)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneSecondPatch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 23,
-     CONDITION_ALWAYS, EVENT(Func_0200027c)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneThirdPatch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 24,
-     CONDITION_ALWAYS, EVENT(Func_0200030c)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneFourthPatch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 25,
-     CONDITION_ALWAYS, EVENT(Func_0200032c)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneFifthPatch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 26,
-     CONDITION_ALWAYS, EVENT(Func_0200034c)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneSixthPatch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 27,
-     CONDITION_ALWAYS, EVENT(Func_0200036c)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneSeventhPatch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 28,
-     CONDITION_ALWAYS, EVENT(Func_020003f8)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneEighthPatch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 29,
-     CONDITION_ALWAYS, EVENT(Func_02000418)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneNinthPatch)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
-     CONDITION_ALWAYS, EVENT(Func_02000b08)},
+     CONDITION_ALWAYS, EVENT(Izumo_RevealTheStoneCircle)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
-     CONDITION_ALWAYS, EVENT(Func_02000ba4)},
+     CONDITION_ALWAYS, EVENT(Izumo_HideTheStoneCircle)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02001b00[] = {
+struct Trigger gIzumo_TriggersOnceTheSerpentIsSlain[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_02000438)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_02000438)},
-    {0xc602, 4, CONDITION_ALWAYS, EVENT(Func_02000438)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Func_02000438)},
-    {0xc602, 6, CONDITION_ALWAYS, EVENT(Func_02000438)},
-    {0xc602, 7, CONDITION_ALWAYS, EVENT(Func_02000438)},
-    {0xc602, 8, 0x302, EVENT(Func_02000438)},
-    {0x4602, 10, CONDITION_ALWAYS, EVENT(Func_02000ca4)},
-    {0x8602, 10, CONDITION_ALWAYS, EVENT(Func_02000c7c)},
-    {0x602, 10, CONDITION_ALWAYS, EVENT(Func_02000c58)},
+    {0xc602, 2, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {0xc602, 3, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {0xc602, 4, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {0xc602, 5, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {0xc602, 6, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {0xc602, 7, CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {0xc602, 8, FLAG_THANKFUL_ONE_WAITS, EVENT(Izumo_EnterDoor)},
+    {0x4602, 10, CONDITION_ALWAYS, EVENT(Izumo_EnterTheRuins)},
+    {0x8602, 10, CONDITION_ALWAYS, EVENT(Izumo_EnterTheRuinsFromTheRight)},
+    {0x602, 10, CONDITION_ALWAYS, EVENT(Izumo_EnterTheRuinsFromTheLeft)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgThoseScreamsFrom)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgWeRePlanning)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgSusaHasChanged)},
@@ -763,7 +794,8 @@ struct Trigger gData_02001b00[] = {
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgSusaHasGrown)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgSusaHasPut)},
     {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgLadyUzumePredicted)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_02000538)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS,
+     EVENT(Izumo_TalkToFestivalStoneCircleGuard)},
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgIfYouReLooking)},
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgDidYouHear)},
     {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgIWonderIf)},
@@ -772,8 +804,8 @@ struct Trigger gData_02001b00[] = {
     {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgWeMayNever)},
     {TRIGGER_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgOurIslandIs)},
     {TRIGGER_TALK, 30, CONDITION_ALWAYS, MSGNO(MsgTheSerpentTaught)},
-    {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Func_020005b4)},
-    {TRIGGER_TALK, 32, CONDITION_ALWAYS, EVENT(Func_02000954)},
+    {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Izumo_TellOfUzumesFamily)},
+    {TRIGGER_TALK, 32, CONDITION_ALWAYS, EVENT(Izumo_OfferATokenOfGratitude)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
      MSGNO(MsgIHadAlways)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
@@ -811,34 +843,34 @@ struct Trigger gData_02001b00[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS,
      MSGNO(MsgAsLongAsWe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1056, CONDITION_ALWAYS,
-     EVENT(Func_02000954)},
+     EVENT(Izumo_OfferATokenOfGratitude)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 12, CONDITION_ALWAYS,
-     EVENT(Func_02000038)},
+     EVENT(Izumo_StartMovingStone)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS,
-     EVENT(Func_02000048)},
-    {0x8, 0, CONDITION_ALWAYS, EVENT(Func_02000038)},
-    {0x9, 0, CONDITION_ALWAYS, EVENT(Func_02000048)},
-    {0x50009085, 0, CONDITION_ALWAYS, EVENT(Func_02000b08)},
-    {0x40009085, 0, CONDITION_ALWAYS, EVENT(Func_02000ba4)},
+     EVENT(Izumo_FinishMovingStone)},
+    {0x8, 0, CONDITION_ALWAYS, EVENT(Izumo_StartMovingStone)},
+    {0x9, 0, CONDITION_ALWAYS, EVENT(Izumo_FinishMovingStone)},
+    {0x50009085, 0, CONDITION_ALWAYS, EVENT(Izumo_RevealTheStoneCircle)},
+    {0x40009085, 0, CONDITION_ALWAYS, EVENT(Izumo_HideTheStoneCircle)},
 #if TLA_PATCH_1 /* From patch 1. */
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 21,
-     CONDITION_ALWAYS, EVENT(Func_020001cc)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneFirstPatch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 22,
-     CONDITION_ALWAYS, EVENT(Func_020001ec)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneSecondPatch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 23,
-     CONDITION_ALWAYS, EVENT(Func_0200027c)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneThirdPatch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 24,
-     CONDITION_ALWAYS, EVENT(Func_0200030c)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneFourthPatch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 25,
-     CONDITION_ALWAYS, EVENT(Func_0200032c)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneFifthPatch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 26,
-     CONDITION_ALWAYS, EVENT(Func_0200034c)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneSixthPatch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 27,
-     CONDITION_ALWAYS, EVENT(Func_0200036c)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneSeventhPatch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 28,
-     CONDITION_ALWAYS, EVENT(Func_020003f8)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneEighthPatch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 29,
-     CONDITION_ALWAYS, EVENT(Func_02000418)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneNinthPatch)},
 #endif
     {TRIGGER_TABLE_END},
 };

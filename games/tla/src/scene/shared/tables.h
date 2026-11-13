@@ -109,7 +109,9 @@
       {SCENE_TABLE_END},                                                       \
   };
 
-#define DEFINE_G_DATA_02000E14(name)                                           \
+/// An actor that spins on the spot every second and a half, from facing
+/// south; the east and north forms start from those headings.
+#define DEFINE_SPIN_FROM_SOUTH_SCRIPT(name)                                    \
   u32 name[] = {                                                               \
       SC_SET(SW_COLLISION, 129),                                               \
       SC_SET(SW_ACCEL, 0x3333),                                                \
@@ -139,7 +141,7 @@
       SC_END,                                                                  \
   };
 
-#define DEFINE_G_DATA_02000F14(name)                                           \
+#define DEFINE_SPIN_FROM_EAST_SCRIPT(name)                                     \
   u32 name[] = {                                                               \
       SC_SET(SW_COLLISION, 129),                                               \
       SC_SET(SW_ACCEL, 0x3333),                                                \
@@ -598,7 +600,7 @@
           SC_WAIT(10), SC_END,                                                 \
   };
 
-#define DEFINE_G_DATA_02001014(name, n1)                                       \
+#define DEFINE_SPIN_FROM_NORTH_SCRIPT(name, n1)                                \
   u32 name[] = {                                                               \
       SC_SET(SW_COLLISION, 129),                                               \
       SC_SET(SW_ACCEL, n1),                                                    \

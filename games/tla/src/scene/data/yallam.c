@@ -5,48 +5,48 @@
 #include "version.h"
 #include "module/scene/yallam.h"
 
-void Func_02000044(void);
+void Yallam_HideSprite(void);
 void Yallam_EnterDoor(void);
-void Func_0200038c(void);
-void Func_0200043c(void);
+void Yallam_DigThirdHole(void);
+void Yallam_DigFifthHole(void);
 void Yallam_TalkAboutSongCircles(void);
 
-extern s32 gData_020025f8[];
+extern s32 gYallam_PillarShadowSunk[];
 
-s32 gData_020025a8[] = {
-    39, 3, 22, 26, 0, 23, 6, 0x20000, 46, (s32)Func_02000044, 17,
+s32 gYallam_PillarRaised[] = {
+    39, 3, 22, 26, 0, 23, 6, 0x20000, 46, (s32)Yallam_HideSprite, 17,
 };
 
-s32 gData_020025d4[] = {
-    22, 26, 0, 23, 6, -0x100000, 46, (s32)Func_02000044, 17,
+s32 gYallam_PillarSunk[] = {
+    22, 26, 0, 23, 6, -0x100000, 46, (s32)Yallam_HideSprite, 17,
 };
 
-s32 gData_020025f8[] = {
+s32 gYallam_PillarShadowSunk[] = {
     22, 9, 0x9999, 22, 10,        0x9999, 22,
-    26, 0, 23,     6,  -0x100000, 46,     (s32)Func_02000044,
+    26, 0, 23,     6,  -0x100000, 46,     (s32)Yallam_HideSprite,
     17,
 };
 
 // clang-format off
-DEFINE_G_DATA_02002634(gData_02002634, 0x1480000, 0x2f00000, 0x1680000,
+DEFINE_G_DATA_02002634(gYallam_FirstVillagerPaces, 0x1480000, 0x2f00000, 0x1680000,
     0x1780000, 0x3080000, 0x1680000, 0x3180000, 0x1480000, 0x1380000)
 
-DEFINE_G_DATA_02002634(gData_020026d8, 0x1680000, 0x3180000, 0x1480000,
+DEFINE_G_DATA_02002634(gYallam_SecondVillagerPaces, 0x1680000, 0x3180000, 0x1480000,
     0x1380000, 0x3080000, 0x1480000, 0x2f00000, 0x1680000, 0x1780000)
 
-u32 gData_0200277c[] = {
+u32 gYallam_SongGameGather9[] = {
     39, 2, 4, 0x1500000, 0, 0x3180000,
     1, 39, 1, 0, 1, 22,
     3, 0x5000, 0, 10, 17,
 };
 
-u32 gData_020027c0[] = {
+u32 gYallam_SongGameGather10[] = {
     39, 2, 4, 0x1600000, 0, 0x3180000,
     1, 39, 1, 0, 1, 22,
     3, 0x5000, 0, 10, 17,
 };
 
-u32 gData_02002804[] = {
+u32 gYallam_SongGameForm8[] = {
     39, 2, 4, 0x13c0000, 0, 0x3780000,
     1, 4, 0x1500000, 0, 0x3780000, 1,
     4, 0x1580000, 0, 0x3680000, 1, 39,
@@ -54,7 +54,7 @@ u32 gData_02002804[] = {
     0, 10, 17,
 };
 
-u32 gData_02002870[] = {
+u32 gYallam_SongGameForm9[] = {
     39, 2, 4, 0x16a0000, 0, 0x3180000,
     1, 4, 0x1800000, 0, 0x3500000, 1,
     4, 0x17e0000, 0, 0x3780000, 1, 39,
@@ -62,7 +62,7 @@ u32 gData_02002870[] = {
     0, 10, 17,
 };
 
-u32 gData_020028dc[] = {
+u32 gYallam_SongGameForm10[] = {
     39, 2, 4, 0x16c0000, 0, 0x3280000,
     1, 4, 0x1760000, 0, 0x36e0000, 1,
     4, 0x1680000, 0, 0x3780000, 1, 39,
@@ -70,25 +70,25 @@ u32 gData_020028dc[] = {
     0, 10, 17,
 };
 
-u32 gData_02002948[] = {
+u32 gYallam_SongGameForm11[] = {
     39, 2, 4, 0x1120000, 0, 0x3780000,
     1, 4, 0x1480000, 0, 0x3780000, 1,
     39, 1, 22, 3, 0x8000, 0,
     10, 17,
 };
 
-u32 gData_02002998[] = {
+u32 gYallam_SongGameStart8[] = {
     39, 2, 4, 0x1580000, 0, 0x3480000,
     1, 39, 1, 17,
 };
 
-u32 gData_020029c0[] = {
+u32 gYallam_SongGameStart10[] = {
     39, 2, 4, 0x1580000, 0, 0x3780000,
     1, 4, 0x1580000, 0, 0x3580000, 1,
     39, 1, 0, 1, 17,
 };
 
-u32 gData_02002a04[] = {
+u32 gYallam_SongGameStart9[] = {
     39, 2, 4, 0x1580000, 0, 0x3780000,
     1, 4, 0x1580000, 0, 0x36a0000, 1,
     39, 1, 0, 1, 17,
@@ -123,19 +123,19 @@ u32 gSceneExits[] = {
 
 s32 gYallam_Placements[] = {
     (s32)0xffff0146,
-    (s32)gData_020025d4,
+    (s32)gYallam_PillarSunk,
     0xb80000,
     0,
     0xc80000,
     0x8000,
     (s32)0xffff0146,
-    (s32)gData_020025a8,
+    (s32)gYallam_PillarRaised,
     0xb80000,
     0,
     0xc80000,
     0x8000,
     (s32)0xffff0147,
-    (s32)gData_020025f8,
+    (s32)gYallam_PillarShadowSunk,
     0x80000,
     0,
     0x80000,
@@ -207,53 +207,53 @@ struct ActorPlacement gYallam_Room2Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002bfc[] = {
+struct ActorPlacement gYallam_SongGamePlacements[] = {
     {136, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(872), FACING_WEST, 1, 0},
-    {136, CONDITION_ALWAYS, (s32)gData_02002634, PIXELS(312), 0, PIXELS(776),
+    {136, CONDITION_ALWAYS, (s32)gYallam_FirstVillagerPaces, PIXELS(312), 0, PIXELS(776),
      FACING_NORTH, 2, 0},
-    {138, CONDITION_ALWAYS, (s32)gData_020026d8, PIXELS(376), 0, PIXELS(776),
+    {138, CONDITION_ALWAYS, (s32)gYallam_SecondVillagerPaces, PIXELS(376), 0, PIXELS(776),
      FACING_SOUTH, 2, 0},
     {138, CONDITION_ALWAYS, 1, PIXELS(272), 0, PIXELS(800), 0xb000, 0, 0},
     {5, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-s16 gData_02002c8c[] = {
+s16 gYallam_DoorOpening[] = {
     93, 28, 1, 2, 6, 92, 28, 1,
     2, 6, -1,
 };
 
-s16 gData_02002ca2[] = {
+s16 gYallam_SecondDoorOpening[] = {
     95, 28, 1, 2, 6, 94, 28, 1,
     2, 6, -1,
 };
 
-s16 gData_02002cb8[] = {
+s16 gYallam_ThirdDoorOpening[] = {
     89, 28, 1, 2, 6, 90, 28, 1,
     2, 6, -1,
 };
 
-s16 gData_02002cce[] = {
+s16 gYallam_FourthDoorOpening[] = {
     92, 30, 2, 2, 6, 94, 30, 2,
     2, 6, -1,
 };
 
-s32 gData_02002ce4[] = {
-    (s32)gData_02002c8c,
+s32 gYallam_Doors[] = {
+    (s32)gYallam_DoorOpening,
     0x130062,
-    (s32)gData_02002ca2,
+    (s32)gYallam_SecondDoorOpening,
     0x14005c,
-    (s32)gData_02002cb8,
+    (s32)gYallam_ThirdDoorOpening,
     0x120054,
-    (s32)gData_02002c8c,
+    (s32)gYallam_DoorOpening,
     0x7004f,
-    (s32)gData_02002cb8,
+    (s32)gYallam_ThirdDoorOpening,
     0x100050,
-    (s32)gData_02002cb8,
+    (s32)gYallam_ThirdDoorOpening,
     0x11004d,
-    (s32)gData_02002ca2,
+    (s32)gYallam_SecondDoorOpening,
     0x80063,
-    (s32)gData_02002cce,
+    (s32)gYallam_FourthDoorOpening,
     0x6005a,
 };
 
@@ -271,12 +271,12 @@ struct Trigger gYallam_Triggers[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {0x4401, 13, CONDITION_ALWAYS, 13},
-    {0x50008905, 20, CONDITION_ALWAYS, EVENT(Func_02000328)},
-    {0x50008905, 21, CONDITION_ALWAYS, EVENT(Func_0200036c)},
-    {0x50008905, 22, CONDITION_ALWAYS, EVENT(Func_0200038c)},
-    {0x50008905, 23, CONDITION_ALWAYS, EVENT(Func_0200041c)},
-    {0x50008905, 24, CONDITION_ALWAYS, EVENT(Func_0200043c)},
-    {0x50008905, 25, CONDITION_ALWAYS, EVENT(Func_020004cc)},
+    {0x50008905, 20, CONDITION_ALWAYS, EVENT(Yallam_DigFirstHole)},
+    {0x50008905, 21, CONDITION_ALWAYS, EVENT(Yallam_DigSecondHole)},
+    {0x50008905, 22, CONDITION_ALWAYS, EVENT(Yallam_DigThirdHole)},
+    {0x50008905, 23, CONDITION_ALWAYS, EVENT(Yallam_DigFourthHole)},
+    {0x50008905, 24, CONDITION_ALWAYS, EVENT(Yallam_DigFifthHole)},
+    {0x50008905, 25, CONDITION_ALWAYS, EVENT(Yallam_DigSixthHole)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgYallamDoesnT)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgOurMasterBoatsman)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgIfYeppWere)},
@@ -293,8 +293,8 @@ struct Trigger gYallam_Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgSunshineIsA)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgIVeSearched)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgYeppAlwaysSang)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x300, (s32)(Func_020022f4)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), 8, 0x300, EVENT(Func_020022f8)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x300, (s32)(Yallam_DoNothing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), 8, 0x300, EVENT(Yallam_ForcePillarDown)},
     {TRIGGER_TABLE_END},
 };
 

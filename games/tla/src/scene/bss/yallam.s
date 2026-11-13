@@ -2,5 +2,5 @@
 	.thumb
 	.section .bss,"aw",%nobits
 	.balign 16
-	.global gData_02002fc0
-gData_02002fc0:
+	.global gYallam_SavedSongGame
+gYallam_SavedSongGame:

@@ -163,16 +163,17 @@
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define LUCKY_WHEELS_HELP_WINDOW_X 2
 #define LUCKY_WHEELS_HELP_WINDOW_WIDTH 26
-#define LUCKY_WHEELS_JACKPOT_TILES 0x06016e00
 #define LUCKY_WHEELS_JACKPOT_COPY DMA_COPY_WORDS(1152)
 #define LUCKY_WHEELS_TITLE_TILES 880
 #else
 #define LUCKY_WHEELS_HELP_WINDOW_X 6
 #define LUCKY_WHEELS_HELP_WINDOW_WIDTH 18
-#define LUCKY_WHEELS_JACKPOT_TILES 0x06017000
 #define LUCKY_WHEELS_JACKPOT_COPY DMA_COPY_WORDS(1024)
 #define LUCKY_WHEELS_TITLE_TILES 896
 #endif
+/// The sprite tiles the jackpot's title letters are copied to.
+#define LUCKY_WHEELS_JACKPOT_TILES                                             \
+  (OBJ_VRAM0 + LUCKY_WHEELS_TITLE_TILES * TILE_SIZE_4BPP)
 
 // Lucky Wheels' prompt windows (stop, all held, start, hold, release),
 // placed and sized for each language's words.

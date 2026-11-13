@@ -55,6 +55,11 @@ struct IntroWork {
   } area;
 };
 
+/// The intro's two pictures share character block 0: the far one (BG1) in
+/// 16-colour tiles, the near one (BG2) in 256-colour tiles from tile 315.
+#define INTRO_BACK_TILE(n) (BG_CHAR_BLOCK(0) + (n) * TILE_SIZE_4BPP)
+#define INTRO_FRONT_TILE(n) (BG_CHAR_BLOCK(0) + (n) * 2 * TILE_SIZE_4BPP)
+
 /// The x of each of the six columns of intro sprites
 const u8 gTitle_IntroSpriteColumns[] = {96, 136, 140, 160, 168, 184};
 
@@ -199,7 +204,7 @@ void Title_LoadIntroBackgrounds(void) {
   Decompress_ByteLz(resourceData, Ram_MapGridCellBuffer);
   Dma_Set(Ram_MapGridCellBuffer + 10560, BG_CHAR_BLOCK(0),
           DMA_COPY_HALFWORDS(10080), REG_DMA3);
-  Dma_Set(Ram_MapGridCellBuffer + 41280, (void *)0x06004ec0,
+  Dma_Set(Ram_MapGridCellBuffer + 41280, INTRO_FRONT_TILE(315),
           DMA_COPY_HALFWORDS(20160), REG_DMA3);
 
   {
@@ -358,7 +363,7 @@ s32 Title_ShowIntro(s32 prompt) {
         y = gBgScroll[1].y;
         if ((y & 7) == 0) {
           Dma_Set(Ram_MapGridCellBuffer + 9600 - work->backRows * 960,
-                  (u8 *)0x06004b00 - work->backRows * 960,
+                  INTRO_BACK_TILE(600) - work->backRows * 960,
                   DMA_COPY_HALFWORDS(480), REG_DMA3);
           work->backRows++;
           frameCount = work->frameCount;
@@ -372,16 +377,17 @@ s32 Title_ShowIntro(s32 prompt) {
         if ((y & 7) == 0) {
           if (work->frontRows * 8 <= 24) {
             Dma_Set(Ram_MapGridCellBuffer + 39360 - work->frontRows * 1920,
-                    (u8 *)0x0600e4c0 - work->frontRows * 1920,
+                    INTRO_FRONT_TILE(915) - work->frontRows * 1920,
                     DMA_COPY_HALFWORDS(960), REG_DMA3);
           } else {
             // Once the finite picture is exhausted, clear incoming bands
             // so wrapped tile memory cannot expose earlier picture rows.
             clearValue = 0;
             Dma_Set(&clearValue,
-                    (u8 *)0x06004ec0 + (160 - work->frontRows * 8) % 160 * 240,
+                    INTRO_FRONT_TILE(315) +
+                        (160 - work->frontRows * 8) % 160 * 240,
                     (DMA_ENABLE | DMA_SRC_FIXED) << 16 | 960, REG_DMA3);
-            tilemap = (u16 *)0x0600f6c0;
+            tilemap = (u16 *)BG_SCREEN_BLOCK(30) + 27 * 32;
             for (i = 0; i < 5; i++) {
               for (j = 0; j < 30; j++)
                 *tilemap++ = 315;

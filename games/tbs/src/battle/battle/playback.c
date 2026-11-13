@@ -359,11 +359,9 @@ void BattlePlayback_Run(void) {
           struct Sprite *record;
           s32 recordIndex;
           struct Sprite **slot;
-          s32 lastPictureMask;
+          s32 lastPictureMask = 0xff;
 
-          /* FAKEMATCH(temporary): lastPictureMask set in the loop's start; as
-           * declared with its 0xff, 2 of 794 instructions differ in tbs-en. */
-          for (recordIndex = 0, slot = records, lastPictureMask = 0xff;
+          for (recordIndex = 0, slot = records;
                (record = GetMotionRecord(
                     BattleObject_Get(events->unitId)->actor, recordIndex)) != 0;
                recordIndex++) {

@@ -65,8 +65,7 @@ UNREAD_RESULT BattleUnit_ClearStatuses(s32 unitId) {
 /// tiles and frees it; each frame queues the WINOUT writes, sets REG_BLDALPHA
 /// and pushes the arrow sprite.
 UNREAD_RESULT BattleMessage_WaitForAdvance(void) {
-  struct AdvanceArrowSprite *prompt;
-  struct AdvanceArrowSprite promptStorage;
+  struct AdvanceArrowSprite arrow;
   s32 frame;
   s32 tileSlot;
   s32 pictureTiles;
@@ -75,9 +74,6 @@ UNREAD_RESULT BattleMessage_WaitForAdvance(void) {
 
   while (!Message_AllTypedFar())
     wait(1);
-  /* FAKEMATCH(temporary): prompt holds &promptStorage; as promptStorage used
-   * directly, 93 of 138 instructions differ in tbs-en. */
-  prompt = &promptStorage;
   tileSlot = VramCache_AllocEntry(128);
   for (frame = 0;; frame++) {
     // Cycle the eight pictures, one every four frames.
@@ -92,16 +88,16 @@ UNREAD_RESULT BattleMessage_WaitForAdvance(void) {
     Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
     // Both attribute words are set whole, as PLAY_ADVANCE sets them
     // (playback.c).
-    ((u32 *)prompt)[1] = ADVANCE_ARROW_ATTR0;
-    ((u32 *)prompt)[2] = 0;
-    prompt->tile = VramCache_Reload(tileSlot, pictureTiles);
+    ((u32 *)&arrow)[1] = ADVANCE_ARROW_ATTR0;
+    ((u32 *)&arrow)[2] = 0;
+    arrow.tile = VramCache_Reload(tileSlot, pictureTiles);
     // The window is placed in tiles, its offset in 1/256 pixels.
-    prompt->x = window->x * 8 + (offset->x >> 8) + 4;
+    arrow.x = window->x * 8 + (offset->x >> 8) + 4;
     // Bob up and down by up to 2 pixels, once every 16 frames (a sixteenth
     // of a turn a frame).
-    prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
-                (offset->y >> 8) + 6;
-    Oam_AddSpriteAtDepth(prompt, 240);
+    arrow.y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
+              (offset->y >> 8) + 6;
+    Oam_AddSpriteAtDepth(&arrow, 240);
     // A held advance key counts only after 16 frames, so one still held from
     // the previous message does not skip this one; B held goes on at once.
     if ((gKeysHeld & KEY_B) || (gKeysPressed & KEY_ADVANCE) ||
@@ -122,32 +118,24 @@ UNREAD_RESULT BattleMessage_WaitForAdvance(void) {
 /// it, and each frame queues the WINOUT writes, sets REG_BLDALPHA and pushes
 /// the cursor sprite.
 UNREAD_RESULT BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
-  struct MenuPoint position;
-  s32 pointerTiles;
-  struct CursorSprite promptStorage;
-  struct CursorSprite *prompt;
+  s32 pointerTiles = WindowSprite_GetPointerTilesFar(0);
+  struct CursorSprite cursor;
   s32 tileSlot;
 
-  pointerTiles = WindowSprite_GetPointerTilesFar(0);
-  position.x = x;
-  position.y = y;
   while (!Message_AllTypedFar())
     wait(1);
-  /* FAKEMATCH(temporary): prompt holds &promptStorage; as promptStorage used
-   * directly, 36 of 107 instructions differ in tbs-en. */
-  prompt = &promptStorage;
   tileSlot = VramCache_AllocEntry(128);
   while (1) {
     IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
     IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
     Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
-    ((s32 *)prompt)[1] = OBJ_SIZE_16X16;
-    ((s32 *)prompt)[2] = 0;
-    prompt->tile = VramCache_Reload(tileSlot, pointerTiles);
+    ((s32 *)&cursor)[1] = OBJ_SIZE_16X16;
+    ((s32 *)&cursor)[2] = 0;
+    cursor.tile = VramCache_Reload(tileSlot, pointerTiles);
     // Nudge it up and right every four frames.
-    prompt->x = position.x + ((gFrameCount & 4) >> 1) - 4;
-    prompt->y = position.y - ((gFrameCount & 4) >> 2) - 8;
-    Oam_AddSpriteAtDepth(prompt, 240);
+    cursor.x = x + ((gFrameCount & 4) >> 1) - 4;
+    cursor.y = y - ((gFrameCount & 4) >> 2) - 8;
+    Oam_AddSpriteAtDepth(&cursor, 240);
     if (gKeysPressed & KEY_ADVANCE)
       break;
     wait(1);

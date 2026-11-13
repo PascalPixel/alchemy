@@ -1,5 +1,9 @@
 /// @file
-/// The scene code of overlay 0x67b, in ROM order.
+/// Aqua Rock's outside, the island south of the Apojii Islands, in the rooms
+/// of this overlay: currents the party runs against, a pillar Moved before
+/// the red Moai, dry Moai that Douse turns into new streams, puddles to
+/// Frost, and the tear-shaped rock whose Douse opens the way inside
+/// (aqua_rock_inside.c).
 
 #include "../field/object/set_sprite_priority.c"
 

@@ -1,5 +1,7 @@
 /// @file
-/// The scene code of overlay 0x663, in ROM order.
+/// Air's Rock's slopes, outside the rock in Osenia, in the rooms of this
+/// overlay: the Wind Stones Whirlwind strengthens, the walls and ledges of the
+/// climb, and the way into the rock itself (airs_rock_inside.c).
 
 #include "shared/actors.h"
 #include "types.h"

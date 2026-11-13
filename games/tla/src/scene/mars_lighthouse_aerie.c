@@ -1,5 +1,11 @@
 /// @file
-/// The scene code of overlay 0x6ae, in ROM order.
+/// Mars Lighthouse's aerie, at the top of the last lighthouse: the party faces
+/// the Doom Dragon (MarsLighthouseAerie_FaceDoomDragon) and learns who the
+/// dragon was (MarsLighthouseAerie_FindWhoTheDragonWas), the parents it held
+/// speak to their children (MarsLighthouseAerie_TalkToBlindedParent and its
+/// siblings), and the beacon is lit with the Mars Star
+/// (MarsLighthouseAerie_LightBeacon) before the Golden Sun rises
+/// (MarsLighthouseAerie_WatchGoldenSunRise).
 
 #include "shared/mars_lighthouse.h"
 #include "shared/effects.h"

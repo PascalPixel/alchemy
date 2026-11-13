@@ -1,3 +1,11 @@
+/// @file
+/// The Sea of Time, the open water before Lemuria: its waves roll in cycles
+/// (SeaOfTime_StartWaves, SeaOfTime_TrackWaves), currents carry the ship
+/// (SeaOfTime_RideCurrent) or sweep it back (SeaOfTime_SweptBack), and a
+/// whirlpool draws it down (SeaOfTime_SinkIntoWhirlpool). The ship's Grind
+/// clears the rocks in its channel one by one (SeaOfTime_GrindFirstRock to
+/// SeaOfTime_GrindLastRock) until it crosses to Lemuria
+/// (SeaOfTime_CrossToLemuria).
 
 #include "../field/object/set_sprite_priority.c"
 

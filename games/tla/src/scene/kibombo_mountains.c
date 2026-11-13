@@ -1,5 +1,9 @@
 /// @file
-/// The scene code of overlay 0x66f, in ROM order.
+/// The Kibombo Mountains, the pass the Kibombo warriors guard on the way to
+/// their village, in the rooms of this overlay: crates the party pushes and
+/// vines it climbs while it keeps out of the guards' sight, a guard who sees
+/// it sending it back, a guard dog and its bone, and the Jupiter Djinni Waft
+/// (KibomboMountains_FightWaft).
 
 #include "flags.h"
 #include "shared/map_cells.h"

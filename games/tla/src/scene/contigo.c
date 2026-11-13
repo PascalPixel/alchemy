@@ -1,5 +1,9 @@
 /// @file
-/// The scene code of overlay 0x694, in ROM order.
+/// Contigo, the village below Jupiter Lighthouse, in the rooms of this
+/// overlay: its shops, inn and Sanctum (Contigo_TalkToWeaponMerchant,
+/// Contigo_TalkToInnkeeper, Contigo_TalkToHealer), the bushes where Scoop
+/// finds the Venus Djinni Salt, and the cycling colours of its water
+/// (Contigo_StartSlowPaletteCycle).
 
 #include "shared/effects.h"
 #include "types.h"

@@ -1,5 +1,9 @@
 /// @file
-/// The scene code of overlay 0x680, in ROM order.
+/// Gaia Rock's outside, near Izumo, in the rooms of this overlay: pillars
+/// Moved across gaps, slides and climbing walls, vines that swing in the wind
+/// of the statues (HangingVine_Place), and the altar where Reveal shows the
+/// Dancing Idol the party carries inside (gaia_rock_inside.c); after the
+/// Serpent, Susa rejoices here that Kushinada is safe.
 
 #include "shared/tables.h"
 #include "battle/battle.h"

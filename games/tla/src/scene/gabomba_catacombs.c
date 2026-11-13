@@ -1,5 +1,8 @@
 /// @file
-/// The scene code of overlay 0x673, in ROM order.
+/// The Gabomba Catacombs, under the Gabomba Statue, in the rooms of this
+/// overlay: stones hidden under bushes that carry the party a level down once
+/// Cyclone clears them, and the Venus Djinni Mud, who fights
+/// (GabombaCatacombs_FightMud).
 
 #include "flags.h"
 #include "shared/tables.h"

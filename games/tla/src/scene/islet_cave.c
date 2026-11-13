@@ -1,5 +1,8 @@
 /// @file
-/// The scene code of overlay 0x675, in ROM order.
+/// The Islet Cave, in the rooms of this overlay: logs the party rides across
+/// its water (IsletCave_RideLog), the Venus Djinni Meld and the Mercury Djinni
+/// Serac at the end of their rides (IsletCave_FightMeld, IsletCave_FightSerac),
+/// and the cycling colours of its water (IsletCave_StartSlowPaletteCycle).
 
 #include "shared/actors.h"
 #include "shared/effects.h"

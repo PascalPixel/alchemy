@@ -143,6 +143,12 @@ battle starts when it is full. So battles come after a distance, not a
 time, with some luck mixed in after each one. The ground also names its
 zone: the groups of enemies that can appear there and how likely each is.
 
+A scene chooses its zones when it loads, from the first rule that matches
+the scene and the entrance the party came by, one zone for each of the
+seven kinds of ground. Some places switch the counting off for a while,
+as Mercury Lighthouse does while the leader carries the pillar's lights,
+and Cloak keeps battles away while it lasts.
+
 Walking does other things on the same measure: every ten cells outside a
 town the party regains a little PP and poison bites.
 

@@ -74,7 +74,15 @@ music keeps its tempo.
 ### Buttons and sleep
 
 The frame loop also turns held buttons into repeats for the menus, and puts
-the console to sleep when L and R are held for three seconds.
+the console to sleep when L and R are held for three seconds, or when
+nothing is pressed for three minutes and idle sleep is on.
+
+### Waiting from anywhere
+
+Any routine may call `wait()`, however deep in its own calls it is. The
+loop runs on a stack of its own: when the caller's stack has grown past
+the loop's, the part in use is copied aside first and put back when
+`wait()` returns.
 
 ## The task runner
 

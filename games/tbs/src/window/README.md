@@ -52,6 +52,13 @@ Not everything in braces is a blank. `{page_break}` and `{end_wait}` are
 control codes. The decoder leaves them among the letters for the typing to
 act on.
 
+A name in the European editions carries its own grammar. It can open with
+`{article_class:N}`, and the blank that writes the name puts the article
+that class takes in front of it. The decoder also remembers how the text
+last ended, so a later code can tell whether the word before it ended in
+an s (in German, an s or a z), or whether a sentence just ended and the
+next word takes a capital.
+
 The packing is Huffman coding: common letters cost the fewest bits.
 
 ## The text buffer

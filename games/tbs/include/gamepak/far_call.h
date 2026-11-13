@@ -36,7 +36,8 @@ struct SpritePlacement;
 struct SpriteScale;
 struct WorldPosition;
 
-// Entries have their target's parameters.
+// Entries have their target's parameters, except seven declared with empty
+// lists, whose callers pass other arguments than the target takes.
 #include "gamepak/far_call/system.h"
 #include "gamepak/far_call/field.h"
 #include "gamepak/far_call/window.h"

@@ -229,7 +229,6 @@ extern const s32 gWorldMap_FootprintActions[6];
 extern const s16 gWorldMap_KeyHeadings[16];
 s32 FarCall_LuckyWheelsTable(s32 entrance);
 s32 FarCall_LuckyDiceTable(s32 entrance);
-void WorldMap_StartStillPicture(void);
 
 // The field effects' scripts and tables (field/field_sequence_tables.c,
 // scripts.s and spark_tiles.s).

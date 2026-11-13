@@ -9,7 +9,6 @@ u8 *Test_GetExits(void);
 u8 *Test_GetActorPlacements(void);
 u8 *Test_GetTriggers(void);
 s32 Test_Initialize(void);
-extern u32 gTest_UnusedRows[];
 extern struct SceneEntrance gTest_Entrances[];
 extern u32 gTest_Exits[];
 extern struct ActorPlacement gTest_ActorPlacements[];

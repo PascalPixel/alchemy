@@ -9,8 +9,7 @@ void StatusScreen_Initialize(s32 unused0, s32 unused1, s32 unused2, s32 unused3)
 
 s32 PartyMemberChooser_Run(void);
 
-/// Lets the player choose one party member, over the field (the Colosso scenes
-/// use it, through MENU.S, and so does the debug test). Returns the chosen
+/// Lets the player choose one party member, over the field. Returns the chosen
 /// party member's id, or -1 when the player backs out. Owns the menu work
 /// (HEAP_SLOT_MENU) while it runs and frees it before returning.
 s32 PartyMemberChooser_Open(void) {

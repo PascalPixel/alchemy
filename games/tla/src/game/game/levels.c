@@ -7,10 +7,10 @@
 s32 Unit_KnowsPsynergy(s32 owner, s32 value);
 
 /// Returns the definition of ability `abilityId` (its low 14 bits); an id
-/// past the table gives the first. Reached through GAME.S as
-/// Ability_Get, which every bank uses to read an ability.
-struct AbilityDefinition *Ability_GetDirect(s32 actionId) {
-  u32 entryIndex = actionId & 0x3fff;
+/// past the table gives the first. Every bank reads an ability through its far
+/// call, Ability_Get.
+struct AbilityDefinition *Ability_GetDirect(s32 abilityId) {
+  u32 entryIndex = abilityId & 0x3fff;
 
   if (entryIndex > 0x2de)
     entryIndex = 0;

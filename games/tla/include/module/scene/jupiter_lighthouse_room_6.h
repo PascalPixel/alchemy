@@ -21,7 +21,7 @@ s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 
 void Leader_CenterInCell(void);
 
-void Scene_RunIfFlagCleared(void);
+void JupiterLighthouse_StepOffButton(void);
 
 extern u32 gFieldEffect_ShortLifeScript[];
 extern u32 gFieldEffect_MediumLifeScript[];

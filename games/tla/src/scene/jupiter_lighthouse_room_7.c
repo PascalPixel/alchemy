@@ -59,11 +59,12 @@ DEFINE_JUPITER_LIGHTHOUSE_CHECK_BLOCK_ON_CELL(
     JupiterLighthouse_CheckBlockOnCell, 16, 0xa1b, 8, 37,
     JupiterLighthouse_OpenDoor)
 
-DEFINE_SCENE_RUN_ONCE(Scene_RunOnce, 514, JupiterLighthouse_OpenDoor)
+DEFINE_BUTTON_STEP_ON(JupiterLighthouse_StepOnButton, 0x202,
+                      JupiterLighthouse_OpenDoor)
 
-DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Scene_RunIfFlagCleared, 514,
-                                 JupiterLighthouse_CloseDoor,
-                                 JupiterLighthouse_CheckBlockOnCell)
+DEFINE_BUTTON_STEP_OFF(JupiterLighthouse_StepOffButton, 0x202,
+                       JupiterLighthouse_CloseDoor,
+                       JupiterLighthouse_CheckBlockOnCell)
 
 void Func_02000184(void) {
   System_Wait(10);

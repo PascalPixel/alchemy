@@ -90,6 +90,10 @@
 /// (MsgFieldPraiseRopeWork)
 #define FLAG_TAVI_RESCUED 0x873
 
+/// Set once the pillar inside Jupiter Lighthouse's main gates stands on the
+/// button beside them: the gates stay open.
+#define FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED 0xa01
+
 /// Set once Felix has woken on Idejima's shore.
 /// ★ Named from the game: "Do you want to check yourself for injuries?"
 /// (MsgIdejimaCheckForInjuries)

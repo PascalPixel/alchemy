@@ -38,7 +38,7 @@ DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gTeleporters,
 
 void JupiterLighthouse_StepOnLowerTeleporter(void);
 void JupiterLighthouse_StepOnUpperTeleporter(void);
-void Scene_RunOnce(void);
+void JupiterLighthouse_StepOnButton(void);
 
 // clang-format off
 DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_ShortLifeScript, 22)
@@ -102,8 +102,8 @@ struct Trigger gSceneEvents[] = {
     {49, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {TRIGGER_STEP, 20, 0xa19, EVENT(Scene_RunOnce)},
-    {TRIGGER_STEP, 21, 0xa19, EVENT(Scene_RunIfFlagCleared)},
+    {TRIGGER_STEP, 20, 0xa19, EVENT(JupiterLighthouse_StepOnButton)},
+    {TRIGGER_STEP, 21, 0xa19, EVENT(JupiterLighthouse_StepOffButton)},
     {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerTeleporter)},
     {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerTeleporter)},
     {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerTeleporter)},

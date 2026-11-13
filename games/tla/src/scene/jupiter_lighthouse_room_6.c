@@ -71,11 +71,12 @@ void JupiterLighthouse_CheckBlockOnCell(void) {
   }
 }
 
-DEFINE_SCENE_RUN_ONCE(Scene_RunOnce, 512, JupiterLighthouse_OpenDoor)
+DEFINE_BUTTON_STEP_ON(JupiterLighthouse_StepOnButton, 0x200,
+                      JupiterLighthouse_OpenDoor)
 
-DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Scene_RunIfFlagCleared, 512,
-                                 JupiterLighthouse_CloseDoor,
-                                 JupiterLighthouse_CheckBlockOnCell)
+DEFINE_BUTTON_STEP_OFF(JupiterLighthouse_StepOffButton, 0x200,
+                       JupiterLighthouse_CloseDoor,
+                       JupiterLighthouse_CheckBlockOnCell)
 
 void JupiterLighthouse_FinishMovingBlock(void) {
   System_Wait(10);

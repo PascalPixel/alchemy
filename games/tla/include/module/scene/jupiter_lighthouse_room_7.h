@@ -19,7 +19,7 @@ void JupiterLighthouse_CloseDoor(void);
 
 void JupiterLighthouse_CheckBlockOnCell(void);
 
-void Scene_RunIfFlagCleared(void);
+void JupiterLighthouse_StepOffButton(void);
 
 void Func_02000184(void);
 

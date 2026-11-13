@@ -1,5 +1,6 @@
 /// @file
-/// Scene code of overlay 0x69a, in ROM order.
+/// Jupiter Lighthouse's ground floor: its copy of the effect spawner, and the
+/// teleporter cells, found, uncovered and sunk into.
 
 #include "../shared/teleporter.h"
 #include "types.h"
@@ -9,12 +10,14 @@
 #include "heap_release.h"
 #include "item_icon.h"
 #include "module/scene/scene.h"
+#include "io_reg.h"
+#include "field.h"
+#include "event_work.h"
 
 extern const s32 *gFieldEffect_LifeScripts[];
 
 void Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -109,3 +112,26 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 /// row's 64 bit; Teleporters_Step calls it the first time the leader steps on
 /// one of the table's cells.
 DEFINE_TELEPORTER_UNCOVER(Teleporter_Uncover, Leader_CenterInCell)
+
+struct CellTargetEntry;
+
+/* VIEW(s156c): tag struct CellTarget as struct CellTarget__s156c; cell_target.h
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_1/s156c.c:18: dereferencing
+ * pointer to incomplete type. */
+struct CellTarget__s156c {
+  s16 firstFlag;
+  s16 flagByte;
+  s16 kind;
+  s16 x;
+  s16 z;
+  s16 count;
+  s16 current;
+  s16 shown;
+  s16 tile;
+};
+
+#include "io_write.h"
+
+DEFINE_TELEPORTER_SINK(Teleporter_Sink, CellTarget__s156c, Leader_CenterInCell)

@@ -253,36 +253,38 @@
     }                                                                          \
   }
 
-/// Runs `call1` once when flag `n1` is set, clearing it, then `call2`.
-#define DEFINE_SCENE_RUN_IF_FLAG_CLEARED(name, n1, call1, call2)               \
+/// The leader steps off a door's button: a door the button held open (`flag`
+/// set) closes, unless the block now stands on the button (`checkBlock`).
+#define DEFINE_BUTTON_STEP_OFF(name, flag, close, checkBlock)                  \
   void name(void) {                                                            \
-    if (Event_GetFlag(n1) == 1) {                                              \
-      Event_ClearFlag(n1);                                                     \
-      call1();                                                                 \
+    if (Event_GetFlag(flag) == 1) {                                            \
+      Event_ClearFlag(flag);                                                   \
+      close();                                                                 \
     }                                                                          \
-    call2();                                                                   \
+    checkBlock();                                                              \
   }
 
-/// Runs `call1(1)` the first time, setting flag `n1`.
-#define DEFINE_SCENE_RUN_ONCE(name, n1, call1)                                 \
+/// The leader steps onto a door's button: the door opens and `flag` says the
+/// button holds it.
+#define DEFINE_BUTTON_STEP_ON(name, flag, open)                                \
   void name(void) {                                                            \
-    if (!Event_GetFlag(n1)) {                                                  \
-      Event_SetFlag(n1);                                                       \
-      call1(1);                                                                \
+    if (!Event_GetFlag(flag)) {                                                \
+      Event_SetFlag(flag);                                                     \
+      open(1);                                                                 \
     }                                                                          \
   }
 
-/// Sets flag `n2` and opens the way once actor `n1` stands on cell (`n3`,
-/// `n4`).
-#define DEFINE_JUPITER_LIGHTHOUSE_CHECK_BLOCK_ON_CELL(name, n1, n2, n3, n4,    \
-                                                      call1)                   \
+/// Opens the door for good, setting `flag`, once the block `actorId` stands on
+/// its button, cell (`cellX`, `cellZ`).
+#define DEFINE_JUPITER_LIGHTHOUSE_CHECK_BLOCK_ON_CELL(name, actorId, flag,     \
+                                                      cellX, cellZ, open)      \
   void name(void) {                                                            \
-    struct Actor *object = Actor_Get(n1);                                      \
+    struct Actor *object = Actor_Get(actorId);                                 \
                                                                                \
-    if (!Event_GetFlag(n2) && object->x >> 20 == n3 &&                         \
-        object->z >> 20 == n4) {                                               \
-      Event_SetFlag(n2);                                                       \
-      call1(1);                                                                \
+    if (!Event_GetFlag(flag) && object->x >> 20 == cellX &&                    \
+        object->z >> 20 == cellZ) {                                            \
+      Event_SetFlag(flag);                                                     \
+      open(1);                                                                 \
     }                                                                          \
   }
 

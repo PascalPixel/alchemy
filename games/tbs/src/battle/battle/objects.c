@@ -475,18 +475,15 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
 /// unit with no place. Called throughout the battle parts.
 struct BattleObject *BattleObject_Get(s32 unitId) {
   struct BattleWork *battle = gBattleWork;
-  struct BattleObject *battleObjects = battle->objects;
-  s32 placementIndex;
+  s32 place = unitId;
+
   // Enemy unit ids from FIRST_ENEMY_UNIT index the places from
   // PARTY_UNIT_COUNT.
-  if (unitId > ALLY_MAX) {
-    unitId -= FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
-  }
-  placementIndex = unitId;
-  if (battle->objectIndex[placementIndex] == BATTLE_OBJECT_NONE) {
+  if (unitId > ALLY_MAX)
+    place -= FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
+  if (battle->objectIndex[place] == BATTLE_OBJECT_NONE)
     return NULL;
-  }
-  return &battleObjects[battle->objectIndex[placementIndex]];
+  return &battle->objects[battle->objectIndex[place]];
 }
 
 /// Detaches the scripts from the four sprite entries of one sprite. Called
@@ -506,28 +503,22 @@ void ResetMotionRecordGroup(void *recordGroup) {
 /// Detaches the scripts from every sprite of a unit's actor. Nothing in the
 /// source calls it.
 void ResetBattleObjectRecordGroups(struct Actor *actor) {
-  s32 storageKind;
-  s32 remaining;
-  void **recordGroups;
-  void *recordGroup;
+  void **groups;
+  s32 i;
 
-  if (actor != NULL) {
-    storageKind = actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK;
-    switch (storageKind) {
-    case ACTOR_SPRITE_ONE:
-      ResetMotionRecordGroup(actor->sprite);
-      return;
-    case ACTOR_SPRITE_GROUP:
-      recordGroups = (void **)actor->sprite;
-      for (remaining = ACTOR_SPRITE_GROUP_SIZE - 1; remaining >= 0;
-           remaining--) {
-        recordGroup = *recordGroups++;
-        if (recordGroup != NULL) {
-          ResetMotionRecordGroup(recordGroup);
-        }
-      }
-      break;
+  if (actor == NULL)
+    return;
+  switch (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) {
+  case ACTOR_SPRITE_ONE:
+    ResetMotionRecordGroup(actor->sprite);
+    break;
+  case ACTOR_SPRITE_GROUP:
+    groups = (void **)actor->sprite;
+    for (i = 0; i < ACTOR_SPRITE_GROUP_SIZE; i++) {
+      if (groups[i] != NULL)
+        ResetMotionRecordGroup(groups[i]);
     }
+    break;
   }
 }
 
@@ -553,24 +544,20 @@ void BattleObject_DestroyAll(void) {
 #else
 void *BattleObject_DestroyAll(void) {
 #endif
-  s32 unitId;
-  s32 placementIndex;
-  struct BattleObject *battleObject;
+  s32 place;
 
-  placementIndex = 0;
-  do {
-    unitId = placementIndex + FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
-    if (placementIndex <= ALLY_MAX) {
-      unitId = placementIndex;
-    }
-    battleObject = BattleObject_Get(unitId);
-    if ((battleObject != NULL) && (battleObject->active != 0)) {
+  for (place = 0; place < UNIT_MAX; place++) {
+    // Places 0 to 7 are the party unit ids, 8 to 13 the enemies.
+    s32 unitId =
+        place <= ALLY_MAX ? place : place + FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
+    struct BattleObject *battleObject = BattleObject_Get(unitId);
+
+    if (battleObject != NULL && battleObject->active != 0) {
       Actor_ReleaseFar(battleObject->actor);
       battleObject->actor = NULL;
       battleObject->active = 0;
     }
-    placementIndex += 1;
-  } while (placementIndex < UNIT_MAX);
+  }
 }
 
 /// Writes the battlefield spot of place (its anchor, on the ground) to

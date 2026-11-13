@@ -377,56 +377,45 @@ UNREAD_RESULT BattlePlacement_RelayoutEnemies(void) {
 /// battle object at its spot. Called by Battle_Run once the unit lists are
 /// filled. Writes gBattleWork->placement and every unit's battle object.
 void BattleUnit_RefreshPlacement(void) {
-  struct BattleWork *battle;
+  struct BattleWork *battle = gBattleWork;
   u16 unitIds[UNIT_MAX];
   s32 xPositions[ENEMY_BATTLE_SIZE];
   s32 zPositions[ENEMY_BATTLE_SIZE];
   s32 count;
-  s32 unitIndex;
-  s32 partyPlace;
-  s32 enemyPlace;
-  s32 remainingPlaces;
-  s32 placementValue;
-  u8 *placementCursor;
+  s32 i;
 
-  partyPlace = 0;
-  enemyPlace = 0;
-  battle = gBattleWork;
-  count = BattleParty_PrepareMembers(unitIds);
-  // placement[0..7] is each party unit id's place and placement[8..13] the
-  // enemy places, numbered 8 to 13.
-  placementValue = BATTLE_OBJECT_NONE;
-  for (unitIndex = UNIT_MAX - 1; unitIndex >= 0; unitIndex--)
-    battle->objectIndex[unitIndex] = placementValue;
-  placementCursor = &battle->objectIndex[UNIT_MAX - 1];
-  for (remainingPlaces = ENEMY_BATTLE_SIZE - 1, placementValue = UNIT_MAX - 1;
-       remainingPlaces >= 0; remainingPlaces--, placementValue--)
-    *placementCursor-- = placementValue;
+  // objectIndex[0..7] is each party unit id's place and objectIndex[8..13]
+  // the enemy places, numbered 8 to 13.
+  for (i = UNIT_MAX - 1; i >= 0; i--)
+    battle->objectIndex[i] = BATTLE_OBJECT_NONE;
+  for (i = UNIT_MAX - 1; i >= PARTY_UNIT_COUNT; i--)
+    battle->objectIndex[i] = i;
 
   // The party, at its fixed spots in pixels: x 80, z 48, 16, -16 and -48
   // (gBattlePlacement_StepPairs, battle_tables.s).
-  for (unitIndex = 0; unitIndex < count; partyPlace++, unitIndex++) {
-    s32 unitId = unitIds[unitIndex];
+  count = BattleParty_PrepareMembers(unitIds);
+  for (i = 0; i < count; i++) {
+    s32 unitId = unitIds[i];
 
-    battle->objectIndex[unitId] = partyPlace;
+    battle->objectIndex[unitId] = i;
     BattleObject_Make(BattleObject_Get(unitId), unitId,
-                      gBattlePlacement_StepPairs[partyPlace * 2],
-                      gBattlePlacement_StepPairs[partyPlace * 2 + 1]);
+                      gBattlePlacement_StepPairs[i * 2],
+                      gBattlePlacement_StepPairs[i * 2 + 1]);
   }
 
   // The enemies, laid out by size.
-  for (unitIndex = 0; unitIndex < ENEMY_BATTLE_SIZE &&
-                      battle->enemyIds[unitIndex] != BATTLE_UNIT_LIST_END;
-       unitIndex++)
-    unitIds[unitIndex] = battle->enemyIds[unitIndex];
-  count = unitIndex;
+  for (i = 0;
+       i < ENEMY_BATTLE_SIZE && battle->enemyIds[i] != BATTLE_UNIT_LIST_END;
+       i++)
+    unitIds[i] = battle->enemyIds[i];
+  count = i;
   BattlePlacement_LayoutEnemies(unitIds, count, xPositions, zPositions);
-  for (unitIndex = 0; unitIndex < count; unitIndex++, enemyPlace++) {
-    s32 unitId = battle->enemyIds[unitIndex];
+  for (i = 0; i < count; i++) {
+    s32 unitId = battle->enemyIds[i];
 
     if (unitId != BATTLE_UNIT_REMOVED)
-      BattleObject_Make(BattleObject_Get(unitId), unitId,
-                        xPositions[enemyPlace], zPositions[enemyPlace]);
+      BattleObject_Make(BattleObject_Get(unitId), unitId, xPositions[i],
+                        zPositions[i]);
   }
 }
 
@@ -435,19 +424,14 @@ void BattleUnit_RefreshPlacement(void) {
 /// @param list unit ids, ended by BATTLE_UNIT_LIST_END, UNIT_MAX at most
 /// @param place 0 to 7 a party unit id, 8 to 13 the enemies
 s32 BattlePlacement_ContainsId(s16 *list, s32 place) {
-  u32 listIndex;
+  s32 i;
 
   // An enemy's place to its unit id.
   if (place > ALLY_MAX)
     place += FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
-  listIndex = 0;
-  do {
-    u16 unitId = *list++;
-
-    if (unitId == BATTLE_UNIT_LIST_END)
-      break;
-    if (unitId == place)
+  for (i = 0; i < UNIT_MAX && (u16)list[i] != BATTLE_UNIT_LIST_END; i++) {
+    if ((u16)list[i] == place)
       return 1;
-  } while (++listIndex < UNIT_MAX);
+  }
   return 0;
 }

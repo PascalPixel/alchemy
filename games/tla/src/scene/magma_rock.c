@@ -77,7 +77,24 @@ DEFINE_ACTORS_RAISE_CELLS(MagmaRock_RaiseActorCells, MagmaRock_SetCellShape)
 #include "sound.h"
 #include "system.h"
 #include "scene_tables.h"
-#include "magma_rock/magma_rock.h"
+#ifndef TLA_MAGMA_ROCK_H
+#define TLA_MAGMA_ROCK_H
+
+#include "types.h"
+
+struct Actor;
+
+struct MagmaRockWork {
+  s32 unk00;
+  s32 x;
+  s32 y;
+  s32 z;
+  s32 unk10;
+  struct Actor *target;
+};
+
+#endif
+
 #include "main_routine_work.h"
 #include "scene_ids.h"
 
@@ -539,8 +556,6 @@ void MagmaRock_WarnStatue(struct Actor *object) {
       work->value168 == 0 && work->value1b2 != 0)
     object->timer--;
 }
-
-#include "magma_rock/magma_rock.h"
 
 s32 MagmaRock_FindStatue(u16 *table) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;

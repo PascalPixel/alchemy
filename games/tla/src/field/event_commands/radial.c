@@ -1,5 +1,7 @@
 /// @file
-/// The radial object.
+/// The radial object: the radial effects, then in ROM order the tile copies,
+/// the field Psynergy (parts under psynergy/), the actors' cells, the step
+/// vectors and the world and World Map pictures.
 
 /// @file
 /// What every part of the radial object shares: its includes. radial.c

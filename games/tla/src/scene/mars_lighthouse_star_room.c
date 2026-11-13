@@ -93,7 +93,38 @@ void Func_02000074(void) { Func_020014f4(); }
 
 void Func_0200007c(void) {}
 
-#include "mars_lighthouse_star_room.h"
+#ifndef TLA_MARS_LIGHTHOUSE_STAR_ROOM_H
+#define TLA_MARS_LIGHTHOUSE_STAR_ROOM_H
+
+#include "types.h"
+#include "system.h"
+#include "ram_buffer.h"
+#include "event_work.h"
+#include "actor.h"
+#include "event_inline.h"
+#include "input.h"
+
+#define DIFF(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
+
+s32 Trig_Cos(s32 angle);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
+void Func_02001928(struct Actor *object, s32 priority);
+
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static __inline__ struct Actor *ObjectCreate_(s32 kind, s32 x, s32 y, s32 z) {
+  return Import_ActorCreate(kind, x, y, z);
+}
+#include "main_routine_work.h"
+#include "field_sprite.h"
+#include "tla_edition.h"
+
+void Actor_StartScript(struct Actor *object, const void *script);
+void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
+extern const s16 gData_020047fc[];
+
+#endif
+
 #include "iwram_call.h"
 
 extern const u8 gMarsLighthouseStarRoom_ScatterIceChipsScript[];
@@ -1693,7 +1724,6 @@ DEFINE_ACTOR_BLINK(Func_02002120, 10, 4, 0)
 #include "event_work.h"
 #include "field.h"
 #include "item_icon.h"
-#include "mars_lighthouse_star_room.h"
 #include "module/field/field.h"
 #include "module/scene/mars_lighthouse_star_room.h"
 #include "module/system/system.h"
@@ -1740,8 +1770,6 @@ void Func_02002354(void) {
   if (((struct RideWork *)(gInventorySnapshot + 0x188))->active)
     Func_02002148();
 }
-
-#include "mars_lighthouse_star_room.h"
 
 extern u8 gInventorySnapshot[];
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
@@ -2123,7 +2151,6 @@ Func_0200428c__s3070(s32 *a, s32 aRadius, s32 *b,
 #include "frame.h"
 #include "actor.h"
 #include "event_inline.h"
-#include "mars_lighthouse_star_room.h"
 #include "module/field/field.h"
 #include "module/scene/mars_lighthouse_star_room.h"
 #include "module/scene/scene.h"

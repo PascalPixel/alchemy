@@ -2,7 +2,58 @@
 /// The scene code of overlay 0x6aa, in ROM order.
 
 #include "shared/map_cells.h"
-#include "mars_lighthouse_entrance.h"
+#ifndef TLA_MARS_LIGHTHOUSE_ENTRANCE_RIDE_H
+#define TLA_MARS_LIGHTHOUSE_ENTRANCE_RIDE_H
+
+#include "types.h"
+#include "ram_buffer.h"
+#include "frame.h"
+#include "actor.h"
+
+struct RideEntry {
+  s16 a;
+  u8 unk02[2];
+  s16 b;
+  s16 c;
+  u8 unk08[4];
+  s32 d;
+};
+
+struct RideRow {
+  u8 unk00[20];
+  s16 a;
+  u8 unk16[2];
+  s16 b;
+  s16 c;
+  u8 unk1c[4];
+  s32 d;
+};
+
+struct RideSlot {
+  u16 value;
+  u8 unk02[2];
+};
+
+struct RideWork {
+  s32 counter;
+  s16 active;
+  u8 unk06[8];
+  s16 value0e;
+  u8 unk10[4];
+  struct RideEntry entries[4];
+  struct RideSlot slots[4];
+  u8 unk64[12];
+  void *handle;
+};
+
+extern u8 gInventorySnapshot[];
+
+#define RIDE_WORK ((struct RideWork *)(gInventorySnapshot + 0x188))
+
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
+
+#endif
+
 #include "event_inline.h"
 #include "field.h"
 #include "module/scene/mars_lighthouse_entrance.h"
@@ -845,8 +896,6 @@ const u8 *Scene_GetEvents(void) {
   return gMarsLighthouseEntrance_Triggers;
 }
 
-#include "mars_lighthouse_entrance.h"
-
 DEFINE_ACTOR_FREEZE(Func_02001234)
 #undef SET_SPRITE_WINDOW_LAYERS
 
@@ -1531,8 +1580,6 @@ void Func_02002270(void) {
   animation->flag11 = 1;
 }
 
-#include "mars_lighthouse_entrance.h"
-
 void Func_020022c4(void) {
   struct RideWork *work = RIDE_WORK;
 
@@ -1681,8 +1728,6 @@ extern u8 gInventorySnapshot[];
 #undef SHARED_F02002148_ID5
 #undef SHARED_F02002148_ID6
 #undef SHARED_F02002148_ID7
-
-#include "mars_lighthouse_entrance.h"
 
 void MarsLighthouseEntrance_ContinueSlide(void) {
   if (RIDE_WORK->active)

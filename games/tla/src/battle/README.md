@@ -7,12 +7,12 @@ the [battle effects](../../../tbs/glossary.md#battle-effect) are in
 
 ## What differs from The Broken Seal
 
-- The bank's C is two objects. `battle.c` holds the bank's first eleven
-  parts, cut where The Broken Seal's are, from the debug routines to the start
-  of an action's staging; it ends before `presentation.c`, which calls
-  `BattleObject_Reset` with one argument where the object's prototype has two
-  (`battle.c` says more). `presentation.c` holds the rest of the bank in ROM
-  order, its parts under `presentation/`.
+- The bank's C is one object, `battle.c`, as in The Broken Seal: eleven
+  parts under `battle/`, cut where The Broken Seal's are, from the debug
+  routines to the start of an action's staging, then the rest of the bank in
+  ROM order, its parts under `presentation/`. One of those calls
+  `BattleObject_Reset` with one argument where the object's definition has two,
+  through a view (`battle.c` says more).
 - The tables (`actflags.tsv`, `actstat.tsv`, the
   [formations](../../../tbs/glossary.md#formation) in `formatn.tsv` and the
   debug parameter sets in `debug_parameter_sets.tsv`) are still TSV, packed by

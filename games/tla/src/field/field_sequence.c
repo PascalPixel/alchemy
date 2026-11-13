@@ -9,11 +9,9 @@
 /// order. The ROM shows one object; the parts are ours, cut where The Broken
 /// Seal's are. The main routine, the first code of the same bank, is its own
 /// object linked just before this one
-/// (../system/main_routine.c). The bank's code after the treasure spots is
-/// in objects of its own: two of them (field_sequence/emitter.c and
-/// field_sequence/rising.c) read a sprite's
-/// third attribute in two ways, as tile bit fields and as its high byte, and no
-/// one struct gives both with the same code.
+/// (../system/main_routine.c). After the treasure spots follow the screen
+/// transitions and, as The Broken Seal's event_commands.c begins, the event
+/// commands' parts under event_commands/.
 
 #include "field_sequence_internal.h"
 

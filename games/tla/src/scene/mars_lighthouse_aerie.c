@@ -3,7 +3,57 @@
 
 #include "shared/mars_lighthouse.h"
 #include "shared/effects.h"
-#include "mars_lighthouse_aerie.h"
+#ifndef TLA_MARS_LIGHTHOUSE_AERIE_H
+#define TLA_MARS_LIGHTHOUSE_AERIE_H
+
+#include "types.h"
+#include "ram_buffer.h"
+#include "frame.h"
+#include "actor.h"
+#include "main_routine_work.h"
+#include "event_inline.h"
+#include "scene_tables.h"
+
+struct Trigger;
+
+u32 Random16(void);
+void Func_02000038(struct Actor *object);
+void Func_02004d24(s32 id);
+void Func_02004d50(s32 id);
+void Func_02004fac(void);
+void Func_02005010(void);
+void PaletteCycle_Fade(void);
+void Teleport_PlaySparks(void);
+
+extern u8 MsgUhhhhnnnICan[];
+extern u8 MsgKoffKoffYou[];
+extern u8 MsgUnnnnIAm[];
+extern u8 MsgIUnderstandYour[];
+extern s16 gMarsLighthouseAerie_Placements[];
+extern struct ActorPlacement gData_0200644c[];
+extern s16 gData_020066bc[];
+extern u32 gData_02006b64;
+extern u32 gData_02006b6c;
+
+void Func_02004e80(s32 from, s32 to);
+
+extern u8 MsgDoNotLet[];
+extern u16 gData_02006cd0;
+extern u16 gData_02006cd8;
+extern u16 gData_02006cdc;
+extern u16 *gData_02006ce0;
+extern u16 gData_02006cec;
+extern u16 gData_02006cf0;
+
+struct MarsLighthouseAerieParty {
+  u8 unk000[0x26a];
+  s16 held;
+};
+
+s32 List_CountEntries(u16 *list);
+
+#endif
+
 #include "event_work.h"
 #include "module/scene/mars_lighthouse_aerie.h"
 #include "module/scene/scene.h"
@@ -1991,7 +2041,6 @@ void Func_02003370(void) {
     FieldTask_Remove(Func_02003370);
 }
 
-#include "mars_lighthouse_aerie.h"
 #include "scene_tables.h"
 
 void Func_020035ec(s32 id) {

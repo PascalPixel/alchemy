@@ -4,7 +4,9 @@
 /// placing projected sprites. field_internal.h holds what the parts share; the
 /// parts under field/ are included here in the order their code has in the
 /// ROM. Camelot's own files are not recoverable: the ROM shows one object, and
-/// these parts are ours, cut where The Broken Seal's are.
+/// these parts are ours, cut where The Broken Seal's are. The rest of the
+/// field bank's C follows in ROM order: the resource slots (parts under
+/// resource_slot/), the tile animation and the terrain.
 
 /// @file
 /// What every part of the field object shares: its includes, in their

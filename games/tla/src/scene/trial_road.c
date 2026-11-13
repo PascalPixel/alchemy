@@ -348,7 +348,7 @@ void TrialRoad_AddPillarTop(s32 id) {
   struct Actor *object;
 
   if (owner != NULL) {
-    object = Actor_Create(489, owner->x, owner->y, owner->z);
+    object = FieldActor_Create(489, owner->x, owner->y, owner->z);
     if (object != NULL) {
       Actor_SetSpriteFlags(object, 0);
       Actor_StartScript(object, gTrialRoad_PillarTopScript);

@@ -9,6 +9,8 @@ effect is drawn in The Broken Seal.
 
 ## What differs from The Broken Seal
 
-- The code is five objects, not one: `battle_effect.c`, `cybele.c`,
-  `ability_effects.c`, `liquifier.c` and `summon_effects.c`, in ROM order,
-  each part named for the first ability it draws.
+- The code is one object, `battle_effect.c`, as in The Broken Seal: its own
+  parts under `battle_effect/`, then the effects from Cybele to Bolt, the
+  ability effects under `ability_effects/`, the Liquifier and the summon
+  effects under `summon_effects/`, in ROM order, each part named for the first
+  ability it draws.

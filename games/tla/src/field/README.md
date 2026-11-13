@@ -20,20 +20,24 @@ explains how this code works.
 - `field_sequence.c` holds the start of the field-sequence bank as parts
   under `field_sequence/`, cut where The Broken Seal's are: encounters,
   actors, walking, the run, the palette editor, triggers, targets, items,
-  Psynergy and the treasure spots. The rest of the bank follows it as
-  objects of their own in ROM order, in `field_sequence/` and the family
-  folders.
+  Psynergy and the treasure spots. The same object goes on with the screen
+  transitions and the start of the event-command bank, its parts under
+  `event_commands/`: `event.c`, `requests.c` and `actor_commands.c`, as The
+  Broken Seal's event_commands.c begins.
   The main routine, which The Broken Seal also keeps in its System folder, is
   in [The Lost Age: system](../system/README.md).
-- `event_commands.c` holds the start of the event-command bank as parts under
-  `event_commands/`: `event.c`, `requests.c` and `actor_commands.c`, as The
-  Broken Seal's object begins. `object/step_angle.c` follows it as an object of
-  its own, since an overlay links it too; the rest of the bank follows as
-  objects of their own in ROM order.
+- The rest of the bank's C follows in ROM order: `object/step_angle.c`,
+  `object/visual_attributes.c` (with the scene, mind-reading, cloak and carry
+  commands after its own parts), `field_effect/move.c`,
+  `field_effect/spawn_resident.c`, `field_effect/advance_motion.c` and
+  `event_commands/radial.c` (the radial effects to the World Map pictures).
+  `step_angle.c`, `move.c` and `advance_motion.c` are objects of their own
+  because field overlays link them too, which is also why the objects around
+  them are apart.
 - `field.c` holds the start of the field bank's C as parts under `field/`,
-  cut where The Broken Seal's field.c parts are: `decompress.c` and
-  `sprite_draw.c` so far. The rest of the bank's C follows it as 23 objects
-  in ROM order, in `object/`, `script/`, `map/` and this folder.
+  cut where The Broken Seal's field.c parts are, then the resource slots
+  (parts under `resource_slot/`), the tile animation and the terrain: the
+  bank's C up to its tables, in one object as the ROM has it.
 - The rest of the folder is grouped by family of the field's code rather than by The
   Broken Seal's objects. A family
   folder holds its files whatever their bank (`object/` holds files of three

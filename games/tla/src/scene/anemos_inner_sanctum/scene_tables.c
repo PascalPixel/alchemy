@@ -346,9 +346,21 @@ struct Vector3__s0ac8 {
   s32 z;
 };
 
-void Func_0200088c();
-void Func_020009b8();
-void Func_02000a78();
+/* VIEW(s0ac8): routine Func_0200088c as void Func_0200088c(), with no
+ * prototype, as the part calls it; scene/anemos_inner_sanctum/scene_tables has
+ * void Func_0200088c(struct Vector3 *, struct Vector3 *, s16). */
+void Func_0200088c__s0ac8() __asm__("Func_0200088c");
+#define Func_0200088c Func_0200088c__s0ac8
+/* VIEW(s0ac8): routine Func_020009b8 as void Func_020009b8(), with no
+ * prototype, as the part calls it; scene/anemos_inner_sanctum/scene_tables has
+ * void Func_020009b8(s32, s32, s16, s16). */
+void Func_020009b8__s0ac8() __asm__("Func_020009b8");
+#define Func_020009b8 Func_020009b8__s0ac8
+/* VIEW(s0ac8): routine Func_02000a78 as void Func_02000a78(), with no
+ * prototype, as the part calls it; scene/anemos_inner_sanctum/scene_tables has
+ * void Func_02000a78(s32, s32, s16). */
+void Func_02000a78__s0ac8() __asm__("Func_02000a78");
+#define Func_02000a78 Func_02000a78__s0ac8
 void Actor_StartScript();
 void BlendScript_Resume(void);
 extern u8 gData_020035cc[];
@@ -906,6 +918,10 @@ void Func_020017b4(struct Actor *self) {
 }
 
 #undef FIELD_AT
+
+#undef Func_0200088c
+#undef Func_020009b8
+#undef Func_02000a78
 
 // ---- scene/anemos_inner_sanctum/s1938.c ----
 

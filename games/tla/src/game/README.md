@@ -7,9 +7,11 @@ explains them for The Broken Seal.
 
 ## What differs from The Broken Seal
 
-- The tables are C arrays under The Broken Seal's file and struct names
-  (`item_table.c`, `ability_table.c`, `class_table.c` and the rest), in the
-  order the ROM keeps them. Their globals keep this game's names for now
+- The tables are C arrays under The Broken Seal's struct names, in the order
+  the ROM keeps them, at the end of `game.c`, the bank's one object, after its
+  code: the experience table, the artifact slots with the item, ability and
+  enemy tables (parts under `artifact_slots/`), and the character, summon,
+  class and element tables. Their globals keep this game's names for now
   (`gCharacter_DefinitionTable` for The Broken Seal's
   `gCharacter_DefinitionTable`), and a few readers still view a row through
   a struct of their own (`EnemyRecord`, `OwnerGrowthRecord`).

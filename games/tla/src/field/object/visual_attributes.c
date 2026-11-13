@@ -1,5 +1,7 @@
 /// @file
-/// The visual_attributes object, written as parts in visual_attributes/.
+/// The visual_attributes object, written as parts in visual_attributes/, then
+/// the event commands that follow it in ROM order: the scene commands, mind
+/// reading, the cloak and carrying.
 
 #include "visual_attributes_internal.h"
 

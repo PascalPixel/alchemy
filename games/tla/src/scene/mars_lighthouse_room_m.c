@@ -107,7 +107,106 @@ void Func_02000058(s32 id, s32 value) {
   Actor_SelectAnimation(object, value);
 }
 
-#include "mars_lighthouse_room_m.h"
+#ifndef TLA_MARS_LIGHTHOUSE_ROOM_M_H
+#define TLA_MARS_LIGHTHOUSE_ROOM_M_H
+
+#include "types.h"
+#include "system.h"
+#include "scene_tables.h"
+#include "actor.h"
+#include "main_routine_work.h"
+#include "ram_buffer.h"
+#include "map.h"
+#include "input.h"
+#include "iwram_call.h"
+#include "text/msg_ids.h"
+#include "frame.h"
+
+struct MarsLighthouseRoomMEventWork {
+  u8 unk000[0x154];
+  s16 exit;
+  u8 unk156[0x10];
+  s16 field166;
+  u8 unk168[0x44];
+  s32 field1ac;
+};
+
+struct MarsLighthouseRoomMVector {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+struct MarsLighthouseRoomMAnimation {
+  u8 unk00[9];
+  u8 unused09 : 2;
+  u8 layer : 2;
+  u8 unk0a[6];
+  u8 value10;
+  u8 flag11 : 1;
+  u16 angle;
+};
+
+struct MarsLighthouseRoomMRideWork {
+  s32 counter;
+  s16 active;
+  u8 unk06[6];
+  u16 value0c;
+  s16 value0e;
+  u8 unk10[0x60];
+  struct Actor *handle;
+};
+
+extern u8 gInventorySnapshot[];
+extern char SceneId_Ov6ACRoom1;
+extern char SceneId_Ov6ACRoom2;
+extern char SceneId_Ov6ACRoom3;
+extern char SceneId_Ov6ACRoom4;
+extern char SceneId_Ov6ACRoom5;
+extern char SceneId_Ov6ACRoom6;
+
+void Actor_SelectAnimation(struct Actor *object, s32 value);
+void Actor_StartScript(struct Actor *object, const void *script);
+
+void Func_02001988(struct Actor *object);
+void Func_02001aec(struct Actor *object);
+void Func_02001cc4(struct Actor *object, s32 layer);
+void Func_02001b64(struct Actor *object);
+
+extern u32 gData_020032d4[];
+extern struct ActorPlacement gMarsLighthouseRoomM_Placements[];
+extern struct ActorPlacement gMarsLighthouseRoomM_Room6Placements[];
+extern struct ActorPlacement gMarsLighthouseRoomM_Room1Placements[];
+
+extern u16 gData_02003918;
+extern u16 gData_02003920;
+extern u16 gData_02003924;
+extern u16 *gData_02003928;
+extern u16 gData_02003934;
+extern u16 gData_02003938;
+extern struct Trigger gMarsLighthouseRoomM_Triggers[];
+extern struct Trigger gMarsLighthouseRoomM_Room6Triggers[];
+extern struct Trigger gMarsLighthouseRoomM_Room1Triggers[];
+extern struct Trigger gMarsLighthouseRoomM_Room5Triggers[];
+extern s32 gData_0200387c[];
+extern u32 gData_02003900[];
+
+s32 List_CountEntries(u16 *list);
+void PaletteCycle_Fade(void);
+void Func_0200166c(void);
+void Func_0200168c(void);
+s32 Func_02001de0(struct Actor *a, struct Actor *b);
+void Func_02001e38(struct Actor *object);
+void Func_02001ed4(struct Actor *object);
+void Func_020012a4(s32 x, s32 z, s32 kind);
+void Func_02002ad4(struct Actor *object);
+void Event_End(void);
+void Teleport_PlayWhirl(void);
+s32 Trig_Cos(s32 angle);
+void Event_StartScreenTransition(void);
+void Event_WaitTransitionFrames(void);
+
+#endif
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -1262,7 +1361,6 @@ DEFINE_BEAM_DRAW_TARGETS(Func_02001f94, Func_02001f14__s1f94, Func_02001d08,
 /// Scene code of overlay 0x6ac, in ROM order.
 
 #include "shared/mars_lighthouse.h"
-#include "mars_lighthouse_room_m.h"
 #include "event_inline.h"
 #include "module/field/field.h"
 #include "module/scene/dehkan_plateau.h"
@@ -1400,7 +1498,6 @@ void Func_020026f0(void) {
 
 #include "shared/tables.h"
 #include "shared/mars_lighthouse.h"
-#include "mars_lighthouse_room_m.h"
 #include "event_inline.h"
 #include "display_transition.h"
 #include "item_icon.h"

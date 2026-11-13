@@ -1,11 +1,13 @@
 /// @file
-/// The first object of the battle effect bank: the display and HBlank helpers,
-/// the canvas layer, the dispatch that runs summon and table effects, and the
-/// effects from Ice and Douse to the battler tints, as The Broken Seal's
-/// battle_effect.c holds them. battle_effect_internal.h holds the includes
-/// every part shares; the parts under battle_effect/ follow in ROM order. The
-/// bank is five objects, not The Broken Seal's one, because the merge could
-/// not reconcile cybele.c and liquifier.c with their neighbours.
+/// The battle effect object, the bank's C in one: the display and HBlank
+/// helpers, the canvas layer, the dispatch that runs summon and table effects,
+/// and the effects from Ice and Douse to the battler tints, as The Broken
+/// Seal's battle_effect.c holds them. battle_effect_internal.h holds the
+/// includes every part shares; the parts under battle_effect/ follow in ROM
+/// order, then the effects from Cybele to Bolt, the ability effects
+/// (ability_effects/), the Liquifier and the summon effects (summon_effects/),
+/// each as it stood alone: where two of them name a type or routine otherwise,
+/// the later one sees its own through a view.
 
 #include "battle_effect_internal.h"
 
@@ -79,10 +81,9 @@
 // ---- battle_effect/cybele.c ----
 #define FxGroup FxGroup__cybele
 
-/// The bank's second object: the effects from the Cybele summon to Bolt
-/// (Boreas, Break, Drain, Cure Poison, Flare, Quake, Fire, Frost, Ray,
-/// Atalanta, Growth, Vine, Thorn and the rest), an object of its own as the
-/// merge could not reconcile it with its neighbours.
+/// The effects from the Cybele summon to Bolt (Boreas, Break, Drain, Cure
+/// Poison, Flare, Quake, Fire, Frost, Ray, Atalanta, Growth, Vine, Thorn and
+/// the rest).
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -5897,8 +5898,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
 // ---- battle_effect/liquifier.c ----
 
 /// Liquifier, and the canvas bursts: a glowing ball that strikes the target in
-/// flames and sparks. An object of its own, as the merge could not reconcile
-/// its model type with its neighbours'.
+/// flames and sparks.
 
 #include "types.h"
 #include "ram_buffer.h"

@@ -6,11 +6,10 @@
 /// holds what the parts share; the parts under battle/ are included here in
 /// the order their code has in the ROM. Camelot's own files are not
 /// recoverable: the ROM shows one object, and these parts are ours, cut where
-/// The Broken Seal's are. The bank's code after them is in objects of its
-/// own, from presentation.c on: its BattleMotion_CallBeast calls
-/// BattleObject_Reset (placement.c) with the object alone, leaving the second
-/// argument register as BattleObject_Get left it, a call this object's
-/// prototype of the routine cannot compile.
+/// The Broken Seal's are. The rest of the bank follows, the parts under
+/// presentation/: its BattleMotion_CallBeast calls BattleObject_Reset
+/// (placement.c) with the object alone, leaving the second argument register
+/// as BattleObject_Get left it, so it calls the routine through a view.
 
 #include "battle_internal.h"
 
@@ -46,10 +45,9 @@
 /// The rest of the battle object (battle.c): a unit's motion graphics, the
 /// strongest unit, applying an ability to its targets, playback, the end of a
 /// turn, the screen transitions, the background, camera and highlights, enemy
-/// formations and the spoils, as The Broken Seal's battle.c ends. The ROM shows
-/// one object; battle.c says why it is two here. presentation_internal.h holds
-/// the includes every part shares; the parts under presentation/ follow in ROM
-/// order.
+/// formations and the spoils, as The Broken Seal's battle.c ends.
+/// presentation_internal.h holds the includes these parts share; the parts
+/// under presentation/ follow in ROM order.
 
 #include "presentation_internal.h"
 

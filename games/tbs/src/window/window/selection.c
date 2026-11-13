@@ -37,10 +37,9 @@ void SelectionMenu_Create(void) {
     screen->records[i + SELECTION_RECORD_CHOSEN].kind = ICON_KIND_NONE;
     i++;
   } while (i != 5);
-  /* FAKEMATCH(temporary): i, left at 5 by the loop, indexes records 7 and 8;
-   * as records[7] and records[8], 6 of 124 instructions differ in tbs-en. */
+  // The row has two icons more than the chosen ones; i is 5.
   screen->records[i + SELECTION_RECORD_ROW].kind = ICON_KIND_NONE;
-  screen->records[i + 3].kind = ICON_KIND_NONE;
+  screen->records[i + SELECTION_RECORD_ROW + 1].kind = ICON_KIND_NONE;
   screen->records[0].kind = FALSE;
   screen->records[1].kind = FALSE;
   screen->records[0].y = 0;

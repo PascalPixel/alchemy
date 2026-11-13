@@ -60,9 +60,9 @@ Script_WaitForEventTimeout:
 	.thumb_func
 Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Func_02001850
+	.global MapGrid_CheckCollision
 	.thumb_func
-Func_02001850:
+MapGrid_CheckCollision:
 	overlay_veneer Func_08020210
 	.global Actor_SetSingleChildFlags
 	.thumb_func

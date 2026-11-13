@@ -150,13 +150,13 @@ Event_ResolvePendingActions:
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_02001190
+	.global Shop_Run
 	.thumb_func
-Func_02001190:
+Shop_Run:
 	overlay_veneer Func_08108008
-	.global Func_02001198
+	.global Inn_CheckIn
 	.thumb_func
-Func_02001198:
+Inn_CheckIn:
 	overlay_veneer Func_08108018
 	.global Func_020011a0
 	.thumb_func

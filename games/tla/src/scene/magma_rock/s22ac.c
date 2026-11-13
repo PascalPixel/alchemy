@@ -426,10 +426,10 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 extern u8 gMapShapeGrid[];
 
-s32 Func_02003adc(s32 layer, s32 x, s32 z);
+s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 u8 Func_02003c24(s32 layer, s32 shape, s32 height);
 
-DEFINE_FUNC_02002D08(Func_02002d08, Func_02003c04, Func_02003adc, Func_02003b3c,
+DEFINE_FUNC_02002D08(Func_02002d08, Func_02003c04, MapGrid_GetTerrainKind, Func_02003b3c,
     Func_02003c24, Func_02003a54)
 
 void Func_020035e0(void);
@@ -560,7 +560,7 @@ void Actor_MoveToObject(s32 id, s32 owner);
 /// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
 /// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
 /// it copy actor 9's visual attributes.
-DEFINE_FUNC_020030BC(Func_020030bc, Func_020030a4, Func_02003c04, Func_02003adc,
+DEFINE_FUNC_020030BC(Func_020030bc, Func_020030a4, Func_02003c04, MapGrid_GetTerrainKind,
     Func_02003b3c, Func_02003c24)
 
 void Func_02003224(struct Actor *object, struct Actor *source) {

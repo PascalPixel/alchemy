@@ -22,8 +22,8 @@ void Event_End(void);
 void Func_0200059c(s32 id);
 void Func_020005cc(void);
 void Func_020005d4(s32 a, s32 b, s32 c, s32 d);
-void Func_020005e4(s32 a, s32 b);
-void Func_020005ec(s32 a);
+void Shop_Run(s32 a, s32 b);
+void Sanctum_Run(s32 a);
 void Func_02000464(void);
 
 extern const u8 gData_020006cc[];
@@ -134,7 +134,7 @@ void Func_020001a8(void) {
 void Func_020001f0(s32 actor) {
   if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0x8000) {
-    Func_020005e4(16, actor);
+    Shop_Run(16, actor);
     return;
   }
   Event_Start();
@@ -147,7 +147,7 @@ void Func_020001f0(s32 actor) {
 void Func_02000250(s32 actor) {
   if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0x8000) {
-    Func_020005e4(16, actor);
+    Shop_Run(16, actor);
     return;
   }
   Event_Start();
@@ -160,7 +160,7 @@ void Func_02000250(s32 actor) {
 void Func_020002b0(s32 actor) {
   if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0xc000) {
-    Func_020005ec(actor);
+    Sanctum_Run(actor);
     return;
   }
   Event_Start();
@@ -173,7 +173,7 @@ void Func_020002b0(s32 actor) {
 void Func_0200030c(s32 actor) {
   if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0xc000) {
-    Func_020005ec(actor);
+    Sanctum_Run(actor);
     return;
   }
   Event_Start();

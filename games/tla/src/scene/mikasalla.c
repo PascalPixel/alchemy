@@ -86,7 +86,7 @@ void *Scene_GetPlacements(void) {
 #include "scene_tables.h"
 #include "event_inline.h"
 
-void Func_02000620(s32 a);
+void Map_SetLayerEntryFlag(s32 a);
 
 /// The leader, already beside a ladder top, turns north, steps onto the rungs
 /// and climbs down out of sight, then leaves by exit 12 from the village or
@@ -191,9 +191,9 @@ void Mikasalla_DigUpLadder(void) {
 /// return.
 void Mikasalla_CastParch(void) {
   if (Event_GetFlag(0x200) == 0) {
-    Func_02000620(0);
-    Func_02000620(1);
-    Func_02000620(2);
+    Map_SetLayerEntryFlag(0);
+    Map_SetLayerEntryFlag(1);
+    Map_SetLayerEntryFlag(2);
     MapGrid_CopyCellsTo(56, 46, 30, 46, 16, 16);
     MapGrid_CopyCellsTo(56, 174, 30, 174, 16, 16);
     MapGrid_CopyCells(28, 23, 16, 16, 15, 23);
@@ -229,9 +229,9 @@ s32 Scene_PrepareMap(void) {
   Actor_GetById(party->currentOwner)->priorityFlags |= 0x20;
   if (party->scene == (s32)&SceneId_Ov65dRoom2) {
     if (Event_GetFlag(0x200)) {
-      Func_02000620(0);
-      Func_02000620(1);
-      Func_02000620(2);
+      Map_SetLayerEntryFlag(0);
+      Map_SetLayerEntryFlag(1);
+      Map_SetLayerEntryFlag(2);
       MapGrid_CopyCellsTo(56, 46, 30, 46, 16, 16);
       MapGrid_CopyCellsTo(56, 174, 30, 174, 16, 16);
       MapGrid_CopyCells(28, 23, 16, 16, 15, 23);

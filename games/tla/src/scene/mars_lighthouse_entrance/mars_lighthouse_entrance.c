@@ -224,7 +224,7 @@ void Func_02000590(void) {
     Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
     Func_02004cd8_(gMainRoutineWork.currentOwner, PIXELS(688), PIXELS(360));
     FieldCamera_MoveTo(PIXELS(688), -1, PIXELS(360), 1);
-    Func_02004d20();
+    FieldCamera_WaitForArrival();
     Func_02004dc8();
     FieldEvent_Wait(40);
     Func_02004718();
@@ -277,11 +277,11 @@ void Func_02000718(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0x10000, 0x2000);
   Camera_SetBounds(PIXELS(168), 0, PIXELS(664), 1);
-  Func_02004d20();
+  FieldCamera_WaitForArrival();
   System_Wait(10);
   FieldCamera_SetSpeed(0x40000, 0x8000);
   Camera_SetBounds(PIXELS(472), 0, PIXELS(664), 1);
-  Func_02004d20();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(90);
   Event_End();
 }
@@ -372,7 +372,7 @@ void Func_020009e8(void) {
   Flag_Clear(0x104);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Func_02004d20();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(120);
   Event_End();
 }
@@ -399,10 +399,10 @@ void Func_02000a7c(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0x10000, 0x2000);
   Camera_SetBounds(PIXELS(872), -1, PIXELS(168), 1);
-  Func_02004d20();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
   FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(264), 1);
-  Func_02004d20();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(120);
   Event_End();
 }

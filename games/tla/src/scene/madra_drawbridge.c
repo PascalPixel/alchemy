@@ -95,7 +95,7 @@ void MadraDrawbridge_BlockBridge(void) {
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     Event_SetFlag(FLAG_GUARDS_BLOCKED_BRIDGE);
-    Func_02000338();
+    FieldCamera_WaitForArrival();
     MapGrid_CopyCellAttributes(11, 9, 4, 1, 8, 14);
     if (Event_GetFlag(FLAG_GUARDS_ASKED_FOR_PERMISSION) == 0) {
       Event_SetMessageId((s32)MsgMadraNeedEldersPermission);
@@ -117,7 +117,7 @@ void MadraDrawbridge_GreetPermittedParty(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgMadraHeardAboutYou);
   FieldCamera_MoveTo(PIXELS(164), -1, PIXELS(260), 1);
-  Func_02000338();
+  FieldCamera_WaitForArrival();
   Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, 3);
   Event_ShowMessage(ACTOR_EAST_GUARD, 0);
   Actor_SetAnimationAndWait(ACTOR_WEST_GUARD, 3);

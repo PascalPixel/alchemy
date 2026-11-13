@@ -519,12 +519,12 @@ DEFINE_FUNC_02000038_58(Func_02000c9c)
 /// moves, under this overlay's names.
 
 #define Func_020036a8 Func_02000d64
-#define Func_02004e08 Func_02002094
+#define Func_02004e08 FlagEntries_GetTable
 #define Func_02004e10 Party_GetLeaderActor
 #define Func_02004b30 Import_ActorCreate
 #define Func_02004b20 Actor_StartScript
 #define Func_02004b18 Func_02001fbc
-#define Func_02004b38 Func_02001fd4
+#define Func_02004b38 Actor_Release
 #define gData_02006bd4 gData_02003da8
 #include "shared/world_map_s36a8.h"
 
@@ -730,9 +730,9 @@ DEFINE_FUNC_020019D4(Func_020019d4, Func_02001ad0)
 
 DEFINE_FUNC_02001A0C(Func_02001a0c)
 
-DEFINE_FUNC_02001A34(Func_02001a34, Func_02001fd4)
+DEFINE_FUNC_02001A34(Func_02001a34, Actor_Release)
 
-DEFINE_FUNC_02001A80(Func_02001a80, Func_02001fd4)
+DEFINE_FUNC_02001A80(Func_02001a80, Actor_Release)
 
 #include "field_sprite.h"
 #include "vram_tab.h"

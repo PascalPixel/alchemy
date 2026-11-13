@@ -6,7 +6,7 @@
 
 #include "types.h"
 
-void Func_02001cc4();
+void FieldCamera_WaitForArrival();
 
 void Func_02001d34();
 

@@ -36,7 +36,7 @@ void Func_020034ac(s32 spread) {
           285, (i << 17) + leader->x - 0x80000, y - 0x20000, leader->z);
     }
     if (effect != 0) {
-      frame = Func_02003bd4(effect->sprite, frame);
+      frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
       Actor_SetSingleChildFlags(effect, 0);
@@ -79,7 +79,7 @@ void Func_020035e0(void) {
     effect = (struct FieldEffect *)FieldActor_Create(285, leader->x, leader->y,
                                                       leader->z);
     if (effect != 0) {
-      state = Func_02003bd4(effect->sprite, state);
+      state = Sprite_ShareVramCacheEntry(effect->sprite, state);
       zero = 0;
       effect->motionFlags = zero;
       effect->collisionFlags = zero;
@@ -105,11 +105,11 @@ void Func_020035e0(void) {
 
 extern u8 gMapShapeGrid[];
 
-s32 Func_02003adc(s32 terrainId, s32 x, s32 z);
+s32 MapGrid_GetTerrainKind(s32 terrainId, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Func_02003c24(s32 terrainId, s32 value, s32 height);
 
-DEFINE_FUNC_02000BC0_89(Func_020036f8, Func_02003adc, Func_02003c24)
+DEFINE_FUNC_02000BC0_89(Func_020036f8, MapGrid_GetTerrainKind, Func_02003c24)
 
 void Func_02002e30(const u8 *data);
 
@@ -133,7 +133,7 @@ struct ParticleWork {
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-DEFINE_FUNC_0200379C(Func_0200379c, Func_02003c3c)
+DEFINE_FUNC_0200379C(Func_0200379c, EffectSprite_DrawAtWorldPosition)
 
 void Func_02003820(s32 x, s32 y, s32 z, s32 count) {
   struct EntryWork *work;

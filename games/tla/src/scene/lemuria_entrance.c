@@ -25,7 +25,7 @@
 
 void Text_GetMessageSize(s32 id, s32 *a, s32 *b, s32 *c, s32 *d);
 void Message_OpenWindow(s32 id, s32 x, s32 y, u32 flags);
-s32 Func_0200053c(s32 a, s32 b, s32 c, s32 d);
+s32 Portrait_OpenWindow(s32 a, s32 b, s32 c, s32 d);
 
 s32 Func_02000038(struct Actor *object) {
   ((struct AnimationRecord26 *)object->sprite)->frame = 0;
@@ -179,7 +179,7 @@ void Func_02000310(s32 kind, s32 frames) {
   }
   Call4((void (*)())Message_OpenWindow, work->u.message++, width, height,
         (resource << 16) | 2);
-  x = Func_0200053c(id, 0, x, 5);
+  x = Portrait_OpenWindow(id, 0, x, 5);
   while (Message_AllTyped() == 0)
     System_Wait(1);
   FieldEvent_Wait(frames);

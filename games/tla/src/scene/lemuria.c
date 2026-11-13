@@ -35,7 +35,7 @@ DEFINE_FUNC_02000038_75(Func_02000038)
 
 DEFINE_FUNC_02000070(Func_02000070, Func_02000038)
 
-s32 Func_02001d54(struct Actor *object);
+s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Func_02001b7c(struct Actor *object, s32 mode);
 
 s32 Func_020000e8(struct Actor *self) {
@@ -45,7 +45,7 @@ s32 Func_020000e8(struct Actor *self) {
   s8 *effect;
   struct Actor *other;
 
-  Actor_SetSpritePriorityDirect(self, Func_02001d54(Actor_Get(gMainRoutineWork.currentOwner)));
+  Actor_SetSpritePriorityDirect(self, BattleEffect_GetObjectPriority(Actor_Get(gMainRoutineWork.currentOwner)));
   mode = 0x3ff & *(u16 *)(event + 0x166);
   state = &self->movementState;
   if (mode == 141) {
@@ -373,18 +373,18 @@ L_02008694:
   Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 0);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(776), 1);
-  Func_02001cc4();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_ShowEmote(12, 0x109, 30);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   Actor_SetAnimationAndWait(12, 4);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(856), 1);
-  Func_02001cc4();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(928), 1);
-  Func_02001cc4();
+  FieldCamera_WaitForArrival();
   t30 = Party_FindOwnerWithAction(133);
   v5 = t30;
   if (v5 == -1)
@@ -403,7 +403,7 @@ L_02008788:
   FieldEvent_Wait(10);
   Actor_ShowEmote(4, 0x105, 60);
   FieldCamera_MoveTo(PIXELS(872), v5, PIXELS(792), 1);
-  Func_02001cc4();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_ShowEmote(12, 0x101, 30);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
@@ -415,7 +415,7 @@ L_02008788:
   Actor_WalkByAndWait(12, -32, 0);
   Actor_FaceDirectionAndWait(12, FACING_SOUTHEAST + FACING_STEP);
   FieldCamera_MoveTo(PIXELS(848), v5, PIXELS(904), 1);
-  Func_02001cc4();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(15);
   FieldEvent_ShowMessageThenWait(12, 0, 5);
   Actor_SetPosition(28, PIXELS(840), PIXELS(920));
@@ -434,7 +434,7 @@ L_020088cc:
 L_020088d4:
 }
 
-void Func_02001bb4(s32 value);
+void Party_RestoreHpPp(s32 value);
 
 void Func_020008e8(void) {
   s32 y = Actor_Get(gMainRoutineWork.currentOwner)->y;
@@ -442,7 +442,7 @@ void Func_020008e8(void) {
   if (y < 0x5a0000) {
     Message_ShowCentered((s32)MsgAndTheOthers, 1);
     Event_PlaySound(126);
-    Func_02001bb4(1);
+    Party_RestoreHpPp(1);
   } else {
     FIELD_AT(Ram_HeapSlots->eventWork, u16, 346) = 1;
   }
@@ -810,7 +810,7 @@ void Func_02001160(void) {
   Actor_FaceDirection(4, FACING_NORTH, 0);
   FieldActor_WaitForMoveById(12);
   FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(544), 1);
-  Func_02001cc4();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   FieldActor_Jump(12, 6, 15);
   FieldActor_Jump(12, 6, 23);
@@ -906,7 +906,7 @@ void Func_02001160(void) {
   Actor_WalkToAndWait(12, 424, 600);
   FieldEvent_Wait(20);
   FieldCamera_MoveTo(PIXELS(400), -1, PIXELS(648), 1);
-  Func_02001cc4();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_FaceDirection(12, FACING_SOUTHEAST + FACING_STEP, 0);
   FieldEvent_Wait(40);
@@ -928,17 +928,17 @@ void Func_02001160(void) {
   Actor_FaceDirection(12, FACING_NORTH + FACING_STEP, 0);
   FieldEvent_Wait(40);
   FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(288), 1);
-  Func_02001cc4();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(60);
   FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(528), 1);
-  Func_02001cc4();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(12, 3);
   FieldEvent_Wait(10);
   FieldCamera_FollowActor(12, 1);
   Actor_WalkToAndWait(12, 456, 568);
   FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(544), 1);
-  Func_02001cc4();
+  FieldCamera_WaitForArrival();
   Actor_FaceDirection(4, FACING_WEST, 0);
   Actor_FaceDirection(7, FACING_SOUTH, 0);
   Actor_FaceDirection(24, FACING_SOUTHEAST + FACING_STEP, 0);

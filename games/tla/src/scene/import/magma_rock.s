@@ -86,9 +86,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_02003a6c
+	.global Actor_Release
 	.thumb_func
-Func_02003a6c:
+Actor_Release:
 	overlay_veneer Actor_Destroy
 	.global Actor_SetPositionAndResetMotion
 	.thumb_func
@@ -118,9 +118,9 @@ Map_GetTerrainHeight:
 	.thumb_func
 Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Func_02003aac
+	.global MapGrid_CheckCollision
 	.thumb_func
-Func_02003aac:
+MapGrid_CheckCollision:
 	overlay_veneer Func_08020210
 	.global Actor_SetSingleChildFlags
 	.thumb_func
@@ -142,9 +142,9 @@ Map_WaitForShakeToSettle:
 	.thumb_func
 SetMapCellCollision:
 	overlay_veneer SetMapCellCollisionFar
-	.global Func_02003adc
+	.global MapGrid_GetTerrainKind
 	.thumb_func
-Func_02003adc:
+MapGrid_GetTerrainKind:
 	overlay_veneer Func_080202f0
 	.global Event_Wait
 	.thumb_func
@@ -214,9 +214,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02003b6c
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02003b6c:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Func_080d452c
 	.thumb_func
@@ -266,9 +266,9 @@ BattleEffect_CleanupSceneObjects:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02003bd4
+	.global Sprite_ShareVramCacheEntry
 	.thumb_func
-Func_02003bd4:
+Sprite_ShareVramCacheEntry:
 	overlay_veneer Func_080c8518
 	.global Event_NoOp
 	.thumb_func
@@ -318,9 +318,9 @@ Func_02003c2c:
 	.thumb_func
 Func_02003c34:
 	overlay_veneer Func_080c87c0
-	.global Func_02003c3c
+	.global EffectSprite_DrawAtWorldPosition
 	.thumb_func
-Func_02003c3c:
+EffectSprite_DrawAtWorldPosition:
 	overlay_veneer Func_080c87d0
 	.global BattleEffect_StepVector3
 	.thumb_func

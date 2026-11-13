@@ -71,7 +71,7 @@ void Func_020002cc(void) {
   Task_AddFrame(Func_02000288, 0x480);
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   FieldCamera_MoveTo(PIXELS(542), PIXELS(44), PIXELS(396), 1);
-  Func_0200206c();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(80);
   Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
   FieldEvent_SetMessageId((s32)MsgTakeTheTiller);
@@ -370,15 +370,15 @@ void Func_02000ce0(void) {
   Event_ShowMessage(9, 0);
   FieldCamera_SetSpeed(0x4cccc, 0x9999);
   FieldCamera_MoveTo(PIXELS(200), -1, PIXELS(344), 1);
-  Func_0200206c();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   FieldCamera_SetSpeed(0x13333, 0x2666);
   FieldCamera_MoveTo(PIXELS(600), -1, PIXELS(344), 1);
-  Func_0200206c();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
   FieldCamera_SetSpeed(0x66666, 0xcccc);
   FieldCamera_MoveTo(PIXELS(264), -1, PIXELS(128), 1);
-  Func_0200206c();
+  FieldCamera_WaitForArrival();
   Actor_SetAnimationAndWait(5, 4);
   Event_ShowMessage(0x2005, 0);
   Actor_FaceDirectionAndWait(6, FACING_EAST);
@@ -585,7 +585,7 @@ void Func_0200128c(void) {
   Event_SetFlag(0x201);
   FieldTask_Remove(func);
   if (handle != 0)
-    Call1((void (*)())Func_02001f14, handle);
+    Call1((void (*)())Actor_Release, handle);
   FieldEvent_Wait(20);
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(20);

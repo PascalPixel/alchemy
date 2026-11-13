@@ -15,7 +15,8 @@ void Func_020026f4(void);
 void VenusLighthouseEntrance_StopSparks(void);
 extern u32 gData_0200b000[];
 
-void Func_02002a14(struct GlowSprite *sprite, struct GlowState *state);
+void EffectSprite_DrawAtWorldPosition(struct GlowSprite *sprite,
+                                      struct GlowState *state);
 
 void Func_02001fd0(void);
 void Func_0200258c(void);

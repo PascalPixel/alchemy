@@ -21,10 +21,10 @@ DEFINE_FUNC_020003D0(Func_020005a0)
 extern u8 gMapShapeGrid[];
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 Func_02003adc(s32 layer, s32 x, s32 z);
+s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 s32 Func_02003c24(s32 layer, s32 shape, s32 height);
 
-DEFINE_FUNC_020005CC(Func_020005cc, Func_02003adc, Func_02003c24)
+DEFINE_FUNC_020005CC(Func_020005cc, MapGrid_GetTerrainKind, Func_02003c24)
 
 #include "../field/map/cell_get.c"
 

@@ -110,9 +110,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_020054a0
+	.global Actor_Release
 	.thumb_func
-Func_020054a0:
+Actor_Release:
 	overlay_veneer Actor_Destroy
 	.global Actor_SetPositionAndResetMotion
 	.thumb_func
@@ -154,9 +154,9 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 Func_0802b450:
 	overlay_veneer Func_080201f0
-	.global Func_020054f8
+	.global MapGrid_CheckCollision
 	.thumb_func
-Func_020054f8:
+MapGrid_CheckCollision:
 	overlay_veneer Func_08020210
 	.global Actor_SetSingleChildFlags
 	.thumb_func
@@ -270,9 +270,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_020055e0
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_020055e0:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Func_080d4568
 	.thumb_func
@@ -282,9 +282,9 @@ Func_080d4568:
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_020055f8
+	.global Field_FindNearbyTalkTarget
 	.thumb_func
-Func_020055f8:
+Field_FindNearbyTalkTarget:
 	overlay_veneer Func_080c82c0
 	.global Func_02005600
 	.thumb_func
@@ -362,9 +362,9 @@ Func_02005688:
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_02005698
+	.global BattleEffect_GetObjectPriority
 	.thumb_func
-Func_02005698:
+BattleEffect_GetObjectPriority:
 	overlay_veneer Func_080c87e8
 	.global Func_020056a0
 	.thumb_func

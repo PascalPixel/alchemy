@@ -608,8 +608,8 @@ void PartyInventory_Remove(s32 item);
 s32 Inventory_AddItem(s32 owner, s32 item);
 void *Unit_Get(s32 owner);
 void Inventory_Equip(s32 owner, s32 slot);
-void Func_020041ec(struct Actor *object);
-void Func_020043d4(void);
+void Actor_Release(struct Actor *object);
+void FieldCamera_WaitForArrival(void);
 
 void Func_02000bd8(void) {
   struct Actor *leader;
@@ -649,11 +649,11 @@ void Func_02000bd8(void) {
     Event_SetFlag(0xa3a);
     FieldActor_SetPositionAndResetMotion(Data_02004cec, 0, 0, 0);
     System_Wait(1);
-    Func_020041ec(Data_02004cec);
+    Actor_Release(Data_02004cec);
     System_Wait(1);
     FieldCamera_SetSpeed(0x4cccc, 0x9999);
     FieldCamera_MoveTo(170 << 18, -1, 146 << 16, 1);
-    Func_020043d4();
+    FieldCamera_WaitForArrival();
     PaletteFade_ApplySource(0x10000, 0);
     PaletteFade_ApplyTarget(0x10003, 0);
     PaletteFade_Interpolate(20);
@@ -791,7 +791,7 @@ void Func_02000e80(void) {
   Task_AddFrame(Func_02001424, 0x480);
   FieldCamera_SetSpeed(0x4cccc, 0x9999);
   FieldCamera_MoveTo(0x2a80000, -1, 0x1e00000, 1);
-  Func_020043d4();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(80);
   MapGrid_SetShake(-1, -1, 0xe666);
   Event_PlaySound(0x186);
@@ -816,7 +816,7 @@ void Func_02000e80(void) {
   PaletteFade_Interpolate(120);
   System_Wait(160);
   FieldCamera_MoveTo(0x2a80000, -1, 0xba0000, 1);
-  Func_020043d4();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
   object = *slot;
   if (object != 0) {
@@ -842,7 +842,7 @@ void Func_02000e80(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->actionFlags |= 1;
   object = *slot;
   if (object != 0)
-    Func_020041ec(object);
+    Actor_Release(object);
   Actor_Get(gMainRoutineWork.currentOwner)->actionFlags &= 0xfe;
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x2a8, 186);
   FieldEvent_Wait(1);
@@ -921,7 +921,7 @@ L_02008ea2:
   Actor_Get(gMainRoutineWork.currentOwner)->actionFlags |= 1;
   object = *slot;
   if (object != 0)
-    Func_020041ec(object);
+    Actor_Release(object);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
   Party_PlaySavedMusic();
   Event_End();
@@ -970,7 +970,7 @@ L_0200905c:
   Task_AddFrame(Func_02001424, 0x480);
   FieldCamera_SetSpeed(0x4cccc, 0x9999);
   FieldCamera_MoveTo(0x2a80000, -1, 0x1e00000, 1);
-  Func_020043d4();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(80);
   MapGrid_SetShake(-1, -1, 0xe666);
   Event_PlaySound(0x186);
@@ -993,7 +993,7 @@ L_0200905c:
   PaletteFade_Interpolate(120);
   System_Wait(160);
   FieldCamera_MoveTo(0x2a80000, -1, 0xba0000, 1);
-  Func_020043d4();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
   object2 = *slot2;
   if (object2 != 0) {
@@ -1019,7 +1019,7 @@ L_0200905c:
   Actor_Get(gMainRoutineWork.currentOwner)->actionFlags |= 1;
   object2 = *slot2;
   if (object2 != 0)
-    Func_020041ec(object2);
+    Actor_Release(object2);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
   Party_PlaySavedMusic();
   Event_SetFlag(0xa30);
@@ -1050,7 +1050,7 @@ void Func_020013e4(struct Actor *object) {
   if (timer->frames == 1)
     FieldActor_SetPositionAndResetMotion(object, 0, 0, 0);
   else if (timer->frames == 0)
-    Func_020041ec(object);
+    Actor_Release(object);
 }
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s1424.c ----

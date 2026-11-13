@@ -61,7 +61,7 @@ const struct Trigger *Scene_GetEvents(void) {
   return (const struct Trigger *)gData_02000a20;
 }
 
-void Func_02000644();
+void Sanctum_Run();
 
 void Func_020000f4(void) {
   s32 result0;
@@ -92,7 +92,7 @@ void Func_0200014c(s32 actor) {
 
   facing = (Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
   if (facing == 0xc000) {
-    Func_0200063c(13, actor);
+    Shop_Run(13, actor);
   } else {
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors11);
     Event_ShowMessage(actor, 0);
@@ -104,7 +104,7 @@ void Func_0200019c(s32 actor) {
 
   facing = (Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
   if (facing == 0xc000) {
-    Func_0200064c(4, actor);
+    Inn_CheckIn(4, actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -119,7 +119,7 @@ void Func_020001fc(s32 actor) {
 
   facing = (Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
   if (facing == 0xc000) {
-    Func_02000644(actor);
+    Sanctum_Run(actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -143,7 +143,7 @@ void Func_02000288(s32 actor) {
 
   facing = (Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
   if (facing == 0xc000) {
-    Func_02000644(actor);
+    Sanctum_Run(actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -158,7 +158,7 @@ void Func_020002e4(s32 actor) {
 
   facing = (Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
   if (facing == 0xc000) {
-    Func_02000644(actor);
+    Sanctum_Run(actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);

@@ -83,7 +83,7 @@ void Func_02000178(void) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_020013c8();
+void FieldCamera_WaitForArrival();
 
 void Func_02000198(void) {
   s32 v_r1, v_r2, v_r0, t0;
@@ -291,7 +291,7 @@ L_02008474:
   Actor_FaceActor(18, 4, 0);
   FieldActor_ShowEmote(18, 0x109, 35);
   FieldCamera_MoveTo(0x1e80000, -1, 0x16e0000, 1);
-  Func_020013c8();
+  FieldCamera_WaitForArrival();
   Actor_FaceDirection(18, 0x5000, 0);
   Event_ShowMessage(18, 0);
   Actor_SetSpeed(17, 0xcccc, 0x6666);
@@ -366,7 +366,7 @@ L_020088f0:
   Actor_SetScript(16, (s32)gData_0200158c);
   FieldCamera_SetSpeed(0x1cccc, 0x3999);
   FieldCamera_MoveTo(0x21e0000, -1, 0x15e0000, 1);
-  Func_020013c8();
+  FieldCamera_WaitForArrival();
   Event_OpenMessage(17, 0);
   t186 = Event_AskYesNoWithActorAnimation(4, 0);
   if (t186 != 0)
@@ -510,13 +510,13 @@ void Func_02000d40(void) {
   /* FAKEMATCH(barrier): the empty asm on count, so the second argument is set
    * first; as the constant argument 8, 2 of 5 instructions differ in tla-en. */
   asm("" : "+l"(count));
-  Func_02001440(13, count);
+  Inn_CheckIn(13, count);
 }
 
 void Func_02000d4c(void) {
   Actor_GetById(gMainRoutineWork.currentOwner);
   if (Event_GetFlag(800)) {
-    Func_02001430(30, 8);
+    Shop_Run(30, 8);
   } else {
     if (Event_GetFlag(0xa5f))
       Event_SetMessageId((s32)MsgLoho51);
@@ -532,7 +532,7 @@ void Func_02000da4(s32 actor) {
   u16 facing = (leader->facing + 0x2000) & ~0x3fff;
 
   if (facing == 0xc000) {
-    Func_02001438(actor);
+    Sanctum_Run(actor);
   } else {
     if (Event_GetFlag(0xa5f))
       Event_SetMessageId((s32)MsgLoho53);

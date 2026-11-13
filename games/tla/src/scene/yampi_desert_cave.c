@@ -78,11 +78,11 @@ extern s32 gData_0200198c[];
 struct Actor *Func_0200033c(s32 *direction, s32 *slot, s32 *kind);
 
 static inline s32 Func_02001850_Call(struct Actor *object, s32 *position) {
-  return Func_02001850(object, position);
+  return MapGrid_CheckCollision(object, position);
 }
 
 /// Finds how far a pushed object can slide in the leader's direction, probing
-/// its footprint cell by cell until Func_02001850 reports a wall. Returns 1
+/// its footprint cell by cell until MapGrid_CheckCollision reports a wall. Returns 1
 /// with the end position in position[0] to position[2], or 0 if it cannot
 /// move.
 s32 Func_020001d4(s32 *position) {
@@ -122,7 +122,7 @@ s32 Func_020001d4(s32 *position) {
     probe[0] = position[0] + (gData_02001974[offset] << 16);
     for (i = 0; i < w; i++) {
       /* FAKEMATCH(wrapper): the call through Func_02001850_Call; as
-         Func_02001850(object, probe), 2 of 171 instructions differ in tla-en.
+         MapGrid_CheckCollision(object, probe), 2 of 171 instructions differ in tla-en.
        */
       if (Func_02001850_Call(object, probe) == 2)
         goto hit;
@@ -360,7 +360,7 @@ void Func_02000754(struct Actor *object) {
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
-  if (Func_02001850(object, position) > 0)
+  if (MapGrid_CheckCollision(object, position) > 0)
     Actor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
 }
 

@@ -21,7 +21,7 @@
 
 extern s32 gData_02004fec[];
 
-DEFINE_FUNC_0200038C(Func_020003b4, gData_02004fec, Func_02004cf8,
+DEFINE_FUNC_0200038C(Func_020003b4, gData_02004fec, MapGrid_CheckCollision,
     Func_02004c98)
 
 #include "ram_buffer.h"
@@ -62,10 +62,10 @@ DEFINE_FUNC_020003D0(Func_020005b0)
 
 #include "actor.h"
 
-s32 Func_02004d20(s32 layer, s32 x, s32 z);
+s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 s32 Func_02004ef0(s32 layer, s32 shape, s32 height);
 
-DEFINE_FUNC_020005CC(Func_020005dc, Func_02004d20, Func_02004ef0)
+DEFINE_FUNC_020005CC(Func_020005dc, MapGrid_GetTerrainKind, Func_02004ef0)
 
 void Func_0200063c(struct Actor *object) {
   s32 count;
@@ -270,7 +270,7 @@ void Func_02000a30(void) {
                                            object->z + 0x100000, 312);
         Func_0200063c(object);
         Event_PlaySound(213);
-        Func_02004cb0(copy);
+        Actor_Release(copy);
         Func_02004c98(object, 4);
         System_Wait(1);
         REG_BLDCNT = 0;
@@ -295,7 +295,7 @@ void Func_02000a30(void) {
                                          object->z + 0x100000, 312);
       Func_0200063c(object);
       Event_PlaySound(213);
-      Func_02004cb0(copy);
+      Actor_Release(copy);
       Func_02004c98(object, 4);
       System_Wait(1);
       REG_BLDCNT = 0;
@@ -550,7 +550,7 @@ end:
   FieldCamera_MoveTo(position[0], position[1], position[2], 1);
   Actor_WaitForMove(flame);
   flame->update = 0;
-  Func_02004cb0(flame);
+  Actor_Release(flame);
   id = 0;
 spark:
   bit = gFrameCount;
@@ -575,7 +575,7 @@ spark:
     return;
   }
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_02004e20();
+  FieldCamera_WaitForArrival();
   System_Wait(10);
   Event_End();
   return;
@@ -588,12 +588,12 @@ hit:
   FieldCamera_MoveTo(position[0], position[1], position[2], 1);
   Actor_WaitForMove(flame);
   flame->update = 0;
-  Func_02004cb0(flame);
+  Actor_Release(flame);
   Event_SetFlag(0x2f0);
   Func_02000ce4__s0e20((u16)id);
   Event_ClearFlag(0x2f0);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_02004e20();
+  FieldCamera_WaitForArrival();
   System_Wait(10);
   Event_End();
 }
@@ -1116,7 +1116,7 @@ void Func_02001d64(void) {
   MapGrid_SetShake(0x30000, 0x30000, 0x10000);
   Event_Wait(30);
   FieldCamera_MoveTo(194 << 18, -1, 136 << 17, 1);
-  Func_02004e20();
+  FieldCamera_WaitForArrival();
   options.type = 403;
   options.priority = 2;
   options.palette = 10;
@@ -1168,7 +1168,7 @@ loop:
   Event_Wait(40);
   Event_SetFlag(2552);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_02004e20();
+  FieldCamera_WaitForArrival();
   wait(10);
   Event_End();
 }
@@ -1213,7 +1213,7 @@ void Func_020021c0(void) {
     Event_PlaySound(141);
     FieldEvent_Wait(30);
     FieldCamera_MoveTo(0x2680000, -1, 0x1280000, 1);
-    Func_02004e20();
+    FieldCamera_WaitForArrival();
     FieldEvent_Wait(30);
     Event_PlaySound(0x22d);
     REG_BLDALPHA = 0x1000;
@@ -1233,7 +1233,7 @@ void Func_020021c0(void) {
     } while (i != 32);
     Event_PlaySound(0x22a);
     Func_02004c98(other, 4);
-    Func_02004cb0(actor);
+    Actor_Release(actor);
     FieldEvent_Wait(1);
     REG_BLDCNT = 0;
     Func_02000694(0, 38, 18, 0);
@@ -1266,7 +1266,7 @@ void Func_02002364(void) {
       Event_End();
       return;
     }
-    Func_02004e58(460, 3);
+    BattleEffect_StartEffectObject22(460, 3);
     Actor_SetAnimation(12, 2);
     Event_SetFlag(0x9f9);
   }
@@ -1427,7 +1427,7 @@ fadeOut:
   cellZ = (z >> 4) - 1;
   MapGrid_CopyCellsTo(65, 1, x + 64, cellZ, 1, 2);
   Func_02000694(0, x, cellZ, 0xff00);
-  Func_02004cb0(object);
+  Actor_Release(object);
   Event_End();
   REG_BLDCNT = 0;
   REG_DISPCNT &= 0x7fff;
@@ -1485,7 +1485,7 @@ void Func_020028ac(void) {
   Event_PlaySound(141);
   FieldEvent_Wait(30);
   FieldCamera_MoveTo(0x780000, -1, 0x1580000, 1);
-  Func_02004e20();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(30);
   Event_PlaySound(0x22d);
   REG_BLDALPHA = 0x1000;
@@ -1505,7 +1505,7 @@ void Func_020028ac(void) {
   } while (i != 32);
   Event_PlaySound(0x22a);
   Func_02004c98(other, 4);
-  Func_02004cb0(actor);
+  Actor_Release(actor);
   FieldEvent_Wait(1);
   REG_BLDCNT = 0;
   Func_02000694(0, 7, 21, 128);

@@ -104,7 +104,7 @@ DEFINE_FUNC_02000188(Func_02000188, 15, 12)
 
 DEFINE_FUNC_02000188(Func_020001cc, 9, 4)
 
-void Func_02001f34(s32 a);
+void Map_ClearLayerEntryFlag(s32 a);
 
 void Func_02000210(void) {
   Event_Start();
@@ -113,10 +113,10 @@ void Func_02000210(void) {
   FieldTask_AddFrame(Func_020001cc, 0x480);
   Event_WaitTransitionFrames();
   FieldEvent_Wait(60);
-  Func_02001f34(13);
+  Map_ClearLayerEntryFlag(13);
   FieldEvent_Wait(60);
   FieldEvent_Wait(60);
-  Func_02001f34(14);
+  Map_ClearLayerEntryFlag(14);
   Event_End();
 }
 

@@ -35,7 +35,7 @@ s32 Func_02000038(s32 arg0) {
 
 void Event_Start();
 void Event_End();
-void Func_02000af0();
+void FieldCamera_WaitForArrival();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -92,7 +92,7 @@ void Func_02000108(void) {
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(5, 0, 5);
   FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(176), 1);
-  Func_02000af0();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(5);
   Actor_SetPosition(11, PIXELS(408), PIXELS(288));
   Actor_SetPosition(5, PIXELS(408), PIXELS(288));
@@ -212,7 +212,7 @@ L_020083da:
   if (v_r5 >= 0)
     goto L_020083da;
   FieldCamera_MoveTo(0x1d80000, -1, 0xb00000, 1);
-  Func_02000af0();
+  FieldCamera_WaitForArrival();
   FieldActor_WaitForMoveById(9);
   Event_PlaySound(145);
   t59 = FIELD_AT(v_r6, s32, 8);
@@ -407,7 +407,7 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
       flySprite = work->sprites;
       for (i = 53; i >= 0; i--) {
         if (particle->age < 60) {
-          Func_02000b48(flySprite, particle);
+          EffectSprite_DrawAtWorldPosition(flySprite, particle);
           BattleEffect_StepVector3(particle, 63, -0x3000);
           particle->age++;
         }

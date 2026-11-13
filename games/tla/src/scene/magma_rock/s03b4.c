@@ -51,7 +51,7 @@ void Func_020003b4(void) {
   dst.y = next->y.fixed;
   step <<= 16;
   dst.z = next->z.fixed + step;
-  if (Func_02003aac(next, &dst) > 0)
+  if (MapGrid_CheckCollision(next, &dst) > 0)
     return;
 
   if (next->transitionBusy != 0)

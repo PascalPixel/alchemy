@@ -53,7 +53,7 @@ struct TitleSprite__title {
 extern struct TitleSprite__title gData_020006f0[];
 
 s32 Func_020005d4(void);
-void Func_0200062c(s32 value);
+void Title_ShowSplashScreen(s32 value);
 void Func_02000634(s32 value);
 
 /// Runs the title by entrance: at entrance 10 the title is revealed and waits
@@ -105,7 +105,7 @@ s32 Title_Run(void) {
   if (gMainRoutineWork.entrance == 1) {
     for (;;) {
       Event_PlaySound(0);
-      Func_0200062c(0);
+      Title_ShowSplashScreen(0);
       Func_02000634(0);
       if (Func_020005d4() > 0) {
         Event_PlaySound(40);

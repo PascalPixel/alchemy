@@ -220,12 +220,12 @@ void Func_02004a44(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value) {
 extern s32 gData_02005f7c__s4700[] __asm__("gData_02005f7c");
 
 static inline s32 Func_020054f8_(struct Actor *object, s32 *position) {
-  return Func_020054f8(object, position);
+  return MapGrid_CheckCollision(object, position);
 }
 
 /// Finds the object the leader is pushing and steps its footprint, one cell
 /// at a time in the leader's direction, until a cell of it is blocked
-/// (Func_020054f8 returns 2). Leaves the object's resting place in target and
+/// (MapGrid_CheckCollision returns 2). Leaves the object's resting place in target and
 /// returns 1, or 0 when nothing is pushed or it cannot move at all.
 DEFINE_FUNC_02000C44(Func_02004a8c, Func_02004bf4, gData_02005f64__s4700,
     gData_02005f7c__s4700, Func_020054f8_)
@@ -245,7 +245,7 @@ DEFINE_FUNC_02003A5C(Func_02004d10, gData_02005f64__s4700, Func_02004a44,
     Func_02004fc0, Func_02005480, gData_02005f7c__s4700)
 
 DEFINE_FUNC_02004774(Func_02004fc0, Func_02005680, gData_02005f58,
-    Func_020054f8)
+    MapGrid_CheckCollision)
 #undef ABS
 #undef PIXELS
 #define PIXELS(value) ((value) << 16)
@@ -263,7 +263,7 @@ DEFINE_FUNC_02004774(Func_02004fc0, Func_02005680, gData_02005f58,
 /// 64 one when the big switch is set, at its animation picture and depth.
 DEFINE_FUNC_02000AAC(Func_02005048, gData_020074cc, Data_0200f510,
     gData_020074ce, gData_020074d0, gData_020075d0, gData_020075d2,
-    Func_02005698, Func_02005440)
+    BattleEffect_GetObjectPriority, Func_02005440)
 
 #include "iwram_call.h"
 #include "task.h"

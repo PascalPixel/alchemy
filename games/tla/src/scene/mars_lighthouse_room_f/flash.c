@@ -65,8 +65,8 @@ DEFINE_FUNC_020012BC(Func_02002954, 10, 4, 0)
 #include "vector3.h"
 #include "fixed_math.h"
 
-/* VIEW(flash): routine Func_020054f8 as s32 Func_020054f8(struct Actor *actor); module/scene/mars_lighthouse_room_f.h has s32 Func_020054f8(struct Actor *object, s32 *position); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/flash.c:132: too few arguments to function `Func_020054f8'. */
-extern s32 Func_020054f8__flash(struct Actor *actor) __asm__("Func_020054f8");
+/* VIEW(flash): routine MapGrid_CheckCollision as s32 MapGrid_CheckCollision(struct Actor *actor); module/scene/mars_lighthouse_room_f.h has s32 MapGrid_CheckCollision(struct Actor *object, s32 *position); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/flash.c:132: too few arguments to function `MapGrid_CheckCollision'. */
+extern s32 Func_020054f8__flash(struct Actor *actor) __asm__("MapGrid_CheckCollision");
 
 #if TLA_PATCH_1
 void Func_0200297c(void) {

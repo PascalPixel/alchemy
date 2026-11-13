@@ -110,9 +110,9 @@ Camera_FollowActor:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02000a30
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02000a30:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Import_EventSetExitRequest
 	.thumb_func

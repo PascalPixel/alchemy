@@ -62,7 +62,7 @@ void Func_020000c4(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Func_02001190(14, actor);
+    Shop_Run(14, actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -76,7 +76,7 @@ void Func_02000124(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Func_02001190(14, actor);
+    Shop_Run(14, actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -90,7 +90,7 @@ void Func_02000184(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Func_02001190(15, actor);
+    Shop_Run(15, actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -104,7 +104,7 @@ void Func_020001e4(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Func_02001190(15, actor);
+    Shop_Run(15, actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -118,7 +118,7 @@ void Func_02000244(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Func_02001198(5, actor);
+    Inn_CheckIn(5, actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -132,7 +132,7 @@ void Func_020002a4(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Func_02001198(5, actor);
+    Inn_CheckIn(5, actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);

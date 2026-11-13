@@ -240,7 +240,7 @@ void Func_02000674(void) {
 
   t0 = Func_02000644();
   if (t0 != 0) {
-    Func_02004634(0xe, 0x16);
+    Inn_CheckIn(0xe, 0x16);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -255,7 +255,7 @@ void Func_02000674(void) {
   }
 }
 
-s32 Func_02004624();
+s32 Shop_Run();
 
 void Func_020006c4(void) {
   s32 t0;
@@ -263,7 +263,7 @@ void Func_020006c4(void) {
 
   t0 = Func_02000644();
   if (t0 != 0) {
-    Func_02004624(0x1f, 0xa);
+    Shop_Run(0x1f, 0xa);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -278,7 +278,7 @@ void Func_020006c4(void) {
   }
 }
 
-s32 Func_0200462c();
+s32 Sanctum_Run();
 
 void Func_02000714(void) {
   s32 t0;
@@ -286,7 +286,7 @@ void Func_02000714(void) {
 
   t0 = Func_02000644();
   if (t0 != 0) {
-    Func_0200462c(8);
+    Sanctum_Run(8);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -428,14 +428,14 @@ void Func_02000914(void) {
   }
 }
 
-void Func_0200457c(void);
+void FieldCamera_WaitForArrival(void);
 
 void Func_02000ad8(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0x4cccc, 0x9999);
   FieldCamera_MoveTo(PIXELS(160), -1, PIXELS(160), 1);
-  Func_0200457c();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
   Actor_RunRepeatedMotion(0xa, 1);
   Actor_FaceDirectionAndWait(10, 0xb000);
@@ -814,7 +814,7 @@ struct RisingObject {
   s32 life;
 };
 
-void Func_020043e4(struct RisingObject *object);
+void Actor_Release(struct RisingObject *object);
 
 void Func_0200181c(struct RisingObject *object) {
   object->x += object->drift << 8;
@@ -823,7 +823,7 @@ void Func_0200181c(struct RisingObject *object) {
   object->scaleY += 0x51e;
   object->drift += 2;
   if (--object->life == 0)
-    Func_020043e4(object);
+    Actor_Release(object);
 }
 
 void Func_02001860(s32 a0, s32 a1, s32 a2) {
@@ -996,7 +996,7 @@ void Func_02001c24(s32 a0) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_0200457c(void);
+void FieldCamera_WaitForArrival(void);
 s32 Func_0200446c();
 
 void Func_02001cf0(void) {
@@ -1033,7 +1033,7 @@ void Func_02001cf0(void) {
   Event_WaitTransitionFrames();
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(448), 1);
-  Func_0200457c();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   FieldEvent_SetMessageId((s32)MsgProx80);
   Event_ShowMessage(26, 0);
@@ -1189,7 +1189,7 @@ void Func_02001cf0(void) {
   t159 = ((s32)FieldCamera_GetActor());
   FIELD_AT((t159 + 0x55), u8, 0) = 0;
   FieldCamera_MoveTo(PIXELS(158), -1, PIXELS(432), 1);
-  Func_0200457c();
+  FieldCamera_WaitForArrival();
   FieldActor_Jump(17, 4, 10);
   Event_ShowMessage(17, 0);
   FieldCamera_SetSpeed(0x13333, 0x2666);
@@ -1262,8 +1262,8 @@ struct EventWork1ac {
 };
 
 void Actor_SetWideSprite(s32 id, s32 wide);
-void Func_0200440c(s32 layer);
-void Func_02004414(u32 layer);
+void Map_ClearLayerEntryFlag(s32 layer);
+void Map_SetLayerEntryFlag(u32 layer);
 void Func_020045dc(s32 a);
 void Func_0200461c(s32 a);
 
@@ -1307,13 +1307,13 @@ s32 Scene_Initialize(void) {
       REG_BLDALPHA = 0xc08;
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
       Task_Add(Func_020018e0, 0x480);
-      Func_02004414(0);
-      Func_02004414(1);
-      Func_0200440c(2);
-      Func_0200440c(3);
-      Func_0200440c(4);
-      Func_0200440c(5);
-      Func_0200440c(6);
+      Map_SetLayerEntryFlag(0);
+      Map_SetLayerEntryFlag(1);
+      Map_ClearLayerEntryFlag(2);
+      Map_ClearLayerEntryFlag(3);
+      Map_ClearLayerEntryFlag(4);
+      Map_ClearLayerEntryFlag(5);
+      Map_ClearLayerEntryFlag(6);
     }
     scene = gMainRoutineWork.scene;
     if (scene == (s32)&SceneId_Ov6a8Room2) {
@@ -1502,7 +1502,7 @@ void Func_02002a8c(void) {
     Event_ShowMessage(5, 0);
     FieldCamera_SetSpeed(0x33333, 0x6666);
     FieldCamera_MoveTo(PIXELS(144), -1, PIXELS(228), 1);
-    Func_0200457c();
+    FieldCamera_WaitForArrival();
     FieldActor_ShowEmote(10, 0x108, 0);
     Event_ShowMessage(0x200a, 0);
     Event_PlaySound(37);
@@ -1825,11 +1825,11 @@ void Func_02002a8c(void) {
     Actor_SetAnimation(11, 9);
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 0x21);
     Actor_SetAnimation(0, 0x28);
-    Func_02004414(2);
-    Func_02004414(3);
-    Func_02004414(4);
-    Func_02004414(5);
-    Func_02004414(6);
+    Map_SetLayerEntryFlag(2);
+    Map_SetLayerEntryFlag(3);
+    Map_SetLayerEntryFlag(4);
+    Map_SetLayerEntryFlag(5);
+    Map_SetLayerEntryFlag(6);
     Event_PlaySound(78);
     FieldEvent_Wait(40);
     PaletteFade_ApplyTarget(0x10009, 0);
@@ -1950,10 +1950,10 @@ struct ParticleWork {
   u16 tile;
 };
 
-void Func_0200460c(struct ParticleSprite *sprite, struct Particle *particle);
+void EffectSprite_DrawAtWorldPosition(struct ParticleSprite *sprite, struct Particle *particle);
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-DEFINE_FUNC_0200379C(Func_02004114, Func_0200460c)
+DEFINE_FUNC_0200379C(Func_02004114, EffectSprite_DrawAtWorldPosition)
 
 /// One falling rock: where it is, how it moves and how long it has fallen.
 struct Rock {

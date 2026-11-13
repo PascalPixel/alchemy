@@ -65,7 +65,7 @@ extern s32 gData_0200121c[];
 
 void Func_0200115c(s32 id);
 
-s32 Func_02001184(s32 owner);
+s32 Field_FindNearbyTalkTarget(s32 owner);
 
 s32 Func_020011fc(void);
 

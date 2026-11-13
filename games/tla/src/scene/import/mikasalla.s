@@ -18,9 +18,9 @@ Map_PlayMapEdit:
 	.thumb_func
 Map_CopyCellPictureIndicesRect:
 	overlay_veneer Map_CopyCellPictureIndicesRectFar
-	.global Func_02000620
+	.global Map_SetLayerEntryFlag
 	.thumb_func
-Func_02000620:
+Map_SetLayerEntryFlag:
 	overlay_veneer Func_080201a0
 	.global Map_CopyCellsRect
 	.thumb_func

@@ -74,7 +74,7 @@ void Func_02004534(void);
 
 void Func_020046ec(void);
 
-void Func_020048ac(s32 mode);
+void Party_RestoreHpPp(s32 mode);
 
 void Func_02000d68(void);
 

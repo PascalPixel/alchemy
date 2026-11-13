@@ -150,9 +150,9 @@ s32 Func_020005a0(s32 *a, s32 *b);
 // game declares.
 void Func_02000c08(u16 index);
 void Func_02000d40(void);
-void Func_02003a6c(struct Actor *object);
+void Actor_Release(struct Actor *object);
 s32 Func_02003af4(void);
-void Func_02003b6c(void);
+void FieldCamera_WaitForArrival(void);
 
 s32 Func_020011e4(struct Actor *source) {
   s32 position[3];
@@ -214,7 +214,7 @@ stop:
   FieldCamera_MoveTo(position[0], position[1], position[2], 1);
   Actor_WaitForMove(object);
   object->update = NULL;
-  Func_02003a6c(object);
+  Actor_Release(object);
   for (i = 0; i != 16; i++) {
     parity = gFrameCount & 1;
 
@@ -235,7 +235,7 @@ stop:
   }
   System_Wait(24);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_02003b6c();
+  FieldCamera_WaitForArrival();
   System_Wait(10);
   return Func_02003af4();
 
@@ -248,12 +248,12 @@ hit:
   FieldCamera_MoveTo(position[0], position[1], position[2], 1);
   Actor_WaitForMove(object);
   object->update = NULL;
-  Func_02003a6c(object);
+  Actor_Release(object);
   Event_SetFlag(0x2f0);
   Func_02000c08(i);
   Event_ClearFlag(0x2f0);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_02003b6c();
+  FieldCamera_WaitForArrival();
   System_Wait(10);
   return Func_02003af4();
 }
@@ -326,7 +326,7 @@ union Position {
 
 #define PART_Y(part) (((union Position *)&(part)->y)->word)
 
-void Func_02003a6c(struct Actor *part);
+void Actor_Release(struct Actor *part);
 
 /// One of the four parts Func_02001738 builds: rises and falls with its owner's
 /// action counter.
@@ -342,7 +342,7 @@ void Func_02001528(struct Actor *part) {
     PART_Y(part) = owner->y + (BYTE_AT(part, 98) << 20) + 0x200000;
     PART_Y(part) -= (owner->timer << 19) - (332 << 19);
   } else if (BYTE_AT(part, 98) * 2 + 333 < owner->timer) {
-    Func_02003a6c(part);
+    Actor_Release(part);
   }
 }
 
@@ -616,7 +616,7 @@ void Func_02001be0(void) {
 void Actor_SetActionById(s32 id, s32 action);
 /* VIEW(s1c00): routine Func_080d452c as void Func_080d452c(s32 a, s32 b); event.h has s32 Func_080d452c(s32 actorId, s32 pan); tried as the definition's void Func_080d452c(s32 id, s32 use_setter), it does not compile in tla-ja: games/tla/src/scene/magma_rock/s0ff4.c:672: conflicting types for `Func_080d452c'. */
 extern void Func_080d452c__s1c00(s32 a, s32 b) __asm__("Func_080d452c");
-void Func_02003b6c(void);
+void FieldCamera_WaitForArrival(void);
 
 void Func_02001c00(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -683,7 +683,7 @@ second:
   MapGrid_SetShake(-1, -1, 0xe666);
   Map_WaitForShakeToSettle();
   Func_080d452c__s1c00(gMainRoutineWork.currentOwner, 1);
-  Func_02003b6c();
+  FieldCamera_WaitForArrival();
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 4);
   Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_WaitForAnimationChange(gMainRoutineWork.currentOwner);

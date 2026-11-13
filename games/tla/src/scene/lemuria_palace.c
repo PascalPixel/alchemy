@@ -155,9 +155,9 @@ void Func_020001d8(void) {
   FieldActor_SetMoveTarget(second, first->x + PIXELS(8), first->y - PIXELS(4),
                       first->z);
   Actor_WaitForMove(first);
-  Func_02001f9c(first);
+  Actor_Release(first);
   Actor_WaitForMove(second);
-  Func_02001f9c(second);
+  Actor_Release(second);
   FieldEvent_Wait(30);
 }
 
@@ -355,8 +355,8 @@ loop:
 void Event_Start();
 /* VIEW(s03a0): routine Event_End as s32 Event_End(); lemuria_palace has void Event_End(); not tried: Event_End's bound declaration was not found. */
 extern s32 Func_02001fd4__s03a0() __asm__("Event_End");
-/* VIEW(lemuria_palace): routine Func_020020ac as void Func_020020ac(); module/scene/scene.h has void Func_020020ac(s32 value); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:411: too few arguments to function `Func_020020ac'. */
-extern void Func_020020ac__lemuria_palace() __asm__("Func_020020ac");
+/* VIEW(lemuria_palace): routine FieldCamera_WaitForArrival as void FieldCamera_WaitForArrival(); module/scene/scene.h has void FieldCamera_WaitForArrival(s32 value); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:411: too few arguments to function `FieldCamera_WaitForArrival'. */
+extern void Func_020020ac__lemuria_palace() __asm__("FieldCamera_WaitForArrival");
 /* VIEW(s03a0): routine Func_020001d8 as s32 Func_020001d8(); the definition has void Func_020001d8(void); tried as the definition's void Func_020001d8(struct Actor *object), it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:356: conflicting types for `Func_020001d8'. */
 extern s32 Func_020001d8__s03a0() __asm__("Func_020001d8");
 s32 __modsi3();
@@ -590,7 +590,7 @@ L_0200863c:
   Actor_SetAnimationAndWait(13, 3);
   Event_Wait(10);
   Func_020001d8__s03a0(13);
-  Func_02002114(32, 0x2108);
+  Field_StartColorTransition(32, 0x2108);
   Event_Wait(32);
   Event_Wait(20);
   Func_020003a0();

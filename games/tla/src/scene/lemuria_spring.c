@@ -46,7 +46,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 void Func_02000054(void) {
   Message_ShowCentered((s32)MsgAndTheOthers, 1);
   Event_PlaySound(0x7e);
-  Func_02001358(1);
+  Party_RestoreHpPp(1);
 }
 
 /* VIEW(lemuria_spring): variable gData_02001678 as extern const u16 gData_02001678[]; the definition has u32 gData_02001678[] = { 0xa08090a, 0xc040b06, 0xe020d03, 0x10000f01, }; tried as the definition's extern u32 gData_02001678[], Func_02000070 moves: 2 of 40 instructions in tla-ja. */
@@ -458,11 +458,11 @@ void Func_0200049c(s32 a0) {
     FieldActor_SetAnimation(FIELD_AT(&gMainRoutineWork, s32, 532), 0x1c);
     Func_02001400(0x1d);
     Func_02001338(0x16);
-    Func_02001370(0x16);
+    Class_GetSeries(0x16);
     Actor_SetPosition(0x1d, 0, 0);
     FieldActor_SetAnimation(FIELD_AT(&gMainRoutineWork, s32, 532), 1);
   } else {
-    Call2(Func_020013f0, a0, 3);
+    Call2(BattleEffect_StartEffectObject22, a0, 3);
     Party_GiveItem(a0, 0);
     FieldEvent_Wait(20);
   }

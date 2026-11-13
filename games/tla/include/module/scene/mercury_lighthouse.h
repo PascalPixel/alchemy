@@ -10,6 +10,6 @@ void Func_020001b0(void);
 
 extern s32 gData_02000618[];
 
-void Func_02000608(void);
+void BattleEffect_FinishSceneAndReleaseHeapBlock(void);
 
 #endif

@@ -24,7 +24,7 @@ s32 Func_020011d4(struct Actor *object);
 
 // Raises each listed actor's cells: the shape grid and the cell flags under it,
 // then lifts the leader if the new terrain is above the leader.
-DEFINE_FUNC_02000038(Func_02000038, Func_020010ec, Func_020011d4, Func_020011f4)
+DEFINE_FUNC_02000038(Func_02000038, MapGrid_GetTerrainKind, Func_020011d4, Func_020011f4)
 
 #define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
 
@@ -56,7 +56,7 @@ void Func_0200014c(u16 *list) {
       u8 *cell = (u8 *)Ram_HeapSlots->mapWork->layers[*layer].cells;
       u8 *shape =
           grid + ((struct MapCell *)cell - (struct MapCell *)Ram_MapCellBuffer);
-      s32 kind = Func_020010ec(*layer, held->x, held->z);
+      s32 kind = MapGrid_GetTerrainKind(*layer, held->x, held->z);
       s32 height = Map_GetTerrainHeight(*layer, held->x, held->z);
       s32 index = Func_020011d4(held);
       s32 result = Func_020011f4(*layer, kind, (height >> 19) - 4);
@@ -84,7 +84,7 @@ void Func_02003c00(s32 a, s32 b, s32 c);
 // One-field view: the shape store is memory of its own to sched2, which sinks
 // it past the cell read; a plain store keeps its order.
 
-DEFINE_FUNC_02000270(Func_02000270, Func_020010ec, Func_020011d4, Func_020011f4)
+DEFINE_FUNC_02000270(Func_02000270, MapGrid_GetTerrainKind, Func_020011d4, Func_020011f4)
 
 struct SceneWork {
   u8 unk000[0x1ac];
@@ -193,7 +193,7 @@ void Func_0200052c(void) {
 
 void Func_02000558(void) { Func_020011cc(gData_020013c4); }
 
-void Func_02001174(void);
+void FieldCamera_WaitForArrival(void);
 void Func_02000958(void);
 
 void Func_02000568(void) {
@@ -214,7 +214,7 @@ void Func_02000568(void) {
   }
   FieldCamera_SetSpeed(0x33333, 0x6666);
   FieldCamera_MoveTo(PIXELS(160), -1, PIXELS(240), 1);
-  Func_02001174();
+  FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(0x6666, 0xccc);
   FieldCamera_MoveTo(PIXELS(160), -1, PIXELS(186), 1);
   Event_PlaySound(168);
@@ -329,7 +329,7 @@ void Func_020008d0(struct Actor *object) {
     Event_SetFlag(0x9ef);
 }
 
-DEFINE_FUNC_020008F4(Func_020008f4, Func_020011fc, Func_02001184, Func_0200014c,
+DEFINE_FUNC_020008F4(Func_020008f4, Func_020011fc, Field_FindNearbyTalkTarget, Func_0200014c,
     gData_020013ca, Func_02001204, Func_020008d0)
 
 void Func_0200092c(void) { Func_0200014c(gData_020013ca); }

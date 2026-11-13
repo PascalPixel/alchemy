@@ -12,7 +12,7 @@ extern struct ActorPlacement gData_02000960[];
 extern struct Trigger gData_02000a20[];
 extern struct Trigger gData_02000bac[];
 
-void Func_0200063c();
+void Shop_Run();
 
 void Func_02000454(void);
 

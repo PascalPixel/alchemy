@@ -46,9 +46,9 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Func_020010ec
+	.global MapGrid_GetTerrainKind
 	.thumb_func
-Func_020010ec:
+MapGrid_GetTerrainKind:
 	overlay_veneer Func_080202f0
 	.global FieldMessage_Show
 	.thumb_func
@@ -114,17 +114,17 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02001174
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02001174:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_02001184
+	.global Field_FindNearbyTalkTarget
 	.thumb_func
-Func_02001184:
+Field_FindNearbyTalkTarget:
 	overlay_veneer Func_080c82c0
 	.global BattleEffect_FindNearestObject
 	.thumb_func

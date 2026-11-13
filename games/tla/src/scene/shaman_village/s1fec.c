@@ -69,7 +69,7 @@ void Func_02002068(void) {
   Event_ShowMessage(15, 0);
   Event_Wait(20);
   if (rod != NULL)
-    Func_0200481c(rod);
+    Actor_Release(rod);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, angle);
   Actor_MoveToObject(18, gMainRoutineWork.currentOwner);
@@ -241,7 +241,7 @@ void Func_02002068(void) {
   Party_PlaySavedMusic();
   FieldCamera_SetSpeed(0x33333, 0x6666);
   FieldCamera_MoveTo(PIXELS(120), -1, PIXELS(260), 1);
-  Func_020049f4();
+  FieldCamera_WaitForArrival();
   Actor_SetPosition(15, 0, 0);
   Actor_SetPosition(17, 0, 0);
   Actor_SetPosition(16, 0, 0);
@@ -748,7 +748,7 @@ void Func_020030bc(void) {
   Event_PlaySound(29);
   FieldCamera_SetSpeed(0x4cccc, 0x9999);
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(540), 1);
-  Func_020049f4();
+  FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_SetAttachedEffect(15, 258);
   Event_Wait(20);
@@ -1107,7 +1107,7 @@ void Func_02003d30(void) {
   Actor_FaceDirection(17, angle, 0);
   Actor_FaceDirectionAndWait(15, FACING_WEST);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, 0, 0);
-  Func_020049f4();
+  FieldCamera_WaitForArrival();
   Event_SetMessageId((s32)MsgShamanMustFinishTrialRoad);
   Event_ShowMessage(0x200f, 0);
   Actor_SetAnimation(15, 3);
@@ -1264,7 +1264,7 @@ void Func_020042c8(struct ShamanVillageObject *object) {
   object->scaleY += step;
   object->field64 += 2;
   if (--object->field68 == 0)
-    Func_0200481c(object);
+    Actor_Release(object);
 }
 
 void Func_0200430c(s32 x, s32 y, s32 z) {
@@ -1364,7 +1364,7 @@ void Func_02004534(void) {
   }
   if ((gMainRoutineWork.entrance == 30 || gMainRoutineWork.entrance == 31) &&
       !Event_GetFlag(0x109)) {
-    Func_020048ac(1);
+    Party_RestoreHpPp(1);
     Event_Start();
     Event_ResolvePendingActions(0);
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 41);

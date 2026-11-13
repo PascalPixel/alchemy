@@ -94,9 +94,9 @@ Func_0200061c:
 	.thumb_func
 Func_02000624:
 	overlay_veneer Resource_FarCall00B + 1
-	.global Func_0200062c
+	.global Title_ShowSplashScreen
 	.thumb_func
-Func_0200062c:
+Title_ShowSplashScreen:
 	overlay_veneer Func_081a6018
 	.global Func_02000634
 	.thumb_func

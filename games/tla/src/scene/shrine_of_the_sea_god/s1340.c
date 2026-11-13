@@ -278,7 +278,7 @@ void Func_02001a3c(void) {
   ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
   ShrineOfTheSeaGod_CamSpeed(0x4cccc, 0x9999);
   ShrineOfTheSeaGod_CamMove(288 << 16, -1, 126 << 16, 1);
-  Func_02003ac8();
+  FieldCamera_WaitForArrival();
   Actor_Jump(13, 4, 20);
   ShrineOfTheSeaGod_MessagePut(0x800d, 0);
   Motion_SetModeAndWaitAnimation(12, 3);
@@ -312,7 +312,7 @@ void Func_02001a3c(void) {
   Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
   Camera_SetSpeedParameters(0x4cccc, 0x9999);
   Camera_MoveWithinMapBounds(264 << 16, -1, 320 << 16, 1);
-  Func_02003ac8();
+  FieldCamera_WaitForArrival();
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   Actor_ArmCallback(14, 0, 20);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
@@ -442,7 +442,7 @@ void Func_02001d24(void) {
   ShrineOfTheSeaGod_ObjTurn(14, 0x3000, 0);
   ShrineOfTheSeaGod_CamSpeed(0x4cccc, 0x9999);
   ShrineOfTheSeaGod_CamMove(188 << 17, -1, 264 << 16, 1);
-  Func_02003ac8();
+  FieldCamera_WaitForArrival();
   ShrineOfTheSeaGod_MessagePut(12, 0);
   ShrineOfTheSeaGod_CamSpeed(0x26666, 0x4ccc);
   ShrineOfTheSeaGod_CamMove(174 << 17, -1, 216 << 16, 1);
@@ -525,7 +525,7 @@ void Func_02002384(void) {
   Event_ResolvePendingActions(0);
   Func_080d4568()->motionFlags = off;
   Camera_MoveWithinMapBounds(480 << 16, 32 << 16, 340 << 16, 1);
-  Func_02003ac8();
+  FieldCamera_WaitForArrival();
   Actor_SetAngleToward(15, gMainRoutineWork.currentOwner, 0);
   Func_080d47b4(15, 0x100, 40);
   Actor_SetSpritePriority(15, 1);
@@ -547,7 +547,7 @@ void Func_02002430(void) {
   Actor_Stop(15);
   Func_080d4568()->motionFlags = off;
   Camera_MoveWithinMapBounds(564 << 16, 32 << 16, 344 << 16, 1);
-  Func_02003ac8();
+  FieldCamera_WaitForArrival();
   Actor_SetAngleToward(15, gMainRoutineWork.currentOwner, 0);
   Func_080d47b4(15, 0x100, 40);
   Actor_SetSpritePriority(15, 1);
@@ -572,7 +572,7 @@ void Func_020024e4(void) {
   Value3((s32 (*)())Func_080d47b4, gMainRoutineWork.currentOwner, 0x100, 0);
   Func_080d4568()->motionFlags = 0;
   ShrineOfTheSeaGod_CamMove(328 << 16, 32 << 16, 552 << 16, 1);
-  Func_02003ac8();
+  FieldCamera_WaitForArrival();
   /* FAKEMATCH(temporary): the angle in a local holding one constant, built
    * before the coordinates; as the constant 0xc000 in the call, 4 of 112
    * instructions differ in tla-en. */
@@ -608,7 +608,7 @@ void Func_020025fc(void) {
     Func_080d47b4(gMainRoutineWork.currentOwner, 0x100, 0);
     Func_080d4568()->motionFlags = done;
     Camera_MoveWithinMapBounds(328 << 16, 48 << 16, 552 << 16, 1);
-    Func_02003ac8();
+    FieldCamera_WaitForArrival();
     done = 0x4000;
     ShrineOfTheSeaGod_ObjPlaceTurn(14, 424 << 16, 520 << 16, done);
     wait(1);

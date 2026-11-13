@@ -722,7 +722,7 @@ void Func_02001108(void) {
   Actor_WalkTo(8, 352, 264);
   Camera_SetSpeedParameters(0x10000, 0x2000);
   Camera_MoveWithinMapBounds(352 << 16, -1, 196 << 16, 1);
-  Func_02001ffc();
+  FieldCamera_WaitForArrival();
   Actor_WaitForMoveById(8);
   Sound_Play(78);
   Sound_Play(556);
@@ -999,7 +999,7 @@ void Func_02001928(s32 x, s32 z, s32 actor) {
   px = (x << 19) + 0x80000;
   pz = (z << 19) + 0x80000;
   FieldCamera_MoveTo(px, -1, pz, 1);
-  Func_02001ffc();
+  FieldCamera_WaitForArrival();
   Event_PlaySound(144);
   MapGrid_SetShake(0, 0x100000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
@@ -1047,7 +1047,7 @@ void Func_02001a14(void) {
   Func_02001928(59, 19, 13);
   Map_WaitForShakeToSettle();
   FieldCamera_MoveTo(0x1600000, -1, 0xc40000, 1);
-  Func_02001ffc();
+  FieldCamera_WaitForArrival();
   Event_SetFlag(0x200);
   ((struct EventWork687 *)Ram_HeapSlots->eventWork)->unk16a = 200;
   Event_PlaySound(0x212);
@@ -1096,7 +1096,7 @@ void Func_02001a14(void) {
                   &burst);
     wait(1);
   }
-  Func_02001f64(actor);
+  Actor_Release(actor);
   Event_PlaySound(0x22d);
   do {
     wait(10);

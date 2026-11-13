@@ -51,7 +51,7 @@ void Func_020013f0(void) {
   Actor_WaitForMoveById(6);
   Event_Wait(10);
   FieldCamera_MoveTo(PIXELS(432), -1, PIXELS(368), 1);
-  Func_020028f4();
+  FieldCamera_WaitForArrival();
   Event_Wait(10);
   Actor_ShowEmote(18, 0x101, 30);
   Event_ShowMessageThenWait(18, 0, 10);

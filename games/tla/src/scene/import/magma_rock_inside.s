@@ -90,9 +90,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_02004cb0
+	.global Actor_Release
 	.thumb_func
-Func_02004cb0:
+Actor_Release:
 	overlay_veneer Actor_Destroy
 	.global Actor_SetPositionAndResetMotion
 	.thumb_func
@@ -126,9 +126,9 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 Func_0802b450:
 	overlay_veneer Func_080201f0
-	.global Func_02004cf8
+	.global MapGrid_CheckCollision
 	.thumb_func
-Func_02004cf8:
+MapGrid_CheckCollision:
 	overlay_veneer Func_08020210
 	.global Actor_SetSingleChildFlags
 	.thumb_func
@@ -146,9 +146,9 @@ Map_SetScreenShake:
 	.thumb_func
 Map_WaitForShakeToSettle:
 	overlay_veneer Func_08020230
-	.global Func_02004d20
+	.global MapGrid_GetTerrainKind
 	.thumb_func
-Func_02004d20:
+MapGrid_GetTerrainKind:
 	overlay_veneer Func_080202f0
 	.global FieldMessage_Show
 	.thumb_func
@@ -274,9 +274,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02004e20
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02004e20:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Import_EventSetExitRequest
 	.thumb_func
@@ -302,9 +302,9 @@ BattleEffect_ApplyColorToSourceBuffer:
 	.thumb_func
 BattleEffect_StartBufferInterpolation:
 	overlay_veneer BattleEffect_StartBufferInterpolationFar
-	.global Func_02004e58
+	.global BattleEffect_StartEffectObject22
 	.thumb_func
-Func_02004e58:
+BattleEffect_StartEffectObject22:
 	overlay_veneer Func_080c83e0
 	.global Func_02004e60
 	.thumb_func
@@ -334,9 +334,9 @@ BattleEffect_CleanupSceneObjects:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02004e98
+	.global Sprite_ShareVramCacheEntry
 	.thumb_func
-Func_02004e98:
+Sprite_ShareVramCacheEntry:
 	overlay_veneer Func_080c8518
 	.global Party_PlaySavedMusic
 	.thumb_func
@@ -398,9 +398,9 @@ Func_02004f08:
 	.thumb_func
 Func_02004f10:
 	overlay_veneer Func_080c87c0
-	.global Func_02004f18
+	.global EffectSprite_DrawAtWorldPosition
 	.thumb_func
-Func_02004f18:
+EffectSprite_DrawAtWorldPosition:
 	overlay_veneer Func_080c87d0
 	.global BattleEffect_StepVector3
 	.thumb_func

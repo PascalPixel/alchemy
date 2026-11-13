@@ -30,7 +30,7 @@ struct Work020023c4 {
   s16 unk6a;
 };
 
-s32 Func_0200424c(struct Actor *actor, struct Vector3 *position);
+s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
 s32 Func_0200428c(s32 *from, s32 radius, struct Vector3 *to, s32 radius2);
 void Animation_ApplyChildValues(struct Actor *actor, s32 a);
 void Func_02002120(void);
@@ -41,7 +41,7 @@ extern u8 gData_020023c4[];
 #define SHARED_F02002148_ID3 Func_02002120
 #define SHARED_F02002148_ID4 Func_020041cc
 #define SHARED_F02002148_ID5 Func_0200422c
-#define SHARED_F02002148_ID6 Func_0200424c
+#define SHARED_F02002148_ID6 MapGrid_CheckCollision
 #define SHARED_F02002148_ID7 Func_0200428c
 #include "../shared/func_02002148.c"
 #undef SHARED_F02002148_NAME

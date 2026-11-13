@@ -354,10 +354,10 @@ row:
     Event_Wait(1);
   }
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_020049f4();
+  FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(0x10000, 0x2000);
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(424), 1);
-  Func_020049f4();
+  FieldCamera_WaitForArrival();
   Task_Add(Func_02000378, 0xc80);
   Event_PlaySound(207);
   REG_BLDALPHA = 0xf00;
@@ -505,7 +505,7 @@ fade:
   Map_CenterOnFollowedPoint();
   wait(1);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_020049f4();
+  FieldCamera_WaitForArrival();
   {
     s32 width = 6;
     s32 height = 29;
@@ -652,13 +652,13 @@ s32 Func_02000f94(void) {
   return facing;
 }
 
-u32 Func_02004a8c(s32 shop);
+u32 Inn_QuoteRoomPrice(s32 shop);
 void Inn_PlaySleep(s32 roomPrice);
 
 void Func_02000fc4(void) {
   if (Event_GetFlag(0x9fe)) {
     if (Func_02000f94()) {
-      Func_02004a84(11, 13);
+      Inn_CheckIn(11, 13);
     } else {
       Event_Start();
       Event_ResolvePendingActions(0);
@@ -670,7 +670,7 @@ void Func_02000fc4(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     if (Func_02000f94()) {
-      u32 price = Func_02004a8c(11);
+      u32 price = Inn_QuoteRoomPrice(11);
 
       Actor_SetAnimation(13, 5);
       Event_Wait(30);
@@ -702,7 +702,7 @@ void Func_02000fc4(void) {
 
 void Func_020010c8(void) {
   if (Func_02000f94()) {
-    Func_02004a7c(8);
+    Sanctum_Run(8);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -746,7 +746,7 @@ void Func_0200113c(void) {
 
 void Func_020011c0(void) {
   if (Func_02000f94()) {
-    Func_02004a74(29, 12);
+    Shop_Run(29, 12);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -835,23 +835,23 @@ void Func_02001380(void) {
     Actor_FaceDirectionAndWait(15, FACING_NORTH);
     FieldCamera_SetSpeed(0x33333, 0x6666);
     FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(182), 1);
-    Func_020049f4();
+    FieldCamera_WaitForArrival();
     Event_ShowMessage(0x200f, 0);
     Actor_SetAttachedEffect(15, 0x102);
     Event_ShowMessage(0x200f, 0);
     FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(280), 1);
-    Func_020049f4();
+    FieldCamera_WaitForArrival();
     Actor_FaceDirectionAndWait(15, FACING_WEST);
     Event_ShowMessage(0x200f, 0);
     FieldCamera_MoveTo(PIXELS(178), -1, PIXELS(220), 1);
-    Func_020049f4();
+    FieldCamera_WaitForArrival();
     Event_Wait(10);
     FieldCamera_MoveTo(PIXELS(270), -1, PIXELS(220), 1);
-    Func_020049f4();
+    FieldCamera_WaitForArrival();
     Event_Wait(20);
     Event_ShowMessage(15, 0);
     FieldCamera_MoveTo(PIXELS(226), -1, PIXELS(280), 1);
-    Func_020049f4();
+    FieldCamera_WaitForArrival();
     Actor_FaceDirectionAndWait(15, FACING_WEST);
     Event_ShowMessage(0x200f, 0);
   }
@@ -888,7 +888,7 @@ void Func_02001644(void) {
   Event_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0x33333, 0x6666);
   FieldCamera_MoveTo(PIXELS(182), -1, PIXELS(304), 1);
-  Func_020049f4();
+  FieldCamera_WaitForArrival();
   Event_SetMessageId((s32)MsgShamanGiveUpTrialPrompt);
   Event_OpenMessage(15, 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
@@ -1008,7 +1008,7 @@ void Func_02001880(void) {
   Actor_SetPosition(15, 0, 0);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_020048b4();
+  InventorySnapshot_Save();
   Import_EventSetExitRequest(11);
 }
 
@@ -1073,7 +1073,7 @@ void Func_02001aa4(void) {
   Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_020048b4();
+  InventorySnapshot_Save();
   Import_EventSetExitRequest(12);
 }
 

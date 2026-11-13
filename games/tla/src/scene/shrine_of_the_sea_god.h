@@ -116,7 +116,7 @@ void Event_ShowMessageAndWait(s32 speaker, s32 flags);
 s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
 void FieldEffect_SetAttached(s32 actor, s32 emote);
 void Camera_SetSpeedParameters(s32 speed, s32 acceleration);
-void Func_02003ac8(void);
+void FieldCamera_WaitForArrival(void);
 struct ShrineOfTheSeaGodObject *Func_080d4568(void);
 void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
 void Actor_WaitForMoveById(s32 actor);

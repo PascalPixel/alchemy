@@ -47,8 +47,8 @@ extern struct Trigger gData_02002da4[];
 extern struct Trigger gData_0200308c[];
 
 void Event_End(void);
-void Func_02001f00(s32 actor);
-void Func_02001f08(s32 slot, s32 actor);
+void Sanctum_Run(s32 actor);
+void Inn_CheckIn(s32 slot, s32 actor);
 void Func_020007dc(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -107,7 +107,7 @@ void Func_020000fc(void) {
   u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Func_02001f08(1, 22);
+    Inn_CheckIn(1, 22);
   } else {
 #if !TLA_PATCH_1
     // Before patch 1 there is no choice prompt.
@@ -148,7 +148,7 @@ void Func_020001b8(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Func_02001f00(actor);
+    Sanctum_Run(actor);
   } else {
     if (Event_GetFlag(0x8ff))
       FieldEvent_SetMessageId((s32)MsgMadraInteriors149);
@@ -329,7 +329,7 @@ void Func_02000570(void) {
 }
 
 extern u32 gData_020033c8[];
-void Func_02001e68();
+void FieldCamera_WaitForArrival();
 void BattleEffect_LoadActionEffectResources();
 void BattleEffect_SetupObjectPair();
 void BattleEffect_StopMainActor();
@@ -438,7 +438,7 @@ void Func_020007dc(void) {
   Actor_FaceDirection(11, FACING_NORTHEAST, 0);
   FieldEvent_Wait(10);
   FieldCamera_MoveTo(PIXELS(488), -1, PIXELS(820), 1);
-  Func_02001e68();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(7, 2);
   FieldEvent_Wait(20);
@@ -599,7 +599,7 @@ void Func_020007dc(void) {
   Actor_FaceDirection(7, FACING_NORTH, 0);
   Actor_WaitForAnimationChange(8);
   FieldCamera_FollowActor(4, 1);
-  Func_02001e68();
+  FieldCamera_WaitForArrival();
   Actor_FaceEachOther(11, 4, 0);
   Actor_RunRepeatedMotion(11, 2);
   FieldEvent_Wait(20);

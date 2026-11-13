@@ -83,7 +83,7 @@ void Func_020000d0(void) {
       }
     }
   }
-  if (Func_020055f8(gMainRoutineWork.currentOwner) != -1)
+  if (Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner) != -1)
     Func_02005688();
 }
 
@@ -319,11 +319,11 @@ void Func_02000670(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0x20000, 0x4000);
   Camera_SetBounds(PIXELS(248), -1, PIXELS(712), 1);
-  Func_020055e0();
+  FieldCamera_WaitForArrival();
   System_Wait(20);
   FieldCamera_SetSpeed(0x50000, 0xa000);
   FieldCamera_MoveTo(PIXELS(248), -1, PIXELS(872), 1);
-  Func_020055e0();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(120);
   Event_End();
 }
@@ -479,7 +479,7 @@ void Func_02000ad8(void) {
   FieldEvent_Wait(60);
   FieldCamera_SetSpeed(0x30000, 0x6000);
   FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(744), 1);
-  Func_020055e0();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(60);
   Event_End();
 }
@@ -1331,7 +1331,7 @@ void Func_0200236c(struct Actor *object, s32 unused);
 void Func_02002604(void) {
   struct RideWork__s25b0 *work = (struct RideWork__s25b0 *)(gData_020023c4 + 0x188);
 
-  Func_020054a0(work->handle);
+  Actor_Release(work->handle);
   work->handle = NULL;
 }
 

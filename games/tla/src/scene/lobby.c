@@ -24,7 +24,7 @@ void Serial_RemoveIrqHandlers(void);
 void Serial_Initialize(void);
 void Event_Start(void);
 void Event_End(void);
-void Func_02001abc(s32 value);
+void Sanctum_Run(s32 value);
 
 void Func_02000044(void) {
   volatile u16 *ime = &REG_IME;
@@ -365,7 +365,7 @@ struct OfferTable {
   struct OfferList list;
 };
 
-s32 Func_0200192c(void *data, s32 size);
+s32 Serial_StartSend(void *data, s32 size);
 
 s32 Func_02000578(void) {
   s32 result;
@@ -400,7 +400,7 @@ s32 Func_02000578(void) {
       Iwram_CopyWordsEntry(heap, Unit_Get(memberIds[i]), size);
       heap[0x12a] = 2;
       peerSlots[memberIds[i]] = i - 128;
-      if ((transferResult = Func_0200192c(heap, size)) == -1) {
+      if ((transferResult = Serial_StartSend(heap, size)) == -1) {
         result = transferResult;
         goto done;
       }
@@ -444,7 +444,7 @@ test:
 next:
   if (i <= 2) {
     heap[0x12a] = tries = 0;
-    if ((transferResult = Func_0200192c(heap, size)) != -1)
+    if ((transferResult = Serial_StartSend(heap, size)) != -1)
       goto test;
     result = transferResult;
     goto done;
@@ -474,7 +474,7 @@ next:
         j--;
       }
     }
-    if ((transferResult = Func_0200192c(heap, size)) == -1) {
+    if ((transferResult = Serial_StartSend(heap, size)) == -1) {
       result = transferResult;
       goto done;
     }
@@ -577,8 +577,8 @@ check:
 #include "task.h"
 
 void Func_02001944(void *callback, s32 mask);
-void Func_0200198c(s32 layer);
-void Func_02001994(s32 layer);
+void Map_ClearLayerEntryFlag(s32 layer);
+void Map_SetLayerEntryFlag(s32 layer);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 struct Window *Message_OpenWindow(const u8 *message, s32 x, s32 y, s32 flags);
 
@@ -648,9 +648,9 @@ s32 Func_02000864(void) {
   if (!failed) {
     buf = HeapSlot_AllocEwram(216, 0x7c8);
     Task_RemoveFar(Func_02000134);
-    Func_0200198c(5);
+    Map_ClearLayerEntryFlag(5);
     wait(8);
-    Func_02001994(5);
+    Map_SetLayerEntryFlag(5);
     if (Event_GetFlag(0x173)) {
       Actor_FaceActor(8, gMainRoutineWork.currentOwner, 0);
       Event_SetMessageId((s32)MsgGoodLuck2);
@@ -670,9 +670,9 @@ s32 Func_02000864(void) {
       if (LinkLobby_ExchangePartyRecords() < 0) {
         Actor_SetSpeed(4, 0x10000, 0x8000);
         Actor_WalkTo(4, 216, 200);
-        Func_0200198c(5);
+        Map_ClearLayerEntryFlag(5);
         wait(8);
-        Func_02001994(5);
+        Map_SetLayerEntryFlag(5);
         Actor_WaitForMoveById(4);
         HeapSlot_Release(216);
         LinkLobby_WriteSlotValue(0);
@@ -934,7 +934,7 @@ s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
 void Func_02000f50(s32 value) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Func_02001abc(value);
+  Sanctum_Run(value);
   Event_End();
 }
 
@@ -1272,8 +1272,8 @@ s32 Func_02000134(void);
 void Func_02000044(void);
 void Serial_Initialize(void);
 void Func_02001944(void *func, s32 mask);
-void Func_02001994(s32 entry);
-void Func_02001a04(s32 value);
+void Map_SetLayerEntryFlag(s32 entry);
+void Party_RestoreHpPp(s32 value);
 void Sound_LoadReverbCode(s32 preset);
 void LinkLobby_WriteSlotValue(s32 value);
 void Event_StartScreenTransition(void);
@@ -1304,7 +1304,7 @@ s32 LinkLobby_RunRoundResult(void) {
   MapGrid_CopyCellAttributes(11, 11, 1, 1, 13, 10);
   LinkLobby_WriteSlotValue(4);
   wait(1);
-  Func_02001994(5);
+  Map_SetLayerEntryFlag(5);
   {
     u16 *name = gData_02003a74;
 
@@ -1470,7 +1470,7 @@ s32 LinkLobby_RunRoundResult(void) {
   Task_Add(func, 0x480);
   Func_02001944(func, 1);
   if (gMainRoutineWork.entrance != 8 || !Event_GetFlag(0x173)) {
-    Func_02001a04(1);
+    Party_RestoreHpPp(1);
     DjinnRecovery_CountDownTwenty();
   }
   return 0;

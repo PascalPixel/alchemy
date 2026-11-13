@@ -54,9 +54,9 @@ GameFlag_Test:
 	.thumb_func
 GameFlag_SetBit:
 	overlay_veneer GameFlag_SetBitFar
-	.global Func_02001f9c
+	.global Actor_Release
 	.thumb_func
-Func_02001f9c:
+Actor_Release:
 	overlay_veneer Actor_Destroy
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -190,9 +190,9 @@ Camera_FollowActor:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_020020ac
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_020020ac:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Import_EventSetExitRequest
 	.thumb_func
@@ -242,9 +242,9 @@ Func_02002104:
 	.thumb_func
 Func_0200210c:
 	overlay_veneer Func_080c87c8
-	.global Func_02002114
+	.global Field_StartColorTransition
 	.thumb_func
-Func_02002114:
+Field_StartColorTransition:
 	overlay_veneer Func_080c87f8
 	.global Field_StartPaletteTransition
 	.thumb_func

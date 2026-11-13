@@ -39,7 +39,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void VenusLighthouseEntrance_RunActorSparkBurst(void *object) {
-  Func_02002a34(8, 0x4084);
+  Field_StartColorTransition(8, 0x4084);
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode(Actor_Get(5), 2);
   FieldEvent_Wait(20);
@@ -152,7 +152,7 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.entrance == 0x62) {
     gMainRoutineWork.secondary = 1;
     gMainRoutineWork.entrance = 1;
-    Func_020028a4(1);
+    Party_RestoreHpPp(1);
     Func_02001c30();
   }
   if (gMainRoutineWork.entrance == 0x63) {
@@ -185,7 +185,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 s32 Actor_StartScript();
-void Func_0200298c(void);
+void FieldCamera_WaitForArrival(void);
 
 void Func_0200030c(void) {
   s32 t1;
@@ -227,7 +227,7 @@ void Func_0200030c(void) {
   Event_PlaySound(165);
   FieldActor_WaitForMoveById(10);
   FieldActor_WaitForMoveById(11);
-  Func_0200298c();
+  FieldCamera_WaitForArrival();
 }
 
 /* VIEW(venus_lighthouse_entrance): variable gData_02003040 as extern u8 gData_02003040[]; the definition has u32 gData_02003040[] = { 1, 0, 1, 38, }; tried as the definition's extern s32 gData_02003040[], it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1535: conflicting types for `gData_02003040'. */
@@ -291,7 +291,7 @@ void Func_02000510(void) {
   Actor_WalkTo(5, 0x178, 0x168);
   FieldEvent_Wait(30);
   FieldCamera_MoveTo(0x1780000, -1, 0x1a80000, 1);
-  Func_0200298c();
+  FieldCamera_WaitForArrival();
   FieldActor_WaitForMoveById(5);
   FieldEvent_Wait(10);
   Actor_ShowEmote(12, 0x102, 40);
@@ -352,7 +352,7 @@ void Func_02000510(void) {
   Actor_FaceDirection(20, 0xe000, 0);
   FieldEvent_Wait(30);
   FieldCamera_MoveTo(0x1780000, -1, 0x1680000, 1);
-  Func_0200298c();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   FieldActor_LaunchFromLeader(8, -16, -16, 0x4000);
   FieldActor_LaunchFromLeader(9, 16, -16, 0x4000);
@@ -442,7 +442,7 @@ void Func_02000510(void) {
   Actor_FaceDirection(8, 0x5000, 0);
   FieldEvent_Wait(20);
   FieldCamera_MoveTo(0x1380000, -1, 0x1a80000, 1);
-  Func_0200298c();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(9, 0, 10);
   FieldEvent_ShowMessageThenWait(5, 0, 10);
@@ -457,7 +457,7 @@ void Func_02000510(void) {
   Actor_ShowEmote(18, 0x107, 30);
   FieldEvent_ShowMessageThenWait(18, 0, 10);
   FieldCamera_MoveTo(0x1780000, -1, 0x1a80000, 1);
-  Func_0200298c();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_FaceDirection(9, 0x2000, 0);
   FieldEvent_Wait(25);
@@ -467,7 +467,7 @@ void Func_02000510(void) {
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(5, 0, 10);
   FieldCamera_MoveTo(0x1780000, -1, 0x1680000, 1);
-  Func_0200298c();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   Actor_FaceDirection(9, 0x8000, 0);
   FieldEvent_Wait(20);
@@ -486,7 +486,7 @@ void Func_02000510(void) {
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(9, 0, 10);
   FieldCamera_MoveTo(0x1780000, -1, 0x1980000, 1);
-  Func_0200298c();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_FaceDirection(9, 0x3000, 0);
   FieldEvent_Wait(20);
@@ -538,7 +538,7 @@ void Func_02000510(void) {
   BattleEffect_SetObjectUpdateMode((s32)record, 2);
   Event_PlaySound(178);
   FieldEvent_Wait(20);
-  Func_02002a34(8, 0x4084);
+  Field_StartColorTransition(8, 0x4084);
   FieldEvent_Wait(60);
   Event_PlaySound(0x186);
   FieldActor_SetSpritePriority(12, 0);
@@ -586,7 +586,7 @@ void Func_02000510(void) {
   Actor_WalkByAndWait(9, -16, 16);
   Actor_FaceDirection(9, 0x6000, 0);
   FieldCamera_MoveTo(0x1680000, -1, 0x1980000, 1);
-  Func_0200298c();
+  FieldCamera_WaitForArrival();
   FieldActor_StartRepeatedMotion(17, 3);
   Actor_SetAttachedEffect(17, 0x102);
   FieldActor_StartRepeatedMotion(18, 3);
@@ -748,7 +748,7 @@ void Func_02000510(void) {
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(9, 0, 10);
   FieldCamera_MoveTo(0x1780000, -1, 0x1980000, 1);
-  Func_0200298c();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   Actor_FaceDirection(9, 0xb000, 0);
   {
@@ -865,8 +865,8 @@ void Func_02000510(void) {
   Actor_WalkByAndWait(9, 64, 0);
   Actor_SetPosition(9, 0, 0);
   FieldEvent_Wait(30);
-  Func_02002994(5, 1);
-  Func_0200298c();
+  FieldCamera_MoveToActorById(5, 1);
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   Actor_ShowEmote(8, 0x105, 30);
   FieldEvent_ShowMessageThenWait(8, 0, 10);
@@ -1012,7 +1012,7 @@ void Func_02001c30(void) {
   FieldActor_SetSpritePriority(8, 2);
   Actor_SetSpriteRotationById(5, 0x4000);
   Actor_SetSingleChildFlags(((s32)Actor_Get(5)), 0);
-  Func_02002994(5, 0);
+  FieldCamera_MoveToActorById(5, 0);
   FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1b4), s32, 0) = 0x3c;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1241,7 +1241,7 @@ void Func_02001fd0(void) {
       frameStep = state->frame >> 2;
       mask = 3;
       sprite->tile = work->tileTop + (frameStep & mask) * 8;
-      Func_02002a14(sprite, state);
+      EffectSprite_DrawAtWorldPosition(sprite, state);
     }
     if (i <= 15) {
       state = &work->states[i];
@@ -1254,7 +1254,7 @@ void Func_02001fd0(void) {
                   0xfffe0000;
       sprite = &work->sprites[i];
       sprite->tile = work->tile + ((state->frame >> 2) & 3) * 8;
-      Func_02002a14(sprite, state);
+      EffectSprite_DrawAtWorldPosition(sprite, state);
       if (work->follow != 0)
         object->y = state->y;
     }
@@ -1266,7 +1266,7 @@ void Func_02001fd0(void) {
 // ---- games/tla/src/scene/venus_lighthouse_entrance/s23a4.c ----
 // Scene code of overlay 0x64d, in ROM order, from s23a4's offset up to the next object the overlay links.
 
-s32 Func_02002a2c(struct Actor *actor);
+s32 BattleEffect_GetObjectDepth(struct Actor *actor);
 
 void Func_020023a4(s32 id) {
   struct GlowWork *work = HeapSlot_AllocFar(220, 0x860);
@@ -1291,8 +1291,8 @@ void Func_020023a4(s32 id) {
   sprite = work->sprites;
   for (i = 15; i >= 0;) {
     Func_02002a0c(sprite, 8, 8, 0x40000000, tile);
-    sprite->unk1e = Func_02002a2c(actor) - 2;
-    sprite->priority = Func_02002a24(actor);
+    sprite->unk1e = BattleEffect_GetObjectDepth(actor) - 2;
+    sprite->priority = BattleEffect_GetObjectPriority(actor);
     sprite->fullColor = 1;
     sprite->palette = 0;
     state->frame = -1;
@@ -1323,7 +1323,7 @@ void Func_020023a4(s32 id) {
       goto wait;
   }
   FieldTask_Remove(Func_02001fd0);
-  Func_02002874(effect);
+  Actor_Release(effect);
   Resource_ResetEntry(resource);
   HeapSlot_Release(220);
 }
@@ -1341,7 +1341,7 @@ void Func_0200258c(void) {
     value = state->frame;
     if ((u32)value < 16) {
       sprite->tile = work->unk2182 + ((value >> 1) & 7) * 8;
-      Func_02002a14(sprite, state);
+      EffectSprite_DrawAtWorldPosition(sprite, state);
       BattleEffect_StepVector3(state, 64, 0);
       state->frame++;
     }
@@ -1374,8 +1374,8 @@ void Func_0200260c(struct Actor *source, s32 x, s32 y, s32 z) {
   struct SparkSprite__venus_lighthouse_entrance *sprite = &work->sprites[*next];
   struct SparkState *state = &work->states[*next];
 
-  sprite->priority = Func_02002a24(source);
-  sprite->unk1e = Func_02002a2c(source);
+  sprite->priority = BattleEffect_GetObjectPriority(source);
+  sprite->unk1e = BattleEffect_GetObjectDepth(source);
   state->frame = 0;
   state->x = x;
   state->y = y;

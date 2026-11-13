@@ -15,7 +15,7 @@ void Func_02000800(void);
 void Func_02000a90(s32 id, s32 a);
 void Func_02000a98(s32 id, s32 a, s32 b);
 void Event_End(void);
-void Func_02000a30(void);
+void FieldCamera_WaitForArrival(void);
 void Func_020005e8(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -173,7 +173,7 @@ void Func_020003ac(void) {
   Event_SetMessageId((s32)MsgWaahhhItS);
   Actor_WalkTo(gMainRoutineWork.currentOwner, 472, 320);
   FieldCamera_MoveTo(PIXELS(456), -1, PIXELS(280), 1);
-  Func_02000a30();
+  FieldCamera_WaitForArrival();
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
   Event_Wait(10);
@@ -265,7 +265,7 @@ void Func_02000650(void) {
   Actor_FaceActor(gMainRoutineWork.currentOwner, 8, 0);
   FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 0x100, 0);
   Camera_FollowActor(8, 1);
-  Func_02000a30();
+  FieldCamera_WaitForArrival();
   Actor_Jump(8, 4, 0);
   Event_Wait(16);
   Actor_Jump(8, 4, 0);
@@ -295,7 +295,7 @@ void Func_0200071c(void) {
   Actor_WalkTo(gMainRoutineWork.currentOwner, 488, 440);
   Event_Wait(16);
   Camera_FollowActor(8, 1);
-  Func_02000a30();
+  FieldCamera_WaitForArrival();
   Actor_Jump(8, 4, 0);
   Event_Wait(16);
   Actor_Jump(8, 4, 0);

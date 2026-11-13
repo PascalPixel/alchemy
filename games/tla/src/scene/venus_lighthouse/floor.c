@@ -35,7 +35,7 @@ void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Func_02001b2c(struct VenusActor *object, s32 mode);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Script_WaitForEventTimeout(struct Actor *actor);
-s32 Func_02001b64(struct VenusActor *object, s32 *position);
+s32 MapGrid_CheckCollision(struct VenusActor *object, s32 *position);
 /* VIEW(floor): routine Func_080d47b4 as void Func_080d47b4(s32 actor, s32 height, s32 frames); event.h has s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames); tried as the definition's struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags, s32 state), it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse/floor.c:38: conflicting types for `Func_080d47b4'. */
 extern void Func_080d47b4__floor(s32 actor, s32 height, s32 frames) __asm__("Func_080d47b4");
 s32 VenusLighthouse_EmitRisingParticles(struct VenusActor *object);
@@ -415,7 +415,7 @@ void Func_02000d30(void) {
 
   FieldEvent_SetMessageId((s32)MsgVenusLighthouseAreYouSureWeShouldBeLeaving);
   FieldCamera_FollowActor(8, 1);
-  Func_02001c4c();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(30);
   Venus_ObjWalk(5, 664, 840);
   Actor_FaceDirection(5, 0, 0);
@@ -437,7 +437,7 @@ void Func_02000d30(void) {
   Venus_ObjTurn(8, FACING_WEST, 0);
   FieldEvent_Wait(20);
   Venus_CamMove(PIXELS(696), -1, PIXELS(920), 1);
-  Func_02001c4c();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(5, 2);
   FieldEvent_Wait(10);

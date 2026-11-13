@@ -276,12 +276,12 @@ s32 Scene_PrepareMap(void) {
 #include "main_routine_work.h"
 #include "event_inline.h"
 
-s32 Func_02004d20(s32 layer, s32 x, s32 z);
+s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 s32 Func_02004ef0(s32 unused, s32 key, s32 value);
 
 /// On entering, sets each listed pillar from its two flags, then lifts the
 /// leader onto the ground under it.
-DEFINE_FUNC_02002D08(Func_02003f44, Func_02004ed0, Func_02004d20, Func_02004df8,
+DEFINE_FUNC_02002D08(Func_02003f44, Func_02004ed0, MapGrid_GetTerrainKind, Func_02004df8,
     Func_02004ef0, Func_02004c98)
 
 #include "../shared/trial_road.h"
@@ -339,7 +339,7 @@ void Actor_MoveToObject(s32 id, s32 owner);
 /// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
 /// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
 /// it copy actor 9's visual attributes.
-DEFINE_FUNC_020030BC(Func_020042f8, Func_020042e0, Func_02004ed0, Func_02004d20,
+DEFINE_FUNC_020030BC(Func_020042f8, Func_020042e0, Func_02004ed0, MapGrid_GetTerrainKind,
     Func_02004df8, Func_02004ef0)
 
 void Func_02004460(struct Actor *object, struct Actor *target) {

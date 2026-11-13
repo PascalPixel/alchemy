@@ -11,7 +11,7 @@ void Func_0200031c(void);
 extern s16 gSceneRegions[];
 extern u32 gData_02002dec[];
 
-void Func_020028f4();
+void FieldCamera_WaitForArrival();
 
 void Func_02000154(s32 arg0);
 

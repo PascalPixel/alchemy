@@ -42,7 +42,7 @@ void Func_020046e8(s32 spread) {
           285, (i << 17) + leader->x - 0x80000, y - 0x20000, leader->z);
     }
     if (effect != 0) {
-      frame = Func_02004e98(effect->sprite, frame);
+      frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
       Actor_SetSingleChildFlags(effect, 0);
@@ -81,7 +81,7 @@ void Func_0200481c(void) {
     effect = (struct FieldEffect *)FieldActor_Create(285, leader->x, leader->y,
                                                      leader->z);
     if (effect != 0) {
-      frame = Func_02004e98(effect->sprite, frame);
+      frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
       Actor_SetSingleChildFlags(effect, 0);
@@ -108,10 +108,10 @@ void Func_0200481c(void) {
 #include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
 #include "map.h"
 
-s32 Func_02004d20(s32 layer, s32 x, s32 z);
+s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 s32 Func_02004ef0(s32 layer, s32 shape, s32 height);
 
-DEFINE_FUNC_02000BC0(Func_02004934, Func_02004d20, Func_02004ef0)
+DEFINE_FUNC_02000BC0(Func_02004934, MapGrid_GetTerrainKind, Func_02004ef0)
 
 #include "../magma_rock_inside.h"
 
@@ -123,7 +123,7 @@ void Func_020049c0(s32 a, s32 b) {
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-DEFINE_FUNC_0200379C(Func_020049d8, Func_02004f18)
+DEFINE_FUNC_0200379C(Func_020049d8, EffectSprite_DrawAtWorldPosition)
 
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
 /// ring that next walks round.

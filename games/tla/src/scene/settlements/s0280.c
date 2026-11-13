@@ -91,7 +91,7 @@ void Func_02000404(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(11, 0, 0);
   Event_SetFlag(0xf5d);
-  Func_02002130(193, 3);
+  BattleEffect_StartEffectObject22(193, 3);
   mode = 0;
   Party_GiveItem(193, mode);
   Event_End();
@@ -222,7 +222,7 @@ void Func_02000714(struct Actor *object) {
   object->scaleY += step;
   object->timer += 2;
   if (--*(s32 *)&object->watchedObject == 0)
-    Func_02002000(object);
+    Actor_Release(object);
 }
 
 void Func_02000758(s32 x, s32 y, s32 z) {
@@ -515,7 +515,7 @@ void Func_02000d14(void) {
 void Func_02000e04(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 514;
   FieldTask_AddFrame(Func_02000d14, 0x480);
-  Func_02002168(170);
+  Scene_QueueMusic(170);
   Func_02000ed0();
 }
 

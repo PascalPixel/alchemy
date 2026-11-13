@@ -30,7 +30,7 @@ void Func_02000288(void);
 
 void Func_020002cc(void);
 
-void Func_0200206c(void);
+void FieldCamera_WaitForArrival(void);
 
 extern s16 gData_020020dc[];
 
@@ -43,7 +43,7 @@ void Func_020020cc(const void *data);
 extern u32 gData_0200247c[];
 extern u32 gData_02002120[];
 
-void Func_02001f14(struct Actor *object);
+void Actor_Release(struct Actor *object);
 
 extern u32 gData_020020e4[];
 extern u32 gData_02002498[];

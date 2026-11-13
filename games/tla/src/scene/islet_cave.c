@@ -559,13 +559,13 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
   x = ((leader->x + (dx << 16)) & 0xfff00000) + 0x80000;
   z = ((leader->z + (dz << 16)) & 0xfff00000) + 0x80000;
   leader->speed = 0x10000;
-  leader->acceleration = 0x8000;
+  leader->acceleration = px(1) / 2;
   Actor_SetMoveTarget(leader, x, leader->y, z);
   Actor_SelectAnimation(leader, 27);
   x = ((actor->x + (dx << 16)) & 0xfff00000) + 0x80000;
   z = ((actor->z + (dz << 16)) & 0xfff00000) + 0x80000;
   actor->speed = 0x10000;
-  actor->acceleration = 0x8000;
+  actor->acceleration = px(1) / 2;
   Actor_SetMoveTarget(actor, x, actor->y, z);
   if (dx < 0 || dz < 0) {
     Actor_SelectAnimation(actor, 4);
@@ -765,11 +765,11 @@ void Func_0200115c(void) {
 
     Event_SetFlag(FLAG_SCENE_TEMP_30);
     Actor_SetPosition(9, 296, 160);
-    object->speedLimit = 0x18000;
+    object->speedLimit = px(3) / 2;
     object->velocityY = PIXELS(15);
     Actor_MoveToAndWait(9, 344, ((owner->z >> 19) << 3) + 24);
     Actor_Stop(8);
-    object->speedLimit = 0x10000;
+    object->speedLimit = px(1);
     Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, 9, 0);
   }
 }

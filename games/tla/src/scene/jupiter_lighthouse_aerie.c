@@ -471,19 +471,19 @@ void Func_02000930(void) {
   facing = linked->facing;
   actor->x = (((linked->x >> 19) & ~1) + (facing >> 13) - 1) << 19;
   actor->z = (((linked->z >> 19) & ~1) - ((facing >> 13) & 2) + 1) << 19;
-  actor->velocityY = 0x60000;
+  actor->velocityY = px(6);
   actor->priorityFlags = 1;
   actor->motionFlags = 3;
   Actor_SetSpriteFlags(actor, 1);
   Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
   shadow = FieldCamera_GetActor();
-  shadow->speedLimit = 0x80000;
-  shadow->acceleration = 0x10000;
+  shadow->speedLimit = px(8);
+  shadow->acceleration = px(1);
   shadow->motionFlags = 0;
   FieldActor_SetMoveTargetFixed(
       shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z), actor->z);
   i = 0;
-  while (i <= 59 && actor->y > actor->terrainHeight + 0x100000) {
+  while (i <= 59 && actor->y > actor->terrainHeight + px(16)) {
     i++;
     System_Wait(1);
   }
@@ -609,11 +609,11 @@ struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   object->unk62 = 0;
   object->unk63 = 0;
   object->update = Whirlwind_Update;
-  object->speedLimit = 0x18000;
+  object->speedLimit = px(3) / 2;
   options.priority = 1;
   options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y, position.z - 0x60000, 0, 0, 0,
-                    0x30000, &options);
+  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, 0x30000,
+                    &options);
   return object;
 }
 
@@ -961,8 +961,8 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   work->start[0] = work->from[0];
   work->start[1] = work->from[1];
   work->start[2] = work->from[2];
-  carrier->speedLimit = 0x8000;
-  carrier->acceleration = 0x8000;
+  carrier->speedLimit = px(1) / 2;
+  carrier->acceleration = px(1) / 2;
   Actor_StartIdle(carrier);
   FieldActor_SetMoveTargetFixed(carrier, work->start[0], work->start[1],
                                 work->start[2]);

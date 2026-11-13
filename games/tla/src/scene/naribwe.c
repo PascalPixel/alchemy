@@ -263,8 +263,8 @@ s32 Scene_Initialize(void) {
   Actor_SetSpriteFlags(Actor_GetById(10), 0);
   Actor_SetSpriteFlags(Actor_GetById(23), 0);
   Actor_GetById(23)->scaleY = 0x19999;
-  Actor_GetById(27)->scaleX = 0x8000;
-  Actor_GetById(27)->scaleY = 0x8000;
+  Actor_GetById(27)->scaleX = Q16_ONE / 2;
+  Actor_GetById(27)->scaleY = Q16_ONE / 2;
   Naribwe_HideStone();
   if (Event_GetFlag(FLAG_SCENE_TEMP_01))
     Actor_SetPosition(23, 0, 0);

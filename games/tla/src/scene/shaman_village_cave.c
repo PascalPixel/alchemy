@@ -184,7 +184,7 @@ void ShamanVillageCave_EddyFlees(void) {
   Actor_SetDestinationOffset(17, dx << 4, 0);
   FieldActor_WaitForMoveById(17);
   Actor_SetDestinationOffset(17, dx * 48, 0);
-  object->velocityY = 0x80000;
+  object->velocityY = px(8);
   dz = -dz;
   FieldActor_WaitForMoveById(17);
   Actor_SetDestinationOffset(17, 0, dz);
@@ -614,7 +614,7 @@ s32 Scene_Initialize(void) {
     object = Actor_Get(15);
     object->motionFlags = 0;
     object->priorityFlags = 0;
-    object->x = 0x2680000;
+    object->x = px(616);
     object->y = 0;
     Actor_SetSpriteFlags(object, 0);
     MapGrid_CopyCellAttributes(40, 19, 1, 1, 38, 19);

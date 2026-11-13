@@ -137,8 +137,8 @@ void Func_0200008c(struct Actor *object) {
     u32 r = Random16();
 
     *timer = *timer + ((((r << 2) + r) * 16) >> 16) + 40;
-    object->scaleX = 0x12000;
-    object->scaleY = 0x11000;
+    object->scaleX = Q16_ONE * 9 / 8;
+    object->scaleY = Q16_ONE * 17 / 16;
   }
 }
 
@@ -221,14 +221,14 @@ void Func_020001d8(void) {
   FieldActor_SetSpritePriority(8, 1);
   object = Actor_Get(8);
   object->motionFlags = 4;
-  object->y = 0x700000;
+  object->y = px(112);
   Actor_SetSpriteColorMode(object, 5);
   Actor_SetSpriteFlags(object, 0);
   object->priorityFlags |= 0x20;
   FieldActor_SetSpritePriority(9, 2);
   object = Actor_Get(9);
   object->motionFlags = 4;
-  object->y = 0x700000;
+  object->y = px(112);
   object->scaleX = 0x14ccc;
   object->scaleY = 0x14ccc;
   Actor_SetSpriteColorMode(object, 5);
@@ -309,7 +309,7 @@ void Func_020004a4(void) {
   u32 phase;
 
   if (anchor != NULL && (phase = Data_0200eb60 & 15) == 0) {
-    object = FieldActor_Create(0x2a0, anchor->x + 0x80000,
+    object = FieldActor_Create(0x2a0, anchor->x + px(8),
                                anchor->y + offset + 0x80000, anchor->z);
     offset = (offset / 0x60000) << 16;
     if (object != NULL) {
@@ -349,7 +349,7 @@ void Func_020005a0(struct Actor *object) {
   object->z = (Math_Sin(angle) << 4) + 0x1080000;
   object->targetX = object->x;
   object->targetZ = object->z;
-  if (object->z < 0x1080000)
+  if (object->z < px(264))
     ((struct FieldSprite *)object->sprite)->priority = 2;
   else
     ((struct FieldSprite *)object->sprite)->priority = 1;
@@ -1740,18 +1740,16 @@ void Orbs_SpawnRising(void) {
     u32 random;
 
     random = Random16();
-    effect = CreateOrbitEffect(0x2a0, center->x,
-                               (s32)((u32)(random << 8) >> 16 << 16) +
-                                   center->y - 0x1c0000,
-                               center->z);
+    effect = CreateOrbitEffect(
+        0x2a0, center->x,
+        (s32)((u32)(random << 8) >> 16 << 16) + center->y - px(28), center->z);
   } else {
     u32 random;
 
     random = Random16();
-    effect = CreateOrbitEffect(0x2a0, center->x,
-                               (s32)((u32)(random << 6) >> 16 << 16) +
-                                   center->y - 0x1c0000,
-                               center->z);
+    effect = CreateOrbitEffect(
+        0x2a0, center->x,
+        (s32)((u32)(random << 6) >> 16 << 16) + center->y - px(28), center->z);
   }
   if (effect != 0) {
     sprite = effect->sprite;
@@ -1804,11 +1802,11 @@ void Func_02003370(void) {
     MapGrid_SetShake(1, 1, 1);
     break;
   case 24:
-    anchor->x = 0x2000000;
-    anchor->y = -0x1680000;
-    anchor->z = 0xcc0000;
-    anchor->scaleX = 0x10000;
-    anchor->scaleY = 0x10000;
+    anchor->x = px(512);
+    anchor->y = -px(360);
+    anchor->z = px(204);
+    anchor->scaleX = Q16_ONE;
+    anchor->scaleY = Q16_ONE;
     SceneActor_ParkRecord(anchor);
     Actor_SetScript(8, gData_02005b54);
     break;
@@ -1827,7 +1825,7 @@ void Func_02003370(void) {
     break;
   case 26:
     Data_02006ccc--;
-    if (anchor->y > 0x140000) {
+    if (anchor->y > px(20)) {
       Data_02006ccc = 999;
       FieldTask_Remove(Func_02003370);
     } else {
@@ -1962,7 +1960,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
     Actor_SetSpriteFlags(created, 0);
     A(object)->speedLimit = 0x6666;
     A(object)->acceleration = 0xccc;
-    A(object)->gravity = 0x8000;
+    A(object)->gravity = px(1) / 2;
     block = HeapSlot_Alloc(68, 0x608);
     Item_LoadIcon(ITEM_MARS_STAR);
     tiles = (block + 0x400);

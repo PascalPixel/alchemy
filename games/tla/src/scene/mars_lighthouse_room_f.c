@@ -353,7 +353,7 @@ void Func_02000170(void) {
 
   angle = ((angle + 2) & 12) << 12;
   position[0] = object->x;
-  position[1] = (object->y + 0x40000) & 0xfff80000;
+  position[1] = (object->y + px(4)) & 0xfff80000;
   position[2] = object->z;
   FieldVector_AddPolarOffset(0x100000, angle, position);
   object = Actor_FindAtCell(position, 1);
@@ -564,7 +564,7 @@ void Func_0200055c(s32 id) {
         object->scaleY = scale;
         object->gravity = 0x547a;
         object->velocityX = vx;
-        object->bounce = 0x8000;
+        object->bounce = Q16_ONE / 2;
       }
       Actor_SetSpriteColorMode(object, 1);
     }
@@ -1210,23 +1210,23 @@ void Func_0200167c(void) {
   facing >>= 13;
   actor->x = (x + facing - 1) << 19;
   actor->z = (((linked->z >> 19) & ~1) - (facing & 2) + 1) << 19;
-  actor->velocityY = 0x60000;
+  actor->velocityY = px(6);
   *(u8 *)&actor->priorityFlags = 1;
   *motion = 3;
   Actor_SetSpriteFlags(actor, 1);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   shadow = FieldCamera_GetActor();
-  shadow->speedLimit = 0x80000;
-  shadow->acceleration = 0x10000;
+  shadow->speedLimit = px(8);
+  shadow->acceleration = px(1);
   *(u8 *)&shadow->motionFlags = 0;
   FieldActor_SetMoveTargetFixed(
       shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z), actor->z);
   i = 0;
-  if (actor->y > actor->terrainHeight + 0x100000) {
+  if (actor->y > actor->terrainHeight + px(16)) {
   fall:
     System_Wait(1);
     i++;
-    if (i <= 59 && actor->y > actor->terrainHeight + 0x100000)
+    if (i <= 59 && actor->y > actor->terrainHeight + px(16))
       goto fall;
   }
   Event_PlaySound(SE_LANDING_THUD);
@@ -1353,11 +1353,11 @@ struct GustObject *Func_02001a54(struct GustObject *source) {
   object->unk62 = 0;
   object->unk63 = 0;
   object->update = Whirlwind_Update;
-  object->speedLimit = 0x18000;
+  object->speedLimit = px(3) / 2;
   options.priority = 1;
   options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y, position.z - 0x60000, 0, 0, 0,
-                    0x30000, &options);
+  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, 0x30000,
+                    &options);
   return object;
 }
 
@@ -2364,7 +2364,7 @@ next:
       object->gravity = 0x547a;
       object->scaleX = scale;
       object->scaleY = object->scaleX;
-      object->bounce = 0x8000;
+      object->bounce = Q16_ONE / 2;
       Actor_SetSpriteColorMode(object, 1);
     }
   }
@@ -2454,7 +2454,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       actor->targetZ = 0x80000000;
       actor->targetY = 0x80000000;
       actor->targetX = 0x80000000;
-      actor->acceleration = 0x4000;
+      actor->acceleration = px(1) / 4;
       actor->timer = 1;
       Event_PlaySound(SE_CRASH);
       /* FAKEMATCH(wrapper): forwarded. */
@@ -2503,9 +2503,9 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       }
     }
 
-    if (actor->scaleX < 0x10000) {
-      actor->scaleX += 0x1000;
-      actor->scaleY += 0x1000;
+    if (actor->scaleX < Q16_ONE) {
+      actor->scaleX += Q16_ONE / 16;
+      actor->scaleY += Q16_ONE / 16;
     }
     FieldActor_SetMoveTargetFixed(actor, position.x, position.y, position.z);
 
@@ -2522,8 +2522,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
   } else if (state == 1) {
     actor->movementState = 0;
     if (actor->scaleX > 0) {
-      actor->scaleX -= 0x1000;
-      actor->scaleY -= 0x1000;
+      actor->scaleX -= Q16_ONE / 16;
+      actor->scaleY -= Q16_ONE / 16;
       Func_02002d08(actor);
     } else {
       actor->z = 0;
@@ -2583,8 +2583,8 @@ void Func_02003304(struct Actor *self) {
                                        position[2]);
   actor->update = Actor_RollAndCrumble;
   actor->actionFlags = 0;
-  actor->speedLimit = 0x80000;
-  actor->acceleration = 0x2000;
+  actor->speedLimit = px(8);
+  actor->acceleration = px(1) / 8;
   sprite->rotation = angle - 0x4000;
   actor->scaleX = 0;
   do {

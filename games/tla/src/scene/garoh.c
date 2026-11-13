@@ -861,12 +861,12 @@ extern void Func_02001360__push(s32 x, s32 y, s32 z, s32 value,
 void Func_020013b0(s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  Func_02001360__push(object->x + 0x80000, object->y + 0x1c0000, object->z,
-                      0x1000, 20);
+  Func_02001360__push(object->x + px(8), object->y + px(28), object->z, 0x1000,
+                      20);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(20);
-  Func_02001360__push(object->x - 0x80000, object->y + 0x1c0000, object->z,
-                      0xf000, 20);
+  Func_02001360__push(object->x - px(8), object->y + px(28), object->z, 0xf000,
+                      20);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(20);
 }

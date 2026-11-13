@@ -171,8 +171,8 @@ s32 PushTarget_FillFootprint(s32 id);
 
 s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
-  Actor_Get(ACTOR_ARCHER_STATUE)->scaleX = 0xc000;
-  Actor_Get(ACTOR_ARCHER_STATUE)->scaleY = 0xc000;
+  Actor_Get(ACTOR_ARCHER_STATUE)->scaleX = Q16_ONE * 3 / 4;
+  Actor_Get(ACTOR_ARCHER_STATUE)->scaleY = Q16_ONE * 3 / 4;
   FieldActor_SetSpritePriority(ACTOR_FIRST_LOG + 1, 3);
   FieldActor_SetSpritePriority(ACTOR_FIRST_LOG + 3, 3);
   Actor_DisableById(ACTOR_FIRST_LOG);
@@ -201,8 +201,8 @@ s32 Scene_PrepareMap(void) {
     struct Actor *object = Actor_Get(ACTOR_PILLAR);
 
     object->motionFlags = 0;
-    object->terrainHeight = -0x200000;
-    object->y = -0x200000;
+    object->terrainHeight = -px(32);
+    object->y = -px(32);
     Actor_SetPosition(ACTOR_PILLAR, 104, 232);
     MapGrid_SetCellHeight(object->x, object->z, 0, 0);
     MapGrid_SetAttributeBAt(object->x, object->z, 0, 128);
@@ -285,11 +285,11 @@ struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   object->unk62 = 0;
   object->unk63 = 0;
   object->update = Whirlwind_Update;
-  object->speedLimit = 0x18000;
+  object->speedLimit = px(3) / 2;
   options.priority = 1;
   options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y, position.z - 0x60000, 0, 0, 0,
-                    0x30000, &options);
+  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, 0x30000,
+                    &options);
   return object;
 }
 

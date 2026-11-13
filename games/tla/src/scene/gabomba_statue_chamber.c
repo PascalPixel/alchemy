@@ -323,8 +323,7 @@ void Func_02000184(void) {
     leader = OBJECT(gMainRoutineWork.currentOwner);
     object = gData_02002058;
     object->motionFlags = 0;
-    Actor_SetMoveTarget((s32)object, leader->x, leader->y + 0x240000,
-                        leader->z);
+    Actor_SetMoveTarget((s32)object, leader->x, leader->y + px(36), leader->z);
     Actor_WaitForMove((s32)gData_02002058);
   }
   PartyInventory_GiveItem(ITEM_BLACK_CRYSTAL, 0);
@@ -691,7 +690,7 @@ void Func_020010d4(void) {
   Actor_SetModeById(9, 1);
   Actor_SetModeById(10, 1);
   statue->velocityY = PIXELS(3);
-  statue->gravity = 0x8000;
+  statue->gravity = px(1) / 2;
   Actor_SetSpeed(13, 1.6);
   Actor_MoveToAndWait(13, 392, 234);
   Event_Wait(10);
@@ -995,8 +994,8 @@ void GabombaStatueChamber_InitializeRoom2(void) {
         REG_BLDALPHA = alpha;
         blend++;
       }
-      front->y += 0x10000;
-      back->y += 0x10000;
+      front->y += px(1);
+      back->y += px(1);
       i++;
       if (i < 352)
         goto loop;

@@ -308,8 +308,8 @@ s32 Func_0200042c(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
-  actor->y = 0x820000;
-  actor->gravity = 0x8000;
+  actor->y = px(130);
+  actor->gravity = px(1) / 2;
   actor->bounce = 0;
   actor->motionFlags = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
@@ -356,8 +356,8 @@ loop:
   FieldMapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  actor->gravity = 0x10000;
-  actor->bounce = 0x4000;
+  actor->gravity = px(1);
+  actor->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
@@ -418,9 +418,9 @@ void Func_0200062c(struct Actor *object) {
   limit <<= 4;
   limit += 255;
   if (scale <= limit)
-    object->scaleX = 0x2000;
+    object->scaleX = Q16_ONE / 8;
   if (object->scaleY <= limit)
-    object->scaleY = 0x2000;
+    object->scaleY = Q16_ONE / 8;
 }
 
 s32 Func_02000678(void) {
@@ -428,8 +428,8 @@ s32 Func_02000678(void) {
   struct Actor *object;
   struct FieldSprite *sprite;
 
-  object = (FieldActor_Create(14, source->x + 0x80000, source->y - 0x20000,
-                              source->z));
+  object =
+      (FieldActor_Create(14, source->x + px(8), source->y - px(2), source->z));
   object->motionFlags = 0;
   Actor_SetSpriteFlags(object, 0);
   Actor_StartScript(object, gData_020050d0);
@@ -463,7 +463,7 @@ s32 Func_02000718(void) {
 
   object = Actor_Get(9);
   Actor_StartScript(object, (s32)gData_020055c0);
-  object->x = 0x1d80000;
+  object->x = px(472);
   Actor_SetAnimationSpeed(object, 0x10);
   Actor_SetAttachedEffect(10, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   return 0;
@@ -609,7 +609,7 @@ void Func_02000a60(struct Actor *object) {
     value = 7;
   Actor_SetSpriteColorMode(object, value & 7);
   if ((gData_02005ee4 & 31) == 0) {
-    object->scaleX = 0x10000;
+    object->scaleX = Q16_ONE;
     Actor_StartScript(object, gData_02005e28);
     Event_PlaySound(SE_DRIP);
   }
@@ -623,7 +623,7 @@ void Func_02000aac(struct Actor *object) {
     value = 7;
   Actor_SetSpriteColorMode(object, value & 7);
   if ((gData_02005ee4 & 31) == 0) {
-    object->scaleY = 0x10000;
+    object->scaleY = Q16_ONE;
     Actor_StartScript(object, gData_02005d6c);
     Event_PlaySound(SE_DRIP);
   }
@@ -753,7 +753,7 @@ void Func_02000d18(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (leader->z >> 19 > 53 && leader->x >> 19 > 83 && leader->x >> 19 <= 91) {
-    leader->speedLimit = 0x20000;
+    leader->speedLimit = px(2);
     Actor_ShowEmote(gMainRoutineWork.currentOwner,
                     EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_SetScript(gMainRoutineWork.currentOwner, gData_020051b8);
@@ -821,7 +821,7 @@ void Func_02000f00(void) {
   }
   Actor_ResetTargetsAndVelocity(10);
   Actor_SetAnimationSpeed(object, 10);
-  object->speedLimit = 0x10000;
+  object->speedLimit = px(1);
   if (walker->script == gData_020055c0 || walker->script == gData_0200559c) {
     walker->movementState = 1;
     Actor_SetAnimationSpeed(walker, 0);
@@ -998,7 +998,7 @@ s32 Orbiter_Spiral(struct Orbiter *orbiter) {
 
   orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
   orbiter->x = anchor->x;
-  orbiter->y = anchor->y + 0x80000;
+  orbiter->y = anchor->y + px(8);
   orbiter->z = anchor->z;
   FieldVector_AddPolarOffset(orbiter->radius, orbiter->angle, &orbiter->x);
   /* FAKEMATCH(temporary): the angle's address, taken after the first push,
@@ -1012,7 +1012,7 @@ s32 Orbiter_Spiral(struct Orbiter *orbiter) {
   orbiter->radius -= 0x40000;
   orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
   orbiter->x = anchor->x;
-  orbiter->y = anchor->y + 0x80000;
+  orbiter->y = anchor->y + px(8);
   orbiter->z = anchor->z;
   FieldVector_AddPolarOffset(orbiter->radius, *angle, &orbiter->x);
   Func_02001314(orbiter);
@@ -1123,7 +1123,7 @@ first:
     Sound_Play(SE_GLITTER);
     spark->x += ((Random16() & 31) - 16) << 16;
     spark->y += ((Random16() & 15) - 8) << 16;
-    spark->speedLimit = 0x80000;
+    spark->speedLimit = px(8);
     spark->acceleration = 0x3333;
     spark->motionFlags = 0;
     Actor_SetSpriteColor(spark, 2);
@@ -1186,7 +1186,7 @@ second:
 third:
   {
     struct Spark *spark = ((void *)Import_ActorCreate(
-        kind, b->x, (i << 16) + b->y - 0x80000, b->z));
+        kind, b->x, (i << 16) + b->y - px(8), b->z));
     spark->action = Random16();
     spark->unk66 = 0x800;
     spark->unk62 = i;
@@ -1476,8 +1476,8 @@ void Func_02001fa0(void) {
   struct Actor *object;
 
   object = Actor_Get(66);
-  object->x = 0x2280000;
-  object->z = 0x1280000;
+  object->x = px(552);
+  object->z = px(296);
   object->y = -1966080;
   object->terrainHeight = -2097152;
   Event_ClearFlag(FLAG_NOTHING_HAPPENS);
@@ -1525,7 +1525,7 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
   v_r5 = (v_r5 + 0x214);
   Actor_MoveToObject(13, FIELD_AT(v_r5, s32, 0));
   Actor_SetDestination(13, 496, 712);
-  object->velocityY = 0x60000;
+  object->velocityY = px(6);
   FieldActor_WaitForMoveById(13);
   FieldEvent_Wait(45);
   Actor_FaceActor(8, FIELD_AT(v_r5, s32, 0), 0);
@@ -1602,7 +1602,7 @@ L_0200a1f8:
   if (t50 != 0) {
     Actor_SetDestination(13, FIELD_AT(t50, s16, 10), FIELD_AT(t50, s16, 18));
   }
-  object->velocityY = 0x60000;
+  object->velocityY = px(6);
   FieldActor_WaitForMoveById(13);
   Actor_SetPosition(13, 0, 0);
   Event_End();
@@ -1972,8 +1972,8 @@ void Func_02002b04(u32 id, s8 mode) {
 
   object->motionFlags = 0;
   object->priorityFlags |= 0x80;
-  object->acceleration = 0x1000;
-  object->speedLimit = 0x10000;
+  object->acceleration = px(1) / 16;
+  object->speedLimit = px(1);
   object->y = PIXELS(16);
   object->timer = object->x >> 16;
   object->unk66 = object->z >> 16;
@@ -2352,12 +2352,12 @@ s32 Scene_Initialize(void) {
         C2(Event_ShowMessageAndWait, 10, 0);
         C2(Actor_SetModeById, 10, 8);
         C2(Event_ShowMessageAndWait, 0x600a, 0);
-        dragon->speedLimit = 0x18000;
+        dragon->speedLimit = px(3) / 2;
         C3(Actor_SetDestinationById, 10, 488, 328);
         C1(Event_Wait, 5);
         Actor_SetModeById(10, 6);
         C1(Event_Wait, 10);
-        dragon->velocityY = 0x60000;
+        dragon->velocityY = px(6);
         C1(Event_Wait, 10);
         dragon->movementState = 1;
         partner->movementState = 1;
@@ -2394,10 +2394,10 @@ s32 Scene_Initialize(void) {
         C1(Event_Wait, 30);
         Actor_SetModeById(10, 8);
         C1(Event_Wait, 10);
-        dragon->speedLimit = 0x18000;
+        dragon->speedLimit = px(3) / 2;
         C3(Actor_SetDestinationById, 10, 488, 328);
         C1(Event_Wait, 14);
-        dragon->velocityY = 0x60000;
+        dragon->velocityY = px(6);
         Actor_SetModeById(10, 6);
         C1(Event_Wait, 10);
         C1(Sound_Play, 572);
@@ -2430,13 +2430,13 @@ s32 Scene_Initialize(void) {
         C2(Actor_SetSpriteFlags, object, 0);
         C2(Actor_StartScript, object, gData_02005360);
         ((struct GaiaRockAnimation *)object->sprite)->angle = 0x2000;
-        object->speedLimit = 0x18000;
+        object->speedLimit = px(3) / 2;
         *(u8 *)&object->motionFlags = 0;
-        object->targetX = 0x1c80000;
-        object->targetY = -0x200000;
-        object->targetZ = 0x1660000;
-        object->scaleX = 0x6000;
-        object->scaleY = 0x6000;
+        object->targetX = px(456);
+        object->targetY = -px(32);
+        object->targetZ = px(358);
+        object->scaleX = Q16_ONE * 3 / 8;
+        object->scaleY = Q16_ONE * 3 / 8;
         C1(Event_Wait, 10);
         C2(Actor_SetAnimationSpeed, partner, 16);
         C1(Event_Wait, 10);
@@ -2457,7 +2457,7 @@ s32 Scene_Initialize(void) {
           C2(Actor_SetSpriteFlags, shards[i], 0);
           C2(Actor_StartScript, shards[i], gData_0200539c);
         }
-        dragon->velocityY = 0xa0000;
+        dragon->velocityY = px(10);
         Actor_GetById(10)->actionFlags &= 254;
         C3(Actor_WalkToById, 10, 432, 320);
         C1(Event_Wait, 10);
@@ -2547,12 +2547,12 @@ s32 Scene_Initialize(void) {
       C4(FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
       C2(Actor_SetModeById, 10, 8);
       C2(Event_ShowMessageAndWait, 10, 0);
-      dragon->speedLimit = 0x18000;
+      dragon->speedLimit = px(3) / 2;
       C3(Actor_SetDestinationById, 10, 488, 328);
       C1(Event_Wait, 5);
       Actor_SetModeById(10, 6);
       C1(Event_Wait, 10);
-      dragon->velocityY = 0x60000;
+      dragon->velocityY = px(6);
       C1(Event_Wait, 10);
       C1(Sound_Play, 572);
       dragon->movementState = 1;
@@ -2574,7 +2574,7 @@ s32 Scene_Initialize(void) {
       C1(Event_Wait, 60);
       C2(Actor_SetModeById, 8, 4);
       C6(MapGrid_CopyCellPictureCellsRect, 85, 72, 5, 2, 30, 19);
-      dragon->y = -0x200000;
+      dragon->y = -px(32);
       dragon->velocityY = 0;
       dragon->speedLimit = slow;
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0x1c80000, 0x1680000);
@@ -2653,7 +2653,7 @@ s32 Scene_Initialize(void) {
       for (i = 0; i < 20; i++) {
         if (i % 5 == 0)
           Func_02001c9c();
-        other->z += -0x10000;
+        other->z += -px(1);
         C1(Event_Wait, 2);
       }
       C1(GameFlag_Set, 0x9ee);
@@ -2803,7 +2803,7 @@ s32 Scene_Initialize(void) {
         other->scaleX = 0x13333;
         other->scaleY = 0x13333;
       }
-      object->y += 0x800000;
+      object->y += px(128);
       for (; frames != 0; frames--) {
         C1(wait, 1);
         if (object->velocityY > -1)
@@ -3056,12 +3056,12 @@ s32 Scene_Initialize(void) {
         C2(Event_ShowMessageAndWait, 10, 0);
         C2(Actor_SetModeById, 10, 8);
         C2(Event_ShowMessageAndWait, 0x600a, 0);
-        dragon->speedLimit = 0x18000;
+        dragon->speedLimit = px(3) / 2;
         C3(Actor_SetDestinationById, 10, 488, 328);
         C1(Event_Wait, 5);
         Actor_SetModeById(10, 6);
         C1(Event_Wait, 10);
-        dragon->velocityY = 0x60000;
+        dragon->velocityY = px(6);
         C1(Event_Wait, 10);
         dragon->movementState = 1;
         partner->movementState = 1;
@@ -3098,10 +3098,10 @@ s32 Scene_Initialize(void) {
         C1(Event_Wait, 30);
         Actor_SetModeById(10, 8);
         C1(Event_Wait, 10);
-        dragon->speedLimit = 0x18000;
+        dragon->speedLimit = px(3) / 2;
         C3(Actor_SetDestinationById, 10, 488, 328);
         C1(Event_Wait, 14);
-        dragon->velocityY = 0x60000;
+        dragon->velocityY = px(6);
         Actor_SetModeById(10, 6);
         C1(Event_Wait, 10);
         C1(Sound_Play, 572);
@@ -3134,13 +3134,13 @@ s32 Scene_Initialize(void) {
         C2(Actor_SetSpriteFlags, object, 0);
         C2(Actor_StartScript, object, gData_02005360);
         ((struct GaiaRockAnimation *)object->sprite)->angle = 0x2000;
-        object->speedLimit = 0x18000;
+        object->speedLimit = px(3) / 2;
         *(u8 *)&object->motionFlags = 0;
-        object->targetX = 0x1c80000;
-        object->targetY = -0x200000;
-        object->targetZ = 0x1660000;
-        object->scaleX = 0x6000;
-        object->scaleY = 0x6000;
+        object->targetX = px(456);
+        object->targetY = -px(32);
+        object->targetZ = px(358);
+        object->scaleX = Q16_ONE * 3 / 8;
+        object->scaleY = Q16_ONE * 3 / 8;
         C1(Event_Wait, 10);
         C2(Actor_SetAnimationSpeed, partner, 16);
         C1(Event_Wait, 10);
@@ -3161,7 +3161,7 @@ s32 Scene_Initialize(void) {
           C2(Actor_SetSpriteFlags, shards[i], 0);
           C2(Actor_StartScript, shards[i], gData_0200539c);
         }
-        dragon->velocityY = 0xa0000;
+        dragon->velocityY = px(10);
         Actor_GetById(10)->actionFlags &= 254;
         C3(Actor_WalkToById, 10, 432, 320);
         C1(Event_Wait, 10);
@@ -3251,12 +3251,12 @@ s32 Scene_Initialize(void) {
       C4(FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
       C2(Actor_SetModeById, 10, 8);
       C2(Event_ShowMessageAndWait, 10, 0);
-      dragon->speedLimit = 0x18000;
+      dragon->speedLimit = px(3) / 2;
       C3(Actor_SetDestinationById, 10, 488, 328);
       C1(Event_Wait, 5);
       Actor_SetModeById(10, 6);
       C1(Event_Wait, 10);
-      dragon->velocityY = 0x60000;
+      dragon->velocityY = px(6);
       C1(Event_Wait, 10);
       C1(Sound_Play, 572);
       dragon->movementState = 1;
@@ -3278,7 +3278,7 @@ s32 Scene_Initialize(void) {
       C1(Event_Wait, 60);
       C2(Actor_SetModeById, 8, 4);
       C6(MapGrid_CopyCellPictureCellsRect, 85, 72, 5, 2, 30, 19);
-      dragon->y = -0x200000;
+      dragon->y = -px(32);
       dragon->velocityY = 0;
       dragon->speedLimit = slow;
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0x1c80000, 0x1680000);
@@ -3357,7 +3357,7 @@ s32 Scene_Initialize(void) {
       for (i = 0; i < 20; i++) {
         if (i % 5 == 0)
           Func_02001c9c();
-        other->z += -0x10000;
+        other->z += -px(1);
         C1(Event_Wait, 2);
       }
       C1(GameFlag_Set, 0x9ee);
@@ -3508,7 +3508,7 @@ s32 Scene_Initialize(void) {
         other->scaleX = 0x13333;
         other->scaleY = 0x13333;
       }
-      object->y += 0x800000;
+      object->y += px(128);
       for (; frames != 0; frames--) {
         C1(wait, 1);
         if (object->velocityY > -1)
@@ -4079,7 +4079,7 @@ void Func_02004af0(s32 id, s32 flag) {
   Actor_StartScript(object, gData_020062d4);
   i = 15;
 burst:
-  object = (FieldActor_Create(255, leader->x, leader->y + 0x100000, leader->z));
+  object = (FieldActor_Create(255, leader->x, leader->y + px(16), leader->z));
   if (object != NULL) {
     u32 angle;
     u32 size;
@@ -4096,7 +4096,7 @@ burst:
     object->scaleX = scale;
     object->scaleY = scale;
     object->gravity = 0x547a;
-    object->bounce = 0x8000;
+    object->bounce = Q16_ONE / 2;
   }
   i--;
   if (i >= 0)
@@ -4130,7 +4130,7 @@ burst:
   FieldEvent_Wait(20);
   Actor_SetSpriteFlags(leader, 1);
   Actor_SelectAnimation(leader, 1);
-  leader->velocityY = 0x40000;
+  leader->velocityY = px(4);
   System_Wait(20);
   work->renderMode = 0;
   Event_End();

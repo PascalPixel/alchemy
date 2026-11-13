@@ -294,7 +294,7 @@ void Func_02000468(struct Actor *object) {
 
 s32 Func_02000478(struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);
-  object->speedLimit = 0x10000;
+  object->speedLimit = px(1);
   object->acceleration = 0xccc;
   object->collisionFlags = 0;
   object->update = (void (*)(void))Func_02000468;
@@ -313,9 +313,9 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 void Func_020004e4(struct Actor *object) {
   if (Map_GetTerrainHeight(0, object->x, object->z) > object->y)
-    object->y += 0x20000;
+    object->y += px(2);
   else
-    object->z -= 0x20000;
+    object->z -= px(2);
   if (object->y >> 20 == 23)
     Actor_Release(object);
   if (object->z >> 20 == 48)
@@ -594,7 +594,7 @@ void Func_02000cd8(s32 unused, s32 id) {
 
     if (object->x >> 20 == 32) {
       wait(30);
-      object->z += 0x10000;
+      object->z += px(1);
       GameFlag_Set(0x950);
     }
   }
@@ -628,14 +628,14 @@ void Func_02000d80(void) {
       return;
     ahead.x = leader->x;
     ahead.y = leader->y;
-    ahead.z = leader->z + 0x20000;
+    ahead.z = leader->z + px(2);
     result = MapGrid_CheckCollision(leader, &ahead);
     if ((gFrameCount & 4) == 0)
       Func_02001d30(leader);
     if (result < 0) {
       Actor_SetAttachedEffect(owner,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      Actor_SetMoveTarget(leader, leader->x, leader->y, leader->z - 0x80000);
+      Actor_SetMoveTarget(leader, leader->x, leader->y, leader->z - px(8));
       Actor_SelectAnimation(leader, 7);
       Actor_WaitForMove(leader);
       do
@@ -648,7 +648,7 @@ void Func_02000d80(void) {
     }
     ahead.x = leader->x;
     ahead.y = leader->y;
-    ahead.z = leader->z - 0x80000;
+    ahead.z = leader->z - px(8);
     result = MapGrid_CheckCollision(leader, &ahead);
     if (result > 0) {
       if (gMainRoutineWork.scene != (s32)&SceneId_AquaRock1)
@@ -661,7 +661,7 @@ void Func_02000d80(void) {
       Func_02001d30(leader);
       Event_Wait(5);
       for (i = 59; i >= 0; i--) {
-        leader->y += 0x20000;
+        leader->y += px(2);
         leader->facing += 0x1000;
         if (Random16() <= 0xfff)
           Func_02001d30(leader);
@@ -684,8 +684,8 @@ void Func_02000d80(void) {
     result = MapGrid_CheckCollision(leader, &ahead);
     if (result > 0)
       return;
-    carried->z += -0x20000;
-    leader->z += -0x20000;
+    carried->z += -px(2);
+    leader->z += -px(2);
   } else
     Func_02001e00();
 }
@@ -704,7 +704,7 @@ void Func_02000f8c(void) {
 
   if (gMainRoutineWork.renderMode == 2) {
     col = object->x >> 20;
-    row = (object->z - object->y - 0xc0000) >> 20;
+    row = (object->z - object->y - px(12)) >> 20;
     if (CellAttribute(map->layers[1].cells, row, col) != 0)
       work->field16a = 44;
   } else {
@@ -773,7 +773,7 @@ DEFINE_AQUA_ROCK_SET_MOVED(Func_02001164, 44, 44, 46, 0x223)
                                                                                \
     if (column == 53) {                                                        \
       wait(30);                                                                \
-      object->z += 0x10000;                                                    \
+      object->z += px(1);                                                      \
       GameFlag_Set(n1);                                                        \
       Map_CopyCellAttributeRect(54, 58, 1, 1, column, n2);                     \
     }                                                                          \
@@ -874,10 +874,10 @@ void Func_02001460(void) {
   Event_StartScreenTransition();
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
-  object->y = -0x100000;
+  object->y = -px(16);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
   for (i = 15; i >= 0; i--) {
-    object->y += 0x10000;
+    object->y += px(1);
     angle = object->facing;
     angle += 0x2000;
     object->facing = angle;
@@ -885,7 +885,7 @@ void Func_02001460(void) {
   }
   Func_02001d30(object);
   object->motionFlags = saved;
-  object->velocityY = 0x80000;
+  object->velocityY = px(8);
   Actor_SetSpriteFlags(object, 1);
   up = gInput.held & KEY_UP;
   state = &gMainRoutineWork;
@@ -907,10 +907,10 @@ void Func_0200153c(void) {
   Event_StartScreenTransition();
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
-  object->y = -0x400000;
+  object->y = -px(64);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
   for (i = 23; i >= 0; i--) {
-    object->y += 0x20000;
+    object->y += px(2);
     angle = object->facing;
     angle += 0x2000;
     object->facing = angle;
@@ -918,7 +918,7 @@ void Func_0200153c(void) {
   }
   Func_02001d30(object);
   object->motionFlags = saved;
-  object->velocityY = 0xc0000;
+  object->velocityY = px(12);
   Actor_SetSpriteFlags(object, 1);
   Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, 680, 912);
   Event_End();
@@ -974,7 +974,7 @@ scatter:
   {
     struct Actor *object = Actor_GetById(i);
 
-    object->speedLimit = 0x4000;
+    object->speedLimit = px(1) / 4;
     object->acceleration = 0x400;
     object->update = (void (*)(void))Func_020015e8;
     object->timer = Random16();
@@ -1167,8 +1167,8 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 void Func_02001d30(struct Actor *object) {
-  struct Actor *child = Import_ActorCreate(14, object->x, object->y + 0x40000,
-                                           object->z + 0x40000);
+  struct Actor *child =
+      Import_ActorCreate(14, object->x, object->y + px(4), object->z + px(4));
   struct FieldSprite *parentSprite = object->sprite;
 
   if (child != 0) {
@@ -1206,14 +1206,14 @@ void Func_02001e00(void) {
     return;
   position[0] = leader->x;
   position[1] = leader->y;
-  position[2] = leader->z + 0x20000;
+  position[2] = leader->z + px(2);
   result = MapGrid_CheckCollision(leader, position);
   if ((gFrameCount & 4) == 0)
     Func_02001d30(leader);
   if (result < 0) {
     Actor_SetAttachedEffect(owner,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Actor_SetMoveTarget(leader, leader->x, leader->y, leader->z + 0x80000);
+    Actor_SetMoveTarget(leader, leader->x, leader->y, leader->z + px(8));
     Actor_SelectAnimation(leader, 49);
     Actor_WaitForMove(leader);
     do {
@@ -1226,7 +1226,7 @@ void Func_02001e00(void) {
   }
   position[0] = leader->x;
   position[1] = leader->y;
-  position[2] = leader->z + 0x80000;
+  position[2] = leader->z + px(8);
   result = MapGrid_CheckCollision(leader, position);
   if (result > 0)
     return;
@@ -1242,8 +1242,8 @@ void Func_02001e00(void) {
   result = MapGrid_CheckCollision(leader, position);
   if (result > 0)
     return;
-  anchor->z += 0x20000;
-  leader->z += 0x20000;
+  anchor->z += px(2);
+  leader->z += px(2);
   leader->facing = 0x4000;
 }
 
@@ -1447,9 +1447,9 @@ void Func_020023c0(void) {
   for (i = 63; i >= 0; i--, bubble++) {
     if (bubble->x != 0) {
       if (Map_GetTerrainHeight(0, bubble->x, bubble->z) < bubble->y)
-        bubble->y -= 0x20000;
+        bubble->y -= px(2);
       else
-        bubble->z += 0x20000;
+        bubble->z += px(2);
       if (bubble->y >> 20 == -4)
         bubble->x = 0;
       if (bubble->z >> 20 == 50)

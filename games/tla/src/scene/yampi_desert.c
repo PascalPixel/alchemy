@@ -715,7 +715,7 @@ void YampiDesert_StirScorpion(void) {
   FieldEvent_Wait(40);
   YampiDesert_BurstSand(0x1600000, 0, 0xf80000);
   Sound_Play(SE_KOLIMA_BRIDGE_HOP);
-  Actor_GetById(16)->velocityY = 0x60000;
+  Actor_GetById(16)->velocityY = px(6);
   Actor_SetSpriteColor(Actor_GetById(16), 0);
   Actor_SetSpriteFlags(Actor_GetById(16), 1);
   Actor_MoveToAndWaitById(16, 380, 248);
@@ -747,7 +747,7 @@ void YampiDesert_StirScorpionAgain(void) {
   FieldEvent_Wait(20);
   YampiDesert_BurstSand(0xf80000, 0, 0x2400000);
   Sound_Play(SE_KOLIMA_BRIDGE_HOP);
-  Actor_GetById(21)->velocityY = 0x60000;
+  Actor_GetById(21)->velocityY = px(6);
   Actor_SetSpriteColor(Actor_GetById(21), 0);
   Actor_SetSpriteFlags(Actor_GetById(21), 1);
   Actor_MoveToAndWaitById(21, 256, 560);
@@ -800,8 +800,8 @@ void YampiDesert_RaiseSandCloud(void) {
           Import_ActorCreate(285, (x - 2) << 16, 0, (z - 2) << 16);
 
       if (object != NULL) {
-        object->speedLimit = 0x12000;
-        object->acceleration = 0x8000;
+        object->speedLimit = px(9) / 8;
+        object->acceleration = px(1) / 2;
         Actor_SetSpriteFlags((struct Actor *)object, 0);
         Actor_SelectAnimation((struct Actor *)object, 1);
         Actor_StartScript(object, gYampiDesert_SandCloudDrifts);
@@ -856,7 +856,7 @@ loop_3:
   wait(1);
   YampiDesert_BurstSand(232 << 16, 0, 184 << 16);
   Sound_Play(SE_KOLIMA_BRIDGE_HOP);
-  partner->velocityY = 0x60000;
+  partner->velocityY = px(6);
   partner->priorityFlags &= ~2;
   Actor_SetSpritePriority(21, 2);
   Actor_SetSpriteColor(Actor_GetById(21), 0);
@@ -882,14 +882,14 @@ loop_3:
 step_13:
   leader->scaleX += -0x400;
   leader->scaleY += -0x400;
-  leader->y += -0x20000;
+  leader->y += -px(2);
   wait(1);
   i++;
   if (i <= 13)
     goto step_13;
   Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   Sound_Play(SE_HIGH_JUMP);
-  partner->velocityY = 0x80000;
+  partner->velocityY = px(8);
   Actor_SetSpriteFlags(Actor_GetById(21), 0);
   Actor_MoveToAndWaitById(21, 232, 168);
   FieldEvent_Wait(3);
@@ -898,7 +898,7 @@ step_13:
 step_5:
   partner->scaleX += -0x800;
   partner->scaleY += -0x800;
-  partner->y += -0x70000;
+  partner->y += -px(7);
   wait(1);
   i++;
   if (i <= 5)
@@ -1007,8 +1007,8 @@ void YampiDesert_RevealMedalSpot(void) {
   if (object != 0) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     Scene_Call4090(64, PIXELS(288), PIXELS(240));
-    if ((leader->x + 0x80000) >> 20 == (object->x + 0x80000) >> 20 &&
-        (leader->z + 0x80000) >> 20 == (object->z + 0x80000) >> 20)
+    if ((leader->x + px(8)) >> 20 == (object->x + px(8)) >> 20 &&
+        (leader->z + px(8)) >> 20 == (object->z + px(8)) >> 20)
       Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
                                              PIXELS(288), PIXELS(256));
   }
@@ -1408,7 +1408,7 @@ void YampiDesert_UpdateSandSlide(void) {
   map = Ram_HeapSlots->mapWork;
   index = Actor_GetCellIndex(leader);
   column = leader->x / 0x100000;
-  row = (leader->z + 0x40000) / 0x100000;
+  row = (leader->z + px(4)) / 0x100000;
   cells = map->layers[0].cells;
   here = cells + index;
   ahead = cells + (column + row * 128);
@@ -1495,7 +1495,7 @@ void YampiDesert_TrackUpperLevel(void) {
 void YampiDesert_TrackUpperLevelFromBelow(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  if (leader->y > -0x100000)
+  if (leader->y > -px(16))
     gMainRoutineWork.unk2c3 = 1;
   else
     gMainRoutineWork.unk2c3 = 0;
@@ -1905,7 +1905,7 @@ void YampiDesert_ClimbOut(struct Actor *object, s32 x, s32 z, s32 mode) {
   Actor_FaceDirectionById(party->currentOwner, FACING_NORTH);
   Actor_SetSpriteFlags(Actor_GetById(party->currentOwner), 0);
   Actor_SetModeById(party->currentOwner, 13);
-  Actor_SetMoveTarget(object, object->x, object->y - 0xa0000, object->z);
+  Actor_SetMoveTarget(object, object->x, object->y - px(10), object->z);
   Actor_WaitForMove(object);
   Actor_SetModeById(party->currentOwner, 10);
   Sound_Play(SE_MAP_EXIT);
@@ -2333,7 +2333,7 @@ void Statue_Sink(u16 *list, s32 mode, s32 count) {
       if (mode == 1) {
         GameFlag_Set(flag);
         YampiDesert_SetStakeCell(id, a, flag, object->terrainId);
-        object->scaleY = 0x10000;
+        object->scaleY = Q16_ONE;
       }
       break;
     }

@@ -182,7 +182,7 @@ void Izumo_CycloneSecondPatch(void) {
       FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, -16, 0);
-      object->velocityY = 0x60000;
+      object->velocityY = px(6);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Event_End();
     }
@@ -203,7 +203,7 @@ void Izumo_CycloneThirdPatch(void) {
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Call3((void (*)())Actor_SetDestinationOffsetById,
             gMainRoutineWork.currentOwner, 0, -16);
-      object->velocityY = 0x60000;
+      object->velocityY = px(6);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Event_End();
     }
@@ -235,7 +235,7 @@ void Izumo_CycloneSeventhPatch(void) {
       FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, 16, 0);
-      object->velocityY = 0x60000;
+      object->velocityY = px(6);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Event_End();
     }

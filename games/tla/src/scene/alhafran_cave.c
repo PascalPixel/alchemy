@@ -233,7 +233,7 @@ s32 AlhafranCave_DrawCrateSprite(void) {
   struct Actor *object = Actor_Get(8);
 
   BattleEffect_DrawSpriteAtWorldPosition(gAlhafranCave_CrateSprite, object->x,
-                                         object->y + 0x1c0000, object->z);
+                                         object->y + px(28), object->z);
   return 0;
 }
 
@@ -279,22 +279,22 @@ void AlhafranCave_SetUpCave(void) {
     AlhafranCave_OpenWayToJail();
   object = Actor_Get(8);
   object->motionFlags = 0;
-  object->y = 0xc0000;
+  object->y = px(12);
   object = Actor_Get(9);
   object->motionFlags = 0;
-  object->y = 0xc0000;
+  object->y = px(12);
   object = Actor_Get(10);
   object->motionFlags = 0;
-  object->y = 0xc0000;
+  object->y = px(12);
   Actor_SetSpriteColorMode(Actor_Get(8), 6);
   Actor_SetSpriteColorMode(Actor_Get(9), 6);
   Actor_SetSpriteColorMode(Actor_Get(10), 6);
   object = Actor_Get(12);
   object->motionFlags = 0;
-  object->y = 0x100000;
+  object->y = px(16);
   object = Actor_Get(11);
   object->motionFlags = 0;
-  object->y = 0x100000;
+  object->y = px(16);
   FieldActor_SetSpriteRotationById(13, 0x1000);
   Actor_SetAnimation(11, 2);
   Actor_SetAnimation(12, 3);
@@ -524,7 +524,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   effect = FieldEffect_SpawnMoveHand(actor21);
   position[0] = actor15->x;
   effect->watchedObject = actor15;
-  position[1] = actor15->y + 0x100000;
+  position[1] = actor15->y + px(16);
   position[2] = actor15->z;
   FieldVector_AddPolarOffset(0x100000, 0xc000, position);
   FieldActor_SetMoveTargetFixed(effect, position[0], position[1], position[2]);
@@ -780,7 +780,7 @@ void Pillars_Pound(const u16 *entry, s32 mode, s32 frame) {
       if (mode == 1) {
         Event_SetFlag(flag);
         Pillar_ShowState(id, kind, flag, object->terrainId);
-        object->scaleY = 0x10000;
+        object->scaleY = Q16_ONE;
       }
       return;
     }

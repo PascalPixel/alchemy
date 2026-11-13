@@ -163,17 +163,15 @@ void LemuriaPalace_CastMapSparks(s32 actorId) {
   Actor_SetAnimation(13, 5);
   FieldEvent_Wait(28);
   Event_PlaySound(SE_MENU_CONFIRM);
-  first =
-      Actor_Spawn(674, object->x + 0xa0000, object->y + 0x100000, object->z);
-  first->speedLimit = 0x20000;
-  first->acceleration = 0x20000;
+  first = Actor_Spawn(674, object->x + px(10), object->y + px(16), object->z);
+  first->speedLimit = px(2);
+  first->acceleration = px(2);
   first->motionFlags = 0;
   FieldActor_SetMoveTargetFixed(first, first->x + PIXELS(6),
                                 first->y + PIXELS(8), first->z);
-  second =
-      Actor_Spawn(674, object->x + 0xa0000, object->y + 0x100000, object->z);
-  second->speedLimit = 0x20000;
-  second->acceleration = 0x20000;
+  second = Actor_Spawn(674, object->x + px(10), object->y + px(16), object->z);
+  second->speedLimit = px(2);
+  second->acceleration = px(2);
   second->motionFlags = 0;
   FieldActor_SetMoveTargetFixed(second, first->x + PIXELS(8),
                                 first->y - PIXELS(4), first->z);
@@ -239,9 +237,9 @@ void LemuriaPalace_DrawMaps(void) {
     }
     (*time)++;
   }
-  position.x = 0x3400000;
+  position.x = px(832);
   position.y = 0;
-  position.z = 0x1c00000;
+  position.z = px(448);
   Camera_WorldToScreen(&position);
   if (gLemuriaPalace_FirstMapShown != 0) {
     gLemuriaPalace_FirstMapSprite.x = position.x;
@@ -950,7 +948,7 @@ grow:
   if (r5_4 >= 0)
     goto grow;
   v23 = Actor_GetById(64);
-  v23->scaleY = 0x10000;
+  v23->scaleY = Q16_ONE;
   Event_Wait(5);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);

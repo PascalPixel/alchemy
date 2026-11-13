@@ -14,5 +14,5 @@ void Leader_CenterInCell(void) {
   FieldActor_SetPositionAndResetMotion(object, (x << 20) + PIXELS(8), object->y,
                                        (z << 20) + PIXELS(8));
   FieldEvent_Wait(4);
-  EventCamera_GetActor()->y -= 0x80000;
+  EventCamera_GetActor()->y -= px(8);
 }

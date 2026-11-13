@@ -433,7 +433,7 @@ void Func_02000a48(void) { Func_02001e0c_(68, 38, 39, 24, 68, 4, 1); }
                                 ATTACHED_EFFECT_IN_FRONT |                     \
                                     ATTACHED_EFFECT_ONCE);                     \
         Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);      \
-        leader->velocityY = 0x60000;                                           \
+        leader->velocityY = px(6);                                             \
         FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);             \
         Event_End();                                                           \
       }                                                                        \
@@ -648,8 +648,8 @@ void Func_020010d8(struct Actor *object) {
   struct FieldSprite *parent;
   struct FieldSprite *sprite;
 
-  child = (FieldActor_Create(14, object->x, object->y + 0x40000,
-                             object->z + 0x40000));
+  child =
+      (FieldActor_Create(14, object->x, object->y + px(4), object->z + px(4)));
   parent = object->sprite;
   if (child != NULL) {
     sprite = child->sprite;
@@ -678,7 +678,7 @@ void Func_020011a8(void) {
       leader->terrainHeight != 0) {
     position[0] = leader->x;
     position[1] = leader->y;
-    position[2] = leader->z + 0x20000;
+    position[2] = leader->z + px(2);
     result = MapGrid_CheckCollision(leader, position);
     if ((gFrameCount & 4) == 0)
       Func_020010d8(leader);
@@ -686,7 +686,7 @@ void Func_020011a8(void) {
       Actor_SetAttachedEffect(owner,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       FieldActor_SetMoveTargetFixed(leader, leader->x, leader->y,
-                                    leader->z + 0x80000);
+                                    leader->z + px(8));
       Actor_SelectAnimation(leader, 49);
       FieldActor_WaitForMove(leader);
       do {
@@ -698,7 +698,7 @@ void Func_020011a8(void) {
     } else {
       position[0] = leader->x;
       position[1] = leader->y;
-      position[2] = leader->z + 0x80000;
+      position[2] = leader->z + px(8);
       result = MapGrid_CheckCollision(leader, position);
       if (result <= 0) {
         position[0] = leader->x + 0x5b333;
@@ -711,8 +711,8 @@ void Func_020011a8(void) {
           position[2] = leader->z + 0x5b333;
           result = MapGrid_CheckCollision(leader, position);
           if (result <= 0) {
-            anchor->z += 0x20000;
-            leader->z += 0x20000;
+            anchor->z += px(2);
+            leader->z += px(2);
             leader->facing = 0x4000;
           }
         }

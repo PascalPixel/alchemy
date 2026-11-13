@@ -310,7 +310,7 @@ s32 Scene_Initialize(void) {
   Actor_Get(14)->update = AlhafraInteriors_DrawFirstGuestSprite;
   Actor_Get(15)->update = AlhafraInteriors_DrawSecondGuestSprite;
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
-    if (Actor_Get(gMainRoutineWork.currentOwner)->x >= 0x2000000)
+    if (Actor_Get(gMainRoutineWork.currentOwner)->x >= px(512))
       Event_SetFlag(FLAG_SCENE_TEMP_00);
     else
       Event_ClearFlag(FLAG_SCENE_TEMP_00);

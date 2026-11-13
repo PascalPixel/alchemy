@@ -254,14 +254,14 @@ ready:
   Actor_WalkBy(8, 0, 16);
   Event_PlaySound(SE_CLATTER);
   FieldEvent_Wait(4);
-  v_r8->scaleX = 0x18000;
-  v_r8->scaleY = 0x18000;
+  v_r8->scaleX = Q16_ONE * 3 / 2;
+  v_r8->scaleY = Q16_ONE * 3 / 2;
   t45 = Actor_Get(10);
   Actor_SetSpriteColorMode(t45, 6);
   Actor_SetPosition(10, 464, 200);
   Actor_SetAnimation(10, 1);
-  v_r6->scaleX = 0x8000;
-  v_r6->scaleY = 0x8000;
+  v_r6->scaleX = Q16_ONE / 2;
+  v_r6->scaleY = Q16_ONE / 2;
   Actor_SetSpeed(9, 2);
   Actor_SetPosition(9, 464, 216);
   Actor_WalkTo(9, 464, 144);

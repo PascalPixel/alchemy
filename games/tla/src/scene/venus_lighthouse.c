@@ -197,7 +197,7 @@ void VenusLighthouse_PushBlockOnto(void) {
     return;
 
   dst.x = next->x.fixed;
-  dst.y = next->y.fixed + 0x100000;
+  dst.y = next->y.fixed + px(16);
   dst.z = next->z.fixed;
   blocker = Actor_FindInCell(&dst, next);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
@@ -463,8 +463,8 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
     GameFlag_Set(FLAG_SCENE_TEMP_01);
     Sound_Play(SE_RATTLE);
     leader->motionFlags &= ~1;
-    leader->terrainHeight = -0x20000;
-    leader->y = -0x20000;
+    leader->terrainHeight = -px(2);
+    leader->y = -px(2);
     Event_End();
   }
 }

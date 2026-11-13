@@ -142,7 +142,7 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
   if (object->x >> 20 == 10 && object->z >> 20 == 32) {
     object->motionFlags = 0;
     for (i = 15; i >= 0; i--) {
-      object->y += 0x20000;
+      object->y += px(2);
       System_Wait(1);
     }
     Actor_RaiseFromCell(id);
@@ -259,22 +259,22 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
     Actor_SetAnimationSpeed(leader, 64);
     leader->motionFlags = flag;
-    leader->y = leader->terrainHeight = -0x780000;
+    leader->y = leader->terrainHeight = -px(120);
     Event_StartScreenTransition();
     FieldEvent_Wait(10);
     for (i = 0; i <= 89 && leader->y < 0; i++) {
-      leader->terrainHeight = leader->y = leader->y + 0x30000;
+      leader->terrainHeight = leader->y = leader->y + px(3);
       leader->facing += 0x1800;
       System_Wait(2);
     }
     leader->terrainHeight = leader->y = 0;
     leader->facing = 0x4000;
     leader->motionFlags = 3;
-    leader->velocityY = 0x30000;
-    leader->gravity = 0x8000;
+    leader->velocityY = px(3);
+    leader->gravity = px(1) / 2;
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
     FieldEvent_Wait(40);
-    leader->gravity = 0x10000;
+    leader->gravity = px(1);
     leader->priorityFlags |= 64;
     Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
     Event_End();
@@ -302,7 +302,7 @@ s32 Scene_PrepareMap(void) {
     Actor_RaiseFromCell(ACTOR_LAST_BLOCKS + 1);
     Actor_RaiseFromCell(ACTOR_LAST_BLOCKS + 2);
     Actor_RaiseFromCell(ACTOR_UNSEEN);
-    Actor_Get(ACTOR_UNSEEN)->gravity = 0x30000;
+    Actor_Get(ACTOR_UNSEEN)->gravity = px(3);
   }
   Actor_SetSpriteFlags(Actor_Get(ACTOR_UNSEEN), 0);
   if (Event_GetFlag(FLAG_BRIDGE_BLOCK_RAISED)) {

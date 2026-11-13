@@ -17,8 +17,8 @@ void Actor_LaunchAhead(struct Actor *self) {
                                        position[2]);
   actor->update = (void (*)(void))Actor_RollAndCrumble;
   actor->actionFlags = 0;
-  actor->speedLimit = 0x80000;
-  actor->acceleration = 0x2000;
+  actor->speedLimit = px(8);
+  actor->acceleration = px(1) / 8;
   sprite->rotation = angle - 0x4000;
   actor->scaleX = 0;
   /* A once-only block: its end holds the order around it (as the plain */

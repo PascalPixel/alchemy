@@ -534,7 +534,7 @@ void Func_020007a8(void) {
   sprite = object->sprite;
   sprite->flag0 = 1;
   object->motionFlags = 0;
-  object->y = 0x180000;
+  object->y = px(24);
 }
 
 extern u8 gData_02003fb8[];
@@ -612,7 +612,7 @@ void Func_02000958(s32 value) {
   FieldEvent_Wait(15);
   Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Actor_Get(gMainRoutineWork.currentOwner)->speedLimit =
-      Actor_Get(gMainRoutineWork.currentOwner)->acceleration = 0x8000;
+      Actor_Get(gMainRoutineWork.currentOwner)->acceleration = px(1) / 2;
   Event_PlaySound(SE_MAP_EXIT);
   Actor_WalkTo(gMainRoutineWork.currentOwner, 312, 496);
   FieldEvent_Wait(5);
@@ -777,7 +777,7 @@ step:
   {
     s32 offset, x;
 
-    object->z += 0x20000;
+    object->z += px(2);
     x = object->x;
     offset = (x & 0xfffff) - 0x80000;
     {
@@ -796,7 +796,7 @@ step:
 test:
   target.x = object->x;
   target.y = object->y;
-  target.z = object->z + 0x80000;
+  target.z = object->z + px(8);
   result = MapGrid_CheckCollision(object, &target);
   if (result <= 0)
     goto step;
@@ -869,8 +869,8 @@ void Func_02000ecc(s32 unused, s32 id) {
     object->x = object->timer << 16;
     object->z = *(s16 *)((u8 *)object + 102) << 16;
     object->motionFlags = 0;
-    object->terrainHeight = -0x200000;
-    object->y = -0x200000;
+    object->terrainHeight = -px(32);
+    object->y = -px(32);
     FieldActor_SetSpritePriority(i, 3);
     i++;
     if (i <= 15)
@@ -1133,7 +1133,7 @@ burst:
   Sound_Play(SE_GLITTER);
   object->x += ((Random16() & 31) - 16) << 16;
   object->y += ((Random16() & 15) - 8) << 16;
-  object->speedLimit = 0x80000;
+  object->speedLimit = px(8);
   object->acceleration = 0x3333;
   object->motionFlags = 0;
   Actor_SetSpriteColor(object, 2);
@@ -1444,7 +1444,7 @@ void Func_02001f04(void) {
   Event_StartScreenTransition();
   Actor_SetSpriteColorMode(object, 9);
   *flags = 0;
-  object->y = 0x500000;
+  object->y = px(80);
   speed = 0x30000;
   i = 31;
 fall:
@@ -1460,7 +1460,7 @@ fall:
   Actor_SetSpriteColorMode(object, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 2);
   *flags = saved;
-  object->velocityY = 0x80000;
+  object->velocityY = px(8);
   Event_PlaySound(SE_SPLASH_SMALL);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 168, 200);
   Event_End();
@@ -1553,8 +1553,8 @@ s32 Scene_Initialize(void) {
     object = Actor_GetById(64);
     if (object != 0) {
       object->motionFlags = 0;
-      object->terrainHeight = -0x200000;
-      object->y = -0x200000;
+      object->terrainHeight = -px(32);
+      object->y = -px(32);
     }
   } else if (scene == (s32)&SceneId_AquaRockInside5) {
     if ((u32)(entrance - 5) <= 1) {
@@ -1875,8 +1875,8 @@ done:
 }
 
 void Func_02002bd4(struct Actor *object) {
-  struct Actor *child = FieldActor_Create(14, object->x, object->y + 0x40000,
-                                          object->z + 0x40000);
+  struct Actor *child =
+      FieldActor_Create(14, object->x, object->y + px(4), object->z + px(4));
   struct FieldSprite *source = object->sprite;
 
   if (child != 0) {
@@ -1914,15 +1914,14 @@ void Func_02002ca4(void) {
     return;
   position[0] = actor->x;
   position[1] = actor->y;
-  position[2] = actor->z + 0x20000;
+  position[2] = actor->z + px(2);
   hit = MapGrid_CheckCollision(actor, position);
   if ((gFrameCount & 4) == 0)
     Func_02002bd4(actor);
   if (hit < 0) {
     Actor_SetAttachedEffect(id,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    FieldActor_SetMoveTargetFixed(actor, actor->x, actor->y,
-                                  actor->z + 0x80000);
+    FieldActor_SetMoveTargetFixed(actor, actor->x, actor->y, actor->z + px(8));
     Actor_SelectAnimation(actor, 49);
     FieldActor_WaitForMove(actor);
     do {
@@ -1935,7 +1934,7 @@ void Func_02002ca4(void) {
   }
   position[0] = actor->x;
   position[1] = actor->y;
-  position[2] = actor->z + 0x80000;
+  position[2] = actor->z + px(8);
   hit = MapGrid_CheckCollision(actor, position);
   if (hit > 0)
     return;
@@ -1951,8 +1950,8 @@ void Func_02002ca4(void) {
   hit = MapGrid_CheckCollision(actor, position);
   if (hit > 0)
     return;
-  center->z += 0x20000;
-  actor->z += 0x20000;
+  center->z += px(2);
+  actor->z += px(2);
   actor->facing = 0x4000;
 }
 

@@ -273,7 +273,7 @@ void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index) {
     object->scaleY -= 0x1f00;
   }
   if (mode == 1) {
-    object->scaleY = 0x10000;
+    object->scaleY = Q16_ONE;
     Event_SetFlag(object->timer);
     MarsLighthouseEntrance_SetIceConeCells(Actor_Get(holder->objectId));
     object->x = object->y = object->z = 0;
@@ -302,7 +302,7 @@ next:
   {
     s32 x = source->x + (Random16() << 4) - (Random16() << 4);
     struct Actor *object =
-        Func_02004bd8_(0x145, x, (Random16() << 3) + source->y + 0x40000,
+        Func_02004bd8_(0x145, x, (Random16() << 3) + source->y + px(4),
                        source->z + (Random16() << 4) - (Random16() << 4));
 
     if (object != NULL) {
@@ -325,7 +325,7 @@ next:
       object->gravity = 0x547a;
       object->scaleX = scale;
       object->scaleY = scale;
-      object->bounce = 0x8000;
+      object->bounce = Q16_ONE / 2;
       Actor_SetSpriteColorMode(object, 1);
     }
   }
@@ -526,16 +526,16 @@ void Func_0200096c(s32 unused, s32 id) {
   if (object->x >> 20 == 11) {
     s32 y;
 
-    object->speedLimit = 0x4000;
-    object->acceleration = 0x2000;
+    object->speedLimit = px(1) / 4;
+    object->acceleration = px(1) / 8;
     y = object->y;
     Actor_SetMoveTarget(object, PIXELS(152), y, PIXELS(792));
   }
   if (object->x >> 20 == 10) {
     s32 y;
 
-    object->speedLimit = 0x4000;
-    object->acceleration = 0x2000;
+    object->speedLimit = px(1) / 4;
+    object->acceleration = px(1) / 8;
     y = object->y;
     {
       /* FAKEMATCH(pin): the actor pinned to r0 to keep the argument order. */
@@ -944,9 +944,9 @@ void Func_020012e4(struct Actor *actor) {
 
   sprite->unk12 += 0x800;
   if (++actor->timer == 8)
-    actor->velocityY = 0x40000;
+    actor->velocityY = px(4);
   if (actor->timer > 9) {
-    actor->x += 0x40000;
+    actor->x += px(4);
     actor->scaleX -= 0x800;
     actor->scaleY -= 0x800;
   }
@@ -1778,7 +1778,7 @@ void Func_020029c8(struct Actor *actor) {
     d = Random16();
     e = Random16();
     z = actor->z + d * 16 - e * 16;
-    y = c * 8 + actor->y + 0x40000;
+    y = c * 8 + actor->y + px(4);
     object = (struct Actor *)Import_ActorCreate(0x1e9, x, y, z);
     if (object != NULL) {
       s32 angle, radius;
@@ -1800,7 +1800,7 @@ void Func_020029c8(struct Actor *actor) {
       object->scaleX = scale;
       object->scaleY = scale;
       object->acceleration = 0;
-      object->bounce = 0x8000;
+      object->bounce = Q16_ONE / 2;
       sprite = object->sprite;
       source = work->owner->sprite;
       VramCache_FreeEntry(sprite->vramBlock);
@@ -1895,7 +1895,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       actor->targetZ = 0x80000000;
       actor->targetY = 0x80000000;
       actor->targetX = 0x80000000;
-      actor->acceleration = 0x4000;
+      actor->acceleration = px(1) / 4;
       actor->timer = 1;
       Event_PlaySound(SE_CRASH);
       /* FAKEMATCH(wrapper): forwarded. */
@@ -1944,9 +1944,9 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       }
     }
 
-    if (actor->scaleX < 0x10000) {
-      actor->scaleX += 0x1000;
-      actor->scaleY += 0x1000;
+    if (actor->scaleX < Q16_ONE) {
+      actor->scaleX += Q16_ONE / 16;
+      actor->scaleY += Q16_ONE / 16;
     }
     FieldActor_SetMoveTargetFixed(actor, position.x, position.y, position.z);
 
@@ -1963,8 +1963,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
   } else if (state == 1) {
     actor->movementState = 0;
     if (actor->scaleX > 0) {
-      actor->scaleX -= 0x1000;
-      actor->scaleY -= 0x1000;
+      actor->scaleX -= Q16_ONE / 16;
+      actor->scaleY -= Q16_ONE / 16;
       Func_020029c8(actor);
     } else {
       actor->z = 0;
@@ -2690,8 +2690,8 @@ void Func_020042f8(void) {
   Camera_SetBounds(-1, -1, -1, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
-  leader->y = 0x820000;
-  leader->gravity = 0x8000;
+  leader->y = px(130);
+  leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
   SCENE_WORK->unk1ac = 0x100;
@@ -2729,8 +2729,8 @@ next:
   FieldMapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  leader->gravity = 0x10000;
-  leader->bounce = 0x4000;
+  leader->gravity = px(1);
+  leader->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Event_End();
@@ -2928,7 +2928,7 @@ void Func_020049dc(u16 *list, s32 mode, s32 count) {
       if (mode == 1) {
         Event_SetFlag(flag);
         Actor_SetCellOpen(id, a, flag, object->terrainId);
-        object->scaleY = 0x10000;
+        object->scaleY = Q16_ONE;
       }
       break;
     }

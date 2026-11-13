@@ -134,7 +134,7 @@ void Champa_RevealTreasureSpot(void) {
 
   TreasureSpot_SetPosition(0x40, 0x1880000, 0x2380000);
   Actor_Get(64)->motionFlags = 0;
-  Actor_Get(64)->y = 0x200000;
+  Actor_Get(64)->y = px(32);
 }
 
 void Champa_HideTreasureSpot(void) { TreasureSpot_SetPosition(0x40, 0, 0); }
@@ -212,8 +212,8 @@ void Champa_SailorsSpotFelix(void) {
 void Champa_TalkToPracticingBoy(s32 actor) {
   struct Actor *object = Actor_Get(actor);
 
-  object->scaleY = 0x10000;
-  object->scaleX = 0x10000;
+  object->scaleY = Q16_ONE;
+  object->scaleX = Q16_ONE;
   FieldEvent_SetMessageId((s32)MsgChampa07);
   Event_ShowMessage(actor, 0);
   Actor_FaceDirectionAndWait(actor, FACING_EAST);
@@ -513,8 +513,8 @@ s32 Scene_Initialize(void) {
   Actor_SetSpriteFlags(((s32)Actor_Get(10)), 0);
   Actor_SetSpriteFlags(((s32)Actor_Get(11)), 0);
   FieldActor_SetSpritePriority(13, 3);
-  Actor_Get(23)->scaleX = 0x8000;
-  Actor_Get(23)->scaleY = 0x8000;
+  Actor_Get(23)->scaleX = Q16_ONE / 2;
+  Actor_Get(23)->scaleY = Q16_ONE / 2;
   Tightrope_Initialize();
   Tightrope_Place(0, 8, 9);
   Map_SetLayerEntryFlag(3);

@@ -1290,7 +1290,7 @@ void Idejima_RideTheTidalWave(void) {
   FieldActor_Jump(gMainRoutineWork.currentOwner, 4, 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 1);
-  leader->scaleX = 0x10000;
+  leader->scaleX = Q16_ONE;
   FieldEvent_Wait(20);
   Actor_SetAttachedEffect(ACTOR_JENNA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1531,7 +1531,7 @@ UNUSED void Idejima_LieDown(s32 id) {
   Actor_SetSpriteFlags(Actor_Get(id), 0);
   object->facing = FACING_SOUTH;
   object->motionFlags = 0;
-  object->x += 0xc0000;
+  object->x += px(12);
   object->y = PIXELS(16);
   object->collisionFlags = 0;
   ((struct ActorSprite *)object->sprite)->rotation = 0xc000;

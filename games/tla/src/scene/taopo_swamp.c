@@ -268,7 +268,7 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
   System_Wait(5);
   actor->motionFlags = 0;
   actor->velocityY = 0;
-  actor->y = 0x40000;
+  actor->y = px(4);
   sprite = actor->sprite;
   i = 0;
   do {
@@ -354,7 +354,7 @@ void TaopoSwamp_DigHoleUnderfoot(void) {
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -16);
-      leader->velocityY = 0x60000;
+      leader->velocityY = px(6);
       FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Event_End();
     }
@@ -394,13 +394,13 @@ void TaopoSwamp_PushPillarOverVent(s32 a, s32 id) {
 
   if (id == 9) {
     if (object->x >> 20 == 17) {
-      object->z += 0x10000;
+      object->z += px(1);
       Vent_SetGust(2, 0x80000);
       Event_SetFlag(0xa6d);
     }
   } else if (id == 10) {
     if (object->x >> 20 == 29) {
-      object->z += 0x10000;
+      object->z += px(1);
       Vent_SetGust(8, 0x80000);
       Event_SetFlag(0xa6e);
     }
@@ -452,7 +452,7 @@ sink:
     TaopoSwamp_FallThroughHole(hole);
     return;
   }
-  leader->z += 0x20000;
+  leader->z += px(2);
   slip = (leader->x & 0xfffff) + 0xfff80000;
   {
     s32 limit = 0x10001;
@@ -469,7 +469,7 @@ sink:
 test:
   position.x = leader->x;
   position.y = leader->y;
-  position.z = leader->z + 0x80000;
+  position.z = leader->z + px(8);
   result = MapGrid_CheckCollision(leader, &position);
   if (result <= 0)
     goto sink;
@@ -493,7 +493,7 @@ void TaopoSwamp_BlowFlowerOffLedge(void) {
   speed = 0x8000;
   i = 2;
   do {
-    object->velocityY = 0x20000;
+    object->velocityY = px(2);
     Event_PlaySound(SE_JUMP);
     object->speedLimit = speed;
     object->acceleration = speed / 2;
@@ -501,7 +501,7 @@ void TaopoSwamp_BlowFlowerOffLedge(void) {
     speed += 0x4000;
   } while (--i >= 0);
   Event_PlaySound(SE_310);
-  object->velocityY = 0x40000;
+  object->velocityY = px(4);
   Actor_WalkByAndWait(8, 0, 8);
   FieldEvent_Wait(60);
   Event_SetFlag(FLAG_AREA_TEMP_10);
@@ -770,11 +770,11 @@ void TaopoSwamp_TremorPillar(void) {
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Actor_SetPosition(10, 480, 248);
   Actor_SetDestination(10, 440, 232);
-  Actor_Get(10)->velocityY = 0xa0000;
+  Actor_Get(10)->velocityY = px(10);
   rock->update = 0;
   i = 15;
 burst:
-  clod = (FieldActor_Create(255, rock->x, rock->y + 0x100000, rock->z));
+  clod = (FieldActor_Create(255, rock->x, rock->y + px(16), rock->z));
   if (clod == 0)
     goto next;
   angle = Random16();
@@ -792,7 +792,7 @@ burst:
   clod->gravity = 0x547a;
   clod->scaleX = scale;
   clod->scaleY = scale;
-  clod->bounce = 0x8000;
+  clod->bounce = Q16_ONE / 2;
 next:
   i--;
   if (i >= 0)
@@ -1160,7 +1160,7 @@ void TaopoSwamp_DripFromCeiling(void) {
 
 /// A drop's script test: whether it is still above the floor.
 s32 TaopoSwamp_IsDropFalling(struct Actor *object) {
-  if (object->y + object->velocityY < -0x300000)
+  if (object->y + object->velocityY < -px(48))
     return 0;
   return 1;
 }
@@ -1217,7 +1217,7 @@ s32 Scene_Initialize(void) {
       if (Event_GetFlag(id + 0x8d8))
         Actor_SetPosition(id, 0, 0);
       else
-        Actor_GetById(id)->scaleY = 0x14000;
+        Actor_GetById(id)->scaleY = Q16_ONE * 5 / 4;
     }
     Actor_SetSpritePriority(13, 3);
     Actor_GetById(13)->collisionFlags = 0;
@@ -1225,8 +1225,8 @@ s32 Scene_Initialize(void) {
       Call6(Map_CopyCellAttributeRect, 50, 16, 1, 2, 47, 16);
     dummy = Actor_GetById(14);
     if (dummy != 0) {
-      dummy->scaleX = 0xc000;
-      dummy->scaleY = 0xc000;
+      dummy->scaleX = Q16_ONE * 3 / 4;
+      dummy->scaleY = Q16_ONE * 3 / 4;
       dummy->motionFlags = 0;
     }
     Task_Add(TaopoSwamp_DripAtRandom, 0x480);
@@ -1341,7 +1341,7 @@ s32 Scene_Initialize(void) {
       Call6(Map_CopyCellsRect, 50, 59, 13, 5, 18, 15);
     } else {
       piece->motionFlags = 0;
-      piece->y = 0x200000;
+      piece->y = px(32);
     }
     if (!Event_GetFlag(FLAG_AREA_TEMP_31)) {
       Event_SetFlag(FLAG_AREA_TEMP_32);
@@ -1418,7 +1418,7 @@ s32 Scene_Initialize(void) {
       if (Event_GetFlag(id + 0x8d8))
         Actor_SetPosition(id, 0, 0);
       else
-        Actor_GetById(id)->scaleY = 0x14000;
+        Actor_GetById(id)->scaleY = Q16_ONE * 5 / 4;
     }
     Actor_SetSpritePriority(13, 3);
     Actor_GetById(13)->collisionFlags = 0;
@@ -1426,8 +1426,8 @@ s32 Scene_Initialize(void) {
       Call6(Map_CopyCellAttributeRect, 50, 16, 1, 2, 47, 16);
     dummy = Actor_GetById(14);
     if (dummy != 0) {
-      dummy->scaleX = 0xc000;
-      dummy->scaleY = 0xc000;
+      dummy->scaleX = Q16_ONE * 3 / 4;
+      dummy->scaleY = Q16_ONE * 3 / 4;
       dummy->motionFlags = 0;
     }
     Task_Add(TaopoSwamp_DripAtRandom, 0x480);
@@ -1548,7 +1548,7 @@ s32 Scene_Initialize(void) {
       Call6(Map_CopyCellsRect, 50, 59, 13, 5, 18, 15);
     } else {
       piece->motionFlags = 0;
-      piece->y = 0x200000;
+      piece->y = px(32);
     }
     if (!Event_GetFlag(FLAG_AREA_TEMP_31)) {
       Event_SetFlag(FLAG_AREA_TEMP_32);
@@ -1661,7 +1661,7 @@ void TaopoSwamp_FocusMapOn(s32 x, s32 z) {
   focus->unk18[2] = 0;
   focus->unk18[3] = 0;
   index = (z / 2 << 7) + x / 2;
-  focus->scaleZ = focus->scaleX = 0x10000;
+  focus->scaleZ = focus->scaleX = Q16_ONE;
   focus->cell = gMapCellBuffer + index * 4;
   focus->shape = gMapShapeGrid + index;
   focus->scrolledX = Iwram_MulQ16(*(s32 *)(map + 0xe4), 0x10000) + focus->x;

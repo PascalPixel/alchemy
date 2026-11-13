@@ -241,7 +241,7 @@ s32 WorldMap_RiseFromAnchor(struct Actor *object) {
   object->scaleX = scale;
   object->scaleY = scale;
   object->x = parent->x;
-  object->y += 0x10000;
+  object->y += px(1);
   object->z = parent->z;
   return 1;
 }
@@ -299,7 +299,7 @@ void WorldMap_SpawnParticle(struct Actor *object) {
   struct FieldSprite *sprite;
 
   Iwram_MulQ16(object->scaleX, 0x18000);
-  SET_VECTOR(position, object->x, object->y + 0x20000, object->z);
+  SET_VECTOR(position, object->x, object->y + px(2), object->z);
   angle = Random16();
   FieldVector_AddPolarOffset(angle * 20, Random16(), position);
   particle = (FieldActor_Create(674, position[0], position[1], position[2]));

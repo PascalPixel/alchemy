@@ -29,7 +29,7 @@ void MagmaRockInside_PushBlockOnto(void) {
     return;
 
   dst.x = next->x.fixed;
-  dst.y = next->y.fixed + 0x100000;
+  dst.y = next->y.fixed + px(16);
   dst.z = next->z.fixed;
   blocker = Actor_FindInCell(&dst, next);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0)

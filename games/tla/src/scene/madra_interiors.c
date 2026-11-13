@@ -538,9 +538,9 @@ void MadraInteriors_InterrogatePiers(void) {
   FieldEvent_ShowMessageThenWait(11, 0, 10);
   FieldActor_Stop(9);
   object3 = Actor_Get(9);
-  object3->scaleX = 0x10000;
+  object3->scaleX = Q16_ONE;
   object4 = Actor_Get(9);
-  object4->scaleY = 0x10000;
+  object4->scaleY = Q16_ONE;
   FieldEvent_Wait(4);
   object5 = Actor_Get(9);
   object5->motionFlags = 2;
@@ -731,7 +731,7 @@ void MadraInteriors_GiveHealingFungus(void) {
   Actor_SetSpeed(11, 0.4);
   Actor_WalkTo(11, 410, 109);
   object = Actor_Get(4);
-  if (object->z > 0x5f0000)
+  if (object->z > px(95))
     Actor_WalkToAndWait(4, object->x / 0x10000, 95);
   Actor_WalkToAndWait(4, 362, 95);
   Actor_FaceDirectionAndWait(4, FACING_SOUTH);
@@ -818,7 +818,7 @@ void MadraInteriors_GiveLaughingFungus(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object0 = Actor_Get(4);
-  if (object0->z > 0x5f0000)
+  if (object0->z > px(95))
     Actor_WalkToAndWait(4, object0->x / 0x10000, 95);
   Actor_WalkToAndWait(4, 362, 95);
   Actor_FaceDirectionAndWait(4, FACING_SOUTH);

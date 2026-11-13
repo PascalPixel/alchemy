@@ -18,7 +18,7 @@ void Statue_Sink(u16 *list, s32 mode, s32 count) {
       if (mode == 1) {
         GameFlag_Set(flag);
         Actor_SetCellOpen(id, a, flag, object->terrainId);
-        object->scaleY = 0x10000;
+        object->scaleY = Q16_ONE;
       }
       break;
     }

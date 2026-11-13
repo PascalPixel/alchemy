@@ -451,8 +451,8 @@ void Settlements_SpawnSmoke(s32 x, s32 y, s32 z) {
     animation = object->sprite;
     animation[9] = (animation[9] & -13) | 4;
     Actor_SetSpriteFlags(object, 0);
-    object->scaleX = 0x8000;
-    object->scaleY = 0x8000;
+    object->scaleX = Q16_ONE / 2;
+    object->scaleY = Q16_ONE / 2;
     *(s32 *)&object->watchedObject = 60;
     object->update = (void (*)(void))Settlements_DriftSmoke;
     Actor_SelectAnimation(object, 5);
@@ -526,7 +526,7 @@ void Settlements_SetUpKaltIsland(void) {
   actor->active = 0;
   actor->mode = 0;
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
-    actor->y += 0x100000;
+    actor->y += px(16);
   actor->flags23 &= 0xfe;
   actor->visible = 1;
   transfer = HeapSlot_Alloc(68, 0x608);
@@ -751,14 +751,14 @@ void Settlements_SinkPillar(void) {
   if (!Event_GetFlag(FLAG_SCENE_TEMP_04) && column == 11 && row == 12) {
     object->motionFlags = 0;
     for (i = 10; i > 0; i--) {
-      object->y -= 0x20000;
+      object->y -= px(2);
       Event_Wait(1);
     }
     Settlements_SplashCrate(9);
     Actor_SetPosition(9, 0, 0);
     Actor_SetPosition(21, 184, 184);
     Actor_GetById(21)->motionFlags = 0;
-    Actor_GetById(21)->y -= 0x400000;
+    Actor_GetById(21)->y -= px(64);
     MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
     Event_SetFlag(FLAG_SCENE_TEMP_04);
   }
@@ -776,7 +776,7 @@ void Settlements_SlideCrateDownFalls(void) {
     i = 8;
   sink:
     FieldEvent_Wait(1);
-    object->y -= 0x20000;
+    object->y -= px(2);
     i--;
     if (i > 0)
       goto sink;
@@ -897,7 +897,7 @@ extern s32 gSettlements_CrateDropScript[];
   i = (frames);                                                                \
   do {                                                                         \
     FieldEvent_Wait(1);                                                        \
-    object->y -= 0x20000;                                                      \
+    object->y -= px(2);                                                        \
     i--;                                                                       \
   } while (i > 0)
 
@@ -972,7 +972,7 @@ void Settlements_SplashCrate(s32 id) {
   spawn.scaleX = 0xcccc;
   spawn.scaleY = 0xcccc;
   spawn.speed = 0x10000;
-  spawn.acceleration = 0x10000;
+  spawn.acceleration = px(1);
   spawn.script = gSettlements_SmokeScript;
   Event_PlaySound(SE_CAST);
   FieldEffect_Spawn(object->x, object->y, object->z, 0, 0, 0, 0x1c0000, &spawn);

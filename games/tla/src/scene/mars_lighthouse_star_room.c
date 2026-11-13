@@ -158,7 +158,7 @@ next:
   {
     s32 x = source->x + (Random16() << 4) - (Random16() << 4);
     struct Actor *object =
-        ObjectCreate_(0x145, x, (Random16() << 3) + source->y + 0x40000,
+        ObjectCreate_(0x145, x, (Random16() << 3) + source->y + px(4),
                       source->z + (Random16() << 4) - (Random16() << 4));
 
     if (object != NULL) {
@@ -181,7 +181,7 @@ next:
       object->gravity = 0x547a;
       object->scaleX = scale;
       object->scaleY = scale;
-      object->bounce = 0x8000;
+      object->bounce = Q16_ONE / 2;
       Actor_SetSpriteColorMode(object, 1);
     }
   }
@@ -223,8 +223,8 @@ void Func_020001e8(void) {
     Event_SetFlag(FLAG_SCENE_TEMP_33);
     object->x = object->timer << 16;
     object->z = *(s16 *)((u8 *)object + 0x66) << 16;
-    object->scaleX = 0x10000;
-    object->scaleY = 0x10000;
+    object->scaleX = Q16_ONE;
+    object->scaleY = Q16_ONE;
     Event_SetFlag(0xa4a);
   }
 }
@@ -348,7 +348,7 @@ s32 Scene_Initialize(void) {
             Func_02000db8(14);
           }
         }
-        if (Actor_GetById(13)->x > 0x1900000) {
+        if (Actor_GetById(13)->x > px(400)) {
           MapGrid_CopyCellAttributes(39, 22, 2, 1, 43, 13);
           MapGrid_CopyCellAttributes(31, 21, 2, 2, 40, 12);
         }
@@ -631,7 +631,7 @@ void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
   HeapSlot_Release(68);
   if (rise) {
     System_Wait(1);
-    (*slot)->velocityY = 0x28000;
+    (*slot)->velocityY = px(5) / 2;
     System_Wait(4);
     Event_PlaySound(SE_CLICK);
     System_Wait(8);
@@ -681,9 +681,9 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
     object = gMarsLighthouseStarRoom_MarsStar;
     object->motionFlags = 0;
-    object->speedLimit = 0x40000;
-    object->acceleration = 0x20000;
-    FieldActor_SetMoveTargetFixed(object, leader->x, leader->y + 0x200000,
+    object->speedLimit = px(4);
+    object->acceleration = px(2);
+    FieldActor_SetMoveTargetFixed(object, leader->x, leader->y + px(32),
                                   leader->z);
     FieldActor_WaitForMove(gMarsLighthouseStarRoom_MarsStar);
     Event_PlaySound(MUS_083);
@@ -861,16 +861,16 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   object = *slot;
   if (object != 0) {
     object->motionFlags = 3;
-    object->velocityY = 0x20000;
-    object->speedLimit = 0x20000;
-    object->acceleration = 0x10000;
+    object->velocityY = px(2);
+    object->speedLimit = px(2);
+    object->acceleration = px(1);
     FieldActor_SetMoveTarget(object, 672, 0, 160);
     FieldActor_WaitForMove((s32)*slot);
     Event_PlaySound(SE_CLICK);
     object = *slot;
-    object->acceleration = 0x8000;
-    object->velocityY = 0x40000;
-    object->speedLimit = 0x10000;
+    object->acceleration = px(1) / 2;
+    object->velocityY = px(4);
+    object->speedLimit = px(1);
     FieldActor_SetMoveTarget(object, 664, 0, 158);
     FieldActor_WaitForMove((s32)*slot);
   }
@@ -940,16 +940,16 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     object = *slot;
     if (object != 0) {
       object->motionFlags = 3;
-      object->velocityY = 0x20000;
-      object->speedLimit = 0x20000;
-      object->acceleration = 0x10000;
+      object->velocityY = px(2);
+      object->speedLimit = px(2);
+      object->acceleration = px(1);
       FieldActor_SetMoveTarget(object, 672, 0, 160);
       FieldActor_WaitForMove((s32)*slot);
       Event_PlaySound(SE_CLICK);
       object = *slot;
-      object->acceleration = 0x8000;
-      object->velocityY = 0x40000;
-      object->speedLimit = 0x10000;
+      object->acceleration = px(1) / 2;
+      object->velocityY = px(4);
+      object->speedLimit = px(1);
       FieldActor_SetMoveTarget(object, 664, 0, 158);
       FieldActor_WaitForMove((s32)*slot);
     }
@@ -1040,16 +1040,16 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   object2 = *slot2;
   if (object2 != 0) {
     object2->motionFlags = 3;
-    object2->velocityY = 0x20000;
-    object2->speedLimit = 0x20000;
-    object2->acceleration = 0x10000;
+    object2->velocityY = px(2);
+    object2->speedLimit = px(2);
+    object2->acceleration = px(1);
     FieldActor_SetMoveTarget(object2, 672, 0, 160);
     FieldActor_WaitForMove((s32)*slot2);
     Event_PlaySound(SE_CLICK);
     object2 = *slot2;
-    object2->acceleration = 0x8000;
-    object2->velocityY = 0x40000;
-    object2->speedLimit = 0x10000;
+    object2->acceleration = px(1) / 2;
+    object2->velocityY = px(4);
+    object2->speedLimit = px(1);
     FieldActor_SetMoveTarget(object2, 664, 0, 158);
     FieldActor_WaitForMove((s32)*slot2);
   }
@@ -1143,8 +1143,8 @@ void Func_02001424(void) {
     sprite = object->sprite;
     sprite->priority = 2;
     Actor_SetSpriteFlags(object, 0);
-    object->scaleX = 0x8000;
-    object->scaleY = 0x8000;
+    object->scaleX = Q16_ONE / 2;
+    object->scaleY = Q16_ONE / 2;
     *(s32 *)&object->watchedObject = 60;
     object->update = Func_020013e4;
     Actor_SelectAnimation(object, 5);
@@ -2025,7 +2025,7 @@ void Func_020024d4(struct Actor *actor) {
     d = Random16();
     e = Random16();
     z = actor->z + d * 16 - e * 16;
-    y = c * 8 + actor->y + 0x40000;
+    y = c * 8 + actor->y + px(4);
     object = (struct Actor *)Import_ActorCreate(0x1e9, x, y, z);
     if (object != NULL) {
       s32 angle, radius;
@@ -2051,7 +2051,7 @@ void Func_020024d4(struct Actor *actor) {
       object->scaleY = scale;
       object->velocityX = velocity;
       object->acceleration = 0;
-      object->bounce = 0x8000;
+      object->bounce = Q16_ONE / 2;
       sprite = object->sprite;
       source = work->owner->sprite;
       VramCache_FreeEntry(sprite->vramBlock);
@@ -2105,7 +2105,7 @@ next:
       object->gravity = 0x547a;
       object->scaleX = scale;
       object->scaleY = object->scaleX;
-      object->bounce = 0x8000;
+      object->bounce = Q16_ONE / 2;
       Actor_SetSpriteColorMode(object, 1);
     }
   }
@@ -2182,7 +2182,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       actor->targetZ = 0x80000000;
       actor->targetY = 0x80000000;
       actor->targetX = 0x80000000;
-      actor->acceleration = 0x4000;
+      actor->acceleration = px(1) / 4;
       actor->timer = 1;
       Event_PlaySound(SE_CRASH);
       /* FAKEMATCH(wrapper): forwarded. */
@@ -2231,9 +2231,9 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       }
     }
 
-    if (actor->scaleX < 0x10000) {
-      actor->scaleX += 0x1000;
-      actor->scaleY += 0x1000;
+    if (actor->scaleX < Q16_ONE) {
+      actor->scaleX += Q16_ONE / 16;
+      actor->scaleY += Q16_ONE / 16;
     }
     FieldActor_SetMoveTargetFixed(actor, position.x, position.y, position.z);
 
@@ -2250,8 +2250,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
   } else if (state == 1) {
     actor->movementState = 0;
     if (actor->scaleX > 0) {
-      actor->scaleX -= 0x1000;
-      actor->scaleY -= 0x1000;
+      actor->scaleX -= Q16_ONE / 16;
+      actor->scaleY -= Q16_ONE / 16;
       Func_020024d4(actor);
     } else {
       actor->z = 0;

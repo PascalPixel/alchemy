@@ -7,7 +7,7 @@ void Leader_Lift(s32 height) {
     object->motionFlags = 0;
     Actor_SetSpriteFlags(object, 0);
     object->y += height;
-    object->speedLimit = 0x10000;
+    object->speedLimit = px(1);
     object->velocityY = 0;
     gMainRoutineWork.renderMode = 2;
     object->actionFlags = 1;

@@ -131,8 +131,8 @@ void Func_02000408(void) {
   struct Actor *object = Actor_GetById(15);
 
   object->motionFlags = 0;
-  object->scaleX = 0x4000;
-  object->scaleY = 0x4000;
+  object->scaleX = Q16_ONE / 4;
+  object->scaleY = Q16_ONE / 4;
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_LIGHT_APPEAR);
@@ -210,7 +210,7 @@ void Func_02000534(s32 a) {
       Func_020004e4(0, a);
     }
   } else {
-    if (Actor_GetById(party->currentOwner)->y > -0x1c0000)
+    if (Actor_GetById(party->currentOwner)->y > -px(28))
       Field_TryJumpForward();
   }
 }
@@ -247,8 +247,8 @@ next:
     object = Actor_GetById(gData_02000eec[i]);
     object->motionFlags = 0;
     object->y += 0x8000;
-    object->acceleration = 0x1000;
-    object->speedLimit = 0x20000;
+    object->acceleration = px(1) / 16;
+    object->speedLimit = px(2);
     Actor_SetSpriteFlags(object, 1);
     Actor_SetMoveTarget(object, object->x, 0xfff80000, object->z);
     object->update = Func_020004b4;

@@ -572,7 +572,7 @@ void Statue_Sink(u16 *list, s32 mode, s32 count) {
       if (mode == 1) {
         GameFlag_Set(flag);
         YampiDesertCave_SetStakeCell(id, a, flag, object->terrainId);
-        object->scaleY = 0x10000;
+        object->scaleY = Q16_ONE;
       }
       break;
     }
@@ -851,7 +851,7 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
     struct Actor *chest = Actor_GetById(17);
 
     Actor_SetPositionFixed(17, column << 19, row << 19);
-    chest->y = 0x200000;
+    chest->y = px(32);
     chest->motionFlags = 3;
     chest->gravity = 0x170a;
     wait(50);

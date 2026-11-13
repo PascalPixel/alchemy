@@ -5,7 +5,7 @@ s32 Orbiter_Spiral(struct Orbiter *orbiter) {
 
   orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
   orbiter->x = anchor->x;
-  orbiter->y = anchor->y + 0x80000;
+  orbiter->y = anchor->y + px(8);
   orbiter->z = anchor->z;
   FieldVector_AddPolarOffset(orbiter->radius, orbiter->angle, &orbiter->x);
   /* FAKEMATCH(temporary): the angle's address, taken after the first push,
@@ -19,7 +19,7 @@ s32 Orbiter_Spiral(struct Orbiter *orbiter) {
   orbiter->radius -= 0x40000;
   orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
   orbiter->x = anchor->x;
-  orbiter->y = anchor->y + 0x80000;
+  orbiter->y = anchor->y + px(8);
   orbiter->z = anchor->z;
   FieldVector_AddPolarOffset(orbiter->radius, *angle, &orbiter->x);
   Func_02001364(orbiter);

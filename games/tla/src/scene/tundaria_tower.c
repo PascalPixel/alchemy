@@ -315,16 +315,16 @@ void Func_020007dc(s32 step) {
   case 1:
     break;
   case 2:
-    position.x = 0x15b0000;
+    position.x = px(347);
     position.y = 0;
-    position.z = 0x1780000;
+    position.z = px(376);
     Func_02000708(&position, 1, 0xcccc);
     break;
   case 3:
     MapGrid_CopyCellPictureIndicesRect(31, 85, 20, 85, 3, 4);
-    position.x = 0x15b0000;
+    position.x = px(347);
     position.y = 0;
-    position.z = 0x1780000;
+    position.z = px(376);
     Func_02000708(&position, 8, 0x18000);
     break;
   }
@@ -358,7 +358,7 @@ void Func_020008a8(void) {
   Event_ResolvePendingActions(0);
   GameFlag_Set(0x944);
   Call6((void (*)())Map_CopyCellAttributeRect, 11, 22, 3, 2, 20, 22);
-  object->gravity = 0x8000;
+  object->gravity = px(1) / 2;
   object->motionFlags = 3;
   OverlayObject_WaitUntilIdle(object);
   Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
@@ -432,7 +432,7 @@ void Func_02000a48(s32 arg0, s32 arg1) {
     object->scaleY -= 7936;
   }
   if (arg0 == 1) {
-    object->scaleY = 0x10000;
+    object->scaleY = Q16_ONE;
     GameFlag_Set(object->timer);
     Func_02000338(Actor_GetById(effectWork[13]));
     MapGrid_CopyCellPictureIndicesRect(67, 23, (object->x >> 20) + 64,
@@ -504,7 +504,7 @@ void Func_02000c64(s32 unused, s32 actorArg) {
   Event_ResolvePendingActions(0);
   dx = (object->x >> 20) - (object->timer >> 8);
   dz = (object->z >> 20) - (object->timer & 0xff);
-  object->speedLimit = 0x8000;
+  object->speedLimit = px(1) / 2;
   while ((MapCell_GetAttributes(1, (object->x >> 20) + dx,
                                 (object->z >> 20) + dz) >>
           8) == 50 &&
@@ -600,15 +600,15 @@ void Func_02000f0c(s32 step) {
     GameFlag_Set(0x94b);
     break;
   case 2:
-    position.x = 0x780000;
+    position.x = px(120);
     position.y = 0;
-    position.z = 0x2380000;
+    position.z = px(568);
     Func_02000708(&position, 1, 0xcccc);
     break;
   case 3:
-    position.x = 0x780000;
+    position.x = px(120);
     position.y = 0;
-    position.z = 0x2380000;
+    position.z = px(568);
     Func_02000708(&position, 8, 0x18000);
     break;
   }
@@ -784,8 +784,8 @@ void Func_020011e0(void) {
   TundariaTower_CamBounds(-1, -1, -1, 0);
   Map_CenterOnFollowedPoint();
   wait(1);
-  leader->y = 0x820000;
-  leader->gravity = 0x8000;
+  leader->y = px(130);
+  leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
@@ -822,8 +822,8 @@ void Func_020011e0(void) {
   MapGrid_WaitForShakeToSettle();
   FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  leader->gravity = 0x10000;
-  leader->bounce = 0x4000;
+  leader->gravity = px(1);
+  leader->bounce = Q16_ONE / 4;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Event_End();
 }
@@ -1078,7 +1078,7 @@ top:
       if (mode == 1) {
         GameFlag_Set(flag);
         Actor_SetCellOpen(id, a, flag, object->terrainId);
-        object->scaleY = 0x10000;
+        object->scaleY = Q16_ONE;
       }
       return;
     }
@@ -1444,7 +1444,7 @@ void Func_020029d0(s32 spread) {
       s32 y = leader->y - (((Random16() * 14) >> 16) << 16);
 
       effect = (struct FieldEffect *)Import_ActorCreate(
-          285, (i << 17) + leader->x - 0x80000, y - 0x20000, leader->z);
+          285, (i << 17) + leader->x - px(8), y - 0x20000, leader->z);
     }
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);

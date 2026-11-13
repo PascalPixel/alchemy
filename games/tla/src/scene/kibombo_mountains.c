@@ -172,9 +172,9 @@ void Func_020001a0(s32 unused, s32 id) {
       Actor_SetSpritePriority(15, 2);
       other = Actor_GetById(9);
       dx = block->x - other->x;
-      if (dx >= 0 ? dx < 0x80000 : other->x - block->x < 0x80000) {
+      if (dx >= 0 ? dx < 0x80000 : other->x - block->x < px(8)) {
         other->motionFlags = 0;
-        other->speedLimit = 0x10000;
+        other->speedLimit = px(1);
         FieldActor_SetMoveTargetFixed(other, block->x, block->y, block->z);
         FieldActor_WaitForMove(other);
         Actor_StartScript(block, gData_02001404);
@@ -364,8 +364,8 @@ s32 Scene_Initialize(void) {
       Actor_GetById(16)->priorityFlags |= 0x80;
       lift = Actor_GetById(17);
       lift->priorityFlags |= 0x40;
-      lift->y = 0xe00000;
-      lift->terrainHeight = 0xe00000;
+      lift->y = px(224);
+      lift->terrainHeight = px(224);
       lift->collisionFlags = flag;
     } else {
       Actor_SetAttachedEffect(10, ATTACHED_EFFECT_IN_FRONT |
@@ -375,7 +375,7 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(0x882))
       Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
     else
-      Actor_GetById(13)->scaleY = 0x14000;
+      Actor_GetById(13)->scaleY = Q16_ONE * 5 / 4;
   } else if (scene == (s32)&SceneId_KibomboMountains2) {
     Actor_SetSpritePriority(8, 1);
     Actor_SetSpritePriority(9, 1);
@@ -464,8 +464,8 @@ void Func_02000ad4(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   Actor_SelectAnimation(object, 1);
-  object->acceleration = 0x4000;
-  object->speedLimit = 0x8000;
+  object->acceleration = px(1) / 4;
+  object->speedLimit = px(1) / 2;
 }
 
 void Func_02000af0(void) {

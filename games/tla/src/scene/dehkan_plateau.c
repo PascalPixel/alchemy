@@ -100,7 +100,7 @@ void Pillars_Pound(const void *data, s32 mode, s32 timer) {
       if (mode == 1) {
         GameFlag_Set(flag);
         Actor_SetCellOpen(active, kind, flag, object->terrainId);
-        object->scaleY = 0x10000;
+        object->scaleY = Q16_ONE;
       }
       return;
     }
@@ -495,7 +495,7 @@ void Rubble_Spray(s32 spread) {
       s32 y = leader->y - (((Random16() * 14) >> 16) << 16);
 
       effect = (struct FieldEffect *)Import_ActorCreate(
-          285, (i << 17) + leader->x - 0x80000, y - 0x20000, leader->z);
+          285, (i << 17) + leader->x - px(8), y - 0x20000, leader->z);
     }
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
@@ -751,7 +751,7 @@ void Func_020013b0(void) {
 void Func_020013fc(void) {
   CrumblingPillars_Step(gData_02003f80);
   Func_020013b0();
-  if (Actor_GetById(gMainRoutineWork.currentOwner)->y < -0x180000) {
+  if (Actor_GetById(gMainRoutineWork.currentOwner)->y < -px(24)) {
     Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   }
@@ -1049,7 +1049,7 @@ void DehkanPlateau_StepOnCrack(void) {
                           cellZ << 3);
   Actor_SetPositionAndResetMotion(leader, cellX << 19, leader->y, cellZ << 19);
   Event_Wait(4);
-  FieldCamera_GetActor()->y += -0x80000;
+  FieldCamera_GetActor()->y += -px(8);
   next = record + 1;
   if (GameFlag_Get(flag)) {
     s32 x, y, index, toX, toZ;
@@ -1343,10 +1343,10 @@ void DehkanPlateau_JoltCamera(void) {
   struct Actor *object = FieldCamera_GetActor();
   u32 i;
 
-  object->y += -0x80000;
+  object->y += -px(8);
   wait(1);
   for (i = 0; i <= 7; i++) {
-    object->y += 0x10000;
+    object->y += px(1);
     wait(1);
   }
 }
@@ -1449,7 +1449,7 @@ void DehkanPlateau_CannonLeapsAway(void) {
   Actor_WalkToAndWaitById(25, 168, 104);
   Event_Wait(10);
   Sound_Play(SE_HIGH_JUMP);
-  Actor_GetById(25)->velocityY = 0x80000;
+  Actor_GetById(25)->velocityY = px(8);
   Actor_SetSpriteFlags(Actor_GetById(25), 0);
   Actor_WalkToAndWaitById(25, 200, 104);
   Actor_SetSpriteFlags(Actor_GetById(25), 1);
@@ -1498,7 +1498,7 @@ void DehkanPlateau_SinkPoundedPillar(void) {
     Actor_SetModeById(18, 4);
     object->priorityFlags |= 2;
     ((u8 *)object)[89] &= 0xfe;
-    object->scaleY = 0x10000;
+    object->scaleY = Q16_ONE;
     GameFlag_Set(FLAG_SCENE_TEMP_05);
   }
 }
@@ -1606,13 +1606,13 @@ void DehkanPlateau_CannonCrumblesPillars(void) {
   Actor_WalkToAndWait(25, 632, 280);
   Actor_SetSpeed(25, 2);
   Sound_Play(SE_HIGH_JUMP);
-  actor->velocityY = 0x80000;
+  actor->velocityY = px(8);
   Actor_SetSpriteFlags(Actor_GetById(25), 0);
   Actor_WalkToAndWait(25, 664, 280);
   Actor_SetSpriteFlags(Actor_GetById(25), 1);
   DehkanPlateau_CrumblePillar(21, 25, 0x210);
   Sound_Play(SE_HIGH_JUMP);
-  actor->velocityY = 0x80000;
+  actor->velocityY = px(8);
   Actor_SetSpriteFlags(Actor_GetById(25), 0);
   Actor_WalkToAndWait(25, 696, 280);
   Actor_SetSpriteFlags(Actor_GetById(25), 1);
@@ -1629,14 +1629,14 @@ void DehkanPlateau_CannonCrumblesPillars(void) {
   Actor_FaceDirectionById(25, FACING_EAST);
   Actor_SetSpeedParameters(25, 0x20000, 0x10000);
   Sound_Play(SE_HIGH_JUMP);
-  actor->velocityY = 0x80000;
+  actor->velocityY = px(8);
   Actor_SetSpriteFlags(Actor_GetById(25), 0);
   Actor_WalkToAndWait(25, 744, 168);
   Actor_SetSpriteFlags(Actor_GetById(25), 1);
   DehkanPlateau_CrumblePillar(24, 25, 0x216);
   Actor_FaceDirectionById(25, FACING_NORTH);
   Sound_Play(SE_HIGH_JUMP);
-  actor->velocityY = 0x80000;
+  actor->velocityY = px(8);
   Actor_SetSpriteFlags(Actor_GetById(25), 0);
   Actor_WalkToAndWait(25, 744, 136);
   Actor_SetSpriteFlags(Actor_GetById(25), 1);
@@ -1757,8 +1757,8 @@ void DehkanPlateau_CannonDropsPoundCube(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   wait(1);
-  leader->y = 0x820000;
-  leader->gravity = 0x8000;
+  leader->y = px(130);
+  leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
@@ -1775,12 +1775,12 @@ void DehkanPlateau_CannonDropsPoundCube(void) {
     wait(1);
     gDehkanPlateau_PoundCube->speedLimit = 0x19999;
     gDehkanPlateau_PoundCube->acceleration = 0x19999;
-    gDehkanPlateau_PoundCube->velocityY = 0x80000;
+    gDehkanPlateau_PoundCube->velocityY = px(8);
   }
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
   Actor_SetSpeed(9, 1.6);
-  leader->velocityY = 0x60000;
-  helper->velocityY = 0x60000;
+  leader->velocityY = px(6);
+  helper->velocityY = px(6);
   FieldActor_SetMoveTarget(leader, 216, 0, 120);
   FieldActor_SetMoveTarget(helper, 280, 0, 120);
   if (gDehkanPlateau_PoundCube != NULL)
@@ -1819,19 +1819,19 @@ void DehkanPlateau_CannonCrumblesLastPillar(void) {
   Actor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_SetSpeedParameters(16, 0x20000, 0x10000);
   Sound_Play(SE_HIGH_JUMP);
-  actor->velocityY = 0x80000;
+  actor->velocityY = px(8);
   Actor_SetSpriteFlags(Actor_GetById(16), 0);
   Actor_WalkToAndWaitById(16, 760, 200);
   Actor_SetSpriteFlags(Actor_GetById(16), 1);
   Event_Wait(20);
   Sound_Play(SE_HIGH_JUMP);
-  actor->velocityY = 0x80000;
+  actor->velocityY = px(8);
   Actor_SetSpriteFlags(Actor_GetById(16), 0);
   Actor_WalkToAndWaitById(16, 792, 200);
   Actor_SetSpriteFlags(Actor_GetById(16), 1);
   DehkanPlateau_CrumblePillar(9, 16, 0x210);
   Sound_Play(SE_HIGH_JUMP);
-  actor->velocityY = 0x80000;
+  actor->velocityY = px(8);
   Actor_SetSpriteFlags(Actor_GetById(16), 0);
   Actor_WalkToAndWaitById(16, 824, 200);
   Actor_SetSpriteFlags(Actor_GetById(16), 1);
@@ -2186,8 +2186,8 @@ void Func_02003764(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   wait(1);
-  leader->y = 0x820000;
-  leader->gravity = 0x8000;
+  leader->y = px(130);
+  leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
@@ -2236,8 +2236,8 @@ loop:
   MapGrid_WaitForShakeToSettle();
   FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  leader->gravity = 0x10000;
-  leader->bounce = 0x4000;
+  leader->gravity = px(1);
+  leader->bounce = Q16_ONE / 4;
   Event_Wait(10);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;

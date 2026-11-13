@@ -290,7 +290,7 @@ void Yallam_DigThirdHole(void) {
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);
-      leader->velocityY = 0x60000;
+      leader->velocityY = px(6);
       FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Event_End();
     }
@@ -311,7 +311,7 @@ void Yallam_DigFifthHole(void) {
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -16);
-      leader->velocityY = 0x60000;
+      leader->velocityY = px(6);
       FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Event_End();
     }
@@ -1769,8 +1769,8 @@ void Yallam_ForcePillarDown(void) {
   struct TileSprite *sprite = object->sprite;
 
   Event_SetFlag(FLAG_AREA_TEMP_00);
-  object->acceleration = 0x18000;
-  object->speedLimit = 0x80000;
+  object->acceleration = px(3) / 2;
+  object->speedLimit = px(8);
   Event_PlaySound(SE_TOPPLE);
   FieldActor_SetMoveTarget(object, 176, 40, 184);
   step = 0;
@@ -1791,8 +1791,8 @@ void Yallam_ForcePillarDown(void) {
   Event_PlaySound(SE_LOG_FALL);
   i = 0;
   sprite->tile = i;
-  object->x = 0xa80000;
-  object->z = 0xc00000;
+  object->x = px(168);
+  object->z = px(192);
   object->y = i;
   object->velocityY = i;
   object->velocityX = i;

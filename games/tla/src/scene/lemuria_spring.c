@@ -689,7 +689,7 @@ void LemuriaSpring_UpdateTossSimulation(void) {
       maxX = 0xc00000;
       minZ = 0x180000;
       maxZ = 0x780000;
-      if (toss->trail[0].z < 0x2a0000) {
+      if (toss->trail[0].z < px(42)) {
         edgeInset = (0x2a0000 - toss->trail[0].z) * 42 / 18;
         minX += edgeInset;
         if (minX > 0x5a0000) {
@@ -700,7 +700,7 @@ void LemuriaSpring_UpdateTossSimulation(void) {
           maxX = 0x960000;
         }
       }
-      if (toss->trail[0].z > 0x660000) {
+      if (toss->trail[0].z > px(102)) {
         edgeInset = (toss->trail[0].z * 42 - 0x660000 * 42) / 18;
         minX = 0x300000 + edgeInset;
         if (minX > 0x5a0000) {
@@ -711,7 +711,7 @@ void LemuriaSpring_UpdateTossSimulation(void) {
           maxX = 0x960000;
         }
       }
-      if (toss->trail[0].x < 0x5a0000) {
+      if (toss->trail[0].x < px(90)) {
         edgeInset = (0x5a0000 - toss->trail[0].x) * 18 / 42;
         minZ = 0x180000 + edgeInset;
         if (minZ > 0x2a0000) {
@@ -722,7 +722,7 @@ void LemuriaSpring_UpdateTossSimulation(void) {
           maxZ = 0x660000;
         }
       }
-      if (toss->trail[0].x > 0x960000) {
+      if (toss->trail[0].x > px(150)) {
         edgeInset = (toss->trail[0].x * 18 - 0x960000 * 18) / 42;
         minZ = 0x180000 + edgeInset;
         if (minZ > 0x2a0000) {
@@ -803,7 +803,7 @@ void LemuriaSpring_UpdateTossSimulation(void) {
           } else {
             obstacle->position.x = pos - motionStep;
           }
-          if (obstacle->position.x <= 0x400000) {
+          if (obstacle->position.x <= px(64)) {
             obstacle->heading = 0;
             if (index == 1) {
               obstacle->pauseOrPhase = 30;
@@ -1008,7 +1008,7 @@ void LemuriaSpring_InitializeTossSimulation(void) {
 
   ride->trail[0].x = 0xffe20000;
   ride->trail[0].y = 0;
-  ride->trail[0].z = 0x640000;
+  ride->trail[0].z = px(100);
   ride->velocity.x = 0;
   ride->velocity.y = 0;
   ride->velocity.z = 0;
@@ -1040,11 +1040,11 @@ s32 LemuriaSpring_RunToss(s32 side) {
       Actor_SetAnimation(gMainRoutineWork.currentOwner, 39);
       ride->hold = 0;
       ride->velocity.x = 0x14ccc;
-      ride->velocity.y = 0x40000;
-      ride->velocity.z = -0x20000;
-      ride->trail[0].x = 0x780000;
-      ride->trail[0].y = 0x100000;
-      ride->trail[0].z = 0x980000;
+      ride->velocity.y = px(4);
+      ride->velocity.z = -px(2);
+      ride->trail[0].x = px(120);
+      ride->trail[0].y = px(16);
+      ride->trail[0].z = px(152);
       ride->frames = 300;
       if (gLemuriaSpring_TossChoice == 1) {
         Actor_SelectAnimation(Actor_Get(16), 3);

@@ -272,7 +272,7 @@ void Func_020008a0(struct Actor *object, s32 dz) {
   MapGrid_CheckCollision(object, &position);
   position.x = object->x;
   position.y = object->y;
-  position.z = object->z + 0x80000;
+  position.z = object->z + px(8);
   if (MapGrid_CheckCollision(object, &position) <= 0) {
     position.x = object->x + 0x5b333;
     position.y = object->y;
@@ -294,8 +294,8 @@ void Func_0200094c(void) {
   struct Actor *steam;
 
   if ((gFrameCount & 7) == 0) {
-    steam = ((struct Actor *)Import_ActorCreate(
-        14, leader->x, leader->y + 0x60000, leader->z));
+    steam = ((struct Actor *)Import_ActorCreate(14, leader->x,
+                                                leader->y + px(6), leader->z));
     if (steam) {
       Actor_SetSpriteFlags(steam, 0);
       Actor_SelectAnimation(steam, 1);
@@ -341,14 +341,14 @@ void Func_020009d4(void) {
   TALK();
   Actor_SetPosition(64, 168, 152);
   statue->motionFlags = 6;
-  statue->terrainHeight += 0x100000;
+  statue->terrainHeight += px(16);
   Sound_Play(SE_SHIMMER);
   glow = ((struct Actor *)Import_ActorCreate(412, 0, 0, 0));
   Actor_StartScript(glow, gFieldEffect_MediumScript);
   Actor_SetSpriteColorMode(glow, 1);
   glow->motionFlags = 0;
   glow->x = statue->x;
-  glow->y = statue->y + 0x80000;
+  glow->y = statue->y + px(8);
   glow->z = statue->z;
   glow->terrainHeight = statue->terrainHeight;
   glow->update = Func_020009bc;
@@ -525,7 +525,7 @@ s32 Scene_Initialize(void) {
     statue = Actor_GetById(64);
     Actor_SetPosition(64, 168, 152);
     statue->motionFlags = 6;
-    statue->terrainHeight += 0x100000;
+    statue->terrainHeight += px(16);
   }
   return 0;
 }

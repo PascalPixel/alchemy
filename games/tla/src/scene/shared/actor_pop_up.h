@@ -8,12 +8,12 @@ s32 Actor_PopUp(struct Actor *object) {
     object->y = Map_GetTerrainHeight(0, object->x, object->z) + 0x100000;
     object->scaleX = frame;
     object->scaleY = frame;
-    object->speedLimit = 0x10000;
-    object->acceleration = 0x8000;
+    object->speedLimit = px(1);
+    object->acceleration = px(1) / 2;
     Actor_SetSpritePriorityDirect(object, 1);
   } else if (frame <= 32) {
-    object->scaleX = 0x10000;
-    object->scaleY = 0x10000;
+    object->scaleX = Q16_ONE;
+    object->scaleY = Q16_ONE;
     {
       s32 half = (object->timer / 2) & 1;
 

@@ -433,7 +433,7 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN))
     Actor_SetPosition(14, 0, 0);
   else
-    Actor_GetById(14)->scaleY = 0x14000;
+    Actor_GetById(14)->scaleY = Q16_ONE * 5 / 4;
   if (GameFlag_Get(FLAG_FIRST_PUDDLE_FROZEN))
     MapGrid_CopyCellAttributes(79, 28, 1, 1, 81, 28);
   if (GameFlag_Get(FLAG_SECOND_PUDDLE_FROZEN))

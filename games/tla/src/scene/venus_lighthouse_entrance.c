@@ -1201,7 +1201,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
   case 3:
     if (work->timer == 0) {
       object->motionFlags = 3;
-      object->velocityY = 0x180000;
+      object->velocityY = px(24);
       work->follow = 0;
       Sound_Play(SE_HEAVY_IMPACT);
     }
@@ -1323,7 +1323,7 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   work->object = actor;
   work->x = actor->x;
   work->y = actor->y;
-  work->z = actor->z + 0x20000;
+  work->z = actor->z + px(2);
   Decompress_TaggedLz(gField_Tiles64D, work);
   resource = VramCache_FindFreeEntry();
   tile = Vram_Load(resource, 0x800, work);
@@ -1349,7 +1349,7 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   effect->priorityFlags = 2;
   Actor_SetSpriteFlags(actor, 0);
   ((struct GlowAnimation *)actor->sprite)->angle = 0x4000;
-  actor->x += -0xc0000;
+  actor->x += -px(12);
   actor->motionFlags = 0;
   work->stage = 0;
   work->timer = 0;

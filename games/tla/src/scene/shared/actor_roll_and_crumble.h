@@ -43,7 +43,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       actor->targetZ = 0x80000000;
       actor->targetY = 0x80000000;
       actor->targetX = 0x80000000;
-      actor->acceleration = 0x4000;
+      actor->acceleration = px(1) / 4;
       actor->timer = 1;
       Event_PlaySound(SE_CRASH);
       /* FAKEMATCH(wrapper): forwarded. */
@@ -92,9 +92,9 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       }
     }
 
-    if (actor->scaleX < 0x10000) {
-      actor->scaleX += 0x1000;
-      actor->scaleY += 0x1000;
+    if (actor->scaleX < Q16_ONE) {
+      actor->scaleX += Q16_ONE / 16;
+      actor->scaleY += Q16_ONE / 16;
     }
     FieldActor_SetMoveTargetFixed(actor, position.x, position.y, position.z);
 
@@ -111,8 +111,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
   } else if (state == 1) {
     actor->movementState = 0;
     if (actor->scaleX > 0) {
-      actor->scaleX -= 0x1000;
-      actor->scaleY -= 0x1000;
+      actor->scaleX -= Q16_ONE / 16;
+      actor->scaleY -= Q16_ONE / 16;
       Func_02002870(actor);
     } else {
       actor->z = 0;

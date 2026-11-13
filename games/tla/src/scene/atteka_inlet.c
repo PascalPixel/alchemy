@@ -159,7 +159,7 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
     Actor_MoveToAndWait(10, 90, 288);
     Actor_WalkToAndWaitById(10, 80, 316);
     Actor_FaceDirectionById(10, FACING_EAST);
-    Actor_GetById(9)->velocityY = 0x40000;
+    Actor_GetById(9)->velocityY = px(4);
     Event_Wait(10);
     Event_SetMessageId((s32)MsgWhereDoYouThink);
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 9, 0);

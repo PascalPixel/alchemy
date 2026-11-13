@@ -267,10 +267,10 @@ void Func_02000198(void) {
     break;
   case 24:
     center->x = 152 << 17;
-    center->y = -0x1680000;
+    center->y = -px(360);
     center->z = 164 << 16;
-    center->scaleX = 0x10000;
-    center->scaleY = 0x10000;
+    center->scaleX = Q16_ONE;
+    center->scaleY = Q16_ONE;
     SceneActor_ParkRecord(center);
     Actor_SetScript(36, gData_0200641c);
     break;
@@ -393,18 +393,16 @@ void Func_020004c8(void) {
     u32 random;
 
     random = Random16();
-    effect = FieldActor_Create(672, center->x,
-                               (s32)((u32)(random << 8) >> 16 << 16) +
-                                   center->y - 0x1c0000,
-                               center->z);
+    effect = FieldActor_Create(
+        672, center->x,
+        (s32)((u32)(random << 8) >> 16 << 16) + center->y - px(28), center->z);
   } else {
     u32 random;
 
     random = Random16();
-    effect = FieldActor_Create(672, center->x,
-                               (s32)((u32)(random << 6) >> 16 << 16) +
-                                   center->y - 0x1c0000,
-                               center->z);
+    effect = FieldActor_Create(
+        672, center->x,
+        (s32)((u32)(random << 6) >> 16 << 16) + center->y - px(28), center->z);
   }
   if (effect != 0) {
     sprite = effect->sprite;
@@ -441,8 +439,8 @@ void Func_020005b8(void) {
     if (gFrameCount & 1) {
       Actor_SetPosition(36, 512, 264);
       Actor_Get(36)->y = 0x6f8000;
-      Actor_Get(36)->scaleX = 0x10000;
-      Actor_Get(36)->scaleY = 0x10000;
+      Actor_Get(36)->scaleX = Q16_ONE;
+      Actor_Get(36)->scaleY = Q16_ONE;
     } else {
       Actor_SetPosition(36, 512, 264);
       Actor_Get(36)->y = 0x688000;
@@ -493,7 +491,7 @@ void Func_0200065c(void) {
       Call1((void (*)())PartyInventory_Remove, 245);
       actor4 = Actor_GetById(4);
       created =
-          FieldActor_Create(0x1e9, actor4->x, actor4->y + 0x80000, actor4->z);
+          FieldActor_Create(0x1e9, actor4->x, actor4->y + px(8), actor4->z);
       if (created != 0) {
         sprite = created->sprite;
         sprite->unk1b[0] = 0;
@@ -513,13 +511,13 @@ void Func_0200065c(void) {
       FieldActor_SetSpritePriority(37, 1);
       actor37 = Actor_GetById(37);
       actor37->x = actor4->x;
-      actor37->y = 0x600000;
+      actor37->y = px(96);
       actor37->z = actor4->z;
       actor37->motionFlags = 3;
       actor37->acceleration = 0xccc;
       actor37->speedLimit = 0x6666;
-      actor37->scaleX = 0x2000;
-      actor37->scaleY = 0x2000;
+      actor37->scaleX = Q16_ONE / 8;
+      actor37->scaleY = Q16_ONE / 8;
       FieldEvent_SetMessageId((s32)MsgThereSeemsTo + 1);
       Event_PlaySound(MUS_036);
       if (created != 0) {
@@ -527,7 +525,7 @@ void Func_0200065c(void) {
         *flags = 0;
         created->gravity = 0x9999;
         created->bounce = 0xcccc;
-        created->velocityY = 0x80000;
+        created->velocityY = px(8);
         FieldActor_SetMoveTarget(created, 512, 128, 294);
         FieldActor_SetMoveTargetFixed(actor37, 0x2000000, -1, 0x1260000);
         Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
@@ -622,9 +620,9 @@ void Func_0200065c(void) {
       actor31->scaleY = 0xffff0000;
       actor31->scaleX = 0x1999;
       actor31->motionFlags = 0;
-      actor31->x = 0x2000000;
-      actor31->y = 0x800000;
-      actor31->z = 0x1080000;
+      actor31->x = px(512);
+      actor31->y = px(128);
+      actor31->z = px(264);
       actor31->priorityFlags |= 2;
       Actor_SetSpriteFlags(Actor_GetById(32), 0);
       FieldActor_SetSpriteColor(Actor_GetById(32), 7);
@@ -632,9 +630,9 @@ void Func_0200065c(void) {
       actor32->scaleY = 0xffff0000;
       actor32->scaleX = 0x1999;
       actor32->motionFlags = 0;
-      actor32->x = 0x2000000;
-      actor32->y = 0xa00000;
-      actor32->z = 0x1080000;
+      actor32->x = px(512);
+      actor32->y = px(160);
+      actor32->z = px(264);
       actor32->priorityFlags |= 2;
       Actor_SetScript(31, gData_02006338);
       Actor_SetScript(32, gData_02006338);
@@ -849,7 +847,7 @@ void Func_02000cd0(void) {
   Actor_ArmCallback_(4, 0x4000, 0);
   Func_020058fc_(7, 258, 0);
   Actor_GetById_(28)->actionFlags &= 0xfe;
-  Actor_GetById_(28)->velocityY = 0x40000;
+  Actor_GetById_(28)->velocityY = px(4);
   Actor_OffsetPositionAndResetMotion_(28, 0, 24);
   Actor_WaitForMoveById_(28);
   Actor_GetById_(28)->actionFlags |= 1;
@@ -2506,25 +2504,25 @@ void Func_020040f4(void) {
   angle = linked->facing;
   actor->x = (((linked->x >> 19) & ~1) + (angle >> 13) - 1) << 19;
   actor->z = (((linked->z >> 19) & ~1) - ((angle >> 13) & 2) + 1) << 19;
-  actor->velocityY = 0x60000;
+  actor->velocityY = px(6);
   actor->priorityFlags = 1;
   actor->motionFlags = 3;
   Actor_SetSpriteFlags(actor, 1);
   Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
   shadow = EventCamera_GetActor();
-  shadow->speedLimit = 0x80000;
-  shadow->acceleration = 0x10000;
+  shadow->speedLimit = px(8);
+  shadow->acceleration = px(1);
   shadow->motionFlags = 0;
   FieldActor_SetMoveTargetFixed(
       shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z), actor->z);
   i = 0;
-  if (actor->y > actor->terrainHeight + 0x100000) {
+  if (actor->y > actor->terrainHeight + px(16)) {
     do {
       System_Wait(1);
       i++;
       if (i > 59)
         break;
-    } while (actor->y > actor->terrainHeight + 0x100000);
+    } while (actor->y > actor->terrainHeight + px(16));
   }
   Event_PlaySound(SE_LANDING_THUD);
   i = 0;
@@ -2578,8 +2576,8 @@ void Whirlwind_Update(struct Object6a5 *object) {
     position.y = object->y;
     position.z = object->z;
     Camera_WorldToScreen(&position);
-    if (position.x <= 0x1100000) {
-      if (position.x >= -0x200000) {
+    if (position.x <= px(272)) {
+      if (position.x >= -px(32)) {
         if (object->unk62 == 0) {
           distance = leader->y - object->y;
           if (distance < 0)
@@ -2876,8 +2874,8 @@ void CrackedTile_DropIn(void) {
   Camera_SetBounds(-1, -1, -1, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
-  leader->y = 0x820000;
-  leader->gravity = 0x8000;
+  leader->y = px(130);
+  leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
@@ -2911,8 +2909,8 @@ void CrackedTile_DropIn(void) {
   FieldMapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  leader->gravity = 0x10000;
-  leader->bounce = 0x4000;
+  leader->gravity = px(1);
+  leader->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Event_End();

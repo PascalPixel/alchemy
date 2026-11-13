@@ -482,7 +482,7 @@ void Func_02000870(void) {
         Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 840, 88);
         Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_WEST);
         Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 9);
-        helper->gravity = 0x10000;
+        helper->gravity = px(1);
         helper->terrainId = two;
       }
       Actor_Jump(9, 4, 0);
@@ -558,8 +558,8 @@ void Func_02000d10(s32 id) {
   struct Actor *object = ((struct Actor *)Actor_GetById(id));
 
   Actor_SetSpeed(id, 3.2);
-  object->gravity = 0x8000;
-  object->velocityY = 0x80000;
+  object->gravity = px(1) / 2;
+  object->velocityY = px(8);
   Actor_SetDestination(id, 120, 120);
 }
 
@@ -977,8 +977,8 @@ void Func_02001944(s32 actor, s32 id) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  object->scaleX = 0x1000;
-  object->scaleY = 0x1000;
+  object->scaleX = Q16_ONE / 16;
+  object->scaleY = Q16_ONE / 16;
   wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1016,7 +1016,7 @@ void Func_02001a04(void) {
 
   FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_RunRepeatedMotion(9, 2);
-  object->gravity = 0x8000;
+  object->gravity = px(1) / 2;
   Actor_SetSpritePriority(9, 1);
   Actor_SetSpeed(9, 0.8);
   Actor_Jump(9, 6, 0);
@@ -1170,8 +1170,8 @@ void Func_02001dc8(s32 id) {
   ((struct Actor *)Actor_GetById(id))->priorityFlags |= 0x20;
   Actor_SetSpritePriority(id, 1);
   object->motionFlags = 0;
-  object->y = -0x200000;
-  object->terrainHeight = -0x200000;
+  object->y = -px(32);
+  object->terrainHeight = -px(32);
 }
 
 /// Places a platform object at its raised position.
@@ -1179,7 +1179,7 @@ void Func_02001dc8(s32 id) {
   {                                                                            \
     FieldActor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(id)),  \
                                          x, PIXELS(-32), z);                   \
-    ((struct Actor *)Actor_GetById(id))->terrainHeight = -0x200000;            \
+    ((struct Actor *)Actor_GetById(id))->terrainHeight = -px(32);              \
   }
 
 void Func_02001e0c(void) {
@@ -1195,7 +1195,7 @@ void Func_02001e0c(void) {
     object->motionFlags = 0;
     FieldActor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(15)),
                                          206 << 18, PIXELS(-32), 144 << 15);
-    object->terrainHeight = -0x200000;
+    object->terrainHeight = -px(32);
     if (Event_GetFlag(FLAG_SCENE_TEMP_12))
       MapGrid_CopyCellAttributes(110, 1, 3, 1, 110, 4);
     else

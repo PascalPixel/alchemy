@@ -245,7 +245,7 @@ void WorldMap_UpdateBobbingMarker(struct BobbingMarker *marker) {
     Actor_SetSpriteColorMode(marker, 7);
   if (marker->stopped == 0) {
     angle = &marker->angle;
-    marker->x.fixed = 0x27880000;
+    marker->x.fixed = px(10120);
     y = MulQ16(Math_Sin(*angle << 3), 0x40000);
     z = 0x20a40000;
 
@@ -270,8 +270,8 @@ s32 StoryActor_Initialize(struct Actor *actor) {
   actor->motionFlags = 0;
   actor->timer = 0;
   actor->unk66 = 0;
-  actor->scaleX = 0x8000;
-  actor->scaleY = 0x8000;
+  actor->scaleX = Q16_ONE / 2;
+  actor->scaleY = Q16_ONE / 2;
   return 0;
 }
 
@@ -298,8 +298,8 @@ s32 Func_020003b4(struct Actor *object) {
     return 1;
   Actor_SetSpriteFlags(object, 0);
   x = object->x;
-  object->acceleration = 0x1000;
-  object->speedLimit = 0x1000;
+  object->acceleration = px(1) / 16;
+  object->speedLimit = px(1) / 16;
   z = object->z;
   FieldActor_SetMoveTargetFixed(object, x - 0x1e0000, object->y, z + 0x80000);
   return 0;
@@ -424,10 +424,10 @@ void WorldMap_BoardShip(void) {
   Event_PlaySound(SE_JUMP);
   Actor_SetSpriteFlags(leader, 0);
   Import_ActorSelectAnimation(leader, 7);
-  leader->speedLimit = 0x30000;
-  leader->acceleration = 0x20000;
-  leader->velocityY = 0x40000;
-  leader->terrainHeight = 0x40000;
+  leader->speedLimit = px(3);
+  leader->acceleration = px(2);
+  leader->velocityY = px(4);
+  leader->terrainHeight = px(4);
   Actor_StartIdle(leader);
   FieldActor_SetMoveTargetFixed(leader, ship->x, 0, ship->z);
   FieldActor_WaitForMove(leader);
@@ -500,7 +500,7 @@ void WorldMap_LeaveShip(void) {
     gMainRoutineWork.unk280 = ship->facing;
     flags = leader->motionFlags;
     leader->x = ship->x;
-    leader->y = 0x40000;
+    leader->y = px(4);
     leader->z = ship->z;
     leader->motionFlags = 0;
     Actor_SetSpriteFlags(leader, 0);
@@ -508,9 +508,9 @@ void WorldMap_LeaveShip(void) {
     System_Wait(6);
     Event_PlaySound(SE_JUMP);
     Import_ActorSelectAnimation(leader, 7);
-    leader->speedLimit = 0x30000;
-    leader->acceleration = 0x20000;
-    leader->velocityY = 0x40000;
+    leader->speedLimit = px(3);
+    leader->acceleration = px(2);
+    leader->velocityY = px(4);
     leader->motionFlags = flags;
     Actor_StartIdle(leader);
     FieldActor_SetMoveTargetFixed(leader, position[0], 0, position[2]);
@@ -1275,8 +1275,8 @@ void WorldMap_MeetEcho(void) {
 
   djinni = Actor_GetById(9);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  x = (leader->x - 0x27880000) / 2 + 0x27880000;
-  z = (leader->z - 0x20a40000) / 2 + 0x20a40000;
+  x = (leader->x - px(10120)) / 2 + 0x27880000;
+  z = (leader->z - px(8356)) / 2 + 0x20a40000;
   /* FAKEMATCH(temporary): flag holds the id 0x16e, then the test's result, then
    * flag 0x175's result for MsgHey2. */
   flag = 0x16e;
@@ -1325,9 +1325,9 @@ void WorldMap_MeetEcho(void) {
     Event_WaitForZoomTransition();
     WorldMap_Freeze();
     djinni->motionFlags = 2;
-    djinni->gravity = 0x4000;
-    djinni->speedLimit = 0x10000;
-    djinni->acceleration = 0x10000;
+    djinni->gravity = px(1) / 4;
+    djinni->speedLimit = px(1);
+    djinni->acceleration = px(1);
     djinni->velocityY = 0;
     djinni->terrainHeight = 0;
     /* FAKEMATCH(barrier): an empty asm that reads and writes all of djinni. */
@@ -1344,7 +1344,7 @@ void WorldMap_MeetEcho(void) {
     wait(16);
     djinni->update = 0;
     Actor_SetSpriteColorMode(djinni, 0);
-    djinni->gravity = 0x10000;
+    djinni->gravity = px(1);
     FieldMessage_ShowAtActor(9, 0);
     if (Event_AskYesNoWithActorAnimation(owner, 0) == 1) {
       Actor_Jump(9, 2, 20);
@@ -1449,7 +1449,7 @@ void WorldMap_MeetEcho(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_MoveToObject(9, owner);
-  djinni->velocityY = 0xa0000;
+  djinni->velocityY = px(10);
   FieldActor_SetMoveTargetFixed(djinni, x, 0, z);
   Event_Wait(30);
   WorldMap_Freeze();
@@ -1720,8 +1720,8 @@ void WorldMap_DriftNorthOfContinent(void) {
   Actor_SetSpriteFlags(Actor_Get(10), 0);
   Actor_SetSpeed(10, 0.4);
   boat->timer = 0;
-  boat->acceleration = 0x2000;
-  boat->speedLimit = 0x2000;
+  boat->acceleration = px(1) / 8;
+  boat->speedLimit = px(1) / 8;
   FieldActor_SetMoveTargetFixed(boat, 0x27ff0000, boat->y, 0x1ecc0000);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1994,7 +1994,7 @@ void WorldMap_TakeOff(void) {
   restore:
     if (Data_02006be8[i] >= 0) {
       Actor_SetSpriteFlags(Actor_Get(Data_02006be8[i]), 1);
-      Actor_Get(Data_02006be8[i])->scaleX = 0x10000;
+      Actor_Get(Data_02006be8[i])->scaleX = Q16_ONE;
       Actor_SetPosition(Data_02006be8[i], 0, 0);
     }
     i++;
@@ -2025,8 +2025,8 @@ void Func_0200343c(struct Actor *parent) {
       Import_ActorSelectAnimation(object, 1);
       Actor_SetSpriteFlags(object, 0);
       object->motionFlags = 0;
-      object->scaleX = 0x20000;
-      object->scaleY = 0x20000;
+      object->scaleX = Q16_ONE * 2;
+      object->scaleY = Q16_ONE * 2;
     }
   }
 }
@@ -2037,8 +2037,8 @@ void Func_02003490(void) {
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   Actor_Get(gMainRoutineWork.currentOwner)->update = Func_0200343c;
-  Actor_Get(gMainRoutineWork.currentOwner)->acceleration = 0x2000;
-  Actor_Get(gMainRoutineWork.currentOwner)->speedLimit = 0x20000;
+  Actor_Get(gMainRoutineWork.currentOwner)->acceleration = px(1) / 8;
+  Actor_Get(gMainRoutineWork.currentOwner)->speedLimit = px(2);
   System_Wait(5);
   FieldEffect_ScheduleRatioTransition(49152, 60);
   Event_StartScreenTransition();
@@ -2368,7 +2368,7 @@ void Func_020048f4(void) {
   u32 attributes;
 
   if ((gInput.held & (KEY_A | KEY_B)) != 0 &&
-      Event_GetFlag(FLAG_MENU_OPEN) == 0 && leader->y > 0x40000) {
+      Event_GetFlag(FLAG_MENU_OPEN) == 0 && leader->y > px(4)) {
     if (--gData_02006e10 <= 0) {
       Party_DrainPp(1);
       gData_02006e10 = 10;

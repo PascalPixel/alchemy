@@ -593,7 +593,7 @@ void Func_02000a34(s32 value) {
     Actor_ShowItemIconById(10, animations.animations[i]);
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 10, 0x29c0000,
           0xc80000);
-    thrown->gravity = 0x4000;
+    thrown->gravity = px(1) / 4;
     Actor_Jump(10, 4, 2);
     Actor_SetSpritePriority(10, 1);
     Call3((void (*)())Actor_SetSpeedParameters, 10, 0x10000, 0x8000);
@@ -661,7 +661,7 @@ void Func_02000a34(s32 value) {
         0xe80000);
   Actor_SetSpritePriority(10, 1);
   thrown->motionFlags = 2;
-  thrown->y = 0x180000;
+  thrown->y = px(24);
   thrown->update = Func_02000038;
   thrown->terrainHeight = 0;
   thrown->scaleX = 0;
@@ -672,7 +672,7 @@ void Func_02000a34(s32 value) {
   Call3((void (*)())MapGrid_SetScreenShake, -1, -1, 0xe666);
   while (thrown->y > 0)
     wait(1);
-  thrown->gravity = 0x10000;
+  thrown->gravity = px(1);
   thrown->y = 0;
   thrown->motionFlags = 4;
   Scene_PlayMusic();
@@ -936,16 +936,16 @@ void Func_0200115c(void) {
     Func_02000734(current, target, 48);
     Event_Wait(20);
     Sound_Play(SE_194);
-    position.x = 0x02960000;
+    position.x = px(662);
     position.y = 0;
-    position.z = 0xee0000;
+    position.z = px(238);
     Func_02002f58(&position);
     Sound_Play(SE_BEAST_CRY);
     Actor_SetPosition(13, 664, 248);
     WORD_AT(object, 72) = 0x10000;
     object->motionFlags = 2;
     object->terrainHeight = 0;
-    object->y = 0x200000;
+    object->y = px(32);
     WORD_AT(object, 24) = 0x4000;
     WORD_AT(object, 108) = (s32)Func_02001138;
     WORD_AT(object, 28) = 0x4000;
@@ -1547,8 +1547,8 @@ void Func_020029f8(s32 id, s32 mode) {
   sprite->x = position[0];
   sprite->z = z = position[2];
   if (mode == 1) {
-    sprite->scaleX = 0x20000;
-    sprite->scaleY = 0x20000;
+    sprite->scaleX = Q16_ONE * 2;
+    sprite->scaleY = Q16_ONE * 2;
     sprite->z = z + 0xa0000;
   }
   Sound_Play(SE_CRASH);

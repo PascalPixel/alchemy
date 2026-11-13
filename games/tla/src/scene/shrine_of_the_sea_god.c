@@ -413,7 +413,7 @@ void Func_02000618(void) {
       (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
   struct ShrineOfTheSeaGodMapLayer *layer = &map->layers[0];
 
-  layer->y += -0x10000;
+  layer->y += -px(1);
   wait(4);
 }
 
@@ -531,7 +531,7 @@ void Func_0200092c(void) {
       (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
   struct ShrineOfTheSeaGodMapLayer *layer = &map->layers[0];
 
-  layer->y += 0x10000;
+  layer->y += px(1);
   wait(4);
 }
 
@@ -586,14 +586,14 @@ void Func_02000994(void) {
   ShrineOfTheSeaGod_CopyRect(59, 124, 9, 12, 12, 3);
   Io_Write16(0x80c, &REG_BLDALPHA);
   wait(1);
-  layer0->y += -0x440000;
-  layer1->y += -0x140000;
-  layer2->y += 0xc0000;
-  leader->z += -0xc0000;
-  ride->y += -0xc0000;
-  a->z += -0xc0000;
-  b->z += -0xc0000;
-  c->z += -0xc0000;
+  layer0->y += -px(68);
+  layer1->y += -px(20);
+  layer2->y += px(12);
+  leader->z += -px(12);
+  ride->y += -px(12);
+  a->z += -px(12);
+  b->z += -px(12);
+  c->z += -px(12);
   Map_CenterOnFollowedPoint();
   wait(4);
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
@@ -836,7 +836,7 @@ void Func_02001088(void) {
   for (id = 9; id <= 13; id++) {
     struct ShrineOfTheSeaGodObject *object = Actor_GetById(id);
 
-    if (leader->y > 0x100000) {
+    if (leader->y > px(16)) {
       Actor_SetSpritePriority(id, 2);
       object->priorityFlags |= 2;
     } else {
@@ -851,7 +851,7 @@ void Func_020010e8(void) {
       Actor_GetById(gMainRoutineWork.currentOwner);
 
   Actor_GetCellIndex();
-  if (leader->y < 0x100000)
+  if (leader->y < px(16))
     gMainRoutineWork.unk2c3 = 0;
   else
     gMainRoutineWork.unk2c3 = 1;
@@ -979,23 +979,23 @@ void Func_02001340(struct ShrineOfTheSeaGodObject *object,
   Sound_Play(SE_HIDDEN_PASSAGE_OPEN);
   object->motionFlags = 0;
   for (n = 0; n <= 1; n++) {
-    other->y -= 0x10000;
+    other->y -= px(1);
     for (i = 0; i <= 3; i++) {
       sprite->rotation += 128;
       wait(1);
     }
-    other->y += 0x10000;
+    other->y += px(1);
     for (i = 0; i <= 7; i++) {
       sprite->rotation -= 128;
       wait(1);
     }
-    other->y -= 0x10000;
+    other->y -= px(1);
     for (i = 0; i <= 3; i++) {
       sprite->rotation += 128;
       wait(1);
     }
   }
-  other->y += 0x10000;
+  other->y += px(1);
   wait(20);
   gData_02004a18[0] = other->x - object->x;
   gData_02004a18[1] = other->y - object->y;
@@ -1074,7 +1074,7 @@ void Func_02001474(void) {
     /* FAKEMATCH(dead): an empty once-only block after the rotation's store. */
     do {
     } while (0);
-    stone->z += 0x10000;
+    stone->z += px(1);
     i++;
     wait(1);
   }
@@ -1324,7 +1324,7 @@ void ShrineOfTheSeaGod_LashRope(void) {
   ((union ObjectWord *)&object->field18)->value = -0x10000;
   sprite->rotation = 0xd000;
   *motionFlags = 0;
-  object->y += 0x60000;
+  object->y += px(6);
   Actor_SetSpriteFlags(Actor_GetById(13), 0);
   ShrineOfTheSeaGod_ObjSpeed(13, 0x6666, 0x3333);
   /* FAKEMATCH(wrapper): Actor_SetMoveTarget called through Call4. */
@@ -1816,7 +1816,7 @@ struct ShrineOfTheSeaGodObject *Func_02002f88(s32 id) {
   struct ShrineOfTheSeaGodObject *object = Actor_GetById(id);
 
   object->priorityFlags |= 2;
-  object->y = 0xc0000;
+  object->y = px(12);
   Actor_DisableById(id);
   return object;
 }
@@ -1897,7 +1897,7 @@ void Func_020030fc(void) {
 
 void ShrineOfTheSeaGod_InitializeRoom2(void) {
 
-  Func_02002f88(10)->y = -0x100000;
+  Func_02002f88(10)->y = -px(16);
   Actor_SetSpritePriority(10, 3);
   Actor_PlaceBlocks(gData_02003cbc);
   Func_02002e70();
@@ -2129,12 +2129,12 @@ void ShrineOfTheSeaGod_InitializeRoom11(void) {
       (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
   struct ShrineOfTheSeaGodMapLayer *layer = &map->layers[2];
 
-  layer->x += 0x800000;
+  layer->x += px(128);
   Map_CenterOnFollowedPoint();
   wait(1);
   if (object != NULL) {
     object->motionFlags = 0;
-    object->y = 0x420000;
+    object->y = px(66);
     object->update = Func_020037a4;
   }
 }

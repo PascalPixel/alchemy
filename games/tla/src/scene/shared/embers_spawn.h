@@ -30,7 +30,7 @@ next:
       object->gravity = 0x547a;
       object->scaleX = scale;
       object->scaleY = object->scaleX;
-      object->bounce = 0x8000;
+      object->bounce = Q16_ONE / 2;
       Actor_SetSpriteColorMode(object, 1);
     }
   }

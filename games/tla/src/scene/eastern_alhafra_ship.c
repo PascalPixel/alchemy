@@ -123,7 +123,7 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
   BattleEffect_EndArcEffect();
   Field_StartPaletteTransition(8);
   *flags = 3;
-  object->gravity = 0x8000;
+  object->gravity = px(1) / 2;
   Event_Wait(5);
   Sound_Play(SE_WATER);
   if (Event_GetFlag(0x8ae) == 0) {
@@ -182,8 +182,8 @@ s32 Scene_Initialize(void) {
       Actor_GetById(14)->priorityFlags |= 128;
       object = Actor_GetById(15);
       object->priorityFlags |= 64;
-      object->y += 0x100000;
-      object->terrainHeight += 0x100000;
+      object->y += px(16);
+      object->terrainHeight += px(16);
     }
   } else {
     Actor_SetHorizontalPositionWithTerrain(14, 0x880000, 0x1db0000);
@@ -234,19 +234,19 @@ extern s32 EasternAlhafraShip_SpawnNote__s0438(
 void Actor_EmitNotes(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
-  EasternAlhafraShip_SpawnNote__s0438(object->x + 0x80000, object->y + 0x1c0000,
+  EasternAlhafraShip_SpawnNote__s0438(object->x + px(8), object->y + px(28),
                                       object->z, 0x1000, 15);
   Sound_Play(SE_LIGHT_APPEAR);
   Event_Wait(15);
-  EasternAlhafraShip_SpawnNote__s0438(object->x - 0x80000, object->y + 0x1c0000,
+  EasternAlhafraShip_SpawnNote__s0438(object->x - px(8), object->y + px(28),
                                       object->z, 0xf000, 15);
   Sound_Play(SE_LIGHT_APPEAR);
   Event_Wait(15);
-  EasternAlhafraShip_SpawnNote__s0438(object->x + 0x80000, object->y + 0x1c0000,
+  EasternAlhafraShip_SpawnNote__s0438(object->x + px(8), object->y + px(28),
                                       object->z, 0x1000, 15);
   Sound_Play(SE_LIGHT_APPEAR);
   Event_Wait(15);
-  EasternAlhafraShip_SpawnNote__s0438(object->x - 0x80000, object->y + 0x1c0000,
+  EasternAlhafraShip_SpawnNote__s0438(object->x - px(8), object->y + px(28),
                                       object->z, 0xf000, 15);
   Sound_Play(SE_LIGHT_APPEAR);
   Event_Wait(15);
@@ -656,8 +656,8 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   result7 = (struct Actor *)Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   result7->update = 0;
-  Actor_SetPositionAndResetMotion(result7, (result7->x + 0x160000),
-                                  (result7->y + 0x80000), result7->z);
+  Actor_SetPositionAndResetMotion(result7, (result7->x + px(22)),
+                                  (result7->y + px(8)), result7->z);
   Event_Wait(30);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 8, 0, 10);
   Actor_FaceDirection(10, FACING_WEST, 0);
@@ -703,8 +703,8 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   result8 =
       (struct Actor *)Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   result8->update = 0;
-  Actor_SetPositionAndResetMotion(result8, (result8->x + 0x160000),
-                                  (result8->y + 0x80000), result8->z);
+  Actor_SetPositionAndResetMotion(result8, (result8->x + px(22)),
+                                  (result8->y + px(8)), result8->z);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);

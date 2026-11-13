@@ -274,7 +274,7 @@ u32 __umodsi3(u32 a, u32 b);
 s32 KandoreanTemple_LevitateStudentBob(struct Actor *object) {
   switch (object->timer) {
   case 6:
-    object->scaleX -= 0x4000;
+    object->scaleX -= Q16_ONE / 4;
     {
       s32 scale = object->scaleY;
 
@@ -282,16 +282,16 @@ s32 KandoreanTemple_LevitateStudentBob(struct Actor *object) {
     }
     break;
   case 4:
-    object->scaleX += 0x2000;
-    object->scaleY -= 0x1000;
+    object->scaleX += Q16_ONE / 8;
+    object->scaleY -= Q16_ONE / 16;
     break;
   case 2:
-    object->scaleX += 0x1000;
+    object->scaleX += Q16_ONE / 16;
     object->scaleY -= 0x800;
     break;
   case 0:
-    object->scaleX = 0x10000;
-    object->scaleY = 0x10000;
+    object->scaleX = Q16_ONE;
+    object->scaleY = Q16_ONE;
     object->timer = Random16() % 90 + 60;
     break;
   }
@@ -352,8 +352,8 @@ void *Scene_GetPlacements(void) {
   if (scene == (s32)&SceneId_KandoreanTemple9) {
     if (GameFlag_Get(0x849)) {
       gKandoreanTemple_PoisHallPlacements[5].talkFacing = 3;
-      gKandoreanTemple_PoisHallPlacements[6].x = 0x1700000;
-      gKandoreanTemple_PoisHallPlacements[6].z = 0x2b60000;
+      gKandoreanTemple_PoisHallPlacements[6].x = px(368);
+      gKandoreanTemple_PoisHallPlacements[6].z = px(694);
       gKandoreanTemple_PoisHallPlacements[7].talkFacing = 1;
     }
     return gKandoreanTemple_PoisHallPlacements;
@@ -474,8 +474,8 @@ void KandoreanTemple_PushThroughTheSteam(void) {
   struct Actor *steam;
 
   if ((gFrameCount & 7) == 0) {
-    steam = ((struct Actor *)Import_ActorCreate(
-        14, leader->x, leader->y + 0x60000, leader->z));
+    steam = ((struct Actor *)Import_ActorCreate(14, leader->x,
+                                                leader->y + px(6), leader->z));
     if (steam) {
       Actor_SetSpriteFlags(steam, 0);
       Actor_SelectAnimation(steam, 1);
@@ -508,7 +508,7 @@ void KandoreanTemple_PushNorth(struct Actor *object, s32 dz) {
   MapGrid_CheckCollision(object, position);
   position[0] = object->x;
   position[1] = object->y;
-  position[2] = object->z + 0x80000;
+  position[2] = object->z + px(8);
   if (MapGrid_CheckCollision(object, position) > 0)
     return;
   position[0] = object->x + 0x5b333;
@@ -526,11 +526,10 @@ void KandoreanTemple_PushNorth(struct Actor *object, s32 dz) {
 }
 
 s32 KandoreanTemple_IsOverActor(struct Actor *a, struct Actor *b) {
-  s32 left = b->x - 0xc0000;
-  s32 right = b->x + 0xc0000;
+  s32 left = b->x - px(12);
+  s32 right = b->x + px(12);
 
-  if (a->x > left && a->x < right && a->z > b->z - 0x80000 &&
-      a->z < b->z + 0x80000)
+  if (a->x > left && a->x < right && a->z > b->z - px(8) && a->z < b->z + px(8))
     return 1;
   return 0;
 }
@@ -779,7 +778,7 @@ void KandoreanTemple_StartLeftVent(void) {
         PIXELS(216));
     Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   }
-  Actor_GetById(11)->scaleY = 0x10000;
+  Actor_GetById(11)->scaleY = Q16_ONE;
   Actor_SetPositionAndResetMotion_(Actor_GetById(11), PIXELS(216), 0,
                                    PIXELS(216));
   KandoreanTemple_LowerLeftColumn(13);
@@ -810,7 +809,7 @@ void KandoreanTemple_StartRightVent(void) {
         PIXELS(248));
     Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   }
-  Actor_GetById(12)->scaleY = 0x10000;
+  Actor_GetById(12)->scaleY = Q16_ONE;
   Actor_SetPositionAndResetMotion_(Actor_GetById(12), PIXELS(376), 0,
                                    PIXELS(248));
   KandoreanTemple_LowerRightColumn(17);
@@ -919,7 +918,7 @@ void KandoreanTemple_RunLeftVent(void) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_08) == 0)
       goto count;
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
-    leader->y = statue->y + 0x40000;
+    leader->y = statue->y + px(4);
     leader->targetY = 0x80000000;
     leader->velocityY = 0;
     goto count;
@@ -1053,7 +1052,7 @@ void KandoreanTemple_RunRightVent(void) {
       }
       if (GameFlag_Get(FLAG_SCENE_TEMP_09)) {
         leader = Actor_GetById(gMainRoutineWork.currentOwner);
-        leader->y = statue->y + 0x40000;
+        leader->y = statue->y + px(4);
         leader->targetY = 0x80000000;
         leader->velocityY = 0;
       }
@@ -1108,7 +1107,7 @@ void KandoreanTemple_RunWestLift(void) {
   } else if ((u32)(*timer - 301) <= 1698) {
     lift->y += PIXELS(4);
     KandoreanTemple_GrowColumn(15, 19660, 0x4ccc);
-    if (*(long *)&lift->y > -0x50000)
+    if (*(long *)&lift->y > -px(5))
       Actor_SetSpritePriority(13, 2);
     if (lift->y >= 0) {
       MapGrid_CopyCellAttributes(0, 0, 1, 1, 27, 12);
@@ -1133,9 +1132,9 @@ void KandoreanTemple_RunWestLift(void) {
     lift->y += PIXELS(-4);
     KandoreanTemple_ShrinkColumn(15, 19660, 0x4ccc);
     // y read as long, as above.
-    if (*(long *)&lift->y < -0x50000)
+    if (*(long *)&lift->y < -px(5))
       Actor_SetSpritePriority(13, 3);
-    if (lift->y <= -0x140000) {
+    if (lift->y <= -px(20)) {
 
       /* FAKEMATCH(temporary): the timer pointer's own address taken. */
       s32 **timerRef = &timer;
@@ -1169,7 +1168,7 @@ void KandoreanTemple_RunEastLift(void) {
   } else if ((u32)(*timer - 301) <= 1698) {
     lift->y += PIXELS(4);
     KandoreanTemple_GrowColumn(16, 19660, 0x4ccc);
-    if (*(long *)&lift->y > -0x50000)
+    if (*(long *)&lift->y > -px(5))
       Actor_SetSpritePriority(14, 2);
     if (lift->y >= 0) {
       MapGrid_CopyCellAttributes(0, 0, 1, 1, 37, 14);
@@ -1194,9 +1193,9 @@ void KandoreanTemple_RunEastLift(void) {
     lift->y += PIXELS(-4);
     KandoreanTemple_ShrinkColumn(16, 19660, 0x4ccc);
     // y read as long, as above.
-    if (*(long *)&lift->y < -0x50000)
+    if (*(long *)&lift->y < -px(5))
       Actor_SetSpritePriority(14, 3);
-    if (lift->y <= -0x140000) {
+    if (lift->y <= -px(20)) {
 
       /* FAKEMATCH(temporary): the timer pointer's own address taken. */
       s32 **timerRef = &timer;
@@ -1235,11 +1234,11 @@ void KandoreanTemple_WatchVentPlatforms(void) {
   else
     Event_ClearFlag(0x17d);
   if (gKandoreanTemple_LeftVentBlowing != 0 && leader->y == 0 &&
-      leader->x > 0x11c0000 && leader->x < 0x1340000 && leader->z < 0xc80000 &&
+      leader->x > px(284) && leader->x < px(308) && leader->z < px(200) &&
       !Event_GetFlag(FLAG_SCENE_TEMP_0B))
     KandoreanTemple_PushNorth(leader, 0x26666);
   if (gKandoreanTemple_RightVentBlowing != 0 && leader->y == 0 &&
-      leader->x > 0x14a0000 && leader->x <= 0x165ffff && leader->z < 0xd80000 &&
+      leader->x > px(330) && leader->x <= 0x165ffff && leader->z < px(216) &&
       !Event_GetFlag(FLAG_SCENE_TEMP_0B))
     KandoreanTemple_PushNorth(leader, 0x39999);
   if (Event_GetFlag(FLAG_SCENE_TEMP_0E)) {
@@ -1263,7 +1262,7 @@ void KandoreanTemple_WatchLifts(void) {
   s32 cellZ = z >> 20;
   s32 riding = 0;
 
-  if (leader->y > 0x100000)
+  if (leader->y > px(16))
     return;
   if ((u32)(x - 0x1900000) > 0xf00000)
     return;
@@ -1651,14 +1650,14 @@ void KandoreanTemple_ReceiveLash(void) {
   object->scaleX = 0xffff0000;
   sprite->rotation = 0xe000;
   object->motionFlags = 0;
-  object->y += 0x40000;
+  object->y += px(4);
   Actor_SetSpriteFlags(Actor_GetById(12), 0);
   Actor_SetSpeed(12, 0.4);
   FieldActor_SetMoveTarget(object, 492, 8, 376);
   FieldActor_WaitForMoveById(12);
   object->motionFlags = 3;
   object->terrainHeight = 0;
-  object->scaleX = 0x10000;
+  object->scaleX = Q16_ONE;
   sprite->rotation = 0;
   Actor_SetAnimation(12, 1);
   Actor_SetSpriteFlags(Actor_GetById(12), 1);
@@ -1845,7 +1844,7 @@ void KandoreanTemple_StartChestbeaterRoom(void) {
   }
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (gMainRoutineWork.entrance == 2) {
-      Actor_GetById(gMainRoutineWork.currentOwner)->y = 0x400000;
+      Actor_GetById(gMainRoutineWork.currentOwner)->y = px(64);
     } else if (gMainRoutineWork.entrance == 3 && Event_GetFlag(0x92d) == 0) {
       Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
@@ -1985,8 +1984,8 @@ void KandoreanTemple_LandFromAbove(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   wait(1);
-  leader->y = 0x820000;
-  leader->gravity = 0x8000;
+  leader->y = px(130);
+  leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
@@ -2021,8 +2020,8 @@ void KandoreanTemple_LandFromAbove(void) {
   MapGrid_WaitForShakeToSettle();
   FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  leader->gravity = 0x10000;
-  leader->bounce = 0x4000;
+  leader->gravity = px(1);
+  leader->bounce = Q16_ONE / 4;
   Event_Wait(10);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
@@ -2222,7 +2221,7 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
       object->scaleX = scale + -0x400;
     }
     object->scaleY += -0x400;
-    object->y += -0x20000;
+    object->y += -px(2);
     wait(1);
     if (i == 10)
       Sound_Play(SE_DUST_PUFF);
@@ -2301,7 +2300,7 @@ rise:
   object->y -= PIXELS(4);
   KandoreanTemple_ShrinkColumn(15, 19660, 0x4ccc);
   wait(1);
-  if (object->y > -0x140000)
+  if (object->y > -px(20))
     goto rise;
   Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
@@ -2320,7 +2319,7 @@ rise:
   object->y -= PIXELS(4);
   KandoreanTemple_ShrinkColumn(16, 19660, 0x4ccc);
   wait(1);
-  if (object->y > -0x140000)
+  if (object->y > -px(20))
     goto rise;
   Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
@@ -2549,7 +2548,7 @@ rise13:
   object->motionFlags = 3;
   Event_Wait(5);
   Sound_Play(SE_DOOR_CLOSE);
-  object->velocityY = 0x30000;
+  object->velocityY = px(3);
   sprite->rotation = 0;
   Event_Wait(60);
   Event_ShowMessageAndWait(13, 0);
@@ -2602,7 +2601,7 @@ rise14:
   object->motionFlags = 3;
   Event_Wait(5);
   Sound_Play(SE_DOOR_CLOSE);
-  object->velocityY = 0x30000;
+  object->velocityY = px(3);
   Event_Wait(60);
   Event_ShowMessageAndWait(14, 0);
   FieldCamera_MoveWithinMapBounds(0x16c0000, 0x480000, 0x2980000, 1);
@@ -2937,7 +2936,7 @@ void KandoreanTemple_MeetPoi(void) {
   /* FAKEMATCH(temporary): the motion flags written through a byte pointer. */
   flags = &object->motionFlags;
   *flags = 0;
-  object->y += 0x40000;
+  object->y += px(4);
   Actor_SetSpriteFlags(Actor_GetById(12), 0);
   Actor_SetSpeed(12, 0.4);
   Actor_SetMoveTarget((s32)object, 0x1bc0000, 0x280000, 0x1780000);
@@ -2945,8 +2944,8 @@ void KandoreanTemple_MeetPoi(void) {
   *flags = 3;
   Actor_SetSpriteFlags(Actor_GetById(12), 1);
   sprite->rotation = 0;
-  object->scaleX = 0x10000;
-  object->terrainHeight = 0x200000;
+  object->scaleX = Q16_ONE;
+  object->terrainHeight = px(32);
   Actor_SetModeById(12, 1);
   Actor_SetSpeed(12, 1.6);
   Actor_Jump(12, 4, 0);

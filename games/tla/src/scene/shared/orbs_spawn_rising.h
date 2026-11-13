@@ -12,18 +12,16 @@ void Orbs_SpawnRising(void) {
     u32 random;
 
     random = Random16();
-    effect = CreateOrbitEffect(0x2a0, center->x,
-                               (s32)((u32)(random << 8) >> 16 << 16) +
-                                   center->y - 0x1c0000,
-                               center->z);
+    effect = CreateOrbitEffect(
+        0x2a0, center->x,
+        (s32)((u32)(random << 8) >> 16 << 16) + center->y - px(28), center->z);
   } else {
     u32 random;
 
     random = Random16();
-    effect = CreateOrbitEffect(0x2a0, center->x,
-                               (s32)((u32)(random << 6) >> 16 << 16) +
-                                   center->y - 0x1c0000,
-                               center->z);
+    effect = CreateOrbitEffect(
+        0x2a0, center->x,
+        (s32)((u32)(random << 6) >> 16 << 16) + center->y - px(28), center->z);
   }
   if (effect != 0) {
     sprite = effect->sprite;

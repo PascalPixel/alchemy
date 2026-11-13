@@ -290,19 +290,19 @@ void Func_02000700(void) {
   Actor_SelectAnimation(leader, 1);
   Actor_SetSpriteFlags(leader, 0);
   leader->motionFlags |= 2;
-  leader->velocityY = 0x40000;
+  leader->velocityY = px(4);
   FieldActor_SetMoveTargetFixed(leader, leader->x, leader->y, z + 0xc0000);
   System_Wait(6);
   Event_PlaySound(SE_FLOOR_SWITCH);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH_SOUTHWEST, 0);
   leader->motionFlags = 0;
   for (i = 0; i < 14; i++) {
-    leader->y += -0x20000;
+    leader->y += -px(2);
     leader->targetY = leader->y;
     System_Wait(1);
   }
   leader->motionFlags = 3;
-  leader->velocityY = 0x30000;
+  leader->velocityY = px(3);
   FieldActor_SetMoveTargetFixed(leader, leader->x, leader->y, z + 0x100000);
   FieldActor_WaitForMove(leader);
   Actor_SetSpriteFlags(leader, 1);
@@ -461,8 +461,8 @@ void Func_0200095c(void) {
   ((struct FieldSprite *)gust->sprite)->priority = 1;
   cell.x = newX;
   cell.z = newZ;
-  gust->speedLimit = 0x40000;
-  gust->acceleration = 0x40000;
+  gust->speedLimit = px(4);
+  gust->acceleration = px(4);
   Actor_SetMoveTarget(gust, cell.x << 16, gust->y, cell.z << 16);
   FieldCamera_SetSpeedAndAcceleration(5, 5);
   FieldCamera_MoveToFixed((s32)(newX << 16), (s32)(-1), (s32)(newZ << 16),
@@ -486,8 +486,8 @@ void Func_0200095c(void) {
   } else {
     cell.x = ((s16 *)&gust->x)[1] + delta.x * 48;
     cell.z = ((s16 *)&gust->z)[1] + delta.z * 48;
-    gust->speedLimit = 0x8000;
-    gust->acceleration = 0x8000;
+    gust->speedLimit = px(1) / 2;
+    gust->acceleration = px(1) / 2;
     Actor_SetMoveTarget(gust, cell.x << 16, gust->y, cell.z << 16);
     Sound_Play(SE_235);
     hit -= 30;
@@ -496,7 +496,7 @@ void Func_0200095c(void) {
         dust.priority = 1;
         dust.startScaleX = dust.startScaleY = (Random16() & 0xffff) + 0x10000;
         velocity.x = Trig_Cos((gFrameCount & 0x1ff) << 12) << 1;
-        velocity.y = 0x10000;
+        velocity.y = px(1);
         velocity.z = Trig_Sin((gFrameCount & 0x1ff) << 12);
         FieldEffect_Spawn(gust->x, gust->y, gust->z, velocity.x, velocity.y,
                           velocity.z,
@@ -548,7 +548,7 @@ void Func_0200095c(void) {
   gust->targetX = 0;
   for (i = 0; i != 8; i++) {
     gust->scaleX -= 0x2666;
-    gust->scaleY -= 0x4000;
+    gust->scaleY -= Q16_ONE / 4;
     gust->y += 0x38000;
     Event_Wait(1);
   }
@@ -574,10 +574,10 @@ void Func_02000f9c(struct Actor *object) {
   object->x += object->bounce;
   object->z += object->unk4c;
   if ((object->x >> 19) <= 39) {
-    object->bounce += 0x18000;
+    object->bounce += Q16_ONE * 3 / 2;
     scale = object->scaleX + 0xccc;
   } else {
-    object->bounce -= 0x18000;
+    object->bounce -= Q16_ONE * 3 / 2;
     scale = object->scaleX - 0x51e;
   }
   object->scaleX = scale;
@@ -659,7 +659,7 @@ row:
       ((struct ObjBits *)spark)->flags |= 1;
       spark->motionFlags = 0;
       spark->bounce = spark->x;
-      spark->gravity = 0x18000;
+      spark->gravity = px(3) / 2;
       spark->unk4c = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
@@ -866,9 +866,9 @@ void Func_02001560(void) {
     wait(6);
     Sound_Play(SE_JUMP);
     Actor_SelectAnimation(leader, 7);
-    leader->speedLimit = 0x20000;
-    leader->acceleration = 0x8000;
-    leader->velocityY = 0x40000;
+    leader->speedLimit = px(2);
+    leader->acceleration = px(1) / 2;
+    leader->velocityY = px(4);
     *motion = 2;
     leader->priorityFlags = 1;
     leader->terrainId = ((u8 *)rider)[98];
@@ -884,13 +884,13 @@ void Func_02001560(void) {
     leader->z = (((ride->z >> 19) & ~1) - (angle & 2) + 1) << 19;
     still = 0;
     Actor_SetSpriteFlags(leader, 1);
-    leader->velocityY = 0x60000;
+    leader->velocityY = px(6);
     leader->priorityFlags = 1;
     *motion = 3;
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     dust = FieldCamera_GetActor();
-    dust->speedLimit = 0x80000;
-    dust->acceleration = 0x10000;
+    dust->speedLimit = px(8);
+    dust->acceleration = px(1);
     dust->motionFlags = still;
     FieldActor_SetMoveTargetFixed(dust, leader->x,
                                   Map_GetTerrainHeight(0, leader->x, leader->z),
@@ -1032,7 +1032,7 @@ void Func_02001b54(struct Actor *object) {
     object->timer = 0;
     options.priority = 1;
     options.palette = 7;
-    FieldEffect_Spawn(position.x, object->y, position.z - 0x60000, 0, 0, 0,
+    FieldEffect_Spawn(position.x, object->y, position.z - px(6), 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
   }
   object->timer++;
@@ -1212,7 +1212,7 @@ row:
       ((struct ObjectPriorityByte *)spark)->priorityFlags |= 1;
       spark->motionFlags = 0;
       spark->bounce = spark->x;
-      spark->gravity = 0x18000;
+      spark->gravity = px(3) / 2;
       spark->unk4c = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
@@ -1438,7 +1438,7 @@ void Func_020026b8(void) {
       ((struct ObjBits *)spark)->flags |= 1;
       spark->motionFlags = 0;
       spark->bounce = spark->x;
-      spark->gravity = 0x18000;
+      spark->gravity = px(3) / 2;
       spark->unk4c = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
@@ -1529,7 +1529,7 @@ void Func_02002b88(void) {
   s32 level;
 
   actor->priorityFlags |= 32;
-  level = ((actor->y + 0x200000) >> 16) / 112;
+  level = ((actor->y + px(32)) >> 16) / 112;
   if (gData_02004698 != level) {
     switch (level) {
     case 3:
@@ -1632,19 +1632,19 @@ s32 Scene_Initialize(void) {
     switch (gMainRoutineWork.entrance) {
     case 3:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
-        LEADER()->z += 0x100000;
+        LEADER()->z += px(16);
       Leader_Lift(0xffb80000);
       goto swaying;
     case 1:
     case 2:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
-        LEADER()->z += 0x100000;
+        LEADER()->z += px(16);
       Leader_Lift(0xffd80000);
       goto swaying;
     case 5:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-        LEADER()->x += 0x300000;
-        LEADER()->y += 0x100000;
+        LEADER()->x += px(48);
+        LEADER()->y += px(16);
       }
     case 6:
       Leader_Lift(0x380000);
@@ -1668,12 +1668,12 @@ s32 Scene_Initialize(void) {
       break;
     case 11:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-        LEADER()->x += 0x100000;
+        LEADER()->x += px(16);
         LEADER()->y += 0xfff00000;
       }
     case 10:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
-        LEADER()->z += 0x100000;
+        LEADER()->z += px(16);
       Leader_Lift(0xffc80000);
     case 12:
       if (GameFlag_Get(0x887))
@@ -1717,11 +1717,11 @@ s32 Scene_Initialize(void) {
       Actor_SetSpriteFlags(Actor_GetById(9), 0);
       Actor_GetById(10)->terrainId = 2;
       Actor_SetSpritePriority(10, 1);
-      Actor_GetById(10)->y = 0xd00000;
+      Actor_GetById(10)->y = px(208);
       Actor_GetById(10)->terrainHeight = Actor_GetById(10)->y;
       Actor_GetById(11)->terrainId = 2;
       Actor_SetSpritePriority(11, 1);
-      Actor_GetById(11)->y = 0xd00000;
+      Actor_GetById(11)->y = px(208);
       Actor_GetById(11)->terrainHeight = Actor_GetById(11)->y;
       if (GameFlag_Get(FLAG_AREA_TEMP_10))
         Actor_SetPosition(10, 504, 872);
@@ -1739,7 +1739,7 @@ s32 Scene_Initialize(void) {
       break;
     case 6:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
-        LEADER()->y += 0x180000;
+        LEADER()->y += px(24);
     case 7:
       Leader_Lift(0x480000);
     case 4:
@@ -1749,12 +1749,12 @@ s32 Scene_Initialize(void) {
     case 8:
     case 9:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
-        LEADER()->z += 0x100000;
+        LEADER()->z += px(16);
       Leader_Lift(0xffe80000);
       goto beam;
     case 10:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
-        LEADER()->x += 0x300000;
+        LEADER()->x += px(48);
     case 11:
       Leader_Lift(0x900000);
     beam:
@@ -1800,7 +1800,7 @@ s32 Scene_Initialize(void) {
         LEADER()->y += 0xffe00000;
     case 13:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
-        LEADER()->z += 0x100000;
+        LEADER()->z += px(16);
       Leader_Lift(0xffd00000);
     case 14:
       beam = (s32 *)Ram_HeapSlots->mapWork;

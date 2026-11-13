@@ -397,7 +397,7 @@ s32 Scene_Initialize(void) {
       FieldCamera_SetSpeed(0.1);
       FieldCamera_MoveTo(316, CAMERA_KEEP, 300, 1);
     }
-    ACTOR(8)->z -= 0x10000;
+    ACTOR(8)->z -= px(1);
     System_Wait(30);
     i++;
     if (i != 10)
@@ -451,7 +451,7 @@ s32 Scene_Initialize(void) {
     }
     if (i == 19)
       Event_FinishScreenTransition();
-    ACTOR(8)->z -= 0x20000;
+    ACTOR(8)->z -= px(2);
     System_Wait(8);
     i++;
     if (i != 20)
@@ -467,8 +467,8 @@ s32 Scene_Initialize(void) {
     object = ACTOR(8);
     scale = 0;
     object->facing = scale;
-    ACTOR(8)->x = 0xf80000;
-    ACTOR(8)->z = 0x980000;
+    ACTOR(8)->x = px(248);
+    ACTOR(8)->z = px(152);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x27f, 0x20000);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, 0x1000, 0x20000);
     REG_DISPCNT &= 0xfdff;
@@ -693,7 +693,7 @@ s32 Scene_Initialize(void) {
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     i = 0;
   L12:
-    ACTOR(8)->y += 0x10000;
+    ACTOR(8)->y += px(1);
     FieldEvent_Wait(1);
     i++;
     if (i != 32)
@@ -767,9 +767,9 @@ s32 Scene_Initialize(void) {
     if (j == 20)
       Actor_SetAnimation(9, 7);
     if (j >= 30 && j <= 46) {
-      ACTOR(9)->scaleX = 0x10000 - scale;
+      ACTOR(9)->scaleX = Q16_ONE - scale;
       ACTOR(9)->scaleY = scale + 0x10000;
-      ACTOR(9)->z -= 0x20000;
+      ACTOR(9)->z -= px(2);
     }
     if (j == 47)
       Actor_SetPosition(9, 0, 0);
@@ -778,7 +778,7 @@ s32 Scene_Initialize(void) {
       PaletteFade_Interpolate(64);
     }
     FIELD(slots, 332) -= 0x10000;
-    ACTOR(8)->z += 0x10000;
+    ACTOR(8)->z += px(1);
     System_Wait(1);
     j++;
     scale += 0x1000;

@@ -900,7 +900,7 @@ void Func_02001d90(void) {
   u32 attributes;
 
   if ((gInput & 3) != 0 && Event_GetFlag(FLAG_MENU_OPEN) == 0 &&
-      leader->y > 0x40000) {
+      leader->y > px(4)) {
     if (--gData_02003fc8 <= 0) {
       Party_DrainPp(1);
       gData_02003fc8 = 10;

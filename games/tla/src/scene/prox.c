@@ -935,7 +935,7 @@ void Func_020015d0(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Event_PlaySound(SE_RATTLE);
   object = (struct Actor *)((s32)FieldCamera_GetActor());
-  object->y += 0x20000;
+  object->y += px(2);
   object = Actor_Get(20);
   object->actionFlags &= 0xfe;
   Actor_WalkToAndWait(20, 408, 200);
@@ -1115,7 +1115,7 @@ void Func_02001b7c(void) {
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   cell = object->x >> 16;
   FieldActor_SetMoveTargetFixed(object, ((8 - cell % 16) << 16) + object->x,
-                                object->y, object->z - 0x40000);
+                                object->y, object->z - px(4));
   FieldActor_WaitForMove(object);
   object->facing = 0xc000;
   Event_PlaySound(SE_STAIRS_UP);
@@ -1145,8 +1145,8 @@ void Func_02001c24(s32 a0) {
     Event_StartScreenTransition();
     Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 0x17);
   } else {
-    FieldActor_SetPositionAndResetMotion(object, (object->x + 0x10000),
-                                         object->y, (object->z + -393216));
+    FieldActor_SetPositionAndResetMotion(object, (object->x + px(1)), object->y,
+                                         (object->z + -393216));
     System_Wait(1);
     Event_StartScreenTransition();
     Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 0x18);

@@ -35,8 +35,8 @@ void SLIDE_FROM_EDGE(void) {
   SLIDE_STOPPED = 0;
 retry:
   SLIDE_STOP_LEADER();
-  object->speedLimit = 0x10000;
-  object->acceleration = 0x8000;
+  object->speedLimit = px(1);
+  object->acceleration = px(1) / 2;
   object->targetX = 0x80000000;
   object->targetZ = 0x80000000;
   object->velocityX = 0;
@@ -67,7 +67,7 @@ retry:
   FieldVector_AddPolarOffset(0x100000, angle, position);
   cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
   if (cell == 255 ||
-      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
+      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > px(8)) {
     object->facing = angle;
     object->velocityX = 0;
     object->velocityZ = 0;
@@ -77,7 +77,7 @@ retry:
   }
   p[0] = x;
   p[2] = z;
-  object->speedLimit = 0x20000;
+  object->speedLimit = px(2);
   object->acceleration = 0x1999;
   object->timer = 0;
   Actor_SetMoveTarget(object, x, object->y, z);
@@ -95,7 +95,7 @@ retry:
   object->update = (void (*)(void))SLIDE_KEEP_SLIDING;
   goto walk;
 walkNext:
-  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
+  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > px(8))
     goto blocked;
   if (SLIDE_STOPPED != 0)
 #if !TLA_PATCH_1
@@ -121,7 +121,7 @@ overlap:
     goto overlap;
   targetX = q[0];
   targetZ = q[2];
-  object->speedLimit = 0x20000;
+  object->speedLimit = px(2);
   object->acceleration = 0x1999;
   Actor_SetMoveTarget(object, q[0], q[1], q[2]);
   i = 0;
@@ -146,8 +146,8 @@ walk:
   if (cell != 255)
     goto walkNext;
 blocked:
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x10000;
+  object->speedLimit = px(2);
+  object->acceleration = px(1);
   Actor_SetMoveTarget(object, targetX, object->y, targetZ);
   FieldActor_WaitForMove(object);
   System_Wait(2);
@@ -157,6 +157,6 @@ changed:
 end:
   object->update = NULL;
   object->actionFlags |= 1;
-  object->acceleration = 0x4000;
+  object->acceleration = px(1) / 4;
   SLIDE_SET_ANIMATION(object, 1);
 }

@@ -169,8 +169,8 @@ void Func_02000418(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
-  leader->y = 0x820000;
-  leader->gravity = 0x8000;
+  leader->y = px(130);
+  leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
   ((struct LandingEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x100;
@@ -206,8 +206,8 @@ loop:
   FieldMapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  leader->gravity = 0x10000;
-  leader->bounce = 0x4000;
+  leader->gravity = px(1);
+  leader->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   ((struct LandingEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x204;
@@ -221,7 +221,7 @@ s32 Func_020005c0(struct Actor *object) {
   ((struct FieldSprite *)object->sprite)->priority = 2;
   object->priorityFlags &= 0xfe;
   object->motionFlags = 0;
-  object->y -= 0x40000;
+  object->y -= px(4);
   return 0;
 }
 
@@ -561,13 +561,13 @@ void Func_0200104c(s32 unused, s32 id) {
 
   if (id == 10 && x == 15 && z == 24) {
     Actor_SetSpriteFlags(Actor_GetById(10), 0);
-    object->y -= 0x20000;
+    object->y -= px(2);
     FieldEvent_Wait(1);
-    object->y -= 0x20000;
+    object->y -= px(2);
     FieldEvent_Wait(1);
-    object->y -= 0x40000;
+    object->y -= px(4);
     FieldEvent_Wait(1);
-    object->y -= 0x80000;
+    object->y -= px(8);
     FieldEvent_Wait(1);
     Actor_SetAnimation(9, 3);
     Actor_SetPosition(10, 0, 0);
@@ -610,7 +610,7 @@ void Func_020010f4(void) {
     return;
   position[0] = leader->x;
   position[1] = leader->y;
-  position[2] = leader->z + 0x80000;
+  position[2] = leader->z + px(8);
   if (MapGrid_CheckCollision(leader, position) < 0)
     work->unk154 = 66;
   leader->z += 0x8000;
@@ -768,28 +768,28 @@ fill:
   REG_DISPCNT |= 0x8000;
   Task_AddFrame(AnkohlRuins_DrawSand, 0x480);
   if (gMainRoutineWork.entrance == 1 || gMainRoutineWork.entrance == 2) {
-    sprite->x = 0x280000;
+    sprite->x = px(40);
     sprite->kind = 1;
     sprite->y = 0;
-    sprite->z = 0x780000;
+    sprite->z = px(120);
     sprite++;
-    sprite->x = 0x380000;
+    sprite->x = px(56);
     sprite->kind = 1;
     sprite->y = 0;
-    sprite->z = 0x780000;
+    sprite->z = px(120);
     sprite++;
-    sprite->x = 0xd80000;
+    sprite->x = px(216);
     sprite->y = 0;
-    sprite->z = 0x780000;
+    sprite->z = px(120);
     sprite->kind = 2;
     sprite++;
-    sprite->x = 0xe80000;
+    sprite->x = px(232);
     sprite->y = 0;
-    sprite->z = 0x780000;
+    sprite->z = px(120);
     sprite->kind = 2;
     sprite++;
-    sprite->x = 0xb80000;
-    sprite->z = 0x580000;
+    sprite->x = px(184);
+    sprite->z = px(88);
     sprite->y = 0;
     sprite->kind = 4;
     sprite++;
@@ -797,28 +797,28 @@ fill:
   // Spelled through a pointer: a member read is copied up into the arm above.
   if (*(s16 *)&gMainRoutineWork.entrance == 3 ||
       *(s16 *)&gMainRoutineWork.entrance == 4) {
-    sprite->x = 0x280000;
-    sprite->z = 0x1b80000;
+    sprite->x = px(40);
+    sprite->z = px(440);
     sprite->y = 0;
     sprite->kind = 1;
     sprite++;
-    sprite->x = 0x380000;
-    sprite->z = 0x1b80000;
+    sprite->x = px(56);
+    sprite->z = px(440);
     sprite->y = 0;
     sprite->kind = 1;
     sprite++;
-    sprite->x = 0xd80000;
+    sprite->x = px(216);
     sprite->y = 0;
-    sprite->z = 0x1980000;
+    sprite->z = px(408);
     sprite->kind = 0;
     sprite++;
-    sprite->x = 0xe80000;
+    sprite->x = px(232);
     sprite->y = 0;
-    sprite->z = 0x1980000;
+    sprite->z = px(408);
     sprite->kind = 1;
     sprite++;
-    sprite->x = 0x480000;
-    sprite->z = 0x1780000;
+    sprite->x = px(72);
+    sprite->z = px(376);
     sprite->y = 0;
     sprite->kind = 4;
   }
@@ -1090,13 +1090,13 @@ void Func_02001f7c(void) {
      * before the leader's in the second test. */
     struct Actor *player = leader;
 
-    if (raft->z + 0x180000 >= player->z && player->z >= raft->z) {
-      player->z = raft->z + 0x180000;
-      rider->z = raft->z + 0x180000;
+    if (raft->z + px(24) >= player->z && player->z >= raft->z) {
+      player->z = raft->z + px(24);
+      rider->z = raft->z + px(24);
     }
-    if (raft->z >= player->z && player->z >= raft->z - 0x100000) {
-      player->z = raft->z - 0x100000;
-      rider->z = raft->z - 0x100000;
+    if (raft->z >= player->z && player->z >= raft->z - px(16)) {
+      player->z = raft->z - px(16);
+      rider->z = raft->z - px(16);
     }
   }
   row = raft->z >> 20;
@@ -1443,7 +1443,7 @@ s32 Scene_Initialize(s32 a0) {
         FieldEvent_Wait(15);
         object = Actor_GetById(10);
         Actor_SetPosition(10, 328, 760);
-        object->y += 0x800000;
+        object->y += px(128);
         frames = 60;
         object->motionFlags = 3;
         for (; frames != 0; frames--) {
@@ -1536,8 +1536,8 @@ s32 Scene_Initialize(s32 a0) {
     object = Actor_GetById(64);
     if (object != NULL) {
       object->motionFlags = 0;
-      object->terrainHeight = 0x480000;
-      object->y = 0x480000;
+      object->terrainHeight = px(72);
+      object->y = px(72);
       object->update = (void (*)(void))AnkohlRuins_RaiseDust;
     }
   }
@@ -1709,7 +1709,7 @@ s32 Scene_Initialize(s32 a0) {
         FieldEvent_Wait(15);
         object = Actor_GetById(10);
         Actor_SetPosition(10, 328, 760);
-        object->y += 0x800000;
+        object->y += px(128);
         frames = 60;
         object->motionFlags = 3;
         for (; frames != 0; frames--) {
@@ -1802,8 +1802,8 @@ s32 Scene_Initialize(s32 a0) {
     object = Actor_GetById(64);
     if (object != NULL) {
       object->motionFlags = 0;
-      object->terrainHeight = 0x480000;
-      object->y = 0x480000;
+      object->terrainHeight = px(72);
+      object->y = px(72);
       object->update = (void (*)(void))AnkohlRuins_RaiseDust;
     }
   }

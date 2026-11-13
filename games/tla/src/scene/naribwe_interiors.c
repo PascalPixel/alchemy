@@ -798,24 +798,24 @@ s32 Scene_Initialize(void) {
 
   object = Actor_Get(18);
   object->motionFlags = 0;
-  object->y = -0x40000;
-  object->terrainHeight = -0x40000;
+  object->y = -px(4);
+  object->terrainHeight = -px(4);
   Actor_Get(18)->priorityFlags |= 0x20;
   FieldActor_SetSpritePriority(18, 1);
   Actor_SetPosition(18, 0, 0);
 
   object = Actor_Get(19);
   object->motionFlags = 0;
-  object->y = 0xc0000;
-  object->terrainHeight = 0xc0000;
+  object->y = px(12);
+  object->terrainHeight = px(12);
   Actor_Get(19)->priorityFlags |= 0x20;
   FieldActor_SetSpritePriority(19, 1);
   Actor_SetPosition(19, 0, 0);
 
   object = Actor_Get(20);
   object->motionFlags = 0;
-  object->y = 0xc0000;
-  object->terrainHeight = 0xc0000;
+  object->y = px(12);
+  object->terrainHeight = px(12);
   Actor_Get(20)->priorityFlags |= 0x20;
   FieldActor_SetSpritePriority(20, 1);
   Actor_SetPosition(20, 0, 0);

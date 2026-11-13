@@ -661,8 +661,8 @@ s32 Scene_Initialize(void) {
         FieldEvent_Wait(40);
         actor = Actor_Get(16);
         actor->motionFlags = unset;
-        actor->y = 0x100000;
-        actor->terrainHeight = 0x100000;
+        actor->y = px(16);
+        actor->terrainHeight = px(16);
         ((u8 *)actor)[98] = 18;
         actor->unk66 = 0x4000;
         actor->watchedObject = (struct Actor *)unset;
@@ -756,7 +756,7 @@ s32 Scene_PrepareMap(void) {
     }
     object = Actor_Get(10);
     object->motionFlags = 0;
-    object->z = 0x680000;
+    object->z = px(104);
     FieldTask_AddFrame(Func_020000c0, 0x480);
   } else if (scene == (s32)&SceneId_MarsLighthouseRoomM1) {
     if (entrance == 1 || entrance == 2 || entrance == 8 || entrance == 10 ||
@@ -1986,7 +1986,7 @@ next:
       object->gravity = 0x547a;
       object->scaleX = scale;
       object->scaleY = object->scaleX;
-      object->bounce = 0x8000;
+      object->bounce = Q16_ONE / 2;
       Actor_SetSpriteColorMode(object, 1);
     }
   }

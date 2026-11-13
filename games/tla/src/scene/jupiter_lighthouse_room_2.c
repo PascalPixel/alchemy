@@ -149,18 +149,18 @@ void Func_020000d0(s32 kind) {
   }
   EventCamera_FollowActor(owner, 1);
   for (i = 35; i >= 0; i--) {
-    leader->y += -0x10000;
+    leader->y += -px(1);
     System_Wait(1);
   }
-  leader->scaleX = 0x10000;
-  leader->scaleY = 0x10000;
+  leader->scaleX = Q16_ONE;
+  leader->scaleY = Q16_ONE;
   effect = Actor_Spawn(280, leader->x, leader->y, leader->z);
   Actor_SelectAnimation(effect, 2);
-  effect->scaleX = 0x18000;
-  effect->scaleY = 0x10000;
+  effect->scaleX = Q16_ONE * 3 / 2;
+  effect->scaleY = Q16_ONE;
   ((struct FieldSprite *)effect->sprite)->priority = 1;
-  while (leader->y > 0x200000) {
-    leader->y += -0x10000;
+  while (leader->y > px(32)) {
+    leader->y += -px(1);
     leader->facing += 0x2000;
     effect->x = leader->x;
     effect->y = leader->y + -0x60000;
@@ -209,15 +209,15 @@ void Func_02000230(s32 kind) {
     Task_AddFrame(Func_020000b4, priority);
   }
   EventCamera_FollowActor(owner, 1);
-  leader->scaleX = 0x10000;
-  leader->scaleY = 0x10000;
+  leader->scaleX = Q16_ONE;
+  leader->scaleY = Q16_ONE;
   effect = Actor_Spawn(280, leader->x, leader->y, leader->z);
   Actor_SelectAnimation(effect, 2);
-  effect->scaleX = 0x18000;
-  effect->scaleY = 0x10000;
+  effect->scaleX = Q16_ONE * 3 / 2;
+  effect->scaleY = Q16_ONE;
   ((struct FieldSprite *)effect->sprite)->priority = 1;
-  while (leader->y < 0x6c0000) {
-    leader->y += 0x10000;
+  while (leader->y < px(108)) {
+    leader->y += px(1);
     leader->facing += 0x2000;
     effect->x = leader->x;
     effect->y = leader->y + -0x60000;
@@ -226,23 +226,23 @@ void Func_02000230(s32 kind) {
   }
   leader->scaleX = 0;
   effect->scaleX = 0;
-  while (leader->y < 0x900000) {
-    leader->y += 0x10000;
-    effect->y += 0x10000;
+  while (leader->y < px(144)) {
+    leader->y += px(1);
+    effect->y += px(1);
     System_Wait(1);
   }
-  effect->scaleX = 0x8000;
-  effect->scaleY = 0xc000;
+  effect->scaleX = Q16_ONE / 2;
+  effect->scaleY = Q16_ONE * 3 / 4;
   for (i = 31; i >= 0; i--) {
     effect->scaleX += 0x800;
     effect->scaleY += 0x200;
     System_Wait(1);
   }
-  effect->scaleX = 0x18000;
-  effect->scaleY = 0x10000;
+  effect->scaleX = Q16_ONE * 3 / 2;
+  effect->scaleY = Q16_ONE;
   Actor_SelectAnimation(effect, 6);
-  leader->scaleX = 0x6000;
-  leader->scaleY = 0x6000;
+  leader->scaleX = Q16_ONE * 3 / 8;
+  leader->scaleY = Q16_ONE * 3 / 8;
   i = 19;
 spin:
   leader->facing += 0x2000;
@@ -257,8 +257,8 @@ spin:
   leader->facing = 0x4000;
   leader->terrainId = 1;
   leader->motionFlags = 3;
-  leader->y = 0x900000;
-  leader->terrainHeight = 0x900000;
+  leader->y = px(144);
+  leader->terrainHeight = px(144);
   FieldTask_Remove(Func_020000b4);
   Func_02000054();
   Event_End();
@@ -378,7 +378,7 @@ void Func_02000680(s32 unused, s32 id) {
       object->x >> 20 == 18 && object->z >> 20 == 6) {
     object->motionFlags = 0;
     for (i = 15; i >= 0; i--) {
-      object->y += 0x20000;
+      object->y += px(2);
       System_Wait(1);
     }
     Actor_RaiseFromCell(id);

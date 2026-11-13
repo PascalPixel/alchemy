@@ -251,7 +251,7 @@ void Func_020000d8(void) {
   if (Func_020037d8(&target)) {
     PushTarget_Push(target);
     System_Wait(5);
-    object->gravity = 0x8000;
+    object->gravity = px(1) / 2;
     Actor_SetAnimation(10, 3);
     Actor_SetDestinationOffset(10, 0, 8);
     FieldEvent_Wait(22);
@@ -533,8 +533,7 @@ void Func_02000568(void) {
     Event_Wait(20);                                                            \
     Actor_SetSpeed(10, 1.6);                                                   \
     STEP(10, 108, 168);                                                        \
-    given =                                                                    \
-        FieldActor_Create(489, leader->x, leader->y + 0x180000, leader->z);    \
+    given = FieldActor_Create(489, leader->x, leader->y + px(24), leader->z);  \
     if (given != 0) {                                                          \
       Actor_SetModeById(gMainRoutineWork.currentOwner, 28);                    \
       given->motionFlags = off;                                                \
@@ -694,7 +693,7 @@ void Func_020006f4(void) {
 struct Actor *Func_02000da0(struct Actor *object, s32 value) {
   struct Actor *spawned;
 
-  spawned = FieldActor_Create(489, object->x, object->y + 0x180000, object->z);
+  spawned = FieldActor_Create(489, object->x, object->y + px(24), object->z);
   if (spawned != 0) {
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
     spawned->motionFlags = 0;
@@ -936,7 +935,7 @@ void Func_0200129c(struct Actor *gift) {
       Actor_SetSpriteFlags(a, 0);                                              \
     }                                                                          \
     if (b != 0) {                                                              \
-      b->scaleY = 0x20000;                                                     \
+      b->scaleY = Q16_ONE * 2;                                                 \
       Actor_SetSpriteFlags(b, 0);                                              \
       Actor_SelectAnimation(b, 1);                                             \
       Actor_StartScript(b, gSmokeScript);                                      \
@@ -1162,7 +1161,7 @@ void Func_02001c38(void) {
 }
 
 void Func_02001c4c(void) {
-  if (Actor_Get(gMainRoutineWork.currentOwner)->y < 0x280000) {
+  if (Actor_Get(gMainRoutineWork.currentOwner)->y < px(40)) {
     Actor_Get(11)->collisionFlags |= 8;
     Actor_Get(12)->collisionFlags |= 8;
   } else {
@@ -1230,7 +1229,7 @@ void Func_02001db0(void) {
   struct Actor *item;
   s32 z;
 
-  if (object->x < 0xe40000 || object->x > 0xec0000)
+  if (object->x < px(228) || object->x > px(236))
     return;
   z = object->z;
   if (z < 0xa40000)
@@ -1762,7 +1761,7 @@ s32 Scene_Initialize(void) {
 }
 
 void Func_02002bd8(void) {
-  if (Actor_Get(gMainRoutineWork.currentOwner)->y > 0x80000) {
+  if (Actor_Get(gMainRoutineWork.currentOwner)->y > px(8)) {
     Actor_Get(9)->collisionFlags &= ~8;
     Actor_Get(10)->collisionFlags &= ~8;
   } else {
@@ -1836,7 +1835,7 @@ void Func_02002d7c(void) {
   }
   for (i = 11; i <= 18; i++)
     Actor_GetById(i)->movementState = 0;
-  if (Actor_GetById(gMainRoutineWork.currentOwner)->y < -0xc0000) {
+  if (Actor_GetById(gMainRoutineWork.currentOwner)->y < -px(12)) {
     work = Ram_HeapSlots->eventWork;
     for (i = 11; i <= 18; i++)
       Actor_GetById(i)->movementState = 1;
@@ -2432,9 +2431,9 @@ s32 Func_020037d8(struct PushTarget *push) {
             /* FAKEMATCH(wrapper): the call through CallFunc_02003e2c. */
             if (CallFunc_02003e2c(object, &cell) == 2)
               goto blocked;
-            cell.x += 0x100000;
+            cell.x += px(16);
           }
-          cell.z += 0x100000;
+          cell.z += px(16);
         }
         push->x += dx;
         steps++;

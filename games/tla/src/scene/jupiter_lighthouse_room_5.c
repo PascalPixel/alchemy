@@ -129,7 +129,7 @@ void Func_02000064(s32 unused, s32 id) {
       return;
     object->motionFlags = 0;
     for (i = 15; i >= 0; i--) {
-      object->y += 0x20000;
+      object->y += px(2);
       System_Wait(1);
     }
     Actor_RaiseFromCell(id);
@@ -259,7 +259,7 @@ void Func_020002b8(void) {
   leader->update = Actor_CyclePictures;
   FieldEvent_Wait(30);
   from[0] = leader->x;
-  from[1] = leader->y + 0x140000;
+  from[1] = leader->y + px(20);
   from[2] = leader->z;
   to[0] = 170 << 18;
   to[1] = 0;
@@ -717,11 +717,11 @@ struct GustObject *Func_02001230(struct GustObject *source) {
   object->unk62 = 0;
   object->unk63 = 0;
   object->update = Func_02001070;
-  object->speedLimit = 0x18000;
+  object->speedLimit = px(3) / 2;
   options.priority = 1;
   options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y, position.z - 0x60000, 0, 0, 0,
-                    0x30000, &options);
+  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, 0x30000,
+                    &options);
   return object;
 }
 

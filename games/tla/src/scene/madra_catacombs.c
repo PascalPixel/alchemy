@@ -668,7 +668,7 @@ void MadraCatacombs_SetUpTabletRoom(void) {
   struct Actor *left = Actor_GetById(8);
   struct Actor *right = Actor_GetById(9);
 
-  left->scaleX = 0x14000;
+  left->scaleX = Q16_ONE * 5 / 4;
   right->scaleX = -0x14000;
   left->motionFlags = 0;
   right->motionFlags = 0;
@@ -677,7 +677,7 @@ void MadraCatacombs_SetUpTabletRoom(void) {
   if (Event_GetFlag(0x8c9) != 0) {
     if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
       left->x += PIXELS(-12);
-      right->x += 0xc0000;
+      right->x += px(12);
     }
     MadraCatacombs_LightFlames();
   }

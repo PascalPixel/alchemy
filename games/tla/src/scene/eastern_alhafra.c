@@ -156,10 +156,10 @@ void Func_020000c8(s32 mode, s32 arg) {
   if (mode == 1) {
     a = Actor_Get(19);
     b = Actor_Get(21);
-    a->speedLimit = 0x40000;
-    a->acceleration = 0x8000;
-    b->acceleration = 0x8000;
-    b->speedLimit = 0x40000;
+    a->speedLimit = px(4);
+    a->acceleration = px(1) / 2;
+    b->acceleration = px(1) / 2;
+    b->speedLimit = px(4);
     FieldActor_SetPositionAndResetMotion(a, 0x1e80000, a->y, 0x1380000);
     FieldActor_SetMoveTarget(a, 440, 0, 312);
     FieldActor_SetPositionAndResetMotion(b, 0x1e80000, b->y, 0x1380000);
@@ -654,14 +654,14 @@ s32 Scene_Initialize(void) {
     } while (0);
     object = OBJECT(19);
     object->motionFlags = flag;
-    object->y = 0x100000;
+    object->y = px(16);
     Tightrope_Place(1, 18, 19);
     Tightrope_Settle(1);
     object = OBJECT(20);
     object->collisionFlags |= 8;
     object = OBJECT(21);
     object->motionFlags = flag;
-    object->y = 0x100000;
+    object->y = px(16);
     Tightrope_Place(2, 20, 21);
   }
   Actor_SetSpriteFlags(Actor_Get(16), 0);
@@ -697,8 +697,8 @@ void Func_02000fa4(void) {
     object->priorityFlags |= 2;
     object->motionFlags = 2;
     object->velocityY = 0;
-    object->y = -0x40000;
-    object->terrainHeight = -0x40000;
+    object->y = -px(4);
+    object->terrainHeight = -px(4);
     FieldMapGrid_SetCellBehavior(0x1500000, 0x2100000, 2, 0);
     FieldMapGrid_SetCellBehavior(0x1500000, 0x2100000, 0, 0);
     FieldMapGrid_SetCellBehavior(0x1600000, 0x2100000, 0, 0);
@@ -1145,20 +1145,20 @@ extern s32 Func_02001b9c__s1bf4(s32 x, s32 y, s32 z, s32 rotation,
 void Func_02001bf4(s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  Func_02001b9c__s1bf4(object->x + 0x80000, object->y + 0x1c0000, object->z,
-                       0x1000, 15);
+  Func_02001b9c__s1bf4(object->x + px(8), object->y + px(28), object->z, 0x1000,
+                       15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  Func_02001b9c__s1bf4(object->x - 0x80000, object->y + 0x1c0000, object->z,
-                       0xf000, 15);
+  Func_02001b9c__s1bf4(object->x - px(8), object->y + px(28), object->z, 0xf000,
+                       15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  Func_02001b9c__s1bf4(object->x + 0x80000, object->y + 0x1c0000, object->z,
-                       0x1000, 15);
+  Func_02001b9c__s1bf4(object->x + px(8), object->y + px(28), object->z, 0x1000,
+                       15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  Func_02001b9c__s1bf4(object->x - 0x80000, object->y + 0x1c0000, object->z,
-                       0xf000, 15);
+  Func_02001b9c__s1bf4(object->x - px(8), object->y + px(28), object->z, 0xf000,
+                       15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
 }
@@ -2278,9 +2278,9 @@ s32 Func_02004240(struct PushState *push) {
           /* FAKEMATCH(wrapper): the call through CallFunc_02004a64. */
           if (CallFunc_02004a64(actor, &cell) == 2)
             goto blocked;
-          cell.x += 0x100000;
+          cell.x += px(16);
         }
-        cell.z += 0x100000;
+        cell.z += px(16);
       }
       push->x += dx;
       steps++;

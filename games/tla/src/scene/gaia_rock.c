@@ -414,9 +414,9 @@ void Func_02000670(void) {
     Event_PlayCueNearFocus(object, 202);
     object = Actor_Spawn(0x118, object->x, object->y, object->z);
     if (object != NULL) {
-      object->acceleration = 0x20000;
-      object->speedLimit = 0x20000;
-      object->scaleX = 0x8000;
+      object->acceleration = px(2);
+      object->speedLimit = px(2);
+      object->scaleX = Q16_ONE / 2;
       object->scaleY = 0x1999;
       object->priorityFlags = phase;
       Actor_SelectAnimation(object, 2);
@@ -457,8 +457,8 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(0x920)) {
       actor = Actor_GetById(16);
       actor->motionFlags = 0;
-      actor->x = 0x580000;
-      actor->y = 0x800000;
+      actor->x = px(88);
+      actor->y = px(128);
       Actor_SetSpriteFlags(actor, 0);
       MapGrid_CopyCellAttributes(6, 27, 1, 1, 5, 27);
     }
@@ -466,8 +466,8 @@ s32 Scene_Initialize(void) {
     actor->priorityFlags = 0;
     if (GameFlag_Get(0x921)) {
       actor->motionFlags = 0;
-      actor->x = 0x2880000;
-      actor->y = 0x400000;
+      actor->x = px(648);
+      actor->y = px(64);
       Actor_SetSpriteFlags(actor, 0);
       MapGrid_CopyCellAttributes(33, 102, 1, 2, 37, 102);
       MapGrid_CopyCellAttributes(27, 44, 1, 1, 40, 46);
@@ -593,7 +593,7 @@ void Func_02000bc0(s32 id, s32 flag) {
 dust:
   {
     struct Actor *dust =
-        FieldActor_Create(255, leader->x, leader->y + 0x100000, leader->z);
+        FieldActor_Create(255, leader->x, leader->y + px(16), leader->z);
 
     if (dust != 0) {
       s32 angle;
@@ -612,7 +612,7 @@ dust:
       dust->scaleX = scale;
       dust->scaleY = scale;
       dust->gravity = 0x547a;
-      dust->bounce = 0x8000;
+      dust->bounce = Q16_ONE / 2;
     }
   }
   if (--i >= 0)
@@ -651,7 +651,7 @@ fall:
   FieldEvent_Wait(20);
   Actor_SetSpriteFlags(leader, 1);
   Actor_SelectAnimation(leader, 1);
-  leader->velocityY = 0x40000;
+  leader->velocityY = px(4);
   System_Wait(20);
   gMainRoutineWork.renderMode = 0;
   Event_End();

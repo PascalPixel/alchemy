@@ -289,7 +289,7 @@ void Func_020000a4(u16 *list, s32 mode, s32 count) {
       if (mode == 1) {
         GameFlag_Set(flag);
         Actor_SetCellOpen(id, a, flag, object->terrainId);
-        object->scaleY = 0x10000;
+        object->scaleY = Q16_ONE;
       }
       break;
     }
@@ -481,7 +481,7 @@ void Func_020007b4(s32 mode, s32 step) {
     firstSprite = first->sprite;
     secondSprite = second->sprite;
     second->motionFlags = 0;
-    second->y += -0x1c0000;
+    second->y += -px(28);
     wait(1);
     entry = &gResourceTableEntries[secondSprite->vramBlock];
     second->watchedObject = (void *)(entry->offset + OBJ_VRAM0);
@@ -502,7 +502,7 @@ void Func_020007b4(s32 mode, s32 step) {
   if (step <= 7)
     first->scaleY += -0x1f00;
   if (mode == 1) {
-    first->scaleY = 0x10000;
+    first->scaleY = Q16_ONE;
     second->y = second->terrainHeight;
     GameFlag_Set(first->timer);
     GameFlag_Clear(second->timer);
@@ -658,9 +658,9 @@ void Func_02000988(void) {
     wait(6);
     Sound_Play(SE_JUMP);
     Actor_SelectAnimation(leader, 7);
-    leader->speedLimit = 0x20000;
-    leader->acceleration = 0x8000;
-    leader->velocityY = 0x40000;
+    leader->speedLimit = px(2);
+    leader->acceleration = px(1) / 2;
+    leader->velocityY = px(4);
     *motion = 2;
     *priority = 1;
     leader->terrainId = ((u8 *)rider)[98];
@@ -676,13 +676,13 @@ void Func_02000988(void) {
     leader->z = (((ride->z >> 19) & ~1) - (angle & 2) + 1) << 19;
     noFlags = 0;
     Actor_SetSpriteFlags(leader, 1);
-    leader->velocityY = 0x60000;
+    leader->velocityY = px(6);
     *priority = 33;
     *motion = 3;
     Call4((void (*)())FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
     dust = FieldCamera_GetActor();
-    dust->speedLimit = 0x80000;
-    dust->acceleration = 0x10000;
+    dust->speedLimit = px(8);
+    dust->acceleration = px(1);
     dust->motionFlags = noFlags;
     Actor_SetMoveTarget(dust, leader->x,
                         Map_GetTerrainHeight(0, leader->x, leader->z),
@@ -826,7 +826,7 @@ void Func_02000f34(struct Actor *object) {
     object->timer = 0;
     options.priority = 1;
     options.palette = 7;
-    FieldEffect_Spawn(position.x, object->y, position.z - 0x60000, 0, 0, 0,
+    FieldEffect_Spawn(position.x, object->y, position.z - px(6), 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
   }
   object->timer++;
@@ -959,7 +959,7 @@ void Func_02001290(struct Actor *object) {
     object->timer = 0;
     options.priority = 1;
     options.palette = 7;
-    FieldEffect_Spawn(position.x, object->y, position.z - 0x60000, 0, 0, 0,
+    FieldEffect_Spawn(position.x, object->y, position.z - px(6), 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
   }
   object->timer++;
@@ -1014,14 +1014,14 @@ void Func_02001458(struct Actor *object) {
      */
     asm("");
     object->speedLimit = -object->speedLimit >> 1;
-    object->z = leader->z - 0x80000;
+    object->z = leader->z - px(8);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside3) {
     other = Actor_GetById(8);
     if (Position_FlatDistance(&other->x, pos) <= 8) {
       object->speedLimit = -object->speedLimit >> 1;
       object->unk4c = 0;
-      object->z = other->z - 0x80000;
+      object->z = other->z - px(8);
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside8) {
     for (i = 0; i != 3; i++) {
@@ -1030,7 +1030,7 @@ void Func_02001458(struct Actor *object) {
       if (Position_FlatDistance(&other->x, pos) <= 8) {
         object->speedLimit = -object->speedLimit >> 1;
         object->unk4c = 0;
-        object->z = other->z - 0x80000;
+        object->z = other->z - px(8);
       }
     }
 #undef other
@@ -1054,7 +1054,7 @@ void Func_0200160c(s32 x, s32 y, s32 z) {
   object->motionFlags = 0;
   BYTE_AT(object, 90) = 0;
   WORD_AT(object, 24) = 0x8000;
-  object->speedLimit = 0x40000;
+  object->speedLimit = px(4);
   object->acceleration = ((Random16() & 0x7fff) << 1) + 0xffff8001;
   WORD_AT(object, 76) = 0x3800;
   WORD_AT(object, 108) = (s32)Func_02001458;
@@ -1251,8 +1251,8 @@ void Func_02001828(void) {
     ((struct FieldSprite *)gust->sprite)->priority = 1;
     cell.x = x;
     cell.z = z;
-    gust->speedLimit = 0x40000;
-    gust->acceleration = 0x40000;
+    gust->speedLimit = px(4);
+    gust->acceleration = px(4);
     Actor_SetMoveTarget(gust, cell.x << 16, gust->y, cell.z << 16);
     Call2((void (*)())Camera_SetSpeedParameters, 0x50000, 0x50000);
     Call4((void (*)())FieldCamera_MoveWithinMapBounds, x << 16, -1, z << 16, 1);
@@ -1291,7 +1291,7 @@ void Func_02001828(void) {
     object = gust->watchedObject;
     object->x = (carried >> 16) << 19;
     object->z = carried << 19;
-    object->velocityY = 0x80000;
+    object->velocityY = px(8);
     object->update = 0;
     object->motionFlags = 2;
     object->priorityFlags |= 1;
@@ -1329,8 +1329,8 @@ void Func_02001828(void) {
   } else {
     cell.x = (gust->x >> 16) + dir.x * 48;
     cell.z = (gust->z >> 16) + dir.z * 48;
-    gust->speedLimit = 0x8000;
-    gust->acceleration = 0x8000;
+    gust->speedLimit = px(1) / 2;
+    gust->acceleration = px(1) / 2;
     Call4((void (*)())Actor_SetMoveTarget, (s32)(gust), (s32)(cell.x << 16),
           (s32)(gust->y), (s32)(cell.z << 16));
     hit -= 30;
@@ -1348,7 +1348,7 @@ void Func_02001828(void) {
           dust.startScaleX = dust.startScaleY = (Random16() & 0xffff) + 0x10000;
         }
         velocity.x = Trig_Cos((gFrameCount & 0x1ff) << 12) << 1;
-        velocity.y = 0x10000;
+        velocity.y = px(1);
         velocity.z = Trig_Sin((gFrameCount & 0x1ff) << 12);
         FieldEffect_Spawn(gust->x, gust->y, gust->z, velocity.x, velocity.y,
                           velocity.z,
@@ -1399,7 +1399,7 @@ shrink:
   gust->targetX = 0;
   for (i = 0; i != 8; i++) {
     gust->scaleX -= 0x2666;
-    gust->scaleY -= 0x4000;
+    gust->scaleY -= Q16_ONE / 4;
     gust->y += 0x38000;
     FieldEvent_Wait(1);
   }
@@ -1433,7 +1433,7 @@ shrink:
       if (Actor_GetById(8)->x >> 19 == 65) {
         velocity.x = Actor_GetById(8)->x + 0xfff80000;
         velocity.y = Actor_GetById(8)->y;
-        velocity.z = Actor_GetById(8)->z + 0x80000;
+        velocity.z = Actor_GetById(8)->z + px(8);
         Actor_SetSpritePriority(8, 2);
         for (i = 0; i != 8; i++) {
           dust.priority = 1;
@@ -1688,11 +1688,11 @@ void Func_02002b58(s32 x, s32 z) {
   spawn.kind = 0x2a0;
   spawn.mode = 1;
   spawn.scaleX = 0xcccc;
-  spawn.scaleY = 0x30000;
+  spawn.scaleY = Q16_ONE * 3;
   i = 0;
 next:
   position.x = x + ((Random16() & 31) << 16) - 0x100000;
-  position.y = 0x40000;
+  position.y = px(4);
   position.z = z;
   FieldEffect_Spawn(position.x, 0, position.z, 0, position.y, 0, 0x1a0000,
                     &spawn);
@@ -1812,7 +1812,7 @@ row:
       ((struct ObjectPriorityByte *)spark)->priorityFlags |= 1;
       spark->motionFlags = 0;
       spark->bounce = spark->x;
-      spark->gravity = 0x18000;
+      spark->gravity = px(3) / 2;
       spark->unk4c = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
@@ -1918,7 +1918,7 @@ void Func_02003170(void) {
   FieldEvent_Wait(15);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Actor_GetById(gMainRoutineWork.currentOwner)->speedLimit =
-      Actor_GetById(gMainRoutineWork.currentOwner)->acceleration = 0x8000;
+      Actor_GetById(gMainRoutineWork.currentOwner)->acceleration = px(1) / 2;
   Sound_Play(SE_MAP_EXIT);
   Actor_WalkToById(gMainRoutineWork.currentOwner, 312, 792);
   FieldEvent_Wait(5);
@@ -2115,7 +2115,7 @@ row:
       ((struct ObjectPriorityByte *)spark)->priorityFlags |= 1;
       spark->motionFlags = 0;
       spark->bounce = spark->x;
-      spark->gravity = 0x18000;
+      spark->gravity = px(3) / 2;
       spark->unk4c = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
@@ -2173,7 +2173,7 @@ fade:
   FieldCamera_WaitForArrival();
   Sound_Play(SE_ENEMY_CRY);
   Call2((void (*)())Actor_ConfigureSpriteColor, 8, 0x100);
-  Func_02002b58(Actor_GetById(8)->x, Actor_GetById(8)->z + 0x200000);
+  Func_02002b58(Actor_GetById(8)->x, Actor_GetById(8)->z + px(32));
   Actor_ConfigureSpriteColor(8, 0);
   Actor_SetSpriteColor(Actor_GetById(8), 7);
   wait(3);
@@ -2352,7 +2352,7 @@ s32 Func_02003ed4(struct Orbiter *orbiter) {
 
   orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
   orbiter->x = anchor->x;
-  orbiter->y = anchor->y + 0x80000;
+  orbiter->y = anchor->y + px(8);
   orbiter->z = anchor->z;
   Call3((void (*)())Vector_AddPolarOffset, orbiter->radius, orbiter->angle,
         (s32)&orbiter->x);
@@ -2364,7 +2364,7 @@ s32 Func_02003ed4(struct Orbiter *orbiter) {
   orbiter->radius -= 0x40000;
   orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
   orbiter->x = anchor->x;
-  orbiter->y = anchor->y + 0x80000;
+  orbiter->y = anchor->y + px(8);
   orbiter->z = anchor->z;
   Vector_AddPolarOffset(orbiter->radius, orbiter->angle, &orbiter->x);
   Func_02003e7c(orbiter);
@@ -2447,7 +2447,7 @@ first:
     Sound_Play(SE_GLITTER);
     spark->x += ((Random16() & 31) - 16) << 16;
     spark->y += ((Random16() & 15) - 8) << 16;
-    spark->speedLimit = 0x80000;
+    spark->speedLimit = px(8);
     spark->acceleration = 0x3333;
     spark->motionFlags = 0;
     Actor_SetSpriteColor(spark, 2);
@@ -2743,7 +2743,7 @@ found:
   firstSprite = first->sprite;
   secondSprite = second->sprite;
   second->motionFlags = busy;
-  second->y += -0x1c0000;
+  second->y += -px(28);
   wait(1);
   entry = &gResourceTableEntries[secondSprite->vramBlock];
   second->watchedObject = (void *)(entry->offset + 0x6010000);
@@ -2772,7 +2772,7 @@ step:
   if (i != 8)
     goto step;
   leader->motionFlags = 3;
-  first->scaleY = 0x10000;
+  first->scaleY = Q16_ONE;
   second->y = second->terrainHeight;
   GameFlag_Set(first->timer);
   GameFlag_Clear(second->timer);
@@ -2896,16 +2896,16 @@ void Func_02004cc8(void) {
   prepared = OverlayObject_PrepareObject(0xd80000, -0x200000, 0x2200000, 286);
   leader->motionFlags = 0;
   Actor_SetSpriteFlags(leader, 0);
-  leader->speedLimit = 0x18000;
-  leader->acceleration = 0x18000;
-  lift = Import_ActorCreate(280, leader->x, leader->y - 0x80000, leader->z);
+  leader->speedLimit = px(3) / 2;
+  leader->acceleration = px(3) / 2;
+  lift = Import_ActorCreate(280, leader->x, leader->y - px(8), leader->z);
   Actor_SelectAnimation(lift, 2);
   Actor_SetSpriteFlags(lift, 0);
   lift->motionFlags = 0;
   lift->speedLimit = 0x16666;
   lift->acceleration = 0x16666;
-  Actor_SetMoveTarget(leader, leader->x, leader->y + 0x500000, leader->z);
-  Actor_SetMoveTarget(lift, lift->x, lift->y + 0x480000, lift->z);
+  Actor_SetMoveTarget(leader, leader->x, leader->y + px(80), leader->z);
+  Actor_SetMoveTarget(lift, lift->x, lift->y + px(72), lift->z);
   Sound_Play(SE_137);
   Event_StartScreenTransition();
   while (!Actor_HasArrived(leader)) {
@@ -2916,19 +2916,19 @@ void Func_02004cc8(void) {
   Sound_Play(SE_288);
   FieldEvent_Wait(10);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
-  height = Map_GetTerrainHeight(0, lift->x, lift->z - 0x100000);
+  height = Map_GetTerrainHeight(0, lift->x, lift->z - px(16));
   leader->y = height;
   leader->terrainHeight = height;
   Actor_SelectAnimation(leader, 6);
   wait(6);
   Sound_Play(SE_JUMP);
   Actor_SelectAnimation(leader, 7);
-  leader->speedLimit = 0x20000;
-  leader->acceleration = 0x8000;
-  leader->velocityY = 0x40000;
+  leader->speedLimit = px(2);
+  leader->acceleration = px(1) / 2;
+  leader->velocityY = px(4);
   leader->motionFlags = 2;
   leader->priorityFlags = 1;
-  Actor_SetMoveTarget(leader, leader->x, leader->y, leader->z - 0x100000);
+  Actor_SetMoveTarget(leader, leader->x, leader->y, leader->z - px(16));
   OverlayObject_WaitUntilIdle(leader);
   Actor_WaitForMove(leader);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
@@ -2985,9 +2985,9 @@ void Func_02004f3c(void) {
   s32 level;
 
   actor->priorityFlags |= 32;
-  if (actor->y + 0x200000 >= 0x1380000)
+  if (actor->y + px(32) >= 0x1380000)
     level = 2;
-  else if (actor->y + 0x200000 >= 0xd80000)
+  else if (actor->y + px(32) >= 0xd80000)
     level = 1;
   else
     level = 0;
@@ -3053,8 +3053,8 @@ void Func_0200505c(void) {
   Call4((void (*)())FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
   Map_CenterOnFollowedPoint();
   wait(1);
-  leader->y = 0x820000;
-  leader->gravity = 0x8000;
+  leader->y = px(130);
+  leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
@@ -3093,8 +3093,8 @@ void Func_0200505c(void) {
   MapGrid_WaitForShakeToSettle();
   FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  leader->gravity = 0x10000;
-  leader->bounce = 0x4000;
+  leader->gravity = px(1);
+  leader->bounce = Q16_ONE / 4;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Event_End();
 }

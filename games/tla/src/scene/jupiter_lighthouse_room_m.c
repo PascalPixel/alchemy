@@ -393,7 +393,7 @@ void Func_0200060c(void) {
     EventCamera_FollowActor(23, 1);
     FieldCamera_WaitForArrival();
     Sound_Play(SE_310);
-    object->gravity = 0x8000;
+    object->gravity = px(1) / 2;
     object->motionFlags = 2;
     object->terrainHeight = PIXELS(-80);
     i = 0;
@@ -407,7 +407,7 @@ void Func_0200060c(void) {
     }
     MapGrid_SetShake(3, 3, 0.95);
     Sound_Play(SE_HEAVY_IMPACT);
-    object->gravity = 0x10000;
+    object->gravity = px(1);
     object->velocityY = PIXELS(6);
     Actor_SetSpeed(23, 1.5);
     if (spot == 2)
@@ -416,7 +416,7 @@ void Func_0200060c(void) {
       Actor_SetDestinationOffset(23, 32, 0);
     Event_Wait(7);
     Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
-    object->gravity = 0x8000;
+    object->gravity = px(1) / 2;
     object->terrainHeight = PIXELS(-240);
     Event_Wait(80);
     MapGrid_SetShake(5, 5, 1);
@@ -431,7 +431,7 @@ void Func_0200060c(void) {
     EventCamera_FollowActor(23, 1);
     FieldCamera_WaitForArrival();
     Sound_Play(SE_310);
-    object->gravity = 0x8000;
+    object->gravity = px(1) / 2;
     object->motionFlags = 2;
     object->terrainHeight = PIXELS(-240);
     Event_Wait(20);
@@ -1712,11 +1712,11 @@ struct GustObject *Whirlwind_SpawnUpper(struct GustObject *source) {
   object->unk62 = 0;
   object->unk63 = 0;
   object->update = Whirlwind_Update;
-  object->speedLimit = 0x18000;
+  object->speedLimit = px(3) / 2;
   options.priority = 1;
   options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y, position.z - 0x60000, 0, 0, 0,
-                    0x30000, &options);
+  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, 0x30000,
+                    &options);
   return object;
 }
 

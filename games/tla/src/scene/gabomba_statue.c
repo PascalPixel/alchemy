@@ -292,7 +292,7 @@ s32 Func_0200047c(struct Actor *object) {
     u8 *phase = &OBJECT_BYTE(object, 98);
 
     object->x = owner->x;
-    object->y = owner->y + 0x100000;
+    object->y = owner->y + px(16);
     object->z = owner->z;
     object->facing = *phase << 8;
     FieldVector_AddPolarOffset(0x60000, *phase << 8, &object->x);
@@ -440,8 +440,8 @@ void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity) {
   System_Wait(6);
   Event_PlaySound(SE_JUMP);
   Actor_SelectAnimation(object, 7);
-  object->speedLimit = 0x30000;
-  object->acceleration = 0x20000;
+  object->speedLimit = px(3);
+  object->acceleration = px(2);
   object->velocityY = velocity;
   *flags &= 0x7e;
   Actor_SetSpriteFlags(object, 0);
@@ -485,7 +485,7 @@ void Func_02000784(void) {
   table = Func_020005b4(actor, 357);
   turn = gData_02005af0 * step;
   if (table != 0) {
-    if (table->y + 0x100000 > actor->y)
+    if (table->y + px(16) > actor->y)
       return;
     if (table->facing == 0x8000)
       turn = -turn;
@@ -546,10 +546,10 @@ void Func_02000978(void) {
 
       if (found->facing == 0x8000)
         dx = -dx;
-      if (found->z - actor->z < -0x20000)
-        actor->z = found->z + 0x20000;
-      if (found->z - actor->z > 0x20000)
-        actor->z = found->z - 0x20000;
+      if (found->z - actor->z < -px(2))
+        actor->z = found->z + px(2);
+      if (found->z - actor->z > px(2))
+        actor->z = found->z - px(2);
       x = actor->x + dx;
       actor->x = x;
       foundX = found->x;
@@ -619,10 +619,10 @@ void Func_02000ad4(void) {
   speed = gData_02005af0 << 15;
   platform = Func_020005b4(actor, 360);
   if (platform != 0) {
-    if (platform->x - actor->x < -0x20000)
-      actor->x = platform->x + 0x20000;
-    if (platform->x - actor->x > 0x20000)
-      actor->x = platform->x - 0x20000;
+    if (platform->x - actor->x < -px(2))
+      actor->x = platform->x + px(2);
+    if (platform->x - actor->x > px(2))
+      actor->x = platform->x - px(2);
     z = actor->z + speed;
     actor->z = z;
     platformZ = platform->z;
@@ -641,10 +641,10 @@ void Func_02000ad4(void) {
   platform = Func_020005b4(actor, 361);
   if (platform == 0)
     return;
-  if (platform->x - actor->x < -0x20000)
-    actor->x = platform->x + 0x20000;
-  if (platform->x - actor->x > 0x20000)
-    actor->x = platform->x - 0x20000;
+  if (platform->x - actor->x < -px(2))
+    actor->x = platform->x + px(2);
+  if (platform->x - actor->x > px(2))
+    actor->x = platform->x - px(2);
   z = actor->z - speed;
   actor->z = z;
   platformZ = platform->z;
@@ -1185,7 +1185,7 @@ void Func_02001a8c(void) {
   FieldEvent_Wait(20);
   Event_PlaySound(SE_RISING_CHIMES);
   Actor_SelectAnimation(object, 5);
-  object->scaleY = 0x10000;
+  object->scaleY = Q16_ONE;
   Event_End();
 }
 
@@ -1490,8 +1490,8 @@ void Func_02002394(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
-  actor->y = 0x820000;
-  actor->gravity = 0x8000;
+  actor->y = px(130);
+  actor->gravity = px(1) / 2;
   actor->bounce = 0;
   actor->motionFlags = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
@@ -1529,8 +1529,8 @@ void Func_02002394(void) {
   FieldMapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  actor->gravity = 0x10000;
-  actor->bounce = 0x4000;
+  actor->gravity = px(1);
+  actor->bounce = Q16_ONE / 4;
   System_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
@@ -2752,7 +2752,7 @@ void Func_020043a4(s32 value, s32 row) {
   if (value == 1) {
     Func_02004288(gSceneState.firstId, 1);
     Actor_SelectAnimation(object, 6);
-    object->scaleY = 0x10000;
+    object->scaleY = Q16_ONE;
   }
 }
 
@@ -2905,7 +2905,7 @@ void Func_02004710(void) {
     s32 px = piece->x;
     if (px != 0) {
       s32 x = px - scrollX;
-      s32 y = piece->y + 0x100000;
+      s32 y = piece->y + px(16);
       s32 pz = piece->z;
       s32 z = pz - scrollZ;
       s32 sy = z - y;
@@ -3491,7 +3491,7 @@ void Statue_Sink(u16 *list, s32 mode, s32 count) {
       if (mode == 1) {
         GameFlag_Set(flag);
         Func_020054ac(id, a, flag, object->terrainId);
-        object->scaleY = 0x10000;
+        object->scaleY = Q16_ONE;
       }
       break;
     }

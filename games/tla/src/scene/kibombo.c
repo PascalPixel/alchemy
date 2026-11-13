@@ -602,12 +602,12 @@ void Func_02000d74(void) {
   Actor_SetHorizontalPositionWithTerrain(27, 0, 0);
   Kibombo_ObjArm(17, FACING_NORTH + FACING_STEP, 0);
   if (gData_02007950 != 0) {
-    if (gData_02007950->y > 0x240000) {
+    if (gData_02007950->y > px(36)) {
     wait:
       Kibombo_ObjArm(17, FACING_NORTH + FACING_STEP, 0);
       gData_02007950->y += 0xffffc000;
       wait(1);
-      if (gData_02007950->y > 0x240000)
+      if (gData_02007950->y > px(36))
         goto wait;
     }
   }
@@ -1440,7 +1440,7 @@ void Func_02002de0(void) {
 void Func_02002e60(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  if (leader->y > 0x100000) {
+  if (leader->y > px(16)) {
     Actor_SetHorizontalPositionWithTerrain(29, 0, 0);
     Actor_SetSpritePriority(30, 2);
   } else {
@@ -1495,7 +1495,7 @@ void Func_02002f34(void) {
 
     if (object != 0) {
       object->bounce = Trig_Cos(((Random16() << 13) >> 16) + 0x3000);
-      object->gravity = 0x10000;
+      object->gravity = px(1);
       object->unk4c = 0x40000 - (u16)Random16();
       value = (u16)Random16() + 0xffff8000;
       object->timer = value;
@@ -1540,8 +1540,8 @@ void Func_02003030(void) {
       part = (u8 *)object->sprite;
       part[9] = (part[9] & -mask) | 8;
       Actor_SetSpriteFlags(object, 0);
-      object->scaleX = 0x8000;
-      object->scaleY = 0x8000;
+      object->scaleX = Q16_ONE / 2;
+      object->scaleY = Q16_ONE / 2;
       *(s32 *)&object->watchedObject = 60;
       object->update = (void (*)(void))Func_02002fec;
       Actor_SelectAnimation(object, 5);
@@ -1556,7 +1556,7 @@ void Func_020030b8(struct Actor *object) {
   } else {
     object->timer = ((Random16() * 10) >> 16) + 10;
     if (object->unk66 != 0) {
-      object->scaleX = 0x18000;
+      object->scaleX = Q16_ONE * 3 / 2;
       object->unk66 = 0;
     } else {
       object->scaleX = 0xfffe8000;
@@ -1572,7 +1572,7 @@ void Func_02003104(s32 x, s32 y, s32 z) {
   if (object != 0) {
     object->motionFlags = 0;
     object->priorityFlags &= ~1;
-    object->scaleY = 0x20000;
+    object->scaleY = Q16_ONE * 2;
     object->timer = ((Random16() * 10) >> 16) + 10;
     object->unk66 = 0;
     object->update = (void (*)(void))Func_020030b8;
@@ -1725,7 +1725,7 @@ void Func_02003308(struct Actor *actor) {
     ((struct FieldSprite *)object->actor.sprite)->rotation += 0x1000;
     object->actor.scaleX += 0x666;
     object->actor.scaleY += 0x666;
-    if (object->actor.scaleX > 0x18000 &&
+    if (object->actor.scaleX > Q16_ONE * 3 / 2 &&
         ((struct FieldSprite *)object->actor.sprite)->rotation == 0) {
       *stage = 1;
       *timer = 1;
@@ -1742,8 +1742,8 @@ void Func_02003308(struct Actor *actor) {
     break;
   case 2:
     *action += 1;
-    object->actor.targetY += 0x40000;
-    if (object->actor.targetY > 0x640000)
+    object->actor.targetY += px(4);
+    if (object->actor.targetY > px(100))
       *stage = 3;
     break;
   case 3:
@@ -1761,8 +1761,8 @@ void Func_02003308(struct Actor *actor) {
   case 5:
     *action += 1;
     object->actor.unk4c -= 2;
-    if (object->actor.targetY < 0x880000)
-      object->actor.targetY += 0x20000;
+    if (object->actor.targetY < px(136))
+      object->actor.targetY += px(2);
     if (object->actor.unk4c <= 1) {
       object->actor.unk4c = 0;
       *stage = 6;
@@ -1809,7 +1809,7 @@ void Func_02003504(void) {
   angle = 0;
   do {
     x = center->x;
-    y = center->y + 0x180000;
+    y = center->y + px(24);
     z = center->z;
     spark = Import_ActorCreate(673, x, y, z);
     if (spark != 0) {
@@ -1823,7 +1823,7 @@ void Func_02003504(void) {
       spark->unk66 = angle / 360;
       spark->riseCounter = 0;
       spark->targetX = center->x;
-      spark->targetY = center->y + 0x180000;
+      spark->targetY = center->y + px(24);
       spark->targetZ = center->z;
       spark->update = (void (*)(void))Func_02003308;
     }
@@ -2282,7 +2282,7 @@ void Kibombo_GabombaNotPleased(void) {
   Func_02003640(1, 1);
   wait(1);
   if (gData_02007950 != 0) {
-    gData_02007950->y += 0x200000;
+    gData_02007950->y += px(32);
     wait(1);
     gData_02007950->motionFlags = 4;
   }
@@ -2374,7 +2374,7 @@ void Func_02004524(void) {
   KIBOMBO_TASK_ADD(Func_02002ccc, 0x480);
   Func_02003640(1, 1);
   if (gData_02007950 != 0) {
-    gData_02007950->y += 0x200000;
+    gData_02007950->y += px(32);
     wait(1);
     gData_02007950->motionFlags = 4;
   }
@@ -2467,7 +2467,7 @@ void Kibombo_GabombaStillNotPleased(void) {
         object = *slot;
         object->y += 0xffffc000;
         wait(1);
-      } while ((*slot)->y > 0x240000);
+      } while ((*slot)->y > px(36));
     }
   }
   Motion_SetModeAndWaitAnimation(17, 4);
@@ -2564,11 +2564,11 @@ void Kibombo_GabombaRespondsToGift(void) {
     struct Actor *gift = gData_02007950;
 
     gift->motionFlags = 0;
-    if (gift->y > 0x240000) {
+    if (gift->y > px(36)) {
     lower:
       gData_02007950->y -= 0x8000;
       wait(1);
-      if (gData_02007950->y > 0x240000)
+      if (gData_02007950->y > px(36))
         goto lower;
     }
   }
@@ -2577,8 +2577,8 @@ void Kibombo_GabombaRespondsToGift(void) {
     gData_02007950->motionFlags = 0;
     i = 0;
   rise:
-    gData_02007950->y += 0x60000;
-    object->scaleY -= 0x2000;
+    gData_02007950->y += px(6);
+    object->scaleY -= Q16_ONE / 8;
     object->y -= 0x8000;
     wait(1);
     i++;
@@ -2586,7 +2586,7 @@ void Kibombo_GabombaRespondsToGift(void) {
       goto rise;
     Actor_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
     for (i = 0; i < 4; i++) {
-      object->scaleY -= 0x2000;
+      object->scaleY -= Q16_ONE / 8;
       object->y -= 0x8000;
       wait(1);
     }
@@ -2605,7 +2605,7 @@ void Kibombo_GabombaRespondsToGift(void) {
                                   0x1340000);
   wait(1);
   for (i = 0; i < 8; i++) {
-    object->scaleY += 0x2000;
+    object->scaleY += Q16_ONE / 8;
     object->y += 0x8000;
     wait(1);
   }
@@ -2755,7 +2755,7 @@ void Func_020050ac(void) {
 void Kibombo_InitializeRoom1(void) {
   Actor_SetHorizontalPositionWithTerrain(11, PIXELS(88), PIXELS(314));
   Actor_SetSpriteFlags(Actor_GetById(11), 0);
-  Actor_GetById(11)->scaleY = 0x8000;
+  Actor_GetById(11)->scaleY = Q16_ONE / 2;
   Func_020050ac();
   GameFlag_Clear(0x86b);
   Actor_DisableById(25);

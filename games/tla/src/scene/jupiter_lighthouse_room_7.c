@@ -259,7 +259,7 @@ void Func_020005e8(s32 mode) {
       object = Actor_Get(i + 10);
       if (Func_020005a0(object)) {
         object->motionFlags = 0;
-        object->y -= 0x20000;
+        object->y -= px(2);
       }
       if (++i <= 5)
         goto L_0200864e;
@@ -295,7 +295,7 @@ void Func_020005e8(s32 mode) {
       object = Actor_Get(i + 10);
       if (Func_020005a0(object)) {
         object->motionFlags = 0;
-        object->y += 0x20000;
+        object->y += px(2);
       }
       if (++i <= 5)
         goto L_0200870c;
@@ -898,7 +898,7 @@ top:
       if (mode == 1) {
         Event_SetFlag(flag);
         Actor_SetCellOpen(id, a, flag, object->terrainId);
-        object->scaleY = 0x10000;
+        object->scaleY = Q16_ONE;
       }
       return;
     }
@@ -1118,8 +1118,8 @@ void CrackedTile_DropIn(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
-  actor->y = 0x820000;
-  actor->gravity = 0x8000;
+  actor->y = px(130);
+  actor->gravity = px(1) / 2;
   actor->bounce = 0;
   actor->motionFlags = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
@@ -1162,8 +1162,8 @@ loop:
   FieldMapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  actor->gravity = 0x10000;
-  actor->bounce = 0x4000;
+  actor->gravity = px(1);
+  actor->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Event_End();

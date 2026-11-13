@@ -485,9 +485,9 @@ s32 Func_02000c38(struct Actor *object, s16 *position) {
     wait(6);
     Sound_Play(SE_JUMP);
     Actor_SelectAnimation(object, 7);
-    object->speedLimit = 0x30000;
-    object->acceleration = 0x20000;
-    object->velocityY = 0x40000;
+    object->speedLimit = px(3);
+    object->acceleration = px(2);
+    object->velocityY = px(4);
     *flags &= 0x7e;
     Actor_SetSpriteFlags(object, 0);
     {

@@ -432,10 +432,10 @@ void ShamanVillage_SwirlSandGrain(struct Actor *object) {
   object->y += object->gravity;
   object->z += *(s32 *)((u8 *)object + 76);
   if (object->x >> 16 < 168) {
-    object->bounce += 0x18000;
+    object->bounce += Q16_ONE * 3 / 2;
     object->scaleY = object->scaleX += 0xccc;
   } else {
-    object->bounce -= 0x18000;
+    object->bounce -= Q16_ONE * 3 / 2;
     object->scaleY = object->scaleX -= 0x51e;
   }
   if (object->bounce > 0)
@@ -515,7 +515,7 @@ row:
       spark->priorityFlags |= 1;
       spark->motionFlags = 0;
       spark->bounce = spark->x;
-      spark->gravity = 0x18000;
+      spark->gravity = px(3) / 2;
       spark->unk4c = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Import_ActorSetMode((struct Actor *)spark, 7);
@@ -2563,8 +2563,8 @@ void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
     ((struct FieldSprite *)object->sprite)->priority = 1;
     object->priorityFlags |= 2;
     Actor_SetSpriteFlags(object, 0);
-    object->scaleX = 0x8000;
-    object->scaleY = 0x8000;
+    object->scaleX = Q16_ONE / 2;
+    object->scaleY = Q16_ONE / 2;
     *(s32 *)&object->watchedObject = 60;
     object->update = ShamanVillage_DriftSmoke;
     Import_ActorSetMode(object, 5);

@@ -641,7 +641,7 @@ void Func_02000ac8(void) {
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
   actor =
-      (FieldActor_Create((u16)type, leader->x, leader->y + 0x80000, leader->z));
+      (FieldActor_Create((u16)type, leader->x, leader->y + px(8), leader->z));
   actor->motionFlags = 0;
   actor->scaleY = 0x1999;
   actor->scaleX = 0x1999;
@@ -896,8 +896,8 @@ void Func_02001398(void) {
   object->priorityFlags |= 2;
   object->motionFlags = 0;
   FieldActor_SetSpriteColor(object, 4);
-  object->scaleY = 0x16000;
-  object->scaleX = 0x16000;
+  object->scaleY = Q16_ONE * 11 / 8;
+  object->scaleX = Q16_ONE * 11 / 8;
   Scene_SetActorSpritePriority(object, 2);
   Actor_SelectAnimation(object, 3);
   Actor_SetSpriteFlags(object, 0);
@@ -952,15 +952,15 @@ void Func_02001518(void) {
   FieldEvent_Wait(30);
   object->motionFlags = 0;
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  object->speedLimit = 0x20000;
+  object->speedLimit = px(2);
   object->acceleration = 0x800;
   Event_PlaySound(SE_KOLIMA_BRIDGE_POST);
-  FieldActor_SetMoveTargetFixed(object, object->x, object->y + 0x40000,
+  FieldActor_SetMoveTargetFixed(object, object->x, object->y + px(4),
                                 object->z);
   FieldActor_WaitForMove(object);
   Scene_SetActorSpritePriority(leader, 1);
   Scene_SetActorSpritePriority(object, 1);
-  FieldActor_SetMoveTargetFixed(object, object->x, object->y + 0x800000,
+  FieldActor_SetMoveTargetFixed(object, object->x, object->y + px(128),
                                 object->z);
   FieldEvent_Wait(80);
   Event_FinishScreenTransition();
@@ -1010,8 +1010,8 @@ void Func_020016fc(void) {
   object = Actor_Get(14);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object->x = 0x2180000;
-  object->z = 0x1680000;
+  object->x = px(536);
+  object->z = px(360);
   object->terrainHeight = -917504;
   object->y = -917504;
   MapGrid_CopyCellsTo(51, 22, 33, 22, 1, 1);
@@ -1157,15 +1157,15 @@ void Func_020019a8(void) {
     object = Actor_Get(10);
   position[0] = (object->x & 0xfff00000) + 0x80000;
   position[2] = (object->z & 0xfff00000) + 0x80000;
-  object->acceleration = 0x10000;
-  object->speedLimit = 0x10000;
+  object->acceleration = px(1);
+  object->speedLimit = px(1);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldActor_SetMoveTargetFixed(object, position[0], 0, position[2]);
   effect =
       OverlayObject_PrepareObject(object->x, 0, position[2] + 0x3b0000, 286);
-  effect->scaleX = 0x18000;
-  effect->scaleY = 0x18000;
+  effect->scaleX = Q16_ONE * 3 / 2;
+  effect->scaleY = Q16_ONE * 3 / 2;
   sprite = effect->sprite;
   ((struct SpriteView *)sprite)->mode = 2;
   REG_WINOUT = WINOUT_WIN01_ALL | WINOUT_WINOBJ_BG0 | WINOUT_WINOBJ_BG1 |
@@ -1206,8 +1206,8 @@ void Func_02001a94(void) {
   FieldEvent_ResolvePendingActions(0);
   target[0] = (object->x & 0xfff00000) + 0x80000;
   target[2] = (object->z & 0xfff00000) + 0x80000;
-  object->acceleration = 0x10000;
-  object->speedLimit = 0x10000;
+  object->acceleration = px(1);
+  object->speedLimit = px(1);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldActor_SetMoveTargetFixed(object, target[0], 0, target[2]);
@@ -1343,14 +1343,14 @@ void Func_02001d68(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(9, 2);
-  object->y = -0x400000;
+  object->y = -px(64);
   Func_020033e0_(9, PIXELS(728), PIXELS(120));
   Actor_SetPosition(gMainRoutineWork.currentOwner, 728, 120);
-  Actor_Get(gMainRoutineWork.currentOwner)->y = -0x300000;
+  Actor_Get(gMainRoutineWork.currentOwner)->y = -px(48);
   Event_StartScreenTransition();
-  object->acceleration = 0x10000;
-  object->speedLimit = 0x10000;
-  FieldActor_SetMoveTargetFixed(object, object->x, object->y + 0x300000,
+  object->acceleration = px(1);
+  object->speedLimit = px(1);
+  FieldActor_SetMoveTargetFixed(object, object->x, object->y + px(48),
                                 object->z);
   FieldActor_WaitForMove(object);
   Event_SetFlag(FLAG_AREA_TEMP_00);
@@ -1363,12 +1363,12 @@ void Func_02001df4(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object->motionFlags = 0;
-  object->y = -0x400000;
-  Actor_Get(gMainRoutineWork.currentOwner)->y = -0x300000;
+  object->y = -px(64);
+  Actor_Get(gMainRoutineWork.currentOwner)->y = -px(48);
   Event_StartScreenTransition();
-  object->acceleration = 0x10000;
-  object->speedLimit = 0x10000;
-  FieldActor_SetMoveTargetFixed(object, object->x, object->y + 0x300000,
+  object->acceleration = px(1);
+  object->speedLimit = px(1);
+  FieldActor_SetMoveTargetFixed(object, object->x, object->y + px(48),
                                 object->z);
   FieldActor_WaitForMove(object);
   Event_SetFlag(FLAG_AREA_TEMP_04);
@@ -1810,7 +1810,7 @@ void Leader_CenterInCell(void) {
   FieldActor_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
                                        (z << 20) + 0x80000);
   FieldEvent_Wait(4);
-  FieldCamera_GetActor()->y -= 0x80000;
+  FieldCamera_GetActor()->y -= px(8);
 }
 
 // Map_CopyCellsRect through this overlay's import.
@@ -1900,8 +1900,8 @@ void CrackedTile_DropIn(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
-  actor->y = 0x820000;
-  actor->gravity = 0x8000;
+  actor->y = px(130);
+  actor->gravity = px(1) / 2;
   actor->bounce = 0;
   actor->motionFlags = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
@@ -1948,8 +1948,8 @@ loop:
   FieldMapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  actor->gravity = 0x10000;
-  actor->bounce = 0x4000;
+  actor->gravity = px(1);
+  actor->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Event_End();

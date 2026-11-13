@@ -139,7 +139,7 @@ void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
     }
     motion = Whirlwind_SpawnUpper(object);
     if (motion != NULL)
-      motion->speedLimit = 0x10000;
+      motion->speedLimit = px(1);
     gWhirlwindRiding = 1;
   }
 }

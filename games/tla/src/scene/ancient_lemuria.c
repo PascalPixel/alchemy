@@ -118,8 +118,8 @@ void AncientLemuria_CycloneRevealsRime(void) {
   Actor_SetSpriteFlags(Actor_GetById(12), 0);
   Actor_SetPosition(12, 88, 216);
   Actor_Jump(12, 9, 0);
-  object->scaleY = 0x8000;
-  object->scaleX = 0x8000;
+  object->scaleY = Q16_ONE / 2;
+  object->scaleX = Q16_ONE / 2;
   for (i = 29; i >= 0; i--) {
     object->facing += 0x1000;
     {
@@ -136,8 +136,8 @@ void AncientLemuria_CycloneRevealsRime(void) {
     wait(1);
   }
   object->facing = 0x3000;
-  object->scaleY = 0x10000;
-  object->scaleX = 0x10000;
+  object->scaleY = Q16_ONE;
+  object->scaleX = Q16_ONE;
   Actor_SetSpriteFlags(Actor_GetById(12), 1);
   Actor_SetSpritePriority(12, 1);
   Event_Wait(8);
@@ -201,8 +201,8 @@ void AncientLemuria_TremorShakesOutRime(void) {
   Actor_SetPosition(12, 270, 184);
   object->y = 22 << 16;
   Actor_Jump(12, 11, 0);
-  object->scaleY = 0x8000;
-  object->scaleX = 0x8000;
+  object->scaleY = Q16_ONE / 2;
+  object->scaleX = Q16_ONE / 2;
   Actor_SetSpeed(12, 2.2);
   Actor_WalkTo(12, 312, 184);
   for (i = 23; i >= 0; i--) {
@@ -219,8 +219,8 @@ void AncientLemuria_TremorShakesOutRime(void) {
     wait(1);
   }
   p->facing = 0x3000;
-  p->scaleY = 0x10000;
-  p->scaleX = 0x10000;
+  p->scaleY = Q16_ONE;
+  p->scaleX = Q16_ONE;
   Actor_WaitForMoveById(12);
 }
 
@@ -447,7 +447,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(25);
-  Actor_GetById(7)->scaleX = 0x10000;
+  Actor_GetById(7)->scaleX = Q16_ONE;
   FieldActor_LaunchFromLeader(7, 0, -16, 0xc000);
   Actor_WaitForMoveById(7);
   Event_Wait(20);

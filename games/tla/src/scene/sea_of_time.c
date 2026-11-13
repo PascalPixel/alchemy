@@ -409,8 +409,8 @@ void SeaOfTime_FollowChannel(void) {
   z = actor->z >> 20;
   dx = Trig_Cos(angle) >> 16;
   dz = Trig_Sin(angle) >> 16;
-  actor->speedLimit = 0x40000;
-  actor->acceleration = 0x40000;
+  actor->speedLimit = px(4);
+  actor->acceleration = px(4);
   targetZ = 0;
   targetX = 0;
   if (SeaOfTime_GetCellCode(1, x + (dz < 0 ? -dz : dz),
@@ -729,7 +729,7 @@ void SeaOfTime_SinkIntoWhirlpool(void) {
   actor = Actor_GetById(8);
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetMoveTarget(actor, actor->x, actor->y, actor->z + 0x80000);
+  Actor_SetMoveTarget(actor, actor->x, actor->y, actor->z + px(8));
   while (Actor_HasArrived(actor) == 0) {
     if ((gFrameCount & 3) == 0) {
       options.priority = 2;
@@ -806,7 +806,7 @@ void SeaOfTime_UpdateSpray(struct Actor *object) {
     spark.startScaleY = 0xb333;
     spark.palette = 7;
     spark.priority = 1;
-    FieldEffect_Spawn(object->x + dx, 0, object->z + 0x100000, 0, even, even,
+    FieldEffect_Spawn(object->x + dx, 0, object->z + px(16), 0, even, even,
                       0xb0000, &spark);
   }
 }
@@ -1136,7 +1136,7 @@ void SeaOfTime_RaiseRock(s32 x, s32 z, s32 actor) {
     Actor_GetById(actor)->scaleY += 0x1999;
     Event_Wait(1);
   }
-  Actor_GetById(actor)->scaleY = 0x10000;
+  Actor_GetById(actor)->scaleY = Q16_ONE;
   Event_Wait(20);
 }
 

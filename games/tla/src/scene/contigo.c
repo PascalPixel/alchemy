@@ -570,7 +570,7 @@ void Func_02000a80(void) {
       object->timer = -(s32)((u32)(Random16() * 16) >> 16) * 2 + 20;
       object->unk66 = 0;
       object->gravity = 0x1999;
-      object->velocityY = 0x30000;
+      object->velocityY = px(3);
       object->facing = Random16();
     }
   }
@@ -963,7 +963,7 @@ void Func_020012c4(void) {
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_OffsetPositionAndResetMotion_(gMainRoutineWork.currentOwner, 0,
                                           -16);
-      leader->velocityY = 0x60000;
+      leader->velocityY = px(6);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Event_End();
     }
@@ -1053,7 +1053,7 @@ void Func_020015ac(void) {
   Actor_SetSpriteColor(Actor_GetById(17), 0);
   Actor_SetSpriteFlags(Actor_GetById(17), 1);
   Actor_SetSpeed(17, 3);
-  object->velocityY = 0xc0000;
+  object->velocityY = px(12);
   Actor_MoveToAndWait(17, 40, 680);
   Event_Wait(10);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -1088,7 +1088,7 @@ void Func_020017bc(s32 id) {
   object->collisionFlags = 8;
   object->priorityFlags |= 2;
   object->motionFlags = 0;
-  object->y = 0x400000;
+  object->y = px(64);
 }
 
 // Sets up actors 19 to 33: their modes, Func_020017bc for 19 to 26, and child

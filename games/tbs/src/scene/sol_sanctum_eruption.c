@@ -696,16 +696,14 @@ static void SolSanctumEruption_ThrowEruptionRing(void) {
 
 /// Resets the sixteen ember slots and their emission timers.
 static void SolSanctumEruption_ResetEmberEmission(void) {
-  s32 *stateSlot;
   u32 emberIndex;
 
   gEmberMask = 63;
   gEmberTimer = 0;
   gEmberLevel = 0;
   gEmberLevelTimer = 120;
-  stateSlot = gEmberState;
   for (emberIndex = 0; emberIndex < 16; emberIndex++) {
-    *stateSlot++ = 0;
+    gEmberState[emberIndex] = 0;
   }
 }
 
@@ -718,7 +716,6 @@ static void SolSanctumEruption_ResetEmberEmission(void) {
 static void SolSanctumEruption_StepEmbers(void) {
   struct WeatherWork *sparkles;
   s32 shakePixels;
-  s32 shakeTimer;
   u8 emberIndex;
   struct Actor *landedEmber;
   struct Actor *ember;
@@ -735,9 +732,8 @@ static void SolSanctumEruption_StepEmbers(void) {
     sparkles->stopped = 1;
     MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   }
-  shakeTimer = gEmberTimer;
-  if (shakeTimer != 0)
-    gEmberTimer = shakeTimer - 3;
+  if (gEmberTimer != 0)
+    gEmberTimer -= 3;
 
   for (emberIndex = 0; emberIndex < 16; emberIndex++) {
     if (gEmberState[emberIndex] != 0) {

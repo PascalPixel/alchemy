@@ -114,7 +114,6 @@ void BattleMotion_ReturnObjectToSpot(struct BattleObject *battleObject) {
 /// distance from the centre. Called by BattleStaging_RunAttack and
 /// BattleStaging_RunPlainAttack.
 void BattleMotion_HopBack(s32 unitId) {
-  u32 scaledX;
   struct BattleObject *battleObject;
   struct Actor *actor;
 
@@ -127,9 +126,7 @@ void BattleMotion_HopBack(s32 unitId) {
   actor->bounce = 0;
   actor->steeringFlags = 0;
   Actor_StartIdleFar(actor);
-  // anchorX * 3 / 2, rounded toward zero.
-  scaledX = battleObject->anchorX * 3;
-  Actor_SetMoveTargetFar(actor, (s32)(scaledX + (scaledX >> 31)) >> 1, 0,
+  Actor_SetMoveTargetFar(actor, battleObject->anchorX * 3 / 2, 0,
                          battleObject->anchorZ);
 }
 

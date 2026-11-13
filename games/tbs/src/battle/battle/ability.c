@@ -1310,6 +1310,5 @@ u32 Ability_IsPsynergy(s32 abilityId) {
   if (abilityId == ABILITY_PSY_DRAIN)
     return 1;
   pp = Ability_Get(abilityId)->ppCost;
-  // The sign bit of -pp | pp: 1 when pp is not 0, with no branch.
-  return (u32)((0 - pp) | pp) >> 31;
+  return pp != 0;
 }

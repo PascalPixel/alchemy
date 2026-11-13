@@ -289,13 +289,12 @@ UNREAD_RESULT BattleObject_UpdatePose(s32 unitId) {
   pose = POSE_STANDING;
   if (unit->hp != 0) {
     if (unit->sleep != 0 || unit->stun != 0 || unit->immobile != 0)
-      pose = (unit->side != BATTLE_SIDE_ENEMY) * POSE_PARTY_HELD;
+      pose =
+          unit->side == BATTLE_SIDE_ENEMY ? POSE_ENEMY_HELD : POSE_PARTY_HELD;
+  } else if (unit->side == BATTLE_SIDE_ENEMY) {
+    pose = POSE_ENEMY_DOWN;
   } else {
-    // 4 for a party member, 5 for an enemy: pose is POSE_STANDING (1, the
-    // enemy side's value) here, so the xor is 0 only for an enemy.
-    s32 notEnemy = unit->side ^ pose;
-    pose = (u32)(-notEnemy | notEnemy) >> 31;
-    pose = POSE_ENEMY_DOWN - pose;
+    pose = POSE_PARTY_HELD;
   }
 
   Actor_SelectAnimationFar(BattleObject_Get(unitId)->actor, pose);

@@ -149,7 +149,8 @@ extern s32 gData_020060fc[];
 
 #define A(p) ((struct OverlayActor *)(p))
 
-void Func_02003658(void) {
+/// ★ Named from the game: "The beacon is lit!" (MsgTheBeaconIs)
+void MarsLighthouseAerie_LightBeacon(void) {
   struct AerieEventWork *work, *later;
   struct OverlaySprite *sprite;
   s32 created, zero, firstBeam, object, tiles, glowTask, message;
@@ -448,7 +449,8 @@ L_0200bcea:
        ->v)
 void Func_020004a4(void);
 
-void Func_02003ff4(void) {
+/// ★ Named from the game: "What could he be doing?" (MsgWhatCouldHe)
+void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   s32 owner, i, ownerInLoop, ownerAfterLoop, quarterTurn;
   s32 threeSixteenthsTurn, actor, t2, t3;
   s32 t4, t5, t6, t7, t8, t9, t10, t17, t21, t25;
@@ -834,7 +836,9 @@ L_0200c72a:
   return;
 }
 
-void Func_02004bc4(void) {
+/// ★ Named from the game: "Do not let your sadness overwhelm you, ! Go!"
+/// (MsgDoNotLet)
+void MarsLighthouseAerie_HoldBackFromParents(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceDirectionAndWait(19, FACING_SOUTH + FACING_STEP);
@@ -846,7 +850,9 @@ void Func_02004bc4(void) {
   Event_End();
 }
 
-void Func_02004c2c(void) {
+/// ★ Named from the game: "Do not let your sadness overwhelm you, ! Go!"
+/// (MsgDoNotLet)
+void MarsLighthouseAerie_HoldBackFromParentsAgain(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceDirectionAndWait(19, FACING_SOUTHEAST + FACING_STEP);
@@ -858,7 +864,8 @@ void Func_02004c2c(void) {
   Event_End();
 }
 
-void Func_02004c94(void) {
+/// ★ Named from the game: "Will you cast in the Mars Star?" (MsgWillYouCast)
+void MarsLighthouseAerie_OfferToCastMarsStar(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(18, PIXELS(512), PIXELS(232));
@@ -868,7 +875,7 @@ void Func_02004c94(void) {
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Actor_SetPosition(18, 0, 0);
     System_Wait(1);
-    Func_02003658();
+    MarsLighthouseAerie_LightBeacon();
   }
   Actor_SetPosition(18, 0, 0);
   System_Wait(1);
@@ -922,7 +929,8 @@ void Func_02004d50(s32 id) {
 
 #endif
 
-void Func_02004da0(void) {
+/// ★ Named from the game: ", I understand your loss..." (MsgIUnderstandYour)
+void MarsLighthouseAerie_TalkToConsoler(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
 #if TLA_PATCH_1
@@ -940,7 +948,9 @@ void Func_02004da0(void) {
   Event_End();
 }
 
-void Func_02004df0(void) {
+/// ★ Named from the game: "I...can't see you, but I sense that you're
+/// nearby..." (MsgUhhhhnnnICan)
+void MarsLighthouseAerie_TalkToBlindedParent(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
 #if TLA_PATCH_1
@@ -954,7 +964,9 @@ void Func_02004df0(void) {
   Event_End();
 }
 
-void Func_02004e20(void) {
+/// ★ Named from the game: "Tell Dora...to live her life to the fullest...for
+/// me..." (MsgKoffKoffYou)
+void MarsLighthouseAerie_TalkToCoughingParent(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
 #if TLA_PATCH_1
@@ -968,7 +980,9 @@ void Func_02004e20(void) {
   Event_End();
 }
 
-void Func_02004e50(void) {
+/// ★ Named from the game: "I am so happy...to have one last chance to see you
+/// again..." (MsgUnnnnIAm)
+void MarsLighthouseAerie_TalkToGladParent(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
 #if TLA_PATCH_1
@@ -1200,7 +1214,7 @@ void Func_020054e4(struct Actor *object) { object->unk5c[6] = 1; }
 #include "objcmd.h"
 
 void Func_020001a0(void);
-void Func_0200065c(void);
+void MarsLighthouseAerie_FaceDoomDragon(void);
 void Func_02004ed8(void);
 
 // clang-format off
@@ -1486,7 +1500,7 @@ s16 gData_020066bc[] = {
 
 struct Trigger gSceneEvents[] = {
     {0x9c05, 1, CONDITION_ALWAYS, EVENT(Func_020001a0)},
-    {TRIGGER_STEP, 10, 0xa3d, EVENT(Func_0200065c)},
+    {TRIGGER_STEP, 10, 0xa3d, EVENT(MarsLighthouseAerie_FaceDoomDragon)},
     {TRIGGER_TALK, 0, CONDITION_ALWAYS, MSGNO(MsgOurQuestIs)},
     {TRIGGER_TALK, 1, CONDITION_ALWAYS, MSGNO(MsgIWishICould)},
     {TRIGGER_TALK, 3, CONDITION_ALWAYS, MSGNO(MsgIfAlexSet)},
@@ -1494,22 +1508,22 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TALK, 6, CONDITION_ALWAYS, MSGNO(MsgIDonTKnowMy)},
     {TRIGGER_TALK, 7, CONDITION_ALWAYS, MSGNO(MsgIMSorryThings)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgBothKyleAnd)},
-    {0x4400, 28, CONDITION_ALWAYS, EVENT(Func_02004da0)},
-    {0x4400, 17, CONDITION_ALWAYS, EVENT(Func_02004df0)},
-    {0x6400, 17, CONDITION_ALWAYS, EVENT(Func_02004df0)},
-    {0xe400, 30, CONDITION_ALWAYS, EVENT(Func_02004e20)},
-    {0x400, 30, CONDITION_ALWAYS, EVENT(Func_02004e20)},
-    {0x2400, 30, CONDITION_ALWAYS, EVENT(Func_02004e20)},
-    {TRIGGER_TALK, 29, CONDITION_ALWAYS, EVENT(Func_02004e50)},
+    {0x4400, 28, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToConsoler)},
+    {0x4400, 17, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToBlindedParent)},
+    {0x6400, 17, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToBlindedParent)},
+    {0xe400, 30, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToCoughingParent)},
+    {0x400, 30, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToCoughingParent)},
+    {0x2400, 30, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToCoughingParent)},
+    {TRIGGER_TALK, 29, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToGladParent)},
 #if TLA_PATCH_1 /* From patch 1. */
     {PSYNERGY_ON_ACTOR(ABILITY_HALT), 28, CONDITION_ALWAYS, EVENT(Func_02004ec0)},
     {PSYNERGY_ON_ACTOR(ABILITY_HALT), 17, CONDITION_ALWAYS, EVENT(Func_02004ecc)},
     {PSYNERGY_ON_ACTOR(ABILITY_HALT), 30, CONDITION_ALWAYS, EVENT(Func_02004ed8)},
     {PSYNERGY_ON_ACTOR(ABILITY_HALT), 29, CONDITION_ALWAYS, EVENT(Func_02004ee4)},
 #endif
-    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Func_02004bc4)},
-    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Func_02004c2c)},
-    {TRIGGER_STEP, 22, 0x202, EVENT(Func_02004c94)},
+    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_HoldBackFromParents)},
+    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_HoldBackFromParentsAgain)},
+    {TRIGGER_STEP, 22, 0x202, EVENT(MarsLighthouseAerie_OfferToCastMarsStar)},
     {TRIGGER_STEP, 23, 0x1202, EVENT(Func_02004d14)},
     {TRIGGERS_END},
 };

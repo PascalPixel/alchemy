@@ -180,7 +180,7 @@ s32 Scene_Initialize(void) {
 
     REG_BLDALPHA = alpha;
     REG_BLDCNT = 0x3f10;
-    Func_02003ff4();
+    MarsLighthouseAerie_WatchGoldenSunRise();
   } else if (gMainRoutineWork.entrance == 4) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -199,16 +199,16 @@ s32 Scene_Initialize(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     FieldEvent_Wait(40);
-    Func_02003658();
+    MarsLighthouseAerie_LightBeacon();
     Event_End();
   } else if (gMainRoutineWork.entrance == 3) {
     Actor_SetAnimation(20, 8);
     Actor_SetAnimation(21, 8);
     Actor_SetAnimation(22, 7);
     if (Event_GetFlag(0xa3d) == 0)
-      Func_020029ac();
+      MarsLighthouseAerie_UrgeOnToBeacon();
   } else if (gMainRoutineWork.entrance == 2) {
-    Func_02001f10();
+    MarsLighthouseAerie_FindWhoTheDragonWas();
   }
   return 0;
 }
@@ -326,7 +326,10 @@ extern u8 gData_02005e3c[];
 extern u8 gData_02005e80[];
 extern u8 gData_02005ec4[];
 
-void Func_0200065c(void) {
+/// The party reaches the beacon in the storm, and the voice calls them
+/// betrayers before the Doom Dragon's battle.
+/// ★ Named from the game: "Betrayers, you have arrived!" (MsgBetrayersYouHave)
+void MarsLighthouseAerie_FaceDoomDragon(void) {
   u8 *unk85;
   u16 *dispcnt;
   struct MainRoutineWork *work;
@@ -1102,7 +1105,8 @@ extern u8 gData_02006004[];
 extern u8 gData_0200602c[];
 extern u8 gData_02006070[];
 
-void Func_02001f10(void) {
+/// ★ Named from the game: "...Who are they?" (MsgWhoAreThey)
+void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   s32 lastArg, spill;
   s32 owner, actor, owner2, t1;
   s32 t2, t16, t34;
@@ -1410,7 +1414,7 @@ void Func_0200298c(s32 id) {
 
 /// The scene that opens with MsgWhatSTheMatter; either answer to its prompt
 /// steps the event's message number.
-void Func_020029ac(void) {
+void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);

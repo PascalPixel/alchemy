@@ -698,7 +698,7 @@
       SC_END,                                                                  \
   };
 
-/// 4 copies: contigo, contigo, data/yallam, data/yallam.
+/// 4 copies: contigo/contigo, contigo/contigo, data/yallam, data/yallam.
 #define DEFINE_G_DATA_02002634(name, n1, n2, n3, n4, n5, n6, n7, n8, n9)       \
   u32 name[] = {                                                               \
       39, 2,  22, 15, 0x10000, 22, 16, 0x6666, 4,  n1, 0,  n2,     1,  4,      \
@@ -769,7 +769,7 @@
       SC_END,                                                                  \
   };
 
-/// 4 copies: anemos_inner_sanctum/s2f48, contigo, data/islet_cave,
+/// 4 copies: anemos_inner_sanctum/s2f48, contigo/contigo, data/islet_cave,
 /// data/yampi_desert_cave.
 #define DEFINE_G_DATA_020013B4(name, n1, n2, n3, n4, n5, n6)                   \
   u16 name[] = {                                                               \

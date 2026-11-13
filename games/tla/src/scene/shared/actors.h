@@ -103,7 +103,7 @@
   }
 
 /// The distance in whole pixels between two 16.16 positions of x, y and z.
-/// 3 copies: contigo, lemuria, magma_rock_inside/s033c.
+/// 3 copies: contigo/contigo, lemuria, magma_rock_inside/s033c.
 #define DEFINE_POSITION_DISTANCE(name)                                         \
   s32 name(s32 *a, s32 *b) {                                                   \
     s32 dx = (*a++ - *b++) >> 16;                                              \
@@ -118,7 +118,7 @@
 
 /// 1 when `other` is within `range` of `self` and `self` faces it, within one
 /// eighth of a turn.
-/// 2 copies: contigo, lemuria.
+/// 2 copies: contigo/contigo, lemuria.
 #define DEFINE_ACTOR_IS_FACING_NEAR(name, call1)                               \
   s32 name(struct Actor *self, struct Actor *other, s32 range) {               \
     s32 result = 0;                                                            \
@@ -257,7 +257,7 @@
   }
 
 /// 1 when the leader faces north, within one eighth of a turn.
-/// 2 copies: contigo, kibombo.
+/// 2 copies: contigo/contigo, kibombo.
 #define DEFINE_LEADER_IS_FACING_NORTH(name)                                    \
   s32 name(void) {                                                             \
     u16 turn;                                                                  \
@@ -306,7 +306,7 @@
   }
 
 /// "The entrance is locked" (MsgShamanEntranceLocked).
-/// 2 copies: contigo, shaman_village/s00b8.
+/// 2 copies: contigo/contigo, shaman_village/s00b8.
 #define DEFINE_SCENE_SHOW_ENTRANCE_LOCKED(name)                                \
   void name(void) {                                                            \
     Event_Start();                                                             \

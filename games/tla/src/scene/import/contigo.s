@@ -410,9 +410,9 @@ BattleEffect_SetObjectUpdateMode:
 	.thumb_func
 Func_02004284:
 	overlay_veneer Func_080c88d8
-	.global Func_080e74d8
+	.global Func_0200428c
 	.thumb_func
-Func_080e74d8:
+Func_0200428c:
 	overlay_veneer Func_080c88e8
 	.global Shop_Run
 	.thumb_func

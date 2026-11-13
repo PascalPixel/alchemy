@@ -45,10 +45,8 @@ struct SceneRegion;
 struct ScriptInterpreter;
 
 extern u32 gDriftScene_SpawnScript[];
-extern u32 gIdejimaExits[];
 extern u32 gSceneExits[];
 extern struct Actor gSnapshotObjects[];
-extern u32 gIdejima_ActorDepartureScript[];
 extern u8 gLinkLobby_SlotColumns[];
 extern s32 gLinkLobby_SlotValues[];
 extern const u8 gActor_BlinkChildValues[4];

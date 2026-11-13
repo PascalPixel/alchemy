@@ -129,9 +129,8 @@ SECTIONS
     {
         "*/games/tla/src/scene/entry/idejima.o"(.text)
         "*/games/tla/src/scene/idejima.o"(.text)
-        "*/games/tla/src/scene/idejima/s16d8.o"(.text)
         "*/games/tla/src/scene/import/idejima.o"(.text)
-        "*/games/tla/src/scene/idejima/s16d8.o"(.data)
+        "*/games/tla/src/scene/idejima.o"(.data)
     }
     .bss :
     {

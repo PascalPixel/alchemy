@@ -10,7 +10,15 @@
 #include "field_event.h"
 #include "event.h"
 
-void DriftScene_SpawnObject(s32 x, s32 y, s32 z, s16 value) {
+// Defined in the old style, with no prototype: Idejima's calls after it are
+// then compiled as calls to an undeclared routine, which pass their arguments
+// as int and load the second first.
+// clang-format off
+void DriftScene_SpawnObject(x, y, z, value)
+  s32 x, y, z;
+  s16 value;
+{
+  // clang-format on
   struct Actor *object;
   struct FieldSprite *sprite;
 

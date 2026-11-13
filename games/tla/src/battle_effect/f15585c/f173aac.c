@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f173aac.c; none has a twin in The Broken Seal.
+/// The body that sixteen abilities' effects share, from Gasp to Demon Eye.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

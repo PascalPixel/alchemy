@@ -1,14 +1,13 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's window/screens/icon_menu.c.
+/// Collecting the party's battle commands, as The Broken Seal's
+/// Battle_CollectPartyCommands does on this game's work and menus, then
+/// Func_0804cda8, which draws a menu's icons each frame, the selected one
+/// bouncing, and fits the window's lines around it.
+/// Then the resource selection menus: shop commands, sanctum services, Yes or
+/// No, coins or medals, and the save screen's actions.
 // Part of f04a85c.c.
 
 #include "../f04a85c_internal.h"
-
-// Collecting the party's battle commands, as The Broken Seal's
-// Battle_CollectPartyCommands does on this game's work and menus, then
-// Func_0804cda8, which draws a menu's icons each frame, the selected one
-// bouncing, and fits the window's lines around it.
-
 
 // Where the Japanese layout differs: the summon window, the item window and
 // the summon's Djinn costs, in tiles; the x of the acting member's icon and of

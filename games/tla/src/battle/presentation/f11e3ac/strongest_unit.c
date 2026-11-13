@@ -1,6 +1,6 @@
 /// @file
-/// Routines first written as strongest_unit.c; none has a twin in The Broken
-/// Seal.
+/// Picking a unit on one side: a random living target, or the living unit with
+/// the highest Attack.
 // Part of f11e3ac.c.
 
 #include "../f11e3ac_internal.h"

@@ -1,5 +1,6 @@
 /// @file
-/// Routines first written as f0e82cc.c; none has a twin in The Broken Seal.
+/// The burst of sparkles an effect ends with, and moving the view: opening the
+/// whole map to it, swinging it and giving the bounds back.
 // Part of f0e2c38.c.
 
 #include "../f0e2c38_internal.h"

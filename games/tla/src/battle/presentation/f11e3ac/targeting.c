@@ -1,5 +1,6 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's battle/battle/targeting.c.
+/// Applying an ability to each of its targets, the battle events queued on the
+/// way, and the wait for the player to advance a battle message.
 // Part of f11e3ac.c.
 
 #include "../f11e3ac_internal.h"

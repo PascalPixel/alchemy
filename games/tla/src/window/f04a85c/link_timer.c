@@ -1,5 +1,6 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's window/screens/link_timer.c.
+/// The link battle timer, and a localized message shown until the player reads
+/// it.
 // Part of f04a85c.c.
 
 #include "../f04a85c_internal.h"

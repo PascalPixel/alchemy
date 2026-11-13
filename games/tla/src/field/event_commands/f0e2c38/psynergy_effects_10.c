@@ -1,6 +1,5 @@
 /// @file
-/// Routines first written as psynergy_effects_10.c; none has a twin in The
-/// Broken Seal.
+/// An effect object that sinks and shrinks.
 // Part of f0e2c38.c.
 
 #include "../f0e2c38_internal.h"

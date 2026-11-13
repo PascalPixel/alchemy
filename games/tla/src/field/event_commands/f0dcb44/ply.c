@@ -1,5 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's field/event_commands/ply.c.
+/// Ply, and the check that ends Cloak.
 // Part of f0dcb44.c.
 
 #include "../f0dcb44_internal.h"

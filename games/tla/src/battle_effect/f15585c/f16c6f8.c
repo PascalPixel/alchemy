@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f16c6f8.c; none has a twin in The Broken Seal.
+/// Geode.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

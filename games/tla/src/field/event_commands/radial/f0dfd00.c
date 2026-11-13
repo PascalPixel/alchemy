@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f0dfd00.c; none has a twin in The Broken Seal.
+/// Whirlwind's orb, carried from the caster to the scene's position.
 // Part of radial.c.
 
 #include "../radial_internal.h"

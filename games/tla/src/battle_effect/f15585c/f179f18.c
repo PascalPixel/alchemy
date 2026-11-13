@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f179f18.c; none has a twin in The Broken Seal.
+/// The Flora summon, Sabre Dance and Backstab.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

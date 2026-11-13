@@ -1,16 +1,14 @@
 /// @file
-/// Routines first written as f02a6b8.c; none has a twin in The Broken Seal.
+/// Loads a layered map, the twin of The Broken Seal's MapGrid_LoadMap: from
+/// layout index's entry in gData_0802f380 it decodes the blocks, the collision
+/// (filled with -1 first, which The Broken Seal does not do), the cells, the
+/// shape grid, the tile animations, the blend script and the script at
+/// 0x0202e000; sets up the three layers from the header, with their cell
+/// positions and shape pointers; loads the palette and tiles unless flag 0x170
+/// says they are already loaded; and starts Func_0802ad84.
 // Part of resource_slot.c.
 
 #include "../resource_slot_internal.h"
-
-// Loads a layered map, the twin of The Broken Seal's MapGrid_LoadMap: from
-// layout index's entry in gData_0802f380 it decodes the blocks, the collision
-// (filled with -1 first, which The Broken Seal does not do), the cells, the
-// shape grid, the tile animations, the blend script and the script at
-// 0x0202e000; sets up the three layers from the header, with their cell
-// positions and shape pointers; loads the palette and tiles unless flag 0x170
-// says they are already loaded; and starts Func_0802ad84.
 
 #include "io_write.h"
 

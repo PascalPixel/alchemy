@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f0d9498.c; none has a twin in The Broken Seal.
+/// One routine of the chain work, not yet understood.
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"

@@ -1,6 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// field/event_commands/jupiter.c.
+/// A Jupiter Djinni joining the party.
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"

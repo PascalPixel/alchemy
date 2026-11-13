@@ -1,6 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// battle_effect/battle_effect/ragnarok.c.
+/// Ragnarok, and the great sword that falls onto the target.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

@@ -1,6 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// field/field_sequence/palette_fade.c.
+/// The palette fade: palettes moved toward target colours.
 // Part of f0cf050.c.
 
 #include "../f0cf050_internal.h"

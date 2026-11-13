@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f17c6ac.c; none has a twin in The Broken Seal.
+/// Fume.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

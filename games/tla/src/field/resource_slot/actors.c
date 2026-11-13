@@ -1,5 +1,6 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's field/field/actors.c.
+/// Animated map tiles, then actors: creating and releasing them, their
+/// animations, and starting scripts.
 // Part of resource_slot.c.
 
 #include "../resource_slot_internal.h"

@@ -1,6 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// field/event_commands/whirlwind.c.
+/// Whirlwind's ring of particles.
 // Part of radial.c.
 
 #include "../radial_internal.h"

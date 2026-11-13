@@ -1,6 +1,6 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// battle_effect/battle_effect/undead_sword.c.
+/// Undead Sword, Plume Edge and Diamond Berg, and the bodies of Dreamtide and
+/// Watery Grave and of Waft and Aroma.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

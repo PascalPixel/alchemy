@@ -1,6 +1,5 @@
 /// @file
-/// Routines first written as ground_particles.c; none has a twin in The Broken
-/// Seal.
+/// The ground particles, the rising particles and the floating motes.
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"

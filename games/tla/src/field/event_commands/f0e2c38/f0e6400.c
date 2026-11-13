@@ -1,5 +1,6 @@
 /// @file
-/// Routines first written as f0e6400.c; none has a twin in The Broken Seal.
+/// Field Psynergy kind 30, an object dropped at the effect's anchor, and the
+/// canvas circle and image copies, with routines not yet understood.
 // Part of f0e2c38.c.
 
 #include "../f0e2c38_internal.h"

@@ -1,6 +1,6 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// battle_effect/battle_effect/canvas.c.
+/// Eclipse, then the canvas layer: transfers, opening and closing, tile maps,
+/// lines.
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"

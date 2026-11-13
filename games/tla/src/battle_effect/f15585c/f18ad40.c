@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f18ad40.c; none has a twin in The Broken Seal.
+/// The Sleep, Baffle, Death and Sword Cards.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

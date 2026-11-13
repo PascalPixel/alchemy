@@ -1,6 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// field/field_sequence/item_display.c.
+/// Showing a found item, and Reveal's sparkles on hidden things.
 // Part of f0cf050.c.
 
 #include "../f0cf050_internal.h"

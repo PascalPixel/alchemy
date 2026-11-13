@@ -1,5 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's field/event_commands/halt.c.
+/// Halt: pausing and resuming objects.
 // Part of radial.c.
 
 #include "../radial_internal.h"

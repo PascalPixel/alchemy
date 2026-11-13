@@ -1,12 +1,9 @@
 /// @file
-/// Routines first written as growing_particle.c; none has a twin in The Broken
-/// Seal.
+/// A sprite particle that grows as it drifts, and Func_080e4730, which sets up
+/// 64 of them as a dust puff.
 // Part of f0e2c38.c.
 
 #include "../f0e2c38_internal.h"
-
-// A sprite particle that grows as it drifts, and Func_080e4730, which sets up
-// 64 of them as a dust puff.
 
 void Camera_WorldToScreen(s32 *position);
 

@@ -1,5 +1,6 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's battle/battle/transition.c.
+/// The battle's screen transitions: the mosaic fade to black, and the rows of
+/// tiles that close in, with the HBlank scroll they run on.
 // Part of f11e3ac.c.
 
 #include "../f11e3ac_internal.h"

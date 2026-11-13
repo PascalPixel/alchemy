@@ -1,5 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's field/field/script_commands.c.
+/// Actor script commands: waits, jumps, flags, moves and work values.
 // Part of resource_slot.c.
 
 #include "../resource_slot_internal.h"

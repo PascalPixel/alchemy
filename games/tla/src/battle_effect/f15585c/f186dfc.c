@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f186dfc.c; none has a twin in The Broken Seal.
+/// The Haures summon, and the open cylinder a summon's band is drawn on.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

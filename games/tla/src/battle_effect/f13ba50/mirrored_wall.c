@@ -1,6 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// battle_effect/battle_effect/mirrored_wall.c.
+/// The canvas's usual pair of blitters, the member beam and the shell shot.
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"

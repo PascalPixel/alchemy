@@ -1,5 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's battle/battle/spoils.c.
+/// The spoils: coins, experience, items and level ups.
 // Part of f11e3ac.c.
 
 #include "../f11e3ac_internal.h"

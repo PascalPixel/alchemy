@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f02b998.c; none has a twin in The Broken Seal.
+/// The world map's window cells, with a routine not yet understood.
 // Part of resource_slot.c.
 
 #include "../resource_slot_internal.h"

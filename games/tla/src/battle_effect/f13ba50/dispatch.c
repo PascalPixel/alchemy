@@ -1,6 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// battle_effect/battle_effect/dispatch.c.
+/// Running summon and table effects, and shared target helpers.
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"

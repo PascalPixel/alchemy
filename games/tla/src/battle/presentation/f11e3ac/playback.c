@@ -1,5 +1,6 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's battle/battle/playback.c.
+/// Battle playback: starting it, scheduling its phases, resetting it and
+/// waiting until it is ready.
 // Part of f11e3ac.c.
 
 #include "../f11e3ac_internal.h"

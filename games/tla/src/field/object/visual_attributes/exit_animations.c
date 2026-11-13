@@ -1,6 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// field/event_commands/exit_animations.c.
+/// An actor's screen position, and the backdrop faded from white.
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"

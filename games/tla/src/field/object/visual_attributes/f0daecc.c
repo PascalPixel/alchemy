@@ -1,5 +1,6 @@
 /// @file
-/// Routines first written as f0daecc.c; none has a twin in The Broken Seal.
+/// Running a field Psynergy animation by its kind, an object's chain, and an
+/// object's priority and depth.
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"

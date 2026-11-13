@@ -1,5 +1,7 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's battle/battle/background.c.
+/// The battle background, its palette and modes, the camera's zoom and the
+/// units' highlights, the star field behind a summon and a unit's element
+/// effect.
 // Part of f11e3ac.c.
 
 #include "../f11e3ac_internal.h"

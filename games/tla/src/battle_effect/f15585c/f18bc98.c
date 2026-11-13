@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f18bc98.c; none has a twin in The Broken Seal.
+/// The breaths, and the crescent slash of Human Hunt and Echo Cut.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

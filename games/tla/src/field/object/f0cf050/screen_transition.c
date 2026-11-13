@@ -1,6 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// field/field_sequence/screen_transition.c.
+/// Screen transitions between scenes: window transitions and dissolves.
 // Part of f0cf050.c.
 
 #include "../f0cf050_internal.h"

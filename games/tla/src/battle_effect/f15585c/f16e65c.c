@@ -1,5 +1,6 @@
 /// @file
-/// Routines first written as f16e65c.c; none has a twin in The Broken Seal.
+/// The body of Heavy Divide and Strong Hit, then Cool, Wyrd Curse, Radiant Fire
+/// and Hurricane.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

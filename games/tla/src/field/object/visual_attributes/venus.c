@@ -1,5 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's field/event_commands/venus.c.
+/// A Venus Djinni joining the party, and a Mercury Djinni's droplets.
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"

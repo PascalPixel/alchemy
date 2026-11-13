@@ -1,5 +1,6 @@
 /// @file
-/// Routines first written as f171bb0.c; none has a twin in The Broken Seal.
+/// The water-column scene of Whorl, Gale, Lethe Albion, Poison Flow and Raging
+/// Flood.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

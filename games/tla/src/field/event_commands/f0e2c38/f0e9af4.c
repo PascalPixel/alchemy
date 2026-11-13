@@ -1,5 +1,6 @@
 /// @file
-/// Routines first written as f0e9af4.c; none has a twin in The Broken Seal.
+/// Field Psynergy kind 24's work, a sprite's four-picture cycle and a step
+/// toward a target, with routines not yet understood.
 // Part of f0e2c38.c.
 
 #include "../f0e2c38_internal.h"

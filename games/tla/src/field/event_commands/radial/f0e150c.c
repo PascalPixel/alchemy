@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f0e150c.c; none has a twin in The Broken Seal.
+/// The arc effect, and the map cells and events a field Psynergy touches.
 // Part of radial.c.
 
 #include "../radial_internal.h"

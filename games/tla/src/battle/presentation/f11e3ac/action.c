@@ -1,5 +1,6 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's battle/battle/action.c.
+/// Whether a unit stands in its side's formation and how many Djinn a side has
+/// on standby, and one routine not yet understood.
 // Part of f11e3ac.c.
 
 #include "../f11e3ac_internal.h"

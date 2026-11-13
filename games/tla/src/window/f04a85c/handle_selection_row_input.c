@@ -1,6 +1,6 @@
 /// @file
-/// Routines first written as handle_selection_row_input.c; none has a twin in
-/// The Broken Seal.
+/// The debug menus' keys, the flag browser, and hexadecimal numbers written as
+/// text.
 // Part of f04a85c.c.
 
 #include "../f04a85c_internal.h"

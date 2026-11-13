@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f14cca8.c; none has a twin in The Broken Seal.
+/// Tinting a battler, and the routine before it, not yet understood.
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"

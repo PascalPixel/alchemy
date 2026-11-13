@@ -1,6 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// battle_effect/battle_effect/procne.c.
+/// The Procne summon, and the scene of summon 7.
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"

@@ -1,6 +1,6 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// field/event_commands/field_psynergy.c.
+/// Helpers the field Psynergy kinds share: map cells, spawned objects and
+/// particles, and the field's tint.
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"

@@ -1,5 +1,6 @@
 /// @file
-/// Routines first written as f1811d4.c; none has a twin in The Broken Seal.
+/// Vengeance and Life Shear, a geyser, swarms of stars and a column of bubbles,
+/// and the Coatlicue summon.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

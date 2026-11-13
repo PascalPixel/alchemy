@@ -1,5 +1,6 @@
 /// @file
-/// Routines first written as f0d9b80.c; none has a twin in The Broken Seal.
+/// A second chain work and its per-frame callback, with routines not yet
+/// understood.
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"

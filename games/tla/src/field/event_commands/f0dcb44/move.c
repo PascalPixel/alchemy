@@ -1,5 +1,6 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's field/event_commands/move.c.
+/// The hue cycle and its colours, Move, and the broken item scattering into
+/// fragments.
 // Part of f0dcb44.c.
 
 #include "../f0dcb44_internal.h"

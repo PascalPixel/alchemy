@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f027064.c; none has a twin in The Broken Seal.
+/// One script command not yet understood.
 // Part of resource_slot.c.
 
 #include "../resource_slot_internal.h"

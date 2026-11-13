@@ -1,5 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's field/event_commands/view.c.
+/// The view bounds, and effect objects linked to another object.
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"

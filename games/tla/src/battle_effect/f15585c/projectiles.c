@@ -1,6 +1,6 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// battle_effect/battle_effect/projectiles.c.
+/// The opening every Djinn effect shares, Cutting Edge, Heat Wave and Blizzard,
+/// and the projectile volleys.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

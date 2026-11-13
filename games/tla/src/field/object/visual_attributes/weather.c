@@ -1,6 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// field/event_commands/weather.c.
+/// Ground particles and lightning on the field.
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"

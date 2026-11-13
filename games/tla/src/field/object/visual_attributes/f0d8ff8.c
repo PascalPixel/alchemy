@@ -1,12 +1,9 @@
 /// @file
-/// Routines first written as f0d8ff8.c; none has a twin in The Broken Seal.
+/// A slot's chain of nodes laid along a line between two points, and
+/// Func_080d9104, which links two objects.
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
-
-// A slot's chain of nodes laid along a line between two points, and
-// Func_080d9104, which links two objects.
-
 
 /* VIEW(f0d8ff8): routine ArcTan2 as s16 ArcTan2(s32 y, s32 x); f0d8740 has s32 ArcTan2(s32 y, s32 x); tried as the definition's s32 ArcTan2(s32 x, s32 y), which the object already declares, Func_080d8ff8 moves: 1 of 120 instructions in tla-ja. */
 extern s16 ArcTan2__f0d8ff8(s32 y, s32 x) __asm__("ArcTan2");

@@ -1,6 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// battle_effect/battle_effect/hail.c.
+/// Hail and Ground, and the battle camera's shakes.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

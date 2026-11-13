@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f16fca8.c; none has a twin in The Broken Seal.
+/// The body of Thunder Mine and Earth Force, then Megaera and Void Beam.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

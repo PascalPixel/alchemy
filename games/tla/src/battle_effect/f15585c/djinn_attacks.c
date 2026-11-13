@@ -1,6 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// battle_effect/battle_effect/djinn_attacks.c.
+/// The summons that spend one Djinni: Mercury, Jupiter, Venus and Mars.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

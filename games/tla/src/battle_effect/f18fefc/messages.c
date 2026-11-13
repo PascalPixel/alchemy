@@ -1,5 +1,6 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's window/window/messages.c.
+/// The Moloch and Iris summons, and the model renderers and projections the
+/// effects draw with.
 // Part of f18fefc.c.
 
 #include "../f18fefc_internal.h"

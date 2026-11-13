@@ -1,6 +1,6 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// battle_effect/battle_effect/target_motes.c.
+/// The status motes of Taint and its kin, Sleep's sheep and Curse's flames, a
+/// Djinni riding a swarm of sparks, and Balm, Tinder and Phoenix.
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"

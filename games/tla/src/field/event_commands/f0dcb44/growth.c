@@ -1,5 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's field/event_commands/growth.c.
+/// Reveal and Growth.
 // Part of f0dcb44.c.
 
 #include "../f0dcb44_internal.h"

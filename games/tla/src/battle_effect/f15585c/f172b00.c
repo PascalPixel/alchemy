@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f172b00.c; none has a twin in The Broken Seal.
+/// One effect not yet understood.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

@@ -1,6 +1,5 @@
 /// @file
-/// Routines first written as psynergy_effects_11.c; none has a twin in The
-/// Broken Seal.
+/// A particle's sprite that grows as it animates.
 // Part of f0e2c38.c.
 
 #include "../f0e2c38_internal.h"

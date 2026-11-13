@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as s28534.c; none has a twin in The Broken Seal.
+/// A script command that moves an actor on the world map by the pad.
 // Part of resource_slot.c.
 
 #include "../resource_slot_internal.h"

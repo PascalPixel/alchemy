@@ -1,6 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// battle_effect/battle_effect/display.c.
+/// Display, scroll and window HBlank DMA helpers.
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"

@@ -1,12 +1,9 @@
 /// @file
-/// Data first written as ability_table.c.
+/// The 734 abilities, by ability id. Each name is the English release's
+/// (MsgAbilityNothing plus the ability id).
 // Part of artifact_slots.c.
 
 #include "../artifact_slots_internal.h"
-
-// The 734 abilities, by ability id. Each name is the English release's
-// (MsgAbilityNothing plus the ability id).
-
 
 // clang-format off
 const struct AbilityDefinition gBattleAction_DefinitionTable[] = {

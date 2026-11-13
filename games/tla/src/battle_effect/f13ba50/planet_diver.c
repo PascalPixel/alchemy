@@ -1,6 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// battle_effect/battle_effect/planet_diver.c.
+/// Haunt, the orbiting spirals and the member burst.
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"

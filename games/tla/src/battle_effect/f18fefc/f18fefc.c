@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f18fefc.c; none has a twin in The Broken Seal.
+/// The Megiddo summon.
 // Part of f18fefc.c.
 
 #include "../f18fefc_internal.h"

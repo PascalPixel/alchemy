@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f0cf050.c; none has a twin in The Broken Seal.
+/// One routine not yet understood.
 // Part of f0cf050.c.
 
 #include "../f0cf050_internal.h"

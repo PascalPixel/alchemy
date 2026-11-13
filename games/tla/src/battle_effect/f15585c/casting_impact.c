@@ -1,6 +1,6 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// battle_effect/battle_effect/casting_impact.c.
+/// The casting impacts, and the step of the background colours toward a
+/// palette.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

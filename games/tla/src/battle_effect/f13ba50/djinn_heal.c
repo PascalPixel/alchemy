@@ -1,6 +1,6 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// battle_effect/battle_effect/djinn_heal.c.
+/// Sixteen tumbling textured quads, the Zagan summon, and the camera turned by
+/// phases.
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"

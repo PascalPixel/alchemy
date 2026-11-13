@@ -1,11 +1,8 @@
 /// @file
-/// Routines first written as f16c274.c; none has a twin in The Broken Seal.
+/// Crystal: a spinning crystal and drifting shards.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"
-
-// Crystal: a spinning crystal and drifting shards.
-
 
 struct Model;
 

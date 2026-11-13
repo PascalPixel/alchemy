@@ -1,5 +1,6 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's battle/battle/turn_end.c.
+/// The end of a turn: each unit's modifiers and conditions counted down, the
+/// Djinn recovering, and the extras an action applies.
 // Part of f11e3ac.c.
 
 #include "../f11e3ac_internal.h"

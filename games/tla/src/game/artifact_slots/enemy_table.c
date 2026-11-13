@@ -1,12 +1,9 @@
 /// @file
-/// Data first written as enemy_table.c.
+/// The 380 enemies, by enemy id. Each name is the English release's
+/// (MsgEnemyName plus the enemy id).
 // Part of artifact_slots.c.
 
 #include "../artifact_slots_internal.h"
-
-// The 380 enemies, by enemy id. Each name is the English release's
-// (MsgEnemyName plus the enemy id).
-
 
 // clang-format off
 const struct EnemyDefinition gEnemy_DefinitionTable[] = {

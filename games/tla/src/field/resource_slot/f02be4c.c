@@ -1,5 +1,6 @@
 /// @file
-/// Routines first written as f02be4c.c; none has a twin in The Broken Seal.
+/// Drawing the world map's tiles into a BG map, with routines not yet
+/// understood.
 // Part of resource_slot.c.
 
 #include "../resource_slot_internal.h"

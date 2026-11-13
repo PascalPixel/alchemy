@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f18df5c.c; none has a twin in The Broken Seal.
+/// Meteor Blow.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

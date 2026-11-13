@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f0e8db0.c; none has a twin in The Broken Seal.
+/// Field Psynergy kind 19: the view swayed from side to side.
 // Part of f0e2c38.c.
 
 #include "../f0e2c38_internal.h"

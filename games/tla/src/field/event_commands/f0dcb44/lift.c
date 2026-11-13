@@ -1,5 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's field/event_commands/lift.c.
+/// Lift, and Force on a target.
 // Part of f0dcb44.c.
 
 #include "../f0dcb44_internal.h"

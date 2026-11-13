@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f0e92b4.c; none has a twin in The Broken Seal.
+/// The view swayed up and down, and the glow of field Psynergy kind 24.
 // Part of f0e2c38.c.
 
 #include "../f0e2c38_internal.h"

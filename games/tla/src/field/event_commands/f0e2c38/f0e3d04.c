@@ -1,5 +1,6 @@
 /// @file
-/// Routines first written as f0e3d04.c; none has a twin in The Broken Seal.
+/// A spray started from an event, and whether an object is blocked, with
+/// routines not yet understood.
 // Part of f0e2c38.c.
 
 #include "../f0e2c38_internal.h"

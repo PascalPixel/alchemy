@@ -1,5 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's field/event_commands/camera.c.
+/// The event camera.
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"

@@ -1,6 +1,6 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// battle_effect/battle_effect/spider_web.c.
+/// The Ulysses summon and Spider Web, with the effect sprites, grey ramp and
+/// circle maps they draw with.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

@@ -1,5 +1,7 @@
 /// @file
-/// Routines first written as f11e3ac.c; none has a twin in The Broken Seal.
+/// A unit's motion graphics in battle: setting its records' frames, the flash
+/// when it is hit, its removal from the formations and the graphics of a
+/// defeated unit, with routines around them not yet understood.
 // Part of f11e3ac.c.
 
 #include "../f11e3ac_internal.h"

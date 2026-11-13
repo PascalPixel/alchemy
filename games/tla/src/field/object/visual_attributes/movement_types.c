@@ -1,6 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// field/event_commands/movement_types.c.
+/// Actor scripts: moving, turning and the built-in movement types.
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"

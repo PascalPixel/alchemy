@@ -1,5 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's field/field/actor_motion.c.
+/// Actor motion, each frame.
 // Part of resource_slot.c.
 
 #include "../resource_slot_internal.h"

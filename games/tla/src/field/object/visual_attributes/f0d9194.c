@@ -1,13 +1,9 @@
 /// @file
-/// Routines first written as f0d9194.c; none has a twin in The Broken Seal.
+/// A slot's chain of nodes built around a point, and Func_080d92a4, which gives
+/// the position of the node at the slot's depth.
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
-
-// A slot's chain of nodes built around a point, and Func_080d92a4, which gives
-// the position of the node at the slot's depth.
-
-
 
 /* VIEW(f0d9194): tag struct ChainNode as struct ChainNode__f0d9194; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5445: structure has no member named `visible'. */
 struct ChainNode__f0d9194 {

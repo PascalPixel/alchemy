@@ -1,6 +1,6 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// battle_effect/battle_effect/death_plunge.c.
+/// Cruel Ruin and the light-streak backdrop with its halved canvas and dimming
+/// background, and two effects not yet understood.
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"

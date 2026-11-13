@@ -1,6 +1,6 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// battle_effect/battle_effect/particle_streams.c.
+/// The particle streams of summon 11, the formation objects summons place,
+/// palette brightening, and an unused second copy of the Nereid summon.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

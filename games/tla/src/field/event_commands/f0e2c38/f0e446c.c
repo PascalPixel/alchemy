@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f0e446c.c; none has a twin in The Broken Seal.
+/// Routines not yet understood.
 // Part of f0e2c38.c.
 
 #include "../f0e2c38_internal.h"

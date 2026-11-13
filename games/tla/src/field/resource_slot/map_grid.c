@@ -1,5 +1,6 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's field/field/map_grid.c.
+/// Moving on the world map by the pad, and decoding a map's tilemaps and
+/// palette.
 // Part of resource_slot.c.
 
 #include "../resource_slot_internal.h"

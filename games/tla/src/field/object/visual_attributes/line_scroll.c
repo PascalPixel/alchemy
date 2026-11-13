@@ -1,6 +1,6 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// field/event_commands/line_scroll.c.
+/// The context effects of leaving through an exit, and the line scroll:
+/// per-line scroll offsets fed by HBlank DMA.
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"

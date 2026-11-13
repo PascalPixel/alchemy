@@ -1,5 +1,6 @@
 /// @file
-/// Routines first written as f18cb74.c; none has a twin in The Broken Seal.
+/// Trident, the leaping strikes of Planet Diver and Planetary, and Meteor
+/// Blow's palette DMA.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

@@ -1,5 +1,6 @@
 /// @file
-/// Routines first written as f0da3bc.c; none has a twin in The Broken Seal.
+/// A field effect that animates sixteen tiles of its own, with routines not yet
+/// understood.
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"

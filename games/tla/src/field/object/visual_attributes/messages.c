@@ -1,6 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// field/event_commands/messages.c.
+/// Messages shown at an actor, and the speaker's voice.
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"

@@ -1,5 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's field/event_commands/djinni.c.
+/// A second copy of the step that halves an actor's distance to its target.
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"

@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f189b14.c; none has a twin in The Broken Seal.
+/// Legend, and the Bramble, Frost, Flame and Thunder Cards.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

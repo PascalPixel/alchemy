@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f178710.c; none has a twin in The Broken Seal.
+/// Rising Dragon and Heartbreak.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

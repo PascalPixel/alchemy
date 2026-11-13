@@ -1,5 +1,6 @@
 /// @file
-/// Routines first written as f15cde8.c; none has a twin in The Broken Seal.
+/// The Azul summon, the effect steps under gravity and the projection of effect
+/// positions onto the screen.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

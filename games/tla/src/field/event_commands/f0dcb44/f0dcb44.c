@@ -1,5 +1,6 @@
 /// @file
-/// Routines first written as f0dcb44.c; none has a twin in The Broken Seal.
+/// A wave that ripples the screen while its colour cycles, sending particles
+/// from the target back to the user.
 // Part of f0dcb44.c.
 
 #include "../f0dcb44_internal.h"

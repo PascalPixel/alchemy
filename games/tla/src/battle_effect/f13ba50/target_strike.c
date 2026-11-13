@@ -1,6 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// battle_effect/battle_effect/target_strike.c.
+/// Monster bites and slashes on one target, and Mad Zephyr.
 // Part of f13ba50.c.
 
 #include "../f13ba50_internal.h"

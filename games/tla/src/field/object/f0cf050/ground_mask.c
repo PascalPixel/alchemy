@@ -1,6 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// field/field_sequence/ground_mask.c.
+/// The fade overlay drawn on the ground beside an actor.
 // Part of f0cf050.c.
 
 #include "../f0cf050_internal.h"

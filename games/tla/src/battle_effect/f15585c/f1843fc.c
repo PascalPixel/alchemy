@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f1843fc.c; none has a twin in The Broken Seal.
+/// The Catastrophe summon.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

@@ -1,6 +1,5 @@
 /// @file
-/// Routines first written as flicker_object.c; none has a twin in The Broken
-/// Seal.
+/// Flickering an object and the arc sprites it sheds.
 // Part of radial.c.
 
 #include "../radial_internal.h"

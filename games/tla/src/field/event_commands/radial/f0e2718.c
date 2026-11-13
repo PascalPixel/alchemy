@@ -1,11 +1,8 @@
 /// @file
-/// Routines first written as f0e2718.c; none has a twin in The Broken Seal.
+/// Places the event work's listed blocks.
 // Part of radial.c.
 
 #include "../radial_internal.h"
-
-// Places the event work's listed blocks.
-
 
 /* VIEW(f0e2718): variable gData_02001000 as extern u8 gData_02001000[]; f0e150c has extern struct TouchCopies gData_02001000; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:2361: incompatible types in initialization. */
 extern u8 gData_02001000__f0e2718[] __asm__("gData_02001000");

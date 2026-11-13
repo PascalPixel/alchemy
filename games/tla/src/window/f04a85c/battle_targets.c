@@ -1,6 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// window/screens/battle_targets.c.
+/// Choosing a battle target.
 // Part of f04a85c.c.
 
 #include "../f04a85c_internal.h"

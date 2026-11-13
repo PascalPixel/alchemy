@@ -1,6 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// field/event_commands/weather.c.
+/// The floating motes and sparkles on the field, and the blends they fade by.
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"

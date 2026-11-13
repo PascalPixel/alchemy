@@ -1,5 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's window/screens/debug.c.
+/// The debug menus' destination row.
 // Part of f04a85c.c.
 
 #include "../f04a85c_internal.h"

@@ -1,6 +1,5 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// field/field/sprite_animation.c.
+/// Sprites, their animations and the picture caches they draw from.
 // Part of resource_slot.c.
 
 #include "../resource_slot_internal.h"

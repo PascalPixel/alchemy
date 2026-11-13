@@ -1,6 +1,6 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// field/event_commands/actor_commands.c.
+/// Event commands on actors: their callbacks, sprite priority and still
+/// pictures.
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"

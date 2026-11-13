@@ -1,5 +1,6 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's battle/battle/formation.c.
+/// Enemy formations: the enemies chosen, levelled and lettered, and each enemy
+/// class's sprite, palette, size and attack effect.
 // Part of f11e3ac.c.
 
 #include "../f11e3ac_internal.h"

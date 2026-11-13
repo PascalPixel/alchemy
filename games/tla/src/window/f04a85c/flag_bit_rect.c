@@ -1,6 +1,6 @@
 /// @file
-/// Routines first written as flag_bit_rect.c; none has a twin in The Broken
-/// Seal.
+/// The save screen's selection, the portrait browser, and the flag grid drawn
+/// into a tilemap.
 // Part of f04a85c.c.
 
 #include "../f04a85c_internal.h"

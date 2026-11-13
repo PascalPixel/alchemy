@@ -1,6 +1,6 @@
 /// @file
-/// Routines whose twins are in The Broken Seal's
-/// window/screens/battle_party_commands.c.
+/// An ability classified for target selection, and a reserve member chosen for
+/// a party slot.
 // Part of f04a85c.c.
 
 #include "../f04a85c_internal.h"

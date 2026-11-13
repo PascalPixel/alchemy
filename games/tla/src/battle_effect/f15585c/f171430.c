@@ -1,5 +1,5 @@
 /// @file
-/// Routines first written as f171430.c; none has a twin in The Broken Seal.
+/// Light Surge.
 // Part of f15585c.c.
 
 #include "../f15585c_internal.h"

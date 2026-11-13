@@ -61,9 +61,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
                                work->sheet + SHEET_TEXTURE, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
                                work->sheet + SHEET_DJINN, 1, 0);
-    /* FAKEMATCH(wrapper): the palette copy through CopyWords_; as a direct
-     * Iwram_CopyWords call, 2 of 549 instructions differ in tla-en. */
-    CopyWords_((void *)BG_PLTT,
+    Iwram_CopyWords((void *)BG_PLTT,
                Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
   } else if (mode == QUADS_MARS) {
     Func_0815585c(effect, (effect->side ^ 1) << 4 | 2, anchor, size);
@@ -144,7 +142,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
         s32 lineX;
         s32 lineY;
 
-        Iwram_FillWords(work->sheet, 128, 0x28282828 - frame / 2 * 0x01010101);
+        Iwram_FillWordsEntry(work->sheet, 128, 0x28282828 - frame / 2 * 0x01010101);
         i = 0;
         angle = frame << 9;
         for (; i != 16; i++) {
@@ -293,7 +291,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
       BattleEffect_SelectLivingTargets(work->effect);
       work->scrollStepX = -8;
       transition[4] = 1;
-      Iwram_FillWords((void *)(BG_PLTT + 96), 256, 0x7fff7fff);
+      Iwram_FillWordsEntry((void *)(BG_PLTT + 96), 256, 0x7fff7fff);
       Resource_LoadAndDecompress((s32)&ResourceId_Data134, work->sheet, 0, 0);
       // Ten ever-fainter copies of one mote.
       for (j = 0; j != 10; j++) {
@@ -329,7 +327,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 50;
   skip = 0;
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   BattleEffect_SelectLivingTargets(work->effect);
   wait(1);
@@ -374,14 +372,14 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
         Animation_ApplyChildArgumentFar(work->objects[i], i + 12);
       }
       REG_BLDALPHA = 0x1010;
-      Iwram_FillWords((void *)(BG_PLTT + 96), 256, 0x7fff7fff);
+      Iwram_FillWordsEntry((void *)(BG_PLTT + 96), 256, 0x7fff7fff);
       work->scrollStepX = -8;
       gCameraSceneParameters[3] = -968;
       gCameraSceneParameters[4] = 120;
       gBgScroll[1].x = savedScroll + 1128;
       Resource_LoadAndDecompress((s32)&ResourceId_PetalSheet, work->sheet, 1,
                                  1);
-      Iwram_CopyWords((void *)BG_PLTT,
+      Iwram_CopyWordsEntry((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                       128);
       work->transferMode = 2;
@@ -439,7 +437,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
       velocity.y += 0x800;
     }
     if (frame == 156) {
-      Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
     }
     if (frame == 157) {
       Resource_LoadAndDecompress((s32)&ResourceId_CrescentRowSheet, work->sheet,

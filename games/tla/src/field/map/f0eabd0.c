@@ -239,7 +239,7 @@ void Func_080eaf98(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
 
   if (sprite == NULL)
     return;
-  Iwram_FillWords(sprite, sizeof(*sprite), 0);
+  Iwram_FillWordsEntry(sprite, sizeof(*sprite), 0);
   sprite->scaleX = Q16_ONE;
   sprite->scaleY = Q16_ONE;
   sprite->depth = 255;

@@ -366,9 +366,6 @@ void Func_081a0a70(void) {
 // The clear goes through an inline wrapper, as the Broken Seal's iwram_call.h
 // writes Iwram_ClearWords; through this game's direct entry, the build shifts
 // the size before loading the routine's address.
-static inline s32 ClearWords(void *destination, s32 size) {
-  return Iwram_ClearWordsEntry(destination, size);
-}
 
 /// Draws one line of the credits' scrolling text: the message is drawn into a
 /// canvas of one byte a pixel, packed to two pixels a byte, and copied into
@@ -390,7 +387,7 @@ s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align) {
   canvas = Heap_AllocEwram(0x900);
   // BUG: the clear, and the packing loop's reads below, cover 0xc00 bytes of
   // a 0x900-byte allocation.
-  ClearWords(canvas, 0xc00);
+  Iwram_ClearWords(canvas, 0xc00);
   busy = Func_08038418(message, canvas, align);
   dst = canvas;
   src = canvas;
@@ -586,10 +583,6 @@ void Func_081a0fb8(void) {
   Dma_Set(gDisplayScroll_Objects, OAM, DMA_COPY_WORDS(256), REG_DMA3);
 }
 
-static __inline__ void DisplayScroll_CopyWords(void *destination, void *source,
-                                               s32 size) {
-  Iwram_CopyWords(destination, source, size);
-}
 
 s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align) {
   u8 *buf = (u8 *)Heap_AllocEwram(0x900);
@@ -615,14 +608,11 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align) {
   if (text == NULL)
     return -1;
   if (!GameFlag_Test(0x200)) {
-    Iwram_FillWords(buf, 0x900, 0);
+    Iwram_FillWordsEntry(buf, 0x900, 0);
     GameFlag_SetBit(0x200);
   } else {
-    /* FAKEMATCH(wrapper): the copy forwarded through DisplayScroll_CopyWords,
-     * which keeps its own constants; as Iwram_CopyWords called directly, 71
-     * of 279 instructions differ in tla-en. */
-    DisplayScroll_CopyWords(buf, buf + 0x800, 0x100);
-    Iwram_FillWords(buf + 0x100, 0x800, 0);
+    Iwram_CopyWords(buf, buf + 0x800, 0x100);
+    Iwram_FillWordsEntry(buf + 0x100, 0x800, 0);
   }
 
   p = text;
@@ -713,10 +703,7 @@ void Func_081a1294(const u8 *source, u8 *destination, s32 position) {
   start = (Data_02007518 >> 19) << 6;
   gScrollTarget = gData_02007520 = position;
   {
-    /* FAKEMATCH(pin): the word's address in r2, where the native loads it;
-     * as a plain pointer with the barrier, 6 of 76 instructions differ in
-     * tla-en. */
-    register volatile s32 *word asm("r2") = &gData_0200751c;
+    volatile s32 *word = &gData_0200751c;
 
     *word = position << 16;
   }

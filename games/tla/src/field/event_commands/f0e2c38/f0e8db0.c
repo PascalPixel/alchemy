@@ -329,7 +329,7 @@ void BattleEffect_ShiftRowsDown(u8 *base, s32 stride, s32 rows) {
     source -= stride;
     destination -= stride;
   }
-  Iwram_FillWords(base, stride, 0);
+  Iwram_FillWordsEntry(base, stride, 0);
 }
 #undef SHAKE_SPRITE_COUNT
 #undef PICTURE_SIZE

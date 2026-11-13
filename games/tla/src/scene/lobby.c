@@ -123,7 +123,7 @@ s32 Func_02000134(void) {
         // in registers (differ 76).
         i = 3;
       clear:
-        Iwram_ClearWords((u8 *)gLinkPeerSignatures + offset, 20);
+        Iwram_ClearWordsEntry((u8 *)gLinkPeerSignatures + offset, 20);
         i--;
         offset += 24;
         if (i >= 0)
@@ -396,7 +396,7 @@ s32 Func_02000578(void) {
     {
       s32 tries = 0;
 
-      Iwram_CopyWords(heap, Unit_Get(memberIds[i]), size);
+      Iwram_CopyWordsEntry(heap, Unit_Get(memberIds[i]), size);
       heap[0x12a] = 2;
       peerSlots[memberIds[i]] = i - 128;
       if ((transferResult = Func_0200192c(heap, size)) == -1) {
@@ -455,7 +455,7 @@ next:
    * the order around it; as the plain statement, 6 of 264 instructions differ
    * in tla-en. */
   do {
-    Iwram_CopyWords(heap, Djinn_GetRecoveryTable(0), size);
+    Iwram_CopyWordsEntry(heap, Djinn_GetRecoveryTable(0), size);
   } while (0);
   {
     s32 timeout;
@@ -1288,23 +1288,10 @@ void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void GameFlag_SetByte(s32 flag, s32 value);
 
-static inline s32 Flag_GetByte(s32 flag) {
-  /* FAKEMATCH(wrapper): Flag_GetByte forwarded inline; as direct calls to
-   * GameFlag_GetByte, 60 of 438 instructions differ in tla-en. */
-  return GameFlag_GetByte(flag);
-}
-
 static inline void Flag_SetByte(s32 flag, s32 value) {
   /* FAKEMATCH(wrapper): Flag_SetByte forwarded inline; as direct calls to
    * GameFlag_SetByte, 17 of 438 instructions differ in tla-en. */
   GameFlag_SetByte(flag, value);
-}
-
-static inline void Map_CopyCells(s32 x, s32 y, s32 width, s32 height, s32 destX,
-                                 s32 destY) {
-  /* FAKEMATCH(wrapper): Map_CopyCells forwarded inline; as direct calls to
-   * Map_CopyCellAttributeRect, 6 of 438 instructions differ in tla-en. */
-  Map_CopyCellAttributeRect(x, y, width, height, destX, destY);
 }
 
 s32 LinkLobby_RunRoundResult(void) {
@@ -1322,7 +1309,7 @@ s32 LinkLobby_RunRoundResult(void) {
   ((struct LobbyEventWork__scene_events *)Ram_HeapSlots->eventWork)->startTransition = 0x201;
   Sound_LoadReverbCode(2);
   Func_02001414(gMainRoutineWork.linkTallies[6]);
-  Map_CopyCells(11, 11, 1, 1, 13, 10);
+  MapGrid_CopyCellAttributes(11, 11, 1, 1, 13, 10);
   LinkLobby_WriteSlotValue(4);
   wait(1);
   Func_02001994(5);
@@ -1356,7 +1343,7 @@ s32 LinkLobby_RunRoundResult(void) {
     msg = wins * 2 + 2;
     if (msg > 14)
       msg = 14;
-    v = Flag_GetByte(1000);
+    v = FieldGameFlag_GetByte(1000);
     if (v == 2) {
       GameFlag_SetByte(1000, 0);
       wins++;
@@ -1442,8 +1429,6 @@ s32 LinkLobby_RunRoundResult(void) {
       gMainRoutineWork.linkTallies[4]++;
       v = gMainRoutineWork.linkTallies[7] + 1;
       gMainRoutineWork.linkTallies[7] = v;
-      /* FAKEMATCH(temporary): the other score branches' address slot reused; as
-       * the row read directly, 8 of 438 instructions differ in tla-en. */
       score = (u32)&gMainRoutineWork.linkTallies[6];
       if (*(u16 *)score < (u16)v)
         *(u16 *)score = v;

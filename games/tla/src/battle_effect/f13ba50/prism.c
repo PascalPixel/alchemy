@@ -191,8 +191,5 @@ void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase, s32 bluePhase) {
     index++;
   } while (index != 64);
 
-  /* FAKEMATCH(wrapper): the copy through CopyWords_, which builds the palette's
-   * address anew for it; as a direct Iwram_CopyWords call, 47 of 96
-   * instructions differ in tla-en. */
-  CopyWords_((void *)0x05000002, palette, sizeof(palette));
+  Iwram_CopyWords((void *)0x05000002, palette, sizeof(palette));
 }

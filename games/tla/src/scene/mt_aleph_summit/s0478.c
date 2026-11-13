@@ -78,12 +78,6 @@ void Func_0200032c(u16 *colors, s32 count, s32 delta);
 void Func_02000394(void);
 void Func_02001564(s32 a, s32 b);
 
-static __inline__ void CopyToPalette(void *from, void *to, s32 size) {
-  /* FAKEMATCH(wrapper): the copy forwarded inline; as Call3, 4 of 1526
-   * instructions differ in tla-en. */
-  Iwram_CopyWords(from, to, size);
-}
-
 s32 Scene_Initialize(void) {
   u8 *block;
   void *buffer;
@@ -134,7 +128,7 @@ s32 Scene_Initialize(void) {
     if (i != 10)
       goto L1;
     Actor_SetAnimationSpeedById(8, 0);
-    Call3((void (*)())Iwram_CopyWords, (s32)buffer, 0x5000008, 14);
+    Call3((void (*)())Iwram_CopyWordsEntry, (s32)buffer, 0x5000008, 14);
     j = 0;
   L2:
     out = (u16 *)0x500000e;
@@ -191,7 +185,7 @@ s32 Scene_Initialize(void) {
   } else if (mode == 3) {
     slots = Ram_HeapSlots;
     block = slots->block32;
-    CopyToPalette(buffer, (void *)0x5000000, 0x1c0);
+    Iwram_CopyWords(buffer, (void *)0x5000000, 0x1c0);
     FieldCamera_MoveTo(0x1000000, -1, 0x900000, 0);
     FieldCamera_SetSpeed(0x10000, 0x2000);
     Actor_SetAnimation(8, 14);
@@ -235,8 +229,8 @@ s32 Scene_Initialize(void) {
     }
     if (j == 51) {
       Event_PlaySound(107);
-      Iwram_CopyWords(buffer, (void *)0x5000000, 0x1c0);
-      Iwram_CopyWords(block + 0xf80, block + 0x1040, 96);
+      Iwram_CopyWordsEntry(buffer, (void *)0x5000000, 0x1c0);
+      Iwram_CopyWordsEntry(block + 0xf80, block + 0x1040, 96);
     }
     if (j >= 16 && j <= 28) {
       value = (j - 16) / 2 + 2;

@@ -183,7 +183,7 @@ s32 Func_081197f0(s32 enemyGroup) {
   transition = HeapSlot_AllocEwram(176, 32);
   HeapSlot_AllocEwram(44, 0x280);
   result = 0;
-  Iwram_ClearWords(Ram_HeapSlots->unkd0[2], 0x7c8);
+  Iwram_ClearWordsEntry(Ram_HeapSlots->unkd0[2], 0x7c8);
   Task_ResetAll();
   transition->targetYaw = 0x2000;
   transition->frames = 0;
@@ -199,16 +199,16 @@ s32 Func_081197f0(s32 enemyGroup) {
   // transform reset; as the plain call, 12 of 885 instructions differ in
   // tla-en.
   do {
-    Iwram_FillWords(camera, sizeof(struct BattleCamera), 0);
+    Iwram_FillWordsEntry(camera, sizeof(struct BattleCamera), 0);
   } while (0);
-  Iwram_FillWords(battle, sizeof(struct EncounterWork), 0);
+  Iwram_FillWordsEntry(battle, sizeof(struct EncounterWork), 0);
   battle->promptSlot = -1;
   battle->enemyGroup = enemyGroup;
   HeapSlot_AllocEwram(148, 12);
   // The slot's fill in a once-only block keeps its address after the
   // allocation; as the plain call, 6 of 885 instructions differ in tla-en.
   do {
-    Iwram_FillWords(Ram_HeapSlots->unk84[4], 12, 0);
+    Iwram_FillWordsEntry(Ram_HeapSlots->unk84[4], 12, 0);
   } while (0);
   battle->background = Event_GetSpecialValueFar();
   HeapSlot_AllocEwram(16, 0xe00);
@@ -319,7 +319,7 @@ s32 Func_081197f0(s32 enemyGroup) {
     transition->frames = 60;
     PartyStatus_DrawFar(battle->partyStatus);
 
-    Iwram_ClearWords(battle->actions, sizeof(battle->actions));
+    Iwram_ClearWordsEntry(battle->actions, sizeof(battle->actions));
     Resource_ResetEntry(battle->promptSlot);
     if (GameFlag_Test(0x16a) == 0)
       actionCount = Battle_GatherActions(battle->actions);

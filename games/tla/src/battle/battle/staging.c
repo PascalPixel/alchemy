@@ -43,7 +43,7 @@ void Func_0811d7e8(u16 *source, struct ActionTargets *targets) {
   if (source[0] > 7)
     side = 1;
   count = BattleUnit_ListIds(side, ids);
-  Iwram_ClearWords(targets, sizeof *targets);
+  Iwram_ClearWordsEntry(targets, sizeof *targets);
   own = 0;
   if (source[0] <= 7)
     own = 1;

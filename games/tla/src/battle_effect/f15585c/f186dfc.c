@@ -154,13 +154,6 @@ void BattleEffect_ProcessPendingStampTransfer(
 #define STAMP_CANVAS(work) ((u8 *)(work) + 0x6780)
 #define HALF_HI(v) (((s16 *)&(v))[1])
 
-/* VIEW(f186dfc): static ClearWords as ClearWords__f186dfc; f16c274 has static inline s32 ClearWords(void *destination, s32 size) { return Iwram_ClearWords(destination, size); }; not tried: ClearWords's definition holds a FAKEMATCH tag. */
-static inline s32 ClearWords__f186dfc(void *destination, s32 size) {
-  /* FAKEMATCH(wrapper): the buffer clears through this inline; as direct
-   * calls to Iwram_ClearWords, 4 of 2667 instructions of
-   * BattleEffect_RunHaures differ in tla-en. */
-  return Iwram_ClearWords(destination, size);
-}
 static __inline__ void PLACE(s32 x, s32 y) {
   Func_08015160(x << 16, y << 16, 0);
 }
@@ -350,7 +343,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         position.b = 0x780000;
         velocity.a = 0;
         velocity.b = 0;
-        Iwram_CopyWords((void *)&BG_PLTT_COLOR(6, 0), battle + 0x56c, 256);
+        Iwram_CopyWordsEntry((void *)&BG_PLTT_COLOR(6, 0), battle + 0x56c, 256);
         {
           u8 *q = shades;
 
@@ -644,7 +637,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           }
           Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB,
                                      work->sheet, 1, 0);
-          Iwram_CopyWords(
+          Iwram_CopyWordsEntry(
               (void *)BG_PLTT,
               Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
           work->transferMode = 1;
@@ -672,7 +665,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         if ((u32)cut <= 5) {
           s32 j;
 
-          ClearWords__f186dfc(buffer, 0xd80);
+          Iwram_ClearWords(buffer, 0xd80);
           for (j = 0; j != 72; j++) {
             s32 m;
 
@@ -880,11 +873,11 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   Func_0814cca8();
   gCameraSceneParameters[4] = 120;
   BattleEffect_SpawnObjects(11, 0x293, 2);
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1, 0);
   {
-    ClearWords__f186dfc(buffer, 0x6c00);
+    Iwram_ClearWords(buffer, 0x6c00);
     for (i = 0; i != 6; i++) {
       s32 j;
 

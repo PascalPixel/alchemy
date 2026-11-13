@@ -180,13 +180,6 @@ void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
                           s32 count);
 
 // Copies words through the IWRAM routine as one statement.
-static inline s32 COPY_WORDS(void *dst, const void *src, s32 size) {
-  return Iwram_CopyWords(dst, src, size);
-}
-
-static inline void FILL_WORDS(void *dst, s32 size, s32 value) {
-  Iwram_FillWords(dst, size, value);
-}
 
 #define SLOT_ALT 188 // unkb8[1]
 #define OBJ_TILES(obj)                                                         \
@@ -299,7 +292,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     u8 *cells;
 
     e = Resource_GetTableEntry((s32)&ResourceId_ChainedDemonTiles);
-    COPY_WORDS((void *)OBJ_PLTT, e, 384);
+    Iwram_CopyWords((void *)OBJ_PLTT, e, 384);
     e += 384;
     Resource_DecodeType01(e, cellBuffer);
     cells = Ram_MapCellBuffer;
@@ -307,7 +300,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       obj = Func_0815b290__f1843fc(32, 32, 0x80002000, 0);
       obj->priority = 2;
       work->objects[i] = obj;
-      COPY_WORDS((void *)OBJ_TILES(obj), cells, 1024);
+      Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 1024);
     }
     {
       u8 *cells = Data_02016000;
@@ -315,23 +308,23 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       for (i = 0; i != 4; i++) {
         obj = Func_0815b3b0__f1843fc(32, 32, 0x80002000, 0);
         work->objects[24 + i] = obj;
-        COPY_WORDS(obj, work->objects[i], 24);
-        COPY_WORDS((void *)OBJ_TILES(work->objects[24 + i]), cells + i * 1024,
+        Iwram_CopyWords(obj, work->objects[i], 24);
+        Iwram_CopyWords((void *)OBJ_TILES(work->objects[24 + i]), cells + i * 1024,
                    1024);
       }
     }
-    COPY_WORDS(cellBuffer + 0x1000, Data_02016000, 0x1000);
+    Iwram_CopyWords(cellBuffer + 0x1000, Data_02016000, 0x1000);
   }
   for (i = 0; i != 6; i++) {
     obj = Func_0815b3b0__f1843fc(32, 32, 0x80002000, 0);
     work->objects[28 + i] = obj;
-    COPY_WORDS(obj, work->objects[i], 24);
+    Iwram_CopyWords(obj, work->objects[i], 24);
   }
   {
     u8 *cells;
 
     e = Resource_GetTableEntry((s32)&ResourceId_GoldenScalesTiles);
-    COPY_WORDS((void *)(OBJ_PLTT + 0xc0), e, 32);
+    Iwram_CopyWords((void *)(OBJ_PLTT + 0xc0), e, 32);
     e += 32;
     Resource_DecodeType01(e, work->sheet);
     cells = work->sheet;
@@ -339,14 +332,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       obj = Func_0815b290__f1843fc(32, 32, 0x80000000, 0xc000);
       obj->priority = 1;
       work->objects[34 + i] = obj;
-      COPY_WORDS((void *)OBJ_TILES(obj), cells, 512);
+      Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 512);
     }
   }
   {
     u8 *cells;
 
     e = Resource_GetTableEntry((s32)&ResourceId_PurpleArmourTiles);
-    COPY_WORDS((void *)(OBJ_PLTT + 0xd0), e, 32);
+    Iwram_CopyWords((void *)(OBJ_PLTT + 0xd0), e, 32);
     e += 32;
     Resource_DecodeType01(e, work->sheet);
     cells = work->sheet;
@@ -354,14 +347,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       obj = Func_0815b290__f1843fc(32, 32, 0x80000000, 0xd000);
       obj->priority = 1;
       work->objects[39 + i] = obj;
-      COPY_WORDS((void *)OBJ_TILES(obj), cells, 512);
+      Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 512);
     }
   }
   {
     u8 *cells;
 
     e = Resource_GetTableEntry((s32)&ResourceId_WhiteSpikesTiles);
-    COPY_WORDS((void *)(OBJ_PLTT + 0xe0), e, 32);
+    Iwram_CopyWords((void *)(OBJ_PLTT + 0xe0), e, 32);
     e += 32;
     Resource_DecodeType01(e, work->sheet);
     cells = work->sheet;
@@ -369,14 +362,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       obj = Func_0815b290__f1843fc(32, 32, 0x80000000, 0xe000);
       obj->priority = 1;
       work->objects[44 + i] = obj;
-      COPY_WORDS((void *)OBJ_TILES(obj), cells, 512);
+      Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 512);
     }
   }
-  COPY_WORDS(work->sheet + 0x5000, (void *)OBJ_PLTT, 480);
+  Iwram_CopyWords(work->sheet + 0x5000, (void *)OBJ_PLTT, 480);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0F9, work->sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0F8, work->sheet + 0x2000, 0,
                              0);
-  COPY_WORDS((void *)BG_PLTT,
+  Iwram_CopyWords((void *)BG_PLTT,
              Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, Data_02012000, 0, 0);
@@ -635,7 +628,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         for (i = 0; i != 4; i++) {
           void *tiles = (void *)OBJ_TILES(work->objects[24 + i]);
 
-          COPY_WORDS(tiles, cellBuffer + i * 1024, 1024);
+          Iwram_CopyWords(tiles, cellBuffer + i * 1024, 1024);
         }
       }
     } else if (frame == 450) {
@@ -644,7 +637,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       swapped = 0;
       cells = Data_02011000;
       for (i = 0; i != 4; i++) {
-        COPY_WORDS((void *)OBJ_TILES(work->objects[24 + i]), cells + i * 1024,
+        Iwram_CopyWords((void *)OBJ_TILES(work->objects[24 + i]), cells + i * 1024,
                    1024);
       }
     }
@@ -892,13 +885,13 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 602) {
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
     }
     if (frame == 630) {
-      Iwram_FillWords(canvas, 0x4000, 0x1f1f1f1f);
+      Iwram_FillWordsEntry(canvas, 0x4000, 0x1f1f1f1f);
     }
     if (frame == 634) {
-      Iwram_FillWords(canvas, 0x4000, 0x1f1f1f1f);
+      Iwram_FillWordsEntry(canvas, 0x4000, 0x1f1f1f1f);
     }
     if ((u32)(frame - 552) <= 43) {
       p = work->particles;
@@ -1121,7 +1114,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + 0x800,
                              1, 0);
-  Iwram_ClearWords(work->sheet + 0x1456, 0x4000);
+  Iwram_ClearWordsEntry(work->sheet + 0x1456, 0x4000);
   for (i = 0; i != 4; i++) {
     {
       s32 j;
@@ -1159,12 +1152,12 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     if (!(gInput.repeat & 3)) {
       do {
         if (frame == 0) {
-          Iwram_FillWords(canvas, 0x4000, 0);
+          Iwram_FillWordsEntry(canvas, 0x4000, 0);
           rise = -0x400000;
           Func_08164b2c(0, -16, -16);
           work->transferMode = 2;
           work->transferValue = 50;
-          COPY_WORDS((void *)BG_PLTT,
+          Iwram_CopyWords((void *)BG_PLTT,
                      Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
                      128);
         }
@@ -1199,7 +1192,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           work->shakeFrames = 8;
           Sound_PlayFar(208);
           do {
-            Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+            Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
           } while (0);
         }
         if (frame == 96) {
@@ -1471,7 +1464,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     bolts = Ram_MapCellBuffer + 0x4000;
     slide = 0;
     slideStep = 0;
-    FILL_WORDS(canvas, 0x4000, 0x3f3f3f3f);
+    Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
     work->transferPending = 1;
     wait(1);
     gBgScroll[1].x = savedScroll;
@@ -1494,7 +1487,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         frame = 88;
       }
       if (frame == 88) {
-        Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
         work->transferMode = 3;
         work->transferValue = 0x02020202;
         gBgScroll[1].x = savedScroll;
@@ -1504,7 +1497,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       }
       if (frame == 0) {
         do {
-          Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+          Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
         } while (0);
         work->scrollStepX = -16;
         gCameraSceneParameters[3] = -968;

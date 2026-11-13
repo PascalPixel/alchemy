@@ -466,8 +466,6 @@ void Func_02000740(void) {
 void Func_02000784(void) {
   struct Actor *actor, *table;
   struct Vector3 test;
-  /* FAKEMATCH(temporary): the step kept in a local set at the top; as
-   * gData_02005af0 * -364, 43 of 230 instructions differ in tla-en. */
   s32 step = -364;
   s32 turn, x, z, dx, dz, back, tx, tz;
 

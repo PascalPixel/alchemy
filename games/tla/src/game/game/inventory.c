@@ -145,10 +145,6 @@ s32 Inventory_AddItem(s32 owner_id, s32 item_id) {
       if (count > 29)
         return -1;
       {
-        /* FAKEMATCH(temporary): the mask in a local of its own, which keeps
-         * the and's and the store's registers; as (entry &
-         * INVENTORY_ENTRY_MASK) | count << INVENTORY_QUANTITY_SHIFT, 32 of 68
-         * instructions differ in tla-en. */
         s32 value = INVENTORY_ENTRY_MASK;
 
         value &= entry;

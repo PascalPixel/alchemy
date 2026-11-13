@@ -555,57 +555,12 @@ void FieldMessage_Show(s32 message, s32 position);
 void Camera_FollowActor(s32 id, s32 mode);
 void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 
-static __inline__ void CommitPos(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants, as ☀️'s scene layer does; as direct calls, 31 of 475
-   * instructions of Func_02000ac4 differ in tla-en and 2 of 490 of
-   * Func_020014fc. */
-  Actor_CommitPositionAndActivate(id, x, z);
-}
-
-static __inline__ void SetPos(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants, as ☀️'s scene layer does; as direct calls, 51 of 475
-   * instructions of Func_02000ac4 differ in tla-en and 20 of 549 of
-   * Func_02000f80. */
-  Actor_SetPositionAndReset(id, x, z);
-}
-
-static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 d) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants, as ☀️'s scene layer does; as direct calls, 33 of 475
-   * instructions of Func_02000ac4 differ in tla-en. */
-  Camera_MoveWithinMapBounds(x, y, z, d);
-}
-
-static __inline__ void ArmCallbackAndRefresh(s32 id, s32 a) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants, as ☀️'s scene layer does; as direct calls, 44 of 475
-   * instructions of Func_02000ac4 differ in tla-en, 4 of 549 of Func_02000f80
-   * and 48 of 490 of Func_020014fc. */
-  Actor_ArmCallbackAndRefresh(id, a);
-}
-
 static __inline__ struct Actor *Emote(s32 id, s32 emote, s32 frames) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
    * constants, as ☀️'s scene layer does; as direct calls, 8 of 475 instructions
    * of Func_02000ac4 differ in tla-en, 25 of 549 of Func_02000f80 and 27 of 490
    * of Func_020014fc. */
   return Func_080d47b4(id, emote, frames);
-}
-
-static __inline__ void LaunchFromFocused(s32 id, s32 a, s32 b, s32 c) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants, as ☀️'s scene layer does; as direct calls, 36 of 475
-   * instructions of Func_02000ac4 differ in tla-en. */
-  Actor_LaunchFromLeader(id, a, b, c);
-}
-
-static __inline__ void Madra_Func_02002c10(s32 id, s32 a) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants, as ☀️'s scene layer does; as direct calls, 31 of 549
-   * instructions of Func_02000f80 differ in tla-en. */
-  FieldEffect_SetAttached(id, a);
 }
 
 /// Actors 24 and 25 talk with 32 and 4, 25 is moved about with its priority
@@ -618,14 +573,14 @@ void Func_02000ac4(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId(MsgYouThereHold);
   Event_ShowMessageThenWait(24, 0, 2);
-  CamBounds(238 << 17, -1, 210 << 17, 1);
+  FieldCamera_MoveTo(238 << 17, -1, 210 << 17, 1);
   Actor_WalkBy(25, 3, 8);
-  CommitPos(24, -3, 8);
+  Actor_WalkByAndWait(24, -3, 8);
   Actor_WaitForMoveById(25);
-  SetPos(4, 472, 426);
+  Actor_WalkToAndWait(4, 472, 426);
   Event_Wait(10);
-  ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, FACING_NORTH);
-  LaunchFromFocused(32, 16, 1, FACING_NORTH);
+  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
+  FieldActor_LaunchFromLeader(32, 16, 1, FACING_NORTH);
   Func_02002c28();
   Actor_WaitForMoveById(32);
   Actor_FaceDirection(4, FACING_EAST, 0);
@@ -658,9 +613,9 @@ void Func_02000ac4(void) {
   Actor_FaceDirection(24, FACING_SOUTH + FACING_STEP, 0);
   Actor_GetById(25)->priorityFlags &= 0xfe;
   Actor_SetSpritePriority(25, 3);
-  SetPos(25, 457, 402);
-  CommitPos(25, 16, 0);
-  SetPos(25, 472, 420);
+  Actor_WalkToAndWait(25, 457, 402);
+  Actor_WalkByAndWait(25, 16, 0);
+  Actor_WalkToAndWait(25, 472, 420);
   Event_Wait(30);
   Actor_SetPositionAndReset(25, 484, 420);
   Actor_GetById(25)->priorityFlags |= 1;
@@ -674,19 +629,19 @@ void Func_02000ac4(void) {
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(24, 3);
   Event_ShowMessageThenWait(24, 0, 2);
-  ArmCallbackAndRefresh(25, FACING_SOUTH);
+  Actor_FaceDirectionAndWait(25, FACING_SOUTH);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(25, 3);
   Event_Wait(5);
   Event_ShowMessageThenWait(25, 0, 2);
   Actor_GetById(25)->priorityFlags &= 0xfe;
   Actor_SetSpritePriority(25, 3);
-  CommitPos(25, 0, -16);
-  SetPos(25, 475, 400);
-  CommitPos(25, -16, 0);
+  Actor_WalkByAndWait(25, 0, -16);
+  Actor_WalkToAndWait(25, 475, 400);
+  Actor_WalkByAndWait(25, -16, 0);
   Actor_GetById(25)->priorityFlags |= 1;
-  CamBounds(238 << 17, -1, 198 << 17, 1);
-  SetPos(25, 459, 416);
+  FieldCamera_MoveTo(238 << 17, -1, 198 << 17, 1);
+  Actor_WalkToAndWait(25, 459, 416);
   Actor_FaceDirection(25, FACING_SOUTHEAST, 0);
   Event_Wait(10);
   Emote(32, 0x101, 50);
@@ -778,8 +733,8 @@ void Func_02000f80(void) {
   Event_Wait(20);
   Actor_FaceDirection(33, FACING_NORTH, 0);
   Actor_FaceDirection(34, FACING_NORTH, 0);
-  Madra_Func_02002c10(34, 258);
-  Madra_Func_02002c10(33, 258);
+  Actor_SetAttachedEffect(34, 258);
+  Actor_SetAttachedEffect(33, 258);
   Event_Wait(50);
   Motion_SetModeAndWaitAnimation(34, 3);
   Motion_SetModeAndWaitAnimation(33, 3);
@@ -798,12 +753,12 @@ void Func_02000f80(void) {
   Event_Wait(120);
   Actor_SetPosition(33, PIXELS(102), PIXELS(340));
   Actor_SetPosition(34, PIXELS(102), PIXELS(340));
-  SetPos(34, 100, 364);
+  Actor_WalkToAndWait(34, 100, 364);
   Actor_WalkTo(34, 124, 380);
-  SetPos(33, 100, 380);
+  Actor_WalkToAndWait(33, 100, 380);
   Actor_WaitForMoveById(34);
   Actor_WalkTo(34, 132, 396);
-  SetPos(33, 108, 396);
+  Actor_WalkToAndWait(33, 108, 396);
   Actor_WaitForMoveById(34);
   Actor_SetAngleToward(4, 33, 0);
   Actor_FaceDirection(34, FACING_NORTH, 0);
@@ -883,9 +838,9 @@ void Func_02000f80(void) {
   Event_Wait(20);
   Event_Wait(20);
   Actor_CommitPositionAndActivate(34, 6, 0);
-  SetPos(34, 164, 316);
+  Actor_WalkToAndWait(34, 164, 316);
   Event_Wait(10);
-  ArmCallbackAndRefresh(33, FACING_WEST);
+  Actor_FaceDirectionAndWait(33, FACING_WEST);
   Motion_SetModeAndWaitAnimation(33, 3);
   Event_Wait(20);
   Event_ShowMessageThenWait(33, 0, 10);
@@ -896,7 +851,7 @@ void Func_02000f80(void) {
   Event_Wait(20);
   GameFlag_SetBit(0x913);
   Actor_CommitPositionAndActivate(33, 30, 0);
-  SetPos(33, 164, 316);
+  Actor_WalkToAndWait(33, 164, 316);
   Event_Wait(20);
   Actor_SetHorizontalPositionWithTerrain(33, 0, 0);
   Event_Wait(20);
@@ -915,10 +870,10 @@ void Func_020014fc(void) {
   Event_SetMessageId(MsgHeyYouLot);
   Event_ShowMessageThenWait(24, 0, 2);
   Camera_MoveWithinMapBounds(PIXELS(476), -1, PIXELS(400), 1);
-  CommitPos(24, -3, 8);
+  Actor_WalkByAndWait(24, -3, 8);
   Actor_SetPositionAndReset(4, 472, 426);
   Event_Wait(10);
-  ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, FACING_NORTH);
+  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
   Actor_LaunchFromLeader(32, 16, 1, FACING_NORTH);
   Func_02002c28();
   Actor_WaitForMoveById(32);
@@ -933,7 +888,7 @@ void Func_020014fc(void) {
   Func_080d47b4(32, 0x101, 30);
   Event_ShowMessageAndWait(32, 0);
   Motion_SetModeAndWaitAnimation(4, 4);
-  ArmCallbackAndRefresh(24, FACING_SOUTH + FACING_STEP);
+  Actor_FaceDirectionAndWait(24, FACING_SOUTH + FACING_STEP);
   Motion_SetModeAndWaitAnimation(24, 4);
   Event_ShowMessageThenWait(24, 0, 10);
   Actor_FaceDirection(32, FACING_NORTH + FACING_STEP, 0);
@@ -945,14 +900,14 @@ void Func_020014fc(void) {
   Actor_SetAngleToward(4, 24, 0);
   Event_Wait(20);
   Func_080d47b4(32, 0x100, 30);
-  ArmCallbackAndRefresh(32, FACING_NORTH + FACING_STEP);
+  Actor_FaceDirectionAndWait(32, FACING_NORTH + FACING_STEP);
   Event_ShowMessageAndWait(32, 0);
-  ArmCallbackAndRefresh(25, FACING_SOUTHEAST);
+  Actor_FaceDirectionAndWait(25, FACING_SOUTHEAST);
   Motion_SetModeAndWaitAnimation(25, 3);
   Actor_FaceDirection(32, FACING_NORTHWEST + FACING_STEP, 0);
   Event_Wait(10);
   FieldMessage_ShowAtActor(25, 0);
-  ArmCallbackAndRefresh(4, FACING_NORTHWEST + FACING_STEP);
+  Actor_FaceDirectionAndWait(4, FACING_NORTHWEST + FACING_STEP);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(25);
     Actor_FaceDirection(32, FACING_NORTHWEST + FACING_STEP, 0);
@@ -966,7 +921,7 @@ void Func_020014fc(void) {
   }
   Motion_SetVarCbAndRefresh(32, 2);
   Event_Wait(20);
-  ArmCallbackAndRefresh(32, FACING_NORTHWEST + FACING_STEP);
+  Actor_FaceDirectionAndWait(32, FACING_NORTHWEST + FACING_STEP);
   Event_ShowMessageAndWait(32, 0);
   Func_080d47b4(25, 0x102, 30);
   Event_ShowMessageThenWait(25, 0, 10);
@@ -1010,7 +965,7 @@ void Func_020014fc(void) {
   Emote(32, 0x101, 0);
   Func_080d47b4(4, 0x101, 30);
   Event_ShowMessageAndWait(32, 0);
-  ArmCallbackAndRefresh(24, FACING_SOUTH + FACING_STEP);
+  Actor_FaceDirectionAndWait(24, FACING_SOUTH + FACING_STEP);
   Motion_SetModeAndWaitAnimation(24, 4);
   Event_Wait(10);
   Event_ShowMessageThenWait(24, 0, 10);
@@ -1040,7 +995,7 @@ void Func_020014fc(void) {
                               ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(32);
   Actor_SetHorizontalPositionWithTerrain(32, 0, 0);
-  ArmCallbackAndRefresh(4, FACING_NORTH);
+  Actor_FaceDirectionAndWait(4, FACING_NORTH);
   Event_End();
 }
 
@@ -1060,13 +1015,9 @@ extern const struct CellPictureCopyEntry gData_02003308__s0ac4[] __asm__("gData_
 /// the group, and they all gather at 4 before flags 0x980 and 0x98e are set.
 void Func_020019d8(void) {
   struct Actor *object;
-  s32 x;
+  s32 x = 153 << 16;
   s32 z;
 
-  /* FAKEMATCH(temporary): x and z held in locals set first, so the place call
-   * builds x before the actor id; as constants passed to the call, 4 of 1565
-   * instructions differ in tla-en (with z alone a local, 2). */
-  x = 153 << 16;
   z = 0x01030000;
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1075,12 +1026,12 @@ void Func_020019d8(void) {
     GameFlag_SetBit(0xa76);
   Event_SetMessageId(MsgWait3);
   Event_ShowMessageThenWait(34, 0, 0);
-  SetPos(4, 150, 280);
+  Actor_WalkToAndWait(4, 150, 280);
   Actor_OffsetPositionAndReset(4, 16, 0);
-  LaunchFromFocused(5, 8, 16, FACING_NORTH);
-  LaunchFromFocused(32, 0, 0, FACING_NORTH);
-  LaunchFromFocused(6, -8, 16, FACING_NORTH);
-  LaunchFromFocused(7, -16, 0, FACING_NORTH);
+  FieldActor_LaunchFromLeader(5, 8, 16, FACING_NORTH);
+  FieldActor_LaunchFromLeader(32, 0, 0, FACING_NORTH);
+  FieldActor_LaunchFromLeader(6, -8, 16, FACING_NORTH);
+  FieldActor_LaunchFromLeader(7, -16, 0, FACING_NORTH);
   Actor_WaitForMoveById(4);
   Actor_FaceDirection(4, FACING_NORTH, 0);
   Event_Wait(20);
@@ -1165,13 +1116,13 @@ void Func_020019d8(void) {
     Actor_CommitPositionAndActivate(34, 16, 0);
     MessageArgument_Push(210, 2);
     FieldMessage_Show((*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++, 5);
-    CommitPos(34, -16, 0);
-    ArmCallbackAndRefresh(34, FACING_SOUTH);
+    Actor_WalkByAndWait(34, -16, 0);
+    Actor_FaceDirectionAndWait(34, FACING_SOUTH);
     Actor_SetPosition(66, PIXELS(192), PIXELS(256));
     *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4) = count;
   }
-  CommitPos(34, -16, -8);
-  ArmCallbackAndRefresh(34, FACING_SOUTH);
+  Actor_WalkByAndWait(34, -16, -8);
+  Actor_FaceDirectionAndWait(34, FACING_SOUTH);
   Func_080d47b4(34, 0x105, 30);
   Event_ShowMessageThenWait(34, 0, 0);
   SET_MODE(34, 3);
@@ -1187,8 +1138,8 @@ void Func_020019d8(void) {
   SET_MODE(7, 3);
   Event_Wait(20);
   Event_Wait(20);
-  ArmCallbackAndRefresh(34, FACING_NORTH);
-  SetPos(34, 153, 259);
+  Actor_FaceDirectionAndWait(34, FACING_NORTH);
+  Actor_WalkToAndWait(34, 153, 259);
   Actor_SetHorizontalPositionWithTerrain(34, 0, 0);
   SET_MODE(32, 4);
   Event_Wait(33);
@@ -1226,7 +1177,7 @@ void Func_020019d8(void) {
   Actor_SetAngleToward(5, 33, 0);
   Actor_SetAngleToward(32, 33, 0);
   Event_Wait(20);
-  ArmCallbackAndRefresh(33, FACING_WEST);
+  Actor_FaceDirectionAndWait(33, FACING_WEST);
   Actor_ArmCallbackAndRefresh(33, FACING_EAST);
   Event_Wait(20);
   Event_ShowMessageAndWait(33, 0);
@@ -1348,7 +1299,7 @@ void Func_020019d8(void) {
   Event_ShowMessageAndWait(33, 0);
   Actor_ArmCallbackAndRefresh(33, FACING_EAST);
   Event_Wait(20);
-  ArmCallbackAndRefresh(33, FACING_WEST);
+  Actor_FaceDirectionAndWait(33, FACING_WEST);
   Event_Wait(20);
   Actor_ArmCallbackAndRefresh(33, FACING_EAST);
   Event_Wait(20);
@@ -1389,7 +1340,7 @@ void Func_020019d8(void) {
   Event_Wait(20);
   Event_ShowMessageAndWait(33, 0);
   Sound_Play(78);
-  CamBounds(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Actor_CommitPositionAndActivate(33, 24, 24);
   Actor_CommitPositionAndActivate(33, 132, 0);
   Actor_SetHorizontalPositionWithTerrain(33, 0, 0);
@@ -1443,7 +1394,7 @@ void Func_020019d8(void) {
   Event_Wait(40);
   Motion_SetVarCbAndRefresh(32, 2);
   Event_Wait(20);
-  ArmCallbackAndRefresh(32, FACING_SOUTH);
+  Actor_FaceDirectionAndWait(32, FACING_SOUTH);
   Event_ShowMessageAndWait(32, 0);
   Actor_SetPartAttribute(Actor_GetById(5), 0);
   Event_Wait(20);
@@ -1595,7 +1546,7 @@ void Func_02002a58(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  CommitPos(4, 0, -14);
+  Actor_WalkByAndWait(4, 0, -14);
   id = 4;
   Actor_CommitPositionAndActivate(id, 16, 0);
   Func_020029c8();
@@ -1606,7 +1557,7 @@ void Func_02002a80(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  CommitPos(4, -2, -6);
+  Actor_WalkByAndWait(4, -2, -6);
   x = 14;
   z = 8;
   id = 4;

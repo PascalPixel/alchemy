@@ -49,7 +49,7 @@ void Func_02003ab0(const u16 *spots, const u16 *levels, void (*handler)(void)) {
     s32 x;
     s32 i;
 
-    Iwram_ClearWords(work, 0x150);
+    Iwram_ClearWordsEntry(work, 0x150);
     x = *spots++;
     i = 0;
     while (x > 0) {

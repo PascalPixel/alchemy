@@ -152,7 +152,7 @@ void Func_020005cc(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  CommitPos(4, 0, -14);
+  Actor_WalkByAndWait(4, 0, -14);
   id = 4;
   Actor_WalkByAndWait(id, 16, 0);
   Func_0200052c();
@@ -163,7 +163,7 @@ void Func_020005f4(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  CommitPos(4, -2, -6);
+  Actor_WalkByAndWait(4, -2, -6);
   x = 14;
   z = 8;
   id = 4;
@@ -289,11 +289,6 @@ s32 Func_020007fc(s32 *p) {
     u32 x;
     s32 angle;
 
-    /* FAKEMATCH(dead): the empty once-only block keeps the first random
-     * value's shift after the second call; without it, 2 of 44 instructions
-     * differ in tla-en (with the asm below also removed, none differ). */
-    do {
-    } while (0);
     x = (u32)a << 9;
     angle = p[12];
     p[12] = angle + ((x >> 16) + (((u32)b << 9) >> 16)) + 0x400;
@@ -446,14 +441,6 @@ void Func_02000c2c(void) { GameFlag_ClearBit(0x201); }
 
 void Func_02000c3c(void) { Func_02001770(); }
 
-static __inline__ void CenterOn(s32 id, s32 column, s32 offset) {
-  /* FAKEMATCH(wrapper): the call forwarded through the inline, which sets the
-   * arguments up in their own order; as a direct Actor_CenterOnColumn call,
-   * 2 of 74 instructions differ in tla-en (the offset is negated after the
-   * column). */
-  Actor_CenterOnColumn(id, column, offset);
-}
-
 void Func_02000c44(void) {
   u32 i;
 
@@ -479,7 +466,7 @@ loop:
   Event_PlaySound(158);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
-  CenterOn(gMainRoutineWork.currentOwner, 2, -4);
+  Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -4);
   FieldEvent_Wait(6);
   FieldEvent_SetExitRequest(2);
   Event_FinishScreenTransition();
@@ -513,7 +500,7 @@ void Func_02000d14(void) {
   frame = &gData_02002c5c;
   if (*frame == -1) {
     u16 *colors = gData_02002c60;
-    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
     copy(colors, (void *)0x5000060, 32);
     copy(gData_02002c80, colors, 32);

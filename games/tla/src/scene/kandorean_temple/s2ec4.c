@@ -366,17 +366,11 @@ void Func_02003b2c(void) {
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
     Actor_SetPositionAndFacing(11, PIXELS(374), PIXELS(282), FACING_EAST);
     {
-      /* FAKEMATCH(temporary): a local holding the angle builds it ahead of the
-       * other arguments; as a plain argument, 4 of 128 instructions differ in
-       * tla-en. */
       s32 angle = 0xd000;
 
       Actor_SetPositionAndFacing(12, PIXELS(272), PIXELS(296), angle);
     }
     {
-      /* FAKEMATCH(temporary): a local holding the angle builds it ahead of the
-       * other arguments; as a plain argument, 4 of 128 instructions differ in
-       * tla-en. */
       s32 angle = 0x3000;
 
       Actor_SetPositionAndFacing(13, PIXELS(216), PIXELS(264), angle);
@@ -402,9 +396,6 @@ void Func_02003c54(void) {
     Func_020053a8_(1, 0x210, 10, 11);
   }
   {
-    /* FAKEMATCH(temporary): a local holding the angle builds it ahead of the
-     * other arguments; as a plain argument, 4 of 24 instructions differ in
-     * tla-en. */
     s32 angle = 0x3000;
 
     Actor_SetPositionAndFacing(12, PIXELS(392), PIXELS(360), angle);
@@ -427,9 +418,6 @@ void Func_02003c8c(void) {
   if ((gMainRoutineWork.entrance >= 4 && gMainRoutineWork.entrance <= 6) ||
       gMainRoutineWork.entrance == 14) {
     if (GameFlag_Test(0x84a)) {
-      /* FAKEMATCH(temporary): a local holding the angle builds it ahead of the
-       * other arguments; as a plain argument, 4 of 179 instructions differ in
-       * tla-en. */
       s32 angle = 0x5000;
 
       Actor_SetPositionAndFacing(12, PIXELS(432), PIXELS(394), angle);
@@ -976,9 +964,6 @@ void Func_0200482c(void) {
 
 void Func_02004fb4(void) {
   struct Actor **slot = &gData_020062ac;
-  /* FAKEMATCH(temporary): one local zero, kept in r7 for the three byte stores
-   * below; as plain zeros, built in r2 where they are stored, 22 of 51
-   * instructions differ in tla-en. */
   s32 zero = 0;
   struct Actor *object =
       ((struct Actor *)Import_ActorCreate(0x1e9, 0x1980000, 0x280000, 0x1580000));

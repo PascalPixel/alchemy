@@ -828,7 +828,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
   action = Ability_Get(abilityId);
   actor = Unit_Get__f11f66c(aid);
   target = Unit_Get__f11f66c(tid);
-  Iwram_CopyWords(bak, target, size);
+  Iwram_CopyWordsEntry(bak, target, size);
   switch (target->enemyId) {
   case 221:
     if (plan->command == 1 && (u32)(aid ^ tid) >> 7 != 0) {
@@ -2370,11 +2370,6 @@ select_again:
         request->command = COMMAND_SUMMON;
         BattleParty_CountStandbyDjinn(0, counts);
         summonIndex = Summon_ListLearnedFar(summons);
-        /* FAKEMATCH(dead): an empty once-only block after the summons are
-         * listed, so the djinn count's 0 argument is set after counts' address;
-         * without it, 2 of 755 instructions differ in tla-en. */
-        do {
-        } while (0);
         for (summonIndex--; summonIndex >= 0; summonIndex--) {
           summon = SummonDefinition_Get(summons[summonIndex]);
           for (element = 0; element <= 3 &&

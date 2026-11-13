@@ -86,7 +86,7 @@ s32 LinkBattle_SendParty(void) {
     work->ownerSlots[i] = mark;
   count = BattleParty_PrepareActiveOwners(owners);
   for (i = 0; i < count; i++) {
-    Iwram_CopyWords(buffer, Unit_Get(owners[i]), size);
+    Iwram_CopyWordsEntry(buffer, Unit_Get(owners[i]), size);
     ((struct LinkUnit *)buffer)->side = 2;
     work->ownerSlots[owners[i]] = i - 128;
     if (Serial_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
@@ -108,7 +108,7 @@ s32 LinkBattle_SendParty(void) {
   // pointer's copy ahead of the count's load; as the plain call, 2 of 153
   // instructions differ in tla-en.
   do {
-    Iwram_CopyWords(buffer, Djinn_GetRecoveryTableFar(0), size);
+    Iwram_CopyWordsEntry(buffer, Djinn_GetRecoveryTableFar(0), size);
   } while (0);
   list = &((struct LinkOfferTable *)buffer)->list;
   for (j = 0; j < list->count;) {
@@ -315,5 +315,5 @@ s32 BattleParty_AssignMemberSlots(void) {
 }
 
 void BattleStaging_ClearLinkPayload(void) {
-  Iwram_ClearWords(gSerialTransfer.payload, 16);
+  Iwram_ClearWordsEntry(gSerialTransfer.payload, 16);
 }

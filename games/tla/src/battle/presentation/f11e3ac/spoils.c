@@ -235,7 +235,7 @@ void Battle_AwardSpoils(void) {
       unit->experience += (u32)spoils->experience >> 1;
     else
       unit->experience += spoils->experience;
-    while (Iwram_CopyWords(backup, unit, sizeof(struct BattleUnit)),
+    while (Iwram_CopyWordsEntry(backup, unit, sizeof(struct BattleUnit)),
            Func_080ad0b0(unitId, gains) != 0) {
       Sound_PlayFar(89);
       MessageArgument_ClearAllFar();

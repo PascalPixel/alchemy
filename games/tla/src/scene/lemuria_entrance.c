@@ -133,8 +133,6 @@ s32 Scene_Initialize(void) {
     gMainRoutineWork.currentOwner = 4;
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = effect;
   }
-  /* FAKEMATCH(wrapper): forwarded, so that the flag number is built for each call; as
-   * Event_GetFlag(0x96b), 15 of 153 instructions differ in tla-en. */
   if (gMainRoutineWork.entrance == 3 && Event_GetFlag(0x96b)) {
     Event_ClearFlag(0x96b);
     Func_020003cc();

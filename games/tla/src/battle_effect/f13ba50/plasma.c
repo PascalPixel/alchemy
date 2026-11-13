@@ -49,7 +49,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
   if (effect->variant != 2) {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteB);
     s32 (*copy)(void *destination, const void *source, s32 size) =
-        Iwram_CopyWords;
+        Iwram_CopyWordsEntry;
 
     // The entry held in a local loads ahead of the destination's shift; as a
     // plain Iwram_CopyWords call, 2 of 457 instructions differ in tla-en.
@@ -92,7 +92,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
       start = i * 8;
       if (frame == start) {
         Sound_PlayFar(134);
-        Iwram_FillWords(canvas, 0x4000, 0x10101010);
+        Iwram_FillWordsEntry(canvas, 0x4000, 0x10101010);
       }
       if (frame >= start && frame < start + 9) {
         if (frame >= start + 1 && frame < start + 2)
@@ -244,7 +244,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
     const void *palette =
         Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
     s32 (*copy)(void *destination, const void *source, s32 size) =
-        Iwram_CopyWords;
+        Iwram_CopyWordsEntry;
 
     // The entry held in a local loads ahead of the destination's shift; as a
     // plain Iwram_CopyWords call, 2 of 783 instructions differ in tla-en.
@@ -253,7 +253,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
     const void *palette =
         Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet);
     s32 (*copy)(void *destination, const void *source, s32 size) =
-        Iwram_CopyWords;
+        Iwram_CopyWordsEntry;
 
     // The entry held in a local loads ahead of the destination's shift; as a
     // plain Iwram_CopyWords call, 2 of 783 instructions differ in tla-en.
@@ -312,7 +312,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
         camera->scroll -= 256;
     }
     if (effect->variant == 3 && frame == 4)
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
 
     if (kind == SPARKS_ORANGE || kind == SPARKS_FROM_ACTOR) {
       if (frame == 2) {

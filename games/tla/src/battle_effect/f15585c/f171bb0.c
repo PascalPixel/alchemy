@@ -163,7 +163,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
 
       Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, sheet + size, 1,
                                  0);
-      Iwram_ClearWords(sheet, size);
+      Iwram_ClearWordsEntry(sheet, size);
       for (row = 0; row != 48; row++) {
         for (k = 0; k != 24; k++) {
           (Ram_MapCellBuffer + 0x4208)[row * 64 + k] =
@@ -171,7 +171,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           sheet[row * 64 + 0x237 - k] = sheet[(row * 2 + row) * 8 + 0x1000 + k];
         }
       }
-      Iwram_CopyWords(palette,
+      Iwram_CopyWordsEntry(palette,
                       Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
                       128);
     } else {
@@ -212,11 +212,11 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                              work->sheet + 0x2000, 1, 1);
   if (mode == 3) {
-    Iwram_CopyWords(
+    Iwram_CopyWordsEntry(
         palette, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
   }
   if (mode == 4 || mode == 2) {
-    Iwram_CopyWords(
+    Iwram_CopyWordsEntry(
         palette, Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet), 128);
   }
   columns = (mode == 2 || mode == 4) ? 8 : 4;

@@ -52,7 +52,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
   sheet = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
-  Iwram_CopyWords((void *)0x05000000,
+  Iwram_CopyWordsEntry((void *)0x05000000,
                   Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet), 128);
   object = GetBattleObjectSlotFar(effect->actors[0])->object;
   half = BattleUnit_GetEffectHeightFar(effect->actors[0]) / 2;
@@ -387,7 +387,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
                              work->sheet + SPARK_OFFSET, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   work->transferMode = 2;
   work->transferValue = 75;
@@ -674,14 +674,6 @@ extern const u8 Data_08198ec4[];
 extern const u8 Data_0819919c[];
 extern const u8 Data_081991a4[];
 
-/* VIEW(f16d130): static ClearWords as ClearWords__f16d130; f16c274 has static inline s32 ClearWords(void *destination, s32 size) { return Iwram_ClearWords(destination, size); }; not tried: ClearWords's definition holds a FAKEMATCH tag. */
-static inline s32 ClearWords__f16d130(void *destination, s32 size) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWords, 14 of 1101 instructions of BattleEffect_RunSerac differ
-   * in tla-en. */
-  return Iwram_ClearWords(destination, size);
-}
-
 // Abilities: Serac.
 //
 // The Mercury Djinni drops onto the target, dust bursting where it lands;
@@ -707,8 +699,8 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
     BattleEffect_StartTiledCanvas(0x2000);
   }
   Func_0815585c(effect, (effect->side << 4) | 0x101, screenA, screenB);
-  ClearWords__f16d130((void *)0x06004000, 0x3c00);
-  Iwram_ClearWords(canvas, 0x3c00);
+  Iwram_ClearWords((void *)0x06004000, 0x3c00);
+  Iwram_ClearWordsEntry(canvas, 0x3c00);
   REG_BLDALPHA = 0x1010;
   REG_BG2PA = 0x100;
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
@@ -722,7 +714,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
                              work->sheet + 0x4000, 1, 0);
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
   // A block of its own: camera, savedYaw and target take their stack slots
   // after the blitter pair's address.
@@ -954,7 +946,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
 
       if (frame > 63) {
         if (frame == 64) {
-          Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+          Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
           for (i = 0; i != 64; i++) {
             struct EffectStep *p = &work->particles[i];
             s32 angle = (i & 7) << 13;

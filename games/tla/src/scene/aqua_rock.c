@@ -341,7 +341,7 @@ void Func_02000b68(s32 unused, s32 id) {
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
   BattleEffect_StartBufferInterpolation(20);
   Event_Wait(20);
-  if (GameFlag_Test_(0xa68) == 0) {
+  if (Event_GetFlag(0xa68) == 0) {
     GameFlag_SetBit(0xa68);
     Func_02002958_(64, 64, 1, 2, 51, 82);
     Func_02002958_(66, 64, 1, 2, 115, 18);
@@ -749,7 +749,7 @@ void Func_0200169c(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, 0, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1124,7 +1124,7 @@ void Func_02002158(void) {
   if (flag == 0) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
+    FieldCamera_MoveTo(-1, -1, -1, 0);
     leader->motionFlags = flag;
     Actor_SetHorizontalPositionWithTerrain(*owner, ((s16 *)&leader->x)[1] << 16,
                                            (((s16 *)&leader->z)[1] << 16) -
@@ -1292,7 +1292,7 @@ void Func_02002550(void) {
   struct AquaRockWork *work = &gData_020034f0;
   void *buffer;
 
-  Iwram_ClearWords(work, 0x70c);
+  Iwram_ClearWordsEntry(work, 0x70c);
   buffer = MemAlloc_(0x100);
   Func_020028b8(gData_02002c74, buffer);
   work->vramEntry = Resource_FindFreeEntry();

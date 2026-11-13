@@ -170,7 +170,7 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
     entry->offset = offset;
     if (src != 0) {
       if (src == (const void *)-1)
-        Iwram_ClearWords(dst, size);
+        Iwram_ClearWordsEntry(dst, size);
       else
         Dma_Set(src, dst, DMA_COPY_WORDS(size >> 2), REG_DMA3);
     }

@@ -63,18 +63,6 @@ void Func_020003fc(struct TreasureIsleCell *cells, s16 index) {
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-static __inline__ void CameraBounds(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as a direct call, 13
-   * of 163 instructions differ in tla-en. */
-  Camera_MoveWithinMapBounds(x, y, z, mode);
-}
-
-static __inline__ void SetCells(s32 a, s32 b, s32 c, s32 d, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as direct calls, 24
-   * of 163 instructions differ in tla-en. */
-  Func_0802b450(a, b, c, d, x, z);
-}
-
 /// Called by Func_020005ac for each listed cell whose flag is still clear:
 /// points the camera at the cell, bursts three effects there, changes its
 /// cell pictures twice and hands over to Func_020003fc, which sets its flag.
@@ -85,7 +73,7 @@ void Func_0200043c(struct TreasureIsleCell *cells, s16 index) {
   FieldCamera_SetSpeed(0x60000, 0xc000);
   // As &cells[index], the sum takes its operands the other way round.
   cell = (struct TreasureIsleCell *)((index << 4) + (s32)cells);
-  CameraBounds((cell->x << 20) + 0x80000, -1, (cell->z << 20) + 0x80000, 1);
+  FieldCamera_MoveTo((cell->x << 20) + 0x80000, -1, (cell->z << 20) + 0x80000, 1);
   Func_02001014();
   MapGrid_SetShake(0, 0x100000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
@@ -103,9 +91,9 @@ void Func_0200043c(struct TreasureIsleCell *cells, s16 index) {
   Func_0200015c((cell->x << 20) + 0x120000, 0, (cell->z << 20) + 0x80000, 0, 0,
                 0, 0x3a0000, &options);
   FieldEvent_Wait(10);
-  SetCells(6, 100, 3, 4, cell->x + 63, cell->z - 2);
+  MapGrid_CopyCellsLayered(6, 100, 3, 4, cell->x + 63, cell->z - 2);
   FieldEvent_Wait(10);
-  SetCells(3, 100, 3, 4, cell->x + 63, cell->z - 2);
+  MapGrid_CopyCellsLayered(3, 100, 3, 4, cell->x + 63, cell->z - 2);
   FieldEvent_Wait(10);
   Func_020003fc(cells, index);
 }
@@ -337,10 +325,10 @@ void Func_02000ba0(void) {
   if (busy != 0)
     return;
   if (gData_02001aa4__scene_tables == -1) {
-    Call3((void (*)())Iwram_CopyWords, Data_02001aa8, (void *)0x05000060, 32);
-    Iwram_CopyWords((void *)gData_02001ac8, Data_02001aa8, 32);
-    Iwram_CopyWords((void *)Data_02001ae8, (void *)0x05000140, 32);
-    Iwram_CopyWords(Data_02001b08, (void *)Data_02001ae8, 32);
+    Call3((void (*)())Iwram_CopyWordsEntry, Data_02001aa8, (void *)0x05000060, 32);
+    Iwram_CopyWordsEntry((void *)gData_02001ac8, Data_02001aa8, 32);
+    Iwram_CopyWordsEntry((void *)Data_02001ae8, (void *)0x05000140, 32);
+    Iwram_CopyWordsEntry(Data_02001b08, (void *)Data_02001ae8, 32);
     gData_02001aa4__scene_tables = 0;
   }
   /* FAKEMATCH(volatile): two of the colour arrays read and written as volatile,
@@ -421,9 +409,6 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom4) {
     if (Event_GetFlag(0x30d))
       Actor_SetPosition(8, PIXELS(696), PIXELS(600));
-    /* FAKEMATCH(signature): Func_02001064 declared returning s32, though it
-     * reaches Func_080d9e98, whose draft returns nothing; as void, which sets
-     * r0 first for these calls, 4 of 241 instructions differ in tla-en. */
     Func_02001064(0, 17, 18);
     Func_02001064(1, 19, 20);
     Func_02001064(2, 21, 22);

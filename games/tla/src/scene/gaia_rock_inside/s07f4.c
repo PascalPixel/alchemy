@@ -337,7 +337,7 @@ void Func_02000f00(void) {
   u8 *sprite = object->sprite;
   u8 *animation = FIELD_AT(sprite, u8 *, 40);
 
-  Iwram_CopyWords(&gData_0200646c, object, 128);
+  Iwram_CopyWordsEntry(&gData_0200646c, object, 128);
   gData_020064f8 = animation[21];
   Data_020064f4 = sprite[24];
   {
@@ -378,7 +378,7 @@ void Func_02000fac(void) {
     walker->movementState = 0;
     Actor_SetAnimationSpeed(walker, 16);
   }
-  Iwram_CopyWords(object, &gData_0200646c, 128);
+  Iwram_CopyWordsEntry(object, &gData_0200646c, 128);
   Actor_SetAnimation(10, Data_020064f4);
   Actor_SetAnimationSpeed(object, gData_020064f8);
 }

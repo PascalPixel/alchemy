@@ -1531,7 +1531,7 @@ void Func_02002048(void) {
 void Func_02002a08(void) {
   struct MapWork *map;
   s32 i;
-  s32 step;
+  s32 step = 0x10000;
 
   if (Event_GetFlag(0x8a7) == 0)
     return;
@@ -1758,10 +1758,6 @@ turn:
   MapGrid_CopyCellsLayered(42, 60, 17, 4, 42, 68);
   MapGrid_CopyCellsLayered(106, 60, 17, 4, 106, 64);
   MapGrid_CopyCellsLayered(106, 60, 17, 4, 106, 68);
-  /* FAKEMATCH(temporary): the step held in a local, used for the first layer
-   * and both actors, gives the native's registers; as the literal each time, 14
-   * of 853 instructions differ in tla-en. */
-  step = 0x10000;
   i = 239;
 scroll:
   *(s32 *)(map->layers[0].unk08 + 4) += step;

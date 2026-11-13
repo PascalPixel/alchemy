@@ -12,13 +12,6 @@ extern u32 gData_02004f9c[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-static __inline__ struct Actor *Func_02004b30_(s32 kind, s32 x, s32 y, s32 z) {
-  /* FAKEMATCH(wrapper): forwarding through the inline builds the kind after the
-   * position loads, as in the native; as a direct call, 4 of 77 instructions
-   * of Func_020039f4 differ in tla-en. */
-  return ((struct Actor *)Import_ActorCreate(kind, x, y, z));
-}
-
 /// Spawns a pair of sparks at the object.
 // As ☀️'s MercuryLighthouse_SpawnSparkPair does at a spawn point.
 void Func_020039f4(struct Actor *object) {
@@ -30,7 +23,7 @@ void Func_020039f4(struct Actor *object) {
    * so its entry loads before the factor's shift, as in the native; as a direct
    * call, 2 of 77 instructions differ in tla-en. */
   mulQ16(object->scaleX, 0x18000);
-  spark = Func_02004b30_(271, object->x, object->y, object->z);
+  spark = FieldActor_Create(271, object->x, object->y, object->z);
   if (spark != NULL) {
     spark->terrainHeight = object->terrainHeight;
     sprite = spark->sprite;
@@ -44,7 +37,7 @@ void Func_020039f4(struct Actor *object) {
       sprite->priority = 1;
     }
   }
-  spark = Func_02004b30_(271, object->x, object->y, object->z);
+  spark = FieldActor_Create(271, object->x, object->y, object->z);
   if (spark != NULL) {
     spark->terrainHeight = object->terrainHeight;
     sprite = spark->sprite;

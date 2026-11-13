@@ -76,10 +76,6 @@ void Func_02000120(void) {
     Actor_SetModeById(18, 3);
     Event_ShowMessageAndWait(18, 0);
     gMainRoutineWork.ownerOverride = 1;
-    /* FAKEMATCH(wrapper): the flag test forwarded through event.h's
-     * Event_GetFlag; as a direct GameFlag_Test call, gMainRoutineWork's offsets
-     * take r3 instead of r2, 22 of 89 instructions differ in tla-en (found
-     * by alchemy permute). */
     if (Event_GetFlag(0x9d0)) {
       GameFlag_SetBit(0x8df);
       GameFlag_SetBit(0x9b2);
@@ -110,9 +106,6 @@ void Func_02000208(void) {
     Event_ResolvePendingActions(0);
     Camera_MoveWithinMapBounds(96 << 16, -1, 308 << 16, 1);
     {
-      /* FAKEMATCH(temporary): the angle shifted from a local, so it is built
-       * first, as the ROM builds it; as a constant, it is built last, 2 of
-       * 195 instructions differ in tla-en. */
       s32 angle = 208;
 
       Actor_SetPositionAndFacing(9, 60 << 16, 362 << 16, angle << 8);
@@ -124,8 +117,6 @@ void Func_02000208(void) {
     Actor_WalkToAndWait(9, 70, 308);
     Actor_ArmCallback(9, FACING_EAST, 0);
     {
-      /* FAKEMATCH(temporary): the angle shifted from a local, as above; as a
-       * constant, 2 of 195 instructions differ in tla-en. */
       s32 angle = 160;
 
       Actor_SetPositionAndFacing(10, 94 << 16, 272 << 16, angle << 7);

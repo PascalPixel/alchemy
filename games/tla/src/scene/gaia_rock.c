@@ -156,8 +156,6 @@ void Func_02000164(s32 unused, s32 id) {
     if ((p->x >> 19) == 81) {
       Event_SetFlag(0x921);
       {
-        /* FAKEMATCH(temporary): the row in its own register; as a plain 46,
-         * 2 of 109 instructions differ in tla-en. */
         s32 row = 46;
 
         MapGrid_CopyCellAttributes(41, row, 1, 1, 39, 46);

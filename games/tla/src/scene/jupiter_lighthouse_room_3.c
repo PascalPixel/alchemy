@@ -31,7 +31,7 @@ void Func_02000070(void) {
   if (Func_02000dcc(&block))
     Func_02001050(block);
   if (object->x >> 20 == 16 && object->z >> 20 == 12 &&
-      GameFlag_Test_(0x200) == 0) {
+      Event_GetFlag(0x200) == 0) {
     Event_SetFlag(0x200);
     FieldActor_SetSpritePriority(10, 3);
     object->motionFlags = 3;

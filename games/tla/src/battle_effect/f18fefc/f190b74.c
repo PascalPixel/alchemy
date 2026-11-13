@@ -146,7 +146,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
     EffectPosition_ProjectScaledBattler(effect->actors[0], &to);
 
     if (frame == 0) {
-      Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gMapCellBuffer, 0,
                                  0);
       Resource_LoadAndDecompress((s32)&ResourceId_Data0E9, gData_02014000, 0,
@@ -195,7 +195,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       gBgScroll[1].x += 8;
 
     if (frame == 8) {
-      Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       step = work->particles;
       for (i = 0; i != 64; i++) {
         step->x = Random16() % 216 - 96;
@@ -219,7 +219,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
     if (frame == 90) {
       struct EffectStep *shard;
 
-      Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       Sound_PlayFar(144);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
       work->shakeFrames = 8;
@@ -503,7 +503,7 @@ void *Resource_GetTableEntry(s32 id);
 s32 Resource_DecodeType01(const void *source, void *destination);
 
 static inline s32 Swirl_CopyPalette(const void *source) {
-  return Iwram_CopyWords((void *)&BG_PLTT[96], source, 128);
+  return Iwram_CopyWordsEntry((void *)&BG_PLTT[96], source, 128);
 }
 
 static inline s32 Swirl_Draw(DrawRectangle draw, void *buffer,
@@ -556,7 +556,7 @@ void Func_08191530(struct BattleEffectArgument *effect) {
   palette += 128;
   Resource_DecodeType01(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet);
-  Iwram_CopyWords((void *)&BG_PLTT[96], palette, 128);
+  Iwram_CopyWordsEntry((void *)&BG_PLTT[96], palette, 128);
   for (i = 0; i != 0x4000; i++)
     work->sheet[i] += 96;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
@@ -596,7 +596,7 @@ void Func_08191530(struct BattleEffectArgument *effect) {
       break;
 
     if (frame == 0)
-      Iwram_FillWords((void *)BG_PLTT, 128, 0x7fff7fff);
+      Iwram_FillWordsEntry((void *)BG_PLTT, 128, 0x7fff7fff);
     if (frame > 119)
       Func_08164a4c(-1, -1, -1);
     else if ((frame & 3) == 1)

@@ -34,14 +34,8 @@ s32 PsynergyMenu_Run(void) {
   Window_InitializeWork(0);
 #if TLA_PATCH_2
   Menu_SuspendFieldTasks();
-  /* FAKEMATCH(wrapper): forwarding through item.c's CopyWords_ inline keeps
-   * each call's own constants; as direct calls, 46 of 164 instructions
-   * differ in tla-de. */
-  CopyWords_(savedTiles, (void *)0x06004000, 0x2000);
-  /* FAKEMATCH(wrapper): forwarding through item.c's FillWords_ inline keeps
-   * each call's own constants; as a direct call, 68 of 164 instructions
-   * differ in tla-de. */
-  FillWords_((void *)0x06004000, 0x2000, 0x33333333);
+  Iwram_CopyWords(savedTiles, (void *)0x06004000, 0x2000);
+  Iwram_FillWords((void *)0x06004000, 0x2000, 0x33333333);
   Text_UseExtraTilesFar(1);
 #endif
   screen->partyCount = Party_ListMembersFar(screen->ownerIds);
@@ -71,7 +65,7 @@ s32 PsynergyMenu_Run(void) {
 #if TLA_PATCH_2
   Func_08038290();
   Text_UseExtraTilesFar(0);
-  CopyWords_((void *)0x06004000, savedTiles, 0x2000);
+  Iwram_CopyWords((void *)0x06004000, savedTiles, 0x2000);
   Ram_HeapSlots->windowTiles[6] = 0;
   Heap_Release(savedTiles);
   wait(1);

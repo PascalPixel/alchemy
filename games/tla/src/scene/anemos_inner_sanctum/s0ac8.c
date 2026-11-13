@@ -284,12 +284,6 @@ void Func_0200109c(void) {
 
 #include "scene_tables.h"
 
-static __inline__ void SetCell(s32 a, s32 x, s32 z, s32 b) {
-  /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as direct calls, 36
-   * of 243 instructions differ in tla-en. */
-  SetMapCellCollision(a, x, z, b);
-}
-
 /// An event handler from the sanctum's event table (in s2f48.c),
 /// reading the leader's place in 8-pixel cells: sets the cells of rooms 3 and
 /// 4, and sets flags 0xa80 to 0xa86 where the leader stands on given cells,
@@ -307,15 +301,15 @@ void Func_02001160(void) {
   x = leader->x >> 19;
   z = leader->z >> 19;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room3) {
-    SetCell(2, 0x480000, 0x1b80000, 232);
+    Field_SetCellBehaviorAt(2, 0x480000, 0x1b80000, 232);
     if (x != 8)
-      SetCell(2, 0x480000, 0x1a80000, 232);
+      Field_SetCellBehaviorAt(2, 0x480000, 0x1a80000, 232);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4) {
-    SetCell(2, 0x1180000, 0x1580000, 0);
-    SetCell(2, 0x1180000, 0x1780000, 232);
-    SetCell(2, 0x1280000, 0x1680000, 0);
-    SetCell(2, 0x2080000, 0x2780000, 232);
+    Field_SetCellBehaviorAt(2, 0x1180000, 0x1580000, 0);
+    Field_SetCellBehaviorAt(2, 0x1180000, 0x1780000, 232);
+    Field_SetCellBehaviorAt(2, 0x1280000, 0x1680000, 0);
+    Field_SetCellBehaviorAt(2, 0x2080000, 0x2780000, 232);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room2) {
     if (x == 37 && z == 31) {
@@ -364,12 +358,6 @@ extern const s32 gData_02003574[];
 void Func_020032e0(struct Actor *, s32);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-static __inline__ struct Actor *Create(s32 type, s32 x, s32 y, s32 z) {
-  /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as a direct call, 4
-   * of 159 instructions differ in tla-en. */
-  return ((struct Actor *)Import_ActorCreate(type, x, y, z));
-}
-
 /// An event handler from the sanctum's event table (in s2f48.c):
 /// changes the cells at the leader's place, spawns an effect of type 0x15d
 /// there and sets the flag the event work's exit selects; once flags 0x200 to
@@ -388,7 +376,7 @@ void Func_02001398(void) {
   else
     MapGrid_CopyCellsTo(54, 87, leader->x >> 20, (leader->z >> 20) + 64, 1, 1);
   Event_PlaySound(106);
-  object = Create(0x15d, ((leader->x >> 20) << 20) + 0x80000, 0,
+  object = FieldActor_Create(0x15d, ((leader->x >> 20) << 20) + 0x80000, 0,
                   ((leader->z >> 20) << 20) + 0x80000);
   object->priorityFlags |= 2;
   object->motionFlags = 0;
@@ -448,10 +436,6 @@ void Func_02001518(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 10);
   FieldEvent_Wait(30);
   object->motionFlags = 0;
-  /* FAKEMATCH(wrapper): the camera move forwarded through FieldCamera_MoveTo,
-   * so each -1 is built on its own, as in the ROM; as a direct call, the three
-   * share one register, two instructions shorter, 12 of 100 instructions
-   * differ in tla-en. */
   FieldCamera_MoveTo(-1, -1, -1, 0);
   object->speedLimit = 0x20000;
   object->acceleration = 0x800;
@@ -531,12 +515,6 @@ DEFINE_FUNC_0200178C(Func_020017a0, 0xc)
 
 extern const s32 gData_02003594[];
 
-static __inline__ void AddPolar(s32 length, s32 angle, s32 *position) {
-  /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as a direct call, 4
-   * of 171 instructions differ in tla-en. */
-  Vector_AddPolarOffsetFar(length, angle, position);
-}
-
 /// The update of an object that moves with the leader: once the leader is past
 /// z 248 it settles on its cell and clears flag 0x200; otherwise it repeats the
 /// leader's step, raising an effect of type 0x2a0 on each step, and stops where
@@ -576,7 +554,7 @@ void Func_020017b4(struct Actor *self) {
   }
   if (ahead[2] >> 16 > 248)
     return;
-  AddPolar(0x70000, 0x8000 - leader->facing, ahead);
+  FieldVector_AddPolarOffset(0x70000, 0x8000 - leader->facing, ahead);
   if (MapGrid_GetCellBehaviorAt(self->terrainId, ahead[0], ahead[2]) == 255)
     return;
   {

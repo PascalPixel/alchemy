@@ -562,7 +562,7 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
               40);
     // The Djinn appears in the orb, then dives down to the left.
     if (frame == 20)
-      Iwram_CopyWords(
+      Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
           Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 128);
     if (frame >= 20 && frame <= 31) {

@@ -458,7 +458,7 @@ s32 Func_08043534(void) {
       }
       dst = (u8 *)buffer + (s32)gData_02000504;
       dst -= (s32)gData_02000000;
-      Iwram_CopyWords(dst, gData_02000504, 16);
+      Iwram_CopyWordsEntry(dst, gData_02000504, 16);
       token = (s32)SaveProgress_Open(0);
       found = Func_08042f10(gData_020036d0, buffer);
       SaveProgress_Close((struct Window *)token);

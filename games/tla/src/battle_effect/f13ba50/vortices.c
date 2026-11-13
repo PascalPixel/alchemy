@@ -222,7 +222,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
     // Wipe the canvas every eight frames from frame 16, leaving a trail.
     for (i = 0; i != 7; i++) {
       if (frame == i * 8 + 16)
-        Iwram_FillWords(canvas, 0x4000, 0x08080808);
+        Iwram_FillWordsEntry(canvas, 0x4000, 0x08080808);
     }
 
     // Sway toward the targets' side; fade in over 16 frames and out over the

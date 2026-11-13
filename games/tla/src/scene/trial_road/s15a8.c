@@ -372,19 +372,12 @@ extern s32 gData_02007e24;
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Words_Copy(void *destination, const void *source,
-                                  s32 size) {
-  Iwram_CopyWords(destination, source, size);
-}
 
 void Func_02001fc4(s32 mode) {
   gData_02007e24 = 1;
   if (mode != 2)
-    Words_Copy(gData_02007e28, (void *)&BG_PLTT_COLOR(5, 0), 32);
+    Iwram_CopyWords(gData_02007e28, (void *)&BG_PLTT_COLOR(5, 0), 32);
   if (mode == 1) {
-    /* FAKEMATCH(temporary): a local holding the zero builds it in r2 and the
-     * counter address in r3, as overlay 699's twin does; as
-     * gData_02007e20 = 0, 6 of 25 instructions differ in tla-en. */
     s32 zero = 0;
 
     gData_02007e20 = zero;
@@ -642,7 +635,7 @@ s32 Scene_PrepareMap(void) {
     if ((u32)(entrance - 31) <= 1) {
       if (!GameFlag_Test(896)) {
         unit = Unit_Get(gMainRoutineWork.currentOwner);
-        Iwram_ClearWords(state, 32);
+        Iwram_ClearWordsEntry(state, 32);
         value = 0;
         for (n = 0; n <= 13; n++)
           value += unit[n];
@@ -662,7 +655,7 @@ s32 Scene_PrepareMap(void) {
     } else if ((u32)(entrance - 33) <= 1) {
       if (!GameFlag_Test(896)) {
         unit = Unit_Get(gMainRoutineWork.currentOwner);
-        Iwram_ClearWords(state, 32);
+        Iwram_ClearWordsEntry(state, 32);
         value = 0;
         for (n = 0; n <= 13; n++)
           value += unit[n];
@@ -694,7 +687,7 @@ s32 Scene_PrepareMap(void) {
       Event_SetDestination((s32)&SceneId_Ov697Room1, n);
     } else if (entrance == 50) {
       unit = Unit_Get(gMainRoutineWork.currentOwner);
-      Iwram_ClearWords(state, 32);
+      Iwram_ClearWordsEntry(state, 32);
       value = 0;
       for (n = 0; n <= 13; n++)
         value += unit[n];
@@ -1462,15 +1455,11 @@ void Func_02003da0(void) {
     if (mover->speed != 0)
       attributes[3] = 0;
     else {
-      /* FAKEMATCH(temporary): the form kept; as attributes[3] |= 128, 4 of 213
-         instructions differ in tla-en. */
       s32 bits = 128;
       bits |= attributes[3];
       attributes[3] = bits;
     }
     if (mover->offset != 0) {
-      /* FAKEMATCH(temporary): the form kept; as attributes[3] |= 16, 4 of 213
-         instructions differ in tla-en. */
       s32 bits = 16;
       bits |= attributes[3];
       attributes[3] = bits;
@@ -1618,17 +1607,13 @@ void Func_02003f68(void) {
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void *Pool_Alloc(s32 size) { return Heap_AllocEwram(size); }
 
-static __inline__ void Words_Clear(void *destination, s32 size) {
-  Iwram_ClearWords(destination, size);
-}
-
 void Func_02004188(s32 a, s32 b) {
   struct TrialRoadGauge *gauge =
       (struct TrialRoadGauge *)(gData_020023c4 + 0x188);
   void *buffer;
 
   if (!GameFlag_Test(0x109))
-    Words_Clear(gauge, 0x1c8);
+    Iwram_ClearWords(gauge, 0x1c8);
   buffer = Pool_Alloc(0x800);
   Func_02005770(gField_Tiles64D, buffer);
   gauge->handle = Resource_FindFreeEntry();
@@ -1989,11 +1974,6 @@ void Func_02004a14(union FieldObject *object) {
   effect->z += velocityZ;
   effect->velocity.x = velocityX - velocityX / 18;
   effect->velocity.z = velocityZ - velocityZ / 16;
-  /* FAKEMATCH(dead): an empty once-only block ends the velocity stores, so the
-   * scale step's loads follow the z velocity's store; without it, 2 of 59
-   * instructions differ in tla-en. */
-  do {
-  } while (0);
   {
     /* FAKEMATCH(temporary): the x scale rate read into a block temporary,
      * which loads it before the x scale; as effect->scaleX +=
@@ -2143,9 +2123,6 @@ void TrialRoad_Idle(void) {}
 
 void TrialRoad_SetBalanceStateReady(void) {
   u16 *state = (u16 *)gSceneState;
-  /* FAKEMATCH(temporary): a local holding 9 builds it with movs; as a plain
-   * constant, which is a halfword pool load, 4 of 4 instructions differ in
-   * tla-en. */
   u16 ready = 9;
 
   *state = ready;
@@ -2539,9 +2516,6 @@ void Func_02005688(s32 a) {
 
 void Func_020056c4(s32 a) {
   struct TrialRoadControl *control = (struct TrialRoadControl *)gSceneState;
-  /* FAKEMATCH(temporary): a word local builds 0 with movs for both halfword
-   * stores; as a halfword constant, which loads from the pool, 14
-   * of 15 instructions differ in tla-en. */
   s32 zero = 0;
 
   *(u16 *)((Ram_HeapSlots->unkec[0]) + 234) = zero;

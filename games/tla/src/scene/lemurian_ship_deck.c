@@ -41,15 +41,6 @@ const u8 *Scene_GetPlacements(void) {
   return gData_020022cc;
 }
 
-static __inline__ void Func_02001f2c_(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                      s32 f) {
-  /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
-   * scene layer, so the arguments are set up in their own order and each call
-   * keeps its constants; as a direct call, the costly constant is built first
-   * or shared, 4 of 79 instructions differ in tla-en. */
-  Map_CopyCellPictureIndicesRect(a, b, c, d, e, f);
-}
-
 void Func_02000078(void) {
   if (Event_GetFlag(0x985)) {
     u8 *work = Ram_HeapSlots->eventWork;
@@ -75,7 +66,7 @@ void Func_02000078(void) {
       goto loop;
     if (!Event_GetFlag(0x201)) {
       Event_PlaySound(158);
-      Func_02001f2c_(51, 38, 70, 22, 1, 2);
+      MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
     }
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);

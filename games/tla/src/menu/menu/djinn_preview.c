@@ -85,7 +85,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     firstIndex = menu->pairIndex[0] & 31;
     firstWasSet = (u16)(menu->pairEntries[0] & 0x8000);
     unit = Unit_Get(memberId);
-    Iwram_CopyWords(original, unit, size);
+    Iwram_CopyWordsEntry(original, unit, size);
     Djinn_PutOnStandbyFar(memberId, firstElement, firstIndex);
     if (mode == 0) {
       secondElement = menu->pairElement[1];
@@ -99,11 +99,11 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     pageCounts[0] =
         PsynergyList_Diff((u16 *)(original + 88), (u16 *)(unit + 88), diffWork,
                           &gainedCount, &lostCount);
-    Iwram_CopyWords(unit, original, size);
+    Iwram_CopyWordsEntry(unit, original, size);
 
     memberId = menu->shownMember[1];
     unit = Unit_Get(memberId);
-    Iwram_CopyWords(original, unit, size);
+    Iwram_CopyWordsEntry(original, unit, size);
     if (mode == 0)
       Djinn_PutOnStandbyFar(memberId, secondElement, secondIndex);
     Djinn_GiveFar(memberId, firstElement, firstIndex);
@@ -113,7 +113,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     pageCounts[1] =
         PsynergyList_Diff((u16 *)(original + 88), (u16 *)(unit + 88), diffWork,
                           &gainedCount, &lostCount);
-    Iwram_CopyWords(unit, original, size);
+    Iwram_CopyWordsEntry(unit, original, size);
     Heap_Release(original);
     Heap_Release(diffWork);
   } else if (mode == 2 || mode == 3) {
@@ -134,7 +134,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     firstIndex = menu->pairIndex[0] & 31;
     applySecond = (mode == 3);
     unit = Unit_Get(memberId);
-    Iwram_CopyWords(original, unit, 332);
+    Iwram_CopyWordsEntry(original, unit, 332);
     Djinn_PutOnStandbyFar(memberId, firstElement, firstIndex);
     if (applySecond != 0)
       Djinn_SetFar(memberId, firstElement, firstIndex);
@@ -142,7 +142,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     pageCounts[0] =
         PsynergyList_Diff((u16 *)(original + 88), (u16 *)(unit + 88), diffWork,
                           &gainedCount, &lostCount);
-    Iwram_CopyWords(unit, original, 332);
+    Iwram_CopyWordsEntry(unit, original, 332);
     pageCounts[1] = pageCounts[0];
     page = 0;
     Heap_Release(original);
@@ -221,7 +221,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         if (backdrop->tutorialTimer == 60) {
           s32 window;
 
-          Iwram_CopyWords(saved, work->tilemap, size);
+          Iwram_CopyWordsEntry(saved, work->tilemap, size);
           window =
               Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 3, 8, 0, 1);
           /* FAKEMATCH(dead): the cursor's store in a once-only block, as The
@@ -235,7 +235,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           while (Message_AllTypedFar() == 0)
             wait(1);
           Window_CloseFar(window, 1);
-          Iwram_CopyWords(work->tilemap, saved, size);
+          Iwram_CopyWordsEntry(work->tilemap, saved, size);
           Func_08038290();
           work->dirty = 1;
           redraw = 1;
@@ -253,7 +253,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         if (backdrop->tutorialTimer == 60) {
           s32 window;
 
-          Iwram_CopyWords(saved, work->tilemap, size);
+          Iwram_CopyWordsEntry(saved, work->tilemap, size);
           window =
               Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 2, 8, 0, 1);
           /* FAKEMATCH(dead): the cursor's store in a once-only block, as The
@@ -267,7 +267,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           while (Message_AllTypedFar() == 0)
             wait(1);
           Window_CloseFar(window, 1);
-          Iwram_CopyWords(work->tilemap, saved, size);
+          Iwram_CopyWordsEntry(work->tilemap, saved, size);
           Func_08038290();
           work->dirty = 1;
           wait(1);
@@ -394,13 +394,13 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
        * as the native does; as a direct call, 6 of 1244 instructions differ
        * in tla-en. */
       if ((frame & 4) != 0)
-        CopyWords(gMenu_BackdropBorderTile, Iwram_CopyWords, (void *)0x060052c0,
+        CopyWords(gMenu_BackdropBorderTile, Iwram_CopyWordsEntry, (void *)0x060052c0,
                   32);
       else
         /* FAKEMATCH(wrapper): the fill forwarded through shared.c's FillWords
          * inline, so the routine loads before its arguments; as a direct
          * call, 4 of 1244 instructions differ in tla-en. */
-        FillWords(Iwram_FillWords, (void *)0x060052c0, 32, 0x44444444);
+        FillWords(Iwram_FillWordsEntry, (void *)0x060052c0, 32, 0x44444444);
     }
 
     if ((pressed & 1) != 0) {
@@ -591,9 +591,9 @@ s32 DjinnMenu_ShowMemberStatus(void) {
       redraw = 0;
     if ((frame & 3) == 0) {
       if (frame & 4)
-        Iwram_CopyWords((void *)0x060052c0, gMenu_BackdropBorderTile, 32);
+        Iwram_CopyWordsEntry((void *)0x060052c0, gMenu_BackdropBorderTile, 32);
       else
-        Iwram_FillWords((void *)0x060052c0, 32, 0x44444444);
+        Iwram_FillWordsEntry((void *)0x060052c0, 32, 0x44444444);
     }
     if (pressedKeys & KEY_START) {
       Sound_PlayFar(113);

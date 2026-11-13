@@ -231,12 +231,7 @@ L_020083da:
   t66 = (s32)Ram_HeapSlots->eventWork;
   FIELD_AT(t66, s32, 436) = 100;
   PaletteFade_ApplyTarget(0x10000, 0);
-  /* FAKEMATCH(dead): the call in a once-only block, whose end holds the order
-   * around it; as the plain statement, 2 of 438 instructions differ in tla-en.
-   */
-  do {
-    Event_StartScreenTransition();
-  } while (0);
+  Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   t70 = (s32)Ram_HeapSlots->eventWork;
   FIELD_AT(t70, s32, 436) = 8;

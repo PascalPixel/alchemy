@@ -1033,14 +1033,8 @@ void Func_02001a14(void) {
   Event_ResolvePendingActions(0);
   Sound_Play(0);
   Map_CopyCellPictureIndicesRect(49, 70, 19, 73, 6, 6);
-  /* FAKEMATCH(wrapper): forwarded, so that its constants are built in the
-   * native's order; as a direct call, 2 of 307 instructions differ in tla-en.
-   */
   actor = FieldActor_Create(159, 0x15c0000, 0, 0xb80000);
   actor->update = (void (*)(void))Func_020010a8;
-  /* FAKEMATCH(wrapper): forwarded, so that its constants are not shared with
-   * the second move's; as a direct call, 47 of 307 instructions differ in
-   * tla-en. */
   FieldCamera_MoveTo(0x1600000, -1, 0xc40000, 0);
   Event_StartScreenTransition();
   wait(1);

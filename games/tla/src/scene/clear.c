@@ -162,13 +162,8 @@ void Func_020001f4(void) {
         gData_020024fe = keys;
     } else if (*held != 0) {
       if (*held == gData_02002410[gData_020024fa]) {
-        /* FAKEMATCH(dead): the two stores in a once-only block, which keeps
-         * them together; as plain statements, 4 of 92 instructions differ in
-         * tla-en. */
-        do {
-          gData_020024fa++;
-          gData_020024fe = 1;
-        } while (0);
+        gData_020024fa++;
+        gData_020024fe = 1;
         if (gData_02002410[gData_020024fa] == 0) {
           gData_020024f6 = 1;
           Event_PlaySound(110);
@@ -192,13 +187,8 @@ void Func_020001f4(void) {
         gData_02002500 = keys;
     } else if (*held != 0) {
       if (*held == gData_02002418[gData_020024fc]) {
-        /* FAKEMATCH(dead): the two stores in a once-only block, as for the
-         * first code; as plain statements, 4 of 92 instructions differ in
-         * tla-en. */
-        do {
-          gData_020024fc++;
-          gData_02002500 = 1;
-        } while (0);
+        gData_020024fc++;
+        gData_02002500 = 1;
         if (gData_02002418[gData_020024fc] == 0) {
           gData_020024f8 = 1;
           Event_PlaySound(110);
@@ -267,7 +257,7 @@ s32 Party_AddMember(s32 value);
 
 /// Swaps the map cell buffer out around a password or link screen.
 #define COPY_CELLS(to, from)                                                   \
-  Value3((s32 (*)())Iwram_CopyWords, (s32)(to), (s32)(from), 0x3000)
+  Value3((s32 (*)())Iwram_CopyWordsEntry, (s32)(to), (s32)(from), 0x3000)
 #define SAVE_CELLS()                                                           \
   u8 *cells = gData_02000000;                                                  \
                                                                                \
@@ -647,14 +637,6 @@ void Func_02000a70(s32 cell, u16 *text) {
 }
 #endif
 
-// The copies go through an inline wrapper, as the Broken Seal's iwram_call.h
-// writes it.
-#undef Iwram_CopyWords
-static inline s32 Iwram_CopyWords(void *destination, const void *source,
-                                  s32 size) {
-  return Iwram_CopyWordsEntry(destination, source, size);
-}
-
 #define RECEIVED_FLAGS (Ram_MapCellBuffer + 0x3040)
 #define RECEIVED_UNITS (Ram_MapCellBuffer + 0x3240)
 
@@ -1022,7 +1004,7 @@ s32 Func_02000e44(void) {
       x = col * 12 + 18;
     work->cells[i] = Func_02002330(grid, work->glyphs[i], x, y);
     work->shown[i] = 99;
-    Iwram_ClearWords(work->cells[i], 128);
+    Iwram_ClearWordsEntry(work->cells[i], 128);
   }
   entry = Resource_FindFreeEntry();
   if (entry <= 95) {
@@ -1304,7 +1286,7 @@ s32 Func_02000e44(void) {
       if (code != work->shown[i]) {
         work->shown[i] = raw;
         if (code == 99) {
-          Iwram_ClearWords(work->cells[i], 128);
+          Iwram_ClearWordsEntry(work->cells[i], 128);
         } else {
           Func_02000a70(entered[index], glyph);
           Func_02002328(glyph[0], work->cells[i]);
@@ -1314,7 +1296,7 @@ s32 Func_02000e44(void) {
     for (; i != 50; i++) {
       if (work->shown[i] != 99) {
         work->shown[i] = 99;
-        Iwram_ClearWords(work->cells[i], 128);
+        Iwram_ClearWordsEntry(work->cells[i], 128);
       }
     }
     System_Wait(1);

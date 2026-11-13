@@ -106,8 +106,8 @@ s32 DjinnMenu_Run(void) {
   /* FAKEMATCH(wrapper): forwarding through item.c's CopyWords_ inline keeps
    * each call's own constants; as plain calls, 4 of 201 instructions differ
    * in tla-en. */
-  CopyWords_((void *)0x06004000, backdrop->tiles, 0x2000);
-  CopyWords_((void *)&BG_PLTT_COLOR(4, 0), backdrop->palette, 128);
+  Iwram_CopyWords((void *)0x06004000, backdrop->tiles, 0x2000);
+  Iwram_CopyWords((void *)&BG_PLTT_COLOR(4, 0), backdrop->palette, 128);
   wait(1);
   Menu_ResumeFieldTasks();
   Window_EraseBorderRectFar(0, 0, 30, 20);
@@ -459,15 +459,15 @@ void Menu_OpenBackdropScreen(void) {
   /* FAKEMATCH(wrapper): forwarding through item.c's CopyWords_ inline keeps
    * each call's own constants; as direct calls, 134 of 237 instructions
    * differ in tla-en. */
-  CopyWords_(backdrop->tiles, BG_CHAR_BLOCK(1), 0x2000);
-  CopyWords_(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0), 128);
+  Iwram_CopyWords(backdrop->tiles, BG_CHAR_BLOCK(1), 0x2000);
+  Iwram_CopyWords(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0), 128);
   /* FAKEMATCH(wrapper): forwarding through item.c's FillWords_ inline keeps
    * each call's own constants; as direct calls, 2 of 237 instructions differ
    * in tla-en. */
-  FillWords_(BG_CHAR_BLOCK(1), 0x2000, 0x33333333);
-  FillWords_((void *)&BG_PLTT_COLOR(4, 0), 128, 0x55555555);
+  Iwram_FillWords(BG_CHAR_BLOCK(1), 0x2000, 0x33333333);
+  Iwram_FillWords((void *)&BG_PLTT_COLOR(4, 0), 128, 0x55555555);
   Graphics_ExpandVramTilesByColorTableFar(BG_CHAR_BLOCK(1) + 0x1000);
-  CopyWords_(BG_CHAR_BLOCK(1) + 150 * 32, gMenu_BackdropBorderTile, 32);
+  Iwram_CopyWords(BG_CHAR_BLOCK(1) + 150 * 32, gMenu_BackdropBorderTile, 32);
   Dma_Set(Palette_GetBasicObjColors(), (void *)&BG_PLTT_COLOR(5, 0),
           DMA_ENABLE << 16 | 16, REG_DMA3);
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
@@ -1752,7 +1752,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId, s32 removeP
   takeIndex = menu->pairIndex[addPairSlot];
   takeSet = menu->pairEntries[addPairSlot] & 0x8000;
   originalUnit = Heap_Alloc(sizeof(struct BattleUnit));
-  Iwram_CopyWords(originalUnit, unit, sizeof(struct BattleUnit));
+  Iwram_CopyWordsEntry(originalUnit, unit, sizeof(struct BattleUnit));
 
   if (page == 0) {
     if (previewMode == 3) {
@@ -1973,7 +1973,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId, s32 removeP
   size = sizeof(struct BattleUnit);
   if (page == 0)
     SideObject_CreateFar(ownerId, 0, side, window, 0, 0);
-  Iwram_CopyWords(unit, originalUnit, size);
+  Iwram_CopyWordsEntry(unit, originalUnit, size);
   Heap_Release(originalUnit);
   return 1;
 }

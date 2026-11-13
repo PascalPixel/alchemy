@@ -349,15 +349,6 @@ DEFINE_FUNC_020000F4_2(Func_0200091c, gData_02001fe8, gData_02001fe4,
 
 DEFINE_FUNC_020001D4(Func_02000978)
 
-/// Reads one colour's three channels, red first, stepping p past them. Its
-/// once-only block orders the shifts as the game does; see the note at its use.
-#define READ_COLOR(r, g, b, p)                                                 \
-  do {                                                                         \
-    (r) = *(p)++;                                                              \
-    (g) = *(p)++;                                                              \
-    (b) = *(p)++;                                                              \
-  } while (0)
-
 void Func_0200099c(void) {
   s32 step = 0;
   u16 *color;
@@ -374,26 +365,22 @@ void Func_0200099c(void) {
   if (!step)
     return;
   color = gData_02001fe0;
-  i = 0;
-  while (i < gData_02001fe4) {
+  for (i = 0; i < gData_02001fe4; i++) {
     dst = &BG_PLTT[gData_02001fcc[gData_02001fe8 * gData_02001fe4 + i]];
-    // READ_COLOR's block, at both uses, orders the reads as the game does; as
-    // three plain reads, 6 of 120 instructions differ in tla-en.
-    READ_COLOR(r, g, b, color);
-    *dst = b << 10 | g << 5 | r;
-    /* FAKEMATCH(dead): i++ in a once-only block; as a plain i++, 2 of 120
-     * instructions differ in tla-en. */
-    do {
-      i++;
-    } while (0);
+    r = *color++;
+    g = *color++;
+    b = *color++;
+    SET_RGB(*dst, r, g, b);
   }
   dst = &BG_PLTT[gData_02001fd8[gData_02001fe4]];
   if (gData_02001fc8)
     color = gData_02001fdc + gData_02001fe4 * 3;
   else
     color = gData_02001fe0 + gData_02001fe4 * 3;
-  READ_COLOR(r, g, b, color);
-  *dst = b << 10 | g << 5 | r;
+  r = *color++;
+  g = *color++;
+  b = *color++;
+  SET_RGB(*dst, r, g, b);
   gData_02001fc8 ^= 1;
   if (++gData_02001fe8 == gData_02001fe4)
     gData_02001fe8 = 0;
@@ -780,8 +767,6 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room2) {
     if (GameFlag_Test(0x303)) {
-      /* FAKEMATCH(wrapper): the form kept; as a direct call, 2 of 390
-       * instructions differ in tla-en. */
       Actor_SetPosition(8, 138 << 18, 216 << 16);
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, 13);
       MapGrid_CopyCellAttributes(95, 3, 3, 3, 98, 13);
@@ -814,8 +799,6 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Test(0x301))
       Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
     if (GameFlag_Test(0x304)) {
-      /* FAKEMATCH(wrapper): the form kept; as a direct call, 2 of 390
-       * instructions differ in tla-en. */
       Actor_SetPosition(13, 168 << 16, 184 << 16);
       MapGrid_CopyCellAttributes(12, 11, 1, 1, 10, 11);
     } else {
@@ -828,16 +811,12 @@ s32 Scene_Initialize(void) {
 #endif
     }
     if (GameFlag_Test(0x305)) {
-      /* FAKEMATCH(wrapper): the form kept; as a direct call, 2 of 390
-       * instructions differ in tla-en. */
       Actor_SetPosition(12, 154 << 18, 132 << 17);
       MapGrid_CopyCellAttributes(38, 15, 1, 1, 38, 16);
     } else {
       MapGrid_CopyCellAttributes(38, 15, 1, 1, 39, 16);
     }
     if (!GameFlag_Test(65) && !GameFlag_Test(145)) {
-      /* FAKEMATCH(wrapper): the form kept; as ((s32)GameFlag_GetByte(0x278)),
-       * 18 of 390 instructions differ in tla-en. */
       s32 step = FieldGameFlag_GetByte(0x278);
       s32 placed = GameFlag_Test(0x271);
 

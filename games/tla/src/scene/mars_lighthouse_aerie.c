@@ -66,9 +66,7 @@ void Func_020000e4(struct Actor *object) {
   counter = &object->unk5c[6];
   {
     s32 radius = object->speedLimit + *counter;
-    /* FAKEMATCH(pin): the anchor copied into r1 for its x; as anchor->x read
-     * straight, 2 of 48 instructions differ in tla-en. */
-    register struct Actor *a asm("r1");
+    struct Actor *a;
 
     a = anchor;
     along = a->x + cosine * (radius + 6);
@@ -1238,16 +1236,12 @@ void Func_02001f10(void) {
   Actor_ShowEmote(19, 0x109, 20);
   Event_ShowMessage(19, 0);
   Event_PlaySound(8);
-  /* FAKEMATCH(wrapper): FieldEffect_SetAttached called through call.h's Call2; as a
-   * direct call, 8 of 1038 instructions differ in tla-en. */
   Actor_SetAttachedEffect(24, 0x102);
   FieldEvent_Wait(20);
   Event_ShowMessage(24, 0);
   Event_ShowMessage(25, 0);
   Actor_SetAnimationAndWait(19, 3);
   Event_ShowMessage(19, 0);
-  /* FAKEMATCH(wrapper): FieldEffect_SetAttached called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_SetAttachedEffect(26, 0x102);
   Event_ShowMessage(0x101a, 0);
   Actor_SetAnimation(19, 4);
@@ -1340,8 +1334,6 @@ L_0200a47a:
   Actor_FaceDirectionAndWait(24, 0x6000);
   Event_ShowMessage(0x4018, 0);
   Actor_FaceDirectionAndWait(21, 0x2000);
-  /* FAKEMATCH(wrapper): FieldEffect_SetAttached called through call.h's Call2; as a
-   * direct call, 2 of 1038 instructions differ in tla-en. */
   Actor_SetAttachedEffect(21, 0x102);
   Event_ShowMessage(21, 0);
   Actor_FaceDirection((*(s32 *)owner2), 0xc000, 0);
@@ -1659,10 +1651,6 @@ void Func_02003210(struct Actor *self) {
   z += sine * 2;
   self->z = z;
   self->targetX = x;
-  /* FAKEMATCH(dead): the target z store stays ahead of the timer load;
-   * without it, 2 of 40 instructions differ in tla-en. */
-  do {
-  } while (0);
   self->targetZ = z;
   self->timer += -0x800;
 }

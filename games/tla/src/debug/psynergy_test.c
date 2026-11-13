@@ -223,21 +223,6 @@ void Func_02000444(void) { Actor_GetById(4)->terrainId = 2; }
 
 void Func_02000454(void) { Actor_GetById(4)->terrainId = 0; }
 
-static __inline__ void Actor_Emote(s32 actor, s32 emote, s32 frames) {
-  /* FAKEMATCH(wrapper): the call forwarded through an inline, so the emote's
-   * 255 is added after the actor is set, as the ROM has it; as direct
-   * Func_080d47b4 calls, 4 of 62 instructions of Func_02000508 and
-   * Func_0200055c differ in tla-en. */
-  Func_080d47b4(actor, emote, frames);
-}
-
-static __inline__ void Actor_SetPositionById(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): the call forwarded through an inline, so the x
-   * constant is split around the actor copy, as the ROM has it; as direct
-   * Actor_SetPositionAndReset calls, 4 of 62 instructions differ in tla-en. */
-  Actor_SetPositionAndReset(actor, x, z);
-}
-
 void Func_02000464(s32 unused, s32 actor) {
   Actor_ShowEmote(actor, 0x100, 50);
   FieldActor_Jump(actor, 6, 15);
@@ -246,13 +231,13 @@ void Func_02000464(s32 unused, s32 actor) {
   if (Event_GetFlag(0x200) == 0) {
     FieldEvent_SetMessageId((s32)MsgDailaInteriorsGah);
     Event_ShowMessage(actor, 0);
-    Actor_SetPositionById(actor, 360, 72);
+    Actor_WalkToAndWait(actor, 360, 72);
     Actor_FaceDirection(actor, 0x4000, 0);
     Event_SetFlag(0x200);
   } else {
     FieldEvent_SetMessageId((s32)MsgDailaInteriorsYarg);
     Event_ShowMessage(actor, 0);
-    Actor_SetPositionById(actor, 392, 104);
+    Actor_WalkToAndWait(actor, 392, 104);
     Actor_FaceDirection(actor, 0x8000, 0);
     Event_ClearFlag(0x200);
   }
@@ -262,7 +247,7 @@ void Func_02000464(s32 unused, s32 actor) {
 void Func_02000508(s32 unused, s32 actor) {
   Actor_FaceActor(actor, 4, 0);
   FieldEvent_Wait(10);
-  Actor_Emote(actor, 0x103, 50);
+  FieldActor_ShowEmote(actor, 0x103, 50);
   FieldActor_Jump(actor, 6, 15);
   FieldActor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
@@ -274,7 +259,7 @@ void Func_02000508(s32 unused, s32 actor) {
 void Func_0200055c(s32 unused, s32 actor) {
   Actor_FaceActor(actor, 4, 0);
   FieldEvent_Wait(10);
-  Actor_Emote(actor, 0x103, 50);
+  FieldActor_ShowEmote(actor, 0x103, 50);
   FieldActor_Jump(actor, 6, 15);
   FieldActor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);

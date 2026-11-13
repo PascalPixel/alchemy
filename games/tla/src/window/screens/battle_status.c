@@ -56,8 +56,11 @@ extern void BattleActor_SpawnObjectsForListFar__screens(u16 *list, s32 count) __
 void Func_08118148(u16 *list, s32 count, s32 mode);
 /* VIEW(screens): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 member); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId). */
 extern void **GetBattleObjectSlotFar__screens(s32 member) __asm__("GetBattleObjectSlotFar");
-// Returns nothing; typed s32 here, see the help window in page 2.
-s32 Window_MapTextCanvasTiles(s32 x, s32 y, s32 width, s32 height, s32 flags);
+#ifdef MODERN
+// Called with no prototype in scope, as its bytes need; a current GCC gets
+// it here.
+void Func_0803a2b0(s32 x, s32 y, u32 width, u32 height, s32 whole);
+#endif
 void Text_DrawWideStringAtOffset(u16 *text, struct SummaryWindow *window, s32 x,
                                  s32 y);
 s32 Unit_GetExperienceForLevelFar(s32 member, s32 level);
@@ -681,9 +684,6 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       u32 entry;
 
       WindowSprite_RedrawSavedRect(statusWindow);
-      /* FAKEMATCH(signature): Window_MapTextCanvasTiles typed s32 though it returns
-       * nothing, so the call sets r0 and y's load leads x's; as void, 6 of
-       * 3111 instructions differ in tla-en. */
       Window_MapTextCanvasTiles(helpWindow->x, helpWindow->y, helpWindow->width,
                     helpWindow->height, 0);
       Window_DrawDividerLine(statusWindow, 0, 16, 29, 16);
@@ -1004,7 +1004,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         if (statusKind == 0 && unit->hp == 0)
           statusKind = 16;
         savedUnit = Heap_Alloc(sizeof(*savedUnit));
-        Iwram_CopyWords(savedUnit, unit, sizeof(*savedUnit));
+        Iwram_CopyWordsEntry(savedUnit, unit, sizeof(*savedUnit));
         attackDelta = unit->atk;
         defenseDelta = unit->def;
         helpValue = 0;
@@ -1016,7 +1016,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         attackDelta -= unit->atk;
         defenseDelta -= unit->def;
         agilityDelta -= unit->agi;
-        Iwram_CopyWords(unit, savedUnit, sizeof(*savedUnit));
+        Iwram_CopyWordsEntry(unit, savedUnit, sizeof(*savedUnit));
         Heap_Release(savedUnit);
         switch (statusKind) {
         case 8:

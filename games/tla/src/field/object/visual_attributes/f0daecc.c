@@ -695,7 +695,7 @@ void Func_080dba5c(void) {
     // arguments; without it, 12 of 103 instructions differ in tla-en.
     do {
     } while (0);
-    Iwram_FillWords(buffer, 0x200, 0);
+    Iwram_FillWordsEntry(buffer, 0x200, 0);
     slot = Resource_FindFreeEntry();
     tiles = VramCache_Load(slot, 0x200, buffer);
     scene->vramSlot = slot;

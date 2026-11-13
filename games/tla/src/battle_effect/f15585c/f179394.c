@@ -377,7 +377,7 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
   if (effect->variant == 2) {
     void *source = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
-    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
     copy((void *)BG_PLTT, source, 128);
   }

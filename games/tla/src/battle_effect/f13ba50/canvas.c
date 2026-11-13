@@ -142,7 +142,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       Task_Add(Func_0813baec, 0x480);
       transition[4] = 1;
       cells = Resource_GetTableEntry((s32)&ResourceId_GoldenDragonTiles);
-      CopyWords_((void *)OBJ_PLTT, cells, 480);
+      Iwram_CopyWords((void *)OBJ_PLTT, cells, 480);
       cells += 480;
       Resource_DecodeType01(cells, gMapCellBuffer);
       tiles = gMapCellBuffer;
@@ -150,25 +150,25 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         obj = Func_0815b290(32, 32, 0x80002000, 0);
         obj->priority = 2;
         work->objects[i] = obj;
-        CopyWords_((void *)OBJ_TILES(obj), tiles, 0x400);
+        Iwram_CopyWords((void *)OBJ_TILES(obj), tiles, 0x400);
         tiles += 0x400;
       }
       cells = Resource_GetTableEntry((s32)&ResourceId_GoldenDragonHeadTiles);
-      CopyWords_((void *)OBJ_PLTT, cells, 480);
+      Iwram_CopyWords((void *)OBJ_PLTT, cells, 480);
       cells += 480;
       Resource_DecodeType01(cells, gMapCellBuffer);
       obj = Func_0815b290(32, 32, 0x80002000, 0);
       work->objects[31] = obj;
       obj->priority = 2;
-      CopyWords_((void *)OBJ_TILES(obj), gMapCellBuffer, 0x400);
+      Iwram_CopyWords((void *)OBJ_TILES(obj), gMapCellBuffer, 0x400);
     }
     scroll += 4;
     REG_BG2X = scroll << 8;
     work->transferPending = 1;
     wait(1);
   }
-  FillWords_(canvas, 0x3c00, 0);
-  FillWords_((void *)0x06004000, 0x3c00, 0);
+  Iwram_FillWords(canvas, 0x3c00, 0);
+  Iwram_FillWords((void *)0x06004000, 0x3c00, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   REG_DISPCNT = 0x7741;
   REG_BG2PA = 0x80;
@@ -183,7 +183,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   work->transferValue = 50;
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
   blit[0] = Ram_HeapSlots->unk64[1];
-  CopyWords_((void *)BG_PLTT,
+  Iwram_CopyWords((void *)BG_PLTT,
              Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
   {
     const u8 *texturePixels = (const u8 *)gData_02014000__f14153c;
@@ -223,7 +223,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       }
       for (i = 0; i != 17; i++) {
         if (frame == Data_0819774f[i]) {
-          FillWords_(canvas, 0x3c00, Data_08197760[i]);
+          Iwram_FillWords(canvas, 0x3c00, Data_08197760[i]);
         }
       }
       req = Data_08196de0;
@@ -458,10 +458,10 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   // Two empty once-only blocks before the fills: without them, 18 differ.
   do {
   } while (0);
-  FillWords_(canvas, 0x4000, 0);
+  Iwram_FillWords(canvas, 0x4000, 0);
   do {
   } while (0);
-  FillWords_((void *)0x06004000, 0x4000, 0);
+  Iwram_FillWords((void *)0x06004000, 0x4000, 0);
   wait(1);
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0x3f46;
@@ -469,7 +469,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   gCameraSceneParameters[4] = 120;
   work->transferMode = 3;
   work->transferValue = 0x02020202;
-  FillWords_(canvas, 0x4000, 0x3f3f3f3f);
+  Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
   REG_BG2CNT = 0x784;
   effect->actors[effect->count] = 0xff;
   BattleActor_SpawnObjectsForListFar(effect->actors, 0);
@@ -498,7 +498,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
     if (frame == 18) {
       work->shakeFrames = 90;
       Sound_PlayFar(145);
-      FillWords_(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
       for (i = 0; i != effect->count; i++) {
         Func_0814cd48(effect->actors[i], 7, 5, i, 4);
       }
@@ -765,7 +765,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       wait(1);
     }
   }
-  FillWords_((void *)0x06004000, 0x3c00, 0x3f3f3f3f);
+  Iwram_FillWords((void *)0x06004000, 0x3c00, 0x3f3f3f3f);
   gBgScroll[1].x = savedScroll;
   transition[4] = 0;
   gCameraSceneParameters[4] = 120;
@@ -774,7 +774,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   work->transferMode = 3;
   work->transferValue = 0x02020202;
   Graphics_LoadGreyRamp();
-  FillWords_(canvas, 0x3c00, 0x3f3f3f3f);
+  Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
   Func_081180e8(134);
   for (frame = 0; frame != 32; frame++) {
     work->transferPending = 1;
@@ -883,11 +883,11 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
       work->transferMode = 2;
       work->transferValue = 50;
       if (kind == KIND_LEFT)
-        Iwram_CopyWords((void *)BG_PLTT,
+        Iwram_CopyWordsEntry((void *)BG_PLTT,
                         Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                         128);
       else
-        Iwram_CopyWords(
+        Iwram_CopyWordsEntry(
             (void *)BG_PLTT,
             Resource_GetTableEntry((s32)&ResourceId_EffectPalette03), 128);
       if (frame == 0)
@@ -927,7 +927,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
           }
         }
         work->shakeFrames = 8;
-        Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       }
       flashes = gData_02014000__f14153c;
       if (frame >= 48 && frame <= 55) {
@@ -1115,15 +1115,15 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
        * BattleEffect_FlushPendingGraphicsTransfer and
        * BattleEffect_ProcessPendingBlock2Transfer, 128 of 369 instructions
        * differ in tla-en. */
-      CopyWords_((void *)0x06004000, source, 0x4000);
+      Iwram_CopyWords((void *)0x06004000, source, 0x4000);
       break;
     case 1:
-      CopyWords_((void *)0x06004000, source, 0x4000);
+      Iwram_CopyWords((void *)0x06004000, source, 0x4000);
       /* FAKEMATCH(wrapper): the fill forwarded through FillWords_, which keeps
        * each call's own constants, as the scene layer does; as direct
        * Iwram_FillWords calls in this callback and in the same three
        * callbacks, 16 of 369 instructions differ in tla-en. */
-      FillWords_(source, 0x4000, work->transferValue);
+      Iwram_FillWords(source, 0x4000, work->transferValue);
       break;
     case 2:
       if (work->transferValue == 50)
@@ -1161,8 +1161,8 @@ void BattleEffect_ProcessPendingStampTransfer(void) {
   if (*pending == 1) {
     *pending = 0;
     IRQ_UNLOCK(ime);
-    CopyWords_(*(void **)(work + 0x7b74), work + 0x6780, 0x1000);
-    FillWords_(work + 0x6780, 0x1000, 0);
+    Iwram_CopyWords(*(void **)(work + 0x7b74), work + 0x6780, 0x1000);
+    Iwram_FillWords(work + 0x6780, 0x1000, 0);
   } else {
     IRQ_UNLOCK(ime);
   }
@@ -1181,11 +1181,11 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
     IRQ_UNLOCK(ime);
     switch (work->transferMode) {
     case 0:
-      CopyWords_((void *)0x06008000, source, 0x7800);
+      Iwram_CopyWords((void *)0x06008000, source, 0x7800);
       break;
     case 1:
-      CopyWords_((void *)0x06008000, source, 0x7800);
-      FillWords_(source, 0x7800, work->transferValue);
+      Iwram_CopyWords((void *)0x06008000, source, 0x7800);
+      Iwram_FillWords(source, 0x7800, work->transferValue);
       break;
     case 2:
       if (work->transferValue == 50)
@@ -1220,11 +1220,11 @@ void BattleEffect_ProcessPendingBlock2Transfer(void) {
     IRQ_UNLOCK(ime);
     switch (work->transferMode) {
     case 0:
-      CopyWords_((void *)0x06008000, source, 0x7800);
+      Iwram_CopyWords((void *)0x06008000, source, 0x7800);
       break;
     case 1:
-      CopyWords_((void *)0x06008000, source, 0x7800);
-      FillWords_(source, 0x3c00, work->transferValue);
+      Iwram_CopyWords((void *)0x06008000, source, 0x7800);
+      Iwram_FillWords(source, 0x3c00, work->transferValue);
       break;
     case 2:
       if (work->transferValue == 50)
@@ -1252,12 +1252,9 @@ void Func_08143354(void) {
   s32 row;
   s32 column;
 
-  /* FAKEMATCH(wrapper): both fills through FillWords_, which sets each call's
-   * own constants anew; as direct Iwram_FillWords calls, 33 of 40 instructions
-   * differ in tla-en. */
-  FillWords_((void *)map, 0x100, -1);
+  Iwram_FillWords((void *)map, 0x100, -1);
   map += 0x40;
-  FillWords_((void *)map, 0x80, 0x03ff03ff);
+  Iwram_FillWords((void *)map, 0x80, 0x03ff03ff);
   map += 0x20;
   tiles = (u32)(Ram_MapCellBuffer + 0x200);
   for (row = 0; row != 16; row++) {
@@ -1408,10 +1405,6 @@ void Func_0814355c(void) {
 
 #undef HI
 
-static __inline__ s32 ClearWords_(void *destination, s32 size) {
-  return Iwram_ClearWords(destination, size);
-}
-
 // Twin: The Broken Seal's BattleEffect_StartCanvasLayer. The Lost Age's
 // changes: BattleEffect_ConfigureEffectDisplay for the display set-up, DISPCNT
 // 0x1741, Palette_StepFadeTransfer at 0x480, Func_0814355c for the display
@@ -1482,8 +1475,8 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
     }
   }
 
-  ClearWords_(canvas, 0x4000);
-  ClearWords_(BG_CHAR_BLOCK(1), 0x4000);
+  Iwram_ClearWords(canvas, 0x4000);
+  Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
   work->shakeFrames = 0;
   work->transferPending = 0;
   work->savedBg1X = gBgScroll[1].x;
@@ -1561,8 +1554,8 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
    * call's own constants and the routine in a callee-saved register; as direct
    * Iwram_ClearWords calls, 24 of 259 instructions of
    * BattleEffect_OpenCanvasLayer differ in tla-en. */
-  ClearWords_(canvas, 0x4000);
-  ClearWords_(BG_CHAR_BLOCK(1), 0x4000);
+  Iwram_ClearWords(canvas, 0x4000);
+  Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
   work->shakeFrames = 0;
   work->transferPending = 0;
   wait(1);
@@ -1691,8 +1684,8 @@ void BattleEffect_SetupCanvasTileMap(void) {
   BattleStaging_ConfigurePaletteFadeFar(2, *(u16 *)screen->unk670, 0);
   gBgScroll[1].y = 32;
   layer->secondMode = 0;
-  ClearWords_((void *)0x06003fc0, 64);
-  FillWords_((void *)0x0600f900, 0x200, -1);
+  Iwram_ClearWords((void *)0x06003fc0, 64);
+  Iwram_FillWords((void *)0x0600f900, 0x200, -1);
   off = 0;
   for (row = 0; row != 16; row++) {
     for (col = 0; col != 32; col++, off += 2) {
@@ -1716,8 +1709,8 @@ void BattleEffect_SetupCanvasTileMap(void) {
               WININ_WIN0_BG2 | WININ_WIN0_BG1 | WININ_WIN0_BG0;
   REG_WINOUT = WINOUT_WINOBJ_ALL | WINOUT_WIN01_CLR | WINOUT_WIN01_BG0;
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
-  ClearWords_(canvas, 0x4000);
-  ClearWords_(BG_CHAR_BLOCK(1), 0x4000);
+  Iwram_ClearWords(canvas, 0x4000);
+  Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
   wait(1);
 }
 

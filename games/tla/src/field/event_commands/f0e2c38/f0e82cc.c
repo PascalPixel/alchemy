@@ -109,7 +109,7 @@ void Func_080e82cc(void) {
       // call, 10 of 563 instructions differ in tla-en.
       do {
       } while (0);
-      fill = Iwram_FillWords;
+      fill = Iwram_FillWordsEntry;
       fill((void *)0x06002000, 0x800, 0);
     }
 
@@ -120,7 +120,7 @@ void Func_080e82cc(void) {
       HeapSlot_Release(96);
       picture = HeapSlot_AllocEwram(96, 0x2000);
     } while (0);
-    Iwram_FillWords(picture, 0x2000, 0);
+    Iwram_FillWordsEntry(picture, 0x2000, 0);
 
     wait(1);
     Dma_Set(picture, (void *)0x06000000, (DMA_ENABLE | DMA_32BIT) << 16 | 0x800,
@@ -340,7 +340,7 @@ void Func_080e87c4(void) {
       // direct Iwram_FillWords call, 2 of 226 differ).
       do {
       } while (0);
-      fill = Iwram_FillWords;
+      fill = Iwram_FillWordsEntry;
       fill((void *)0x06002000, 0x500, 0xf000f000);
     }
     Window_LoadGraphics();

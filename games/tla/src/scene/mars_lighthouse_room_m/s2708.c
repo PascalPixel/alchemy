@@ -6,7 +6,11 @@
 #include "item_icon.h"
 #include "module/scene/mars_lighthouse_room_m.h"
 
-s32 Func_02002368(s32 a, s32 b);
+#ifdef MODERN
+// Called with no prototype in scope, as its bytes need; a current GCC gets
+// it here.
+void Func_02002368();
+#endif
 s32 Func_02003168(s32 layer, s32 x, s32 z);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 
@@ -42,8 +46,6 @@ struct RideState {
 };
 
 s32 Func_02002708(void) {
-  /* FAKEMATCH(signature): typed to return s32, which it never sets; as void,
-   * 2 of 138 instructions differ in tla-en. */
   struct RideEvent *event = Ram_HeapSlots->eventWork;
   struct RideState *ride;
   struct Actor *leader;
@@ -328,11 +330,7 @@ void Func_02002ae8(struct Actor *actor) {
       actor->acceleration = 0x4000;
       actor->timer = 1;
       Event_PlaySound(145);
-      /* FAKEMATCH(wrapper): forwarded, so each argument builds its own 0x50000;
-       * as a direct call, 6 of 362 instructions differ in tla-en. */
       MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-      /* FAKEMATCH(wrapper): forwarded, so each argument builds its own -1; as a
-       * direct call, 17 of 362 instructions differ in tla-en. */
       MapGrid_SetShake(-1, -1, 0xe666);
       if (actor->watchedObject != NULL)
         ((void (*)(struct Actor *))actor->watchedObject)(actor);

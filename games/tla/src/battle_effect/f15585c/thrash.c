@@ -63,10 +63,6 @@ void BattleEffect_RunBoostHack(s32 a0) { Func_0816a2d8(a0, 4); }
 /// Abilities: Twin Shear (kind 425).
 void BattleEffect_RunTwinShear(s32 a0) { Func_0816a2d8(a0, 5); }
 
-// Code after this part calls Iwram_CopyWords through iwram_call.h's macro
-// again.
-#undef Iwram_CopyWords
-#define Iwram_CopyWords Iwram_CopyWordsEntry
 
 #undef RESULTS_FRAME
 
@@ -239,7 +235,7 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
 
     // The flood: four frames of the canvas filled with colour 0x3f.
     if ((u32)(frame - FLOOD_FRAME) <= 3)
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
     if (frame == RESULTS_FRAME)
       Func_081180e8(PHASE_RESULTS);
     if (frame == HIT_FRAME) {
@@ -260,8 +256,8 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
     /* FAKEMATCH(wrapper): both clears through ClearWords_, which sets the size
      * for each call and holds the routine; as direct Iwram_ClearWords calls, 14
      * of 469 instructions differ in tla-en. */
-    ClearWords_((void *)0x06004000, 0x3c00);
-    ClearWords_(canvas, 0x3c00);
+    Iwram_ClearWords((void *)0x06004000, 0x3c00);
+    Iwram_ClearWords(canvas, 0x3c00);
     Task_Remove(Palette_StepFadeTransfer);
     SummonEffect_RunCanvasMode2(effect);
   } else {

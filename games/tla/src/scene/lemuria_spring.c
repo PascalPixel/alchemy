@@ -213,8 +213,6 @@ prompt:
   medals = PartyInventory_CountItem(229);
   message = (s32)MsgWhatWillYou;
   Event_SetMessageId(message);
-  /* FAKEMATCH(wrapper): forwarded, so the -1 is built after movs r1, #0; as a
-   * direct call, 144 of 286 instructions differ in tla-en. */
   Event_OpenMessage(-1, 0);
   window = Window_Create(0, 0, COUNT_WINDOW_WIDTH, 4, 2);
   result = (s32)MsgCoins2;
@@ -283,8 +281,6 @@ toss:
     medals = PartyInventory_CountItem(229);
     message = (s32)MsgWhatWillYou;
     Event_SetMessageId(message);
-    /* FAKEMATCH(wrapper): forwarded, so the -1 is built after movs r1, #0; as
-     * a direct call, 38 of 300 instructions differ in tla-ja. */
     Event_OpenMessage(-1, 0);
     window = Window_Create(0, 0, COUNT_WINDOW_WIDTH, 4, 2);
     text = (s32)MsgCoins2;
@@ -367,9 +363,6 @@ toss:
       }
     } else {
       total = 0;
-      /* FAKEMATCH(wrapper): forwarded, so the flag number is built for each
-       * call; as a direct call, 43 of 286 instructions differ in tla-en and 40
-       * of 300 in tla-ja. */
       if (result == 0 && Event_GetFlag(0x90b) == 0) {
         Event_SetFlag(0x90b);
         Func_0200049c((s32)minusOne);

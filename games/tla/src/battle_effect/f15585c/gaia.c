@@ -107,7 +107,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
   // The palette: BG colours 1-63 darkened eight steps in each channel.
   Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet, Ram_MapCellBuffer,
                              1, 0);
-  Iwram_CopyWords(palette,
+  Iwram_CopyWordsEntry(palette,
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteA), 128);
   color = (u16 *)&BG_PLTT[1];
   for (i = 0; i != 63; i++) {

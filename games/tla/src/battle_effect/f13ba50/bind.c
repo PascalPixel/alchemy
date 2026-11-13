@@ -31,11 +31,7 @@ void Graphics_ConvertBackgroundToBlueRamp(void) {
   delays = Ram_HeapSlots->unk64[0];
   end = 0;
   speed = 16;
-  /* FAKEMATCH(wrapper): the copy forwarded through CopyWords_, which loads the
-   * routine's entry before the arguments, as the native does at all three
-   * copies; as direct Iwram_CopyWords calls, 8 of 181 instructions differ in
-   * tla-en. */
-  CopyWords_(PIXEL_BUFFER, (void *)0x06008000, 0x7800);
+  Iwram_CopyWords(PIXEL_BUFFER, (void *)0x06008000, 0x7800);
   delayMask = 63;
   p = delays;
   do {
@@ -69,7 +65,7 @@ void Graphics_ConvertBackgroundToBlueRamp(void) {
       } while (x != 256);
       row++;
     }
-    CopyWords_((void *)0x06008000, PIXEL_BUFFER, 0x7800);
+    Iwram_CopyWords((void *)0x06008000, PIXEL_BUFFER, 0x7800);
     wait(1);
     if (end > 248)
       break;
@@ -93,7 +89,7 @@ void Graphics_ConvertBackgroundToBlueRamp(void) {
       i++;
     } while (i != 0x7800);
   }
-  CopyWords_((void *)0x06008000, PIXEL_BUFFER, 0x7800);
+  Iwram_CopyWords((void *)0x06008000, PIXEL_BUFFER, 0x7800);
   wait(1);
 }
 

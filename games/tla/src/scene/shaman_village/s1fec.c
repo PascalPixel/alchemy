@@ -343,9 +343,6 @@ void Func_0200290c(void) {
   Event_SetMessageId((s32)MsgShamanMissingShamanRod);
   if (PartyInventory_FindMember(65) == -1)
     goto refuse;
-  /* FAKEMATCH(wrapper): the count read through ListOwners; as a direct
-   * Party_ListMembers call with owner = owners before it, 4 of 119
-   * instructions differ in tla-en. */
   count = FieldParty_ListMembers(owners);
   owner = owners;
   remaining = 8;
@@ -1358,9 +1355,6 @@ void Func_02004534(void) {
       521;
   ((struct ShamanVillageObject *)Actor_GetById(12))->collisionFlags = 8;
   if (GameFlag_Test(0x9fe)) {
-    /* FAKEMATCH(temporary): the local holding one constant starts the facing
-     * before the other arguments, as the native has; as the plain argument
-     * 0x3000, 2 of 159 instructions differ in tla-en. */
     s32 angle = 0x3000;
 
     Actor_SetPositionAndFacing(8, PIXELS(88), PIXELS(92), angle);

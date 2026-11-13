@@ -249,7 +249,7 @@ void *Unit_Get(s32 owner);
 
 void Func_02002a64(void) {
   s32 speed;
-  s32 cue;
+  s32 cue = 0x6007;
 
   Func_020056b4();
   FieldEvent_ResolvePendingActions(0);
@@ -265,8 +265,6 @@ void Func_02002a64(void) {
   }
   Actor_SetPositionAndFacing(7, 165 << 17, 156 << 17, speed);
   {
-    /* FAKEMATCH(temporary): actor 23's speed in a local; as the constant in the
-     * call, 4 of 521 instructions differ in tla-en. */
     s32 slow = 0xb000;
 
     Actor_SetPositionAndFacing(23, 216 << 17, 156 << 17, slow);
@@ -283,11 +281,6 @@ void Func_02002a64(void) {
   Event_ShowMessage(23, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeed(0xcccc, 0x1999);
-  /* FAKEMATCH(temporary): the else branch's 0x6007 set here in a local, which
-   * gives the event work counter r3 and r2 as the native has them; as
-   * Event_ShowMessage(0x6007, 0), 20 of 521 instructions differ in
-   * tla-en. */
-  cue = 0x6007;
   FieldCamera_MoveTo(196 << 17, -1, 146 << 17, 1);
   Func_020057b4();
   Actor_FaceDirection(gMainRoutineWork.currentOwner, 0, 0);
@@ -680,9 +673,6 @@ L_0200b762:
   Task_AddFrame((s32)Func_02001ac0, 0x480);
 L_0200b78e:
   t46 = Func_02003604();
-  /* FAKEMATCH(temporary): the table's address in a local set after the call,
-   * which makes it the load's base register; as ((u8 *)gData_02005d8c)'s address
-   * added in place, 2 of 211 instructions differ in tla-en. */
   table = ((u8 *)gData_02005d8c);
   Func_020048a4(19, 11, *(s32 *)(table + (t46 << 2)), 16);
   Actor_SetAnimation(15, 5);
@@ -872,7 +862,7 @@ s32 Func_02003a64(s32 value) {
 retry:
   state->count += 1;
   gRandomState = state->count;
-  Iwram_ClearWords(state, sizeof(state->cells));
+  Iwram_ClearWordsEntry(state, sizeof(state->cells));
   state->cells[3 * 11 + 5].kind = 10;
   state->cells[7 * 11 + 1].kind = 10;
   state->cells[7 * 11 + 9].kind = 10;
@@ -1097,12 +1087,12 @@ s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
   length--;
   dz = endZ - z0;
   spare = length - abs(endX - x0) - abs(dz);
-  Iwram_ClearWords(Data_02006fc8, 32);
-  Iwram_ClearWords(Data_02006fe8, 32);
-  Iwram_ClearWords(Data_02007008, 32);
-  Iwram_ClearWords(Data_02007028, 32);
-  Iwram_ClearWords(Data_02007048, 32);
-  Iwram_ClearWords(gData_02007068, 32);
+  Iwram_ClearWordsEntry(Data_02006fc8, 32);
+  Iwram_ClearWordsEntry(Data_02006fe8, 32);
+  Iwram_ClearWordsEntry(Data_02007008, 32);
+  Iwram_ClearWordsEntry(Data_02007028, 32);
+  Iwram_ClearWordsEntry(Data_02007048, 32);
+  Iwram_ClearWordsEntry(gData_02007068, 32);
   if (spare & 1)
     return -1;
   x = x0;
@@ -1527,7 +1517,7 @@ s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id) {
     count = state->count;
     Task_AddFrame(Func_02004710, TASK_PASS_VBLANK);
   } else {
-    Iwram_ClearWords(state, sizeof(struct SceneState));
+    Iwram_ClearWordsEntry(state, sizeof(struct SceneState));
     state->originX = x;
     state->originZ = z;
     Func_020038ac();
@@ -1927,7 +1917,7 @@ void Func_02005090(void) {
   Func_02004f84(*timer, clock->now);
   // old and now walk the sheet and the pictures here, the digit lists below.
   for (i = 0; i < 5; i++) {
-    Iwram_CopyWords(now, old + (*digit << 6) - 0xc00, 64);
+    Iwram_CopyWordsEntry(now, old + (*digit << 6) - 0xc00, 64);
     now += 64;
     digit++;
   }
@@ -1986,7 +1976,7 @@ void Func_020052a4(s32 mode) {
   u8 *tiles;
 
   if (!Event_GetFlag(0x109)) {
-    Iwram_ClearWords(clock, sizeof(struct ClockWork));
+    Iwram_ClearWordsEntry(clock, sizeof(struct ClockWork));
     clock->timer = 3600;
     clock->ringing = 1;
   }

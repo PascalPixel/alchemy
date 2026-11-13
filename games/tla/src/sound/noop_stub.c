@@ -150,10 +150,6 @@ void SoundFlag_Clear(s32 sound) {
 
 s32 __divsi3(s32 numerator, s32 denominator);
 
-static __inline__ s32 Sound_ClearWords(void *destination, s32 size) {
-  return Iwram_ClearWords(destination, size);
-}
-
 /// Sets direct sound to a fixed 31536 Hz output with 528 samples a VBlank,
 /// keeping mode's rate nibble, clears the two PCM buffers and points DMA 1
 /// and 2 at them, then restarts timer 0 at line 159.
@@ -186,10 +182,7 @@ void Sound_SetFixedSampleFreq(u32 mode) {
     REG_TM0CNT_L = __divsi3(-140448, samples);
   } while (0);
   buffer = gData_02003a90;
-  /* FAKEMATCH(wrapper): the clear forwarded through Sound_ClearWords, so the
-   * entry's address loads after the size's shift; as Iwram_ClearWords(buffer,
-   * 0x18c0), 2 of 58 instructions differ in tla-en. */
-  Sound_ClearWords(buffer, 0x18c0);
+  Iwram_ClearWords(buffer, 0x18c0);
   m4aSoundVSyncOn();
   REG_DMA1SAD = (u32)buffer;
   buffer += 0xc60;

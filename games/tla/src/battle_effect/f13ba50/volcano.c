@@ -37,7 +37,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
     const void *palette = Resource_GetTableEntry((s32)&ResourceId_RedPaletteB);
     s32 (*copy)(void *destination, const void *source, s32 size) =
-        Iwram_CopyWords;
+        Iwram_CopyWordsEntry;
 
     // The entry held in a local loads ahead of the destination's shift; as a
     // plain Iwram_CopyWords call, 2 of 604 instructions differ in tla-en.
@@ -46,7 +46,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
     const void *palette =
         Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
     s32 (*copy)(void *destination, const void *source, s32 size) =
-        Iwram_CopyWords;
+        Iwram_CopyWordsEntry;
 
     // The entry held in a local loads ahead of the destination's shift; as a
     // plain Iwram_CopyWords call, 2 of 604 instructions differ in tla-en.

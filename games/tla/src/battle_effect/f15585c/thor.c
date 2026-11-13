@@ -134,7 +134,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
     }
   }
   REG_BG2CNT = 0x784;
-  CopyWords((void *)BG_PLTT,
+  Iwram_CopyWords((void *)BG_PLTT,
             Resource_GetTableEntry((s32)&ResourceId_BlastSheet), 128);
 
   for (frame = 0; frame != STORM_DUSK_FRAMES; frame++) {
@@ -327,7 +327,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_VioletMoteSheet,
                              work->sheet + STORM_MOTE_CELLS, 1, 0);
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_CrystalSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data135, sprites, 0, 0);
   REG_BLDALPHA = 0x1010;
@@ -412,7 +412,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
         s32 mirrorX;
         for (i = 0; i != 6; i++) {
           if (frame == i * 8 + 80) {
-            Iwram_FillWords(canvas, 0x4000, 0x10101010);
+            Iwram_FillWordsEntry(canvas, 0x4000, 0x10101010);
           }
         }
         for (i = 0; i != STORM_BOLTS; i++) {

@@ -6,7 +6,7 @@
 
 void Render_ResetFrame(void) {
   gObjAffineCount = 0;
-  Iwram_ClearWords(gOamBucketMasks, 32);
+  Iwram_ClearWordsEntry(gOamBucketMasks, 32);
 }
 
 /// Takes the next of the 32 sprite affine matrices and fills it with the

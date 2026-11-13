@@ -114,7 +114,7 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
     resource = (s32)&ResourceId_CyanPalette;
     break;
   }
-  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
   work->transferMode = 2;   // each transfer halves the old picture,
   work->transferValue = 50; // leaving a trail
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -258,12 +258,6 @@ void BattleEffect_RunSlaver(void *object) { Func_0813cb34(object, 2); }
 // The IWRAM routines are called through one inline each, as The Broken Seal's
 // iwram_call.h layer calls them: called directly, CSE shares the size
 // between the two clears.
-static inline s32 ClearWords(void *destination, s32 size) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWords, 16 of 477 instructions of Func_0813cb34 differ in
-   * tla-en. */
-  return Iwram_ClearWords(destination, size);
-}
 
 // Soothing Star (mode 0, effect kind 344), Sleep Star (mode 1, kind 349) and
 // Slaver (mode 2, kind 395).
@@ -318,7 +312,7 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
     resource = (s32)&ResourceId_EarthWallSheet;
   else
     resource = (s32)&ResourceId_GreenPalette;
-  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
   work->transferMode = 2;
   work->transferValue = 75;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -436,8 +430,8 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
   HeapSlot_Release(SLOT_BLITTER);
   if (mode == MODE_SLAVER) {
     // Clear the canvas and run Impair's effect on the targets.
-    ClearWords((void *)0x06004000, 0x3c00);
-    ClearWords(canvas, 0x3c00);
+    Iwram_ClearWords((void *)0x06004000, 0x3c00);
+    Iwram_ClearWords(canvas, 0x3c00);
     Task_Remove(Palette_StepFadeTransfer);
     SummonEffect_RunCanvasMode1(effect);
   } else {

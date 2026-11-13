@@ -72,10 +72,10 @@ void Func_020003e8(void) {
   if (*(s8 *)(work + 0xca4) != 0)
     return;
   if (gData_020024c4__apojii_islands == -1) {
-    Call3((void (*)())Iwram_CopyWords, Data_02002958, (void *)0x05000060, 32);
-    Iwram_CopyWords(Data_02002978, Data_02002958, 32);
-    Iwram_CopyWords(gData_02002998, (void *)0x05000080, 32);
-    Iwram_CopyWords(gData_020029b8, gData_02002998, 32);
+    Call3((void (*)())Iwram_CopyWordsEntry, Data_02002958, (void *)0x05000060, 32);
+    Iwram_CopyWordsEntry(Data_02002978, Data_02002958, 32);
+    Iwram_CopyWordsEntry(gData_02002998, (void *)0x05000080, 32);
+    Iwram_CopyWordsEntry(gData_020029b8, gData_02002998, 32);
     gData_020024c4__apojii_islands = 0;
   }
   phase = gData_020024c4__apojii_islands / 8 % 4;
@@ -106,10 +106,10 @@ void Func_02000540(void) {
   if (busy != 0)
     return;
   if (gData_020024c8__apojii_islands == -1) {
-    Call3((void (*)())Iwram_CopyWords, (s32)Data_020029d8, 0x05000060, 32);
-    Iwram_CopyWords(Data_020029f8, Data_020029d8, 32);
-    Iwram_CopyWords(Data_02002a18, (void *)0x050001a0, 32);
-    Iwram_CopyWords(Data_02002a38, Data_02002a18, 32);
+    Call3((void (*)())Iwram_CopyWordsEntry, (s32)Data_020029d8, 0x05000060, 32);
+    Iwram_CopyWordsEntry(Data_020029f8, Data_020029d8, 32);
+    Iwram_CopyWordsEntry(Data_02002a18, (void *)0x050001a0, 32);
+    Iwram_CopyWordsEntry(Data_02002a38, Data_02002a18, 32);
     gData_020024c8__apojii_islands = busy;
   }
   phase = gData_020024c8__apojii_islands / 8 % 4;
@@ -147,7 +147,7 @@ void Func_020006bc(void) {
   s32 i;
 
   if (gData_020024cc[0] == -1) {
-    Iwram_CopyWords(gData_02002a58, (void *)0x05000080, 32);
+    Iwram_CopyWordsEntry(gData_02002a58, (void *)0x05000080, 32);
     gData_020024cc[0] = 0;
   }
   base = (gData_020024cc[0] / 2) % 15;
@@ -648,7 +648,7 @@ void Func_020015f8(void) {
 /// Clears the effect table, takes a free VRAM entry for it with a 0x200-byte
 /// block and no source, then schedules Func_020015f8.
 void Func_020017bc(void) {
-  Iwram_ClearWords(&gData_02002aa0, 0x1004);
+  Iwram_ClearWordsEntry(&gData_02002aa0, 0x1004);
   gData_02002aa0.block = Resource_FindFreeEntry();
   Vram_Load(gData_02002aa0.block, 0x200, 0);
   FieldTask_AddFrame(Func_020015f8, 0x480);

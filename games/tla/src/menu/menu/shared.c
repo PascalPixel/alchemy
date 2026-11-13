@@ -133,7 +133,7 @@ static inline void RestoreUnit(struct BattleUnit *unit,
   /* FAKEMATCH(wrapper): both restores forwarded through an inline, so the size
      loads after the call's other arguments; as direct Iwram_CopyWords calls, 2
      of 494 instructions differ in tla-en. */
-  Iwram_CopyWords(unit, backup, sizeof(struct BattleUnit));
+  Iwram_CopyWordsEntry(unit, backup, sizeof(struct BattleUnit));
 }
 
 /// Draws the status panel of the Item and Psynergy screens for the party
@@ -231,7 +231,7 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot, s32 mode)
       break;
     }
     backup = Heap_Alloc(sizeof(struct BattleUnit));
-    Iwram_CopyWords(backup, unit, sizeof(struct BattleUnit));
+    Iwram_CopyWordsEntry(backup, unit, sizeof(struct BattleUnit));
     if (state->equipPreview) {
       unit->inventory[slot] &= ~INVENTORY_EQUIPPED;
       Unit_UpdateClassFar(owner);
@@ -267,7 +267,7 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot, s32 mode)
       break;
     }
     backup = Heap_Alloc(sizeof(struct BattleUnit));
-    Iwram_CopyWords(backup, unit, sizeof(struct BattleUnit));
+    Iwram_CopyWordsEntry(backup, unit, sizeof(struct BattleUnit));
     if (state->equipPreview)
       unit->inventory[slot] &= ~INVENTORY_EQUIPPED;
     else
@@ -1168,9 +1168,9 @@ void Menu_UpdateCancelSound(void) {
   frame = gFrameCount;
   if ((frame & 3) == 0) {
     if (frame & 4)
-      CopyWords(gData_08105948, Iwram_CopyWords, (void *)0x06002540, 32);
+      CopyWords(gData_08105948, Iwram_CopyWordsEntry, (void *)0x06002540, 32);
     else
-      FillWords(Iwram_FillWords, (void *)0x06002540, 32, 0x44444444);
+      FillWords(Iwram_FillWordsEntry, (void *)0x06002540, 32, 0x44444444);
   }
   input = &gInput;
   mask = 8;

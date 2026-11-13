@@ -139,14 +139,12 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, buffer, 1, 1);
   if (mode == 1) {
-    /* FAKEMATCH(wrapper): Iwram_CopyWords called through CopyWords; as a
-     * direct call, 2 of 747 instructions differ in tla-en. */
-    CopyWords((void *)BG_PLTT,
+    Iwram_CopyWords((void *)BG_PLTT,
               Resource_GetTableEntry((s32)&ResourceId_VioletPaletteC), 128);
   }
 
   // The bolts' four pictures, 24 by 120, each in a 32-wide cell.
-  Iwram_ClearWords(work->sheet + 0x1456, 0x4000);
+  Iwram_ClearWordsEntry(work->sheet + 0x1456, 0x4000);
   for (i = 0; i != 4; i++) {
     for (k = 0; k != 120; k++) {
       s32 j;
@@ -236,7 +234,7 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
         spark->velocityY = (Trig_Cos(angle) * speed) >> 6;
         spark->variant = (Random16() & 7) + 16;
       }
-      Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       work->shakeFrames = 16;
       Func_08118088(effect->actors[0], 4);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
@@ -472,7 +470,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
   for (i = 0; i != 512; i++) {
     SPARKS[i].variant = -1;
   }
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
   BattleEffect_SelectLivingTargets(work->effect);
   wait(1);
@@ -543,13 +541,13 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
       }
     }
     if ((u32)(frame - 64) <= 3) {
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
     }
     if (frame > 103) {
       Func_0815f0a0((s32)&ResourceId_TanPalette);
     }
     if (frame == 64) {
-      Iwram_CopyWords((void *)BG_PLTT,
+      Iwram_CopyWordsEntry((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                       128);
     }
@@ -658,7 +656,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
         }
         if (frame == start + 9) {
           work->shakeFrames = 8;
-          Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+          Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
           Sound_PlayFar(144);
         }
         if (frame >= start) {
@@ -676,7 +674,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
           Render_ApplyProjectedPlacementFar(work->objects[i], placement,
                                             &request.x, 0);
           if (t == 9) {
-            Iwram_ClearWords(
+            Iwram_ClearWordsEntry(
                 (u8 *)0x06010e00 +
                     ((u32)(((u16 *)work->objects[i])[4] << 22) >> 17),
                 0x200);
@@ -823,7 +821,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
     }
   }
   Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, buffer + 0x1000, 1, 0);
-  Iwram_ClearWords(buffer, 0x1000);
+  Iwram_ClearWordsEntry(buffer, 0x1000);
 
   // The beam's head: the rune, mirrored to 48 columns.
   for (i = 0; i != 48; i++) {
@@ -834,10 +832,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
       buffer[0x208 + i * 64 + 47 - j] = buffer[0x1000 + i * 24 + j];
     }
   }
-  /* FAKEMATCH(wrapper): Iwram_CopyWords called through CopyWords; as a
-   * direct call, 2 of 743 instructions of BattleEffect_RunVoidBeam differ in
-   * tla-en. */
-  CopyWords((void *)BG_PLTT,
+  Iwram_CopyWords((void *)BG_PLTT,
             Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
 
   // The beam's body: a 32-line gradient.

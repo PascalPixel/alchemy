@@ -211,8 +211,6 @@ stop:
   object->speedLimit = 0x20000;
   object->update = Func_02000d40;
   FieldActor_SetMoveTarget(object, position[0], position[1], position[2]);
-  /* FAKEMATCH(wrapper): the form kept; as FieldCamera_SetSpeed(0x20000,
-   * 0x4000), 2 of 260 instructions differ in tla-en. */
   FieldCamera_SetSpeed(0x20000, 0x4000);
   FieldCamera_MoveTo(position[0], position[1], position[2], 1);
   Actor_WaitForMove(object);
@@ -247,15 +245,11 @@ hit:
   object->speedLimit = 0x20000;
   object->update = Func_02000d40;
   FieldActor_SetMoveTarget(object, position[0], position[1], position[2]);
-  /* FAKEMATCH(wrapper): the form kept; as FieldCamera_SetSpeed(0x20000,
-   * 0x4000), 2 of 260 instructions differ in tla-en. */
   FieldCamera_SetSpeed(0x20000, 0x4000);
   FieldCamera_MoveTo(position[0], position[1], position[2], 1);
   Actor_WaitForMove(object);
   object->update = NULL;
   Func_02003a6c(object);
-  /* FAKEMATCH(wrapper): the form kept; as Event_SetFlag(0x2f0), 8 of 260
-   * instructions differ in tla-en. */
   Event_SetFlag(0x2f0);
   Func_02000c08(i);
   Event_ClearFlag(0x2f0);
@@ -847,9 +841,6 @@ void Func_020020f8(s32 mode, s32 cue) {
   }
   if (mode == 3) {
     struct Actor *target;
-    /* FAKEMATCH(temporary): the attribute copies' last argument as a
-     * local set first keeps it in r6; as the constant 8, 12 of 104
-     * instructions differ in tla-en. */
     s32 last = 8;
 
     Func_02002024(work->target->x, work->target->z);

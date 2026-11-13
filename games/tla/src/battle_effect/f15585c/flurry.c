@@ -160,7 +160,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
     resource = (s32)&ResourceId_EmberStreakSheet;
     break;
   }
-  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
 
   // The caster closes in; variant 12 lunges further and waits.
   if (variant == 12) {
@@ -275,7 +275,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
       // The hit; the last blow ends the run.
       if (frame == start + 2) {
         if (RECORD(RECORD_FILL) == 1)
-          Iwram_FillWords(canvas, 0x4000, 0x2f2f2f2f);
+          Iwram_FillWordsEntry(canvas, 0x4000, 0x2f2f2f2f);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 4);
         if (i == blows - 1) {
           Func_08118088(effect->actors[0], 4);

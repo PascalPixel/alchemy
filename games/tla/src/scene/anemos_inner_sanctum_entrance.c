@@ -159,12 +159,6 @@ void Func_02000388(void);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Script_WaitForEventTimeout(struct Actor *actor);
 
-static __inline__ void MoveTo(struct Actor *object, s32 x, s32 y, s32 z) {
-  /* FAKEMATCH(wrapper): MoveTo forwarded inline; as direct calls to
-   * Actor_SetMoveTarget, 6 of 157 instructions differ in tla-en. */
-  Actor_SetMoveTarget(object, x, y, z);
-}
-
 void Func_02000588(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 shift = 0x1300000;
@@ -179,7 +173,7 @@ void Func_02000588(void) {
     return;
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
 #if TLA_PATCH_1
-  MoveTo(object, (object->x & 0xfff00000) + 0x80000, object->y,
+  FieldActor_SetMoveTarget(object, (object->x & 0xfff00000) + 0x80000, object->y,
          (object->z & 0xfff00000) + 0x80000);
 #endif
   {
@@ -412,7 +406,7 @@ DEFINE_FUNC_02000A98(Func_02000a98, gData_02001ce0, gData_02001cdc,
 void Func_02000b18(void) {
   u8 *buffer = BumpAlloc(0x1800);
 
-  Iwram_ClearWords(gData_02001ce0, 64);
+  Iwram_ClearWordsEntry(gData_02001ce0, 64);
   Resource_DecodeType01(gField_CachedTilesD, buffer);
   gData_02001cdc = Resource_FindFreeEntry();
   VramCache_Load(gData_02001cdc, 0x1800, buffer);

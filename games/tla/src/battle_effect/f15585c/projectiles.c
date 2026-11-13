@@ -5,15 +5,6 @@
 
 #include "../f15585c_internal.h"
 
-static __inline__ s32 ClearWords_(void *destination, s32 size) {
-  return Iwram_ClearWords(destination, size);
-}
-
-static __inline__ s32 CopyWords_(void *destination, const void *source,
-                                 s32 size) {
-  return Iwram_CopyWords(destination, source, size);
-}
-
 // The packed preparer word: kind | side << 4 | anchor << 5.
 #define PREPARE_KIND(packed) ((packed) & 7)
 #define PREPARE_SIDE(packed) (((packed) >> 4) & 1)
@@ -133,7 +124,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
     break;
   }
   palette = Resource_GetTableEntry(resource);
-  CopyWords_((void *)0x05000000, palette, 128);
+  Iwram_CopyWords((void *)0x05000000, palette, 128);
   switch (kind) {
   case 0:
     resource = (s32)&ResourceId_VenusDjinnSmallSheet;
@@ -376,8 +367,8 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(188);
   HeapSlot_Release(104);
-  ClearWords_((void *)0x06004000, 0x4000);
-  ClearWords_(canvas, 0x4000);
+  Iwram_ClearWords((void *)0x06004000, 0x4000);
+  Iwram_ClearWords(canvas, 0x4000);
   REG_BLDALPHA = 0x1010;
 }
 
@@ -651,7 +642,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                                  work->sheet + 0x1000, 1, 1);
     if (mode == 5) {
       void *palette = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
-      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
       copy((void *)BG_PLTT, palette, 128);
     }
@@ -659,7 +650,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                                work->sheet + 0x2000, 1, 0);
     if (mode == 5) {
       void *palette = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
-      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
       copy((void *)BG_PLTT, palette, 128);
     }
@@ -674,13 +665,13 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
     if (mode == 15) {
       REG_BLDCNT = 0;
     } else if (mode == 16) {
-      Iwram_CopyWords((void *)BG_PLTT,
+      Iwram_CopyWordsEntry((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_LimePalette),
                       128);
       Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
                                  work->sheet + 0x22, 1, 0);
     } else {
-      Iwram_CopyWords((void *)BG_PLTT,
+      Iwram_CopyWordsEntry((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet),
                       128);
       Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
@@ -693,7 +684,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
     work->transferMode = 1;
     work->transferValue = 0;
   } else if (mode == 2) {
-    Iwram_CopyWords((void *)BG_PLTT,
+    Iwram_CopyWordsEntry((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_CometSheetA), 128);
     Resource_LoadAndDecompress((s32)&ResourceId_ProjectileVolleyImage,
                                work->sheet, 0, 0);

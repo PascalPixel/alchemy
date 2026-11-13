@@ -208,13 +208,6 @@ void Func_02000768(void) {
 
 void Actor_MoveToObject(s32 actor, s32 target);
 
-static inline void GondowanCliffs_ObjWalk(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): the call through this inline; as direct calls to
-   * Actor_SetPositionAndReset, 78 of 165 instructions of Func_020007d8 differ
-   * in tla-en. */
-  Actor_SetPositionAndReset(actor, x, z);
-}
-
 static inline void GondowanCliffs_Jump(s32 actor, s32 height, s32 frames) {
   Func_080d47b4(actor, height, frames);
 }
@@ -226,16 +219,16 @@ void Func_020007d8(void) {
   FieldEvent_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 552, 488);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 552, 488);
   Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
   FieldActor_WatchAndSetScript(5, gMainRoutineWork.currentOwner);
-  GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 568, 480);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 568, 480);
   FieldActor_WatchAndSetScript(6, gMainRoutineWork.currentOwner);
   Actor_MoveToObject(6, gMainRoutineWork.currentOwner);
-  GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 584, 472);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 584, 472);
   FieldActor_WatchAndSetScript(22, gMainRoutineWork.currentOwner);
   Actor_MoveToObject(22, gMainRoutineWork.currentOwner);
-  GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 608, 472);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 608, 472);
   FieldEvent_SetMessageId((s32)MsgWhereDoYou);
   GondowanCliffs_Jump(22, 258, 20);
   Event_ShowMessage(22, 0);
@@ -260,9 +253,9 @@ void Func_020007d8(void) {
   Actor_SetPosition(22, 0, 0);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 568, 480);
   Actor_SetPosition(6, 0, 0);
-  GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 552, 488);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 552, 488);
   Actor_SetPosition(5, 0, 0);
-  GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 528, 488);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 528, 488);
   Event_FinishScreenTransition();
   Event_PlaySound(123);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 512, 488);
@@ -295,37 +288,32 @@ s32 Scene_Initialize(void) {
     return 0;
   }
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
-  /* FAKEMATCH(dead): the room test through the placing of actor 17 in a
-   * once-only block, which loads gMainRoutineWork before the scene offset; as
-   * plain statements, 2 of 227 instructions differ in tla-en. */
-  do {
-    if (gMainRoutineWork.scene != (s32)&SceneId_Ov66bRoom1)
-      goto done;
-    Func_020012f4();
-    Func_0200130c(0, 0x200, 10, 11);
-    if (GameFlag_Test(0x8ab)) {
-      Func_020012fc();
-      Func_02001304(0, 8, 9);
-    }
-    if (GameFlag_Test(0x885))
-      Actor_SetPosition(14, 0, 0);
-    else
-      Actor_GetById(14)->scaleY = 0x14000;
-    if (GameFlag_Test(0x201))
-      MapGrid_CopyCellAttributes(79, 28, 1, 1, 81, 28);
-    if (GameFlag_Test(0x202))
-      MapGrid_CopyCellAttributes(115, 35, 1, 1, 117, 35);
-    Func_02000fcc(0, 240);
-    Func_02001068(0, 17, 0, 0, 64);
-    if (GameFlag_Test(0x886)) {
-      actor = Actor_GetById(17);
-      MapGrid_CopyCellsLayered(124, 1, 1, 1, 119, 43);
-      Actor_SetPosition(17, PIXELS(1912), PIXELS(728));
-      height = Map_GetTerrainHeight(0, actor->x, actor->z);
-      actor->y = height;
-      actor->terrainHeight = height;
-    }
-  } while (0);
+  if (gMainRoutineWork.scene != (s32)&SceneId_Ov66bRoom1)
+    goto done;
+  Func_020012f4();
+  Func_0200130c(0, 0x200, 10, 11);
+  if (GameFlag_Test(0x8ab)) {
+    Func_020012fc();
+    Func_02001304(0, 8, 9);
+  }
+  if (GameFlag_Test(0x885))
+    Actor_SetPosition(14, 0, 0);
+  else
+    Actor_GetById(14)->scaleY = 0x14000;
+  if (GameFlag_Test(0x201))
+    MapGrid_CopyCellAttributes(79, 28, 1, 1, 81, 28);
+  if (GameFlag_Test(0x202))
+    MapGrid_CopyCellAttributes(115, 35, 1, 1, 117, 35);
+  Func_02000fcc(0, 240);
+  Func_02001068(0, 17, 0, 0, 64);
+  if (GameFlag_Test(0x886)) {
+    actor = Actor_GetById(17);
+    MapGrid_CopyCellsLayered(124, 1, 1, 1, 119, 43);
+    Actor_SetPosition(17, PIXELS(1912), PIXELS(728));
+    height = Map_GetTerrainHeight(0, actor->x, actor->z);
+    actor->y = height;
+    actor->terrainHeight = height;
+  }
   Actor_SetAnimation(16, 4);
   if (GameFlag_Test(0x884)) {
     MapGrid_CopyCellAttributes(74, 31, 1, 1, 74, 33);
@@ -336,7 +324,7 @@ s32 Scene_Initialize(void) {
   } else {
     Actor_GetById(15)->collisionFlags |= 16;
   }
-  Iwram_CopyWords(((u8 *)gData_02001ae0), (void *)&BG_PLTT_COLOR(0, 12), 8);
+  Iwram_CopyWordsEntry(((u8 *)gData_02001ae0), (void *)&BG_PLTT_COLOR(0, 12), 8);
   Task_AddFrame(Func_02000738, 0x480);
   ((struct MapLayerBits *)Ram_HeapSlots->mapWork)->priority = 1;
 done:

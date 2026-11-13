@@ -138,7 +138,7 @@ done:
 s32 BattleStaging_InitializeTilePattern(void) {
   Dma_Set((const void *)0x06000290, (void *)0x06000280, DMA_COPY_HALFWORDS(8),
           REG_DMA3);
-  return Iwram_ClearWords((void *)0x0600028c, 20);
+  return Iwram_ClearWordsEntry((void *)0x0600028c, 20);
 }
 
 void BattleTransition_ClearBg0Vofs(void) {

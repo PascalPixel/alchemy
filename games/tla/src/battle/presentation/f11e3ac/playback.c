@@ -83,7 +83,7 @@ void BattleEvent_Playback(void) {
   void Func_08122cd0(struct AnimationRecord * record, s32 unused) {
     u8 *tiles = (u8 *)OBJ_VRAM + gResourceTableEntries[record->slot].offset;
 
-    Iwram_ClearWords(tiles, record->width * record->height);
+    Iwram_ClearWordsEntry(tiles, record->width * record->height);
   }
 
   if (battle->events.phase == BATTLE_PLAYBACK_IDLE)

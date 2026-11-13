@@ -118,13 +118,13 @@ void Func_020000c0(void) {
   if (busy != 0)
     return;
   if (gData_020036c4 == -1) {
-    Iwram_CopyWords(Data_020039bc, (void *)0x050001a0, 32);
-    Iwram_CopyWords(gData_0200393c, (void *)0x05000100, 64);
-    Iwram_CopyWords(gData_0200397c, gData_0200393c, 64);
+    Iwram_CopyWordsEntry(Data_020039bc, (void *)0x050001a0, 32);
+    Iwram_CopyWordsEntry(gData_0200393c, (void *)0x05000100, 64);
+    Iwram_CopyWordsEntry(gData_0200397c, gData_0200393c, 64);
     gData_020036c4 = 0;
   }
   base = gData_020036c4 / 8 % 6;
-  Iwram_CopyWords(gData_0200397c, Data_020039bc, 32);
+  Iwram_CopyWordsEntry(gData_0200397c, Data_020039bc, 32);
   if (entrance == 1 && Event_GetFlag(0xa32)) {
     for (i = 0; i <= 5; i++)
       gData_0200397c[i + 10] = gData_0200393c[(base + i) % 6 + 10];
@@ -209,9 +209,9 @@ void Func_020003c4(void) {
   if (busy != 0)
     return;
   if (gData_02003704 == -1) {
-    Iwram_CopyWords(gData_02003a5c, (void *)0x05000040, 32);
-    Iwram_CopyWords((void *)Data_020039dc, (void *)0x05000100, 64);
-    Iwram_CopyWords(Data_02003a1c, (void *)Data_020039dc, 64);
+    Iwram_CopyWordsEntry(gData_02003a5c, (void *)0x05000040, 32);
+    Iwram_CopyWordsEntry((void *)Data_020039dc, (void *)0x05000100, 64);
+    Iwram_CopyWordsEntry(Data_02003a1c, (void *)Data_020039dc, 64);
     gData_02003704 = 0;
   }
   /* FAKEMATCH(volatile): the saved colours read as volatile; as plain u16, 2 of
@@ -224,13 +224,13 @@ void Func_020003c4(void) {
     Data_02003a1c[i + 26] = Data_020039dc[(base + i) % 6 + 26];
   }
   if (!Event_GetFlag(0xa32))
-    Iwram_CopyWords(&Data_02003a1c[10], Data_0200ba70, 12);
+    Iwram_CopyWordsEntry(&Data_02003a1c[10], Data_0200ba70, 12);
   if (!Event_GetFlag(0xa33))
-    Iwram_CopyWords(&Data_02003a1c[20], Data_0200ba70, 12);
+    Iwram_CopyWordsEntry(&Data_02003a1c[20], Data_0200ba70, 12);
   if (!Event_GetFlag(0xa34))
-    Iwram_CopyWords(&Data_02003a1c[26], Data_0200ba70, 12);
+    Iwram_CopyWordsEntry(&Data_02003a1c[26], Data_0200ba70, 12);
   if (!Event_GetFlag(0xa35))
-    Iwram_CopyWords(&Data_02003a1c[4], Data_0200ba70, 12);
+    Iwram_CopyWordsEntry(&Data_02003a1c[4], Data_0200ba70, 12);
   IO_WRITE_QUEUE_PUSH(0x05000100, (u32)Data_02003a1c, 0x84000010);
   gData_02003704++;
 }
@@ -295,9 +295,6 @@ void Func_020006c8(s32 state) {
    * the state is copied for the next index, as in the native; as the test
    * itself, 12 of 141 instructions differ in tla-en. */
   odd = state & 1;
-  /* FAKEMATCH(temporary): a local pointer to the flash, taken here, loads its
-   * address before 20 is subtracted; as a direct store in each arm, 13 of 141
-   * instructions differ in tla-en. */
   flash = (u16 *)&gData_02003a7e;
   next = state - 20;
   if (odd)
@@ -469,9 +466,6 @@ s32 Scene_Initialize(void) {
         PaletteFade_ApplyTarget(0x10003, 0);
         PaletteFade_Interpolate(20);
         System_Wait(20);
-        /* FAKEMATCH(temporary): entrance reused for the palette address, which
-         * holds its register; as a plain store, 38 of 324 instructions differ
-         * in tla-en. */
         entrance = 0x500021e;
         *(u16 *)entrance = 0x7fff;
         System_Wait(1);
@@ -620,8 +614,6 @@ void Func_020010e4(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  /* FAKEMATCH(wrapper): forwarded so 0x10000 is built again for the next
-   * call; as a direct call, 8 of 37 instructions differ in tla-en. */
   PaletteFade_ApplySource(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
   BattleEffect_StartBufferInterpolation(20);
@@ -640,8 +632,6 @@ void Func_02001154(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  /* FAKEMATCH(wrapper): forwarded so 0x10000 is built again for the next
-   * call; as a direct call, 8 of 37 instructions differ in tla-en. */
   PaletteFade_ApplySource(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
   BattleEffect_StartBufferInterpolation(20);
@@ -660,8 +650,6 @@ void Func_020011c4(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  /* FAKEMATCH(wrapper): forwarded so 0x10000 is built again for the next
-   * call; as a direct call, 8 of 37 instructions differ in tla-en. */
   PaletteFade_ApplySource(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
   BattleEffect_StartBufferInterpolation(20);
@@ -680,8 +668,6 @@ void Func_02001234(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  /* FAKEMATCH(wrapper): forwarded so 0x10000 is built again for the next
-   * call; as a direct call, 8 of 37 instructions differ in tla-en. */
   PaletteFade_ApplySource(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
   BattleEffect_StartBufferInterpolation(20);
@@ -749,8 +735,6 @@ void Func_020013a0(void) {
       FieldCamera_MoveTo(PIXELS(224), PIXELS(64), PIXELS(216), 1);
       Func_02003228();
       FieldEvent_Wait(20);
-      /* FAKEMATCH(wrapper): forwarded so 0x10000 is built again for the next
-       * call; as a direct call, 12 of 155 instructions differ in tla-en. */
       PaletteFade_ApplySource(0x10000, 0);
       BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
       BattleEffect_StartBufferInterpolation(20);
@@ -775,14 +759,9 @@ void Func_020013a0(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldCamera_SetSpeed(0x20000, 0x4000);
-    /* FAKEMATCH(wrapper): forwarded so this branch builds its own positions;
-     * as a direct call, 16 of 155 instructions differ in tla-en. */
     FieldCamera_MoveTo(PIXELS(224), PIXELS(64), PIXELS(216), 1);
     Func_02003228();
     FieldEvent_Wait(20);
-    /* FAKEMATCH(wrapper): forwarded so 0x10000 is built again for the next
-     * call, as in the branch above; as a direct call at this site, 22 of 155
-     * instructions differ in tla-en. */
     PaletteFade_ApplySource(0x10000, 0);
     BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
     BattleEffect_StartBufferInterpolation(20);

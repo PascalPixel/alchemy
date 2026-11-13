@@ -149,10 +149,6 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
   REG_WIN1V = 0x1088;
   BattleEffect_LoadBlitter(
       SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-  /* FAKEMATCH(temporary): the blitter in a local, read before the transfer mode
-   * is set and tested below; as blit[0] read from the heap slot after
-   * work->transferValue and tested, 33 of 1122 instructions differ in tla-en.
-   */
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 2;
   work->transferValue = 50;
@@ -195,7 +191,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FA, Data_02011000, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, Data_02011400, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
                   128);
   for (i = 0, p = work->particles; i != 32; i++, p++) {
@@ -211,7 +207,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != 104; frame++) {
     if (frame == 0) {
-      Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(palette), 128);
+      Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(palette), 128);
     }
     if (frame > 76) {
       Func_0815f0a0(palette);
@@ -605,7 +601,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, work->sheet + 0x5000,
                                0, 0);
   }
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   // The blitter faces the caster's side.
   if (effect->side == 0)

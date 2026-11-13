@@ -131,7 +131,7 @@ void Func_020001a0(s32 unused, s32 id) {
         other->z = 0;
         Event_SetFlag(0x200);
       } else {
-        Call3((void (*)())Iwram_CopyWords, (s32)&saved, (s32)other, 128);
+        Call3((void (*)())Iwram_CopyWordsEntry, (s32)&saved, (s32)other, 128);
         Actor_ResetTargetsAndVelocity(9);
         FieldActor_Jump(9, 4, 0);
         FieldEvent_Wait(30);
@@ -140,7 +140,7 @@ void Func_020001a0(s32 unused, s32 id) {
         FieldEvent_Wait(60);
         Actor_SetAnimationAndWait(9, 4);
         FieldEvent_Wait(20);
-        { void *from = &saved; Iwram_CopyWords(other, from, 128); }
+        { void *from = &saved; Iwram_CopyWordsEntry(other, from, 128); }
         MapGrid_CopyCellAttributes(53, 35, 1, 1, 53, 36);
         Event_SetFlag(0x224);
       }
@@ -149,9 +149,6 @@ void Func_020001a0(s32 unused, s32 id) {
 }
 
 void Func_0200036c(void) {
-  /* FAKEMATCH(wrapper): the placements and flags through event.h's inlines,
-   * which build each constant again at each call; as direct calls, which share
-   * 764 and 380 in saved registers, 36 of 76 instructions differ in tla-en. */
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetDestination(17, 764, 384);
@@ -353,9 +350,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 
 void Func_02000960(void) {
-  /* FAKEMATCH(wrapper): the calls through event.h's inlines keep each call's
-   * own constants and argument order; as direct Actor_SetPositionAndReset calls
-   * for Actor_WalkToAndWait, 42 of 140 instructions differ in tla-en. */
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(MsgIsTheWay);
@@ -408,9 +402,6 @@ void Func_02000ad4(s32 id) {
 void Func_02000af0(void) {
   s32 owner = gMainRoutineWork.currentOwner;
 
-  /* FAKEMATCH(wrapper): the calls through event.h's inlines, as in
-   * Func_02000960, build each call's constants again in the original's argument
-   * order; as direct calls, 126 of 251 instructions differ in tla-en. */
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(23, PIXELS(248), PIXELS(472));

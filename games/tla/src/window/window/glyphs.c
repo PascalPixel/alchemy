@@ -64,14 +64,14 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
     glyph = (const u16 *)(gFont_KanjiGlyphs + index * (FONT_GLYPH_ROWS * 2));
     width = KANJI_WIDTH;
   }
-  Iwram_ClearWords(pixels, GLYPH_PIXELS_SIZE);
+  Iwram_ClearWordsEntry(pixels, GLYPH_PIXELS_SIZE);
 #else
   secondIndex = (code << 8) >> 16;
   code &= 255;
   firstIndex = code - 32;
   glyph = (const u8 *)gFont_Glyphs + firstIndex * sizeof(struct FontGlyph);
   width = ((const struct FontGlyph *)glyph)->width;
-  Iwram_ClearWords(pixels, GLYPH_PIXELS_SIZE);
+  Iwram_ClearWordsEntry(pixels, GLYPH_PIXELS_SIZE);
   glyph = (const u8 *)((const struct FontGlyph *)glyph)->rows;
 #endif
   if (work->mode != 0) {

@@ -86,7 +86,7 @@ void Func_020000c0(u16 *colors, s32 count, s32 red, s32 green, s32 blue) {
 
 void Func_02000138(u8 *grid, s32 count, s32 scale) {
   // Through a local pointer: the routine's address loads before the arguments.
-  s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWords;
+  s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWordsEntry;
   s32 i = 0;
   // The corner the rings are centred on; each holds 63 for its whole life.
   s32 cornerColumn = 63;
@@ -178,7 +178,7 @@ void Func_0200020c(s32 stage) {
   Func_080d46a4(gData_02003d5c[stage], 1);
   map->yaw = 0x1000;
   map->unk11c = 0xd000;
-  Iwram_ClearWords((void *)0x050001c0, 32);
+  Iwram_ClearWordsEntry((void *)0x050001c0, 32);
   wait(1);
   Actor_GetById(gMainRoutineWork.currentOwner)->animationKind = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->delay = 64;
@@ -220,7 +220,7 @@ void Func_0200020c(s32 stage) {
     IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)(Data_020020bc + palette * 32),
                         0x80000010);
     {
-      void (*clear)(void *, s32) = (void (*)(void *, s32))Iwram_ClearWords;
+      void (*clear)(void *, s32) = (void (*)(void *, s32))Iwram_ClearWordsEntry;
       s32 size = 0x2000;
       void *tilesAt = (void *)0x06001000;
 

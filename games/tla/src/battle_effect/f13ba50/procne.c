@@ -604,7 +604,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
     const void *lightning =
         Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet);
     s32 (*copy)(void *destination, const void *source, s32 size) =
-        Iwram_CopyWords;
+        Iwram_CopyWordsEntry;
 
     // The entry held in a local loads ahead of the destination's shift; as a
     // plain Iwram_CopyWords call, 2 of 1072 instructions differ in tla-en.
@@ -698,7 +698,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 176) {
         work->transferMode = 3;
         work->transferValue = 0x02020202;
-        Iwram_CopyWords(
+        Iwram_CopyWordsEntry(
             (void *)BG_PLTT,
             Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet), 128);
       } else if (frame >= 160 && frame <= 175) {

@@ -565,7 +565,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
       Func_081180e8(134);
       work->shakeFrames = 12;
       Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
       Func_08118088(effect->actors[0], 4);
     }
     timer = work->particles[0].variant;
@@ -721,7 +721,7 @@ extern const u8 Data_08198df8[];
 static inline void CopyPalette(const void *palette) {
   // Both palette copies go through this helper; as direct calls to
   // Iwram_CopyWords, 4 of 513 instructions of Func_08181ed4 differ in tla-en.
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, palette, 128);
 }
 
 void Func_0815e22c(struct EffectPosition *midpoint);
@@ -1034,7 +1034,7 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
         star->velocityZ = (Trig_Cos(angle) * speed) >> 5;
         star->variant = 0;
       }
-      Iwram_CopyWords((void *)BG_PLTT,
+      Iwram_CopyWordsEntry((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_BlastSheet), 128);
     }
 
@@ -1208,7 +1208,7 @@ void Func_08182898(struct BattleEffectArgument *effect) {
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
   // The blue beam's palette colours the bubble cels.
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_BlueBeamSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FD, work->sheet, 0, 0);
 
@@ -1415,23 +1415,6 @@ void Func_08164b2c(s32 r, s32 g, s32 b);
     }                                                                          \
   } while (0)
 
-/* VIEW(f1811d4): static CopyWords as CopyWords__f1811d4; the definition has static inline s32 CopyWords(void *destination, const void *source, s32 size); not tried: CopyWords's definition holds a FAKEMATCH tag. */
-static inline void CopyWords__f1811d4(void *destination, const void *source, s32 size) {
-  /* FAKEMATCH(wrapper): the copies through this inline, so their sizes stay
-   * out of CSE; as direct calls to Iwram_CopyWords, 528 of 2781 instructions
-   * of BattleEffect_RunCoatlicue differ in tla-en. */
-  Iwram_CopyWords(destination, source, size);
-}
-
-/* VIEW(f1811d4): static FillWords as FillWords__f1811d4; actor_move_random has static inline void FillWords(void *dst, s32 size, s32 value) { Iwram_FillWords(dst, size, value); }; not tried: FillWords's definition holds a FAKEMATCH tag. */
-static inline void FillWords__f1811d4(void *destination, s32 size, s32 value) {
-  /* FAKEMATCH(wrapper): the last two fills through this inline, so the
-   * routine's address loads before the value; as direct calls to
-   * Iwram_FillWords, 8 of 2781 instructions of BattleEffect_RunCoatlicue
-   * differ in tla-en. */
-  Iwram_FillWords(destination, size, value);
-}
-
 /// Coatlicue: the ground opens over a green dusk, the serpent goddess rises in
 /// a spiral of stone, her coils sweep the field and her light heals the party.
 void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
@@ -1501,7 +1484,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   {
     u8 *e = Resource_GetTableEntry((s32)&ResourceId_BellMaidenTiles);
 
-    CopyWords__f1811d4((void *)OBJ_PLTT, e, 512);
+    Iwram_CopyWords((void *)OBJ_PLTT, e, 512);
     Resource_DecodeType01(e + 512, cellBuffer);
     {
       u8 *cells;
@@ -1512,7 +1495,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         obj = Func_0815b290__f1811d4(32, 32, 0x80002000, 0);
         obj->priority = 2;
         work->objects[i] = obj;
-        CopyWords__f1811d4((void *)OBJ_TILES(obj), cells, 1024);
+        Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 1024);
       }
     }
   }
@@ -1568,11 +1551,11 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       work->transferValue = 50;
     }
     if (frame == 82) {
-      Iwram_FillWords(canvas, 0x4000, 0x2f2f2f2f);
+      Iwram_FillWordsEntry(canvas, 0x4000, 0x2f2f2f2f);
       Sound_PlayFar(130);
     }
     if (frame == 210) {
-      Iwram_FillWords(canvas, 0x4000, 0x2f2f2f2f);
+      Iwram_FillWordsEntry(canvas, 0x4000, 0x2f2f2f2f);
       Sound_PlayFar(130);
     }
     if (frame == 274) {
@@ -2089,7 +2072,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       if (frame > 80) {
         for (i = 0; i != 3; i++) {
           if (frame == Data_0819974e[i]) {
-            Iwram_FillWords(canvas, 0x4000, 0x2f2f2f2f);
+            Iwram_FillWordsEntry(canvas, 0x4000, 0x2f2f2f2f);
           }
           if (frame > Data_0819974e[i] && frame < Data_0819974e[i] + 10) {
             s32 d = frame - Data_0819974e[i];
@@ -2233,7 +2216,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     wait(1);
   }
-  FillWords__f1811d4((void *)0x06004000, 0x4000, 0x3f3f3f3f);
+  Iwram_FillWords((void *)0x06004000, 0x4000, 0x3f3f3f3f);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
   for (i = 0; i != 12; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
@@ -2247,9 +2230,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   Task_Remove(BattleEffect_ArmPaletteHBlankDma);
   gCameraSceneParameters[4] = 120;
   wait(1);
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
-  FillWords__f1811d4(canvas, 0x4000, 0x3f3f3f3f);
+  Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
   Func_08164b2c(0, 0, 11);
   frame = 0;
   for (; frame != 60; frame++) {

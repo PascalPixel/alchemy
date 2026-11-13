@@ -95,7 +95,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
     Resource_LoadAndDecompress((s32)&ResourceId_VortexSheet, work->sheet, 1, 0);
     palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
   }
-  CopyWords_((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   if (mode == 4)
     Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);
   if (mode == 3)

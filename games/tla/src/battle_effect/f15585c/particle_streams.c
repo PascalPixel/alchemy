@@ -577,10 +577,7 @@ void Func_0816467c(s32 formation, s32 x, s32 y) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  /* FAKEMATCH(wrapper): the clear through ClearWords_, which loads its address
-   * before the size's shift; as a direct Iwram_ClearWords call, 2 of 430
-   * instructions differ in tla-en. */
-  ClearWords_((void *)0x06004000, 0x4000);
+  Iwram_ClearWords((void *)0x06004000, 0x4000);
   HeapSlot_Release(188);
   HeapSlot_Release(104);
 }
@@ -695,7 +692,6 @@ void BattleEffect_ArmPaletteHBlankDma(void) {
 }
 
 /// The particle streams in mode 0.
-/* VIEW(actor_move_random): static CopyWords_ as CopyWords___actor_move_random; f15b3b0 has static __inline__ s32 CopyWords_(void *destination, const void *source, s32 size) { return Iwram_CopyWords(destination, source, size); }; tried with the definition the rest of the object has, BattleEffect_RunMeteor (gone) moves: 4 of 4 instructions in tla-ja. */
 DEFINE_EFFECT_KIND(BattleEffect_RunMeteor, BattleEffect_RunParticleStreams, 0)
 
 /// The particle streams in mode 1.
@@ -719,11 +715,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunOuterSpace, BattleEffect_RunParticleStreams,
 
 
 
-
-static __inline__ s32 CopyWords___actor_move_random(void *destination, const void *source,
-                                 s32 size) {
-  return Iwram_CopyWords(destination, source, size);
-}
 
 
 // The map cell buffer: first a 256 x 128 picture the streams draw into (BG1's
@@ -904,16 +895,16 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   }
   Resource_LoadAndDecompress((s32)&ResourceId_FlameSheetB, work->sheet, 1, 1);
   if (mode == 1)
-    CopyWords___actor_move_random((void *)BG_PLTT,
+    Iwram_CopyWords((void *)BG_PLTT,
                Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
                128);
 
   // BG1 shows the ground: the map cell buffer filled with colour 1.
-  FillWords_(Ram_MapCellBuffer, 0x8000, 0x01010101);
+  Iwram_FillWords(Ram_MapCellBuffer, 0x8000, 0x01010101);
   // The copy in a once-only block, so its entry loads before the size; as
   // the plain call, 2 of 1591 instructions differ in tla-en.
   do {
-    CopyWords___actor_move_random((void *)0x06008000, Ram_MapCellBuffer, 0x7800);
+    Iwram_CopyWords((void *)0x06008000, Ram_MapCellBuffer, 0x7800);
   } while (0);
   wait(1);
   REG_BLDCNT = 0;
@@ -933,7 +924,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   // the size's shift; as the plain call, 4 of 1591 instructions differ in
   // tla-en.
   do {
-    FillWords_(canvas, 0x4000, 0);
+    Iwram_FillWords(canvas, 0x4000, 0);
   } while (0);
 
   for (i = 0; i != 256; i++) {
@@ -943,7 +934,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
 
     ((u8 *)canvas)[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = shade;
   }
-  CopyWords___actor_move_random((void *)0x06004000, canvas, 0x4000);
+  Iwram_CopyWords((void *)0x06004000, canvas, 0x4000);
   gCameraSceneParameters[4] = 240;
   BattleEffect_SelectLivingTargets(work->effect);
 

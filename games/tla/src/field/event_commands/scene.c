@@ -112,7 +112,7 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
     // allocation; without it, 4 of 239 instructions differ in tla-en.
     do {
     } while (0);
-    Iwram_FillWords(work, sizeof(*work), 0);
+    Iwram_FillWordsEntry(work, sizeof(*work), 0);
   } else {
     work = Ram_HeapSlots->effectWork;
   }

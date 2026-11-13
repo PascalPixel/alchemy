@@ -167,7 +167,7 @@ void Func_02000334(void) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
-      Actor_OffsetPositionAndResetMotion_(gMainRoutineWork.currentOwner, 0,
+      Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0,
                                                  -16);
       leader->velocityY = 0x60000;
       FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
@@ -263,8 +263,6 @@ sink:
   leader->z += 0x20000;
   slip = (leader->x & 0xfffff) + 0xfff80000;
   {
-    /* FAKEMATCH(temporary): each bound in one local just past the limit; as literal
-     * bounds, 73 of 166 instructions differ in tla-en. */
     s32 limit = 0x10001;
 
     if (slip >= limit)
@@ -458,7 +456,7 @@ void Func_02000b90(s32 a, s32 id) {
     object->priorityFlags |= 2;
     Event_SetFlag(0x335);
     Event_SetFlag(0x336);
-    Actor_SetSpeedParameters_(id, 0x8000, 0x4000);
+    Actor_SetSpeed(id, 0x8000, 0x4000);
     Actor_SetDestinationOffset(id, -32, 0);
     FieldActor_WaitForMoveById(id);
     Actor_SetAnimation(id, 3);
@@ -624,7 +622,7 @@ void Func_02001038(s32 a, s32 id) {
     object->priorityFlags |= 2;
     Event_SetFlag(0x33c);
     Event_SetFlag(0x33d);
-    Actor_SetSpeedParameters_(id, 0x8000, 0x4000);
+    Actor_SetSpeed(id, 0x8000, 0x4000);
     Actor_SetDestinationOffset(id, 0, -32);
     FieldActor_WaitForMoveById(id);
     Actor_SetAnimation(id, 3);
@@ -1386,7 +1384,7 @@ void Func_02002120(void) {
   struct SceneState *state = &gSceneState;
 
   if (Event_GetFlag(0x109) == 0)
-    Iwram_ClearWords(state, 12);
+    Iwram_ClearWordsEntry(state, 12);
 }
 
 // volatile: the VBlank handler sets the held keys, as gKeysHeld in The Broken Seal.
@@ -1543,7 +1541,7 @@ void Func_02002614(u16 *points, u16 *values, s32 arg) {
     s32 x;
     s32 i;
 
-    Iwram_ClearWords(work, 0x150);
+    Iwram_ClearWordsEntry(work, 0x150);
     x = *points++;
     i = 0;
     while (x > 0) {

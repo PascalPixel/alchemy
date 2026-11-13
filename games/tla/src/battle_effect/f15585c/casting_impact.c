@@ -242,12 +242,6 @@ void Render_DrawModelList(struct Model *);
 #define RINGS ((struct Particle *)(Ram_MapCellBuffer + 0x6e00))
 #define IWRAM_SLOT_68 (IWRAM->slot68)
 #define IWRAM_SLOT_BC (IWRAM->slotbc)
-static __inline__ void CLEAR(void *dst, s32 size) {
-  Iwram_ClearWords(dst, size);
-}
-static __inline__ void FILL(void *dst, s32 size, s32 value) {
-  Iwram_FillWords(dst, size, value);
-}
 // The second release in a once-only block, whose loop note sets kinds 68 and
 // 84's scheduling; the other sites spell the releases out.
 #define RELEASE_BLITTERS()                                                     \
@@ -376,7 +370,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
     Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, buffer, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
                                work->frames, 1, 1);
-    CLEAR(buffer + 0xc56, 0x4000);
+    Iwram_ClearWords(buffer + 0xc56, 0x4000);
     for (i = 0; i != 4; i++) {
       for (j = 0; j != 120; j++) {
         for (k = 0; k != 24; k++)
@@ -400,7 +394,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
 
     Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, buffer + 0x1000, 1,
                                0);
-    CLEAR(buffer, 0x1000);
+    Iwram_ClearWords(buffer, 0x1000);
     for (i = 0; i != 48; i++) {
       for (k = 0; k != 24; k++) {
         buffer[0x208 + i * 64 + k] = buffer[0x1000 + i * 24 + k];
@@ -715,8 +709,8 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
       REG_BG2X = (64 - target[0]) << 8;
       work->unk7780 = 1;
       work->unk7784 = 0;
-      CLEAR(BG_VRAM, 0x3c00);
-      CLEAR(screen, 0x3c00);
+      Iwram_ClearWords(BG_VRAM, 0x3c00);
+      Iwram_ClearWords(screen, 0x3c00);
       REG_BLDCNT = 0;
     }
     if (kind == 61) {
@@ -727,8 +721,8 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
         REG_BG2X = (96 - target[0]) << 8;
     }
     if (kind == 45 || kind == 47 || kind == 54 || kind == 56) {
-      CLEAR(BG_VRAM, 0x3c00);
-      CLEAR(screen, 0x3c00);
+      Iwram_ClearWords(BG_VRAM, 0x3c00);
+      Iwram_ClearWords(screen, 0x3c00);
       action->prelude = 0;
       Task_Remove(Palette_StepFadeTransfer);
       Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -750,8 +744,8 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
     object->acceleration = save34;
     object->verticalMotionStrength = save48;
     if (kind == 65) {
-      CLEAR(BG_VRAM, 0x3c00);
-      CLEAR(screen, 0x3c00);
+      Iwram_ClearWords(BG_VRAM, 0x3c00);
+      Iwram_ClearWords(screen, 0x3c00);
       action->prelude = 0;
       Task_Remove(Palette_StepFadeTransfer);
       Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -761,8 +755,8 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
       BattleEffect_RunSparkGroups(action, 2);
       return;
     }
-    CLEAR(screen, 0x3c00);
-    CLEAR(BG_VRAM, 0x3c00);
+    Iwram_ClearWords(screen, 0x3c00);
+    Iwram_ClearWords(BG_VRAM, 0x3c00);
     if (kind == 79) {
       for (i = 1; i != 64; i++) {
         v = 31 - ((Trig_Cos(i << 8) << 5) >> 16);
@@ -1372,7 +1366,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
                             gData_0819750c[action->side * 7 + 1],
                             y + gData_0819751a[1], 99, 69);
           if (frame >= 4 && frame < 6)
-            FILL(screen, 0x4000, 0x3f3f3f3f);
+            Iwram_FillWords(screen, 0x4000, 0x3f3f3f3f);
           if (frame >= 6 && frame < 8)
             drawFuncs.draw[0](screen, work->frames + 0x3081,
                               gData_0819750c[action->side * 7 + 2],
@@ -1538,7 +1532,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
         if (t >= 0 && t < 16)
           REG_BLDALPHA = ((t / 2 + 8) << 8) | (16 - t);
         if (frame >= 4 && frame < 8)
-          FILL(screen, 0x4000, 0x01010101);
+          Iwram_FillWords(screen, 0x4000, 0x01010101);
         if (frame > 3) {
           if (action->side == 0)
             drawFuncs.draw[0](screen, buffer, 32, 21, 96, 88);
@@ -1590,7 +1584,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
         if (frame > 4)
           drawFuncs.draw[0](screen, buffer, 35, 17, 60, 95);
         if (frame == 5)
-          FILL(screen, 0x4000, 0x3f3f3f3f);
+          Iwram_FillWords(screen, 0x4000, 0x3f3f3f3f);
         if (frame >= 0 && (m = frame / 3) < 7) {
           if (action->side == 0)
             drawFuncs.draw[0](screen, buffer + gData_081988ee[m],
@@ -1635,7 +1629,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
         if (t >= 0 && t < 16)
           REG_BLDALPHA = (16 - t) | 0x1000;
         if (frame >= 4 && frame < 6)
-          FILL(screen, 0x4000, 0x3f3f3f3f);
+          Iwram_FillWords(screen, 0x4000, 0x3f3f3f3f);
         if (frame < 4) {
           if (action->side == 1)
             drawFuncs.draw[0](screen, work->frames, 0, 24, 80, 104);
@@ -2355,7 +2349,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
         for (i = 0; i != 3; i++) {
           if (frame == i * 3 + 3) {
             Sound_PlayFar(212);
-            FILL(screen, 0x4000, 0x2f2f2f2f);
+            Iwram_FillWords(screen, 0x4000, 0x2f2f2f2f);
           }
         }
       } else if (kind == 74) {
@@ -2507,8 +2501,8 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
 
     if (kind == 51 || kind == 67 || kind == 9 || kind == 10 || kind == 11 ||
         kind == 70 || kind == 79 || kind == 90) {
-      CLEAR(BG_VRAM, 0x3c00);
-      CLEAR(screen, 0x3c00);
+      Iwram_ClearWords(BG_VRAM, 0x3c00);
+      Iwram_ClearWords(screen, 0x3c00);
       action->prelude = 0;
       Task_Remove(Palette_StepFadeTransfer);
       Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

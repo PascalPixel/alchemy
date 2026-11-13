@@ -446,12 +446,6 @@ L_0200bcea:
        ->v)
 void Func_020004a4(void);
 
-static __inline__ void W_Func_02005714(s32 a0, s32 a1, s32 a2) {
-  /* FAKEMATCH(wrapper): W_Func_02005714 forwarded inline; as direct calls to
-   * Func_080d47b4, 195 of 1176 instructions differ in tla-en. */
-  Func_080d47b4(a0, a1, a2);
-}
-
 void Func_02003ff4(void) {
   s32 owner, i, ownerInLoop, ownerAfterLoop, quarterTurn;
   s32 threeSixteenthsTurn, actor, t2, t3;
@@ -573,7 +567,7 @@ void Func_02003ff4(void) {
   Actor_FaceDirection(1, quarterTurn, 0);
   Actor_FaceDirection(3, quarterTurn, 0);
   Actor_FaceDirectionAndWait(0, quarterTurn);
-  W_Func_02005714(0, 0x109, 20);
+  FieldActor_ShowEmote(0, 0x109, 20);
   Event_ShowMessage(0, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
   Event_ShowMessage(28, 0);
@@ -601,7 +595,7 @@ void Func_02003ff4(void) {
   Func_02005794();
   ((struct Actor *)actor)->facing = quarterTurn;
   Actor_SetAnimation(5, 1);
-  W_Func_02005714(5, 0x100, 20);
+  FieldActor_ShowEmote(5, 0x100, 20);
   Event_ShowMessage(5, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
   Event_ShowMessage(28, 0);
@@ -610,7 +604,7 @@ void Func_02003ff4(void) {
   FieldPsynergy_StartMindReadWave(23, 24);
   Event_ShowMessage(28, 0);
   Func_02005794();
-  W_Func_02005714(1, 0x100, 20);
+  FieldActor_ShowEmote(1, 0x100, 20);
   Event_ShowMessage(1, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
   Event_ShowMessage(28, 0);
@@ -686,14 +680,14 @@ L_0200c66c:
     ownerInLoop = (s32)&party->currentOwner;
   }
   t195 = *(s32 *)ownerInLoop;
-  W_Func_02005714(t195, 0x100, 0);
-  W_Func_02005714(5, 0x100, 0);
-  W_Func_02005714(6, 0x100, 0);
-  W_Func_02005714(7, 0x100, 0);
-  W_Func_02005714(19, 0x100, 0);
-  W_Func_02005714(0, 0x100, 0);
-  W_Func_02005714(1, 0x100, 0);
-  W_Func_02005714(2, 0x100, 0);
+  FieldActor_ShowEmote(t195, 0x100, 0);
+  FieldActor_ShowEmote(5, 0x100, 0);
+  FieldActor_ShowEmote(6, 0x100, 0);
+  FieldActor_ShowEmote(7, 0x100, 0);
+  FieldActor_ShowEmote(19, 0x100, 0);
+  FieldActor_ShowEmote(0, 0x100, 0);
+  FieldActor_ShowEmote(1, 0x100, 0);
+  FieldActor_ShowEmote(2, 0x100, 0);
   Actor_ShowEmote(3, 0x100, 0);
   t205 = *(s32 *)ownerInLoop;
   Func_02000640(t205);

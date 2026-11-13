@@ -33,4 +33,11 @@ struct CellTarget {
   struct CellTargetEntry entries[1];
 };
 
+/// The map cell of a 16.16 coordinate with a watched cell's 64 bit ORed in,
+/// as each copy of the cell-target handler in the Jupiter and Mars Lighthouse
+/// overlays and overlay 6B0 builds its row. The name is ours.
+static inline s32 CellTarget_CellOf(s32 position, s16 bit) {
+  return (position >> 20) | bit;
+}
+
 #endif

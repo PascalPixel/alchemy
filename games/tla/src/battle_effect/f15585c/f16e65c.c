@@ -380,7 +380,7 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0CE, work->sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
                              work->sheet + SPARK_OFFSET, 1, 0);
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
   work->transferMode = 2;
   work->transferValue = 50;
@@ -596,7 +596,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
   width = 32;
   palette = (u16 *)BG_PLTT + 1;
   caster = GetBattleObjectSlotFar(effect->actor)->object;
-  Iwram_ClearWords((void *)BG_PLTT, 128);
+  Iwram_ClearWordsEntry((void *)BG_PLTT, 128);
   for (i = 0; i != 63; i++) {
     *palette++ = i / 3 + 8;
   }
@@ -608,7 +608,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     s32 half;
     s32 offset;
     // The clear through a local: the native loads its entry before the sheet.
-    s32 (*clear)(void *destination, s32 size) = Iwram_ClearWords;
+    s32 (*clear)(void *destination, s32 size) = Iwram_ClearWordsEntry;
 
     size = width / 2;
     half = size / 2;
@@ -867,7 +867,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
       104, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, work->sheet + 0x1000, 0,
                              0);
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   work->transferMode = 2;
   work->transferValue = 75;
@@ -922,7 +922,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
 
     // Frame 8: the canvas flashes white and the target is struck.
     if (frame == 8) {
-      Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       work->shakeFrames = 16;
       Func_08118088(effect->actors[0], 0);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
@@ -1045,7 +1045,7 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
   BattleEffect_LoadBlitter(
       104, BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_CyanPalette), 128);
   work->transferMode = 2;
   work->transferValue = 50;
@@ -1062,7 +1062,7 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
 
   // The streak: one pixel of colour 24 a row, stepping a pixel sideways
   // every 16 rows against the wind.
-  Iwram_ClearWords(work->sheet, 256);
+  Iwram_ClearWordsEntry(work->sheet, 256);
   for (i = 0; i != STREAKS; i++) {
     if (effect->side == 0)
       work->sheet[i * 4 - i / 16 + 3] = 24;
@@ -1171,8 +1171,8 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
    * after HeapSlot_Release; without it, 2 of 376 instructions differ in
    * tla-en. */
   __asm__("");
-  Iwram_ClearWords((void *)0x06004000, size);
-  Iwram_ClearWords(canvas, size);
+  Iwram_ClearWordsEntry((void *)0x06004000, size);
+  Iwram_ClearWordsEntry(canvas, size);
   Task_Remove(Palette_StepFadeTransfer);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   SummonEffect_RunCanvasMode3(effect);

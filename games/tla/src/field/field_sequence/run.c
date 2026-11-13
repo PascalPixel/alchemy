@@ -70,7 +70,7 @@ s32 FieldSequence_Run(void) {
   s32 packed;
 
   work = HeapSlot_AllocEwram(108, 0xd50);
-  Iwram_ClearWords(work, 0xd50);
+  Iwram_ClearWordsEntry(work, 0xd50);
   GameFlag_ClearBit(259);
   gMainRoutineWork.primary = gMainRoutineWork.scene;
   gMainRoutineWork.secondary = gMainRoutineWork.entrance;

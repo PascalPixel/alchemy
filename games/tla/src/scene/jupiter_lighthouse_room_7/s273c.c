@@ -18,14 +18,6 @@
 void Func_02001f74(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
-                                                   s32 mode) {
-  /* FAKEMATCH(wrapper): the call forwarded through the inline, which keeps
-   * each -1 in its own register; as a direct call, 8 of 169 instructions
-   * differ in tla-en. */
-  Camera_MoveWithinMapBounds(x, y, z, mode);
-}
-
 void Func_0200273c(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   u32 i;
@@ -34,7 +26,7 @@ void Func_0200273c(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
   actor->y = 0x820000;

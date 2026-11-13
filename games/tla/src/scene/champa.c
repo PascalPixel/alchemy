@@ -322,9 +322,6 @@ void Func_02000638(void) {
       FieldEvent_ResolvePendingActions(0);
       FieldEvent_SetMessageId((s32)MsgChampa52);
       {
-        /* FAKEMATCH(temporary): the facing in a local, which starts it before
-         * the other arguments as the native has; as the plain argument 0xc000,
-         * 2 of 414 instructions differ in tla-en. */
         s32 angle = 0xc000;
 
         Actor_SetPositionAndFacing(29, PIXELS(314), PIXELS(679), angle);

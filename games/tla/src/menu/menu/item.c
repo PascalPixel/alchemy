@@ -42,19 +42,6 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut);
 void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns);
 void ItemMenu_HideAllIcons(void);
 
-static __inline__ s32 CopyWords_(void *destination, const void *source,
-                                 s32 size) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants; as direct calls, 92 of 162 instructions differ in tla-en. */
-  return Iwram_CopyWords(destination, source, size);
-}
-
-static __inline__ s32 FillWords_(void *destination, s32 size, u32 value) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants; as a direct call, 47 of 162 instructions differ in tla-en. */
-  return Iwram_FillWords(destination, size, value);
-}
-
 /// The field menu's Item screen: choose a party member, one of their items and
 /// a command. Owns the menu work while it runs and frees it before returning.
 /// Returns ItemMenu_RunCommands' result: 1 when an item is to be used on the
@@ -91,8 +78,8 @@ s32 Func_080f94a4(void) {
       (struct RenderInput *)Window_CreateFar(13, 0, 17, 3, 2);
 #if TLA_PATCH_1
   Menu_SuspendFieldTasks();
-  CopyWords_(backup, (void *)0x06004000, size);
-  FillWords_((void *)0x06004000, size, 0x33333333);
+  Iwram_CopyWords(backup, (void *)0x06004000, size);
+  Iwram_FillWords((void *)0x06004000, size, 0x33333333);
   Text_UseExtraTilesFar(1);
 #endif
 
@@ -121,7 +108,7 @@ s32 Func_080f94a4(void) {
 #if TLA_PATCH_1
   Func_08038290();
   Text_UseExtraTilesFar(0);
-  CopyWords_((void *)0x06004000, backup, size);
+  Iwram_CopyWords((void *)0x06004000, backup, size);
   Ram_HeapSlots->windowTiles[6] = 0;
   Heap_Release(backup);
   wait(1);
@@ -144,7 +131,11 @@ typedef s32 (*ItemWordCopyFn)(void *dst, const void *src, s32 size);
 #define ITEM_IWRAM_COPY_WORDS                                                  \
   ((ItemWordCopyFn)(IwramIrqMain + Iwram_CopyWordsOffset))
 
-s32 Unit_RefreshPsynergyFar(s32 unit);
+#ifdef MODERN
+// Called with no prototype in scope, as its bytes need; a current GCC gets
+// it here.
+void Unit_RefreshPsynergyFar(s32 unit);
+#endif
 void Func_080fae8c(s32 member, s32 slot, s32 mode, s32 target);
 #if TLA_PATCH_2
 void Func_08104484(void);
@@ -374,9 +365,6 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           Inventory_RemoveFar(command, menu->selectedSlots[0]);
           Item_AdjustCounterFar(menu->selectedItems[0] & 0x1ff, 1);
         }
-        /* FAKEMATCH(signature): Unit_RefreshPsynergyFar declared returning s32,
-         * though this game's routine returns nothing, here and below; as void,
-         * 4 of 1355 instructions differ in tla-en. */
         Unit_RefreshPsynergyFar(command);
         Unit_CalculateFar(command);
         ItemMenu_SetItemWindowRow3();
@@ -570,8 +558,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       wait(1);
       if (aborted == 1) {
-        Iwram_CopyWords(source, sourceCopy, size);
-        Iwram_CopyWords(target, targetCopy, size);
+        Iwram_CopyWordsEntry(source, sourceCopy, size);
+        Iwram_CopyWordsEntry(target, targetCopy, size);
         WindowSprite_ClearListFar(menu->infoWindow);
         InventoryMenu_ShowModalMessage((s32)MsgCannotTrade, ITEM_CANNOT_TRADE_X,
                                        14);
@@ -736,11 +724,6 @@ s32 ItemMenu_Use(void) {
   }
 
   item = menu->selectedItems[0];
-  /* FAKEMATCH(dead): an empty once-only block between the item load and the
-   * 0x1ff mask; as mask = item & 0x1ff, 2 of 67 instructions differ in tla-en.
-   */
-  do {
-  } while (0);
   mask = 0x1ff;
   mask &= item;
   Item_PlayUseAnimation(mask);
@@ -1488,7 +1471,7 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
       unit = Unit_Get(target);
       size = 332;
       buffer = Heap_Alloc(size);
-      Iwram_CopyWords(buffer, unit, size);
+      Iwram_CopyWordsEntry(buffer, unit, size);
       previewSlot = Inventory_RemoveFirstUnflagged(target);
       if (previewSlot != 0) {
         entry &= ~0x200;
@@ -1502,7 +1485,7 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
       } else {
         StatusPanel_Draw(menu->statusWindow, target, slot, style);
       }
-      Iwram_CopyWords(unit, buffer, size);
+      Iwram_CopyWordsEntry(unit, buffer, size);
       Heap_Release(buffer);
     }
     break;
@@ -1523,7 +1506,7 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
       unit = Unit_Get(target);
       size = 332;
       buffer = Heap_Alloc(size);
-      Iwram_CopyWords(buffer, unit, size);
+      Iwram_CopyWordsEntry(buffer, unit, size);
       previewSlot = Inventory_RemoveFirstUnflagged(target);
       if (previewSlot != 0) {
         entry &= ~0x200;
@@ -1537,7 +1520,7 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
       } else {
         StatusPanel_Draw(menu->statusWindow, target, slot, style);
       }
-      Iwram_CopyWords(unit, buffer, size);
+      Iwram_CopyWordsEntry(unit, buffer, size);
       Heap_Release(buffer);
     }
     break;
@@ -1551,7 +1534,7 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
       unit = Unit_Get(target);
       size = 332;
       buffer = Heap_Alloc(size);
-      Iwram_CopyWords(buffer, unit, size);
+      Iwram_CopyWordsEntry(buffer, unit, size);
       previewSlot = Inventory_RemoveFirstUnflagged(target);
       if (previewSlot != 0) {
         previewSlot = Inventory_AddItemFar(target, entry);
@@ -1564,7 +1547,7 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
       } else {
         StatusPanel_Draw(menu->statusWindow, target, slot, style);
       }
-      Iwram_CopyWords(unit, buffer, size);
+      Iwram_CopyWordsEntry(unit, buffer, size);
       Heap_Release(buffer);
     }
     break;
@@ -1855,15 +1838,10 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
 
   if (item->flags & ITEM_CANNOT_UNEQUIP) {
     commandStates[4] = COMMAND_DISABLED;
-    /* FAKEMATCH(dead): the equipped test in a once-only block, which
-     * keeps the store above from sinking below the selected item's address;
-     * as the plain if, 2 of 157 instructions differ in tla-en. */
-    do {
-      if (menu->selectedItems[0] & INVENTORY_EQUIPPED) {
-        commandStates[3] = COMMAND_DISABLED;
-        commandStates[5] = COMMAND_DISABLED;
-      }
-    } while (0);
+    if (menu->selectedItems[0] & INVENTORY_EQUIPPED) {
+      commandStates[3] = COMMAND_DISABLED;
+      commandStates[5] = COMMAND_DISABLED;
+    }
   }
 
   if (BattleEffect_HasTriggerFar(menu->selectedItems[0] & ITEM_ID_MASK) != 0)
@@ -2778,7 +2756,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
    * both copies; as 332 at each, 6 of 179 instructions differ in tla-en. */
   size = 332;
   saved = Heap_Alloc(size);
-  Iwram_CopyWords(saved, unit, size);
+  Iwram_CopyWordsEntry(saved, unit, size);
   window = menu->messageWindow;
   if ((u32)(Inventory_EquipFar(menu->paneOwner[1], menu->selectedSlots[1]) +
             2) <= 1) {
@@ -2824,7 +2802,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
   if (GameFlag_Test(336))
     selection = 1;
   if (selection == 1)
-    Iwram_CopyWords(unit, saved, size);
+    Iwram_CopyWordsEntry(unit, saved, size);
   Heap_Release(saved);
   Unit_RefreshPsynergyFar(menu->paneOwner[1]);
   Unit_CalculateFar(menu->paneOwner[1]);

@@ -634,9 +634,6 @@ void Func_02000fe0(const struct MapCell *cell) {
   leader->motionFlags = 0;
   if ((cell->attributeB & 64) == 0) {
     {
-      /* FAKEMATCH(temporary): the window mask is built in a word register, as
-       * the native builds it; as REG_WINOUT = 0xf1f, 18 of 130 instructions
-       * differ in tla-en. */
       u16 winout = 0xf1f;
 
       REG_WINOUT = winout;

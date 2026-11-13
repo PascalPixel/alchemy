@@ -513,8 +513,6 @@ step:
     x = object->x;
     offset = (x & 0xfffff) - 0x80000;
     {
-      /* FAKEMATCH(temporary): each bound in one local just past the limit; as
-       * literal bounds, 4 of 120 instructions differ in tla-en. */
       s32 limit = 0x10001;
 
       if (offset >= limit)
@@ -868,8 +866,6 @@ void Func_02001620(s32 firstId, s32 secondId) {
   Camera_MoveWithinMapBounds((first->x >> 16) << 16, (first->y >> 16) << 16,
                              (first->z >> 16) << 16, 1);
   Sound_Play(141);
-  /* FAKEMATCH(wrapper): forwarded, so each argument builds its own 0x20000; as
-   * a direct call, 17 of 402 instructions differ in tla-en. */
   MapGrid_SetShake(0x20000, 0x20000, 0x10000);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
@@ -920,8 +916,6 @@ burst:
     goto tail;
   }
 spiral:
-  /* FAKEMATCH(wrapper): forwarded, so second->z takes r0 for its reload; as a
-   * direct call, 105 of 402 instructions differ in tla-en. */
   spark = FieldActor_Create(672, second->x, second->y, second->z);
   Sound_Play(195);
   spark->timer = (Random16Far() & 0x7fff) + 0x8000;
@@ -936,13 +930,9 @@ spiral:
   Func_02003cc4(spark, 7);
   Actor_SetSingleChildFlags(spark, 0);
   Animation_SetStateFlags(spark, 1);
-  /* FAKEMATCH(wrapper): forwarded for its argument order; as a direct call, 2
-   * of 402 instructions differ in tla-en. */
   FieldVector_AddPolarOffset(spark->unk4c, spark->timer, &spark->x);
   Actor_StartScript(spark, gData_02004004);
   if (i == 3) {
-    /* FAKEMATCH(wrapper): forwarded for its argument order; as a direct call, 2
-     * of 402 instructions differ in tla-en. */
     Actor_SetSpriteColorById(secondId, 256);
     second->motionFlags = noMotion;
     second->acceleration = 0x3333;
@@ -958,8 +948,6 @@ tail:
   wait(16);
   i = 2;
 column:
-  /* FAKEMATCH(wrapper): forwarded, so second->z takes r0 for its reload; as a
-   * direct call, 116 of 402 instructions differ in tla-en. */
   riser = FieldActor_Create(672, second->x, second->y + i * 0x10000 - 0x80000,
                             second->z);
   riser->timer = Random16Far();
@@ -1821,7 +1809,7 @@ void Func_02003278(void) {
   void *buffer;
   s32 priority;
 
-  Iwram_ClearWords(&gData_0200536c, 0x604);
+  Iwram_ClearWordsEntry(&gData_0200536c, 0x604);
   buffer = MemAlloc_(0xc80);
   Resource_DecodeType01(gData_0200414c, buffer);
   gData_0200536c.vramEntry = Resource_FindFreeEntry();
@@ -2009,7 +1997,7 @@ void Func_02003628(void) {
   void *buffer;
   s32 priority;
 
-  Iwram_ClearWords(&gData_02005970, 0x3a4);
+  Iwram_ClearWordsEntry(&gData_02005970, 0x3a4);
   buffer = MemAlloc_(0x400);
   Resource_DecodeType01(gData_02004351, buffer);
   gData_02005970.vramEntry = Resource_FindFreeEntry();

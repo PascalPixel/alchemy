@@ -416,9 +416,6 @@ void Func_02000954(void) {
 }
 
 s32 Scene_Initialize(void) {
-  /* FAKEMATCH(wrapper): Call3 sets Actor_SetHorizontalPositionWithTerrain's arguments up in the native's
-   * order, as in Func_020006a4; as a direct call, 2 of 123 instructions differ
-   * in tla-en. */
   GameFlag_ClearBit(0x302);
   WORD_AT(Ram_HeapSlots->eventWork, 428) = 0x100;
   Task_Add(Func_0200060c, TASK_PASS_FRAME);

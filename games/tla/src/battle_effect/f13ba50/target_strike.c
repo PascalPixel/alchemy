@@ -196,7 +196,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
     resource = (s32)&ResourceId_OrangePaletteB;
     break;
   }
-  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
   if (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH)
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                                work->sheet + 0x3200, 1, 0);
@@ -609,7 +609,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
       model->texture = &texture;
       model->corners = corners;
       if (frame == 8)
-        Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
       if (frame >= 8 && frame <= 17) {
         s32 scale = Trig_Sin(((frame - 8) << 11) + 0x3000) * 612 >> 8;
 
@@ -832,7 +832,7 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
     palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteA);
     break;
   }
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, palette, 128);
 
   // A fleck's x is its angle and z its radius, in 1/16 pixels; fleck i
   // waits i frames before it rises.
@@ -930,20 +930,6 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
 
 #define BACKGROUND(battle) (((union BattleBackgroundId *)(battle)->unk670)->id)
 
-static inline s32 FillWords(void *destination, s32 size, u32 value) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_FillWords, 2 of 376 instructions of Func_0813e7e0 differ in
-   * tla-en. */
-  return Iwram_FillWords(destination, size, value);
-}
-
-static inline s32 CopyWords(void *destination, const void *source, s32 size) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 27 of 376 instructions of Func_0813e7e0 differ in
-   * tla-en. */
-  return Iwram_CopyWords(destination, source, size);
-}
-
 // Shows the battle background fading in, until A (unused).
 
 void Func_0813e7e0(struct BattleEffectArgument *effect) {
@@ -1001,8 +987,8 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
   /* FAKEMATCH(wrapper): the clears through ClearWords; as a direct call to
    * Iwram_ClearWords, 14 of 376 instructions of Func_0813e7e0 differ in tla-en.
    */
-  ClearWords(canvas, 0x4000);
-  ClearWords((void *)0x06004000, 0x4000);
+  Iwram_ClearWords(canvas, 0x4000);
+  Iwram_ClearWords((void *)0x06004000, 0x4000);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0;
@@ -1014,8 +1000,8 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
 
   // Keep the picture at 0x06008000 aside, show the battle background with
   // its colours black, and flash the first target.
-  CopyWords(Ram_MapCellBuffer, (void *)0x06008000, 0x7800);
-  FillWords(Ram_MapCellBuffer, 0x7800, 0x01010101);
+  Iwram_CopyWords(Ram_MapCellBuffer, (void *)0x06008000, 0x7800);
+  Iwram_FillWords(Ram_MapCellBuffer, 0x7800, 0x01010101);
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
   BattleBackground_LoadFar(1, BACKGROUND(battle), -1);

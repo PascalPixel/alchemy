@@ -76,11 +76,11 @@ void WindowSystem_InitField(void) {
 
   work = (struct WindowWork *)HeapSlot_AllocEwram(
       60, sizeof(struct WindowWork));
-  Iwram_ClearWords(work, sizeof(struct WindowWork));
+  Iwram_ClearWordsEntry(work, sizeof(struct WindowWork));
   work->dirty = 1;
   work->glyphResource = 99;
   work->level = 15;
-  FillWords(Iwram_FillWords, work->tilemap, sizeof(work->tilemap), 0xf000f000);
+  FillWords(Iwram_FillWordsEntry, work->tilemap, sizeof(work->tilemap), 0xf000f000);
   WindowSprite_InitializeFreeList();
   Portrait_ClearSlots();
   Task_Add((s32)WindowSystem_UploadTilemap, TASK_PASS_FRAME);
@@ -95,17 +95,17 @@ void WindowSystem_InitBattle(s32 kind) {
     dst &= 0x3ff;
     Dma_Set((void *)(0x06000010 + src * 32), (void *)(0x06000000 + dst * 32),
             DMA_COPY_HALFWORDS(8), REG_DMA3);
-    return Iwram_ClearWords((void *)(0x0600000c + dst * 32), 20);
+    return Iwram_ClearWordsEntry((void *)(0x0600000c + dst * 32), 20);
   }
 
   work = (struct WindowWork *)HeapSlot_AllocEwram(
       60, sizeof(struct WindowWork));
-  Iwram_ClearWords(work, sizeof(struct WindowWork));
+  Iwram_ClearWordsEntry(work, sizeof(struct WindowWork));
   work->dirty = 1;
   work->glyphResource = 99;
   work->menuState = 1;
   work->level = 15;
-  Iwram_FillWords(work->tilemap, sizeof(work->tilemap), 0xf000f000);
+  Iwram_FillWordsEntry(work->tilemap, sizeof(work->tilemap), 0xf000f000);
   WindowSprite_InitializeFreeList();
   Task_Add((s32)WindowSystem_UploadTilemap, TASK_PASS_FRAME);
   WindowSystem_StartBattleUpdate(kind);
@@ -196,13 +196,6 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   canvas->dirty = 1;
 }
 
-static inline void Window_FillWords(void *destination, s32 size, u32 value) {
-  /* FAKEMATCH(wrapper): the call through this inline; as direct calls to the
-   * fixed entry, 10 of 68 instructions of Window_DrawOpened differ in tla-en.
-   */
-  Iwram_FillWordsEntry(destination, size, value);
-}
-
 /// Draws a window as its flags ask: with flag 8 its inside is filled (with
 /// colour 4 under flag 0x20, which also draws the border, else cleared), and
 /// without it only the border is drawn. Clears the window's duration.
@@ -224,9 +217,9 @@ void Window_DrawOpened(struct Window *window) {
   if (8 & flags) {
     if (0x20 & flags) {
       Window_DrawBorder(x, y, width, height);
-      Window_FillWords((void *)0x06002500, 0xF00, 0x44444444);
+      Iwram_FillWords((void *)0x06002500, 0xF00, 0x44444444);
     } else {
-      Window_FillWords((void *)0x06002500, 0xF00, 0);
+      Iwram_FillWords((void *)0x06002500, 0xF00, 0);
     }
     Window_MapTextCanvasTiles(x, y, width, height, 0);
   } else {
@@ -580,14 +573,14 @@ struct UiChannelSlot *BattleMessage_Continue(struct Window *window,
 
 /// Clears the text canvas to transparent.
 s32 Text_ClearCanvas(void) {
-  s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWords;
+  s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWordsEntry;
 
   return fill((void *)0x06002500, 0xf00, 0);
 }
 
 /// Fills the text canvas with the window background colour (4).
 void Text_FillCanvasBackground(void) {
-  s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWords;
+  s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWordsEntry;
 
   fill((void *)0x06002500, 0xf00, 0x44444444);
 }

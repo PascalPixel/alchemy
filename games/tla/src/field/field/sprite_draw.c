@@ -229,7 +229,7 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
   } else if (obj->dirty != 0) {
     size = obj->width * obj->height;
     pixels = Heap_Alloc(size);
-    Iwram_ClearWords(pixels, size);
+    Iwram_ClearWordsEntry(pixels, size);
 
     drawCount = -1;
 

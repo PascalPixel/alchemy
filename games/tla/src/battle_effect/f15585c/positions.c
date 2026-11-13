@@ -562,8 +562,8 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
 
   // The burst: clear both canvases, blend, and centre the layer on the
   // first target, kept within 128 pixels.
-  Iwram_ClearWords(canvas, words);
-  Iwram_ClearWords((void *)0x06004000, words);
+  Iwram_ClearWordsEntry(canvas, words);
+  Iwram_ClearWordsEntry((void *)0x06004000, words);
   work->transferMode = 2;
   work->transferValue = 75;
   REG_BG1CNT = 0x1f81;

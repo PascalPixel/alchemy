@@ -232,7 +232,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       frame = 143;
     }
     if (frame == 0) {
-      Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0,
                                  0);
       Resource_LoadAndDecompress((s32)&ResourceId_Data0E9, work->sheet, 0, 0);
@@ -376,7 +376,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       target[4] = zero;
       work->transferMode = 2;
       work->transferValue = 50;
-      Iwram_CopyWords((void *)BG_PLTT,
+      Iwram_CopyWordsEntry((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
     }
     if (frame > 154) {
@@ -410,14 +410,14 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         IME_RESTORE(ime, saved);
       }
       Actor_SetAnimationSpeedFar(caster, 128);
-      Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       work->transferMode = 3;
       work->transferValue = 0x06060606;
     }
     if (frame == 171) {
       work->shakeFrames = 8;
       Sound_PlayFar(145);
-      Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       Func_08118088(effect->actors[0], 0);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
       work->transferMode = 1;
@@ -555,7 +555,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     }
 
     if (frame == 8) {
-      Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       p = work->particles;
       for (i = 0; i != 64; i++, p++) {
         p->x = Random16() & 127;

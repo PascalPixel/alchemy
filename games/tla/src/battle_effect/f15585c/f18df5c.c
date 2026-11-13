@@ -204,8 +204,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet,
                              work->sheet + 0x2000, 1, 1);
-  Iwram_CopyWords(sprites, work->sheet + 0x1c2, 30);
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWordsEntry(sprites, work->sheet + 0x1c2, 30);
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   Graphics_LoadGreyRamp();
   gCameraSceneParameters[4] = 240;
@@ -215,9 +215,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
    * of 1556 instructions differ in tla-en. */
   // A once-only block: it closes the fill's block before the copy.
   do {
-    FillWords_(map, 0x8000, 0x01010101);
+    Iwram_FillWords(map, 0x8000, 0x01010101);
   } while (0);
-  Iwram_CopyWords((void *)0x06008000, map, 0x7800);
+  Iwram_CopyWordsEntry((void *)0x06008000, map, 0x7800);
   BattleEffect_SelectLivingTargets(work->effect);
   BattleEffect_SpawnObjects(1, 0x28a, 1);
   REG_BLDCNT = blank;
@@ -226,9 +226,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   REG_BG2CNT = 0x2787;
   // A once-only block, as for the map's fill.
   do {
-    FillWords_(canvas, 0x4000, 0);
+    Iwram_FillWords(canvas, 0x4000, 0);
   } while (0);
-  Iwram_CopyWords((void *)0x06004000, canvas, 0x4000);
+  Iwram_CopyWordsEntry((void *)0x06004000, canvas, 0x4000);
   Task_Add(BattleEffect_FlushPendingGraphicsTransfer, 3200);
   REG_BLDCNT = 0x3f46;
   REG_BLDALPHA = 0x1010;
@@ -463,7 +463,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
           }
         }
       } else {
-        Iwram_ClearWords(gMapCellBuffer, 0x7800);
+        Iwram_ClearWordsEntry(gMapCellBuffer, 0x7800);
       }
     }
 
@@ -542,7 +542,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, work->sheet + 0x5000, 0,
                              0);
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   {
     s32 *q = (s32 *)Data_02010018;

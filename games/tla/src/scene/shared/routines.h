@@ -26,7 +26,7 @@
     s32 cx, cz;                                                                \
     s32 k;                                                                     \
                                                                                \
-    Iwram_ClearWords(table, 4);                                                \
+    Iwram_ClearWordsEntry(table, 4);                                           \
     table->kind = kind;                                                        \
     table->firstFlag = flag;                                                   \
     table->flagByte = flagByte;                                                \
@@ -702,7 +702,7 @@
   void name(void) {                                                            \
     u8 *buffer = BumpAlloc(0xc00);                                             \
                                                                                \
-    Iwram_ClearWords(data1, 64);                                               \
+    Iwram_ClearWordsEntry(data1, 64);                                          \
     Resource_DecodeType01(gField_CachedTilesA, buffer);                        \
     data2 = Resource_FindFreeEntry();                                          \
     VramCache_Load(data2, 0xc00, buffer);                                      \
@@ -748,7 +748,7 @@
   void name(void) {                                                            \
     u8 *buffer = Heap_Alloc(0xc00);                                            \
                                                                                \
-    Iwram_ClearWords(data1, 64);                                               \
+    Iwram_ClearWordsEntry(data1, 64);                                          \
     Resource_DecodeType01(gField_CachedTilesB, buffer);                        \
     data2 = Resource_FindFreeEntry();                                          \
     Vram_Load(data2, 0x800, buffer);                                           \
@@ -771,7 +771,7 @@
   void name(void) {                                                            \
     u8 *buffer = BumpAlloc(0x800);                                             \
                                                                                \
-    Iwram_ClearWords(data1, 64);                                               \
+    Iwram_ClearWordsEntry(data1, 64);                                          \
     Resource_DecodeType01(gField_CachedTilesC, buffer);                        \
     data2 = Resource_FindFreeEntry();                                          \
     Vram_Load(data2, 0x800, buffer);                                           \
@@ -793,8 +793,8 @@
   void name(s32 mode) {                                                        \
     data1 = 1;                                                                 \
     if (mode != 2) {                                                           \
-      Iwram_CopyWords(data2, (void *)&BG_PLTT_COLOR(12, 0), 32);               \
-      Iwram_CopyWords(data3, (void *)&BG_PLTT_COLOR(13, 0), 32);               \
+      Iwram_CopyWordsEntry(data2, (void *)&BG_PLTT_COLOR(12, 0), 32);          \
+      Iwram_CopyWordsEntry(data3, (void *)&BG_PLTT_COLOR(13, 0), 32);          \
     }                                                                          \
     if (Event_GetFlag(0xa00) || mode == 1) {                                   \
       Counter_Set(0);                                                          \
@@ -4661,7 +4661,7 @@
     u32 event, last;                                                           \
     s32 cz, cx;                                                                \
                                                                                \
-    Iwram_ClearWords(table, 4);                                                \
+    Iwram_ClearWordsEntry(table, 4);                                           \
     table->kind = kind;                                                        \
     table->firstFlag = flag;                                                   \
     table->flagByte = flagByte;                                                \
@@ -5627,9 +5627,9 @@
     if (kind + level == data1)                                                 \
       return;                                                                  \
     data1 = kind + level;                                                      \
-    Call2((void (*)())Iwram_ClearWords, (s32)(data2), (s32)(0x100));           \
+    Call2((void (*)())Iwram_ClearWordsEntry, (s32)(data2), (s32)(0x100));      \
     {                                                                          \
-      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;                \
+      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;           \
                                                                                \
       if (kind == 0) {                                                         \
         copy(data2, data3[8], 0x80);                                           \
@@ -5643,24 +5643,24 @@
     base = 0;                                                                  \
     count = level;                                                             \
     if (count > 7) {                                                           \
-      Iwram_CopyWords(data2, data3, 32);                                       \
+      Iwram_CopyWordsEntry(data2, data3, 32);                                  \
       base = 8;                                                                \
       count -= 8;                                                              \
     }                                                                          \
     if (level > 15) {                                                          \
-      Iwram_CopyWords(data2[1], data3[1], 32);                                 \
+      Iwram_CopyWordsEntry(data2[1], data3[1], 32);                            \
       count = level;                                                           \
       base = 16;                                                               \
       count -= 16;                                                             \
     }                                                                          \
     if (level > 23) {                                                          \
-      Iwram_CopyWords(data2[2], data3[2], 32);                                 \
+      Iwram_CopyWordsEntry(data2[2], data3[2], 32);                            \
       count = level;                                                           \
       base = 24;                                                               \
       count -= 24;                                                             \
     }                                                                          \
     if (level > 30) {                                                          \
-      Iwram_CopyWords(data2[3], data3[3], 32);                                 \
+      Iwram_CopyWordsEntry(data2[3], data3[3], 32);                            \
       base = 0;                                                                \
       count = 0;                                                               \
     }                                                                          \
@@ -6201,8 +6201,8 @@
   void name(s32 mode) {                                                        \
     data1 = 1;                                                                 \
     if (mode != 2) {                                                           \
-      Iwram_CopyWords(data2, (void *)&BG_PLTT_COLOR(12, 0), 32);               \
-      Iwram_CopyWords(data3, (void *)&BG_PLTT_COLOR(13, 0), 32);               \
+      Iwram_CopyWordsEntry(data2, (void *)&BG_PLTT_COLOR(12, 0), 32);          \
+      Iwram_CopyWordsEntry(data3, (void *)&BG_PLTT_COLOR(13, 0), 32);          \
     }                                                                          \
     if (Event_GetFlag(0xa00) || mode == 1) {                                   \
       /* FAKEMATCH(temporary): a local holding 0, so the zero is built in r2   \
@@ -6386,7 +6386,7 @@
       blue = *src++;                                                           \
       /* FAKEMATCH(dead): the store in a once-only block, whose end holds the  \
        * order around it; as the plain statement, 2 of 120 instructions differ \
-       * in tla-en. */                                                                    \
+       * in tla-en. */                                                         \
       do {                                                                     \
         *dst = (blue << 10) | (green << 5) | red;                              \
       } while (0);                                                             \
@@ -6399,8 +6399,8 @@
     red = *src++;                                                              \
     green = *src++;                                                            \
     /* FAKEMATCH(dead): the last read in a once-only block, whose end holds    \
-     * the order around it; as the plain statement, 2 of 120 instructions                \
-     * differ in tla-en. */                                                                    \
+     * the order around it; as the plain statement, 2 of 120 instructions      \
+     * differ in tla-en. */                                                    \
     do {                                                                       \
       blue = *src++;                                                           \
     } while (0);                                                               \
@@ -6500,7 +6500,7 @@
       /* FAKEMATCH(temporary): 0xf1f held in a word local, so it is built with \
        * movs, lsls, adds as the native does (a plain store loads it from the  \
        * pool); as a plain store of the constant, 20 of 131 instructions       \
-       * differ in tla-en. */                                                                 \
+       * differ in tla-en. */                                                  \
       u32 winout = 0xf1f;                                                      \
                                                                                \
       REG_WINOUT = winout;                                                     \
@@ -6533,7 +6533,7 @@
 #define DEFINE_FUNC_02001928(name, data1)                                      \
   void name(struct Actor *object, s32 part) {                                  \
     /* FAKEMATCH(temporary): one zero for every cleared field; as six stores   \
-     * of 0, 29 of 30 instructions differ in tla-en. */                                 \
+     * of 0, 29 of 30 instructions differ in tla-en. */                        \
     s32 zero = 0;                                                              \
                                                                                \
     object->motionFlags = zero;                                                \

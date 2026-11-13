@@ -63,23 +63,12 @@ void Func_020001f8(void) {
   if (step == 0)
     return;
   src = Data_02006018;
-  for (i = 0; i < gData_0200601c;) {
+  for (i = 0; i < gData_0200601c; i++) {
     dst = &BG_PLTT[gData_02006004[gData_02006020 * gData_0200601c + i]];
     red = *src++;
     green = *src++;
-    /* FAKEMATCH(dead): the statement in a once-only block, whose end holds
-     * the order around it; as the plain statement, 4 of 120 instructions differ
-     * in tla-en. */
-    do {
-      blue = *src++;
-    } while (0);
-    *dst = (blue << 10) | (green << 5) | red;
-    /* FAKEMATCH(dead): the count's step in a once-only block, whose end
-     * holds it before the exit test's load; as the for loop's own step, 2 of
-     * 120 instructions differ in tla-en. */
-    do {
-      i++;
-    } while (0);
+    blue = *src++;
+    SET_RGB(*dst, red, green, blue);
   }
   dst = &BG_PLTT[gData_02006010[gData_0200601c]];
   if (gData_02006000 != 0)
@@ -88,13 +77,8 @@ void Func_020001f8(void) {
     src = Data_02006018 + gData_0200601c * 3;
   red = *src++;
   green = *src++;
-  /* FAKEMATCH(dead): the statement in a once-only block, whose end holds
-   * the order around it; as the plain statement, 2 of 120 instructions differ
-   * in tla-en. */
-  do {
-    blue = *src++;
-  } while (0);
-  *dst = (blue << 10) | (green << 5) | red;
+  blue = *src++;
+  SET_RGB(*dst, red, green, blue);
   gData_02006000 ^= 1;
   if (++gData_02006020 == gData_0200601c)
     gData_02006020 = 0;

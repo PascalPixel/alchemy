@@ -93,22 +93,6 @@ void wait(s32 frames);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_EndCanvasLayer(void);
 
-/* VIEW(f17e698): static ClearWords as ClearWords__f17e698; f16c274 has static inline s32 ClearWords(void *destination, s32 size) { return Iwram_ClearWords(destination, size); }; not tried: ClearWords's definition holds a FAKEMATCH tag. */
-static inline s32 ClearWords__f17e698(void *destination, s32 size) {
-  /* FAKEMATCH(wrapper): the sheet's clear through this inline; as a direct
-   * call to Iwram_ClearWords, 2 of 386 instructions of Func_0817e698 differ
-   * in tla-en. */
-  return Iwram_ClearWords(destination, size);
-}
-
-/* VIEW(f17e698): static CopyWords as CopyWords__f17e698; f15585c has static inline s32 CopyWords(void *destination, const void *source, s32 size) { return Iwram_CopyWords(destination, source, size); }; not tried: CopyWords's definition holds a FAKEMATCH tag. */
-static inline s32 CopyWords__f17e698(void *destination, const void *source, s32 size) {
-  /* FAKEMATCH(wrapper): the palette copies through this inline; as direct
-   * calls to Iwram_CopyWords, 4 of 386 instructions of Func_0817e698 differ
-   * in tla-en. */
-  return Iwram_CopyWords(destination, source, size);
-}
-
 // A symmetrical burst over the target. Three half-pictures of the earth
 // wall sheet are mirrored into three 64x64 cels; the burst grows through
 // them in its first twelve frames, flickers between the last two until
@@ -131,18 +115,18 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet,
                              work->sheet + PICTURE_OFFSET, 1, 1);
-  ClearWords__f17e698(work->sheet, 0x4000);
+  Iwram_ClearWords(work->sheet, 0x4000);
   MIRROR_HALF(0, PICTURE_OFFSET + 0xa8e, 17, 49)
   MIRROR_HALF(1, PICTURE_OFFSET + 0xdcf, 19, 55)
   MIRROR_HALF(2, PICTURE_OFFSET + 0x11e4, 20, 64)
   if (mode == 3)
-    CopyWords__f17e698((void *)BG_PLTT,
+    Iwram_CopyWords((void *)BG_PLTT,
               Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   else if (mode == 2)
-    CopyWords__f17e698((void *)BG_PLTT,
+    Iwram_CopyWords((void *)BG_PLTT,
               Resource_GetTableEntry((s32)&ResourceId_FireballSheet), 128);
   else
-    CopyWords__f17e698((void *)BG_PLTT,
+    Iwram_CopyWords((void *)BG_PLTT,
               Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
 
   // Centre the canvas's x 64 on the target.
@@ -354,15 +338,12 @@ struct SystemWork__f17e698 {
 };
 
 #define SYSTEM ((struct SystemWork__f17e698 *)Ram_HeapSlots)
-static inline void Iwram_Copy(void *d, const void *s, s32 n) {
-  Iwram_CopyWords(d, s, n);
-}
 /// Iwram_CopyWords reached from IwramIrqMain rather than at its fixed address,
 /// as the trade's snapshot copies reach it: its address is then a pool load,
 /// made after the arguments and after the call before it.
 #define IWRAM_COPY_WORDS_LINKED                                                \
   ((CopyFunc)(IwramIrqMain + Iwram_CopyWordsOffset))
-#define Iwram_Clear Iwram_ClearWords
+#define Iwram_Clear Iwram_ClearWordsEntry
 
 #define VRAM_SLOTS gResourceTableEntries
 #define DECODE_BUFFER Ram_MapCellBuffer
@@ -557,7 +538,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       }
       src = (const u8 *)Resource_GetTableEntry(
           (s32)&ResourceId_ForestCanopyTiles);
-      Iwram_Copy((void *)0x050003e0, src, 32);
+      Iwram_CopyWords((void *)0x050003e0, src, 32);
       src += 32;
       Resource_DecodeType01(src, work->frames);
       for (j = 0; j != 2; j++) {
@@ -565,25 +546,25 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           obj = Func_0815b290__f17e698(32, 32, 0x80000000, 0xf000);
           work->sprites[j * 9 + i] = obj;
           obj->priority = 1;
-          Iwram_Copy((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
+          Iwram_CopyWords((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
                      &work->frames[(j << 12) + i * 0x200], 0x200);
         }
         obj = Func_0815b3b0__f17e698(32, 32, 0x80000000, 0xf000);
         work->sprites[j * 9 + 8] = obj;
-        Iwram_Copy(obj, work->sprites[j * 9], 24);
+        Iwram_CopyWords(obj, work->sprites[j * 9], 24);
         for (i = 0; i != 8; i++)
           work->particles[j * 9 + i].timer = work->sprites[j * 9 + i]->tile;
       }
       src = (const u8 *)Resource_GetTableEntry(
           (s32)&ResourceId_BronzeAutomatonTiles);
-      Iwram_Copy((void *)0x05000200, src, 0x1c0);
+      Iwram_CopyWords((void *)0x05000200, src, 0x1c0);
       src += 0x1c0;
       Resource_DecodeType01(src, DECODE_BUFFER);
       for (i = 0; i != 21; i++) {
         obj = Func_0815b290__f17e698(32, 32, 0x80002000, 0);
         obj->priority = 3;
         work->sprites[i + 18] = obj;
-        Iwram_Copy((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
+        Iwram_CopyWords((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
                    DECODE_BUFFER + i * 0x400, 0x400);
       }
       obj = Func_0815b290__f17e698(32, 64, 0xc000a000, 0);
@@ -596,16 +577,16 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
        * source; as DECODE_BUFFER + i * 0x400 with no asm, 2 of 3921
        * instructions differ in tla-en. */
       __asm__("" : "=r"(i) : "0"(i));
-      Iwram_Copy((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
+      Iwram_CopyWords((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
                  DECODE_BUFFER + i * 0x400, 0x800);
       src = (const u8 *)Resource_GetTableEntry((s32)&ResourceId_MissileTiles);
-      Iwram_Copy((void *)0x050003c0, src, 32);
+      Iwram_CopyWords((void *)0x050003c0, src, 32);
       src += 32;
       Resource_DecodeType01(src, DECODE_BUFFER);
       obj = Func_0815b290__f17e698(16, 8, 0x4000, 0xe000);
       obj->priority = 1;
       work->sprites[41] = obj;
-      Iwram_Copy((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
+      Iwram_CopyWords((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
                  DECODE_BUFFER, 0x100);
       /* FAKEMATCH(barrier): an empty asm keeps the call before the loop's
        * hoisted constants; as no asm, 6 of 3921 instructions differ in tla-en.
@@ -613,7 +594,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       __asm__("");
       for (i = 0; i != 15; i++) {
         work->sprites[42 + i] = Func_0815b3b0__f17e698(16, 8, 0x4000, 0xf000);
-        Iwram_Copy(work->sprites[42 + i], work->sprites[41], 24);
+        Iwram_CopyWords(work->sprites[42 + i], work->sprites[41], 24);
         work->sprites[42 + i]->tile = work->sprites[41]->tile;
         if (i > 6)
           work->sprites[42 + i]->priority = 2;
@@ -705,7 +686,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
                                0, 0);
     pixels = DECODE_BUFFER;
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, pixels, 0, 0);
-    Iwram_Copy(
+    Iwram_CopyWords(
         (void *)0x05000000,
         (const void *)Resource_GetTableEntry((s32)&ResourceId_SmokeSheet), 128);
     work->transferMode = 2;
@@ -802,7 +783,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         *pal = (b << 10) | (g << 5) | r;
       }
       if (frame == 280) {
-        Iwram_Copy(
+        Iwram_CopyWords(
             (void *)0x05000000,
             (const void *)Resource_GetTableEntry((s32)&ResourceId_SmokeSheet),
             128);
@@ -1645,7 +1626,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
       discY = 0x500000;
       work->transferMode = 2;
       work->transferValue = 50;
-      Iwram_CopyWords((void *)BG_PLTT,
+      Iwram_CopyWordsEntry((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                       128);
     }
@@ -1679,7 +1660,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
           life += sizeof(struct EffectStep) / sizeof(s32);
         }
         work->shakeFrames = 8;
-        Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       }
       sparks = gData_02014000__f17e698;
       if ((u32)(frame - 80) <= 7) {

@@ -212,10 +212,6 @@ s32 sub_08124af8(s32 id) {
         {
           u32 opcode = 1;
 
-          /* FAKEMATCH(barrier): an empty asm on opcode, so its 1 is set
-           * before gain is copied to r1; as BattleEvent_Push(1, gain), 2 of 74
-           * instructions differ in tla-en. */
-          asm volatile("" : "+l"(opcode));
           BattleEvent_Push(opcode, gain);
         }
         BattleEvent_Push(4, (u32)&MsgHpRecover);
@@ -786,7 +782,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
     s32 i;
 
     before = Heap_AllocEwram(sizeof(struct BattleUnit));
-    Iwram_CopyWords(before, unit, sizeof(struct BattleUnit));
+    Iwram_CopyWordsEntry(before, unit, sizeof(struct BattleUnit));
     for (i = 0; i <= 3; i++) {
       if (counts[i] > 4)
         counts[i] = 4;

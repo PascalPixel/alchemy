@@ -80,8 +80,6 @@ void Func_02000094(s32 unused, s32 id) {
     test:;
     } while (y > floor || object->velocityY != 0);
     {
-      /* FAKEMATCH(temporary): the motion flags cleared from a zero of their
-       * own; as a plain 0 store, 2 of 50 instructions differ in tla-en. */
       s32 cleared = 0;
 
       object->motionFlags = cleared;

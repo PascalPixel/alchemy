@@ -255,7 +255,6 @@ void Actor_CycleSpriteColors(struct Actor *actor) {
   }
 }
 
-
 /// Carry, Lift, Douse, Move and the Djinni's hop into battle throw things this
 /// way.
 DEFINE_SET_TARGET_POSITION_FROM_MAGNITUDE_ANGLE(, Actor_SetMoveTargetFar)

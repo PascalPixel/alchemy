@@ -663,7 +663,6 @@ static void Altin_EnterDoor(void) {
   struct FieldWork *work;
   struct Actor *actor;
   s32 doorIndex;
-  struct MapGridCellAnimation *door;
   s32 column;
   s32 row;
   s32 rightColumn;
@@ -678,9 +677,8 @@ static void Altin_EnterDoor(void) {
   }
 
   doorIndex = (s16)(work->stepTrigger - CELL_BEHAVIOR_ALTIN_FIRST_DOOR);
-  door = &gAltin_Doors[doorIndex];
-  column = (s16)door->x;
-  row = (s16)door->y;
+  column = (s16)gAltin_Doors[doorIndex].x;
+  row = (s16)gAltin_Doors[doorIndex].y;
   if (doorIndex == DOOR_SANCTUM) {
     // The Sanctum's door slides open with SE_THUMP, as Bilibin's does.
     Sound_Play(SE_THUMP);
@@ -702,7 +700,7 @@ static void Altin_EnterDoor(void) {
         ALTIN_TO_COTTAGE_ROOMS_D_NORTH - CELL_BEHAVIOR_ALTIN_FIRST_DOOR) {
       MapGrid_CopyCellsTo(33, 42, 8, 17, 1, 2);
     }
-    MapGrid_AnimateCells(door->steps, column, row);
+    MapGrid_AnimateCells(gAltin_Doors[doorIndex].steps, column, row);
   }
 
   // Walk the leader through.

@@ -664,11 +664,17 @@ static void AltinPeak_FreezeSpritzRoomThirdPuddle(void) {
 /// reaches the timer. So as the timer climbs to 100 the water flickers away.
 static void AltinPeak_FlickerWaterOut(void) {
   s16 control = REG_DISPCNT & ~DISPCNT_BG1_ON;
+  /* FAKEMATCH(temporary): the BG1 bit held in a local; as control |=
+   * DISPCNT_BG1_ON, 2 of 22 instructions differ in tbs-en. */
+  s32 bg1 = DISPCNT_BG1_ON;
+  /* FAKEMATCH(temporary): the new control widened into a word before its
+   * store; as REG_DISPCNT = control, 2 of 22 instructions differ in tbs-en. */
+  u32 value;
 
-  if ((u32)(Import_RandomNext() * 100) >> 16 >= gAltinPeak_FlickerTimer) {
-    control |= DISPCNT_BG1_ON;
-  }
-  REG_DISPCNT = (u16)control;
+  if ((u32)(Import_RandomNext() * 100) >> 16 >= gAltinPeak_FlickerTimer)
+    control |= bg1;
+  value = (u16)control;
+  REG_DISPCNT = value;
 }
 
 /// Flickers the water away while the timer counts to 100, then lets the

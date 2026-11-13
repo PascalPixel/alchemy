@@ -136,7 +136,7 @@ static void KolimaForestFloodgate_JumpSouth(void) { Field_TryJumpForward(); }
 /// Gives the short log's column of cells its cell behavior: column 4 at the
 /// west place, column 6 at the east.
 static void KolimaForestFloodgate_MarkShortLogCells(void) {
-  if (*gKolimaForestFloodgateReturned == 1) {
+  if ((s16)*gKolimaForestFloodgateReturned == 1) {
     MapGrid_CopyCellAttributes(0, 0, 1, 4, 4, 9);
   } else {
     MapGrid_CopyCellAttributes(0, 0, 1, 4, 6, 9);
@@ -463,7 +463,9 @@ static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *entry) {
     actor->radius = 32;
     height = px(
         MapGrid_GetTerrainHeight(0, actor->x.part.pixel, actor->z.part.pixel));
-    actor->y.fixed += height;
+    /* FAKEMATCH(temporary): the height added as a plain word, outside its
+     * union; as actor->y.fixed, 1 of 82 instructions differ in tbs-en. */
+    *(s32 *)&actor->y += height;
     actor->groundHeight = height;
   }
 }
@@ -472,7 +474,6 @@ static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *entry) {
 void KolimaForestFloodgate_StampLogCells(const struct FloodgateLog *records,
                                          s32 value) {
   const struct FloodgateLog *record = records;
-  struct MapGridCell *cells = (struct MapGridCell *)gMapGridCellBuffer;
   s32 column;
   s32 row;
   s32 i;
@@ -483,7 +484,8 @@ void KolimaForestFloodgate_StampLogCells(const struct FloodgateLog *records,
     column = record->x;
     row = record->z;
     for (i = 0; i < 4; i++) {
-      cells[column + row * 128].behavior = value;
+      ((struct MapGridCell *)gMapGridCellBuffer)[column + (row << 7)].behavior =
+          value;
       if (record->vertical == 0)
         column++;
       else
@@ -524,7 +526,7 @@ static s32 KolimaForestFloodgate_CheckLogFits(s32 x, s32 z, s32 mode) {
         &((struct MapGridCell *)gMapGridCellBuffer)[x + (z << 7)];
 
     if (cell->behavior == CELL_BEHAVIOR_WALL ||
-        gMapGridShapes[cell->shape * 4] != 0) {
+        *(cell->shape * 4 + gMapGridShapes) != 0) {
       return -1;
     }
     if (mode == 0) {

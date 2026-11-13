@@ -35,15 +35,13 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
 /// vanishes, then is put at x 8 * column + 8, z 0, with no exit and no end to
 /// the event; nothing in either overlay calls it.
 static void UNUSED MercuryLighthouse_DropLeaderToColumn(s32 column) {
-  struct Actor *record;
 
   Event_Start();
   Sound_Play(SE_SPARKLING_PASSAGE);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.4);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
   Actor_SetDestinationOffsetById(ACTOR_PARTY_LEADER, 0, -8);
-  record = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(record, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Event_Wait(8);
   Actor_SetPositionFixed(ACTOR_PARTY_LEADER, ((column << 19) + px(8)), 0);
   Event_Wait(30);

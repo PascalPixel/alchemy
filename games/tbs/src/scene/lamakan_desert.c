@@ -567,6 +567,8 @@ static void LamakanDesert_BatheInOasis(void) {
   s32 count;
   const s32 *oases;
   s32 total;
+  s32 offset;
+  const s32 *oasis;
   s32 nearest;
   s32 distance;
   struct Actor *leader;
@@ -592,12 +594,30 @@ static void LamakanDesert_BatheInOasis(void) {
   }
   // Every oasis is nearer than 240 pixels, so the first always counts; a tie
   // goes to the later.
-  for (total = count; count != 0; count--) {
-    distance = LamakanDesert_PixelsToOasis(
-        &Actor_Get(ACTOR_PARTY_LEADER)->x.fixed, &oases[(total - count) * 2]);
-    if (distance <= best) {
-      best = distance;
-      nearest = total - count;
+  total = count;
+  oasis = oases;
+  if (count != 0) {
+    offset = 0;
+    do {
+      distance = LamakanDesert_PixelsToOasis(
+          &Actor_Get(ACTOR_PARTY_LEADER)->x.fixed, oasis);
+      if (distance <= best) {
+        best = distance;
+        nearest = total - count;
+      }
+      offset += 2 * sizeof(s32);
+      oasis = (const s32 *)((const u8 *)oases + offset);
+    } while (--count != 0);
+    /* FAKEMATCH(dead): two self-tests of offset, each with updates that cancel
+     * out, rank it above count in allocation; without them, 22 of 228
+     * instructions differ in tbs-en. */
+    if (offset) {
+      offset++;
+      offset--;
+    }
+    if (offset) {
+      offset++;
+      offset--;
     }
   }
   // The oasis's x, then its z.
@@ -734,39 +754,36 @@ static void HeatGauge_CountStep(void) {
 /// looks at the nearest pit and is pulled backwards into it, and a battle with
 /// an Ant Lion begins.
 static void LamakanDesert_FallIntoPit(void) {
-  struct Actor *target;
-  struct Actor *actor;
-  struct Actor *record;
+  struct Actor *leader;
+  struct Actor *turned;
+  struct Actor *pit;
   s32 id;
   s32 best;
   s32 min;
   s32 dx;
   s32 dz;
+  s32 distance;
 
-  target = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   best = ACTOR_FIRST_PIT;
   GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
   min = 0x100000;
-  // Select the closest live pit using Manhattan distance in whole pixels.
+  // The nearest pit still there, by the distance along x plus along z.
   for (id = ACTOR_FIRST_PIT; id <= ACTOR_LAST_PIT; id++) {
-    struct Actor *other = Actor_Get(id);
-
-    if (other != 0) {
-      dx = (target->x.fixed - other->x.fixed) / px(1);
-      dz = (target->z.fixed - other->z.fixed) / px(1);
-      {
-        s32 ax = dx;
-
-        if (ax < 0) {
-          ax = -ax;
-        }
-        if (dz < 0) {
-          dz = -dz;
-        }
-        if (ax + dz < min) {
-          best = id;
-          min = ax + dz;
-        }
+    pit = Actor_Get(id);
+    if (pit != 0) {
+      dx = (leader->x.fixed - pit->x.fixed) / px(1);
+      dz = (leader->z.fixed - pit->z.fixed) / px(1);
+      distance = dx;
+      if (distance < 0) {
+        distance = -distance;
+      }
+      if (dz < 0) {
+        dz = -dz;
+      }
+      if (distance + dz < min) {
+        best = id;
+        min = distance + dz;
       }
     }
   }
@@ -781,18 +798,19 @@ static void LamakanDesert_FallIntoPit(void) {
   Event_Wait(60);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  record = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->facing = (record->facing + TRIG_TURN / 2) & -0x1000;
+  // The leader turns his back on the pit.
+  turned = Actor_Get(ACTOR_PARTY_LEADER);
+  turned->facing =
+      (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 2) & -0x1000;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_RUN);
   Actor_SetAnimationSpeedById(ACTOR_PARTY_LEADER, 24);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.1);
-  record = Actor_Get(ACTOR_PARTY_LEADER);
-  record->update = (void (*)(struct Actor *))LamakanDesert_LeaderSpraySand;
-  record = Actor_Get(best);
-  if (record != 0) {
-    Actor_SetDestination(ACTOR_PARTY_LEADER, record->x.part.pixel,
-                         record->z.part.pixel);
+  Actor_Get(ACTOR_PARTY_LEADER)->update =
+      (void (*)(struct Actor *))LamakanDesert_LeaderSpraySand;
+  pit = Actor_Get(best);
+  if (pit != 0) {
+    Actor_SetDestination(ACTOR_PARTY_LEADER, pit->x.part.pixel,
+                         pit->z.part.pixel);
   }
   Event_Wait(60);
   Actor_ShowEmote(best, EMOTE_IN_FRONT | EMOTE_HEART, 0);
@@ -800,8 +818,7 @@ static void LamakanDesert_FallIntoPit(void) {
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-  record = Actor_Get(ACTOR_PARTY_LEADER);
-  record->update = NULL;
+  Actor_Get(ACTOR_PARTY_LEADER)->update = NULL;
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 4);
 }

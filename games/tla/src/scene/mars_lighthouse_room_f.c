@@ -978,15 +978,7 @@ void Func_02001628(s32 id) {
   height = object->terrainHeight;
   WORD_AT(object, 68) = 0;
   object->y = height + 0x200000;
-  {
-    u8 *flags = &object->priorityFlags;
-    /* FAKEMATCH(temporary): the bit held in a local, so it is built in the
-     * register it ORs into; as *flags |= 128, 4 of 38 instructions differ in
-     * tla-en. */
-    s32 bit = 128;
-
-    *flags = bit | *flags;
-  }
+  object->priorityFlags |= 128;
   height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
   Func_02005540(object->x, object->z, 0, (height >> 19) + 6);
   Func_020056a8(object->x, object->z, 0, 128);

@@ -401,7 +401,7 @@ void WorldPicture_UpdateMarkers(void) {
 /// other's scratch storage. The picture argument is unused; the resource is
 /// fixed.
 void WorldPicture_Show(s32 picture) {
-  struct MapGridScrollAnimView *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
+  struct MapGridScrollWork *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   struct FieldWork *work =
       HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   struct ActorSystemWork *menu = HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM);

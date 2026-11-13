@@ -234,18 +234,20 @@ PARTY_DEFINE_ADJUST(Party_AdjustShopGifts, shopGifts, 28)
 /// start and each turn. `output` needs room for 17 bytes: up to 16 summons
 /// and SUMMON_END.
 s32 Summon_ListLearned(u8 *output) {
-  struct DjinnRecoveryTable *table =
-      Djinn_GetRecoveryTable(DJINN_RECOVERY_PARTY);
+  const u8 *summon = gSummon_OrderList;
+  const u8 *last = &gSummon_OrderList[15];
   s32 count = 0;
-  s32 i;
 
-  for (i = 0; i < 16; i++) {
-    u8 summonId = gSummon_OrderList[i];
+  do {
+    u8 summonId = *summon++;
 
-    if (table->summonMask & (1 << summonId))
-      output[count++] = summonId;
-  }
-  output[count] = SUMMON_END;
+    if (Djinn_GetRecoveryTable(DJINN_RECOVERY_PARTY)->summonMask &
+        (1 << summonId)) {
+      *output++ = summonId;
+      count++;
+    }
+  } while (summon <= last);
+  *output = SUMMON_END;
   return count;
 }
 

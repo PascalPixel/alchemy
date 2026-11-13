@@ -9,7 +9,7 @@
 void LemuriaInteriors_PiersVisitsUncle(void);
 
 extern s16 gSceneRegions[];
-extern u32 gData_02002dec[];
+extern u32 gLemuriaInteriors_NoteFloats[];
 
 void FieldCamera_WaitForArrival();
 

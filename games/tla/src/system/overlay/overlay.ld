@@ -988,9 +988,8 @@ SECTIONS
     {
         "*/games/tla/src/scene/entry/lemuria_interiors.o"(.text)
         "*/games/tla/src/scene/lemuria_interiors.o"(.text)
-        "*/games/tla/src/scene/lemuria_interiors/s12dc.o"(.text)
         "*/games/tla/src/scene/import/lemuria_interiors.o"(.text)
-        "*/games/tla/src/scene/lemuria_interiors/s12dc.o"(.data)
+        "*/games/tla/src/scene/lemuria_interiors.o"(.data)
     }
 }
 #elif OVERLAY == 0x68d

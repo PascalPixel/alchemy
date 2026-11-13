@@ -463,7 +463,7 @@ void LemuriaSpring_GivePrize(s32 a0) {
     FIELD_AT((t52 + 0x55), u8, 0) = 0;
     FIELD_AT(t52, s32, 12) = 0x200000;
     FieldActor_SetAnimation(FIELD_AT(&gMainRoutineWork, s32, 532), 0x1c);
-    Func_02001400(0x1d);
+    SummonTablet_PlayRunes(0x1d);
     Summon_ShowLearnedMessage(0x16);
     Class_GetSeries(0x16);
     Actor_SetPosition(0x1d, 0, 0);

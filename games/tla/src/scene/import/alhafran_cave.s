@@ -214,9 +214,9 @@ Actor_SetActionCallback:
 	.thumb_func
 Rope_Initialize:
 	overlay_veneer Rope_InitializeFar
-	.global Func_02001570
+	.global Rope_Place
 	.thumb_func
-Func_02001570:
+Rope_Place:
 	overlay_veneer Rope_PlaceFar
 	.global FlagBlock_PlaceAllMarkingEdges
 	.thumb_func

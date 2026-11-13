@@ -178,9 +178,9 @@ ItemDisplay_ShowItem:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02001400
+	.global SummonTablet_PlayRunes
 	.thumb_func
-Func_02001400:
+SummonTablet_PlayRunes:
 	overlay_veneer SummonTablet_PlayRunesFar
 	.global Sound_Play
 	.thumb_func

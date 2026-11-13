@@ -36,7 +36,7 @@ void AlhafranCave_CastSand(void);
 void AlhafranCave_StartMovingCrate(void);
 void AlhafranCave_FinishMovingCrate(void);
 void FlagBlock_PlaceAllMarkingEdges(const void *data);
-void Func_02001570(s32 a, s32 b, s32 c, s32 d);
+void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 extern s32 gAlhafranCave_ClearedWord;
 
 // Set while the way down to the jail is open, as the leader stands on the
@@ -368,7 +368,7 @@ void AlhafranCave_SetUpJail(void) {
     work->valueD4c = 3;
   }
   Rope_Initialize();
-  Func_02001570(0, 0x200, 10, 11);
+  Rope_Place(0, 0x200, 10, 11);
   Actor_Get(10)->priorityFlags |= 32;
   Actor_Get(11)->priorityFlags |= 32;
   Pillars_Place(gAlhafranCave_Pillars);

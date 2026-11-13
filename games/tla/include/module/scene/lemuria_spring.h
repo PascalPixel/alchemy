@@ -15,7 +15,7 @@ s32 LemuriaSpring_RunToss();
 
 void LemuriaSpring_GivePrize(s32 a0);
 
-s32 Func_02001400();
+void SummonTablet_PlayRunes(s32 targetId);
 
 s32 ItemDisplay_ShowItem();
 

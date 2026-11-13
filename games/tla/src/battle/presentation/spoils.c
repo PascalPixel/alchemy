@@ -226,7 +226,7 @@ void Battle_AwardSpoils(void) {
   }
   list = units;
   living = BattleParty_ListLivingUnits(1, list);
-  count = Func_0811a24c(1, list);
+  count = BattleUnit_ListLiving(1, list);
   backup = Heap_AllocEwram(sizeof(struct BattleUnit));
   for (i = 0; i < count; i++) {
     unitId = list[i];

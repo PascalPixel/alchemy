@@ -76,7 +76,7 @@ extern s32 Func_0804babc__battle_party_commands(u16 *actors, struct BattleAction
 extern void BattleLayout_HighlightPartyPanels__battle_party_commands(u16 *units) __asm__("PartyStatus_HighlightMembers");
 /* VIEW(battle_party_commands): routine BattleParty_ListActorIdsFar as s32 BattleParty_ListActorIdsFar(s32 side, u16 *units); graphics.h has s32 BattleParty_ListActorIdsFar(s32 side, s32 group); tried as the rest of the object declares it, Battle_CollectPartyCommands moves: 2 of 1909 instructions in tla-ja. */
 extern s32 BattleParty_ListActorIdsFar__battle_party_commands(s32 side, u16 *units) __asm__("BattleParty_ListActorIdsFar");
-/* VIEW(battle_party_commands): routine Message_DecodeRaw as void Message_DecodeRaw(s32 message, u16 *text, s32 capacity); countdown has void Message_DecodeRaw(s32, s16 *, s32); tried as the definition's void Message_DecodeRaw(s32 message, u16 *text, s32 capacity), which the object already declares, Func_0804bbd0.1 moves: 2 of 24 instructions in tla-ja. */
+/* VIEW(battle_party_commands): routine Message_DecodeRaw as void Message_DecodeRaw(s32 message, u16 *text, s32 capacity); countdown has void Message_DecodeRaw(s32, s16 *, s32); tried as the definition's void Message_DecodeRaw(s32 message, u16 *text, s32 capacity), which the object already declares, Link_DrawWaitingForOpponent.1 moves: 2 of 24 instructions in tla-ja. */
 extern void Message_DecodeRaw__battle_party_commands(s32 message, u16 *text, s32 capacity) __asm__("Message_DecodeRaw");
 void *Unit_Get(s32 owner);
 /* VIEW(battle_party_commands): routine Window_Create as struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags); menus has struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags); tried as the definition's struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs), which the object already declares, Battle_CollectPartyCommands moves: 7 of 1909 instructions in tla-ja. */
@@ -115,7 +115,7 @@ extern void Text_DrawWideStringAtOffset__battle_party_commands(u16 *text, struct
 
 /// Collects the party's commands for a turn into `commands`, one for each of
 /// the `commandCount` units in `actors`, with two nested functions: the party
-/// panels' clear and the link wait's message (Func_0804bbd0). Unlike The Broken
+/// panels' clear and the link wait's message (Link_DrawWaitingForOpponent). Unlike The Broken
 /// Seal's, each round first appends the forced actions of statused members
 /// (Func_0804babc), whose count is added to the result; B on the party's row
 /// undoes a reserve swap; command 49 swaps a reserve member in (Func_0804b8b8
@@ -809,7 +809,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   if (state->linkTimer != 0) {
     struct BattleWork *link;
 
-    void Func_0804bbd0(void) {
+    void Link_DrawWaitingForOpponent(void) {
       u16 text[64];
 
 #if LANGUAGE != LANGUAGE_JAPANESE
@@ -825,7 +825,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     if (state->timerWindow == NULL && link->linkPaused == 0) {
       state->timerWindow = Window_Create__battle_party_commands(0, 16, 30, 4, 42);
       Vram_FillWindowBlockPattern__battle_party_commands();
-      Func_0804bbd0();
+      Link_DrawWaitingForOpponent();
     } else {
       state->timerWindow = NULL;
     }

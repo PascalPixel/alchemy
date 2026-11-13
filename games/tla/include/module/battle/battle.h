@@ -263,7 +263,7 @@ extern const s32 gData_08128868[];
 
 extern const s32 Data_0812cacc[];
 
-s32 Func_0811a24c(s32 sideMask, u16 *unitIds);
+s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds);
 
 void Func_08138050(struct BattleFxRequest *request, s32 value);
 

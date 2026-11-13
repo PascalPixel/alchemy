@@ -34,7 +34,7 @@
 #include "module/window/window.h"
 
 void Func_02000e04(s32);
-/* VIEW(psynergy_test): routine Func_02000df4 as void Func_02000df4(s32, s32); module/tla.h has s32 Func_02000df4(s32 *member, s32 *slot); tried as the rest of the object declares it, Func_020000a4 moves: 2 of 67 instructions in tla-ja. */
+/* VIEW(psynergy_test): routine Func_02000df4 as void Func_02000df4(s32, s32); module/tla.h has s32 Func_02000df4(s32 *member, s32 *slot); tried as the rest of the object declares it, MenuTest_BrowseMessageRange moves: 2 of 67 instructions in tla-ja. */
 extern void Func_02000df4__psynergy_test(s32, s32) __asm__("Func_02000df4");
 void Func_02000f1c(s32, s32);
 void Func_02000ecc(s32, s32, s32, s32, s32, s32, s32);
@@ -62,7 +62,7 @@ void Func_02000068(void) { Func_02000e04(0); }
 
 void Func_02000074(void) {}
 
-void Func_02000078(s32 message) {
+void MenuTest_ShowMessageAndWait(s32 message) {
   Message_CloseFinishedWindows();
   Message_OpenWindow(message, 5, 0, 0x22);
   while (Message_AllTyped() == 0)
@@ -70,7 +70,7 @@ void Func_02000078(s32 message) {
   System_Wait(1);
 }
 
-void Func_020000a4(s32 message, s32 count) {
+void MenuTest_BrowseMessageRange(s32 message, s32 count) {
   s32 i;
   void *window;
 
@@ -79,7 +79,7 @@ void Func_020000a4(s32 message, s32 count) {
     Func_02000df4__psynergy_test(1, 1);
     Func_02000df4__psynergy_test(5, 2);
     Func_02000df4__psynergy_test(0x1e240, 5);
-    Func_02000078(message);
+    MenuTest_ShowMessageAndWait(message);
     goto check;
   wait:
     if (INPUT_HELD != 0)
@@ -103,22 +103,22 @@ done:
 }
 
 void Func_02000140(void) {
-  Func_020000a4((s32)MsgWeaponShopWelcome,
+  MenuTest_BrowseMessageRange((s32)MsgWeaponShopWelcome,
                 MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
 void Func_02000158(void) {
-  Func_020000a4((s32)MsgArmorShopWelcome,
+  MenuTest_BrowseMessageRange((s32)MsgArmorShopWelcome,
                 MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
 void Func_02000170(void) {
-  Func_020000a4((s32)MsgItemShopWelcome,
+  MenuTest_BrowseMessageRange((s32)MsgItemShopWelcome,
                 MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
 void Func_0200018c(void) {
-  Func_020000a4((s32)MsgWelcomeWearyWanderers,
+  MenuTest_BrowseMessageRange((s32)MsgWelcomeWearyWanderers,
                 MsgRightWhenI - MsgWelcomeWearyWanderers);
 }
 

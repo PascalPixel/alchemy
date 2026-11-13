@@ -21,7 +21,7 @@ void Func_081195ec(void) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   s32 i;
 
-  if (Func_0811a24c(1, 0) == 0)
+  if (BattleUnit_ListLiving(1, 0) == 0)
     return;
   count = actorCount = BattleParty_ListActorIds(1, actors);
   reserveCount = BattleParty_PrepareReserveOwners(reserves);
@@ -344,7 +344,7 @@ s32 Func_081197f0(s32 enemyGroup) {
       }
       if (enemyGroup == 638)
         goto party_lost;
-      if (Func_0811a24c(1, 0) == 0)
+      if (BattleUnit_ListLiving(1, 0) == 0)
         goto party_lost;
       if (BattleParty_ListLivingUnits(1, 0) == 0)
         break;
@@ -652,7 +652,7 @@ s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
 
 /// As BattleParty_ListLivingUnits, with the reserve owners listed after the
 /// active ones.
-s32 Func_0811a24c(s32 sideMask, u16 *unitIds) {
+s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   u16 members[10];
   u16 *base;
   s32 remaining;

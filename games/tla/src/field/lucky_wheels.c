@@ -977,9 +977,9 @@ void Func_081b3294(void) {
 
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 
-/// The Broken Seal's LuckyWheels_InitializeTitle on this game's heap slots (the
-/// reel work at 0xb4, the effect work at 0x5c with its particles first).
-void Func_081b336c(void) {
+/// Sets up the bouncing title letters of a win, as The Broken Seal does, on
+/// this game's heap slots (the reel work at 0xb4, the effect work at 0x5c with its particles first).
+void LuckyWheels_InitializeTitle(void) {
   struct ReelWork *state;
   struct ReelEffectWork *work;
   struct EffectStep *letter;
@@ -1169,7 +1169,7 @@ void LuckyWheels_Run(void) {
     Resource_DecodeType01(entry, tiles);
     Dma_Set(tiles, (void *)JACKPOT_TILES, JACKPOT_COPY, REG_DMA3);
     WindowSystem_InitFieldFar();
-    Func_081b336c();
+    LuckyWheels_InitializeTitle();
 
     for (i = 0; i != 5; i++) {
       struct Reel *reel = &state->reels[i];

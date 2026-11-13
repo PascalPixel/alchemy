@@ -6,7 +6,7 @@ Alchemy is a reconstruction of the source for the Game Boy Advance games ☀️ 
 
 <a href="https://alchemy.pascalpixel.com"><img src="https://alchemy.pascalpixel.com/guides/docs/interface.png" width="838" alt="Alchemy's documentation on the interface: Isaac talks to Garet's sister in Vale above a diagram of what each button opens, beside the guide's sidebar" /></a>
 
-[alchemy.pascalpixel.com](https://alchemy.pascalpixel.com) explains how The Broken Seal works, written from its rebuilt source, with recordings from the game itself.
+[alchemy.pascalpixel.com](https://alchemy.pascalpixel.com) explains how The Broken Seal works, written from its rebuilt source, with recordings from the game itself. To find the code behind something you saw in the game, start at [the source's own page](games/tbs/src/README.md).
 
 ## Build
 

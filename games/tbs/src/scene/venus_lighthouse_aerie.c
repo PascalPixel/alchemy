@@ -3132,7 +3132,7 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   center = ((struct Actor *)Actor_Get(23));
   grid = gMapGridWork[0];
   drift = (u32)(Random_Next() * 48) >> 16 << 16;
-  if ((s16)(grid->viewY >> 16) <= 129) {
+  if ((s16)(grid->view[1] >> 16) <= 129) {
     if (gFrameCount & 1) {
       Actor_SetPosition(ACTOR_BEACON_ORB, 304, 164);
       Actor_Get(ACTOR_BEACON_ORB)->scaleX = Q16_ONE;

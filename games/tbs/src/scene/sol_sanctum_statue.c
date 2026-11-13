@@ -815,11 +815,11 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   struct AnimationSpritePart *sprite = sScrollingSprites.parts;
 #ifdef UBFIX
-  s32 cameraX = grid->viewX / px(1);
-  s32 screenY = 80 - grid->viewY / px(1);
+  s32 cameraX = grid->view[0] / px(1);
+  s32 screenY = 80 - grid->view[1] / px(1);
 #else
   // UB: viewX and viewY are separate scalar members, not an array.
-  s32 *view = &grid->viewX;
+  s32 *view = grid->view;
   s32 cameraX = view[0] / px(1);
   s32 screenY = 80 - view[1] / px(1);
 #endif

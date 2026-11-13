@@ -63,14 +63,9 @@ s32 LinkBattle_ReceiveParty(void) {
     // Measure the label (at most NAME_LIMIT + 1 characters), shift the name
     // right to make room for it, then write it in; the name's end is cut.
     Message_DecodeRawUnboundedFar(MsgEnemyLabel, label);
-    i = 0;
-    if (label[i] != 0) {
-      do {
-        i += 1;
-        if (i > NAME_LIMIT) {
-          break;
-        }
-      } while (label[i] != 0);
+    for (i = 0; i <= NAME_LIMIT; i++) {
+      if (label[i] == 0)
+        break;
     }
 #if APPEND_NAME_SPACE
     label[i] = ' ';

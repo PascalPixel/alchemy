@@ -5,17 +5,6 @@
 
 #include "../field_sequence_internal.h"
 
-/// The actor system's work (struct ActorSystemWork, gActorSystemWork in
-/// HEAP_SLOT_ACTOR_SYSTEM), seen as the flag that suspends sprite projection
-/// while the menu opens.
-struct ActorSystemSuspendView {
-  u16 used;     ///< ActorSystemWork's; not named here
-  u8 unused[2]; ///< ActorSystemWork's; no code names it
-  /// ActorSystemWork's suspended: while nonzero, sprites not held are not
-  /// drawn and give up their VRAM (actor_camera.c, sprite_draw.c).
-  u16 wait;
-};
-
 /// The field sequence: runs the current scene, which the party entered by
 /// entrance, until it leaves; returns the exit kind it left by, for
 /// Scene_TakeExit, or EXIT_KEEP_DESTINATION when the next scene is already in
@@ -332,22 +321,21 @@ s32 FieldSequence_Run(s32 entrance) {
               // each) free, sprite drawing stays suspended while the menu
               // runs, and a frame passes so that the field's sprites give
               // their VRAM back before it opens.
-              struct ActorSystemSuspendView *ctrl =
-                  (struct ActorSystemSuspendView *)gActorSystemWork;
+              struct ActorSystemWork *actorSystem = gActorSystemWork;
               u8 *owner = gVramCacheBlockOwners;
               s32 free = 0;
               s32 n = 512;
 
               do {
-                if (*owner++ == 0xff)
+                if (*owner++ == VRAM_BLOCK_OWNER_FREE)
                   free++;
               } while (--n != 0);
               if (free - 136 < 0) {
-                ctrl->wait = 1;
+                actorSystem->suspended = 1;
                 wait(1);
               }
               PauseMenu_RunFar(0);
-              ctrl->wait = 0;
+              actorSystem->suspended = 0;
             } else {
               FieldMessage_ShowFar(MsgFieldPauseUnavailable,
                                    FIELD_MESSAGE_ZOOM);

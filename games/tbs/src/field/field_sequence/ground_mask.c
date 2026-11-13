@@ -4,15 +4,6 @@
 
 #include "../field_sequence_internal.h"
 
-#ifndef UBFIX
-/// The map grid work in HEAP_SLOT_MAP_GRID, seen as the halfwords of its view
-/// position: the high halves are the view's x and z in whole pixels.
-struct MapGridScrollCameraView {
-  u8 beforeView[228]; ///< the map grid work up to its view position
-  s16 camera[4];
-};
-#endif
-
 /// Each frame of the fade overlay: on each of the two cells beside the
 /// actor (left and right of it), where the ground one or two cells south rises
 /// above the actor's floor, draws a semi-transparent 16-pixel-wide

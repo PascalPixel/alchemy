@@ -75,14 +75,13 @@ void PartyStatus_CreateWindow(s32 flags) {
   layout = HeapSlot_AllocEwram(HEAP_SLOT_PARTY_STATUS, sizeof(*layout));
   busy = (s8 *)&WINDOW_WORK->holdTilemapUpload;
   {
-    s32 idle = 0;
 
     *busy = 1;
     PartyStatus_BuildLayoutBounds(flags);
     layout->window =
         Window_Create(layout->x, layout->y, layout->width, layout->height, 6);
     PartyStatus_Draw(flags);
-    *busy = idle;
+    *busy = 0;
   }
 }
 

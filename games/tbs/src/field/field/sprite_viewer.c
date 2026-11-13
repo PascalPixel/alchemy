@@ -578,7 +578,6 @@ void SpriteViewer_StartStaggeredAnimations(s32 layerIndex, s32 animationIndex) {
     struct SpriteAnimation *entry =
         spriteGroup->entries[layerIndex & (ANIM_LAYER_COUNT - 1)];
     struct AnimationMetadata *metadata;
-    s32 initialFrame = 0;
 
     if (entry->scripts != 0) {
       metadata = Resource_GetMetadataRecordFar(entry->animationId);
@@ -589,12 +588,12 @@ void SpriteViewer_StartStaggeredAnimations(s32 layerIndex, s32 animationIndex) {
         entry->script = entry->scripts[animationIndex];
         entry->timer = spriteIndex * SPRITE_ANIMATION_NORMAL_STEP;
         entry->step = SPRITE_ANIMATION_NORMAL_STEP;
-        entry->scriptOffset = initialFrame;
-        entry->pictureBase = initialFrame;
+        entry->scriptOffset = 0;
+        entry->pictureBase = 0;
         entry->picture = SPRITE_PICTURE_NONE;
       }
       spriteGroup->offsetY = metadata->adjustY;
-      spriteGroup->rotation = initialFrame;
+      spriteGroup->rotation = 0;
     }
     spriteIndex++;
     spriteGroup++;

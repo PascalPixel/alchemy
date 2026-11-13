@@ -126,13 +126,12 @@ void Weather_StartRain(void) {
   // words is the decode buffer, then each particle's attribute cursor.
   u32 *words;
   u32 i;
-  u32 fill = 0;
 
   work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct WeatherWork));
   leader = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
   Scene_QueueMusic(SE_AMBIENT_WATER);
   particle = work->particles;
-  Dma_Fill32(fill, work, sizeof(struct WeatherWork));
+  Dma_Fill32(0, work, sizeof(struct WeatherWork));
   words = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gFieldEffect_GroundParticleTiles, words);
   work->entry = VramCache_FindFreeEntry();

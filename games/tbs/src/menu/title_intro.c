@@ -633,7 +633,6 @@ s32 Title_ShowCamelotLogo(void) {
 
   gOamCopyEnabled = 1;
   {
-    s32 result = 0;
 
     resourceId = (s32)&ResourceId_CamelotLogo;
     Task_ResetAll();
@@ -643,7 +642,7 @@ s32 Title_ShowCamelotLogo(void) {
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(6);
     REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-    gBgScroll[2].y = result;
+    gBgScroll[2].y = 0;
     resourceData = Resource_GetTableEntry(resourceId);
     Decompress_TaggedLz(resourceData, Ram_MapGridCellBuffer);
     // The decoded resource: 224 colours, the map, the still tiles, then four
@@ -677,7 +676,7 @@ s32 Title_ShowCamelotLogo(void) {
         break;
       wait(1);
     }
-    return result;
+    return 0;
   }
 }
 

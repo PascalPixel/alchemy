@@ -1438,7 +1438,6 @@ void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
   if (current < count) {
     u32 mask = PACK_WINDOW_MASK;
     struct LzPackWork **root = &gWaitForFlashWrite;
-    s32 empty = -1;
 
     do {
       u32 slot = (start + current) & mask;
@@ -1447,7 +1446,7 @@ void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
       LzPack_RemoveSlotNode(slot);
       state = *root;
       current++;
-      state->bucketBySlot[slot] = empty;
+      state->bucketBySlot[slot] = (-1);
     } while (current < count);
   }
 }

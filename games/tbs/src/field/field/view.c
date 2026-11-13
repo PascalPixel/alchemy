@@ -99,12 +99,11 @@ void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
   s32 verticalSquared;
   s32 diagonal;
   s32 vertical;
-  s32 groundHeight = 0;
   s32 horizontal;
 
   // The followed point on the ground (height 0), in camera space; horizon is
   // its height less its depth times the pitch slope.
-  SET_VECTOR(groundPoint, position[0], groundHeight, position[2]);
+  SET_VECTOR(groundPoint, position[0], 0, position[2]);
   Iwram_TransformVector(groundPoint, cameraPoint);
   cameraCoordinates = cameraPoint;
   horizon =

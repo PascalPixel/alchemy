@@ -11,7 +11,6 @@
 /// (its action lacks BATTLE_OK). A broken item (INVENTORY_BROKEN) is not
 /// tested here. The item command lists the usable items first by it.
 s32 Item_ClassifyUseAbility(s32 unit, s32 itemId) {
-  s32 itemUseStatus = 1;
   struct ItemDefinition *item;
 
   if (itemId == 0) {
@@ -20,13 +19,13 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 itemId) {
   item = Item_GetDirectFar(itemId);
   // Equipment that grants Psynergy.
   if (item->useType == 3) {
-    return itemUseStatus;
+    return 1;
   }
   if (item->abilityId == 0) {
-    return itemUseStatus;
+    return 1;
   }
   if ((item->type != 0) && (Item_CanUnitEquip(unit, itemId) == 0)) {
-    return itemUseStatus;
+    return 1;
   }
   if ((BATTLE_OK & Ability_Get(item->abilityId)->flags) == 0) {
     return 2;

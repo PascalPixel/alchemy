@@ -49,10 +49,9 @@ void Actor_SetMovementTypeById(u32 actorId, s32 action) {
 /// (Actor_Stop), about 22 of them.
 void Actor_Stop(u32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
-  u8 enabled = 1;
 
   if (actor != NULL) {
-    actor->steeringFlags = enabled | actor->steeringFlags;
+    actor->steeringFlags |= 1;
     Actor_StartIdleFar(actor);
   }
 }

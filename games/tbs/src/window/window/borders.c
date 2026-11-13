@@ -47,9 +47,8 @@ loop:
       Window_DrawZoomBorder(window, 1);
       window->zoomStage++;
       {
-        u8 dirty = 1;
 
-        state->dirty = dirty;
+        state->dirty = 1;
       }
     } else {
       Window_EraseBorderRect((s16)window->previousX, (s16)window->previousY,

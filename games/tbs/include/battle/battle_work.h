@@ -74,7 +74,7 @@ struct BattlePlaybackWork {
   s32 flags;
 };
 
-/// A turn's queue holds up to 20 actions.
+/// The most actions a turn's queue holds.
 enum { BATTLE_ACTION_CAPACITY = 20 };
 
 /// The battle's own work: its enemies, units and their battle objects, the

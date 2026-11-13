@@ -8,6 +8,7 @@
 #include "edition.h"
 #include "static_assert.h"
 
+/// The most commands the playback queue holds.
 enum { BATTLE_PLAYBACK_CAPACITY = 64 };
 
 /// BattlePlaybackWork.phase: how far BattlePlayback_Run has got through the
@@ -21,10 +22,10 @@ enum BattlePlaybackPhase {
   BATTLE_PLAYBACK_PHASE_READY = 4     ///< every target has been played
 };
 
-/// The playback queue: up to 64 commands, each an opcode (enum
-/// BattlePlaybackCommand) and one operand, in the order they play. It lives in
-/// BattleWork.playback.queue: BattlePlayback_Push appends to it and playback
-/// reads it.
+/// The playback queue: up to BATTLE_PLAYBACK_CAPACITY commands, each an opcode
+/// (enum BattlePlaybackCommand) and one operand, in the order they play. It
+/// lives in BattleWork.playback.queue: BattlePlayback_Push appends to it and
+/// playback reads it.
 struct BattlePlaybackQueue {
   u8 opcodes[BATTLE_PLAYBACK_CAPACITY]; ///< enum BattlePlaybackCommand
   /// Each command's operand: a unit, item or ability id, a number, a message or

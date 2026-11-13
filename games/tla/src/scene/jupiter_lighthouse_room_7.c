@@ -191,9 +191,9 @@ void Func_020002f0(void) {
   Call4((void (*)())MapGrid_SetCellHeight, 0x2300000, 0xf00000, 0, -2);
   Call4((void (*)())MapGrid_SetCellHeight, 0x1f00000, 0x1000000, 0, -2);
   Call4((void (*)())MapGrid_SetCellHeight, 0x2100000, 0xa00000, 0, -2);
-  FieldMapGrid_SetCellBehavior(0x2600000, 0xa00000, 2, 0);
-  FieldMapGrid_SetCellBehavior(0x1f00000, 0xa00000, 2, 0);
-  FieldMapGrid_SetCellBehavior(0x1f00000, 0xe00000, 2, 0);
+  FieldMapGrid_SetCellBehavior(px(608), px(160), 2, 0);
+  FieldMapGrid_SetCellBehavior(px(496), px(160), 2, 0);
+  FieldMapGrid_SetCellBehavior(px(496), px(224), 2, 0);
   if (Event_GetFlag(0xa10) || Event_GetFlag(0xa11))
     MapGrid_SetCellHeight(0x2300000, 0xf00000, 0, 0);
   if (Event_GetFlag(0xa12) || Event_GetFlag(0xa13))
@@ -205,19 +205,19 @@ void Func_020002f0(void) {
     MapGrid_CopyCellsLayered(111, 51, 1, 1, 99, 15);
     if (Event_GetFlag(0xa13)) {
       MapGrid_CopyCellsLayered(105, 51, 1, 3, 95, 14);
-      FieldMapGrid_SetCellBehavior(0x1f00000, 0xe00000, 2, 0xec);
+      FieldMapGrid_SetCellBehavior(px(496), px(224), 2, 0xec);
     }
     if (Event_GetFlag(0xa15))
       MapGrid_CopyCellsLayered(111, 53, 1, 1, 97, 10);
   } else if (Event_GetFlag(0xa11)) {
     MapGrid_CopyCellsLayered(98, 51, 5, 1, 98, 10);
     MapGrid_CopyCellsLayered(99, 52, 4, 5, 99, 11);
-    FieldMapGrid_SetCellBehavior(0x2600000, 0xa00000, 2, 0xec);
+    FieldMapGrid_SetCellBehavior(px(608), px(160), 2, 0xec);
     if (Event_GetFlag(0xa12))
       MapGrid_CopyCellsLayered(106, 53, 1, 1, 95, 16);
     if (Event_GetFlag(0xa14)) {
       MapGrid_CopyCellsLayered(109, 51, 3, 1, 95, 10);
-      FieldMapGrid_SetCellBehavior(0x1f00000, 0xa00000, 2, 0xec);
+      FieldMapGrid_SetCellBehavior(px(496), px(160), 2, 0xec);
     }
   } else {
     if (Event_GetFlag(0xa12))
@@ -424,11 +424,11 @@ void Func_020009e4(s32 a, s32 b) { Func_02001a48(gData_020031c4, a, b); }
 void Func_020009f8(s32 id, s32 x, s32 z, s32 dx, s32 dz) {
   struct Actor *object = Actor_Get(id);
 
-  Actor_SetPositionFixed(id, (x << 20) + PIXELS(8), (z << 20) + PIXELS(8));
+  Actor_SetPositionFixed(id, (x << 20) + px(8), (z << 20) + px(8));
   object->motionFlags = 3;
-  object->terrainHeight = PIXELS(-16);
-  object->y = PIXELS(-16);
-  object->velocityY = PIXELS(8);
+  object->terrainHeight = px(-16);
+  object->y = px(-16);
+  object->velocityY = px(8);
   Actor_SetSpeed(id, 1.6);
   Actor_SetDestinationOffset(id, dx, dz);
   Event_PlaySound(SE_222);
@@ -531,7 +531,7 @@ void Func_02000cec(void) {
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;
-  FieldVector_AddPolarOffset(0x100000, facing, position);
+  FieldVector_AddPolarOffset(px(16), facing, position);
   x = position[0] >> 20;
   z = position[2] >> 20;
   if (first->y == 0 && x == first->x >> 20 && z == first->z >> 20)

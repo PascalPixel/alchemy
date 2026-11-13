@@ -8,9 +8,9 @@ void Actor_LaunchAhead(struct Actor *self) {
   volatile s32 position[3];
 
   position[0] = self->x;
-  position[1] = self->y - PIXELS(12);
+  position[1] = self->y - px(12);
   position[2] = self->z;
-  FieldVector_AddPolarOffset(PIXELS(32), angle, (struct Vector3 *)position);
+  FieldVector_AddPolarOffset(px(32), angle, (struct Vector3 *)position);
   actor->facing = angle;
   actor->motionFlags = 0;
   FieldActor_SetPositionAndResetMotion(actor, position[0], position[1],

@@ -192,7 +192,7 @@ void AttekaInlet_HammaShowsTheWings(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-    Camera_SetSpeedParameters(0x26666, 0x4ccc);
+    FieldCamera_SetSpeed(2.4);
     FieldCamera_MoveTo(520, CAMERA_KEEP, 372, 1);
     FieldCamera_WaitForArrival();
     Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
@@ -209,8 +209,8 @@ void AttekaInlet_HammaShowsTheWings(void) {
     FieldCamera_MoveTo(432, 32, 232, 1);
     FieldCamera_WaitForArrival();
     Event_Wait(40);
-    Camera_SetSpeedParameters(0x4cccc, 0x9999);
-    FieldCamera_MoveWithinMapBounds(PIXELS(520), PIXELS(32), PIXELS(372), 1);
+    FieldCamera_SetSpeed(4.8);
+    FieldCamera_MoveWithinMapBounds(px(520), px(32), px(372), 1);
     FieldCamera_WaitForArrival();
     Event_Wait(20);
     Actor_FaceDirectionAndWait(23, FACING_SOUTH_SOUTHEAST);
@@ -237,7 +237,7 @@ void AttekaInlet_HammaShowsTheWings(void) {
     Event_ShowMessageAndWait(23, 0);
     Motion_SetModeAndWaitAnimation(23, 3);
     Event_ShowMessageAndWait(23, 0);
-    Actor_SetSpeedParameters(23, 0xcccc, 0x6666);
+    Actor_SetSpeed(23, 0.8);
     Actor_GetById(23)->actionFlags &= ~1;
     Actor_WalkToAndWaitById(23, 504, 360);
     Event_Wait(1);
@@ -287,7 +287,7 @@ void AttekaInlet_PiersAsksToSetSail(void) {
                                *(s16 *)((u8 *)object + 18));
     Actor_WaitForMoveById(18);
     Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
-    Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
     Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 528, 276);
     Event_End();
   }
@@ -358,8 +358,7 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   angle = 0xd000;
-  Actor_SetHorizontalPositionAndAngleWithTerrain(24, PIXELS(504), PIXELS(460),
-                                                 angle);
+  Actor_SetHorizontalPositionAndAngleWithTerrain(24, px(504), px(460), angle);
   wait(1);
   Event_SetMessageId((s32)MsgHeyWait2);
   Event_ShowMessageAndWait(24, 0);
@@ -384,7 +383,7 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Event_Wait(1);
   Actor_GetById(24)->actionFlags |= 1;
   Motion_SetVarCbAndRefresh(24, 2);
-  Actor_SetHorizontalPositionWithTerrain(65, PIXELS(520), PIXELS(380));
+  Actor_SetHorizontalPositionWithTerrain(65, px(520), px(380));
   wait(1);
   Actor_GetById(24)->actionFlags &= ~1;
   Actor_WalkToAndWait(24, 520, 388);
@@ -394,7 +393,7 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Actor_FaceDirection(24, FACING_NORTH_NORTHWEST, 10);
   Motion_SetModeAndWaitAnimation(24, 3);
   Actor_WalkToAndWait(24, 520, 434);
-  FieldCamera_MoveWithinMapBounds(PIXELS(512), -1, PIXELS(348), 1);
+  FieldCamera_MoveWithinMapBounds(px(512), -1, px(348), 1);
   Actor_WalkToAndWait(24, 504, 460);
   Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
   Actor_FaceDirectionById(23, angle);
@@ -472,7 +471,7 @@ void AttekaInlet_OpenDoorAndEnter(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -4);
   Event_Wait(8);
   Event_FinishScreenTransition();
@@ -532,7 +531,7 @@ void AttekaInlet_SetUpTheHarbour(void) {
     if (GameFlag_Get(FLAG_HAMMA_SHOWED_THE_WINGS)) {
       s32 speed = 0xc0;
 
-      Actor_SetPositionAndFacing(23, PIXELS(504), PIXELS(360), speed << 6);
+      Actor_SetPositionAndFacing(23, px(504), px(360), speed << 6);
     }
     Actor_WatchAndSetScript(19, party->currentOwner);
     Actor_WatchAndSetScript(20, party->currentOwner);

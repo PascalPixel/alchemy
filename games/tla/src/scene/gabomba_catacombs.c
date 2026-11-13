@@ -124,7 +124,7 @@ void Func_02000100(void) {
     if (leader->x >> 20 == 24 && leader->z >> 20 == 21) {
       LEADER_HOP();
       Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, 16, 0);
-      leader->velocityY = PIXELS(6);
+      leader->velocityY = px(6);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Event_End();
     }
@@ -153,7 +153,7 @@ void Func_020001d4(void) { Import_EventSetExitRequest(5); }
     if (leader->x >> 20 == n8 && leader->z >> 20 == n9) {                      \
       LEADER_HOP();                                                            \
       Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, 16, 0);    \
-      leader->velocityY = PIXELS(6);                                           \
+      leader->velocityY = px(6);                                               \
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);                    \
       Event_End();                                                             \
     }                                                                          \
@@ -176,7 +176,7 @@ void Func_020002e0(void) {
     FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, -16, 0);
-    leader->velocityY = PIXELS(6);
+    leader->velocityY = px(6);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     Event_End();
   }
@@ -205,7 +205,7 @@ void Func_02000564(void) {
     FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -16);
-    leader->velocityY = PIXELS(6);
+    leader->velocityY = px(6);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     Event_End();
   }

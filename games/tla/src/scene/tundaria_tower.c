@@ -362,7 +362,7 @@ void Func_020008a8(void) {
   object->motionFlags = 3;
   OverlayObject_WaitUntilIdle(object);
   Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(68, PIXELS(344), PIXELS(372));
+  Actor_SetHorizontalPositionWithTerrain(68, px(344), px(372));
   Actor_GetById(68)->update = (void (*)(void))Func_02000840;
   Event_End();
 }
@@ -567,9 +567,9 @@ void Func_02000de4(void) {
       s32 owner = gMainRoutineWork.currentOwner;
 
       if (angle < 0)
-        Actor_SetHorizontalPositionWithTerrain(owner, PIXELS(872), PIXELS(600));
+        Actor_SetHorizontalPositionWithTerrain(owner, px(872), px(600));
       else
-        Actor_SetHorizontalPositionWithTerrain(owner, PIXELS(872), PIXELS(632));
+        Actor_SetHorizontalPositionWithTerrain(owner, px(872), px(632));
     }
   }
 }
@@ -866,8 +866,8 @@ s32 Scene_Initialize(void) {
         Actor_SetSpriteFlags(Actor_GetById(8), 0);
         object->collisionFlags = 0;
         object->motionFlags = 0;
-        object->terrainHeight = PIXELS(8);
-        object->y = PIXELS(8);
+        object->terrainHeight = px(8);
+        object->y = px(8);
         Actor_SetItemIcon(object, 441);
         if (GameFlag_Get(0x944)) {
           MapGrid_CopyCellsTo(31, 85, 20, 85, 3, 4);
@@ -907,7 +907,7 @@ s32 Scene_Initialize(void) {
   } else if (scene == (s32)&SceneId_TundariaTower6) {
     switch (gMainRoutineWork.entrance) {
     case 3:
-      object = FieldActor_Create(0x11e, PIXELS(472), 0, PIXELS(200));
+      object = FieldActor_Create(0x11e, px(472), 0, px(200));
       if (object != NULL) {
         Call2((void (*)())Scene_SetActorSpritePriority, (s32)object, 1);
         object->motionFlags = 0;

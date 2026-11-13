@@ -241,15 +241,13 @@ void VenusLighthouseEntrance_BirdsLand(void) {
   FIELD_AT(t1, s32, 72) = 0x28f;
   FIELD_AT(t1, s32, 48) = 0x18000;
   FIELD_AT(t1, s32, 52) = 0x8000;
-  FieldActor_SetPositionAndResetMotion(t1, PIXELS(216), PIXELS(96),
-                                       PIXELS(176));
+  FieldActor_SetPositionAndResetMotion(t1, px(216), px(96), px(176));
   t3 = ((s32)Actor_Get(11));
   FIELD_AT((t3 + 0x55), u8, 0) = 0;
   FIELD_AT(t3, s32, 72) = 0x7ae;
   FIELD_AT(t3, s32, 48) = 0x18000;
   FIELD_AT(t3, s32, 52) = 0x8000;
-  FieldActor_SetPositionAndResetMotion(t3, PIXELS(616), PIXELS(96),
-                                       PIXELS(152));
+  FieldActor_SetPositionAndResetMotion(t3, px(616), px(96), px(152));
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(376, CAMERA_KEEP, 248, 0);
   Event_StartScreenTransition();

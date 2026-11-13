@@ -348,8 +348,7 @@ void LemurianShip_ExamineEngine(void) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_07)) {
       Event_PlaySound(SE_CRUNCH);
       FieldActor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(15)),
-                                           PIXELS(824), PIXELS(-32),
-                                           PIXELS(72));
+                                           px(824), px(-32), px(72));
       ((struct Actor *)Actor_GetById(15))->terrainHeight = 0xffe00000;
       MapGrid_CopyCellsTo(72, 68, 50, 64, 3, 3);
       MapGrid_CopyCellAttributes(106, 16, 3, 2, 110, 4);
@@ -888,7 +887,7 @@ void Func_020015c8(void) {
     *(s32 *)((u8 *)object + 0x34) = 0x8000;
     Actor_SetSpriteFlags(object, 0);
     Actor_SelectAnimation(object, 0);
-    Actor_SetMoveTarget(object, PIXELS(808), PIXELS(8), PIXELS(140));
+    Actor_SetMoveTarget(object, px(808), px(8), px(140));
     Actor_StartScript(object, gData_02003ef8);
   }
 }
@@ -1132,13 +1131,13 @@ void Func_02001c88(void) {
     if (flag != 0) {
       MapGrid_CopyCellAttributes(0, 25, 1, 3, 6, 25);
       Actor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(10)),
-                                      PIXELS(104), 0, PIXELS(424));
+                                      px(104), 0, px(424));
       ((struct Actor *)Actor_GetById(10))->terrainHeight = 0;
     } else {
       Actor_SetPosition(8, 0, 0);
       MapGrid_CopyCellAttributes(0, 25, 1, 3, 6, 25);
       FieldActor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(10)),
-                                           PIXELS(104), 0, PIXELS(424));
+                                           px(104), 0, px(424));
       ((struct Actor *)Actor_GetById(10))->terrainHeight = 0;
     }
     wait(1);
@@ -1149,7 +1148,7 @@ void Func_02001c88(void) {
     else
       Actor_SetPosition(9, 0, 0);
     FieldActor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(11)),
-                                         PIXELS(104), PIXELS(-32), PIXELS(536));
+                                         px(104), px(-32), px(536));
     ((struct Actor *)Actor_GetById(11))->terrainHeight = 0xffe00000;
     Actor_SetSpritePriority(11, 1);
     wait(1);
@@ -1178,7 +1177,7 @@ void Func_02001dc8(s32 id) {
 #define RAISE(id, x, z)                                                        \
   {                                                                            \
     FieldActor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(id)),  \
-                                         x, PIXELS(-32), z);                   \
+                                         x, px(-32), z);                       \
     ((struct Actor *)Actor_GetById(id))->terrainHeight = -px(32);              \
   }
 
@@ -1194,7 +1193,7 @@ void Func_02001e0c(void) {
 
     object->motionFlags = 0;
     FieldActor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(15)),
-                                         206 << 18, PIXELS(-32), 144 << 15);
+                                         206 << 18, px(-32), 144 << 15);
     object->terrainHeight = -px(32);
     if (Event_GetFlag(FLAG_SCENE_TEMP_12))
       MapGrid_CopyCellAttributes(110, 1, 3, 1, 110, 4);
@@ -1345,7 +1344,7 @@ void Func_02002498(void) {
   if (Event_GetFlag(0x938)) {
     MapGrid_CopyCellAttributes(44, 0, 1, 1, 48, 32);
     Actor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(16)),
-                                    PIXELS(776), 0, PIXELS(520));
+                                    px(776), 0, px(520));
     ((struct Actor *)Actor_GetById(16))->terrainHeight = 0;
     if (!Event_GetFlag(FLAG_SCENE_TEMP_28))
       Actor_SetPosition(9, 0, 0);
@@ -1355,7 +1354,7 @@ void Func_02002498(void) {
   if (Event_GetFlag(0x939)) {
     MapGrid_CopyCellAttributes(44, 0, 1, 1, 53, 32);
     Actor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(17)),
-                                    PIXELS(856), 0, PIXELS(520));
+                                    px(856), 0, px(520));
     ((struct Actor *)Actor_GetById(17))->terrainHeight = 0;
     if (!Event_GetFlag(FLAG_SCENE_TEMP_29))
       Actor_SetPosition(10, 0, 0);
@@ -1365,7 +1364,7 @@ void Func_02002498(void) {
   if (Event_GetFlag(0x93a)) {
     MapGrid_CopyCellAttributes(44, 0, 1, 1, 43, 37);
     Actor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(18)),
-                                    PIXELS(696), 0, PIXELS(600));
+                                    px(696), 0, px(600));
     ((struct Actor *)Actor_GetById(18))->terrainHeight = 0;
     if (!Event_GetFlag(FLAG_SCENE_TEMP_2A))
       Actor_SetPosition(11, 0, 0);
@@ -1375,7 +1374,7 @@ void Func_02002498(void) {
   if (Event_GetFlag(0x93b)) {
     MapGrid_CopyCellAttributes(44, 0, 1, 1, 48, 37);
     Actor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(19)),
-                                    PIXELS(776), 0, PIXELS(600));
+                                    px(776), 0, px(600));
     ((struct Actor *)Actor_GetById(19))->terrainHeight = 0;
     if (!Event_GetFlag(FLAG_SCENE_TEMP_2B))
       Actor_SetPosition(12, 0, 0);
@@ -1385,7 +1384,7 @@ void Func_02002498(void) {
   if (Event_GetFlag(0x93c)) {
     MapGrid_CopyCellAttributes(44, 0, 1, 1, 50, 37);
     Actor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(20)),
-                                    PIXELS(808), 0, PIXELS(600));
+                                    px(808), 0, px(600));
     ((struct Actor *)Actor_GetById(20))->terrainHeight = 0;
     if (!Event_GetFlag(FLAG_SCENE_TEMP_2C))
       Actor_SetPosition(13, 0, 0);
@@ -1395,7 +1394,7 @@ void Func_02002498(void) {
   if (Event_GetFlag(0x93e)) {
     MapGrid_CopyCellAttributes(44, 0, 1, 1, 48, 43);
     Actor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(22)),
-                                    PIXELS(776), 0, PIXELS(696));
+                                    px(776), 0, px(696));
     ((struct Actor *)Actor_GetById(22))->terrainHeight = 0;
     if (!Event_GetFlag(FLAG_SCENE_TEMP_2E))
       Actor_SetPosition(15, 0, 0);
@@ -1444,7 +1443,7 @@ void Func_02002820(void) {
     object = ((struct Actor *)Actor_GetById(64));
     object->motionFlags = 0;
     Actor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(64)),
-                                    PIXELS(136), PIXELS(-32), PIXELS(392));
+                                    px(136), px(-32), px(392));
     object->terrainHeight = 0xfff00000;
     Actor_SetSpritePriority(64, 3);
     FieldActor_SetSpriteColor(((struct Actor *)Actor_GetById(64)), 1);
@@ -1492,8 +1491,7 @@ void Func_02002970(void) {
     MapGrid_CopyCellsTo(35, 68, 35, 69, 1, 1);
     MapGrid_CopyCellAttributes(35, 0, 1, 1, 35, 9);
     object->motionFlags = 0;
-    FieldActor_SetPositionAndResetMotion(object, PIXELS(568), PIXELS(-16),
-                                         PIXELS(152));
+    FieldActor_SetPositionAndResetMotion(object, px(568), px(-16), px(152));
     Actor_SetSpritePriority(8, 3);
     Event_SetFlag(FLAG_SCENE_TEMP_04);
     Actor_SetPosition(10, 568, 152);
@@ -1583,13 +1581,13 @@ s32 gData_02002e9c[] = {
 
 u32 gData_02002f1c[] =                                                                 
       {                                                                        
-          SC_ARG(2), SC_MOVE(PIXELS(808), 0, PIXELS(168)), SC_SYNC, SC_ARG(1),   
+          SC_ARG(2), SC_MOVE(px(808), 0, px(168)), SC_SYNC, SC_ARG(1),   
           SC_END,                                                              
   };
 
 u32 gData_02002f44[] =                                                                 
       {                                                                        
-          SC_ARG(2),   SC_MOVE(PIXELS(784), 0, PIXELS(196)),                     
+          SC_ARG(2),   SC_MOVE(px(784), 0, px(196)),                     
           SC_SYNC,     SC_ARG(1),                                              
           SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTHEAST),                    
           SC_WAIT(10), SC_END,                                                 
@@ -1597,14 +1595,14 @@ u32 gData_02002f44[] =
 
 u32 gData_02002f88[] =                                                                 
       {                                                                        
-          SC_ARG(2),   SC_MOVE(PIXELS(832), 0, PIXELS(196)),                     
+          SC_ARG(2),   SC_MOVE(px(832), 0, px(196)),                     
           SC_SYNC,     SC_ARG(1),                                              
           SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTHWEST),                    
           SC_WAIT(10), SC_END,                                                 
   };
 
 u32 gData_02002fcc[] = {                                                               
-      SC_ARG(2),   SC_MOVE(PIXELS(792), 0, PIXELS(216)),                         
+      SC_ARG(2),   SC_MOVE(px(792), 0, px(216)),                         
       SC_SYNC,     SC_ARG(1),                                                  
       SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),              
       SC_WAIT(10), SC_END,                                                     
@@ -1735,9 +1733,9 @@ struct ActorPlacement gLemurianShip_Placements[] = {
 };
 
 struct ActorPlacement gData_02003398[] = {                                             
-      {248, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(424), FACING_SOUTH, 0,   
+      {248, CONDITION_ALWAYS, 1, px(104), 0, px(424), FACING_SOUTH, 0,   
        0},                                                                     
-      {248, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(536), FACING_SOUTH, 0,   
+      {248, CONDITION_ALWAYS, 1, px(104), 0, px(536), FACING_SOUTH, 0,   
        0},                                                                     
       {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},               
       {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},               
@@ -1797,9 +1795,9 @@ struct ActorPlacement gData_02003710[] = {
 };
 
 struct ActorPlacement gData_020037d0[] = {                                             
-      {314, CONDITION_ALWAYS, 1, PIXELS(584), 0, PIXELS(168), FACING_SOUTH, 2,   
+      {314, CONDITION_ALWAYS, 1, px(584), 0, px(168), FACING_SOUTH, 2,   
        0},                                                                     
-      {314, CONDITION_ALWAYS, 1, PIXELS(472), 0, PIXELS(152), FACING_SOUTH, 2,   
+      {314, CONDITION_ALWAYS, 1, px(472), 0, px(152), FACING_SOUTH, 2,   
        0},                                                                     
       {290, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},               
       {290, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},               

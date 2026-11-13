@@ -547,7 +547,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   EventCamera_FollowActor(21, 1);
   FieldEvent_Wait(120);
   Actor_SetSpeed(21, 0.6);
-  Actor_SetSpeedParameters(21, 0x9999, 0x4ccc);
+  Actor_SetSpeed(21, 0.6);
   Actor_GetById(21)->priorityFlags &= ~1;
   Actor_WalkTo(21, 144, 648);
   if (mode == 0) {
@@ -1447,7 +1447,7 @@ s32 gIzumoInteriors_BounceScript[] = {
     SC_SET(SW_SPEED, 0x6666),
     SC_ARG(0),
     SC_LABEL(1),
-    SC_SET(SW_Y, PIXELS(4)),
+    SC_SET(SW_Y, px(4)),
     SC_WAIT(30),
     SC_END,
 };

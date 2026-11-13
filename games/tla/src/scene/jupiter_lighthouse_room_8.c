@@ -359,7 +359,7 @@ static inline s32 PushTarget_CheckCollision(struct Actor *object,
 #include "shared/push_target_find_slide.h"
 
 /// The whole-pixel half of a 16.16 coordinate.
-#define PIXELS(v) (((s16 *)&(v))[1])
+#define PIXEL_PART(v) (((s16 *)&(v))[1])
 
 #include "shared/push_target_find_ahead.h"
 
@@ -460,7 +460,7 @@ void PushTarget_UpdatePusher(struct Actor *object) {
   position.x = object->x;
   position.y = object->y;
   position.z = object->z;
-  FieldVector_AddPolarOffset(0x100000, angle, &position);
+  FieldVector_AddPolarOffset(px(16), angle, &position);
   hit = Actor_FindAtCell(&position, 1);
   if (hit != 0) {
     i = 0;
@@ -529,8 +529,7 @@ s32 gPushLeaderSteps[] = {
 
 #undef ABS
 #define ABS(v) ((v) < 0 ? -(v) : (v))
-#undef PIXELS
-#define PIXELS(value) ((value) << 16)
+#undef PIXEL_PART
 // @file
 // The first room of Jupiter Lighthouse's left tower: its copy of the effect
 // spawner, and the cracked tiles, found, cracked and fallen through.

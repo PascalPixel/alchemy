@@ -282,7 +282,7 @@ void Lemuria_DigFifthSpot(void) {
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);
-      leader->velocityY = PIXELS(6);
+      leader->velocityY = px(6);
       FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Event_End();
     }
@@ -363,7 +363,7 @@ void Lemuria_KnockAtBrokenDoor(void) {
   s32 v5;
   struct Actor *object;
 
-  if (Actor_Get(gMainRoutineWork.currentOwner)->y > PIXELS(96) ||
+  if (Actor_Get(gMainRoutineWork.currentOwner)->y > px(96) ||
       Event_GetFlag(0x969)) {
     FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x15a), s16, 0) = 1;
     return;
@@ -405,19 +405,19 @@ void Lemuria_KnockAtBrokenDoor(void) {
   Actor_FaceDirectionAndWait(4, FACING_NORTH);
   FieldEvent_Wait(10);
   Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  FieldCamera_MoveToFixed(PIXELS(872), v5, PIXELS(792), 1);
+  FieldCamera_MoveToFixed(px(872), v5, px(792), 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
-  FieldCamera_MoveToFixed(PIXELS(872), v5, PIXELS(856), 1);
+  FieldCamera_MoveToFixed(px(872), v5, px(856), 1);
   FieldActor_Jump(12, 4, 0);
   Actor_WalkToAndWait(12, 872, 912);
   FieldEvent_Wait(20);
   Actor_SetSpeed(12, 1);
   Actor_WalkByAndWait(12, -32, 0);
   Actor_FaceDirectionAndWait(12, FACING_SOUTHEAST + FACING_STEP);
-  FieldCamera_MoveToFixed(PIXELS(848), v5, PIXELS(904), 1);
+  FieldCamera_MoveToFixed(px(848), v5, px(904), 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(15);
   FieldEvent_ShowMessageThenWait(12, 0, 5);
@@ -647,8 +647,8 @@ s32 Scene_Initialize(void) {
   }
   actor = Actor_Get(31);
   actor->motionFlags = 0;
-  actor->terrainHeight = PIXELS(64);
-  actor->y = PIXELS(64);
+  actor->terrainHeight = px(64);
+  actor->y = px(64);
   return 0;
 }
 
@@ -1048,13 +1048,13 @@ u32 gLemuria_FirstWalkerPaces[] = {
       SC_SET(SW_SPEED, 0x10000),                                               
       SC_SET(SW_ACCEL, 0x10000),                                               
       SC_LABEL(1),                                                             
-      SC_MOVE(PIXELS(40), 0, PIXELS(952)),                                      
+      SC_MOVE(px(40), 0, px(952)),                                      
       SC_SYNC,                                                                 
-      SC_MOVE(PIXELS(40), 0, PIXELS(904)),                                      
+      SC_MOVE(px(40), 0, px(904)),                                      
       SC_SYNC,                                                                 
-      SC_MOVE(PIXELS(88), 0, PIXELS(904)),                                      
+      SC_MOVE(px(88), 0, px(904)),                                      
       SC_SYNC,                                                                 
-      SC_MOVE(PIXELS(88), 0, PIXELS(952)),                                      
+      SC_MOVE(px(88), 0, px(952)),                                      
       SC_SYNC,                                                                 
       SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
   };
@@ -1064,13 +1064,13 @@ u32 gLemuria_SecondWalkerPaces[] = {
       SC_SET(SW_SPEED, 0x10000),                                               
       SC_SET(SW_ACCEL, 0x10000),                                               
       SC_LABEL(1),                                                             
-      SC_MOVE(PIXELS(88), 0, PIXELS(904)),                                      
+      SC_MOVE(px(88), 0, px(904)),                                      
       SC_SYNC,                                                                 
-      SC_MOVE(PIXELS(88), 0, PIXELS(952)),                                      
+      SC_MOVE(px(88), 0, px(952)),                                      
       SC_SYNC,                                                                 
-      SC_MOVE(PIXELS(40), 0, PIXELS(952)),                                      
+      SC_MOVE(px(40), 0, px(952)),                                      
       SC_SYNC,                                                                 
-      SC_MOVE(PIXELS(40), 0, PIXELS(904)),                                      
+      SC_MOVE(px(40), 0, px(904)),                                      
       SC_SYNC,                                                                 
       SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
   };

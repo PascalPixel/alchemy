@@ -336,12 +336,12 @@ void MadraInteriors_SetUpJail(void) {
       Actor_SetPosition(10, 0, 0);
     }
   } else if (Event_GetFlag(0x8ff)) {
-    MadraInteriors_PlaceFacing(9, PIXELS(515), PIXELS(841), FACING_NORTHEAST);
-    MadraInteriors_PlaceFacing(10, PIXELS(472), PIXELS(877), FACING_NORTH);
+    MadraInteriors_PlaceFacing(9, px(515), px(841), FACING_NORTHEAST);
+    MadraInteriors_PlaceFacing(10, px(472), px(877), FACING_NORTH);
     Actor_SetPosition(8, 0, 0);
   } else {
-    MadraInteriors_PlaceFacing(9, PIXELS(515), PIXELS(841), FACING_NORTHWEST);
-    MadraInteriors_PlaceFacing(10, PIXELS(472), PIXELS(877), FACING_NORTH);
+    MadraInteriors_PlaceFacing(9, px(515), px(841), FACING_NORTHWEST);
+    MadraInteriors_PlaceFacing(10, px(472), px(877), FACING_NORTH);
     Actor_SetPosition(8, 0, 0);
   }
 }
@@ -1124,9 +1124,9 @@ void MadraInteriors_AskToStayLonger(void) {
 /// after them, as they fetch the Djinni for the Healing Fungus.
 u32 gMadraInteriors_WifeWalksToBackRoom[] = {
     SC_ARG(2),
-    SC_MOVE_XZ(PIXELS(356), PIXELS(72)),
+    SC_MOVE_XZ(px(356), px(72)),
     SC_SYNC,
-    SC_MOVE(PIXELS(324), 0, PIXELS(73)),
+    SC_MOVE(px(324), 0, px(73)),
     SC_SYNC,
     SC_CMD_03,
     SC_END,
@@ -1134,7 +1134,7 @@ u32 gMadraInteriors_WifeWalksToBackRoom[] = {
 
 u32 gMadraInteriors_LeaderStepsAside[] = {
     SC_ARG(2),
-    SC_MOVE_XZ(PIXELS(339), PIXELS(111)),
+    SC_MOVE_XZ(px(339), px(111)),
     SC_SYNC,
     SC_ARG(1),
     SC_SET(SW_FACING, FACING_NORTHWEST),
@@ -1145,9 +1145,9 @@ u32 gMadraInteriors_LeaderStepsAside[] = {
 
 u32 gMadraInteriors_OldManWalksToBackRoom[] = {
     SC_ARG(2),
-    SC_MOVE_XZ(PIXELS(356), PIXELS(72)),
+    SC_MOVE_XZ(px(356), px(72)),
     SC_SYNC,
-    SC_MOVE(PIXELS(324), 0, PIXELS(73)),
+    SC_MOVE(px(324), 0, px(73)),
     SC_SYNC,
     SC_CMD_03,
     SC_END,
@@ -1155,11 +1155,11 @@ u32 gMadraInteriors_OldManWalksToBackRoom[] = {
 
 u32 gMadraInteriors_WifeComesBack[] = {                                                               
       SC_ARG(2),                                                               
-      SC_POSITION(PIXELS(327), 0, PIXELS(71)),                                 
+      SC_POSITION(px(327), 0, px(71)),                                 
       SC_SET(SW_FACING, FACING_EAST),                                          
-      SC_MOVE(PIXELS(352), 0, PIXELS(72)),                                     
+      SC_MOVE(px(352), 0, px(72)),                                     
       SC_SYNC,                                                                 
-      SC_MOVE_XZ(PIXELS(373), PIXELS(109)),                                     
+      SC_MOVE_XZ(px(373), px(109)),                                     
       SC_SYNC,                                                                 
       SC_ARG(1),                                                               
       SC_SET(SW_FACING, FACING_NORTH),                                         
@@ -1173,11 +1173,11 @@ u32 gMadraInteriors_WifeComesBack[] = {
 
 u32 gMadraInteriors_OldManComesBack[] = {                                                               
       SC_ARG(2),                                                               
-      SC_POSITION(PIXELS(327), 0, PIXELS(71)),                                 
+      SC_POSITION(px(327), 0, px(71)),                                 
       SC_SET(SW_FACING, FACING_EAST),                                          
-      SC_MOVE(PIXELS(352), 0, PIXELS(72)),                                     
+      SC_MOVE(px(352), 0, px(72)),                                     
       SC_SYNC,                                                                 
-      SC_MOVE_XZ(PIXELS(373), PIXELS(97)),                                     
+      SC_MOVE_XZ(px(373), px(97)),                                     
       SC_SYNC,                                                                 
       SC_ARG(1),                                                               
       SC_SET(SW_FACING, FACING_NORTH),                                         
@@ -1191,11 +1191,11 @@ u32 gMadraInteriors_OldManComesBack[] = {
 
 u32 gMadraInteriors_CharFollows[] = {
     SC_ARG(2),
-    SC_POSITION(PIXELS(327), PIXELS(24), PIXELS(71)),
+    SC_POSITION(px(327), px(24), px(71)),
     SC_SET(SW_FACING, FACING_EAST),
-    SC_MOVE(PIXELS(352), 0, PIXELS(72)),
+    SC_MOVE(px(352), 0, px(72)),
     SC_SYNC,
-    SC_MOVE_XZ(PIXELS(373), PIXELS(97)),
+    SC_MOVE_XZ(px(373), px(97)),
     SC_SYNC,
     SC_ARG(1),
     SC_SET(SW_FACING, FACING_NORTH),
@@ -1571,9 +1571,9 @@ struct Trigger gMadraInteriors_TriggersOnReturn[] = {
 
 /// The interrogators walk out of the jail once Piers has been questioned.
 u32 gMadraInteriors_InterrogatorsLeave[] = {                                                               
-      SC_ARG(2), SC_MOVE(PIXELS(408), 0, PIXELS(872)),                           
-      SC_SYNC,   SC_MOVE(PIXELS(408), 0, PIXELS(904)),                           
-      SC_SYNC,   SC_MOVE(PIXELS(408), 0, PIXELS(920)),                           
+      SC_ARG(2), SC_MOVE(px(408), 0, px(872)),                           
+      SC_SYNC,   SC_MOVE(px(408), 0, px(904)),                           
+      SC_SYNC,   SC_MOVE(px(408), 0, px(920)),                           
       SC_SYNC,   SC_ARG(1),                                                    
       SC_END,                                                                  
   };
@@ -1604,44 +1604,44 @@ s32 gMadraInteriors_InterrogatorLifted[] = {
     SC_SET(SW_MOTION, 0),
     SC_WAIT(100),
     SC_WAIT(36),
-    SC_ADD(SW_Y, PIXELS(3)),
+    SC_ADD(SW_Y, px(3)),
     SC_WAIT(9),
-    SC_ADD(SW_Y, PIXELS(5)),
-    SC_ADD(SW_X, PIXELS(1)),
+    SC_ADD(SW_Y, px(5)),
+    SC_ADD(SW_X, px(1)),
     SC_WAIT(9),
-    SC_ADD(SW_Y, PIXELS(4)),
+    SC_ADD(SW_Y, px(4)),
     SC_WAIT(9),
     SC_SET(SW_FACING, FACING_WEST),
-    SC_ADD(SW_X, PIXELS(1)),
-    SC_ADD(SW_Y, PIXELS(5)),
+    SC_ADD(SW_X, px(1)),
+    SC_ADD(SW_Y, px(5)),
     SC_WAIT(9),
-    SC_ADD(SW_Y, PIXELS(4)),
+    SC_ADD(SW_Y, px(4)),
     SC_WAIT(9),
-    SC_ADD(SW_Y, PIXELS(4)),
-    SC_ADD(SW_X, PIXELS(1)),
+    SC_ADD(SW_Y, px(4)),
+    SC_ADD(SW_X, px(1)),
     SC_WAIT(9),
-    SC_ADD(SW_Y, PIXELS(4)),
+    SC_ADD(SW_Y, px(4)),
     SC_SET(SW_FACING, FACING_SOUTH),
-    SC_ADD(SW_X, PIXELS(1)),
+    SC_ADD(SW_X, px(1)),
     SC_LABEL(1),
     SC_SET(SW_SCALE_X, 0x10000),
     SC_SET(SW_SCALE_Y, 0x10000),
-    SC_ADD(SW_Y, PIXELS(-1)),
+    SC_ADD(SW_Y, px(-1)),
     SC_ADD(SW_SCALE_Y, 0x2000),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_Y, -4096),
     SC_WAIT(2),
-    SC_ADD(SW_Y, PIXELS(1)),
+    SC_ADD(SW_Y, px(1)),
     SC_ADD(SW_SCALE_Y, -2048),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_Y, -2048),
-    SC_ADD(SW_Y, PIXELS(-1)),
+    SC_ADD(SW_Y, px(-1)),
     SC_WAIT(4),
     SC_ADD(SW_SCALE_Y, 0x2000),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_Y, -4096),
     SC_WAIT(2),
-    SC_ADD(SW_Y, PIXELS(1)),
+    SC_ADD(SW_Y, px(1)),
     SC_ADD(SW_SCALE_Y, -2048),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_Y, -2048),

@@ -378,15 +378,15 @@ blend:
     goto blend;
   GameFlag_Set(0x95f);
   GameFlag_Set(0x95e);
-  Camera_SetSpeedParameters(0x10000, 0x2000);
+  FieldCamera_SetSpeed(1);
   /* FAKEMATCH(wrapper): the camera moves forwarded through
    * ApojiiIslands_CamMove. */
-  ApojiiIslands_CamMove(PIXELS(360), -1, PIXELS(328), 1);
+  ApojiiIslands_CamMove(px(360), -1, px(328), 1);
   Actor_ShowEmoteById(16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldCamera_WaitForArrival();
-  ApojiiIslands_CamMove(PIXELS(440), -1, PIXELS(376), 1);
+  ApojiiIslands_CamMove(px(440), -1, px(376), 1);
   FieldCamera_WaitForArrival();
-  ApojiiIslands_CamMove(PIXELS(472), -1, PIXELS(408), 1);
+  ApojiiIslands_CamMove(px(472), -1, px(408), 1);
   Import_EventSetExitRequest(77);
 }
 
@@ -425,7 +425,7 @@ void Func_02000a48(void) { Func_02001e0c_(68, 38, 39, 24, 68, 4, 1); }
                                                                                \
     Func_02001e0c_(n1, 38, n2, n3, n1, n4, 1);                                 \
     if (Event_GetFlag(n5) == 0) {                                              \
-      Func_02001d04_(n6, PIXELS(n7), PIXELS(n8));                              \
+      Func_02001d04_(n6, px(n7), px(n8));                                      \
       if (leader->x >> 20 == n9 && leader->z >> 20 == n10) {                   \
         Event_Start();                                                         \
         FieldEvent_ResolvePendingActions(0);                                   \

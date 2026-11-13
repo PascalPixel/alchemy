@@ -17,12 +17,12 @@ outer:
 inner:
   if (((struct ObjectAnimationState *)object->sprite)->value28[0] ==
       gPushKinds[k]) {
-    x = (PIXELS(leader->x) + (gPushLeaderSteps[*direction] >> 16)) >> 4;
-    z = (PIXELS(leader->z) + (s16)gPushLeaderSteps[*direction]) >> 4;
-    left = (PIXELS(object->x) + gPushFootprints[k][0]) >> 4;
-    top = (PIXELS(object->z) + gPushFootprints[k][1]) >> 4;
-    right = (PIXELS(object->x) + gPushFootprints[k][2]) >> 4;
-    bottom = (PIXELS(object->z) + gPushFootprints[k][3]) >> 4;
+    x = (PIXEL_PART(leader->x) + (gPushLeaderSteps[*direction] >> 16)) >> 4;
+    z = (PIXEL_PART(leader->z) + (s16)gPushLeaderSteps[*direction]) >> 4;
+    left = (PIXEL_PART(object->x) + gPushFootprints[k][0]) >> 4;
+    top = (PIXEL_PART(object->z) + gPushFootprints[k][1]) >> 4;
+    right = (PIXEL_PART(object->x) + gPushFootprints[k][2]) >> 4;
+    bottom = (PIXEL_PART(object->z) + gPushFootprints[k][3]) >> 4;
     if (left <= x && x < right && top <= z && z < bottom) {
       *kind = k;
       if (k & 1) {

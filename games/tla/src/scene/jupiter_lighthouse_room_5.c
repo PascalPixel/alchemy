@@ -331,10 +331,10 @@ void Func_020002b8(void) {
   c->motionFlags = 0;
   d->motionFlags = 0;
   for (i = 0; i < 16; i++) {
-    a->y += PIXELS(2);
-    b->y += PIXELS(2);
-    c->y += PIXELS(2);
-    d->y += PIXELS(2);
+    a->y += px(2);
+    b->y += px(2);
+    c->y += px(2);
+    d->y += px(2);
     System_Wait(1);
   }
   Actor_RaiseFromCell(13);
@@ -487,7 +487,7 @@ void Func_020008a4(void) {
   Actor_SetSpriteFlags(((void *)Actor_Get(22)), 0);
   FieldActor_SetSpriteColor(((void *)Actor_Get(22)), 15);
   angle = 0x4000;
-  Actor_SetPositionAndFacing(22, PIXELS(64), PIXELS(225), angle);
+  Actor_SetPositionAndFacing(22, px(64), px(225), angle);
   Func_02000734();
   FieldEvent_Wait(40);
   FieldCamera_MoveTo(68, CAMERA_KEEP, 240, 1);
@@ -543,7 +543,7 @@ s32 Scene_Initialize(void) {
     Event_ClearFlag(0xa22);
   if (Event_GetFlag(0xa22)) {
     angle = 0x4000;
-    Actor_SetPositionAndFacing(22, PIXELS(64), PIXELS(225), angle);
+    Actor_SetPositionAndFacing(22, px(64), px(225), angle);
   }
   Actor_PlaceBlocks(gData_02002fb8);
   Actor_SetActionCallback(Actor_Get(64), 9);
@@ -1195,7 +1195,7 @@ u32 gOrbScript[] = {
       SC_SET(SW_SCALE_Y, 0xcccc),                                              
       SC_ARG(1),                                                               
       SC_LABEL(1),                                                             
-      SC_ADD(SW_Y, PIXELS(1)),                                                 
+      SC_ADD(SW_Y, px(1)),                                                 
       SC_WAIT(1),                                                              
       SC_LOOP(16, SC_TO(1)),                                                   
       SC_POSITION(0, 0, 0),                                                    

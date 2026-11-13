@@ -1246,11 +1246,9 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_AREA_TEMP_10))
       Actor_SetPosition(8, 0, 0);
     if (Event_GetFlag(0xa6d))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(280),
-            PIXELS(232));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 9, px(280), px(232));
     if (Event_GetFlag(0xa6e))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 10, PIXELS(472),
-            PIXELS(248));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 10, px(472), px(248));
     TaopoSwamp_StartVents(gTaopoSwamp_Room5Vents, gTaopoSwamp_Room5VentPair,
                           TaopoSwamp_CycleDjinniVents);
   } else if (scene == (s32)&SceneId_TaopoSwamp7) {
@@ -1275,8 +1273,7 @@ s32 Scene_Initialize(void) {
     piece = Actor_GetById(9);
     piece->motionFlags = 0;
     if (Event_GetFlag(0xa6f)) {
-      Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(264),
-            PIXELS(424));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 9, px(264), px(424));
       piece->terrainHeight = 0;
       piece->y = 0;
       Call6(Map_CopyCellAttributeRect, 15, 26, 1, 1, 16, 26);
@@ -1312,8 +1309,7 @@ s32 Scene_Initialize(void) {
       Event_SetFlag(FLAG_AREA_TEMP_39);
     } else if (Event_GetFlag(FLAG_AREA_TEMP_3A)) {
       Actor_SetAnimation(8, 3);
-      Call3(Actor_SetHorizontalPositionWithTerrain, 8, PIXELS(184),
-            PIXELS(344));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 8, px(184), px(344));
       Actor_GetById(8)->collisionFlags = 0;
       Actor_GetById(8)->priorityFlags |= 2;
       Actor_SetSpritePriority(8, 3);
@@ -1323,8 +1319,7 @@ s32 Scene_Initialize(void) {
       Event_SetFlag(FLAG_AREA_TEMP_3C);
     } else if (Event_GetFlag(FLAG_AREA_TEMP_3D)) {
       Actor_SetAnimation(9, 3);
-      Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(504),
-            PIXELS(184));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 9, px(504), px(184));
       Actor_GetById(9)->collisionFlags = 0;
       Actor_GetById(9)->priorityFlags |= 2;
       Call6(Map_CopyCellAttributeRect, 30, 13, 1, 1, 31, 11);
@@ -1332,11 +1327,9 @@ s32 Scene_Initialize(void) {
   } else if (scene == (s32)&SceneId_TaopoSwamp10) {
     piece = Actor_GetById(19);
     if (Event_GetFlag(FLAG_AREA_TEMP_30)) {
-      Call3(Actor_SetHorizontalPositionWithTerrain, 19, PIXELS(480),
-            PIXELS(248));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 19, px(480), px(248));
       if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
-        Call3(Actor_SetHorizontalPositionWithTerrain, 10, PIXELS(440),
-              PIXELS(232));
+        Call3(Actor_SetHorizontalPositionWithTerrain, 10, px(440), px(232));
       Call6(Map_CopyCellsRect, 47, 50, 2, 14, 29, 1);
       Call6(Map_CopyCellsRect, 50, 59, 13, 5, 18, 15);
     } else {
@@ -1347,8 +1340,7 @@ s32 Scene_Initialize(void) {
       Event_SetFlag(FLAG_AREA_TEMP_32);
     } else if (Event_GetFlag(FLAG_AREA_TEMP_33)) {
       Actor_SetAnimation(9, 3);
-      Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(120),
-            PIXELS(248));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 9, px(120), px(248));
       Actor_GetById(9)->collisionFlags = 0;
       Actor_GetById(9)->priorityFlags |= 2;
       Call6(Map_CopyCellAttributeRect, 7, 17, 1, 1, 7, 15);
@@ -1361,8 +1353,7 @@ s32 Scene_Initialize(void) {
       Call6(Map_CopyCellAttributeRect, 27, 14, 1, 1, 27, 13);
       if (Event_GetFlag(FLAG_AREA_TEMP_36)) {
         Actor_SetAnimation(10, 3);
-        Call3(Actor_SetHorizontalPositionWithTerrain, 10, PIXELS(408),
-              PIXELS(264));
+        Call3(Actor_SetHorizontalPositionWithTerrain, 10, px(408), px(264));
         Actor_GetById(10)->collisionFlags = 0;
         Actor_GetById(10)->priorityFlags |= 2;
         Call6(Map_CopyCellAttributeRect, 25, 18, 1, 1, 25, 16);
@@ -1450,11 +1441,9 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_AREA_TEMP_10))
       Actor_SetPosition(8, 0, 0);
     if (Event_GetFlag(0xa6d))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(280),
-            PIXELS(232));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 9, px(280), px(232));
     if (Event_GetFlag(0xa6e))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 10, PIXELS(472),
-            PIXELS(248));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 10, px(472), px(248));
     TaopoSwamp_StartVents(gTaopoSwamp_Room5Vents, gTaopoSwamp_Room5VentPair,
                           TaopoSwamp_CycleDjinniVents);
   } else if (scene == (s32)&SceneId_TaopoSwamp6) {
@@ -1482,8 +1471,7 @@ s32 Scene_Initialize(void) {
     piece = Actor_GetById(9);
     piece->motionFlags = 0;
     if (Event_GetFlag(0xa6f)) {
-      Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(264),
-            PIXELS(424));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 9, px(264), px(424));
       piece->terrainHeight = 0;
       piece->y = 0;
       Call6(Map_CopyCellAttributeRect, 15, 26, 1, 1, 16, 26);
@@ -1542,8 +1530,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_AREA_TEMP_30)) {
       Actor_SetPosition(19, 480, 248);
       if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
-        Call3(Actor_SetHorizontalPositionWithTerrain, 10, PIXELS(440),
-              PIXELS(232));
+        Call3(Actor_SetHorizontalPositionWithTerrain, 10, px(440), px(232));
       Call6(Map_CopyCellsRect, 47, 50, 2, 14, 29, 1);
       Call6(Map_CopyCellsRect, 50, 59, 13, 5, 18, 15);
     } else {

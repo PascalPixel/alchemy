@@ -239,7 +239,7 @@ void Func_02000398(struct Orbiter__gabomba_statue *actor, s32 *x, s32 *z) {
   SET_VECTOR(position, (actor->centerX + 16) << 16, 0x100000,
              actor->centerZ << 16);
   turn = gData_02005af0 * 0x3000 + angle;
-  FieldVector_AddPolarOffset(0xd0000, turn + 0x8000, position);
+  FieldVector_AddPolarOffset(px(13), turn + 0x8000, position);
   *x = position[0];
   *z = position[2];
 }
@@ -252,7 +252,7 @@ s32 Func_02000408(struct Orbiter__gabomba_statue *actor) {
   actor->flags23 = 0;
   SET_POSITION(actor, (actor->centerX + 16) << 16, 0x100000,
                actor->centerZ << 16);
-  FieldVector_AddPolarOffset(0xd0000, angle + 0x8000, &actor->x);
+  FieldVector_AddPolarOffset(px(13), angle + 0x8000, &actor->x);
   next = *phase + gData_02005af0;
   if (next < 0)
     next = 179;
@@ -295,7 +295,7 @@ s32 Func_0200047c(struct Actor *object) {
     object->y = owner->y + px(16);
     object->z = owner->z;
     object->facing = *phase << 8;
-    FieldVector_AddPolarOffset(0x60000, *phase << 8, &object->x);
+    FieldVector_AddPolarOffset(px(6), *phase << 8, &object->x);
     *phase += 16;
   }
   return 1;
@@ -415,7 +415,7 @@ struct Orbiter__find_near *Func_02000624(struct Orbiter__find_near *origin,
   position[2] = origin->z;
   /* FAKEMATCH(temporary): the facing read into a local before the call. */
   facing = origin->facing;
-  FieldVector_AddPolarOffset(0x100000, facing, position);
+  FieldVector_AddPolarOffset(px(16), facing, position);
   for (i = 8; i < 64; i++) {
     struct Orbiter__find_near *object =
         ((struct Orbiter__find_near *)Actor_Get(i));
@@ -579,7 +579,7 @@ void Func_02000a20(struct Actor *object) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
-  object->y = PIXELS(6);
+  object->y = px(6);
   object->z = 0xf741cf;
   object->facing = FACING_SOUTH;
   party = &gMainRoutineWork;
@@ -748,11 +748,11 @@ void Func_02000cf0(struct Actor *object) {
   Actor_FaceDirection(39, FACING_WEST, 0);
   FieldEvent_Wait(15);
   Event_PlaySound(SE_JUMP);
-  Actor_Get(39)->velocityY = PIXELS(4);
+  Actor_Get(39)->velocityY = px(4);
   Actor_SetSpeed(39, 4);
   Actor_WalkToAndWait(39, 312, 200);
   Event_PlaySound(SE_JUMP);
-  Actor_Get(39)->velocityY = PIXELS(6);
+  Actor_Get(39)->velocityY = px(6);
   Actor_SetSpeed(39, 4);
   Actor_WalkToAndWait(39, 312, 168);
   Actor_SetSpeed(39, 2);
@@ -760,12 +760,12 @@ void Func_02000cf0(struct Actor *object) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldEvent_Wait(15);
   Event_PlaySound(SE_JUMP);
-  Actor_Get(39)->velocityY = PIXELS(6);
+  Actor_Get(39)->velocityY = px(6);
   Actor_SetSpeed(39, 4);
   Actor_WalkToAndWait(39, 360, 152);
   FieldEvent_Wait(15);
   Event_PlaySound(SE_JUMP);
-  Actor_Get(39)->velocityY = PIXELS(6);
+  Actor_Get(39)->velocityY = px(6);
   Actor_SetSpeed(39, 2);
   Actor_WalkToAndWait(39, 360, 184);
   Actor_SetSpeed(39, 2);
@@ -774,7 +774,7 @@ void Func_02000cf0(struct Actor *object) {
   Actor_WalkToAndWait(39, 408, 184);
   FieldEvent_Wait(15);
   Event_PlaySound(SE_JUMP);
-  Actor_Get(39)->velocityY = PIXELS(6);
+  Actor_Get(39)->velocityY = px(6);
   Actor_SetSpeed(39, 4);
   Actor_WalkToAndWait(39, 440, 184);
   Actor_SetPosition(39, 0, 0);
@@ -903,7 +903,7 @@ void Func_020011bc(s32 x, s32 z) {
   FieldActor_RefreshSelectorById(gMainRoutineWork.currentOwner);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 13);
-  FieldActor_SetMoveTargetFixed(object, x << 16, PIXELS(-12), z << 16);
+  FieldActor_SetMoveTargetFixed(object, x << 16, px(-12), z << 16);
   FieldActor_WaitForMove(object);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 10);
   Event_PlaySound(SE_MAP_EXIT);
@@ -1160,7 +1160,7 @@ void Func_020019d0(void) {
   FieldEvent_Wait(40);
   Event_PlaySound(SE_582);
   actor->motionFlags = 0;
-  actor->y = PIXELS(8);
+  actor->y = px(8);
   FieldEvent_Wait(10);
   actor->y = 0;
   FieldEvent_Wait(10);
@@ -1220,7 +1220,7 @@ void Func_02001b0c(void) {
                                                                                \
       Func_02001adc(id);                                                       \
       object->motionFlags = 0;                                                 \
-      object->y = PIXELS(36);                                                  \
+      object->y = px(36);                                                      \
       i++;                                                                     \
     }                                                                          \
     if (i < n2)                                                                \
@@ -1625,16 +1625,16 @@ void Func_020027cc(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   speed = 0x4000;
-  Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, PIXELS(348),
-                             PIXELS(312), speed);
-  Actor_SetPositionAndFacing(7, PIXELS(330), PIXELS(312), speed);
+  Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, px(348), px(312),
+                             speed);
+  Actor_SetPositionAndFacing(7, px(330), px(312), speed);
   {
     s32 slow = 0x3000;
 
-    Actor_SetPositionAndFacing(23, PIXELS(432), PIXELS(312), slow);
+    Actor_SetPositionAndFacing(23, px(432), px(312), slow);
   }
-  Actor_SetPositionAndFacing(6, PIXELS(448), PIXELS(312), speed);
-  Actor_SetPositionAndFacing(5, PIXELS(468), PIXELS(312), speed);
+  Actor_SetPositionAndFacing(6, px(448), px(312), speed);
+  Actor_SetPositionAndFacing(5, px(468), px(312), speed);
   System_Wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x202;
   Event_StartScreenTransition();
@@ -1855,9 +1855,9 @@ void GabombaStatue_SawEnergyFlow(void) {
   FieldCamera_MoveTo(440, CAMERA_KEEP, 182, 0);
   Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
   south = FACING_SOUTH;
-  Actor_SetPositionAndFacing(5, PIXELS(472), PIXELS(216), south);
+  Actor_SetPositionAndFacing(5, px(472), px(216), south);
   facing = FACING_SOUTHEAST + FACING_STEP;
-  Actor_SetPositionAndFacing(24, PIXELS(472), PIXELS(200), facing);
+  Actor_SetPositionAndFacing(24, px(472), px(200), facing);
   System_Wait(1);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
@@ -1901,11 +1901,11 @@ void GabombaStatue_SawEnergyFlow(void) {
   Actor_SetAttachedEffect(24, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Event_ShowMessage(24, 0);
-  Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, PIXELS(472),
-                             PIXELS(204), south);
-  Actor_SetPositionAndFacing(7, PIXELS(440), PIXELS(204), south);
-  Actor_SetPositionAndFacing(23, PIXELS(456), PIXELS(204), facing);
-  Actor_SetPositionAndFacing(6, PIXELS(488), PIXELS(204), south);
+  Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, px(472), px(204),
+                             south);
+  Actor_SetPositionAndFacing(7, px(440), px(204), south);
+  Actor_SetPositionAndFacing(23, px(456), px(204), facing);
+  Actor_SetPositionAndFacing(6, px(488), px(204), south);
   System_Wait(1);
   Event_ShowMessage(23, 0);
   Actor_FaceDirection(24, FACING_NORTH + FACING_STEP, 0);
@@ -2004,7 +2004,7 @@ void GabombaStatue_InitializeRoom2(void) {
   }
   Func_020053bc(gData_02005d7c);
   if (!Event_GetFlag(0x8ce) || !Event_GetFlag(0x8cf))
-    Actor_Get(26)->y = PIXELS(16);
+    Actor_Get(26)->y = px(16);
   Rope_Initialize();
   Exit_Set(0, 513, 8, 9);
   Exit_Set(1, 514, 10, 11);
@@ -3625,23 +3625,23 @@ LATE_DATA s32 gData_02005af0 = 0;
 
 LATE_DATA u32 gData_02005af4[] =                                                                 
       {                                                                        
-          SC_ARG(2), SC_MOVE(PIXELS(472), 0, PIXELS(184)), SC_SYNC, SC_ARG(1),   
+          SC_ARG(2), SC_MOVE(px(472), 0, px(184)), SC_SYNC, SC_ARG(1),   
           SC_END,                                                              
   };
 
 LATE_DATA u32 gData_02005b1c[] = {                                                               
-      SC_ARG(2),  SC_MOVE(PIXELS(488), 0, PIXELS(176)), SC_SYNC,    SC_ARG(1),  
+      SC_ARG(2),  SC_MOVE(px(488), 0, px(176)), SC_SYNC,    SC_ARG(1),  
       SC_WAIT(1), SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(1), SC_END,     
   };
 
 LATE_DATA u32 gData_02005b60[] = {                                                               
-      SC_ARG(2),  SC_MOVE(PIXELS(456), 0, PIXELS(176)), SC_SYNC,    SC_ARG(1),  
+      SC_ARG(2),  SC_MOVE(px(456), 0, px(176)), SC_SYNC,    SC_ARG(1),  
       SC_WAIT(1), SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(1), SC_END,     
   };
 
 LATE_DATA u32 gData_02005ba4[] = {
     SC_ARG(2),
-    SC_MOVE(PIXELS(464), 0, PIXELS(208)),
+    SC_MOVE(px(464), 0, px(208)),
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(1),
@@ -3652,9 +3652,9 @@ LATE_DATA u32 gData_02005ba4[] = {
 
 LATE_DATA u32 gData_02005be8[] = {
     SC_ARG(2),
-    SC_MOVE(PIXELS(432), 0, PIXELS(286)),
+    SC_MOVE(px(432), 0, px(286)),
     SC_SYNC,
-    SC_MOVE(PIXELS(432), 0, PIXELS(312)),
+    SC_MOVE(px(432), 0, px(312)),
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(1),
@@ -3679,9 +3679,9 @@ LATE_DATA s32 gData_02005ca0[] = {
 
 LATE_DATA u32 gData_02005ccc[] = {
     SC_ARG(2),
-    SC_MOVE(PIXELS(472), 0, PIXELS(308)),
+    SC_MOVE(px(472), 0, px(308)),
     SC_SYNC,
-    SC_MOVE(PIXELS(440), 0, PIXELS(312)),
+    SC_MOVE(px(440), 0, px(312)),
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(1),
@@ -3692,9 +3692,9 @@ LATE_DATA u32 gData_02005ccc[] = {
 
 LATE_DATA u32 gData_02005d24[] = {
     SC_ARG(2),
-    SC_MOVE(PIXELS(472), 0, PIXELS(308)),
+    SC_MOVE(px(472), 0, px(308)),
     SC_SYNC,
-    SC_MOVE(PIXELS(460), 0, PIXELS(312)),
+    SC_MOVE(px(460), 0, px(312)),
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(1),

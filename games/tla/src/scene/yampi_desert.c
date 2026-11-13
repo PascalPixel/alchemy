@@ -703,8 +703,8 @@ void YampiDesert_StirScorpion(void) {
   Event_ResolvePendingActions(0);
   YampiDesert_ClearRaisedEvent();
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 16);
-  Camera_SetSpeedParameters(0x26666, 0x4ccc);
-  Scene_CamBounds(PIXELS(300), -1, PIXELS(248), 1);
+  FieldCamera_SetSpeed(2.4);
+  Scene_CamBounds(px(300), -1, px(248), 1);
   Actor_MoveToAndWaitById(16, 254, 248);
   Actor_MoveToAndWaitById(16, 352, 240);
   Task_Remove(YampiDesert_PlayScorpionRumble);
@@ -735,8 +735,8 @@ void YampiDesert_StirScorpionAgain(void) {
   Event_ResolvePendingActions(0);
   YampiDesert_ClearRaisedEvent();
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 21);
-  Camera_SetSpeedParameters(0x26666, 0x4ccc);
-  FieldCamera_MoveWithinMapBounds(PIXELS(246), -1, PIXELS(616), 1);
+  FieldCamera_SetSpeed(2.4);
+  FieldCamera_MoveWithinMapBounds(px(246), -1, px(616), 1);
   Scene_SetPositionAndCommit(21, 248, 648);
   Scene_SetPositionAndCommit(21, 248, 576);
   Task_Remove(YampiDesert_PlayScorpionRumble);
@@ -767,10 +767,10 @@ void YampiDesert_CornerScorpion(void) {
   Event_ResolvePendingActions(0);
   YampiDesert_ClearRaisedEvent();
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 21);
-  Camera_SetSpeedParameters(0x26666, 0x4ccc);
-  Scene_CamBounds(PIXELS(232), -1, PIXELS(328), 1);
+  FieldCamera_SetSpeed(2.4);
+  Scene_CamBounds(px(232), -1, px(328), 1);
   Scene_SetPositionAndCommit(21, 232, 328);
-  FieldCamera_MoveWithinMapBounds(PIXELS(232), -1, PIXELS(200), 1);
+  FieldCamera_MoveWithinMapBounds(px(232), -1, px(200), 1);
   Scene_SetPositionAndCommit(21, 232, 280);
   Actor_MoveToAndWaitById(21, 232, 168);
   Task_Remove(YampiDesert_PlayScorpionRumble);
@@ -845,7 +845,7 @@ loop_3:
     goto loop_3;
   Actor_SetHorizontalPositionWithTerrain(22, 0, 0);
   FieldEvent_Wait(20);
-  Scene_CamBounds(PIXELS(232), -1, PIXELS(196), 1);
+  Scene_CamBounds(px(232), -1, px(196), 1);
   Actor_ShowEmoteById(gMainRoutineWork.currentOwner,
                       EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Scene_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
@@ -918,7 +918,7 @@ void YampiDesert_ScoopCenterPit(s32 mode) {
   if (mode == 1) {
     object = Actor_GetById(9);
     MapGrid_CopyCellPictureIndicesRect(35, 39, 13, 11, 3, 3);
-    Scene_Call4090(9, PIXELS(232), PIXELS(200));
+    Scene_Call4090(9, px(232), px(200));
     height = Map_GetTerrainHeight(0, object->x, object->z);
     object->y = height;
     object->terrainHeight = height;
@@ -1006,11 +1006,11 @@ void YampiDesert_RevealMedalSpot(void) {
 
   if (object != 0) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
-    Scene_Call4090(64, PIXELS(288), PIXELS(240));
+    Scene_Call4090(64, px(288), px(240));
     if ((leader->x + px(8)) >> 20 == (object->x + px(8)) >> 20 &&
         (leader->z + px(8)) >> 20 == (object->z + px(8)) >> 20)
       Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
-                                             PIXELS(288), PIXELS(256));
+                                             px(288), px(256));
   }
 }
 
@@ -1900,7 +1900,7 @@ void YampiDesert_ClimbOut(struct Actor *object, s32 x, s32 z, s32 mode) {
   zero = 0;
   party = &gMainRoutineWork;
   *flags = zero;
-  Actor_SetSpeedParameters(party->currentOwner, 0x10000, 0x8000);
+  Actor_SetSpeed(party->currentOwner, 1);
   Actor_WalkToAndWaitById(party->currentOwner, x, z);
   Actor_FaceDirectionById(party->currentOwner, FACING_NORTH);
   Actor_SetSpriteFlags(Actor_GetById(party->currentOwner), 0);
@@ -1959,12 +1959,12 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   Event_ResolvePendingActions(0);
   Sound_Play(SOUND_FADE_OUT_BGM);
   Call4(FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
-  Call4(FieldCamera_MoveWithinMapBounds, PIXELS(232), -1, PIXELS(184), 0);
+  Call4(FieldCamera_MoveWithinMapBounds, px(232), -1, px(184), 0);
   Map_CenterOnFollowedPoint();
   wait(1);
   Actor_SetSpriteFlags(Actor_GetById(party->currentOwner), 0);
   leader->motionFlags = 0;
-  leader->y = PIXELS(130);
+  leader->y = px(130);
   leader->gravity = Q16_ONE / 2;
   leader->bounce = 0;
   Actor_SetSpriteFlags(Actor_GetById(8), 0);
@@ -1973,11 +1973,11 @@ void YampiDesert_LandAndFightKingScorpion(void) {
     // built last.
     s32 angle = TRIG_TURN / 4;
 
-    Call4(Actor_SetHorizontalPositionAndAngleWithTerrain, 8, PIXELS(232),
-          PIXELS(148), angle);
+    Call4(Actor_SetHorizontalPositionAndAngleWithTerrain, 8, px(232), px(148),
+          angle);
   }
   actor8->motionFlags = 0;
-  actor8->y = PIXELS(130);
+  actor8->y = px(130);
   actor8->gravity = Q16_ONE / 2;
   actor8->bounce = 0;
   wait(1);

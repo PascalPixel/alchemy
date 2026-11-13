@@ -202,17 +202,17 @@ s32 Scene_PrepareMap(void) {
   if (Event_GetFlag(FLAG_LEFT_PILLAR_IN_GAP)) {
     object = Actor_Get(14);
     object->motionFlags = 0;
-    object->terrainHeight = PIXELS(-32);
-    object->y = PIXELS(-32);
-    Func_020023b0_(14, PIXELS(328), PIXELS(584));
+    object->terrainHeight = px(-32);
+    object->y = px(-32);
+    Func_020023b0_(14, px(328), px(584));
     MapGrid_SetCellHeight(object->x, object->z, 0, 0);
   }
   if (Event_GetFlag(FLAG_RIGHT_PILLAR_IN_GAP)) {
     object = Actor_Get(15);
     object->motionFlags = 0;
-    object->terrainHeight = PIXELS(-32);
-    object->y = PIXELS(-32);
-    Func_020023b0_(15, PIXELS(520), PIXELS(584));
+    object->terrainHeight = px(-32);
+    object->y = px(-32);
+    Func_020023b0_(15, px(520), px(584));
     MapGrid_SetCellHeight(object->x, object->z, 0, 0);
   }
   Actor_Get(8)->priorityFlags |= 32;
@@ -358,7 +358,7 @@ static inline s32 PushTarget_CheckCollision(struct Actor *object,
 #include "shared/push_target_find_slide.h"
 
 /// The whole-pixel half of a 16.16 coordinate.
-#define PIXELS(v) (((s16 *)&(v))[1])
+#define PIXEL_PART(v) (((s16 *)&(v))[1])
 
 /// Finds the object the leader is pushing: among objects 8 to 63 whose sprite
 /// shape is in the six-entry footprint table, the one whose footprint holds the
@@ -387,7 +387,7 @@ void PushTarget_UpdatePusher(struct Actor *object) {
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
-  FieldVector_AddPolarOffset(0x100000, angle, position);
+  FieldVector_AddPolarOffset(px(16), angle, position);
   other = Actor_FindAtCell(position, 1);
   if (other != NULL) {
     i = 0;
@@ -458,8 +458,7 @@ s32 gPushLeaderSteps[] = {
 #undef FLAG_RIGHT_PILLAR_IN_GAP
 #undef ABS
 #define ABS(v) ((v) < 0 ? -(v) : (v))
-#undef PIXELS
-#define PIXELS(value) ((value) << 16)
+#undef PIXEL_PART
 // @file
 // The room of gaps and logs in Jupiter Lighthouse: its copy of the effect
 // spawner, and the cracked tiles, found, cracked and fallen through.

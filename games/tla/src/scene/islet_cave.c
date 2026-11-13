@@ -243,7 +243,7 @@ s32 Func_020003d4(struct Actor *object) {
   object->motionFlags = 3;
   if (step < 32) {
     if (step == 0)
-      object->velocityY = PIXELS(1);
+      object->velocityY = px(1);
     animation[9] = Trig_Cos(step << 12) / 128;
   }
   (*phase)++;
@@ -308,7 +308,7 @@ void Func_020004ac(void) {
     gMainRoutineWork.unk2c2 = 1;                                               \
     Event_Wait(40);                                                            \
     Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,      \
-                                           PIXELS(n1), PIXELS(n2));            \
+                                           px(n1), px(n2));                    \
     Func_020004ac();                                                           \
   }
 
@@ -384,7 +384,7 @@ loop:
     MapGrid_AnimateCells(gData_020019ec[index].steps, x, position[1]);
   }
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
   Event_Wait(6);
   Import_EventSetExitRequest(*(s16 *)(work + 0x154));
@@ -766,7 +766,7 @@ void Func_0200115c(void) {
     Event_SetFlag(FLAG_SCENE_TEMP_30);
     Actor_SetPosition(9, 296, 160);
     object->speedLimit = px(3) / 2;
-    object->velocityY = PIXELS(15);
+    object->velocityY = px(15);
     Actor_MoveToAndWait(9, 344, ((owner->z >> 19) << 3) + 24);
     Actor_Stop(8);
     object->speedLimit = px(1);
@@ -801,7 +801,7 @@ u32 gData_020013fc[] = {
 
 s32 gData_02001418[] = {
     SC_SET(SW_MOTION, 0),
-    SC_ADD(SW_Y, PIXELS(-4)),
+    SC_ADD(SW_Y, px(-4)),
     SC_SET(SW_SCALE_X, 0xcccc),
     SC_SET(SW_SCALE_Y, 0xcccc),
     SC_CALL(IsletCave_ClearScriptedActorSpriteFlags),

@@ -110,11 +110,11 @@ void Func_02000054(void) {
 
   object = Actor_Get(gMainRoutineWork.currentOwner);
   if (object->terrainId == 1) {
-    FieldMapGrid_SetCellBehavior(0x900000, 0x2400000, 2, 0xea);
-    FieldMapGrid_SetCellBehavior(0x1000000, 0x2300000, 2, 0xea);
+    FieldMapGrid_SetCellBehavior(px(144), px(576), 2, 0xea);
+    FieldMapGrid_SetCellBehavior(px(256), px(560), 2, 0xea);
   } else {
-    FieldMapGrid_SetCellBehavior(0x900000, 0x2400000, 2, 0xeb);
-    FieldMapGrid_SetCellBehavior(0x1000000, 0x2300000, 2, 0xeb);
+    FieldMapGrid_SetCellBehavior(px(144), px(576), 2, 0xeb);
+    FieldMapGrid_SetCellBehavior(px(256), px(560), 2, 0xeb);
   }
 }
 
@@ -301,7 +301,7 @@ void Func_02000454(void) {
     Actor_SetAnimationSpeed(object, 64);
     object->motionFlags = 0;
     for (i = 109; i >= 0; i--) {
-      object->y += PIXELS(3);
+      object->y += px(3);
       angle = object->facing;
       angle += 0x1800;
       object->facing = angle;
@@ -390,7 +390,7 @@ void Func_020006dc(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   if (party->renderMode == 10)
-    FieldMapGrid_SetCellBehavior(0x1500000, 0x2500000, 0, 255);
+    FieldMapGrid_SetCellBehavior(px(336), px(592), 0, 255);
 }
 
 void Func_02000704(void) {

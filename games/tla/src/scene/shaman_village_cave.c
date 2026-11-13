@@ -253,9 +253,9 @@ void ShamanVillageCave_PlaceGladiators(void) {
   s32 angle;
 
   angle = 0x5000;
-  Actor_SetPositionAndFacing(19, PIXELS(231), PIXELS(199), angle);
-  Actor_SetPositionAndFacing(20, PIXELS(220), PIXELS(191), angle);
-  Actor_SetPositionAndFacing(21, PIXELS(204), PIXELS(191), angle);
+  Actor_SetPositionAndFacing(19, px(231), px(199), angle);
+  Actor_SetPositionAndFacing(20, px(220), px(191), angle);
+  Actor_SetPositionAndFacing(21, px(204), px(191), angle);
   return;
 }
 
@@ -265,7 +265,7 @@ void ShamanVillageCave_PlaceGoldenShirt(void) {
 
   FieldActor_ShowItemIconById(22, ITEM_GOLDEN_SHIRT);
   angle = 0xc000;
-  Actor_SetPositionAndFacing(22, PIXELS(212), PIXELS(199), angle);
+  Actor_SetPositionAndFacing(22, px(212), px(199), angle);
   Event_SetFlag(0xa73);
   return;
 }
@@ -305,13 +305,13 @@ void ShamanVillageCave_MeetColossoFans(void) {
   FieldCamera_MoveTo(199, CAMERA_KEEP, 177, 1);
   FieldCamera_WaitForArrival();
   angle = 0x4000;
-  Actor_SetPositionAndFacing(19, PIXELS(199), PIXELS(130), angle);
+  Actor_SetPositionAndFacing(19, px(199), px(130), angle);
   Actor_WalkTo(19, 231, 199);
   FieldEvent_Wait(20);
-  Actor_SetPositionAndFacing(20, PIXELS(199), PIXELS(130), angle);
+  Actor_SetPositionAndFacing(20, px(199), px(130), angle);
   Actor_WalkTo(20, 220, 191);
   FieldEvent_Wait(20);
-  Actor_SetPositionAndFacing(21, PIXELS(199), PIXELS(130), angle);
+  Actor_SetPositionAndFacing(21, px(199), px(130), angle);
   Actor_WalkTo(21, 204, 191);
   FieldCamera_MoveTo(199, CAMERA_KEEP, 225, 1);
   FieldCamera_WaitForArrival();
@@ -422,12 +422,12 @@ void ShamanVillageCave_LoseToColossoFans(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(199, CAMERA_KEEP, 273, 0);
   FieldEvent_SetMessageId((s32)MsgHeyTheseGuys);
-  Actor_SetPositionAndFacing(4, PIXELS(184), PIXELS(229), angle);
-  Actor_SetPositionAndFacing(0, PIXELS(200), PIXELS(221), angle);
+  Actor_SetPositionAndFacing(4, px(184), px(229), angle);
+  Actor_SetPositionAndFacing(0, px(200), px(221), angle);
   {
     s32 turn = 0xc000;
 
-    Actor_SetPositionAndFacing(18, PIXELS(218), PIXELS(320), turn);
+    Actor_SetPositionAndFacing(18, px(218), px(320), turn);
   }
   Actor_SetAnimation(4, 19);
   Actor_SetAnimation(0, 39);
@@ -481,9 +481,9 @@ void ShamanVillageCave_BeatColossoFans(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(199, CAMERA_KEEP, 273, 0);
   FieldEvent_SetMessageId((s32)MsgTheseGuysWere);
-  Actor_SetPositionAndFacing(4, PIXELS(184), PIXELS(229), angle);
-  Actor_SetPositionAndFacing(0, PIXELS(200), PIXELS(221), angle);
-  Actor_SetPositionAndFacing(18, PIXELS(208), PIXELS(237), angle);
+  Actor_SetPositionAndFacing(4, px(184), px(229), angle);
+  Actor_SetPositionAndFacing(0, px(200), px(221), angle);
+  Actor_SetPositionAndFacing(18, px(208), px(237), angle);
   Actor_SetAnimation(20, 8);
   Actor_SetAnimation(19, 8);
   Actor_SetAnimation(21, 8);

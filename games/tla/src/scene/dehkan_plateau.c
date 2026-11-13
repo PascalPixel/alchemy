@@ -1044,7 +1044,7 @@ void DehkanPlateau_StepOnCrack(void) {
   }
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 4);
   Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, cellX << 3,
                           cellZ << 3);
   Actor_SetPositionAndResetMotion(leader, cellX << 19, leader->y, cellZ << 19);
@@ -1619,15 +1619,15 @@ void DehkanPlateau_CannonCrumblesPillars(void) {
   Event_Wait(10);
   Actor_SetSpeed(25, 1.6);
   Actor_WalkToAndWait(25, 712, 280);
-  Camera_SetSpeedParameters(0x26666, 0x4ccc);
-  FieldCamera_MoveWithinMapBounds(PIXELS(712), -1, PIXELS(136), 1);
+  FieldCamera_SetSpeed(2.4);
+  FieldCamera_MoveWithinMapBounds(px(712), -1, px(136), 1);
   MapGrid_CopyCellPictureIndicesRect(112, 6, 110, 4, 1, 1);
   Actor_SetSpritePriority(25, 1);
   Actor_WalkToAndWait(25, 712, 200);
   Actor_WalkToAndWaitById(25, 712, 168);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Actor_FaceDirectionById(25, FACING_EAST);
-  Actor_SetSpeedParameters(25, 0x20000, 0x10000);
+  Actor_SetSpeed(25, 2);
   Sound_Play(SE_HIGH_JUMP);
   actor->velocityY = px(8);
   Actor_SetSpriteFlags(Actor_GetById(25), 0);
@@ -1663,7 +1663,7 @@ void DehkanPlateau_CannonPoundsLeaderThrough(void) {
     s32 facing = FACING_NORTH;
 
     Actor_SetHorizontalPositionAndAngleWithTerrain(
-        gMainRoutineWork.currentOwner, PIXELS(248), PIXELS(136), facing);
+        gMainRoutineWork.currentOwner, px(248), px(136), facing);
   }
   MapGrid_CopyCellPictureIndicesRect(65, 64, 15, 8, 1, 1);
   GameFlag_Set(FLAG_SCENE_TEMP_45);
@@ -1770,8 +1770,8 @@ void DehkanPlateau_CannonDropsPoundCube(void) {
   Sound_Play(SE_KOLIMA_BRIDGE_HOP);
   DehkanPlateau_JoltCamera();
   if (gDehkanPlateau_PoundCube != NULL) {
-    FieldActor_SetPositionAndResetMotion(gDehkanPlateau_PoundCube, 0xf80000, 0,
-                                         0x780000);
+    FieldActor_SetPositionAndResetMotion(gDehkanPlateau_PoundCube, px(248), 0,
+                                         px(120));
     wait(1);
     gDehkanPlateau_PoundCube->speedLimit = 0x19999;
     gDehkanPlateau_PoundCube->acceleration = 0x19999;
@@ -1811,13 +1811,13 @@ void DehkanPlateau_CannonCrumblesLastPillar(void) {
   Event_ResolvePendingActions(0);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 16);
   FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_MoveWithinMapBounds(PIXELS(760), PIXELS(32), PIXELS(204), 1);
+  FieldCamera_MoveWithinMapBounds(px(760), px(32), px(204), 1);
   FieldCamera_WaitForArrival();
   Actor_FaceActorById(16, gMainRoutineWork.currentOwner, 0);
   // Called for its value, which is unused: as Call3 the actor id is loaded
   // before the 0x100's shift.
   Actor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Actor_SetSpeedParameters(16, 0x20000, 0x10000);
+  Actor_SetSpeed(16, 2);
   Sound_Play(SE_HIGH_JUMP);
   actor->velocityY = px(8);
   Actor_SetSpriteFlags(Actor_GetById(16), 0);

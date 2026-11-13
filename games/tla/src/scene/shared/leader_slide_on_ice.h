@@ -24,16 +24,16 @@ void TundariaTower_SlideOnIce(void) {
 
 top:
   TundariaTower_StopLeader();
-  actor->speedLimit = PIXELS(1);
-  actor->acceleration = PIXELS(1) / 2;
+  actor->speedLimit = px(1);
+  actor->acceleration = px(1) / 2;
   actor->targetX = 0x80000000;
   actor->targetZ = 0x80000000;
   actor->velocityX = 0;
   actor->velocityZ = 0;
   position = &probe;
-  position->x = startX = (actor->x & 0xfff00000) + PIXELS(8);
+  position->x = startX = (actor->x & 0xfff00000) + px(8);
   position->y = actor->y;
-  position->z = startZ = (actor->z & 0xfff00000) + PIXELS(8);
+  position->z = startZ = (actor->z & 0xfff00000) + px(8);
   x = startX;
   z = startZ;
   layer = &actor->terrainId;
@@ -41,7 +41,7 @@ top:
   dz = z - actor->z;
   dx = x - actor->x;
   distance = Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz);
-  if (distance < PIXELS(4)) {
+  if (distance < px(4)) {
     heading = gTundariaTower_SlideAnglesByKey[(gInput.held >> 4) & 15];
     if ((heading << 16) == -0x10000) {
       return;
@@ -50,12 +50,12 @@ top:
     heading = (s16)ArcTan2(z - actor->z, x - actor->x);
     heading = (s16)((heading + 0x2000) & -0x4000);
   }
-  FieldVector_AddPolarOffset(PIXELS(16), heading, &probe);
+  FieldVector_AddPolarOffset(px(16), heading, &probe);
   nextBehavior =
       FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
   if (nextBehavior == 255 ||
       Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y >
-          PIXELS(8)) {
+          px(8)) {
     actor->facing = heading;
     actor->velocityX = 0;
     actor->velocityZ = 0;
@@ -65,7 +65,7 @@ top:
   }
   position->x = startX;
   position->z = startZ;
-  actor->speedLimit = PIXELS(2);
+  actor->speedLimit = px(2);
   actor->acceleration = 0x1999;
   actor->timer = 0;
   FieldActor_SetMoveTargetFixed(actor, startX, actor->y, startZ);
@@ -75,7 +75,7 @@ top:
   actor->update = TundariaTower_KeepSliding;
   goto test;
 body:
-  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > PIXELS(8)) {
+  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > px(8)) {
     goto stop;
   }
   radius = actor->radius - 2;
@@ -98,7 +98,7 @@ body:
   }
   x = next->x;
   z = next->z;
-  actor->speedLimit = PIXELS(2);
+  actor->speedLimit = px(2);
   actor->acceleration = 0x1999;
   FieldActor_SetMoveTargetFixed(actor, next->x, next->y, next->z);
   FieldActor_WaitForMove(actor);
@@ -110,7 +110,7 @@ test:
     struct Vector3 *step;
 
     step = &probe;
-    FieldVector_AddPolarOffset(PIXELS(16), heading, step);
+    FieldVector_AddPolarOffset(px(16), heading, step);
     /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the
      * address. */
     step = NULL;
@@ -121,8 +121,8 @@ test:
     goto body;
   }
 stop:
-  actor->speedLimit = PIXELS(2);
-  actor->acceleration = PIXELS(1);
+  actor->speedLimit = px(2);
+  actor->acceleration = px(1);
   FieldActor_SetMoveTargetFixed(actor, x, actor->y, z);
   FieldActor_WaitForMove(actor);
   System_Wait(2);
@@ -133,6 +133,6 @@ blocked:
 done:
   actor->update = NULL;
   actor->actionFlags |= 1;
-  actor->acceleration = PIXELS(1) / 4;
+  actor->acceleration = px(1) / 4;
   Actor_SelectAnimation(actor, 1);
 }

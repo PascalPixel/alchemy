@@ -481,10 +481,10 @@ void Func_020009b8(s32 x, s32 y, s16 part, s16 a3) {
   s32 i;
 
   for (i = 0; i != 16;) {
-    struct Actor *object = (FieldActor_Create(0x2a0, x, y, 0x980000));
+    struct Actor *object = (FieldActor_Create(0x2a0, x, y, px(152)));
     s32 angle = i << 12;
 
-    FieldVector_AddPolarOffset(0x200000, angle, &object->x);
+    FieldVector_AddPolarOffset(px(32), angle, &object->x);
     object->timer = angle;
     object->unk66 = a3;
     BYTE_AT(object, 98) = i;
@@ -506,7 +506,7 @@ void Func_020009b8(s32 x, s32 y, s16 part, s16 a3) {
 void Func_02000a78(s32 a0, s32 a1, s16 a2) {
   struct Actor *object;
 
-  object = FieldActor_Create(0x2a0, (a0 << 16), ((a1 + 3) << 16), 0x980000);
+  object = FieldActor_Create(0x2a0, (a0 << 16), ((a1 + 3) << 16), px(152));
   object->motionFlags = 4;
   FieldActor_SetSpriteColor(object, (u16)a2);
   Scene_SetActorSpritePriority(object, 2);
@@ -1083,7 +1083,7 @@ void Func_020017b4(struct Actor *self) {
   }
   if (ahead[2] >> 16 > 248)
     return;
-  FieldVector_AddPolarOffset(0x70000, 0x8000 - leader->facing, ahead);
+  FieldVector_AddPolarOffset(px(7), 0x8000 - leader->facing, ahead);
   if (FieldMapGrid_GetCellBehaviorAt(self->terrainId, ahead[0], ahead[2]) ==
       255)
     return;
@@ -1344,7 +1344,7 @@ void Func_02001d68(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(9, 2);
   object->y = -px(64);
-  Func_020033e0_(9, PIXELS(728), PIXELS(120));
+  Func_020033e0_(9, px(728), px(120));
   Actor_SetPosition(gMainRoutineWork.currentOwner, 728, 120);
   Actor_Get(gMainRoutineWork.currentOwner)->y = -px(48);
   Event_StartScreenTransition();

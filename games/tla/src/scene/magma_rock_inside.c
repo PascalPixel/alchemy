@@ -886,7 +886,7 @@ void MagmaRockInside_PushPillarIntoLava(void) {
   position[0] = (leader->x & 0xfff00000) + 0x80000;
   position[1] = leader->y - px(16);
   position[2] = (leader->z & 0xfff00000) + 0x80000;
-  FieldVector_AddPolarOffset(0x200000, angle, position);
+  FieldVector_AddPolarOffset(px(32), angle, position);
   target = Actor_FindInCell(position, leader);
   if (target == 0)
     return;
@@ -1273,7 +1273,7 @@ void MagmaRockInside_FloodWithLava(void) {
   p[0] = (leader->x & 0xfff00000) + 0x80000;
   p[1] = leader->y;
   p[2] = (leader->z & 0xfff00000) + 0x80000;
-  FieldVector_AddPolarOffset(0x100000, (s32)facing ^ 0x8000, p);
+  FieldVector_AddPolarOffset(px(16), (s32)facing ^ 0x8000, p);
   leader->facing = facing;
   Actor_WalkToAndWait(*(s32 *)j, ((s16 *)p)[1], ((s16 *)p)[5]);
   Actor_Get(*(s32 *)j)->actionFlags |= 1;
@@ -2938,13 +2938,13 @@ s16 gMagmaRockInside_PlatformPath1[] = {
   };
 
 u32 gMagmaRockInside_PlatformPath2[] = {                                                               
-      SC_MOVE(PIXELS(216), PIXELS(16), PIXELS(568)),                             
+      SC_MOVE(px(216), px(16), px(568)),                             
       SC_SYNC,                                                                 
-      SC_MOVE(PIXELS(216), PIXELS(16), PIXELS(584)),                             
+      SC_MOVE(px(216), px(16), px(584)),                             
       SC_SYNC,                                                                 
-      SC_MOVE(PIXELS(136), PIXELS(16), PIXELS(584)),                             
+      SC_MOVE(px(136), px(16), px(584)),                             
       SC_SYNC,                                                                 
-      SC_MOVE(PIXELS(136), PIXELS(16), PIXELS(568)),                             
+      SC_MOVE(px(136), px(16), px(568)),                             
       SC_SYNC,                                                                 
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
       SC_END,                                                                  
@@ -2961,13 +2961,13 @@ u16 gMagmaRockInside_PlatformPath3[] = {
 };
 
 u32 gMagmaRockInside_PlatformPath4[] = {                                                               
-      SC_MOVE(PIXELS(184), PIXELS(16), PIXELS(232)),                             
+      SC_MOVE(px(184), px(16), px(232)),                             
       SC_SYNC,                                                                 
-      SC_MOVE(PIXELS(280), PIXELS(16), PIXELS(232)),                             
+      SC_MOVE(px(280), px(16), px(232)),                             
       SC_SYNC,                                                                 
-      SC_MOVE(PIXELS(280), PIXELS(16), PIXELS(264)),                             
+      SC_MOVE(px(280), px(16), px(264)),                             
       SC_SYNC,                                                                 
-      SC_MOVE(PIXELS(184), PIXELS(16), PIXELS(264)),                             
+      SC_MOVE(px(184), px(16), px(264)),                             
       SC_SYNC,                                                                 
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
       SC_END,                                                                  
@@ -3055,7 +3055,7 @@ u32 gMagmaRockInside_FlameScript[] = {
 };
 
 u32 gMagmaRockInside_TorchScript[] = {                                                               
-      SC_MOVE_BY(0, PIXELS(160), 0),                                           
+      SC_MOVE_BY(0, px(160), 0),                                           
       SC_SYNC,                                                                 
       SC_FREE,                                                                 
       SC_END,                                                                  
@@ -3074,14 +3074,14 @@ s32 gMagmaRockInside_OrbitScript[] = {
   };
 
 u32 gMagmaRockInside_BlazeCasterScript[] = {                                                               
-      SC_MOVE_BY(0, PIXELS(24), 0),                                            
+      SC_MOVE_BY(0, px(24), 0),                                            
       SC_SYNC,                                                                 
       SC_SET(SW_MOTION, 4),                                                    
       SC_END,                                                                  
   };
 
 u32 gMagmaRockInside_BlazeWatcherScript[] = {                                                               
-      SC_MOVE_BY(0, PIXELS(16), 0),                                            
+      SC_MOVE_BY(0, px(16), 0),                                            
       SC_SYNC,                                                                 
       SC_SET(SW_MOTION, 4),                                                    
       SC_END,                                                                  
@@ -3089,7 +3089,7 @@ u32 gMagmaRockInside_BlazeWatcherScript[] = {
 
 s32 gMagmaRockInside_BlazeCasterReturnScript[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
-      SC_MOVE_BY(0, PIXELS(-24), 0),                                           
+      SC_MOVE_BY(0, px(-24), 0),                                           
       SC_SYNC,                                                                 
       SC_SET(SW_MOTION, 0),                                                   
       SC_END,                                                                  
@@ -3097,7 +3097,7 @@ s32 gMagmaRockInside_BlazeCasterReturnScript[] = {
 
 s32 gMagmaRockInside_BlazeWatcherReturnScript[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
-      SC_MOVE_BY(0, PIXELS(-16), 0),                                           
+      SC_MOVE_BY(0, px(-16), 0),                                           
       SC_SYNC,                                                                 
       SC_SET(SW_MOTION, 3),                                                   
       SC_END,                                                                  

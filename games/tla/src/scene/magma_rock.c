@@ -1549,7 +1549,7 @@ void MagmaRock_LandLeader(void) {
     object->velocityY = 0;
     object->terrainHeight = height;
     object->y = height;
-    object->targetY = PIXELS(-32768);
+    object->targetY = px(-32768);
     EventCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
   }
 }

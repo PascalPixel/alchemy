@@ -590,8 +590,8 @@ struct ContigoGlow {
 // on.
 void Func_02000af4(void) {
   struct ContigoGlow *effect;
-  s32 x = PIXELS(706);
-  s32 z = PIXELS(116);
+  s32 x = px(706);
+  s32 z = px(116);
   u32 i;
 
   Event_Start();
@@ -1309,7 +1309,7 @@ void Func_02001c5c(s32 a, s32 b, s32 c, s32 d) {
     MapGrid_CopyCellPictureIndicesRect(a, b + 2, c + 1, d, width, height);
   }
   Event_Wait(20);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetMovementTypeById(gMainRoutineWork.currentOwner, gData_0200466c);
   wait(12);
   Sound_Play(SE_MAP_EXIT);
@@ -1406,8 +1406,8 @@ void Func_02001d50(void) {
   Event_ShowMessageAndWait(9, 0);
   Actor_FaceDirection(0, FACING_NORTH, 0);
   Actor_FaceDirectionAndWait(1, FACING_SOUTH);
-  Camera_SetSpeedParameters(0xcccc, 0x1999);
-  FieldCamera_MoveWithinMapBounds(PIXELS(148), -1, PIXELS(368), 1);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveWithinMapBounds(px(148), -1, px(368), 1);
   Actor_WalkToAndWait(9, 172, 342);
   Actor_FaceDirection(0, FACING_NORTHEAST, 0);
   Actor_FaceDirection(1, FACING_NORTHEAST, 0);
@@ -1567,8 +1567,7 @@ void Func_02001d50(void) {
   Sound_Play(MUS_000);
   Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(8)), 15);
   angle = 0xb000;
-  Actor_SetHorizontalPositionAndAngleWithTerrain(8, PIXELS(160), PIXELS(466),
-                                                 angle);
+  Actor_SetHorizontalPositionAndAngleWithTerrain(8, px(160), px(466), angle);
   wait(1);
   Event_ShowMessageAndWait(8, 0);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 8);
@@ -1720,8 +1719,8 @@ void Func_02001d50(void) {
   FieldCamera_MoveTo(180, CAMERA_KEEP, 410, 1);
   Actor_WalkToAndWait(8, 160, 466);
   Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
-  Camera_SetSpeedParameters(0x26666, 0x4ccc);
-  FieldCamera_MoveWithinMapBounds(PIXELS(148), -1, PIXELS(368), 1);
+  FieldCamera_SetSpeed(2.4);
+  FieldCamera_MoveWithinMapBounds(px(148), -1, px(368), 1);
   FieldCamera_WaitForArrival();
   Scene_PlayMusic();
   Contigo_Jump(5, 265, 20);
@@ -1799,7 +1798,7 @@ void Func_02002e18(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldCamera_SetSpeed(0.8);
-    FieldCamera_MoveWithinMapBounds(PIXELS(160), -1, PIXELS(368), 1);
+    FieldCamera_MoveWithinMapBounds(px(160), -1, px(368), 1);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 158, 394);
     Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);

@@ -2341,7 +2341,7 @@ s32 Func_020036b8(s32 first, s32 target) {
         if (turn != 8) {
           // The unsigned % 4: as & 3 the mask narrows to a halfword and pools.
           stream->direction = (u32)(stream->direction + turn) % 4;
-          FieldVector_AddPolarOffset(0x100000, stream->direction << 14,
+          FieldVector_AddPolarOffset(px(16), stream->direction << 14,
                                      &stream->x);
         }
       } while (again != 0);

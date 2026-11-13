@@ -1358,7 +1358,7 @@ void ShamanVillage_MeetMoapa(void) {
 /// The Shaman's Rod (item 65) drawn as an actor over the leader.
 struct Actor *ShamanVillage_CreateRodIcon(void) {
   struct Actor *object =
-      ((struct Actor *)Import_ActorCreate(489, 0x780000, 0x400000, 0x1080000));
+      ((struct Actor *)Import_ActorCreate(489, px(120), px(64), px(264)));
   u8 *buffer = NULL;
 
   if (object == NULL)
@@ -1521,7 +1521,7 @@ void ShamanVillage_ShowShamansRod(void) {
     Actor_SetAnimation(15, 3);
     Event_ShowMessage(15, 0);
     FieldCamera_SetSpeed(0.4);
-    FieldCamera_MoveToFixed(PIXELS(180), 0x200000, z, 1);
+    FieldCamera_MoveToFixed(px(180), 0x200000, z, 1);
   }
   object = ((struct Actor *)Actor_GetById(16));
   object->blockMarked = 0;
@@ -2251,9 +2251,9 @@ void ShamanVillage_ShebaClearsSand(void) {
   FieldCamera_MoveTo(168, CAMERA_KEEP, 540, 1);
   Event_Wait(20);
   angle = 0x4000;
-  Actor_SetPositionAndFacing(15, PIXELS(224), PIXELS(280), angle);
-  Actor_SetPositionAndFacing(16, PIXELS(208), PIXELS(264), angle);
-  Actor_SetPositionAndFacing(17, PIXELS(240), PIXELS(264), angle);
+  Actor_SetPositionAndFacing(15, px(224), px(280), angle);
+  Actor_SetPositionAndFacing(16, px(208), px(264), angle);
+  Actor_SetPositionAndFacing(17, px(240), px(264), angle);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   Actor_FaceDirection(18, FACING_EAST, 0);
   Actor_FaceDirection(5, FACING_EAST, 0);
@@ -2378,8 +2378,8 @@ void ShamanVillage_RestartTrial(void) {
   angle = 0x4000;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_SetPositionAndFacing(16, PIXELS(184), PIXELS(128), angle);
-  Actor_SetPositionAndFacing(17, PIXELS(264), PIXELS(128), angle);
+  Actor_SetPositionAndFacing(16, px(184), px(128), angle);
+  Actor_SetPositionAndFacing(17, px(264), px(128), angle);
   Actor_SetSpeed(16, 1.6);
   Actor_SetSpeed(17, 1.6);
   FieldCamera_SetSpeed(0.8);
@@ -2475,9 +2475,9 @@ void ShamanVillage_SetUpVillage(void) {
   } else if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     s32 angle = 0x4000;
 
-    Actor_SetPositionAndFacing(15, PIXELS(168), PIXELS(568), angle);
-    Actor_SetPositionAndFacing(17, PIXELS(216), PIXELS(536), angle);
-    Actor_SetPositionAndFacing(16, PIXELS(120), PIXELS(536), angle);
+    Actor_SetPositionAndFacing(15, px(168), px(568), angle);
+    Actor_SetPositionAndFacing(17, px(216), px(536), angle);
+    Actor_SetPositionAndFacing(16, px(120), px(536), angle);
     wait(1);
   }
   Actor_SetAnimation(8, 2);
@@ -2516,7 +2516,7 @@ void ShamanVillage_SetUpRoom3(void) {
   ((struct Actor *)Actor_GetById(14))->motionFlags = 0;
   if (Event_GetFlag(0x94e)) {
     Actor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(14)),
-                                    PIXELS(520), PIXELS(32), PIXELS(184));
+                                    px(520), px(32), px(184));
     wait(1);
     MapGrid_CopyCellAttributes(30, 11, 1, 1, 32, 11);
     wait(10);
@@ -2645,7 +2645,7 @@ void ShamanVillage_SetUpRoom4(void) {
   if (Event_GetFlag(0x9fe)) {
     s32 angle = 0x3000;
 
-    Actor_SetPositionAndFacing(8, PIXELS(88), PIXELS(92), angle);
+    Actor_SetPositionAndFacing(8, px(88), px(92), angle);
     Actor_SetPosition(11, 156, 72);
   } else {
     Actor_SetPosition(17, 0, 0);

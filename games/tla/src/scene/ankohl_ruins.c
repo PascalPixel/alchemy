@@ -529,7 +529,7 @@ void Func_02000e60(s32 unused, s32 id) {
   FieldEvent_Wait(15);
   Event_PlaySound(SE_FLAME_FLARE);
   AnkohlRuins_Call2df4(29, 70, 3, 1, 12, 71);
-  AnkohlRuins_CamBounds(PIXELS(216), -1, PIXELS(120), 1);
+  AnkohlRuins_CamBounds(px(216), -1, px(120), 1);
   AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
   FieldEvent_Wait(60);
   Event_PlaySound(SE_575);

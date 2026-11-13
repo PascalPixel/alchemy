@@ -167,14 +167,14 @@ void LemuriaPalace_CastMapSparks(s32 actorId) {
   first->speedLimit = px(2);
   first->acceleration = px(2);
   first->motionFlags = 0;
-  FieldActor_SetMoveTargetFixed(first, first->x + PIXELS(6),
-                                first->y + PIXELS(8), first->z);
+  FieldActor_SetMoveTargetFixed(first, first->x + px(6), first->y + px(8),
+                                first->z);
   second = Actor_Spawn(674, object->x + px(10), object->y + px(16), object->z);
   second->speedLimit = px(2);
   second->acceleration = px(2);
   second->motionFlags = 0;
-  FieldActor_SetMoveTargetFixed(second, first->x + PIXELS(8),
-                                first->y - PIXELS(4), first->z);
+  FieldActor_SetMoveTargetFixed(second, first->x + px(8), first->y - px(4),
+                                first->z);
   FieldActor_WaitForMove(first);
   Actor_Release(first);
   FieldActor_WaitForMove(second);

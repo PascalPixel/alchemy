@@ -527,7 +527,7 @@ void Func_0200065c(void) {
         created->bounce = 0xcccc;
         created->velocityY = px(8);
         FieldActor_SetMoveTarget(created, 512, 128, 294);
-        FieldActor_SetMoveTargetFixed(actor37, 0x2000000, -1, 0x1260000);
+        FieldActor_SetMoveTargetFixed(actor37, px(512), -1, px(294));
         Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
         System_Wait(1);
         Actor_SetSpeed(7, 0.8);
@@ -546,7 +546,7 @@ void Func_0200065c(void) {
         FieldEvent_Wait(90);
         *flags = 0;
         FieldActor_SetMoveTarget(created, 512, 128, 264);
-        FieldActor_SetMoveTargetFixed(actor37, 0x2000000, -1, 0x1080000);
+        FieldActor_SetMoveTargetFixed(actor37, px(512), -1, px(264));
         *flags = state;
         FieldEvent_Wait(60);
         *flags = 0;
@@ -959,16 +959,16 @@ void Func_02001388(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   fast = 0xa000;
-  Actor_SetPositionAndFacing(4, 0x2000000, 0x1380000, fast);
-  Actor_SetPositionAndFacing(7, 0x2100000, 0x1300000, fast);
+  Actor_SetPositionAndFacing(4, px(512), px(312), fast);
+  Actor_SetPositionAndFacing(7, px(528), px(304), fast);
   slow = 0x2000;
-  Actor_SetPositionAndFacing(27, 0x1f80000, 0x1300000, slow);
+  Actor_SetPositionAndFacing(27, px(504), px(304), slow);
   {
-    Actor_SetPositionAndFacing(28, 0x2080000, 0x1200000, slow);
+    Actor_SetPositionAndFacing(28, px(520), px(288), slow);
   }
   {
     s32 north = 0xc000;
-    Actor_SetPositionAndFacing(5, 0x2280000, 0x1880000, north);
+    Actor_SetPositionAndFacing(5, px(552), px(392), north);
   }
   Actor_SetAnimation(27, 9);
   Actor_SetAnimation(28, 8);
@@ -1078,14 +1078,14 @@ void Func_020016e8(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetPositionAndFacing(4, PIXELS(512), PIXELS(312), northwest);
-  Actor_SetPositionAndFacing(7, PIXELS(528), PIXELS(304), northwest);
+  Actor_SetPositionAndFacing(4, px(512), px(312), northwest);
+  Actor_SetPositionAndFacing(7, px(528), px(304), northwest);
   southeast = FACING_SOUTHEAST;
-  Actor_SetPositionAndFacing(27, PIXELS(504), PIXELS(304), southeast);
-  Actor_SetPositionAndFacing(28, PIXELS(520), PIXELS(288), southeast);
-  Actor_SetPositionAndFacing(5, PIXELS(528), PIXELS(320), northwest);
+  Actor_SetPositionAndFacing(27, px(504), px(304), southeast);
+  Actor_SetPositionAndFacing(28, px(520), px(288), southeast);
+  Actor_SetPositionAndFacing(5, px(528), px(320), northwest);
   north = FACING_NORTH;
-  Actor_SetPositionAndFacing(6, PIXELS(544), PIXELS(384), north);
+  Actor_SetPositionAndFacing(6, px(544), px(384), north);
   FieldCamera_MoveTo(520, 104, 312, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1106,11 +1106,11 @@ void Func_020016e8(void) {
   Actor_Get(5)->actionFlags &= ~1;
   Actor_Get(27)->actionFlags &= ~1;
   Actor_Get(28)->actionFlags &= ~1;
-  Actor_Get(4)->velocityY = PIXELS(3);
-  Actor_Get(7)->velocityY = PIXELS(3);
-  Actor_Get(5)->velocityY = PIXELS(3);
-  Actor_Get(27)->velocityY = PIXELS(3);
-  Actor_Get(28)->velocityY = PIXELS(3);
+  Actor_Get(4)->velocityY = px(3);
+  Actor_Get(7)->velocityY = px(3);
+  Actor_Get(5)->velocityY = px(3);
+  Actor_Get(27)->velocityY = px(3);
+  Actor_Get(28)->velocityY = px(3);
   Actor_SetDestinationOffset(4, 8, 4);
   Actor_SetDestinationOffset(7, 8, 4);
   Actor_SetDestinationOffset(5, 8, 4);
@@ -1157,12 +1157,12 @@ void Func_020016e8(void) {
   Actor_SetDestinationOffset(6, -16, -8);
   Actor_SetDestinationOffset(27, 16, 8);
   Actor_SetDestinationOffset(28, 16, 8);
-  Actor_Get(4)->velocityY = PIXELS(4);
-  Actor_Get(7)->velocityY = PIXELS(4);
-  Actor_Get(5)->velocityY = PIXELS(4);
-  Actor_Get(6)->velocityY = PIXELS(4);
-  Actor_Get(27)->velocityY = PIXELS(4);
-  Actor_Get(28)->velocityY = PIXELS(4);
+  Actor_Get(4)->velocityY = px(4);
+  Actor_Get(7)->velocityY = px(4);
+  Actor_Get(5)->velocityY = px(4);
+  Actor_Get(6)->velocityY = px(4);
+  Actor_Get(27)->velocityY = px(4);
+  Actor_Get(28)->velocityY = px(4);
   FieldEvent_Wait(4);
   if (gMainRoutineWork.sequenceResult == -1)
     FieldUnit_AddHp(4, -10);
@@ -1252,15 +1252,15 @@ void Func_02001bc4(void) {
   Actor_Get(28)->priorityFlags |= 1;
   mid = 0xc000;
   fast = 0xa000;
-  Actor_SetPositionAndFacing(4, 0x1f80000, 0x1300000, fast);
-  Actor_SetPositionAndFacing(7, 0x2100000, 0x1200000, fast);
+  Actor_SetPositionAndFacing(4, px(504), px(304), fast);
+  Actor_SetPositionAndFacing(7, px(528), px(288), fast);
   slow = 0x2000;
-  Actor_SetPositionAndFacing(27, 0x1e80000, 0x1280000, slow);
-  Actor_SetPositionAndFacing(28, 0x1f80000, 0x1180000, slow);
-  Actor_SetPositionAndFacing(5, 0x2100000, 0x1300000, fast);
-  Actor_SetPositionAndFacing(6, 0x2280000, 0x1200000, mid);
-  Actor_SetPositionAndFacing(29, 0x1e00000, 0x1680000, mid);
-  Actor_SetPositionAndFacing(30, 0x2500000, 0x1880000, FACING_EAST);
+  Actor_SetPositionAndFacing(27, px(488), px(296), slow);
+  Actor_SetPositionAndFacing(28, px(504), px(280), slow);
+  Actor_SetPositionAndFacing(5, px(528), px(304), fast);
+  Actor_SetPositionAndFacing(6, px(552), px(288), mid);
+  Actor_SetPositionAndFacing(29, px(480), px(360), mid);
+  Actor_SetPositionAndFacing(30, px(592), px(392), FACING_EAST);
   Actor_SetAnimation(5, 19);
   Actor_SetAnimation(6, 19);
   Actor_SetAnimation(4, 19);
@@ -1374,14 +1374,14 @@ void Func_02001bc4(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldEvent_ShowMessageThenWait(30, 0, 0);
-  Actor_SetPositionAndFacing(30, 0x2000000, 0x1480000, mid);
+  Actor_SetPositionAndFacing(30, px(512), px(328), mid);
   Func_02003a6c(0);
   Scene_PlayMusic();
   FieldEvent_Wait(10);
-  Actor_SetPositionAndFacing(0, 0x2180000, 0x1700000, mid);
-  Actor_SetPositionAndFacing(1, 0x2180000, 0x1800000, mid);
-  Actor_SetPositionAndFacing(2, 0x2280000, 0x1700000, mid);
-  Actor_SetPositionAndFacing(3, 0x2280000, 0x1600000, mid);
+  Actor_SetPositionAndFacing(0, px(536), px(368), mid);
+  Actor_SetPositionAndFacing(1, px(536), px(384), mid);
+  Actor_SetPositionAndFacing(2, px(552), px(368), mid);
+  Actor_SetPositionAndFacing(3, px(552), px(352), mid);
   FieldEvent_ShowMessageThenWait(0, 0, 0);
   EventCamera_FollowActor(0, 1);
   Actor_WalkTo(0, 536, 336);
@@ -1738,16 +1738,16 @@ void Func_02002ae4(void) {
   t13 = (s32)Actor_Get(29);
   FIELD_AT((t13 + 0x23), u8, 0) = (1 | FIELD_AT((t13 + 0x23), u8, 0));
   fast = 0xa000;
-  Actor_SetPositionAndFacing(4, 0x2080000, 0x1300000, fast);
-  Actor_SetPositionAndFacing(7, 0x2180000, 0x1200000, fast);
+  Actor_SetPositionAndFacing(4, px(520), px(304), fast);
+  Actor_SetPositionAndFacing(7, px(536), px(288), fast);
   slow = 0x2000;
-  Actor_SetPositionAndFacing(27, 0x1e00000, 0x1280000, slow);
-  Actor_SetPositionAndFacing(28, 0x1f00000, 0x1180000, slow);
-  Actor_SetPositionAndFacing(5, 0x2200000, 0x1300000, fast);
+  Actor_SetPositionAndFacing(27, px(480), px(296), slow);
+  Actor_SetPositionAndFacing(28, px(496), px(280), slow);
+  Actor_SetPositionAndFacing(5, px(544), px(304), fast);
   mid = 0xc000;
-  Actor_SetPositionAndFacing(6, 0x2300000, 0x1200000, mid);
-  Actor_SetPositionAndFacing(29, 0x1e00000, 0x1680000, mid);
-  Actor_SetPositionAndFacing(30, 0x2500000, 0x1880000, FACING_EAST);
+  Actor_SetPositionAndFacing(6, px(560), px(288), mid);
+  Actor_SetPositionAndFacing(29, px(480), px(360), mid);
+  Actor_SetPositionAndFacing(30, px(592), px(392), FACING_EAST);
   Actor_SetAnimation(27, 0xa);
   Actor_SetAnimation(28, 9);
   W_Func_02005914(0x10000, slow);
@@ -1921,12 +1921,12 @@ void Func_02002ae4(void) {
   FieldEvent_ShowMessageThenWait(30, 0, 0);
   {
     s32 speed = 0xc000;
-    Actor_SetPositionAndFacing(30, 0x2000000, 0x1480000, speed);
+    Actor_SetPositionAndFacing(30, px(512), px(328), speed);
   }
-  Actor_SetPositionAndFacing(0, 0x2180000, 0x1500000, FACING_NORTH);
-  Actor_SetPositionAndFacing(1, 0x2180000, 0x1600000, FACING_NORTH);
-  Actor_SetPositionAndFacing(2, 0x2280000, 0x1600000, FACING_NORTH);
-  Actor_SetPositionAndFacing(3, 0x2280000, 0x1700000, FACING_NORTH);
+  Actor_SetPositionAndFacing(0, px(536), px(336), FACING_NORTH);
+  Actor_SetPositionAndFacing(1, px(536), px(352), FACING_NORTH);
+  Actor_SetPositionAndFacing(2, px(552), px(352), FACING_NORTH);
+  Actor_SetPositionAndFacing(3, px(552), px(368), FACING_NORTH);
   Actor_FaceDirection(4, FACING_SOUTH, 0);
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   Actor_FaceDirection(6, FACING_SOUTH, 0);
@@ -3007,15 +3007,15 @@ LATE_DATA u32 gData_02005ff8[] = {
     SC_SET(SW_SPEED, 0x10000),
     SC_SET(SW_ACCEL, 0x10000),
     SC_ARG(2),
-    SC_MOVE(PIXELS(480), PIXELS(72), PIXELS(360)),
+    SC_MOVE(px(480), px(72), px(360)),
     SC_SYNC,
-    SC_MOVE(PIXELS(456), PIXELS(72), PIXELS(360)),
+    SC_MOVE(px(456), px(72), px(360)),
     SC_SYNC,
-    SC_MOVE(PIXELS(440), PIXELS(72), PIXELS(256)),
+    SC_MOVE(px(440), px(72), px(256)),
     SC_SYNC,
-    SC_MOVE(PIXELS(408), PIXELS(72), PIXELS(256)),
+    SC_MOVE(px(408), px(72), px(256)),
     SC_SYNC,
-    SC_MOVE(PIXELS(409), PIXELS(32), PIXELS(312)),
+    SC_MOVE(px(409), px(32), px(312)),
     SC_SYNC,
     SC_ARG(1),
     SC_END,
@@ -3025,34 +3025,34 @@ LATE_DATA s32 gData_02006088[] = {
       SC_ARG(2),                                                               
       SC_SET(SW_SPEED, 0x38000),                                               
       SC_SET(SW_ACCEL, 0x10000),                                               
-      SC_MOVE(PIXELS(409), PIXELS(32), PIXELS(312)),                            
+      SC_MOVE(px(409), px(32), px(312)),                            
       SC_SYNC,                                                                 
       SC_WAIT(10),                                                             
-      SC_MOVE(PIXELS(376), PIXELS(32), PIXELS(312)),                            
+      SC_MOVE(px(376), px(32), px(312)),                            
       SC_SET(SW_MOTION, 2),                                                    
-      SC_SET(SW_VELOCITY_Y, PIXELS(5)),                                        
+      SC_SET(SW_VELOCITY_Y, px(5)),                                        
       SC_CALL(Func_02000038),                                                  
       SC_SYNC,                                                                 
       SC_CALL(Func_02000050),                                                  
       SC_WAIT(20),                                                             
-      SC_MOVE(PIXELS(344), PIXELS(32), PIXELS(312)),                            
+      SC_MOVE(px(344), px(32), px(312)),                            
       SC_SET(SW_MOTION, 2),                                                    
-      SC_SET(SW_VELOCITY_Y, PIXELS(5)),                                        
+      SC_SET(SW_VELOCITY_Y, px(5)),                                        
       SC_WAIT(10),                                                             
       SC_CALL(Func_02000038),                                                  
       SC_SYNC,                                                                 
       SC_CALL(Func_02000050),                                                  
       SC_WAIT(20),                                                             
-      SC_MOVE(PIXELS(312), PIXELS(32), PIXELS(312)),                            
+      SC_MOVE(px(312), px(32), px(312)),                            
       SC_SET(SW_MOTION, 2),                                                    
-      SC_SET(SW_VELOCITY_Y, PIXELS(5)),                                        
+      SC_SET(SW_VELOCITY_Y, px(5)),                                        
       SC_CALL(Func_02000038),                                                  
       SC_SYNC,                                                                 
       SC_CALL(Func_02000050),                                                  
       SC_WAIT(20),                                                             
-      SC_MOVE(PIXELS(312), PIXELS(32), PIXELS(278)),                             
+      SC_MOVE(px(312), px(32), px(278)),                             
       SC_SET(SW_MOTION, 2),                                                    
-      SC_SET(SW_VELOCITY_Y, PIXELS(5)),                                        
+      SC_SET(SW_VELOCITY_Y, px(5)),                                        
       SC_CALL(Func_02000038),                                                  
       SC_SYNC,                                                                 
       SC_CALL(Func_02000050),                                                  
@@ -3064,34 +3064,34 @@ LATE_DATA s32 gData_020061e0[] = {
       SC_ARG(2),                                                               
       SC_SET(SW_SPEED, 0x38000),                                               
       SC_SET(SW_ACCEL, 0x10000),                                               
-      SC_MOVE(PIXELS(616), PIXELS(32), PIXELS(312)),                            
+      SC_MOVE(px(616), px(32), px(312)),                            
       SC_SYNC,                                                                 
       SC_WAIT(10),                                                             
-      SC_MOVE(PIXELS(648), PIXELS(32), PIXELS(312)),                            
+      SC_MOVE(px(648), px(32), px(312)),                            
       SC_SET(SW_MOTION, 2),                                                    
-      SC_SET(SW_VELOCITY_Y, PIXELS(5)),                                        
+      SC_SET(SW_VELOCITY_Y, px(5)),                                        
       SC_CALL(Func_02000038),                                                  
       SC_SYNC,                                                                 
       SC_CALL(Func_02000050),                                                  
       SC_WAIT(20),                                                             
-      SC_MOVE(PIXELS(681), PIXELS(32), PIXELS(312)),                            
+      SC_MOVE(px(681), px(32), px(312)),                            
       SC_SET(SW_MOTION, 2),                                                    
-      SC_SET(SW_VELOCITY_Y, PIXELS(5)),                                        
+      SC_SET(SW_VELOCITY_Y, px(5)),                                        
       SC_WAIT(10),                                                             
       SC_CALL(Func_02000038),                                                  
       SC_SYNC,                                                                 
       SC_CALL(Func_02000050),                                                  
       SC_WAIT(20),                                                             
-      SC_MOVE(PIXELS(712), PIXELS(32), PIXELS(312)),                            
+      SC_MOVE(px(712), px(32), px(312)),                            
       SC_SET(SW_MOTION, 2),                                                    
-      SC_SET(SW_VELOCITY_Y, PIXELS(5)),                                        
+      SC_SET(SW_VELOCITY_Y, px(5)),                                        
       SC_CALL(Func_02000038),                                                  
       SC_SYNC,                                                                 
       SC_CALL(Func_02000050),                                                  
       SC_WAIT(20),                                                             
-      SC_MOVE(PIXELS(712), PIXELS(32), PIXELS(264)),                             
+      SC_MOVE(px(712), px(32), px(264)),                             
       SC_SET(SW_MOTION, 2),                                                    
-      SC_SET(SW_VELOCITY_Y, PIXELS(5)),                                        
+      SC_SET(SW_VELOCITY_Y, px(5)),                                        
       SC_CALL(Func_02000038),                                                  
       SC_SYNC,                                                                 
       SC_CALL(Func_02000050),                                                  
@@ -3112,13 +3112,13 @@ LATE_DATA s32 gData_02006338[] = {
     SC_WAIT(1),
     SC_LOOP(160, SC_TOP),
     SC_END,
-    SC_ADD(SW_Y, PIXELS(4)),
+    SC_ADD(SW_Y, px(4)),
     SC_WAIT(1),
     SC_LOOP(30, SC_TOP),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
     SC_END,
-    SC_ADD(SW_Y, PIXELS(2)),
+    SC_ADD(SW_Y, px(2)),
     SC_WAIT(1),
     SC_LOOP(160, SC_TOP),
     SC_POSITION(0, 0, 0),
@@ -3143,7 +3143,7 @@ LATE_DATA s32 gData_02006470[] = {
     SC_SET(SW_SCALE_Y, 0xcccc),
     SC_ARG(1),
     SC_LABEL(1),
-    SC_ADD(SW_Y, PIXELS(-1)),
+    SC_ADD(SW_Y, px(-1)),
     SC_WAIT(1),
     SC_LOOP(16, SC_TO(1)),
     SC_POSITION(0, 0, 0),

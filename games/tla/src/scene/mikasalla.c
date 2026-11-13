@@ -377,7 +377,7 @@ s32 gMikasalla_ChickenPaces[] = {
       SC_SET(SW_SPEED, 0x9999),                                                    
       SC_LABEL(1),                                                             
       SC_ARG(2),                                                               
-      SC_MOVE(PIXELS(120), 0, PIXELS(648)),                                      
+      SC_MOVE(px(120), 0, px(648)),                                      
       SC_SYNC,                                                                 
       SC_ARG(1),                                                               
       SC_WAIT(20), /* A half turn; FACING_WEST names a heading, not a turn. */ 
@@ -419,7 +419,7 @@ s32 gMikasalla_ChickenPaces[] = {
       SC_ADD(SW_SCALE_Y, -2048),                                               
       SC_WAIT(4),                                                              
       SC_ARG(2),                                                               
-      SC_MOVE(PIXELS(72), 0, PIXELS(648)),                                      
+      SC_MOVE(px(72), 0, px(648)),                                      
       SC_SYNC,                                                                 
       SC_ARG(1),                                                               
       SC_WAIT(20), /* A half turn; FACING_WEST names a heading, not a turn. */ 
@@ -470,7 +470,7 @@ s32 gMikasalla_SheepPaces[] = {
       SC_SET(SW_SPEED, 0x4ccc),                                                    
       SC_LABEL(1),                                                             
       SC_ARG(2),                                                               
-      SC_MOVE(PIXELS(88), 0, PIXELS(680)),                                      
+      SC_MOVE(px(88), 0, px(680)),                                      
       SC_SYNC,                                                                 
       SC_ARG(1),                                                               
       SC_WAIT(20), /* A half turn; FACING_WEST names a heading, not a turn. */ 
@@ -512,7 +512,7 @@ s32 gMikasalla_SheepPaces[] = {
       SC_ADD(SW_SCALE_Y, -2048),                                               
       SC_WAIT(4),                                                              
       SC_ARG(2),                                                               
-      SC_MOVE(PIXELS(120), 0, PIXELS(680)),                                      
+      SC_MOVE(px(120), 0, px(680)),                                      
       SC_SYNC,                                                                 
       SC_ARG(1),                                                               
       SC_WAIT(20), /* A half turn; FACING_WEST names a heading, not a turn. */ 

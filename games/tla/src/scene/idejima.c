@@ -148,11 +148,11 @@ void Idejima_GetUp(s32 id) {
 
   Actor_SetAnimation(id, 1);
   Actor_SetSpriteFlags(Actor_Get(id), 1);
-  object->x -= PIXELS(12);
+  object->x -= px(12);
   ((struct ActorSprite *)object->sprite)->rotation = 0;
   System_Wait(1);
   Actor_SetSpriteFlags(Actor_Get(id), 1);
-  object->velocityY = PIXELS(4);
+  object->velocityY = px(4);
   object->motionFlags = 3;
   System_Wait(40);
 }
@@ -178,7 +178,7 @@ void Idejima_WakeKraden(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_KRADEN), 1);
   System_Wait(1);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_KRADEN), 1);
-  actor->velocityY = PIXELS(4);
+  actor->velocityY = px(4);
   actor->motionFlags = 3;
   System_Wait(40);
   Event_ShowMessage(ACTOR_KRADEN, 0);
@@ -239,7 +239,7 @@ void Idejima_WakeJenna(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_JENNA), 1);
   System_Wait(1);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_JENNA), 1);
-  actor->velocityY = PIXELS(4);
+  actor->velocityY = px(4);
   actor->motionFlags = 3;
   System_Wait(40);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
@@ -368,8 +368,7 @@ void Idejima_CatchUpWithFelix(void) {
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
     MapGrid_CopyCellAttributes(38, 31, 2, 1, 25, 42);
     Idejima_GetUp(8);
-    Actor_SetHorizontalPositionWithTerrain(ACTOR_KRADEN, PIXELS(312),
-                                           PIXELS(666));
+    Actor_SetHorizontalPositionWithTerrain(ACTOR_KRADEN, px(312), px(666));
     System_Wait(1);
     Actor_SetSpeed(ACTOR_KRADEN, 1.6);
     Actor_WalkToAndWait(ACTOR_KRADEN, 212, 680);
@@ -410,8 +409,7 @@ void Idejima_CatchUpWithFelix(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Idejima_WalkLeaderBack();
-    Actor_SetHorizontalPositionWithTerrain(ACTOR_JENNA, PIXELS(312),
-                                           PIXELS(666));
+    Actor_SetHorizontalPositionWithTerrain(ACTOR_JENNA, px(312), px(666));
     System_Wait(1);
     FieldEvent_SetMessageId((s32)MsgIdejimaCantBelieveYouTwo);
     Event_ShowMessage(ACTOR_JENNA, 0);
@@ -467,8 +465,7 @@ void Idejima_CatchUpWithFelix(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Idejima_WalkLeaderBack();
-    Actor_SetHorizontalPositionWithTerrain(ACTOR_SHEBA, PIXELS(312),
-                                           PIXELS(666));
+    Actor_SetHorizontalPositionWithTerrain(ACTOR_SHEBA, px(312), px(666));
     System_Wait(1);
     Event_SetMessageId((s32)MsgIdejimaWaitForMe);
     Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
@@ -818,7 +815,7 @@ void Idejima_BreakAwayFromGondowan(void) {
   Map_CenterOnFollowedPoint();
   Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
   south = FACING_SOUTH;
-  Actor_SetPositionAndFacing(ACTOR_JENNA, PIXELS(184), PIXELS(168), south);
+  Actor_SetPositionAndFacing(ACTOR_JENNA, px(184), px(168), south);
   {
     struct Actor *ship = Actor_Get(ACTOR_KRADEN);
 
@@ -1135,18 +1132,17 @@ void Idejima_RideTheTidalWave(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   DriftScene_Prepare();
   a3000 = 0x3000;
-  Actor_SetPositionAndFacing(ACTOR_KRADEN, PIXELS(314), PIXELS(200), a3000);
+  Actor_SetPositionAndFacing(ACTOR_KRADEN, px(314), px(200), a3000);
   aD000 = 0xd000;
-  Actor_SetPositionAndFacing(ACTOR_ALEX, PIXELS(328), PIXELS(240), aD000);
+  Actor_SetPositionAndFacing(ACTOR_ALEX, px(328), px(240), aD000);
   a4000 = 0x4000;
-  Actor_SetPositionAndFacing(ACTOR_JENNA, PIXELS(340), PIXELS(200), a4000);
-  Actor_SetPositionAndFacing(ACTOR_SHEBA, PIXELS(342), PIXELS(230),
-                             FACING_EAST);
+  Actor_SetPositionAndFacing(ACTOR_JENNA, px(340), px(200), a4000);
+  Actor_SetPositionAndFacing(ACTOR_SHEBA, px(342), px(230), FACING_EAST);
   Actor_SetAnimation(ACTOR_SHEBA, 19);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SHEBA), 0);
   a8000 = 0x8000;
-  Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, PIXELS(312),
-                             PIXELS(230), a8000);
+  Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, px(312), px(230),
+                             a8000);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 41);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   System_Wait(1);
@@ -1532,7 +1528,7 @@ UNUSED void Idejima_LieDown(s32 id) {
   object->facing = FACING_SOUTH;
   object->motionFlags = 0;
   object->x += px(12);
-  object->y = PIXELS(16);
+  object->y = px(16);
   object->collisionFlags = 0;
   ((struct ActorSprite *)object->sprite)->rotation = 0xc000;
 }
@@ -1551,7 +1547,7 @@ void Idejima_PlaceTheSleepers(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_KRADEN), 0);
     actor->facing = FACING_SOUTH;
     actor->motionFlags = 0;
-    actor->y = PIXELS(12);
+    actor->y = px(12);
     actor->collisionFlags = 0;
     Actor_SetAnimation(ACTOR_KRADEN, 5);
   }
@@ -1564,7 +1560,7 @@ void Idejima_PlaceTheSleepers(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_JENNA), 0);
     actor->facing = FACING_SOUTH;
     actor->motionFlags = 0;
-    actor->y = PIXELS(12);
+    actor->y = px(12);
     actor->collisionFlags = 0;
     Actor_SetAnimation(ACTOR_JENNA, 18);
   }
@@ -1578,7 +1574,7 @@ void Idejima_PlaceTheSleepers(void) {
     Actor_SetAnimation(ACTOR_SHEBA, 19);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SHEBA), 0);
     actor->motionFlags = 0;
-    actor->y = PIXELS(12);
+    actor->y = px(12);
   }
   MapGrid_CopyCellsTo(72, 42, 75, 40, 1, 1);
   System_Wait(1);
@@ -1588,24 +1584,24 @@ void Idejima_PlaceTheSleepers(void) {
 
 // clang-format off
 u32 gIdejima_KradenToTheShipScript[] = {                                                               
-      SC_ARG(2), SC_MOVE(PIXELS(216), 0, PIXELS(172)),                           
-      SC_SYNC,   SC_MOVE(PIXELS(264), 0, PIXELS(164)),                           
+      SC_ARG(2), SC_MOVE(px(216), 0, px(172)),                           
+      SC_SYNC,   SC_MOVE(px(264), 0, px(164)),                           
       SC_SYNC,   SC_ARG(1),                                                    
       SC_END,                                                                  
   };
 
 u32 gIdejima_JennaToTheShipScript[] = {                                                               
-      SC_ARG(2), SC_MOVE(PIXELS(216), 0, PIXELS(182)),                           
-      SC_SYNC,   SC_MOVE(PIXELS(242), 0, PIXELS(164)),                           
+      SC_ARG(2), SC_MOVE(px(216), 0, px(182)),                           
+      SC_SYNC,   SC_MOVE(px(242), 0, px(164)),                           
       SC_SYNC,   SC_ARG(1),                                                    
       SC_END,                                                                  
   };
 
 u32 gIdejima_AlexLeadsTheWayScript[] = {
     SC_ARG(2),
-    SC_MOVE(PIXELS(224), 0, PIXELS(172)),
+    SC_MOVE(px(224), 0, px(172)),
     SC_SYNC,
-    SC_MOVE(PIXELS(392), 0, PIXELS(172)),
+    SC_MOVE(px(392), 0, px(172)),
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(1),
@@ -1616,11 +1612,11 @@ u32 gIdejima_AlexLeadsTheWayScript[] = {
 
 u32 gIdejima_KradenFollowsAlexScript[] = {
     SC_ARG(2),
-    SC_MOVE(PIXELS(224), 0, PIXELS(172)),
+    SC_MOVE(px(224), 0, px(172)),
     SC_SYNC,
-    SC_MOVE(PIXELS(304), 0, PIXELS(172)),
+    SC_MOVE(px(304), 0, px(172)),
     SC_SYNC,
-    SC_MOVE(PIXELS(336), 0, PIXELS(192)),
+    SC_MOVE(px(336), 0, px(192)),
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(1),
@@ -1639,28 +1635,28 @@ u32 gIdejima_JennaFollowsAlexScript[] = {
 
 u32 gIdejima_KradenRunsToFelixScript[] =                                                                 
       {                                                                        
-          SC_ARG(2), SC_MOVE(PIXELS(420), 0, PIXELS(200)), SC_SYNC, SC_ARG(1),   
+          SC_ARG(2), SC_MOVE(px(420), 0, px(200)), SC_SYNC, SC_ARG(1),   
           SC_END,                                                              
   };
 
 u32 gIdejima_JennaRunsToFelixScript[] =                                                                 
       {                                                                        
-          SC_ARG(2), SC_MOVE(PIXELS(408), 0, PIXELS(232)), SC_SYNC, SC_ARG(1),   
+          SC_ARG(2), SC_MOVE(px(408), 0, px(232)), SC_SYNC, SC_ARG(1),   
           SC_END,                                                              
   };
 
 u32 gIdejima_JennaToTheShoreScript[] = {                                                               
-      SC_ARG(2),   SC_MOVE(PIXELS(424), 0, PIXELS(200)), SC_SYNC,     SC_ARG(1), 
+      SC_ARG(2),   SC_MOVE(px(424), 0, px(200)), SC_SYNC,     SC_ARG(1), 
       SC_WAIT(1), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(1), SC_END,    
   };
 
 u32 gIdejima_ShebaToTheShoreScript[] = {                                                               
-      SC_ARG(2),   SC_MOVE(PIXELS(408), 0, PIXELS(228)), SC_SYNC,     SC_ARG(1), 
+      SC_ARG(2),   SC_MOVE(px(408), 0, px(228)), SC_SYNC,     SC_ARG(1), 
       SC_WAIT(1), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(1), SC_END,    
   };
 
 u32 gIdejima_KradenToTheShoreScript[] = {                                                               
-      SC_ARG(2),   SC_MOVE(PIXELS(400), 0, PIXELS(214)), SC_SYNC,     SC_ARG(1), 
+      SC_ARG(2),   SC_MOVE(px(400), 0, px(214)), SC_SYNC,     SC_ARG(1), 
       SC_WAIT(1), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(1), SC_END,    
   };
 
@@ -1699,10 +1695,10 @@ s32 gIdejima_StretchScript[] = {
 };
 
 u32 gIdejima_KradenStepsAsideScript[] = {
-    SC_POSITION(PIXELS(152), 0, PIXELS(756)),
+    SC_POSITION(px(152), 0, px(756)),
     SC_WAIT(1),
     SC_ARG(2),
-    SC_MOVE(PIXELS(146), 0, PIXELS(736)),
+    SC_MOVE(px(146), 0, px(736)),
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(1),

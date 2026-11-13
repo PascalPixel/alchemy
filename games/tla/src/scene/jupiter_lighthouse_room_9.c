@@ -87,7 +87,7 @@ struct GustObject *Whirlwind_SpawnUpper();
 
 void JupiterLighthouse_StartHovering(void) {
   if (gMainRoutineWork.renderMode == 10)
-    FieldMapGrid_SetCellBehavior(0x2200000, 0x1100000, 0, 255);
+    FieldMapGrid_SetCellBehavior(px(544), px(272), 0, 255);
 }
 
 void JupiterLighthouse_StopHovering(void) {
@@ -122,19 +122,19 @@ void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
     object = Actor_Get(ACTOR_WHIRLWIND_SOURCE);
     if (id == 50) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 488, 280);
-      object->y = PIXELS(32);
+      object->y = px(32);
       object->facing = FACING_WEST;
     } else if (id == 51) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 472, 184);
-      object->y = PIXELS(32);
+      object->y = px(32);
       object->facing = FACING_WEST;
     } else if (id == 52) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 616, 280);
-      object->y = PIXELS(32);
+      object->y = px(32);
       object->facing = 0;
     } else if (id == 53) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 632, 184);
-      object->y = PIXELS(32);
+      object->y = px(32);
       object->facing = 0;
     }
     motion = Whirlwind_SpawnUpper(object);

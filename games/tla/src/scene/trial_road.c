@@ -1056,7 +1056,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
                       z = (toZ << 20) + 0x80000);
   Event_Wait(6);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x4ccc, 0x3333);
+  Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.3, 0.2);
   Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, dx << 3,
                                  dz << 3);
   Event_Wait(24);
@@ -3443,15 +3443,15 @@ static inline void *TrialRoadLink_AllocPicture(void) {
     register s32 arg asm("r0");                                                \
     s32 side = gMainRoutineWork.entrance & 1;                                  \
     if (side) {                                                                \
-      x = (actor->x - work->originX) / PIXELS(16) left;                        \
+      x = (actor->x - work->originX) / px(16) left;                            \
       arg = which;                                                             \
     } else {                                                                   \
-      x = (actor->x - work->originX) / PIXELS(16) right;                       \
+      x = (actor->x - work->originX) / px(16) right;                           \
       arg = which;                                                             \
     }                                                                          \
     originZ = &work->originZ;                                                  \
     lift = TrialRoad_GetStage(arg);                                            \
-    y = (actor->z - *originZ) / PIXELS(16) + work->scrollY - lift * 36 + 4;    \
+    y = (actor->z - *originZ) / px(16) + work->scrollY - lift * 36 + 4;        \
     /* Once-only: ends the block, so y + 4 is scheduled before x & 511. */     \
     do {                                                                       \
     } while (0);                                                               \

@@ -119,7 +119,7 @@ void JupiterLighthouse_RevealThePassage(void) {
   Actor_SetPosition(ACTOR_HIDDEN_BLOCK, 504, 168);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     Actor_RaiseFromCell(ACTOR_HIDDEN_BLOCK);
-    ((u8)FieldMapGrid_SetCellBehavior(0x1f00000, 0xa00000, 0, 254));
+    ((u8)FieldMapGrid_SetCellBehavior(px(496), px(160), 0, 254));
   }
 }
 
@@ -812,8 +812,8 @@ void Leader_CenterInCell(void) {
   Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, (x << 4) + 8,
                           (z << 4) + 8);
   System_Wait(1);
-  FieldActor_SetPositionAndResetMotion(object, (x << 20) + PIXELS(8), object->y,
-                                       (z << 20) + PIXELS(8));
+  FieldActor_SetPositionAndResetMotion(object, (x << 20) + px(8), object->y,
+                                       (z << 20) + px(8));
   FieldEvent_Wait(4);
   ((struct Actor *)FieldCamera_GetActor())->y += 0xfff80000;
 }

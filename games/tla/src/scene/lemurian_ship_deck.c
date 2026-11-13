@@ -71,7 +71,7 @@ void LemurianShipDeck_EnterCabin(void) {
 
       if (object != 0) {
         object->motionFlags = 0;
-        object->y = PIXELS(32);
+        object->y = px(32);
       }
     }
     i++;
@@ -252,13 +252,13 @@ void LemurianShipDeck_TakeTheTiller(void) {
   FieldCamera_MoveTo(342, 48, 408, 0);
   System_Wait(1);
   MapGrid_CopyCellsTo(60, 53, 67, 16, 7, 3);
-  LemurianShipDeck_PlaceFacing(gMainRoutineWork.currentOwner, PIXELS(552),
-                               PIXELS(376), FACING_EAST);
-  LemurianShipDeck_PlaceFacing(9, PIXELS(558), PIXELS(345), 0xd000);
-  LemurianShipDeck_PlaceFacing(7, PIXELS(534), PIXELS(404), FACING_EAST);
+  LemurianShipDeck_PlaceFacing(gMainRoutineWork.currentOwner, px(552), px(376),
+                               FACING_EAST);
+  LemurianShipDeck_PlaceFacing(9, px(558), px(345), 0xd000);
+  LemurianShipDeck_PlaceFacing(7, px(534), px(404), FACING_EAST);
   turn = 0x2000;
-  LemurianShipDeck_PlaceFacing(6, PIXELS(568), PIXELS(408), turn);
-  LemurianShipDeck_PlaceFacing(5, PIXELS(546), PIXELS(440), 0x4000);
+  LemurianShipDeck_PlaceFacing(6, px(568), px(408), turn);
+  LemurianShipDeck_PlaceFacing(5, px(546), px(440), 0x4000);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
   Actor_SetScript(5, gLemurianShipDeck_FirstCrewLooksAround);
@@ -380,7 +380,7 @@ void LemurianShipDeck_HoldOnToTiller(void) {
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(458, 48, 408, 0);
   FieldEvent_SetMessageId(MsgHoldOnTo);
-  Actor_SetPositionAndFacing(4, PIXELS(470), PIXELS(392), FACING_EAST);
+  Actor_SetPositionAndFacing(4, px(470), px(392), FACING_EAST);
   FieldActor_LaunchFromLeader(6, 0, -24, FACING_SOUTH);
   FieldActor_LaunchFromLeader(5, -16, -16, FACING_SOUTHEAST);
   FieldActor_LaunchFromLeader(9, -24, 8, FACING_NORTHEAST + FACING_STEP);
@@ -693,7 +693,7 @@ void LemurianShipDeck_EmitSparkle(void) {
   struct Actor *object;
 
   SET_VECTOR(position, 0x1680000, 0x400000, 0x1a80000);
-  FieldVector_AddPolarOffset(0x200000, Random16(), position);
+  FieldVector_AddPolarOffset(px(32), Random16(), position);
   object = FieldActor_Create(0x2a2, position[0], position[1], position[2]);
   if (object != NULL) {
     object->motionFlags = 0;
@@ -709,7 +709,7 @@ void LemurianShipDeck_EmitSparkle(void) {
 /// The Black Crystal (item 242's icon) as an actor on the deck.
 struct Actor *LemurianShipDeck_CreateBlackCrystal(void) {
   struct Actor *object =
-      (struct Actor *)Import_ActorCreate(0x1e9, 0x1680000, 0x400000, 0x1a80000);
+      (struct Actor *)Import_ActorCreate(0x1e9, px(360), px(64), px(424));
   u8 *buffer = 0;
   struct FieldSprite *sprite;
 
@@ -1073,7 +1073,7 @@ u32 gLemurianShipDeck_ReachPiersShipScript[] = {
 
 u32 gLemurianShipDeck_ReturnToShipScript[] = {
     SC_ARG(2),
-    SC_MOVE(PIXELS(368), 0, PIXELS(448)),
+    SC_MOVE(px(368), 0, px(448)),
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(10),

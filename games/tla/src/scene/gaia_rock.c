@@ -217,7 +217,7 @@ void Func_020002c0(void) {
   if (done == 0) {
     Actor_SetPosition(64, 657, 246);
     object->motionFlags = done;
-    object->y = PIXELS(80);
+    object->y = px(80);
   }
 }
 
@@ -420,7 +420,7 @@ void Func_02000670(void) {
       object->scaleY = 0x1999;
       object->priorityFlags = phase;
       Actor_SelectAnimation(object, 2);
-      FieldActor_SetMoveTargetFixed(object, object->x - PIXELS(32), object->y,
+      FieldActor_SetMoveTargetFixed(object, object->x - px(32), object->y,
                                     object->z);
       Actor_StartScript(object, gData_020015c4);
       Actor_SetSpritePriorityDirect(object, 2);

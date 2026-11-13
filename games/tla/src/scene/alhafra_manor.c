@@ -241,7 +241,7 @@ s32 Scene_Initialize(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Event_Wait(10);
-    Camera_SetSpeedParameters(0x20000, 0x4000);
+    FieldCamera_SetSpeed(2);
     {
       /* FAKEMATCH(pin): the mode in r3 ahead of the other arguments. */
       register s32 mode asm("r3") = 1;

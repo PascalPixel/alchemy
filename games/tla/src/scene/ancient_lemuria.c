@@ -74,11 +74,11 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void AncientLemuria_KeepCameraSouth(void) {
-  Ram_HeapSlots->mapWork->minZ = PIXELS(750);
+  Ram_HeapSlots->mapWork->minZ = px(750);
 }
 
 void AncientLemuria_LetCameraNorth(void) {
-  Ram_HeapSlots->mapWork->minZ = PIXELS(352);
+  Ram_HeapSlots->mapWork->minZ = px(352);
 }
 
 void AncientLemuria_StartMovingStatue(void) {}
@@ -372,7 +372,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_SetSpeed(4, 1);
   Actor_WalkByAndWait(4, 0, -16);
   Event_Wait(10);
-  FieldCamera_MoveWithinMapBounds(PIXELS(168), -1, PIXELS(536), 1);
+  FieldCamera_MoveWithinMapBounds(px(168), -1, px(536), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_SetSpeed(9, 0.8);
@@ -602,7 +602,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(30);
-  FieldCamera_MoveWithinMapBounds(PIXELS(168), -1, PIXELS(512), 1);
+  FieldCamera_MoveWithinMapBounds(px(168), -1, px(512), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
@@ -734,7 +734,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_WaitForMoveById(9);
   Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
   Event_Wait(30);
-  FieldCamera_MoveWithinMapBounds(PIXELS(168), -1, PIXELS(536), 1);
+  FieldCamera_MoveWithinMapBounds(px(168), -1, px(536), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_WalkByAndWait(11, 0, -10);
@@ -828,9 +828,9 @@ struct ActorPlacement gActorPlacements[] = {
                     0x3000, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(157, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 504,
                     0x5000, TALK_FACING_PARTY, 0),
-    {56, CONDITION_ALWAYS, 1, -PIXELS(56), 0, -PIXELS(56), FACING_NORTH, 2, 0},
-    {7, CONDITION_ALWAYS, 1, -PIXELS(56), 0, -PIXELS(56), FACING_NORTH, 2, 0},
-    {244, 0x51, 1, -PIXELS(56), 0, -PIXELS(56), FACING_SOUTH, 0, 0},
+    {56, CONDITION_ALWAYS, 1, -px(56), 0, -px(56), FACING_NORTH, 2, 0},
+    {7, CONDITION_ALWAYS, 1, -px(56), 0, -px(56), FACING_NORTH, 2, 0},
+    {244, 0x51, 1, -px(56), 0, -px(56), FACING_SOUTH, 0, 0},
     ACTOR_PLACEMENT(289, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 184,
                     FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},

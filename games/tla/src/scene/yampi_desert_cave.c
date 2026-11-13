@@ -217,7 +217,7 @@ s32 YampiDesertCave_FindLogSlide(s32 *position) {
 #include "text/msg_ids.h"
 
 /// The whole-pixel half of a 16.16 coordinate.
-#define PIXELS(v) (((s16 *)&(v))[1])
+#define PIXEL_PART(v) (((s16 *)&(v))[1])
 
 struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
                                             s32 *kind) {
@@ -237,14 +237,17 @@ outer:
 inner:
   if (((struct ObjectAnimationState *)object->sprite)->value28[0] ==
       gYampiDesertCave_LogSprites[k]) {
-    x = (PIXELS(leader->x) + (gPushLeaderSteps[*direction] >> 16)) >> 4;
-    z = (PIXELS(leader->z) + (s16)gPushLeaderSteps[*direction]) >> 4;
-    left = (PIXELS(object->x) + gYampiDesertCave_LogFootprints[k * 4]) >> 4;
-    top = (PIXELS(object->z) + gYampiDesertCave_LogFootprints[k * 4 + 1]) >> 4;
+    x = (PIXEL_PART(leader->x) + (gPushLeaderSteps[*direction] >> 16)) >> 4;
+    z = (PIXEL_PART(leader->z) + (s16)gPushLeaderSteps[*direction]) >> 4;
+    left = (PIXEL_PART(object->x) + gYampiDesertCave_LogFootprints[k * 4]) >> 4;
+    top = (PIXEL_PART(object->z) + gYampiDesertCave_LogFootprints[k * 4 + 1]) >>
+          4;
     right =
-        (PIXELS(object->x) + gYampiDesertCave_LogFootprints[k * 4 + 2]) >> 4;
+        (PIXEL_PART(object->x) + gYampiDesertCave_LogFootprints[k * 4 + 2]) >>
+        4;
     bottom =
-        (PIXELS(object->z) + gYampiDesertCave_LogFootprints[k * 4 + 3]) >> 4;
+        (PIXEL_PART(object->z) + gYampiDesertCave_LogFootprints[k * 4 + 3]) >>
+        4;
     if (left <= x && x < right && top <= z && z < bottom) {
       *kind = k;
       if (k & 1) {
@@ -1038,8 +1041,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-#undef PIXELS
-#define PIXELS(value) ((value) << 16)
+#undef PIXEL_PART
 #undef DEFINE_TELEPORT_FROM_MARK
 #undef DEFINE_BURST_PILLAR
 #undef FIELD_AT

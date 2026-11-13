@@ -398,7 +398,7 @@ void Func_02000a98(s32 x, s32 z) {
   Event_Start();
   Event_ResolvePendingActions(0);
   object->motionFlags = 0;
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, x, z);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_RefreshSelectorById(gMainRoutineWork.currentOwner);
@@ -406,7 +406,7 @@ void Func_02000a98(s32 x, s32 z) {
                            gMainRoutineWork.currentOwner)),
                        0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 13);
-  Actor_SetMoveTarget(object, x << 16, PIXELS(-12), z << 16);
+  Actor_SetMoveTarget(object, x << 16, px(-12), z << 16);
   Actor_WaitForMove(object);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 10);
   Sound_Play(SE_MAP_EXIT);
@@ -465,7 +465,7 @@ void Func_02000be8(void) {
   wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 328, 184);
   Event_Wait(20);
   Sound_Play(SE_MATERIALIZE);
@@ -500,7 +500,7 @@ void Func_02000d3c(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   BlendScript_Suspend();
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, 0, -8);
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_SOUTH);
@@ -535,7 +535,7 @@ void Func_02000e50(void) { GameFlag_Clear(FLAG_SCENE_TEMP_06); }
 void Func_02000e60(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveWithinMapBounds(PIXELS(392), -1, PIXELS(120), 1);
+  FieldCamera_MoveWithinMapBounds(px(392), -1, px(120), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Event_SetMessageId((s32)MsgIHaveFollowed);
@@ -631,18 +631,16 @@ void Func_020010d4(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  FieldActor_SetPositionAndResetMotion(((s32)Actor_GetById(13)), PIXELS(392), 0,
-                                       PIXELS(268));
+  FieldActor_SetPositionAndResetMotion(((s32)Actor_GetById(13)), px(392), 0,
+                                       px(268));
   wait(1);
   /* FAKEMATCH(temporary): the leader read before the first turn is built. */
   owner = gMainRoutineWork.currentOwner;
-  Actor_SetPositionAndFacing(owner, PIXELS(360), PIXELS(184),
-                             turnA = FACING_NORTHEAST);
-  Actor_SetPositionAndFacing(7, PIXELS(376), PIXELS(184), turnA);
-  Actor_SetPositionAndFacing(11, PIXELS(360), PIXELS(168), turnA);
-  Actor_SetPositionAndFacing(6, PIXELS(423), PIXELS(168),
-                             turnB = FACING_NORTHWEST);
-  Actor_SetPositionAndFacing(5, PIXELS(408), PIXELS(184), turnB);
+  Actor_SetPositionAndFacing(owner, px(360), px(184), turnA = FACING_NORTHEAST);
+  Actor_SetPositionAndFacing(7, px(376), px(184), turnA);
+  Actor_SetPositionAndFacing(11, px(360), px(168), turnA);
+  Actor_SetPositionAndFacing(6, px(423), px(168), turnB = FACING_NORTHWEST);
+  Actor_SetPositionAndFacing(5, px(408), px(184), turnB);
   if (statue != 0) {
     sprite = statue->sprite;
     sprite->nextFrame = 0;
@@ -669,8 +667,8 @@ void Func_020010d4(void) {
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 6, 0);
   Actor_ShowEmoteById(5, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   Event_ShowMessageAndWait(5, 0);
-  FieldActor_SetPositionAndResetMotion(((s32)Actor_GetById(13)), PIXELS(392), 0,
-                                       PIXELS(340));
+  FieldActor_SetPositionAndResetMotion(((s32)Actor_GetById(13)), px(392), 0,
+                                       px(340));
   Sound_Play(SOUND_FADE_OUT_BGM);
   BattleEffect_ApplyColorToTargetBuffer(0x10002, 0);
   PaletteFade_StartInterpolation(40);
@@ -689,7 +687,7 @@ void Func_020010d4(void) {
   Actor_MoveToAndWait(13, 392, 246);
   Actor_SetModeById(9, 1);
   Actor_SetModeById(10, 1);
-  statue->velocityY = PIXELS(3);
+  statue->velocityY = px(3);
   statue->gravity = px(1) / 2;
   Actor_SetSpeed(13, 1.6);
   Actor_MoveToAndWait(13, 392, 234);
@@ -732,8 +730,7 @@ void Func_020010d4(void) {
   Sound_Play(MUS_000);
   {
     s32 turn = 0xd000;
-    Actor_SetHorizontalPositionAndAngleWithTerrain(12, PIXELS(400), PIXELS(320),
-                                                   turn);
+    Actor_SetHorizontalPositionAndAngleWithTerrain(12, px(400), px(320), turn);
   }
   wait(1);
   Event_ShowMessageAndWait(12, 0);
@@ -744,8 +741,8 @@ void Func_020010d4(void) {
   Actor_FaceDirection(6, FACING_SOUTH, 0);
   Actor_FaceDirection(7, FACING_SOUTH, 0);
   Actor_FaceDirection(11, FACING_SOUTHEAST + FACING_STEP, 0);
-  Camera_SetSpeedParameters(0x19999, 0x3333);
-  FieldCamera_MoveWithinMapBounds(PIXELS(392), -1, PIXELS(200), 1);
+  FieldCamera_SetSpeed(1.6);
+  FieldCamera_MoveWithinMapBounds(px(392), -1, px(200), 1);
   Actor_SetSpeed(12, 1.2);
   Actor_WalkToAndWait(12, 404, 220);
   Actor_Jump(12, 4, 10);
@@ -818,19 +815,19 @@ void Func_02001710(void) {
   {
     s32 angleA = 0xe000;
 
-    Actor_SetPositionAndFacing(*owner, 0x1680000, 0xd80000, angleA);
-    Actor_SetPositionAndFacing(7, 0x1780000, 0xd80000, angleA);
+    Actor_SetPositionAndFacing(*owner, px(360), px(216), angleA);
+    Actor_SetPositionAndFacing(7, px(376), px(216), angleA);
   }
   facing = 0xa000;
   zero = 0;
-  Actor_SetPositionAndFacing(11, 0x1680000, 0xc80000, zero);
-  Actor_SetPositionAndFacing(5, 0x1980000, 0xd80000, facing);
+  Actor_SetPositionAndFacing(11, px(360), px(200), zero);
+  Actor_SetPositionAndFacing(5, px(408), px(216), facing);
   angleC = 0x8000;
-  Actor_SetPositionAndFacing(6, 0x1a80000, 0xc80000, angleC);
+  Actor_SetPositionAndFacing(6, px(424), px(200), angleC);
   {
     s32 angleB = 0xb000;
 
-    Actor_SetPositionAndFacing(12, 0x1880000, 0xc80000, angleB);
+    Actor_SetPositionAndFacing(12, px(392), px(200), angleB);
   }
   heap = Ram_HeapSlots;
   System_Wait(1);
@@ -1057,9 +1054,9 @@ void Func_02000e60(void);
 // clang-format off
 u32 gData_02001f18[] = {
     SC_ARG(2),
-    SC_MOVE(PIXELS(428), 0, PIXELS(234)),
+    SC_MOVE(px(428), 0, px(234)),
     SC_SYNC,
-    SC_MOVE(PIXELS(488), 0, PIXELS(234)),
+    SC_MOVE(px(488), 0, px(234)),
     SC_SYNC,
     SC_END,
 };
@@ -1077,10 +1074,10 @@ u32 gData_02001f78[] = {
 };
 
 s32 gData_02001f9c[] = {
-    SC_POSITION(PIXELS(392), PIXELS(64), PIXELS(124)),
+    SC_POSITION(px(392), px(64), px(124)),
     SC_WAIT(1),
     SC_LABEL(1),
-    SC_ADD(SW_Y, PIXELS(-1)),
+    SC_ADD(SW_Y, px(-1)),
     SC_WAIT(1),
     SC_LOOP(64, SC_TO(1)),
     SC_WAIT(1),
@@ -1093,8 +1090,8 @@ u32 gData_02001fe4[] = {
 };
 
 u32 gData_0200200c[] = {                                                               
-      SC_ARG(2), SC_MOVE(PIXELS(392), 0, PIXELS(148)),                           
-      SC_SYNC,   SC_MOVE(PIXELS(392), 0, PIXELS(236)),                           
+      SC_ARG(2), SC_MOVE(px(392), 0, px(148)),                           
+      SC_SYNC,   SC_MOVE(px(392), 0, px(236)),                           
       SC_SYNC,   SC_ARG(1),                                                    
       SC_END,                                                                  
   };

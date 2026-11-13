@@ -245,8 +245,8 @@ void GondowanCliffs_FreezeSecondPuddle(void) {
 
   object->priorityFlags = 0;
   object->motionFlags = 0;
-  object->terrainHeight = PIXELS(32);
-  object->y = PIXELS(32);
+  object->terrainHeight = px(32);
+  object->y = px(32);
   MapGrid_CopyCellAttributes(115, 35, 1, 1, 117, 35);
   Event_SetFlag(FLAG_SECOND_PUDDLE_FROZEN);
 }
@@ -280,7 +280,7 @@ void GondowanCliffs_TalkToDog(void) {
   out[0] = object->x;
   out[1] = object->y;
   out[2] = object->z;
-  FieldVector_AddPolarOffset(0x100000, object->facing, out);
+  FieldVector_AddPolarOffset(px(16), object->facing, out);
   if ((position.x >> 20) == 119 && (position.z >> 20) == 45) {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->unk15a = 1;
   } else {
@@ -475,7 +475,7 @@ s32 Scene_PrepareMap(void) {
 }
 
 // The whole-pixel half of a 16.16 coordinate.
-#define PIXELS(v) (((s16 *)&(v))[1])
+#define PIXEL_PART(v) (((s16 *)&(v))[1])
 
 // The swinging actors' callback, the same as Yampi Desert's platforms: for each
 // of the 16 entries it moves the actor on its timer, writes its height to the
@@ -528,7 +528,7 @@ void Geysers_Update(void) {
     }
     index = (object->x >> 20) + (object->z >> 20) * 128;
     terrain[index] = (u8)work->value + i;
-    *collision = ((PIXELS(object->y) + entry->height) / 8) << 8;
+    *collision = ((PIXEL_PART(object->y) + entry->height) / 8) << 8;
     cell = &cells[index];
     if (entry->step != 0)
       cell->attributeB = 0;
@@ -709,8 +709,7 @@ struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
 #undef EFFECT_SPRITE_PRIORITY
 #undef FLAG_FIRST_PUDDLE_FROZEN
 #undef FLAG_SECOND_PUDDLE_FROZEN
-#undef PIXELS
-#define PIXELS(value) ((value) << 16)
+#undef PIXEL_PART
 
 // @file
 // The Gondowan Cliffs' tables, which the scene's getters return.
@@ -748,7 +747,7 @@ LATE_DATA s16 gGondowanCliffs_Entrances[] = {
 };
 
 LATE_DATA struct ActorPlacement gGondowanCliffs_PassEntrances[] = {
-    {0, CONDITION_ALWAYS, 168, 0x40000118, PIXELS(-1), -0x1, 0xffff, 0, 0},
+    {0, CONDITION_ALWAYS, 168, 0x40000118, px(-1), -0x1, 0xffff, 0, 0},
     {SCENE_TABLE_END},
 };
 

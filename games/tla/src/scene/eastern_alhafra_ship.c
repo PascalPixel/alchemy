@@ -75,7 +75,7 @@ void EasternAlhafraShip_ShakeDownTheBread(void) {
   v6 = 192;
   v6 = (v6 << 11);
   *(s32 *)((u8 *)object0 + 40) = v6;
-  Actor_SetSpeedParameters(*(s32 *)((u8 *)v5 + 0), 0x20000, 0x10000);
+  Actor_SetSpeed(*(s32 *)((u8 *)v5 + 0), 2);
   Actor_WalkTo(*(s32 *)((u8 *)v5 + 0), 136, 488);
   Event_Wait(10);
   Actor_SetDestination(15, 120, 472);
@@ -382,7 +382,7 @@ void EasternAlhafraShip_MayorArrives(void) {
   Actor_FaceDirection(4, FACING_SOUTH, 0);
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   Actor_FaceDirection(6, FACING_SOUTH, 0);
-  FieldCamera_MoveWithinMapBounds(PIXELS(448), -1, PIXELS(416), 1);
+  FieldCamera_MoveWithinMapBounds(px(448), -1, px(416), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_Jump(9, 6, 15);
@@ -539,7 +539,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_SetSpeed(22, 1);
   Actor_SetSpeed(23, 1);
   Actor_SetSpeed(24, 1);
-  FieldCamera_MoveWithinMapBounds(PIXELS(464), -1, PIXELS(408), 0);
+  FieldCamera_MoveWithinMapBounds(px(464), -1, px(408), 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
@@ -787,7 +787,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_FaceDirection(18, FACING_SOUTH, 0);
   Actor_FaceDirection(19, FACING_SOUTH, 0);
   Event_Wait(20);
-  FieldCamera_MoveWithinMapBounds(PIXELS(464), -1, PIXELS(344), 1);
+  FieldCamera_MoveWithinMapBounds(px(464), -1, px(344), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(30);
   Motion_SetVarCbAndRefresh(25, 2);
@@ -1135,7 +1135,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_FaceDirection(16, FACING_NORTH, 0);
   Actor_ArmCallback(8, FACING_WEST, 0);
   Event_Wait(20);
-  FieldCamera_MoveWithinMapBounds(PIXELS(464), -1, PIXELS(296), 1);
+  FieldCamera_MoveWithinMapBounds(px(464), -1, px(296), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(19, 2);
@@ -1222,7 +1222,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_FaceDirection(16, FACING_SOUTH, 0);
   Event_Wait(20);
   Event_ShowMessageThenWait(16, 0, 10);
-  FieldCamera_MoveWithinMapBounds(PIXELS(464), -1, PIXELS(320), 1);
+  FieldCamera_MoveWithinMapBounds(px(464), -1, px(320), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(25, 2);

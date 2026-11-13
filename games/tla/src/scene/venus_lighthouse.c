@@ -415,7 +415,7 @@ void VenusLighthouse_RepelLeader(void) {
 
     actor->speed = 0x40000;
     who = leader;
-    Actor_SetSpeedParameters(who, 0x40000, 0x20000);
+    Actor_SetSpeed(who, 4);
   }
   if (*(s32 *)&actor->zLow >> 20 <= 54) {
     Actor_GetById__floor(leader)->selectFlags &= ~1;

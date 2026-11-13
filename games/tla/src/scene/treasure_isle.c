@@ -666,11 +666,11 @@ u32 gTreasureIsle_PostStill[] = {
 };
 
 struct ActorPlacement gTreasureIsle_Placements[] = {                                             
-      {272, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(440), FACING_SOUTH, 2,    
+      {272, CONDITION_ALWAYS, 1, px(280), 0, px(440), FACING_SOUTH, 2,    
        0},                                                                     
-      {272, CONDITION_ALWAYS, 1, PIXELS(344), 0, PIXELS(440), FACING_SOUTH, 2,    
+      {272, CONDITION_ALWAYS, 1, px(344), 0, px(440), FACING_SOUTH, 2,    
        0},                                                                    
-      {272, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(344), FACING_SOUTH, 2,    
+      {272, CONDITION_ALWAYS, 1, px(424), 0, px(344), FACING_SOUTH, 2,    
        0},                                                                    
       {SCENE_TABLE_END},                                                       
   };

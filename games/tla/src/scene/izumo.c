@@ -174,8 +174,8 @@ void Izumo_CycloneSecondPatch(void) {
 
   Call7((void (*)())TileCopies_CopyTouchedCells, 53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Get(3999)) {
-    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 64, PIXELS(456),
-          PIXELS(584));
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 64, px(456),
+          px(584));
     if (object->x >> 20 == 28 && object->z >> 20 == 36) {
       Event_Start();
       Event_ResolvePendingActions(0);
@@ -194,8 +194,8 @@ void Izumo_CycloneThirdPatch(void) {
 
   Call7((void (*)())TileCopies_CopyTouchedCells, 53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Get(4000)) {
-    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 65, PIXELS(472),
-          PIXELS(552));
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 65, px(472),
+          px(552));
     if (object->x >> 20 == 29 && object->z >> 20 == 34) {
       Event_Start();
       Event_ResolvePendingActions(0);
@@ -227,8 +227,8 @@ void Izumo_CycloneSeventhPatch(void) {
 
   Call7((void (*)())TileCopies_CopyTouchedCells, 42, 0, 6, 2, 9, 18, 0);
   if (!GameFlag_Get(4001)) {
-    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 66, PIXELS(168),
-          PIXELS(328));
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 66, px(168),
+          px(328));
     if (object->x >> 20 == 10 && object->z >> 20 == 20) {
       Event_Start();
       Event_ResolvePendingActions(0);
@@ -395,8 +395,8 @@ void Izumo_StopThePartyToThankThem(void) {
   FieldEvent_Wait(15);
   Value3((s32 (*)())Actor_ShowEmoteById, gMainRoutineWork.currentOwner, 256,
          30);
-  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 32, PIXELS(200),
-        PIXELS(216));
+  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 32, px(200),
+        px(216));
   Actor_WalkToById(32, 200, 248);
   Actor_WaitForMoveById(32);
   FieldEvent_Wait(30);
@@ -518,8 +518,8 @@ s32 Scene_Initialize(void) {
     }
     if (GameFlag_Get(FLAG_STOPPED_TO_THANK_THE_PARTY) &&
         !GameFlag_Get(FLAG_TOKEN_OFFERED)) {
-      Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 32, PIXELS(200),
-            PIXELS(216));
+      Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 32, px(200),
+            px(216));
       Actor_SetSpritePriority(32, 3);
       Actor_GetById(32)->motionFlags |= 2;
       GameFlag_Set(FLAG_THANKFUL_ONE_WAITS);
@@ -543,7 +543,7 @@ void Izumo_RevealTheStoneCircle(void) {
     Call6((void (*)())Map_CopyCellAttributeRect, 36, 12, 3, 3, 22, 8);
     if (x == 23 && z == 9)
       Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
-                                             PIXELS(376), PIXELS(136));
+                                             px(376), px(136));
   } else {
     MapGrid_CopyCellPictureIndicesRect(36, 8, 22, 8, 3, 3);
     Call6((void (*)())Map_CopyCellAttributeRect, 36, 8, 3, 3, 22, 8);

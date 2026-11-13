@@ -526,7 +526,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   effect->watchedObject = actor15;
   position[1] = actor15->y + px(16);
   position[2] = actor15->z;
-  FieldVector_AddPolarOffset(0x100000, 0xc000, position);
+  FieldVector_AddPolarOffset(px(16), 0xc000, position);
   FieldActor_SetMoveTargetFixed(effect, position[0], position[1], position[2]);
   FieldEffect_SnapScaleToFull(effect);
   Actor_SelectAnimation(effect, 4);

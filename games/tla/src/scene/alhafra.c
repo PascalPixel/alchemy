@@ -97,7 +97,7 @@ void Alhafra_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(step->script, step->x, step->z);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
   Event_Wait(10);
@@ -260,7 +260,7 @@ void Alhafra_FindGoldCoins(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAlhafra74);
-  FieldCamera_MoveWithinMapBounds(0x2300000, -1, 0x1f00000, 1);
+  FieldCamera_MoveWithinMapBounds(px(560), -1, px(496), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(29, 2);

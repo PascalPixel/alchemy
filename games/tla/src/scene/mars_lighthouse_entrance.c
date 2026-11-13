@@ -370,7 +370,7 @@ void MarsLighthouseEntrance_Teleport(void) {
     Teleport_PlaySparks();
     WORD_AT(Actor_Get(gMainRoutineWork.currentOwner), 108) = 0;
     FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
-    Func_02004cd8_(gMainRoutineWork.currentOwner, PIXELS(688), PIXELS(360));
+    Func_02004cd8_(gMainRoutineWork.currentOwner, px(688), px(360));
     FieldCamera_MoveTo(688, CAMERA_KEEP, 360, 1);
     FieldCamera_WaitForArrival();
     Teleport_PlayWhirl();
@@ -436,11 +436,11 @@ void Func_02000718(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(1);
-  Camera_SetBounds(PIXELS(168), 0, PIXELS(664), 1);
+  Camera_SetBounds(px(168), 0, px(664), 1);
   FieldCamera_WaitForArrival();
   System_Wait(10);
   FieldCamera_SetSpeed(4);
-  Camera_SetBounds(PIXELS(472), 0, PIXELS(664), 1);
+  Camera_SetBounds(px(472), 0, px(664), 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(90);
   Event_End();
@@ -496,7 +496,7 @@ void MarsLighthouseEntrance_PushStatueIntoFlames(s32 unused, s32 id) {
 
     if (object->x >> 20 == 20) {
       FieldEvent_Wait(5);
-      object->z += PIXELS(1);
+      object->z += px(1);
       BYTE_AT(object, 98) = 1;
       Flag_Set(0xa4f);
     }
@@ -529,7 +529,7 @@ void Func_0200096c(s32 unused, s32 id) {
     object->speedLimit = px(1) / 4;
     object->acceleration = px(1) / 8;
     y = object->y;
-    Actor_SetMoveTarget(object, PIXELS(152), y, PIXELS(792));
+    Actor_SetMoveTarget(object, px(152), y, px(792));
   }
   if (object->x >> 20 == 10) {
     s32 y;
@@ -587,7 +587,7 @@ void Func_02000a7c(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(1);
-  Camera_SetBounds(PIXELS(872), -1, PIXELS(168), 1);
+  Camera_SetBounds(px(872), -1, px(168), 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
   FieldCamera_MoveTo(872, CAMERA_KEEP, 264, 1);
@@ -662,7 +662,7 @@ void Func_02000ce4(s32 unused, s32 id) {
 
     if (object->x >> 20 == 5) {
       FieldEvent_Wait(5);
-      object->z += PIXELS(1);
+      object->z += px(1);
       Flag_Set(0xa4e);
     }
   }
@@ -1889,7 +1889,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     position.x = actor->x;
     position.y = actor->y;
     position.z = actor->z;
-    FieldVector_AddPolarOffset(0x80000, actor->facing, &position);
+    FieldVector_AddPolarOffset(px(8), actor->facing, &position);
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, position.x, position.z) ==
         7) {
       actor->targetZ = 0x80000000;
@@ -2077,16 +2077,16 @@ void Leader_SlideOnIce(void) {
 
 top:
   Leader_StopIfPending();
-  actor->speedLimit = PIXELS(1);
-  actor->acceleration = PIXELS(1) / 2;
+  actor->speedLimit = px(1);
+  actor->acceleration = px(1) / 2;
   actor->targetX = 0x80000000;
   actor->targetZ = 0x80000000;
   actor->velocityX = 0;
   actor->velocityZ = 0;
   position = &probe;
-  position->x = startX = (actor->x & 0xfff00000) + PIXELS(8);
+  position->x = startX = (actor->x & 0xfff00000) + px(8);
   position->y = actor->y;
-  position->z = startZ = (actor->z & 0xfff00000) + PIXELS(8);
+  position->z = startZ = (actor->z & 0xfff00000) + px(8);
   x = startX;
   z = startZ;
   layer = &actor->terrainId;
@@ -2094,7 +2094,7 @@ top:
   dz = z - actor->z;
   dx = x - actor->x;
   distance = Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz);
-  if (distance < PIXELS(4)) {
+  if (distance < px(4)) {
     heading = gData_02005798[(gInput.held >> 4) & 15];
     if ((heading << 16) == -0x10000) {
       return;
@@ -2103,12 +2103,12 @@ top:
     heading = (s16)ArcTan2(z - actor->z, x - actor->x);
     heading = (s16)((heading + 0x2000) & -0x4000);
   }
-  FieldVector_AddPolarOffset(PIXELS(16), heading, &probe);
+  FieldVector_AddPolarOffset(px(16), heading, &probe);
   nextBehavior =
       FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
   if (nextBehavior == 255 ||
       Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y >
-          PIXELS(8)) {
+          px(8)) {
     actor->facing = heading;
     actor->velocityX = 0;
     actor->velocityZ = 0;
@@ -2118,7 +2118,7 @@ top:
   }
   position->x = startX;
   position->z = startZ;
-  actor->speedLimit = PIXELS(2);
+  actor->speedLimit = px(2);
   actor->acceleration = 0x1999;
   actor->timer = 0;
   FieldActor_SetMoveTargetFixed(actor, startX, actor->y, startZ);
@@ -2128,7 +2128,7 @@ top:
   actor->update = Actor_SteerByPad;
   goto test;
 body:
-  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > PIXELS(8)) {
+  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > px(8)) {
     goto stop;
   }
   radius = actor->radius - 2;
@@ -2151,7 +2151,7 @@ body:
   }
   x = next->x;
   z = next->z;
-  actor->speedLimit = PIXELS(2);
+  actor->speedLimit = px(2);
   actor->acceleration = 0x1999;
   FieldActor_SetMoveTargetFixed(actor, next->x, next->y, next->z);
   FieldActor_WaitForMove(actor);
@@ -2163,7 +2163,7 @@ test:
     struct Vector3 *step;
 
     step = &probe;
-    FieldVector_AddPolarOffset(PIXELS(16), heading, step);
+    FieldVector_AddPolarOffset(px(16), heading, step);
     /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the
      * address. */
     step = NULL;
@@ -2174,8 +2174,8 @@ test:
     goto body;
   }
 stop:
-  actor->speedLimit = PIXELS(2);
-  actor->acceleration = PIXELS(1);
+  actor->speedLimit = px(2);
+  actor->acceleration = px(1);
   FieldActor_SetMoveTargetFixed(actor, x, actor->y, z);
   FieldActor_WaitForMove(actor);
   System_Wait(2);
@@ -2186,7 +2186,7 @@ blocked:
 done:
   actor->update = NULL;
   actor->actionFlags |= 1;
-  actor->acceleration = PIXELS(1) / 4;
+  actor->acceleration = px(1) / 4;
   Actor_SelectAnimation(actor, 1);
 }
 
@@ -2245,8 +2245,8 @@ void Leader_SlideOnIceAhead(void) {
 
 top:
   Leader_StopIfPending();
-  actor->speedLimit = PIXELS(1);
-  actor->acceleration = PIXELS(1) / 2;
+  actor->speedLimit = px(1);
+  actor->acceleration = px(1) / 2;
   actor->targetX = 0x80000000;
   actor->targetZ = 0x80000000;
   /* Default: one zero, spilled and reloaded at each use. */
@@ -2255,7 +2255,7 @@ top:
   actor->velocityZ = zero;
   /* FAKEMATCH(temporary): cell holds the masked x. */
   cell = actor->x & 0xfff00000;
-  i = PIXELS(8);
+  i = px(8);
   position = &probe;
   position->x = startX = cell + i;
   position->y = actor->y;
@@ -2264,7 +2264,7 @@ top:
   z = startZ;
   startBehavior = FieldMapGrid_GetCellBehaviorAt(*(layer = &actor->terrainId),
                                                  startX, startZ);
-  FieldVector_AddPolarOffset(PIXELS(16), heading, position);
+  FieldVector_AddPolarOffset(px(16), heading, position);
   nextBehavior =
       FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
   if (nextBehavior == 255 ||
@@ -2278,7 +2278,7 @@ top:
   }
   position->x = x;
   position->z = z;
-  actor->speedLimit = PIXELS(2);
+  actor->speedLimit = px(2);
   actor->acceleration = 0x1999;
   actor->timer = zero;
   Actor_SelectAnimation(actor, 2);
@@ -2289,7 +2289,7 @@ top:
   asm("" : : "r"(nextBehavior), "r"(nextBehavior) : SFP_CLOBBER);
   goto test;
 body:
-  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > PIXELS(8)) {
+  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > px(8)) {
     goto stop;
   }
   radius = actor->radius - 2;
@@ -2312,7 +2312,7 @@ body:
   }
   x = next->x;
   z = next->z;
-  actor->speedLimit = PIXELS(2);
+  actor->speedLimit = px(2);
   actor->acceleration = 0x1999;
   FieldActor_SetMoveTargetFixed(actor, next->x, next->y, next->z);
   FieldActor_WaitForMove(actor);
@@ -2323,7 +2323,7 @@ test:
   /* FAKEMATCH(barrier): the asm tied to heading, with an r4 clobber. */
   asm("" : "=r"(angle) : "0"(heading) : "r4");
   step = &probe;
-  FieldVector_AddPolarOffset(PIXELS(16), angle, step);
+  FieldVector_AddPolarOffset(px(16), angle, step);
   /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the address.
    */
   step = NULL;
@@ -2333,8 +2333,8 @@ test:
     goto body;
   }
 stop:
-  actor->speedLimit = PIXELS(2);
-  actor->acceleration = PIXELS(1);
+  actor->speedLimit = px(2);
+  actor->acceleration = px(1);
   FieldActor_SetMoveTargetFixed(actor, x, actor->y, z);
   FieldActor_WaitForMove(actor);
   System_Wait(2);
@@ -2345,7 +2345,7 @@ blocked:
 done:
   actor->update = NULL;
   actor->actionFlags |= 1;
-  actor->acceleration = PIXELS(1) / 4;
+  actor->acceleration = px(1) / 4;
   Actor_SelectAnimation(actor, 1);
 }
 
@@ -2944,10 +2944,10 @@ u32 gData_02004de8[] = {
       SC_SET(SW_STEERING, 0),                                                  
       SC_SET(SW_SPEED, 0x8000),                                                
       SC_SET(SW_ACCEL, 0x800),                                                 
-      SC_MOVE(PIXELS(200), 0, PIXELS(112)),                                     
+      SC_MOVE(px(200), 0, px(112)),                                     
       SC_SYNC,                                                                 
       SC_WAIT(20),                                                             
-      SC_MOVE(PIXELS(104), 0, PIXELS(112)),                                     
+      SC_MOVE(px(104), 0, px(112)),                                     
       SC_SYNC,                                                                 
       SC_WAIT(20),                                                             
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
@@ -2957,10 +2957,10 @@ u32 gData_02004e50[] = {
       SC_SET(SW_STEERING, 0),                                                  
       SC_SET(SW_SPEED, 0x8000),                                                
       SC_SET(SW_ACCEL, 0x800),                                                 
-      SC_MOVE(PIXELS(232), 0, PIXELS(112)),                                     
+      SC_MOVE(px(232), 0, px(112)),                                     
       SC_SYNC,                                                                 
       SC_WAIT(20),                                                             
-      SC_MOVE(PIXELS(296), 0, PIXELS(112)),                                     
+      SC_MOVE(px(296), 0, px(112)),                                     
       SC_SYNC,                                                                 
       SC_WAIT(20),                                                             
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
@@ -2969,14 +2969,14 @@ u32 gData_02004e50[] = {
 u32 gData_02004eb8[] = {                                                               
       SC_SET(SW_STEERING, 0),                                                  
       SC_SET(SW_MOTION, 2),                                                    
-      SC_SET(SW_Y, PIXELS(48)),                                                
-      SC_SET(SW_GROUND, PIXELS(48)),                                           
+      SC_SET(SW_Y, px(48)),                                                
+      SC_SET(SW_GROUND, px(48)),                                           
       SC_SET(SW_SPEED, 0x8000),                                                
       SC_SET(SW_ACCEL, 0x800),                                                 
-      SC_MOVE(PIXELS(904), 0, PIXELS(528)),                                      
+      SC_MOVE(px(904), 0, px(528)),                                      
       SC_SYNC,                                                                 
       SC_WAIT(20),                                                             
-      SC_MOVE(PIXELS(840), 0, PIXELS(528)),                                      
+      SC_MOVE(px(840), 0, px(528)),                                      
       SC_SYNC,                                                                 
       SC_WAIT(20),                                                             
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
@@ -2985,19 +2985,19 @@ u32 gData_02004eb8[] = {
 u32 gData_02004f44[] = {
     SC_SET(SW_STEERING, 0),
     SC_SET(SW_MOTION, 2),
-    SC_SET(SW_Y, PIXELS(48)),
-    SC_SET(SW_GROUND, PIXELS(48)),
+    SC_SET(SW_Y, px(48)),
+    SC_SET(SW_GROUND, px(48)),
     SC_SET(SW_SPEED, 0x8000),
     SC_SET(SW_ACCEL, 0x800),
     SC_WAIT(10),
-    SC_MOVE(PIXELS(88), 0, PIXELS(688)),
+    SC_MOVE(px(88), 0, px(688)),
     SC_SYNC,
     SC_WAIT(30),
     SC_LABEL(1),
-    SC_MOVE(PIXELS(152), 0, PIXELS(688)),
+    SC_MOVE(px(152), 0, px(688)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(88), 0, PIXELS(688)),
+    SC_MOVE(px(88), 0, px(688)),
     SC_SYNC,
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
@@ -3005,8 +3005,8 @@ u32 gData_02004f44[] = {
 u32 gData_02004ff0[] = {                                                               
       SC_SET(SW_STEERING, 0),                                                  
       SC_SET(SW_MOTION, 0),                                                   
-      SC_SET(SW_Y, PIXELS(32)),                                                
-      SC_SET(SW_GROUND, PIXELS(32)),                                           
+      SC_SET(SW_Y, px(32)),                                                
+      SC_SET(SW_GROUND, px(32)),                                           
       SC_SET(SW_SPEED, 0x8000),                                                
       SC_SET(SW_ACCEL, 0x800),                                                 
       SC_END,                                                                  
@@ -3015,77 +3015,77 @@ u32 gData_02004ff0[] = {
 s32 gData_0200503c[] = {
     SC_SET(SW_STEERING, 0),
     SC_SET(SW_MOTION, 0),
-    SC_SET(SW_Y, PIXELS(32)),
-    SC_SET(SW_GROUND, PIXELS(32)),
+    SC_SET(SW_Y, px(32)),
+    SC_SET(SW_GROUND, px(32)),
     SC_SET(SW_SPEED, 0x8000),
     SC_SET(SW_ACCEL, 0x800),
-    SC_MOVE(PIXELS(808), PIXELS(32), PIXELS(128)),
+    SC_MOVE(px(808), px(32), px(128)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(808), PIXELS(48), PIXELS(128)),
+    SC_MOVE(px(808), px(48), px(128)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(728), PIXELS(48), PIXELS(128)),
+    SC_MOVE(px(728), px(48), px(128)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(728), PIXELS(32), PIXELS(128)),
+    SC_MOVE(px(728), px(32), px(128)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(712), PIXELS(32), PIXELS(128)),
+    SC_MOVE(px(712), px(32), px(128)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(712), PIXELS(48), PIXELS(128)),
+    SC_MOVE(px(712), px(48), px(128)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(616), PIXELS(48), PIXELS(128)),
+    SC_MOVE(px(616), px(48), px(128)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(616), PIXELS(32), PIXELS(128)),
+    SC_MOVE(px(616), px(32), px(128)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(552), PIXELS(32), PIXELS(128)),
+    SC_MOVE(px(552), px(32), px(128)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(552), PIXELS(48), PIXELS(128)),
+    SC_MOVE(px(552), px(48), px(128)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(536), PIXELS(48), PIXELS(128)),
+    SC_MOVE(px(536), px(48), px(128)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(536), PIXELS(32), PIXELS(128)),
+    SC_MOVE(px(536), px(32), px(128)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(520), PIXELS(32), PIXELS(128)),
+    SC_MOVE(px(520), px(32), px(128)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(520), PIXELS(48), PIXELS(128)),
+    SC_MOVE(px(520), px(48), px(128)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(296), PIXELS(48), PIXELS(128)),
+    SC_MOVE(px(296), px(48), px(128)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(296), PIXELS(32), PIXELS(128)),
+    SC_MOVE(px(296), px(32), px(128)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(264), PIXELS(32), PIXELS(128)),
+    SC_MOVE(px(264), px(32), px(128)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(264), PIXELS(48), PIXELS(128)),
+    SC_MOVE(px(264), px(48), px(128)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(136), PIXELS(48), PIXELS(128)),
+    SC_MOVE(px(136), px(48), px(128)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(136), PIXELS(32), PIXELS(128)),
+    SC_MOVE(px(136), px(32), px(128)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(120), PIXELS(32), PIXELS(128)),
+    SC_MOVE(px(120), px(32), px(128)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(120), PIXELS(48), PIXELS(128)),
+    SC_MOVE(px(120), px(48), px(128)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(56), PIXELS(48), PIXELS(128)),
+    SC_MOVE(px(56), px(48), px(128)),
     SC_SYNC,
     SC_WAIT(60),
     SC_CALL(Func_02000070),
@@ -3095,13 +3095,13 @@ s32 gData_0200503c[] = {
 u32 gData_02005314[] = {
     SC_SET(SW_STEERING, 0),
     SC_SET(SW_MOTION, 0),
-    SC_SET(SW_X, PIXELS(56)),
-    SC_SET(SW_Z, PIXELS(128)),
-    SC_SET(SW_Y, PIXELS(48)),
-    SC_SET(SW_GROUND, PIXELS(48)),
+    SC_SET(SW_X, px(56)),
+    SC_SET(SW_Z, px(128)),
+    SC_SET(SW_Y, px(48)),
+    SC_SET(SW_GROUND, px(48)),
     SC_SET(SW_SPEED, 0x8000),
     SC_SET(SW_ACCEL, 0x800),
-    SC_MOVE(PIXELS(56), PIXELS(48), PIXELS(128)),
+    SC_MOVE(px(56), px(48), px(128)),
     SC_SYNC,
     SC_WAIT(20),
     SC_END,
@@ -3166,9 +3166,9 @@ s16 gData_02005454[] = {
 };
 
 s32 gData_0200547c[] = {                                                               
-      SC_CALL(Actor_PopUpSlow), SC_MOVE(PIXELS(112), PIXELS(32), PIXELS(728)),             
-      SC_SYNC,        SC_MOVE(PIXELS(112), PIXELS(22), PIXELS(728)),             
-      SC_SYNC,        SC_MOVE(PIXELS(128), PIXELS(22), PIXELS(728)),             
+      SC_CALL(Actor_PopUpSlow), SC_MOVE(px(112), px(32), px(728)),             
+      SC_SYNC,        SC_MOVE(px(112), px(22), px(728)),             
+      SC_SYNC,        SC_MOVE(px(128), px(22), px(728)),             
       SC_SYNC,        SC_CALL(Actor_Park),                                          
       SC_END,                                                                  
   };
@@ -3179,9 +3179,9 @@ s32 gData_020054cc[] = {
   };
 
 s32 gData_02005528[] = {                                                               
-      SC_CALL(Actor_PopUpSlow), SC_MOVE(PIXELS(872), PIXELS(32), PIXELS(576)),             
-      SC_SYNC,        SC_MOVE(PIXELS(872), PIXELS(30), PIXELS(576)),             
-      SC_SYNC,        SC_MOVE(PIXELS(872), PIXELS(30), PIXELS(584)),             
+      SC_CALL(Actor_PopUpSlow), SC_MOVE(px(872), px(32), px(576)),             
+      SC_SYNC,        SC_MOVE(px(872), px(30), px(576)),             
+      SC_SYNC,        SC_MOVE(px(872), px(30), px(584)),             
       SC_SYNC,        SC_CALL(Actor_Park),                                          
       SC_END,                                                                  
   };

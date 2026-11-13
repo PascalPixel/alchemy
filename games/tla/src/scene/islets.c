@@ -260,8 +260,8 @@ void Func_020000d8(void) {
     object->priorityFlags |= 2;
     object->motionFlags = 0;
     object->velocityY = 0;
-    object->y = PIXELS(-8);
-    object->terrainHeight = PIXELS(-8);
+    object->y = px(-8);
+    object->terrainHeight = px(-8);
     MapGrid_CopyCellAttributes(9, 1, 4, 1, 9, 10);
     MapGrid_CopyCellAttributes(9, 8, 4, 1, 9, 9);
     MapGrid_CopyCellAttributes(9, 64, 4, 1, 9, 74);
@@ -482,12 +482,11 @@ void Func_02000568(void) {
                                          leader->y,
                                          (leader->z + object->z) / 2);
     System_Wait(20);
-    FieldActor_SetPositionAndResetMotion(object, PIXELS(120), PIXELS(128),
-                                         PIXELS(312));
+    FieldActor_SetPositionAndResetMotion(object, px(120), px(128), px(312));
     Actor_SetAnimation(10, 5);
     System_Wait(10);
     Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
-    spawned = FieldActor_Create(0x1e9, leader->x, 0x980000, leader->z);
+    spawned = FieldActor_Create(0x1e9, leader->x, px(152), leader->z);
     if (spawned != 0) {
       Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
       FieldActor_SetItemIcon(spawned, 453);
@@ -590,7 +589,7 @@ void Func_020006f4(void) {
         Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 98, 168);
         Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_NORTH);
         Actor_Jump(gMainRoutineWork.currentOwner, 4, 10);
-        item = FieldActor_Create(489, 0x680000, 0x180000, 0xa00000);
+        item = FieldActor_Create(489, px(104), px(24), px(160));
         // Default: the object handed back is set for real in HAND_BACK.
         given = 0;
         if (item != 0) {
@@ -625,7 +624,7 @@ void Func_020006f4(void) {
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 120, 190);
       Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_EAST);
       STEP(gMainRoutineWork.currentOwner, 132, 190);
-      item = FieldActor_Create(489, 0x8c0000, 0, 0xbe0000);
+      item = FieldActor_Create(489, px(140), 0, px(190));
       if (item != 0) {
         Actor_SetItemIcon(item, 453);
         Actor_SetSpriteFlags(item, 0);
@@ -639,7 +638,7 @@ void Func_020006f4(void) {
       Event_ShowMessageAndWait(10, 0);
       Actor_WatchAndSetScript(10, gMainRoutineWork.currentOwner);
       STEP(gMainRoutineWork.currentOwner, 132, 190);
-      FieldActor_SetPositionAndResetMotion(item, 0xc30000, 0, 0x730000);
+      FieldActor_SetPositionAndResetMotion(item, px(195), 0, px(115));
       STEP(gMainRoutineWork.currentOwner, 120, 190);
       Event_Wait(20);
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 98, 168);
@@ -769,7 +768,7 @@ void Func_02000e38(void) {
     if (item != 0) {
       void (*hook2)(void);
       item->collisionFlags = 9;
-      FieldActor_SetPositionAndResetMotion(item, 0x680000, 0, 0x3480000);
+      FieldActor_SetPositionAndResetMotion(item, px(104), 0, px(840));
       hook2 = Actor_EmitSmoke;
       if (right) {
         leader->update = hook2;
@@ -778,7 +777,7 @@ void Func_02000e38(void) {
         Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_WEST);
         leader->update = hook2;
         STEP(gMainRoutineWork.currentOwner, 288, 840);
-        FieldActor_SetPositionAndResetMotion(item, 0x1180000, 0, 0x3480000);
+        FieldActor_SetPositionAndResetMotion(item, px(280), 0, px(840));
         STEP(gMainRoutineWork.currentOwner, 296, 840);
         leader->update = 0;
         FieldActor_Stop(gMainRoutineWork.currentOwner);
@@ -792,7 +791,7 @@ void Func_02000e38(void) {
         Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
         leader->update = hook2;
         STEP(gMainRoutineWork.currentOwner, 272, 840);
-        FieldActor_SetPositionAndResetMotion(item, 0x1180000, 0, 0x3480000);
+        FieldActor_SetPositionAndResetMotion(item, px(280), 0, px(840));
         STEP(gMainRoutineWork.currentOwner, 264, 840);
         leader->update = 0;
         FieldActor_Stop(gMainRoutineWork.currentOwner);
@@ -837,8 +836,8 @@ void Func_02000e38(void) {
 void Func_02001278(struct Actor *object) {
   struct Actor *source = Actor_Get(9);
 
-  FieldActor_SetPositionAndResetMotion(object, source->x,
-                                       source->y + PIXELS(16), source->z);
+  FieldActor_SetPositionAndResetMotion(object, source->x, source->y + px(16),
+                                       source->z);
   object->facing = source->facing;
 }
 
@@ -928,8 +927,8 @@ void Func_0200129c(struct Actor *gift) {
 
 #define SPAWN(a, b, answer)                                                    \
   {                                                                            \
-    a = FieldActor_Create(163, 0x1280000, 0, 0x1a80000);                       \
-    b = FieldActor_Create(14, 0x1280000, 0, 0x1a80000);                        \
+    a = FieldActor_Create(163, px(296), 0, px(424));                           \
+    b = FieldActor_Create(14, px(296), 0, px(424));                            \
     if (a != 0) {                                                              \
       a->motionFlags = answer;                                                 \
       Actor_SetSpriteFlags(a, 0);                                              \
@@ -1261,7 +1260,7 @@ void Func_02001db0(void) {
   item = Actor_GetById(20);
   item->motionFlags = 0;
   FieldActor_SetItemIcon(item, 452);
-  FieldActor_SetPositionAndResetMotion(item, leader->x, leader->y + PIXELS(24),
+  FieldActor_SetPositionAndResetMotion(item, leader->x, leader->y + px(24),
                                        leader->z);
   FieldEvent_Wait(20);
   FieldPsynergy_RestoreMindReadPalette();
@@ -1289,12 +1288,11 @@ void Func_02001f74(void) {
   System_Wait(1);
   object->motionFlags = 0;
   Actor_SetSpeed(10, 1.6);
-  FieldActor_SetPositionAndResetMotion(object, PIXELS(268), PIXELS(64),
-                                       PIXELS(390));
+  FieldActor_SetPositionAndResetMotion(object, px(268), px(64), px(390));
   System_Wait(1);
-  object->terrainHeight = PIXELS(128);
+  object->terrainHeight = px(128);
   System_Wait(1);
-  object->y = PIXELS(160);
+  object->y = px(160);
   System_Wait(1);
   FieldTask_AddFrame(Func_02001f58, 0x480);
   FieldActor_SetMoveTarget(object, 132, 128, 320);
@@ -1781,7 +1779,7 @@ void Islets_InitializeRoom1(void) {
   Actor_SetSpeed(10, 0.8);
   Actor_Get(10)->collisionFlags |= 0x80;
   if (Event_GetFlag(0xaa1)) {
-    spawned = FieldActor_Create(489, 0x1180000, 0, 0x3480000);
+    spawned = FieldActor_Create(489, px(280), 0, px(840));
     if (spawned != 0) {
       spawned->motionFlags = 0;
       FieldActor_SetItemIcon(spawned, 454);
@@ -1912,8 +1910,8 @@ void Islets_InitializeRoom2(void) {
     Actor_SetAnimation(10, 4);
     object->priorityFlags |= 2;
     object->motionFlags = 0;
-    object->y = PIXELS(-8);
-    object->terrainHeight = PIXELS(-8);
+    object->y = px(-8);
+    object->terrainHeight = px(-8);
     MapGrid_CopyCellAttributes(9, 1, 4, 1, 9, 10);
     MapGrid_CopyCellAttributes(9, 64, 4, 1, 9, 74);
   } else {
@@ -1930,7 +1928,7 @@ void Islets_InitializeRoom2(void) {
     {
       s32 facing = FACING_SOUTHEAST + FACING_STEP;
 
-      Actor_SetPositionAndFacing(19, PIXELS(234), PIXELS(204), facing);
+      Actor_SetPositionAndFacing(19, px(234), px(204), facing);
     }
     Actor_Get(19)->collisionFlags |= 0x80;
     Actor_SetSpeed(9, 2);
@@ -1949,7 +1947,7 @@ void Islets_InitializeRoom3(void) {
   Actor_SetSpriteFlags(Actor_Get(10), 0);
   Actor_SetAnimation(10, 4);
   if (Event_GetFlag(0xaa3)) {
-    spawned = FieldActor_Create(489, 0x680000, 0x180000, 0xa00000);
+    spawned = FieldActor_Create(489, px(104), px(24), px(160));
     if (spawned != 0) {
       spawned->motionFlags = 0;
       FieldActor_SetItemIcon(spawned, 453);
@@ -2080,7 +2078,7 @@ void Islets_InitializeRoom5(void) {
       {
         s32 a3 = 0x4000;
 
-        Actor_SetPositionAndFacing(9, 0x980000, 0x3000000, a3);
+        Actor_SetPositionAndFacing(9, px(152), px(768), a3);
       }
       Actor_SetPosition(10, 176, 777);
       System_Wait(1);
@@ -2153,7 +2151,7 @@ void Islets_InitializeRoom5(void) {
       {
         s32 a3 = 0x4000;
 
-        Actor_SetPositionAndFacing(9, 0x980000, 0x3000000, a3);
+        Actor_SetPositionAndFacing(9, px(152), px(768), a3);
       }
       Actor_SetPosition(10, 176, 777);
       System_Wait(1);
@@ -2521,7 +2519,7 @@ void Actor_StopAtPushTarget(struct Actor *object) {
   position.x = object->x;
   position.y = object->y;
   position.z = object->z;
-  FieldVector_AddPolarOffset(0x100000, angle, &position);
+  FieldVector_AddPolarOffset(px(16), angle, &position);
   hit = Actor_FindAtCell(&position, 1);
   if (hit != 0) {
     i = 0;
@@ -2625,40 +2623,40 @@ u32 gData_02004198[] = {
     SC_ARG(4),
     SC_SET(SW_SPEED, 0xcccc),
     SC_SET(SW_ACCEL, 0x3333),
-    SC_SET(SW_Y, PIXELS(64)),
+    SC_SET(SW_Y, px(64)),
     SC_LABEL(1),
-    SC_MOVE(PIXELS(352), PIXELS(64), PIXELS(336)),
+    SC_MOVE(px(352), px(64), px(336)),
     SC_SYNC,
-    SC_MOVE(PIXELS(368), PIXELS(64), PIXELS(336)),
+    SC_MOVE(px(368), px(64), px(336)),
     SC_SYNC,
-    SC_MOVE(PIXELS(376), PIXELS(64), PIXELS(328)),
+    SC_MOVE(px(376), px(64), px(328)),
     SC_SYNC,
-    SC_MOVE(PIXELS(376), PIXELS(64), PIXELS(312)),
+    SC_MOVE(px(376), px(64), px(312)),
     SC_SYNC,
-    SC_MOVE(PIXELS(368), PIXELS(64), PIXELS(304)),
+    SC_MOVE(px(368), px(64), px(304)),
     SC_SYNC,
-    SC_MOVE(PIXELS(352), PIXELS(64), PIXELS(304)),
+    SC_MOVE(px(352), px(64), px(304)),
     SC_SYNC,
-    SC_MOVE(PIXELS(344), PIXELS(64), PIXELS(312)),
+    SC_MOVE(px(344), px(64), px(312)),
     SC_SYNC,
-    SC_MOVE(PIXELS(344), PIXELS(64), PIXELS(328)),
+    SC_MOVE(px(344), px(64), px(328)),
     SC_SYNC,
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
 u32 gData_02004274[] = {
     SC_ARG(2),
-    SC_MOVE(PIXELS(234), 0, PIXELS(240)),
+    SC_MOVE(px(234), 0, px(240)),
     SC_SYNC,
-    SC_MOVE(PIXELS(276), 0, PIXELS(222)),
+    SC_MOVE(px(276), 0, px(222)),
     SC_SYNC,
-    SC_MOVE(PIXELS(308), 0, PIXELS(256)),
+    SC_MOVE(px(308), 0, px(256)),
     SC_SYNC,
-    SC_MOVE(PIXELS(252), 0, PIXELS(256)),
+    SC_MOVE(px(252), 0, px(256)),
     SC_SYNC,
-    SC_MOVE(PIXELS(264), 0, PIXELS(208)),
+    SC_MOVE(px(264), 0, px(208)),
     SC_SYNC,
-    SC_MOVE(PIXELS(232), 0, PIXELS(184)),
+    SC_MOVE(px(232), 0, px(184)),
     SC_SYNC,
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -2666,24 +2664,24 @@ u32 gData_02004274[] = {
 s32 gData_02004300[] = {
     SC_ARG(3),
     SC_SE(152),
-    SC_SET(SW_VELOCITY_Y, PIXELS(4)),
-    SC_MOVE_BY(0, 0, PIXELS(-16)),
+    SC_SET(SW_VELOCITY_Y, px(4)),
+    SC_MOVE_BY(0, 0, px(-16)),
     SC_SYNC,
     SC_SE(152),
-    SC_SET(SW_VELOCITY_Y, PIXELS(4)),
-    SC_MOVE_BY(PIXELS(-32), 0, 0),
+    SC_SET(SW_VELOCITY_Y, px(4)),
+    SC_MOVE_BY(px(-32), 0, 0),
     SC_SYNC,
     SC_SE(152),
-    SC_SET(SW_VELOCITY_Y, PIXELS(4)),
-    SC_MOVE_BY(0, 0, PIXELS(32)),
+    SC_SET(SW_VELOCITY_Y, px(4)),
+    SC_MOVE_BY(0, 0, px(32)),
     SC_SYNC,
     SC_SE(152),
-    SC_SET(SW_VELOCITY_Y, PIXELS(4)),
-    SC_MOVE_BY(PIXELS(32), 0, 0),
+    SC_SET(SW_VELOCITY_Y, px(4)),
+    SC_MOVE_BY(px(32), 0, 0),
     SC_SYNC,
     SC_SE(152),
-    SC_SET(SW_VELOCITY_Y, PIXELS(4)),
-    SC_MOVE(PIXELS(280), 0, PIXELS(856)),
+    SC_SET(SW_VELOCITY_Y, px(4)),
+    SC_MOVE(px(280), 0, px(856)),
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(1),
@@ -2695,24 +2693,24 @@ s32 gData_02004300[] = {
 s32 gData_020043f8[] = {
     SC_ARG(3),
     SC_SE(152),
-    SC_SET(SW_VELOCITY_Y, PIXELS(4)),
-    SC_MOVE_BY(0, 0, PIXELS(16)),
+    SC_SET(SW_VELOCITY_Y, px(4)),
+    SC_MOVE_BY(0, 0, px(16)),
     SC_SYNC,
     SC_SE(152),
-    SC_SET(SW_VELOCITY_Y, PIXELS(4)),
-    SC_MOVE_BY(PIXELS(32), 0, 0),
+    SC_SET(SW_VELOCITY_Y, px(4)),
+    SC_MOVE_BY(px(32), 0, 0),
     SC_SYNC,
     SC_SE(152),
-    SC_SET(SW_VELOCITY_Y, PIXELS(4)),
-    SC_MOVE_BY(0, 0, PIXELS(-32)),
+    SC_SET(SW_VELOCITY_Y, px(4)),
+    SC_MOVE_BY(0, 0, px(-32)),
     SC_SYNC,
     SC_SE(152),
-    SC_SET(SW_VELOCITY_Y, PIXELS(4)),
-    SC_MOVE_BY(PIXELS(-32), 0, 0),
+    SC_SET(SW_VELOCITY_Y, px(4)),
+    SC_MOVE_BY(px(-32), 0, 0),
     SC_SYNC,
     SC_SE(152),
-    SC_SET(SW_VELOCITY_Y, PIXELS(4)),
-    SC_MOVE(PIXELS(280), 0, PIXELS(856)),
+    SC_SET(SW_VELOCITY_Y, px(4)),
+    SC_MOVE(px(280), 0, px(856)),
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(1),
@@ -2726,39 +2724,39 @@ u32 gSmokeScript[] = {
 };
 
 u32 gData_02004508[] = {                                                               
-      SC_MOVE(PIXELS(248), 0, PIXELS(686)),                                     
+      SC_MOVE(px(248), 0, px(686)),                                     
       SC_SYNC,                                                                 
-      SC_MOVE(PIXELS(248), 0, PIXELS(768)),                                     
+      SC_MOVE(px(248), 0, px(768)),                                     
       SC_SYNC,                                                                 
-      SC_MOVE(PIXELS(152), 0, PIXELS(768)),                                      
+      SC_MOVE(px(152), 0, px(768)),                                      
       SC_SYNC,                                                                 
       SC_SET(SW_BYTE_63, 1),                                                   
       SC_END,                                                                  
   };
 
 u32 gData_02004554[] = {                                                               
-      SC_ARG(2), SC_MOVE(PIXELS(248), 0, PIXELS(686)),                           
-      SC_SYNC,   SC_MOVE(PIXELS(248), 0, PIXELS(768)),                           
-      SC_SYNC,   SC_MOVE(PIXELS(176), 0, PIXELS(777)),                           
+      SC_ARG(2), SC_MOVE(px(248), 0, px(686)),                           
+      SC_SYNC,   SC_MOVE(px(248), 0, px(768)),                           
+      SC_SYNC,   SC_MOVE(px(176), 0, px(777)),                           
       SC_SYNC,   SC_ARG(1),                                                    
       SC_END,                                                                  
   };
 
 u32 gData_020045a4[] = {                                                               
-      SC_MOVE(PIXELS(248), 0, PIXELS(768)),                                     
+      SC_MOVE(px(248), 0, px(768)),                                     
       SC_SYNC,                                                                 
-      SC_MOVE(PIXELS(248), 0, PIXELS(686)),                                     
+      SC_MOVE(px(248), 0, px(686)),                                     
       SC_SYNC,                                                                 
-      SC_MOVE(PIXELS(248), 0, PIXELS(584)),                                      
+      SC_MOVE(px(248), 0, px(584)),                                      
       SC_SYNC,                                                                 
       SC_SET(SW_BYTE_63, 1),                                                   
       SC_END,                                                                  
   };
 
 u32 gData_020045f0[] = {                                                               
-      SC_ARG(2), SC_MOVE(PIXELS(248), 0, PIXELS(768)),                           
-      SC_SYNC,   SC_MOVE(PIXELS(248), 0, PIXELS(686)),                           
-      SC_SYNC,   SC_MOVE(PIXELS(240), 0, PIXELS(600)),                           
+      SC_ARG(2), SC_MOVE(px(248), 0, px(768)),                           
+      SC_SYNC,   SC_MOVE(px(248), 0, px(686)),                           
+      SC_SYNC,   SC_MOVE(px(240), 0, px(600)),                           
       SC_SYNC,   SC_ARG(1),                                                    
       SC_END,                                                                  
   };

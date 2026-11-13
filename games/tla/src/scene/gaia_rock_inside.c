@@ -664,7 +664,7 @@ void Func_02000b6c(void) {
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);
-      leader->velocityY = PIXELS(6);
+      leader->velocityY = px(6);
       FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
     }
     if (!Event_GetFlag(FLAG_SERPENT_SLAIN)) {
@@ -1627,7 +1627,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
   Actor_SetSpritePriorityDirect(partner, 1);
   Actor_MoveToObject(12, gMainRoutineWork.currentOwner);
   Actor_SetDestination(12, 528, 372);
-  partner->velocityY = PIXELS(6);
+  partner->velocityY = px(6);
   Actor_WaitForMoveById(12);
   Event_Wait(45);
   Actor_FaceActorById(8, gMainRoutineWork.currentOwner, 0);
@@ -1669,7 +1669,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
     if (leader != NULL)
       Actor_SetDestinationById(12, *(s16 *)((u8 *)leader + 10),
                                *(s16 *)((u8 *)leader + 18));
-    partner->velocityY = PIXELS(6);
+    partner->velocityY = px(6);
     Actor_WaitForMoveById(12);
     Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
     if (!GameFlag_Get(FLAG_SERPENT_SLAIN)) {
@@ -1693,7 +1693,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
     if (leader != NULL)
       Actor_SetDestinationById(12, *(s16 *)((u8 *)leader + 10),
                                *(s16 *)((u8 *)leader + 18));
-    partner->velocityY = PIXELS(6);
+    partner->velocityY = px(6);
     Actor_WaitForMoveById(12);
     Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
     Event_End();
@@ -1715,7 +1715,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
   Actor_SetSpritePriorityDirect(partner, 1);
   Actor_MoveToObject(12, gMainRoutineWork.currentOwner);
   Actor_SetDestination(12, 672, 372);
-  partner->velocityY = PIXELS(6);
+  partner->velocityY = px(6);
   Actor_WaitForMoveById(12);
   Event_Wait(45);
   Actor_FaceActorById(9, gMainRoutineWork.currentOwner, 0);
@@ -1757,7 +1757,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
     if (leader != NULL)
       Actor_SetDestinationById(12, *(s16 *)((u8 *)leader + 10),
                                *(s16 *)((u8 *)leader + 18));
-    partner->velocityY = PIXELS(6);
+    partner->velocityY = px(6);
     Actor_WaitForMoveById(12);
     Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
     if (!GameFlag_Get(FLAG_SERPENT_SLAIN)) {
@@ -1781,7 +1781,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
     if (leader != NULL)
       Actor_SetDestinationById(12, *(s16 *)((u8 *)leader + 10),
                                *(s16 *)((u8 *)leader + 18));
-    partner->velocityY = PIXELS(6);
+    partner->velocityY = px(6);
     Actor_WaitForMoveById(12);
     Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
     Event_End();
@@ -1803,7 +1803,7 @@ void GaiaRockInside_PlaceDollOnRoom5Altar(void) {
   Actor_SetSpritePriorityDirect(partner, 1);
   Actor_MoveToObject(14, gMainRoutineWork.currentOwner);
   Actor_SetDestination(14, 336, 396);
-  partner->velocityY = PIXELS(6);
+  partner->velocityY = px(6);
   Actor_WaitForMoveById(14);
   Event_Wait(45);
   Actor_FaceActorById(8, gMainRoutineWork.currentOwner, 0);
@@ -1845,7 +1845,7 @@ void GaiaRockInside_PlaceDollOnRoom5Altar(void) {
     if (leader != NULL)
       Actor_SetDestinationById(14, *(s16 *)((u8 *)leader + 10),
                                *(s16 *)((u8 *)leader + 18));
-    partner->velocityY = PIXELS(6);
+    partner->velocityY = px(6);
     Actor_WaitForMoveById(14);
     Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
     if (!GameFlag_Get(FLAG_SERPENT_SLAIN)) {
@@ -1869,7 +1869,7 @@ void GaiaRockInside_PlaceDollOnRoom5Altar(void) {
     if (leader != NULL)
       Actor_SetDestinationById(14, *(s16 *)((u8 *)leader + 10),
                                *(s16 *)((u8 *)leader + 18));
-    partner->velocityY = PIXELS(6);
+    partner->velocityY = px(6);
     Actor_WaitForMoveById(14);
     Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
     Event_End();
@@ -1974,7 +1974,7 @@ void Func_02002b04(u32 id, s8 mode) {
   object->priorityFlags |= 0x80;
   object->acceleration = px(1) / 16;
   object->speedLimit = px(1);
-  object->y = PIXELS(16);
+  object->y = px(16);
   object->timer = object->x >> 16;
   object->unk66 = object->z >> 16;
   Actor_SetAnimation(id, mode);
@@ -2415,7 +2415,7 @@ s32 Scene_Initialize(void) {
         C2(Actor_SetAnimationSpeed, partner, 0);
         C1(Event_Wait, 15);
         C1(Sound_Play, 215);
-        object = FieldActor_Create(285, 0x1e80000, -0x100000, 0x1590000);
+        object = FieldActor_Create(285, px(488), -px(16), px(345));
         C2(Actor_SetSpriteFlags, object, 0);
         C2(Actor_StartScript, object, gData_0200539c);
         C2(Actor_SelectAnimation, object, 1);
@@ -2426,7 +2426,7 @@ s32 Scene_Initialize(void) {
         C1(Event_Wait, 55);
         C1(Event_Wait, 5);
         C1(Sound_Play, 136);
-        object = FieldActor_Create(412, 0x1e80000, -0x100000, 0x1590000);
+        object = FieldActor_Create(412, px(488), -px(16), px(345));
         C2(Actor_SetSpriteFlags, object, 0);
         C2(Actor_StartScript, object, gData_02005360);
         ((struct GaiaRockAnimation *)object->sprite)->angle = 0x2000;
@@ -2452,7 +2452,7 @@ s32 Scene_Initialize(void) {
           if ((i & 1) == 0)
             dz = 8;
           shards[i] = (struct Actor *)Import_ActorCreate(
-              403, 0x1c80000 + (dx << 16), -0x200000, 0x1660000 + (dz << 16));
+              403, 0x1c80000 + (dx << 16), -px(32), 0x1660000 + (dz << 16));
           C2(Actor_SelectAnimation, shards[i], 2);
           C2(Actor_SetSpriteFlags, shards[i], 0);
           C2(Actor_StartScript, shards[i], gData_0200539c);
@@ -3119,7 +3119,7 @@ s32 Scene_Initialize(void) {
         C2(Actor_SetAnimationSpeed, partner, 0);
         C1(Event_Wait, 15);
         C1(Sound_Play, 215);
-        object = FieldActor_Create(285, 0x1e80000, -0x100000, 0x1590000);
+        object = FieldActor_Create(285, px(488), -px(16), px(345));
         C2(Actor_SetSpriteFlags, object, 0);
         C2(Actor_StartScript, object, gData_0200539c);
         C2(Actor_SelectAnimation, object, 1);
@@ -3130,7 +3130,7 @@ s32 Scene_Initialize(void) {
         C1(Event_Wait, 55);
         C1(Event_Wait, 5);
         C1(Sound_Play, 136);
-        object = FieldActor_Create(412, 0x1e80000, -0x100000, 0x1590000);
+        object = FieldActor_Create(412, px(488), -px(16), px(345));
         C2(Actor_SetSpriteFlags, object, 0);
         C2(Actor_StartScript, object, gData_02005360);
         ((struct GaiaRockAnimation *)object->sprite)->angle = 0x2000;
@@ -3156,7 +3156,7 @@ s32 Scene_Initialize(void) {
           if ((i & 1) == 0)
             dz = 8;
           shards[i] = (struct Actor *)Import_ActorCreate(
-              403, 0x1c80000 + (dx << 16), -0x200000, 0x1660000 + (dz << 16));
+              403, 0x1c80000 + (dx << 16), -px(32), 0x1660000 + (dz << 16));
           C2(Actor_SelectAnimation, shards[i], 2);
           C2(Actor_SetSpriteFlags, shards[i], 0);
           C2(Actor_StartScript, shards[i], gData_0200539c);
@@ -4186,29 +4186,29 @@ u32 gData_020050f4[] = {
 };
 
 s32 gData_02005118[] = {                                                               
-      SC_MOVE_BY(0, 0, PIXELS(2)),                                            
+      SC_MOVE_BY(0, 0, px(2)),                                            
       SC_SYNC,                                                                 
-      SC_MOVE_BY(0, 0, PIXELS(-4)),                                           
+      SC_MOVE_BY(0, 0, px(-4)),                                           
       SC_SYNC,                                                                 
-      SC_MOVE_BY(0, 0, PIXELS(2)),                                            
+      SC_MOVE_BY(0, 0, px(2)),                                            
       SC_SYNC,                                                                 
       SC_WAIT(2),                                                              
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
   };
 
 s32 gData_02005168[] = {                                                               
-      SC_MOVE_BY(0, 0, PIXELS(4)),                                            
+      SC_MOVE_BY(0, 0, px(4)),                                            
       SC_SYNC,                                                                 
-      SC_MOVE_BY(0, 0, PIXELS(-8)),                                           
+      SC_MOVE_BY(0, 0, px(-8)),                                           
       SC_SYNC,                                                                 
-      SC_MOVE_BY(0, 0, PIXELS(4)),                                            
+      SC_MOVE_BY(0, 0, px(4)),                                            
       SC_SYNC,                                                                 
       SC_WAIT(2),                                                              
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
   };
 
 u32 gData_020051b8[] = {
-    SC_MOVE(PIXELS(744), 0, PIXELS(432)),
+    SC_MOVE(px(744), 0, px(432)),
     SC_SYNC,
     SC_ARG(1),
     SC_END,
@@ -4225,7 +4225,7 @@ u32 gData_02005208[] = {
 };
 
 u32 gData_02005218[] = {                                                               
-      SC_MOVE_BY(0, PIXELS(160), 0),                                           
+      SC_MOVE_BY(0, px(160), 0),                                           
       SC_SYNC,                                                                 
       SC_FREE,                                                                 
       SC_END,                                                                  
@@ -4242,14 +4242,14 @@ s32 gData_02005244[] = {
   };
 
 u32 gData_02005264[] = {                                                               
-      SC_MOVE_BY(0, PIXELS(24), 0),                                            
+      SC_MOVE_BY(0, px(24), 0),                                            
       SC_SYNC,                                                                 
       SC_SET(SW_MOTION, 4),                                                    
       SC_END,                                                                  
   };
 
 u32 gData_02005288[] = {                                                               
-      SC_MOVE_BY(0, PIXELS(16), 0),                                            
+      SC_MOVE_BY(0, px(16), 0),                                            
       SC_SYNC,                                                                 
       SC_SET(SW_MOTION, 4),                                                    
       SC_END,                                                                  
@@ -4257,7 +4257,7 @@ u32 gData_02005288[] = {
 
 s32 gData_020052ac[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
-      SC_MOVE_BY(0, PIXELS(-24), 0),                                           
+      SC_MOVE_BY(0, px(-24), 0),                                           
       SC_SYNC,                                                                 
       SC_SET(SW_MOTION, 0),                                                   
       SC_END,                                                                  
@@ -4265,7 +4265,7 @@ s32 gData_020052ac[] = {
 
 s32 gData_020052dc[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
-      SC_MOVE_BY(0, PIXELS(-16), 0),                                           
+      SC_MOVE_BY(0, px(-16), 0),                                           
       SC_SYNC,                                                                 
       SC_SET(SW_MOTION, 3),                                                   
       SC_END,                                                                  
@@ -4389,7 +4389,7 @@ s32 gData_02005544[] = {
 
 u32 gData_0200559c[] = {
     SC_SET(SW_SPEED, 0x4000),
-    SC_MOVE_BY(PIXELS(16), 0, 0),
+    SC_MOVE_BY(px(16), 0, 0),
     SC_SYNC,
     SC_END,
 };
@@ -4398,7 +4398,7 @@ s32 gData_020055c0[] = {
     SC_SET(SW_SPEED, 0x8000),
     SC_SET(SW_COLLISION, 129),
     SC_SET(SW_MOTION, 3),
-    SC_MOVE(PIXELS(472), PIXELS(-32), PIXELS(344)),
+    SC_MOVE(px(472), px(-32), px(344)),
     SC_SYNC,
     SC_SET(SW_COLLISION, 0),
     SC_CALL(Func_020005dc),
@@ -4409,7 +4409,7 @@ s32 gData_02005610[] = {
     SC_SET(SW_SPEED, 0x10000),
     SC_SET(SW_MOTION, 0),
     SC_SET(SW_COLLISION, 0),
-    SC_MOVE_BY(PIXELS(4), PIXELS(8), 0),
+    SC_MOVE_BY(px(4), px(8), 0),
     SC_SYNC,
     SC_LABEL(1),
     SC_CALL(Func_020005f8),
@@ -4422,7 +4422,7 @@ s32 gData_02005610[] = {
     SC_CALL(Func_02000610),
     SC_WAIT(1),
     SC_LOOP(8, SC_TO(2)),
-    SC_MOVE_BY(PIXELS(-4), PIXELS(-8), 0),
+    SC_MOVE_BY(px(-4), px(-8), 0),
     SC_SYNC,
     SC_SET(SW_MOTION, 3),
     SC_END,
@@ -4430,8 +4430,8 @@ s32 gData_02005610[] = {
 
 s32 gData_020056c4[] = {                                                               
       SC_SET(SW_SPEED, 0x20000),                                               
-      SC_MOVE(PIXELS(424), 0, PIXELS(344)),                                      
-      SC_SET(SW_VELOCITY_Y, PIXELS(8)),                                        
+      SC_MOVE(px(424), 0, px(344)),                                      
+      SC_SET(SW_VELOCITY_Y, px(8)),                                        
       SC_SYNC,                                                                 
       SC_CALL(Func_020007f4),                                                  
       SC_WAIT(2),                                                              
@@ -4443,8 +4443,8 @@ s32 gData_020056c4[] = {
 
 s32 gData_02005728[] = {                                                               
       SC_SET(SW_SPEED, 0x20000),                                               
-      SC_MOVE(PIXELS(512), 0, PIXELS(384)),                                      
-      SC_SET(SW_VELOCITY_Y, PIXELS(8)),                                        
+      SC_MOVE(px(512), 0, px(384)),                                      
+      SC_SET(SW_VELOCITY_Y, px(8)),                                        
       SC_SYNC,                                                                 
       SC_CALL(Func_020007f4),                                                  
       SC_WAIT(2),                                                              
@@ -4466,23 +4466,23 @@ s32 gData_0200578c[] = {
     SC_SET(SW_STEERING, 0),
     SC_ARG(9),
     SC_CALL(Func_020006f8),
-    SC_MOVE_BY(PIXELS(16), 0, 0),
+    SC_MOVE_BY(px(16), 0, 0),
     SC_SYNC,
     SC_SET(SW_SPEED, 0x10000),
     SC_SET(SW_STEERING, 1),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_ARG(2),
-    SC_MOVE_BY(0, 0, PIXELS(16)),
+    SC_MOVE_BY(0, 0, px(16)),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_WEST),
-    SC_MOVE_BY(PIXELS(-16), 0, 0),
+    SC_MOVE_BY(px(-16), 0, 0),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTH),
     SC_SET(SW_SPEED, 0x8000),
     SC_CALL(Func_02000718),
     SC_ARG(7),
     SC_WAIT(15),
-    SC_MOVE(PIXELS(472), 0, PIXELS(360)),
+    SC_MOVE(px(472), 0, px(360)),
     SC_SYNC,
     SC_WAIT(10),
     SC_ARG(0),
@@ -4499,7 +4499,7 @@ s32 gData_0200578c[] = {
     SC_SET(SW_SPEED, 0x10000),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_ARG(2),
-    SC_MOVE(PIXELS(472), 0, PIXELS(456)),
+    SC_MOVE(px(472), 0, px(456)),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_WEST),
     SC_ARG(0),

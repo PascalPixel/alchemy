@@ -303,7 +303,7 @@ nextSpark:
   VramCache_FreeEntry(entry);
   Heap_Release(table);
   FieldCamera_MoveTo(488, CAMERA_KEEP, 390, 1);
-  Actor_SetPositionAndFacing(14, 0xf80000, 0x1e00000, FACING_EAST);
+  Actor_SetPositionAndFacing(14, px(248), px(480), FACING_EAST);
   Loho_DrawBrokenWall();
   MapGrid_SetShake(0, 0, 1);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
@@ -753,15 +753,15 @@ s32 Scene_Initialize(void) {
   }
   if (Event_GetFlag(0xa5f)) {
     Actor_SetPosition(20, 0, 0);
-    Actor_SetPositionAndFacing(14, PIXELS(248), PIXELS(480), FACING_EAST);
+    Actor_SetPositionAndFacing(14, px(248), px(480), FACING_EAST);
     if (!Event_GetFlag(0x90a)) {
       Actor_SetPosition(17, 0, 0);
       Actor_SetPosition(16, 0, 0);
       Actor_SetPosition(18, 0, 0);
     } else {
-      Loho_PlaceFacing(16, PIXELS(459), PIXELS(254), FACING_NORTHEAST);
-      Loho_PlaceFacing(18, PIXELS(442), PIXELS(203), FACING_WEST);
-      Loho_PlaceFacing(17, PIXELS(490), PIXELS(188), FACING_SOUTHEAST);
+      Loho_PlaceFacing(16, px(459), px(254), FACING_NORTHEAST);
+      Loho_PlaceFacing(18, px(442), px(203), FACING_WEST);
+      Loho_PlaceFacing(17, px(490), px(188), FACING_SOUTHEAST);
       Actor_GetById(17)->timer = Actor_GetById(17)->x >> 16;
       Actor_GetById(17)->unk66 = Actor_GetById(17)->z >> 16;
       Actor_SetScript(17, 2);
@@ -791,7 +791,7 @@ u32 gLoho_FirstMinerGoesToWall[] = {
 s32 gLoho_SecondMinerStepsUp[] = {
     SC_WAIT(50),
     SC_ARG(2),
-    SC_MOVE_BY(PIXELS(4), 0, PIXELS(-40)),
+    SC_MOVE_BY(px(4), 0, px(-40)),
     SC_SYNC,
     SC_ARG(1),
     SC_END,
@@ -800,9 +800,9 @@ s32 gLoho_SecondMinerStepsUp[] = {
 s32 gLoho_ThirdMinerStepsUp[] = {
     SC_WAIT(70),
     SC_ARG(2),
-    SC_MOVE_BY(0, 0, PIXELS(-40)),
+    SC_MOVE_BY(0, 0, px(-40)),
     SC_SYNC,
-    SC_MOVE_XZ(PIXELS(512), PIXELS(303)),
+    SC_MOVE_XZ(px(512), px(303)),
     SC_SYNC,
     SC_ARG(1),
     SC_END,
@@ -816,12 +816,12 @@ u32 gLoho_FirstMinerWalksBack[] = {
 };
 
 u32 gLoho_FirstMinerFetchesCannon[] = {
-    SC_POSITION(PIXELS(583), 0, PIXELS(327)),
+    SC_POSITION(px(583), 0, px(327)),
     SC_SET(SW_MOTION, 0),
-    SC_POSITION(PIXELS(583), 0, PIXELS(300)),
-    SC_MOVE_XZ(PIXELS(583), PIXELS(327)),
+    SC_POSITION(px(583), 0, px(300)),
+    SC_MOVE_XZ(px(583), px(327)),
     SC_SYNC,
-    SC_MOVE_XZ(PIXELS(554), PIXELS(332)),
+    SC_MOVE_XZ(px(554), px(332)),
     SC_SYNC,
     SC_ARG(1),
     SC_END,
@@ -829,16 +829,16 @@ u32 gLoho_FirstMinerFetchesCannon[] = {
 
 u32 gLoho_FirstMinerReturns[] = {
     SC_ARG(2),
-    SC_MOVE_XZ(PIXELS(472), PIXELS(331)),
+    SC_MOVE_XZ(px(472), px(331)),
     SC_SYNC,
-    SC_MOVE_XZ(PIXELS(472), PIXELS(361)),
+    SC_MOVE_XZ(px(472), px(361)),
     SC_SYNC,
     SC_ARG(1),
     SC_END,
 };
 
 s32 gLoho_ForemanComes[] = {
-    SC_MOVE_BY(0, PIXELS(2), 0),
+    SC_MOVE_BY(0, px(2), 0),
     SC_SYNC,
     SC_END,
     SC_ARG(5),
@@ -866,7 +866,7 @@ u32 gLoho_VillagerPaces[] = {
 
 u32 gLoho_VillagerReturns[] = {
     SC_ARG(2),
-    SC_MOVE(PIXELS(128), 0, PIXELS(120)),
+    SC_MOVE(px(128), 0, px(120)),
     SC_SYNC,
     SC_ARG(1),
     SC_LABEL(1),
@@ -885,7 +885,7 @@ u32 gLoho_VillagerReturns[] = {
 u32 gLoho_VillagerMovesWest[] = {                                                               
       SC_SET(SW_SPEED, 0xe666),                                                
       SC_ARG(2),                                                               
-      SC_MOVE(PIXELS(128), 0, PIXELS(144)),                                      
+      SC_MOVE(px(128), 0, px(144)),                                      
       SC_SYNC,                                                                 
       SC_ARG(1),                                                               
       SC_END,                                                                  
@@ -894,7 +894,7 @@ u32 gLoho_VillagerMovesWest[] = {
 u32 gLoho_VillagerMovesNorth[] = {                                                               
       SC_SET(SW_SPEED, 0xe666),                                                
       SC_ARG(2),                                                               
-      SC_MOVE(PIXELS(159), 0, PIXELS(128)),                                      
+      SC_MOVE(px(159), 0, px(128)),                                      
       SC_SYNC,                                                                 
       SC_ARG(1),                                                               
       SC_END,                                                                  

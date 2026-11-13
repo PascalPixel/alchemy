@@ -378,12 +378,12 @@ void Func_02000808(void) {
     FieldEvent_ResolvePendingActions(0);
     Actor_SetSpriteFlags(Actor_Get(22), 0);
     speed = 0x4000;
-    Actor_SetPositionAndFacing(22, PIXELS(360), PIXELS(199), speed);
+    Actor_SetPositionAndFacing(22, px(360), px(199), speed);
     FieldCamera_MoveTo(359, CAMERA_KEEP, 220, 1);
     FieldCamera_WaitForArrival();
     Func_020007a0(22);
     FieldEvent_Wait(30);
-    Actor_SetPositionAndFacing(21, PIXELS(360), PIXELS(199), speed);
+    Actor_SetPositionAndFacing(21, px(360), px(199), speed);
     Actor_WalkByAndWait(21, 0, 16);
     Func_020007d4(22);
     FieldEvent_SetMessageId((s32)MsgGaroh12);
@@ -480,7 +480,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(0x91f)) {
       s32 angle = 0x4000;
 
-      Actor_SetPositionAndFacing(10, PIXELS(328), PIXELS(162), angle);
+      Actor_SetPositionAndFacing(10, px(328), px(162), angle);
     }
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
     FieldEffect_StartBlankOverlay(0);
@@ -605,7 +605,7 @@ void Func_02000e78(s32 id, struct Actor *object) {
   object->motionFlags = 0;
   saved = id;
   for (i = 16; i > 0; i--) {
-    object->y -= PIXELS(2);
+    object->y -= px(2);
     FieldEvent_Wait(1);
   }
   Event_PlaySound(SE_WHOOSH);
@@ -2924,8 +2924,8 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 s32 gData_0200552c[] = {
     SC_SET(SW_MOTION, 0),
-    SC_ADD(SW_Y, PIXELS(-4)),
-    SC_ADD(SW_X, PIXELS(6)),
+    SC_ADD(SW_Y, px(-4)),
+    SC_ADD(SW_X, px(6)),
     SC_SET(SW_SCALE_X, 0xcccc),
     SC_SET(SW_SCALE_Y, 0xcccc),
     SC_CALL(Garoh_ClearScriptedActorSpriteFlags),

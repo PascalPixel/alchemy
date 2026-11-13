@@ -453,8 +453,8 @@ void MadraCatacombs_RockChestWithBookshelf(void) {
   animation->frame = ((struct AnimationRecord18 *)lever->sprite)->frame;
   if (Event_GetFlag(FLAG_SCENE_TEMP_04) != 0 && animation->frame == 0) {
     Event_PlaySound(SE_535);
-    rock->x += PIXELS(-2);
-    rock->velocityY = PIXELS(2);
+    rock->x += px(-2);
+    rock->velocityY = px(2);
     Event_ClearFlag(FLAG_SCENE_TEMP_04);
   }
   if (animation->frame != 0)
@@ -654,8 +654,8 @@ void MadraCatacombs_SetUpBookshelfRoom(void) {
     object = Actor_GetById(64);
     object->collisionFlags = 8;
     object->motionFlags = 2;
-    object->y = PIXELS(32);
-    object->terrainHeight = PIXELS(32);
+    object->y = px(32);
+    object->terrainHeight = px(32);
     object->update = MadraCatacombs_RockChestWithBookshelf;
     Actor_GetById(8)->scaleY = 0xcccc;
   }
@@ -676,7 +676,7 @@ void MadraCatacombs_SetUpTabletRoom(void) {
   right->y = 0;
   if (Event_GetFlag(0x8c9) != 0) {
     if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
-      left->x += PIXELS(-12);
+      left->x += px(-12);
       right->x += px(12);
     }
     MadraCatacombs_LightFlames();

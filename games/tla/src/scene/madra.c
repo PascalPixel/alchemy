@@ -329,12 +329,12 @@ void Madra_WorkerBlocksHole(void) {
   } else if (!Event_GetFlag(FLAG_SCENE_TEMP_80)) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    Madra_PlaceFacing(26, PIXELS(744), PIXELS(257), FACING_SOUTH);
-    Actor_GetById(4)->velocityY = PIXELS(5);
+    Madra_PlaceFacing(26, px(744), px(257), FACING_SOUTH);
+    Actor_GetById(4)->velocityY = px(5);
     Actor_SetSpeed(4, 2);
     Actor_WalkToAndWait(4, 720, 244);
     Actor_FaceDirectionAndWait(4, FACING_SOUTHEAST);
-    Madra_PlaceFacing(4, PIXELS(720), PIXELS(244), FACING_SOUTHEAST);
+    Madra_PlaceFacing(4, px(720), px(244), FACING_SOUTHEAST);
     Event_SetFlag(FLAG_SCENE_TEMP_80);
     Madra_AskComingThroughHole();
     Event_End();
@@ -346,12 +346,12 @@ void Madra_WorkerBlocksSealedHole(void) {
   if (!Event_GetFlag(FLAG_SCENE_TEMP_80)) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    Madra_PlaceFacing(26, PIXELS(744), PIXELS(256), FACING_SOUTH);
-    Actor_GetById(4)->velocityY = PIXELS(5);
+    Madra_PlaceFacing(26, px(744), px(256), FACING_SOUTH);
+    Actor_GetById(4)->velocityY = px(5);
     Actor_SetSpeed(4, 2);
     Actor_WalkToAndWait(4, 720, 244);
     Actor_FaceDirectionAndWait(4, FACING_SOUTHEAST);
-    Madra_PlaceFacing(4, PIXELS(720), PIXELS(244), FACING_SOUTHEAST);
+    Madra_PlaceFacing(4, px(720), px(244), FACING_SOUTHEAST);
     Event_SetFlag(FLAG_SCENE_TEMP_80);
     Madra_AskComingThroughSealedHole();
     Event_End();
@@ -706,13 +706,13 @@ void Madra_GrantPassageToOsenia(void) {
     return;
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveWithinMapBounds(PIXELS(124), -1, PIXELS(420), 1);
+  FieldCamera_MoveWithinMapBounds(px(124), -1, px(420), 1);
   FieldCamera_WaitForArrival();
   Actor_SetSpeed(33, 0.8);
   Actor_SetSpeed(34, 0.8);
   Event_StartScreenTransition();
   Actor_SetPosition(33, 172, 332);
-  Actor_SetHorizontalPositionWithTerrain(34, PIXELS(172), PIXELS(324));
+  Actor_SetHorizontalPositionWithTerrain(34, px(172), px(324));
   Event_SetMessageId(MsgHasEscaped2);
   Event_WaitTransitionFrames();
   Event_ShowMessageThenWait(33, 0, 10);

@@ -398,8 +398,8 @@ void Kibombo_MeetPiers(void) {
   Event_ResolvePendingActions(0);
   Kibombo_CamMove(-1, -1, -1, 0);
   FieldCamera_GetActor()->motionFlags = 0;
-  Camera_SetSpeedParameters(0x9999, 0x1333);
-  FieldCamera_MoveWithinMapBounds(PIXELS(88), -1, PIXELS(392), 1);
+  FieldCamera_SetSpeed(0.6);
+  FieldCamera_MoveWithinMapBounds(px(88), -1, px(392), 1);
   Kibombo_ObjSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Kibombo_ObjWalk(gMainRoutineWork.currentOwner, 72, 392);
   Kibombo_ObjWalk(gMainRoutineWork.currentOwner, 88, 392);
@@ -522,8 +522,8 @@ void Kibombo_PiersThanksParty(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-  Camera_SetSpeedParameters(0x26666, 0x4ccc);
-  FieldCamera_MoveWithinMapBounds(PIXELS(280), -1, PIXELS(88), 1);
+  FieldCamera_SetSpeed(2.4);
+  FieldCamera_MoveWithinMapBounds(px(280), -1, px(88), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Event_SetMessageId((s32)MsgYouVeCome);
@@ -560,8 +560,8 @@ void Func_02000d74(void) {
   Actor_ArmCallback(26, FACING_EAST, 0);
   Actor_ArmCallback(5, FACING_EAST, 0);
   Actor_ArmCallback(6, FACING_EAST, 10);
-  Camera_SetSpeedParameters(0x4cccc, 0x9999);
-  Kibombo_CamMove(PIXELS(264), -1, PIXELS(388), 1);
+  FieldCamera_SetSpeed(4.8);
+  Kibombo_CamMove(px(264), -1, px(388), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(40);
   Kibombo_ObjArm(17, FACING_SOUTHEAST + FACING_STEP, 20);
@@ -570,10 +570,9 @@ void Func_02000d74(void) {
   Sound_Play(MUS_026);
   Actor_SetSpriteFlags(Actor_GetById(27), 0);
   Actor_GetById(27)->motionFlags = 0;
-  Actor_SetPositionAndResetMotion(Actor_GetById(27), PIXELS(265), PIXELS(24),
-                                  PIXELS(344));
-  Camera_SetSpeedParameters(0x6666, 0xccc);
-  FieldCamera_MoveWithinMapBounds(PIXELS(264), -1, PIXELS(340), 1);
+  Actor_SetPositionAndResetMotion(Actor_GetById(27), px(265), px(24), px(344));
+  FieldCamera_SetSpeed(0.4);
+  FieldCamera_MoveWithinMapBounds(px(264), -1, px(340), 1);
   Kibombo_ObjSpeed(17, 0x3333, 0x1999);
   Kibombo_ObjWalk(17, 264, 374);
   Kibombo_TaskAdd(Func_02002eb0, 0x480);
@@ -613,8 +612,8 @@ void Func_02000d74(void) {
   }
   Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
   Event_ShowMessageAndWait(17, 0);
-  Camera_SetSpeedParameters(0x4cccc, 0x9999);
-  FieldCamera_MoveWithinMapBounds(PIXELS(264), PIXELS(16), PIXELS(420), 1);
+  FieldCamera_SetSpeed(4.8);
+  FieldCamera_MoveWithinMapBounds(px(264), px(16), px(420), 1);
   Kibombo_ObjSpeed(17, 0x19999, 0xcccc);
   Actor_WalkToAndWaitById(17, 264, 392);
   Event_Wait(20);
@@ -623,7 +622,7 @@ void Func_02000d74(void) {
   Sound_Play(MUS_011);
   Func_020032b0();
   Event_Wait(80);
-  FieldCamera_MoveWithinMapBounds(PIXELS(88), PIXELS(32), PIXELS(392), 1);
+  FieldCamera_MoveWithinMapBounds(px(88), px(32), px(392), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(40);
   Event_ShowMessageAndWait(7, 0);
@@ -650,8 +649,8 @@ void Func_02000d74(void) {
   Kibombo_ObjSpeed(26, 0xcccc, 0x6666);
   Actor_WalkToById(26, 104, 368);
   Event_Wait(20);
-  Camera_SetSpeedParameters(0xcccc, 0x1999);
-  FieldCamera_MoveWithinMapBounds(PIXELS(111), -1, PIXELS(356), 1);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveWithinMapBounds(px(111), -1, px(356), 1);
   Actor_WaitForMoveById(26);
   Actor_SetModeById(26, 1);
   Kibombo_ObjArm(26, FACING_NORTH + FACING_STEP, 40);
@@ -752,7 +751,7 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_SetSpeed(6, 0.8);
   Actor_SetPosition(26, 56, 372);
   Actor_SetPosition(5, 56, 372);
-  Actor_SetHorizontalPositionWithTerrain(6, PIXELS(56), PIXELS(372));
+  Actor_SetHorizontalPositionWithTerrain(6, px(56), px(372));
   wait(1);
   Actor_SetMovementTypeById(26, gData_02005f14);
   Actor_SetMovementTypeById(5, gData_02005f58);
@@ -1078,7 +1077,7 @@ void Kibombo_DeadEndByTheStatue(void) {
   Actor_FaceDirection(7, FACING_WEST, 0);
   Event_SetMessageId(MsgItSADead);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 7, 0);
-  Camera_SetSpeedParameters(0x26666, 0x4ccc);
+  FieldCamera_SetSpeed(2.4);
   ((struct Actor *)((s32)FieldCamera_GetActor()))->motionFlags = done;
   FieldCamera_MoveTo(200, CAMERA_KEEP, 180, 1);
   FieldCamera_WaitForArrival();
@@ -1109,7 +1108,7 @@ void Kibombo_DeadEndByTheStatue(void) {
   Actor_FaceDirection(26, FACING_SOUTHEAST + FACING_STEP, 20);
   Actor_FaceDirection(26, FACING_SOUTH + FACING_STEP, 40);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 26, 0);
-  FieldCamera_MoveWithinMapBounds(PIXELS(268), -1, PIXELS(188), 1);
+  FieldCamera_MoveWithinMapBounds(px(268), -1, px(188), 1);
   Actor_WalkToAndWaitById(26, 218, 156);
   Actor_ArmCallback(26, FACING_EAST, 40);
   Actor_Stop(gMainRoutineWork.currentOwner);
@@ -1153,7 +1152,7 @@ void Kibombo_DeadEndByTheStatue(void) {
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x6666, 0x3333);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.4);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 280, 188);
   Actor_SetModeById(26, 1);
   Event_Wait(10);
@@ -1203,7 +1202,7 @@ ask:
   Actor_WatchAndSetScript(26, gMainRoutineWork.currentOwner);
   Actor_WatchAndSetScript(7, gMainRoutineWork.currentOwner);
   FieldCamera_MoveTo(268, CAMERA_KEEP, 164, 1);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 280, 120);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_WEST);
   Event_SetFlag(FLAG_SCENE_TEMP_20);
@@ -1263,7 +1262,7 @@ ask:
   Event_ShowMessageAndWait(5, 0);
   Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessageAndWait(26, 0);
-  FieldCamera_MoveWithinMapBounds(PIXELS(268), -1, PIXELS(188), 1);
+  FieldCamera_MoveWithinMapBounds(px(268), -1, px(188), 1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   Actor_FaceDirection(6, FACING_WEST, 0);
   Actor_ArmCallback(7, FACING_EAST, 0);
@@ -1415,8 +1414,7 @@ void Func_02002d64(void) {
 void Func_02002de0(void) {
   struct Actor **slot = &gData_02007950;
   s32 zero = 0;
-  struct Actor *object =
-      Import_ActorCreate(0x1e9, 0x1090000, 0x240000, 0x1580000);
+  struct Actor *object = Import_ActorCreate(0x1e9, px(265), px(36), px(344));
 
   *slot = object;
   if (object != 0) {
@@ -1444,7 +1442,7 @@ void Func_02002e60(void) {
     Actor_SetHorizontalPositionWithTerrain(29, 0, 0);
     Actor_SetSpritePriority(30, 2);
   } else {
-    Kibombo_ObjSetPos(Actor_GetById(29), PIXELS(120), 0, PIXELS(168));
+    Kibombo_ObjSetPos(Actor_GetById(29), px(120), 0, px(168));
     Actor_SetSpritePriority(30, 3);
   }
 }
@@ -1454,7 +1452,7 @@ void Func_02002eb0(void) {
     struct Actor *object = Actor_GetById(27);
 
     Actor_SetPositionAndResetMotion(gData_02007950, object->x,
-                                    object->y + PIXELS(12), object->z);
+                                    object->y + px(12), object->z);
   }
 }
 
@@ -1489,8 +1487,7 @@ void Func_02002f34(void) {
   s32 phase = gFrameCount & 3;
 
   if (phase == 0) {
-    struct Actor *object =
-        Import_ActorCreate(0x16e, 0x1080000, 0x200000, 0x13c0000);
+    struct Actor *object = Import_ActorCreate(0x16e, px(264), px(32), px(316));
     s32 value;
 
     if (object != 0) {
@@ -1526,8 +1523,7 @@ void Func_02002fec(struct Actor *object) {
 
 void Func_02003030(void) {
   if ((gFrameCount & 63) == 0) {
-    struct Actor *object =
-        Import_ActorCreate(0x11d, 0x580000, 0x100000, 0x13a0000);
+    struct Actor *object = Import_ActorCreate(0x11d, px(88), px(16), px(314));
     u8 *part;
     s32 mask;
 
@@ -1635,7 +1631,7 @@ void Func_0200324c(void) {
     zero = 0;
     object->motionFlags = zero;
   }
-  Actor_GetById(15)->y = PIXELS(32);
+  Actor_GetById(15)->y = px(32);
   Actor_GetById(16)->y = zero;
   Scene_RunUnlessFlag();
 }
@@ -1844,9 +1840,9 @@ void Func_02003610(void) {
 void Func_02003640(s32 open, s32 hide) {
   if (open != 0) {
     Kibombo_MapCopy(49, 37, 79, 15, 3, 2);
-    Kibombo_ObjSetPos(Actor_GetById(12), PIXELS(253), PIXELS(32), PIXELS(289));
-    Actor_SetPositionAndResetMotion(Actor_GetById(13), PIXELS(275), PIXELS(32),
-                                    PIXELS(289));
+    Kibombo_ObjSetPos(Actor_GetById(12), px(253), px(32), px(289));
+    Actor_SetPositionAndResetMotion(Actor_GetById(13), px(275), px(32),
+                                    px(289));
     if (hide != 0) {
       Actor_SetModeById(12, 0);
       Actor_SetModeById(13, 0);
@@ -1866,8 +1862,8 @@ void Func_020036e0(s32 open, s32 mode) {
     MapGrid_CopyCellPictureIndicesRect(41, 38, 79, 16, 3, 3);
     Kibombo_BlendStart(12, 21, 1, 1, 16, 22);
     if (mode != 0)
-      Actor_SetPositionAndResetMotion(Actor_GetById(14), PIXELS(264),
-                                      PIXELS(32), PIXELS(308));
+      Actor_SetPositionAndResetMotion(Actor_GetById(14), px(264), px(32),
+                                      px(308));
     switch (mode) {
     case 0:
       Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
@@ -1886,11 +1882,11 @@ void Func_020036e0(s32 open, s32 mode) {
       break;
     case 5:
       Actor_SetModeById(14, 6);
-      Actor_GetById(14)->y -= PIXELS(34);
+      Actor_GetById(14)->y -= px(34);
       break;
     case 6:
       Actor_SetModeById(14, 7);
-      Actor_GetById(14)->y -= PIXELS(34);
+      Actor_GetById(14)->y -= px(34);
       break;
     }
   } else {
@@ -1975,7 +1971,7 @@ void Func_02003948(void) {
   Event_ResolvePendingActions(0);
   Kibombo_CamMove(-1, -1, -1, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   x = leader->x;
   px = x >> 16;
   Actor_SetMoveTarget(leader, ((8 - px % 16) << 16) + x, leader->y, leader->z);
@@ -1999,12 +1995,12 @@ void Func_02003a08(s32 x, s32 z) {
   Event_Start();
   Event_ResolvePendingActions(0);
   leader->motionFlags = 0;
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, x, z);
   Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_NORTH);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 13);
-  Actor_SetMoveTarget(leader, x << 16, PIXELS(-12), z << 16);
+  Actor_SetMoveTarget(leader, x << 16, px(-12), z << 16);
   Actor_WaitForMove(leader);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 10);
   Sound_Play(SE_MAP_EXIT);
@@ -2101,7 +2097,7 @@ void Func_02003c84(void) {
   Kibombo_FadeTo(0x7fff, 0);
   PaletteFade_StartInterpolation(1);
   wait(1);
-  Kibombo_CamMove(146 << 18, -1, PIXELS(248), 0);
+  Kibombo_CamMove(146 << 18, -1, px(248), 0);
   Map_CenterOnFollowedPoint();
   wait(1);
   Kibombo_FadeTo(0x10000, 0);
@@ -2116,7 +2112,7 @@ void Func_02003c84(void) {
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
   PaletteFade_StartInterpolation(1);
   wait(1);
-  FieldCamera_MoveWithinMapBounds(PIXELS(248), -1, 134 << 18, 0);
+  FieldCamera_MoveWithinMapBounds(px(248), -1, 134 << 18, 0);
   Map_CenterOnFollowedPoint();
   wait(1);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
@@ -2144,7 +2140,7 @@ void Kibombo_CeremonyBegins(void) {
   Sound_Play(SOUND_FADE_OUT_BGM);
   Kibombo_ObjSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Kibombo_ObjWalk(gMainRoutineWork.currentOwner, 86, 455);
-  Actor_SetHorizontalPositionWithTerrain(26, PIXELS(86), PIXELS(455));
+  Actor_SetHorizontalPositionWithTerrain(26, px(86), px(455));
   wait(1);
   Kibombo_ObjSpeed(26, 0xcccc, 0x6666);
   Kibombo_ObjWalk(26, 72, 455);
@@ -2152,18 +2148,18 @@ void Kibombo_CeremonyBegins(void) {
   Kibombo_ObjArm(gMainRoutineWork.currentOwner, FACING_WEST, 40);
   Kibombo_ObjArm(26, FACING_NORTH + FACING_STEP, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
-  Camera_SetSpeedParameters(0x26666, 0x4ccc);
-  Kibombo_CamMove(PIXELS(264), PIXELS(16), PIXELS(420), 1);
+  FieldCamera_SetSpeed(2.4);
+  Kibombo_CamMove(px(264), px(16), px(420), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(40);
-  Camera_SetSpeedParameters(0x6666, 0xccc);
-  Kibombo_CamMove(PIXELS(264), PIXELS(32), PIXELS(320), 1);
+  FieldCamera_SetSpeed(0.4);
+  Kibombo_CamMove(px(264), px(32), px(320), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(80);
   Actor_Jump(17, 4, 40);
   Event_ShowMessageAndWait(17, 0);
   Kibombo_CamSpeed(0x4cccc, 0x9999);
-  Kibombo_CamMove(PIXELS(264), PIXELS(32), PIXELS(400), 1);
+  Kibombo_CamMove(px(264), px(32), px(400), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Kibombo_ObjArm(17, FACING_SOUTHEAST + FACING_STEP, 20);
@@ -2171,31 +2167,31 @@ void Kibombo_CeremonyBegins(void) {
   Sound_Play(MUS_011);
   GameFlag_Set(0x8f2);
   Sound_Play(SE_BOSS_ROAR);
-  Actor_GetById(18)->velocityY = PIXELS(4);
+  Actor_GetById(18)->velocityY = px(4);
   wait(5);
-  Actor_GetById(19)->velocityY = PIXELS(4);
+  Actor_GetById(19)->velocityY = px(4);
   wait(5);
-  Actor_GetById(20)->velocityY = PIXELS(4);
+  Actor_GetById(20)->velocityY = px(4);
   wait(5);
-  Actor_GetById(21)->velocityY = PIXELS(4);
+  Actor_GetById(21)->velocityY = px(4);
   wait(5);
-  Actor_GetById(22)->velocityY = PIXELS(4);
+  Actor_GetById(22)->velocityY = px(4);
   wait(5);
-  Actor_GetById(23)->velocityY = PIXELS(4);
+  Actor_GetById(23)->velocityY = px(4);
   wait(5);
-  Actor_GetById(24)->velocityY = PIXELS(4);
+  Actor_GetById(24)->velocityY = px(4);
   wait(5);
-  Actor_GetById(25)->velocityY = PIXELS(4);
+  Actor_GetById(25)->velocityY = px(4);
   wait(20);
   Actor_ArmCallback(17, FACING_NORTH + FACING_STEP, 20);
   Func_020032b0();
   Event_Wait(40);
-  Camera_SetSpeedParameters(0x3333, 0x666);
-  FieldCamera_MoveWithinMapBounds(PIXELS(264), 0, PIXELS(400), 1);
+  FieldCamera_SetSpeed(0.2);
+  FieldCamera_MoveWithinMapBounds(px(264), 0, px(400), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(200);
-  Camera_SetSpeedParameters(0x4cccc, 0x9999);
-  FieldCamera_MoveWithinMapBounds(PIXELS(111), PIXELS(32), PIXELS(456), 1);
+  FieldCamera_SetSpeed(4.8);
+  FieldCamera_MoveWithinMapBounds(px(111), px(32), px(456), 1);
   FieldCamera_WaitForArrival();
   Actor_ArmCallback(26, FACING_EAST, 0);
   Event_ShowMessageAndWait(26, 0);
@@ -2228,7 +2224,7 @@ void Kibombo_PresentOrbToGabomba(void) {
   Event_Wait(40);
   Sound_Play(SOUND_FADE_OUT_BGM);
   Kibombo_CamSpeed(0xcccc, 0x1999);
-  Kibombo_CamMove(PIXELS(264), -1, PIXELS(388), 1);
+  Kibombo_CamMove(px(264), -1, px(388), 1);
   FieldCamera_WaitForArrival();
   Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
   Motion_SetModeAndWaitAnimation(17, 3);
@@ -2237,10 +2233,9 @@ void Kibombo_PresentOrbToGabomba(void) {
   Sound_Play(MUS_026);
   Actor_SetSpriteFlags(Actor_GetById(27), 0);
   Actor_GetById(27)->motionFlags = 0;
-  Actor_SetPositionAndResetMotion(Actor_GetById(27), PIXELS(265), PIXELS(24),
-                                  PIXELS(344));
-  Camera_SetSpeedParameters(0x6666, 0xccc);
-  FieldCamera_MoveWithinMapBounds(PIXELS(264), -1, PIXELS(340), 1);
+  Actor_SetPositionAndResetMotion(Actor_GetById(27), px(265), px(24), px(344));
+  FieldCamera_SetSpeed(0.4);
+  FieldCamera_MoveWithinMapBounds(px(264), -1, px(340), 1);
   Kibombo_ObjSpeed(17, 0x3333, 0x1999);
   Actor_WalkToAndWaitById(17, 264, 374);
   wait(1);
@@ -2277,8 +2272,7 @@ void Kibombo_GabombaNotPleased(void) {
   FieldCamera_GetActor()->motionFlags = 0;
   Actor_SetSpriteFlags(Actor_GetById(27), 0);
   Actor_GetById(27)->motionFlags = 0;
-  Actor_SetPositionAndResetMotion(Actor_GetById(27), PIXELS(265), PIXELS(24),
-                                  PIXELS(344));
+  Actor_SetPositionAndResetMotion(Actor_GetById(27), px(265), px(24), px(344));
   Func_02003640(1, 1);
   wait(1);
   if (gData_02007950 != 0) {
@@ -2389,7 +2383,7 @@ void Func_02004524(void) {
 extern s32 gData_020061a8[];
 
 void Func_020045d0(void) {
-  Camera_SetSpeedParameters(0x4cccc, 0x9999);
+  FieldCamera_SetSpeed(4.8);
   Kibombo_CamMove(132 << 17, 0, 200 << 17, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
@@ -2634,10 +2628,10 @@ void Kibombo_CeremonyEnds(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Kibombo_CamMove(-1, -1, -1, 0);
-  FieldCamera_MoveWithinMapBounds(PIXELS(384), -1, PIXELS(601), 0);
+  FieldCamera_MoveWithinMapBounds(px(384), -1, px(601), 0);
   wait(1);
   Actor_SetHorizontalPositionAndAngleWithTerrain(
-      gMainRoutineWork.currentOwner, PIXELS(370), PIXELS(636), FACING_NORTH);
+      gMainRoutineWork.currentOwner, px(370), px(636), FACING_NORTH);
   Map_CenterOnFollowedPoint();
   wait(1);
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
@@ -2654,7 +2648,7 @@ void Kibombo_CeremonyEnds(void) {
   Motion_SetModeAndWaitAnimation(8, 3);
   Kibombo_ObjArm(10, FACING_NORTHWEST + FACING_STEP, 20);
   Kibombo_ObjArm(10, FACING_NORTH + FACING_STEP, 20);
-  Actor_GetById(10)->velocityY = PIXELS(3);
+  Actor_GetById(10)->velocityY = px(3);
   Event_Wait(40);
   Actor_SetModeById(9, 3);
   Motion_SetModeAndWaitAnimation(8, 3);
@@ -2753,7 +2747,7 @@ void Func_020050ac(void) {
 }
 
 void Kibombo_InitializeRoom1(void) {
-  Actor_SetHorizontalPositionWithTerrain(11, PIXELS(88), PIXELS(314));
+  Actor_SetHorizontalPositionWithTerrain(11, px(88), px(314));
   Actor_SetSpriteFlags(Actor_GetById(11), 0);
   Actor_GetById(11)->scaleY = Q16_ONE / 2;
   Func_020050ac();
@@ -2802,8 +2796,8 @@ void Kibombo_InitializeRoom4(void) {
   done = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
   if (!done) {
     actor->motionFlags = done;
-    actor->y = PIXELS(42);
-    actor->z += PIXELS(-42);
+    actor->y = px(42);
+    actor->z += px(-42);
     Actor_SetSpriteFlags(Actor_GetById(11), 0);
     Actor_SetSpritePriority(11, 1);
     if (gMainRoutineWork.entrance == 19 && GameFlag_Get(7)) {
@@ -3071,11 +3065,11 @@ void Kibombo_InitializeRoom3(void) {
       if (GameFlag_Get(0x8ee)) {
         s32 angle = FACING_NORTHWEST + FACING_STEP;
 
-        Kibombo_ObjPlaceFacing(8, PIXELS(434), PIXELS(634), angle);
+        Kibombo_ObjPlaceFacing(8, px(434), px(634), angle);
       } else {
         s32 angle = FACING_NORTHWEST + FACING_STEP;
 
-        Kibombo_ObjPlaceFacing(8, PIXELS(364), PIXELS(576), angle);
+        Kibombo_ObjPlaceFacing(8, px(364), px(576), angle);
       }
     } else {
       Kibombo_CeremonyEnds();
@@ -3084,8 +3078,8 @@ void Kibombo_InitializeRoom3(void) {
 #if TLA_PATCH_1
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     object = Actor_GetById(16);
-    object->x -= PIXELS(14);
-    object->z -= PIXELS(8);
+    object->x -= px(14);
+    object->z -= px(8);
   }
 #endif
   Actor_FallOverById(16, 0);
@@ -3093,8 +3087,8 @@ void Kibombo_InitializeRoom3(void) {
   ((struct FieldSprite *)object->sprite)->rotation = 0;
   object->scaleX = Q16_ONE;
   object->scaleY = Q16_ONE;
-  object->x += PIXELS(14);
-  object->z += PIXELS(8);
+  object->x += px(14);
+  object->z += px(8);
   Actor_SetModeById(16, 6);
   if (gMainRoutineWork.entrance == 14)
     GameFlag_Set(0x8ee);
@@ -3143,20 +3137,20 @@ s32 gData_02005cd0[] = {
   };
 
 u32 gData_02005d18[] = {                                                               
-      SC_ARG(2),   SC_MOVE(PIXELS(98), 0, PIXELS(408)),                         
+      SC_ARG(2),   SC_MOVE(px(98), 0, px(408)),                         
       SC_SYNC,     SC_ARG(1),                                                  
       SC_WAIT(1), SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),              
       SC_WAIT(1), SC_END,                                                     
   };
 
 u32 gData_02005d5c[] = {                                                               
-      SC_ARG(2),   SC_MOVE(PIXELS(80), 0, PIXELS(376)), SC_SYNC,     SC_ARG(1), 
+      SC_ARG(2),   SC_MOVE(px(80), 0, px(376)), SC_SYNC,     SC_ARG(1), 
       SC_WAIT(1), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(1), SC_END,    
   };
 
 s32 gData_02005da0[] = {
     SC_ARG(2),
-    SC_MOVE(PIXELS(68), 0, PIXELS(392)),
+    SC_MOVE(px(68), 0, px(392)),
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(1),
@@ -3185,13 +3179,13 @@ u32 gData_02005e54[] = {
 
 u32 gData_02005e88[] = {
     SC_ARG(2),
-    SC_MOVE(PIXELS(72), 0, PIXELS(296)),
+    SC_MOVE(px(72), 0, px(296)),
     SC_SYNC,
-    SC_MOVE(PIXELS(40), 0, PIXELS(340)),
+    SC_MOVE(px(40), 0, px(340)),
     SC_SYNC,
-    SC_MOVE(PIXELS(40), 0, PIXELS(356)),
+    SC_MOVE(px(40), 0, px(356)),
     SC_SYNC,
-    SC_MOVE(PIXELS(56), 0, PIXELS(372)),
+    SC_MOVE(px(56), 0, px(372)),
     SC_SYNC,
     SC_ARG(1),
     SC_END,
@@ -3199,22 +3193,22 @@ u32 gData_02005e88[] = {
 
 u32 gData_02005eec[] =                                                                 
       {                                                                        
-          SC_ARG(2), SC_MOVE(PIXELS(88), 0, PIXELS(372)), SC_SYNC, SC_ARG(1),   
+          SC_ARG(2), SC_MOVE(px(88), 0, px(372)), SC_SYNC, SC_ARG(1),   
           SC_END,                                                              
   };
 
 u32 gData_02005f14[] = {                                                               
-      SC_ARG(2),   SC_MOVE(PIXELS(48), 0, PIXELS(384)), SC_SYNC,     SC_ARG(1), 
+      SC_ARG(2),   SC_MOVE(px(48), 0, px(384)), SC_SYNC,     SC_ARG(1), 
       SC_WAIT(1), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(1), SC_END,    
   };
 
 u32 gData_02005f58[] = {                                                               
-      SC_ARG(2),   SC_MOVE(PIXELS(48), 0, PIXELS(360)), SC_SYNC,     SC_ARG(1), 
+      SC_ARG(2),   SC_MOVE(px(48), 0, px(360)), SC_SYNC,     SC_ARG(1), 
       SC_WAIT(1), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(1), SC_END,    
   };
 
 u32 gData_02005f9c[] = {                                                               
-      SC_ARG(2),   SC_MOVE(PIXELS(36), 0, PIXELS(372)), SC_SYNC,     SC_ARG(1), 
+      SC_ARG(2),   SC_MOVE(px(36), 0, px(372)), SC_SYNC,     SC_ARG(1), 
       SC_WAIT(1), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(1), SC_END,    
   };
 
@@ -3226,7 +3220,7 @@ u32 gData_02005fe0[] = {
 
 u32 gData_02006014[] =                                                                 
       {                                                                        
-          SC_ARG(2),   SC_MOVE(PIXELS(298), 0, PIXELS(200)),                     
+          SC_ARG(2),   SC_MOVE(px(298), 0, px(200)),                     
           SC_SYNC,     SC_ARG(1),                                              
           SC_WAIT(1), SC_SET(SW_FACING, FACING_NORTHWEST),                    
           SC_WAIT(1), SC_END,                                                 
@@ -3234,7 +3228,7 @@ u32 gData_02006014[] =
 
 u32 gData_02006058[] =                                                                 
       {                                                                        
-          SC_ARG(2),   SC_MOVE(PIXELS(308), 0, PIXELS(188)),                     
+          SC_ARG(2),   SC_MOVE(px(308), 0, px(188)),                     
           SC_SYNC,     SC_ARG(1),                                              
           SC_WAIT(1), SC_SET(SW_FACING, FACING_NORTHWEST),                    
           SC_WAIT(1), SC_END,                                                 
@@ -3242,7 +3236,7 @@ u32 gData_02006058[] =
 
 u32 gData_0200609c[] =                                                                 
       {                                                                        
-          SC_ARG(2),   SC_MOVE(PIXELS(298), 0, PIXELS(176)),                     
+          SC_ARG(2),   SC_MOVE(px(298), 0, px(176)),                     
           SC_SYNC,     SC_ARG(1),                                              
           SC_WAIT(1), SC_SET(SW_FACING, FACING_NORTHWEST),                    
           SC_WAIT(1), SC_END,                                                 
@@ -3250,7 +3244,7 @@ u32 gData_0200609c[] =
 
 u32 gData_020060e0[] =                                                                 
       {                                                                        
-          SC_ARG(2), SC_MOVE(PIXELS(222), 0, PIXELS(184)), SC_SYNC, SC_ARG(1),   
+          SC_ARG(2), SC_MOVE(px(222), 0, px(184)), SC_SYNC, SC_ARG(1),   
           SC_END,                                                              
   };
 
@@ -3270,11 +3264,11 @@ s32 gData_0200613c[] = {
 s32 gData_0200614c[] = {
     SC_SET(SW_SCALE_X, 0x18000),
     SC_SET(SW_SCALE_Y, 0x18000),
-    SC_ADD(SW_Y, PIXELS(-2)),
+    SC_ADD(SW_Y, px(-2)),
     SC_WAIT(20),
     SC_SET(SW_SCALE_X, 0x10000),
     SC_SET(SW_SCALE_Y, 0x10000),
-    SC_ADD(SW_Y, PIXELS(2)),
+    SC_ADD(SW_Y, px(2)),
     SC_WAIT(1),
     SC_END,
 };

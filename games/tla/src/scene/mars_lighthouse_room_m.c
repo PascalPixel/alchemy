@@ -170,7 +170,7 @@ void Func_02000058(s32 id, s32 value) {
   struct Actor *object = Actor_Get(id);
 
   object->motionFlags = 0;
-  object->y = PIXELS(14);
+  object->y = px(14);
   Actor_SetSpriteFlags(object, 0);
   Actor_SelectAnimation(object, value);
 }
@@ -886,7 +886,7 @@ void Func_020012a4(s32 x, s32 z, s32 kind) {
     } else {
       ((struct MarsLighthouseRoomMAnimation *)object->sprite)->layer = 1;
       object->velocityX = (((u32)(Random16() * 8) >> 16) - 4) << 16;
-      object->velocityY = PIXELS(4);
+      object->velocityY = px(4);
       Actor_StartScript(object, gData_02003900);
     }
   }

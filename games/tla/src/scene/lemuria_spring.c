@@ -110,7 +110,7 @@ void LemuriaSpring_RiseAndFadeIn(void) {
   Event_PlaySound(SE_BURST);
   layer = (s32 *)(map + 0x178);
   for (i = 0; i < 16; i++) {
-    layer[3] -= PIXELS(1);
+    layer[3] -= px(1);
     wait(4);
   }
   for (i = 0; i < 8; i++) {

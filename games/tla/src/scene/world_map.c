@@ -657,7 +657,7 @@ void WorldMap_GazeIntoPond(void) {
     position[0] = leader->x;
     position[1] = leader->y;
     position[2] = leader->z;
-    FieldVector_AddPolarOffset(0x100000, leader->facing, position);
+    FieldVector_AddPolarOffset(px(16), leader->facing, position);
     object = Actor_Get(79);
     x = position[0];
     if (object == NULL) {
@@ -707,7 +707,7 @@ void Func_02000d4c(void) {
   Actor_SetSpriteFlags(Actor_Get(19), 0);
   a = 0x4000;
   id = 19;
-  Actor_SetPositionAndFacing(id, PIXELS(10168), PIXELS(9648), a);
+  Actor_SetPositionAndFacing(id, px(10168), px(9648), a);
   Event_SetFlag(0xa77);
 }
 
@@ -886,7 +886,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
   Event_ResolvePendingActions(0);
   if (entrance == 9) {
     west = 0xc000;
-    Actor_SetPositionAndFacing(20, 0x27b80000, 0x23280000, west);
+    Actor_SetPositionAndFacing(20, px(10168), px(9000), west);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     WorldMap_Freeze();
@@ -912,9 +912,9 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_FaceDirectionAndWait(23, west);
     east = 0x4000;
     Event_Wait(10);
-    Actor_SetPositionAndFacing(20, 0x27b80000, 0x25800000, east);
-    Actor_SetPositionAndFacing(21, 0x27b80000, 0x25800000, east);
-    Actor_SetPositionAndFacing(22, 0x27b80000, 0x25800000, east);
+    Actor_SetPositionAndFacing(20, px(10168), px(9600), east);
+    Actor_SetPositionAndFacing(21, px(10168), px(9600), east);
+    Actor_SetPositionAndFacing(22, px(10168), px(9600), east);
     Actor_WalkBy(20, 0, 16);
     Actor_WalkBy(21, -16, 16);
     Actor_WalkByAndWait(22, 16, 16);
@@ -1001,15 +1001,15 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
   } else if (entrance == 74) {
     Event_ClearFlag(0xa76);
     east74 = 0x4000;
-    Actor_SetPositionAndFacing(20, 0x27b80000, 0x25900000, east74);
-    Actor_SetPositionAndFacing(21, 0x27a80000, 0x25900000, east74);
-    Actor_SetPositionAndFacing(22, 0x27c80000, 0x25900000, east74);
+    Actor_SetPositionAndFacing(20, px(10168), px(9616), east74);
+    Actor_SetPositionAndFacing(21, px(10152), px(9616), east74);
+    Actor_SetPositionAndFacing(22, px(10184), px(9616), east74);
     {
       s32 a3 = 0xe000;
 
-      Actor_SetPositionAndFacing(23, 0x27a80000, 0x25c00000, a3);
+      Actor_SetPositionAndFacing(23, px(10152), px(9664), a3);
     }
-    Actor_SetPositionAndFacing(4, 0x27b80000, 0x25b00000, FACING_NORTHWEST);
+    Actor_SetPositionAndFacing(4, px(10168), px(9648), FACING_NORTHWEST);
     EventCamera_FollowActor(4, 0);
     FieldEffect_ScheduleRatioTransition(0x18ccc, 1);
     Actor_SetAnimation(4, 19);
@@ -1055,12 +1055,12 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
   } else {
     Event_ClearFlag(0xa76);
     eastB = 0x4000;
-    Actor_SetPositionAndFacing(20, 0x27b80000, 0x25a00000, eastB);
+    Actor_SetPositionAndFacing(20, px(10168), px(9632), eastB);
     westB = 0xc000;
-    Actor_SetPositionAndFacing(21, 0x27a80000, 0x25a00000, eastB);
-    Actor_SetPositionAndFacing(22, 0x27c80000, 0x25a00000, eastB);
-    Actor_SetPositionAndFacing(23, 0x27b00000, 0x25d00000, westB);
-    Actor_SetPositionAndFacing(4, 0x27c00000, 0x25d00000, westB);
+    Actor_SetPositionAndFacing(21, px(10152), px(9632), eastB);
+    Actor_SetPositionAndFacing(22, px(10184), px(9632), eastB);
+    Actor_SetPositionAndFacing(23, px(10160), px(9680), westB);
+    Actor_SetPositionAndFacing(4, px(10176), px(9680), westB);
     EventCamera_FollowActor(4, 0);
     FieldEffect_ScheduleRatioTransition(0x18000, 1);
     Event_StartScreenTransition();
@@ -1207,9 +1207,9 @@ void WorldMap_DeliverLohoCannon(void) {
   /* FAKEMATCH(temporary): the facing angle held in a local is built once and
    * shared by the three placements. */
   angle = 0xe000;
-  Actor_SetPositionAndFacing(16, PIXELS(8913), PIXELS(5853), angle);
-  Actor_SetPositionAndFacing(17, PIXELS(8929), PIXELS(5869), angle);
-  Actor_SetPositionAndFacing(18, PIXELS(8929), PIXELS(5885), angle);
+  Actor_SetPositionAndFacing(16, px(8913), px(5853), angle);
+  Actor_SetPositionAndFacing(17, px(8929), px(5869), angle);
+  Actor_SetPositionAndFacing(18, px(8929), px(5885), angle);
   Event_StartScreenTransition();
   Actor_SetSpeed(16, 0.2);
   Actor_SetSpeed(17, 0.2);
@@ -1377,7 +1377,7 @@ void WorldMap_MeetEcho(void) {
     Actor_Jump(9, 2, 30);
     Event_ShowMessageAndWait(9, 0);
     djinni->motionFlags = 0;
-    FieldActor_SetMoveTargetFixed(djinni, x, 0x100000, z);
+    FieldActor_SetMoveTargetFixed(djinni, x, px(16), z);
     while (i >= 0) {
       *(u16 *)&djinni->facing += 0x1000;
       wait(1);
@@ -1640,8 +1640,8 @@ void Func_020028cc(void) {
   if ((gFrameCount & 15) != 0)
     return;
   leader = Actor_Get(8);
-  obj = FieldActor_Create(285, leader->x - PIXELS(32), leader->y,
-                          leader->z - PIXELS(16));
+  obj =
+      FieldActor_Create(285, leader->x - px(32), leader->y, leader->z - px(16));
   if (obj == NULL)
     return;
   obj->scaleX = Q16_ONE / 2;
@@ -1722,14 +1722,14 @@ void WorldMap_DriftNorthOfContinent(void) {
   boat->timer = 0;
   boat->acceleration = px(1) / 8;
   boat->speedLimit = px(1) / 8;
-  FieldActor_SetMoveTargetFixed(boat, 0x27ff0000, boat->y, 0x1ecc0000);
+  FieldActor_SetMoveTargetFixed(boat, px(10239), boat->y, px(7884));
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   WorldMap_Freeze();
   FieldEvent_SetMessageId((s32)MsgWeReSaved);
   Event_ShowMessage(5, 0);
   Event_ShowMessage(8, 0);
-  FieldActor_SetMoveTargetFixed(boat, 0x280f0000, boat->y, 0x1ebc0000);
+  FieldActor_SetMoveTargetFixed(boat, px(10255), boat->y, px(7868));
   Event_ShowMessage(6, 0);
   Event_ShowMessage(5, 0);
   Event_ShowMessage(6, 0);

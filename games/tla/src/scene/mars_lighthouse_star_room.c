@@ -610,7 +610,7 @@ void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
   s32 size;
 
   zero = 0;
-  object = FieldActor_Create(0x1e9, 0x2be0000, 0, 0xe00000);
+  object = FieldActor_Create(0x1e9, px(702), 0, px(224));
   *slot = object;
   if (object == NULL)
     return;
@@ -795,7 +795,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   System_Wait(1);
   Event_PlaySound(SE_GEM_SET);
   slot = &gMarsLighthouseStarRoom_MarsStar;
-  object = FieldActor_Create(0x1e9, 0x2a80000, 0x80000, 0x930000);
+  object = FieldActor_Create(0x1e9, px(680), px(8), px(147));
   *slot = object;
   if (object != 0) {
     sprite = object->sprite;
@@ -913,8 +913,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     System_Wait(1);
     Event_PlaySound(SE_GEM_SET);
     slot = &gMarsLighthouseStarRoom_MarsStar;
-    object =
-        (struct Actor *)FieldActor_Create(0x1e9, 0x2a80000, 0x80000, 0x930000);
+    object = (struct Actor *)FieldActor_Create(0x1e9, px(680), px(8), px(147));
     *slot = object;
     if (object != 0) {
       sprite = object->sprite;
@@ -975,7 +974,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   System_Wait(1);
   Event_PlaySound(SE_GEM_SET);
   slot2 = &gMarsLighthouseStarRoom_MarsStar;
-  object2 = FieldActor_Create(0x1e9, 0x2a80000, 0x80000, 0x930000);
+  object2 = FieldActor_Create(0x1e9, px(680), px(8), px(147));
   *slot2 = object2;
   if (object2 != 0) {
     sprite2 = object2->sprite;
@@ -2176,7 +2175,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     position.x = actor->x;
     position.y = actor->y;
     position.z = actor->z;
-    FieldVector_AddPolarOffset(0x80000, actor->facing, &position);
+    FieldVector_AddPolarOffset(px(8), actor->facing, &position);
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, position.x, position.z) ==
         7) {
       actor->targetZ = 0x80000000;
@@ -2369,16 +2368,16 @@ void Leader_SlideOnIce(void) {
 
 top:
   Func_02002d90();
-  actor->speedLimit = PIXELS(1);
-  actor->acceleration = PIXELS(1) / 2;
+  actor->speedLimit = px(1);
+  actor->acceleration = px(1) / 2;
   actor->targetX = 0x80000000;
   actor->targetZ = 0x80000000;
   actor->velocityX = 0;
   actor->velocityZ = 0;
   position = &probe;
-  position->x = startX = (actor->x & 0xfff00000) + PIXELS(8);
+  position->x = startX = (actor->x & 0xfff00000) + px(8);
   position->y = actor->y;
-  position->z = startZ = (actor->z & 0xfff00000) + PIXELS(8);
+  position->z = startZ = (actor->z & 0xfff00000) + px(8);
   x = startX;
   z = startZ;
   layer = &actor->terrainId;
@@ -2386,7 +2385,7 @@ top:
   dz = z - actor->z;
   dx = x - actor->x;
   distance = Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz);
-  if (distance < PIXELS(4)) {
+  if (distance < px(4)) {
     heading = gData_0200483c[(gInput.held >> 4) & 15];
     if ((heading << 16) == -0x10000) {
       return;
@@ -2395,12 +2394,12 @@ top:
     heading = (s16)ArcTan2(z - actor->z, x - actor->x);
     heading = (s16)((heading + 0x2000) & -0x4000);
   }
-  FieldVector_AddPolarOffset(PIXELS(16), heading, &probe);
+  FieldVector_AddPolarOffset(px(16), heading, &probe);
   nextBehavior =
       FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
   if (nextBehavior == 255 ||
       Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y >
-          PIXELS(8)) {
+          px(8)) {
     actor->facing = heading;
     actor->velocityX = 0;
     actor->velocityZ = 0;
@@ -2410,7 +2409,7 @@ top:
   }
   position->x = startX;
   position->z = startZ;
-  actor->speedLimit = PIXELS(2);
+  actor->speedLimit = px(2);
   actor->acceleration = 0x1999;
   actor->timer = 0;
   FieldActor_SetMoveTargetFixed(actor, startX, actor->y, startZ);
@@ -2420,7 +2419,7 @@ top:
   actor->update = Actor_SteerByPad;
   goto test;
 body:
-  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > PIXELS(8)) {
+  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > px(8)) {
     goto stop;
   }
   radius = actor->radius - 2;
@@ -2443,7 +2442,7 @@ body:
   }
   x = next->x;
   z = next->z;
-  actor->speedLimit = PIXELS(2);
+  actor->speedLimit = px(2);
   actor->acceleration = 0x1999;
   FieldActor_SetMoveTargetFixed(actor, next->x, next->y, next->z);
   FieldActor_WaitForMove(actor);
@@ -2455,7 +2454,7 @@ test:
     struct Vector3 *step;
 
     step = &probe;
-    FieldVector_AddPolarOffset(PIXELS(16), heading, step);
+    FieldVector_AddPolarOffset(px(16), heading, step);
     /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the
      * address. */
     step = NULL;
@@ -2466,8 +2465,8 @@ test:
     goto body;
   }
 stop:
-  actor->speedLimit = PIXELS(2);
-  actor->acceleration = PIXELS(1);
+  actor->speedLimit = px(2);
+  actor->acceleration = px(1);
   FieldActor_SetMoveTargetFixed(actor, x, actor->y, z);
   FieldActor_WaitForMove(actor);
   System_Wait(2);
@@ -2478,7 +2477,7 @@ blocked:
 done:
   actor->update = NULL;
   actor->actionFlags |= 1;
-  actor->acceleration = PIXELS(1) / 4;
+  actor->acceleration = px(1) / 4;
   Actor_SelectAnimation(actor, 1);
 }
 
@@ -2537,8 +2536,8 @@ void Leader_SlideOnIceAhead(void) {
 
 top:
   Func_02002d90();
-  actor->speedLimit = PIXELS(1);
-  actor->acceleration = PIXELS(1) / 2;
+  actor->speedLimit = px(1);
+  actor->acceleration = px(1) / 2;
   actor->targetX = 0x80000000;
   actor->targetZ = 0x80000000;
   /* Default: one zero, spilled and reloaded at each use. */
@@ -2547,7 +2546,7 @@ top:
   actor->velocityZ = zero;
   /* FAKEMATCH(temporary): cell holds the masked x. */
   cell = actor->x & 0xfff00000;
-  i = PIXELS(8);
+  i = px(8);
   position = &probe;
   position->x = startX = cell + i;
   position->y = actor->y;
@@ -2556,7 +2555,7 @@ top:
   z = startZ;
   startBehavior = FieldMapGrid_GetCellBehaviorAt(*(layer = &actor->terrainId),
                                                  startX, startZ);
-  FieldVector_AddPolarOffset(PIXELS(16), heading, position);
+  FieldVector_AddPolarOffset(px(16), heading, position);
   nextBehavior =
       FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
   if (nextBehavior == 255 ||
@@ -2570,7 +2569,7 @@ top:
   }
   position->x = x;
   position->z = z;
-  actor->speedLimit = PIXELS(2);
+  actor->speedLimit = px(2);
   actor->acceleration = 0x1999;
   actor->timer = zero;
   Actor_SelectAnimation(actor, 2);
@@ -2581,7 +2580,7 @@ top:
   asm("" : : "r"(nextBehavior), "r"(nextBehavior) : SFP_CLOBBER);
   goto test;
 body:
-  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > PIXELS(8)) {
+  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > px(8)) {
     goto stop;
   }
   radius = actor->radius - 2;
@@ -2604,7 +2603,7 @@ body:
   }
   x = next->x;
   z = next->z;
-  actor->speedLimit = PIXELS(2);
+  actor->speedLimit = px(2);
   actor->acceleration = 0x1999;
   FieldActor_SetMoveTargetFixed(actor, next->x, next->y, next->z);
   FieldActor_WaitForMove(actor);
@@ -2615,7 +2614,7 @@ test:
   /* FAKEMATCH(barrier): the asm tied to heading, with an r4 clobber. */
   asm("" : "=r"(angle) : "0"(heading) : "r4");
   step = &probe;
-  FieldVector_AddPolarOffset(PIXELS(16), angle, step);
+  FieldVector_AddPolarOffset(px(16), angle, step);
   /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the address.
    */
   step = NULL;
@@ -2625,8 +2624,8 @@ test:
     goto body;
   }
 stop:
-  actor->speedLimit = PIXELS(2);
-  actor->acceleration = PIXELS(1);
+  actor->speedLimit = px(2);
+  actor->acceleration = px(1);
   FieldActor_SetMoveTargetFixed(actor, x, actor->y, z);
   FieldActor_WaitForMove(actor);
   System_Wait(2);
@@ -2637,7 +2636,7 @@ blocked:
 done:
   actor->update = NULL;
   actor->actionFlags |= 1;
-  actor->acceleration = PIXELS(1) / 4;
+  actor->acceleration = px(1) / 4;
   Actor_SelectAnimation(actor, 1);
 }
 

@@ -355,13 +355,13 @@ void Func_02000170(void) {
   position[0] = object->x;
   position[1] = (object->y + px(4)) & 0xfff80000;
   position[2] = object->z;
-  FieldVector_AddPolarOffset(0x100000, angle, position);
+  FieldVector_AddPolarOffset(px(16), angle, position);
   object = Actor_FindAtCell(position, 1);
   if (object != NULL) {
     position[0] = object->x;
     position[1] = object->y;
     position[2] = object->z;
-    FieldVector_AddPolarOffset(0x100000, angle, position);
+    FieldVector_AddPolarOffset(px(16), angle, position);
     if (Actor_FindAtCell(position, 1) != NULL)
       return;
   }
@@ -417,7 +417,7 @@ void Func_02000280(s32 unused, s32 id) {
 
   kind = gData_02005b5c[id - 18];
   Actor_SetPositionFixed(kind, S16_AT(object, 100) << 16,
-                         (S16_AT(object, 102) << 16) - PIXELS(8));
+                         (S16_AT(object, 102) << 16) - px(8));
 }
 
 void Func_020002b8(s32 unused, s32 id) {
@@ -784,7 +784,7 @@ void Func_02000b40(void) {
 
       SET_VECTOR(position, (leader->x & 0xfff00000) + 0x80000, leader->y,
                  (leader->z & 0xfff00000) + 0x80000);
-      FieldVector_AddPolarOffset(0x100000, angle, position);
+      FieldVector_AddPolarOffset(px(16), angle, position);
       x = position[0] >> 20;
       z = position[2] >> 20;
       cells = Ram_MapCellBuffer;
@@ -2448,7 +2448,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     position.x = actor->x;
     position.y = actor->y;
     position.z = actor->z;
-    FieldVector_AddPolarOffset(0x80000, actor->facing, &position);
+    FieldVector_AddPolarOffset(px(8), actor->facing, &position);
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, position.x, position.z) ==
         7) {
       actor->targetZ = 0x80000000;
@@ -2574,9 +2574,9 @@ void Func_02003304(struct Actor *self) {
   volatile s32 position[3];
 
   position[0] = self->x;
-  position[1] = self->y - PIXELS(12);
+  position[1] = self->y - px(12);
   position[2] = self->z;
-  FieldVector_AddPolarOffset(PIXELS(32), angle, (struct Vector3 *)position);
+  FieldVector_AddPolarOffset(px(32), angle, (struct Vector3 *)position);
   actor->facing = angle;
   actor->motionFlags = 0;
   FieldActor_SetPositionAndResetMotion(actor, position[0], position[1],
@@ -3013,16 +3013,16 @@ void Leader_SlideOnIce(void) {
 
 top:
   Leader_StopIfPending();
-  actor->speedLimit = PIXELS(1);
-  actor->acceleration = PIXELS(1) / 2;
+  actor->speedLimit = px(1);
+  actor->acceleration = px(1) / 2;
   actor->targetX = 0x80000000;
   actor->targetZ = 0x80000000;
   actor->velocityX = 0;
   actor->velocityZ = 0;
   position = &probe;
-  position->x = startX = (actor->x & 0xfff00000) + PIXELS(8);
+  position->x = startX = (actor->x & 0xfff00000) + px(8);
   position->y = actor->y;
-  position->z = startZ = (actor->z & 0xfff00000) + PIXELS(8);
+  position->z = startZ = (actor->z & 0xfff00000) + px(8);
   x = startX;
   z = startZ;
   layer = &actor->terrainId;
@@ -3030,7 +3030,7 @@ top:
   dz = z - actor->z;
   dx = x - actor->x;
   distance = Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz);
-  if (distance < PIXELS(4)) {
+  if (distance < px(4)) {
     heading = gData_02005f38[(gInput.held >> 4) & 15];
     if ((heading << 16) == -0x10000) {
       return;
@@ -3039,12 +3039,12 @@ top:
     heading = (s16)ArcTan2(z - actor->z, x - actor->x);
     heading = (s16)((heading + 0x2000) & -0x4000);
   }
-  FieldVector_AddPolarOffset(PIXELS(16), heading, &probe);
+  FieldVector_AddPolarOffset(px(16), heading, &probe);
   nextBehavior =
       FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
   if (nextBehavior == 255 ||
       Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y >
-          PIXELS(8)) {
+          px(8)) {
     actor->facing = heading;
     actor->velocityX = 0;
     actor->velocityZ = 0;
@@ -3054,7 +3054,7 @@ top:
   }
   position->x = startX;
   position->z = startZ;
-  actor->speedLimit = PIXELS(2);
+  actor->speedLimit = px(2);
   actor->acceleration = 0x1999;
   actor->timer = 0;
   FieldActor_SetMoveTargetFixed(actor, startX, actor->y, startZ);
@@ -3064,7 +3064,7 @@ top:
   actor->update = Actor_SteerByPad;
   goto test;
 body:
-  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > PIXELS(8)) {
+  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > px(8)) {
     goto stop;
   }
   radius = actor->radius - 2;
@@ -3087,7 +3087,7 @@ body:
   }
   x = next->x;
   z = next->z;
-  actor->speedLimit = PIXELS(2);
+  actor->speedLimit = px(2);
   actor->acceleration = 0x1999;
   FieldActor_SetMoveTargetFixed(actor, next->x, next->y, next->z);
   FieldActor_WaitForMove(actor);
@@ -3099,7 +3099,7 @@ test:
     struct Vector3 *step;
 
     step = &probe;
-    FieldVector_AddPolarOffset(PIXELS(16), heading, step);
+    FieldVector_AddPolarOffset(px(16), heading, step);
     /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the
      * address. */
     step = NULL;
@@ -3110,8 +3110,8 @@ test:
     goto body;
   }
 stop:
-  actor->speedLimit = PIXELS(2);
-  actor->acceleration = PIXELS(1);
+  actor->speedLimit = px(2);
+  actor->acceleration = px(1);
   FieldActor_SetMoveTargetFixed(actor, x, actor->y, z);
   FieldActor_WaitForMove(actor);
   System_Wait(2);
@@ -3122,7 +3122,7 @@ blocked:
 done:
   actor->update = NULL;
   actor->actionFlags |= 1;
-  actor->acceleration = PIXELS(1) / 4;
+  actor->acceleration = px(1) / 4;
   Actor_SelectAnimation(actor, 1);
 }
 
@@ -3175,8 +3175,8 @@ void Leader_SlideOnIceAhead(void) {
 
 top:
   Leader_StopIfPending();
-  actor->speedLimit = PIXELS(1);
-  actor->acceleration = PIXELS(1) / 2;
+  actor->speedLimit = px(1);
+  actor->acceleration = px(1) / 2;
   actor->targetX = 0x80000000;
   actor->targetZ = 0x80000000;
   /* Default: one zero, spilled and reloaded at each use. */
@@ -3185,7 +3185,7 @@ top:
   actor->velocityZ = zero;
   /* FAKEMATCH(temporary): cell holds the masked x. */
   cell = actor->x & 0xfff00000;
-  i = PIXELS(8);
+  i = px(8);
   position = &probe;
   position->x = startX = cell + i;
   position->y = actor->y;
@@ -3194,7 +3194,7 @@ top:
   z = startZ;
   startBehavior = FieldMapGrid_GetCellBehaviorAt(*(layer = &actor->terrainId),
                                                  startX, startZ);
-  FieldVector_AddPolarOffset(PIXELS(16), heading, position);
+  FieldVector_AddPolarOffset(px(16), heading, position);
   nextBehavior =
       FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
   if (nextBehavior == 255 ||
@@ -3208,7 +3208,7 @@ top:
   }
   position->x = x;
   position->z = z;
-  actor->speedLimit = PIXELS(2);
+  actor->speedLimit = px(2);
   actor->acceleration = 0x1999;
   actor->timer = zero;
   Actor_SelectAnimation(actor, 2);
@@ -3219,7 +3219,7 @@ top:
   asm("" : : "r"(nextBehavior), "r"(nextBehavior) : SFP_CLOBBER);
   goto test;
 body:
-  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > PIXELS(8)) {
+  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > px(8)) {
     goto stop;
   }
   radius = actor->radius - 2;
@@ -3242,7 +3242,7 @@ body:
   }
   x = next->x;
   z = next->z;
-  actor->speedLimit = PIXELS(2);
+  actor->speedLimit = px(2);
   actor->acceleration = 0x1999;
   FieldActor_SetMoveTargetFixed(actor, next->x, next->y, next->z);
   FieldActor_WaitForMove(actor);
@@ -3253,7 +3253,7 @@ test:
   /* FAKEMATCH(barrier): the asm tied to heading, with an r4 clobber. */
   asm("" : "=r"(angle) : "0"(heading) : "r4");
   step = &probe;
-  FieldVector_AddPolarOffset(PIXELS(16), angle, step);
+  FieldVector_AddPolarOffset(px(16), angle, step);
   /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the address.
    */
   step = NULL;
@@ -3263,8 +3263,8 @@ test:
     goto body;
   }
 stop:
-  actor->speedLimit = PIXELS(2);
-  actor->acceleration = PIXELS(1);
+  actor->speedLimit = px(2);
+  actor->acceleration = px(1);
   FieldActor_SetMoveTargetFixed(actor, x, actor->y, z);
   FieldActor_WaitForMove(actor);
   System_Wait(2);
@@ -3275,7 +3275,7 @@ blocked:
 done:
   actor->update = NULL;
   actor->actionFlags |= 1;
-  actor->acceleration = PIXELS(1) / 4;
+  actor->acceleration = px(1) / 4;
   Actor_SelectAnimation(actor, 1);
 }
 
@@ -3354,13 +3354,12 @@ static inline s32 PushTarget_CheckCollision(struct Actor *object,
 // target and returns 1, or 0 when nothing is pushed or it cannot move at all.
 #include "shared/push_target_find_slide.h"
 
-#undef PIXELS
 // The whole-pixel half of a 16.16 coordinate.
-#define PIXELS(v) (((s16 *)&(v))[1])
+#define PIXEL_PART(v) (((s16 *)&(v))[1])
 
 #include "shared/push_target_find_ahead.h"
 
-#undef PIXELS
+#undef PIXEL_PART
 
 void PushTarget_Push(struct PushTarget target) {
   u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
@@ -3449,8 +3448,6 @@ void PushTarget_Push(struct PushTarget target) {
 
 #include "shared/actor_stop_at_push_target.h"
 #undef ABS
-#undef PIXELS
-#define PIXELS(value) ((value) << 16)
 
 #define MapLayer MapLayer__s5048
 #include "map.h"
@@ -3603,10 +3600,10 @@ u32 gData_020056d4[] = {
       SC_SET(SW_MOTION, 2),                                                    
       SC_SET(SW_SPEED, 0x8000),                                                
       SC_SET(SW_ACCEL, 0x800),                                                 
-      SC_MOVE(PIXELS(680), 0, PIXELS(304)),                                     
+      SC_MOVE(px(680), 0, px(304)),                                     
       SC_SYNC,                                                                 
       SC_WAIT(20),                                                             
-      SC_MOVE(PIXELS(760), 0, PIXELS(304)),                                     
+      SC_MOVE(px(760), 0, px(304)),                                     
       SC_SYNC,                                                                 
       SC_WAIT(20),                                                             
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
@@ -3617,10 +3614,10 @@ u32 gData_02005748[] = {
       SC_SET(SW_MOTION, 2),                                                    
       SC_SET(SW_SPEED, 0x8000),                                                
       SC_SET(SW_ACCEL, 0x800),                                                 
-      SC_MOVE(PIXELS(584), 0, PIXELS(304)),                                     
+      SC_MOVE(px(584), 0, px(304)),                                     
       SC_SYNC,                                                                 
       SC_WAIT(20),                                                             
-      SC_MOVE(PIXELS(664), 0, PIXELS(304)),                                     
+      SC_MOVE(px(664), 0, px(304)),                                     
       SC_SYNC,                                                                 
       SC_WAIT(20),                                                             
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
@@ -3629,8 +3626,8 @@ u32 gData_02005748[] = {
 u32 gData_020057bc[] = {
     SC_SET(SW_STEERING, 0),
     SC_SET(SW_MOTION, 2),
-    SC_SET(SW_Y, PIXELS(48)),
-    SC_SET(SW_GROUND, PIXELS(48)),
+    SC_SET(SW_Y, px(48)),
+    SC_SET(SW_GROUND, px(48)),
     SC_SET(SW_SPEED, 0x8000),
     SC_SET(SW_ACCEL, 0x800),
     SC_LABEL(1),
@@ -3638,14 +3635,14 @@ u32 gData_020057bc[] = {
     SC_FLAG_CHECK(0x220),
     SC_IFNOT(SC_TO(1)),
     SC_LABEL(2),
-    SC_MOVE(PIXELS(176), 0, PIXELS(576)),
+    SC_MOVE(px(176), 0, px(576)),
     SC_SYNC,
-    SC_MOVE(PIXELS(248), 0, PIXELS(576)),
+    SC_MOVE(px(248), 0, px(576)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(176), 0, PIXELS(576)),
+    SC_MOVE(px(176), 0, px(576)),
     SC_SYNC,
-    SC_MOVE(PIXELS(104), 0, PIXELS(576)),
+    SC_MOVE(px(104), 0, px(576)),
     SC_SYNC,
     SC_WAIT(20),
     SC_LOOP(SC_FOREVER, SC_TO(2)),
@@ -3654,18 +3651,18 @@ u32 gData_020057bc[] = {
 u32 gData_02005890[] = {
     SC_SET(SW_STEERING, 0),
     SC_SET(SW_MOTION, 2),
-    SC_SET(SW_Y, PIXELS(32)),
-    SC_SET(SW_GROUND, PIXELS(32)),
+    SC_SET(SW_Y, px(32)),
+    SC_SET(SW_GROUND, px(32)),
     SC_SET(SW_SPEED, 0x8000),
     SC_SET(SW_ACCEL, 0x800),
-    SC_MOVE(PIXELS(88), 0, PIXELS(112)),
+    SC_MOVE(px(88), 0, px(112)),
     SC_SYNC,
     SC_WAIT(20),
     SC_LABEL(1),
-    SC_MOVE(PIXELS(168), 0, PIXELS(112)),
+    SC_MOVE(px(168), 0, px(112)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(88), 0, PIXELS(112)),
+    SC_MOVE(px(88), 0, px(112)),
     SC_SYNC,
     SC_WAIT(20),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
@@ -3674,27 +3671,27 @@ u32 gData_02005890[] = {
 u32 gData_0200593c[] = {
     SC_SET(SW_STEERING, 0),
     SC_SET(SW_MOTION, 0),
-    SC_SET(SW_Y, PIXELS(32)),
-    SC_SET(SW_GROUND, PIXELS(32)),
+    SC_SET(SW_Y, px(32)),
+    SC_SET(SW_GROUND, px(32)),
     SC_SET(SW_SPEED, 0x8000),
     SC_SET(SW_ACCEL, 0x800),
     SC_LABEL(1),
-    SC_MOVE(PIXELS(264), PIXELS(32), PIXELS(112)),
+    SC_MOVE(px(264), px(32), px(112)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(264), PIXELS(80), PIXELS(112)),
+    SC_MOVE(px(264), px(80), px(112)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(232), PIXELS(80), PIXELS(112)),
+    SC_MOVE(px(232), px(80), px(112)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(264), PIXELS(80), PIXELS(112)),
+    SC_MOVE(px(264), px(80), px(112)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(264), PIXELS(32), PIXELS(112)),
+    SC_MOVE(px(264), px(32), px(112)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(360), PIXELS(32), PIXELS(112)),
+    SC_MOVE(px(360), px(32), px(112)),
     SC_SYNC,
     SC_WAIT(20),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
@@ -3703,8 +3700,8 @@ u32 gData_0200593c[] = {
 u32 gData_02005a3c[] = {                                                               
       SC_SET(SW_STEERING, 0),                                                  
       SC_SET(SW_MOTION, 2),                                                   
-      SC_SET(SW_Y, PIXELS(32)),                                                
-      SC_SET(SW_GROUND, PIXELS(32)),                                           
+      SC_SET(SW_Y, px(32)),                                                
+      SC_SET(SW_GROUND, px(32)),                                           
       SC_SET(SW_SPEED, 0x8000),                                                
       SC_SET(SW_ACCEL, 0x800),                                                 
       SC_END,                                                                  
@@ -3713,22 +3710,22 @@ u32 gData_02005a3c[] = {
 u32 gData_02005a88[] = {
     SC_SET(SW_STEERING, 0),
     SC_SET(SW_MOTION, 2),
-    SC_SET(SW_Y, PIXELS(48)),
-    SC_SET(SW_GROUND, PIXELS(48)),
+    SC_SET(SW_Y, px(48)),
+    SC_SET(SW_GROUND, px(48)),
     SC_SET(SW_SPEED, 0x8000),
     SC_SET(SW_ACCEL, 0x800),
-    SC_MOVE(PIXELS(968), 0, PIXELS(80)),
+    SC_MOVE(px(968), 0, px(80)),
     SC_SYNC,
     SC_WAIT(20),
     SC_LABEL(1),
-    SC_MOVE(PIXELS(872), 0, PIXELS(80)),
+    SC_MOVE(px(872), 0, px(80)),
     SC_SYNC,
-    SC_MOVE(PIXELS(776), 0, PIXELS(80)),
+    SC_MOVE(px(776), 0, px(80)),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(PIXELS(872), 0, PIXELS(80)),
+    SC_MOVE(px(872), 0, px(80)),
     SC_SYNC,
-    SC_MOVE(PIXELS(968), 0, PIXELS(80)),
+    SC_MOVE(px(968), 0, px(80)),
     SC_SYNC,
     SC_WAIT(20),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
@@ -3820,9 +3817,9 @@ s32 gData_02005ce0[] = {
   };
 
 s32 gData_02005d3c[] = {                                                               
-      SC_CALL(Actor_PopUp), SC_MOVE(PIXELS(872), PIXELS(32), PIXELS(128)),             
-      SC_SYNC,        SC_MOVE(PIXELS(872), PIXELS(22), PIXELS(128)),             
-      SC_SYNC,        SC_MOVE(PIXELS(872), PIXELS(22), PIXELS(144)),             
+      SC_CALL(Actor_PopUp), SC_MOVE(px(872), px(32), px(128)),             
+      SC_SYNC,        SC_MOVE(px(872), px(22), px(128)),             
+      SC_SYNC,        SC_MOVE(px(872), px(22), px(144)),             
       SC_SYNC,        SC_CALL(Actor_Park),                                          
       SC_END,                                                                  
   };
@@ -3908,8 +3905,6 @@ s32 gPushLeaderSteps[] = {
 #undef SLIDE_KEEP_SLIDING
 #undef SLIDE_SPHERES_OVERLAP
 #undef ABS
-#undef PIXELS
-#define PIXELS(value) ((value) << 16)
 #undef CrackedTile_FallEvent
 #undef MapLayer
 
@@ -4054,14 +4049,14 @@ LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_Room3Placements[] = {
 LATE_DATA u32 gData_02006980[] = {                                                               
       SC_SET(SW_STEERING, 0),                                                  
       SC_SET(SW_MOTION, 2),                                                    
-      SC_SET(SW_Y, PIXELS(80)),                                                
-      SC_SET(SW_GROUND, PIXELS(80)),                                           
+      SC_SET(SW_Y, px(80)),                                                
+      SC_SET(SW_GROUND, px(80)),                                           
       SC_SET(SW_SPEED, 0x8000),                                                
       SC_SET(SW_ACCEL, 0x800),                                                 
-      SC_MOVE(PIXELS(216), 0, PIXELS(512)),                                      
+      SC_MOVE(px(216), 0, px(512)),                                      
       SC_SYNC,                                                                 
       SC_WAIT(20),                                                             
-      SC_MOVE(PIXELS(152), 0, PIXELS(512)),                                      
+      SC_MOVE(px(152), 0, px(512)),                                      
       SC_SYNC,                                                                 
       SC_WAIT(20),                                                             
       SC_LOOP(SC_FOREVER, SC_TOP),                                             

@@ -114,7 +114,7 @@ void MercuryLighthouse_SpawnMotes(void) {
       z = 0x2b80000;
       object->motionFlags = phase;
       object->x = x;
-      object->y = PIXELS(160);
+      object->y = px(160);
       object->z = z;
       Actor_SetSpriteFlags(object, 0);
       object->priorityFlags &= ~1;
@@ -248,15 +248,15 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 s32 gMercuryLighthouse_MoteScript[] = {
-    SC_ADD(SW_Y, PIXELS(-2)),
+    SC_ADD(SW_Y, px(-2)),
     SC_CALL(MercuryLighthouse_FlickerMote),
     SC_WAIT(1),
-    SC_ADD(SW_Y, PIXELS(-2)),
+    SC_ADD(SW_Y, px(-2)),
     SC_CALL(MercuryLighthouse_FlickerMote),
     SC_WAIT(1),
     SC_LOOP(30, SC_TOP),
     SC_LABEL(1),
-    SC_ADD(SW_Y, PIXELS(-1)),
+    SC_ADD(SW_Y, px(-1)),
     SC_CALL(MercuryLighthouse_FlickerMote),
     SC_WAIT(1),
     SC_LOOP(40, SC_TO(1)),

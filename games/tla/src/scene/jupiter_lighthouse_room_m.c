@@ -366,7 +366,7 @@ void Func_0200060c(void) {
   Event_ResolvePendingActions(0);
   Sound_Play(SE_CHEST_OPEN);
   /* FAKEMATCH(wrapper): forwarded through Camera_MoveWithinMapBounds_ above. */
-  Camera_MoveWithinMapBounds_(194 << 18, -1, PIXELS(208), 1);
+  Camera_MoveWithinMapBounds_(194 << 18, -1, px(208), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(6);
   Sound_Play(SE_FLOOR_SWITCH);
@@ -395,7 +395,7 @@ void Func_0200060c(void) {
     Sound_Play(SE_310);
     object->gravity = px(1) / 2;
     object->motionFlags = 2;
-    object->terrainHeight = PIXELS(-80);
+    object->terrainHeight = px(-80);
     i = 0;
     if (object->y > object->terrainHeight) {
       do {
@@ -408,7 +408,7 @@ void Func_0200060c(void) {
     MapGrid_SetShake(3, 3, 0.95);
     Sound_Play(SE_HEAVY_IMPACT);
     object->gravity = px(1);
-    object->velocityY = PIXELS(6);
+    object->velocityY = px(6);
     Actor_SetSpeed(23, 1.5);
     if (spot == 2)
       Actor_SetDestinationOffset(23, -32, 0);
@@ -417,7 +417,7 @@ void Func_0200060c(void) {
     Event_Wait(7);
     Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
     object->gravity = px(1) / 2;
-    object->terrainHeight = PIXELS(-240);
+    object->terrainHeight = px(-240);
     Event_Wait(80);
     MapGrid_SetShake(5, 5, 1);
     Sound_Play(SE_CLATTER);
@@ -433,7 +433,7 @@ void Func_0200060c(void) {
     Sound_Play(SE_310);
     object->gravity = px(1) / 2;
     object->motionFlags = 2;
-    object->terrainHeight = PIXELS(-240);
+    object->terrainHeight = px(-240);
     Event_Wait(20);
     Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
     Event_Wait(60);
@@ -714,7 +714,7 @@ void Func_02000cac(s32 arg) {
   FieldActor_RefreshSelectorById(28);
   FieldEvent_Wait(20);
   angle = 0x2000;
-  Actor_SetPositionAndFacing(2, PIXELS(741), PIXELS(232), angle);
+  Actor_SetPositionAndFacing(2, px(741), px(232), angle);
   FieldCamera_SetSpeed(4);
   FieldCamera_MoveTo(800, 0, 270, 1);
   FieldCamera_WaitForArrival();
@@ -789,8 +789,8 @@ void Func_02000cac(s32 arg) {
   FieldEvent_Wait(20);
   FieldEvent_Wait(10);
   Actor_SetScript(3, gData_02005548);
-  Actor_SetPositionAndFacing(26, PIXELS(665), PIXELS(128), angle);
-  Actor_SetPositionAndFacing(27, PIXELS(641), PIXELS(128), angle);
+  Actor_SetPositionAndFacing(26, px(665), px(128), angle);
+  Actor_SetPositionAndFacing(27, px(641), px(128), angle);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldEvent_ShowMessageThenWait(26, 0, 5);
   I_Func_020048cc(0, 256, 0);
@@ -1200,20 +1200,20 @@ void Func_02001ed0(void) {
   {
     s32 angle = 0x4000;
 
-    Actor_SetPositionAndFacing(4, 0x2980000, 0x580000, angle);
+    Actor_SetPositionAndFacing(4, px(664), px(88), angle);
   }
   {
     s32 angle = 0x2000;
 
-    Actor_SetPositionAndFacing(27, 0x2cd0000, 0xd00000, angle);
+    Actor_SetPositionAndFacing(27, px(717), px(208), angle);
   }
-  Actor_SetPositionAndFacing(26, 0x2e10000, 0xc30000, FACING_SOUTHEAST);
+  Actor_SetPositionAndFacing(26, px(737), px(195), FACING_SOUTHEAST);
   {
     s32 angle = 0xa000;
 
-    Actor_SetPositionAndFacing(0, 0x2f90000, 0xdb0000, angle);
+    Actor_SetPositionAndFacing(0, px(761), px(219), angle);
   }
-  Actor_SetPositionAndFacing(2, 0x2e50000, 0xe80000, FACING_NORTHWEST);
+  Actor_SetPositionAndFacing(2, px(741), px(232), FACING_NORTHWEST);
   Actor_SetScript(3, (s32)gData_02005548);
   Actor_SetSpriteFlags(Actor_Get(0), 0);
   Actor_SetAnimation(0, 0x27);
@@ -1584,8 +1584,8 @@ s32 Scene_Initialize(void) {
   object->terrainHeight = 0;
   object = Actor_Get(25);
   object->motionFlags = 0;
-  object->y = PIXELS(32);
-  object->terrainHeight = PIXELS(32);
+  object->y = px(32);
+  object->terrainHeight = px(32);
   if (Event_GetFlag(FLAG_SCENE_TEMP_02)) {
     MapGrid_CopyCellsLayered(49, 106, 4, 3, 49, 76);
     MapGrid_CopyCellAttributes(49, 45, 4, 1, 49, 44);
@@ -1642,7 +1642,7 @@ s32 Scene_PrepareMap(void) {
     Actor_SetPosition(20, 1016, 248);
     MapGrid_CopyCellsLayered(104, 42, 5, 11, 61, 42);
     MapGrid_CopyCellsLayered(106, 52, 1, 1, 63, 84);
-    FieldMapGrid_SetCellBehavior(0x4100000, 0xa00000, 2, 236);
+    FieldMapGrid_SetCellBehavior(px(1040), px(160), 2, 236);
   }
   object->motionFlags = 0;
   {
@@ -1963,19 +1963,19 @@ u32 gData_02004a90[] = {
 };
 
 u32 gData_02004ab4[] = {                                                               
-      SC_SYNC,    SC_MOVE_XZ(PIXELS(699), PIXELS(170)), SC_SYNC,                
+      SC_SYNC,    SC_MOVE_XZ(px(699), px(170)), SC_SYNC,                
       SC_WAIT(1), SC_SET(SW_FACING, FACING_SOUTHEAST), SC_ARG(1),              
       SC_END,                                                                  
   };
 
 u32 gData_02004ae8[] = {                                                               
-      SC_SYNC,    SC_MOVE_XZ(PIXELS(679), PIXELS(170)), SC_SYNC,                
+      SC_SYNC,    SC_MOVE_XZ(px(679), px(170)), SC_SYNC,                
       SC_WAIT(1), SC_SET(SW_FACING, FACING_SOUTHEAST), SC_ARG(1),              
       SC_END,                                                                  
   };
 
 u32 gData_02004b1c[] = {                                                               
-      SC_SYNC,    SC_MOVE_XZ(PIXELS(659), PIXELS(170)), SC_SYNC,                
+      SC_SYNC,    SC_MOVE_XZ(px(659), px(170)), SC_SYNC,                
       SC_WAIT(1), SC_SET(SW_FACING, FACING_SOUTHEAST), SC_ARG(1),              
       SC_END,                                                                  
   };
@@ -2114,10 +2114,10 @@ LATE_DATA u32 gData_0200558c[] = {
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(60),
-    SC_MOVE_XZ(PIXELS(737), PIXELS(202)),
+    SC_MOVE_XZ(px(737), px(202)),
     SC_ARG(2),
     SC_WAIT(4),
-    SC_MOVE_XZ(PIXELS(776), PIXELS(202)),
+    SC_MOVE_XZ(px(776), px(202)),
     SC_CALL(Func_02000ad0),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -2128,19 +2128,19 @@ LATE_DATA u32 gData_020055ec[] = {
     SC_SYNC,
     SC_ARG(9),
     SC_WAIT(60),
-    SC_MOVE_XZ(PIXELS(776), PIXELS(202)),
+    SC_MOVE_XZ(px(776), px(202)),
     SC_ARG(2),
     SC_WAIT(4),
-    SC_MOVE_XZ(PIXELS(737), PIXELS(202)),
+    SC_MOVE_XZ(px(737), px(202)),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 LATE_DATA u32 gData_02005644[] = {
     SC_CALL(Func_02000b38),
-    SC_MOVE_XZ(PIXELS(731), PIXELS(213)),
+    SC_MOVE_XZ(px(731), px(213)),
     SC_ARG(2),
     SC_WAIT(4),
-    SC_MOVE_XZ(PIXELS(731), PIXELS(232)),
+    SC_MOVE_XZ(px(731), px(232)),
     SC_CALL(Func_02000ad0),
     SC_SYNC,
     SC_ARG(1),
@@ -2151,9 +2151,9 @@ LATE_DATA u32 gData_02005644[] = {
 LATE_DATA u32 gData_0200569c[] = {
     SC_ARG(2),
     SC_CALL(Func_02000b38),
-    SC_MOVE_XZ(PIXELS(731), PIXELS(232)),
+    SC_MOVE_XZ(px(731), px(232)),
     SC_WAIT(4),
-    SC_MOVE_XZ(PIXELS(731), PIXELS(213)),
+    SC_MOVE_XZ(px(731), px(213)),
     SC_SYNC,
     SC_ARG(8),
     SC_WAIT(53),
@@ -2170,9 +2170,9 @@ LATE_DATA u32 gData_020056ec[] = {
 
 LATE_DATA u32 gData_02005748[] = {
     SC_ARG(5),
-    SC_MOVE_BY(0, 0, PIXELS(32)),
+    SC_MOVE_BY(0, 0, px(32)),
     SC_SYNC,
-    SC_MOVE_XZ(PIXELS(744), PIXELS(328)),
+    SC_MOVE_XZ(px(744), px(328)),
     SC_SYNC,
     SC_ARG(1),
     SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
@@ -2181,9 +2181,9 @@ LATE_DATA u32 gData_02005748[] = {
 
 LATE_DATA u32 gData_0200578c[] = {
     SC_ARG(5),
-    SC_MOVE_BY(PIXELS(-8), 0, PIXELS(32)),
+    SC_MOVE_BY(px(-8), 0, px(32)),
     SC_SYNC,
-    SC_MOVE_XZ(PIXELS(896), PIXELS(328)),
+    SC_MOVE_XZ(px(896), px(328)),
     SC_SYNC,
     SC_ARG(1),
     SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
@@ -2192,7 +2192,7 @@ LATE_DATA u32 gData_0200578c[] = {
 
 LATE_DATA u32 gData_020057d0[] = {                                                               
       SC_ARG(2),                                                              
-      SC_MOVE_XZ(PIXELS(740), PIXELS(312)),                                      
+      SC_MOVE_XZ(px(740), px(312)),                                      
       SC_SYNC,                                                                 
       SC_ARG(1),                                                               
       SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),                           
@@ -2201,7 +2201,7 @@ LATE_DATA u32 gData_020057d0[] = {
 
 LATE_DATA u32 gData_02005800[] = {                                                               
       SC_ARG(2),                                                              
-      SC_MOVE_XZ(PIXELS(900), PIXELS(312)),                                     
+      SC_MOVE_XZ(px(900), px(312)),                                     
       SC_SYNC,                                                                 
       SC_ARG(1),                                                               
       SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),                       
@@ -2210,7 +2210,7 @@ LATE_DATA u32 gData_02005800[] = {
 
 LATE_DATA u32 gData_0200d830[] = {                                                               
       SC_ARG(5),                                                              
-      SC_MOVE_XZ(PIXELS(724), PIXELS(312)),                                      
+      SC_MOVE_XZ(px(724), px(312)),                                      
       SC_SYNC,                                                                 
       SC_ARG(1),                                                               
       SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),                           
@@ -2219,7 +2219,7 @@ LATE_DATA u32 gData_0200d830[] = {
 
 LATE_DATA u32 gData_02005860[] = {                                                               
       SC_ARG(5),                                                              
-      SC_MOVE_XZ(PIXELS(916), PIXELS(312)),                                     
+      SC_MOVE_XZ(px(916), px(312)),                                     
       SC_SYNC,                                                                 
       SC_ARG(1),                                                               
       SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),                       
@@ -2228,10 +2228,10 @@ LATE_DATA u32 gData_02005860[] = {
 
 LATE_DATA u32 gData_02005890[] = {
     SC_ARG(5),
-    SC_MOVE_XZ(PIXELS(677), PIXELS(287)),
+    SC_MOVE_XZ(px(677), px(287)),
     SC_SYNC,
     SC_ARG(5),
-    SC_MOVE_XZ(PIXELS(740), PIXELS(344)),
+    SC_MOVE_XZ(px(740), px(344)),
     SC_SYNC,
     SC_ARG(1),
     SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
@@ -2240,10 +2240,10 @@ LATE_DATA u32 gData_02005890[] = {
 
 LATE_DATA u32 gData_020058d8[] = {
     SC_ARG(5),
-    SC_MOVE_XZ(PIXELS(950), PIXELS(287)),
+    SC_MOVE_XZ(px(950), px(287)),
     SC_SYNC,
     SC_ARG(5),
-    SC_MOVE_XZ(PIXELS(900), PIXELS(344)),
+    SC_MOVE_XZ(px(900), px(344)),
     SC_SYNC,
     SC_ARG(1),
     SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
@@ -2252,7 +2252,7 @@ LATE_DATA u32 gData_020058d8[] = {
 
 LATE_DATA u32 gData_02005920[] = {                                                               
       SC_ARG(5),                                                              
-      SC_MOVE_XZ(PIXELS(708), PIXELS(328)),                                      
+      SC_MOVE_XZ(px(708), px(328)),                                      
       SC_SYNC,                                                                 
       SC_ARG(1),                                                               
       SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),                           
@@ -2261,10 +2261,10 @@ LATE_DATA u32 gData_02005920[] = {
 
 LATE_DATA u32 gData_02005950[] = {
     SC_ARG(5),
-    SC_MOVE_BY(PIXELS(-8), 0, 0),
+    SC_MOVE_BY(px(-8), 0, 0),
     SC_SYNC,
     SC_ARG(5),
-    SC_MOVE_XZ(PIXELS(924), PIXELS(328)),
+    SC_MOVE_XZ(px(924), px(328)),
     SC_SYNC,
     SC_ARG(1),
     SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
@@ -2277,21 +2277,21 @@ LATE_DATA u32 gData_0200599c[] = {
 
 LATE_DATA u32 gData_020059a4[] = {
     SC_ARG(2),
-    SC_MOVE_XZ(PIXELS(706), PIXELS(172)),
+    SC_MOVE_XZ(px(706), px(172)),
     SC_SYNC,
-    SC_MOVE_XZ(PIXELS(682), PIXELS(151)),
+    SC_MOVE_XZ(px(682), px(151)),
     SC_SYNC,
-    SC_MOVE_XZ(PIXELS(682), PIXELS(120)),
+    SC_MOVE_XZ(px(682), px(120)),
     SC_SYNC,
-    SC_MOVE_XZ(PIXELS(664), PIXELS(106)),
+    SC_MOVE_XZ(px(664), px(106)),
     SC_SYNC,
-    SC_MOVE_XZ(PIXELS(664), PIXELS(100)),
+    SC_MOVE_XZ(px(664), px(100)),
     SC_SYNC,
     SC_END,
 };
 
 LATE_DATA u32 gData_02005a00[] = {
-    SC_MOVE_XZ(PIXELS(664), PIXELS(80)),
+    SC_MOVE_XZ(px(664), px(80)),
     SC_SYNC,
     SC_FREE,
 };

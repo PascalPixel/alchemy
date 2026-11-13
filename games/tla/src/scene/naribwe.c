@@ -309,14 +309,14 @@ void Naribwe_HideStone(void);
   struct ActorPlacement name[] = {                                             \
       ACTOR_PLACEMENT(365, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 246, \
                       FACING_SOUTH, TALK_FACING_PARTY, 0),                     \
-      {304, CONDITION_ALWAYS, (s32)gNaribwe_BrazierBurns, PIXELS(316), 0,      \
-       PIXELS(132), FACING_SOUTH, 0, 0},                                       \
-      {304, CONDITION_ALWAYS, (s32)gNaribwe_BrazierBurns, PIXELS(372), 0,      \
-       PIXELS(132), FACING_SOUTH, 0, 0},                                       \
-      {410, CONDITION_ALWAYS, (s32)gNaribwe_FlameRises, PIXELS(316), 0,        \
-       PIXELS(132), FACING_SOUTH, 0, 0},                                       \
-      {410, CONDITION_ALWAYS, (s32)gNaribwe_FlameRises, PIXELS(372), 0,        \
-       PIXELS(132), FACING_SOUTH, 0, 0},                                       \
+      {304, CONDITION_ALWAYS, (s32)gNaribwe_BrazierBurns, px(316), 0, px(132), \
+       FACING_SOUTH, 0, 0},                                                    \
+      {304, CONDITION_ALWAYS, (s32)gNaribwe_BrazierBurns, px(372), 0, px(132), \
+       FACING_SOUTH, 0, 0},                                                    \
+      {410, CONDITION_ALWAYS, (s32)gNaribwe_FlameRises, px(316), 0, px(132),   \
+       FACING_SOUTH, 0, 0},                                                    \
+      {410, CONDITION_ALWAYS, (s32)gNaribwe_FlameRises, px(372), 0, px(132),   \
+       FACING_SOUTH, 0, 0},                                                    \
       ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 344, \
                       FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),            \
       ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 200,   \
@@ -337,8 +337,8 @@ void Naribwe_HideStone(void);
                       FACING_EAST, TALK_FACING_PARTY, 0),                      \
       ACTOR_PLACEMENT(110, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 360, \
                       FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),             \
-      {307, CONDITION_ALWAYS, (s32)gNaribwe_IvyAnimation, PIXELS(40), 0,       \
-       PIXELS(168), FACING_SOUTH, 2, 0},                                       \
+      {307, CONDITION_ALWAYS, (s32)gNaribwe_IvyAnimation, px(40), 0, px(168),  \
+       FACING_SOUTH, 2, 0},                                                    \
       ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 376, \
                       FACING_SOUTH, TALK_FACING_KEEP, 0),                      \
       ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 376, \

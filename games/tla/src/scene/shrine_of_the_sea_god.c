@@ -2058,15 +2058,15 @@ void ShrineOfTheSeaGod_InitializeRoom7(void) {
   if (GameFlag_Get(FLAG_SCENE_TEMP_31)) {
     Map_CopyCellAttributeRect(0, 0, 3, 1, 19, 13);
     Map_CopyCellAttributeRect(40, 0, 2, 1, 19, 33);
-    Actor_SetPositionAndResetMotion(Actor_GetById(15), PIXELS(320), -PIXELS(21),
-                                    PIXELS(534));
+    Actor_SetPositionAndResetMotion(Actor_GetById(15), px(320), -px(21),
+                                    px(534));
     Actor_SetSpritePriority(15, 3);
   }
   if (GameFlag_Get(FLAG_SCENE_TEMP_32)) {
     Map_CopyCellAttributeRect(0, 0, 3, 1, 24, 22);
     Map_CopyCellAttributeRect(40, 0, 2, 1, 24, 24);
-    Actor_SetPositionAndResetMotion(Actor_GetById(16), PIXELS(400), -PIXELS(21),
-                                    PIXELS(390));
+    Actor_SetPositionAndResetMotion(Actor_GetById(16), px(400), -px(21),
+                                    px(390));
     Actor_SetSpritePriority(16, 3);
   }
   Rope_Initialize();
@@ -2412,11 +2412,11 @@ struct ActorPlacement gShrineOfTheSeaGod_Room7Placements[] = {
 };
 
 struct ActorPlacement gShrineOfTheSeaGod_Room8Placements[] = {                                             
-      {297, CONDITION_ALWAYS, 1, PIXELS(160), 0, PIXELS(202), FACING_SOUTH, 2,    
+      {297, CONDITION_ALWAYS, 1, px(160), 0, px(202), FACING_SOUTH, 2,    
        0},                                                                     
-      {297, CONDITION_ALWAYS, 1, PIXELS(176), 0, PIXELS(298), FACING_SOUTH, 2,    
+      {297, CONDITION_ALWAYS, 1, px(176), 0, px(298), FACING_SOUTH, 2,    
        1},                                                                    
-      {297, CONDITION_ALWAYS, 1, PIXELS(320), 0, PIXELS(218), FACING_SOUTH, 2,    
+      {297, CONDITION_ALWAYS, 1, px(320), 0, px(218), FACING_SOUTH, 2,    
        1},                                                                    
       {SCENE_TABLE_END},                                                       
   };

@@ -192,7 +192,7 @@ void ChampaCliffCaves_OpenDoorAndEnter(const struct WarpTarget *warp, s32 door,
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(warp->scene, warp->x, warp->z);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   id = gMainRoutineWork.currentOwner;
   if (mode == 0)
@@ -311,7 +311,7 @@ void Func_020003ec(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_ChampaCliffCaves4 && x == 41 &&
       (u32)(z - 13) <= 4)
     Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
-                                           PIXELS(664), PIXELS(280));
+                                           px(664), px(280));
 }
 
 extern struct Trigger gChampaCliffCaves_Room1Triggers[];
@@ -386,7 +386,7 @@ void Func_020005e8(s32 actor) {
 }
 
 void Func_0200067c(s32 value) {
-  Actor_SetSpeedParameters(8, 0xcccc, 0x6666);
+  Actor_SetSpeed(8, 0.8);
   Actor_GetById(8)->actionFlags &= 0xfe;
   Actor_WalkByAndWaitById(8, 0, 6);
   Event_Wait(1);
@@ -579,7 +579,7 @@ void Func_02000a34(s32 value) {
         0);
   Call2((void (*)())Actor_FaceDirectionById, 8, 0x5000);
   Event_Wait(10);
-  FieldCamera_MoveWithinMapBounds(0x2980000, -1, 0xe80000, 1);
+  FieldCamera_MoveWithinMapBounds(px(664), -1, px(232), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
   Value3((s32 (*)())Actor_ShowEmoteById, 8, 0x107, 40);
@@ -798,7 +798,7 @@ void Func_0200115c(void) {
     Event_SetMessageId((s32)MsgBackForMore);
     FieldEvent_ShowMessageThenWait(11, 0, 5);
     Sound_Play(MUS_036);
-    FieldCamera_MoveWithinMapBounds(664 << 16, -1, 0x1000000, 1);
+    FieldCamera_MoveWithinMapBounds(664 << 16, -1, px(256), 1);
     FieldCamera_WaitForArrival();
     Event_Wait(5);
     Motion_SetModeAndWaitAnimation(8, 4);
@@ -811,7 +811,7 @@ void Func_0200115c(void) {
     FieldEvent_ShowMessageThenWait(11, 0, 5);
     Sound_Play(MUS_036);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
-    FieldCamera_MoveWithinMapBounds(664 << 16, -1, 0x1000000, 1);
+    FieldCamera_MoveWithinMapBounds(664 << 16, -1, px(256), 1);
     FieldCamera_WaitForArrival();
     Event_Wait(5);
     Actor_Jump(11, 6, 15);
@@ -1028,13 +1028,12 @@ void Func_02001868(void) {
   Event_SetMessageId((s32)MsgMySalamanderYou);
   owner = (s32 *)&gMainRoutineWork;
   owner = (s32 *)((u8 *)owner + 532);
-  Actor_SetHorizontalPositionWithTerrain(*owner, PIXELS(568), PIXELS(256));
-  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 13, PIXELS(592),
-        PIXELS(240));
+  Actor_SetHorizontalPositionWithTerrain(*owner, px(568), px(256));
+  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 13, px(592),
+        px(240));
   Actor_SetModeById(13, 3);
   Actor_ArmCallback(*owner, FACING_EAST, 0);
-  Call4((void (*)())FieldCamera_MoveWithinMapBounds, PIXELS(656), -1,
-        PIXELS(248), 0);
+  Call4((void (*)())FieldCamera_MoveWithinMapBounds, px(656), -1, px(248), 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
@@ -1103,7 +1102,7 @@ void Func_02001868(void) {
   Call4((void (*)())Actor_LaunchFromLeader, 15, 16, -16, 0);
   Actor_WaitForMoveById(15);
   Event_Wait(10);
-  FieldCamera_MoveWithinMapBounds(PIXELS(640), -1, PIXELS(248), 1);
+  FieldCamera_MoveWithinMapBounds(px(640), -1, px(248), 1);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(6, 4);
   Call3((void (*)())Event_ShowMessageThenWait, 0x1006, 0, 5);
@@ -1208,15 +1207,14 @@ void Func_02001868(void) {
   Call3((void (*)())Actor_ArmCallback, 11, FACING_WEST, 0);
   Call2((void (*)())Actor_FaceDirectionById, 8, FACING_WEST);
   Event_Wait(10);
-  Call4((void (*)())FieldCamera_MoveWithinMapBounds, PIXELS(568), -1,
-        PIXELS(248), 1);
+  Call4((void (*)())FieldCamera_MoveWithinMapBounds, px(568), -1, px(248), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
   Actor_SetSpritePriority(14, 2);
   Actor_GetById(14)->facing = 0x3000;
   Actor_GetById(14)->motionFlags = 0;
-  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 14, PIXELS(520),
-        PIXELS(200));
+  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 14, px(520),
+        px(200));
   Call3((void (*)())Actor_SetSpeedParameters, 14, 0x10000, 0x8000);
   Actor_WalkByAndWaitById(14, 0, 16);
   Actor_ArmCallback(14, 0x3000, 0);
@@ -1233,7 +1231,7 @@ void Func_02001868(void) {
   Actor_WalkByAndWaitById(14, 8, 8);
   Actor_WalkByAndWaitById(14, 64, 0);
   Call3((void (*)())Actor_ArmCallback, 8, 0x5000, 0);
-  FieldCamera_MoveWithinMapBounds(PIXELS(600), -1, PIXELS(256), 1);
+  FieldCamera_MoveWithinMapBounds(px(600), -1, px(256), 1);
   Call3((void (*)())Actor_SetSpeedParameters, 11, 0x10000, 0x8000);
   Call3((void (*)())Actor_WalkByAndWaitById, 11, -32, 0);
   Call3((void (*)())Actor_WalkByAndWaitById, 11, -16, -16);

@@ -306,7 +306,7 @@ void Champa_FeizhiHoldsHerGift(void) {
   {
     s32 facing = FACING_NORTH;
 
-    Actor_SetPositionAndFacing(31, PIXELS(312), PIXELS(593), facing);
+    Actor_SetPositionAndFacing(31, px(312), px(593), facing);
   }
   Event_SetFlag(FLAG_FEIZHIS_GIFT_WAITING);
 }
@@ -330,7 +330,7 @@ void Champa_FeizhiArrives(void) {
       {
         s32 angle = 0xc000;
 
-        Actor_SetPositionAndFacing(29, PIXELS(314), PIXELS(679), angle);
+        Actor_SetPositionAndFacing(29, px(314), px(679), angle);
       }
       FieldEvent_ShowMessageThenWait(29, 0, 5);
       Actor_WalkToAndWait(4, 314, 580);

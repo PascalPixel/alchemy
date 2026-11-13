@@ -160,9 +160,9 @@ void Func_020000c8(s32 mode, s32 arg) {
     a->acceleration = px(1) / 2;
     b->acceleration = px(1) / 2;
     b->speedLimit = px(4);
-    FieldActor_SetPositionAndResetMotion(a, 0x1e80000, a->y, 0x1380000);
+    FieldActor_SetPositionAndResetMotion(a, px(488), a->y, px(312));
     FieldActor_SetMoveTarget(a, 440, 0, 312);
-    FieldActor_SetPositionAndResetMotion(b, 0x1e80000, b->y, 0x1380000);
+    FieldActor_SetPositionAndResetMotion(b, px(488), b->y, px(312));
     FieldActor_SetMoveTarget(b, 440, 0, 376);
     Tightrope_Release(1);
     Tightrope_Release(2);
@@ -195,9 +195,9 @@ void Func_02000190(s32 unused, s32 id) {
     x = object->x >> 20;
     z = object->z >> 20;
     if (x == 34 && z == 32 && leaderX == 33)
-      FieldMapGrid_SetCellBehavior(0x2100000, 0x2000000, 2, 255);
+      FieldMapGrid_SetCellBehavior(px(528), px(512), 2, 255);
     if (x == 33 && z == 32 && leaderX == 32)
-      FieldMapGrid_SetCellBehavior(0x2000000, 0x2000000, 2, 255);
+      FieldMapGrid_SetCellBehavior(px(512), px(512), 2, 255);
   }
 }
 
@@ -223,8 +223,8 @@ void Func_02000200(s32 mode, s32 id) {
   hit = 0;
   z = object->z >> 20;
   if (id == 10) {
-    FieldMapGrid_SetCellBehavior(0x2100000, 0x2000000, 2, 0);
-    FieldMapGrid_SetCellBehavior(0x2000000, 0x2000000, 2, 0);
+    FieldMapGrid_SetCellBehavior(px(528), px(512), 2, 0);
+    FieldMapGrid_SetCellBehavior(px(512), px(512), 2, 0);
   }
   if (x == 31 && z == 32) {
     Event_SetFlag(0x8a0);
@@ -279,15 +279,15 @@ void Func_02000200(s32 mode, s32 id) {
 
 void Func_02000394(s32 unused, s32 id) {
   Func_02000190(unused, id);
-  FieldMapGrid_SetCellBehavior(0x1400000, 0x1d00000, 2, 255);
-  FieldMapGrid_SetCellBehavior(0x1400000, 0x1e00000, 2, 255);
-  FieldMapGrid_SetCellBehavior(0x1400000, 0x1f00000, 2, 255);
-  FieldMapGrid_SetCellBehavior(0x1400000, 0x2000000, 2, 255);
-  FieldMapGrid_SetCellBehavior(0x1600000, 0x1d00000, 2, 255);
-  FieldMapGrid_SetCellBehavior(0x1600000, 0x1e00000, 2, 255);
-  FieldMapGrid_SetCellBehavior(0x1600000, 0x1f00000, 2, 255);
-  FieldMapGrid_SetCellBehavior(0x1600000, 0x2000000, 2, 255);
-  FieldMapGrid_SetCellBehavior(0x1500000, 0x2100000, 2, 0);
+  FieldMapGrid_SetCellBehavior(px(320), px(464), 2, 255);
+  FieldMapGrid_SetCellBehavior(px(320), px(480), 2, 255);
+  FieldMapGrid_SetCellBehavior(px(320), px(496), 2, 255);
+  FieldMapGrid_SetCellBehavior(px(320), px(512), 2, 255);
+  FieldMapGrid_SetCellBehavior(px(352), px(464), 2, 255);
+  FieldMapGrid_SetCellBehavior(px(352), px(480), 2, 255);
+  FieldMapGrid_SetCellBehavior(px(352), px(496), 2, 255);
+  FieldMapGrid_SetCellBehavior(px(352), px(512), 2, 255);
+  FieldMapGrid_SetCellBehavior(px(336), px(528), 2, 0);
 }
 
 void Func_0200042c(s32 mode, s32 id) {
@@ -302,15 +302,15 @@ void Func_0200042c(s32 mode, s32 id) {
   open = 0;
   if (x == 21 && z == 33)
     open = 1;
-  FieldMapGrid_SetCellBehavior(0x1400000, 0x1d00000, 2, 0);
-  FieldMapGrid_SetCellBehavior(0x1400000, 0x1e00000, 2, 0);
-  FieldMapGrid_SetCellBehavior(0x1400000, 0x1f00000, 2, 0);
-  FieldMapGrid_SetCellBehavior(0x1400000, 0x2000000, 2, 0);
-  FieldMapGrid_SetCellBehavior(0x1600000, 0x1d00000, 2, 0);
-  FieldMapGrid_SetCellBehavior(0x1600000, 0x1e00000, 2, 0);
-  FieldMapGrid_SetCellBehavior(0x1600000, 0x1f00000, 2, 0);
-  FieldMapGrid_SetCellBehavior(0x1600000, 0x2000000, 2, 0);
-  FieldMapGrid_SetCellBehavior(0x1500000, 0x2100000, 2, 255);
+  FieldMapGrid_SetCellBehavior(px(320), px(464), 2, 0);
+  FieldMapGrid_SetCellBehavior(px(320), px(480), 2, 0);
+  FieldMapGrid_SetCellBehavior(px(320), px(496), 2, 0);
+  FieldMapGrid_SetCellBehavior(px(320), px(512), 2, 0);
+  FieldMapGrid_SetCellBehavior(px(352), px(464), 2, 0);
+  FieldMapGrid_SetCellBehavior(px(352), px(480), 2, 0);
+  FieldMapGrid_SetCellBehavior(px(352), px(496), 2, 0);
+  FieldMapGrid_SetCellBehavior(px(352), px(512), 2, 0);
+  FieldMapGrid_SetCellBehavior(px(336), px(528), 2, 255);
   if (open)
     FieldCamera_MoveTo(336, CAMERA_KEEP, 560, 1);
   Func_02000200(mode, id);
@@ -348,12 +348,12 @@ void Func_02000514(void) {
       FieldEvent_ResolvePendingActions(0);
       FieldCamera_MoveTo(336, CAMERA_KEEP, 560, 1);
       Func_020044c4__s0514(unk);
-      MapGrid_SetCellBehavior(actor15->x - PIXELS(24), actor15->z, 0, 0);
-      MapGrid_SetCellBehavior(actor15->x + PIXELS(8), actor15->z, 0, 0);
-      MapGrid_SetCellBehavior(actor15->x - PIXELS(24), actor15->z, 2, 0);
-      MapGrid_SetCellBehavior(actor15->x - PIXELS(8), actor15->z, 2, 0);
-      MapGrid_SetCellBehavior(actor15->x + PIXELS(8), actor15->z, 2, 0);
-      MapGrid_SetCellBehavior(actor15->x + PIXELS(24), actor15->z, 2, 0);
+      MapGrid_SetCellBehavior(actor15->x - px(24), actor15->z, 0, 0);
+      MapGrid_SetCellBehavior(actor15->x + px(8), actor15->z, 0, 0);
+      MapGrid_SetCellBehavior(actor15->x - px(24), actor15->z, 2, 0);
+      MapGrid_SetCellBehavior(actor15->x - px(8), actor15->z, 2, 0);
+      MapGrid_SetCellBehavior(actor15->x + px(8), actor15->z, 2, 0);
+      MapGrid_SetCellBehavior(actor15->x + px(24), actor15->z, 2, 0);
       Actor_SetAnimation(15, 3);
       Actor_SetDestinationOffset(15, 0, 16);
       FieldEvent_Wait(20);
@@ -699,9 +699,9 @@ void Func_02000fa4(void) {
     object->velocityY = 0;
     object->y = -px(4);
     object->terrainHeight = -px(4);
-    FieldMapGrid_SetCellBehavior(0x1500000, 0x2100000, 2, 0);
-    FieldMapGrid_SetCellBehavior(0x1500000, 0x2100000, 0, 0);
-    FieldMapGrid_SetCellBehavior(0x1600000, 0x2100000, 0, 0);
+    FieldMapGrid_SetCellBehavior(px(336), px(528), 2, 0);
+    FieldMapGrid_SetCellBehavior(px(336), px(528), 0, 0);
+    FieldMapGrid_SetCellBehavior(px(352), px(528), 0, 0);
   }
   if (Event_GetFlag(0x8a4)) {
     Actor_SetPosition(16, 0, 0);
@@ -2303,7 +2303,7 @@ s32 Func_02004240(struct PushState *push) {
 }
 
 /// The whole-pixel half of a 16.16 coordinate.
-#define PIXELS(v) (((s16 *)&(v))[1])
+#define PIXEL_PART(v) (((s16 *)&(v))[1])
 
 #include "shared/push_target_find_ahead.h"
 
@@ -2444,8 +2444,7 @@ next:
 #undef EVENT_WORK
 #undef OBJECT
 #undef FIELD_AT
-#undef PIXELS
-#define PIXELS(value) ((value) << 16)
+#undef PIXEL_PART
 #include "text/msg_ids.h"
 
 void Func_02000958(void);

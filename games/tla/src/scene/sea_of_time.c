@@ -828,7 +828,7 @@ void SeaOfTime_CrossToLemuria(void) {
   Actor_SetSpeed(8, 1);
   Actor_GetById(8)->facing = FACING_NORTH;
   Actor_WalkTo(8, 352, 264);
-  Camera_SetSpeedParameters(0x10000, 0x2000);
+  FieldCamera_SetSpeed(1);
   FieldCamera_MoveWithinMapBounds(352 << 16, -1, 196 << 16, 1);
   FieldCamera_WaitForArrival();
   Actor_WaitForMoveById(8);
@@ -934,7 +934,7 @@ next:
     }
     i++;
   }
-  object = Import_ActorCreate(159, 0x15c0000, 0, 0xb80000);
+  object = Import_ActorCreate(159, px(348), 0, px(184));
   // The object's per-frame hook, struct Actor's update.
   *(void (**)(struct Actor *))((u8 *)object + 0x6c) = SeaOfTime_UpdateSpray;
   Event_Wait(60);
@@ -1155,7 +1155,7 @@ void SeaOfTime_Open(void) {
   Event_ResolvePendingActions(0);
   Event_PlaySound(MUS_000);
   MapGrid_CopyCellsTo(49, 70, 19, 73, 6, 6);
-  actor = FieldActor_Create(159, 0x15c0000, 0, 0xb80000);
+  actor = FieldActor_Create(159, px(348), 0, px(184));
   actor->update = (void (*)(void))SeaOfTime_UpdateSpray;
   FieldCamera_MoveTo(352, CAMERA_KEEP, 196, 0);
   Event_StartScreenTransition();
@@ -1363,12 +1363,12 @@ u32 gFieldEffect_LongScript[] = {
 u8 gSeaOfTime_LapsNeeded[] = {16, 24, 16, 24, 16, 24};
 
 struct Spots gSeaOfTime_LapSpots = {{
-    {PIXELS(672), PIXELS(704)},
-    {PIXELS(896), PIXELS(320)},
-    {PIXELS(512), PIXELS(192)},
-    {PIXELS(320), PIXELS(416)},
-    {PIXELS(320), PIXELS(832)},
-    {PIXELS(96), PIXELS(160)},
+    {px(672), px(704)},
+    {px(896), px(320)},
+    {px(512), px(192)},
+    {px(320), px(416)},
+    {px(320), px(832)},
+    {px(96), px(160)},
 }};
 // clang-format on
 

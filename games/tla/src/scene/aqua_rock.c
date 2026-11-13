@@ -818,10 +818,10 @@ void Func_02001224(s32 unused, s32 id) {
   Func_02002a20_(0x10000, 0);
   PaletteFade_StartInterpolation(30);
   Event_Wait(15);
-  Camera_SetSpeedParameters(0x10000, 0x2000);
-  FieldCamera_MoveWithinMapBounds(PIXELS(248), -PIXELS(32), PIXELS(760), 1);
+  FieldCamera_SetSpeed(1);
+  FieldCamera_MoveWithinMapBounds(px(248), -px(32), px(760), 1);
   FieldCamera_WaitForArrival();
-  Actor_SetHorizontalPositionWithTerrain(15, PIXELS(264), PIXELS(792));
+  Actor_SetHorizontalPositionWithTerrain(15, px(264), px(792));
   Actor_SetSpriteFlags(Actor_GetById(15), 0);
   Actor_GetById(15)->collisionFlags = 0;
   Actor_GetById(15)->priorityFlags |= 2;
@@ -875,7 +875,7 @@ void Func_02001460(void) {
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   object->y = -px(16);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 2);
   for (i = 15; i >= 0; i--) {
     object->y += px(1);
     angle = object->facing;
@@ -908,7 +908,7 @@ void Func_0200153c(void) {
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   object->y = -px(64);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 2);
   for (i = 23; i >= 0; i--) {
     object->y += px(2);
     angle = object->facing;
@@ -1053,8 +1053,7 @@ s32 Scene_Initialize(void) {
       Actor_SetModeById(id, 0);
     }
     if (GameFlag_Get(0x950))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 25, PIXELS(520),
-            PIXELS(584));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 25, px(520), px(584));
     x = GameFlag_GetByte(0x310);
     z = GameFlag_GetByte(0x318);
     if (z != 0)
@@ -1079,16 +1078,11 @@ s32 Scene_Initialize(void) {
     if (gMainRoutineWork.entrance == 5)
       Func_0200169c();
     if (GameFlag_Get(0x955)) {
-      Call3(Actor_SetHorizontalPositionWithTerrain, 17, PIXELS(392),
-            PIXELS(824));
-      Call3(Actor_SetHorizontalPositionWithTerrain, 18, PIXELS(424),
-            PIXELS(824));
-      Call3(Actor_SetHorizontalPositionWithTerrain, 19, PIXELS(456),
-            PIXELS(824));
-      Call3(Actor_SetHorizontalPositionWithTerrain, 20, PIXELS(488),
-            PIXELS(824));
-      Call3(Actor_SetHorizontalPositionWithTerrain, 21, PIXELS(520),
-            PIXELS(824));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 17, px(392), px(824));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 18, px(424), px(824));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 19, px(456), px(824));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 20, px(488), px(824));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 21, px(520), px(824));
       Call6(Map_CopyCellAttributeRect, 64, 66, 9, 3, 24, 53);
       Call6(Map_CopyCellsRect, 64, 66, 11, 7, 87, 50);
       Actor_GetById(21)->update = Func_02001670;
@@ -1112,14 +1106,12 @@ s32 Scene_Initialize(void) {
       Call6(Map_CopyCellAttributeRect, 44, 44, 1, 1, 46, 44);
     Actor_SetModeById(12, 2);
     if (GameFlag_Get(0x951)) {
-      Call3(Actor_SetHorizontalPositionWithTerrain, 12, PIXELS(856),
-            PIXELS(840));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 12, px(856), px(840));
       Call6(Map_CopyCellAttributeRect, 54, 58, 1, 1, 53, 52);
     }
     Actor_SetModeById(13, 2);
     if (GameFlag_Get(0x952)) {
-      Call3(Actor_SetHorizontalPositionWithTerrain, 13, PIXELS(856),
-            PIXELS(936));
+      Call3(Actor_SetHorizontalPositionWithTerrain, 13, px(856), px(936));
       Call6(Map_CopyCellAttributeRect, 54, 58, 1, 1, 53, 58);
     }
     if (gMainRoutineWork.entrance == 5 || gMainRoutineWork.entrance == 7) {
@@ -1142,7 +1134,7 @@ s32 Scene_Initialize(void) {
       if (GameFlag_Get(0xa69)) {
         Func_020025a8(8);
         Func_02002834(8);
-        Actor_SetHorizontalPositionWithTerrain(15, PIXELS(264), PIXELS(792));
+        Actor_SetHorizontalPositionWithTerrain(15, px(264), px(792));
         Actor_SetSpriteFlags(Actor_GetById(15), 0);
         Actor_GetById(15)->collisionFlags = 0;
         Actor_GetById(15)->priorityFlags |= 2;
@@ -1334,7 +1326,7 @@ void Func_02002158(void) {
     Event_StartScreenTransition();
     Sound_Play(SE_SPARKLING_PASSAGE);
     leader->update = (void (*)(void))Actor_EmitMist;
-    Actor_SetSpeedParameters(*owner, 0x6666, 0x3333);
+    Actor_SetSpeed(*owner, 0.4);
     Actor_WalkByAndWaitById(*owner, 0, 8);
     Actor_SetSpriteColor(Actor_GetById(*owner), 0);
     Actor_SetSpriteFlags(Actor_GetById(*owner), 1);

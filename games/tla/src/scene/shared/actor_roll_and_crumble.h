@@ -37,7 +37,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     position.x = actor->x;
     position.y = actor->y;
     position.z = actor->z;
-    FieldVector_AddPolarOffset(0x80000, actor->facing, &position);
+    FieldVector_AddPolarOffset(px(8), actor->facing, &position);
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, position.x, position.z) ==
         7) {
       actor->targetZ = 0x80000000;

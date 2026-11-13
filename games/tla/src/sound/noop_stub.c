@@ -7,18 +7,12 @@ void Func_081c1010(void) {}
 #include "io_reg.h"
 #include "input.h"
 
-/// The sound VBlank state's byte 2, set while the sound test runs.
-struct SoundVBlankState {
-  u8 unk00[2];
-  u8 unk02;
-  u8 unk03;
-};
+#include "sound_driver_symbols.h"
 
-extern volatile struct SoundVBlankState gData_03001138;
-extern s32 Data_03000ee4;
-extern s32 gIwramHi_Data1;
+extern s32 gSoundMixerClipped;
+extern s32 gBuildStamp;
 
-void Sound_LoadPresetParameters(s32 preset);
+void Sound_LoadReverbCode(s32 preset);
 void Sound_Play(s32 id);
 void wait(s32 frames);
 
@@ -35,7 +29,7 @@ static const struct SoundTestCues sSoundTestCues = {{0, 80, 100}};
 /// from preset 3, with the sound VBlank state's byte 2 set, a clip timer of 2
 /// and the commands 0, 78 and 390.
 // As ☀️'s SoundTest_Run (games/tbs/src/sound/sound.c).
-void Func_081c1014(void) {
+void SoundTest_Run(void) {
   struct SoundTestCues cues;
   s32 preset;
   s32 row;
@@ -48,23 +42,23 @@ void Func_081c1014(void) {
   // VBlank state's; as the plain store, 10 of 145 instructions differ in
   // tla-en.
   do {
-    gIwramHi_Data1 = 0;
+    gBuildStamp = 0;
   } while (0);
-  gData_03001138.unk02 = 1;
+  gSoundVBlankState.soundTestActive = 1;
   timer = 20;
 
   for (;;) {
     if (timer != 0)
       timer--;
 
-    if (Data_03000ee4 != 0) {
-      Data_03000ee4 = 0;
+    if (gSoundMixerClipped != 0) {
+      gSoundMixerClipped = 0;
       timer = 2;
     }
 
     if (gInput.repeat & KEY_SELECT) {
       preset = (preset + 1) % 5;
-      Sound_LoadPresetParameters(preset);
+      Sound_LoadReverbCode(preset);
     }
     if (gInput.repeat & KEY_R)
       cues.cue[row] += 10;
@@ -116,7 +110,7 @@ void Sound_UpdateCommandMask(u32 command) {
 #include "sound.h"
 #include "system.h"
 
-u16 Sound_GetCurrentBgm(void) { return gData_02005830; }
+u16 Sound_GetCurrentBgm(void) { return gCurrentBgm; }
 
 s32 SoundFlag_Test(s32 sound) {
   s32 mask;

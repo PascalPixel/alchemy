@@ -4,6 +4,9 @@
 
 #include "../visual_attributes_internal.h"
 
+s32 __divsi3(s32, s32);
+extern u32 gData_03001144;
+
 /// Sets the map coordinates the camera keeps the screen inside.
 void MapGrid_SetCameraBounds(s32 minX, s32 minZ, s32 maxX, s32 maxZ) {
   struct MapWork *map = Ram_HeapSlots->mapWork;

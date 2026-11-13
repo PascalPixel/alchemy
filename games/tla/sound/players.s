@@ -9,14 +9,14 @@
 	.balign 4
 	.global gSound_PlayerSlots
 gSound_PlayerSlots:
-	music_player gMusicPlayerJingle, Sound_Tracks0, 4
-	music_player gMusicPlayerBgm, Sound_Tracks1, 10
-	music_player Sound_Player2, Sound_Tracks2, 2
-	music_player gSound_Player3, Sound_Tracks3, 2
-	music_player Sound_Player4, Sound_Tracks4, 2
-	music_player gSound_Player5, Sound_Tracks5, 2
-	music_player Sound_Player6, Sound_Tracks6, 2
-	music_player Sound_Player7, Sound_Tracks7, 2
+	music_player gMPlayInfo_Jingle, Sound_Tracks0, 4
+	music_player gMPlayInfo_BGM, Sound_Tracks1, 10
+	music_player gMPlayInfo_MenuSE, Sound_Tracks2, 2
+	music_player gMPlayInfo_ActionSE, Sound_Tracks3, 2
+	music_player gMPlayInfo_SE4, Sound_Tracks4, 2
+	music_player gMPlayInfo_SE5, Sound_Tracks5, 2
+	music_player gMPlayInfo_SE6, Sound_Tracks6, 2
+	music_player gMPlayInfo_SE7, Sound_Tracks7, 2
 
 @ The player count is this table's row count; the mixer has at most 0 lines
 	.global Sound_PlayerCount

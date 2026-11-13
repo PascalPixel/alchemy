@@ -1,5 +1,8 @@
 /// @file
-/// Overlay 0x6b7's scene: its code, then its tables, in ROM order.
+/// The debug room Increase item and level, as The Broken Seal's: its actors
+/// raise the party's levels, give any item and show the game's icons and
+/// portraits. Through entrances 96 to 99 the same scene is instead one of four
+/// rooms of people in rows, each of whom says their name when talked to.
 
 #include "battle.h"
 #include "field.h"
@@ -19,8 +22,32 @@
 #include "text/msg_ids.h"
 #include "item.h"
 #include "dma.h"
+#include "battle_unit.h"
+#include "character_ids.h"
 
 #include "edition.h"
+
+/// The entrances that open a room of names in place of the debug room: each
+/// has its own actor placements and the triggers of
+/// gIncreaseItemAndLevel_NameTriggers.
+enum {
+  ENTRANCE_NAMES_FOURTH = 96,
+  ENTRANCE_NAMES_THIRD = 97,
+  ENTRANCE_NAMES_SECOND = 98,
+  ENTRANCE_NAMES_FIRST = 99
+};
+
+/// The debug room's actors, numbering the rows of
+/// gIncreaseItemAndLevel_ActorPlacements, as The Broken Seal's.
+enum IncreaseItemAndLevelActorId {
+  ACTOR_ITEM_BROWSER = 8, ///< IncreaseItemAndLevel_SelectItem
+  ACTOR_ICON_BROWSER,     ///< IncreaseItemAndLevel_OpenIconBrowser
+  /// IncreaseItemAndLevel_OpenPortraitBrowser; Force cast at it runs
+  /// IncreaseItemAndLevel_RunMotionTest.
+  ACTOR_PORTRAIT_BROWSER,
+  /// IncreaseItemAndLevel_RunLevelEditor, drawn larger than the others.
+  ACTOR_LEVEL_EDITOR
+};
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -28,84 +55,98 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern u32 gData_0200082c[];
-extern u32 gData_020008a4[];
-extern s16 gData_02000a0c[];
-extern s16 gData_02000b74[];
-extern u32 gData_02000cf4[];
+extern struct ActorPlacement gIncreaseItemAndLevel_ActorPlacements[];
+extern struct ActorPlacement gIncreaseItemAndLevel_FirstNamePlacements[];
+extern struct ActorPlacement gIncreaseItemAndLevel_SecondNamePlacements[];
+extern struct ActorPlacement gIncreaseItemAndLevel_ThirdNamePlacements[];
+extern struct ActorPlacement gIncreaseItemAndLevel_FourthNamePlacements[];
 
-const u8 *Func_0200004c(void) {
-  if (gMainRoutineWork.entrance == 99)
-    return gData_020008a4;
-  if (gMainRoutineWork.entrance == 98)
-    return gData_02000a0c;
-  if (gMainRoutineWork.entrance == 97)
-    return gData_02000b74;
-  if (gMainRoutineWork.entrance == 96)
-    return gData_02000cf4;
-  return gData_0200082c;
+/// The scene's actor placements: a room of names for its entrance, else the
+/// debug room's.
+const struct ActorPlacement *IncreaseItemAndLevel_GetActorPlacements(void) {
+  if (gMainRoutineWork.entrance == ENTRANCE_NAMES_FIRST)
+    return gIncreaseItemAndLevel_FirstNamePlacements;
+  if (gMainRoutineWork.entrance == ENTRANCE_NAMES_SECOND)
+    return gIncreaseItemAndLevel_SecondNamePlacements;
+  if (gMainRoutineWork.entrance == ENTRANCE_NAMES_THIRD)
+    return gIncreaseItemAndLevel_ThirdNamePlacements;
+  if (gMainRoutineWork.entrance == ENTRANCE_NAMES_FOURTH)
+    return gIncreaseItemAndLevel_FourthNamePlacements;
+  return gIncreaseItemAndLevel_ActorPlacements;
 }
 
-void Func_020006e4(void);
-void Func_020006ec(void);
+void Event_Start(void);
+void Event_End(void);
 
-void Func_02000098(s32 index) {
-  Func_020006e4();
+/// Shows the name of the person talked to in a room of names: actor `actorId`
+/// says the message its room's list of names gives it. The first room's list
+/// starts at Master Poi, the third's at Alex.
+void IncreaseItemAndLevel_ShowName(s32 actorId) {
+  Event_Start();
   Event_ResolvePendingActions(0);
-  if (gMainRoutineWork.entrance == 99)
-    Event_SetMessageId(index + (s32)MsgFixingThisWill);
-  else if (gMainRoutineWork.entrance == 98)
-    Event_SetMessageId(index + (s32)MsgFortuneTeller2);
-  else if (gMainRoutineWork.entrance == 97)
-    Event_SetMessageId(index + (s32)MsgConfirmGraphic2);
+  if (gMainRoutineWork.entrance == ENTRANCE_NAMES_FIRST)
+    Event_SetMessageId(actorId + (s32)MsgFixingThisWill);
+  else if (gMainRoutineWork.entrance == ENTRANCE_NAMES_SECOND)
+    Event_SetMessageId(actorId + (s32)MsgFortuneTeller2);
+  else if (gMainRoutineWork.entrance == ENTRANCE_NAMES_THIRD)
+    Event_SetMessageId(actorId + (s32)MsgConfirmGraphic2);
   else
-    Event_SetMessageId(index + (s32)MsgPiers2);
-  Event_ShowMessageAndWait(index, 0);
-  Func_020006ec();
+    Event_SetMessageId(actorId + (s32)MsgPiers2);
+  Event_ShowMessageAndWait(actorId, 0);
+  Event_End();
 }
 
-void Func_0200068c(s32 index, s32 flags);
+void MessageArgument_Push(s32 value, s32 kind);
 
-void Func_020000fc(s32 index) {
-  Func_020006e4();
+/// Shows a party member's name when they are talked to in a room of names:
+/// Isaac's for ISAAC, and so on, with the character as the message's actor
+/// argument.
+void IncreaseItemAndLevel_ShowCharacterName(s32 character) {
+  Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId(index + (s32)MsgIsaac2);
-  Func_0200068c(index, 1);
-  Event_ShowMessageAndWait(index, 0);
-  if (index == 1)
-    Event_ShowMessageAndWait(0, 0);
-  Func_020006ec();
+  Event_SetMessageId(character + (s32)MsgIsaac2);
+  MessageArgument_Push(character, 1);
+  Event_ShowMessageAndWait(character, 0);
+  // XXX: why Garet's name is followed by a message from Isaac; the room's
+  // render, talking to Garet, would settle it.
+  if (character == GARET)
+    Event_ShowMessageAndWait(ISAAC, 0);
+  Event_End();
 }
 
-extern s32 gData_02000f10[];
-extern s32 gData_02000ebc[];
-u8 *Unit_Get(s32 owner);
+extern struct Trigger gIncreaseItemAndLevel_NameTriggers[];
+extern struct Trigger gIncreaseItemAndLevel_Triggers[];
 void Unit_Calculate(s32 owner);
-void Func_020006a4(void);
-void Func_020006ac(void);
+s32 DebugBrowser_Icons(void);
+s32 DebugBrowser_Portraits(void);
 
-const u8 *Func_02000138(void) {
+/// The scene's triggers: the rooms of names' for any entrance above 94, else
+/// the debug room's.
+const struct Trigger *IncreaseItemAndLevel_GetTriggers(void) {
   if (gMainRoutineWork.entrance > 94)
-    return gData_02000f10;
-  return gData_02000ebc;
+    return gIncreaseItemAndLevel_NameTriggers;
+  return gIncreaseItemAndLevel_Triggers;
 }
 
-void Func_02000160(s32 owner, s32 delta) {
-  Unit_LevelUpTo(owner, Unit_Get(owner)[15] + delta);
-  Unit_Calculate(owner);
+/// Raises one party member's level by amount, then recalculates that unit.
+void IncreaseItemAndLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {
+  Unit_LevelUpTo(ownerId,
+                 ((struct BattleUnit *)Unit_Get(ownerId))->level + amount);
+  Unit_Calculate(ownerId);
 }
 
-void Func_0200017c(s32 delta) {
-  u16 owners[16];
-  s32 count;
+/// Applies the level change to every party member.
+void IncreaseItemAndLevel_AdjustPartyLevels(s32 amount) {
+  u16 ownerIds[16];
+  s32 ownerCount;
   s32 i;
 
-  count = FieldParty_ListMembers(owners);
-  for (i = 0; i < count; i++)
-    Func_02000160(owners[i], delta);
+  ownerCount = FieldParty_ListMembers(ownerIds);
+  for (i = 0; i < ownerCount; i++)
+    IncreaseItemAndLevel_AdjustOwnerLevel(ownerIds[i], amount);
 }
 
-extern u32 gData_02000744[];
+extern char gIncreaseItemAndLevel_LvLabel[];
 
 void *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 void Text_DrawMessage(s32 msg, void *window, s32 x, s32 y);
@@ -123,55 +164,59 @@ static inline u32 Input_PressedFenced(u32 mask) {
   return keys;
 }
 
-/// The debug room's level raiser: Start or Select raises the party's levels
-/// by 5 and A by 1; B closes the window and recalculates the four units.
-void Func_020001a8(void) {
-  u8 *record;
-  void *win;
-  s32 flag;
-  s32 msg;
+/// Displays the leader's level and changes the whole party's, as The Broken
+/// Seal's: talking to ACTOR_LEVEL_EDITOR shows `Raise everyone's level.` over
+/// the leader's name and level; Start or Select raises the whole party five
+/// levels with a jingle (sound 93), A one level (sound 91). B closes the
+/// window and recalculates the original four heroes.
+void IncreaseItemAndLevel_RunLevelEditor(void) {
+  struct BattleUnit *unit;
+  void *window;
+  s32 redraw;
+  s32 messageId;
 
-  record = Unit_Get(gMainRoutineWork.currentOwner);
-  win = Window_Create(0, 0, 30, 9, 2);
+  unit = Unit_Get(gMainRoutineWork.currentOwner);
+  window = Window_Create(0, 0, 30, 9, 2);
 
-  msg = (s32)MsgRaiseEveryoneS;
-  Text_DrawMessage(msg, win, 0, 0);
-  Text_DrawMessage(msg + 1, win, 0, 16);
-  msg += 2;
-  flag = 1;
-  Text_DrawMessage(msg, win, 0, 32);
+  messageId = (s32)MsgRaiseEveryoneS;
+  Text_DrawMessage(messageId, window, 0, 0);
+  Text_DrawMessage(messageId + 1, window, 0, 16);
+  messageId += 2;
+  redraw = 1;
+  Text_DrawMessage(messageId, window, 0, 32);
 
   for (;;) {
-    if (flag != 0) {
-      WindowSprite_RedrawSavedRect(win);
-      Text_DrawStringAtOffset(record, win, 0, 48);
-      Text_DrawStringInWindow(gData_02000744, win, 48, 48);
-      flag = 0;
-      Text_DrawNumberInWindow(record[15], 0, win, 72, 48);
+    if (redraw != 0) {
+      WindowSprite_RedrawSavedRect(window);
+      Text_DrawStringAtOffset(unit->name, window, 0, 48);
+      Text_DrawStringInWindow(gIncreaseItemAndLevel_LvLabel, window, 48, 48);
+      redraw = 0;
+      Text_DrawNumberInWindow(unit->level, 0, window, 72, 48);
     }
 
-    if ((gInput.pressed & 8) != 0 || Input_PressedFenced(4) != 0) {
-      Func_0200017c(5);
+    if ((gInput.pressed & KEY_START) != 0 ||
+        Input_PressedFenced(KEY_SELECT) != 0) {
+      IncreaseItemAndLevel_AdjustPartyLevels(5);
       Sound_Play(93);
-      flag = 1;
+      redraw = 1;
     }
 
-    if ((gInput.pressed & 1) != 0) {
-      Func_0200017c(1);
+    if ((gInput.pressed & KEY_A) != 0) {
+      IncreaseItemAndLevel_AdjustPartyLevels(1);
       Sound_Play(91);
-      flag = 1;
+      redraw = 1;
     }
 
-    if ((gInput.pressed & 2) != 0) {
+    if ((gInput.pressed & KEY_B) != 0) {
       Sound_Play(113);
-      WindowSprite_RedrawSavedRect(win);
+      WindowSprite_RedrawSavedRect(window);
       wait(1);
-      Window_Close(win, 1);
+      Window_Close(window, 1);
 
-      Unit_Calculate(0);
-      Unit_Calculate(1);
-      Unit_Calculate(3);
-      Unit_Calculate(2);
+      Unit_Calculate(ISAAC);
+      Unit_Calculate(GARET);
+      Unit_Calculate(MIA);
+      Unit_Calculate(IVAN);
       return;
     }
 
@@ -179,32 +224,40 @@ void Func_020001a8(void) {
   }
 }
 
-#define ITEM_COUNT 512
+#define ITEM_COUNT 512      ///< The browser's item numbers, 0 to 511, wrapping.
+#define BROWSER_ROW_STEP 10 ///< Right and Left move ten numbers.
+#define BROWSER_PAGE_STEP 30 ///< R and L move thirty.
+#define ITEM_ID_MASK 0x1ff
 
-extern u32 gData_02000748[];
-extern u32 gData_02000754[];
-extern u32 gData_0200076c[];
+extern char gIncreaseItemAndLevel_ItemPrompt[];
+extern char gIncreaseItemAndLevel_ItemHelp[];
+extern char gIncreaseItemAndLevel_ItemFull[];
 
 void Text_DrawNumberAtOffset(s32 value, s32 format, void *window, s32 x, s32 y);
 void Text_DrawCharacterAtOffset(s32 character, void *window, s32 x, s32 y);
 s32 PartyInventory_HasSpace(void);
 s32 PartyInventory_Add(s32 item);
 void ItemMenu_DrawItemDetails(void *window, s32 item);
-struct ItemDefinition *Func_020006bc(s32 item);
+struct ItemDefinition *Item_GetDirect(s32 item);
 
-void Func_020002cc(void) {
+/// Browses nonempty item definitions and gives the selected item to the party,
+/// as The Broken Seal's: talking to ACTOR_ITEM_BROWSER. Up and Down step one
+/// number, Right and Left ten, R and L thirty, passing over numbers whose item
+/// has no icon; A gives the item to the first party member with room, and B,
+/// or A with every bag full, closes the browser.
+void IncreaseItemAndLevel_SelectItem(void) {
   void *window;
   void *details;
-  s32 item;
+  s32 selectedItemId;
   s32 redraw;
-  s32 index;
-  s32 count;
-  s8 step;
+  s32 messageOrDefinitionId;
+  s32 entryCount;
+  s8 seekDirection;
 
-  count = ITEM_COUNT;
-  step = 0;
+  entryCount = ITEM_COUNT;
+  seekDirection = 0;
   Sound_Play(112);
-  item = 1;
+  selectedItemId = 1;
   redraw = 1;
   window = Window_Create(0, 0, 30, 7, 2);
 #if LANGUAGE < LANGUAGE_GERMAN
@@ -212,6 +265,9 @@ void Func_020002cc(void) {
 #else
   details = Window_Create(0, 9, 18, 10, 2);
 #endif
+  // Lend the highlight palette (BG palette 14) to the item icons, as The
+  // Broken Seal's: sprite palette 0 into it, then the window background colour
+  // over its text background.
   Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010,
           (volatile u32 *)0x040000d4);
   Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001,
@@ -220,89 +276,93 @@ void Func_020002cc(void) {
   while (1) {
     if (redraw) {
       redraw = 0;
-      item = (item + ITEM_COUNT) % count;
+      // Wrap the number into 0 to 511 (a step back from 0 is 511).
+      selectedItemId = (selectedItemId + ITEM_COUNT) % entryCount;
       WindowSprite_RedrawSavedRect(window);
       WindowSprite_ClearList(window);
-      Text_DrawStringInWindow(gData_02000748, window, 0, 0);
-      Text_DrawNumberAtOffset(item, 0, window, 80, 0);
+      Text_DrawStringInWindow(gIncreaseItemAndLevel_ItemPrompt, window, 0, 0);
+      Text_DrawNumberAtOffset(selectedItemId, 0, window, 80, 0);
       if (PartyInventory_HasSpace()) {
-        Text_DrawStringInWindow(gData_02000754, window, 0, 32);
-        index = item & 0x1ff;
-        Func_020006bc(index);
-        Text_DrawCharacterAtOffset(index + (s32)MsgItemName, window, 120, 0);
-        Text_DrawMessage(index + (s32)MsgItemPlainName, window, 0, 16);
+        Text_DrawStringInWindow(gIncreaseItemAndLevel_ItemHelp, window, 0, 32);
+        messageOrDefinitionId = selectedItemId & ITEM_ID_MASK;
+        Item_GetDirect(messageOrDefinitionId);
+        Text_DrawCharacterAtOffset(messageOrDefinitionId + (s32)MsgItemName,
+                                   window, 120, 0);
+        Text_DrawMessage(messageOrDefinitionId + (s32)MsgItemPlainName, window,
+                         0, 16);
         WindowSprite_RedrawSavedRect(details);
-        ItemMenu_DrawItemDetails(details, item);
+        ItemMenu_DrawItemDetails(details, selectedItemId);
       } else {
-        Text_DrawStringInWindow(gData_0200076c, window, 0, 32);
+        Text_DrawStringInWindow(gIncreaseItemAndLevel_ItemFull, window, 0, 32);
       }
     }
-    if (Input_PressedFenced(1)) {
-      if (PartyInventory_Add(item) == -1) {
+    if (Input_PressedFenced(KEY_A)) {
+      if (PartyInventory_Add(selectedItemId) == -1) {
         Sound_Play(113);
         break;
       }
       Sound_Play(175);
     }
-    if (gInput.pressed & 2) {
+    if (gInput.pressed & KEY_B) {
       Sound_Play(113);
       break;
     }
-    if (gInput.repeat & 64) {
-      step = -1;
-      item--;
+    if (gInput.repeat & KEY_UP) {
+      seekDirection = -1;
+      selectedItemId--;
       redraw = 1;
       Sound_Play(111);
     }
-    if (gInput.repeat & 128) {
-      step = 1;
-      item++;
+    if (gInput.repeat & KEY_DOWN) {
+      seekDirection = 1;
+      selectedItemId++;
       redraw = 1;
       Sound_Play(111);
     }
-    if (gInput.repeat & 16) {
-      step = 1;
-      item += 10;
+    if (gInput.repeat & KEY_RIGHT) {
+      seekDirection = 1;
+      selectedItemId += BROWSER_ROW_STEP;
       redraw = 1;
       Sound_Play(111);
     }
-    if (gInput.repeat & 32) {
-      step = -1;
-      item -= 10;
+    if (gInput.repeat & KEY_LEFT) {
+      seekDirection = -1;
+      selectedItemId -= BROWSER_ROW_STEP;
       redraw = 1;
       Sound_Play(111);
     }
-    if (gInput.repeat & 256) {
-      step = 1;
-      item += 30;
+    if (gInput.repeat & KEY_R) {
+      seekDirection = 1;
+      selectedItemId += BROWSER_PAGE_STEP;
       redraw = 1;
       Sound_Play(111);
     }
-    if (gInput.repeat & 512) {
-      step = -1;
-      item -= 30;
+    if (gInput.repeat & KEY_L) {
+      seekDirection = -1;
+      selectedItemId -= BROWSER_PAGE_STEP;
       redraw = 1;
       Sound_Play(111);
     }
-    if (step == -1) {
-      item = (item + ITEM_COUNT) % count;
+    // Skip items with no icon in the chosen direction.
+    if (seekDirection == -1) {
+      selectedItemId = (selectedItemId + ITEM_COUNT) % entryCount;
       goto check_back;
     back:
-      item = (item + ITEM_COUNT - 1) % count;
+      selectedItemId = (selectedItemId + ITEM_COUNT - 1) % entryCount;
     check_back:
-      if (Func_020006bc(item & 0x1ff)->icon == 0)
+      if (Item_GetDirect(selectedItemId & ITEM_ID_MASK)->icon == 0)
         goto back;
     }
-    if (step == 1) {
-      item = (item + ITEM_COUNT) % count;
+    if (seekDirection == 1) {
+      selectedItemId = (selectedItemId + ITEM_COUNT) % entryCount;
       goto check_ahead;
     ahead:
-      item = (item + ITEM_COUNT + 1) % count;
+      selectedItemId = (selectedItemId + ITEM_COUNT + 1) % entryCount;
     check_ahead:
-      if (Func_020006bc(item & 0x1ff)->icon == 0)
+      if (Item_GetDirect(selectedItemId & ITEM_ID_MASK)->icon == 0)
         goto ahead;
     }
-    step = 0;
+    seekDirection = 0;
     wait(1);
   }
   WindowSprite_RedrawSavedRect(window);
@@ -311,37 +371,30 @@ void Func_020002cc(void) {
   Window_Close(details, 1);
 }
 
-void Func_020005d8(void);
-void Func_02000610(void);
-void Func_02000624(void);
-void Func_0200062c(void);
+void IncreaseItemAndLevel_RunMotionTest(void);
+void IncreaseItemAndLevel_EnableEffectChildMode(void);
+void IncreaseItemAndLevel_OpenIconBrowser(void);
+void IncreaseItemAndLevel_OpenPortraitBrowser(void);
 
-u32 gData_02000744[] = {
-    0x764c,
-};
+char gIncreaseItemAndLevel_LvLabel[4] = "Lv";
 
-u32 gData_02000748[] = {
-    0x6d657449,
-    0x3a6f4e20,
-    0,
-};
+char gIncreaseItemAndLevel_ItemPrompt[12] = "Item No:";
 
-// clang-format off
-u32 gData_02000754[] = {
-    0x65473a41, 0x74492074, 0x20206d65, 0x65523a42, 0x6e727574, 0,
-};
+char gIncreaseItemAndLevel_ItemHelp[24] = "A:Get Item  B:Return";
 
-u32 gData_0200076c[] = {
-    0x4d455449, 0x4c554620, 0x2e2e2e4c, 0x2e2e2e2e, 46,
-};
+char gIncreaseItemAndLevel_ItemFull[20] = "ITEM FULL........";
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 80, 0, 72, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {10, CONDITION_ALWAYS, 80, 0, 272, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {96, CONDITION_ALWAYS, 192, 0, 240, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {97, CONDITION_ALWAYS, 192, 0, 240, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {98, CONDITION_ALWAYS, 176, 0, 240, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {99, CONDITION_ALWAYS, 176, 0, 240, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_NAMES_FOURTH, CONDITION_ALWAYS, 192, 0, 240, FACING_NORTH, 0, -1,
+     -1, -1, -1, 0},
+    {ENTRANCE_NAMES_THIRD, CONDITION_ALWAYS, 192, 0, 240, FACING_NORTH, 0, -1,
+     -1, -1, -1, 0},
+    {ENTRANCE_NAMES_SECOND, CONDITION_ALWAYS, 176, 0, 240, FACING_NORTH, 0, -1,
+     -1, -1, -1, 0},
+    {ENTRANCE_NAMES_FIRST, CONDITION_ALWAYS, 176, 0, 240, FACING_NORTH, 0, -1,
+     -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
@@ -349,241 +402,179 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-u32 gData_0200082c[] = {
-    0xffff0150, 1, 0x300000, 0, 0x1100000, 0x2000,
-    0xffff00fc, 1, 0x300000, 0, 0x480000, 0x2000,
-    0xffff00fd, 1, 0x300000, 0, 0x880000, 0x2000,
-    0xffff00d8, 1, 0x680000, 0, 0x1100000, 0x2000,
-    0xffff, 0, 0, 0, 0, 0,
+/// The debug room's actors, in the order of enum IncreaseItemAndLevelActorId.
+// clang-format off
+struct ActorPlacement gIncreaseItemAndLevel_ActorPlacements[] = {
+    {336, CONDITION_ALWAYS, 1, PIXELS(48), 0, PIXELS(272), FACING_SOUTHEAST, 0, 0},
+    {252, CONDITION_ALWAYS, 1, PIXELS(48), 0, PIXELS(72), FACING_SOUTHEAST, 0, 0},
+    {253, CONDITION_ALWAYS, 1, PIXELS(48), 0, PIXELS(136), FACING_SOUTHEAST, 0, 0},
+    {216, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(272), FACING_SOUTHEAST, 0, 0},
+    {SCENE_TABLE_END, 0, 0, 0, 0, 0, 0, 0, 0},
 };
 
-u32 gData_020008a4[] = {
-    0xffff0015, 1, 0xa00000, 0, 0xa00000, 0x22000,
-    0xffff0012, 1, 0xa00000, 0, 0xc00000, 0x22000,
-    0xffff0011, 1, 0xa00000, 0, 0xe00000, 0x22000,
-    0xffff0014, 1, 0xa00000, 0, 0x1000000, 0x22000,
-    0xffff0013, 1, 0xa00000, 0, 0x1200000, 0x22000,
-    0xffff0018, 1, 0xa00000, 0, 0x1400000, 0x22000,
-    0xffff0019, 1, 0xa00000, 0, 0x1600000, 0x22000,
-    0xffff001a, 1, 0xd00000, 0, 0xa00000, 0x22000,
-    0xffff0029, 1, 0xd00000, 0, 0xc00000, 0x22000,
-    0xffff002a, 1, 0xd00000, 0, 0xe00000, 0x22000,
-    0xffff0010, 1, 0xd00000, 0, 0x1000000, 0x22000,
-    0xffff0025, 1, 0xd00000, 0, 0x1200000, 0x22000,
-    0xffff0026, 1, 0xd00000, 0, 0x1400000, 0x22000,
-    0xffff0024, 1, 0xd00000, 0, 0x1600000, 0x22000,
-    0xffff, 0, 0, 0, 0, 0,
+/// The first room of names, from Master Poi.
+struct ActorPlacement gIncreaseItemAndLevel_FirstNamePlacements[] = {
+    {21, CONDITION_ALWAYS, 1, PIXELS(160), 0, PIXELS(160), FACING_SOUTHEAST, 2, 0},
+    {18, CONDITION_ALWAYS, 1, PIXELS(160), 0, PIXELS(192), FACING_SOUTHEAST, 2, 0},
+    {17, CONDITION_ALWAYS, 1, PIXELS(160), 0, PIXELS(224), FACING_SOUTHEAST, 2, 0},
+    {20, CONDITION_ALWAYS, 1, PIXELS(160), 0, PIXELS(256), FACING_SOUTHEAST, 2, 0},
+    {19, CONDITION_ALWAYS, 1, PIXELS(160), 0, PIXELS(288), FACING_SOUTHEAST, 2, 0},
+    {24, CONDITION_ALWAYS, 1, PIXELS(160), 0, PIXELS(320), FACING_SOUTHEAST, 2, 0},
+    {25, CONDITION_ALWAYS, 1, PIXELS(160), 0, PIXELS(352), FACING_SOUTHEAST, 2, 0},
+    {26, CONDITION_ALWAYS, 1, PIXELS(208), 0, PIXELS(160), FACING_SOUTHEAST, 2, 0},
+    {41, CONDITION_ALWAYS, 1, PIXELS(208), 0, PIXELS(192), FACING_SOUTHEAST, 2, 0},
+    {42, CONDITION_ALWAYS, 1, PIXELS(208), 0, PIXELS(224), FACING_SOUTHEAST, 2, 0},
+    {16, CONDITION_ALWAYS, 1, PIXELS(208), 0, PIXELS(256), FACING_SOUTHEAST, 2, 0},
+    {37, CONDITION_ALWAYS, 1, PIXELS(208), 0, PIXELS(288), FACING_SOUTHEAST, 2, 0},
+    {38, CONDITION_ALWAYS, 1, PIXELS(208), 0, PIXELS(320), FACING_SOUTHEAST, 2, 0},
+    {36, CONDITION_ALWAYS, 1, PIXELS(208), 0, PIXELS(352), FACING_SOUTHEAST, 2, 0},
+    {SCENE_TABLE_END, 0, 0, 0, 0, 0, 0, 0, 0},
 };
 
-s16 gData_02000a0c[] = {
-    29, -1, 1, 0, 0, 256, 0, 0,
-    0, 160, 0x2000, 2, 30, -1, 1, 0,
-    0, 256, 0, 0, 0, 192, 0x2000, 2,
-    32, -1, 1, 0, 0, 256, 0, 0,
-    0, 224, 0x2000, 2, 31, -1, 1, 0,
-    0, 256, 0, 0, 0, 256, 0x2000, 2,
-    34, -1, 1, 0, 0, 256, 0, 0,
-    0, 288, 0x2000, 2, 23, -1, 1, 0,
-    0, 256, 0, 0, 0, 320, 0x2000, 2,
-    33, -1, 1, 0, 0, 256, 0, 0,
-    0, 352, 0x2000, 2, 60, -1, 1, 0,
-    0, 208, 0, 0, 0, 160, 0x2000, 2,
-    61, -1, 1, 0, 0, 208, 0, 0,
-    0, 192, 0x2000, 2, 62, -1, 1, 0,
-    0, 208, 0, 0, 0, 224, 0x2000, 2,
-    43, -1, 1, 0, 0, 208, 0, 0,
-    0, 256, 0x2000, 2, 44, -1, 1, 0,
-    0, 208, 0, 0, 0, 288, 0x2000, 2,
-    46, -1, 1, 0, 0, 208, 0, 0,
-    0, 320, 0x2000, 2, 45, -1, 1, 0,
-    0, 208, 0, 0, 0, 352, 0x2000, 2,
-    -1, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0,
+struct ActorPlacement gIncreaseItemAndLevel_SecondNamePlacements[] = {
+    {29, CONDITION_ALWAYS, 1, PIXELS(256), 0, PIXELS(160), FACING_SOUTHEAST, 2, 0},
+    {30, CONDITION_ALWAYS, 1, PIXELS(256), 0, PIXELS(192), FACING_SOUTHEAST, 2, 0},
+    {32, CONDITION_ALWAYS, 1, PIXELS(256), 0, PIXELS(224), FACING_SOUTHEAST, 2, 0},
+    {31, CONDITION_ALWAYS, 1, PIXELS(256), 0, PIXELS(256), FACING_SOUTHEAST, 2, 0},
+    {34, CONDITION_ALWAYS, 1, PIXELS(256), 0, PIXELS(288), FACING_SOUTHEAST, 2, 0},
+    {23, CONDITION_ALWAYS, 1, PIXELS(256), 0, PIXELS(320), FACING_SOUTHEAST, 2, 0},
+    {33, CONDITION_ALWAYS, 1, PIXELS(256), 0, PIXELS(352), FACING_SOUTHEAST, 2, 0},
+    {60, CONDITION_ALWAYS, 1, PIXELS(208), 0, PIXELS(160), FACING_SOUTHEAST, 2, 0},
+    {61, CONDITION_ALWAYS, 1, PIXELS(208), 0, PIXELS(192), FACING_SOUTHEAST, 2, 0},
+    {62, CONDITION_ALWAYS, 1, PIXELS(208), 0, PIXELS(224), FACING_SOUTHEAST, 2, 0},
+    {43, CONDITION_ALWAYS, 1, PIXELS(208), 0, PIXELS(256), FACING_SOUTHEAST, 2, 0},
+    {44, CONDITION_ALWAYS, 1, PIXELS(208), 0, PIXELS(288), FACING_SOUTHEAST, 2, 0},
+    {46, CONDITION_ALWAYS, 1, PIXELS(208), 0, PIXELS(320), FACING_SOUTHEAST, 2, 0},
+    {45, CONDITION_ALWAYS, 1, PIXELS(208), 0, PIXELS(352), FACING_SOUTHEAST, 2, 0},
+    {SCENE_TABLE_END, 0, 0, 0, 0, 0, 0, 0, 0},
 };
 
-s16 gData_02000b74[] = {
-    0, -1, 1, 0, 0, 160, 0, 0,
-    0, 160, 0x2000, 2, 1, -1, 1, 0,
-    0, 160, 0, 0, 0, 192, 0x2000, 2,
-    2, -1, 1, 0, 0, 160, 0, 0,
-    0, 224, 0x2000, 2, 3, -1, 1, 0,
-    0, 160, 0, 0, 0, 256, 0x2000, 2,
-    5, -1, 1, 0, 0, 160, 0, 0,
-    0, 288, 0x2000, 2, 6, -1, 1, 0,
-    0, 160, 0, 0, 0, 320, 0x2000, 2,
-    7, -1, 1, 0, 0, 160, 0, 0,
-    0, 352, 0x2000, 2, 57, -1, 1, 0,
-    0, 208, 0, 0, 0, 160, 0x2000, 2,
-    56, -1, 1, 0, 0, 208, 0, 0,
-    0, 192, 0x2000, 2, 59, -1, 1, 0,
-    0, 208, 0, 0, 0, 224, 0x2000, 2,
-    201, -1, 1, 0, 0, 208, 0, 0,
-    0, 256, 0x2000, 2, 202, -1, 1, 0,
-    0, 208, 0, 0, 0, 288, 0x2000, 2,
-    64, -1, 1, 0, 0, 208, 0, 0,
-    0, 336, 0x2000, 2, 65, -1, 1, 0,
-    0, 208, 0, 0, 0, 368, 0x2000, 2,
-    63, -1, 1, 0, 0, 208, 0, 0,
-    0, 400, 0x2000, 2, -1, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
+/// The third room of names, from Alex.
+struct ActorPlacement gIncreaseItemAndLevel_ThirdNamePlacements[] = {
+    {0, CONDITION_ALWAYS, 1, PIXELS(160), 0, PIXELS(160), FACING_SOUTHEAST, 2, 0},
+    {1, CONDITION_ALWAYS, 1, PIXELS(160), 0, PIXELS(192), FACING_SOUTHEAST, 2, 0},
+    {2, CONDITION_ALWAYS, 1, PIXELS(160), 0, PIXELS(224), FACING_SOUTHEAST, 2, 0},
+    {3, CONDITION_ALWAYS, 1, PIXELS(160), 0, PIXELS(256), FACING_SOUTHEAST, 2, 0},
+    {5, CONDITION_ALWAYS, 1, PIXELS(160), 0, PIXELS(288), FACING_SOUTHEAST, 2, 0},
+    {6, CONDITION_ALWAYS, 1, PIXELS(160), 0, PIXELS(320), FACING_SOUTHEAST, 2, 0},
+    {7, CONDITION_ALWAYS, 1, PIXELS(160), 0, PIXELS(352), FACING_SOUTHEAST, 2, 0},
+    {57, CONDITION_ALWAYS, 1, PIXELS(208), 0, PIXELS(160), FACING_SOUTHEAST, 2, 0},
+    {56, CONDITION_ALWAYS, 1, PIXELS(208), 0, PIXELS(192), FACING_SOUTHEAST, 2, 0},
+    {59, CONDITION_ALWAYS, 1, PIXELS(208), 0, PIXELS(224), FACING_SOUTHEAST, 2, 0},
+    {201, CONDITION_ALWAYS, 1, PIXELS(208), 0, PIXELS(256), FACING_SOUTHEAST, 2, 0},
+    {202, CONDITION_ALWAYS, 1, PIXELS(208), 0, PIXELS(288), FACING_SOUTHEAST, 2, 0},
+    {64, CONDITION_ALWAYS, 1, PIXELS(208), 0, PIXELS(336), FACING_SOUTHEAST, 2, 0},
+    {65, CONDITION_ALWAYS, 1, PIXELS(208), 0, PIXELS(368), FACING_SOUTHEAST, 2, 0},
+    {63, CONDITION_ALWAYS, 1, PIXELS(208), 0, PIXELS(400), FACING_SOUTHEAST, 2, 0},
+    {SCENE_TABLE_END, 0, 0, 0, 0, 0, 0, 0, 0},
 };
 
-u32 gData_02000cf4[] = {
-    0xffff00cd, 1, 0x800000, 0, 0xa00000, 0x22000,
-    0xffff00ce, 1, 0x800000, 0, 0xc00000, 0x22000,
-    0xffff00c6, 1, 0x800000, 0, 0xe00000, 0x22000,
-    0xffff0079, 1, 0x800000, 0, 0x1000000, 0x22000,
-    0xffff0077, 1, 0x800000, 0, 0x1200000, 0x22000,
-    0xffff007b, 1, 0x800000, 0, 0x1400000, 0x22000,
-    0xffff0068, 1, 0xb00000, 0, 0xa00000, 0x22000,
-    0xffff0069, 1, 0xb00000, 0, 0xc00000, 0x22000,
-    0xffff0081, 1, 0xb00000, 0, 0xe00000, 0x22000,
-    0xffff0082, 1, 0xb00000, 0, 0x1000000, 0x22000,
-    0xffff00c7, 1, 0xb00000, 0, 0x1200000, 0x22000,
-    0xffff00d1, 1, 0xb00000, 0, 0x1400000, 0x22000,
-    0xffff006c, 1, 0xe00000, 0, 0xa00000, 0x22000,
-    0xffff006d, 1, 0xe00000, 0, 0xc00000, 0x22000,
-    0xffff006e, 1, 0xe00000, 0, 0xe00000, 0x22000,
-    0xffff006f, 1, 0xe00000, 0, 0x1000000, 0x22000,
-    0xffff0086, 1, 0xe00000, 0, 0x1200000, 0x22000,
-    0xffff0087, 1, 0xe00000, 0, 0x1400000, 0x22000,
-    0xffff, 0, 0, 0, 0, 0,
+struct ActorPlacement gIncreaseItemAndLevel_FourthNamePlacements[] = {
+    {205, CONDITION_ALWAYS, 1, PIXELS(128), 0, PIXELS(160), FACING_SOUTHEAST, 2, 0},
+    {206, CONDITION_ALWAYS, 1, PIXELS(128), 0, PIXELS(192), FACING_SOUTHEAST, 2, 0},
+    {198, CONDITION_ALWAYS, 1, PIXELS(128), 0, PIXELS(224), FACING_SOUTHEAST, 2, 0},
+    {121, CONDITION_ALWAYS, 1, PIXELS(128), 0, PIXELS(256), FACING_SOUTHEAST, 2, 0},
+    {119, CONDITION_ALWAYS, 1, PIXELS(128), 0, PIXELS(288), FACING_SOUTHEAST, 2, 0},
+    {123, CONDITION_ALWAYS, 1, PIXELS(128), 0, PIXELS(320), FACING_SOUTHEAST, 2, 0},
+    {104, CONDITION_ALWAYS, 1, PIXELS(176), 0, PIXELS(160), FACING_SOUTHEAST, 2, 0},
+    {105, CONDITION_ALWAYS, 1, PIXELS(176), 0, PIXELS(192), FACING_SOUTHEAST, 2, 0},
+    {129, CONDITION_ALWAYS, 1, PIXELS(176), 0, PIXELS(224), FACING_SOUTHEAST, 2, 0},
+    {130, CONDITION_ALWAYS, 1, PIXELS(176), 0, PIXELS(256), FACING_SOUTHEAST, 2, 0},
+    {199, CONDITION_ALWAYS, 1, PIXELS(176), 0, PIXELS(288), FACING_SOUTHEAST, 2, 0},
+    {209, CONDITION_ALWAYS, 1, PIXELS(176), 0, PIXELS(320), FACING_SOUTHEAST, 2, 0},
+    {108, CONDITION_ALWAYS, 1, PIXELS(224), 0, PIXELS(160), FACING_SOUTHEAST, 2, 0},
+    {109, CONDITION_ALWAYS, 1, PIXELS(224), 0, PIXELS(192), FACING_SOUTHEAST, 2, 0},
+    {110, CONDITION_ALWAYS, 1, PIXELS(224), 0, PIXELS(224), FACING_SOUTHEAST, 2, 0},
+    {111, CONDITION_ALWAYS, 1, PIXELS(224), 0, PIXELS(256), FACING_SOUTHEAST, 2, 0},
+    {134, CONDITION_ALWAYS, 1, PIXELS(224), 0, PIXELS(288), FACING_SOUTHEAST, 2, 0},
+    {135, CONDITION_ALWAYS, 1, PIXELS(224), 0, PIXELS(320), FACING_SOUTHEAST, 2, 0},
+    {SCENE_TABLE_END, 0, 0, 0, 0, 0, 0, 0, 0},
 };
 // clang-format on
 
-s32 gData_02000ebc[] = {
-    0,
-    (s32)0xffff0008,
-    (s32)Func_020002cc,
-    0,
-    (s32)0xffff0009,
-    (s32)Func_02000624,
-    0,
-    (s32)0xffff000a,
-    (s32)Func_0200062c,
-    0,
-    (s32)0xffff000b,
-    (s32)Func_020001a8,
-    0x8e15,
-    (s32)0xffff000a,
-    (s32)Func_020005d8,
-    0x10008e15,
-    (s32)0xffff000a,
-    (s32)Func_02000610,
-    -1,
-    0,
-    0,
+// The control words of the trigger rows: 0 a talk; FORCE_ON_ACTOR Force cast
+// at an actor (kind 5, on an actor, ability 142), and with
+// PSYNERGY_PHASE_BEFORE_CAST the row run at phase 1, before the cast.
+#define TRIGGER_TALK 0
+#define FORCE_ON_ACTOR 0x8e15
+#define PSYNERGY_PHASE_BEFORE_CAST 0x10000000
+
+/// Talking to each tester runs its tool, as The Broken Seal's Japanese
+/// edition has it: Force cast at the portrait browser runs a motion test, and
+/// a second row on the same person, run before the cast, sets the effect's
+/// child mode, so Force's shot leaves the portrait browser where it stands.
+struct Trigger gIncreaseItemAndLevel_Triggers[] = {
+    {TRIGGER_TALK, ACTOR_ITEM_BROWSER, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_SelectItem)},
+    {TRIGGER_TALK, ACTOR_ICON_BROWSER, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_OpenIconBrowser)},
+    {TRIGGER_TALK, ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_OpenPortraitBrowser)},
+    {TRIGGER_TALK, ACTOR_LEVEL_EDITOR, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_RunLevelEditor)},
+    {FORCE_ON_ACTOR, ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_RunMotionTest)},
+    {PSYNERGY_PHASE_BEFORE_CAST | FORCE_ON_ACTOR, ACTOR_PORTRAIT_BROWSER,
+     CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_EnableEffectChildMode)},
+    {TRIGGERS_END},
 };
 
-s32 gData_02000f10[] = {
-    0,
-    -0x10000,
-    (s32)Func_020000fc,
-    0,
-    (s32)0xffff0001,
-    (s32)Func_020000fc,
-    0,
-    (s32)0xffff0002,
-    (s32)Func_020000fc,
-    0,
-    (s32)0xffff0003,
-    (s32)Func_020000fc,
-    0,
-    (s32)0xffff0005,
-    (s32)Func_020000fc,
-    0,
-    (s32)0xffff0006,
-    (s32)Func_020000fc,
-    0,
-    (s32)0xffff0007,
-    (s32)Func_020000fc,
-    0,
-    (s32)0xffff0008,
-    (s32)Func_02000098,
-    0,
-    (s32)0xffff0009,
-    (s32)Func_02000098,
-    0,
-    (s32)0xffff000a,
-    (s32)Func_02000098,
-    0,
-    (s32)0xffff000b,
-    (s32)Func_02000098,
-    0,
-    (s32)0xffff000c,
-    (s32)Func_02000098,
-    0,
-    (s32)0xffff000d,
-    (s32)Func_02000098,
-    0,
-    (s32)0xffff000e,
-    (s32)Func_02000098,
-    0,
-    (s32)0xffff000f,
-    (s32)Func_02000098,
-    0,
-    (s32)0xffff0010,
-    (s32)Func_02000098,
-    0,
-    (s32)0xffff0011,
-    (s32)Func_02000098,
-    0,
-    (s32)0xffff0012,
-    (s32)Func_02000098,
-    0,
-    (s32)0xffff0013,
-    (s32)Func_02000098,
-    0,
-    (s32)0xffff0014,
-    (s32)Func_02000098,
-    0,
-    (s32)0xffff0015,
-    (s32)Func_02000098,
-    0,
-    (s32)0xffff0016,
-    (s32)Func_02000098,
-    0,
-    (s32)0xffff0017,
-    (s32)Func_02000098,
-    0,
-    (s32)0xffff0018,
-    (s32)Func_02000098,
-    0,
-    (s32)0xffff0019,
-    (s32)Func_02000098,
-    0,
-    (s32)0xffff001a,
-    (s32)Func_02000098,
-    0,
-    (s32)0xffff001b,
-    (s32)Func_02000098,
-    0,
-    (s32)0xffff001c,
-    (s32)Func_02000098,
-    0,
-    (s32)0xffff001d,
-    (s32)Func_02000098,
-    0,
-    (s32)0xffff001e,
-    (s32)Func_02000098,
-    0,
-    (s32)0xffff001f,
-    (s32)Func_02000098,
-    0,
-    (s32)0xffff0020,
-    (s32)Func_02000098,
-    0x8e15,
-    (s32)0xffff000a,
-    (s32)Func_020005d8,
-    0x10008e15,
-    (s32)0xffff000a,
-    (s32)Func_02000610,
-    -1,
-    0,
-    0,
+/// The rooms of names' triggers: each party member says their name, and each
+/// placed person from actor 8 to 32 theirs. The debug room's two Force rows
+/// stay at the end.
+struct Trigger gIncreaseItemAndLevel_NameTriggers[] = {
+    {TRIGGER_TALK, ISAAC, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowCharacterName)},
+    {TRIGGER_TALK, GARET, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowCharacterName)},
+    {TRIGGER_TALK, IVAN, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowCharacterName)},
+    {TRIGGER_TALK, MIA, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowCharacterName)},
+    {TRIGGER_TALK, JENNA, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowCharacterName)},
+    {TRIGGER_TALK, SHEBA, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowCharacterName)},
+    {TRIGGER_TALK, PIERS, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowCharacterName)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, 23, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, 25, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, 27, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, 28, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, 29, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, 30, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, 32, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {FORCE_ON_ACTOR, ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_RunMotionTest)},
+    {PSYNERGY_PHASE_BEFORE_CAST | FORCE_ON_ACTOR, ACTOR_PORTRAIT_BROWSER,
+     CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_EnableEffectChildMode)},
+    {TRIGGERS_END},
 };
 
-void Func_02000570(s32 countdown) {
+/// Unused: requests an exit through a window transition over 24 frames; no
+/// trigger row names it.
+// XXX: what the event work's words at 428 and 436 are; The Broken Seal's
+// FieldWork has transition and transitionFrames there, which a shared
+// declaration here would settle.
+void IncreaseItemAndLevel_RequestExit(s32 countdown) {
   u8 *event = Ram_HeapSlots->eventWork;
 
   *(s32 *)(event + 428) = 513;
@@ -591,43 +582,60 @@ void Func_02000570(s32 countdown) {
   Import_EventSetExitRequest(countdown);
 }
 
-s32 Func_02000590(void) {
+/// The scene's initialize entry: starts the window transition, and in the
+/// debug room (entrances up to 89) draws ACTOR_LEVEL_EDITOR 1.7 times its
+/// size, as The Broken Seal's Japanese edition does.
+s32 IncreaseItemAndLevel_Initialize(void) {
   u8 *event = Ram_HeapSlots->eventWork;
 
   *(s32 *)(event + 428) = 516;
   *(s32 *)(event + 436) = 24;
   if (gMainRoutineWork.entrance <= 89) {
-    Actor_GetById(11)->scaleY = 0x1b333;
-    Actor_GetById(11)->scaleX = 0x1b333;
+    Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = 0x1b333;
+    Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleX = 0x1b333;
   }
   return 0;
 }
 
-void Func_020005d8(void) {
+/// Runs the animation test, then moves ACTOR_LEVEL_EDITOR to its test
+/// position, as The Broken Seal's Japanese edition: Force cast at
+/// ACTOR_PORTRAIT_BROWSER gives it mode 2 and ACTOR_LEVEL_EDITOR mode 4; once
+/// ACTOR_PORTRAIT_BROWSER's animation has changed, ACTOR_LEVEL_EDITOR moves to
+/// (156, 208).
+void IncreaseItemAndLevel_RunMotionTest(void) {
   s32 x;
   s32 z;
   s32 id;
 
-  Func_020006e4();
+  Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetModeById(10, 2);
-  Actor_SetModeById(11, 4);
-  Actor_WaitForAnimationChange(10);
+  Actor_SetModeById(ACTOR_PORTRAIT_BROWSER, 2);
+  Actor_SetModeById(ACTOR_LEVEL_EDITOR, 4);
+  Actor_WaitForAnimationChange(ACTOR_PORTRAIT_BROWSER);
   x = 156;
   z = 208;
-  id = 11;
+  id = ACTOR_LEVEL_EDITOR;
   /* FAKEMATCH(barrier): x, z and the actor held at an empty asm, so the actor
    * is set between the halves of the position, as the ROM has it; as no asm,
    * 2 of 20 instructions differ in tla-en. */
   asm("" : "+l"(x), "+l"(z), "+l"(id));
   Actor_SetHorizontalPositionWithTerrain(id, x << 17, z << 17);
-  Func_020006ec();
+  Event_End();
 }
 
-void Func_02000610(void) { *((u8 *)Ram_HeapSlots->effectWork + 53) = 1; }
+/// Keeps Force from moving ACTOR_PORTRAIT_BROWSER: run at phase 1 of Force
+/// cast at it, this sets the effect's childMode, and Force's shot then leaves
+/// its target where it is.
+void IncreaseItemAndLevel_EnableEffectChildMode(void) {
+  *((u8 *)Ram_HeapSlots->effectWork + 53) = 1;
+}
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_02000624(void) { Func_020006a4(); }
+/// Opens the icon browser. Talking to ACTOR_ICON_BROWSER.
+void IncreaseItemAndLevel_OpenIconBrowser(void) { DebugBrowser_Icons(); }
 
-void Func_0200062c(void) { Func_020006ac(); }
+/// Opens the portrait browser. Talking to ACTOR_PORTRAIT_BROWSER.
+void IncreaseItemAndLevel_OpenPortraitBrowser(void) {
+  DebugBrowser_Portraits();
+}

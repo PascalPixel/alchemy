@@ -15,42 +15,77 @@
 /// leaves them unspecified.
 typedef s32 (*TerrainHeightFn)();
 
-s32 Curve_GetFirstSampleA();
-s32 Curve_LerpTwoSamples();
-s32 Curve_LerpTwoSamplesB();
-s32 Curve_StepAtSummedPosition();
-s32 Curve_StepAtDifferencePosition();
-s32 Curve_LerpThreeSamplesByRatio();
-s32 Curve_LerpThreeSamplesAtDifference();
-s32 Curve_LerpTwoSamplesByTable();
-s32 Curve_StepAtHalf();
-s32 Curve_StepAtHalfB();
-s32 Func_0802d3c4();
-s32 Func_0802d3d8();
-s32 Curve_LookupSampleByTable();
-s32 Curve_LookupSampleByTableReversed();
-s32 Func_0802d414();
-s32 Func_0802d438();
+s32 Terrain_GetFlatHeight();
+s32 Terrain_GetSlopeXHeight();
+s32 Terrain_GetSlopeYHeight();
+s32 Terrain_GetStepSumDiagonalHeight();
+s32 Terrain_GetStepDifferenceDiagonalHeight();
+s32 Terrain_GetBendSumDiagonalHeight();
+s32 Terrain_GetBendDifferenceDiagonalHeight();
+s32 Terrain_GetRoundedSquareHeight();
+s32 Terrain_GetStepXHeight();
+s32 Terrain_GetStepYHeight();
+s32 Terrain_GetSampleTableTransposedHeight();
+s32 Terrain_GetSampleTableTransposedMirroredHeight();
+s32 Terrain_GetSampleTableHeight();
+s32 Terrain_GetSampleTableMirroredHeight();
+s32 Terrain_GetSplitTopStepHeight();
+s32 Terrain_GetSplitBottomStepHeight();
 
-/// The height functions: the low four bits of a cell's first collision
-/// byte choose one, called with (the remaining samples, x and z in the cell).
-const TerrainHeightFn gMap_TerrainHeightHandlers[16] = {
-    Curve_GetFirstSampleA,
-    Curve_LerpTwoSamples,
-    Curve_LerpTwoSamplesB,
-    Curve_StepAtSummedPosition,
-    Curve_StepAtDifferencePosition,
-    Curve_LerpThreeSamplesByRatio,
-    Curve_LerpThreeSamplesAtDifference,
-    Curve_LerpTwoSamplesByTable,
-    Curve_StepAtHalf,
-    Curve_StepAtHalfB,
-    Func_0802d3c4,
-    Func_0802d3d8,
-    Curve_LookupSampleByTable,
-    Curve_LookupSampleByTableReversed,
-    Func_0802d414,
-    Func_0802d438,
+/// A map cell's terrain kind, as The Broken Seal's enum TerrainKind: the low
+/// four bits of its shape's first byte, which pick its height function. This
+/// game has no bends along an axis; its sample tables take their kinds.
+enum TerrainKind {
+  TERRAIN_FLAT = 0,
+  TERRAIN_SLOPE_X = 1,
+  TERRAIN_SLOPE_Y = 2,
+  TERRAIN_STEP_SUM_DIAGONAL = 3,
+  TERRAIN_STEP_DIFFERENCE_DIAGONAL = 4,
+  TERRAIN_BEND_SUM_DIAGONAL = 5,
+  TERRAIN_BEND_DIFFERENCE_DIAGONAL = 6,
+  TERRAIN_ROUNDED_SQUARE = 7,
+  TERRAIN_STEP_X = 8,
+  TERRAIN_STEP_Y = 9,
+  /// As TERRAIN_SAMPLE_TABLE with x and y swapped.
+  TERRAIN_SAMPLE_TABLE_TRANSPOSED = 10,
+  /// As TERRAIN_SAMPLE_TABLE_MIRRORED with x and y swapped.
+  TERRAIN_SAMPLE_TABLE_TRANSPOSED_MIRRORED = 11,
+  /// The sample gTerrain_SampleIndexTable picks for each pixel.
+  TERRAIN_SAMPLE_TABLE = 12,
+  /// As TERRAIN_SAMPLE_TABLE, mirrored left to right.
+  TERRAIN_SAMPLE_TABLE_MIRRORED = 13,
+  /// Above y 8, the first sample left of x 8 and the second right of it; below,
+  /// the third.
+  TERRAIN_SPLIT_TOP_STEP = 14,
+  /// Above y 8, the first sample; below, the second left of x 8 and the third
+  /// right of it.
+  TERRAIN_SPLIT_BOTTOM_STEP = 15,
+  TERRAIN_KIND_COUNT = 16
+};
+
+/// Ground height functions, by enum TerrainKind, called with (the remaining
+/// samples, x within the cell, y within the cell). Each reads only the
+/// arguments it needs.
+const TerrainHeightFn gMapGrid_TerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
+    [TERRAIN_FLAT] = Terrain_GetFlatHeight,
+    [TERRAIN_SLOPE_X] = Terrain_GetSlopeXHeight,
+    [TERRAIN_SLOPE_Y] = Terrain_GetSlopeYHeight,
+    [TERRAIN_STEP_SUM_DIAGONAL] = Terrain_GetStepSumDiagonalHeight,
+    [TERRAIN_STEP_DIFFERENCE_DIAGONAL] =
+        Terrain_GetStepDifferenceDiagonalHeight,
+    [TERRAIN_BEND_SUM_DIAGONAL] = Terrain_GetBendSumDiagonalHeight,
+    [TERRAIN_BEND_DIFFERENCE_DIAGONAL] =
+        Terrain_GetBendDifferenceDiagonalHeight,
+    [TERRAIN_ROUNDED_SQUARE] = Terrain_GetRoundedSquareHeight,
+    [TERRAIN_STEP_X] = Terrain_GetStepXHeight,
+    [TERRAIN_STEP_Y] = Terrain_GetStepYHeight,
+    [TERRAIN_SAMPLE_TABLE_TRANSPOSED] = Terrain_GetSampleTableTransposedHeight,
+    [TERRAIN_SAMPLE_TABLE_TRANSPOSED_MIRRORED] =
+        Terrain_GetSampleTableTransposedMirroredHeight,
+    [TERRAIN_SAMPLE_TABLE] = Terrain_GetSampleTableHeight,
+    [TERRAIN_SAMPLE_TABLE_MIRRORED] = Terrain_GetSampleTableMirroredHeight,
+    [TERRAIN_SPLIT_TOP_STEP] = Terrain_GetSplitTopStepHeight,
+    [TERRAIN_SPLIT_BOTTOM_STEP] = Terrain_GetSplitBottomStepHeight,
 };
 
 /// The world map's terrain behaviour, read at a selector plus a row: 0x10
@@ -121,7 +156,7 @@ s32 Script_ApplyRelativePosition();
 s32 Script_StoreAngleToWatchedObject();
 s32 Script_ApplyWatchedObjectPosition();
 s32 Script_ApplyLocalOffsetPosition();
-s32 Func_08025698();
+s32 Actor_Wander();
 s32 Func_08025830();
 s32 Actor_ApproachWatchedActor();
 s32 Func_08025160();
@@ -346,7 +381,7 @@ const ScriptCommandFn gData_0802f204[54] = {
     Script_StoreAngleToWatchedObject,    // 0x06 SC_FACE_WATCHED
     Script_ApplyWatchedObjectPosition,   // 0x07 SC_MOVE_TO_WATCHED
     Script_ApplyLocalOffsetPosition,     // 0x08 SC_MOVE_LOCAL
-    Func_08025698,                       // 0x09 SC_WANDER
+    Actor_Wander,                       // 0x09 SC_WANDER
     Func_08025830,                       // 0x0a SC_WANDER_HOME
     Actor_ApproachWatchedActor,          // 0x0b SC_APPROACH_WATCHED
     Func_08025160,                       // 0x0c SC_CAMERA

@@ -4,6 +4,11 @@
 
 #include "../visual_attributes_internal.h"
 
+/// The event command "camera move to", as The Broken Seal's
+/// FieldCamera_MoveWithinMapBounds: sends the camera to the requested axes,
+/// 16.16 pixels (-1 keeps that axis), kept far enough inside the map that the
+/// screen never shows past its edge. With useSetter 0 the camera jumps there
+/// at once; otherwise it travels at its own speed.
 void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
                                 s32 useSetter) {
   s32 shouldUseSetter;
@@ -26,6 +31,9 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
   runtimeBlock = HeapSlot_AllocEwram(108, 0xd50);
   object = runtimeBlock->viewCenter;
   map = Ram_HeapSlots->mapWork;
+  // Keep the screen inside the map: the view centre stays 120 pixels from
+  // either side, 96 from the top and 64 from the bottom, the z limits moved
+  // down the map by its height.
   minimumX = map->minX + 0x780000;
   objectZOffset = object->y;
   minimumZ = map->minZ + objectZOffset + 0x600000;
@@ -68,16 +76,16 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
 }
 
 
-s32 __divsi3(s32, s32);
-extern u32 gData_03001144;
-
-void Func_080d450c(s32 id, s32 use_setter) {
+/// The event command "camera move to actor": Camera_MoveWithinMapBounds to
+/// the actor's x and z.
+void FieldCamera_MoveToActorById(s32 id, s32 use_setter) {
   struct Actor *obj = ObjectTable_Get(id);
 
   if (obj != NULL)
     Camera_MoveWithinMapBounds(obj->x, -1, obj->z, use_setter);
 }
 
+/// As FieldCamera_MoveToActorById, to the actor's height too.
 void Func_080d452c(s32 id, s32 use_setter) {
   struct Actor *obj = ObjectTable_Get(id);
 
@@ -92,11 +100,14 @@ void FieldCamera_WaitForArrival(void) {
   Event_Wait(2);
 }
 
+/// The event command "get view centre": returns the camera actor.
 struct Actor *Func_080d4568(void) {
   return ((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))->viewCenter;
 }
 
-void Func_080d4580(struct Actor *target, s32 keepCurrentPosition) {
+/// Unused: makes the camera follow target; unless keepCurrentPosition is set
+/// it jumps there at once.
+void FieldCamera_Follow(struct Actor *target, s32 keepCurrentPosition) {
   struct Actor *object;
 
   object = ((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))->viewCenter;

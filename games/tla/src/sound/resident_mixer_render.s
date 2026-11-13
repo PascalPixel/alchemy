@@ -125,7 +125,7 @@ AlchemyUncreditedEnd_080012fa:
 	and	lr, r8, r8, lsl #7
 	str	lr, [pc]
 	b	.L_03000dcc
-	.global Data_03000ee4
-Data_03000ee4:
+	.global gSoundMixerClipped
+gSoundMixerClipped:
 	.4byte	0
 	.4byte	IwramSoundMixWorkspace

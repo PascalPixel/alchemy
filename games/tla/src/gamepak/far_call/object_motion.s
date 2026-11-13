@@ -156,7 +156,7 @@ Func_080c81b0:
 	.global Func_080c81b8
 	.thumb_func
 Func_080c81b8:
-	overlay_veneer Func_080d40dc
+	overlay_veneer Event_ShowSpeakerMessage
 	.global Func_080c81c0
 	.thumb_func
 Func_080c81c0:
@@ -228,7 +228,7 @@ Func_080c8240:
 	.global Func_080c8248
 	.thumb_func
 Func_080c8248:
-	overlay_veneer Func_080d450c
+	overlay_veneer FieldCamera_MoveToActorById
 	.global Func_080c8250
 	.thumb_func
 Func_080c8250:

@@ -1,40 +1,63 @@
+/// @file
+/// The game's own sound code over the sound driver, as The Broken Seal's:
+/// Sound_Play, which takes every sound number, the music's volume and tempo
+/// ramps, and the music's return after a jingle.
+
 #include "types.h"
 #include "sound_driver_symbols.h"
 
-extern u16 gData_02005830;
-extern u16 gData_02005834;
-extern u16 gData_0200583c;
-extern u16 gData_0200580c;
-extern u8 gData_02005814;
-extern u8 gData_02005804;
-extern u16 gData_02005820[8];
+enum {
+  /// Full volume, and the song's own tempo and pitch: 1.0 in the ramps' 8.8
+  /// fixed point.
+  BGM_UNITY_SCALE = 256,
+  /// A ramp's step a VBlank: a full fade in or out takes 64 VBlanks.
+  BGM_DEFAULT_RAMP_STEP = 4,
+  /// The track mask of every music command here: tracks 0 to 7.
+  TRACKS_ALL = 0xff,
+  MUSIC_PLAYER_COUNT = 8, ///< gMusicPlayerLastSound's entries, one a player.
+  /// VBlanks after a jingle starts before the music waits for it to end.
+  BGM_RESTORE_DELAY_VBLANKS = 10,
+  /// Sound_WaitForBgmRestore gives up after this many frames, about
+  /// five seconds.
+  BGM_WAIT_TIMEOUT_FRAMES = 300
+};
+
+extern u16 gCurrentBgm;
+extern u16 gBgmTempoPitchTarget;
+extern u16 gBgmTempoPitch;
+extern u16 gBgmTempoPitchStep;
+extern u8 gBgmFadeRequested;
+extern u8 gSound_UnreadByte;
+extern u16 gMusicPlayerLastSound[MUSIC_PLAYER_COUNT];
 
 void m4aSoundInit(void);
 void Sound_SetFixedSampleFreq(u32 mode);
 
 void Func_081c0c18(void) {}
 
-/// Initializes the sound driver and sets the music state to its defaults:
-/// full volume and pitch, steps of 4 and the eight player volumes cleared.
-// As The Broken Seal's.
+/// Starts the sound driver, resets the BGM ramps (gBgmVolume and its kin),
+/// clears every player's last sound and sets the fixed output rate. As The
+/// Broken Seal's, but no music is sound 0 here.
 void Sound_Initialize(void) {
   u16 *playerVolume;
   s32 remaining;
 
   m4aSoundInit();
-  gData_02005830 = 0;
-  gMusicRestoreDelay = 0;
-  gMusicVolumeTarget = 0x100;
-  gMusicVolume = 0x100;
-  gMusicVolumeStep = 4;
-  gData_02005834 = 0x100;
-  gData_0200583c = 0x100;
-  gData_0200580c = 4;
-  gData_02005814 = 0;
+  gCurrentBgm = 0;
+  gBgmRestoreDelay = 0;
+  gBgmVolumeTarget = BGM_UNITY_SCALE;
+  gBgmVolume = BGM_UNITY_SCALE;
+  gBgmVolumeStep = BGM_DEFAULT_RAMP_STEP;
+  gBgmTempoPitchTarget = BGM_UNITY_SCALE;
+  gBgmTempoPitch = BGM_UNITY_SCALE;
+  gBgmTempoPitchStep = BGM_DEFAULT_RAMP_STEP;
+  gBgmFadeRequested = 0;
   gSoundCommandMask = 0;
-  gData_02005804 = 0;
-  playerVolume = gData_02005820;
-  remaining = 7;
+  // XXX (no evidence): what gSound_UnreadByte holds; no code in either game
+  // reads it or its Broken Seal twin.
+  gSound_UnreadByte = 0;
+  playerVolume = gMusicPlayerLastSound;
+  remaining = MUSIC_PLAYER_COUNT - 1;
   do {
     remaining--;
     *playerVolume = 0;
@@ -45,144 +68,159 @@ void Sound_Initialize(void) {
 
 #include "sound_driver.h"
 
-/// The interrupt handler clears unk03 every VBlank after the sound
-/// update, reading it first as only a volatile access survives; while it is
-/// set, sound commands are ignored.
-struct SoundVBlankState {
-  u8 unk00[3];
-  u8 unk03;
-};
+extern struct SoundPlayer gMPlayInfo_ActionSE;
+extern struct SoundPlayer gMPlayInfo_SE5;
+extern struct SoundPlayer gMPlayInfo_Jingle;
 
-extern volatile struct SoundVBlankState gData_03001138;
-extern struct SoundPlayer gSound_Player3;
-extern struct SoundPlayer gSound_Player5;
-extern struct SoundPlayer gMusicPlayerJingle;
+void SoundFlag_Set(s32 sound);
+void m4aSongNumStart(u16 sound);
+void Sound_LoadReverbCode(s32 code);
 
-void SoundFlag_Set(s32 cue);
-void m4aSongNumStart(u16 cue);
-void Sound_LoadPresetParameters(s32 preset);
+/// Returns the reverb code Sound_Play gives music `sound`: SOUND_REVERB_LONG
+/// for every one, where The Broken Seal's gives it to three.
+s32 Sound_GetReverbCode(s32 sound) { return SOUND_REVERB_LONG; }
 
-s32 Func_081c0cac(s32 cue) { return 3; }
-
-/// Plays sound command id: 78 fades the music out, 390 and 395 fade players
-/// 3 and 5, 100 to 699 are songs started on their table's player (7 takes
-/// the first idle one of 7 down to 4), 80 to 99 play over silenced music,
-/// and the rest (79 aside) become the background music.
-// As The Broken Seal's, with ⚓️'s ranges.
+/// Plays a sound number, the game's one way of playing a sound: a fade control,
+/// a sound effect, a jingle or music, as The Broken Seal's with this game's
+/// ranges (enum SoundControl). Every sound is first marked as heard
+/// (SoundFlag_Set), and none plays while the frame wait runs the driver's
+/// update.
 void Sound_Play(s32 id) {
   s32 flags;
   s32 player;
 
   SoundFlag_Set(id);
-  flags = id & 0xf000;
-  if (gData_03001138.unk03 != 0)
+  flags = id & SOUND_FLAGS_MASK;
+  if (gSoundVBlankState.updating != 0)
     return;
-  id &= 0xfff;
+  id &= SOUND_NUM_MASK;
 
-  if (id == 78) {
-    if (gData_02005814 != 0)
+  if (id == SOUND_FADE_OUT_BGM) {
+    // Fade the music out, once until the next music starts: 16 steps 7
+    // VBlanks apart, 112 VBlanks.
+    if (gBgmFadeRequested != 0)
       return;
-    m4aMPlayFadeOut(&gMusicPlayerBgm, 7);
-    gData_02005814++;
-    gData_02005830 = 0;
-  } else if (id == 390) {
-    gData_02005820[3] = 0;
-    m4aMPlayFadeOut(&gSound_Player3, 3);
-    gData_02005820[5] = 0;
-    m4aMPlayFadeOut(&gSound_Player5, 3);
-  } else if (id == 395) {
-    gData_02005820[5] = 0;
-    m4aMPlayFadeOut(&gSound_Player5, 3);
-  } else if (id >= 700) {
+    m4aMPlayFadeOut(&gMPlayInfo_BGM, 7);
+    gBgmFadeRequested++;
+    gCurrentBgm = 0;
+  } else if (id == SOUND_FADE_OUT_ACTION_SE) {
+    gMusicPlayerLastSound[MUSIC_PLAYER_ACTION_SE] = 0;
+    m4aMPlayFadeOut(&gMPlayInfo_ActionSE, 3);
+    gMusicPlayerLastSound[MUSIC_PLAYER_SE5] = 0;
+    m4aMPlayFadeOut(&gMPlayInfo_SE5, 3);
+  } else if (id == SOUND_FADE_OUT_SE5) {
+    gMusicPlayerLastSound[MUSIC_PLAYER_SE5] = 0;
+    m4aMPlayFadeOut(&gMPlayInfo_SE5, 3);
+  } else if (id >= SOUND_SE_END) {
     goto background;
-  } else if (id > 99) {
+  } else if (id >= SOUND_SE_FIRST) {
+    // A sound on MUSIC_PLAYER_SE_LAST borrows a free effect player,
+    // searching back to MUSIC_PLAYER_SE_FIRST; with all four busy,
+    // MUSIC_PLAYER_SE_LAST's sound is cut off.
     player = gSongTable[id].slot;
-    if (player == 7) {
+    if (player == MUSIC_PLAYER_SE_LAST) {
     next:
       if (((u8 *)&gSound_PlayerSlots[player].player->status)[0] != 0) {
         player--;
-        if (player > 3)
+        if (player >= MUSIC_PLAYER_SE_FIRST)
           goto next;
-        player = 7;
+        player = MUSIC_PLAYER_SE_LAST;
       }
     }
     MPlayStart(gSound_PlayerSlots[player].player, gSongTable[id].header);
-    gData_02005820[player] = id;
-  } else if (id > 79) {
-    m4aMPlayVolumeControl(&gMusicPlayerBgm, 255, 0);
-    gMusicVolumeTarget = 0;
-    gMusicVolume = 0;
+    gMusicPlayerLastSound[player] = id;
+  } else if (id >= SOUND_JINGLE_FIRST) {
+    // A jingle, on its own player: the music's tracks 0 to 7 go silent at
+    // once but keep playing, and fade back in once the jingle has ended
+    // (Sound_UpdateBgmRamps).
+    m4aMPlayVolumeControl(&gMPlayInfo_BGM, TRACKS_ALL, 0);
+    gBgmVolumeTarget = 0;
+    gBgmVolume = 0;
     m4aSongNumStart(id);
-    gMusicRestoreDelay = 10;
+    gBgmRestoreDelay = BGM_RESTORE_DELAY_VBLANKS;
   } else {
-    if (id == 79)
+    // Music: the keep control, or the music last chosen, changes nothing.
+    if (id == SOUND_KEEP_BGM)
       return;
   background:
-    if (id == gData_02005830)
+    if (id == gCurrentBgm)
       return;
-    gData_02005830 = id;
-    Sound_LoadPresetParameters(Func_081c0cac(id));
+    gCurrentBgm = id;
+    Sound_LoadReverbCode(Sound_GetReverbCode(id));
     m4aSongNumStart(id);
-    if (flags & 0x1000)
-      gMusicVolume = 0;
+    // A silent start fades the new music in over 64 VBlanks.
+    if (flags & SOUND_FLAG_FADE_IN)
+      gBgmVolume = 0;
     else
-      gMusicVolume = 0x100;
-    gMusicVolumeTarget = 0x100;
-    gMusicVolumeStep = 4;
-    gData_02005814 = 0;
+      gBgmVolume = BGM_UNITY_SCALE;
+    gBgmVolumeTarget = BGM_UNITY_SCALE;
+    gBgmVolumeStep = BGM_DEFAULT_RAMP_STEP;
+    gBgmFadeRequested = 0;
   }
 }
 
-/// Steps the music volume toward its target and the pitch toward its target,
-/// each by its step, after the jingle's restore delay runs out, as The Broken
-/// Seal's without the DMA restart count.
+/// Restores BGM after a jingle and steps its volume and combined tempo/pitch
+/// ramps once per VBlank, clamping each ramp when it crosses its target, as
+/// The Broken Seal's without the DMA restart count (Sound_VSync here).
 void Sound_UpdateBgmRamps(void) {
   s32 delta;
 
-  if (gMusicRestoreDelay != 0) {
-    if (gMusicRestoreDelay == 1) {
-      if ((u8)gMusicPlayerJingle.status == 0) {
-        gMusicRestoreDelay = 0;
-        gMusicVolumeTarget = 0x100;
+  // After a jingle starts, count down to 1, then hold there until the
+  // jingle's player has no track left and let the music fade back in.
+  if (gBgmRestoreDelay != 0) {
+    if (gBgmRestoreDelay == 1) {
+      if ((u8)gMPlayInfo_Jingle.status == 0) {
+        gBgmRestoreDelay = 0;
+        gBgmVolumeTarget = BGM_UNITY_SCALE;
       }
     } else {
-      gMusicRestoreDelay -= 1;
+      gBgmRestoreDelay -= 1;
     }
   }
-  if ((s16)gMusicVolumeTarget != (s16)gMusicVolume) {
-    delta = (s16)gMusicVolumeTarget - (s16)gMusicVolume;
+  // A step that changes the sign of target - value has crossed the target,
+  // and the value stops on it.
+  if ((s16)gBgmVolumeTarget != (s16)gBgmVolume) {
+    delta = (s16)gBgmVolumeTarget - (s16)gBgmVolume;
     if (delta > 0)
-      gMusicVolume += gMusicVolumeStep;
+      gBgmVolume += gBgmVolumeStep;
     else
-      gMusicVolume -= gMusicVolumeStep;
-    if ((((s16)gMusicVolumeTarget - (s16)gMusicVolume) ^ delta) < 0)
-      gMusicVolume = gMusicVolumeTarget;
-    m4aMPlayVolumeControl(&gMusicPlayerBgm, 255, gMusicVolume);
+      gBgmVolume -= gBgmVolumeStep;
+    if ((((s16)gBgmVolumeTarget - (s16)gBgmVolume) ^ delta) < 0)
+      gBgmVolume = gBgmVolumeTarget;
+    m4aMPlayVolumeControl(&gMPlayInfo_BGM, TRACKS_ALL, gBgmVolume);
   }
-  if ((s16)gData_02005834 != (s16)gData_0200583c) {
-    delta = (s16)gData_02005834 - (s16)gData_0200583c;
+  if ((s16)gBgmTempoPitchTarget != (s16)gBgmTempoPitch) {
+    delta = (s16)gBgmTempoPitchTarget - (s16)gBgmTempoPitch;
     if (delta > 0)
-      gData_0200583c += gData_0200580c;
+      gBgmTempoPitch += gBgmTempoPitchStep;
     else
-      gData_0200583c -= gData_0200580c;
-    if ((((s16)gData_02005834 - (s16)gData_0200583c) ^ delta) < 0)
-      gData_0200583c = gData_02005834;
-    m4aMPlayTempoControl(&gMusicPlayerBgm, gData_0200583c);
-    m4aMPlayPitchControl(&gMusicPlayerBgm, 255,
-                         (s16)gData_0200583c * 12 - 3072);
+      gBgmTempoPitch -= gBgmTempoPitchStep;
+    if ((((s16)gBgmTempoPitchTarget - (s16)gBgmTempoPitch) ^ delta) < 0)
+      gBgmTempoPitch = gBgmTempoPitchTarget;
+    // The tempo scale and the pitch move together: 12 semitones for each 256
+    // of scale (pitch is in 1/256 semitone).
+    m4aMPlayTempoControl(&gMPlayInfo_BGM, gBgmTempoPitch);
+    m4aMPlayPitchControl(&gMPlayInfo_BGM, TRACKS_ALL,
+                         (s16)gBgmTempoPitch * 12 - 12 * BGM_UNITY_SCALE);
   }
 }
 
 void SoundDriver_Update(void);
 
-void Func_081c0f3c(void) { SoundDriver_Update(); }
+/// Runs the sound driver's VBlank work: the DMA restart count The Broken
+/// Seal's Sound_UpdateBgmRamps ran at its end. Reached through the far-call
+/// slot that routine had.
+void Sound_VSync(void) { SoundDriver_Update(); }
 
-void Sound_SetBgmTempo(u16 scale) {
-  m4aMPlayTempoControl(&gMusicPlayerBgm, scale);
+/// Sets the BGM tempo scale directly; BGM_UNITY_SCALE preserves its native
+/// tempo.
+void Sound_SetBgmTempo(u16 tempoScale) {
+  m4aMPlayTempoControl(&gMPlayInfo_BGM, tempoScale);
 }
 
+/// Applies a pitch offset, in 1/256 semitone, to the music's tracks 0 to 7.
 void Sound_SetBgmPitch(u16 pitch) {
-  m4aMPlayPitchControl(&gMusicPlayerBgm, 0xff, pitch);
+  m4aMPlayPitchControl(&gMPlayInfo_BGM, TRACKS_ALL, pitch);
 }
 
 #include "battle.h"
@@ -195,37 +233,49 @@ void Sound_SetBgmPitch(u16 pitch) {
 #include "sound.h"
 #include "system.h"
 
-void Func_081c0f70(u16 first, u16 second) {
-  gData_02005834 = first;
-  gData_0200580c = second;
+/// Sets the target and per-VBlank step of the combined BGM tempo/pitch ramp
+/// (BGM_UNITY_SCALE the music's own).
+void Sound_SetBgmTempoPitchTarget(u16 targetScale, u16 step) {
+  gBgmTempoPitchTarget = targetScale;
+  gBgmTempoPitchStep = step;
 }
 
+/// Sets BGM volume (BGM_UNITY_SCALE full) immediately and cancels any
+/// outstanding volume ramp.
 void Sound_SetBgmVolume(s16 volume) {
-  m4aMPlayVolumeControl(&gMusicPlayerBgm, 0xff, volume);
-  gMusicVolumeTarget = volume;
-  gMusicVolume = volume;
+  m4aMPlayVolumeControl(&gMPlayInfo_BGM, TRACKS_ALL, volume);
+  gBgmVolumeTarget = volume;
+  gBgmVolume = volume;
 }
 
-void Sound_SetBgmVolumeTarget(u16 primary, u16 secondary) {
-  gMusicVolumeTarget = primary;
-  gMusicVolumeStep = secondary;
+/// Sets the BGM volume target (BGM_UNITY_SCALE full) and its per-VBlank step.
+void Sound_SetBgmVolumeTarget(u16 targetVolume, u16 step) {
+  gBgmVolumeTarget = targetVolume;
+  gBgmVolumeStep = step;
 }
 
+/// Stops every sound player while preserving its state for a later resume.
 void Sound_StopAllMusicPlayers(void) { m4aMPlayAllStop(); }
 
+/// Resumes every player, each from where m4aMPlayAllStop stopped it.
 void Sound_ResumeAllMusicPlayers(void) { m4aMPlayAllContinue(); }
 
-u8 Sound_GetBgmRestoreDelay(void) { return gMusicRestoreDelay; }
+/// Returns nonzero while a jingle holds the music: from its start until its
+/// player falls silent and the music begins to fade back in.
+u8 Sound_GetBgmRestoreDelay(void) { return gBgmRestoreDelay; }
 
+/// Waits a frame at a time for jingle restoration, giving up after 300
+/// frames.
 void Sound_WaitForBgmRestore(void) {
-  s32 wait_count = 0;
+  s32 framesWaited = 0;
 
   do {
-    if (gMusicRestoreDelay == 0)
+    if (gBgmRestoreDelay == 0)
       break;
     wait(1);
-    wait_count++;
-  } while (wait_count <= 299);
+    framesWaited++;
+  } while (framesWaited < BGM_WAIT_TIMEOUT_FRAMES);
 }
 
+/// Stops the sound DMA and its timer; the soft reset calls it first.
 void Sound_SuspendDirectSound(void) { m4aSoundVSyncOff(); }

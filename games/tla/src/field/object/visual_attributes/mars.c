@@ -221,7 +221,7 @@ extern void Animation_ApplyChildValuesFar__mars_join(struct CaptureObject *objec
 /// Per-frame update of a Venus Djinni's falling motes: each circles the
 /// leader on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a
 /// pixel a frame, and is released 20 pixels above the leader's feet. Set by
-/// Func_080d82e0, the Venus Djinni's effect.
+/// Djinn_RunVenusJoinEffect, the Venus Djinni's effect.
 void FieldEffect_UpdateDescendingOrbitActor(
     struct DescendingOrbitObject *actor) {
   struct OrbitPosition local;
@@ -248,7 +248,7 @@ void FieldEffect_UpdateDescendingOrbitActor(
 
 void BattleEffect_UpdateRadialSpread(struct FieldParticle *effect);
 
-void BattleEffect_RunVenusDjinnCapture(s32 arg);
+void Djinn_RunVenusJoinEffect(s32 arg);
 
 void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect);
 

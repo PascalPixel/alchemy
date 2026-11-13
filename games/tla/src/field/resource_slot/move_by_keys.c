@@ -13,7 +13,7 @@ void Vector_AddPolarOffset(s32 radius, s32 angle,
 s32 Func_080c8710(struct Actor *object);
 s32 Func_080c8700(struct Actor *object);
 s32 MapGrid_IsWallAt(s32 *position);
-s32 Func_0802d45c(s32 terrainId, s32 x, s32 z);
+s32 MapGrid_GetTerrainHeight(s32 terrainId, s32 x, s32 z);
 void Actor_SelectAnimation(struct Actor *object, s32 argument);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 
@@ -87,11 +87,11 @@ s32 Actor_MoveByKeys(struct Actor *object) {
       animation = 12;
     } else if (INPUT_HELD & 64) {
       terrainHeight =
-          Func_0802d45c(object->terrainId, position.x, position.z - 0x100000);
+          MapGrid_GetTerrainHeight(object->terrainId, position.x, position.z - 0x100000);
       if (terrainHeight - object->y < 0x100000)
         goto refused;
     } else if (INPUT_HELD & 128) {
-      terrainHeight = Func_0802d45c(object->terrainId, position.x, position.z);
+      terrainHeight = MapGrid_GetTerrainHeight(object->terrainId, position.x, position.z);
       if (terrainHeight - object->y > -0x80000) {
       refused:
         collisionFlags = 1;

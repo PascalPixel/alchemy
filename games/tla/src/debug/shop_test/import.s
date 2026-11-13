@@ -105,11 +105,11 @@ Func_02000d20:
 	.global Func_02000d28
 	.thumb_func
 Func_02000d28:
-	overlay_veneer Func_08038318
+	overlay_veneer DebugBrowser_IconsFar
 	.global Func_02000d30
 	.thumb_func
 Func_02000d30:
-	overlay_veneer Func_08038320
+	overlay_veneer DebugBrowser_PortraitsFar
 	.global Func_02000d38
 	.thumb_func
 Func_02000d38:

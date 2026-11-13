@@ -9,10 +9,10 @@ Sound_SetBgmVolumeTargetFar:
 	.thumb_func
 Sound_GetBgmRestoreDelayFar:
 	overlay_veneer Sound_GetBgmRestoreDelay
-	.global Func_081c0050
+	.global SoundTest_RunFar
 	.thumb_func
-Func_081c0050:
-	overlay_veneer Func_081c1014
+SoundTest_RunFar:
+	overlay_veneer SoundTest_Run
 	.global Sound_StopAllMusicPlayersFar
 	.thumb_func
 Sound_StopAllMusicPlayersFar:

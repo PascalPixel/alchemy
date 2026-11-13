@@ -172,7 +172,7 @@ s32 Event_GetSpecialValueFar(void);
 void ObjectSystem_InitializeFar(s32 mode);
 void WindowSystem_InitBattleFar(s32 mode);
 s32 Func_08127cd4(s32 enemyGroup);
-void Sound_LoadPresetParameters(s32 preset);
+void Sound_LoadReverbCode(s32 preset);
 void BattleUnit_RefreshPlacement(void);
 void PartyStatus_CreateWindowFar(s32 layout);
 void Func_081263c4(void);
@@ -300,7 +300,7 @@ s32 Func_081197f0(s32 enemyGroup) {
     Sound_PlayFar(cue);
     if (GameFlag_Test(0x16c) != 0) {
       Sound_PlayFar(55);
-      Sound_LoadPresetParameters(4);
+      Sound_LoadReverbCode(4);
     }
   } else {
     Sound_PlayFar(50);

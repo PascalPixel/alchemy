@@ -37,9 +37,9 @@ extern const s32 gData_0802ece0[];
 
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
-s32 Func_0802d45c(s32 terrainId, s32 x, s32 z);
-s32 Func_0802d7b0(s32 x, s32 z, s32 layer, s32 height);
-s32 Func_0802d87c(struct Actor *actor, struct FieldPosition *position);
+s32 MapGrid_GetTerrainHeight(s32 terrainId, s32 x, s32 z);
+s32 MapGrid_CheckCollisionAt(s32 x, s32 z, s32 layer, s32 height);
+s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
 s32 Func_080c8770(s32 x, s32 z, s32 kind);
 void Actor_SelectAnimation(struct Actor *actor, s32 argument);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
@@ -78,8 +78,8 @@ s32 Func_080298c0(struct Actor *actor) {
   cellZ = actor->z & 0xfff00000;
   y = actor->y;
   terrainId = &actor->terrainId;
-  groundHere = Func_0802d45c(*terrainId, cellX, cellZ);
-  groundAhead = Func_0802d45c(*terrainId, cellX, cellZ + 0xfff00000);
+  groundHere = MapGrid_GetTerrainHeight(*terrainId, cellX, cellZ);
+  groundAhead = MapGrid_GetTerrainHeight(*terrainId, cellX, cellZ + 0xfff00000);
   if (actor->timer != 0) {
     if (actor->targetX != 0x80000000)
       goto done;
@@ -90,7 +90,7 @@ s32 Func_080298c0(struct Actor *actor) {
     if (groundAhead < y) {
       s32 topZ = cellZ + 0xfff80000;
 
-      if (Func_0802d7b0(actor->x, topZ, *terrainId, actor->terrainHeight) ==
+      if (MapGrid_CheckCollisionAt(actor->x, topZ, *terrainId, actor->terrainHeight) ==
           2) {
         actor->y -= 0x10000;
       } else {
@@ -130,7 +130,7 @@ s32 Func_080298c0(struct Actor *actor) {
       Vector_AddPolarOffset(0x80000, (u16)angle, &testPosition);
       testPosition.y = actor->y - testPosition.z;
       testPosition.z = actor->z;
-      if (Func_0802d87c(actor, &testPosition))
+      if (MapGrid_CheckCollision(actor, &testPosition))
         goto climb_blocked;
       testPosition.x = actor->x;
       testPosition.y = 0;
@@ -138,7 +138,7 @@ s32 Func_080298c0(struct Actor *actor) {
       Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &testPosition);
       testPosition.y = actor->y - testPosition.z;
       testPosition.z = actor->z;
-      if (Func_0802d87c(actor, &testPosition))
+      if (MapGrid_CheckCollision(actor, &testPosition))
         goto climb_blocked;
       testPosition.x = actor->x;
       testPosition.y = 0;
@@ -146,7 +146,7 @@ s32 Func_080298c0(struct Actor *actor) {
       Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &testPosition);
       testPosition.y = actor->y - testPosition.z;
       testPosition.z = actor->z;
-      if (Func_0802d87c(actor, &testPosition))
+      if (MapGrid_CheckCollision(actor, &testPosition))
         goto climb_blocked;
       testPosition.x = actor->x;
       testPosition.y = 0;
@@ -154,7 +154,7 @@ s32 Func_080298c0(struct Actor *actor) {
       Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &testPosition);
       testPosition.y = actor->y - testPosition.z;
       testPosition.z = actor->z;
-      if (Func_0802d87c(actor, &testPosition))
+      if (MapGrid_CheckCollision(actor, &testPosition))
         goto climb_blocked;
       testPosition.x = actor->x;
       testPosition.y = 0;
@@ -162,7 +162,7 @@ s32 Func_080298c0(struct Actor *actor) {
       Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000, &testPosition);
       testPosition.y = actor->y - testPosition.z;
       testPosition.z = actor->z;
-      if (!Func_0802d87c(actor, &testPosition))
+      if (!MapGrid_CheckCollision(actor, &testPosition))
         goto climb_moved;
     climb_blocked:
       position.x = actor->x;
@@ -237,27 +237,27 @@ s32 Func_080298c0(struct Actor *actor) {
     heading = (s16)angle;
     goto counted;
   }
-  if (!Func_0802d87c(actor, &position)) {
+  if (!MapGrid_CheckCollision(actor, &position)) {
     testPosition.x = actor->x;
     testPosition.y = actor->y;
     testPosition.z = actor->z;
     Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &testPosition);
-    if (!Func_0802d87c(actor, &testPosition)) {
+    if (!MapGrid_CheckCollision(actor, &testPosition)) {
       testPosition.x = actor->x;
       testPosition.y = actor->y;
       testPosition.z = actor->z;
       Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &testPosition);
-      if (!Func_0802d87c(actor, &testPosition)) {
+      if (!MapGrid_CheckCollision(actor, &testPosition)) {
         testPosition.x = actor->x;
         testPosition.y = actor->y;
         testPosition.z = actor->z;
         Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &testPosition);
-        if (!Func_0802d87c(actor, &testPosition)) {
+        if (!MapGrid_CheckCollision(actor, &testPosition)) {
           testPosition.x = actor->x;
           testPosition.y = actor->y;
           testPosition.z = actor->z;
           Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000, &testPosition);
-          if (!Func_0802d87c(actor, &testPosition)) {
+          if (!MapGrid_CheckCollision(actor, &testPosition)) {
             heading = (s16)angle;
             goto counted;
           }
@@ -281,31 +281,31 @@ s32 Func_080298c0(struct Actor *actor) {
     position.y = actor->y;
     position.z = actor->z;
     Vector_AddPolarOffset(0x80000, (u16)heading, &position);
-    if (Func_0802d87c(actor, &position))
+    if (MapGrid_CheckCollision(actor, &position))
       continue;
     testPosition.x = actor->x;
     testPosition.y = actor->y;
     testPosition.z = actor->z;
     Vector_AddPolarOffset(0x80000, (u16)heading + 0x1000, &testPosition);
-    if (Func_0802d87c(actor, &testPosition))
+    if (MapGrid_CheckCollision(actor, &testPosition))
       continue;
     testPosition.x = actor->x;
     testPosition.y = actor->y;
     testPosition.z = actor->z;
     Vector_AddPolarOffset(0x80000, (u16)heading - 0x1000, &testPosition);
-    if (Func_0802d87c(actor, &testPosition))
+    if (MapGrid_CheckCollision(actor, &testPosition))
       continue;
     testPosition.x = actor->x;
     testPosition.y = actor->y;
     testPosition.z = actor->z;
     Vector_AddPolarOffset(0x80000, (u16)heading + 0x2000, &testPosition);
-    if (Func_0802d87c(actor, &testPosition))
+    if (MapGrid_CheckCollision(actor, &testPosition))
       continue;
     testPosition.x = actor->x;
     testPosition.y = actor->y;
     testPosition.z = actor->z;
     Vector_AddPolarOffset(0x80000, (u16)heading - 0x2000, &testPosition);
-    if (!Func_0802d87c(actor, &testPosition))
+    if (!MapGrid_CheckCollision(actor, &testPosition))
       goto counted;
   }
   position.x = actor->x;
@@ -333,7 +333,7 @@ s32 Func_080298c0(struct Actor *actor) {
     cellX = (actor->x & 0xfff00000) + 0x80000;
     cellZ = (actor->z & 0xfff00000) + 0x180000;
 
-    if (Func_0802d45c(*terrainId, cellX, cellZ) < y &&
+    if (MapGrid_GetTerrainHeight(*terrainId, cellX, cellZ) < y &&
         Func_080c8770(cellX, cellZ, 2)) {
       actor->motionFlags = 0;
       Actor_SetMoveTarget(actor, actor->x, groundHere + 0xfffe0000, cellZ);
@@ -437,7 +437,7 @@ struct Unk0802a124Actor {
 // The camera yaw each direction-pad combination turns toward.
 extern const s32 gData_0802eca0[16];
 
-s32 Func_0802db64(struct Actor *object, struct FieldPosition *position);
+s32 WorldMap_IsWalkable(struct Actor *object, struct FieldPosition *position);
 
 /// Script command 0x22: moves the object on the world map by the direction pad
 /// at a fixed pace (faster while L repeats), trying six turned headings when
@@ -500,9 +500,9 @@ s32 Func_0802a124(struct Actor *object) {
       } while (0);
       rightPosition.z = object->z;
       Vector_AddPolarOffset(0x80000, direction - 0x1555, &rightPosition);
-      if ((Func_0802db64(object, &position) |
-           Func_0802db64(object, &leftPosition) |
-           Func_0802db64(object, &rightPosition)) != 0) {
+      if ((WorldMap_IsWalkable(object, &position) |
+           WorldMap_IsWalkable(object, &leftPosition) |
+           WorldMap_IsWalkable(object, &rightPosition)) != 0) {
         angleOffsets[count++] = direction + 0x1000;
         angleOffsets[count++] = direction - 0x1000;
         angleOffsets[count++] = direction + 0x2000;
@@ -523,9 +523,9 @@ s32 Func_0802a124(struct Actor *object) {
           rightPosition.y = object->y;
           rightPosition.z = object->z;
           Vector_AddPolarOffset(0x80000, direction - 0x1555, &rightPosition);
-          if ((Func_0802db64(object, &position) |
-               Func_0802db64(object, &leftPosition) |
-               Func_0802db64(object, &rightPosition)) != 0)
+          if ((WorldMap_IsWalkable(object, &position) |
+               WorldMap_IsWalkable(object, &leftPosition) |
+               WorldMap_IsWalkable(object, &rightPosition)) != 0)
             continue;
           angle = (s16)direction;
           goto update_object;

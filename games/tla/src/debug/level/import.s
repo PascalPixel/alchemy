@@ -46,9 +46,9 @@ Text_DrawNumberAtOffset:
 	.thumb_func
 Text_DrawNumberInWindow:
 	overlay_veneer Text_DrawNumberInWindowFar
-	.global Func_0200068c
+	.global MessageArgument_Push
 	.thumb_func
-Func_0200068c:
+MessageArgument_Push:
 	overlay_veneer MessageArgument_PushFar
 	.global WindowSprite_RedrawSavedRect
 	.thumb_func
@@ -58,21 +58,21 @@ WindowSprite_RedrawSavedRect:
 	.thumb_func
 WindowSprite_ClearList:
 	overlay_veneer WindowSprite_ClearListFar
-	.global Func_020006a4
+	.global DebugBrowser_Icons
 	.thumb_func
-Func_020006a4:
-	overlay_veneer Func_08038318
-	.global Func_020006ac
+DebugBrowser_Icons:
+	overlay_veneer DebugBrowser_IconsFar
+	.global DebugBrowser_Portraits
 	.thumb_func
-Func_020006ac:
-	overlay_veneer Func_08038320
+DebugBrowser_Portraits:
+	overlay_veneer DebugBrowser_PortraitsFar
 	.global Unit_Calculate
 	.thumb_func
 Unit_Calculate:
 	overlay_veneer Unit_CalculateFar
-	.global Func_020006bc
+	.global Item_GetDirect
 	.thumb_func
-Func_020006bc:
+Item_GetDirect:
 	overlay_veneer Item_Get
 	.global PartyInventory_Add
 	.thumb_func
@@ -90,13 +90,13 @@ Unit_LevelUpTo:
 	.thumb_func
 PartyInventory_HasSpace:
 	overlay_veneer PartyInventory_HasSpaceFar
-	.global Func_020006e4
+	.global Event_Start
 	.thumb_func
-Func_020006e4:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_020006ec
+	.global Event_End
 	.thumb_func
-Func_020006ec:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func

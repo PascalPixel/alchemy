@@ -79,4 +79,4 @@ AlchemyUncredited_080006ac:
 	.4byte	0x00000350
 	.4byte	0x04000006
 AlchemyUncreditedEnd_080006ac:
-	.4byte	gData_03001138
+	.4byte	gSoundVBlankState

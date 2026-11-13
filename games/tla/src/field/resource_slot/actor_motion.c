@@ -282,7 +282,7 @@ void Func_08023f9c(void) {
             }
           }
           if (!standing)
-            ground = Func_0802d45c(object->terrainId, velocityX, velocityZ);
+            ground = MapGrid_GetTerrainHeight(object->terrainId, velocityX, velocityZ);
           velocityY = ground - object->groundHeight;
           if (ground - y > -0x40000)
             y += velocityY;

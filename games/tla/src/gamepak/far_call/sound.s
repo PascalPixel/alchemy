@@ -5,9 +5,9 @@
 	.thumb_func
 m4aSoundVSyncOffFar:
 	overlay_veneer Sound_SuspendDirectSound
-	.global Func_081c0088
+	.global Sound_UpdateBgmRampsFar
 	.thumb_func
-Func_081c0088:
+Sound_UpdateBgmRampsFar:
 	overlay_veneer Sound_UpdateBgmRamps
 	.global SoundFlag_TestFar
 	.thumb_func

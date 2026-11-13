@@ -4,7 +4,7 @@
 	.global Func_08020210
 	.thumb_func
 Func_08020210:
-	overlay_veneer Func_0802d87c
+	overlay_veneer MapGrid_CheckCollision
 	.global Actor_SetSingleChildFlagsFar
 	.thumb_func
 Actor_SetSingleChildFlagsFar:

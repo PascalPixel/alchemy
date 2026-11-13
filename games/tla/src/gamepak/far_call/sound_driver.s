@@ -15,13 +15,13 @@ Sound_InitializeFar:
 	.thumb_func
 Sound_PlayFar:
 	overlay_veneer Sound_Play
-	.global Func_081c0018
+	.global Sound_VSyncFar
 	.thumb_func
-Func_081c0018:
-	overlay_veneer Func_081c0f3c
-	.global Func_081c0020
+Sound_VSyncFar:
+	overlay_veneer Sound_VSync
+	.global Sound_SetBgmTempoFar
 	.thumb_func
-Func_081c0020:
+Sound_SetBgmTempoFar:
 	overlay_veneer Sound_SetBgmTempo
 	.global Sound_SetBgmPitchFar
 	.thumb_func
@@ -30,7 +30,7 @@ Sound_SetBgmPitchFar:
 	.global Sound_SetBgmTempoPitchTargetFar
 	.thumb_func
 Sound_SetBgmTempoPitchTargetFar:
-	overlay_veneer Func_081c0f70
+	overlay_veneer Sound_SetBgmTempoPitchTarget
 	.global Sound_SetBgmVolumeFar
 	.thumb_func
 Sound_SetBgmVolumeFar:

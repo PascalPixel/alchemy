@@ -351,10 +351,10 @@ Serial_WaitForStatusMaskFar:
 	.thumb_func
 Serial_RemoveIrqHandlersFar:
 	overlay_veneer Serial_RemoveIrqHandlers
-	.global Sound_LoadPresetParametersFar
+	.global Sound_LoadReverbCodeFar
 	.thumb_func
-Sound_LoadPresetParametersFar:
-	overlay_veneer Sound_LoadPresetParameters
+Sound_LoadReverbCodeFar:
+	overlay_veneer Sound_LoadReverbCode
 	.global Func_08000380
 	.thumb_func
 Func_08000380:
@@ -438,4 +438,4 @@ Task_FindFar:
 	.global Func_08000420
 	.thumb_func
 Func_08000420:
-	overlay_veneer Func_08014220
+	overlay_veneer VramCache_CountFreeBlocks

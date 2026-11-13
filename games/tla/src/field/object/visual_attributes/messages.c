@@ -261,7 +261,7 @@ s32 Event_AskYesNoAndShowResponse(s32 object, s32 message) {
 void Event_NoOpUpdate(void) {}
 
 /// Opens the next message for the speaker and waits until its window is idle.
-void Func_080d40dc(s32 speaker) {
+void Event_ShowSpeakerMessage(s32 speaker) {
   // BUG: the position is never set; the window is placed from whatever the
   // two registers hold.
   struct {

@@ -1,5 +1,11 @@
 /// @file
-/// The scene code of overlay 0x67c, in ROM order.
+/// Aqua Rock's inside, the island south of the Apojii Islands, in the rooms of
+/// this overlay: rapids and falls the party runs against or rides, vents that
+/// blow until a pillar is Moved over them (Vent_Puff), Moai that lower
+/// the water, puddles to Frost, Water Stones to Douse and a tightrope. At its
+/// heart Piers reads the tablet and learns Parch
+/// (AquaRockInside_ReadParchTablet); the Mercury Djinni Steam waits in one of
+/// its rooms (AquaRockInside_FightSteam).
 
 #include "shared/actors.h"
 #include "types.h"
@@ -129,7 +135,7 @@ void Event_NoOp(void);
 void Func_020006d0(void);
 s32 Func_02000b24(s32 id, s32 value);
 void Func_02000b5c(void);
-void Func_02001a1c(void);
+void AquaRockInside_ReadParchTablet(void);
 void Func_02001e78(s32 id);
 void Func_020030f4(void);
 void Func_02003460(s32 value);
@@ -285,7 +291,7 @@ void Func_02000690(void);
 
 void Func_0200071c(void);
 void Func_020007d4(void);
-void Func_02000a24(void);
+void AquaRockInside_CheckColumn(void);
 
 void Func_02000a98(void);
 
@@ -296,10 +302,10 @@ void Func_02000bd4(void);
 void Func_02000de4(void);
 
 void Func_02001060(void);
-void Func_020010ec(void);
+void AquaRockInside_CheckPsynergyStone(void);
 void Func_02001170(void);
 void Func_02001328(void);
-void Func_02001c68(void);
+void AquaRockInside_WalkToParchTablet(void);
 void Func_02001cd8(void);
 void Func_02001d40(void);
 void Func_02002ca4(void);
@@ -312,7 +318,7 @@ void Tightrope_Place();
 
 extern u8 Data_0202c001[];
 
-void Func_0200033c(void) { Field_RequestDjinnBattle(10, 32); }
+void AquaRockInside_FightSteam(void) { Field_RequestDjinnBattle(10, 32); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -636,7 +642,7 @@ void Func_02000958(s32 value) {
   FieldEvent_SetExitRequest(value);
 }
 
-void Func_02000a24(void) {
+void AquaRockInside_CheckColumn(void) {
   s32 seen;
   const u8 *message;
 
@@ -961,7 +967,7 @@ void Func_020010d0(struct Actor *object) {
   }
 }
 
-void Func_020010ec(void) {
+void AquaRockInside_CheckPsynergyStone(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered(MsgCheckedThePsynergy, 1);
@@ -1301,7 +1307,7 @@ column:
 
 void Actor_MoveToObject();
 
-void Func_02001a1c(void) {
+void AquaRockInside_ReadParchTablet(void) {
   s32 t4, t59;
 
   Event_Start();
@@ -1343,7 +1349,7 @@ L_02009a46:
   FieldEvent_Wait(20);
   Message_ShowCentered(((s32)&MsgCheckedTheTabletIt + 2), 1);
   Func_02001620(14, 7);
-  Party_LearnAbility(7, 138);
+  Party_LearnAbility(PIERS, ABILITY_PARCH);
   Event_SetFlag(0x9ae);
   Event_PlaySound(107);
   FieldEvent_Wait(30);
@@ -1379,7 +1385,7 @@ L_02009c42:
 L_02009c56:
 }
 
-void Func_02001c68(void) {
+void AquaRockInside_WalkToParchTablet(void) {
   if (Event_GetFlag(0x9ae)) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -1391,7 +1397,7 @@ void Func_02001c68(void) {
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 264, 184);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     FieldEvent_Wait(10);
-    Func_02001a1c();
+    AquaRockInside_ReadParchTablet();
   }
 }
 
@@ -1407,7 +1413,7 @@ void Func_02001c68(void) {
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 264, 184);            \
       Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);     \
       FieldEvent_Wait(10);                                                     \
-      Func_02001a1c();                                                         \
+      AquaRockInside_ReadParchTablet();                                        \
     }                                                                          \
   }
 
@@ -2666,10 +2672,10 @@ u32 gWaterDropScript[] = {
 #undef Func_02003ab0
 #undef Orbiter_Spiral
 
-void Func_0200033c(void);
+void AquaRockInside_FightSteam(void);
 void Func_020005f8(void);
 void Func_02000b84(void);
-void Func_02001a1c(void);
+void AquaRockInside_ReadParchTablet(void);
 
 /* VIEW(data): variable Data_020005f4 as this part declared it; the scene
  * defines it as a routine. */
@@ -2919,7 +2925,7 @@ LATE_DATA struct Trigger gAquaRockInside_Room2Triggers[] = {
     {0x51, 8, CONDITION_ALWAYS, 8},
     {0x51, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(Func_02002ca4)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_0200033c)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(AquaRockInside_FightSteam)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x95c, EVENT(Func_02000644)},
     {0x9, 0, CONDITION_ALWAYS, EVENT(Func_02000644)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 88, 0x240, EVENT(Func_02000690)},
@@ -2936,7 +2942,7 @@ LATE_DATA struct Trigger gAquaRockInside_Room3Triggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {0xc402, 7, CONDITION_ALWAYS, EVENT(Leader_SinkAway)},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02000a24)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(AquaRockInside_CheckColumn)},
     {0x1c814, 9, 0x95d, EVENT(Func_020007d4)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0xa66, EVENT(Func_02000a98)},
     {TRIGGER_TABLE_END},
@@ -3017,7 +3023,7 @@ LATE_DATA struct Trigger gAquaRockInside_Room7Triggers[] = {
     {0x21, 2, CONDITION_ALWAYS, 2},
     {0x21, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXAMINE, 30, CONDITION_ALWAYS, EVENT(Func_020010ec)},
+    {TRIGGER_EXAMINE, 30, CONDITION_ALWAYS, EVENT(AquaRockInside_CheckPsynergyStone)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3048,8 +3054,8 @@ LATE_DATA struct Trigger gAquaRockInside_Room9Triggers[] = {
 
 LATE_DATA struct Trigger gAquaRockInside_Room10Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0xc403, 30, CONDITION_ALWAYS, EVENT(Func_02001a1c)},
-    {0x4403, 30, CONDITION_ALWAYS, EVENT(Func_02001c68)},
+    {0xc403, 30, CONDITION_ALWAYS, EVENT(AquaRockInside_ReadParchTablet)},
+    {0x4403, 30, CONDITION_ALWAYS, EVENT(AquaRockInside_WalkToParchTablet)},
     {0x8403, 30, CONDITION_ALWAYS, EVENT(Func_02001cd8)},
     {0x403, 30, CONDITION_ALWAYS, EVENT(Func_02001d40)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 40, IF_FLAG_SET(0x349), EVENT(Func_02001328)},

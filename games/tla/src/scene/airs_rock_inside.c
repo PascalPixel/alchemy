@@ -184,7 +184,7 @@ void Actor_LiftTargetBlock(const s16 *list);
 void Actor_PlaceMovedBlock(void);
 
 void Func_02002790(void);
-void Func_02004534(void);
+void AirsRockInside_ReadRevealTablet(void);
 
 extern struct Trigger gAirsRockInside_Room1Triggers[];
 extern struct Trigger gAirsRockInside_Room2Triggers[];
@@ -2653,7 +2653,7 @@ static inline void Call0(void (*f)()) {
 // Checking the tablet shows its message; the first time (flag 0x8d4 clear)
 // the scene with actor 6 follows, as Func_020030cc of Magma Rock does with
 // the Blaze tablet.
-void Func_02004534(void) {
+void AirsRockInside_ReadRevealTablet(void) {
   struct Actor *object;
 
   Event_Start();
@@ -2699,7 +2699,7 @@ void Func_02004534(void) {
      * differ in tla-en. */
     Call0(MapGrid_WaitForShakeToSettle);
     Call2(Func_02004138, 8, 6);
-    Party_LearnAbility(6, 0x90);
+    Party_LearnAbility(SHEBA, ABILITY_REVEAL);
     GameFlag_Set(0x8d4);
     Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, 6, 0);
     FieldEvent_Wait(10);
@@ -2731,7 +2731,7 @@ void Func_02004740(void) {
     Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 264, 136);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     FieldEvent_Wait(10);
-    Func_02004534();
+    AirsRockInside_ReadRevealTablet();
   }
 }
 
@@ -2747,7 +2747,7 @@ void Func_02004740(void) {
       Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 264, 136);        \
       Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);       \
       FieldEvent_Wait(10);                                                     \
-      Func_02004534();                                                         \
+      AirsRockInside_ReadRevealTablet();                                       \
     }                                                                          \
   }
 
@@ -3847,7 +3847,7 @@ struct Trigger gAirsRockInside_Room5Triggers[] = {
     {TRIGGER_STEP, 81, CONDITION_ALWAYS, EVENT(Func_02002898)},
     {TRIGGER_STEP, 90, CONDITION_ALWAYS, EVENT(Func_02003d40)},
     {0x8602, 12, CONDITION_ALWAYS, EVENT(Func_02004880)},
-    {0xc403, 30, CONDITION_ALWAYS, EVENT(Func_02004534)},
+    {0xc403, 30, CONDITION_ALWAYS, EVENT(AirsRockInside_ReadRevealTablet)},
     {0x4403, 30, CONDITION_ALWAYS, EVENT(Func_02004740)},
     {0x8403, 30, CONDITION_ALWAYS, EVENT(Func_020047b0)},
     {0x403, 30, CONDITION_ALWAYS, EVENT(Func_02004818)},

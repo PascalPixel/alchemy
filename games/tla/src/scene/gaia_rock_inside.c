@@ -1,5 +1,12 @@
 /// @file
-/// The scene code of overlay 0x681, in ROM order.
+/// Gaia Rock's inside, the rooms of this overlay near Izumo: the party places
+/// the doll on the altar by the entrance and on the altars deeper in
+/// (GaiaRockInside_PlaceDollOnFirstAltar to
+/// GaiaRockInside_PlaceDollOnRoom5Altar), each one weakening the Serpent, and
+/// clears overgrowth and cobwebs with Cyclone. In the Serpent's lair Susa
+/// fights to save Kushinada (GaiaRockInside_MeetSusa); examining the Serpent
+/// starts the battle with it (GaiaRockInside_ChallengeSerpent). Felix reads
+/// the rock's tablet and learns Sand (GaiaRockInside_ReadSandTablet).
 
 #include "shared/actors.h"
 #include "types.h"
@@ -176,7 +183,7 @@ extern char SceneId_Ov681Room3;
 extern char SceneId_Ov681Room4;
 
 extern struct ActorPlacement gGaiaRockInside_Placements[];
-extern struct ActorPlacement gData_020059a0[];
+extern struct ActorPlacement gGaiaRockInside_LairPlacements[];
 extern struct ActorPlacement gGaiaRockInside_Room3Placements[];
 extern struct ActorPlacement gGaiaRockInside_Room4Placements[];
 extern struct ActorPlacement gGaiaRockInside_Room5Placements[];
@@ -231,24 +238,24 @@ void Func_02000cf8(void);
 
 void Func_02000d18(void);
 
-void Func_02000edc(void);
+void GaiaRockInside_SusaSaysMoveAside(void);
 
-void Func_02001048(void);
-void Func_020011c8(void);
-void Func_020012ac(void);
+void GaiaRockInside_MeetSusa(void);
+void GaiaRockInside_TalkToSusa(void);
+void GaiaRockInside_ReadSusasMind(void);
 
 void Func_02001d14(void);
-void Func_02001ebc(void);
+void GaiaRockInside_ChallengeSerpent(void);
 
 void Leader_SetLayerByte(void);
 
 void Func_02001f84(void);
 void Func_02001fa0(void);
-void Func_02001fd8(void);
-void Func_02002020(void);
-void Func_0200225c(void);
-void Func_020024b8(void);
-void Func_02002718(void);
+void GaiaRockInside_CheckAltar(void);
+void GaiaRockInside_PlaceDollOnFirstAltar(void);
+void GaiaRockInside_PlaceDollOnWestAltar(void);
+void GaiaRockInside_PlaceDollOnEastAltar(void);
+void GaiaRockInside_PlaceDollOnRoom5Altar(void);
 
 void Func_02002a14(void);
 
@@ -631,7 +638,7 @@ const void *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room5)
     return gGaiaRockInside_Room5Placements;
   if (gMainRoutineWork.entrance > 8)
-    return gData_020059a0;
+    return gGaiaRockInside_LairPlacements;
   return gGaiaRockInside_Placements;
 }
 
@@ -817,7 +824,7 @@ void Func_02000d18(void) {
   FieldEvent_SetExitRequest(9);
 }
 
-void Func_02000edc(void) {
+void GaiaRockInside_SusaSaysMoveAside(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgGaiaRockInside05);
@@ -901,7 +908,7 @@ extern s32 gData_0200646c__s1048[] __asm__("gData_0200646c");
 // Object 10 turns to the leader, talks and walks to its place while the camera
 // follows; flag 0x9de is set, and object 9's script decides whether two
 // words of gData_0200646c are copied into place.
-void Func_02001048(void) {
+void GaiaRockInside_MeetSusa(void) {
   struct Actor *object = Actor_Get(9);
 
   Event_Start();
@@ -948,7 +955,7 @@ void Func_02001048(void) {
 // Talking to object 10 while its byte at 0x60 is at most 2: once flag 0x9ac is
 // set it says one of two lines, by whether any of flags 0x9bc to 0x9bf is set;
 // before that it turns to the leader and speaks.
-void Func_020011c8(void) {
+void GaiaRockInside_TalkToSusa(void) {
   if (*((u8 *)Actor_Get(10) + 96) > 2)
     return;
   Event_Start();
@@ -986,7 +993,7 @@ void Func_020011c8(void) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_020012ac(void) {
+void GaiaRockInside_ReadSusasMind(void) {
   struct Actor *t5;
   s32 t2;
 
@@ -1323,7 +1330,7 @@ extern s32 Func_02004e64__s15d0(void) __asm__("Event_End");
 // The party meets person 11 on the ledge: they talk, the ground shakes, the
 // screen blends out and back while the ledge changes, the party gains the item
 // and person 11 joins the leader (flag 0x9ba).
-s32 Func_020019cc(void) {
+s32 GaiaRockInside_ReadSandTablet(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   /* FAKEMATCH(volatile): the blend level rereads through its slot; as a plain
    * local, 112 of 250 instructions differ in tla-en. */
@@ -1383,7 +1390,7 @@ s32 Func_020019cc(void) {
   }
   BlendScript_Resume();
   Actor_SetPosition(12, 0, 0);
-  Party_LearnAbility(4, 139);
+  Party_LearnAbility(FELIX, ABILITY_SAND);
   Event_SetFlag(0x9ba);
   Actor_SetSpeed(11, 0x13333, 0x9999);
   Actor_SetAnimation(11, 2);
@@ -1513,7 +1520,7 @@ void Func_02001d14(void) {
 // s32: as u16 the scene symbol loads through ldrh and the pools break up.
 #include "text/msg_ids.h"
 
-void Func_02001ebc(void) {
+void GaiaRockInside_ChallengeSerpent(void) {
   s32 count;
 
   if (Event_GetFlag(FLAG_SERPENT_SLAIN)) {
@@ -1585,7 +1592,7 @@ void Func_02001fa0(void) {
 }
 
 // Examines the altar.
-void Func_02001fd8(void) {
+void GaiaRockInside_CheckAltar(void) {
   const u8 *message = MsgCheckedTheAltar;
   const u8 *next;
   s32 owner;
@@ -1606,7 +1613,7 @@ void Func_02001fd8(void) {
 #include "text/msg_ids.h"
 void Actor_MoveToObject(s32 id, s32 target);
 
-void Func_02002020(void) {
+void GaiaRockInside_PlaceDollOnFirstAltar(void) {
   s32 t1, t2, t26, t27, t28, t34, t35, t37, t38, t43, t44, t50, v_r5, v_r6,
       v_r7, v_r8;
   struct Actor *v_r10;
@@ -1713,7 +1720,7 @@ L_0200a22e:
 // 14: the first object shakes with random vertical speeds, and while the flag
 // of its event (0x9bd, 0x9be, 0x9bc) is clear it moves, two map copies open
 // the way and the partner returns to the leader.
-void Func_0200225c(void) {
+void GaiaRockInside_PlaceDollOnWestAltar(void) {
   struct Actor *object;
   struct Actor *partner;
   struct Actor *leader;
@@ -1801,7 +1808,7 @@ void Func_0200225c(void) {
   }
 }
 
-void Func_020024b8(void) {
+void GaiaRockInside_PlaceDollOnEastAltar(void) {
   struct Actor *object;
   struct Actor *partner;
   struct Actor *leader;
@@ -1889,7 +1896,7 @@ void Func_020024b8(void) {
   }
 }
 
-void Func_02002718(void) {
+void GaiaRockInside_PlaceDollOnRoom5Altar(void) {
   struct Actor *object;
   struct Actor *partner;
   struct Actor *leader;
@@ -2020,15 +2027,15 @@ void Func_02002a34(void) { Func_02004af0(0xd, 0x305); }
 
 extern char SceneId_Ov681Room5;
 extern struct Trigger gGaiaRockInside_Triggers[];
-extern struct Trigger gData_02005f30[];
+extern struct Trigger gGaiaRockInside_LairTriggers[];
 extern struct Trigger gData_02005fcc[];
 extern struct Trigger gGaiaRockInside_Room2Triggers[];
-extern s32 gGaiaRockInside_Room3Triggers[];
+extern struct Trigger gGaiaRockInside_Room3Triggers[];
 extern struct Trigger gGaiaRockInside_Room4Triggers[];
 extern struct Trigger gGaiaRockInside_Room5Triggers[];
 
 // Returns the current room's table.
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room2)
     return gGaiaRockInside_Room2Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room3)
@@ -2038,7 +2045,7 @@ const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room5)
     return gGaiaRockInside_Room5Triggers;
   if (gMainRoutineWork.entrance == 9)
-    return gData_02005f30;
+    return gGaiaRockInside_LairTriggers;
   if (gMainRoutineWork.entrance > 9)
     return gData_02005fcc;
   return gGaiaRockInside_Triggers;
@@ -4276,10 +4283,11 @@ void Func_02004a5c(s32 id, s32 x, s32 y, s32 z) {
  * #undef Func_020006f8 #undef Func_02000718 #undef Func_02000748 #undef
  * Func_020007f4 #undef Func_020008b4 #undef Func_02000900 #undef Func_02000af8
  * #undef Orbiter_Spiral #undef Orbit_Update #undef Actor_AimAtWatched #undef
- * Actor_StepToWatched #undef Func_020019cc #undef Func_02002974 #undef
- * Func_0200485c; tried as the one declaration extern const u8 gData_020062d4[],
- * it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside.c:4146:
- * `gData_020062d4' undeclared (first use in this function). */
+ * Actor_StepToWatched #undef GaiaRockInside_ReadSandTablet #undef Func_02002974
+ * #undef Func_0200485c; tried as the one declaration extern const u8
+ * gData_020062d4[], it does not compile in tla-ja:
+ * games/tla/src/scene/gaia_rock_inside.c:4146: `gData_020062d4' undeclared
+ * (first use in this function). */
 extern const u8 gData_020062d4__s2cb4[] __asm__("gData_020062d4");
 #define gData_020062d4 gData_020062d4__s2cb4
 extern u32 gData_02006290[];
@@ -4683,7 +4691,7 @@ struct ActorPlacement gGaiaRockInside_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020059a0[] = {
+struct ActorPlacement gGaiaRockInside_LairPlacements[] = {
     {148, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(328), FACING_SOUTH, 2, 0},
     {398, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
     {29, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(456), FACING_SOUTH, 2, 0},
@@ -4794,16 +4802,16 @@ struct Trigger gGaiaRockInside_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02005f30[] = {
-    {TRIGGER_RAISED, 42, CONDITION_ALWAYS, EVENT(Func_02000edc)},
+struct Trigger gGaiaRockInside_LairTriggers[] = {
+    {TRIGGER_RAISED, 42, CONDITION_ALWAYS, EVENT(GaiaRockInside_SusaSaysMoveAside)},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_STEP, 40, 0x9de, EVENT(Func_02001048)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_020011c8)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, EVENT(Func_020012ac)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_020019cc)},
+    {TRIGGER_STEP, 40, 0x9de, EVENT(GaiaRockInside_MeetSusa)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(GaiaRockInside_TalkToSusa)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, EVENT(GaiaRockInside_ReadSusasMind)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(GaiaRockInside_ReadSandTablet)},
     {0x53, 50, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGaiaRockInside11))},
-    {TRIGGER_EXAMINE, 55, CONDITION_ALWAYS, EVENT(Func_02001ebc)},
-    {TRIGGER_EXAMINE, 56, CONDITION_ALWAYS, EVENT(Func_02001ebc)},
+    {TRIGGER_EXAMINE, 55, CONDITION_ALWAYS, EVENT(GaiaRockInside_ChallengeSerpent)},
+    {TRIGGER_EXAMINE, 56, CONDITION_ALWAYS, EVENT(GaiaRockInside_ChallengeSerpent)},
     {0x53, 77, 0xe41, EVENT(Func_02001fa0)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Leader_SetLayerByte)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_02001f84)},
@@ -4813,7 +4821,7 @@ struct Trigger gData_02005f30[] = {
 struct Trigger gData_02005fcc[] = {
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_STEP, 42, CONDITION_ALWAYS, EVENT(Func_02001d14)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_020019cc)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(GaiaRockInside_ReadSandTablet)},
     {0x53, 50, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGaiaRockInside11))},
     {TRIGGER_EXAMINE, 55, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGaiaRockInside08))},
     {0x53, 77, 0xe41, EVENT(Func_02001fa0)},
@@ -4833,42 +4841,24 @@ struct Trigger gGaiaRockInside_Room2Triggers[] = {
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {0x21, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_02001fd8)},
-    {0x1c314, 0x40c, CONDITION_ALWAYS, EVENT(Func_02002020)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(GaiaRockInside_CheckAltar)},
+    {0x1c314, 0x40c, CONDITION_ALWAYS, EVENT(GaiaRockInside_PlaceDollOnFirstAltar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(Func_02002974)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT(Func_02002974)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02002974)},
     {TRIGGER_TABLE_END},
 };
 
-s32 gGaiaRockInside_Room3Triggers[] = {
-    1,
-    (s32)0xffff0001,
-    1,
-    33,
-    (s32)0xffff0002,
-    2,
-    1,
-    (s32)0xffff0003,
-    3,
-    0,
-    (s32)0xffff000a,
-    (s32)Func_02001fd8,
-    0x1c314,
-    (s32)0xffff040a,
-    (s32)Func_0200225c,
-    0,
-    (s32)0xffff000b,
-    (s32)Func_02001fd8,
-    0x1c314,
-    (s32)0xffff040b,
-    (s32)Func_020024b8,
-    0x50008905,
-    (s32)0xffff0014,
-    (s32)Func_02000b6c,
-    0x50008905,
-    0xffff,
-    0,
+struct Trigger gGaiaRockInside_Room3Triggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {0x21, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(GaiaRockInside_CheckAltar)},
+    {0x1c314, 0x40a, CONDITION_ALWAYS, EVENT(GaiaRockInside_PlaceDollOnWestAltar)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(GaiaRockInside_CheckAltar)},
+    {0x1c314, 0x40b, CONDITION_ALWAYS, EVENT(GaiaRockInside_PlaceDollOnEastAltar)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 20, CONDITION_ALWAYS, EVENT(Func_02000b6c)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), -1, 0, 0},
 };
 
 struct Trigger gGaiaRockInside_Room4Triggers[] = {
@@ -4891,8 +4881,8 @@ struct Trigger gGaiaRockInside_Room5Triggers[] = {
     {TRIGGER_STEP, 30, 0x303, EVENT(Func_02002a14)},
     {TRIGGER_STEP, 31, 0x304, EVENT(Func_02002a24)},
     {TRIGGER_STEP, 32, 0x305, EVENT(Func_02002a34)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02001fd8)},
-    {0x1c314, 0x409, CONDITION_ALWAYS, EVENT(Func_02002718)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(GaiaRockInside_CheckAltar)},
+    {0x1c314, 0x409, CONDITION_ALWAYS, EVENT(GaiaRockInside_PlaceDollOnRoom5Altar)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, 0},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 40, CONDITION_ALWAYS, EVENT(Func_02000cd8)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41, CONDITION_ALWAYS, EVENT(Func_02000cf8)},

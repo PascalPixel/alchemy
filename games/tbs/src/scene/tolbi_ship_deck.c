@@ -98,17 +98,8 @@
 #include "map_grid_scroll.h"
 #include "heap.h"
 #include "fixed_math.h"
+#include "tolbi_ship.h"
 
-// Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
-// party enters another area, and other areas use the numbers for
-// their own.
-
-/// The deck shakes until the Kraken is defeated (set in ship_rooms.c).
-///
-/// The line is "There's a huge sea monster on the ship!"
-/// ★ Named from the game: "there's a huge sea monster on the ship!"
-/// (MsgTolbiShipWonderWhatsWrongShipShouldnt)
-#define FLAG_TOLBI_SHIP_KRAKEN_ON_DECK 0x302
 
 // The scene's routines, defined below.
 static void TolbiShipDeck_ConfrontCrewman(void);
@@ -147,14 +138,6 @@ static void TolbiShipDeck_Turn(s32 actorId, s32 facing);
 static void TolbiShipDeck_SightIsland(void);
 static void TolbiShipDeck_ReturnFromIsland(void);
 static void TolbiShipDeck_PlaceLeaderOnDeck(void);
-
-// The append service registers these borrowed crew tables for later talk
-// lookups, but does not write them. Its mutable API therefore needs a cast
-// at each call; the tables themselves remain const.
-
-/// A speaker, which is the actor with the speaker bits for where its message
-/// window and portrait open.
-#define SPEAKER(actorId, bits) ((bits) | (actorId))
 
 /// Who is who on deck, numbering each actor placement table's rows from
 /// ACTOR_FIRST_PLACED.

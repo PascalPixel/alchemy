@@ -5,8 +5,6 @@
 #include "event.h"
 #include "scene_tables.h"
 
-#define NULL ((void *)0)
-
 #include "item_ids.h"
 
 #endif

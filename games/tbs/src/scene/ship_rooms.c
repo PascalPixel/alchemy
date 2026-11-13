@@ -134,28 +134,13 @@
 #include "actor_script.h"
 #include "fixed_math.h"
 #include "scene.h"
+#include "tolbi_ship.h"
 #include "shared/walk_into_leader.h"
 
 /// The visible anchor charm has been created this visit.
 /// ★ Named from the game: "Anchor Charm" (MsgItemName)
 #define FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN FLAG_SCENE_TEMP_00
 
-// Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
-// party enters another area, and other areas use the numbers for
-// their own.
-/// A passenger chosen to row follows the party to the rowing deck.
-/// ★ Named from the game: "Looks like you've been chosen to help row"
-/// (MsgTolbiShipLooksLikeYouveBeenChosen)
-#define FLAG_TOLBI_SHIP_ROWER_CHOSEN 0x300
-/// The hold's stairs are barred while monsters are on the rowing deck.
-/// ★ Named from the game: "Monsters belowdecks!"
-/// (MsgTolbiShipMonstersBelowdecks)
-#define FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS 0x301
-/// The Kraken is on deck, and the deck shakes until it is defeated
-/// (tolbi_ship_deck.c reads it too).
-/// ★ Named from the game: "there's a huge sea monster on the ship!"
-/// (MsgTolbiShipWonderWhatsWrongShipShouldnt)
-#define FLAG_TOLBI_SHIP_KRAKEN_ON_DECK 0x302
 
 /// Operations shared by the captain's quarters, passenger hold and rowing-deck
 /// events.
@@ -478,10 +463,6 @@ enum ShipRoomsCellBehavior {
   CELL_BEHAVIOR_SHIP_ROOMS_HOLD_BARREL = 101,
   CELL_BEHAVIOR_SHIP_ROOMS_QUARTERS_JAR = 102
 };
-
-/// A speaker, which is the actor with the speaker bits for where its message
-/// window and portrait open.
-#define SPEAKER(actorId, bits) ((bits) | (actorId))
 
 /// ShipRooms_MoveCameraAndWait's flags, above the frames it waits
 /// after in the low bits.

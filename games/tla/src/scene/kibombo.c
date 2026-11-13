@@ -1,5 +1,13 @@
 /// @file
-/// The scene code of overlay 0x670, in ROM order.
+/// Kibombo, the warriors' village below the Gabomba Statue, in the six
+/// rooms of this overlay: the village, its shops, inn and Sanctum
+/// (Kibombo_OpenWeaponShop, Kibombo_OpenInn), and the grounds before the
+/// statue. On the sacred night Akafubu offers the Black Orb to the Great
+/// Gabomba (Kibombo_CeremonyBegins to Kibombo_CeremonyEnds), where Piers, come
+/// to take his orb back, joins the party (Kibombo_PiersThanksParty); the way to
+/// the statue past the dead end is a vent Scoop uncovers
+/// (Kibombo_DeadEndByTheStatue). The villagers' talk changes once Akafubu is
+/// the witch doctor (Kibombo_TalkPathToPeace).
 
 // ---- games/tla/src/scene/kibombo/s0038.c ----
 
@@ -206,7 +214,7 @@ const struct Trigger *Scene_GetEvents(void) {
   return gKibombo_Triggers;
 }
 
-void Func_02000228(void) {
+void Kibombo_AskAboutFewerWarriors(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgItLooksLikeThere);
@@ -214,7 +222,7 @@ void Func_02000228(void) {
   Event_End();
 }
 
-void Func_0200024c(void) {
+void Kibombo_AskAboutRevenge(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgYouDidnT);
@@ -222,7 +230,7 @@ void Func_0200024c(void) {
   Event_End();
 }
 
-void Func_02000270(void) {
+void Kibombo_TalkPathToPeace(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgNowThatAkafubu);
@@ -234,7 +242,7 @@ void Func_02000270(void) {
   Event_End();
 }
 
-void Func_020002c4(void) {
+void Kibombo_AskGoingWest(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAreYouGoing);
@@ -244,7 +252,7 @@ void Func_020002c4(void) {
 
 DEFINE_LEADER_IS_FACING_NORTH(Leader_IsFacingNorth)
 
-void Func_02000318(void) {
+void Kibombo_OpenWeaponShop(void) {
   if (Leader_IsFacingNorth()) {
     Shop_Run(17, 20);
   } else {
@@ -256,7 +264,7 @@ void Func_02000318(void) {
   }
 }
 
-void Func_02000350(void) {
+void Kibombo_OpenArmorShop(void) {
   if (Leader_IsFacingNorth()) {
     Shop_Run(18, 21);
   } else {
@@ -268,7 +276,7 @@ void Func_02000350(void) {
   }
 }
 
-void Func_02000388(void) {
+void Kibombo_OpenItemShop(void) {
   if (Leader_IsFacingNorth()) {
     Shop_Run(19, 22);
   } else {
@@ -280,7 +288,7 @@ void Func_02000388(void) {
   }
 }
 
-void Func_020003c0(void) {
+void Kibombo_OpenInn(void) {
   if (Leader_IsFacingNorth()) {
     Inn_CheckIn(6, 23);
   } else {
@@ -292,7 +300,7 @@ void Func_020003c0(void) {
   }
 }
 
-void Func_020003f8(void) {
+void Kibombo_OpenSanctum(void) {
   if (Leader_IsFacingNorth()) {
     Sanctum_Run(25);
   } else {
@@ -304,7 +312,7 @@ void Func_020003f8(void) {
   }
 }
 
-void Func_0200042c(void) {
+void Kibombo_TalkForeignCeremony(void) {
   if (Kibombo_FlagCheck(0x9df)) {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -328,7 +336,7 @@ void Func_0200042c(void) {
   }
 }
 
-void Func_020004dc(void) {
+void Kibombo_TalkAchingBack(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgOhMyBack);
@@ -336,7 +344,7 @@ void Func_020004dc(void) {
   Event_End();
 }
 
-void Func_02000500(void) {
+void Kibombo_ReadMindNeverAgain(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgISwearThat);
@@ -344,26 +352,26 @@ void Func_02000500(void) {
   Event_End();
 }
 
-void Func_02000524(s32 show) {
+void Kibombo_SetActorsHidden(s32 show) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Kibombo2 || scene == (s32)&SceneId_Kibombo5)
-    Func_02000590(show, 15, 2);
+    Actors_SetHidden(show, 15, 2);
   else if (scene == (s32)&SceneId_Kibombo3)
-    Func_02000590(show, 26, 2);
+    Actors_SetHidden(show, 26, 2);
 }
 
-void Func_02000568(void) {
-  Func_02000524(1);
+void Kibombo_HideActors(void) {
+  Kibombo_SetActorsHidden(1);
   GameFlag_Set(0x200);
 }
 
-void Func_0200057c(void) {
-  Func_02000524(0);
+void Kibombo_ShowActors(void) {
+  Kibombo_SetActorsHidden(0);
   GameFlag_Clear(0x200);
 }
 
-void Func_02000590(s32 show, s32 first, u32 count) {
+void Actors_SetHidden(s32 show, s32 first, u32 count) {
   u32 i;
 
   for (i = 0; i < count; i++) {
@@ -579,7 +587,7 @@ void Func_02000b2c(void) {
   Event_ShowMessageAndWait(7, 0);
 }
 
-void Func_02000c90(void) {
+void Kibombo_PiersThanksParty(void) {
   struct KibomboObject *leader;
 
   Event_Start();
@@ -735,7 +743,7 @@ void Func_02000d74(void) {
   }
 }
 
-void Func_02001218(void) {
+void Kibombo_PiersRefusesToLeave(void) {
   if (!Kibombo_FlagCheck(0x92e)) {
     Import_EventSetExitRequest(5);
     return;
@@ -1240,7 +1248,7 @@ extern const u8 gData_020060e0__s1318[] __asm__("gData_020060e0");
 extern u32 gData_02006108[];
 void Func_0200384c(void);
 
-void Func_02002050(void) {
+void Kibombo_DeadEndByTheStatue(void) {
   s32 done = Event_GetFlag(0x86a);
 
   if (done != 0)
@@ -1825,7 +1833,7 @@ void Func_02003184(void) {
 
 DEFINE_ACTOR_HIDE(Actor_Hide, Actor_DisableById)
 
-DEFINE_SCENE_RUN_UNLESS_FLAG(Scene_RunUnlessFlag, 0x200, Func_0200057c)
+DEFINE_SCENE_RUN_UNLESS_FLAG(Scene_RunUnlessFlag, 0x200, Kibombo_ShowActors)
 
 void Func_0200324c(void) {
   u32 i;
@@ -2172,7 +2180,7 @@ void Func_02003898(void) {
     Task_Remove(Func_02002d64);
 }
 
-void Func_020038ec(void) {
+void Kibombo_LeaveRoom(void) {
   struct KibomboEventWork *work = Ram_HeapSlots->eventWork;
 
   Event_Start();
@@ -2185,11 +2193,11 @@ void Func_020038ec(void) {
   Import_EventSetExitRequest(work->exit);
 }
 
-void Func_02003930(void) {
+void Kibombo_LeaveRoomFading(void) {
   struct KibomboEventWork *work = Ram_HeapSlots->eventWork;
 
   work->screenEffect = 0x209;
-  Func_020038ec();
+  Kibombo_LeaveRoom();
 }
 
 void Func_02003948(void) {
@@ -2365,7 +2373,7 @@ void Func_02003c84(void) {
   Import_EventSetExitRequest(10);
 }
 
-void Func_02003dec(void) {
+void Kibombo_CeremonyBegins(void) {
   struct KibomboObject *leader;
 
   Kibombo_CamMove(-1, -1, -1, 0);
@@ -2448,7 +2456,7 @@ void Func_02003dec(void) {
 
 void Func_02002eb0(void);
 
-void Func_020040cc(void) {
+void Kibombo_PresentOrbToGabomba(void) {
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   Kibombo_CamMove(-1, -1, -1, 0);
@@ -2497,7 +2505,7 @@ void Func_020040cc(void) {
   Import_EventSetExitRequest(10);
 }
 
-void Func_02004294(void) {
+void Kibombo_GabombaNotPleased(void) {
   struct KibomboObject **slot;
   struct KibomboObject *object;
   s32 y;
@@ -2562,7 +2570,7 @@ void Func_02004294(void) {
   Import_EventSetExitRequest(11);
 }
 
-void Func_02004424(void) {
+void Kibombo_WitchDoctorFeelsPower(void) {
   struct KibomboEventWork *work;
   s32 effect;
 
@@ -2679,7 +2687,7 @@ void Func_020045d0(void) {
   Event_ShowMessageAndWait(0x8000 + 17, 0);
 }
 
-void Func_020047e4(void) {
+void Kibombo_GabombaStillNotPleased(void) {
   struct KibomboObject **slot;
   struct KibomboObject *object;
 
@@ -2712,7 +2720,7 @@ void Func_020047e4(void) {
   Import_EventSetExitRequest(12);
 }
 
-void Func_0200489c(void) {
+void Kibombo_GabombaSeesOrb(void) {
   Func_02004524();
   Sound_Play(0x240);
   Actor_SetSpriteColor(Actor_GetById(12), 7);
@@ -2738,7 +2746,7 @@ void Func_0200489c(void) {
   Import_EventSetExitRequest(12);
 }
 
-void Func_02004978(void) {
+void Kibombo_GabombaResponds(void) {
   Func_02004524();
   Kibombo_SePlay(0x240);
   Actor_SetSpriteColor(Actor_GetById(12), 7);
@@ -2761,7 +2769,7 @@ void Func_02004978(void) {
   Import_EventSetExitRequest(12);
 }
 
-void Func_02004a28(void) {
+void Kibombo_GabombaRespondsToGift(void) {
   struct KibomboObject *object;
   u32 i;
 
@@ -2862,7 +2870,7 @@ void Func_02004a28(void) {
   Import_EventSetExitRequest(13);
 }
 
-void Func_02004cf4(void) {
+void Kibombo_CeremonyEnds(void) {
   struct KibomboEventWork *work;
   struct KibomboObject *leader;
 
@@ -2959,17 +2967,17 @@ s32 Scene_Initialize(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Kibombo1)
-    Func_02005114();
+    Kibombo_InitializeRoom1();
   else if (scene == (s32)&SceneId_Kibombo4)
-    Func_0200516c();
+    Kibombo_InitializeRoom4();
   else if (scene == (s32)&SceneId_Kibombo2)
-    Func_020054e0();
+    Kibombo_InitializeRoom2();
   else if (scene == (s32)&SceneId_Kibombo5)
-    Func_02005594();
+    Kibombo_InitializeRoom5();
   else if (scene == (s32)&SceneId_Kibombo6)
-    Func_020057e0();
+    Kibombo_InitializeRoom6();
   else if (scene == (s32)&SceneId_Kibombo3)
-    Func_02005898();
+    Kibombo_InitializeRoom3();
   return 0;
 }
 
@@ -2987,7 +2995,7 @@ void Func_020050ac(void) {
   Actor_GetById(23)->collisionFlags |= 0x80;
 }
 
-void Func_02005114(void) {
+void Kibombo_InitializeRoom1(void) {
   Actor_SetHorizontalPositionWithTerrain(11, PIXELS(88), PIXELS(314));
   Actor_SetSpriteFlags(Actor_GetById(11), 0);
   Actor_GetById(11)->scaleY = 0x8000;
@@ -3057,7 +3065,7 @@ static __inline__ s32 Gauge(s32 value, s32 max) {
 // sets flags 0x202 and 0x209, places actor 29, places actors 21 and 26 to 28
 // when flag 0x8fd is set, sets flag 0x86b and fades in with Func_02002c34
 // scheduled.
-void Func_0200516c(void) {
+void Kibombo_InitializeRoom4(void) {
   struct Actor *actor = Actor_GetById(11);
   u8 *unit;
   s32 done;
@@ -3177,7 +3185,7 @@ void Func_0200538c(void) {
   Actor_SetSpritePriority(14, 1);
 }
 
-void Func_020054e0(void) {
+void Kibombo_InitializeRoom2(void) {
   s16 entrance;
 
   Func_0200538c();
@@ -3207,7 +3215,7 @@ void Func_020054e0(void) {
   }
 }
 
-void Func_02005594(void) {
+void Kibombo_InitializeRoom5(void) {
   u32 i;
 
   Event_Start();
@@ -3226,25 +3234,25 @@ void Func_02005594(void) {
   wait(1);
   switch (gMainRoutineWork.entrance) {
   case 10:
-    Func_020040cc();
+    Kibombo_PresentOrbToGabomba();
     return;
   case 11:
-    Func_02004294();
+    Kibombo_GabombaNotPleased();
     return;
   case 12:
-    Func_02004424();
+    Kibombo_WitchDoctorFeelsPower();
     return;
   case 13:
-    Func_020047e4();
+    Kibombo_GabombaStillNotPleased();
     return;
   case 14:
-    Func_0200489c();
+    Kibombo_GabombaSeesOrb();
     return;
   case 15:
-    Func_02004978();
+    Kibombo_GabombaResponds();
     return;
   case 16:
-    Func_02004a28();
+    Kibombo_GabombaRespondsToGift();
     return;
   }
   Actor_SetSpritePriority(17, 1);
@@ -3276,7 +3284,7 @@ void Func_02005594(void) {
     if (!GameFlag_Get(0x8fd))
       Func_020032b0();
   } else if (gMainRoutineWork.entrance == 5) {
-    Func_02003dec();
+    Kibombo_CeremonyBegins();
   }
   Event_End();
   if (gMainRoutineWork.entrance == 99) {
@@ -3301,7 +3309,7 @@ void Func_02005594(void) {
 
 #define PALETTE_WORD(index) (*(u16 *)(0x05000000 + (index) * 2))
 
-void Func_020057e0(void) {
+void Kibombo_InitializeRoom6(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   GameFlag_Set(514);
@@ -3329,7 +3337,7 @@ void Func_020057e0(void) {
 
 void Actor_FallOverById(s32 actor, s32 angle);
 
-void Func_02005898(void) {
+void Kibombo_InitializeRoom3(void) {
   struct KibomboObject *object;
 
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
@@ -3347,7 +3355,7 @@ void Func_02005898(void) {
         Kibombo_ObjPlaceFacing(8, PIXELS(364), PIXELS(576), angle);
       }
     } else {
-      Func_02004cf4();
+      Kibombo_CeremonyEnds();
     }
   }
 #if TLA_PATCH_1
@@ -3374,24 +3382,24 @@ void Func_02005994(void) { Field_TryJumpForward(); }
 #include "text/msg_ids.h"
 #include "objcmd.h"
 
-void Func_02000228(void);
-void Func_0200024c(void);
-void Func_02000270(void);
-void Func_020002c4(void);
-void Func_02000318(void);
-void Func_02000350(void);
-void Func_02000388(void);
-void Func_020003c0(void);
-void Func_020003f8(void);
-void Func_0200042c(void);
-void Func_020004dc(void);
-void Func_02000500(void);
+void Kibombo_AskAboutFewerWarriors(void);
+void Kibombo_AskAboutRevenge(void);
+void Kibombo_TalkPathToPeace(void);
+void Kibombo_AskGoingWest(void);
+void Kibombo_OpenWeaponShop(void);
+void Kibombo_OpenArmorShop(void);
+void Kibombo_OpenItemShop(void);
+void Kibombo_OpenInn(void);
+void Kibombo_OpenSanctum(void);
+void Kibombo_TalkForeignCeremony(void);
+void Kibombo_TalkAchingBack(void);
+void Kibombo_ReadMindNeverAgain(void);
 void Func_020005d0(void);
 void Func_02000734(void);
 void Func_020007c8(void);
-void Func_02000c90(void);
-void Func_02001218(void);
-void Func_02002050(void);
+void Kibombo_PiersThanksParty(void);
+void Kibombo_PiersRefusesToLeave(void);
+void Kibombo_DeadEndByTheStatue(void);
 void Func_02002ad8(void);
 void Func_02002af8(void);
 
@@ -3830,7 +3838,7 @@ struct Trigger gKibombo_Room1Triggers[] = {
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAkafubuHasFinally)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
      MSGNO(MsgEveryoneWasTerribly)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_02000228)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Kibombo_AskAboutFewerWarriors)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
      MSGNO(MsgCoveringOurWarriors)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTheGreatGabomba)},
@@ -3851,29 +3859,29 @@ struct Trigger gKibombo_Room1Triggers[] = {
     {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgWeGetTo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
      MSGNO(MsgLatelyTheMonsters)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_0200024c)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Kibombo_AskAboutRevenge)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
      MSGNO(MsgNoOneInKibombo)},
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgTheOtherWarriors)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS,
      MSGNO(MsgWithAllOur)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, EVENT(Func_02000270)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, EVENT(Kibombo_TalkPathToPeace)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
      MSGNO(MsgIWonderIfI)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gKibombo_Room4Triggers[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_020038ec)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoom)},
+    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoom)},
     {0xc602, 3, 0x209, EVENT(Func_02003948)},
     {0xc602, 4, 0x209, EVENT(Func_02003948)},
     {0xc602, 5, 0x209, EVENT(Func_02003948)},
     {0xc602, 6, 0x209, EVENT(Func_02003948)},
     {0xc602, 7, 0x209, EVENT(Func_02003948)},
     {0xc602, 8, 0x209, EVENT(Func_02003948)},
-    {TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(Func_020038ec)},
-    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoom)},
+    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoom)},
     {TRIGGER_STEP, 16, CONDITION_ALWAYS, EVENT(Func_02002ad8)},
     {TRIGGER_STEP, 15, CONDITION_ALWAYS, EVENT(Func_02002af8)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, 0x201, EVENT(Func_020005d0)},
@@ -3952,18 +3960,18 @@ struct Trigger gKibombo_Room4Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, 0x8fd, MSGNO(MsgIFeelSo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
      MSGNO(MsgIReallyWonder)},
-    {TRIGGER_TALK, 36, CONDITION_ALWAYS, EVENT(Func_0200042c)},
+    {TRIGGER_TALK, 36, CONDITION_ALWAYS, EVENT(Kibombo_TalkForeignCeremony)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 36, CONDITION_ALWAYS,
      MSGNO(MsgIWonderIfA)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gKibombo_Room2Triggers[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_020038ec)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoom)},
+    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoom)},
     {0x4602, 3, IF_FLAG_SET(0x86a), EVENT(Func_02003bf0)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Func_02003930)},
-    {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoomFading)},
+    {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoom)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, 0x201, EVENT(Func_020005d0)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x9ea, EVENT(Func_02000734)},
     {9, 0, 0x9ea, EVENT(Func_02000734)},
@@ -3981,13 +3989,13 @@ struct Trigger gKibombo_Room2Triggers[] = {
 };
 
 struct Trigger gKibombo_Room5Triggers[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_020038ec)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoom)},
+    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoom)},
     {0x4602, 3, IF_FLAG_SET(0x86a), EVENT(Func_02003bf0)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Func_02003930)},
-    {TRIGGER_STEP, 5, 0x8f3, EVENT(Func_020038ec)},
-    {TRIGGER_STEP, 5, 0x92f, EVENT(Func_02001218)},
-    {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoomFading)},
+    {TRIGGER_STEP, 5, 0x8f3, EVENT(Kibombo_LeaveRoom)},
+    {TRIGGER_STEP, 5, 0x92f, EVENT(Kibombo_PiersRefusesToLeave)},
+    {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoom)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, 0x201, EVENT(Func_020005d0)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x9ea, EVENT(Func_02000734)},
     {9, 0, 0x9ea, EVENT(Func_02000734)},
@@ -4002,11 +4010,11 @@ struct Trigger gKibombo_Room5Triggers[] = {
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 14, 0x207,
      EVENT(Func_02000728)},
     {TRIGGER_STEP, 20, 0x8f3, EVENT(Func_020007c8)},
-    {TRIGGER_STEP, 22, 0x92e, EVENT(Func_02000c90)},
+    {TRIGGER_STEP, 22, 0x92e, EVENT(Kibombo_PiersThanksParty)},
     {TRIGGER_TALK, 7, CONDITION_ALWAYS, MSGNO(MsgTheOrbIs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 7, CONDITION_ALWAYS,
      MSGNO(MsgIAmCertain)},
-    {TRIGGER_STEP, 21, 0x8f5, EVENT(Func_02002050)},
+    {TRIGGER_STEP, 21, 0x8f5, EVENT(Kibombo_DeadEndByTheStatue)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgAhhSomethingIs)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgYouLookHuman)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgAkafubuPossessesThe)},
@@ -4059,7 +4067,7 @@ struct Trigger gKibombo_Room3Triggers[] = {
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgIHaveHeard)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
      MSGNO(MsgIKnowI)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_020002c4)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Kibombo_AskGoingWest)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
      MSGNO(MsgCrossingTheRiver)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgYouCanSee)},
@@ -4071,12 +4079,12 @@ struct Trigger gKibombo_Room3Triggers[] = {
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgEachYearWhen)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
      MSGNO(MsgIWonderWhatOeia)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_020004dc)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Kibombo_TalkAchingBack)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
-     EVENT(Func_02000500)},
-    {TRIGGER_TALK, 28, CONDITION_ALWAYS, EVENT(Func_020004dc)},
+     EVENT(Kibombo_ReadMindNeverAgain)},
+    {TRIGGER_TALK, 28, CONDITION_ALWAYS, EVENT(Kibombo_TalkAchingBack)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS,
-     EVENT(Func_02000500)},
+     EVENT(Kibombo_ReadMindNeverAgain)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgAsSoonAs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
      MSGNO(MsgAkafubuGetsSo)},
@@ -4086,27 +4094,27 @@ struct Trigger gKibombo_Room3Triggers[] = {
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgWeThinkIt)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
      MSGNO(MsgIAmAMighty)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Func_02000318)},
-    {TRIGGER_EXAMINE, 20, CONDITION_ALWAYS, EVENT(Func_02000318)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Kibombo_OpenWeaponShop)},
+    {TRIGGER_EXAMINE, 20, CONDITION_ALWAYS, EVENT(Kibombo_OpenWeaponShop)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
      MSGNO(MsgOurWarriorsAppear)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, EVENT(Func_02000350)},
-    {TRIGGER_EXAMINE, 21, CONDITION_ALWAYS, EVENT(Func_02000350)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, EVENT(Kibombo_OpenArmorShop)},
+    {TRIGGER_EXAMINE, 21, CONDITION_ALWAYS, EVENT(Kibombo_OpenArmorShop)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
      MSGNO(MsgBecauseOurPaint)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_02000388)},
-    {TRIGGER_EXAMINE, 22, CONDITION_ALWAYS, EVENT(Func_02000388)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Kibombo_OpenItemShop)},
+    {TRIGGER_EXAMINE, 22, CONDITION_ALWAYS, EVENT(Kibombo_OpenItemShop)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
      MSGNO(MsgIfIHad)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS, EVENT(Func_020003c0)},
-    {TRIGGER_EXAMINE, 23, CONDITION_ALWAYS, EVENT(Func_020003c0)},
+    {TRIGGER_TALK, 23, CONDITION_ALWAYS, EVENT(Kibombo_OpenInn)},
+    {TRIGGER_EXAMINE, 23, CONDITION_ALWAYS, EVENT(Kibombo_OpenInn)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS,
      MSGNO(MsgThatBedMakes)},
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgICanTRemember)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
      MSGNO(MsgILoveKibombo)},
-    {TRIGGER_TALK, 25, CONDITION_ALWAYS, EVENT(Func_020003f8)},
-    {TRIGGER_EXAMINE, 24, CONDITION_ALWAYS, EVENT(Func_020003f8)},
+    {TRIGGER_TALK, 25, CONDITION_ALWAYS, EVENT(Kibombo_OpenSanctum)},
+    {TRIGGER_EXAMINE, 24, CONDITION_ALWAYS, EVENT(Kibombo_OpenSanctum)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS,
      MSGNO(MsgICanTBelieve)},
     {TRIGGER_TABLE_END},

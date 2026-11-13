@@ -132,7 +132,9 @@ const u8 *Scene_GetEvents(void) {
   return gData_0200518c;
 }
 
-void Func_020004bc(void) {
+/// ★ Named from the game: "We followed the pirates here from Madra... Are you
+/// going to Alhafra, too?" (MsgWeFollowedThe)
+void YampiDesert_TalkToTraveler(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWeFollowedThe);
@@ -154,7 +156,9 @@ void Func_020004e0(void) {
   Event_ShowMessageAndWait(13, 0);
 }
 
-void Func_02000550(void) {
+/// ★ Named from the game: "As you can see, the elder is quite insistent on
+/// finding a way through." (MsgAsYouCan)
+void YampiDesert_TalkToElderAboutWay(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (!Scene_FlagTest(0x88f))
@@ -166,7 +170,9 @@ void Func_02000550(void) {
   Event_End();
 }
 
-void Func_020005a8(void) {
+/// ★ Named from the game: "This is where my son must prove himself as mayor..."
+/// (MsgThisIsWhere)
+void YampiDesert_TalkToElder(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (!Scene_FlagTest(0x88f))
@@ -178,7 +184,9 @@ void Func_020005a8(void) {
   Event_End();
 }
 
-void Func_02000600(void) {
+/// ★ Named from the game: "North: Alhafra South: Air's Rock Warning: Beyond
+/// this point, there is no route back." (MsgNorthAlhafraSouth)
+void YampiDesert_ReadSignpost(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgNorthAlhafraSouth, 1);
@@ -328,7 +336,7 @@ void Func_0200095c(u16 *list) {
   }
 }
 
-void Func_02000994(void) {
+void YampiDesert_CastSand(void) {
   s16 scene;
 
   Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 2;

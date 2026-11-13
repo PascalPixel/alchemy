@@ -308,9 +308,11 @@ do {
   Event_SetFlag(0x8e5);
 }
 
-void Func_020002f4(s32 a) { Func_02002958_(a, 65, 0x301); }
+/// Scoop on the spot under actor 65 digs up its item (flag 0x301).
+void TaopoSwamp_ScoopHiddenItem(s32 a) { Func_02002958_(a, 65, 0x301); }
 
-void Func_02000304(s32 a) { Func_02002958_(a, 64, 0x300); }
+/// Scoop on the spot under actor 64 digs up its item (flag 0x300).
+void TaopoSwamp_ScoopOtherHiddenItem(s32 a) { Func_02002958_(a, 64, 0x300); }
 
 void Func_02000314(void) { Func_02002990_(76, 70, 14, 8, 14, 37, 0); }
 
@@ -849,7 +851,8 @@ void TaopoSwamp_CoolLastRock(s32 a, s32 id) {
   TaopoSwamp_DarkenRoom(1);
 }
 
-void Func_02001128(s32 a) { Func_02002958_(a, 64, 0x348); }
+/// Scoop on the sparkle in the dark chamber digs up the Star Dust (flag 0x348).
+void TaopoSwamp_ScoopStarDust(s32 a) { Func_02002958_(a, 64, 0x348); }
 
 void TaopoSwamp_ShowSparkleMessage(void) { Func_020029a0((s32)&MsgIThoughtI); }
 

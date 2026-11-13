@@ -32,25 +32,25 @@ void Func_020037e8(void);
 
 void Func_02001bec(void);
 
-void Func_020005a8(void);
+void YampiDesert_TalkToElder(void);
 
-void Func_02000600(void);
+void YampiDesert_ReadSignpost(void);
 
 void Func_020007e0(void);
 
-void Func_02000994(void);
+void YampiDesert_CastSand(void);
 
 void Func_02000a10(void);
 
 void Func_02000a8c(void);
 
-void Func_02000c34(void);
+void YampiDesert_StirScorpion(void);
 
-void Func_02000d50(void);
+void YampiDesert_StirScorpionAgain(void);
 
 void Func_02000e78(void);
 
-void Func_02000fc8(void);
+void YampiDesert_TrapKingScorpion(void);
 
 void Func_020012dc(void);
 

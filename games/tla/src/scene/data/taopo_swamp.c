@@ -7,8 +7,8 @@
 void Func_02000038(void);
 void TaopoSwamp_BlowAwayBush(void);
 void TaopoSwamp_SinkPillar(void);
-void Func_020002f4(void);
-void Func_02000304(void);
+void TaopoSwamp_ScoopHiddenItem(void);
+void TaopoSwamp_ScoopOtherHiddenItem(void);
 void Func_02000314(void);
 void TaopoSwamp_FallThroughHole(void);
 void TaopoSwamp_PushPillarOverVent(void);
@@ -29,7 +29,7 @@ void TaopoSwamp_CoolExitRock(void);
 void TaopoSwamp_PushExitRockIn(void);
 void TaopoSwamp_CoolDarkRock(void);
 void TaopoSwamp_CoolLastRock(void);
-void Func_02001128(void);
+void TaopoSwamp_ScoopStarDust(void);
 void TaopoSwamp_ShowSparkleMessage(void);
 void TaopoSwamp_LandDrop(void);
 void TaopoSwamp_LandDrip(void);
@@ -289,8 +289,8 @@ struct Trigger gData_02003128[] = {
     {33, 7, CONDITION_ALWAYS, 7},
     {49, 8, CONDITION_ALWAYS, 8},
     {33, 9, CONDITION_ALWAYS, 9},
-    {0x50008805, 51, 0x301, EVENT(Func_020002f4)},
-    {0x50008805, 50, 0x300, EVENT(Func_02000304)},
+    {0x50008805, 51, 0x301, EVENT(TaopoSwamp_ScoopHiddenItem)},
+    {0x50008805, 50, 0x300, EVENT(TaopoSwamp_ScoopOtherHiddenItem)},
     {TRIGGERS_END},
 };
 
@@ -441,7 +441,7 @@ struct Trigger gData_02003560[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0x342, EVENT(TaopoSwamp_CoolLastRock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x341, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x343, 0},
-    {0x50008805, 50, 0x348, EVENT(Func_02001128)},
+    {0x50008805, 50, 0x348, EVENT(TaopoSwamp_ScoopStarDust)},
     {TRIGGERS_END},
 };
 

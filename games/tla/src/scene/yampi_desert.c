@@ -55,7 +55,9 @@ void Func_02000b84(s32 x, s32 y, s32 z) {
   }
 }
 
-void Func_02000c34(void) {
+/// Pound on the first screen's wooden column: the scorpion moving under the
+/// sand bursts out and flees to the next screen (flag 0x889).
+void YampiDesert_StirScorpion(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Func_020021d4();
@@ -86,7 +88,8 @@ void Func_02000c34(void) {
   Event_End();
 }
 
-void Func_02000d50(void) {
+/// As YampiDesert_StirScorpion, on the second screen (flag 0x88a).
+void YampiDesert_StirScorpionAgain(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Func_020021d4();
@@ -171,7 +174,9 @@ void Func_02000f24(void) {
 
 #define OBJ(p) ((struct Actor *)(p))
 
-void Func_02000fc8(void) {
+/// The trapped scorpion uses Scoop, the leader falls with it, and the King
+/// Scorpion's battle begins.
+void YampiDesert_TrapKingScorpion(void) {
   struct Actor *leader = OBJ(Actor_GetById(gMainRoutineWork.currentOwner));
   struct Actor *partner = OBJ(Actor_GetById(21));
   u32 i;
@@ -265,7 +270,8 @@ step_5:
   Func_02004138(4);
 }
 
-void Func_02001288(s32 mode) {
+/// Scoop on the sand pit between the four rocks (flag 0x8ed).
+void YampiDesert_ScoopCenterPit(s32 mode) {
   struct Actor *object;
   s32 height;
 
@@ -376,7 +382,8 @@ void Func_02001594(void) {
   Map_CopyCellAttributeRect(64, 64, 1, 1, 8, 96);
 }
 
-void Func_020015d4(s32 mode) {
+/// Scoop on the sand pit that hides the ladder (flag 0x88d).
+void YampiDesert_ScoopLadderPit(s32 mode) {
   if (mode == 1) {
     Func_02001594();
     GameFlag_SetBit(0x88d);
@@ -415,7 +422,8 @@ extern u8 gData_0200468c[];
 extern u8 gData_020046dc[];
 extern u8 gData_02004718[];
 
-void Func_02001690(s32 p0) {
+/// ★ Named from the game: "Hey! Look! Up there!" (MsgHeyLookUp)
+void YampiDesert_SeeTravelersAbove(s32 p0) {
   s32 *owner;
   s32 angle;
 

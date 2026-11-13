@@ -5,6 +5,7 @@
 
 #include "../battle_internal.h"
 #include "module/battle/battle.h"
+#include "gamepak/far_call/field.h"
 #include "module/system/system.h"
 
 /// Builds a battle object's status icon flags from its unit: poison

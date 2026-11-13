@@ -115,10 +115,6 @@ void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 
-void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void BattlePlayback_StartFar(s32 phase);
-
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
@@ -152,12 +148,8 @@ void Func_08179e6c(void);
 
 void BattleEffect_AdvanceScrollOnInterval(void);
 
-void VramBlock_Reset93Far(void);
-
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode);
-
-void VramBlock_Load93Far(void);
 
 void Func_08164abc(s32 r, s32 g, s32 b);
 void Func_08164b2c(s32 red, s32 green, s32 blue);
@@ -179,12 +171,7 @@ extern char ResourceId_Data0DA;
 
 void Palette_BrightenBgEntries(s32 red, s32 green, s32 blue);
 
-void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
-                          s32 count);
-
 void BattleEffect_ConfigureEffectDisplay(void);
-
-void BattleBackground_SetModeFar(s32 mode, s32 background, s32 value);
 
 void BattleEffect_ClearActorTimers(void);
 void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
@@ -788,8 +775,6 @@ extern u8 Data_081977f4[];
 
 extern char ResourceId_EffectPalette03;
 
-void Func_08118150(s32 kind);
-
 void ColorBuffer_Halve(void *source, void *destination, s32 size);
 void ColorBuffer_ScaleThreeQuarters(void *source, void *destination, s32 size);
 void ColorBuffer_Darken(void *source, s32 amount, void *destination, s32 size);
@@ -844,8 +829,6 @@ extern const u16 Data_08197a64[][2]; // the galloping Zagan's
 extern const u8 Data_08197a94[];     // each ring's start
 extern const u8 Data_08197a98[];     // growth
 extern const s8 Data_08197a9c[];     // height
-
-s32 BattleMotion_GetSlotPaletteFar(s32 id);
 
 // Shards and frames for each variant (The Broken Seal's
 // gFalling_IceCounts).

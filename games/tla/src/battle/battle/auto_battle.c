@@ -5,6 +5,7 @@
 
 #include "../battle_internal.h"
 #include "module/battle/battle.h"
+#include "gamepak/far_call/battle_effect.h"
 
 s32 AutoBattle_BuildActions(struct BattleSortedUnitEntry *entries) {
   struct BattleSortedUnitEntry swap;
@@ -475,8 +476,6 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
   slot = BattleObject_Get(unitId);
   Actor_SetMode((struct Actor *)slot->object, 1);
 }
-
-s32 Animation_ApplyChildArgumentFar(void *group, s32 flags);
 
 void BattleMotion_PlayFall(s32 unitId) {
   struct BattleObjectAnimation *animation;

@@ -6,6 +6,7 @@
 #include "../field_sequence_internal.h"
 #include "module/field/field.h"
 #include "module/field/field_sequence.h"
+#include "gamepak/far_call/field.h"
 #include "gamepak/far_call/game.h"
 #include "ram_buffer.h"
 

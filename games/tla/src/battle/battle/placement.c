@@ -7,8 +7,6 @@
 #include "module/battle/battle.h"
 #include "module/system/system.h"
 
-struct MotionObject *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
-
 /// Resets a battle actor, making its object when it has none: scale 0xe666,
 /// the anchors cleared unless keep is set, no sprite, animation, effect or
 /// state, facing ArcTan2(0, 0) + 0x8000, visible, then the actor object
@@ -20,7 +18,7 @@ void BattleObject_Reset(struct BattleObj *actor, s32 keep) {
   s32 zero;
 
   if (actor->object == 0)
-    object = Actor_CreateFar(0xf000, 0, 0, 0);
+    object = (struct MotionObject *)Actor_CreateFar(0xf000, 0, 0, 0);
   else
     object = actor->object;
   // The zero in a local of its own, set before the keep test, serves the 0

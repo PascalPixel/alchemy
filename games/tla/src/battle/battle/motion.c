@@ -5,6 +5,7 @@
 
 #include "../battle_internal.h"
 #include "module/battle/battle.h"
+#include "gamepak/far_call/field.h"
 
 #define Actor_ResetMotion ((void (*)(struct MotionObject *))Actor_ResetMotion)
 #define Actor_SetTargetPosition                                                \

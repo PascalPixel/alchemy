@@ -5,6 +5,7 @@
 
 #include "../battle_internal.h"
 #include "module/battle/battle.h"
+#include "gamepak/far_call/battle_effect.h"
 #include "module/battle/presentation.h"
 
 s32 Func_0811d79c(s32 kind) {

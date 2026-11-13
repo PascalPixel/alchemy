@@ -5,6 +5,7 @@
 
 #include "../battle_internal.h"
 #include "module/battle/battle.h"
+#include "gamepak/far_call/window.h"
 #include "module/battle/presentation.h"
 
 void BattleCamera_SetCommandView(s32 pos) {

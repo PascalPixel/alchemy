@@ -276,8 +276,6 @@ void Shop_BuyDone(s32 unit, s32 item, s32 quantity);
 void Shop_DrawStock(struct RenderInput *window, s32 selected);
 void Shop_DrawItemPrice(s32 window, s32 itemId, s32 price, s32 priceKind);
 
-void ItemMenu_DrawItemDetailsWithCountFar(void *window, s32 item, s32 count);
-
 void Shop_DrawParty(struct RenderInput *window, s32 selected, s32 itemId);
 void Shop_DrawCarriedItem(struct RenderInput *window, s32 unitId, s32 itemId);
 void Shop_DrawEquipComparison(s32 window, s32 unitId, s32 itemId);
@@ -309,14 +307,7 @@ s32 ItemPicker_Run(s32 *outUnit, s32 *outSlot, s32 itemMode);
 s32 ItemPicker_SelectItem(s32 unitId);
 void ItemPicker_DrawItem(void *window, s32 unitId, s32 slot);
 
-s32 Inventory_CheckDiscardFar(s32 unitId, s32 slot);
-s32 Inventory_CheckUnequipFar(s32 unitId, s32 slot);
-
 void MenuCursor_Advance(struct ShopCursor *cursor);
-
-void Event_ResolveAllPendingActionsFar(void);
-
-void Palette_LoadIconsIntoHighlightFar(void);
 
 void VramBlock_LoadResource(s32 slot, s32 size, s32 resource);
 
@@ -339,15 +330,11 @@ s32 Shop_ChooseMember(void);
 
 s32 Shop_RunRepairMemberChoice(void);
 
-s32 BattleEffect_GetResourceIdFar(u16 id);
-
 s32 Sanctum_RunPartyService(void);
 void Sanctum_HighlightMembers(void *window, s32 memberIndex);
 void Sanctum_DrawFee(s32 window, s32 unitId);
 void Sanctum_ApplyService(s32 unitId, s32 serviceKind);
 void Sanctum_RunMemberIconBurst(s32 member);
-
-void FieldEffect_ClearOwnedSlotFar(struct Effect_080b2f4c *);
 
 extern s8 Data_0810cf28[];
 
@@ -370,10 +357,6 @@ s32 Forge_OfferItem(s32 unitId, s32 slot);
 extern const s16 Data_0810c38e[];
 
 extern const s16 gData_0810c3f4[][33];
-
-void Menu_PlaceOwnerEntryObjectsFar(void *window, s32 a, s32 b);
-void Menu_CreateOwnerEntryObjectsFar(s32 first);
-void Menu_ReleaseEntryObjectsFar(void);
 
 void Shop_SellItem(s32 unitId, s32 slot, s32 count);
 

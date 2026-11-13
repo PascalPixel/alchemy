@@ -6,6 +6,8 @@
 #include "../shop_internal.h"
 #include "gamepak/far_call/window.h"
 #include "module/shop/shop.h"
+#include "gamepak/far_call/menu.h"
+#include "gamepak/far_call/field_sequence.h"
 #include "module/tla.h"
 
 extern char ResourceId_ShopGemTiles;

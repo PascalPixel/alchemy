@@ -6,6 +6,7 @@
 #include "encounter_zone.h"
 #include "gamepak/far_call/game.h"
 #include "module/field/field_sequence.h"
+#include "gamepak/far_call/field.h"
 #include "module/tla.h"
 #include "resource_ids.h"
 

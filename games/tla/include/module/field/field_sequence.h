@@ -351,8 +351,6 @@ extern const struct SceneMusicEntry Data_080ee6d4[];
 extern struct TerrainRule gData_080eedbc[];
 extern struct TerrainRule gData_080eef34[];
 
-s32 WorldMap_GetBattleEnvironmentFar(void *position, s32 *kind);
-
 extern const struct EncounterZone gEncounter_EnemyGroupTable[];
 
 extern const struct SceneCueRule gScene_CueRuleTable[];
@@ -378,21 +376,8 @@ extern char ResourceId_BlizzardBackdrop;
 /// encounters that use it as (zone << 4) + slot, ended by 0.
 extern const s16 Data_080efd1c[];
 
-void WorldMap_InitializePerspectiveFar(void);
-void MapGrid_LoadMapFar(s32 map);
-
-void WorldMap_UpdateCurrentTileBlockFar(void);
-
-void Map_ApplySetFlagEditsFar(void);
-
-void AreaNameWindow_ShowFar(s32 scene);
-
 s32 WorldPicture_Show(s32 mode);
 void WorldMap_ZoomOutWhileLHeld(void);
-
-void PauseMenu_RunFar(s32 mode);
-
-void Func_080200b0(void);
 
 extern u8 Data_0202e004[];
 extern s32 Data_02000448;
@@ -400,14 +385,7 @@ extern u16 Data_0200044c;
 
 extern s16 Data_080f2204[];
 
-void Func_08038340(s32 value);
-
-void Class_GetSeriesFar(s32 value);
-
 extern const u8 Data_080eff22[];
-
-void MapAnimation_StartFar();
-void WorldMap_LoadAreaGraphicsFar(void);
 
 void BattleBackground_SelectForEnvironment(s32 terrain);
 

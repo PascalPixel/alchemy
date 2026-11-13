@@ -4,6 +4,7 @@
 
 #include "../battle_effect_internal.h"
 #include "module/battle_effect/battle_effect.h"
+#include "gamepak/far_call/battle.h"
 
 #define BOLT_COUNT 3
 #define RING_POINTS 10

@@ -2,8 +2,7 @@
 #define ALCHEMY_FAR_CALL_SHOP_H
 
 /// @file
-/// What games/tla/src/field/object/visual_attributes/ declares for the files
-/// that use it, written once.
+/// The far calls into the shop bank, as the other banks' code calls them.
 
 #include "types.h"
 

@@ -16,6 +16,7 @@
 #include "fixed_math.h"
 #include "graphics.h"
 #include "module/battle_effect/battle_effect.h"
+#include "gamepak/far_call/battle.h"
 #include "module/system/system.h"
 #include "render_model.h"
 #include "resource.h"

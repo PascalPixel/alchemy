@@ -6,6 +6,8 @@
 
 #include "../presentation_internal.h"
 #include "module/battle/battle.h"
+#include "gamepak/far_call/battle_effect.h"
+#include "gamepak/far_call/field.h"
 #include "module/battle/presentation.h"
 #include "module/battle/presentation.h"
 #include "module/system/system.h"

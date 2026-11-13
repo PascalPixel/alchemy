@@ -5,6 +5,8 @@
 
 #include "../shop_internal.h"
 #include "module/shop/shop.h"
+#include "gamepak/far_call/menu.h"
+#include "gamepak/far_call/game.h"
 
 /// Runs the forge: the smith's line, then a party member's materials to
 /// forge, until the player leaves. `objectId` is the actor whose portrait the

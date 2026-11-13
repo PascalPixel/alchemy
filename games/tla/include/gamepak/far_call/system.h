@@ -2,8 +2,7 @@
 #define ALCHEMY_FAR_CALL_SYSTEM_H
 
 /// @file
-/// What games/tla/src/scene/dehkan_plateau/ declares for the files that use it,
-/// written once.
+/// The far calls into the system bank, as the other banks' code calls them.
 
 #include "types.h"
 

@@ -232,10 +232,6 @@ extern u8 gData_03001ae8[];
 s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action);
 s32 AutoBattle_RunPsynergy(struct BattleActionRecord *);
 
-void BattleEffect_DispatchByIdRangeFar(struct BattlePresentationWork *work);
-void BattleEffect_RunFromTableFar(struct BattlePresentationWork *work);
-void BattleEffect_RunElementPillarFar(struct BattlePresentationWork *work);
-
 s32 Battle_RunEncounter(s32 enemyGroup);
 
 extern struct Snapshot Data_0200ff58;
@@ -243,8 +239,6 @@ extern struct SnapshotCopy Data_0200ff6c[];
 extern struct SnapshotVitals Data_0200ffec[];
 
 extern u8 Data_0812a16c[];
-
-void Unit_SetPpFar(struct BattleUnit *unit, s32 pp);
 
 extern struct DebugPartyEntry gDebug_ParameterSets[];
 
@@ -264,10 +258,6 @@ extern const s32 gData_08128868[];
 extern const s32 gBattleObject_EmptyScript[];
 
 s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds);
-
-void Func_08138050(struct BattleFxRequest *request, s32 value);
-
-s32 BattleBackground_GetSelectedFar(void);
 
 void BattleUnit_RefreshPlacement(void);
 
@@ -295,8 +285,6 @@ void Battle_AwardSpoils(void);
 
 extern const s8 gData_081287c8[];
 
-s32 SpritePictureCache_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
-
 extern const u16 gData_081287d4[];
 extern const u16 gData_081287e2[];
 extern const u16 gData_081287f0[];
@@ -319,12 +307,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan);
 void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 value);
 void BattleBackground_RestorePalette(void);
 
-s32 Battle_CollectPartyCommandsFar(struct BattleActionRecord *entries,
-                                   void *buffer, s32 mode);
-
 extern struct BattlePresentationTransition *gTransitionWork;
-
-void SpriteAnimation_StartFar(void *work, s32 no);
 
 s32 Func_0811d79c(s32 kind);
 

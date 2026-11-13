@@ -5,6 +5,7 @@
 #include "../shop_internal.h"
 #include "gamepak/far_call/game.h"
 #include "module/shop/shop.h"
+#include "gamepak/far_call/menu.h"
 
 void Shop_GiveGameTicket(void *window, void *itemWindow) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;

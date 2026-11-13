@@ -210,8 +210,8 @@ loop:
 /// A task: the palette at 0x05000082 pulses brighter and darker than its
 /// source at 0x050000c2 with the frame count.
 void MtAlephSummit_PulseColors(void) {
-  u16 *src = (u16 *)0x050000c2;
-  u16 *dst = (u16 *)0x05000082;
+  u16 *src = (u16 *)&BG_PLTT_COLOR(6, 1);
+  u16 *dst = (u16 *)&BG_PLTT_COLOR(4, 1);
   s32 delta = (Math_Sin((gFrameCount << 11) >> 1) * 2) >> 16;
   s32 i = 0;
 
@@ -391,7 +391,7 @@ s32 Scene_Initialize(void) {
     Call3((void (*)())Iwram_CopyWordsEntry, (s32)buffer, 0x5000008, 14);
     j = 0;
   L2:
-    out = (u16 *)0x500000e;
+    out = (u16 *)&BG_PLTT_COLOR(0, 7);
     color = out;
     i = 0;
   L3:
@@ -501,9 +501,11 @@ s32 Scene_Initialize(void) {
       IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, value | 0x1000, 0x20000);
     }
     if (j >= 20 && j <= 51)
-      MtAlephSummit_StepColorsToward((u16 *)0x5000080, (u16 *)0x50000c0, 16);
+      MtAlephSummit_StepColorsToward((u16 *)&BG_PLTT_COLOR(4, 0),
+                                     (u16 *)&BG_PLTT_COLOR(6, 0), 16);
     if (j > 49)
-      Call3((void (*)())MtAlephSummit_ShiftColors, (u16 *)0x5000000, 224, 1);
+      Call3((void (*)())MtAlephSummit_ShiftColors, (u16 *)&BG_PLTT_COLOR(0, 0),
+            224, 1);
     System_Wait(4);
     j++;
     if (j != 84)
@@ -518,7 +520,7 @@ s32 Scene_Initialize(void) {
     Task_AddFrame(MtAlephSummit_PulseColors, 0x480);
     j = 0;
   L7:
-    MtAlephSummit_StepColorsToward((u16 *)0x5000000, buffer, 224);
+    MtAlephSummit_StepColorsToward((u16 *)&BG_PLTT_COLOR(0, 0), buffer, 224);
     System_Wait(4);
     j++;
     if (j != 32)

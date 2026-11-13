@@ -2135,8 +2135,8 @@ void Func_02003d44(s32 mode) {
   buffer = Heap_AllocEwram(0x4000);
   Decompress_TaggedLz(gWorldMapPackedTiles, buffer);
   Decompress_TaggedLz(gWorldMapPackedPictures, buffer + 0x1000);
-  IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)(gWorldMapPalettes + mode * 32),
-                      0x80000010);
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(14, 0),
+                      (u32)(gWorldMapPalettes + mode * 32), 0x80000010);
   IO_WRITE_QUEUE_PUSH(0x06001000, (u32)buffer, 0x84000400);
   Task_AddFrame(Func_02003c50, 0x480);
   Event_Start();
@@ -2227,14 +2227,15 @@ void Func_020042e0(void) {
   Decompress_TaggedLz(gWorldMapPackedTilesB, buffer);
   frames = buffer + 0x2000;
   Decompress_TaggedLz(gWorldMapPackedPicturesB, frames);
-  IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)gWorldMapPalettesB, 0x80000010);
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(14, 0), (u32)gWorldMapPalettesB,
+                      0x80000010);
   IO_WRITE_QUEUE_PUSH(0x06000000, (u32)buffer, 0x84000400);
   IO_WRITE_QUEUE_PUSH(0x06001000, (u32)frames, 0x84000800);
-  IoWriteQueue_Store16(0x04000050, 0x3f41);
-  IoWriteQueue_Store16(0x04000052, 0x1010);
+  IoWriteQueue_Store16((u32)&REG_BLDCNT, 0x3f41);
+  IoWriteQueue_Store16((u32)&REG_BLDALPHA, 0x1010);
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 352;
-  IO_WRITE_QUEUE_PUSH(0x04000008, 0xc200, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BG0CNT, 0xc200, 0x20000);
   y = 0x2d60;
   x = 561;
   for (i = 95; i >= 0; i--) {
@@ -2256,7 +2257,7 @@ void Func_020042e0(void) {
   mode = 0;
   PaletteFade_ApplyTarget(0x7fff, mode);
   PaletteFade_Interpolate(1);
-  IoWriteQueue_Store16(0x04000052, 0x1000);
+  IoWriteQueue_Store16((u32)&REG_BLDALPHA, 0x1000);
   System_Wait(1);
   PaletteFade_ApplyTarget(0, 0);
   PaletteFade_Interpolate(60);

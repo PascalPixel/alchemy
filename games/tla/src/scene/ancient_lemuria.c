@@ -6,6 +6,7 @@
 /// AncientLemuria_TremorShakesOutRime).
 
 #include "types.h"
+#include "system/io_reg.h"
 #include "flags.h"
 #include "map.h"
 #include "system/ram_buffer.h"
@@ -266,29 +267,29 @@ s32 AncientLemuria_CycleWaterColors(void) {
     s16 saved;
     s32 index;
 
-    saved = *(volatile u16 *)0x050000fc;
+    saved = BG_PLTT_COLOR(7, 14);
     index = 14;
   first:
-    palette = (u16 *)0x050000e0;
+    palette = (u16 *)&BG_PLTT_COLOR(7, 0);
     palette[index] = (palette - 1)[index];
     index--;
     if (index != 1)
       goto first;
-    *(volatile u16 *)0x050000e2 = saved;
-    saved = *(volatile u16 *)0x0500011c;
+    BG_PLTT_COLOR(7, 1) = saved;
+    saved = BG_PLTT_COLOR(8, 14);
     index = 14;
   second:
-    palette = (u16 *)0x05000100;
+    palette = (u16 *)&BG_PLTT_COLOR(8, 0);
     palette[index] = (palette - 1)[index];
     index--;
     if (index != 1)
       goto second;
-    *(volatile u16 *)0x05000102 = saved;
+    BG_PLTT_COLOR(8, 1) = saved;
   }
   {
     s16 color = gAncientLemuria_ShimmerColors[(*Ram_FrameCount >> 2) % 12];
 
-    *(volatile u16 *)0x050000fe = color;
+    BG_PLTT_COLOR(7, 15) = color;
     return color;
   }
 }

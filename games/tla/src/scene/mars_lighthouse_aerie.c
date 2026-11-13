@@ -418,7 +418,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
 
   t0 = gMainRoutineWork.currentOwner;
   actor = Actor_Get(t0);
-  palette = (u16 *)0x500021e;
+  palette = (u16 *)&OBJ_PLTT_COLOR(0, 15);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   t4 = Actor_Get(18);
@@ -1028,7 +1028,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   *unk85 = 0;
   PaletteFade_ApplyTarget(0x10000, 2);
   PaletteFade_Interpolate(20);
-  dispcnt = (u16 *)0x4000000;
+  dispcnt = (u16 *)&REG_DISPCNT;
   Event_PlaySound(MUS_039);
   Actor_RunScriptAndWait(17, (s32)gData_02005cac);
   *dispcnt = *dispcnt & 0xf9ff;
@@ -1887,8 +1887,8 @@ void MarsLighthouseAerie_LightBeacon(void) {
   FieldCamera_MoveTo(512, 96, 312, 1);
   FieldCamera_WaitForArrival();
   System_Wait(1);
-  *(u16 *)0x4000052 = 0xc08;
-  *(u16 *)0x4000050 = 0x3f10;
+  REG_BLDALPHA = 0xc08;
+  REG_BLDCNT = 0x3f10;
   MapGrid_CopyCellAttributes(18, 40, 18, 16, 23, 10);
   Func_02003648(7);
   Func_02003648(5);
@@ -2544,7 +2544,7 @@ L_0200c66c:
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(20);
   System_Wait(240);
-  *(u16 *)0x4000000 = 0;
+  REG_DISPCNT = 0;
   PaletteFade_ApplyTarget(0, 0);
   PaletteFade_Interpolate(8);
   System_Wait(8);

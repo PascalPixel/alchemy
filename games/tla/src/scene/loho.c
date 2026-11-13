@@ -247,7 +247,7 @@ seedSparks:
   if (i >= 0)
     goto seedSparks;
   Dma_Set((const void *)(s32)Field_Palette685, (void *)0x50003e0, 0x80000010,
-          (volatile u32 *)0x40000d4);
+          REG_DMA3);
   i = 0;
   /* FAKEMATCH(dead): this test that never passes, with its edge into the loop.
    */

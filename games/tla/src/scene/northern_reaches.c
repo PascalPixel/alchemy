@@ -448,8 +448,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
     *timer = -(Random16() << 5 >> 16);
     timer += 4;
   }
-  Dma_Set(Field_Palette685, (void *)0x50003e0, 0x80000010,
-          (volatile u32 *)0x40000d4);
+  Dma_Set(Field_Palette685, (void *)0x50003e0, 0x80000010, REG_DMA3);
   for (frame = 0; frame <= 149; frame++) {
     if ((frame & 31) == 0) {
       Event_PlaySound(SE_CRASH);

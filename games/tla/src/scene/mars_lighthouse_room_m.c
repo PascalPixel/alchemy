@@ -329,7 +329,8 @@ void Func_020000c0(void) {
     for (i = 0; i <= 5; i++)
       gData_0200397c[i + 10] = gData_0200393c[(base + i) % 6 + 4];
   }
-  IO_WRITE_QUEUE_PUSH(0x050001a0, (u32)gData_0200397c, 0x84000008);
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(13, 0), (u32)gData_0200397c,
+                      0x84000008);
   gData_020036c4++;
 }
 
@@ -418,7 +419,8 @@ void Func_020003c4(void) {
     Iwram_CopyWordsEntry(&Data_02003a1c[26], Data_0200ba70, 12);
   if (!Event_GetFlag(0xa35))
     Iwram_CopyWordsEntry(&Data_02003a1c[4], Data_0200ba70, 12);
-  IO_WRITE_QUEUE_PUSH(0x05000100, (u32)Data_02003a1c, 0x84000010);
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(8, 0), (u32)Data_02003a1c,
+                      0x84000010);
   gData_02003704++;
 }
 
@@ -567,9 +569,9 @@ void Func_02000934(s32 entrance) {
     if (gData_02003a80 == 3)
       MapGrid_CopyCellsLayered(0, 125, 3, 3, 8, 67);
   }
-  IO_WRITE_QUEUE_PUSH(0x04000052, Data_02003a7c | (16 - Data_02003a7c) << 8,
-                      0x20000);
-  IO_WRITE_QUEUE_PUSH(0x04000050, 0x3f42, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
+                      Data_02003a7c | (16 - Data_02003a7c) << 8, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x3f42, 0x20000);
   Task_AddFrame(Func_0200055c, 0x480);
 }
 

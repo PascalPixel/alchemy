@@ -233,8 +233,8 @@ void Func_020003e8(void) {
     *(u16 *)((u8 *)firstCopy + offset) = Data_02002958[12 + k];
     *(u16 *)((u8 *)secondCopy + offset) = gData_02002998[12 + k];
   }
-  IO_WRITE_QUEUE_PUSH(0x05000060, (u32)firstCopy, 0x84000008);
-  IO_WRITE_QUEUE_PUSH(0x05000080, (u32)secondCopy, 0x84000008);
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(3, 0), (u32)firstCopy, 0x84000008);
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(4, 0), (u32)secondCopy, 0x84000008);
   gData_020024c4++;
 }
 
@@ -269,8 +269,10 @@ void Func_02000540(void) {
     } while (0);
     Data_02002a38[12 + j] = Data_02002a18[12 + k];
   }
-  IO_WRITE_QUEUE_PUSH(0x05000060, (u32)Data_020029f8, 0x84000008);
-  IO_WRITE_QUEUE_PUSH(0x050001a0, (u32)Data_02002a38, 0x84000008);
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(3, 0), (u32)Data_020029f8,
+                      0x84000008);
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(13, 0), (u32)Data_02002a38,
+                      0x84000008);
   gData_020024c8++;
 }
 
@@ -299,7 +301,8 @@ void Func_020006bc(void) {
   base = (gData_020024cc[0] / 2) % 15;
   for (i = 0; i < 15; i++)
     gData_02002a78[(base + i) % 15 + 1] = gData_02002a58[i + 1];
-  IO_WRITE_QUEUE_PUSH(0x050003c0, (u32)gData_02002a78, 0x84000008);
+  IO_WRITE_QUEUE_PUSH((u32)&OBJ_PLTT_COLOR(14, 0), (u32)gData_02002a78,
+                      0x84000008);
   gData_020024cc[0]++;
 }
 
@@ -361,8 +364,8 @@ flash:
   if (i >= 0)
     goto flash;
   ObjectTable_Snapshot();
-  IO_WRITE_QUEUE_PUSH(0x04000050, 0xf00, 0x20000);
-  IO_WRITE_QUEUE_PUSH(0x04000052, 0x1000, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0xf00, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, 0x1000, 0x20000);
   wait(1);
   Task_Remove(Func_02000540);
   Task_Add(Func_020006bc, TASK_PASS_VBLANK);
@@ -370,7 +373,7 @@ flash:
   Func_020017f8(33, 0, 0);
   i = 1;
 blend:
-  IO_WRITE_QUEUE_PUSH(0x04000052, 0x1000 | i, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, 0x1000 | i, 0x20000);
   wait(4);
   i++;
   if (i <= 6)

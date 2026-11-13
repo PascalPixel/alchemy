@@ -1,6 +1,7 @@
 /// @file
 #include "field/event_inline.h"
 #include "types.h"
+#include "system/io_reg.h"
 #include "item_ids.h"
 #include "flags.h"
 #include "system/main_routine_work.h"
@@ -538,13 +539,13 @@ void Func_02000a34(s32 value) {
   glow[0] = 0x2960000;
   glow[1] = 0;
   glow[2] = 0xee0000;
-  palette = (u16 *)0x050000e4;
+  palette = (u16 *)&BG_PLTT_COLOR(7, 2);
   bright[0] = *palette++;
   bright[1] = *palette++;
   bright[2] = *palette++;
   bright[3] = *palette++;
   bright[4] = *palette;
-  palette = (u16 *)0x050000c4;
+  palette = (u16 *)&BG_PLTT_COLOR(6, 2);
   dim[0] = *palette++;
   dim[1] = *palette++;
   dim[2] = *palette++;
@@ -764,7 +765,7 @@ chosen:
 
 DEFINE_CHAMPA_CLIFF_CAVES_GROW(Func_02001138, 0xc00)
 
-#define PALETTE ((u16 *)0x05000000)
+#define PALETTE ((u16 *)&BG_PLTT_COLOR(0, 0))
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
@@ -1527,8 +1528,7 @@ void Func_020029f8(s32 id, s32 mode) {
   wait(2);
   object->scaleX = 0;
   Actor_SetSpriteFlags(object, 0);
-  Dma_Set(Field_Palette685, (void *)0x050003e0, 0x80000010,
-          (volatile u32 *)0x040000d4);
+  Dma_Set(Field_Palette685, (void *)0x050003e0, 0x80000010, REG_DMA3);
   Decompress_TaggedLz(
       Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion), work);
   slot = VramCache_FindFreeEntry();
@@ -1730,10 +1730,10 @@ loop:
     blue += 3;
     if (i <= 15) {
       colour = blue << 10 | wave << 5 | red;
-      ((u16 *)0x05000200)[111 - i] = colour;
+      ((u16 *)&OBJ_PLTT_COLOR(0, 0))[111 - i] = colour;
     } else {
       colour = blue << 10 | wave << 5 | red;
-      ((u16 *)0x05000200)[255 - i] = colour;
+      ((u16 *)&OBJ_PLTT_COLOR(0, 0))[255 - i] = colour;
     }
     i++;
   }

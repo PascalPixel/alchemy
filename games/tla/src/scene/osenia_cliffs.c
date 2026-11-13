@@ -15,6 +15,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "system/io_reg.h"
 #include "scene_tables.h"
 #include "field/event_inline.h"
 #include "system/ram_buffer.h"
@@ -120,11 +121,11 @@ void OseniaCliffs_CyclePalette(void) {
     if (gOseniaCliffs_PaletteCycleStep[0] == 8)
       gOseniaCliffs_PaletteCycleStep[0] = 0;
     i = gOseniaCliffs_PaletteCycleStep[0]++;
-    colors = (u16 *)0x05000180;
-    *(u16 *)0x050000c2 = colors[i];
-    *(u16 *)0x050000c4 = colors[(i + 1) & 7];
-    *(u16 *)0x050000c6 = colors[(i + 2) & 7];
-    *(u16 *)0x050000c8 = colors[(i + 3) & 7];
+    colors = (u16 *)&BG_PLTT_COLOR(12, 0);
+    BG_PLTT_COLOR(6, 1) = colors[i];
+    BG_PLTT_COLOR(6, 2) = colors[(i + 1) & 7];
+    BG_PLTT_COLOR(6, 3) = colors[(i + 2) & 7];
+    BG_PLTT_COLOR(6, 4) = colors[(i + 3) & 7];
   }
 }
 

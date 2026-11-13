@@ -21,6 +21,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "system/io_reg.h"
 #include "item_ids.h"
 #include "flags.h"
 #include "scene_tables.h"
@@ -441,24 +442,24 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) {
   if (GameFlag_Get(FLAG_BRIGGS_CAUGHT)) {
-    u16 *src = (u16 *)0x5000116;
+    u16 *src = (u16 *)&BG_PLTT_COLOR(8, 11);
 
     u32 c;
 
     /* FAKEMATCH(dead): the four copies in a once-only block. */
     do {
       c = *src;
-      *(u16 *)0x50000f6 = c;
+      BG_PLTT_COLOR(7, 11) = c;
       src++;
       c = *src;
-      *(u16 *)0x50000f8 = c;
+      BG_PLTT_COLOR(7, 12) = c;
       src++;
       c = *src;
-      *(u16 *)0x50000fa = c;
+      BG_PLTT_COLOR(7, 13) = c;
       {
         u32 last = src[1];
 
-        *(u16 *)0x50000fc = last;
+        BG_PLTT_COLOR(7, 14) = last;
       }
     } while (0);
     MapGrid_CopyCellAttributes(37, 18, 2, 2, 37, 33);

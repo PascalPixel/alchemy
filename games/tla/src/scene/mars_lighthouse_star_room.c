@@ -722,7 +722,7 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
       } white;
 
       white.value = 0x7fff;
-      *(u16 *)0x0500021e = white.value;
+      OBJ_PLTT_COLOR(0, 15) = white.value;
     }
     System_Wait(1);
     FieldMessage_ShowCentered((s32)MsgMarsStar06, 0, 0);

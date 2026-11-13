@@ -1001,9 +1001,9 @@ s32 Func_02000e44(void) {
   Window_LoadGraphics();
   WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                     gMainRoutineWork.paletteGlow[1]);
-  palette = (u16 *)0x050001c0;
+  palette = (u16 *)&BG_PLTT_COLOR(14, 0);
   Dma_Set((const void *)0x050001e0, palette, (DMA_ENABLE | DMA_32BIT) << 16 | 8,
-          (volatile u32 *)0x040000d4);
+          REG_DMA3);
   palette[4] = 0x6318;
   mode = IconMenu_ChooseSendOption(1);
   if (mode == -1)

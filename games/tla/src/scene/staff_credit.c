@@ -234,8 +234,8 @@ void Func_0200020c(s32 stage) {
   } else {
     u16 *tiles = (u16 *)buffer;
 
-    IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)(Data_020020bc + palette * 32),
-                        0x80000010);
+    IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(14, 0),
+                        (u32)(Data_020020bc + palette * 32), 0x80000010);
     {
       void (*clear)(void *, s32) = (void (*)(void *, s32))Iwram_ClearWordsEntry;
       s32 size = 0x2000;
@@ -270,13 +270,15 @@ void Func_0200020c(s32 stage) {
       if (stage == 4) {
         gBgScroll[0].x = 8;
         gBgScroll[0].y = frame;
-        IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)Data_0200213c, 0x80000010);
-        IO_WRITE_QUEUE_PUSH(0x050001e0, (u32)gData_0200215c, 0x80000010);
+        IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(14, 0), (u32)Data_0200213c,
+                            0x80000010);
+        IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(15, 0), (u32)gData_0200215c,
+                            0x80000010);
       } else {
         gBgScroll[0].x = gData_02003d9c[stage][0];
         gBgScroll[0].y = gData_02003d9c[stage][1];
-        IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)(Data_020020bc + palette * 32),
-                            0x80000010);
+        IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(14, 0),
+                            (u32)(Data_020020bc + palette * 32), 0x80000010);
       }
     }
     if (stage == 4) {
@@ -343,11 +345,11 @@ void Func_0200020c(s32 stage) {
         IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + 0x5200), 0x84000140);
       if (frame > 153) {
         gData_02003dbc = 0;
-        Func_020000c0((u16 *)0x05000000, 256, -2, -2, -2);
-        Func_020000c0((u16 *)0x05000200, 256, -2, -2, -2);
+        Func_020000c0((u16 *)&BG_PLTT_COLOR(0, 0), 256, -2, -2, -2);
+        Func_020000c0((u16 *)&OBJ_PLTT_COLOR(0, 0), 256, -2, -2, -2);
       } else if (frame > 79 && (frame & 1)) {
-        Func_020000c0((u16 *)0x05000000, 256, 1, 1, 1);
-        Func_020000c0((u16 *)0x05000200, 256, 1, 1, 1);
+        Func_020000c0((u16 *)&BG_PLTT_COLOR(0, 0), 256, 1, 1, 1);
+        Func_020000c0((u16 *)&OBJ_PLTT_COLOR(0, 0), 256, 1, 1, 1);
       }
     } else if (frame >= 0) {
       grid = buffer + 0x2000;
@@ -421,9 +423,9 @@ void Func_0200020c(s32 stage) {
       if (frame == 138)
         gData_02003dbe = 1;
       if (frame > 64 && (frame & 1))
-        Func_020000c0((u16 *)0x050001c0, 16, 1, 1, 1);
+        Func_020000c0((u16 *)&BG_PLTT_COLOR(14, 0), 16, 1, 1, 1);
       if (frame > 140)
-        Func_020000c0((u16 *)0x050001c0, 16, -2, -2, -2);
+        Func_020000c0((u16 *)&BG_PLTT_COLOR(14, 0), 16, -2, -2, -2);
       if (late <= 95)
         gBgScroll[0].y++;
     }
@@ -452,8 +454,8 @@ void Func_0200020c(s32 stage) {
   }
   Heap_Release(buffer);
   DebugText_Clear();
-  IoWriteQueue_Store16(0x04000052, gData_02003dbc);
-  IoWriteQueue_Store16(0x04000050, 0);
+  IoWriteQueue_Store16((u32)&REG_BLDALPHA, gData_02003dbc);
+  IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
   Event_SetFlag(FLAG_SKIP_SCENE_CHANGE_SOUND);
 }
 
@@ -593,8 +595,8 @@ void Func_02001400(s32 mode) {
   buffer = Heap_AllocEwram(0x4000);
   Decompress_TaggedLz(gWorldMapPackedTiles, buffer);
   Decompress_TaggedLz(gWorldMapPackedPictures, buffer + 0x1000);
-  IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)(gWorldMapPalettes + mode * 32),
-                      0x80000010);
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(14, 0),
+                      (u32)(gWorldMapPalettes + mode * 32), 0x80000010);
   {
     struct IoWriteQueue *q = &gIoWriteQueue;
     u32 saved;
@@ -668,8 +670,8 @@ void Func_02001400(s32 mode) {
     FieldTask_Remove(Func_0200130c);
     DebugText_Clear();
     level = gData_02003fc0;
-    IoWriteQueue_Store16(0x04000052, level);
-    IoWriteQueue_Store16(0x04000050, 0);
+    IoWriteQueue_Store16((u32)&REG_BLDALPHA, level);
+    IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
   } else {
     gData_02003fc0 = 0xd00;
     FieldEvent_Wait(4);
@@ -682,8 +684,8 @@ void Func_02001400(s32 mode) {
     FieldTask_Remove(Func_0200130c);
     DebugText_Clear();
     level = gData_02003fc0;
-    IoWriteQueue_Store16(0x04000052, level);
-    IoWriteQueue_Store16(0x04000050, 0);
+    IoWriteQueue_Store16((u32)&REG_BLDALPHA, level);
+    IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
   }
   Heap_Release(buffer);
   Event_SetFlag(FLAG_SKIP_SCENE_CHANGE_SOUND);

@@ -1264,7 +1264,7 @@ s32 Scene_Initialize(void) {
     gSeaOfTime_WaveStartFrame = gFrameCount;
     gSeaOfTime_WaveState = 1;
     Dma_Set((const void *)0x05000062, gSeaOfTime_SavedColors.colors, 0x8000000e,
-            (volatile u32 *)0x040000d4);
+            REG_DMA3);
     if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
       u32 *state = gSceneState;
       u32 offset, i;
@@ -1287,7 +1287,7 @@ s32 Scene_Initialize(void) {
     if (gMainRoutineWork.entrance <= 4) {
       if (!GameFlag_Get(0x940)) {
         Dma_Set((const void *)0x05000062, gSeaOfTime_SavedColors.colors,
-                0x8000000e, (volatile u32 *)0x040000d4);
+                0x8000000e, REG_DMA3);
       } else {
         if (!GameFlag_Get(0xa90))
           SeaOfTime_PlaceRock(21, 23, 9);
@@ -1300,9 +1300,8 @@ s32 Scene_Initialize(void) {
         {
           void *block = Ram_HeapSlots->block32;
 
-          *(volatile u16 *)0x0500001e &= 0xffe0;
-          Dma_Set((const void *)0x05000000, block, 0x84000070,
-                  (volatile u32 *)0x040000d4);
+          BG_PLTT_COLOR(0, 15) &= 0xffe0;
+          Dma_Set((const void *)0x05000000, block, 0x84000070, REG_DMA3);
         }
         BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
       }

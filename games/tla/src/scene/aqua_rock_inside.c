@@ -881,7 +881,7 @@ void Func_02000ecc(s32 unused, s32 id) {
     BlendScript_Suspend();
     i = 12;
   blend:
-    IO_WRITE_QUEUE_PUSH(0x04000052, 0x1000 | i, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, 0x1000 | i, 0x20000);
     System_Wait(4);
     i--;
     if (i >= 0)

@@ -450,8 +450,10 @@ void TreasureIsle_CycleWaterColors(void) {
     gTreasureIsle_ObjColors[(phase + i) % 4 + 2] =
         gTreasureIsle_SavedObjColors[i + 2];
   }
-  IO_WRITE_QUEUE_PUSH(0x05000060, (u32)gTreasureIsle_BgColors, 0x84000008);
-  IO_WRITE_QUEUE_PUSH(0x05000140, (u32)gTreasureIsle_ObjColors, 0x84000008);
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(3, 0), (u32)gTreasureIsle_BgColors,
+                      0x84000008);
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(10, 0), (u32)gTreasureIsle_ObjColors,
+                      0x84000008);
   gTreasureIsle_ColorCycleFrame[0]++;
 }
 #undef FIELD_AT

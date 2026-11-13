@@ -248,8 +248,8 @@ s32 Scene_Initialize(void) {
       Actor_DepartInRing(gMainRoutineWork.currentOwner);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_JupiterLighthouseBasement2) {
-    *(volatile u16 *)0x04000052 = 0x1008;
-    *(volatile u16 *)0x04000050 = 0x3f10;
+    REG_BLDALPHA = 0x1008;
+    REG_BLDCNT = 0x3f10;
     Func_02000298();
   }
   return 0;

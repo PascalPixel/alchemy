@@ -1,6 +1,7 @@
 /// @file
 #include "shared/actors.h"
 #include "types.h"
+#include "system/io_reg.h"
 #include "scene_tables.h"
 #include "system/ram_buffer.h"
 #include "field_event.h"
@@ -353,8 +354,8 @@ void Func_0200087c(void) {
     kind = MapGrid_GetCellBehaviorAt(2, object->x, object->z);
     if (kind != 0) {
       object->priorityFlags |= 2;
-      *(u16 *)0x4000052 = 0x1000;
-      blendControl = (u16 *)0x4000050;
+      REG_BLDALPHA = 0x1000;
+      blendControl = (u16 *)&REG_BLDCNT;
       *blendControl = 0x3f10;
       sum = kind + 2;
       spawned = OverlayObject_PrepareObject(object->x, 0,

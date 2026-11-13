@@ -3575,12 +3575,12 @@ s32 Scene_PrepareMap(void) {
       Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
       map[261] = 1;
       {
-        volatile u16 control = *(volatile u16 *)0x0400000c & ~3;
+        volatile u16 control = REG_BG2CNT & ~3;
         // Once-only block: keeps the sky cell window's store after its read.
         do {
         } while (0);
 
-        *(volatile u16 *)0x0400000c = control | 1;
+        REG_BG2CNT = control | 1;
       }
       Func_020048a0();
       stage = (s32 *)(gInventorySnapshot + 0x288);

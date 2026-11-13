@@ -18,6 +18,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "system/io_reg.h"
 #include "item_ids.h"
 #include "flags.h"
 #include "scene_tables.h"
@@ -472,33 +473,33 @@ void Champa_RotatePaletteColors(void) {
     s16 saved;
     s32 index;
 
-    saved = *(volatile u16 *)0x0500007c;
+    saved = BG_PLTT_COLOR(3, 14);
     index = 14;
   first:
-    palette = (volatile u16 *)0x05000060;
+    palette = (volatile u16 *)&BG_PLTT_COLOR(3, 0);
     palette[index] = (palette - 1)[index];
     index--;
     if (index != 1)
       goto first;
-    *(volatile u16 *)0x05000062 = saved;
-    saved = *(volatile u16 *)0x0500009c;
+    BG_PLTT_COLOR(3, 1) = saved;
+    saved = BG_PLTT_COLOR(4, 14);
     index = 14;
   second:
-    palette = (volatile u16 *)0x05000080;
+    palette = (volatile u16 *)&BG_PLTT_COLOR(4, 0);
     palette[index] = (palette - 1)[index];
     index--;
     if (index != 1)
       goto second;
-    *(volatile u16 *)0x05000082 = saved;
-    saved = *(volatile u16 *)0x050000bc;
+    BG_PLTT_COLOR(4, 1) = saved;
+    saved = BG_PLTT_COLOR(5, 14);
     index = 14;
   third:
-    palette = (volatile u16 *)0x050000a0;
+    palette = (volatile u16 *)&BG_PLTT_COLOR(5, 0);
     palette[index] = (palette - 1)[index];
     index--;
     if (index != 1)
       goto third;
-    *(volatile u16 *)0x050000a2 = saved;
+    BG_PLTT_COLOR(5, 1) = saved;
   }
 }
 

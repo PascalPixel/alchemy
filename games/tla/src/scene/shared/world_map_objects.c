@@ -215,8 +215,8 @@ void WorldMap_UpdatePlacedActors(void) {
 /// next frames.
 void WorldMap_QueueBlend(void) {
   if ((u16)Ram_HeapSlots->objectSystem->suspended == 0) {
-    IO_WRITE_QUEUE_PUSH(0x4000050, 0x3f8e, 0x20000);
-    IO_WRITE_QUEUE_PUSH(0x4000054, 12, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x3f8e, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 12, 0x20000);
   }
 }
 

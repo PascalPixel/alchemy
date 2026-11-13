@@ -11,6 +11,7 @@
 /// uncovers Geode, a Venus Djinni (AttekaInlet_CycloneUncoversGeode).
 
 #include "flags.h"
+#include "system/io_reg.h"
 #include "shared/tables.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -434,30 +435,30 @@ void AttekaInlet_RotateWaterColors(void) {
     s16 saved;
     s32 index;
 
-    saved = *(volatile u16 *)0x05000172;
+    saved = BG_PLTT_COLOR(11, 9);
     index = 9;
   first:
-    palette = (u16 *)0x05000160;
+    palette = (u16 *)&BG_PLTT_COLOR(11, 0);
     palette[index] = (palette - 1)[index];
     index--;
     if (index != 4)
       goto first;
-    *(volatile u16 *)0x05000168 = saved;
+    BG_PLTT_COLOR(11, 4) = saved;
   }
   if ((*Ram_FrameCount & 7) == 0) {
     volatile u16 *palette;
     s16 saved;
     s32 index;
 
-    saved = *(volatile u16 *)0x0500017e;
+    saved = BG_PLTT_COLOR(11, 15);
     index = 15;
   second:
-    palette = (u16 *)0x05000160;
+    palette = (u16 *)&BG_PLTT_COLOR(11, 0);
     palette[index] = (palette - 1)[index];
     index--;
     if (index != 12)
       goto second;
-    *(volatile u16 *)0x05000178 = saved;
+    BG_PLTT_COLOR(11, 12) = saved;
   }
 }
 

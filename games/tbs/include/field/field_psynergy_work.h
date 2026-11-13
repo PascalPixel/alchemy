@@ -49,8 +49,9 @@ struct FieldEffectWork {
   ///@}
   u8 unusedAfterSavedScript[4]; ///< no code names it
   u8 savedPalette; ///< the target's first sprite's param, saved likewise
-  u8 lit;          ///< set in two Mercury Lighthouse scenes; not read by name
-  u16 tileSlot;    ///< resource entry holding the spark tiles
+  u8 lit; ///< set in two Mercury Lighthouse scenes: Douse lets particles sway
+          ///< down
+  u16 tileSlot;            ///< resource entry holding the spark tiles
   u16 unusedAfterTileSlot; ///< no code names it
   u16 freeBlocks;          ///< 512 less the free resource blocks at the start
   /// The map's shake and its decay, restored when the field Psynergy ends.

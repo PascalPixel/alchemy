@@ -4,26 +4,6 @@
 
 #include "../event_commands_internal.h"
 
-/// The field effect (struct FieldEffectWork, gFieldEffectWork) as Douse reads
-/// it; the notes give the FieldEffectWork fields at the same offsets.
-struct FieldEffectDouseView {
-  s32 angle;            ///< 1/65536 turns: the way the caster faces
-  s32 x, y, z;          ///< the ground under the cloud's destination
-  struct Actor *caster; ///< mainActor
-  s32 targetActor;      ///< child: the target's actor, 0 for none
-  u8 reserved18[8];
-  /// enabled: set at the start, cleared when a trigger names the target
-  /// (FieldPsynergy_Dispatch). Set, 10 particles fall; cleared, 24
-  /// drops, or 30 swaying particles in Mercury Lighthouse.
-  u8 highArc;
-  u8 reserved21[19];
-  u8 variant; ///< childOption: set by an event, the cloud stops 80 pixels up
-  u8 reserved35[16];
-  /// lit: set in two Mercury Lighthouse scenes (setup.c), where swaying
-  /// particles (SPRITE_PARTICLE) fall rather than splashing drops.
-  u8 alternate;
-};
-
 /// Per-frame update of a falling drop: on reaching altitude it is released 2
 /// frames later and scatters three half-size splashes, which hop toward
 /// points 32 pixels away and are released after 6 frames.
@@ -97,8 +77,8 @@ void FieldPsynergy_Douse(void) {
   struct Vector3 pos;
   struct Vector3 start;
   struct Vector3 end;
-  struct FieldEffectDouseView *work = gFieldEffectWork;
-  struct Actor *caster = work->caster;
+  struct FieldEffectWork *work = gFieldEffectWork;
+  struct Actor *caster = work->mainActor;
   struct Actor *cloud;
   s32 step;
   s32 steps = 11;
@@ -112,7 +92,7 @@ void FieldPsynergy_Douse(void) {
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_ITEM_BREAK);
   // No target: 16 pixels in front of the caster, at the ground's height.
-  if (work->targetActor == 0) {
+  if (work->child == 0) {
     work->x = caster->x.fixed;
     work->z = caster->z.fixed;
     Vector_AddPolarOffset(px(16), work->angle, (struct Vector3 *)&work->x);
@@ -124,7 +104,7 @@ void FieldPsynergy_Douse(void) {
   y = work->y;
   end.y = y + px(32);
   end.z = work->z;
-  if ((s8)work->variant != 0)
+  if (work->childOption != 0)
     end.y = y + px(80);
 
   // Grow from a quarter to full size on the way.
@@ -141,11 +121,11 @@ void FieldPsynergy_Douse(void) {
   }
   wait(10);
 
-  if ((s8)work->alternate == 0) {
+  if ((s8)work->lit == 0) {
     // Drop a particle every 6 frames from 3 to 8 pixels round the cloud (the
     // last right under it).
     count = 10;
-    if ((s8)work->highArc == 0)
+    if (work->enabled == 0)
       count = 24;
     for (step = 0; step < count; step++) {
       pos.x = cloud->x.fixed;
@@ -171,7 +151,7 @@ void FieldPsynergy_Douse(void) {
   } else {
     // Every 6 frames, a swaying particle falls from 3 to 8 pixels round the
     // cloud.
-    if ((s8)work->highArc != 0)
+    if (work->enabled != 0)
       count = 10;
     else
       count = 30;

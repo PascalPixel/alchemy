@@ -809,8 +809,8 @@ static void CrossboneIsle_MoveSelectedActorAndLog(s32 actorId, s32 xOffset,
   logActor = Actor_Get(actorId);
   Event_Start();
   {
-    fixedX = ((selectedActor->x.fixed + px(xOffset)) & 0xFFF00000) + px(8);
-    fixedZ = ((selectedActor->z.fixed + px(zOffset)) & 0xFFF00000) + px(8);
+    fixedX = ((selectedActor->x.fixed + px(xOffset)) & FIELD_CELL_MASK) + px(8);
+    fixedZ = ((selectedActor->z.fixed + px(zOffset)) & FIELD_CELL_MASK) + px(8);
 
     selectedActor->speedLimit = px(1);
     selectedActor->acceleration = px(1) / 2;
@@ -820,8 +820,8 @@ static void CrossboneIsle_MoveSelectedActorAndLog(s32 actorId, s32 xOffset,
   // Position the log on the same cell-center grid as the selected actor.
   Actor_SelectAnimation(selectedActor, ANIM_LEADER_WALK_BACKWARDS);
   {
-    fixedX = ((logActor->x.fixed + px(xOffset)) & 0xFFF00000) + px(8);
-    fixedZ = ((logActor->z.fixed + px(zOffset)) & 0xFFF00000) + px(8);
+    fixedX = ((logActor->x.fixed + px(xOffset)) & FIELD_CELL_MASK) + px(8);
+    fixedZ = ((logActor->z.fixed + px(zOffset)) & FIELD_CELL_MASK) + px(8);
 
     logActor->speedLimit = px(1);
     logActor->acceleration = px(1) / 2;
@@ -981,9 +981,9 @@ static s32 CrossboneIsle_TryHop(struct Actor *actor,
 #if TBS_PATCH_1
   struct FieldPosition destination;
 
-  destination.x = (actor->x.fixed & 0xfff00000) + px(8);
+  destination.x = (actor->x.fixed & FIELD_CELL_MASK) + px(8);
   destination.y = actor->y.fixed;
-  destination.z = (actor->z.fixed & 0xfff00000) + px(8);
+  destination.z = (actor->z.fixed & FIELD_CELL_MASK) + px(8);
   {
     s32 direction = (actor->facing + TRIG_TURN / 8) & 0xc000;
 

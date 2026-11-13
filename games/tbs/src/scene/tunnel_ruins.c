@@ -275,9 +275,9 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
   u8 savedMotionFlags = actor->motionFlags;
   struct FieldPosition adjacentTile;
 
-  adjacentTile.x = (actor->x.fixed & 0xfff00000) + px(8);
+  adjacentTile.x = (actor->x.fixed & FIELD_CELL_MASK) + px(8);
   adjacentTile.y = actor->y.fixed;
-  adjacentTile.z = (actor->z.fixed & 0xfff00000) + px(8);
+  adjacentTile.z = (actor->z.fixed & FIELD_CELL_MASK) + px(8);
 
   FieldVector_AddPolarOffset(16, (actor->facing + TRIG_TURN / 8) & 0xc000,
                              &adjacentTile);

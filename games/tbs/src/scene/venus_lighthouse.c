@@ -1024,9 +1024,9 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
   // ahead.
   savedMotionFlags = *motionFlags;
 #if TBS_PATCH_1
-  landing.x = (leader->x.fixed & 0xfff00000) + px(8);
+  landing.x = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
   landing.y = leader->y.fixed;
-  landing.z = (leader->z.fixed & 0xfff00000) + px(8);
+  landing.z = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
   direction = (leader->facing + TRIG_TURN / 8) & 0xc000;
   Vector_AddPolarOffset(px(16), direction, &landing);
 #else
@@ -1036,9 +1036,9 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
   if (FieldActor_CheckMovementCollision(leader, &landing) != 1 &&
       Actor_FindAtPosition(&landing, leader) == 0) {
 #if TBS_PATCH_1
-    landing.x = (leader->x.fixed & 0xfff00000) + px(8);
+    landing.x = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
     landing.y = leader->y.fixed;
-    landing.z = (leader->z.fixed & 0xfff00000) + px(8);
+    landing.z = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
     Vector_AddPolarOffset(px(32), (leader->facing + TRIG_TURN / 8) & 0xc000,
                           &landing);
 #else

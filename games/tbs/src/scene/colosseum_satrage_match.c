@@ -538,11 +538,11 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
   {
     destinationX =
         ((pusher->x.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetX)) &
-         0xFFF00000) +
+         FIELD_CELL_MASK) +
         px(8);
     destinationZ =
         ((pusher->z.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetZ)) &
-         0xFFF00000) +
+         FIELD_CELL_MASK) +
         px(8);
 
     pusher->speedLimit = px(1);
@@ -554,11 +554,11 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
   {
     destinationX =
         ((log->x.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetX)) &
-         0xFFF00000) +
+         FIELD_CELL_MASK) +
         px(8);
     destinationZ =
         ((log->z.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetZ)) &
-         0xFFF00000) +
+         FIELD_CELL_MASK) +
         px(8);
 
     log->speedLimit = px(1);

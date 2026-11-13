@@ -419,8 +419,8 @@ static void MercuryLighthouseAerie_JumpToPlatform(void) {
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   angle = (actor->facing + TRIG_TURN / 16) & 0xe000;
   flags = actor->motionFlags;
-  SET_POSITION(&position, (actor->x.fixed & 0xfff00000) + px(8), actor->y.fixed,
-               (actor->z.fixed & 0xfff00000) + px(8));
+  SET_POSITION(&position, (actor->x.fixed & FIELD_CELL_MASK) + px(8),
+               actor->y.fixed, (actor->z.fixed & FIELD_CELL_MASK) + px(8));
   Vector_AddPolarOffset(px(32), angle, &position);
   if (FieldActor_CheckMovementCollision(actor, &position) == 0) {
     GameFlag_Clear(FLAG_ON_PLATFORM);

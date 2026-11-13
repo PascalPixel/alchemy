@@ -522,9 +522,9 @@ static void MogallForest_FirstArea_JumpNorth(void) {
 #if TBS_PATCH_1
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  position.x = (leader->x.fixed & 0xfff00000) + px(8);
+  position.x = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
   position.y = leader->y.fixed;
-  position.z = (leader->z.fixed & 0xfff00000) - px(24);
+  position.z = (leader->z.fixed & FIELD_CELL_MASK) - px(24);
 #else
   position.x = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed;
   position.y = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
@@ -542,9 +542,9 @@ static void MogallForest_FirstArea_JumpSouth(void) {
   s32 savedMotionFlags = *motionFlags;
 
 #if TBS_PATCH_1
-  position.x = (actor->x.fixed & 0xfff00000) + px(8);
+  position.x = (actor->x.fixed & FIELD_CELL_MASK) + px(8);
   position.y = actor->y.fixed;
-  position.z = (actor->z.fixed & 0xfff00000) + px(40);
+  position.z = (actor->z.fixed & FIELD_CELL_MASK) + px(40);
 #else
   position.x = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed;
   position.y = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;

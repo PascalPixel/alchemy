@@ -419,8 +419,8 @@ static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
   actor = Actor_Get(actorId);
   Event_Start();
   {
-    x = ((leader->x.fixed + (dx << 16)) & 0xFFF00000) + px(8);
-    z = ((leader->z.fixed + (dz << 16)) & 0xFFF00000) + px(8);
+    x = ((leader->x.fixed + (dx << 16)) & FIELD_CELL_MASK) + px(8);
+    z = ((leader->z.fixed + (dz << 16)) & FIELD_CELL_MASK) + px(8);
 
     leader->speedLimit = px(1);
     leader->acceleration = px(1) / 2;
@@ -428,8 +428,8 @@ static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
   }
   Actor_SelectAnimation(leader, 27);
   {
-    x = ((actor->x.fixed + (dx << 16)) & 0xFFF00000) + px(8);
-    z = ((actor->z.fixed + (dz << 16)) & 0xFFF00000) + px(8);
+    x = ((actor->x.fixed + (dx << 16)) & FIELD_CELL_MASK) + px(8);
+    z = ((actor->z.fixed + (dz << 16)) & FIELD_CELL_MASK) + px(8);
 
     actor->speedLimit = px(1);
     actor->acceleration = px(1) / 2;

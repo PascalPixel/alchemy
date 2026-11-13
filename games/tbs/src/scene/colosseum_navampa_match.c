@@ -872,7 +872,7 @@ static void ColosseumNavampaMatch_PassNorthWallOpening(void) {
   Actor_SetAttachedEffect(*actorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SelectAnimation(actor, ANIM_LEADER_RUN);
-  z = actor->z.fixed & 0xFFF00000;
+  z = actor->z.fixed & FIELD_CELL_MASK;
   FieldActor_SetMoveTargetFixed(actor, actor->x.fixed, actor->y.fixed,
                                 z + px(24));
   Actor_WaitForMove(actor);
@@ -903,7 +903,7 @@ static void ColosseumNavampaMatch_PassSouthWallOpening(void) {
   actor->acceleration = px(1);
   actor->speedLimit = px(2);
   Actor_SelectAnimation(actor, ANIM_LEADER_RUN);
-  z = actor->z.fixed & 0xFFF00000;
+  z = actor->z.fixed & FIELD_CELL_MASK;
   FieldActor_SetMoveTargetFixed(actor, actor->x.fixed, actor->y.fixed,
                                 z + px(12));
   Actor_WaitForMove(actor);

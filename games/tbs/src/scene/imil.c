@@ -1645,9 +1645,9 @@ static void Imil_RunIceSlide(void) {
 
     Event_Start();
 
-    probe.x = (subject->x.fixed & 0xfff00000) + px(8);
+    probe.x = (subject->x.fixed & FIELD_CELL_MASK) + px(8);
     probe.y = subject->y.fixed;
-    probe.z = (subject->z.fixed & 0xfff00000) + px(8);
+    probe.z = (subject->z.fixed & FIELD_CELL_MASK) + px(8);
     z = probe.z;
     x = probe.x;
     layer = &subject->layer;

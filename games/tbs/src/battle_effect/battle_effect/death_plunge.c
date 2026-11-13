@@ -55,7 +55,6 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   s32 point[3];
   struct ScreenPoint screen;
   s32 frame;
-  s32 percent;
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->args = args;
@@ -76,11 +75,12 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   second = GetBattleObjectSlotFar(work->args->targets[0]);
   user = first->actor;
   target = second->actor;
-  /* FAKEMATCH(temporary): percent holds 90; as 90 in the two lines below, 8 of
-   * 363 instructions differ in tbs-en. */
-  percent = 90;
-  x = user->x.fixed + percent * (target->x.fixed - user->x.fixed) / 100;
-  z = user->z.fixed + percent * (target->z.fixed - user->z.fixed) / 100;
+  {
+    s32 percent = 90;
+
+    x = user->x.fixed + percent * (target->x.fixed - user->x.fixed) / 100;
+    z = user->z.fixed + percent * (target->z.fixed - user->z.fixed) / 100;
+  }
   userHeight = BattleUnit_GetEffectHeightFar(work->args->user);
   targetHeight = BattleUnit_GetEffectHeightFar(work->args->targets[0]);
   Actor_StartIdleFar(user);

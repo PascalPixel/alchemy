@@ -153,7 +153,7 @@ s32 Equipment_GetUnleashRateBonus(struct Unit *unit) {
   for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
     if (unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
       item = Item_GetDirect(unit->inventory[inventorySlot]);
-      for (effectIndex = 0; effectIndex < 4; effectIndex++) {
+      for (effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS; effectIndex++) {
         if (item->effects[effectIndex].kind == EQUIP_EFFECT_ADD_UNLEASH_CHANCE)
           chanceBonus += item->effects[effectIndex].amount;
       }

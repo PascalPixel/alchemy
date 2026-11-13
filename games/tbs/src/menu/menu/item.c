@@ -2159,7 +2159,7 @@ void ItemMenu_DrawItemDetails(struct Window *window, s32 inventoryEntry) {
   if (def->type != ITEM_TYPE_NONE) {
     hasEffects = 0;
     if (def->primaryBonus == 0 && def->secondaryBonus == 0) {
-      for (i = 0; i < 4; i++) {
+      for (i = 0; i < EQUIP_EFFECT_SLOTS; i++) {
         if (def->effects[i].kind != 0 || def->useType == ITEM_USE_TEACHES) {
           hasEffects = 1;
           break;
@@ -2186,7 +2186,7 @@ void ItemMenu_DrawItemDetails(struct Window *window, s32 inventoryEntry) {
     }
   }
   // Each of its effects.
-  for (i = 0; i < 4; i++) {
+  for (i = 0; i < EQUIP_EFFECT_SLOTS; i++) {
     if (def->effects[i].kind == EQUIP_EFFECT_NONE)
       continue;
     amount = def->effects[i].amount;

@@ -223,7 +223,7 @@ void Unit_Calculate(s32 unitId) {
       do {
       } while (0);
       stats->def += stats->item->secondaryBonus;
-      for (effectIndex = 0; effectIndex < 4; effectIndex++) {
+      for (effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS; effectIndex++) {
         effectKind = stats->item->effects[effectIndex].kind;
         effectAmount = stats->item->effects[effectIndex].amount;
         stats->kind = effectKind;
@@ -310,17 +310,17 @@ void Unit_Calculate(s32 unitId) {
       }
     }
 
-    // The class's multipliers are in tenths: 10 keeps a stat as it is
+    // The class's multipliers are in tenths (STAT_SCALE_ONE keeps a stat)
     {
       struct ClassDefinition *classDefinition =
           Class_GetDefinition(unit->classId);
 
-      stats->hp = stats->hp * classDefinition->hp / 10;
-      stats->pp = stats->pp * classDefinition->pp / 10;
-      stats->atk = stats->atk * classDefinition->atk / 10;
-      stats->def = stats->def * classDefinition->def / 10;
-      stats->agi = stats->agi * classDefinition->agi / 10;
-      stats->luck = stats->luck * classDefinition->luck / 10;
+      stats->hp = stats->hp * classDefinition->hp / STAT_SCALE_ONE;
+      stats->pp = stats->pp * classDefinition->pp / STAT_SCALE_ONE;
+      stats->atk = stats->atk * classDefinition->atk / STAT_SCALE_ONE;
+      stats->def = stats->def * classDefinition->def / STAT_SCALE_ONE;
+      stats->agi = stats->agi * classDefinition->agi / STAT_SCALE_ONE;
+      stats->luck = stats->luck * classDefinition->luck / STAT_SCALE_ONE;
     }
 
     // Then the equipment's multiplying effects, EQUIP_EFFECT_SCALE_HP to
@@ -329,7 +329,7 @@ void Unit_Calculate(s32 unitId) {
       if (!(unit->inventory[index] & INVENTORY_EQUIPPED))
         continue;
       stats->item = Item_GetDirect(unit->inventory[index]);
-      for (effectIndex = 0; effectIndex < 4; effectIndex++) {
+      for (effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS; effectIndex++) {
         effectKind = stats->item->effects[effectIndex].kind;
         effectAmount = stats->item->effects[effectIndex].amount;
         stats->kind = effectKind;
@@ -339,28 +339,28 @@ void Unit_Calculate(s32 unitId) {
         // there.
         switch (effectKind) {
         case EQUIP_EFFECT_SCALE_HP - EQUIP_EFFECT_SCALE_HP:
-          stats->hp = stats->hp * stats->amount / 10;
+          stats->hp = stats->hp * stats->amount / STAT_SCALE_ONE;
           break;
         case EQUIP_EFFECT_SCALE_HP_REGEN - EQUIP_EFFECT_SCALE_HP:
-          stats->hpRegen = stats->hpRegen * stats->amount / 10;
+          stats->hpRegen = stats->hpRegen * stats->amount / STAT_SCALE_ONE;
           break;
         case EQUIP_EFFECT_SCALE_PP - EQUIP_EFFECT_SCALE_HP:
-          stats->pp = stats->pp * stats->amount / 10;
+          stats->pp = stats->pp * stats->amount / STAT_SCALE_ONE;
           break;
         case EQUIP_EFFECT_SCALE_PP_REGEN - EQUIP_EFFECT_SCALE_HP:
-          stats->ppRegen = stats->ppRegen * stats->amount / 10;
+          stats->ppRegen = stats->ppRegen * stats->amount / STAT_SCALE_ONE;
           break;
         case EQUIP_EFFECT_SCALE_ATTACK - EQUIP_EFFECT_SCALE_HP:
-          stats->atk = stats->atk * stats->amount / 10;
+          stats->atk = stats->atk * stats->amount / STAT_SCALE_ONE;
           break;
         case EQUIP_EFFECT_SCALE_DEFENSE - EQUIP_EFFECT_SCALE_HP:
-          stats->def = stats->def * stats->amount / 10;
+          stats->def = stats->def * stats->amount / STAT_SCALE_ONE;
           break;
         case EQUIP_EFFECT_SCALE_AGILITY - EQUIP_EFFECT_SCALE_HP:
-          stats->agi = stats->agi * stats->amount / 10;
+          stats->agi = stats->agi * stats->amount / STAT_SCALE_ONE;
           break;
         case EQUIP_EFFECT_SCALE_LUCK - EQUIP_EFFECT_SCALE_HP:
-          stats->luck = stats->luck * stats->amount / 10;
+          stats->luck = stats->luck * stats->amount / STAT_SCALE_ONE;
           break;
         }
       }
@@ -478,7 +478,7 @@ void GameFlag_RefreshLureCap(void) {
         s32 effectIndex;
 
         effect = Item_GetDirect(unit->inventory[inventorySlot])->effects;
-        for (effectIndex = 0; effectIndex < 4; effectIndex++) {
+        for (effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS; effectIndex++) {
           u8 effectKind;
 
           effectKind = effect->kind;

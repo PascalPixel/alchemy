@@ -3215,7 +3215,7 @@ static void Vale_TrailSparkles(struct Actor *updated) {
       struct Sprite *record = particle->sprite;
       s32 priorityFlags = ~12;
       priorityFlags &= ((u8 *)&record->image)[9];
-      priorityFlags |= 4;
+      priorityFlags |= ACTOR_PRIORITY_OVERHEAD;
       ((u8 *)&record->image)[9] = priorityFlags;
     }
   }

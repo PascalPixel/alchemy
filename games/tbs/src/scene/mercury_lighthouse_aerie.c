@@ -256,7 +256,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
     for (i = ACTOR_FIRST_PLATFORM; i < ACTOR_FIRST_PLATFORM + 6; i++) {
       Actor_SetSpritePriority(i, 1);
       Actor_Get(i)->motionFlags = 4;
-      Actor_Get(i)->priorityFlags |= 2;
+      Actor_Get(i)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       Actor_Get(i)->y.fixed = -(px(50) + px(1) / 2);
     }
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&

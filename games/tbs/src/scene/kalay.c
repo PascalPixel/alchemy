@@ -2507,7 +2507,7 @@ static void Kalay_FreezePuddle(void) {
   if (effect != 0) {
     Actor_SetSpriteFlags(effect, 0);
     effect->y.fixed -= px(32);
-    effect->priorityFlags = 2;
+    effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
   GameFlag_Set(FLAG_TUNNEL_PUDDLE_FROZEN);
 }

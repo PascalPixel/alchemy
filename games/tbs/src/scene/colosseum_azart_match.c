@@ -749,7 +749,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
   actor = Actor_Get(ACTOR_ROCK_A);
   hit = MapGrid_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
   if (actor->y.fixed == 0 && hit == 0) {
-    actor->priorityFlags = 2;
+    actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     actor->motionFlags = hit;
     MapGrid_CopyCellAttributes(14, 13, 1, 1, actor->x.fixed >> 20,
                                actor->z.fixed >> 20);
@@ -761,7 +761,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
   actor = Actor_Get(ACTOR_ROCK_B);
   actor->x.fixed = (x << 20) + px(8);
   actor->motionFlags = 0;
-  actor->priorityFlags = 2;
+  actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(14, 13, 1, 1, x, 12);
   Task_AddFrame(ColosseumAzartMatch_UpdateBrokenBridge, TASK_PASS_FRAME);
   actor = Actor_Get(ACTOR_GROWTH_PLANT);
@@ -777,12 +777,12 @@ s32 ColosseumAzartMatch_Initialize(void) {
   actor = Actor_Get(ACTOR_LOG_NORTH_SOUTH);
   col = actor->z.fixed >> 20;
   actor->motionFlags = zero;
-  actor->priorityFlags = 2;
+  actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(64, 24, 3, 1, 64, col);
   actor = Actor_Get(ACTOR_LOG_EAST_WEST);
   col = actor->x.fixed >> 20;
   actor->motionFlags = zero;
-  actor->priorityFlags = 2;
+  actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(63, 25, 1, 3, col, 9);
   // With the pipeworks' pillar pushed, water pours from the pipe above it
   // down into the pool at the wall's foot.
@@ -802,7 +802,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
   } else {
     Actor_SelectAnimation(actor, 2);
   }
-  Actor_Get(ACTOR_PIPE_EAST)->priorityFlags = 2;
+  Actor_Get(ACTOR_PIPE_EAST)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   Colosso_ShowItemIcon(ACTOR_PRIZE_A, ITEM_IRON_SHIELD);
   Colosso_ShowItemIcon(ACTOR_PRIZE_B, ITEM_PADDED_GLOVES);
   // Select competition, support, explanation, or post-battle arrival.

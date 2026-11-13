@@ -455,7 +455,7 @@ s32 VenusLighthouseAerie_Initialize(void) {
     Actor_SetSpriteFlags(Actor_Get(platformId), clear);
     Actor_SetSpritePriority(platformId, 1);
     platform->motionFlags = ACTOR_FLOATS;
-    platform->priorityFlags |= 2;
+    platform->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     platform->y.fixed = px(1) / 2;
     platformId++;
   } while (platformId <= ACTOR_LAST_PLATFORM);

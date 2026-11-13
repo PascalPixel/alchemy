@@ -2738,7 +2738,7 @@ static void VenusLighthouse_LayDownHurtActor(s32 actorId) {
   Actor_SelectAnimation(actor, ANIM_HURT_LYING);
   Actor_SetSpritePriority(actorId, 3);
   {
-    s32 priorityFlags = 2;
+    s32 priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     priorityFlags |= actor->priorityFlags;
     actor->priorityFlags = priorityFlags;
   }

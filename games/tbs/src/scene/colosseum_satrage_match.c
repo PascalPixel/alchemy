@@ -1012,9 +1012,9 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     Actor_SelectAnimation(actor, 4);
     actor->motionFlags = 0;
     actor->y.fixed = 0;
-    actor->priorityFlags = 2;
+    actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
-  Actor_Get(ACTOR_FORCE_TARGET)->priorityFlags = 2;
+  Actor_Get(ACTOR_FORCE_TARGET)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   if (GameFlag_Get(FLAG_OBSTACLE_KNOCKED_DOWN)) {
     actor = Actor_Get(ACTOR_FALLING_LOG);
     actor->x.fixed = px(336);
@@ -1027,7 +1027,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     Actor_SelectAnimation(actor, FALLING_LOG_ANIMATION_STANDING);
     actor->y.fixed = px(16);
   }
-  Actor_Get(ACTOR_WALL_PILLAR)->priorityFlags = 2;
+  Actor_Get(ACTOR_WALL_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   zero = 0;
   // With the wall pillar moved, the cell it stood on takes the ground of the
   // cell south of it. The map stores the two alike, open ground, so the copy
@@ -1041,25 +1041,25 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   }
   if (GameFlag_Get(FLAG_WEST_TARGET_FROZEN)) {
     Actor_Get(ACTOR_PUDDLE_WEST)->motionFlags = zero;
-    Actor_Get(ACTOR_PUDDLE_WEST)->priorityFlags = 2;
+    Actor_Get(ACTOR_PUDDLE_WEST)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetAnimation(ACTOR_PUDDLE_WEST, PUDDLE_ANIMATION_PILLAR);
     MapGrid_CopyCellAttributes(46, 17, 1, 1, 44, 17);
   }
   if (GameFlag_Get(FLAG_EAST_TARGET_FROZEN)) {
     Actor_Get(ACTOR_PUDDLE_EAST)->motionFlags = zero;
-    Actor_Get(ACTOR_PUDDLE_EAST)->priorityFlags = 2;
+    Actor_Get(ACTOR_PUDDLE_EAST)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetAnimation(ACTOR_PUDDLE_EAST, PUDDLE_ANIMATION_PILLAR);
     MapGrid_CopyCellAttributes(46, 17, 1, 1, 50, 17);
   }
   actor = Actor_Get(ACTOR_RIDING_LOG_NORTH);
   column = actor->x.fixed >> 20;
   actor->motionFlags = zero;
-  actor->priorityFlags = 2;
+  actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(52, 28, 1, 3, column, 10);
   actor = Actor_Get(ACTOR_RIDING_LOG_SOUTH);
   column = actor->x.fixed >> 20;
   actor->motionFlags = zero;
-  actor->priorityFlags = 2;
+  actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(52, 28, 1, 3, column, 13);
 
   // Each Mini-Maze pillar returns to the column its area temp flag byte
@@ -1071,7 +1071,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   actor = Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR);
   actor->x.fixed = (x << 20) + px(8);
   actor->motionFlags = zero;
-  actor->priorityFlags = 2;
+  actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(71, 16, 1, 1, x, 16);
   x = FieldGameFlag_GetByte(FLAG_MINI_MAZE_SECOND_PILLAR_COLUMN);
   if (x == 0) {
@@ -1080,7 +1080,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   actor = Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR + 1);
   actor->x.fixed = (x << 20) + px(8);
   actor->motionFlags = zero;
-  actor->priorityFlags = 2;
+  actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(71, 16, 1, 1, x, 16);
   x = FieldGameFlag_GetByte(FLAG_MINI_MAZE_THIRD_PILLAR_COLUMN);
   if (x == 0) {
@@ -1089,7 +1089,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   actor = Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR + 2);
   actor->x.fixed = (x << 20) + px(8);
   actor->motionFlags = zero;
-  actor->priorityFlags = 2;
+  actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(71, 16, 1, 1, x, 16);
 
   ColosseumSatrageMatch_UpdateRollingLogCollision();
@@ -1102,7 +1102,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
          liftId <= ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT;
          liftId++, columnOffset += 2) {
       actor = Actor_Get(liftId);
-      actor->priorityFlags = 2;
+      actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       Actor_SelectAnimation(actor, 4);
       MapGrid_CopyCellAttributes(56, 13, 1, 1, columnOffset, row);
     }
@@ -1112,7 +1112,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     for (liftId = ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT;
          liftId <= ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT; liftId++) {
       actor = Actor_Get(liftId);
-      actor->priorityFlags = 2;
+      actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       Actor_SelectAnimation(actor, 4);
       actor->speedLimit = px(1) / 2;
       actor->acceleration = px(1) / 5;

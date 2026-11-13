@@ -1880,7 +1880,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent) {
 
     risingEffect->sprite->image.priority = wiseOne->sprite->image.priority;
     risingEffect->update = FieldEffect_AnimateVerticalPositive;
-    risingEffect->priorityFlags = 2;
+    risingEffect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
 }
 

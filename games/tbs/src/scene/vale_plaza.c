@@ -1162,7 +1162,8 @@ static void ValePlaza_SentToAidElders(void) {
     Actor_SetScript(ACTOR_STORM_FIRST_AIDE, gValePlaza_AideRunActions);
     Event_Wait(20);
 #if TBS_PATCH_4
-    Actor_Get(ACTOR_STORM_SECOND_AIDE)->priorityFlags |= 1;
+    Actor_Get(ACTOR_STORM_SECOND_AIDE)->priorityFlags |=
+        ACTOR_PRIORITY_AUTOMATIC;
 #endif
     Actor_SetScript(ACTOR_STORM_SECOND_AIDE, gValePlaza_AideRunActions);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);

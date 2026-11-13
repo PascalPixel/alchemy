@@ -612,7 +612,7 @@ static void ColosseumNavampaMatch_SettleStones(void) {
   for (slot = ACTOR_LOG_AREA_STONE_A; slot <= ACTOR_LOG_AREA_STONE_C; slot++) {
     actor = Actor_Get(slot);
     if (MapGrid_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed) == 0) {
-      actor->priorityFlags = 2;
+      actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       actor->motionFlags = 0;
       x = actor->x.fixed >> 20;
       z = actor->z.fixed >> 20;

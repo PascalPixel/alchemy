@@ -3013,7 +3013,7 @@ static void MercuryLighthouse_SpawnRipple(struct Actor *source) {
 
   effect->motionFlags = 0;
   effect->layer = 1;
-  effect->priorityFlags = 2;
+  effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 
   if (sprite != 0) {
     Sprite_StartAnimation(sprite, 2);

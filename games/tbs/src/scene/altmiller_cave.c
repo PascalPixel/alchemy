@@ -542,7 +542,7 @@ static void AltmillerCave_UpdateMovedObstacle(void) {
   if (actor->x.fixed >> 20 == 30 && actor->z.fixed >> 20 == 20) {
     actor->motionFlags = 2;
     actor->groundHeight = 0;
-    actor->priorityFlags = 2;
+    actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(30, 20, 1, 1, 32, 20);
 #if TBS_PATCH_1
     GameFlag_Set(FLAG_ALTMILLER_CAVE_PILLAR_IN_PLACE);

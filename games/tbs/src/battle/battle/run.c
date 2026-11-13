@@ -445,8 +445,9 @@ s32 BattleEnemy_List(s16 *unitIds) {
 /// to pick targets.
 s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   u16 members[8];
-  s32 enemyCapacity = ENEMY_BATTLE_SIZE;
+  u16 *output = unitIds;
   s32 count = 0;
+  s32 enemyCapacity = ENEMY_BATTLE_SIZE;
   s32 unitId;
   s32 i;
 
@@ -458,9 +459,13 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
     s32 memberCount = BattleParty_PrepareMembers(members);
 
     for (i = 0; i < memberCount; i++) {
-      if (Unit_GetFar(members[i])->hp > 0) {
-        if (unitIds != NULL)
-          unitIds[count] = members[i];
+      s16 hp;
+
+      unitId = members[i];
+      hp = Unit_GetFar(unitId)->hp;
+      if (hp > 0) {
+        if (output != NULL)
+          *output++ = unitId;
         count++;
       }
     }
@@ -471,14 +476,14 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
       struct Unit *unit = Unit_GetFar(unitId);
 
       if (unit->side != BATTLE_SIDE_NONE && unit->hp > 0) {
-        if (unitIds != NULL)
-          unitIds[count] = unitId;
+        if (output != NULL)
+          *output++ = unitId;
         count++;
       }
     }
   }
-  if (unitIds != NULL)
-    unitIds[count] = BATTLE_UNIT_LIST_END;
+  if (output != NULL)
+    *output = BATTLE_UNIT_LIST_END;
   return count;
 }
 

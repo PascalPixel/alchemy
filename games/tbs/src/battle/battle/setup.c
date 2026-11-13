@@ -309,7 +309,6 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
   u16 partyMembers[10];
   s32 partySize;
   s32 element;
-  s32 summonId;
   u32 availableMask;
 
   partySize = BattleParty_PrepareMembers(partyMembers);
@@ -329,21 +328,29 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
     }
   }
 
-  // The inner loop stops at the first element whose requirement is not met.
-  for (summonId = 0; summonId < SUMMON_COUNT; summonId++) {
-    const struct SummonDefinition *summon = SummonDefinition_Get(summonId);
+  // Then element counts the summons; the inner loop stops at the first element
+  // whose requirement is not met.
+  for (element = 0; element < SUMMON_COUNT; element++) {
+    const struct SummonDefinition *summon = SummonDefinition_Get(element);
     s32 elementsMet;
 
     if (summon != 0) {
       const u8 *required = summon->djinnRequired;
 
-      for (elementsMet = 0; elementsMet < ELEMENT_COUNT; elementsMet++) {
-        if (totals[elementsMet] < required[elementsMet])
-          break;
+      elementsMet = 0;
+      if (totals[0] >= required[0]) {
+        const u8 *total = totals;
+
+        do {
+          if (++elementsMet >= ELEMENT_COUNT)
+            break;
+          total++;
+          required++;
+        } while (*total >= *required);
       }
 
       if (elementsMet == ELEMENT_COUNT)
-        availableMask |= 1u << summonId;
+        availableMask |= 1u << element;
     }
   }
 

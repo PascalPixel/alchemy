@@ -27,17 +27,20 @@ static const u16 sSelectorTileOffsets[30] = {
 /// through SHOP.S, by the item menu's quantity bar, which draws its bar in
 /// four colours this way.
 void QuantityBar_Fill(s32 itemCount, s32 paletteSelector, u8 *tileBuffer) {
-  // One byte holds two 4-bit pixels, the left one in the low nibble.
-  u8 pixels = (paletteSelector << 4) + 1;
   s32 segment;
-  s32 row;
 
+  // One byte holds two 4-bit pixels, the left one in the low nibble.
+  paletteSelector = (paletteSelector << 4) + 1;
   for (segment = 0; segment < itemCount; segment++) {
     // A tile row is 4 bytes; the segment's byte in rows 1 to 6.
     u8 *column = tileBuffer + sSelectorTileOffsets[segment];
 
-    for (row = 1; row <= 6; row++)
-      column[row * 4] = pixels;
+    column[4] = paletteSelector;
+    column[8] = paletteSelector;
+    column[12] = paletteSelector;
+    column[16] = paletteSelector;
+    column[20] = paletteSelector;
+    column[24] = paletteSelector;
   }
 }
 

@@ -306,24 +306,54 @@ s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
   s32 attempts = 1;
   s32 score;
   s32 attempt;
+  s8 *poison;
+  u8 *delusion;
+  u8 *confusion;
+  u8 *charm;
+  u8 *stun;
+  u8 *sleep;
 
-  if (Battle_IsReviveEffect(effectId) != 0 && unit->hp != 0)
+  if (Battle_IsReviveEffect(effectId) != 0 && unit->hp != 0) {
     return 0;
-  if (effectId == ABILITY_EFFECT_CURE_POISON && unit->poison == 0)
+  }
+
+  if (effectId == ABILITY_EFFECT_CURE_POISON && unit->poison == 0) {
     return 0;
+  }
+
   // Restore needs a delusion, confusion or charm, or failing those a stun,
-  // sleep, seal or curse.
-  if (effectId == ABILITY_EFFECT_RESTORE && unit->delusion == 0 &&
-      unit->confusion == 0 && unit->charm == 0 && unit->stun == 0 &&
-      unit->sleep == 0 && unit->psySeal == 0 && unit->grimReaper == 0)
+  // sleep, seal or curse; the order of these tests is the ROM's.
+  goto action4_check;
+action4_tail:
+  if (unit->stun == 0 && unit->sleep == 0 && *(u8 *)&unit->psySeal == 0 &&
+      unit->grimReaper == 0) {
     return 0;
-  if (effectId == ABILITY_EFFECT_CURE_ALL && unit->poison == 0 &&
-      unit->delusion == 0 && unit->confusion == 0 && unit->charm == 0 &&
-      unit->stun == 0 && unit->sleep == 0 && unit->psySeal == 0 &&
-      unit->grimReaper == 0 && unit->haunt == 0)
+  }
+  goto action4_done;
+action4_check:
+  if (effectId == ABILITY_EFFECT_RESTORE) {
+    if (unit->delusion == 0 && *(u8 *)&unit->confusion == 0 &&
+        unit->charm == 0) {
+      goto action4_tail;
+    }
+  }
+
+action4_done:
+  poison = &unit->poison;
+  delusion = &unit->delusion;
+  confusion = (u8 *)&unit->confusion;
+  charm = &unit->charm;
+  stun = &unit->stun;
+  sleep = &unit->sleep;
+  if (effectId == ABILITY_EFFECT_CURE_ALL && *poison == 0 && *delusion == 0 &&
+      *confusion == 0 && *charm == 0 && *stun == 0 && *sleep == 0 &&
+      unit->psySeal == 0 && unit->grimReaper == 0 && *(u8 *)&unit->haunt == 0) {
     return 0;
-  if (effectId == ABILITY_EFFECT_CURSE && unit->grimReaper == 1)
+  }
+
+  if (effectId == ABILITY_EFFECT_CURSE && unit->grimReaper == 1) {
     return 0;
+  }
 
   // A positive base rate is adjusted by the element levels, the target's luck
   // and its weaknesses; 0 or a negative one is a fixed chance.
@@ -334,17 +364,21 @@ s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
                      (unit->luck >> 1);
 
     score += difference * 3;
-    if (BattleAbility_IsWeakToEffect(unit, effectId) != 0)
+    if (BattleAbility_IsWeakToEffect(unit, effectId) != 0) {
       score += 25;
+    }
   } else {
     score = -score;
   }
 
-  if (effectId == ABILITY_EFFECT_SEAL_2_TURNS)
+  if (effectId == ABILITY_EFFECT_SEAL_2_TURNS) {
     attempts = 3;
+  }
+
   for (attempt = 0; attempt < attempts; attempt++) {
-    if (score * successScale / 100 >= (s32)Battle_RandomPercent())
+    if (score * successScale / 100 >= (s32)Battle_RandomPercent()) {
       return 1;
+    }
   }
   return 0;
 }

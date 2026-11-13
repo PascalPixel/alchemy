@@ -39,11 +39,13 @@ struct Formation {
   u8 maximumCounts[FORMATION_MEMBERS];
 };
 
-/// The 380 formations, by formation id (battle/formations.c).
-extern const struct Formation gFormations[];
+/// The rows of gFormations.
+#define FORMATION_COUNT 380
+/// The formations, by formation id (battle/formations.c).
+extern struct Formation gFormations[FORMATION_COUNT];
 
 /// The 20 enemies whose defeated flags a monster battle clears before it picks
 /// a formation (battle/formations.c).
-extern const u16 gBattleFormation_LevelMatchedEnemies[];
+extern u16 gBattleFormation_LevelMatchedEnemies[20];
 
 #endif

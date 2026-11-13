@@ -36,10 +36,10 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
     // element follow them in the unit.
     source += (u8 *)&((struct Unit *)0)->djinnSetCounts -
               (u8 *)&((struct Unit *)0)->djinnHeld;
-    for (i = 3; i >= 0; i--) {
-      u32 value = *source;
-      source++;
-      *cursor++ = value * 10;
+    for (i = 0; i < ELEMENT_COUNT; i++) {
+      u32 count = *source++;
+
+      *cursor++ = count * 10;
     }
 
     if (record <= PIERS) {
@@ -97,9 +97,12 @@ Unit_CalculateBaseElements(s32 unitId, struct BattleElementStats *destination) {
 
     if (preset > 43)
       preset = 0;
-    for (i = 0; i < ELEMENT_COUNT; i++)
+    // The copy returns from inside its loop, as the last element is written.
+    for (i = 0;;) {
       destination[i] = gEnemy_ElementPresetTable[preset].stats[i];
-    RETURN_UNREAD(preset);
+      if (++i >= ELEMENT_COUNT)
+        RETURN_UNREAD(preset);
+    }
   }
 
   // Element levels in tenths: the whole level picks the table's row, the

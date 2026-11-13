@@ -4,8 +4,8 @@
 
 #include "../battle_internal.h"
 
-/// The rows of gFormations.
-#define FORMATION_COUNT 380
+/// The entries of an array whose size is declared.
+#define ARRAY_COUNT(array) (sizeof(array) / sizeof((array)[0]))
 
 // How many name letters tell the enemies of one class apart: 26 in Japanese,
 // 9 in the localizations.
@@ -82,8 +82,6 @@ struct FormationCandidate {
 #define FORMATION_POOL_SIZE 32
 /// How far above the party's level a monster battle's formation may be.
 #define FORMATION_LEVEL_MARGIN 3
-/// The entries of gBattleFormation_LevelMatchedEnemies.
-#define LEVEL_MATCHED_ENEMY_COUNT 20
 
 /// A copy of a unit's base stats, from baseHp to its element stats, kept
 /// while its level is adjusted: BattleEnemy_AdjustLevel takes it from the
@@ -116,18 +114,25 @@ struct BattleBaseStats {
 /// gBattleFormation_LevelMatchedEnemies, which excludes those above level 3
 /// unless FLAG_MONSTER_BATTLE_ANY_ENEMY bypasses the defeated-enemy check.
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
+  s32 matchCount = 0;
   struct FormationCandidate *pool =
       Heap_AllocEwram(FORMATION_POOL_SIZE * sizeof *pool);
   u16 party[8];
-  s32 partySize = BattleParty_PrepareMembers(party);
   s32 levelTotal = 0;
-  s32 matchCount = 0;
+  s32 partySize = BattleParty_PrepareMembers(party);
+  s32 i;
+  s32 entry;
   s32 targetLevel;
   s32 result;
-  s32 i;
 
-  for (i = 0; i < partySize; i++)
-    levelTotal += Unit_GetFar(party[i])->level;
+  if (partySize > 0) {
+    const u16 *member = party;
+
+    i = partySize;
+    do {
+      levelTotal += Unit_GetFar(*member++)->level;
+    } while (--i != 0);
+  }
 
   // The flag byte is -1 once a series has ended, which takes a level off.
   targetLevel = levelTotal / partySize;
@@ -143,7 +148,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   // Forget defeated classes that the monster battles normally exclude;
   // FLAG_MONSTER_BATTLE_ANY_ENEMY would still admit them. The definition
   // read is unused.
-  for (i = 0; i < LEVEL_MATCHED_ENEMY_COUNT; i++) {
+  for (i = 0; i < ARRAY_COUNT(gBattleFormation_LevelMatchedEnemies); i++) {
     Enemy_GetDefinitionFar(gBattleFormation_LevelMatchedEnemies[i]);
     GameFlag_ClearFar(
         ENEMY_DEFEATED_FLAG(gBattleFormation_LevelMatchedEnemies[i]));
@@ -151,13 +156,12 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
 
   // Each qualifying formation replaces the pool's lowest entry; empty
   // entries score -1, so the pool fills first.
-  for (i = 0; i < FORMATION_COUNT; i++) {
+  for (i = 0; i < ARRAY_COUNT(gFormations); i++) {
     s32 score = BattleFormation_AverageLevel(i);
 
     if (score >= 0 && score <= targetLevel + FORMATION_LEVEL_MARGIN) {
       s32 lowestIndex = -1;
       s32 lowestLevel = 999;
-      s32 entry;
 
       for (entry = 0; entry < FORMATION_POOL_SIZE; entry++) {
         if (pool[entry].score < lowestLevel) {

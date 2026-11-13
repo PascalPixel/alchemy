@@ -88,7 +88,7 @@ s32 DebugParameterSet_Load(s32 set) {
       member->djinnSet[i] = 0;
     }
     for (i = 0; i < 32; i++)
-      member->psynergy[i].encodedAction = 0;
+      *&member->psynergy[i].encodedAction = 0;
     for (i = 0; i < 2; i++) {
       if (gDebug_ParameterSets[row].abilities[i] != 0)
         Unit_LearnPsynergyFar(unitId, gDebug_ParameterSets[row].abilities[i]);

@@ -23,6 +23,6 @@ struct DebugParameterSetRow {
 #define DEBUG_PARAMETER_SET_END -1
 
 /// The debug menu's parameter sets (debug_parameter_sets.c).
-extern const struct DebugParameterSetRow gDebug_ParameterSets[];
+extern struct DebugParameterSetRow gDebug_ParameterSets[];
 
 #endif

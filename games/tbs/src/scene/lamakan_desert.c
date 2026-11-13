@@ -1032,26 +1032,30 @@ static UNUSED void LamakanDesert_UnusedWalkManticore(void) {
 /// FLAG_FIELD_HANDLING_REQUESTS is set, its bar shrinks as the heat
 /// grows, and its colors turn redder (flickering greener past 60 of 120).
 static void HeatGauge_Draw(void) {
-  struct ScreenTransitionState *transition;
-  struct MenuSprite *sprite;
   u8 *buffer;
-  u16 *color;
-  u16 *edge;
+  s32 tile;
+  s16 *colors;
+  s16 *color;
+  struct ScreenTransitionState *transition;
   u32 *pixels;
-  u32 *source;
+  u32 *word;
   u8 *frame;
   u8 *bar;
-  s32 tile;
-  s32 level;
+  struct MenuSprite *sprite;
+  s32 slide;
+  u32 i;
+  u32 *palette;
   u32 red;
   u32 green;
   u32 blue;
+  s32 level;
   u32 attributes;
-  u32 i;
   s32 y;
+  u32 offset;
 
-  tile = gVramCacheEntries[(s16)gHeatGauge_VramSlot].offset >> 5;
-  if ((s16)gHeatGauge_Held != 0) {
+  // The gauge's two halfwords are read signed.
+  tile = gVramCacheEntries[*(s16 *)&gHeatGauge_VramSlot].offset >> 5;
+  if (*(s16 *)&gHeatGauge_Held != 0) {
     gHeatGaugeSlide = 2;
   } else if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) != 0) {
     if (gHeatGaugeSlide > 0) {
@@ -1063,17 +1067,21 @@ static void HeatGauge_Draw(void) {
               (DMA_ENABLE | DMA_16BIT) << 16 | 16, REG_DMA3);
     }
   }
-  if (gHeatGaugeSlide == 0) {
-    VramCache_ReleaseVram((s16)gHeatGauge_VramSlot);
+  slide = gHeatGaugeSlide;
+  if (slide == 0) {
+    VramCache_ReleaseVram(*(s16 *)&gHeatGauge_VramSlot);
     return;
   }
 
-  // Window 1 covers the gauge's columns on lines 8 to 151.
+  // Window 1's left edge follows the gauge on lines 8 to 151.
   transition = *Ram_DisplayWork;
   if (transition != NULL) {
-    edge = &transition->pages[transition->page][3 + 2 * 8];
+    u16 *edge = transition->pages[transition->page];
+    s32 left = (s16)(slide << 3);
+
+    edge += 3 + 2 * 8;
     for (i = 0; i < 144; i++) {
-      *edge = (s16)(gHeatGaugeSlide * 8);
+      *edge = left;
       edge += 2;
     }
   }
@@ -1083,14 +1091,17 @@ static void HeatGauge_Draw(void) {
   buffer = Heap_Alloc(2304);
   Dma_Set(gHeatGauge_Palette, buffer, (DMA_ENABLE | DMA_16BIT) << 16 | 16,
           REG_DMA3);
-  color = (u16 *)buffer + 6;
+  colors = (s16 *)buffer + 6;
+  color = colors;
   for (i = 6; i < 12; i++) {
-    red = *color & 31;
-    green = (*color >> 5) & 31;
-    blue = (*color >> 10) & 31;
+    u16 value = *color;
+
+    red = value & 31;
+    green = (value >> 5) & 31;
+    blue = ((value >> 10) & 31) - 20;
     level = gHeatGaugeLevel;
     red += level / 3;
-    blue -= level / 6;
+    blue = blue - level / 6 + 20;
     if (level > 60 && (gFrameCount & 1)) {
       green += level * 64 / 120 - 32;
     }
@@ -1105,10 +1116,11 @@ static void HeatGauge_Draw(void) {
     }
     *color++ = RGB(red, green, blue);
   }
-  source = (u32 *)((u16 *)buffer + 6);
-  IoWriteQueue_Store32((u32)&OBJ_PLTT_COLOR(14, 6), source[0]);
-  IoWriteQueue_Store32((u32)&OBJ_PLTT_COLOR(14, 8), source[1]);
-  IoWriteQueue_Store32((u32)&OBJ_PLTT_COLOR(14, 10), source[2]);
+  palette = (u32 *)&OBJ_PLTT_COLOR(14, 6);
+  word = (u32 *)(buffer + 6 * sizeof(u16));
+  IoWriteQueue_Store32((u32)palette++, *word++);
+  IoWriteQueue_Store32((u32)palette++, *word++);
+  IoWriteQueue_Store32((u32)palette++, *word++);
 
   gHeatGaugeLevel =
       gMainRoutineWork.hazardSteps * 120 / gMainRoutineWork.hazardLimit;
@@ -1128,11 +1140,15 @@ static void HeatGauge_Draw(void) {
   Dma_Set(gHeatGauge_TileBuffer, buffer, DMA_COPY_WORDS(576), REG_DMA3);
   if (gHeatGaugeFlash <= 118) {
     pixels = (u32 *)buffer + 20;
-    for (i = 12; i < 128 - gHeatGaugeLevel; i++) {
-      pixels[8] = 0xeeeeeeee;
-      *pixels++ = 0xeeeeeeee;
-      if (i % 8 == 7) {
-        pixels += 8;
+    {
+      u32 fill = 0xeeeeeeee;
+
+      for (i = 12; i < 128 - gHeatGaugeLevel; i++) {
+        pixels[8] = fill;
+        *pixels++ = fill;
+        if ((i & 7) == 7) {
+          pixels += 8;
+        }
       }
     }
     pixels[0] = ((u32 *)buffer)[0];
@@ -1142,19 +1158,20 @@ static void HeatGauge_Draw(void) {
   bar = buffer;
   frame = buffer + 1152;
   for (i = 0; i < 1152; i++) {
-    if (*frame != 0) {
-      *bar = *frame;
+    u8 pixel = *frame++;
+
+    if (pixel != 0) {
+      *bar = pixel;
     }
-    frame++;
     bar++;
   }
-  VramCache_Load((s16)gHeatGauge_VramSlot, 1152, buffer);
+  VramCache_Load(*(s16 *)&gHeatGauge_VramSlot, 1152, buffer);
 
   // Four 16x32 sprites down the screen's left edge and the 16x16 cap at the
   // gauge's foot.
   attributes = OBJ_SIZE_16X32;
   sprite = gHeatGauge_Sprites;
-  for (i = 0, y = 8; i < 5; i++, y += 32) {
+  for (i = 0, offset = 0, y = 8; i < 5; i++) {
     u32 x = (gHeatGaugeSlide * 8 - 16) & 0x1ff;
 
     if (i == 4) {
@@ -1163,9 +1180,11 @@ static void HeatGauge_Draw(void) {
     sprite->next = NULL;
     sprite->oam.word.attr01 = (x << 16) | y | attributes;
     sprite->oam.word.attr23 = tile | OBJ_PRIORITY(1) | OBJ_PALETTE(14);
-    Oam_AddSpriteAtDepth(sprite, 255);
+    Oam_AddSpriteAtDepth(((u8 *)gHeatGauge_Sprites + offset), 255);
     sprite++;
     tile += 8;
+    offset += sizeof(*sprite);
+    y += 32;
   }
   Heap_Release(buffer);
 }

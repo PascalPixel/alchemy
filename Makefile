@@ -1,5 +1,3 @@
-	new=$(@:.stamp=.ld).$$$$.new; $(CPP) $(LD_CPPFLAGS) -DOVERLAY=0x$* $< $$new && { cmp -s $$new $(@:.stamp=.ld) && rm $$new || mv $$new $(@:.stamp=.ld); }
-	new=$(@:.stamp=.ld).$$$$.new; $(CPP) $(LD_CPPFLAGS) $< $$new && { cmp -s $$new $(@:.stamp=.ld) && rm $$new || mv $$new $(@:.stamp=.ld); }
 # Golden Sun: The Broken Seal ☀️ (tbs) and The Lost Age ⚓️ (tla), in six
 # languages each: ja en de es fr it. `make tbs-en` builds one edition into
 # out/tbs-en/tbs-en.gba; `make compare-tbs-en` also checks it against

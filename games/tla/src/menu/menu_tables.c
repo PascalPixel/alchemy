@@ -1,5 +1,5 @@
-#include "menu.h"
-#include "field.h"
+#include "menu/menu.h"
+#include "field/field.h"
 #include "edition.h"
 #include "types.h"
 

@@ -8,7 +8,7 @@
 
 #include "types.h"
 #include "actor.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 
@@ -35,7 +35,7 @@ s32 Func_0200033c(s32 a0) {
   return 0;
 }
 
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 
 extern u8 gMapCellBuffer[];
 
@@ -94,12 +94,12 @@ s32 Func_02000384(u32 layer, s32 x, s32 y, s32 value) {
 // the mark.
 #include "map.h"
 #include "actor.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
 #include "module/system/system.h"
 #include "module/tla.h"
-#include "resource.h"
+#include "graphics/resource.h"
 #include "text/msg_ids.h"
 
 void Actor_PlaceMovedBlock(s32 id);
@@ -130,13 +130,13 @@ void Func_02000468(struct Unk_02000468 *unk) {
   }
 }
 
-#include "battle.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -305,7 +305,7 @@ void Func_02000830(void) {
 }
 
 #include "field_event.h"
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
@@ -771,7 +771,7 @@ fade:
   Event_End();
 }
 
-#include "input.h"
+#include "system/input.h"
 
 void Func_02001560(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);

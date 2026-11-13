@@ -3,7 +3,7 @@
 // Part of field_sequence.c.
 
 #include "../event_commands_internal.h"
-#include "frame.h"
+#include "system/frame.h"
 #include "module/field/event_commands.h"
 #include "module/field/object.h"
 

@@ -3,20 +3,20 @@
 /// tosses coins or Lucky Medals into it as in Tolbi's spring game, past the
 /// moving obstacles, for coins or for items.
 
-#include "battle.h"
-#include "io_write.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "system/io_write.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "ram_buffer.h"
-#include "io_reg.h"
-#include "event_inline.h"
+#include "system/ram_buffer.h"
+#include "system/io_reg.h"
+#include "field/event_inline.h"
 #include "event_work.h"
 #include "module/field/field.h"
 #include "module/game/game.h"
@@ -54,8 +54,8 @@ s32 Class_GetSeries();
 #include "module/tla.h"
 #include "module/window/window.h"
 #include "text/msg_ids.h"
-#include "text_render.h"
-#include "uiflow.h"
+#include "graphics/text_render.h"
+#include "graphics/uiflow.h"
 
 extern struct SpringTossMotion gLemuriaSpring_Toss;
 extern struct SpringObstacle gLemuriaSpring_Obstacles[];
@@ -135,7 +135,7 @@ void LemuriaSpring_TossCoin(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 
 void LemuriaSpring_InitializeTossSimulation(void);
 
@@ -182,7 +182,7 @@ s32 Scene_Initialize(void) {
 #include "text/msg_ids.h"
 #include "version.h"
 #include "edition.h"
-#include "input.h"
+#include "system/input.h"
 #include "actor.h"
 
 s32 Scene_PrepareMap(void) { return 0; }
@@ -594,8 +594,8 @@ void LemuriaSpring_SetSpriteStorageKind(s32 a0, s32 a1) {
   }
 }
 
-#include "iwram_call.h"
-#include "vector3.h"
+#include "system/iwram_call.h"
+#include "system/vector3.h"
 
 void LemuriaSpring_UpdateTossSimulation(void) {
   struct SpringTossMotion *toss;
@@ -981,7 +981,7 @@ void LemuriaSpring_UpdateTossSimulation(void) {
 #undef TOSS_WINDOW_WIDTH
 #undef WEIGHT
 
-#include "task.h"
+#include "system/task.h"
 
 /* VIEW(ride): variable gLemuriaSpring_Toss as extern struct SpringRide
  * gLemuriaSpring_Toss; lemuria_spring has extern struct SpringTossMotion

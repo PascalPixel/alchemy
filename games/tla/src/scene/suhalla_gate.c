@@ -4,11 +4,11 @@
 /// Punch Ant in the Gateway Cave (Room3) on the way to Idejima.
 
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_tables.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 extern u32 gSceneExits[];
 
@@ -25,7 +25,7 @@ void Event_WaitTransitionFrames(void);
 extern u8 MsgMyThatWas[];
 extern u8 MsgNotThatWay[];
 #include "types.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "text/msg_ids.h"
 #include "module/field/event_commands.h"
 #include "module/scene/scene.h"
@@ -60,14 +60,14 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSuhallaGate_Entrances;
 }
 
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "scene_tables.h"
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
@@ -94,8 +94,8 @@ const struct Trigger *Scene_GetEvents(void) {
   return gSuhallaGate_Triggers;
 }
 
-#include "event_inline.h"
-#include "ram_buffer.h"
+#include "field/event_inline.h"
+#include "system/ram_buffer.h"
 #include "event_work.h"
 
 /// After the first battle (flag 0x894) its Ruffian lies beaten by the path.

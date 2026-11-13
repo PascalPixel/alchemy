@@ -7,8 +7,8 @@
 /// travels with it.
 
 #include "types.h"
-#include "mul_q16.h"
-#include "frame.h"
+#include "system/mul_q16.h"
+#include "system/frame.h"
 
 struct FarCallVeneer {
   u32 stub;

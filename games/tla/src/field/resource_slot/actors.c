@@ -136,7 +136,7 @@ s32 MapGrid_GetScreenRelativePosition(struct Thing *obj, s32 *out) {
   return -1;
 }
 
-#include "task.h"
+#include "system/task.h"
 
 /// Sets up the map animation work for map mode: its 92-byte work and an 8 KB
 /// buffer, both cleared by DMA from one zero word, and the animation callbacks
@@ -175,7 +175,7 @@ void ActorSystem_ReservedNoOpB(void) {}
 
 // Objects: create and release field objects, and render them each frame.
 
-#include "objdisp.h"
+#include "field/objdisp.h"
 #include "actor.h"
 struct ActorSpriteView;
 #define Animation_ApplyChildArgument Animation_ApplyChildArgument
@@ -190,9 +190,9 @@ struct ActorSpriteView;
 #undef InitializeAnimationObjects
 #undef Animation_ApplyChildValue
 #undef Animation_ApplyChildArgument
-#include "ram_code.h"
-#include "battle_system.h"
-#include "transform.h"
+#include "system/ram_code.h"
+#include "battle/battle_system.h"
+#include "system/transform.h"
 #include "macros.h"
 
 /// Returns an unused object (one without a script) from the 64 slots, or 0
@@ -427,7 +427,7 @@ void Actor_RegisterSpriteMetadata(struct Actor *object, s32 value) {
   }
 }
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 
 /// Starts an actor on the script that approaches its watched actor
 /// (SC_APPROACH_WATCHED), watching watched.
@@ -554,7 +554,7 @@ void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority) {
   object->priorityFlags &= ~1;
 }
 
-#include "render_input.h"
+#include "graphics/render_input.h"
 #include "fixed_math.h"
 
 /* VIEW(resource_slot): tag struct IconSprite as struct
@@ -650,7 +650,7 @@ void ActorSystem_ResumeProjectionAndHideLayers(void) {
 s32 Actor_ReturnTrue(void) { return 1; }
 
 #include "map.h"
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "field/sprite.h"
 #include "field/field.h"
 
@@ -980,7 +980,7 @@ void ObjectSystem_UpdateCameraFixed(void) {
 
 // Object scripts: move the instruction cursor and control byte54.
 
-#include "script.h"
+#include "field/script.h"
 
 /// Jumps to the script the next word points to and returns 1 to continue
 /// with its first command.

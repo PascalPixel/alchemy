@@ -11,25 +11,25 @@
 /// entrance 99), the secret is shared (FLAG_GAROH_SECRET_SHARED) and the
 /// rooms take their morning tables.
 
-#include "battle.h"
+#include "battle/battle.h"
 #include "event_work.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "flags.h"
 #include "scene_tables.h"
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 /// The inn's actors, numbering the rows of gGarohInteriors_InnActorPlacements.
 enum GarohInnActorId {
@@ -119,7 +119,7 @@ void Event_End(void);
 void Shop_Run(s32 slot, s32 actor);
 void Sanctum_Run(s32 id);
 void Inn_CheckIn(s32 slot, s32 actor);
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
 

@@ -1,14 +1,14 @@
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "field_event.h"
-#include "event.h"
+#include "field/event.h"
 
 // Defined in the old style, with no prototype: Idejima's calls after it are
 // then compiled as calls to an undeclared routine, which pass their arguments

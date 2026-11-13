@@ -112,14 +112,14 @@ s32 SeaOfTime_SetCellCode(u32 layer, s32 x, s32 y, s32 value) {
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
@@ -318,9 +318,9 @@ void SeaOfTime_RideCurrent(void) {
 }
 
 #include "actor.h"
-#include "ram_buffer.h"
-#include "event_inline.h"
-#include "frame.h"
+#include "system/ram_buffer.h"
+#include "field/event_inline.h"
+#include "system/frame.h"
 #include "system/field_effect.h"
 
 // Walks actor 8 along a run of cells in the facing the event work names,
@@ -410,8 +410,8 @@ void SeaOfTime_FollowChannel(void) {
   Event_End();
 }
 
-#include "iwram_call.h"
-#include "main_routine_work.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
 #include "text/msg_ids.h"
 
 /* VIEW(sea_of_time): variable gSeaOfTime_LapCount as extern u16
@@ -755,7 +755,7 @@ void SeaOfTime_SinkIntoWhirlpool(void) {
   Event_End();
 }
 
-#include "io_reg.h"
+#include "system/io_reg.h"
 
 void SeaOfTime_SweptBack(void) {
   Event_Start();

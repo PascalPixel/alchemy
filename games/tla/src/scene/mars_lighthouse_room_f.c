@@ -6,14 +6,14 @@
 #include "shared/mars_lighthouse.h"
 #include "shared/actors.h"
 #include "shared/effects.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "event_work.h"
@@ -459,7 +459,7 @@ void Func_02000514(void) {
 
 void Func_02000554(void) { Func_02001448(); }
 
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 
 /* VIEW(first): routine gData_02005b68 as this part declared it; the joined file
  * has another. */
@@ -633,7 +633,7 @@ step:
   FieldEvent_SetExitRequest(16);
 }
 
-#include "input.h"
+#include "system/input.h"
 #include "macros.h"
 
 void Func_020009ec(void) {
@@ -1124,8 +1124,8 @@ extern s32 gData_02007040__first __asm__("gData_02007040");
 void Func_020014dc(s32 value) { gData_02007040 = value; }
 
 #include "shared/jupiter_lighthouse_aerie.h"
-#include "dma.h"
-#include "io_reg.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
 
 /* VIEW(first): routine gData_0200703c as this part declared it; the joined file
  * has another. */
@@ -1136,7 +1136,7 @@ extern u16 gData_02007068[];
 DEFINE_PALETTE_CYCLE_STEP(Func_020014e8, gData_0200703c, gData_02007040,
                           gData_02007068)
 
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "field_event.h"
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(JupiterLighthouse_LoadPalettesZero,
@@ -1144,14 +1144,14 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(JupiterLighthouse_LoadPalettesZero,
                                              gData_02007088, gData_0200703c,
                                              Func_020014e8, gData_0200708c)
 
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
                              MapGrid_SetAttributeBAt)
 
 #include "actor.h"
-#include "main_routine_work.h"
-#include "frame.h"
+#include "system/main_routine_work.h"
+#include "system/frame.h"
 
 /* VIEW(s167c): tag struct EventWork as struct EventWork__s167c; event_work.h
  * has another definition; tried with the definition the rest of the object has,
@@ -1252,7 +1252,7 @@ extern const s32 gData_02007044__first[] __asm__("gData_02007044");
 DEFINE_WHIRLWIND_UPDATE(Func_02001894, MapGrid_GetCellBehavior,
                         Position_FlatDistance, gData_02007044, Data_02007064)
 
-#include "field_effect.h"
+#include "system/field_effect.h"
 
 static __inline__ s32 MulQ16(s32 a, s32 b) {
   /* FAKEMATCH(wrapper): MulQ16 forwarded inline; as direct calls to
@@ -1290,7 +1290,7 @@ struct GustObject *Func_02001a54(struct GustObject *source) {
 DEFINE_ACTOR_EMIT_RISING_SPARKS_B(Actor_EmitRisingSparksB, Func_020035b8)
 
 #include "call.h"
-#include "field_coordinate.h"
+#include "field/field_coordinate.h"
 
 void Func_02001bcc(void) {
   struct PositionedActor *actor9 = Actor_GetById(9);
@@ -1657,7 +1657,7 @@ s32 Func_020027dc(s32 index) {
 
 DEFINE_RIDE_SET_SLOT(Func_020027ec)
 
-#include "battle_unit.h"
+#include "battle/battle_unit.h"
 
 struct MarsLighthouseEventWork {
   u8 unk000[0x16a];
@@ -1718,7 +1718,7 @@ struct RideWork {
 
 DEFINE_ACTOR_BLINK(Func_02002954, 10, 4, 0)
 
-#include "vector3.h"
+#include "system/vector3.h"
 #include "fixed_math.h"
 
 /* VIEW(flash): routine MapGrid_CheckCollision as s32
@@ -1960,8 +1960,8 @@ s32 Func_02002cfc(void) {
   return ((struct RideWork *)(gInventorySnapshot + 0x188))->active;
 }
 
-#include "iwram_call.h"
-#include "field.h"
+#include "system/iwram_call.h"
+#include "field/field.h"
 
 struct Sprite {
   u8 unk00[4];
@@ -2128,7 +2128,7 @@ DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_02002f80, Work020023c4__s2f80,
 
 #include "shared/mars_lighthouse.h"
 #include "mars_lighthouse_room_f.h"
-#include "field.h"
+#include "field/field.h"
 #include "module/scene/mars_lighthouse_star_room.h"
 
 void Func_02002f6c(struct Actor *object);
@@ -2140,7 +2140,7 @@ DEFINE_ACTOR_ATTACH(Func_0200328c, Func_02005480, Func_02002f6c)
 #include "field_sprite.h"
 #include "scene_tables.h"
 #include "system/vector3.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 void Func_02002f80(struct Actor *actor);
 
@@ -2187,8 +2187,8 @@ DEFINE_ACTOR_POP_UP_SLOW(Func_020033cc, Func_02005480)
 
 DEFINE_ACTOR_POP_UP(Func_02003478, Func_02005480)
 
-#include "ram_buffer.h"
-#include "frame.h"
+#include "system/ram_buffer.h"
+#include "system/frame.h"
 #include "macros.h"
 
 /* VIEW(s328c): tag struct RideSlot as struct RideSlot__s328c;
@@ -2294,12 +2294,12 @@ DEFINE_ACTOR_PARK(Func_0200351c, Func_02003304)
 
 #include "shared/cracked_tile.h"
 #include "types.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "field_sprite.h"
-#include "field_effect.h"
-#include "event_inline.h"
-#include "field.h"
-#include "heap_release.h"
+#include "system/field_effect.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "system/heap_release.h"
 #include "item_icon.h"
 #include "module/scene/scene.h"
 
@@ -2387,10 +2387,10 @@ extern struct CellTarget gData_020070a8__s35b8 __asm__("gData_020070a8");
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "iwram_call.h"
-#include "cell_target.h"
+#include "system/iwram_call.h"
+#include "field/cell_target.h"
 
 DEFINE_CRACKED_TILES_FIND(Func_020038ac, gData_020070a8, CrackedTiles_Update)
 
@@ -2406,7 +2406,7 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 // one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
-#include "io_reg.h"
+#include "system/io_reg.h"
 
 DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 
@@ -2429,14 +2429,14 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 #include "shared/push.h"
 #include "shared/tables.h"
 #include "types.h"
-#include "system.h"
-#include "ram_buffer.h"
+#include "system/system.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "field_effect.h"
-#include "event_inline.h"
+#include "system/main_routine_work.h"
+#include "system/field_effect.h"
+#include "field/event_inline.h"
 #include "event_work.h"
-#include "heap_release.h"
+#include "system/heap_release.h"
 #include "item_icon.h"
 #include "module/field/field.h"
 #include "module/field/field_effect.h"
@@ -2527,7 +2527,7 @@ void Func_02003fc8(s32 dx, s32 dz, s32 value) {
   }
 }
 
-#include "input.h"
+#include "system/input.h"
 
 /* VIEW(s3d80): variable gData_02005ef8 as extern const s16 gData_02005ef8[];
  * the definition has s32 gData_02005ef8[] = { 0xffff, - 0x8000, (s32)
@@ -2707,7 +2707,7 @@ DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Actor_StopAtPushTarget, Actor_FindAtCell,
 /* VIEW(s5048): tag struct MapLayer as struct MapLayer__s5048; room.h has
  * another definition; not tried: struct MapLayer__s5048 was not found. */
 #include "field_event.h"
-#include "vram_tab.h"
+#include "graphics/vram_tab.h"
 
 // Queues the lit actors' sprites: for each listed actor with a position,
 // projects it from the map's view, skips it off screen, and writes a 16 by 16
@@ -2718,8 +2718,8 @@ DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gData_020074cc, Data_0200f510,
                           gData_020075d2, BattleEffect_GetObjectPriority,
                           Oam_AddSpriteAtDepthClamped)
 
-#include "iwram_call.h"
-#include "task.h"
+#include "system/iwram_call.h"
+#include "system/task.h"
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

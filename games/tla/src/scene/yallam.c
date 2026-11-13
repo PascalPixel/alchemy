@@ -6,7 +6,7 @@
 
 #include "types.h"
 #include "actor.h"
-#include "field.h"
+#include "field/field.h"
 #include "module/scene/scene.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
@@ -61,10 +61,10 @@ s32 Yallam_HideSprite(struct Actor *object) {
 #include "venus_lighthouse/distance.c"
 
 #include "types.h"
-#include "ram_buffer.h"
-#include "main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
 #include "actor.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -121,19 +121,19 @@ s32 Yallam_FaceIfNear(struct Actor *object, struct Actor *target, s32 range,
 void Yallam_UpdateSongGame(void);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 #include "version.h"
-#include "battle.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "scene_tables.h"
-#include "event_inline.h"
-#include "main_routine_work.h"
+#include "field/event_inline.h"
+#include "system/main_routine_work.h"
 #include "event_work.h"
-#include "task.h"
-#include "ram_buffer.h"
+#include "system/task.h"
+#include "system/ram_buffer.h"
 #include "macros.h"
 
 /// Stops an actor and turns it to the target when it is within range (or

@@ -2,16 +2,16 @@
 #define AQUA_ROCK_INSIDE_LOCAL_H
 
 #include "types.h"
-#include "system.h"
-#include "ram_buffer.h"
+#include "system/system.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_tables.h"
-#include "iwram_call.h"
-#include "io_reg.h"
+#include "system/iwram_call.h"
+#include "system/io_reg.h"
 #include "field_sprite.h"
-#include "event_inline.h"
-#include "frame.h"
+#include "field/event_inline.h"
+#include "system/frame.h"
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Animation_ApplyChildArgument(void *animation, s32 value);

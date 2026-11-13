@@ -1,5 +1,5 @@
 #include "types.h"
-#include "field_effect.h"
+#include "system/field_effect.h"
 
 void FieldEffect_AdvanceMotion(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;

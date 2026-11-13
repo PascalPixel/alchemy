@@ -7,13 +7,13 @@
 #include "shared/tables.h"
 #include "field/field.h"
 
-#include "battle.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "event_work.h"
@@ -49,7 +49,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 #include "text/msg_ids.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 /// "The items that one carries are filled with one's hopes and desires."
 s32 NaribweInteriors_MindReadFortuneTeller(void) {
@@ -70,7 +70,7 @@ s32 NaribweInteriors_MindReadFortuneTellerOnReturn(void) {
   return 0;
 }
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "actor.h"
 
 const struct Trigger *Scene_GetEvents(void) {
@@ -791,7 +791,7 @@ u8 *NaribweInteriors_GetDjinniHint(void) {
   return message;
 }
 
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 
 void Actor_DisableById(s32 id);
 

@@ -40,41 +40,41 @@
 
 #include "types.h"
 #include "actor.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "objdisp.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/objdisp.h"
 #include "field_event.h"
-#include "ram_buffer.h"
-#include "heap_release.h"
+#include "system/ram_buffer.h"
+#include "system/heap_release.h"
 #include "fixed_math.h"
 #include "actor_view.h"
 #include "field_sprite.h"
 #include "flag_call.h"
-#include "dma.h"
-#include "io_reg.h"
-#include "display_transition.h"
-#include "iwram_call.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "graphics/display_transition.h"
+#include "system/iwram_call.h"
 #include "map.h"
-#include "frame.h"
-#include "task.h"
-#include "io_write_queue.h"
-#include "irq.h"
-#include "palette_buffers.h"
+#include "system/frame.h"
+#include "system/task.h"
+#include "system/io_write_queue.h"
+#include "system/irq.h"
+#include "graphics/palette_buffers.h"
 #include "debug.h"
-#include "sprite.h"
-#include "resource.h"
-#include "vram_tab.h"
-#include "io_write.h"
-#include "main_routine_work.h"
+#include "field/sprite.h"
+#include "graphics/resource.h"
+#include "graphics/vram_tab.h"
+#include "system/io_write.h"
+#include "system/main_routine_work.h"
 #include "macros.h"
 #include "event_work.h"
-#include "input.h"
+#include "system/input.h"
 
 // The parts, in ROM order.
 #include "module/system/system.h"
@@ -552,7 +552,7 @@ void FieldEffect_StartWindowHBlankDma(void) {
           1,
       (volatile u32 *)channel);
 }
-#include "event.h"
+#include "field/event.h"
 #include "gamepak/far_call/window.h"
 
 void ScreenTransition_UpdateScanlineTable(void) {
@@ -1350,7 +1350,7 @@ void ScreenTransition_InitializeState(s32 value) {
   Task_Add((s32)(ScreenTransition_UpdateDissolve), TASK_PASS_VBLANK);
   wait(0x78);
 }
-#include "ground_mask.h"
+#include "field/ground_mask.h"
 
 void BattleEffect_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
                                      s32 frames) {

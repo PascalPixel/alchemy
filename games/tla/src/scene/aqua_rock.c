@@ -48,18 +48,18 @@ struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 kind) {
 #include "shared/actors.h"
 #include "event_work.h"
 #include "shared/effects.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "event.h"
-#include "ground_mask.h"
+#include "field/event.h"
+#include "field/ground_mask.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
 
@@ -116,7 +116,7 @@ extern struct Unk02003450 Data_02003450[];
 
 #include "module/scene/scene.h"
 #include "module/tla.h"
-#include "task.h"
+#include "system/task.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -133,9 +133,9 @@ const u8 *Scene_GetRegions(void) {
 }
 
 #include "actor.h"
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "system/vector3.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -520,9 +520,9 @@ void Func_02000d64(struct Actor *object, s32 limit) {
   }
 }
 
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "frame.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/frame.h"
 
 /* VIEW(aqua_rock): routine MapGrid_CheckCollision as s32
  * MapGrid_CheckCollision(struct Actor *object, struct Vector3 *position);
@@ -611,7 +611,7 @@ void Func_02000d80(void) {
 }
 
 #include "map.h"
-#include "input.h"
+#include "system/input.h"
 
 static inline u8 CellAttribute(struct MapCell *cells, s32 row, s32 col) {
   cells += row * 128 + col;
@@ -1449,10 +1449,10 @@ void Func_020025a8(s32 id) {
   }
 }
 
-#include "heap_release.h"
-#include "dma.h"
-#include "io_reg.h"
-#include "resource.h"
+#include "system/heap_release.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "graphics/resource.h"
 
 DEFINE_GROUND_PARTICLES_DRAW(GroundParticles_Draw, gGroundParticleFrames)
 

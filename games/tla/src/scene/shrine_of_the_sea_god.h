@@ -2,8 +2,8 @@
 #define TLA_SHRINE_OF_THE_SEA_GOD_H
 
 #include "types.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
 
 struct ShrineOfTheSeaGodObject {
   u8 unk00[6];

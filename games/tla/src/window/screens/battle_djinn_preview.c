@@ -3,7 +3,7 @@
 // Part of window.c.
 
 #include "../screens_internal.h"
-#include "djinn_preview.h"
+#include "window/djinn_preview.h"
 #include "gamepak/far_call/game.h"
 #include "module/tla.h"
 #include "module/window/screens.h"
@@ -93,20 +93,20 @@ s32 BattleDjinnMenu_ListChangedDjinn(struct DjinnSlot *oldGrid,
 /// @file
 /// Display: place an ability icon in a window as a sprite.
 
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
+#include "menu/menu.h"
 #include "minigame.h"
-#include "sound.h"
-#include "system.h"
-#include "render_input.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "graphics/render_input.h"
 #include "types.h"
-#include "resource.h"
-#include "vram_tab.h"
+#include "graphics/resource.h"
+#include "graphics/vram_tab.h"
 
 /// Loads the icon into a free VRAM cache slot and draws a 16x16 sprite;
 /// does nothing if no slot is free.

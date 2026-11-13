@@ -8,8 +8,8 @@
 
 #include "types.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
 #include "event_work.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
@@ -64,13 +64,13 @@ void Field_TryJumpForward(void);
 
 void Func_02000038(void) { Field_RequestDjinnBattle(18, 70); }
 
-#include "battle.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -123,7 +123,7 @@ void Func_02000190(s32 unused, s32 id) {
     FieldActor_SetSpritePriority(15, 1);
 }
 
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "call.h"
 
 /* VIEW(first): routine gData_02001404 as this part declared it; the joined file
@@ -322,7 +322,7 @@ const u8 *Scene_GetEvents(void) {
   return gData_02001ad8;
 }
 
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "version.h"
 
 void Func_02000af0(void);

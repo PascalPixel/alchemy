@@ -1,17 +1,17 @@
 
 #include "../field/object/set_sprite_priority.c"
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "field_event.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 #define Actor_SetSpriteFlags                                                   \
   ((void (*)(struct Actor *, s32))Actor_SetSpriteFlags)
@@ -57,10 +57,10 @@ struct Actor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z,
 #undef Actor_SetSpriteColor
 // ---- from scene/venus_lighthouse.c ----
 #include "types.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "field_sprite.h"
-#include "field_effect.h"
-#include "event_inline.h"
+#include "system/field_effect.h"
+#include "field/event_inline.h"
 
 extern void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
@@ -152,10 +152,10 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 // venus_lighthouse/.
 
 #include "shared/push.h"
-#include "field_coordinate.h"
+#include "field/field_coordinate.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
-#include "scene.h"
+#include "system/scene.h"
 
 extern s32 gPushLeaderSteps[];
 
@@ -167,18 +167,18 @@ DEFINE_BLOCK_PUSH_ONTO(VenusLighthouse_PushBlockOnto, gPushLeaderSteps,
 
 #include "../field/map/cell_fill_byte.c"
 
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "field_event.h"
 #include "scene_tables.h"
-#include "frame.h"
+#include "system/frame.h"
 
 // Unused: does nothing; nothing calls it.
 UNUSED void VenusLighthouse_Nothing(void) {}
@@ -251,9 +251,9 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 // statue that repels the leader, the reliefs and the paths Reveal shows.
 
 #include "shared/tables.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "event_work.h"
-#include "event.h"
+#include "field/event.h"
 #include "flag_call.h"
 #include "module/field/event_commands.h"
 
@@ -448,16 +448,16 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
 
 #include "field_event.h"
 #include "text/msg_ids.h"
-#include "event_inline.h"
-#include "battle.h"
+#include "field/event_inline.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "scene_tables.h"
 #include "tla_edition.h"
 #include "scene_ids.h"

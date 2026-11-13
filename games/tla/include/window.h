@@ -2,8 +2,8 @@
 #define ALCHEMY_WINDOW_H
 
 #include "edition.h"
-#include "output.h"
-#include "uiflow.h"
+#include "graphics/output.h"
+#include "graphics/uiflow.h"
 #include "static_assert.h"
 #include "window_tile.h"
 

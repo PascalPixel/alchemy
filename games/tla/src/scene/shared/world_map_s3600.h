@@ -1,9 +1,9 @@
 #include "types.h"
-#include "ram_buffer.h"
-#include "main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
 #include "actor.h"
 #include "event_work.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 extern struct Actor *gData_02006c08[];
 

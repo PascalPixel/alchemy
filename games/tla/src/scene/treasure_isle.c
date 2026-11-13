@@ -8,7 +8,7 @@
 
 #include "types.h"
 #include "actor.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 DEFINE_SCENE_CREATE_ACTOR(TreasureIsle_CreateActor)
 
@@ -37,14 +37,14 @@ DEFINE_SCENE_CREATE_ACTOR(TreasureIsle_CreateActor)
 
 #include "shared/tables.h"
 #include "shared/map_cells.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "module/scene/scene.h"
@@ -129,7 +129,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 
 const u8 *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -145,14 +145,14 @@ const u8 *Scene_GetPlacements(void) {
   return gTreasureIsle_Placements;
 }
 
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "map.h"
 
 extern struct MapCell gMapCellBuffer[];
 
 DEFINE_MAP_CELL_SWAP(TreasureIsle_SwapCells)
 
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 // Draws a spiky rock risen at its cell, blocks the cell and sets its flag.
 void TreasureIsle_SetSpikyRock(struct TreasureIsleCell *cells, s16 index) {
@@ -162,7 +162,7 @@ void TreasureIsle_SetSpikyRock(struct TreasureIsleCell *cells, s16 index) {
   Event_SetFlag(cells[index].flag);
 }
 
-#include "field_effect.h"
+#include "system/field_effect.h"
 
 // A spiky rock rises out of the ground at a listed cell: the camera goes to
 // it, the ground shakes and dust bursts, and TreasureIsle_SetSpikyRock leaves
@@ -427,8 +427,8 @@ const u8 *Scene_GetEvents(void) {
   return (const u8 *)gTreasureIsle_Room1Triggers;
 }
 
-#include "iwram_call.h"
-#include "io_write_queue.h"
+#include "system/iwram_call.h"
+#include "system/io_write_queue.h"
 
 // The water colours' cycle frame, -1 until the first frame saves the
 // palettes.
@@ -478,7 +478,7 @@ void TreasureIsle_CycleWaterColors(void) {
 // its code, then the overlay's data.
 
 #include "actor.h"
-#include "task.h"
+#include "system/task.h"
 
 /* VIEW(s0cf4): tag struct TreasureIsleEventWork as struct
  * TreasureIsleEventWork__s0cf4; treasure_isle.c has another definition; tried

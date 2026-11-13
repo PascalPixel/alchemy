@@ -7,11 +7,11 @@
 #define TLA_MARS_LIGHTHOUSE_AERIE_H
 
 #include "types.h"
-#include "ram_buffer.h"
-#include "frame.h"
+#include "system/ram_buffer.h"
+#include "system/frame.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
 #include "scene_tables.h"
 
 struct Trigger;
@@ -142,14 +142,14 @@ void Func_020000e4(struct Actor *object) {
   *pangle -= 0x800;
 }
 
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -173,8 +173,8 @@ DEFINE_SCENE_LEAVE_BY_EXIT(Func_020001a0, Func_02004fac, Teleport_PlaySparks, 1,
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 #include "actor.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
 
 extern s16 gData_02005aa4[];
 extern s16 gData_02005ab4[];
@@ -235,7 +235,7 @@ void Func_020001d8(void) {
   FieldTask_AddFrame(Func_020004a4, 0x480);
 }
 
-#include "io_reg.h"
+#include "system/io_reg.h"
 
 /// Sets the scene up for the entrance the party arrived by (5 to 2).
 s32 Scene_Initialize(void) {
@@ -370,7 +370,7 @@ void Func_02000640(s32 id) {
   Actor_FaceDirection(id, FACING_NORTH, 0);
 }
 
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -1905,7 +1905,7 @@ void Func_02003210(struct Actor *self) {
   self->timer += -0x800;
 }
 
-#include "frame.h"
+#include "system/frame.h"
 
 static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
                                                     s32 z) {
@@ -1952,15 +1952,15 @@ DEFINE_ORBS_SPAWN_RISING(Func_0200326c, 0x200, gData_02006afc, Func_02003210, 2)
 #include "shared/tables.h"
 #include "types.h"
 #include "actor.h"
-#include "frame.h"
-#include "event_inline.h"
+#include "system/frame.h"
+#include "field/event_inline.h"
 #include "event_work.h"
-#include "field.h"
+#include "field/field.h"
 #include "item_icon.h"
 #include "module/scene/mars_lighthouse_aerie.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
-#include "system.h"
+#include "system/system.h"
 #include "text/msg_ids.h"
 
 void BattleEffect_GetObjectPriority(void);
@@ -2089,7 +2089,7 @@ void Func_0200361c(s32 id) {
 void Func_02003648(s32 id) { Actor_GetById(id)->motionFlags = 3; }
 
 #include "system/main_routine_work.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 
 void Func_02000610(s32 id);
 void Func_02000640(s32 id);
@@ -2977,8 +2977,8 @@ void Func_02004ed8(void) { Func_02004e80(30, 22); }
 void Func_02004ee4(void) { Func_02004e80(29, 21); }
 #endif
 
-#include "dma.h"
-#include "io_reg.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
 
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
@@ -2986,7 +2986,7 @@ void Func_02004ee4(void) { Func_02004e80(29, 21); }
 DEFINE_PALETTE_SET_COLORS_FADE(Func_02004ef0, gData_02006ce0, Data_02006ce4,
                                Data_02006ce8, Data_02006cd4, Func_020051e0)
 
-#include "task.h"
+#include "system/task.h"
 
 DEFINE_PALETTE_CYCLE_START(Func_02004fac, gData_02006cf0, gData_02006cec,
                            List_CountEntries, gData_02006ce0, gData_02006cdc,

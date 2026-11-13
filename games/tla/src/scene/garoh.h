@@ -2,7 +2,7 @@
 #define TLA_GAROH_H
 
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
 #include "flag_call.h"
 

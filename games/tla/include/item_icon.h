@@ -2,9 +2,9 @@
 #define TLA_ITEM_ICON_H
 
 #include "types.h"
-#include "ram_buffer.h"
-#include "task.h"
-#include "vram_tab.h"
+#include "system/ram_buffer.h"
+#include "system/task.h"
+#include "graphics/vram_tab.h"
 
 #define ICON_COUNT 15 ///< Number of carried items.
 #define ICON_NONE 96  ///< No resource.

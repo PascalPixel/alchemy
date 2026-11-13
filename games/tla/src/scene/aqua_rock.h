@@ -2,16 +2,16 @@
 #define AQUA_ROCK_LOCAL_H
 
 #include "types.h"
-#include "system.h"
-#include "task.h"
-#include "ram_buffer.h"
+#include "system/system.h"
+#include "system/task.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_tables.h"
-#include "iwram_call.h"
-#include "io_reg.h"
+#include "system/iwram_call.h"
+#include "system/io_reg.h"
 #include "field_sprite.h"
-#include "frame.h"
+#include "system/frame.h"
 
 s32 GameFlag_Get(s32 flag);
 void GameFlag_Clear(s32 flag);

@@ -2,19 +2,19 @@
 #define SETTLEMENTS_LOCAL_H
 
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_tables.h"
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "scene_ids.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 s32 Trig_Cos(s32 angle);
 
 extern u8 MsgSettlements01[];
 
-#include "frame.h"
+#include "system/frame.h"
 
 extern s16 gSettlements_FallsObjects[];
 extern u16 gSettlements_SlideStopped;

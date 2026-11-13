@@ -2,12 +2,12 @@
 #define TLA_SEA_OF_TIME_H
 
 #include "types.h"
-#include "system.h"
-#include "ram_buffer.h"
-#include "iwram_call.h"
-#include "dma.h"
-#include "event_inline.h"
-#include "frame.h"
+#include "system/system.h"
+#include "system/ram_buffer.h"
+#include "system/iwram_call.h"
+#include "system/dma.h"
+#include "field/event_inline.h"
+#include "system/frame.h"
 #include "actor.h"
 #include "system/field_effect.h"
 

@@ -3,22 +3,22 @@
 /// Felix fires the Magma Ball at it from a safe distance.
 
 #include "shared/tables.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
 #include "event_work.h"
 #include "text/msg_ids.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "system/dma.h"
 #include "gamepak/far_call/system.h"
 #include "item_icon.h"
@@ -41,9 +41,9 @@ void EffectSprite_DrawAtWorldPosition(struct IceShardSprite *sprite,
 extern s32 gNorthernReaches_ShipAtRest[];
 
 #include "module/scene/scene.h"
-#include "render_input.h"
+#include "graphics/render_input.h"
 #include "effect_sprite.h"
-#include "resource.h"
+#include "graphics/resource.h"
 
 /// The Magma Ball's ice shards and the explosion's sparks, as the ice wall
 /// shatters (NorthernReaches_ShatterIceWall).

@@ -59,11 +59,11 @@ DEFINE_POSITION_DISTANCE(Position_Distance)
 #include "shared/map_cells.h"
 #include "shared/effects.h"
 #include "types.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
 #include "event_work.h"
-#include "field.h"
-#include "field_coordinate.h"
+#include "field/field.h"
+#include "field/field_coordinate.h"
 #include "module/field/field.h"
 #include "module/field/object.h"
 
@@ -180,7 +180,7 @@ void MagmaRockInside_BurstStatue(s32 mode, s32 cue);
 #include "module/scene/scene.h"
 #include "module/system/system.h"
 #include "module/tla.h"
-#include "scene.h"
+#include "system/scene.h"
 #include "text/msg_ids.h"
 
 void Actor_LiftTargetBlock(s16 *cells);
@@ -197,7 +197,7 @@ extern s32 gPushLeaderSteps[];
 DEFINE_BLOCK_PUSH_ONTO(MagmaRockInside_PushBlockOnto, gPushLeaderSteps,
                        MapGrid_CheckCollision, Func_02004c98)
 
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "map.h"
 
 extern struct MapCell gMapCellBuffer[];
@@ -349,13 +349,13 @@ s32 MagmaRockInside_SetCellShape(s32 terrain, s32 x, s32 z, s32 height);
 DEFINE_ACTORS_RAISE_CELLS(MagmaRockInside_RaiseActorCells,
                           MagmaRockInside_SetCellShape)
 
-#include "battle.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -424,7 +424,7 @@ void MagmaRockInside_UnblockMovedPillar(void) {
   MagmaRockInside_ClearBlockCells(*(s32 *)(work + 0xcbc));
 }
 
-#include "io_reg.h"
+#include "system/io_reg.h"
 
 void MagmaRockInside_BlockMovedPillar(void) {
   struct Actor *object =
@@ -526,8 +526,8 @@ void MagmaRockInside_BlockMovedPillar(void) {
   Event_End();
 }
 
-#include "frame.h"
-#include "field_effect.h"
+#include "system/frame.h"
+#include "system/field_effect.h"
 
 s32 Import_BattleEffectStopMainActor(void);
 
@@ -2375,10 +2375,10 @@ void MagmaRockInside_LayerWithLeader(struct Actor *arg) {
 
 #include "shared/map_cells.h"
 #include "magma_rock_inside.h"
-#include "io_reg.h"
+#include "system/io_reg.h"
 #include "call.h"
 #include "event_work.h"
-#include "field.h"
+#include "field/field.h"
 #include "module/field/object.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
@@ -2755,11 +2755,11 @@ s32 Scene_PrepareMap(void) {
 }
 
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "map.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
 
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value);
@@ -2943,20 +2943,20 @@ test:
 #include "shared/effects.h"
 #include "shared/tables.h"
 #include "types.h"
-#include "system.h"
-#include "iwram_call.h"
+#include "system/system.h"
+#include "system/iwram_call.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "field_sprite.h"
-#include "field_effect.h"
-#include "event_inline.h"
-#include "heap_release.h"
+#include "system/field_effect.h"
+#include "field/event_inline.h"
+#include "system/heap_release.h"
 #include "item_icon.h"
 #include "module/field/field_effect.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
-#include "particle.h"
-#include "resource.h"
+#include "field/particle.h"
+#include "graphics/resource.h"
 
 /* VIEW(s46e8): routine Actor_StartScript as void Actor_StartScript(struct
  * FieldEffect *effect, const s32 *script); local.h has void

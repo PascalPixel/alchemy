@@ -171,8 +171,11 @@ DEFINE := $(UPPER_$(GAME))_EDITION_$(UPPER_$(LANG))
 ROM_END_tbs := 0x08800000
 ROM_END_tla := 0x09000000
 
-INCLUDES := -Igames/$(GAME)/include \
-            $(addprefix -Igames/$(GAME)/include/,battle field game gamepak graphics menu shop sound system window)
+# One include path, as pret has: a header names its bank folder in its
+# path (#include "field/actor.h"). The Broken Seal still finds its headers
+# through each bank folder too.
+INCLUDES_tbs := $(addprefix -Igames/tbs/include/,battle field game gamepak graphics menu shop sound system window)
+INCLUDES := -Igames/$(GAME)/include $(INCLUDES_$(GAME))
 
 # Game C (K1, K2): alchemy-gcc's GCC of July 2000, one option set per game;
 # ⚓️'s overlays swap -O2 for -Os below, by file and place in the build.

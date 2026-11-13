@@ -7,8 +7,8 @@
 // affine scales after the BG2 reference point, 64 object slots and one more
 // word before the effect.
 
-#include "effect_step.h"
-#include "battle_effect_argument.h"
+#include "field/effect_step.h"
+#include "battle/battle_effect_argument.h"
 #include "static_assert.h"
 #include "types.h"
 

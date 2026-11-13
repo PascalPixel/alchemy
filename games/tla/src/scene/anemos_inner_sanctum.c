@@ -3,15 +3,15 @@
 
 #include "shared/actors.h"
 #include "shared/effects.h"
-#include "dma.h"
-#include "io_reg.h"
-#include "event_inline.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "field/event_inline.h"
 #include "types.h"
-#include "task.h"
-#include "ram_buffer.h"
+#include "system/task.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "event_work.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
@@ -251,15 +251,15 @@ void Func_02000328(void) {
 // Scene code of overlay 0x6b0, in ROM order.
 
 #include "types.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "field_sprite.h"
-#include "field_effect.h"
+#include "system/field_effect.h"
 #include "fixed_math.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "actor.h"
 
 #include "macros.h"
-#include "field.h"
+#include "field/field.h"
 
 void Actor_SelectAnimation(struct Actor *, s32);
 void Actor_StartScript(struct Actor *object, const s32 *script);
@@ -423,13 +423,13 @@ s32 Func_02000794(struct Actor *object) {
 
 // Scene code of overlay 0x6b0, in ROM order.
 
-#include "battle.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
 
@@ -563,7 +563,7 @@ void Func_02000a78(s32 a0, s32 a1, s16 a2) {
 // Scene code of overlay 0x6b0, in ROM order.
 
 #include "shared/actors.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "system/io_reg.h"
 #include "system/main_routine_work.h"
 #include "event_work.h"
@@ -1110,7 +1110,7 @@ DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(Func_0200178c, 0xb)
 
 DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(Func_020017a0, 0xc)
 
-#include "frame.h"
+#include "system/frame.h"
 
 /* VIEW(s0ac8): routine gData_02003594 as this part declared it; the joined file
  * has another. */
@@ -1212,7 +1212,7 @@ void Func_02001938(void) {
   }
 }
 
-#include "io_reg.h"
+#include "system/io_reg.h"
 
 struct SpriteView {
   u8 unk00[4];
@@ -1823,7 +1823,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 // Scene code of overlay 0x6b0, in ROM order.
 
 #include "shared/cracked_tile.h"
-#include "heap_release.h"
+#include "system/heap_release.h"
 #include "item_icon.h"
 #include "module/scene/scene.h"
 
@@ -1926,8 +1926,8 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepth
 #include "../field/map/cell_sprite.c"
 
-#include "iwram_call.h"
-#include "cell_target.h"
+#include "system/iwram_call.h"
+#include "field/cell_target.h"
 
 DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find, gCrackedTiles, CrackedTiles_Update)
 
@@ -1961,7 +1961,7 @@ DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
 // Scene code of overlay 0x6b0, in ROM order.
 
-#include "dma.h"
+#include "system/dma.h"
 
 void CrackedTile_Fall(struct PushEvent *event) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -2056,13 +2056,13 @@ void CrackedTile_Fall(struct PushEvent *event) {
 #include "shared/tables.h"
 #include "shared/cracked_tile.h"
 #include "types.h"
-#include "system.h"
-#include "ram_buffer.h"
+#include "system/system.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "field_effect.h"
+#include "system/main_routine_work.h"
+#include "system/field_effect.h"
 #include "event_work.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "module/field/field_effect.h"
 #include "module/scene/scene.h"
 
@@ -2142,7 +2142,7 @@ loop:
   Event_End();
 }
 
-#include "cell_target.h"
+#include "field/cell_target.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
 /* VIEW(s2f48): routine CrackedTile_Fall as this part declared it; the joined

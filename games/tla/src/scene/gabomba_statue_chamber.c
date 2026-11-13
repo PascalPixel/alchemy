@@ -4,14 +4,14 @@
 #include "flags.h"
 #include "text/msg_ids.h"
 
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "gamepak/far_call/system.h"
@@ -77,8 +77,8 @@ u8 *Scene_GetEvents(void) {
   return gData_02002530;
 }
 
-#include "io_reg.h"
-#include "event_inline.h"
+#include "system/io_reg.h"
+#include "field/event_inline.h"
 
 void Func_02000100(void) {
   volatile u16 *color = (volatile u16 *)&OBJ_PLTT_COLOR(0, 15);
@@ -99,9 +99,9 @@ void Func_02000100(void) {
   Actor_SetModeById(8, 1);
 }
 
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_ids.h"
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
@@ -427,7 +427,7 @@ void Func_02000a98(s32 x, s32 z) {
 
 void Func_02000b60(void) { Func_02000a98(312, 144); }
 
-#include "input.h"
+#include "system/input.h"
 
 void Func_02000b70(void) {
   struct GabombaStatueChamberObject *leader =

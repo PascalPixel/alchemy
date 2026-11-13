@@ -2,12 +2,12 @@
 #define TLA_YAMPI_DESERT_SCENE_H
 
 #include "types.h"
-#include "task.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
+#include "system/task.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
 #include "field_event.h"
 #include "scene_ids.h"
-#include "frame.h"
+#include "system/frame.h"
 
 struct SceneEventWork {
   u8 unk000[0x16a];

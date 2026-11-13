@@ -4,14 +4,14 @@
 /// event when the leader touches it. Overlay 64c keeps the same code.
 
 #include "types.h"
-#include "ram_buffer.h"
-#include "main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
 #include "map.h"
 #include "actor.h"
 #include "event_work.h"
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "flag_call.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 /// One of the scene's placed objects, 20 bytes; a zero kind ends the list.
 struct WorldMapPlacement {

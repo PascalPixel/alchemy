@@ -3,12 +3,12 @@
 
 #include "types.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "input.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/input.h"
 #include "text/msg_ids.h"
-#include "event_inline.h"
-#include "frame.h"
+#include "field/event_inline.h"
+#include "system/frame.h"
 #include "scene_tables.h"
 
 struct IzumoRuinsEventWork {

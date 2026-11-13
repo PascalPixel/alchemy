@@ -3,8 +3,8 @@
 // Part of system.c.
 
 #include "../system_internal.h"
-#include "mul_q16.h"
-#include "ram_buffer.h"
+#include "system/mul_q16.h"
+#include "system/ram_buffer.h"
 #include "resource_ids.h"
 
 void String_FormatHex(u32 value) {

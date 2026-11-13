@@ -13,14 +13,14 @@
 
 #include "system/main_routine_work.h"
 
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "flags.h"
 #include "scene_tables.h"
@@ -51,8 +51,8 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "actor.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
 
 // The town's own story, which no other scene reads.
 #define FLAG_TOLD_INDRA_MOVED 0x8b0 ///< told the fisherman Indra moved
@@ -229,7 +229,7 @@ void Alhafra_GiveBreadToHungryBoy(void) {
   Event_End();
 }
 
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 
 void Alhafra_TalkToHungryBoy(s32 id) {
   if (!GameFlag_Get(FLAG_HUNGRY_BOY_FED)) {

@@ -6,14 +6,14 @@
 /// race, the summit's cave and pools and Gasp the Djinni.
 
 #include "shared/trial_road.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "module/field/object.h"
@@ -90,7 +90,7 @@ s32 TrialRoad_RivalIsAhead(s32 fallback) {
   return fallback;
 }
 
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 void TrialRoad_TakeStairs(s32 direction) {
   struct TrialRoadState *state = gTrialRoadState;
@@ -139,11 +139,11 @@ void TrialRoad_TakeStairs(s32 direction) {
 /// Trial Road's stage puzzles: the stairs, chests and doors, and the pillars,
 /// torches, logs, spouts and sand the eight rooms are built from.
 
-#include "ram_buffer.h"
-#include "main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
 #include "macros.h"
 #include "text/msg_ids.h"
-#include "vector3.h"
+#include "system/vector3.h"
 #include "event_work.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
@@ -1194,9 +1194,9 @@ void TrialRoad_RevealVine(void) {
 // Trial Road's effect spawner and the sand stage's stream.
 
 #include "types.h"
-#include "field_effect.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
+#include "system/field_effect.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -1275,9 +1275,9 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "../field/field_effect/advance_motion_priority.c"
 
-#include "system.h"
+#include "system/system.h"
 #include "actor.h"
-#include "frame.h"
+#include "system/frame.h"
 
 void TrialRoad_DriftWithStream(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -1312,16 +1312,16 @@ void TrialRoad_DriftWithStream(void) {
 #include "shared/effects.h"
 #include "shared/trial_road.h"
 #include "event_work.h"
-#include "heap_release.h"
+#include "system/heap_release.h"
 #include "item_icon.h"
 #include "module/field/object.h"
 #include "module/scene/scene.h"
 #include "module/system/system.h"
 #include "module/tla.h"
-#include "resource.h"
-#include "serial.h"
-#include "task.h"
-#include "heap_slots.h"
+#include "graphics/resource.h"
+#include "system/serial.h"
+#include "system/task.h"
+#include "system/heap_slots.h"
 
 void TrialRoad_LiftCaveRock(void) { GameFlag_Set(0x289); }
 
@@ -1400,9 +1400,9 @@ void TrialRoad_SetSummitPillar(s32 a, s32 id) {
   }
 }
 
-#include "iwram_call.h"
-#include "dma.h"
-#include "io_reg.h"
+#include "system/iwram_call.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
 
 /* VIEW(s15a8): routine gTrialRoad_Triggers as this part declared it; the joined
  * file has another. */
@@ -1756,10 +1756,10 @@ void TrialRoad_StartPaletteCycle(s32 mode) {
 }
 
 #include "scene_tables.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "map.h"
 #include "text/msg_ids.h"
-#include "field.h"
+#include "field/field.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -3492,7 +3492,7 @@ void TrialRoad_MoveRival(void) {
 
 // next object the overlay links, and the overlay's data.
 
-#include "vram_tab.h"
+#include "graphics/vram_tab.h"
 
 /* VIEW(s51a0): tag struct TrialRoadLinkWork as struct TrialRoadLinkWork__s51a0;
  * s15a8.c has another definition; tried with the definition the rest of the

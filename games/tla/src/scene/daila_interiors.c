@@ -10,20 +10,20 @@
 
 #include "shared/tables.h"
 #include "shared/actors.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "flags.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
 #include "field_event.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_call.h"
 #include "text/msg_ids.h"
 #include "types.h"
@@ -62,7 +62,7 @@ static inline void Daila_CopyCells(s32 srcX, s32 srcY, s32 destX, s32 destY,
                                    s32 width, s32 height) {
   Map_CopyCellsRect(srcX, srcY, destX, destY, width, height);
 }
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
 #include "event_work.h"
 #include "inventory.h"
@@ -433,7 +433,7 @@ DEFINE_SCENE_RAISE_HELD_ACTOR(Scene_RaiseHeldActor, FlagBlock_ApplyFlags,
 // Scene code of overlay 0x652, in ROM order, from item's offset up to the next
 // object the overlay links.
 
-#include "item.h"
+#include "game/item.h"
 
 /* VIEW(item): tag struct DailaActor as struct DailaActor__item;
  * daila_interiors.c has another definition; tried with the definition the rest

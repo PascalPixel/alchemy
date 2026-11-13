@@ -3,23 +3,23 @@
 /// the ship and asks whether the party is ready to sail, and a house stands on
 /// the quay.
 
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "types.h"
-#include "ram_buffer.h"
-#include "main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
 #include "actor.h"
 #include "flag_call.h"
-#include "event_inline.h"
-#include "frame.h"
+#include "field/event_inline.h"
+#include "system/frame.h"
 
 #define S16_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
 
@@ -51,9 +51,9 @@ void Event_WaitTransitionFrames(void);
 void LemuriaDock_EnterDoor(const struct WarpTarget *warp, s32 door, s32 mode);
 void LemuriaDock_CyclePalette(void);
 void Event_End(void);
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "version.h"
-#include "io_reg.h"
+#include "system/io_reg.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
 

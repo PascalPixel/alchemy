@@ -1,10 +1,10 @@
 #ifndef ALCHEMY_INVENTORY_H
 #define ALCHEMY_INVENTORY_H
 
-#include "item.h"
+#include "game/item.h"
 
 #include "owner_state.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 
 s32 Inventory_Count(s32 owner);
 s32 Inventory_CountItem(s32 owner, s32 item);

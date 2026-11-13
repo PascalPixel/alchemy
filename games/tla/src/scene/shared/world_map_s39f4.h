@@ -1,10 +1,10 @@
 #include "types.h"
-#include "system.h"
-#include "iwram_call.h"
+#include "system/system.h"
+#include "system/iwram_call.h"
 #include "actor.h"
 #include "field_sprite.h"
 #include "macros.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "actor_view.h"
 
 extern s32 gData_02004f90[];

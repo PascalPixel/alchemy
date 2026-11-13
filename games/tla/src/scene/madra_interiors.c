@@ -6,14 +6,14 @@
 /// household welcomes him home.
 
 #include "shared/tables.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -45,11 +45,11 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "types.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -76,11 +76,11 @@ void MadraInteriors_InterrogatePiers(void);
 #include "version.h"
 #include "actor.h"
 #include "field_sprite.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
 #include "event_work.h"
 #include "text/msg_ids.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room2)

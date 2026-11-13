@@ -589,7 +589,7 @@ void BattleEffect_DropObjectAtAnchor(s32 id) {
   event->cue = id | 0x1000;
 }
 
-#include "battle_unit.h"
+#include "battle/battle_unit.h"
 
 struct DropEvent {
   u8 unk000[0xd34];

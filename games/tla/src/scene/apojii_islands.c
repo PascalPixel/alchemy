@@ -35,20 +35,20 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 #include "shared/tables.h"
 #include "apojii_islands.h"
 #include "types.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_ids.h"
 #include "call.h"
-#include "ram_buffer.h"
-#include "iwram_call.h"
-#include "io_write_queue.h"
+#include "system/ram_buffer.h"
+#include "system/iwram_call.h"
+#include "system/io_write_queue.h"
 #include "system/io_reg.h"
-#include "event_inline.h"
-#include "event.h"
+#include "field/event_inline.h"
+#include "field/event.h"
 #include "event_work.h"
-#include "field.h"
+#include "field/field.h"
 #include "field_event.h"
 #include "flag_call.h"
-#include "ground_mask.h"
+#include "field/ground_mask.h"
 #include "module/field/field.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
@@ -83,8 +83,8 @@ extern u16 gData_02002a58[16];
 
 #include "module/scene/scene.h"
 #include "module/tla.h"
-#include "system.h"
-#include "task.h"
+#include "system/system.h"
+#include "system/task.h"
 
 extern u8 Data_0202c001[];
 
@@ -761,9 +761,9 @@ void Func_020017bc(void) {
   FieldTask_AddFrame(Func_020015f8, 0x480);
 }
 
-#include "heap_release.h"
-#include "io_reg.h"
-#include "resource.h"
+#include "system/heap_release.h"
+#include "system/io_reg.h"
+#include "graphics/resource.h"
 
 void Func_020017f8(u32 base, s32 a, s32 b) {
   struct MapWork *map = Ram_HeapSlots->mapWork;

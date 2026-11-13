@@ -5,7 +5,7 @@
 #include "../screens_internal.h"
 #include "window_tile.h"
 #include "module/window/screens.h"
-#include "psynergy_menu.h"
+#include "menu/psynergy_menu.h"
 
 #define NAVIGATION ((struct PsynergyMenuNavigation *)Ram_HeapSlots->unke4[0])
 

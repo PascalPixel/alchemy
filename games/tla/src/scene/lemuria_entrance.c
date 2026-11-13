@@ -4,18 +4,18 @@
 /// sail out.
 
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "scene_tables.h"
 #include "event_work.h"
 #include "call.h"
@@ -34,7 +34,7 @@ extern s32 gLemuriaEntrance_ShipAtRest[];
 #include "module/scene/scene.h"
 #include "module/window/window.h"
 #include "text/msg_ids.h"
-#include "uiflow.h"
+#include "graphics/uiflow.h"
 
 void Text_GetMessageSize(s32 id, s32 *a, s32 *b, s32 *c, s32 *d);
 void Message_OpenWindow(s32 id, s32 x, s32 y, u32 flags);

@@ -5,12 +5,12 @@
 #include "shared/tables.h"
 #include "event_work.h"
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_tables.h"
-#include "frame.h"
-#include "event_inline.h"
+#include "system/frame.h"
+#include "field/event_inline.h"
 #include "field/field.h"
 
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
@@ -64,7 +64,7 @@ struct GabombaCatacombsParty {
   u16 value254;
 };
 
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
 
@@ -307,9 +307,9 @@ s32 Func_020009bc(struct Actor *object) {
 }
 
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Actor_MoveToObject(s32 actor, s32 target);
@@ -427,14 +427,14 @@ void Func_02000d90(void) {
     Scene_TalkToActor(0x1040);
 }
 
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }

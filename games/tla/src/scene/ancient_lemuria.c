@@ -7,10 +7,10 @@
 
 #include "types.h"
 #include "map.h"
-#include "ram_buffer.h"
-#include "iwram_call.h"
+#include "system/ram_buffer.h"
+#include "system/iwram_call.h"
 #include "field_event.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
@@ -26,21 +26,21 @@ static inline void MapCopy(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                            s32 destY, s32 layer) {
   TileCopies_CopyTouchedCells(srcX, srcY, width, height, destX, destY, layer);
 }
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "map.h"
 #include "scene_tables.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
-#include "ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
+#include "system/ram_buffer.h"
 #include "event_work.h"
 #include "text/msg_ids.h"
 /// The twelve colours, a frame in four, the water's shimmer takes in turn.

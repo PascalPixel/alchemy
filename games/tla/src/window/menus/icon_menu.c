@@ -8,11 +8,11 @@
 // Part of window.c.
 
 #include "../menus_internal.h"
-#include "affine.h"
+#include "system/affine.h"
 #include "flag_call.h"
 #include "gamepak/far_call/game.h"
 #include "item_icon.h"
-#include "menu_list.h"
+#include "window/menu_list.h"
 #include "module/tla.h"
 #include "gamepak/far_call/battle.h"
 #include "module/window/screens.h"

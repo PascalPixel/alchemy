@@ -4,13 +4,13 @@
 
 #include "field/field.h"
 
-#include "battle.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "event_work.h"
@@ -35,10 +35,10 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "text/msg_ids.h"
 #include "actor.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (GameFlag_Get(2219))

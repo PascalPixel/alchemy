@@ -2,11 +2,11 @@
 #define TLA_AIRS_ROCK_INSIDE_H
 
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "field_event.h"
-#include "iwram_call.h"
-#include "main_routine_work.h"
-#include "frame.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/frame.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))

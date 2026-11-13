@@ -4,14 +4,14 @@
 #include "flags.h"
 #include "shared/actors.h"
 #include "shared/effects.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -108,13 +108,13 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "types.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
 #include "map.h"
 #include "scene_tables.h"
-#include "input.h"
+#include "system/input.h"
 #include "text/msg_ids.h"
-#include "frame.h"
+#include "system/frame.h"
 #include "system/vector3.h"
 
 struct IsletsEventWork {
@@ -218,7 +218,7 @@ void FieldPsynergy_StopMindReadWave(void);
 
 #endif
 
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -281,8 +281,8 @@ const struct Trigger *Scene_GetEvents(void) {
 }
 
 #include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
 #include "event_work.h"
 #include "text/msg_ids.h"
 
@@ -1200,8 +1200,8 @@ void Func_02001c4c(void) {
   }
 }
 
-#include "dma.h"
-#include "io_reg.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
 
 /* VIEW(scene_tables): variable gData_02004f04 as u8 gData_02004f04;
  * module/scene/prox.h has s32 gData_02004f04[]; tried as the definition's
@@ -2227,8 +2227,8 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// Scene code of overlay 0x674, in ROM order.
 
 #include "shared/push.h"
-#include "heap_release.h"
-#include "palette_snapshots.h"
+#include "system/heap_release.h"
+#include "graphics/palette_snapshots.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
 

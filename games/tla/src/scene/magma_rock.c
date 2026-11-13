@@ -3,10 +3,10 @@
 #include "../field/object/prepare_object.c"
 
 #include "types.h"
-#include "ram_buffer.h"
-#include "iwram_call.h"
+#include "system/ram_buffer.h"
+#include "system/iwram_call.h"
 #include "actor.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "module/scene/scene.h"
 
 struct Actor *MagmaRock_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
@@ -45,12 +45,12 @@ struct Actor *MagmaRock_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
 
 #include "shared/push.h"
 #include "types.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
-#include "field_coordinate.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
+#include "field/field_coordinate.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
-#include "scene.h"
+#include "system/scene.h"
 
 extern s32 gPushLeaderSteps[];
 
@@ -69,11 +69,11 @@ DEFINE_BLOCK_PUSH_ONTO(MagmaRock_PushBlockOnto, gPushLeaderSteps,
 
 #include "shared/map_cells.h"
 #include "shared/actors.h"
-#include "ram_buffer.h"
-#include "iwram_call.h"
+#include "system/ram_buffer.h"
+#include "system/iwram_call.h"
 #include "actor.h"
 #include "map.h"
-#include "field.h"
+#include "field/field.h"
 #include "module/field/event_commands.h"
 #include "module/scene/magma_rock.h"
 
@@ -94,13 +94,13 @@ DEFINE_MAP_CELL_SET_SHAPE(MagmaRock_SetCellShape, MapGrid_GetTerrainKind,
 
 DEFINE_ACTORS_RAISE_CELLS(MagmaRock_RaiseActorCells, MagmaRock_SetCellShape)
 
-#include "battle.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "scene_tables.h"
 #ifndef TLA_MAGMA_ROCK_H
 #define TLA_MAGMA_ROCK_H
@@ -342,7 +342,7 @@ s32 MagmaRock_BlockMovedPillar(void) {
   return Func_02003af4();
 }
 
-#include "frame.h"
+#include "system/frame.h"
 
 void Import_FieldPsynergySetupActorPair(s32 owner, u16 value);
 
@@ -562,7 +562,7 @@ DEFINE_ACTOR_FLASH_COLOR(MagmaRock_FlashStatue, 10)
 
 // Magma Rock's statues: the magma they fire, the flame columns that lift the
 // leader, the cracked columns, slides, pillars, vines and the final blast.
-#include "event.h"
+#include "field/event.h"
 #include "event_work.h"
 #include "flag_call.h"
 
@@ -693,7 +693,7 @@ void MagmaRock_DriftAndSlow(struct Actor *object) {
 }
 
 #include "field/event_work.h"
-#include "field_effect.h"
+#include "system/field_effect.h"
 
 s32 Position_FlatDistance(s32 *a, s32 *b);
 // XXX: magma_rock.c defines this with an s16 value; this call matches only with
@@ -1584,18 +1584,18 @@ const struct Trigger *Scene_GetEvents(void) {
 #include "shared/map_cells.h"
 #include "shared/actors.h"
 #include "types.h"
-#include "system.h"
-#include "ram_buffer.h"
-#include "main_routine_work.h"
+#include "system/system.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
 #include "actor.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "scene_tables.h"
 #include "field/sprite.h"
 #include "call.h"
 #include "scene_ids.h"
 #include "field/event_work.h"
 #include "event_work.h"
-#include "field.h"
+#include "field/field.h"
 #include "module/field/object.h"
 #include "module/scene/magma_rock.h"
 #include "module/scene/mars_lighthouse_star_room.h"
@@ -2273,14 +2273,14 @@ test:
 
 #include "shared/effects.h"
 #include "shared/tables.h"
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "field_sprite.h"
-#include "field_effect.h"
+#include "system/field_effect.h"
 #include "system/ram_buffer.h"
-#include "resource.h"
-#include "heap_release.h"
+#include "graphics/resource.h"
+#include "system/heap_release.h"
 #include "module/field/field_effect.h"
-#include "particle.h"
+#include "field/particle.h"
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 

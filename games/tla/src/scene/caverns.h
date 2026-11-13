@@ -3,10 +3,10 @@
 
 #include "types.h"
 #include "scene_tables.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "field_event.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define HALF_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))

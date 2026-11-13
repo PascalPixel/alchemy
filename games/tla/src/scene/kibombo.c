@@ -17,7 +17,7 @@ Import_ActorCreate__kibombo(s32 type, s32 x, s32 y,
 #include "gamepak/far_call/system.h"
 #include "module/field/event_commands.h"
 #include "module/scene/kibombo.h"
-#include "resource.h"
+#include "graphics/resource.h"
 
 s32 Func_02000038(struct KibomboObject *object) {
   object->sprite->rotation += 0x600;
@@ -77,7 +77,7 @@ s32 Func_020000c4(struct KibomboObject *object) {
 // The scene code of overlay 0x670 that its scene tables belong to, in ROM
 // order; the rest of the overlay is in kibombo/.
 
-#include "battle.h"
+#include "battle/battle.h"
 /* VIEW(kibombo): routine Actor_SetPositionAndResetMotion as void
  * Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
  * kibombo.h has void Actor_SetPositionAndResetMotion(struct KibomboObject
@@ -126,18 +126,18 @@ extern void
 Actor_SetPartAttribute__kibombo(struct Actor *object,
                                 s32 attribute) __asm__("Actor_SetSpriteColor");
 #define Actor_SetSpriteColor Actor_SetPartAttribute__kibombo
-#include "field.h"
+#include "field/field.h"
 #undef Actor_SetSpriteColor
 #undef Actor_SetBlendMode
 #undef Actor_SetSpriteFlags
 #undef Actor_SetSpritePriority
 #undef Actor_SetPositionAndResetMotion
-#include "game.h"
-#include "graphics.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
@@ -805,9 +805,9 @@ void Func_02001218(void) {
 // Scene code of overlay 0x670, in ROM order, from s1318's offset up to the next
 // object the overlay links.
 
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 /* VIEW(s1318): routine Task_Add as s32 Task_Add(TaskFunc func, s32 order);
  * kibombo.h has void Task_Add(void(*func) (void), s32 priority); tried as the
  * definition's s32 Task_Add(TaskFunc func, s32 order), which the object already
@@ -889,7 +889,7 @@ extern void Script_WaitForEventTimeout__s1318(struct Actor *actor) __asm__(
  * declaration was not found. */
 extern struct Actor *Func_080d4568__s1318(void) __asm__("FieldCamera_GetActor");
 #define FieldCamera_GetActor Func_080d4568__s1318
-#include "event_inline.h"
+#include "field/event_inline.h"
 #undef FieldCamera_GetActor
 #undef Actor_WaitForMove
 #undef Actor_SetSpriteColor
@@ -1558,7 +1558,7 @@ s32 Func_02002b08(s32 value) {
   return value;
 }
 
-#include "io_reg.h"
+#include "system/io_reg.h"
 
 void Func_02002b18(s32 index, s32 entry, s32 delta) {
   u16 color = gData_02007948[entry];
@@ -1838,7 +1838,7 @@ void Func_02003104(s32 x, s32 y, s32 z) {
   }
 }
 
-#include "io_reg.h"
+#include "system/io_reg.h"
 
 struct KibomboEffectWork {
   u8 unk000[0x7c4];
@@ -2033,7 +2033,7 @@ extern void Script_WaitForEventTimeout__s3308(struct Actor *actor) __asm__(
 struct Actor;
 extern struct Actor *Func_080d4568__s3308(void) __asm__("FieldCamera_GetActor");
 #define FieldCamera_GetActor Func_080d4568__s3308
-#include "event_inline.h"
+#include "field/event_inline.h"
 #undef FieldCamera_GetActor
 #undef Actor_WaitForMove
 #undef Actor_SetSpriteColor
@@ -2375,7 +2375,7 @@ void Func_02003a08(s32 x, s32 z) {
   Import_EventSetExitRequest(work->exit);
 }
 
-#include "input.h"
+#include "system/input.h"
 
 void Func_02003ac8(void) {
   struct KibomboObject *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -3135,7 +3135,7 @@ void Func_02005114(void) {
 
 // ---- games/tla/src/scene/kibombo/s516c.c ----
 // Kibombo's setup.
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 /* VIEW(s516c): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
  * Actor *object, u32 flags); kibombo.h has void Actor_SetSpriteFlags(struct
  * KibomboObject *object, u32 value); not tried: Actor_SetSpriteFlags's bound
@@ -3162,7 +3162,7 @@ extern void
 Actor_SetPartAttribute__s516c(struct Actor *object,
                               s32 attribute) __asm__("Actor_SetSpriteColor");
 #define Actor_SetSpriteColor Actor_SetPartAttribute__s516c
-#include "field.h"
+#include "field/field.h"
 #undef Actor_SetSpriteColor
 #undef Actor_SetBlendMode
 #undef Actor_SetSpriteFlags

@@ -140,23 +140,23 @@ const u8 *Scene_GetRegions(void) {
   return 0;
 }
 
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "text/msg_ids.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "map.h"
 
 /* VIEW(first): routine gYampiDesert_Placements as this part declared it; the
@@ -663,18 +663,18 @@ void YampiDesert_WatchScorpionStop(void) {
 #include "shared/map_cells.h"
 #include "shared/actors.h"
 #include "types.h"
-#include "system.h"
-#include "field_effect.h"
+#include "system/system.h"
+#include "system/field_effect.h"
 #include "event_work.h"
 #include "flag_call.h"
-#include "heap_release.h"
+#include "system/heap_release.h"
 #include "item_icon.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/field/field_effect.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
-#include "resource.h"
+#include "graphics/resource.h"
 #include "text/msg_ids.h"
 
 /* VIEW(yampi_desert): routine Actor_ShowEmoteById as this part declared it; the
@@ -701,7 +701,7 @@ extern void Statue_Sink__s0b84(const void *script, s32 a,
 #include "scene_tables.h"
 #include "actor.h"
 #include "call.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -1376,9 +1376,9 @@ void YampiDesert_RippleFollowsScorpion(void) {
 #undef OBJ
 #undef MOVE_LEADER_TO
 
-#include "input.h"
-#include "frame.h"
-#include "field.h"
+#include "system/input.h"
+#include "system/frame.h"
+#include "field/field.h"
 
 #define FIELD32(object, offset) (*(s32 *)((u8 *)(object) + (offset)))
 
@@ -1448,9 +1448,9 @@ void YampiDesert_SlideLeader(struct Actor *object, s32 dx, s32 dz) {
   }
 }
 
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "map.h"
-#include "task.h"
+#include "system/task.h"
 #include "event_work.h"
 #include "fixed_math.h"
 #include "version.h"
@@ -2390,7 +2390,7 @@ loop:
 // Finds the current target's table row and shrinks it.
 DEFINE_STATUE_SINK(Statue_Sink, YampiDesert_SetStakeCell)
 
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 
 DEFINE_ACTOR_SET_CELL_OPEN(YampiDesert_SetStakeCell, Actor_GetCellIndex,
                            Actor_SelectAnimation)

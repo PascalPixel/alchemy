@@ -1,7 +1,7 @@
 #include "types.h"
-#include "field_effect.h"
-#include "main_routine_work.h"
-#include "event.h"
+#include "system/field_effect.h"
+#include "system/main_routine_work.h"
+#include "field/event.h"
 
 /* VIEW(advance_motion_priority): tag struct EffectSpriteBits as struct
  * EffectSpriteBits__advance_motion_priority; module/scene/trial_road.h has

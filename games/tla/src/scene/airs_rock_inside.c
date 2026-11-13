@@ -4,7 +4,7 @@
 #include "shared/map_cells.h"
 #include "shared/actors.h"
 #include "airs_rock_inside.h"
-#include "system.h"
+#include "system/system.h"
 
 #include "actor.h"
 
@@ -169,7 +169,7 @@ next:
 }
 
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 
 // Finds the current target's table row and shrinks it.
 void Func_020000a4(u16 *list, s32 mode, s32 count) {
@@ -234,7 +234,7 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
 #include "flags.h"
 #include "shared/actors.h"
 #include "airs_rock_inside.h"
-#include "system.h"
+#include "system/system.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
@@ -396,7 +396,7 @@ void Func_020006cc(struct Actor *object) {
   MapGrid_SetCellHeight(px, pz, object->terrainId, height);
 }
 
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "field_sprite.h"
 #include "graphics/vram_tab.h"
 #include "system/dma.h"
@@ -494,8 +494,8 @@ void Func_02000908(u16 *list) {
   } while (*entry != 0xffff);
 }
 
-#include "main_routine_work.h"
-#include "input.h"
+#include "system/main_routine_work.h"
+#include "system/input.h"
 
 void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void FieldCamera_FollowActor(s32 id, s32 flag);
@@ -656,7 +656,7 @@ DEFINE_POSITION_DISTANCE_ABOVE(Position_DistanceAbove)
 // mode 0); it moves 1.5 pixels a frame along its angle, upward when its angle
 // is 0xc000.
 
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "field/event_work.h"
 
 /* VIEW(airs_rock_inside): routine gData_020061ac as this part declared it; the
@@ -1467,13 +1467,13 @@ const u8 *Scene_GetEntrances(void) {
   return gData_02006238;
 }
 
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
 #include "scene_tables.h"
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
@@ -1541,13 +1541,13 @@ void Func_020026c0(void) {
 // ---- games/tla/src/scene/airs_rock_inside/s2770.c ----
 
 #include "shared/effects.h"
-#include "task.h"
+#include "system/task.h"
 #include "event_work.h"
 #include "flag_call.h"
 #include "module/field/event_commands.h"
 #include "module/field/object.h"
 #include "module/system/system.h"
-#include "resource.h"
+#include "graphics/resource.h"
 
 void Func_02002770(void) {
   s32 value = -1;
@@ -1744,7 +1744,7 @@ void Func_02002cc0(struct Actor *object) {
 // ---- games/tla/src/scene/airs_rock_inside/s2cf0.c ----
 #include "bg_scroll.h"
 #include "system/io_reg.h"
-#include "frame.h"
+#include "system/frame.h"
 
 void BattleEffect_ApplyColorToSourceBuffer(s32 a, s32 b);
 s32 BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
@@ -3107,15 +3107,15 @@ void Func_02004f3c(void) {
 #include "flags.h"
 #include "shared/tables.h"
 #include "types.h"
-#include "system.h"
-#include "task.h"
+#include "system/system.h"
+#include "system/task.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
 #include "system/field_effect.h"
 #include "system/vector3.h"
 #include "call.h"
-#include "field.h"
+#include "field/field.h"
 #include "airs_rock_inside.h"
 #include "event_work.h"
 #include "flag_call.h"

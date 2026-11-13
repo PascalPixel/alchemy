@@ -8,17 +8,17 @@
 
 #include "shared/tables.h"
 #include "event_work.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "flags.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
@@ -45,7 +45,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 /// Whirlwind on a patch of overgrowth blows it away for good.
 void ApojiiIslandsCave_BlowAwayFoliage(s32 unused, s32 actor) {

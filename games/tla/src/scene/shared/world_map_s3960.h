@@ -1,10 +1,10 @@
 #include "types.h"
-#include "iwram_call.h"
-#include "ram_buffer.h"
-#include "sprite.h"
-#include "io_write_queue.h"
-#include "task.h"
-#include "event_inline.h"
+#include "system/iwram_call.h"
+#include "system/ram_buffer.h"
+#include "field/sprite.h"
+#include "system/io_write_queue.h"
+#include "system/task.h"
+#include "field/event_inline.h"
 
 extern struct Actor *gData_02006c08[];
 

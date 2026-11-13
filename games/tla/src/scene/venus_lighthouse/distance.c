@@ -1,5 +1,5 @@
 #include "types.h"
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 
 s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b) {
   s32 dx = (*a++ - *b++) >> 16;

@@ -4,7 +4,7 @@
 #include "../field/object/prepare_object.c"
 #include "shared/actors.h"
 #include "anemos_inner_sanctum_entrance/anemos_inner_sanctum_entrance.h"
-#include "field.h"
+#include "field/field.h"
 
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 
@@ -27,9 +27,9 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
 #include "shared/jupiter_lighthouse.h"
 #include "types.h"
 #include "actor.h"
-#include "event_inline.h"
-#include "field.h"
-#include "event.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/event.h"
 #include "event_work.h"
 #include "item_icon.h"
 
@@ -67,13 +67,13 @@ s32 Func_0200033c(struct Actor *object) {
   return 0;
 }
 
-#include "battle.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -354,11 +354,11 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "map.h"
 #include "field_event.h"
-#include "vram_tab.h"
-#include "frame.h"
+#include "graphics/vram_tab.h"
+#include "system/frame.h"
 
 extern struct LightOam gData_02001d20[];
 /* VIEW(s0588): variable gData_02001de2 as extern s16 gData_02001de2; hide has
@@ -442,8 +442,8 @@ void LightSprites_Draw(void) {
   }
 }
 
-#include "iwram_call.h"
-#include "task.h"
+#include "system/iwram_call.h"
+#include "system/task.h"
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

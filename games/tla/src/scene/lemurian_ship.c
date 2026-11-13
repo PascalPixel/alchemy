@@ -2,14 +2,14 @@
 /// The scene code of overlay 0x656, in ROM order.
 
 #include "shared/tables.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
@@ -68,14 +68,14 @@ Animation_SetStateFlags__s00b8(struct LemurianShipObject *object,
                                s32 flags) __asm__("Actor_SetBlendMode");
 #define Actor_SetBlendMode Animation_SetStateFlags__s00b8
 #include "types.h"
-#include "system.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
+#include "system/system.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 #include "field_sprite.h"
-#include "event_inline.h"
-#include "frame.h"
+#include "field/event_inline.h"
+#include "system/frame.h"
 
 struct LemurianShipObject {
   u8 unk00[6];
@@ -175,7 +175,7 @@ void Actor_PlaceBlocks(const void *script);
 extern u32 gData_02003ef8[];
 #undef Actor_SetBlendMode
 #undef Actor_SetSpriteFlags
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "version.h"
 #include "macros.h"
 

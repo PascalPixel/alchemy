@@ -1,5 +1,5 @@
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "map.h"
 
 extern struct MapCell gMapCellBuffer[];

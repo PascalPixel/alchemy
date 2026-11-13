@@ -9,22 +9,22 @@
 /// since the tidal wave; after, the people talk of the jewels he brought home.
 
 #include "shared/actors.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
 #include "version.h"
 #include "event_work.h"
 #include "scene_ids.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
 

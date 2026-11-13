@@ -5,14 +5,14 @@
 #include "shared/jupiter_lighthouse.h"
 #include "shared/actors.h"
 #include "shared/effects.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "event_work.h"
@@ -91,8 +91,8 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-#include "main_routine_work.h"
-#include "event_inline.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
 
 void Func_02000054(void) {
   struct Actor *t0;
@@ -114,7 +114,7 @@ void Func_020000b4(void) {
 
 #include "actor.h"
 #include "field_sprite.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 
 void Func_020000d0(s32 kind) {
   s32 owner = gMainRoutineWork.currentOwner;
@@ -312,10 +312,10 @@ void Func_020004d0(s32 a0, s32 a1) {
 }
 
 #include "field_event.h"
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "macros.h"
-#include "io_reg.h"
-#include "io_write.h"
+#include "system/io_reg.h"
+#include "system/io_write.h"
 #include "call.h"
 
 static inline void CopyCells(s32 srcX, s32 srcY, s32 width, s32 height,
@@ -502,7 +502,7 @@ extern s32
 void Func_020009dc(s32 a0) { gPaletteCyclePausesInEvents = a0; }
 
 #include "shared/jupiter_lighthouse_aerie.h"
-#include "dma.h"
+#include "system/dma.h"
 
 /* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined
  * file has another. */
@@ -536,7 +536,7 @@ Func_0200230c__jupiter_lighthouse_room_2() __asm__("MapGrid_SetAttributeBAt");
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
                              Func_0200230c__jupiter_lighthouse_room_2)
 
-#include "frame.h"
+#include "system/frame.h"
 
 DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Whirlwind_CarryLeaderLower)
 
@@ -546,12 +546,12 @@ DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 /// Scene code of overlay 0x69b, in ROM order.
 
-#include "irq.h"
-#include "field_effect.h"
-#include "field_coordinate.h"
+#include "system/irq.h"
+#include "system/field_effect.h"
+#include "field/field_coordinate.h"
 #include "map.h"
-#include "vram_tab.h"
-#include "task.h"
+#include "graphics/vram_tab.h"
+#include "system/task.h"
 #include "item_icon.h"
 
 /* VIEW(s0d94): routine gWhirlwindEndScript as this part declared it; the joined
@@ -660,10 +660,10 @@ void Func_020015d0(s32 a0) { gLightSpritePriority = a0; }
 
 #include "shared/cracked_tile.h"
 #include "types.h"
-#include "field_effect.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
-#include "heap_release.h"
+#include "system/field_effect.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
+#include "system/heap_release.h"
 #include "item_icon.h"
 #include "module/scene/scene.h"
 
@@ -754,11 +754,11 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "scene_tables.h"
-#include "cell_target.h"
+#include "field/cell_target.h"
 
 DEFINE_CRACKED_TILES_FIND_LOWER(CrackedTiles_FindLower, gCrackedTiles,
                                 CrackedTiles_Update)
@@ -775,9 +775,9 @@ DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
 // Scene code of overlay 0x69b, in ROM order.
 
-#include "io_reg.h"
+#include "system/io_reg.h"
 #include "event_work.h"
-#include "field.h"
+#include "field/field.h"
 
 struct CellTargetEntry;
 
@@ -796,7 +796,7 @@ struct CellTarget__s1c8c {
   s16 tile;
 };
 
-#include "io_write.h"
+#include "system/io_write.h"
 
 DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1c8c,
                          Leader_CenterInCell)
@@ -814,11 +814,11 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1c8c,
 #include "shared/tables.h"
 #include "shared/cracked_tile.h"
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "field_effect.h"
-#include "event_inline.h"
+#include "system/main_routine_work.h"
+#include "system/field_effect.h"
+#include "field/event_inline.h"
 #include "shared/jupiter_lighthouse_aerie.h"
 #include "event_work.h"
 #include "module/field/field_effect.h"
@@ -847,7 +847,7 @@ void CrackedTile_Fall();
 DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
                           CrackedTile_Fall)
 
-#include "cell_target.h"
+#include "field/cell_target.h"
 
 DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
                                   CrackedTile_DropIn)

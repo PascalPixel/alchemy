@@ -3,7 +3,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
-#include "heap_slots.h"
+#include "system/heap_slots.h"
 #include "module/battle/battle.h"
 
 s32 LinkBattle_ReceiveParty(void) {

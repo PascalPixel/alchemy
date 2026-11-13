@@ -47,7 +47,7 @@
 // Each character's lighthouse group, two lists the game's rules read, and the
 // experience each character needs for each level.
 
-#include "game.h"
+#include "game/game.h"
 
 /// Each character's element group, as The Broken Seal has it: 0 for the Venus
 /// and Mars Adepts, 1 for the Jupiter and Mercury ones.

@@ -6,8 +6,8 @@
 #define TLA_MARS_LIGHTHOUSE_ENTRANCE_RIDE_H
 
 #include "types.h"
-#include "ram_buffer.h"
-#include "frame.h"
+#include "system/ram_buffer.h"
+#include "system/frame.h"
 #include "actor.h"
 
 struct RideEntry {
@@ -54,8 +54,8 @@ void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 #endif
 
-#include "event_inline.h"
-#include "field.h"
+#include "field/event_inline.h"
+#include "field/field.h"
 #include "module/scene/mars_lighthouse_entrance.h"
 #include "module/scene/scene.h"
 
@@ -68,13 +68,13 @@ void Func_02000044(void) { Field_RequestDjinnBattle(11, 57); }
 
 void Func_02000050(void) { Field_RequestDjinnBattle(17, 36); }
 
-#include "battle.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -180,7 +180,7 @@ DEFINE_MAP_CELL_SWAP(Func_02000168)
 
 #include "shared/mars_lighthouse.h"
 #include "shared/actors.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "actor.h"
 #include "event_work.h"
 #include "item_icon.h"
@@ -271,7 +271,7 @@ loop:
     goto loop;
 }
 
-#include "field_effect.h"
+#include "system/field_effect.h"
 
 /* VIEW(mars_lighthouse_entrance): routine Func_02003b30 as this part declared
  * it; the joined file has another. */
@@ -320,7 +320,7 @@ void MarsLighthouseEntrance_StartPoundIceCone(void) {
   Func_02000338__mars_lighthouse_entrance();
 }
 
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 
 /* VIEW(mars_lighthouse_entrance): routine gData_02005394 as this part declared
  * it; the joined file has another. */
@@ -392,7 +392,7 @@ step:
   FieldEvent_SetExitRequest(20);
 }
 
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 
 /// ★ Named from the game: " checked the ice." (MsgCheckedTheIce)
 void MarsLighthouseEntrance_CheckIce(void) {
@@ -661,7 +661,7 @@ void Func_02000ce4(s32 unused, s32 id) {
   }
 }
 
-#include "vram_tab.h"
+#include "graphics/vram_tab.h"
 
 #define Oam_AddSpriteAtDepthClamped Oam_AddSpriteAtDepthClamped
 
@@ -694,7 +694,7 @@ void Func_02000d18(void) {
   Oam_AddSpriteAtDepthClamped(Data_020068a4, depth);
 }
 
-#include "task.h"
+#include "system/task.h"
 
 /// Fills 0x100 bytes with colour 1, loads them into a VRAM block of their own
 /// and starts Func_02000d18.
@@ -1863,9 +1863,9 @@ DEFINE_BEAM_DRAW_TARGETS(Func_020020ec, Func_0200206c__s20ec, Func_02001e60,
 #include "shared/mars_lighthouse.h"
 #include "types.h"
 #include "actor.h"
-#include "ram_buffer.h"
-#include "iwram_call.h"
-#include "event_inline.h"
+#include "system/ram_buffer.h"
+#include "system/iwram_call.h"
+#include "field/event_inline.h"
 #include "module/field/field.h"
 #include "module/scene/mars_lighthouse_entrance.h"
 #include "module/scene/scene.h"
@@ -1897,8 +1897,8 @@ void Func_020022c4(void) {
 
 void Func_020022d8(s16 value) { RIDE_WORK->value0e = value; }
 
-#include "io_reg.h"
-#include "field.h"
+#include "system/io_reg.h"
+#include "field/field.h"
 
 void Func_020020ec(void);
 
@@ -1956,8 +1956,8 @@ void Func_020024ac(u32 index, s32 value) {
     work->slots[index].value = value;
 }
 
-#include "main_routine_work.h"
-#include "battle_unit.h"
+#include "system/main_routine_work.h"
+#include "battle/battle_unit.h"
 
 struct MarsLighthouseEventWork {
   u8 unk000[0x16a];
@@ -1994,14 +1994,14 @@ DEFINE_ACTOR_BLINK(Func_02002614, 10, 4, 0)
 #include "types.h"
 #include "call.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "vector3.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/vector3.h"
 #include "fixed_math.h"
-#include "event_inline.h"
-#include "display_transition.h"
+#include "field/event_inline.h"
+#include "graphics/display_transition.h"
 #include "event_work.h"
-#include "field.h"
+#include "field/field.h"
 #include "item_icon.h"
 #include "module/field/field.h"
 #include "module/scene/mars_lighthouse_entrance.h"
@@ -2148,7 +2148,7 @@ int MarsLighthouseEntrance_SlideOnIce(void) {
   ride->active = 0;
 }
 
-#include "system.h"
+#include "system/system.h"
 
 s32 Func_020029a0(void) {
   if (RIDE_WORK->active) {
@@ -2160,8 +2160,8 @@ s32 Func_020029a0(void) {
 
 s32 Func_020029bc(void) { return RIDE_WORK->active; }
 
-#include "iwram_call.h"
-#include "field.h"
+#include "system/iwram_call.h"
+#include "field/field.h"
 
 struct Sprite {
   u8 unk00[4];
@@ -2420,7 +2420,7 @@ DEFINE_ACTOR_POP_UP(Func_02003138, Func_02004bc0)
 
 DEFINE_ACTOR_PARK(Func_020031dc, Func_02002fc4)
 
-#include "input.h"
+#include "system/input.h"
 
 /* VIEW(s263c): routine gData_02005758 as this part declared it; the joined file
  * has another. */
@@ -2497,10 +2497,10 @@ void Func_02003878(s32 value) { gData_020068b0 = value; }
 #include "types.h"
 #include "actor.h"
 #include "fixed_math.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "scene_tables.h"
 #include "system/main_routine_work.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "module/field/field.h"
 #include "module/scene/mars_lighthouse_entrance.h"
 #include "module/scene/scene.h"
@@ -2665,9 +2665,9 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003884, Func_02003284, Func_02004bc0,
 // Scene code of overlay 0x6aa, in ROM order.
 
 #include "types.h"
-#include "field_effect.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
+#include "system/field_effect.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
 #include "module/scene/scene.h"
 
 /* VIEW(s3b30): routine gData_0200686c as this part declared it; the joined file
@@ -2758,8 +2758,8 @@ void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 }
 
 #include "shared/cracked_tile.h"
-#include "field.h"
-#include "heap_release.h"
+#include "field/field.h"
+#include "system/heap_release.h"
 #include "item_icon.h"
 
 #define CELL_TABLE Data_020068b4
@@ -2767,10 +2767,10 @@ void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "iwram_call.h"
-#include "cell_target.h"
+#include "system/iwram_call.h"
+#include "field/cell_target.h"
 
 DEFINE_CRACKED_TILES_FIND(Func_02003e24, Data_020068b4, CrackedTiles_Update)
 
@@ -2786,7 +2786,7 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 // one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(Func_020040f0, Leader_CenterInCell)
 
-#include "io_reg.h"
+#include "system/io_reg.h"
 #include "event_work.h"
 
 void Func_02004160(struct PushEvent *event) {
@@ -2859,7 +2859,7 @@ void Func_02004160(struct PushEvent *event) {
 #include "shared/actors.h"
 #include "shared/effects.h"
 #include "shared/mars_lighthouse_entrance_room.h"
-#include "field_effect.h"
+#include "system/field_effect.h"
 #include "module/field/field_effect.h"
 #include "module/scene/mars_lighthouse_entrance.h"
 #include "module/scene/scene.h"
@@ -2929,11 +2929,11 @@ next:
 }
 
 #include "types.h"
-#include "ram_buffer.h"
-#include "main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
 #include "actor.h"
-#include "event_inline.h"
-#include "cell_target.h"
+#include "field/event_inline.h"
+#include "field/cell_target.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
 /* VIEW(s42f8): routine Func_02004160 as this part declared it; the joined file
@@ -2949,8 +2949,8 @@ DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, Data_020068b4, Func_020040f0,
 DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, Data_020068b4,
                                   Func_020042f8)
 
-#include "dma.h"
-#include "io_reg.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
 
 extern u16 *gData_0200e88c;
 extern u16 *gData_02006890;
@@ -2961,7 +2961,7 @@ extern u16 *gData_02006890;
 DEFINE_PALETTE_SET_COLORS_FADE(Func_020045f8, gData_0200e88c, gData_02006890,
                                Data_02006894, Data_02006880, Func_020048e8)
 
-#include "task.h"
+#include "system/task.h"
 
 extern u16 gData_02006898;
 
@@ -3011,7 +3011,7 @@ void Func_020048e8(void) {
   work->value1ac = saved;
 }
 
-#include "field.h"
+#include "field/field.h"
 
 DEFINE_ACTORS_SET_CELLS_OPEN(Actors_SetCellsOpen, Func_02004a60)
 

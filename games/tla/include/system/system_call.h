@@ -11,7 +11,7 @@
 /// `Task_AddFrame(func, TASK_PASS_FRAME)` and the inline calls Task_Add, which
 /// resolves to the overlay's import stub. event_inline.h includes this layer.
 
-#include "event.h"
+#include "field/event.h"
 
 /// Adds `func` as a task of priority `priority` (TASK_PASS_FRAME
 /// runs it once a frame), or gives the task already running it that

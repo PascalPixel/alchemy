@@ -17,20 +17,20 @@
 #include "shared/jupiter_lighthouse.h"
 #include "shared/actors.h"
 #include "shared/effects.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "actor.h"
-#include "ram_buffer.h"
-#include "main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
 #include "field_event.h"
 #include "event_work.h"
 #include "module/field/field.h"
@@ -38,12 +38,12 @@
 #include "module/tla.h"
 #include "map.h"
 #include "call.h"
-#include "field_effect.h"
-#include "field_coordinate.h"
+#include "system/field_effect.h"
+#include "field/field_coordinate.h"
 #include "shared/push.h"
-#include "vram_tab.h"
-#include "task.h"
-#include "heap_release.h"
+#include "graphics/vram_tab.h"
+#include "system/task.h"
+#include "system/heap_release.h"
 #include "item_icon.h"
 
 #include "field/cell_target.h"
@@ -222,9 +222,9 @@ s32 Scene_PrepareMap(void) {
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void Map_CenterOnFollowedPoint(void);
-#include "iwram_call.h"
-#include "dma.h"
-#include "io_reg.h"
+#include "system/iwram_call.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
 
 /* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it;
  * the joined file has another. */
@@ -258,7 +258,7 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
                              MapGrid_SetAttributeBAt)
 
-#include "frame.h"
+#include "system/frame.h"
 #include "field_sprite.h"
 
 DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
@@ -476,14 +476,14 @@ DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
 
 #include "shared/cracked_tile.h"
 #include "types.h"
-#include "field_effect.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
-#include "heap_release.h"
+#include "system/field_effect.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
+#include "system/heap_release.h"
 #include "item_icon.h"
 #include "module/scene/scene.h"
-#include "io_reg.h"
-#include "field.h"
+#include "system/io_reg.h"
+#include "field/field.h"
 #include "event_work.h"
 
 #include "field/cell_target.h"
@@ -581,11 +581,11 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "scene_tables.h"
-#include "cell_target.h"
+#include "field/cell_target.h"
 
 DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find, gCrackedTiles, CrackedTiles_Update)
 
@@ -612,7 +612,7 @@ struct CellTarget__s1c30 {
   s16 tile;
 };
 
-#include "io_write.h"
+#include "system/io_write.h"
 
 DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1c30,
                          Leader_CenterInCell)
@@ -631,13 +631,13 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1c30,
 #include "shared/cracked_tile.h"
 #include "shared/tables.h"
 #include "types.h"
-#include "cell_target.h"
-#include "system.h"
-#include "ram_buffer.h"
+#include "field/cell_target.h"
+#include "system/system.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "field_effect.h"
-#include "event_inline.h"
+#include "system/main_routine_work.h"
+#include "system/field_effect.h"
+#include "field/event_inline.h"
 #include "event_work.h"
 #include "module/field/field_effect.h"
 #include "module/scene/scene.h"

@@ -3,11 +3,11 @@
 
 #include "types.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "input.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/input.h"
 #include "text/msg_ids.h"
-#include "frame.h"
+#include "system/frame.h"
 
 struct JupiterLighthouseRoom7Cell {
   u8 unk00[6];

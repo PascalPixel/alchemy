@@ -34,7 +34,7 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 #include "shared/effects.h"
 #include "event_work.h"
 #include "aqua_rock_inside.h"
-#include "field.h"
+#include "field/field.h"
 #include "module/field/map.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
@@ -110,16 +110,16 @@ extern u8 Data_0202c001[];
 
 void Func_0200033c(void) { Field_RequestDjinnBattle(10, 32); }
 
-#include "battle.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -601,8 +601,8 @@ void Func_02000ca8(void) {
 
 #include "actor.h"
 #include "system/vector3.h"
-#include "event_inline.h"
-#include "io_write_queue.h"
+#include "field/event_inline.h"
+#include "system/io_write_queue.h"
 
 /* VIEW(s0cc8): routine Func_02000ca8 as void Func_02000ca8(); the parts before
  * it has another declaration; tried as the definition's void
@@ -936,7 +936,7 @@ void Func_02001364(struct Actor *object) {
 // Scene code of overlay 0x67c, in ROM order, from s13bc's offset up to the next
 // object the overlay links.
 
-#include "frame.h"
+#include "system/frame.h"
 
 // Steps an orbiting object around its anchor: turns it by half its speed, puts
 // it on the anchor (raised 8 pixels) and pushes it out by its radius; when its
@@ -970,7 +970,7 @@ DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, FieldEffect_Spawn)
 // next object the overlay links.
 
 #include "system/io_reg.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 
 union ActorView {
   struct Actor actor;
@@ -1546,7 +1546,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "text/msg_ids.h"
 
 // The original keeps the masked BG1CNT in a stack slot it never reads again:
@@ -1922,7 +1922,7 @@ DEFINE_LEADER_SINK_AWAY(Leader_SinkAway, Actor_EmitMist)
 DEFINE_LEADER_RISE_FROM_WATER(Leader_RiseFromWater, Actor_EmitMist)
 
 #include "map.h"
-#include "vram_tab.h"
+#include "graphics/vram_tab.h"
 
 // Draws the scene's pillars: a top sprite for each active one and, when it
 // stands above its base, a column sprite as tall as its height.
@@ -2329,10 +2329,10 @@ s32 Func_020036b8(s32 first, s32 target) {
 #include "shared/tables.h"
 #include "aqua_rock_inside.h"
 #include "types.h"
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "system/io_reg.h"
-#include "event_inline.h"
-#include "field.h"
+#include "field/event_inline.h"
+#include "field/field.h"
 
 #define VENT_TOUCHING Func_02003844
 #define VENT_BOUNCE Func_0200389c

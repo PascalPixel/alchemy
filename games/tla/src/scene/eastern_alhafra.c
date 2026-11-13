@@ -4,19 +4,19 @@
 // ---- games/tla/src/scene/eastern_alhafra.c ----
 
 #include "shared/effects.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "flags.h"
 #include "scene_tables.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
 
@@ -105,7 +105,7 @@ void MapGrid_SetAttributeBAt();
 
 #include "module/scene/scene.h"
 #include "module/tla.h"
-#include "particle.h"
+#include "field/particle.h"
 
 /* VIEW(eastern_alhafra): routine gData_02004d0c as this part declared it; the
  * joined file has another. */
@@ -203,7 +203,7 @@ void Func_02000190(s32 unused, s32 id) {
   }
 }
 
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "event_work.h"
 #include "text/msg_ids.h"
 
@@ -535,10 +535,10 @@ check:
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-#include "io_reg.h"
-#include "dma.h"
+#include "system/io_reg.h"
+#include "system/dma.h"
 #include "map.h"
-#include "frame.h"
+#include "system/frame.h"
 
 /* VIEW(s0514): routine gData_020054f0 as this part declared it; the joined file
  * has another. */
@@ -2238,9 +2238,9 @@ DEFINE_ROCKS_SPAWN(Rocks_Spawn)
 
 #include "shared/push.h"
 #include "system/task.h"
-#include "heap_release.h"
+#include "system/heap_release.h"
 #include "item_icon.h"
-#include "resource.h"
+#include "graphics/resource.h"
 
 static __inline__ void StartTask(void (*func)(void), s32 priority) {
   /* FAKEMATCH(wrapper): Task_Add forwarded inline; as a direct call, 6 of 83

@@ -16,11 +16,11 @@
 #include "shared/tables.h"
 #include "shared/actors.h"
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_ids.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "module/scene/scene.h"
 
 /* VIEW(first): routine gGondowanCliffs_Entrances as this part declared it; the
@@ -44,14 +44,14 @@ const u8 *Scene_GetEntrances(void) {
   return gGondowanCliffs_Entrances;
 }
 
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "scene_tables.h"
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
@@ -119,10 +119,10 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 #include "types.h"
 #include "map.h"
 #include "actor.h"
-#include "event_inline.h"
-#include "field.h"
+#include "field/event_inline.h"
+#include "field/field.h"
 #include "event_work.h"
-#include "heap_release.h"
+#include "system/heap_release.h"
 #include "item_icon.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
@@ -282,8 +282,8 @@ void GondowanCliffs_ScoopUpGeyser(s32 unused, s32 cell) {
   }
 }
 
-#include "ram_buffer.h"
-#include "main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
 #include "text/msg_ids.h"
 
 void GondowanCliffs_TalkToDog(void) {
@@ -334,8 +334,8 @@ const u8 *Scene_GetEvents(void) {
   return gGondowanCliffs_Triggers;
 }
 
-#include "frame.h"
-#include "io_reg.h"
+#include "system/frame.h"
+#include "system/io_reg.h"
 
 extern u16 gGondowanCliffs_SavedWaterColors[];
 
@@ -353,7 +353,7 @@ void GondowanCliffs_CycleWaterColors(void) {
   }
 }
 
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "call.h"
 
 void GondowanCliffs_SetUpPass(void) {

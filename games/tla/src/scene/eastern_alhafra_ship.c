@@ -10,20 +10,20 @@
 
 #include "shared/tables.h"
 #include "shared/effects.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "flags.h"
 #include "scene_tables.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
 #include "event_work.h"
 #include "text/msg_ids.h"
 
@@ -50,7 +50,7 @@ s32 Scene_GetPlacements(void) {
 
 void EasternAlhafraShip_StartMovingCrate(void) {}
 
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 void EasternAlhafraShip_FinishMovingCrate(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);

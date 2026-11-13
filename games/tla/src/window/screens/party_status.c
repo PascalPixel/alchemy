@@ -3,7 +3,7 @@
 // Part of window.c.
 
 #include "../screens_internal.h"
-#include "menu_list.h"
+#include "window/menu_list.h"
 #include "module/system/system.h"
 #include "module/window/screens.h"
 #include "module/window/window.h"

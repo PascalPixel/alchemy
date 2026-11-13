@@ -8,7 +8,7 @@
 #include "module/field/field.h"
 #include "module/field/object.h"
 #include "module/system/system.h"
-#include "object_effect_scripts.h"
+#include "battle/object_effect_scripts.h"
 #include "scene_call.h"
 
 struct Actor *Actor_GetById(u32 objectId);

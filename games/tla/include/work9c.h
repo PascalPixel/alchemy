@@ -2,7 +2,7 @@
 #define TLA_WORK9C_H
 
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 
 /// Heap-slot 0x9c workspace: eight slots and 128 nodes.
 struct Work9cNode {

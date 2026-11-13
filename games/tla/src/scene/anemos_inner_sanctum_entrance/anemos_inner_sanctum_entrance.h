@@ -2,9 +2,9 @@
 #define TLA_ANEMOS_INNER_SANCTUM_ENTRANCE_H
 
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
 

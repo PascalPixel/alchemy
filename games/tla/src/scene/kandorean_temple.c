@@ -34,7 +34,7 @@
 
 #include "flags.h"
 #include "kandorean_temple.h"
-#include "field.h"
+#include "field/field.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
 
@@ -187,14 +187,14 @@ s32 KandoreanTemple_PlaceLevitatingStudent(struct Actor *object) {
   return 0;
 }
 
-#include "battle.h"
+#include "battle/battle.h"
 
-#include "game.h"
-#include "graphics.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -214,13 +214,13 @@ u32 *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "macros.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "io_reg.h"
+#include "system/main_routine_work.h"
+#include "system/io_reg.h"
 #include "version.h"
-#include "task.h"
+#include "system/task.h"
 
 /* VIEW(kandorean_temple): routine gKandoreanTemple_Placements as this part
  * declared it; the joined file has another. */
@@ -1964,11 +1964,11 @@ L_0200ae24:
 
 #include "shared/tables.h"
 #include "kandorean_temple.h"
-#include "field_effect.h"
+#include "system/field_effect.h"
 #include "event_work.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "version.h"
-#include "task.h"
+#include "system/task.h"
 #include "text/msg_ids.h"
 #include "module/field/field_effect.h"
 #include "module/scene/scene.h"

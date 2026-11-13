@@ -6,20 +6,20 @@
 /// party ties the second with Lash (OseniaCliffs_LashRope).
 
 #include "shared/tables.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "event_inline.h"
-#include "ram_buffer.h"
-#include "main_routine_work.h"
-#include "frame.h"
+#include "field/event_inline.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "system/frame.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
 

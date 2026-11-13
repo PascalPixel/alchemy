@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "static_assert.h"
-#include "effect_step.h"
+#include "field/effect_step.h"
 
 struct BattleEffectArgument;
 

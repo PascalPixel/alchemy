@@ -3,7 +3,7 @@
 
 #include "../field/object/prepare_object.c"
 #include "ankohl_ruins/ankohl_ruins.h"
-#include "field.h"
+#include "field/field.h"
 
 struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 type) {
   struct Actor *object = FieldActor_Create(type, x, y, z);
@@ -29,7 +29,7 @@ struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 type) {
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
-#include "../../games/tla/src/field/field_effect/spawn.c"
+#include "../field/field_effect/spawn.c"
 
 // ---- scene/ankohl_ruins.c ----
 
@@ -37,14 +37,14 @@ struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 type) {
 // order; the rest of the overlay is in ankohl_ruins/.
 
 #include "flags.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "module/field/event_commands.h"
@@ -121,10 +121,10 @@ void Func_02000384(void) {
 #include "../field/field_effect/advance_motion.c"
 #endif
 
-#include "ram_buffer.h"
-#include "main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
 #include "actor.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "call.h"
 #include "system/field_effect.h"
 
@@ -607,7 +607,7 @@ void Func_020010f4(void) {
 }
 
 #include "scene_ids.h"
-#include "vram_tab.h"
+#include "graphics/vram_tab.h"
 
 void Func_020011c0(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
@@ -726,7 +726,7 @@ void Func_020012c4(void) {
   }
 }
 
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "graphics/resource.h"
 #include "system/heap_release.h"
 #include "system/io_reg.h"
@@ -835,7 +835,7 @@ void Func_020015ac(void) {
   }
 }
 
-#include "frame.h"
+#include "system/frame.h"
 
 /* VIEW(ankohl_ruins): variable gData_02002fa8 as struct AnkohlRuinsWaterRow
  * gData_02002fa8[]; scene/ankohl_ruins/s2438 has u32 gData_02002fa8[] = {;
@@ -1268,7 +1268,7 @@ void Func_020023d0(struct Actor *object) {
 
 #include "flags.h"
 #include "version.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 /// What games/tla/src/scene/ declares for the files that use it, written once.
 
@@ -1301,9 +1301,9 @@ struct AnkohlRuinsSpriteWork;
 #include "types.h"
 #include "call.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_ids.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "text/msg_ids.h"
 
 struct AnkohlRuinsFloatWork {
@@ -1602,9 +1602,9 @@ s32 Scene_Initialize(s32 a0) {
 #include "types.h"
 #include "call.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_ids.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "text/msg_ids.h"
 
 struct AnkohlRuinsFloatWork {

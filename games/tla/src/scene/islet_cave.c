@@ -7,10 +7,10 @@
 #include "system/main_routine_work.h"
 
 #include "types.h"
-#include "ram_buffer.h"
-#include "dma.h"
-#include "io_reg.h"
-#include "event_inline.h"
+#include "system/ram_buffer.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "field/event_inline.h"
 #include "event_work.h"
 #include "module/scene/garoh.h"
 
@@ -93,7 +93,7 @@ extern u16 *gPaletteCycleSlots;
 DEFINE_PALETTE_SET_COLORS(Palette_SetColors, gData_02001a24, gPaletteColors,
                           Data_02001a2c, gPaletteCycleSlots, Func_02000328)
 
-#include "task.h"
+#include "system/task.h"
 
 extern u16 gPaletteCycleTimer;
 
@@ -183,13 +183,13 @@ s32 Func_020003d4(struct Actor *object) {
   return -1;
 }
 
-#include "battle.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

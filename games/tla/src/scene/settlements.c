@@ -24,7 +24,7 @@
 #include "shared/effects.h"
 #include "settlements.h"
 #include "field_event.h"
-#include "field.h"
+#include "field/field.h"
 
 /// What The Lost Age's code declares for the files that use it, written once.
 
@@ -157,7 +157,7 @@ void Settlements_SpawnSplashRing(s32 objectId);
 
 void Settlements_MovePillar(void);
 
-#include "palette_snapshots.h"
+#include "graphics/palette_snapshots.h"
 
 void Settlements_MeetGel(void) { Djinn_JoinParty(10, 1, 14); }
 
@@ -172,13 +172,13 @@ s32 Settlements_ClearSpriteFlags(struct Actor *object) {
 
 DEFINE_ACTOR_BOB(Actor_Bob)
 
-#include "battle.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -198,8 +198,8 @@ u32 *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-#include "main_routine_work.h"
-#include "io_reg.h"
+#include "system/main_routine_work.h"
+#include "system/io_reg.h"
 #include "version.h"
 
 /* VIEW(first): routine gSettlements_Placements as this part declared it; the
@@ -632,8 +632,8 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-#include "ram_buffer.h"
-#include "iwram_call.h"
+#include "system/ram_buffer.h"
+#include "system/iwram_call.h"
 #include "system/io_write_queue.h"
 #include "system/irq_lock.h"
 #include "map.h"
@@ -1053,11 +1053,11 @@ void Settlements_SplashCrate(s32 id) {
 // are.
 
 #include "types.h"
-#include "field_effect.h"
+#include "system/field_effect.h"
 #include "actor.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "settlements.h"
-#include "field.h"
+#include "field/field.h"
 #include "module/field/field.h"
 #include "module/field/field_effect.h"
 #include "module/scene/scene.h"
@@ -1140,10 +1140,10 @@ void Settlements_KeepSliding(struct Actor *object) {
 
 #include "event_work.h"
 #include "call.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "iwram_call.h"
-#include "input.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/iwram_call.h"
+#include "system/input.h"
 
 void Settlements_StopLeader(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -1292,16 +1292,16 @@ end:
 // are.
 
 #include "version.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 #if TLA_PATCH_1
 
 #include "types.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "iwram_call.h"
-#include "input.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/iwram_call.h"
+#include "system/input.h"
 #include "call.h"
 
 /* VIEW(s1a1c): variable gSettlements_SlideStopped as volatile s16
@@ -1471,10 +1471,10 @@ end:
 
 #include "types.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "iwram_call.h"
-#include "input.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/iwram_call.h"
+#include "system/input.h"
 #include "call.h"
 
 extern volatile s16
@@ -1639,11 +1639,11 @@ end:
 #include "call.h"
 #include "types.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "iwram_call.h"
-#include "event_inline.h"
-#include "field.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/iwram_call.h"
+#include "field/event_inline.h"
+#include "field/field.h"
 #include "module/field/field.h"
 #include "module/tla.h"
 

@@ -2,16 +2,16 @@
 #define TLA_TUNDARIA_TOWER_H
 
 #include "types.h"
-#include "system.h"
-#include "ram_buffer.h"
-#include "frame.h"
+#include "system/system.h"
+#include "system/ram_buffer.h"
+#include "system/frame.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_ids.h"
 #include "event_work.h"
-#include "resource.h"
-#include "heap_release.h"
-#include "field_effect.h"
+#include "graphics/resource.h"
+#include "system/heap_release.h"
+#include "system/field_effect.h"
 
 #include "scene_tables.h"
 

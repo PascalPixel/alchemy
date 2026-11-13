@@ -6,6 +6,6 @@
 /// it before those parts, and each part includes it too.
 
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 
 #endif // ALCHEMY_PSYNERGY_INTERNAL_H

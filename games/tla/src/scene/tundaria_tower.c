@@ -7,12 +7,12 @@
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Func_02002f90
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
-#include "../../games/tla/src/field/field_effect/spawn.c"
+#include "../field/field_effect/spawn.c"
 
 #undef EFFECT_SET_SCRIPT
 
 #include "types.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 void Func_02000280(void) {
   GameFlag_Set(513);
@@ -23,9 +23,9 @@ void Func_02000280(void) {
 
 #include "../field/map/cell_get.c"
 
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "map.h"
-#include "field.h"
+#include "field/field.h"
 #include "module/field/map.h"
 #include "module/scene/magma_rock.h"
 #include "flag_call.h"
@@ -88,13 +88,13 @@ void Func_02000338(struct Actor *object) {
 }
 
 #include "field_event.h"
-#include "battle.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "scene_tables.h"
 
 void Actor_SelectAnimation();
@@ -216,9 +216,9 @@ void Func_0200058c(void) {
   Event_End();
 }
 
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "text/msg_ids.h"
 
 #define FIELD_AT(base, type, off)                                              \
@@ -269,7 +269,7 @@ void Func_020005d0(void) {
 }
 
 #include "call.h"
-#include "field_effect.h"
+#include "system/field_effect.h"
 
 void Func_020006d4(union FieldObject *object) {
   object->effect.x += object->effect.velocity.x;
@@ -540,7 +540,7 @@ void Func_02000c64(s32 unused, s32 actorArg) {
   Event_End();
 }
 
-#include "io_reg.h"
+#include "system/io_reg.h"
 
 /// Off layer 2's terrain height, the event's object runs cue 188 on terrain 2
 /// with motion flags 3. In room 6, column 27 sets flag 0x947, and column 25
@@ -719,16 +719,16 @@ void Func_020010d4(struct Actor *object) {
 // ---- from scene/tundaria_tower/events_f.c ----
 // ---- games/tla/src/scene/tundaria_tower/s11e0.c ----
 #include "types.h"
-#include "system.h"
-#include "ram_buffer.h"
+#include "system/system.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "event_work.h"
-#include "frame.h"
-#include "field_effect.h"
-#include "event_inline.h"
-#include "event.h"
-#include "field.h"
+#include "system/frame.h"
+#include "system/field_effect.h"
+#include "field/event_inline.h"
+#include "field/event.h"
+#include "field/field.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
 /* VIEW(events_f): routines Func_020010d4, Func_02000404, Func_020007dc,
@@ -879,7 +879,7 @@ void Func_020011e0(void) {
   Event_End();
 }
 
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "call.h"
 #include "scene_ids.h"
 #include "scene_tables.h"
@@ -1065,7 +1065,7 @@ void Func_020017dc(struct Actor *object) {
   Actor_SetAnimationSpeed(object, 48);
 }
 
-#include "input.h"
+#include "system/input.h"
 
 void Func_02001868(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -1216,10 +1216,10 @@ end:
 
 #include "types.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "iwram_call.h"
-#include "input.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/iwram_call.h"
+#include "system/input.h"
 #include "call.h"
 
 /* VIEW(s1b48): variable gData_02003cd0 as volatile s16 gData_02003cd0;
@@ -1395,10 +1395,10 @@ end:
 
 #include "types.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "iwram_call.h"
-#include "input.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/iwram_call.h"
+#include "system/input.h"
 #include "call.h"
 
 extern volatile s16 gData_02003cd0__s1b48 __asm__("gData_02003cd0");
@@ -2093,18 +2093,18 @@ void Func_02002764(const u16 *table) {
 #include "shared/map_cells.h"
 #include "shared/tables.h"
 #include "types.h"
-#include "system.h"
-#include "iwram_call.h"
+#include "system/system.h"
+#include "system/iwram_call.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "field_sprite.h"
-#include "field_effect.h"
-#include "event_inline.h"
+#include "system/field_effect.h"
+#include "field/event_inline.h"
 #include "gamepak/far_call/system.h"
 #include "module/field/field_effect.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
-#include "particle.h"
+#include "field/particle.h"
 
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 void *Sprite_ShareVramCacheEntry(void *src, void *alt);

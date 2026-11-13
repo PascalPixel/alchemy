@@ -43,7 +43,7 @@ void Func_02000280(void) {
 // The scene code of overlay 0x654 that its scene tables belong to, in ROM
 // order; the rest of the overlay is in shrine_of_the_sea_god/.
 
-#include "battle.h"
+#include "battle/battle.h"
 struct Actor;
 #define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion
 /* VIEW(shrine_of_the_sea_god): routine Actor_SetSpriteFlags as void
@@ -54,15 +54,15 @@ struct Actor;
 extern void Actor_SetSingleChildFlags__shrine_of_the_sea_god(
     struct Actor *object, u32 flags) __asm__("Actor_SetSpriteFlags");
 #define Actor_SetSpriteFlags Actor_SetSingleChildFlags__shrine_of_the_sea_god
-#include "field.h"
+#include "field/field.h"
 #undef Actor_SetSpriteFlags
 #undef Actor_SetPositionAndResetMotion
-#include "game.h"
-#include "graphics.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
@@ -281,8 +281,8 @@ const struct Trigger *Scene_GetEvents(void) {
 
 #include "text/msg_ids.h"
 #include "shrine_of_the_sea_god.h"
-#include "io_reg.h"
-#include "io_write.h"
+#include "system/io_reg.h"
+#include "system/io_write.h"
 #include "call.h"
 #include "macros.h"
 
@@ -932,13 +932,13 @@ void Func_020012b4(void) {
 
 #include "shared/actors.h"
 #include "shrine_of_the_sea_god.h"
-#include "system.h"
+#include "system/system.h"
 #include "macros.h"
 #include "call.h"
 #include "text/msg_ids.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
-#include "frame.h"
+#include "system/frame.h"
 #include "module/scene/scene.h"
 #include "module/scene/shrine_of_the_sea_god.h"
 #include "module/field/field_effect.h"

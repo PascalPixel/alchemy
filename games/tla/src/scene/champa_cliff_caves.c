@@ -3,11 +3,11 @@
 
 // ---- games/tla/src/scene/champa_cliff_caves.c ----
 
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "types.h"
 #include "flags.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
 #include "field_event.h"
 #include "scene_call.h"
 #include "text/msg_ids.h"
@@ -51,10 +51,10 @@ static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
 static __inline__ void Func_02003534_(s32 actor, s32 angle) {
   Actor_FaceDirectionById(actor, angle);
 }
-#include "event.h"
+#include "field/event.h"
 #include "event_work.h"
-#include "field.h"
-#include "heap_release.h"
+#include "field/field.h"
+#include "system/heap_release.h"
 #include "item_icon.h"
 #include "module/field/event_commands.h"
 
@@ -108,8 +108,8 @@ extern char ResourceId_FireColumn;
 
 #include "module/scene/scene.h"
 #include "module/system/system.h"
-#include "resource.h"
-#include "system.h"
+#include "graphics/resource.h"
+#include "system/system.h"
 
 #define DEFINE_CHAMPA_CLIFF_CAVES_GROW(name, n1)                               \
   void name(struct RiseObject *object) {                                       \
@@ -123,12 +123,12 @@ extern char ResourceId_FireColumn;
 
 DEFINE_CHAMPA_CLIFF_CAVES_GROW(Func_02000038, 0x1000)
 
-#include "battle.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
 #include "scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -1935,7 +1935,7 @@ void Func_02003078(void) {
 #undef FIELD_AT
 
 // ---- games/tla/src/scene/champa_cliff_caves/s3164.c ----
-#include "task.h"
+#include "system/task.h"
 
 /* VIEW(s3164): tag struct ChampaCliffCavesWork as struct
  * ChampaCliffCavesWork__s3164; champa_cliff_caves.c has another definition;

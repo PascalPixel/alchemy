@@ -90,8 +90,8 @@ void ParticleBurst_Update(void) {
   work->frame++;
 }
 
-#include "resource.h"
-#include "task.h"
+#include "graphics/resource.h"
+#include "system/task.h"
 
 void BattleEffect_EndX(void) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
@@ -198,16 +198,16 @@ void Cyclone_LiftLeader(void) {
   work->follower->z = owner->z;
 }
 
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "motobj.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "battle/motobj.h"
 
 void BattleEffect_SpinObject(struct MotionObject *object) {
   object->angle += 0x1000;
@@ -561,7 +561,7 @@ void Actor_ArriveInRing(s32 actor) {
 
 // The spray's drops and smoke puffs, moved and drawn each frame.
 
-#include "frame.h"
+#include "system/frame.h"
 
 struct SprayParticle {
   s32 x;

@@ -8,7 +8,7 @@
 
 #include "types.h"
 #include "actor.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 
@@ -32,21 +32,21 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 
 // Scene code of overlay 0x681, in ROM order.
 
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "actor.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "version.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "system/field_effect.h"
 #include "field_sprite.h"
 #include "event_work.h"
@@ -751,7 +751,7 @@ void Func_02000cd8(void) {
   Call7(Cyclone_CopyTouchedCells, 0x13, 0x18, 0, 4, 3, 0x1f, 4);
 }
 
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 
 void Func_02000cf8(void) { Func_02004ff4_(18, 17, 0, 3, 3, 31, 0); }
 
@@ -1038,7 +1038,7 @@ void Func_02001314(s32 a0) {
 // Scene code of overlay 0x681, in ROM order, from s136c's offset up to the next
 // object the overlay links.
 
-#include "frame.h"
+#include "system/frame.h"
 #include "system/field_effect.h"
 
 // Steps an orbiting object around its anchor: turns it by half its speed, puts
@@ -1088,20 +1088,20 @@ DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, FieldEffect_Spawn)
 
 #include "types.h"
 #include "flags.h"
-#include "system.h"
+#include "system/system.h"
 #include "actor.h"
 #include "system/io_reg.h"
-#include "event_inline.h"
-#include "main_routine_work.h"
+#include "field/event_inline.h"
+#include "system/main_routine_work.h"
 #include "text/msg_ids.h"
-#include "field_effect.h"
+#include "system/field_effect.h"
 #include "fixed_math.h"
 #include "event_work.h"
 #include "module/field/event_commands.h"
 #include "module/field/object.h"
 #include "module/scene/scene.h"
 #include "module/system/system.h"
-#include "field.h"
+#include "field/field.h"
 
 struct Spark {
   u8 unk00[8];
@@ -1583,7 +1583,7 @@ void Func_02001ebc(void) {
 #include "shared/actors.h"
 #include "types.h"
 #include "flags.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "actor_view.h"
 #include "event_work.h"
 #include "module/field/field.h"
@@ -1596,13 +1596,13 @@ void Func_02001ebc(void) {
    } *)(base))                                                                 \
        ->v)
 
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 DEFINE_LEADER_SET_LAYER_BYTE(Leader_SetLayerByte, 2)
 
 DEFINE_LEADER_SET_LAYER_BYTE(Func_02001f84, 0)
 
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 
 void Func_02001fa0(void) {
   struct Actor *t0;
@@ -1635,7 +1635,7 @@ void Func_02001fd8(void) {
   }
 }
 
-#include "system.h"
+#include "system/system.h"
 #include "text/msg_ids.h"
 void Actor_MoveToObject(s32 id, s32 target);
 
@@ -1744,7 +1744,7 @@ L_0200a22e:
 
 #include "actor.h"
 #include "scene_tables.h"
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 
 // Three scene events of one shape, for objects 8 and 12, 9 and 12, and 8 and
 // 14: the first object shakes with random vertical speeds, and while the flag
@@ -2223,9 +2223,9 @@ step:
 
 #include "types.h"
 #include "flags.h"
-#include "system.h"
+#include "system/system.h"
 #include "actor.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
 
@@ -2343,10 +2343,10 @@ void Func_02002d30(void) {
 #if TLA_PATCH_1
 
 #include "call.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "io_reg.h"
-#include "field.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/io_reg.h"
+#include "field/field.h"
 
 #define Test(flag) Event_GetFlag(flag)
 #define C1(f, a) Call1((void (*)())f, a)
@@ -3081,10 +3081,10 @@ end:
 // Func_0200042c, and the room pointer is a plain local.
 
 #include "call.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "io_reg.h"
-#include "field.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/io_reg.h"
+#include "field/field.h"
 
 #define Test(flag) Event_GetFlag(flag)
 #define C1(f, a) Call1((void (*)())f, a)
@@ -3820,7 +3820,7 @@ end:
 
 #endif
 
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "map.h"
 
 #define FIELD_AT(base, type, off)                                              \
@@ -4444,8 +4444,8 @@ burst:
 #include "shared/tables.h"
 #include "types.h"
 
-#include "task.h"
-#include "event_inline.h"
+#include "system/task.h"
+#include "field/event_inline.h"
 
 void Func_02004d00(void) {
   Task_AddFrame((s32)Func_020049e4, TASK_PASS_VBLANK);

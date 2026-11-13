@@ -2,14 +2,14 @@
 #define TLA_ANKOHL_RUINS_H
 
 #include "types.h"
-#include "system.h"
-#include "ram_buffer.h"
+#include "system/system.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
 #include "field_sprite.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 /// The overlay's view of the event work heap slot.
 struct AnkohlRuinsEventWork {

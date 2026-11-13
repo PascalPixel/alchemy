@@ -9,11 +9,11 @@
 #include "shared/actors.h"
 #include "shared/effects.h"
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "map.h"
 #include "actor.h"
 #include "macros.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "event_work.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -275,9 +275,9 @@ inner:
 }
 
 #include "types.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "event_inline.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "field/event_inline.h"
 
 extern char SceneId_Ov662Room1;
 extern char SceneId_Ov662Room2;
@@ -471,8 +471,8 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *object) {
     Actor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
 }
 
-#include "dma.h"
-#include "io_reg.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
 
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
@@ -484,7 +484,7 @@ DEFINE_PALETTE_SET_COLORS(YampiDesertCave_SetMarkColors,
                           gYampiDesertCave_MarkCycleSlots,
                           YampiDesertCave_ArriveByTeleport)
 
-#include "task.h"
+#include "system/task.h"
 
 DEFINE_PALETTE_CYCLE_START_VBLANK(
     YampiDesertCave_StartMarkGlow, gYampiDesertCave_MarkCycleIndex,
@@ -611,13 +611,13 @@ s32 Actor_GetCellIndex(struct Actor *object);
 DEFINE_ACTOR_SET_CELL_OPEN(YampiDesertCave_SetStakeCell, Actor_GetCellIndex,
                            Actor_SelectAnimation)
 
-#include "battle.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "scene_tables.h"
 
 /// Talking to Crystal, the Venus Djinni Scoop dug up, starts its battle

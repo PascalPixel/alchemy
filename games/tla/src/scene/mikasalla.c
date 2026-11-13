@@ -9,17 +9,17 @@
 
 #include "shared/actors.h"
 #include "shared/tables.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_ids.h"
 #include "event_work.h"
 
@@ -97,18 +97,18 @@ void *Scene_GetPlacements(void) {
 }
 
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_tables.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 void Map_SetLayerEntryFlag(s32 a);
 
 void Mikasalla_ClimbDownLadder(void);
 
 extern u8 MsgFieldAreYouLookingForSomeone[];
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 /* VIEW(mikasalla): tag struct WarpEntry as struct WarpEntry__mikasalla;
  * module/scene/scene.h has another definition; tried with the definition the

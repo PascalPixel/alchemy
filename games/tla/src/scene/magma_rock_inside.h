@@ -2,14 +2,14 @@
 #define MAGMA_ROCK_INSIDE_LOCAL_H
 
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_tables.h"
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "scene_ids.h"
-#include "frame.h"
-#include "event_inline.h"
+#include "system/frame.h"
+#include "field/event_inline.h"
 #include "map.h"
 
 extern struct MapCell gMapCellBuffer[];

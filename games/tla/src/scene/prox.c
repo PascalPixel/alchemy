@@ -6,10 +6,10 @@
 /// The scene code of overlay 0x6a8, in ROM order.
 
 #include "types.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "field_sprite.h"
-#include "field_effect.h"
-#include "event_inline.h"
+#include "system/field_effect.h"
+#include "field/event_inline.h"
 
 void Actor_SelectAnimation(struct Actor *object, s32 argument);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
@@ -109,18 +109,18 @@ void Func_02000290(void) { Djinn_JoinParty(0x18, 1, 0x13); }
 #include "shared/mars_lighthouse.h"
 #include "shared/actors.h"
 #include "shared/effects.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "event_work.h"
 #include "actor.h"
 #include "version.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
 #include "call.h"
@@ -132,17 +132,17 @@ void Func_02000290(void) { Djinn_JoinParty(0x18, 1, 0x13); }
 /// inline helpers some of their calls go through, as overlay 694's do.
 
 #include "types.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
 #include "event_work.h"
 
 #define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
 
 #endif
 
-#include "input.h"
-#include "frame.h"
-#include "heap_release.h"
+#include "system/input.h"
+#include "system/frame.h"
+#include "system/heap_release.h"
 #include "item_icon.h"
 #include "module/field/field.h"
 #include "module/scene/magma_rock.h"
@@ -234,8 +234,8 @@ extern u32 gData_02004680[];
 void Func_020018e0(void);
 
 #include "module/system/system.h"
-#include "particle.h"
-#include "resource.h"
+#include "field/particle.h"
+#include "graphics/resource.h"
 #include "text/msg_ids.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
@@ -1214,7 +1214,7 @@ void Func_02001c24(s32 a0) {
 
 // object the overlay links.
 
-#include "io_reg.h"
+#include "system/io_reg.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \

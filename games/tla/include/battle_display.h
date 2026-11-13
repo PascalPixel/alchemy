@@ -5,7 +5,7 @@
 /// The Lost Age's presentation work, which holds nine actors.
 // The Broken Seal's (games/tbs/include/battle/battle_camera.h) holds eight.
 
-#include "battle_action.h"
+#include "battle/battle_action.h"
 
 #include "types.h"
 #include "static_assert.h"

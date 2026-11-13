@@ -9,20 +9,20 @@
 /// once Briggs has sailed from Alhafra.
 
 #include "shared/tables.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "flags.h"
 #include "scene_tables.h"
-#include "event_inline.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
+#include "field/event_inline.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
 #include "field_event.h"
 #include "event_work.h"
 #include "module/field/object.h"
@@ -315,7 +315,7 @@ void Champa_FeizhiHoldsHerGift(void) {
 }
 
 #include "version.h"
-#include "frame.h"
+#include "system/frame.h"
 
 void Champa_FeizhiArrives(void) {
   s32 t0;

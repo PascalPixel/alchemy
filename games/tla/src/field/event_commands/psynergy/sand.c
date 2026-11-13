@@ -4,8 +4,8 @@
 
 #include "../psynergy_internal.h"
 
-#include "field_psynergy_work.h"
-#include "main_routine_work.h"
+#include "field/field_psynergy_work.h"
+#include "system/main_routine_work.h"
 #include "system/io_reg.h"
 
 extern char ResourceId_DustPuffA;

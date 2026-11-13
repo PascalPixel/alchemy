@@ -2,11 +2,11 @@
 /// The scene code of overlay 0x655, in ROM order.
 
 #include "types.h"
-#include "system.h"
+#include "system/system.h"
 #include "actor.h"
-#include "event_inline.h"
-#include "ram_buffer.h"
-#include "field.h"
+#include "field/event_inline.h"
+#include "system/ram_buffer.h"
+#include "field/field.h"
 #include "map.h"
 #include "event_work.h"
 #include "module/field/event_commands.h"
@@ -118,9 +118,9 @@ void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer) {
   }
 }
 
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "field_sprite.h"
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 
 void CrumblingPillars_Place(const void *data) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -502,7 +502,7 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
 
 #include "../field/field_effect/advance_motion_priority.c"
 
-#include "field_effect.h"
+#include "system/field_effect.h"
 #include "module/field/field_effect.h"
 
 /* VIEW(first): routine gData_02003e00 as this part declared it; the joined file
@@ -600,7 +600,7 @@ void Rubble_Burst(void) {
 }
 
 #include "shared/map_cells.h"
-#include "../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
+#include "tundaria_tower/tundaria_tower.h"
 #include "module/field/field.h"
 
 DEFINE_ACTOR_SET_CELL_SHAPE(Actor_SetCellShape, MapGrid_GetTerrainKind,
@@ -708,25 +708,25 @@ DEFINE_HELD_ACTOR_RAISE_CELL(HeldActor_RaiseCell, MapGrid_GetTerrainKind,
 #include "shared/map_cells.h"
 #include "shared/actors.h"
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
 #include "map.h"
 #include "field_sprite.h"
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "event_work.h"
-#include "event.h"
+#include "field/event.h"
 #include "flag_call.h"
 #include "module/field/event_commands.h"
 #include "module/scene/dehkan_plateau.h"
@@ -1733,20 +1733,20 @@ void Func_02002604(void) {
 
 #include "flags.h"
 #include "types.h"
-#include "system.h"
+#include "system/system.h"
 #include "actor.h"
 #include "field_sprite.h"
 #include "fixed_math.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "scene_tables.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
 #include "event_work.h"
-#include "event.h"
-#include "field.h"
+#include "field/event.h"
+#include "field/field.h"
 #include "flag_call.h"
 #include "gamepak/far_call/system.h"
-#include "heap_release.h"
+#include "system/heap_release.h"
 #include "module/field/event_commands.h"
 #include "module/scene/dehkan_plateau.h"
 #include "module/scene/scene.h"
@@ -2046,7 +2046,7 @@ void Func_02002bcc(void) {
 // object the overlay links.
 
 #include "map.h"
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "scene_ids.h"
 
 void Actor_TakePlaceOf(struct Actor *object, struct Actor *other);
@@ -2323,8 +2323,8 @@ void Func_02003164(void) {
 // Scene code of overlay 0x655, in ROM order, from s3284's offset up to the next
 // object the overlay links.
 
-#include "task.h"
-#include "field_effect.h"
+#include "system/task.h"
+#include "system/field_effect.h"
 
 /* VIEW(s3284): routine gData_02003fc8 as this part declared it; the joined file
  * has another. */

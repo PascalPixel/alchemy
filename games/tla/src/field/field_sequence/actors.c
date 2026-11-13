@@ -8,7 +8,7 @@
 #include "module/field/field_sequence.h"
 #include "module/field/object.h"
 #include "gamepak/far_call/field.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "module/tla.h"
 
 /// Picks the sprite a scene placement's character id shows: character 8

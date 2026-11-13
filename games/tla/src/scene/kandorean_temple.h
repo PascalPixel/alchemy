@@ -2,16 +2,16 @@
 #define KANDOREAN_TEMPLE_LOCAL_H
 
 #include "types.h"
-#include "system.h"
-#include "ram_buffer.h"
+#include "system/system.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_tables.h"
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "field_sprite.h"
-#include "input.h"
-#include "event_inline.h"
-#include "frame.h"
+#include "system/input.h"
+#include "field/event_inline.h"
+#include "system/frame.h"
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 

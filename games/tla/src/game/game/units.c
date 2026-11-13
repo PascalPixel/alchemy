@@ -7,7 +7,7 @@
 #include "gamepak/far_call/field_sequence.h"
 #include "module/game/game.h"
 #include "gamepak/far_call/window.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "resource_ids.h"
 
 extern u16 gData_02003860;

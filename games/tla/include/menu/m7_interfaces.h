@@ -2,7 +2,7 @@
 #define ALCHEMY_M7_INTERFACES_H
 
 #include "edition.h"
-#include "render_input.h"
+#include "graphics/render_input.h"
 
 void PsynergyMenu_PositionMemberEntry(struct WindowSprite **icons, s32 index,
                                       s32 x, s32 y, s32 columns);

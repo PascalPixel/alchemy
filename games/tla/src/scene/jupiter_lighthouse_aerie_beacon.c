@@ -2,15 +2,15 @@
 /// The scene code of overlay 0x6a5, in ROM order.
 
 #include "types.h"
-#include "event_inline.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "field/event_inline.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "scene_tables.h"
 
 s32 Func_02000038(s32 a0) {
@@ -86,20 +86,20 @@ void Func_020000ec(struct Actor *self) {
 #include "shared/actors.h"
 #include "shared/effects.h"
 #include "types.h"
-#include "heap_release.h"
+#include "system/heap_release.h"
 #include "actor.h"
 #include "field_sprite.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "version.h"
 #include "map.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "scene_tables.h"
 #include "call.h"
 #include "system/main_routine_work.h"
 #include "text/msg_ids.h"
 #include "scene_ids.h"
-#include "frame.h"
-#include "field.h"
+#include "system/frame.h"
+#include "field/field.h"
 #include "event_work.h"
 #include "module/field/event_commands.h"
 
@@ -224,7 +224,7 @@ extern s32 Data_02006a28;
 
 #include "module/scene/scene.h"
 #include "module/tla.h"
-#include "system.h"
+#include "system/system.h"
 
 void MapGrid_SetCellHeight(void);
 
@@ -1117,12 +1117,12 @@ void Func_02001388(void) {
 }
 
 #include "owner_state.h"
-#include "battle.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
 
 void Func_020016e8(void) {
   s32 northwest = FACING_NORTHWEST;
@@ -2522,9 +2522,9 @@ extern s32
 void Func_02003f54(s32 a0) { gPaletteCyclePausesInEvents = a0; }
 
 #include "shared/jupiter_lighthouse_aerie.h"
-#include "iwram_call.h"
-#include "dma.h"
-#include "io_reg.h"
+#include "system/iwram_call.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
 #include "field_event.h"
 
 /* VIEW(s3f54): routine gPaletteCycleFrame as this part declared it; the joined
@@ -2552,8 +2552,8 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_020057c4__s0198,
                              MapGrid_SetAttributeBAt)
 
-#include "vector3.h"
-#include "main_routine_work.h"
+#include "system/vector3.h"
+#include "system/main_routine_work.h"
 
 void Func_020040f4(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -2709,9 +2709,9 @@ void Whirlwind_Update(struct Object6a5 *object) {
 // Scene code of overlay 0x6a5, in ROM order.
 
 #include "shared/whirlwind.h"
-#include "field_effect.h"
-#include "vram_tab.h"
-#include "task.h"
+#include "system/field_effect.h"
+#include "graphics/vram_tab.h"
+#include "system/task.h"
 #include "item_icon.h"
 
 extern u8 gLightSpritesLarge[];
@@ -2859,10 +2859,10 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 // Scene code of overlay 0x6a5, in ROM order.
 
 #include "types.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "field_sprite.h"
-#include "field_effect.h"
-#include "event_inline.h"
+#include "system/field_effect.h"
+#include "field/event_inline.h"
 
 /* VIEW(s4bd4): routine Actor_StartScript as this part declared it; the joined
  * file has another. */
@@ -2950,15 +2950,15 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "../field/map/cell_sprite.c"
 
 #include "shared/cracked_tile.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "scene_tables.h"
-#include "io_reg.h"
-#include "cell_target.h"
+#include "system/io_reg.h"
+#include "field/cell_target.h"
 #include "event_work.h"
-#include "field.h"
-#include "heap_release.h"
+#include "field/field.h"
+#include "system/heap_release.h"
 #include "item_icon.h"
 #include "module/scene/scene.h"
 
@@ -2988,13 +2988,13 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 
 #include "shared/cracked_tile.h"
 #include "types.h"
-#include "system.h"
-#include "ram_buffer.h"
-#include "main_routine_work.h"
+#include "system/system.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
 #include "actor.h"
-#include "field_effect.h"
-#include "event_inline.h"
-#include "cell_target.h"
+#include "system/field_effect.h"
+#include "field/event_inline.h"
+#include "field/cell_target.h"
 #include "event_work.h"
 #include "module/field/field_effect.h"
 #include "module/scene/scene.h"

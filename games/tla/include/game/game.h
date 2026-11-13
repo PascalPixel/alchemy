@@ -6,8 +6,8 @@
 
 #include "types.h"
 #include "edition.h"
-#include "battle_summon.h"
-#include "battle_unit.h"
+#include "battle/battle_summon.h"
+#include "battle/battle_unit.h"
 #include "item.h"
 #include "character_ids.h"
 #include "character.h"

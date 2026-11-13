@@ -4,19 +4,19 @@
 /// and Psynergy hurls two of them skyward on columns of rising earth before the
 /// party heads west for the meeting spot.
 
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "actor.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "event_work.h"
 #include "gamepak/far_call/system.h"
 #include "item_icon.h"
@@ -52,7 +52,7 @@ void VenusLighthouseEntrance_ThiefWaitsForBackup(void);
 void VenusLighthouseEntrance_PointToMeetingSpot(void);
 
 #include "module/tla.h"
-#include "resource.h"
+#include "graphics/resource.h"
 #include "scene_ids.h"
 #include "module/game/game.h"
 #include "text/msg_ids.h"
@@ -148,8 +148,8 @@ void VenusLighthouseEntrance_RunWithDustTrail(s32 actor) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-#include "ram_buffer.h"
-#include "main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -1060,7 +1060,7 @@ void VenusLighthouseEntrance_PointToMeetingSpot(void) {
   Event_End();
 }
 
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 
 /// ★ Named from the game: " ... Are... Are you all right?" (MsgAreAreYou)
 void VenusLighthouseEntrance_WakeUp(void) {
@@ -1523,8 +1523,8 @@ void VenusLighthouseEntrance_StartDust(void) {
   Task_AddFrame(VenusLighthouseEntrance_UpdateDust, (s32)(0x480));
 }
 
-#include "resource.h"
-#include "heap_release.h"
+#include "graphics/resource.h"
+#include "system/heap_release.h"
 
 /* VIEW(sparks): tag struct SparkWork as struct SparkWork__sparks;
  * venus_lighthouse_entrance.c has another definition; tried with the definition

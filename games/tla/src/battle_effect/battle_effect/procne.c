@@ -8,7 +8,7 @@
 #include "module/battle_effect/battle_effect.h"
 #include "module/system/system.h"
 #include "gamepak/far_call/field.h"
-#include "mul_q16.h"
+#include "system/mul_q16.h"
 #include "resource_ids.h"
 
 // Summon 8 (BattleEffect_RunSceneEffect's case 8). Twin: The Broken Seal's

@@ -3,31 +3,31 @@
 
 #include "shared/actors.h"
 #include "types.h"
-#include "ram_buffer.h"
-#include "main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
 #include "version.h"
-#include "event_inline.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "field/event_inline.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "scene_tables.h"
-#include "frame.h"
-#include "iwram_call.h"
+#include "system/frame.h"
+#include "system/iwram_call.h"
 #include "actor.h"
-#include "field_coordinate.h"
+#include "field/field_coordinate.h"
 #include "text/msg_ids.h"
 #include "owner_state.h"
 #include "event_work.h"
 #include "field_sprite.h"
 #include "call.h"
-#include "task.h"
+#include "system/task.h"
 #include "fixed_math.h"
-#include "input.h"
+#include "system/input.h"
 #include "item_icon.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -1719,7 +1719,7 @@ void Func_020028cc(void) {
   Actor_StartScript(obj, gData_02004f10);
 }
 
-#include "io_reg.h"
+#include "system/io_reg.h"
 
 extern u32 gData_02004eb8[];
 
@@ -2185,8 +2185,8 @@ s32 Func_020039a8(struct Actor *object) {
 /// Scene code of overlay 0x64b, in ROM order.
 
 #include "shared/flight.h"
-#include "io_write_queue.h"
-#include "resource.h"
+#include "system/io_write_queue.h"
+#include "graphics/resource.h"
 
 extern u8 gData_02006f20[];
 extern u8 gData_02006e0e[];
@@ -2243,8 +2243,8 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
 DEFINE_CAMERA_JITTER(WorldMap_JitterTransitionCamera)
 
 #include "bg_scroll.h"
-#include "sprite.h"
-#include "vram_tab.h"
+#include "field/sprite.h"
+#include "graphics/vram_tab.h"
 
 #define PUSH_PICTURE(offset)                                                   \
   IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + (offset)), 0x84000140)

@@ -2,7 +2,7 @@
 #define TLA_WORKA0_H
 
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 
 /// Heap-slot 0xa0 workspace: eight slots and 128 nodes.
 struct WorkA0Node {

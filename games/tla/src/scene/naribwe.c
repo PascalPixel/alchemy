@@ -4,11 +4,11 @@
 /// shows the stone that hides the Unicorn Ring.
 
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_tables.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 extern u32 gSceneExits[];
 
@@ -92,7 +92,7 @@ extern u8 MsgNaribwe23__first __asm__("MsgNaribwe23");
  * has another. */
 extern u8 MsgNaribwe45__first __asm__("MsgNaribwe45");
 #define MsgNaribwe45 MsgNaribwe45__first
-#include "field.h"
+#include "field/field.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -108,7 +108,7 @@ const u8 *Scene_GetPlacements(void) {
   return gNaribwe_Placements;
 }
 
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 /// Before Blaze is cast on the central fire, the event work notes whether the
 /// party came in by entrance 10.

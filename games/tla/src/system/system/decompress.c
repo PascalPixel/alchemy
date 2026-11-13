@@ -3,7 +3,7 @@
 // Part of system.c.
 
 #include "../system_internal.h"
-#include "ram_code.h"
+#include "system/ram_code.h"
 
 void Decompress_Halfwords(const void *source, void *destination) {
   u8 routine[(u32)Resource_DecompressHalfwordsCodeSize];

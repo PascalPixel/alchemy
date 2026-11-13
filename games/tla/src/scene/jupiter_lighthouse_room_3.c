@@ -22,25 +22,25 @@ int Random16__first() __asm__("Random16");
 #include "shared/jupiter_lighthouse.h"
 #include "shared/effects.h"
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_tables.h"
-#include "iwram_call.h"
-#include "dma.h"
-#include "event_inline.h"
+#include "system/iwram_call.h"
+#include "system/dma.h"
+#include "field/event_inline.h"
 #include "map.h"
-#include "irq.h"
+#include "system/irq.h"
 #include "field_sprite.h"
 #include "call.h"
-#include "field_effect.h"
-#include "field_coordinate.h"
+#include "system/field_effect.h"
+#include "field/field_coordinate.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
 #include "shared/push.h"
-#include "vram_tab.h"
-#include "task.h"
-#include "heap_release.h"
+#include "graphics/vram_tab.h"
+#include "system/task.h"
+#include "system/heap_release.h"
 #include "item_icon.h"
 
 #include "field/cell_target.h"
@@ -114,7 +114,7 @@ extern const u16 gPaletteCycleColors[];
 extern const u16 gPaletteCycleUnlitPalette[];
 extern const u16 gPaletteCycleUnlitColors[];
 #include "event_work.h"
-#include "field.h"
+#include "field/field.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -259,7 +259,7 @@ void JupiterLighthouse_JumpForward(void) { Field_TryJumpForward(); }
 
 #include "shared/scene_set_arrival_flags.h"
 
-#include "io_reg.h"
+#include "system/io_reg.h"
 #include "field_event.h"
 
 void PaletteCycle_SetPausesInEvents(s32 value) {
@@ -278,7 +278,7 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
                              MapGrid_SetAttributeBAt)
 
-#include "frame.h"
+#include "system/frame.h"
 
 DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Whirlwind_CarryLeaderLower)
 
@@ -523,18 +523,18 @@ DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
 // spawner, and the cracked tiles, found, cracked and fallen through.
 
 #include "types.h"
-#include "field_effect.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
+#include "system/field_effect.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
 #include "shared/cracked_tile.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "iwram_call.h"
-#include "io_reg.h"
-#include "cell_target.h"
+#include "system/iwram_call.h"
+#include "system/io_reg.h"
+#include "field/cell_target.h"
 #include "event_work.h"
-#include "field.h"
-#include "heap_release.h"
+#include "field/field.h"
+#include "system/heap_release.h"
 #include "item_icon.h"
 #include "module/scene/scene.h"
 
@@ -662,14 +662,14 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 #include "shared/cracked_tile.h"
 #include "shared/tables.h"
 #include "types.h"
-#include "cell_target.h"
-#include "ram_buffer.h"
+#include "field/cell_target.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "field_effect.h"
-#include "event_inline.h"
-#include "system.h"
-#include "frame.h"
+#include "system/main_routine_work.h"
+#include "system/field_effect.h"
+#include "field/event_inline.h"
+#include "system/system.h"
+#include "system/frame.h"
 void GameFlag_SetByte(s32 flag, s32 value);
 void Map_CenterOnFollowedPoint(void);
 #include "event_work.h"

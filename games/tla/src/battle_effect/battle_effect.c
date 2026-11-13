@@ -70,23 +70,23 @@
 /// the rest).
 
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "dma.h"
-#include "io_reg.h"
-#include "battle.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "battle/battle.h"
 #include "battle_display.h"
 #include "gamepak/far_call/battle.h"
-#include "graphics.h"
+#include "graphics/graphics.h"
 #include "module/battle_effect/battle_effect.h"
 #include "module/field/object.h"
 #include "module/system/system.h"
 #include "gamepak/far_call/field.h"
-#include "render_placement.h"
+#include "graphics/render_placement.h"
 #include "module/window/screens.h"
 #include "resource_ids.h"
-#include "scene.h"
-#include "system.h"
+#include "system/scene.h"
+#include "system/system.h"
 
 struct MenuFlagWork {
   u8 unk000[0x506];
@@ -120,14 +120,14 @@ void BattleEffect_InitializeTilemapAndFlushQueue(void) {
 }
 
 #include "fixed_math.h"
-#include "task.h"
-#include "input.h"
-#include "iwram_call.h"
-#include "motobj.h"
-#include "transform.h"
-#include "battle_effect.h"
+#include "system/task.h"
+#include "system/input.h"
+#include "system/iwram_call.h"
+#include "battle/motobj.h"
+#include "system/transform.h"
+#include "battle/battle_effect.h"
 #include "battle_effect_work.h"
-#include "resource.h"
+#include "graphics/resource.h"
 
 // The pixel half of a 16.16 value.
 #define HI(v) (((s16 *)&(v))[1])
@@ -1085,11 +1085,11 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
 
 // Break's ice shards (effect kind 43).
 
-#include "battle_action.h"
+#include "battle/battle_action.h"
 
-#include "effect_step.h"
+#include "field/effect_step.h"
 
-#include "heap_release.h"
+#include "system/heap_release.h"
 
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
 
@@ -1391,12 +1391,12 @@ void BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode) {
 }
 
 #include "debug.h"
-#include "field.h"
-#include "game.h"
+#include "field/field.h"
+#include "game/game.h"
 
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
 
 DEFINE_EFFECT_KIND(BattleEffect_RunPly, BattleEffect_RunHealingMotes, 0)
 
@@ -3373,7 +3373,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-#include "battle_effect_argument.h"
+#include "battle/battle_effect_argument.h"
 
 /// Abilities: Smoke Bomb, Sleep Bomb (kind 380).
 DEFINE_EFFECT_KIND(BattleEffect_RunSmokeBomb, BattleEffect_RunEruption, 1)
@@ -4652,7 +4652,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
 
 #undef TRAILS
 
-#include "vram_tab.h"
+#include "graphics/vram_tab.h"
 
 // The blitter slots read as what they hold, a drawing routine.
 #define ALTERNATE_BLITTER_SLOT                                                 \
@@ -5895,24 +5895,24 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
 /// flames and sparks.
 
 #include "types.h"
-#include "ram_buffer.h"
-#include "io_reg.h"
-#include "iwram_call.h"
-#include "heap_release.h"
-#include "battle_effect.h"
+#include "system/ram_buffer.h"
+#include "system/io_reg.h"
+#include "system/iwram_call.h"
+#include "system/heap_release.h"
+#include "battle/battle_effect.h"
 #include "battle_effect_work.h"
-#include "task.h"
+#include "system/task.h"
 #include "actor.h"
 #include "battle_display.h"
 #include "fixed_math.h"
-#include "graphics.h"
+#include "graphics/graphics.h"
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "module/system/system.h"
-#include "render_model.h"
-#include "resource.h"
+#include "battle/render_model.h"
+#include "graphics/resource.h"
 #include "resource_ids.h"
-#include "system.h"
+#include "system/system.h"
 
 struct Model;
 
@@ -6250,17 +6250,17 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 
-#include "motobj.h"
+#include "battle/motobj.h"
 #include "field_event.h"
 
 #define Actor_SetAnimationSpeedFar                                             \
@@ -6286,7 +6286,7 @@ void BattleEffect_RunCanvasMode3WithAction(
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
-#include "io_write_queue.h"
+#include "system/io_write_queue.h"
 #include "bg_scroll.h"
 #include "battle_work.h"
 

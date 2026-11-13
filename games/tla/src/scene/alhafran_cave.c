@@ -10,14 +10,14 @@
 /// leader stands on the ledge above it (AlhafranCave_OpenWayToJail).
 
 #include "flags.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "event_work.h"
@@ -64,10 +64,10 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
 #include "field/field.h"
 
 extern char SceneId_AlhafranCave;
@@ -272,7 +272,7 @@ s32 Scene_Initialize(void) {
 #endif
 }
 
-#include "task.h"
+#include "system/task.h"
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 

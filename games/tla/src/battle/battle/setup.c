@@ -7,7 +7,7 @@
 #include "gamepak/far_call/game.h"
 #include "module/battle/battle.h"
 #include "module/system/system.h"
-#include "transform.h"
+#include "system/transform.h"
 
 void SceneTransform_SetPosition(s32 *position);
 

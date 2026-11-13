@@ -5,13 +5,13 @@
 /// What every part under resource_slot/ shares: its includes. field.c
 /// includes it before those parts, and each part includes it too.
 
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
 
 struct Actor;
 struct FieldPosition;

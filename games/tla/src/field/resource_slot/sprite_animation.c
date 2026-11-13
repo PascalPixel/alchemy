@@ -48,13 +48,13 @@ struct ResourceSprite {
 extern s32 AnimationObject_Allocate__resource_slot(s32 id) __asm__(
     "SpriteAnimation_Alloc");
 #define SpriteAnimation_Alloc AnimationObject_Allocate__resource_slot
-#include "system.h"
+#include "system/system.h"
 #undef SpriteAnimation_Alloc
 #include "types.h"
-#include "resource.h"
-#include "sprite.h"
-#include "sprite_metadata.h"
-#include "ram_buffer.h"
+#include "graphics/resource.h"
+#include "field/sprite.h"
+#include "system/sprite_metadata.h"
+#include "system/ram_buffer.h"
 
 s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   struct AnimationMetadata *metadata;
@@ -469,9 +469,9 @@ void Animation_ApplyChildValue(struct ChildGroup *group, s32 value) {
   }
 }
 
-#include "heap_release.h"
-#include "io_reg.h"
-#include "dma.h"
+#include "system/heap_release.h"
+#include "system/io_reg.h"
+#include "system/dma.h"
 
 #define ANIMATION_OBJECT_COUNT 64
 
@@ -598,7 +598,7 @@ void SpriteAnimation_Clear(void *dst) {
 typedef char
     ResourceObjectWork_size[sizeof(struct ResourceObjectWork) == 56 ? 1 : -1];
 
-#include "vram_tab.h"
+#include "graphics/vram_tab.h"
 
 /// Creates an animated sprite object for animation id, using one of 64 free
 /// objects and a VRAM cache entry. Returns the object, or NULL on failure.
@@ -715,7 +715,7 @@ void Sprite_Destroy(struct ResourceObjectWork *work) {
   }
 }
 
-#include "scene.h"
+#include "system/scene.h"
 
 /// Sums the first cnt frame durations of animation id's entry number `no`.
 /// Commands are two bytes (command, value); 254, 241, 253 and 239 end the

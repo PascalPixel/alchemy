@@ -108,9 +108,7 @@ void AncientLemuria_CycloneRevealsRime(void) {
   struct Actor *object;
   s32 i;
 
-  /* FAKEMATCH(wrapper): scene.h's MapCopy, whose inline parameters keep each
-   * stack argument in its own register; as a direct call, 8 of 273
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): scene.h's MapCopy. */
   MapCopy(7, 13, 1, 1, 5, 13, 0);
   if (Event_GetFlag(0x96c))
     return;
@@ -125,13 +123,11 @@ void AncientLemuria_CycloneRevealsRime(void) {
   for (i = 29; i >= 0; i--) {
     object->facing += 0x1000;
     {
-      /* FAKEMATCH(pin): the limit's first half stays in r2; as a plain
-       * local, 30 of 273 instructions differ in tla-en. */
+      /* FAKEMATCH(pin): the limit's first half stays in r2. */
       register s32 limit asm("r2") = 255;
 
       /* FAKEMATCH(barrier): the barrier starts the 0xffff limit before the
-       * scale's load and finishes it after; without it, 13 of 273
-       * instructions differ in tla-en. */
+       * scale's load and finishes it after. */
       asm("" : "+r"(limit) : "r"(object->scaleX));
       if (object->scaleX <= (limit << 8) + 255)
         object->scaleX += 0xa00;
@@ -215,9 +211,7 @@ void AncientLemuria_TremorShakesOutRime(void) {
 
       object->facing += turn;
     }
-    /* FAKEMATCH(temporary): the object read again through p after the
-     * turn, so the scale is reloaded after its test; as object throughout, 13
-     * of 85 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the object read again through p after the turn. */
     p = object;
     if (p->scaleX <= 0xffff)
       p->scaleX += 0xa00;
@@ -677,9 +671,7 @@ void AncientLemuria_MeetTheLemurians(void) {
     }
     ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count += 2;
   } else {
-    /* FAKEMATCH(pin): the count pinned to r2, as the ROM keeps it, with the
-     * work pointer in r3; as a plain local, local-alloc gives the count r3,
-     * 14 of 1671 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the count pinned to r2. */
     register u32 n asm("r2");
 
     n = ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count;

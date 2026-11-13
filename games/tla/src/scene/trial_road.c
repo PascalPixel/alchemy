@@ -133,8 +133,7 @@ void TrialRoad_TakeStairs(s32 direction) {
       state->leaderBest = state->stage[0];
   }
   {
-    /* FAKEMATCH(temporary): the byte offset kept in a local; as order[index], 2
-     * of 93 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the byte offset kept in a local. */
     s32 offset = (state->stage[0] * 2 + state->mirrored) * 2;
 
     state->pattern = *(s16 *)((u8 *)order + offset);
@@ -1074,8 +1073,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
     Actor_SelectAnimation(object, 8);
     Actor_WaitForMove(object);
     {
-      /* FAKEMATCH(pin): the 2 held in r2 while the address takes r3; as
-       * object->priorityFlags = 2, 8 of 240 instructions differ in tla-en. */
+      /* FAKEMATCH(pin): the 2 held in r2 while the address takes r3. */
       u8 *flags = &object->priorityFlags;
       register s32 value asm("r2") = 2;
 
@@ -1497,8 +1495,7 @@ void TrialRoad_SetUpLogStage(void) {
   OBJECT_BYTE(Actor_GetById(17), 98) = 1;
   OBJECT_BYTE(Actor_GetById(18), 98) = 1;
   {
-    /* FAKEMATCH(pin): the zero pinned to r6; as a plain local, which reuses r5
-     * where the 1 was held, 12 of 52 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the zero pinned to r6. */
     register s32 clear asm("r6") = 0;
 
     Actor_GetById(16)->collisionFlags = clear;
@@ -1950,8 +1947,7 @@ s32 Scene_PrepareMap(void) {
         GameFlag_Set(896);
       }
       {
-        /* FAKEMATCH(temporary): side, for both the store and its flip; as
-         * state->mirrored, 2 of 879 instructions differ in tla-en. */
+        /* FAKEMATCH(temporary): side, for both the store and its flip. */
         s16 side = (entrance - 1) & 1;
 
         state->mirrored = side;
@@ -1961,8 +1957,7 @@ s32 Scene_PrepareMap(void) {
         state->rivalBest = 4;
         side ^= 1;
         {
-          /* FAKEMATCH(temporary): index; as state->order[side + 6], 2 of 879
-           * instructions differ in tla-en. */
+          /* FAKEMATCH(temporary): index. */
           s32 index = side + 6;
 
           value = state->order[index];
@@ -2450,9 +2445,7 @@ void TrialRoad_BeatMoapa(void) {
   OBJECT_BYTE(Actor_GetById(8), 0x5a) &= ~1;
   Actor_WalkToAndWait(8, TrialRoad_MirrorCellX(35), 264);
   Event_Wait(1);
-  /* FAKEMATCH(signature): the byte typed as a whole-byte bit-field, as in
-   * overlay 685; as a plain byte, which stores in the order of a store that
-   * aliases what follows, 4 of 304 instructions differ in tla-en. */
+  /* FAKEMATCH(signature): the byte typed as a whole-byte bit-field. */
   ((struct ActorSolid *)Actor_GetById(8))->solid |= 1;
   Event_Wait(20);
   FieldActor_ShowEmote(8, 261, 10);
@@ -3086,9 +3079,7 @@ void TrialRoad_DriftRubble(union FieldObject *object) {
   effect->velocity.x = velocityX - velocityX / 18;
   effect->velocity.z = velocityZ - velocityZ / 16;
   {
-    /* FAKEMATCH(temporary): the x scale rate read into a block temporary,
-     * which loads it before the x scale; as effect->scaleX +=
-     * effect->scaleRateX, 2 of 59 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the x scale rate read into a block temporary. */
     s32 rate = effect->scaleRateX;
 
     effect->scaleX += rate;
@@ -3118,8 +3109,7 @@ void TrialRoad_SpawnRubble(s32 spread) {
 
   do {
     {
-      /* FAKEMATCH(temporary): y held in a local, so x is computed before it; as
-       * one expression, 14 of 122 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): y held in a local. */
       s32 y = leader->y - (((Random16() * 14) >> 16) << 16);
 
       effect = (struct FieldEffect *)Import_ActorCreate(
@@ -3432,14 +3422,11 @@ static inline void *TrialRoadLink_AllocPicture(void) {
 #define MARKER(left, right, which, tileAdd)                                    \
   do {                                                                         \
     s32 lift;                                                                  \
-    /* FAKEMATCH(pin): originZ in r6; as a plain s32 *, 304 of 497             \
-       instructions differ in tla-en. */                                       \
+    /* FAKEMATCH(pin): originZ in r6. */                                       \
     register s32 *originZ asm("r6");                                           \
-    /* FAKEMATCH(pin): x in r9; as a plain s32, 365 of 497 instructions        \
-       differ in tla-en. */                                                    \
+    /* FAKEMATCH(pin): x in r9. */                                             \
     register s32 x asm("r9");                                                  \
-    /* FAKEMATCH(pin): arg in r0; as a plain s32, 44 of 497 instructions       \
-       differ in tla-en. */                                                    \
+    /* FAKEMATCH(pin): arg in r0. */                                           \
     register s32 arg asm("r0");                                                \
     s32 side = gMainRoutineWork.entrance & 1;                                  \
     if (side) {                                                                \
@@ -3597,8 +3584,7 @@ void TrialRoad_StartRival(s32 a) {
 
   if (Event_GetFlag(0x109) == 0) {
     /* FAKEMATCH(temporary): a local reads the work value before the three
-     * stores; as the value stored directly, 4 of 24 instructions differ in
-     * tla-en. */
+     * stores. */
     s32 value = *(u16 *)(work + 228);
 
     control->field02 = a;

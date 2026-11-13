@@ -440,9 +440,8 @@ void TreasureIsle_CycleWaterColors(void) {
                          (void *)gTreasureIsle_SavedObjColors, 32);
     gTreasureIsle_ColorCycleFrame[0] = 0;
   }
-  /* FAKEMATCH(volatile): two of the colour arrays read and written as volatile,
-   * which keeps the second read after the first store; as plain u16, 6 of 152
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(volatile): two of the colour arrays read and written as volatile.
+   */
   phase = gTreasureIsle_ColorCycleFrame[0] / 8 % 4;
   for (i = 0; i <= 3; i++) {
     gTreasureIsle_BgColors[(phase + i) % 4 + 2] =

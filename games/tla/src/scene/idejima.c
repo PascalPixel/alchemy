@@ -743,9 +743,7 @@ void Idejima_ScrollWaves(void) {
 
   s32 offset = line[0];
 
-  /* FAKEMATCH(dead): an empty once-only block, so BG3VOFS's address is built
-   * after the first line is loaded; as no block, 2 of 26 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(dead): an empty once-only block. */
   do {
   } while (0);
   REG_BG3VOFS = offset;
@@ -800,9 +798,7 @@ void DriftScene_Prepare(void) {
 /// without the orb that moved it. Alex joins them, the beacon is lit and the
 /// tremor tears Idejima away from Gondowan.
 void Idejima_BreakAwayFromGondowan(void) {
-  /* FAKEMATCH(temporary): the facing in a local set before its first use, which
-   * the native keeps in r10 for the later arms; as the constant, 2 of 829
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the facing in a local set before its first use. */
   s32 south;
 
   Event_Start();

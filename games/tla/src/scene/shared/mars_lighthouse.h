@@ -728,8 +728,7 @@
     for (i = 0; i < 64; i++, flags += 128, other++) {                          \
       if (other->script != NULL && (*flags & 1) && other != actor) {           \
         /* FAKEMATCH(barrier): the empty asm clobbering sfp and r4 and reading \
-         * next and actor; as no asm, 85 of 304 instructions differ in tla-en. \
-         */                                                                    \
+         * next and actor. */                                                  \
         asm(""                                                                 \
             :                                                                  \
             : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),        \
@@ -756,9 +755,7 @@
       step = &probe;                                                           \
       FieldVector_AddPolarOffset(PIXELS(16), heading, step);                   \
       /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the         \
-       * address, so next rebuilds it; as no store, 59 of 304 instructions     \
-       * differ in tla-en.                                                     \
-       */                                                                      \
+       * address. */                                                           \
       step = NULL;                                                             \
     }                                                                          \
     next = &probe;                                                             \
@@ -820,8 +817,7 @@
     zero = 0;                                                                  \
     actor->velocityX = zero;                                                   \
     actor->velocityZ = zero;                                                   \
-    /* FAKEMATCH(temporary): cell holds the masked x; as one expression, 2 of  \
-     * 246 instructions differ in tla-en. */                                   \
+    /* FAKEMATCH(temporary): cell holds the masked x. */                       \
     cell = actor->x & 0xfff00000;                                              \
     i = PIXELS(8);                                                             \
     position = &probe;                                                         \
@@ -854,8 +850,7 @@
     Actor_SetAnimationSpeed(actor, 48);                                        \
     actor->update = call3;                                                     \
     /* FAKEMATCH(barrier): the empty asm clobbering sfp and reading            \
-     * nextBehavior twice; as no asm, 18 of 246 instructions differ in tla-en. \
-     */                                                                        \
+     * nextBehavior twice. */                                                  \
     asm("" : : "r"(nextBehavior), "r"(nextBehavior) : SFP_CLOBBER);            \
     goto test;                                                                 \
   body:                                                                        \
@@ -869,8 +864,7 @@
     for (i = 0; i < 64; i++, flags += 128, other++) {                          \
       if (other->script != NULL && (*flags & 1) && other != actor) {           \
         /* FAKEMATCH(barrier): the empty asm clobbering sfp and r4 and reading \
-         * next and actor; as no asm, 170 of 246 instructions differ in        \
-         * tla-en. */                                                          \
+         * next and actor. */                                                  \
         asm(""                                                                 \
             :                                                                  \
             : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),        \
@@ -891,15 +885,12 @@
       goto blocked;                                                            \
     }                                                                          \
   test:                                                                        \
-    /* FAKEMATCH(barrier): the asm tied to heading, with an r4 clobber so PRE  \
-     * leaves it, loads the angle ahead of the address; as heading in the      \
-     * call, 44 of 246 instructions differ in tla-en. */                       \
+    /* FAKEMATCH(barrier): the asm tied to heading, with an r4 clobber. */     \
     asm("" : "=r"(angle) : "0"(heading) : "r4");                               \
     step = &probe;                                                             \
     FieldVector_AddPolarOffset(PIXELS(16), angle, step);                       \
-    /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the address,  \
-     * so next rebuilds it; as &probe in the call, 97 of 246 instructions      \
-     * differ in tla-en. */                                                    \
+    /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the address.  \
+     */                                                                        \
     step = NULL;                                                               \
     next = &probe;                                                             \
     nextBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, next->x, next->z);   \
@@ -969,8 +960,8 @@
       dx = actor->x;                                                           \
       dz = actor->z;                                                           \
       dx -= cameraX;                                                           \
-      /* FAKEMATCH(barrier): the empty asm on dx changes its allocation rank;  \
-       * as no asm, 94 of 182 instructions differ in tla-en. */                \
+      /* FAKEMATCH(barrier): the empty asm on dx changes its allocation rank.  \
+       */                                                                      \
       asm("" : : "r"(dx));                                                     \
       y = actor->y;                                                            \
       dz -= cameraZ;                                                           \
@@ -1062,12 +1053,9 @@
         actor->acceleration = 0x4000;                                          \
         actor->timer = 1;                                                      \
         Event_PlaySound(SE_CRASH);                                             \
-        /* FAKEMATCH(wrapper): forwarded, so each argument builds its own      \
-         * 0x50000; as a direct call, 6 of 362 instructions differ in tla-en.  \
-         */                                                                    \
+        /* FAKEMATCH(wrapper): forwarded. */                                   \
         MapGrid_SetShake(0x50000, 0x50000, 0x10000);                           \
-        /* FAKEMATCH(wrapper): forwarded, so each argument builds its own -1;  \
-         * as a direct call, 17 of 362 instructions differ in tla-en. */       \
+        /* FAKEMATCH(wrapper): forwarded. */                                   \
         MapGrid_SetShake(-1, -1, 0xe666);                                      \
         if (actor->watchedObject != NULL)                                      \
           ((void (*)(struct Actor *))actor->watchedObject)(actor);             \
@@ -1169,8 +1157,7 @@
         Actor_StartScript(object, data1);                                      \
         Actor_SetSpriteFlags(object, 0);                                       \
         /* FAKEMATCH(temporary): the scale is taken before the velocity        \
-         * stores, as in the native; as object->scaleX = (size >> 1) + 0x4000, \
-         * 14 of 98 instructions differ in tla-en. */                          \
+         * stores. */                                                          \
         scale = (size >> 1) + 0x4000;                                          \
         object->velocityY = rise + 0x14000;                                    \
         object->velocityZ = Iwram_MulQ16(radius, Trig_Cos(angle));             \

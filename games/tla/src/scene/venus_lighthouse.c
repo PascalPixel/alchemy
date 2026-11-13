@@ -335,10 +335,7 @@ void VenusLighthouse_RepelLeader(void) {
   Actor_RefreshSelectorById(leader);
   Actor_SetSpriteColor(Actor_GetById__floor(leader), 6);
   {
-    /* FAKEMATCH(pin): the leader pinned to r0, so it is copied there before the
-     * acceleration is built, as the native does; as
-     * Actor_SetSpeedParameters(leader, 0x40000, 0x20000), 2 of 85 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(pin): the leader pinned to r0. */
     register s32 who __asm__("r0");
 
     actor->speed = 0x40000;
@@ -363,8 +360,7 @@ void VenusLighthouse_RepelLeader(void) {
   Actor_SetSpriteColor(Actor_GetById__floor(leader), 0);
   Motion_SetModeAndWaitAnimation(leader, 4);
 
-  /* FAKEMATCH(dead): an empty once-only block, so the null callback is built
-   * after the wait; as no block, 46 of 85 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): an empty once-only block. */
   do {
   } while (0);
 

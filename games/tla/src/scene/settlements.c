@@ -971,9 +971,7 @@ extern u32 gSettlements_SmokeScript[];
 
 void Settlements_SplashCrate(s32 id) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-   * touches: of the 68 bytes it reserves (sub sp, #68), no instruction
-   * addresses the 12 at sp+56 to sp+67, where Settlements_SpawnSplashRing keeps
-   * its velocity; as without it, 4 of 41 instructions differ in tla-en. */
+   * touches: of the 68 bytes it reserves. */
   UNUSED struct SettlementsVector velocity;
   struct SettlementsSpawn spawn;
   struct Actor *object = Actor_Get(id);

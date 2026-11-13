@@ -337,9 +337,7 @@ loop:
     angle = i << 12;
     cosine = Trig_Cos(angle);
     /* FAKEMATCH(dead): spawn is always 1, a constant GCSE only folds after its
-     * partial redundancy pass, so that pass leaves the velocity array's
-     * address in the loop, built after the cosine call as the native has it;
-     * as the plain body, 4 of 177 instructions differ in tla-en. */
+     * partial redundancy pass. */
     if (spawn) {
       velocity[0] = cosine;
       velocity[1] = 0;
@@ -1150,8 +1148,7 @@ second:
       b->acceleration = 0x3333;
       b->speedLimit = 0x3333;
       /* FAKEMATCH(barrier): references to idA rank it over idB and hold idB in
-       * r0 before the script load; as no asm, 22 of 402 instructions differ in
-       * tla-en. */
+       * r0 before the script load. */
       asm("" : : "r"(idA));
       Actor_SetMovementTypeById(idB, gData_02005288);
     }
@@ -1216,8 +1213,7 @@ void BlendScript_Resume(void);
 // and person 11 joins the leader (flag 0x9ba).
 s32 GaiaRockInside_ReadSandTablet(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  /* FAKEMATCH(volatile): the blend level rereads through its slot; as a plain
-   * local, 112 of 250 instructions differ in tla-en. */
+  /* FAKEMATCH(volatile): the blend level rereads through its slot. */
   volatile u16 level;
   s32 message;
 
@@ -1346,8 +1342,7 @@ void Func_02001c9c(void) {
 void Func_02001d14(void) {
   struct Actor *person;
   struct Actor *object;
-  /* FAKEMATCH(volatile): the form kept; as u16 level, 146 of 173 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(volatile): the form kept. */
   volatile u16 level;
   s32 i;
 
@@ -1416,13 +1411,12 @@ void GaiaRockInside_ChallengeSerpent(void) {
     s32 scene;
 
     count = a + b + c + Event_GetFlag(0x9bf);
-    /* FAKEMATCH(dead): the count is summed before the battle rule store;
-     * without it, 8 of 68 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): the count is summed before the battle rule store. */
     do {
     } while (0);
     gMainRoutineWork.battleRule24b = 2;
-    /* FAKEMATCH(dead): the scene address is loaded after the battle rule
-     * store; without it, 4 of 68 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): the scene address is loaded after the battle rule store.
+     */
     do {
     } while (0);
     scene = (s32)&SceneId_Ov681Room1;
@@ -2196,8 +2190,7 @@ void Event_WaitTransitionFrames(void);
 s32 Scene_Initialize(void) {
   s32 message;
   struct MainRoutineWork *work;
-  /* FAKEMATCH(pin): room in r8, which leaves r7 to the owner pointer; as a
-   * plain local, 82 of 1969 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): room in r8, which leaves r7 to the owner pointer. */
   register struct MainRoutineWork *room asm("r8");
   s16 *entrance;
   s16 *early;
@@ -2621,8 +2614,7 @@ s32 Scene_Initialize(void) {
       C1(Event_Wait, 30);
       {
         s32 x;
-        /* FAKEMATCH(pin): z in r5 and x in r6; as a plain local, 12 of 1969
-         * instructions differ in tla-en. */
+        /* FAKEMATCH(pin): z in r5 and x in r6. */
         register s32 z asm("r5");
 
         x = 0x1d00000;
@@ -3326,8 +3318,7 @@ s32 Scene_Initialize(void) {
       C1(Event_Wait, 30);
       {
         s32 x;
-        /* FAKEMATCH(pin): z in r5 and x in r6; as a plain local, 7 of 1961
-         * instructions differ in tla-ja. */
+        /* FAKEMATCH(pin): z in r5 and x in r6. */
         register s32 z asm("r5");
 
         x = 0x1d00000;
@@ -3687,8 +3678,7 @@ typedef struct {
 #define gPath ((Unk_Path *)(gInventorySnapshot + 0x288))
 
 static __inline__ void *Heap_AllocEwram_(s32 size) {
-  /* FAKEMATCH(wrapper): forwarded inline, as scene_call.h describes; as a
-   * direct call, 102 of 418 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): forwarded inline. */
   return Heap_AllocEwram(size);
 }
 
@@ -3941,8 +3931,7 @@ void Func_020048a0(void) {
     s32 i;
 
     for (i = 1; i >= 0; i--, layer++) {
-      /* FAKEMATCH(pin): x fixed to r2, so x is held in r2 and z in r3; as a
-       * plain local, 18 of 45 instructions differ in tla-en. */
+      /* FAKEMATCH(pin): x fixed to r2. */
       register s32 x asm("r2") = layer->x >> 20;
       s32 z = layer->z >> 20;
 
@@ -3959,8 +3948,7 @@ void Func_020048a0(void) {
 s32 Func_02004904(void) {
   struct GaiaRockInsidePath *path = GAIA_ROCK_INSIDE_PATH;
   s32 current = path->current;
-  /* FAKEMATCH(pin): the node fixed to r3 and each link to r2; as a plain local,
-   * 34 of 41 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the node fixed to r3 and each link to r2. */
   register struct GaiaRockInsideNode *node asm("r3") = &path->nodes[current];
   s32 next = current + 1;
   u32 link;
@@ -4047,14 +4035,11 @@ void Func_02004af0(s32 id, s32 flag) {
   s32 i;
   struct MainRoutineWork *work;
 
-  /* FAKEMATCH(barrier): the form kept; as plain gMainRoutineWork.currentOwner
-   * with no asm, 2 of 218 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the form kept. */
   __asm__("" : "=r"(entryWork) : "0"(entryWork));
-  /* FAKEMATCH(barrier): the form kept; as plain code with no asm here, 2 of 218
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the form kept. */
   __asm__("");
-  /* FAKEMATCH(temporary): the form kept; as id used directly from entry, 4 of
-   * 218 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the form kept. */
   value = id;
   leader = Actor_Get(entryWork->currentOwner);
   gravity = leader->gravity;

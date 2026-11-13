@@ -388,7 +388,7 @@ s32 Scene_Initialize(void) {
         x = 153;
         id = ACTOR_DISAPPOINTED_TRAVELER;
         /* FAKEMATCH(barrier): the forced id keeps its load right after that
-         * half; as no asm, 2 of 158 instructions differ in tla-en. */
+         * half. */
         asm volatile("" : "+l"(id));
         x <<= 17;
         z = 335 << 16;

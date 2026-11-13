@@ -460,10 +460,7 @@ void CrackedTile_Fall(struct CellTarget__s14dc *table,
   }
   Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
   do {
-    /* FAKEMATCH(dead): the flag cleared behind a loop-end note, so the
-     * table is copied out of r8 after the actor's byte store, as in the
-     * native; as table->shown = 0, 16 of 131 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(dead): the flag cleared behind a loop-end note. */
     table->shown = 0;
   } while (0);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;

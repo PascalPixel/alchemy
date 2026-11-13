@@ -193,8 +193,7 @@ void Func_020001d8(struct Actor *object) {
     Func_0200015c(object);
   (*(s16 *)((u8 *)object + 102))--;
   /* FAKEMATCH(dead): an empty once-only block, whose loop note ends the
-   * scheduling block, so the timer is stored before z loads as in the native;
-   * without it, 2 of 87 instructions differ in tla-en. */
+   * scheduling block. */
   do {
   } while (0);
   object->x += Trig_Cos(((object->z >> 14) + (object->y >> 15)) << 8) / 2;

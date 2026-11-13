@@ -30,8 +30,7 @@ void SLIDE_FROM_EDGE(void) {
   s32 *p;
 
   /* FAKEMATCH(volatile): the stop flag read as a volatile s16, reread after
-   * each test and for lsls #16; as a plain u16, 54 of 347 instructions differ
-   * in tla-en. */
+   * each test and for lsls #16. */
   object = ObjectTable_Get(gMainRoutineWork.currentOwner);
   SLIDE_STOPPED = 0;
 retry:
@@ -110,8 +109,7 @@ walkNext:
   flags = &entry->collisionFlags;
 overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
-    /* FAKEMATCH(wrapper): the overlap call goes through Value4; as a direct
-     * call, 2 of 347 instructions differ in tla-en. */
+    /* FAKEMATCH(wrapper): the overlap call goes through Value4. */
     if (Value4((s32 (*)())SLIDE_SPHERES_OVERLAP, (s32)&entry->x, radius,
                (s32)position, entry->radius - 2) >= 0)
       goto blocked;
@@ -140,7 +138,7 @@ test:
     goto changed;
 walk:
   /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
-   * position's address; as no asm, 94 of 347 instructions differ in tla-en. */
+   * position's address. */
   __asm__("" : : : SFP_CLOBBER);
   FieldVector_AddPolarOffset(0x100000, angle, position);
   q = position;

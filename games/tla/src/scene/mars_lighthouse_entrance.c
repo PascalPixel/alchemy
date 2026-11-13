@@ -319,8 +319,7 @@ next:
       scale = (Random16() >> 1) + 0x4000;
       Actor_StartScript(object, gData_02005394);
       Actor_SetSpriteFlags(object, 0);
-      /* FAKEMATCH(dead): an empty once-only block holds the order around it; as
-       * no block, 2 of 113 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): an empty once-only block holds the order around it. */
       do {
       } while (0);
       object->velocityY = angle * 4 + 0x20000;
@@ -525,12 +524,10 @@ void Func_0200096c(s32 unused, s32 id) {
     object->acceleration = 0x2000;
     y = object->y;
     {
-      /* FAKEMATCH(pin): the actor pinned to r0 to keep the argument order; as
-       * an unpinned local, 2 of 38 instructions differ in tla-en. */
+      /* FAKEMATCH(pin): the actor pinned to r0 to keep the argument order. */
       register struct Actor *self asm("r0") = object;
       s32 x = 0xc80000;
-      /* FAKEMATCH(pin): z pinned to r3 to keep the argument order; as an
-       * unpinned local, 2 of 38 instructions differ in tla-en. */
+      /* FAKEMATCH(pin): z pinned to r3 to keep the argument order. */
       register s32 z asm("r3") = 0x3180000;
 
       Actor_SetMoveTarget(self, x, y, z);
@@ -1541,10 +1538,7 @@ int MarsLighthouseEntrance_SlideOnIce(void) {
   // Unused: gives the stack frame its 12 bytes.
   s32 frame[3];
 
-  /* FAKEMATCH(signature): typed as returning int, though it returns nothing;
-   * the return register then waits on the leader's copy into r0, which the
-   * scheduler issues before the update hook is cleared; as void, 2 of 138
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(signature): typed as returning int, though it returns nothing. */
   if (event->started == 0) {
     ScreenTransition_Start(event->field1ac, event->field1b4);
     event->started = 1;
@@ -1556,8 +1550,7 @@ int MarsLighthouseEntrance_SlideOnIce(void) {
   event->field15c = 0;
   event->field164 = 0;
   /* FAKEMATCH(signature): Party_TakeFallDamage declared returning s32, though
-   * it returns nothing, so the -10 call sets r1 before negating r0; as void, 2
-   * of 138 instructions differ in tla-en. */
+   * it returns nothing. */
   Func_020024c0__s2860(-10, 0);
   FieldCamera_SetSpeed(0x70000, 0xe000);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -2181,8 +2174,7 @@ DEFINE_ACTORS_SET_CELLS_OPEN(Actors_SetCellsOpen, Actor_SetCellOpen)
 void Func_020049dc(u16 *list, s32 mode, s32 count) {
   struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
 
-  /* FAKEMATCH(dead): the entry jump in a once-only block; as the plain
-   * goto, 5 of 61 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the entry jump in a once-only block. */
   do {
     goto test;
   } while (0);

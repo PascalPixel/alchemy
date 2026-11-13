@@ -82,8 +82,7 @@ void Func_020002a4(void) {
   // after its first instruction.
   s32 (*sine)(s32) = *(s32 (**)(s32))(((u32)Trig_Sin & ~3) + 4);
   struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[1];
-  /* FAKEMATCH(pin): line held in r5; as a plain local, 70 of 110 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(pin): line held in r5. */
   register u16 *line asm("r5") = Data_02006340;
 
   if (((struct EventWork *)Ram_HeapSlots->eventWork)->pendingFirst == 0) {
@@ -96,8 +95,7 @@ void Func_020002a4(void) {
     *(s32 *)&layer->unk08[20] = 0;
     frame = *(u8 *)&gFrameCount;
     i = 0;
-    /* FAKEMATCH(barrier): asm("" : "+r"(i)) keeps the loop's top test; as i = 0
-     * alone, 48 of 110 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): asm("" : "+r"(i)) keeps the loop's top test. */
     asm("" : "+r"(i));
     z = *(s16 *)((u8 *)layer + 6);
     x = *(s16 *)((u8 *)layer + 2);
@@ -108,8 +106,7 @@ void Func_020002a4(void) {
     a = z * stepA + (frame << 10);
     b = z * stepB - (frame << 10);
     for (; i != 160; i++) {
-      /* FAKEMATCH(pin): s1 held in r8; as a plain local, 57 of 110 instructions
-       * differ in tla-en. */
+      /* FAKEMATCH(pin): s1 held in r8. */
       register s32 s1 asm("r8") = sine(a);
       s32 s2 = sine(b);
       *line++ = ((s1 * 3 + s2 * 7) >> 19) + x;
@@ -847,9 +844,7 @@ void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer) {
     Actor_SelectAnimation(object, 1);
     Actor_StartScript(object, gData_02006330);
     object->motionFlags = 0;
-    /* FAKEMATCH(barrier): an empty asm, so the stack argument is loaded before
-     * the pooled zero for nextFrame; without it, 2 of 32 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm. */
     __asm__ volatile("");
     object->unk5e = timer;
     sprite->nextFrame = 0;
@@ -1332,9 +1327,7 @@ void Func_020022f4(void) {
   Actor_WalkToAndWait(8, 296, 712);
   FieldEvent_Wait(1);
   object = Actor_Get(8);
-  /* FAKEMATCH(temporary): a local holding the constant 1, so the value is ORed
-   * into the register that holds it; as one |= 1, 4 of 362 instructions differ
-   * in tla-en. */
+  /* FAKEMATCH(temporary): a local holding the constant 1. */
   b1 = 1;
   b1 |= object->actionFlags;
   object->actionFlags = b1;
@@ -1379,9 +1372,7 @@ void Func_020022f4(void) {
   FieldActor_Jump(9, 6, 23);
   {
     s32 a0 = 4;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 4 of 362 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     Actor_SetAnimation(a0, 3);
   }
@@ -1442,9 +1433,7 @@ void Func_02002694(void) {
   {
     s32 a0 = 9;
     s32 a1 = FACING_SOUTHEAST;
-    /* FAKEMATCH(barrier): an empty asm on a0 and a1, so the third argument is
-     * loaded, then the first, then the second finished; as the plain call, 2 of
-     * 1799 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0 and a1. */
     __asm__("" : "+l"(a0), "+l"(a1));
     Actor_FaceDirection(a0, a1, 0);
   }
@@ -1510,9 +1499,7 @@ void Func_02002694(void) {
   Actor_SetAnimation(6, 3);
   {
     s32 a0 = 5;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 2 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 3);
   }
@@ -1568,9 +1555,7 @@ void Func_02002694(void) {
   FieldEvent_Wait(20);
   {
     s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 2 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 4);
   }
@@ -1591,9 +1576,7 @@ void Func_02002694(void) {
   FieldEvent_Wait(20);
   {
     s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 4 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 4);
   }
@@ -1613,18 +1596,14 @@ void Func_02002694(void) {
     FieldEvent_Wait(40);
     {
       s32 a0 = 10;
-      /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-       * before the others; as the plain call, 2 of 1799 instructions differ in
-       * tla-en. */
+      /* FAKEMATCH(barrier): an empty asm on a0. */
       asm volatile("" : "+l"(a0));
       FieldActor_SetAnimation(a0, 4);
     }
     FieldEvent_Wait(33);
     {
       s32 a0 = 10;
-      /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-       * before the others; as the plain call, 2 of 1799 instructions differ in
-       * tla-en. */
+      /* FAKEMATCH(barrier): an empty asm on a0. */
       asm volatile("" : "+l"(a0));
       FieldEvent_ShowMessageThenWait(a0, 0, 0);
     }
@@ -1645,9 +1624,7 @@ void Func_02002694(void) {
   FieldEvent_Wait(30);
   {
     s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 4 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 3);
   }
@@ -1667,9 +1644,7 @@ void Func_02002694(void) {
   FieldEvent_ShowMessageThenWait(6, 0, 0);
   {
     s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 4 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 4);
   }
@@ -1686,9 +1661,7 @@ void Func_02002694(void) {
   Actor_ShowEmote(9, 0x101, 60);
   {
     s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 4 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 3);
   }
@@ -1712,9 +1685,7 @@ void Func_02002694(void) {
     FieldEvent_Wait(30);
     {
       s32 a0 = 5;
-      /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-       * before the others; as the plain call, 2 of 1799 instructions differ in
-       * tla-en. */
+      /* FAKEMATCH(barrier): an empty asm on a0. */
       asm volatile("" : "+l"(a0));
       FieldActor_SetAnimation(a0, 3);
     }
@@ -1743,9 +1714,7 @@ void Func_02002694(void) {
   FieldEvent_ShowMessageThenWait(10, 0, 0);
   {
     s32 a0 = 9;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 4 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 3);
   }
@@ -1769,9 +1738,7 @@ void Func_02002694(void) {
   FieldEvent_Wait(30);
   {
     s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 4 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 3);
   }
@@ -1801,9 +1768,7 @@ void Func_02002694(void) {
   FieldEvent_Wait(30);
   {
     s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 4 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 3);
   }
@@ -1816,9 +1781,7 @@ void Func_02002694(void) {
   FieldEvent_ShowMessageThenWait(10, 0, 0);
   {
     s32 a0 = 9;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 4 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 4);
   }
@@ -1848,9 +1811,7 @@ void Func_02002694(void) {
   Actor_WalkByAndWait(8, 16, 0);
   FieldEvent_Wait(1);
   t14 = Actor_Get(8);
-  /* FAKEMATCH(temporary): a local holding the constant 1, so the value is ORed
-   * into the register that holds it; as one |= 1, 4 of 1799 instructions differ
-   * in tla-en. */
+  /* FAKEMATCH(temporary): a local holding the constant 1. */
   b1 = 1;
   b1 |= *(u8 *)((t14 + 90));
   *(u8 *)((t14 + 90)) = b1;
@@ -1860,9 +1821,7 @@ void Func_02002694(void) {
   Actor_SetSpeed(10, 0xb333, 0x5999);
   {
     s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 4 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 4);
   }
@@ -1876,9 +1835,7 @@ void Func_02002694(void) {
   Actor_SetAttachedEffect(8, 0x102);
   {
     s32 a0 = 8;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 2 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 3);
   }
@@ -1887,9 +1844,7 @@ void Func_02002694(void) {
   Actor_SetAttachedEffect(8, 0x102);
   {
     s32 a0 = 8;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 2 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 3);
   }
@@ -1897,9 +1852,7 @@ void Func_02002694(void) {
   FieldEvent_Wait(20);
   {
     s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 2 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 3);
   }
@@ -1910,9 +1863,7 @@ void Func_02002694(void) {
   FieldEvent_ShowMessageThenWait(8, 0, 0);
   {
     s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 4 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 4);
   }
@@ -1925,9 +1876,7 @@ void Func_02002694(void) {
   FieldEvent_ShowMessageThenWait(8, 0, 0);
   {
     s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 4 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 4);
   }
@@ -1940,9 +1889,7 @@ void Func_02002694(void) {
   FieldEvent_ShowMessageThenWait(10, 0, 0);
   {
     s32 a0 = 8;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 4 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 3);
   }
@@ -1952,9 +1899,7 @@ void Func_02002694(void) {
   FieldEvent_Wait(35);
   {
     s32 a0 = 8;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 4 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 3);
   }
@@ -1966,9 +1911,7 @@ void Func_02002694(void) {
   Actor_SetAnimation(6, 3);
   {
     s32 a0 = 9;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 2 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 3);
   }
@@ -2010,9 +1953,7 @@ void Func_02002694(void) {
   FieldEvent_Wait(30);
   {
     s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 2 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 3);
   }
@@ -2030,9 +1971,7 @@ void Func_02002694(void) {
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   {
     s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 4 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 3);
   }
@@ -2045,9 +1984,7 @@ void Func_02002694(void) {
   FieldEvent_ShowMessageThenWait(5, 0, 0);
   {
     s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 4 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 4);
   }
@@ -2061,9 +1998,7 @@ void Func_02002694(void) {
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   {
     s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 4 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 3);
   }
@@ -2077,9 +2012,7 @@ void Func_02002694(void) {
   Actor_SetAnimation(6, 3);
   {
     s32 a0 = 9;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 2 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 3);
   }
@@ -2102,9 +2035,7 @@ void Func_02002694(void) {
   FieldEvent_Wait(20);
   {
     s32 a0 = 4;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 2 of 1799 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on a0. */
     asm volatile("" : "+l"(a0));
     FieldActor_SetAnimation(a0, 3);
   }
@@ -2656,7 +2587,7 @@ L_0200c694:;
     s32 a1 = -16;
     s32 a2 = 0;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
-     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
+     * first. */
     Actor_WalkByAndWait(10, a1, a2);
   }
   FieldEvent_Wait(20);
@@ -2702,8 +2633,8 @@ L_0200caf6:;
   *(s32 *)(v8 + 12) = (t17 + 0x6666);
   {
     s32 angle = *(u16 *)(v5 + 6);
-    /* FAKEMATCH(barrier): the native starts the 0x1000 step before it loads
-     * the angle; as the plain sum, 2 of 2484 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): the native starts the 0x1000 step before it loads the
+     * angle. */
     __asm__("" : "+l"(angle));
     *(u16 *)(v5 + 6) = angle + 0x1000;
   }
@@ -2787,7 +2718,7 @@ L_0200ccdc:;
   FieldEvent_Wait(1);
   t23 = Actor_Get(10);
   /* FAKEMATCH(temporary): the value is ORed into the register that holds the
-   * constant; as one |=, 4 of 2484 instructions differ in tla-en. */
+   * constant. */
   b1 = 1;
   b1 |= *(u8 *)(((u8 *)t23 + 90));
   *(u8 *)(((u8 *)t23 + 90)) = b1;
@@ -2832,7 +2763,7 @@ L_0200cda2:;
     s32 a1 = 0x108;
     s32 a2 = 30;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
-     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
+     * first. */
     Actor_ShowEmote(5, a1, a2);
   }
   FieldEvent_ShowMessageThenWait(0x2005, 0, 0);
@@ -2840,7 +2771,7 @@ L_0200cda2:;
     s32 a1 = 0x3000;
     s32 a2 = 0;
     /* FAKEMATCH(barrier): the native loads the later arguments before the
-     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
+     * first. */
     Actor_FaceDirection(10, a1, a2);
   }
   FieldEvent_Wait(20);

@@ -110,8 +110,7 @@ void MercuryLighthouse_SpawnMotes(void) {
       sprite = object->sprite;
       x = Random16() * 40 + 0x32c0000;
       /* FAKEMATCH(temporary): z is built before the motion flag and x are
-       * stored, as in the native; as object->z = 0x2b80000, 12 of 76
-       * instructions differ in tla-en. */
+       * stored. */
       z = 0x2b80000;
       object->motionFlags = phase;
       object->x = x;
@@ -175,8 +174,7 @@ void MercuryLighthouse_HearVoices(void) {
   actor->update = (void (*)(void))MercuryLighthouse_LookAround;
   actor = Actor_GetById(12);
   {
-    /* FAKEMATCH(temporary): the timer's + 40 comes before its address, as in
-     * the native; as a direct store, 2 of 303 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the timer's + 40 comes before its address. */
     u8 timer = ((Random16() * 80) >> 16) + 40;
 
     *((u8 *)actor + 98) = timer;

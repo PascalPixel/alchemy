@@ -263,9 +263,7 @@ void Func_02000540(void) {
   }
   phase = gData_020024c8 / 8 % 4;
   for (k = 0; k <= 3; k++) {
-    /* FAKEMATCH(dead): the phase and the first colour in a once-only block,
-     * whose end holds the order around it; as plain statements, 6 of 152
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(dead): the phase and the first colour in a once-only block. */
     do {
       j = (phase + k) % 4;
       Data_020029f8[12 + j] = Data_020029d8[12 + k];
@@ -350,12 +348,9 @@ void Func_020007a4(s32 unused, s32 id) {
   Func_02001ba0(17);
   Scene_QueueMusic(SE_170);
   i = 3;
-  /* FAKEMATCH(wrapper): both flashes forwarded through ApojiiIslands_Flash,
-   * which keeps each call's own constants; as direct calls, 10 of 188
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): both flashes forwarded through ApojiiIslands_Flash. */
   /* FAKEMATCH(signature): BattleEffect_ApplyColorToTargetBuffer declared
-   * returning s32, though its target returns nothing; as void, 2 of 188
-   * instructions differ in tla-en. */
+   * returning s32, though its target returns nothing. */
 flash:
   ApojiiIslands_Flash(Random16() & 0x7fff, 0);
   PaletteFade_StartInterpolation(15);
@@ -385,8 +380,7 @@ blend:
   GameFlag_Set(0x95e);
   Camera_SetSpeedParameters(0x10000, 0x2000);
   /* FAKEMATCH(wrapper): the camera moves forwarded through
-   * ApojiiIslands_CamMove, so each builds its own -1; as direct calls, 25 of
-   * 188 instructions differ in tla-en. */
+   * ApojiiIslands_CamMove. */
   ApojiiIslands_CamMove(PIXELS(360), -1, PIXELS(328), 1);
   Actor_ShowEmoteById(16, 256, 20);
   FieldCamera_WaitForArrival();
@@ -578,8 +572,7 @@ void Scroll_HBlank(void) {
     REG_BLDCNT = 0;
   } else {
     value = gData_02002a9e;
-    /* FAKEMATCH(dead): the once-only block orders this statement; as a plain
-     * statement, 9 of 35 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): the once-only block orders this statement. */
     do {
       REG_BG1HOFS = value;
     } while (0);
@@ -788,7 +781,7 @@ void Func_020015f8(void) {
       continue;
     left &= 0x1ff;
     /* FAKEMATCH(dead): a self-update of Ram_HeapSlots->mapWork after left's
-     * mask; as nothing, 82 of 189 instructions differ in tla-en. */
+     * mask. */
     Ram_HeapSlots->mapWork += 0;
     top &= 255;
     attr = record->oam;

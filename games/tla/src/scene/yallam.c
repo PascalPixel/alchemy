@@ -154,14 +154,11 @@ s32 Yallam_WatchSongGame(struct Actor *object) {
   if (SceneActor_CalculateFixedPointDistance(&leader->x, &object->x) <= 11) {
     u8 *state = &object->movementState;
     /* FAKEMATCH(temporary): the call's argument copied before the barrier
-     * below; as object->movementState = force; Actor_SelectAnimation(object,
-     * 2), 4 of 82 instructions differ in tla-en. */
+     * below. */
     struct Actor *arg = object;
 
     /* FAKEMATCH(barrier): the state's address and the argument are both formed
-     * before the state is stored, as the native does; as object->movementState
-     * = force; Actor_SelectAnimation(object, 2), with the copy above, 4 of 82
-     * instructions differ in tla-en. */
+     * before the state is stored. */
     asm("" : : "l"(arg), "l"(state));
     *state = force;
     Actor_SelectAnimation(arg, 2);
@@ -405,8 +402,7 @@ s32 Yallam_HasArrived(struct Actor *object) {
 /// One step of a runner's path round the village in the song game, by its
 /// step counter, stopping or going on by the game's mode.
 void Yallam_RunSongPath(s32 actor) {
-  /* FAKEMATCH(pin): the object in r5, as the native keeps it; as a plain local,
-   * 372 of 1163 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the object in r5. */
   register struct YallamActor *object asm("r5") =
       ((struct YallamActor *)Actor_GetById(actor));
   u8 *state = &object->state;
@@ -917,8 +913,7 @@ void Yallam_RunSongPath(s32 actor) {
   case 240:
     Actor_SetDestination(actor, 248, 872);
     {
-      /* FAKEMATCH(pin): the timer's address rebuilt in r2 from the object; as
-       * object->timer++, 190 of 1163 instructions differ in tla-en. */
+      /* FAKEMATCH(pin): the timer's address rebuilt in r2 from the object. */
       register u8 *step asm("r2") = (u8 *)object;
 
       step += 100;

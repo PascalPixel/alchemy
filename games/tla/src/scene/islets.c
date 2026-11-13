@@ -572,9 +572,7 @@ void Func_02000568(void) {
 void Func_020006f4(void) {
   struct Actor *item, *leader, *given;
   const u8 *asked, *noticed;
-  /* FAKEMATCH(temporary): zero wrapped in a struct of one u16, so it stays a
-   * HImode pseudo and its 0 is loaded from the pool; as s32 zero, 25 of 687
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): zero wrapped in a struct of one u16. */
   struct {
     u16 v;
   } zero;
@@ -952,8 +950,7 @@ void Func_020014e0(void) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     if (GameFlag_Get(513) != 0) {
       Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-      /* FAKEMATCH(temporary): the form kept; as leader->update =
-       * Actor_EmitSmoke, 94 of 569 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): the form kept. */
       a = (struct Actor *)Actor_EmitSmoke;
       leader->update = (void (*)(void))a;
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 318, 424);
@@ -1180,8 +1177,7 @@ void Func_02001cac(void) {
   volatile u16 *dma;
 
   /* FAKEMATCH(barrier): an asm reading the first line keeps its load before the
-   * register address is built; as no asm, 6 of 34 instructions differ in
-   * tla-en. */
+   * register address is built. */
   __asm__("" : : "r"(first));
   scroll = &REG_BG1HOFS;
   *scroll = first;
@@ -1204,8 +1200,7 @@ void Func_02001cfc(void) {
   s32 sine;
 
   for (*count = 0; *count != 160; (*count)++) {
-    /* FAKEMATCH(dead): the sine's call and store in a once-only block; as plain
-     * statements, 2 of 65 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): the sine's call and store in a once-only block. */
     do {
       sine = Math_Sin((*count + *(u8 *)&gFrameCount + layer[3]) << 9);
       v[0] = sine;
@@ -1362,8 +1357,7 @@ void Func_02002144(void) {
   object = Actor_Get(13);
   gData_02005198 = x1 = object->x;
   {
-    /* FAKEMATCH(pin): object 13's z in r2, as the native keeps it for its
-     * test; as a plain local, 31 of 58 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): object 13's z in r2. */
     register s32 z asm("r2");
 
     z = object->z;
@@ -2046,8 +2040,7 @@ void Islets_InitializeRoom5(void) {
     s32 a3 = 4;
     s32 a0 = 3;
 
-    /* FAKEMATCH(barrier): the native loads the first argument last; as the
-     * plain call, 2 of 145 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): the native loads the first argument last. */
     asm volatile("" : "+l"(a1), "+l"(a2), "+l"(a3));
     PaletteCycle_Add__islets(a0, a1, a2, a3);
   }
@@ -2397,8 +2390,7 @@ s32 Func_020037d8(struct PushTarget *push) {
   object = Func_02003940(&direction, &push->id, &push->footprint);
   if (object != 0) {
     kind = push->footprint;
-    /* FAKEMATCH(dead): the address of kind taken and dropped; as kind =
-     * push->footprint alone, 127 of 171 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): the address of kind taken and dropped. */
     (void)&kind;
     {
       s32 width = BoxSpan(kind, 0);
@@ -2420,14 +2412,12 @@ s32 Func_020037d8(struct PushTarget *push) {
         s8 *table = gPushFootprints[0];
 
         index = kind * 4;
-        /* FAKEMATCH(wrapper): the read through RowByte; as table[index + 1],
-         * 27 of 171 instructions differ in tla-en. */
+        /* FAKEMATCH(wrapper): the read through RowByte. */
         cell.z = push->z + (RowByte(table, index + 1) << 16);
         for (j = 0; j < height; j++) {
           cell.x = push->x + (gPushFootprints[0][index] << 16);
           for (i = 0; i < width; i++) {
-            /* FAKEMATCH(wrapper): the call through CallFunc_02003e2c; as a
-             * direct call, 2 of 171 instructions differ in tla-en. */
+            /* FAKEMATCH(wrapper): the call through CallFunc_02003e2c. */
             if (CallFunc_02003e2c(object, &cell) == 2)
               goto blocked;
             cell.x += 0x100000;

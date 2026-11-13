@@ -444,9 +444,7 @@ s32 Scene_PrepareMap(void) {
 
     u32 c;
 
-    /* FAKEMATCH(dead): the four copies in a once-only block, whose end holds
-     * the order around it; as plain statements, 4 of 57 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(dead): the four copies in a once-only block. */
     do {
       c = *src;
       *(u16 *)0x50000f6 = c;

@@ -357,9 +357,7 @@ void MagmaRockInside_StartLavaPlatform(s32 a0, s32 a1, s32 a2) {
   FIELD_AT(v6, s32, 48) = 0x8000;
   FIELD_AT(v6, s32, 52) = 0x8000;
   FIELD_AT(v6, u8, 85) = 2;
-  /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
-   * the listing orders it; without it, 4 of 53 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(barrier): an empty asm ends the scheduling block here. */
   asm("");
   v5 = (v5 >> 16);
   v5 = (v5 << 16);
@@ -367,9 +365,7 @@ void MagmaRockInside_StartLavaPlatform(s32 a0, s32 a1, s32 a2) {
   v5 = ((u32)v5 >> 16);
   Actor_SetSpriteFlags(v6, 0);
   t4 = Event_GetFlag(v5);
-  /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
-   * the listing orders it; without it, 2 of 53 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(barrier): an empty asm ends the scheduling block here. */
   asm("");
   if (t4 == 0)
     goto sunk;
@@ -453,8 +449,7 @@ void MagmaRockInside_UnblockMovedPillar(void) {
 void MagmaRockInside_BlockMovedPillar(void) {
   struct Actor *object =
       *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
-  /* FAKEMATCH(pin): copy in r5, as the native keeps it; as a plain local,
-   * 78 of 281 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): copy in r5. */
   register struct Actor *copy asm("r5");
   s32 scene;
   s32 x;
@@ -589,8 +584,7 @@ void MagmaRockInside_TrailEmbers(struct Actor *object) {
     Event_PlayCueNearFocus(object, 136);
   dz = Random16() & 15;
   vz = ((Random16() & 31) - 16) << 12;
-  /* FAKEMATCH(temporary): z read into its own local; as object->z in the
-   * call, 4 of 60 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): z read into its own local. */
   z = object->z;
   FieldEffect_Spawn(object->x, object->y, z + ((dz - 8) << 15), 0, 0, vz,
                     0x320001, &options);
@@ -917,8 +911,7 @@ void MagmaRockInside_DrainLava(void) {
   u32 i;
   u32 row;
 
-  /* FAKEMATCH(dead): srcX and srcZ start from a zero only combine sees; as srcX
-   * = 0 and srcZ = 0, 138 of 537 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): srcX and srcZ start from a zero only combine sees. */
   srcX = ((u32)layer & 3) >> 2;
   srcZ = ((u32)layer & 7) >> 3;
   // t holds 212 for a set flag, then the frame count.
@@ -961,12 +954,10 @@ void MagmaRockInside_DrainLava(void) {
   // native; as for loops, 431 of 537 instructions differ in tla-en.
   i = 0;
 burst:
-  /* FAKEMATCH(temporary): burstRandom holding the first call's value; as the
-   * call inside the sum, 4 of 537 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): burstRandom holding the first call's value. */
   burstRandom = Random16();
   mask = 31;
-  /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 230 of 537
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the empty asm clobbering sfp. */
   asm("" : : : SFP_CLOBBER);
   burstPosition = position;
   burstPosition[0] = baseX + ((burstRandom & mask) << 16);
@@ -1034,8 +1025,7 @@ rise:
     if ((t & 3) == 0) {
       i = 0;
     spark:
-      /* FAKEMATCH(temporary): sparkRandom holding the call's value; as the call
-       * inside the sum, 2 of 537 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): sparkRandom holding the call's value. */
       sparkRandom = Random16();
       sparkPosition = position;
       sparkPosition[0] = baseX + ((sparkRandom % 48) << 16);
@@ -1076,8 +1066,7 @@ rise:
   lastOptions->startScaleX = 0x1cccc;
   i = 0;
 last:
-  /* FAKEMATCH(temporary): sparkRandom holding the call's value; as the call
-   * inside the sum, 2 of 537 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): sparkRandom holding the call's value. */
   sparkRandom = Random16();
   sparkPosition = position;
   sparkPosition[0] = baseX + ((sparkRandom % 48) << 16);
@@ -1179,8 +1168,7 @@ void MagmaRockInside_FloodWithLava(void) {
     if (gMainRoutineWork.entrance <= 8) {
       srcX = 49;
       /* FAKEMATCH(dead): j set again to the position's address, which it
-       * already holds; as without it, 25 of 496 instructions differ in tla-en.
-       */
+       * already holds. */
       j = (u32)position;
       i = 75;
       dstX = 113;
@@ -1254,10 +1242,7 @@ void MagmaRockInside_FloodWithLava(void) {
   FieldEvent_Wait(20);
   j = (u32)&gMainRoutineWork.currentOwner;
   Actor_Get(*(s32 *)j)->actionFlags &= ~1;
-  /* FAKEMATCH(temporary): the position's address held in a pointer, so that
-   * the two halfword reads are taken from it as the native does (movs r2, #2;
-   * ldrsh r1, [r5, r2]); as position[] and ((s16 *)position)[1], 37 of 496
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the position's address held in a pointer. */
   p = position;
   p[0] = (leader->x & 0xfff00000) + 0x80000;
   p[1] = leader->y;
@@ -1538,9 +1523,8 @@ void MagmaRockInside_TrackStepCell(void) {
   work = Ram_HeapSlots->eventWork;
   value = MagmaRockInside_GetCell(2, x, z) >> 8;
   if (value != 0) {
-    /* FAKEMATCH(temporary): the value plus 200 held in delay before the
-       store; as *(s16 *)(work + 362) = value + 200, 6 of 70 instructions
-       differ in tla-en. */
+    /* FAKEMATCH(temporary): the value plus 200 held in delay before the store.
+     */
     s32 delay = value + 200;
     *(s16 *)(work + 362) = delay;
   }
@@ -1923,7 +1907,7 @@ burst:
   wait(30);
   i = 0;
   /* FAKEMATCH(dead): the never-taken jump into the spiral keeps its refs at
-   * weight 1; as the spiral alone, 174 of 402 instructions differ in tla-en. */
+   * weight 1. */
   probe = second->unk57;
   if (probe & 0x100) {
     wait(1);
@@ -2697,8 +2681,7 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
 
   do {
     {
-      /* FAKEMATCH(temporary): y held in a local, so x is computed before it; as
-       * one expression, 14 of 122 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): y held in a local. */
       s32 y = leader->y - (((Random16() * 14) >> 16) << 16);
 
       effect = (struct FieldEffect *)FieldActor_Create(

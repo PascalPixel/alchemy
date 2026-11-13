@@ -695,9 +695,8 @@ fade:
     goto fade;
   gSeaOfTime_WaveState = 1;
   GameFlag_Clear(0x200);
-  /* FAKEMATCH(signature): typed to return s32, passing on Event_End's,
-   * though its target Event_End returns nothing; as void, 6 of 150 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(signature): typed to return s32, passing on Event_End's, though
+   * its target Event_End returns nothing. */
   return Event_EndWithResult();
 }
 
@@ -1047,9 +1046,7 @@ void SeaOfTime_AnimateSea(void) {
       s32 green = (color >> 5) & 31;
       s32 blue = (color >> 10) & 31;
       s32 flag = GameFlag_Get(0x200);
-      /* FAKEMATCH(temporary): each channel shifted up after the flag test; as
-       * (u16)green << 5 and so on in the store, 167 of 272 instructions differ
-       * in tla-en. */
+      /* FAKEMATCH(temporary): each channel shifted up after the flag test. */
       u32 greenBits = green << 16;
       u32 redBits = red << 16;
       u32 blueBits = blue << 16;

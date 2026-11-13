@@ -30,9 +30,7 @@ void TileCopies_CopyTouchedCells(s32 srcX, s32 srcY, s32 width, s32 height,
                                  s32 destX, s32 destY, s32 mode);
 
 static inline void Contigo_Jump(s32 actor, s32 height, s32 frames) {
-  /* FAKEMATCH(pin): the height pinned to r1, so that the actor loads after the
-   * height and the frames, as the native has; as an unpinned local, 2 of 8
-   * instructions differ in tla-en (Func_020007a4). */
+  /* FAKEMATCH(pin): the height pinned to r1. */
   register s32 h __asm__("r1") = height;
   s32 f = frames;
   s32 a = actor;
@@ -1212,9 +1210,7 @@ void Func_02001abc(void) {
   MessageArgument_Push(price, 5);
   FieldMessage_ShowAtActor(14, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
-    /* FAKEMATCH(pin): the scene state's address pinned to r3, so that it
-     * loads before the coins; as a plain store, 6 of 72 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(pin): the scene state's address pinned to r3. */
     register u32 *state __asm__("r3") = (u32 *)gSceneState;
 
     *state = gMainRoutineWork.coins;
@@ -1246,9 +1242,7 @@ void Func_02001b84(void) {
   Event_SetMessageId((s32)MsgContigo23);
   FieldMessage_ShowAtActor(8, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
-    /* FAKEMATCH(pin): the scene state's address pinned to r3, so that it
-     * loads before the coins; as a plain store, 6 of 69 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(pin): the scene state's address pinned to r3. */
     register u32 *state __asm__("r3") = (u32 *)gSceneState;
 
     *state = gMainRoutineWork.coins;
@@ -1321,8 +1315,7 @@ void Func_02001d50(void) {
   struct ContigoObject *object;
   s32 answer;
   /* FAKEMATCH(pin): the leader pinned to r5, reloaded after each yes/no prompt
-   * and copied to r0 in each branch, as the native has; as an unpinned local,
-   * 28 of 1701 instructions differ in tla-en. */
+   * and copied to r0 in each branch. */
   register s32 owner __asm__("r5");
   s32 angle;
 
@@ -2024,8 +2017,8 @@ void Contigo_InitializeRoom1(void) {
   s32 zero;
 
   Task_Add(Func_020036f0, 0x480);
-  /* FAKEMATCH(temporary): the second byte's 0 built after the first
-   * byte's address; as a plain 0, 21 of 136 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the second byte's 0 built after the first byte's
+   * address. */
   zero = 0;
   BYTE_AT(object, 98) = 1;
   BYTE_AT(object, 99) = zero;

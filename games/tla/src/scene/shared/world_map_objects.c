@@ -27,20 +27,18 @@ extern struct Actor *gWorldMap_PlacedActors[];
 /// The event countdown takes before when the party leader's x is less than
 /// that of the object in slot - 100 of the overlay's table, else after.
 void WorldMap_SetCountdownByX(s32 slot, s32 before, s32 after) {
-  /* FAKEMATCH(pin): after copied to r6 on entry; as plain after, 18 of 33
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(pin): after copied to r6 on entry. */
   register s32 elseValue asm("r6") = after;
   struct Actor *target = gWorldMap_PlacedActors[slot - 100];
   struct Actor *owner;
   struct EventWork *work;
 
   /* FAKEMATCH(barrier): ⚓️ loads gMainRoutineWork's address before it builds
-   * the currentOwner offset; as no barrier, 2 of 33 instructions differ in
-   * tla-en. */
+   * the currentOwner offset. */
   asm volatile("");
   {
-    /* FAKEMATCH(pin): before copied to r7 after the barrier, beside the
-     * call; as plain before, 4 of 33 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): before copied to r7 after the barrier, beside the call.
+     */
     register s32 thenValue asm("r7") = before;
 
     owner = Actor_Get(gMainRoutineWork.currentOwner);
@@ -55,20 +53,18 @@ void WorldMap_SetCountdownByX(s32 slot, s32 before, s32 after) {
 
 /// The same on z.
 void WorldMap_SetCountdownByZ(s32 slot, s32 before, s32 after) {
-  /* FAKEMATCH(pin): after copied to r6 on entry; as plain after, 18 of 33
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(pin): after copied to r6 on entry. */
   register s32 elseValue asm("r6") = after;
   struct Actor *target = gWorldMap_PlacedActors[slot - 100];
   struct Actor *owner;
   struct EventWork *work;
 
   /* FAKEMATCH(barrier): ⚓️ loads gMainRoutineWork's address before it builds
-   * the currentOwner offset; as no barrier, 2 of 33 instructions differ in
-   * tla-en. */
+   * the currentOwner offset. */
   asm volatile("");
   {
-    /* FAKEMATCH(pin): before copied to r7 after the barrier, beside the
-     * call; as plain before, 4 of 33 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): before copied to r7 after the barrier, beside the call.
+     */
     register s32 thenValue asm("r7") = before;
 
     owner = Actor_Get(gMainRoutineWork.currentOwner);
@@ -115,8 +111,7 @@ void WorldMap_UpdatePlacedActors(void) {
   s32 next;
   s32 left, right, top, bottom;
   struct Actor **slot;
-  /* FAKEMATCH(pin): the form kept; as a plain local, 18 of 260 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(pin): the form kept. */
   register struct EventWork *work asm("r9") = Ram_HeapSlots->eventWork;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct Actor *object = work->viewCenter;
@@ -139,12 +134,10 @@ void WorldMap_UpdatePlacedActors(void) {
   }
   i = 0;
   next = kind;
-  /* FAKEMATCH(barrier): the form kept; as no asm, 7 of 260 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(barrier): the form kept. */
   asm("" : "+g"(next));
   slot = objects;
-  /* FAKEMATCH(barrier): the form kept; as no asm, 16 of 260 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(barrier): the form kept. */
   asm("" : "+g"(leader));
   while (next != 0) {
     s32 px, pz;
@@ -265,9 +258,8 @@ void WorldMap_SpawnSparkPair(struct Actor *object) {
   struct FieldSprite *sprite;
   s32 (*mulQ16)(s32 a, s32 b) = Iwram_MulQ16;
 
-  /* FAKEMATCH(temporary): the resident multiply called through a local pointer,
-   * so its entry loads before the factor's shift, as in the native; as a direct
-   * call, 2 of 77 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the resident multiply called through a local pointer.
+   */
   mulQ16(object->scaleX, 0x18000);
   spark = FieldActor_Create(271, object->x, object->y, object->z);
   if (spark != NULL) {

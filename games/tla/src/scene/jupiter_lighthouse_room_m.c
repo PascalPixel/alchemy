@@ -269,8 +269,7 @@ static __inline__ void Func_020048b4_(s32 id, s32 angle) {
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
                                                    s32 mode) {
-  /* FAKEMATCH(wrapper): forwarded inline; as plain calls, 2 of 237
-   * instructions of Func_020003b8 differ in tla-en. */
+  /* FAKEMATCH(wrapper): forwarded inline. */
   FieldCamera_MoveWithinMapBounds(x, y, z, mode);
 }
 
@@ -369,8 +368,7 @@ void Func_0200060c(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_CHEST_OPEN);
-  /* FAKEMATCH(wrapper): forwarded through Camera_MoveWithinMapBounds_ above;
-   * as plain calls, 63 of 292 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): forwarded through Camera_MoveWithinMapBounds_ above. */
   Camera_MoveWithinMapBounds_(194 << 18, -1, PIXELS(208), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(6);
@@ -614,8 +612,7 @@ extern u32 gData_020049dc[];
 
 static __inline__ struct Actor *I_Func_020048cc(s32 actor, s32 emote,
                                                 s32 frames) {
-  /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; as
-   * direct calls at its 42 sites, 171 of 1568 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): forwarding keeps each call's own constants. */
   return (struct Actor *)Actor_ShowEmoteById(actor, emote, frames);
 }
 
@@ -766,15 +763,11 @@ void Func_02000cac(s32 arg) {
   Actor_SetDestinationOffset(3, 0, -2);
   FieldActor_WaitForMoveById(3);
   Actor_SetSpeed(3, 0x20000, 0x10000);
-  /* FAKEMATCH(dead): the statement kept in a once-only block, whose
-   * loop note starts a scheduling region here as in the native; as plain
-   * statements, 2 of 1568 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the statement kept in a once-only block. */
   do {
     Actor_SetAnimation(3, 4);
   } while (0);
-  /* FAKEMATCH(dead): the statement kept in a once-only block, whose
-   * loop note starts a scheduling region here as in the native; as plain
-   * statements, 2 of 1568 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the statement kept in a once-only block. */
   do {
     FieldEvent_Wait(33);
   } while (0);
@@ -791,9 +784,7 @@ void Func_02000cac(s32 arg) {
   Actor_FaceEachOther(0, 2, 0);
   FieldEvent_Wait(10);
   I_Func_020048cc(0, 0x102, 30);
-  /* FAKEMATCH(dead): the statement kept in a once-only block, whose
-   * loop note starts a scheduling region here as in the native; as plain
-   * statements, 4 of 1568 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the statement kept in a once-only block. */
   do {
     FieldEvent_ShowMessageThenWait(0, 0, 5);
   } while (0);
@@ -828,9 +819,7 @@ void Func_02000cac(s32 arg) {
   I_Func_020048cc(0, 0x107, 30);
   FieldEvent_ShowMessageThenWait(0, 0, 5);
   FieldActor_RefreshSelectorById(26);
-  /* FAKEMATCH(dead): the statement kept in a once-only block, whose
-   * loop note starts a scheduling region here as in the native; as plain
-   * statements, 4 of 1568 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the statement kept in a once-only block. */
   do {
     FieldActor_RefreshSelectorById(27);
   } while (0);
@@ -848,9 +837,7 @@ void Func_02000cac(s32 arg) {
   (struct Actor *)Actor_ShowEmote(0, 0x106, 30);
   Actor_FaceDirection(2, FACING_NORTHWEST, 0);
   Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
-  /* FAKEMATCH(dead): the statement kept in a once-only block, whose
-   * loop note starts a scheduling region here as in the native; as plain
-   * statements, 4 of 1568 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the statement kept in a once-only block. */
   do {
     FieldEvent_ShowMessageThenWait(0, 0, 5);
   } while (0);
@@ -881,9 +868,7 @@ void Func_02000cac(s32 arg) {
   (struct Actor *)Actor_ShowEmote(0, 0x103, 30);
   FieldEvent_ShowMessageThenWait(0, 0, 5);
   I_Func_020048cc(26, 0x108, 30);
-  /* FAKEMATCH(dead): the statement kept in a once-only block, whose
-   * loop note starts a scheduling region here as in the native; as plain
-   * statements, 4 of 1568 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the statement kept in a once-only block. */
   do {
     FieldEvent_ShowMessageThenWait(26, 0, 5);
   } while (0);
@@ -896,9 +881,7 @@ void Func_02000cac(s32 arg) {
   FieldEvent_ShowMessageThenWait(2, 0, 5);
   Actor_SetAnimation(27, 4);
   Actor_SetAnimation(26, 4);
-  /* FAKEMATCH(dead): the statement kept in a once-only block, whose
-   * loop note starts a scheduling region here as in the native; as plain
-   * statements, 4 of 1568 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the statement kept in a once-only block. */
   do {
     FieldEvent_Wait(33);
   } while (0);
@@ -927,28 +910,22 @@ void Func_02000cac(s32 arg) {
   (struct Actor *)Actor_ShowEmote(2, 0x101, 30);
   FieldEvent_ShowMessageThenWait(2, 0, 5);
   {
-    /* FAKEMATCH(pin): the angle pinned to r1, so it is copied there first; as
-     * a plain local, 2 of 1568 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the angle pinned to r1. */
     register s32 a1 asm("r1") = angle;
     s32 flags = 0;
 
-    /* FAKEMATCH(barrier): r1 and r2 are set before r0, as the native sets
-     * them; without it, 18 of 1568 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): r1 and r2 are set before r0. */
     __asm__("" : : "r"(a1), "r"(flags));
     Actor_FaceDirection(26, a1, flags);
   }
-  /* FAKEMATCH(dead): the statement kept in a once-only block, whose
-   * loop note starts a scheduling region here as in the native; as plain
-   * statements, 4 of 1568 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the statement kept in a once-only block. */
   do {
     Actor_FaceDirectionAndWait(27, angle);
   } while (0);
   Actor_SetAnimation(26, 3);
   FieldEvent_Wait(20);
   FieldEvent_Wait(10);
-  /* FAKEMATCH(dead): the statement kept in a once-only block, whose
-   * loop note starts a scheduling region here as in the native; as plain
-   * statements, 4 of 1568 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the statement kept in a once-only block. */
   do {
     FieldEvent_ShowMessageThenWait(26, 0, 5);
   } while (0);
@@ -968,16 +945,12 @@ void Func_02000cac(s32 arg) {
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(2, 0, 5);
   I_Func_020048cc(26, 0x109, 30);
-  /* FAKEMATCH(dead): the statement kept in a once-only block, whose
-   * loop note starts a scheduling region here as in the native; as plain
-   * statements, 2 of 1568 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the statement kept in a once-only block. */
   do {
     FieldEvent_ShowMessageThenWait(26, 0, 5);
   } while (0);
   Actor_SetAnimation(27, 4);
-  /* FAKEMATCH(dead): the statement kept in a once-only block, whose
-   * loop note starts a scheduling region here as in the native; as plain
-   * statements, 2 of 1568 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the statement kept in a once-only block. */
   do {
     FieldEvent_Wait(33);
   } while (0);
@@ -1025,9 +998,7 @@ void Func_02000cac(s32 arg) {
   FieldActor_RefreshSelectorById(27);
   Actor_FaceEachOther(26, 27, 30);
   Actor_SetAnimation(26, 3);
-  /* FAKEMATCH(dead): the statement kept in a once-only block, whose
-   * loop note starts a scheduling region here as in the native; as plain
-   * statements, 2 of 1568 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the statement kept in a once-only block. */
   do {
     Actor_SetAnimation(27, 3);
   } while (0);
@@ -1066,9 +1037,7 @@ void Func_02000cac(s32 arg) {
   FieldEvent_ShowMessageThenWait(5, 0, 5);
   Actor_FaceDirectionAndWait(28, FACING_SOUTH);
   FieldEvent_Wait(10);
-  /* FAKEMATCH(dead): the statement kept in a once-only block, whose
-   * loop note starts a scheduling region here as in the native; as plain
-   * statements, 4 of 1568 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the statement kept in a once-only block. */
   do {
     FieldEvent_ShowMessageThenWait(28, 0, 5);
   } while (0);
@@ -1080,9 +1049,7 @@ void Func_02000cac(s32 arg) {
   Actor_FaceActor(6, 4, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimation(7, 3);
-  /* FAKEMATCH(dead): the statement kept in a once-only block, whose
-   * loop note starts a scheduling region here as in the native; as plain
-   * statements, 2 of 1568 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the statement kept in a once-only block. */
   do {
     Actor_SetAnimation(6, 3);
   } while (0);
@@ -1117,18 +1084,14 @@ void Func_02000cac(s32 arg) {
 }
 
 static __inline__ void JupiterLighthouseRoomM_AddHp(s32 owner, s32 delta) {
-  /* FAKEMATCH(wrapper): forwarding through the inline reloads -10000 from
-   * the pool at each call, as the native does; as direct calls, 23 of 160
-   * instructions of Func_02001c7c differ in tla-en, the four uses sharing it
-   * in r5. */
+  /* FAKEMATCH(wrapper): forwarding through the inline reloads -10000 from the
+   * pool at each call. */
   Unit_AddHp(owner, delta);
 }
 
 static __inline__ void JupiterLighthouseRoomM_AddPp(s32 owner, s32 delta) {
-  /* FAKEMATCH(wrapper): forwarding through the inline reloads -10000 from
-   * the pool at each call, as the native does; as direct calls, 23 of 160
-   * instructions of Func_02001c7c differ in tla-en, the four uses sharing it
-   * in r5. */
+  /* FAKEMATCH(wrapper): forwarding through the inline reloads -10000 from the
+   * pool at each call. */
   Unit_AddPp(owner, delta);
 }
 
@@ -1164,9 +1127,7 @@ void Func_02001c7c(void) {
   FieldEvent_Wait(20);
   do {
     /* FAKEMATCH(dead): the store kept in a once-only block, whose end ends
-     * CSE's block, so the byte store's dead zero is not kept in r8 for the
-     * store of the owner below; without it, 31 of 160 instructions differ
-     * in tla-en. */
+     * CSE's block. */
     gMainRoutineWork.battleRule24b = 6;
   } while (0);
   FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov6a3, 77);
@@ -1218,8 +1179,7 @@ s32 Inventory_Equip();
 // The Japanese form differs and is still on its listing.
 
 static __inline__ void Walk(s32 id, s32 speed, s32 frames) {
-  /* FAKEMATCH(wrapper): the walk forwarded inline, so its constants stay out of
-   * CSE; as direct calls, 103 of 1328 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the walk forwarded inline. */
   ((struct Actor *)Actor_ShowEmoteById(id, speed, frames));
 }
 
@@ -1693,7 +1653,7 @@ s32 Scene_PrepareMap(void) {
     s32 zero = 0;
 
     /* FAKEMATCH(barrier): the last call's zero is built before the position
-     * loads; as a plain 0 argument, 2 of 62 instructions differ in tla-en. */
+     * loads. */
     __asm__("" : : "r"(zero));
     MapGrid_SetCellHeight(object->x, object->z, zero, -6);
   }

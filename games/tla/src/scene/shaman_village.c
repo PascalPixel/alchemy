@@ -266,7 +266,7 @@ void InventorySnapshot_Save(void);
 
 #define SHAMAN_VILLAGE_EMOTE(actor, emote, frames)                             \
   {                                                                            \
-    /* FAKEMATCH(pin): the emote pinned to r1, as the native */                \
+    /* FAKEMATCH(pin): the emote pinned to r1. */                              \
     /* loads the emote and the frames before the actor at every */             \
     /* emote of this overlay. Measured against it: an inline */                \
     /* call (the actor comes one row early wherever the emote */               \
@@ -580,8 +580,7 @@ swirl:
 
     REG_BG2CNT = control;
   }
-  /* FAKEMATCH(dead): the empty once-only block ends CSE's run here; with
-   * no block, 2 of 720 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the empty once-only block ends CSE's run here. */
   do {
   } while (0);
   Dma_Set((void *)0x06002800, (void *)0x06003000, 0x84000200, REG_DMA3);
@@ -1339,14 +1338,12 @@ void ShamanVillage_MeetMoapa(void) {
   ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner))->actionFlags |=
       1;
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
-   * frames load before the actor; as a plain call, 13 of 246 instructions
-   * differ in tla-en (see the macro). */
+   * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(15, 259, 20)
   Event_ShowMessage(0x800f, 0);
   Actor_StartRepeatedMotion(17, 1);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
-   * frames load before the actor; as a plain call, 8 of 246 instructions differ
-   * in tla-en (see the macro). */
+   * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(17, 259, 0)
   Event_ShowMessage(0x8011, 0);
   Actor_StartRepeatedMotion(16, 1);
@@ -1415,8 +1412,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
   rod = ShamanVillage_CreateRodIcon();
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
-   * frames load before the actor; as a plain call, 84 of 711 instructions
-   * differ in tla-en (see the macro). */
+   * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(15, 256, 20)
   Actor_SetSpeed(15, 0x26666, 0x13333);
   Actor_WalkToAndWait(15, 120, 242);
@@ -1442,8 +1438,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_SetScript(5, gShamanVillage_JennaStandsByRodScript);
   Actor_SetScript(6, gShamanVillage_ShebaStandsByRodScript);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
-   * frames load before the actor; as a plain call, 14 of 711 instructions
-   * differ in tla-en (see the macro). */
+   * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(17, 256, 0)
   Actor_SetSpeed(17, 0x13333, 0x9999);
   Actor_WalkToAndWait(17, 136, 232);
@@ -1454,8 +1449,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_SetAnimationAndWait(15, 3);
   Event_ShowMessage(15, 0);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
-   * frames load before the actor; as a plain call, 28 of 711 instructions
-   * differ in tla-en (see the macro). */
+   * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(15, 257, 20)
   Event_ShowMessage(15, 0);
   Actor_SetAttachedEffect(18, 258);
@@ -1465,32 +1459,27 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_WalkToAndWait(15, 120, 252);
   Event_Wait(40);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
-   * frames load before the actor; as a plain call, 25 of 711 instructions
-   * differ in tla-en (see the macro). */
+   * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(15, 257, 20)
   Actor_WalkToAndWait(15, 136, 252);
   Actor_FaceDirection(15, FACING_SOUTH, 20);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
-   * frames load before the actor; as a plain call, 22 of 711 instructions
-   * differ in tla-en (see the macro). */
+   * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(15, 257, 40)
   Actor_WalkToAndWait(15, 104, 252);
   Actor_FaceDirection(15, FACING_SOUTH, 20);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
-   * frames load before the actor; as a plain call, 25 of 711 instructions
-   * differ in tla-en (see the macro). */
+   * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(15, 257, 20)
   Actor_WalkToAndWait(15, 152, 252);
   Actor_FaceDirection(15, FACING_SOUTH, 20);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
-   * frames load before the actor; as a plain call, 16 of 711 instructions
-   * differ in tla-en (see the macro). */
+   * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(15, 257, 40)
   Actor_WalkToAndWait(15, 88, 252);
   Actor_FaceDirection(15, FACING_SOUTH, 40);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
-   * frames load before the actor; as a plain call, 19 of 711 instructions
-   * differ in tla-en (see the macro). */
+   * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(15, 257, 80)
   Actor_WalkToAndWait(15, 120, 252);
   Actor_WalkToAndWait(15, 120, 242);
@@ -1506,8 +1495,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Event_ShowMessage(18, 0);
   Actor_FaceDirection(15, FACING_SOUTHEAST, 0);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
-   * frames load before the actor; as a plain call, 19 of 711 instructions
-   * differ in tla-en (see the macro). */
+   * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(15, 265, 20)
   Event_ShowMessage(15, 0);
   Actor_FaceDirection(6, FACING_NORTH, 0);
@@ -1521,14 +1509,12 @@ void ShamanVillage_ShowShamansRod(void) {
   Event_ShowMessage(6, 0);
   Actor_FaceDirection(15, FACING_SOUTHWEST, 0);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
-   * frames load before the actor; as a plain call, 8 of 711 instructions differ
-   * in tla-en (see the macro). */
+   * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(5, 257, 0)
   Event_ShowMessage(5, 0);
   Actor_SetAnimationAndWait(15, 3);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
-   * frames load before the actor; as a plain call, 8 of 711 instructions differ
-   * in tla-en (see the macro). */
+   * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(7, 265, 20)
   Event_ShowMessage(7, 0);
   Actor_FaceDirection(15, FACING_SOUTHEAST, 0);
@@ -1537,8 +1523,7 @@ void ShamanVillage_ShowShamansRod(void) {
   FieldActor_ShowEmote(15, 265, 40);
   Event_ShowMessage(15, 0);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
-   * frames load before the actor; as a plain call, 45 of 711 instructions
-   * differ in tla-en (see the macro). */
+   * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(17, 262, 20)
   Actor_FaceDirectionAndWait(17, FACING_SOUTHWEST);
   Event_ShowMessage(17, 0);
@@ -1723,9 +1708,7 @@ void ShamanVillage_CheckTrialEntry(void) {
   EVENT_WORK->messageId++;
   if (remaining != 0) {
   refuse:
-    /* FAKEMATCH(pin): the emote pinned to r1 by SHAMAN_VILLAGE_EMOTE, so it and
-     * the frames load before the actor; as a plain Actor_ShowEmoteById(15, 257,
-     * 20), 2 of 119 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the emote pinned to r1 by SHAMAN_VILLAGE_EMOTE. */
     SHAMAN_VILLAGE_EMOTE(15, 257, 20)
     Event_ShowMessage(0x200f, 0);
     ShamanVillage_StepBackFromTrial();
@@ -2116,8 +2099,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_FaceDirectionAndWait(15, FACING_NORTHWEST);
   Event_ShowMessage(0x200f, 0);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
-   * frames load before the actor; as a plain call, 91 of 1045 instructions
-   * differ in tla-en (see the macro). */
+   * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(15, 256, 0)
   Actor_FaceDirectionAndWait(15, FACING_NORTH);
   Event_ShowMessage(15, 0);
@@ -2133,24 +2115,21 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Actor_FaceDirection(18, 0, 0);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
-   * frames load before the actor; as a plain call, 88 of 1045 instructions
-   * differ in tla-en (see the macro). */
+   * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(5, 256, 20)
   Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
   Event_ShowMessage(5, 0);
   Actor_FaceDirectionAndWait(15, FACING_NORTHWEST);
   Event_ShowMessage(0x200f, 0);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
-   * frames load before the actor; as a plain call, 30 of 1045 instructions
-   * differ in tla-en (see the macro). */
+   * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(18, 257, 40)
   Event_ShowMessage(0x4012, 0);
   Actor_SetAnimationAndWait(15, 3);
   Actor_FaceDirectionAndWait(15, FACING_NORTH);
   Event_ShowMessage(15, 0);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
-   * frames load before the actor; as a plain call, 83 of 1045 instructions
-   * differ in tla-en (see the macro). */
+   * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(17, 256, 0)
   FieldActor_ShowEmote(16, 256, 0);
   Actor_FaceDirection(16, FACING_SOUTHEAST, 0);
@@ -2160,8 +2139,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_StartRepeatedMotion(16, 1);
   Event_ShowMessage(16, 0);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
-   * frames load before the actor; as a plain call, 29 of 1045 instructions
-   * differ in tla-en (see the macro). */
+   * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(6, 259, 0)
   Actor_FaceDirection(6, FACING_SOUTHWEST, 20);
   Actor_FaceDirectionAndWait(6, FACING_SOUTH);
@@ -2169,8 +2147,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_SetAttachedEffect(15, 258);
   Event_ShowMessage(15, 0);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
-   * frames load before the actor; as a plain call, 30 of 1045 instructions
-   * differ in tla-en (see the macro). */
+   * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(6, 259, 0)
   Actor_Jump(6, 2, 10);
   Actor_Jump(6, 4, 10);
@@ -2220,13 +2197,11 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_FaceDirection(17, FACING_NORTHWEST, 0);
   Actor_FaceDirection(16, FACING_NORTHWEST, 0);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
-   * frames load before the actor; as a plain call, 23 of 1045 instructions
-   * differ in tla-en (see the macro). */
+   * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(18, 265, 20)
   Event_ShowMessage(18, 0);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
-   * frames load before the actor; as a plain call, 83 of 1045 instructions
-   * differ in tla-en (see the macro). */
+   * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(17, 257, 0)
   FieldActor_ShowEmote(16, 257, 20);
   FieldActor_ShowEmote(5, 264, 40);
@@ -2237,8 +2212,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   Event_ShowMessage(7, 0);
   Actor_FaceDirection(15, FACING_NORTHEAST, 0);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
-   * frames load before the actor; as a plain call, 83 of 1045 instructions
-   * differ in tla-en (see the macro). */
+   * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(15, 259, 20)
   FieldActor_ShowEmote(6, 259, 20);
   Event_ShowMessage(6, 0);
@@ -2703,9 +2677,7 @@ void ShamanVillage_SetUpRoom2(void) {
     s32 priority = 0x480;
 
     /* FAKEMATCH(barrier): the empty asm holds r0 until the priority is
-     * complete, so the callback is loaded last as the native has; as
-     * Task_Add(ShamanVillage_LayerVillageActors, 0x480), 8 of 128 instructions
-     * differ in tla-en. */
+     * complete. */
     __asm__("" : "+l"(priority) : : "r0");
     Task_Add(ShamanVillage_LayerVillageActors, priority);
   }

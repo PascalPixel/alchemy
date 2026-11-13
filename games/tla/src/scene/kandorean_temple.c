@@ -133,11 +133,7 @@ static __inline__ void Actor_SetPositionAndResetMotion_(struct Actor *object,
 
 static __inline__ void Func_020053d0_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
-  /* FAKEMATCH(wrapper): the call through this inline, whose parameters give
-   * each stack argument its own register, as in The Broken Seal's scene layer;
-   * as a direct call to TileCopies_CopyTouchedCells, which builds them all in
-   * r3, 8 of 15 instructions differ in tla-en
-   * (KandoreanTemple_CycloneFirstPatch). */
+  /* FAKEMATCH(wrapper): the call through this inline. */
   TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
@@ -625,9 +621,7 @@ void KandoreanTemple_UpdateStreamSteam(struct Actor *object) {
   object->z += vz;
   object->bounce = vx - vx / 18;
   object->unk4c = vz - vz / 16;
-  /* FAKEMATCH(dead): an empty once-only block, so the Z speed is stored before
-   * the scale rate loads, as in KandoreanTemple_UpdateVentSteam; without it, 2
-   * of 97 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): an empty once-only block. */
   do {
   } while (0);
   rate = object->speedLimit;
@@ -635,15 +629,11 @@ void KandoreanTemple_UpdateStreamSteam(struct Actor *object) {
   sprite = object->sprite;
   object->scaleX = scale + rate;
   {
-    /* FAKEMATCH(pin): the call's first argument pinned to r0, so it is copied
-     * before the Y scale store; as a plain local, copied after the action's
-     * halfword load, 4 of 97 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the call's first argument pinned to r0. */
     register struct Actor *first asm("r0") = object;
 
     object->scaleY += object->acceleration;
-    /* FAKEMATCH(dead): an empty once-only block, so the Y scale is stored
-     * before the action is addressed, as in KandoreanTemple_UpdateVentSteam;
-     * without it, 2 of 97 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block. */
     do {
     } while (0);
     sprite->rotation += object->timer;
@@ -1150,9 +1140,7 @@ void KandoreanTemple_RunWestLift(void) {
       Actor_SetSpritePriority(13, 3);
     if (lift->y <= -0x140000) {
 
-      /* FAKEMATCH(temporary): the timer pointer's own address taken, which
-       * orders the stack arguments of the 2280 call as the native does; as
-       * *timer = 0, 6 of 193 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): the timer pointer's own address taken. */
       s32 **timerRef = &timer;
 
       Scene_QueueMusic(SE_245);
@@ -1215,9 +1203,7 @@ void KandoreanTemple_RunEastLift(void) {
       Actor_SetSpritePriority(14, 3);
     if (lift->y <= -0x140000) {
 
-      /* FAKEMATCH(temporary): the timer pointer's own address taken, which
-       * orders the stack arguments of the 2280 call as the native does; as
-       * *timer = 0, 6 of 193 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): the timer pointer's own address taken. */
       s32 **timerRef = &timer;
 
       Scene_QueueMusic(SE_245);
@@ -1433,9 +1419,7 @@ void KandoreanTemple_ClimbDownTheWell(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   /* FAKEMATCH(temporary): the flags address and the zero held in locals, with
-   * gMainRoutineWork's address taken in the block below, so the byte store
-   * follows the address load; as leader->motionFlags = 0, which stores first,
-   * 2 of 92 instructions differ in tla-en. */
+   * gMainRoutineWork's address taken in the block below. */
   flags = &leader->motionFlags;
   zero = 0;
   party = &gMainRoutineWork;
@@ -1723,10 +1707,7 @@ void KandoreanTemple_FightChestbeaters(void) {
   Actor_SetDestinationById(12, 300, 164);
   Actor_MoveToAndWaitById(13, 356, 164);
   Event_Wait(40);
-  /* FAKEMATCH(dead): an empty once-only block, whose loop note ends the
-   * scheduling block before the battle rule is set, so the last position
-   * call's r1 is shifted before r2 is loaded; without it, 2 of 87
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(dead): an empty once-only block. */
   do {
   } while (0);
   gMainRoutineWork.battleRule24b = 2;
@@ -2951,10 +2932,7 @@ void KandoreanTemple_MeetPoi(void) {
   Actor_SetModeById(12, 7);
   object->scaleX = 0xffff0000;
   sprite->rotation = 0xe000;
-  /* FAKEMATCH(temporary): the motion flags written through a byte pointer, so
-   * the store may alias the rotation and stays after it; as
-   * object->motionFlags, which keeps the struct's alias set, 51 of 783
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the motion flags written through a byte pointer. */
   flags = &object->motionFlags;
   *flags = 0;
   object->y += 0x40000;

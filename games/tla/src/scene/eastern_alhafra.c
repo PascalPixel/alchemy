@@ -651,9 +651,7 @@ s32 Scene_Initialize(void) {
   flag = Event_GetFlag(0x8a2);
   if (flag == 0) {
     object = OBJECT(18);
-    /* FAKEMATCH(dead): the solid bit set in a once-only block, which lays out
-     * the branch over it as the native does; as the plain statement, 18 of 467
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(dead): the solid bit set in a once-only block. */
     do {
       object->collisionFlags |= 8;
     } while (0);
@@ -719,9 +717,8 @@ void Func_02000fa4(void) {
     Actor_SetPosition(10, PIXELS(504), PIXELS(520));
     Actor_SetAnimation(10, 2);
     object->collisionFlags = 0;
-    /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here,
-     * as the listing orders it; without it, 4 of 168 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here.
+     */
     do {
     } while (0);
     object->priorityFlags |= 2;
@@ -733,9 +730,8 @@ void Func_02000fa4(void) {
     Actor_SetPosition(11, PIXELS(408), PIXELS(536));
     Actor_SetAnimation(11, 2);
     object->collisionFlags = 0;
-    /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here,
-     * as the listing orders it; without it, 4 of 168 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here.
+     */
     do {
     } while (0);
     object->priorityFlags |= 2;
@@ -1128,9 +1124,7 @@ void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer) {
     Actor_SetSpritePriorityDirect(object, 1);
     object->motionFlags = 0;
     {
-      /* FAKEMATCH(signature): the timer copied into an s64 local, so it loads
-       * before the pooled zero for nextFrame; as object->unk5e = timer, 2 of 35
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(signature): the timer copied into an s64 local. */
       s64 wide = timer;
 
       object->unk5e = wide;
@@ -2141,8 +2135,7 @@ struct RockWork {
 DEFINE_ROCKS_SPAWN(Rocks_Spawn)
 
 static __inline__ void StartTask(void (*func)(void), s32 priority) {
-  /* FAKEMATCH(wrapper): Task_Add forwarded inline; as a direct call, 6 of 83
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): Task_Add forwarded inline. */
   Task_Add(func, priority);
 }
 
@@ -2287,8 +2280,7 @@ s32 Func_02004240(struct PushState *push) {
       for (j = 0; j < height; j++) {
         cell.x = push->x + (gPushFootprints[kind][0] << 16);
         for (i = 0; i < width; i++) {
-          /* FAKEMATCH(wrapper): the call through CallFunc_02004a64; as a direct
-           * call, 2 of 171 instructions differ in tla-en. */
+          /* FAKEMATCH(wrapper): the call through CallFunc_02004a64. */
           if (CallFunc_02004a64(actor, &cell) == 2)
             goto blocked;
           cell.x += 0x100000;

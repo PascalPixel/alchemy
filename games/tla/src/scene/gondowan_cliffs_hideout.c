@@ -62,9 +62,7 @@ void GondowanCliffsHideout_WarriorsAreFound(void) {
       s32 half = 129;
       s32 id = ACTOR_WARRIOR_FROM_KIBOMBO;
 
-      /* FAKEMATCH(barrier): an empty asm on half and id, so the actor is set
-       * between the halves of the value; without it, 2 of 84 instructions
-       * differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm on half and id. */
       asm("" : "+l"(half), "+l"(id));
       FieldEffect_SetAttached(id, half << 1);
     }

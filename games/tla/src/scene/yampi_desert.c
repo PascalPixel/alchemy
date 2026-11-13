@@ -529,8 +529,7 @@ next:
       struct MapCell *cells = map->layers[layer].cells;
       u8 *shapes =
           (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
-      /* FAKEMATCH(pin): the index in r10; as a plain local, 32 of 130
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(pin): the index in r10. */
       register s32 index asm("r10") = Actor_GetCellIndex(object);
       s32 shape = MapGrid_GetTerrainKind(layer, object->x, object->z);
       s32 height = Map_GetTerrainHeight(layer, object->x, object->z);
@@ -556,15 +555,12 @@ done:
 void YampiDesert_BlockPoundedStakes(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct Actor *object;
-  /* FAKEMATCH(pin): the limit in r2, so the next id takes r3; as a plain
-   * local, 10 of 31 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the limit in r2. */
   register s32 limit asm("r2");
 
   goto next;
   do {
-    /* FAKEMATCH(barrier): the record pointer passed through an empty asm, so
-     * the id is read again and the pointer outranks the actor for r5; without
-     * it, 19 of 31 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): the record pointer passed through an empty asm. */
     asm("" : "+l"(list));
     object = Actor_GetById(list[0]);
     if (GameFlag_Get(list[2]))
@@ -587,8 +583,7 @@ void YampiDesert_UnblockStakes(u16 *list) {
   loop:
     cell = &map->layers[2].cells[Actor_GetCellIndex(Actor_GetById(*list))];
     collisionCode = 232;
-    /* FAKEMATCH(dead): the advance in a once-only block, so the store waits for
-     * it; as list += 3, 2 of 25 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): the advance in a once-only block. */
     do {
       list += 3;
     } while (0);
@@ -1353,8 +1348,7 @@ void YampiDesert_SlideLeader(struct Actor *object, s32 dx, s32 dz) {
         sprite = dust->sprite;
         sprite->mode = 1;
         /* FAKEMATCH(dead): an empty once-only block after the sprite store
-         * keeps gInput's address load after it; as the store alone, 2 of 174
-         * instructions differ in tla-en. */
+         * keeps gInput's address load after it. */
         do {
         } while (0);
         if (gInput.held != 0) {
@@ -1963,8 +1957,7 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   struct Actor *leader = Actor_GetById(party->currentOwner);
   struct Actor *actor8 = Actor_GetById(8);
   /* FAKEMATCH(wrapper): the camera, walk and speed calls forwarded through
-   * call.h's Call3 and Call4; as direct calls, 28 of 187 instructions differ
-   * in tla-en. */
+   * call.h's Call3 and Call4. */
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -2208,9 +2201,7 @@ void YampiDesert_SetUpRoom6(void) {
 
 static inline void Scene_StoreU16(u16 *field, s32 value) {
   /* FAKEMATCH(wrapper): through the inline the value is a word constant built
-   * after the field's address (movs), where stored directly it loads from the
-   * literal pool; as the halfword constant stored directly, 24 of 100
-   * instructions of YampiDesert_SetUpRoom8 differ in tla-en. */
+   * after the field's address. */
   *field = value;
 }
 
@@ -2508,9 +2499,7 @@ void YampiDesert_DrawRisingSand(void) {
     z = object->z - viewZ - originY;
     sy = z - y;
     x = (x >> 16) - 8;
-    /* FAKEMATCH(wrapper): forwarded, so -0x20000 is built for the call and
-     * again for the sum; as a direct call, 276 of 252 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(wrapper): forwarded. */
     sy = ((sy +
            Value2((s32 (*)())Iwram_MulQ16, -0x20000, Trig_Sin(entry->phase)) +
            -0x20000) >>

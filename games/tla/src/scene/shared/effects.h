@@ -462,8 +462,7 @@
     s32 i;                                                                     \
                                                                                \
     /* FAKEMATCH(barrier): an empty asm before the work is read keeps the      \
-     * spills of x and y at the entry; as an initializer, 4 of 88 instructions \
-     * differ in tla-en. */                                                    \
+     * spills of x and y at the entry. */                                      \
     asm("");                                                                   \
     work = Ram_HeapSlots->menuRuntime;                                         \
     /* A goto loop carries no loop notes, so the offsets are rebuilt on every  \
@@ -591,8 +590,7 @@
     orbiter->z = anchor->z;                                                    \
     FieldVector_AddPolarOffset(orbiter->radius, orbiter->angle, &orbiter->x);  \
     /* FAKEMATCH(temporary): the angle's address, taken after the first push,  \
-     * sets r2 from r8 before the second push reads it; as orbiter->angle,     \
-     * 2 of 89 instructions differ in tla-en. */                               \
+     * sets r2 from r8 before the second push reads it. */                     \
     angle = &orbiter->angle;                                                   \
     if (--orbiter->countdown == 0)                                             \
       return 0;                                                                \
@@ -635,9 +633,8 @@
   next:                                                                        \
     p = colors;                                                                \
     {                                                                          \
-      /* FAKEMATCH(temporary): the slot and the table address held in locals;  \
-       * as colors[(phase + i) % 5] = *(u16 *)((u8 *)gData_02006a2c + offset), \
-       * 2 of 83 instructions differ in tla-en. */                             \
+      /* FAKEMATCH(temporary): the slot and the table address held in locals.  \
+       */                                                                      \
       s32 slot = (phase + i) % 5;                                              \
       u8 *table = (u8 *)data3;                                                 \
                                                                                \

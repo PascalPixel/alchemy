@@ -290,17 +290,13 @@ void Lemuria_GrowVine(void) {
   s32 old;
 
   flag = 0x900;
-  /* FAKEMATCH(barrier): the empty asm on flag, so the flag's high part is
-   * shifted before the two coordinates start; as the plain constant, the shift
-   * comes after them, 2 of 33 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the empty asm on flag. */
   asm volatile("" : "+l"(flag));
   x = 0x3580000;
   z = 0x3f80000;
   Event_SetFlag(flag + 0x63);
   value = MapGrid_GetAttributeBAt(x, z, 0);
-  /* FAKEMATCH(temporary): the first z copied to old, so the second z starts
-   * before the first store call's arguments; as z reassigned after that call,
-   * its shift comes late, 2 of 33 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the first z copied to old. */
   old = z;
   z = 0x4080000;
   MapGrid_SetAttributeBAt(x, old, 0, value | 64);
@@ -520,9 +516,7 @@ void Lemuria_StartRippleDma(void) {
   volatile u16 *scroll;
   volatile u16 *dma;
 
-  /* FAKEMATCH(barrier): the empty asm reading first, so the first line's load
-   * comes before the register address is built; as no asm, the load follows
-   * it, 6 of 34 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the empty asm reading first. */
   __asm__("" : : "r"(first));
   scroll = &REG_BG2HOFS;
   *scroll = first;

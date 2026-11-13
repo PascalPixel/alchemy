@@ -494,8 +494,7 @@ void MagmaRock_PlaceVolley(u16 id, s16 first, s16 side) {
   object->z = Actor_Get(linked)->z;
   Scene_SetActorSpritePriority(object, 2);
   HALF_AT(object, 102) = first;
-  /* FAKEMATCH(temporary): the byte is computed before its address; as
-   * BYTE_AT(object, 98) = side ^ 1, 6 of 104 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the byte is computed before its address. */
   facing = side ^ 1;
   BYTE_AT(object, 98) = facing;
   object->update = (void *)MagmaRock_RollMagmaRock;
@@ -1011,9 +1010,7 @@ void MagmaRock_BurnStatue(struct Actor *object) {
       part->motionFlags = 0;
       Actor_SetSpriteFlags(part, 0);
       Actor_SelectAnimation(parts[i], 3);
-      /* FAKEMATCH(dead): part set again to parts[i], which it holds; as
-       * parts[i]-> for the uses below, 65 of 294 instructions differ in
-       * tla-en. */
+      /* FAKEMATCH(dead): part set again to parts[i], which it holds. */
       part = parts[i];
       // Byte 98 lies in actor.h's callback. Written as a field, the value is
       // computed before its address, as the native does (through a u8 *,
@@ -1030,9 +1027,7 @@ void MagmaRock_BurnStatue(struct Actor *object) {
       Actor_SetSpriteFlags(part, 0);
       Actor_SelectAnimation(parts[0], 3);
       Scene_SetActorSpritePriority(parts[0], 3);
-      /* FAKEMATCH(dead): part set again to parts[0], which it holds; as
-       * parts[0]-> for the uses below, 45 of 294 instructions differ in
-       * tla-en. */
+      /* FAKEMATCH(dead): part set again to parts[0], which it holds. */
       part = parts[0];
       part->unk5c[6] = 3;
       part->watchedObject = object;
@@ -1255,8 +1250,7 @@ void MagmaRock_PushPillarEast(void) {
   MagmaRock_ClearBlockCells(object);
   terrainId = &object->terrainId;
   {
-    /* FAKEMATCH(temporary): the three values held in locals; as call arguments,
-     * 2 of 92 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the three values held in locals. */
     s32 x = object->x >> 20;
     s32 z = object->z >> 20;
     s32 height = object->terrainHeight >> 19;
@@ -1289,8 +1283,7 @@ void MagmaRock_PushPillarWest(void) {
   MagmaRock_ClearBlockCells(object);
   terrainId = &object->terrainId;
   {
-    /* FAKEMATCH(temporary): the three values held in locals; as call arguments,
-     * 2 of 90 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the three values held in locals. */
     s32 x = object->x >> 20;
     s32 z = object->z >> 20;
     s32 height = object->terrainHeight >> 19;
@@ -2015,9 +2008,7 @@ void MagmaRock_StepOnTrap(u16 *list) {
   target = Actor_FindAtCell(position, 0);
   if (target == 0)
     return;
-  /* FAKEMATCH(dead): a test no u16 can pass enters the loop a second way, so it
-   * is no natural loop and its references are not weighted; as if (target != 0)
-   * goto test; return;, 75 of 191 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): a test no u16 can pass enters the loop a second way. */
   if (list[0] & 0x10000)
     goto body;
   goto test;
@@ -2103,8 +2094,7 @@ void MagmaRock_SpawnRubble(s32 spread) {
 
   do {
     {
-      /* FAKEMATCH(temporary): y held in a local, so x is computed before it; as
-       * one expression, 14 of 122 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): y held in a local. */
       s32 y = leader->y - (((Random16() * 14) >> 16) << 16);
 
       effect = (struct FieldEffect *)FieldActor_Create(

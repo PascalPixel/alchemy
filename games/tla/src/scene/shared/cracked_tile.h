@@ -352,23 +352,18 @@
             }                                                                  \
             entry++;                                                           \
             table->count++;                                                    \
-            /* FAKEMATCH(barrier): an empty asm on the stored count; as no     \
-             * asm, 2 of 268 instructions differ in tla-en. */                 \
+            /* FAKEMATCH(barrier): an empty asm on the stored count. */        \
             asm("" : "=m"(table->count) : "m"(table->count) : "r3");           \
-            /* FAKEMATCH(barrier): an empty asm on the word over the count; as \
-             * no asm, 2 of 268 instructions differ in tla-en. */              \
+            /* FAKEMATCH(barrier): an empty asm on the word over the count. */ \
             asm("" : "=m"(*(s32 *)&table->z));                                 \
           }                                                                    \
         }                                                                      \
       columnNext:                                                              \
-        /* FAKEMATCH(barrier): an empty asm lengthening the table's life; as   \
-         * no asm, 224 of 268 instructions differ in tla-en. */                \
+        /* FAKEMATCH(barrier): an empty asm lengthening the table's life. */   \
         asm("");                                                               \
-        /* FAKEMATCH(barrier): an empty asm lengthening the table's life; as   \
-         * no asm, 224 of 268 instructions differ in tla-en. */                \
+        /* FAKEMATCH(barrier): an empty asm lengthening the table's life. */   \
         asm("");                                                               \
-        /* FAKEMATCH(barrier): an empty asm lengthening the table's life; as   \
-         * no asm, 224 of 268 instructions differ in tla-en. */                \
+        /* FAKEMATCH(barrier): an empty asm lengthening the table's life. */   \
         asm("");                                                               \
         i++;                                                                   \
         cell++;                                                                \
@@ -473,9 +468,7 @@
       angle = i << 12;                                                         \
       cosine = Trig_Cos(angle);                                                \
       /* FAKEMATCH(dead): spawn is always 1, a constant GCSE only folds after  \
-       * its partial redundancy pass, so that pass leaves the velocity array's \
-       * address in the loop, built after the cosine call as the native has    \
-       * it; as the plain body, 4 of 169 instructions differ in tla-en. */     \
+       * its partial redundancy pass. */                                       \
       if (spawn) {                                                             \
         velocity[0] = cosine;                                                  \
         velocity[1] = 0;                                                       \
@@ -532,10 +525,7 @@
     Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);         \
     {                                                                          \
       /* FAKEMATCH(temporary): a word local holding 0xf1f, built with movs,    \
-       * lsls, adds as the native does; as a constant stored to the halfword   \
-       * register, loaded from the pool, 20 of 131 instructions differ in      \
-       * tla-en.                                                               \
-       */                                                                      \
+       * lsls, adds as the native does. */                                     \
       u32 winout = 0xf1f;                                                      \
                                                                                \
       REG_WINOUT = winout;                                                     \

@@ -88,9 +88,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gDailaEntrances; }
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 static inline void ReturnHome(s32 mode, s32 actor, s32 flag) {
-  /* FAKEMATCH(wrapper): the call forwarded through the inline, as in the scene
-   * layer of The Broken Seal; as a direct call, which shifts 0x300 before
-   * the actor is loaded, 2 of 6 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the call forwarded through the inline. */
   Actor_ReturnHome(mode, actor, flag);
 }
 

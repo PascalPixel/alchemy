@@ -102,8 +102,7 @@ void Func_020000f0(void) { Func_02000bc0(19, 0x302); }
 #if !TLA_PATCH_1
 void Func_02000100(s32 id) {
   struct Actor *object = Actor_Get(id);
-  /* FAKEMATCH(pin): the counter fixed to r6, so the object takes r5; as a plain
-   * local, 12 of 22 instructions differ in tla-ja. */
+  /* FAKEMATCH(pin): the counter fixed to r6. */
   register s32 frames asm("r6");
 
   object->motionFlags = 3;
@@ -118,26 +117,19 @@ void Func_02000100(s32 id) {
 #else
 void Func_02000100(s32 id, s32 cue) {
   struct Actor *object = Actor_Get(id);
-  /* FAKEMATCH(pin): the flags' address fixed to r2, so it is built with 85 in
-   * it first (movs r2, #85; adds r2, r2, r5) and the 3 takes r3; as a plain
-   * local, 21 of 32 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the flags' address fixed to r2. */
   register u8 *flags asm("r2");
   u8 *held;
-  /* FAKEMATCH(pin): the counter fixed to r6, so the object takes r5; as a plain
-   * local, 12 of 32 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the counter fixed to r6. */
   register s32 frames asm("r6");
 
   flags = (u8 *)85;
-  /* FAKEMATCH(barrier): an empty asm on flags, so 85 stays in a register and is
-   * added to the object rather than the object copied and 85 added; without it,
-   * 4 of 32 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm on flags. */
   asm("" : "+r"(flags));
   flags += (s32)object;
   *flags = 3;
   frames = 60;
-  /* FAKEMATCH(temporary): a copy of the flags' address, so it is copied to r8
-   * for the calls after the counter starts; as flags itself, 9 of 32
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): a copy of the flags' address. */
   held = flags;
   while (frames != 0) {
     System_Wait(1);
@@ -182,7 +174,7 @@ void Func_02000164(s32 unused, s32 id) {
     if ((object->x >> 19) == 77)
       MapGrid_CopyCellAttributes(33, 102, 1, 2, 37, 102);
     /* FAKEMATCH(temporary): the object read again through p for the last two
-     * tests; as object throughout, 22 of 109 instructions differ in tla-en. */
+     * tests. */
     p = object;
     if ((p->x >> 19) == 79 && (p->y >> 19) == 12) {
       DROP_OBJECT(19);

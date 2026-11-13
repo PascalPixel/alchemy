@@ -411,8 +411,7 @@ void Func_020004bc(s32 unused, s32 id) {
     Func_02003460(i << 16);
     {
       /* FAKEMATCH(pin): the zero pinned to r1, set before the column is copied
-       * to r0; as a plain local, 2 of 72 instructions differ in tla-en (2 as a
-       * literal 0). */
+       * to r0. */
       register s32 height asm("r1") = 0;
 
       Func_0200349c(column, height);
@@ -971,9 +970,7 @@ void Func_02001170(void) {
   s32 result;
 
   if (Event_GetFlag(0x24b)) {
-    /* FAKEMATCH(signature): these two calls go through a void function type, so
-     * r0 is set before r1, as the ROM does; as declared (value-returning, as
-     * the third), r1 loads first, 4 of 41 instructions differ in tla-en. */
+    /* FAKEMATCH(signature): these two calls go through a void function type. */
     ((void (*)(s32, s32))Func_02000b24)(12, 38);
     ((void (*)(s32, s32))Func_02000b24)(13, 39);
     Func_02000b24(15, 37);
@@ -1175,7 +1172,7 @@ burst:
   wait(30);
   i = 0;
   /* FAKEMATCH(dead): the never-taken jump into the spiral keeps its refs at
-   * weight 1; as the spiral alone, 174 of 402 instructions differ in tla-en. */
+   * weight 1. */
   probe = second->unk57;
   if (probe & 0x100) {
     wait(1);
@@ -2394,9 +2391,7 @@ void Vent_Puff(s32 *position, s32 base) {
     object->gravity = (u16)Random16();
     object->unk4c = (u16)(Random16() << 1) + base;
     /* FAKEMATCH(temporary): the s32 local keeps the zero extension and the pool
-     * word 0xffff8000; as a direct store, the add narrows to 16 bits (movs,
-     * lsls for 0x8000, no extension), 10 of 50 instructions differ in
-     * tla-en. */
+     * word 0xffff8000. */
     angle = (u16)Random16() - 0x8000;
     object->timer = angle;
     Actor_StartScripted(object, 3);

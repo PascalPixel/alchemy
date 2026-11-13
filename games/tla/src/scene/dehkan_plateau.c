@@ -116,9 +116,7 @@ void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer) {
   cell += Actor_GetCellIndex(object);
   if (GameFlag_Get(flag)) {
     /* FAKEMATCH(temporary): the flags read into a local before the cell store
-     * and ORed into the register that holds 2, as the native does; as one |=,
-     * which builds the 0 for the cell before the read, 8 of 75 instructions
-     * differ in tla-en. */
+     * and ORed into the register that holds 2. */
     u8 flags = object->priorityFlags;
     s32 bits;
 
@@ -494,8 +492,7 @@ void Rubble_Spray(s32 spread) {
 
   do {
     {
-      /* FAKEMATCH(temporary): y held in a local, so x is computed before it; as
-       * one expression, 14 of 122 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): y held in a local. */
       s32 y = leader->y - (((Random16() * 14) >> 16) << 16);
 
       effect = (struct FieldEffect *)Import_ActorCreate(
@@ -609,9 +606,7 @@ void Func_02000d78(u16 *list) {
       value = MapCollision_FindOrAddTag(*layer, shape, (level >> 19) - 4);
       cells += index;
       /* FAKEMATCH(signature): the shape grid byte stored through a bit-field
-         view (struct ShapeBits), whose alias set lets the cell's attribute be
-         read first; as `*shapes = value;`, 4 of 131 instructions differ in
-         tla-en. */
+       * view. */
       ((struct ShapeBits *)shapes)->shape = value;
       cells->attributeB &= 63;
       cells += 128;
@@ -947,9 +942,7 @@ loop:
           x = *cell++;                                                         \
           y = *cell++;                                                         \
           /* FAKEMATCH(temporary): the destination table through a local set   \
-           * here, which loads its first halfword before the 1 is built; as    \
-           * gDehkanPlateau_Room1CrackPictures[0], 2 of 56 instructions differ \
-           * in tla-en. */                                                     \
+           * here. */                                                          \
           dest = data2;                                                        \
           MapGrid_CopyCellPictureIndicesRect(dest[0], dest[1], x, y, 1, 1);    \
         }                                                                      \
@@ -1547,8 +1540,7 @@ void DehkanPlateau_CrumblePillar(s32 id, s32 center, s32 flag) {
     struct EffectView *effect;
     s32 y;
 
-    /* FAKEMATCH(temporary): the form kept; as one call argument, 10 of 129
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the form kept. */
     y = leader->y - ((((Random16() * 7) << 1) >> 16) << 16);
     object = ((struct Actor *)Import_ActorCreate(
         285, (i << 17) + leader->x - Q16_ONE * 8, y - Q16_ONE * 2, leader->z));
@@ -2021,8 +2013,7 @@ void DehkanPlateau_InitializeRoom3(void) {
   Actor_SetSpritePriority(9, 1);
   Actor_SetSpritePriority(10, 1);
   Actor_SetSpritePriority(11, 1);
-  /* FAKEMATCH(dead): an empty once-only block ends the argument loads' tie; as
-   * no block, 2 of 276 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): an empty once-only block ends the argument loads' tie. */
   do {
   } while (0);
   Tightrope_Initialize();
@@ -2105,8 +2096,7 @@ extern u16 gData_02004276[];
 
 #define DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(name, n1, n2, n3, n4, n5, n6)      \
   void name(void) {                                                            \
-    /* FAKEMATCH(pin): flag in r5, which leaves r6 to the entry; as a plain    \
-     * local, 61 of 79 instructions differ in tla-en. */                       \
+    /* FAKEMATCH(pin): flag in r5, which leaves r6 to the entry. */            \
     register s32 flag asm("r5") = 800;                                         \
     s32 offset = 0;                                                            \
                                                                                \

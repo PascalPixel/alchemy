@@ -247,9 +247,8 @@ seedSparks:
   Dma_Set((const void *)(s32)Field_Palette685, (void *)0x50003e0, 0x80000010,
           (volatile u32 *)0x40000d4);
   i = 0;
-  /* FAKEMATCH(dead): this test that never passes, with its edge into the loop,
-   * which combine folds away; as the loop entered only at its top, 28 of 1050
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(dead): this test that never passes, with its edge into the loop.
+   */
   if (((entry & 255) >> 8) == 0)
     goto frame;
   i = 1;
@@ -570,8 +569,7 @@ void Loho_ReadInnSign(void) {
 void Loho_TalkToInnkeeper(void) {
   s32 count = 8;
 
-  /* FAKEMATCH(barrier): the empty asm on count, so the second argument is set
-   * first; as the constant argument 8, 2 of 5 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the empty asm on count. */
   asm("" : "+l"(count));
   Inn_CheckIn(13, count);
 }
@@ -664,9 +662,7 @@ void Loho_EnterDoor(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
 
-  /* FAKEMATCH(dead): an empty once-only block, so gMainRoutineWork loads
-   * before the event work; as no block, one row is reordered, 2 of 31
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(dead): an empty once-only block. */
   do {
   } while (0);
   Actor_SetAnimation(party->currentOwner, 2);

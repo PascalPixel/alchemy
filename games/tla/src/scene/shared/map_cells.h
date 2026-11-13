@@ -552,9 +552,7 @@
     shapes += index;                                                           \
     index <<= 2;                                                               \
     /* FAKEMATCH(signature): the grid byte stored through a one-field struct   \
-     * view (struct ShapeCell), whose alias set lets sched2 sink it past the   \
-     * cell read; as *shapes = newShape, 6 of 76 instructions differ in        \
-     * tla-en. */                                                              \
+     * view. */                                                                \
     ((struct ShapeCell *)shapes)->shape = newShape;                            \
     cells += index;                                                            \
     ((struct MapCell *)cells)->attributeB |= 192;                              \

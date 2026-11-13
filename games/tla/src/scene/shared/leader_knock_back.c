@@ -34,9 +34,7 @@ void KNOCK_BACK(void) {
           7) {
         s32 i;
 
-        /* FAKEMATCH(temporary): velocityX stored through a union, so the
-         * store aliases the work's s16 read after it; as the plain store, 2
-         * of 236 instructions differ in tla-en (2 of 186 in tla-ja). */
+        /* FAKEMATCH(temporary): velocityX stored through a union. */
         ((union {
            s32 value;
            u16 half;
@@ -100,9 +98,7 @@ void KNOCK_BACK(void) {
         radius = actor->radius - 2;
         other = Ram_HeapSlots->scriptObjects;
         flags = &other->collisionFlags;
-        /* FAKEMATCH(wrapper): the overlap test forwarded through Value4; as a
-         * direct call, 117 of 236 instructions differ in tla-en.
-         */
+        /* FAKEMATCH(wrapper): the overlap test forwarded through Value4. */
         for (i = 0; i <= 63; i++, flags += 128, other++) {
           if (other->script != 0 && (*flags & 1) && other != actor &&
               Value4((s32 (*)())KNOCK_BACK_SPHERES_OVERLAP, (s32)&other->x,
@@ -121,9 +117,7 @@ void KNOCK_BACK(void) {
         x = actor->x += work->unk68 << 17;
         // The old z read in a once-only block, whose end keeps the read
         // between x's store and the work read.
-        /* FAKEMATCH(temporary): oldZ carries the z read out of the block; as z
-         * = actor->z + (work->unk6a << 17), 8 of 186 instructions differ in
-         * tla-ja. */
+        /* FAKEMATCH(temporary): oldZ carries the z read out of the block. */
         do {
           oldZ = actor->z;
         } while (0);
@@ -153,8 +147,7 @@ void KNOCK_BACK(void) {
     Actor_SetSpriteColorMode(actor, 0);
   }
 #if !TLA_PATCH_1
-  /* FAKEMATCH(barrier): an empty asm reading work before the last store; as
-   * the plain store, 2 of 186 instructions differ in tla-ja. */
+  /* FAKEMATCH(barrier): an empty asm reading work before the last store. */
   asm("" : : "r"(work));
 #endif
   // UB: work is set only when renderMode is 0; otherwise the store goes

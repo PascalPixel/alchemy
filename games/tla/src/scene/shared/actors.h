@@ -370,9 +370,7 @@
     Event_ResolvePendingActions(0);                                            \
     a = 192;                                                                   \
     id = 4;                                                                    \
-    /* FAKEMATCH(barrier): the id held at an empty asm, so it comes between    \
-     * the angle byte and its shift; as no asm, 2 of 11 instructions differ in \
-     * tla-en. */                                                              \
+    /* FAKEMATCH(barrier): the id held at an empty asm. */                     \
     __asm__ volatile("" : "+r"(id));                                           \
     Actor_ArmCallback(id, a << 8, 0);                                          \
     call1();                                                                   \

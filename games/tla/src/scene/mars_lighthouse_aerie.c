@@ -249,9 +249,8 @@ s32 Scene_Initialize(void) {
   Func_020001d8();
   Event_SetFlag(0x112);
   if (gMainRoutineWork.entrance == 5) {
-    /* FAKEMATCH(pin): the blend word pinned to r3 as a halfword loads from
-     * the pool before the register address, as native; as a plain store, 2
-     * of 121 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the blend word pinned to r3 as a halfword loads from the
+     * pool before the register address. */
     register u16 alpha asm("r3") = 0xc08;
 
     REG_BLDALPHA = alpha;
@@ -322,9 +321,7 @@ void Func_020004a4(void) {
       FieldActor_SetSpriteColor(object, 10);
       object->motionFlags = phase;
       {
-        /* FAKEMATCH(temporary): the masked value held in a local; as
-         * object->action = Random16() & 0x0ffff000, 45 of 103 instructions
-         * differ in tla-en. */
+        /* FAKEMATCH(temporary): the masked value held in a local. */
         s32 action = Random16() & 0x0ffff000;
 
         object->timer = action;
@@ -1721,9 +1718,7 @@ void Func_02003210(struct Actor *self) {
 
 static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
                                                     s32 z) {
-  /* FAKEMATCH(wrapper): the effect created through an inline, which
-   * evaluates the position before the type; as a direct call of
-   * Import_ActorCreate, 4 of 92 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the effect created through an inline. */
   return (struct OrbitEffect *)Import_ActorCreate(type, x, y, z);
 }
 
@@ -1816,9 +1811,7 @@ void Func_02003370(void) {
       FieldActor_SetSpriteColor(object, 1);
       object->motionFlags = 0;
       {
-        /* FAKEMATCH(temporary): the masked value held in a local; as
-         * object->action = Random16() & 0x0ffff000, 36 of 207 instructions
-         * differ in tla-en. */
+        /* FAKEMATCH(temporary): the masked value held in a local. */
         s32 action = Random16() & 0x0ffff000;
 
         object->timer = action;
@@ -1826,8 +1819,7 @@ void Func_02003370(void) {
       zero = 0;
       object->unk66 = 0;
       {
-        /* FAKEMATCH(temporary): the byte held in a local; as a direct store, 2
-         * of 207 instructions differ in tla-en. */
+        /* FAKEMATCH(temporary): the byte held in a local. */
         u8 phase = Random16() >> 13;
 
         ((u8 *)object)[98] = phase;
@@ -2622,8 +2614,7 @@ void Func_02004d50(s32 id) {
   struct MarsLighthouseAerieParty *party =
       (struct MarsLighthouseAerieParty *)&gMainRoutineWork;
   s32 held = party->held;
-  /* FAKEMATCH(temporary): the word held in a halfword struct; as a plain store
-   * of -1, 42 of 32 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the word held in a halfword struct. */
   struct HeldHalfword raw = *(struct HeldHalfword *)&party->held;
   struct HeldHalfword ones;
 

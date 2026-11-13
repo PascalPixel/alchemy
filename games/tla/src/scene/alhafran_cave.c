@@ -328,8 +328,7 @@ void AlhafranCave_SetUpCave(void) {
   Actor_SetActionCallback(Actor_Get(16), 9);
   if (!Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     /* FAKEMATCH(wrapper): the three calls forwarded through
-     * MapGrid_CopyCellPictureCellsRect_; as any one a direct call, 4 of 223
-     * instructions differ in tla-en. */
+     * MapGrid_CopyCellPictureCellsRect_. */
     MapGrid_CopyCellPictureCellsRect_(0, 58, 12, 7, 13, 58);
     MapGrid_CopyCellPictureCellsRect_(0, 58, 2, 9, 25, 66);
     MapGrid_CopyCellPictureCellsRect_(0, 58, 10, 5, 15, 74);
@@ -445,9 +444,8 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   struct Actor *effect;
   s32 position[3];
 
-  /* FAKEMATCH(wrapper): 79 calls forwarded through call.h's Call2, Call3,
-   * Call4 and Value3; as direct calls, 221 of 993 instructions differ in
-   * tla-en (any one alone, 2 to 71). */
+  /* FAKEMATCH(wrapper): 79 calls forwarded through call.h's Call2, Call3, Call4
+   * and Value3. */
   if (GameFlag_Get(FLAG_BRIGGS_CAUGHT) == 0)
     return;
   if (GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED) == 1)

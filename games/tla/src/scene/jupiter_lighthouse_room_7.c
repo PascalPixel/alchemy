@@ -199,9 +199,7 @@ s32 Func_02000290(void) {
 /// Copies the map cells and sets the cell values that flags 0xa10 to 0xa15 call
 /// for.
 void Func_020002f0(void) {
-  /* FAKEMATCH(wrapper): every call forwarded through the call layer; as direct
-   * calls, 63 of 303 instructions differ in tla-en, the coordinates and flags
-   * shared in saved registers. */
+  /* FAKEMATCH(wrapper): every call forwarded through the call layer. */
   MapGrid_CopyCellsLayered(0x5e, 0x3c, 9, 8, 0x5e, 0xa);
   Call4((void (*)())MapGrid_SetCellHeight, 0x2300000, 0xf00000, 0, -2);
   Call4((void (*)())MapGrid_SetCellHeight, 0x1f00000, 0x1000000, 0, -2);
@@ -294,8 +292,7 @@ void Func_020005e8(s32 mode) {
     if (i <= 5)
       goto L_02008684;
     /* FAKEMATCH(dead): an empty once-only block keeps the loop's exit branch
-     * from being threaded to the function's end; as the plain if/else, 4 of 175
-     * instructions differ in tla-en. */
+     * from being threaded to the function's end. */
     do {
     } while (0);
   } else {
@@ -821,8 +818,7 @@ void Func_02001a48(u16 *list, s32 mode, s32 count) {
 top:
   {
     u32 entry = *list;
-    /* FAKEMATCH(dead): the effect work read through its own address; as
-     * work->objectId, 21 of 61 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): the effect work read through its own address. */
     s32 id = (*&work)->objectId;
 
     if (id == entry) {
@@ -1061,8 +1057,7 @@ void CrackedTile_DropIn(void) {
   i = 0;
   // A goto loop: as a do-while loop, 4 of 169 instructions differ in tla-en.
 loop:
-  /* FAKEMATCH(dead): the body tested on a flag that is always set; without
-   * the test, 4 of 169 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the body tested on a flag that is always set. */
   if (always) {
     s32 angle;
     s32 velocity[3];

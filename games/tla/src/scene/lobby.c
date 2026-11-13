@@ -68,9 +68,7 @@ s32 LinkLobby_PeerSlotMatches(s32 slot) {
   } else {
     Event_ClearFlag(0x303);
   }
-  /* FAKEMATCH(dead): a once-only loop, which places the test after the body;
-   * as a plain if with no break, the test comes first, 43 of 67 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(dead): a once-only loop, which places the test after the body. */
   while (id >= 0 && Event_GetFlag(0x303)) {
     const s32 *expected = &gLinkLobby_SlotValues[slot];
 
@@ -420,8 +418,7 @@ s32 LinkLobby_SendPartyRecords(void) {
       if (i < memberCount)
         goto send;
       /* FAKEMATCH(dead): an empty once-only block between the test and the
-       * jump, which stops cross-jumping joining the test to the guard; as no
-       * block, 14 of 264 instructions differ in tla-en. */
+       * jump. */
       do {
       } while (0);
       goto next;
@@ -451,9 +448,7 @@ next:
   Heap_Release(heap);
   size = 0x154;
   heap = Heap_AllocEwram(size);
-  /* FAKEMATCH(dead): the statement in a once-only block, whose end holds
-   * the order around it; as the plain statement, 6 of 264 instructions differ
-   * in tla-en. */
+  /* FAKEMATCH(dead): the statement in a once-only block. */
   do {
     Iwram_CopyWordsEntry(heap, Djinn_GetRecoveryTable(0), size);
   } while (0);
@@ -507,10 +502,7 @@ static __inline__ void Lobby_ResetTransferState(void) {
 
   state = &gSerialTransfer;
   ime = &REG_IME;
-  /* FAKEMATCH(dead): the IME exchange in a once-only block, which keeps it
-   * before the zero and status constants; as plain statements, the constants
-   * come first, 8 of 62 instructions of LinkLobby_ExchangePartyRecords differ
-   * in tla-en. */
+  /* FAKEMATCH(dead): the IME exchange in a once-only block. */
   do {
     saved = *ime;
     *ime = (u16)ime;
@@ -538,9 +530,7 @@ s32 LinkLobby_ExchangePartyRecords(void) {
   s32 first;
   s32 flag;
 
-  /* FAKEMATCH(dead): the result's zero in a once-only block, which keeps it
-   * apart from the flag query that follows; as the plain result = 0, 2 of 62
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the result's zero in a once-only block. */
   do {
     result = 0;
   } while (0);
@@ -688,9 +678,8 @@ s32 LinkLobby_EnterBattle(void) {
       Actor_SetSpeed(4, 0x8000, 0x4000);
       Actor_WaitForMoveById(4);
     }
-    /* FAKEMATCH(temporary): the flag test's result kept while the scene
-     * symbol is loaded once for both branches; as if (Event_GetFlag(0x173)), 2
-     * of 329 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the flag test's result kept while the scene symbol
+     * is loaded once for both branches. */
     set = Event_GetFlag(0x173);
     scene = (s32)&SceneId_Ov6b5;
     if (set) {
@@ -1034,9 +1023,7 @@ void LinkLobby_TakeSongRequest(s32 actor) {
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   wait(120);
   Event_PlaySound(MUS_709);
-  /* FAKEMATCH(dead): the statement in a once-only block, whose end holds
-   * the order around it; as the plain statement, 2 of 153 instructions differ
-   * in tla-en. */
+  /* FAKEMATCH(dead): the statement in a once-only block. */
   do {
     Event_SetMessageId((s32)MsgComeBackWhen);
   } while (0);
@@ -1111,9 +1098,7 @@ s32 LinkLobby_TalkByProgress(s32 actor) {
 s32 LinkLobby_LeaveArena(void) {
   Serial_RemoveIrqHandlers();
   Sound_LoadReverbCode(2);
-  /* FAKEMATCH(dead): the return in a once-only block, which loads the scene
-   * number before the 1; as the plain return, the 1 comes first, 2 of 8
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the return in a once-only block. */
   do {
     return Import_EventSetDestination((s32)&SceneId_Ov64a, 1);
   } while (0);
@@ -1278,8 +1263,7 @@ void Event_WaitTransitionFrames(void);
 void GameFlag_SetByte(s32 flag, s32 value);
 
 static inline void Flag_SetByte(s32 flag, s32 value) {
-  /* FAKEMATCH(wrapper): Flag_SetByte forwarded inline; as direct calls to
-   * GameFlag_SetByte, 17 of 438 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): Flag_SetByte forwarded inline. */
   GameFlag_SetByte(flag, value);
 }
 

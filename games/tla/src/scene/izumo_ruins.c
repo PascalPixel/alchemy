@@ -519,8 +519,7 @@ void Rubble_Spray(s32 spread) {
 
   do {
     {
-      /* FAKEMATCH(temporary): y held in a local, so x is computed before it; as
-       * one expression, 14 of 122 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): y held in a local. */
       s32 y = leader->y - (((Random16() * 14) >> 16) << 16);
 
       effect = (struct FieldEffect *)FieldActor_Create(
@@ -798,10 +797,7 @@ void IzumoRuins_StartMovingPillar(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_IzumoRuinsFirstRoom) {
     Actor_LiftTargetBlock(gIzumoRuins_FirstRoomMovablePillars);
   } else {
-    /* FAKEMATCH(signature): the cell read through an s16 return type, so the
-     * old cell is masked in r3 and 0xff00 built in r2; read as s32 the two
-     * registers swap; as the header's s32 return, 6 of 29 instructions differ
-     * in tla-en. */
+    /* FAKEMATCH(signature): the cell read through an s16 return type. */
     MapGrid_SetCellWord(
         2, 50, 13,
         0xff00 |

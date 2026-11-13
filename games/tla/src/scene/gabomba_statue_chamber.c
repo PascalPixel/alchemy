@@ -226,8 +226,7 @@ void Func_02000184(void) {
   PaletteFade_ApplySource(0x10000, 2);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 2);
   /* FAKEMATCH(temporary): the palette entry's address taken before the fade's
-   * wait; as OBJ_PLTT_COLOR(0, 15) = 0x7fff after it, 4 of 895 instructions
-   * differ in tla-en. */
+   * wait. */
   color = &OBJ_PLTT_COLOR(0, 15);
   PaletteFade_StartInterpolation(10);
   wait(10);
@@ -558,8 +557,7 @@ void Func_02000ef0(struct Actor *object) { object->x = Actor_GetById(8)->x; }
     s32 x = leader->x;                                                         \
     s32 z = leader->z;                                                         \
     /* FAKEMATCH(temporary): a local holding the 0 for the three byte stores,  \
-     * set before the null test, so it takes r7; as the constant 0 in each     \
-     * store, 20 of 58 instructions differ in tla-en. */                       \
+     * set before the null test. */                                            \
     s32 zero = 0;                                                              \
     struct GabombaStatueChamberObject *object;                                 \
                                                                                \
@@ -630,9 +628,7 @@ void Func_020010d4(void) {
   FieldActor_SetPositionAndResetMotion(((s32)Actor_GetById(13)), PIXELS(392), 0,
                                        PIXELS(268));
   wait(1);
-  /* FAKEMATCH(temporary): the leader read before the first turn is built; as
-   * gMainRoutineWork.currentOwner in the call, 34 of 640 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(temporary): the leader read before the first turn is built. */
   owner = gMainRoutineWork.currentOwner;
   Actor_SetPositionAndFacing(owner, PIXELS(360), PIXELS(184),
                              turnA = FACING_NORTHEAST);
@@ -1027,14 +1023,12 @@ void GabombaStatueChamber_InitializeRoom3(void) {
   if (gMainRoutineWork.entrance == 2) {
     if (GameFlag_Get(0xa27)) {
       /* FAKEMATCH(temporary): the scene id through a local, which issues its
-       * literal load first; as plain stores, 4 of 71 instructions differ in
-       * tla-en. */
+       * literal load first. */
       scene = &SceneId_Ov671Room7;
       gMainRoutineWork.retreatScene = (s32)scene;
       gMainRoutineWork.retreatEntrance = 1;
     } else if (GameFlag_Get(0xa28)) {
-      /* FAKEMATCH(temporary): the scene id through a local, as in the first
-       * branch; as plain stores, 4 of 71 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): the scene id through a local. */
       scene = &SceneId_Ov672Room1;
       gMainRoutineWork.retreatScene = (s32)scene;
       gMainRoutineWork.retreatEntrance = 3;

@@ -455,8 +455,7 @@ void Func_02000870(void) {
       Actor_WalkToAndWait(9, 824, 88);
       Event_Wait(1);
       {
-        /* FAKEMATCH(temporary): the bit in a local the byte is or'ed into; as
-         * unk5a[0] |= 1, 47 of 260 instructions differ in tla-en. */
+        /* FAKEMATCH(temporary): the bit in a local the byte is or'ed into. */
         u8 *bits = &((struct Actor *)Actor_GetById(9))->actionFlags;
         s32 value = 1;
 

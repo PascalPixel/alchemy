@@ -70,14 +70,8 @@ void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 src_z, s32 width,
 
 static inline void CopyCells(s32 srcX, s32 srcZ, s32 width, s32 height,
                              s32 destX, s32 destZ) {
-  /* FAKEMATCH(wrapper): the call forwarded through an inline, which puts every
-   * argument in a register before the stack arguments are stored; as direct
-   * calls to MapGrid_CopyCellPictureCellsRect, 24 of 59 instructions of
-   * Func_02002980 differ in tla-en (24 of 59 in Func_02002a14, 12 of 59 in
-   * Func_02003d40). */
-  /* FAKEMATCH(wrapper): CopyCells forwarded inline; as direct calls to
-   * MapGrid_CopyCellPictureCellsRect, 12 of 70 instructions of Func_020026c0
-   * differ in tla-en. */
+  /* FAKEMATCH(wrapper): the call forwarded through an inline. */
+  /* FAKEMATCH(wrapper): CopyCells forwarded inline. */
   MapGrid_CopyCellPictureCellsRect(srcX, srcZ, width, height, destX, destZ);
 }
 #include "system/system.h"
@@ -345,18 +339,14 @@ void Func_020004d4(struct Actor *object) {
     object->x = ((Random16() & 0xff) << 16) + (176 << 16);
     {
       s32 r = Random16();
-      /* FAKEMATCH(pin): the leader's y pinned to r3, which the ROM loads before
-       * it builds the mask; as a plain local, 12 of 53 instructions differ in
-       * tla-en (24 with z plain too). */
+      /* FAKEMATCH(pin): the leader's y pinned to r3. */
       register s32 y asm("r3") = leader->y;
 
       object->y = y + ((r & 31) << 16);
     }
     {
       s32 r = Random16();
-      /* FAKEMATCH(pin): as for y, the leader's z pinned to r3, so it loads
-       * before the mask; as a plain local, 12 of 53 instructions differ in
-       * tla-en (24 with y plain too). */
+      /* FAKEMATCH(pin): as for y, the leader's z pinned to r3. */
       register s32 z asm("r3") = leader->z;
 
       object->z = z + ((r & 127) << 16);
@@ -389,8 +379,7 @@ void Func_02000550(struct Actor *object) {
     Func_020004d4(object);
   (*(s16 *)((u8 *)object + 102))--;
   /* FAKEMATCH(dead): an empty once-only block, whose loop note ends the
-   * scheduling block so the timer is stored before z loads, as the ROM does; as
-   * no block, 2 of 87 instructions differ in tla-en. */
+   * scheduling block. */
   do {
   } while (0);
   object->x += Trig_Cos(((object->z >> 14) + (object->y >> 15)) << 8) / 2;
@@ -560,8 +549,7 @@ void Func_02000908(u16 *list) {
     object->collisionFlags &= ~1;
     object->timer = flag;
     /* FAKEMATCH(wrapper): Func_020006cc called through Call1, the step behind
-     * it; as a direct call with the step before it, 2 of 58 instructions differ
-     * in tla-en. */
+     * it. */
     Call1((void (*)())Func_020006cc, (s32)object);
     entry += 3;
   } while (*entry != 0xffff);
@@ -821,9 +809,7 @@ void Func_02000f34(struct Actor *object) {
       position.x = object->x;
       position.z = object->z;
     } else {
-      /* FAKEMATCH(wrapper): forwarded, so each product builds its own constant
-       * and they share the routine's address; as direct calls, 106 of 153
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(wrapper): forwarded. */
       position.x = object->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
                                       Trig_Cos(object->facing));
       position.z = object->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
@@ -885,7 +871,7 @@ void Func_020010b4(struct Actor *shot) {
     shot->update = 0;
     Actor_StartScript(shot, gData_020061cc);
     /* FAKEMATCH(dead): an empty once-only block holds the next statement after
-     * this one; as no block, 2 of 211 instructions differ in tla-en. */
+     * this one. */
     do {
     } while (0);
     return;
@@ -949,9 +935,7 @@ void Func_02001290(struct Actor *object) {
       position.x = object->x;
       position.z = object->z;
     } else {
-      /* FAKEMATCH(wrapper): forwarded, so each product builds its own 0x80000
-       * and they share the routine's address; as direct calls, 129 of 184
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(wrapper): forwarded. */
       position.x = object->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
                                       Trig_Cos(object->facing));
       position.z = object->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
@@ -1029,8 +1013,8 @@ void Func_02001458(struct Actor *object) {
       *counter = value;
     }
     object->unk4c = 0;
-    /* FAKEMATCH(barrier): an empty asm holds the next statement after this
-     * one; as no asm, 22 of 200 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm holds the next statement after this one.
+     */
     asm("");
     object->speedLimit = -object->speedLimit >> 1;
     object->z = leader->z - 0x80000;
@@ -1183,8 +1167,7 @@ void Func_02001828(void) {
   s32 hit = 0;
 
   /* FAKEMATCH(wrapper): calls forwarded through call.h's Call2, Call3, Call4
-   * and Call6, so each builds its own constants; as direct calls, 416 of 1527
-   * instructions differ in tla-en. */
+   * and Call6. */
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_RUSH);
@@ -1196,8 +1179,7 @@ void Func_02001828(void) {
   gust->scaleY = 0x3333;
   gust->motionFlags = 0;
   /* FAKEMATCH(signature): the target's word read as long, an alias set outside
-   * struct Actor's, so the load need not wait for the motion flags' store; as
-   * TARGET(effect), 2 of 1527 instructions differ in tla-en. */
+   * struct Actor's. */
   ((struct FieldSprite *)gust->sprite)->priority =
       ((struct FieldSprite *)((struct Actor *)*(long *)&effect->target)->sprite)
           ->priority;
@@ -1568,9 +1550,8 @@ void Func_020026c0(void) {
   work = Ram_HeapSlots->eventWork;
   value = Func_02000690(2, x, z) >> 8;
   if (value != 0) {
-    /* FAKEMATCH(temporary): the value plus 200 held in delay before the
-       store; as *(s16 *)(work + 362) = value + 200, 6 of 70 instructions
-       differ in tla-en. */
+    /* FAKEMATCH(temporary): the value plus 200 held in delay before the store.
+     */
     s32 delay = value + 200;
     *(s16 *)(work + 362) = delay;
   }
@@ -1748,9 +1729,7 @@ void Func_02002c40(struct Actor *object) {
 
   phase = WORD_AT(object, 48);
   radius = 0xc0000;
-  /* FAKEMATCH(barrier): the radius constant is built before y >> 2, as the
-   * native does; as radius = (y >> 2) + 0xc0000, 2 of 56 instructions differ
-   * in tla-en. */
+  /* FAKEMATCH(barrier): the radius constant is built before y >> 2. */
   __asm__("");
   radius += y >> 2;
   object->x = WORD_AT(object, 68) +
@@ -1788,8 +1767,7 @@ void Func_02002cf0(void) {
   Event_ResolvePendingActions(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   /* FAKEMATCH(dead): BG0CNT's value in a once-only block of its own, built
-   * before its address; as a plain block, 2 of 446 instructions differ in
-   * tla-en. */
+   * before its address. */
   do {
     s32 control = BGCNT_SCREEN_BASE(4);
 
@@ -1832,8 +1810,7 @@ row:
       {
         s32 priority = ((s8 *)Actor_GetById(11)->sprite)[9] & 12;
 
-        /* FAKEMATCH(temporary): the sprite held in the row pointer; as
-         * spark->animation, 28 of 446 instructions differ in tla-en. */
+        /* FAKEMATCH(temporary): the sprite held in the row pointer. */
         cell = spark->sprite;
         ((struct SpriteAttr2High *)cell)->priority = priority >> 2;
       }
@@ -1957,10 +1934,7 @@ void Func_02003170(void) {
 }
 
 static inline void ClearLayer2Shape(s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): the call forwarded through an inline, which builds the
-   * shared z constant again for the second call, as the ROM does; as a direct
-   * call, the constant is kept in r5 across the first call, 12 of 68
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the call forwarded through an inline. */
   MapGrid_SetCellHeight(x, z, 2, 0);
 }
 
@@ -2098,8 +2072,7 @@ void Func_02003654(void) {
   Event_ResolvePendingActions(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   /* FAKEMATCH(dead): BG0CNT's value in a once-only block of its own, built
-   * before its address; as a plain block, 2 of 439 instructions differ in
-   * tla-en. */
+   * before its address. */
   do {
     s32 control = BGCNT_SCREEN_BASE(4);
 
@@ -2142,8 +2115,7 @@ row:
       {
         s32 priority = ((s8 *)Actor_GetById(10)->sprite)[9] & 12;
 
-        /* FAKEMATCH(temporary): the sprite held in the row pointer; as
-         * spark->animation, 26 of 439 instructions differ in tla-en. */
+        /* FAKEMATCH(temporary): the sprite held in the row pointer. */
         cell = spark->sprite;
         ((struct SpriteAttr2High *)cell)->priority = priority >> 2;
       }
@@ -2507,8 +2479,7 @@ first:
     goto first;
   REG_BLDALPHA = 0x1008;
   wait(30);
-  /* FAKEMATCH(dead): the never-true jump into the loop; as no test at all, 200
-   * of 402 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the never-true jump into the loop. */
   never = idB << 1;
   i = 0;
   if (never & 1) {
@@ -2539,8 +2510,7 @@ second:
       b->motionFlags = 0;
       b->acceleration = 0x3333;
       b->speedLimit = 0x3333;
-      /* FAKEMATCH(barrier): the empty asm before the call; as no asm, 2 of 402
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): the empty asm before the call. */
       asm("");
       Actor_SetMovementTypeById(idB, gData_02006104);
     }
@@ -2619,8 +2589,7 @@ void Actor_SetDestinationById(u32 objectId, s32 x, s32 z);
 
 static inline void Call0(void (*f)()) {
   /* FAKEMATCH(wrapper): the call layer without arguments, through which the two
-   * -1s before the call are negated in this order; as a direct call, 2 of 202
-   * instructions differ in tla-en. */
+   * -1s before the call are negated in this order. */
   f();
 }
 
@@ -2668,9 +2637,7 @@ void AirsRockInside_ReadRevealTablet(void) {
     FieldMessage_Show(MsgCheckedTheTablet + 2, 1);
     Call3(MapGrid_SetScreenShake, 0x50000, 0x70000, 0x10000);
     Call3(MapGrid_SetScreenShake, -1, -1, 0xe666);
-    /* FAKEMATCH(wrapper): the call through Call0's pointer, which negates the
-     * two -1s before it in this order; as a direct call, 2 of 202 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(wrapper): the call through Call0's pointer. */
     Call0(MapGrid_WaitForShakeToSettle);
     Call2(Func_02004138, 8, 6);
     Party_LearnAbility(SHEBA, ABILITY_REVEAL);
@@ -3150,8 +3117,7 @@ s32 Scene_Initialize(void) {
   s32 i, z, one;
 
   /* FAKEMATCH(wrapper): 48 calls forwarded through call.h's Call3, Call4 and
-   * Call6 (Call4 through a cast to void (*)()); as direct calls, 122 of 1091
-   * instructions differ in tla-en. */
+   * Call6. */
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 516;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;

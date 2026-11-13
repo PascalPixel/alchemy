@@ -1036,8 +1036,7 @@ void Madra_MeetKarst(void) {
   Actor_WalkByAndWaitById(34, 0, 4);
   SET_MODE(34, 3);
   /* FAKEMATCH(dead): this wait in a once-only block, which starts its own
-   * scheduling region; as a plain call, whose message call then loads its
-   * arguments in the other order, 2 of 1565 instructions differ in tla-en. */
+   * scheduling region. */
   do {
     Event_Wait(20);
   } while (0);
@@ -1450,8 +1449,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   SET_MODE(32, 3);
   /* FAKEMATCH(dead): this wait in a once-only block, which starts its own
-   * scheduling region; as a plain call, whose speed call then loads its
-   * arguments in the other order, 2 of 1565 instructions differ in tla-en. */
+   * scheduling region. */
   do {
     Event_Wait(20);
   } while (0);

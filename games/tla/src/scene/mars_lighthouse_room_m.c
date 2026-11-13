@@ -401,8 +401,7 @@ void Func_020003c4(void) {
     Iwram_CopyWordsEntry(Data_02003a1c, (void *)Data_020039dc, 64);
     gData_02003704 = 0;
   }
-  /* FAKEMATCH(volatile): the saved colours read as volatile; as plain u16, 2 of
-   * 179 instructions differ in tla-en. */
+  /* FAKEMATCH(volatile): the saved colours read as volatile. */
   base = gData_02003704 / 8 % 6;
   for (i = 0; i <= 5; i++) {
     Data_02003a1c[i + 4] = Data_020039dc[(base + i) % 6 + 4];
@@ -476,9 +475,7 @@ void Func_020006c8(s32 state) {
   if ((state ^ gData_02003a82) & 1)
     Event_PlaySound(SE_560);
   gData_02003a82 = state;
-  /* FAKEMATCH(temporary): the low bit held in a local, so it is taken before
-   * the state is copied for the next index, as in the native; as the test
-   * itself, 12 of 141 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the low bit held in a local. */
   odd = state & 1;
   flash = (u16 *)&gData_02003a7e;
   next = state - 20;
@@ -874,8 +871,7 @@ void MarsLighthouseRoomM_ReadWindInscription(void) {
 void Func_020012a4(s32 x, s32 z, s32 kind) {
   struct Actor *object;
 
-  /* FAKEMATCH(temporary): z shifted ahead of the call; as z << 16 in its
-   * arguments, 2 of 53 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): z shifted ahead of the call. */
   z <<= 16;
   object = (struct Actor *)Import_ActorCreate(403, x << 16, 0, z);
 
@@ -1286,9 +1282,7 @@ void Func_02001f14(struct MarsLighthouseRoomMVector *position, s32 value) {
     object->gravity = (u16)Random16();
     object->unk4c = ((u32)(Random16() << 17) >> 16) + value;
     /* FAKEMATCH(temporary): the angle held in an s32 local keeps the zero
-     * extension and the pool word 0xffff8000 (a direct store narrows the add
-     * to 16 bits: movs, lsls for 0x8000, no extension); as a direct store, 10
-     * of 50 instructions differ in tla-en. */
+     * extension and the pool word 0xffff8000. */
     angle = (u16)Random16() - 0x8000;
     object->timer = angle;
     ((void (*)())Actor_SetupScripted)(object, 2);
@@ -1512,8 +1506,7 @@ s32 MarsLighthouseRoomM_SlideOnIce(void) {
   // Unused: gives the stack frame its 12 bytes.
   UNUSED s32 unused[3];
 
-  /* FAKEMATCH(signature): typed returning s32, though it returns nothing; as
-   * void, 2 of 138 instructions differ in tla-en. */
+  /* FAKEMATCH(signature): typed returning s32, though it returns nothing. */
   if (event->started == 0) {
     ScreenTransition_Start(event->field1ac, event->field1b4);
     event->started = 1;

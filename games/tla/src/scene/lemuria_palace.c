@@ -100,31 +100,27 @@ extern s16 gLemuriaPalace_GlowColors[];
 
 static inline u32 Frame_Mod6(u32 frame) {
   /* FAKEMATCH(wrapper): the inline keeps gFrameCount's address out of a
-   * callee-saved register; as gFrameCount % 6, 16 of 35 instructions differ in
-   * tla-en. */
+   * callee-saved register. */
   return frame % 6;
 }
 
 /// Every sixth frame rotates colours 1-14 of background palette 12 by one
 /// place; every frame sets its colour 15 from a twelve-step glow.
 void LemuriaPalace_CycleGlowColors(void) {
-  /* FAKEMATCH(pin): the colour stays in r1; as a plain local, 4 of 35
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the colour stays in r1. */
   register s32 color asm("r1");
 
   if (Frame_Mod6(gFrameCount) == 0) {
     volatile u16 *palette;
-    /* FAKEMATCH(pin): the saved colour takes r1 and leaves r0 to the index; as
-     * a plain local, 12 of 35 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the saved colour takes r1 and leaves r0 to the index. */
     register s32 saved asm("r1");
     s32 index;
 
-    /* FAKEMATCH(pin): the read stays in r3; as a plain local, 6 of 35
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the read stays in r3. */
     register s32 raw asm("r3") = *(volatile u16 *)&BG_PLTT_COLOR(12, 14);
 
-    /* FAKEMATCH(barrier): the barrier keeps the sign extension apart from
-     * the read; without it, 6 of 35 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): the barrier keeps the sign extension apart from the
+     * read. */
     asm("" : "+r"(raw));
     saved = (s16)raw;
     index = 14;
@@ -205,16 +201,15 @@ void LemuriaPalace_DrawMaps(void) {
 
     {
       s32 value = level << 8;
-      /* FAKEMATCH(dead): an empty block holds the shift first; with no
-       * block, 2 of 96 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): an empty block holds the shift first. */
       do {
       } while (0);
       value |= 16 - level;
 
       REG_BLDALPHA = value;
     }
-    /* FAKEMATCH(dead): the step in a once-only block holds it after the
-     * store; as the plain statement, 2 of 96 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): the step in a once-only block holds it after the store.
+     */
     do {
       t++;
     } while (0);
@@ -226,7 +221,7 @@ void LemuriaPalace_DrawMaps(void) {
     {
       u16 *table = (u16 *)gLemuriaPalace_MapCrossfade;
       /* FAKEMATCH(temporary): the offset in a local puts the table first in the
-       * load; as table[step], 2 of 96 instructions differ in tla-en. */
+       * load. */
       s32 at = step * 2;
       s32 value = *(u16 *)((u8 *)table + at);
 
@@ -265,8 +260,7 @@ extern s32 gLemuriaPalace_FirstMapVram;
 /// Loads the two maps the council shows the party, the ancient world and
 /// Lunpa's, and starts drawing them.
 void LemuriaPalace_LoadMaps(void) {
-  /* FAKEMATCH(wrapper): forwarded, so that its 0x1000 goes straight to r0; as a
-   * direct call, 47 of 126 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): forwarded. */
   void *buffer = (void *)Value1((s32 (*)())Heap_Alloc, 0x1000);
   s32 *firstSlot;
   s32 *firstTile;

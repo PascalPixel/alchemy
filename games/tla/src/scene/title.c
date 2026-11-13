@@ -120,8 +120,8 @@ s32 Title_Run(void) {
           ScreenFade_ToBlack(30);
           ScreenFade_Wait();
           /* FAKEMATCH(dead): an empty once-only block keeps the counter's zero
-           * after the wait call, where sched2 would fill the call's stall
-           * with it; without it, 2 of 155 instructions differ in tla-en. */
+           * after the wait call, where sched2 would fill the call's stall with
+           * it. */
           do {
           } while (0);
           frames = 0;
@@ -209,9 +209,7 @@ void Title_RevealSpriteRow(void) {
   i = 0;
   y = 0x88;
   do {
-    /* FAKEMATCH(temporary): the row's y copied to n, so 0x88 is rebuilt in n's
-     * register each pass; as y used directly, which stays in r8, 20 of
-     * 70 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the row's y copied to n. */
     n = y;
     x = 232 - (18 - i) * 8;
     *w++ = 0;
@@ -270,9 +268,7 @@ fade:
 
 static __inline__ void Decode_(void *source, void *destination) {
   /* FAKEMATCH(wrapper): the decode forwarded through this inline keeps the
-   * buffer address a constant of each call, as The Broken Seal's system call
-   * layer does; as a direct call, which keeps the address in r5, 17
-   * of 94 instructions differ in tla-en. */
+   * buffer address a constant of each call. */
   Decompress_TaggedLz(source, destination);
 }
 

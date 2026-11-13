@@ -369,10 +369,7 @@ void Func_0200045c(void) {
       Actor_ShowEmote(0x1c, 0x103, 0x1e);
       Event_ShowMessage(0x1c, 0);
       Actor_SetAnimation(27, 3);
-      /* FAKEMATCH(dead): an empty once-only block, which ends the scheduling
-       * block after the animation call, so its id (r0) is set before its mode
-       * (r1); without it, 2 of 39 instructions differ in tla-en, the mode set
-       * first. */
+      /* FAKEMATCH(dead): an empty once-only block. */
       do {
       } while (0);
       FieldEvent_Wait(20);
@@ -395,9 +392,7 @@ void Func_020004c8(void) {
   if (Event_GetFlag(0x201) == 0 && gFrameCount % 3 != 0)
     return;
   center = Actor_Get(31);
-  /* FAKEMATCH(wrapper): both effects created through Actor_Create above, which
-   * evaluates the position before the type; as direct calls of
-   * Import_ActorCreate, 2 of 94 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): both effects created through Actor_Create above. */
   if (Event_GetFlag(0x201) != 0) {
     u32 random;
 
@@ -1040,15 +1035,11 @@ void Func_02001388(void) {
   Event_ShowMessage(5, 0);
   Actor_WalkBy(5, -8, -24);
   Actor_FaceDirectionAndWait(4, slow);
-  /* FAKEMATCH(dead): the statement in a once-only block, whose end holds
-   * the order around it; as the plain statement, 2 of 349 instructions differ
-   * in tla-en. */
+  /* FAKEMATCH(dead): the statement in a once-only block. */
   do {
     Actor_SetAnimation(4, 3);
   } while (0);
-  /* FAKEMATCH(dead): the statement in a once-only block, whose end holds
-   * the order around it; as the plain statement, 2 of 349 instructions differ
-   * in tla-en. */
+  /* FAKEMATCH(dead): the statement in a once-only block. */
   do {
     FieldEvent_Wait(0x14);
   } while (0);
@@ -1155,10 +1146,7 @@ void Func_020016e8(void) {
   FieldActor_WaitForMoveById(6);
   Actor_FaceDirectionAndWait(4, southeast);
   Actor_FaceDirection(6, northwest, 0);
-  /* FAKEMATCH(dead): the three calls kept in a once-only block; as the
-   * plain calls, 18 of 400 instructions differ in tla-en (the angles' copies
-   * into r3 in five of the six placements, and the argument order of the
-   * calls around the block). */
+  /* FAKEMATCH(dead): the three calls kept in a once-only block. */
   do {
     Actor_SetAnimation(4, 3);
     FieldEvent_Wait(20);

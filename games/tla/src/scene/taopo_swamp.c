@@ -1682,8 +1682,7 @@ void TaopoSwamp_DarkenRoom(s32 fade) {
   if (fade) {
     Blend_SetAlpha(0xe06);
     /* FAKEMATCH(dead): the empty once-only block finishes the blend value
-     * before the shared register address; without it, 2 of 60 instructions
-     * differ in tla-en. */
+     * before the shared register address. */
     do {
     } while (0);
     System_Wait(10);
@@ -1730,8 +1729,7 @@ void TaopoSwamp_SinkInMud(void) {
     sprite->child[6] = 1;
   sprite->mode |= 8;
   sprite->mode &= 0xfe;
-  /* FAKEMATCH(dead): the once-only block orders this statement; as a plain
-   * statement, 4 of 159 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the once-only block orders this statement. */
   do {
     sprite->dirty = 1;
   } while (0);
@@ -1844,10 +1842,8 @@ void Vent_Puff(s32 *position, s32 base) {
     object->bounce = Trig_Cos(((u32)(Random16() * 0x3000) >> 16) + 0x3000);
     object->gravity = (u16)Random16();
     object->unk4c = (u16)(Random16() << 1) + base;
-    /* FAKEMATCH(temporary): an s32 local keeps the zero extension and the
-     * pool word 0xffff8000; as a direct store, which narrows the add to 16
-     * bits (movs, lsls for 0x8000, no extension), 10 of 50 instructions differ
-     * in tla-en. */
+    /* FAKEMATCH(temporary): an s32 local keeps the zero extension and the pool
+     * word 0xffff8000. */
     angle = (u16)Random16() - 0x8000;
     object->timer = angle;
     Actor_StartScripted(object, 3);

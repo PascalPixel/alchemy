@@ -174,8 +174,7 @@ next:
       scale = ((u32)Random16() >> 1) + 0x4000;
       Actor_StartScript(object, gMarsLighthouseStarRoom_ScatterIceChipsScript);
       Actor_SetSpriteFlags(object, 0);
-      /* FAKEMATCH(dead): an empty once-only block holds the order around it; as
-       * no block, 2 of 113 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): an empty once-only block holds the order around it. */
       do {
       } while (0);
       object->velocityY = angle * 4 + 0x20000;
@@ -304,8 +303,7 @@ s32 Scene_Initialize(void) {
       struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
       struct Overlay6abEventWork *work = Ram_HeapSlots->eventWork;
       /* FAKEMATCH(signature): GameFlag_GetByte declared returning s32, where
-       * its definition returns u8; as u8, 17 of 255 instructions differ in
-       * tla-en. */
+       * its definition returns u8. */
       s32 column = GameFlag_GetByte(0x340);
       s32 row = GameFlag_GetByte(0x348);
       struct Actor *other;
@@ -467,9 +465,8 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   FIELD_AT(v6, s32, 24) = 0x4000;
   FIELD_AT(v6, s32, 28) = 0x4000;
   FIELD_AT(v8, u8, 85) = 0;
-  /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here,
-   * as the listing orders it; without it, 10 of 343 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here.
+   */
   do {
   } while (0);
   FIELD_AT(v8, s32, 24) = 0x4000;
@@ -553,9 +550,8 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   } else {
     FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), s16, 0) =
         (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
-    /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here,
-     * as the listing orders it; without it, 2 of 343 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here.
+     */
     do {
     } while (0);
     Actor_WaitForAnimationChange(gMainRoutineWork.currentOwner);
@@ -1134,9 +1130,7 @@ void Func_02001424(void) {
   z += 0x1cc0000;
   object = ObjectCreate_(0x11d, x, 0x200000, z);
   if (object != NULL) {
-    /* FAKEMATCH(barrier): an empty asm clobbering r0, so the child flags call
-     * copies object in again; as no asm, 7 of 91 instructions differ in tla-en.
-     */
+    /* FAKEMATCH(barrier): an empty asm clobbering r0. */
     asm("" : : : "r0");
     object->unk5c[0] = 2;
     object->motionFlags = 0;
@@ -1352,9 +1346,7 @@ void Func_02001b78(s32 *position, s32 base) {
     object->gravity = (u16)Random16();
     object->unk4c = (u16)(Random16() << 1) + base;
     /* FAKEMATCH(temporary): the angle held in an s32 local keeps the zero
-     * extension and the pool word 0xffff8000 (a direct store narrows the add
-     * to 16 bits: movs, lsls for 0x8000, no extension); as a direct store, 10
-     * of 50 instructions differ in tla-en. */
+     * extension and the pool word 0xffff8000. */
     angle = (u16)Random16() - 0x8000;
     object->timer = angle;
     Func_02001b38__s1b78(object, 2);
@@ -1500,7 +1492,7 @@ void Func_02001df0(u16 *targets, u16 *stops, s32 a2, s32 a3) {
     id = *targets++;
     {
       /* FAKEMATCH(dead): a test combine folds, keeping the first loop's refs
-       * unweighted; as no test, 90 of 145 instructions differ in tla-en. */
+       * unweighted. */
       s32 never = id & 0x40;
       if (never < 0) {
         id = 0;
@@ -1549,7 +1541,7 @@ void Func_02001df0(u16 *targets, u16 *stops, s32 a2, s32 a3) {
       *(u16 *)((u8 *)beam + stopOffset) = count;
       {
         /* FAKEMATCH(dead): a test combine folds, keeping the second loop's refs
-         * unweighted; as no test, 133 of 145 instructions differ in tla-en. */
+         * unweighted. */
         s32 never = count & 0x40;
         if (never < 0) {
           p = stops;
@@ -1707,8 +1699,7 @@ s32 MarsLighthouseStarRoom_SlideOnIce(void) {
   struct Actor *leader;
   s32 frame[3]; // Unused: gives the stack frame its 12 bytes.
 
-  /* FAKEMATCH(signature): typed returning s32, though it returns nothing; as
-   * void, 2 of 138 instructions differ in tla-en. */
+  /* FAKEMATCH(signature): typed returning s32, though it returns nothing. */
 
   if (event->started == 0) {
     ScreenTransition_Start(event->field1ac, event->field1b4);
@@ -1723,9 +1714,7 @@ s32 MarsLighthouseStarRoom_SlideOnIce(void) {
 #ifdef UBFIX
   Party_TakeFallDamage();
 #else
-  /* FAKEMATCH(wrapper): Party_TakeFallDamage called through a cast to
-   * s32 (*)(s32, s32) with -10 and 0; as Party_TakeFallDamage(), 3 of 138
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): Party_TakeFallDamage called through a cast to s32. */
   ((s32 (*)(s32, s32))Party_TakeFallDamage)(-10, 0);
 #endif
   FieldCamera_SetSpeed(0x70000, 0xe000);

@@ -93,8 +93,7 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
   i = 0;
   if ((u16)sprite != gYampiDesertCave_LogSprites[i]) {
   loop:
-    /* FAKEMATCH(temporary): kind set to i, then stepped; as kind = (u16)(i +
-     * 1), 12 of 160 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): kind set to i, then stepped. */
     kind = (u16)i;
     kind = (u16)(kind + 1);
     i = (s16)kind;
@@ -117,13 +116,12 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
   az = *(s32 *)&map->layers[1].unk08[4] >> 20;
   bx = *(s32 *)&map->layers[2].unk08[0];
   bz = *(s32 *)&map->layers[2].unk08[4];
-  /* FAKEMATCH(temporary): the first call's last two arguments held in locals;
-   * as direct arguments, 36 of 160 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the first call's last two arguments held in locals.
+   */
   layer1X = (u16)i + x;
   layer1Z = (u16)az + z;
   MapGrid_CopyCellAttributes(x, z, w, h, layer1X, layer1Z);
-  /* FAKEMATCH(temporary): the second call's arguments held in locals; as direct
-   * arguments, 10 of 160 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the second call's arguments held in locals. */
   fromX = (u16)(bx >> 20) + x;
   fromZ = (u16)(bz >> 20) + z;
   toX = x + 64;
@@ -191,10 +189,7 @@ s32 YampiDesertCave_FindLogSlide(s32 *position) {
   row:
     probe[0] = position[0] + (gYampiDesertCave_LogFootprints[offset] << 16);
     for (i = 0; i < w; i++) {
-      /* FAKEMATCH(wrapper): the call through YampiDesertCave_CheckCollision; as
-         MapGrid_CheckCollision(object, probe), 2 of 171 instructions differ in
-         tla-en.
-       */
+      /* FAKEMATCH(wrapper): the call through YampiDesertCave_CheckCollision. */
       if (YampiDesertCave_CheckCollision(object, probe) == 2)
         goto hit;
       probe[0] += 0x100000;
@@ -359,9 +354,7 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
   Event_PlaySound(SE_HEAVY_MOVE);
   Actor_SetSpeed(rect.word[4], 0x8000, 0x1999);
   Actor_SetMoveTarget(object, rect.word[0], rect.word[1], rect.word[2]);
-  /* FAKEMATCH(dead): a loop of one pass with an untaken two-test branch, so the
-   * second half starts afresh in cse; as no loop, 277 of 342 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(dead): a loop of one pass with an untaken two-test branch. */
   for (j = 0; j < 1; j++) {
     if (j != 0 && j != 5)
       w = 1;
@@ -856,8 +849,7 @@ void YampiDesertCave_MeetGuardianOfFire(void) {
   Event_Wait(20);
   /* FAKEMATCH(dead): a once-only block around the first two stores keeps the
    * call's first argument ahead of the scene store's address, where without it
-   * the argument follows the store; as plain stores, 2 of 71 instructions
-   * differ in tla-en. */
+   * the argument follows the store. */
   do {
     FIELD_AT(&gMainRoutineWork, u16, 0x254) = 0x19cd;
     FIELD_AT(&gMainRoutineWork, u8, 0x24b) = 2;

@@ -567,10 +567,7 @@ void Func_0200130c(void) {
 }
 
 static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH(wrapper): the call forwarded through the inline, which sets the
-   * arguments up in their own order: z is shifted before the -1 starts; as
-   * direct FieldCamera_MoveWithinMapBounds calls, 6 of 66 instructions differ
-   * in tla-en. */
+  /* FAKEMATCH(wrapper): the call forwarded through the inline. */
   FieldCamera_MoveTo(x, y, z, mode);
 }
 
@@ -585,8 +582,7 @@ void Func_02001400(s32 mode) {
   u32 level;
 
   /* FAKEMATCH(temporary): the blend level is read into level, a u32 local,
-   * before each IoWriteQueue_Store16 call; as IoWriteQueue_Store16(0x04000052,
-   * gData_02003fc0), 4 of 593 instructions differ in tla-en. */
+   * before each IoWriteQueue_Store16 call. */
   System_Wait(1);
   Event_ClearFlag(0x109);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
@@ -729,10 +725,7 @@ void Func_02001ad0(struct Actor *parent) {
         sprite->nextFrame = 0;
         VramCache_FreeEntry(sprite->vramBlock);
         sprite->vramBlock = work->vramBlock;
-        /* FAKEMATCH(signature): the sprite written through LinkedSpriteView,
-         * which splits the byte at 0x11 and attribute 1's bits 14-15 that
-         * FieldSprite leaves whole; as sprite->unk11 |= 1, flipX = 0 and
-         * flipY = 1, 44 of 120 instructions differ in tla-en. */
+        /* FAKEMATCH(signature): the sprite written through LinkedSpriteView. */
         ((struct LinkedSpriteView *)sprite)->retainCacheEntry = 1;
         sprite->tile =
             (gResourceTableEntries[sprite->vramBlock].offset >> 5) & 0x3ff;

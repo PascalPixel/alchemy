@@ -369,13 +369,9 @@ static inline void RunToActor4(s32 id) {
 /// emotes the four actors run to actor 4.
 void LemurianShipDeck_HoldOnToTiller(void) {
 #if !TLA_PATCH_2
-  /* FAKEMATCH(dead): a call that never runs, kept for its routine address,
-   * the first constant the function puts in its pool: the message id's pool
-   * label is then numbered one later, and reload's hard-register CSE, whose
-   * lookup of the second -16 finds r1's only through that label's hash in
-   * this object, builds -16 twice, as Japanese and English do; from patch 2
-   * the ROM copies it from r1, as the plain form does here. As nothing, 15 of
-   * 459 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): a call that never runs, kept for its routine address, the
+   * first constant the function puts in its pool: the message id's pool label
+   * is then numbered one later, and reload's hard-register CSE. */
   if (0)
     Task_AddFrame(LemurianShipDeck_BobDeck, 0x480);
 #endif
@@ -500,12 +496,9 @@ s32 Scene_Initialize(void) {
   struct MapModeBits bits = map->bits;
 
   /* FAKEMATCH(temporary): the mode bits changed in a one-byte copy, bits, and
-   * stored back; as map->bits.mode = 1 with no empty block, 2 of 62
-   * instructions differ in tla-en. */
+   * stored back. */
   bits.mode = 1;
-  /* FAKEMATCH(dead): an empty once-only block before the copy's store, so
-   * gMainRoutineWork's address loads between the or and the store; as no block,
-   * 12 of 62 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): an empty once-only block before the copy's store. */
   do {
   } while (0);
   party = &gMainRoutineWork;
@@ -514,9 +507,7 @@ s32 Scene_Initialize(void) {
     LemurianShipDeck_SetUpTillerDeck();
   } else {
     *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
-    /* FAKEMATCH(dead): an empty once-only block, which ends the scheduling
-     * block after the store; as no block, 4 of 62 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block. */
     do {
     } while (0);
     Actor_Get(party->currentOwner)->priorityFlags |= 0x20;

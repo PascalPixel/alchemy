@@ -474,10 +474,7 @@ void Func_02000804(s32 actor) {
   Actor_FaceDirectionById(8, FACING_WEST);
   Event_Wait(10);
   Actor_ShowEmoteById(8, 258, 30);
-  /* FAKEMATCH(signature): called through a type returning s32, which gives the
-   * native's argument order (r1 before r0); as the void call scene_call.h
-   * declares, which the other scenes match with, 2 of 144 instructions differ
-   * in tla-en. */
+  /* FAKEMATCH(signature): called through a type returning s32. */
   ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(8, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(20);
@@ -702,8 +699,7 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
 
 static __inline__ void Func_0200343c_(s32 x, s32 z, s32 a, s32 b) {
-  /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 32 of
-   * 613 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): forwarded through this inline. */
   MapGrid_SetCellHeight(x, z, a, b);
 }
 
@@ -713,8 +709,7 @@ static __inline__ void Actor_ArmCallback_(s32 actor, s32 angle, s32 frames) {
 
 void Func_02000f48(s32 actor) {
   s32 item;
-  /* FAKEMATCH(dead): each owner stored and never read; as the bare tests,
-   * 68 of 205 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): each owner stored and never read. */
   s32 owner;
 
   if ((Actor_GetById(gMainRoutineWork.currentOwner)->x >> 20) <= 41)
@@ -786,8 +781,7 @@ struct Position {
 };
 
 static __inline__ void FieldMessage_ShowAtActor_(s32 speaker, s32 flags) {
-  /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 35 of
-   * 613 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): forwarded through this inline. */
   ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(speaker, flags);
 }
 
@@ -967,8 +961,7 @@ void Func_0200115c(void) {
     Party_SetFields1f2And1f4((s32)&SceneId_Ov685Room4, 98);
     Event_SetAfterBattleDestination((s32)&SceneId_Ov685Room4, 99);
     party = &gMainRoutineWork;
-    /* FAKEMATCH(dead): holds the 2's store after the party pointer; as no
-     * block, 10 of 613 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): holds the 2's store after the party pointer. */
     do {
     } while (0);
     party->battleRule24b = 2;
@@ -1518,8 +1511,7 @@ void Func_02001868(void) {
 }
 
 static __inline__ void Place(void *a, s32 b, s32 c, u32 d, s32 e) {
-  /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 4 of 181
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): forwarded inline. */
   EffectSprite_Init(a, b, c, d, e);
 }
 

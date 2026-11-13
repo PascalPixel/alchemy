@@ -387,9 +387,8 @@ void Func_0200087c(void) {
         velocity[0] += velocity[0] >> 1;
         velocity[0] += ((u32)(Random16() * 3 << 14) >> 16) - 0x6000;
         velocity[2] += ((u32)(Random16() * 3 << 13) >> 16) - 0x3000;
-        /* FAKEMATCH(dead): sum, never read again, assigned the flags inside
-         * the call's arguments; as 0x10b0000 passed directly, 6 of 255
-         * instructions differ in tla-en. */
+        /* FAKEMATCH(dead): sum, never read again, assigned the flags inside the
+         * call's arguments. */
         FieldEffect_Spawn(object->x, object->y, object->z, velocity[0],
                           velocity[1], velocity[2], sum = 0x10b0000, &options);
         i++;

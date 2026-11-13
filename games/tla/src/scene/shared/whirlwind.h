@@ -264,8 +264,7 @@
           s32 cosine = Trig_Cos(self->facing);                                 \
           s32 speed = self->speedLimit;                                        \
           /* FAKEMATCH(dead): the routine address taken inside a once-only     \
-           * block, so the speed loads first; as a plain call, 2 of 197        \
-           * instructions differ in tla-en. */                                 \
+           * block. */                                                         \
           do {                                                                 \
             multiply = Iwram_MulQ16;                                           \
           } while (0);                                                         \
@@ -350,8 +349,7 @@
       s32 zero = 0;                                                            \
                                                                                \
       /* FAKEMATCH(temporary): one word zero clears the ride byte, then the    \
-       * update; as self->update = 0; *((u8 *)self + 0x63) = 0;, 4 of 197      \
-       * instructions differ in tla-en (byte first, 15). */                    \
+       * update. */                                                            \
       *((u8 *)self + 0x63) = zero;                                             \
       self->update = (void *)zero;                                             \
     }                                                                          \

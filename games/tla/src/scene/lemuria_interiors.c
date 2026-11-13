@@ -711,8 +711,7 @@ void LemuriaInteriors_EmitNote(s32 x, s32 y, s32 z, s16 rotation, s32 timer) {
     Actor_StartScript(object, gLemuriaInteriors_NoteFloats);
     object->motionFlags = 0;
     {
-      /* FAKEMATCH(barrier): the empty asm before the timer's store; as no asm,
-       * 2 of 32 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): the empty asm before the timer's store. */
       __asm__("");
       ((struct SpawnedActor *)object)->timer = timer;
     }

@@ -549,8 +549,7 @@ void Func_02000d2c(void) {
   }
   Actor_PlaceMovedBlock();
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom6) {
-    /* FAKEMATCH(temporary): the copy makes each column test reload X; as
-     * object->x, 10 of 76 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the copy makes each column test reload X. */
     struct Actor *o = object;
 
     if (o->x >> 19 == 27)
@@ -1452,8 +1451,7 @@ void Func_020029d0(s32 spread) {
 
   do {
     {
-      /* FAKEMATCH(temporary): y held in a local, so x is computed before it; as
-       * one expression, 14 of 122 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): y held in a local. */
       s32 y = leader->y - (((Random16() * 14) >> 16) << 16);
 
       effect = (struct FieldEffect *)Import_ActorCreate(

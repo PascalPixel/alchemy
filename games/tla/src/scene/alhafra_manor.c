@@ -242,8 +242,7 @@ s32 Scene_Initialize(void) {
     Event_Wait(10);
     Camera_SetSpeedParameters(0x20000, 0x4000);
     {
-      /* FAKEMATCH(pin): the mode in r3 ahead of the other arguments; as a
-       * literal, 2 of 128 instructions differ in tla-en. */
+      /* FAKEMATCH(pin): the mode in r3 ahead of the other arguments. */
       register s32 mode asm("r3") = 1;
 
       FieldCamera_MoveWithinMapBounds(144 << 16, cameraY, cameraZ, mode);

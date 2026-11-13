@@ -118,8 +118,7 @@ void Func_02000468(struct Unk_02000468 *unk) {
     map = Ram_HeapSlots->mapWork;
     if (map != NULL) {
       struct MapCell **cells = &map->layers[2].cells;
-      /* FAKEMATCH(dead): cell's initial value, overwritten unread; as a plain
-         declaration, 14 of 40 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): cell's initial value, overwritten unread. */
       struct MapCell *cell = *cells;
       s32 x = unk->x >> 20;
       s32 row = (unk->z - unk->y) >> 20;
@@ -989,9 +988,7 @@ void Func_02001b54(struct Actor *object) {
       position.x = object->x;
       position.z = object->z;
     } else {
-      /* FAKEMATCH(wrapper): forwarded, so each product builds its own constant
-       * and they share the routine's address; as direct calls, 106 of 153
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(wrapper): forwarded. */
       position.x = object->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
                                       Trig_Cos(object->facing));
       position.z = object->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
@@ -1140,8 +1137,7 @@ void Func_02001f7c(void) {
   FieldEvent_ResolvePendingActions(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   /* FAKEMATCH(dead): BG0CNT's value in a once-only block of its own, built
-   * before its address; as a plain block, 2 of 520 instructions differ in
-   * tla-en. */
+   * before its address. */
   do {
     s32 control = BGCNT_SCREEN_BASE(4);
 
@@ -1184,8 +1180,7 @@ row:
       {
         s32 priority = ((s8 *)Actor_Get(14)->sprite)[9] & 12;
 
-        /* FAKEMATCH(temporary): the sprite held in the row pointer; as
-         * spark->animation, 20 of 520 instructions differ in tla-en. */
+        /* FAKEMATCH(temporary): the sprite held in the row pointer. */
         cell = spark->sprite;
         ((struct SpriteAttr2High *)cell)->priority = priority >> 2;
       }

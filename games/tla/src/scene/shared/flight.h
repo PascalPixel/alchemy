@@ -238,7 +238,7 @@
         u8 *source = &data3[base / 8][4] + i / 2;                              \
         u8 *dest = &data2[base / 8][4] + i / 2;                                \
         /* FAKEMATCH(barrier): the empty asm on dest changes its allocation    \
-         * rank; as no asm, 22 of 181 instructions differ in tla-en. */        \
+         * rank. */                                                            \
         asm("" : "=r"(dest) : "0"(dest));                                      \
                                                                                \
         j = 2;                                                                 \

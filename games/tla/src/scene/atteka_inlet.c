@@ -504,10 +504,7 @@ s32 Scene_PrepareMap(void) {
 }
 
 static __inline__ void Task_Add_(void (*func)(void), s32 priority) {
-  /* FAKEMATCH(wrapper): the call forwarded through an inline, which keeps each
-   * call's own constants, as The Broken Seal's scene layer does; as direct
-   * calls to Task_Add, 28 of 107 instructions of AttekaInlet_SetUpTheHarbour
-   * differ in tla-en. */
+  /* FAKEMATCH(wrapper): the call forwarded through an inline. */
   Task_Add(func, priority);
 }
 

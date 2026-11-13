@@ -212,9 +212,7 @@ void EasternAlhafraShip_SpawnNote(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
     Actor_SelectAnimation(object, 1);
     Actor_StartScript(object, gEasternAlhafraShip_NoteScript);
     object->motionFlags = 0;
-    /* FAKEMATCH(barrier): an empty asm, so the fifth argument is read from the
-     * stack before the zero for nextFrame, as the native does; as no asm, 2 of
-     * 32 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm. */
     __asm__("");
     object->unk5e = fifth;
     sprite->nextFrame = 0;

@@ -178,9 +178,7 @@ void Actor_StartScript(struct OrbitEffect *object, const void *script);
 
 static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
                                                     s32 z) {
-  /* FAKEMATCH(wrapper): the effect created through an inline, which
-   * evaluates the position before the type; as a direct call of
-   * Import_ActorCreate, 4 of 94 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the effect created through an inline. */
   return ((struct OrbitEffect *)Import_ActorCreate(type, x, y, z));
 }
 
@@ -686,9 +684,8 @@ void Func_02001070(struct Actor *self) {
         s32 (*multiply)(s32, s32);
         s32 cosine = Trig_Cos(self->facing);
         s32 speed = self->speedLimit;
-        /* FAKEMATCH(dead): the routine address taken inside a once-only
-         * block, so the speed loads first; as a plain call, 2 of 197
-         * instructions differ in tla-en. */
+        /* FAKEMATCH(dead): the routine address taken inside a once-only block.
+         */
         do {
           multiply = Iwram_MulQ16;
         } while (0);
@@ -866,9 +863,7 @@ void Func_02001650(s32 count) {
     angle = ((Random16() * 3) >> 2) + 0x6000;
     radius = 0x400000;
     speed = ((Random16() << 4) >> 16) + 16;
-    /* FAKEMATCH(temporary): the cosine held in a 64-bit temporary; as
-     * Iwram_MulQ16(Trig_Cos(angle), radius), 14 of 92 instructions differ
-     * in tla-en. */
+    /* FAKEMATCH(temporary): the cosine held in a 64-bit temporary. */
     cosine = Trig_Cos(angle);
     spark->dx = Iwram_MulQ16(cosine, radius) >> 16;
     spark->dy = -Iwram_MulQ16(Math_Sin(angle), radius) >> 16;

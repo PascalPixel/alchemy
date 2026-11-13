@@ -95,16 +95,14 @@ void EffectSprite_Init(struct EpilogueSprite *sprite, s32 a, s32 b, u32 c,
 
 static __inline__ void Set(struct EpilogueSprite *sprite, s32 a, s32 b, u32 c,
                            s32 tile) {
-  /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 6 of 69
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): forwarded inline. */
   EffectSprite_Init(sprite, a, b, c, tile);
 }
 
 /// Loads the green panel the speakers' names are written on, and starts
 /// Epilogue_PlaceNamePanel.
 void Epilogue_LoadNamePanel(void) {
-  /* FAKEMATCH(wrapper): the size through Value1; as a direct call, 21 of 69
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the size through Value1. */
   void *buffer = (void *)Value1((s32 (*)())Heap_Alloc, 0x800);
   struct EpilogueSprite *sprite;
   s32 *slot;
@@ -153,9 +151,8 @@ void Epilogue_ShowLineAt(s32 message, s32 x, s32 y, s32 left, s32 line,
   window = Message_OpenWindow(gEpilogueMessage, x, y,
                               (Speaker_GetVoice(message) << 16) | 4);
   if (!wide) {
-    /* FAKEMATCH(temporary): the name window held in a temporary until after
-     * the stores; as name = Portrait_OpenWindow(...), 2 of 100 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(temporary): the name window held in a temporary until after the
+     * stores. */
     struct EpilogueWindow *opened = Portrait_OpenWindow(message, 0, left, line);
 
     gEpilogueNameShown = 1;
@@ -432,8 +429,7 @@ L_0200871e:
   EndingPicture_Show(0, (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
   value = 0;
-  /* FAKEMATCH(dead): the store in a once-only block; as a plain store, 2 of 426
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the store in a once-only block. */
   do {
     REG_BLDCNT = value;
   } while (0);

@@ -324,9 +324,7 @@ void Func_020004d0(s32 a0, s32 a1) {
 
 static inline void CopyCells(s32 srcX, s32 srcY, s32 width, s32 height,
                              s32 destX, s32 destY) {
-  /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
-   * scene layer, so each stack argument keeps its own register; as a direct
-   * call, 10 of 157 instructions of Func_02000500 differ in tla-en. */
+  /* FAKEMATCH(wrapper): the call forwarded through this inline. */
   MapGrid_CopyCellPictureCellsRect(srcX, srcY, width, height, destX, destY);
 }
 

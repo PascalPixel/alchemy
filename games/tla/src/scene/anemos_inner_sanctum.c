@@ -1649,8 +1649,7 @@ L_0200a596:
   FIELD_AT(((s32)Actor_Get(11)), u8, 85) = 0;
   FIELD_AT(((s32)Actor_Get(11)), u8, 35) |= 128;
   Actor_SetAnimation(11, 2);
-  /* FAKEMATCH(dead): v_r6 set again to the address it already holds; without
-   * it, 4 of 913 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): v_r6 set again to the address it already holds. */
   v_r6 = (s32)&gMainRoutineWork;
   if ((Event_GetFlag(0x304)) != 0)
     goto L_0200a5fa;
@@ -1939,9 +1938,7 @@ loop:
     angle = i << 12;
     cosine = Trig_Cos(angle);
     /* FAKEMATCH(dead): spawn is always 1, a constant GCSE only folds after its
-     * partial redundancy pass, so that pass leaves the velocity array's
-     * address in the loop, built after the cosine call as the native has it;
-     * as the plain body, 4 of 169 instructions differ in tla-en. */
+     * partial redundancy pass. */
     if (spawn) {
       velocity[0] = cosine;
       velocity[1] = 0;

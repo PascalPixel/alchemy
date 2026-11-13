@@ -280,8 +280,7 @@ void MadraCatacombs_UnlockWithRuinKey(void) {
   for (i = 0; i < 120; i++) {
     left->x += -0x1999;
     /* FAKEMATCH(signature): read and written as long, another alias set than
-     * the left door's int store, so the load need not wait for that store; as
-     * int, 2 of 175 instructions differ in tla-en. */
+     * the left door's int store. */
     *(long *)&right->x += 0x1999;
     wait(1);
   }
@@ -432,10 +431,7 @@ void MadraCatacombs_FinishMovingClimbablePillar(void) {
 /// actors 20 to 29 each go to one of them.
 void MadraCatacombs_LightFlames(void) {
   u32 i;
-  /* FAKEMATCH(pin): the actor pinned to r6, so the counter takes r5 as the
-   * native has them (a do-while or a counter-derived actor measured 14 to
-   * 29); as a plain local the two swap, 14 of 89 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(pin): the actor pinned to r6. */
   register s32 actor __asm__("r6");
   s32 target;
 
@@ -604,9 +600,7 @@ void MadraCatacombs_SetUpVillage(void) {
   Rope_Initialize();
   b = 0x102;
   a = 1;
-  /* FAKEMATCH(barrier): a and b held at an empty asm, so the first argument is
-   * set before the second is finished; as no asm, 2 of 142 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(barrier): a and b held at an empty asm. */
   __asm__("" : "+r"(a), "+r"(b));
   Rope_Place(a, b + 255, 9, 10);
   Actor_DisableById(11);
@@ -618,8 +612,7 @@ void MadraCatacombs_SetUpVillage(void) {
     x <<= 18;
     y = 0;
     /* FAKEMATCH(barrier): x, y and z held at an empty asm, the second of the
-     * pair above, so y is cleared before z is shifted; as no asm, 2 of 142
-     * instructions differ in tla-en. */
+     * pair above. */
     __asm__("" : "+r"(x), "+r"(y), "+r"(z));
     Actor_SetPositionAndResetMotion(object, x, y, z << 16);
   }

@@ -300,9 +300,7 @@
         for (row = 0; row < height; row++) {                                   \
           position[0] = target->x + (data1[footprint][0] << 16);               \
           for (col = 0; col < width; col++) {                                  \
-            /* FAKEMATCH(wrapper): the call through Func_02002338_; as         \
-             * MapGrid_CheckCollision(object, position), 2 of 171 instructions \
-             * differ in tla-en. */                                            \
+            /* FAKEMATCH(wrapper): the call through Func_02002338_. */         \
             if (call2(object, position) == 2)                                  \
               goto blocked;                                                    \
             position[0] += 0x100000;                                           \
@@ -389,8 +387,7 @@
     Event_NoOp();                                                              \
     next->x.fixed = dst.x;                                                     \
     {                                                                          \
-      /* FAKEMATCH(temporary): z read ahead of velocityX's store; as dst.z at  \
-       * its store, 4 of 175 instructions differ in tla-en. */                 \
+      /* FAKEMATCH(temporary): z read ahead of velocityX's store. */           \
       s32 z = dst.z;                                                           \
                                                                                \
       next->velocityX = 0;                                                     \

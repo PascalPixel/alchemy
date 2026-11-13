@@ -109,9 +109,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 static __inline__ void Decode_(void *source, void *destination) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps the buffer address
-   * a constant of each call, as ☀️'s system call layer does; as a direct call
-   * the address is kept in r5; as Decompress_TaggedLz called directly, 21 of
-   * 103 instructions differ in tla-en (Func_0200005c). */
+   * a constant of each call. */
   Decompress_TaggedLz(source, destination);
 }
 
@@ -170,10 +168,7 @@ scroll_pair:
   ((struct ClearWork *)Ram_HeapSlots->mapWork)->mode = 0x1400;
   {
     struct Actor *leader;
-    /* FAKEMATCH(pin): the flag's zero pinned to r5 as a halfword, so that it
-     * loads from the pool after the call, as the native has; as a plain store
-     * it reuses the scroll loop's zero kept in r5; as leader->motionFlags = 0,
-     * 4 of 103 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the flag's zero pinned to r5 as a halfword. */
     register u16 zero asm("r5");
 
     leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -210,13 +205,11 @@ void Func_0200015c(void) {
 void Func_020001f4(void) {
   if (gData_020024f6 == 0) {
     /* FAKEMATCH(pin): the held keys pointer pinned to r4, with the key pinned
-     * to r3 below; as an unpinned local, 12 of 92 instructions differ in
-     * tla-en. */
+     * to r3 below. */
     register volatile u32 *held asm("r4") = &gInput.held;
 
     if (gData_020024fe != 0) {
-      /* FAKEMATCH(pin): the key pinned to r3, with the pointer above; as an
-       * unpinned local, 6 of 92 instructions differ in tla-en. */
+      /* FAKEMATCH(pin): the key pinned to r3, with the pointer above. */
       register u32 keys asm("r3") = *held;
 
       if (keys == 0)
@@ -235,13 +228,11 @@ void Func_020001f4(void) {
     }
   }
   if (gData_020024f8 == 0) {
-    /* FAKEMATCH(pin): the held keys pointer pinned to r4, as for the first
-     * code; as an unpinned local, 12 of 92 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the held keys pointer pinned to r4. */
     register volatile u32 *held asm("r4") = &gInput.held;
 
     if (gData_02002500 != 0) {
-      /* FAKEMATCH(pin): the key pinned to r3, as for the first code; as an
-       * unpinned local, 6 of 92 instructions differ in tla-en. */
+      /* FAKEMATCH(pin): the key pinned to r3. */
       register u32 keys asm("r3") = *held;
 
       if (keys == 0)
@@ -1311,14 +1302,11 @@ s32 Func_02000e44(void) {
       }
     }
     action = length;
-    /* FAKEMATCH(barrier): the count is not known to be the length, whose
-     * remainder the native reloads from the stack; as no asm, 2 of 1077
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): the count is not known to be the length. */
     asm volatile("" : "+r"(action));
     if (length > 49) {
       if (pages - 1 == page) {
-        /* FAKEMATCH(barrier): r2 no longer holds the length; as no asm, 2 of
-         * 1077 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): r2 no longer holds the length. */
         asm volatile("" : : : "r2");
         action = length % 50;
       } else
@@ -1356,8 +1344,7 @@ s32 Func_02000e44(void) {
 /// panel's stride plus the column. The loops are the listing's: no loop pass
 /// touches them, so the tile is rebuilt and the mask reloaded on every pass.
 void Func_02001804(struct Panel_02001804 *panel, const void *source) {
-  /* FAKEMATCH(pin): the shadow pointer in r5; as a plain local, 7 of 53
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the shadow pointer in r5. */
   register u16 *shadow asm("r5") = (u16 *)Ram_HeapSlots->windowTiles;
   void *work = Heap_AllocEwram(0x300);
   u16 *tiles;
@@ -1394,8 +1381,7 @@ next_column:
 }
 
 void Func_0200187c(struct Panel_02001804 *panel) {
-  /* FAKEMATCH(pin): the shadow pointer in r5; as a plain local, 23 of 43
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the shadow pointer in r5. */
   register u16 *shadow asm("r5") = (u16 *)Ram_HeapSlots->windowTiles;
   void *work = Heap_AllocEwram(0x300);
   u16 *tiles;
@@ -1717,9 +1703,7 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
       for (m = 0; m != 23; m++) {
         s32 count = 0;
         u16 quantity;
-        /* FAKEMATCH(dead): a halfword copy of the count nothing reads, which
-         * keeps the zero-extension hoisted above the sign test; without it, 139
-         * of 479 instructions differ in tla-en. */
+        /* FAKEMATCH(dead): a halfword copy of the count nothing reads. */
 
         for (n = 0; n != 15; n++) {
           if ((unit->inventory[n] & 0x1ff) == gData_0200271c[m])

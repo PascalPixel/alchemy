@@ -258,9 +258,7 @@ s32 Func_020002d8(struct Actor *object, struct Actor *target, s32 range,
 
     if (ahead == facing || right == facing || left == facing || force != 0) {
       /* FAKEMATCH(temporary): the count and movementState's address held in
-       * locals before the test; as blockedSteps read in the test and
-       * object->movementState at each store, 16 of 107 instructions differ in
-       * tla-en. */
+       * locals before the test. */
       s16 count = ((struct EventWork *)Ram_HeapSlots->eventWork)->blockedSteps;
       u8 *movementState = &object->movementState;
 
@@ -1194,8 +1192,7 @@ void Prox_GiveThanksForBeacon(void) {
   Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(184), PIXELS(484));
   /* FAKEMATCH(temporary): the three facings held in locals set before their
    * first placement, where as constants each placement rebuilds them and the
-   * later turns cannot share them; as the constants, 76 of 936 instructions
-   * differ in tla-en. */
+   * later turns cannot share them. */
   angleC000 = 0xc000;
   angleB000 = 0xb000;
   Actor_SetPositionAndFacing(0, PIXELS(168), PIXELS(484), angleC000);
@@ -1460,11 +1457,7 @@ s32 Scene_Initialize(void) {
   } else if (scene == (s32)&SceneId_Ov6a8Room6) {
     s32 *effect =
         &((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect;
-    /* FAKEMATCH(pin): the call's argument pinned to the r0 it is passed in, so
-     * it loads before the store as the native does; in the plain order the
-     * store comes first; as ...->screenEffect = 0x209 and
-     * FieldEffect_StartBlankOverlay(0), as the other rooms write it, 2 of 147
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the call's argument pinned to the r0 it is passed in. */
     register s32 skip __asm__("r0");
     s32 value = 0x209;
 

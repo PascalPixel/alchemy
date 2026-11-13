@@ -121,21 +121,15 @@ void VenusLighthouseEntrance_RunWithDustTrail(s32 actor) {
   object->priorityFlags = 0;
   {
     s32 a = actor;
-    /* FAKEMATCH(pin): the 96 pinned to r1; as
-     * Actor_WalkByAndWaitById(a, 96, dz), the pin below kept, 2 of 35
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the 96 pinned to r1. */
     register s32 dx asm("r1") = 96;
-    /* FAKEMATCH(pin): the -96 pinned to r2, the same call's second; as
-     * Actor_WalkByAndWaitById(actor, 96, -96) with neither pin nor the
-     * copy, 23 of 35 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the -96 pinned to r2, the same call's second. */
     register s32 dz asm("r2") = -96;
 
     Actor_WalkByAndWaitById(a, dx, dz);
   }
   {
-    /* FAKEMATCH(pin): the arguments pinned in order, so the -96 is negated
-     * after the actor is copied; as Actor_WalkByAndWaitById(
-     * actor, -96, 96), 2 of 35 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): the arguments pinned in order. */
     register s32 a asm("r0") = actor;
     s32 dx = -96;
 
@@ -803,8 +797,7 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   {
     s32 a0 = 5;
 
-    /* FAKEMATCH(dead): an empty once-only block before the angle's load; as the
-     * plain call, 2 of 2142 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block before the angle's load. */
     do {
     } while (0);
     Actor_FaceDirection(a0, 0x4000, 0);
@@ -838,9 +831,7 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   *(u8 *)(((u8 *)Actor_GetById(14)) + 90) &= 254;
   Actor_WalkToAndWait(14, 0x1c8, 0x1a8);
   FieldEvent_Wait(1);
-  /* FAKEMATCH(dead): an empty once-only block ends CSE's block, so the 1 of
-   * these six sets stays one register; as no block, 80 of 2142 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(dead): an empty once-only block ends CSE's block. */
   do {
   } while (0);
   *(u8 *)(((u8 *)Actor_GetById(14)) + 90) |= 1;
@@ -1250,9 +1241,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
       scale = 0;
     effect->scaleX = scale;
     effect->scaleY = scale;
-    /* FAKEMATCH(dead): an empty once-only block after the scale's stores, which
-     * the timer's address follows; as no block, 2 of 449 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block after the scale's stores. */
     do {
     } while (0);
     timer = &work->timer;

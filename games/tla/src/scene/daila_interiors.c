@@ -61,9 +61,7 @@ static inline void Daila_Jump(s32 actor, s32 height, s32 frames) {
   s32 a = actor;
 
   /* FAKEMATCH(barrier): an empty asm over the three copies finishes height and
-   * frames before the actor; as Actor_ShowEmoteById(actor, height, frames), the
-   * actor is copied two instructions early and, in
-   * DailaInteriors_PracticeShout, 2 of 62 instructions differ in tla-en. */
+   * frames before the actor. */
   __asm__("" : "+l"(h), "+l"(f), "+l"(a));
   Actor_ShowEmoteById(a, h, f);
 }

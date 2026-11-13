@@ -113,11 +113,7 @@ void Izumo_FinishMovingStone(void) {
   s32 x = actor->x >> 20;
   s32 z = actor->z >> 20;
 
-  /* FAKEMATCH(wrapper): the flag commands go through flag_call.h's inlines,
-   * which build each flag id again, and the block copies through call.h's
-   * Call6; as direct calls to GameFlag_Get, GameFlag_Set,
-   * GameFlag_Clear and Map_CopyCellAttributeRect, 27 of 135 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(wrapper): the flag commands go through flag_call.h's inlines. */
   Actor_PlaceMovedBlock();
   Sound_Play(SE_WATER);
   if (x == 20 && z == 9) {
@@ -272,11 +268,7 @@ const struct Trigger *Scene_GetEvents(void) {
 }
 
 static inline s32 GameFlag_Test_(s32 flag) {
-  /* FAKEMATCH(wrapper): the flag test forwarded through the inline, as overlay
-   * 679's GameFlag_Test_ does, keeps the actor in r5 and the message in r6; as
-   * a direct call to GameFlag_Get the two swap; as that direct call, 16 of 42
-   * instructions of Izumo_TalkToStoneCircleGuard differ in tla-en, as do 16 of
-   * 42 of Izumo_TalkToFestivalStoneCircleGuard. */
+  /* FAKEMATCH(wrapper): the flag test forwarded through the inline. */
   return GameFlag_Get(flag);
 }
 
@@ -391,10 +383,7 @@ void Izumo_RotateWaterColors(void) {
 
 void Izumo_StopThePartyToThankThem(void) {
   /* FAKEMATCH(signature): six routines called through call.h's Call3 and Value
-   * with function types they do not have (Value3 calls the void
-   * Actor_ShowEmoteById as returning a value), so each call's arguments are set
-   * up in the native's order; as all six direct calls, 12 of 140 instructions
-   * differ in tla-en. */
+   * with function types they do not have. */
   GameFlag_Set(FLAG_STOPPED_TO_THANK_THE_PARTY);
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -490,9 +479,7 @@ void Izumo_OfferATokenOfGratitude(void) {
     message = MsgWouldYouBe;
     Event_SetMessageId(message);
     /* FAKEMATCH(signature): FieldMessage_ShowAtActor called as returning a
-     * value, so the flags load before the actor as the native schedules it;
-     * as FieldMessage_ShowAtActor(32, 0) through the header's void prototype,
-     * 2 of 43 instructions differ in tla-en. */
+     * value. */
     ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(32, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {

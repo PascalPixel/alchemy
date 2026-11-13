@@ -226,9 +226,7 @@ DEFINE_TILE_SPRITE_RESET(TileSprite_Reset)
 
 static __inline__ s32 MulQ16(s32 a, s32 b) {
   /* FAKEMATCH(wrapper): through the inline the multiply's address loads between
-   * the halves of 0x40000, as in the native, where called directly both halves
-   * come first; as Iwram_MulQ16 called directly, 2 of 56 instructions of
-   * WorldMap_UpdateBobbingMarker differ in tla-en. */
+   * the halves of 0x40000. */
   return Iwram_MulQ16(a, b);
 }
 
@@ -351,9 +349,7 @@ void WorldMap_SetUpFlyingShip(void) {
     s32 zero;
 
     /* FAKEMATCH(temporary): the halfword counters take an s32 zero assigned
-     * inside the first store; as a halfword constant it loads from the pool,
-     * and as a zero set first 346 is kept out of r3; as 0 stored in each, 13
-     * of 73 instructions differ in tla-en. */
+     * inside the first store. */
     *(u16 *)(work + 346) = zero = 0;
     *(u16 *)(work + 350) = zero;
     *(u16 *)(work + 348) = zero;
@@ -649,8 +645,7 @@ void WorldMap_GazeIntoPond(void) {
     s32 amount = (((unit[15] * Random16()) << 1) >> 16) + 0x8001;
     s32 position[3];
     s32 x;
-    /* FAKEMATCH(pin): object in r6, which leaves r7 to the amount; as a plain
-     * local, 24 of 129 instructions differ in tla-en. */
+    /* FAKEMATCH(pin): object in r6, which leaves r7 to the amount. */
     register struct Actor *object asm("r6");
 
     Message_ShowCentered((s32)MsgThereAreSome, 1);
@@ -671,8 +666,7 @@ void WorldMap_GazeIntoPond(void) {
       object->z = position[2];
     }
     FieldActor_ShowItemIconById(79, amount);
-    /* FAKEMATCH(dead): the store and the call in a once-only block; as plain
-     * statements, 6 of 129 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): the store and the call in a once-only block. */
     do {
       *(u16 *)((u8 *)work + 0xd34) = amount;
       Scene_TalkToActor(0x1000 | slot);
@@ -872,8 +866,7 @@ void WorldMap_ExplainGivingDjinn(void) {
 #define ARM_WEST(id)                                                           \
   do {                                                                         \
     /* FAKEMATCH(barrier): the native copies the angle before it loads the     \
-     * actor id; as the plain Call3, 10 of 946 instructions differ in tla-en.  \
-     */                                                                        \
+     * actor id. */                                                            \
     s32 a1 = west;                                                             \
                                                                                \
     asm volatile("" : "+l"(a1));                                               \
@@ -904,8 +897,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     WorldMap_Freeze();
     {
       /* FAKEMATCH(barrier): the native copies the angle before the other
-       * arguments; as the plain call, 2 of 946 instructions differ in tla-en.
-       */
+       * arguments. */
       s32 a3 = west;
 
       asm volatile("" : "+l"(a3));
@@ -940,8 +932,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     ARM_WEST(4);
     {
       /* FAKEMATCH(barrier): the native copies the angle, loads the 0 and then
-       * the actor; as the plain Call3, 2 of 946 instructions differ in tla-en.
-       */
+       * the actor. */
       s32 a1 = west, a2;
 
       asm volatile("" : "+l"(a1));
@@ -976,15 +967,12 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     ARM_WEST(23);
     {
       /* FAKEMATCH(barrier): the native starts 0x102, loads the 30, shifts, and
-       * loads the actor last; as the plain Value3, 2 of 946 instructions differ
-       * in tla-en. */
+       * loads the actor last. */
       s32 a1 = 129, a2;
 
       asm volatile("" : "+l"(a1));
       a2 = 30;
-      /* FAKEMATCH(barrier): the asm on the 30, the same call's second; as the
-       * plain Value3, with the other two, 2 of 946 instructions differ in
-       * tla-en. */
+      /* FAKEMATCH(barrier): the asm on the 30, the same call's second. */
       asm volatile("" : "+l"(a2));
       a1 <<= 1;
       Actor_ShowEmote(4, a1, a2);
@@ -993,8 +981,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Event_Wait(10);
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     gMainRoutineWork.battleRule24b = 2;
-    /* FAKEMATCH(dead): the native loads the scene's id after this store; as
-     * no block, 2 of 946 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): the native loads the scene's id after this store. */
     do {
     } while (0);
     {
@@ -1213,9 +1200,7 @@ void WorldMap_DeliverLohoCannon(void) {
   Actor_Get(17)->motionFlags = 2;
   Actor_Get(18)->motionFlags = 2;
   /* FAKEMATCH(temporary): the facing angle held in a local is built once and
-   * shared by the three placements, as in the native; as a literal, each
-   * forwarded call builds it again; as 0xe000 in each call, 25 of 168
-   * instructions differ in tla-en. */
+   * shared by the three placements. */
   angle = 0xe000;
   Actor_SetPositionAndFacing(16, PIXELS(8913), PIXELS(5853), angle);
   Actor_SetPositionAndFacing(17, PIXELS(8929), PIXELS(5869), angle);
@@ -1287,11 +1272,8 @@ void WorldMap_MeetEcho(void) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   x = (leader->x - 0x27880000) / 2 + 0x27880000;
   z = (leader->z - 0x20a40000) / 2 + 0x20a40000;
-  /* FAKEMATCH(temporary): flag holds the id 0x16e, then the test's result,
-   * then flag 0x175's result for MsgHey2, so the test's known zero dies before
-   * the stores of 0 to velocityY and terrainHeight; as
-   * `if (Event_GetFlag(0x16e) == 0)` with TUTORIAL_MESSAGE(MsgHey2), 53 of 714
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): flag holds the id 0x16e, then the test's result, then
+   * flag 0x175's result for MsgHey2. */
   flag = 0x16e;
   flag = GameFlag_Get(flag);
   if (flag == 0) {
@@ -1343,9 +1325,7 @@ void WorldMap_MeetEcho(void) {
     djinni->acceleration = 0x10000;
     djinni->velocityY = 0;
     djinni->terrainHeight = 0;
-    /* FAKEMATCH(barrier): an empty asm that reads and writes all of djinni,
-     * so sched2 takes the two stores of 0 before the copy of the motionFlags
-     * address into sl; as no asm, 2 of 714 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm that reads and writes all of djinni. */
     asm("" : "+m"(*djinni));
     FieldActor_SetMoveTarget(djinni, 0x27880000, 0, 0x20a40000);
     while (i >= 0) {
@@ -1560,10 +1540,7 @@ void Func_02002594(void) {
 
 static __inline__ void PosSet(s32 id, s32 x, s32 z) {
   /* FAKEMATCH(wrapper): as in the scene layer of The Broken Seal, the command
-   * takes pixels and shifts them into fixed point inside an inline; as a direct
-   * call or a forwarding inline, id and dz take each other's register; as
-   * Actor_SetHorizontalPositionWithTerrain called directly, 8 of 18
-   * instructions differ in tla-en. */
+   * takes pixels and shifts them into fixed point inside an inline. */
   Actor_SetPosition(id, x << 16, z << 16);
 }
 
@@ -1825,8 +1802,7 @@ void Func_02002e00(void) {
   FieldCamera_SetSpeed(0x40000, 0x8000);
   {
     /* FAKEMATCH(pin): the mode pinned to r3 starts right after the 1 negated
-     * for y, before x loads; as a plain constant, 2 of 39 instructions differ
-     * in tla-en. */
+     * for y, before x loads. */
     register s32 mode asm("r3") = 1;
 
     FieldCamera_MoveTo(11890 << 16, -1, 10090 << 16, mode);
@@ -2116,8 +2092,7 @@ void Func_02003c3c(void) {
 static inline void QueueBlend(u32 address, u32 value) {
   /* FAKEMATCH(wrapper): forwarding through the inline sets the arguments up in
    * their own order: the native finishes the value's orr before the register
-   * address's add; as direct calls, 4 of 31 instructions of Func_02003c50
-   * differ in tla-en. */
+   * address's add. */
   IoWriteQueue_Store16(address, value);
 }
 
@@ -2137,8 +2112,7 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH(wrapper): as in the scene layer of The Broken Seal, forwarding
    * through the inline sets the arguments up in their own order: the native
    * shifts z before it starts the -1, where called directly the -1 starts
-   * first; as direct calls, 6 of 66 instructions of
-   * WorldMap_JitterTransitionCamera differ in tla-en. */
+   * first. */
   FieldCamera_MoveTo(x, y, z, mode);
 }
 
@@ -2226,8 +2200,7 @@ void Func_02003d44(s32 mode) {
     FieldTask_Remove(Func_02003c50);
     DebugText_Clear();
     /* FAKEMATCH(temporary): the blend read into blend before each of the two
-     * IoWriteQueue_Store16 calls; as IoWriteQueue_Store16((u32)&REG_BLDALPHA,
-     * gData_02006e08) at both, 2 of 593 instructions differ in tla-en. */
+     * IoWriteQueue_Store16 calls. */
     blend = gData_02006e08;
     IoWriteQueue_Store16((u32)&REG_BLDALPHA, blend);
     IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
@@ -2271,8 +2244,7 @@ void Func_020042e0(void) {
   y = 0x2d60;
   x = 561;
   for (i = 95; i >= 0; i--) {
-    /* FAKEMATCH(temporary): x * 16 held in t before the divide; as scrollX =
-     * x * 16 / 128, 22 of 227 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): x * 16 held in t before the divide. */
     t = x * 16;
     scrollX = t / 128;
     scrollY = -y / 128 + 352;

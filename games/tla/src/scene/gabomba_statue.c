@@ -157,9 +157,7 @@ s32 Func_0200028c(struct Wanderer *actor) {
     turned = &actor->turned;
     if (*turned != 0) {
       *turned = 0;
-      /* FAKEMATCH(dead): an empty once-only block, so the flag is cleared
-       * before the facing is addressed; without it, 2 of 35 instructions differ
-       * in tla-en. */
+      /* FAKEMATCH(dead): an empty once-only block. */
       do {
       } while (0);
       facing = &actor->facingA;
@@ -376,9 +374,7 @@ void GabombaStatue_LashRope(void) {
     direction = gData_02005af0;
     Func_020020f0(0);
     Event_SetFlag(515);
-    /* FAKEMATCH(temporary): the 0 stored from a u16 local holding it, so it is
-     * built in a register (movs, strh); as the constant 0 stored directly, 11
-     * of 40 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the 0 stored from a u16 local holding it. */
     *(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x166) = zero;
     i = 0;
   loop:
@@ -417,8 +413,7 @@ struct Orbiter__find_near *Func_02000624(struct Orbiter__find_near *origin,
 
   position[0] = origin->x;
   position[2] = origin->z;
-  /* FAKEMATCH(temporary): the facing read into a local before the call; as
-   * origin->facing in the call, 9 of 63 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the facing read into a local before the call. */
   facing = origin->facing;
   FieldVector_AddPolarOffset(0x100000, facing, position);
   for (i = 8; i < 64; i++) {
@@ -1090,9 +1085,7 @@ void Func_0200176c(void) {
   Event_PlaySound(SE_581);
   actor->motionFlags = 0;
   speed = 0x19999;
-  /* FAKEMATCH(barrier): an empty asm on speed, so the speed is loaded before
-   * the owner, whose base is already in a register; as the plain call, 4 of 40
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm on speed. */
   asm volatile("" : "+l"(speed));
   Actor_SetSpeed(gMainRoutineWork.currentOwner, speed, 0x19999);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 152, 488);
@@ -2282,8 +2275,7 @@ s32 Func_02003a64(s32 value) {
   struct PuzzleCell *cell;
 
   state->count = value - 1;
-  /* FAKEMATCH(dead): the form kept; as no such test, 580 of 629 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(dead): the form kept. */
   {
     s32 mark = state->cells[0].occupied;
     if (mark & 0x100) {
@@ -2318,8 +2310,7 @@ retry:
 draw_row:
   col = 0;
 draw_col:
-  /* FAKEMATCH(temporary): the form kept; as plain arguments, 231 of 629
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the form kept. */
   {
     s32 drawn = state->cells[row * 11 + col].kind;
     s32 drawZ, drawX = state->originX;
@@ -2495,8 +2486,7 @@ turn_col:
       break;
     }
   }
-  /* FAKEMATCH(temporary): the form kept; as plain arguments, 12 of 629
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the form kept. */
   {
     s32 drawZ, drawX = state->originX;
     drawZ = state->originZ + row;
@@ -2664,9 +2654,7 @@ void Func_02004270(s32 x, s32 z, s32 kind, s32 state) {
   {
     s32 column = x;
 
-    /* FAKEMATCH(barrier): an empty asm on column that names the cell table, so
-     * the table is loaded before x is added; without it, 9 of 10 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on column that names the cell table. */
     asm("" : "+l"(column) : "l"(gSceneState.cells));
     i = z * 11 + column;
   }
@@ -2705,8 +2693,7 @@ nextColumn:
           s32 z = state->originZ;
 
           /* FAKEMATCH(temporary): the origins read into x and z before the
-           * column and row are added; as plain arguments, 12 of 119
-           * instructions differ in tla-en. */
+           * column and row are added. */
           x += column;
           z += row;
           MapGrid_CopyCells(0, 11, 1, 1, x, z);
@@ -2719,8 +2706,7 @@ nextColumn:
         // next load's constant only as a char access.
         ((u8 *)cell)[3] = 1;
         /* FAKEMATCH(temporary): kind and the origins read before the column and
-         * row are added; as plain arguments, 37 of 119 instructions differ in
-         * tla-en. */
+         * row are added. */
         kind = cell->kind;
         mapX = state->originX;
         mapZ = state->originZ;
@@ -2747,9 +2733,7 @@ u8 Func_02004380(s32 x, s32 z, s32 direction) {
   {
     s32 column = x;
 
-    /* FAKEMATCH(barrier): an empty asm on column that names the cell table, so
-     * the table is loaded before x is added; without it, 12 of 13 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm on column that names the cell table. */
     asm("" : "+l"(column) : "l"(gSceneState.cells));
     i = z * 11 + column;
   }
@@ -3172,9 +3156,8 @@ s32 Func_02004d48(s32 first, s32 check) {
   actor->unk62 = 2;
   actor->unk63 = 1;
   actor->unk4c = 0;
-  /* FAKEMATCH(signature): Actor_StartIdle, Actor_StartIdleFar's veneer,
-   * called without the actor it reads from r0; as
-   * Actor_StartIdle(actor), 73 of 230 instructions differ in tla-en. */
+  /* FAKEMATCH(signature): Actor_StartIdle, Actor_StartIdleFar's veneer, called
+   * without the actor it reads from r0. */
   Actor_StartIdle();
   Actor_SelectAnimation(actor, 2);
   id = second;
@@ -3495,8 +3478,7 @@ void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer) {
   cell += Actor_GetCellIndex(object);
   if (Event_GetFlag(flag)) {
     /* FAKEMATCH(temporary): the flags read into a local before the cell store
-     * and a local holding 2, so the flags are ORed into the register that holds
-     * 2; as one priorityFlags |= 2, 8 of 75 instructions differ in tla-en. */
+     * and a local holding 2. */
     u8 flags = object->priorityFlags;
     s32 bits;
 

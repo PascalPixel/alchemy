@@ -403,9 +403,7 @@ void PaletteCycle_Step(void) {
 next:
   p = colors;
   {
-    /* FAKEMATCH(temporary): the slot and the table's address held in
-     * locals; as colors[(phase + i) % 5] = *(u16 *)((u8 *)gPaletteCycleColors +
-     * offset), 2 of 83 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the slot and the table's address held in locals. */
     s32 slot = (phase + i) % 5;
     u8 *table = (u8 *)gPaletteCycleColors;
 
@@ -556,9 +554,8 @@ void Whirlwind_Update(struct Actor *self) {
         s32 (*multiply)(s32, s32);
         s32 cosine = Trig_Cos(self->facing);
         s32 speed = self->speedLimit;
-        /* FAKEMATCH(dead): the routine address taken inside a once-only
-         * block, so the speed loads first; as a plain call, 2 of 197
-         * instructions differ in tla-en. */
+        /* FAKEMATCH(dead): the routine address taken inside a once-only block.
+         */
         do {
           multiply = Iwram_MulQ16;
         } while (0);
@@ -854,8 +851,7 @@ void Actor_StartIdle(struct Actor *object);
 
 static __inline__ void SetUp(struct EffectSprite *sprite, s32 pivotX,
                              s32 pivotY, u32 attributes, s32 tile) {
-  /* FAKEMATCH(wrapper): the setup forwarded inline; as a direct call, 2 of 316
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): the setup forwarded inline. */
   EffectSprite_Init(sprite, pivotX, pivotY, attributes, tile);
 }
 
@@ -897,8 +893,7 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
                       work);
   largeEntry = VramCache_FindFreeEntry();
   {
-    /* FAKEMATCH(temporary): sprite also holds the size; as a plain argument, 7
-     * of 316 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): sprite also holds the size. */
     sprite = (struct EffectSprite *)512;
     largeTile = Vram_Load(largeEntry, (s32)sprite, work);
   }

@@ -356,9 +356,7 @@ void Champa_FeizhiArrives(void) {
       FieldActor_WaitForMoveById(30);
       FieldEvent_Wait(20);
       {
-        /* FAKEMATCH(pin): the emote pinned to r1, so that it loads before the
-         * actor as the native has; as the plain argument 0x101 through the
-         * inline, 2 of 414 instructions differ in tla-en. */
+        /* FAKEMATCH(pin): the emote pinned to r1. */
         register s32 emote asm("r1") = 0x101;
 
         Actor_ShowEmote(0x1e, emote, 0x1e);
@@ -395,9 +393,7 @@ void Champa_FeizhiArrives(void) {
       FieldEvent_ShowMessageThenWait(0x1d, 0, 5);
       {
         s32 b = 0x108, c = 0x1e;
-        /* FAKEMATCH(barrier): the emote and the frames held at an empty asm, so
-         * the first argument is set last, as the native schedule has it; as no
-         * asm, 18 of 414 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): the emote and the frames held at an empty asm. */
         __asm__ volatile("" : "+l"(b), "+l"(c));
         Actor_ShowEmote(0x1e, b, c);
       }
@@ -412,9 +408,7 @@ void Champa_FeizhiArrives(void) {
       FieldEvent_Wait(10);
       {
         s32 b = 0x108, c = 0x1e;
-        /* FAKEMATCH(barrier): the emote and the frames held at an empty asm, so
-         * the first argument is set last, as the native schedule has it; as no
-         * asm, 12 of 414 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): the emote and the frames held at an empty asm. */
         __asm__ volatile("" : "+l"(b), "+l"(c));
         Actor_ShowEmote(0x1e, b, c);
       }
@@ -607,7 +601,7 @@ void Champa_ShowTwoMessages(s32 firstId, s32 firstX, s32 firstY, s32 firstA,
                             s32 secondY, s32 secondA, s32 secondB,
                             volatile s32 frames) {
   /* FAKEMATCH(volatile): the frames volatile, read from their stack slot at
-   * each use; as s32 frames, 44 of 79 instructions differ in tla-en. */
+   * each use. */
   struct ChampaEventWork *work = Ram_HeapSlots->eventWork;
   s32 first = Actor_GetSpriteById(firstId);
   s32 second = Actor_GetSpriteById(secondId);
@@ -620,8 +614,7 @@ void Champa_ShowTwoMessages(s32 firstId, s32 firstX, s32 firstY, s32 firstA,
       System_Wait(frames);
   }
   /* FAKEMATCH(volatile): the counter's second store and the second x both
-   * volatile, so x is loaded after the store; as work->message++ and s32
-   * secondX, 4 of 79 instructions differ in tla-en. */
+   * volatile. */
   Message_OpenWindow((*(volatile s16 *)&work->message)++, secondX, secondY,
                      Speaker_GetVoice(second) << 16);
   Portrait_OpenWindow(second, 0, secondA, secondB);

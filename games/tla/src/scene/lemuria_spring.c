@@ -231,9 +231,7 @@ s32 LemuriaSpring_RunSpringGame(void) {
 #endif
   s32 total;
   s32 prize;
-  /* FAKEMATCH(temporary): minusOne, a 64-bit -1 for these calls, so CSE does
-   * not share a compare's -1 with them; as -1, 57 of 286 instructions differ in
-   * tla-en and 68 of 300 in tla-ja. */
+  /* FAKEMATCH(temporary): minusOne, a 64-bit -1 for these calls. */
   s64 minusOne = -1;
 
 #if TLA_PATCH_1
@@ -837,8 +835,7 @@ void LemuriaSpring_UpdateTossSimulation(void) {
         obstacle->position.x = Trig_Sin(obstacle->heading) * 48 + 0x700000;
         obstacle->position.z = Trig_Cos(obstacle->heading) * 40 + 0x480000;
         /* FAKEMATCH(temporary): the new heading held in cycleFrame, the local
-         * the last obstacle keeps its phase in; as obstacle->heading +=
-         * motionStep, 15 of 918 instructions differ in tla-en. */
+         * the last obstacle keeps its phase in. */
         cycleFrame = (u16)obstacle->heading + motionStep;
         obstacle->heading = cycleFrame;
         obstacle->pauseOrPhase = obstacle->pauseOrPhase + 1;
@@ -993,9 +990,7 @@ void LemuriaSpring_InitializeTossSimulation(void) {
   do {
     zero = 0;
     rec->position.x = *xtbl << 16;
-    /* FAKEMATCH(barrier): the x store ends the first group, so the z table's
-     * read follows it at once; as plain stores of 0 with no barrier, 2 of 52
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): the x store ends the first group. */
     __asm__("");
     rec->position.z = *ztbl << 16;
     rec->position.y = zero;

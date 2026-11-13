@@ -101,18 +101,14 @@ void Func_0200142c(struct ShrineOfTheSeaGodObject *object);
 static inline void ShrineOfTheSeaGod_CopyRect(s32 sx, s32 sy, s32 w, s32 h,
                                               s32 dx, s32 dy) {
   /* FAKEMATCH(wrapper): the rectangle copy reaches the main image through one
-   * inline layer; as direct MapGrid_CopyCellPictureIndicesRect calls, 19 of 360
-   * instructions differ in tla-en (Func_02000994), and 55 in all over the
-   * seven callers that change. */
+   * inline layer. */
   MapGrid_CopyCellPictureIndicesRect(sx, sy, w, h, dx, dy);
 }
 
 static inline void ShrineOfTheSeaGod_BlendStart(s32 a, s32 b, s32 c, s32 d,
                                                 s32 e, s32 f) {
   /* FAKEMATCH(wrapper): the blend start reaches the main image through one
-   * inline layer; as direct Map_CopyCellAttributeRect calls, 12 of 153
-   * instructions differ in tla-en (ShrineOfTheSeaGod_InitializeRoom5), and 48
-   * in all over the ten callers that change. */
+   * inline layer. */
   Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
@@ -140,14 +136,9 @@ void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
 void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 
 static inline void ShrineOfTheSeaGod_Jump(s32 actor, s32 height, s32 frames) {
-  /* FAKEMATCH(pin): the height pinned to r1, so the actor loads after the
-   * height and frames; as a plain local, 18 of 656 instructions differ in
-   * tla-en (ShrineOfTheSeaGod_LashRope), and 24 in all over its four callers.
-   */
+  /* FAKEMATCH(pin): the height pinned to r1. */
   register s32 h __asm__("r1") = height;
-  /* FAKEMATCH(pin): the frames pinned to r2 with the height above; as a plain
-   * local, 8 of 656 instructions differ in tla-en (ShrineOfTheSeaGod_LashRope),
-   * and 12 in all over three callers. */
+  /* FAKEMATCH(pin): the frames pinned to r2 with the height above. */
   register s32 f __asm__("r2") = frames;
 
   Actor_ShowEmoteById(actor, h, f);
@@ -710,12 +701,10 @@ loop:
   leader->y += 0x8000;
   frames = 2;
   leader->height += 0x8000;
-  /* FAKEMATCH(barrier): wait()'s argument is set before the count; as
-   * wait(2), 4 of 142 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): wait()'s argument is set before the count. */
   asm volatile("" : "+l"(frames));
   i++;
-  /* FAKEMATCH(barrier): the layer is read after the count; without it, 4 of
-   * 142 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the layer is read after the count. */
   asm("" : "+l"(layer) : "l"(i));
   layer->y += 0x8000;
   wait(frames);
@@ -1084,9 +1073,7 @@ void Func_02001474(void) {
   spin = 0x200;
   for (i = 0; i <= 7;) {
     sprite->rotation += spin;
-    /* FAKEMATCH(dead): an empty once-only block after the rotation's store,
-     * which the next load of the stone follows; as no block, 2 of 199
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(dead): an empty once-only block after the rotation's store. */
     do {
     } while (0);
     stone->z += 0x10000;
@@ -1308,8 +1295,7 @@ void ShrineOfTheSeaGod_LashRope(void) {
   wait(1);
   ShrineOfTheSeaGod_ObjWalk(14, 356, 196);
   /* FAKEMATCH(wrapper): Actor_FaceDirectionById called through the inline
-   * ShrineOfTheSeaGod_ObjAngle, here and below; as direct calls, 128 of 656
-   * instructions differ in tla-en. */
+   * ShrineOfTheSeaGod_ObjAngle, here and below. */
   ShrineOfTheSeaGod_ObjAngle(14, 0xb000);
   Event_SetMessageId((s32)MsgFieldPraiseRopeWork);
   ShrineOfTheSeaGod_MessagePut(14, 0);
@@ -1334,21 +1320,16 @@ void ShrineOfTheSeaGod_LashRope(void) {
   ShrineOfTheSeaGod_ObjCommit(13, 248, 168);
   Actor_SetModeById(13, 6);
   /* FAKEMATCH(temporary): the first motion flags store written through a byte
-   * pointer, so it may alias the rotation and stays after it; as
-   * object->motionFlags, which keeps the struct's alias set, 12 of 656
-   * instructions differ in tla-en. */
+   * pointer. */
   motionFlags = &object->motionFlags;
-  /* FAKEMATCH(signature): field18 written through a one-member union, so both
-   * its stores may alias the sprite's rotation and stay ahead of it; as
-   * object->field18, 4 of 656 instructions differ in tla-en. */
+  /* FAKEMATCH(signature): field18 written through a one-member union. */
   ((union ObjectWord *)&object->field18)->value = -0x10000;
   sprite->rotation = 0xd000;
   *motionFlags = 0;
   object->y += 0x60000;
   Actor_SetSpriteFlags(Actor_GetById(13), 0);
   ShrineOfTheSeaGod_ObjSpeed(13, 0x6666, 0x3333);
-  /* FAKEMATCH(wrapper): Actor_SetMoveTarget called through Call4; as a direct
-   * call, 2 of 656 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): Actor_SetMoveTarget called through Call4. */
   Call4((void (*)())Actor_SetMoveTarget, (s32)object, 164 << 17, 152 << 14,
         168 << 16);
   // A once-only block: its end holds the order around it (as the plain
@@ -1925,8 +1906,7 @@ void ShrineOfTheSeaGod_InitializeRoom2(void) {
     Actor_GetById(11)->collisionFlags = 1;
   }
   /* FAKEMATCH(temporary): SHRINE_OF_THE_SEA_GOD_TASK_ADD_LATE's local holding
-   * the priority builds it before the task function loads; as
-   * Task_Add(Func_020030fc, 0x480), 2 of 79 instructions differ in tla-en. */
+   * the priority builds it before the task function loads. */
   SHRINE_OF_THE_SEA_GOD_TASK_ADD_LATE(Func_020030fc, 0x480);
 }
 
@@ -1989,9 +1969,8 @@ void ShrineOfTheSeaGod_InitializeRoom5(void) {
 
   if ((u16)(gMainRoutineWork.entrance - 2) <= 1) {
     Actor_SetSpritePriority(13, 3);
-    /* FAKEMATCH(dead): the cancelling update ties the flag or to the
-     * constant's register; as *flags |= 2, 4 of 153 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(dead): the cancelling update ties the flag or to the constant's
+     * register. */
     *flags = *flags + 2 - (*flags & 2);
   } else {
     Actor_SetSpritePriority(13, 1);
@@ -2091,8 +2070,7 @@ void ShrineOfTheSeaGod_InitializeRoom7(void) {
   object->motionFlags = 0;
   Actor_DisableById(23);
   Actor_GetById(23)->motionFlags = 0;
-  /* FAKEMATCH(temporary): actor 24 fetched into its own variable; as
-   * object = Actor_GetById(24), 51 of 171 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): actor 24 fetched into its own variable. */
   lastObject = Actor_GetById(24);
   object = lastObject;
   Actor_DisableById(24);

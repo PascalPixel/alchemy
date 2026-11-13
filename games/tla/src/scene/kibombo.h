@@ -78,8 +78,7 @@ static inline void Kibombo_ObjTurn(s32 actor, s32 angle) {
 static inline void Kibombo_BlendStart(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
   /* FAKEMATCH(wrapper): the blend start reaches the main image through this
-   * inline; as a direct call to Map_CopyCellAttributeRect, 4 of 25
-   * instructions differ in tla-en (Kibombo_UncoverVent). */
+   * inline. */
   Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 

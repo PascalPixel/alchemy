@@ -266,7 +266,7 @@ void Func_02000580(s32 scale) {
     value = (color >> 10) & 31;
     value <<= 10;
     /* FAKEMATCH(dead): blue masked like the other two channels, clearing
-       nothing; as no mask on blue, 38 of 59 instructions differ in tla-en. */
+     * nothing. */
     value &= mask;
     if (value > 0x7c00)
       value = 0x7c00;
@@ -314,10 +314,8 @@ loop:
   index >>= 1;
   {
     s32 x = gData_020019ec[index].x;
-    /* FAKEMATCH(temporary): x read first and y read through a pointer
-     * to x from a separate byte offset; as
-     * gData_020019ec[index].y in the call, 4 of 63 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(temporary): x read first and y read through a pointer to x from
+     * a separate byte offset. */
     u32 offset = index * sizeof(struct MapGridCellAnimation) +
                  offsetof(struct MapGridCellAnimation, x);
     const u16 *position = (const u16 *)((const u8 *)gData_020019ec + offset);
@@ -693,8 +691,7 @@ void Func_020010ac(void) {
   gMainRoutineWork.battleRule24b = 2;
   cue = 0x67;
   /* FAKEMATCH(barrier): the asm on the first argument loads it before the
-   * second, as the native does; as Field_RequestBattleFromEncounterTable(0x67,
-   * 2), 2 of 64 instructions differ in tla-en. */
+   * second. */
   __asm__ volatile("" : "+r"(cue));
   Field_RequestBattleFromEncounterTable(cue, 2);
   Event_End();

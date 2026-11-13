@@ -1593,9 +1593,7 @@ void Func_02003184(void) {
   Kibombo_Spawn(x, 0x2e0000, 0x1b60000);
   Kibombo_Spawn(x, 0x340000, 0x1aa0000);
   Kibombo_Spawn(x, 0x3a0000, 0x19e0000);
-  /* FAKEMATCH(dead): an empty once-only block before the last spawn, which
-   * shifts x's shift after the second register store as the native has it;
-   * without it, 2 of 43 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): an empty once-only block before the last spawn. */
   do {
   } while (0);
   Func_02003104(x, 0x400000, 0x1920000);
@@ -2298,9 +2296,7 @@ void Kibombo_GabombaNotPleased(void) {
       object = *slot;
     test:
       y = object->y;
-      /* FAKEMATCH(barrier): an empty asm on the height, so the limit's first
-       * half is built before it loads; as object->y > 0x240000, 2 of 151
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm on the height. */
       __asm__("" : "+l"(y));
     } while (y > 0x240000);
   }
@@ -2802,8 +2798,8 @@ void Kibombo_InitializeRoom4(void) {
       unit = Unit_Get(7);
       *(u16 *)(unit + 0x38) = *(u16 *)(unit + 0x34);
       *(u16 *)(unit + 0x3a) = *(u16 *)(unit + 0x36);
-      /* FAKEMATCH(dead): both copies stored before the gauge's argument
-       * is extended; without it, 2 of 218 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): both copies stored before the gauge's argument is
+       * extended. */
       do {
       } while (0);
       *(u16 *)(unit + 0x14) =

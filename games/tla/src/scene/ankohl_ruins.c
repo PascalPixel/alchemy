@@ -395,24 +395,20 @@ void Func_02000a68(s32 unused, s32 objectId) {
 // them ten frames later; Func_02000100 of Gaia Rock is the same function.
 void Func_02000b30(s32 id, s32 cue) {
   struct Actor *object = Actor_Get(id);
-  /* FAKEMATCH(pin): the flags' address built in r2 with 85 in it first; as a
-   * plain pointer, 17 of 32 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the flags' address built in r2 with 85 in it first. */
   register u8 *flags asm("r2");
   u8 *held;
-  /* FAKEMATCH(pin): the counter in r6 and the object in r5; as a plain
-   * counter, 12 of 32 instructions differ in tla-en. */
+  /* FAKEMATCH(pin): the counter in r6 and the object in r5. */
   register s32 frames asm("r6");
 
   flags = (u8 *)85;
-  /* FAKEMATCH(barrier): keeps 85 in a register, so it is added to the object
-   * rather than the object copied and 85 added; without it, 4 of 32
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): keeps 85 in a register. */
   asm("" : "+r"(flags));
   flags += (s32)object;
   *flags = 3;
   frames = 60;
   /* FAKEMATCH(temporary): the address copied to r8 for the calls after the
-   * counter starts; as one variable, 9 of 32 instructions differ in tla-en. */
+   * counter starts. */
   held = flags;
   while (frames != 0) {
     System_Wait(1);
@@ -766,7 +762,7 @@ fill:
   work->unk08 = ((s32 *)layer->unk08)[0];
   work->unk0c = ((s32 *)layer->unk08)[1];
   /* FAKEMATCH(dead): the once-only block builds the value after the stores
-   * before it; as a plain store, 6 of 179 instructions differ in tla-en. */
+   * before it. */
   do {
     s32 winout = 0x1b1f;
 
@@ -1093,9 +1089,8 @@ void Func_02001f7c(void) {
   raft->z += 0xcccc;
   column = leader->x >> 20;
   if (gMainRoutineWork.renderMode != 5 && column > 12 && column <= 15) {
-    /* FAKEMATCH(temporary): a second pointer to the leader loads the raft's
-     * z before the leader's in the second test; as leader, 16 of 167
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): a second pointer to the leader loads the raft's z
+     * before the leader's in the second test. */
     struct Actor *player = leader;
 
     if (raft->z + 0x180000 >= player->z && player->z >= raft->z) {

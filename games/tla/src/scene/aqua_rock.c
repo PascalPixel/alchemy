@@ -283,8 +283,7 @@ found:
   coordinate = p->y;
   Actor_SetMoveTarget(object, p->x, coordinate, p->z);
 end:
-  /* FAKEMATCH(temporary): the form kept; as return 0, 22 of 107 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(temporary): the form kept. */
   x = 0;
   return x;
 }
@@ -467,9 +466,8 @@ void Func_02000844(void) {
     GameFlag_Set(0x201);
   else
     GameFlag_Clear(0x201);
-  /* FAKEMATCH(temporary): each copy's five varying arguments held in locals
-   * of their own scope; as direct calls with the arguments written in,
-   * 188 of 307 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): each copy's five varying arguments held in locals of
+   * their own scope. */
   if (GameFlag_Get(0x200)) {
     struct Unk02003450 *opened = &Data_02003450[0];
     {

@@ -113,10 +113,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 static inline void SetCollisionCode(s32 x, s32 z, s32 layer, s32 value) {
-  /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
-   * scene layer, so each call keeps its own constants; as a direct call, 12
-   * of 47 instructions of JupiterLighthouse_RevealThePassage differ in tla-en.
-   */
+  /* FAKEMATCH(wrapper): the call forwarded through this inline. */
   ((u8)MapGrid_SetCellBehavior(x, z, layer, value));
 }
 

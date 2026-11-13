@@ -918,8 +918,7 @@ s32 Scene_Initialize(void) {
   s32 bits;
   s32 other;
 
-  /* FAKEMATCH(temporary): the first flag update through other; as *flags |=
-   * bits, 49 of 559 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the first flag update through other. */
 
   ((struct SceneWork *)heap->eventWork)->unk1ac = 516;
   value = 516;
@@ -1216,8 +1215,7 @@ DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
                         Position_FlatDistance, gData_02007044, Data_02007064)
 
 static __inline__ s32 MulQ16(s32 a, s32 b) {
-  /* FAKEMATCH(wrapper): MulQ16 forwarded inline; as direct calls to
-   * Iwram_MulQ16, 69 of 92 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): MulQ16 forwarded inline. */
   return Iwram_MulQ16(a, b);
 }
 
@@ -1672,18 +1670,14 @@ extern s32 MapGrid_CheckCollisionOfActor(struct Actor *actor) __asm__(
 void Func_0200297c(void) {
 #else
 s32 Func_0200297c(void) {
-  /* FAKEMATCH(signature): declared returning s32, though it returns nothing,
-   * so the return register's clobber and use rank the last store's address
-   * copy ahead of its zero; as void, 2 of 186 instructions differ in
-   * tla-ja. */
+  /* FAKEMATCH(signature): declared returning s32, though it returns nothing. */
 #endif
   struct MainRoutineWork *main = &gMainRoutineWork;
   struct Work020023c4 *work;
 #if TLA_PATCH_1
   struct Vector3 position;
 #else
-  /* FAKEMATCH(temporary): the position held in a union beside a halfword;
-   * as a plain struct Vector3, 16 of 186 instructions differ in tla-ja. */
+  /* FAKEMATCH(temporary): the position held in a union beside a halfword. */
   union {
     struct Vector3 v;
     s16 h;
@@ -1713,9 +1707,7 @@ s32 Func_0200297c(void) {
                                                   actor->z) == 7) {
         s32 i;
 
-        /* FAKEMATCH(temporary): velocityX stored through a union; as the plain
-         * store, 2 of 236 instructions differ in tla-en (2 of 186 in
-         * tla-ja). */
+        /* FAKEMATCH(temporary): velocityX stored through a union. */
         ((union {
            s32 value;
            u16 half;
@@ -1764,8 +1756,7 @@ s32 Func_0200297c(void) {
         flags = &other->collisionFlags;
         for (i = 0; i <= 63; i++, flags += 128, other++) {
           /* FAKEMATCH(wrapper): Import_FieldCheckSpheresOverlap forwarded
-           * through Value4; as a direct call, 110 of 236 instructions differ in
-           * tla-en. */
+           * through Value4. */
           if (other->script != 0 && (*flags & 1) && other != actor &&
               Value4((s32 (*)())Import_FieldCheckSpheresOverlap, (s32)&other->x,
                      radius, (s32)&position, other->radius - 2) >= 0) {
@@ -1830,8 +1821,7 @@ void ScreenTransition_Start(s32 mode, s32 frames);
 /// Stepping onto ice (cell behavior 90, as Imil's ice slide is in The Broken
 /// Seal): the leader slides until the ice stops.
 s32 MarsLighthouseRoomF_SlideOnIce(void) {
-  /* FAKEMATCH(signature): declared returning s32 with no return; as void, 2
-   * of 138 instructions differ in tla-en. */
+  /* FAKEMATCH(signature): declared returning s32 with no return. */
   struct EventWork *event = Ram_HeapSlots->eventWork;
   struct RideWork *ride;
   struct Actor *leader;
@@ -1855,9 +1845,8 @@ s32 MarsLighthouseRoomF_SlideOnIce(void) {
 #ifdef UBFIX
   Party_TakeFallDamage();
 #else
-  /* FAKEMATCH(wrapper): called through a cast to the int-returning
-   * two-argument type, which sets r1 before negating r0; as
-   * Party_TakeFallDamage(), 3 of 138 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): called through a cast to the int-returning two-argument
+   * type. */
   ((s32 (*)(s32, s32))Party_TakeFallDamage)(-10, 0);
 #endif
   FieldCamera_SetSpeed(0x70000, 0xe000);

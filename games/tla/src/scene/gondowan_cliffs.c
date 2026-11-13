@@ -611,9 +611,7 @@ void Geysers_Draw(void) {
     z = actor->z - scrollZ - lift;
     screenY = z - y;
     x = (x >> 16) - 8;
-    /* FAKEMATCH(wrapper): forwarded, so -0x20000 is built for the call and
-     * again for the sum; as a direct call, 276 of 252 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(wrapper): forwarded. */
     screenY =
         ((screenY +
           Value2((s32 (*)())Iwram_MulQ16, -0x20000, Trig_Sin(swing->phase)) +

@@ -376,8 +376,7 @@ void ShamanVillageCave_MeetColossoFans(void) {
   Actor_SetDestinationOffset(19, -16, 24);
   FieldActor_WaitForMoveById(19);
   /* FAKEMATCH(dead): the once-only block loads gMainRoutineWork before its
-   * offset is built; as the plain store, 4 of 408 instructions differ in
-   * tla-en. */
+   * offset is built. */
   do {
     gMainRoutineWork.battleRule24b = 2;
   } while (0);
@@ -395,8 +394,7 @@ void ShamanVillageCave_FightGladiators(void) {
 
     party->battleRule24b = 2;
     /* FAKEMATCH(dead): the empty once-only block's loop note ends the
-     * scheduling block after the store; without it, 4 of 22 instructions
-     * differ in tla-en (the scene id is loaded before the store). */
+     * scheduling block after the store. */
     do {
     } while (0);
   }

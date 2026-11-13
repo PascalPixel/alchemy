@@ -94,8 +94,7 @@ s32 Scene_Initialize(void) {
     u32 bit = 32;
 
     /* FAKEMATCH(barrier): the asm on the bit builds it in the register it ORs
-     * into, as the native does, where without it the OR goes into the loaded
-     * byte; as *flags |= 32, 4 of 55 instructions differ in tla-en. */
+     * into. */
     __asm__("" : "+l"(bit));
     *flags = bit | value;
   }
@@ -109,9 +108,7 @@ s32 Scene_Initialize(void) {
 
     a0 = 1;
     /* FAKEMATCH(barrier): the asm on the first argument keeps its load right
-     * after the first half of flag + 0xff, where without it it loads last; as
-     * Rope_Place(1, flag + 0xff, 13, 14), 2 of 55 instructions differ in
-     * tla-en. */
+     * after the first half of flag + 0xff, where without it it loads last. */
     asm volatile("" : "+l"(a0));
     Rope_Place(a0, flag + 0xff, 13, 14);
   }

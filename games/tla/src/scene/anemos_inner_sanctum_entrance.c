@@ -308,9 +308,7 @@ static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Get(flag); }
 
 static __inline__ void SetObjectValue(s32 id, s32 value) {
   /* FAKEMATCH(pin): the value pinned to r1, which the ROM loads before the id
-   * (movs r1; movs r0); as a direct call or a plain forwarding inline, the id
-   * comes first, 10 of 110 instructions of Scene_Initialize differ in tla-en.
-   */
+   * (movs r1. */
   register s32 v asm("r1") = value;
 
   Func_02000ba4(id, v);
@@ -326,9 +324,7 @@ s32 Scene_Initialize(void) {
            ->route;
   s32 value = 0x204;
 
-  /* FAKEMATCH(barrier): an empty asm after the address and the value, so
-   * gMainRoutineWork's address loads just before the store; as one assignment,
-   * 2 of 110 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm after the address and the value. */
   __asm__("");
   *route = value;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6b1Room1) {

@@ -434,7 +434,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
   }
   sparks = Heap_AllocEwram(0x600);
   /* FAKEMATCH(temporary): the size held in the local that then takes the
-   * buffer; as Heap_Alloc(0x1000), 19 of 323 instructions differ in tbs-en. */
+   * buffer. */
   sheet = (void *)0x1000;
   sheet = Heap_Alloc((s32)sheet);
   Decompress_TaggedLz(

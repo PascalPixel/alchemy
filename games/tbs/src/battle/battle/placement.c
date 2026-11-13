@@ -25,8 +25,8 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   u8 classId;
 
   // Positions are 16.16 fixed point; y is the battlefield's depth.
-  fixedX = x * 65536;
-  fixedZ = y * 65536;
+  fixedX = px(x);
+  fixedZ = px(y);
   // The id 0xf000 has no sprite kind of enum ActorCreateKind, so
   // FieldActor_Create makes no sprite; BattleObject_SpawnObjectsForList
   // attaches the battle sprites later.
@@ -272,16 +272,24 @@ void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y) {
 /// held for one: unit ids 254 and 255 in the list.
 #define IS_PLACEHOLDER_ID(id) ((u16)((id) - BATTLE_UNIT_REMOVED) <= 1)
 
-/// Lays out count enemies in a column 80 pixels left of the centre, spaced
-/// by their size: each takes 38 pixels of the line if large, 27 if small and
-/// 25 for an empty place, half before and half after it, none before the
-/// first. The column starts from an estimate of its length, 30 pixels an
-/// enemy (27 for more than four), so it sits only roughly centred. The
-/// Kraken and the Fusion Dragon would stand nearer, 50 pixels left, past the
-/// first place; each is fought alone (formations.c rows 213 and 347), so
-/// neither does. Called by BattleUnit_RefreshPlacement and
-/// BattlePlacement_RelayoutEnemies; writes only xPositions and zPositions, in
-/// pixels.
+/// The enemies' column, in pixels from the battlefield's centre, and the
+/// nearer place the Kraken and the Fusion Dragon would take.
+#define ENEMY_COLUMN_X (-80)
+#define ENEMY_COLUMN_NEAR_X (-50)
+/// Pixels of the column a large enemy, a small one and an empty place take.
+#define ENEMY_SPACING_LARGE 38
+#define ENEMY_SPACING_SMALL 27
+#define ENEMY_SPACING_EMPTY 25
+
+/// Lays out count enemies in a column left of the centre (ENEMY_COLUMN_X),
+/// spaced by their size: each takes its ENEMY_SPACING_ pixels of the line,
+/// half before and half after it, none before the first. The column starts from
+/// an estimate of its length, 30 pixels an enemy (27 for more than four), so it
+/// sits only roughly centred. The Kraken and the Fusion Dragon would stand
+/// nearer (ENEMY_COLUMN_NEAR_X), past the first place; each is fought alone
+/// (formations.c rows 213 and 347), so neither does. Called by
+/// BattleUnit_RefreshPlacement and BattlePlacement_RelayoutEnemies; writes only
+/// xPositions and zPositions, in pixels.
 void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
                                    s32 *zPositions) {
   s32 totalSpacing = count <= 4 ? 30 : 27;
@@ -293,27 +301,29 @@ void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
   for (index = 0; index != count; index++) {
     s32 spacing = 0;
 
-    xPositions[index] = -80;
+    xPositions[index] = ENEMY_COLUMN_X;
     if (index != 0) {
       struct Unit *actor;
 
-      spacing = 25;
+      spacing = ENEMY_SPACING_EMPTY;
       if (!IS_PLACEHOLDER_ID(actorIds[index])) {
         actor = Unit_GetFar(actorIds[index]);
-        spacing = BattleSprite_IsSmall(actor->id) ? 27 : 38;
-        // The first place keeps -80 whatever its class.
+        spacing = BattleSprite_IsSmall(actor->id) ? ENEMY_SPACING_SMALL
+                                                  : ENEMY_SPACING_LARGE;
+        // The first place keeps ENEMY_COLUMN_X whatever its class.
         if (actor->id == ENEMY_FUSION_DRAGON || actor->id == ENEMY_KRAKEN) {
-          xPositions[index] = -50;
+          xPositions[index] = ENEMY_COLUMN_NEAR_X;
         }
       }
     }
     z -= spacing / 2;
     zPositions[index] = z;
-    spacing = 25;
+    spacing = ENEMY_SPACING_EMPTY;
     if (!IS_PLACEHOLDER_ID(actorIds[index])) {
       struct Unit *actor = Unit_GetFar(actorIds[index]);
 
-      spacing = BattleSprite_IsSmall(actor->id) ? 27 : 38;
+      spacing = BattleSprite_IsSmall(actor->id) ? ENEMY_SPACING_SMALL
+                                                : ENEMY_SPACING_LARGE;
     }
     z -= spacing / 2;
   }
@@ -345,8 +355,8 @@ s32 BattlePlacement_RelayoutEnemies(void) {
 #endif
   struct BattleWork *battle = gBattleWork;
   u16 unitIds[UNIT_MAX];
-  s32 xPositions[6];
-  s32 zPositions[6];
+  s32 xPositions[ENEMY_BATTLE_SIZE];
+  s32 zPositions[ENEMY_BATTLE_SIZE];
   s32 enemyCount;
   s32 enemyIndex;
 
@@ -362,8 +372,8 @@ s32 BattlePlacement_RelayoutEnemies(void) {
     if (unitId != BATTLE_UNIT_REMOVED) {
       struct BattleObject *battleObject = BattleObject_Get(unitId);
 
-      battleObject->anchorX = xPositions[enemyIndex] * 65536;
-      battleObject->anchorZ = zPositions[enemyIndex] * 65536;
+      battleObject->anchorX = px(xPositions[enemyIndex]);
+      battleObject->anchorZ = px(zPositions[enemyIndex]);
     }
   }
 }
@@ -375,8 +385,8 @@ s32 BattlePlacement_RelayoutEnemies(void) {
 void BattleUnit_RefreshPlacement(void) {
   struct BattleWork *battle;
   u16 unitIds[UNIT_MAX];
-  s32 xPositions[6];
-  s32 zPositions[6];
+  s32 xPositions[ENEMY_BATTLE_SIZE];
+  s32 zPositions[ENEMY_BATTLE_SIZE];
   s32 count;
   s32 unitIndex;
   s32 partyPlace;
@@ -392,11 +402,11 @@ void BattleUnit_RefreshPlacement(void) {
   // placement[0..7] is each party unit id's place and placement[8..13] the
   // enemy places, numbered 8 to 13.
   placementValue = BATTLE_OBJECT_NONE;
-  for (unitIndex = 13; unitIndex >= 0; unitIndex--)
+  for (unitIndex = UNIT_MAX - 1; unitIndex >= 0; unitIndex--)
     battle->objectIndex[unitIndex] = placementValue;
-  placementCursor = &battle->objectIndex[13];
-  for (remainingPlaces = 5, placementValue = 13; remainingPlaces >= 0;
-       remainingPlaces--, placementValue--)
+  placementCursor = &battle->objectIndex[UNIT_MAX - 1];
+  for (remainingPlaces = ENEMY_BATTLE_SIZE - 1, placementValue = UNIT_MAX - 1;
+       remainingPlaces >= 0; remainingPlaces--, placementValue--)
     *placementCursor-- = placementValue;
 
   // The party, at its fixed spots in pixels: x 80, z 48, 16, -16 and -48
@@ -428,14 +438,14 @@ void BattleUnit_RefreshPlacement(void) {
 
 /// Returns 1 if the unit at place is in list. Called by
 /// BattleObject_SpawnObjectsForList to find the actors to release.
-/// @param list unit ids, ended by BATTLE_UNIT_LIST_END, 14 at most
+/// @param list unit ids, ended by BATTLE_UNIT_LIST_END, UNIT_MAX at most
 /// @param place 0 to 7 a party unit id, 8 to 13 the enemies
 s32 BattlePlacement_ContainsId(s16 *list, s32 place) {
   u32 listIndex;
 
   // An enemy's place to its unit id.
   if (place > ALLY_MAX)
-    place += FIRST_ENEMY_UNIT - 8;
+    place += FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
   listIndex = 0;
   do {
     u16 unitId = *list++;
@@ -444,6 +454,6 @@ s32 BattlePlacement_ContainsId(s16 *list, s32 place) {
       break;
     if (unitId == place)
       return 1;
-  } while (++listIndex < 14);
+  } while (++listIndex < UNIT_MAX);
   return 0;
 }

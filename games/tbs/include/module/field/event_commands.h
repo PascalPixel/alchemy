@@ -134,7 +134,7 @@ void Actor_UpdateBlink(struct Actor *actor);
 void Actor_SetSpriteColor(struct Actor *actor, s32 param);
 void Actor_WatchAndStartScript(u32 actorId, s32 targetId, const void *script);
 s32 Actor_StepAngle(struct Actor *actor);
-void Actor_ResetTargetAndSetMode1(u32 actorId);
+void Actor_ClearDestinationAndStand(u32 actorId);
 void Actor_FaceDirectionById(s32 actorId, s32 angle, s32 frames);
 void Actor_SetSpritePriority(s32 actorId, s32 priority);
 void Actor_CopyGraphics(u32 targetId, u32 sourceId);

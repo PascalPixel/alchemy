@@ -839,7 +839,7 @@ s32 Actor_StepAngle(struct Actor *actor) {
 /// Clears an actor's destination, puts it under script control and
 /// stands it still. Reached only through an unnamed veneer in the field
 /// sequence bank's far-call table; nothing in the game names it.
-void Actor_ResetTargetAndSetMode1(u32 actorId) {
+void Actor_ClearDestinationAndStand(u32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {

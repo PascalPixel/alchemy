@@ -35,9 +35,10 @@ struct FarCallTrigVeneer {
   s32 (*target)(s32 angle);
 };
 
-/// The System table's prefix through Trig_Cos, in its assembly order. This
-/// routine runs from a RAM copy and calls the target words, not the ROM stubs.
-struct FarCallRuntimeTrigView {
+/// The start of the System bank's far-call table, as far as Trig_Cos. This
+/// routine runs from a RAM copy, so it calls through the target words rather
+/// than the veneers.
+struct FarCallSystemTable {
   struct FarCallVeneer preceding[8];
   struct FarCallAtan2Veneer atan2;
   struct FarCallVeneer squareRoots[2];
@@ -48,11 +49,11 @@ struct FarCallRuntimeTrigView {
 STATIC_ASSERT(sizeof(struct FarCallVeneer) == 8);
 STATIC_ASSERT(sizeof(struct FarCallAtan2Veneer) == 8);
 STATIC_ASSERT(sizeof(struct FarCallTrigVeneer) == 8);
-STATIC_ASSERT(offsetof(struct FarCallRuntimeTrigView, atan2) == 64);
-STATIC_ASSERT(offsetof(struct FarCallRuntimeTrigView, sin) == 88);
-STATIC_ASSERT(offsetof(struct FarCallRuntimeTrigView, cos) == 96);
+STATIC_ASSERT(offsetof(struct FarCallSystemTable, atan2) == 64);
+STATIC_ASSERT(offsetof(struct FarCallSystemTable, sin) == 88);
+STATIC_ASSERT(offsetof(struct FarCallSystemTable, cos) == 96);
 
-extern const struct FarCallRuntimeTrigView FarCall_RuntimeTable;
+extern const struct FarCallSystemTable FarCall_RuntimeTable;
 
 /// One scanline of the world map's ground plane. WorldMap_BuildScanlineTable
 /// fills x (the line's width scale) and z (its depth); the rest caches the

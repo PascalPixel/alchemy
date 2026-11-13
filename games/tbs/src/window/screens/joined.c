@@ -144,8 +144,9 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   MessageArgument_Push(element * DJINN_PER_ELEMENT + djinn +
                            ABILITY_DJINNI_FIRST,
                        MESSAGE_ARGUMENT_ABILITY);
-  JOINED_QUEUE_TEXT(window, Message_DecodeMode1(element + MsgVenusDjinnJoined),
-                    36, 2, cleared);
+  JOINED_QUEUE_TEXT(
+      window, Message_DecodeAndClearArguments(element + MsgVenusDjinnJoined),
+      36, 2, cleared);
   Sound_PlayFar(MUS_JOINED);
   do {
     Oam_AddSpriteAtDepth(entry, 250);
@@ -198,7 +199,8 @@ void Party_ShowJoinedMessage(s32 member) {
     work->voiceSound = 0;
     work->voiceCountdown = 0;
     MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
-    JOINED_QUEUE_TEXT(window, Message_DecodeMode1(MsgJoinedParty), 36, 2, 0);
+    JOINED_QUEUE_TEXT(window, Message_DecodeAndClearArguments(MsgJoinedParty),
+                      36, 2, 0);
     Sound_PlayFar(MUS_JOINED);
     do {
       Oam_AddSpriteAtDepth(entry, 250);
@@ -266,8 +268,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     MessageArgument_Push(first, MESSAGE_ARGUMENT_ACTOR);
     MessageArgument_Push(second, MESSAGE_ARGUMENT_ACTOR);
 
-    JOINED_QUEUE_TEXT(window, Message_DecodeMode1(MsgPairJoinedParty), 68, 2,
-                      0);
+    JOINED_QUEUE_TEXT(
+        window, Message_DecodeAndClearArguments(MsgPairJoinedParty), 68, 2, 0);
 
     Sound_PlayFar(MUS_JOINED);
 

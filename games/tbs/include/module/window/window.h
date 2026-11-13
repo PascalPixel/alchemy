@@ -477,7 +477,7 @@ s32 Text_CheckPauseSkipped(struct Message *message);
 s32 Text_CheckTextDismissed(struct Message *message);
 void Message_CloseFinishedWindows(void);
 void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset);
-s32 Message_DecodeMode1(s32 message);
+s32 Message_DecodeAndClearArguments(s32 message);
 void Message_Find(struct MessageReader *reader, s32 message);
 s32 Text_DecodeSymbolInC(struct MessageReader *reader);
 void Portrait_ClearSlots(void);

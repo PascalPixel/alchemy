@@ -54,9 +54,9 @@ Resource_FindFreeEntry:
 	.thumb_func
 DebugText_Clear:
 	overlay_veneer DebugText_ClearFar
-	.global Func_020046ac
+	.global Import_OamAddSpriteAtDepth
 	.thumb_func
-Func_020046ac:
+Import_OamAddSpriteAtDepth:
 	overlay_veneer Oam_AddSpriteAtDepthFar
 	.global Window_LoadGraphics
 	.thumb_func

@@ -82,9 +82,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_02005a3c
+	.global Import_ActorDestroy
 	.thumb_func
-Func_02005a3c:
+Import_ActorDestroy:
 	overlay_veneer Actor_Destroy
 	.global Actor_SetPositionAndResetMotion
 	.thumb_func
@@ -322,9 +322,9 @@ Field_DispatchTypeHandler:
 	.thumb_func
 BattleEffect_LoadActionEffectResources:
 	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
-	.global Func_02005c1c
+	.global Import_BattleEffectSetupObjectPair
 	.thumb_func
-Func_02005c1c:
+Import_BattleEffectSetupObjectPair:
 	overlay_veneer BattleEffect_SetupObjectPairFar
 	.global BattleEffect_StopMainActor
 	.thumb_func

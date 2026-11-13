@@ -87,7 +87,7 @@ void Sound_Play(s32 cue);
 void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
 struct KibomboObject *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Func_02005a24(struct KibomboObject *object, s32 mode);
-void Func_02005a3c(struct KibomboObject *object);
+void Import_ActorDestroy(struct KibomboObject *object);
 void Actor_SetSingleChildFlags(struct KibomboObject *object,
                                         u32 value);
 void Animation_SetStateFlags(struct KibomboObject *object, s32 flags);
@@ -98,7 +98,7 @@ void Field_DispatchTypeHandler(s32 type);
 void Func_02005bb4(void);
 void Import_EventSetExitRequest(s32 countdown);
 void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
-s32 Func_02005c1c(s32 a, s32 b);
+s32 Import_BattleEffectSetupObjectPair(s32 a, s32 b);
 void BattleEffect_StopMainActor(void);
 void EventObject_Initialize(void);
 

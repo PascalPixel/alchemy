@@ -39,7 +39,7 @@ extern s16 gLightSpritesLarge;
 extern s16 gLightSpritePriority;
 
 s32 Func_02002b48(struct Actor *actor);
-void Func_020029c0(struct LightOam *oam, s32 depth);
+void Import_OamAddSpriteAtDepth(struct LightOam *oam, s32 depth);
 
 extern u32 gData_02003020[];
 extern u32 gData_0200305c[];

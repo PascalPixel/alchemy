@@ -75,7 +75,7 @@ void Func_02000190(s32 unused, s32 id) {
 extern const u8 gData_02001404[];
 
 void Actor_StartScript(struct Actor *object, const u8 *script);
-void Func_0200104c(struct Actor *object);
+void Import_ActorResetMotion(struct Actor *object);
 
 void Func_020001a0(s32 unused, s32 id) {
   struct Actor saved;
@@ -127,7 +127,7 @@ void Func_020001a0(s32 unused, s32 id) {
         FieldActor_SetMoveTarget(other, block->x, block->y, block->z);
         Actor_WaitForMove(other);
         Actor_StartScript(block, gData_02001404);
-        Func_0200104c(other);
+        Import_ActorResetMotion(other);
         other->x = 0;
         other->z = 0;
         Event_SetFlag(0x200);

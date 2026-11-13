@@ -26,9 +26,9 @@ Func_0200103c:
 	.thumb_func
 Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
-	.global Func_0200104c
+	.global Import_ActorResetMotion
 	.thumb_func
-Func_0200104c:
+Import_ActorResetMotion:
 	overlay_veneer Actor_ResetMotion
 	.global Actor_SetMoveTarget
 	.thumb_func

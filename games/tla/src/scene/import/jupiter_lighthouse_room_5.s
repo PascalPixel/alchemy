@@ -70,9 +70,9 @@ VramCache_Load:
 	.thumb_func
 Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
-	.global Func_020027d8
+	.global Import_OamAddSpriteAtDepth
 	.thumb_func
-Func_020027d8:
+Import_OamAddSpriteAtDepth:
 	overlay_veneer Oam_AddSpriteAtDepthFar
 	.global Resource_GetTableEntry
 	.thumb_func

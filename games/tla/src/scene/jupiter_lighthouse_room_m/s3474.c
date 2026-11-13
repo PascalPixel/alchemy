@@ -35,14 +35,14 @@ DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(JupiterLighthouse_PlaceRaisedActor
 
 extern s16 gLightSpritesLarge;
 
-void Func_020046ac(struct LightOam *oam, s32 depth);
+void Import_OamAddSpriteAtDepth(struct LightOam *oam, s32 depth);
 
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
 /// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
 /// 64 one when the big switch is set, at its animation picture and depth.
 DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, Data_02005ac4,
     gLightSpriteCount, gData_02005a84, gLightSpritesLarge, gLightSpritePriority,
-    Func_0200499c, Func_020046ac)
+    Func_0200499c, Import_OamAddSpriteAtDepth)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

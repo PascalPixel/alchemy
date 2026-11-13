@@ -78,9 +78,9 @@ Event_Wait:
 	.thumb_func
 Actor_GetById:
 	overlay_veneer Actor_GetByIdFar
-	.global Func_02000824
+	.global Import_EventSetDestination
 	.thumb_func
-Func_02000824:
+Import_EventSetDestination:
 	overlay_veneer Event_SetDestinationFar
 	.global BattleEffect_GetResourceId
 	.thumb_func

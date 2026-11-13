@@ -88,7 +88,7 @@ void Func_02003438(s32 id, s32 a);
 
 void Func_02000158(void);
 
-void Func_020032f8(struct Actor *object);
+void Import_ActorDestroy(struct Actor *object);
 
 extern char SceneId_Ov6B0Room5;
 

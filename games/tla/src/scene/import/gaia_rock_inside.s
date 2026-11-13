@@ -86,9 +86,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_02004dbc
+	.global Import_ActorDestroy
 	.thumb_func
-Func_02004dbc:
+Import_ActorDestroy:
 	overlay_veneer Actor_Destroy
 	.global Map_CenterOnFollowedPoint
 	.thumb_func

@@ -38,14 +38,14 @@ extern struct Actor *gData_0200242c[];
 /* VIEW(s0854): variable gData_0200252e as s16 gData_0200252e; module/scene/scene.h has u16 gData_0200252e; tried as the rest of the object declares it, LightSprites_Draw moves: 99 of 200 instructions, LightSprites_InitA moves: 0 of 36 instructions, LightSprites_InitB moves: 0 of 36 instructions, 1 more in tla-ja. */
 extern s16 gData_0200252e__s0854 __asm__("gData_0200252e");
 
-void Func_02001a84(struct LightOam *oam, s32 depth);
+void Import_OamAddSpriteAtDepth(struct LightOam *oam, s32 depth);
 
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
 /// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
 /// 64 one when the big switch is set, at its animation picture and depth.
 DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, Data_0200246c,
     gData_0200242a, gData_0200242c, gLightSpritesLarge, gData_0200252e__s0854,
-    Func_02001bd4, Func_02001a84)
+    Func_02001bd4, Import_OamAddSpriteAtDepth)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

@@ -76,7 +76,7 @@ struct IsletsMapWork {
   s32 value194;
 };
 
-void Func_02003dfc(struct Actor *object);
+void Import_ActorDestroy(struct Actor *object);
 void Func_02003fbc(void);
 void Func_02003fc4(void);
 void Func_02003f74(void);

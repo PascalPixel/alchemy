@@ -52,14 +52,14 @@ extern s16 gLightSpriteTile;
 extern struct Actor *gData_02002af4[];
 extern struct LightOam gData_02002b34[];
 
-void Func_02002130(struct LightOam *oam, s32 depth);
+void Import_OamAddSpriteAtDepth(struct LightOam *oam, s32 depth);
 
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
 /// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
 /// 64 one when the big switch is set, at its animation picture and depth.
 DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gData_02002b34,
     gLightSpriteCount, gData_02002af4, gLightSpritesLarge, gLightSpritePriority,
-    Func_020022b0, Func_02002130)
+    Func_020022b0, Import_OamAddSpriteAtDepth)
 
 
 // The scene's own event inlines: a habit of the whole game written once, as

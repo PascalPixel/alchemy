@@ -1793,7 +1793,7 @@ void Func_020030f4(void) {
           screenY |= 0x40002000;
           entry->top[1] = screenY;
           entry->top[2] = (tile + rise) | attributes;
-          Func_02003c94(entry->top, depth);
+          Import_OamAddSpriteAtDepth(entry->top, depth);
         }
         screenY = z - y;
         screenY = (screenY >> 16) + 8;
@@ -1812,7 +1812,7 @@ void Func_020030f4(void) {
             screenY |= 0x6000;
             entry->column[1] = screenY;
             entry->column[2] = attributes | (tile + rise);
-            Func_02003c94(column, depth);
+            Import_OamAddSpriteAtDepth(column, depth);
           }
         }
       }
@@ -1999,7 +1999,7 @@ void Func_020034fc(void) {
         splash->sprite[0] = 0;
         splash->sprite[1] = screenY | (column << 16) | 0x40002000;
         *frame = (tile + (((Random16Far() * 3) >> 16) << 3)) | priority;
-        Func_02003c94(splash->sprite, z);
+        Import_OamAddSpriteAtDepth(splash->sprite, z);
       }
     }
     i--;

@@ -50,9 +50,9 @@ VramCache_Load:
 	.thumb_func
 Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
-	.global Func_02002dac
+	.global Import_OamAddSpriteAtDepth
 	.thumb_func
-Func_02002dac:
+Import_OamAddSpriteAtDepth:
 	overlay_veneer Oam_AddSpriteAtDepthFar
 	.global GameFlag_Test
 	.thumb_func

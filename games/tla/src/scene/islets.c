@@ -327,7 +327,7 @@ void Func_02000568(void) {
     Party_GiveItem(0x1c5, 0);
     Func_02003fbc();
     if (spawned != 0) {
-      Func_02003dfc(spawned);
+      Import_ActorDestroy(spawned);
       Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
     }
     Actor_FaceDirectionAndWait(10, FACING_EAST);
@@ -377,7 +377,7 @@ void Func_02000568(void) {
     PartyInventory_Remove(453);                                                \
     PartyInventory_GiveItem(454, 0);                                           \
     if (given != 0) {                                                          \
-      Func_02003dfc(given);                                                    \
+      Import_ActorDestroy(given);                                                    \
       Actor_SetModeById(gMainRoutineWork.currentOwner, 1);                     \
     }                                                                          \
     Func_02003fbc();                                                           \
@@ -507,7 +507,7 @@ void Func_020006f4(void) {
         Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, 0xc000);
         Actor_Jump(gMainRoutineWork.currentOwner, 4, 10);
         if (item != 0)
-          Func_02003dfc(item);
+          Import_ActorDestroy(item);
         Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
         Event_SetFlag(513);
       }
@@ -638,7 +638,7 @@ void Func_02000e38(void) {
     Func_02003fbc();
     Actor_GetById(gMainRoutineWork.currentOwner)->facing = 0x4000;
     if (gift != 0) {
-      Func_02003dfc(gift);
+      Import_ActorDestroy(gift);
       Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
     }
     Actor_FaceDirectionAndWait(11, 0xc000);
@@ -846,7 +846,7 @@ void Func_020014e0(void) {
         Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 302, 424);
         leader->update = 0;
         if (a != 0)
-          Func_02003dfc(a);
+          Import_ActorDestroy(a);
         Event_SetFlag(513);
       }
     }

@@ -42,13 +42,13 @@ Heap_Alloc:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Func_020028b0
+	.global Import_ResourceDecodeByteLzInRam
 	.thumb_func
-Func_020028b0:
+Import_ResourceDecodeByteLzInRam:
 	overlay_veneer Resource_DecodeByteLzInRamFar
-	.global Func_020028b8
+	.global Import_ResourceDecodeType01
 	.thumb_func
-Func_020028b8:
+Import_ResourceDecodeType01:
 	overlay_veneer Resource_DecodeType01Far
 	.global VramCache_Load
 	.thumb_func
@@ -102,9 +102,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_02002928
+	.global Import_ActorDestroy
 	.thumb_func
-Func_02002928:
+Import_ActorDestroy:
 	overlay_veneer Actor_Destroy
 	.global Actor_SetMoveTarget
 	.thumb_func

@@ -71,11 +71,11 @@ DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(JupiterLighthouse_PlaceRaisedActor
 extern s16 gLightSpriteTile;
 extern u32 gData_02002204[];
 
-void Func_020019d4(struct LightOam *oam, s32 depth);
+void Import_OamAddSpriteAtDepth(struct LightOam *oam, s32 depth);
 
 DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, Data_02002244,
     gLightSpriteCount, gData_02002204, gLightSpritesLarge, gLightSpritePriority,
-    Func_02001b24, Func_020019d4)
+    Func_02001b24, Import_OamAddSpriteAtDepth)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

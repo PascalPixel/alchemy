@@ -765,7 +765,7 @@ fadeOut:
   cellY = (y >> 4) - 1;
   Call6((void (*)())Map_CopyCellPictureIndicesRect, 65, 1, cellX + 64, cellY, 1, 2);
   Func_0200062c(0, cellX, cellY, 0xff00);
-  Func_02005d7c(marker);
+  Import_ActorDestroy(marker);
   Event_End();
   REG_BLDCNT = 0;
   REG_DISPCNT &= 0x7fff;
@@ -1409,8 +1409,8 @@ void Func_02004cc8(void) {
   lift->motionFlags = 0;
   lift->speedLimit = 0x16666;
   lift->acceleration = 0x16666;
-  Func_02005d8c(leader, leader->x, leader->y + 0x500000, leader->z);
-  Func_02005d8c(lift, lift->x, lift->y + 0x480000, lift->z);
+  Import_ActorSetTargetPosition(leader, leader->x, leader->y + 0x500000, leader->z);
+  Import_ActorSetTargetPosition(lift, lift->x, lift->y + 0x480000, lift->z);
   Sound_Play(137);
   Event_StartScreenTransition();
   while (!Func_02005dec(leader)) {
@@ -1433,20 +1433,20 @@ void Func_02004cc8(void) {
   leader->velocityY = 0x40000;
   leader->motionFlags = 2;
   leader->priorityFlags = 1;
-  Func_02005d8c(leader, leader->x, leader->y, leader->z - 0x100000);
+  Import_ActorSetTargetPosition(leader, leader->x, leader->y, leader->z - 0x100000);
   OverlayObject_WaitUntilIdle(leader);
-  Func_02005d94(leader);
+  Import_ActorCommitPosition(leader);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   Func_02005d5c(lift, 5);
   wait(12);
-  Func_02005d7c(lift);
+  Import_ActorDestroy(lift);
   leader->motionFlags = 3;
   leader->terrainHeight = leader->y;
   Actor_SetSingleChildFlags(leader, 1);
 #if TLA_PATCH_1
   leader->priorityFlags = priorityFlags;
 #endif
-  Func_02005d7c(prepared);
+  Import_ActorDestroy(prepared);
   wait(1);
   Event_WaitTransitionFrames();
   Event_End();

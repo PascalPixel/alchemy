@@ -391,7 +391,7 @@ struct DailaActor__item {
 extern struct DailaActor__item *Actor_GetById__item(s32 id) __asm__("Actor_GetById");
 void Func_02000da4(struct DailaActor__item *object, s32 mode);
 void Sound_Play(s32 cue);
-void Func_02000c9c(struct DailaActor__item *object);
+void Import_ActorResetMotion(struct DailaActor__item *object);
 
 void Func_02000730(void) {
   s32 saved48;
@@ -428,7 +428,7 @@ void Func_02000730(void) {
       Actor_GetById__item(9)->y = savedY;
       Actor_GetById__item(9)->unk48 = saved48;
       Actor_GetById__item(9)->unk6c = 0;
-      Func_02000c9c(Actor_GetById__item(9));
+      Import_ActorResetMotion(Actor_GetById__item(9));
       Import_ActorSetSpritePriority(9, 1);
       Actor_GetById__item(9)->kind55 = 2;
       Actor_GetById__item(9)->speed1c = 0x13333;
@@ -440,7 +440,7 @@ void Func_02000730(void) {
   Import_EventEnd();
 }
 
-struct ItemDefinition *Func_02000ce4(s32 item);
+struct ItemDefinition *Import_ItemGet(s32 item);
 void FieldMessage_Show(s32 msg, s32 mode);
 void *Unit_Get(s32 owner);
 
@@ -465,7 +465,7 @@ s32 Func_02000878(s32 item, s32 unused) {
     FieldMessage_Show((s32)MsgItemDropPrompt, 1);
     result = Func_02000df4(&member, &slot);
     if (result == -1) {
-      if (Func_02000ce4(item)->flags & 8) {
+      if (Import_ItemGet(item)->flags & 8) {
         MessageArgument_Push(item, 2);
         FieldMessage_Show((s32)MsgItemDropPrompt + 4, 1);
         goto retry;

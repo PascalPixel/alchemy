@@ -50,9 +50,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_0200108c
+	.global Import_ActorDestroy
 	.thumb_func
-Func_0200108c:
+Import_ActorDestroy:
 	overlay_veneer Actor_Destroy
 	.global Map_CopyCellPictureIndicesRect
 	.thumb_func

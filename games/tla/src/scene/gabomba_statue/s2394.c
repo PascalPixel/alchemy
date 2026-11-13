@@ -445,7 +445,7 @@ void Func_02002f70(void) {
   FieldCamera_MoveTo(spark->x, -1, spark->z, 1);
   Func_020057b4();
   Event_ShowMessage(5, 0);
-  Func_02005644(spark);
+  Import_ActorDestroy(spark);
   FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(304), 1);
   Func_020057b4();
   Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
@@ -763,7 +763,7 @@ void Func_020038ac(void) {
   void *buffer = Mem_Alloc(0xc00);
   s32 handle;
 
-  Func_020055cc(gField_CachedTilesA, buffer);
+  Import_ResourceDecodeType01(gField_CachedTilesA, buffer);
   handle = Resource_FindFreeEntry();
   VramCache_Load(handle, 0xc00, buffer);
   state->tileEntry = handle;
@@ -1495,7 +1495,7 @@ void Func_02004710(void) {
         oam->mode = 1;
         oam->affine = affine;
       }
-      Func_020055ec(oam, depth);
+      Import_OamAddSpriteAtDepth(oam, depth);
       oam++;
     }
   }
@@ -1719,10 +1719,10 @@ s32 Func_02004d48(s32 first, s32 check) {
   actor->unk62 = 2;
   actor->unk63 = 1;
   actor->unk4c = 0;
-  /* FAKEMATCH(signature): Func_02005654, Actor_ResetMotion's veneer, called
-   * without the actor it reads from r0; as Func_02005654(actor), 73 of 230
+  /* FAKEMATCH(signature): Import_ActorResetMotion, Actor_ResetMotion's veneer, called
+   * without the actor it reads from r0; as Import_ActorResetMotion(actor), 73 of 230
    * instructions differ in tla-en. */
-  Func_02005654();
+  Import_ActorResetMotion();
   Func_02005624(actor, 2);
   id = second;
   actor = ((struct Unk02004d48 *)Actor_Get(id++));
@@ -1731,7 +1731,7 @@ s32 Func_02004d48(s32 first, s32 check) {
   actor->unk62 = 0;
   actor->unk63 = 1;
   actor->unk4c = 0;
-  Func_02005654(actor);
+  Import_ActorResetMotion(actor);
   Func_02005624(actor, 2);
   actor = ((struct Unk02004d48 *)Actor_Get(id++));
   actor->unk64 = 8;
@@ -1739,7 +1739,7 @@ s32 Func_02004d48(s32 first, s32 check) {
   actor->unk62 = 2;
   actor->unk63 = 1;
   actor->unk4c = 0;
-  Func_02005654(actor);
+  Import_ActorResetMotion(actor);
   Func_02005624(actor, 2);
   actor = ((struct Unk02004d48 *)Actor_Get(id));
   actor->unk64 = 10;
@@ -1747,7 +1747,7 @@ s32 Func_02004d48(s32 first, s32 check) {
   actor->unk62 = 0;
   actor->unk63 = 1;
   actor->unk4c = 0;
-  Func_02005654(actor);
+  Import_ActorResetMotion(actor);
   Func_02005624(actor, 2);
   for (tries = 0; tries <= 127; tries++) {
     done = 1;
@@ -1939,7 +1939,7 @@ void Func_02005090(void) {
       oam->affine = scaled;
     else
       oam->affine = plain;
-    Func_020055ec(oam, 236);
+    Import_OamAddSpriteAtDepth(oam, 236);
   }
 }
 
@@ -1977,7 +1977,7 @@ void Func_020052a4(s32 mode) {
     clock->ringing = 1;
   }
   tiles = Heap_AllocEwram(0x400);
-  Func_020055cc(Resource_GetTableEntry((s32)&ResourceId_ClockDigits), tiles);
+  Import_ResourceDecodeType01(Resource_GetTableEntry((s32)&ResourceId_ClockDigits), tiles);
   clock->tiles = tiles;
   clock->digits = tiles + 0x2c0;
   clock->tileEntry = Resource_FindFreeEntry();

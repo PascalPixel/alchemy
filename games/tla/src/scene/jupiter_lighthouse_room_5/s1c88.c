@@ -92,7 +92,7 @@ void Func_02001c88(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 // leader steps on.
 #define CELL_TABLE gTeleporters
 #define CELL_SPRITE_DRAW Func_02001e50
-#define CELL_PUSH_SLOT_ENTRY Func_020027d8
+#define CELL_PUSH_SLOT_ENTRY Import_OamAddSpriteAtDepth
 #include "../../field/map/cell_sprite.c"
 
 #include "ram_buffer.h"

@@ -61,7 +61,7 @@ DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(JupiterLighthouse_PlaceRaisedActor
 /* VIEW(s098c): variable gData_020024f4 as s16 gData_020024f4; module/scene/clear.h has u16 gData_020024f4[]; tried as the definition's extern u16 gData_020024f4[], which the object already declares, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_basement/s098c.c:225: `gData_020024f4' has an incomplete type. */
 extern s16 gData_020024f4__s098c __asm__("gData_020024f4");
 
-void Func_02001bc4(struct LightOam *oam, s32 depth);
+void Import_OamAddSpriteAtDepth(struct LightOam *oam, s32 depth);
 
 void LightSprites_Draw(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -107,7 +107,7 @@ void LightSprites_Draw(void) {
           oam->priority = Func_02001d24(actor);
         else
           oam->priority = gData_020024f6;
-        Func_02001bc4(oam, depth);
+        Import_OamAddSpriteAtDepth(oam, depth);
         oam++;
       } else {
         s32 x, sy;
@@ -128,7 +128,7 @@ void LightSprites_Draw(void) {
           oam->priority = Func_02001d24(actor);
         else
           oam->priority = gData_020024f6;
-        Func_02001bc4(oam, depth);
+        Import_OamAddSpriteAtDepth(oam, depth);
         oam++;
       }
     }

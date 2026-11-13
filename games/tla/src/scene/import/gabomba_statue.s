@@ -62,9 +62,9 @@ Heap_AllocEwram:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Sys_FreeFar
-	.global Func_020055cc
+	.global Import_ResourceDecodeType01
 	.thumb_func
-Func_020055cc:
+Import_ResourceDecodeType01:
 	overlay_veneer Resource_DecodeType01Far
 	.global VramCache_Load
 	.thumb_func
@@ -78,9 +78,9 @@ Resource_FindFreeEntry:
 	.thumb_func
 AffineMatrix_BuildForEffect:
 	overlay_veneer AffineMatrix_BuildForEffectFar
-	.global Func_020055ec
+	.global Import_OamAddSpriteAtDepth
 	.thumb_func
-Func_020055ec:
+Import_OamAddSpriteAtDepth:
 	overlay_veneer Oam_AddSpriteAtDepthFar
 	.global Resource_GetTableEntry
 	.thumb_func
@@ -122,17 +122,17 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_02005644
+	.global Import_ActorDestroy
 	.thumb_func
-Func_02005644:
+Import_ActorDestroy:
 	overlay_veneer Actor_Destroy
 	.global Map_CenterOnFollowedPoint
 	.thumb_func
 Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
-	.global Func_02005654
+	.global Import_ActorResetMotion
 	.thumb_func
-Func_02005654:
+Import_ActorResetMotion:
 	overlay_veneer Actor_ResetMotion
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -322,9 +322,9 @@ Import_EventSetExitRequest:
 	.thumb_func
 Func_080d2b4c:
 	overlay_veneer Func_080c8288
-	.global Func_020057d4
+	.global Import_LeaderStopMoving
 	.thumb_func
-Func_020057d4:
+Import_LeaderStopMoving:
 	overlay_veneer Leader_StopMovingFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func

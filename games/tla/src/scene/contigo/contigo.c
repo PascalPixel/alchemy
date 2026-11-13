@@ -306,7 +306,7 @@ void Func_020009d0(struct OrbitEffect *effect) {
     effect->pause = ((Random16Far() << 4) >> 16) + 8;
   }
   if (++effect->timer == 101)
-    Func_02003ff4(effect);
+    Import_ActorDestroy(effect);
 }
 
 void Func_02000a80(void) {
@@ -387,7 +387,7 @@ void Func_02000af4(void) {
     i++;
     if (i < 28)
       goto shrink;
-    Func_02003ff4(effect);
+    Import_ActorDestroy(effect);
   }
   BattleEffect_SetObjectUpdateMode(((struct ContigoObject *)Actor_GetById(17)), 0);
   BattleEffect_WaitForArcGroups();

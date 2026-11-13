@@ -65,10 +65,10 @@ struct AquaRockWork {
 
 s32 Math_Sine(s32 angle);
 void Heap_Release(void *block);
-void Func_020028b8(const void *source, void *destination);
+void Import_ResourceDecodeType01(const void *source, void *destination);
 void Func_02002910(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *data);
-void Func_02002928(struct Actor *object);
+void Import_ActorDestroy(struct Actor *object);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Map_CopyCellsRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);

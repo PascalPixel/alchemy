@@ -84,7 +84,7 @@ s32 Func_02003604(void);
 s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id);
 void Func_02004f40(u32 *x_out, u32 *z_out);
 
-void Func_02005644(struct Actor *object);
+void Import_ActorDestroy(struct Actor *object);
 
 extern u32 gData_02005c40[];
 
@@ -104,13 +104,13 @@ s32 abs(s32);
 s32 Func_02004224(s32 from, s32 to, s32 kind);
 void Func_02004288(s32 id, s32 value);
 
-void Func_020055ec(struct Sprite *oam, s32 depth);
+void Import_OamAddSpriteAtDepth(struct Sprite *oam, s32 depth);
 
 void Func_020038ac(void);
 void Func_02003974(void);
 s32 Func_02003a64(s32 value);
 
-void Func_02005654();
+void Import_ActorResetMotion();
 
 void Func_02005210(void);
 void Func_0200525c(void);

@@ -82,21 +82,21 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_02005d7c
+	.global Import_ActorDestroy
 	.thumb_func
-Func_02005d7c:
+Import_ActorDestroy:
 	overlay_veneer Actor_Destroy
 	.global Map_CenterOnFollowedPoint
 	.thumb_func
 Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
-	.global Func_02005d8c
+	.global Import_ActorSetTargetPosition
 	.thumb_func
-Func_02005d8c:
+Import_ActorSetTargetPosition:
 	overlay_veneer Actor_SetTargetPosition
-	.global Func_02005d94
+	.global Import_ActorCommitPosition
 	.thumb_func
-Func_02005d94:
+Import_ActorCommitPosition:
 	overlay_veneer Actor_CommitPosition
 	.global Map_CopyCellPictureIndicesRect
 	.thumb_func

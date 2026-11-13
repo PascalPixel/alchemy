@@ -86,7 +86,7 @@ s32 Func_02002c2c(struct Actor *actor);
 /// 64 one when the big switch is set, at its animation picture and depth.
 DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, Data_02003640,
     gData_020035fe, gData_02003600, gLightSpritesLarge, gLightSpritePriority,
-    Func_02002c2c, Func_02002aa4)
+    Func_02002c2c, Import_OamAddSpriteAtDepth)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

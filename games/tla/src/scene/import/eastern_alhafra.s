@@ -34,9 +34,9 @@ HeapSlot_AllocFar:
 	.thumb_func
 HeapSlot_Release:
 	overlay_veneer HeapSlot_ReleaseFar
-	.global Func_020049d4
+	.global Import_ResourceDecodeType01
 	.thumb_func
-Func_020049d4:
+Import_ResourceDecodeType01:
 	overlay_veneer Resource_DecodeType01Far
 	.global Resource_ResetEntry
 	.thumb_func
@@ -74,9 +74,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_02004a24
+	.global Import_ActorDestroy
 	.thumb_func
-Func_02004a24:
+Import_ActorDestroy:
 	overlay_veneer Actor_Destroy
 	.global Actor_SetPositionAndResetMotion
 	.thumb_func

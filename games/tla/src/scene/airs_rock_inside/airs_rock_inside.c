@@ -374,9 +374,9 @@ void Func_02000988(void) {
     *motion = 2;
     *priority = 1;
     leader->terrainId = ((u8 *)rider)[98];
-    Func_02005d8c(leader, leader->x + dx, leader->y, leader->z + dz);
+    Import_ActorSetTargetPosition(leader, leader->x + dx, leader->y, leader->z + dz);
     OverlayObject_WaitUntilIdle(leader);
-    Func_02005d94(leader);
+    Import_ActorCommitPosition(leader);
     Actor_SetSingleChildFlags(leader, 1);
     *motion = 3;
     break;
@@ -394,10 +394,10 @@ void Func_02000988(void) {
     dust->speedLimit = 0x80000;
     dust->acceleration = 0x10000;
     dust->motionFlags = noFlags;
-    Func_02005d8c(dust, leader->x,
+    Import_ActorSetTargetPosition(dust, leader->x,
                   Map_GetTerrainHeight(0, leader->x, leader->z), leader->z);
     OverlayObject_WaitUntilIdle(leader);
-    Func_02005d94(dust);
+    Import_ActorCommitPosition(dust);
     break;
   }
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
@@ -712,7 +712,7 @@ void Func_02001458(struct Actor *object) {
   Actor_SetAnimationSpeed(object, 16);
   if (object->timer == 0) {
     if (object->x == 0) {
-      Func_02005d7c(object);
+      Import_ActorDestroy(object);
     } else {
       object->z = 0;
       object->x = 0;
@@ -901,14 +901,14 @@ void Func_02001828(void) {
   ((struct FieldSprite *)gust->sprite)->priority =
       ((struct FieldSprite *)((struct Actor *)*(long *)&effect->target)->sprite)
           ->priority;
-  Func_02005d8c(gust, TARGET(effect)->x, TARGET(effect)->y,
+  Import_ActorSetTargetPosition(gust, TARGET(effect)->x, TARGET(effect)->y,
                 TARGET(effect)->z + 0xffff0000);
   gust->terrainHeight = Map_GetTerrainHeight(0, gust->x, gust->z);
   while (gust->scaleY <= 0x14ccb) {
     gust->scaleY += 0x1999;
     FieldEvent_Wait(1);
   }
-  Func_02005d94(gust);
+  Import_ActorCommitPosition(gust);
   gust->z = TARGET(effect)->z + 0xffff0000;
   while (gust->scaleY <= 0x1cccb) {
     if ((gFrameCount & 3) == 0) {
@@ -976,7 +976,7 @@ void Func_02001828(void) {
     cell.z = z;
     gust->speedLimit = 0x40000;
     gust->acceleration = 0x40000;
-    Func_02005d8c(gust, cell.x << 16, gust->y, cell.z << 16);
+    Import_ActorSetTargetPosition(gust, cell.x << 16, gust->y, cell.z << 16);
     Call2((void (*)())Camera_SetSpeedParameters, 0x50000, 0x50000);
     Call4((void (*)())Camera_MoveWithinMapBounds, x << 16, -1, z << 16, 1);
   }
@@ -1054,7 +1054,7 @@ void Func_02001828(void) {
     cell.z = (gust->z >> 16) + dir.z * 48;
     gust->speedLimit = 0x8000;
     gust->acceleration = 0x8000;
-    Call4((void (*)())Func_02005d8c, (s32)(gust), (s32)(cell.x << 16),
+    Call4((void (*)())Import_ActorSetTargetPosition, (s32)(gust), (s32)(cell.x << 16),
           (s32)(gust->y), (s32)(cell.z << 16));
     hit -= 30;
     i = 0;
@@ -1126,7 +1126,7 @@ shrink:
     gust->y += 0x38000;
     FieldEvent_Wait(1);
   }
-  Func_02005d7c(gust);
+  Import_ActorDestroy(gust);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room4) {
     if (hit == 5) {
       SHAKE();

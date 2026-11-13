@@ -243,7 +243,7 @@ void Func_02000ac8(void) {
     }
   }
 
-  Func_020032f8(actor);
+  Import_ActorDestroy(actor);
   Event_SetFlag(0x200);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02003430();

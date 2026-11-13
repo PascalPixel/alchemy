@@ -1413,7 +1413,7 @@ void Func_020023e8(void) {
     Func_02005330(gData_020062ac, 3);
   Party_GiveItem(198, 0);
   if (gData_020062ac != 0)
-    Func_02005148(gData_020062ac);
+    Import_ActorDestroy(gData_020062ac);
   Actor_SetAnimation(12, 4);
   Event_ShowMessage(0x800c, 0);
   FieldCamera_SetSpeed(0x6666, 0xccc);

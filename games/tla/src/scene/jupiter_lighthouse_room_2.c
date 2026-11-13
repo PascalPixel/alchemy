@@ -117,7 +117,7 @@ void Func_020000d0(s32 kind) {
     System_Wait(1);
     i--;
   } while (i >= 0);
-  Func_020021d4(effect);
+  Import_ActorDestroy(effect);
   Actor_SetSingleChildFlags(Actor_Get(owner), 1);
   leader->facing = 0x4000;
   leader->terrainId = 0;
@@ -195,7 +195,7 @@ spin:
   i--;
   if (i >= 0)
     goto spin;
-  Func_020021d4(effect);
+  Import_ActorDestroy(effect);
   Actor_SetSingleChildFlags(Actor_Get(owner), 1);
   leader->facing = 0x4000;
   leader->terrainId = 1;

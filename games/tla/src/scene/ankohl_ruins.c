@@ -651,7 +651,7 @@ void Func_020012c4(void) {
         sprite->oam[0] = 0;
         sprite->oam[1] = sy | (sx << 16) | 0x40000800;
         sprite->oam[2] = tile | 0x400;
-        Func_02002dac(sprite->oam, 255);
+        Import_OamAddSpriteAtDepth(sprite->oam, 255);
       }
       sprite++;
     }

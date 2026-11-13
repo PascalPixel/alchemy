@@ -421,7 +421,7 @@ void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity) {
   u8 *flags = &object->motionFlags;
   u8 saved;
 
-  Func_020057d4(object);
+  Import_LeaderStopMoving(object);
   saved = *flags;
   Func_02005624__gabomba_statue(object, 6);
   System_Wait(6);

@@ -22,13 +22,13 @@ Task_Add:
 	.thumb_func
 Task_RemoveFar:
 	overlay_veneer Func_080000d8
-	.global Func_02001bf4
+	.global Import_TaskSuspendAll
 	.thumb_func
-Func_02001bf4:
+Import_TaskSuspendAll:
 	overlay_veneer Task_SuspendAllFar
-	.global Func_02001bfc
+	.global Import_TaskResumeAll
 	.thumb_func
-Func_02001bfc:
+Import_TaskResumeAll:
 	overlay_veneer Task_ResumeAllFar
 	.global Random16Far
 	.thumb_func
@@ -46,9 +46,9 @@ HeapSlot_AllocEwram:
 	.thumb_func
 HeapSlot_Release:
 	overlay_veneer HeapSlot_ReleaseFar
-	.global Func_02001c24
+	.global Import_ResourceDecodeByteLzInRam
 	.thumb_func
-Func_02001c24:
+Import_ResourceDecodeByteLzInRam:
 	overlay_veneer Resource_DecodeByteLzInRamFar
 	.global VramCache_Load
 	.thumb_func

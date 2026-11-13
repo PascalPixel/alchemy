@@ -18,9 +18,9 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Func_02000c9c
+	.global Import_ActorResetMotion
 	.thumb_func
-Func_02000c9c:
+Import_ActorResetMotion:
 	overlay_veneer Actor_ResetMotion
 	.global Func_02000ca4
 	.thumb_func
@@ -54,9 +54,9 @@ Message_CloseFinishedWindows:
 	.thumb_func
 Unit_Calculate:
 	overlay_veneer Unit_CalculateFar
-	.global Func_02000ce4
+	.global Import_ItemGet
 	.thumb_func
-Func_02000ce4:
+Import_ItemGet:
 	overlay_veneer Item_Get
 	.global Inventory_GetQuantity
 	.thumb_func

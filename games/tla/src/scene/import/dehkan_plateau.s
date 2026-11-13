@@ -66,9 +66,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_02003bb8
+	.global Import_ActorDestroy
 	.thumb_func
-Func_02003bb8:
+Import_ActorDestroy:
 	overlay_veneer Actor_Destroy
 	.global Actor_SetPositionAndResetMotion
 	.thumb_func

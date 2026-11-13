@@ -51,7 +51,7 @@ void Func_02002fec(struct KibomboObject *object) {
   object->scaleY += 0x51e;
   object->field64 += 2;
   if (--object->field68 == 0)
-    Func_02005a3c(object);
+    Import_ActorDestroy(object);
 }
 
 void Func_02003030(void) {
@@ -193,7 +193,7 @@ DEFINE_FUNC_020032B0(Func_020032c8, 1)
 
 void Func_020032e0(void) {
   BattleEffect_LoadActionEffectResources(143, 1);
-  Func_02005c1c(17, 27);
+  Import_BattleEffectSetupObjectPair(17, 27);
   EventObject_Initialize();
   Field_DispatchTypeHandler(1);
   BattleEffect_StopMainActor();
@@ -361,7 +361,7 @@ void Func_02003308(struct Actor *actor) {
   case 7:
     Resource_ResetEntry(
         ((struct FieldSprite *)object->actor.sprite)->vramBlock);
-    Func_02005a3c(&object->actor);
+    Import_ActorDestroy(&object->actor);
     break;
   }
 }
@@ -502,7 +502,7 @@ void Func_020037e4(void) {
 void Func_0200384c(void) {
   BattleEffect_LoadActionEffectResources(136, 1);
   Task_Add(Func_020037e4, 0x480);
-  Func_02005c1c(gMainRoutineWork.currentOwner, -1);
+  Import_BattleEffectSetupObjectPair(gMainRoutineWork.currentOwner, -1);
   EventObject_Initialize();
   Field_DispatchTypeHandler(1);
   BattleEffect_StopMainActor();

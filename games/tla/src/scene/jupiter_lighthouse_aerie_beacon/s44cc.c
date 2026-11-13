@@ -85,14 +85,14 @@ void Func_02004644(void) {
 /* VIEW(s44cc): variable gData_02006b70 as s16 gData_02006b70; module/scene/scene.h has u8 gData_02006b70[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s44cc.c:217: `gData_02006b70' has an incomplete type. */
 extern s16 gData_02006b70__s44cc __asm__("gData_02006b70");
 
-void Func_0200571c(struct LightOam *oam, s32 depth);
+void Import_OamAddSpriteAtDepth(struct LightOam *oam, s32 depth);
 
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
 /// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
 /// 64 one when the big switch is set, at its animation picture and depth.
 DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, Data_02006ab0,
     gLightSpriteCount, gData_02006a70, gData_02006b70__s44cc, gLightSpritePriority,
-    Func_020059bc, Func_0200571c)
+    Func_020059bc, Import_OamAddSpriteAtDepth)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

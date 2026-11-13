@@ -88,7 +88,7 @@ void Func_02001094(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #define CELL_TABLE gTeleporters
 #define CELL_SPRITE_DRAW Func_0200125c
-#define CELL_PUSH_SLOT_ENTRY Func_02001bc4
+#define CELL_PUSH_SLOT_ENTRY Import_OamAddSpriteAtDepth
 #include "../../field/map/cell_sprite.c"
 
 #include "ram_buffer.h"

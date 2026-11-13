@@ -129,12 +129,12 @@ void Func_02000540(void) {
 }
 
 void Func_02000694(void) {
-  Func_02001bf4(Func_02000540);
+  Import_TaskSuspendAll(Func_02000540);
   System_Wait(3);
 }
 
 void Func_020006a8(void) {
-  Func_02001bfc(Func_02000540);
+  Import_TaskResumeAll(Func_02000540);
   System_Wait(3);
 }
 
@@ -758,7 +758,7 @@ void Func_02001ad8(void) {
   Dma_Set((const void *)&zero, work,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 517, REG_DMA3);
   buf = HeapSlot_AllocEwram(56, 0x400);
-  Func_02001c24(gField_Tiles679, buf);
+  Import_ResourceDecodeByteLzInRam(gField_Tiles679, buf);
   work->vramEntry = Resource_FindFreeEntry();
   work->tileBase = Vram_Load(work->vramEntry, 0x300, buf);
   HeapSlot_Release(56);

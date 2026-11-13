@@ -44,7 +44,7 @@ extern s16 gLightSpritePriority;
 /// 64 one when the big switch is set, at its animation picture and depth.
 DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gData_020026a0,
     gData_0200265e__s0910, gData_02002660, gLightSpritesLarge, gLightSpritePriority,
-    Func_02001c80, Func_02001b40)
+    Func_02001c80, Import_OamAddSpriteAtDepth)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

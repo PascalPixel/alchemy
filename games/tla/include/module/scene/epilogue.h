@@ -10,7 +10,7 @@ struct EpilogueSprite;
 
 void Func_0200083c(struct EpilogueSprite *sprite);
 
-s32 Func_02000824();
+s32 Import_EventSetDestination();
 
 s32 Func_02000864();
 

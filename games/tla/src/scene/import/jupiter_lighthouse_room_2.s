@@ -54,9 +54,9 @@ VramCache_Load:
 	.thumb_func
 Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
-	.global Func_0200218c
+	.global Import_OamAddSpriteAtDepth
 	.thumb_func
-Func_0200218c:
+Import_OamAddSpriteAtDepth:
 	overlay_veneer Oam_AddSpriteAtDepthFar
 	.global GameFlag_Test
 	.thumb_func
@@ -90,9 +90,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_020021d4
+	.global Import_ActorDestroy
 	.thumb_func
-Func_020021d4:
+Import_ActorDestroy:
 	overlay_veneer Actor_Destroy
 	.global Actor_SetPositionAndResetMotion
 	.thumb_func

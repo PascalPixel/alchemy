@@ -362,7 +362,7 @@ void LightSprites_Draw(void) {
           oam->priority = Func_02000d5c(actor);
         else
           oam->priority = gData_02001de2__s0588;
-        Func_02000c3c(oam, depth);
+        Import_OamAddSpriteAtDepth(oam, depth);
         oam++;
       } else {
         s32 frame = actor->timer;
@@ -382,7 +382,7 @@ void LightSprites_Draw(void) {
           oam->priority = Func_02000d5c(actor);
         else
           oam->priority = gData_02001de2__s0588;
-        Func_02000c3c(oam, depth);
+        Import_OamAddSpriteAtDepth(oam, depth);
         oam++;
       }
     }

@@ -55,7 +55,7 @@ extern struct LightOam gData_020022dc[];
 /// 64 one when the big switch is set, at its animation picture and depth.
 DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gData_020022dc,
     gLightSpriteCount, gData_0200229c, gLightSpritesLarge, gLightSpritePriority,
-    Func_02001bb4, Func_02001a64)
+    Func_02001bb4, Import_OamAddSpriteAtDepth)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

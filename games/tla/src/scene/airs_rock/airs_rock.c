@@ -469,7 +469,7 @@ void Func_0200095c(void) {
     gust->y += 0x38000;
     Event_Wait(1);
   }
-  Func_02003b48(gust);
+  Import_ActorDestroy(gust);
   Event_Wait(30);
   Func_02003c38(gMainRoutineWork.currentOwner, 1);
   Func_02003c30();

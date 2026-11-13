@@ -66,9 +66,9 @@ VramCache_Load:
 	.thumb_func
 Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
-	.global Func_020029c0
+	.global Import_OamAddSpriteAtDepth
 	.thumb_func
-Func_020029c0:
+Import_OamAddSpriteAtDepth:
 	overlay_veneer Oam_AddSpriteAtDepthFar
 	.global Resource_GetTableEntry
 	.thumb_func
@@ -114,9 +114,9 @@ Actor_SetPositionAndResetMotion:
 	.thumb_func
 Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
-	.global Func_02002a20
+	.global Import_ActorResetMotion
 	.thumb_func
-Func_02002a20:
+Import_ActorResetMotion:
 	overlay_veneer Actor_ResetMotion
 	.global Actor_SetMoveTarget
 	.thumb_func

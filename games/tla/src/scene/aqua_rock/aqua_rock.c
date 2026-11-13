@@ -122,9 +122,9 @@ void Func_020004e4(struct Actor *object) {
   else
     object->z -= 0x20000;
   if (object->y >> 20 == 23)
-    Func_02002928(object);
+    Import_ActorDestroy(object);
   if (object->z >> 20 == 48)
-    Func_02002928(object);
+    Import_ActorDestroy(object);
 }
 
 void Func_0200052c(struct Actor *object) {
@@ -1318,7 +1318,7 @@ void Func_02002550(void) {
 
   Iwram_ClearWordsEntry(work, 0x70c);
   buffer = MemAlloc_(0x100);
-  Func_020028b8(gData_02002c74, buffer);
+  Import_ResourceDecodeType01(gData_02002c74, buffer);
   work->vramEntry = Resource_FindFreeEntry();
   VramCache_Load(work->vramEntry, 0x100, buffer);
   Heap_Release(buffer);
@@ -1368,7 +1368,7 @@ void Func_0200276c(void) {
   Dma_Set((const void *)&zero, work,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 517, REG_DMA3);
   buf = HeapSlot_AllocEwram(56, 0x400);
-  Func_020028b0(gField_Tiles679, buf);
+  Import_ResourceDecodeByteLzInRam(gField_Tiles679, buf);
   work->vramEntry = Resource_FindFreeEntry();
   work->tileBase = VramCache_Load(work->vramEntry, 0x300, buf);
   HeapSlot_Release(56);

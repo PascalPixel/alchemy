@@ -129,7 +129,11 @@ void Func_020001f0(const struct WarpTarget *warp, s32 door, s32 mode) {
   Event_End();
 }
 
-void Func_02000278(s32 door) {
+/// The party leader walks into one of Lemuria's doors; the palace's is locked
+/// while the council meets.
+/// "The door is locked... It sounds as if there's a raucous caucus going on
+/// inside..."
+void Lemuria_EnterDoor(s32 door) {
   const struct WarpTarget *warp = &gData_020021bc;
   s32 mode = 0;
 
@@ -172,7 +176,7 @@ void Func_02000278(s32 door) {
 /// Actor 18's talk: one message, and Actor_TurnToFaceEachOther with the party
 /// leader, while the event work's halfword at 0x166 is 0, another once it is
 /// set; the actor's angle is restored after.
-void Func_02000308(void) {
+void Lemuria_TalkToSpoiledChild(void) {
   u8 *work = Ram_HeapSlots->eventWork;
   struct Actor *object = Actor_Get(18);
   s16 angle = object->facing;
@@ -195,7 +199,7 @@ void Func_02000308(void) {
 }
 
 /// The same for actor 19.
-void Func_02000398(void) {
+void Lemuria_TalkToLonelyChild(void) {
   u8 *work = Ram_HeapSlots->eventWork;
   struct Actor *object = Actor_Get(19);
   s16 angle = object->facing;
@@ -317,7 +321,10 @@ void Func_0200061c(s32 a) { Func_02001cf4_(a, 72, 0x308); }
 s32 Party_FindOwnerWithAction();
 void Func_02001d2c();
 
-void Func_0200062c(void) {
+/// A door that will not open, until a Lemurian inside takes Piers's companions
+/// in another way.
+/// "The door doesn't want to open."
+void Lemuria_KnockAtBrokenDoor(void) {
   s32 t1, t2, t3, t4, t12, t30, t31, v5;
 
   t1 = (s32)Actor_Get(gMainRoutineWork.currentOwner);
@@ -415,7 +422,9 @@ L_020088d4:
 
 void Party_RestoreHpPp(s32 value);
 
-void Func_020008e8(void) {
+/// "Felix and the others drank of the spring. Their HP and PP were fully
+/// replenished!"
+void Lemuria_DrinkFromSpring(void) {
   s32 y = Actor_Get(gMainRoutineWork.currentOwner)->y;
 
   if (y < 0x5a0000) {
@@ -429,7 +438,7 @@ void Func_020008e8(void) {
 
 /// Actor 30 offers a test of luck at the Spring of Lemuria; flag 0x908
 /// records that the party took it.
-void Func_02000934(void) {
+void Lemuria_OfferSpringLuck(void) {
   if (Event_GetFlag(0x908)) {
     Actor_FaceActor(30, gMainRoutineWork.currentOwner, 0);
     FieldActor_RefreshSelectorById(30);
@@ -674,7 +683,8 @@ L_02008e44:
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_02000e7c(s32 id) {
+/// "Oh! Goodness! Felix! Look over here! This palace is magnificient!"
+void Lemuria_AdmirePalace(s32 id) {
   struct Actor *leader;
   s32 a;
   s32 b;
@@ -742,7 +752,8 @@ void Func_02000e7c(s32 id) {
   Event_End();
 }
 
-void Func_0200109c(void) {
+/// "Where are you going, Felix? Let's take a longer look around!"
+void Lemuria_KeepLookingAround(void) {
   struct Actor *leader;
 
   Event_Start();
@@ -773,7 +784,10 @@ struct EventWork1c4 {
   u16 count;
 };
 
-void Func_02001160(void) {
+/// The party marvels at the city, and is stopped by a Lemurian who has never
+/// seen it before.
+/// "This place is remarkable... Truly remarkable..."
+void Lemuria_MarvelAtCity(void) {
   struct Actor *leader;
   s32 result;
 
@@ -1143,29 +1157,29 @@ struct WarpTarget gData_020021e4 = {(s32)gData_0200219a, 28, 13};
 struct WarpTarget gData_020021ec = {(s32)gData_02002184, 54, 50};
 
 struct Trigger gSceneEvents[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_02000278)},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_02000278)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_02000278)},
+    {0xc602, 1, CONDITION_ALWAYS, EVENT(Lemuria_EnterDoor)},
+    {0xc602, 2, CONDITION_ALWAYS, EVENT(Lemuria_EnterDoor)},
+    {0xc602, 3, CONDITION_ALWAYS, EVENT(Lemuria_EnterDoor)},
     {49, 4, CONDITION_ALWAYS, 4},
     {0xc401, 5, 0x1908, 5},
-    {0xc602, 12, 0x1966, EVENT(Func_02000278)},
+    {0xc602, 12, 0x1966, EVENT(Lemuria_EnterDoor)},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
-    {0xc602, 16, 0x1969, EVENT(Func_02000278)},
-    {0xc602, 11, CONDITION_ALWAYS, EVENT(Func_02000278)},
-    {0xc602, 10, CONDITION_ALWAYS, EVENT(Func_02000278)},
+    {0xc602, 16, 0x1969, EVENT(Lemuria_EnterDoor)},
+    {0xc602, 11, CONDITION_ALWAYS, EVENT(Lemuria_EnterDoor)},
+    {0xc602, 10, CONDITION_ALWAYS, EVENT(Lemuria_EnterDoor)},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
-    {TRIGGER_STEP, 20, 0x964, EVENT(Func_02001160)},
-    {TRIGGER_STEP, 21, 0x964, EVENT(Func_02000e7c)},
-    {TRIGGER_STEP, 22, 0x964, EVENT(Func_02000e7c)},
-    {TRIGGER_STEP, 23, 0x964, EVENT(Func_0200109c)},
+    {TRIGGER_STEP, 20, 0x964, EVENT(Lemuria_MarvelAtCity)},
+    {TRIGGER_STEP, 21, 0x964, EVENT(Lemuria_AdmirePalace)},
+    {TRIGGER_STEP, 22, 0x964, EVENT(Lemuria_AdmirePalace)},
+    {TRIGGER_STEP, 23, 0x964, EVENT(Lemuria_KeepLookingAround)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgICannotRemember)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgLemuriaHasNo)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgInLemuriaWe)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgLifeNeverChanges)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgIOughtTo)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgHowOldAm)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_02000308)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_02000398)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Lemuria_TalkToSpoiledChild)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Lemuria_TalkToLonelyChild)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgMeowMrrrfle2)},
     {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgWoofRrrrrroof2)},
     {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgMoo2)},
@@ -1177,8 +1191,8 @@ struct Trigger gSceneEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgSometimesIThink)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgLongAgoA)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgKingHydrosIs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT(Func_02000308)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, EVENT(Func_02000398)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT(Lemuria_TalkToSpoiledChild)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, EVENT(Lemuria_TalkToLonelyChild)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgNoOneIn)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgThereSSo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgLemuriansAreSo)},
@@ -1203,11 +1217,11 @@ struct Trigger gSceneEvents[] = {
     {0xc400, 11, CONDITION_ALWAYS, MSGNO(MsgHouseOfThe)},
     {TRIGGER_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgDrinkingFromThis)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgTheseTurtlesHave)},
-    {TRIGGER_TALK, 30, CONDITION_ALWAYS, EVENT(Func_02000934)},
+    {TRIGGER_TALK, 30, CONDITION_ALWAYS, EVENT(Lemuria_OfferSpringLuck)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgNoOneIs)},
-    {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Func_020008e8)},
-    {TRIGGER_EXAMINE, 25, CONDITION_ALWAYS, EVENT(Func_020008e8)},
-    {TRIGGER_EXAMINE, 40, CONDITION_ALWAYS, EVENT(Func_0200062c)},
+    {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Lemuria_DrinkFromSpring)},
+    {TRIGGER_EXAMINE, 25, CONDITION_ALWAYS, EVENT(Lemuria_DrinkFromSpring)},
+    {TRIGGER_EXAMINE, 40, CONDITION_ALWAYS, EVENT(Lemuria_KnockAtBrokenDoor)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x962, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 10, 0x963, EVENT(Func_02000560)},
     {0x50008905, 30, CONDITION_ALWAYS, EVENT(Func_02000428)},

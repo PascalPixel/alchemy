@@ -29,15 +29,6 @@ struct PlayerSprite__f0298c0 {
 extern const s16 gWorldMap_KeyHeadings[16];
 
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
-/* VIEW(f0298c0): routine Sand_JitterGrain as void Sand_JitterGrain(void); the
- * definition has void Sand_JitterGrain(struct Actor *object); not tried:
- * Sand_JitterGrain's bound declaration was not found. */
-extern void Func_08029810__f0298c0(void) __asm__("Sand_JitterGrain");
-/* VIEW(f0298c0): routine Sand_CheckEndKeys as s32 Sand_CheckEndKeys(struct
- * Actor *actor); the definition has s32 Sand_CheckEndKeys(s32 arg); not tried:
- * Sand_CheckEndKeys's bound declaration was not found. */
-extern s32
-Func_08029838__f0298c0(struct Actor *actor) __asm__("Sand_CheckEndKeys");
 
 /// Script command 0x1e (control mode 5): the leader turned to sand by the Sand
 /// Psynergy, moved by the direction pad on a field map.
@@ -190,7 +181,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
         effect->terrainHeight = actor->terrainHeight;
         sprite = effect->sprite;
         Actor_StartScript(effect, gData_0802ed28);
-        effect->update = Func_08029810__f0298c0;
+        effect->update = Sand_JitterGrain;
         effect->motionFlags = 2;
         if (collision == 0)
           Sound_PlayFar(596);
@@ -205,7 +196,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
         }
       }
     }
-    Func_08029838__f0298c0(actor);
+    Sand_CheckEndKeys(actor);
     goto done;
   }
 
@@ -408,7 +399,7 @@ counted:
       *wakeTimer = 5;
     }
   }
-  Func_08029838__f0298c0(actor);
+  Sand_CheckEndKeys(actor);
 
 done:
   actor->step++;
@@ -593,7 +584,7 @@ update_object:
       *timer = 5;
     }
   }
-  Func_08029838__f0298c0(object);
+  Sand_CheckEndKeys(object);
   object->step++;
   return 1;
 }

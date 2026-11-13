@@ -45,13 +45,6 @@ VramCache_Reload__menus(s32 entry,
  * BattleParty_PrepareReserveOwners...; not tried: Unit_Get's declaration holds
  * a FAKEMATCH tag. */
 extern struct BattleUnit *Unit_Get__menus(s32 unit) __asm__("Unit_Get");
-/* VIEW(menus): routine Window_Create as struct TargetWindow *Window_Create(s32
- * x, s32 y, s32 width, s32 height, s32 flags); module/window/window.h has
- * struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
- * not tried: Window_Create's declaration holds a FAKEMATCH tag. */
-extern struct TargetWindow *
-Window_Create__menus(s32 x, s32 y, s32 width, s32 height,
-                     s32 flags) __asm__("Window_Create");
 /* VIEW(menus): routine Oam_AddSpriteAtDepth as s32 Oam_AddSpriteAtDepth(void
  * *sprite, s32 depth); task.h has void Oam_AddSpriteAtDepth(void *entry, s32
  * priority); tried as the definition's void Oam_AddSpriteAtDepth(void *entry,
@@ -59,16 +52,6 @@ Window_Create__menus(s32 x, s32 y, s32 width, s32 height,
  */
 extern s32 Oam_AddSpriteAtDepth__menus(void *sprite, s32 depth) __asm__(
     "Oam_AddSpriteAtDepth"); // Returns void; see the tag.
-/* VIEW(menus): routine OamMatrix_AllocFromTransform as s32
- * OamMatrix_AllocFromTransform(struct TargetAffine *affine); affine.h has s32
- * OamMatrix_AllocFromTransform(struct AffineTransform *source); not tried:
- * OamMatrix_AllocFromTransform's bound declaration was not found. */
-extern s32 AffineMatrix_BuildForEffect__menus(
-    struct TargetAffine *affine) __asm__("OamMatrix_AllocFromTransform");
-/* VIEW(menus): routine Window_Close as void Window_Close(void *window, s32
- * mode); uiflow.h has void Window_Close(struct Window *window, s32 release);
- * not tried: Window_Close's declaration holds a FAKEMATCH tag. */
-extern void Window_Close__menus(void *window, s32 mode) __asm__("Window_Close");
 /* VIEW(menus): routine Text_DrawStringAtOffset as void
  * Text_DrawStringAtOffset(const u8 *text, struct TargetWindow *window, s32 x,
  * s32 y); text_render.h has void Text_DrawStringAtOffset(u8 *text, struct
@@ -79,35 +62,6 @@ extern void Window_Close__menus(void *window, s32 mode) __asm__("Window_Close");
 extern void
 Text_DrawStringAtOffset__menus(const u8 *text, struct TargetWindow *window,
                                s32 x, s32 y) __asm__("Text_DrawStringAtOffset");
-/* VIEW(menus): routine Text_DrawNumberInWindow as void
- * Text_DrawNumberInWindow(s32 value, s32 digits, struct TargetWindow *window,
- * s32 x, s32 y); module/window/window.h has void Text_DrawNumberInWindow(s32
- * value, s32 width, s32 output, s32 x, s32 y); not tried:
- * Text_DrawNumberInWindow's declaration holds a FAKEMATCH tag. */
-extern void
-Text_DrawNumberInWindow__menus(s32 value, s32 digits,
-                               struct TargetWindow *window, s32 x,
-                               s32 y) __asm__("Text_DrawNumberInWindow");
-/* VIEW(menus): routine Text_DrawMessageAsTiles as void
- * Text_DrawMessageAsTiles(s32 message, struct TargetWindow *window, s32 x, s32
- * y); text_render.h has void Text_DrawMessageAsTiles(s32 character, struct
- * RenderInput *work, u32 offsetX, u32 offsetY); not tried:
- * Text_DrawMessageAsTiles's bound declaration was not found. */
-extern void
-Text_DrawCharacterAtOffset__menus(s32 message, struct TargetWindow *window,
-                                  s32 x,
-                                  s32 y) __asm__("Text_DrawMessageAsTiles");
-/* VIEW(menus): routine Message_CopyExpanded as void Message_CopyExpanded(s32
- * message, u16 *text, s32 capacity); module/window/window.h has s32
- * Message_CopyExpanded(s32 key, u16 *destination, u32 capacity); not tried:
- * Message_CopyExpanded's declaration holds a FAKEMATCH tag. */
-extern void
-Message_CopyExpanded__menus(s32 message, u16 *text,
-                            s32 capacity) __asm__("Message_CopyExpanded");
-/* VIEW(menus): routine Text_ClearCanvas as void Text_ClearCanvas(void);
- * graphics.h has s32 Text_ClearCanvas(void); not tried: Text_ClearCanvas's
- * bound declaration was not found. */
-extern void Vram_ClearWindowBlock__menus(void) __asm__("Text_ClearCanvas");
 
 // The help window's column beside the aimed member, kept on screen.
 #define TARGET_HELP_COLUMN(back, width, last)                                  \
@@ -309,7 +263,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
    * no asm, 96 of 1647 instructions differ in tla-en. */
   __asm__("" : : : "r8", "r10");
 #endif
-  window = Window_Create__menus(0, 12, 30, 4, 74);
+  window = Window_Create(0, 12, 30, 4, 74);
 
   for (;;) {
     // A once-only block: its end keeps the tile reload after the sprite's
@@ -364,7 +318,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       effect.scaleY = 176;
     }
     effect.angle = 0;
-    matrix = AffineMatrix_BuildForEffect__menus(&effect);
+    matrix = OamMatrix_AllocFromTransform(&effect);
 
     if (redraw & 1) {
       targetCount = 0;
@@ -406,7 +360,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           BattleMotion_ProjectConditionalPositionFar(candidateIds[targetIndex],
                                                      &selectedPosition);
           if (conditionWindow != NULL)
-            Window_Close__menus(conditionWindow, 1);
+            Window_Close(conditionWindow, 1);
           switch (kind) {
           case 7:
 #if TLA_PATCH_2
@@ -417,30 +371,29 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             if (System_GetLanguage() == CARTRIDGE_LANGUAGE_ITALIAN) {
               if (anchor + 6 > 29)
                 helpColumn = 20;
-              conditionWindow = Window_Create__menus(helpColumn, 8, 10, 3, 6);
+              conditionWindow = Window_Create(helpColumn, 8, 10, 3, 6);
             } else if (System_GetLanguage() == CARTRIDGE_LANGUAGE_SPANISH) {
               if (anchor + 7 > 29)
                 helpColumn = 19;
-              conditionWindow = Window_Create__menus(helpColumn, 8, 11, 3, 6);
+              conditionWindow = Window_Create(helpColumn, 8, 11, 3, 6);
             } else {
               if (anchor + 5 > 29)
                 helpColumn = 21;
-              conditionWindow = Window_Create__menus(helpColumn, 8, 9, 3, 6);
+              conditionWindow = Window_Create(helpColumn, 8, 9, 3, 6);
             }
           }
 #else
             TARGET_HELP_COLUMN(4, 4, 22);
-            conditionWindow = Window_Create__menus(
-                helpColumn, 8, TARGET_SET_DJINNI_WIDTH, 3, 6);
+            conditionWindow =
+                Window_Create(helpColumn, 8, TARGET_SET_DJINNI_WIDTH, 3, 6);
 #endif
             Text_SetColor(2);
-            Text_DrawCharacterAtOffset__menus((s32)MsgSetDjinni,
-                                              conditionWindow, 0, 0);
+            Text_DrawMessageAsTiles((s32)MsgSetDjinni, conditionWindow, 0, 0);
             Text_SetColor(15);
             break;
           case 1:
             TARGET_HELP_COLUMN(7, 6, 17);
-            conditionWindow = Window_Create__menus(helpColumn, 8, 13, 3, 6);
+            conditionWindow = Window_Create(helpColumn, 8, 13, 3, 6);
 #if TLA_PATCH_2
             switch (System_GetLanguage()) {
             case CARTRIDGE_LANGUAGE_GERMAN:
@@ -461,38 +414,36 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             Text_DrawStringAtOffset__menus(gOwnerStatus_HpString,
                                            conditionWindow, 0, 0);
 #endif
-            Text_DrawNumberInWindow__menus(unit->hp, 4, conditionWindow, 16, 0);
+            Text_DrawNumberInWindow(unit->hp, 4, conditionWindow, 16, 0);
             Text_DrawStringAtOffset__menus(gOwnerStatus_SlashString,
                                            conditionWindow, 48, 0);
-            Text_DrawNumberInWindow__menus(unit->maxHp, 4, conditionWindow, 56,
-                                           0);
+            Text_DrawNumberInWindow(unit->maxHp, 4, conditionWindow, 56, 0);
             break;
           case 2:
             TARGET_HELP_COLUMN(7, 6, 17);
-            conditionWindow = Window_Create__menus(helpColumn, 8, 13, 3, 6);
+            conditionWindow = Window_Create(helpColumn, 8, 13, 3, 6);
             Text_DrawStringAtOffset__menus(gOwnerStatus_PpString,
                                            conditionWindow, 0, 0);
-            Text_DrawNumberInWindow__menus(unit->pp, 4, conditionWindow, 16, 0);
+            Text_DrawNumberInWindow(unit->pp, 4, conditionWindow, 16, 0);
             Text_DrawStringAtOffset__menus(gOwnerStatus_SlashString,
                                            conditionWindow, 48, 0);
-            Text_DrawNumberInWindow__menus(unit->maxPp, 4, conditionWindow, 56,
-                                           0);
+            Text_DrawNumberInWindow(unit->maxPp, 4, conditionWindow, 56, 0);
             break;
           case 5:
             TARGET_HELP_COLUMN(7, 5, 18);
-            conditionWindow = Window_Create__menus(helpColumn, 8, 12, 3, 6);
+            conditionWindow = Window_Create(helpColumn, 8, 12, 3, 6);
             if (unit->hp != 0)
               goto no_condition;
-            Text_DrawCharacterAtOffset__menus((s32)MsgEffectDowned,
-                                              conditionWindow, 0, 0);
+            Text_DrawMessageAsTiles((s32)MsgEffectDowned, conditionWindow, 0,
+                                    0);
             break;
           case 3:
             TARGET_HELP_COLUMN(7, 5, 18);
-            conditionWindow = Window_Create__menus(helpColumn, 8, 12, 3, 6);
+            conditionWindow = Window_Create(helpColumn, 8, 12, 3, 6);
             if (unit->poison == 0)
               goto no_condition;
-            Text_DrawCharacterAtOffset__menus((s32)MsgEffectCurePoison,
-                                              conditionWindow, 0, 0);
+            Text_DrawMessageAsTiles((s32)MsgEffectCurePoison, conditionWindow,
+                                    0, 0);
             break;
           case 4: {
             count = 0;
@@ -514,28 +465,28 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             TARGET_CONDITION_LIST_WINDOW();
             count = 0;
             if (unit->delusion != 0) {
-              Text_DrawCharacterAtOffset__menus((s32)MsgRemoveDelusion,
-                                                conditionWindow, 0, 0);
+              Text_DrawMessageAsTiles((s32)MsgRemoveDelusion, conditionWindow,
+                                      0, 0);
               count = 1;
             }
             if (unit->stun != 0) {
-              Text_DrawCharacterAtOffset__menus((s32)MsgRemoveStun,
-                                                conditionWindow, 0, count * 8);
+              Text_DrawMessageAsTiles((s32)MsgRemoveStun, conditionWindow, 0,
+                                      count * 8);
               count++;
             }
             if (unit->sleep != 0) {
-              Text_DrawCharacterAtOffset__menus((s32)MsgWakeFromSleep,
-                                                conditionWindow, 0, count * 8);
+              Text_DrawMessageAsTiles((s32)MsgWakeFromSleep, conditionWindow, 0,
+                                      count * 8);
               count++;
             }
             if (unit->psySeal != 0) {
-              Text_DrawCharacterAtOffset__menus((s32)MsgBreakPsynergySeal,
-                                                conditionWindow, 0, count * 8);
+              Text_DrawMessageAsTiles((s32)MsgBreakPsynergySeal,
+                                      conditionWindow, 0, count * 8);
               count++;
             }
             if (unit->grimReaper != 0) {
-              Text_DrawCharacterAtOffset__menus((s32)MsgDispelGrimReaper,
-                                                conditionWindow, 0, count * 8);
+              Text_DrawMessageAsTiles((s32)MsgDispelGrimReaper, conditionWindow,
+                                      0, count * 8);
               count++;
             }
             if (count == 0)
@@ -578,38 +529,38 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             TARGET_CONDITION_LIST_WINDOW();
             count = 0;
             if (unit->poison != 0) {
-              Text_DrawCharacterAtOffset__menus((s32)MsgEffectCurePoison,
-                                                conditionWindow, 0, 0);
+              Text_DrawMessageAsTiles((s32)MsgEffectCurePoison, conditionWindow,
+                                      0, 0);
               count = 1;
             }
             if (unit->delusion != 0) {
-              Text_DrawCharacterAtOffset__menus((s32)MsgRemoveDelusion,
-                                                conditionWindow, 0, count * 8);
+              Text_DrawMessageAsTiles((s32)MsgRemoveDelusion, conditionWindow,
+                                      0, count * 8);
               count++;
             }
             if (unit->stun != 0) {
-              Text_DrawCharacterAtOffset__menus((s32)MsgRemoveStun,
-                                                conditionWindow, 0, count * 8);
+              Text_DrawMessageAsTiles((s32)MsgRemoveStun, conditionWindow, 0,
+                                      count * 8);
               count++;
             }
             if (unit->sleep != 0) {
-              Text_DrawCharacterAtOffset__menus((s32)MsgWakeFromSleep,
-                                                conditionWindow, 0, count * 8);
+              Text_DrawMessageAsTiles((s32)MsgWakeFromSleep, conditionWindow, 0,
+                                      count * 8);
               count++;
             }
             if (unit->psySeal != 0) {
-              Text_DrawCharacterAtOffset__menus((s32)MsgBreakPsynergySeal,
-                                                conditionWindow, 0, count * 8);
+              Text_DrawMessageAsTiles((s32)MsgBreakPsynergySeal,
+                                      conditionWindow, 0, count * 8);
               count++;
             }
             if (unit->grimReaper != 0) {
-              Text_DrawCharacterAtOffset__menus((s32)MsgDispelGrimReaper,
-                                                conditionWindow, 0, count * 8);
+              Text_DrawMessageAsTiles((s32)MsgDispelGrimReaper, conditionWindow,
+                                      0, count * 8);
               count++;
             }
             if (unit->haunt != 0) {
-              Text_DrawCharacterAtOffset__menus((s32)MsgDispelEvilSpirit,
-                                                conditionWindow, 0, count * 8);
+              Text_DrawMessageAsTiles((s32)MsgDispelEvilSpirit, conditionWindow,
+                                      0, count * 8);
               count++;
             }
             if (count != 0)
@@ -617,8 +568,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           }
           no_condition:
             Text_SetColor(2);
-            Text_DrawCharacterAtOffset__menus((s32)MsgEffectNone,
-                                              conditionWindow, 0, 0);
+            Text_DrawMessageAsTiles((s32)MsgEffectNone, conditionWindow, 0, 0);
             Text_SetColor(15);
             break;
           }
@@ -649,7 +599,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           namePosition.x = 224 - width;
         if (namePosition.x < 0)
           namePosition.x = 0;
-        Vram_ClearWindowBlock__menus();
+        Text_ClearCanvas();
         Text_DrawWideStringAtOffset(targetName, window, namePosition.x, 4);
       }
       redraw &= ~1;
@@ -757,8 +707,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   wait(1);
   VramCache_FreeEntry(cursorSlot);
   if (conditionWindow != NULL)
-    Window_Close__menus(conditionWindow, 1);
-  Window_Close__menus(window, 1);
+    Window_Close(conditionWindow, 1);
+  Window_Close(window, 1);
   BattleHighlight_SetModesFar(candidateIds, 0);
   NAVIGATION->targetViewOffset = 0;
   wait(1);

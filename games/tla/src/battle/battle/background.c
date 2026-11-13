@@ -128,19 +128,12 @@ void BattleBackground_Init(void) {
 
 void BattleBackground_Free(void) { HeapSlot_Release(40); }
 
-/* VIEW(f11e3ac): routine Resource_GetTableEntry as u8
- * *Resource_GetTableEntry(s32 id); resource.h has void
- * *Resource_GetTableEntry(s32 resourceId); not tried: Resource_GetTableEntry's
- * bound declaration was not found. */
-extern u8 *
-Resource_GetTableEntry__presentation(s32 id) __asm__("Resource_GetTableEntry");
-
 // Loads a battle backdrop: its picture decoded into BG VRAM, its palette
 // (darkened by level steps of 1/60 when level is not negative), the tile
 // table and tilemap, and the HBlank scroll the first time.
 void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
   struct BattlePresentationTransition *view = Ram_HeapSlots->transitionWork;
-  u8 *data = Resource_GetTableEntry__presentation(resource);
+  u8 *data = Resource_GetTableEntry(resource);
   struct BattleBackdropWork *session =
       (struct BattleBackdropWork *)Ram_HeapSlots->battleWork;
   ModelDecoder decode;
@@ -243,19 +236,6 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   scanlines->page ^= 1;
 }
 
-/* VIEW(f11e3ac): routine Projection_Set as void Projection_Set(s32 span, u32
- * depth, s32 range); module/system/system.h has void Projection_Set(u32 value0,
- * u32 value1, u32 value2); not tried: Projection_Set's bound declaration was
- * not found. */
-extern void Projection_Set__presentation(s32 span, u32 depth,
-                                         s32 range) __asm__("Projection_Set");
-/* VIEW(f11e3ac): routine SceneTransform_ApplyPosition as void
- * SceneTransform_ApplyPosition(s32 *position); module/system/system.h has void
- * SceneTransform_ApplyPosition(const s32 *pos); not tried:
- * SceneTransform_ApplyPosition's bound declaration was not found. */
-extern void SceneTransform_ApplyPosition__presentation(s32 *position) __asm__(
-    "SceneTransform_ApplyPosition");
-
 #ifdef UBFIX
 void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) {
 #else
@@ -286,9 +266,9 @@ void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
   sourceBounds[2] = 0;
 
   result = Iwram_RatioMulQ14(span, alpha);
-  Projection_Set__presentation(span, result, span * 2);
+  Projection_Set(span, result, span * 2);
   Transform_Reset();
-  SceneTransform_ApplyPosition__presentation(pos);
+  SceneTransform_ApplyPosition(pos);
   Transform_ApplyYaw((s16)scene->yaw);
   Transform_ApplyPitch((s16)scene->pitch);
   renderBounds[0] = 0;
@@ -306,7 +286,7 @@ void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
   half = scale * 0xff;
   width = half * 2;
   result = Iwram_RatioMulQ14(width, alpha);
-  Projection_Set__presentation(width, result, half * 4);
+  Projection_Set(width, result, half * 4);
 }
 
 // BattleCamera_SetView: The Broken Seal's function of that name
@@ -337,9 +317,9 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   sourceBounds[2] = 0;
 
   result = Iwram_RatioMulQ14(span, alpha);
-  Projection_Set__presentation(span, result, span * 2);
+  Projection_Set(span, result, span * 2);
   Transform_Reset();
-  SceneTransform_ApplyPosition__presentation(pos);
+  SceneTransform_ApplyPosition(pos);
   Transform_ApplyYaw((s16)scene->yaw);
   Transform_ApplyPitch((s16)scene->pitch);
   {
@@ -364,7 +344,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   half = scale * 0xff;
   width = half * 2;
   result = Iwram_RatioMulQ14(width, alpha);
-  Projection_Set__presentation(width, result, half * 4);
+  Projection_Set(width, result, half * 4);
 }
 
 // Battle presentation: center the camera between two objects.
@@ -927,24 +907,22 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
   work->ready = 0;
   work->originPending = 0;
   Iwram_ClearWordsEntry(Ram_HeapSlots->battleFxWork[1], 0x4000);
-  data = Resource_GetTableEntry__presentation((s32)&ResourceId_BlueRingSheet);
+  data = Resource_GetTableEntry((s32)&ResourceId_BlueRingSheet);
   Iwram_CopyWordsEntry((void *)BG_PLTT, data, 128);
   data += 128;
   Decompress_TaggedLz(data, work);
   switch (mode) {
   case 0:
-    data =
-        Resource_GetTableEntry__presentation((s32)&ResourceId_YellowPaletteB);
+    data = Resource_GetTableEntry((s32)&ResourceId_YellowPaletteB);
     break;
   case 1:
-    data = Resource_GetTableEntry__presentation((s32)&ResourceId_BlueRingSheet);
+    data = Resource_GetTableEntry((s32)&ResourceId_BlueRingSheet);
     break;
   case 2:
-    data = Resource_GetTableEntry__presentation((s32)&ResourceId_RedPaletteC);
+    data = Resource_GetTableEntry((s32)&ResourceId_RedPaletteC);
     break;
   default:
-    data =
-        Resource_GetTableEntry__presentation((s32)&ResourceId_VioletPaletteD);
+    data = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteD);
     break;
   }
   Dma_Set(data, (void *)BG_PLTT, 0x84000000 | 32, REG_DMA3);

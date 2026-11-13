@@ -51,4 +51,6 @@
 #include "system/io_reg.h"
 #include "map.h"
 
+void FieldEffect_AdvanceMotion(union FieldObject *object);
+
 #endif // ALCHEMY_RADIAL_INTERNAL_H

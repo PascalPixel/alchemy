@@ -45,11 +45,6 @@ void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f15cde8): routine BattleObject_GetFar as void **BattleObject_GetFar(s32
- * objectId); motobj.h has struct BattleObj *BattleObject_GetFar(s32 objectId);
- * not tried: BattleObject_GetFar's bound declaration was not found. */
-extern void **
-GetBattleObjectSlotFar__f15cde8(s32 objectId) __asm__("BattleObject_GetFar");
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
@@ -314,7 +309,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         }
       }
       for (i = 0; i != effect->count; i++) {
-        ((s32 *)*GetBattleObjectSlotFar__f15cde8(effect->actors[i]))[3] = 0;
+        ((s32 *)BattleObject_GetFar(effect->actors[i])->object)[3] = 0;
       }
       REG_BG2CNT = 0x787;
     }
@@ -409,7 +404,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         ((struct AzulObject *)work->objects[i])->shape = 0x4000;
       }
       for (i = 0; i != effect->count; i++) {
-        s32 *actor = *GetBattleObjectSlotFar__f15cde8(effect->actors[i]);
+        s32 *actor = BattleObject_GetFar(effect->actors[i])->object;
 
         BattleEffect_StartActorMotion(effect->actors[i], 1, 0, 0, 0x40000, 100);
         actor[18] = 0;
@@ -559,16 +554,17 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
     }
     if (frame == 10 || frame == 186) {
       for (i = 0; i != effect->count; i++) {
-        void **slot = GetBattleObjectSlotFar__f15cde8(effect->actors[i]);
-        s32 *actor = slot[0];
+        struct BattleObj *slot = BattleObject_GetFar(effect->actors[i]);
+        s32 *actor = slot->object;
         void *record;
 
         if (frame == 186) {
           ReleaseBattleObjectRecordsFar(effect->actors[i]);
         }
         if (frame == 10) {
-          for (j = 0; (record = GetMotionRecordFar(slot[0], j)) != 0; j++) {
-            Sprite_RemoveAnimationFar(record, (s32)slot[9]);
+          for (j = 0; (record = GetMotionRecordFar(slot->object, j)) != 0;
+               j++) {
+            Sprite_RemoveAnimationFar(record, (s32)slot->effectEntry);
           }
           BattleEffect_TintBattler(effect->actors[i], 9, 5, i, 8);
           BattleEffect_StartActorMotion(effect->actors[i], 1, 0, 0,
@@ -584,7 +580,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
     }
     if (frame > 9) {
       for (i = 0; i != effect->count; i++) {
-        s32 *actor = *GetBattleObjectSlotFar__f15cde8(effect->actors[i]);
+        s32 *actor = BattleObject_GetFar(effect->actors[i])->object;
 
         actor[10] = actor[10] * 60 / 64;
       }

@@ -58,29 +58,11 @@ struct PendingEvent__f0e92b4 {
 
 extern char ResourceId_WaterSplash;
 
-/* VIEW(f0e92b4): routine Scene_FindPsynergyTrigger as struct
- * PendingEvent__f0e92b4 *Scene_FindPsynergyTrigger(u32 kind, s32 entry, s32
- * arg); f0e5d5c has void *Scene_FindPsynergyTrigger(u32 kind, s32 entry, s32
- * arg); not tried: Scene_FindPsynergyTrigger's bound declaration was not found.
- */
-extern struct PendingEvent__f0e92b4 *
-Func_080ce458__f0e92b4(u32 kind, s32 entry,
-                       s32 arg) __asm__("Scene_FindPsynergyTrigger");
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 s32 Actor_GetSpriteIdFar(struct Actor *object);
 void Animation_ApplyChildValueFar(void *sprite, s32 value);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
-/* VIEW(f0e92b4): routine EffectSprite_DrawAtWorldPosition as void
- * EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct
- * SplashParticle *particle); f0e4a34 has void
- * EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct
- * GlowParticle *particle); not tried: EffectSprite_DrawAtWorldPosition's marker
- * was not found. */
-extern void EffectSprite_DrawAtWorldPosition__f0e92b4(
-    struct EffectSprite *sprite,
-    struct SplashParticle
-        *particle) __asm__("EffectSprite_DrawAtWorldPosition");
 void BattleEffect_ShiftRowsDown(u8 *base, s32 stride, s32 rows);
 
 void FieldPsynergy_GrindOnTarget(void) {
@@ -119,7 +101,7 @@ void FieldPsynergy_GrindOnTarget(void) {
   next = 0;
   mode = 0;
   selector = Scene_SelectPsynergyTarget(scene->fieldKind);
-  pending = Func_080ce458__f0e92b4(0x50000005, scene->fieldKind, selector);
+  pending = Scene_FindPsynergyTrigger(0x50000005, scene->fieldKind, selector);
   if (child != NULL) {
     if (animation != NULL) {
       if (animation->width * animation->height <= 0x800) {
@@ -218,7 +200,7 @@ void FieldPsynergy_GrindOnTarget(void) {
           sprite->oam.index = tile + 16;
         if (particle->timer == 22)
           sprite->oam.index = tile + 24;
-        EffectSprite_DrawAtWorldPosition__f0e92b4(sprite, particle);
+        EffectSprite_DrawAtWorldPosition(sprite, particle);
         particle->timer++;
       }
     }

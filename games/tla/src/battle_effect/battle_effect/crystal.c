@@ -41,13 +41,6 @@ void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
 void Transform_ApplyYaw(s32 angle);
 
-/* VIEW(f16c274): routine BattleObject_GetFar as struct BattleObjectPosition
- * **BattleObject_GetFar(s32 objectId); motobj.h has struct BattleObj
- * *BattleObject_GetFar(s32 objectId); not tried: BattleObject_GetFar's bound
- * declaration was not found. */
-extern struct BattleObjectPosition **
-GetBattleObjectSlotFar__f16c274(s32 objectId) __asm__("BattleObject_GetFar");
-
 extern char ResourceId_Data0FB;
 extern char ResourceId_VenusDjinnSmallSheet;
 extern char ResourceId_BlastSheet;
@@ -120,7 +113,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
     work->transferValue = 75;
     Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
     camera = Ram_HeapSlots->cameraWork;
-    target = *GetBattleObjectSlotFar__f16c274(effect->actors[0]);
+    target = BattleObject_GetFar(effect->actors[0])->object;
 
     for (frame = 0; frame != CRYSTAL_FRAMES; frame++) {
       if (frame == 0) {

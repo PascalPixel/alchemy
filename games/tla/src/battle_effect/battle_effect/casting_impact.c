@@ -227,13 +227,6 @@ void SummonEffect_RunCanvasMode1(void *action);
 void SummonEffect_RunCanvasMode2(void *action);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 
-/* VIEW(fxdisp): routine BattleEffect_PackTileRows as void
- * BattleEffect_PackTileRows(void *, void *, s32, s32); the definition has void
- * BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride); not tried:
- * BattleEffect_PackTileRows's bound declaration was not found. */
-extern void
-Graphics_PackTileRows__fxdisp(void *, void *, s32,
-                              s32) __asm__("BattleEffect_PackTileRows");
 void Canvas_BlitAtFoot(void *, s32, s32, s32);
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode);
@@ -307,7 +300,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
   Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work->frames, 1,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, buffer, 1, 0);
-  Graphics_PackTileRows__fxdisp(buffer, work->frames + 0x5100, 40, 0x120);
+  BattleEffect_PackTileRows(buffer, work->frames + 0x5100, 40, 0x120);
 
   if (kind == 5 || kind == 53 || kind == 78) {
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, buffer, 1, 0);

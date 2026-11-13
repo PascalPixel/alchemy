@@ -44,12 +44,6 @@ void Actor_MoveHalfwayTowardTarget(struct Actor *obj) {
 #endif
 
 struct Actor *Actor_GetById(u32 objectId);
-/* VIEW(motes): routine Actor_CreateFar as struct Actor *Actor_CreateFar(s32
- * kind, s32 x, s32 y, s32 z); visual_attributes has struct
- * BattleEffectWatchedObject *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
- * not tried: Actor_CreateFar's bound declaration was not found. */
-extern struct Actor *Func_080200c0__motes(s32 kind, s32 x, s32 y,
-                                          s32 z) __asm__("Actor_CreateFar");
 
 void Djinn_RunBattleStartHop(s32 djinniId) {
   struct Actor *djinni;
@@ -114,7 +108,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   sharedSprite = NULL;
   prev = djinni;
   for (i = 0; i < 8; i++) {
-    copy = Func_080200c0__motes(sprite, djinni->x, djinni->y, djinni->z);
+    copy = Actor_CreateFar(sprite, djinni->x, djinni->y, djinni->z);
     // DEAD: nothing reads copies; the source keeps the store.
     copies[i] = copy;
     if (copy != NULL) {

@@ -329,17 +329,12 @@ s32 ActorScript_TestFlag(struct ScriptInterpreter *interpreter) {
   return done;
 }
 
-/* VIEW(f02493c): routine GameFlag_Set as s32 GameFlag_Set(s32); flag_call.h has
- * void GameFlag_Set(s32 flag); not tried: GameFlag_Set's bound declaration was
- * not found. */
-extern s32 GameFlag_SetBit__f02493c(s32) __asm__("GameFlag_Set");
-
 s32 ActorScript_SetFlagAndTest(struct ScriptInterpreter *interpreter) {
   s32 value;
 
   value = interpreter->script[interpreter->cursor + 1];
   interpreter->conditionResult = GameFlag_Get(value);
-  GameFlag_SetBit__f02493c(value);
+  GameFlag_Set(value);
   interpreter->cursor += 2;
   return 1;
 }
@@ -362,7 +357,7 @@ s32 ActorScript_ToggleFlagAndTest(struct ScriptInterpreter *interpreter) {
   if (interpreter->conditionResult == 1)
     GameFlag_Clear(value);
   else
-    GameFlag_SetBit__f02493c(value);
+    GameFlag_Set(value);
   interpreter->cursor += 2;
   return 1;
 }
@@ -755,15 +750,6 @@ s32 Actor_ApproachWatchedActor(struct Actor *object) {
 
 struct ScriptObjectEntry;
 
-/* VIEW(offset): routine ActorScript_CheckOverlap as s32
- * ActorScript_CheckOverlap(struct ScriptObjectEntry *object, s32 *position);
- * the definition has s32 ActorScript_CheckOverlap(struct Actor *object, s32
- * *values); not tried: ActorScript_CheckOverlap's bound declaration was not
- * found. */
-extern s32 ScriptObject_CheckOverlap__offset(
-    struct ScriptObjectEntry *object,
-    s32 *position) __asm__("ActorScript_CheckOverlap");
-
 /// SC_WANDER(base, range, limit), as The Broken Seal's: walks to a random
 /// point base to base + range away within 90 degrees of its heading, that
 /// nothing blocks, and within limit pixels of home.
@@ -797,8 +783,8 @@ retry:
     radius = base + Iwram_MulQ16(Random16(), range);
     heading = object->scriptValue + (Random16() >> 2) - (Random16() >> 2);
     Vector_AddPolarOffset(radius, heading, &pos);
-    if (ScriptObject_CheckOverlap__offset((struct ScriptObjectEntry *)object,
-                                          (s32 *)&pos) != 0)
+    if (ActorScript_CheckOverlap((struct ScriptObjectEntry *)object,
+                                 (s32 *)&pos) != 0)
       goto retry;
     if (MapGrid_CheckCollision((struct Actor *)object, &pos) != 0)
       goto retry;
@@ -896,8 +882,8 @@ s32 ActorScript_WanderNearHome(struct ActorScriptView *object) {
       candidatePosition.y = object->y;
       candidatePosition.z = object->z;
       Vector_AddPolarOffset(0x80000, heading, &candidatePosition);
-      if (ScriptObject_CheckOverlap__offset((struct ScriptObjectEntry *)object,
-                                            (s32 *)&candidatePosition) != 0)
+      if (ActorScript_CheckOverlap((struct ScriptObjectEntry *)object,
+                                   (s32 *)&candidatePosition) != 0)
         goto roam;
       candidatePosition.x = object->x;
       candidatePosition.y = object->y;
@@ -958,8 +944,8 @@ back:
     candidatePosition.y = object->y;
     candidatePosition.z = object->z;
     Vector_AddPolarOffset(0x80000, heading, &candidatePosition);
-    if (ScriptObject_CheckOverlap__offset((struct ScriptObjectEntry *)object,
-                                          (s32 *)&candidatePosition) != 0)
+    if (ActorScript_CheckOverlap((struct ScriptObjectEntry *)object,
+                                 (s32 *)&candidatePosition) != 0)
       goto back;
     candidatePosition.x = object->x;
     candidatePosition.y = object->y;

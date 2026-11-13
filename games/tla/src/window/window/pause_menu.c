@@ -86,22 +86,6 @@ void Render_SetTilemapFlagBitRect(const struct Window *object, s32 x, s32 y,
 extern struct RenderInput *
 Window_Create__flag_bit_rect(s32 x, s32 y, s32 width, s32 height,
                              s32 style) __asm__("Window_Create");
-/* VIEW(flag_bit_rect): routine Text_DrawStringInWindow as void
- * Text_DrawStringInWindow(u8 *text, struct RenderInput *window, u32 x, u32 y);
- * handle_selection_row_input has void Text_DrawStringInWindow(s32 text, s32
- * window, s32 x, s32 y); not tried: Text_DrawStringInWindow's declaration holds
- * a FAKEMATCH tag. */
-extern void Text_DrawStringInWindow__flag_bit_rect(
-    u8 *text, struct RenderInput *window, u32 x,
-    u32 y) __asm__("Text_DrawStringInWindow");
-/* VIEW(flag_bit_rect): routine Text_DrawNumberInWindow as void
- * Text_DrawNumberInWindow(s32 value, s32 width, struct RenderInput *window, s32
- * x, s32 y); menus has void Text_DrawNumberInWindow(s32 value, s32 digits,
- * struct TargetWindow *window, s32 x, s32 y); not tried:
- * Text_DrawNumberInWindow's declaration holds a FAKEMATCH tag. */
-extern void Text_DrawNumberInWindow__flag_bit_rect(
-    s32 value, s32 width, struct RenderInput *window, s32 x,
-    s32 y) __asm__("Text_DrawNumberInWindow");
 
 /// Browses pages of item, Psynergy and status-pattern icons, suspending the
 /// field's actor system while the browser owns its window and cache entries.
@@ -157,22 +141,17 @@ s32 DebugBrowser_Icons(void) {
       Window_Close(window, 2);
       window = Window_Create__flag_bit_rect(10, 0, 18, 12, 2);
       if (mode == 0)
-        Text_DrawStringInWindow__flag_bit_rect(gWorkspace_ItemTitle, window, 0,
-                                               0);
+        Text_DrawStringInWindow(gWorkspace_ItemTitle, window, 0, 0);
       else if (mode == 1)
-        Text_DrawStringInWindow__flag_bit_rect(gWorkspace_EnergyTitle, window,
-                                               0, 0);
+        Text_DrawStringInWindow(gWorkspace_EnergyTitle, window, 0, 0);
       else
-        Text_DrawStringInWindow__flag_bit_rect(gWorkspace_StatusTitle, window,
-                                               0, 0);
-      Text_DrawStringInWindow__flag_bit_rect(gWorkspace_PageLabel, window, 0,
-                                             8);
-      Text_DrawNumberInWindow__flag_bit_rect(page, 0, window, 40, 8);
+        Text_DrawStringInWindow(gWorkspace_StatusTitle, window, 0, 0);
+      Text_DrawStringInWindow(gWorkspace_PageLabel, window, 0, 8);
+      Text_DrawNumberInWindow(page, 0, window, 40, 8);
       base = page << 5;
-      Text_DrawNumberInWindow__flag_bit_rect(base, 3, window, 64, 8);
-      Text_DrawStringInWindow__flag_bit_rect(gWorkspace_RangeDash, window, 88,
-                                             8);
-      Text_DrawNumberInWindow__flag_bit_rect(base + 31, 3, window, 96, 8);
+      Text_DrawNumberInWindow(base, 3, window, 64, 8);
+      Text_DrawStringInWindow(gWorkspace_RangeDash, window, 88, 8);
+      Text_DrawNumberInWindow(base + 31, 3, window, 96, 8);
       for (i = 0; i <= 31; i++) {
         slot = -1;
         row = i / 8;
@@ -197,13 +176,6 @@ s32 DebugBrowser_Icons(void) {
   Ram_HeapSlots->objectSystem->suspended = 0;
   return 0;
 }
-
-/* VIEW(flag_bit_rect): routine WindowSprite_PrepareForRedraw as void
- * WindowSprite_PrepareForRedraw(struct RenderInput *window); resource_work has
- * void WindowSprite_PrepareForRedraw(struct Window *); not tried:
- * WindowSprite_PrepareForRedraw's declaration holds a FAKEMATCH tag. */
-extern void WindowSprite_PrepareForRedraw__flag_bit_rect(
-    struct RenderInput *window) __asm__("WindowSprite_PrepareForRedraw");
 
 /// A debug browser of the portraits: left and right step through
 /// gPortrait_CharacterMap and then gPortrait_SpriteMap, L and R by ten, each
@@ -264,14 +236,14 @@ s32 DebugBrowser_Portraits(void) {
     if (redraw) {
       redraw = 0;
       index = (index + total) % total;
-      WindowSprite_PrepareForRedraw__flag_bit_rect(window);
+      WindowSprite_PrepareForRedraw(window);
       if (index < count)
         glyph = gPortrait_CharacterMap[index * 2 + 1];
       else
         glyph = gPortrait_SpriteMap[(index - count) * 2 + 1] + 128;
       slot = *(u16 *)((u8 *)work + slotOffset);
       Icon_LoadWithPalette(glyph, 0, &slot, &tile, palette, 1);
-      Text_DrawNumberInWindow__flag_bit_rect(index, 2, window, 0, 0);
+      Text_DrawNumberInWindow(index, 2, window, 0, 0);
       Text_DrawMessageAsTiles(index + (s32)MsgTestName, window, 24, 0);
     }
     wait(1);

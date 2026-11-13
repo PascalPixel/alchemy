@@ -57,12 +57,6 @@ void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(summon_effects): routine BattleObject_GetFar as void
- * **BattleObject_GetFar(s32 objectId); motobj.h has struct BattleObj
- * *BattleObject_GetFar(s32 objectId); not tried: BattleObject_GetFar's bound
- * declaration was not found. */
-extern void **GetBattleObjectSlotFar__summon_effects(s32 objectId) __asm__(
-    "BattleObject_GetFar");
 
 void wait(s32 frames);
 u32 Random16(void);
@@ -187,7 +181,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   meshA = work->sheet + 0x5f40;
   meshB = work->sheet + 0x6340;
-  caster = *GetBattleObjectSlotFar__summon_effects(effect->actor);
+  caster = BattleObject_GetFar(effect->actor)->object;
   x = 0;
   z = 0;
   scale = 0x10000;
@@ -374,7 +368,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       list2[1] = 255;
       BattleActor_SpawnObjectsForListFar(list2, 0);
       gCameraSceneParameters[4] = 556;
-      target = *GetBattleObjectSlotFar__summon_effects(effect->actors[0]);
+      target = BattleObject_GetFar(effect->actors[0])->object;
       target[2] = zero;
       target[4] = zero;
       work->transferMode = 2;

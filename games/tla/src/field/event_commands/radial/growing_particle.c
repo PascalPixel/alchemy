@@ -57,14 +57,6 @@ void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
                            s32 action);
 void FieldPsynergy_WatchSandGround(void);
 extern char ResourceId_DustPuffA;
-/* VIEW(growing_particle): routine Sand_SpawnGrain as void Sand_SpawnGrain(void
- * *sprite, void *particle, s32 index, s32 tiles, s32 high); the definition has
- * void Sand_SpawnGrain(struct EffectSprite__f0e446c *sprite, struct
- * EffectParticle *particle, s32 unused, s32 tiles, s32 high); not tried:
- * Sand_SpawnGrain's bound declaration was not found. */
-extern void
-Func_080e45a8__growing_particle(void *sprite, void *particle, s32 index,
-                                s32 tiles, s32 high) __asm__("Sand_SpawnGrain");
 /* VIEW(growing_particle): routine Sand_InitLeaderSprite as void
  * Sand_InitLeaderSprite(void *sprite, s32 tiles); the definition has void
  * Sand_InitLeaderSprite(struct EffectSprite__f0e446c *sprite, s32 tiles); not
@@ -80,13 +72,6 @@ void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
 void Actor_SetFirstSpriteAnimationFar(struct Actor *object, s32 index);
 void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
 struct Actor *Actor_GetById(u32 objectId);
-/* VIEW(growing_particle): routine Scene_FindPsynergyTrigger as struct
- * PendingEvent *Scene_FindPsynergyTrigger(u32 filter, s32 kind, s32 selector);
- * battle.h has struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32
- * kind, s32 selector); not tried: Scene_FindPsynergyTrigger's bound declaration
- * was not found. */
-extern struct PendingEvent *Func_080ce458__growing_particle(
-    u32 filter, s32 kind, s32 selector) __asm__("Scene_FindPsynergyTrigger");
 
 void FieldPsynergy_EndSand(void) {
   u8 *work = HeapSlot_Alloc(92, 0x192c);
@@ -123,8 +108,8 @@ void FieldPsynergy_EndSand(void) {
   delay = 0;
   particleSprite = work + 0x800;
   for (; i < 64; i++) {
-    Func_080e45a8__growing_particle(particleSprite, particle, i, particleTiles,
-                                    *(s16 *)(event + 0xd48));
+    Sand_SpawnGrain(particleSprite, particle, i, particleTiles,
+                    *(s16 *)(event + 0xd48));
     *(s32 *)(particle + 24) = delay;
     particleSprite += 40;
     delay -= 2;
@@ -201,7 +186,7 @@ void FieldPsynergy_EndSand(void) {
       }
       if (*(s16 *)(event + 0xd48) == 0)
         Field_RunPsynergyEvent(
-            Func_080ce458__growing_particle(
+            Scene_FindPsynergyTrigger(
                 0x40000005, *(s16 *)(effect + 30),
                 Scene_SelectPsynergyTarget(*(s16 *)(effect + 30))),
             *(s16 *)(effect + 24), -1);

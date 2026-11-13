@@ -13,11 +13,6 @@ void Field_StartColorTransition(s32 frames, s32 color);
 void Camera_WorldToScreen(s32 *position);
 void Actor_ArmCallback(s32 id, s32 value, s32 flags);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-/* VIEW(f0ea14c): routine SummonTablet_CyclePictures as void
- * SummonTablet_CyclePictures(void); the definition has void
- * SummonTablet_CyclePictures(struct Actor *object); not tried:
- * SummonTablet_CyclePictures's bound declaration was not found. */
-extern void Func_080e9e8c__f0ea14c(void) __asm__("SummonTablet_CyclePictures");
 void SummonTablet_UpdateMotes(void);
 
 /// Plays a summon tablet's reading (a treasure of type 132, "examined the
@@ -109,7 +104,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
   Actor_SelectAnimationFar(target, 2);
   Event_Wait(60);
   target->timer = 0;
-  target->update = Func_080e9e8c__f0ea14c;
+  target->update = SummonTablet_CyclePictures;
   Sound_PlayFar(142);
   Event_Wait(80);
   Actor_StartScriptFar(target, Data_080f1040);

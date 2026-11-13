@@ -17,15 +17,6 @@
 extern struct LinkSignature
     gLinkPeerSignatures__menus[] __asm__("gLinkPeerSignatures");
 
-/* VIEW(countdown): routine Text_DrawNumberInWindow as void
- * Text_DrawNumberInWindow(s32 value, s32 width, s32 handle, s32 arg3, s32
- * arg4); menus has void Text_DrawNumberInWindow(s32 value, s32 digits, struct
- * TargetWindow *window, s32 x, s32 y); not tried: Text_DrawNumberInWindow's
- * declaration holds a FAKEMATCH tag. */
-extern void
-Text_DrawNumberInWindow__countdown(s32 value, s32 width, s32 handle, s32 arg3,
-                                   s32 arg4) __asm__("Text_DrawNumberInWindow");
-
 void UpdateLinkSessionCountdown(void) {
   struct LinkCountdownState *state =
       ((struct LinkCountdownState **)Ram_HeapSlots)[57];
@@ -121,51 +112,22 @@ void UpdateLinkSessionCountdown(void) {
       Sound_PlayFar(108);
 
     if (state->displayHandle != 0)
-      Text_DrawNumberInWindow__countdown(seconds, 2, state->displayHandle, 16,
-                                         8);
+      Text_DrawNumberInWindow(seconds, 2, state->displayHandle, 16, 8);
   }
 
 done:
   return;
 }
 
-/* VIEW(menus): routine Text_FillCanvasBackground as unsigned char
- * Text_FillCanvasBackground(void); module/window/window.h has void
- * Text_FillCanvasBackground(void); not tried: Text_FillCanvasBackground's bound
- * declaration was not found. */
-extern unsigned char
-Text_FillCanvasBackground__menus(void) __asm__("Text_FillCanvasBackground");
-/* VIEW(countdown): routine Text_DrawWideStringAtOffset as void
- * Text_DrawWideStringAtOffset(s16 *, s32, s32, s32); menus has void
- * Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x,
- * s32 y); not tried: Text_DrawWideStringAtOffset's declaration holds a
- * FAKEMATCH tag. */
-extern void Text_DrawWideStringAtOffset__countdown(
-    s16 *, s32, s32, s32) __asm__("Text_DrawWideStringAtOffset");
-
 // The Japanese edition decodes the message (Message_DecodeRaw) into at most 32
 // halfwords; the others copy its text (Message_CopyExpanded) into at most 52.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define BATTLE_MENU_MESSAGE_CAPACITY 52
-#define BATTLE_MENU_MESSAGE_COPY Message_CopyExpanded__countdown
+#define BATTLE_MENU_MESSAGE_COPY Message_CopyExpanded
 #else
 #define BATTLE_MENU_MESSAGE_CAPACITY 32
 #define BATTLE_MENU_MESSAGE_COPY Message_DecodeRaw
 #endif
-
-/* VIEW(countdown): routine Window_Create as s32 Window_Create(s32, s32, s32,
- * s32, s32); menus has struct TargetWindow *Window_Create(s32 x, s32 y, s32
- * width, s32 height, s32 flags); not tried: Window_Create's declaration holds a
- * FAKEMATCH tag. */
-extern s32 Window_Create__countdown(s32, s32, s32, s32,
-                                    s32) __asm__("Window_Create");
-
-/* VIEW(countdown): routine Message_CopyExpanded as s32
- * Message_CopyExpanded(s32, s16 *, s32); menus has void
- * Message_CopyExpanded(s32 message, u16 *text, s32 capacity); not tried:
- * Message_CopyExpanded's declaration holds a FAKEMATCH tag. */
-extern s32 Message_CopyExpanded__countdown(s32, s16 *,
-                                           s32) __asm__("Message_CopyExpanded");
 
 /// Tests whether the party may not run from this battle: battle types 3 and
 /// 4 (the battles an event starts, and link battles; see
@@ -195,11 +157,11 @@ s32 Battle_RefuseFlee(void) {
   }
   if (result != 0) {
     attrs = 42;
-    work = Window_Create__countdown(0, 7, 30, 4, attrs);
-    Text_FillCanvasBackground__menus();
+    work = Window_Create(0, 7, 30, 4, attrs);
+    Text_FillCanvasBackground();
     BATTLE_MENU_MESSAGE_COPY((s32)&MsgNoTimeToRun, buffer,
                              BATTLE_MENU_MESSAGE_CAPACITY);
-    Text_DrawWideStringAtOffset__countdown(buffer, work, 0, 4);
+    Text_DrawWideStringAtOffset(buffer, work, 0, 4);
     do {
       wait(1);
     } while ((gInput.pressed & (KEY_A | KEY_B)) == 0 &&

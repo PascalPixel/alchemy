@@ -22,14 +22,6 @@ struct Work080e6400 {
 };
 
 void Picture_ShiftColumnsByWave(u8 *source, u8 *destination, s32 phase);
-/* VIEW(f0e6400): routine EffectSprite_DrawAtWorldPosition as void
- * EffectSprite_DrawAtWorldPosition(struct ScreenSprite *sprite, s32 *position);
- * f0e4a34 has void EffectSprite_DrawAtWorldPosition(struct EffectSprite
- * *sprite, struct GlowParticle *particle); not tried:
- * EffectSprite_DrawAtWorldPosition's marker was not found. */
-extern void EffectSprite_DrawAtWorldPosition__f0e6400(
-    struct ScreenSprite *sprite,
-    s32 *position) __asm__("EffectSprite_DrawAtWorldPosition");
 
 #define NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 
@@ -119,7 +111,7 @@ void Scoop_Update(void) {
       for (i = 0, particle = work->particles; i < 64; i++, particle++) {
         if (particle->timer >= 0 && particle->timer < 45) {
           sprite = &work->sprites[i];
-          EffectSprite_DrawAtWorldPosition__f0e6400(sprite, particle);
+          EffectSprite_DrawAtWorldPosition(sprite, particle);
           if (particle->timer < 42) {
             particle->y -= Q16_ONE;
             jitter = Random16();
@@ -910,7 +902,7 @@ void Teleport_PlaySparks(void) {
       age = particle->age;
       if (age >= 0) {
         if ((u32)age < 20) {
-          EffectSprite_DrawAtWorldPosition__f0e6400(sprite, particle);
+          EffectSprite_DrawAtWorldPosition(sprite, particle);
           // Reread in each arm: the two calls share one bl only this way.
           if (i & 1) {
             BattleEffect_IntegrateVector3(&particle->x, 63, 0x8000);
@@ -1529,7 +1521,7 @@ void FieldPsynergy_UpdateUnnamed28(void) {
         pos[0] = actor->x + entry->x;
         pos[1] = actor->y + entry->y;
         pos[2] = actor->z + entry->z;
-        EffectSprite_DrawAtWorldPosition__f0e6400(sprite, pos);
+        EffectSprite_DrawAtWorldPosition(sprite, pos);
         timer = entry->timer;
       }
       if ((entry->timer = timer + 1) == 16)

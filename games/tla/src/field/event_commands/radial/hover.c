@@ -300,14 +300,6 @@ struct MoteWork {
 };
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
-/* VIEW(f0e9af4): routine EffectSprite_DrawAtWorldPosition as void
- * EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct Mote
- * *mote); f0e92b4 has void EffectSprite_DrawAtWorldPosition(struct EffectSprite
- * *sprite, struct SplashParticle *particle); not tried:
- * EffectSprite_DrawAtWorldPosition's marker was not found. */
-extern void EffectSprite_DrawAtWorldPosition__f0e9af4(
-    struct EffectSprite *sprite,
-    struct Mote *mote) __asm__("EffectSprite_DrawAtWorldPosition");
 
 /// Task of SummonTablet_PlayRunes: moves and draws the motes.
 void SummonTablet_UpdateMotes(void) {
@@ -372,7 +364,7 @@ void SummonTablet_UpdateMotes(void) {
   for (i = 31; i >= 0; i--, sprite++, mote++) {
     if ((u32)mote->timer < 20) {
       sprite->oam.index = *tile + (mote->timer / 5 & 7) * 8;
-      EffectSprite_DrawAtWorldPosition__f0e9af4(sprite, mote);
+      EffectSprite_DrawAtWorldPosition(sprite, mote);
       BattleEffect_IntegrateVector3(&mote->x, 63, -0x8000);
       mote->timer++;
     }

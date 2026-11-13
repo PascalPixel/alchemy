@@ -25,14 +25,6 @@ s32 MapGrid_IsSandCell(s32 x, s32 z, s32 terrain);
 void BattleEffect_SetObjectUpdateMode(struct Actor *actor, s32 mode);
 void FieldPsynergy_WatchSandGround(void);
 void FieldPsynergy_EndSand(void);
-/* VIEW(f0e4a34): routine Sand_SpawnGrain as void Sand_SpawnGrain(void *sprite,
- * void *particle, s32 index, s32 tiles, s32 high); the definition has void
- * Sand_SpawnGrain(struct EffectSprite__f0e446c *sprite, struct EffectParticle
- * *particle, s32 unused, s32 tiles, s32 high); not tried: Sand_SpawnGrain's
- * bound declaration was not found. */
-extern void Func_080e45a8__f0e4a34(void *sprite, void *particle, s32 index,
-                                   s32 tiles,
-                                   s32 high) __asm__("Sand_SpawnGrain");
 /* VIEW(f0e4a34): routine Sand_InitLeaderSprite as void
  * Sand_InitLeaderSprite(void *sprite, s32 tiles); the definition has void
  * Sand_InitLeaderSprite(struct EffectSprite__f0e446c *sprite, s32 tiles); not
@@ -41,14 +33,6 @@ extern void Func_080e4510__f0e4a34(void *sprite,
                                    s32 tiles) __asm__("Sand_InitLeaderSprite");
 void Picture_SinkColumnsByWave(u8 *source, u8 *destination, s32 phase);
 void Sand_DrawLeaderSprite(void *sprite);
-/* VIEW(f0e4a34): routine FieldPsynergy_DecodePicture as void
- * FieldPsynergy_DecodePicture(void *source, void *buffer, s32 size); the
- * definition has void FieldPsynergy_DecodePicture(struct PictureSource *source,
- * void *buffer, s32 size); not tried: FieldPsynergy_DecodePicture's bound
- * declaration was not found. */
-extern void
-Func_080e43a4__f0e4a34(void *source, void *buffer,
-                       s32 size) __asm__("FieldPsynergy_DecodePicture");
 void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Actor_SetPositionAndResetMotionFar(struct Actor *actor, s32 x, s32 y,
                                         s32 z);
@@ -95,7 +79,7 @@ void FieldPsynergy_Sand(void) {
   delay = -12;
   sprite = work + 0x800;
   for (; i < 64; i++) {
-    Func_080e45a8__f0e4a34(sprite, particle, i, particleTiles, event->standing);
+    Sand_SpawnGrain(sprite, particle, i, particleTiles, event->standing);
     *(s32 *)(particle + 24) = delay;
     sprite += 40;
     delay -= 2;
@@ -116,7 +100,8 @@ void FieldPsynergy_Sand(void) {
   }
   owner->facing = 0x4000;
   wait(1);
-  Func_080e43a4__f0e4a34(*(void **)((u8 *)owner->sprite + 40), work, 0x400);
+  FieldPsynergy_DecodePicture(*(void **)((u8 *)owner->sprite + 40), work,
+                              0x400);
   pictureEntry = VramCache_FindFreeEntry();
   pictureTiles = VramCache_Load(pictureEntry, 0x400, NULL);
   Func_080e4510__f0e4a34(work + 0x1900, pictureTiles);
@@ -201,15 +186,6 @@ extern const u16 Data_080f0fa0[];
 
 void Camera_WorldToScreen(s32 *position);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-/* VIEW(f0e4a34): routine EffectSprite_DrawAtWorldPosition as void
- * EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct
- * GlowParticle *particle); f0e2c38 has void
- * EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct
- * SprayParticle *particle); not tried: EffectSprite_DrawAtWorldPosition's
- * marker was not found. */
-extern void EffectSprite_DrawAtWorldPosition__f0e4a34(
-    struct EffectSprite *sprite,
-    struct GlowParticle *particle) __asm__("EffectSprite_DrawAtWorldPosition");
 void MapGrid_SetScreenShakeFar(s32 x, s32 y, s32 decay);
 
 #define GLOW_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
@@ -317,7 +293,7 @@ void FieldPsynergy_UpdateBurst(void) {
         sprite->oam.index = work->burstTile + 28;
         break;
       }
-      EffectSprite_DrawAtWorldPosition__f0e4a34(sprite, particle);
+      EffectSprite_DrawAtWorldPosition(sprite, particle);
       particle->timer++;
     }
     switch (work->phase) {
@@ -438,7 +414,7 @@ void FieldPsynergy_UpdateBurst(void) {
         sprite->oam.index = work->burstTile + 28;
         break;
       }
-      EffectSprite_DrawAtWorldPosition__f0e4a34(sprite, particle);
+      EffectSprite_DrawAtWorldPosition(sprite, particle);
       particle->timer++;
     }
     switch (work->phase) {

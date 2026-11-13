@@ -79,15 +79,6 @@ typedef s32 (*MotionCommand)(struct MotionObject *object);
 extern const MotionCommand gData_0802f204[];
 extern const s32 gActorScript_CycleTable[];
 
-/* VIEW(f023680): routine ActorScript_CheckOverlap as s32
- * ActorScript_CheckOverlap(struct MotionObject *object, s32 *values); the
- * definition has s32 ActorScript_CheckOverlap(struct Actor *object, s32
- * *values); not tried: ActorScript_CheckOverlap's bound declaration was not
- * found. */
-extern s32 ScriptObject_CheckOverlap__f023680(
-    struct MotionObject *object,
-    s32 *values) __asm__("ActorScript_CheckOverlap");
-
 #define TARGET_UNSET ((s32)0x80000000)
 
 /// A whole-pixel distance squared.
@@ -363,7 +354,7 @@ void Actor_UpdateAllThumb(void) {
       pos[0] = x;
       pos[1] = y;
       pos[2] = z;
-      if (ScriptObject_CheckOverlap__f023680(object, pos) != 0) {
+      if (ActorScript_CheckOverlap(object, pos) != 0) {
         object->refused++;
         continue;
       }

@@ -27,14 +27,6 @@ struct OrbitEffect {
   void (*update)(struct OrbitEffect *);
 };
 
-/* VIEW(radial): routine FieldEffect_AdvanceMotion as void
- * FieldEffect_AdvanceMotion(struct FieldEffect *effect);
- * module/field/field_effect.h has void FieldEffect_AdvanceMotion(union
- * FieldObject *object); not tried: FieldEffect_AdvanceMotion's bound
- * declaration was not found. */
-extern void Effect_AdvanceMotion__radial(struct FieldEffect *effect) __asm__(
-    "FieldEffect_AdvanceMotion");
-
 void FieldEffect_SpawnRadialParticleRing(struct MotionObject *origin) {
   struct EffectOptions options;
   s32 velocity[3];
@@ -43,7 +35,7 @@ void FieldEffect_SpawnRadialParticleRing(struct MotionObject *origin) {
   u32 i;
 
   options.palette = 0;
-  options.update = Effect_AdvanceMotion__radial;
+  options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = 0xCCCC;
   options.startScaleY = 0xCCCC;
   i = 0;
@@ -136,19 +128,6 @@ void FieldPsynergy_WhirlwindOnTarget(void) { FieldPsynergy_Whirlwind(); }
 // An orbiting mote: radial.c's OrbitEffect.
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
-/* VIEW(f0dfd00): routine FieldEffect_WanderAroundAnchor as void
- * FieldEffect_WanderAroundAnchor(struct OrbitEffect__f0dfd00 *mote); the
- * definition has void FieldEffect_WanderAroundAnchor(struct OrbitEffect
- * *effect); not tried: FieldEffect_WanderAroundAnchor's bound declaration was
- * not found. */
-extern void BattleEffect_WanderAroundAnchor__f0dfd00(
-    struct OrbitEffect *mote) __asm__("FieldEffect_WanderAroundAnchor");
-/* VIEW(f0dfd00): routine FieldEffect_CircleAnchor as void
- * FieldEffect_CircleAnchor(struct OrbitEffect__f0dfd00 *mote); the definition
- * has void FieldEffect_CircleAnchor(struct OrbitEffect *effect); not tried:
- * FieldEffect_CircleAnchor's bound declaration was not found. */
-extern void BattleEffect_CircleAnchor__f0dfd00(
-    struct OrbitEffect *mote) __asm__("FieldEffect_CircleAnchor");
 void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object);
 
 #define ORB_OBJECT 280
@@ -242,7 +221,7 @@ void FieldPsynergy_Whirlwind(void) {
       mote = (struct OrbitEffect *)Actor_Spawn(MOTE_OBJECT, position.x,
                                                position.y, position.z);
       if (mote != 0) {
-        mote->update = BattleEffect_CircleAnchor__f0dfd00;
+        mote->update = FieldEffect_CircleAnchor;
         mote->anchor = orb;
         mote->timer = 0;
         mote->pause = 0;
@@ -274,7 +253,7 @@ void FieldPsynergy_Whirlwind(void) {
         mote = (struct OrbitEffect *)Actor_Spawn(MOTE_OBJECT, position.x,
                                                  position.y, position.z);
         if (mote != 0) {
-          mote->update = BattleEffect_WanderAroundAnchor__f0dfd00;
+          mote->update = FieldEffect_WanderAroundAnchor;
           mote->timer = 20 + i * -2;
           mote->pause = 0;
           mote->speed = 0x1999;
@@ -913,31 +892,7 @@ struct SpinScene {
   struct FieldParticle slots[SLOT_MAX];
 };
 
-/* VIEW(launch): routine Actor_SetSpriteColorModeFar as void
- * Actor_SetSpriteColorModeFar(void *object, s32 value); actor_view.h has void
- * Actor_SetSpriteColorModeFar(struct Actor *, u32); not tried:
- * Actor_SetSpriteColorModeFar's bound declaration was not found. */
-extern void Animation_ApplyChildValuesFar__launch(
-    void *object, s32 value) __asm__("Actor_SetSpriteColorModeFar");
-/* VIEW(launch): routine Actor_SetSpriteFlagsFar as void
- * Actor_SetSpriteFlagsFar(void *object, s32 flags); actor_view.h has void
- * Actor_SetSpriteFlagsFar(struct Actor *object, u32 flags); not tried:
- * Actor_SetSpriteFlagsFar's bound declaration was not found. */
-extern void Actor_SetSingleChildFlagsFar__launch(
-    void *object, s32 flags) __asm__("Actor_SetSpriteFlagsFar");
 void Actor_ApplyRandomChildValues(struct SpinObject *owner);
-/* VIEW(launch): routine FieldEffect_UpdateSpinAngle as void
- * FieldEffect_UpdateSpinAngle(struct SpinObject *object); the definition has
- * void FieldEffect_UpdateSpinAngle(struct Actor *object); not tried:
- * FieldEffect_UpdateSpinAngle's bound declaration was not found. */
-extern void BattleEffect_AdvanceAngleWithRamp__launch(
-    struct SpinObject *object) __asm__("FieldEffect_UpdateSpinAngle");
-/* VIEW(launch): routine FieldEffect_UpdateRetreatCaster as void
- * FieldEffect_UpdateRetreatCaster(struct SpinObject *obj); the definition has
- * void FieldEffect_UpdateRetreatCaster(struct Actor *obj); not tried:
- * FieldEffect_UpdateRetreatCaster's bound declaration was not found. */
-extern void BattleEffect_UpdateDescendingObject__launch(
-    struct SpinObject *obj) __asm__("FieldEffect_UpdateRetreatCaster");
 
 void FieldPsynergy_Retreat(void) {
   struct SpinScene *scene = Ram_HeapSlots->effectWork;
@@ -960,15 +915,15 @@ void FieldPsynergy_Retreat(void) {
   wait(40);
 
   Sound_PlayFar(220);
-  Animation_ApplyChildValuesFar__launch(obj, 0);
+  Actor_SetSpriteColorModeFar(obj, 0);
   Actor_SelectAnimationFar(obj, 3);
-  obj->update = BattleEffect_AdvanceAngleWithRamp__launch;
+  obj->update = FieldEffect_UpdateSpinAngle;
   obj->timer = 0;
   wait(70);
 
-  Actor_SetSingleChildFlagsFar__launch(obj, 0);
+  Actor_SetSpriteFlagsFar(obj, 0);
   obj->motionFlags = 0;
-  obj->update = BattleEffect_UpdateDescendingObject__launch;
+  obj->update = FieldEffect_UpdateRetreatCaster;
   obj->targetX = EFFECT_NO_TARGET;
   pos.x = obj->x;
   pos.y = obj->y;
@@ -1070,7 +1025,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
  * struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z); tried as the
  * rest of the object declares it, it does not compile in tla-ja (make modern):
  * games/tla/src/field/event_commands/radial.c:79:13: note:
- * 'Effect_AdvanceMotion__radial' declared here. */
+ * 'FieldEffect_AdvanceMotion' declared here. */
 struct ArcObject *Actor_CreateFar__radial(s32 kind, s32 x, s32 y,
                                           s32 z) __asm__("Actor_CreateFar");
 #define Actor_CreateFar Actor_CreateFar__radial
@@ -1185,7 +1140,7 @@ void FieldPsynergy_Avoid(void) {
   VramCache_Load((s16)slot, 0x100, tiles);
   gMainRoutineWork.avoidDistance = 0x09600000;
   gMainRoutineWork.avoidByItem = GameFlag_Get(0x145);
-  Animation_ApplyChildValuesFar__launch(object, 0);
+  Actor_SetSpriteColorModeFar(object, 0);
   object->callback = FieldEffect_UpdateAvoidCaster;
   object->phase = 0;
   object->step = 0;

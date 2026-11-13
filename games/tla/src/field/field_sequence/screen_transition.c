@@ -236,13 +236,6 @@ void Actor_ReleaseIfPresent(struct Actor *object) {
 /// Does nothing; nothing in the image calls it.
 void ScreenTransition_ReservedNoOp(void) {}
 
-/* VIEW(rising): routine ItemDisplay_EmitSparkles as void
- * ItemDisplay_EmitSparkles(void); the definition has void
- * ItemDisplay_EmitSparkles(struct ParticleEmitter *emitter); not tried:
- * ItemDisplay_EmitSparkles's bound declaration was not found. */
-extern void Marker_MoveLeaderAwayFromEmitter__rising(void) __asm__(
-    "ItemDisplay_EmitSparkles");
-
 /// Places the object 36 pixels above the controlled owner, gives it its
 /// sprite priority and, three frames on, the descent script, and turns the
 /// owner to face a quarter turn.
@@ -277,7 +270,7 @@ void ItemDisplay_ShowPicture(struct Actor *object, s32 flags) {
       Actor_StartScriptFar(object, gFieldEffect_ParticleEmitterScript);
       object->velocityY = 0x20000;
       object->gravity = 0x4000;
-      object->update = Marker_MoveLeaderAwayFromEmitter__rising;
+      object->update = ItemDisplay_EmitSparkles;
     }
     if (flags == 3)
       wait(60);
@@ -337,7 +330,7 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
     HeapSlot_Release(68);
 
     if (flags & 1)
-      object->update = Marker_MoveLeaderAwayFromEmitter__rising;
+      object->update = ItemDisplay_EmitSparkles;
     if (flags & 2)
       ItemDisplay_RaiseAboveLeader(object);
 

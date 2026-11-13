@@ -40,20 +40,6 @@ struct CaptureObject__f0d8740 {
   void *callback;
 };
 
-/* VIEW(f0d8740): routine Actor_CreateFar as struct CaptureObject__f0d8740
- * *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct
- * BattleEffectWatchedObject *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
- * not tried: Actor_CreateFar's bound declaration was not found. */
-extern struct CaptureObject__f0d8740 *
-Func_080200c0__f0d8740(s32 kind, s32 x, s32 y,
-                       s32 z) __asm__("Actor_CreateFar");
-/* VIEW(f0d8740): routine Actor_ReleaseFar as void Actor_ReleaseFar(struct
- * CaptureObject__f0d8740 *object); battle.h has void Actor_ReleaseFar(struct
- * Actor *object); not tried: Actor_ReleaseFar's bound declaration was not
- * found. */
-extern void Actor_Destroy__f0d8740(
-    struct CaptureObject__f0d8740 *object) __asm__("Actor_ReleaseFar");
-
 void Djinn_RunMercuryJoinEffect(s32 arg) {
   struct CaptureObject__f0d8740 *djinni;
   struct CaptureObject__f0d8740 *copy;
@@ -101,7 +87,7 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
   previous = djinni;
   cursor = copies;
   for (remaining = 7; remaining >= 0; remaining--) {
-    copy = Func_080200c0__f0d8740(kind, djinni->x, djinni->y, djinni->z);
+    copy = Actor_CreateFar(kind, djinni->x, djinni->y, djinni->z);
     *cursor++ = copy;
     if (copy != NULL) {
       copy->scaleY = 0xf000;
@@ -127,10 +113,10 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
     djinni->y += 0x80000;
     wait(1);
   }
-  Actor_Destroy__f0d8740(djinni);
+  Actor_ReleaseFar(djinni);
   list = copies;
   for (remaining = 7; remaining >= 0; remaining--)
-    Actor_Destroy__f0d8740(*list++);
+    Actor_ReleaseFar(*list++);
   if (resourceId != 96)
     VramCache_FreeEntry(resourceId);
   wait(10);

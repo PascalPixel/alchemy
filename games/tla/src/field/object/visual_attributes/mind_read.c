@@ -273,14 +273,6 @@ struct Vec3 {
 
 struct PendingEvent;
 
-/* VIEW(f0dd054): routine Scene_FindPsynergyTrigger as struct PendingEvent
- * *Scene_FindPsynergyTrigger(u32 filter, s32 kind, s32 selector); battle.h has
- * struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind, s32
- * selector); not tried: Scene_FindPsynergyTrigger's bound declaration was not
- * found. */
-extern struct PendingEvent *
-Func_080ce458__f0dd054(u32 filter, s32 kind,
-                       s32 selector) __asm__("Scene_FindPsynergyTrigger");
 /* VIEW(f0dd054): routine BattleEffect_GetCycledTableWord as u32
  * BattleEffect_GetCycledTableWord(u32 keys); the definition has u16
  * BattleEffect_GetCycledTableWord(void); tried as the definition's u16
@@ -349,8 +341,9 @@ void FieldPsynergy_SteerPushedTarget(void) {
     return;
   }
 
-  event = Func_080ce458__f0dd054(0x50000005, scene->fieldKind,
-                                 Scene_SelectPsynergyTarget(scene->fieldKind));
+  event =
+      Scene_FindPsynergyTrigger(0x50000005, scene->fieldKind,
+                                Scene_SelectPsynergyTarget(scene->fieldKind));
   pusher->watchedObject = target;
   position.x = target->x;
   position.y = target->y + (16 << 16);
@@ -575,13 +568,6 @@ void FieldPsynergy_Move(void) {
 
 extern const s32 gFieldEffect_FragmentScript[];
 
-/* VIEW(item_break): routine FieldEffect_UpdateMoveHand as void
- * FieldEffect_UpdateMoveHand(void); the definition has void
- * FieldEffect_UpdateMoveHand(struct ItemBreakFragmentSource *src); not tried:
- * FieldEffect_UpdateMoveHand's bound declaration was not found. */
-extern void BattleEffect_UpdateItemBreakFragment__item_break(void) __asm__(
-    "FieldEffect_UpdateMoveHand");
-
 #define SE_ITEM_BREAK 138
 
 /// The Broken Seal's FieldEffect_SpawnMoveHand with this game's objects
@@ -604,7 +590,7 @@ void *FieldEffect_SpawnMoveHand(void *object) {
     return 0;
   parent->scaleY = 0x4000;
   parent->scaleX = 0x4000;
-  parent->update = BattleEffect_UpdateItemBreakFragment__item_break;
+  parent->update = FieldEffect_UpdateMoveHand;
   parent->speedLimit = 2 << 16;
   parent->acceleration = 2 << 16;
   parent->motionFlags = 0;
@@ -1168,13 +1154,6 @@ struct EffectWork {
   struct EffectTarget *target;
 };
 
-/* VIEW(f0dd820): routine FieldEffect_ClearOwnedSlot as void
- * FieldEffect_ClearOwnedSlot(struct RadialBurstEffect *effect); f0dd054 has
- * void FieldEffect_ClearOwnedSlot(struct FieldParticle *); not tried:
- * FieldEffect_ClearOwnedSlot's bound declaration was not found. */
-extern void BattleEffect_ClearOwnedSlot__f0dd820(
-    struct RadialBurstEffect *effect) __asm__("FieldEffect_ClearOwnedSlot");
-
 void FieldEffect_UpdateRadialBurst(struct RadialBurstEffect *effect) {
   struct EffectWork *work = Ram_HeapSlots->effectWork;
   struct EffectPosition value;
@@ -1221,7 +1200,7 @@ again:
   }
 
   if (state == 3 && FieldParticle_HasPendingTarget(effect) == 0)
-    BattleEffect_ClearOwnedSlot__f0dd820(effect);
+    FieldEffect_ClearOwnedSlot(effect);
 }
 
 /// A heavy impact, as The Broken Seal's: an actor placed below the source
@@ -1272,14 +1251,6 @@ void FieldPsynergy_ForceOnTarget(struct BattleEffectArgument *effect) {
 #include "module/field/event_commands.h"
 
 void *Sprite_ShareVramCacheEntry(void *src, void *alt);
-/* VIEW(f0de21c): routine MapGrid_CheckCollisionFar as s32
- * MapGrid_CheckCollisionFar(struct Actor *object, struct Effect04Vector
- * *position); f0dd054 has s32 MapGrid_CheckCollisionFar(struct Actor *object,
- * struct Vec3 *position); not tried: MapGrid_CheckCollisionFar's bound
- * declaration was not found. */
-extern s32 Func_08020210__f0de21c(
-    struct Actor *object,
-    struct Effect04Vector *position) __asm__("MapGrid_CheckCollisionFar");
 /* VIEW(f0de21c): routine FieldEffect_UpdateRadialBurst as void
  * FieldEffect_UpdateRadialBurst(struct FieldParticle *slot); the definition has
  * void FieldEffect_UpdateRadialBurst(struct RadialBurstEffect *effect); not
@@ -1406,7 +1377,7 @@ void FieldPsynergy_Force(void) {
     pos.y = target->y;
     pos.z = target->z;
     Vector_AddPolarOffset(0x100000, scene->angle, &pos);
-    if (Func_08020210__f0de21c(target, &pos) == 0 &&
+    if (MapGrid_CheckCollisionFar(target, &pos) == 0 &&
         ActorScript_CheckOverlapFar(target, &pos) == 0) {
       target->acceleration = 0x10000;
       target->speedLimit = 0x10000;

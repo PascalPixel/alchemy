@@ -20,11 +20,6 @@ void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f17d174): routine BattleObject_GetFar as void **BattleObject_GetFar(s32
- * objectId); motobj.h has struct BattleObj *BattleObject_GetFar(s32 objectId);
- * not tried: BattleObject_GetFar's bound declaration was not found. */
-extern void **
-GetBattleObjectSlotFar__f17d174(s32 objectId) __asm__("BattleObject_GetFar");
 
 extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_BlueCrescentSheet;
@@ -105,8 +100,7 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
       struct EffectStep *thrown;
 
       for (i = 0, thrown = work->particles; i != STARS; i++, thrown++) {
-        struct StarTarget *caster =
-            *GetBattleObjectSlotFar__f17d174(effect->actor);
+        struct StarTarget *caster = BattleObject_GetFar(effect->actor)->object;
         s32 height = BattleUnit_GetEffectHeightFar(effect->actor) / 2;
         s32 velocity;
 
@@ -147,7 +141,7 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
       s32 b;
 
       member = i % effect->count;
-      target = *GetBattleObjectSlotFar__f17d174(effect->actors[member]);
+      target = BattleObject_GetFar(effect->actors[member])->object;
       height = BattleUnit_GetEffectHeightFar(effect->actors[member]) / 2;
       if (star->variant < 0) {
         continue;
@@ -394,7 +388,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  victim = *GetBattleObjectSlotFar__f17d174(effect->actors[0]);
+  victim = BattleObject_GetFar(effect->actors[0])->object;
   camera = (u16 *)Ram_HeapSlots->cameraWork;
   savedYaw = camera[27];
   height = 0;

@@ -7,24 +7,6 @@
 #include "module/system/system.h"
 #include "scene_call.h"
 
-/* VIEW(f0d489c): routine Actor_CreateFar as struct LinkedEffectObject
- * *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct
- * BattleEffectWatchedObject *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
- * not tried: Actor_CreateFar's bound declaration was not found. */
-extern struct LinkedEffectObject *
-Func_080200c0__f0d489c(s32 kind, s32 x, s32 y,
-                       s32 z) __asm__("Actor_CreateFar");
-/* VIEW(f0d489c): routine Actor_ReleaseFar as void Actor_ReleaseFar(struct
- * LinkedEffectObject *object); battle.h has void Actor_ReleaseFar(struct Actor
- * *object); not tried: Actor_ReleaseFar's bound declaration was not found. */
-extern void Actor_Destroy__f0d489c(struct LinkedEffectObject *object) __asm__(
-    "Actor_ReleaseFar");
-/* VIEW(f0d489c): routine FieldEffect_CopyWatchedActorPosition as void
- * FieldEffect_CopyWatchedActorPosition(void); the definition has s32
- * FieldEffect_CopyWatchedActorPosition(struct Actor *object); not tried:
- * FieldEffect_CopyWatchedActorPosition's bound declaration was not found. */
-extern void BattleEffect_CopyWatchedObjectPosition__f0d489c(void) __asm__(
-    "FieldEffect_CopyWatchedActorPosition");
 extern const u8 gActor_WaitScript[];
 
 /// The Broken Seal's BattleEffect_ConfigureWatchedObject with this game's
@@ -46,13 +28,13 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
 
   if ((flags & 3) != 0) {
     if ((flags & 3) == 2 || Actor_IsOutsideAnimation108(object->resource)) {
-      child = Func_080200c0__f0d489c(264, object->x, object->y, object->z);
+      child = Actor_CreateFar(264, object->x, object->y, object->z);
     }
   } else {
     child = object->resource;
     if (child == 0)
       return;
-    Actor_Destroy__f0d489c(child);
+    Actor_ReleaseFar(child);
     object->resource = NULL;
     return;
   }
@@ -76,7 +58,7 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
 
   child->resourceId = actorId;
   child->value55 = 0;
-  child->callback = BattleEffect_CopyWatchedObjectPosition__f0d489c;
+  child->callback = FieldEffect_CopyWatchedActorPosition;
   visual = child->visual;
   visual->value26 = 0;
   child->resource = object;

@@ -59,11 +59,6 @@ void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f173aac): routine BattleObject_GetFar as void **BattleObject_GetFar(s32
- * objectId); motobj.h has struct BattleObj *BattleObject_GetFar(s32 objectId);
- * not tried: BattleObject_GetFar's bound declaration was not found. */
-extern void **
-GetBattleObjectSlotFar__f173aac(s32 objectId) __asm__("BattleObject_GetFar");
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
@@ -525,13 +520,13 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         ball->velocityZ = other[2];
       }
       if (frame <= 47) {
-        s32 *user = *GetBattleObjectSlotFar__f173aac(effect->actor);
+        s32 *user = BattleObject_GetFar(effect->actor)->object;
 
         ball->velocityX += (user[2] - other[0]) / 40;
         ball->velocityY += (0x3c0000 - other[1]) / 40;
         ball->velocityZ += (user[4] - other[2]) / 40;
       } else {
-        s32 *target = *GetBattleObjectSlotFar__f173aac(effect->actors[0]);
+        s32 *target = BattleObject_GetFar(effect->actors[0])->object;
         struct EffectStep *fall = &work->particles[62];
 
         if (frame == 48) {
@@ -1036,7 +1031,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       struct EffectPosition pos;
 
       if (frame == 0) {
-        void *user = *GetBattleObjectSlotFar__f173aac(effect->actor);
+        void *user = BattleObject_GetFar(effect->actor)->object;
 
         Actor_SelectAnimationFar(user, 0);
         Actor_SelectAnimationFar(user, 2);
@@ -1044,8 +1039,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         Sound_PlayFar(212);
       }
       if (frame == 14)
-        Actor_SetAnimationSpeedFar(
-            *GetBattleObjectSlotFar__f173aac(effect->actor), 16);
+        Actor_SetAnimationSpeedFar(BattleObject_GetFar(effect->actor)->object,
+                                   16);
       if (frame == 22)
         Sound_PlayFar(212);
       if (frame == 26) {

@@ -232,12 +232,6 @@ void Graphics_LoadGreyRamp(void);
 void Canvas_BlitAtFoot(void *, s32, s32, s32);
 s32 BattleEffect_LoadBlitter(s32, s32);
 void ColorBuffer_ScaleFar(void *, void *, s32, s32);
-/* VIEW(f175f74): routine BattleObject_GetFar as struct ActorPos
- * **BattleObject_GetFar(s32); motobj.h has struct BattleObj
- * *BattleObject_GetFar(s32 objectId); not tried: BattleObject_GetFar's bound
- * declaration was not found. */
-extern struct ActorPos **
-GetBattleObjectSlotFar__f175f74(s32) __asm__("BattleObject_GetFar");
 void BattlePlayback_StartFar(s32);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
@@ -1436,7 +1430,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     PARTICLES[i].timer = -1;
   }
   for (i = 0; i != arg->count; i++) {
-    struct ActorPos *actor = *GetBattleObjectSlotFar__f175f74(arg->actors[i]);
+    struct ActorPos *actor = BattleObject_GetFar(arg->actors[i])->object;
 
     work->homes[i].x = actor->x;
     work->homes[i].y = actor->y;
@@ -1458,8 +1452,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         work->members[i].timer = -1;
       }
       for (i = 0; i != arg->count; i++) {
-        struct ActorPos *actor =
-            *GetBattleObjectSlotFar__f175f74(arg->actors[i]);
+        struct ActorPos *actor = BattleObject_GetFar(arg->actors[i])->object;
 
         BattleEffect_TintBattler(arg->actors[i], 0, 5, -1, -1);
         actor->x = -(i + 4) * 0x800000;
@@ -1473,8 +1466,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       work->transferValue = 0;
       ColorBuffer_ScaleFar(scene->palette, PLTT + 0x60, 0x99a0, 128);
       for (i = 0; i != arg->count; i++) {
-        struct ActorPos *actor =
-            *GetBattleObjectSlotFar__f175f74(arg->actors[i]);
+        struct ActorPos *actor = BattleObject_GetFar(arg->actors[i])->object;
 
         actor->x = 0;
         actor->y = 0x7c0000;
@@ -1515,8 +1507,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         work->transferMode = 2;
         work->transferValue = 50;
         for (i = 0; i != arg->count; i++) {
-          struct ActorPos *actor =
-              *GetBattleObjectSlotFar__f175f74(arg->actors[i]);
+          struct ActorPos *actor = BattleObject_GetFar(arg->actors[i])->object;
 
           actor->x = 0;
           actor->y = 0x200000;
@@ -1638,8 +1629,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         }
       }
       for (i = 0; i != arg->count; i++) {
-        struct ActorPos *actor =
-            *GetBattleObjectSlotFar__f175f74(arg->actors[i]);
+        struct ActorPos *actor = BattleObject_GetFar(arg->actors[i])->object;
         struct Particle__f175f74 *member = &work->members[i];
         s32 landed = 0;
 

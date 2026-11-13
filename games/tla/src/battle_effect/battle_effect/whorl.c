@@ -57,11 +57,6 @@ void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f171bb0): routine BattleObject_GetFar as void **BattleObject_GetFar(s32
- * objectId); motobj.h has struct BattleObj *BattleObject_GetFar(s32 objectId);
- * not tried: BattleObject_GetFar's bound declaration was not found. */
-extern void **
-GetBattleObjectSlotFar__f171bb0(s32 objectId) __asm__("BattleObject_GetFar");
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
@@ -142,7 +137,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
                                    point);
     REG_BG2CNT = 0x785;
   } else if (mode == 2 || mode == 4) {
-    s32 *caster = *GetBattleObjectSlotFar__f171bb0(effect->actor);
+    s32 *caster = BattleObject_GetFar(effect->actor)->object;
 
     if (mode == 2) {
       s32 row;
@@ -185,7 +180,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
-  target = *GetBattleObjectSlotFar__f171bb0(effect->actors[0]);
+  target = BattleObject_GetFar(effect->actors[0])->object;
   work->particles[63].x = target[2];
   work->particles[63].y = target[3];
   work->particles[63].z = target[4];

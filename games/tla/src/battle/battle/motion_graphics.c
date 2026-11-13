@@ -314,15 +314,6 @@ void BattleMotion_DismissBeast(struct SavedBattleObj *saved) {
   }
 }
 
-/* VIEW(f11e3ac): routine BattleSprite_GetAttackHop as s32
- * BattleSprite_GetAttackHop(s32 classId); the definition has void
- * BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) { void
- * BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) { s32 span = 0x01fe0000;
- * s32 zoom; struc...; not tried: BattleSprite_GetAttackHop's bound declaration
- * was not found. */
-extern s32 BattleClass_GetAttackHop__presentation(s32 classId) __asm__(
-    "BattleSprite_GetAttackHop");
-
 s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   struct BattlePresentationWork work;
   void *object;
@@ -384,9 +375,8 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   if (work.kind == 10)
     Actor_SelectAnimationFar(object, 2);
   else
-    BattleMotion_ApproachTarget(
-        work.actor, work.actors[0], frames,
-        BattleClass_GetAttackHop__presentation(unit->enemyId) << 16);
+    BattleMotion_ApproachTarget(work.actor, work.actors[0], frames,
+                                BattleSprite_GetAttackHop(unit->enemyId) << 16);
   if ((mode & 32) && plan->actorId != plan->actorId2 &&
       plan->actorId2 != (work.actors[0] & 0x80)) {
     object = BattleObject_Get(plan->actorId2);
@@ -396,7 +386,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
         animation->entries[0]->animationId, 2, 1);
     BattleMotion_ApproachTarget(
         plan->actorId2, work.actors[0], frames,
-        BattleClass_GetAttackHop__presentation(
+        BattleSprite_GetAttackHop(
             ((struct BattleUnit *)Unit_Get(plan->actorId2))->enemyId)
             << 16);
     Actor_SetAnimationSpeedFar(

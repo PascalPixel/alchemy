@@ -26,12 +26,6 @@ void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-/* VIEW(f16c6f8): routine BattleObject_GetFar as void **BattleObject_GetFar(s32
- * objectId); f16c274 has struct BattleObjectPosition **BattleObject_GetFar(s32
- * objectId); not tried: BattleObject_GetFar's bound declaration was not found.
- */
-extern void **
-GetBattleObjectSlotFar__f16c6f8(s32 objectId) __asm__("BattleObject_GetFar");
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
@@ -133,7 +127,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
   mesh = work->sheet + 0xc00;
   pitch = 0;
   battle = (u8 *)Ram_HeapSlots->battleWork;
-  caster = *GetBattleObjectSlotFar__f16c6f8(effect->actor);
+  caster = BattleObject_GetFar(effect->actor)->object;
   gBgScroll[1].x = -56;
   // The battlefield's picture, later the dome's texture.
   picture = gMapCellBuffer;

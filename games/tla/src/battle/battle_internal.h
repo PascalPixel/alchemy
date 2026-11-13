@@ -333,4 +333,7 @@ extern const u16 gBattleUnit_WeaponAnimationsJenna[];
 
 extern struct BattlePresentationTransition *gTransitionWork;
 
+u32 BattleSprite_GetAttackHop(u32 index);
+s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y);
+
 #endif

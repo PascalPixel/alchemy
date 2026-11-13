@@ -7,6 +7,7 @@
 #include "version.h"
 #include "gamepak/far_call/game.h"
 #include "gamepak/far_call/battle.h"
+#include "battle/motobj.h"
 #include "module/window/screens.h"
 #include "module/window/window.h"
 
@@ -51,18 +52,7 @@ extern const u8 gOwnerStatus_KpString[];
 extern const u8 gOwnerStatus_PvString[];
 #endif
 
-/* VIEW(screens): routine BattleActor_SpawnObjectsForListFar as void
- * BattleActor_SpawnObjectsForListFar(u16 *list, s32 count); module/tla.h has
- * void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode); not tried:
- * BattleActor_SpawnObjectsForListFar's declaration holds a FAKEMATCH tag. */
-extern void BattleActor_SpawnObjectsForListFar__screens(
-    u16 *list, s32 count) __asm__("BattleActor_SpawnObjectsForListFar");
 void BattleObject_SpawnObjectsForListFar(u16 *list, s32 count, s32 mode);
-/* VIEW(screens): routine BattleObject_GetFar as void **BattleObject_GetFar(s32
- * member); motobj.h has struct BattleObj *BattleObject_GetFar(s32 objectId);
- * not tried: BattleObject_GetFar's bound declaration was not found. */
-extern void **
-GetBattleObjectSlotFar__screens(s32 member) __asm__("BattleObject_GetFar");
 s32 Unit_GetExperienceForLevelFar(s32 member, s32 level);
 
 // The four list-page scroll marks, one tile per page of four rows (Psynergy
@@ -143,7 +133,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   itemCount = psynergyCount = djinnCount = 0;
   shownMember = figureList[0] = list[0];
   figureList[1] = 255;
-  BattleActor_SpawnObjectsForListFar__screens(figureList, 1);
+  BattleActor_SpawnObjectsForListFar(figureList, 1);
   portraitSlot = VramCache_AllocEntry(0x200);
   navigation = NAVIGATION;
   navigation->timerHidden = redraw;
@@ -473,8 +463,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       figureShown = 0;
     }
     {
-      struct SummaryOam *face =
-          ((struct SummaryOam **)*GetBattleObjectSlotFar__screens(member))[20];
+      struct SummaryOam *face = BattleObject_GetFar(member)->object->records;
 
       portraitSprite.oam.word.attr01 = 0xc0002400;
       portraitSprite.oam.word.attr23 = 0;

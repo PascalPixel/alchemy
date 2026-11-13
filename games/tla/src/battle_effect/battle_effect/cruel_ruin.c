@@ -743,12 +743,6 @@ struct Model;
 
 void Render_DrawModelList__battle_effect(struct Model *model);
 
-/* VIEW(f13eb70): routine BattleObject_GetFar as void **BattleObject_GetFar(s32
- * objectId); motobj.h has struct BattleObj *BattleObject_GetFar(s32 objectId);
- * not tried: BattleObject_GetFar's bound declaration was not found. */
-extern void **
-GetBattleObjectSlotFar__f13eb70(s32 objectId) __asm__("BattleObject_GetFar");
-
 #define HI(v) (((s16 *)&(v))[1])
 
 /* VIEW(battle_effect): tag struct ResourceTableEntry as struct
@@ -851,7 +845,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   savedScroll = gBgScroll[1].x;
   scrollX = 0;
   phase = 0;
-  actor = *GetBattleObjectSlotFar__f13eb70(effect->actor);
+  actor = BattleObject_GetFar(effect->actor)->object;
   actor[18] = phase;
   Graphics_LoadGreyRamp();
   Sound_PlayFar(140);

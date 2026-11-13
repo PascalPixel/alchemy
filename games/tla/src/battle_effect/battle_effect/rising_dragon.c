@@ -56,11 +56,6 @@ void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f178710): routine BattleObject_GetFar as void **BattleObject_GetFar(s32
- * objectId); f175f74 has struct ActorPos **BattleObject_GetFar(s32); not tried:
- * BattleObject_GetFar's bound declaration was not found. */
-extern void **
-GetBattleObjectSlotFar__f178710(s32 objectId) __asm__("BattleObject_GetFar");
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
@@ -160,7 +155,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
   {
     s32 endX[2] = {0, 0};
     s32 endY[2] = {0, 0};
-    caster = *GetBattleObjectSlotFar__f178710(effect->actor);
+    caster = BattleObject_GetFar(effect->actor)->object;
     Actor_SetAnimationSpeedFar(caster, 48);
     Actor_SelectAnimationFar(caster, 2);
     EffectPosition_ProjectBattler(effect->actor, &source);

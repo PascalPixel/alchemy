@@ -57,11 +57,6 @@ void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f171430): routine BattleObject_GetFar as void **BattleObject_GetFar(s32
- * objectId); motobj.h has struct BattleObj *BattleObject_GetFar(s32 objectId);
- * not tried: BattleObject_GetFar's bound declaration was not found. */
-extern void **
-GetBattleObjectSlotFar__f171430(s32 objectId) __asm__("BattleObject_GetFar");
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
@@ -167,7 +162,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   camera = Ram_HeapSlots->cameraWork;
   savedYaw = camera->yaw;
-  target = *GetBattleObjectSlotFar__f171430(effect->actors[0]);
+  target = BattleObject_GetFar(effect->actors[0])->object;
 
   // Shaded circles of 2 to 64 pixels, packed in the map buffer.
   cells = (s32)gMapCellBuffer;

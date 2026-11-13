@@ -11,13 +11,6 @@
 // the field, Left and Right step the value (0 to 324) or the second number
 // (0 to 99) by one, R and L by ten, and the row is redrawn after a step.
 
-/* VIEW(handle_selection_row_input): routine DebugSceneSelect_DrawRow as void
- * DebugSceneSelect_DrawRow(s32 arg, s32 value, s16 *sub); the definition has
- * void DebugSceneSelect_DrawRow(void *window, s16 first, const s16 *second);
- * not tried: DebugSceneSelect_DrawRow's bound declaration was not found. */
-extern void Menu_DrawSelectionRow__handle_selection_row_input(
-    s32 arg, s32 value, s16 *sub) __asm__("DebugSceneSelect_DrawRow");
-
 /// Edits the debug scene or entrance, returning -1 to exit and -2 to
 /// cancel. Shoulder buttons step by ten; it keeps the original 99-step
 /// entrance wrap. Otherwise it returns the scene after this frame's keys. Up
@@ -45,7 +38,7 @@ s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
     }
     if (value > 324)
       value = 0;
-    Menu_DrawSelectionRow__handle_selection_row_input(arg, value, sub);
+    DebugSceneSelect_DrawRow(arg, value, sub);
   } else if (gInput.repeat & KEY_LEFT) {
     if (*mode == 0) {
       value--;
@@ -56,7 +49,7 @@ s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
     }
     if (value < 0)
       value = 324;
-    Menu_DrawSelectionRow__handle_selection_row_input(arg, value, sub);
+    DebugSceneSelect_DrawRow(arg, value, sub);
   } else if (gInput.repeat & KEY_R) {
     if (*mode == 0) {
       *sub = 0;
@@ -68,7 +61,7 @@ s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
     }
     if (value > 324)
       value = 0;
-    Menu_DrawSelectionRow__handle_selection_row_input(arg, value, sub);
+    DebugSceneSelect_DrawRow(arg, value, sub);
   } else if (gInput.repeat & KEY_L) {
     if (*mode == 0) {
       *sub = 0;
@@ -80,7 +73,7 @@ s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
     }
     if (value < 0)
       value = 324;
-    Menu_DrawSelectionRow__handle_selection_row_input(arg, value, sub);
+    DebugSceneSelect_DrawRow(arg, value, sub);
   }
   return value;
 }
@@ -101,7 +94,7 @@ s32 DebugFlagEditor_Run(void) {
   win = 0;
   cur[0] = win;
   cur[1] = win;
-  win = Window_Create__menus(1, 0, 28, 20, 2);
+  win = Window_Create(1, 0, 28, 20, 2);
   DebugFlagEditor_DrawTable(win, page);
   MenuArrow_Create(obj, &res);
   for (;;) {
@@ -146,14 +139,6 @@ void String_FormatHexDigits(u32 value, u32 count, u8 *out) {
  * WindowSprite_PrepareForRedraw's declaration holds a FAKEMATCH tag. */
 extern void WindowSprite_PrepareForRedraw__handle_selection_row_input(
     void) __asm__("WindowSprite_PrepareForRedraw");
-/* VIEW(menus): routine Text_DrawStringInWindow as void
- * Text_DrawStringInWindow(s32 text, s32 window, s32 x, s32 y);
- * module/window/window.h has void Text_DrawStringInWindow(u8 *text, s32 arg1,
- * u32 x, u32 y); not tried: Text_DrawStringInWindow's declaration holds a
- * FAKEMATCH tag. */
-extern void
-Text_DrawStringInWindow__menus(s32 text, s32 window, s32 x,
-                               s32 y) __asm__("Text_DrawStringInWindow");
 
 /// Draws one page of 256 flags as sixteen rows of hexadecimal labels and bits.
 /// Each row: its first flag's number in three hex digits, then its 16 flags
@@ -166,7 +151,7 @@ void DebugFlagEditor_DrawTable(s32 window, s32 startFlag) {
   char bits[17];
 
   WindowSprite_PrepareForRedraw__handle_selection_row_input();
-  Text_DrawStringInWindow__menus((s32)gMenu_HexDigitsString, window, 48, 0);
+  Text_DrawStringInWindow((s32)gMenu_HexDigitsString, window, 48, 0);
 
   flag = startFlag << 8;
   for (row = 0; row != 16; row++) {
@@ -178,8 +163,8 @@ void DebugFlagEditor_DrawTable(s32 window, s32 startFlag) {
       label[i] = 0;
     }
     String_FormatHexDigits(flag, 3, label);
-    Text_DrawStringInWindow__menus((s32)label, window, 0, y);
-    Text_DrawStringInWindow__menus((s32)gMenu_ColonString, window, 32, y);
+    Text_DrawStringInWindow((s32)label, window, 0, y);
+    Text_DrawStringInWindow((s32)gMenu_ColonString, window, 32, y);
 
     for (i = 0; i < 16; i++) {
       s32 val = GameFlag_Get(flag);
@@ -187,7 +172,7 @@ void DebugFlagEditor_DrawTable(s32 window, s32 startFlag) {
       flag++;
     }
     bits[i] = 0;
-    Text_DrawStringInWindow__menus((s32)bits, window, 48, y);
+    Text_DrawStringInWindow((s32)bits, window, 48, y);
   }
 }
 

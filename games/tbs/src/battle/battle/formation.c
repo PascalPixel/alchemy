@@ -422,19 +422,19 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   s32 enemyCount;
   s32 levelAdjustment;
   u16 listBuffer[UNIT_MAX];
-  s32 extraCounts[5];
-  s32 memberCounts[5];
-  s32 memberOrder[5];
+  s32 extraCounts[FORMATION_MEMBERS];
+  s32 memberCounts[FORMATION_MEMBERS];
+  s32 memberOrder[FORMATION_MEMBERS];
   s32 freeSpriteSlots;
   s32 changed;
   s32 additionalRoom;
   s32 spriteSlots;
   s32 fittingCount;
   s32 classId;
-  s32 memberOrCopyIndex;
+  s32 j;
   s32 remainingKinds;
   s32 copies;
-  u32 memberOrEnemyIndex;
+  u32 i;
   s32 memberIndex;
 
   battle = gBattleWork;
@@ -445,51 +445,44 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
     recordId = BattleFormation_SelectLevelMatchedCandidate(&levelAdjustment);
   if (recordId < 0 || recordId >= FORMATION_COUNT)
     recordId = 1;
-  record = (struct Formation *)&gFormations[recordId];
-  for (memberIndex = 0;
-       memberIndex <= 4 && record->minimumCounts[memberIndex] == 0;
+  record = &gFormations[recordId];
+  for (memberIndex = 0; memberIndex < FORMATION_MEMBERS &&
+                        record->minimumCounts[memberIndex] == 0;
        memberIndex++)
     ;
-  if (memberIndex == 5)
-    record = (struct Formation *)&gFormations[1];
+  if (memberIndex == FORMATION_MEMBERS)
+    record = &gFormations[1];
 
   // The six sprite slots left once every member's minimum is placed; a
   // large enemy takes two.
   freeSpriteSlots = 6;
   enemyCount = 0;
-  for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4; memberOrEnemyIndex++) {
-    if (record->minimumCounts[memberOrEnemyIndex] != 0) {
-      s32 requiredSlots =
-          2 - (BattleSprite_IsSmall(record->memberIds[memberOrEnemyIndex] +
-                                    ENEMY_ID_FIRST) != 0);
+  for (i = 0; i < FORMATION_MEMBERS; i++) {
+    if (record->minimumCounts[i] != 0) {
+      s32 requiredSlots = FORMATION_MEMBER_SLOTS(record, i);
 
-      freeSpriteSlots -=
-          requiredSlots * record->minimumCounts[memberOrEnemyIndex];
+      freeSpriteSlots -= requiredSlots * record->minimumCounts[i];
     }
   }
 
   // Each member's extra enemies: a random number from 0 to as many more as
   // its maximum allows and the free slots would hold on their own.
-  for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4; memberOrEnemyIndex++) {
+  for (i = 0; i < FORMATION_MEMBERS; i++) {
     s32 minimum;
     s32 maximum;
 
-    memberCounts[memberOrEnemyIndex] = minimum =
-        record->minimumCounts[memberOrEnemyIndex];
-    maximum = record->maximumCounts[memberOrEnemyIndex];
+    memberCounts[i] = minimum = record->minimumCounts[i];
+    maximum = record->maximumCounts[i];
     additionalRoom = maximum - minimum;
     if (additionalRoom > 0) {
-      s32 memberSlots =
-          2 - (BattleSprite_IsSmall(record->memberIds[memberOrEnemyIndex] +
-                                    ENEMY_ID_FIRST) != 0);
+      s32 memberSlots = FORMATION_MEMBER_SLOTS(record, i);
 
       fittingCount = freeSpriteSlots / memberSlots;
       if (fittingCount < additionalRoom)
         additionalRoom = fittingCount;
-      extraCounts[memberOrEnemyIndex] =
-          ((additionalRoom + 1) * Random16()) >> 16;
+      extraCounts[i] = ((additionalRoom + 1) * Random16()) >> 16;
     } else {
-      extraCounts[memberOrEnemyIndex] = 0;
+      extraCounts[i] = 0;
     }
   }
 
@@ -497,16 +490,15 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   // order, until none fits.
   do {
     changed = 0;
-    for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4;
-         memberOrEnemyIndex++) {
-      classId = record->memberIds[memberOrEnemyIndex] + ENEMY_ID_FIRST;
-      if (extraCounts[memberOrEnemyIndex] != 0) {
+    for (i = 0; i < FORMATION_MEMBERS; i++) {
+      classId = record->memberIds[i] + ENEMY_ID_FIRST;
+      if (extraCounts[i] != 0) {
         spriteSlots = 2 - (BattleSprite_IsSmall(classId) != 0);
         if (spriteSlots > freeSpriteSlots) {
-          extraCounts[memberOrEnemyIndex] = 0;
+          extraCounts[i] = 0;
         } else {
-          memberCounts[memberOrEnemyIndex]++;
-          extraCounts[memberOrEnemyIndex]--;
+          memberCounts[i]++;
+          extraCounts[i]--;
           freeSpriteSlots -= spriteSlots;
           changed = 1;
         }
@@ -519,21 +511,19 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   switch (battle->layout) {
   case FORMATION_LAYOUT_SHUFFLED:
     // The members' order shuffled by ten random swaps.
-    for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4; memberOrEnemyIndex++)
-      memberOrder[memberOrEnemyIndex] = memberOrEnemyIndex;
-    for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 9;
-         memberOrEnemyIndex++) {
-      s32 first = (Random16() * 5) >> 16;
-      s32 second = (Random16() * 5) >> 16;
+    for (i = 0; i < FORMATION_MEMBERS; i++)
+      memberOrder[i] = i;
+    for (i = 0; i < 10; i++) {
+      s32 first = (Random16() * FORMATION_MEMBERS) >> 16;
+      s32 second = (Random16() * FORMATION_MEMBERS) >> 16;
       s32 swap = memberOrder[first];
 
       memberOrder[first] = memberOrder[second];
       memberOrder[second] = swap;
     }
-    for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4;
-         memberOrEnemyIndex++) {
+    for (i = 0; i < FORMATION_MEMBERS; i++) {
       s32 copyIndex;
-      s32 slot = memberOrder[memberOrEnemyIndex];
+      s32 slot = memberOrder[i];
 
       for (copyIndex = 0; copyIndex < memberCounts[slot]; copyIndex++)
         enemyKinds[enemyCount++] = record->memberIds[slot] + ENEMY_ID_FIRST;
@@ -543,27 +533,22 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
     // Each enemy drawn from a random member with any left.
     for (;;) {
       remainingKinds = 0;
-      for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4;
-           memberOrEnemyIndex++) {
-        if (memberCounts[memberOrEnemyIndex] != 0)
-          memberOrder[remainingKinds++] = memberOrEnemyIndex;
+      for (i = 0; i < FORMATION_MEMBERS; i++) {
+        if (memberCounts[i] != 0)
+          memberOrder[remainingKinds++] = i;
       }
       if (remainingKinds == 0)
         break;
-      memberOrCopyIndex = memberOrder[(Random16() * remainingKinds) >> 16];
-      enemyKinds[enemyCount++] =
-          record->memberIds[memberOrCopyIndex] + ENEMY_ID_FIRST;
-      memberCounts[memberOrCopyIndex]--;
+      j = memberOrder[(Random16() * remainingKinds) >> 16];
+      enemyKinds[enemyCount++] = record->memberIds[j] + ENEMY_ID_FIRST;
+      memberCounts[j]--;
     }
     break;
   default:
-    for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4;
-         memberOrEnemyIndex++) {
-      copies = memberCounts[memberOrEnemyIndex];
-      for (memberOrCopyIndex = 0; memberOrCopyIndex < copies;
-           memberOrCopyIndex++)
-        enemyKinds[enemyCount++] =
-            record->memberIds[memberOrEnemyIndex] + ENEMY_ID_FIRST;
+    for (i = 0; i < FORMATION_MEMBERS; i++) {
+      copies = memberCounts[i];
+      for (j = 0; j < copies; j++)
+        enemyKinds[enemyCount++] = record->memberIds[i] + ENEMY_ID_FIRST;
     }
     break;
   }
@@ -572,32 +557,28 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   enemyKinds[enemyCount] = 0;
   battle->firstDefeated = ENEMY_BATTLE_SIZE;
   battle->defeatState = DEFEAT_ONE;
-  for (memberOrEnemyIndex = FIRST_ENEMY_UNIT;
-       memberOrEnemyIndex < FIRST_ENEMY_UNIT + ENEMY_BATTLE_SIZE;
-       memberOrEnemyIndex++)
-    Iwram_ClearWords(Unit_GetFar(memberOrEnemyIndex), BATTLE_UNIT_SIZE);
+  for (i = FIRST_ENEMY_UNIT; i < FIRST_ENEMY_UNIT + ENEMY_BATTLE_SIZE; i++)
+    Iwram_ClearWords(Unit_GetFar(i), BATTLE_UNIT_SIZE);
 
-  memberOrEnemyIndex = 0;
+  i = 0;
   // Each enemy unit, with its name letter (BattleEnemy_ClaimNameLetter) and,
   // in a monster battle, the level margin.
   if (enemyKinds[0] != 0) {
     for (;;) {
-      s32 suffixCode =
-          BattleEnemy_ClaimNameLetter(enemyKinds[memberOrEnemyIndex], 1);
+      s32 suffixCode = BattleEnemy_ClaimNameLetter(enemyKinds[i], 1);
 
       if (suffixCode & ENEMY_LETTER_FIRST_TOO)
-        BattleEnemy_LetterFirstOfKind(enemyKinds[memberOrEnemyIndex]);
-      BattleUnit_SetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
-                        enemyKinds[memberOrEnemyIndex],
+        BattleEnemy_LetterFirstOfKind(enemyKinds[i]);
+      BattleUnit_SetFar(i + FIRST_ENEMY_UNIT, enemyKinds[i],
                         suffixCode & ENEMY_LETTER_MASK);
-      Unit_GetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT);
+      // DEAD: the unit is fetched and not used; the ROM keeps the call.
+      Unit_GetFar(i + FIRST_ENEMY_UNIT);
       if (levelAdjustment != 0)
-        BattleEnemy_AdjustLevel(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
-                                levelAdjustment);
-      memberOrEnemyIndex++;
-      if (memberOrEnemyIndex > 5 || enemyKinds[memberOrEnemyIndex] == 0)
+        BattleEnemy_AdjustLevel(i + FIRST_ENEMY_UNIT, levelAdjustment);
+      i++;
+      if (i > 5 || enemyKinds[i] == 0)
         break;
     }
   }
-  return memberOrEnemyIndex;
+  return i;
 }

@@ -519,21 +519,6 @@ u32 BuildStamp_GetTime(void) {
   return (u16)result;
 }
 
-/// A view of EWRAM from gSceneLocalState on, which
-/// MainRoutineWork_InitializeDefaults writes one byte through.
-/// gSceneLocalState's 120 bytes and gInventorySnapshot's 140 come first, so
-/// firstSnapshotSlot is the first byte of gActorSnapshot.
-struct MapLocalStateSnapshotView {
-  u8 mapAndInventory[256]; ///< gSceneLocalState, then most of
-                           ///< gInventorySnapshot
-  /// gInventorySnapshot's last word, past the 65 halfwords the snapshot
-  /// uses; nothing reads or writes it through this view.
-  u32 playTime;
-  /// gActorSnapshot.slots[0]: set to ACTOR_SNAPSHOT_EMPTY,
-  /// so a new game holds no saved actors.
-  u8 firstSnapshotSlot;
-};
-
 /// Clears the game-state header, the scene state with the Colosso's inventory
 /// snapshot and the actor snapshot after it, the flags and most of the
 /// save stamp; sets a new game's defaults: Isaac alone in the party, the
@@ -558,8 +543,7 @@ void MainRoutineWork_InitializeDefaults(void) {
   zero = 0;
   START_DMA(&zero, gGameFlagBytes,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 128);
-  ((struct MapLocalStateSnapshotView *)gSceneLocalState)->firstSnapshotSlot =
-      ACTOR_SNAPSHOT_EMPTY;
+  gActorSnapshot.slots[0] = ACTOR_SNAPSHOT_EMPTY;
   zero = 0;
   START_DMA(&zero, gBattleArenaRecord + 0x1c,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 664);

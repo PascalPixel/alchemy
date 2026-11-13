@@ -25,13 +25,12 @@ enum GrowingColumnsMode {
 };
 
 /// One growing column, laid over a struct Particle in work->particles.
-struct ParticleGrowthColumnView {
+struct GrowingColumn {
   s32 x; ///< the root, in canvas pixels
   s32 y; ///< the root's row: 108 to 115, lower for later columns
-  s32 z; ///< the Particle's z and velocityX, unused here
-  s32 velocityX;
-  s32 height;    ///< the full length, 55 to 118 capped by its shape
-  s32 velocityZ; ///< the Particle's, unused here
+  s32 unused[2];
+  s32 height; ///< the full length, 55 to 118 capped by its shape
+  s32 unused2;
   /// The frame it starts to grow; set, but the frame loop computes its own.
   s32 start;
 };
@@ -64,7 +63,7 @@ void BattleEffect_RunPunji(struct BattleEffectParams *args) {
 /// last 4.
 ///
 /// Called by BattleEffect_RunGrowth and BattleEffect_RunPunji.
-/// work->particles holds the 16 columns (struct ParticleGrowthColumnView) and
+/// work->particles holds the 16 columns (struct GrowingColumn) and
 /// PARTICLES the dust. Writes REG_BG2PA, REG_BLDCNT, REG_BLDALPHA and, on side
 /// 1, REG_BG2X; sets work->shakeFrames as each column appears.
 ///
@@ -73,41 +72,16 @@ void BattleEffect_RunPunji(struct BattleEffectParams *args) {
 ///         Punji Trap and Punji Strike, 12 for Wild Growth. The effect runs
 ///         4 frames a column and 56 more.
 void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
-  struct BattleEffectWork *work;
-  void *canvas;
-  void *rectangle[2];
-
-  s32 frame;
+  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  u8 *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  struct GrowingColumn *columns = (struct GrowingColumn *)work->particles;
+  DrawRectangle draw[2];
+  s32 columnCount;
   s32 duration;
-  void **draw;
-  s32 cueFrame;
-  s32 fadeStart;
-  s32 fadeEnd;
-  s32 start;
-
-  u8 *variantCursor;
-
-  struct ParticleGrowthColumnView *setup;
-  s32 x;
-  s32 height;
-  s32 limit;
-
-  s32 puffPictures;
-  struct ParticleGrowthColumnView *column;
-  s32 length;
-  s32 reach;
-  s8 pillarHeight;
-
-  s32 n;
-  s32 reactFrame;
-
+  s32 dustPictures;
+  s32 frame;
   s32 i;
-  struct Particle *puff;
-  s32 puffAge;
-  s32 image;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
@@ -115,203 +89,140 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   if (mode == GROWING_COLUMNS_PILLARS) {
     Resource_LoadAndDecompress((s32)&ResourceId_GreenPillarSheet, work->sheet,
                                1, 1);
+    dustPictures = GROWING_COLUMNS_PILLAR_DUST_PICTURES;
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_VineSheet, work->sheet, 1, 1);
+    dustPictures = GROWING_COLUMNS_VINE_DUST_PICTURES;
   }
-  if (work->args->side == EFFECT_SIDE_PARTY) {
+  if (work->args->side == EFFECT_SIDE_PARTY)
     REG_BG2X = -(112 << 8); // 112 pixels right
-  }
+  // The odd columns draw through the mirrored blitter, draw[1].
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  rectangle[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
+  draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
-  // The odd columns draw through the mirrored blitter, draw[1].
-  {
-    void *mirroredBlitter = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
 
-    draw = rectangle;
-    draw[1] = mirroredBlitter;
-  }
+  columnCount = gGrowth_ColumnCounts[work->args->variant];
+  duration = columnCount * 4 + 56;
 
-  duration = gGrowth_ColumnCounts[work->args->variant] * 4 + 56;
-
-  // Mark the dust free (variant -1): 1024 entries, though only the first 512
-  // are used.
-  variantCursor = Ram_MapGridCellBuffer + offsetof(struct Particle, variant);
-  i = 0;
-  do {
-    i++;
-    *(s32 *)variantCursor = -1;
-    variantCursor += sizeof(struct Particle);
-  } while (i != 1024);
+  // Mark the dust free: 1024 entries, though only the first 512 are used.
+  for (i = 0; i != 1024; i++)
+    PARTICLES[i].variant = -1;
 
   // The 16 columns' roots and lengths: each root up to 4 pixels either side
   // of its gGrowth_ColumnX, each length random and capped by its shape. All
   // 16 are placed, whatever the variant's count.
-  i = 0;
-  setup = (struct ParticleGrowthColumnView *)work->particles;
-  do {
-    x = (gGrowth_ColumnX[i] + (7 & Random16())) - 4;
-    setup->y = i / 2 + 108;
-    setup->x = x;
-    height = (63 & Random16()) + 55;
-    setup->height = height;
-    limit = gGrowth_HeightLimits[i % 3];
-    if (limit < height) {
-      setup->height = limit;
-    }
-    limit = i * 4 + 8;
-    setup->start = limit;
-    i++;
-    setup++;
-  } while (i != 16);
+  for (i = 0; i != 16; i++) {
+    struct GrowingColumn *column = &columns[i];
+
+    column->x = gGrowth_ColumnX[i] + (Random16() & 7) - 4;
+    column->y = i / 2 + 108;
+    column->height = (Random16() & 63) + 55;
+    if (column->height > gGrowth_HeightLimits[i % 3])
+      column->height = gGrowth_HeightLimits[i % 3];
+    column->start = i * 4 + 8;
+  }
 
   // Each transfer clears the canvas: everything is redrawn every frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 
-  frame = 0;
-  if (duration != 0) {
-    cueFrame = duration - 64;
-    fadeStart = duration - 20;
-    fadeEnd = duration - 4;
-    do {
-      if (frame == cueFrame) {
-        EFFECT_SHOW_DAMAGE(SE_WATER);
-      }
-      if (frame >= fadeStart && frame < fadeEnd) {
-        // Fade out over 16 frames, the canvas's share falling from 15/16 to
-        // nothing, which it stays at for the last 4.
-        REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-        REG_BLDALPHA = BLEND_ALPHA((duration - frame) - 5, 16);
-      }
-      // The columns, the targets' reactions and the dust they throw up.
-      if (frame < fadeEnd) {
-        i = 0;
-        if (gGrowth_ColumnCounts[work->args->variant] != 0) {
-          do {
-            column = (struct ParticleGrowthColumnView
-                          *)((u8 *)work->particles +
-                             i * sizeof(struct ParticleGrowthColumnView));
-            start = i * 4 + 8;
-            if (frame == i * 4 + 9) {
-              work->shakeFrames = 2;
-            }
+  for (frame = 0; frame != duration; frame++) {
+    if (frame == duration - 64)
+      EFFECT_SHOW_DAMAGE(SE_WATER);
+    if (frame >= duration - 20 && frame < duration - 4) {
+      // Fade out over 16 frames, the canvas's share falling from 15/16 to
+      // nothing, which it stays at for the last 4.
+      REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+      REG_BLDALPHA = BLEND_ALPHA(duration - frame - 5, 16);
+    }
+    // The columns, the targets' reactions and the dust they throw up.
+    if (frame < duration - 4) {
+      for (i = 0; i != columnCount; i++) {
+        struct GrowingColumn *column = &columns[i];
+        s32 start = i * 4 + 8;
+        s32 n;
 
-            // Grow 8 pixels a frame (odd columns mirrored), standing on the
-            // root and centred across it. A pillar also stops at its
-            // gGrowth_PillarHeights entry.
-            if (frame > start) {
-              u32 shape = i % 3;
+        if (frame == start + 1)
+          work->shakeFrames = 2;
 
-              length = (frame - start) * 8;
-              reach = column->height;
-              if (length > reach) {
-                length = reach;
-              }
-              if (mode == GROWING_COLUMNS_VINES) {
-                {
-                  s32 side = 1 & i;
-                  s32 picture = gGrowth_VinePictures[shape];
-                  shape = gGrowth_VineWidths[shape];
-                  ((DrawRectangle)draw[side])(
-                      canvas, work->sheet + picture, column->x - (shape >> 1),
-                      column->y - length, shape, length);
-                }
-              } else {
-                pillarHeight = gGrowth_PillarHeights[7 & i];
-                if (length > pillarHeight) {
-                  length = pillarHeight;
-                }
-                {
-                  s32 side = 1 & i;
-                  s32 picture = gGrowth_PillarPictures[shape];
-                  shape = gGrowth_PillarWidths[shape];
-                  ((DrawRectangle)draw[side])(
-                      canvas, work->sheet + picture, column->x - (shape >> 1),
-                      column->y - length, shape, length);
-                }
-              }
-            }
+        // Grow 8 pixels a frame (odd columns mirrored), standing on the
+        // root and centred across it. A pillar also stops at its
+        // gGrowth_PillarHeights entry.
+        if (frame > start) {
+          s32 shape = i % 3;
+          s32 length = (frame - start) * 8;
+          s32 picture;
+          s32 width;
 
-            // The targets react 4 frames after the column starts to grow,
-            // with a sound for even columns only.
-            n = 0;
-            if (work->args->targetCount != 0) {
-              reactFrame = start + 4;
-              do {
-                if (frame == reactFrame) {
-                  if (!(i & 1)) {
-                    Sound_PlayFar(SE_IMPACT);
-                  }
-                  BattleEffect_TintBattler(work->args->targets[n],
-                                           SPRITE_COLOR_WHITE, POSE_DAMAGE, n,
-                                           3);
-                }
-                n++;
-              } while (n != work->args->targetCount);
-            } else {
-              reactFrame = start + 4;
-            }
-
-            // On frames 4 and 8, put the first free puff of dust near the
-            // root: x within 8 pixels of it, y on rows 80 to 95.
-            if ((frame == reactFrame) || (frame == (start + 8))) {
-              n = 0;
-              while (n != 512) {
-                struct Particle *dust = &PARTICLES[n];
-
-                if (dust->variant == -1) {
-                  dust->x = ((Random16() & 0xf) + column->x) - 8;
-                  dust->y = (Random16() & 0xf) + 80;
-                  dust->variant = 0;
-                  break;
-                }
-                n++;
-              }
-            }
-            i++;
-          } while (i != gGrowth_ColumnCounts[work->args->variant]);
-        }
-      }
-
-      // Dust, after the columns so it is drawn over them; it keeps going
-      // through the last 4 frames.
-      i = 0;
-      puff = PARTICLES;
-      do {
-        puffAge = puff->variant;
-        if (puffAge >= 0) {
-          image = puffAge / 2;
-          puffPictures = GROWING_COLUMNS_VINE_DUST_PICTURES;
-          if (mode != GROWING_COLUMNS_VINES) {
-            puffPictures = GROWING_COLUMNS_PILLAR_DUST_PICTURES;
+          if (length > column->height)
+            length = column->height;
+          if (mode == GROWING_COLUMNS_VINES) {
+            picture = gGrowth_VinePictures[shape];
+            width = gGrowth_VineWidths[shape];
+          } else {
+            if (length > gGrowth_PillarHeights[i & 7])
+              length = gGrowth_PillarHeights[i & 7];
+            picture = gGrowth_PillarPictures[shape];
+            width = gGrowth_PillarWidths[shape];
           }
-          ((DrawRectangle)rectangle[0])(
-              canvas,
-              work->sheet + (gGrowth_PuffPictures[image] + puffPictures),
-              puff->x - gGrowth_PuffWidths[image],
-              puff->y - (s8)gGrowth_PuffHeights[image] / 2,
-              gGrowth_PuffWidths[image], (s8)gGrowth_PuffHeights[image]);
-          ((DrawRectangle)rectangle[1])(
-              canvas,
-              work->sheet + (gGrowth_PuffPictures[image] + puffPictures),
-              puff->x, puff->y - (s8)gGrowth_PuffHeights[image] / 2,
-              gGrowth_PuffWidths[image], (s8)gGrowth_PuffHeights[image]);
-          puff->variant++;
-          if (puff->variant == 14) {
-            puff->variant = -1;
+          draw[i & 1](canvas, work->sheet + picture, column->x - width / 2,
+                      column->y - length, width, length);
+        }
+
+        // The targets react 4 frames after the column starts to grow, with
+        // a sound for even columns only.
+        if (frame == start + 4) {
+          for (n = 0; n != work->args->targetCount; n++) {
+            if (!(i & 1))
+              Sound_PlayFar(SE_IMPACT);
+            BattleEffect_TintBattler(work->args->targets[n], SPRITE_COLOR_WHITE,
+                                     POSE_DAMAGE, n, 3);
           }
         }
-        puff++;
-        i++;
-      } while (i != 512);
 
-      BattleCamera_Shake(4, 4);
-      EFFECT_END_FRAME(work);
-      frame++;
-    } while (frame != duration);
+        // On frames 4 and 8, put the first free puff of dust near the root:
+        // x within 8 pixels of it, y on rows 80 to 95.
+        if (frame == start + 4 || frame == start + 8) {
+          for (n = 0; n != 512; n++) {
+            struct Particle *dust = &PARTICLES[n];
+
+            if (dust->variant == -1) {
+              dust->x = (Random16() & 15) + column->x - 8;
+              dust->y = (Random16() & 15) + 80;
+              dust->variant = 0;
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    // Dust, after the columns so it is drawn over them; it keeps going
+    // through the last 4 frames. Each puff is drawn twice, its left half
+    // mirrored.
+    for (i = 0; i != 512; i++) {
+      struct Particle *puff = &PARTICLES[i];
+
+      if (puff->variant >= 0) {
+        s32 image = puff->variant / 2;
+        u8 *picture = work->sheet + gGrowth_PuffPictures[image] + dustPictures;
+        s32 width = gGrowth_PuffWidths[image];
+        s32 height = (s8)gGrowth_PuffHeights[image];
+
+        draw[0](canvas, picture, puff->x - width, puff->y - height / 2, width,
+                height);
+        draw[1](canvas, picture, puff->x, puff->y - height / 2, width, height);
+        puff->variant++;
+        if (puff->variant == 14)
+          puff->variant = -1;
+      }
+    }
+
+    BattleCamera_Shake(4, 4);
+    EFFECT_END_FRAME(work);
   }
   EFFECT_FINISH_CANVAS();
 }

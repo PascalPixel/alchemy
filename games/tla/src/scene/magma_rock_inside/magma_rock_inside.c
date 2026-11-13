@@ -228,14 +228,62 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern u8 gMagmaRockInside_Placements[];
-extern u8 gMagmaRockInside_Room2Placements[];
-extern u8 gMagmaRockInside_Room3Placements[];
-extern u8 gMagmaRockInside_Room4Placements[];
-extern u8 gMagmaRockInside_Room5Placements[];
-extern u8 gMagmaRockInside_Room6Placements[];
-extern u8 gMagmaRockInside_Room7Placements[];
-extern u8 gMagmaRockInside_Room8Placements[];
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_Placements as u8
+ * gMagmaRockInside_Placements[]; scene/magma_rock_inside/s46e8 has struct
+ * ActorPlacement gMagmaRockInside_Placements[] = {. */
+extern u8 gMagmaRockInside_Placements__magma_rock_inside[] __asm__(
+    "gMagmaRockInside_Placements");
+#define gMagmaRockInside_Placements                                            \
+  gMagmaRockInside_Placements__magma_rock_inside
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room2Placements as u8
+ * gMagmaRockInside_Room2Placements[]; scene/magma_rock_inside/s46e8 has struct
+ * ActorPlacement gMagmaRockInside_Room2Placements[] = {. */
+extern u8 gMagmaRockInside_Room2Placements__magma_rock_inside[] __asm__(
+    "gMagmaRockInside_Room2Placements");
+#define gMagmaRockInside_Room2Placements                                       \
+  gMagmaRockInside_Room2Placements__magma_rock_inside
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room3Placements as u8
+ * gMagmaRockInside_Room3Placements[]; scene/magma_rock_inside/s46e8 has struct
+ * ActorPlacement gMagmaRockInside_Room3Placements[] = {. */
+extern u8 gMagmaRockInside_Room3Placements__magma_rock_inside[] __asm__(
+    "gMagmaRockInside_Room3Placements");
+#define gMagmaRockInside_Room3Placements                                       \
+  gMagmaRockInside_Room3Placements__magma_rock_inside
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room4Placements as u8
+ * gMagmaRockInside_Room4Placements[]; scene/magma_rock_inside/s46e8 has struct
+ * ActorPlacement gMagmaRockInside_Room4Placements[] = {. */
+extern u8 gMagmaRockInside_Room4Placements__magma_rock_inside[] __asm__(
+    "gMagmaRockInside_Room4Placements");
+#define gMagmaRockInside_Room4Placements                                       \
+  gMagmaRockInside_Room4Placements__magma_rock_inside
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room5Placements as u8
+ * gMagmaRockInside_Room5Placements[]; scene/magma_rock_inside/s46e8 has struct
+ * ActorPlacement gMagmaRockInside_Room5Placements[] = {. */
+extern u8 gMagmaRockInside_Room5Placements__magma_rock_inside[] __asm__(
+    "gMagmaRockInside_Room5Placements");
+#define gMagmaRockInside_Room5Placements                                       \
+  gMagmaRockInside_Room5Placements__magma_rock_inside
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room6Placements as u8
+ * gMagmaRockInside_Room6Placements[]; scene/magma_rock_inside/s46e8 has struct
+ * ActorPlacement gMagmaRockInside_Room6Placements[] = {. */
+extern u8 gMagmaRockInside_Room6Placements__magma_rock_inside[] __asm__(
+    "gMagmaRockInside_Room6Placements");
+#define gMagmaRockInside_Room6Placements                                       \
+  gMagmaRockInside_Room6Placements__magma_rock_inside
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room7Placements as u8
+ * gMagmaRockInside_Room7Placements[]; scene/magma_rock_inside/s46e8 has struct
+ * ActorPlacement gMagmaRockInside_Room7Placements[] = {. */
+extern u8 gMagmaRockInside_Room7Placements__magma_rock_inside[] __asm__(
+    "gMagmaRockInside_Room7Placements");
+#define gMagmaRockInside_Room7Placements                                       \
+  gMagmaRockInside_Room7Placements__magma_rock_inside
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room8Placements as u8
+ * gMagmaRockInside_Room8Placements[]; scene/magma_rock_inside/s46e8 has struct
+ * ActorPlacement gMagmaRockInside_Room8Placements[] = {. */
+extern u8 gMagmaRockInside_Room8Placements__magma_rock_inside[] __asm__(
+    "gMagmaRockInside_Room8Placements");
+#define gMagmaRockInside_Room8Placements                                       \
+  gMagmaRockInside_Room8Placements__magma_rock_inside
 
 extern s16 gMagmaRockInside_Room6Pillars[];
 
@@ -398,7 +446,13 @@ void MagmaRockInside_PlayBurst(s16 value) {
   BattleEffect_CleanupSceneObjects();
 }
 
-extern const s32 gMagmaRockInside_EmberScript[];
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_EmberScript as const s32
+ * gMagmaRockInside_EmberScript[]; scene/magma_rock_inside/s46e8 has u32
+ * gMagmaRockInside_EmberScript[] = {. */
+extern const s32 gMagmaRockInside_EmberScript__magma_rock_inside[] __asm__(
+    "gMagmaRockInside_EmberScript");
+#define gMagmaRockInside_EmberScript                                           \
+  gMagmaRockInside_EmberScript__magma_rock_inside
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -464,8 +518,19 @@ void MagmaRockInside_ResolveBeforeBurst(void) {
   Event_ResolvePendingActions(0);
 }
 
-extern u16 gMagmaRockInside_Statues[];
-extern u16 gMagmaRockInside_Room4Statues[];
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_Statues as u16
+ * gMagmaRockInside_Statues[]; scene/magma_rock_inside/s46e8 has s32
+ * gMagmaRockInside_Statues[] = {. */
+extern u16 gMagmaRockInside_Statues__magma_rock_inside[] __asm__(
+    "gMagmaRockInside_Statues");
+#define gMagmaRockInside_Statues gMagmaRockInside_Statues__magma_rock_inside
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room4Statues as u16
+ * gMagmaRockInside_Room4Statues[]; scene/magma_rock_inside/s46e8 has s16
+ * gMagmaRockInside_Room4Statues[] = {. */
+extern u16 gMagmaRockInside_Room4Statues__magma_rock_inside[] __asm__(
+    "gMagmaRockInside_Room4Statues");
+#define gMagmaRockInside_Room4Statues                                          \
+  gMagmaRockInside_Room4Statues__magma_rock_inside
 
 void MagmaRockInside_FlashStatue(struct Actor *object);
 
@@ -731,7 +796,13 @@ void MagmaRockInside_PushPillarIntoLava(void) {
   Event_End();
 }
 
-extern const s32 gMagmaRockInside_FlameEmberScript[];
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_FlameEmberScript as const
+ * s32 gMagmaRockInside_FlameEmberScript[]; scene/magma_rock_inside/s46e8 has
+ * u32 gMagmaRockInside_FlameEmberScript[] = {. */
+extern const s32 gMagmaRockInside_FlameEmberScript__magma_rock_inside[] __asm__(
+    "gMagmaRockInside_FlameEmberScript");
+#define gMagmaRockInside_FlameEmberScript                                      \
+  gMagmaRockInside_FlameEmberScript__magma_rock_inside
 
 void MagmaRockInside_DrainLava(void) {
   s32 srcX;
@@ -1683,13 +1754,87 @@ union ActorView {
   } bytes;
 };
 
-extern const u8 gMagmaRockInside_BlazeCasterScript[];
-extern const s32 gMagmaRockInside_TorchScript[];
-extern const s32 gMagmaRockInside_SparkScript[];
-extern const u8 gMagmaRockInside_BlazeWatcherScript[];
-extern const s32 gMagmaRockInside_OrbitScript[];
-extern const u8 gMagmaRockInside_BlazeCasterReturnScript[];
-extern const u8 gMagmaRockInside_BlazeWatcherReturnScript[];
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_BlazeCasterScript as const
+ * u8 gMagmaRockInside_BlazeCasterScript[]; scene/magma_rock_inside/s46e8 has
+ * DEFINE_G_DATA_02005264(gMagmaRockInside_BlazeCasterScript, 24)
+ * DEFINE_G_DATA_02005264(gMagmaRockInside_BlazeWatcherScript, 16)
+ * DEFINE_G_DATA_020052AC(gMagmaRockInside_BlazeCasterReturnScript, 24, 0)
+ * DEFINE_G_DATA_020052AC(gMagmaRockInside_BlazeWatcherReturnScript, 16, 3)
+ * DEFINE_G_DATA_02001540(gMagmaRockInside_RubbleScript, 33)
+ * DEFINE_G_DATA_02001540(gMagmaRockInside_DustScript, 44) const s32
+ * *gFieldEffect_DurationScripts[] = {. */
+extern const u8 gMagmaRockInside_BlazeCasterScript__magma_rock_inside[] __asm__(
+    "gMagmaRockInside_BlazeCasterScript");
+#define gMagmaRockInside_BlazeCasterScript                                     \
+  gMagmaRockInside_BlazeCasterScript__magma_rock_inside
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_TorchScript as const s32
+ * gMagmaRockInside_TorchScript[]; scene/magma_rock_inside/s46e8 has
+ * DEFINE_G_DATA_02005218(gMagmaRockInside_TorchScript) s32
+ * gMagmaRockInside_SparkScript[] = {. */
+extern const s32 gMagmaRockInside_TorchScript__magma_rock_inside[] __asm__(
+    "gMagmaRockInside_TorchScript");
+#define gMagmaRockInside_TorchScript                                           \
+  gMagmaRockInside_TorchScript__magma_rock_inside
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_SparkScript as const s32
+ * gMagmaRockInside_SparkScript[]; scene/magma_rock_inside/s46e8 has s32
+ * gMagmaRockInside_SparkScript[] = {. */
+extern const s32 gMagmaRockInside_SparkScript__magma_rock_inside[] __asm__(
+    "gMagmaRockInside_SparkScript");
+#define gMagmaRockInside_SparkScript                                           \
+  gMagmaRockInside_SparkScript__magma_rock_inside
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_BlazeWatcherScript as
+ * const u8 gMagmaRockInside_BlazeWatcherScript[]; scene/magma_rock_inside/s46e8
+ * has DEFINE_G_DATA_02005264(gMagmaRockInside_BlazeWatcherScript, 16)
+ * DEFINE_G_DATA_020052AC(gMagmaRockInside_BlazeCasterReturnScript, 24, 0)
+ * DEFINE_G_DATA_020052AC(gMagmaRockInside_BlazeWatcherReturnScript, 16, 3)
+ * DEFINE_G_DATA_02001540(gMagmaRockInside_RubbleScript, 33)
+ * DEFINE_G_DATA_02001540(gMagmaRockInside_DustScript, 44) const s32
+ * *gFieldEffect_DurationScripts[] = {. */
+extern const u8
+    gMagmaRockInside_BlazeWatcherScript__magma_rock_inside[] __asm__(
+        "gMagmaRockInside_BlazeWatcherScript");
+#define gMagmaRockInside_BlazeWatcherScript                                    \
+  gMagmaRockInside_BlazeWatcherScript__magma_rock_inside
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_OrbitScript as const s32
+ * gMagmaRockInside_OrbitScript[]; scene/magma_rock_inside/s46e8 has
+ * DEFINE_G_DATA_02005244(gMagmaRockInside_OrbitScript, Orbit_Update,
+ * Actor_AimAtWatched, MagmaRockInside_DriftForSteps)
+ * DEFINE_G_DATA_02005264(gMagmaRockInside_BlazeCasterScript, 24)
+ * DEFINE_G_DATA_02005264(gMagmaRockInside_BlazeWatcherScript, 16)
+ * DEFINE_G_DATA_020052AC(gMagmaRockInside_BlazeCasterReturnScript, 24, 0)
+ * DEFINE_G_DATA_020052AC(gMagmaRockInside_BlazeWatcherReturnScript, 16, 3)
+ * DEFINE_G_DATA_02001540(gMagmaRockInside_RubbleScript, 33)
+ * DEFINE_G_DATA_02001540(gMagmaRockInside_DustScript, 44) const s32
+ * *gFieldEffect_DurationScripts[] = {. */
+extern const s32 gMagmaRockInside_OrbitScript__magma_rock_inside[] __asm__(
+    "gMagmaRockInside_OrbitScript");
+#define gMagmaRockInside_OrbitScript                                           \
+  gMagmaRockInside_OrbitScript__magma_rock_inside
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_BlazeCasterReturnScript as
+ * const u8 gMagmaRockInside_BlazeCasterReturnScript[];
+ * scene/magma_rock_inside/s46e8 has
+ * DEFINE_G_DATA_020052AC(gMagmaRockInside_BlazeCasterReturnScript, 24, 0)
+ * DEFINE_G_DATA_020052AC(gMagmaRockInside_BlazeWatcherReturnScript, 16, 3)
+ * DEFINE_G_DATA_02001540(gMagmaRockInside_RubbleScript, 33)
+ * DEFINE_G_DATA_02001540(gMagmaRockInside_DustScript, 44) const s32
+ * *gFieldEffect_DurationScripts[] = {. */
+extern const u8
+    gMagmaRockInside_BlazeCasterReturnScript__magma_rock_inside[] __asm__(
+        "gMagmaRockInside_BlazeCasterReturnScript");
+#define gMagmaRockInside_BlazeCasterReturnScript                               \
+  gMagmaRockInside_BlazeCasterReturnScript__magma_rock_inside
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_BlazeWatcherReturnScript
+ * as const u8 gMagmaRockInside_BlazeWatcherReturnScript[];
+ * scene/magma_rock_inside/s46e8 has
+ * DEFINE_G_DATA_020052AC(gMagmaRockInside_BlazeWatcherReturnScript, 16, 3)
+ * DEFINE_G_DATA_02001540(gMagmaRockInside_RubbleScript, 33)
+ * DEFINE_G_DATA_02001540(gMagmaRockInside_DustScript, 44) const s32
+ * *gFieldEffect_DurationScripts[] = {. */
+extern const u8
+    gMagmaRockInside_BlazeWatcherReturnScript__magma_rock_inside[] __asm__(
+        "gMagmaRockInside_BlazeWatcherReturnScript");
+#define gMagmaRockInside_BlazeWatcherReturnScript                              \
+  gMagmaRockInside_BlazeWatcherReturnScript__magma_rock_inside
 
 void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
   struct Actor *first = Actor_GetById(a);
@@ -1951,14 +2096,61 @@ DEFINE_MAGMA_ROCK_INSIDE_READ_TABLET_FROM(
 DEFINE_MAGMA_ROCK_INSIDE_READ_TABLET_FROM(
     MagmaRockInside_ReadBlazeTabletFromSouth, 248)
 
-extern u8 gMagmaRockInside_Triggers[];
-extern u8 gMagmaRockInside_Room2Triggers[];
-extern u8 gMagmaRockInside_Room3Triggers[];
-extern u8 gMagmaRockInside_Room4Triggers[];
-extern u8 gMagmaRockInside_Room5Triggers[];
-extern u8 gMagmaRockInside_Room6Triggers[];
-extern u8 gMagmaRockInside_Room7Triggers[];
-extern u8 gMagmaRockInside_Room8Triggers[];
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_Triggers as u8
+ * gMagmaRockInside_Triggers[]; scene/magma_rock_inside/s46e8 has struct Trigger
+ * gMagmaRockInside_Triggers[] = {. */
+extern u8 gMagmaRockInside_Triggers__magma_rock_inside[] __asm__(
+    "gMagmaRockInside_Triggers");
+#define gMagmaRockInside_Triggers gMagmaRockInside_Triggers__magma_rock_inside
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room2Triggers as u8
+ * gMagmaRockInside_Room2Triggers[]; scene/magma_rock_inside/s46e8 has struct
+ * Trigger gMagmaRockInside_Room2Triggers[] = {. */
+extern u8 gMagmaRockInside_Room2Triggers__magma_rock_inside[] __asm__(
+    "gMagmaRockInside_Room2Triggers");
+#define gMagmaRockInside_Room2Triggers                                         \
+  gMagmaRockInside_Room2Triggers__magma_rock_inside
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room3Triggers as u8
+ * gMagmaRockInside_Room3Triggers[]; scene/magma_rock_inside/s46e8 has struct
+ * Trigger gMagmaRockInside_Room3Triggers[] = {. */
+extern u8 gMagmaRockInside_Room3Triggers__magma_rock_inside[] __asm__(
+    "gMagmaRockInside_Room3Triggers");
+#define gMagmaRockInside_Room3Triggers                                         \
+  gMagmaRockInside_Room3Triggers__magma_rock_inside
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room4Triggers as u8
+ * gMagmaRockInside_Room4Triggers[]; scene/magma_rock_inside/s46e8 has struct
+ * Trigger gMagmaRockInside_Room4Triggers[] = {. */
+extern u8 gMagmaRockInside_Room4Triggers__magma_rock_inside[] __asm__(
+    "gMagmaRockInside_Room4Triggers");
+#define gMagmaRockInside_Room4Triggers                                         \
+  gMagmaRockInside_Room4Triggers__magma_rock_inside
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room5Triggers as u8
+ * gMagmaRockInside_Room5Triggers[]; scene/magma_rock_inside/s46e8 has struct
+ * Trigger gMagmaRockInside_Room5Triggers[] = {. */
+extern u8 gMagmaRockInside_Room5Triggers__magma_rock_inside[] __asm__(
+    "gMagmaRockInside_Room5Triggers");
+#define gMagmaRockInside_Room5Triggers                                         \
+  gMagmaRockInside_Room5Triggers__magma_rock_inside
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room6Triggers as u8
+ * gMagmaRockInside_Room6Triggers[]; scene/magma_rock_inside/s46e8 has struct
+ * Trigger gMagmaRockInside_Room6Triggers[] = {. */
+extern u8 gMagmaRockInside_Room6Triggers__magma_rock_inside[] __asm__(
+    "gMagmaRockInside_Room6Triggers");
+#define gMagmaRockInside_Room6Triggers                                         \
+  gMagmaRockInside_Room6Triggers__magma_rock_inside
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room7Triggers as u8
+ * gMagmaRockInside_Room7Triggers[]; scene/magma_rock_inside/s46e8 has struct
+ * Trigger gMagmaRockInside_Room7Triggers[] = {. */
+extern u8 gMagmaRockInside_Room7Triggers__magma_rock_inside[] __asm__(
+    "gMagmaRockInside_Room7Triggers");
+#define gMagmaRockInside_Room7Triggers                                         \
+  gMagmaRockInside_Room7Triggers__magma_rock_inside
+/* VIEW(magma_rock_inside): variable gMagmaRockInside_Room8Triggers as u8
+ * gMagmaRockInside_Room8Triggers[]; scene/magma_rock_inside/s46e8 has struct
+ * Trigger gMagmaRockInside_Room8Triggers[] = {. */
+extern u8 gMagmaRockInside_Room8Triggers__magma_rock_inside[] __asm__(
+    "gMagmaRockInside_Room8Triggers");
+#define gMagmaRockInside_Room8Triggers                                         \
+  gMagmaRockInside_Room8Triggers__magma_rock_inside
 
 u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -2066,6 +2258,35 @@ void MagmaRockInside_LayerWithLeader(struct Actor *arg) {
 #undef FIELD_AT
 #undef EVENT_WORK
 
+#undef gMagmaRockInside_EmberScript
+#undef gMagmaRockInside_FlameEmberScript
+#undef gMagmaRockInside_Statues
+#undef gMagmaRockInside_Room4Statues
+#undef gMagmaRockInside_SparkScript
+#undef gMagmaRockInside_Placements
+#undef gMagmaRockInside_Room2Placements
+#undef gMagmaRockInside_Room3Placements
+#undef gMagmaRockInside_Room4Placements
+#undef gMagmaRockInside_Room5Placements
+#undef gMagmaRockInside_Room6Placements
+#undef gMagmaRockInside_Room7Placements
+#undef gMagmaRockInside_Room8Placements
+#undef gMagmaRockInside_Triggers
+#undef gMagmaRockInside_Room2Triggers
+#undef gMagmaRockInside_Room3Triggers
+#undef gMagmaRockInside_Room4Triggers
+#undef gMagmaRockInside_Room5Triggers
+#undef gMagmaRockInside_Room6Triggers
+#undef gMagmaRockInside_Room7Triggers
+#undef gMagmaRockInside_Room8Triggers
+#undef DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR
+
+#undef gMagmaRockInside_TorchScript
+#undef gMagmaRockInside_OrbitScript
+#undef gMagmaRockInside_BlazeCasterScript
+#undef gMagmaRockInside_BlazeWatcherScript
+#undef gMagmaRockInside_BlazeCasterReturnScript
+#undef gMagmaRockInside_BlazeWatcherReturnScript
 // ---- scene/magma_rock_inside/s3678.c ----
 
 /// Magma Rock's inside: its crumbling pillars and traps.
@@ -2083,23 +2304,129 @@ void MagmaRockInside_LayerWithLeader(struct Actor *arg) {
 
 void Tightrope_Initialize(void);
 
-extern const u8 gMagmaRockInside_PlatformPath1[];
-extern const u8 gMagmaRockInside_PlatformPath2[];
-extern const u8 gMagmaRockInside_PlatformPath3[];
-extern const u8 gMagmaRockInside_PlatformPath4[];
-extern const u8 gMagmaRockInside_PlatformPath5[];
-extern const u8 gMagmaRockInside_PlatformPath10[];
-extern const u8 gMagmaRockInside_PlatformPath11[];
-extern const u8 gMagmaRockInside_PlatformPath12[];
-extern u16 gMagmaRockInside_Statues[];
-extern u16 gMagmaRockInside_Room4Statues[];
-extern const u8 gMagmaRockInside_Room6Pillars[];
+/* VIEW(s3678): variable gMagmaRockInside_PlatformPath1 as const u8
+ * gMagmaRockInside_PlatformPath1[]; scene/magma_rock_inside/s46e8 has
+ * DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath1, 776, 680, 744, 680,
+ * 744, 632, 776, 632) DEFINE_G_DATA_020050D4(gMagmaRockInside_PlatformPath2,
+ * 216, 568, 216, 584, 136, 584, 136, 568) u16 gMagmaRockInside_PlatformPath3[]
+ * = {. */
+extern const u8 gMagmaRockInside_PlatformPath1__s3678[] __asm__(
+    "gMagmaRockInside_PlatformPath1");
+#define gMagmaRockInside_PlatformPath1 gMagmaRockInside_PlatformPath1__s3678
+/* VIEW(s3678): variable gMagmaRockInside_PlatformPath2 as const u8
+ * gMagmaRockInside_PlatformPath2[]; scene/magma_rock_inside/s46e8 has
+ * DEFINE_G_DATA_020050D4(gMagmaRockInside_PlatformPath2, 216, 568, 216, 584,
+ * 136, 584, 136, 568) u16 gMagmaRockInside_PlatformPath3[] = {. */
+extern const u8 gMagmaRockInside_PlatformPath2__s3678[] __asm__(
+    "gMagmaRockInside_PlatformPath2");
+#define gMagmaRockInside_PlatformPath2 gMagmaRockInside_PlatformPath2__s3678
+/* VIEW(s3678): variable gMagmaRockInside_PlatformPath3 as const u8
+ * gMagmaRockInside_PlatformPath3[]; scene/magma_rock_inside/s46e8 has u16
+ * gMagmaRockInside_PlatformPath3[] = {. */
+extern const u8 gMagmaRockInside_PlatformPath3__s3678[] __asm__(
+    "gMagmaRockInside_PlatformPath3");
+#define gMagmaRockInside_PlatformPath3 gMagmaRockInside_PlatformPath3__s3678
+/* VIEW(s3678): variable gMagmaRockInside_PlatformPath4 as const u8
+ * gMagmaRockInside_PlatformPath4[]; scene/magma_rock_inside/s46e8 has
+ * DEFINE_G_DATA_020050D4(gMagmaRockInside_PlatformPath4, 184, 232, 280, 232,
+ * 280, 264, 184, 264) DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath5,
+ * 472, 296, 424, 296, 424, 264, 472, 264)
+ * DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath6, 216, 600, 280, 600,
+ * 280, 664, 216, 664) DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath7,
+ * 312, 664, 376, 664, 376, 600, 312, 600)
+ * DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath8, 440, 600, 504, 600,
+ * 504, 664, 440, 664) DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath9,
+ * 536, 664, 600, 664, 600, 600, 536, 600)
+ * DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath10, 376, 264, 376, 232,
+ * 408, 232, 408, 264) DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath11,
+ * 216, 680, 280, 680, 280, 712, 216, 712)
+ * DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath12, 376, 680, 312, 680,
+ * 312, 712, 376, 712) s16 gMagmaRockInside_Room2Pillars[] = {. */
+extern const u8 gMagmaRockInside_PlatformPath4__s3678[] __asm__(
+    "gMagmaRockInside_PlatformPath4");
+#define gMagmaRockInside_PlatformPath4 gMagmaRockInside_PlatformPath4__s3678
+/* VIEW(s3678): variable gMagmaRockInside_PlatformPath5 as const u8
+ * gMagmaRockInside_PlatformPath5[]; scene/magma_rock_inside/s46e8 has
+ * DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath5, 472, 296, 424, 296,
+ * 424, 264, 472, 264) DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath6,
+ * 216, 600, 280, 600, 280, 664, 216, 664)
+ * DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath7, 312, 664, 376, 664,
+ * 376, 600, 312, 600) DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath8,
+ * 440, 600, 504, 600, 504, 664, 440, 664)
+ * DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath9, 536, 664, 600, 664,
+ * 600, 600, 536, 600) DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath10,
+ * 376, 264, 376, 232, 408, 232, 408, 264)
+ * DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath11, 216, 680, 280, 680,
+ * 280, 712, 216, 712) DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath12,
+ * 376, 680, 312, 680, 312, 712, 376, 712) s16 gMagmaRockInside_Room2Pillars[] =
+ * {. */
+extern const u8 gMagmaRockInside_PlatformPath5__s3678[] __asm__(
+    "gMagmaRockInside_PlatformPath5");
+#define gMagmaRockInside_PlatformPath5 gMagmaRockInside_PlatformPath5__s3678
+/* VIEW(s3678): variable gMagmaRockInside_PlatformPath10 as const u8
+ * gMagmaRockInside_PlatformPath10[]; scene/magma_rock_inside/s46e8 has
+ * DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath10, 376, 264, 376, 232,
+ * 408, 232, 408, 264) DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath11,
+ * 216, 680, 280, 680, 280, 712, 216, 712)
+ * DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath12, 376, 680, 312, 680,
+ * 312, 712, 376, 712) s16 gMagmaRockInside_Room2Pillars[] = {. */
+extern const u8 gMagmaRockInside_PlatformPath10__s3678[] __asm__(
+    "gMagmaRockInside_PlatformPath10");
+#define gMagmaRockInside_PlatformPath10 gMagmaRockInside_PlatformPath10__s3678
+/* VIEW(s3678): variable gMagmaRockInside_PlatformPath11 as const u8
+ * gMagmaRockInside_PlatformPath11[]; scene/magma_rock_inside/s46e8 has
+ * DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath11, 216, 680, 280, 680,
+ * 280, 712, 216, 712) DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath12,
+ * 376, 680, 312, 680, 312, 712, 376, 712) s16 gMagmaRockInside_Room2Pillars[] =
+ * {. */
+extern const u8 gMagmaRockInside_PlatformPath11__s3678[] __asm__(
+    "gMagmaRockInside_PlatformPath11");
+#define gMagmaRockInside_PlatformPath11 gMagmaRockInside_PlatformPath11__s3678
+/* VIEW(s3678): variable gMagmaRockInside_PlatformPath12 as const u8
+ * gMagmaRockInside_PlatformPath12[]; scene/magma_rock_inside/s46e8 has
+ * DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath12, 376, 680, 312, 680,
+ * 312, 712, 376, 712) s16 gMagmaRockInside_Room2Pillars[] = {. */
+extern const u8 gMagmaRockInside_PlatformPath12__s3678[] __asm__(
+    "gMagmaRockInside_PlatformPath12");
+#define gMagmaRockInside_PlatformPath12 gMagmaRockInside_PlatformPath12__s3678
+/* VIEW(s3678): variable gMagmaRockInside_Statues as u16
+ * gMagmaRockInside_Statues[]; scene/magma_rock_inside/s46e8 has s32
+ * gMagmaRockInside_Statues[] = {. */
+extern u16
+    gMagmaRockInside_Statues__s3678[] __asm__("gMagmaRockInside_Statues");
+#define gMagmaRockInside_Statues gMagmaRockInside_Statues__s3678
+/* VIEW(s3678): variable gMagmaRockInside_Room4Statues as u16
+ * gMagmaRockInside_Room4Statues[]; scene/magma_rock_inside/s46e8 has s16
+ * gMagmaRockInside_Room4Statues[] = {. */
+extern u16 gMagmaRockInside_Room4Statues__s3678[] __asm__(
+    "gMagmaRockInside_Room4Statues");
+#define gMagmaRockInside_Room4Statues gMagmaRockInside_Room4Statues__s3678
+/* VIEW(s3678): variable gMagmaRockInside_Room6Pillars as const u8
+ * gMagmaRockInside_Room6Pillars[]; scene/magma_rock_inside/magma_rock_inside
+ * has s16 gMagmaRockInside_Room6Pillars[]. */
+extern const u8 gMagmaRockInside_Room6Pillars__s3678[] __asm__(
+    "gMagmaRockInside_Room6Pillars");
+#define gMagmaRockInside_Room6Pillars gMagmaRockInside_Room6Pillars__s3678
 
-void MagmaRockInside_StartLavaPlatform(s32 id, const u8 *script, s32 flag);
+/* VIEW(s3678): routine MagmaRockInside_StartLavaPlatform as void
+ * MagmaRockInside_StartLavaPlatform(s32 id, const u8 *script, s32 flag);
+ * scene/magma_rock_inside/magma_rock_inside has void
+ * MagmaRockInside_StartLavaPlatform(s32 a0, s32 a1, s32 a2) {. */
+void MagmaRockInside_StartLavaPlatform__s3678(
+    s32 id, const u8 *script,
+    s32 flag) __asm__("MagmaRockInside_StartLavaPlatform");
+#define MagmaRockInside_StartLavaPlatform                                      \
+  MagmaRockInside_StartLavaPlatform__s3678
 void Actor_PlaceBlocks(const u8 *table);
 void Tightrope_Place(s32 a, s32 b, s32 c);
 s32 MagmaRockInside_SwapCells(u32 layer, s32 x, s32 y, s32 value);
-void MagmaRockInside_LayerWithLeader(void);
+/* VIEW(s3678): routine MagmaRockInside_LayerWithLeader as void
+ * MagmaRockInside_LayerWithLeader(void);
+ * scene/magma_rock_inside/magma_rock_inside has void
+ * MagmaRockInside_LayerWithLeader(struct Actor *arg) {. */
+void MagmaRockInside_LayerWithLeader__s3678(void) __asm__(
+    "MagmaRockInside_LayerWithLeader");
+#define MagmaRockInside_LayerWithLeader MagmaRockInside_LayerWithLeader__s3678
 
 #define CLOSED_BLEND()                                                         \
   {                                                                            \
@@ -2419,7 +2746,11 @@ void MagmaRockInside_SetPillarMode3(s32 id) {
   Actor_DisableById(id);
 }
 
-void Actor_MoveToObject(s32 id, s32 owner);
+/* VIEW(s3678): routine Actor_MoveToObject as void Actor_MoveToObject(s32 id,
+ * s32 owner); scene/magma_rock_inside/magma_rock_inside has s32
+ * Actor_MoveToObject(). */
+void Actor_MoveToObject__s3678(s32 id, s32 owner) __asm__("Actor_MoveToObject");
+#define Actor_MoveToObject Actor_MoveToObject__s3678
 /// Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)
 /// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
 /// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
@@ -2520,6 +2851,21 @@ test:
 
 #include "../../field/field_effect/advance_motion_priority.c"
 
+#undef gMagmaRockInside_Room6Pillars
+#undef MagmaRockInside_StartLavaPlatform
+#undef MagmaRockInside_LayerWithLeader
+#undef Actor_MoveToObject
+#undef gMagmaRockInside_PlatformPath3
+#undef gMagmaRockInside_Statues
+#undef gMagmaRockInside_Room4Statues
+
+#undef gMagmaRockInside_PlatformPath1
+#undef gMagmaRockInside_PlatformPath2
+#undef gMagmaRockInside_PlatformPath4
+#undef gMagmaRockInside_PlatformPath5
+#undef gMagmaRockInside_PlatformPath10
+#undef gMagmaRockInside_PlatformPath11
+#undef gMagmaRockInside_PlatformPath12
 // ---- scene/magma_rock_inside/s46e8.c ----
 
 /// Magma Rock's inside: its falling rocks and rubble, and its tables.
@@ -2544,7 +2890,12 @@ test:
 #include "particle.h"
 #include "resource.h"
 
-void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
+/* VIEW(s46e8): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
+ * FieldEffect *effect, s32 flags); field/field.h has void
+ * Actor_SetSpriteFlags(struct Actor *object, u32 flags). */
+void Actor_SetSpriteFlags__s46e8(struct FieldEffect *effect,
+                                 s32 flags) __asm__("Actor_SetSpriteFlags");
+#define Actor_SetSpriteFlags Actor_SetSpriteFlags__s46e8
 /* VIEW(s46e8): routine Actor_StartScript as void Actor_StartScript(struct
  * FieldEffect *effect, const s32 *script); local.h has void
  * Actor_StartScript(struct Actor *object, const void *data); not tried:
@@ -2715,15 +3066,55 @@ void MagmaRockInside_EndFallingRocks(void) {
 
 void MagmaRockInside_MeetDjinni(void);
 void MagmaRockInside_ResolveBeforeBurst(void);
-void MagmaRockInside_TargetStatue(void);
+/* VIEW(s46e8): routine MagmaRockInside_TargetStatue as void
+ * MagmaRockInside_TargetStatue(void); scene/magma_rock_inside/magma_rock_inside
+ * has void MagmaRockInside_TargetStatue(s32 mode) {. */
+void MagmaRockInside_TargetStatue__s46e8(void) __asm__(
+    "MagmaRockInside_TargetStatue");
+#define MagmaRockInside_TargetStatue MagmaRockInside_TargetStatue__s46e8
 void MagmaRockInside_FireStatue(void);
-void MagmaRockInside_BurstCrackedPillar1(void);
-void MagmaRockInside_BurstCrackedPillar2(void);
+/* VIEW(s46e8): routine MagmaRockInside_BurstCrackedPillar1 as void
+ * MagmaRockInside_BurstCrackedPillar1(void);
+ * scene/magma_rock_inside/magma_rock_inside has
+ * DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR(MagmaRockInside_BurstCrackedPillar1, 9,
+ * 0x350)
+ * DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR(MagmaRockInside_BurstCrackedPillar2,
+ * 11, 0x351) void MagmaRockInside_SmokeEmber(struct Actor *object) {. */
+void MagmaRockInside_BurstCrackedPillar1__s46e8(void) __asm__(
+    "MagmaRockInside_BurstCrackedPillar1");
+#define MagmaRockInside_BurstCrackedPillar1                                    \
+  MagmaRockInside_BurstCrackedPillar1__s46e8
+/* VIEW(s46e8): routine MagmaRockInside_BurstCrackedPillar2 as void
+ * MagmaRockInside_BurstCrackedPillar2(void);
+ * scene/magma_rock_inside/magma_rock_inside has
+ * DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR(MagmaRockInside_BurstCrackedPillar2,
+ * 11, 0x351) void MagmaRockInside_SmokeEmber(struct Actor *object) {. */
+void MagmaRockInside_BurstCrackedPillar2__s46e8(void) __asm__(
+    "MagmaRockInside_BurstCrackedPillar2");
+#define MagmaRockInside_BurstCrackedPillar2                                    \
+  MagmaRockInside_BurstCrackedPillar2__s46e8
 void MagmaRockInside_LightTorch(void);
 void MagmaRockInside_OpenStairs(void);
-void MagmaRockInside_OrbitParent(void);
-void Orbit_Update(void);
-void Actor_AimAtWatched(void);
+/* VIEW(s46e8): routine MagmaRockInside_OrbitParent as void
+ * MagmaRockInside_OrbitParent(void); scene/magma_rock_inside/magma_rock_inside
+ * has s32 MagmaRockInside_OrbitParent(struct Orbiter__magma_rock_inside
+ * *object) {. */
+void MagmaRockInside_OrbitParent__s46e8(void) __asm__(
+    "MagmaRockInside_OrbitParent");
+#define MagmaRockInside_OrbitParent MagmaRockInside_OrbitParent__s46e8
+/* VIEW(s46e8): routine Orbit_Update as void Orbit_Update(void);
+ * scene/magma_rock_inside/magma_rock_inside has
+ * DEFINE_ORBIT_UPDATE(Orbit_Update) #define BYTE_AT(base, offset) (*(u8 *)((u8
+ * *)(base) + (offset))) DEFINE_ACTOR_AIM_AT_WATCHED(Actor_AimAtWatched) s32
+ * MagmaRockInside_DriftForSteps(struct Actor *object) {. */
+void Orbit_Update__s46e8(void) __asm__("Orbit_Update");
+#define Orbit_Update Orbit_Update__s46e8
+/* VIEW(s46e8): routine Actor_AimAtWatched as void Actor_AimAtWatched(void);
+ * scene/magma_rock_inside/magma_rock_inside has
+ * DEFINE_ACTOR_AIM_AT_WATCHED(Actor_AimAtWatched) s32
+ * MagmaRockInside_DriftForSteps(struct Actor *object) {. */
+void Actor_AimAtWatched__s46e8(void) __asm__("Actor_AimAtWatched");
+#define Actor_AimAtWatched Actor_AimAtWatched__s46e8
 
 extern u32 gFieldEffect_LongScript[];
 
@@ -2836,10 +3227,10 @@ DEFINE_G_DATA_02001540(gMagmaRockInside_RubbleScript, 33)
 
 DEFINE_G_DATA_02001540(gMagmaRockInside_DustScript, 44)
 
-s32 gFieldEffect_DurationScripts[] = {
-    (s32)gFieldEffect_ShortScript,
-    (s32)gFieldEffect_MediumScript,
-    (s32)gFieldEffect_LongScript,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -3310,3 +3701,24 @@ struct Trigger gMagmaRockInside_Room8Triggers[] = {
      EVENT(MagmaRockInside_PutOutTabletFlame)},
     {TRIGGER_TABLE_END},
 };
+
+#undef Actor_SetSpriteFlags
+#undef MagmaRockInside_TargetStatue
+#undef MagmaRockInside_BurstCrackedPillar1
+#undef MagmaRockInside_BurstCrackedPillar2
+#undef MagmaRockInside_OrbitParent
+#undef Orbit_Update
+#undef Actor_AimAtWatched
+#undef gMagmaRockInside_PlatformPath1
+#undef gMagmaRockInside_PlatformPath2
+#undef gMagmaRockInside_PlatformPath4
+#undef gMagmaRockInside_PlatformPath5
+#undef gMagmaRockInside_PlatformPath10
+#undef gMagmaRockInside_PlatformPath11
+#undef gMagmaRockInside_PlatformPath12
+#undef gMagmaRockInside_TorchScript
+#undef gMagmaRockInside_OrbitScript
+#undef gMagmaRockInside_BlazeCasterScript
+#undef gMagmaRockInside_BlazeWatcherScript
+#undef gMagmaRockInside_BlazeCasterReturnScript
+#undef gMagmaRockInside_BlazeWatcherReturnScript

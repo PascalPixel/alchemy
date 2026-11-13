@@ -516,7 +516,11 @@ DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, MapGrid_GetCellBehavior,
                               Position_FlatDistance, gWhirlwindEndScript,
                               gWhirlwindRiding)
 
-void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
+/* VIEW(s0d94): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
+ * FieldEffect *effect, s32 flags); field/field.h has void
+ * Actor_SetSpriteFlags(struct Actor *object, u32 flags). */
+void Actor_SetSpriteFlags__s0d94(struct FieldEffect *effect,
+                                 s32 flags) __asm__("Actor_SetSpriteFlags");
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags, struct EffectOptions *options);

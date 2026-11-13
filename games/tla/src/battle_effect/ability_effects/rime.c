@@ -72,7 +72,8 @@ void Transform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList(struct Model *model);
+void Render_DrawModelList__ability_effects(struct Model *model) __asm__(
+    "Render_DrawModelList");
 
 // Rime and Haze: the Djinni rises swaying through the canvas over the
 // party while its sign turns in the air: for Rime a crystal that spins in

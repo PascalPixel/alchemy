@@ -23,8 +23,9 @@ struct PartyKeys__f0267bc {
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
 
-s32 MapGrid_CheckCollision(struct Actor *object,
-                           struct FieldPosition *position);
+s32 MapGrid_CheckCollision__resource_slot(
+    struct Actor *object,
+    struct FieldPosition *position) __asm__("MapGrid_CheckCollision");
 /* VIEW(f0267bc): routine Unit_Get as struct LeaderUnit *Unit_Get(s32 owner);
  * offset has void *Unit_Get(s32 owner); tried as the definition's void
  * *Unit_Get(s32 owner), which the object already declares, it does not compile
@@ -462,8 +463,9 @@ extern struct MapCell gMapCellBuffer[];
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
 
-s32 MapGrid_CheckCollision(struct Actor *object,
-                           struct FieldPosition *position);
+s32 MapGrid_CheckCollision__resource_slot(
+    struct Actor *object,
+    struct FieldPosition *position) __asm__("MapGrid_CheckCollision");
 /* VIEW(f027064): routine Unit_Get as struct LeaderUnit *Unit_Get(s32 owner);
  * offset has void *Unit_Get(s32 owner); tried as the definition's void
  * *Unit_Get(s32 owner), which the object already declares, it does not compile

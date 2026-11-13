@@ -77,7 +77,10 @@ void Func_020003cc(void) {
  * games/tla/src/scene/apojii_islands.c:76: `gData_020024c4' has an incomplete
  * type. */
 extern s32 gData_020024c4__apojii_islands __asm__("gData_020024c4");
-extern u16 Data_02002958[], Data_02002978[], gData_02002998[], gData_020029b8[];
+extern u16 Data_02002958[];
+extern u16 Data_02002978[];
+extern u16 gData_02002998[];
+extern u16 gData_020029b8[];
 
 void Func_020003e8(void) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -116,7 +119,10 @@ void Func_020003e8(void) {
  * games/tla/src/scene/apojii_islands.c:110: `gData_020024c8' has an incomplete
  * type. */
 extern s32 gData_020024c8__apojii_islands __asm__("gData_020024c8");
-extern u16 Data_020029d8[], Data_020029f8[], Data_02002a18[], Data_02002a38[];
+extern u16 Data_020029d8[];
+extern u16 Data_020029f8[];
+extern u16 Data_02002a18[];
+extern u16 Data_02002a38[];
 
 void Func_02000540(void) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -870,10 +876,10 @@ u32 gWaterDropScript[] = {
 
 DEFINE_G_DATA_02001F18(gGroundParticleFrames)
 
-s32 gFieldEffect_DurationScripts[] = {
-    (s32)gData_02001e34,
-    (s32)gData_02001e70,
-    (s32)gData_02001eac,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gData_02001e34,
+    gData_02001e70,
+    gData_02001eac,
 };
 
 s32 gData_02002044[] = {

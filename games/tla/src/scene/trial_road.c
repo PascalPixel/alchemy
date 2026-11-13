@@ -73,7 +73,11 @@ s32 TrialRoad_RivalIsAhead(s32 fallback) {
 
 #include "event_inline.h"
 
-s32 TrialRoad_OfferToGiveUp(s32 value);
+/* VIEW(trial_road): routine TrialRoad_OfferToGiveUp as s32
+ * TrialRoad_OfferToGiveUp(s32 value); scene/trial_road/s0218 has s32
+ * TrialRoad_OfferToGiveUp(void) {. */
+s32 TrialRoad_OfferToGiveUp__trial_road(s32 value) __asm__(
+    "TrialRoad_OfferToGiveUp");
 
 void TrialRoad_TakeStairs(s32 direction) {
   struct TrialRoadState *state = gTrialRoadState;
@@ -82,7 +86,7 @@ void TrialRoad_TakeStairs(s32 direction) {
   if ((u32)(direction - 1) <= 1) {
     if (state->stage[0] <= 0) {
       if (Event_GetFlag(2559)) {
-        if (TrialRoad_OfferToGiveUp(0) == 0)
+        if (TrialRoad_OfferToGiveUp__trial_road(0) == 0)
           Actor_WalkByAndWait(gMainRoutineWork.currentOwner, 0, -16);
         return;
       }

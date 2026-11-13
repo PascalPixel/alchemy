@@ -26,7 +26,13 @@ extern u8 gData_02004d0c[];
 extern u8 gData_02004dbc[];
 extern u8 gData_02004fe4[];
 
-void Statue_Sink(void *, s32, s32);
+/* VIEW(eastern_alhafra): routine Statue_Sink as void Statue_Sink(void *, s32,
+ * s32); scene/eastern_alhafra/s44c4 has DEFINE_STATUE_SINK(Statue_Sink,
+ * Actor_SetCellOpen) #include "field_event.h"
+ * DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
+ * Actor_SelectAnimation). */
+void Statue_Sink__eastern_alhafra(void *, s32, s32) __asm__("Statue_Sink");
+#define Statue_Sink Statue_Sink__eastern_alhafra
 s32 Actor_HasArrived();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -116,8 +122,14 @@ void Func_02000190(s32 unused, s32 id) {
 
 extern u8 gData_02005290[];
 
-s32 Func_02004240(struct DoorPlan *);
-void Func_020044c4(struct DoorPlan);
+/* VIEW(eastern_alhafra): routine Func_02004240 as s32 Func_02004240(struct
+ * DoorPlan *); scene/eastern_alhafra/s4004 has s32 Func_02004240(struct
+ * PushState *push) {. */
+s32 Func_02004240__eastern_alhafra(struct DoorPlan *) __asm__("Func_02004240");
+/* VIEW(eastern_alhafra): routine Func_020044c4 as void Func_020044c4(struct
+ * DoorPlan); scene/eastern_alhafra/s44c4 has void Func_020044c4(struct
+ * PushTarget target) {. */
+void Func_020044c4__eastern_alhafra(struct DoorPlan) __asm__("Func_020044c4");
 /* VIEW(eastern_alhafra): routine Actor_SelectAnimation as s32
  * Actor_SelectAnimation(); module/scene/scene.h has void
  * Actor_SelectAnimation(struct Actor *object, s32 mode); tried as the rest of
@@ -246,6 +258,7 @@ void Func_0200042c(s32 mode, s32 id) {
     EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
 }
 
+#undef Statue_Sink
 // ---- games/tla/src/scene/eastern_alhafra/s0514.c ----
 // Scene code of overlay 0x668, in ROM order, from s0514's offset up to the next
 // object the overlay links.
@@ -496,7 +509,9 @@ void Func_02000af8(void) {
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 #define OBJECT(id) (Actor_Get((id)))
 
-void Func_020040ec();
+/* VIEW(s0514): routine Func_020040ec as void Func_020040ec();
+ * scene/eastern_alhafra/s4004 has s32 Func_020040ec(s32 id) {. */
+void Func_020040ec__s0514() __asm__("Func_020040ec");
 /* VIEW(eastern_alhafra): routine Rope_Place as void Rope_Place();
  * module/scene/mars_lighthouse_aerie.h has void Rope_Place(void); tried as
  * the definition's void Rope_Place(void), which the object already declares,
@@ -589,7 +604,7 @@ s32 Scene_Initialize(void) {
   }
   Func_02000fa4();
   if (Event_GetFlag(0x8a6) == 0)
-    Func_020040ec(15);
+    Func_020040ec__s0514(15);
   Rope_Initialize();
   Func_02004c2c__eastern_alhafra(0, 0x8a3, 8, 9);
   OBJECT(8)->priorityFlags |= 32;
@@ -2155,7 +2170,9 @@ DEFINE_ROCKS_SPAWN(Rocks_Spawn)
 #include "module/tla.h"
 #include "resource.h"
 
-struct RockWork {
+/* VIEW(s4004): tag struct RockWork as struct RockWork__s4004;
+ * games/tla/src/scene/eastern_alhafra/s1bf4 has another definition. */
+struct RockWork__s4004 {
   u8 tiles[0x500];
   struct Rock rocks[64];
   struct RockSprite sprites[64];
@@ -2171,7 +2188,8 @@ static __inline__ void StartTask(void (*func)(void), s32 priority) {
 }
 
 void Func_02004004(void) {
-  struct RockWork *work = HeapSlot_Alloc(220, sizeof(struct RockWork));
+  struct RockWork__s4004 *work =
+      HeapSlot_Alloc(220, sizeof(struct RockWork__s4004));
   s32 entry;
   s32 tile;
   s32 i;
@@ -2381,7 +2399,9 @@ struct PushTarget {
   void (*callback)(void);
 };
 
-extern s8 gPushFootprints[];
+/* VIEW(s44c4): variable gPushFootprints as s8 gPushFootprints[];
+ * scene/eastern_alhafra/s4004 has s8 gPushFootprints[][4]. */
+extern s8 gPushFootprints__s44c4[] __asm__("gPushFootprints");
 extern s32 gPushDirectionSteps[];
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
@@ -2407,13 +2427,14 @@ void Func_020044c4(struct PushTarget target) {
   acceleration = leader->acceleration;
   from[0] = object->x;
   from[2] = object->z;
-  cell[0] = (object->x + (gPushFootprints[footprint * 4] << 16)) >> 20;
-  cell[2] = (object->z + (gPushFootprints[footprint * 4 + 1] << 16)) >> 20;
-  width = (ABS(gPushFootprints[footprint * 4]) +
-           ABS(gPushFootprints[footprint * 4 + 2])) >>
+  cell[0] = (object->x + (gPushFootprints__s44c4[footprint * 4] << 16)) >> 20;
+  cell[2] =
+      (object->z + (gPushFootprints__s44c4[footprint * 4 + 1] << 16)) >> 20;
+  width = (ABS(gPushFootprints__s44c4[footprint * 4]) +
+           ABS(gPushFootprints__s44c4[footprint * 4 + 2])) >>
           4;
-  height = (ABS(gPushFootprints[footprint * 4 + 1]) +
-            ABS(gPushFootprints[footprint * 4 + 3])) >>
+  height = (ABS(gPushFootprints__s44c4[footprint * 4 + 1]) +
+            ABS(gPushFootprints__s44c4[footprint * 4 + 3])) >>
            4;
   Map_FillCellRectByte2(0, cell[0], cell[2], width, height, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x1999);
@@ -2452,8 +2473,8 @@ void Func_020044c4(struct PushTarget target) {
   Event_PlaySound(213);
   FieldActor_SetPositionAndResetMotion(object, target.x, object->y, target.z);
   Actor_SelectAnimation(object, 1);
-  target.x = target.x + (gPushFootprints[footprint * 4] << 16);
-  target.z = target.z + (gPushFootprints[footprint * 4 + 1] << 16);
+  target.x = target.x + (gPushFootprints__s44c4[footprint * 4] << 16);
+  target.z = target.z + (gPushFootprints__s44c4[footprint * 4 + 1] << 16);
   target.x >>= 20;
   target.z >>= 20;
   originX = *(s32 *)(map + 328) >> 20;
@@ -2462,8 +2483,8 @@ void Func_020044c4(struct PushTarget target) {
                              originX + target.x, originZ + target.z);
   Map_FillCellRectByte2(0, target.x, target.z, width, height, 255);
   Map_FillCellRectByte2(2, target.x, target.z, width, height, 255);
-  cell[0] = (from[0] + (gPushFootprints[footprint * 4] << 16)) >> 20;
-  cell[2] = (from[2] + (gPushFootprints[footprint * 4 + 1] << 16)) >> 20;
+  cell[0] = (from[0] + (gPushFootprints__s44c4[footprint * 4] << 16)) >> 20;
+  cell[2] = (from[2] + (gPushFootprints__s44c4[footprint * 4 + 1] << 16)) >> 20;
   originX += cell[0];
   originZ += cell[2];
   MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);

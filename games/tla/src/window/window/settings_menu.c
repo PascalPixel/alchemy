@@ -91,9 +91,24 @@ struct OptionWork {
 
 extern char ResourceId_ShopCursorPictures;
 
-void MenuCursor_AdvanceFar(union OptionCursor *cursor);
-void MenuCursor_MoveTowardTargetFar(union OptionCursor *cursor);
-void WindowSprite_Pulse(void *object);
+/* VIEW(window): routine MenuCursor_AdvanceFar as void
+ * MenuCursor_AdvanceFar(union OptionCursor *cursor); module/window/window.h has
+ * void MenuCursor_AdvanceFar(struct NameCursorMotion *cursor). */
+void MenuCursor_AdvanceFar__window(union OptionCursor *cursor) __asm__(
+    "MenuCursor_AdvanceFar");
+#define MenuCursor_AdvanceFar MenuCursor_AdvanceFar__window
+/* VIEW(window): routine MenuCursor_MoveTowardTargetFar as void
+ * MenuCursor_MoveTowardTargetFar(union OptionCursor *cursor);
+ * module/window/window.h has void MenuCursor_MoveTowardTargetFar(struct
+ * NameCursorMotion *cursor). */
+void MenuCursor_MoveTowardTargetFar__window(union OptionCursor *cursor) __asm__(
+    "MenuCursor_MoveTowardTargetFar");
+#define MenuCursor_MoveTowardTargetFar MenuCursor_MoveTowardTargetFar__window
+/* VIEW(window): routine WindowSprite_Pulse as void WindowSprite_Pulse(void
+ * *object); window/screens has void WindowSprite_Pulse(struct Object *obj) {.
+ */
+void WindowSprite_Pulse__window(void *object) __asm__("WindowSprite_Pulse");
+#define WindowSprite_Pulse WindowSprite_Pulse__window
 
 void SettingsMenu_AnimateCursors(void) {
   s32 src0;
@@ -198,8 +213,14 @@ extern s8 gOptionMenu_SleepIcons[];
 extern u8 MsgSpeechLabel[];
 extern u8 MsgAutoSleepLabel[];
 
-void *CommandIcon_Create(s32 frame, s32 flags, struct RenderInput *input,
-                         s32 offsetX, s32 offsetY);
+/* VIEW(window): routine CommandIcon_Create as void *CommandIcon_Create(s32
+ * frame, s32 flags, struct RenderInput *input, s32 offsetX, s32 offsetY);
+ * window/screens has struct WindowSprite *CommandIcon_Create(s32 arg0, s32
+ * arg1, struct RenderInput *arg2, s32 arg3, s32 arg4) {. */
+void *CommandIcon_Create__window(s32 frame, s32 flags,
+                                 struct RenderInput *input, s32 offsetX,
+                                 s32 offsetY) __asm__("CommandIcon_Create");
+#define CommandIcon_Create CommandIcon_Create__window
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 void MenuCursor_SetPositionImmediateFar(void *object, s32 x, s32 y);
 
@@ -394,7 +415,11 @@ struct RenderInput *SettingsMenu_Open(void);
 void WindowColor_Apply(s32 hue, s32 brightness);
 struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,
                                       s32 x, s32 y);
-void MenuTitle_Bob(struct WindowSprite *pair);
+/* VIEW(window): routine MenuTitle_Bob as void MenuTitle_Bob(struct WindowSprite
+ * *pair); module/window/screens.h has void MenuTitle_Bob(struct BobPairObject
+ * *object). */
+void MenuTitle_Bob__window(struct WindowSprite *pair) __asm__("MenuTitle_Bob");
+#define MenuTitle_Bob MenuTitle_Bob__window
 void Icon_PrepareActorFar(struct WindowSprite *icon);
 void CommandIcon_Load(s32 index, s32 value, s32 flag);
 void MenuCursor_SetFar(void *cursor, s32 x, s32 y, s32 mode);
@@ -706,7 +731,7 @@ void PauseMenu_Release(void);
 struct RenderInput *PauseMenu_Open(void);
 struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,
                                       s32 x, s32 y);
-void MenuTitle_Bob(struct WindowSprite *pair);
+void MenuTitle_Bob__window(struct WindowSprite *pair) __asm__("MenuTitle_Bob");
 void Icon_PrepareActorFar(struct WindowSprite *icon);
 void CommandIcon_Load(s32 index, s32 value, s32 flag);
 void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);

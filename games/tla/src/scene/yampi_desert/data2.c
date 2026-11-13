@@ -27,10 +27,10 @@ extern u8 gFieldEffect_ShortScript[];
 extern u8 gFieldEffect_MediumScript[];
 extern u8 gFieldEffect_LongScript[];
 
-s32 gFieldEffect_DurationScripts[] = {
-    (s32)gFieldEffect_ShortScript,
-    (s32)gFieldEffect_MediumScript,
-    (s32)gFieldEffect_LongScript,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 // clang-format off

@@ -30,6 +30,13 @@
 #include "field_sequence/psynergy.c"
 #include "field_sequence/treasure_spots.c"
 
+#undef ObjectEvent_PlaceOnGround
+#undef PartyInventory_GiveItem
+#undef BattleEffect_GetFlags
+
+#undef PartyInventory_GiveItem
+#undef BattleEffect_GetFlags
+
 // ---- field/object/screen_transition.c ----
 
 /// The field's screen transitions and palette fades, as The Broken Seal's
@@ -2360,6 +2367,19 @@ void Heading_Close(void) {
 /// three: object/step_angle.c, which an overlay links too, follows this
 /// object, and the rest of the commands are still separate files.
 
+/* VIEW(event_commands): routine GameFlag_GetByte as u8 GameFlag_GetByte(s32
+ * flag); field/event.h has s32 GameFlag_GetByte(s32 flag). */
+u8 GameFlag_GetByte__event_commands(s32 flag) __asm__("GameFlag_GetByte");
+#define GameFlag_GetByte GameFlag_GetByte__event_commands
+/* VIEW(event_commands): routine Actor_SetHorizontalPositionWithTerrain as void
+ * Actor_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z);
+ * field/event.h has void Actor_SetHorizontalPositionWithTerrain(s32 actorId,
+ * s32 x, s32 z). */
+void Actor_SetHorizontalPositionWithTerrain__event_commands(
+    u32 objectId, s32 x,
+    s32 z) __asm__("Actor_SetHorizontalPositionWithTerrain");
+#define Actor_SetHorizontalPositionWithTerrain                                 \
+  Actor_SetHorizontalPositionWithTerrain__event_commands
 #include "event_commands_internal.h"
 
 // The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
@@ -2367,3 +2387,26 @@ void Heading_Close(void) {
 #include "event_commands/event.c"
 #include "event_commands/requests.c"
 #include "event_commands/actor_commands.c"
+
+#undef Encounter_GetDjinnFormation
+#undef Field_RequestDjinnBattle
+#undef Event_SetAfterBattleDestination
+#undef Party_SetFields1f2And1f4
+#undef EventWork1cc
+#undef Actor_SetSpeedParameters
+#undef Actor_SetMovementTypeById
+#undef Actor_Stop
+#undef Actor_WatchAndSetScript
+#undef Actor_SetMovementTypeAndWaitById
+#undef Actor_WalkToById
+#undef Actor_WalkToAndWaitById
+#undef Actor_SetDestinationOffsetById
+#undef Actor_LaunchFromLeader
+#undef Actor_WaitForMoveById
+#undef Actor_SetHorizontalPositionAndAngleWithTerrain
+#undef Actor_SetActionById
+#undef Motion_SetModeAndWaitAnimation
+#undef Actor_Jump
+#undef ParticleSprite
+#undef GameFlag_GetByte
+#undef Actor_SetHorizontalPositionWithTerrain

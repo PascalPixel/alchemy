@@ -74,7 +74,12 @@ s32 BattleDjinn_CountStandby(u32 arg0, u8 *counts) {
   return found;
 }
 
-s32 Battle_GetUnitAtPlace(s32 tag);
+/* VIEW(presentation): routine Battle_GetUnitAtPlace as s32
+ * Battle_GetUnitAtPlace(s32 tag); battle/battle has s16
+ * Battle_GetUnitAtPlace(s32 slot) {. */
+s32 Battle_GetUnitAtPlace__presentation(s32 tag) __asm__(
+    "Battle_GetUnitAtPlace");
+#define Battle_GetUnitAtPlace Battle_GetUnitAtPlace__presentation
 
 s32 BattleActionRun_Build(struct BattleActionRecord *request,
                           struct BattlePlan *plan) {

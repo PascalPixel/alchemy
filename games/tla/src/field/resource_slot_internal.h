@@ -16,7 +16,14 @@
 struct Actor;
 struct FieldPosition;
 /// Defined in map/tile_animation.c.
-s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
+/* VIEW(resource_slot): routine MapGrid_CheckCollision as s32
+ * MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
+ * field/map/tile_animation has s32 MapGrid_CheckCollision(struct Actor *actor,
+ * s16 *position) {. */
+s32 MapGrid_CheckCollision__resource_slot(
+    struct Actor *actor,
+    struct FieldPosition *position) __asm__("MapGrid_CheckCollision");
+#define MapGrid_CheckCollision MapGrid_CheckCollision__resource_slot
 
 typedef void (*ConvertFn)(void *destination, void *source, void *saved);
 

@@ -35,6 +35,23 @@
 #include "game/djinn.c"
 #include "game/snapshot.c"
 
+#undef Data_080b1290
+#undef gCharacter_LevelExpTable
+#undef gData_080b1f40
+#undef gData_080b2340
+#undef gCharacter_DefinitionTable
+#undef gSummon_OrderList
+#undef gElement_PowerResistByLevel
+#undef gEnemy_ElementPresetTable
+#undef Data_080b1290
+#undef gData_080b1f40
+#undef gCharacter_DefinitionTable
+#undef gData_080b2340
+#undef gCharacter_LevelExpTable
+#undef gSummon_OrderList
+#undef gEnemy_ElementPresetTable
+#undef gElement_PowerResistByLevel
+
 // ---- game/experience_table.c ----
 
 /// Each character's lighthouse group, two lists the game's rules read, and the

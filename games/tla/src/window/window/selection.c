@@ -310,6 +310,9 @@ void SelectionMenu_StartDrawing(void) {
 /// Stops drawing the selection screen.
 void SelectionMenu_StopDrawing(void) { Task_Remove(SelectionMenu_Draw); }
 
+/* VIEW(window): tag struct EffectPosition as struct EffectPosition__window;
+ * field/effect_step.h has another definition. */
+#define EffectPosition EffectPosition__window
 struct EffectPosition {
   s32 x;
   s32 y;
@@ -884,7 +887,10 @@ UNUSED void Menu_MoveSelectionForward(struct SelectionScrollScreen *screen) {
 }
 
 extern struct SelectionScrollScreen *gResQueueWork;
-extern u32 gKeyState;
+/* VIEW(window): variable gKeyState as u32 gKeyState; module/window/window.h has
+ * s32 gKeyState. */
+extern u32 gKeyState__window __asm__("gKeyState");
+#define gKeyState gKeyState__window
 extern volatile u32 gKeysRepeat;
 
 void Menu_MoveSelectionBackward(struct SelectionScrollScreen *screen) {
@@ -1521,6 +1527,9 @@ void MenuArrow_NoOpCallback3(void) {}
 
 void MenuArrow_NoOpCallback4(void) {}
 
+/* VIEW(window): tag struct MenuSprite as struct MenuSprite__window;
+ * window/menu_list.h has another definition. */
+#define MenuSprite MenuSprite__window
 struct MenuSprite {
   struct MenuSprite *next;
   union {

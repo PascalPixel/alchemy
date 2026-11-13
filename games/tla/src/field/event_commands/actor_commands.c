@@ -15,6 +15,14 @@ struct Actor *Actor_GetById(u32 objectId) {
   return object;
 }
 
+/* VIEW(event_commands): routine Actor_SetSpeedParameters as void
+ * Actor_SetSpeedParameters(u32 objectId, s32 speedLimit, s32 acceleration);
+ * field/event.h has void Actor_SetSpeedParameters(s32 actorId, s32 speed, s32
+ * acceleration). */
+void Actor_SetSpeedParameters__event_commands(
+    u32 objectId, s32 speedLimit,
+    s32 acceleration) __asm__("Actor_SetSpeedParameters");
+#define Actor_SetSpeedParameters Actor_SetSpeedParameters__event_commands
 void Actor_SetSpeedParameters(u32 objectId, s32 speedLimit, s32 acceleration) {
   struct Actor *object = ObjectTable_Get(objectId);
 
@@ -24,6 +32,12 @@ void Actor_SetSpeedParameters(u32 objectId, s32 speedLimit, s32 acceleration) {
   }
 }
 
+/* VIEW(event_commands): routine Actor_SetMovementTypeById as void
+ * Actor_SetMovementTypeById(u32 objectId, s32 action); field/event.h has void
+ * Actor_SetMovementTypeById(s32 actorId, const void *script). */
+void Actor_SetMovementTypeById__event_commands(
+    u32 objectId, s32 action) __asm__("Actor_SetMovementTypeById");
+#define Actor_SetMovementTypeById Actor_SetMovementTypeById__event_commands
 void Actor_SetMovementTypeById(u32 objectId, s32 action) {
   struct Actor *object = ObjectTable_Get(objectId);
 
@@ -35,6 +49,10 @@ void Actor_SetMovementTypeById(u32 objectId, s32 action) {
   }
 }
 
+/* VIEW(event_commands): routine Actor_Stop as void Actor_Stop(u32 objectId);
+ * field/event.h has void Actor_Stop(s32 actorId). */
+void Actor_Stop__event_commands(u32 objectId) __asm__("Actor_Stop");
+#define Actor_Stop Actor_Stop__event_commands
 void Actor_Stop(u32 objectId) {
   struct Actor *object = ObjectTable_Get(objectId);
   u8 enabled;
@@ -60,6 +78,12 @@ void Actor_ResetTargetsAndVelocity(u32 objectId) {
   }
 }
 
+/* VIEW(event_commands): routine Actor_WatchAndSetScript as void
+ * Actor_WatchAndSetScript(u32 objectId, u32 linkedObjectId); field/event.h has
+ * void Actor_WatchAndSetScript(s32 actorId, s32 watchedActorId). */
+void Actor_WatchAndSetScript__event_commands(
+    u32 objectId, u32 linkedObjectId) __asm__("Actor_WatchAndSetScript");
+#define Actor_WatchAndSetScript Actor_WatchAndSetScript__event_commands
 void Actor_WatchAndSetScript(u32 objectId, u32 linkedObjectId) {
   struct Actor *object = ObjectTable_Get(objectId);
 
@@ -76,6 +100,13 @@ void Actor_RefreshSelectorById(u32 objectId) {
     Actor_WaitForCommandEndFar(object);
 }
 
+/* VIEW(event_commands): routine Actor_SetMovementTypeAndWaitById as void
+ * Actor_SetMovementTypeAndWaitById(u32 objectId, s32 action); field/event.h has
+ * void Actor_SetMovementTypeAndWaitById(s32 actorId, const void *script). */
+void Actor_SetMovementTypeAndWaitById__event_commands(
+    u32 objectId, s32 action) __asm__("Actor_SetMovementTypeAndWaitById");
+#define Actor_SetMovementTypeAndWaitById                                       \
+  Actor_SetMovementTypeAndWaitById__event_commands
 void Actor_SetMovementTypeAndWaitById(u32 objectId, s32 action) {
   struct Actor *object = ObjectTable_Get(objectId);
 
@@ -109,6 +140,12 @@ void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z) {
   }
 }
 
+/* VIEW(event_commands): routine Actor_WalkToById as void Actor_WalkToById(u32
+ * objectId, s32 x, s32 z); field/event.h has void Actor_WalkToById(s32 actorId,
+ * s32 x, s32 z). */
+void Actor_WalkToById__event_commands(u32 objectId, s32 x,
+                                      s32 z) __asm__("Actor_WalkToById");
+#define Actor_WalkToById Actor_WalkToById__event_commands
 void Actor_WalkToById(u32 objectId, s32 x, s32 z) {
   struct Actor *object = ObjectTable_Get(objectId);
 
@@ -120,6 +157,12 @@ void Actor_WalkToById(u32 objectId, s32 x, s32 z) {
   }
 }
 
+/* VIEW(event_commands): routine Actor_WalkToAndWaitById as void
+ * Actor_WalkToAndWaitById(u32 objectId, s32 x, s32 z); field/event.h has void
+ * Actor_WalkToAndWaitById(s32 actorId, s32 x, s32 z). */
+void Actor_WalkToAndWaitById__event_commands(
+    u32 objectId, s32 x, s32 z) __asm__("Actor_WalkToAndWaitById");
+#define Actor_WalkToAndWaitById Actor_WalkToAndWaitById__event_commands
 void Actor_WalkToAndWaitById(u32 objectId, s32 x, s32 z) {
   struct Actor *object = ObjectTable_Get(objectId);
 
@@ -165,6 +208,15 @@ void Actor_CenterOnColumn(u32 objectId, s32 action, s32 zOffset) {
   }
 }
 
+/* VIEW(event_commands): routine Actor_SetDestinationOffsetById as void
+ * Actor_SetDestinationOffsetById(u32 objectId, s32 xOffset, s32 zOffset);
+ * field/event.h has void Actor_SetDestinationOffsetById(s32 actorId, s32 dx,
+ * s32 dz). */
+void Actor_SetDestinationOffsetById__event_commands(
+    u32 objectId, s32 xOffset,
+    s32 zOffset) __asm__("Actor_SetDestinationOffsetById");
+#define Actor_SetDestinationOffsetById                                         \
+  Actor_SetDestinationOffsetById__event_commands
 void Actor_SetDestinationOffsetById(u32 objectId, s32 xOffset, s32 zOffset) {
   struct Actor *object = ObjectTable_Get(objectId);
 
@@ -198,6 +250,14 @@ void Actor_WalkByAndWaitById(u32 objectId, s32 xOffset, s32 zOffset) {
   }
 }
 
+/* VIEW(event_commands): routine Actor_LaunchFromLeader as void
+ * Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 action);
+ * field/event.h has void Actor_LaunchFromLeader(s32 actorId, s32 dx, s32 dz,
+ * s32 facing). */
+void Actor_LaunchFromLeader__event_commands(
+    u32 actorId, s32 xOffset, s32 zOffset,
+    s32 action) __asm__("Actor_LaunchFromLeader");
+#define Actor_LaunchFromLeader Actor_LaunchFromLeader__event_commands
 void Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 action) {
   struct Actor *object = ObjectTable_Get(actorId);
 
@@ -214,6 +274,12 @@ void Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 action) {
   }
 }
 
+/* VIEW(event_commands): routine Actor_WaitForMoveById as void
+ * Actor_WaitForMoveById(u32 objectId); field/event.h has void
+ * Actor_WaitForMoveById(s32 actorId). */
+void Actor_WaitForMoveById__event_commands(u32 objectId) __asm__(
+    "Actor_WaitForMoveById");
+#define Actor_WaitForMoveById Actor_WaitForMoveById__event_commands
 void Actor_WaitForMoveById(u32 objectId) {
   struct Actor *object = ObjectTable_Get(objectId);
 
@@ -242,6 +308,16 @@ void Actor_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
   }
 }
 
+/* VIEW(event_commands): routine Actor_SetHorizontalPositionAndAngleWithTerrain
+ * as void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x,
+ * s32 z, s16 angle); field/event.h has void
+ * Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x, s32 z, s32
+ * angle). */
+void Actor_SetHorizontalPositionAndAngleWithTerrain__event_commands(
+    u32 objectId, s32 x, s32 z,
+    s16 angle) __asm__("Actor_SetHorizontalPositionAndAngleWithTerrain");
+#define Actor_SetHorizontalPositionAndAngleWithTerrain                         \
+  Actor_SetHorizontalPositionAndAngleWithTerrain__event_commands
 void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x, s32 z,
                                                     s16 angle) {
   struct Actor *object = ObjectTable_Get(objectId);
@@ -296,6 +372,12 @@ void Actor_SetModeById(u32 objectId, s32 action) {
 #define Actor_SetAnimationSpeedFar                                             \
   ((void (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
+/* VIEW(event_commands): routine Actor_SetActionById as void
+ * Actor_SetActionById(u32 objectId, s32 action); field/event.h has void
+ * Actor_SetActionById(s32 actorId, s32 steps). */
+void Actor_SetActionById__event_commands(u32 objectId, s32 action) __asm__(
+    "Actor_SetActionById");
+#define Actor_SetActionById Actor_SetActionById__event_commands
 void Actor_SetActionById(u32 objectId, s32 action) {
   struct Actor *object = ObjectTable_Get(objectId);
 
@@ -339,11 +421,24 @@ void Actor_WaitForAnimationChange(u32 objectId) {
   }
 }
 
+/* VIEW(event_commands): routine Motion_SetModeAndWaitAnimation as void
+ * Motion_SetModeAndWaitAnimation(u32 objectId, s32 action); field/event.h has
+ * void Motion_SetModeAndWaitAnimation(s32 actorId, s32 animation). */
+void Motion_SetModeAndWaitAnimation__event_commands(
+    u32 objectId, s32 action) __asm__("Motion_SetModeAndWaitAnimation");
+#define Motion_SetModeAndWaitAnimation                                         \
+  Motion_SetModeAndWaitAnimation__event_commands
 void Motion_SetModeAndWaitAnimation(u32 objectId, s32 action) {
   Actor_SetModeById(objectId, action);
   Actor_WaitForAnimationChange(objectId);
 }
 
+/* VIEW(event_commands): routine Actor_Jump as void Actor_Jump(u32 objectId, s32
+ * speed, s32 eventId); field/event.h has void Actor_Jump(s32 actorId, s32
+ * speed, s32 frames). */
+void Actor_Jump__event_commands(u32 objectId, s32 speed,
+                                s32 eventId) __asm__("Actor_Jump");
+#define Actor_Jump Actor_Jump__event_commands
 void Actor_Jump(u32 objectId, s32 speed, s32 eventId) {
   struct Actor *object;
   u8 *objectFlags;
@@ -400,6 +495,9 @@ void FieldEffect_UpdateDustPuff(struct Actor *object) {
 
 struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 
+/* VIEW(event_commands): tag struct ParticleSprite as struct
+ * ParticleSprite__event_commands; module/tla.h has another definition. */
+#define ParticleSprite ParticleSprite__event_commands
 struct ParticleSprite {
   u8 unk00[8];
   u16 tile : 10;

@@ -195,7 +195,12 @@ struct LevelUpResult *Unit_CheckLevelUp(s32 unitId,
   return Unit_TryLevelUp(unitId, gains);
 }
 
-extern struct OwnerGrowthRecord gCharacter_DefinitionTable[8];
+/* VIEW(game): variable gCharacter_DefinitionTable as struct OwnerGrowthRecord
+ * gCharacter_DefinitionTable[8]; game/character_table has const struct
+ * CharacterDefinition gCharacter_DefinitionTable[] = {. */
+extern struct OwnerGrowthRecord
+    gCharacter_DefinitionTable__game[8] __asm__("gCharacter_DefinitionTable");
+#define gCharacter_DefinitionTable gCharacter_DefinitionTable__game
 
 struct OwnerGrowthRecord *Character_GetDefinition(s32 index) {
   s32 stride = sizeof(struct OwnerGrowthRecord);
@@ -217,7 +222,11 @@ struct OwnerGrowthRecord *Character_GetDefinition(s32 index) {
   return (struct OwnerGrowthRecord *)(index * stride + (u32)base);
 }
 
-extern s32 gData_080b2340[];
+/* VIEW(game): variable gData_080b2340 as s32 gData_080b2340[];
+ * game/artifact_slots has const s32 gData_080b2340[9] = {0, 1, 2, 3, 4, 5, 6,
+ * 7, -1}. */
+extern s32 gData_080b2340__game[] __asm__("gData_080b2340");
+#define gData_080b2340 gData_080b2340__game
 
 void Party_InitializeCharacters(void) {
   struct OwnerInventoryState *state;
@@ -275,7 +284,11 @@ void Party_InitializeCharacters(void) {
 /// Unused: reserved entry; keeps its place in the far-call table.
 void Unit_LevelNoOp(void) {}
 
-extern u32 gCharacter_LevelExpTable[];
+/* VIEW(game): variable gCharacter_LevelExpTable as u32
+ * gCharacter_LevelExpTable[]; game/experience_table has const u32
+ * gCharacter_LevelExpTable[] = {. */
+extern u32 gCharacter_LevelExpTable__game[] __asm__("gCharacter_LevelExpTable");
+#define gCharacter_LevelExpTable gCharacter_LevelExpTable__game
 
 /// Experience required per level: eight characters, 99 levels each.
 u32 Unit_GetExperienceForLevel(s32 owner, s32 level) {

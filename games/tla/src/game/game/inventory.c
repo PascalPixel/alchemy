@@ -479,7 +479,10 @@ s32 RareItemStock_Adjust(s32 index, s32 delta) {
   return index;
 }
 
-extern u16 gData_080b1f40[];
+/* VIEW(game): variable gData_080b1f40 as u16 gData_080b1f40[];
+ * game/artifact_slots has const u16 gData_080b1f40[512] = {. */
+extern u16 gData_080b1f40__game[] __asm__("gData_080b1f40");
+#define gData_080b1f40 gData_080b1f40__game
 
 s32 Item_AdjustCounter(s32 itemId, s32 delta) {
   s32 result;

@@ -11,6 +11,9 @@ struct StripQuad;
 // One model vertex: signed byte coordinates, padded to a word. Written
 // through this struct, its stores are not char stores, so a reload of the
 // stack may pass them.
+/* VIEW(summon_effects): tag struct ModelVertex as struct
+ * ModelVertex__summon_effects; battle_effect/ability_effects has another
+ * definition. */
 struct ModelVertex {
   s8 x;
   s8 y;

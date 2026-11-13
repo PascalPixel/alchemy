@@ -10,6 +10,8 @@
 
 #include "../field/object/find_in_cell.c"
 
+#undef EFFECT_SPAWN
+
 // ---- scene/magma_rock/s03b4.c ----
 
 #include "shared/push.h"
@@ -47,11 +49,6 @@ DEFINE_BLOCK_PUSH_ONTO(MagmaRock_PushBlockOnto, gPushLeaderSteps,
 #include "field.h"
 #include "module/field/event_commands.h"
 #include "module/scene/magma_rock.h"
-
-struct EventObjects {
-  u8 unk00[20];
-  struct Actor *objects[64];
-};
 
 void MagmaRock_FightFury(void) { Field_RequestDjinnBattle(8, 56); }
 
@@ -292,8 +289,15 @@ struct MagmaRockEffectParams {
 
 extern const u8 gMagmaRock_FlameEmberScript[];
 
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags,
-                       s32 *params);
+/* VIEW(magma_rock): routine FieldEffect_Spawn as void FieldEffect_Spawn(s32 x,
+ * s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags, s32 *params);
+ * field/field_effect/spawn has void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32
+ * velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct
+ * EffectOptions *options) {. */
+void FieldEffect_Spawn__magma_rock(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c,
+                                   s32 flags,
+                                   s32 *params) __asm__("FieldEffect_Spawn");
+#define FieldEffect_Spawn FieldEffect_Spawn__magma_rock
 
 void MagmaRock_ThrowEmbers(struct Actor *object) {
   struct Actor *linked = object->watchedObject;
@@ -481,6 +485,8 @@ void MagmaRock_PlaceVolley(u16 id, s16 first, s16 side) {
 
 DEFINE_ACTOR_FLASH_COLOR(MagmaRock_FlashStatue, 10)
 
+#undef FieldEffect_Spawn
+
 // ---- scene/magma_rock/s0ff4.c ----
 
 /// Magma Rock's statues: the magma they fire, the flame columns that lift the
@@ -497,6 +503,9 @@ DEFINE_ACTOR_FLASH_COLOR(MagmaRock_FlashStatue, 10)
 #include "flag_call.h"
 #include "module/scene/magma_rock.h"
 
+/* VIEW(s0ff4): tag struct MagmaRockEventWork as struct
+ * MagmaRockEventWork__s0ff4; scene/magma_rock has another definition. */
+#define MagmaRockEventWork MagmaRockEventWork__s0ff4
 struct MagmaRockEventWork {
   u8 unk000[0x15a];
   s16 value15a;
@@ -628,14 +637,28 @@ void MagmaRock_DriftAndSlow(struct Actor *object) {
 #include "field.h"
 
 s32 Trig_Cos(s32 angle);
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags, struct EffectOptions *options);
+/* VIEW(s0ff4): routine FieldEffect_Spawn as void FieldEffect_Spawn(s32 x, s32
+ * y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct
+ * EffectOptions *options); field/field_effect/spawn has void EFFECT_SPAWN(s32
+ * x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
+ * const struct EffectOptions *options) {. */
+void FieldEffect_Spawn__s0ff4(
+    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
+    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
+#define FieldEffect_Spawn FieldEffect_Spawn__s0ff4
 s32 Position_FlatDistance(s32 *a, s32 *b);
 // XXX: magma_rock.c defines this with an s16 value; this call matches only with
 // u16. A match of magma_rock.c's MagmaRock_PlayBurst under u16 would settle
 // which the game declares.
-void MagmaRock_PlayBurst(u16 index);
-void MagmaRock_TrailEmbers(void);
+/* VIEW(s0ff4): routine MagmaRock_PlayBurst as void MagmaRock_PlayBurst(u16
+ * index); scene/magma_rock has void MagmaRock_PlayBurst(s16 value) {. */
+void MagmaRock_PlayBurst__s0ff4(u16 index) __asm__("MagmaRock_PlayBurst");
+#define MagmaRock_PlayBurst MagmaRock_PlayBurst__s0ff4
+/* VIEW(s0ff4): routine MagmaRock_TrailEmbers as void
+ * MagmaRock_TrailEmbers(void); scene/magma_rock has void
+ * MagmaRock_TrailEmbers(struct Actor *object) {. */
+void MagmaRock_TrailEmbers__s0ff4(void) __asm__("MagmaRock_TrailEmbers");
+#define MagmaRock_TrailEmbers MagmaRock_TrailEmbers__s0ff4
 void Actor_Release(struct Actor *object);
 s32 Func_02003af4(void);
 void FieldCamera_WaitForArrival(void);
@@ -804,6 +827,9 @@ void MagmaRock_BurstStatue(s32 mode, s32 cue) {
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
+/* VIEW(s0ff4): tag union Position as union Position__s0ff4;
+ * module/scene/scene.h has struct Position. */
+#define Position Position__s0ff4
 /// A 16.16 position word, read whole or by halves.
 union Position {
   s32 word;
@@ -837,6 +863,9 @@ void MagmaRock_RaiseFlamePart(struct Actor *part) {
 #include "system/field_effect.h"
 #include "system/main_routine_work.h"
 
+/* VIEW(s0ff4): tag struct MagmaRockEffectConfig as struct
+ * MagmaRockEffectConfig__s0ff4; scene/magma_rock has another definition. */
+#define MagmaRockEffectConfig MagmaRockEffectConfig__s0ff4
 struct MagmaRockEffectConfig {
   s32 kind;
   s32 variant;
@@ -850,7 +879,29 @@ struct MagmaRockEffectConfig {
   void (*unk24)(void);
 };
 
-void MagmaRock_SetCellShape(s32 layer, s32 x, s32 z, s32 height);
+/* VIEW(s0ff4): routine MagmaRock_SetCellShape as void
+ * MagmaRock_SetCellShape(s32 layer, s32 x, s32 z, s32 height); scene/magma_rock
+ * has DEFINE_MAP_CELL_SET_SHAPE(MagmaRock_SetCellShape, MapGrid_GetTerrainKind,
+ * MapCollision_FindOrAddTag) #include "../field/map/cell_get.c" #include
+ * "field.h" DEFINE_ACTORS_RAISE_CELLS(MagmaRock_RaiseActorCells,
+ * MagmaRock_SetCellShape) #include "battle.h" #include "game.h" #include
+ * "graphics.h" #include "lib.h" #include "menu.h" #include "sound.h" #include
+ * "system.h" #include "scene_tables.h" #include "magma_rock/magma_rock.h"
+ * #include "main_routine_work.h" #include "scene_ids.h" // For each id of a
+ * list ended by 0xffff: clears the object's mark and, on a // cell with
+ * attribute bit 6, blocks the cells ahead of and behind it and sets // the
+ * mark. DEFINE_BLOCKS_MARK_CELLS(Blocks_MarkCells, MapCell_GetAttributes) //
+ * Clears the object's mark and the cells ahead of and behind it that the mark
+ * // blocked. DEFINE_BLOCK_CLEAR_CELLS(MagmaRock_ClearBlockCells) // For each
+ * id of a list ended by 0xffff: settles the object on its ground, // copies the
+ * cell under it, and blocks the cells ahead of and behind it on a // cell with
+ * attribute bit 6. #include "text/msg_ids.h" /// For each id of a list ended by
+ * 0xffff: settles the object on its ground, /// copies the cell under it, and
+ * blocks the cells ahead of and behind it on a /// cell with attribute bit 6.
+ * void MagmaRock_SettleBlocks(u16 *ids) {. */
+void MagmaRock_SetCellShape__s0ff4(s32 layer, s32 x, s32 z, s32 height) __asm__(
+    "MagmaRock_SetCellShape");
+#define MagmaRock_SetCellShape MagmaRock_SetCellShape__s0ff4
 
 #define EFFECT_Y(object) (((union Position *)&(object)->effect.y)->word)
 
@@ -1220,7 +1271,19 @@ second:
 void MagmaRock_ClearBlockCells(struct Actor *object);
 void MagmaRock_SetCellShape(s32 layer, s32 x, s32 z, s32 height);
 void MagmaRock_PushBlockOnto(void);
-void Blocks_MarkCells(s16 *ids);
+/* VIEW(s0ff4): routine Blocks_MarkCells as void Blocks_MarkCells(s16 *ids);
+ * scene/magma_rock has DEFINE_BLOCKS_MARK_CELLS(Blocks_MarkCells,
+ * MapCell_GetAttributes) // Clears the object's mark and the cells ahead of and
+ * behind it that the mark // blocked.
+ * DEFINE_BLOCK_CLEAR_CELLS(MagmaRock_ClearBlockCells) // For each id of a list
+ * ended by 0xffff: settles the object on its ground, // copies the cell under
+ * it, and blocks the cells ahead of and behind it on a // cell with attribute
+ * bit 6. #include "text/msg_ids.h" /// For each id of a list ended by 0xffff:
+ * settles the object on its ground, /// copies the cell under it, and blocks
+ * the cells ahead of and behind it on a /// cell with attribute bit 6. void
+ * MagmaRock_SettleBlocks(u16 *ids) {. */
+void Blocks_MarkCells__s0ff4(s16 *ids) __asm__("Blocks_MarkCells");
+#define Blocks_MarkCells Blocks_MarkCells__s0ff4
 
 void MagmaRock_PushPillarEast(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1397,3 +1460,11 @@ const struct Trigger *Scene_GetEvents(void) {
   return (const struct Trigger *)gMagmaRock_Triggers;
 }
 #undef BYTE_AT
+
+#undef MagmaRockEventWork
+#undef FieldEffect_Spawn
+#undef MagmaRock_PlayBurst
+#undef MagmaRock_TrailEmbers
+#undef MagmaRockEffectConfig
+#undef MagmaRock_SetCellShape
+#undef Blocks_MarkCells #undef Position

@@ -10,7 +10,12 @@
  * WindowSprite_PrepareForRedraw(struct Window *). */
 extern void WindowSprite_PrepareForRedraw__selrow(void *window) __asm__(
     "WindowSprite_PrepareForRedraw");
-void Text_DrawNumber(s32 value, s32 digits, void *window, s32 x, s32 y);
+/* VIEW(menus): routine Text_DrawNumber as void Text_DrawNumber(s32 value, s32
+ * digits, void *window, s32 x, s32 y); window/window has void
+ * Text_DrawNumber(s32 value, s32 width, s32 output, s32 x, s32 y) {. */
+void Text_DrawNumber__menus(s32 value, s32 digits, void *window, s32 x,
+                            s32 y) __asm__("Text_DrawNumber");
+#define Text_DrawNumber Text_DrawNumber__menus
 /* VIEW(selrow): routine Text_DrawString as void Text_DrawString(const u8 *text,
  * void *window, s32 x, s32 y); graphics.h has void Text_DrawString(u8 *text,
  * s32 window, s32 x, s32 y). */

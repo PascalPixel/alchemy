@@ -422,7 +422,13 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
 }
 
 u32 Math_UnsignedMulHigh(u32 a, u32 b);
-u32 Math_UnsignedMulHighAdd(u32 a, u32 b, s32 c);
+/* VIEW(window): routine Math_UnsignedMulHighAdd as u32
+ * Math_UnsignedMulHighAdd(u32 a, u32 b, s32 c);
+ * module/battle_effect/battle_effect.h has s32 Math_UnsignedMulHighAdd(s32
+ * value, u32 magic, s32 multiplier). */
+u32 Math_UnsignedMulHighAdd__window(u32 a, u32 b,
+                                    s32 c) __asm__("Math_UnsignedMulHighAdd");
+#define Math_UnsignedMulHighAdd Math_UnsignedMulHighAdd__window
 
 /// Writes value as decimal text into buffer (14 bytes) and returns where the
 /// text starts. With width 0 the number has no padding and a minus sign when

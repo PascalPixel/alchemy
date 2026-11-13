@@ -216,8 +216,8 @@ u32 gData_020069fc[] = {
 };
 // clang-format on
 
-s32 gFieldEffect_DurationScripts[] = {
-    (s32)gFieldEffect_ShortScript,
-    (s32)gFieldEffect_MediumScript,
-    (s32)gData_02005f10,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gData_02005f10,
 };

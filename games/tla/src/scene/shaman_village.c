@@ -163,14 +163,51 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern u32 gShamanVillage_Placements[];
-extern u32 gShamanVillage_Room1Placements[];
-extern s16 gShamanVillage_Room3Placements[];
+/* VIEW(s00b8): variable gShamanVillage_Placements as u32
+ * gShamanVillage_Placements[]; scene/shaman_village/s1fec has struct
+ * ActorPlacement gShamanVillage_Placements[] = {. */
+extern u32
+    gShamanVillage_Placements__s00b8[] __asm__("gShamanVillage_Placements");
+#define gShamanVillage_Placements gShamanVillage_Placements__s00b8
+/* VIEW(s00b8): variable gShamanVillage_Room1Placements as u32
+ * gShamanVillage_Room1Placements[]; scene/shaman_village/s1fec has struct
+ * ActorPlacement gShamanVillage_Room1Placements[] = {. */
+extern u32 gShamanVillage_Room1Placements__s00b8[] __asm__(
+    "gShamanVillage_Room1Placements");
+#define gShamanVillage_Room1Placements gShamanVillage_Room1Placements__s00b8
+/* VIEW(s00b8): variable gShamanVillage_Room3Placements as s16
+ * gShamanVillage_Room3Placements[]; scene/shaman_village/s1fec has struct
+ * ActorPlacement gShamanVillage_Room3Placements[] = {. */
+extern s16 gShamanVillage_Room3Placements__s00b8[] __asm__(
+    "gShamanVillage_Room3Placements");
+#define gShamanVillage_Room3Placements gShamanVillage_Room3Placements__s00b8
 
-extern struct ShamanVillageSceneBlock gShamanVillage_Room2Placements;
-extern u32 gShamanVillage_Room4Placements[];
-extern u32 gShamanVillage_Room5Placements[];
-extern u32 gShamanVillage_Room6Placements[];
+/* VIEW(s00b8): variable gShamanVillage_Room2Placements as struct
+ * ShamanVillageSceneBlock gShamanVillage_Room2Placements;
+ * scene/shaman_village/s1fec has struct ActorPlacement
+ * gShamanVillage_Room2Placements[] = {. */
+extern struct ShamanVillageSceneBlock
+    gShamanVillage_Room2Placements__s00b8 __asm__(
+        "gShamanVillage_Room2Placements");
+#define gShamanVillage_Room2Placements gShamanVillage_Room2Placements__s00b8
+/* VIEW(s00b8): variable gShamanVillage_Room4Placements as u32
+ * gShamanVillage_Room4Placements[]; scene/shaman_village/s1fec has struct
+ * ActorPlacement gShamanVillage_Room4Placements[] = {. */
+extern u32 gShamanVillage_Room4Placements__s00b8[] __asm__(
+    "gShamanVillage_Room4Placements");
+#define gShamanVillage_Room4Placements gShamanVillage_Room4Placements__s00b8
+/* VIEW(s00b8): variable gShamanVillage_Room5Placements as u32
+ * gShamanVillage_Room5Placements[]; scene/shaman_village/s1fec has struct
+ * ActorPlacement gShamanVillage_Room5Placements[] = {. */
+extern u32 gShamanVillage_Room5Placements__s00b8[] __asm__(
+    "gShamanVillage_Room5Placements");
+#define gShamanVillage_Room5Placements gShamanVillage_Room5Placements__s00b8
+/* VIEW(s00b8): variable gShamanVillage_Room6Placements as u32
+ * gShamanVillage_Room6Placements[]; scene/shaman_village/s1fec has struct
+ * ActorPlacement gShamanVillage_Room6Placements[] = {. */
+extern u32 gShamanVillage_Room6Placements__s00b8[] __asm__(
+    "gShamanVillage_Room6Placements");
+#define gShamanVillage_Room6Placements gShamanVillage_Room6Placements__s00b8
 
 void *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -299,7 +336,12 @@ void ShamanVillage_SwirlSandGrain(struct ShamanVillageObject *object) {
 #include "system/io_reg.h"
 #include "system/field_effect.h"
 
-extern const s32 gFieldEffect_MediumScript[];
+/* VIEW(s00b8): variable gFieldEffect_MediumScript as const s32
+ * gFieldEffect_MediumScript[]; scene/shaman_village/s1fec has u32
+ * gFieldEffect_MediumScript[] = {. */
+extern const s32
+    gFieldEffect_MediumScript__s00b8[] __asm__("gFieldEffect_MediumScript");
+#define gFieldEffect_MediumScript gFieldEffect_MediumScript__s00b8
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -543,13 +585,47 @@ fade:
 }
 #undef OBJ14_BYTE
 
-extern u32 gShamanVillage_Triggers[];
-extern u32 gShamanVillage_Room1Triggers[];
-extern u32 gShamanVillage_Room3Triggers[];
-extern u32 gShamanVillage_Room2Triggers[];
-extern u32 gShamanVillage_Room4Triggers[];
-extern u32 gShamanVillage_Room5Triggers[];
-extern u32 gShamanVillage_Room6Triggers[];
+/* VIEW(s00b8): variable gShamanVillage_Triggers as u32
+ * gShamanVillage_Triggers[]; scene/shaman_village/s1fec has struct Trigger
+ * gShamanVillage_Triggers[] = {. */
+extern u32 gShamanVillage_Triggers__s00b8[] __asm__("gShamanVillage_Triggers");
+#define gShamanVillage_Triggers gShamanVillage_Triggers__s00b8
+/* VIEW(s00b8): variable gShamanVillage_Room1Triggers as u32
+ * gShamanVillage_Room1Triggers[]; scene/shaman_village/s1fec has struct Trigger
+ * gShamanVillage_Room1Triggers[] = {. */
+extern u32 gShamanVillage_Room1Triggers__s00b8[] __asm__(
+    "gShamanVillage_Room1Triggers");
+#define gShamanVillage_Room1Triggers gShamanVillage_Room1Triggers__s00b8
+/* VIEW(s00b8): variable gShamanVillage_Room3Triggers as u32
+ * gShamanVillage_Room3Triggers[]; scene/shaman_village/s1fec has struct Trigger
+ * gShamanVillage_Room3Triggers[] = {. */
+extern u32 gShamanVillage_Room3Triggers__s00b8[] __asm__(
+    "gShamanVillage_Room3Triggers");
+#define gShamanVillage_Room3Triggers gShamanVillage_Room3Triggers__s00b8
+/* VIEW(s00b8): variable gShamanVillage_Room2Triggers as u32
+ * gShamanVillage_Room2Triggers[]; scene/shaman_village/s1fec has struct Trigger
+ * gShamanVillage_Room2Triggers[] = {. */
+extern u32 gShamanVillage_Room2Triggers__s00b8[] __asm__(
+    "gShamanVillage_Room2Triggers");
+#define gShamanVillage_Room2Triggers gShamanVillage_Room2Triggers__s00b8
+/* VIEW(s00b8): variable gShamanVillage_Room4Triggers as u32
+ * gShamanVillage_Room4Triggers[]; scene/shaman_village/s1fec has struct Trigger
+ * gShamanVillage_Room4Triggers[] = {. */
+extern u32 gShamanVillage_Room4Triggers__s00b8[] __asm__(
+    "gShamanVillage_Room4Triggers");
+#define gShamanVillage_Room4Triggers gShamanVillage_Room4Triggers__s00b8
+/* VIEW(s00b8): variable gShamanVillage_Room5Triggers as u32
+ * gShamanVillage_Room5Triggers[]; scene/shaman_village/s1fec has struct Trigger
+ * gShamanVillage_Room5Triggers[] = {. */
+extern u32 gShamanVillage_Room5Triggers__s00b8[] __asm__(
+    "gShamanVillage_Room5Triggers");
+#define gShamanVillage_Room5Triggers gShamanVillage_Room5Triggers__s00b8
+/* VIEW(s00b8): variable gShamanVillage_Room6Triggers as u32
+ * gShamanVillage_Room6Triggers[]; scene/shaman_village/s1fec has struct Trigger
+ * gShamanVillage_Room6Triggers[] = {. */
+extern u32 gShamanVillage_Room6Triggers__s00b8[] __asm__(
+    "gShamanVillage_Room6Triggers");
+#define gShamanVillage_Room6Triggers gShamanVillage_Room6Triggers__s00b8
 
 void *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -1013,8 +1089,20 @@ void ShamanVillage_ChallengeMoapa(void) {
   Event_End();
 }
 
-extern const u8 gShamanVillage_WalkToLeftStartScript[];
-extern const u8 gShamanVillage_WalkToRightStartScript[];
+/* VIEW(s00b8): variable gShamanVillage_WalkToLeftStartScript as const u8
+ * gShamanVillage_WalkToLeftStartScript[]; scene/shaman_village/s1fec has u32
+ * gShamanVillage_WalkToLeftStartScript[] = {. */
+extern const u8 gShamanVillage_WalkToLeftStartScript__s00b8[] __asm__(
+    "gShamanVillage_WalkToLeftStartScript");
+#define gShamanVillage_WalkToLeftStartScript                                   \
+  gShamanVillage_WalkToLeftStartScript__s00b8
+/* VIEW(s00b8): variable gShamanVillage_WalkToRightStartScript as const u8
+ * gShamanVillage_WalkToRightStartScript[]; scene/shaman_village/s1fec has u32
+ * gShamanVillage_WalkToRightStartScript[] = {. */
+extern const u8 gShamanVillage_WalkToRightStartScript__s00b8[] __asm__(
+    "gShamanVillage_WalkToRightStartScript");
+#define gShamanVillage_WalkToRightStartScript                                  \
+  gShamanVillage_WalkToRightStartScript__s00b8
 
 /// The leader takes the left path and Moapa the right, after the countdown.
 /// ★ Named from the game: "If you have chosen, then we shall take the other
@@ -1247,43 +1335,26 @@ void ShamanVillage_MeetMoapa(void) {
   Event_End();
 }
 
+#undef gFieldEffect_MediumScript
+#undef gShamanVillage_WalkToLeftStartScript
+#undef gShamanVillage_WalkToRightStartScript
+#undef gShamanVillage_Placements
+#undef gShamanVillage_Room1Placements
+#undef gShamanVillage_Room3Placements
+#undef gShamanVillage_Room2Placements
+#undef gShamanVillage_Room4Placements
+#undef gShamanVillage_Room5Placements
+#undef gShamanVillage_Room6Placements
+#undef gShamanVillage_Triggers
+#undef gShamanVillage_Room1Triggers
+#undef gShamanVillage_Room3Triggers
+#undef gShamanVillage_Room2Triggers
+#undef gShamanVillage_Room4Triggers
+#undef gShamanVillage_Room5Triggers
+#undef gShamanVillage_Room6Triggers
 // ---- scene/shared/drift_spawn.c ----
 
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "types.h"
-#include "field_event.h"
-#include "event.h"
-
-// Defined in the old style, with no prototype: Idejima's calls after it are
-// then compiled as calls to an undeclared routine, which pass their arguments
-// as int and load the second first.
-// clang-format off
-void DriftScene_SpawnObject(x, y, z, value)
-  s32 x, y, z;
-  s16 value;
-{
-  // clang-format on
-  struct Actor *object;
-  struct FieldSprite *sprite;
-
-  object = Import_ActorCreate(0x1e8, x, y, z);
-  if (object != 0) {
-    sprite = object->sprite;
-    Sound_Play(0x97);
-    Import_ActorSetMode(object, 1);
-    Import_ActorStartScript(object, gDriftScene_SpawnScript);
-    object->motionFlags = 0;
-    sprite->nextFrame = 0;
-    sprite->rotation = value;
-  }
-}
+#include "shared/drift_spawn.c"
 
 // ---- scene/shaman_village/s1fec.c ----
 
@@ -1326,7 +1397,13 @@ struct ShamanVillageObject *ShamanVillage_CreateRodIcon(void) {
   return object;
 }
 
-void DriftScene_SpawnObject(s32 x, s32 y, s32 z, u16 value);
+/* VIEW(s1fec): routine DriftScene_SpawnObject as void
+ * DriftScene_SpawnObject(s32 x, s32 y, s32 z, u16 value);
+ * scene/shared/drift_spawn has void DriftScene_SpawnObject(x, y, z, value) s32
+ * x, y, z. */
+void DriftScene_SpawnObject__s1fec(s32 x, s32 y, s32 z,
+                                   u16 value) __asm__("DriftScene_SpawnObject");
+#define DriftScene_SpawnObject DriftScene_SpawnObject__s1fec
 
 extern u32 gShamanVillage_JennaStandsByRodScript[];
 extern u32 gShamanVillage_GuardLeavesHouseScript[];
@@ -2821,10 +2898,10 @@ s32 gShamanVillage_EnterDoorScript[] = {
     0, 1, 13, 24, 0, 17,
 };
 
-s32 gFieldEffect_DurationScripts[] = {
-    (s32)gFieldEffect_ShortScript,
-    (s32)gFieldEffect_MediumScript,
-    (s32)gFieldEffect_LongScript,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 u32 gShamanVillage_WalkToLeftStartScript[] = {
@@ -3448,3 +3525,5 @@ u32 gDriftScene_SpawnScript[] = {
     46,
     38,
 };
+
+#undef DriftScene_SpawnObject

@@ -310,10 +310,10 @@ s16 gIzumoRuins_SecondRoomMovablePillars[] = {
     10, 11, 12, 13, 14, 15, -1, 0,
 };
 
-s32 gFieldEffect_DurationScripts[] = {
-    (s32)gFieldEffect_ShortScript,
-    (s32)gFieldEffect_MediumScript,
-    (s32)gFieldEffect_LongScript,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 s16 gIzumoRuins_FirstRoomPoundPillars[] = {

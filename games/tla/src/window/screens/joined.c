@@ -26,7 +26,11 @@ s32 Screens_ReturnZero(void) { return 0; }
 struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
                                     s32 y, u16 *spacing, s32 flags);
 #else
-s32 Message_Start();
+/* VIEW(screens): routine Message_Start as s32 Message_Start(); window/window
+ * has struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32
+ * x, s32 y, u16 *spacing, s32 flags) {. */
+s32 Message_Start__screens() __asm__("Message_Start");
+#define Message_Start Message_Start__screens
 #endif
 
 void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {

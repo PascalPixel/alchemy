@@ -14,7 +14,11 @@
 extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
+/* VIEW(s3b7c): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
+ * FieldEffect *effect, s32 flags); field/field.h has void
+ * Actor_SetSpriteFlags(struct Actor *object, u32 flags). */
+void Actor_SetSpriteFlags__s3b7c(struct FieldEffect *effect,
+                                 s32 flags) __asm__("Actor_SetSpriteFlags");
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -36,7 +40,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   Actor_StartScript(effect,
                     gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSpriteFlags(effect, 0);
+  Actor_SetSpriteFlags__s3b7c(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
@@ -146,5 +150,15 @@ struct CellTarget__s41ac {
 
 #include "io_write.h"
 
+/* VIEW(s41ac): routine CrackedTile_Fall as void CrackedTile_Fall(struct
+ * CellTarget__s41ac *table, struct CellTargetEntry *entry);
+ * module/scene/jupiter_lighthouse_room_m.h has void CrackedTile_Fall(struct
+ * CellTarget *table, struct CellTargetEntry *entry). */
+void CrackedTile_Fall__s41ac(
+    struct CellTarget__s41ac *table,
+    struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
+#define CrackedTile_Fall CrackedTile_Fall__s41ac
 DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s41ac,
                          Leader_CenterInCell)
+
+#undef CrackedTile_Fall

@@ -58,6 +58,8 @@ s32 Func_02000384(u32 layer, s32 x, s32 y, s32 value) {
 
 #include "../../field/object/wait_until_idle.c"
 
+#undef EFFECT_SET_SCRIPT
+
 // ---- scene/airs_rock/airs_rock.c ----
 
 /// Scene code of overlay 0x663, in ROM order.
@@ -343,7 +345,11 @@ void Func_0200092c(struct Actor *object) {
 #include "system/vector3.h"
 
 extern s16 gData_02004674[][4];
-void Actor_StartScript(struct Actor *object, const u8 *script);
+/* VIEW(airs_rock): routine Actor_StartScript as void Actor_StartScript(struct
+ * Actor *object, const u8 *script); field/field_effect/spawn has void
+ * EFFECT_SET_SCRIPT(struct Actor *object, const s32 *script). */
+void Actor_StartScript__airs_rock(
+    struct Actor *object, const u8 *script) __asm__("Actor_StartScript");
 /* VIEW(airs_rock): routine Actor_HasArrived as s32 Actor_HasArrived(struct
  * Actor *object); module/scene/scene.h has void Actor_HasArrived(struct Actor
  * *object, const void *script); tried as the rest of the object declares it, it
@@ -404,7 +410,7 @@ void Func_0200095c(void) {
       spark->unk4c = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
-      Actor_StartScript(spark, gData_02003d1c);
+      Actor_StartScript__airs_rock(spark, gData_02003d1c);
       Actor_SetSpriteFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
       spark->update = Func_02000840;
@@ -647,7 +653,7 @@ row:
       spark->unk4c = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
-      Actor_StartScript(spark, gData_02003d1c);
+      Actor_StartScript__airs_rock(spark, gData_02003d1c);
       Actor_SetSpriteFlags(spark, 0);
       FieldActor_SetSpriteColor(spark, 2);
       spark->update = Func_020008ac;
@@ -898,7 +904,8 @@ DEFINE_POSITION_DISTANCE_ABOVE(Position_DistanceAbove)
 
 #include "field/event_work.h"
 
-extern u8 gData_02003de0[], gData_02003dcc[];
+extern u8 gData_02003de0[];
+extern u8 gData_02003dcc[];
 
 void Func_02001908(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -924,9 +931,9 @@ void Func_02001908(struct Actor *shot) {
     ((struct Shot *)shot)->unk63 = 0;
     shot->update = 0;
     if (shot->facing == 0xc000)
-      Actor_StartScript(shot, gData_02003de0);
+      Actor_StartScript__airs_rock(shot, gData_02003de0);
     else
-      Actor_StartScript(shot, gData_02003dcc);
+      Actor_StartScript__airs_rock(shot, gData_02003dcc);
     return;
   }
   if (((struct Shot *)shot)->unk62 == 0) {
@@ -1118,7 +1125,7 @@ void Func_02001dc4(s32 x, s32 z) {
       Sprite_ShareVramCacheEntry(rock->sprite, first->sprite);
     }
     Actor_SetSpriteFlags(rock, 0);
-    Actor_StartScript(rock, gData_02003dfc);
+    Actor_StartScript__airs_rock(rock, gData_02003dfc);
     Actor_SelectAnimation(rock, 2);
     rock->velocityY = ((Random16() & 3) << 16) + 0x40000;
     rock->gravity = 0x3333;
@@ -1213,7 +1220,7 @@ row:
       spark->unk4c = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
-      Actor_StartScript(spark, gData_02003d1c);
+      Actor_StartScript__airs_rock(spark, gData_02003d1c);
       Actor_SetSpriteFlags(spark, 0);
       FieldActor_SetSpriteColor(spark, 2);
       spark->update = Func_020008ac;
@@ -1440,7 +1447,7 @@ void Func_020026b8(void) {
       spark->unk4c = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
-      Actor_StartScript(spark, gData_02003d1c);
+      Actor_StartScript__airs_rock(spark, gData_02003d1c);
       Actor_SetSpriteFlags(spark, 0);
       FieldActor_SetSpriteColor(spark, 2);
       spark->update = Func_020008ac;

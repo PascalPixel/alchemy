@@ -29,7 +29,14 @@ extern u32 Render_ResetTransformState__f02b998(void) __asm__(
  * SceneTransform_ApplyPosition(const s32 *pos). */
 extern void SceneTransform_ApplyPosition__resource_slot(void *position) __asm__(
     "SceneTransform_ApplyPosition");
-void WorldMap_BuildScanlineTable(s32 ratio, s32 *position, void *affineWork);
+/* VIEW(resource_slot): routine WorldMap_BuildScanlineTable as void
+ * WorldMap_BuildScanlineTable(s32 ratio, s32 *position, void *affineWork);
+ * field/map/terrain has void WorldMap_BuildScanlineTable(s32 pitchSlope, s32
+ * *position, struct ScanlineRow *row) {. */
+void WorldMap_BuildScanlineTable__resource_slot(
+    s32 ratio, s32 *position,
+    void *affineWork) __asm__("WorldMap_BuildScanlineTable");
+#define WorldMap_BuildScanlineTable WorldMap_BuildScanlineTable__resource_slot
 
 void WorldMap_InitializePerspective(void) {
   /* FAKEMATCH(signature): Transform_Reset declared returning u32;
@@ -454,7 +461,9 @@ void WorldMap_RenderPaletteMappedColumn(u32 tileColumn) {
   } while (row <= 63);
 }
 
-void WorldMap_BuildScanlineTable(s32 ratio, s32 *position, void *affineWork);
+void WorldMap_BuildScanlineTable__resource_slot(
+    s32 ratio, s32 *position,
+    void *affineWork) __asm__("WorldMap_BuildScanlineTable");
 
 void WorldMap_UpdateView(void) {
   u8 *camera = Ram_HeapSlots->cameraWork;

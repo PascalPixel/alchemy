@@ -281,11 +281,28 @@ DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, MapGrid_GetCellBehavior,
 
 extern s16 gData_020024f6;
 
-void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
-void Whirlwind_UpdateLower(struct GustObject *object);
+/* VIEW(s098c): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
+ * FieldEffect *effect, s32 flags); field/field.h has void
+ * Actor_SetSpriteFlags(struct Actor *object, u32 flags). */
+void Actor_SetSpriteFlags__s098c(struct FieldEffect *effect,
+                                 s32 flags) __asm__("Actor_SetSpriteFlags");
+/* VIEW(s098c): routine Whirlwind_UpdateLower as void
+ * Whirlwind_UpdateLower(struct GustObject *object);
+ * scene/jupiter_lighthouse_basement has
+ * DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, MapGrid_GetCellBehavior,
+ * Position_FlatDistance, gWhirlwindEndScript, Data_020023ac) // ----
+ * scene/jupiter_lighthouse_basement/s098c.c ---- /// Scene code of overlay
+ * 0x699, in ROM order. #include "shared/whirlwind.h" #include
+ * "shared/jupiter_lighthouse.h" #include "types.h" #include "system.h" #include
+ * "call.h" #include "iwram_call.h" #include "actor.h" #include "field_effect.h"
+ * #include "event_inline.h" #include "item_icon.h" #include
+ * "module/scene/jupiter_lighthouse_basement.h" #include "module/scene/scene.h"
+ * extern s16 gData_020024f6. */
+void Whirlwind_UpdateLower__s098c(struct GustObject *object) __asm__(
+    "Whirlwind_UpdateLower");
 
 DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation,
-                       Whirlwind_UpdateLower, FieldEffect_Spawn)
+                       Whirlwind_UpdateLower__s098c, FieldEffect_Spawn)
 
 #include "frame.h"
 #include "field_coordinate.h"
@@ -313,7 +330,13 @@ s32 Func_02000a64(struct Actor *object) {
   return 0;
 }
 
-void Actor_SetSpriteColorMode(struct PositionedActor *object, s32 value);
+/* VIEW(s098c): routine Actor_SetSpriteColorMode as void
+ * Actor_SetSpriteColorMode(struct PositionedActor *object, s32 value);
+ * scene/shared/jupiter_lighthouse_aerie.h has void
+ * Actor_SetSpriteColorMode(struct Actor *object, s32 value). */
+void Actor_SetSpriteColorMode__s098c(
+    struct PositionedActor *object,
+    s32 value) __asm__("Actor_SetSpriteColorMode");
 
 DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
     JupiterLighthouse_PlaceRaisedActors)

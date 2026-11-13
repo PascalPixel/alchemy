@@ -5,6 +5,10 @@
 /// What every part of the radial object shares: its includes. radial.c
 /// includes it before the parts, and each part includes it too.
 
+// world_map.h first: battle.h names struct WorldMapWork, and a struct declared
+// before its definition keeps a smaller alignment, which world_picture.c's
+// copies of it show.
+#include "world_map.h"
 #include "iwram_call.h"
 #include "objdisp.h"
 #include "system.h"
@@ -673,8 +677,16 @@ void FieldPsynergy_Catch(void) {
   FieldPsynergy_FadeFromCastColor();
 }
 
-void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
-                                      struct ScatterParticle *p);
+/* VIEW(radial): routine EffectSprite_DrawAtWorldPosition as void
+ * EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct
+ * ScatterParticle *p); field/map/actor_cells has void
+ * EffectSprite_DrawAtWorldPosition(struct ScreenSprite *sprite, s32 *position)
+ * {. */
+void EffectSprite_DrawAtWorldPosition__radial(
+    struct EffectSprite *sprite,
+    struct ScatterParticle *p) __asm__("EffectSprite_DrawAtWorldPosition");
+#define EffectSprite_DrawAtWorldPosition                                       \
+  EffectSprite_DrawAtWorldPosition__radial
 void Rope_GetEndNodePosition(s32 target, struct Vector3 *position);
 
 /// Task of the Lash: its scattering particles along the rope.
@@ -1154,8 +1166,20 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
   particle->z = source->z - ((0x10000 - scale) * 5) + 0x100000;
 }
 
-struct ArcObject *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
-void Animation_ApplyChildArgumentFar(struct ArcSprite *sprite, s32 animation);
+/* VIEW(radial): routine Actor_CreateFar as struct ArcObject
+ * *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z); gamepak/far_call/field.h has
+ * struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z). */
+struct ArcObject *Actor_CreateFar__radial(s32 kind, s32 x, s32 y,
+                                          s32 z) __asm__("Actor_CreateFar");
+#define Actor_CreateFar Actor_CreateFar__radial
+/* VIEW(radial): routine Animation_ApplyChildArgumentFar as void
+ * Animation_ApplyChildArgumentFar(struct ArcSprite *sprite, s32 animation);
+ * gamepak/far_call/field.h has void Animation_ApplyChildArgumentFar(void *,
+ * s32). */
+void Animation_ApplyChildArgumentFar__radial(
+    struct ArcSprite *sprite,
+    s32 animation) __asm__("Animation_ApplyChildArgumentFar");
+#define Animation_ApplyChildArgumentFar Animation_ApplyChildArgumentFar__radial
 
 void FieldEffect_SpawnDescendingArcParticles(struct ArcObject *source) {
   u8 *work = Ram_HeapSlots->effectWork;
@@ -2129,6 +2153,9 @@ void TileCopies_Restore(void) {
   }
 }
 
+#undef Animation_ApplyChildArgumentFar
+#undef Actor_CreateFar
+#undef EffectSprite_DrawAtWorldPosition
 // ---- field/event_commands/tile_copies.c ----
 
 /// The Cyclone's helpers: copying the cells it touched, its arcs and its
@@ -2161,7 +2188,13 @@ struct MapCell__f0e2774 {
  * `count' in something not a structure or union. */
 extern struct TouchCopies gData_02001000__f0e2774 __asm__("gData_02001000");
 
-struct MapCell__f0e2774 *MapGrid_GetCellAt(s32 x, s32 z, s32 layer);
+/* VIEW(tile_copies): routine MapGrid_GetCellAt as struct MapCell__f0e2774
+ * *MapGrid_GetCellAt(s32 x, s32 z, s32 layer); field/event_commands/radial has
+ * struct MapCell__f0e150c *MapGrid_GetCellAt(s32 x, s32 z, s32 layer). */
+struct MapCell__f0e2774 *
+MapGrid_GetCellAt__tile_copies(s32 x, s32 z,
+                               s32 layer) __asm__("MapGrid_GetCellAt");
+#define MapGrid_GetCellAt MapGrid_GetCellAt__tile_copies
 
 /// For each cell the Cyclone touched (the event work's point list from
 /// FieldPsynergy_GatherNearbyCells) inside the width by height rectangle at
@@ -2355,6 +2388,7 @@ void ParticleBurst_Start(void) {
   Task_Add(ParticleBurst_Update, TASK_PASS_VBLANK);
 }
 
+#undef MapGrid_GetCellAt
 // ---- field/event_commands/psynergy.c ----
 
 /// The field Psynergy The Lost Age adds, from Cyclone to Hover, each part named
@@ -2381,6 +2415,21 @@ void ParticleBurst_Start(void) {
 #include "psynergy/hover.c"
 #include "psynergy/mote_trail.c"
 #include "psynergy/collision_tags.c"
+
+#undef BurstWork
+#undef Camera_WorldToScreen
+#undef EffectSprite_DrawAtWorldPosition
+#undef ObjectAnimation
+#undef Resource_GetMetadataRecordFarFar
+#undef BattleEffect_DropObjectAtAnchor
+#undef SparkParticle
+#undef Actor_ApplyRandomChildValues
+#undef MapGrid_SetCellBehavior
+#undef ObjectSprite
+#undef Mote
+#undef Actor_StartScriptFar
+#undef Camera_WorldToScreen
+#undef EffectSprite_DrawAtWorldPosition
 
 // ---- field/map/actor_cells.c ----
 
@@ -3181,6 +3230,9 @@ struct Spark {
 
 // The heap block of the effect: the picture, then the sparks and their
 // sprites.
+/* VIEW(step_vector): tag struct SparkWork as struct SparkWork__step_vector;
+ * field/event_commands/psynergy has another definition. */
+#define SparkWork SparkWork__step_vector
 struct SparkWork {
   u8 picture[0x400];
   struct Spark sparks[64];
@@ -3489,6 +3541,9 @@ void FieldEffect_ClearOwnedSlot(struct FieldParticle *slot) {
   Dma_Fill32(0, slot, sizeof *slot);
 }
 
+#undef SparkWork
+#undef BG_VRAM
+
 // ---- field/event_commands/world_picture.c ----
 
 /// The world map screen: its markers and cursor (The Broken Seal's
@@ -3699,7 +3754,12 @@ u32 Func_080ec298(u8 *entry) {
 
 // The world map screen's work, laid out as field/world_map.h has it.
 
-u32 Func_080ec298(struct WorldMapPlace *place);
+/* VIEW(world_map_picture): routine Func_080ec298 as u32 Func_080ec298(struct
+ * WorldMapPlace *place); field/event_commands/world_picture has u32
+ * Func_080ec298(u8 *entry) {. */
+u32 Func_080ec298__world_map_picture(struct WorldMapPlace *place) __asm__(
+    "Func_080ec298");
+#define Func_080ec298 Func_080ec298__world_map_picture
 
 // The place's position on the world map screen.
 #define PLACE_SCREEN_X(place) ((place)->x * 853 / 16384 - 269)
@@ -4759,3 +4819,5 @@ const struct FlagEntry *FlagEntries_GetTable(void) { return gData_080f1140; }
 #undef BG_VRAM
 #undef SCROLL_X
 #undef SCROLL_Y
+
+#undef Func_080ec298

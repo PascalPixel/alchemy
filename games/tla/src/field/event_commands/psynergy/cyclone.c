@@ -17,16 +17,9 @@ struct BurstSprite {
   u8 unk14[20];
 };
 
-struct BurstParticle {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 heading;
-  s32 speed;
-  s32 spin;
-  s32 delay;
-};
-
+/* VIEW(psynergy): tag struct BurstWork as struct BurstWork__psynergy;
+ * module/field/event_commands.h has another definition. */
+#define BurstWork BurstWork__psynergy
 struct BurstWork {
   u8 tiles[384];
   struct BurstSprite sprites[96];
@@ -39,7 +32,12 @@ struct BurstWork {
 };
 
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
-void Camera_WorldToScreen(s32 *position);
+/* VIEW(psynergy): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32
+ * *position); module/field/event_commands.h has void
+ * Camera_WorldToScreen(struct EffectVector *position). */
+void Camera_WorldToScreen__psynergy(s32 *position) __asm__(
+    "Camera_WorldToScreen");
+#define Camera_WorldToScreen Camera_WorldToScreen__psynergy
 #include "effect_sprite.h"
 
 /// The 96-particle burst's task (heap slot 0x5c work, started by
@@ -615,8 +613,16 @@ struct SprayEvent {
 };
 
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
-void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
-                                      struct SprayParticle *particle);
+/* VIEW(psynergy): routine EffectSprite_DrawAtWorldPosition as void
+ * EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct
+ * SprayParticle *particle); field/event_commands/radial has void
+ * EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct
+ * ScatterParticle *p). */
+void EffectSprite_DrawAtWorldPosition__psynergy(
+    struct EffectSprite *sprite,
+    struct SprayParticle *particle) __asm__("EffectSprite_DrawAtWorldPosition");
+#define EffectSprite_DrawAtWorldPosition                                       \
+  EffectSprite_DrawAtWorldPosition__psynergy
 s32 MapGrid_CheckCollisionFar(struct Actor *object, s32 *position);
 s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 

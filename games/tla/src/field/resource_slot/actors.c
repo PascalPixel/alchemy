@@ -693,10 +693,22 @@ s32 Actor_ReturnTrue(void) { return 1; }
 #include "field/sprite.h"
 #include "field/field.h"
 
-void Render_ApplyProjectedPlacementAtDepth(struct PlacedSprite *sprite,
-                                           struct SpritePlacement *point,
-                                           s32 *scale, s32 facing, s32 depth);
-void Sprite_ComposePicture(struct PlacedSprite *sprite, s32 facing);
+/* VIEW(resource_slot): routine Render_ApplyProjectedPlacementAtDepth as void
+ * Render_ApplyProjectedPlacementAtDepth(struct PlacedSprite *sprite, struct
+ * SpritePlacement *point, s32 *scale, s32 facing, s32 depth); field/field has
+ * void Render_ApplyProjectedPlacementAtDepth(struct LayeredSprite *object, s32
+ * *pos, s32 *scale, s32 mode, s32 depth) {. */
+void Render_ApplyProjectedPlacementAtDepth__resource_slot(
+    struct PlacedSprite *sprite, struct SpritePlacement *point, s32 *scale,
+    s32 facing, s32 depth) __asm__("Render_ApplyProjectedPlacementAtDepth");
+#define Render_ApplyProjectedPlacementAtDepth                                  \
+  Render_ApplyProjectedPlacementAtDepth__resource_slot
+/* VIEW(resource_slot): routine Sprite_ComposePicture as void
+ * Sprite_ComposePicture(struct PlacedSprite *sprite, s32 facing); field/field
+ * has s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {. */
+void Sprite_ComposePicture__resource_slot(
+    struct PlacedSprite *sprite, s32 facing) __asm__("Sprite_ComposePicture");
+#define Sprite_ComposePicture Sprite_ComposePicture__resource_slot
 
 #define BASE_PRIORITY(map) (((struct MapPriorityWork *)(map))->basePriority)
 // The priority field (bits 15..14) of a cell's word.
@@ -932,8 +944,14 @@ void ActorSystem_PlaceSprites(void) {
 // a function of its own, the body of ☀️'s ObjectSystem_UpdateCameraFixed
 // loop.
 
-void Render_PlaceProjectedSprite(void *sprite, s32 *point, const s32 *scale,
-                                 s32 facing, s32 depth);
+/* VIEW(resource_slot): routine Render_PlaceProjectedSprite as void
+ * Render_PlaceProjectedSprite(void *sprite, s32 *point, const s32 *scale, s32
+ * facing, s32 depth); field/field has void Render_PlaceProjectedSprite(struct
+ * LayeredSprite *sprite, s32 *point, s32 *scale, s32 facing, s32 depth) {. */
+void Render_PlaceProjectedSprite__resource_slot(
+    void *sprite, s32 *point, const s32 *scale, s32 facing,
+    s32 depth) __asm__("Render_PlaceProjectedSprite");
+#define Render_PlaceProjectedSprite Render_PlaceProjectedSprite__resource_slot
 
 s32 ActorCamera_ReturnTrue(void) { return 1; }
 

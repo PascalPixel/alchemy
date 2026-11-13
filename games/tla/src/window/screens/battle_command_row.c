@@ -5,7 +5,12 @@
 #include "../screens_internal.h"
 #include "module/window/screens.h"
 
-extern const u16 gWindowSprite_BounceScales[32];
+/* VIEW(screens): variable gWindowSprite_BounceScales as const u16
+ * gWindowSprite_BounceScales[32]; window/window has u16
+ * gWindowSprite_BounceScales[]. */
+extern const u16 gWindowSprite_BounceScales__screens[32] __asm__(
+    "gWindowSprite_BounceScales");
+#define gWindowSprite_BounceScales gWindowSprite_BounceScales__screens
 
 struct WindowTiles {
   u8 unk00[3];

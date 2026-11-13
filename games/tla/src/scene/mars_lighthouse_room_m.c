@@ -122,7 +122,10 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 #include "iwram_call.h"
 #include "io_write_queue.h"
 
-extern s32 gData_020036c4;
+/* VIEW(mars_lighthouse_room_m): variable gData_020036c4 as s32 gData_020036c4;
+ * scene/mars_lighthouse_room_m/s2708 has s32 gData_020036c4[] = {. */
+extern s32 gData_020036c4__mars_lighthouse_room_m __asm__("gData_020036c4");
+#define gData_020036c4 gData_020036c4__mars_lighthouse_room_m
 extern u16 gData_0200393c[];
 extern u16 gData_0200397c[];
 
@@ -215,7 +218,10 @@ void Func_0200030c(void) {
   Event_End();
 }
 
-extern s32 gData_02003704;
+/* VIEW(mars_lighthouse_room_m): variable gData_02003704 as s32 gData_02003704;
+ * scene/mars_lighthouse_room_m/s2708 has s32 gData_02003704[] = {. */
+extern s32 gData_02003704__mars_lighthouse_room_m __asm__("gData_02003704");
+#define gData_02003704 gData_02003704__mars_lighthouse_room_m
 extern u16 gData_02003a5c[];
 
 void Func_020003c4(void) {
@@ -449,10 +455,22 @@ void Func_0200154c(u16 *slots, u16 *colours, u16 *a, u16 *b);
  * function `Func_02002e6c'. */
 extern void Func_02002e6c__s0b64(void) __asm__("Func_02002e6c");
 
-extern u8 gData_0200338c[];
-extern u8 gData_0200339c[];
-extern u8 gData_020033c8[];
-extern u8 gData_020033f4[];
+/* VIEW(mars_lighthouse_room_m): variable gData_0200338c as u8 gData_0200338c[];
+ * scene/mars_lighthouse_room_m/s2708 has s16 gData_0200338c[] = {. */
+extern u8 gData_0200338c__mars_lighthouse_room_m[] __asm__("gData_0200338c");
+#define gData_0200338c gData_0200338c__mars_lighthouse_room_m
+/* VIEW(mars_lighthouse_room_m): variable gData_0200339c as u8 gData_0200339c[];
+ * scene/mars_lighthouse_room_m/s2708 has s16 gData_0200339c[] = {. */
+extern u8 gData_0200339c__mars_lighthouse_room_m[] __asm__("gData_0200339c");
+#define gData_0200339c gData_0200339c__mars_lighthouse_room_m
+/* VIEW(mars_lighthouse_room_m): variable gData_020033c8 as u8 gData_020033c8[];
+ * scene/mars_lighthouse_room_m/s2708 has s16 gData_020033c8[] = {. */
+extern u8 gData_020033c8__mars_lighthouse_room_m[] __asm__("gData_020033c8");
+#define gData_020033c8 gData_020033c8__mars_lighthouse_room_m
+/* VIEW(mars_lighthouse_room_m): variable gData_020033f4 as u8 gData_020033f4[];
+ * scene/mars_lighthouse_room_m/s2708 has u32 gData_020033f4[] = {. */
+extern u8 gData_020033f4__mars_lighthouse_room_m[] __asm__("gData_020033f4");
+#define gData_020033f4 gData_020033f4__mars_lighthouse_room_m
 
 s32 Scene_Initialize(void) {
   s32 entrance;
@@ -1233,6 +1251,12 @@ DEFINE_BEAM_DRAW_TARGETS(Func_02001f94, Func_02001f14__s1f94, Func_02001d08,
                          Func_02001d98, Func_02001d50, Func_02001b1c)
 #undef IWRAM
 
+#undef gData_0200338c
+#undef gData_0200339c
+#undef gData_020033c8
+#undef gData_020033f4
+#undef gData_020036c4
+#undef gData_02003704
 // ---- scene/mars_lighthouse_room_m/s2118.c ----
 
 /// Scene code of overlay 0x6ac, in ROM order.
@@ -1269,42 +1293,6 @@ void Func_02002118(void) {
 #include "ram_buffer.h"
 #include "frame.h"
 #include "actor.h"
-
-struct RideEntry {
-  s16 a;
-  u8 unk02[2];
-  s16 b;
-  s16 c;
-  u8 unk08[4];
-  s32 d;
-};
-
-struct RideRow {
-  u8 unk00[20];
-  s16 a;
-  u8 unk16[2];
-  s16 b;
-  s16 c;
-  u8 unk1c[4];
-  s32 d;
-};
-
-struct RideSlot {
-  u16 value;
-  u8 unk02[2];
-};
-
-struct RideWork {
-  s32 counter;
-  s16 active;
-  u8 unk06[8];
-  s16 value0e;
-  u8 unk10[4];
-  struct RideEntry entries[4];
-  struct RideSlot slots[4];
-  u8 unk64[12];
-  void *handle;
-};
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 #include "main_routine_work.h"
@@ -1356,7 +1344,10 @@ struct MarsLighthouseEventWork {
   u16 downOwners[8];
 };
 
-struct BattleUnit *Unit_Get(s32 owner);
+/* VIEW(s2118): routine Unit_Get as struct BattleUnit *Unit_Get(s32 owner);
+ * item_icon.h has void *Unit_Get(s32 owner). */
+struct BattleUnit *Unit_Get__s2118(s32 owner) __asm__("Unit_Get");
+#define Unit_Get Unit_Get__s2118
 
 DEFINE_PARTY_TAKE_FALL_DAMAGE(Func_02002368)
 
@@ -1402,6 +1393,7 @@ void Func_020026f0(void) {
     Func_020024e4();
 }
 
+#undef Unit_Get
 // ---- scene/mars_lighthouse_room_m/s2708.c ----
 
 /// Scene code of overlay 0x6ac, in ROM order.
@@ -1414,11 +1406,11 @@ void Func_020026f0(void) {
 #include "item_icon.h"
 #include "module/scene/mars_lighthouse_room_m.h"
 
-#ifdef MODERN
-// Called with no prototype in scope, as its bytes need; a current GCC gets
-// it here.
-void Func_02002368();
-#endif
+/* VIEW(s2708): routine Func_02002368 as int Func_02002368(), called with no
+ * declaration in scope as its bytes need; the definition has void
+ * Func_02002368(void). */
+s32 Func_02002368__s2708() __asm__("Func_02002368");
+#define Func_02002368 Func_02002368__s2708
 s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 layer, s32 x, s32 z);
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
@@ -1508,42 +1500,6 @@ s32 MarsLighthouseRoomM_SlideOnIce(void) {
 #include "ram_buffer.h"
 #include "frame.h"
 #include "actor.h"
-
-struct RideEntry {
-  s16 a;
-  u8 unk02[2];
-  s16 b;
-  s16 c;
-  u8 unk08[4];
-  s32 d;
-};
-
-struct RideRow {
-  u8 unk00[20];
-  s16 a;
-  u8 unk16[2];
-  s16 b;
-  s16 c;
-  u8 unk1c[4];
-  s32 d;
-};
-
-struct RideSlot {
-  u16 value;
-  u8 unk02[2];
-};
-
-struct RideWork {
-  s32 counter;
-  s16 active;
-  u8 unk06[8];
-  s16 value0e;
-  u8 unk10[4];
-  struct RideEntry entries[4];
-  struct RideSlot slots[4];
-  u8 unk64[12];
-  void *handle;
-};
 
 extern u16 gData_02004cf0[];
 void Actor_Release(void *handle);
@@ -1677,6 +1633,9 @@ void Func_02002ad4(struct Actor *object) {
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
+/* VIEW(s2708): tag struct Work020023c4 as struct Work020023c4__s2708;
+ * module/scene/scene.h has another definition. */
+#define Work020023c4 Work020023c4__s2708
 struct Work020023c4 {
   u8 unk00[4];
   u16 unk04;
@@ -1737,9 +1696,16 @@ DEFINE_ACTOR_PARK(Func_02003084, Func_02002e6c)
 
 #include "objcmd.h"
 
-void Func_0200004c(void);
+/* VIEW(s2708): routine Func_0200004c as void Func_0200004c(void);
+ * scene/mars_lighthouse_room_m has s32 Func_0200004c(struct Actor *object) {.
+ */
+void Func_0200004c__s2708(void) __asm__("Func_0200004c");
+#define Func_0200004c Func_0200004c__s2708
 void Func_0200030c(void);
-void Func_020006c8(void);
+/* VIEW(s2708): routine Func_020006c8 as void Func_020006c8(void);
+ * scene/mars_lighthouse_room_m has void Func_020006c8(s32 state) {. */
+void Func_020006c8__s2708(void) __asm__("Func_020006c8");
+#define Func_020006c8 Func_020006c8__s2708
 
 s32 gData_020032c8[] = {
     SC_CALL(Func_0200004c),
@@ -1922,3 +1888,8 @@ u32 gData_02003900[] = {
     0, 20, 3, 0, 1, 38,
 };
 // clang-format on
+
+#undef Work020023c4
+#undef Func_0200004c
+#undef Func_020006c8
+#undef Func_02002368

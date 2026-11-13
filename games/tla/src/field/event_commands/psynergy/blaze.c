@@ -31,6 +31,9 @@ struct FxEvent {
   s8 unkd38;
 };
 
+/* VIEW(psynergy): tag struct ObjectAnimation as struct
+ * ObjectAnimation__psynergy; module/field/field.h has another definition. */
+#define ObjectAnimation ObjectAnimation__psynergy
 struct ObjectAnimation {
   u8 unk00[40];
   s16 *definition;
@@ -48,7 +51,14 @@ extern char ResourceId_RedFlameBurst, ResourceId_VioletFlameBurst,
 
 s32 Actor_GetSpriteIdFar(struct Actor *object);
 void Field_StartColorTransition(s32 frames, s32 color);
-struct ObjectMetadata *Resource_GetMetadataRecordFarFar(s32 id);
+/* VIEW(psynergy): routine Resource_GetMetadataRecordFarFar as struct
+ * ObjectMetadata *Resource_GetMetadataRecordFarFar(s32 id);
+ * system/sprite_metadata.h has struct AnimationMetadata
+ * *Resource_GetMetadataRecordFarFar(u32 number). */
+struct ObjectMetadata *Resource_GetMetadataRecordFarFar__psynergy(
+    s32 id) __asm__("Resource_GetMetadataRecordFarFar");
+#define Resource_GetMetadataRecordFarFar                                       \
+  Resource_GetMetadataRecordFarFar__psynergy
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target);

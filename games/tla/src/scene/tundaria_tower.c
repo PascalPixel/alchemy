@@ -5,6 +5,8 @@
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../../../../games/tla/src/field/field_effect/spawn.c"
 
+#undef EFFECT_SET_SCRIPT
+
 // ---- scene/tundaria_tower/script0.c ----
 
 #include "types.h"
@@ -375,7 +377,11 @@ void Func_0200095c(void) { Func_0200189c(); }
 
 extern const u8 gData_02003370[];
 
-void Func_02002f90(struct Actor *object, const void *script);
+/* VIEW(cell_set): routine Func_02002f90 as void Func_02002f90(struct Actor
+ * *object, const void *script); field/field_effect/spawn has void
+ * EFFECT_SET_SCRIPT(struct Actor *object, const s32 *script). */
+void Func_02002f90__cell_set(struct Actor *object,
+                             const void *script) __asm__("Func_02002f90");
 
 /// Actor 8 is placed and given its script while the screen flashes, and three
 /// map cells change.
@@ -396,7 +402,7 @@ void Func_02000964(void) {
   object->actionFlags = 0;
   object->update = 0;
   Actor_SetDestination(8, 424, 536);
-  Func_02002f90(object, gData_02003370);
+  Func_02002f90__cell_set(object, gData_02003370);
   Actor_WaitForMoveById(8);
   GameFlag_Set(0x200);
   Actor_WatchAndSetScript(8, gMainRoutineWork.currentOwner);

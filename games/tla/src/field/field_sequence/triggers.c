@@ -171,7 +171,12 @@ void *Scene_FindActorTalkTrigger(s32 id) {
   return event;
 }
 
-s32 BattleEffect_GetFlags(s32 id);
+/* VIEW(field_sequence): routine BattleEffect_GetFlags as s32
+ * BattleEffect_GetFlags(s32 id); field/object/screen_transition has u8
+ * BattleEffect_GetFlags(void) {. */
+s32 BattleEffect_GetFlags__field_sequence(s32 id) __asm__(
+    "BattleEffect_GetFlags");
+#define BattleEffect_GetFlags BattleEffect_GetFlags__field_sequence
 void Actor_TurnToFaceEachOther(s32 first, s32 second, s32 mode);
 
 s32 Scene_TalkToActor(s32 id) {

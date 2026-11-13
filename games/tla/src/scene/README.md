@@ -26,8 +26,8 @@ runs, its tables and its [events](../../../tbs/glossary.md#event).
   most of it under `games/tla/src/field/`. Code that only overlays use sits
   there too: compiled inside each scene that uses it, which includes it, or its
   own object where an overlay still links it so. `scene/shared/` holds such
-  pieces: `drift_spawn.c`, compiled inside Idejima and its own object in one
-  other overlay, `scene_set_arrival_flags.h`, compiled inside each scene that
+  pieces: `drift_spawn.c`, compiled inside Idejima and inside the Shaman Village,
+  `scene_set_arrival_flags.h`, compiled inside each scene that
   links it, and the routines several scenes copy, each written once as a macro
   a scene expands where its copy sits, in headers by kind: `cracked_tile.h`,
   `whirlwind.h`, `push.h`, `map_cells.h` and the rest.

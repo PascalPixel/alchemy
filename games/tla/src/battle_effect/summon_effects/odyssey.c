@@ -16,6 +16,9 @@ struct Model;
 // begin with it. Its s32 member gives the read the alias set of
 // transition->active, so the read waits for that store; as
 // *(u16 *)(battle)->unk670, 6 of 1075 instructions differ in tla-en.
+/* VIEW(summon_effects): tag union BattleBackgroundId as union
+ * BattleBackgroundId__summon_effects; module/battle_effect/battle_effect.h has
+ * another definition. */
 union BattleBackgroundId {
   u16 id;
   s32 word;
@@ -486,8 +489,6 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
   HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }
-
-typedef DrawRectangle BlitterPair[2];
 
 // The swirl runs until A is pressed, at most this many frames.
 #define SWIRL_MAX_FRAMES 312000

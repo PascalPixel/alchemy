@@ -2187,7 +2187,10 @@ void Func_02003c58(s32 mode) {
   System_Wait(2);
 }
 
-s32 Func_02004644();
+/* VIEW(s0198): routine Func_02004644 as s32 Func_02004644();
+ * scene/jupiter_lighthouse_aerie_beacon/s44cc has void Func_02004644(void) {.
+ */
+s32 Func_02004644__s0198() __asm__("Func_02004644");
 s32 Party_AddMember(s32 value);
 
 s32 Scene_Initialize(void) {
@@ -2221,7 +2224,7 @@ s32 Scene_Initialize(void) {
   FIELD_AT((t8 + 0x23), u8, 0) = (0x80 | FIELD_AT((t8 + 0x23), u8, 0));
   t9 = Event_GetFlag(0xa21);
   if (t9 == 0) {
-    Func_02004644();
+    Func_02004644__s0198();
   } else {
     t11 = Actor_Get(24);
     FIELD_AT(t11, s32, 24) = 0;
@@ -2488,13 +2491,22 @@ void Whirlwind_Update(struct Object6a5 *object) {
 
 extern u8 gLightSpritesLarge[];
 
-void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
-void Whirlwind_Update(struct GustObject *object);
+/* VIEW(s44cc): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
+ * FieldEffect *effect, s32 flags); field/field.h has void
+ * Actor_SetSpriteFlags(struct Actor *object, u32 flags). */
+void Actor_SetSpriteFlags__s44cc(struct FieldEffect *effect,
+                                 s32 flags) __asm__("Actor_SetSpriteFlags");
+/* VIEW(s44cc): routine Whirlwind_Update as void Whirlwind_Update(struct
+ * GustObject *object);
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s3f54 has void
+ * Whirlwind_Update(struct Object6a5 *object) {. */
+void Whirlwind_Update__s44cc(struct GustObject *object) __asm__(
+    "Whirlwind_Update");
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags, struct EffectOptions *options);
 
 DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper, Actor_SelectAnimation,
-                             Whirlwind_Update, FieldEffect_Spawn)
+                             Whirlwind_Update__s44cc, FieldEffect_Spawn)
 
 DEFINE_ACTOR_EMIT_RISING_SPARKS_B(Actor_EmitRisingSparksB, FieldEffect_Spawn)
 

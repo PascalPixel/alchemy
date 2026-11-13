@@ -23,10 +23,10 @@ extern u8 gData_02002bb4[];
 // clang-format off
 DEFINE_G_DATA_02001F18(gGroundParticleFrames)
 
-s32 gFieldEffect_DurationScripts[] = {
-    (s32)gData_02002a78,
-    (s32)gData_02002ab4,
-    (s32)gData_02002af0,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gData_02002a78,
+    gData_02002ab4,
+    gData_02002af0,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

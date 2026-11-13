@@ -42,7 +42,51 @@
 #include "window/debug.c"
 #include "window/text_tiles.c"
 
+#undef Unit_Get
+#undef Ability_Get
+#undef Message_DecodeRawUnbounded
+#undef MenuTitle_Bob
+#undef gKeyState
+#undef MenuCursor_AdvanceFar
+#undef MenuCursor_MoveTowardTargetFar
+#undef Portrait_Create
+#undef MenuSprite
+#undef PartyInventory_AddFar
+#undef CommandIcon_Create
+#undef WindowSprite_Pulse
+#undef EffectPosition
+#undef Math_UnsignedMulHighAdd
+#undef Event_SetDestinationFar
+#undef Unit_Get
+#undef Portrait_Create
+#undef Ability_Get
+#undef MenuSprite
+#undef MenuCursor_AdvanceFar
+#undef MenuCursor_MoveTowardTargetFar
+#undef WindowSprite_Pulse
+#undef CommandIcon_Create
+#undef MenuTitle_Bob
+#undef Event_SetDestinationFar
+
 // ---- window/screens.c ----
+
+/* VIEW(screens): routine Text_DrawPrefixedNumberAtOffset as int
+ * Text_DrawPrefixedNumberAtOffset(), called with no declaration in scope;
+ * another part has its declaration. */
+s32 Text_DrawPrefixedNumberAtOffset__screens() __asm__(
+    "Text_DrawPrefixedNumberAtOffset");
+#define Text_DrawPrefixedNumberAtOffset Text_DrawPrefixedNumberAtOffset__screens
+/* VIEW(screens): routine Text_DrawWideStringInWindow as int
+ * Text_DrawWideStringInWindow(), called with no declaration in scope; another
+ * part has its declaration. */
+s32 Text_DrawWideStringInWindow__screens() __asm__(
+    "Text_DrawWideStringInWindow");
+#define Text_DrawWideStringInWindow Text_DrawWideStringInWindow__screens
+/* VIEW(screens): routine Window_MapTextCanvasTiles as int
+ * Window_MapTextCanvasTiles(), called with no declaration in scope; another
+ * part has its declaration. */
+s32 Window_MapTextCanvasTiles__screens() __asm__("Window_MapTextCanvasTiles");
+#define Window_MapTextCanvasTiles Window_MapTextCanvasTiles__screens
 
 /// The screens object: the screens built on the window system (window.c). It
 /// holds creating window sprites and the portraits, the party status window,
@@ -88,6 +132,26 @@
 #include "screens/battle_item_menu.c"
 #include "screens/battle_psynergy_menu.c"
 
+#undef Message_OpenWindow
+#undef Portrait_GetForSpeaker
+#undef Window_DrawBorder
+#undef Text_MeasureDecoded
+#undef Portrait_OpenWindow
+#undef MenuCursor_SetPositionImmediateFar
+#undef MenuCursor_SetFar
+#undef Message_Start
+#undef gWindowSprite_BounceScales
+#undef Text_DrawWideStringAtOffset
+#undef Window_PutGlyph
+#undef Portrait_OpenWindow
+#undef gWindowSprite_BounceScales
+#undef Text_DrawWideStringAtOffset
+#undef Window_PutGlyph
+
+#undef Text_DrawPrefixedNumberAtOffset
+#undef Text_DrawWideStringInWindow
+#undef Window_MapTextCanvasTiles
+
 // ---- window/menus.c ----
 
 /// The rest of the screens object (screens.c): the battle target selection,
@@ -109,3 +173,17 @@
 #include "menus/debug.c"
 #include "menus/debug_flags.c"
 #include "menus/pause_menu.c"
+
+#undef Portrait_Load
+#undef Text_DrawWideStringAtOffset
+#undef Menu_BuildLocalizedPatternTiles
+#undef Window_PutGlyph
+#undef BattleDjinnMenu_Run
+#undef Message_ShowAndWait
+#undef Window_ClearInteriorTiles
+#undef Text_DrawNumber
+#undef Icon_BuildItemIconTiles
+#undef Icon_BuildMiscIconTiles
+#undef gPortrait_CharacterMap
+#undef gPortrait_SpriteMap
+#undef Portrait_OpenWindow

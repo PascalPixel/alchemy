@@ -570,7 +570,15 @@ extern const u8 gMarsLighthouseRoomF_Room4Triggers[];
 extern const u8 gMarsLighthouseRoomF_Room1Triggers[];
 extern const u8 gMarsLighthouseRoomF_Room3Triggers[];
 extern const u8 gMarsLighthouseRoomF_Room2Triggers[];
-void MarsLighthouseRoomF_ContinueSlide(void);
+/* VIEW(mars_lighthouse_room_f): routine MarsLighthouseRoomF_ContinueSlide as
+ * void MarsLighthouseRoomF_ContinueSlide(void);
+ * scene/mars_lighthouse_room_f/flash has
+ * DEFINE_RIDE_IF_ACTIVE(MarsLighthouseRoomF_ContinueSlide,
+ * MarsLighthouseRoomF_SlideOnIce) s32 Func_02002cfc(void) {. */
+void MarsLighthouseRoomF_ContinueSlide__mars_lighthouse_room_f(void) __asm__(
+    "MarsLighthouseRoomF_ContinueSlide");
+#define MarsLighthouseRoomF_ContinueSlide                                      \
+  MarsLighthouseRoomF_ContinueSlide__mars_lighthouse_room_f
 void Func_020043ec(void);
 
 void Func_02000c80(s32 id) {
@@ -841,7 +849,16 @@ extern const u8 gData_02005c84[];
 extern const u8 gData_02005ce0[];
 extern const u8 gData_02005d3c[];
 
-s32 Func_0200328c(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
+/* VIEW(mars_lighthouse_room_f): routine Func_0200328c as s32 Func_0200328c(s32
+ * id, s32 a1, s32 a2, s32 a3, const void *script);
+ * scene/mars_lighthouse_room_f/s328c has DEFINE_ACTOR_ATTACH(Func_0200328c,
+ * Func_02005480, Func_02002f6c) #include "types.h" #include "actor.h" #include
+ * "field_sprite.h" #include "scene_tables.h" #include "system/vector3.h"
+ * #include "event_inline.h" void Func_02002f80(struct Actor *actor). */
+s32 Func_0200328c__mars_lighthouse_room_f(
+    s32 id, s32 a1, s32 a2, s32 a3,
+    const void *script) __asm__("Func_0200328c");
+#define Func_0200328c Func_0200328c__mars_lighthouse_room_f
 
 s32 Scene_PrepareMap(void) {
   struct MainRoutineWork *party;
@@ -1329,6 +1346,8 @@ void Func_02002618(s16 value) {
 
 DEFINE_BEAM_START(Func_02002624, Func_0200242c)
 
+#undef MarsLighthouseRoomF_ContinueSlide
+#undef Func_0200328c
 // ---- scene/mars_lighthouse_room_f/ride.c ----
 
 /// Scene code of overlay 0x6ad, in ROM order.
@@ -1344,30 +1363,17 @@ DEFINE_BEAM_START(Func_02002624, Func_0200242c)
 #include "module/scene/scene.h"
 #include "module/tla.h"
 
-struct RideEntry {
-  s16 a;
-  u8 unk02[2];
-  s16 b;
-  s16 c;
-  u8 unk08[4];
-  s32 d;
-};
-
-struct RideRow {
-  u8 unk00[20];
-  s16 a;
-  u8 unk16[2];
-  s16 b;
-  s16 c;
-  u8 unk1c[4];
-  s32 d;
-};
-
+/* VIEW(ride): tag struct RideSlot as struct RideSlot__ride;
+ * scene/mars_lighthouse_room_f has another definition. */
+#define RideSlot RideSlot__ride
 struct RideSlot {
   u16 value;
   u8 unk02[2];
 };
 
+/* VIEW(ride): tag struct RideWork as struct RideWork__ride;
+ * scene/mars_lighthouse_room_f has another definition. */
+#define RideWork RideWork__ride
 struct RideWork {
   s32 counter;
   s16 active;
@@ -1398,6 +1404,11 @@ s32 Func_02002778(void) {
 
 DEFINE_RIDE_ADVANCE_COUNTER(Func_02002784)
 
+/* VIEW(ride): routine Func_020027ac as void Func_020027ac(s32 index, s32
+ * value); scene/mars_lighthouse_room_f.h has s32 Func_020027ac(s32 index, s32
+ * value). */
+void Func_020027ac__ride(s32 index, s32 value) __asm__("Func_020027ac");
+#define Func_020027ac Func_020027ac__ride
 DEFINE_RIDE_SET_ENTRY(Func_020027ac)
 
 void Func_020027cc(s32 index, s16 value) {
@@ -1427,6 +1438,10 @@ DEFINE_PARTY_TAKE_FALL_DAMAGE(Func_02002800)
 
 #include "../field/field_effect/advance_spin.c"
 
+#undef RideSlot
+#undef RideWork
+#undef Func_020027ac
+
 // ---- scene/mars_lighthouse_room_f/flash.c ----
 
 /// Scene code of overlay 0x6ad, in ROM order.
@@ -1444,30 +1459,17 @@ DEFINE_PARTY_TAKE_FALL_DAMAGE(Func_02002800)
 #include "module/scene/scene.h"
 #include "module/tla.h"
 
-struct RideEntry {
-  s16 a;
-  u8 unk02[2];
-  s16 b;
-  s16 c;
-  u8 unk08[4];
-  s32 d;
-};
-
-struct RideRow {
-  u8 unk00[20];
-  s16 a;
-  u8 unk16[2];
-  s16 b;
-  s16 c;
-  u8 unk1c[4];
-  s32 d;
-};
-
+/* VIEW(flash): tag struct RideSlot as struct RideSlot__flash;
+ * scene/mars_lighthouse_room_f has another definition. */
+#define RideSlot RideSlot__flash
 struct RideSlot {
   u16 value;
   u8 unk02[2];
 };
 
+/* VIEW(flash): tag struct RideWork as struct RideWork__flash;
+ * scene/mars_lighthouse_room_f has another definition. */
+#define RideWork RideWork__flash
 struct RideWork {
   s32 counter;
   s16 active;
@@ -1891,6 +1893,8 @@ DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_02002f80, Work020023c4__s2f80,
                               Func_02002e8c, Func_02002d08)
 #undef ABS
 
+#undef RideSlot
+#undef RideWork
 // ---- scene/mars_lighthouse_room_f/s328c.c ----
 
 /// Scene code of overlay 0x6ad, in ROM order.
@@ -1960,30 +1964,17 @@ DEFINE_ACTOR_POP_UP(Func_02003478, Func_02005480)
 #include "frame.h"
 #include "macros.h"
 
-struct RideEntry {
-  s16 a;
-  u8 unk02[2];
-  s16 b;
-  s16 c;
-  u8 unk08[4];
-  s32 d;
-};
-
-struct RideRow {
-  u8 unk00[20];
-  s16 a;
-  u8 unk16[2];
-  s16 b;
-  s16 c;
-  u8 unk1c[4];
-  s32 d;
-};
-
+/* VIEW(s328c): tag struct RideSlot as struct RideSlot__s328c;
+ * scene/mars_lighthouse_room_f has another definition. */
+#define RideSlot RideSlot__s328c
 struct RideSlot {
   u16 value;
   u8 unk02[2];
 };
 
+/* VIEW(s328c): tag struct RideWork as struct RideWork__s328c;
+ * scene/mars_lighthouse_room_f has another definition. */
+#define RideWork RideWork__s328c
 struct RideWork {
   s32 counter;
   s16 active;
@@ -2005,3 +1996,6 @@ void Func_0200236c(struct Actor *object, s32 unused);
 DEFINE_ACTOR_PARK(Func_0200351c, Func_02003304)
 
 #include "../field/object/set_sprite_priority.c"
+
+#undef RideSlot
+#undef RideWork

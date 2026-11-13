@@ -8,7 +8,12 @@
 
 struct OwnerGrowthRecord;
 
-extern const struct ElementPreset gEnemy_ElementPresetTable[];
+/* VIEW(game): variable gEnemy_ElementPresetTable as const struct ElementPreset
+ * gEnemy_ElementPresetTable[]; game/element_table has const struct
+ * EnemyElementPreset gEnemy_ElementPresetTable[] = {. */
+extern const struct ElementPreset
+    gEnemy_ElementPresetTable__game[] __asm__("gEnemy_ElementPresetTable");
+#define gEnemy_ElementPresetTable gEnemy_ElementPresetTable__game
 
 /// Each element's value, ten per digit: an enemy's from the preset its record
 /// names, a character's from its djinn counts plus its growth record's bonus.
@@ -71,7 +76,12 @@ s32 Enemy_GetAttackElement(void *state) {
   return *(u32 *)((u8 *)table + offset);
 }
 
-extern struct ElementLevelBonus gElement_PowerResistByLevel[16];
+/* VIEW(game): variable gElement_PowerResistByLevel as struct ElementLevelBonus
+ * gElement_PowerResistByLevel[16]; game/element_table has const struct
+ * ElementLevelBonus gElement_PowerResistByLevel[16] = {. */
+extern struct ElementLevelBonus gElement_PowerResistByLevel__game[16] __asm__(
+    "gElement_PowerResistByLevel");
+#define gElement_PowerResistByLevel gElement_PowerResistByLevel__game
 
 void Unit_CalculateBaseElements(s32 owner,
                                 struct BattleElementStats *destination) {

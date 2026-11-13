@@ -741,7 +741,8 @@ void BattleEffect_EndElementStreaks(void) {
 
 struct Model;
 
-void Render_DrawModelList(struct Model *model);
+void Render_DrawModelList__battle_effect(struct Model *model) __asm__(
+    "Render_DrawModelList");
 
 /* VIEW(f13eb70): routine BattleObject_GetFar as void
  * **BattleObject_GetFar(s32 objectId); motobj.h has struct BattleObj
@@ -775,10 +776,17 @@ extern char ResourceId_CornerRuneASheet, ResourceId_ForestCanopyTiles;
 extern char ResourceId_SunbeamCloudsBackdrop, ResourceId_VioletSkyBackdrop;
 extern u8 gMapCellBuffer[];
 
-struct SpriteObject *EffectSprite_CreateWithTiles(s32 width, s32 height,
-                                                  u32 shape, u32 attributes);
-struct RuinObject *EffectSprite_Acquire(s32 width, s32 height, u32 shape,
-                                        s32 mode);
+struct SpriteObject *EffectSprite_CreateWithTiles__battle_effect(
+    s32 width, s32 height, u32 shape,
+    u32 attributes) __asm__("EffectSprite_CreateWithTiles");
+/* VIEW(battle_effect): routine EffectSprite_Acquire as struct RuinObject
+ * *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode);
+ * battle_effect/ability_effects has struct EffectSprite__f15b3b0
+ * *EffectSprite_Acquire(s32 kind, s32 value) {. */
+struct RuinObject *
+EffectSprite_Acquire__battle_effect(s32 width, s32 height, u32 shape,
+                                    s32 mode) __asm__("EffectSprite_Acquire");
+#define EffectSprite_Acquire EffectSprite_Acquire__battle_effect
 
 #define SLOT_ALT 188 // unkb8[1]
 #define ALT_BLITTER ((DrawRectangle)Ram_HeapSlots->unkb8[1])

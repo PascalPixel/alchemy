@@ -16,6 +16,9 @@
 // The anchor whose effect runs 54 frames.
 #define ANCHOR_SHORT 8
 
+/* VIEW(ability_effects): tag struct CameraWork as struct
+ * CameraWork__ability_effects; module/battle_effect/battle_effect.h has another
+ * definition. */
 struct CameraWork {
   s32 eye[3];
   s32 pos[3];

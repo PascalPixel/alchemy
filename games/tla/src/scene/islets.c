@@ -542,7 +542,8 @@ DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 3, Actor_SelectAnimation, gSmokeScript)
 
 #include "call.h"
 
-extern const u8 gData_020043f8[], gData_02004300[];
+extern const u8 gData_020043f8[];
+extern const u8 gData_02004300[];
 
 #define STEP(actor, x, z)                                                      \
   (Actor_GetById(actor)->actionFlags &= ~1, Actor_WalkToAndWait(actor, x, z),  \
@@ -1851,7 +1852,11 @@ struct MapLayerBits {
 };
 
 void Func_02003410(void);
-void PaletteCycle_Add(s32 a, s32 b, s32 c, s32 d);
+/* VIEW(islets): routine PaletteCycle_Add as void PaletteCycle_Add(s32 a, s32 b,
+ * s32 c, s32 d); graphics/palette_snapshots.h has s32 PaletteCycle_Add(s16
+ * bank, s16 index, s16 delay, s16 count). */
+void PaletteCycle_Add__islets(s32 a, s32 b, s32 c,
+                              s32 d) __asm__("PaletteCycle_Add");
 
 void Func_0200329c(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
@@ -1872,9 +1877,9 @@ void Func_0200329c(void) {
     /* FAKEMATCH(barrier): the native loads the first argument last; as the
      * plain call, 2 of 145 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2), "+l"(a3));
-    PaletteCycle_Add(a0, a1, a2, a3);
+    PaletteCycle_Add__islets(a0, a1, a2, a3);
   }
-  PaletteCycle_Add(4, 12, 5, 4);
+  PaletteCycle_Add__islets(4, 12, 5, 4);
   if (Event_GetFlag(0xaa5) &&
       (done = Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) == 0) {
     Actor_SetPosition(10, 0x1180000, 0x1d40000);
@@ -1933,7 +1938,8 @@ struct MapLayerBits {
 };
 
 void Func_02003410(void);
-s32 PaletteCycle_Add(s16 bank, s16 index, s16 delay, s16 count);
+s32 PaletteCycle_Add__islets(s16 bank, s16 index, s16 delay,
+                             s16 count) __asm__("PaletteCycle_Add");
 
 void Func_0200329c(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
@@ -1945,8 +1951,8 @@ void Func_0200329c(void) {
   if (gMainRoutineWork.entrance == 2)
     Event_ClearFlag(303);
   Func_02003410();
-  PaletteCycle_Add(3, 12, 5, 4);
-  PaletteCycle_Add(4, 12, 5, 4);
+  PaletteCycle_Add__islets(3, 12, 5, 4);
+  PaletteCycle_Add__islets(4, 12, 5, 4);
   if (Event_GetFlag(0xaa5) &&
       (done = Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) == 0) {
     Actor_SetPosition(10, 0x1180000, 0x1d40000);
@@ -2351,12 +2357,15 @@ inner:
   return NULL;
 }
 
-void Actor_StopAtPushTarget(void);
+/* VIEW(s3410): routine Actor_StopAtPushTarget as void
+ * Actor_StopAtPushTarget(void); scene/islets/s3d0c has void
+ * Actor_StopAtPushTarget(struct Actor *object) {. */
+void Actor_StopAtPushTarget__s3410(void) __asm__("Actor_StopAtPushTarget");
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 DEFINE_PUSH_TARGET_PUSH(PushTarget_Push, gPushFootprints, Func_02003790,
-                        Actor_StopAtPushTarget, Actor_SelectAnimation,
+                        Actor_StopAtPushTarget__s3410, Actor_SelectAnimation,
                         gPushLeaderSteps)
 
 // ---- scene/islets/s3d0c.c ----

@@ -288,6 +288,12 @@ struct Actor *ObjectEvent_GetObject(u32 objectId) {
 
 void ObjectEvent_Remove(u32 objectId) { Actor_ReleaseAtIndex(objectId); }
 
+/* VIEW(field_sequence): routine ObjectEvent_PlaceOnGround as void
+ * ObjectEvent_PlaceOnGround(u32 objectId, s32 x, s32 z); field/event.h has void
+ * ObjectEvent_PlaceOnGround(s32 object, s32 x, s32 z). */
+void ObjectEvent_PlaceOnGround__field_sequence(
+    u32 objectId, s32 x, s32 z) __asm__("ObjectEvent_PlaceOnGround");
+#define ObjectEvent_PlaceOnGround ObjectEvent_PlaceOnGround__field_sequence
 void ObjectEvent_PlaceOnGround(u32 objectId, s32 x, s32 z) {
   struct ActorScriptView *object;
 

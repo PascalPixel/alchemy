@@ -347,12 +347,48 @@ void HangingVine_Place(s32 id, s32 force) {
 
 void FieldPsynergy_HaltOnTarget(s32 id);
 void FieldPsynergy_StartMindReadWave(s32 sourceId, s32 targetId);
-void FieldPsynergy_SteerPushedTarget(s32 targetId);
-void FieldPsynergy_LiftOnTarget(s32 targetId);
-void FieldPsynergy_ForceOnTarget(s32 targetId);
-void FieldPsynergy_DouseOnTarget(s32 targetId);
-void FieldPsynergy_FrostOnTarget(s32 targetId);
-void FieldPsynergy_PlyOnTarget(s32 targetId);
+/* VIEW(visual_attributes): routine FieldPsynergy_SteerPushedTarget as void
+ * FieldPsynergy_SteerPushedTarget(s32 targetId); field/event_commands/mind_read
+ * has void FieldPsynergy_SteerPushedTarget(void) {. */
+void FieldPsynergy_SteerPushedTarget__visual_attributes(s32 targetId) __asm__(
+    "FieldPsynergy_SteerPushedTarget");
+#define FieldPsynergy_SteerPushedTarget                                        \
+  FieldPsynergy_SteerPushedTarget__visual_attributes
+/* VIEW(visual_attributes): routine FieldPsynergy_LiftOnTarget as void
+ * FieldPsynergy_LiftOnTarget(s32 targetId); field/event_commands/mind_read has
+ * void FieldPsynergy_LiftOnTarget(void) {. */
+void FieldPsynergy_LiftOnTarget__visual_attributes(s32 targetId) __asm__(
+    "FieldPsynergy_LiftOnTarget");
+#define FieldPsynergy_LiftOnTarget FieldPsynergy_LiftOnTarget__visual_attributes
+/* VIEW(visual_attributes): routine FieldPsynergy_ForceOnTarget as void
+ * FieldPsynergy_ForceOnTarget(s32 targetId); field/event_commands/mind_read has
+ * void FieldPsynergy_ForceOnTarget(struct BattleEffectArgument *effect) {. */
+void FieldPsynergy_ForceOnTarget__visual_attributes(s32 targetId) __asm__(
+    "FieldPsynergy_ForceOnTarget");
+#define FieldPsynergy_ForceOnTarget                                            \
+  FieldPsynergy_ForceOnTarget__visual_attributes
+/* VIEW(visual_attributes): routine FieldPsynergy_DouseOnTarget as void
+ * FieldPsynergy_DouseOnTarget(s32 targetId); field/event_commands/cloak has
+ * void FieldPsynergy_DouseOnTarget(void) { FieldPsynergy_Douse(); } #include
+ * "event_work.h" static __inline__ s32 Lerp10(s32 start, s32 end, s32 step) {.
+ */
+void FieldPsynergy_DouseOnTarget__visual_attributes(s32 targetId) __asm__(
+    "FieldPsynergy_DouseOnTarget");
+#define FieldPsynergy_DouseOnTarget                                            \
+  FieldPsynergy_DouseOnTarget__visual_attributes
+/* VIEW(visual_attributes): routine FieldPsynergy_FrostOnTarget as void
+ * FieldPsynergy_FrostOnTarget(s32 targetId); field/event_commands/mind_read has
+ * void FieldPsynergy_FrostOnTarget(void) {. */
+void FieldPsynergy_FrostOnTarget__visual_attributes(s32 targetId) __asm__(
+    "FieldPsynergy_FrostOnTarget");
+#define FieldPsynergy_FrostOnTarget                                            \
+  FieldPsynergy_FrostOnTarget__visual_attributes
+/* VIEW(visual_attributes): routine FieldPsynergy_PlyOnTarget as void
+ * FieldPsynergy_PlyOnTarget(s32 targetId); field/event_commands/mind_read has
+ * void FieldPsynergy_PlyOnTarget(void) {. */
+void FieldPsynergy_PlyOnTarget__visual_attributes(s32 targetId) __asm__(
+    "FieldPsynergy_PlyOnTarget");
+#define FieldPsynergy_PlyOnTarget FieldPsynergy_PlyOnTarget__visual_attributes
 /* VIEW(f0daecc): routine FieldPsynergy_WhirlwindOnTarget as void
  * FieldPsynergy_WhirlwindOnTarget(s32 targetId); battle.h has void
  * FieldPsynergy_WhirlwindOnTarget(void); tried as the definition's void

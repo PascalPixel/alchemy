@@ -234,7 +234,10 @@ struct Work {
   u16 unk66;
 };
 
-void Func_020006f8();
+/* VIEW(scene_tables): routine Func_020006f8 as void Func_020006f8();
+ * scene/anemos_inner_sanctum/s0480 has s32 Func_020006f8(struct Mover *mover)
+ * {. */
+void Func_020006f8__scene_tables() __asm__("Func_020006f8");
 void Actor_SelectAnimation(struct Actor *, s32);
 void Actor_StartScript();
 extern u8 gData_02003684[];
@@ -264,7 +267,7 @@ void Func_0200088c(struct Vector3 *from, struct Vector3 *to, s16 part) {
   Actor_SetSpriteFlags(actor, 0);
   FieldVector_AddPolarOffset(actor->unk4c, actor->unk64, &actor->position);
   Actor_StartScript(actor, gData_02003684);
-  Func_020006f8(actor);
+  Func_020006f8__scene_tables(actor);
 }
 
 #include "actor.h"
@@ -325,7 +328,9 @@ void Func_02000a78(s32 a0, s32 a1, s16 a2) {
 #include "module/scene/anemos_inner_sanctum.h"
 #include "text/msg_ids.h"
 
-struct Work {
+/* VIEW(s0ac8): tag struct Work as struct Work__s0ac8;
+ * scene/anemos_inner_sanctum/scene_tables has another definition. */
+struct Work__s0ac8 {
   u8 pad[340];
   u16 room;
 };
@@ -351,7 +356,7 @@ extern u8 gData_02003620[];
 extern s32 gData_020036fc[][2];
 
 void Func_02000ac8(void) {
-  struct Work *work = ((struct Globals *)Ram_HeapSlots)->work;
+  struct Work__s0ac8 *work = ((struct Globals *)Ram_HeapSlots)->work;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   volatile u16 alpha = REG_BLDALPHA;
   s32 x, z;
@@ -900,6 +905,8 @@ void Func_020017b4(struct Actor *self) {
   }
 }
 
+#undef FIELD_AT
+
 // ---- scene/anemos_inner_sanctum/s1938.c ----
 
 /// Scene code of overlay 0x6b0, in ROM order.
@@ -919,7 +926,10 @@ void Func_020017b4(struct Actor *self) {
 void Actor_PlaceBlocks(void);
 
 void Func_02000178(void);
-void Func_020017b4(void);
+/* VIEW(s1938): routine Func_020017b4 as void Func_020017b4(void);
+ * scene/anemos_inner_sanctum/s0ac8 has void Func_020017b4(struct Actor *self)
+ * {. */
+void Func_020017b4__s1938(void) __asm__("Func_020017b4");
 
 void Func_02001938(void) {
   struct Actor *object;
@@ -932,7 +942,7 @@ void Func_02001938(void) {
     object = Actor_Get(10);
   if (*(s16 *)((u8 *)Actor_Get(gMainRoutineWork.currentOwner) + 18) <= 247) {
     object->motionFlags = 0;
-    object->update = Func_020017b4;
+    object->update = Func_020017b4__s1938;
     object->unk4c = Actor_Get(gMainRoutineWork.currentOwner)->x;
     object->acceleration = Actor_Get(gMainRoutineWork.currentOwner)->z;
     Event_SetFlag(0x200);
@@ -1194,7 +1204,9 @@ void Func_02001df4(void) {
 
 #include "call.h"
 s32 Func_02000038();
-s32 Func_02000a78();
+/* VIEW(s1938): routine Func_02000a78 as s32 Func_02000a78();
+ * scene/anemos_inner_sanctum/s0ac8 has void Func_02000a78(). */
+s32 Func_02000a78__s1938() __asm__("Func_02000a78");
 s32 CrackedTiles_Find();
 s32 CrackedTile_PlaceLanding();
 extern u8 gData_020036e4[];
@@ -1227,22 +1239,22 @@ s32 Scene_Initialize(void) {
           (s32)gData_02003888, (s32)gData_020038b4);
     t3 = Event_GetFlag(0xa87);
     if (t3 != 0) {
-      Call3((void (*)())Func_02000a78, 0x208, 48, 0);
+      Call3((void (*)())Func_02000a78__s1938, 0x208, 48, 0);
       MapGrid_CopyCellsTo(85, 34, 85, 8, 9, 8);
     }
     t6 = Event_GetFlag(0xa88);
     if (t6 != 0) {
-      Call3((void (*)())Func_02000a78, 0x228, 48, 3);
+      Call3((void (*)())Func_02000a78__s1938, 0x228, 48, 3);
       MapGrid_CopyCellsTo(101, 34, 101, 8, 9, 8);
     }
     t9 = Event_GetFlag(0xa89);
     if (t9 != 0) {
-      Call3((void (*)())Func_02000a78, 0x1f8, 40, 10);
+      Call3((void (*)())Func_02000a78__s1938, 0x1f8, 40, 10);
       MapGrid_CopyCellsTo(85, 46, 85, 20, 9, 8);
     }
     t12 = Event_GetFlag(0xa8a);
     if (t12 != 0) {
-      Call3((void (*)())Func_02000a78, 0x238, 40, 2);
+      Call3((void (*)())Func_02000a78__s1938, 0x238, 40, 2);
       MapGrid_CopyCellsTo(101, 46, 101, 20, 9, 8);
     }
     t15 = Event_GetFlag(0xa8b);
@@ -1560,10 +1572,25 @@ void Effect_MoveLocal(union FieldObject *object) {
 #include "event_inline.h"
 
 void Actor_SelectAnimation(struct Actor *, s32);
-extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
+/* VIEW(move): routine Actor_StartScript as void Actor_StartScript(struct
+ * FieldEffect *effect, const s32 *script); scene/anemos_inner_sanctum/s0ac8 has
+ * void Actor_StartScript(). */
+extern void
+Actor_StartScript__move(struct FieldEffect *effect,
+                        const s32 *script) __asm__("Actor_StartScript");
 extern const s32 *gData_02004428[];
-void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
-extern void Actor_SetSpritePriorityB(struct FieldEffect *effect, s32 priority);
+/* VIEW(move): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
+ * FieldEffect *effect, s32 flags); field/field.h has void
+ * Actor_SetSpriteFlags(struct Actor *object, u32 flags). */
+void Actor_SetSpriteFlags__move(struct FieldEffect *effect,
+                                s32 flags) __asm__("Actor_SetSpriteFlags");
+/* VIEW(move): routine Actor_SetSpritePriorityB as void
+ * Actor_SetSpritePriorityB(struct FieldEffect *effect, s32 priority);
+ * field/object/set_sprite_priority_b has void Actor_SetSpritePriorityB(struct
+ * Actor *object, s32 priority) {. */
+extern void Actor_SetSpritePriorityB__move(
+    struct FieldEffect *effect,
+    s32 priority) __asm__("Actor_SetSpritePriorityB");
 void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                             s32 velocityZ, u32 flags,
                             const struct EffectOptions *options) {
@@ -1583,14 +1610,14 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect, gData_02004428[flags & EFFECT_SCRIPT_MASK]);
+  Actor_StartScript__move(effect, gData_02004428[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSpriteFlags(effect, 0);
+  Actor_SetSpriteFlags__move(effect, 0);
   effect->update = Effect_MoveLocal;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
-  Actor_SetSpritePriorityB(effect, party->sprite->priority);
+  Actor_SetSpritePriorityB__move(effect, party->sprite->priority);
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
   effect->spin = 0;
@@ -1601,7 +1628,7 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     FieldActor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
     effect->priorityFlags &= ~1;
-    Actor_SetSpritePriorityB(effect, options->priority);
+    Actor_SetSpritePriorityB__move(effect, options->priority);
   }
   start = flags & EFFECT_USE_START_SCALE;
   if (start != 0) {
@@ -1625,7 +1652,7 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
     Actor_SelectAnimation(effect, 1);
-    Actor_StartScript(effect, options->script);
+    Actor_StartScript__move(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
     sprite->rotation = options->rotation;

@@ -66,7 +66,12 @@
 // The screens object's functions its parts call before their definitions.
 struct BobPairObject;
 
-s32 Message_OpenWindow(s32 message, s32 x, s32 y, s32 style);
+/* VIEW(screens): routine Message_OpenWindow as s32 Message_OpenWindow(s32
+ * message, s32 x, s32 y, s32 style); window/window has struct Window
+ * *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {. */
+s32 Message_OpenWindow__screens(s32 message, s32 x, s32 y,
+                                s32 style) __asm__("Message_OpenWindow");
+#define Message_OpenWindow Message_OpenWindow__screens
 
 struct CommandRowIcon {
   u8 unk00[4];

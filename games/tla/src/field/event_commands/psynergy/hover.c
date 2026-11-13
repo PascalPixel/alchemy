@@ -270,6 +270,9 @@ void Motion_StepTowardTarget(struct Chase *chase, s32 speed) {
 
 // One mote: a position chasing its target (Motion_StepTowardTarget's struct
 // Chase) and a frame count, negative before it starts.
+/* VIEW(psynergy): tag struct Mote as struct Mote__psynergy;
+ * module/field/field.h has another definition. */
+#define Mote Mote__psynergy
 struct Mote {
   s32 x;
   s32 z;

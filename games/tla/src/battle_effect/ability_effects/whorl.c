@@ -48,7 +48,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
 void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList(struct Model *model);
+void Render_DrawModelList__ability_effects(struct Model *model) __asm__(
+    "Render_DrawModelList");
 void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
@@ -106,8 +107,9 @@ extern u16 gBattleEffect_MoteCells[];
 extern const u8 gData_08199340[];
 extern const u8 gData_08199210[];
 
-void Render_ProjectVertices(struct ModelVertex *vertices,
-                            struct ProjectedVertex *screen, s32 count);
+void Render_ProjectVertices__ability_effects(
+    struct ModelVertex *vertices, struct ProjectedVertex *screen,
+    s32 count) __asm__("Render_ProjectVertices");
 void SceneTransform_ApplyPosition(const s32 *pos);
 
 // The water-column scene shared by Whorl (0), Gale (1), Lethe Albion (2),

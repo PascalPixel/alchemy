@@ -38,7 +38,8 @@ struct RenderModel__f14153c {
   u8 scrollV;
 };
 
-void Render_DrawModelList(struct Model *model);
+void Render_DrawModelList__battle_effect(struct Model *model) __asm__(
+    "Render_DrawModelList");
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
@@ -60,8 +61,15 @@ extern u8 gMapCellBuffer[];
  * undeclared (first use in this function). */
 extern struct EffectStep gData_02014000__f14153c[] __asm__("gData_02014000");
 
-struct SpriteObject *EffectSprite_CreateWithTiles(s32 width, s32 height,
-                                                  u32 shape, u32 attributes);
+/* VIEW(battle_effect): routine EffectSprite_CreateWithTiles as struct
+ * SpriteObject *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape,
+ * u32 attributes); battle_effect/ability_effects has struct EffectSprite
+ * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
+ * flags) {. */
+struct SpriteObject *EffectSprite_CreateWithTiles__battle_effect(
+    s32 width, s32 height, u32 shape,
+    u32 attributes) __asm__("EffectSprite_CreateWithTiles");
+#define EffectSprite_CreateWithTiles EffectSprite_CreateWithTiles__battle_effect
 
 #define SLOT_ALT 188 // unkb8[1]
 #define OBJ_TILES(obj) (0x06010000 + gResourceTableEntries[(obj)->slot].offset)

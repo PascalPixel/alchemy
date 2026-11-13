@@ -148,7 +148,8 @@ struct Model;
 #define gMotes ((struct EffectStep *)Ram_MapCellBuffer)
 #define gSparks ((struct EffectStep *)(Ram_MapCellBuffer + 0x3800))
 
-void Render_DrawModelList(struct Model *model);
+void Render_DrawModelList__battle_effect(struct Model *model) __asm__(
+    "Render_DrawModelList");
 
 #define BUILD_BLITTER(slot, width, height, flags, mode)                        \
   do {                                                                         \

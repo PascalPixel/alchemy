@@ -8,6 +8,8 @@
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../../field/field_effect/spawn.c"
 
+#undef EFFECT_SET_SCRIPT
+
 // ---- scene/dehkan_plateau/dehkan_plateau.c ----
 
 /// Scene code of overlay 0x655, in ROM order.
@@ -404,7 +406,12 @@ void Func_020019b8(void) {
 }
 
 void Actor_TakePlaceOf(struct Actor *object, struct Actor *other);
-void Actor_StartScript(struct Actor *object, const void *script);
+/* VIEW(dehkan_plateau): routine Actor_StartScript as void
+ * Actor_StartScript(struct Actor *object, const void *script);
+ * field/field_effect/spawn has void EFFECT_SET_SCRIPT(struct Actor *object,
+ * const s32 *script). */
+void Actor_StartScript__dehkan_plateau(
+    struct Actor *object, const void *script) __asm__("Actor_StartScript");
 void Actor_MoveToObject(s32 id, s32 target);
 
 extern struct Actor *gData_02004420;

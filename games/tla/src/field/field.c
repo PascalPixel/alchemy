@@ -530,6 +530,14 @@ void Render_PlaceSpritePartPair(struct LayeredSprite *sprite, s32 screenX,
 /// Places an animation object's sprite (and its shadow) at the screen point
 /// of a projected position (x, y, z, ground), scaled by scale[0] and
 /// scale[1]; the sprites go into the depth list by their depth.
+/* VIEW(field): routine Render_ApplyProjectedPlacement as void
+ * Render_ApplyProjectedPlacement(struct LayeredSprite *object, s32 *pos, s32
+ * *scale, s32 mode); field/field.h has void Render_ApplyProjectedPlacement(void
+ * *sprite, s32 *position, s32 *scale, u16 angle). */
+void Render_ApplyProjectedPlacement__field(
+    struct LayeredSprite *object, s32 *pos, s32 *scale,
+    s32 mode) __asm__("Render_ApplyProjectedPlacement");
+#define Render_ApplyProjectedPlacement Render_ApplyProjectedPlacement__field
 void Render_ApplyProjectedPlacement(struct LayeredSprite *object, s32 *pos,
                                     s32 *scale, s32 mode) {
   s32 matrix;
@@ -852,6 +860,7 @@ void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *record,
   }
 }
 
+#undef Render_ApplyProjectedPlacement
 // ---- field/resource_slot.c ----
 
 /// The resource_slot object, written as parts in resource_slot/.
@@ -869,6 +878,28 @@ void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *record,
 #include "resource_slot/map_grid.c"
 #include "resource_slot/map_layers.c"
 #include "resource_slot/world_map.c"
+
+#undef InitializeAnimationObjects
+#undef ResourceMetadata_Register
+#undef Animation_ApplyChildArgument
+#undef Animation_ApplyChildValue
+#undef SpriteAnimation_Alloc
+#undef Render_ApplyProjectedPlacementAtDepth
+#undef Sprite_ComposePicture
+#undef Render_PlaceProjectedSprite
+#undef MapGrid_CheckCollision
+#undef MapGrid_CheckCollision
+#undef MapGrid_CheckCollisionAbove
+#undef WorldMap_IsWalkable
+#undef WorldMap_IsSailable
+#undef WorldMap_IsFlyable
+#undef WorldMap_BuildScanlineTable
+#undef MapGrid_CheckCollisionAbove
+#undef MapGrid_CheckCollision
+#undef WorldMap_IsSailable
+#undef WorldMap_IsFlyable
+#undef WorldMap_IsWalkable
+#undef WorldMap_BuildScanlineTable
 
 // ---- field/map/tile_animation.c ----
 
@@ -889,7 +920,10 @@ void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *record,
 #include "module/field/map.h"
 #include "module/field/object.h"
 
-extern u8 gWorldMapWork[];
+/* VIEW(tile_animation): variable gWorldMapWork as u8 gWorldMapWork[];
+ * battle/battle.h has struct WorldMapWork gWorldMapWork. */
+extern u8 gWorldMapWork__tile_animation[] __asm__("gWorldMapWork");
+#define gWorldMapWork gWorldMapWork__tile_animation
 
 void WorldMap_PreloadCurrentTileBlock(void) {
   struct MapTileWindow *window = (struct MapTileWindow *)Ram_HeapSlots->mapWork;
@@ -1036,7 +1070,12 @@ void MapAnimation_PresentPicture(void) {
           dma);
 }
 
-void TileMap_DrawRowsFromRam(void *source, void *destination);
+/* VIEW(tile_animation): routine TileMap_DrawRowsFromRam as void
+ * TileMap_DrawRowsFromRam(void *source, void *destination); field/map/terrain
+ * has void TileMap_DrawRowsFromRam(s32 arg0, s32 arg1) {. */
+void TileMap_DrawRowsFromRam__tile_animation(
+    void *source, void *destination) __asm__("TileMap_DrawRowsFromRam");
+#define TileMap_DrawRowsFromRam TileMap_DrawRowsFromRam__tile_animation
 
 void MapAnimation_Start(void) {
   u8 *pages = Ram_HeapSlots->unk1c[0];
@@ -1720,7 +1759,10 @@ s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 z) {
 
 #include "edition.h"
 
-extern u8 gMapCellBuffer[];
+/* VIEW(tile_animation): variable gMapCellBuffer as u8 gMapCellBuffer[];
+ * field/resource_slot has struct MapCell gMapCellBuffer[]. */
+extern u8 gMapCellBuffer__tile_animation[] __asm__("gMapCellBuffer");
+#define gMapCellBuffer gMapCellBuffer__tile_animation
 
 /// Returns the terrain kind of a layer's cell at (x, z) in 16.16 pixels, as
 /// The Broken Seal's.
@@ -2126,6 +2168,9 @@ s32 WorldMap_IsFlyable(struct WorldMover *mover,
   return -1;
 }
 
+#undef gWorldMapWork
+#undef gMapCellBuffer
+#undef TileMap_DrawRowsFromRam
 // ---- field/map/terrain.c ----
 
 #include "battle.h"
@@ -2313,9 +2358,19 @@ void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
 #include "input.h"
 #include "module/system/system.h"
 
-extern u32 gMapCellBuffer[];
+/* VIEW(terrain): variable gMapCellBuffer as u32 gMapCellBuffer[];
+ * field/resource_slot has struct MapCell gMapCellBuffer[]. */
+extern u32 gMapCellBuffer__terrain[] __asm__("gMapCellBuffer");
+#define gMapCellBuffer gMapCellBuffer__terrain
 
-s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id);
+/* VIEW(terrain): routine ResourceMetadata_Register as s32
+ * ResourceMetadata_Register(struct MetadataSlotState *state, s32 id);
+ * actor_view.h has s32 ResourceMetadata_Register(struct ActorSpriteView *,
+ * s32). */
+s32 ResourceMetadata_Register__terrain(
+    struct MetadataSlotState *state,
+    s32 id) __asm__("ResourceMetadata_Register");
+#define ResourceMetadata_Register ResourceMetadata_Register__terrain
 
 // The native reads the held keys afresh at each test.
 #define HELD (*(volatile u32 *)&gInput.held)
@@ -2874,3 +2929,6 @@ void SpriteViewer_PlaceRing(void) {
       angle += odd;
   }
 }
+
+#undef gMapCellBuffer
+#undef ResourceMetadata_Register

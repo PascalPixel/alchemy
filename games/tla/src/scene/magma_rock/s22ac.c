@@ -781,13 +781,22 @@ extern u8 gMapShapeGrid[];
 
 s32 MapGrid_GetTerrainKind(s32 terrainId, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 MapCollision_FindOrAddTag(s32 terrainId, s32 value, s32 height);
+/* VIEW(s34ac): routine MapCollision_FindOrAddTag as s32
+ * MapCollision_FindOrAddTag(s32 terrainId, s32 value, s32 height);
+ * scene/magma_rock/s22ac has u8 MapCollision_FindOrAddTag(s32 layer, s32 shape,
+ * s32 height). */
+s32 MapCollision_FindOrAddTag__s34ac(
+    s32 terrainId, s32 value, s32 height) __asm__("MapCollision_FindOrAddTag");
 
 DEFINE_ACTOR_SET_CELL_SHAPE_AT(MagmaRock_SetActorCellShape,
                                MapGrid_GetTerrainKind,
-                               MapCollision_FindOrAddTag)
+                               MapCollision_FindOrAddTag__s34ac)
 
-void MagmaRock_StepOnCrumblingPillar(const u8 *data);
+/* VIEW(s34ac): routine MagmaRock_StepOnCrumblingPillar as void
+ * MagmaRock_StepOnCrumblingPillar(const u8 *data); scene/magma_rock/s22ac has
+ * void MagmaRock_StepOnCrumblingPillar(u16 *list) {. */
+void MagmaRock_StepOnCrumblingPillar__s34ac(const u8 *data) __asm__(
+    "MagmaRock_StepOnCrumblingPillar");
 
 void MagmaRock_SetLeaderCellShape(s32 a, s32 b) {
   MagmaRock_SetActorCellShape(a, b, gMainRoutineWork.currentOwner);
@@ -1010,10 +1019,10 @@ DEFINE_G_DATA_02001540(gMagmaRock_RubbleScript, 33)
 
 DEFINE_G_DATA_02001540(gMagmaRock_DustScript, 44)
 
-s32 gFieldEffect_DurationScripts[] = {
-    (s32)gFieldEffect_ShortScript,
-    (s32)gFieldEffect_MediumScript,
-    (s32)gFieldEffect_LongScript,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

@@ -9,6 +9,8 @@
 #define EFFECT_SPRITE_PRIORITY
 #include "../../field/field_effect/spawn.c"
 
+#undef EFFECT_SPAWN
+
 // ---- scene/treasure_isle/treasure_isle.c ----
 
 /// Treasure Isle, the dungeon in the north-east of the world: buttons that
@@ -82,8 +84,14 @@ void TreasureIsle_SetSpikyRock(struct TreasureIsleCell *cells, s16 index) {
 
 #include "field_effect.h"
 
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags, struct EffectOptions *options);
+/* VIEW(treasure_isle): routine FieldEffect_Spawn as void FieldEffect_Spawn(s32
+ * x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
+ * struct EffectOptions *options); field/field_effect/spawn has void
+ * EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32
+ * velocityZ, u32 flags, const struct EffectOptions *options) {. */
+void FieldEffect_Spawn__treasure_isle(
+    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
+    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
 
 /// A spiky rock rises out of the ground at a listed cell: the camera goes to
 /// it, the ground shakes and dust bursts, and TreasureIsle_SetSpikyRock leaves
@@ -106,13 +114,16 @@ void TreasureIsle_RaiseSpikyRock(struct TreasureIsleCell *cells, s16 index) {
   options.priority = 1;
   options.type = 0x115;
   options.script = gTreasureIsle_RockDust;
-  FieldEffect_Spawn((cell->x << 20) + 0x80000, 0, (cell->z << 20) + 0x140000, 0,
-                    0, 0, 0x3a0000, &options);
+  FieldEffect_Spawn__treasure_isle((cell->x << 20) + 0x80000, 0,
+                                   (cell->z << 20) + 0x140000, 0, 0, 0,
+                                   0x3a0000, &options);
   options.startScaleX = 0x9999;
-  FieldEffect_Spawn((cell->x << 20) - 0x20000, 0, (cell->z << 20) + 0x80000, 0,
-                    0, 0, 0x3a0000, &options);
-  FieldEffect_Spawn((cell->x << 20) + 0x120000, 0, (cell->z << 20) + 0x80000, 0,
-                    0, 0, 0x3a0000, &options);
+  FieldEffect_Spawn__treasure_isle((cell->x << 20) - 0x20000, 0,
+                                   (cell->z << 20) + 0x80000, 0, 0, 0, 0x3a0000,
+                                   &options);
+  FieldEffect_Spawn__treasure_isle((cell->x << 20) + 0x120000, 0,
+                                   (cell->z << 20) + 0x80000, 0, 0, 0, 0x3a0000,
+                                   &options);
   FieldEvent_Wait(10);
   MapGrid_CopyCellsLayered(6, 100, 3, 4, cell->x + 63, cell->z - 2);
   FieldEvent_Wait(10);
@@ -530,10 +541,10 @@ u32 gTreasureIsle_RockDust[] = {
     0, 0, 0, 1, 38, 17,
 };
 
-s32 gFieldEffect_DurationScripts[] = {
-    (s32)gFieldEffect_ShortScript,
-    (s32)gFieldEffect_MediumScript,
-    (s32)gFieldEffect_LongScript,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 struct TreasureIsleCell gTreasureIsle_Room2SpikyRocks[] = {

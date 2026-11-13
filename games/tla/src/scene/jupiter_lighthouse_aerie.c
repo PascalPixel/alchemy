@@ -786,7 +786,9 @@ void Func_02001080(void) {
 #include "module/tla.h"
 #include "resource.h"
 
-struct BeamWork {
+/* VIEW(s17a8): tag struct BeamWork as struct BeamWork__s17a8;
+ * games/tla/src/scene/jupiter_lighthouse_aerie/s0d08 has another definition. */
+struct BeamWork__s17a8 {
   u8 tiles[0x200];
   struct EffectSprite sprites[32];
   struct BeamSpark sparks[32];
@@ -818,7 +820,8 @@ static __inline__ void SetUp(struct EffectSprite *sprite, s32 pivotX,
 }
 
 void Func_020017a8(s32 a, s32 b, s32 side) {
-  struct BeamWork *work = HeapSlot_Alloc(220, sizeof(struct BeamWork));
+  struct BeamWork__s17a8 *work =
+      HeapSlot_Alloc(220, sizeof(struct BeamWork__s17a8));
   struct Actor *carrier =
       *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 460);
   struct EffectSprite *sprite;

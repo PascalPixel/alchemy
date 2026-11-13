@@ -108,11 +108,6 @@ struct FloraWork {
   u16 palette[240];
 };
 
-struct WordPair {
-  s32 a;
-  s32 b;
-};
-
 /* VIEW(f179f18): variable gResourceTableEntries as extern struct
  * ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct
  * VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations'
@@ -1151,6 +1146,8 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
+/* VIEW(ability_effects): tag struct FxSlot as struct FxSlot__ability_effects;
+ * module/battle_effect/battle_effect.h has another definition. */
 struct FxSlot {
   void *object;
   u8 unk04[0x26];

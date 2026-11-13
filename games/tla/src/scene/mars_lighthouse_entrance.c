@@ -587,7 +587,13 @@ void Func_02000ce4(s32 unused, s32 id) {
 #include "map.h"
 #include "vram_tab.h"
 
-void Oam_AddSpriteAtDepthClamped(u32 *oam, s32 depth);
+/* VIEW(mars_lighthouse_entrance): routine Oam_AddSpriteAtDepthClamped as void
+ * Oam_AddSpriteAtDepthClamped(u32 *oam, s32 depth); module/system/system.h has
+ * void Oam_AddSpriteAtDepthClamped(void *entry, s32 slot). */
+void Oam_AddSpriteAtDepthClamped__mars_lighthouse_entrance(
+    u32 *oam, s32 depth) __asm__("Oam_AddSpriteAtDepthClamped");
+#define Oam_AddSpriteAtDepthClamped                                            \
+  Oam_AddSpriteAtDepthClamped__mars_lighthouse_entrance
 
 void Func_02000d18(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -728,7 +734,11 @@ extern const u8 gMarsLighthouseEntrance_Room6Triggers[];
 extern const u8 gMarsLighthouseEntrance_Room7Triggers[];
 extern s16 gData_02006868;
 
-void Func_02002c2c(void);
+/* VIEW(mars_lighthouse_entrance): routine Func_02002c2c as void
+ * Func_02002c2c(void); scene/mars_lighthouse_entrance/s263c has void
+ * Func_02002c2c(struct Actor *object) {. */
+void Func_02002c2c__mars_lighthouse_entrance(void) __asm__("Func_02002c2c");
+#define Func_02002c2c Func_02002c2c__mars_lighthouse_entrance
 
 void Func_02000fa4(void) {
   Event_PlaySound(0x248);
@@ -921,11 +931,31 @@ void Func_02001378(void) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-s32 Func_02002270();
-s32 Func_020022d8();
-s32 Func_020022e4();
-s32 Func_0200246c();
-s32 Func_0200248c();
+/* VIEW(mars_lighthouse_entrance): routine Func_02002270 as s32 Func_02002270();
+ * scene/mars_lighthouse_entrance/s2270 has void Func_02002270(void) {. */
+s32 Func_02002270__mars_lighthouse_entrance() __asm__("Func_02002270");
+#define Func_02002270 Func_02002270__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine Func_020022d8 as s32 Func_020022d8();
+ * scene/mars_lighthouse_entrance/s2270 has void Func_020022d8(s16 value) {
+ * RIDE_WORK->value0e = value; } #include "io_reg.h" #include "field.h" void
+ * Func_020020ec(void). */
+s32 Func_020022d8__mars_lighthouse_entrance() __asm__("Func_020022d8");
+#define Func_020022d8 Func_020022d8__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine Func_020022e4 as s32 Func_020022e4();
+ * scene/mars_lighthouse_entrance/s2270 has DEFINE_BEAM_START(Func_020022e4,
+ * Func_020020ec) s32 Func_02002418(s32 index) {. */
+s32 Func_020022e4__mars_lighthouse_entrance() __asm__("Func_020022e4");
+#define Func_020022e4 Func_020022e4__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine Func_0200246c as s32 Func_0200246c();
+ * scene/mars_lighthouse_entrance/s2270 has void Func_0200246c(s32 index, s32
+ * value) {. */
+s32 Func_0200246c__mars_lighthouse_entrance() __asm__("Func_0200246c");
+#define Func_0200246c Func_0200246c__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine Func_0200248c as s32 Func_0200248c();
+ * scene/mars_lighthouse_entrance/s2270 has void Func_0200248c(s32 index, s16
+ * value) {. */
+s32 Func_0200248c__mars_lighthouse_entrance() __asm__("Func_0200248c");
+#define Func_0200248c Func_0200248c__mars_lighthouse_entrance
 s32 Func_020045f8();
 /* VIEW(s138c): routine Func_0200196c as extern u8 Func_0200196c[]; the
  * definition has void Func_0200196c(void); tried as the definition's void
@@ -1462,6 +1492,13 @@ DEFINE_BEAM_DRAW_TARGETS(Func_020020ec, Func_0200206c__s20ec, Func_02001e60,
                          Func_02001ef0, Func_02001ea8, Func_02001c74)
 #undef IWRAM
 
+#undef Func_02002270
+#undef Func_020022d8
+#undef Func_0200246c
+#undef Func_0200248c
+#undef Oam_AddSpriteAtDepthClamped
+#undef Func_02002c2c
+#undef Func_020022e4
 // ---- scene/mars_lighthouse_entrance/s2270.c ----
 
 /// Scene code of overlay 0x6aa, in ROM order.
@@ -1532,6 +1569,11 @@ s32 Func_02002444(s32 limit) {
   return work->counter;
 }
 
+/* VIEW(s2270): routine Func_0200246c as void Func_0200246c(s32 index, s32
+ * value); scene/shared/mars_lighthouse_entrance_room.h has s32
+ * Func_0200246c(s32 index, s32 value). */
+void Func_0200246c__s2270(s32 index, s32 value) __asm__("Func_0200246c");
+#define Func_0200246c Func_0200246c__s2270
 void Func_0200246c(s32 index, s32 value) {
   struct RideWork *work = RIDE_WORK;
   struct RideEntry *entry = &work->entries[index];
@@ -1566,7 +1608,10 @@ struct MarsLighthouseEventWork {
   u16 downOwners[8];
 };
 
-struct BattleUnit *Unit_Get(s32 owner);
+/* VIEW(s2270): routine Unit_Get as struct BattleUnit *Unit_Get(s32 owner);
+ * item_icon.h has void *Unit_Get(s32 owner). */
+struct BattleUnit *Unit_Get__s2270(s32 owner) __asm__("Unit_Get");
+#define Unit_Get Unit_Get__s2270
 
 DEFINE_PARTY_TAKE_FALL_DAMAGE(Func_020024c0)
 
@@ -1574,6 +1619,9 @@ DEFINE_PARTY_TAKE_FALL_DAMAGE(Func_020024c0)
 
 DEFINE_ACTOR_BLINK(Func_02002614, 10, 4, 0)
 
+#undef Func_020022e4
+#undef Unit_Get
+#undef Func_0200246c
 // ---- scene/mars_lighthouse_entrance/s263c.c ----
 
 /// Scene code of overlay 0x6aa, in ROM order.
@@ -1598,19 +1646,24 @@ DEFINE_ACTOR_BLINK(Func_02002614, 10, 4, 0)
 #include "module/system/system.h"
 #include "scene_ids.h"
 
-struct Work020023c4 {
-  u8 unk00[4];
-  u16 unk04;
-  u8 unk06[0x68 - 6];
-  s16 unk68;
-  s16 unk6a;
-};
-
 void Func_020024c0();
 void Func_02004bc0(struct Actor *actor, s32 a);
 s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
-void Func_02002614(void);
+/* VIEW(s263c): routine Func_02002614 as void Func_02002614(void);
+ * scene/mars_lighthouse_entrance/s2270 has DEFINE_ACTOR_BLINK(Func_02002614,
+ * 10, 4, 0) #undef Func_020022e4 #undef Unit_Get // ----
+ * scene/mars_lighthouse_entrance/s263c.c ---- /// Scene code of overlay 0x6aa,
+ * in ROM order. #include "shared/mars_lighthouse.h" #include "version.h"
+ * #include "types.h" #include "call.h" #include "actor.h" #include
+ * "main_routine_work.h" #include "ram_buffer.h" #include "vector3.h" #include
+ * "fixed_math.h" #include "event_inline.h" #include "display_transition.h"
+ * #include "event_work.h" #include "field.h" #include "item_icon.h" #include
+ * "module/field/field.h" #include "module/scene/mars_lighthouse_entrance.h"
+ * #include "module/system/system.h" #include "scene_ids.h" void
+ * Func_020024c0(). */
+void Func_02002614__s263c(void) __asm__("Func_02002614");
+#define Func_02002614 Func_02002614__s263c
 extern u8 gInventorySnapshot[];
 
 #define SHARED_F02002148_NAME Func_0200263c
@@ -1948,6 +2001,10 @@ DEFINE_LEADER_STOP_IF_PENDING(Func_02003284)
 #include "system/input.h"
 #include "system/main_routine_work.h"
 
+/* VIEW(s263c): tag struct Position as struct Position__s263c;
+ * scene/mars_lighthouse_entrance/mars_lighthouse_entrance has another
+ * definition. */
+#define Position Position__s263c
 /// A point on the map: 16.16 fixed-point pixels.
 struct Position {
   s32 x;
@@ -2002,6 +2059,8 @@ extern s32 Func_02004c78__s3564(s32 *a, s32 aRadius, s32 *b,
 
 void Func_02003878(s32 value) { gData_020068b0 = value; }
 
+#undef Func_02002614
+#undef Position
 // ---- scene/mars_lighthouse_entrance/s3884.c ----
 
 /// Scene code of overlay 0x6aa, in ROM order.
@@ -2019,6 +2078,10 @@ void Func_02003878(s32 value) { gData_020068b0 = value; }
 #include "module/scene/scene.h"
 #include "module/tla.h"
 
+/* VIEW(s3884): tag struct Position as struct Position__s3884;
+ * scene/mars_lighthouse_entrance/mars_lighthouse_entrance has another
+ * definition. */
+#define Position Position__s3884
 /// A point on the map: 16.16 fixed-point pixels.
 struct Position {
   s32 x;
@@ -2026,9 +2089,22 @@ struct Position {
   s32 z;
 };
 
-void Func_020031f8(void);
+/* VIEW(s3884): routine Func_020031f8 as void Func_020031f8(void);
+ * scene/mars_lighthouse_entrance/s263c has
+ * DEFINE_ACTOR_STEER_BY_PAD(Func_020031f8, gData_02005758, Func_02004bc0)
+ * DEFINE_LEADER_STOP_IF_PENDING(Func_02003284) #include "system/iwram_call.h"
+ * #include "system/input.h" #include "system/main_routine_work.h" /*
+ * VIEW(s263c): tag struct Position as struct Position__s263c;
+ * scene/mars_lighthouse_entrance/mars_lighthouse_entrance has another
+ * definition. * / #define Position Position__s263c /// A point on the
+ * map: 16.16 fixed-point pixels. struct Position {. */
+void Func_020031f8__s3884(void) __asm__("Func_020031f8");
+#define Func_020031f8 Func_020031f8__s3884
 
 DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003884, Func_02003284, Func_02004bc0,
                                  Func_020031f8, Func_02004c78)
 
 #include "../field/object/set_sprite_priority_b.c"
+
+#undef Position
+#undef Func_020031f8

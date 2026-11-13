@@ -164,6 +164,13 @@ struct ActorSpriteView__resource_slot {
   u8 unk1c[0x0c];
   struct AnimationEntry *entries[4];
 };
+/* VIEW(resource_slot): routine InitializeAnimationObjects as s32
+ * InitializeAnimationObjects(struct ActorSpriteView__resource_slot *state);
+ * actor_view.h has s32 InitializeAnimationObjects(struct ActorSpriteView *). */
+s32 InitializeAnimationObjects__resource_slot(
+    struct ActorSpriteView__resource_slot
+        *state) __asm__("InitializeAnimationObjects");
+#define InitializeAnimationObjects InitializeAnimationObjects__resource_slot
 s32 InitializeAnimationObjects(struct ActorSpriteView__resource_slot *state) {
   s32 index;
   struct AnimationEntry **slot;
@@ -246,6 +253,14 @@ void SpriteAnimation_Reset(struct AnimationEntry *work) {
   }
 }
 
+/* VIEW(resource_slot): routine ResourceMetadata_Register as s32
+ * ResourceMetadata_Register(struct MetadataSlotState *state, s32 id);
+ * actor_view.h has s32 ResourceMetadata_Register(struct ActorSpriteView *,
+ * s32). */
+s32 ResourceMetadata_Register__resource_slot(
+    struct MetadataSlotState *state,
+    s32 id) __asm__("ResourceMetadata_Register");
+#define ResourceMetadata_Register ResourceMetadata_Register__resource_slot
 s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id) {
   s32 value = state->slots[0];
   s32 index = 0;
@@ -347,6 +362,14 @@ void SpriteAnimation_Start(struct AnimationEntry *work, s32 no) {
   }
 }
 
+/* VIEW(resource_slot): routine Animation_ApplyChildArgument as s32
+ * Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags);
+ * actor_view.h has s32 Animation_ApplyChildArgument(struct ActorSpriteView *,
+ * s32). */
+s32 Animation_ApplyChildArgument__resource_slot(
+    struct AnimationGroup *state,
+    s32 flags) __asm__("Animation_ApplyChildArgument");
+#define Animation_ApplyChildArgument Animation_ApplyChildArgument__resource_slot
 s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags) {
   s32 highBit;
   s32 index;
@@ -416,6 +439,12 @@ s32 Sprite_SetAnimationTimers(struct ChildGroup *group, s32 value) {
   return 0;
 }
 
+/* VIEW(resource_slot): routine Animation_ApplyChildValue as void
+ * Animation_ApplyChildValue(struct ChildGroup *group, s32 value); actor_view.h
+ * has void Animation_ApplyChildValue(struct ActorSpriteView *, s32). */
+void Animation_ApplyChildValue__resource_slot(
+    struct ChildGroup *group, s32 value) __asm__("Animation_ApplyChildValue");
+#define Animation_ApplyChildValue Animation_ApplyChildValue__resource_slot
 void Animation_ApplyChildValue(struct ChildGroup *group, s32 value) {
   s32 i;
 
@@ -476,6 +505,12 @@ void VramBlock_Load93(void) {
   VramCache_Load(93, size, data);
 }
 
+/* VIEW(resource_slot): routine SpriteAnimation_Alloc as struct AnimationEntry
+ * *SpriteAnimation_Alloc(s32 id); system/system.h has s32
+ * SpriteAnimation_Alloc(s32 id). */
+struct AnimationEntry *
+SpriteAnimation_Alloc__resource_slot(s32 id) __asm__("SpriteAnimation_Alloc");
+#define SpriteAnimation_Alloc SpriteAnimation_Alloc__resource_slot
 struct AnimationEntry *SpriteAnimation_Alloc(s32 id) {
   struct AnimationMetadata *metadata;
   struct AnimationEntry *entry;

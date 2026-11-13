@@ -17,7 +17,12 @@ void Field_RequestBattleFromEncounterTable(s32 row, s32 column) {
   BattleEffect_SelectBattleCue(row, column);
 }
 
-s32 Encounter_GetDjinnFormation(s32 djinn);
+/* VIEW(event_commands): routine Encounter_GetDjinnFormation as s32
+ * Encounter_GetDjinnFormation(s32 djinn); field/field_sequence has u16
+ * Encounter_GetDjinnFormation(s32 djinni) {. */
+s32 Encounter_GetDjinnFormation__event_commands(s32 djinn) __asm__(
+    "Encounter_GetDjinnFormation");
+#define Encounter_GetDjinnFormation Encounter_GetDjinnFormation__event_commands
 
 extern s8 gData_02001000[];
 
@@ -27,6 +32,12 @@ extern s8 gData_02001000[];
 /// prepared first; the pending event is 300 + the Djinni id with that flag,
 /// the enemy group is chosen, and on the world map the zone and backdrop come
 /// from the leader's position.
+/* VIEW(event_commands): routine Field_RequestDjinnBattle as void
+ * Field_RequestDjinnBattle(u32 flags, u32 djinn); field/event.h has void
+ * Field_RequestDjinnBattle(s32 flag, s32 no). */
+void Field_RequestDjinnBattle__event_commands(u32 flags, u32 djinn) __asm__(
+    "Field_RequestDjinnBattle");
+#define Field_RequestDjinnBattle Field_RequestDjinnBattle__event_commands
 void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   u8 *work = Ram_HeapSlots->eventWork;
   u32 noPrepare = flags & 0x800;
@@ -54,11 +65,24 @@ void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   BattleEffect_SelectBattleCue(0, 0);
 }
 
+/* VIEW(event_commands): routine Event_SetAfterBattleDestination as void
+ * Event_SetAfterBattleDestination(u16 first, u16 second); field/event.h has
+ * void Event_SetAfterBattleDestination(s32 sceneId, s32 entrance). */
+void Event_SetAfterBattleDestination__event_commands(
+    u16 first, u16 second) __asm__("Event_SetAfterBattleDestination");
+#define Event_SetAfterBattleDestination                                        \
+  Event_SetAfterBattleDestination__event_commands
 void Event_SetAfterBattleDestination(u16 first, u16 second) {
   gMainRoutineWork.pair1ee[0] = first;
   gMainRoutineWork.pair1ee[1] = second;
 }
 
+/* VIEW(event_commands): routine Party_SetFields1f2And1f4 as void
+ * Party_SetFields1f2And1f4(u16 first, u16 second); field/event.h has void
+ * Party_SetFields1f2And1f4(s32 sceneId, s32 entrance). */
+void Party_SetFields1f2And1f4__event_commands(u16 first, u16 second) __asm__(
+    "Party_SetFields1f2And1f4");
+#define Party_SetFields1f2And1f4 Party_SetFields1f2And1f4__event_commands
 void Party_SetFields1f2And1f4(u16 first, u16 second) {
   gMainRoutineWork.pair1f2[0] = first;
   gMainRoutineWork.pair1f2[1] = second;
@@ -97,11 +121,6 @@ void Scene_PlayQueuedMusic(void) {
   }
 }
 
-struct EventWork15a {
-  u8 unk000[0x15a];
-  u16 flag;
-};
-
 void Func_080d2cc4(s32 message) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -112,6 +131,9 @@ void Func_080d2cc4(s32 message) {
     ((struct EventWork15a *)Ram_HeapSlots->eventWork)->flag = 1;
 }
 
+/* VIEW(event_commands): tag struct EventWork1cc as struct
+ * EventWork1cc__event_commands; module/tla.h has another definition. */
+#define EventWork1cc EventWork1cc__event_commands
 struct EventWork1cc {
   u8 unk000[0x1cc];
   struct CueObject *focus;

@@ -202,7 +202,12 @@ s32 PartyStatus_DrawBars(struct RenderInput *window, s32 x, s32 y, s32 value) {
 extern s32
 Func_08118130__screens(s32 a,
                        u8 *counts) __asm__("BattleDjinn_CountStandbyFar");
-void Window_DrawBorder(s32 x, s32 y, s32 width, s32 height);
+/* VIEW(screens): routine Window_DrawBorder as void Window_DrawBorder(s32 x, s32
+ * y, s32 width, s32 height); window/window has void Window_DrawBorder(s32 x,
+ * s32 y, u32 width, u32 height) {. */
+void Window_DrawBorder__screens(s32 x, s32 y, s32 width,
+                                s32 height) __asm__("Window_DrawBorder");
+#define Window_DrawBorder Window_DrawBorder__screens
 // Text_DrawPrefixedNumberAtOffset is called with no prototype in scope, as The
 // Broken Seal's screens.c calls it: with one, hp reaches r0 before the call's
 // other arguments rather than last (2 of 495 instructions in tla-en).

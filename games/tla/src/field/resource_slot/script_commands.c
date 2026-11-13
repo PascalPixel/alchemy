@@ -878,8 +878,9 @@ found:
 
 struct ScriptObjectEntry;
 
-s32 MapGrid_CheckCollision(struct Actor *object,
-                           struct FieldPosition *position);
+s32 MapGrid_CheckCollision__resource_slot(
+    struct Actor *object,
+    struct FieldPosition *position) __asm__("MapGrid_CheckCollision");
 
 /// SC_WANDER_HOME: moves the object to a random spot within its home radius: up
 /// to seven tries at a point a random distance away in a random turn of its
@@ -1687,8 +1688,14 @@ void ScriptObject_SetValue(struct ScriptObject *object, s32 value) {
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
 
-s32 MapGrid_CheckCollisionAbove(struct Actor *object,
-                                struct FieldPosition *position);
+/* VIEW(resource_slot): routine MapGrid_CheckCollisionAbove as s32
+ * MapGrid_CheckCollisionAbove(struct Actor *object, struct FieldPosition
+ * *position); field/map/tile_animation has s32
+ * MapGrid_CheckCollisionAbove(struct Actor *actor, s16 *position) {. */
+s32 MapGrid_CheckCollisionAbove__resource_slot(
+    struct Actor *object,
+    struct FieldPosition *position) __asm__("MapGrid_CheckCollisionAbove");
+#define MapGrid_CheckCollisionAbove MapGrid_CheckCollisionAbove__resource_slot
 void *Unit_Get(s32 owner);
 
 /// Script command 0x23 (control mode 10): the leader hovering (the Hover

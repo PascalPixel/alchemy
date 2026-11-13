@@ -51,7 +51,13 @@ void Settlements_LiftBoulder(void) { GameFlag_Set(0x208); }
  * not compile in tla-ja: games/tla/include/system/input.h:37: conflicting types
  * for `gInput'. */
 extern u32 gInput__s1620 __asm__("gInput");
-extern const s16 gSettlements_SlideAngles[];
+/* VIEW(settlements): variable gSettlements_SlideAngles as const s16
+ * gSettlements_SlideAngles[]; scene/settlements/s1d30 has
+ * DEFINE_G_DATA_02002276(gSettlements_SlideAngles) s16
+ * gSettlements_SlideAnglesByKey[] = {. */
+extern const s16
+    gSettlements_SlideAngles__settlements[] __asm__("gSettlements_SlideAngles");
+#define gSettlements_SlideAngles gSettlements_SlideAngles__settlements
 
 void Settlements_KeepSliding(struct Actor *object) {
   s32 angle;
@@ -227,6 +233,7 @@ end:
   Actor_SelectAnimation(object, 1);
 }
 
+#undef gSettlements_SlideAngles
 // ---- scene/settlements/s1a1c.c ----
 
 /// The settlements' events, continued; settlements.c says which places these
@@ -245,7 +252,11 @@ end:
 #include "input.h"
 #include "call.h"
 
-extern volatile s16 gSettlements_SlideStopped;
+/* VIEW(s1a1c): variable gSettlements_SlideStopped as volatile s16
+ * gSettlements_SlideStopped; scene/settlements.h has u16
+ * gSettlements_SlideStopped. */
+extern volatile s16
+    gSettlements_SlideStopped__s1a1c __asm__("gSettlements_SlideStopped");
 extern s16 gSettlements_SlideAnglesByKey[];
 void Settlements_KeepSliding(struct Actor *object);
 void Settlements_StopLeader(void);
@@ -280,7 +291,7 @@ void Settlements_SlideOnIceFromEdge(void) {
    * reread after each test and for lsls #16; as a plain u16, 54 of 347
    * instructions differ in tla-en. */
   object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  gSettlements_SlideStopped = 0;
+  gSettlements_SlideStopped__s1a1c = 0;
 retry:
   Settlements_StopLeader();
   object->speedLimit = 0x10000;
@@ -328,7 +339,7 @@ retry:
   Actor_SelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
   for (i = 0; i <= 179 && Actor_HasArrived(object) == 0; i++) {
-    if (gSettlements_SlideStopped != 0)
+    if (gSettlements_SlideStopped__s1a1c != 0)
       goto end;
     System_Wait(1);
   }
@@ -337,7 +348,7 @@ retry:
 walkNext:
   if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
     goto blocked;
-  if (gSettlements_SlideStopped != 0)
+  if (gSettlements_SlideStopped__s1a1c != 0)
     goto end;
   radius = object->radius - 2;
   entry = Ram_HeapSlots->scriptObjects;
@@ -368,9 +379,9 @@ next:
   i++;
 test:
   if (i <= 179 && Actor_HasArrived(object) == 0 &&
-      gSettlements_SlideStopped == 0)
+      gSettlements_SlideStopped__s1a1c == 0)
     goto next;
-  if (gSettlements_SlideStopped != 0)
+  if (gSettlements_SlideStopped__s1a1c != 0)
     goto end;
   if (cell != startCell)
     goto changed;
@@ -411,7 +422,8 @@ end:
 #include "input.h"
 #include "call.h"
 
-extern volatile s16 gSettlements_SlideStopped;
+extern volatile s16
+    gSettlements_SlideStopped__s1a1c __asm__("gSettlements_SlideStopped");
 extern s16 gSettlements_SlideAnglesByKey[];
 void Settlements_KeepSliding(struct Actor *object);
 void Settlements_StopLeader(void);
@@ -445,7 +457,7 @@ void Settlements_SlideOnIceFromEdge(void) {
   // gSettlements_SlideStopped is read as a volatile s16: it is reread after
   // each test.
   object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  gSettlements_SlideStopped = 0;
+  gSettlements_SlideStopped__s1a1c = 0;
 retry:
   Settlements_StopLeader();
   object->speedLimit = 0x10000;
@@ -498,7 +510,7 @@ retry:
 walkNext:
   if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
     goto blocked;
-  if (gSettlements_SlideStopped != 0)
+  if (gSettlements_SlideStopped__s1a1c != 0)
     goto blocked;
   radius = object->radius - 2;
   entry = Ram_HeapSlots->scriptObjects;
@@ -529,9 +541,9 @@ next:
   i++;
 test:
   if (i <= 179 && Actor_HasArrived(object) == 0 &&
-      gSettlements_SlideStopped == 0)
+      gSettlements_SlideStopped__s1a1c == 0)
     goto next;
-  if (gSettlements_SlideStopped != 0)
+  if (gSettlements_SlideStopped__s1a1c != 0)
     goto end;
   if (cell != startCell)
     goto changed;
@@ -585,7 +597,10 @@ void Settlements_SetSlideStopped(s32 value) {
   gSettlements_SlideStopped = value;
 }
 
-void Settlements_KeepSliding(void);
+/* VIEW(s1d30): routine Settlements_KeepSliding as void
+ * Settlements_KeepSliding(void); scene/settlements/settlements has void
+ * Settlements_KeepSliding(struct Actor *object) {. */
+void Settlements_KeepSliding__s1d30(void) __asm__("Settlements_KeepSliding");
 
 void Settlements_SlideOnIceFacing(void) {
   struct Actor *object;
@@ -641,7 +656,7 @@ retry:
   object->timer = 0;
   Actor_SelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
-  object->update = Settlements_KeepSliding;
+  object->update = Settlements_KeepSliding__s1d30;
   goto walk;
 walkNext:
   if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
@@ -744,10 +759,10 @@ s16 gSettlements_SlideAnglesByKey[] = {
     0,
 };
 
-s32 gFieldEffect_DurationScripts[] = {
-    (s32)gFieldEffect_ShortScript,
-    (s32)gFieldEffect_MediumScript,
-    (s32)gFieldEffect_LongScript,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 s32 gSettlements_BobScript[] = {

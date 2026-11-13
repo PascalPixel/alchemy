@@ -7,10 +7,22 @@
 #include "field_effect.h"
 #include "event_inline.h"
 
-extern void Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
+/* VIEW(prox): routine Actor_SelectAnimation as void
+ * Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
+ * module/field/field.h has void Actor_SelectAnimation(struct Actor *object, s32
+ * argument). */
+extern void
+Actor_SelectAnimation__prox(struct FieldEffect *effect,
+                            s32 mode) __asm__("Actor_SelectAnimation");
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-extern const s32 *gData_020047a0[];
-void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
+/* VIEW(prox): variable gData_020047a0 as const s32 *gData_020047a0[];
+ * scene/prox/prox has s32 gData_020047a0[] = {. */
+extern const s32 *gData_020047a0__prox[] __asm__("gData_020047a0");
+/* VIEW(prox): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
+ * FieldEffect *effect, s32 flags); field/field.h has void
+ * Actor_SetSpriteFlags(struct Actor *object, u32 flags). */
+void Actor_SetSpriteFlags__prox(struct FieldEffect *effect,
+                                s32 flags) __asm__("Actor_SetSpriteFlags");
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {
@@ -29,10 +41,10 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect, gData_020047a0[flags & EFFECT_SCRIPT_MASK]);
+  Actor_SelectAnimation__prox(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Actor_StartScript(effect, gData_020047a0__prox[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSpriteFlags(effect, 0);
+  Actor_SetSpriteFlags__prox(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
@@ -59,7 +71,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     s32 targetX;
     s32 count;
 
-    script = gData_020047a0[flags & EFFECT_SCRIPT_MASK];
+    script = gData_020047a0__prox[flags & EFFECT_SCRIPT_MASK];
     targetX = options->targetScaleX;
     count = script[3];
     if (start != 0) {
@@ -71,7 +83,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Actor_SelectAnimation(effect, 1);
+    Actor_SelectAnimation__prox(effect, 1);
     Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
@@ -94,6 +106,8 @@ void Func_02000280(void) { Djinn_JoinParty(0x14, 0, 0x10); }
 void Func_02000290(void) { Djinn_JoinParty(0x18, 1, 0x13); }
 
 #include "venus_lighthouse/distance.c"
+
+#undef FIELD_AT
 
 // ---- scene/prox/prox.c ----
 

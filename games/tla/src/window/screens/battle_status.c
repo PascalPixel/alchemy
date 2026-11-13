@@ -62,8 +62,14 @@ void BattleObject_SpawnObjectsForListFar(u16 *list, s32 count, s32 mode);
  * *BattleObject_GetFar(s32 objectId). */
 extern void **
 GetBattleObjectSlotFar__screens(s32 member) __asm__("BattleObject_GetFar");
-void Text_DrawWideStringAtOffset(u16 *text, struct SummaryWindow *window, s32 x,
-                                 s32 y);
+/* VIEW(screens): routine Text_DrawWideStringAtOffset as void
+ * Text_DrawWideStringAtOffset(u16 *text, struct SummaryWindow *window, s32 x,
+ * s32 y); window/window has void Text_DrawWideStringAtOffset(u16 *text, struct
+ * Window *window, s32 x, s32 y) {. */
+void Text_DrawWideStringAtOffset__screens(
+    u16 *text, struct SummaryWindow *window, s32 x,
+    s32 y) __asm__("Text_DrawWideStringAtOffset");
+#define Text_DrawWideStringAtOffset Text_DrawWideStringAtOffset__screens
 s32 Unit_GetExperienceForLevelFar(s32 member, s32 level);
 
 // The four list-page scroll marks, one tile per page of four rows (Psynergy

@@ -568,6 +568,13 @@ struct Actor *Actor_GetById(u32 objectId);
 
 /// Puts object id at the effect's anchor (if any) and lets it fall under
 /// gravity, waits 50 frames, then cues the event with id | 0x1000.
+/* VIEW(psynergy): routine BattleEffect_DropObjectAtAnchor as void
+ * BattleEffect_DropObjectAtAnchor(s32 id); field/field.h has void
+ * BattleEffect_DropObjectAtAnchor(u32 objectId). */
+void BattleEffect_DropObjectAtAnchor__psynergy(s32 id) __asm__(
+    "BattleEffect_DropObjectAtAnchor");
+#define BattleEffect_DropObjectAtAnchor                                        \
+  BattleEffect_DropObjectAtAnchor__psynergy
 void BattleEffect_DropObjectAtAnchor(s32 id) {
   struct ModeEvent *event = Ram_HeapSlots->eventWork;
   struct Actor *anchor;
@@ -801,6 +808,9 @@ void Teleport_PlayWhirl(void) {
 
 #define SPARK_COUNT 100
 
+/* VIEW(psynergy): tag struct SparkParticle as struct SparkParticle__psynergy;
+ * module/field/field.h has another definition. */
+#define SparkParticle SparkParticle__psynergy
 struct SparkParticle {
   s32 x;
   s32 y;
@@ -819,7 +829,12 @@ struct SparkWork {
 };
 
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
-void Actor_ApplyRandomChildValues(void);
+/* VIEW(psynergy): routine Actor_ApplyRandomChildValues as void
+ * Actor_ApplyRandomChildValues(void); field/event_commands/radial has void
+ * Actor_ApplyRandomChildValues(struct SpinObject *owner). */
+void Actor_ApplyRandomChildValues__psynergy(void) __asm__(
+    "Actor_ApplyRandomChildValues");
+#define Actor_ApplyRandomChildValues Actor_ApplyRandomChildValues__psynergy
 
 /// Sparks burst from the leader, Teleport_PlayWhirl's companion in the same
 /// scenes.
@@ -1022,7 +1037,12 @@ extern char ResourceId_GlowDisc, ResourceId_WhitePuff;
 s32 MapGrid_IsWaterCell(s32 x, s32 z, s32 layer);
 s32 FieldPsynergy_GetCanvasPriority(struct Actor *object, s32 facing);
 void BattleEffect_ApplyColorToTargetBuffer(s32 packed, s32 mode);
-void MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 value);
+/* VIEW(psynergy): routine MapGrid_SetCellBehavior as void
+ * MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 value); field/event.h
+ * has s32 MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 behavior). */
+void MapGrid_SetCellBehavior__psynergy(
+    s32 x, s32 z, s32 layer, s32 value) __asm__("MapGrid_SetCellBehavior");
+#define MapGrid_SetCellBehavior MapGrid_SetCellBehavior__psynergy
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
 void BattleEffect_FadeToSavedPalettes(s32 frames);
 

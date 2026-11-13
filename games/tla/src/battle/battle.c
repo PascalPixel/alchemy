@@ -28,6 +28,19 @@
 #include "battle/turn.c"
 #include "battle/staging.c"
 
+#undef EncounterWork
+#undef Data_02018000
+#undef GameFlag_GetByte
+#undef BattleMessage_WaitForAdvanceAt
+#undef BattleSprite_GetEffectHeight
+#undef Unit_CalculateFar
+
+#undef Data_02018000
+#undef GameFlag_GetByte
+#undef BattleMessage_WaitForAdvanceAt
+#undef BattleSprite_GetEffectHeight
+#undef Unit_CalculateFar
+
 // ---- battle/presentation.c ----
 
 /// The rest of the battle object (battle.c): a unit's motion graphics, the
@@ -51,3 +64,6 @@
 #include "presentation/background.c"
 #include "presentation/formation.c"
 #include "presentation/spoils.c"
+
+#undef BattleObject_Reset
+#undef Battle_GetUnitAtPlace

@@ -18,7 +18,12 @@ extern u8 gMapCellBuffer[];
 
 void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 mode);
 s32 Field_GetSceneAttributes(s32 scene);
-s32 PartyInventory_GiveItem(s32 item);
+/* VIEW(field_sequence): routine PartyInventory_GiveItem as s32
+ * PartyInventory_GiveItem(s32 item); field/event.h has s32
+ * PartyInventory_GiveItem(s32 item, s32 flags). */
+s32 PartyInventory_GiveItem__field_sequence(s32 item) __asm__(
+    "PartyInventory_GiveItem");
+#define PartyInventory_GiveItem PartyInventory_GiveItem__field_sequence
 s32 Leader_StepOntoRope(void);
 s32 Leader_StepOffRope(void);
 s32 Leader_StepOntoTightrope(void);

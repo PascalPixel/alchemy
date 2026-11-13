@@ -39,6 +39,8 @@ void BattleEffect_StepPaletteToResource(s32 resource) {
   Dma_Set(dst, (void *)BG_PLTT, DMA_COPY_HALFWORDS(64), REG_DMA3);
 }
 
+/* VIEW(ability_effects): tag struct Particle as struct
+ * Particle__ability_effects; field/particle.h has another definition. */
 struct Particle {
   s32 x;
   s32 y;
@@ -72,6 +74,8 @@ struct DrawFuncs {
   DrawFunc draw[2];
 };
 
+/* VIEW(ability_effects): tag struct Texture as struct Texture__ability_effects;
+ * module/battle_effect/battle_effect.h has another definition. */
 struct Texture {
   u8 width;
   u8 height;
@@ -235,7 +239,8 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_DrawModelList(struct Model *);
+void Render_DrawModelList__ability_effects(struct Model *) __asm__(
+    "Render_DrawModelList");
 
 #define PLTT ((void *)0x05000000)
 #define BG_VRAM ((void *)0x06004000)

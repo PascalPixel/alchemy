@@ -32,7 +32,52 @@
 #include "battle_effect/dispatch.c"
 #include "battle_effect/battler_tint.c"
 
+#undef PHASE_RESULTS
+#undef SHARD_COUNT
+#undef DROP_COUNT
+#undef EFFECT_STEPS
+#undef PARTICLES
+#undef MOTES
+#undef BOLT_COUNT
+#undef STAR_COUNT
+#undef FORMATION_SIZE
+#undef COLUMN_WIDTH
+#undef COLUMN_HEIGHT
+#undef MOTE_COUNT
+#undef PILLAR_FRAMES
+
+#undef EffectSprite_CreateWithTiles
+#undef EffectSprite_Acquire
+#undef Render_DrawModelList
+#undef PHASE_RESULTS
+#undef SHARD_COUNT
+#undef DROP_COUNT
+#undef EFFECT_STEPS
+#undef EffectSprite_Acquire
+#undef EffectSprite_CreateWithTiles
+#undef SLOT_ALT
+#undef OBJ_TILES
+#undef CLIP
+#undef PARTICLES
+#undef MOTES
+#undef RECORD_FRAMES
+#undef BOLT_COUNT
+#undef STAR_COUNT
+#undef FORMATION_SIZE
+#undef COLUMN_WIDTH
+#undef COLUMN_HEIGHT
+#undef HEAP_BLITTER_ALTERNATE
+#undef MOTE_COUNT
+#undef SPARK_COUNT
+#undef PILLAR_FRAMES
+#undef HEAP_BLITTER
+#undef Render_DrawModelList
+#undef SLOT_BLITTER
+#undef BLITTER
+#undef HI
+
 // ---- battle_effect/cybele.c ----
+#define FxGroup FxGroup__cybele
 
 /// The bank's second object: the effects from the Cybele summon to Bolt
 /// (Boreas, Break, Drain, Cure Poison, Flare, Quake, Fire, Frost, Ray,
@@ -63,6 +108,8 @@ struct MenuFlagWork {
   u8 busy;
 };
 
+/* VIEW(cybele): tag struct FxGroup as struct FxGroup__cybele;
+ * battle_effect/battle_effect has another definition. */
 struct FxGroup {
   u8 unk00[32];
   struct Actor *objects[8];
@@ -4645,8 +4692,15 @@ struct SpriteObject {
   u8 slot; // its row of gResourceTableEntries
 };
 
-struct SpriteObject *EffectSprite_CreateWithTiles(s32 width, s32 height,
-                                                  u32 shape, u32 attributes);
+/* VIEW(cybele): routine EffectSprite_CreateWithTiles as struct SpriteObject
+ * *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape, u32
+ * attributes); battle_effect/ability_effects has struct EffectSprite
+ * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
+ * flags) {. */
+struct SpriteObject *EffectSprite_CreateWithTiles__cybele(
+    s32 width, s32 height, u32 shape,
+    u32 attributes) __asm__("EffectSprite_CreateWithTiles");
+#define EffectSprite_CreateWithTiles EffectSprite_CreateWithTiles__cybele
 
 #define TRAILS ((struct EffectStep *)Ram_MapCellBuffer)
 #define MATRICES (Ram_MapCellBuffer + 0x3800)
@@ -5696,7 +5750,43 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
+#undef HI
+#undef HEAP_BLITTER
+#undef HEAP_BLITTER_ALTERNATE
+#undef PARTICLES
+#undef BLIT_MODE
+#undef SHARDS
+#undef MOTES
+#undef SPARKS
+#undef BLITTER_SLOT
+#undef FLAME_COUNT
+#undef EMBERS
+#undef CHIPS
+#undef CLIP
+#undef SPARK_COUNT
+#undef Actor_SetAnimationSpeedFar
+#undef STARS
+#undef ALTERNATE_BLITTER_SLOT
+#undef OBJ_VRAM
+#undef COLUMN_COUNT
+#undef PHASE_RESULTS
+#undef BLITTER_TRANSPARENT
+#undef PREPARE_KIND
+#undef PREPARE_ANCHOR
+#undef BLITTER_MAX
+
+#undef FxGroup
+#undef EffectSprite_CreateWithTiles
+#undef PUFF_COUNT
+
 // ---- battle_effect/ability_effects.c ----
+#define SpriteAttributes SpriteAttributes__ability_effects
+#define FxSlot FxSlot__ability_effects
+#define SpriteObject SpriteObject__ability_effects
+#define Texture Texture__ability_effects
+#define Particle Particle__ability_effects
+#define ResourceTableEntry ResourceTableEntry__ability_effects
+#define CameraWork CameraWork__ability_effects
 
 /// The bank's third object: the effects of abilities and summons from the
 /// opening every Djinn effect shares to Meteor Blow, each part named for the
@@ -5761,6 +5851,19 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
 #include "ability_effects/trident.c"
 #include "ability_effects/meteor_blow.c"
 
+#undef CameraWork
+#undef Projection_Set
+#undef ResourceTableEntry
+#undef Particle
+#undef Texture
+#undef SpriteObject
+#undef FxSlot
+#undef SpriteAttributes
+#undef Render_ProjectVertices
+#undef Render_DrawModelList
+#undef Render_ProjectVertices
+#undef Render_DrawModelList
+
 // ---- battle_effect/liquifier.c ----
 
 /// Liquifier, and the canvas bursts: a glowing ball that strikes the target in
@@ -5812,7 +5915,12 @@ struct RenderModel__liquifier {
 // combine with the second.
 #define EFFECT_PICTURES (Ram_MapCellBuffer + 0x4000)
 
-void Render_DrawModelList(struct Model *model);
+/* VIEW(liquifier): routine Render_DrawModelList as void
+ * Render_DrawModelList(struct Model *model); battle_effect/summon_effects has
+ * void Render_DrawModelList(struct Model *model). */
+void Render_DrawModelList__liquifier(struct Model *model) __asm__(
+    "Render_DrawModelList");
+#define Render_DrawModelList Render_DrawModelList__liquifier
 
 // Effect kind 123, 111 frames. Sparks gather at the caster (frames 0-15)
 // and burst from it toward the target (16-110); eight flat flashes turn about
@@ -6489,7 +6597,16 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
   }
 }
 
+#undef HI
+#undef Actor_SetAnimationSpeedFar
+
+#undef Render_DrawModelList
 // ---- battle_effect/summon_effects.c ----
+#define Model Model__summon_effects
+#define Texture Texture__summon_effects
+#define ResourceTableEntry ResourceTableEntry__summon_effects
+#define BattleBackgroundId BattleBackgroundId__summon_effects
+#define ModelVertex ModelVertex__summon_effects
 
 /// The bank's last object: the Megiddo, Moloch and Iris summons, Odyssey, and
 /// the model renderers the effects draw with. summon_effects_internal.h holds
@@ -6502,3 +6619,12 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
 #include "summon_effects/megiddo.c"
 #include "summon_effects/odyssey.c"
 #include "summon_effects/moloch.c"
+
+#undef ModelVertex
+#undef BattleBackgroundId
+#undef ResourceTableEntry
+#undef gResourceTableEntries
+#undef EffectSprite_CreateWithTiles
+#undef EffectSprite_Acquire
+#undef Texture
+#undef Model

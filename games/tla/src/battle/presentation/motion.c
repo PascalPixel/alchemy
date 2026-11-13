@@ -14,7 +14,10 @@
 #include "module/tla.h"
 #include "text/msg_ids.h"
 
-void BattleObject_Reset();
+/* VIEW(presentation): routine BattleObject_Reset as void BattleObject_Reset();
+ * the definition has another declaration. */
+void BattleObject_Reset__presentation() __asm__("BattleObject_Reset");
+#define BattleObject_Reset BattleObject_Reset__presentation
 
 /// The Tamer's calls (abilities 600 to 606, Wild Wolf to Grand Golem): for
 /// a call that lands, saves the battle object it borrows and brings in the

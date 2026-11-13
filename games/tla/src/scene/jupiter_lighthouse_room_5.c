@@ -807,7 +807,10 @@ void Func_02001538(void) {
 #include "module/tla.h"
 #include "resource.h"
 
-struct Spark {
+/* VIEW(s1650): tag struct Spark as struct Spark__s1650;
+ * games/tla/src/scene/jupiter_lighthouse_room_5/s1230 has another definition.
+ */
+struct Spark__s1650 {
   u8 unk00[0x0c];
   s32 dx;
   s32 dy;
@@ -815,9 +818,11 @@ struct Spark {
   s32 age;
 };
 
-struct SparkWork {
+/* VIEW(s1650): tag struct SparkWork as struct SparkWork__s1650;
+ * games/tla/src/scene/jupiter_lighthouse_room_5 has another definition. */
+struct SparkWork__s1650 {
   u8 tiles[0x400];
-  struct Spark sparks[96];
+  struct Spark__s1650 sparks[96];
   struct SparkSprite sprites[96];
   s32 from[3];
   s32 to[3];
@@ -831,8 +836,8 @@ struct SparkWork {
 /// cosine and negated sine of it at 64 pixels as its direction, a random
 /// speed of 16 to 31 and an age of 0.
 void Func_02001650(s32 count) {
-  struct SparkWork *work = Ram_HeapSlots->menuRuntime;
-  struct Spark *spark;
+  struct SparkWork__s1650 *work = Ram_HeapSlots->menuRuntime;
+  struct Spark__s1650 *spark;
   s32 angle;
   s32 i;
   s32 radius;
@@ -874,10 +879,11 @@ extern s32 Func_020029f0__s1650(struct Actor *object) __asm__(
     "BattleEffect_GetObjectPriority");
 
 void Func_02001718(const s32 *from, const s32 *to) {
-  struct SparkWork *work = HeapSlot_Alloc(220, sizeof(struct SparkWork));
+  struct SparkWork__s1650 *work =
+      HeapSlot_Alloc(220, sizeof(struct SparkWork__s1650));
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct SparkSprite *sprite;
-  struct Spark *spark;
+  struct Spark__s1650 *spark;
   s32 entry;
   s32 tile;
   s32 i;
@@ -924,7 +930,7 @@ void Func_02001718(const s32 *from, const s32 *to) {
 #include "task.h"
 
 void Func_0200185c(void) {
-  struct SparkWork *work = Ram_HeapSlots->menuRuntime;
+  struct SparkWork__s1650 *work = Ram_HeapSlots->menuRuntime;
 
   FieldTask_Remove(Func_02001538);
   VramCache_FreeEntry(work->vramEntry);

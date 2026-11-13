@@ -126,20 +126,49 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 #include "main_routine_work.h"
 #include "event_inline.h"
 
-extern const u8 gData_02005aa4[];
-extern const u8 gData_02005ab4[];
-extern const u8 gData_02005ae0[];
-extern const u8 gData_02005b0c[];
+/* VIEW(mars_lighthouse_aerie): variable gData_02005aa4 as const u8
+ * gData_02005aa4[]; scene/mars_lighthouse_aerie/s3370 has s16 gData_02005aa4[]
+ * = {. */
+extern const u8
+    gData_02005aa4__mars_lighthouse_aerie[] __asm__("gData_02005aa4");
+/* VIEW(mars_lighthouse_aerie): variable gData_02005ab4 as const u8
+ * gData_02005ab4[]; scene/mars_lighthouse_aerie/s3370 has s16 gData_02005ab4[]
+ * = {. */
+extern const u8
+    gData_02005ab4__mars_lighthouse_aerie[] __asm__("gData_02005ab4");
+/* VIEW(mars_lighthouse_aerie): variable gData_02005ae0 as const u8
+ * gData_02005ae0[]; scene/mars_lighthouse_aerie/s3370 has s16 gData_02005ae0[]
+ * = {. */
+extern const u8
+    gData_02005ae0__mars_lighthouse_aerie[] __asm__("gData_02005ae0");
+/* VIEW(mars_lighthouse_aerie): variable gData_02005b0c as const u8
+ * gData_02005b0c[]; scene/mars_lighthouse_aerie/s3370 has u32 gData_02005b0c[]
+ * = {. */
+extern const u8
+    gData_02005b0c__mars_lighthouse_aerie[] __asm__("gData_02005b0c");
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
-void Func_02004ef0(const u8 *a, const u8 *b, const u8 *c, const u8 *d);
+/* VIEW(mars_lighthouse_aerie): routine Func_02004ef0 as void
+ * Func_02004ef0(const u8 *a, const u8 *b, const u8 *c, const u8 *d);
+ * scene/mars_lighthouse_aerie/s3370 has
+ * DEFINE_PALETTE_SET_COLORS_FADE(Func_02004ef0, gData_02006ce0, Data_02006ce4,
+ * Data_02006ce8, Data_02006cd4, Func_020051e0) #include "task.h"
+ * DEFINE_PALETTE_CYCLE_START(Func_02004fac, gData_02006cf0, gData_02006cec,
+ * List_CountEntries, gData_02006ce0, gData_02006cdc, 15, gData_02006cd8, 16,
+ * gData_02006cd0, PaletteCycle_Fade) void Func_02005010(void) {. */
+void Func_02004ef0__mars_lighthouse_aerie(const u8 *a, const u8 *b, const u8 *c,
+                                          const u8 *d) __asm__("Func_02004ef0");
+#define Func_02004ef0 Func_02004ef0__mars_lighthouse_aerie
 void Func_020004a4(void);
 
 void Func_020001d8(void) {
   struct Actor *object;
   s32 i;
 
-  Func_02004ef0(gData_02005aa4, gData_02005ab4, gData_02005ae0, gData_02005b0c);
+  Func_02004ef0(gData_02005aa4__mars_lighthouse_aerie,
+                gData_02005ab4__mars_lighthouse_aerie,
+                gData_02005ae0__mars_lighthouse_aerie,
+                gData_02005b0c__mars_lighthouse_aerie);
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x40;
   for (i = 10; i <= 16; i++) {
     object = Actor_Get(i);
@@ -231,7 +260,11 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-extern const u8 gData_02006ad0[];
+/* VIEW(mars_lighthouse_aerie): variable gData_02006ad0 as const u8
+ * gData_02006ad0[]; scene/mars_lighthouse_aerie/s3370 has u32 gData_02006ad0[]
+ * = {. */
+extern const u8
+    gData_02006ad0__mars_lighthouse_aerie[] __asm__("gData_02006ad0");
 
 void Actor_StartScript(struct Actor *object, const u8 *script);
 void Func_020005a0(struct Actor *object);
@@ -251,7 +284,7 @@ void Func_020004a4(void) {
       u8 zero;
 
       sprite = object->sprite;
-      Actor_StartScript(object, gData_02006ad0);
+      Actor_StartScript(object, gData_02006ad0__mars_lighthouse_aerie);
       FieldActor_SetSpriteColor(object, 10);
       object->motionFlags = phase;
       {
@@ -317,24 +350,114 @@ void Func_02000640(s32 id) {
    } *)(base))                                                                 \
        ->v)
 struct SparkleWork;
-void Func_020053e4(struct Actor *object, struct SparkleWork *work);
+/* VIEW(mars_lighthouse_aerie): routine Func_020053e4 as void
+ * Func_020053e4(struct Actor *object, struct SparkleWork *work);
+ * scene/mars_lighthouse_aerie/s3370 has void Func_020053e4(struct Actor
+ * *object, struct SparkleWork__s53e4 *work) {. */
+void Func_020053e4__mars_lighthouse_aerie(
+    struct Actor *object, struct SparkleWork *work) __asm__("Func_020053e4");
 s32 ObjectTable_DestroyById();
 s32 Actor_MoveToObject();
-extern u8 gData_02005ba8[];
-extern u8 gData_02005bd0[];
-extern u8 gData_02005bf8[];
-extern u8 gData_02005c20[];
-extern u8 gData_02005c48[];
-extern u8 gData_02005c70[];
-extern u8 gData_02005cac[];
-extern u8 gData_02005ce8[];
-extern u8 gData_02005d2c[];
-extern u8 gData_02005d70[];
-extern u8 gData_02005db4[];
-extern u8 gData_02005df8[];
-extern u8 gData_02005e3c[];
-extern u8 gData_02005e80[];
-extern u8 gData_02005ec4[];
+/* VIEW(mars_lighthouse_aerie): variable gData_02005ba8 as u8 gData_02005ba8[];
+ * scene/mars_lighthouse_aerie/s3370 has DEFINE_G_DATA_02002F1C(gData_02005ba8,
+ * 496, 328) DEFINE_G_DATA_02002F1C(gData_02005bd0, 480, 328)
+ * DEFINE_G_DATA_02002F1C(gData_02005bf8, 488, 320)
+ * DEFINE_G_DATA_02002F1C(gData_02005c20, 528, 328)
+ * DEFINE_G_DATA_02002F1C(gData_02005c48, 512, 328) s32 gData_02005c70[] = {. */
+extern u8 gData_02005ba8__mars_lighthouse_aerie[] __asm__("gData_02005ba8");
+#define gData_02005ba8 gData_02005ba8__mars_lighthouse_aerie
+/* VIEW(mars_lighthouse_aerie): variable gData_02005bd0 as u8 gData_02005bd0[];
+ * scene/mars_lighthouse_aerie/s3370 has DEFINE_G_DATA_02002F1C(gData_02005bd0,
+ * 480, 328) DEFINE_G_DATA_02002F1C(gData_02005bf8, 488, 320)
+ * DEFINE_G_DATA_02002F1C(gData_02005c20, 528, 328)
+ * DEFINE_G_DATA_02002F1C(gData_02005c48, 512, 328) s32 gData_02005c70[] = {. */
+extern u8 gData_02005bd0__mars_lighthouse_aerie[] __asm__("gData_02005bd0");
+#define gData_02005bd0 gData_02005bd0__mars_lighthouse_aerie
+/* VIEW(mars_lighthouse_aerie): variable gData_02005bf8 as u8 gData_02005bf8[];
+ * scene/mars_lighthouse_aerie/s3370 has DEFINE_G_DATA_02002F1C(gData_02005bf8,
+ * 488, 320) DEFINE_G_DATA_02002F1C(gData_02005c20, 528, 328)
+ * DEFINE_G_DATA_02002F1C(gData_02005c48, 512, 328) s32 gData_02005c70[] = {. */
+extern u8 gData_02005bf8__mars_lighthouse_aerie[] __asm__("gData_02005bf8");
+#define gData_02005bf8 gData_02005bf8__mars_lighthouse_aerie
+/* VIEW(mars_lighthouse_aerie): variable gData_02005c20 as u8 gData_02005c20[];
+ * scene/mars_lighthouse_aerie/s3370 has DEFINE_G_DATA_02002F1C(gData_02005c20,
+ * 528, 328) DEFINE_G_DATA_02002F1C(gData_02005c48, 512, 328) s32
+ * gData_02005c70[] = {. */
+extern u8 gData_02005c20__mars_lighthouse_aerie[] __asm__("gData_02005c20");
+#define gData_02005c20 gData_02005c20__mars_lighthouse_aerie
+/* VIEW(mars_lighthouse_aerie): variable gData_02005c48 as u8 gData_02005c48[];
+ * scene/mars_lighthouse_aerie/s3370 has DEFINE_G_DATA_02002F1C(gData_02005c48,
+ * 512, 328) s32 gData_02005c70[] = {. */
+extern u8 gData_02005c48__mars_lighthouse_aerie[] __asm__("gData_02005c48");
+#define gData_02005c48 gData_02005c48__mars_lighthouse_aerie
+/* VIEW(mars_lighthouse_aerie): variable gData_02005c70 as u8 gData_02005c70[];
+ * scene/mars_lighthouse_aerie/s3370 has s32 gData_02005c70[] = {. */
+extern u8 gData_02005c70__mars_lighthouse_aerie[] __asm__("gData_02005c70");
+/* VIEW(mars_lighthouse_aerie): variable gData_02005cac as u8 gData_02005cac[];
+ * scene/mars_lighthouse_aerie/s3370 has u32 gData_02005cac[] = {. */
+extern u8 gData_02005cac__mars_lighthouse_aerie[] __asm__("gData_02005cac");
+/* VIEW(mars_lighthouse_aerie): variable gData_02005ce8 as u8 gData_02005ce8[];
+ * scene/mars_lighthouse_aerie/s3370 has DEFINE_G_DATA_02002F44(gData_02005ce8,
+ * 500, 306) DEFINE_G_DATA_02002F88(gData_02005d2c, 524, 306, 10)
+ * DEFINE_G_DATA_02002F44(gData_02005d70, 488, 320)
+ * DEFINE_G_DATA_02002F44(gData_02005db4, 472, 304)
+ * DEFINE_G_DATA_02003534(gData_02005df8, 464, 280, 10)
+ * DEFINE_G_DATA_02002F88(gData_02005e3c, 538, 320, 10)
+ * DEFINE_G_DATA_02002F88(gData_02005e80, 552, 304, 10)
+ * DEFINE_G_DATA_02005EC4(gData_02005ec4) u32 gData_02005f08[] = {. */
+extern u8 gData_02005ce8__mars_lighthouse_aerie[] __asm__("gData_02005ce8");
+#define gData_02005ce8 gData_02005ce8__mars_lighthouse_aerie
+/* VIEW(mars_lighthouse_aerie): variable gData_02005d2c as u8 gData_02005d2c[];
+ * scene/mars_lighthouse_aerie/s3370 has DEFINE_G_DATA_02002F88(gData_02005d2c,
+ * 524, 306, 10) DEFINE_G_DATA_02002F44(gData_02005d70, 488, 320)
+ * DEFINE_G_DATA_02002F44(gData_02005db4, 472, 304)
+ * DEFINE_G_DATA_02003534(gData_02005df8, 464, 280, 10)
+ * DEFINE_G_DATA_02002F88(gData_02005e3c, 538, 320, 10)
+ * DEFINE_G_DATA_02002F88(gData_02005e80, 552, 304, 10)
+ * DEFINE_G_DATA_02005EC4(gData_02005ec4) u32 gData_02005f08[] = {. */
+extern u8 gData_02005d2c__mars_lighthouse_aerie[] __asm__("gData_02005d2c");
+#define gData_02005d2c gData_02005d2c__mars_lighthouse_aerie
+/* VIEW(mars_lighthouse_aerie): variable gData_02005d70 as u8 gData_02005d70[];
+ * scene/mars_lighthouse_aerie/s3370 has DEFINE_G_DATA_02002F44(gData_02005d70,
+ * 488, 320) DEFINE_G_DATA_02002F44(gData_02005db4, 472, 304)
+ * DEFINE_G_DATA_02003534(gData_02005df8, 464, 280, 10)
+ * DEFINE_G_DATA_02002F88(gData_02005e3c, 538, 320, 10)
+ * DEFINE_G_DATA_02002F88(gData_02005e80, 552, 304, 10)
+ * DEFINE_G_DATA_02005EC4(gData_02005ec4) u32 gData_02005f08[] = {. */
+extern u8 gData_02005d70__mars_lighthouse_aerie[] __asm__("gData_02005d70");
+#define gData_02005d70 gData_02005d70__mars_lighthouse_aerie
+/* VIEW(mars_lighthouse_aerie): variable gData_02005db4 as u8 gData_02005db4[];
+ * scene/mars_lighthouse_aerie/s3370 has DEFINE_G_DATA_02002F44(gData_02005db4,
+ * 472, 304) DEFINE_G_DATA_02003534(gData_02005df8, 464, 280, 10)
+ * DEFINE_G_DATA_02002F88(gData_02005e3c, 538, 320, 10)
+ * DEFINE_G_DATA_02002F88(gData_02005e80, 552, 304, 10)
+ * DEFINE_G_DATA_02005EC4(gData_02005ec4) u32 gData_02005f08[] = {. */
+extern u8 gData_02005db4__mars_lighthouse_aerie[] __asm__("gData_02005db4");
+#define gData_02005db4 gData_02005db4__mars_lighthouse_aerie
+/* VIEW(mars_lighthouse_aerie): variable gData_02005df8 as u8 gData_02005df8[];
+ * scene/mars_lighthouse_aerie/s3370 has DEFINE_G_DATA_02003534(gData_02005df8,
+ * 464, 280, 10) DEFINE_G_DATA_02002F88(gData_02005e3c, 538, 320, 10)
+ * DEFINE_G_DATA_02002F88(gData_02005e80, 552, 304, 10)
+ * DEFINE_G_DATA_02005EC4(gData_02005ec4) u32 gData_02005f08[] = {. */
+extern u8 gData_02005df8__mars_lighthouse_aerie[] __asm__("gData_02005df8");
+#define gData_02005df8 gData_02005df8__mars_lighthouse_aerie
+/* VIEW(mars_lighthouse_aerie): variable gData_02005e3c as u8 gData_02005e3c[];
+ * scene/mars_lighthouse_aerie/s3370 has DEFINE_G_DATA_02002F88(gData_02005e3c,
+ * 538, 320, 10) DEFINE_G_DATA_02002F88(gData_02005e80, 552, 304, 10)
+ * DEFINE_G_DATA_02005EC4(gData_02005ec4) u32 gData_02005f08[] = {. */
+extern u8 gData_02005e3c__mars_lighthouse_aerie[] __asm__("gData_02005e3c");
+#define gData_02005e3c gData_02005e3c__mars_lighthouse_aerie
+/* VIEW(mars_lighthouse_aerie): variable gData_02005e80 as u8 gData_02005e80[];
+ * scene/mars_lighthouse_aerie/s3370 has DEFINE_G_DATA_02002F88(gData_02005e80,
+ * 552, 304, 10) DEFINE_G_DATA_02005EC4(gData_02005ec4) u32 gData_02005f08[] =
+ * {. */
+extern u8 gData_02005e80__mars_lighthouse_aerie[] __asm__("gData_02005e80");
+#define gData_02005e80 gData_02005e80__mars_lighthouse_aerie
+/* VIEW(mars_lighthouse_aerie): variable gData_02005ec4 as u8 gData_02005ec4[];
+ * scene/mars_lighthouse_aerie/s3370 has DEFINE_G_DATA_02005EC4(gData_02005ec4)
+ * u32 gData_02005f08[] = {. */
+extern u8 gData_02005ec4__mars_lighthouse_aerie[] __asm__("gData_02005ec4");
+#define gData_02005ec4 gData_02005ec4__mars_lighthouse_aerie
 
 /// The party reaches the beacon in the storm, and the voice calls them
 /// betrayers before the Doom Dragon's battle.
@@ -685,7 +808,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldEvent_Wait(10);
   FieldActor_SetAnimation(18, 6);
   FieldEvent_Wait(10);
-  Func_020053e4(actor, (s32)gData_02006c20);
+  Func_020053e4__mars_lighthouse_aerie(actor, (s32)gData_02006c20);
   FieldEvent_Wait(80);
   FieldActor_SetAnimation(18, 3);
   FieldEvent_Wait(10);
@@ -940,7 +1063,7 @@ L_02009638:
   FieldActor_SetAnimationAndWait(3, 3);
   Event_PlaySound(78);
   FIELD_AT(actor, s32, 108) = (s32)Func_02000068;
-  Actor_SetScript(18, (s32)gData_02005c70);
+  Actor_SetScript(18, (s32)gData_02005c70__mars_lighthouse_aerie);
   PaletteFade_ApplyTarget(0x10001, 1);
   PaletteFade_Interpolate(20);
   System_Wait(20);
@@ -972,7 +1095,7 @@ L_02009638:
   PaletteFade_Interpolate(20);
   dispcnt = (u16 *)0x4000000;
   Event_PlaySound(39);
-  Actor_RunScriptAndWait(17, (s32)gData_02005cac);
+  Actor_RunScriptAndWait(17, (s32)gData_02005cac__mars_lighthouse_aerie);
   *dispcnt = *dispcnt & 0xf9ff;
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_Interpolate(40);
@@ -1113,13 +1236,45 @@ void Func_02001ee4(struct Actor *object) {
     FieldActor_SetSpriteColor(object, 15);
 }
 
-extern u8 gData_02005f08[];
-extern u8 gData_02005f50[];
-extern u8 gData_02005f98[];
-extern u8 gData_02005fdc[];
-extern u8 gData_02006004[];
-extern u8 gData_0200602c[];
-extern u8 gData_02006070[];
+/* VIEW(mars_lighthouse_aerie): variable gData_02005f08 as u8 gData_02005f08[];
+ * scene/mars_lighthouse_aerie/s3370 has u32 gData_02005f08[] = {. */
+extern u8 gData_02005f08__mars_lighthouse_aerie[] __asm__("gData_02005f08");
+/* VIEW(mars_lighthouse_aerie): variable gData_02005f50 as u8 gData_02005f50[];
+ * scene/mars_lighthouse_aerie/s3370 has u32 gData_02005f50[] = {. */
+extern u8 gData_02005f50__mars_lighthouse_aerie[] __asm__("gData_02005f50");
+/* VIEW(mars_lighthouse_aerie): variable gData_02005f98 as u8 gData_02005f98[];
+ * scene/mars_lighthouse_aerie/s3370 has DEFINE_G_DATA_02002F88(gData_02005f98,
+ * 486, 286, 10) DEFINE_G_DATA_02002F1C(gData_02005fdc, 504, 300)
+ * DEFINE_G_DATA_02002F1C(gData_02006004, 528, 292)
+ * DEFINE_G_DATA_02005EC4(gData_0200602c) DEFINE_G_DATA_02002F88(gData_02006070,
+ * 548, 292, 10) s32 gData_020060b4[] = {. */
+extern u8 gData_02005f98__mars_lighthouse_aerie[] __asm__("gData_02005f98");
+#define gData_02005f98 gData_02005f98__mars_lighthouse_aerie
+/* VIEW(mars_lighthouse_aerie): variable gData_02005fdc as u8 gData_02005fdc[];
+ * scene/mars_lighthouse_aerie/s3370 has DEFINE_G_DATA_02002F1C(gData_02005fdc,
+ * 504, 300) DEFINE_G_DATA_02002F1C(gData_02006004, 528, 292)
+ * DEFINE_G_DATA_02005EC4(gData_0200602c) DEFINE_G_DATA_02002F88(gData_02006070,
+ * 548, 292, 10) s32 gData_020060b4[] = {. */
+extern u8 gData_02005fdc__mars_lighthouse_aerie[] __asm__("gData_02005fdc");
+#define gData_02005fdc gData_02005fdc__mars_lighthouse_aerie
+/* VIEW(mars_lighthouse_aerie): variable gData_02006004 as u8 gData_02006004[];
+ * scene/mars_lighthouse_aerie/s3370 has DEFINE_G_DATA_02002F1C(gData_02006004,
+ * 528, 292) DEFINE_G_DATA_02005EC4(gData_0200602c)
+ * DEFINE_G_DATA_02002F88(gData_02006070, 548, 292, 10) s32 gData_020060b4[] =
+ * {. */
+extern u8 gData_02006004__mars_lighthouse_aerie[] __asm__("gData_02006004");
+#define gData_02006004 gData_02006004__mars_lighthouse_aerie
+/* VIEW(mars_lighthouse_aerie): variable gData_0200602c as u8 gData_0200602c[];
+ * scene/mars_lighthouse_aerie/s3370 has DEFINE_G_DATA_02005EC4(gData_0200602c)
+ * DEFINE_G_DATA_02002F88(gData_02006070, 548, 292, 10) s32 gData_020060b4[] =
+ * {. */
+extern u8 gData_0200602c__mars_lighthouse_aerie[] __asm__("gData_0200602c");
+#define gData_0200602c gData_0200602c__mars_lighthouse_aerie
+/* VIEW(mars_lighthouse_aerie): variable gData_02006070 as u8 gData_02006070[];
+ * scene/mars_lighthouse_aerie/s3370 has DEFINE_G_DATA_02002F88(gData_02006070,
+ * 548, 292, 10) s32 gData_020060b4[] = {. */
+extern u8 gData_02006070__mars_lighthouse_aerie[] __asm__("gData_02006070");
+#define gData_02006070 gData_02006070__mars_lighthouse_aerie
 
 /// ★ Named from the game: "...Who are they?" (MsgWhoAreThey)
 void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
@@ -1276,8 +1431,8 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   FIELD_AT((Actor_Get(21)), u8, 98) = 0;
   Actor_SetSpeed(21, 0xcccc, 0x6666);
   Actor_SetSpeed(20, 0xcccc, 0x6666);
-  Actor_SetScript(21, (s32)gData_02005f08);
-  Actor_SetScript(20, (s32)gData_02005f50);
+  Actor_SetScript(21, (s32)gData_02005f08__mars_lighthouse_aerie);
+  Actor_SetScript(20, (s32)gData_02005f50__mars_lighthouse_aerie);
   Actor_SetSpeed(19, 0x26666, 0x13333);
   Actor_WalkToAndWait(19, 0x21c, 0x154);
   FieldActor_Jump(19, 4, 10);
@@ -1402,8 +1557,8 @@ L_0200a47a:
   Actor_WalkToAndWait(22, 0x1ce, 0x118);
   Actor_FaceDirectionAndWait(22, 0);
   FieldActor_SetSpritePriority(22, 1);
-  Func_020053e4((Actor_Get(22)), (s32)gData_02006c20);
-  Func_020053e4((Actor_Get(25)), (s32)gData_02006b70);
+  Func_020053e4__mars_lighthouse_aerie((Actor_Get(22)), (s32)gData_02006c20);
+  Func_020053e4__mars_lighthouse_aerie((Actor_Get(25)), (s32)gData_02006b70);
   FieldEvent_Wait(40);
   Actor_SetAnimationAndWait(19, 4);
   Event_ShowMessage(19, 0);
@@ -1440,8 +1595,8 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldActor_SetSpritePriority(3, 1);
-  Func_020053e4((s32)Actor_Get(7), (s32)gData_02006c20);
-  Func_020053e4((s32)Actor_Get(3), (s32)gData_02006b70);
+  Func_020053e4__mars_lighthouse_aerie((s32)Actor_Get(7), (s32)gData_02006c20);
+  Func_020053e4__mars_lighthouse_aerie((s32)Actor_Get(3), (s32)gData_02006b70);
   FieldEvent_Wait(120);
   Func_020054e4((s32)Actor_Get(7));
   Func_020054e4((s32)Actor_Get(3));
@@ -1686,6 +1841,27 @@ DEFINE_ORBS_SPAWN_RISING(Func_0200326c, 0x200, gData_02006afc, Func_02003210, 2)
 
 #include "../field/object/park_record.c"
 
+#undef FIELD_AT
+
+#undef Func_02004ef0
+#undef gData_02005ba8
+#undef gData_02005bd0
+#undef gData_02005bf8
+#undef gData_02005c20
+#undef gData_02005c48
+#undef gData_02005ce8
+#undef gData_02005d2c
+#undef gData_02005d70
+#undef gData_02005db4
+#undef gData_02005df8
+#undef gData_02005e3c
+#undef gData_02005e80
+#undef gData_02005ec4
+#undef gData_02005f98
+#undef gData_02005fdc
+#undef gData_02006004
+#undef gData_0200602c
+#undef gData_02006070
 // ---- scene/mars_lighthouse_aerie/s3370.c ----
 
 /// Scene code of overlay 0x6ae, in ROM order.
@@ -1714,7 +1890,10 @@ void Teleport_PlayWhirl(void);
 extern s32 gData_02005b54[];
 
 void Actor_StartScript(struct Actor *object, const u8 *script);
-void Func_020000e4(void);
+/* VIEW(s3370): routine Func_020000e4 as void Func_020000e4(void);
+ * scene/mars_lighthouse_aerie has void Func_020000e4(struct Actor *object) {.
+ */
+void Func_020000e4__s3370(void) __asm__("Func_020000e4");
 
 void Func_02003370(void) {
   struct Actor *anchor = Actor_GetById(8);
@@ -1800,7 +1979,7 @@ void Func_02003370(void) {
 
         ((u8 *)object)[98] = phase;
       }
-      object->update = Func_020000e4;
+      object->update = Func_020000e4__s3370;
       object->speedLimit = Math_Sin(Random16() * 0xffff >> 20) * 24;
       object->speedLimit = anchor->speedLimit >> 16;
       sprite->unk1a = zero;

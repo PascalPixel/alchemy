@@ -12,11 +12,6 @@
 // The rocks' motion is particles[10..20], the late rocks' columns [16..21].
 #define FIRST_ROCK 10
 
-struct Scale {
-  s32 x;
-  s32 y;
-};
-
 struct RockSpritePart {
   u8 unk00[4];
   u16 y : 8;

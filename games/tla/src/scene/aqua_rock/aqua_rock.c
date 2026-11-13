@@ -9,6 +9,8 @@
 #define EFFECT_SPRITE_PRIORITY
 #include "../../field/field_effect/spawn.c"
 
+#undef EFFECT_SPAWN
+
 // ---- scene/aqua_rock/aqua_rock.c ----
 
 /// Scene code of overlay 0x67b, in ROM order.
@@ -198,7 +200,10 @@ void Func_02000580(void) {
   }
 }
 
-extern s32 gData_02003204, gData_02003208, gData_0200320c, gData_02003210;
+extern s32 gData_02003204;
+extern s32 gData_02003208;
+extern s32 gData_0200320c;
+extern s32 gData_02003210;
 
 /// Unless flag 0x104 is set, runs four 240-frame timers (gData_02003204 to
 /// gData_02003210) that hold flags 0x200 to 0x203 set for their last 90
@@ -1098,8 +1103,14 @@ void Func_02001f60(s32 id) {
   }
 }
 
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags,
-                       s32 *params);
+/* VIEW(events_g): routine FieldEffect_Spawn as void FieldEffect_Spawn(s32 x,
+ * s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags, s32 *params);
+ * field/field_effect/spawn has void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32
+ * velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct
+ * EffectOptions *options) {. */
+void FieldEffect_Spawn__events_g(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c,
+                                 s32 flags,
+                                 s32 *params) __asm__("FieldEffect_Spawn");
 
 void Func_02001f90(s32 arg0) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);

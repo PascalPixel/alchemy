@@ -1323,10 +1323,10 @@ u16 gSeaOfTime_LapSpots[] = {
 };
 // clang-format on
 
-s32 gFieldEffect_DurationScripts[] = {
-    (s32)gFieldEffect_ShortScript,
-    (s32)gFieldEffect_MediumScript,
-    (s32)gFieldEffect_LongScript,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 s32 gSeaOfTime_ShipRests[] = {

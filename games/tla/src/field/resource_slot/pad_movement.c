@@ -38,7 +38,9 @@ struct PlayerSprite__f0279b0 {
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
 
-s32 WorldMap_IsWalkable(struct Actor *object, struct FieldPosition *position);
+s32 WorldMap_IsWalkable__resource_slot(
+    struct Actor *object,
+    struct FieldPosition *position) __asm__("WorldMap_IsWalkable");
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 /* VIEW(f0279b0): routine Animation_ApplyChildArgument as s32
  * Animation_ApplyChildArgument(struct PlayerSprite__f0279b0 *, s32); f027064
@@ -236,8 +238,14 @@ s32 Field_CheckConfiguredKeysAndCount(struct ActorScriptView *interpreter) {
   return 1;
 }
 
-s32 MapGrid_CheckCollision(struct Actor *object,
-                           struct FieldPosition *position);
+/* VIEW(resource_slot): routine MapGrid_CheckCollision as s32
+ * MapGrid_CheckCollision(struct Actor *object, struct FieldPosition *position);
+ * field/map/tile_animation has s32 MapGrid_CheckCollision(struct Actor *actor,
+ * s16 *position) {. */
+s32 MapGrid_CheckCollision__resource_slot(
+    struct Actor *object,
+    struct FieldPosition *position) __asm__("MapGrid_CheckCollision");
+#define MapGrid_CheckCollision MapGrid_CheckCollision__resource_slot
 
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
 #define SAME_CELL(a, b) ((((a) - (b) + 0x80000) >> 20) == 0)
@@ -600,7 +608,14 @@ struct PartyKeys__s28534 {
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
 
-s32 WorldMap_IsSailable(struct Actor *object, struct FieldPosition *position);
+/* VIEW(resource_slot): routine WorldMap_IsSailable as s32
+ * WorldMap_IsSailable(struct Actor *object, struct FieldPosition *position);
+ * field/map/tile_animation has s32 WorldMap_IsSailable(void *object, struct
+ * WorldPosition *position) {. */
+s32 WorldMap_IsSailable__resource_slot(
+    struct Actor *object,
+    struct FieldPosition *position) __asm__("WorldMap_IsSailable");
+#define WorldMap_IsSailable WorldMap_IsSailable__resource_slot
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 /* VIEW(s28534): routine Animation_ApplyChildArgument as s32
  * Animation_ApplyChildArgument(struct PlayerSprite__s28534 *, s32); f027064 has
@@ -876,7 +891,14 @@ struct WorldEventWork__f028aac {
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
 
-s32 WorldMap_IsFlyable(struct Actor *object, struct FieldPosition *position);
+/* VIEW(resource_slot): routine WorldMap_IsFlyable as s32
+ * WorldMap_IsFlyable(struct Actor *object, struct FieldPosition *position);
+ * field/map/tile_animation has s32 WorldMap_IsFlyable(struct WorldMover *mover,
+ * struct WorldPosition *position) {. */
+s32 WorldMap_IsFlyable__resource_slot(
+    struct Actor *object,
+    struct FieldPosition *position) __asm__("WorldMap_IsFlyable");
+#define WorldMap_IsFlyable WorldMap_IsFlyable__resource_slot
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 /* VIEW(f028aac): routine Animation_ApplyChildArgument as s32
  * Animation_ApplyChildArgument(struct PlayerSprite__f028aac *, s32); f027064

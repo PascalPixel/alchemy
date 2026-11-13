@@ -617,7 +617,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
 void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList(struct Model *model);
+void Render_DrawModelList__ability_effects(struct Model *model) __asm__(
+    "Render_DrawModelList");
 
 void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyYaw(s32 angle);
@@ -650,8 +651,9 @@ struct ProjectedPoint {
 extern s32 Render_ProjectPoint__f16d130(
     const void *point,
     struct ProjectedPoint *screen) __asm__("Render_ProjectPoint");
-void Render_ProjectVertices(struct ModelVertex *vertices,
-                            struct ProjectedVertex *screen, s32 count);
+void Render_ProjectVertices__ability_effects(
+    struct ModelVertex *vertices, struct ProjectedVertex *screen,
+    s32 count) __asm__("Render_ProjectVertices");
 
 extern char ResourceId_Data0C1;
 extern char ResourceId_DustBlobSheet;

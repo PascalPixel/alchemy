@@ -279,7 +279,10 @@ void Func_020007a8(void) {
   object->y = 0x180000;
 }
 
-extern const u8 gData_02003fb8[];
+/* VIEW(aqua_rock_inside): variable gData_02003fb8 as const u8 gData_02003fb8[];
+ * scene/aqua_rock_inside/s3844 has u32 gData_02003fb8[] = {. */
+extern const u8 gData_02003fb8__aqua_rock_inside[] __asm__("gData_02003fb8");
+#define gData_02003fb8 gData_02003fb8__aqua_rock_inside
 
 void Func_020007d4(void) {
   s32 priority;
@@ -478,6 +481,7 @@ void Func_02000ca8(void) {
   Event_End();
 }
 
+#undef gData_02003fb8
 // ---- games/tla/src/scene/aqua_rock_inside/s0cc8.c ----
 // Scene code of overlay 0x67c, in ROM order, from s0cc8's offset up to the next
 // object the overlay links.
@@ -863,8 +867,38 @@ union ActorView {
     u8 unk63;
   } bytes;
 };
-extern const u8 gData_02004034[], gData_02003fe8[], gData_02004004[],
-    gData_02004058[], gData_02004014[], gData_0200407c[], gData_020040ac[];
+/* VIEW(s1620): variable gData_02004034 as const u8 gData_02004034[];
+ * scene/aqua_rock_inside/s3844 has u32 gData_02004034[] = {. */
+extern const u8 gData_02004034__s1620[] __asm__("gData_02004034");
+#define gData_02004034 gData_02004034__s1620
+/* VIEW(s1620): variable gData_02003fe8 as const u8 gData_02003fe8[];
+ * scene/aqua_rock_inside/s3844 has u32 gData_02003fe8[] = {. */
+extern const u8 gData_02003fe8__s1620[] __asm__("gData_02003fe8");
+#define gData_02003fe8 gData_02003fe8__s1620
+/* VIEW(s1620): variable gData_02004004 as const u8 gData_02004004[];
+ * scene/aqua_rock_inside/s3844 has DEFINE_G_DATA_02003584(gData_02004004,
+ * Orbiter_Spiral, 38, 17) DEFINE_G_DATA_02004014(gData_02004014, Orbit_Update,
+ * Actor_AimAtWatched, Actor_StepToWatched) u32 gData_02004034[] = {. */
+extern const u8 gData_02004004__s1620[] __asm__("gData_02004004");
+#define gData_02004004 gData_02004004__s1620
+/* VIEW(s1620): variable gData_02004058 as const u8 gData_02004058[];
+ * scene/aqua_rock_inside/s3844 has u32 gData_02004058[] = {. */
+extern const u8 gData_02004058__s1620[] __asm__("gData_02004058");
+#define gData_02004058 gData_02004058__s1620
+/* VIEW(s1620): variable gData_02004014 as const u8 gData_02004014[];
+ * scene/aqua_rock_inside/s3844 has DEFINE_G_DATA_02004014(gData_02004014,
+ * Orbit_Update, Actor_AimAtWatched, Actor_StepToWatched) u32 gData_02004034[] =
+ * {. */
+extern const u8 gData_02004014__s1620[] __asm__("gData_02004014");
+#define gData_02004014 gData_02004014__s1620
+/* VIEW(s1620): variable gData_0200407c as const u8 gData_0200407c[];
+ * scene/aqua_rock_inside/s3844 has s32 gData_0200407c[] = {. */
+extern const u8 gData_0200407c__s1620[] __asm__("gData_0200407c");
+#define gData_0200407c gData_0200407c__s1620
+/* VIEW(s1620): variable gData_020040ac as const u8 gData_020040ac[];
+ * scene/aqua_rock_inside/s3844 has s32 gData_020040ac[] = {. */
+extern const u8 gData_020040ac__s1620[] __asm__("gData_020040ac");
+#define gData_020040ac gData_020040ac__s1620
 
 void Func_02001620(s32 firstId, s32 secondId) {
   struct Actor *first = Actor_GetById(firstId);
@@ -1262,10 +1296,22 @@ void Func_02001fcc(void) {
   Vents_AdvanceCounter(0x34bc0);
 }
 
-extern const u8 gData_020040f4[];
-extern const u8 gData_02004102[];
-extern const u8 gData_02004106[];
-extern const u8 gData_02004114[];
+/* VIEW(s1620): variable gData_020040f4 as const u8 gData_020040f4[];
+ * scene/aqua_rock_inside/s3844 has u16 gData_020040f4[] = {. */
+extern const u8 gData_020040f4__s1620[] __asm__("gData_020040f4");
+#define gData_020040f4 gData_020040f4__s1620
+/* VIEW(s1620): variable gData_02004102 as const u8 gData_02004102[];
+ * scene/aqua_rock_inside/s3844 has u16 gData_02004102[] = {. */
+extern const u8 gData_02004102__s1620[] __asm__("gData_02004102");
+#define gData_02004102 gData_02004102__s1620
+/* VIEW(s1620): variable gData_02004106 as const u8 gData_02004106[];
+ * scene/aqua_rock_inside/s3844 has u16 gData_02004106[] = {. */
+extern const u8 gData_02004106__s1620[] __asm__("gData_02004106");
+#define gData_02004106 gData_02004106__s1620
+/* VIEW(s1620): variable gData_02004114 as const u8 gData_02004114[];
+ * scene/aqua_rock_inside/s3844 has u32 gData_02004114[] = {. */
+extern const u8 gData_02004114__s1620[] __asm__("gData_02004114");
+#define gData_02004114 gData_02004114__s1620
 
 // Returns what its closing Task_Add call leaves in r0.
 s32 Func_02003ab0(const u8 *a, const u8 *b, void (*handler)(void));
@@ -2144,6 +2190,17 @@ s32 Func_020036b8(s32 first, s32 target) {
 #undef BG1_SET_PRIORITY_1
 #undef LAYER_S32
 
+#undef gData_02003fe8
+#undef gData_02004004
+#undef gData_02004014
+#undef gData_02004034
+#undef gData_02004058
+#undef gData_0200407c
+#undef gData_020040ac
+#undef gData_020040f4
+#undef gData_02004102
+#undef gData_02004106
+#undef gData_02004114
 // ---- scene/aqua_rock_inside/s3844.c ----
 
 /// Scene code of overlay 0x67c, in ROM order.
@@ -2189,6 +2246,13 @@ void Vent_Puff(s32 *position, s32 base) {
 
 DEFINE_VENTS_UPDATE(Vents_Update, Vent_Puff)
 
+/* VIEW(s3844): routine Func_02003ab0 as void Func_02003ab0(const u16 *spots,
+ * const u16 *levels, void (*handler)(void));
+ * games/tla/src/scene/aqua_rock_inside/s1620 has s32 Func_02003ab0(const u8 *a,
+ * const u8 *b, void (*handler)(void)). */
+void Func_02003ab0__s3844(const u16 *spots, const u16 *levels,
+                          void (*handler)(void)) __asm__("Func_02003ab0");
+#define Func_02003ab0 Func_02003ab0__s3844
 void Func_02003ab0(const u16 *spots, const u16 *levels, void (*handler)(void)) {
   struct WaterWork *work = (struct WaterWork *)(gInventorySnapshot + 0x188);
   struct WaterOutlet *outlet = work->outlets;
@@ -2271,10 +2335,44 @@ DEFINE_VENTS_SET_ID(Vents_SetId)
 
 #include "scene_tables.h"
 
-void Orbiter_Spiral(void);
-void Orbit_Update(void);
-void Actor_AimAtWatched(void);
-void Actor_StepToWatched(void);
+/* VIEW(s3844): routine Orbiter_Spiral as void Orbiter_Spiral(void);
+ * games/tla/src/scene/aqua_rock_inside/s13bc has
+ * DEFINE_ORBITER_SPIRAL(Orbiter_Spiral, Func_02001364) // Moves around in a
+ * circle. DEFINE_ORBIT_UPDATE(Orbit_Update) #define BYTE_AT(base, offset) (*(u8
+ * *)((u8 *)(base) + (offset))) DEFINE_ACTOR_AIM_AT_WATCHED(Actor_AimAtWatched)
+ * DEFINE_ACTOR_STEP_TO_WATCHED(Actor_StepToWatched) #include
+ * "system/field_effect.h" void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32
+ * velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct
+ * EffectOptions *options). */
+void Orbiter_Spiral__s3844(void) __asm__("Orbiter_Spiral");
+#define Orbiter_Spiral Orbiter_Spiral__s3844
+/* VIEW(s3844): routine Orbit_Update as void Orbit_Update(void);
+ * games/tla/src/scene/aqua_rock_inside/s13bc has
+ * DEFINE_ORBIT_UPDATE(Orbit_Update) #define BYTE_AT(base, offset) (*(u8 *)((u8
+ * *)(base) + (offset))) DEFINE_ACTOR_AIM_AT_WATCHED(Actor_AimAtWatched)
+ * DEFINE_ACTOR_STEP_TO_WATCHED(Actor_StepToWatched) #include
+ * "system/field_effect.h" void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32
+ * velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct
+ * EffectOptions *options). */
+void Orbit_Update__s3844(void) __asm__("Orbit_Update");
+#define Orbit_Update Orbit_Update__s3844
+/* VIEW(s3844): routine Actor_AimAtWatched as void Actor_AimAtWatched(void);
+ * games/tla/src/scene/aqua_rock_inside/s13bc has
+ * DEFINE_ACTOR_AIM_AT_WATCHED(Actor_AimAtWatched)
+ * DEFINE_ACTOR_STEP_TO_WATCHED(Actor_StepToWatched) #include
+ * "system/field_effect.h" void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32
+ * velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct
+ * EffectOptions *options). */
+void Actor_AimAtWatched__s3844(void) __asm__("Actor_AimAtWatched");
+#define Actor_AimAtWatched Actor_AimAtWatched__s3844
+/* VIEW(s3844): routine Actor_StepToWatched as void Actor_StepToWatched(void);
+ * games/tla/src/scene/aqua_rock_inside/s13bc has
+ * DEFINE_ACTOR_STEP_TO_WATCHED(Actor_StepToWatched) #include
+ * "system/field_effect.h" void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32
+ * velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct
+ * EffectOptions *options). */
+void Actor_StepToWatched__s3844(void) __asm__("Actor_StepToWatched");
+#define Actor_StepToWatched Actor_StepToWatched__s3844
 
 // clang-format off
 u32 gData_02003f04[] = {
@@ -2363,3 +2461,9 @@ u32 gWaterDropScript[] = {
     30, 0, 38,
 };
 // clang-format on
+
+#undef Func_02003ab0
+#undef Orbiter_Spiral
+#undef Orbit_Update
+#undef Actor_AimAtWatched
+#undef Actor_StepToWatched

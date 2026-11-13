@@ -92,8 +92,12 @@ void Func_0200137c(void) {
     MapCell_SetAttributes(0, 14, 17, 0x3200);
 }
 
-extern const u8 gData_02003340[];
-extern const u8 gData_0200335a[];
+/* VIEW(s11e0): variable gData_02003340 as const u8 gData_02003340[];
+ * scene/tundaria_tower/s29d0 has s16 gData_02003340[] = {. */
+extern const u8 gData_02003340__s11e0[] __asm__("gData_02003340");
+/* VIEW(s11e0): variable gData_0200335a as const u8 gData_0200335a[];
+ * scene/tundaria_tower/s29d0 has s16 gData_0200335a[] = {. */
+extern const u8 gData_0200335a__s11e0[] __asm__("gData_0200335a");
 void Actor_PlaceBlocks(const s16 *data);
 
 s32 Scene_Initialize(void) {
@@ -159,7 +163,7 @@ s32 Scene_Initialize(void) {
       break;
     }
   } else if (scene == (s32)&SceneId_Ov68fRoom5) {
-    Func_02000404(gData_02003340);
+    Func_02000404(gData_02003340__s11e0);
   } else if (scene == (s32)&SceneId_Ov68fRoom6) {
     switch (gMainRoutineWork.entrance) {
     case 3:
@@ -174,7 +178,7 @@ s32 Scene_Initialize(void) {
       break;
     case 1:
     case 2:
-      Func_02000404(gData_0200335a);
+      Func_02000404(gData_0200335a__s11e0);
       if (GameFlag_Get(0x947)) {
         Actor_SetPosition(13, PIXELS(216), PIXELS(136));
         if (GameFlag_Get(0x946))
@@ -423,7 +427,9 @@ end:
 #include "input.h"
 #include "call.h"
 
-extern volatile s16 gData_02003cd0;
+/* VIEW(s1b48): variable gData_02003cd0 as volatile s16 gData_02003cd0;
+ * scene/tundaria_tower/tundaria_tower.h has u16 gData_02003cd0. */
+extern volatile s16 gData_02003cd0__s1b48 __asm__("gData_02003cd0");
 extern s16 gData_020032b2[];
 void Func_020017dc(struct Actor *object);
 void Func_02001868(void);
@@ -463,7 +469,7 @@ void Func_02001b48(void) {
    * each test and for lsls #16; as a plain u16, 54 of 347 instructions differ
    * in tla-en. */
   object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  gData_02003cd0 = 0;
+  gData_02003cd0__s1b48 = 0;
 retry:
   Func_02001868();
   object->speedLimit = 0x10000;
@@ -513,7 +519,7 @@ retry:
   Actor_SelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
   for (i = 0; i <= 179 && Actor_HasArrived(object) == 0; i++) {
-    if (gData_02003cd0 != 0)
+    if (gData_02003cd0__s1b48 != 0)
       goto end;
     wait(1);
   }
@@ -522,7 +528,7 @@ retry:
 walkNext:
   if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
     goto blocked;
-  if (gData_02003cd0 != 0)
+  if (gData_02003cd0__s1b48 != 0)
     goto end;
   radius = object->radius - 2;
   entry = Ram_HeapSlots->scriptObjects;
@@ -552,9 +558,9 @@ next:
   wait(1);
   i++;
 test:
-  if (i <= 179 && Actor_HasArrived(object) == 0 && gData_02003cd0 == 0)
+  if (i <= 179 && Actor_HasArrived(object) == 0 && gData_02003cd0__s1b48 == 0)
     goto next;
-  if (gData_02003cd0 != 0)
+  if (gData_02003cd0__s1b48 != 0)
     goto end;
   if (cell != startCell)
     goto changed;
@@ -597,7 +603,7 @@ end:
 #include "input.h"
 #include "call.h"
 
-extern volatile s16 gData_02003cd0;
+extern volatile s16 gData_02003cd0__s1b48 __asm__("gData_02003cd0");
 extern s16 gData_020032b2[];
 void Func_020017dc(struct Actor *object);
 void Func_02001868(void);
@@ -633,7 +639,7 @@ void Func_02001b48(void) {
   s32 *p;
 
   object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  gData_02003cd0 = 0;
+  gData_02003cd0__s1b48 = 0;
 retry:
   Func_02001868();
   object->speedLimit = 0x10000;
@@ -690,7 +696,7 @@ retry:
 walkNext:
   if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
     goto blocked;
-  if (gData_02003cd0 != 0)
+  if (gData_02003cd0__s1b48 != 0)
     goto blocked;
   radius = object->radius - 2;
   entry = Ram_HeapSlots->scriptObjects;
@@ -720,9 +726,9 @@ next:
   wait(1);
   i++;
 test:
-  if (i <= 179 && Actor_HasArrived(object) == 0 && gData_02003cd0 == 0)
+  if (i <= 179 && Actor_HasArrived(object) == 0 && gData_02003cd0__s1b48 == 0)
     goto next;
-  if (gData_02003cd0 != 0)
+  if (gData_02003cd0__s1b48 != 0)
     goto end;
   if (cell != startCell)
     goto changed;
@@ -778,7 +784,10 @@ s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
 void Func_02001e5c(s32 value) { gData_02003cd0 = value; }
 
-void Func_020017dc(void);
+/* VIEW(events_f): routine Func_020017dc as void Func_020017dc(void);
+ * games/tla/src/scene/tundaria_tower/s11e0 has void Func_020017dc(struct Actor
+ * *object) {. */
+void Func_020017dc__events_f(void) __asm__("Func_020017dc");
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 void Func_02001e68(void) {
@@ -835,7 +844,7 @@ retry:
   object->timer = 0;
   Actor_SelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
-  object->update = Func_020017dc;
+  object->update = Func_020017dc__events_f;
   goto walk;
 walkNext:
   if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
@@ -1311,10 +1320,25 @@ void Func_02002764(const u16 *table) {
 #include "particle.h"
 
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
-u32 Sprite_ShareVramCacheEntry(struct FieldSprite *sprite, u32 frame);
+/* VIEW(s29d0): routine Sprite_ShareVramCacheEntry as u32
+ * Sprite_ShareVramCacheEntry(struct FieldSprite *sprite, u32 frame);
+ * module/field/event_commands.h has void *Sprite_ShareVramCacheEntry(void
+ * *sprite, void *last). */
+u32 Sprite_ShareVramCacheEntry__s29d0(
+    struct FieldSprite *sprite,
+    u32 frame) __asm__("Sprite_ShareVramCacheEntry");
 
-void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
-void Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
+/* VIEW(s29d0): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
+ * FieldEffect *effect, s32 flags); field/field.h has void
+ * Actor_SetSpriteFlags(struct Actor *object, u32 flags). */
+void Actor_SetSpriteFlags__s29d0(struct FieldEffect *effect,
+                                 s32 flags) __asm__("Actor_SetSpriteFlags");
+/* VIEW(s29d0): routine Actor_SelectAnimation as void
+ * Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
+ * scene/tundaria_tower/events_f has void Actor_SelectAnimation(struct Actor
+ * *object, s32 mode). */
+void Actor_SelectAnimation__s29d0(struct FieldEffect *effect,
+                                  s32 mode) __asm__("Actor_SelectAnimation");
 
 void Func_020029d0(s32 spread) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -1332,11 +1356,11 @@ void Func_020029d0(s32 spread) {
           285, (i << 17) + leader->x - 0x80000, y - 0x20000, leader->z);
     }
     if (effect != 0) {
-      frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
+      frame = Sprite_ShareVramCacheEntry__s29d0(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSpriteFlags(effect, 0);
-      Actor_SelectAnimation(effect, 2);
+      Actor_SetSpriteFlags__s29d0(effect, 0);
+      Actor_SelectAnimation__s29d0(effect, 2);
       Func_02002f90(effect, gData_020032d4);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
@@ -1373,12 +1397,12 @@ void Func_02002b04(void) {
       if (effect != NULL) {
         s32 angle;
 
-        state = Sprite_ShareVramCacheEntry(effect->sprite, state);
+        state = Sprite_ShareVramCacheEntry__s29d0(effect->sprite, state);
         zero = 0;
         effect->motionFlags = zero;
         effect->collisionFlags = zero;
-        Actor_SetSpriteFlags(effect, 0);
-        Actor_SelectAnimation(effect, 2);
+        Actor_SetSpriteFlags__s29d0(effect, 0);
+        Actor_SelectAnimation__s29d0(effect, 2);
         Func_02002f90(effect, gData_02003304);
         angle = i << 12;
         effect->velocity.x = Trig_Cos(angle);
@@ -1474,8 +1498,13 @@ DEFINE_ROCKS_SPAWN(Rocks_Spawn)
 // The falling rocks' setup, and Func_02002ebc, which stops their task and
 // frees their picture and heap slot.
 
-void EffectSprite_Init(struct RockSprite__s29d0 *sprite, s32 width, s32 height,
-                       u32 attr, s32 tile);
+/* VIEW(s29d0): routine EffectSprite_Init as void EffectSprite_Init(struct
+ * RockSprite__s29d0 *sprite, s32 width, s32 height, u32 attr, s32 tile);
+ * effect_sprite.h has void EffectSprite_Init(struct EffectSprite *sprite, s32
+ * pivotX, s32 pivotY, u32 attributes, s32 tile). */
+void EffectSprite_Init__s29d0(struct RockSprite__s29d0 *sprite, s32 width,
+                              s32 height, u32 attr,
+                              s32 tile) __asm__("EffectSprite_Init");
 
 /// The falling rocks' setup: loads their picture, sets up 64 small sprites,
 /// marks each rock idle and starts the task that spawns them.
@@ -1496,7 +1525,7 @@ void Func_02002e00(void) {
   rock = work->rocks;
   sprite = work->sprites;
   for (i = 63; i >= 0; i--) {
-    EffectSprite_Init(sprite, 8, 8, 0x40000000, tile);
+    EffectSprite_Init__s29d0(sprite, 8, 8, 0x40000000, tile);
     sprite->blend = 1;
     sprite->palette = 0;
     sprite->priority = 0;
@@ -1575,10 +1604,10 @@ u32 gData_02003304[] = {
     0, 0, 0, 0, 1, 38,
 };
 
-s32 gFieldEffect_DurationScripts[] = {
-    (s32)gData_020031b0,
-    (s32)gData_020031ec,
-    (s32)gData_02003228,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gData_020031b0,
+    gData_020031ec,
+    gData_02003228,
 };
 
 s16 gData_02003340[] = {

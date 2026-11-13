@@ -47,6 +47,9 @@ struct ShakeWork {
 };
 
 // An object's sprite; the sway shakes it sideways by its offset.
+/* VIEW(psynergy): tag struct ObjectSprite as struct ObjectSprite__psynergy;
+ * module/field/field.h has another definition. */
+#define ObjectSprite ObjectSprite__psynergy
 struct ObjectSprite {
   u8 unk00[0x12];
   u16 offsetX;

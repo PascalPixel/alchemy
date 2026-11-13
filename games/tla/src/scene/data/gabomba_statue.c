@@ -46,10 +46,10 @@ u32 gData_02005ad4[] = {
     0x60a0502, 0xa060107, 0x702040a, 0x1050a04,
 };
 
-s32 gFieldEffect_DurationScripts[] = {
-    (s32)gFieldEffect_ShortScript,
-    (s32)gFieldEffect_MediumScript,
-    (s32)gFieldEffect_LongScript,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 u32 gData_02005af0[] = {

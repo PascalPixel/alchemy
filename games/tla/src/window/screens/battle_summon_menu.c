@@ -27,8 +27,14 @@
 #define NAVIGATION ((struct SummonMenuNavigation *)Ram_HeapSlots->unke4[0])
 #define SUMMON_END 32
 
-void Window_PutGlyph(struct SummonMenuWindow *window, s32 character, s32 x,
-                     s32 y, s32 mode);
+/* VIEW(screens): routine Window_PutGlyph as void Window_PutGlyph(struct
+ * SummonMenuWindow *window, s32 character, s32 x, s32 y, s32 mode);
+ * window/window has void Window_PutGlyph(struct Window *win, u32 tile, u32 x,
+ * u32 y, s32 mode) {. */
+void Window_PutGlyph__screens(struct SummonMenuWindow *window, s32 character,
+                              s32 x, s32 y,
+                              s32 mode) __asm__("Window_PutGlyph");
+#define Window_PutGlyph Window_PutGlyph__screens
 
 s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   struct SummonMenuOam cursorStorage;

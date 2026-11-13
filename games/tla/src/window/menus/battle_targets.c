@@ -114,8 +114,14 @@ Message_CopyExpanded__menus(s32 message, u16 *text,
  * Text_ClearCanvas(void), which the object already declares,
  * BattleTarget_RunSelection moves: 1 of 1647 instructions in tla-ja. */
 extern void Vram_ClearWindowBlock__menus(void) __asm__("Text_ClearCanvas");
-void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x,
-                                 s32 y);
+/* VIEW(menus): routine Text_DrawWideStringAtOffset as void
+ * Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x,
+ * s32 y); window/window has void Text_DrawWideStringAtOffset(u16 *text, struct
+ * Window *window, s32 x, s32 y) {. */
+void Text_DrawWideStringAtOffset__menus(
+    u16 *text, struct TargetWindow *window, s32 x,
+    s32 y) __asm__("Text_DrawWideStringAtOffset");
+#define Text_DrawWideStringAtOffset Text_DrawWideStringAtOffset__menus
 
 // The help window's column beside the aimed member, kept on screen.
 #define TARGET_HELP_COLUMN(back, width, last)                                  \

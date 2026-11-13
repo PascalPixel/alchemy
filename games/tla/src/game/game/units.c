@@ -1187,7 +1187,10 @@ void Djinn_AddFoundToOwner(s32 owner, s32 element, s32 djinn) {
   GameFlag_SetBit__game(flag);
 }
 
-extern const s16 Data_080b1290[4][7];
+/* VIEW(game): variable Data_080b1290 as const s16 Data_080b1290[4][7];
+ * game/experience_table has const u16 Data_080b1290[4][7] = {. */
+extern const s16 Data_080b1290__game[4][7] __asm__("Data_080b1290");
+#define Data_080b1290 Data_080b1290__game
 
 /// Unless flag 0x800 is set, sets the party aside, makes the first four owners
 /// the party, gives them their first djinn, then hands out 16 random djinn

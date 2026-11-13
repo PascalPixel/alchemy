@@ -24,6 +24,29 @@
 #include "visual_attributes/psynergy_dispatch.c"
 #include "visual_attributes/field_psynergy.c"
 
+#undef Actor_ShowEmoteById
+#undef BattleEffect_ApplyColorToTargetBuffer
+#undef Actor_ShowItemIconById
+#undef FieldCamera_MoveToActor
+#undef Actor_SetSpriteRotationById
+#undef MapGrid_SetCellBehavior
+#undef FieldPsynergy_SteerPushedTarget
+#undef FieldPsynergy_LiftOnTarget
+#undef FieldPsynergy_ForceOnTarget
+#undef FieldPsynergy_FrostOnTarget
+#undef FieldPsynergy_PlyOnTarget
+#undef FieldPsynergy_DouseOnTarget
+#undef Actor_ReleaseFar
+
+#undef BattleEffect_ApplyColorToTargetBuffer
+#undef Actor_ReleaseFar
+#undef FieldPsynergy_SteerPushedTarget
+#undef FieldPsynergy_LiftOnTarget
+#undef FieldPsynergy_ForceOnTarget
+#undef FieldPsynergy_DouseOnTarget
+#undef FieldPsynergy_FrostOnTarget
+#undef FieldPsynergy_PlyOnTarget
+
 // ---- field/event_commands/scene.c ----
 
 #include "types.h"
@@ -520,7 +543,12 @@ Scene_FindActorPlacement__f0dcb44(s32 id) __asm__("Scene_FindActorPlacement");
  * *Resource_GetMetadataRecordFarFar(u32 number). */
 extern struct WaveFxMetadata *Resource_GetMetadataRecordFarFar__f0dcb44(
     s32 sprite) __asm__("Resource_GetMetadataRecordFarFar");
-struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
+/* VIEW(mind_read): routine Actor_CreateFar as struct Actor *Actor_CreateFar(s32
+ * kind, s32 x, s32 y, s32 z); field/object/visual_attributes has struct
+ * BattleEffectWatchedObject *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z). */
+struct Actor *Actor_CreateFar__mind_read(s32 kind, s32 x, s32 y,
+                                         s32 z) __asm__("Actor_CreateFar");
+#define Actor_CreateFar Actor_CreateFar__mind_read
 
 // Each frame after the delay: rewrites the 160-line wave into the other
 // page, cycles the colour every other frame, and at counts 0, 8 and 16 of
@@ -798,9 +826,26 @@ Func_080ce458__f0dd054(u32 filter, s32 kind,
  * function `BattleEffect_GetCycledTableWord'. */
 extern u32 BattleEffect_GetCycledTableWord__f0dd054(u32 keys) __asm__(
     "BattleEffect_GetCycledTableWord");
-s32 MapGrid_CheckCollisionFar(struct Actor *object, struct Vec3 *position);
-s32 MapGrid_GetTerrainKindFar(s32 layer, s32 x, s32 z);
-void Actor_ApplyRandomChildValues(void);
+/* VIEW(mind_read): routine MapGrid_CheckCollisionFar as s32
+ * MapGrid_CheckCollisionFar(struct Actor *object, struct Vec3 *position);
+ * module/field/field.h has s32 MapGrid_CheckCollisionFar(struct Actor *object,
+ * s32 *position). */
+s32 MapGrid_CheckCollisionFar__mind_read(
+    struct Actor *object,
+    struct Vec3 *position) __asm__("MapGrid_CheckCollisionFar");
+#define MapGrid_CheckCollisionFar MapGrid_CheckCollisionFar__mind_read
+/* VIEW(mind_read): routine MapGrid_GetTerrainKindFar as s32
+ * MapGrid_GetTerrainKindFar(s32 layer, s32 x, s32 z); module/field/field.h has
+ * u32 MapGrid_GetTerrainKindFar(s32 terrain, s32 x, s32 z). */
+s32 MapGrid_GetTerrainKindFar__mind_read(s32 layer, s32 x, s32 z) __asm__(
+    "MapGrid_GetTerrainKindFar");
+#define MapGrid_GetTerrainKindFar MapGrid_GetTerrainKindFar__mind_read
+/* VIEW(mind_read): routine Actor_ApplyRandomChildValues as void
+ * Actor_ApplyRandomChildValues(void); field/object/visual_attributes has void
+ * Actor_ApplyRandomChildValues(struct Actor *owner) {. */
+void Actor_ApplyRandomChildValues__mind_read(void) __asm__(
+    "Actor_ApplyRandomChildValues");
+#define Actor_ApplyRandomChildValues Actor_ApplyRandomChildValues__mind_read
 
 #define MOVE_CELL_MASK 0xfff00000 ///< a 16-pixel cell
 
@@ -1664,12 +1709,18 @@ struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
   return object;
 }
 
+/* VIEW(mind_read): tag struct EffectPosition as struct
+ * EffectPosition__mind_read; field/effect_step.h has another definition. */
+#define EffectPosition EffectPosition__mind_read
 struct EffectPosition {
   s32 x;
   s32 y;
   s32 z;
 };
 
+/* VIEW(mind_read): tag struct EffectWork as struct EffectWork__mind_read;
+ * field/event_commands/scene has another definition. */
+#define EffectWork EffectWork__mind_read
 struct EffectWork {
   u16 angle;
   u8 unk02[14];
@@ -2308,7 +2359,12 @@ struct EventWork__f0de21c {
   u16 state;
 };
 
-s32 MapGrid_IsCloakCell(s32 x, s32 z, s32 layer);
+/* VIEW(mind_read): routine MapGrid_IsCloakCell as s32 MapGrid_IsCloakCell(s32
+ * x, s32 z, s32 layer); field/object/visual_attributes has s32
+ * MapGrid_IsCloakCell(s32 x, s32 z) {. */
+s32 MapGrid_IsCloakCell__mind_read(s32 x, s32 z,
+                                   s32 layer) __asm__("MapGrid_IsCloakCell");
+#define MapGrid_IsCloakCell MapGrid_IsCloakCell__mind_read
 
 /// A task of Cloak: when the controlled character does not
 /// stand on a tile Cloak can hide on, requests CLOAK_END (0x2092).
@@ -2373,7 +2429,21 @@ void FieldPsynergy_ResumeCloakCheck(void) {
 #undef SE_CLOAK_END
 #undef CLOAK_FLICKER_PALETTE
 
+#undef Actor_CreateFar
+#undef MapGrid_CheckCollisionFar
+#undef MapGrid_GetTerrainKindFar
+#undef Actor_ApplyRandomChildValues
+#undef EffectPosition
+#undef EffectWork
+#undef MapGrid_IsCloakCell
 // ---- field/event_commands/cloak.c ----
+
+/* VIEW(cloak): routine BattleEffect_GetCycledTableWord as s32
+ * BattleEffect_GetCycledTableWord(), called with no declaration in scope; the
+ * definition has u16 BattleEffect_GetCycledTableWord(void). */
+s32 BattleEffect_GetCycledTableWord__cloak() __asm__(
+    "BattleEffect_GetCycledTableWord");
+#define BattleEffect_GetCycledTableWord BattleEffect_GetCycledTableWord__cloak
 
 /// The end of Cloak, and Douse.
 
@@ -2704,7 +2774,12 @@ struct EffectWork__f0decb8 {
   u8 palette;
 };
 
-void Actor_ApplyRandomChildValues(void);
+/* VIEW(cloak): routine Actor_ApplyRandomChildValues as void
+ * Actor_ApplyRandomChildValues(void); field/object/visual_attributes has void
+ * Actor_ApplyRandomChildValues(struct Actor *owner) {. */
+void Actor_ApplyRandomChildValues__cloak(void) __asm__(
+    "Actor_ApplyRandomChildValues");
+#define Actor_ApplyRandomChildValues Actor_ApplyRandomChildValues__cloak
 void FieldEffect_SpawnRadialParticleRing(struct FxObject *object);
 
 static __inline__ s32 Actor_ProbeRaised(struct FxObject *object,
@@ -2920,6 +2995,10 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     FieldPsynergy_FadeFromCastColor();
   }
 }
+
+#undef Actor_ApplyRandomChildValues
+
+#undef BattleEffect_GetCycledTableWord
 
 // ---- field/event_commands/carry.c ----
 

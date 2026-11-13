@@ -432,7 +432,14 @@ done:
   return 1;
 }
 
-s32 WorldMap_IsWalkable(struct Actor *object, struct FieldPosition *position);
+/* VIEW(resource_slot): routine WorldMap_IsWalkable as s32
+ * WorldMap_IsWalkable(struct Actor *object, struct FieldPosition *position);
+ * field/map/tile_animation has s32 WorldMap_IsWalkable(void *object, struct
+ * WorldPosition *position) {. */
+s32 WorldMap_IsWalkable__resource_slot(
+    struct Actor *object,
+    struct FieldPosition *position) __asm__("WorldMap_IsWalkable");
+#define WorldMap_IsWalkable WorldMap_IsWalkable__resource_slot
 
 /// Script command 0x22 (control mode 9): the leader as sand on the world map
 /// (the Sand Psynergy). Moves the object on the world map by the direction pad

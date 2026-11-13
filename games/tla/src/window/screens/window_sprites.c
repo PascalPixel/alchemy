@@ -5,7 +5,11 @@
 #include "../screens_internal.h"
 #include "module/window/screens.h"
 
-s32 Portrait_GetForSpeaker(s32 key);
+/* VIEW(screens): routine Portrait_GetForSpeaker as s32
+ * Portrait_GetForSpeaker(s32 key); window/window has s32
+ * Portrait_GetForSpeaker(u32 value) {. */
+s32 Portrait_GetForSpeaker__screens(s32 key) __asm__("Portrait_GetForSpeaker");
+#define Portrait_GetForSpeaker Portrait_GetForSpeaker__screens
 
 /// Takes a free window output, writes its OAM attributes at the window's
 /// position offset by (offsetX, offsetY) pixels and appends it to the window's

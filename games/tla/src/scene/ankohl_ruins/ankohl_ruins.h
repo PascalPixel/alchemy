@@ -22,12 +22,6 @@ struct AnkohlRuinsEventWork {
   struct Actor *unk1cc;
 };
 
-extern s16 gData_02003780;
-extern s16 gData_02003782;
-extern s16 gData_02003784;
-extern s32 gData_02003788;
-extern s32 gData_0200378c;
-
 void Func_02000b30(s32 id, s32 cue);
 void Func_0200160c(void);
 void Func_020019a0(void);

@@ -9,6 +9,8 @@
 #define EFFECT_SPRITE_PRIORITY
 #include "../../field/field_effect/spawn.c"
 
+#undef EFFECT_SPAWN
+
 // ---- scene/gaia_rock_inside/gaia_rock_inside.c ----
 
 /// Scene code of overlay 0x681, in ROM order.
@@ -38,7 +40,10 @@
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-extern const u8 gData_02005458[];
+/* VIEW(gaia_rock_inside): variable gData_02005458 as const u8 gData_02005458[];
+ * scene/gaia_rock_inside/s4d00 has u32 gData_02005458[] = {. */
+extern const u8 gData_02005458__gaia_rock_inside[] __asm__("gData_02005458");
+#define gData_02005458 gData_02005458__gaia_rock_inside
 
 const u8 *Scene_GetRegions(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room5)
@@ -68,8 +73,16 @@ void Func_0200036c(void) {
 #include "../../field/field_effect/advance_motion.c"
 #endif
 
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags, struct EffectOptions *options);
+/* VIEW(gaia_rock_inside): routine FieldEffect_Spawn as void
+ * FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32
+ * velocityZ, u32 flags, struct EffectOptions *options);
+ * field/field_effect/spawn has void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32
+ * velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct
+ * EffectOptions *options) {. */
+void FieldEffect_Spawn__gaia_rock_inside(
+    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
+    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
+#define FieldEffect_Spawn FieldEffect_Spawn__gaia_rock_inside
 /* VIEW(gaia_rock_inside): routine Event_End as s32 Event_End(void);
  * module/scene/scene.h has void Event_End(void); tried as the rest of the
  * object declares it, it does not compile in tla-en:
@@ -158,7 +171,11 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
    } *)(base))                                                                 \
        ->v)
 
-s32 Actor_SelectAnimation();
+/* VIEW(gaia_rock_inside): routine Actor_SelectAnimation as s32
+ * Actor_SelectAnimation(); module/field/field.h has void
+ * Actor_SelectAnimation(struct Actor *object, s32 argument). */
+s32 Actor_SelectAnimation__gaia_rock_inside() __asm__("Actor_SelectAnimation");
+#define Actor_SelectAnimation Actor_SelectAnimation__gaia_rock_inside
 
 s32 Func_020005dc(void) {
   s32 t0;
@@ -177,9 +194,17 @@ s32 Func_020005f8(void) {
   return 0;
 }
 
-extern const u8 gData_020050d0[];
+/* VIEW(gaia_rock_inside): variable gData_020050d0 as const u8 gData_020050d0[];
+ * scene/gaia_rock_inside/s4d00 has u32 gData_020050d0[] = {. */
+extern const u8 gData_020050d0__gaia_rock_inside[] __asm__("gData_020050d0");
+#define gData_020050d0 gData_020050d0__gaia_rock_inside
 
-void Actor_StartScript(struct Actor *object, const u8 *script);
+/* VIEW(gaia_rock_inside): routine Actor_StartScript as void
+ * Actor_StartScript(struct Actor *object, const u8 *script); actor_view.h has
+ * void Actor_StartScript(struct Actor *, const s32 *). */
+void Actor_StartScript__gaia_rock_inside(
+    struct Actor *object, const u8 *script) __asm__("Actor_StartScript");
+#define Actor_StartScript Actor_StartScript__gaia_rock_inside
 
 s32 Func_02000610(void) {
   struct FieldSprite *sprite = Actor_Get(9)->sprite;
@@ -230,14 +255,20 @@ s32 Func_02000678(void) {
   return 0;
 }
 
-extern u8 gData_02005544[];
+/* VIEW(gaia_rock_inside): variable gData_02005544 as u8 gData_02005544[];
+ * scene/gaia_rock_inside/s4d00 has s32 gData_02005544[] = {. */
+extern u8 gData_02005544__gaia_rock_inside[] __asm__("gData_02005544");
+#define gData_02005544 gData_02005544__gaia_rock_inside
 
 s32 Func_020006e0(void) {
   Actor_StartScript(((s32)Actor_Get(9)), (s32)gData_02005544);
   return 0;
 }
 
-extern u8 gData_0200559c[];
+/* VIEW(gaia_rock_inside): variable gData_0200559c as u8 gData_0200559c[];
+ * scene/gaia_rock_inside/s4d00 has u32 gData_0200559c[] = {. */
+extern u8 gData_0200559c__gaia_rock_inside[] __asm__("gData_0200559c");
+#define gData_0200559c gData_0200559c__gaia_rock_inside
 
 s32 Func_020006f8(void) {
   Actor_StartScript(((s32)Actor_Get(9)), (s32)gData_0200559c);
@@ -268,6 +299,15 @@ s32 Func_02000748(void) {
 
 #include "../../field/field_effect/advance_motion_priority.c"
 
+#undef FieldEffect_Spawn
+#undef Actor_SelectAnimation
+#undef Actor_StartScript
+#undef gData_020050d0
+#undef gData_02005458
+#undef gData_02005544
+#undef gData_0200559c
+#undef FIELD_AT
+
 // ---- scene/gaia_rock_inside/s07f4.c ----
 
 /// Scene code of overlay 0x681, in ROM order.
@@ -290,9 +330,17 @@ s32 Func_02000748(void) {
 #include "module/tla.h"
 #include "text/msg_ids.h"
 #include "module/field/field_effect.h"
-extern s32 gData_0200559c[];
+/* VIEW(s07f4): variable gData_0200559c as s32 gData_0200559c[];
+ * scene/gaia_rock_inside/gaia_rock_inside has u8 gData_0200559c[]. */
+extern s32 gData_0200559c__s07f4[] __asm__("gData_0200559c");
+#define gData_0200559c gData_0200559c__s07f4
 
-void Actor_StartScript(struct Actor *object, const s32 *script);
+/* VIEW(s07f4): routine Actor_StartScript as void Actor_StartScript(struct Actor
+ * *object, const s32 *script); scene/gaia_rock_inside/gaia_rock_inside has void
+ * Actor_StartScript(struct Actor *object, const u8 *script). */
+void Actor_StartScript__s07f4(struct Actor *object,
+                              const s32 *script) __asm__("Actor_StartScript");
+#define Actor_StartScript Actor_StartScript__s07f4
 
 /* VIEW(s07f4): tag struct DustSprite as struct DustSprite__s07f4;
  * module/scene/scene.h has another definition; tried with the definition the
@@ -397,10 +445,18 @@ void Func_02000900(struct Counted *object) {
 
 extern struct ActorPlacement gData_02005a54[];
 
-extern s32 gData_02005ee4;
+/* VIEW(s07f4): variable gData_02005ee4 as s32 gData_02005ee4;
+ * scene/gaia_rock_inside/s4d00 has u32 gData_02005ee4[] = {. */
+extern s32 gData_02005ee4__s07f4 __asm__("gData_02005ee4");
+#define gData_02005ee4 gData_02005ee4__s07f4
 extern s32 gData_02005e28[];
 
-void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
+/* VIEW(s07f4): routine Actor_SetSpriteColorMode as void
+ * Actor_SetSpriteColorMode(struct Actor *object, s32 value); actor_view.h has
+ * void Actor_SetSpriteColorMode(struct Actor *, u32). */
+void Actor_SetSpriteColorMode__s07f4(struct Actor *object, s32 value) __asm__(
+    "Actor_SetSpriteColorMode");
+#define Actor_SetSpriteColorMode Actor_SetSpriteColorMode__s07f4
 
 /// Return the table for the current room.
 const void *Scene_GetPlacements(void) {
@@ -493,7 +549,10 @@ void Func_02000b6c(void) {
   }
 }
 
-void Func_02002cb4(s32 a);
+/* VIEW(s07f4): routine Func_02002cb4 as void Func_02002cb4(s32 a);
+ * scene/gaia_rock_inside/s2cb4 has void Func_02002cb4(u8 mode) {. */
+void Func_02002cb4__s07f4(s32 a) __asm__("Func_02002cb4");
+#define Func_02002cb4 Func_02002cb4__s07f4
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -539,7 +598,12 @@ void Func_02000cd8(void) {
 
 void Func_02000cf8(void) { Func_02004ff4_(18, 17, 0, 3, 3, 31, 0); }
 
-extern const struct CellPoint gData_020051d8[12];
+/* VIEW(s07f4): variable gData_020051d8 as const struct CellPoint
+ * gData_020051d8[12]; scene/gaia_rock_inside/s4d00 has u16 gData_020051d8[] =
+ * {. */
+extern const struct CellPoint
+    gData_020051d8__s07f4[12] __asm__("gData_020051d8");
+#define gData_020051d8 gData_020051d8__s07f4
 
 void Func_02000d18(void) {
   struct Actor *guard;
@@ -660,13 +724,22 @@ void Func_02000fac(void) {
 }
 #undef FIELD_AT
 
+#undef gData_0200559c
+#undef Actor_StartScript
+#undef Actor_SetSpriteColorMode
+#undef Func_02002cb4
+#undef gData_020051d8
+#undef gData_02005ee4
 // ---- games/tla/src/scene/gaia_rock_inside/s1048.c ----
 // Scene code of overlay 0x681, in ROM order, from s1048's offset up to the next
 // object the overlay links.
 
 #include "text/msg_ids.h"
 
-extern s32 gData_0200559c[];
+/* VIEW(s1048): variable gData_0200559c as s32 gData_0200559c[];
+ * scene/gaia_rock_inside/gaia_rock_inside has u8 gData_0200559c[]. */
+extern s32 gData_0200559c__s1048[] __asm__("gData_0200559c");
+#define gData_0200559c gData_0200559c__s1048
 /* VIEW(s1048): variable gData_0200646c as extern s32 gData_0200646c[]; s07f4
  * has extern struct Actor gData_0200646c; tried as the definition's extern
  * struct ActorPlacement gData_0200646c[], it does not compile in tla-ja:
@@ -751,6 +824,7 @@ void Func_020011c8(void) {
   Event_End();
 }
 
+#undef gData_0200559c
 // ---- games/tla/src/scene/gaia_rock_inside/s12ac.c ----
 // Scene code of overlay 0x681, in ROM order, from s12ac's offset up to the next
 // object the overlay links.
@@ -789,7 +863,10 @@ void Func_020012ac(void) {
  * void Actor_StartScript(struct Actor *object, const s32 *script); not tried:
  * Actor_StartScript's bound declaration was not found. */
 extern s32 Func_02004dac__s12ac() __asm__("Actor_StartScript");
-extern u8 gData_02005208[];
+/* VIEW(s12ac): variable gData_02005208 as u8 gData_02005208[];
+ * scene/gaia_rock_inside/s4d00 has u32 gData_02005208[] = {. */
+extern u8 gData_02005208__s12ac[] __asm__("gData_02005208");
+#define gData_02005208 gData_02005208__s12ac
 
 void Func_02001314(s32 a0) {
   s32 t0;
@@ -808,6 +885,7 @@ void Func_02001314(s32 a0) {
 }
 #undef FIELD_AT
 
+#undef gData_02005208
 // ---- games/tla/src/scene/gaia_rock_inside/s136c.c ----
 // Scene code of overlay 0x681, in ROM order, from s136c's offset up to the next
 // object the overlay links.
@@ -815,7 +893,10 @@ void Func_02001314(s32 a0) {
 #include "frame.h"
 #include "system/field_effect.h"
 
-extern s32 gData_0200559c[];
+/* VIEW(s136c): variable gData_0200559c as s32 gData_0200559c[];
+ * scene/gaia_rock_inside/gaia_rock_inside has u8 gData_0200559c[]. */
+extern s32 gData_0200559c__s136c[] __asm__("gData_0200559c");
+#define gData_0200559c gData_0200559c__s136c
 
 // Steps an orbiting object around its anchor: turns it by half its speed, puts
 // it on the anchor (raised 8 pixels) and pushes it out by its radius; when its
@@ -858,6 +939,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, FieldEffect_Spawn)
 #undef BYTE_AT
 
+#undef gData_0200559c
 // ---- scene/gaia_rock_inside/s15d0.c ----
 
 /// Scene code of overlay 0x681, in ROM order.
@@ -904,11 +986,73 @@ struct Spark {
   struct Actor *watchedObject;
 };
 
-extern const u8 gData_02005264[], gData_02005218[], gData_02005234[],
-    gData_02005288[], gData_02005244[], gData_020052ac[], gData_020052dc[];
-void Actor_SelectAnimation(void *object, s32 mode);
-void Actor_StartScript(void *object, const u8 *script);
-void Actor_EmitBubbles(void);
+/* VIEW(s15d0): variable gData_02005264 as const u8 gData_02005264[];
+ * scene/gaia_rock_inside/s4d00 has DEFINE_G_DATA_02005264(gData_02005264, 24)
+ * DEFINE_G_DATA_02005264(gData_02005288, 16)
+ * DEFINE_G_DATA_020052AC(gData_020052ac, 24, 0)
+ * DEFINE_G_DATA_020052AC(gData_020052dc, 16, 3) u16 gData_0200530c[] = {. */
+extern const u8 gData_02005264__s15d0[] __asm__("gData_02005264");
+#define gData_02005264 gData_02005264__s15d0
+/* VIEW(s15d0): variable gData_02005218 as const u8 gData_02005218[];
+ * scene/gaia_rock_inside/s4d00 has DEFINE_G_DATA_02005218(gData_02005218) s32
+ * gData_02005234[] = {. */
+extern const u8 gData_02005218__s15d0[] __asm__("gData_02005218");
+#define gData_02005218 gData_02005218__s15d0
+/* VIEW(s15d0): variable gData_02005234 as const u8 gData_02005234[];
+ * scene/gaia_rock_inside/s4d00 has s32 gData_02005234[] = {. */
+extern const u8 gData_02005234__s15d0[] __asm__("gData_02005234");
+#define gData_02005234 gData_02005234__s15d0
+/* VIEW(s15d0): variable gData_02005288 as const u8 gData_02005288[];
+ * scene/gaia_rock_inside/s4d00 has DEFINE_G_DATA_02005264(gData_02005288, 16)
+ * DEFINE_G_DATA_020052AC(gData_020052ac, 24, 0)
+ * DEFINE_G_DATA_020052AC(gData_020052dc, 16, 3) u16 gData_0200530c[] = {. */
+extern const u8 gData_02005288__s15d0[] __asm__("gData_02005288");
+#define gData_02005288 gData_02005288__s15d0
+/* VIEW(s15d0): variable gData_02005244 as const u8 gData_02005244[];
+ * scene/gaia_rock_inside/s4d00 has DEFINE_G_DATA_02005244(gData_02005244,
+ * Orbit_Update, Actor_AimAtWatched, Actor_StepToWatched)
+ * DEFINE_G_DATA_02005264(gData_02005264, 24)
+ * DEFINE_G_DATA_02005264(gData_02005288, 16)
+ * DEFINE_G_DATA_020052AC(gData_020052ac, 24, 0)
+ * DEFINE_G_DATA_020052AC(gData_020052dc, 16, 3) u16 gData_0200530c[] = {. */
+extern const u8 gData_02005244__s15d0[] __asm__("gData_02005244");
+#define gData_02005244 gData_02005244__s15d0
+/* VIEW(s15d0): variable gData_020052ac as const u8 gData_020052ac[];
+ * scene/gaia_rock_inside/s4d00 has DEFINE_G_DATA_020052AC(gData_020052ac, 24,
+ * 0) DEFINE_G_DATA_020052AC(gData_020052dc, 16, 3) u16 gData_0200530c[] = {. */
+extern const u8 gData_020052ac__s15d0[] __asm__("gData_020052ac");
+#define gData_020052ac gData_020052ac__s15d0
+/* VIEW(s15d0): variable gData_020052dc as const u8 gData_020052dc[];
+ * scene/gaia_rock_inside/s4d00 has DEFINE_G_DATA_020052AC(gData_020052dc, 16,
+ * 3) u16 gData_0200530c[] = {. */
+extern const u8 gData_020052dc__s15d0[] __asm__("gData_020052dc");
+#define gData_020052dc gData_020052dc__s15d0
+/* VIEW(s15d0): routine Actor_SelectAnimation as void Actor_SelectAnimation(void
+ * *object, s32 mode); module/field/field.h has void
+ * Actor_SelectAnimation(struct Actor *object, s32 argument). */
+void Actor_SelectAnimation__s15d0(void *object,
+                                  s32 mode) __asm__("Actor_SelectAnimation");
+#define Actor_SelectAnimation Actor_SelectAnimation__s15d0
+/* VIEW(s15d0): routine Actor_StartScript as void Actor_StartScript(void
+ * *object, const u8 *script); scene/gaia_rock_inside/gaia_rock_inside has void
+ * Actor_StartScript(struct Actor *object, const u8 *script). */
+void Actor_StartScript__s15d0(void *object,
+                              const u8 *script) __asm__("Actor_StartScript");
+#define Actor_StartScript Actor_StartScript__s15d0
+/* VIEW(s15d0): routine Actor_EmitBubbles as void Actor_EmitBubbles(void);
+ * games/tla/src/scene/gaia_rock_inside/s136c has
+ * DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, FieldEffect_Spawn) #undef
+ * BYTE_AT #undef gData_0200559c // ---- scene/gaia_rock_inside/s15d0.c ---- ///
+ * Scene code of overlay 0x681, in ROM order. #include "types.h" #include
+ * "flags.h" #include "system.h" #include "actor.h" #include "system/io_reg.h"
+ * #include "event_inline.h" #include "main_routine_work.h" #include
+ * "text/msg_ids.h" #include "field_effect.h" #include "fixed_math.h" #include
+ * "event_work.h" #include "module/field/event_commands.h" #include
+ * "module/field/object.h" #include "module/scene/gaia_rock_inside.h" #include
+ * "module/scene/scene.h" #include "module/system/system.h" #include "field.h"
+ * struct Spark {. */
+void Actor_EmitBubbles__s15d0(void) __asm__("Actor_EmitBubbles");
+#define Actor_EmitBubbles Actor_EmitBubbles__s15d0
 
 void Func_020015d0(s32 idA, s32 idB) {
   struct Actor *a = Actor_GetById(idA);
@@ -1286,6 +1430,16 @@ void Func_02001ebc(void) {
   }
 }
 
+#undef Actor_SelectAnimation
+#undef Actor_StartScript
+#undef Actor_EmitBubbles
+#undef gData_02005218
+#undef gData_02005234
+#undef gData_02005244
+#undef gData_02005264
+#undef gData_02005288
+#undef gData_020052ac
+#undef gData_020052dc
 // ---- scene/gaia_rock_inside/s1f68.c ----
 
 /// Scene code of overlay 0x681, in ROM order.
@@ -1727,7 +1881,10 @@ void Func_02002718(void) {
   }
 }
 
-extern const s16 gData_0200530c[][2];
+/* VIEW(s1f68): variable gData_0200530c as const s16 gData_0200530c[][2];
+ * scene/gaia_rock_inside/s4d00 has u16 gData_0200530c[] = {. */
+extern const s16 gData_0200530c__s1f68[][2] __asm__("gData_0200530c");
+#define gData_0200530c gData_0200530c__s1f68
 
 /// Records which of eleven listed cells persons 10 and 11 stand on, as the two
 /// halves of the byte flag 0x210.
@@ -1754,7 +1911,10 @@ s32 Func_02002974(void) {
   }
 }
 
-s32 Func_02004af0();
+/* VIEW(s1f68): routine Func_02004af0 as s32 Func_02004af0();
+ * scene/gaia_rock_inside/s2cb4 has void Func_02004af0(s32 id, s32 flag) {. */
+s32 Func_02004af0__s1f68() __asm__("Func_02004af0");
+#define Func_02004af0 Func_02004af0__s1f68
 
 void Func_02002a14(void) { Func_02004af0(0xb, 0x303); }
 
@@ -1763,13 +1923,34 @@ void Func_02002a24(void) { Func_02004af0(0xc, 0x304); }
 void Func_02002a34(void) { Func_02004af0(0xd, 0x305); }
 
 extern char SceneId_Ov681Room5;
-extern const u8 gData_02005ee8[];
-extern const u8 gData_02005f30[];
-extern const u8 gData_02005fcc[];
-extern const u8 gData_02006038[];
-extern const u8 gData_020060f8[];
-extern const u8 gData_02006164[];
-extern const u8 gData_020061a0[];
+/* VIEW(s1f68): variable gData_02005ee8 as const u8 gData_02005ee8[];
+ * scene/gaia_rock_inside/s4d00 has struct Trigger gData_02005ee8[] = {. */
+extern const u8 gData_02005ee8__s1f68[] __asm__("gData_02005ee8");
+#define gData_02005ee8 gData_02005ee8__s1f68
+/* VIEW(s1f68): variable gData_02005f30 as const u8 gData_02005f30[];
+ * scene/gaia_rock_inside/s4d00 has struct Trigger gData_02005f30[] = {. */
+extern const u8 gData_02005f30__s1f68[] __asm__("gData_02005f30");
+#define gData_02005f30 gData_02005f30__s1f68
+/* VIEW(s1f68): variable gData_02005fcc as const u8 gData_02005fcc[];
+ * scene/gaia_rock_inside/s4d00 has struct Trigger gData_02005fcc[] = {. */
+extern const u8 gData_02005fcc__s1f68[] __asm__("gData_02005fcc");
+#define gData_02005fcc gData_02005fcc__s1f68
+/* VIEW(s1f68): variable gData_02006038 as const u8 gData_02006038[];
+ * scene/gaia_rock_inside/s4d00 has struct Trigger gData_02006038[] = {. */
+extern const u8 gData_02006038__s1f68[] __asm__("gData_02006038");
+#define gData_02006038 gData_02006038__s1f68
+/* VIEW(s1f68): variable gData_020060f8 as const u8 gData_020060f8[];
+ * scene/gaia_rock_inside/s4d00 has s32 gData_020060f8[] = {. */
+extern const u8 gData_020060f8__s1f68[] __asm__("gData_020060f8");
+#define gData_020060f8 gData_020060f8__s1f68
+/* VIEW(s1f68): variable gData_02006164 as const u8 gData_02006164[];
+ * scene/gaia_rock_inside/s4d00 has struct Trigger gData_02006164[] = {. */
+extern const u8 gData_02006164__s1f68[] __asm__("gData_02006164");
+#define gData_02006164 gData_02006164__s1f68
+/* VIEW(s1f68): variable gData_020061a0 as const u8 gData_020061a0[];
+ * scene/gaia_rock_inside/s4d00 has struct Trigger gData_020061a0[] = {. */
+extern const u8 gData_020061a0__s1f68[] __asm__("gData_020061a0");
+#define gData_020061a0 gData_020061a0__s1f68
 
 /// Returns the current room's table.
 const u8 *Scene_GetEvents(void) {
@@ -1789,6 +1970,15 @@ const u8 *Scene_GetEvents(void) {
 }
 #undef FIELD_AT
 
+#undef Func_02004af0
+#undef gData_0200530c
+#undef gData_02005ee8
+#undef gData_02005f30
+#undef gData_02005fcc
+#undef gData_02006038
+#undef gData_020060f8
+#undef gData_02006164
+#undef gData_020061a0
 // ---- games/tla/src/scene/gaia_rock_inside/s2ac8.c ----
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -1935,8 +2125,15 @@ step:
 
 // Starts the room where persons 8 to 16 sway: unless flag 265 is set, clears
 // the sway state and places each person, then starts the sway's task.
-extern u16 gSceneState[];
-extern const s16 gData_0200533c[][2];
+/* VIEW(s2cb4): variable gSceneState as u16 gSceneState[];
+ * games/tla/src/scene/gaia_rock_inside/s2b8c has struct SwayState gSceneState.
+ */
+extern u16 gSceneState__s2cb4[] __asm__("gSceneState");
+#define gSceneState gSceneState__s2cb4
+/* VIEW(s2cb4): variable gData_0200533c as const s16 gData_0200533c[][2];
+ * scene/gaia_rock_inside/s4d00 has u32 gData_0200533c[] = {. */
+extern const s16 gData_0200533c__s2cb4[][2] __asm__("gData_0200533c");
+#define gData_0200533c gData_0200533c__s2cb4
 
 /// Starts the room where persons 8 to 16 sway: unless flag 265 is set, clears
 /// the sway state and places each person, then starts the sway's task.
@@ -2056,26 +2253,73 @@ struct GaiaRockInsideSceneWork {
   s32 screenEffect;
 };
 
-extern char MsgFieldYouYouCannotFightThe[];
-extern char MsgFieldAtLastTheSerpentHas[];
-extern char MsgFieldLikeISaidTheSerpent[];
-extern char MsgFieldItLooksLikeTheDragon[];
-extern s16 gData_0200530c[][2];
-extern u8 gData_02005360[];
-extern u8 gData_0200539c[];
-extern u8 gData_020053d8[];
-extern u8 gData_0200578c[];
-extern u8 gData_02005e28[];
+/* VIEW(s2cb4): variable MsgFieldYouYouCannotFightThe as char
+ * MsgFieldYouYouCannotFightThe[]; out/tla-en/text/msg_ids.h has u8
+ * MsgFieldYouYouCannotFightThe[]. */
+extern char MsgFieldYouYouCannotFightThe__s2cb4[] __asm__(
+    "MsgFieldYouYouCannotFightThe");
+#define MsgFieldYouYouCannotFightThe MsgFieldYouYouCannotFightThe__s2cb4
+/* VIEW(s2cb4): variable MsgFieldAtLastTheSerpentHas as char
+ * MsgFieldAtLastTheSerpentHas[]; out/tla-en/text/msg_ids.h has u8
+ * MsgFieldAtLastTheSerpentHas[]. */
+extern char
+    MsgFieldAtLastTheSerpentHas__s2cb4[] __asm__("MsgFieldAtLastTheSerpentHas");
+#define MsgFieldAtLastTheSerpentHas MsgFieldAtLastTheSerpentHas__s2cb4
+/* VIEW(s2cb4): variable MsgFieldLikeISaidTheSerpent as char
+ * MsgFieldLikeISaidTheSerpent[]; out/tla-en/text/msg_ids.h has u8
+ * MsgFieldLikeISaidTheSerpent[]. */
+extern char
+    MsgFieldLikeISaidTheSerpent__s2cb4[] __asm__("MsgFieldLikeISaidTheSerpent");
+#define MsgFieldLikeISaidTheSerpent MsgFieldLikeISaidTheSerpent__s2cb4
+/* VIEW(s2cb4): variable MsgFieldItLooksLikeTheDragon as char
+ * MsgFieldItLooksLikeTheDragon[]; out/tla-en/text/msg_ids.h has u8
+ * MsgFieldItLooksLikeTheDragon[]. */
+extern char MsgFieldItLooksLikeTheDragon__s2cb4[] __asm__(
+    "MsgFieldItLooksLikeTheDragon");
+#define MsgFieldItLooksLikeTheDragon MsgFieldItLooksLikeTheDragon__s2cb4
+/* VIEW(s2cb4): variable gData_0200530c as s16 gData_0200530c[][2];
+ * games/tla/src/scene/gaia_rock_inside/s1f68 has const s16 gData_0200530c[][2].
+ */
+extern s16 gData_0200530c__s2cb4[][2] __asm__("gData_0200530c");
+#define gData_0200530c gData_0200530c__s2cb4
+/* VIEW(s2cb4): variable gData_02005360 as u8 gData_02005360[];
+ * scene/gaia_rock_inside/s4d00 has u32 gData_02005360[] = {. */
+extern u8 gData_02005360__s2cb4[] __asm__("gData_02005360");
+#define gData_02005360 gData_02005360__s2cb4
+/* VIEW(s2cb4): variable gData_0200539c as u8 gData_0200539c[];
+ * scene/gaia_rock_inside/s4d00 has u32 gData_0200539c[] = {. */
+extern u8 gData_0200539c__s2cb4[] __asm__("gData_0200539c");
+#define gData_0200539c gData_0200539c__s2cb4
+/* VIEW(s2cb4): variable gData_020053d8 as u8 gData_020053d8[];
+ * scene/gaia_rock_inside/s4d00 has u32 gData_020053d8[] = {. */
+extern u8 gData_020053d8__s2cb4[] __asm__("gData_020053d8");
+#define gData_020053d8 gData_020053d8__s2cb4
+/* VIEW(s2cb4): variable gData_0200578c as u8 gData_0200578c[];
+ * scene/gaia_rock_inside/s4d00 has s32 gData_0200578c[] = {. */
+extern u8 gData_0200578c__s2cb4[] __asm__("gData_0200578c");
+#define gData_0200578c gData_0200578c__s2cb4
+/* VIEW(s2cb4): variable gData_02005e28 as u8 gData_02005e28[];
+ * games/tla/src/scene/gaia_rock_inside/s07f4 has s32 gData_02005e28[]. */
+extern u8 gData_02005e28__s2cb4[] __asm__("gData_02005e28");
+#define gData_02005e28 gData_02005e28__s2cb4
 
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 kind);
 s32 __modsi3(s32 numerator, s32 denominator);
 void Func_02002ac8();
 void Func_02001c9c(void);
-void Func_0200042c(void);
+/* VIEW(s2cb4): routine Func_0200042c as void Func_0200042c(void);
+ * scene/gaia_rock_inside/gaia_rock_inside has s32 Func_0200042c(void) {. */
+void Func_0200042c__s2cb4(void) __asm__("Func_0200042c");
+#define Func_0200042c Func_0200042c__s2cb4
 void Func_02004a5c(s32 id, s32 x, s32 y, s32 z);
 void Func_02004d00(void);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
-void Actor_StartScript(struct Actor *object, const u8 *script);
+/* VIEW(s2cb4): routine Actor_StartScript as void Actor_StartScript(struct Actor
+ * *object, const u8 *script); actor_view.h has void Actor_StartScript(struct
+ * Actor *, const s32 *). */
+void Actor_StartScript__s2cb4(struct Actor *object,
+                              const u8 *script) __asm__("Actor_StartScript");
+#define Actor_StartScript Actor_StartScript__s2cb4
 void BlendScript_Resume(void);
 void BlendScript_Suspend(void);
 void Actor_SetSpritePriorityDirect();
@@ -2767,16 +3011,54 @@ extern char SceneId_Ov681Room2;
 extern char SceneId_Ov681Room3;
 extern char SceneId_Ov681Room4;
 extern char SceneId_Ov681Room5;
-extern char MsgFieldYouYouCannotFightThe[];
-extern char MsgFieldAtLastTheSerpentHas[];
-extern char MsgFieldLikeISaidTheSerpent[];
-extern char MsgFieldItLooksLikeTheDragon[];
-extern s16 gData_0200530c[][2];
-extern u8 gData_02005360[];
-extern u8 gData_0200539c[];
-extern u8 gData_020053d8[];
-extern u8 gData_0200578c[];
-extern u8 gData_02005e28[];
+/* VIEW(s2cb4): variable MsgFieldYouYouCannotFightThe as char
+ * MsgFieldYouYouCannotFightThe[]; out/tla-ja/text/msg_ids.h has u8
+ * MsgFieldYouYouCannotFightThe[]. */
+extern char MsgFieldYouYouCannotFightThe__s2cb4[] __asm__(
+    "MsgFieldYouYouCannotFightThe");
+#define MsgFieldYouYouCannotFightThe MsgFieldYouYouCannotFightThe__s2cb4
+/* VIEW(s2cb4): variable MsgFieldAtLastTheSerpentHas as char
+ * MsgFieldAtLastTheSerpentHas[]; out/tla-ja/text/msg_ids.h has u8
+ * MsgFieldAtLastTheSerpentHas[]. */
+extern char
+    MsgFieldAtLastTheSerpentHas__s2cb4[] __asm__("MsgFieldAtLastTheSerpentHas");
+#define MsgFieldAtLastTheSerpentHas MsgFieldAtLastTheSerpentHas__s2cb4
+/* VIEW(s2cb4): variable MsgFieldLikeISaidTheSerpent as char
+ * MsgFieldLikeISaidTheSerpent[]; out/tla-ja/text/msg_ids.h has u8
+ * MsgFieldLikeISaidTheSerpent[]. */
+extern char
+    MsgFieldLikeISaidTheSerpent__s2cb4[] __asm__("MsgFieldLikeISaidTheSerpent");
+#define MsgFieldLikeISaidTheSerpent MsgFieldLikeISaidTheSerpent__s2cb4
+/* VIEW(s2cb4): variable MsgFieldItLooksLikeTheDragon as char
+ * MsgFieldItLooksLikeTheDragon[]; out/tla-ja/text/msg_ids.h has u8
+ * MsgFieldItLooksLikeTheDragon[]. */
+extern char MsgFieldItLooksLikeTheDragon__s2cb4[] __asm__(
+    "MsgFieldItLooksLikeTheDragon");
+#define MsgFieldItLooksLikeTheDragon MsgFieldItLooksLikeTheDragon__s2cb4
+/* VIEW(s2cb4): variable gData_0200530c as s16 gData_0200530c[][2];
+ * scene/gaia_rock_inside/s4d00 has u16 gData_0200530c[] = {. */
+extern s16 gData_0200530c__s2cb4[][2] __asm__("gData_0200530c");
+#define gData_0200530c gData_0200530c__s2cb4
+/* VIEW(s2cb4): variable gData_02005360 as u8 gData_02005360[];
+ * scene/gaia_rock_inside/s4d00 has u32 gData_02005360[] = {. */
+extern u8 gData_02005360__s2cb4[] __asm__("gData_02005360");
+#define gData_02005360 gData_02005360__s2cb4
+/* VIEW(s2cb4): variable gData_0200539c as u8 gData_0200539c[];
+ * scene/gaia_rock_inside/s4d00 has u32 gData_0200539c[] = {. */
+extern u8 gData_0200539c__s2cb4[] __asm__("gData_0200539c");
+#define gData_0200539c gData_0200539c__s2cb4
+/* VIEW(s2cb4): variable gData_020053d8 as u8 gData_020053d8[];
+ * scene/gaia_rock_inside/s4d00 has u32 gData_020053d8[] = {. */
+extern u8 gData_020053d8__s2cb4[] __asm__("gData_020053d8");
+#define gData_020053d8 gData_020053d8__s2cb4
+/* VIEW(s2cb4): variable gData_0200578c as u8 gData_0200578c[];
+ * scene/gaia_rock_inside/s4d00 has s32 gData_0200578c[] = {. */
+extern u8 gData_0200578c__s2cb4[] __asm__("gData_0200578c");
+#define gData_0200578c gData_0200578c__s2cb4
+/* VIEW(s2cb4): variable gData_02005e28 as u8 gData_02005e28[];
+ * games/tla/src/scene/gaia_rock_inside/s07f4 has s32 gData_02005e28[]. */
+extern u8 gData_02005e28__s2cb4[] __asm__("gData_02005e28");
+#define gData_02005e28 gData_02005e28__s2cb4
 
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 kind);
 s32 __modsi3(s32 numerator, s32 denominator);
@@ -2785,7 +3067,12 @@ void Func_02001c9c(void);
 void Func_02004a5c(s32 id, s32 x, s32 y, s32 z);
 void Func_02004d00(void);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
-void Actor_StartScript(struct Actor *object, const u8 *script);
+/* VIEW(s2cb4): routine Actor_StartScript as void Actor_StartScript(struct Actor
+ * *object, const u8 *script); actor_view.h has void Actor_StartScript(struct
+ * Actor *, const s32 *). */
+void Actor_StartScript__s2cb4(struct Actor *object,
+                              const u8 *script) __asm__("Actor_StartScript");
+#define Actor_StartScript Actor_StartScript__s2cb4
 void Actor_Release();
 void BlendScript_Resume(void);
 void BlendScript_Suspend(void);
@@ -3460,8 +3747,16 @@ void Func_02004274(s32 a0) { Func_0200495c(1, a0); }
 
 void *Unit_Get(s32 owner);
 void BlendScript_Start(u16 *script);
-void Func_02000aac(void);
-void Func_02000a60(void);
+/* VIEW(s2cb4): routine Func_02000aac as void Func_02000aac(void);
+ * games/tla/src/scene/gaia_rock_inside/s07f4 has void Func_02000aac(struct
+ * Actor *object) {. */
+void Func_02000aac__s2cb4(void) __asm__("Func_02000aac");
+#define Func_02000aac Func_02000aac__s2cb4
+/* VIEW(s2cb4): routine Func_02000a60 as void Func_02000a60(void);
+ * games/tla/src/scene/gaia_rock_inside/s07f4 has void Func_02000a60(struct
+ * Actor *object) {. */
+void Func_02000a60__s2cb4(void) __asm__("Func_02000a60");
+#define Func_02000a60 Func_02000a60__s2cb4
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room1) {
@@ -3820,7 +4115,10 @@ void Func_0200485c(s32 direction) {
   Event_PlaySound(123);
 }
 
-extern s8 gData_020053fc[][2];
+/* VIEW(s2cb4): variable gData_020053fc as s8 gData_020053fc[][2];
+ * scene/gaia_rock_inside/s4d00 has u32 gData_020053fc[] = {. */
+extern s8 gData_020053fc__s2cb4[][2] __asm__("gData_020053fc");
+#define gData_020053fc gData_020053fc__s2cb4
 
 /// From the third state on, for each of the two map layers:
 /// Map_CopyRawCellsRect with the state's origin plus the layer's cell, a 15 by
@@ -3932,8 +4230,21 @@ void Func_02004a5c(s32 id, s32 x, s32 y, s32 z) {
   Actor_SetSpriteFlags(object, 0);
 }
 
-extern const u8 gData_020062d4[];
-extern const u8 gData_02006290[];
+/* VIEW(s2cb4): variable gData_020062d4 as const u8 gData_020062d4[];
+ * scene/gaia_rock_inside/s4d00 has DEFINE_G_DATA_020016CC(gData_020062d4) //
+ * clang-format on #undef Func_020049e4 #undef Func_020005dc #undef
+ * Func_020005f8 #undef Func_02000610 #undef Func_02000678 #undef Func_020006e0
+ * #undef Func_020006f8 #undef Func_02000718 #undef Func_02000748 #undef
+ * Func_020007f4 #undef Func_020008b4 #undef Func_02000900 #undef Func_02000af8
+ * #undef Orbiter_Spiral #undef Orbit_Update #undef Actor_AimAtWatched #undef
+ * Actor_StepToWatched #undef Func_020019cc #undef Func_02002974 #undef
+ * Func_0200485c. */
+extern const u8 gData_020062d4__s2cb4[] __asm__("gData_020062d4");
+#define gData_020062d4 gData_020062d4__s2cb4
+/* VIEW(s2cb4): variable gData_02006290 as const u8 gData_02006290[];
+ * scene/gaia_rock_inside/s4d00 has u32 gData_02006290[] = {. */
+extern const u8 gData_02006290__s2cb4[] __asm__("gData_02006290");
+#define gData_02006290 gData_02006290__s2cb4
 
 void Func_02004af0(s32 id, s32 flag) {
   struct MainRoutineWork *entryWork = &gMainRoutineWork;
@@ -4020,6 +4331,37 @@ burst:
   Event_SetFlag(flag);
 }
 
+#undef gSceneState
+#undef MsgFieldYouYouCannotFightThe
+#undef MsgFieldAtLastTheSerpentHas
+#undef MsgFieldLikeISaidTheSerpent
+#undef MsgFieldItLooksLikeTheDragon
+#undef gData_0200530c
+#undef gData_02005e28
+#undef Func_0200042c
+#undef Actor_StartScript
+#undef Func_02000aac
+#undef Func_02000a60
+#undef gData_0200533c
+#undef gData_02005360
+#undef gData_0200539c
+#undef gData_020053d8
+#undef gData_020053fc
+#undef gData_0200578c
+#undef gData_02006290
+#undef gData_020062d4
+
+#undef MsgFieldYouYouCannotFightThe
+#undef MsgFieldAtLastTheSerpentHas
+#undef MsgFieldLikeISaidTheSerpent
+#undef MsgFieldItLooksLikeTheDragon
+#undef gData_02005e28
+#undef Actor_StartScript
+#undef gData_0200530c
+#undef gData_02005360
+#undef gData_0200539c
+#undef gData_020053d8
+#undef gData_0200578c
 // ---- scene/gaia_rock_inside/s4d00.c ----
 
 /// Scene code of overlay 0x681, in ROM order.
@@ -4030,7 +4372,10 @@ burst:
 
 #include "task.h"
 #include "event_inline.h"
-extern u8 Func_020049e4[];
+/* VIEW(s4d00): variable Func_020049e4 as u8 Func_020049e4[];
+ * scene/gaia_rock_inside/s2cb4 has void Func_020049e4(void) {. */
+extern u8 Func_020049e4__s4d00[] __asm__("Func_020049e4");
+#define Func_020049e4 Func_020049e4__s4d00
 
 void Func_02004d00(void) {
   Task_AddFrame((s32)Func_020049e4, TASK_PASS_VBLANK);
@@ -4040,27 +4385,96 @@ void Func_02004d00(void) {
 #include "text/msg_ids.h"
 #include "objcmd.h"
 
-void Func_020005dc(void);
-void Func_020005f8(void);
-void Func_02000610(void);
-void Func_02000678(void);
-void Func_020006e0(void);
-void Func_020006f8(void);
-void Func_02000718(void);
-void Func_02000748(void);
-void Func_020007f4(void);
-void Func_020008b4(void);
-void Func_02000900(void);
-void Func_02000af8(void);
+/* VIEW(s4d00): routine Func_020005dc as void Func_020005dc(void);
+ * scene/gaia_rock_inside/gaia_rock_inside has s32 Func_020005dc(void) {. */
+void Func_020005dc__s4d00(void) __asm__("Func_020005dc");
+#define Func_020005dc Func_020005dc__s4d00
+/* VIEW(s4d00): routine Func_020005f8 as void Func_020005f8(void);
+ * scene/gaia_rock_inside/gaia_rock_inside has s32 Func_020005f8(void) {. */
+void Func_020005f8__s4d00(void) __asm__("Func_020005f8");
+#define Func_020005f8 Func_020005f8__s4d00
+/* VIEW(s4d00): routine Func_02000610 as void Func_02000610(void);
+ * scene/gaia_rock_inside/gaia_rock_inside has s32 Func_02000610(void) {. */
+void Func_02000610__s4d00(void) __asm__("Func_02000610");
+#define Func_02000610 Func_02000610__s4d00
+/* VIEW(s4d00): routine Func_02000678 as void Func_02000678(void);
+ * scene/gaia_rock_inside/gaia_rock_inside has s32 Func_02000678(void) {. */
+void Func_02000678__s4d00(void) __asm__("Func_02000678");
+#define Func_02000678 Func_02000678__s4d00
+/* VIEW(s4d00): routine Func_020006e0 as void Func_020006e0(void);
+ * scene/gaia_rock_inside/gaia_rock_inside has s32 Func_020006e0(void) {. */
+void Func_020006e0__s4d00(void) __asm__("Func_020006e0");
+#define Func_020006e0 Func_020006e0__s4d00
+/* VIEW(s4d00): routine Func_020006f8 as void Func_020006f8(void);
+ * scene/gaia_rock_inside/gaia_rock_inside has s32 Func_020006f8(void) {. */
+void Func_020006f8__s4d00(void) __asm__("Func_020006f8");
+#define Func_020006f8 Func_020006f8__s4d00
+/* VIEW(s4d00): routine Func_02000718 as void Func_02000718(void);
+ * scene/gaia_rock_inside/gaia_rock_inside has s32 Func_02000718(void) {. */
+void Func_02000718__s4d00(void) __asm__("Func_02000718");
+#define Func_02000718 Func_02000718__s4d00
+/* VIEW(s4d00): routine Func_02000748 as void Func_02000748(void);
+ * scene/gaia_rock_inside/gaia_rock_inside has s32 Func_02000748(void) {. */
+void Func_02000748__s4d00(void) __asm__("Func_02000748");
+#define Func_02000748 Func_02000748__s4d00
+/* VIEW(s4d00): routine Func_020007f4 as void Func_020007f4(void);
+ * games/tla/src/scene/gaia_rock_inside/s07f4 has s32 Func_020007f4(void) {. */
+void Func_020007f4__s4d00(void) __asm__("Func_020007f4");
+#define Func_020007f4 Func_020007f4__s4d00
+/* VIEW(s4d00): routine Func_020008b4 as void Func_020008b4(void);
+ * games/tla/src/scene/gaia_rock_inside/s07f4 has s32 Func_020008b4(void) {. */
+void Func_020008b4__s4d00(void) __asm__("Func_020008b4");
+#define Func_020008b4 Func_020008b4__s4d00
+/* VIEW(s4d00): routine Func_02000900 as void Func_02000900(void);
+ * games/tla/src/scene/gaia_rock_inside/s07f4 has void Func_02000900(struct
+ * Counted *object) {. */
+void Func_02000900__s4d00(void) __asm__("Func_02000900");
+#define Func_02000900 Func_02000900__s4d00
+/* VIEW(s4d00): routine Func_02000af8 as void Func_02000af8(void);
+ * games/tla/src/scene/gaia_rock_inside/s07f4 has void Func_02000af8(s32 unused,
+ * u32 id) {. */
+void Func_02000af8__s4d00(void) __asm__("Func_02000af8");
+#define Func_02000af8 Func_02000af8__s4d00
 void Func_02000b6c(void);
 void Func_02000cd8(void);
-void Orbiter_Spiral(void);
-void Orbit_Update(void);
-void Actor_AimAtWatched(void);
-void Actor_StepToWatched(void);
-void Func_020019cc(void);
-void Func_02002974(void);
-void Func_0200485c(void);
+/* VIEW(s4d00): routine Orbiter_Spiral as void Orbiter_Spiral(void);
+ * games/tla/src/scene/gaia_rock_inside/s136c has
+ * DEFINE_ORBITER_SPIRAL(Orbiter_Spiral, Func_02001314) // Moves around in a
+ * circle. s32 Orbit_Update(struct GaiaRockInsideOrbit *object) {. */
+void Orbiter_Spiral__s4d00(void) __asm__("Orbiter_Spiral");
+#define Orbiter_Spiral Orbiter_Spiral__s4d00
+/* VIEW(s4d00): routine Orbit_Update as void Orbit_Update(void);
+ * games/tla/src/scene/gaia_rock_inside/s136c has s32 Orbit_Update(struct
+ * GaiaRockInsideOrbit *object) {. */
+void Orbit_Update__s4d00(void) __asm__("Orbit_Update");
+#define Orbit_Update Orbit_Update__s4d00
+/* VIEW(s4d00): routine Actor_AimAtWatched as void Actor_AimAtWatched(void);
+ * games/tla/src/scene/gaia_rock_inside/s136c has
+ * DEFINE_ACTOR_AIM_AT_WATCHED(Actor_AimAtWatched)
+ * DEFINE_ACTOR_STEP_TO_WATCHED(Actor_StepToWatched) void FieldEffect_Spawn(s32
+ * x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
+ * const struct EffectOptions *options). */
+void Actor_AimAtWatched__s4d00(void) __asm__("Actor_AimAtWatched");
+#define Actor_AimAtWatched Actor_AimAtWatched__s4d00
+/* VIEW(s4d00): routine Actor_StepToWatched as void Actor_StepToWatched(void);
+ * games/tla/src/scene/gaia_rock_inside/s136c has
+ * DEFINE_ACTOR_STEP_TO_WATCHED(Actor_StepToWatched) void FieldEffect_Spawn(s32
+ * x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
+ * const struct EffectOptions *options). */
+void Actor_StepToWatched__s4d00(void) __asm__("Actor_StepToWatched");
+#define Actor_StepToWatched Actor_StepToWatched__s4d00
+/* VIEW(s4d00): routine Func_020019cc as void Func_020019cc(void);
+ * scene/gaia_rock_inside/s15d0 has s32 Func_020019cc(void) {. */
+void Func_020019cc__s4d00(void) __asm__("Func_020019cc");
+#define Func_020019cc Func_020019cc__s4d00
+/* VIEW(s4d00): routine Func_02002974 as void Func_02002974(void);
+ * games/tla/src/scene/gaia_rock_inside/s1f68 has s32 Func_02002974(void) {. */
+void Func_02002974__s4d00(void) __asm__("Func_02002974");
+#define Func_02002974 Func_02002974__s4d00
+/* VIEW(s4d00): routine Func_0200485c as void Func_0200485c(void);
+ * scene/gaia_rock_inside/s2cb4 has void Func_0200485c(s32 direction) {. */
+void Func_0200485c__s4d00(void) __asm__("Func_0200485c");
+#define Func_0200485c Func_0200485c__s4d00
 
 extern u32 gData_02005528[];
 extern u32 gData_02005a30[];
@@ -4154,10 +4568,10 @@ u32 gData_020053fc[] = {
     0x17012201, 0xc01,
 };
 
-s32 gFieldEffect_DurationScripts[] = {
-    (s32)gFieldEffect_ShortScript,
-    (s32)gFieldEffect_MediumScript,
-    (s32)gFieldEffect_LongScript,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -4577,3 +4991,24 @@ u32 gData_02006290[] = {
 
 DEFINE_G_DATA_020016CC(gData_020062d4)
 // clang-format on
+
+#undef Func_020049e4
+#undef Func_020005dc
+#undef Func_020005f8
+#undef Func_02000610
+#undef Func_02000678
+#undef Func_020006e0
+#undef Func_020006f8
+#undef Func_02000718
+#undef Func_02000748
+#undef Func_020007f4
+#undef Func_020008b4
+#undef Func_02000900
+#undef Func_02000af8
+#undef Orbiter_Spiral
+#undef Orbit_Update
+#undef Actor_AimAtWatched
+#undef Actor_StepToWatched
+#undef Func_020019cc
+#undef Func_02002974
+#undef Func_0200485c

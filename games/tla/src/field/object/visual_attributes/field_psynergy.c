@@ -139,6 +139,12 @@ u8 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer) {
   return MapGrid_GetCellAt(x, z, layer)->collisionCode;
 }
 
+/* VIEW(visual_attributes): routine MapGrid_SetCellBehavior as u8
+ * MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 value); field/event.h
+ * has s32 MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 behavior). */
+u8 MapGrid_SetCellBehavior__visual_attributes(
+    s32 x, s32 z, s32 layer, s32 value) __asm__("MapGrid_SetCellBehavior");
+#define MapGrid_SetCellBehavior MapGrid_SetCellBehavior__visual_attributes
 u8 MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 value) {
   MapGrid_GetCellAt(x, z, layer)->collisionCode = value;
   return value;

@@ -16,11 +16,6 @@ struct Model;
 #define SUMMON16_FRAMES 296
 #define SUMMON16_SKIP_TO 232
 
-struct Point2D {
-  s32 x;
-  s32 y;
-};
-
 extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_Data0C1;
 extern char ResourceId_Data134;
@@ -598,19 +593,11 @@ void Transform_Pop(void);
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HALF(p, n) (((s16 *)(p))[n])
 
+/* VIEW(summon_effects): tag struct ResourceTableEntry as struct
+ * ResourceTableEntry__summon_effects; module/tla.h has another definition. */
 struct ResourceTableEntry {
   u16 unk0;
   u16 tile;
-};
-
-struct WordPair {
-  s32 a;
-  s32 b;
-};
-
-struct Scale {
-  s32 x;
-  s32 y;
 };
 
 // The spark objects' work, in the map cell buffer at 0x1f40.
@@ -690,7 +677,12 @@ struct Spans4 {
 
 extern char ResourceId_SunsetBackdrop, ResourceId_StarfieldFlareBackdrop;
 extern char ResourceId_RobedGoddessTiles, ResourceId_PinkPetalsTiles;
-extern struct ResourceTableEntry gResourceTableEntries[];
+/* VIEW(summon_effects): variable gResourceTableEntries as struct
+ * ResourceTableEntry gResourceTableEntries[]; graphics/vram_tab.h has struct
+ * VramBlockCacheEntry gResourceTableEntries[]. */
+extern struct ResourceTableEntry
+    gResourceTableEntries__summon_effects[] __asm__("gResourceTableEntries");
+#define gResourceTableEntries gResourceTableEntries__summon_effects
 extern u8 Data_02010578[];
 extern struct IrisSparks Data_02011f40;
 extern struct IrisScene Data_02012ee0;
@@ -729,10 +721,24 @@ extern const u8 Data_0819a0d4[];
 extern const u8 Data_0819a140[];
 extern const u8 Data_0819a160[];
 
-struct SpriteObject *EffectSprite_CreateWithTiles(s32 width, s32 height,
-                                                  u32 shape, u32 attributes);
-struct IrisSprite *EffectSprite_Acquire(s32 width, s32 height, u32 shape,
-                                        s32 mode);
+/* VIEW(summon_effects): routine EffectSprite_CreateWithTiles as struct
+ * SpriteObject *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape,
+ * u32 attributes); battle_effect/ability_effects has struct EffectSprite
+ * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
+ * flags) {. */
+struct SpriteObject *EffectSprite_CreateWithTiles__summon_effects(
+    s32 width, s32 height, u32 shape,
+    u32 attributes) __asm__("EffectSprite_CreateWithTiles");
+#define EffectSprite_CreateWithTiles                                           \
+  EffectSprite_CreateWithTiles__summon_effects
+/* VIEW(summon_effects): routine EffectSprite_Acquire as struct IrisSprite
+ * *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode);
+ * battle_effect/ability_effects has struct EffectSprite__f15b3b0
+ * *EffectSprite_Acquire(s32 kind, s32 value) {. */
+struct IrisSprite *
+EffectSprite_Acquire__summon_effects(s32 width, s32 height, u32 shape,
+                                     s32 mode) __asm__("EffectSprite_Acquire");
+#define EffectSprite_Acquire EffectSprite_Acquire__summon_effects
 void BattleEffect_ConfigureEffectDisplay(void);
 
 void Palette_LoadBasicSpriteColors(void);
@@ -3115,6 +3121,8 @@ struct PoolEntry *Render_AllocateModelList(s32 count) {
   return entries;
 }
 
+/* VIEW(summon_effects): tag struct Texture as struct Texture__summon_effects;
+ * module/battle_effect/battle_effect.h has another definition. */
 struct Texture {
   u8 logWidth;
   u8 logHeight;
@@ -3143,6 +3151,8 @@ s32 Render_CopyTextureToIwram(struct Texture *source, struct Texture *copy) {
   return 1;
 }
 
+/* VIEW(summon_effects): tag struct Model as struct Model__summon_effects;
+ * battle_effect/ability_effects has another definition. */
 /// One entry of a model list. Render_AllocateModelList allocates the list with
 /// a cleared entry after the last.
 struct Model {

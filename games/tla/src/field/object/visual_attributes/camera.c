@@ -85,6 +85,12 @@ void FieldCamera_MoveToActorById(s32 id, s32 use_setter) {
 }
 
 /// As FieldCamera_MoveToActorById, to the actor's height too.
+/* VIEW(visual_attributes): routine FieldCamera_MoveToActor as void
+ * FieldCamera_MoveToActor(s32 id, s32 use_setter); field/event.h has s32
+ * FieldCamera_MoveToActor(s32 actorId, s32 pan). */
+void FieldCamera_MoveToActor__visual_attributes(s32 id, s32 use_setter) __asm__(
+    "FieldCamera_MoveToActor");
+#define FieldCamera_MoveToActor FieldCamera_MoveToActor__visual_attributes
 void FieldCamera_MoveToActor(s32 id, s32 use_setter) {
   struct Actor *obj = ObjectTable_Get(id);
 

@@ -174,8 +174,6 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
 // The chips' shapes and flips live in particles[32..63].
 #define FIRST_CHIP 32
 
-typedef DrawRectangle BlitterPair[2];
-
 extern char ResourceId_PortalSheet;
 
 // The chips: ☀️'s gHail_ChipFlips (a blitter's flags), and, by shape,
@@ -462,7 +460,12 @@ void BattleEffect_RunImpactBurst(s32 group, s32 x, s32 y);
 void Canvas_BlitAtFoot(void *source, s32 x, s32 y, s32 size); // four motes
 void SceneTransform_ApplyScale(s32 *scale);
 
-void Projection_Set(s32 a, s32 b, s32 c);
+/* VIEW(ability_effects): routine Projection_Set as void Projection_Set(s32 a,
+ * s32 b, s32 c); module/system/system.h has void Projection_Set(u32 value0, u32
+ * value1, u32 value2). */
+void Projection_Set__ability_effects(s32 a, s32 b,
+                                     s32 c) __asm__("Projection_Set");
+#define Projection_Set Projection_Set__ability_effects
 void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
 
 // The Broken Seal's iwram_call.h forwards these through static inlines; here

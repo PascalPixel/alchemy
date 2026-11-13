@@ -9,8 +9,16 @@
 extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_SelectAnimation(struct Actor *object, s32 a);
-void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
+/* VIEW(s129c): routine Actor_StartScript as void Actor_StartScript(struct
+ * FieldEffect *effect, const s32 *script); scene/shared/trial_road.h has void
+ * Actor_StartScript(struct Actor *object, const void *script). */
+void Actor_StartScript__s129c(struct FieldEffect *effect,
+                              const s32 *script) __asm__("Actor_StartScript");
+/* VIEW(s129c): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
+ * FieldEffect *effect, s32 flags); field/field.h has void
+ * Actor_SetSpriteFlags(struct Actor *object, u32 flags). */
+void Actor_SetSpriteFlags__s129c(struct FieldEffect *effect,
+                                 s32 flags) __asm__("Actor_SetSpriteFlags");
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -29,10 +37,10 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect,
-                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
+  Actor_StartScript__s129c(
+      effect, gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSpriteFlags(effect, 0);
+  Actor_SetSpriteFlags__s129c(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
@@ -72,7 +80,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
     Actor_SelectAnimation(effect, 1);
-    Actor_StartScript(effect, options->script);
+    Actor_StartScript__s129c(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
     sprite->rotation = options->rotation;

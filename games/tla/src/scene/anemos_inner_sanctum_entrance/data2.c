@@ -11,10 +11,10 @@ extern u8 gData_02000d6c[];
 extern u8 gData_02000da8[];
 extern u8 gData_02000de4[];
 
-s32 gFieldEffect_DurationScripts[] = {
-    (s32)gData_02000d6c,
-    (s32)gData_02000da8,
-    (s32)gData_02000de4,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gData_02000d6c,
+    gData_02000da8,
+    gData_02000de4,
 };
 
 s32 gData_02001970[] = {

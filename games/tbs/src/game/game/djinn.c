@@ -92,9 +92,7 @@ s32 Djinn_CanSet(s32 unitId, s32 element, s32 djinnIndex) {
   if ((unit->djinnSet[element] & (1 << djinnIndex)) != 0)
     return 0;
 
-  list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(unitId < 0 ||
-                                                               unitId > PIERS))
-              ->list;
+  list = &Djinn_GetRecoveryTable(unitId < 0 || unitId > PIERS)->list;
   for (entryIndex = 0; entryIndex < list->count; entryIndex++) {
     if (element == list->entries[entryIndex].element &&
         djinnIndex == list->entries[entryIndex].index)
@@ -155,9 +153,7 @@ s32 DjinnRecovery_Remove(s32 unitId, s32 element, s32 djinnIndex) {
   s32 removed = 0;
   s32 entryIndex;
 
-  list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(unitId < 0 ||
-                                                               unitId > PIERS))
-              ->list;
+  list = &Djinn_GetRecoveryTable(unitId < 0 || unitId > PIERS)->list;
   for (entryIndex = 0; entryIndex < list->count; entryIndex++) {
     if (element == list->entries[entryIndex].element &&
         djinnIndex == list->entries[entryIndex].index) {
@@ -182,8 +178,7 @@ u32 *DjinnRecovery_AddStandby(u32 unitId, u32 element, u32 djinnIndex) {
   struct DjinnRecoveryEntry *entry;
 
   DjinnRecovery_Remove(unitId, element, djinnIndex);
-  list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(unitId > PIERS))
-              ->list;
+  list = &Djinn_GetRecoveryTable(unitId > PIERS)->list;
   entry = &list->entries[list->count];
   entry->element = element;
   entry->index = djinnIndex;
@@ -225,9 +220,7 @@ s32 Djinn_Transfer(s32 source, s32 element, s32 djinnIndex, s32 target) {
 /// calls it by name.
 s32 DjinnRecovery_CountStandby(u8 *counts) {
   struct DjinnRecoveryList *list =
-      &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(
-            DJINN_RECOVERY_PARTY))
-           ->list;
+      &Djinn_GetRecoveryTable(DJINN_RECOVERY_PARTY)->list;
   s32 standbyCount = 0;
   s32 i;
 

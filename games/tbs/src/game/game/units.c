@@ -41,11 +41,10 @@ void Game_RestartQuest(void) {
 /// read as a bank. The bank also holds the summon flags Summon_ListLearned
 /// reads. Called by the battle code that sets, recovers and links Djinn
 /// (DjinnRecovery_CountDown, BattleSummon_UpdateAvailability, the link battle).
-void *Djinn_GetRecoveryTable(s32 enemySide) {
-  if (enemySide != 0) {
-    return Unit_Get(FIRST_ENEMY_UNIT + 3);
-  }
-  return &gMainRoutineWork.summonMask;
+struct DjinnRecoveryTable *Djinn_GetRecoveryTable(s32 enemySide) {
+  if (enemySide != 0)
+    return (struct DjinnRecoveryTable *)Unit_Get(FIRST_ENEMY_UNIT + 3);
+  return (struct DjinnRecoveryTable *)&gMainRoutineWork.summonMask;
 }
 
 /// Returns the average level of the party members, rounded down (0 with no

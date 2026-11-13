@@ -1137,8 +1137,6 @@ DEFINE_ACTOR_RESET_SCRIPTED_FOR(Func_02001f84, gData_02005d8c)
 DEFINE_RIDE_SPAWN_FRONT(Func_02001fb4, Func_02005498_, Func_02001f84, 2,
                         Func_02001e20, Func_02005480)
 
-#include "shared/mars_lighthouse_entrance_room.h"
-
 struct RideDirection {
   u16 unk00;
   u16 unk02;
@@ -1165,8 +1163,6 @@ DEFINE_RIDE_UPDATE_LANDING(Func_02001ffc, RideWork__s1ffc, Func_02001d5c,
                            Func_02001dc0)
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
-
-extern const u8 gData_02005d8c[];
 
 void Func_020022d0(struct Actor *object);
 
@@ -1332,17 +1328,6 @@ DEFINE_BEAM_START(Func_02002624, Func_0200242c)
 
 /// Scene code of overlay 0x6ad, in ROM order.
 
-#include "shared/mars_lighthouse.h"
-#include "types.h"
-#include "ram_buffer.h"
-#include "frame.h"
-#include "actor.h"
-#include "event_inline.h"
-#include "module/field/field.h"
-#include "module/scene/mars_lighthouse_star_room.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
-
 /* VIEW(ride): tag struct RideSlot as struct RideSlot__ride;
  * scene/mars_lighthouse_room_f has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
@@ -1374,7 +1359,6 @@ struct RideWork {
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Func_020041ec(void *handle);
-void Func_0200236c(struct Actor *object, s32 unused);
 
 s32 Func_02002758(s32 index) {
   return ((struct RideRow *)(gInventorySnapshot + 0x188 + index * 16))->a;
@@ -1409,7 +1393,6 @@ s32 Func_020027dc(s32 index) {
 
 DEFINE_RIDE_SET_SLOT(Func_020027ec)
 
-#include "main_routine_work.h"
 #include "battle_unit.h"
 
 struct MarsLighthouseEventWork {
@@ -1434,18 +1417,7 @@ DEFINE_PARTY_TAKE_FALL_DAMAGE(Func_02002800)
 
 /// Scene code of overlay 0x6ad, in ROM order.
 
-#include "shared/mars_lighthouse.h"
-#include "types.h"
-#include "ram_buffer.h"
-#include "frame.h"
-#include "actor.h"
-#include "event_inline.h"
-#include "event_work.h"
 #include "module/field/event_commands.h"
-#include "module/scene/mars_lighthouse_room_f.h"
-#include "module/scene/mars_lighthouse_star_room.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
 
 /* VIEW(flash): tag struct RideSlot as struct RideSlot__flash;
  * scene/mars_lighthouse_room_f has another definition; tried with the
@@ -1477,16 +1449,8 @@ struct RideWork {
   void *handle;
 };
 
-void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
-void Func_020041ec(void *handle);
-void Func_0200236c(struct Actor *object, s32 unused);
-
 DEFINE_ACTOR_BLINK(Func_02002954, 10, 4, 0)
 
-#include "version.h"
-
-#include "call.h"
-#include "main_routine_work.h"
 #include "vector3.h"
 #include "fixed_math.h"
 

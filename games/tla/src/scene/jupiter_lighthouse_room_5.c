@@ -553,7 +553,6 @@ DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
                              MapGrid_SetAttributeBAt)
 
 #include "field_sprite.h"
-#include "event_work.h"
 
 DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
@@ -793,17 +792,7 @@ void Func_02001538(void) {
 
 /// Scene code of overlay 0x69e, in ROM order.
 
-#include "shared/jupiter_lighthouse.h"
-#include "types.h"
-#include "system.h"
-#include "ram_buffer.h"
-#include "iwram_call.h"
-#include "event_inline.h"
 #include "gamepak/far_call/system.h"
-#include "item_icon.h"
-#include "module/scene/jupiter_lighthouse_room_5.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
 #include "resource.h"
 
 /* VIEW(s1650): tag struct SparkWork as struct SparkWork__s1650;
@@ -856,9 +845,6 @@ void Func_02001650(s32 count) {
       goto next;
   }
 }
-
-#include "actor.h"
-#include "main_routine_work.h"
 
 /* VIEW(s1650): routine BattleEffect_GetObjectPriority as s32
  * BattleEffect_GetObjectPriority(struct Actor *object); module/scene/scene.h
@@ -915,9 +901,7 @@ void Func_02001718(const s32 *from, const s32 *to) {
 }
 
 #include "map.h"
-#include "field_event.h"
 #include "vram_tab.h"
-#include "task.h"
 
 void Func_0200185c(void) {
   struct SparkWork__s1650 *work = Ram_HeapSlots->menuRuntime;

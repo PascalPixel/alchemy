@@ -1996,4 +1996,3 @@ u32 gYampiDesert_SlideDust[] = {
     0, 1, 38,
 };
 // clang-format on
-#undef PIXELS__s3910

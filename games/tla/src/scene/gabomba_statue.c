@@ -148,12 +148,9 @@ s32 Func_0200028c(struct Wanderer *actor) {
 #include "lib.h"
 #include "menu.h"
 #include "sound.h"
-#include "system.h"
 #include "scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
-
-#include "scene_ids.h"
 
 extern const u8 gData_02005dfc[];
 extern const u8 gData_02005e2c[];

@@ -16,11 +16,6 @@
 
 #undef EFFECT_SPAWN
 
-// ---- scene/settlements/s0280.c ----
-
-/// The settlements' events, continued; settlements.c says which places these
-/// are.
-
 #include "shared/actors.h"
 #include "shared/effects.h"
 #include "settlements.h"
@@ -43,7 +38,6 @@ s32 Settlements_ClearSpriteFlags(struct Actor *object) {
 DEFINE_ACTOR_BOB(Actor_Bob)
 
 #include "battle.h"
-#include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "lib.h"

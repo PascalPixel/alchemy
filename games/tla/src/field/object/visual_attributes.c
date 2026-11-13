@@ -38,15 +38,6 @@
 #undef FieldPsynergy_DouseOnTarget
 #undef Actor_ReleaseFar
 
-#undef BattleEffect_ApplyColorToTargetBuffer
-#undef Actor_ReleaseFar
-#undef FieldPsynergy_SteerPushedTarget
-#undef FieldPsynergy_LiftOnTarget
-#undef FieldPsynergy_ForceOnTarget
-#undef FieldPsynergy_DouseOnTarget
-#undef FieldPsynergy_FrostOnTarget
-#undef FieldPsynergy_PlyOnTarget
-
 // ---- field/event_commands/scene.c ----
 
 #include "types.h"
@@ -377,7 +368,6 @@ void Func_080dc954(void) {
     *((u8 *)slots->mapWork + 0x970) = mode;
 }
 
-#include "heap_release.h"
 #include "dma.h"
 
 #define WAVE_FX_SLOT 88
@@ -486,13 +476,7 @@ void FieldPsynergy_RestoreMindReadPalette(void) {
 /// event_commands.c has them in its parts mind_read.c to cloak.c: Mind Read's
 /// wave, Move, Reveal, Growth, Lift, Force, Frost, Ply and the start of Cloak.
 
-#include "types.h"
-#include "ram_buffer.h"
-#include "actor.h"
-#include "dma.h"
 #include "io_reg.h"
-#include "battle.h"
-#include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "lib.h"
@@ -500,31 +484,20 @@ void FieldPsynergy_RestoreMindReadPalette(void) {
 #include "sound.h"
 #include "system.h"
 #include "objdisp.h"
-#include "frame.h"
 #include "input.h"
 #include "edition.h"
 #include "fixed_math.h"
 #include "object_effect_scripts.h"
 #include "field_event.h"
 #include "field/field_psynergy_work.h"
-#include "field_particle.h"
 #include "debug.h"
-#include "main_routine_work.h"
-#include "iwram_call.h"
 #include "field_psynergy_work.h"
 #include "display_transition.h"
 #include "event_work.h"
-#include "task.h"
-#include "actor_view.h"
-#include "field_sprite.h"
 #include "scene.h"
 #include "macros.h"
-#include "sprite.h"
 
 // The parts, in ROM order.
-#include "event.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
 
 // Each frame after the delay: rewrites the 160-line wave into the other
 // page, cycles the colour every other frame, and at counts 0, 8 and 16 of
@@ -616,9 +589,6 @@ void FieldPsynergy_UpdateMindReadWave(void) {
       work->counter = 0;
   }
 }
-#include "module/field/event_commands.h"
-#include "module/field/object.h"
-#include "module/system/system.h"
 
 /// Applies BG0 line scrolling with HBlank DMA.
 void FieldEffect_ArmBg0HBlankDma(void) {

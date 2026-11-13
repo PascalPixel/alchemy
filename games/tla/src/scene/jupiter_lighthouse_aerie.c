@@ -351,7 +351,6 @@ DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
 
 #include "frame.h"
 #include "field_sprite.h"
-#include "event_work.h"
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
                                                    s32 mode) {
@@ -767,23 +766,13 @@ void Func_02001080(void) {
 
 /// Scene code of overlay 0x6a4, in ROM order.
 
-#include "shared/jupiter_lighthouse.h"
-#include "types.h"
-#include "ram_buffer.h"
-#include "actor.h"
 #include "effect_sprite.h"
-#include "event_inline.h"
 #include "map.h"
-#include "field_event.h"
 #include "vram_tab.h"
-#include "iwram_call.h"
 #include "task.h"
 #include "gamepak/far_call/system.h"
 #include "heap_release.h"
 #include "item_icon.h"
-#include "module/scene/jupiter_lighthouse_aerie.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
 #include "resource.h"
 
 /* VIEW(s17a8): tag struct BeamWork as struct BeamWork__s17a8;

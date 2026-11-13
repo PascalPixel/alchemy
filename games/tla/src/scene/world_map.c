@@ -1728,8 +1728,6 @@ void WorldMap_DriftNorthOfContinent(void) {
   FieldEvent_SetExitRequest(65);
 }
 
-#include "scene_ids.h"
-
 /// The leader is hidden and released, the screen fades and the camera moves;
 /// once a key is held the scene changes to SceneId_Ov667.
 void Func_02002e00(void) {
@@ -2039,21 +2037,6 @@ extern struct Actor *gData_02006c08__s3600[] __asm__("gData_02006c08");
 
 /// Scene code of overlay 0x64b, in ROM order.
 
-#include "types.h"
-#include "system.h"
-#include "ram_buffer.h"
-#include "frame.h"
-#include "iwram_call.h"
-#include "actor.h"
-#include "event_inline.h"
-#include "event_work.h"
-#include "item_icon.h"
-#include "module/scene/scene.h"
-#include "module/scene/staff_credit.h"
-#include "module/scene/world_map.h"
-
-u32 __umodsi3(u32 a, u32 b);
-
 s32 Func_02003988(s32 x, s32 z) { return x / 0x100000 + (z / 0x100000) * 128; }
 
 s32 Func_020039a8(struct Actor *object) {
@@ -2083,28 +2066,12 @@ s32 Func_020039a8(struct Actor *object) {
 /// Scene code of overlay 0x64b, in ROM order.
 
 #include "shared/flight.h"
-#include "types.h"
-#include "system.h"
-#include "frame.h"
-#include "actor.h"
-#include "event_inline.h"
-#include "ram_buffer.h"
-#include "iwram_call.h"
 #include "io_write_queue.h"
-#include "io_reg.h"
-#include "main_routine_work.h"
-#include "event_work.h"
-#include "field.h"
-#include "module/scene/scene.h"
-#include "module/scene/staff_credit.h"
-#include "module/scene/world_map.h"
-#include "module/system/system.h"
 #include "resource.h"
 
 extern u8 gData_02006f20[];
 extern u8 gData_02006e0e[];
 extern u8 gData_02006e0c[];
-void WorldMap_Freeze(void);
 
 DEFINE_ACTOR_FLICKER(Func_02003b38, Func_020039f4)
 
@@ -2116,8 +2083,6 @@ DEFINE_ACTOR_CYCLE_CHILD_VALUES(Func_02003b70, gData_02004fc8, gData_02006be4,
 DEFINE_ACTOR_SET_FLIGHT_MODE(Func_02003bb8, Func_02003b38, Func_02003b70)
 
 DEFINE_LEADER_SEARCH(Func_02003bf0, Func_02003bb8, WorldMap_GetBlockPlace)
-
-u32 __umodsi3(u32 a, u32 b);
 
 void Func_02003c3c(void) {
   Func_02003bb8(Actor_GetById(Party_GetLeaderActor()), 0);
@@ -2155,12 +2120,9 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
 /// Shakes the camera diagonally by one pixel every three frames.
 DEFINE_CAMERA_JITTER(WorldMap_JitterTransitionCamera)
 
-#include "event_work.h"
 #include "bg_scroll.h"
 #include "sprite.h"
-#include "field_sprite.h"
 #include "vram_tab.h"
-#include "resource.h"
 
 #define PUSH_PICTURE(offset)                                                   \
   IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + (offset)), 0x84000140)
@@ -2340,7 +2302,7 @@ DEFINE_ACTOR_GROW_DOWN(Func_020045e4, Actor_Release)
  * actor_view.h has s32 Animation_ApplyChildArgument(struct ActorSpriteView *,
  * s32); tried as the definition's s32 Animation_ApplyChildArgument(struct
  * AnimationGroup *state, s32 flags), it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:2379: `Func_020045e4' undeclared (first use
+ * games/tla/src/scene/world_map.c:2358: `Func_020045e4' undeclared (first use
  * in this function). */
 s32 Animation_ApplyChildArgument__s3b38(
     struct AnimationGroup *state,
@@ -2397,26 +2359,22 @@ void Func_02004634(struct Actor *parent) {
   }
 }
 
-#include "call.h"
-#include "task.h"
-#include "input.h"
-
 /* VIEW(s3b38): variable gData_02006e0c as s16 gData_02006e0c;
  * module/scene/scene.h has u8 gData_02006e0c[]; tried as the one declaration
  * extern s16 gData_02006e0c, it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:2411: conflicting types for `gData_02006e0c'.
+ * games/tla/src/scene/world_map.c:2390: conflicting types for `gData_02006e0c'.
  */
 extern s16 gData_02006e0c__s3b38 __asm__("gData_02006e0c");
 /* VIEW(s3b38): variable gData_02006e0e as s16 gData_02006e0e;
  * module/scene/scene.h has u8 gData_02006e0e[]; tried as the one declaration
  * extern s16 gData_02006e0e, it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:2413: conflicting types for `gData_02006e0e'.
+ * games/tla/src/scene/world_map.c:2392: conflicting types for `gData_02006e0e'.
  */
 extern s16 gData_02006e0e__s3b38 __asm__("gData_02006e0e");
 /* VIEW(s3b38): variable gData_02006f20 as u8 gData_02006f20[][32];
  * module/scene/scene.h has u8 gData_02006f20[]; tried as the rest of the object
  * declares it, it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:2417: `gData_02006f20__s3b38' undeclared
+ * games/tla/src/scene/world_map.c:2396: `gData_02006f20__s3b38' undeclared
  * (first use in this function). */
 extern u8 gData_02006f20__s3b38[][32] __asm__("gData_02006f20");
 
@@ -2458,8 +2416,6 @@ DEFINE_GAUGE_INIT(Func_020049bc, gData_02006f20__s3b38, gData_02006e0e__s3b38,
 
 DEFINE_GAUGE_END(Func_02004a1c, gData_02006f20__s3b38, gData_02006e0e__s3b38,
                  gData_02006e0c__s3b38, Func_020048f4)
-
-#include "scene_tables.h"
 
 /* VIEW(s3b38): routine Func_02003418 as void Func_02003418(void);
  * scene/world_map has s32 Func_02003418(struct Actor *object) {; tried as the

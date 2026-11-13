@@ -8,10 +8,6 @@
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect/spawn.c"
 
-// ---- scene/garoh/garoh.c ----
-
-/// Scene code of overlay 0x65f, in ROM order.
-
 #include "garoh.h"
 #include "event_inline.h"
 #include "map.h"
@@ -41,7 +37,6 @@ void Func_02000280(void) {
 #include "io_reg.h"
 #include "palette_buffers.h"
 #include "frame.h"
-#include "field.h"
 
 void Func_020002a4(void) {
   // Declared first: x then wins its allocation tie with sine.
@@ -149,7 +144,6 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "main_routine_work.h"
-#include "event_work.h"
 
 extern u32 gData_020056dc[];
 extern u32 gData_020056f4[];

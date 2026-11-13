@@ -195,7 +195,6 @@ DEFINE_ACTOR_FLICKER_CHILD(Actor_FlickerChild, 7)
 // ---- games/tla/src/scene/apojii_islands/s07a4.c ----
 #include "scene_tables.h"
 #include "actor.h"
-#include "task.h"
 
 /* VIEW(s07a4): routine Random16 as u16 Random16(void); system.h has u32
  * Random16(void); tried as the definition's u32 Random16(void), which the
@@ -290,7 +289,6 @@ blend:
 // next object the overlay links.
 
 #include "map.h"
-#include "event_work.h"
 
 void Func_02000974(void) {
   Event_Start();
@@ -718,7 +716,6 @@ void Func_020017bc(void) {
   FieldTask_AddFrame(Func_020015f8, 0x480);
 }
 
-#include "system.h"
 #include "heap_release.h"
 #include "io_reg.h"
 #include "resource.h"

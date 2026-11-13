@@ -1064,7 +1064,6 @@ void Func_02000cac(s32 arg) {
 #include "version.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "event_work.h"
 
 static __inline__ void JupiterLighthouseRoomM_AddHp(s32 owner, s32 delta) {
   /* FAKEMATCH(wrapper): forwarding through the inline reloads -10000 from
@@ -1699,26 +1698,12 @@ DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
 
 /// Scene code of overlay 0x6a3, in ROM order.
 
-#include "shared/whirlwind.h"
-#include "shared/jupiter_lighthouse.h"
-#include "shared/effects.h"
-#include "types.h"
-#include "call.h"
-#include "iwram_call.h"
-#include "actor.h"
 #include "field_effect.h"
-#include "event_inline.h"
-#include "shared/jupiter_lighthouse_aerie.h"
 #include "field_coordinate.h"
-#include "field_sprite.h"
-#include "ram_buffer.h"
 #include "map.h"
-#include "field_event.h"
 #include "vram_tab.h"
 #include "task.h"
 #include "item_icon.h"
-#include "module/scene/jupiter_lighthouse_room_m.h"
-#include "module/scene/scene.h"
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void Whirlwind_Update(struct Actor *self);

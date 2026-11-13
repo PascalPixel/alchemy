@@ -40,11 +40,9 @@ DEFINE_BLOCK_PUSH_ONTO(MagmaRock_PushBlockOnto, gPushLeaderSteps,
 
 #include "shared/map_cells.h"
 #include "shared/actors.h"
-#include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "actor.h"
-#include "event_inline.h"
 #include "map.h"
 #include "field.h"
 #include "module/field/event_commands.h"
@@ -64,8 +62,6 @@ DEFINE_MAP_CELL_SET_SHAPE(MagmaRock_SetCellShape, MapGrid_GetTerrainKind,
                           MapCollision_FindOrAddTag)
 
 #include "../field/map/cell_get.c"
-
-#include "field.h"
 
 DEFINE_ACTORS_RAISE_CELLS(MagmaRock_RaiseActorCells, MagmaRock_SetCellShape)
 
@@ -95,7 +91,6 @@ struct MagmaRockWork {
 
 #endif
 
-#include "main_routine_work.h"
 #include "scene_ids.h"
 
 // For each id of a list ended by 0xffff: clears the object's mark and, on a
@@ -496,17 +491,9 @@ DEFINE_ACTOR_FLASH_COLOR(MagmaRock_FlashStatue, 10)
 
 /// Magma Rock's statues: the magma they fire, the flame columns that lift the
 /// leader, the cracked columns, slides, pillars, vines and the final blast.
-#include "shared/actors.h"
-#include "types.h"
-#include "system.h"
-#include "ram_buffer.h"
-#include "actor.h"
-#include "event_inline.h"
 #include "event.h"
 #include "event_work.h"
-#include "field.h"
 #include "flag_call.h"
-#include "module/scene/magma_rock.h"
 
 /* VIEW(s0ff4): tag struct MagmaRockEventWork as struct
  * MagmaRockEventWork__s0ff4; scene/magma_rock has another definition; tried
@@ -568,9 +555,6 @@ check:
 done:
   return result;
 }
-
-#include "main_routine_work.h"
-#include "scene_ids.h"
 
 s32 MagmaRock_LookUpCellStatue(s32 x, s32 z, u16 *table) {
   s32 result = 0;
@@ -639,10 +623,7 @@ void MagmaRock_DriftAndSlow(struct Actor *object) {
 
 #include "field/event_work.h"
 #include "field_effect.h"
-#include "frame.h"
-#include "field.h"
 
-s32 Trig_Cos(s32 angle);
 s32 Position_FlatDistance(s32 *a, s32 *b);
 // XXX: magma_rock.c defines this with an s16 value; this call matches only with
 // u16. A match of magma_rock.c's MagmaRock_PlayBurst under u16 would settle

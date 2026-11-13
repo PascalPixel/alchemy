@@ -94,9 +94,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 /// venus_lighthouse/.
 
 #include "shared/push.h"
-#include "types.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
 #include "field_coordinate.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
@@ -196,19 +193,12 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 /// statue that repels the leader, the reliefs and the paths Reveal shows.
 
 #include "shared/tables.h"
-#include "types.h"
-#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "event.h"
-#include "field.h"
-#include "field_event.h"
 #include "flag_call.h"
 #include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/scene/scene.h"
 #include "module/scene/venus_lighthouse.h"
-#include "system.h"
 #include "module/game/game.h"
 
 void Exit_PrepareActorAnimation(s32 actor, s32 value);

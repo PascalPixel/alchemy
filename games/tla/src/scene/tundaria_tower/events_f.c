@@ -79,7 +79,6 @@ void Func_020011e0(void) {
   Event_End();
 }
 
-#include "tundaria_tower.h"
 #include "iwram_call.h"
 #include "call.h"
 #include "scene_ids.h"
@@ -286,7 +285,6 @@ void Func_02001868(void) {
  * games/tla/src/scene/tundaria_tower/events_f.c:350: `Func_020017dc__events_e'
  * undeclared (first use in this function). */
 extern void Func_020017dc__events_e(void) __asm__("Func_020017dc");
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 void Func_0200189c(void) {
   struct Actor *object;
@@ -764,21 +762,8 @@ end:
 // ---- scene/tundaria_tower/events_f.c ----
 
 #include "../shared/map_cells.h"
-#include "tundaria_tower.h"
-#include "call.h"
-#include "types.h"
-#include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "iwram_call.h"
 #include "field_event.h"
-#include "event_inline.h"
-#include "field.h"
-#include "module/field/field.h"
 #include "module/field/object.h"
-#include "module/scene/scene.h"
-#include "module/scene/tundaria_tower.h"
-#include "module/tla.h"
 
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 

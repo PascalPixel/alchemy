@@ -33,20 +33,11 @@
 #undef BattleSprite_GetEffectHeight
 #undef Unit_CalculateFar
 
-#undef Data_02018000
-#undef GameFlag_GetByte
-#undef BattleMessage_WaitForAdvanceAt
-#undef BattleSprite_GetEffectHeight
-#undef Unit_CalculateFar
-
-// ---- battle/presentation.c ----
-
-/// The rest of the battle object (battle.c): a unit's motion graphics, the
-/// strongest unit, applying an ability to its targets, playback, the end of a
-/// turn, the screen transitions, the background, camera and highlights, enemy
-/// formations and the spoils, as The Broken Seal's battle.c ends.
-/// presentation_internal.h holds the includes these parts share; the parts
-/// under presentation/ follow in ROM order.
+// The rest of the bank, as The Broken Seal's battle.c ends: a unit's motion
+// graphics, the strongest unit, applying an ability to its targets, playback,
+// the end of a turn, the screen transitions, the background, camera and
+// highlights, enemy formations and the spoils. presentation_internal.h holds
+// the includes these parts share.
 
 #include "presentation_internal.h"
 

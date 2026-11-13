@@ -1309,17 +1309,12 @@ void Func_020026c0(void) {
 // ---- games/tla/src/scene/airs_rock_inside/s2770.c ----
 
 #include "../shared/effects.h"
-#include "../airs_rock_inside.h"
-#include "system.h"
 #include "task.h"
 #include "event_work.h"
 #include "flag_call.h"
 #include "module/field/event_commands.h"
 #include "module/field/object.h"
-#include "module/scene/airs_rock_inside.h"
-#include "module/scene/scene.h"
 #include "module/system/system.h"
-#include "module/tla.h"
 #include "resource.h"
 
 void Func_02002770(void) {
@@ -1332,10 +1327,6 @@ void Func_02002770(void) {
   }
 }
 
-#include "types.h"
-#include "call.h"
-#include "actor.h"
-#include "main_routine_work.h"
 void Func_02002790(void) {
   struct Actor *actor = Actor_GetById(Party_GetLeaderActor());
   s32 x = actor->x >> 20;
@@ -1422,13 +1413,9 @@ DEFINE_AIRS_ROCK_INSIDE_TRACK_LEADER_CELL(Func_02002980, 64)
 /// As Func_02002980, one row nearer.
 DEFINE_AIRS_ROCK_INSIDE_TRACK_LEADER_CELL(Func_02002a14, 63)
 
-#include "system/field_effect.h"
-#include "system/vector3.h"
-
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 
 void Func_02002aa8(s32 x, s32 z) {
   struct EffectOptions options;
@@ -1480,8 +1467,6 @@ next:
     goto next;
 }
 
-s32 Trig_Sin(s32 angle);
-
 void Func_02002bd0(struct Actor *object) {
   s32 radius = ((object->y - object->terrainHeight) >> 1) + 0x100000;
 
@@ -1525,21 +1510,15 @@ void Func_02002cc0(struct Actor *object) {
 }
 
 // ---- games/tla/src/scene/airs_rock_inside/s2cf0.c ----
-#include "scene_tables.h"
 #include "bg_scroll.h"
-#include "field_sprite.h"
-#include "system/dma.h"
 #include "system/io_reg.h"
 #include "frame.h"
 
 void BattleEffect_ApplyColorToSourceBuffer(s32 a, s32 b);
 s32 BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
 void PaletteFade_StartInterpolation(s32 mode);
-void Camera_SetSpeedParameters(s32 a, s32 b);
-void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void MapGrid_CopyCellPictureIndicesRect(s32 x, s32 z, s32 width, s32 height,
                                         s32 a, s32 b);
-void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 void Actor_ConfigureSpriteColor(s32 actor, s32 a);
 
 /// The second pillar of light, Func_02003654 with object 11 glowing, the camera
@@ -1755,8 +1734,6 @@ void Func_02003254(void) {
     Actor_LiftTargetBlock(gData_0200607e);
   }
 }
-
-#include "ram_buffer.h"
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
@@ -2371,7 +2348,6 @@ third:
 
 void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
-#include "event_work.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \

@@ -1238,5 +1238,3 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
 #undef HI
 #undef HEAP_BLITTER
 #undef CLIP
-#undef LOAD_QUARTER
-#undef DRAW_QUARTER

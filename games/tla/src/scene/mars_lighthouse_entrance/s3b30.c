@@ -82,27 +82,19 @@ void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-// ---- scene/mars_lighthouse_entrance/s3cf8.c ----
-
-/// Scene code of overlay 0x6aa, in ROM order.
-
 #include "../shared/cracked_tile.h"
 #include "field.h"
 #include "heap_release.h"
 #include "item_icon.h"
-#include "module/scene/scene.h"
 
 #define CELL_TABLE Data_020068b4
 #define CELL_SPRITE_DRAW CrackedTiles_Update
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../../field/map/cell_sprite.c"
 
-#include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
 #include "iwram_call.h"
-#include "event_inline.h"
 #include "cell_target.h"
 
 DEFINE_CRACKED_TILES_FIND(Func_02003e24, Data_020068b4, CrackedTiles_Update)

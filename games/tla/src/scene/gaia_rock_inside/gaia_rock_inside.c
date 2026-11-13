@@ -280,18 +280,8 @@ s32 Func_02000748(void) {
 // ---- games/tla/src/scene/gaia_rock_inside/s07f4.c ----
 
 #include "../shared/effects.h"
-#include "types.h"
 #include "flags.h"
-#include "system.h"
-#include "actor.h"
-#include "event_inline.h"
-#include "main_routine_work.h"
-#include "field.h"
-#include "event_work.h"
-#include "module/field/event_commands.h"
 #include "module/field/field.h"
-#include "module/scene/gaia_rock_inside.h"
-#include "module/scene/scene.h"
 #include "module/tla.h"
 #include "text/msg_ids.h"
 #include "module/field/field_effect.h"
@@ -357,9 +347,7 @@ s32 Func_020008b4(void) {
   return 0;
 }
 
-#include "ram_buffer.h"
 #include "call.h"
-#include "scene_tables.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -4234,12 +4222,6 @@ burst:
 #undef gData_0200578c
 #undef gData_020062d4
 
-#undef Actor_StartScript
-#undef gData_0200530c
-#undef gData_02005360
-#undef gData_0200539c
-#undef gData_020053d8
-#undef gData_0200578c
 // ---- scene/gaia_rock_inside/s4d00.c ----
 
 /// Scene code of overlay 0x681, in ROM order.

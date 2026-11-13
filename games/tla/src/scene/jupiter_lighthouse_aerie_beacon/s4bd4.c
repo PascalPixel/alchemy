@@ -88,17 +88,10 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../../field/map/cell_sprite.c"
 
-// ---- scene/jupiter_lighthouse_aerie_beacon/s4ec8.c ----
-
-/// Scene code of overlay 0x6a5, in ROM order.
-
 #include "../shared/cracked_tile.h"
-#include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
 #include "iwram_call.h"
-#include "event_inline.h"
 #include "scene_tables.h"
 #include "io_reg.h"
 #include "cell_target.h"
@@ -106,7 +99,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "field.h"
 #include "heap_release.h"
 #include "item_icon.h"
-#include "module/scene/jupiter_lighthouse_aerie_beacon.h"
 #include "module/scene/scene.h"
 
 void CrackedTiles_Update(void);

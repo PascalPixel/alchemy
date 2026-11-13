@@ -33,7 +33,6 @@ extern u8 Data_0202c001[];
 void Func_0200033c(void) { Field_RequestDjinnBattle(10, 32); }
 
 #include "battle.h"
-#include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "lib.h"

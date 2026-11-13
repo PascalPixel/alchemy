@@ -363,8 +363,6 @@ done:
 }
 
 #undef SERVICE_PRICE_WINDOW_WIDTH
-#undef SERVICE_PRICE_WINDOW_WIDTH
-#undef SERVICE_PRICE_WINDOW_WIDTH
 
 #define Item_GetDirectFar ((u8 *(*)(u16))Item_GetDirectFar)
 

@@ -82,10 +82,6 @@ void Func_0200363c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-// ---- scene/mars_lighthouse_star_room/s3804.c ----
-
-/// Scene code of overlay 0x6ab, in ROM order.
-
 #include "../shared/cracked_tile.h"
 #include "event_work.h"
 #include "field.h"
@@ -98,12 +94,9 @@ void Func_0200363c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepth
 #include "../../field/map/cell_sprite.c"
 
-#include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
 #include "iwram_call.h"
-#include "event_inline.h"
 #include "cell_target.h"
 
 DEFINE_CRACKED_TILES_FIND(Func_02003930, gData_02004cf4, CrackedTiles_Update)

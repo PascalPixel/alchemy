@@ -9,10 +9,6 @@
 #define EFFECT_SPRITE_PRIORITY
 #include "../../field/field_effect/spawn.c"
 
-// ---- scene/caverns/caverns.c ----
-
-/// Scene code of overlay 0x6a9, in ROM order.
-
 #include "flags.h"
 #include "battle.h"
 #include "field.h"

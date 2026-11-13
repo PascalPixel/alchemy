@@ -86,7 +86,6 @@ s32 Shop_ChooseMember(void) {
 }
 
 #undef MONEY_WINDOW_WIDTH
-#undef MONEY_WINDOW_WIDTH
 
 // The price window and the item details window are sized to their text.
 #if (LANGUAGE == LANGUAGE_JAPANESE)
@@ -244,15 +243,6 @@ s32 Shop_SelectSell(s32 unitId) {
   return result;
 }
 
-#undef PRICE_WINDOW_X
-#undef PRICE_WINDOW_WIDTH
-#undef DETAILS_WINDOW_WIDTH
-#undef PRICE_WINDOW_X
-#undef PRICE_WINDOW_WIDTH
-#undef DETAILS_WINDOW_WIDTH
-#undef PRICE_WINDOW_X
-#undef PRICE_WINDOW_WIDTH
-#undef DETAILS_WINDOW_WIDTH
 #undef PRICE_WINDOW_X
 #undef PRICE_WINDOW_WIDTH
 #undef DETAILS_WINDOW_WIDTH

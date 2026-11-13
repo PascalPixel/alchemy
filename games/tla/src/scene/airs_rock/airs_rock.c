@@ -75,13 +75,10 @@ s32 Func_02000384(u32 layer, s32 x, s32 y, s32 value) {
 // For each id of a list ended by 0xffff: clears the object's mark and, on a
 // cell with attribute bit 6, blocks the cells ahead of and behind it and sets
 // the mark.
-#include "types.h"
-#include "ram_buffer.h"
 #include "map.h"
 #include "actor.h"
 #include "event_inline.h"
 #include "module/field/field.h"
-#include "module/scene/airs_rock.h"
 #include "module/scene/scene.h"
 #include "module/system/system.h"
 #include "module/tla.h"
@@ -198,8 +195,6 @@ void Func_020005ec(void) {
   }
   Event_End();
 }
-
-s32 Func_02000384();
 
 /// Object 11's column sets or clears flag 0x311 and writes the low byte of the
 /// cell value Func_02000348 returns (its high byte 0xff when the object is

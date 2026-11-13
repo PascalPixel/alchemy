@@ -708,9 +708,6 @@ L_0200b84a:
 L_0200b856:
 }
 
-#include "heap_release.h"
-#include "resource.h"
-
 struct Sprite {
   u8 b0, b1, b2, b3, b4;
   u8 mode : 2;

@@ -114,13 +114,7 @@ DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
 /// Scene code of overlay 0x69b, in ROM order.
 
-#include "../shared/cracked_tile.h"
-#include "types.h"
-#include "ram_buffer.h"
-#include "actor.h"
-#include "main_routine_work.h"
 #include "io_reg.h"
-#include "event_inline.h"
 #include "event_work.h"
 #include "field.h"
 #include "module/scene/jupiter_lighthouse_room_2.h"

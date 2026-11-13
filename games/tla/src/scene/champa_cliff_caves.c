@@ -57,7 +57,6 @@ static __inline__ void Func_02003534_(s32 actor, s32 angle) {
 #include "module/scene/scene.h"
 #include "module/system/system.h"
 #include "resource.h"
-#include "scene_call.h"
 #include "system.h"
 
 #define DEFINE_CHAMPA_CLIFF_CAVES_GROW(name, n1)                               \
@@ -73,14 +72,11 @@ static __inline__ void Func_02003534_(s32 actor, s32 angle) {
 DEFINE_CHAMPA_CLIFF_CAVES_GROW(Func_02000038, 0x1000)
 
 #include "battle.h"
-#include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "lib.h"
 #include "menu.h"
 #include "sound.h"
-#include "system.h"
-#include "types.h"
 #include "scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -472,8 +468,6 @@ void Func_02000978(s32 actor) {
 // ---- games/tla/src/scene/champa_cliff_caves/s0a34.c ----
 #include "call.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
 #include "text/msg_ids.h"
 
 #define FIELD_AT(base, type, off)                                              \
@@ -1580,7 +1574,6 @@ void Func_020029f8(s32 id, s32 mode) {
   VramCache_FreeEntry(slot);
   HeapSlot_Release(220);
 }
-#undef Field_StartPaletteTransition
 #undef FIELD_AT
 #undef PALETTE
 #undef BYTE_AT

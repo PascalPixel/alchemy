@@ -462,25 +462,8 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
 
 #include "../field/field_effect/advance_motion_priority.c"
 
-// ---- scene/dehkan_plateau/s0974.c ----
-
-/// Scene code of overlay 0x655, in ROM order.
-
-#include "types.h"
-#include "system.h"
-#include "iwram_call.h"
-#include "actor.h"
-#include "main_routine_work.h"
-#include "field_sprite.h"
 #include "field_effect.h"
-#include "event_inline.h"
-#include "ram_buffer.h"
-#include "map.h"
-#include "event_work.h"
 #include "module/field/field_effect.h"
-#include "module/scene/dehkan_plateau.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
 
 extern const s32 gData_02003e00[];
 
@@ -529,10 +512,6 @@ void Rubble_Spray(s32 spread) {
   } while (i <= 7);
 }
 
-void Actor_TakePlaceOf(struct Actor *object, struct Actor *other);
-
-void Actor_MoveToObject(s32 id, s32 target);
-
 extern const u8 gData_02003e30[];
 
 void Rubble_Burst(void) {
@@ -574,56 +553,16 @@ void Rubble_Burst(void) {
   }
 }
 
-// ---- scene/dehkan_plateau/s0bc0.c ----
-
-/// Scene code of overlay 0x655, in ROM order.
-
 #include "shared/map_cells.h"
 #include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
-#include "map.h"
-#include "types.h"
-#include "ram_buffer.h"
-#include "actor.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
-#include "field_sprite.h"
-#include "iwram_call.h"
-#include "field.h"
-#include "event_work.h"
-#include "module/field/event_commands.h"
 #include "module/field/field.h"
-#include "module/scene/dehkan_plateau.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
 
 DEFINE_ACTOR_SET_CELL_SHAPE(Actor_SetCellShape, MapGrid_GetTerrainKind,
                             MapCollision_FindOrAddTag)
 
-extern const u8 gData_02003f44[];
-extern const u8 gData_02003f52[];
-extern const u8 gData_02003f80[];
-extern const u8 gData_02003f92[];
-extern const u8 gData_02003f98[];
-extern const u8 gData_02003fa0[];
-extern const u8 gData_02003fa8[];
-extern const u8 gData_02003fb0[];
-extern const u8 gData_02003fb8[];
-extern const u8 gData_02003fc0[];
-extern const u8 gData_02003fc4[];
-
-void Func_02002180(void);
-void Func_02001804(void);
-
-extern const u16 gData_02003fd2[];
-extern const struct CellRecord gData_02004066[];
-
 void Leader_SetCellShapeAt(s32 a, s32 b) {
   Actor_SetCellShape(a, b, gMainRoutineWork.currentOwner);
 }
-
-void Actor_TakePlaceOf(struct Actor *object, struct Actor *other);
-void Actor_StartScript(struct Actor *object, const void *script);
-void Actor_MoveToObject(s32 id, s32 target);
 
 // Raises each listed actor's cells: the shape grid and the cell flags under it,
 // then lifts the leader if the new terrain is above the leader.

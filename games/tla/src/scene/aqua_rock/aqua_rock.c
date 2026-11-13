@@ -246,8 +246,6 @@ void Func_02000740(void) {
     gData_02003210 = 0;
 }
 
-#include "task.h"
-
 #define UNK02003450_SET(g, a, b, c, d, e, f, h, i, height, flag)               \
   (g)->unk00 = (a);                                                            \
   (g)->unk02 = (b);                                                            \

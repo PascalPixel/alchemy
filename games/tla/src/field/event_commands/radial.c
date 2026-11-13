@@ -177,7 +177,6 @@ void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *object) {
 
 void FieldPsynergy_WhirlwindOnTarget(void) { FieldPsynergy_Whirlwind(); }
 #undef Actor_SetPositionAndResetMotionFar
-#include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/field/object.h"
 #include "module/field/radial.h"
@@ -348,8 +347,6 @@ void FieldPsynergy_Whirlwind(void) {
 #undef SE_ORB_FADES
 #undef TARGET_ANIMATION_A
 #undef TARGET_ANIMATION_B
-#include "module/field/event_commands.h"
-#include "module/field/radial.h"
 
 void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object) {
   if (object->age == 80) {
@@ -358,8 +355,6 @@ void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object) {
   }
   object->age++;
 }
-
-void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 
 void FieldEffect_UpdateHaltParticle(struct FieldParticle *effect) {
   struct BattleFxScene *scene;
@@ -550,9 +545,6 @@ void FieldPsynergy_CatchOnTarget(void) { FieldPsynergy_Catch(); }
 static __inline__ s32 Interpolate(s32 from, s32 to, s32 step) {
   return from + (to - from) * step / 10;
 }
-#include "module/field/event_commands.h"
-#include "module/field/object.h"
-#include "module/field/radial.h"
 
 void FieldPsynergy_Catch(void) {
   struct FxScene13 *scene = Ram_HeapSlots->effectWork;
@@ -956,8 +948,6 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *slot) {
 }
 #include "event.h"
 #include "event_work.h"
-#include "module/field/event_commands.h"
-#include "module/field/radial.h"
 #include "scene_call.h"
 
 #define SLOT_MAX 24
@@ -1178,8 +1168,6 @@ void FieldEffect_SpawnDescendingArcParticles(struct ArcObject *source) {
 }
 #include "flag_call.h"
 #include "gamepak/far_call/window.h"
-#include "module/field/field.h"
-#include "module/field/radial.h"
 #include "text/msg_ids.h"
 
 /// The caster during Avoid (FieldPsynergy_Avoid): sheds a pair of falling
@@ -1299,8 +1287,6 @@ void FieldPsynergy_Avoid(void) {
   VramCache_FreeEntry(scene->arcTileSlot);
   FieldMessage_ShowFar((s32)&MsgMonstersAttackLess, 1);
 }
-#include "module/field/object.h"
-#include "module/field/radial.h"
 
 void BattleEffect_WaitForArcGroups(void) {
   struct ArcEffectWork *work = Ram_HeapSlots->block62;
@@ -1366,11 +1352,6 @@ void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
   work->target = target;
   work->group ^= 1;
 }
-#include "event_work.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/field/object.h"
-#include "module/field/radial.h"
 
 /* VIEW(f0e150c): tag struct ArcSprite as struct ArcSprite__f0e150c; radial.c
  * has another definition; tried with the definition the rest of the object has,
@@ -1449,8 +1430,6 @@ void BattleEffect_EndArcEffect(void) {
   Task_Remove((u32)BattleEffect_UpdateArcEffect);
   HeapSlot_Release(248);
 }
-
-void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 
 #define BOW_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 
@@ -2028,7 +2007,6 @@ void TileCopies_CopyTouchedCells(s32 toX, s32 toZ, s32 width, s32 height,
   }
 }
 #undef BOW_NEXT_PHASE
-#include "module/field/event_commands.h"
 
 /* VIEW(f0e2718): variable gData_02001000 as extern u8 gData_02001000[]; f0e150c
  * has extern struct TouchCopies gData_02001000; tried as the rest of the object
@@ -2070,12 +2048,6 @@ void TileCopies_Restore(void) {
 /// The Cyclone's helpers: copying the cells it touched, its arcs and its
 /// burst, and an object jumping to the leader.
 
-#include "types.h"
-#include "actor.h"
-#include "ram_buffer.h"
-#include "event.h"
-#include "event_work.h"
-#include "module/field/event_commands.h"
 #include "module/system/system.h"
 #include "gamepak/far_call/field.h"
 #include "field/field.h"
@@ -2141,9 +2113,6 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
     }
   }
 }
-
-#include "fixed_math.h"
-#include "actor_view.h"
 
 /// An object (sprite) pops up at the cell (x, z), grows, turns to the leader,
 /// who raises its arms, hops twice and flies into the leader in an arc. Trial
@@ -2221,11 +2190,6 @@ void Cyclone_PlotArc(s32 radius, s32 angle, u16 *offsets, u8 *pixels) {
     angle += 0x170;
   }
 }
-
-#include "task.h"
-#include "resource.h"
-#include "system.h"
-#include "effect_sprite.h"
 
 void ParticleBurst_Start(void) {
   struct BurstWork *work = (struct BurstWork *)Ram_HeapSlots->battleFxWork[0];
@@ -2309,22 +2273,11 @@ void ParticleBurst_Start(void) {
 #undef ObjectSprite
 #undef Mote
 #undef Actor_StartScriptFar
-#undef Camera_WorldToScreen
-#undef EffectSprite_DrawAtWorldPosition
 
 // ---- field/map/actor_cells.c ----
 
 /// Actors standing as blocks in the map: their cells tagged and the tags
 /// cleared, the actor at a position, and effect sprites filled and queued.
-
-#include "types.h"
-#include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "actor_view.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/system/system.h"
 
 /* VIEW(f0eabd0): tag struct SwitchCell as struct SwitchCell__f0eabd0; field.h
  * has another definition; tried with the definition the rest of the object has,
@@ -2340,7 +2293,6 @@ struct SwitchCell__f0eabd0 {
 extern u8 gMapShapeGrid[];
 
 struct Actor *Actor_GetById(u32 objectId);
-#include "field.h"
 
 /// Makes each listed actor (ids, ended by 0xffff) a block in the map: its
 /// cell's shape is tagged 32 pixels above the ground, so the party can stand
@@ -2522,8 +2474,6 @@ struct Actor *Leader_FindActorAhead(void) {
   return NULL;
 }
 
-#include "fixed_math.h"
-
 /// Returns the first of event objects 8 to 63 on position's cell, at its
 /// height too when checkY is set, or NULL.
 struct Actor *Actor_FindAtCell(s32 *position, s32 checkY) {
@@ -2546,9 +2496,6 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 checkY) {
   }
   return NULL;
 }
-
-#include "iwram_call.h"
-#include "effect_sprite.h"
 
 /// The width and height of each OAM shape and size, in pixels.
 extern const u8 gData_080f3bc4[][2];
@@ -2703,21 +2650,6 @@ void EffectSprite_DrawAtWorldPosition(struct ScreenSprite *sprite,
 
 // ---- field/event_commands/step_vector.c ----
 
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "types.h"
-#include "module/field/event_commands.h"
-#include "module/field/object.h"
-#include "module/system/system.h"
-#include "gamepak/far_call/field.h"
-
 void BattleEffect_StepVector2(s32 *vector, s32 damping, s32 gravity) {
   BattleEffect_IntegrateVector2(vector, damping, gravity);
 }
@@ -2725,8 +2657,6 @@ void BattleEffect_StepVector2(s32 *vector, s32 damping, s32 gravity) {
 void BattleEffect_StepVector3(s32 *vector, s32 damping, s32 gravity) {
   BattleEffect_IntegrateVector3(vector, damping, gravity);
 }
-
-#include "ram_buffer.h"
 
 void BattleEffect_PlotHalfCanvasPixel(s32 x, s32 y, s32 color) {
   u16 *map = Ram_HeapSlots->canvasMap;
@@ -2884,10 +2814,7 @@ void ColorBuffer_MapToFadeStep3(u8 *buffer, s32 count) {
   }
 }
 
-#include "iwram_call.h"
 #include "dma.h"
-#include "io_reg.h"
-#include "canvas_sprite.h"
 
 #define OBJ_TILES ((u8 *)0x06010000)
 #define BG_VRAM ((void *)0x06000000)
@@ -3000,8 +2927,6 @@ void BattleEffect_DrawCanvasSprite(void) {
 
 // The canvas sprite of the field Psynergy scenes.
 
-#include "heap_release.h"
-#include "task.h"
 #include "window.h"
 
 /// Starts the canvas sprite of the field Psynergy scenes: its work, a cleared
@@ -3060,11 +2985,6 @@ void BattleEffect_EndCanvasSprite(void) {
   HeapSlot_Release(96);
   HeapSlot_Release(240);
 }
-
-#include "resource.h"
-#include "actor.h"
-#include "effect_sprite.h"
-#include "actor_view.h"
 
 // One spark: where it circles round, its angle and radius, and its age in
 // frames (-1: unused).
@@ -3226,7 +3146,6 @@ void Actor_VanishInSparks(s32 objectId) {
   HeapSlot_Release(HEAP_SLOT_SPARKS);
 }
 
-#include "field_particle.h"
 #include "macros.h"
 
 void FieldParticle_Update(struct FieldParticle *effect) {
@@ -3263,8 +3182,6 @@ void FieldEffect_DrawScaledActor(struct FieldParticle *object) {
       object->z < 0xe00000)
     Render_ApplyProjectedPlacementFar(sprite, position, scale, 0);
 }
-
-#include "fixed_math.h"
 
 void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
   s32 dx;
@@ -3400,19 +3317,7 @@ void FieldEffect_ClearOwnedSlot(struct FieldParticle *slot) {
 /// The world map screen: its markers and cursor (The Broken Seal's
 /// world_picture.c), and where the leader stands on it.
 
-#include "types.h"
-#include "dma.h"
-#include "heap_release.h"
-#include "resource.h"
-#include "vram_tab.h"
-#include "event_work.h"
-#include "flag_call.h"
-#include "ram_buffer.h"
 #include "field/world_map.h"
-#include "gamepak/far_call/window.h"
-#include "module/field/event_commands.h"
-
-struct Actor *Actor_GetById(u32 objectId);
 
 void WorldPicture_Initialize(void) {
   u32 *markerTiles;
@@ -3497,22 +3402,11 @@ void WorldPicture_Initialize(void) {
   Ram_WorldMapScroll[1] = screenY;
 }
 
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-
 void WorldPicture_Release(void) {
   VramCache_FreeEntry(gWorldMapWork.vramBlock);
   VramCache_FreeEntry(gWorldMapWork.windowSlot);
   Window_CloseFar((u32)gWorldMapWork.window, 2);
 }
-
-#include "actor.h"
 
 /// Unused: nothing calls it. Puts the leader at the world map position of
 /// picture point (x, z), the inverse of WorldPicture_GetLeaderPoint's scale,
@@ -3591,17 +3485,7 @@ u32 Func_080ec298(u8 *entry) {
 /// The world map screen's picture: drawing it, scrolling it with the cursor,
 /// its area markers, and zooming the view out while L is held.
 
-#include "types.h"
-#include "ram_buffer.h"
-#include "event_work.h"
-#include "flag_call.h"
-#include "gamepak/far_call/window.h"
-#include "lib.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
-#include "scene.h"
 #include "text/msg_ids.h"
-#include "world_map.h"
 
 // The world map screen's work, laid out as field/world_map.h has it.
 
@@ -3716,13 +3600,8 @@ void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
 #undef PLACE_SCREEN_Y
 
 #include "input.h"
-#include "main_routine_work.h"
 #include "io_write_queue.h"
-#include "iwram_call.h"
 #include "edition.h"
-#include "version.h"
-#include "fixed_math.h"
-#include "frame.h"
 
 // The scrolled name's left edge, in pixels left of its place.
 #if LANGUAGE == LANGUAGE_GERMAN

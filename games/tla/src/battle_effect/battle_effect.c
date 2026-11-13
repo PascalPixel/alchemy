@@ -51,29 +51,13 @@
 #undef EffectSprite_CreateWithTiles
 #undef EffectSprite_Acquire
 #undef Render_DrawModelList
-#undef PHASE_RESULTS
-#undef SHARD_COUNT
-#undef DROP_COUNT
-#undef EFFECT_STEPS
-#undef EffectSprite_Acquire
-#undef EffectSprite_CreateWithTiles
 #undef SLOT_ALT
 #undef OBJ_TILES
 #undef CLIP
-#undef PARTICLES
-#undef MOTES
 #undef RECORD_FRAMES
-#undef BOLT_COUNT
-#undef STAR_COUNT
-#undef FORMATION_SIZE
-#undef COLUMN_WIDTH
-#undef COLUMN_HEIGHT
 #undef HEAP_BLITTER_ALTERNATE
-#undef MOTE_COUNT
 #undef SPARK_COUNT
-#undef PILLAR_FRAMES
 #undef HEAP_BLITTER
-#undef Render_DrawModelList
 #undef SLOT_BLITTER
 #undef BLITTER
 #undef HI
@@ -135,7 +119,6 @@ void BattleEffect_InitializeTilemapAndFlushQueue(void) {
   BattleEffect_EndCanvasLayer();
 }
 
-#include "system.h"
 #include "fixed_math.h"
 #include "task.h"
 #include "input.h"
@@ -1106,8 +1089,6 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
 
 #include "effect_step.h"
 
-#include "graphics.h"
-
 #include "heap_release.h"
 
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
@@ -1248,8 +1229,6 @@ void BattleEffect_RunDrain(u8 *effect) {
 void BattleEffect_RunTrueCollide(u8 *effect) {
   BattleEffect_RunDrainMotes(effect, 2);
 }
-
-#include "battle_display.h"
 
 #define MOTES_PER_MEMBER 128
 #define MOTES ((struct EffectStep *)Ram_MapCellBuffer)
@@ -1411,7 +1390,6 @@ void BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-#include "battle.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -5901,8 +5879,6 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
 #undef SpriteObject
 #undef FxSlot
 #undef SpriteAttributes
-#undef Render_ProjectVertices
-#undef Render_DrawModelList
 #undef Render_ProjectVertices
 #undef Render_DrawModelList
 

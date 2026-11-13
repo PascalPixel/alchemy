@@ -49,7 +49,6 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "main_routine_work.h"
-#include "scene_ids.h"
 
 const u8 *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -499,8 +498,6 @@ void TreasureIsle_JumpForward(void) { Field_TryJumpForward(); }
 #define RUSTY_SWORD_MESSAGE MSGNO(MsgRustySword2)
 #endif
 
-void TreasureIsle_PressRoom3Button(void);
-void TreasureIsle_RaiseLastSpikyRock(void);
 void TreasureIsle_LiftSecondRock(void);
 void TreasureIsle_LiftThirdRock(void);
 

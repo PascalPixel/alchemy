@@ -671,28 +671,18 @@ test:
 
 /// Magma Rock's rubble and falling rocks, and its tables.
 
-#include "../shared/map_cells.h"
 #include "../shared/effects.h"
 #include "../shared/tables.h"
-#include "types.h"
-#include "system.h"
 #include "iwram_call.h"
-#include "actor.h"
-#include "main_routine_work.h"
 #include "field_sprite.h"
 #include "field_effect.h"
-#include "event_inline.h"
-#include "map.h"
 #include "system/ram_buffer.h"
 #include "resource.h"
 #include "heap_release.h"
-#include "field.h"
 #include "module/field/field_effect.h"
-#include "module/scene/magma_rock.h"
 #include "particle.h"
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
-s32 Trig_Cos(s32 angle);
 
 void MagmaRock_SpawnRubble(s32 spread) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -776,8 +766,6 @@ void MagmaRock_SpawnDustRing(void) {
     }
   }
 }
-
-extern u8 gMapShapeGrid[];
 
 s32 MapGrid_GetTerrainKind(s32 terrainId, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);

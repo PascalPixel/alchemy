@@ -1065,9 +1065,6 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
 #undef PAGE_X
 #undef HEADING_X
 #undef NAME_X
-#undef PAGE_X
-#undef HEADING_X
-#undef NAME_X
 
 // PsynergyMenu_RunList runs the Psynergy list of the member in paneIndex, the
 // twin of The Broken Seal's PsynergyMenu_RunList
@@ -1307,8 +1304,6 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
   return result;
 }
 
-#undef CURSOR_X
-#undef CHANGE_HELP_X
 #undef CURSOR_X
 #undef CHANGE_HELP_X
 

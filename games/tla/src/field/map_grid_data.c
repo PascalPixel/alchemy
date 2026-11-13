@@ -354,12 +354,8 @@ const OperandFunc gActorScript_OperandHandlerTable[41] = {
     ActorScript_SetOrCompareRiseEnabled,       // 0x28 SW_BYTE_63
 };
 
-// ---- field/map/maps.c ----
-
-/// Each map's resources, as offsets from ResourceId_Map000, by map: its BG
-/// map, palette and four tile sets.
-
-#include "types.h"
+// Each map's resources, as offsets from ResourceId_Map000, by map: its BG
+// map, palette and four tile sets.
 
 // clang-format off
 const u16 gMaps[][6] = {

@@ -116,16 +116,9 @@ DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
 /// Scene code of overlay 0x69e, in ROM order.
 
-#include "../shared/cracked_tile.h"
-#include "types.h"
-#include "ram_buffer.h"
-#include "actor.h"
-#include "main_routine_work.h"
 #include "io_reg.h"
-#include "event_inline.h"
 #include "field.h"
 #include "event_work.h"
-#include "module/scene/jupiter_lighthouse_room_5.h"
 
 /* VIEW(s22b8): tag struct CellTarget as struct CellTarget__s22b8; cell_target.h
  * has another definition; tried with the definition the rest of the object has,

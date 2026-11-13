@@ -140,17 +140,11 @@ DEFINE_MAP_CELL_SWAP(Func_02000168)
 
 #include "shared/mars_lighthouse.h"
 #include "shared/actors.h"
-#include "types.h"
 #include "main_routine_work.h"
-#include "event_inline.h"
 #include "actor.h"
-#include "battle.h"
 #include "event_work.h"
-#include "field.h"
 #include "item_icon.h"
 #include "module/field/field.h"
-#include "module/scene/mars_lighthouse_entrance.h"
-#include "module/scene/scene.h"
 #include "module/tla.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
@@ -207,7 +201,6 @@ L_02008282:
 }
 
 #include "field_event.h"
-#include "field.h"
 
 void Func_02004bc0();
 
@@ -238,7 +231,6 @@ loop:
     goto loop;
 }
 
-#include "shared/mars_lighthouse_entrance_room.h"
 #include "field_effect.h"
 
 void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -329,15 +321,6 @@ next:
     goto next;
 }
 
-extern const u8 gMarsLighthouseEntrance_Placements[];
-extern const u8 gMarsLighthouseEntrance_Room1Placements[];
-extern const u8 gMarsLighthouseEntrance_Room2Placements[];
-extern const u8 gMarsLighthouseEntrance_Room3Placements[];
-extern const u8 gMarsLighthouseEntrance_Room4Placements[];
-extern const u8 gMarsLighthouseEntrance_Room5Placements[];
-extern const u8 gMarsLighthouseEntrance_Room6Placements[];
-extern const u8 gMarsLighthouseEntrance_Room7Placements[];
-
 /// Grind on the ice at the dead end, actor 10: the crack runs to the ice sheet
 /// a floor below.
 void MarsLighthouseEntrance_GrindIce(void) {
@@ -369,8 +352,6 @@ void MarsLighthouseEntrance_CheckIce(void) {
   FieldMessage_Show((s32)MsgCheckedTheIce + 1, 1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->unk15a = 1;
 }
-
-#include "scene_tables.h"
 
 /// Teleport on the circle: the first time the camera follows the leader across;
 /// after, the leader leaves at once.
@@ -632,7 +613,6 @@ void Func_02000ce4(s32 unused, s32 id) {
   }
 }
 
-#include "map.h"
 #include "vram_tab.h"
 
 #define Oam_AddSpriteAtDepthClamped Oam_AddSpriteAtDepthClamped
@@ -696,8 +676,6 @@ fill:
                                                                                \
     REG_WINOUT = winout;                                                       \
   } while (0)
-
-extern struct MapCell gMapCellBuffer[];
 
 /// The leader shrinks and sinks over 40 frames, then the screen transition
 /// ends.

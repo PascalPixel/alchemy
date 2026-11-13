@@ -710,13 +710,9 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
 
 void CrumblingPillars_Step(const void *data);
 void CrumblingPillars_StepWithStandIn(const void *data);
-void Func_02002180(void);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
-void Func_02001804(void);
-extern const u16 gData_02003fd2[];
-extern const struct CellRecord gData_02004066[];
 /* VIEW(events_g): routine Actor_SetHorizontalPositionAndAngleWithTerrain as
  * void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 id, s32 x, s32 z, s16
  * angle); event.h has void Actor_SetHorizontalPositionAndAngleWithTerrain(s32

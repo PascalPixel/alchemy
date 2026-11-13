@@ -3338,7 +3338,6 @@ void Render_DrawModelList(struct Model *model) {
 #undef PLTT
 #undef STREAK
 #undef FADE_PLTT
-#undef FILL_WORDS
 #undef DECODE_01
 #undef XOR_SWAP
 #undef FILL_SPAN

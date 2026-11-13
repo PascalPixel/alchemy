@@ -252,8 +252,6 @@ DEFINE_PUSH_TARGET_FIND_SLIDE(PushTarget_FindSlide, PushTarget_FindAhead,
                               gData_02005f64__s4700, gData_02005f7c,
                               Func_020054f8_)
 
-#include "event_work.h"
-
 #undef PIXELS
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])

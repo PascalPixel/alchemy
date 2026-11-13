@@ -7,8 +7,6 @@
 
 #undef EFFECT_SET_SCRIPT
 
-// ---- scene/tundaria_tower/script0.c ----
-
 #include "types.h"
 #include "event_inline.h"
 
@@ -21,9 +19,6 @@ void Func_02000280(void) {
 
 #include "../field/map/cell_get.c"
 
-// ---- field/map/cell_set.c ----
-
-#include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "field.h"
@@ -89,9 +84,7 @@ void Func_02000338(struct Actor *object) {
 }
 
 #include "field_event.h"
-#include "event_inline.h"
 #include "battle.h"
-#include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "lib.h"

@@ -113,7 +113,6 @@ dispatch:
 #include "actor.h"
 #include "affine.h"
 #include "fixed_math.h"
-#include "module/field/field.h"
 #include "module/field/object.h"
 #include "module/system/system.h"
 #include "task.h"
@@ -892,12 +891,6 @@ void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *record,
 #undef SpriteAnimation_Alloc
 #undef Render_ApplyProjectedPlacementAtDepth
 #undef MapGrid_CheckCollision
-#undef MapGrid_CheckCollisionAbove
-#undef MapGrid_CheckCollision
-#undef WorldMap_IsSailable
-#undef WorldMap_IsFlyable
-#undef WorldMap_IsWalkable
-#undef WorldMap_BuildScanlineTable
 
 // ---- field/map/tile_animation.c ----
 
@@ -905,18 +898,9 @@ void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *record,
 /// queue), then the ground heights and the collision of cells and the world
 /// map, as The Broken Seal's tile_animation.c and terrain.c have them.
 
-#include "types.h"
-#include "dma.h"
-#include "io_reg.h"
-#include "ram_buffer.h"
 #include "map.h"
-#include "actor.h"
-#include "heap_release.h"
-#include "resource.h"
 #include "graphics.h"
-#include "module/field/field.h"
 #include "module/field/map.h"
-#include "module/field/object.h"
 
 /* VIEW(tile_animation): variable gWorldMapWork as u8 gWorldMapWork[];
  * battle/battle.h has struct WorldMapWork gWorldMapWork; tried as the 3
@@ -1049,7 +1033,6 @@ void WorldMap_PreloadCurrentTileBlock(void) {
 
 #include "system.h"
 #include "frame.h"
-#include "task.h"
 
 void MapAnimation_PresentPicture(void) {
   s32 control;
@@ -1231,8 +1214,6 @@ void Map_SetLayerEntryFlag(u32 no) {
 
   anim->paused = 1;
 }
-
-#include "iwram_call.h"
 
 void TilesetAnim_StartAll(const u16 *script) {
   struct MapWork *state = Ram_HeapSlots->mapWork;
@@ -1587,8 +1568,6 @@ s32 Terrain_GetBendSumDiagonalHeight(const s8 *samples, s32 start, s32 end) {
   }
   return result;
 }
-
-#include "fixed_math.h"
 
 s32 Terrain_GetBendDifferenceDiagonalHeight(const s8 *samples, s32 start,
                                             s32 end) {
@@ -2159,28 +2138,12 @@ s32 WorldMap_IsFlyable(struct WorldMover *mover,
 // ---- field/map/terrain.c ----
 
 #include "battle.h"
-#include "task.h"
 #include "field.h"
 #include "game.h"
-#include "graphics.h"
 #include "lib.h"
 #include "menu.h"
 #include "sound.h"
-#include "system.h"
-#include "types.h"
-#include "ram_buffer.h"
-#include "map.h"
-#include "scene.h"
-#include "dma.h"
-#include "heap_release.h"
-#include "io_reg.h"
 #include "ram_code.h"
-#include "frame.h"
-#include "module/field/field.h"
-#include "module/field/map.h"
-#include "module/system/system.h"
-#include "resource.h"
-#include "sprite_metadata.h"
 #include "module/field/resource_slot.h"
 
 extern u32 Data_02018000[];
@@ -2271,9 +2234,6 @@ void TileMap_DrawRowsFromRam(s32 arg0, s32 arg1) {
   Heap_Release(routine);
 }
 
-#include "iwram_call.h"
-#include "fixed_math.h"
-
 // An inline function over the fixed address, as ☀️'s iwram_call.h reaches
 // this entry (☀️'s returns the entry's s32).
 #undef Iwram_TransformVector
@@ -2341,7 +2301,6 @@ void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
 // The debug sprite viewer.
 
 #include "input.h"
-#include "module/system/system.h"
 
 // The native reads the held keys afresh at each test.
 #define HELD (*(volatile u32 *)&gInput.held)
@@ -2651,7 +2610,6 @@ s32 SpriteViewer_FindNextSpriteWithPictures(s32 value, s32 delta) {
 #endif
 }
 
-#include "sprite.h"
 #include "render_placement.h"
 
 /// Lays out the sprite viewer's ring around pixel (x, z): one position per
@@ -2760,8 +2718,6 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
 }
 #undef FIELD_AT_OFFSET
 #undef HELD
-
-#include "sprite_metadata.h"
 
 void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value) {
   u8 *base = Ram_HeapSlots->unk0c[1];

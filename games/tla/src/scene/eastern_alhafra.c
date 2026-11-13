@@ -2134,14 +2134,9 @@ DEFINE_ROCKS_SPAWN(Rocks_Spawn)
 /// Scene code of overlay 0x668, in ROM order.
 
 #include "shared/push.h"
-#include "types.h"
-#include "map.h"
 #include "system/task.h"
 #include "heap_release.h"
-#include "event_inline.h"
 #include "item_icon.h"
-#include "module/scene/eastern_alhafra.h"
-#include "module/tla.h"
 #include "resource.h"
 
 static __inline__ void StartTask(void (*func)(void), s32 priority) {
@@ -2182,9 +2177,6 @@ void Func_02004004(void) {
   StartTask(Particles_UpdateFalling, 0x480);
 }
 
-#include "ram_buffer.h"
-#include "resource.h"
-
 void Func_020040c0(void) {
   struct EasternAlhafraSparkWork *work = Ram_HeapSlots->menuRuntime;
 
@@ -2199,8 +2191,6 @@ void Func_020040c0(void) {
 // map's spare area (Map_CopyCellAttributeRect) and byte 2 of both collision
 // layers there is filled with 255. Returns 1, or 0 for a shape with no
 // footprint.
-
-#include "actor.h"
 
 extern s8 gPushFootprints[][4];
 
@@ -2326,9 +2316,6 @@ s32 Func_02004240(struct PushState *push) {
   return 0;
 }
 
-#include "main_routine_work.h"
-#include "event_work.h"
-
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])
 
@@ -2339,18 +2326,8 @@ DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gPushKinds,
 
 /// Scene code of overlay 0x668, in ROM order.
 
-#include "shared/push.h"
 #include "shared/map_cells.h"
-#include "types.h"
-#include "ram_buffer.h"
-#include "actor.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
-#include "field.h"
-#include "map.h"
 #include "module/field/field.h"
-#include "module/scene/eastern_alhafra.h"
-#include "module/scene/scene.h"
 
 struct PushTarget {
   s32 x; ///< 16.16 fixed-point pixels
@@ -2367,7 +2344,6 @@ struct PushTarget {
  * games/tla/src/scene/eastern_alhafra.c:2348: conflicting types for
  * `gPushFootprints'. */
 extern s8 gPushFootprints__s44c4[] __asm__("gPushFootprints");
-extern s32 gPushDirectionSteps[];
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 

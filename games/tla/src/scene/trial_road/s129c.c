@@ -119,7 +119,6 @@ void TrialRoad_DriftWithStream(void) {
 #include "../shared/map_cells.h"
 #include "../shared/effects.h"
 #include "../shared/trial_road.h"
-#include "event_inline.h"
 #include "event_work.h"
 #include "heap_release.h"
 #include "item_icon.h"
@@ -522,11 +521,6 @@ DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gTrialRoad_PaletteCycleFrame,
                              gTrialRoad_PaletteCycleRunning,
                              gTrialRoad_PaletteCycleColors, 0x050000a4)
 
-#include "system.h"
-
-extern s32 gTrialRoad_PaletteCycleFrame;
-extern s32 gTrialRoad_PaletteCycleRunning;
-
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 
@@ -543,12 +537,9 @@ void TrialRoad_StartPaletteCycle(s32 mode) {
   }
 }
 
-#include "types.h"
-#include "main_routine_work.h"
 #include "scene_tables.h"
 #include "ram_buffer.h"
 #include "map.h"
-#include "event_work.h"
 #include "text/msg_ids.h"
 #include "field.h"
 
@@ -1613,7 +1604,6 @@ void TrialRoad_UpdateFountains(void) {
 // entry, the trap table's setup, TrialRoad_CheckCrumblingStep, the placing of
 // actors 8, 9 and 10, TrialRoad_StepOnTrap and a second copy of
 // Effect_AdvanceMotionAtLeaderPriority, in ROM order.
-#include "frame.h"
 
 /// Queues the Trial Road movers' sprites.
 void TrialRoad_DrawFountains(void) {
@@ -1707,8 +1697,6 @@ void TrialRoad_DrawFountains(void) {
     count++;
   }
 }
-
-#include "actor.h"
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -1850,8 +1838,6 @@ void TrialRoad_TakePlaceOf(struct Actor *object, struct Actor *target) {
   Actor_SetPositionAndResetMotion(object, target->x, target->y, target->z);
   Actor_SetPositionAndResetMotion(target, 0, 0, 0);
 }
-
-#include "field_effect.h"
 
 void TrialRoad_StepOnTrap(const u16 *table) {
   struct Actor *leader;
@@ -2116,8 +2102,6 @@ void TrialRoad_WaitForBalanceState(void) {
 
 // The Trial Road rival's per-frame update.
 
-#include "../shared/trial_road.h"
-
 /// Updates the Trial Road rival by the scene state's mode: 4 follows the
 /// leader's position mirrored across the course; 3 places the rival and its
 /// partner from the linked player's record; 1 replays the recorded path; 2
@@ -2279,8 +2263,6 @@ void TrialRoad_MoveRival(void) {
 
 // next object the overlay links, and the overlay's data.
 
-#include "heap_release.h"
-#include "resource.h"
 #include "vram_tab.h"
 
 /* VIEW(s51a0): tag struct TrialRoadLinkWork as struct TrialRoadLinkWork__s51a0;
@@ -2303,8 +2285,6 @@ struct TrialRoadLinkWork__s51a0 {
 };
 
 extern const u8 gTrialRoad_ProgressPicture[];
-
-s32 TrialRoad_GetStage(s32 side);
 
 // The picture's buffer: 576 bytes of EWRAM, the size VramCache_Load copies.
 static inline void *TrialRoadLink_AllocPicture(void) {
@@ -2474,8 +2454,6 @@ void TrialRoad_ShowProgress(s32 a, s32 b) {
   Task_Add(TrialRoad_DrawProgress, 0x476);
   Heap_Release(buffer);
 }
-
-extern u8 gSceneState[];
 
 void TrialRoad_StartRival(s32 a) {
   u8 *work = Ram_HeapSlots->unkec[0];

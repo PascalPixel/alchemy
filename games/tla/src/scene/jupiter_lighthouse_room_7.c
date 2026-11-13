@@ -708,7 +708,6 @@ DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
 
 #include "frame.h"
 #include "field_sprite.h"
-#include "event_work.h"
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
                                                    s32 mode) {
@@ -734,21 +733,9 @@ DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
 
 /// Scene code of overlay 0x6a0, in ROM order.
 
-#include "shared/whirlwind.h"
-#include "shared/jupiter_lighthouse.h"
 #include "shared/map_cells.h"
-#include "shared/effects.h"
-#include "types.h"
-#include "call.h"
-#include "iwram_call.h"
-#include "actor.h"
 #include "field_effect.h"
-#include "event_inline.h"
-#include "shared/jupiter_lighthouse_aerie.h"
 #include "field_coordinate.h"
-#include "field_sprite.h"
-#include "ram_buffer.h"
-#include "field_event.h"
 #include "map.h"
 #include "vram_tab.h"
 #include "task.h"
@@ -849,9 +836,6 @@ DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
                             gLightSpriteCount, gLightSpritesLarge,
                             gLightSpritePriority__s16d4)
-
-extern const u8 gData_020031c4[];
-extern s32 gPaletteCyclePausesInEvents;
 
 DEFINE_LIGHT_SPRITES_ADD_COUNTED(LightSprites_AddCounted, gLightSpriteActors,
                                  gLightSpriteCount)

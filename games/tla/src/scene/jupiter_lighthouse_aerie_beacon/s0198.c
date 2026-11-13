@@ -913,7 +913,6 @@ void Func_02001388(void) {
 #include "lib.h"
 #include "menu.h"
 #include "sound.h"
-#include "system.h"
 
 void Func_020016e8(void) {
   s32 northwest = FACING_NORTHWEST;
@@ -1996,8 +1995,6 @@ void Func_02002ae4(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-#include "event_work.h"
-
 /// Writes to out the ids of objects 0 to 63 standing in columns 4 to 8 and in
 /// the three rows from 72 less the row of z. Nothing in this overlay calls it.
 // As ☀️'s MercuryLighthouseAerie_CollectBandSlots does.
@@ -2462,25 +2459,10 @@ void Whirlwind_Update(struct Object6a5 *object) {
 /// Scene code of overlay 0x6a5, in ROM order.
 
 #include "../shared/whirlwind.h"
-#include "../shared/jupiter_lighthouse.h"
-#include "../shared/effects.h"
-#include "types.h"
-#include "system.h"
-#include "call.h"
-#include "iwram_call.h"
-#include "actor.h"
 #include "field_effect.h"
-#include "event_inline.h"
-#include "frame.h"
-#include "field_event.h"
-#include "field_sprite.h"
-#include "ram_buffer.h"
-#include "map.h"
 #include "vram_tab.h"
 #include "task.h"
 #include "item_icon.h"
-#include "module/scene/jupiter_lighthouse_aerie_beacon.h"
-#include "module/scene/scene.h"
 
 extern u8 gLightSpritesLarge[];
 

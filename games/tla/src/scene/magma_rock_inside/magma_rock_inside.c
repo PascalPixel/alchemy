@@ -27,7 +27,6 @@ DEFINE_POSITION_DISTANCE(Position_Distance)
 
 #include "../shared/push.h"
 #include "../shared/map_cells.h"
-#include "../shared/actors.h"
 #include "../shared/effects.h"
 #include "types.h"
 #include "main_routine_work.h"
@@ -87,8 +86,6 @@ s32 MagmaRockInside_SetCollisionRect(u32 layer, u32 x, u32 y, u32 width,
   return 0;
 }
 
-#include "../magma_rock_inside.h"
-
 void MagmaRockInside_FightFury(void) { Field_RequestDjinnBattle(15, 56); }
 
 void MagmaRockInside_MeetDjinni(void) { Djinn_JoinParty(17, 2, 19); }
@@ -144,7 +141,6 @@ void MagmaRockInside_PausePlatform(struct Actor *object) {
     *state = 0;
 }
 
-#include "field.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \

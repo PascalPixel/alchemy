@@ -56,7 +56,6 @@ void Func_020000b4(void) {
 #include "actor.h"
 #include "field_sprite.h"
 #include "ram_buffer.h"
-#include "event_work.h"
 
 void Func_020000d0(s32 kind) {
   s32 owner = gMainRoutineWork.currentOwner;
@@ -481,30 +480,13 @@ DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 /// Scene code of overlay 0x69b, in ROM order.
 
-#include "shared/whirlwind.h"
-#include "shared/jupiter_lighthouse.h"
-#include "shared/effects.h"
-#include "types.h"
-#include "ram_buffer.h"
-#include "iwram_call.h"
 #include "irq.h"
-#include "event_work.h"
-#include "actor.h"
-#include "main_routine_work.h"
-#include "field_sprite.h"
-#include "event_inline.h"
-#include "call.h"
 #include "field_effect.h"
-#include "shared/jupiter_lighthouse_aerie.h"
 #include "field_coordinate.h"
 #include "map.h"
-#include "field_event.h"
 #include "vram_tab.h"
 #include "task.h"
 #include "item_icon.h"
-#include "module/field/field.h"
-#include "module/scene/jupiter_lighthouse_room_2.h"
-#include "module/scene/scene.h"
 
 extern const s32 gWhirlwindEndScript[];
 

@@ -265,7 +265,6 @@ void Func_02002bcc(void) {
 #include "map.h"
 #include "iwram_call.h"
 #include "scene_ids.h"
-#include "field.h"
 
 void Actor_TakePlaceOf(struct Actor *object, struct Actor *other);
 void Actor_MoveToObject(s32 id, s32 target);
@@ -482,7 +481,6 @@ void CrumblingPillars_PlaceWithStandIns(const void *data);
 void Func_020018a8(void);
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);
 
@@ -541,8 +539,6 @@ void Func_02003164(void) {
 
 #include "task.h"
 #include "field_effect.h"
-
-extern struct Actor *gData_02004420;
 
 extern const u8 gData_02003fc8[];
 extern s32 gData_02005678;
@@ -846,7 +842,6 @@ void Func_0200390c(void) {
 // ---- games/tla/src/scene/dehkan_plateau/s3a30.c ----
 // Scene code of overlay 0x655, in ROM order, from s3a30's offset up to the next
 // object the overlay links.
-extern struct Actor *gData_02004420;
 
 void Func_02003a30(void) {
   struct Actor **slot = &gData_02004420;

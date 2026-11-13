@@ -57,16 +57,6 @@
 #undef EffectPosition
 #undef Math_UnsignedMulHighAdd
 #undef Event_SetDestinationFar
-#undef Unit_Get
-#undef Portrait_Create
-#undef Ability_Get
-#undef MenuSprite
-#undef MenuCursor_AdvanceFar
-#undef MenuCursor_MoveTowardTargetFar
-#undef WindowSprite_Pulse
-#undef CommandIcon_Create
-#undef MenuTitle_Bob
-#undef Event_SetDestinationFar
 
 // ---- window/screens.c ----
 
@@ -143,10 +133,6 @@ s32 Window_MapTextCanvasTiles__screens() __asm__("Window_MapTextCanvasTiles");
 #undef Portrait_OpenWindow
 #undef MenuCursor_SetPositionImmediateFar
 #undef Message_Start
-#undef gWindowSprite_BounceScales
-#undef Text_DrawWideStringAtOffset
-#undef Window_PutGlyph
-#undef Portrait_OpenWindow
 #undef gWindowSprite_BounceScales
 #undef Text_DrawWideStringAtOffset
 #undef Window_PutGlyph

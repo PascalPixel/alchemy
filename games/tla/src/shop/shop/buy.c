@@ -258,9 +258,6 @@ close:
 }
 
 #undef PRICE_WINDOW_WIDTH
-#undef PRICE_WINDOW_WIDTH
-#undef PRICE_WINDOW_WIDTH
-#undef MONEY_WINDOW_WIDTH
 #undef MONEY_WINDOW_WIDTH
 
 void Shop_DrawStock(struct RenderInput *window, s32 selected) {
@@ -647,8 +644,6 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
 }
 
 #undef QUANTITY_CURSOR_Y
-#undef QUANTITY_CURSOR_Y
-#undef QUANTITY_CURSOR_Y
 
 // The quantity window: outside the English edition the count sits further left
 // and the price and coins label move with their words; the Spanish, French and
@@ -776,10 +771,6 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   return result;
 }
 
-#undef QUANTITY_COINS_X
-#undef QUANTITY_COINS_X
-#undef QUANTITY_COINS_X
-#undef QUANTITY_COINS_X
 #undef QUANTITY_COINS_X
 
 void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {

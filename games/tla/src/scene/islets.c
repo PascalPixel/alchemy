@@ -2113,12 +2113,9 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// Scene code of overlay 0x674, in ROM order.
 
 #include "shared/push.h"
-#include "types.h"
 #include "heap_release.h"
 #include "palette_snapshots.h"
-#include "field.h"
 #include "module/field/field.h"
-#include "module/scene/islets.h"
 #include "module/scene/scene.h"
 
 void Func_02003410(void) {
@@ -2158,20 +2155,13 @@ inner:
 
 // Overlay 674 keeps its own palette queue between its allocation and step
 // functions; its PaletteCycle_Add is the main image's.
-#include "ram_buffer.h"
-#include "dma.h"
-#include "io_reg.h"
 
 #define gPaletteWork ((struct PaletteSnapshotWork *)Ram_HeapSlots->unk70[0])
 
 #include "../field/palqueue_add.c"
 #undef gPaletteWork
 
-#include "actor.h"
-#include "main_routine_work.h"
-#include "event_work.h"
 #include "text/msg_ids.h"
-#include "event_inline.h"
 
 void Func_020034d8(void) {
   Task_AddFrame(&Func_020034fc, 0x480);
@@ -2470,8 +2460,6 @@ DEFINE_PUSH_TARGET_PUSH(PushTarget_Push, gPushFootprints, Func_02003790,
 // ---- scene/islets/s3d0c.c ----
 
 /// Scene code of overlay 0x674, in ROM order.
-
-#include "event_inline.h"
 
 void Actor_StopAtPushTarget(struct Actor *object) {
   struct Vector3 position;

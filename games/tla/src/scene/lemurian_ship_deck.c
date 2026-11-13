@@ -178,34 +178,15 @@ void LemurianShipDeck_BobDeck(void) {
   gLemurianShipDeck_BobPhase += 0x200;
 }
 
-// ---- scene/lemurian_ship_deck/s0b84.c ----
-
-/// The deck's events and data, linked apart from lemurian_ship_deck.c.
-
 #include "shared/effects.h"
 #include "shared/tables.h"
-#include "types.h"
-#include "system.h"
-#include "main_routine_work.h"
-#include "actor.h"
-#include "ram_buffer.h"
-#include "event_work.h"
 #include "text/msg_ids.h"
 #include "version.h"
-#include "scene_tables.h"
-#include "event_inline.h"
-#include "scene_ids.h"
 #include "macros.h"
 #include "field_sprite.h"
 #include "task.h"
 #include "call.h"
-#include "frame.h"
-#include "field.h"
 #include "module/scene/lemurian_ship_deck.h"
-#include "module/scene/scene.h"
-
-extern s32 gLemurianShipDeck_WaveScroll;
-extern s32 gLemurianShipDeck_BobPhase;
 
 void LemurianShipDeck_RotateColors4To9(void);
 void LemurianShipDeck_HoldOnToTiller(void);

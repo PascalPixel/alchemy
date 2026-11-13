@@ -275,7 +275,6 @@ void SeaOfTime_RideCurrent(void) {
 #include "ram_buffer.h"
 #include "event_inline.h"
 #include "frame.h"
-#include "event_work.h"
 #include "system/field_effect.h"
 
 /// Walks actor 8 along a run of cells in the facing the event work names,
@@ -741,8 +740,6 @@ void SeaOfTime_UpdateSpray(struct Actor *object) {
                       0xb0000, &spark);
   }
 }
-
-extern struct SavedColors gSeaOfTime_SavedColors;
 
 void SeaOfTime_CrossToLemuria(void) {
   volatile u16 fill;
@@ -1281,9 +1278,6 @@ s32 Scene_PrepareMap(void) {
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   return 0;
 }
-
-void SeaOfTime_CircleSwirl(void);
-void SeaOfTime_FollowChannel(void);
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {

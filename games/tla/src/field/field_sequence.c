@@ -32,9 +32,6 @@
 #undef PartyInventory_GiveItem
 #undef BattleEffect_GetFlags
 
-#undef PartyInventory_GiveItem
-#undef BattleEffect_GetFlags
-
 // ---- field/object/screen_transition.c ----
 
 /// The field's screen transitions and palette fades, as The Broken Seal's
@@ -342,7 +339,6 @@ struct EffectVisual__rising {
   u8 value1a;
   u8 value1b;
 };
-struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 
 void ItemDisplay_ShowItem(s32 item, s32 flags) {
   struct Actor *owner = ObjectTable_Get(Party_GetLeaderActor());
@@ -558,9 +554,6 @@ void FieldEffect_StartWindowHBlankDma(void) {
 }
 #include "event.h"
 #include "gamepak/far_call/window.h"
-#include "module/field/screen_transition.h"
-#include "module/field/object.h"
-#include "module/system/system.h"
 
 void ScreenTransition_UpdateScanlineTable(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -1358,9 +1351,6 @@ void ScreenTransition_InitializeState(s32 value) {
   wait(0x78);
 }
 #include "ground_mask.h"
-#include "module/field/screen_transition.h"
-#include "module/field/object.h"
-#include "module/system/system.h"
 
 void BattleEffect_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
                                      s32 frames) {
@@ -1947,7 +1937,6 @@ void FieldEffect_StartFadeOverlay(void *object) {
     object = ObjectTable_Get(gMainRoutineWork.currentOwner);
   work[6] = (u32)object;
 }
-#include "module/field/screen_transition.h"
 
 /// Suspends the fade overlay's drawing callback.
 void FadeOverlay_Suspend(void) { Task_SuspendAll(FadeOverlay_DrawMarks); }
@@ -2123,8 +2112,6 @@ s32 Speaker_GetActorSprite(u32 objectId) {
   }
   return *object->animation->value28;
 }
-#include "event.h"
-#include "module/field/screen_transition.h"
 #include "resource_ids.h"
 
 /* VIEW(definition_flags): routine Speaker_GetActorSprite as s32

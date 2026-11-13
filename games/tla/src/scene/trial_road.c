@@ -120,16 +120,11 @@ void TrialRoad_TakeStairs(s32 direction) {
 /// Trial Road's stage puzzles: the stairs, chests and doors, and the pillars,
 /// torches, logs, spouts and sand the eight rooms are built from.
 
-#include "shared/trial_road.h"
-#include "event_inline.h"
-#include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
-#include "scene_tables.h"
 #include "macros.h"
 #include "text/msg_ids.h"
 #include "vector3.h"
-#include "field.h"
 #include "event_work.h"
 #include "module/scene/trial_road.h"
 #include "module/window/window.h"

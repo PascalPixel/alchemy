@@ -43,19 +43,9 @@
 #undef gSummon_OrderList
 #undef gElement_PowerResistByLevel
 #undef gEnemy_ElementPresetTable
-#undef Data_080b1290
-#undef gData_080b1f40
-#undef gCharacter_DefinitionTable
-#undef gData_080b2340
-#undef gCharacter_LevelExpTable
-#undef gSummon_OrderList
-#undef gEnemy_ElementPresetTable
-#undef gElement_PowerResistByLevel
 
-// ---- game/experience_table.c ----
-
-/// Each character's lighthouse group, two lists the game's rules read, and the
-/// experience each character needs for each level.
+// Each character's lighthouse group, two lists the game's rules read, and the
+// experience each character needs for each level.
 
 #include "game.h"
 
@@ -198,10 +188,6 @@ const u32 gCharacter_LevelExpTable[] = {
 /// multiplies by; nothing found reads this copy.
 const u32 Data_080b1f28 = 0x1999999a;
 
-// ---- game/artifact_slots.c ----
-
-/// The artifact_slots object, written as parts in artifact_slots/.
-
 #include "artifact_slots_internal.h"
 
 // The parts, in ROM order.
@@ -210,11 +196,7 @@ const u32 Data_080b1f28 = 0x1999999a;
 #include "artifact_slots/ability_table.c"
 #include "artifact_slots/enemy_table.c"
 
-// ---- game/character_table.c ----
-
-/// The eight characters' definitions, by character id.
-
-#include "game.h"
+// The eight characters' definitions, by character id.
 
 // clang-format off
 const struct CharacterDefinition gCharacter_DefinitionTable[] = {
@@ -317,12 +299,8 @@ const struct CharacterDefinition gCharacter_DefinitionTable[] = {
 };
 // clang-format on
 
-// ---- game/summon_table.c ----
-
-/// The summons: the order the Summon command lists them in, and each one's
-/// ability and the Djinn it needs. Each name is its ability's.
-
-#include "game.h"
+// The summons: the order the Summon command lists them in, and each one's
+// ability and the Djinn it needs. Each name is its ability's.
 
 /// The order the Summon command lists the summons in.
 const u8 gSummon_OrderList[29] = {
@@ -480,12 +458,9 @@ const struct SummonDefinition gSummon_DefinitionTable[] = {
 };
 // clang-format on
 
-// ---- game/class_table.c ----
+// The 244 classes, by class id. Each name is the English release's
+// (MsgClassName plus the class id).
 
-/// The 244 classes, by class id. Each name is the English release's
-/// (MsgClassName plus the class id).
-
-#include "game.h"
 #include "owner_state.h"
 
 // clang-format off
@@ -3934,13 +3909,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
 };
 // clang-format on
 
-// ---- game/element_table.c ----
-
-/// The element tables: class series by element, element power and resistance
-/// by level, the enemies' element presets, the power and resistance curve, and
-/// the classes two ability effects look for.
-
-#include "game.h"
+// The element tables: class series by element, element power and resistance
+// by level, the enemies' element presets, the power and resistance curve, and
+// the classes two ability effects look for.
 
 /// The class series by a character's strongest and second element, read as
 /// [strongest][second]; The Broken Seal's gClass_SeriesByElements.

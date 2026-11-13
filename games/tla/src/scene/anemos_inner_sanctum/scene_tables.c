@@ -170,16 +170,13 @@ s32 Func_02000794(struct Actor *object) {
 /// Scene code of overlay 0x6b0, in ROM order.
 
 #include "battle.h"
-#include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "lib.h"
 #include "menu.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "scene_tables.h"
-#include "module/scene/anemos_inner_sanctum.h"
 #include "scene_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -187,8 +184,6 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-#include "main_routine_work.h"
 
 extern struct ActorPlacement gData_02003b38[];
 extern struct ActorPlacement gData_02003b50[];
@@ -212,7 +207,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 #include "system/iwram_call.h"
-#include "event_inline.h"
 
 struct Work {
   u8 pad0[8];
@@ -234,7 +228,6 @@ struct Work {
   u16 unk66;
 };
 
-void Actor_SelectAnimation(struct Actor *, s32);
 void Actor_StartScript();
 extern u8 gData_02003684[];
 
@@ -265,8 +258,6 @@ void Func_0200088c(struct Vector3 *from, struct Vector3 *to, s16 part) {
   Actor_StartScript(actor, gData_02003684);
   Func_020006f8(actor);
 }
-
-#include "actor.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -312,16 +303,10 @@ void Func_02000a78(s32 a0, s32 a1, s16 a2) {
 /// Scene code of overlay 0x6b0, in ROM order.
 
 #include "../shared/actors.h"
-#include "types.h"
-#include "system.h"
 #include "ram_buffer.h"
-#include "actor.h"
 #include "system/io_reg.h"
 #include "system/main_routine_work.h"
-#include "event_inline.h"
-#include "field.h"
 #include "event_work.h"
-#include "module/scene/anemos_inner_sanctum.h"
 #include "text/msg_ids.h"
 
 /* VIEW(s0ac8): tag struct Work as struct Work__s0ac8;
@@ -356,7 +341,6 @@ void Func_020009b8__s0ac8() __asm__("Func_020009b8");
  * Func_02000ac8 moves: 1 of 630 instructions in tla-ja. */
 void Func_02000a78__s0ac8() __asm__("Func_02000a78");
 #define Func_02000a78 Func_02000a78__s0ac8
-void Actor_StartScript();
 void BlendScript_Resume(void);
 extern u8 gData_020035cc[];
 extern u8 gData_02003620[];
@@ -612,8 +596,6 @@ void Func_0200109c(void) {
   }
 }
 
-#include "scene_tables.h"
-
 /// An event handler from the sanctum's event table (in s2f48.c),
 /// reading the leader's place in 8-pixel cells: sets the cells of rooms 3 and
 /// 4, and sets flags 0xa80 to 0xa86 where the leader stands on given cells,
@@ -684,8 +666,6 @@ void Func_02001160(void) {
 #include "field/event_work.h"
 
 extern const s32 gData_02003574[];
-
-void Actor_SelectAnimation(struct Actor *, s32);
 
 /// An event handler from the sanctum's event table (in s2f48.c):
 /// changes the cells at the leader's place, spawns an effect of type 0x15d
@@ -923,16 +903,8 @@ void Func_020017b4(struct Actor *self) {
 /// Scene code of overlay 0x6b0, in ROM order.
 
 #include "flags.h"
-#include "types.h"
-#include "ram_buffer.h"
-#include "actor.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
-#include "event_work.h"
 #include "module/field/object.h"
-#include "module/scene/anemos_inner_sanctum.h"
 #include "text/msg_ids.h"
-#include "scene_ids.h"
 
 void Actor_PlaceBlocks(void);
 
@@ -956,7 +928,6 @@ void Func_02001938(void) {
   }
 }
 
-#include "field_sprite.h"
 #include "io_reg.h"
 
 struct SpriteView {
@@ -1104,8 +1075,6 @@ void Func_02001c60(void) {
   Func_02000158();
 }
 
-#include "scene_ids.h"
-
 /* VIEW(s1938): tag struct EventWork154 as struct EventWork154__s1938;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, its members read value as returnEntrance, it does not
@@ -1166,8 +1135,6 @@ loop:
   Event_End();
 }
 
-#include "scene_tables.h"
-
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_020033e0_(s32 id, s32 x, s32 z) {
@@ -1214,9 +1181,6 @@ void Func_02001df4(void) {
 s32 Func_02000038();
 s32 CrackedTiles_Find();
 s32 CrackedTile_PlaceLanding();
-extern u8 gData_020036e4[];
-extern u8 gData_020036ea[];
-extern u8 gData_020036f6[];
 extern u8 gData_0200384c[];
 extern u8 gData_0200385c[];
 extern u8 gData_02003888[];
@@ -1549,8 +1513,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// Scene code of overlay 0x6b0, in ROM order.
 
 #include "../shared/cracked_tile.h"
-#include "types.h"
-#include "field_effect.h"
 #include "heap_release.h"
 #include "item_icon.h"
 #include "module/scene/scene.h"
@@ -1572,11 +1534,6 @@ void Effect_MoveLocal(union FieldObject *object) {
   sprite->rotation += object->effect.spin;
 }
 
-#include "main_routine_work.h"
-#include "field_sprite.h"
-#include "event_inline.h"
-
-void Actor_SelectAnimation(struct Actor *, s32);
 extern const s32 *gData_02004428[];
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void Actor_SetSpritePriorityB(struct Actor *object, s32 priority);
@@ -1656,8 +1613,6 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepth
 #include "../../field/map/cell_sprite.c"
 
-#include "ram_buffer.h"
-#include "actor.h"
 #include "iwram_call.h"
 #include "cell_target.h"
 
@@ -1693,19 +1648,7 @@ DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
 /// Scene code of overlay 0x6b0, in ROM order.
 
-#include "types.h"
-#include "ram_buffer.h"
-#include "actor.h"
-#include "main_routine_work.h"
-#include "scene_tables.h"
-#include "iwram_call.h"
 #include "dma.h"
-#include "event_inline.h"
-#include "io_reg.h"
-#include "event_work.h"
-#include "field.h"
-#include "module/scene/anemos_inner_sanctum.h"
-#include "module/scene/scene.h"
 
 void CrackedTile_Fall(struct PushEvent *event) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);

@@ -1,5 +1,9 @@
 /// @file
-/// The Gondowan Cliffs' copy of the effect spawner, FieldEffect_Spawn.
+/// The Gondowan Cliffs' events and set-up, and the geysers Scoop digs up out of
+/// the yellow sand: each rises and falls on its timer, carrying the leader up
+/// its column of water (Geysers_Update, Geysers_Draw).
+///
+/// It opens on its copy of the effect spawner, FieldEffect_Spawn.
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -8,12 +12,6 @@
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
 #include "../../field/field_effect/spawn.c"
-
-// ---- scene/gondowan_cliffs/cliffs.c ----
-
-/// The Gondowan Cliffs' events and set-up, and the geysers Scoop digs up out of
-/// the yellow sand: each rises and falls on its timer, carrying the leader up
-/// its column of water (Geysers_Update, Geysers_Draw).
 
 #include "flags.h"
 #include "../shared/map_cells.h"
@@ -397,8 +395,6 @@ s32 Scene_PrepareMap(void) {
     *(const u8 **)Ram_HeapSlots->mapWork->unk0fc = gGondowanCliffs_MapRects;
   return 0;
 }
-
-#include "map.h"
 
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])

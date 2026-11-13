@@ -246,8 +246,6 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02001c74,
                              MapGrid_SetAttributeBAt)
 
-#include "event_work.h"
-
 DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Whirlwind_CarryLeaderLower)
 
 #include "irq.h"
@@ -266,18 +264,9 @@ DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, MapGrid_GetCellBehavior,
 
 /// Scene code of overlay 0x699, in ROM order.
 
-#include "shared/whirlwind.h"
-#include "shared/jupiter_lighthouse.h"
-#include "types.h"
-#include "system.h"
 #include "call.h"
-#include "iwram_call.h"
-#include "actor.h"
 #include "field_effect.h"
-#include "event_inline.h"
 #include "item_icon.h"
-#include "module/scene/jupiter_lighthouse_basement.h"
-#include "module/scene/scene.h"
 
 extern s16 gData_020024f6;
 
@@ -286,10 +275,7 @@ void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation,
                        Whirlwind_UpdateLower, FieldEffect_Spawn)
 
-#include "frame.h"
 #include "field_coordinate.h"
-#include "field_sprite.h"
-#include "field_event.h"
 #include "task.h"
 
 s32 Func_02000a64(struct Actor *object) {
@@ -319,7 +305,6 @@ DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
 // projects it from the map's view, skips it off screen, and writes a 16 by 16
 // sprite, or a 32 by 64 one when the big switch is set, at its animation
 // picture and depth.
-#include "ram_buffer.h"
 #include "map.h"
 #include "vram_tab.h"
 

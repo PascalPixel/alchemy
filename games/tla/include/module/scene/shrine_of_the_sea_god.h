@@ -9,7 +9,7 @@
 struct ShrineOfTheSeaGodObject;
 
 /// A word of the object written through a one-member union (see the
-/// FAKEMATCH(signature) tag in Func_02001d24).
+/// FAKEMATCH(signature) tag in ShrineOfTheSeaGod_LashRope).
 union ObjectWord {
   s32 value;
 };
@@ -35,19 +35,19 @@ struct ShrineOfTheSeaGodPartyExtra {
 void Func_020025fc(void);
 void Func_02003854(s32 actor);
 
-void Func_020004e0(void);
+void ShrineOfTheSeaGod_StartleCompanion(void);
 
 void Func_02000554(void);
 
-void Func_02000688(void);
+void ShrineOfTheSeaGod_UseSeaGodsTear(void);
 
 void Func_02000e38(void);
 
-void Func_02000f34(void);
+void ShrineOfTheSeaGod_FreezeFirstPuddle(void);
 
-void Func_02000f58(void);
+void ShrineOfTheSeaGod_FreezeSecondPuddle(void);
 
-void Func_02000f80(void);
+void ShrineOfTheSeaGod_FreezeThirdPuddle(void);
 
 void Func_02000fa8(void);
 
@@ -64,8 +64,8 @@ void Func_02001474(void);
 void Func_020016d8(void);
 
 void Func_02001a0c(void);
-void Func_02001a3c(void);
-void Func_02001d24(void);
+void ShrineOfTheSeaGod_ThrowRopeAgain(void);
+void ShrineOfTheSeaGod_LashRope(void);
 void Func_02002384(void);
 
 void Func_02002430(void);

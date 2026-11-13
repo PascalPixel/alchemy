@@ -134,10 +134,10 @@ void Actor_SetSingleChildFlags(struct ShrineOfTheSeaGodObject *object,
 static inline void ShrineOfTheSeaGod_Jump(s32 actor, s32 height, s32 frames) {
   /* FAKEMATCH(pin): the height pinned to r1, so the actor loads after the
    * height and frames; as a plain local, 18 of 656 instructions differ in
-   * tla-en (Func_02001d24), and 24 in all over its four callers. */
+   * tla-en (ShrineOfTheSeaGod_LashRope), and 24 in all over its four callers. */
   register s32 h __asm__("r1") = height;
   /* FAKEMATCH(pin): the frames pinned to r2 with the height above; as a plain
-   * local, 8 of 656 instructions differ in tla-en (Func_02001d24), and 12 in
+   * local, 8 of 656 instructions differ in tla-en (ShrineOfTheSeaGod_LashRope), and 12 in
    * all over three callers. */
   register s32 f __asm__("r2") = frames;
 

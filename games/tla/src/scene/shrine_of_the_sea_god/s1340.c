@@ -257,7 +257,9 @@ void Func_02001a0c(void) {
   ShrineOfTheSeaGod_BlendStart(14, 14, 1, 1, 15, 14);
 }
 
-void Func_02001a3c(void) {
+/// ★ Named from the game: "All right! I'm gonna throw the rope again!"
+/// (MsgFieldRopeThrownAgain)
+void ShrineOfTheSeaGod_ThrowRopeAgain(void) {
   struct ShrineOfTheSeaGodObject *leader;
 
   Event_Start();
@@ -339,7 +341,9 @@ static inline void ShrineOfTheSeaGod_ObjAngle(s32 actor, s32 angle) {
 }
 void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);
 
-void Func_02001d24(void) {
+/// Lash ties the boys' rope, Tavi climbs down and both meet the party.
+/// ★ Named from the game: "Excellent work, !" (MsgFieldPraiseRopeWork)
+void ShrineOfTheSeaGod_LashRope(void) {
   struct ShrineOfTheSeaGodObject *object;
   struct ShrineOfTheSeaGodObject *leader;
   struct ShrineOfTheSeaGodSprite *sprite;

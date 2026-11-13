@@ -152,7 +152,9 @@ const struct Trigger *Scene_GetEvents(void) {
 
 extern const u8 gData_02003c10[];
 
-void Func_020004b0(void) {
+/// ★ Named from the game: "This statue looks a lot like the one in Daila's
+/// Sanctum." (MsgFieldStatueLikeDailaShrine)
+void ShrineOfTheSeaGod_ExamineStatue(void) {
   struct ShrineOfTheSeaGodEventWork *work = Ram_HeapSlots->eventWork;
 
   Event_Start();
@@ -162,7 +164,8 @@ void Func_020004b0(void) {
   Event_End();
 }
 
-void Func_020004e0(void) {
+/// ★ Named from the game: "Wah! You scared me!" (MsgFieldStartledCompanion)
+void ShrineOfTheSeaGod_StartleCompanion(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_Stop(11);
@@ -237,7 +240,10 @@ void DisplayBlend_EnableRunScript(void);
 void Map_SetScreenShake(s32 a, s32 b, s32 c);
 void Import_EventSetExitRequest(s32 value);
 
-void Func_02000688(void) {
+/// The Sea God's Tear (item 458) used on the statue on the island, actor 10,
+/// makes the water rise.
+/// ★ Named from the game: "Sea God's Tear" (item 458's name)
+void ShrineOfTheSeaGod_UseSeaGodsTear(void) {
   u32 i;
 
   Event_Start();
@@ -568,17 +574,20 @@ void Func_02000f18(s32 actor) {
   Actor_GetById(actor)->priorityFlags |= 0x20;
 }
 
-void Func_02000f34(void) {
+/// Frost on the puddle, actor 10, makes an ice pillar (flag 0x200).
+void ShrineOfTheSeaGod_FreezeFirstPuddle(void) {
   ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 8, 18);
   GameFlag_SetBit(0x200);
 }
 
-void Func_02000f58(void) {
+/// Frost on the puddle, actor 11, makes an ice pillar (flag 0x201).
+void ShrineOfTheSeaGod_FreezeSecondPuddle(void) {
   ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 10, 18);
   GameFlag_SetBit(0x201);
 }
 
-void Func_02000f80(void) {
+/// Frost on the puddle, actor 12, makes an ice pillar (flag 0x202).
+void ShrineOfTheSeaGod_FreezeThirdPuddle(void) {
   ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 10, 17);
   GameFlag_SetBit(0x202);
 }

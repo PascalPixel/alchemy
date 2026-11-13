@@ -203,7 +203,11 @@ void SoundTest_Run(void) {
   reverbCode = SOUND_REVERB_NORMAL;
   // XXX (no evidence): why the sound test clears the first four digits of the
   // build stamp copy; nothing in the game reads that copy.
-  gBuildStamp[0] = 0;
+  /* FAKEMATCH(dead): a once-only block keeps the store between the two
+   * setups; as a plain store, 4 of 145 instructions differ in tbs-en. */
+  do {
+    gBuildStamp[0] = 0;
+  } while (0);
   clipTimer = 20;
 
   for (;;) {

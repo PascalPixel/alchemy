@@ -100,7 +100,7 @@ void InventorySnapshot_Save(void);
     /* a once-only block, and barriers that hold r0 (each empty */             \
     /* asm adds four bytes to the pool estimate and moves the */               \
     /* literal pool of a long scene). As an unpinned local, 111 */             \
-    /* of 711 instructions differ in tla-en (Func_02002068). */                \
+    /* of 711 instructions differ in tla-en (ShamanVillage_ShowShamansRod). */                \
     register s32 emote_ __asm__("r1") = (emote);                               \
     s32 frames_ = (frames);                                                    \
     Func_080d47b4((actor), emote_, frames_);                                   \
@@ -108,16 +108,16 @@ void InventorySnapshot_Save(void);
 
 // ---- this overlay
 
-void Func_0200057c(void);
-void Func_020011f8(void);
-void Func_02002f20(s32 a, s32 b);
-void Func_02002fb0(s32 a);
-void Func_02003b6c(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f);
-s32 Func_02000f94(void);
-void Func_02001380(void);
-void Func_0200289c(void);
-void Func_0200290c(void);
-void Func_02003040(void);
+void ShamanVillage_BlowAwaySand(void);
+void ShamanVillage_HopFortuneTeller(void);
+void ShamanVillage_StartLettering(s32 a, s32 b);
+void ShamanVillage_LoadLettering(s32 a);
+void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f);
+s32 ShamanVillage_IsFacingCounter(void);
+void ShamanVillage_ExplainTrialRules(void);
+void ShamanVillage_StepBackFromTrial(void);
+void ShamanVillage_CheckTrialEntry(void);
+void ShamanVillage_CountDownToStart(void);
 
 extern s32 gData_02004c08[];
 extern s32 gData_020050f8[];

@@ -55,6 +55,8 @@ s32 Func_02002708(void) {
   // Unused: gives the stack frame its 12 bytes.
   UNUSED s32 unused[3];
 
+  /* FAKEMATCH(signature): typed returning s32, though it returns nothing; as
+   * void, 2 of 138 instructions differ in tla-en. */
   if (event->started == 0) {
     ScreenTransition_Start(event->field1ac, event->field1b4);
     event->started = 1;
@@ -65,8 +67,6 @@ s32 Func_02002708(void) {
   event->field15e = 0;
   event->field15c = 0;
   event->field164 = 0;
-  /* FAKEMATCH(signature): Func_02002368 declared returning s32, which it
-   * never sets; as void, 2 of 138 instructions differ in tla-en. */
   Func_02002368(-10, 0);
   FieldCamera_SetSpeed(0x70000, 0xe000);
   leader = Actor_Get(gMainRoutineWork.currentOwner);

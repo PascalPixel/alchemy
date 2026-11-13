@@ -8,7 +8,8 @@
 #include "module/scene/shaman_village.h"
 #include "task.h"
 
-struct ShamanVillageObject *Func_02001fec(void) {
+/// The Shaman's Rod (item 65) drawn as an actor over the leader.
+struct ShamanVillageObject *ShamanVillage_CreateRodIcon(void) {
   struct ShamanVillageObject *object =
       ((struct ShamanVillageObject *)Import_ActorCreate(489, 0x780000, 0x400000,
                                                         0x1080000));
@@ -39,7 +40,9 @@ void DriftScene_SpawnObject(s32 x, s32 y, s32 z, u16 value);
 extern u32 gData_02004d84[];
 extern u32 gData_02004e5c[];
 
-void Func_02002068(void) {
+/// ★ Named from the game: "That's the Shaman's Rod!"
+/// (MsgShamanRecognizeShamanRod)
+void ShamanVillage_ShowShamansRod(void) {
   struct ShamanVillageObject *rod;
   struct ShamanVillageObject *object;
   s32 angle;
@@ -57,7 +60,7 @@ void Func_02002068(void) {
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x13333, 0x9999);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 120, 264);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
-  rod = Func_02001fec();
+  rod = ShamanVillage_CreateRodIcon();
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
    * frames load before the actor; as a plain call, 84 of 711 instructions
    * differ in tla-en (see the macro). */
@@ -270,7 +273,9 @@ void Func_02002068(void) {
   Event_End();
 }
 
-void Func_0200279c(void) {
+/// ★ Named from the game: "If you're here offering charity, I won't have it...
+/// Or did you want to show me something?" (MsgShamanShowMeSomething)
+void ShamanVillage_ShowItemToMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanShowMeSomething);
@@ -278,7 +283,9 @@ void Func_0200279c(void) {
   Event_End();
 }
 
-void Func_020027c0(void) {
+/// ★ Named from the game: "Did you want to sell it? Because I don't have any
+/// money." (MsgShamanCannotBuyGift)
+void ShamanVillage_ShowItemToGuard(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanCannotBuyGift);
@@ -286,7 +293,9 @@ void Func_020027c0(void) {
   Event_End();
 }
 
-void Func_020027e4(void) {
+/// ★ Named from the game: "Show it to Moapa if you must"
+/// (MsgShamanShowItToMoapa)
+void ShamanVillage_ShowItemToOtherGuard(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanShowItToMoapa);
@@ -294,7 +303,8 @@ void Func_020027e4(void) {
   Event_End();
 }
 
-void Func_02002808(void) {
+/// ★ Named from the game: "Hoolabaloo!" (MsgShamanFortuneGreeting)
+void ShamanVillage_GreetFortuneSeeker(void) {
   if (Event_GetFlag(0x9fe)) {
     Event_PlaySound(0);
     Event_Start();
@@ -303,19 +313,21 @@ void Func_02002808(void) {
     Actor_SetAnimation(17, 5);
     Event_ShowMessage(17, 0);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 20);
-    Func_020011f8();
+    ShamanVillage_HopFortuneTeller();
     Actor_SetAnimation(17, 1);
     Event_SetFlag(0x203);
     Event_End();
   }
 }
 
-void Func_02002878(void) {
+/// Growth on the sprout, actor 21: its cells become climbable, toward the
+/// Spirit Gloves' chest (flag 0x205).
+void ShamanVillage_GrowVine(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 2, 2, 17);
   Event_SetFlag(0x205);
 }
 
-void Func_0200289c(void) {
+void ShamanVillage_StepBackFromTrial(void) {
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 168, 304);
@@ -329,7 +341,11 @@ void Func_0200289c(void) {
 #define EVENT_WORK ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)
 
 // Forwards to Party_ListMembers; tagged where it is used.
-void Func_0200290c(void) {
+/// Moapa takes the challenge only from a party with the Shaman's Rod and eight
+/// pieces of equipment.
+/// ★ Named from the game: "But what's this? You no longer have the Shaman's
+/// Rod?" (MsgShamanMissingShamanRod)
+void ShamanVillage_CheckTrialEntry(void) {
   s16 owners[10];
   s32 count;
   s32 i;
@@ -368,7 +384,7 @@ void Func_0200290c(void) {
      * 2 of 119 instructions differ in tla-en. */
     SHAMAN_VILLAGE_EMOTE(15, 257, 20)
     Event_ShowMessage(0x200f, 0);
-    Func_0200289c();
+    ShamanVillage_StepBackFromTrial();
   } else {
     EVENT_WORK->field1c4++;
     Event_ShowMessage(0x200f, 0);
@@ -396,7 +412,7 @@ extern s16 gData_02006500;
 
 /// The portrait mode task: reads its command script, eases the portrait's
 /// scale, blend and position, and queues its sprites.
-void Func_02002a20(void) {
+void ShamanVillage_RunLettering(void) {
   u32 *write = gData_020064d0;
   struct Sprite *sprite = (struct Sprite *)write;
   s32 tile = gResourceTableEntries[gData_02005158[0]].offset >> 5;
@@ -435,7 +451,7 @@ commands:
       gData_020064bc = *gData_020064c0++;
       break;
     case -1:
-      Task_RemoveFar(Func_02002a20);
+      Task_RemoveFar(ShamanVillage_RunLettering);
       Resource_ResetEntry(gData_02005158[0]);
       return;
     }
@@ -590,15 +606,15 @@ commands:
 }
 
 /// Starts the mode task: keeps the mode and its parameter, schedules
-/// Func_02002a20 and picks the script the mode runs, then rewinds the
+/// ShamanVillage_RunLettering and picks the script the mode runs, then rewinds the
 /// task's timer and position.
-void Func_02002f20(s32 modeArg, s32 paramArg) {
+void ShamanVillage_StartLettering(s32 modeArg, s32 paramArg) {
   s32 handler;
 
   gData_020064b0 = modeArg;
   gData_02006494 = paramArg << 4;
 
-  Task_Add(Func_02002a20, 0x480);
+  Task_Add(ShamanVillage_RunLettering, 0x480);
 
   handler = (s32)gData_0200515a;
   if (modeArg == 2) {
@@ -644,7 +660,7 @@ struct LetteringSheet {
 /// Decodes the lettering sheet, sends one graphic's palette to OBJ palette 15
 /// and loads its tiles into a VRAM block of its own. Graphic 8 has a palette of
 /// its own and graphic 4's tiles.
-void Func_02002fb0(s32 graphic) {
+void ShamanVillage_LoadLettering(s32 graphic) {
   // BUG: this holds seven graphics of the sheet's eight, so decoding the sheet
   // writes 1024 bytes past the block.
 #ifdef BUGFIX
@@ -673,28 +689,33 @@ void Func_02002fb0(s32 graphic) {
   Heap_Release(sheet);
 }
 
-void Func_02003040(void) {
+/// The lettering banner's three counts and the start, before the race up Trial
+/// Road.
+void ShamanVillage_CountDownToStart(void) {
   gData_0200515a[15] = 180;
   Event_Wait(30);
   Event_PlaySound(78);
-  Func_02002fb0(5);
-  Func_02002f20(2, 0);
+  ShamanVillage_LoadLettering(5);
+  ShamanVillage_StartLettering(2, 0);
   Event_PlaySound(236);
   Event_Wait(60);
-  Func_02002f20(2, 1);
+  ShamanVillage_StartLettering(2, 1);
   Event_PlaySound(236);
   Event_Wait(60);
-  Func_02002fb0(6);
-  Func_02002f20(2, 0);
+  ShamanVillage_LoadLettering(6);
+  ShamanVillage_StartLettering(2, 0);
   Event_PlaySound(236);
   Event_Wait(60);
-  Func_02002fb0(7);
-  Func_02002f20(4, 0);
+  ShamanVillage_LoadLettering(7);
+  ShamanVillage_StartLettering(4, 0);
   Event_PlaySound(237);
   Event_PlaySound(76);
 }
 
-void Func_020030bc(void) {
+/// Moapa's first test: Sheba steps up and casts Whirlwind on the purple rock,
+/// and the sand is gone (flag 0x94c).
+/// ★ Named from the game: "You can do it, !" (MsgShamanCheerForCompanion)
+void ShamanVillage_ShebaClearsSand(void) {
   u8 *work = Ram_HeapSlots->effectWork;
   struct ShamanVillageObject *object =
       ((struct ShamanVillageObject *)Actor_GetById(16));
@@ -744,7 +765,7 @@ void Func_020030bc(void) {
   Actor_FaceDirection(17, FACING_NORTH, 0);
   Actor_FaceDirection(16, FACING_NORTH, 0);
   FieldCamera_SetSpeed(0x19999, 0x3333);
-  Func_02003b24();
+  ShamanVillage_CastWhirlwindOnSand();
   Event_PlaySound(29);
   FieldCamera_SetSpeed(0x4cccc, 0x9999);
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(540), 1);
@@ -1007,7 +1028,7 @@ void Func_020030bc(void) {
   Event_End();
 }
 
-void Func_02003b24(void) {
+void ShamanVillage_CastWhirlwindOnSand(void) {
   Actor_SetSpritePriority(6, 1);
   Event_PlaySound(131);
   BattleEffect_StartArcEffect();
@@ -1016,11 +1037,11 @@ void Func_02003b24(void) {
   BattleEffect_SetObjectUpdateMode(((struct ShamanVillageObject *)Actor_GetById(6)), 0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
-  Func_0200057c();
+  ShamanVillage_BlowAwaySand();
   Actor_SetSpritePriority(6, 2);
 }
 
-void Func_02003b6c(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
+void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   struct ShamanVillageEventWork *work = Ram_HeapSlots->eventWork;
   struct ShamanVillageObject *object;
   s32 cell;
@@ -1051,15 +1072,15 @@ void Func_02003b6c(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   Import_EventSetExitRequest(work->exit);
 }
 
-void Func_02003c58(void) { Func_02003b6c(43, 40, 8, 22, 1, 2); }
+void Func_02003c58(void) { ShamanVillage_EnterDoor(43, 40, 8, 22, 1, 2); }
 
-void Func_02003c74(void) { Func_02003b6c(43, 42, 4, 26, 1, 2); }
+void Func_02003c74(void) { ShamanVillage_EnterDoor(43, 42, 4, 26, 1, 2); }
 
-void Func_02003c90(void) { Func_02003b6c(43, 42, 27, 21, 1, 2); }
+void Func_02003c90(void) { ShamanVillage_EnterDoor(43, 42, 27, 21, 1, 2); }
 
-void Func_02003cac(void) { Func_02003b6c(43, 40, 28, 17, 1, 2); }
+void Func_02003cac(void) { ShamanVillage_EnterDoor(43, 40, 28, 17, 1, 2); }
 
-void Func_02003cc8(void) { Func_02003b6c(43, 42, 10, 8, 1, 2); }
+void Func_02003cc8(void) { ShamanVillage_EnterDoor(43, 42, 10, 8, 1, 2); }
 
 void Func_02003ce4(void) {
   if (Event_GetFlag(0x202)) {
@@ -1070,11 +1091,14 @@ void Func_02003ce4(void) {
     Event_WaitTransitionFrames();
     Import_EventSetExitRequest(13);
   } else {
-    Func_02003b6c(43, 40, 7, 6, 1, 2);
+    ShamanVillage_EnterDoor(43, 40, 7, 6, 1, 2);
   }
 }
 
-void Func_02003d30(void) {
+/// Back at Trial Road's foot, Moapa offers the trial again.
+/// ★ Named from the game: "In order to reach the battle at the summit, you
+/// cannot fail on Trial Road." (MsgShamanMustFinishTrialRoad)
+void ShamanVillage_RestartTrial(void) {
   s32 angle;
 
   Event_ClearFlag(0x11b);
@@ -1120,7 +1144,7 @@ void Func_02003d30(void) {
       Event_PlaySound(76);
       Event_ShowMessage(0x200f, 0);
       Event_SetFlag(0x200);
-      Func_02001380();
+      ShamanVillage_ExplainTrialRules();
       return;
     }
     EVENT_WORK->field1c4++;
@@ -1130,18 +1154,20 @@ void Func_02003d30(void) {
   Event_OpenMessage(0x200f, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
     Event_ShowMessage(0x200f, 0);
-    Func_0200289c();
+    ShamanVillage_StepBackFromTrial();
   } else {
     EVENT_WORK->field1c4++;
     Event_ShowMessage(0x200f, 0);
-    Func_0200290c();
+    ShamanVillage_CheckTrialEntry();
   }
   Party_PlaySavedMusic();
   Event_ClearFlag(0x12f);
   Event_End();
 }
 
-void Func_02003f78(void) {
+/// ★ Named from the game: "It would be wise of you to quit. Even if you reach
+/// the top, you cannot beat me." (MsgShamanMoapaAdvisesLeaving)
+void ShamanVillage_AdviseQuitting(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanMoapaAdvisesLeaving);
@@ -1156,7 +1182,7 @@ void Func_02003f78(void) {
   Event_WaitTransitionFrames();
   Event_Wait(20);
   Event_ShowMessage(0x200f, 0);
-  Func_0200289c();
+  ShamanVillage_StepBackFromTrial();
   Event_ClearFlag(0x12f);
   Event_End();
 }
@@ -1165,21 +1191,21 @@ s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_ShamanVillage1)
-    Func_02004060();
+    ShamanVillage_SetUpVillage();
   else if (scene == (s32)&SceneId_ShamanVillage3)
-    Func_020041b8();
+    ShamanVillage_SetUpRoom3();
   else if (scene == (s32)&SceneId_ShamanVillage2)
-    Func_020043f8();
+    ShamanVillage_SetUpRoom2();
   else if (scene == (s32)&SceneId_ShamanVillage4)
-    Func_02004534();
+    ShamanVillage_SetUpRoom4();
   else if (scene == (s32)&SceneId_ShamanVillage6)
-    Func_020046ec();
+    ShamanVillage_SetUpRoom6();
   return 0;
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_02004060(void) {
+void ShamanVillage_SetUpVillage(void) {
   if (Event_GetFlag(0x94c)) {
     MapGrid_CopyCellsTo(47, 19, 38, 19, 9, 11);
     MapGrid_CopyCellAttributes(1, 5, 9, 1, 6, 29);
@@ -1204,9 +1230,9 @@ void Func_02004060(void) {
     s32 entrance = gMainRoutineWork.entrance;
 
     if (entrance == 11)
-      Func_02003d30();
+      ShamanVillage_RestartTrial();
     else if (entrance == 9)
-      Func_02003f78();
+      ShamanVillage_AdviseQuitting();
   }
   if (Event_GetFlag(0x9fe)) {
     Actor_SetPosition(15, 0, 0);
@@ -1218,7 +1244,7 @@ void Func_02004060(void) {
   }
 }
 
-void Func_020041b8(void) {
+void ShamanVillage_SetUpRoom3(void) {
   struct ShamanVillageObject *object;
 
   Actor_SetAnimation(8, 2);
@@ -1302,7 +1328,7 @@ struct IoReg16 {
   u16 value;
 };
 
-void Func_020043f8(void) {
+void ShamanVillage_SetUpRoom2(void) {
   if (!Event_GetFlag(0x109)) {
     if (Event_GetFlag(0x9fe)) {
       Actor_SetPosition(16, PIXELS(104), PIXELS(200));
@@ -1326,7 +1352,7 @@ void Func_020043f8(void) {
   Func_02004a44();
   Func_02004a4c(0, 0x204, 19, 20);
   if (Event_GetFlag(0x205))
-    Func_02002878();
+    ShamanVillage_GrowVine();
   REG_BLDALPHA = 0xc08;
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   {
@@ -1346,7 +1372,7 @@ void Func_020043f8(void) {
   }
 }
 
-void Func_02004534(void) {
+void ShamanVillage_SetUpRoom4(void) {
   u32 i;
 
   ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
@@ -1414,7 +1440,7 @@ void Func_02004534(void) {
 
 DEFINE_FUNC_020043C8(Func_020046bc, 9, 10)
 
-void Func_020046ec(void) {
+void ShamanVillage_SetUpRoom6(void) {
   struct ShamanVillageEventWork *work = Ram_HeapSlots->eventWork;
 
   work->screenEffect = 521;
@@ -1642,10 +1668,10 @@ s16 gData_02005186[] = {
 #include "text/msg_ids.h"
 
 void Func_02000280(void);
-void Func_02000d08(void);
-void Func_02000d28(void);
-void Func_02000d48(void);
-void Func_02000e3c(void);
+void ShamanVillage_StopAtLockedEntrance(void);
+void ShamanVillage_StopAtClosedEntrance(void);
+void ShamanVillage_ReadTrialRoadSign(void);
+void ShamanVillage_TalkToOtherGuard(void);
 
 // clang-format off
 u32 gData_02005204[] = {
@@ -1828,23 +1854,23 @@ struct Trigger gData_02005aac[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), 526, 0x94c, EVENT(Func_020030bc)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), 526, 0x94c, EVENT(ShamanVillage_ShebaClearsSand)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 1038, 0x94c, 0},
-    {TRIGGER_STEP, 10, 0x9e0, EVENT(Func_02001380)},
-    {TRIGGER_STEP, 10, 0x201, EVENT(Func_02001764)},
-    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_02001644)},
-    {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Func_02001880)},
-    {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(Func_02001aa4)},
+    {TRIGGER_STEP, 10, 0x9e0, EVENT(ShamanVillage_ExplainTrialRules)},
+    {TRIGGER_STEP, 10, 0x201, EVENT(ShamanVillage_ChallengeMoapa)},
+    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(ShamanVillage_OfferToGiveUp)},
+    {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(ShamanVillage_TakeLeftPath)},
+    {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(ShamanVillage_TakeRightPath)},
     {TRIGGER_TALK, 15, 0x94c, MSGNO(MsgShamanYegelosSandChallenge)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgShamanChooseEitherRoad)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x94c, MSGNO(MsgShamanRodWasStolen)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgShamanMoapaCannotLose)},
     {TRIGGER_TALK, 17, 0x94c, MSGNO(MsgShamanTrialRoadAncientBattle)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_02000d68)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(ShamanVillage_TalkToGuard)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x94c, MSGNO(MsgShamanNeedContigoOrShamanPower)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgShamanMoapaGreatestWarrior)},
     {TRIGGER_TALK, 16, 0x94c, MSGNO(MsgShamanAncientHeroesVanishedSand)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_02000e3c)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(ShamanVillage_TalkToOtherGuard)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x94c, MSGNO(MsgShamanSandChallengeWillFail)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgShamanJadeNeedsYegelosHeir)},
     {TRIGGERS_END},
@@ -1858,11 +1884,11 @@ struct Trigger gData_02005bc0[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_02000280)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, 0x94e, EVENT(Func_02001cc8)},
-    {0xc403, 22, 0x94d, EVENT(Func_02000d28)},
-    {TRIGGER_EXAMINE, 10, CONDITION_ALWAYS, EVENT(Func_02000d48)},
-    {TRIGGER_STEP, 11, 0x203, EVENT(Func_02002808)},
-    {0xc400, 17, CONDITION_ALWAYS, EVENT(Func_0200122c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, 0x94e, EVENT(ShamanVillage_DropPillar)},
+    {0xc403, 22, 0x94d, EVENT(ShamanVillage_StopAtClosedEntrance)},
+    {TRIGGER_EXAMINE, 10, CONDITION_ALWAYS, EVENT(ShamanVillage_ReadTrialRoadSign)},
+    {TRIGGER_STEP, 11, 0x203, EVENT(ShamanVillage_GreetFortuneSeeker)},
+    {0xc400, 17, CONDITION_ALWAYS, EVENT(ShamanVillage_TellFortune)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0xa21, MSGNO(MsgShamanCloudyFortuneBeforeTrial)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgShamanCloudyFortuneAfterTrial)},
     {TRIGGER_TALK, 15, 0x9fe, MSGNO(MsgShamanSilentVillager)},
@@ -1885,14 +1911,14 @@ struct Trigger gData_02005ca4[] = {
     {0xce01, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {0xc602, 12, CONDITION_ALWAYS, EVENT(Func_02003cc8)},
-    {0xc602, 13, 0x94f, EVENT(Func_02001d3c)},
+    {0xc602, 13, 0x94f, EVENT(ShamanVillage_MeetMoapa)},
     {0xc602, 13, CONDITION_ALWAYS, EVENT(Func_02003ce4)},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 19, 0x204, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 21, 0x205, EVENT(Func_02002878)},
-    {0xc403, 20, 0x94d, EVENT(Func_02000d08)},
-    {0xc403, 22, 0x94d, EVENT(Func_02000d28)},
-    {0xc403, 21, 0x94f, EVENT(Func_02001d3c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 21, 0x205, EVENT(ShamanVillage_GrowVine)},
+    {0xc403, 20, 0x94d, EVENT(ShamanVillage_StopAtLockedEntrance)},
+    {0xc403, 22, 0x94d, EVENT(ShamanVillage_StopAtClosedEntrance)},
+    {0xc403, 21, 0x94f, EVENT(ShamanVillage_MeetMoapa)},
     {TRIGGER_TALK, 8, 0x9fe, MSGNO(MsgShamanSilentVillager)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgShamanMoapaImpressedByChallenge)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x9fe, MSGNO(MsgShamanWaitForOutsidersToLeave)},
@@ -1914,7 +1940,7 @@ struct Trigger gData_02005ca4[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x9fe, MSGNO(MsgShamanTrustContigoFriends)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgShamanRemainFriendsWithContigo)},
     {TRIGGER_TALK, 13, 0x9fe, MSGNO(MsgShamanSilentVillager)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_02001118)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(ShamanVillage_AskAboutOtherSide)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x9fe, MSGNO(MsgShamanDistrustFriendlyOutsiders)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgShamanWishToBreakSandWalls)},
     {TRIGGER_TALK, 14, 0x9fe, MSGNO(MsgShamanSilentVillager)},
@@ -1922,20 +1948,20 @@ struct Trigger gData_02005ca4[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x9fe, MSGNO(MsgShamanShutDoorsAgainstOutsiders)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
      MSGNO(MsgShamanOutskirtsHaveDifferentPowers)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_02000ef8)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(ShamanVillage_TellOutsidersToLeave)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgShamanOutsidersAreNotContigo)},
-    {TRIGGER_TALK, 17, 0x9fe, EVENT(Func_02000f2c)},
+    {TRIGGER_TALK, 17, 0x9fe, EVENT(ShamanVillage_WarnOfMoapasPower)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgShamanGuardPromisesRematchVictory)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x9fe, MSGNO(MsgShamanContigoTempleTreasure)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgShamanClimbingTrialRoadIsHard)},
-    {TRIGGER_TALK, 16, 0x9fe, EVENT(Func_02000f60)},
+    {TRIGGER_TALK, 16, 0x9fe, EVENT(ShamanVillage_SendToMoapa)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgShamanVillagersBlameGuardDefeat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x9fe, MSGNO(MsgShamanMoapaSparedOutsiders)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgShamanGuardBlamesMountainClimb)},
-    {0x4114, 15, 0x9e1, EVENT(Func_02002068)},
-    {0x1ff14, 15, CONDITION_ALWAYS, EVENT(Func_0200279c)},
-    {0x1ff14, 16, CONDITION_ALWAYS, EVENT(Func_020027c0)},
-    {0x1ff14, 17, CONDITION_ALWAYS, EVENT(Func_020027e4)},
+    {0x4114, 15, 0x9e1, EVENT(ShamanVillage_ShowShamansRod)},
+    {0x1ff14, 15, CONDITION_ALWAYS, EVENT(ShamanVillage_ShowItemToMoapa)},
+    {0x1ff14, 16, CONDITION_ALWAYS, EVENT(ShamanVillage_ShowItemToGuard)},
+    {0x1ff14, 17, CONDITION_ALWAYS, EVENT(ShamanVillage_ShowItemToOtherGuard)},
     {TRIGGERS_END},
 };
 
@@ -1967,10 +1993,10 @@ struct Trigger gData_02005f98[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x9fe, MSGNO(MsgShamanFirstForeignVisitors)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
      MSGNO(MsgShamanNamesBeforeBattleOldFashioned)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Func_0200113c)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(ShamanVillage_TalkToMoapa)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x9ed, MSGNO(MsgShamanVictorsDeserveRespect)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgShamanVictorsNamesOnTrialColumns)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_02000fc4)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(ShamanVillage_TalkToInnkeeper)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x9fe, MSGNO(MsgShamanPayingStrangersMayStay)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgShamanMoapaMiserableAfterDefeat)},
     {TRIGGER_TALK, 14, 0x9fe, MSGNO(MsgShamanSilentVillager)},
@@ -2009,7 +2035,7 @@ struct Trigger gData_020061f0[] = {
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgShamanYegelosBraveJourney)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
      MSGNO(MsgShamanGrandparentsTiredOfWarStories)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_020011c0)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(ShamanVillage_TalkToShopkeeper)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgShamanHusbandWorriesAboutWeapons)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgShamanWarehouseOwnerFeelsResponsible)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgShamanWeaponsDidNotCauseLoss)},
@@ -2024,7 +2050,7 @@ struct Trigger gData_020061f0[] = {
 
 struct Trigger gData_020062d4[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_020010c8)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(ShamanVillage_TalkToPriest)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x9fe, MSGNO(MsgShamanVisitorsMustFindMoapa)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShamanFearRenewedContigoWar)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgShamanThreatenContigoRematch)},

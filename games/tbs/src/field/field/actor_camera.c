@@ -263,7 +263,7 @@ void ActorSystem_ProjectSprites(void) {
         // A group's sprite field points to its four sprite pointers; empty
         // ones are null.
         sprites = (void **)actor->sprite;
-        for (spritesRemaining = 3; spritesRemaining >= 0; spritesRemaining--) {
+        for (spritesRemaining = 0; spritesRemaining < 4; spritesRemaining++) {
           sprite = *sprites++;
           if (sprite != NULL)
             Render_PlaceProjectedSprite(sprite, &actor->x.fixed, groupScale,

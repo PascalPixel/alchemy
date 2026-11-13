@@ -197,7 +197,7 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
 s32 CountRemainingErasedFlashBytes(u8 *cursor) {
   s32 remaining;
 
-  for (remaining = gFlash->sector.size; remaining != 0; remaining--) {
+  for (remaining = 0; remaining < gFlash->sector.size; remaining++) {
     if (*cursor++ != FLASH_ERASED_BYTE)
       break;
   }

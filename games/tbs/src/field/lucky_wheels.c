@@ -1371,7 +1371,7 @@ void LzPack_ResetSlotBuckets(void) {
     gWaitForFlashWrite->nodes[index].previous = NULL;
   }
   bucket = gWaitForFlashWrite->bucket;
-  for (index = 255; index >= 0; index--) {
+  for (index = 0; index < 256; index++) {
     *bucket++ = NULL;
   }
 }

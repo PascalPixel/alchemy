@@ -1532,7 +1532,7 @@ s32 PsynergyMenu_SelectAction(void) {
     s32 priority = 245;
     struct WindowSprite **icons = menu->entryIcons;
 
-    for (iconIndex = 31; iconIndex >= 0; iconIndex--) {
+    for (iconIndex = 0; iconIndex < 32; iconIndex++) {
       struct WindowSprite *icon = *icons++;
 
       if (icon != 0)

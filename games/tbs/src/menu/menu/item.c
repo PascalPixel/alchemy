@@ -949,7 +949,7 @@ void ItemMenu_HideAllIcons(void) {
   struct WindowSprite **icons = ((struct ItemMenuWork *)gMenuWork)->entryIcons;
   s32 slot;
 
-  for (slot = 31; slot >= 0; slot--) {
+  for (slot = 0; slot < 32; slot++) {
     struct WindowSprite *icon = *icons++;
     if (icon != 0) {
       icon->motion = ICON_HIDDEN;
@@ -1450,15 +1450,14 @@ s32 ItemMenu_CollectItems(struct Unit *unit, u16 *items, s32 mode) {
 /// 0 draws the list's icons (ICON_KIND_ITEM); any other iconStyle the
 /// equipment view's (ICON_KIND_EQUIPMENT_ITEM).
 void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle) {
-  s32 remaining;
+  s32 i;
   u16 *entries;
   struct WindowSprite **icons;
   s32 itemId;
 
   icons = ((struct ItemMenuWork *)gMenuWork)->entryIcons;
   entries = inventoryEntries;
-  remaining = INVENTORY_SLOTS - 1;
-  do {
+  for (i = 0; i < INVENTORY_SLOTS; i++) {
     itemId = *entries++;
     if (itemId != 0) {
       if (iconStyle == 0) {
@@ -1470,8 +1469,7 @@ void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle) {
       }
     }
     icons++;
-    remaining--;
-  } while (remaining >= 0);
+  }
   Menu_HideEmptyEntryIcons(inventoryEntries);
 }
 

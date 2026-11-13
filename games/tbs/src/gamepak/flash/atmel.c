@@ -119,7 +119,7 @@ advanceSector:
 u16 ProgramAtmelFlashSector(u32 sector, const u8 *source) {
   const u8 *input;
   volatile u8 *destination;
-  s32 remaining;
+  s32 i;
 
   input = source;
   sector = (u16)sector;
@@ -132,12 +132,8 @@ u16 ProgramAtmelFlashSector(u32 sector, const u8 *source) {
     REG_IME = 0;
     FLASH_SEND_COMMAND(FLASH_COMMAND_PROGRAM);
 
-    remaining = gFlash_ChipAtmelLayout.type.sector.size;
-    if (remaining != 0) {
-      do {
-        *destination++ = *input++;
-        remaining--;
-      } while (remaining != 0);
+    for (i = 0; i < gFlash_ChipAtmelLayout.type.sector.size; i++) {
+      *destination++ = *input++;
     }
 
     destination--;

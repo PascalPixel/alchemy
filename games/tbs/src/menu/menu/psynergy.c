@@ -820,14 +820,14 @@ void PsynergyMenu_CloseWindows(void) {
 /// Loads each listed Psynergy's icon into its icon sprite (32 entries) and
 /// hides the icons of empty entries.
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
-  s32 remaining;
+  s32 i;
   struct WindowSprite **icons;
   u16 *p;
   s32 psynergyId;
 
   icons = ((struct PsynergyMenuWork *)gMenuWork)->entryIcons;
   p = psynergies;
-  for (remaining = 31; remaining >= 0; remaining--) {
+  for (i = 0; i < 32; i++) {
     psynergyId = *p++;
     if (psynergyId != 0) {
       Resource_LoadByModeIntoSlotFar(ICON_KIND_ABILITY, psynergyId,

@@ -715,7 +715,7 @@ void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
   if (width > 0 && height > 0) {
     do {
       tileCursor = &((u16 (*)[32])work->tilemap)[y][x];
-      for (column = width; column != 0; column--) {
+      for (column = 0; column < width; column++) {
         tile = *tileCursor;
         if (((tile >> 12) & 15) == 15) {
           masked = tile & 0xffff0fff;

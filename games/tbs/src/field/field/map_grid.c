@@ -89,10 +89,10 @@ typedef void (*TilemapConvertFn)(void *dst, const void *src, const void *saved);
 /// placeholder) a number of its own, counting up from 0 in map order.
 UNUSED void TileMap_NumberPlaceholderCellPictures(void) {
   u32 *cell = (u32 *)gMapGridCellBuffer;
-  u32 remaining;
+  u32 i;
   s32 nextPlaceholder = -1;
 
-  for (remaining = 128 * 128; remaining != 0; remaining--) {
+  for (i = 0; i < 128 * 128; i++) {
     u32 cellPictureId = *cell & MAPGRID_CELL_PICTURE_ID_MASK;
 
     if (cellPictureId == MAPGRID_CELL_PICTURE_ID_MASK) {
@@ -197,7 +197,7 @@ struct MapHeader {
 
 /// A map resource: one of a layout's packed things, by its row from
 /// ResourceId_Map001.
-#define MAPGRID_RESOURCE(map, n)                                         \
+#define MAPGRID_RESOURCE(map, n)                                               \
   Resource_GetTableEntry((map)->resources[n] + (u32)&ResourceId_Map001)
 
 /// Loads layout index from gMaps: its cell pictures, shapes,

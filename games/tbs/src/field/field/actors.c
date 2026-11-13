@@ -399,7 +399,7 @@ void Actor_SetAnimationAndSpeed(struct Actor *actor, s32 animation, s32 step) {
       break;
     case ACTOR_SPRITE_GROUP:
       sprites = (void **)actor->sprite;
-      for (spritesRemaining = 3; spritesRemaining >= 0; spritesRemaining--) {
+      for (spritesRemaining = 0; spritesRemaining < 4; spritesRemaining++) {
         sprite = *sprites++;
         if (sprite != 0) {
           Sprite_StartAnimation(sprite, animation);

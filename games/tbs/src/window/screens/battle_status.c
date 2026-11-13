@@ -800,7 +800,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   {
     s32 *statusSlotCursor = statusSlots;
 
-    for (i = 10; i >= 0; i--) {
+    for (i = 0; i < 11; i++) {
       VramCache_FreeEntry(*statusSlotCursor++);
     }
   }

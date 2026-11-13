@@ -116,7 +116,7 @@ void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
     sinYaw = FarCall_RuntimeTable.sin.target(angle);
     cosYaw = FarCall_RuntimeTable.cos.target(angle);
     negativeSinYaw = -sinYaw;
-    for (scanline = VISIBLE_SCANLINES - 1; scanline >= 0; scanline--) {
+    for (scanline = 0; scanline < VISIBLE_SCANLINES; scanline++) {
       s32 widthScale = line->x;
       s32 centerX;
       s32 horizontalOffset;
@@ -160,7 +160,7 @@ void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
     }
   } else {
     // Same angle: the cached terms stand and only the position moves.
-    for (scanline = VISIBLE_SCANLINES - 1; scanline >= 0; scanline--) {
+    for (scanline = 0; scanline < VISIBLE_SCANLINES; scanline++) {
       if (gFrameCount & 1) {
         // On odd frames the sample point shifts by half a pixel step along
         // the line and a quarter step across it, so alternate frames sample

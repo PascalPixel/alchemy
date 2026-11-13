@@ -397,7 +397,7 @@ void Actor_ClearOutOfBounds(void) {
   s32 bottom;
   struct Actor **actorSlot;
   s32 releaseCacheMask;
-  s32 remainingSlots;
+  s32 i;
 
   camera = work->camera;
   centerX = camera->x.fixed;
@@ -409,7 +409,7 @@ void Actor_ClearOutOfBounds(void) {
   actorSlot = &work->actors[ACTOR_FIRST_PLACED];
   releaseCacheMask = ~1;
 
-  for (remainingSlots = PLACED_MAX - 1; remainingSlots >= 0; remainingSlots--) {
+  for (i = 0; i < PLACED_MAX; i++) {
     struct Actor *actor = *actorSlot;
 
     if (actor != NULL) {
@@ -482,12 +482,10 @@ void Actor_ClearAll(void) {
   s32 actorIndex;
 
   emptyActor = NULL;
-  actorIndex = ACTOR_ID_COUNT - 1;
   work = gFieldWork;
-  do {
+  for (actorIndex = ACTOR_ID_COUNT - 1; actorIndex >= 0; actorIndex--) {
     work->actors[actorIndex] = emptyActor;
-    actorIndex--;
-  } while (actorIndex >= 0);
+  }
 }
 
 /// Returns the actor in slot index (below ACTOR_ID_COUNT), or

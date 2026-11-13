@@ -18,18 +18,16 @@ typedef s32 (*TaskIntFunc)(void);
 /// from a clean table.
 void Task_ResetAll(void) {
   struct Task *task = gTasks;
-  s32 remaining;
+  s32 i;
 
   gTasksInitialized = 0;
   gTasksRunning = 0;
-  remaining = TASK_COUNT - 1;
-  do {
+  for (i = 0; i < TASK_COUNT; i++) {
     task->func = 0;
     task->priority = TASK_PRIORITY_EMPTY;
     task->flags = 0;
     task++;
-    remaining--;
-  } while (remaining >= 0);
+  }
   gTasksInitialized = 1;
 }
 

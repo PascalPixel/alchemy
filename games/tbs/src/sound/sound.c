@@ -203,12 +203,7 @@ void SoundTest_Run(void) {
   reverbCode = SOUND_REVERB_NORMAL;
   // XXX (no evidence): why the sound test clears the first four digits of the
   // build stamp copy; nothing in the game reads that copy.
-  /* FAKEMATCH(dead): the store in a once-only block, after reverbCode's setup
-   * and before clipTimer's; as the plain store, 8 of 140 instructions differ
-   * in tbs-en. */
-  do {
-    gBuildStamp[0] = 0;
-  } while (0);
+  gBuildStamp[0] = 0;
   clipTimer = 20;
 
   for (;;) {
@@ -259,8 +254,7 @@ void SoundTest_Run(void) {
 /// and clears every player's last sound. Called by System_Initialize through
 /// the sound far-call table.
 void Sound_Initialize(void) {
-  s16 *playerVolume;
-  s32 remaining;
+  s32 i;
 
   m4aSoundInit();
   // No music is sound 0xff, so the first music always plays.
@@ -274,17 +268,12 @@ void Sound_Initialize(void) {
   gBgmTempoPitchStep = BGM_DEFAULT_RAMP_STEP;
   gBgmFadeRequested = 0;
   gSoundCommandMask = 0;
-  playerVolume = gMusicPlayerLastSound;
   // XXX (no evidence): what gSound_UnreadByte holds; no code in either game
   // reads it or its Lost Age twin (gData_02005804, also after
   // gBgmRestoreDelay), and no literal in the ROM but this one points at it.
   gSound_UnreadByte = 0;
-  remaining = MUSIC_PLAYER_COUNT - 1;
-  do {
-    remaining--;
-    *playerVolume = 0;
-    playerVolume += 1;
-  } while (remaining >= 0);
+  for (i = 0; i < MUSIC_PLAYER_COUNT; i++)
+    gMusicPlayerLastSound[i] = 0;
 }
 
 /// Sets the BGM tempo scale directly; BGM_UNITY_SCALE preserves its native

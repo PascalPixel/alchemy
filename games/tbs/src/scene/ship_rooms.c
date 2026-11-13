@@ -3076,111 +3076,110 @@ static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
   struct Actor *actor;
   s32 halfStep;
   s32 leftSeat;
+  s32 x;
 
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_RESET_CAMERA, 0, 0);
-  {
-    s32 x = 432;
-
-    halfStep = px(1) / 2;
-    ShipRooms_PlaceActor(ACTOR_PARTY_LEADER, x, 134, FACING_WEST);
-    ShipRooms_PlaceFoundActors(1);
-    wait(1);
-    Event_StartScreenTransition();
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 406, 134);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 406, 152);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 421, 152);
+  /* FAKEMATCH(temporary): x set here, after the camera reset; as declared with
+   * its 432, 10 of 337 instructions differ in tbs-en. */
+  x = 432;
+  halfStep = px(1) / 2;
+  ShipRooms_PlaceActor(ACTOR_PARTY_LEADER, x, 134, FACING_WEST);
+  ShipRooms_PlaceFoundActors(1);
+  wait(1);
+  Event_StartScreenTransition();
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 406, 134);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 406, 152);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 421, 152);
+  Actor_RunRepeatedMotion(ACTOR_ROWING_KAJA, 1);
+  Event_Wait(20);
+  Actor_FaceEachOther(ACTOR_ROWING_KAJA, ACTOR_PARTY_LEADER, 10);
+  if (GameFlag_Get(FLAG_TOLBI_SHIP_ROWER_CHOSEN) != 0) {
+    rowerId = ShipRooms_FindFirstSetFlag(seat, 0);
     Actor_RunRepeatedMotion(ACTOR_ROWING_KAJA, 1);
     Event_Wait(20);
     Actor_FaceEachOther(ACTOR_ROWING_KAJA, ACTOR_PARTY_LEADER, 10);
-    if (GameFlag_Get(FLAG_TOLBI_SHIP_ROWER_CHOSEN) != 0) {
-      rowerId = ShipRooms_FindFirstSetFlag(seat, 0);
-      Actor_RunRepeatedMotion(ACTOR_ROWING_KAJA, 1);
-      Event_Wait(20);
-      Actor_FaceEachOther(ACTOR_ROWING_KAJA, ACTOR_PARTY_LEADER, 10);
-      Event_SetMessageId(MsgTolbiShipBackBroughtOarsman);
-      ShipRooms_Say(KAJA_ROWING_SPEAKER);
-      Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-      leftSeat = 0;
-      Actor_SetSpeedFixed(ACTOR_PARTY_LEADER, px(1), halfStep);
-      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, x, 168);
-      Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-      actor = Actor_Get(ACTOR_PARTY_LEADER);
-      if (actor != 0) {
-        Actor_SetPositionFixed(rowerId, actor->x.fixed, actor->z.fixed);
-      }
-      Actor_SetSpeedFixed(rowerId, px(1), halfStep);
-      Actor_WalkToAndWait(rowerId, 448, 168);
-      Actor_FaceDirection(rowerId, FACING_NORTH_NORTHWEST, 20);
-      Actor_FaceDirection(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHEAST, 20);
-      Actor_SetAnimation(ACTOR_ROWING_KAJA, ANIM_NOD);
-      ShipRooms_Say(ACTOR_ROWING_KAJA);
-      Actor_ShowEmote(rowerId, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-      Actor_RunRepeatedMotion(ACTOR_ROWING_KAJA, 1);
-      Actor_SetAnimation(ACTOR_ROWING_KAJA, ANIM_NOD);
-      ShipRooms_Say(ACTOR_ROWING_KAJA);
-      Actor_SetAnimationAndWait(rowerId, ANIM_NOD);
-      if (GameFlag_Get(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
-        Actor_FaceDirection(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHEAST, 0);
-        Actor_WalkToAndWait(rowerId, 470, 204);
-        ShipRooms_Turn(rowerId, FACING_NORTH_NORTHWEST);
-      } else if (GameFlag_Get(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) != 0) {
-        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 422, 154);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-        Actor_FaceDirection(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHWEST, 0);
-        Actor_WalkToAndWait(rowerId, 410, 204);
-        leftSeat = 1;
-        ShipRooms_Turn(rowerId, FACING_NORTH_NORTHEAST);
-      } else if (GameFlag_Get(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) != 0) {
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
-        Actor_FaceDirection(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHEAST, 0);
-        Actor_WalkToAndWait(rowerId, 470, 172);
-        ShipRooms_Turn(rowerId, FACING_NORTH_NORTHWEST);
-      } else {
-        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 422, 154);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-        Actor_FaceDirection(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHWEST, 0);
-        Actor_WalkToAndWait(rowerId, 410, 172);
-        leftSeat = 1;
-        ShipRooms_Turn(rowerId, FACING_NORTH_NORTHEAST);
-      }
-      Actor_FaceEachOther(ACTOR_ROWING_KAJA, ACTOR_PARTY_LEADER, 20);
-      ShipRooms_Say(SPEAKER(ACTOR_ROWING_KAJA, SPEAKER_PORTRAIT_RIGHT));
-      Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-      Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, ANIM_NOD);
-      Actor_SetSpeed(ACTOR_ROWING_KAJA, 1);
-      if (leftSeat != 0) {
-        Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 428, 164);
-        Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 408, 164);
-      }
-      Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 408, 134);
-      Actor_WalkTo(ACTOR_ROWING_KAJA, 440, 134);
-      Event_Wait(40);
-      ShipRooms_RunEventCommand(SHIP_CLOSE_SCREEN,
-                                SHIP_ROOMS_ROWING_DECK_TO_TOLBI_SHIP_DECK_READY,
-                                0);
-    } else {
-      Event_SetMessageId(MsgTolbiShipBack);
-      // "Isaac, you're back."
-      FieldEvent_ShowMessageThenWait(KAJA_ROWING_SPEAKER, 0, 40);
-      Actor_ShowEmote(ACTOR_ROWING_KAJA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-      ShipRooms_Say(KAJA_ROWING_SPEAKER);
-      Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
-                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      Event_Wait(60);
-      Actor_ShowEmote(ACTOR_ROWING_KAJA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
-      Actor_StartRepeatedMotion(ACTOR_ROWING_KAJA, 2);
-      ShipRooms_Say(KAJA_ROWING_SPEAKER);
-      Actor_ShowEmote(ACTOR_ROWING_KAJA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-      ShipRooms_Say(KAJA_ROWING_SPEAKER);
-      Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, ANIM_SHAKE_HEAD);
-      ShipRooms_Say(KAJA_ROWING_SPEAKER);
-      Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-      Event_Wait(20);
-      Import_EventSetExitRequest(SHIP_ROOMS_ROWING_DECK_TO_PASSENGER_HOLD);
+    Event_SetMessageId(MsgTolbiShipBackBroughtOarsman);
+    ShipRooms_Say(KAJA_ROWING_SPEAKER);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    leftSeat = 0;
+    Actor_SetSpeedFixed(ACTOR_PARTY_LEADER, px(1), halfStep);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, x, 168);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    actor = Actor_Get(ACTOR_PARTY_LEADER);
+    if (actor != 0) {
+      Actor_SetPositionFixed(rowerId, actor->x.fixed, actor->z.fixed);
     }
+    Actor_SetSpeedFixed(rowerId, px(1), halfStep);
+    Actor_WalkToAndWait(rowerId, 448, 168);
+    Actor_FaceDirection(rowerId, FACING_NORTH_NORTHWEST, 20);
+    Actor_FaceDirection(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHEAST, 20);
+    Actor_SetAnimation(ACTOR_ROWING_KAJA, ANIM_NOD);
+    ShipRooms_Say(ACTOR_ROWING_KAJA);
+    Actor_ShowEmote(rowerId, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+    Actor_RunRepeatedMotion(ACTOR_ROWING_KAJA, 1);
+    Actor_SetAnimation(ACTOR_ROWING_KAJA, ANIM_NOD);
+    ShipRooms_Say(ACTOR_ROWING_KAJA);
+    Actor_SetAnimationAndWait(rowerId, ANIM_NOD);
+    if (GameFlag_Get(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
+      Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
+      Actor_FaceDirection(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHEAST, 0);
+      Actor_WalkToAndWait(rowerId, 470, 204);
+      ShipRooms_Turn(rowerId, FACING_NORTH_NORTHWEST);
+    } else if (GameFlag_Get(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) != 0) {
+      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 422, 154);
+      Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
+      Actor_FaceDirection(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHWEST, 0);
+      Actor_WalkToAndWait(rowerId, 410, 204);
+      leftSeat = 1;
+      ShipRooms_Turn(rowerId, FACING_NORTH_NORTHEAST);
+    } else if (GameFlag_Get(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) != 0) {
+      Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
+      Actor_FaceDirection(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHEAST, 0);
+      Actor_WalkToAndWait(rowerId, 470, 172);
+      ShipRooms_Turn(rowerId, FACING_NORTH_NORTHWEST);
+    } else {
+      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 422, 154);
+      Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
+      Actor_FaceDirection(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHWEST, 0);
+      Actor_WalkToAndWait(rowerId, 410, 172);
+      leftSeat = 1;
+      ShipRooms_Turn(rowerId, FACING_NORTH_NORTHEAST);
+    }
+    Actor_FaceEachOther(ACTOR_ROWING_KAJA, ACTOR_PARTY_LEADER, 20);
+    ShipRooms_Say(SPEAKER(ACTOR_ROWING_KAJA, SPEAKER_PORTRAIT_RIGHT));
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, ANIM_NOD);
+    Actor_SetSpeed(ACTOR_ROWING_KAJA, 1);
+    if (leftSeat != 0) {
+      Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 428, 164);
+      Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 408, 164);
+    }
+    Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 408, 134);
+    Actor_WalkTo(ACTOR_ROWING_KAJA, 440, 134);
+    Event_Wait(40);
+    ShipRooms_RunEventCommand(
+        SHIP_CLOSE_SCREEN, SHIP_ROOMS_ROWING_DECK_TO_TOLBI_SHIP_DECK_READY, 0);
+  } else {
+    Event_SetMessageId(MsgTolbiShipBack);
+    // "Isaac, you're back."
+    FieldEvent_ShowMessageThenWait(KAJA_ROWING_SPEAKER, 0, 40);
+    Actor_ShowEmote(ACTOR_ROWING_KAJA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+    ShipRooms_Say(KAJA_ROWING_SPEAKER);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Event_Wait(60);
+    Actor_ShowEmote(ACTOR_ROWING_KAJA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
+    Actor_StartRepeatedMotion(ACTOR_ROWING_KAJA, 2);
+    ShipRooms_Say(KAJA_ROWING_SPEAKER);
+    Actor_ShowEmote(ACTOR_ROWING_KAJA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+    ShipRooms_Say(KAJA_ROWING_SPEAKER);
+    Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, ANIM_SHAKE_HEAD);
+    ShipRooms_Say(KAJA_ROWING_SPEAKER);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Event_Wait(20);
+    Import_EventSetExitRequest(SHIP_ROOMS_ROWING_DECK_TO_PASSENGER_HOLD);
   }
 }
 

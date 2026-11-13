@@ -967,7 +967,6 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_Jump(ACTOR_GARET, 2, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(40);
-  // Garet: "Jenna and Kraden are gone!"
   Event_SetMessageId(MsgSolSanctumFriendsGone);
   // "Jenna and Kraden are gone!"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);

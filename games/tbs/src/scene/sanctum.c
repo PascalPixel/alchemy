@@ -430,7 +430,6 @@ static void Sanctum_AskAboutNewAdepts(void) {
   } else {
     gFieldWork->message++;
     // "......"
-    // "......"
     FieldEvent_ShowTwoMessagesAndWait(SANCTUM_NEW_FRIENDS_SPEAKER, 16, 1, 24, 1,
                                       3, 7, 16, 1, 14, 0);
     // "Your friend seems angered by your words, Isaac... That..."

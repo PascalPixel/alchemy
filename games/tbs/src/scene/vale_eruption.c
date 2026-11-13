@@ -333,7 +333,6 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   // "You're safe!"
   Event_ShowMessage(ACTOR_GREAT_HEALER, 0);
   Event_Wait(40);
-  // The mayor: "Come over here, both of you!"
   Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
   // "Come over here, both of you!"
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);

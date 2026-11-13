@@ -1005,7 +1005,6 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-  // Garet: "What's wrong, Kraden?"
   Event_SetMessageId(MsgSolSanctumWrongKraden);
   // "What's wrong, Kraden?"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);

@@ -629,7 +629,6 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_SetAnimation(ACTOR_MIA, ANIM_MIA_HEAD_BOWED);
   // "I have failed in the one duty placed upon me... This is..."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 60);
-  // Jenna calls out: "Isaac! Garet!"
   Sound_Play(SOUND_FADE_OUT_BGM);
   Actor_SetPosition(ACTOR_JENNA, 216, 200);
   // "Isaac! Garet!"

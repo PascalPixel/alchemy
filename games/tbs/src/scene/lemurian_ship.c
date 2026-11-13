@@ -235,7 +235,7 @@ static void Ship_UpdateSwell(void) {
     sprayPosition.z = z;
     actor = FieldActor_Create(SPRITE_WATER_DROP, sprayPosition.x,
                               sprayPosition.y, sprayPosition.z);
-    if (actor != 0) {
+    if (actor != NULL) {
       actor->update = LemurianShip_SprayUpdate;
       actor->timer = 60;
       actor->userValue = 1;

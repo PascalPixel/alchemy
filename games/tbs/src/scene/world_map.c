@@ -430,7 +430,7 @@ static void WorldMap_PulseOrbAndSpawnSparks(struct Actor *actor) {
   z = actor->z.fixed;
   spark = FieldActor_Create(SPRITE_SPARKLE, x, y, z);
   Sound_Play(SE_GLITTER);
-  if (spark == 0)
+  if (spark == NULL)
     return;
   spark->motionFlags = 0;
   spark->sprite->image.priority = 1;
@@ -880,7 +880,7 @@ static void WorldMap_BoardBunzasWagon(void) {
   Event_Wait(60);
   Actor_SetAnimation(ACTOR_HAMMET, ANIM_WALK);
   actor = Actor_Get(ACTOR_WAGON);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_HAMMET, actor->x.part.pixel,
                          actor->z.part.pixel);
   }
@@ -889,7 +889,7 @@ static void WorldMap_BoardBunzasWagon(void) {
   Event_Wait(60);
   Actor_SetAnimation(ACTOR_BUNZA, ANIM_WALK);
   actor = Actor_Get(ACTOR_WAGON);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_BUNZA, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_BUNZA);
@@ -897,7 +897,7 @@ static void WorldMap_BoardBunzasWagon(void) {
   Event_Wait(60);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   actor = Actor_Get(ACTOR_WAGON);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_PARTY_LEADER, actor->x.part.pixel,
                          actor->z.part.pixel);
   }
@@ -956,7 +956,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
                          gCaravanFourthWagonArrives);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   spriteActor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (spriteActor != 0) {
+  if (spriteActor != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, spriteActor->x.fixed,
                            spriteActor->z.fixed);
   }
@@ -1431,7 +1431,7 @@ static void WorldMap_MeetFlint(void) {
     GameFlag_Set(FLAG_DJINN_LESSON);
     Event_Start();
     leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0)
+    if (leader != NULL)
       Actor_SetPositionFixed(ACTOR_VENUS_DJINNI, leader->x.fixed,
                              leader->z.fixed);
     Djinn_Give(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_FLINT));
@@ -1563,7 +1563,7 @@ static void WorldMap_MeetFlint(void) {
   }
   Event_Start();
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0)
+  if (leader != NULL)
     Actor_SetPositionFixed(ACTOR_VENUS_DJINNI, leader->x.fixed,
                            leader->z.fixed);
   djinni->velocityY = px(10);
@@ -2314,7 +2314,7 @@ static void WorldMap_SpawnIslandWake(void) {
   island = Actor_Get(ACTOR_DRIFTING_ISLAND);
   puff = FieldActor_Create(SPRITE_DUST_PUFF, island->x.fixed - px(32),
                            island->y.fixed, island->z.fixed - px(16));
-  if (puff == 0)
+  if (puff == NULL)
     return;
   puff->scaleX = Q16_ONE / 2;
   puff->scaleY = Q16_ONE / 2;
@@ -2414,7 +2414,7 @@ static void WorldMap_CatchInStorm(s32 targetActorId) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
     Actor_SetAnimation(id, ANIM_LEADER_LOOK_AROUND);
     storm = Actor_Get(targetActorId);
-    if (storm != 0) {
+    if (storm != NULL) {
       Actor_SetDestination(id, storm->x.part.pixel, storm->z.part.pixel);
     }
     Actor_WaitForMoveById(id);

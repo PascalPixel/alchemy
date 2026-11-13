@@ -85,19 +85,19 @@ UNUSED static void PushedActor_AdvancePair(void) {
   dir = lead->facing >> 12;
   Actor_StepFrom(&dst, lead, gPushedActor_DirectionSteps[dir]);
   next = PushedActor_FindAtTile(&dst, lead);
-  if (next == 0)
+  if (next == NULL)
     return;
 
   Actor_StepFrom(&dst, next, gPushedActor_DirectionSteps[dir]);
   blocker = PushedActor_FindAtTile(&dst, next);
-  if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
+  if (blocker != NULL && (blocker->collisionFlags & 1) != 0)
     return;
 
   dst.x = next->x.fixed;
   dst.y = next->y.fixed + px(16);
   dst.z = next->z.fixed;
   blocker = PushedActor_FindAtTile(&dst, next);
-  if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
+  if (blocker != NULL && (blocker->collisionFlags & 1) != 0)
     return;
 
   next->layer = 2;
@@ -146,7 +146,7 @@ static UNREAD_RESULT PushedActor_StopBlockedMotion(struct Actor *actor) {
   dir = actor->facing >> 12;
   Actor_StepFrom(&probe, actor, gPushedActor_DirectionSteps[dir]);
   target = PushedActor_FindAtTile(&probe, actor);
-  if (target != 0) {
+  if (target != NULL) {
     u32 i = 0;
     s32 kind = target->sprite->entries[0]->animationId;
     s32 *kinds = gPushedActor_FootprintKinds;
@@ -253,7 +253,7 @@ PushedActor_FindClearPosition(struct PushedActorProbe *probe) {
   probe->callback = 0;
   actor = Scene_FindActorRegion(&direction, &probe->actorSlot,
                                 &probe->footprintIndex);
-  if (actor == 0) {
+  if (actor == NULL) {
     return 0;
   }
   mode = &actor->layer;
@@ -409,7 +409,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   Actor_GetById(ACTOR_PARTY_LEADER)->update =
       (void (*)(struct Actor *))PushedActor_StopBlockedMotion;
   Event_Wait(4);
-  if ((u32)(direction - 6) <= 7)
+  if (direction >= 6 && direction <= 13)
     Actor_SelectAnimation(actor, 3);
   else
     Actor_SelectAnimation(actor, 2);

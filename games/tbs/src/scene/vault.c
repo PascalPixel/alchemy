@@ -185,7 +185,7 @@ static void Vault_IvanStaysBehind(void) {
   }
   Event_Start();
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_IVAN, 0.8);
@@ -795,7 +795,7 @@ s32 Scene_Initialize(void) {
         if (GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
           Event_Start();
           actor = Actor_Get(ACTOR_PARTY_LEADER);
-          if (actor != 0) {
+          if (actor != NULL) {
             Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
           }
           if (gMainRoutineWork.entrance == VAULT_FROM_WORLD_MAP_SOUTH) {

@@ -446,7 +446,7 @@ s32 VenusLighthouseAerie_Initialize(void) {
 
     if (slot != 0) {
       struct Actor *nearestPlatform = Actor_Get(slot);
-      if (nearestPlatform != 0) {
+      if (nearestPlatform != NULL) {
         nearestPlatform->motionFlags = 0;
       }
     }
@@ -792,15 +792,15 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   Actor_SetSpeed(ACTOR_IVAN, 1);
   Actor_SetSpeed(ACTOR_MIA, 1.4);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
   }
   Actor_WalkTo(ACTOR_GARET, 328, 168);
@@ -893,7 +893,7 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   do {
     actor = Actor_Get(ACTOR_SHEBA);
     VenusLighthouseAerie_FlashActorPalette(actor);
-    frame = (frame + 1);
+    frame++;
     wait(1);
   } while ((u32)frame <= 39);
   Task_AddFrame(VenusLighthouseAerie_UpdateShebaPalette, TASK_PASS_FRAME);
@@ -1848,7 +1848,7 @@ static void VenusLighthouseAerie_SpawnUpperOrbitParticles(void) {
                                    px(28),
                                center->z.fixed);
   }
-  if (effect != 0) {
+  if (effect != NULL) {
     sprite = effect->sprite;
     Actor_StartScript(effect, gVenusLighthouseAerie_OrbitParticleScript);
     Actor_SetSpriteColor(effect, SPRITE_COLOR_GRB);
@@ -2986,7 +2986,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
     effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
                                center->y.fixed - randomHeight - px(8),
                                center->z.fixed);
-    if (effect != 0) {
+    if (effect != NULL) {
       sprite = effect->sprite;
       Actor_StartScript(effect, gVenusLighthouseAerie_RiseParticleScript);
       Actor_SetSpriteColor(effect, SPRITE_COLOR_GRB);
@@ -3055,7 +3055,7 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   } else {
     Actor_SetPosition(ACTOR_BEACON_ORB, 0, 0);
   }
-  if (center == 0)
+  if (center == NULL)
     return;
   phase = gFrameCount & 15;
   if (phase != 0)
@@ -3064,7 +3064,7 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
                              center->y.fixed + drift + px(8), center->z.fixed);
   drift /= px(6);
   drift <<= 16;
-  if (effect == 0)
+  if (effect == NULL)
     return;
   sprite = effect->sprite;
   Actor_StartScript(effect, gVenusLighthouseAerie_BesideParticleScript);

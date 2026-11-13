@@ -440,7 +440,7 @@ static void AltinPeak_FightThirdWaterBeast(void) {
 static void AltinPeak_SettleSpritzRoomPillar(void) {
   struct Actor *pillar = Actor_Get(ACTOR_SPRITZ_ROOM_PILLAR);
 
-  if (pillar != 0) {
+  if (pillar != NULL) {
     s32 column;
 
     MapGrid_CopyCellAttributes(24, 27, 2, 1, 24, 26);
@@ -463,7 +463,7 @@ static void AltinPeak_FreezeFirstWaterBeastRoomPuddle(void) {
 
   puddle = Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE);
   MapGrid_CopyCellAttributes(7, 13, 1, 1, 9, 13);
-  if (puddle != 0) {
+  if (puddle != NULL) {
     Actor_SetSpriteFlags(puddle, 0);
     puddle->y.fixed -= px(32);
     puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -478,7 +478,7 @@ static void AltinPeak_FreezeFirstWaterBeastRoomSecondPuddle(void) {
 
   puddle = Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
   MapGrid_CopyCellAttributes(29, 1, 3, 1, 17, 13);
-  if (puddle != 0) {
+  if (puddle != NULL) {
     puddle->motionFlags = ACTOR_FALLS;
   }
   GameFlag_Set(FLAG_ALTIN_PEAK_SECOND_PUDDLE_FROZEN);
@@ -490,7 +490,7 @@ static void AltinPeak_FreezeSpritzRoomPuddle(void) {
 
   puddle = Actor_Get(ACTOR_SPRITZ_ROOM_PUDDLE);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 26, 26);
-  if (puddle != 0) {
+  if (puddle != NULL) {
     Actor_SetSpriteFlags(puddle, 0);
     puddle->y.fixed -= px(32);
     puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -504,7 +504,7 @@ static void AltinPeak_FreezeThirdWaterBeastRoomPuddle(void) {
 
   puddle = Actor_Get(ACTOR_THIRD_WATER_BEAST_ROOM_PUDDLE);
   MapGrid_CopyCellAttributes(23, 13, 1, 1, 25, 13);
-  if (puddle != 0) {
+  if (puddle != NULL) {
     Actor_SetSpriteFlags(puddle, 0);
     puddle->y.fixed -= px(32);
     puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -518,7 +518,7 @@ static void AltinPeak_FreezePoolRoomPuddle(void) {
 
   puddle = Actor_Get(ACTOR_POOL_ROOM_PUDDLE);
   MapGrid_CopyCellAttributes(45, 41, 1, 1, 43, 41);
-  if (puddle != 0) {
+  if (puddle != NULL) {
     Actor_SetSpriteFlags(puddle, 0);
     puddle->y.fixed -= px(32);
     puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -533,7 +533,7 @@ static void AltinPeak_FreezeSpritzRoomSecondPuddle(void) {
 
   puddle = Actor_Get(ACTOR_SPRITZ_ROOM_SECOND_PUDDLE);
   MapGrid_CopyCellAttributes(1, 0, 1, 1, 17, 10);
-  if (puddle != 0) {
+  if (puddle != NULL) {
     Actor_SetSpriteFlags(puddle, 0);
     puddle->y.fixed -= px(32);
     puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -547,7 +547,7 @@ static void AltinPeak_FreezeSpritzRoomThirdPuddle(void) {
 
   puddle = Actor_Get(ACTOR_SPRITZ_ROOM_THIRD_PUDDLE);
   MapGrid_CopyCellAttributes(1, 0, 1, 1, 26, 15);
-  if (puddle != 0) {
+  if (puddle != NULL) {
     Actor_SetSpriteFlags(puddle, 0);
     puddle->y.fixed -= px(32);
     puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -1004,7 +1004,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 780, 140);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
-    if (actor != 0) {
+    if (actor != NULL) {
       Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
     }
     Actor_SetSpeed(ACTOR_GARET, 0.8);
@@ -1401,13 +1401,13 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
     Actor_SetPosition(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE, 0, 0);
   } else {
     actor = Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE);
-    if (actor != 0) {
+    if (actor != NULL) {
       actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       Actor_SetSpriteFlags(actor, 0);
     }
   }
   actor = Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
-  if (actor != 0) {
+  if (actor != NULL) {
     actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetSpriteFlags(actor, 0);
   }
@@ -1977,15 +1977,15 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Event_WaitTransitionFrames();
   Event_Wait(20);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
   }
   Actor_SetSpeed(ACTOR_GARET, 0.6);

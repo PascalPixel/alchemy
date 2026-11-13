@@ -413,7 +413,7 @@ VenusLighthouse_CreateBlendedPassageEffect(s32 x, s32 y, s32 z, s32 type) {
   struct Actor *effect;
 
   effect = FieldActor_Create(type, x, y, z);
-  if (effect != 0) {
+  if (effect != NULL) {
     ((struct Sprite *)effect->sprite)->image.priority = 0;
     VenusLighthouse_ConfigurePassageEffect(effect, SPRITE_COLOR_BLACK);
     Actor_SetBlendMode(effect, ACTOR_BLEND_TRANSLUCENT);
@@ -437,7 +437,7 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
   struct Actor *actor;
 
   actor = FieldActor_Create(type, x, y, z);
-  if (actor != 0) {
+  if (actor != NULL) {
     ((struct Sprite *)actor->sprite)->image.priority = 1;
     VenusLighthouse_ConfigurePassageEffect(actor, SPRITE_COLOR_HIDDEN);
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -478,20 +478,20 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   Actor_StepFrom(&targetPosition, leader,
                  gPushedActor_DirectionSteps[directionIndex]);
   pillar = Actor_FindAtPosition(&targetPosition, leader);
-  if (pillar == 0)
+  if (pillar == NULL)
     return;
 
   Actor_StepFrom(&targetPosition, pillar,
                  gPushedActor_DirectionSteps[directionIndex]);
   blockingActor = Actor_FindAtPosition(&targetPosition, pillar);
-  if (blockingActor != 0 && (blockingActor->collisionFlags & 1) != 0)
+  if (blockingActor != NULL && (blockingActor->collisionFlags & 1) != 0)
     return;
 
   targetPosition.x = pillar->x.fixed;
   targetPosition.y = pillar->y.fixed + px(16);
   targetPosition.z = pillar->z.fixed;
   blockingActor = Actor_FindAtPosition(&targetPosition, pillar);
-  if (blockingActor != 0 && (blockingActor->collisionFlags & 1) != 0)
+  if (blockingActor != NULL && (blockingActor->collisionFlags & 1) != 0)
     return;
 
   pillar->layer = 2;
@@ -802,7 +802,7 @@ static struct Actor *VenusLighthouse_CreateLight(s32 x, s32 z,
   fixedX = px(x);
   fixedZ = px(z);
   effect = FieldActor_Create(SPRITE_PARTICLE, fixedX, 0, fixedZ);
-  if (effect == 0) {
+  if (effect == NULL) {
     return 0;
   }
   effect->speedLimit = px(1);
@@ -1210,7 +1210,7 @@ static void VenusLighthouse_MovePillarTowardWall(void) {
     if (GameFlag_Get(talked) == 0) {
       GameFlag_Set(talked);
       actor = Actor_Get(ACTOR_PARTY_LEADER);
-      if (actor != 0) {
+      if (actor != NULL) {
         Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
       }
       Actor_SetSpeedFixed(ACTOR_GARET, walkSpeed, walkAcceleration);
@@ -1744,7 +1744,7 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
                                gVenusThirdFloorSockets[switchIndex].z);
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, savedPriority);
     Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-    if (occlusionEffect != 0) {
+    if (occlusionEffect != NULL) {
       Actor_Release(occlusionEffect);
     }
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN)) {

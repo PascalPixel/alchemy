@@ -164,7 +164,7 @@ static void Colosso_TakePlaceForMatch(void) {
 #endif
     struct Actor *actor = Actor_GetById(actorId);
 
-    if (actor != 0 && actor->spriteStorageKind == 1 &&
+    if (actor != NULL && actor->spriteStorageKind == 1 &&
         actor->sprite->entries[0]->animationId ==
             SPRITE_YOUNG_MAN_WITH_FAIR_HAIR) {
       s32 distanceX = (supporter->x.fixed - actor->x.fixed) / px(1);
@@ -446,7 +446,7 @@ L_main:
   Actor_SetSpeed(friendId, 1);
   Actor_SetSpeed(guide, 1);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetPositionFixed(friendId, leader->x.fixed, leader->z.fixed);
   }
   frontZ = guideZ + 16;

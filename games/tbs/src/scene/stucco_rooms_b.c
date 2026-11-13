@@ -171,7 +171,7 @@ static void StuccoRoomsB_EnterDoor(void) {
   for (actorId = ACTOR_FIRST_PLACED; actorId < STUCCO_ROOMS_B_ACTOR_SLOT_END;
        actorId++) {
     actor = Actor_Get(actorId);
-    if (actor != 0) {
+    if (actor != NULL) {
       actor->motionFlags = 0;
     }
   }

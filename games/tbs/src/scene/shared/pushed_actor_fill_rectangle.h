@@ -17,7 +17,7 @@ static s32 PushedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z,
   u32 row;
   u32 column;
 
-  if (grid != 0) {
+  if (grid != NULL) {
     if (layer <= 2) {
       cells = grid->layers[layer].cells;
     } else {

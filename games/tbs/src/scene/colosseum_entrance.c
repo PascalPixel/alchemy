@@ -1089,7 +1089,7 @@ static void ColosseumEntrance_ExplainTrial(void) {
   Event_SetMessageId(MsgColosseumHaveMakeThroughCountlessMatches);
 
   if (GameFlag_Get(FLAG_COLOSSO_CLEARED_TRIAL_SEEN) != 0) {
-    gFieldWork->message = (gFieldWork->message + 1);
+    gFieldWork->message = gFieldWork->message + 1;
   }
 
   ColosseumEntrance_ShowMessageAndPause(ACTOR_TRIAL_ATTENDANT);

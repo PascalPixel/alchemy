@@ -406,7 +406,7 @@ static void Bilibin_OpenDoorAndLeave(void) {
   for (actorSlot = ACTOR_FIRST_PLACED; actorSlot < ACTOR_ID_COUNT;
        actorSlot++) {
     actor = Actor_Get(actorSlot);
-    if (actor != 0) {
+    if (actor != NULL) {
       actor->motionFlags = 0;
     }
   }

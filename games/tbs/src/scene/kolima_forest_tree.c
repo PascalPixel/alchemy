@@ -399,11 +399,11 @@ static void KolimaForestTree_RestoreTret(void) {
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_IVAN, 1);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
   }
   Actor_SetScript(ACTOR_GARET, gKolimaForestTree_GaretApproachActions);
@@ -411,7 +411,7 @@ static void KolimaForestTree_RestoreTret(void) {
   if (includeMia != 0) {
     Actor_SetSpeed(ACTOR_MIA, 1);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
+    if (leader != NULL) {
       Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
     }
     Actor_SetScript(ACTOR_MIA, gKolimaForestTree_MiaApproachActions);
@@ -456,7 +456,7 @@ static void KolimaForestTree_RestoreTret(void) {
     wait(6);
     KolimaPalette_Restore(1);
     PaletteFade_StartInterpolation(6);
-    flash = (flash + 1);
+    flash++;
     wait(6);
   } while ((u32)flash <= 3);
   KolimaPalette_Restore(0);
@@ -807,7 +807,7 @@ static void KolimaForestTree_SpawnRejectionSpark(void) {
   if (gKolimaForestTreePlaySparkSound != 0)
     Sound_Play(SE_SPARKLE_FALL);
   effect = FieldActor_Create(SPRITE_GOLDEN_RINGS, spawnX, spawnY, spawnZ);
-  if (effect == 0)
+  if (effect == NULL)
     return;
   sprite = effect->sprite;
   sprite->flags = phase;
@@ -987,7 +987,7 @@ static void KolimaForestTree_SpawnOrbitSparks(void) {
       spark = FieldActor_Create(SPRITE_SPARKLE, gKolimaForestTreeSparkOrigin[0],
                                 gKolimaForestTreeSparkOrigin[1],
                                 gKolimaForestTreeSparkOrigin[2]);
-      if (spark != 0) {
+      if (spark != NULL) {
         previousSprite =
             Sprite_ShareVramCacheEntry(spark->sprite, previousSprite);
         spark->motionFlags = 0;

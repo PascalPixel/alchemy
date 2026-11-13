@@ -597,7 +597,7 @@ static void MercuryLighthouse_PressGateFloorSwitch(void) {
   if (Event_GetFlag(FLAG_LEADER_ON_FLOOR_SWITCH) == 0) {
     x = Actor_Get(ACTOR_PARTY_LEADER)->x.part.pixel;
     z = Actor_Get(ACTOR_PARTY_LEADER)->z.part.pixel;
-    if ((u32)(x - 84) <= 7 && z > 211 && z <= 219) {
+    if (x >= 84 && x <= 91 && z > 211 && z <= 219) {
       Event_Start();
       GameFlag_Set(FLAG_LEADER_ON_FLOOR_SWITCH);
       Event_Wait(5);
@@ -1588,13 +1588,13 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     // Garet and Ivan rejoin the leader.
     Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
-    if (actor != 0) {
+    if (actor != NULL) {
       Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel,
                            actor->z.part.pixel);
     }
     Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
-    if (actor != 0) {
+    if (actor != NULL) {
       Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel,
                            actor->z.part.pixel);
     }
@@ -1729,7 +1729,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
                           EFFECT_SCRIPT_MEDIUM,
                       &options);
     Event_Wait(2);
-    wave = (wave + 1);
+    wave++;
   } while ((u32)wave <= 15);
   Event_Wait(40);
   wave = 0;
@@ -1758,7 +1758,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
                           EFFECT_SCRIPT_MEDIUM,
                       &options);
     Event_Wait(2);
-    wave = (wave + 1);
+    wave++;
   } while ((u32)wave <= 15);
   Event_Wait(60);
   Sound_Play(SE_RUMBLE);
@@ -1788,10 +1788,10 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
                         EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET |
                             EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
                         &options);
-      particleIndex = (particleIndex + 1);
+      particleIndex++;
       Event_Wait(2);
     } while ((u32)particleIndex <= 31);
-    wave = (wave + 1);
+    wave++;
   } while ((u32)wave <= 3);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -2805,7 +2805,7 @@ static void MercuryLighthouse_SpawnRipple(struct Actor *source) {
 
   effect = FieldActor_Create(SPRITE_RIPPLE, source->x.fixed, source->y.fixed,
                              source->z.fixed);
-  if (effect == 0) {
+  if (effect == NULL) {
     return;
   }
 
@@ -2816,7 +2816,7 @@ static void MercuryLighthouse_SpawnRipple(struct Actor *source) {
   effect->layer = 1;
   effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 
-  if (sprite != 0) {
+  if (sprite != NULL) {
     Sprite_StartAnimation(sprite, 2);
     sprite->flags = 0;
     sprite->image.priority = 3;

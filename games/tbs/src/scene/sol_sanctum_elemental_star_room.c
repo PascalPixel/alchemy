@@ -504,7 +504,7 @@ static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 246, 479);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 10);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   Actor_SetSpeed(ACTOR_GARET, 1);
@@ -813,7 +813,7 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   Actor_RunRepeatedMotion(ACTOR_FELIX_MASKED, 3);
   Event_Wait(40);
   other = Actor_Get(ACTOR_FELIX_MASKED);
-  if (other != 0) {
+  if (other != NULL) {
     Actor_SetPositionFixed(ACTOR_FELIX, other->x.fixed, other->z.fixed);
   }
   Actor_SetPosition(ACTOR_FELIX_MASKED, 0, 0);

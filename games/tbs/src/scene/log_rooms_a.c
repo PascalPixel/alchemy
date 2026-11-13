@@ -925,7 +925,7 @@ static void LogRoomsA_MeetIvan(void) {
     GameFlag_Set(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH);
     Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
-    if (actor != 0) {
+    if (actor != NULL) {
       Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel,
                            actor->z.part.pixel);
     }
@@ -937,7 +937,7 @@ static void LogRoomsA_MeetIvan(void) {
   // Garet walks back into the leader and the earlier music returns.
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_GARET);

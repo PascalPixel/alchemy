@@ -436,7 +436,7 @@ static inline void BabiLighthouse_WalkBackToLeader(s32 actorId) {
 
   Actor_SetAnimation(actorId, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetDestination(actorId, leader->x.part.pixel, leader->z.part.pixel);
   }
   Actor_WaitForMoveById(actorId);
@@ -1155,7 +1155,7 @@ static void BabiLighthouse_PushRoadPillar(void) {
   struct Actor *ahead = BabiLighthouse_FindActorAhead(leader);
   s32 heightDifference;
 
-  if (ahead == 0) {
+  if (ahead == NULL) {
     return;
   }
 
@@ -1177,7 +1177,7 @@ static void BabiLighthouse_ClimbOrPushRoadPillar(void) {
   s32 climbDirection = (leader->facing + TRIG_TURN / 8) & 0xc000;
   s32 climbResult = -1;
 
-  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_CLIMB || ahead == 0) {
+  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_CLIMB || ahead == NULL) {
     if (climbDirection == FACING_NORTH) {
       climbResult = Field_ClimbUp();
     }

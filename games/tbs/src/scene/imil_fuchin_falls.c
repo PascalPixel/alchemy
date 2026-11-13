@@ -997,7 +997,7 @@ static struct Actor *FuchinFallsCave_CreateForegroundActor(s32 x, s32 y, s32 z,
                                                            s32 resourceId) {
   struct Actor *actor = FieldActor_Create(resourceId, x, y, z);
 
-  if (actor != 0) {
+  if (actor != NULL) {
     actor->sprite->image.priority = 1;
     actor->motionFlags = 0;
     Actor_SetSpriteFlags(actor, 0);
@@ -1503,7 +1503,7 @@ void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
   };
 
   effect = (struct FieldEffect *)Actor_Create(SPRITE_DUST_PUFF, x, y, z);
-  if (effect == 0)
+  if (effect == NULL)
     return;
   sprite = effect->sprite;
   Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
@@ -1518,7 +1518,7 @@ void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
   sprite->image.priority = 1;
-  if ((flags & 0xffff0000) == 0 || extra == 0)
+  if ((flags & 0xffff0000) == 0 || extra == NULL)
     return;
   if (flags & EFFECT_USE_PALETTE)
     Actor_SetSpriteColor((struct Actor *)effect, extra->palette);

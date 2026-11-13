@@ -179,7 +179,7 @@ static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   table = gGomaCavePillar_FragmentScripts;
   fragment = FieldActor_Create(SPRITE_DUST_PUFF, x, y, z);
-  if (fragment == 0)
+  if (fragment == NULL)
     return;
   sprite = fragment->sprite;
   Actor_SelectAnimation(fragment, (scriptAndChildValue + 1) & 15);

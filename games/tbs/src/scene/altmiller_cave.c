@@ -425,7 +425,7 @@ static void AltmillerCave_StartRetreat(void) {
   Event_Wait(20);
   replacement = FieldActor_Create(0, original->x.fixed, original->y.fixed,
                                   original->z.fixed);
-  if (replacement != 0) {
+  if (replacement != NULL) {
     Dma_Set(original, replacement,
             (DMA_ENABLE | DMA_32BIT) << 16 | sizeof(struct Actor) / 4,
             REG_DMA3);
@@ -484,7 +484,7 @@ static void AltmillerCave_FreezePuddle(void) {
   blocked = effectWork->childMode;
   if (blocked == 0) {
     MapGrid_CopyCellAttributes(76, 16, 1, 1, 73, 17);
-    if (puddle != 0) {
+    if (puddle != NULL) {
       s32 motionFlags = 2;
       puddle->motionFlags = motionFlags;
       puddle->priorityFlags = blocked;
@@ -1847,7 +1847,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Actor_SetSpeed(ACTOR_MIA, 1.2);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
@@ -1855,7 +1855,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
@@ -1863,7 +1863,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_MIA);

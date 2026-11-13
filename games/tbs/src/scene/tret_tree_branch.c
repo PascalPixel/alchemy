@@ -107,7 +107,7 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
   offsetZ *= px(16);
 
   // Shift the selected actor before the separate camera actor.
-  if (actor != 0) {
+  if (actor != NULL) {
     actor->x.fixed += offsetX;
     actor->z.fixed += offsetZ;
     groundHeight =
@@ -117,7 +117,7 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
   }
 
   actor = work->camera;
-  if (actor != 0) {
+  if (actor != NULL) {
     actor->x.fixed += offsetX;
     actor->z.fixed += offsetZ;
     groundHeight =

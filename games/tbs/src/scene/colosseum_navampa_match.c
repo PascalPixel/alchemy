@@ -312,7 +312,7 @@ static void ColosseumNavampaMatch_RideMovingSidewalk(void) {
   struct Actor *actor = Actor_Get(id);
   s32 z = actor->z.part.pixel;
 
-  if ((u32)(z - 183) <= 3) {
+  if (z >= 183 && z <= 186) {
     subject->x.fixed += -(px(4) / 5);
     actor->x.fixed += -(px(4) / 5);
   }
@@ -1140,11 +1140,11 @@ static void ColosseumNavampaMatch_SpawnPeriodicParticle(void) {
     return;
   }
   particle = Actor_Get(kind);
-  if (particle == 0) {
+  if (particle == NULL) {
     return;
   }
   source = Actor_Get(ACTOR_PARTY_LEADER);
-  if (source != 0) {
+  if (source != NULL) {
     Actor_SetPositionFixed(kind, source->x.fixed, source->z.fixed);
   }
   Actor_SetSpriteFlags(Actor_Get(kind), 0);
@@ -1396,24 +1396,24 @@ static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
   Event_Wait(6);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
   }
-  Actor_WalkToAndWait(guideId, (guideX - 16), (guideZ - 64));
+  Actor_WalkToAndWait(guideId, guideX - 16, guideZ - 64);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
-  Actor_WalkToAndWait(guideId, (guideX - 16), (guideZ - 16));
+  Actor_WalkToAndWait(guideId, guideX - 16, guideZ - 16);
   Actor_WalkToAndWait(guideId, guideX, guideZ);
   Actor_FaceDirection(guideId, FACING_NORTH, 10);
   Event_End();
@@ -1670,7 +1670,7 @@ static void ColosseumNavampaMatch_PositionActor(s32 selector, s32 x, s32 z) {
   struct Actor *actor;
 
   actor = Actor_Lookup(selector);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_StartIdle(actor);
     Actor_SelectAnimation(actor, 5);
     Actor_SetMoveTarget(actor, px(x), actor->y.fixed, px(z));
@@ -1683,7 +1683,7 @@ static void ColosseumNavampaMatch_PositionAndActivateActor(s32 selector, s32 x,
   struct Actor *actor;
 
   actor = Actor_Lookup(selector);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_StartIdle(actor);
     Actor_SelectAnimation(actor, 5);
     Actor_SetMoveTarget(actor, px(x), actor->y.fixed, px(z));

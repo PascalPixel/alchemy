@@ -623,7 +623,7 @@ static void CrossboneIsleKeys_DodgeFirstPursuer(void) {
   Actor_SetSpeed(ACTOR_FIRST_STATUE, 1.9);
   Sound_Play(SE_THUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetDestination(ACTOR_FIRST_STATUE, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
@@ -665,7 +665,7 @@ static void CrossboneIsleKeys_DodgeSecondPursuer(void) {
   Actor_SetSpeed(ACTOR_SECOND_STATUE, 1.7);
   Sound_Play(SE_THUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetDestination(ACTOR_SECOND_STATUE, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
@@ -733,7 +733,7 @@ static void CrossboneIsleKeys_DodgeThirdPursuer(void) {
     Actor_SetSpeed(ACTOR_THIRD_STATUE, 1.7);
     Sound_Play(SE_THUMP);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
+    if (leader != NULL) {
       Actor_SetDestination(ACTOR_THIRD_STATUE, leader->x.part.pixel,
                            leader->z.part.pixel);
     }
@@ -771,7 +771,7 @@ static void CrossboneIsleKeys_DodgeFourthPursuer(void) {
     }
     Actor_WaitForMoveById(ACTOR_FOURTH_STATUE);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
+    if (leader != NULL) {
       Actor_SetDestination(ACTOR_FOURTH_STATUE, leader->x.part.pixel,
                            leader->z.part.pixel);
     }
@@ -814,7 +814,7 @@ static void CrossboneIsleKeys_DodgeFifthPursuer(void) {
   Actor_SetSpeed(ACTOR_FIFTH_STATUE, 1.7);
   Sound_Play(SE_THUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetDestination(ACTOR_FIFTH_STATUE, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
@@ -895,7 +895,7 @@ static void CrossboneIsleKeys_FreezePuddle(void) {
   struct Actor *puddle = Actor_Get(ACTOR_PUDDLE);
 
   MapGrid_CopyCellAttributes(40, 54, 1, 1, 40, 55);
-  if (puddle != 0) {
+  if (puddle != NULL) {
     u8 *motionFlags = &Actor_Get(ACTOR_PUDDLE)->motionFlags;
     u8 *priorityFlags = &puddle->priorityFlags;
 

@@ -347,7 +347,7 @@ static void CottageRoomsB_AskWhetherMaskedManWasFelix(void) {
     Event_ShowMessage(ACTOR_YOUNG_MAN_SAW_MASK, 0);
   } else {
     work = gFieldWork;
-    work->message = (work->message + 1);
+    work->message = work->message + 1;
     Event_AskYesNo(ACTOR_YOUNG_MAN_SAW_MASK, 0);
   }
   Event_End();

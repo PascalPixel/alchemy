@@ -1,9 +1,7 @@
-#ifndef BILIBIN_H
-#define BILIBIN_H
+#ifndef ALCHEMY_BILIBIN_H
+#define ALCHEMY_BILIBIN_H
 
 #include "types.h"
-
-#define NULL ((void *)0)
 
 #include "event.h"
 #include "scene_tables.h"

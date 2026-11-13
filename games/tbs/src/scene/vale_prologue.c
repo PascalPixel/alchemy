@@ -1239,7 +1239,7 @@ static void ValePrologue_GaretCommentsOnBlockedPath(s32 x, s32 y) {
   s32 acceleration = (px(1) / 2);
 
   leaderAtStart = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leaderAtStart != 0) {
+  if (leaderAtStart != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET_CHILD, leaderAtStart->x.fixed,
                            leaderAtStart->z.fixed);
   }
@@ -1537,7 +1537,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   {
     struct Actor *leader;
     leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
+    if (leader != NULL) {
       Actor_SetPositionFixed(ACTOR_GARET_CHILD, leader->x.fixed,
                              leader->z.fixed);
     }
@@ -1917,14 +1917,14 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
       Actor_SetSpeed(ACTOR_EXHAUSTED_STRONGMAN, 1);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 217, 1367);
       actor = Actor_Get(ACTOR_PARTY_LEADER);
-      if (actor != 0) {
+      if (actor != NULL) {
         Actor_SetPositionFixed(ACTOR_GARET_CHILD, actor->x.fixed,
                                actor->z.fixed);
       }
       Actor_WalkToAndWait(ACTOR_GARET_CHILD, 235, 1367);
       Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_NORTH_NORTHWEST, 0);
       actor = Actor_Get(ACTOR_PARTY_LEADER);
-      if (actor != 0) {
+      if (actor != NULL) {
         Actor_SetPositionFixed(ACTOR_JENNA_CHILD, actor->x.fixed,
                                actor->z.fixed);
       }
@@ -1941,7 +1941,7 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
       leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       sprite->image.priority = 2;
       actor = Actor_Get(ACTOR_PARTY_LEADER);
-      if (actor != 0) {
+      if (actor != NULL) {
         Actor_SetPositionFixed(ACTOR_EXHAUSTED_STRONGMAN, actor->x.fixed,
                                actor->z.fixed);
       }

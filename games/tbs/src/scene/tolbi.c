@@ -176,7 +176,7 @@ static void Tolbi_GrowSprout(void) {
   struct Actor *sprout;
 
   sprout = Actor_Get(ACTOR_TOLBI_SPROUT);
-  if (sprout != 0) {
+  if (sprout != NULL) {
     sprout->collisionFlags = 0;
   }
   sprout = Actor_Get(ACTOR_TOLBI_SPROUT);
@@ -643,7 +643,7 @@ static void Tolbi_MeetSearchingSoldiers(void) {
 /// Frost on the puddle freezes it into a pillar.
 static void Tolbi_FreezePuddle(void) {
   struct Actor *puddle = Actor_Get(ACTOR_TOLBI_PUDDLE);
-  if (puddle != 0) {
+  if (puddle != NULL) {
     Actor_SetSpriteFlags(puddle, 0);
     puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     puddle->motionFlags = 0;

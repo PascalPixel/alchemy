@@ -609,7 +609,7 @@ static void ColosseumAzartMatch_MarkFinishTerrain(s32 actorId) {
   s32 row;
 
   target = Actor_Get(actorId);
-  if (target != 0) {
+  if (target != NULL) {
     column = target->x.fixed >> 19;
     row = target->z.fixed >> 19;
     if (column >= 94 && column <= 95 && row > 23 && row <= 26) {
@@ -871,17 +871,17 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   Event_Wait(6);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_WalkToAndWait(guide, x - 16, z - 64);

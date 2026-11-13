@@ -334,15 +334,15 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0)
+  if (leader != NULL)
     Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
                          leader->z.part.pixel);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0)
+  if (leader != NULL)
     Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
                          leader->z.part.pixel);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0)
+  if (leader != NULL)
     Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
@@ -450,15 +450,15 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_SetSpeed(ACTOR_IVAN, 0.8);
   Actor_SetSpeed(ACTOR_MIA, 0.8);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
   }
   wait(1);
@@ -1664,7 +1664,7 @@ static void MercuryLighthouseAerie_FindLiftRiders(s32 *out, s32 y) {
        slot++) {
     struct Actor *actor = work->actors[slot];
 
-    if (actor != 0) {
+    if (actor != NULL) {
       s32 cell = FIELD_CELL(actor->x.fixed);
       s32 row = FIELD_CELL(actor->z.fixed);
 

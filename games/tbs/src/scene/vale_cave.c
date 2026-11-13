@@ -680,7 +680,7 @@ static void ValeCave_RideLogWest(void) {
 static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row) {
   struct Actor *actor = Actor_Get(actorId);
 
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetSpritePriority(actorId, 3);
     actor->layer = 2;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;

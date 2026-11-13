@@ -296,7 +296,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   gKolimaForestFloodgate_ShakeChance = 0;
   do {
     wait(1);
-    nextShakeChance = (gKolimaForestFloodgate_ShakeChance + 1);
+    nextShakeChance = gKolimaForestFloodgate_ShakeChance + 1;
     gKolimaForestFloodgate_ShakeChance += 1;
   } while (nextShakeChance <= 100);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
@@ -529,7 +529,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   Vector_AddPolarOffset(px(16), facing, point);
   run = KolimaForestFloodgate_FindLogAt(runs, point[0] / px(16),
                                         point[2] / px(16));
-  if (run == 0)
+  if (run == NULL)
     return;
   for (i = 0; i <= 10; i++) {
     point[0] = run->x << 20;

@@ -554,7 +554,7 @@ static void Altin_EnterDoor(void) {
   Event_Start();
   for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_ID; actorId++) {
     actor = Actor_Get(actorId);
-    if (actor != 0) {
+    if (actor != NULL) {
       actor->motionFlags = 0;
     }
   }
@@ -810,11 +810,11 @@ static void CottageRoomsD_PlaceSheltering(void) {
     actor->collisionFlags |= ACTOR_NEAR_TALK;
   }
   actor = Actor_Get(ACTOR_ARMOR_MERCHANT);
-  if (actor != 0) {
+  if (actor != NULL) {
     actor->collisionFlags |= ACTOR_NEAR_TALK;
   }
   actor = Actor_Get(ACTOR_ITEM_MERCHANT);
-  if (actor != 0) {
+  if (actor != NULL) {
     actor->collisionFlags |= ACTOR_NEAR_TALK;
   }
 }
@@ -861,7 +861,7 @@ static void Altin_BeastSpawnSpray(void) {
   if ((gFrameCount & 3) == 0) {
     spray = ((struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, px(64), 0,
                                                px(400)));
-    if (spray != 0) {
+    if (spray != NULL) {
       spray->timer = WATER_SPRAY_LIFETIME;
       spray->userValue = 0;
       ((struct FieldEffect *)spray)->countdown = WATER_SPRAY_LIFETIME;

@@ -668,14 +668,14 @@ static void MercuryLighthouse_SpawnRipple(struct Actor *source) {
   struct Actor *effect = FieldActor_Create(SPRITE_RIPPLE, source->x.fixed,
                                            source->y.fixed, source->z.fixed);
 
-  if (effect != 0) {
+  if (effect != NULL) {
     struct Sprite *sprite = (struct Sprite *)effect->sprite;
 
     Actor_StartScript(effect, gMercuryLighthouseEntrance_RippleScript);
     effect->motionFlags = 0;
     effect->layer = 1;
     effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    if (sprite != 0) {
+    if (sprite != NULL) {
       Sprite_StartAnimation(sprite, 2);
       sprite->flags = 0;
       sprite->image.priority = 3;

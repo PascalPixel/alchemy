@@ -267,7 +267,7 @@ static void GomaCaveEntrance_IvanRejoins(void) {
   Actor_SetSpeed(ACTOR_GARET, 0.8);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   Actor_WalkToAndWait(ACTOR_GARET, 264, 168);
@@ -283,7 +283,7 @@ static void GomaCaveEntrance_IvanRejoins(void) {
     // Garet falls back into line.
     Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
+    if (leader != NULL) {
       Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
                            leader->z.part.pixel);
     }

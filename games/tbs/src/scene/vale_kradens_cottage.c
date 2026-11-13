@@ -990,7 +990,7 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 94, 293);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
-      if (leader != 0) {
+      if (leader != NULL) {
         Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
       }
       Actor_WalkToAndWait(ACTOR_GARET, 110, 279);

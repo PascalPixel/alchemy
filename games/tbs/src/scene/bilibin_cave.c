@@ -519,7 +519,7 @@ static void BilibinCave_PushTorch(void) {
   nextCellZ =
       (leader->z.part.pixel + (s16)gPushedActor_DirectionSteps[heading]) >> 4;
   target = Actor_FindAtCell(nextCellX, nextCellZ);
-  if (target == 0)
+  if (target == NULL)
     return;
 
   nextCellX =
@@ -528,7 +528,7 @@ static void BilibinCave_PushTorch(void) {
   nextCellZ =
       (target->z.part.pixel + (s16)gPushedActor_DirectionSteps[heading]) >> 4;
   blocker = Actor_FindAtCell(nextCellX, nextCellZ);
-  if (blocker != 0)
+  if (blocker != NULL)
     return;
 
   target->layer = 2;

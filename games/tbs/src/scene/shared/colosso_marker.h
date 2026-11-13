@@ -237,7 +237,7 @@ void Colosso_HidePointer(void) {
 void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
 
-  if (actor != 0) {
+  if (actor != NULL) {
     s32 speed = px(2);
     s32 unpaused = 0;
 
@@ -255,7 +255,7 @@ void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z) {
 void Colosso_WalkActorToAndStand(s32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
 
-  if (actor != 0) {
+  if (actor != NULL) {
     s32 speed = px(5) / 4;
     s32 unpaused = 0;
 

@@ -1734,15 +1734,15 @@ static void Kalay_HammetReturnsToPalace(void) {
   Event_ShowMessageThenWait(ACTOR_BUNZA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_GARET, 0.8);
@@ -2207,7 +2207,7 @@ static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z) {
   particle =
       FieldActor_Create(SPRITE_DUST_PUFF, x - px(8),
                         px((u32)(random * 8) >> 16) + height + px(16), z);
-  if (particle != 0) {
+  if (particle != NULL) {
     particle->motionFlags = 0;
     particle->sprite->image.priority = 2;
     Actor_SetSpriteColor(particle, SPRITE_COLOR_BLUE_TINT);
@@ -2246,7 +2246,7 @@ static void Kalay_FreezePuddle(void) {
 
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 9, 14);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 9, 45);
-  if (effect != 0) {
+  if (effect != NULL) {
     Actor_SetSpriteFlags(effect, 0);
     effect->y.fixed -= px(32);
     effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;

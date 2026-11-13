@@ -17,7 +17,7 @@ static void FieldEffect_AnimateVerticalPositive(struct Actor *actor) {
   s32 amplitude;
 
   anchor = actor->watchedActor;
-  actor->timer = (actor->timer + 1);
+  actor->timer = actor->timer + 1;
   frame = actor->timer;
 
   if (frame > 31) {
@@ -41,7 +41,7 @@ static void FieldEffect_AnimateVerticalNegative(struct Actor *actor) {
   s32 amplitude;
 
   anchor = actor->watchedActor;
-  actor->timer = (actor->timer + 1);
+  actor->timer = actor->timer + 1;
   frame = actor->timer;
 
   if (frame > 31) {

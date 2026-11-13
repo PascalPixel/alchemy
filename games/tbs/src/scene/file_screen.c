@@ -606,8 +606,8 @@ menu_top:;
       linkMessage = MsgClearSaveLabel;
 
       Text_DrawMessage(linkMessage, (struct Window *)result, 0, 4);
-      Text_DrawMessage((linkMessage + 1), (struct Window *)result, 0, 16);
-      Text_DrawMessage((linkMessage + 3), (struct Window *)result, 0, 36);
+      Text_DrawMessage(linkMessage + 1, (struct Window *)result, 0, 16);
+      Text_DrawMessage(linkMessage + 3, (struct Window *)result, 0, 36);
       Serial_Initialize();
       wait(10);
       {
@@ -671,7 +671,7 @@ menu_top:;
 
         linkConnectionOk = 1;
         for (index = 0; index <= 599999; index++) {
-          limit = (limit + 1);
+          limit++;
           if ((requiredLinkMask & gLinkStatus) == requiredLinkMask) {
             limit = 0;
           }
@@ -770,7 +770,7 @@ menu_top:;
           goto page_select;
         }
         if ((gKeysPressed & KEY_A) != 0) {
-          pageIndex = (pageIndex + 1);
+          pageIndex++;
           index = 1;
           if (pageIndex == pageCount) {
             Sound_Play(SE_MENU_CONFIRM);
@@ -795,7 +795,7 @@ menu_top:;
           } else {
             goto keys_done;
           }
-          wrappedPage = (wrappedPage % pageCount);
+          wrappedPage = wrappedPage % pageCount;
           index = 1;
           pageIndex = wrappedPage;
         }
@@ -806,8 +806,8 @@ menu_top:;
           limit = 2;
           do {
             Window_DrawDividerLine(pageWindow, 0, limit, 18, limit);
-            limit = (limit + 2);
-            index = (index + 1);
+            limit = limit + 2;
+            index++;
           } while (index != 4);
           // The page numbers beside the arrows, on WINDOW_PALETTE: tile 769 +
           // n is the digit n + 1, and 779 + n the same digit in the second
@@ -823,7 +823,7 @@ menu_top:;
                 }
                 Window_SetTilemapEntry(pageWindow, tileValue,
                                        index + 18 - pageCount, -1, result);
-                index = (index + 1);
+                index++;
               } while (index != pageCount);
             }
             Window_SetTilemapEntry(pageWindow, PAGE_ARROW_LEFT,
@@ -849,18 +849,18 @@ menu_top:;
               FileScreen_NameEntryCharacter(
                   password[index] & PASSWORD_SYMBOL_MASK, glyph);
             } while (0);
-            passwordColumn = (index % 10);
+            passwordColumn = index % 10;
             if (passwordColumn > 4) {
               s32 row;
 
-              glyphColumn = (pageGlyphIndex % 10);
-              row = (pageGlyphIndex / 10);
+              glyphColumn = pageGlyphIndex % 10;
+              row = pageGlyphIndex / 10;
               Text_DrawString(glyph, pageWindow, glyphColumn * 12 + 18,
                               (row << 4) + 2);
             } else {
               s32 row;
 
-              glyphColumn = (pageGlyphIndex % 10);
+              glyphColumn = pageGlyphIndex % 10;
               // The same division, by the divide routine's own name.
               row = __divsi3(pageGlyphIndex, 10);
               Text_DrawString(glyph, pageWindow, glyphColumn * 12 + 8,

@@ -339,7 +339,7 @@ static void CrossboneIsleSteppingStones_ReadMapGridCell(
     s32 layer, s32 x, s32 y, union CrossboneIslePillarCell *dst) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
 
-  if (grid != 0) {
+  if (grid != NULL) {
     struct MapGridCell *cell = grid->layers[layer].cells;
 
     cell += x + (y << 7);
@@ -361,7 +361,7 @@ static void CrossboneIsleSteppingStones_SetCellAttributes(
     s32 layer, s32 x, s32 y, const union CrossboneIslePillarCell *source) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
 
-  if (grid != 0) {
+  if (grid != NULL) {
     struct CrossboneIslePillarCellBits *cell =
         (struct CrossboneIslePillarCellBits *)grid->layers[layer].cells;
 
@@ -430,7 +430,7 @@ static s32 CrossboneIsleSteppingStones_LowerActorToLedge(s32 id, s32 far) {
   actor->x.fixed = 0;
   actor->y.fixed = 0;
   actor->z.fixed = 0;
-  if (temporaryActor != 0) {
+  if (temporaryActor != NULL) {
     Actor_Release(temporaryActor);
   }
   return found;

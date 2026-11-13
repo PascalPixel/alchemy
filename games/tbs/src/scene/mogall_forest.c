@@ -1277,7 +1277,7 @@ s32 MogallForest_Initialize(void) {
     case MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_EAST:
     case MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_QUARTZ:
       actor = Actor_Get(ACTOR_PARTY_LEADER);
-      if (actor != 0) {
+      if (actor != NULL) {
         Actor_SetPositionFixed(ACTOR_NUT, actor->x.fixed, actor->z.fixed);
       }
       actor = Actor_Get(ACTOR_NUT);

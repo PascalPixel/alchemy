@@ -209,7 +209,7 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
     Event_Start();
     Actor_SetSpeed(ACTOR_IODEM, 1);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
+    if (leader != NULL) {
       Actor_SetPositionFixed(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
     }
     Actor_SetDestinationOffset(ACTOR_IODEM, -8, 16);
@@ -239,7 +239,7 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
       Event_ShowMessage(ACTOR_IODEM, 0);
       Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
-      if (leader != 0) {
+      if (leader != NULL) {
         Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
                              leader->z.part.pixel);
       }
@@ -270,7 +270,7 @@ static void GondowanCave_IodemRejoins(void) {
   {
     struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-    if (leader != 0)
+    if (leader != NULL)
       Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
                            leader->z.part.pixel);
   }

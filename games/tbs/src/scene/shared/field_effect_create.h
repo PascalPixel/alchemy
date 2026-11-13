@@ -16,7 +16,7 @@ UNUSED static void SetEffectRecordMode(struct Actor *work, s32 mode) {
 UNUSED static void *Actor_PrepareFixed(s32 x, s32 y, s32 z, s32 type) {
   struct Actor *actor = FieldActor_Create(type, x, y, z);
 
-  if (actor != 0) {
+  if (actor != NULL) {
     actor->sprite->image.priority = 0;
     actor->motionFlags = 0;
     actor->collisionFlags = ACTOR_NOT_TARGETED;
@@ -38,7 +38,7 @@ UNUSED static void *Actor_PrepareFixed(s32 x, s32 y, s32 z, s32 type) {
 UNUSED static void *Actor_CreateConfiguredFixed(s32 x, s32 y, s32 z, s32 type) {
   struct Actor *actor = FieldActor_Create(type, x, y, z);
 
-  if (actor != 0) {
+  if (actor != NULL) {
     actor->sprite->image.priority = 1;
     actor->motionFlags = 0;
     actor->collisionFlags = ACTOR_NOT_TARGETED;

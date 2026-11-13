@@ -220,8 +220,7 @@ enum {
 /// animation tables and frames under graphics/sprite draw them.
 enum LunpaFortressAnimation {
   /// One of Dodonpa's men lying beaten on the floor (man_with_orange_hair.png),
-  /// as the three
-  /// guards lie after their fight.
+  /// as the three guards lie after their fight.
   ANIM_GUARD_BEATEN = 5,
   /// Donpa lying in bed, only his head on the pillow showing (donpa.png).
   ANIM_DONPA_IN_BED = 5,
@@ -256,8 +255,6 @@ enum LunpaFortressRaisedTrigger {
   RAISED_SENTRIES_SPOTTED
 };
 
-/// Reveal's phases: the hidden things show, and hide again.
-
 /// Where a party caught by a guard is sent: the Lunpa Fortress Gates.
 enum { EXIT_THROWN_OUT = 60 };
 
@@ -283,8 +280,8 @@ enum {
 /// layer.
 #define LUNPA_FORTRESS_ROOM_LAYERS (DISPCNT_BG2_ON | DISPCNT_BG3_ON)
 
-/// The paired patrol's layer origin across: 136 pixels, in 16.16 fixed point.
-// The paired patrol computes this layer offset in floating point.
+/// The paired patrol's layer origin across, 136 pixels, written in floating
+/// point.
 #define PAIRED_PATROL_LAYER_ORIGIN_X (136.0 * 65536)
 
 static s32 LunpaFortress_TryTakeChestItem(s32 actorId, s32 itemId);
@@ -409,7 +406,7 @@ static void LunpaFortress_LowerCrates(void) {
   MapGrid_CopyCellAttributes(15, 20, 1, 1, 15, 22);
   MapGrid_CopyCellAttributes(17, 23, 1, 3, 15, 23);
   cratesActor = Actor_Get(ACTOR_CAVE_CRATES);
-  if (cratesActor != 0) {
+  if (cratesActor != NULL) {
     Actor_SetSpriteFlags(cratesActor, 0);
     cratesActor->motionFlags = 0;
     cratesActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -690,27 +687,18 @@ static void LunpaFortress_TakeCellKey(void) {
   GameFlag_Set(FLAG_LUNPA_FORTRESS_CELL_KEY);
   Actor_SetPosition(ACTOR_UPPER_FLOOR_CELL_KEY, 0, 0);
 }
+
 /// Where the patrolling pair cannot see the leader: the west end of their
 /// corridor and the cells below its gap.
 static s32 LunpaFortress_IsLeaderInPatrolSafeZone(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  s32 leaderFixedZ = leader->z.fixed;
-  s32 leaderFixedX;
-  s32 leaderTileZ, leaderTileX;
+  s32 leaderTileZ = leader->z.fixed / px(16);
+  s32 leaderTileX = leader->x.fixed / px(16);
 
-  if (leaderFixedZ < 0) {
-    leaderFixedZ += px(16) - 1;
-  }
-  leaderFixedX = leader->x.fixed;
-  leaderTileZ = leaderFixedZ >> 20;
-  if (leaderFixedX < 0) {
-    leaderFixedX += px(16) - 1;
-  }
-  leaderTileX = leaderFixedX >> 20;
-  if ((u32)(leaderTileZ - 5) <= 2 && leaderTileX <= 10) {
+  if (leaderTileZ >= 5 && leaderTileZ <= 7 && leaderTileX <= 10) {
     return 1;
   }
-  if ((u32)(leaderTileX - 8) <= 1 && leaderTileZ > 22) {
+  if (leaderTileX >= 8 && leaderTileX <= 9 && leaderTileZ > 22) {
     return 1;
   }
   return 0;
@@ -792,25 +780,10 @@ static void LunpaFortress_PatrolPairThrowsPartyOut(void) {
 static s32 LunpaFortress_IsLeaderPassingPatrollingGuard(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *guard = Actor_Get(ACTOR_UPPER_FLOOR_HALL_PATROL);
-  s32 leaderFixedX = leader->x.fixed;
-  s32 guardFixedZ;
-  s32 guardFixedX;
-  s32 leaderTileX, guardTileZ, guardTileX;
+  s32 leaderTileX = leader->x.fixed / px(16);
+  s32 guardTileZ = guard->z.fixed / px(16);
+  s32 guardTileX = guard->x.fixed / px(16);
 
-  if (leaderFixedX < 0) {
-    leaderFixedX += px(16) - 1;
-  }
-  leaderTileX = leaderFixedX >> 20;
-  guardFixedZ = guard->z.fixed;
-  if (guardFixedZ < 0) {
-    guardFixedZ += px(16) - 1;
-  }
-  guardFixedX = guard->x.fixed;
-  guardTileZ = guardFixedZ >> 20;
-  if (guardFixedX < 0) {
-    guardFixedX += px(16) - 1;
-  }
-  guardTileX = guardFixedX >> 20;
   if (leaderTileX == 52 && guardTileX == 57 && guardTileZ > 34 &&
       guardTileZ <= 40) {
     return 1;
@@ -882,13 +855,15 @@ static s32 LunpaFortress_IsLeaderInGroundFloorPatrolSafeZone(void) {
   s32 leaderTileZ = leader->z.fixed / px(16);
   s32 leaderTileX = leader->x.fixed / px(16);
 
-  if ((u32)(leaderTileX - 41) <= 3 && leaderTileZ > 25 && leaderTileZ <= 28) {
+  if (leaderTileX >= 41 && leaderTileX <= 44 && leaderTileZ > 25 &&
+      leaderTileZ <= 28) {
     return 1;
   }
   if (leaderTileX == 41 && leaderTileZ > 37 && leaderTileZ <= 41) {
     return 1;
   }
-  if ((u32)(leaderTileX - 54) <= 2 && leaderTileZ > 30 && leaderTileZ <= 40) {
+  if (leaderTileX >= 54 && leaderTileX <= 56 && leaderTileZ > 30 &&
+      leaderTileZ <= 40) {
     return 1;
   }
   return 0;
@@ -2688,21 +2663,21 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_Wait(100);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_MIA);
@@ -3193,15 +3168,15 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(ACTOR_TOADONPA_HAMMET, ANIM_STILL);
     LunpaFortress_RestoreToadonpaDoors();
     mapActor = Actor_Get(ACTOR_INVISIBLE_TOADONPA_WEST_JAR);
-    if (mapActor != 0)
+    if (mapActor != NULL)
       Actor_SetSpriteFlags(mapActor, 0);
     mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     mapActor = Actor_Get(ACTOR_INVISIBLE_TOADONPA_CHEST);
-    if (mapActor != 0)
+    if (mapActor != NULL)
       Actor_SetSpriteFlags(mapActor, 0);
     mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     mapActor = Actor_Get(ACTOR_INVISIBLE_TOADONPA_EAST_JAR);
-    if (mapActor != 0)
+    if (mapActor != NULL)
       Actor_SetSpriteFlags(mapActor, 0);
     mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
@@ -3224,7 +3199,7 @@ s32 Scene_Initialize(void) {
       }
     }
     mapActor = Actor_Get(ACTOR_INVISIBLE_TOADONPA_BOSS_PART);
-    if (mapActor != 0)
+    if (mapActor != NULL)
       Actor_SetSpriteFlags(mapActor, 0);
     mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     mapActor->scaleX = 4 * Q16_ONE / 5;
@@ -3410,24 +3385,24 @@ static void LunpaFortress_InitializeCave(void) {
   }
   Event_Start();
   mapActor = Actor_Get(ACTOR_CAVE_FIRST_SWITCH_IVY);
-  if (mapActor != 0) {
+  if (mapActor != NULL) {
     mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
   mapActor = Actor_Get(ACTOR_CAVE_PASSAGE_IVY);
-  if (mapActor != 0) {
+  if (mapActor != NULL) {
     mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
   mapActor = Actor_Get(ACTOR_CAVE_SECOND_SWITCH_IVY);
-  if (mapActor != 0) {
+  if (mapActor != NULL) {
     mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
   mapActor = Actor_Get(ACTOR_INVISIBLE_CAVE_JAR);
-  if (mapActor != 0) {
+  if (mapActor != NULL) {
     Actor_SetSpriteFlags(mapActor, 0);
   }
   mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   mapActor = Actor_Get(ACTOR_CAVE_CRATES);
-  if (mapActor != 0) {
+  if (mapActor != NULL) {
     mapActor->collisionFlags |= ACTOR_NEAR_PSYNERGY;
   }
   Actor_SetSpriteFlags(Actor_Get(ACTOR_INVISIBLE_CAVE_JAR), 0);

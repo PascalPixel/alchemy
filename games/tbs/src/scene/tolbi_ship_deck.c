@@ -1730,15 +1730,15 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 208, 598);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 248, 598);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_GARET, 1);
@@ -1954,7 +1954,7 @@ static void TolbiShipDeck_RowersDisembark(void) {
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_INVISIBLE_ARRIVED_CAMERA_TARGET,
                            actor->x.fixed, actor->z.fixed);
   }
@@ -2156,7 +2156,7 @@ static void TolbiShipDeck_SetUpOars(void) {
 static void TolbiShipDeck_ShowOar(s32 actorId) {
   struct Actor *oar = Actor_Get(actorId);
 
-  if (oar != 0) {
+  if (oar != NULL) {
     Actor_SetSpritePriority(actorId, 3);
     Actor_SetSpriteFlags(oar, 0);
     oar->collisionFlags = 0;
@@ -2492,15 +2492,15 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 180, 654);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
   }
   Actor_SetSpeed(ACTOR_GARET, 1.2);

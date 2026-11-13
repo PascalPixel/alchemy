@@ -1085,7 +1085,7 @@ static void SolSanctumStatue_PushCenterStatueNorth(void) {
   struct Actor *movingActor;
 
   movingActor = Actor_Get(ACTOR_CENTER_STATUE);
-  if (movingActor != 0) {
+  if (movingActor != NULL) {
     if (FIELD_CELL(movingActor->z.fixed) == 8) {
       Event_Start();
       Sound_Play(SE_PUSH);
@@ -1139,7 +1139,7 @@ static void SolSanctumStatue_PushLeftBeamStatueSouth(void) {
   struct Actor *statue = Actor_Get(ACTOR_LEFT_BEAM_STATUE);
   s32 row;
 
-  if (statue == 0) {
+  if (statue == NULL) {
     return;
   }
 

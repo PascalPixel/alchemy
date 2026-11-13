@@ -825,7 +825,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   // Garet rejoins the leader and the man wanders again from where he stands.
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_GARET);

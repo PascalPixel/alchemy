@@ -63,7 +63,7 @@ static void Colosso_SparkleAroundPrize(struct Actor *prize) {
 
       sparkle = FieldActor_Create(SPRITE_SPARKLE, x, y, z);
     }
-    if (sparkle != 0) {
+    if (sparkle != NULL) {
       sparkle->motionFlags = 0;
       Actor_SetSpriteFlags(sparkle, 0);
       Actor_StartScript(sparkle, gColosso_PrizeSparkleScript);

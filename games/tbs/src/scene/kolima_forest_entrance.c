@@ -249,14 +249,14 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   {
     struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-    if (leader != 0) {
+    if (leader != NULL) {
       Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
     }
   }
   {
     struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-    if (leader != 0) {
+    if (leader != NULL) {
       Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
     }
   }
@@ -267,7 +267,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     {
       struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-      if (leader != 0) {
+      if (leader != NULL) {
         Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
       }
     }
@@ -983,7 +983,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   {
     struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-    if (leader != 0) {
+    if (leader != NULL) {
       Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
                            leader->z.part.pixel);
     }
@@ -994,7 +994,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   {
     struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-    if (leader != 0) {
+    if (leader != NULL) {
       Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
                            leader->z.part.pixel);
     }
@@ -1006,7 +1006,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     {
       struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-      if (leader != 0) {
+      if (leader != NULL) {
         Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel,
                              leader->z.part.pixel);
       }
@@ -1053,7 +1053,7 @@ static void KolimaForestEntrance_SpawnCurseSparkle(void) {
   if (gKolimaForestEntrance_SparkleSoundOn != 0)
     Sound_Play(SE_SPARKLE_FALL);
   sparkle = FieldActor_Create(SPRITE_GOLDEN_RINGS, spawnX, 0, spawnZ);
-  if (sparkle == 0)
+  if (sparkle == NULL)
     return;
   sprite = sparkle->sprite;
   sprite->flags = framePhase;
@@ -1116,7 +1116,7 @@ static void KolimaForestEntrance_FlickerPsynergyFields(void) {
   struct Actor *p;
 
   p = Actor_Get(ACTOR_LEADER_PSYNERGY_FIELD);
-  if (p != 0) {
+  if (p != NULL) {
     p->motionFlags = 0;
     if ((gFrameCount & 1) == 0) {
       p->y.fixed = 0;
@@ -1125,7 +1125,7 @@ static void KolimaForestEntrance_FlickerPsynergyFields(void) {
     }
   }
   p = Actor_Get(ACTOR_IVAN_PSYNERGY_FIELD);
-  if (p != 0) {
+  if (p != NULL) {
     p->motionFlags = 0;
     if ((gFrameCount & 1) != 0) {
       p->y.fixed = 0;
@@ -1134,7 +1134,7 @@ static void KolimaForestEntrance_FlickerPsynergyFields(void) {
     }
   }
   p = Actor_Get(ACTOR_MIA_PSYNERGY_FIELD);
-  if (p != 0) {
+  if (p != NULL) {
     p->motionFlags = 0;
     if ((gFrameCount & 1) == 0) {
       p->y.fixed = 0;
@@ -1143,7 +1143,7 @@ static void KolimaForestEntrance_FlickerPsynergyFields(void) {
     }
   }
   p = Actor_Get(ACTOR_GARET_PSYNERGY_FIELD);
-  if (p != 0) {
+  if (p != NULL) {
     p->motionFlags = 0;
     if ((gFrameCount & 1) != 0) {
       p->y.fixed = 0;

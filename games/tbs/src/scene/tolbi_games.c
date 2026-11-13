@@ -913,7 +913,7 @@ static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
   struct Sprite *sprite;
   u32 count;
 
-  if (actor != 0) {
+  if (actor != NULL) {
     actor->x.fixed = *coordinate++;
     actor->y.fixed = *coordinate++;
     actor->z.fixed = *coordinate;
@@ -950,7 +950,7 @@ static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
 static void TolbiSpring_SetSpriteStorageKind(s32 actorId, s32 storageKind) {
   struct Actor *actor = Actor_Get(actorId);
 
-  if (actor != 0) {
+  if (actor != NULL) {
     actor->spriteStorageKind = storageKind;
   }
 }

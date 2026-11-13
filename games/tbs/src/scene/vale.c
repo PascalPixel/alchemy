@@ -1619,7 +1619,7 @@ static void Vale_GaretMeetsHisSister(void) {
   Actor_FaceDirection(ACTOR_GARETS_SISTER_AFTER_KALAY, FACING_SOUTH_SOUTHEAST,
                       0);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   Actor_WalkToAndWait(ACTOR_GARET, 402, 608);
@@ -1697,7 +1697,7 @@ static void Vale_GaretAsksToProtectFamily(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 367, 745);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   Actor_WalkToAndWait(ACTOR_GARET, 346, 745);
@@ -2961,7 +2961,7 @@ static void Vale_TrailSparkles(struct Actor *source) {
   Vector_AddPolarOffset(randomDistance * 48, Random_Next(), spawnPosition);
   particle = FieldActor_Create(SPRITE_SPARKLE, spawnPosition[0],
                                spawnPosition[1], spawnPosition[2]);
-  if (particle != 0) {
+  if (particle != NULL) {
     particle->motionFlags = ACTOR_FALLS;
     particle->gravity = px(1) / 10;
     particle->wait = 12;
@@ -2992,7 +2992,7 @@ static void Vale_VanishMoveHand(struct Actor *emitter) {
     struct Actor *particle = FieldActor_Create(
         SPRITE_SPARKLE, emitter->x.fixed, emitter->y.fixed, emitter->z.fixed);
 
-    if (particle != 0) {
+    if (particle != NULL) {
       s32 verticalSpeed;
 
       Actor_SetSpriteFlags(particle, 0);
@@ -3109,7 +3109,7 @@ static void Vale_AdjustPillarPriorityForLeaderHeight(void) {
     pillar = Actor_Get(ACTOR_PILLAR_AFTER_KALAY);
   else
     pillar = Actor_Get(ACTOR_PILLAR);
-  if (pillar != 0) {
+  if (pillar != NULL) {
     if (leader->y.fixed > px(200))
       pillar->priorityFlags =
           ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_UNDERFOOT;

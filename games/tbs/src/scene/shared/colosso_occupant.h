@@ -30,7 +30,7 @@ static void Colosso_PushActorAhead(void) {
   position.z = leader->z.fixed + step;
 
   pushed = Actor_FindAtPosition(&position, leader);
-  if (pushed == 0) {
+  if (pushed == NULL) {
     return;
   }
 
@@ -41,7 +41,7 @@ static void Colosso_PushActorAhead(void) {
   position.z = pushed->z.fixed + step;
 
   blocker = Actor_FindAtPosition(&position, pushed);
-  if (blocker != 0 && (blocker->collisionFlags & ACTOR_SOLID) != 0) {
+  if (blocker != NULL && (blocker->collisionFlags & ACTOR_SOLID) != 0) {
     return;
   }
 
@@ -50,7 +50,7 @@ static void Colosso_PushActorAhead(void) {
   position.z = pushed->z.fixed;
 
   blocker = Actor_FindAtPosition(&position, pushed);
-  if (blocker != 0 && (blocker->collisionFlags & ACTOR_SOLID) != 0) {
+  if (blocker != NULL && (blocker->collisionFlags & ACTOR_SOLID) != 0) {
     return;
   }
 
@@ -108,7 +108,7 @@ void *Colosso_FindActorAhead(void) {
   Vector_AddPolarOffset(px(16), facing, &position);
 
   occupant = Actor_FindAtPosition(&position, record);
-  if (occupant == 0) {
+  if (occupant == NULL) {
     position.x = (record->x.fixed & FIELD_CELL_MASK) + px(8);
     position.y = record->y.fixed;
     position.z = (record->z.fixed & FIELD_CELL_MASK) + px(8);

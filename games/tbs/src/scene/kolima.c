@@ -409,7 +409,7 @@ static void Kolima_LowerBridge(void) {
     struct Actor *debris = FieldActor_Create(
         SPRITE_DUST_PUFF, px(148 + debrisIndex * 4), 0, px(258));
 
-    if (debris != 0) {
+    if (debris != NULL) {
       debris->motionFlags = 0;
       Actor_SetSpriteFlags(debris, 0);
       debris->sprite->image.priority = 0;
@@ -1471,7 +1471,7 @@ static void Kolima_SpawnCurseSparkle(void) {
     Sound_Play(SE_SPARKLE_FALL);
   }
   sparkle = FieldActor_Create(SPRITE_GOLDEN_RINGS, spawnX, 0, spawnZ);
-  if (sparkle == 0) {
+  if (sparkle == NULL) {
     return;
   }
   sprite = sparkle->sprite;

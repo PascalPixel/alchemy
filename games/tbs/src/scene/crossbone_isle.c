@@ -372,7 +372,7 @@ s32 Scene_Initialize(void) {
     Scene_RedrawActorFootprint(ACTOR_FIRST_ISLE_LOG + 1);
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN) != 0) {
       actor = Actor_Get(ACTOR_FIRST_PLANT);
-      if (actor != 0) {
+      if (actor != NULL) {
         actor->collisionFlags = 0;
         Actor_SelectAnimation(actor, 4);
         Actor_SetSpriteFlags(actor, 0);
@@ -381,7 +381,7 @@ s32 Scene_Initialize(void) {
     }
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 1) != 0) {
       actor = Actor_Get(ACTOR_FIRST_PLANT + 1);
-      if (actor != 0) {
+      if (actor != NULL) {
         actor->collisionFlags = 0;
         Actor_SelectAnimation(actor, 4);
         Actor_SetSpriteFlags(actor, 0);
@@ -390,7 +390,7 @@ s32 Scene_Initialize(void) {
     }
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 2) != 0) {
       actor = Actor_Get(ACTOR_FIRST_PLANT + 2);
-      if (actor != 0) {
+      if (actor != NULL) {
         actor->collisionFlags = 0;
         Actor_SelectAnimation(actor, 4);
         Actor_SetSpriteFlags(actor, 0);
@@ -399,7 +399,7 @@ s32 Scene_Initialize(void) {
     }
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 3) != 0) {
       actor = Actor_Get(ACTOR_FIRST_PLANT + 3);
-      if (actor != 0) {
+      if (actor != NULL) {
         actor->collisionFlags = 0;
         Actor_SelectAnimation(actor, 4);
         Actor_SetSpriteFlags(actor, 0);
@@ -596,7 +596,7 @@ static inline void CrossboneIsle_GrowPlant(s32 actorId, s32 plant, s32 x,
                                            s32 z) {
   struct Actor *actor = Actor_Get(ACTOR_FIRST_PLANT + plant);
 
-  if (actor != 0) {
+  if (actor != NULL) {
     actor->collisionFlags = 0;
   }
   Actor_SetSpriteFlags(Actor_Get(actorId), 0);
@@ -752,7 +752,7 @@ static void CrossboneIsle_DrawHorizontalLogFootprint(s32 actorId,
                                                      s32 unused) {
   struct Actor *actor = Actor_Get(actorId);
 
-  if (actor != 0) {
+  if (actor != NULL) {
     s32 priorityFlags;
 
     Actor_SetSpritePriority(actorId, 3);
@@ -774,7 +774,7 @@ static void CrossboneIsle_DrawVerticalLogFootprint(s32 actorId,
                                                    s32 sourceRow, s32 unused) {
   struct Actor *actor = Actor_Get(actorId);
 
-  if (actor != 0) {
+  if (actor != NULL) {
     s32 priorityFlags;
 
     Actor_SetSpritePriority(actorId, 3);
@@ -1480,31 +1480,31 @@ static void CrossboneIsle_SlideEleventhLogSouth(void) {
   seventhLogColumn = FIELD_CELL(Actor_Get(ACTOR_SEVENTH_LOG)->x.fixed);
 
   if (row == 9) {
-    if ((u32)(seventhLogColumn - 6) <= 2) {
+    if (seventhLogColumn >= 6 && seventhLogColumn <= 8) {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_ELEVENTH_LOG, 0, 32);
-    } else if ((u32)(twelfthLogColumn - 6) <= 2) {
+    } else if (twelfthLogColumn >= 6 && twelfthLogColumn <= 8) {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_ELEVENTH_LOG, 0, 80);
     } else {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_ELEVENTH_LOG, 0, 64);
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_ELEVENTH_LOG, 0, 96);
     }
   } else if (row == 11) {
-    if ((u32)(seventhLogColumn - 6) <= 2) {
+    if (seventhLogColumn >= 6 && seventhLogColumn <= 8) {
       return;
     }
-    if ((u32)(twelfthLogColumn - 6) <= 2) {
+    if (twelfthLogColumn >= 6 && twelfthLogColumn <= 8) {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_ELEVENTH_LOG, 0, 48);
     } else {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_ELEVENTH_LOG, 0, 128);
     }
   } else if (row == 12) {
-    if ((u32)(twelfthLogColumn - 6) <= 2) {
+    if (twelfthLogColumn >= 6 && twelfthLogColumn <= 8) {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_ELEVENTH_LOG, 0, 32);
     } else {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_ELEVENTH_LOG, 0, 112);
     }
   } else if (row == 14) {
-    if ((u32)(twelfthLogColumn - 6) <= 2) {
+    if (twelfthLogColumn >= 6 && twelfthLogColumn <= 8) {
       return;
     }
     CrossboneIsle_MoveSelectedActorAndLog(ACTOR_ELEVENTH_LOG, 0, 80);
@@ -1618,10 +1618,10 @@ static void CrossboneIsle_SlideSecondLogSouth(void) {
   ninthLogColumn = FIELD_CELL(Actor_Get(ACTOR_NINTH_LOG)->x.fixed);
 
   if (row == 8) {
-    if ((u32)(ninthLogColumn - 9) <= 2) {
+    if (ninthLogColumn >= 9 && ninthLogColumn <= 11) {
       return;
     }
-    if ((u32)(seventhLogColumn - 9) <= 2) {
+    if (seventhLogColumn >= 9 && seventhLogColumn <= 11) {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SECOND_LOG, 0, 48);
     } else {
       if ((u32)(twelfthLogColumn - 9) > 2) {
@@ -1630,25 +1630,25 @@ static void CrossboneIsle_SlideSecondLogSouth(void) {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SECOND_LOG, 0, 96);
     }
   } else if (row == 11) {
-    if ((u32)(seventhLogColumn - 9) <= 2) {
+    if (seventhLogColumn >= 9 && seventhLogColumn <= 11) {
       return;
     }
-    if ((u32)(twelfthLogColumn - 9) <= 2) {
+    if (twelfthLogColumn >= 9 && twelfthLogColumn <= 11) {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SECOND_LOG, 0, 48);
     } else {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SECOND_LOG, 0, 128);
     }
   } else if (row == 12) {
-    if ((u32)(seventhLogColumn - 9) <= 2) {
+    if (seventhLogColumn >= 9 && seventhLogColumn <= 11) {
       return;
     }
-    if ((u32)(twelfthLogColumn - 9) <= 2) {
+    if (twelfthLogColumn >= 9 && twelfthLogColumn <= 11) {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SECOND_LOG, 0, 32);
     } else {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SECOND_LOG, 0, 112);
     }
   } else if (row == 14) {
-    if ((u32)(twelfthLogColumn - 9) <= 2) {
+    if (twelfthLogColumn >= 9 && twelfthLogColumn <= 11) {
       return;
     }
     CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SECOND_LOG, 0, 80);
@@ -1803,29 +1803,29 @@ static void CrossboneIsle_SlideSeventhLogWest(void) {
   secondLogRow = FIELD_CELL(Actor_Get(ACTOR_SECOND_LOG)->z.fixed);
 
   if (column == 13) {
-    if ((u32)(secondLogRow - 12) <= 2) {
+    if (secondLogRow >= 12 && secondLogRow <= 14) {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SEVENTH_LOG, -16, 0);
-    } else if ((u32)(eleventhLogRow - 12) <= 2) {
+    } else if (eleventhLogRow >= 12 && eleventhLogRow <= 14) {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SEVENTH_LOG, -64, 0);
     } else {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SEVENTH_LOG, -112, 0);
     }
   } else if (column == 12) {
-    if ((u32)(secondLogRow - 12) <= 2) {
+    if (secondLogRow >= 12 && secondLogRow <= 14) {
       return;
     }
-    if ((u32)(eleventhLogRow - 12) <= 2) {
+    if (eleventhLogRow >= 12 && eleventhLogRow <= 14) {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SEVENTH_LOG, -48, 0);
     } else {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SEVENTH_LOG, -96, 0);
     }
   } else if (column == 9) {
-    if ((u32)(eleventhLogRow - 12) <= 2) {
+    if (eleventhLogRow >= 12 && eleventhLogRow <= 14) {
       return;
     }
     CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SEVENTH_LOG, -48, 0);
   } else if (column == 8) {
-    if ((u32)(eleventhLogRow - 12) <= 2) {
+    if (eleventhLogRow >= 12 && eleventhLogRow <= 14) {
       return;
     }
     CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SEVENTH_LOG, -32, 0);
@@ -1856,20 +1856,20 @@ static void CrossboneIsle_SlideSeventhLogEast(void) {
   secondLogRow = FIELD_CELL(Actor_Get(ACTOR_SECOND_LOG)->z.fixed);
 
   if (column == 6) {
-    if ((u32)(secondLogRow - 12) <= 2) {
+    if (secondLogRow >= 12 && secondLogRow <= 14) {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SEVENTH_LOG, 32, 0);
-    } else if ((u32)(eleventhLogRow - 12) <= 2) {
+    } else if (eleventhLogRow >= 12 && eleventhLogRow <= 14) {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SEVENTH_LOG, 64, 0);
     } else {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SEVENTH_LOG, 112, 0);
     }
   } else if (column == 8) {
-    if ((u32)(secondLogRow - 12) <= 2) {
+    if (secondLogRow >= 12 && secondLogRow <= 14) {
       return;
     }
     CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SEVENTH_LOG, 80, 0);
   } else if (column == 9) {
-    if ((u32)(secondLogRow - 12) <= 2) {
+    if (secondLogRow >= 12 && secondLogRow <= 14) {
       return;
     }
     CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SEVENTH_LOG, 64, 0);
@@ -1902,24 +1902,24 @@ static void CrossboneIsle_SlideNinthLogWest(void) {
   secondLogRow = FIELD_CELL(Actor_Get(ACTOR_SECOND_LOG)->z.fixed);
 
   if (column == 13) {
-    if ((u32)(secondLogRow - 9) <= 2) {
+    if (secondLogRow >= 9 && secondLogRow <= 11) {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_NINTH_LOG, -16, 0);
-    } else if ((u32)(eleventhLogRow - 9) <= 2) {
+    } else if (eleventhLogRow >= 9 && eleventhLogRow <= 11) {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_NINTH_LOG, -64, 0);
     } else {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_NINTH_LOG, -112, 0);
     }
   } else if (column == 12) {
-    if ((u32)(secondLogRow - 9) <= 2) {
+    if (secondLogRow >= 9 && secondLogRow <= 11) {
       return;
     }
-    if ((u32)(eleventhLogRow - 9) <= 2) {
+    if (eleventhLogRow >= 9 && eleventhLogRow <= 11) {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_NINTH_LOG, -48, 0);
     } else {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_NINTH_LOG, -96, 0);
     }
   } else if (column == 9) {
-    if ((u32)(eleventhLogRow - 9) <= 2) {
+    if (eleventhLogRow >= 9 && eleventhLogRow <= 11) {
       return;
     }
     CrossboneIsle_MoveSelectedActorAndLog(ACTOR_NINTH_LOG, -48, 0);
@@ -1949,13 +1949,13 @@ static void CrossboneIsle_SlideNinthLogEast(void) {
   companionRow = FIELD_CELL(Actor_Get(ACTOR_SECOND_LOG)->z.fixed);
 
   if (column == 6) {
-    if ((u32)(companionRow - 9) <= 2) {
+    if (companionRow >= 9 && companionRow <= 11) {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_NINTH_LOG, 32, 0);
     } else {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_NINTH_LOG, 112, 0);
     }
   } else if (column == 8) {
-    if ((u32)(companionRow - 9) <= 2) {
+    if (companionRow >= 9 && companionRow <= 11) {
       return;
     }
     CrossboneIsle_MoveSelectedActorAndLog(ACTOR_NINTH_LOG, 80, 0);

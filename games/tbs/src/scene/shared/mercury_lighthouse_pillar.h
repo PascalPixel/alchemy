@@ -196,10 +196,10 @@ void MercuryLighthouse_ChargeLights(void) {
     return;
   Event_Start();
   pillar = state->pillar;
-  if (pillar == 0) {
+  if (pillar == NULL) {
     actor = FieldActor_Create(SPRITE_GOLDEN_RINGS, leader->x.fixed,
                               leader->y.fixed + px(24), leader->z.fixed);
-    if (actor != 0) {
+    if (actor != NULL) {
       struct Sprite *sprite = actor->sprite;
 
       actor->groundHeight = leader->groundHeight;
@@ -209,7 +209,7 @@ void MercuryLighthouse_ChargeLights(void) {
       /* FAKEMATCH(temporary): the height lowered as a plain word, outside its
        * union; as actor->y.fixed, 2 of 80 instructions differ in tbs-en. */
       *(s32 *)&actor->y -= px(1) / 2;
-      if (sprite != 0) {
+      if (sprite != NULL) {
         sprite->flags = 0;
         sprite->image.priority = 1;
       }
@@ -251,7 +251,7 @@ void MercuryLighthouse_LoseLights(void) {
   GameFlag_Clear(FLAG_NO_ENCOUNTERS_IN_AREA);
 
   target = state->pillar;
-  if (target != 0) {
+  if (target != NULL) {
     target->timer = 0;
     Actor_StartScript(target, gMercuryLighthouse_ScaleCounterScript);
     Actor_SelectAnimation(target, 7);

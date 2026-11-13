@@ -172,8 +172,6 @@ enum {
   MapGrid_CopyCellAttributes(SECRET_SPARE_COLUMN(number), SECRET_SPARE_ROW, 4, \
                              2, column, (row) + 1)
 
-#define NULL ((void *)0)
-
 #include "shared/field_effect_create.h"
 #include "shared/field_effect_spawn.h"
 
@@ -714,7 +712,7 @@ static void LamakanDesert_FallIntoPit(void) {
   // The nearest pit still there, by the distance along x plus along z.
   for (id = ACTOR_FIRST_PIT; id <= ACTOR_LAST_PIT; id++) {
     pit = Actor_Get(id);
-    if (pit != 0) {
+    if (pit != NULL) {
       dx = (leader->x.fixed - pit->x.fixed) / px(1);
       dz = (leader->z.fixed - pit->z.fixed) / px(1);
       distance = dx;
@@ -750,7 +748,7 @@ static void LamakanDesert_FallIntoPit(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->update =
       (void (*)(struct Actor *))LamakanDesert_LeaderSpraySand;
   pit = Actor_Get(best);
-  if (pit != 0) {
+  if (pit != NULL) {
     Actor_SetDestination(ACTOR_PARTY_LEADER, pit->x.part.pixel,
                          pit->z.part.pixel);
   }

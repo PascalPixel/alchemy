@@ -289,7 +289,7 @@ static void StuccoRoomsA_OpenDoorAndExit(void) {
   for (slot = ACTOR_FIRST_PLACED; slot <= ACTOR_LAST_ID; slot++) {
     struct Actor *actor = Actor_Get(slot);
 
-    if (actor != 0) {
+    if (actor != NULL) {
       actor->motionFlags = 0;
     }
   }

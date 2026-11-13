@@ -297,7 +297,7 @@ static void VaultCave_PushPillarAhead(void) {
       4;
   row = (pillar->z.part.pixel + (s16)gVaultCave_DirectionSteps[direction]) >> 4;
   beyond = VaultCave_FindCollidableActorAtCell(column, row);
-  if (beyond != 0 && (beyond->collisionFlags & 1)) {
+  if (beyond != NULL && (beyond->collisionFlags & 1)) {
     return;
   }
   pillar->layer = 2;
@@ -357,23 +357,12 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gVaultCave_FallbackTriggers;
 }
 
-/// Tests the southern pillar's cell, rounding fixed coordinates toward zero.
+/// Whether the southern pillar stands on its switch.
 static s32 VaultCave_IsSouthernPillarOnSwitch(void) {
   struct Actor *pillar = Actor_Get(ACTOR_SOUTHERN_PILLAR);
-  s32 fixedZ = pillar->z.fixed;
-  s32 fixedX;
-  s32 row;
-  s32 column;
+  s32 row = pillar->z.fixed / px(16);
+  s32 column = pillar->x.fixed / px(16);
 
-  if (fixedZ < 0) {
-    fixedZ += px(16) - 1;
-  }
-  fixedX = pillar->x.fixed;
-  row = fixedZ >> 20;
-  if (fixedX < 0) {
-    fixedX += px(16) - 1;
-  }
-  column = fixedX >> 20;
   if (column == 15 && row == 54) {
     return 1;
   }
@@ -421,23 +410,12 @@ static void VaultCave_ApplyNorthernSwitchCells(void) {
   MapGrid_CopyCellAttributes(17, 10, 1, 1, 17, 11);
 }
 
-/// Tests the northern pillar's cell with the same signed-coordinate rounding.
+/// Whether the northern pillar stands on its switch.
 static s32 VaultCave_IsNorthernPillarOnSwitch(void) {
   struct Actor *pillar = Actor_Get(ACTOR_NORTHERN_PILLAR);
-  s32 fixedZ = pillar->z.fixed;
-  s32 fixedX;
-  s32 row;
-  s32 column;
+  s32 row = pillar->z.fixed / px(16);
+  s32 column = pillar->x.fixed / px(16);
 
-  if (fixedZ < 0) {
-    fixedZ += px(16) - 1;
-  }
-  fixedX = pillar->x.fixed;
-  row = fixedZ >> 20;
-  if (fixedX < 0) {
-    fixedX += px(16) - 1;
-  }
-  column = fixedX >> 20;
   if (column == 16 && row == 12) {
     return 1;
   }
@@ -480,7 +458,7 @@ static void VaultCave_FreezeWestUpperPuddle(void) {
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 23, 32);
 
-  if (target != 0) {
+  if (target != NULL) {
     Actor_Get(ACTOR_WEST_UPPER_PUDDLE)->motionFlags = 0;
     target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
@@ -495,7 +473,7 @@ static void VaultCave_FreezeWestLowerPuddle(void) {
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 23, 34);
 
-  if (target != 0) {
+  if (target != NULL) {
     Actor_Get(ACTOR_WEST_LOWER_PUDDLE)->motionFlags = 0;
     target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
@@ -509,7 +487,7 @@ static void VaultCave_FreezeInnerWestLowerPuddle(void) {
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 24, 34);
 
-  if (target != 0) {
+  if (target != NULL) {
     Actor_Get(ACTOR_INNER_WEST_LOWER_PUDDLE)->motionFlags = 0;
     target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
@@ -523,7 +501,7 @@ static void VaultCave_FreezeEastUpperPuddle(void) {
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 26, 32);
 
-  if (target != 0) {
+  if (target != NULL) {
     Actor_SetSpriteFlags(target, 0);
 
     Actor_Get(ACTOR_EAST_UPPER_PUDDLE)->motionFlags = 0;
@@ -539,7 +517,7 @@ static void VaultCave_FreezeEastLowerPuddle(void) {
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 26, 34);
 
-  if (target != 0) {
+  if (target != NULL) {
     Actor_SetSpriteFlags(target, 0);
 
     Actor_Get(ACTOR_EAST_LOWER_PUDDLE)->motionFlags = 0;
@@ -555,7 +533,7 @@ static void VaultCave_FreezeFarEastPuddle(void) {
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 28, 33);
 
-  if (target != 0) {
+  if (target != NULL) {
     Actor_SetSpriteFlags(target, 0);
 
     Actor_Get(ACTOR_FAR_EAST_PUDDLE)->motionFlags = 0;
@@ -823,7 +801,7 @@ static void VaultCave_SpawnPuffs(struct Actor *source) {
   for (puffIndex = 0; puffIndex < 4; puffIndex++) {
     puff = FieldActor_Create(SPRITE_DROPLET, source->x.fixed, source->y.fixed,
                              source->z.fixed);
-    if (puff == 0)
+    if (puff == NULL)
       break;
     puff->scaleY = 11 * Q16_ONE / 20;
     puff->scaleX = 11 * Q16_ONE / 20;

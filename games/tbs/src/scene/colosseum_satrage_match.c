@@ -760,7 +760,7 @@ static void ColosseumSatrageMatch_ReachArena(void) {
   refreshCount = 9;
   do {
     Actor_WaitForScriptEndById(ACTOR_OPPONENT);
-    refreshCount = (refreshCount - 1);
+    refreshCount = refreshCount - 1;
   } while (refreshCount >= 0);
   Actor_SetSpeed(ACTOR_OPPONENT, 1);
   Actor_WalkTo(ACTOR_OPPONENT, 88, 256);
@@ -1060,24 +1060,24 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   Event_Wait(6);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
   }
-  Actor_WalkToAndWait(attendantId, (attendantX - 16), (attendantZ - 64));
+  Actor_WalkToAndWait(attendantId, attendantX - 16, attendantZ - 64);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
-  Actor_WalkToAndWait(attendantId, (attendantX - 16), (attendantZ - 16));
+  Actor_WalkToAndWait(attendantId, attendantX - 16, attendantZ - 16);
   Actor_WalkToAndWait(attendantId, attendantX, attendantZ);
   Actor_FaceDirection(attendantId, FACING_NORTH, 10);
   Event_End();

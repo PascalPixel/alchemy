@@ -281,7 +281,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
     Actor_SetAnimation(leaderId, ANIM_LEADER_LOOK_AROUND);
     storm = Actor_Get(stormId);
-    if (storm != 0) {
+    if (storm != NULL) {
       Actor_SetDestination(leaderId, storm->x.part.pixel, storm->z.part.pixel);
     }
     Actor_WaitForMoveById(leaderId);
@@ -374,7 +374,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     Actor_SetSpeed(ACTOR_IODEM, 1);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
     partyLeader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (partyLeader != 0) {
+    if (partyLeader != NULL) {
       Actor_SetPositionFixed(ACTOR_IODEM, partyLeader->x.fixed,
                              partyLeader->z.fixed);
     }
@@ -463,7 +463,7 @@ static void SuhallaDesert_IodemAsksWhetherToPressOn(void) {
     Event_Start();
     Event_SetMessageId(MsgSuhallaNowhereFound);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
+    if (leader != NULL) {
       Actor_SetPositionFixed(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
     }
 #ifdef BUGFIX
@@ -784,7 +784,7 @@ static void SuhallaDesert_SetUpFirstMapStorms(void) {
   for (stormId = ACTOR_FIRST_SANDSTORM; stormId <= ACTOR_LAST_SANDSTORM;
        stormId++) {
     actor = Actor_Get(stormId);
-    if (actor != 0) {
+    if (actor != NULL) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         actor->scaleX = Q16_ONE / 32;
         actor->scaleY = Q16_ONE / 32;
@@ -821,7 +821,7 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
   for (stormId = ACTOR_FIRST_SANDSTORM; stormId < ACTOR_FOURTH_SANDSTORM;
        stormId++) {
     actor = Actor_Get(stormId);
-    if (actor != 0) {
+    if (actor != NULL) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         actor->scaleX = Q16_ONE / 32;
         actor->scaleY = Q16_ONE / 32;
@@ -831,12 +831,12 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
     }
   }
   actor = Actor_Get(ACTOR_FOURTH_SANDSTORM);
-  if (actor != 0) {
+  if (actor != NULL) {
     struct SpriteAnimation *part;
 
     sprite = actor->sprite;
     part = sprite->entries[0];
-    if (part != 0) {
+    if (part != NULL) {
       part->colorMode = 10;
     }
     sprite->dirty = 1;

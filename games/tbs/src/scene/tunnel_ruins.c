@@ -1112,28 +1112,28 @@ static void TunnelRuins_MoveLadyStatue(void) {
   if (FIELD_CELL(actor->x.fixed) == 23) {
     actor = Actor_Get(ACTOR_LADY_STATUE_NORTHEAST);
     if (FIELD_CELL(actor->z.fixed) == 49) {
-      correctPositions = (correctPositions + 1);
+      correctPositions++;
     }
   }
   actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST);
   if (FIELD_CELL(actor->x.fixed) == 25) {
     actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST);
     if (FIELD_CELL(actor->z.fixed) == 47) {
-      correctPositions = (correctPositions + 1);
+      correctPositions++;
     }
   }
   actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST);
   if (FIELD_CELL(actor->x.fixed) == 23) {
     actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST);
     if (FIELD_CELL(actor->z.fixed) == 47) {
-      correctPositions = (correctPositions + 1);
+      correctPositions++;
     }
   }
   actor = Actor_Get(ACTOR_LADY_STATUE_SOUTH);
   if (FIELD_CELL(actor->x.fixed) == 24) {
     actor = Actor_Get(ACTOR_LADY_STATUE_SOUTH);
     if (FIELD_CELL(actor->z.fixed) == 48) {
-      correctPositions = (correctPositions + 1);
+      correctPositions++;
     }
   }
   // The door moves only when the arrangement is completed or broken.

@@ -36,7 +36,7 @@ void Colosso_ShowItemIcon(s32 id, s32 item) {
   s32 zero;
 
   actor = Actor_GetById(id);
-  if (actor != 0 && actor->spriteStorageKind == 1) {
+  if (actor != NULL && actor->spriteStorageKind == 1) {
     sprite = actor->sprite;
     icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     zero = 0;

@@ -19,7 +19,7 @@ void Vault_PlaceItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z) {
   s32 zero = 0;
 
   actor = Actor_Create(SPRITE_BLANK, fixed_x, fixed_y, fixed_z);
-  if (actor != 0) {
+  if (actor != NULL) {
     sprite = actor->sprite;
     sprite->flags = zero;
     sprite->count = zero;

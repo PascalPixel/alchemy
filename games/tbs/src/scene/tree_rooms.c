@@ -1021,7 +1021,7 @@ static void TreeRooms_SpawnSwirlSparks(void) {
     for (sparkIndex = 0; sparkIndex < 6 - wave; sparkIndex++) {
       spark = FieldActor_Create(SPRITE_SPARKLE, sSparkOrigin.x, sSparkOrigin.y,
                                 sSparkOrigin.z);
-      if (spark != 0) {
+      if (spark != NULL) {
         previousResourceEntry =
             Sprite_ShareVramCacheEntry(spark->sprite, previousResourceEntry);
         spark->motionFlags = 0;

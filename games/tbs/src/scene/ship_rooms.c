@@ -1090,7 +1090,7 @@ static void ShipRooms_StepBesideLeader(s32 passengerId) {
   {
     struct Actor *start = Actor_Get(ACTOR_PARTY_LEADER);
 
-    if (start != 0) {
+    if (start != NULL) {
       Actor_SetPositionFixed(passengerId, start->x.fixed, start->z.fixed);
     }
   }
@@ -1938,21 +1938,21 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 486, 608);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_WalkToAndWait(ACTOR_GARET, 486, 624);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
   actor = Actor_Get(ACTOR_GARET);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_IVAN, 1);
   Actor_WalkToAndWait(ACTOR_IVAN, 486, 640);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
   actor = Actor_Get(ACTOR_IVAN);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_MIA, 1);
@@ -2064,14 +2064,14 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   Actor_SetScript(ACTOR_QUARTERS_KAJA, action);
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   actor = Actor_Get(ACTOR_IVAN);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   actor = Actor_Get(ACTOR_GARET);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
@@ -2471,21 +2471,21 @@ static void ShipRooms_AskForReplacementOarsmen(void) {
   ShipRooms_Say(ACTOR_ROWING_KAJA);
   ShipRooms_Turn(ACTOR_ROWING_KAJA, FACING_NORTH_NORTHEAST);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_GARET, 0.8);
   Actor_WalkToAndWait(ACTOR_GARET, 440, 148);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   actor = Actor_Get(ACTOR_GARET);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_IVAN, 0.8);
   Actor_WalkToAndWait(ACTOR_IVAN, 456, 148);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
   actor = Actor_Get(ACTOR_IVAN);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_MIA, 0.8);
@@ -2813,7 +2813,7 @@ static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 432, 168);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
-    if (actor != 0) {
+    if (actor != NULL) {
       Actor_SetPositionFixed(rowerId, actor->x.fixed, actor->z.fixed);
     }
     Actor_SetSpeedFixed(rowerId, px(1), halfStep);
@@ -3431,15 +3431,15 @@ static void ShipRooms_ReportMonstersBelowdecks(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_GARET);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
   }
   wait(1);

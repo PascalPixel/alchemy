@@ -1475,7 +1475,7 @@ static void Sanctum_ShowHealerAfterimage(void) {
   struct Sprite *sprite;
 
   actor = Actor_Get(ACTOR_HEALER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_HEALER_AFTERIMAGE, actor->x.fixed,
                            actor->z.fixed);
   }
@@ -1491,7 +1491,7 @@ static void Sanctum_ShowHealerAfterimage(void) {
     for (entryIndex = 0; entryIndex < sprite->count; entryIndex++) {
       struct SpriteAnimation *entry = sprite->entries[entryIndex];
 
-      if (entry != 0 && entry->script != 0) {
+      if (entry != NULL && entry->script != 0) {
         entry->colorMode = SPRITE_COLOR_RED_TINT;
       }
     }
@@ -1562,10 +1562,10 @@ static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep) {
 
   orbitStep = angleStep;
   center = Actor_Get(actorId);
-  if (center != 0) {
+  if (center != NULL) {
     effect = FieldActor_Create(SPRITE_SPARKLE, center->x.fixed,
                                center->y.fixed + px(45), center->z.fixed);
-    if (effect != 0) {
+    if (effect != NULL) {
       sprite = effect->sprite;
       Actor_StartScript(effect, gSanctum_OwnerEffectScript);
       effect->motionFlags = 0;
@@ -1875,7 +1875,7 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
   {
     u8 cleared = 0;
 
-    if (icon != 0) {
+    if (icon != NULL) {
       Actor_StartScript(icon, gItemIcon_GrowScript);
       sprite = icon->sprite;
       sprite->flags = cleared;
@@ -1937,7 +1937,7 @@ static void Sanctum_SpawnActorSpark(s32 id) {
   s32 randomOffset;
 
   actor = Actor_Get(id);
-  if (actor == 0)
+  if (actor == NULL)
     return;
   randomOffset = Math_RemainderUnsigned(Random_Next(), 20);
   x = actor->x.fixed;
@@ -1946,7 +1946,7 @@ static void Sanctum_SpawnActorSpark(s32 id) {
   spark = FieldActor_Create(
       SPRITE_GLINT, x, actor->y.fixed + ((Random_Next() & 15) << 16) - px(8),
       actor->z.fixed);
-  if (spark == 0)
+  if (spark == NULL)
     return;
   sprite = spark->sprite;
   spark->motionFlags = 0;

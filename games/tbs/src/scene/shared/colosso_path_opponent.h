@@ -214,7 +214,7 @@ static void Colosso_DrawGauge(void) {
   if ((gFrameCount & 15) > 4) {
     shape = OBJ_SIZE_16X16;
     actor = Actor_Lookup(gauge->opponentActorId);
-    if (actor != 0) {
+    if (actor != NULL) {
       x = ((actor->x.fixed - gauge->finishX) / px(14)) + 112;
       y = ((actor->z.fixed - gauge->finishZ) / px(14)) + gauge->level * 6 - 4;
       y &= 255;
@@ -226,7 +226,7 @@ static void Colosso_DrawGauge(void) {
       Oam_AddSpriteAtDepth(entry++, 255);
     }
     actor = Actor_Lookup(gauge->playerActorId);
-    if (actor != 0) {
+    if (actor != NULL) {
       x = ((actor->x.fixed - gauge->finishX) / px(14)) + 112;
       y = ((actor->z.fixed - gauge->finishZ) / px(14)) + gauge->level * 6 - 4;
       y &= 255;

@@ -503,7 +503,7 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
     // Iodem walks into the leader and is hidden: he travels in the party.
     leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
+    if (leader != NULL) {
       Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
                            leader->z.part.pixel);
     }

@@ -540,6 +540,30 @@ static s32 BattleArena_ReportDisconnection(void) {
 #endif
 }
 
+/// Waits a frame at a time for a receive to finish, as BattleArena_FinishSend
+/// waits for a send. More than size bytes is an overrun, and fewer once it
+/// ends a short record; either fails (-1).
+static inline s32 BattleArena_FinishReceive(s32 *timeout, u32 size) {
+  s32 tries = 0;
+
+  while (Serial_GetActiveTransfers() != 0) {
+    if (gSerialReceivedSize > size) {
+      return -1;
+    }
+    wait(1);
+    if (--*timeout < 0 ||
+        (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+      if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
+        return -1;
+      }
+    }
+  }
+  if (gSerialReceivedSize != size) {
+    return -1;
+  }
+  return 0;
+}
+
 /// Receives the partner's three party member records into units 128 to 130
 /// (the battle's enemies, by Unit_Get) and its Djinn recovery table into the
 /// enemy side's (Djinn_GetRecoveryTable(1)).
@@ -554,128 +578,64 @@ static s32 BattleArena_ReportDisconnection(void) {
 /// records are received in place.
 static s32 BattleArena_ReceivePartyRecords(void) {
   u16 namePrefix[24];
-  u32 size;
-  void *heap;
-  s32 result;
+  void *buffer;
+  struct Unit *unit;
+  s32 result = 0;
   s32 slot;
   s32 timeout;
-  s32 tries;
-  u8 *record;
-  s32 transferResult;
   s32 prefixLength;
-  s32 nameIndex;
+  s32 i;
 
-  size = LOBBY_UNIT_RECORD_BYTES;
-  heap = Heap_AllocEwram(size);
-  result = 0;
+  buffer = Heap_AllocEwram(LOBBY_UNIT_RECORD_BYTES);
   timeout = LOBBY_RECEIVE_TIMEOUT_FRAMES;
-  slot = 0;
-  // Three records, each started at next and waited for at testRecord, then
-  // the recovery table at second.
-  goto next;
-waitRecord:
-  if (gSerialReceivedSize > size) {
-    result = -1;
-    goto done;
-  }
-  wait(1);
-  if (--timeout < 0 ||
-      (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-    if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
+  // The partner's party members become this battle's enemies 128 to 130.
+  for (slot = 0; slot < LOBBY_UNIT_RECORD_COUNT; slot++) {
+    unit = Unit_Get(slot + 128);
+    if (Serial_StartReceive(unit) == -1 ||
+        BattleArena_FinishReceive(&timeout, LOBBY_UNIT_RECORD_BYTES) != 0) {
       result = -1;
       goto done;
     }
-  }
-testRecord:
-  if (Serial_GetActiveTransfers() != 0) {
-    goto waitRecord;
-  }
-  if (gSerialReceivedSize != size) {
-    result = -1;
-    goto done;
-  }
-  // Unit's side (0x12a): the sender marks a party member 2 and a padding
-  // record 0.
-  if (record[0x12a] != 0) {
-    result++;
-  }
-  wait(2);
-  // Put the prefix before the name, shifting it right and cutting it to the
-  // 14 letters and terminator a Unit name holds.
-  FieldMessage_DecodeRawUnbounded(MsgEnemyLabel, namePrefix);
-  nameIndex = 0;
-  if (namePrefix[nameIndex] != 0) {
-    do {
-      nameIndex++;
-      if (nameIndex > LOBBY_PREFIX_LIMIT) {
-        break;
-      }
-    } while (namePrefix[nameIndex] != 0);
-  }
-  // German, Spanish, French and Italian put a space after the prefix.
+    // The sender marks a party member BATTLE_SIDE_PARTY and a padding
+    // record BATTLE_SIDE_NONE.
+    if (unit->side != BATTLE_SIDE_NONE) {
+      result++;
+    }
+    wait(2);
+    // Put the prefix before the name, shifting it right and cutting it to the
+    // 14 letters and terminator a Unit name holds.
+    FieldMessage_DecodeRawUnbounded(MsgEnemyLabel, namePrefix);
+    // The prefix's length, at most LOBBY_PREFIX_LIMIT + 1.
+    for (i = 0; namePrefix[i] != 0 && i <= LOBBY_PREFIX_LIMIT; i++) {
+    }
+    // German, Spanish, French and Italian put a space after the prefix.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-  namePrefix[nameIndex] = ' ';
-  prefixLength = nameIndex + 1;
+    namePrefix[i] = ' ';
+    prefixLength = i + 1;
 #else
-  prefixLength = nameIndex;
+    prefixLength = i;
 #endif
-  for (nameIndex = 14; nameIndex >= prefixLength; nameIndex--) {
-    record[nameIndex] = record[nameIndex - prefixLength];
-  }
-  for (nameIndex = 0; nameIndex < prefixLength; nameIndex++) {
-    record[nameIndex] = namePrefix[nameIndex];
-  }
-  record[14] = 0;
-  slot++;
-next:
-  if (slot > 2) {
-    goto second;
-  }
-  // The partner's party members become this battle's enemies 128 to 130.
-  record = (u8 *)Unit_Get(slot + 128);
-  tries = 0;
-  if ((transferResult = Serial_StartReceive(record)) == -1) {
-    goto failed;
-  }
-  goto testRecord;
-waitRecovery:
-  transferResult = gSerialReceivedSize;
-  if (transferResult > LOBBY_RECOVERY_RECORD_BYTES) {
-    result = -1;
-    goto done;
-  }
-  wait(1);
-  if (--timeout < 0 ||
-      (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-    if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
-      result = -1;
-      goto done;
+    for (i = 14; i >= prefixLength; i--) {
+      unit->name[i] = unit->name[i - prefixLength];
     }
+    for (i = 0; i < prefixLength; i++) {
+      unit->name[i] = namePrefix[i];
+    }
+    unit->name[14] = 0;
   }
-testRecovery:
-  if (Serial_GetActiveTransfers() != 0) {
-    goto waitRecovery;
-  }
-  if (gSerialReceivedSize != LOBBY_RECOVERY_RECORD_BYTES) {
+  Heap_Release(buffer);
+
+  // Then the recovery table, into the enemy side's (unit 131's record).
+  buffer = Heap_AllocEwram(LOBBY_RECOVERY_RECORD_BYTES);
+  if (Serial_StartReceive(Djinn_GetRecoveryTable(1)) == -1 ||
+      BattleArena_FinishReceive(&timeout, LOBBY_RECOVERY_RECORD_BYTES) != 0) {
     result = -1;
   } else {
     wait(2);
   }
-  goto done;
-second:
-  // Then the recovery table, into the enemy side's (unit 131's record).
-  Heap_Release(heap);
-  size = LOBBY_RECOVERY_RECORD_BYTES;
-  heap = Heap_AllocEwram(size);
-  tries = 0;
-  if ((transferResult = Serial_StartReceive(Djinn_GetRecoveryTable(1))) != -1) {
-    goto testRecovery;
-  }
-failed:
-  result = transferResult;
 done:
-  Heap_Release(heap);
+  Heap_Release(buffer);
   return result;
 }
 
@@ -1157,9 +1117,7 @@ static s32 BattleArena_ReportWinTallies(s32 actorId) {
 
   Event_Start();
   Actor_FaceActor(actorId, gMainRoutineWork.leaderActorId, 0);
-  // FACING_IS_NORTH's test, written out: strictly between northwest and
-  // northeast.
-  if ((facing - 0xa001) <= 0x3ffe) {
+  if (FACING_IS_NORTH(facing)) {
     messageBase = MsgLobbyLooksLikeFirst;
     tally = &gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_WINS];
     if (*tally != 0) {

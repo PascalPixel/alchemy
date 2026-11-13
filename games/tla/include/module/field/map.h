@@ -109,10 +109,6 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 check_y);
 
 void Func_0200189c(void);
 
-void Func_02003178(void);
-void Func_02002fc8(void);
-void Func_02002fd0(void);
-
 extern u8 Data_0202d000[];
 extern u8 gData_02038000[];
 extern u8 gData_0203a000[];
@@ -138,7 +134,6 @@ extern u8 Render_DrawMapCodeSize[];
 s32 SpriteViewer_FindNextSpriteWithPictures(s32 spriteId, s32 direction);
 void SpriteViewer_PlaceRing(void);
 extern char ResourceId_Data012;
-extern u8 gData_03001e60[];
 extern struct BattleCells gSpriteObjects;
 
 void BlendScript_Start(u16 *script);

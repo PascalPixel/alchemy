@@ -270,8 +270,6 @@ struct BattleLinkedActionState {
   u8 unk0c[28];
 };
 
-extern u8 gData_03001ae8[];
-
 extern struct Snapshot Data_0200ff58;
 
 extern struct SnapshotCopy Data_0200ff6c[];

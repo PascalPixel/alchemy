@@ -553,7 +553,6 @@ void MarsLighthouseStarRoom_KeepStarAtLeaderPriority(struct Actor *object) {
 
 extern struct Actor *gMarsLighthouseStarRoom_MarsStar;
 
-
 /// The Mars Star (item 247's icon) as an actor on the floor, rising first when
 /// asked.
 /// ★ Named from the game: "Mars Star" (item 247's name)

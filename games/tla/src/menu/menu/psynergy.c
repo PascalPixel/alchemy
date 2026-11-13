@@ -373,7 +373,6 @@ struct Rec5 {
 struct Cur {
   unsigned short mark : 8;
 };
-extern u8 gData_03001f2c[];
 
 s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
                                 s32 mode);

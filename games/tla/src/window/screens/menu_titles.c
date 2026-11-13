@@ -181,8 +181,6 @@ int Window_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3,
   Window_SetTilemapEntry((struct Window *)arg0, tile, arg1 + 2, arg2, 0);
 }
 
-extern u8 gData_03001e40[];
-
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
                                    s32 shift) {
   s32 neg;

@@ -225,7 +225,6 @@ extern struct SpriteObject__f175f74 *EffectSprite_CreateWithTiles__f175f74(
 extern struct SpriteObject__f175f74 *
 EffectSprite_Acquire__f175f74(s32, s32, u32,
                               u32) __asm__("EffectSprite_Acquire");
-s32 Func_0800206c(s32, s32);
 
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void SceneTransform_ApplyScale3(s32, s32, s32);

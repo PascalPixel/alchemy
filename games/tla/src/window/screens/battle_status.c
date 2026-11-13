@@ -62,11 +62,6 @@ void BattleObject_SpawnObjectsForListFar(u16 *list, s32 count, s32 mode);
  * *BattleObject_GetFar(s32 objectId). */
 extern void **
 GetBattleObjectSlotFar__screens(s32 member) __asm__("BattleObject_GetFar");
-#ifdef MODERN
-// Called with no prototype in scope, as its bytes need; a current GCC gets
-// it here.
-void Func_0803a2b0(s32 x, s32 y, u32 width, u32 height, s32 whole);
-#endif
 void Text_DrawWideStringAtOffset(u16 *text, struct SummaryWindow *window, s32 x,
                                  s32 y);
 s32 Unit_GetExperienceForLevelFar(s32 member, s32 level);

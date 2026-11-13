@@ -240,60 +240,46 @@ close:
 /// the chosen item lifted and pulsing. Called by Shop_SelectBuy each time the
 /// cursor moves.
 void Shop_DrawStock(struct Window *window, s32 selected) {
+  struct ShopWork *shop = gMenuWork;
+  s32 first = selected - selected % SHOP_STOCK_PAGE_ITEMS;
+  s32 slot;
 
-  struct ShopWork *shop;
-  s16 *itemIds;
-  s16 *stockCursor;
-  s32 itemCount;
-  s32 stockIndex;
-  s32 pageSlot;
-  s32 priceX;
-  s16 itemId;
-  struct ItemDefinition *item;
-  struct WindowSprite *icon;
+  if (window == 0)
+    return;
+  WindowSprite_PrepareForRedrawFar(window);
+  if (first != 0) {
+    struct WindowSprite *arrow = WindowSprite_CreateFar(
+        shop->previousPageIcon, OUTPUT_SIZE_16X16, window, 216, -16);
 
-  shop = gMenuWork;
-  itemIds = shop->stockItemIds;
-  itemCount = shop->stockCount;
-  stockIndex = selected - selected % SHOP_STOCK_PAGE_ITEMS;
-  if (window != 0) {
-    WindowSprite_PrepareForRedrawFar(window);
-    if (stockIndex != 0) {
-      icon = WindowSprite_CreateFar(shop->previousPageIcon, OUTPUT_SIZE_16X16,
-                                    window, 216, -16);
-      icon->kind = 0;
-      icon->motion = WINDOW_SPRITE_MOTION_HOP_UP;
-      icon->animationStep = 0;
+    arrow->kind = 0;
+    arrow->motion = WINDOW_SPRITE_MOTION_HOP_UP;
+    arrow->animationStep = 0;
+  }
+  if (first + SHOP_STOCK_PAGE_ITEMS < shop->stockCount) {
+    struct WindowSprite *arrow = WindowSprite_CreateFar(
+        shop->nextPageIcon, OUTPUT_SIZE_16X16, window, 216, 24);
+
+    arrow->kind = 0;
+    arrow->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
+    arrow->animationStep = 0;
+  }
+  // Depth slots: the items 252, the chosen one 253, the prices 251.
+  for (slot = 0;
+       slot < SHOP_STOCK_PAGE_ITEMS && first + slot < shop->stockCount;
+       slot++) {
+    s32 itemId = shop->stockItemIds[first + slot];
+    struct ItemDefinition *item = Item_GetDirectFar(itemId);
+    struct WindowSprite *icon =
+        WindowSprite_CreateLoadedFar(itemId, 1, window, slot * 32, 0);
+
+    icon->sentinel = 252;
+    if (first + slot == selected) {
+      icon->motion = WINDOW_SPRITE_MOTION_SWELL;
+      icon->animationStep = 10;
+      icon->sentinel = 253;
     }
-    if (stockIndex + SHOP_STOCK_PAGE_ITEMS < itemCount) {
-      icon = WindowSprite_CreateFar(shop->nextPageIcon, OUTPUT_SIZE_16X16,
-                                    window, 216, 24);
-      icon->kind = 0;
-      icon->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
-      icon->animationStep = 0;
-    }
-    pageSlot = 0;
-    if (stockIndex < (u32)itemCount) {
-      stockCursor = (s16 *)((stockIndex * 2) + (u32)itemIds);
-      priceX = 16;
-      for (;
-           (u32)pageSlot < SHOP_STOCK_PAGE_ITEMS && stockIndex < (u32)itemCount;
-           priceX += 32, pageSlot++, stockCursor++, stockIndex++) {
-        itemId = *stockCursor;
-        item = Item_GetDirectFar(itemId);
-        // Depth slots: the items 252, the chosen one 253, the prices 251
-        icon =
-            WindowSprite_CreateLoadedFar(itemId, 1, window, pageSlot * 32, 0);
-        icon->sentinel = 252;
-        if (stockIndex == selected) {
-          icon->motion = WINDOW_SPRITE_MOTION_SWELL;
-          icon->animationStep = 10;
-          icon->sentinel = 253;
-        }
-        icon = Shop_CreatePriceSprite(item->price, window, priceX, 0);
-        icon->sentinel = 251;
-      }
-    }
+    icon = Shop_CreatePriceSprite(item->price, window, slot * 32 + 16, 0);
+    icon->sentinel = 251;
   }
 }
 
@@ -325,36 +311,20 @@ void Shop_DrawMoney(void) {
 /// repair lists.
 void Shop_DrawItemPrice(struct Window *window, s32 itemId, s32 price,
                         s32 priceKind) {
-  s32 labelMessage;
-
   if (window == 0)
     return;
-  goto draw;
-cannot_buy:
-  Text_DrawMessageAsTilesFar(MsgCannotBuyThat, window, SHOP_ITEM_NOTE_X, 8);
-  return;
-show_price:
-  labelMessage = MsgPrice;
-  Text_DrawMessageAsTilesFar(labelMessage, window, SHOP_ITEM_NOTE_X, 8);
-  labelMessage -= 3;
-  Text_DrawNumberInWindowFar(price, 5, window, SHOP_PRICE_NUMBER_X, 8);
-  Text_DrawMessageAsTilesFar(labelMessage, window, SHOP_PRICE_LABEL_X, 8);
-  return;
-draw:
   WindowSprite_RedrawSavedRectFar(window);
   Text_DrawMessageAsTilesFar(itemId + MsgItemName, window, 0, 0);
-  if (price != 0)
-    goto show_price;
-  switch (priceKind) {
-  case SHOP_PRICE_KIND_SELL:
-    goto cannot_buy;
-  case SHOP_PRICE_KIND_REPAIR:
+  if (price == 0 && priceKind == SHOP_PRICE_KIND_SELL) {
+    Text_DrawMessageAsTilesFar(MsgCannotBuyThat, window, SHOP_ITEM_NOTE_X, 8);
+  } else if (price == 0 && priceKind == SHOP_PRICE_KIND_REPAIR) {
     Text_DrawMessageAsTilesFar(MsgNotBroken, window, SHOP_ITEM_NOTE_X, 8);
-    break;
-  default:
-    goto show_price;
+  } else {
+    // "Price:", the number, then its unit, three messages before.
+    Text_DrawMessageAsTilesFar(MsgPrice, window, SHOP_ITEM_NOTE_X, 8);
+    Text_DrawNumberInWindowFar(price, 5, window, SHOP_PRICE_NUMBER_X, 8);
+    Text_DrawMessageAsTilesFar(MsgPrice - 3, window, SHOP_PRICE_LABEL_X, 8);
   }
-  return;
 }
 
 /// Shows `message`, an item's description, in the help window; a NULL window

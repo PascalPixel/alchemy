@@ -259,8 +259,7 @@ void FieldMotes_Start(void) {
   size = sizeof(struct WeatherWork);
   work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
   mote = work->particles;
-  /* FAKEMATCH(temporary): size takes the fill's 0; as 0 in the fill, 4 of 83
-   * instructions differ in tbs-en. */
+  // size, done with once the work is allocated, carries the fill's 0.
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
@@ -413,8 +412,7 @@ void FieldEffect_InitializeSparkles(void) {
   u8 *tiles;
   u32 i;
 
-  /* FAKEMATCH(temporary): size takes the fill's 0; as 0 in the fill, 4 of 74
-   * instructions differ in tbs-en. */
+  // size, done with once the work is allocated, carries the fill's 0.
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);

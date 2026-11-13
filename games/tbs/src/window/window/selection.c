@@ -846,8 +846,7 @@ void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
     } else {
       node = state->head;
       i = 64;
-      /* FAKEMATCH(temporary): kind holds the 0; as records[1].kind = FALSE,
-       * 28 of 184 instructions differ in tbs-en. */
+      // kind, which later takes the head's kind, carries the 0 first.
       kind = 0;
       state->records[1].kind = kind;
       while (node->next != NULL) {

@@ -32,7 +32,7 @@
 ///
 /// From TBS_PATCH_3 on, a patch of ivy (SPRITE_IVY) stands at (132, 388), over
 /// a dark opening at the foot of the cliff on the grounds' south edge. The
-/// earlier editions show the opening bare (renders of tbs-en and tbs-fr). No
+/// earlier editions leave the opening bare. No
 /// exit or trigger answers that opening, so the ivy only hides a way in that
 /// leads nowhere.
 

@@ -1849,8 +1849,7 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
 /// Nothing calls it. In the game, Alex and Saturos exit over to the lift and
 /// ride it down without it (MercuryLighthouseAerie_AlexAppears).
 UNUSED static void MercuryLighthouseAerie_UnusedAlexCastsPly(void) {
-  // XXX (no evidence): what this was for; nothing calls it, so neither the
-  // ROM nor a render shows it in an event.
+  // XXX (no evidence): what this was for; no event plays it.
   FieldPsynergy_LoadResources(ABILITY_PLY, 1);
   FieldPsynergy_SetupActorPair(ACTOR_ALEX, ACTOR_LIFT_STATUE);
   FieldPsynergy_StartCast();

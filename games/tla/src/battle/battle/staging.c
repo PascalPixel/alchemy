@@ -58,7 +58,7 @@ void Func_0811d7e8(u16 *source, struct ActionTargets *targets) {
 
   if (source[0] > 7)
     side = 1;
-  count = Func_0811a39c(side, ids);
+  count = BattleUnit_ListIds(side, ids);
   Iwram_ClearWords(targets, sizeof *targets);
   own = 0;
   if (source[0] <= 7)
@@ -94,7 +94,7 @@ void Func_0811d89c(struct ActionTargets *targets) {
 
   if (targets->side > 7)
     side = 2;
-  count = Func_0811a39c(side, ids);
+  count = BattleUnit_ListIds(side, ids);
   for (i = 0; i < count; i++) {
     targets->ids[i] = ids[i];
     targets->stateA[i] = 0;
@@ -162,10 +162,10 @@ struct DispatchBattleWork {
 s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan);
 s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode);
 s32 Func_0811df70(struct BattlePlan *plan, s32 mode);
-s32 Func_0811f088(struct BattlePlan *plan, s32 mode);
-s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
-                  struct BattleActionRecord *selection);
-s32 Func_0811de78(struct BattlePlan *plan);
+s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode);
+s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
+                          struct BattleActionRecord *selection);
+s32 BattleStaging_RunFlee(struct BattlePlan *plan);
 s32 Func_08124cc4(s32 party);
 void BattleUnit_ProcessActionEnd(struct BattlePlan *plan);
 void Func_0812628c(s32 mode, s32 background, s32 value);
@@ -254,17 +254,17 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
       break;
     case 3:
     case 17:
-      Func_0811f088(&battle->plan, 0);
+      BattleStaging_RunPsynergyCast(&battle->plan, 0);
       break;
     case 6:
-      Func_0811f088(&battle->plan, 1);
+      BattleStaging_RunPsynergyCast(&battle->plan, 1);
       break;
     case 8:
     case 16:
-      Func_0811f088(&battle->plan, 2);
+      BattleStaging_RunPsynergyCast(&battle->plan, 2);
       break;
     case 4:
-      Func_0811edb0(&battle->plan, 0, request);
+      BattleStaging_RunItem(&battle->plan, 0, request);
       break;
     case 10: {
       u8 swap = battle->plan.targetIds[0];
@@ -272,7 +272,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
       battle->unk84e = 1;
       battle->plan.targetIds[0] = battle->plan.actorId2;
       battle->skipPlayback = 1;
-      Func_0811f088(&battle->plan, 1);
+      BattleStaging_RunPsynergyCast(&battle->plan, 1);
       battle->skipPlayback = 0;
       battle->plan.targetIds[0] = swap;
       swap = battle->plan.actorId;
@@ -297,7 +297,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
       s32 kept;
 
       battle->skipPlayback = 1;
-      Func_0811f088(&battle->plan, 1);
+      BattleStaging_RunPsynergyCast(&battle->plan, 1);
       battle->skipPlayback = 0;
       BattleMessage_ShowAndWaitFar((s32)&MsgDjinnRecoverFaster);
       kept = Func_08124cc4(battle->plan.targetIds[0] > 7);
@@ -314,15 +314,15 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
       if (BattleParty_ListLivingUnits(2, 0) == 0)
         break;
       Func_0811d89c((struct ActionTargets *)&battle->plan);
-      Func_0811f088(&battle->plan, 1);
+      BattleStaging_RunPsynergyCast(&battle->plan, 1);
       break;
     case 13:
       Func_0811df70(&battle->plan, 1);
       Func_0811d914((struct ActionTargets *)&battle->plan);
-      Func_0811f088(&battle->plan, 1);
+      BattleStaging_RunPsynergyCast(&battle->plan, 1);
       break;
     case 7:
-      if (Func_0811de78(&battle->plan) != 0)
+      if (BattleStaging_RunFlee(&battle->plan) != 0)
         fled = 1;
       if (fled != 0)
         goto finish;
@@ -397,7 +397,7 @@ struct EscapeTransition {
 /// Plays a flee action, The Broken Seal's BattleStaging_RunFlee without its
 /// last wait: the party runs unless encounterMode is 2, and an enemy gets away
 /// 7 times in 10. Returns 1 when the party got away.
-s32 Func_0811de78(struct BattlePlan *plan) {
+s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
   s32 completed;
   struct EscapeTransition *presentation =
       (struct EscapeTransition *)Ram_HeapSlots->transitionWork;

@@ -194,7 +194,17 @@ struct TlaSpriteRecord {
   struct SpriteEntry *entries[1];
 };
 
-void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
+/// Readies the sprites of the units in list: releases those of every place
+/// list lacks, then creates each listed unit's sprites (body, weapon, status
+/// icon and shadow; or the two parts of a two-part enemy) unless it has
+/// them, building its status icons and setting its pose. With refreshPoses,
+/// sets every listed unit's pose again afterwards. Called by BattleObject_Put
+/// (refreshing) and BattleUnit_ListAllAndSubmit, by the staging and
+/// entry transition code, and through its far stub by
+/// BattleEffect_SelectLivingTargets. Writes the actors' sprites, their storage
+/// kind and height, and the battle objects' icon and shadow entries.
+void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
+                                      s32 releaseOthers) {
   s32 unitIndex;
   s32 unitId;
   struct BattleObj *battleObject;
@@ -312,7 +322,7 @@ void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
 }
 
 void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh) {
-  Func_0811b75c(list, refresh, 1);
+  BattleObject_SpawnObjectsForList(list, refresh, 1);
 }
 
 struct AnimationEntryGroup {

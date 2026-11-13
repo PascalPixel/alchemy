@@ -608,7 +608,7 @@ struct BattleDisplayFlags {
 
 /* VIEW(f11f66c): routine BattleMotion_FlashHit as void BattleMotion_FlashHit(u32 unitId, s32 a, s32 b); the definition has void BattleMotion_FlashHit(s32 id); tried as the definition's void BattleMotion_FlashHit(s32 id), which the object already declares, it does not compile in tla-ja: games/tla/src/battle/presentation/f11e3ac.c:1720: too many arguments to function `BattleMotion_FlashHit'. */
 extern void BattleMotion_FlashHit__f11f66c(u32 unitId, s32 a, s32 b) __asm__("BattleMotion_FlashHit");
-s32 Func_0812824c(s32 unitId, s32 earned);
+s32 BattleEnemy_RecordDefeat(s32 unitId, s32 earned);
 void BattleObject_UpdatePose(s32 id);
 u32 BattlePlayback_Reset(void);
 
@@ -668,7 +668,7 @@ u32 BattleEvent_DispatchQueued(void) {
         BattleMotion_FlashHit__f11f66c(queue->operands[i], 0, 0);
         break;
       case BATTLE_EVENT_DEFEAT:
-        Func_0812824c(queue->operands[i], runtime->flags);
+        BattleEnemy_RecordDefeat(queue->operands[i], runtime->flags);
         BattleActor_ResetRuntimeFields(queue->operands[i]);
         BattleMotion_ShowDowned(queue->operands[i]);
         break;

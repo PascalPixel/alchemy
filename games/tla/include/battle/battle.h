@@ -144,7 +144,7 @@ s32 Func_080ce31c(s32 kind);
 struct TriggerEvent;
 struct TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector);
 void Func_080e3074(void);
-void Func_0811b75c(s16 *list, s32 refresh, s32 spawn);
+void BattleObject_SpawnObjectsForList(s16 *list, s32 refresh, s32 spawn);
 void Func_0818f620(struct BattleEffectArgument *effect, u32 mode);
 void GameFlag_ClearBitFar(s32 flag);
 void GameFlag_SetBitFar(s32 flag);

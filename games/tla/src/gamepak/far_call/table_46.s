@@ -12,4 +12,4 @@ BattleMotion_ApproachTargetFar:
 	.global Func_08118080
 	.thumb_func
 Func_08118080:
-	overlay_veneer Func_0811c01c
+	overlay_veneer BattleMotion_LeapBack

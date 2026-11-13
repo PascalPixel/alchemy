@@ -123,7 +123,7 @@ BattleEnemy_CalculateExperienceReward(struct BattleUnit *unit, u16 *reward) {
 /// also keeps the last two defeated enemies (their ids and Func_08128228's
 /// first digit of their names, alternating slots, with a count up to 2) and
 /// sets the seen flag only for enemy ids below 0x200.
-s32 Func_0812824c(s32 unitId, s32 djinnBonus) {
+s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   struct BattleUnit *unit;
   const struct EnemyDefinition *enemy;
   struct DefeatBattleWork *battle;

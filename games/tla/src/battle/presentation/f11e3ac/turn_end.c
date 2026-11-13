@@ -447,7 +447,7 @@ void Func_0812628c(s32 mode, s32 background, s32 value);
     BattleMessage_WaitForAdvance();                                            \
   }
 
-void Func_08124e20(void) {
+void Battle_ProcessTurnEnd(void) {
   struct BattleWork *battle;
   s32 side;
   s32 sideCount;

@@ -753,23 +753,49 @@ STATIC_ASSERT(sizeof(struct MapGridCellAnimationStep) == 10);
 void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
   struct MapGridCellAnimationStep *step =
       (struct MapGridCellAnimationStep *)steps;
-  // Each step's rectangle and delay, read a step at a time beside it.
-  s16 *rectangle = (s16 *)(steps + 1);
-  u32 end = MAPGRID_ANIMATION_STEPS_END;
   u32 source = step->source;
+  /* FAKEMATCH(temporary): the end test reads a copy of source, and the
+   * updates that cancel out end CSE's knowledge of it, so source stays in r0
+   * and the test keeps its ip copy; with the plain loop, 23 of 54
+   * instructions differ in tbs-en. */
+  u32 test = source;
 
-  while (source != end) {
-    s32 sourceY = rectangle[0];
-    s32 width = rectangle[1];
-    s32 height = rectangle[2];
-    s32 delay = rectangle[3];
+  if (step) {
+    source ^= test;
+    source ^= test;
+  }
+  if (test != MAPGRID_ANIMATION_STEPS_END) {
+    u32 end = MAPGRID_ANIMATION_STEPS_END;
+    // Each step's rectangle and delay, read a step at a time beside it.
+    s16 *rectangle = (s16 *)(steps + 1);
 
-    rectangle += 5;
-    MapGrid_CopyCellPictureIndicesRect(source, (u16)sourceY, destinationX,
-                                       destinationY, (u16)width, (u16)height);
-    step++;
-    wait((u16)delay);
-    source = step->source;
+    while (1) {
+      s32 sourceY = rectangle[0];
+      s32 width = rectangle[1];
+      s32 height = rectangle[2];
+      s32 delay = rectangle[3];
+
+      rectangle += 5;
+      MapGrid_CopyCellPictureIndicesRect(source, (u16)sourceY, destinationX,
+                                         destinationY, (u16)width, (u16)height);
+      step++;
+      wait((u16)delay);
+      source = step->source;
+      if (step) {
+        source++;
+        source--;
+      }
+      {
+        u32 next = source;
+
+        if (step) {
+          source++;
+          source--;
+        }
+        if (next == end)
+          break;
+      }
+    }
   }
 }
 

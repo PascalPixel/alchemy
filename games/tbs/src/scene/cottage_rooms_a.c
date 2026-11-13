@@ -81,6 +81,7 @@
 #include "ram_buffer.h"
 #include "flags.h"
 #include "sounds.h"
+#include "heap.h"
 
 /// The placed actors, numbered in the order of the actor placement tables,
 /// which all place them alike.
@@ -444,9 +445,8 @@ static void CottageRoomsA_LeaveToValePlazaNorth(void) {
 /// Vale, Jenna's grandmother lies sick in bed.
 s32 CottageRoomsA_Initialize(void) {
   struct Actor *actor;
-  struct FieldWork **eventSlot = &gFieldWork;
 
-  (*eventSlot)->transition =
+  gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   // On the stormy night every resident is out, and lightning flashes outside.
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
@@ -466,8 +466,7 @@ s32 CottageRoomsA_Initialize(void) {
     Actor_SetPosition(ACTOR_WEAPON_MERCHANT, 0, 0);
     Actor_SetPosition(ACTOR_ARMOR_MERCHANT, 0, 0);
     Weather_StartLightning();
-    (*(struct FieldBlendWork **)((u8 *)eventSlot + Ram_FieldBlendWorkOffset))
-        ->loud = 1;
+    ((struct FieldBlendWork *)gHeapSlots[HEAP_SLOT_FIELD_BLEND])->loud = 1;
     Weather_LastLightning();
     wait(30);
     Event_StartScreenTransition();

@@ -649,11 +649,9 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   struct Sprite *sprite;
   struct MapGridScrollWork *grid;
   struct Actor *viewCenter;
-  struct FieldWork **eventSlot;
   struct FieldWork *work;
 
-  eventSlot = (struct FieldWork **)Ram_FieldWork;
-  work = *eventSlot;
+  work = gFieldWork;
   grid = *(struct MapGridScrollWork **)Ram_MapGridWork;
   viewCenter = work->camera;
   sprite = Actor_Get(ACTOR_TUNIC)->sprite;
@@ -695,12 +693,11 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   viewCenter->z.fixed = px(691);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  (*eventSlot)->transition =
+  gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  (*eventSlot)->transitionFrames = 64;
+  gFieldWork->transitionFrames = 64;
   Weather_StartLightning();
-  (*(struct FieldBlendWork **)((u8 *)eventSlot + Ram_FieldBlendWorkOffset))
-      ->loud = 1;
+  ((struct FieldBlendWork *)gHeapSlots[HEAP_SLOT_FIELD_BLEND])->loud = 1;
   Weather_LastLightning();
   wait(30);
   Event_StartScreenTransition();
@@ -786,7 +783,7 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   // sorry, but we don't have time..."
   Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    (*eventSlot)->message++;
+    gFieldWork->message++;
   }
   Event_Wait(20);
   Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0, 20);
@@ -796,8 +793,8 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_DoraLeavesScript);
   Actor_SetScript(ACTOR_PARTY_LEADER, gCottageRoomsB_IsaacLeavesScript);
   Event_Wait(20);
-  (*eventSlot)->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-  (*eventSlot)->transitionFrames = 16;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transitionFrames = 16;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(

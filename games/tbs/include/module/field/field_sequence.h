@@ -7,7 +7,7 @@
 struct SpeakerDefinition;
 struct Actor;
 struct ScreenTransitionState;
-struct TriggerView;
+struct Trigger;
 struct Vector3;
 struct ActorPlacement;
 
@@ -116,16 +116,6 @@ void FieldEffect_ShrinkActorAndDestroyFast(struct Actor *actor);
 void FieldPsynergy_Lift(void);
 void FieldPsynergy_Carry(void);
 
-/// One of the scene's triggers (the same 12 bytes as struct Trigger).
-struct TriggerView {
-  s32 flags; ///< the low 4 bits are the kind (TriggerKind; 7 talks to
-             ///< the actor the party stopped)
-  u8 value;  ///< the target (an actor id or a cell behavior)
-  u8 unused05;
-  s16 condition; ///< as for GameFlag_IsConditionActive
-  s32 result; ///< below TRIGGER_RESULT_MESSAGE_END a message, else a function
-};
-
 /// A trigger result below it is a message number, and from it on the address of
 /// the routine to run: every routine lies above it, so one word holds either.
 #define TRIGGER_RESULT_MESSAGE_END 65536
@@ -203,7 +193,7 @@ void PaletteEditor_Run(void);
 struct ActorPlacement *Scene_FindActorPlacement(s32 id);
 s32 GameFlag_IsConditionActive(s32 condition);
 u32 Scene_ExamineTriggerIgnoresCondition(s32 flags, s32 result);
-struct TriggerView *Scene_FindTrigger(s32 kind, s32 target);
+const struct Trigger *Scene_FindTrigger(s32 kind, s32 target);
 void Overlay_CallInitialize(void);
 s32 Scene_FindActorTalkTrigger(s32 id);
 s32 Scene_TalkToActor(s32 id);

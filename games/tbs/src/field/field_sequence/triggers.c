@@ -113,20 +113,20 @@ u32 Scene_ExamineTriggerIgnoresCondition(s32 flags, s32 result) {
 ///
 /// Called by every lookup of a scene's triggers in this part and by
 /// Actor_GetTriggerCellAheadOfCurrent. Changes nothing.
-struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
+const struct Trigger *Scene_FindTrigger(s32 kind, s32 target) {
   struct FieldWork *work = gFieldWork;
-  struct TriggerView *trigger = (struct TriggerView *)work->triggers;
+  const struct Trigger *trigger = work->triggers;
   s32 flags;
   u32 facing =
       ((struct Actor *)Actor_Lookup(gMainRoutineWork.leaderActorId))->facing;
 
-  flags = trigger->flags;
+  flags = trigger->kind;
   // Preserve the full control word: direction and push-delay bits refine kind.
   while (flags != -1) {
-    if ((flags & TRIGGER_KIND_MASK) == kind && trigger->value == target &&
-        (Scene_ExamineTriggerIgnoresCondition(flags, trigger->result) != 0 ||
+    if ((flags & TRIGGER_KIND_MASK) == kind && (u8)trigger->subject == target &&
+        (Scene_ExamineTriggerIgnoresCondition(flags, trigger->value) != 0 ||
          (GameFlag_IsConditionActive(trigger->condition) != 0 &&
-          (flags = trigger->flags, 1)))) {
+          (flags = trigger->kind, 1)))) {
       s32 matches = 0;
       s32 minimumPushFrames = 12;
       s32 touchRequirements;
@@ -163,9 +163,9 @@ struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
       }
     }
     trigger++;
-    if (trigger->flags == -1)
+    if (trigger->kind == -1)
       break;
-    flags = trigger->flags;
+    flags = trigger->kind;
   }
   return 0;
 }
@@ -183,11 +183,11 @@ UNUSED void Overlay_CallInitialize(void) { gOverlayArea.initialize(); }
 /// searching, and by the field Psynergy dispatch, which Halts only an
 /// actor with a talk trigger; both test the result only for non-zero.
 s32 Scene_FindActorTalkTrigger(s32 id) {
-  struct TriggerView *talkTrigger = Scene_FindTrigger(TRIGGER_TALK, id);
+  const struct Trigger *talkTrigger = Scene_FindTrigger(TRIGGER_TALK, id);
   s32 pausedActorId = gMainRoutineWork.haltedActor;
 
   if (pausedActorId == id) {
-    struct TriggerView *pausedTrigger =
+    const struct Trigger *pausedTrigger =
         Scene_FindTrigger(TRIGGER_TALK_HALTED, pausedActorId);
 
     if (pausedTrigger != 0) {
@@ -212,7 +212,7 @@ s32 Scene_TalkToActor(s32 id) {
   struct ActorPlacement *placement = Scene_FindActorPlacement(id);
   s32 result = -1;
   struct Actor *actor = Actor_GetById(id);
-  struct TriggerView *trigger;
+  const struct Trigger *trigger;
   s32 actorPaused = 0;
   u32 savedAngle;
   u32 talkFacing;
@@ -229,7 +229,7 @@ s32 Scene_TalkToActor(s32 id) {
       }
       // A function talk trigger is not run for a stopped actor: it says
       // one of the two lines of its sprite's Halted pair, at random.
-      if (trigger->result >= TRIGGER_RESULT_MESSAGE_END) {
+      if (trigger->value >= TRIGGER_RESULT_MESSAGE_END) {
         s32 haltedLines = Speaker_GetHaltedLines(id);
         u32 random = Random16();
         s32 message = MsgPonderEllipsis + haltedLines * 2 + (random * 2 >> 16);
@@ -244,7 +244,7 @@ s32 Scene_TalkToActor(s32 id) {
     trigger = Scene_FindTrigger(TRIGGER_TALK, id);
   }
 
-  if (trigger != 0 && trigger->result != 0) {
+  if (trigger != 0 && trigger->value != 0) {
     if (!actorPaused) {
       // Stop the actor; with talk facing 0, 1 or 3, also stop the leader
       // and make each watch the other.
@@ -266,15 +266,15 @@ s32 Scene_TalkToActor(s32 id) {
     }
     // A result below TRIGGER_RESULT_MESSAGE_END is a message; above, a function
     // to call.
-    if (trigger->result < TRIGGER_RESULT_MESSAGE_END) {
+    if (trigger->value < TRIGGER_RESULT_MESSAGE_END) {
       Message_SetDecodeFlagsFar(usePausedDialogue);
       Event_Start();
-      Event_SetMessageId(trigger->result);
+      Event_SetMessageId(trigger->value);
       Event_ShowMessageAndWait(id, 0);
       Event_End();
     } else {
       Leader_StopMoving();
-      ((void (*)(s32))trigger->result)(id);
+      ((void (*)(s32))trigger->value)(id);
     }
     if (!actorPaused) {
       // An actor left idle (script command 16) goes back to what its
@@ -311,16 +311,16 @@ finish:
 s32 Scene_RunRaisedTrigger(s32 value) {
   s32 result;
   s32 handled;
-  struct TriggerView *trigger;
+  const struct Trigger *trigger;
 
   trigger = Scene_FindTrigger(TRIGGER_RAISED, value);
   handled = -1;
   if (trigger != NULL) {
-    result = trigger->result;
+    result = trigger->value;
     if (result != 0) {
       if (result < TRIGGER_RESULT_MESSAGE_END) {
         Event_Start();
-        Event_SetMessageId(trigger->result);
+        Event_SetMessageId(trigger->value);
         Event_ShowMessageAndWait(-1, 0);
         handled = 0;
         Event_End();
@@ -343,8 +343,8 @@ s32 Scene_RunRaisedTrigger(s32 value) {
 /// CELL_BEHAVIOR_EVENT_LAST. Sets work->exit for an exit, and clears
 /// work->blockedSteps after a step trigger that needs pushing.
 s32 Scene_RunStepTriggerOrExit(s32 value) {
-  struct TriggerView *touch;
-  struct TriggerView *exit;
+  const struct Trigger *touch;
+  const struct Trigger *exit;
   s32 exitId;
   s32 handled;
   struct FieldWork *work;
@@ -352,18 +352,18 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
   touch = Scene_FindTrigger(TRIGGER_STEP, value);
   handled = -1;
   work = gFieldWork;
-  if ((touch != 0) && (touch->result != 0)) {
-    if (touch->flags & STEP_TRIGGER_FLAG_WALKING) {
+  if ((touch != 0) && (touch->value != 0)) {
+    if (touch->kind & STEP_TRIGGER_FLAG_WALKING) {
       work->blockedSteps = 0;
     }
-    if (touch->result < TRIGGER_RESULT_MESSAGE_END) {
+    if (touch->value < TRIGGER_RESULT_MESSAGE_END) {
       Event_Start();
-      Event_SetMessageId(touch->result);
+      Event_SetMessageId(touch->value);
       Event_ShowMessageAndWait(-1, 0);
       handled = 0;
       Event_End();
     } else {
-      ((void (*)(s32))touch->result)(value);
+      ((void (*)(s32))touch->value)(value);
       handled = 0;
     }
   } else {
@@ -371,7 +371,7 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
     if (exit != 0) {
       // An enum ExitStyle chooses how the leader leaves; the animated styles'
       // flags make the next scene play the matching arrival.
-      exitId = exit->flags & EXIT_STYLE_MASK;
+      exitId = exit->kind & EXIT_STYLE_MASK;
       switch (exitId) {
       case EXIT_STYLE_NORMAL:
         Sound_PlayFar(SE_MAP_EXIT);
@@ -385,7 +385,7 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
         Exit_StartStairsDown();
         break;
       }
-      work->exit = exit->result;
+      work->exit = exit->value;
       handled = 0;
     }
   }
@@ -460,7 +460,7 @@ s32 Field_ExamineCell(s32 tile) {
     FieldMessage_ShowFar(MsgTileChecked + tile, FIELD_MESSAGE_ZOOM);
     FieldMessage_ShowFar(MsgTileResult + tile, FIELD_MESSAGE_ZOOM);
   } else {
-    trigger = (const struct Trigger *)Scene_FindTrigger(TRIGGER_EXAMINE, tile);
+    trigger = Scene_FindTrigger(TRIGGER_EXAMINE, tile);
     if (trigger != NULL) {
       s32 flags = trigger->kind;
 

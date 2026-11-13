@@ -883,33 +883,6 @@ struct MagmaRockEffectConfig {
   void (*unk24)(void);
 };
 
-/* VIEW(s0ff4): routine MagmaRock_SetCellShape as void
- * MagmaRock_SetCellShape(s32 layer, s32 x, s32 z, s32 height); scene/magma_rock
- * has DEFINE_MAP_CELL_SET_SHAPE(MagmaRock_SetCellShape, MapGrid_GetTerrainKind,
- * MapCollision_FindOrAddTag) #include "../field/map/cell_get.c" #include
- * "field.h" DEFINE_ACTORS_RAISE_CELLS(MagmaRock_RaiseActorCells,
- * MagmaRock_SetCellShape) #include "battle.h" #include "game.h" #include
- * "graphics.h" #include "lib.h" #include "menu.h" #include "sound.h" #include
- * "system.h" #include "scene_tables.h" #include "magma_rock/magma_rock.h"
- * #include "main_routine_work.h" #include "scene_ids.h" // For each id of a
- * list ended by 0xffff: clears the object's mark and, on a // cell with
- * attribute bit 6, blocks the cells ahead of and behind it and sets // the
- * mark. DEFINE_BLOCKS_MARK_CELLS(Blocks_MarkCells, MapCell_GetAttributes) //
- * Clears the object's mark and the cells ahead of and behind it that the mark
- * // blocked. DEFINE_BLOCK_CLEAR_CELLS(MagmaRock_ClearBlockCells) // For each
- * id of a list ended by 0xffff: settles the object on its ground, // copies the
- * cell under it, and blocks the cells ahead of and behind it on a // cell with
- * attribute bit 6. #include "text/msg_ids.h" /// For each id of a list ended by
- * 0xffff: settles the object on its ground, /// copies the cell under it, and
- * blocks the cells ahead of and behind it on a /// cell with attribute bit 6.
- * void MagmaRock_SettleBlocks(u16 *ids) {; tried as the rest of the object
- * declares it, it does not compile in tla-ja:
- * games/tla/src/scene/magma_rock.c:1224: conflicting types for
- * `MagmaRock_SetCellShape'. */
-void MagmaRock_SetCellShape__s0ff4(s32 layer, s32 x, s32 z, s32 height) __asm__(
-    "MagmaRock_SetCellShape");
-#define MagmaRock_SetCellShape MagmaRock_SetCellShape__s0ff4
-
 #define EFFECT_Y(object) (((union Position *)&(object)->effect.y)->word)
 
 // The fifth part of MagmaRock_BurnStatue's group: follows its owner like the
@@ -1266,7 +1239,6 @@ second:
 }
 
 void MagmaRock_ClearBlockCells(struct Actor *object);
-void MagmaRock_SetCellShape(s32 layer, s32 x, s32 z, s32 height);
 void MagmaRock_PushBlockOnto(void);
 
 void MagmaRock_PushPillarEast(void) {
@@ -1448,8 +1420,8 @@ const struct Trigger *Scene_GetEvents(void) {
 #undef MagmaRockEventWork
 #undef MagmaRock_PlayBurst
 #undef MagmaRockEffectConfig
-#undef MagmaRock_SetCellShape
-#undef Blocks_MarkCells #undef Position
+#undef Blocks_MarkCells
+#undef Position
 
 #include "../field/field_effect/advance_motion.c"
 
@@ -1474,7 +1446,6 @@ const struct Trigger *Scene_GetEvents(void) {
 #undef MagmaRock_PlayBurst
 #undef Position
 #undef MagmaRockEffectConfig
-#undef MagmaRock_SetCellShape
 /* VIEW(s22ac): tag struct MagmaRockEventWork as this part has it; the joined
  * file has another; tried with the definition the rest of the object has, it
  * does not compile in tla-ja: games/tla/src/scene/magma_rock.c:1441:

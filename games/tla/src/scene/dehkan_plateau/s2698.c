@@ -691,7 +691,7 @@ DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(Func_0200353c, 3, 8, 67, 3, 66, 69)
 DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(Func_020035ec, 13, 5, 77, 0, 65, 65)
 
 void Func_0200369c(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   Func_02001fdc();
   if (GameFlag_Test(0x86c) != 0) {
@@ -807,7 +807,7 @@ void Func_0200390c(void) {
   struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 entrance;
 
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   owner->priorityFlags |= 32;
   if (GameFlag_Test(0x878) == 0) {
     Func_02003a30();
@@ -870,7 +870,7 @@ void Func_02003a30(void) {
 }
 
 void Func_02003aa0(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   if (GameFlag_Test(95) != 0)
     GameFlag_SetBit(521);

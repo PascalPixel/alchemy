@@ -512,7 +512,7 @@ void Func_02001054(void) {
 }
 
 void Func_020010b4(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   Event_ClearFlag(0x12f);
 }
 

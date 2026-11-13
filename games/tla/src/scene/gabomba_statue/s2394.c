@@ -40,7 +40,7 @@ void Func_02002394(void) {
   actor->gravity = 0x8000;
   actor->bounce = 0;
   actor->motionFlags = 0;
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(204);
@@ -77,7 +77,7 @@ void Func_02002394(void) {
   actor->bounce = 0x4000;
   System_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   Event_End();
 }
 
@@ -181,7 +181,7 @@ void Func_020027cc(void) {
   Actor_SetPositionAndFacing(6, PIXELS(448), PIXELS(312), speed);
   Actor_SetPositionAndFacing(5, PIXELS(468), PIXELS(312), speed);
   System_Wait(1);
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x202;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x202;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(40);
@@ -260,7 +260,7 @@ void Func_02002a64(void) {
   Actor_SetPositionAndFacing(6, 224 << 17, 156 << 17, north);
   Actor_SetPositionAndFacing(5, 234 << 17, 156 << 17, north);
   System_Wait(1);
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x201;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(40);
@@ -288,9 +288,9 @@ void Func_02002a64(void) {
     Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xe000, 0);
     Actor_FaceDirectionAndWait(7, 0x6000);
     Event_ShowMessage(0x6007, 0);
-    (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
+    (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
   } else {
-    (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
+    (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
     Actor_SetSpeed(7, 0x20000, 0x10000);
     Actor_WalkToAndWait(7, 340, 296);
     Actor_WalkToAndWait(7, 354, 296);
@@ -406,7 +406,7 @@ void Func_02002f70(void) {
   System_Wait(1);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x202;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x202;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldCamera_SetSpeed(0x13333, 0x2666);
@@ -664,7 +664,7 @@ L_0200b78e:
   table = ((u8 *)gData_02005d8c);
   Func_020048a4(19, 11, *(s32 *)(table + (t46 << 2)), 16);
   Actor_SetAnimation(15, 5);
-  if (FIELD_AT(&gMainRoutineWork, s16, 482) != 2)
+  if (gMainRoutineWork.entrance != 2)
     goto L_0200b7c0;
   Func_020027cc();
   goto L_0200b856;
@@ -672,8 +672,8 @@ L_0200b7c0:
   t50 = Event_GetFlag(0x8f6);
   if (t50 != 0)
     goto L_0200b7e4;
-  if (FIELD_AT(&gMainRoutineWork, s16, 482) != 1) {
-    p_r3 = FIELD_AT(&gMainRoutineWork, s16, 482);
+  if (gMainRoutineWork.entrance != 1) {
+    p_r3 = gMainRoutineWork.entrance;
     goto L_0200b7dc;
   }
   Func_0200253c();
@@ -688,10 +688,10 @@ L_0200b7e4:
     goto L_0200b856;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x201;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x209;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   Event_ClearFlag(0x8fc);
   t59 = Event_GetFlag(0x9eb);
   if (t59 == 0)

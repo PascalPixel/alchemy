@@ -533,10 +533,10 @@ void Func_02000a34(s32 value) {
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(20);
     Event_ShowMessageThenWait(8, 0, 5);
-    FIELD_AT(Ram_HeapSlots->eventWork, u16, 452)++;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
   } else {
     Event_Wait(40);
-    FIELD_AT(Ram_HeapSlots->eventWork, u16, 452)++;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
     Event_ShowMessageThenWait(8, 0, 5);
   }
   Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x2000,
@@ -1110,13 +1110,13 @@ void Func_02001868(void) {
     Motion_SetModeAndWaitAnimation(6, 3);
     Event_Wait(10);
     Event_ShowMessageThenWait(0x1006, 0, 5);
-    FIELD_AT(Ram_HeapSlots->eventWork, u16, 452)++;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
   } else {
     Event_Wait(35);
     Actor_ArmCallbackAndRefresh(6, FACING_SOUTHEAST);
     Event_Wait(5);
     Motion_SetModeAndWaitAnimation(6, 4);
-    FIELD_AT(Ram_HeapSlots->eventWork, u16, 452)++;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
     Event_ShowMessageThenWait(0x1006, 0, 5);
   }
   Actor_ArmCallback(15, FACING_EAST, 0);
@@ -1252,10 +1252,10 @@ void Func_02001868(void) {
     Event_Wait(10);
     Func_080d47b4(11, 0x108, 30);
     Event_ShowMessageThenWait(11, 0, 5);
-    FIELD_AT(Ram_HeapSlots->eventWork, u16, 452) += 2;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
   } else {
     Event_Wait(35);
-    FIELD_AT(Ram_HeapSlots->eventWork, u16, 452) += 2;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
     Event_ShowMessageThenWait(8, 0, 5);
     Actor_ArmCallbackAndRefresh(11, FACING_WEST);
     Event_Wait(5);
@@ -1317,12 +1317,12 @@ void Func_02001868(void) {
     Motion_SetModeAndWaitAnimation(15, 3);
     Event_Wait(10);
     Event_ShowMessageThenWait(0x200f, 0, 5);
-    FIELD_AT(Ram_HeapSlots->eventWork, u16, 452)++;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
   } else {
     Event_Wait(35);
     Motion_SetModeAndWaitAnimation(15, 3);
     Event_Wait(10);
-    FIELD_AT(Ram_HeapSlots->eventWork, u16, 452)++;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
     Event_ShowMessageThenWait(0x200f, 0, 5);
   }
   Call3((void (*)())Actor_ArmCallback, 8, 0x5000, 0);

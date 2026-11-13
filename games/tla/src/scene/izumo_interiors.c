@@ -1067,7 +1067,7 @@ L_02009e48:
 }
 
 s32 Scene_Initialize(void) {
-  FIELD_AT(Ram_HeapSlots->eventWork, s32, 428) = 0x201;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
   if (gMainRoutineWork.entrance != 7)
     Event_ClearFlag(0x350);
   if (GameFlag_Test(0x927) && !GameFlag_Test(0x928) &&

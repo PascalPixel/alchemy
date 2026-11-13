@@ -26,13 +26,12 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
 DEFINE_TELEPORTER_DROP_IN(Teleporter_DropIn, Func_02001e78)
 
 DEFINE_TELEPORTERS_STEP(Teleporters_Step, gData_02003488, Teleporter_Uncover,
-    Teleporter_Sink)
+                        Teleporter_Sink)
 
 void Func_02002888(s32 dx, s32 dz, s32 value) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   u8 *event = Ram_HeapSlots->eventWork;
-  struct CellTarget *work =
-      &gData_02003488;
+  struct CellTarget *work = &gData_02003488;
   s32 x = FieldGameFlag_GetByte(work->flagByte);
   s32 z = FieldGameFlag_GetByte(work->flagByte + 8);
 
@@ -48,7 +47,7 @@ void Func_02002888(s32 dx, s32 dz, s32 value) {
     shadow->z = object->z;
     Map_CenterOnFollowedPoint();
     Teleporter_DropIn();
-    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = value;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = value;
   }
 }
 

@@ -52,31 +52,30 @@ void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b) {
     Func_02000328();
 }
 
-DEFINE_PALETTE_CYCLE_START(Func_020000f4, gPaletteCycleIndex, gPaletteCycleLength,
-    List_CountEntries, gPaletteSlots, gPaletteCycleDelay, 15, gPaletteCycleTimer, 16,
-    gPaletteCycleBright, PaletteCycle_Fade)
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+DEFINE_PALETTE_CYCLE_START(Func_020000f4, gPaletteCycleIndex,
+                           gPaletteCycleLength, List_CountEntries,
+                           gPaletteSlots, gPaletteCycleDelay, 15,
+                           gPaletteCycleTimer, 16, gPaletteCycleBright,
+                           PaletteCycle_Fade)
 
 void Func_02000158(void) {
-  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x100;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   FieldTask_Remove((s32)PaletteCycle_Fade);
 }
 
-DEFINE_PALETTE_CYCLE_START(Func_02000178, gPaletteCycleIndex, gPaletteCycleLength,
-    List_CountEntries, gPaletteSlots, gPaletteCycleDelay, 2, gPaletteCycleTimer, 2,
-    gPaletteCycleBright, PaletteCycle_Fade)
+DEFINE_PALETTE_CYCLE_START(Func_02000178, gPaletteCycleIndex,
+                           gPaletteCycleLength, List_CountEntries,
+                           gPaletteSlots, gPaletteCycleDelay, 2,
+                           gPaletteCycleTimer, 2, gPaletteCycleBright,
+                           PaletteCycle_Fade)
 
 DEFINE_LIST_COUNT_ENTRIES(List_CountEntries)
 
-DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gPaletteCycleTimer, gPaletteCycleDelay,
-    gPaletteCycleColors, gPaletteCycleLength, gPaletteCycleSlots, gPaletteCycleIndex,
-    gPaletteSlots, gPaletteCycleBright, gPaletteColors)
+DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gPaletteCycleTimer,
+                          gPaletteCycleDelay, gPaletteCycleColors,
+                          gPaletteCycleLength, gPaletteCycleSlots,
+                          gPaletteCycleIndex, gPaletteSlots,
+                          gPaletteCycleBright, gPaletteColors)
 
 void Func_020017b4(void);
 

@@ -35,13 +35,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 #include "main_routine_work.h"
 #include "event_inline.h"
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void Func_02000054(void) {
   struct Actor *t0;
 
@@ -221,11 +214,11 @@ DEFINE_JUPITER_LIGHTHOUSE_ROOM_2_SET_STATE(Func_020003f4, 30)
 DEFINE_JUPITER_LIGHTHOUSE_ROOM_2_SET_STATE(Func_02000410, 31)
 
 void Func_0200042c(void) {
-  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x16a), u16, 0) = 0x20;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 0x20;
 }
 
 void Func_02000440(void) {
-  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x16a), u16, 0) = 0x21;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 0x21;
 }
 
 /// Once the leader stands at height 32 or more, it rises and spins for 110

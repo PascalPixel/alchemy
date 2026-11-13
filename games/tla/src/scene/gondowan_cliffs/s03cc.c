@@ -144,7 +144,7 @@ void Func_02000660(void) {
   out[2] = object->z;
   FieldVector_AddPolarOffset(0x100000, object->facing, out);
   if ((position.x >> 20) == 119 && (position.z >> 20) == 45) {
-    FIELD_AT(Ram_HeapSlots->eventWork, u16, 346) = 1;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->unk15a = 1;
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -264,8 +264,7 @@ void Func_020007d8(void) {
 }
 
 void Func_0200130c(s32 a, s32 b, s32 c, s32 d);
-struct RideEntry *Func_02001068(s32 slot, s32 id, s32 timer, s32 low,
-                                s32 high);
+struct RideEntry *Func_02001068(s32 slot, s32 id, s32 timer, s32 low, s32 high);
 
 /// Gondowan Cliffs' setup: Ov66bRoom2 runs Func_02000768 and returns; with
 /// flag 0x8f3 set and 0x8ef clear it runs Func_020007d8; otherwise in
@@ -278,7 +277,7 @@ s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 height;
 
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 513;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 513;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov66bRoom2) {
     Func_02000768();
     return 0;
@@ -324,7 +323,8 @@ s32 Scene_Initialize(void) {
   } else {
     Actor_GetById(15)->collisionFlags |= 16;
   }
-  Iwram_CopyWordsEntry(((u8 *)gData_02001ae0), (void *)&BG_PLTT_COLOR(0, 12), 8);
+  Iwram_CopyWordsEntry(((u8 *)gData_02001ae0), (void *)&BG_PLTT_COLOR(0, 12),
+                       8);
   Task_AddFrame(Func_02000738, 0x480);
   ((struct MapLayerBits *)Ram_HeapSlots->mapWork)->priority = 1;
 done:
@@ -448,7 +448,11 @@ void Func_02000be4(void) {
 
 #include "graphics/vram_tab.h"
 
-/* VIEW(s03cc): tag struct SwingWork as struct SwingWork__s03cc; module/tla.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/gondowan_cliffs/s03cc.c:478: structure has no member named `actors'. */
+/* VIEW(s03cc): tag struct SwingWork as struct SwingWork__s03cc; module/tla.h
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/gondowan_cliffs/s03cc.c:478: structure has no member
+ * named `actors'. */
 struct SwingWork__s03cc {
   s16 entry;
   s16 value;
@@ -463,7 +467,8 @@ void Func_0200119c(u32 *oam, s32 depth);
 // 16 pixels of its height and the bobbing head on top, at most 80 sprites,
 // queued by Func_0200119c.
 void Func_02000dac(void) {
-  struct SwingWork__s03cc *work = (struct SwingWork__s03cc *)(gData_020023c4 + 0x188);
+  struct SwingWork__s03cc *work =
+      (struct SwingWork__s03cc *)(gData_020023c4 + 0x188);
   struct SwingActor *swing = work->actors;
   s32 k;
   u32 tile = gResourceTableEntries[work->entry].offset >> 5;
@@ -524,9 +529,15 @@ void Func_02000dac(void) {
     z = actor->z - scrollZ - lift;
     screenY = z - y;
     x = (x >> 16) - 8;
-    /* FAKEMATCH(wrapper): forwarded, so -0x20000 is built for the call and again
-     * for the sum; as a direct call, 276 of 252 instructions differ in tla-en. */
-    screenY = ((screenY + Value2((s32 (*)())Iwram_MulQ16, -0x20000, Math_Sine(swing->bob)) + -0x20000) >> 16) - 4;
+    /* FAKEMATCH(wrapper): forwarded, so -0x20000 is built for the call and
+     * again for the sum; as a direct call, 276 of 252 instructions differ in
+     * tla-en. */
+    screenY =
+        ((screenY +
+          Value2((s32 (*)())Iwram_MulQ16, -0x20000, Math_Sine(swing->bob)) +
+          -0x20000) >>
+         16) -
+        4;
     depth = ((y + z) >> 16) + 58;
     if ((u32)(x + 15) > 334 || screenY <= -16 || screenY > 239)
       continue;
@@ -593,8 +604,7 @@ struct RideEntry *Func_02001068(s32 slot, s32 id, s32 timer, s32 low,
     entry->unk14 = 0;
     object->priorityFlags |= 2;
   }
-  rider = (FieldActor_Create(0x8000, object->x, object->y,
-                                              object->z));
+  rider = (FieldActor_Create(0x8000, object->x, object->y, object->z));
   rider->collisionFlags = 0;
   rider->motionFlags = 0;
   rider->priorityFlags |= 128;

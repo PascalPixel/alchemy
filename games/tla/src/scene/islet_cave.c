@@ -36,7 +36,7 @@ DEFINE_PALETTE_CYCLE_START_VBLANK(IsletCave_StartSlowPaletteCycle,
                                   gData_02001a14, PaletteCycle_Fade)
 
 void IsletCave_StopPaletteCycle(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Task_RemoveFar(PaletteCycle_Fade);
 }
 
@@ -637,14 +637,14 @@ void Func_020010ac(void) {
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   BattleEffect_StartBufferInterpolation(0x3c);
   Event_Wait(60);
-  t12 = ((s32)Actor_GetById(FIELD_AT(&gMainRoutineWork, s32, 532)));
+  t12 = ((s32)Actor_GetById(gMainRoutineWork.currentOwner));
   if (t12 != 0) {
     Actor_ResetAndSetPosition(8, FIELD_AT(t12, s16, 10),
                               FIELD_AT(t12, s16, 18));
   }
   Event_Wait(20);
   Event_SetAfterBattleDestination((s32)&SceneId_Ov675Room3, 2);
-  FIELD_AT(&gMainRoutineWork, u8, 587) = 2;
+  gMainRoutineWork.battleRule24b = 2;
   cue = 0x67;
   /* FAKEMATCH(barrier): the asm on the first argument loads it before the
    * second, as the native does; as Field_RequestBattleFromEncounterTable(0x67,

@@ -327,11 +327,11 @@ void Func_02000638(void) {
       t17 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
       if (t17 == 0) {
         FieldEvent_ShowMessageThenWait(0x1d, 0, 5);
-        FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
-            (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
+            (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
       } else {
-        FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
-            (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
+            (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
         FieldEvent_ShowMessageThenWait(0x1d, 0, 5);
       }
       Actor_ShowEmote(0x1d, 0x109, 0x1e);
@@ -503,7 +503,7 @@ s32 Scene_Initialize(void) {
   s32 t19;
   s32 t23;
 
-  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x100;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Task_AddFrame((s32)Func_02000a80, 0xc80);
   Map_SetLayerEntryFlag(8);
   Actor_SetSingleChildFlags(((s32)Actor_Get(10)), 0);
@@ -696,12 +696,12 @@ void Func_02000e30(void) {
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     FieldEvent_Wait(15);
     Event_ShowMessage(0x2019, 0);
-    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
-        (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
+        (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
   } else {
     FieldEvent_Wait(35);
-    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
-        (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
+        (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
     Event_ShowMessage(0x2019, 0);
   }
   Actor_FaceDirection(7, 0, 0);
@@ -731,16 +731,16 @@ void Func_02000e30(void) {
     Actor_FaceDirectionAndWait(6, 0xc000);
     FieldEvent_Wait(10);
     Event_ShowMessage(6, 0);
-    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
-        (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
+        (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
   } else {
     FieldEvent_Wait(40);
     Actor_SetAnimationAndWait(6, 3);
     FieldEvent_Wait(10);
     Actor_FaceDirectionAndWait(6, 0xc000);
     FieldEvent_Wait(10);
-    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
-        (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
+        (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
     Event_ShowMessage(6, 0);
   }
   Actor_FaceDirectionAndWait(25, 0x5000);
@@ -1281,14 +1281,14 @@ void Func_02000e30(void) {
     FieldEvent_Wait(15);
     Actor_ShowEmote(0x1c, 0x102, 0x1e);
     Event_ShowMessage(0x1c, 0);
-    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
-        (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
+        (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
   } else {
     Func_02000e04(5, 6);
     FieldEvent_Wait(35);
     Actor_ShowEmote(0x1c, 0x105, 0x1e);
-    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
-        (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
+        (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
     Event_ShowMessage(0x1c, 0);
   }
   Actor_FaceDirection(4, 0x8000, 0);

@@ -82,7 +82,7 @@ s32 Func_0200042c(void) {
   actor->gravity = 0x8000;
   actor->bounce = 0;
   actor->motionFlags = 0;
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(204);
@@ -132,7 +132,7 @@ loop:
   actor->bounce = 0x4000;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   return Func_02004e64__gaia_rock_inside();
 }
 #endif

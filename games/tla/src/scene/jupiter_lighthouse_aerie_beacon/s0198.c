@@ -129,8 +129,8 @@ void Func_02000198(void) {
   }
   if (spawn) {
     rise = ((u32)(Random16Far() * 80) >> 16) << 16;
-    effect =
-        FieldActor_Create(672, center->x, center->y - rise + 0xfff80000, center->z);
+    effect = FieldActor_Create(672, center->x, center->y - rise + 0xfff80000,
+                               center->z);
     if (effect != 0) {
       sprite = effect->sprite;
       Actor_StartScript(effect, gData_02006470);
@@ -161,7 +161,10 @@ void Func_02000198(void) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(s0198): routine Func_0200581c as s32 Func_0200581c(); module/scene/jupiter_lighthouse_aerie_beacon.h has void Func_0200581c(void); tried as the rest of the object declares it, Func_020040f4 moves: 1 of 216 instructions in tla-ja. */
+/* VIEW(s0198): routine Func_0200581c as s32 Func_0200581c();
+ * module/scene/jupiter_lighthouse_aerie_beacon.h has void Func_0200581c(void);
+ * tried as the rest of the object declares it, Func_020040f4 moves: 1 of 216
+ * instructions in tla-ja. */
 extern s32 Func_0200581c__s0198() __asm__("Func_0200581c");
 
 void Func_0200045c(void) {
@@ -215,17 +218,17 @@ void Func_020004c8(void) {
 
     random = Random16Far();
     effect = FieldActor_Create(672, center->x,
-                          (s32)((u32)(random << 8) >> 16 << 16) + center->y -
-                              0x1c0000,
-                          center->z);
+                               (s32)((u32)(random << 8) >> 16 << 16) +
+                                   center->y - 0x1c0000,
+                               center->z);
   } else {
     u32 random;
 
     random = Random16Far();
     effect = FieldActor_Create(672, center->x,
-                          (s32)((u32)(random << 6) >> 16 << 16) + center->y -
-                              0x1c0000,
-                          center->z);
+                               (s32)((u32)(random << 6) >> 16 << 16) +
+                                   center->y - 0x1c0000,
+                               center->z);
   }
   if (effect != 0) {
     sprite = effect->sprite;
@@ -560,7 +563,9 @@ static __inline__ void Actor_StartRepeatedMotion_(s32 id, s32 motion) {
   Actor_StartRepeatedMotion(id, motion);
 }
 static __inline__ void GameFlag_SetBit_(s32 flag) { GameFlag_SetBit(flag); }
-static __inline__ void Func_0200593c_(s32 a, s32 b) { Field_RequestBattleFromEncounterTable(a, b); }
+static __inline__ void Func_0200593c_(s32 a, s32 b) {
+  Field_RequestBattleFromEncounterTable(a, b);
+}
 
 #define ACTOR_SET_MODE_AND_WAIT(id, mode, frames)                              \
   do {                                                                         \
@@ -750,7 +755,7 @@ L_02009260:
   ACTOR_SET_MODE_AND_WAIT(27, 3, 20);
   Func_020058d4_(0x201b, 0, 0);
   gMainRoutineWork.battleRule24b = 2;
-do {
+  do {
     gMainRoutineWork.battleRule24b = 2;
   } while (0);
   Event_SetAfterBattleDestination((s32)&SceneId_Ov6a5, 10);
@@ -891,7 +896,7 @@ void Func_02001388(void) {
     FieldUnit_AddHp(4, -10);
   }
   gMainRoutineWork.battleRule24b = 2;
-do {
+  do {
     gMainRoutineWork.battleRule24b = 2;
   } while (0);
   Event_SetAfterBattleDestination((s32)&SceneId_Ov6a5, 0xb);
@@ -1007,7 +1012,7 @@ void Func_020016e8(void) {
   if (gMainRoutineWork.sequenceResult == -1)
     FieldUnit_AddHp(4, -10);
   gMainRoutineWork.battleRule24b = 2;
-do {
+  do {
     gMainRoutineWork.battleRule24b = 2;
   } while (0);
   Event_SetAfterBattleDestination((s32)&SceneId_Ov6a5, 12);
@@ -1015,7 +1020,6 @@ do {
   Event_ClearFlag(0x11b);
   Field_RequestBattleFromEncounterTable(13, 7);
 }
-
 
 void Func_02001ac4(s32 a0, s32 a1) {
   BattleEffect_StartArcEffect();
@@ -1635,11 +1639,11 @@ void Func_02002ae4(void) {
   t67 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (t67 == 0) {
     FieldEvent_ShowMessageThenWait(0x1d, 0, 0);
-    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
-        (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
+        (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
   } else {
-    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
-        (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
+        (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
     FieldEvent_ShowMessageThenWait(0x1d, 0, 0);
   }
   Event_PlaySound(0x4e);
@@ -1850,8 +1854,8 @@ void Func_02002ae4(void) {
   } else {
     FieldActor_ShowEmote(0, 0x107, 0x1e);
     SET_MODE_AND_WAIT(5, 4, 0x21);
-    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
-        (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 2);
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
+        (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 2);
     Actor_FaceDirectionAndWait(5, 0x8000);
     FieldEvent_ShowMessageThenWait(5, 0, 0);
     Actor_FaceDirectionAndWait(5, 0x4000);
@@ -2018,7 +2022,11 @@ struct SceneWork {
   u8 pad0[12];
   s32 unk_0c;
 };
-/* VIEW(s0198): tag struct FieldWork as struct FieldWork__s0198; field_work.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2064: dereferencing pointer to incomplete type. */
+/* VIEW(s0198): tag struct FieldWork as struct FieldWork__s0198; field_work.h
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2064:
+ * dereferencing pointer to incomplete type. */
 struct FieldWork__s0198 {
   u8 pad0[0x178];
   struct SceneWork unk_178;
@@ -2119,7 +2127,11 @@ void Func_02003a6c(s32 mode) {
   }
 }
 
-/* VIEW(s0198): tag struct HeapSlotWords as struct HeapSlotWords__s0198; module/scene/scene.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2150: structure has no member named `map'. */
+/* VIEW(s0198): tag struct HeapSlotWords as struct HeapSlotWords__s0198;
+ * module/scene/scene.h has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2150: structure
+ * has no member named `map'. */
 struct HeapSlotWords__s0198 {
   s32 unk00[8];
   u8 *map;
@@ -2129,7 +2141,8 @@ extern s32 gData_02005a20[];
 
 void Func_02003c58(s32 mode) {
   struct ScrollWork *work =
-      (struct ScrollWork *)(((struct HeapSlotWords__s0198 *)Ram_HeapSlots)->map + 376);
+      (struct ScrollWork
+           *)(((struct HeapSlotWords__s0198 *)Ram_HeapSlots)->map + 376);
   s32 speed = 0x18000;
   u32 count = 0;
   u32 i;
@@ -2186,7 +2199,7 @@ s32 Scene_Initialize(void) {
   s32 t9;
   s32 t25;
 
-  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x201;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
   Call2(Func_020059b4, 0xf, 1);
   Func_020059b4(0x10, 1);
   t2 = Actor_Get(gMainRoutineWork.currentOwner);
@@ -2278,15 +2291,22 @@ extern s32 gPaletteCycleFrame;
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
 DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame, gData_020069f8,
-    gData_02006a2c)
+                          gData_02006a2c)
 
-/* VIEW(s0198): routine Func_020057c4 as void Func_020057c4(); module/scene/scene.h has void Func_020057c4(void); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2369: too many arguments to function `Func_020057c4'. */
+/* VIEW(s0198): routine Func_020057c4 as void Func_020057c4();
+ * module/scene/scene.h has void Func_020057c4(void); tried as the rest of the
+ * object declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2369: too many
+ * arguments to function `Func_020057c4'. */
 extern void Func_020057c4__s0198() __asm__("Func_020057c4");
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_020069f8, gData_02006a2c,
-    gLighthousePalette13, PaletteCycle_Step, gLighthouseUnlitColors)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
+                                        gData_020069f8, gData_02006a2c,
+                                        gLighthousePalette13, PaletteCycle_Step,
+                                        gLighthouseUnlitColors)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_020057c4__s0198, Func_020059ec)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_020057c4__s0198,
+                             Func_020059ec)
 
 #include "vector3.h"
 #include "main_routine_work.h"
@@ -2364,8 +2384,13 @@ void Func_020040f4(void) {
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-/* VIEW(s3f54): routine Actor_StartScript as void Actor_StartScript(struct Object6a5 *object, const void *script); s0198 has void Actor_StartScript(struct Actor *object, const void *script); not tried: Actor_StartScript's bound declaration was not found. */
-extern void Func_02005764__s3f54(struct Object6a5 *object, const void *script) __asm__("Actor_StartScript");
+/* VIEW(s3f54): routine Actor_StartScript as void Actor_StartScript(struct
+ * Object6a5 *object, const void *script); s0198 has void
+ * Actor_StartScript(struct Actor *object, const void *script); not tried:
+ * Actor_StartScript's bound declaration was not found. */
+extern void
+Func_02005764__s3f54(struct Object6a5 *object,
+                     const void *script) __asm__("Actor_StartScript");
 extern u8 gData_020069fc[];
 
 void Whirlwind_Update(struct Object6a5 *object) {
@@ -2405,7 +2430,8 @@ void Whirlwind_Update(struct Object6a5 *object) {
           if (distance < 0)
             distance = object->y - leader->y;
           near = 0;
-          if (Position_FlatDistance(&leader->x, &object->x) <= 12 && distance < 0xc0000)
+          if (Position_FlatDistance(&leader->x, &object->x) <= 12 &&
+              distance < 0xc0000)
             near = 1;
           if (near != 0 && Event_GetFlag(0x104) == 0) {
             leader->watchedObject = (struct Actor *)object;

@@ -556,7 +556,7 @@ s32 Scene_Initialize(void) {
   s32 t1, t2, t3, t5, t8, t15, t16, t17, t19, t20, t21, t23, t24, t25, t26, t27,
       t28, t29, v5;
 
-  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x204;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   if ((u32)((FIELD_AT(&gMainRoutineWork, u16, 482) + -3) << 16) > (u32)0x10000)
     goto L_02008e6e;
   t1 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));

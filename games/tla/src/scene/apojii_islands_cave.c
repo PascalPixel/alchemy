@@ -2,6 +2,7 @@
 /// The scene code of overlay 0x67a, in ROM order.
 
 #include "shared/tables.h"
+#include "event_work.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -25,13 +26,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 #include "event_inline.h"
 
 void Func_02000054(s32 a0, s32 a1) { GameFlag_SetBit((a1 + 0x8e1)); }
@@ -39,7 +33,7 @@ void Func_02000054(s32 a0, s32 a1) { GameFlag_SetBit((a1 + 0x8e1)); }
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
-  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x201;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
   return 0;
 }
 

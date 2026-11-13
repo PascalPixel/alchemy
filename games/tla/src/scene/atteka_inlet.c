@@ -85,7 +85,7 @@ void Func_02000120(void) {
     }
     Import_EventSetExitRequest(4);
   } else {
-    (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
+    (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
     Event_ShowMessageAndWait(18, 0);
     Actor_SetSpeed(18, 0x19999, 0xcccc);
     Actor_SetModeById(18, 2);
@@ -246,7 +246,7 @@ void Func_02000640(void) {
     }
     Import_EventSetExitRequest(4);
   } else {
-    (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
+    (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
     Event_ShowMessageAndWait(18, 0);
     Actor_SetSpeed(18, 0x19999, 0xcccc);
     Actor_SetModeById(18, 2);

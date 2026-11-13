@@ -4,6 +4,7 @@
 // ---- games/tla/src/scene/aqua_rock.c ----
 
 #include "../shared/actors.h"
+#include "event_work.h"
 #include "../shared/effects.h"
 #include "battle.h"
 #include "field.h"
@@ -844,7 +845,7 @@ s32 Scene_Initialize(void) {
   s32 id, x, z;
   s16 *entrance;
 
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 516;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 516;
   gMainRoutineWork.retreatScene = (s32)&SceneId_Ov67bRoom1;
   gMainRoutineWork.retreatEntrance = 1;
   map->mode = 1;

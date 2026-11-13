@@ -12,6 +12,7 @@
 /// rooms take their morning tables.
 
 #include "battle.h"
+#include "event_work.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
@@ -97,11 +98,6 @@ enum GarohHouseActorId {
 
 /// The sanctum's healer, its one actor.
 enum GarohSanctumActorId { ACTOR_HEALER = ACTOR_FIRST_PLACED };
-
-struct EventWork1c4 {
-  u8 unk000[0x1c4];
-  u16 count;
-};
 
 extern struct ActorPlacement gGarohInteriors_NoActorPlacements[];
 extern struct ActorPlacement gGarohInteriors_InnActorPlacements[];
@@ -279,7 +275,8 @@ void GarohInteriors_AskWhatTheWanderersSeek(s32 actor) {
         0) {
       Event_ShowMessageAndWait(actor, 0);
     } else {
-      ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
+      // Past "You don't really believe they exist, do you?" to the next line.
+      ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
       Event_ShowMessageAndWait(actor, 0);
     }
   } else {
@@ -395,7 +392,7 @@ const struct Trigger *Scene_GetEvents(void) {
 s32 Scene_Initialize(void) {
   s32 turn;
 
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   Func_0200087c(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov660Room1) {

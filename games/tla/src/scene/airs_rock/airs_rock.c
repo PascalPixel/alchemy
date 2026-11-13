@@ -108,12 +108,12 @@ void Func_02000568(void) {
   MapGrid_CopyCellsTo(64, 64, 83, 35, 1, 2);
   Map_ClearLayerEntryFlag(0);
   FieldEvent_Wait(45);
-  Actor_SetSpeed(FIELD_AT(&gMainRoutineWork, s32, 532), 0x8000, 0x4000);
-  Actor_WalkTo(FIELD_AT(&gMainRoutineWork, s32, 532), 312, 680);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_WalkTo(gMainRoutineWork.currentOwner, 312, 680);
   FieldEvent_Wait(5);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldActor_WaitForMoveById(FIELD_AT(&gMainRoutineWork, s32, 532));
+  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Event_PlaySound(0x7b);
   FieldEvent_SetExitRequest(4);
   Event_End();
@@ -1504,7 +1504,7 @@ s32 Scene_Initialize(void) {
   s32 *beam;
   volatile struct DmaRegisters *dma;
 
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 516;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 516;
   gMainRoutineWork.retreatScene = (s32)&SceneId_Ov663Room1;
   gMainRoutineWork.retreatEntrance = 1;
   LEADER()->priorityFlags |= 32;
@@ -1703,7 +1703,7 @@ s32 Scene_Initialize(void) {
       if (GameFlag_Test(0x879))
         Actor_SetPosition(13, 0xb80000, 0x1180000);
       if (!GameFlag_Test(0x87a)) {
-        *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
+        ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
         REG_BLDALPHA = 0x1008;
         REG_BLDCNT = 0x3f42;
         dma = (volatile struct DmaRegisters *)0x040000b0;
@@ -1781,7 +1781,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (FIELD_AT(&gMainRoutineWork, s16, 480) == (s32)MsgCurePoison2) {
+  if (gMainRoutineWork.scene == (s32)MsgCurePoison2) {
     Func_02002b88();
   }
   return 0;

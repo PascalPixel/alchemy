@@ -220,7 +220,7 @@ void Func_0200032c(s32 unused, s32 id) {
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 513;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 513;
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1)
     Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   JupiterLighthouse_LoadPalettesZero(0);
@@ -332,8 +332,10 @@ next:
   gData_02003314++;
 }
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(JupiterLighthouse_LoadPalettesZero, gData_02003318, gData_02003340,
-    gData_02003360, gData_02003314, PaletteCycle_Step, gData_02003364)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(JupiterLighthouse_LoadPalettesZero,
+                                             gData_02003318, gData_02003340,
+                                             gData_02003360, gData_02003314,
+                                             PaletteCycle_Step, gData_02003364)
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02002a78, Func_02002b58)
 
@@ -411,8 +413,14 @@ extern const s32 gData_0200331c[];
 extern s32 gData_0200333c;
 
 s32 Func_02002b50(s32 x, s32 z, s32 layer);
-/* VIEW(jupiter_lighthouse_aerie): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position); tried as the definition's void Camera_WorldToScreen(struct EffectVector *position), which the object already declares, Func_02001080 moves: 1 of 856 instructions in tla-ja. */
-extern void Camera_WorldToScreen__jupiter_lighthouse_aerie(s32 *position) __asm__("Camera_WorldToScreen");
+/* VIEW(jupiter_lighthouse_aerie): routine Camera_WorldToScreen as void
+ * Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void
+ * Camera_WorldToScreen(struct EffectVector *position); tried as the
+ * definition's void Camera_WorldToScreen(struct EffectVector *position), which
+ * the object already declares, Func_02001080 moves: 1 of 856 instructions in
+ * tla-ja. */
+extern void Camera_WorldToScreen__jupiter_lighthouse_aerie(
+    s32 *position) __asm__("Camera_WorldToScreen");
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Whirlwind_Update(struct Actor *self) {
@@ -452,7 +460,8 @@ void Whirlwind_Update(struct Actor *self) {
         if (distance < 0)
           distance = self->y - leader->y;
         near = 0;
-        if (Position_FlatDistance(&leader->x, &self->x) <= 12 && distance < 0xc0000)
+        if (Position_FlatDistance(&leader->x, &self->x) <= 12 &&
+            distance < 0xc0000)
           near = 1;
         if (near && !Event_GetFlag(260)) {
           leader->facing = self->facing;
@@ -498,7 +507,8 @@ stop:
 #include "call.h"
 #include "field_effect.h"
 
-DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Func_020029f0, Whirlwind_Update, Func_02001e78)
+DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Func_020029f0, Whirlwind_Update,
+                       Func_02001e78)
 
 #include "field_coordinate.h"
 
@@ -523,7 +533,8 @@ s32 Func_02000de0(struct Actor *object) {
   return 0;
 }
 
-DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(JupiterLighthouse_PlaceRaisedActors)
+DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
+    JupiterLighthouse_PlaceRaisedActors)
 
 void Func_02001010(struct Actor *object) {
   u8 *fill = &gDecodeFillByte;

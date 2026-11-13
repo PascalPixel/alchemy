@@ -1639,12 +1639,6 @@ void Func_02002a84(void) {
 #endif
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 void Func_02002ec4();
 void Func_0200306c();
 void Func_020032c8();
@@ -1707,8 +1701,8 @@ L_0200ad0a:
   t39 = GameFlag_Test(0x109);
   if (t39 != 0)
     goto L_0200adda;
-  if (FIELD_AT(&gMainRoutineWork, s16, 482) != 3) {
-    p_r3 = FIELD_AT(&gMainRoutineWork, s16, 482);
+  if (gMainRoutineWork.entrance != 3) {
+    p_r3 = gMainRoutineWork.entrance;
     goto L_0200add2;
   }
   Func_0200306c();
@@ -1727,7 +1721,7 @@ L_0200adda:
   t44 = GameFlag_Test(0x109);
   if (t44 != 0)
     goto L_0200ae24;
-  if (FIELD_AT(&gMainRoutineWork, s16, 482) != 5)
+  if (gMainRoutineWork.entrance != 5)
     goto L_0200ae24;
   Func_02002ec4();
 L_0200ae24:

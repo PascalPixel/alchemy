@@ -2,6 +2,7 @@
 /// The scene code of overlay 0x650, in ROM order.
 
 #include "battle.h"
+#include "event_work.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
@@ -164,7 +165,7 @@ void Func_020002b4(void) {
     Actor_SetAnimation(5, 3);
     Event_ShowMessage(5, 0);
   } else {
-    *(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4) += 2;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
     Event_ShowMessage(5, 0);
   }
   Actor_SetSpeed(5, 0x19999, 0xcccc);

@@ -2,6 +2,7 @@
 /// The scene code of overlay 0x666, in ROM order.
 
 #include "system/main_routine_work.h"
+#include "event_work.h"
 
 #include "battle.h"
 #include "field.h"
@@ -112,7 +113,7 @@ void Func_02000084(void) {
   FieldEvent_ShowMessageThenWait(0x801f, 0, 0xa);
   Actor_FaceDirection(31, 0xc000, 0);
   FieldEvent_Wait(20);
-  FieldCamera_FollowActor(FIELD_AT(&gMainRoutineWork, s32, 532), 1);
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   Event_End();
 }
@@ -160,8 +161,8 @@ void Func_020002bc(void) {
   Event_SetFlag(0x8b1);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_WalkToAndWait(FIELD_AT(&gMainRoutineWork, s32, 532), 152, 328);
-  Actor_FaceDirection(FIELD_AT(&gMainRoutineWork, s32, 532), 0xc000, 0);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 152, 328);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xc000, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors07);
   Actor_FaceDirection(14, 0, 0);
   FieldEvent_Wait(20);
@@ -203,14 +204,14 @@ void Func_020002bc(void) {
 }
 
 void Func_02000444(s32 a0) {
-  Actor_FaceEachOther(a0, FIELD_AT(&gMainRoutineWork, s32, 532), 0);
+  Actor_FaceEachOther(a0, gMainRoutineWork.currentOwner, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors08);
   Event_ShowMessage(a0, 0);
   Actor_FaceDirection(14, 0x3000, 0);
 }
 
 void Func_0200047c(s32 a0, s32 a1) {
-  Actor_FaceEachOther(a1, FIELD_AT(&gMainRoutineWork, s32, 532), 0);
+  Actor_FaceEachOther(a1, gMainRoutineWork.currentOwner, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors48);
   Event_ShowMessage(a1, 0);
   Actor_FaceDirection(a1, 0xe000, 0);
@@ -277,7 +278,7 @@ void BattleEffect_FillOverlayTiles(s32 mode);
 void Func_02000bb4();
 
 s32 Scene_Initialize(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
   Actor_Get(16)->collisionFlags |= 4;
   Actor_Get(16)->collisionFlags |= 16;
   FieldActor_SetSpritePriority(9, 3);
@@ -318,7 +319,7 @@ void BattleEffect_FillOverlayTiles(s32 mode);
 void Func_02000bb4();
 
 s32 Scene_Initialize(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
   Actor_Get(16)->collisionFlags |= 4;
   Actor_Get(16)->collisionFlags |= 16;
   FieldActor_SetSpritePriority(9, 3);

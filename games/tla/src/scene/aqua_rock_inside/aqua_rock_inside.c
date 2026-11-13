@@ -4,6 +4,7 @@
 // ---- games/tla/src/scene/aqua_rock_inside.c ----
 
 #include "../shared/effects.h"
+#include "event_work.h"
 #include "../aqua_rock_inside.h"
 #include "field.h"
 #include "module/field/map.h"
@@ -1016,7 +1017,7 @@ void Func_02001a1c(void) {
 L_02009a46:
   FieldEvent_SetMessageId((s32)&MsgCheckedTheTabletIt);
   FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), s16, 0) =
-      (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
+      (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
   Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
   FieldEvent_Wait(1);
   Actor_WalkTo(gMainRoutineWork.currentOwner, 256, 184);
@@ -1263,7 +1264,7 @@ s32 Scene_Initialize(void) {
   s32 entrance = gMainRoutineWork.entrance;
   struct Actor *object;
 
-  FIELD_AT(Ram_HeapSlots->eventWork, s32, 428) = 0x204;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   if (scene == (s32)&SceneId_Ov67cRoom1) {
     if (GameFlag_Test(0x230)) {
       Call1((void (*)())Func_02001e78, 8);

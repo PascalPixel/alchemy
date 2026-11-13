@@ -597,12 +597,12 @@ void Func_02000658(void) {
     Event_Wait(30);
     Motion_SetModeAndWaitAnimation(6, 4);
     Event_ShowMessageThenWait(6, 0, 10);
-    (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
+    (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
   } else {
     Event_Wait(40);
     Motion_SetModeAndWaitAnimation(6, 3);
     Event_Wait(10);
-    (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
+    (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
     Event_ShowMessageThenWait(6, 0, 10);
   }
   Motion_SetModeAndWaitAnimation(13, 3);

@@ -595,11 +595,11 @@ void Func_02000cac(s32 arg) {
     FieldEvent_Wait(20);
     FieldEvent_Wait(10);
     FieldEvent_ShowMessageThenWait(28, 0, 5);
-    (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
+    (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
   } else {
     Actor_SetAnimation(28, 4);
     FieldEvent_Wait(33);
-    (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
+    (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
     FieldEvent_ShowMessageThenWait(28, 0, 5);
   }
   Actor_RunRepeatedMotion(5, 2);
@@ -1541,7 +1541,7 @@ void Func_02001ed0(void) {
 s32 Scene_Initialize(void) {
   struct Actor *object;
 
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 516;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 516;
   Func_02004994(8, 1);
   Func_02004994(9, 1);
   Func_02004994(10, 1);

@@ -271,7 +271,8 @@ s32 Scene_Initialize(void) {
   s32 flag;
   s32 height;
 
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = EVENT_WORK_VALUE;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect =
+      EVENT_WORK_VALUE;
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 0x20;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov66fRoom1) {

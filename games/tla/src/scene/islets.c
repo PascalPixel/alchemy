@@ -482,7 +482,7 @@ void Func_020006f4(void) {
       Func_02003fc4();
       Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
       FieldMessage_Show(noticed + 2, 1);
-      (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
+      (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
       Func_02003fbc();
       Actor_Jump(10, 6, 10);
       Event_SetMessageId(noticed + 3);
@@ -730,7 +730,8 @@ void Func_0200129c(struct Actor *gift) {
   Func_02003de4(gift, 2);
   FieldActor_SetMoveTarget(gift, 0x1200000, 0, 0x21a0000);
   FieldEvent_Wait(20);
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = ISLETS_GIFT_TRANSITION;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect =
+      ISLETS_GIFT_TRANSITION;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(3);
@@ -855,7 +856,7 @@ void Func_020014e0(void) {
         0) {
       struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
       Func_02003fbc();
-      (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
+      (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
       Event_ShowMessage(9, 0);
       ((u8 *)HeapSlot_AllocEwram(88, 664))[0x295] = 99;
       FieldActor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
@@ -879,7 +880,8 @@ void Func_020014e0(void) {
       Actor_GetById(10)->update = Actor_EmitSmoke;
       Actor_WalkTo(10, 288, 538);
       FieldEvent_Wait(20);
-      *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = STORED_AT_1AC;
+      ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect =
+          STORED_AT_1AC;
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();
       Func_02003fbc();

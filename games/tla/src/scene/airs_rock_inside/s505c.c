@@ -40,7 +40,7 @@ void Func_0200505c(void) {
   leader->gravity = 0x8000;
   leader->bounce = 0;
   leader->motionFlags = 0;
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(204);
@@ -76,7 +76,7 @@ void Func_0200505c(void) {
   Func_02005ec4(gMainRoutineWork.currentOwner, 256);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Event_End();
 }
 
@@ -104,7 +104,7 @@ s32 Scene_Initialize(void) {
    * Call6 (Call4 through a cast to void (*)()); as direct calls, 122 of 1091
    * instructions differ in tla-en. */
 
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 516;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 516;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   GameFlag_SetBit(0x300);
   GameFlag_SetBit(0x89f);

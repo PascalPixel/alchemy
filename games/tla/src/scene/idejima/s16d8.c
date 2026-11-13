@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x650, in ROM order.
 
 #include "../shared/tables.h"
+#include "event_work.h"
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -320,7 +321,7 @@ void Func_02001ee0(void) {
   Event_ShowMessage(0x1005, 0);
   Actor_FaceDirection(8, FACING_NORTHWEST + FACING_STEP, 0);
   FieldEvent_ShowMessageThenWait(0x8008, 0, 40);
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1b4) = 120;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->delay = 120;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(12);
@@ -655,7 +656,7 @@ void Func_02002c64(void) {
     Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
   } else {
     Actor_WaitForAnimationChange(leader);
-    *(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4) += 2;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x6666, 0x3333);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 384, 746);
     FelixWake_EndStep();

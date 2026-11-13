@@ -243,7 +243,7 @@
     actor->gravity = 0x8000;                                                   \
     actor->bounce = 0;                                                         \
     actor->motionFlags = 0;                                                    \
-    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;                  \
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;      \
     Event_StartScreenTransition();                                             \
     Event_WaitTransitionFrames();                                              \
     Event_PlaySound(204);                                                      \
@@ -319,7 +319,7 @@
     } while (x <= 39);                                                         \
     Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;               \
     table->shown = 0;                                                          \
-    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;                  \
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;      \
     Event_FinishScreenTransition();                                            \
     Event_WaitTransitionFrames();                                              \
   }
@@ -499,7 +499,7 @@
     actor->gravity = 0x8000;                                                   \
     actor->bounce = 0;                                                         \
     actor->motionFlags = 0;                                                    \
-    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;                  \
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;      \
     Event_StartScreenTransition();                                             \
     Event_WaitTransitionFrames();                                              \
     Event_PlaySound(204);                                                      \
@@ -609,7 +609,7 @@
       Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;             \
     } while (0);                                                               \
     event->busy = 0;                                                           \
-    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;                  \
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;      \
     Event_FinishScreenTransition();                                            \
     Event_WaitTransitionFrames();                                              \
   }

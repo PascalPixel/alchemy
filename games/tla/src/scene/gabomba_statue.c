@@ -598,7 +598,7 @@ void Func_02000a20(struct Actor *object) {
     if (i == 10)
       Event_PlaySound(204);
     if (i == 20) {
-      *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;
+      ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
       Event_FinishScreenTransition();
     }
   }
@@ -841,7 +841,7 @@ void Func_02000fc0(void) {
   Event_PlaySound(11);
   result = Func_02004d48(11, 1);
   ObjectTable_Snapshot();
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x201;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   switch (result) {

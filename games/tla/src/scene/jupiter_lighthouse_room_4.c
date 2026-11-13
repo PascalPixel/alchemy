@@ -172,7 +172,7 @@ s32 Scene_Initialize(void) {
   s32 flag;
   s32 i;
 
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 516;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 516;
   Func_020000c0();
   if (Event_GetFlag(2567))
     Func_0200017c();

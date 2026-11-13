@@ -55,7 +55,7 @@ void Teleporter_Sink(struct PushEvent *event) {
     Actor_GetById(gMainRoutineWork.currentOwner)->animationKind = 0;
   } while (0);
   event->busy = 0;
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }

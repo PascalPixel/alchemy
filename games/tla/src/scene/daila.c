@@ -2,6 +2,7 @@
 /// The scene code of overlay 0x651, in ROM order.
 
 #include "shared/actors.h"
+#include "event_work.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -385,7 +386,7 @@ DEFINE_SCENE_RAISE_HELD_ACTOR(Scene_RaiseHeldActor, Func_02000d58,
                               gData_02000d80)
 
 s32 Scene_Initialize(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila1)
     Func_02000d68(12, 0);
   else if (gMainRoutineWork.scene == (s32)&SceneId_Daila2)

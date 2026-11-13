@@ -2,6 +2,7 @@
 /// The scene code of overlay 0x673, in ROM order.
 
 #include "shared/tables.h"
+#include "event_work.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -476,7 +477,8 @@ s32 Scene_Initialize(void) {
   s32 entrance;
   struct Actor *statue;
 
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = CATACOMBS_SCREEN_EFFECT;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect =
+      CATACOMBS_SCREEN_EFFECT;
   Func_02001254(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room1 &&
       (entrance = gMainRoutineWork.entrance) == 1) {

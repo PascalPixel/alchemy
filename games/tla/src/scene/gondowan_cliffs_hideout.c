@@ -82,7 +82,7 @@ void GondowanCliffsHideout_WarriorsAreFound(void) {
 }
 
 s32 Scene_Initialize(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 513;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 513;
   Actor_SetSingleChildFlags(Actor_GetById(8), 0);
   Actor_SetSingleChildFlags(Actor_GetById(9), 0);
   return 0;

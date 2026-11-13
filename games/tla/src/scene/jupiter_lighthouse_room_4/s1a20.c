@@ -71,7 +71,7 @@ void Func_02001c68(s32 dx, s32 dz, s32 value) {
     shadow->z = object->z;
     Map_CenterOnFollowedPoint();
     Teleporter_DropIn();
-    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = value;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = value;
   }
 }
 

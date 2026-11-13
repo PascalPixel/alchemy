@@ -61,12 +61,13 @@ void Func_020000ec(void) {
   MapGrid_CopyCellAttributes(23, 22, 2, 1, 15, 39);
 }
 
-DEFINE_JUPITER_LIGHTHOUSE_CHECK_BLOCK_ON_CELL(JupiterLighthouse_CheckBlockOnCell, 10, 0xa01, 17, 33,
-    Func_02000060)
+DEFINE_JUPITER_LIGHTHOUSE_CHECK_BLOCK_ON_CELL(
+    JupiterLighthouse_CheckBlockOnCell, 10, 0xa01, 17, 33, Func_02000060)
 
 DEFINE_SCENE_RUN_ONCE(Scene_RunOnce, 0x200, Func_02000060)
 
-DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Scene_RunIfFlagCleared, 0x200, Func_020000ec, JupiterLighthouse_CheckBlockOnCell)
+DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Scene_RunIfFlagCleared, 0x200, Func_020000ec,
+                                 JupiterLighthouse_CheckBlockOnCell)
 
 void Func_020001f4(void) {
   System_Wait(10);
@@ -76,7 +77,7 @@ void Func_020001f4(void) {
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   if (!Event_GetFlag(0x109) && gMainRoutineWork.entrance == 6)
     Func_02001bcc(gMainRoutineWork.currentOwner);
   if (Event_GetFlag(0xa01)) {
@@ -109,14 +110,16 @@ extern s32 gPaletteCycleFrame;
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
-DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gPaletteCycleFrame, gData_02002230,
-    gData_02002258, 0x05000184)
+DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gPaletteCycleFrame,
+                             gData_02002230, gData_02002258, 0x05000184)
 
 void Func_02001b14();
 void Func_02001bc4();
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_02002230, gData_02002258,
-    gData_02002278, PaletteCycle_StepAt, gData_0200227c)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
+                                        gData_02002230, gData_02002258,
+                                        gData_02002278, PaletteCycle_StepAt,
+                                        gData_0200227c)
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02001b14, Func_02001bc4)
 

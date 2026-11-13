@@ -24,6 +24,7 @@ void Func_02000280(void) {
 
 #include "types.h"
 #include "flags.h"
+#include "event_work.h"
 #include "ram_buffer.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -42,7 +43,7 @@ void Func_020002a4(void) {
    * differ in tla-en. */
   register u16 *line asm("r5") = Data_02006340;
 
-  if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 0xca4) == 0) {
+  if (((struct EventWork *)Ram_HeapSlots->eventWork)->pendingFirst == 0) {
     u32 frame;
     s32 z, a, b;
     s32 stepA, stepB;
@@ -530,13 +531,6 @@ void Func_02000be4(void) {
   }
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void Func_02000d30(void) {
   s32 t4;
 
@@ -546,7 +540,7 @@ void Func_02000d30(void) {
   t4 = Event_GetFlag(FLAG_GAROH_NIGHT);
   if (t4 == 0)
     goto L_02008da6;
-  if (FIELD_AT(&gMainRoutineWork, s16, 482) != 12)
+  if (gMainRoutineWork.entrance != 12)
     goto L_02008d72;
   PaletteFade_ApplyTarget(0x2048c9, 1);
   goto L_02008d7e;

@@ -83,11 +83,10 @@ void Func_02000184(void) { Import_EventSetExitRequest(4); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-
 s32 Scene_Initialize(void) {
   s32 clear;
 
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   clear = Event_GetFlag(0x109);
   if (clear == 0) {
     if (gMainRoutineWork.entrance == 4)
@@ -119,15 +118,17 @@ extern s32 gPaletteCycleFrame;
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
-DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gPaletteCycleFrame, gData_02002198,
-    gData_020021c0, 0x05000184)
+DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gPaletteCycleFrame,
+                             gData_02002198, gData_020021c0, 0x05000184)
 
 #include "field_event.h"
 
 void Func_02001a6c();
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_02002198, gData_020021c0,
-    gData_020021e0, PaletteCycle_StepAt, gLighthouseUnlitColors)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
+                                        gData_02002198, gData_020021c0,
+                                        gData_020021e0, PaletteCycle_StepAt,
+                                        gLighthouseUnlitColors)
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02001a6c, Func_02001b34)
 

@@ -2,6 +2,7 @@
 /// The scene code of overlay 0x67e, in ROM order.
 
 #include "shared/tables.h"
+#include "event_work.h"
 #include "types.h"
 #include "task.h"
 #include "ram_buffer.h"
@@ -529,7 +530,7 @@ void Func_02000ba4(void) {
 }
 
 void Func_02000bdc(void) {
-  s32 value = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 340);
+  s32 value = ((struct EventWork *)Ram_HeapSlots->eventWork)->exit;
 
   Actor_ArmCallback(4, FACING_NORTH, 0);
   FieldEvent_Wait(10);

@@ -362,7 +362,7 @@ const struct Trigger *Scene_GetEvents(void) {
 }
 
 s32 Scene_Initialize(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6a9Room1)
     Func_02000ba8();
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6a9Room4)

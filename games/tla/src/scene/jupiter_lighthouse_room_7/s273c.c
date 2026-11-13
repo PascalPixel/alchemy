@@ -33,7 +33,7 @@ void Teleporter_DropIn(void) {
   actor->gravity = 0x8000;
   actor->bounce = 0;
   actor->motionFlags = 0;
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(204);
@@ -85,9 +85,10 @@ extern struct CellTarget gTeleporters;
 void GameFlag_SetByte(s32 flag, s32 value);
 
 DEFINE_TELEPORTERS_STEP(Teleporters_Step, gTeleporters, Teleporter_Uncover,
-    Teleporter_Sink)
+                        Teleporter_Sink)
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gTeleporters, Teleporter_DropIn)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gTeleporters,
+                                Teleporter_DropIn)
 
 #include "scene_tables.h"
 

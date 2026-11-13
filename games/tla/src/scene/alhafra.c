@@ -237,7 +237,7 @@ void Func_020002f8(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAlhafra69);
   Event_Wait(10);
-  Actor_SetAngleToward(27, FIELD_AT(&gMainRoutineWork, s32, 532), 0);
+  Actor_SetAngleToward(27, gMainRoutineWork.currentOwner, 0);
   Event_Wait(10);
   Event_ShowMessageThenWait(0x1b, 0, 0xa);
   Event_ShowMessageThenWait(-1, 0, 0xa);
@@ -312,9 +312,9 @@ void Func_0200047c(void) {
   Actor_FaceDirection(30, 0x6000, 0);
   Actor_SetModeById(29, 5);
   Sound_Play(0x59);
-  FIELD_AT(&gMainRoutineWork, s32, 532) = 0x1d;
+  gMainRoutineWork.currentOwner = 0x1d;
   BattleEffect_StartEffectObject22(0, 3);
-  FIELD_AT(&gMainRoutineWork, s32, 532) = 4;
+  gMainRoutineWork.currentOwner = 4;
   Event_Wait(50);
   FieldActor_Jump(28, 6, 15);
   FieldActor_Jump(28, 6, 23);
@@ -350,7 +350,7 @@ void Func_0200047c(void) {
   Actor_SetAnimation(30, 6);
   Actor_FaceDirection(29, 0x4000, 0);
   Actor_FaceDirection(28, 0xc000, 0);
-  FieldCamera_FollowActor(FIELD_AT(&gMainRoutineWork, s32, 532), 1);
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02001ccc__alhafra();
   Event_End();
 }
@@ -440,7 +440,7 @@ const struct Trigger *Scene_GetEvents(void) {
 s32 Scene_Initialize(void) {
   s32 t1, t2, t9, t23, t37, t39, t41, t44, t51, t53, t56, t58, t60;
 
-  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x100;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   t1 = GameFlag_Test(0x8a7);
   if (t1 == 0)
     goto L_020088aa;
@@ -875,7 +875,7 @@ void Func_02000aa0(s32 a0) {
   FieldEvent_ShowMessageThenWait(0x101e, 0, 0xa);
   Motion_SetVarCbAndRefresh(17, 2);
   Event_Wait(10);
-  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1b8), s32, 0) = 0;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->waitMode = 0;
   FieldEvent_ShowMessageThenWait(0x11, 0, 0xa);
   Motion_SetModeAndWaitAnimation(30, 3);
   Event_Wait(20);
@@ -1002,7 +1002,7 @@ void Func_02000aa0(s32 a0) {
   Actor_SetPosition(34, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(35, 0, 0);
   Event_Wait(15);
-  Camera_FollowActor(FIELD_AT(&gMainRoutineWork, s32, 532), 1);
+  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02001ccc__alhafra();
   Event_End();
 }
@@ -1023,8 +1023,8 @@ void Func_02001958(s32 a0) {
   FieldEvent_SetMessageId((s32)MsgAlhafra28);
   if (a0 == 1) {
     FieldEvent_Wait(10);
-    Actor_WalkToAndWait(FIELD_AT(&gMainRoutineWork, s32, 532), 168, 736);
-    Actor_FaceDirection(FIELD_AT(&gMainRoutineWork, s32, 532), 0, 0);
+    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 168, 736);
+    Actor_FaceDirection(gMainRoutineWork.currentOwner, 0, 0);
   }
   Actor_ShowEmote(0x19, 0x102, 0x1e);
   FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
@@ -1059,12 +1059,12 @@ void Func_02001958(s32 a0) {
       Motion_SetVarCbAndRefresh(25, 2);
       Event_Wait(20);
       Event_ShowMessageThenWait(0x19, 0, 0xa);
-      FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
-          (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
+      ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
+          (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
     } else {
       Event_Wait(30);
-      FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) =
-          (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
+      ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
+          (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
       Event_ShowMessageThenWait(0x19, 0, 0xa);
     }
     Actor_GetById(4)->actionFlags &= 0xfe;

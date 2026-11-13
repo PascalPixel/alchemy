@@ -2139,11 +2139,11 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003390, Func_02002d90,
 // Scene code of overlay 0x6ab, in ROM order.
 
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
-extern s32 gData_02004ce0[];
+extern s32 gFieldEffect_DurationScripts[];
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
-void Func_0200363c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options) {
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options) {
   struct FieldEffect *party =
       (struct FieldEffect *)Actor_GetById(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
@@ -2160,7 +2160,8 @@ void Func_0200363c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect, gData_02004ce0[flags & EFFECT_SCRIPT_MASK]);
+  Actor_StartScript(effect,
+                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
@@ -2189,7 +2190,7 @@ void Func_0200363c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     s32 targetX;
     s32 count;
 
-    script = gData_02004ce0[flags & EFFECT_SCRIPT_MASK];
+    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
     targetX = options->targetScaleX;
     count = script[3];
     if (start != 0) {
@@ -2239,13 +2240,13 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 // @file
 // Scene code of overlay 0x6ab, in ROM order.
 
-/* VIEW(s3e04): routine Func_0200363c as this part declared it; the joined file
- * has another; tried as the rest of the object declares it, Func_02003930
+/* VIEW(s3e04): routine FieldEffect_Spawn as this part declared it; the joined
+ * file has another; tried as the rest of the object declares it, Func_02003930
  * (gone) moves: 267 of 267 instructions in tla-ja. */
 void Func_0200363c__s3e04(
     s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("Func_0200363c");
-#define Func_0200363c Func_0200363c__s3e04
+    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
+#define FieldEffect_Spawn Func_0200363c__s3e04
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   FieldCamera_MoveTo(x, y, z, mode);
@@ -2255,7 +2256,7 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
   MapGrid_SetShake(a, b, c);
 }
 
-DEFINE_CRACKED_TILE_DROP_IN(Func_02003e04, Func_0200363c)
+DEFINE_CRACKED_TILE_DROP_IN(Func_02003e04, FieldEffect_Spawn)
 
 void GameFlag_SetByte(s32 flag, s32 value);
 /* VIEW(s3e04): routine CrackedTile_FallEvent as this part declared it; the
@@ -2488,11 +2489,11 @@ s16 gData_0200483c[] = {
     16384, 0, -32768, 16384, -1, 0, -32768, -1,
 };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_0200485c, 22)
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_02004898, 44)
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_020048d4, 126)
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
 
 s32 gData_02004910[] = {
     SC_CALL(Func_02000038),
@@ -2593,12 +2594,12 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-s32 gData_02004ce0[] = {
-    (s32)gData_0200485c,
-    (s32)gData_02004898,
-    (s32)gData_020048d4,
+s32 gFieldEffect_DurationScripts[] = {
+    (s32)gFieldEffect_ShortScript,
+    (s32)gFieldEffect_MediumScript,
+    (s32)gFieldEffect_LongScript,
 };
-#undef Func_0200363c
+#undef FieldEffect_Spawn
 #undef CrackedTile_FallEvent
 #undef Func_02000038
 #undef MarsLighthouseStarRoom_SlideOnIce

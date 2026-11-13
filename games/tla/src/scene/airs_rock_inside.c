@@ -1,10 +1,9 @@
 /// @file
 /// Air's Rock's inside, the rooms of this overlay within the rock in Osenia:
 /// halls of tightropes, pillars to Move and twisters to Whirlwind. At its heart
-/// Sheba
-/// reads the tablet and learns Reveal (AirsRockInside_ReadRevealTablet, walked
-/// to by AirsRockInside_WalkToRevealTablet), and a Psynergy Stone restores the
-/// party's PP (AirsRockInside_CheckPsynergyStone).
+/// Sheba reads the tablet and learns Reveal (AirsRockInside_ReadRevealTablet,
+/// walked to by AirsRockInside_WalkToRevealTablet), and a Psynergy Stone
+/// restores the party's PP (AirsRockInside_CheckPsynergyStone).
 
 #include "shared/map_cells.h"
 #include "shared/actors.h"

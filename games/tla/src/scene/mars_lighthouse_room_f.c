@@ -174,9 +174,9 @@ void Func_02001490(void);
 
 void Func_02001894(struct Actor *self);
 
-void Func_020035b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 s32 Func_02001d5c(struct Actor *a, struct Actor *b);
 s32 Func_02001dc0(struct Actor *a, struct Actor *b);
@@ -1273,12 +1273,12 @@ struct GustObject *Func_02001a54(struct GustObject *source) {
   object->speedLimit = 0x18000;
   options.priority = 1;
   options.palette = 7;
-  Func_020035b8(position.x, source->y, position.z - 0x60000, 0, 0, 0, 0x30000,
-                &options);
+  FieldEffect_Spawn(position.x, source->y, position.z - 0x60000, 0, 0, 0,
+                    0x30000, &options);
   return object;
 }
 
-DEFINE_ACTOR_EMIT_RISING_SPARKS_B(Actor_EmitRisingSparksB, Func_020035b8)
+DEFINE_ACTOR_EMIT_RISING_SPARKS_B(Actor_EmitRisingSparksB, FieldEffect_Spawn)
 
 void Func_02001bcc(void) {
   struct PositionedActor *actor9 = Actor_GetById(9);
@@ -2227,10 +2227,10 @@ DEFINE_ACTOR_PARK(Func_0200351c, Func_02003304)
 #include "field/event_inline.h"
 
 void Actor_StartScript(struct Actor *object, const void *script);
-extern s32 gData_02007058[];
-void Func_020035b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options) {
+extern s32 gFieldEffect_DurationScripts[];
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options) {
   struct FieldEffect *party =
       (struct FieldEffect *)Actor_GetById(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
@@ -2247,7 +2247,8 @@ void Func_020035b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Func_02005480(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect, gData_02007058[flags & EFFECT_SCRIPT_MASK]);
+  Actor_StartScript(effect,
+                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
@@ -2276,7 +2277,7 @@ void Func_020035b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     s32 targetX;
     s32 count;
 
-    script = gData_02007058[flags & EFFECT_SCRIPT_MASK];
+    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
     targetX = options->targetScaleX;
     count = script[3];
     if (start != 0) {
@@ -2346,7 +2347,7 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
   MapGrid_SetShake(a, b, c);
 }
 
-DEFINE_CRACKED_TILE_DROP_IN(Func_02003d80, Func_020035b8)
+DEFINE_CRACKED_TILE_DROP_IN(Func_02003d80, FieldEffect_Spawn)
 
 void GameFlag_SetByte(s32 flag, s32 value);
 /* VIEW(s3d80): routine CrackedTile_FallEvent as this part declared it; the
@@ -2818,11 +2819,11 @@ u32 gData_02005e00[] = {
     1, 13, 10, 0xc0010000, 38,
 };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_02005e44, 22)
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_02005e80, 44)
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_02005ebc, 126)
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
 
 s32 gData_02005ef8[] = {
     0xffff, -0x8000, (s32)0xe000c000, (s32)0xc000a000, 0x20004000, 0x40006000,
@@ -3125,10 +3126,10 @@ LATE_DATA s32 gData_02007044[] = {
 };
 // clang-format on
 
-LATE_DATA s32 gData_02007058[] = {
-    (s32)gData_02005e44,
-    (s32)gData_02005e80,
-    (s32)gData_02005ebc,
+LATE_DATA s32 gFieldEffect_DurationScripts[] = {
+    (s32)gFieldEffect_ShortScript,
+    (s32)gFieldEffect_MediumScript,
+    (s32)gFieldEffect_LongScript,
 };
 #undef MarsLighthouseRoomF_ContinueSlide
 #undef Func_02001010

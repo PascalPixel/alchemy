@@ -73,7 +73,7 @@ static inline void Contigo_Tiles(s32 srcX, s32 srcY, s32 width, s32 height,
 
 /// What The Lost Age's code declares for the files that use it, written once.
 
-extern s32 gData_0200474c[];
+extern s32 gFieldEffect_DurationScripts[];
 extern struct ActorPlacement gContigo_Room1Placements[];
 extern struct ActorPlacement gContigo_Room4Placements[];
 extern struct ActorPlacement gData_02005018[];
@@ -306,7 +306,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect, gData_0200474c[flags & EFFECT_SCRIPT_MASK]);
+  Actor_StartScript(effect,
+                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
@@ -335,7 +336,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     s32 target;
     s32 frames;
 
-    script = gData_0200474c[flags & EFFECT_SCRIPT_MASK];
+    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
     target = options->targetScaleX;
     frames = script[3];
     if ((flags & EFFECT_USE_START_SCALE) != 0) {
@@ -2586,7 +2587,7 @@ s16 gData_020046d8[] = {
 
 DEFINE_G_DATA_020013B4(gData_02004704, 94, 89, 90, 91, 92, 93)
 
-s32 gData_0200474c[] = {
+s32 gFieldEffect_DurationScripts[] = {
     (s32)gData_0200457c,
     (s32)gData_020045b8,
     (s32)gData_020045f4,

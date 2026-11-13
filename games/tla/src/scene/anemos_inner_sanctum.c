@@ -1779,7 +1779,7 @@ void Effect_MoveLocal(union FieldObject *object) {
   sprite->rotation += object->effect.spin;
 }
 
-extern s32 gData_02004428[];
+extern s32 gFieldEffect_DurationScripts[];
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void Actor_SetSpritePriorityB(struct Actor *object, s32 priority);
 void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -1801,7 +1801,8 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect, gData_02004428[flags & EFFECT_SCRIPT_MASK]);
+  Actor_StartScript(effect,
+                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSpriteFlags(effect, 0);
   effect->update = Effect_MoveLocal;
@@ -1830,7 +1831,7 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     s32 targetX;
     s32 count;
 
-    script = gData_02004428[flags & EFFECT_SCRIPT_MASK];
+    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
     targetX = options->targetScaleX;
     count = script[3];
     if (start != 0) {
@@ -2488,7 +2489,7 @@ struct MapGridCellAnimation gData_02004410[] = {
     {gData_020043fa, 53, 4},
 };
 
-s32 gData_02004428[] = {
+s32 gFieldEffect_DurationScripts[] = {
     (s32)gData_0200378c,
     (s32)gData_020037c8,
     (s32)gData_02003804,

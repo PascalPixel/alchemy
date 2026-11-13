@@ -46,11 +46,11 @@
 
 void Actor_SelectAnimation(struct Actor *object, s32 argument);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-extern s32 gData_020047a0[];
+extern s32 gFieldEffect_DurationScripts[];
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
-void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options) {
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options) {
   struct FieldEffect *party =
       ((struct FieldEffect *)Actor_GetById(gMainRoutineWork.currentOwner));
   struct FieldEffect *effect;
@@ -67,7 +67,8 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect, gData_020047a0[flags & EFFECT_SCRIPT_MASK]);
+  Actor_StartScript(effect,
+                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
@@ -96,7 +97,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     s32 targetX;
     s32 count;
 
-    script = gData_020047a0[flags & EFFECT_SCRIPT_MASK];
+    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
     targetX = options->targetScaleX;
     count = script[3];
     if (start != 0) {
@@ -2338,7 +2339,7 @@ s32 gData_02004780[] = {
     0xffff, -0x8000,
 };
 
-s32 gData_020047a0[] = {
+s32 gFieldEffect_DurationScripts[] = {
     (s32)gData_02004644,
     (s32)gData_02004680,
     (s32)gData_020046bc,

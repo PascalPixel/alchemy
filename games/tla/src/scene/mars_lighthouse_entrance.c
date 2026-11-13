@@ -282,9 +282,9 @@ void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index) {
     options.startScaleX = options.startScaleY = 0x10000;
     options.targetScaleX = options.targetScaleY = 0x8000;
     options.rotation = (Random16() & 15) << 12;
-    Func_02003b30(object->x, object->y - index * 3 * 0x10000 + 0x100000,
-                  object->z, ((Random16() & 15) - 8) << 13, 0, 0, 0x5a0000,
-                  &options);
+    FieldEffect_Spawn(object->x, object->y - index * 3 * 0x10000 + 0x100000,
+                      object->z, ((Random16() & 15) - 8) << 13, 0, 0, 0x5a0000,
+                      &options);
     object->scaleY -= 0x1f00;
   }
   if (mode == 1) {
@@ -2165,7 +2165,7 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003884, Func_02003284, Func_02004bc0,
 #undef gMarsLighthouseEntrance_Room5Placements
 #undef gMarsLighthouseEntrance_Room6Placements
 #undef gMarsLighthouseEntrance_Room7Placements
-#undef Func_02003b30
+#undef FieldEffect_Spawn
 #undef gData_0200547c
 #undef gData_020054cc
 #undef gData_02005528
@@ -2238,13 +2238,13 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003884, Func_02003284, Func_02004bc0,
 // @file
 // Scene code of overlay 0x6aa, in ROM order.
 
-extern s32 gData_0200686c[];
+extern s32 gFieldEffect_DurationScripts[];
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
-void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options) {
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options) {
   struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
@@ -2259,7 +2259,8 @@ void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Func_02004bc0(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect, gData_0200686c[flags & EFFECT_SCRIPT_MASK]);
+  Actor_StartScript(effect,
+                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
@@ -2288,7 +2289,7 @@ void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     s32 target;
     s32 frames;
 
-    script = gData_0200686c[flags & EFFECT_SCRIPT_MASK];
+    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
     target = options->targetScaleX;
     frames = script[3];
     if ((flags & EFFECT_USE_START_SCALE) != 0) {
@@ -2426,8 +2427,8 @@ next:
     velocity.x += velocity.x >> 1;
     velocity.x += ((u32)(Random16() * 3 << 14) >> 16) - 0x6000;
     velocity.z += ((u32)(Random16() * 3 << 13) >> 16) - 0x3000;
-    Func_02003b30(leader->x, leader->y, leader->z, velocity.x, velocity.y,
-                  velocity.z, 0x1090001, &options);
+    FieldEffect_Spawn(leader->x, leader->y, leader->z, velocity.x, velocity.y,
+                      velocity.z, 0x1090001, &options);
   }
   if (++i <= 16)
     goto next;
@@ -2820,11 +2821,11 @@ s16 gData_02005798[] = {
     16384, 0, -32768, 16384, -1, 0, -32768, -1,
 };
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_020057b8, 22)
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_020057f4, 44)
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
 
-DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_02005830, 126)
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
 
 s16 gData_0200586c[] = {
     137, 138, 139, 140, 141, 142, 143, -1,
@@ -3299,10 +3300,10 @@ u32 gData_02006868[] = {
     0,
 };
 
-s32 gData_0200686c[] = {
-    (s32)gData_020057b8,
-    (s32)gData_020057f4,
-    (s32)gData_02005830,
+s32 gFieldEffect_DurationScripts[] = {
+    (s32)gFieldEffect_ShortScript,
+    (s32)gFieldEffect_MediumScript,
+    (s32)gFieldEffect_LongScript,
 };
 #undef Func_02004160
 #undef Func_020045f8

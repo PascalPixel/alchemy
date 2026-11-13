@@ -677,11 +677,6 @@ static void VaultCave_RunRumble(void) {
 
 /// In VaultCavePassage's pool room, searching the switch flips it.
 /// "Isaac flipped the switch."
-///
-/// The first time since the party came in from Vault, the switch turns, the
-/// cave rumbles and shakes for eight seconds and the map changes as it fades.
-/// FLAG_VAULT_CAVE_SWITCH_FLIPPED then keeps the change until the party comes
-/// down the ladder from Vault again.
 static void VaultCave_FlipSwitch(void) {
   s32 destinationColumn;
 

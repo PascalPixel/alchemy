@@ -331,9 +331,6 @@ static void AltmillerCave_SetFadeLevel(s32 level) {
 }
 
 /// Crossing the first darkness boundary sets the cave's lightest level.
-///
-/// AltmillerCaveEntrance's boundaries are step triggers 60 to 65. Crossing one
-/// sets its level, 0 to 5, each a step darker than the last.
 static void AltmillerCave_DarkenToLevel0(void) {
   AltmillerCave_SetFadeLevel(0);
 }
@@ -610,9 +607,6 @@ static void AltmillerCave_PlaceLights(s32 angle) {
 }
 
 /// Task that spins the ring of lights.
-///
-/// It speeds up, coasts, slows and stops with the chosen light at the top,
-/// which then pulses. A click (SE_CLICK) sounds for each fifth of a turn.
 static void AltmillerCave_SpinLights(void) {
   struct LightWheel *wheel = gAltmillerCave_LightWheel;
   s32 moving = 1;
@@ -664,14 +658,6 @@ static void AltmillerCave_SpinLights(void) {
 
 /// Talking to one of AltmillerCaveDraught's rocks rotates it. "Isaac rotated
 /// the rock."
-///
-/// - Turning the leftmost rock, then the rightmost, brings out the ring of
-///   lights.
-/// - Then each time the rock matching the light at the top is turned, the ring
-///   spins to another light.
-/// - A wrong rock puts the lights away and starts over.
-/// - After three lights matched the ring shrinks away, the wall bursts and the
-///   way to Babi's draught opens.
 static void AltmillerCave_TurnRock(s32 rock) {
   u8 *puzzle;
   struct LightWheel *wheel;
@@ -830,15 +816,6 @@ static __inline__ void AltmillerCave_FacePartyNorth(void) {
 }
 
 /// Babi drinks the Mystic Draught and appears, startling the party.
-///
-/// It plays in AltmillerCaveBabi on talking to Babi or reading his mind once
-/// the Mystic Draught is found.
-///
-/// - Ivan reads his mind and finds him to be Babi, the ruler of Tolbi, who
-///   sought Lemurians to escape growing old.
-/// - Two soldiers from Tolbi find him and take him back.
-/// - He invites the party to Colosso's finals.
-/// - Garet asks whether they should take part.
 static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   struct ScreenTransitionState *state;
   struct Actor *actor;
@@ -1607,10 +1584,6 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
 
 /// The invisible Babi asks the party to bring his draught from deep in the
 /// cave.
-///
-/// It plays in AltmillerCaveBabi on talking to the invisible Babi or reading
-/// his mind the first time. He can be heard but not seen, and cannot move. He
-/// tells the order of the five rocks.
 static void AltmillerCave_MeetInvisibleBabi(void) {
   struct Actor *leader;
   s32 line;
@@ -1930,9 +1903,6 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
 
 /// Babi asks whether the party forgot the order of the rock colors, and tells
 /// it again.
-///
-/// It plays in AltmillerCaveBabi on talking to Babi again before the draught is
-/// found.
 static void AltmillerCave_RepeatRockOrder(void) {
   s32 question;
 
@@ -1957,9 +1927,6 @@ static void AltmillerCave_RepeatRockOrder(void) {
 
 /// Babi calls the party back and says where the draught is. "Wait... The
 /// draught is... on a table behind the door."
-///
-/// It plays in AltmillerCaveBabi on walking away from Babi (step trigger 19)
-/// the first time after meeting him.
 static void AltmillerCave_BabiCallsPartyBack(void) {
   if (GameFlag_Get(FLAG_MET_INVISIBLE_BABI) == 0)
     return;
@@ -2022,12 +1989,6 @@ static __inline__ void AltmillerCave_RedrawObstacleFootprints(void) {
 }
 
 /// Sets up the room being entered. Returns 0.
-///
-/// - An entry from outside the cave takes the room's first entrance.
-/// - AltmillerCaveEntrance picks its darkness from the entrance.
-/// - AltmillerCaveBabi's Babi is invisible until rescued.
-/// - AltmillerCaveSquall's obstacles and pillar and AltmillerCaveDraught's
-///   obstacles, lights and rocks are restored.
 s32 AltmillerCave_Initialize(void) {
   struct Actor *actor;
   s32 i;

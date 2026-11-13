@@ -328,10 +328,6 @@ static void MogallForest_SpawnPuffRing(s32 id) {
 }
 
 /// Brings an ape out of its hiding place.
-///
-/// The camera goes to the ape's hiding place, which bursts in a ring of puffs,
-/// and the ape shows itself in colour mode color. That is SPRITE_COLOR_GRB for
-/// a guide, SPRITE_COLOR_NORMAL for one that attacks.
 static void MogallForest_ApeComesOut(s32 actorId, s32 color) {
   FieldCamera_SetSpeedParameters(px(2), px(1) / 4);
   FieldCamera_MoveToActorById(actorId, 1);
@@ -389,9 +385,6 @@ const struct ActorPlacement *MogallForest_GetActorPlacements(void) {
 
 /// Mogall Forest, the first area: walking into a log (cell behavior 20) pushes
 /// it.
-///
-/// The river log pushed to row 26 rolls into the water and can be crossed. Sets
-/// FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED.
 static void MogallForest_FirstArea_PushLog(void) {
   struct PushedActorProbe probe;
 
@@ -473,8 +466,6 @@ static void MogallForest_FirstArea_JumpSouth(void) {
 }
 
 /// Mogall Forest, the first area: searching the sign (cell behavior 27).
-///
-/// "The broken sign reads: North: Fuchin Temple / South: Mogall Prairie..."
 static void MogallForest_ReadBrokenSign(void) {
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -483,8 +474,6 @@ static void MogallForest_ReadBrokenSign(void) {
 }
 
 /// Mogall Forest, the first area: Force on the north hiding place.
-///
-/// The ape comes out, points the way and hops off south.
 static void MogallForest_FirstArea_NorthApeShowsWay(void) {
   struct Actor *ape;
 
@@ -520,9 +509,6 @@ static void MogallForest_FirstArea_NorthApeShowsWay(void) {
 }
 
 /// Mogall Forest, the first area: Force on the attacking ape's hiding place.
-///
-/// It comes out angry and leaps at the leader, and the battle with an Ape
-/// begins (ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, slot 0).
 static void MogallForest_FirstArea_ApeAttacks(void) {
   struct Actor *ape;
 
@@ -563,8 +549,6 @@ static void MogallForest_FirstArea_ApeAttacks(void) {
 }
 
 /// Mogall Forest, the first area: Force on the east hiding place.
-///
-/// The ape comes out, points the way and hops off east.
 static void MogallForest_FirstArea_EastApeShowsWay(void) {
   struct Actor *ape;
 
@@ -602,17 +586,12 @@ static void MogallForest_FirstArea_EastApeShowsWay(void) {
 
 /// Mogall Forest, the first area: Catch on the Nut floating over the river
 /// brings it to the party.
-///
-/// Sets FLAG_MOGALL_FOREST_NUT_CAUGHT.
 static void MogallForest_CatchNut(void) {
   Scene_CatchNut(ACTOR_NUT, FLAG_MOGALL_FOREST_NUT_CAUGHT);
 }
 
 /// Mogall Forest, the second area: walking into a log (cell behavior 20) pushes
 /// it.
-///
-/// The log at row 23 changes the ground beside it, and the river log pushed to
-/// column 35 rolls into the water.
 static void MogallForest_SecondArea_PushLog(void) {
   struct PushedActorProbe probe;
   s32 destinationColumn;
@@ -669,8 +648,6 @@ static inline void MogallForest_UpdateRockFootprint(s32 column, s32 row) {
 }
 
 /// Mogall Forest, the second area: Move on the rock.
-///
-/// Its footprint follows it, and at (36, 24) it sinks two pixels into place.
 static void MogallForest_SecondArea_UpdateRock(void) {
   s32 column;
   s32 row;
@@ -694,8 +671,6 @@ static void MogallForest_SecondArea_UpdateRock(void) {
 }
 
 /// Mogall Forest, the second area: Force on the north hiding place.
-///
-/// The ape points the way and hops off south.
 static void MogallForest_SecondArea_NorthApeShowsWay(void) {
   struct Actor *ape;
 
@@ -726,8 +701,6 @@ static void MogallForest_SecondArea_NorthApeShowsWay(void) {
 }
 
 /// Mogall Forest, the second area: Force on the east hiding place.
-///
-/// The ape points the way and hops off east.
 static void MogallForest_SecondArea_EastApeShowsWay(void) {
   struct Actor *ape;
 
@@ -769,8 +742,6 @@ static void MogallForest_SecondArea_EastApeShowsWay(void) {
 
 /// Mogall Forest, the second area: Force on the south hiding place the first
 /// time.
-///
-/// The ape bolts to another hiding place nearby.
 static void MogallForest_SecondArea_SouthApeHidesAgain(void) {
   struct Actor *ape;
 
@@ -789,8 +760,6 @@ static void MogallForest_SecondArea_SouthApeHidesAgain(void) {
 }
 
 /// Mogall Forest, the second area: Force on the south ape's new hiding place.
-///
-/// It points the way and hops off west.
 static void MogallForest_SecondArea_SouthApeShowsWay(void) {
   struct Actor *ape;
 
@@ -834,9 +803,6 @@ static void MogallForest_SecondArea_SouthApeShowsWay(void) {
 
 /// Mogall Forest, the third area: walking into a log (cell behavior 20) pushes
 /// it.
-///
-/// Each river log rolls into the water at its column (42 and 40) and can be
-/// crossed.
 static void MogallForest_ThirdArea_PushLog(void) {
   struct PushedActorProbe probe;
   s32 landed;
@@ -979,8 +945,6 @@ static void MogallForest_ThirdArea_UpdateSouthRock(void) {
 }
 
 /// Mogall Forest, the third area: Force on the attacking ape's hiding place.
-///
-/// The ape leaps at the leader and the battle with an Ape begins.
 static void MogallForest_ThirdArea_ApeAttacks(void) {
   struct Actor *ape;
   struct Actor *leaderForX;
@@ -1017,8 +981,6 @@ static void MogallForest_ThirdArea_ApeAttacks(void) {
 }
 
 /// Mogall Forest, the third area: Force on the middle hiding place.
-///
-/// The ape points the way and hops off south.
 static void MogallForest_ThirdArea_MiddleApeShowsWay(void) {
   struct Actor *ape;
 
@@ -1057,8 +1019,6 @@ static void MogallForest_ThirdArea_MiddleApeShowsWay(void) {
 }
 
 /// Mogall Forest, the third area: Force on the west hiding place.
-///
-/// The ape points the way and hops off west.
 static void MogallForest_ThirdArea_WestApeShowsWay(void) {
   struct Actor *ape;
 
@@ -1098,8 +1058,6 @@ static void MogallForest_ThirdArea_WestApeShowsWay(void) {
 
 /// Mogall Forest, the third area: Force on the east hiding place the first
 /// time.
-///
-/// The ape bolts to another hiding place to the south.
 static void MogallForest_ThirdArea_EastApeHidesAgain(void) {
   struct Actor *ape;
 
@@ -1118,8 +1076,6 @@ static void MogallForest_ThirdArea_EastApeHidesAgain(void) {
 }
 
 /// Mogall Forest, the third area: Force on the east ape's new hiding place.
-///
-/// It points the way and hops off south.
 static void MogallForest_ThirdArea_EastApeShowsWay(void) {
   struct Actor *ape;
 
@@ -1161,9 +1117,6 @@ static void MogallForest_ThirdArea_EastApeShowsWay(void) {
 }
 
 /// Mogall Forest, the third area: touching cell behavior 22, once.
-///
-/// The east ape appears again, turns to the party and leads it south to a
-/// hiding place. Sets FLAG_MOGALL_FOREST_LED_TO_KILLER_APE.
 static void MogallForest_ApeLeadsToKillerApe(void) {
   struct Actor *ape;
 
@@ -1198,12 +1151,6 @@ static void MogallForest_ApeLeadsToKillerApe(void) {
 
 /// Mogall Forest, the third area: touching cell behavior 23 until the Killer
 /// Ape is beaten.
-///
-/// The hiding place shakes twice and out comes the Killer Ape to fight
-/// (ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, slot 1). It is the east ape's
-/// actor, a fifth again as big.
-///
-/// The party comes back at MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS.
 static void MogallForest_KillerApeAttacks(void) {
   struct Vector3 velocity;
   struct Actor *actor;
@@ -1292,15 +1239,6 @@ const struct Trigger *MogallForest_GetTriggers(void) {
 }
 
 /// Sets up Mogall Forest's area.
-///
-/// In the first area, the first time, an ape peeks out and hides. Apes already
-/// out stay gone, and rolled logs and moved rocks stay put.
-///
-/// In the third area, coming back from the Killer Ape
-/// (MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS) marks it beaten.
-/// Entering at MOGALL_FOREST_KILLER_APE_BRIDGES_FROM_RIVER or
-/// MOGALL_FOREST_KILLER_APE_FROM_WORLD_MAP once Force is learned and the Killer
-/// Ape beaten sets FLAG_NYUNPA_ENLIGHTENED.
 s32 MogallForest_Initialize(void) {
   struct Actor *actor;
   s32 sceneId;

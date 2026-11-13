@@ -171,11 +171,6 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) { return gMcCoyPalaceExits; }
 
 /// The people of McCoy's Palace.
-///
-/// Once the reward is taken, four of them turn differently when talked to:
-/// the woman in Milady's nightgown, the old man who praises the warriors, the
-/// soldier who watched the party go to Kolima and the soldier who keeps the
-/// treasure.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *placements;
 
@@ -272,11 +267,6 @@ static void McCoyPalace_TalkToSoldierWatchingKolima(void) {
 
 /// McCoy's Palace, the treasure room: the soldier who keeps the treasure.
 ///
-/// What he says follows the reward:
-/// - Before, Bilibin's great treasures go to whoever ends the curse.
-/// - While the party chooses, only one item.
-/// - After, the reward was the greatest.
-///
 /// Unused: with flag 0x84d set he would say `Pick any one of the four
 /// treasures.` instead, but nothing in the game names or sets that flag.
 static void McCoyPalace_TalkToSoldierShowingTheReward(void) {
@@ -334,8 +324,6 @@ static void McCoyPalace_ReadRewardSoldiersThoughts(void) {
 
 /// McCoy's Palace, step triggers 9, 12 and 13: walking north through a door
 /// opens it with a sound, the leader walks through and the next room loads.
-///
-/// McCoy's door (step trigger 9) makes no sound once the captain has opened it.
 static void McCoyPalace_WalkThroughDoor(void) {
   struct FieldWork *work;
   s32 hideDoorLayers;
@@ -530,12 +518,6 @@ static __inline__ void McCoyPalace_OpenRewardChestRow(void) {
 }
 
 /// Sets McCoy's Palace up.
-///
-/// It sets up one of these:
-/// - McCoy's first audience.
-/// - The captain outside McCoy's door after it.
-/// - The reward audience once Kolima's curse is lifted.
-/// - The reward chests where the party left them.
 s32 Scene_Initialize(void) {
   s32 rewardTaken;
   s32 curseLifted;
@@ -623,15 +605,6 @@ static __inline__ void McCoyPalace_PrepareCompanionApproach(void) {
 /// McCoy's Palace, through McCoy's door before the curse is lifted, the first
 /// audience: the captain announces the party and McCoy asks whether they can
 /// save Kolima.
-///
-/// - Refusing, he calls them too young and they leave. Coming back, they may
-///   change their minds.
-/// - Accepting, McCoy gives the key to the barricades, Garet bristles at
-///   being called children, and McCoy takes the key back and has the captain
-///   see them out.
-///
-/// The party arrives at MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST, beyond
-/// the door.
 static void McCoyPalace_AudienceWithMcCoy(void) {
   struct Actor *actor;
 
@@ -1206,10 +1179,6 @@ static void McCoyPalace_FaceCompanionsForAudience(void) {
 
 /// McCoy's Palace, once Kolima's curse is lifted: brought in under arrest, the
 /// party is thanked by McCoy and sent to choose a reward.
-///
-/// The gate guards bring the party in from the grounds
-/// (MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST) to
-/// MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST, before McCoy.
 static void McCoyPalace_McCoyRewardsParty(void) {
   struct Actor *viewCenter;
   struct Actor *actor;

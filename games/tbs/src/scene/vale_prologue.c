@@ -288,9 +288,6 @@ const struct Trigger *ValePrologue_GetTriggers(void) {
 
 /// In Vale on the stormy night, swaps the bridge's cell behaviors as
 /// the leader steps onto it.
-///
-/// Reached by stepping on cell behavior 15. Sets FLAG_VALE_ON_BRIDGE, which
-/// ValePrologue_Initialize reads to swap them again.
 static void ValePrologue_StepOntoBridge(void) {
   GameFlag_Set(FLAG_VALE_ON_BRIDGE);
   MapGrid_CopyCellAttributes(40, 84, 7, 4, 10, 84);
@@ -298,8 +295,6 @@ static void ValePrologue_StepOntoBridge(void) {
 
 /// In Vale on the stormy night, restores the bridge's cell behaviors as
 /// the leader steps off it.
-///
-/// Reached by stepping on cell behavior 14. Clears FLAG_VALE_ON_BRIDGE.
 static void ValePrologue_StepOffBridge(void) {
   GameFlag_Clear(FLAG_VALE_ON_BRIDGE);
   MapGrid_CopyCellAttributes(40, 89, 7, 4, 10, 84);
@@ -324,11 +319,6 @@ UNUSED static void ValePrologue_UnusedOpenSanctumDoor(void) {
 }
 
 /// Leaves through an exit the exit table doesn't list.
-///
-/// In Vale on the stormy night, stepping on cell behavior 2 requests exit 1,
-/// the one number the exit table leaves out. Scene_TakeExit therefore falls
-/// back to the first exit's scene, Vale's SceneId_ValePlaza, at
-/// ENTRANCE_DEFAULT.
 static void ValePrologue_LeaveNorthwestToValePlaza(void) {
   Sound_Play(SE_MAP_EXIT);
   Vale_RequestBackdropExit(1);
@@ -336,9 +326,6 @@ static void ValePrologue_LeaveNorthwestToValePlaza(void) {
 
 /// In Vale on the stormy night, leaves for the part of Vale around Kraden's
 /// cottage.
-///
-/// Reached by stepping on cell behavior 3. Arrives at
-/// VALE_KRADENS_COTTAGE_FROM_VALE_NORTH.
 static void ValePrologue_LeaveToValeKradensCottageNorth(void) {
   Sound_Play(SE_MAP_EXIT);
   Vale_RequestBackdropExit(VALE_PROLOGUE_TO_VALE_KRADENS_COTTAGE_NORTH);
@@ -346,9 +333,6 @@ static void ValePrologue_LeaveToValeKradensCottageNorth(void) {
 
 /// In Vale on the stormy night, leaves for the part of Vale around Kraden's
 /// cottage by its second path.
-///
-/// Reached by stepping on cell behavior 4. Arrives at
-/// VALE_KRADENS_COTTAGE_FROM_VALE_SOUTH.
 static void ValePrologue_LeaveToValeKradensCottageSouth(void) {
   Sound_Play(SE_MAP_EXIT);
   Vale_RequestBackdropExit(VALE_PROLOGUE_TO_VALE_KRADENS_COTTAGE_SOUTH);
@@ -356,10 +340,6 @@ static void ValePrologue_LeaveToValeKradensCottageSouth(void) {
 
 /// In Vale on the stormy night, leaves for the plaza, where the villagers have
 /// gathered (SceneId_ValePlaza).
-///
-/// Reached by stepping on cell behavior 5. Arrives at VALE_PLAZA_FROM_VALE.
-/// After the Boulder swept them away, Garet first resolves to go after Isaac
-/// (ValePrologue_GaretFollowsIsaac).
 static void ValePrologue_LeaveToValePlaza(void) {
   Sound_Play(SE_MAP_EXIT);
   if (GameFlag_Get(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0 &&
@@ -370,9 +350,6 @@ static void ValePrologue_LeaveToValePlaza(void) {
 }
 
 /// In Vale on the stormy night, opens the door of Garet's house and goes in.
-///
-/// Reached by walking north into cell behavior 6. Arrives at
-/// COTTAGE_ROOMS_A_FROM_VALE_EAST, the house where Garet's family lives.
 static void ValePrologue_LeaveToCottageRoomsAEast(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gValePrologue_IsaacsDoorOpens, 54, 32);
@@ -385,12 +362,6 @@ static void ValePrologue_LeaveToCottageRoomsAEast(void) {
 /// night, this is Isaac's first time at the door of
 /// VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_SOUTH. Afterwards the door opens as
 /// usual. "Huh? Isaac?"
-///
-/// Reached by walking north into cell behavior 7. The shove plays until
-/// FLAG_VALE_STORM_BUMPED_INTO_VILLAGER or FLAG_VALE_STORM_SECOND_ROCK_FELL
-/// is set, and sets FLAG_VALE_SHOVING_MANS_DOOR_OPEN. Otherwise the event
-/// goes into a house of Vale (SceneId_CottageRoomsA, at
-/// COTTAGE_ROOMS_A_FROM_VALE_SOUTH).
 static void ValePrologue_LeaveToCottageRoomsA(void) {
   if (Event_GetFlag(FLAG_VALE_SHOVING_MANS_DOOR_OPEN) == 0) {
     Sound_Play(SE_DOOR_OPEN);
@@ -409,11 +380,6 @@ static void ValePrologue_LeaveToCottageRoomsA(void) {
 
 /// Goes back into Isaac's house on the stormy night. It's the door he and Dora
 /// came out of in Vale, and it opens unless they left it open.
-///
-/// Reached by walking north into cell behavior 8. Takes
-/// VALE_PROLOGUE_TO_COTTAGE_ROOMS_B_ISAACS_HOUSE, to
-/// COTTAGE_ROOMS_B_FROM_VALE in SceneId_CottageRoomsB, where Vale's
-/// VALE_TO_COTTAGE_ROOMS_B leads by day.
 static void ValePrologue_LeaveToIsaacsHouse(void) {
   if (GameFlag_Get(FLAG_VALE_ISAACS_DOOR_OPEN) == 0) {
     Sound_Play(SE_DOOR_OPEN);
@@ -425,9 +391,6 @@ static void ValePrologue_LeaveToIsaacsHouse(void) {
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
-///
-/// Reached by walking north into cell behavior 9. Arrives in a house of
-/// Vale at COTTAGE_ROOMS_A_FROM_VALE_NORTH.
 static void ValePrologue_LeaveToCottageRoomsANorth(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gValePrologue_GrandparentsDoorOpens, 49, 69);
@@ -437,11 +400,6 @@ static void ValePrologue_LeaveToCottageRoomsANorth(void) {
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
-///
-/// Reached by walking north into cell behavior 10. Takes
-/// VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST, to
-/// COTTAGE_ROOMS_A_FROM_VALE_WEST in SceneId_CottageRoomsA, where
-/// Vale's VALE_TO_COTTAGE_ROOMS_A_WEST leads by day.
 static void ValePrologue_LeaveToCottageRoomsAWest(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gValePrologue_WestHouseDoorOpens, 52, 76);
@@ -452,13 +410,6 @@ static void ValePrologue_LeaveToCottageRoomsAWest(void) {
 
 /// Unused: its row answers cell behavior 11, which no cell of the stormy
 /// night's layout (map/vale_prologue) carries.
-///
-/// It would have opened the door of the house west of the river. That is the
-/// door ValePrologue_LeaveToCottageRoomsBWest uses for behavior 12, one row
-/// lower. It would have walked the leader to the same spot and taken
-/// VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST_BY_WEST_BANK_DOOR into the house
-/// ValePrologue_LeaveToCottageRoomsAWest leads to
-/// (COTTAGE_ROOMS_A_FROM_VALE_WEST).
 static void ValePrologue_UnusedLeaveToCottageRoomsAWestByWestBankDoor(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValePrologue_IsaacsDoorOpens, 35, 74);
@@ -469,9 +420,6 @@ static void ValePrologue_UnusedLeaveToCottageRoomsAWestByWestBankDoor(void) {
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
-///
-/// Reached by walking north into cell behavior 12. Arrives in the house
-/// with two beds before a hearth, COTTAGE_ROOMS_B_FROM_VALE_PROLOGUE_WEST.
 static void ValePrologue_LeaveToCottageRoomsBWest(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValePrologue_IsaacsDoorOpens, 35, 73);
@@ -481,9 +429,6 @@ static void ValePrologue_LeaveToCottageRoomsBWest(void) {
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
-///
-/// Reached by walking north into cell behavior 13. Arrives in the house
-/// with two beds before a hearth, COTTAGE_ROOMS_B_FROM_VALE_PROLOGUE_EAST.
 static void ValePrologue_LeaveToCottageRoomsBEast(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValePrologue_GrandparentsDoorOpens, 38, 72);
@@ -494,15 +439,6 @@ static void ValePrologue_LeaveToCottageRoomsBEast(void) {
 
 /// Arriving in Vale on the stormy night sets the scene up for its stage of
 /// the night.
-///
-/// It restores the fallen rocks, the river event and the Boulder from their
-/// flags and starts the storm. On the first arrival by
-/// VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA it plays the event with Dora
-/// and Kyle.
-///
-/// Called by FieldSequence_Run once the actors are placed. Sets
-/// FLAG_VALE_STORM. After a battle (FLAG_KEEP_PARTY_POSITION) the two doors
-/// close again. Garet, until he joins, is shown struggling with his things.
 s32 ValePrologue_Initialize(void) {
   Scene_QueueMusic(SE_AMBIENT_WATER);
   Actor_SetPosition(ACTOR_FELIX_CHILD, 0, 0);
@@ -719,12 +655,6 @@ s32 ValePrologue_Initialize(void) {
 /// In Vale on the stormy night, Dora comes out into the storm with Isaac to
 /// Kyle, and the two send Isaac on to the plaza while they go to help. "Kyle...
 /// Will they be able to stop the Boulder?"
-///
-/// Called by ValePrologue_Initialize on arrival by
-/// VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA until
-/// FLAG_VALE_STORM_SENT_TO_PLAZA is set. Sets it and
-/// FLAG_VALE_ISAACS_DOOR_OPEN, clears FLAG_SHOW_AREA_NAME, and removes Dora
-/// and Kyle.
 static void ValePrologue_DoraSendsIsaacToThePlaza(void) {
   s32 message;
 
@@ -841,14 +771,6 @@ static void ValePrologue_DoraSendsIsaacToThePlaza(void) {
 /// In Vale on the stormy night, the first rock (ACTOR_FIRST_ROCK) falls
 /// across the path as Isaac walks past, and Garet, once with Isaac, says they
 /// cannot get around it.
-///
-/// Reached by stepping on cell behavior 41 until
-/// FLAG_VALE_STORM_FIRST_ROCK_PASSED is set, which this sets. Sets
-/// FLAG_VALE_STORM_FIRST_ROCK_FELL as the rock falls.
-///
-/// With Garet along, before the Boulder swept Felix, his parents and Kyle
-/// away, his first comment on any rock sets
-/// FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH.
 static void ValePrologue_FirstRockFalls(void) {
   struct Actor *rock;
   struct Actor *leader;
@@ -910,9 +832,6 @@ static void ValePrologue_FirstRockFalls(void) {
 }
 
 /// Applies the cell behaviors left by the first rock (ACTOR_FIRST_ROCK).
-///
-/// Called by ValePrologue_FirstRockFalls and, once the rock has fallen, by
-/// ValePrologue_Initialize.
 static void ValePrologue_ApplyFirstRockCollision(void) {
   MapGrid_CopyCellAttributes(29, 64, 1, 1, 21, 57);
   MapGrid_CopyCellAttributes(29, 64, 1, 1, 21, 58);
@@ -923,10 +842,6 @@ static void ValePrologue_ApplyFirstRockCollision(void) {
 
 /// In Vale on the stormy night, the second rock (ACTOR_FIRST_ROCK + 1) falls
 /// down the path as Isaac walks past.
-///
-/// Reached by stepping on cell behavior 42. It works as
-/// ValePrologue_FirstRockFalls does for the first, with
-/// FLAG_VALE_STORM_SECOND_ROCK_FELL and FLAG_VALE_STORM_SECOND_ROCK_PASSED.
 static void ValePrologue_SecondRockFalls(void) {
   struct Actor *rock;
   struct Actor *leader;
@@ -986,9 +901,6 @@ static void ValePrologue_SecondRockFalls(void) {
 
 /// Applies the cell behaviors left by the second rock (ACTOR_FIRST_ROCK +
 /// 1).
-///
-/// Called by ValePrologue_SecondRockFalls and, once the rock has fallen, by
-/// ValePrologue_Initialize.
 static void ValePrologue_ApplySecondRockCollision(void) {
   MapGrid_CopyCellAttributes(29, 23, 1, 1, 15, 53);
   MapGrid_CopyCellAttributes(29, 23, 1, 1, 14, 53);
@@ -1002,10 +914,6 @@ static void ValePrologue_ApplySecondRockCollision(void) {
 
 /// In Vale on the stormy night, the third rock (ACTOR_FIRST_ROCK + 2) falls
 /// down the path as Isaac walks past.
-///
-/// Reached by stepping on cell behavior 43. It works as
-/// ValePrologue_FirstRockFalls does for the first, with
-/// FLAG_VALE_STORM_THIRD_ROCK_FELL and FLAG_VALE_STORM_THIRD_ROCK_PASSED.
 static void ValePrologue_ThirdRockFalls(void) {
   if (Event_GetFlag(FLAG_VALE_STORM_THIRD_ROCK_PASSED) == 0) {
     Event_Start();
@@ -1065,9 +973,6 @@ static void ValePrologue_ThirdRockFalls(void) {
 
 /// Applies the cell behaviors left by the third rock (ACTOR_FIRST_ROCK +
 /// 2).
-///
-/// Called by ValePrologue_ThirdRockFalls and, once the rock has fallen, by
-/// ValePrologue_Initialize.
 static void ValePrologue_ApplyThirdRockCollision(void) {
   MapGrid_CopyCellAttributes(29, 22, 1, 1, 3, 42);
   MapGrid_CopyCellAttributes(29, 21, 1, 1, 2, 42);
@@ -1077,10 +982,6 @@ static void ValePrologue_ApplyThirdRockCollision(void) {
 
 /// In Vale on the stormy night, the fourth rock (ACTOR_FIRST_ROCK + 3) falls
 /// down the path as Isaac walks past.
-///
-/// Reached by stepping on cell behavior 44. It works as
-/// ValePrologue_FirstRockFalls does for the first, with
-/// FLAG_VALE_STORM_FOURTH_ROCK_FELL and FLAG_VALE_STORM_FOURTH_ROCK_PASSED.
 static void ValePrologue_FourthRockFalls(void) {
   struct Actor *rock;
   struct Actor *leader;
@@ -1136,9 +1037,6 @@ static void ValePrologue_FourthRockFalls(void) {
 
 /// Applies the cell behaviors left by the fourth rock (ACTOR_FIRST_ROCK +
 /// 3).
-///
-/// Called by ValePrologue_FourthRockFalls and, once the rock has fallen, by
-/// ValePrologue_Initialize.
 static void ValePrologue_ApplyFourthRockCollision(void) {
   MapGrid_CopyCellAttributes(29, 20, 1, 1, 26, 71);
   MapGrid_CopyCellAttributes(29, 20, 1, 1, 26, 70);
@@ -1150,8 +1048,6 @@ static void ValePrologue_ApplyFourthRockCollision(void) {
 /// Stops the leader at the door of VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_SOUTH
 /// for the first conversation of the night. A stout man runs out of the door,
 /// knocks Isaac back and runs off to the plaza. "Huh? Isaac?"
-///
-/// Sets FLAG_VALE_STORM_BUMPED_INTO_VILLAGER.
 static void ValePrologue_BumpIntoShovingMan(void) {
   s32 message;
 
@@ -1189,9 +1085,6 @@ static void ValePrologue_BumpIntoShovingMan(void) {
 
 /// In Vale on the stormy night, Isaac hears Garet struggling with his things.
 /// "Ugh... Hrnghhh..."
-///
-/// Reached by stepping on cell behavior 30, until Garet has joined. Sets
-/// FLAG_VALE_STORM_HEARD_GARET.
 static void ValePrologue_HearGaretStruggling(void) {
   if (Event_GetFlag(FLAG_VALE_STORM_HEARD_GARET) == 0) {
     if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) == 0) {
@@ -1214,9 +1107,6 @@ static void ValePrologue_HearGaretStruggling(void) {
 
 /// In Vale on the stormy night, Garet calls after Isaac as he walks away
 /// from him, asking whether he will just leave him there.
-///
-/// Reached by stepping on cell behavior 31 once Isaac has heard Garet and
-/// before Garet joins. ValePrologue_GaretLeavesHisChest brings him along.
 static void ValePrologue_GaretCallsAfterIsaac(void) {
   if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) == 0 &&
       GameFlag_Get(FLAG_VALE_STORM_HEARD_GARET) != 0) {
@@ -1231,9 +1121,6 @@ static void ValePrologue_GaretCallsAfterIsaac(void) {
 
 /// In Vale on the stormy night, talking to Garet is about whether to leave
 /// his things behind, or, after the river, about the Boulder.
-///
-/// Reached by talking to Garet. Before he joins,
-/// ValePrologue_GaretLeavesHisChest brings him along.
 static void ValePrologue_TalkToGaret(void) {
   if (GameFlag_Get(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0) {
     Event_Start();
@@ -1257,8 +1144,6 @@ static void ValePrologue_TalkToGaret(void) {
 /// Garet asks the question the caller chose and, on either answer, drops his
 /// chest and joins the party. A yes has him agree to forget his things. A no
 /// has him decide a rock would cost him chest and life alike.
-///
-/// Sets FLAG_VALE_STORM_GARET_JOINED.
 static void ValePrologue_GaretLeavesHisChest(void) {
   s32 agreedToLeaveBelongings;
 
@@ -1294,19 +1179,6 @@ static void ValePrologue_GaretLeavesHisChest(void) {
 
 /// Unused: another version of Garet joining Isaac on the stormy night,
 /// which the game never plays.
-///
-/// Its row answers cell behavior 32. But every way there crosses the cells
-/// where Isaac hears Garet struggling (behavior 30,
-/// ValePrologue_HearGaretStruggling) and where Garet calls after him and
-/// joins (behavior 31, ValePrologue_GaretCallsAfterIsaac). So Garet has
-/// always joined by then, and the event's first test,
-/// FLAG_VALE_STORM_GARET_JOINED, ends it.
-///
-/// Its lines appear nowhere else. Garet runs up
-/// (gValePrologue_UnusedGaretRunsUpScript) and heaves for breath,
-/// `*Hah* *Hah*`, while gValePrologue_UnusedGaretPantingScript swells and
-/// shrinks his sprite. He asks `Are you trapped, too?` before they leave
-/// together.
 static void ValePrologue_UnusedGaretJoinsIsaac(void) {
   struct Actor *actor;
   s32 message;
@@ -1359,9 +1231,6 @@ static void ValePrologue_UnusedGaretJoinsIsaac(void) {
 
 /// In Vale on the stormy night, Garet turns Isaac back from the path north,
 /// which leads to Mt. Aleph.
-///
-/// Reached by stepping on cell behavior 33, every time. Isaac is walked
-/// back south.
 static void ValePrologue_WarnAboutMtAleph(void) {
   struct Actor *initialLeader;
 
@@ -1424,11 +1293,6 @@ static void ValePrologue_GaretCommentsOnBlockedPath(s32 x, s32 y) {
 /// In Vale on the stormy night, the elders hold the Boulder with their
 /// Psynergy as it slips.
 /// "Ahhh! The Boulder! It's falling!"
-///
-/// Reached by stepping on cell behavior 34 until FLAG_VALE_BOULDER_FELL is
-/// set, which this sets. The elders and their two stand-ins
-/// (gValePrologue_BoulderWatchers, ACTOR_ELDER_EAST_STAND_IN to
-/// ACTOR_ELDER_WEST) are placed for the event and removed after it.
 static void ValePrologue_WatchBoulderFall(void) {
   u32 i;
   struct Actor *movingActor;
@@ -1656,10 +1520,6 @@ UNUSED static void ValePrologue_FlashBoulderMapAnimationEntries(void) {
 /// Vale on the stormy night, her brother Felix has fallen in and clings on as
 /// Kyle and her parents try to save him. "Oh no! My brother!" The rope will not
 /// reach and no one has Psynergy left, so they send for help.
-///
-/// Reached by stepping on cell behavior 35 until
-/// FLAG_VALE_STORM_SAW_FELIX_HANGING_ON is set, which this sets after
-/// ValePrologue_DoraGoesForHelp.
 static void ValePrologue_WatchAttemptToSaveFelix(void) {
   const s32 *pulseScript;
 
@@ -2049,9 +1909,6 @@ static void ValePrologue_DoraGoesForHelp(void) {
 /// Kyle tells Isaac and Garet to find help for Felix. In Vale on the stormy
 /// night, at the river, he tells them they don't have enough Psynergy to save
 /// Felix.
-///
-/// Reached by talking to Kyle. The first time he greets Isaac and sets
-/// FLAG_VALE_STORM_KYLE_GREETED_ISAAC.
 static void ValePrologue_TalkAboutSavingFelix(void) {
   const s32 *pulseScript;
 
@@ -2094,10 +1951,6 @@ static void ValePrologue_TalkAboutSavingFelix(void) {
 /// Psynergy is restored ("Mom! Dad! We're back!"). As Dora calls everyone
 /// down to save Felix, the Boulder comes down the river and sweeps away Felix,
 /// his parents and Kyle.
-///
-/// Reached by stepping on cell behavior 36 once
-/// FLAG_VALE_STORM_SENT_TO_AID_ELDERS is set (vale_plaza.c), until
-/// FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY is set, which this sets.
 static void ValePrologue_BoulderSweepsThemAway(void) {
   struct Actor *leader;
   struct Actor *actor;
@@ -2240,17 +2093,6 @@ static __inline__ void ValePrologue_PlayImpactBeat(s32 shakeAmplitude,
 
 /// The Boulder comes down the river and carries Felix, his parents and Kyle
 /// away.
-///
-/// - The party gathers on the bank and hears it coming.
-/// - The screen fades to the river upstream, where the camera follows the
-///   Boulder down (gValePrologue_BoulderRollsDownriver).
-/// - Two frozen lightning flashes show the family and Kyle in its path.
-/// - The bank is redrawn without them, with the rocks the Boulder left, and
-///   the party stands at the spot of VALE_PROLOGUE_FROM_BOULDER_PASSED.
-///
-/// Called by ValePrologue_BoulderSweepsThemAway, whose recording on the docs
-/// site (places/vale-storm/events/ValePrologue_BoulderSweepsThemAway.gif)
-/// shows the descent.
 static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   struct Sprite *actorVisual;
   struct Sprite *boulderShadowSprite;
@@ -2695,9 +2537,6 @@ static void ValePrologue_FlickerBoulderShadow(void) {
 /// An exhausted strongman tries to go for help and can't move. In Vale on the
 /// stormy night, after the Boulder, the strongman who came to help tries to go
 /// for help himself. "I can't move..."
-///
-/// Reached by talking to him (ACTOR_EXHAUSTED_STRONGMAN). The first time sets
-/// FLAG_VALE_STORM_STRONGMAN_TRIED_TO_GO.
 static void ValePrologue_StrongmanTriesToGoForHelp(void) {
   struct Actor *villager;
   struct Actor *leader;
@@ -2770,10 +2609,6 @@ static void ValePrologue_StrongmanTriesToGoForHelp(void) {
 
 /// As Isaac leaves the river to get help, Garet will not let him go alone and
 /// goes after him. "I can't let him go alone..."
-///
-/// Called by ValePrologue_LeaveToValePlaza after the Boulder swept Felix,
-/// his parents and Kyle away. Sets FLAG_VALE_STORM_GARET_LEFT, which has the
-/// two meet the strangers on the way (vale_plaza.c).
 static void ValePrologue_GaretFollowsIsaac(void) {
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -2812,9 +2647,6 @@ static void ValePrologue_GaretFollowsIsaac(void) {
 
 /// Redraws the riverbank as the Boulder left it, pictures and cell
 /// behaviors.
-///
-/// Called by ValePrologue_ShowBoulderSweepingDownriver and, on later
-/// arrivals, by ValePrologue_Initialize.
 static void ValePrologue_RebuildRiverbank(void) {
   MapGrid_CopyCellsTo(16, 96, 11, 73, 6, 3);
   MapGrid_CopyCellsTo(16, 96, 34, 68, 14, 10);
@@ -2836,9 +2668,6 @@ static void ValePrologue_RebuildRiverbank(void) {
 
 /// In Vale on the stormy night, a monster attacks on the paths (slot 2 of
 /// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
-///
-/// Reached by stepping on cell behavior 16 until
-/// FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT is set.
 static void ValePrologue_FightThirdMonster(void) {
   struct FieldWork *work;
 
@@ -2855,9 +2684,6 @@ static void ValePrologue_FightThirdMonster(void) {
 
 /// In Vale on the stormy night, another monster attacks (slot 3 of
 /// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
-///
-/// Reached by stepping on cell behavior 17 until
-/// FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT is set.
 static void ValePrologue_FightFourthMonster(void) {
   struct FieldWork *work;
 

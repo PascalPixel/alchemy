@@ -611,13 +611,6 @@ static void Kalay_EnterPalace(void) {
 /// Leaving Kalay (step triggers 9 and 10) after hearing of the Colosso tour at
 /// the inn, the party watches the tour group stop. This plays until the tour
 /// has left.
-///
-/// - The guides count everyone.
-/// - They pace back and forth while the tourists grumble.
-/// - They give up on the missing man and lead the group off.
-/// - The late tourist then runs after it.
-///
-/// Otherwise the party leaves.
 static void Kalay_WatchTourGroupDeparture(void) {
   s32 message;
   struct Actor *headWait;
@@ -1178,16 +1171,6 @@ s32 Kalay_Initialize(void) {
 }
 
 /// Sets up Kalay.
-///
-/// Having heard in Lunpa that Hammet is held there sets area temp flag
-/// FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA. Once Hammet is free
-/// (FLAG_DODONPA_LOCKED_UP) the palace's FLAG_IVAN_REPORTED_TO_LAYANA,
-/// FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS and FLAG_KALAY_TUNNEL_OPEN are
-/// set too, so its earlier events count as seen and the passage is open.
-///
-/// Coming up from the Kalay Tunnel (KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM)
-/// finds its statue moved aside, and until it is caught the Nut circles in the
-/// air.
 static void Kalay_PrepareTown(void) {
   OrbitingMapActor *nut;
   u8 *heap;
@@ -1275,13 +1258,6 @@ static void Kalay_PrepareTunnelEntrance(void) {
 /// Sets up the Kalay Tunnel's passage (KalayTunnelPassage). It opens with a
 /// window transition, and its way through is drawn open once
 /// FLAG_KALAY_TUNNEL_OPEN is set.
-///
-/// Arriving from the treasure room
-/// (KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_WEST and
-/// KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_EAST) or by the stairs
-/// from the north-east room
-/// (KALAY_TUNNEL_PASSAGE_LONG_PATH_FROM_NORTHEAST_ROOM) starts
-/// SE_AMBIENT_WATER.
 static void Kalay_PrepareTunnelPassage(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -1525,11 +1501,6 @@ static void Kalay_AlternateGuidesPacing(void) {
 
 /// The guards before the door of Hammet Palace (HammetPalaceGrounds) meet the
 /// party the first time it comes.
-///
-/// They turn the party away until they recognize Ivan, tanned and grown, and
-/// learn that he does not know Hammet is a prisoner in Lunpa. Ivan insists his
-/// friends hear everything. The guards open the door and take the party in to
-/// Lady Layana (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM).
 static void Kalay_IvanMeetsPalaceGuards(void) {
   struct Actor *actor;
 
@@ -1740,10 +1711,6 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
 /// arriving at the Kalay Tunnel Entrance by
 /// KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH after the party has freed him
 /// from Lunpa.
-///
-/// Hammet explains the underground passage to the palace. He asks Bunza to take
-/// the party round through the town, so the passage stays secret. The guard
-/// opens it, Hammet goes in and the party rides off.
 static void Kalay_HammetReturnsToPalace(void) {
   struct Actor *actor;
   struct FieldWork *work;

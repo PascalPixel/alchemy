@@ -235,10 +235,6 @@ static void KolimaForestFloodgate_CaptureShakeScroll(void) {
 
 /// In Kolima Forest (SceneId_KolimaForestFloodgate), searching the Floodgate
 /// Switch flips it. "Isaac flipped the switch."
-///
-/// The camera turns to the floodgate, which opens or closes. The ground rumbles
-/// and the top of the screen shakes harder for 100 frames, and the river rises
-/// or falls.
 static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   s32 nextShakeChance;
 

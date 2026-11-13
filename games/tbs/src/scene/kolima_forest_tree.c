@@ -190,11 +190,6 @@ const struct Trigger *KolimaForestTree_GetTriggers(void) {
 /// the ones who resisted Tret's glamour and senses a great warmth in them, but
 /// says they are too late to rescue Tret. She tells them to leave before the
 /// forest is destroyed (sets FLAG_MET_LAUREL).
-///
-/// After that she gives only that warning.
-///
-/// Once the curse is lifted, the forest is alive again thanks to the party, and
-/// Laurel says, "We shall protect the forest from now on."
 static void KolimaForestTree_TalkToLaurel(void) {
   Event_Start();
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_OPEN_EYES);
@@ -234,13 +229,6 @@ static void KolimaForestTree_TalkToLaurel(void) {
 
 /// In Kolima Forest (SceneId_KolimaForestTree), talking to Tret
 /// (ACTOR_TRET_STAND_IN) finds him silent until the curse is lifted.
-///
-/// Before the Tret Tree, his wrathful side answers, the screen darkening around
-/// its words. After it, if anyone carries Hermes' Water the File Screen opens.
-/// Once the curse is lifted, no axe shall touch him again.
-///
-/// Until FLAG_TRET_DEFEATED Mind Read on him runs this too, with no effect of
-/// its own (subject bit 10).
 static void KolimaForestTree_TalkToTret(void) {
   s32 waterHolder;
 
@@ -418,20 +406,6 @@ static __inline__ void KolimaForestTree_FaceParty(s32 facing, s32 waitFrames) {
 }
 
 /// Hermes' Water heals Tret.
-///
-/// - The companions gather as the water seeps in and the forest's healthy
-///   colours spread.
-/// - Tret feels life flowing in him again and, asked by Laurel and the party,
-///   frees the people he turned into trees.
-/// - He and Laurel tell how the gems fell from the sky into their branches and
-///   twisted their anger and sorrow, and that only the elder trees were
-///   changed.
-/// - Laurel has seen that an evil forest has risen south of the river, and
-///   Tret, asking whether the party will go there, warns them to hurry.
-/// - Tret thanks the party for saving Kolima, the forest and himself.
-///
-/// Sets FLAG_KOLIMA_CURSE_LIFTED and turns the Hermes' Water back into an Empty
-/// Bottle.
 static void KolimaForestTree_RestoreTret(void) {
   s32 includeMia;
   struct Actor *leader;

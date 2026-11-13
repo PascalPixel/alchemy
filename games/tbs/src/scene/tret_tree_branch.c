@@ -174,9 +174,6 @@ static void TretTreeBranch_GoUpSoutheastVine(void) {
 
 /// Walking into one of the eight exits in Tret Tree plays the exit sound and
 /// leaves by the exit touched.
-///
-/// The exits' cells have the exits' own numbers as their cell behaviors. Each
-/// leads into Tret Tree's other scene (SceneId_TreeRooms).
 static void TretTreeBranch_EnterTretTreeRooms(void) {
   struct FieldWork *work = gFieldWork;
 

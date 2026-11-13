@@ -91,8 +91,6 @@
 static void Tolbi_FreezePuddle(void);
 
 /// Talking to Ember, a Mars Djinni, makes it join the party.
-///
-/// Its index among the Mars Djinn is 4, the fifth Mars name in the game text.
 static void Tolbi_JoinEmber(void) {
   Djinn_JoinParty(ACTOR_TOLBI_EMBER, ELEMENT_MARS, DJINNI_INDEX(DJINNI_EMBER));
 }
@@ -101,8 +99,6 @@ static void Tolbi_JoinEmber(void) {
 
 /// Stops a running child when the target is close by and ahead of it, or
 /// always when force is set.
-///
-/// Otherwise it starts the child running again.
 ///
 /// The child stops when the target is within one facing step of where it
 /// looks. For the party leader, that is within two steps either side.
@@ -186,9 +182,6 @@ const struct ActorPlacement *Tolbi_GetActorPlacements(void) {
 }
 
 /// Growth on the sprout makes a plant the party can climb.
-///
-/// The grown plant no longer blocks the party, and its map cell becomes
-/// climbable.
 static void Tolbi_GrowSprout(void) {
   struct Actor *sprout;
 
@@ -203,8 +196,6 @@ static void Tolbi_GrowSprout(void) {
 }
 
 /// Reveal uncovers the hidden chest.
-///
-/// Its map cell is drawn in and the chest moves into place.
 static void Tolbi_RevealHiddenChest(void) {
   MapGrid_CopyCellAttributes(3, 32, 1, 1, 3, 26);
   TreasureSpot_SetPosition(CELL_BEHAVIOR_TOLBI_HIDDEN_CHEST, px(56), px(424));
@@ -232,8 +223,6 @@ static void Tolbi_ReadLuckyMedalSign(void) {
 }
 
 /// Talking to the older brother, or reading his mind.
-///
-/// He stops running while he speaks, then turns back the way he was going.
 static void Tolbi_TalkToOlderBrother(void) {
   struct FieldWork *work = gFieldWork;
   struct Actor *kid;
@@ -323,10 +312,6 @@ const struct Trigger *Tolbi_SelectTriggers(void) {
 }
 
 /// A suspicious old woman asks whether anyone can live past 100 years old.
-///
-/// She's ACTOR_TOLBI_SUSPICIOUS_OLD_WOMAN, in Tolbi during the festival, and
-/// asks whether someone can live to be more than 100 years old. Either way
-/// the talk turns to Babi, who is older still.
 static void Tolbi_AskAboutLivingPastHundred(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiSomeoneLiveMore);
@@ -351,8 +336,6 @@ static void Tolbi_TalkToFather(void) {
 
 /// The mother turns to her crying boy, then back to promise better sweets
 /// later on.
-///
-/// She says "Be patient, little guy."
 static void Tolbi_TalkToMother(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiPatientLittleGuy);
@@ -388,8 +371,6 @@ static void Tolbi_TalkToSleepingScalper(void) {
 
 /// After Colosso, ACTOR_TOLBI_FINALS_FAN asks whether the party was in the
 /// finals.
-///
-/// The question is anchored to the father, who has left town by then.
 static void Tolbi_AskWhetherPartyWasInFinals(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiFinalsWerent);
@@ -422,10 +403,6 @@ static void Tolbi_TalkToSnackVendor(void) {
 }
 
 /// Walking into one of the town's doors opens it and takes the party inside.
-///
-/// The door opens and the leader steps in, except at
-/// TOLBI_TO_WEAPON_AND_ARMOR_SHOP. Then the scene changes through the door's
-/// exit, numbered as its cell behavior.
 static void Tolbi_EnterDoor(void) {
   struct FieldWork *work = gFieldWork;
   u32 actorId;
@@ -457,9 +434,6 @@ static void Tolbi_EnterDoor(void) {
 
 /// The update of ACTOR_TOLBI_OLD_MAN, who during the festival says he is 65
 /// and that Babi was already old when he was born.
-///
-/// It gives him the leader's sprite priority every frame, for both of his
-/// sprite parts.
 static void Tolbi_CopyLeaderPriority(struct Actor *updated) {
   s32 priority;
 
@@ -472,9 +446,6 @@ static void Tolbi_CopyLeaderPriority(struct Actor *updated) {
 }
 
 /// Sets up the scene on entry.
-///
-/// It sets up the running children, ACTOR_TOLBI_OLD_MAN's update, and
-/// everything the flags have already changed.
 s32 Tolbi_ApplyEntryState(s32 unused) {
   struct Actor *actor;
   void (*kidUpdate)(struct Actor *);
@@ -530,8 +501,6 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
 
 /// The visitor at the spring's gate asks whether the party wants to test its
 /// luck.
-///
-/// On yes he steps aside for good and the way to Tolbi Spring opens.
 static void Tolbi_TalkToSpringVisitor(void) {
   Event_Start();
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 304, 312);
@@ -572,12 +541,6 @@ static void Tolbi_RequestTouchedExit(void) {
 
 /// Two soldiers searching for the missing Babi stop the party and show his
 /// picture.
-///
-/// They do so during the festival, the first time the party steps on
-/// CELL_BEHAVIOR_TOLBI_SOLDIERS. They ask "Have you seen anyone who looks like
-/// this?" and leave either way the party answers.
-///
-/// Sets FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI.
 static void Tolbi_MeetSearchingSoldiers(void) {
   s32 firstMsg;
 
@@ -688,9 +651,6 @@ static void Tolbi_MeetSearchingSoldiers(void) {
 }
 
 /// Frost on the puddle freezes it into a pillar.
-///
-/// The frozen pillar is drawn underfoot and stops following the terrain, and
-/// its map cell becomes solid.
 static void Tolbi_FreezePuddle(void) {
   struct Actor *puddle = Actor_Get(ACTOR_TOLBI_PUDDLE);
   if (puddle != 0) {

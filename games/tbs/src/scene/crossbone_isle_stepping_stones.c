@@ -785,10 +785,6 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
 }
 
 /// Searching the switch beside CrossboneIsleFloodgate's floodgate flips it.
-///
-/// "Isaac flipped the switch." Either the floodgate closes and the water backs
-/// up behind it, floating the logs higher, or it opens and the water drains
-/// away and the logs settle on the floor.
 static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
   s32 waterRaised;
   struct Actor *water;
@@ -1312,8 +1308,6 @@ CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *actor) {
 
 /// Frost ends on the third puddle in CrossboneIsleDragonStatue: it freezes,
 /// unless the leader stood on it.
-///
-/// A frozen second puddle thaws back to water.
 static void CrossboneIsleSteppingStones_FreezeThirdPuddle(void) {
   s32 set;
 

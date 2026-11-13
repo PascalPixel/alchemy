@@ -463,15 +463,6 @@ static inline void BabiLighthouse_WalkBackToLeader(s32 actorId) {
 
 /// Faran asks the party to prove it can follow the kidnappers by opening the
 /// stone door.
-///
-/// It plays on walking up to the stone door in BabiLighthouseStoneDoor the
-/// first time.
-///
-/// - Faran asks whether the kidnappers really went through it.
-/// - The onlookers argue.
-/// - Iodem, arriving with the party, tells who they are.
-/// - Faran, doubting them, asks them to prove they can follow by opening the
-///   door.
 static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   // Bring the party to the witnesses gathered around the sealed door.
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW);
@@ -767,11 +758,6 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
 
 /// The stone door of BabiLighthouseStoneDoor opens before Iodem and Faran the
 /// first time.
-///
-/// - Everyone marvels.
-/// - The door shuts again in front of Iodem.
-/// - The party reasons that it keeps out those without Psynergy.
-/// - Iodem and Faran leave Sheba's rescue to the party.
 static void BabiLighthouse_ExplainTruthDoor(void) {
   // Everyone reacts to the opened door before trying to follow the party.
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN);
@@ -1112,9 +1098,6 @@ static void BabiLighthouse_CloseTruthDoor(void) {
 
 /// Searching the door's switch under Reveal's light flips it and opens the
 /// door.
-///
-/// Otherwise it reads an inscription. "The truth of this door is open to those
-/// seeing with their true heart."
 static void BabiLighthouse_InspectTruthDoorSwitch(void) {
   struct FieldWork *work = gFieldWork;
 
@@ -1160,9 +1143,6 @@ static struct Actor *BabiLighthouse_FindActorAhead(struct Actor *actor) {
 
 /// Before Carry is cast on the Road to Babi Lighthouse's pillar, sets the
 /// effect's childOption.
-///
-/// Once Carry lets go, the effect then waits for the pillar to bounce up and
-/// land, and rings it with dust (carry.c).
 static void BabiLighthouse_LandCarriedPillarInDust(void) {
   ((struct FieldEffectWork *)gFieldEffectWork)->childOption = 1;
 }
@@ -1212,10 +1192,6 @@ static void BabiLighthouse_PushRoadPillar(void) {
 
 /// Walking into the climbable cells by the Road to Babi Lighthouse's pillar
 /// makes the leader climb or push.
-///
-/// He climbs up or down where he faces north or south, already climbing or with
-/// no pillar ahead. When he does not climb he pushes the pillar
-/// (BabiLighthouse_PushRoadPillar).
 static void BabiLighthouse_ClimbOrPushRoadPillar(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *ahead = BabiLighthouse_FindActorAhead(leader);
@@ -1319,10 +1295,6 @@ static void BabiLighthouse_MatchLeaderPriority(struct Actor *updated) {
 #endif
 
 /// Sets up the scene being entered. Returns 0.
-///
-/// Retreat leads back to the Entry. The road's pillar, the Entry's pillars,
-/// vine and the four lying on the ground, BabiLighthouseLuff's arrivals by
-/// falling, and BabiLighthouseStoneDoor's door and onlookers are restored.
 s32 BabiLighthouse_SetupMap(void) {
   struct Actor *placedActor;
   s32 sceneId;

@@ -282,9 +282,6 @@ static void CrossboneIsleKeys_BaneFirstEscape(void) {
 
 /// In CrossboneIsleBane, coming near again (step trigger 21): Bane flees a
 /// second time.
-///
-/// It hops, dashes across the platforms and crashes into the far wall, shaking
-/// the room, and is left squashing and stretching.
 static void CrossboneIsleKeys_BaneSecondEscape(void) {
   struct Actor *spinningDjinni;
   struct Actor *jumpingDjinni;
@@ -339,9 +336,6 @@ static void CrossboneIsleKeys_BaneSecondEscape(void) {
 
 /// In CrossboneIsleBane, the third time (step trigger 22): Bane flees to the
 /// room's last corner.
-///
-/// It recovers, hops down a winding path to that corner and keeps watching
-/// the leader.
 static void CrossboneIsleKeys_BaneLastEscape(void) {
   struct Actor *djinni;
 
@@ -449,13 +443,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Unused: pressing south on the walkway cell in front of CrossboneIsleKeys's
 /// third or fourth blue door jumps the leader over the pit onto the post two
 /// cells south, at (21, 45) or (25, 45) (Field_TryJumpForward).
-///
-/// Both rows that name it follow a plain step trigger row for the same cell
-/// (CrossboneIsleKeys_OpenThirdBlueDoor, CrossboneIsleKeys_OpenFourthBlueDoor),
-/// which Scene_FindTrigger always finds first.
-///
-/// Those events make the same jump themselves once more than 12 blocked steps
-/// have passed.
 static void CrossboneIsleKeys_UnusedJumpOntoPost(void) {
   Field_TryJumpForward();
 }
@@ -542,9 +529,6 @@ static void CrossboneIsleKeys_OpenSecondBlueDoor(void) {
 
 /// Touching CrossboneIsleKeys's third blue door (step trigger 53, the walkway
 /// cell in front of it).
-///
-/// Facing away from the door, once more than 12 blocked steps have passed, the
-/// leader jumps over the pit onto a post.
 static void CrossboneIsleKeys_OpenThirdBlueDoor(void) {
   struct Actor *leader;
   s16 *blockedSteps;
@@ -563,9 +547,6 @@ static void CrossboneIsleKeys_OpenThirdBlueDoor(void) {
 
 /// Touching CrossboneIsleKeys's fourth blue door (step trigger 54, the walkway
 /// cell in front of it).
-///
-/// Facing away from the door, once more than 12 blocked steps have passed, the
-/// leader jumps over the pit onto a post.
 static void CrossboneIsleKeys_OpenFourthBlueDoor(void) {
   struct Actor *leader;
   s16 *blockedSteps;
@@ -1025,8 +1006,6 @@ static void CrossboneIsleKeys_MoveFirstPillar(void) {
 }
 
 /// Pushing CrossboneIsleBane's first pillar (step trigger 51).
-///
-/// Standing at the ladder in column 38, the leader climbs instead.
 static void CrossboneIsleKeys_PushFirstPillar(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *pillar = Actor_Get(ACTOR_FIRST_PILLAR);
@@ -1052,9 +1031,6 @@ static void CrossboneIsleKeys_PushFirstPillar(void) {
 }
 
 /// Leaves the chest where the second pillar has reached the ladder.
-///
-/// The chest's actor is hidden, its examine trigger takes its place and the
-/// ladder cell is restored.
 static void CrossboneIsleKeys_ReleaseSecondPillarChest(void) {
   Task_Remove(CrossboneIsleKeys_FollowSecondPillar);
   Actor_SetPosition(ACTOR_SECOND_PILLAR_CHEST, 0, 0);
@@ -1080,8 +1056,6 @@ static void CrossboneIsleKeys_MoveSecondPillar(void) {
 }
 
 /// Pushing CrossboneIsleBane's second pillar (step trigger 52).
-///
-/// At the ladder, the chest on top of it stays there.
 static void CrossboneIsleKeys_PushSecondPillar(void) {
   PushedActor_AdvancePair();
   CrossboneIsleKeys_MoveSecondPillar();

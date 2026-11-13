@@ -238,9 +238,6 @@ const struct Trigger *LogRoomsC_GetTriggers(void) {
 }
 
 /// Sets up the houses for the curse and the way they're entered.
-///
-/// It opens with a window transition, sets the trees' sprites while the curse
-/// lasts, and draws the father's room for the way it is entered.
 s32 LogRoomsC_Initialize(void) {
   struct FieldWork *work = gFieldWork;
   s32 actorId;

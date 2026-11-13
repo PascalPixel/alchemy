@@ -198,17 +198,6 @@ const struct SceneExitRegion *Sanctum_GetRegions(void) { return NULL; }
 const u32 *Sanctum_GetExits(void) { return gSanctum_Exits; }
 
 /// Chooses the actors by entrance.
-///
-/// - Vale Sanctum's Great Healer and two other healers (SANCTUM_FROM_VALE and
-///   SANCTUM_VALE_UNUSED).
-/// - The quest's gathering (SANCTUM_FROM_VALE_ERUPTION and
-///   SANCTUM_FROM_QUEST_RESTART).
-/// - The healer and ACTOR_SANCTUM_MEMBER of Vault Sanctum and Bilibin Sanctum
-///   (SANCTUM_FROM_VAULT, SANCTUM_FROM_VAULT_REVISIT, SANCTUM_FROM_LOG_ROOMS_A
-///   and SANCTUM_FROM_BILIBIN).
-/// - The healer alone in Altin Sanctum and Xian Sanctum (SANCTUM_FROM_ALTIN and
-///   SANCTUM_FROM_XIAN).
-/// - Nobody otherwise.
 const struct ActorPlacement *Sanctum_GetActorPlacements(void) {
   switch (gMainRoutineWork.entrance) {
   case SANCTUM_FROM_VALE:
@@ -236,13 +225,6 @@ const struct ActorPlacement *Sanctum_GetActorPlacements(void) {
 
 /// Chooses the triggers by entrance, and in Vale Sanctum before and after the
 /// quest by story flag.
-///
-/// Vale Sanctum takes gSanctum_ValeTriggers before the party has left Vale,
-/// gSanctum_ValeTriggersAfterLeaving once it has (FLAG_VALE_PARTY_LEFT) and
-/// gSanctum_ValeTriggersAfterKalay once it has reached Kalay
-/// (FLAG_KALAY_REACHED). The quest's visits (SANCTUM_FROM_VALE_ERUPTION,
-/// SANCTUM_FROM_QUEST_RESTART and SANCTUM_QUEST_UNUSED) take
-/// gSanctum_QuestTriggers.
 const struct Trigger *Sanctum_GetTriggers(void) {
   switch (gMainRoutineWork.entrance) {
   case SANCTUM_FROM_VAULT:
@@ -274,10 +256,6 @@ const struct Trigger *Sanctum_GetTriggers(void) {
 }
 
 /// Vault Sanctum: talking to ACTOR_SANCTUM_MEMBER.
-///
-/// He talks about the stolen gold statue until the thieves are jailed
-/// (FLAG_VAULT_THIEVES_JAILED) and about fate afterwards. On the later visit
-/// (SANCTUM_FROM_VAULT_REVISIT), the statue is polished.
 static void Sanctum_TalkAboutGoldenStatue(void) {
   Event_Start();
 
@@ -299,9 +277,6 @@ static void Sanctum_TalkAboutGoldenStatue(void) {
 }
 
 /// Vault Sanctum: Mind Read on ACTOR_SANCTUM_MEMBER.
-///
-/// He thinks about the stolen statue or, once it is back, about Isaac awakening
-/// to the Sanctum's teachings. On the later visit, the statue is cleaned up.
 static void Sanctum_ReadMindAboutGoldenStatue(void) {
   Event_Start();
 
@@ -324,9 +299,6 @@ static void Sanctum_ReadMindAboutGoldenStatue(void) {
 }
 
 /// Vale Sanctum: talking to the Great Healer after Isaac has refused the quest.
-///
-/// "Are you sure?" Changing his mind, Isaac can accept after all, and the quest
-/// goes on as if he had accepted at once.
 static void Sanctum_ReconsiderQuest(void) {
   Event_Start();
   Event_SetMessageId(MsgSanctumAreYouSure);
@@ -391,10 +363,6 @@ static void Sanctum_ReconsiderQuest(void) {
 
 /// Vale Sanctum, once the party has reached Kalay: talking to
 /// ACTOR_WEST_HEALER, who asks about the party's new friends.
-///
-/// "Isaac, are your new friends Adepts by any chance?" Denied, a friend's
-/// silence says they must be. In every edition but the Japanese, that friend is
-/// Ivan, placed for it. In the Japanese, it is Garet.
 static void Sanctum_AskAboutNewAdepts(void) {
   Event_Start();
 #if TBS_PATCH_1
@@ -437,13 +405,6 @@ static void Sanctum_AskAboutPsynergyChanges(void) {
 }
 
 /// Sets up the place for its entrance and plays its opening event.
-///
-/// Vault Sanctum places ACTOR_GOLD_STATUE once the thieves are jailed.
-///
-/// Vale Sanctum's quest visits restore the floor and play the request, unless
-/// the party is returning after a battle. Those visits are
-/// SANCTUM_FROM_VALE_ERUPTION, and SANCTUM_FROM_QUEST_RESTART after a refusal,
-/// which sets FLAG_SANCTUM_QUEST_RESTARTED.
 s32 Sanctum_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -484,9 +445,6 @@ s32 Sanctum_Initialize(void) {
 
 /// Vale Sanctum: heading for the door after refusing the quest (cell behavior
 /// 2, until FLAG_SANCTUM_WARNED_BEFORE_LEAVING is set, which it sets).
-///
-/// The Great Healer warns that the choice is final: "Once you step outside the
-/// village, you cannot take back your decision."
 static void Sanctum_WarnBeforeLeaving(void) {
   Event_Start();
   FieldCamera_SetSpeed(1);
@@ -506,13 +464,6 @@ static void Sanctum_WarnBeforeLeaving(void) {
 
 /// Vale Sanctum: leaving after refusing the quest (cell behavior 1) ends the
 /// game.
-///
-/// The room turns sepia: `And so the world began drifting toward its fated
-/// destruction...`
-///
-/// Starting again from the Great Healer takes SANCTUM_TO_QUEST_RESTART, back to
-/// SANCTUM_FROM_QUEST_RESTART. The other choices take SANCTUM_TO_FILE_SCREEN,
-/// to SceneId_FileScreen.
 static void Sanctum_LeaveAfterRefusing(void) {
   struct PaletteFade *paletteWork;
 
@@ -595,14 +546,6 @@ static inline void Sanctum_ShowAllEmotes(void) {
 
 /// Vale Sanctum, SANCTUM_FROM_VALE_ERUPTION and SANCTUM_FROM_QUEST_RESTART: the
 /// Great Healer asks Isaac to take on the quest.
-///
-/// The gathering hears what happened in Sol Sanctum (skipped after a refusal).
-/// The Great Healer explains the Wise One's warning, and asks Isaac to accept
-/// responsibility for the fate of the land.
-///
-/// Accepting plays Sanctum_ReceiveWiseOnesMission, sets
-/// FLAG_SANCTUM_QUEST_ACCEPTED and takes SANCTUM_TO_VALE_PLAZA. Refusing leaves
-/// the room to gSanctum_QuestTriggers.
 static void Sanctum_RequestQuestAcceptance(void) {
   u32 effectIndex;
 
@@ -1165,10 +1108,6 @@ static void Sanctum_RequestQuestAcceptance(void) {
 
 /// Vale Sanctum, once Isaac accepts: the Wise One appears and accepts Isaac and
 /// Garet.
-///
-/// Garet and the Mayor react. The Wise One appears before the Great Healer and
-/// accepts the two, and the healer relays its guidance. They are to leave the
-/// next day.
 static void Sanctum_ReceiveWiseOnesMission(void) {
   u32 sparkIndex;
   struct Actor *wiseOne;
@@ -2061,11 +2000,6 @@ static s32 Sanctum_IsLeaderFacingHealer(void) {
 }
 
 /// Vale Sanctum: talking to the Great Healer outside the quest.
-///
-/// From the front the healer opens the Sanctum's services. Otherwise the words
-/// follow the story, from "Wielders of Psynergy are called Adepts" before the
-/// party has left Vale to the closed path to Sol Sanctum once it has reached
-/// Kalay.
 static void Sanctum_TalkToHealer(void) {
   if (Sanctum_IsLeaderFacingHealer() != 0) {
     Sanctum_Run(ACTOR_HEALER);
@@ -2084,14 +2018,6 @@ static void Sanctum_TalkToHealer(void) {
 }
 
 /// Vault Sanctum: talking to the healer.
-///
-/// From the front the healer opens the Sanctum's services. Otherwise the healer
-/// speaks of the gold statue or, on the later visit, of the earthquakes.
-///
-/// Its case for the quest's entrances (SANCTUM_FROM_VALE_ERUPTION,
-/// SANCTUM_FROM_QUEST_RESTART and SANCTUM_QUEST_UNUSED) passes to
-/// Sanctum_ReconsiderQuest, though their triggers (gSanctum_QuestTriggers) call
-/// that directly.
 static void Sanctum_TalkToHealerOnVisit(void) {
   s32 entrance;
 
@@ -2131,8 +2057,6 @@ static void Sanctum_TalkToHealerOnVisit(void) {
 }
 
 /// Bilibin Sanctum: talking to the healer, about Kolima's curse, lifted or not.
-///
-/// From the front, the healer opens the Sanctum's services.
 static void Sanctum_TalkAboutCurse(void) {
   if (Sanctum_IsLeaderFacingHealer() != 0) {
     Sanctum_Run(ACTOR_HEALER);
@@ -2150,8 +2074,6 @@ static void Sanctum_TalkAboutCurse(void) {
 
 /// Altin Sanctum: talking to the healer, about the beasts in the mine, or the
 /// party's saving Altin from them.
-///
-/// From the front, the healer opens the Sanctum's services.
 static void Sanctum_TalkAboutAltinMonsters(void) {
   if (Sanctum_IsLeaderFacingHealer() != 0) {
     Sanctum_Run(ACTOR_HEALER);
@@ -2168,8 +2090,6 @@ static void Sanctum_TalkAboutAltinMonsters(void) {
 
 /// Xian Sanctum: talking to the healer, who came to Xian from very distant
 /// lands.
-///
-/// From the front, the healer opens the Sanctum's services.
 static void Sanctum_TalkAboutJourneyFromXian(void) {
   if (Sanctum_IsLeaderFacingHealer() != 0) {
     Sanctum_Run(ACTOR_HEALER);

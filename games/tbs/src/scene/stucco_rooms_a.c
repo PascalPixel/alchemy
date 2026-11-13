@@ -159,8 +159,6 @@ const struct SceneExitRegion *StuccoRoomsA_GetRegions(void) { return NULL; }
 const u32 *StuccoRoomsA_GetExits(void) { return gStuccoRoomsA_Exits; }
 
 /// The inn's rooms share one actor placement table and the houses another.
-///
-/// The table is chosen by entrance and clipped to the current view.
 const struct ActorPlacement *StuccoRoomsA_GetActorPlacements(void) {
   s32 sceneId = gMainRoutineWork.next;
 
@@ -222,9 +220,6 @@ const struct Trigger *StuccoRoomsA_GetTriggers(void) {
 
 /// The tour's guide in the dining room of Kalay's inn tells the party of the
 /// tour.
-///
-/// He says `Please finish eating if you are taking the tour! We'll be
-/// leaving soon!` Now the party has heard of the tour.
 static void StuccoRoomsA_TalkToTourGuide(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayPleaseFinishEatingIfTaking);
@@ -235,8 +230,6 @@ static void StuccoRoomsA_TalkToTourGuide(void) {
 }
 
 /// Someone asks whether the party knows the continent south of Tolbi.
-///
-/// They're in one of Kalay's houses, and answer either way the party replies.
 static void StuccoRoomsA_AskAboutSouthernContinent(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayDoKnowAboutContinentSouth);
@@ -249,9 +242,6 @@ static void StuccoRoomsA_AskAboutSouthernContinent(void) {
 
 /// Spoken to across the counter of Kalay's inn, the leader facing west, the
 /// innkeeper offers a room.
-///
-/// From any other side he asks whether the party is going to Tolbi too. Once
-/// the tour has left, he says how empty the inn feels instead.
 static void StuccoRoomsA_TalkToInnkeeper(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -279,9 +269,6 @@ static void StuccoRoomsA_TalkToInnkeeper(void) {
 }
 
 /// The Kalay Sanctum's healer offers its services across the counter.
-///
-/// He does so when spoken to across the counter with the leader facing north.
-/// From elsewhere he says Kalay is a peaceful place.
 static void StuccoRoomsA_TalkToHealer(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -300,9 +287,6 @@ static void StuccoRoomsA_TalkToHealer(void) {
 
 /// Walking north into one of four doors inside Kalay's houses and inn opens
 /// it and takes the party through.
-///
-/// The doors are step triggers 12, 13, 16 and 19. The event stops the room's
-/// actors, opens the door and walks the leader out.
 static void StuccoRoomsA_OpenDoorAndExit(void) {
   struct FieldWork *work = gFieldWork;
   u32 slot;
@@ -374,14 +358,6 @@ s32 StuccoRoomsA_Initialize(void) {
 
 /// Once the Colosso tour has left, its guests are gone from Kalay's inn, and
 /// two people from the houses.
-///
-/// Until then the second tour guide is drawn with his green and blue swapped,
-/// as in kalay.c.
-///
-/// Entering by STUCCO_ROOMS_A_HOUSE_NORTHEAST_LOWER instead blanks four by two
-/// cells below the ground floor. The corner of a neighbouring room would
-/// otherwise show there, at the bottom edge of the view (the room's render
-/// with and without the copy).
 static void StuccoRoomsA_ApplyRoomState(void) {
   s16 entrance = gMainRoutineWork.entrance;
 

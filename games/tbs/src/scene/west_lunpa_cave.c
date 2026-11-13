@@ -264,20 +264,6 @@ static void WestLunpaCave_FlipRaisingSwitch(void) {
 }
 
 /// In West Lunpa Cave, Hammet finds Bunza hiding behind a rock.
-///
-/// It plays on stepping onto cell behavior 10, by the rock Bunza hides
-/// behind. Donpa must first have let the party leave the fortress with Hammet
-/// (FLAG_DODONPA_LOCKED_UP).
-///
-/// - Bunza steps out.
-/// - The party and Hammet gather behind the leader.
-/// - Garet and Mia think they saw someone.
-/// - Ivan asks whether Dodonpa's henchmen have found them. On a yes, Garet
-///   will fight. On a no, Garet wonders what else it could be.
-/// - Hammet calls out and names Bunza, and Bunza knows Hammet's voice.
-/// - The reunion and the wagon talk follow.
-///
-/// It sets FLAG_LUNPA_CAVE_REUNION_SEEN, so it plays once.
 static void WestLunpaCave_HammetFindsBunza(void) {
   s32 sighting;
   s32 recognition;
@@ -385,10 +371,6 @@ static void WestLunpaCave_HammetFindsBunza(void) {
 }
 
 /// The reunion, with the screen closed and reopened on the group.
-///
-/// Hammet and Ivan tell how the party came to his rescue. Bunza tells how he
-/// came to Lunpa and found the cave. He warns that Dodonpa's henchmen are
-/// combing the area, and offers his wagon as a way out of Lunpa.
 static void Reunion_Converse(void) {
   s32 reunion;
   s32 messageBase;
@@ -685,22 +667,6 @@ static void Reunion_Converse(void) {
 }
 
 /// Reconciles the party's answers until they either ride or stay behind.
-///
-/// Garet asks whether to ride.
-///
-/// - A yes brings Bunza's question whether the party has unfinished business.
-///   A no to that rides.
-/// - A no brings Garet's and Mia's questions whether it really will not ride.
-/// - Answers that point to staying meet Garet's check that nothing is left to
-///   do, where a yes rides. They also meet Bunza's apology that he cannot
-///   wait, after which Mia asks whether the party will stay.
-/// - A no to Mia's "You do want to go with them?" leaves Ivan confused and
-///   Garet asking again.
-///
-/// The gotos are the conversation's own shape, not a forced layout. Two of
-/// them enter the middle of the other branch. A no to riding joins the
-/// nothing-left check, and Mia's question joins Bunza's. Structured C could
-/// only write that by repeating those questions' calls.
 static void WagonChoice_Run(void) {
   s32 wagon;
   s32 insisted;

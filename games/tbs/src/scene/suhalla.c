@@ -134,13 +134,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 /// A woman asks whether the party is trying to get to Lalivero.
-///
-/// She's ACTOR_WOMAN_ASKING_ABOUT_LALIVERO, in Suhalla before Babi's
-/// audience. She asks "Are you trying to get to Lalivero?"
-///
-/// - Yes, and the sandstorms make it impossible.
-/// - No, and the woman doubts it, for Angarans who come to Suhalla are always
-///   going to Lalivero.
 static void Suhalla_AskIfGoingToLalivero(s32 actorId) {
   s32 firstMessage = MsgSuhallaTryingGetLalivero;
   Event_SetMessageId(firstMessage);
@@ -156,11 +149,6 @@ static void Suhalla_AskIfGoingToLalivero(s32 actorId) {
 }
 
 /// An old woman asks whether the sandstorm brought the party to Suhalla.
-///
-/// She's ACTOR_OLD_WOMAN_ON_SOUTHERN_GONDOWAN, there after Babi's audience.
-///
-/// - Yes, and everyone the storms catch winds up here.
-/// - No, and the old woman wonders why there are so many storms.
 static void Suhalla_AskIfBroughtBySandstorm(s32 actorId) {
   s32 firstMessage = MsgSuhallaBroughtSuhallaSandstorm;
   Event_SetMessageId(firstMessage);
@@ -176,9 +164,6 @@ static void Suhalla_AskIfBroughtBySandstorm(s32 actorId) {
 }
 
 /// Growth on Suhalla's sprout makes the plant grow.
-///
-/// Its cell takes the cell behavior of the grown plant's cell. The event
-/// sets FLAG_SUHALLA_SPROUT_GROWN.
 static void Suhalla_GrowSprout(void) {
   MapGrid_CopyCellAttributes(25, 9, 1, 1, 4, 9);
   GameFlag_Set(FLAG_SUHALLA_SPROUT_GROWN);
@@ -186,13 +171,6 @@ static void Suhalla_GrowSprout(void) {
 
 /// Walking north into one of Suhalla's doors opens it and takes the party
 /// inside.
-///
-/// The door opens, the leader steps through and the party leaves by that
-/// exit into the village's buildings.
-///
-/// The doors are SUHALLA_TO_INN, SUHALLA_TO_HOUSE_WEST,
-/// SUHALLA_TO_HOUSE_NORTHEAST and SUHALLA_TO_HOUSE_EAST, whose cell behaviors
-/// are their exits' numbers.
 static void Suhalla_EnterDoor(void) {
   struct FieldWork *work = gFieldWork;
   s32 exitTrigger = work->stepTrigger;
@@ -231,11 +209,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 /// Sets Suhalla up as the party enters.
-///
-/// The screen opens with the backdrop fade. The sprout is drawn grown if
-/// Growth was used on it before a return that keeps the party's position.
-///
-/// SUHALLA_AFTER_BABI_SPOKE sets FLAG_BABI_SPOKE_AFTER_COLOSSO.
 s32 Scene_Initialize(void) {
   struct FieldWork *work;
 

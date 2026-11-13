@@ -239,8 +239,6 @@ MercuryLighthouseEntrance_GetActorPlacements(void) {
 }
 
 /// Mercury Lighthouse: searching the inscription by the pool (cell behavior 1).
-///
-/// "He who honors the heart of the goddess shall stand at the center of all..."
 static void MercuryLighthouseEntrance_ReadHeartInscription(void) {
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -281,12 +279,6 @@ const struct Trigger *MercuryLighthouseEntrance_GetTriggers(void) {
 
 /// Mercury Lighthouse, the pool: Ply on the Ply target, from cell (12, 32)
 /// only, as the inscription bids.
-///
-/// The room dims, fifteen sparks rise from the pool, and its colours start to
-/// shimmer. The routes that need it open, so the pool's cell behaviors come
-/// into play.
-///
-/// Until FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED is set, which it sets.
 static void MercuryLighthouseEntrance_ActivateWithPly(void) {
   s32 leaderColumn;
   s32 leaderRow;
@@ -349,8 +341,6 @@ static void MercuryLighthouseEntrance_ReturnToDoorway(void) {
 
 /// Mercury Lighthouse, the doorway: touching cell behavior 40 or 42 while the
 /// Lizard Man stands aside.
-///
-/// He steps back in front of the doorway.
 static void MercuryLighthouseEntrance_LizardManReturnsToCentre(void) {
   GameFlag_Clear(FLAG_LIZARD_MAN_STEPPED_ASIDE);
   Actor_SetScript(ACTOR_LIZARD_MAN,
@@ -359,8 +349,6 @@ static void MercuryLighthouseEntrance_LizardManReturnsToCentre(void) {
 
 /// Mercury Lighthouse, the doorway: touching cell behavior 41 while the Lizard
 /// Man stands in the doorway.
-///
-/// He steps into the leader's way, west from column 7 and east otherwise.
 static void MercuryLighthouseEntrance_LizardManBlocksLeader(void) {
   struct Actor *leader;
   s32 leaderX;
@@ -381,9 +369,6 @@ static void MercuryLighthouseEntrance_LizardManBlocksLeader(void) {
 
 /// Mercury Lighthouse, the doorway: talking to the Lizard Man, Mind Read on
 /// him, or walking north into cell behavior 40 or 41.
-///
-/// He stirs and the battle begins. Afterwards the party comes back at
-/// MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN.
 static void MercuryLighthouseEntrance_FightLizardMan(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_LIZARD_MAN, 2);
@@ -405,12 +390,6 @@ static void MercuryLighthouseEntrance_FightLizardMan(void) {
 
 /// Sets up Mercury Lighthouse's ground floor, then plays the event of the
 /// entrance taken.
-///
-/// It sets up the lights the leader carries, FLAG_MERCURY_LIGHTHOUSE_LIT, the
-/// Retreat point, the pool's colours and the routes Ply has opened.
-///
-/// The events are the Lizard Man event until Mia has gone in, the drop from
-/// above, the passages' arrivals and the rise from the channels.
 s32 MercuryLighthouseEntrance_Initialize(void) {
   struct EffectOptions options;
   s32 velocity[3];
@@ -580,10 +559,6 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
 /// Mercury Lighthouse, the doorway, at
 /// MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_BEFORE_LIZARD_MAN unless returning
 /// after a battle.
-///
-/// Mia tries to get past the Lizard Man, who steps across to block her each
-/// time. Then she waits, watching the leader come up, and the cells before the
-/// doorway become walkable.
 static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
   s32 paceCycle;
   struct Actor *mia;
@@ -666,9 +641,6 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
 /// Mercury Lighthouse, the doorway, at
 /// MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN, back from the
 /// Lizard Man battle, once.
-///
-/// Mia nods to the leader and goes on into the lighthouse. Sets
-/// FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA.
 static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
   struct Actor *actor;
 

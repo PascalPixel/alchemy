@@ -104,9 +104,6 @@ static void Colosso_ShowOpeningLettering(s32 match) {
 /// Shows how a match ended, back in the arena after its battle: `WIN`, or
 /// `LOSE` in blue, swells over the arena with its jingle, the loser shows an
 /// ellipsis, and the screen closes.
-///
-/// result is the match's number, negative for a loss; the lettering stands
-/// for that many seconds.
 static void Colosso_ShowMatchResult(s32 result) {
   s32 loser;
 

@@ -140,8 +140,6 @@ static s32 FileScreen_EncodePassword(u8 *data, s32 size, u8 *out);
 static u16 FileScreen_CalculatePasswordCrc16(u32 byteCount, u8 *data);
 
 /// The File Screen overlay's scene tables, for the scene loader.
-///
-/// They are one entrance, the exit, and no actor placements or triggers.
 u8 *FileScreen_GetEntrances(void) { return (u8 *)gFileScreen_Entrances; }
 
 /// The exit regions entry: the File Screen has no exit boxes.
@@ -157,8 +155,6 @@ u8 *FileScreen_GetTriggers(void) { return (u8 *)gFileScreen_Triggers; }
 
 /// Loads the Golden Sun logo onto BG2 as Title_LoadBackground (title.c) does,
 /// and stops the leader's motion.
-///
-/// FileScreen_Run calls it first.
 static void FileScreen_LoadBackground(void) {
   u8 *resource;
   s32 resourceId;
@@ -206,10 +202,6 @@ static void FileScreen_LoadBackground(void) {
 }
 
 /// The task that fades BG0 and the sprites in over the logo.
-///
-/// Their weight rises by a sixteenth every two frames, and the task removes
-/// itself at full weight, 32 frames on. FileScreen_Run schedules it once,
-/// when there is no save file to choose.
 static void FileScreen_UpdateBlend(void) {
   u16 level;
 
@@ -256,10 +248,6 @@ const u16 gFileScreen_ExtraButtonCode[] = {
 
 /// The task that follows the two hidden codes each frame while the File
 /// Screen runs.
-///
-/// Each key must be held alone and then every key released. Any other key
-/// starts that code over. A finished code sets its unlocked flag, which stays
-/// set, and plays SE_CHIME.
 static void FileScreen_CheckButtonCodes(void) {
   if (gFileScreen_CodeUnlocked == 0) {
     if (gFileScreen_CodeHeld != 0) {
@@ -306,16 +294,6 @@ static void FileScreen_CheckButtonCodes(void) {
 #undef FILE_SCREEN_BUTTON_CODE_KEYS
 
 /// Converts a six-bit password symbol to the edition's one- or two-byte glyph.
-///
-/// It writes the glyph, a second byte (Japanese's voiced mark, else 0) and a
-/// terminator into text.
-///
-/// Outside Japanese the 64 symbols are A to Z without I and O, 2 to 9, a to z
-/// without l and o, and ! ? # & $ % + =. Japanese uses hiragana, the last 18
-/// with the voiced mark.
-///
-/// The six left out are the three pairs that look alike (I, l and 1; O, o and
-/// 0), so a password copied by hand reads back one way.
 static void FileScreen_NameEntryCharacter(s32 cell, u8 *text) {
   text[1] = 0;
   text[2] = 0;
@@ -375,10 +353,6 @@ static void FileScreen_NameEntryCharacter(s32 cell, u8 *text) {
 
 /// Returns -1 when the loaded game may not restart at its last Sanctum, 0
 /// otherwise.
-///
-/// It may not when it was saved where an event blocked Retreat
-/// (FLAG_RETREAT_BLOCKED). Towns (SCENE_TYPE_TOWN), which block it by
-/// themselves, and the world map are the exceptions.
 static s32 FileScreen_GetSaveRecoveryBlockMask(void) {
   s32 mapDifference;
 
@@ -415,13 +389,6 @@ struct SaveLinkGreeting {
 };
 
 /// The overlay's initialize entry: the File Screen.
-///
-/// At entrance 2, after the credits, it offers to save the cleared game and
-/// goes on to the world map.
-///
-/// Otherwise it loops on the start menu until the player starts a new game,
-/// continues a file or enters the Battle Arena. Copying, erasing and sending
-/// a cleared file's data, by cable or as a password, come back to the menu.
 ///
 /// Returns 0 once a destination is set.
 s32 FileScreen_Run(void) {
@@ -1053,24 +1020,6 @@ struct PasswordMember {
 /// PASSWORD_LEVEL_GOLD takes 173 bytes, _SILVER 39 or _BRONZE 9. Any other
 /// mode clears 11. It clamps each party member's base stats and level in
 /// place first, and returns the byte count.
-///
-/// Every level of password holds:
-/// - the four levels, 7 bits each from the lowest bit, in bytes 0 to 2 and
-///   the high half of 3
-/// - the Djinn held, 7 bits an element, in the low half of 3 and bytes 4 to 6
-/// - the story flags of gFileScreen_PasswordFlags, in byte 7
-///
-/// Silver and Bronze keep in byte 8 which Psynergy items the party carries.
-///
-/// Gold and Silver add the base stats, 60 bits a party member, high bits
-/// first, from byte 8 (Gold) or 9 (Silver).
-///
-/// Gold alone adds:
-/// - the 60 inventory slots' items, 9 bits each from byte 39, with a spare
-///   bit after every seventh
-/// - the 5-bit quantity fields of the 23 gFileScreen_PasswordStackItems for
-///   each party member, from the low half of byte 107
-/// - the coins, in bytes 165 to 167
 static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   // The private view remains pending member reconciliation; its fields below
   // follow Unit's actual base stats.
@@ -1284,12 +1233,6 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
 
 /// Encodes size bytes of data as password symbols in out and returns how
 /// many there are.
-///
-/// - It XORs every byte but the last with the last (in place).
-/// - It cuts the bits into six-bit symbols, high bits first.
-/// - It adds a check symbol after every nine (their sum, mod 64; a shorter
-///   last group gets none).
-/// - It then adds each symbol's position, mod 64.
 static s32 FileScreen_EncodePassword(u8 *data, s32 size, u8 *out) {
   s32 xorKey;
   s32 symbolCount;
@@ -1342,10 +1285,6 @@ static s32 FileScreen_EncodePassword(u8 *data, s32 size, u8 *out) {
 
 /// Runs the original shift/subtract checksum, initially 0xffff, and returns
 /// its complemented low 16 bits.
-///
-/// 0xFFFFEFDF is -0x1021, CRC-16-CCITT's polynomial, subtracted where that CRC
-/// XORs it. Bits above 15 never reach the result, since carries and borrows
-/// only move up.
 static u16 FileScreen_CalculatePasswordCrc16(u32 byteCount, u8 *data) {
   u32 crc;
   u32 byteIndex;

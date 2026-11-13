@@ -334,10 +334,6 @@ static void Kolima_WalkThroughExit(s32 exitNumber) {
 /// In Kolima, walking into one of the five doorways leads into the houses and
 /// shops. Their step triggers are the numbers of the exits they take
 /// (KOLIMA_TO_INN to KOLIMA_TO_HOUSE_NORTH).
-///
-/// The door sound plays. The four entered walking north open their door
-/// (gKolima_DoorCells) and the leader walks in. KOLIMA_TO_HOUSE_NORTH, entered
-/// walking south, has no door to draw.
 static void Kolima_EnterDoor(void) {
   struct FieldWork *work = gFieldWork;
   s32 x = 0;
@@ -379,17 +375,6 @@ static void Kolima_EnterDoor(void) {
 /// At Kolima Bridge, the first time the party steps up to it, the villager
 /// beside it (ACTOR_BRIDGE_VILLAGER) asks whether they are going to cross. At
 /// the leader's nod he says "Go right ahead!" and hops aside to the post.
-///
-/// - The drawbridge then comes down across the river in front of the leader in
-///   four ever quicker steps of map cells.
-/// - As it lands, ten puffs of dust fly up.
-/// - The screen shakes and the leader jumps back.
-///
-/// The last cells copied also give the bridge the cell behaviors that open it.
-/// From then on the villager keeps turning to face the leader.
-///
-/// This is step trigger 10, and it plays until FLAG_KOLIMA_BRIDGE_LOWERED. Sets
-/// FLAG_KOLIMA_BRIDGE_LOWERED.
 static void Kolima_LowerBridge(void) {
   u32 debrisIndex;
 
@@ -477,14 +462,6 @@ static void Kolima_LowerBridge(void) {
 /// Sets up whichever scene is entered: Kolima Bridge as the curse and the
 /// bridge leave it (Kolima_RestoreBridgeState), Kolima Tunnel with a window
 /// transition, and Kolima itself.
-///
-/// In Kolima the four sparkles twinkle. While the curse lasts the villagers
-/// stand as trees, and three cells around (14, 8) take the cell behavior of
-/// cell (13, 9). The first entry from the World Map plays
-/// Kolima_WitnessForestCurse.
-///
-/// Once that has been seen, here or in Kolima Forest, Garet, Ivan and Mia, the
-/// two voices and the domes are taken away and five more sparkles are placed.
 s32 Kolima_Initialize(void) {
   s16 sceneId;
   u32 actorId;
@@ -581,30 +558,6 @@ static __inline__ void Kolima_NodTogether(void) {
 
 /// In Kolima, on the first entry from the World Map (KOLIMA_FROM_WORLD_MAP),
 /// the party sees the curse fall. This plays until FLAG_KOLIMA_CURSE_WITNESSED.
-///
-/// - The leader, Garet and Ivan, with Mia if she has joined, walk into a silent
-///   village.
-/// - Ivan reads a tree's mind ("This tree...was a person").
-/// - Garet sees that everyone in Kolima has been turned into a tree and asks
-///   the leader whether he knows why.
-/// - Ivan notices "sparkly stuff on the ground".
-/// - Sparkles rain from the sky and press the party down until domes of their
-///   own Psynergy rise over each of them.
-/// - They argue over whether it was their Psynergy, since no one was
-///   concentrating. Ivan decides that some Psynergy acts only when it is
-///   needed.
-/// - A second shower raises the domes again.
-/// - Tret and Laurel, unseen, wonder at people immune to Tret's glamour. Tret,
-///   dying and torn in two, will not forgive Kolima's axes. Laurel tells the
-///   party to reawaken his gentle side and look for Tret deep within the
-///   forest.
-/// - Whatever the leader answers to Ivan and Garet, the party resolves to save
-///   Kolima.
-///
-/// Mia's lines and moves are skipped without her.
-///
-/// Sets FLAG_KOLIMA_CURSE_WITNESSED. KolimaForestEntrance_WitnessForestCurse
-/// plays the same event in Kolima Forest.
 static void Kolima_WitnessForestCurse(void) {
   struct Actor *actor;
   s32 *partyLayout;
@@ -1591,16 +1544,6 @@ s32 gKolima_MiaInParty __attribute__((section(".bss")));
 s32 gKolima_EffectActive __attribute__((section(".bss")));
 
 /// Sets up Kolima Bridge.
-///
-/// While the curse lasts, the villager as a man (ACTOR_BRIDGE_VILLAGER) is put
-/// out of sight, leaving him a tree (ACTOR_BRIDGE_VILLAGER_AS_TREE). The five
-/// cells from (9, 18), the cells of step trigger 10, take the open ground of
-/// the row above them. So walking up to the river does not start
-/// Kolima_LowerBridge, whose villager is still a tree. Afterwards the tree is
-/// put out of sight instead.
-///
-/// Once the bridge is down (FLAG_KOLIMA_BRIDGE_LOWERED), it is drawn down and
-/// its cells changed to match.
 static void Kolima_RestoreBridgeState(void) {
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     Actor_SetPosition(ACTOR_BRIDGE_VILLAGER, 0, 0);

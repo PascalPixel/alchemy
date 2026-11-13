@@ -189,16 +189,6 @@ const struct Trigger *MercuryLighthouseAerie_GetTriggers(void) {
 }
 
 /// Sets up the Lighthouse Aerie, then plays the event of the entrance taken.
-///
-/// The beacon flickers and the six platforms sit 50 pixels down.
-///
-/// - The first arrival (MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) plays the
-///   party's arrival.
-/// - The return from the battle with Saturos
-///   (MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE) plays Alex's event.
-/// - Arriving by the lift
-///   (MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR) leaves the
-///   lift up.
 s32 MercuryLighthouseAerie_Initialize(void) {
   u32 i;
   s32 actorId;
@@ -276,10 +266,6 @@ s32 MercuryLighthouseAerie_Initialize(void) {
 
 /// Lighthouse Aerie, at MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT unless
 /// returning after a battle: the party arrives at the top.
-///
-/// The Adepts of the lit element regain their PP. The aerie shakes, the camera
-/// pans across and in a flash the party stands at the top. Isaac shakes his
-/// head and the others gather on him.
 static void MercuryLighthouseAerie_PartyArrives(void) {
   struct Actor *leader;
 
@@ -380,9 +366,6 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
 #include "shared/actor_nearest.h"
 
 /// Lighthouse Aerie: walking into cell behavior 10 or 11.
-///
-/// If nothing is in the way the leader jumps two cells ahead, off any platform
-/// and onto the next.
 static void MercuryLighthouseAerie_JumpToPlatform(void) {
   struct Actor *actor;
   struct FieldPosition position;
@@ -415,8 +398,6 @@ static void MercuryLighthouseAerie_JumpToPlatform(void) {
 }
 
 /// Lighthouse Aerie: touching cell behavior 10 when not already on a platform.
-///
-/// The platform underfoot dips with the leader and bobs back up.
 static void MercuryLighthouseAerie_StepOntoPlatform(void) {
   struct Actor *leader;
   struct Actor *actor;
@@ -455,8 +436,6 @@ static void MercuryLighthouseAerie_StepOntoPlatform(void) {
 }
 
 /// Lighthouse Aerie: touching cell behavior 11, off the platforms.
-///
-/// The leader walks normally again and the platforms stop following.
 static void MercuryLighthouseAerie_SettlePlatforms(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -469,13 +448,6 @@ static void MercuryLighthouseAerie_SettlePlatforms(void) {
 }
 
 /// Lighthouse Aerie: touching cell behavior 5 before the confrontation.
-///
-/// Garet sees the lighthouse is lit: "It's too late! The lighthouse has already
-/// been lit!" Mia learns the party is from Vale. Jenna calls out, and Felix,
-/// Menardi and Saturos face the party.
-///
-/// Menardi leaves with Jenna, Kraden and Felix for the next lighthouse, and
-/// Saturos fights alone (ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2).
 static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   struct Actor *actor;
 
@@ -954,15 +926,6 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
 /// Lighthouse Aerie, at MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE, back
 /// from the battle, unless returning after another: Saturos is beaten, but not
 /// for long.
-///
-/// "Isaac, we got him!" Alex appears and explains that the lighthouse bound
-/// Saturos' fire Psynergy and lent Mia endless power.
-///
-/// Saturos stands again. The two exit over to the lift and ride it down, and
-/// the party regroups on the leader.
-///
-/// Sets FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED and
-/// FLAG_SATUROS_BEATEN_AT_MERCURY.
 static void MercuryLighthouseAerie_AlexAppears(void) {
   Event_Start();
   Actor_Get(ACTOR_LIFT_STATUE)->motionFlags = 0;
@@ -1553,8 +1516,6 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
 }
 
 /// Lighthouse Aerie: touching cell behavior 6 while the lift is down.
-///
-/// The camera watches it rise with its statue.
 static void MercuryLighthouseAerie_CallLift(void) {
   struct MapGridLayerScroll *lift;
 
@@ -1584,11 +1545,6 @@ static void MercuryLighthouseAerie_CallLift(void) {
 }
 
 /// Lighthouse Aerie: touching cell behavior 12.
-///
-/// The leader steps onto the lift and rides it down to
-/// SceneId_MercuryLighthouseExterior, arriving at
-/// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE by the Fountain of
-/// Healing.
 static void MercuryLighthouseAerie_RideLiftDown(void) {
   Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
@@ -1829,9 +1785,6 @@ UNUSED static void MercuryLighthouseAerie_UnusedAlexCastsPly(void) {
 }
 
 /// A beacon spark's update, which swings it round the beacon it watches.
-///
-/// Its angle (its timer, in 1/65536 turns) steps back each frame. Its speed
-/// holds the swing's radius in pixels, less 28.
 static void MercuryLighthouseAerie_UpdateBeaconSpark(struct Actor *spark) {
   struct Actor *beacon;
   u16 angle;
@@ -1846,9 +1799,6 @@ static void MercuryLighthouseAerie_UpdateBeaconSpark(struct Actor *spark) {
 }
 
 /// Flickers the beacon and sheds its sparks, every frame.
-///
-/// While the view is near the top the beacon flickers between two sizes, and
-/// every 16 frames it throws off a spark that swings round it.
 static void MercuryLighthouseAerie_FlickerBeacon(void) {
   struct Actor *beacon;
   struct Actor *spark;

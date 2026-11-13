@@ -286,11 +286,6 @@ const struct ActorPlacement *Xian_GetActorPlacements(void) {
 
 /// A villager in Xian asks whether the young warriors came through Mogall
 /// Forest.
-///
-/// She is ACTOR_WOMAN_ON_YOUNG_WARRIORS, and asks before Xian hears of Hsu.
-/// "Young warriors, very gallant! You came through Mogall Forest?"
-///
-/// A yes earns respect. A no is a lie, since Silk Road from Altin is blocked.
 static void Xian_AskAboutYoungWarriors(void) {
   Event_Start();
   Event_SetMessageId(MsgXianYoungWarriorsVeryGallantCame);
@@ -302,14 +297,6 @@ static void Xian_AskAboutYoungWarriors(void) {
 }
 
 /// Talking to the water carrier in Xian.
-///
-/// While she carries her water east of x = 320 the first time, she spills it.
-/// A puddle spreads at her feet and she cries "You made me spill my water!"
-/// She walks back west to fetch more, the leader stepping aside if he is in
-/// her way.
-///
-/// Otherwise she only answers "Do not speak to me. I might spill my water.",
-/// or once it is spilled, "Now I must get water again."
 static void Xian_TalkToWaterCarrier(void) {
   struct Actor *puddle;
   struct Actor *carrier;
@@ -476,12 +463,6 @@ static void Xian_FreezeSpilledWater(void) {
 }
 
 /// Talking to the kung fu student in Xian.
-///
-/// The first time she shouts "Hoo-whaaa... Hachaaa!" and the leader steps
-/// back. The student leaps at the tree, which jumps under her strike, and
-/// she says "Heh heh heh..."
-///
-/// Afterwards she says "My kung fu is strong."
 static void Xian_TalkToKungFuStudent(void) {
   s32 demonstrationSeen;
   struct Actor *leader;
@@ -577,13 +558,6 @@ static void Xian_TalkToKungFuStudent(void) {
 }
 
 /// Feizhi asks, in Xian, whether the party are strong warriors.
-///
-/// She is by the south exit after she has left Master Feh's school, and
-/// before Xian hears of Hsu. "You are the warriors from the school... Are you
-/// strong warriors?"
-///
-/// On a yes, she hopes they will go west. On a no, very few warriors would
-/// call themselves weak.
 static void Xian_TalkToFeizhi(void) {
   Event_Start();
   Event_SetMessageId(MsgXianWarriorsFromSchoolStrongWarriors);
@@ -646,11 +620,6 @@ static void Xian_WalkThroughExit(s32 exitNumber) {
 }
 
 /// Walking north into one of Xian's doors opens it, and the party goes in.
-///
-/// Each door's cell behavior is the number of the exit it leads by. Five lead
-/// into the houses, shops and inn. XIAN_TO_SANCTUM leads into Xian Sanctum
-/// (SE_THUMP), and XIAN_TO_LACQUER_ROOMS_A_FEHS_SCHOOL into Master Feh's
-/// school.
 static void Xian_OpenDoorAndLeave(void) {
   struct FieldWork *work = gFieldWork;
 
@@ -695,9 +664,6 @@ static void Xian_OpenDoorAndLeave(void) {
 
 /// Force on the training tree in Xian makes it jump, and the student cries
 /// out.
-///
-/// The first time she says "Wha-Wha-What happened? The tree jumped on its
-/// own!", and the next time "...It jumped again... I am too tired...".
 static void Xian_StrikeTrainingTreeWithForce(void) {
   TaskFunc rotate;
 
@@ -773,14 +739,6 @@ const struct Trigger *Xian_GetTriggers(void) { return gXian_Triggers; }
 
 /// Queues and plays SE_AMBIENT_WIND and sets up the village as the story and
 /// this visit left it.
-///
-/// - The kung fu student stands where her strike leaves her, after the news
-///   of Hsu or, back from a battle, after her strike.
-/// - Feizhi is gone after the news or once she has seen the rockslide.
-/// - Back from a battle, the frozen puddle keeps its ice.
-/// - The water carrier is hooked to Xian_WatchWaterCarrierPath.
-/// - The training tree, its Force mark and the three crates are drawn under
-///   the actors.
 s32 Xian_Initialize(void) {
   struct Actor *actor;
   u32 crateIndex;

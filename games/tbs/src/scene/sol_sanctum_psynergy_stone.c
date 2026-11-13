@@ -57,9 +57,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 /// Opens the map with the window transition and blocks Retreat.
-///
-/// Once Mt. Aleph has erupted (FLAG_SOL_SANCTUM_ERUPTED), the room rumbles
-/// (SE_RUMBLE) and shakes gently, as the rest of the sanctum does.
 s32 Scene_Initialize(void) {
   s32 shakeX = px(1);
   s32 shakeY = px(1);

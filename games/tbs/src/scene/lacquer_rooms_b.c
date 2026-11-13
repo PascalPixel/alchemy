@@ -277,9 +277,6 @@ const struct Trigger *LacquerRoomsB_GetTriggers(void) {
 /// SPRITE_CHEST's sheet (Actor_CreateConfigured). There is one in the inn
 /// (LACQUER_ROOMS_B_INN_SOUTH and LACQUER_ROOMS_B_INN_FROM_INN_GUEST_ROOMS) and
 /// two in the shops (LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP).
-///
-/// In the room behind the school, it clears FLAG_SHOW_AREA_NAME and lays Hsu in
-/// the bed.
 s32 LacquerRoomsB_Initialize(void) {
   s16 entrance;
 

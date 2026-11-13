@@ -305,9 +305,6 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 actorId) {
 }
 
 /// Stepping on step trigger 10 on the Pirate Ship: Deadbeard attacks.
-///
-/// He is the sixth group of ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS. After
-/// the battle the party comes back to the ship at ENTRANCE_AFTER_BATTLE.
 static void CrossboneIsle_FightDeadbeard(void) {
 
   Event_Start();
@@ -348,13 +345,6 @@ static void CrossboneIsle_CatchNut(void) {
 }
 
 /// Restores each scene's puzzles from its flags.
-///
-/// - In CrossboneIsleFloatingLogs, the sliding logs' footprints.
-/// - On the Pirate Ship, the mimic's chest and, after Deadbeard, the Demon
-///   Mail's.
-/// - On Crossbone Isle, the ivy, plants and Nut.
-/// - In the corridor rooms, the mimic's chest, the sunk pillars and the door
-///   opened after a battle.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 sceneId;
@@ -484,9 +474,6 @@ static void CrossboneIsle_RestoreSunkPillar(void) {
 
 /// Move on a corridor room's pillar in Crossbone Isle Cave, and after each
 /// push: at column 40 the pillar sinks.
-///
-/// It sinks into the floor in a ring of dust, and the corridor is open (a
-/// flag per room from FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED).
 static void CrossboneIsle_MovePillar(void) {
   struct Actor *pillar;
   s32 column;
@@ -546,10 +533,6 @@ static void CrossboneIsle_OpenWestDoor(void) {
 
 /// Walking north into a corridor room's east door in Crossbone Isle Cave
 /// (step trigger 3): the monsters behind it attack, once.
-///
-/// The first time, the party fights them and comes back at
-/// ENTRANCE_AFTER_BATTLE. Once they are beaten, the door opens onto the side
-/// room.
 static void CrossboneIsle_OpenEastDoor(void) {
   if (GameFlag_Get(gMainRoutineWork.next +
                    (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
@@ -638,10 +621,6 @@ static inline void CrossboneIsle_GrowPlant(s32 actorId, s32 plant, s32 x,
 
 /// Unused: Growth on Crossbone Isle's first plant would grow it and let the
 /// party climb at (304, 368).
-///
-/// The actor placements put that plant at the map's origin, off stage in the
-/// forest's corner. No cast can reach it there and the player never sees it
-/// (its render).
 static void CrossboneIsle_UnusedGrowFirstPlant(s32 actorId) {
   CrossboneIsle_GrowPlant(actorId, 0, 304, 368);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN);
@@ -678,9 +657,6 @@ static void CrossboneIsle_BlowAwayFirstIvy(void) {
 
 /// Unused: Whirlwind on Crossbone Isle's second ivy would blow it away for
 /// good.
-///
-/// The actor placements put that ivy at the map's origin, off stage. No cast
-/// can reach it there and the player never sees it (its render).
 static void CrossboneIsle_UnusedBlowAwaySecondIvy(void) {
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1);
 }
@@ -692,8 +668,6 @@ static void CrossboneIsle_BlowAwayThirdIvy(void) {
 
 /// Unused: Whirlwind on Crossbone Isle's fourth ivy would blow it away for
 /// good.
-///
-/// The actor placements set only three, so no actor answers its trigger.
 static void CrossboneIsle_UnusedBlowAwayFourthIvy(void) {
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3);
 }

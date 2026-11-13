@@ -211,10 +211,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Turning back in Gondowan Passage (step trigger 10) with Iodem in the party,
 /// until he has reached Babi Lighthouse: he steps out and asks why Isaac is
 /// going back.
-///
-/// Yes: he waits here for the party's return.
-///
-/// No: he rejoins the party and Isaac steps away from the step trigger.
 static void GondowanCave_IodemAsksWhyTurningBack(void) {
   struct Actor *leader;
 
@@ -271,11 +267,6 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
 }
 
 /// Iodem comes along with the party from Gondowan Passage, where he waits.
-///
-/// He comes along when he's talked to, or walked up to (step trigger 11) while
-/// he isn't with the party.
-///
-/// `I've been waiting for you, Isaac! We should go to Babi Lighthouse soon.`
 static void GondowanCave_IodemRejoins(void) {
   Event_Start();
   Actor_FaceActor(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);
@@ -303,14 +294,6 @@ static void GondowanCave_IodemRejoins(void) {
 
 /// Talking to the first soldier in Gondowan Passage before Babi has spoken
 /// after Colosso: he asks whether the party will cross into Gondowan.
-///
-/// `Do you wish to cross into Gondowan?`
-///
-/// Yes: `I won't stop you, but I wouldn't go unless I had business there.`,
-/// with advice to watch Colosso until it is over.
-///
-/// No: `That's a good idea. They wouldn't let you into Babi Lighthouse,
-/// anyway.`
 static void GondowanCave_SoldierAsksAboutCrossing(void) {
   s32 firstMessage;
 
@@ -335,10 +318,6 @@ static void GondowanCave_SoldierAsksAboutCrossing(void) {
 
 /// Mind Read on the second soldier in Gondowan Passage, before Babi has
 /// spoken after Colosso: he grumbles about guard duty.
-///
-/// Once Colosso is over (FLAG_COLOSSO_OVER) he grumbles that guard duty made
-/// him miss all of it. Before, he grumbles that the warriors fight while he
-/// guards the bridge.
 static void GondowanCave_ReadSoldierMind(void) {
   if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0 &&
       GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) == 0)
@@ -350,9 +329,6 @@ static void GondowanCave_ReadSoldierMind(void) {
 
 /// Leaving GondowanCave by GONDOWAN_CAVE_TO_WORLD_MAP_EAST (exit 1),
 /// out to the World Map.
-///
-/// With FLAG_SCENE_TEMP_04 set, which nothing in the game sets, three unnamed
-/// flags and the pillar's are first put into one arrangement.
 static void GondowanCave_LeaveToWorldMapEast(void) {
   struct FieldWork *work;
 
@@ -376,15 +352,9 @@ static void GondowanCave_LeaveToWorldMapEast(void) {
 
 /// Walking west or east into step triggers 10 and 11 in GondowanCave: the
 /// leader jumps two cells forward where the map allows (Field_TryJumpForward).
-///
-/// That takes him across the stump and the pillar once they float in the
-/// water.
 static void GondowanCave_JumpAcross(void) { Field_TryJumpForward(); }
 
 /// Move on the stump in GondowanCave, until it has leapt.
-///
-/// From column 30 or less it spins and leaps into the water, freeing the cell
-/// where it stood.
 static void GondowanCave_MoveStump(void) {
   Actor_Get(ACTOR_STUMP);
   Event_Start();
@@ -519,10 +489,6 @@ static void GondowanCave_LiftBoulder(void) {
 }
 
 /// Sets up the scene as the party enters.
-///
-/// Gondowan Passage blocks Retreat and keeps Iodem out of sight while he
-/// travels with the party. Gondowan Cave's GondowanCave puts the stump and the
-/// pillar where the party left them.
 s32 Scene_Initialize(void) {
 
   if (gMainRoutineWork.next == (s32)&SceneId_GondowanPassage) {

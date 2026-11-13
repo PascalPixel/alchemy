@@ -197,9 +197,6 @@ static void VaultRevisit_HopeVolcanoStaysCalm(void) {
 /// (FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED) he says "Hey, it's that warrior
 /// guy!" and "Yeah, and Ivan, too." After that he says "I'm so glad you came
 /// back to Vault!"
-///
-/// Bit 1 of the boy's timer keeps Vault_UpdateWalkingVillager from moving it
-/// while it talks.
 static void VaultRevisit_GreetWarriorGuy(void) {
   struct Actor *actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
   u16 facing = actor->facing;
@@ -250,9 +247,6 @@ static void VaultRevisit_WishEldersWereBrave(void) {
 
 /// The strongman on watch asks about the jail. "Did you guys check out the
 /// jail?"
-///
-/// - Yes: how did the thugs break out?
-/// - No: the thieves broke out and got away.
 static void VaultRevisit_AskAboutJailbreak(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultGuysCheckJail);
@@ -456,10 +450,6 @@ static void VaultRevisit_EnterInn(void) {
 /// The item shop's door opens and the party walks in.
 /// It's VAULT_REVISIT_TO_LOG_ROOMS_B_EAST, into the item shop, where the
 /// couple who talk of Colosso also stand.
-///
-/// The leader is drawn at sprite priority 3 as he walks in, as at the weapon
-/// and armor shop and the jail. The cell behavior of the doorway, a column of
-/// three cells at (23, 12), is replaced so he can pass.
 static void VaultRevisit_EnterItemShop(void) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
@@ -610,27 +600,6 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 }
 
 /// Sets up Vault as the party finds it after reaching Kalay.
-///
-/// On arrival it does these things:
-///
-/// - It restores the passage's cell behaviors (shared/vault_toggle.h).
-/// - It creates the still actor of SPRITE_CRATE on the well, which shows
-///   nothing.
-/// - It mends the inn's roof, which vault.c leaves holed.
-/// - It gives the two children round the well the update routine
-///   Vault_UpdateWalkingVillager.
-///
-/// The dog waits at the hidden passage once it has shown it.
-///
-/// Coming in by a gate (ENTRANCE_DEFAULT to VAULT_REVISIT_NORTH_UNUSED,
-/// forwarded from vault.c) before Sap has joined clears
-/// FLAG_VAULT_SAP_CALLED_BY_BELL, so Sap is hidden again. While it is called
-/// and has not joined, it stands on the cliff top.
-///
-/// Coming out of Vault Sanctum (VAULT_REVISIT_FROM_SANCTUM) clears
-/// FLAG_SHOW_AREA_NAME. Coming up from Vault Cave
-/// (VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE) clears FLAG_ARRIVAL_STAIRS_UP, so
-/// the leader's arrival animation does not play.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 

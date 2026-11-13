@@ -70,9 +70,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) { return gGomaCavePondTriggers; }
 
 /// Sets up the room as the party enters.
-///
-/// Once the stump in the room above has been pushed over, it lies here
-/// underfoot, and the cells it covers change.
 s32 Scene_Initialize(void) {
   struct FieldWork *work;
 

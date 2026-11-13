@@ -211,9 +211,6 @@ const struct Trigger *SolSanctumElementalStarRoom_GetTriggers(void) {
 }
 
 /// Elemental Star Room: searching the Venus Star's pedestal.
-///
-/// The room flashes, new crossings open between the pedestals, and the star
-/// goes into a Mythril Bag. Sets FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED.
 static void SolSanctumElementalStarRoom_BagVenusStar(void) {
   u32 i;
   s32 member;
@@ -316,9 +313,6 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
 
 /// Elemental Star Room: searching the Mercury Star's pedestal, as the Venus
 /// Star.
-///
-/// Kraden: "Good, good! Now, go fetch the others!" Sets
-/// FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED.
 static void SolSanctumElementalStarRoom_BagMercuryStar(void) {
   u32 i;
   s32 member;
@@ -420,10 +414,6 @@ static void SolSanctumElementalStarRoom_BagMercuryStar(void) {
 }
 
 /// Elemental Star Room: searching the Jupiter Star's pedestal.
-///
-/// The star is bagged. Then Saturos and Menardi appear with Jenna and Kraden as
-/// hostages, Felix is unmasked, and Alex takes the three stars. Sets
-/// FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX, which ends the row.
 static void SolSanctumElementalStarRoom_BagJupiterStarAndMeetSaturos(void) {
   Event_Start();
   SolSanctumElementalStarRoom_BagJupiterStar();
@@ -725,9 +715,6 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
 
 /// Menardi offers a guarantee of the hostages' safety, and the masked man must
 /// remove his mask.
-///
-/// Isaac and Garet hear the name Felix, Jenna's brother, whom they thought lost
-/// on the day of the Boulder.
 static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
@@ -829,8 +816,6 @@ static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void) {
 }
 
 /// Felix unmasks and tells Jenna he survived, saved by Saturos and Menardi.
-///
-/// Garet asks whether to give them the stars, and either way takes them over.
 static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   struct Actor *actor;
   struct Actor *other;
@@ -1020,8 +1005,6 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
 }
 
 /// Alex appears, takes the three stars from Garet and demands the last one.
-///
-/// The Venus, Mercury and Jupiter Stars leave the party's items.
 static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   u32 i;
   struct Actor *actor;
@@ -1248,10 +1231,6 @@ static void SolSanctumElementalStarRoom_LineUpCaptors(void) {
 
 /// Elemental Star Room: searching the Mars Star's pedestal, until
 /// FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED is set.
-///
-/// Isaac bags the last star, and the room quakes. Then the event cuts away by
-/// SOL_SANCTUM_ELEMENTAL_STAR_ROOM_TO_SOL_SANCTUM_ERUPTION to the chamber's
-/// collapse (SceneId_SolSanctumEruption).
 static void SolSanctumElementalStarRoom_TakeMarsStar(void) {
   u8 pass;
   s32 member;
@@ -1323,9 +1302,6 @@ static void SolSanctumElementalStarRoom_TakeMarsStar(void) {
 }
 
 /// Elemental Star Room: talking to Kraden.
-///
-/// He speaks about the stars still to bag or, once Alex holds them, his regret:
-/// "I am responsible for all of this."
 static void SolSanctumElementalStarRoom_TalkToKraden(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX)) {
@@ -1403,8 +1379,6 @@ static void SolSanctumElementalStarRoom_TalkToAlex(void) {
 
 /// Elemental Star Room: walking north back the way the party came has Kraden
 /// call it back.
-///
-/// "There aren't any Elemental Stars out there!"
 static void SolSanctumElementalStarRoom_KradenStopsPartyLeaving(void) {
   Event_Start();
   Event_SetMessageId(MsgSolSanctumNoStarsOutThere);
@@ -1435,14 +1409,6 @@ SolSanctumElementalStarRoom_ShowPedestal(s32 cameraX, s32 cameraZ, s32 actorX,
 }
 
 /// Elemental Star Room, the first arrival: Kraden explains the Elemental Stars.
-///
-/// Isaac appears, Garet and Jenna step out, and Kraden follows. He explains the
-/// Elemental Stars at the four pedestals, and gives out the Mythril Bags.
-///
-/// Called by SolSanctumElementalStarRoom_Initialize at
-/// SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS until
-/// FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED is set, which it sets. Clears
-/// FLAG_SHOW_AREA_NAME.
 static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   u16 i;
   struct Actor *rising;
@@ -2076,14 +2042,6 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
 }
 
 /// Sets up the Elemental Star Room.
-///
-/// - Retreat is blocked, and the floating lights start.
-/// - The crossings of each bagged star are redrawn.
-/// - Kraden and Jenna stand where the explanation left them.
-/// - The captors line up once Alex holds the stars.
-/// - The first arrival by
-///   SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS plays its
-///   event.
 s32 SolSanctumElementalStarRoom_Initialize(void) {
   s32 ringActorId;
 

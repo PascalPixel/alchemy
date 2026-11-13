@@ -340,9 +340,6 @@ static void VenusLighthouseAerie_JumpToNextPlatform(void) {
 }
 
 /// Landing on a platform makes it dip under the leader and spring back up.
-///
-/// FLAG_VENUS_AERIE_ON_PLATFORM is set while the leader stands on a platform,
-/// so this runs once per landing.
 static void VenusLighthouseAerie_LandOnPlatform(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *platform;
@@ -383,10 +380,6 @@ static void VenusLighthouseAerie_LandOnPlatform(void) {
 
 /// Stepping back onto the floor, and before each jump, sets the platforms
 /// floating again.
-///
-/// The leader walks and falls normally again. All six platforms float,
-/// bobbing, as they do until the leader lands on one
-/// (VenusLighthouseAerie_LandOnPlatform).
 static void VenusLighthouseAerie_FloatPlatforms(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -404,12 +397,6 @@ const struct Trigger *VenusLighthouseAerie_GetTriggers(void) {
 }
 
 /// Sets up the beacon's statues and the six platforms.
-///
-/// It then runs the part of the event the entrance selects. The arrival runs
-/// only when not back from a battle. After a lost battle it instead gives
-/// back the Shaman's Rod and leaves for Lalivero Sanctum.
-///
-/// Back from a battle, the platform nearest the leader stands still.
 s32 VenusLighthouseAerie_Initialize(void) {
   s32 mirroredScale;
   u32 platformId;
@@ -800,17 +787,6 @@ static void VenusLighthouseAerie_ShowPartyMember(s32 actorId, s32 shown) {
 
 /// Walking up to Saturos and Menardi starts the confrontation
 /// (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON).
-///
-/// - Felix refuses to be rescued.
-/// - Sheba reads the party's minds for the rod that reaches Jupiter
-///   Lighthouse.
-/// - They promise not to harm her for the Shaman's Rod.
-/// - Felix carries it over.
-/// - They will not let her go, and the first battle begins.
-///
-/// It sets FLAG_SHAMANS_ROD_HOLDER plus the party member who carried the rod.
-/// It sets FLAG_AERIE_FIRST_BATTLE_BEGUN as the battle starts, which changes
-/// the aerie's music.
 static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   s32 rodHolder;
   struct Actor *actor;
@@ -1285,15 +1261,6 @@ static inline void VenusLighthouseAerie_ShowGroupEmote(s32 emote,
 
 /// Back from the first battle, Saturos and Menardi fuse
 /// (VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE).
-///
-/// - Felix will still have the beacons lit.
-/// - Saturos throws the Venus Star into the lighthouse.
-/// - Its light restores Saturos and Menardi.
-/// - Felix leaves with Sheba, and the two fuse.
-///
-/// It refills the PP of the party's Adepts whose lighthouses are lit, starts
-/// the second battle and sets FLAG_AERIE_SECOND_BATTLE_BEGUN, which changes
-/// the aerie's music.
 static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   struct EffectOptions menardiBurst;
   s32 velocity[3];
@@ -1995,10 +1962,6 @@ static void VenusLighthouseAerie_FinishSaturosAndMenardiBattle(void) {
 /// A look back from the World Map shows Sheba in danger
 /// (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT, after the World Map's lighthouse
 /// transition).
-///
-/// Felix cries out as Sheba clings to the broken aerie. Then the World Map
-/// returns with its music still playing
-/// (VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP).
 static void VenusLighthouseAerie_ShowShebaInDanger(void) {
   Event_Start();
   VenusLighthouseAerie_RestorePartyOnBrokenAerie();
@@ -2016,9 +1979,6 @@ static void VenusLighthouseAerie_ShowShebaInDanger(void) {
 
 /// Back from the World Map, stages the broken aerie for Sheba's fall and the
 /// party's escape (VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP).
-///
-/// It plays them, sets FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED and leaves for
-/// Lalivero (VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_C).
 static void VenusLighthouseAerie_StageShebasFall(void) {
   struct Actor *leader;
   struct Actor *actor;
@@ -2632,9 +2592,6 @@ static void VenusLighthouseAerie_TryToPreventFall(void) {
 }
 
 /// Shows Sheba falling, Felix jumping after her and the party escaping.
-///
-/// The party resolves to find Jenna and the others at Idejima, and a long
-/// search finds no sign of Jenna.
 static void VenusLighthouseAerie_PlayShebasFall(void) {
   struct Actor *actor;
   s32 stepPending;

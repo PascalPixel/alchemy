@@ -181,8 +181,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Talking to one of the people of Hammet Palace before Hammet is free: he
 /// hopes for his release.
-///
-/// `Lord Hammet will be released soon. Right?`
 static void HammetPalace_AskWhetherHammetWillBeReleased(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayLordHammetWillReleasedSoon);
@@ -195,8 +193,6 @@ static void HammetPalace_AskWhetherHammetWillBeReleased(void) {
 
 /// Talking to one of the people of Hammet Palace before Hammet is free: he
 /// worries for Hammet's silk trade.
-///
-/// `Has the legacy of Lord Hammet's silk trading come to an end?`
 static void HammetPalace_AskWhetherSilkTradeHasEnded(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayHasLegacyLordHammetsSilk);
@@ -208,15 +204,6 @@ static void HammetPalace_AskWhetherSilkTradeHasEnded(void) {
 }
 
 /// Layana scolds Isaac for sneaking into Lunpa.
-///
-/// It's the first talk with her in Hammet Palace after the party has heard in
-/// Lunpa that Hammet is held there (area temp flag
-/// FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA).
-///
-/// `Isaac, you sneaked into Lunpa? That's far too dangerous!`
-///
-/// She is glad Hammet is unhurt, but asks the party not to go back, and to
-/// fulfill their quest.
 static void HammetPalace_LayanaScoldsLunpaVisit(void) {
 
   Event_Start();
@@ -281,16 +268,6 @@ s32 Scene_Initialize(void) {
 }
 
 /// Sets up the room the party enters by.
-///
-/// - In Layana's room (HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM), Hammet
-///   stands beside her once he is free, and his homecoming plays the first
-///   time. Before that she stands elsewhere once the party has heard of him
-///   in Lunpa (FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA).
-/// - By the door to the underground passage
-///   (HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING and
-///   HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM) the door is drawn open
-///   once FLAG_KALAY_TUNNEL_OPEN is set.
-/// - HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS is Ivan's report.
 static void HammetPalace_SetUpEntrance(void) {
   struct Actor *actor;
   s32 facing;
@@ -346,12 +323,6 @@ static void HammetPalace_SetUpEntrance(void) {
 
 /// Ivan's report in Hammet Palace, when the guards at the door bring the party
 /// to Layana: she had hoped Hammet came back with him.
-///
-/// - The ransom was paid long ago, yet Dodonpa holds Hammet still.
-/// - Layana will not risk him by sending the soldiers, nor the party.
-/// - She tells of the prophecy, the Jupiter Adept who gave Hammet the Shaman's
-///   Rod and Ivan, and what the rod is to find.
-/// - Then she sends everyone back to their posts.
 static void HammetPalace_IvanReportsToLayana(void) {
 
   struct FieldWork *work;
@@ -877,12 +848,6 @@ static void HammetPalace_FacePartyNorth(s32 waitFrames) {
 
 /// Hammet's homecoming in Hammet Palace, the first time the party walks into
 /// Layana's room once he is free.
-///
-/// - Hammet welcomes them.
-/// - Layana scolds Ivan for going to Lunpa against her word.
-/// - Ivan decides to leave at once on the quest.
-/// - Hammet sends them to Hesperia with the Shaman's Rod, as the Jupiter Adept
-///   said.
 static void HammetPalace_HammetsHomecoming(void) {
 
   struct Actor *leader;

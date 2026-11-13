@@ -328,9 +328,6 @@ static void GomaCavePillar_SpawnStumpDust(void) {
 s32 gGomaCavePillar_WitnessFrames;
 
 /// Move on the stump in Goma Cave, until it falls (FLAG_GOMA_CAVE_STUMP_FELL).
-///
-/// Once it is pushed to the edge (column 25), it teeters shedding dust, tips
-/// over and falls into the room below with a crash that shakes the screen.
 static void GomaCavePillar_PushStumpOver(void) {
   s32 column;
   void (*fragmentFunc)(void);
@@ -478,8 +475,6 @@ static void GomaCavePillar_PushEastPillar(void) {
 
 /// Walking west into the gap in Goma Cave (cell behavior 20): the leader
 /// jumps across it.
-///
-/// Later patches use the shared forward jump.
 static void GomaCavePillar_JumpGapWest(void) {
 #if TBS_PATCH_1
   Field_TryJumpForward();
@@ -530,8 +525,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Back from a won battle with Forge, the man reacts on a timer while the
 /// Djinni joins the party.
-///
-/// Once the Djinni's event is over, it raises RAISED_FORGE_JOINED.
 static void GomaCavePillar_FidgetWhileForgeFights(void) {
   struct FieldWork *work;
   s32 frame;
@@ -560,9 +553,6 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
 
 /// Raised in Goma Cave once Forge has joined the party: the man who fought it
 /// is amazed.
-///
-/// He says `You got it? Wow, that's pretty impressive!`, then walks off for
-/// good.
 static void GomaCavePillar_WitnessCheersForgeCaught(void) {
   Task_Remove(GomaCavePillar_FidgetWhileForgeFights);
   Event_Start();
@@ -587,9 +577,6 @@ static void GomaCavePillar_WitnessCheersForgeCaught(void) {
 
 /// Sets up the room as the party enters: the pillars and the stump where the
 /// party left them.
-///
-/// ENTRANCE_STUMP_FALL plays the stump's fall. After a won battle with Forge,
-/// the man's reaction starts.
 s32 Scene_Initialize(void) {
   struct FieldWork *work;
 

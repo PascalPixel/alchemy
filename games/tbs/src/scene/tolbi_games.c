@@ -308,9 +308,6 @@ static void TolbiSpring_AskAboutFirstDiceGame(s32 actorId) {
 }
 
 /// Searching Tolbi Spring lets the party toss a coin or a Lucky Medal.
-///
-/// The spring rises into view the first time in the visit, and the leader
-/// stands with their back to it to toss.
 static void TolbiSpring_TossCoinOrMedal(void) {
   s32 leader = gMainRoutineWork.leaderActorId;
 
@@ -358,15 +355,6 @@ const struct Trigger *TolbiSpring_GetTriggers(void) {
 }
 
 /// The setup of both scenes.
-///
-/// For Tolbi Spring it sets up the blend, the two mirrored props drawn
-/// underfoot and, from Tolbi (TOLBI_SPRING_FROM_TOLBI), the toss's obstacles.
-/// The spring is shown at once if it has risen in this visit.
-///
-/// For the Lucky Dice and Lucky Wheels rooms it removes the soldier after
-/// FLAG_COLOSSO_OVER, and handles the returns from the games.
-/// STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE announces Lucky Dice's coins and
-/// STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS hands over Lucky Wheels' prizes.
 s32 TolbiSpring_Initialize(void) {
   s32 coinChange;
   s8 *wonPrizes;
@@ -568,9 +556,6 @@ static void TolbiSpring_RiseAndFadeIn(void) {
 
 /// The Lucky Wheels attendant in Tolbi checks tickets and inventory space
 /// before sending the party to the game.
-///
-/// The game returns to STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS. `spoken` is 1
-/// after a game with no prize, to offer another.
 static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
   s32 tickets = PartyInventory_CountItem(ITEM_GAME_TICKET);
   s32 room;
@@ -639,9 +624,6 @@ static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
 }
 
 /// Talking to the Lucky Dice attendant in Tolbi offers a game.
-///
-/// It costs ten coins a level of the party's average level. The event saves
-/// the coin total for the return to STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE.
 static void TolbiSpring_OfferLuckyDice(void) {
   u32 cost;
   u32 coins;

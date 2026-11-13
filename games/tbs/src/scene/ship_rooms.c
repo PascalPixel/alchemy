@@ -489,11 +489,6 @@ static s32 ShipRooms_HasArrived(struct Actor *actor) {
 
 /// The update of Kaja (ACTOR_QUARTERS_KAJA) while the ship waits off the
 /// island.
-///
-/// He paces between two spots in the captain's quarters, looking about at each.
-/// At three points of the round he signals the captain (ACTOR_QUARTERS_CAPTAIN)
-/// through his own riseEnabled, but not while the captain is paused. work holds
-/// the step.
 static void ShipRooms_PaceCaptainsQuarters(struct Actor *actor) {
   struct Actor *captain;
 
@@ -563,9 +558,6 @@ static void ShipRooms_PaceCaptainsQuarters(struct Actor *actor) {
 }
 
 /// The update of the captain, who watches Kaja pace.
-///
-/// He turns north-northeast at the first signal, nods at the second if still
-/// turned, and faces east at the third. Does nothing while paused.
 static void ShipRooms_WatchPacer(struct Actor *watcher) {
   struct Actor *pacer;
 
@@ -615,9 +607,6 @@ const struct SceneExitRegion *ShipRooms_GetRegions(void) { return 0; }
 const u32 *ShipRooms_GetExits(void) { return gShipRooms_Exits; }
 
 /// Picks the actor placements for the room entered and the voyage's stage.
-///
-/// Some stages change who turns to face the party when talked to (talkFacing)
-/// in the shared tables.
 const struct ActorPlacement *ShipRooms_SelectActorPlacements(void) {
   switch (gMainRoutineWork.entrance) {
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
@@ -753,10 +742,6 @@ const struct Trigger *ShipRooms_SelectTriggers(void) {
 }
 
 /// The crewman asks whether the party wants to see the captain too.
-///
-/// This is in the captain's quarters at Kalay, once the warriors want to see
-/// the captain. On yes, the passengers' pressure on the captain plays
-/// (FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL).
 static void ShipRooms_TalkToCaptainsQuartersCrewman(void) {
   Event_Start();
   Field_EndBusyAndReveal();
@@ -799,13 +784,6 @@ static void ShipRooms_TalkToSeanInCaptainsQuarters(void) {
 }
 
 /// The captain, who speaks by the voyage's stage.
-///
-/// First it is too late to hire mercenaries, then he tells of his bad luck at
-/// losing his lucky anchor, then he is uncertain what might happen, and under
-/// sail he gives the news of an injured oarsman.
-///
-/// After finding the Anchor Charm, talking to him also opens the File Screen,
-/// so that the charm can be returned.
 static void ShipRooms_TalkToCaptain(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
@@ -836,9 +814,6 @@ static void ShipRooms_TalkToCaptain(void) {
 }
 
 /// A passenger in the hold while the ship waits.
-///
-/// Once the party has agreed to protect the ship, she worries the proud
-/// warriors won't like being told to row, and asks the party.
 static void ShipRooms_TalkToWaitingWarrior(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
@@ -867,8 +842,6 @@ static void ShipRooms_TalkToWaitingWarrior(void) {
 
 /// Another waiting passenger, once the party has agreed to protect the ship,
 /// asks whether it will row.
-///
-/// "Are you going to row?"
 static void ShipRooms_TalkToWaitingMuscleAdmirer(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
@@ -952,8 +925,6 @@ static void ShipRooms_AskLadyToRow(void) {
 }
 
 /// The stared-at passenger is asked to row, as the others are.
-///
-/// It is written out in full rather than through ShipRooms_AskToRow.
 static void ShipRooms_AskStaredAtPassengerToRow(void) {
   s32 rowerId;
 
@@ -1289,8 +1260,6 @@ static void ShipRooms_TalkToMuscleAdmirerAtOars(void) {
 }
 
 /// Mind Read on the head guide at the oars.
-///
-/// "Just hurry up and slay that beast!"
 static void ShipRooms_ReadHeadGuideMindAtOars(void) {
   TOLBI_SHIP_ROWER_LINE_BY_ROUND(PASSENGER_HEAD_GUIDE, ACTOR_ROWING_HEAD_GUIDE,
                                  MsgTolbiShipDontCareTakesJustHurry,
@@ -1358,10 +1327,6 @@ static void ShipRooms_ReadMuscleAdmirerMindAtOars(void) {
 #undef TOLBI_SHIP_ROWER_LINE_FIRST_OR_LATER
 
 /// Asks a passenger to row.
-///
-/// On yes they walk to the leader and leave with them, and the seat's flag for
-/// this passenger (seatFlag) and FLAG_TOLBI_SHIP_ROWER_CHOSEN are set. On no
-/// the next message refuses.
 static void ShipRooms_AskToRow(s32 speaker, s32 question, s32 seatFlag) {
   Event_Start();
   Event_SetMessageId(question);
@@ -1379,10 +1344,6 @@ static void ShipRooms_AskToRow(s32 speaker, s32 question, s32 seatFlag) {
 }
 
 /// The travelling healer in the hold.
-///
-/// From in front of him (the leader facing roughly east) he opens his Sanctum.
-/// Otherwise he talks by the voyage's stage. Under sail, until the ship is
-/// docked, he is ACTOR_SEA_HOLD_HEALER, else ACTOR_HOLD_HEALER.
 static void ShipRooms_TalkToHealer(void) {
   struct Actor *leader;
 
@@ -1420,10 +1381,6 @@ static void ShipRooms_TalkToHealer(void) {
 /// Talking to one of the monsters on the rowing deck
 /// (ACTOR_ROWING_FIRST_MONSTER and the two after it) starts the battle with
 /// them.
-///
-/// The battle is a slot of the encounter zone of the Tolbi ship's scripted
-/// battles. The slot, and the entrance the party comes back to, are chosen by
-/// how far the voyage has gone.
 static void ShipRooms_FightRowingDeckMonsters(void) {
   Event_Start();
   Field_EndBusyAndReveal();
@@ -1453,8 +1410,6 @@ static void ShipRooms_FightRowingDeckMonsters(void) {
 }
 
 /// While the monsters are aboard, the leader is walked back from the stairs.
-///
-/// "Where are you going, Isaac? Slay the beasts and save my mates!"
 static void ShipRooms_TurnBackFromStairs(void) {
   if (GameFlag_Get(FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS) != 0) {
     Event_Start();
@@ -1469,9 +1424,6 @@ static void ShipRooms_TurnBackFromStairs(void) {
 
 /// Below decks at Kalay, once the warriors have gone to the captain
 /// (CELL_BEHAVIOR_SHIP_ROOMS_QUARTERS_CREW): the crew wonders at the delay.
-///
-/// The captain, Kaja and the crewman wonder what could have happened to the
-/// replacement ship, as on deck (FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY).
 static void ShipRooms_WatchCrewWonderAtDelay(void) {
   if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0)
     return;
@@ -1508,10 +1460,6 @@ static void ShipRooms_WatchCrewWonderAtDelay(void) {
 /// In the hold at Kalay, once the tour group has left Kalay
 /// (CELL_BEHAVIOR_SHIP_ROOMS_HOLD_WARRIORS): Ouranos threatens to go ashore if
 /// the ship doesn't sail.
-///
-/// The second guide can't say when it will, so Sean and Ouranos set off to make
-/// the captain set sail. The guide ("I don't want any violence!") hurries after
-/// them past the party.
 static void ShipRooms_WatchWarriorsStormOff(void) {
   s32 guideSpeaker;
   s32 seanSpeaker;
@@ -1640,9 +1588,6 @@ static void ShipRooms_WatchWarriorsStormOff(void) {
 
 /// In the captain's quarters at Kalay: the passengers press the captain to
 /// launch.
-///
-/// Ouranos and Sean offer to guard the deck. The captain finds his lucky anchor
-/// charm gone and refuses to sail without it.
 static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   s32 seanSpeech;
   s32 ouranosSpeech;
@@ -1908,9 +1853,6 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
 
 /// In the captain's quarters at Kalay, using the Anchor Charm on the captain:
 /// he has his lucky anchor back.
-///
-/// Sean names the party to guard the oarsmen, and the party agrees to protect
-/// the ship (FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED).
 static void ShipRooms_ReturnLuckyAnchor(void) {
   struct Actor *actor;
   s32 captainSpeech;
@@ -2517,11 +2459,6 @@ static void ShipRooms_PlaceFoundActors(s32 gated) {
 
 /// On the rowing deck, once the charm is back: Kaja tells the oarsmen the ship
 /// sails without its replacement.
-///
-/// He asks the party to bring a passenger to row whenever an oarsman falls,
-/// keeping the teams balanced. Leads to the deck's
-/// TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_READY
-/// (FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT).
 static void ShipRooms_AskForReplacementOarsmen(void) {
   struct Actor *actor;
 
@@ -2696,8 +2633,6 @@ static void ShipRooms_AnnounceDeparture(void) {
 }
 
 /// Kaja comes into the hold and calls the first passenger to the rowing deck.
-///
-/// "Row those oars!"
 static void ShipRooms_KajaCallsToOars(void) {
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_RESET_CAMERA, 0, 0);
@@ -3124,8 +3059,6 @@ static void ShipRooms_MoveCameraAndWaitFixed(s32 x, s32 y, s32 z, u32 flags) {
 }
 
 /// Reuses the voyage's actor, camera, transition and selection operations.
-///
-/// Each command names how it interprets the two arguments below.
 static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
   u32 slot;
 
@@ -3723,9 +3656,6 @@ static void ShipRooms_EndThirdAttack(void) {
 }
 
 /// SHIP_ROOMS_FROM_WORLD_MAP, on the rowing deck: the ship rocks.
-///
-/// A huge sea monster is on the ship, and the party goes up on deck
-/// (FLAG_TOLBI_SHIP_KRAKEN_ON_DECK).
 static void ShipRooms_NoticeShipRocking(void) {
   s32 secondRower;
   s32 thirdRower;
@@ -3873,9 +3803,6 @@ static void ShipRooms_ShakeWhileKrakenAboard(void) {
 
 /// SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_ISLAND, in the captain's
 /// quarters, after the ship has come off course.
-///
-/// A short exchange plays, then SHIP_ROOMS_TO_WORLD_MAP leads by the World Map
-/// to the island (SHIP_ROOMS_ROWING_DECK_FROM_WORLD_MAP_ISLAND).
 static void ShipRooms_ShowCaptainsQuartersBeforeIsland(void) {
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_SETUP_CAPTAINS_QUARTERS, 1, 0);
@@ -3892,9 +3819,6 @@ static void ShipRooms_ShowCaptainsQuartersBeforeIsland(void) {
 
 /// SHIP_ROOMS_ROWING_DECK_FROM_WORLD_MAP_ISLAND, on the rowing deck at the
 /// island.
-///
-/// Kaja rests the rowers, and each chosen passenger answers
-/// (FLAG_TOLBI_SHIP_AT_ISLAND).
 static void ShipRooms_ReachIsland(void) {
   s32 fourthRower;
   s32 secondRower;
@@ -4024,10 +3948,6 @@ static void ShipRooms_ReachIsland(void) {
 
 /// SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SWITCH_TEAMS, on the rowing deck
 /// back from the island.
-///
-/// Kaja switches the left and right teams, the left team's timing having taken
-/// the ship off course. The chosen passengers swap seats and the ship sets off
-/// again.
 static void ShipRooms_DismissReplacementRowers(void) {
   s32 firstRower;
   s32 fourthRower;

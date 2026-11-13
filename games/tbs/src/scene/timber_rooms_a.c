@@ -138,10 +138,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 /// Suhalla's merchant.
-///
-/// Spoken to facing north, across the counter, the merchant opens the shop.
-/// Otherwise the merchant says Suhalla's is the only store, or, after Babi's
-/// audience, asks whether the party is surprised to find so few shops.
 static void TimberRoomsA_TalkToMerchant(s32 actorId) {
   u16 facing =
       (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff;
@@ -167,10 +163,6 @@ static void TimberRoomsA_TalkToMerchant(s32 actorId) {
 }
 
 /// Suhalla's innkeeper.
-///
-/// Spoken to facing north, across the counter, the innkeeper offers a room.
-/// Otherwise the innkeeper has nothing to do until Tolbi's festival ends, or,
-/// after Babi's audience, has been busy since the sandstorms began.
 static void TimberRoomsA_TalkToInnkeeper(s32 actorId) {
   u16 facing =
       (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff;
@@ -188,11 +180,6 @@ static void TimberRoomsA_TalkToInnkeeper(s32 actorId) {
 }
 
 /// Suhalla Sanctum's Healer.
-///
-/// Spoken to facing north, across the counter, the Healer offers the
-/// sanctum's services. Otherwise the Healer talks of Lalivero under Tolbi's
-/// rule, or, after Babi's audience, wonders why there are so many
-/// sandstorms.
 static void TimberRoomsA_TalkToHealer(s32 actorId) {
   u16 facing =
       (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff;
@@ -210,14 +197,6 @@ static void TimberRoomsA_TalkToHealer(s32 actorId) {
 }
 
 /// A traveler the storms blew back asks whether the party was blown here too.
-///
-/// That's in Suhalla after Babi's audience, and the question is whether the
-/// party was on the way to Babi Lighthouse.
-///
-/// - Yes, and the traveler means to give up and follow the northern mountain
-///   back to Tolbi.
-/// - No, and the traveler tells of setting out to open a business at the
-///   lighthouse.
 static void TimberRoomsA_AskIfBlownHere(s32 actorId) {
   s32 question = MsgSuhallaSupposeFolkBlown;
   Event_SetMessageId(question);
@@ -236,21 +215,6 @@ static void TimberRoomsA_AskIfBlownHere(s32 actorId) {
 
 /// In Suhalla after Babi's audience, Iodem steps out of the party and
 /// questions the two wounded soldiers.
-///
-/// It plays once, on stepping into the house where they lie (cell behavior
-/// 50).
-///
-/// - A soldier says "Iodem..."
-/// - They were escorting Sheba to Lalivero when a sandstorm hit them.
-/// - They tell of others who stopped the cyclones with water and slew the
-///   monsters causing them.
-/// - Iodem asks whether these are the ones the party follows.
-/// - Either way he resolves to search the desert for Sheba and pursue them,
-///   and rejoins the party.
-///
-/// Sets FLAG_IODEM_MET_WOUNDED_SOLDIERS either way. Once Iodem has reached
-/// Babi Lighthouse (FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED), the event does not
-/// play.
 static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
   struct Actor *leader;
   GameFlag_Set(FLAG_IODEM_MET_WOUNDED_SOLDIERS);
@@ -568,11 +532,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 /// Sets Suhalla's buildings up as the party enters.
-///
-/// It puts the merchant and innkeeper behind their counters, and the two
-/// wounded soldiers lying in their beds.
-///
-/// TIMBER_ROOMS_A_AFTER_BABI_SPOKE sets FLAG_BABI_SPOKE_AFTER_COLOSSO.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
   if (gMainRoutineWork.entrance == TIMBER_ROOMS_A_AFTER_BABI_SPOKE)

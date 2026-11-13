@@ -227,25 +227,17 @@ const struct Trigger *BilibinCave_GetTriggers(void) {
 
 /// Stepping on step trigger 10 at the Bilibin Cave Entrance, on either side of
 /// the way into Bilibin Cave, turns the way's exit off.
-///
-/// The way's cell (21, 14), the exit cell of
-/// BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH, takes the cell behavior
-/// of source cell (1, 0), which has none.
 static void BilibinCave_WalkOntoLedgeOverCaveMouth(void) {
   MapGrid_CopyCellAttributes(1, 0, 1, 1, 21, 14);
 }
 
 /// Stepping on step trigger 11 at the Bilibin Cave Entrance, a cell further
 /// out, turns the way's exit back on.
-///
-/// The way's cell (21, 14) takes back the exit, from source cell (0, 0).
 static void BilibinCave_WalkOffLedgeOverCaveMouth(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 21, 14);
 }
 
 /// Reveal in Bilibin Cave (SceneId_BilibinCaveRapier) shows the hidden path.
-///
-/// The path is a strip of tiles and two rows of the cells under it.
 static void BilibinCave_RevealHiddenPath(void) {
   MapGrid_CopyCellsTo(111, 37, 97, 21, 1, 3);
   {
@@ -259,8 +251,6 @@ static void BilibinCave_RevealHiddenPath(void) {
 
 /// As Reveal wears off in Bilibin Cave (SceneId_BilibinCaveRapier), the path is
 /// hidden again.
-///
-/// The strip's tiles and one row of its cells are restored.
 static void BilibinCave_HideRevealedPath(void) {
   MapGrid_CopyCellsTo(95, 21, 97, 21, 1, 3);
   {
@@ -283,8 +273,6 @@ static void BilibinCave_DouseRapierRoomFire(void) {
 
 /// Douse on the fire in Bilibin Cave (SceneId_BilibinCaveIce), until it is out,
 /// puts it out.
-///
-/// The puddle beside it then freezes into a pillar the party can walk over.
 static void BilibinCave_DouseIceRoomFire(void) {
   Event_Start();
   Actor_SetPosition(ACTOR_ICE_ROOM_FIRE, 0, 0);
@@ -301,9 +289,6 @@ static void BilibinCave_DouseIceRoomFire(void) {
 
 /// Frost on a puddle in Bilibin Cave (SceneId_BilibinCaveIce) that heat keeps
 /// from freezing melts straight back.
-///
-/// This clears the Psynergy's child effect and plays the ice melting back into
-/// a puddle.
 static inline void BilibinCave_MeltFrostBack(s32 actorId) {
   Event_Start();
   Actor_SetSpriteColorById(actorId, SPRITE_COLOR_NORMAL);
@@ -332,13 +317,6 @@ static void BilibinCave_FreezeThirdPuddle(void) {
 }
 
 /// A movable torch melts the ice pillar beside it.
-///
-/// This runs after a push or Move in Bilibin Cave (SceneId_BilibinCaveIce).
-/// While either movable torch stands on cell (35, 23)
-/// (FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR and
-/// FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR), the ice pillar beside it melts
-/// with a sound, and FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED says so. When both
-/// leave, it freezes again.
 static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
   struct Actor *firstActor;
   struct Actor *secondActor;
@@ -390,9 +368,6 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
 
 /// Growth on the sprout at the Bilibin Cave Entrance, until it has grown, grows
 /// it into a vine.
-///
-/// Its cell's cell behavior changes, and
-/// FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN keeps it grown.
 static void BilibinCave_GrowPlant(void) {
 
   MapGrid_CopyCellAttributes(31, 0, 1, 1, 8, 13);
@@ -414,8 +389,6 @@ static void BilibinCave_StopFootprints(void) {
 }
 
 /// Sets up the scene being entered, with its puzzles already solved.
-///
-/// The scene is the Bilibin Cave Entrance or one of Bilibin Cave's two.
 s32 BilibinCave_Initialize(void) {
   s16 variant = gMainRoutineWork.next;
 
@@ -440,8 +413,6 @@ static void BilibinCave_RestoreEntrance(void) {
 }
 
 /// Sets up Bilibin Cave's SceneId_BilibinCaveRapier.
-///
-/// It places its two torches, and its fire, gone once Douse has put it out.
 static void BilibinCave_RestoreRapierRoom(void) {
 
   gFieldWork->transition =
@@ -464,9 +435,6 @@ static inline void BilibinCave_ClearActorSpriteFlags(s32 actorId) {
 }
 
 /// Sets up Bilibin Cave's SceneId_BilibinCaveIce.
-///
-/// It places its torches, puddles and pillars, with the steps of its puzzle
-/// already solved.
 static void BilibinCave_RestoreIceRoom(void) {
   s32 destinationCellX;
 

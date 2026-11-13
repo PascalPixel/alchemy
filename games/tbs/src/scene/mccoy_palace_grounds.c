@@ -125,9 +125,6 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) { return gMcCoyPalaceGroundsExits; }
 
 /// The people outside McCoy's Palace.
-///
-/// Once McCoy has turned the party away, the east guard turns back after
-/// talking. Once the curse is lifted, Lady McCoy faces the party.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_McCoyPalaceGrounds) {
     if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0)
@@ -179,9 +176,6 @@ static void McCoyPalaceGrounds_TalkToNorthWorker(void) {
 
 /// McCoy's Palace, outside, before the curse is lifted: Lady McCoy asks
 /// whether the party blames her for the curse.
-///
-/// On yes she calls herself the victim, and on no she calls the curse a
-/// superstition. Either way she wants her palace.
 static void McCoyPalaceGrounds_TalkToLadyMcCoy(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinTellingMeImResponsibleFor);
@@ -206,9 +200,6 @@ static void McCoyPalaceGrounds_TalkToWestGuard(void) {
 
 /// McCoy's Palace, outside, until McCoy turns the party away: the east guard
 /// asks whether the party is brave enough to meet his lord.
-///
-/// On yes, the gate opens and the west guard walks in. Once the party is
-/// admitted, he reminds it that McCoy is a difficult man.
 ///
 /// Unused: the branch for a party back from Bilibin never runs. In it he
 /// scolds the party once for keeping McCoy waiting (MsgBilibinWhere,
@@ -318,9 +309,6 @@ static void McCoyPalaceGrounds_EnterPalace(void) {
 }
 
 /// Sets up the grounds outside McCoy's Palace.
-///
-/// The west worker is drawn in front. The guards, Lady McCoy and the arrest
-/// are set as the story stands.
 s32 Scene_Initialize(void) {
   struct FieldWork *work = gFieldWork;
   struct Actor *actor;
@@ -339,9 +327,6 @@ s32 Scene_Initialize(void) {
 }
 
 /// The guards stand where the party left them.
-///
-/// Once the curse is lifted, Lady McCoy stands before the palace and, until
-/// McCoy has rewarded the party, the guards arrest them.
 static void McCoyPalaceGrounds_RestoreStory(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
     GameFlag_Clear(FLAG_GATE_OPEN);

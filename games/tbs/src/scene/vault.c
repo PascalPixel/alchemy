@@ -181,11 +181,6 @@ static int Vault_GetIvanVenusDjinnCount(void) {
 
 /// Leaving Vault by either gate, Ivan stays behind if he is helping search
 /// for the rod and the thieves are free.
-///
-/// The gates are CELL_BEHAVIOR_VAULT_SOUTH_GATE and _NORTH_GATE, before
-/// VAULT_TO_WORLD_MAP_SOUTH and VAULT_TO_WORLD_MAP_NORTH. Ivan walks out to
-/// the gate and says he is still worried about the rod and will wait in
-/// Vault. He leaves any Venus Djinni with Isaac and leaves the party.
 static void Vault_IvanStaysBehind(void) {
   struct Actor *actor;
   struct FieldWork *work;
@@ -261,9 +256,6 @@ static inline void Vault_AskYesNoAndShowReply(s32 speaker) {
 
 /// In Vault while the rod is missing, a townsperson asks about the eruption.
 /// "Wasn't the eruption of Mt. Aleph incredible?"
-///
-/// - Yes: too terrified to sleep for days.
-/// - No: aren't you courageous!
 static void Vault_AskAboutEruption(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultWasntEruptionMtAlephIncredible);
@@ -279,9 +271,6 @@ static void Vault_AskAboutEruption(void) {
 
 /// In Vault while the rod is missing, a townsperson says travelers left town
 /// in a big hurry, and asks whether the party saw them.
-///
-/// - Yes: two women and four men, the girl and old man unhappy to be there.
-/// - No: maybe they left earlier.
 static void Vault_AskAboutFleeingTravelers(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultThoseTravelersLeftInBig);
@@ -307,9 +296,6 @@ static void Vault_ThiefDeniesTheft(void) {
 /// The traveler was stranded by the eruption, and asks while the rod is
 /// missing.
 /// "Off on an adventure, are you?"
-///
-/// - Yes: impressive for youngsters.
-/// - No: see the Sanctum while you're here.
 static void Vault_AskAboutAdventure(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultOffOnAdventure);
@@ -493,9 +479,6 @@ static void Vault_ThankForCapturingThieves(void) {
 
 /// In Vault after the thieves are jailed, the strongman on watch asks about the
 /// prisoners. "Those men you captured... They're in jail now?"
-///
-/// - Yes: the prison hadn't been used in a long time.
-/// - No: they're upset; maybe go see them.
 static void Vault_AskAboutPrisoners(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultThoseMenCapturedTheyreIn);
@@ -771,9 +754,6 @@ static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
 /// a gate, Sap, the Venus Djinni hiding in the tree east of the bell tower,
 /// jumps out onto the cliff top above the cave mouth
 /// (FLAG_VAULT_SAP_CALLED_BY_BELL).
-///
-/// No event here lets the party talk to it. It joins in the town's later
-/// scene (vault_revisit.c).
 static void Vault_RingBell(void) {
   Event_Start();
   Sound_Play(SE_BELL);
@@ -820,10 +800,6 @@ static void Vault_GiveBoneToDog(void) {
 }
 
 /// Arriving in Vault, the setup puts everyone where the story has them.
-///
-/// It restores the dog's and Sap's places. It sets the two children and the
-/// woman wanting the roof fixed stopping near the leader. While Ivan waits in
-/// Vault for the party, it has him greet the two and rejoin.
 s32 Scene_Initialize(void) {
   s32 suspectsMindRead;
   struct Actor *actor;

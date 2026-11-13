@@ -181,13 +181,6 @@ static void LogRoomsB_HusbandLongsForColosso(void) {
 }
 
 /// In his house, the mayor welcomes Isaac back.
-///
-/// The thieves he caught have escaped from jail, and Vault feared they would
-/// come after him. He asks whether the party has run into them, and a yes and
-/// a no get different warnings.
-///
-/// Sets FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, after which the mayor only
-/// warns of their revenge, and FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES.
 static void LogRoomsB_WelcomeIsaacBack(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultIsaacYouveComeBackVault);
@@ -221,24 +214,12 @@ static void LogRoomsB_WarnOfThievesRevenge(void) {
 
 /// Unused: the cook upstairs at the inn offers the party her leftover bones,
 /// but gives none.
-///
-/// She would have said `I did some cooking, so now I've got all these useless
-/// bones.` and asked `...You want some?`.
-///
-/// Her earlier talk row, MsgVaultWeDontGetALotOf with no condition, always
-/// answers first, because Scene_FindTrigger takes the first match. So the
-/// player only ever hears that travelers are few in winter.
 static void LogRoomsB_UnusedOfferLeftoverBones(void) {
   LogRoomsB_FaceAndSpeak(ACTOR_COOK, MsgVaultDidSomeCookingNowIve);
 }
 
 /// The girl at the inn offers leftover bones from dinner, or more of them once
 /// one was taken (FLAG_VAULT_BONE_RECEIVED).
-///
-/// A yes gets a Bone if there is room, and a no gets a nod.
-///
-/// Her talk row needs FLAG_VAULT_LEADER_BESIDE_BONE clear, that is, the leader
-/// not standing beside the floor Bone.
 static void LogRoomsB_OfferBones(void) {
   Event_Start();
   Actor_TurnToFaceEachOther(ACTOR_GIRL_AT_THE_INN, ACTOR_PARTY_LEADER, 0);
@@ -400,13 +381,6 @@ static void LogRoomsB_ReadBoneGiverMind(void) {
 const struct Trigger *Scene_GetTriggers(void) { return gLogRoomsB_Triggers; }
 
 /// Opens the room through a window transition.
-///
-/// Entering the house at LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST sets its
-/// owner on the floor and takes the stone off his table.
-///
-/// Entering the inn (LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST, or from
-/// upstairs by LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS) places the floor Bone
-/// beside the girl and starts Vault_UpdateBoneProximityFlag.
 s32 Scene_Initialize(void) {
   s32 entrance;
 

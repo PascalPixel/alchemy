@@ -451,9 +451,6 @@ static s32 sOarDepth[8];
 
 /// Bobs the actor between 4 and 12 pixels high by a random amount
 /// each frame.
-///
-/// The actor's userValue says which way it is going, 1 down and 0 up.
-/// Returns 1.
 static s32 TolbiShipDeck_Bob(struct Actor *actor) {
   if ((s16)actor->userValue != 0) {
     actor->y.fixed -= (Random_Below(32768)) + px(1) / 2;
@@ -589,8 +586,6 @@ static void TolbiShipDeck_ShrinkToNormalSize(struct Actor *actor) {
 
 /// Turns the actor east, northeast-by-north or southeast-by-south at
 /// random intervals of 80 to 160 frames.
-///
-/// riseCounter counts down the wait. Returns 1.
 static s32 TolbiShipDeck_IdleTurn(struct Actor *actor) {
   if (actor->riseCounter != 0) {
     actor->riseCounter--;
@@ -663,14 +658,6 @@ const struct Trigger *TolbiShipDeck_GetTriggers(void) {
 }
 
 /// Talking to ACTOR_KALAY_CREW_MEMBER on deck at Kalay.
-///
-/// What he says follows the delay:
-///
-/// - short with the tour guide at first,
-/// - alarmed once the warriors storm off to the captain,
-/// - relieved once the party has agreed to protect the ship.
-///
-/// While alarmed he paces at random intervals.
 static void TolbiShipDeck_TalkToCrewMember(void) {
   struct Actor *crewMember;
   s32 random;
@@ -706,9 +693,6 @@ static void TolbiShipDeck_TalkToCrewMember(void) {
 }
 
 /// The tour guide on deck at Kalay talks about the ship's delay.
-///
-/// The guide has the same three moods as TolbiShipDeck_TalkToCrewMember, and
-/// says "If we don't leave soon, Colosso will start without us!"
 static void TolbiShipDeck_TalkToTourGuide(void) {
   struct Actor *guide;
   s32 random;
@@ -775,11 +759,6 @@ static void TolbiShipDeck_OpenSecondDoor(void) {
 
 /// Walking into one of the ways below deck, whose cell behaviors are
 /// numbered as their exits.
-///
-/// The doors to the passengers' hold and the captain's quarters open and the
-/// leader steps through. The hatch to the cargo hold just plays its sound.
-///
-/// Leaves by the exit numbered as the cell behavior.
 static void TolbiShipDeck_GoBelow(void) {
   s32 throughDoor;
   struct FieldWork *work;
@@ -810,9 +789,6 @@ static void TolbiShipDeck_GoBelow(void) {
 #if TBS_PATCH_2
 /// In the German, Spanish, French and Italian editions cell behavior 2 is a
 /// plain step trigger.
-///
-/// The leader goes below only while facing west, after walking onto the
-/// hatch.
 static void TolbiShipDeck_GoBelowWhileFacingWest(void) {
   if ((u16)(Actor_Get(ACTOR_PARTY_LEADER)->facing - (FACING_SOUTHWEST + 1)) <
       FACING_NORTHWEST - (FACING_SOUTHWEST + 1)) {
@@ -825,16 +801,6 @@ static void TolbiShipDeck_GoBelowWhileFacingWest(void) {
 #endif
 
 /// The captain decides to set sail without the replacement ship.
-///
-/// It plays on deck at Kalay, once the tour group has left Kalay
-/// (FLAG_KALAY_COLOSSO_TOUR_LEFT), on stepping beside the crew
-/// (CELL_BEHAVIOR_TOLBI_SHIP_DECK_BY_CREW).
-///
-/// The captain, Kaja and the crewman wonder what happened to the replacement
-/// ship. The captain decides to set sail anyway, trusting his anchor charm.
-/// The crewman runs off through the second door.
-///
-/// Plays once (FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY).
 static void TolbiShipDeck_WatchCrewDecideToSail(void) {
   struct Actor *actor;
 
@@ -954,11 +920,6 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
 
 /// On deck at Kalay, the crewman comes out as the party approaches from the
 /// east side of the door (CELL_BEHAVIOR_TOLBI_SHIP_DECK_EAST_OF_DOOR).
-///
-/// He protests "I didn't do anything..." and slips away round the party to
-/// the bow.
-///
-/// Runs until the party has confronted the crewman.
 static void TolbiShipDeck_CatchCrewmanFromEast(void) {
   if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0) {
@@ -1024,9 +985,6 @@ static void TolbiShipDeck_CatchCrewmanFromWest(void) {
 }
 
 /// The start both of those share.
-///
-/// The camera pans to the door, which opens, and the crewman steps out and
-/// denies everything. Records the confrontation.
 static void TolbiShipDeck_ConfrontCrewman(void) {
   FieldCamera_SetSpeed(1.6);
   FieldCamera_MoveTo(216, CAMERA_KEEP, 824, 1);
@@ -1052,10 +1010,6 @@ static void TolbiShipDeck_ConfrontCrewman(void) {
 }
 
 /// Sets up the scene on entry.
-///
-/// It clears FLAG_WORLD_MAP_LEFT, sets the transition, starts the deck's sway
-/// at a random angle and stops the sea's scroll. Then it redraws the map grid
-/// and applies the voyage's state.
 s32 TolbiShipDeck_Initialize(void) {
   struct MapGridLayerScroll *sea =
       &((struct MapGridScrollWork *)gMapGridWork[0])
@@ -1077,11 +1031,6 @@ s32 TolbiShipDeck_Initialize(void) {
 }
 
 /// Applies the voyage's state.
-///
-/// The state decides which cells and oars are drawn, whether the deck rocks
-/// and the sea scrolls, and which event the entrance starts. The entrances
-/// from TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_READY on are the voyage's events,
-/// chained by their exits.
 static void TolbiShipDeck_ApplyEntryState(void) {
   s32 flag;
 
@@ -1215,9 +1164,6 @@ static void TolbiShipDeck_PlaceWaitingPassengers(void) {
 
 /// At Kalay once the anchor charm is back
 /// (FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED), moves the people on deck.
-///
-/// ACTOR_KALAY_CREW_MEMBER, the tour guide and the three passengers take new
-/// places, and the crewman, the captain and Kaja leave the deck.
 static void TolbiShipDeck_PlacePassengersAgreedToRow(void) {
   Actor_SetPosition(ACTOR_KALAY_CREW_MEMBER, 262, 706);
   Actor_Get(ACTOR_KALAY_CREW_MEMBER)->facing = FACING_SOUTH_SOUTHWEST;
@@ -1288,9 +1234,6 @@ static void TolbiShipDeck_SetUpAfterKraken(void) {
 
 /// At anchor off the island, the crew stand where they were left, by whether
 /// the party has agreed to scout the island.
-///
-/// Entering by TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS means the party is back from
-/// it.
 static void TolbiShipDeck_SetUpAtAnchor(void) {
   struct Actor *actor;
 
@@ -1327,8 +1270,6 @@ static void TolbiShipDeck_SetUpAtAnchor(void) {
 /// Setting sail from Kalay before the party is on deck, Kaja
 /// (ACTOR_KALAY_KAJA) brings word to ACTOR_KALAY_CREW_MEMBER that all is
 /// ready.
-///
-/// It plays at TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_READY.
 static void TolbiShipDeck_DepartFromKalay(void) {
   struct Actor *actor;
 
@@ -1357,8 +1298,6 @@ static void TolbiShipDeck_DepartFromKalay(void) {
 
 /// On later departures, with the party aboard, Kaja brings word to
 /// ACTOR_SEA_CREW_MEMBER.
-///
-/// It plays at TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_READY.
 static void TolbiShipDeck_DepartWithParty(void) {
   struct Actor *actor;
 
@@ -1392,9 +1331,6 @@ static void TolbiShipDeck_DepartWithParty(void) {
 
 /// The messenger comes up through the first door to report, and the crew
 /// member waiting there calls the ship ready.
-///
-/// He calls "Preparations... Ready!" Then the event moves on to the next
-/// stage of the voyage.
 static void TolbiShipDeck_AnnouncePreparationsReady(s32 messenger,
                                                     s32 crewMember) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -1425,9 +1361,6 @@ static void TolbiShipDeck_AnnouncePreparationsReady(s32 messenger,
 }
 
 /// Sea monsters are sighted.
-///
-/// The call is "Aye, Captain! Sea monsters!" It plays at
-/// TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_SEA_MONSTERS.
 static void TolbiShipDeck_SightSeaMonsters(void) {
   Event_Start();
   Event_AppendActorPlacements(
@@ -1456,9 +1389,6 @@ static void TolbiShipDeck_SightSeaMonsters(void) {
 }
 
 /// The monsters leap aboard and someone cries out.
-///
-/// The cry is "It's no use. It's too late!" It plays at
-/// TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD.
 static void TolbiShipDeck_MonstersBoard(void) {
   const s32 *shared;
 
@@ -1527,8 +1457,6 @@ static void TolbiShipDeck_MonstersBoard(void) {
 }
 
 /// The monsters harry the crew while more of them climb aboard.
-///
-/// It plays at TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK.
 static void TolbiShipDeck_MonstersAttackCrew(void) {
   Event_Start();
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
@@ -1632,8 +1560,6 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
 }
 
 /// A great shape rises from the sea and a monster drops onto the deck.
-///
-/// It plays at TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK.
 static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   struct Actor *monster;
   struct Actor *actor;
@@ -1759,9 +1685,6 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
 }
 
 /// The party jumps down to the deck, gathers and charges the Kraken.
-///
-/// It plays at TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_KRAKEN. The battle with the
-/// Kraken begins, returning to TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE.
 static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   struct Actor *actor;
 
@@ -1877,9 +1800,6 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
 }
 
 /// Isaac is thanked for the Kraken.
-///
-/// The line is "Thank you, Isaac. You did good against that Kraken." It plays
-/// at TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE.
 static void TolbiShipDeck_ThankForKraken(void) {
   struct Actor *actor;
 
@@ -1931,9 +1851,6 @@ static void TolbiShipDeck_ThankForKraken(void) {
 }
 
 /// Land is sighted.
-///
-/// The call is "Hey, I can see land!" It plays at
-/// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_LAND_SIGHTED.
 static void TolbiShipDeck_SightLand(void) {
   struct Actor *actor;
 
@@ -2010,13 +1927,6 @@ enum TolbiShipDeckRowerReply {
 
 /// At Tolbi, the four passengers who rowed come up from below in turn and
 /// each says something.
-///
-/// Then the leader comes up and is thanked for the hard work. It plays at
-/// TOLBI_SHIP_DECK_FROM_WORLD_MAP.
-///
-/// Who rowed is read from the four seats' flag groups, the passengers
-/// (ACTOR_ARRIVED_FIRST_PASSENGER and the eight after) in a fixed order of
-/// preference.
 static void TolbiShipDeck_RowersDisembark(void) {
   s32 roster[4];
   s32 matched[4];
@@ -2161,8 +2071,6 @@ static void TolbiShipDeck_RowersDisembark(void) {
 
 /// Returns the passenger (ACTOR_ARRIVED_FIRST_PASSENGER and the eight after)
 /// who promised to row at a seat (0 to 3), or 0 if the seat is empty.
-///
-/// Each seat has a group of nine flags, one for each passenger.
 static s32 TolbiShipDeck_GetRowerAtSeat(u32 seat) {
   s32 flag = 0;
   s32 passenger = ACTOR_ARRIVED_FIRST_PASSENGER;
@@ -2194,9 +2102,6 @@ static s32 TolbiShipDeck_GetRowerAtSeat(u32 seat) {
 #define TOLBI_SHIP_DECK_SEA_WRAP px(32)
 
 /// The task that rocks the deck while under sail.
-///
-/// It sways the camera on two random-walking angles and offsets the BG3 sea
-/// pattern, wrapping at 32 pixels.
 static void TolbiShipDeck_RockDeck(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   s32 *origin = grid->origin;
@@ -2228,8 +2133,6 @@ static void TolbiShipDeck_RockDeck(void) {
 
 /// Under sail, shows the stroke oars (ACTOR_FIRST_STROKE_OAR) and the oars at
 /// the sides (ACTOR_FIRST_OAR, the right-hand ones mirrored).
-///
-/// It also records each side oar's resting depth and chooses their strokes.
 static void TolbiShipDeck_SetUpOars(void) {
   Actor_Get(ACTOR_FIRST_STROKE_OAR)->collisionFlags = 0;
   Actor_Get(ACTOR_FIRST_STROKE_OAR + 1)->collisionFlags = 0;
@@ -2279,9 +2182,6 @@ static void TolbiShipDeck_ShowOar(s32 actorId) {
 }
 
 /// Gives each oar the stroke of its seat's rower.
-///
-/// Empty seats take stroke 3. The first loop's stores are all overwritten
-/// below.
 static void TolbiShipDeck_ChooseOarStrokes(void) {
   u32 *mode = sOarStroke;
   u32 i;
@@ -2364,10 +2264,6 @@ static void TolbiShipDeck_RowOars(void) {
 }
 
 /// Advances one stroke's phase.
-///
-/// It goes slowly through the catch and the finish of the stroke, quicker
-/// through the drive, quickest on the return. Its stroke oar's animation
-/// follows.
 static void TolbiShipDeck_AdvanceStroke(s32 actorId, s32 slot) {
   u16 value = sOarAngle[slot];
 
@@ -2387,10 +2283,6 @@ static void TolbiShipDeck_AdvanceStroke(s32 actorId, s32 slot) {
 }
 
 /// Swings one oar to its angle.
-///
-/// Unless flags bit 1 is set, the angle follows the stroke oar whose stroke
-/// the oar takes. Bit 0 marks a right-hand oar. The oar's tilt (its sprite's
-/// rotation) and depth follow the angle.
 static void TolbiShipDeck_SwingOar(s32 id, s32 slot, s32 flags) {
   struct Actor *actor = Actor_Get(id);
   struct Sprite *sprite = actor->sprite;
@@ -2429,9 +2321,6 @@ static void TolbiShipDeck_SwingOar(s32 id, s32 slot, s32 flags) {
 
 /// When not under sail, the oars lie at rest, all copying the first stroke
 /// oar.
-///
-/// That oar stands where the leader is while they copy it and then takes the
-/// first oar's place.
 static void TolbiShipDeck_RestOars(void) {
   struct Actor *actor;
   u32 i;
@@ -2532,13 +2421,6 @@ static void TolbiShipDeck_Turn(s32 actorId, s32 facing) {
 
 /// After the lookout's call, Kaja sees the coast is not Tolbi's and the ship
 /// is off course.
-///
-/// It plays at TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_OFF_COURSE. Ouranos
-/// thinks they have reached Tolbi, but Kaja sees otherwise. The crew head for
-/// an island to get their bearings before Kaja goes below.
-///
-/// TOLBI_SHIP_DECK_TO_SHIP_ROOMS_ISLAND leads on below decks, toward
-/// the island.
 static void TolbiShipDeck_SightIsland(void) {
   Event_Start();
   sSeaScroll[0] = px(4);
@@ -2615,9 +2497,6 @@ static void TolbiShipDeck_SightIsland(void) {
 
 /// At anchor off the island, talking to Sean or Ouranos, the party is asked
 /// to scout the island for the arguing tour group.
-///
-/// Garet and Ivan may argue before the party agrees
-/// (FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED).
 static void TolbiShipDeck_OfferToScoutIsland(void) {
   struct Actor *leader;
 
@@ -2704,9 +2583,6 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
 }
 
 /// Back on deck from the island, the party is asked whether it explored it.
-///
-/// The question is "How was it, Isaac? Did you explore the island
-/// thoroughly?" On yes, the crew make ready to sail and the event moves on.
 static void TolbiShipDeck_ReturnFromIsland(void) {
   Event_Start();
   Event_AppendActorPlacements(

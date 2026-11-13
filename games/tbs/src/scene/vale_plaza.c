@@ -382,9 +382,6 @@ const struct ActorPlacement *ValePlaza_GetActorPlacements(void) {
 }
 
 /// In Vale, searching the Psynergy Stone restores the party's PP.
-///
-/// Reached by searching cell behavior 100 in every table but the
-/// farewell's. Clears FLAG_NOTHING_HAPPENS.
 static void ValePlaza_UsePsynergyStone(void) {
   Event_Start();
   FieldMessage_Show(MsgValeCheckedThePsynergyStone, 1);
@@ -417,9 +414,6 @@ const struct Trigger *ValePlaza_GetTriggers(void) {
 
 /// A burly grey-haired man asks whether Isaac meditates each day. He means on
 /// Mt. Aleph, and he stands in Vale on the day the story begins.
-///
-/// Reached by talking to ACTOR_MAN_ASKING_ABOUT_MEDITATION on the day the
-/// story begins.
 static void ValePlaza_AskAboutMeditation(void) {
   Event_Start();
   Event_SetMessageId(MsgValeMeditateOnMtAlephDaily);
@@ -433,9 +427,6 @@ static void ValePlaza_AskAboutMeditation(void) {
 
 /// A woman in a green dress recalls the difficult time three years ago. She
 /// asks Isaac about it, in Vale on the day the story begins.
-///
-/// Reached by talking to ACTOR_WOMAN_RECALLING_STORM on the day the story
-/// begins.
 static void ValePlaza_RecallThreeYearsAgo(void) {
   Event_Start();
   Event_SetMessageId(MsgValeADifficultTimeThreeYears);
@@ -450,8 +441,6 @@ static void ValePlaza_RecallThreeYearsAgo(void) {
 /// A small boy asks whether the travelers went to meet the mayor. He has fair
 /// hair, and asks it in Vale on the day the story begins, about the travelers
 /// who stopped by.
-///
-/// Reached by talking to ACTOR_FIRST_CHILD on the day the story begins.
 static void ValePlaza_AskAboutTheTravelers(void) {
   Event_Start();
   Event_SetMessageId(MsgValeDidTheTravelersMeetThe);
@@ -466,11 +455,6 @@ static void ValePlaza_AskAboutTheTravelers(void) {
 /// In Vale before the party sets out, a strongman shows Isaac his Psynergy and
 /// shakes the ground. Later he asks whether they worry about crossing the land
 /// so few.
-///
-/// Reached by talking to ACTOR_STRONGMAN_SHOWING_PSYNERGY on the day the
-/// story begins and after the party has left. The display adds and removes the
-/// task ValePlaza_UpdateShowingStrongmanPsynergy and shakes the map for
-/// three seconds.
 static void ValePlaza_DemonstratePsynergy(void) {
   u32 i;
   s32 message;
@@ -547,11 +531,6 @@ static void ValePlaza_DemonstratePsynergy(void) {
 /// An old man with a cane asks Isaac a question that changes with the story.
 /// In Vale he answers Isaac about Psynergy on the stormy night, asks about the
 /// Wise One after the party has left, and about the journey after Kalay.
-///
-/// Reached by talking to ACTOR_STORM_CURIOUS_OLD_MAN on the stormy night,
-/// ACTOR_CURIOUS_OLD_MAN after the party has left and
-/// ACTOR_AFTER_KALAY_CURIOUS_OLD_MAN after Kalay. The story state picks the
-/// question.
 static void ValePlaza_AskAboutJourney(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
@@ -611,10 +590,6 @@ static void ValePlaza_TalkAboutFallenStone(void) {
 
 /// In Vale on the stormy night, a small boy with some Psynergy left lifts
 /// a small rock (ACTOR_STORM_SMALL_ROCK) into the air.
-///
-/// Reached by talking to ACTOR_STORM_ROCK_LIFTING_BOY on the stormy night.
-/// Adds and removes the tasks ValePlaza_UpdateRockLiftingBoyPsynergy and
-/// ValePlaza_UpdateSmallRockPalette.
 static void ValePlaza_BoyLiftsSmallRock(void) {
   u32 i;
   s32 savedMotionFlags;
@@ -665,9 +640,6 @@ static void ValePlaza_BoyLiftsSmallRock(void) {
 /// A little girl tells Isaac which way Jenna went. In Vale on the stormy night,
 /// once he has been sent back to the river, she tells him to help Felix
 /// instead.
-///
-/// Reached by talking to ACTOR_STORM_GIRL_WHO_SAW_JENNA on the stormy
-/// night.
 static void ValePlaza_TalkAboutHelping(void) {
   Event_Start();
   Actor_FaceEachOther(ACTOR_STORM_GIRL_WHO_SAW_JENNA, ACTOR_PARTY_LEADER, 10);
@@ -685,9 +657,6 @@ static void ValePlaza_TalkAboutHelping(void) {
 
 /// In Vale back from Kalay, a young man welcomes Isaac home. Later he only
 /// says this is Vale.
-///
-/// Reached by talking to ACTOR_AFTER_KALAY_WELCOMING_YOUNG_MAN after Kalay.
-/// Sets FLAG_VALE_WELCOMED_HOME.
 static void ValePlaza_WelcomeIsaacHome(void) {
   Event_Start();
   if (Event_GetFlag(FLAG_VALE_WELCOMED_HOME) != 0) {
@@ -703,10 +672,6 @@ static void ValePlaza_WelcomeIsaacHome(void) {
 /// The old man searching the ground says the Psynergy Stone is gone. In Vale
 /// back from Kalay, he stops and tells Isaac the stone that fell on his roof
 /// has gone.
-///
-/// Reached after Kalay by talking to ACTOR_AFTER_KALAY_HUT_OWNER, or by Mind
-/// Read on it until FLAG_VALE_PSYNERGY_STONE_GONE_TOLD is set. It sets the
-/// flag and restarts the search.
 static void ValePlaza_PsynergyStoneIsGone(void) {
   struct Actor *actor = Actor_Get(ACTOR_AFTER_KALAY_HUT_OWNER);
   Event_Start();
@@ -759,9 +724,6 @@ static void ValePlaza_OpenNorthwestDoor(void) {
 /// In Vale back from Kalay, opens the northeast doorway in two stages and walks
 /// into the second forge room (SceneId_CottageRoomsB,
 /// COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHEAST).
-///
-/// Reached by walking north into cell behavior 2 after Kalay. The other
-/// tables have no such door.
 static void ValePlaza_OpenNortheastDoor(void) {
   Sound_Play(SE_THUMP);
   MapGrid_CopyCellsTo(0, 63, 51, 8, 2, 2);
@@ -819,11 +781,6 @@ static void ValePlaza_LeaveThroughWestPassage(void) {
 
 /// In Vale, leaves by the town gate for the World Map, once the party has
 /// begun its journey.
-///
-/// Reached by stepping on cell behavior 8. It takes VALE_PLAZA_TO_WORLD_MAP
-/// once FLAG_VALE_PARTY_LEFT is set, else does nothing. The farewell
-/// (ValePlaza_DepartForQuest) shows the villagers gathered at the gate and
-/// leaves by the same exit.
 static void ValePlaza_LeaveThroughTownGate(void) {
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     Sound_Play(SE_MAP_EXIT);
@@ -832,25 +789,16 @@ static void ValePlaza_LeaveThroughTownGate(void) {
 }
 
 /// In Vale, Whirlwind blows ACTOR_FIRST_IVY away.
-///
-/// Reached by Whirlwind on it by day, until it is gone. Sets
-/// FLAG_VALE_FIRST_IVY_BLOWN_AWAY.
 static void ValePlaza_BlowAwayFirstIvy(void) {
   GameFlag_Set((FLAG_VALE_FIRST_IVY_BLOWN_AWAY));
 }
 
 /// In Vale, Whirlwind blows ACTOR_SECOND_IVY away.
-///
-/// Reached by Whirlwind on it by day, until it is gone. Sets
-/// FLAG_VALE_SECOND_IVY_BLOWN_AWAY.
 static void ValePlaza_BlowAwaySecondIvy(void) {
   GameFlag_Set((FLAG_VALE_SECOND_IVY_BLOWN_AWAY));
 }
 
 /// In Vale, Whirlwind blows ACTOR_THIRD_IVY away.
-///
-/// Reached by Whirlwind on it by day, until it is gone. Sets
-/// FLAG_VALE_THIRD_IVY_BLOWN_AWAY.
 static void ValePlaza_BlowAwayThirdIvy(void) {
   GameFlag_Set((FLAG_VALE_THIRD_IVY_BLOWN_AWAY));
 }
@@ -859,21 +807,6 @@ static void ValePlaza_BlowAwayThirdIvy(void) {
 /// It hides the ivy Whirlwind has blown away, runs the three debug entrances
 /// (the strangers' departure and two presets), and sets up the storm, the
 /// farewell or the village after Kalay.
-///
-/// The scene's initialize entry. By entrance and time:
-///
-/// - VALE_PLAZA_DEBUG_CHILDHOOD sets FLAG_CHILDHOOD and takes
-///   VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST.
-/// - VALE_PLAZA_FROM_SANCTUM runs ValePlaza_DepartForQuest.
-/// - VALE_PLAZA_AFTER_TRAVELERS_BATTLE (and
-///   VALE_PLAZA_DEBUG_BEFORE_TRAVELERS_LEAVE) runs
-///   ValePlaza_TravelersLeaveAfterBattle.
-/// - On the stormy night, once Garet has gone after Isaac
-///   (FLAG_VALE_STORM_GARET_LEFT), it runs ValePlaza_MeetSurvivingTravelers.
-///
-/// Once the boys have been sent back to the river, it removes the two
-/// strongmen who left to aid the elders, Jenna and the man who went with
-/// them.
 s32 ValePlaza_Initialize(void) {
   struct Actor *actor;
   s32 flag;
@@ -998,13 +931,6 @@ s32 ValePlaza_Initialize(void) {
 /// strongmen to aid the elders holding back the Boulder. Then he sends Isaac
 /// and Garet back to the river to show Jenna and a man whose Psynergy is
 /// restored the way. "Go aid the elders!"
-///
-/// Reached by stepping on cell behavior 20 on the stormy night, until
-/// FLAG_VALE_STORM_SENT_TO_AID_ELDERS is set. It sets the flag.
-///
-/// The flag is named for the mayor's first order, but what it records is the
-/// boys being sent back. The return to the river (vale_prologue.c) waits for
-/// it.
 static void ValePlaza_SentToAidElders(void) {
   s32 skipReply = 0;
 
@@ -1164,10 +1090,6 @@ static void ValePlaza_SentToAidElders(void) {
 /// In Vale on the stormy night, after the river, Isaac overhears two travelers
 /// who survived Sol Sanctum's fury, the game's first sight of Saturos and
 /// Menardi. "Only the two of us survived..."
-///
-/// Called by ValePlaza_Initialize on the stormy night once
-/// FLAG_VALE_STORM_GARET_LEFT is set. It goes on into
-/// ValePlaza_FightTravelers.
 static void ValePlaza_MeetSurvivingTravelers(void) {
   struct Actor *camera;
 
@@ -1239,10 +1161,6 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
 /// In Vale on the stormy night, the travelers catch Isaac eavesdropping and
 /// fight. Win or lose, the party returns by VALE_PLAZA_AFTER_TRAVELERS_BATTLE.
 /// "You must forget everything you heard."
-///
-/// Starts the fifth slot of the encounter zone of the scripted battles of
-/// Vale, Vault and the World Map, with both outcomes leading back to
-/// VALE_PLAZA_AFTER_TRAVELERS_BATTLE, and sets FLAG_KEEP_MUSIC_ONCE.
 static void ValePlaza_FightTravelers(void) {
   struct Actor *actor;
 
@@ -1351,12 +1269,6 @@ static void ValePlaza_FightTravelers(void) {
 
 /// In Vale after the battle, the travelers leave Isaac and Garet lying in the
 /// storm, and the storm, and the prologue, end.
-///
-/// Called by ValePlaza_Initialize from VALE_PLAZA_AFTER_TRAVELERS_BATTLE, after
-/// the battle, or VALE_PLAZA_DEBUG_BEFORE_TRAVELERS_LEAVE. Clears
-/// FLAG_VALE_STORM and takes VALE_PLAZA_TO_TITLE, to the title (SceneId_Title,
-/// TITLE_FROM_VALE_PLAZA). The title then opens on Vale three years later
-/// (scene/title.c).
 static void ValePlaza_TravelersLeaveAfterBattle(void) {
   struct Actor *actor;
 
@@ -1437,11 +1349,6 @@ static void ValePlaza_TravelersLeaveAfterBattle(void) {
 
 /// In Vale, at the town gate, the villagers give their supplies and farewells
 /// as Isaac and Garet set out on the Wise One's quest.
-///
-/// Called by ValePlaza_Initialize from VALE_PLAZA_FROM_SANCTUM, the way out of
-/// the Vale Sanctum once the quest is accepted. Restores the party's HP and PP,
-/// gives a Herb (from Garet's sister) and the Catch Beads (from Dora), and
-/// takes VALE_PLAZA_TO_WORLD_MAP.
 static void ValePlaza_DepartForQuest(void) {
   struct Actor *actor;
   struct FieldWork *work;
@@ -1941,35 +1848,24 @@ static void ValePlaza_SpawnEffectPair(struct Actor *parent) {
 #include "shared/event_psynergy.h"
 
 /// Updates the rock-lifting boy's Psynergy display.
-///
-/// A task ValePlaza_BoyLiftsSmallRock adds while the boy lifts.
 static void ValePlaza_UpdateRockLiftingBoyPsynergy(void) {
   ValePlaza_CyclePsynergyPaletteAndSpawnEffects(
       Actor_Get(ACTOR_STORM_ROCK_LIFTING_BOY));
 }
 
 /// Updates the demonstrating strongman's Psynergy display.
-///
-/// A task ValePlaza_DemonstratePsynergy adds while the ground shakes.
 static void ValePlaza_UpdateShowingStrongmanPsynergy(void) {
   ValePlaza_CyclePsynergyPaletteAndSpawnEffects(
       Actor_Get(ACTOR_STRONGMAN_SHOWING_PSYNERGY));
 }
 
 /// Updates the small rock's palette while it is lifted.
-///
-/// A task ValePlaza_BoyLiftsSmallRock adds while ACTOR_STORM_SMALL_ROCK
-/// rises.
 static void ValePlaza_UpdateSmallRockPalette(void) {
   ValePlaza_CyclePsynergyPalette(Actor_Get(ACTOR_STORM_SMALL_ROCK));
 }
 
 /// Arriving by VALE_PLAZA_DEBUG_STORY_FLAGS sets a preset of story flags,
 /// which differs by edition, and leaves by VALE_PLAZA_TO_BILIBIN.
-///
-/// Sets FLAG_NO_ENCOUNTERS and FLAG_DEBUG_BATTLE_KEYS. From the third patch it
-/// sets the whole story up to Kalay, and before that patch FLAG_TRET_DEFEATED
-/// and FLAG_KOLIMA_CURSE_LIFTED.
 static void ValePlaza_SetProgressFlagsAndExit(void) {
   GameFlag_Set(FLAG_NO_ENCOUNTERS);
   GameFlag_Set(FLAG_DEBUG_BATTLE_KEYS);

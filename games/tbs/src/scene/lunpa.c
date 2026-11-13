@@ -315,9 +315,6 @@ static void Lunpa_TalkToWestGuard(void) {
 
 /// Lunpa, before Donpa's judgment: the east guard on the road in wants
 /// Dodonpa's authorization.
-///
-/// Once the guards suspect Kalay, he asks instead whether the party came from
-/// there and whether they are here to save Hammet.
 static void Lunpa_TalkToEastGuard(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
@@ -342,11 +339,6 @@ static void Lunpa_TalkToEastGuard(void) {
 }
 
 /// Lunpa: Mind Read on the east guard.
-///
-/// - He fears Dodonpa's blame.
-/// - Once he suspects Kalay, he trusts the cave's gate.
-/// - After Donpa's judgment, he thinks the merchant who was desperate to do
-///   business in the village is still around somewhere, causing no trouble.
 static void Lunpa_ReadEastGuardsThoughts(void) {
   s32 thoughts;
 
@@ -428,8 +420,6 @@ static void Lunpa_AskAboutFortressCommotion(void) {
 
 /// Lunpa Fortress Gates: the left guard hears someone while the party is
 /// cloaked.
-///
-/// After Donpa's judgment, he nearly recognizes Hammet with the party.
 static void Lunpa_TalkToLeftGuard(void) {
   s32 recognitionMessageBase;
 
@@ -451,9 +441,6 @@ static void Lunpa_TalkToLeftGuard(void) {
 }
 
 /// Lunpa Fortress Gates: the right guard boasts.
-///
-/// He finds the place creepy while the party is cloaked, and after Donpa's
-/// judgment wonders how the warriors from Kalay got in.
 static void Lunpa_TalkToRightGuard(void) {
   if (gMainRoutineWork.cloaked != 0) {
     Event_SetMessageId(MsgLunpaRightGuardFeelsCreepy);
@@ -466,10 +453,6 @@ static void Lunpa_TalkToRightGuard(void) {
 }
 
 /// Lunpa Fortress Gates: Mind Read on the left guard.
-///
-/// After Donpa's judgment and before Hammet finds Bunza, he thinks the man
-/// with the party looks like that merchant. The first time, Mind Read is cut
-/// short as he turns to look.
 static void Lunpa_ReadLeftGuardsThoughts(void) {
   s32 recognizedHammet;
 
@@ -931,11 +914,6 @@ static void Lunpa_LeaderSneaksOut(void) {
 }
 
 /// Sets Lunpa or the Lunpa Fortress Gates up.
-///
-/// In the town, that means Reveal's secrets hidden and the floating Nut.
-///
-/// At the gates, it means the thrown-out or sneaking-out event, the watchers,
-/// and the fortress's puzzle and guard flags cleared.
 s32 Scene_Initialize(void) {
   struct Actor *puddle;
 

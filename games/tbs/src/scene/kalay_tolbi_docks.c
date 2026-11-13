@@ -291,9 +291,6 @@ const struct ActorPlacement *KalayTolbiDocks_GetActorPlacements(void) {
 
 /// Stepping off the ship at Tolbi Docks (step trigger 20), the leader walks a
 /// few steps and a man on the docks hurries over to stand beside the party.
-///
-/// This plays until FLAG_TOLBI_DOCKS_ARRIVALS_GREETED is set, which coming off
-/// the ship by TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK clears.
 static void KalayTolbiDocks_GreetArrivals(void) {
   Event_Start();
   GameFlag_Set(FLAG_TOLBI_DOCKS_ARRIVALS_GREETED);
@@ -404,9 +401,6 @@ static void KalayTolbiDocks_RemindBoardShip(void) {
 /// tickets when it faces him from the east. With one bought he steps aside,
 /// takes it (sets FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) and lets the party
 /// aboard.
-///
-/// Once aboard, he offers to let the party go ashore again
-/// (FLAG_KALAY_DOCKS_WENT_ASHORE).
 static void KalayTolbiDocks_TalkToTicketTaker(void) {
   s32 ticketHolder;
   s32 ticketSlot;
@@ -498,10 +492,6 @@ static void KalayTolbiDocks_TalkToDockWorker(void) {
 /// In the room at Kalay Docks, until the ship has crossed, the ticket seller
 /// offers tickets for the four of them at 600 coins, with the party's coins
 /// shown beside the question.
-///
-/// Declining, the leader shakes his head. Without enough coins the seller
-/// refuses. Otherwise the party gets its ticket and pays (sets
-/// FLAG_KALAY_DOCKS_TICKET_BOUGHT).
 static void KalayTolbiDocks_TalkToTicketSeller(void) {
   struct Window *coinsWindow;
   struct MainRoutineWork *state;
@@ -799,15 +789,6 @@ static void KalayTolbiDocks_SettleCrates(s32 actorId) {
 /// At Kalay Docks, on the first entry from the World Map, Garet runs to the
 /// edge of the docks and marvels at the sea. "Incredible! So this is the ocean
 /// Kraden was talking about!"
-///
-/// Kraden is the scholar who has told Garet of the ocean. The man who asks
-/// travellers about Tolbi (ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI) walks over,
-/// shaking his head. The Karagol is surrounded by land, so it is not a real
-/// ocean. Garet means to see a real one someday, nods with the leader and
-/// rejoins the party.
-///
-/// This plays on arriving by KALAY_DOCKS_FROM_WORLD_MAP_SOUTH, until
-/// FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL is set.
 static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   struct Actor *actor;
 
@@ -896,14 +877,6 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
 
 /// At Tolbi Docks after Colosso, the first time the party comes to the pier, it
 /// watches the tour guide tell an angry young man his ticket was refunded.
-///
-/// The passengers demand to be taken home, the ships being stuck and the road
-/// blocked. When the angry one charges, the guides' hired bodyguard steps in.
-/// After a second try the passenger is knocked flat and the bodyguard spins on
-/// the spot.
-///
-/// This is step trigger 50, and it plays until
-/// FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED is set.
 static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   struct Actor *actor;
 

@@ -410,8 +410,6 @@ static void Vale_TalkAboutTheMayorAndTremors(void) {
 
 /// A woman in Vale (ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN) asks whether Isaac is
 /// going to Kraden's cottage and warns him not to go beyond it.
-///
-/// After the party has left, she says Kraden has not come back.
 static void Vale_WarnAboutGoingBeyondKradensCottage(void) {
   s32 asked = FLAG_VALE_ASKED_IF_GOING_TO_KRADEN;
 
@@ -470,10 +468,6 @@ static void Vale_ArgueWithGaretsSister(void) {
 
 /// Talking to Dora in Vale before the party leaves has her speak of the hole in
 /// the roof.
-///
-/// Right after the roof is mended (FLAG_VALE_ROOF_JUST_MENDED) she frets about
-/// the hole clumsy Garet left. Otherwise, since it will not rain for a while,
-/// Isaac can fix it later.
 static void Vale_DoraFretsAboutTheRoof(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VALE_ROOF_JUST_MENDED) != 0) {
@@ -555,9 +549,6 @@ static void Vale_EnterSanctum(void) {
 
 /// On the path to Mt. Aleph in Vale (cell behavior 2), Jenna stops Isaac until
 /// Kraden has planned the visit (FLAG_SANCTUM_VISIT_PLANNED).
-///
-/// After that, VALE_TO_SOL_ENTRANCE leads up to Sol Entrance. Jenna says
-/// "Kraden is waiting for us".
 static void Vale_ApproachMtAleph(void) {
   if (GameFlag_Get(FLAG_SANCTUM_VISIT_PLANNED) == 0) {
     Vale_HaveJennaStopTheAlephDetour();
@@ -609,8 +600,6 @@ static void Vale_EnterCottageRoomsA(void) {
 /// At the door of Isaac's house in Vale (cell behavior 8), Dora will not open
 /// after the party has left and before Kalay. "My Isaac would keep his
 /// promise... Go away."
-///
-/// Otherwise VALE_TO_COTTAGE_ROOMS_B leads in.
 static void Vale_EnterIsaacsHouse(void) {
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0 &&
       GameFlag_Get(FLAG_KALAY_REACHED) == 0) {
@@ -661,11 +650,6 @@ static void Vale_EnterCottageRoomsAWest(void) {
 /// (map/vale_prologue, the stormy night's too) carries, as
 /// ValePrologue_UnusedLeaveToCottageRoomsAWestByWestBankDoor in
 /// vale_prologue.c.
-///
-/// It would have opened the door of the house west of the river, walked the
-/// leader to the spot before it and taken
-/// VALE_TO_COTTAGE_ROOMS_A_NORTH_WEST_BANK_DOOR into the house of Jenna's
-/// grandparents, whose way out returns by that house's own door.
 static void Vale_UnusedEnterJennasGrandparentsHouseByWestBankDoor(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_IsaacsDoorOpens, 35, 74);
@@ -809,9 +793,6 @@ static void Vale_ClimbDownFromRoof(void) {
 
 /// A bearded man in a long robe in Vale (ACTOR_MAN_GUARDING_MT_ALEPH, cell
 /// behavior 50) jumps out in front of Isaac, then keeps watching him.
-///
-/// Sets FLAG_VALE_WARNED_AGAINST_MT_ALEPH. "You're not planning on sneaking up
-/// to Mt. Aleph...?"
 static void Vale_WarnAgainstSneakingUpMtAleph(void) {
   struct Actor *guard;
   struct Actor *actor;
@@ -1513,10 +1494,6 @@ UNUSED static void Vale_UnusedRoofMended(void) {
 
 /// Vale's setup plays the roof mending (VALE_FROM_TITLE) or its end (entrance
 /// 17, once).
-///
-/// It also floats the Nut, places the pillar by its column, sets the watching
-/// man going, and removes the puppies once Saturos and Menardi have been met.
-/// After a battle it restores the roof's and the bridge's cells.
 s32 Vale_Initialize(void) {
   struct Actor *actor;
   s32 set;
@@ -1645,9 +1622,6 @@ s32 Vale_Initialize(void) {
 }
 
 /// Back from Kalay, Garet meets his sister in Vale.
-///
-/// Sets area flag FLAG_VALE_GARET_MET_SISTER. "Ah! It's been a while... You're
-/// back?" ("Sis...").
 static void Vale_GaretMeetsHisSister(void) {
   struct Actor *actor;
   s32 msg;
@@ -1739,9 +1713,6 @@ static void Vale_GaretMeetsHisSister(void) {
 
 /// Back from Kalay, Garet asks one of his family in Vale
 /// (ACTOR_GARETS_BROTHER_AFTER_KALAY) to protect it while he is gone.
-///
-/// Sets area flag FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY. "WHATEVER YOU DO,
-/// you must protect the family while I'm gone."
 static void Vale_GaretAsksToProtectFamily(void) {
   struct Actor *actor;
 
@@ -1969,10 +1940,6 @@ static void Vale_PlaceOrHideBoards(s32 first, u32 count, s32 mode) {
 
 /// Arriving by VALE_FROM_TITLE, the game's opening in Vale, finds Isaac mending
 /// the roof of his house.
-///
-/// Garet trains his Psynergy, and Jenna comes by. The two speak of the storm
-/// three years ago before going to fetch Isaac. "Three years later... Isaac!
-/// Haven't you finished mending the roof yet?"
 static void Vale_MendingTheRoof(void) {
   u32 i;
   // Default: NULL until the first board is fetched.
@@ -2956,11 +2923,6 @@ static s32 Vale_DistanceInPixels(s32 *first, s32 *second) {
 ///
 /// He sees it within range pixels and in the sixteenth of a turn he faces or
 /// the one either side of it, or always when force is set.
-///
-/// Seeing it stops him where he stands (paused, mode 1, with riseCounter
-/// marking why) until it is out of sight again. Paused without riseCounter, as
-/// Vale_SynchronizeAlephGuardPause leaves him while a menu is open, he just
-/// stands.
 ///
 /// Returns 1 when he is stopped.
 static s32 Vale_TestFacing(struct Actor *actor, struct Actor *target, s32 range,

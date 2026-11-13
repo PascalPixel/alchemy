@@ -282,9 +282,6 @@ static void SuhallaDesert_UpdateCaptureTimer(void) {
 }
 
 /// The leader walks into a storm and is caught.
-///
-/// Drawn to its centre and lifted, the party spins until Douse stops the
-/// storm or it carries them away.
 static void SuhallaDesert_CatchInStorm(s32 stormId) {
   s32 leaderId;
   struct Actor *leader;
@@ -352,20 +349,12 @@ static void SuhallaDesert_CaughtByFourthStorm(void) {
 }
 
 /// The fifth storm catches the leader.
-///
-/// In SuhallaDesertNorth the leader walks into it (cell behavior 45). In
-/// SuhallaDesertSouth it's the chasing storm, which reaches the moving leader
-/// (event 55).
 static void SuhallaDesert_CaughtByFifthStorm(void) {
   SuhallaDesert_CatchInStorm(ACTOR_FIRST_SANDSTORM + 4);
 }
 
 /// As the party nears a storm it rises, growing to full size with the sand
 /// haze fading in the first time.
-///
-/// The first time a storm rises with Iodem in the party, he steps out and
-/// warns of the sandstorms. He says "If we don't get past here, we'll never
-/// make it to Babi Lighthouse."
 static void SuhallaDesert_RaiseStorm(s32 stormId) {
   s32 frame;
   s32 weight;
@@ -480,18 +469,6 @@ static void SuhallaDesert_FifthStormRises(void) {
 }
 
 /// Iodem asks whether to search the desert for Sheba again or press on.
-///
-/// It plays in SuhallaDesertSouth, near its way out to the World Map (cell
-/// behavior 9), once Iodem has heard the wounded soldiers in Suhalla.
-///
-/// He steps out of the party and says "Sheba is nowhere to be found. Should
-/// we search the desert once more or press on to Lalivero?"
-///
-/// Whatever the answer, Iodem decides to head first for the guard gate ahead,
-/// Suhalla Gate, and leave Sheba to the soldiers there. Then he rejoins the
-/// party.
-///
-/// Sets FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA.
 static void SuhallaDesert_IodemAsksWhetherToPressOn(void) {
   struct Actor *leader;
 
@@ -555,9 +532,6 @@ static void SuhallaDesert_IodemAsksWhetherToPressOn(void) {
 #define GAP(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
 /// The chasing storm's script, which follows the leader.
-///
-/// It throws up sand every eight frames, and catches a moving leader it comes
-/// within 8 pixels of (event 55).
 static s32 SuhallaDesert_ChaseLeader(struct Actor *actor) {
   struct EffectOptions options;
   struct Actor *leader;
@@ -619,10 +593,6 @@ static void SuhallaDesert_StormGivesChase(void) {
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
 /// SceneId_SuhallaDesertSouth), Douse cast at the storm that caught the leader
 /// rains on it from above.
-///
-/// The event sets the Psynergy effect's child option, so that Douse's orb
-/// rises to 80 pixels above the storm rather than 32 and rains on it from
-/// above (FieldPsynergy_Douse).
 static void SuhallaDesert_DouseCastAtStorm(void) {
   struct FieldEffectWork *work = gFieldEffectWork;
 
@@ -631,9 +601,6 @@ static void SuhallaDesert_DouseCastAtStorm(void) {
 
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
 /// SceneId_SuhallaDesertSouth), Douse stops the storm that caught the leader.
-///
-/// It is doused for good, and the monster in it attacks.
-/// SceneId_SuhallaDesertSouth's fourth and chasing storms hold other monsters.
 static void SuhallaDesert_DouseStorm(s32 unused, s32 stormId) {
   // The storm no longer carries the party away.
   if (gFieldWork->raisedTrigger == RAISED_SANDSTORM_CARRIES_PARTY_AWAY) {
@@ -670,10 +637,6 @@ static void SuhallaDesert_DouseStorm(s32 unused, s32 stormId) {
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
 /// SceneId_SuhallaDesertSouth), the spinning runs out (event 99) and the storm
 /// carries the party away.
-///
-/// The storm rises into the sky with the party and the screen closes. The
-/// party lands falling (FLAG_ARRIVE_FALLING) on the World Map outside Suhalla,
-/// or where the second scene's fourth storm drops it.
 static void SuhallaDesert_StormCarriesPartyAway(void) {
   s32 stormId;
   struct Actor *leader;
@@ -732,17 +695,9 @@ static void SuhallaDesert_PulseRevealPalette(void) {
 
 #ifdef UBFIX
 /// Reveal wears off, and what it showed is hidden again.
-///
-/// It runs as Reveal ends and whenever a scene is entered. Only in
-/// SuhallaDesertSouth does it hide what Reveal showed and put back the
-/// pulsing color.
 static void SuhallaDesert_RevealEnds(void) {
 #else
 /// Reveal wears off, and what it showed is hidden again.
-///
-/// It runs as Reveal ends and whenever a scene is entered. Only in
-/// SuhallaDesertSouth does it hide what Reveal showed and put back the
-/// pulsing color.
 static s32 SuhallaDesert_RevealEnds(void) {
   s32 removalResult;
 #endif
@@ -768,9 +723,6 @@ static s32 SuhallaDesert_RevealEnds(void) {
 }
 
 /// Reveal shows a hidden stone pillar in the desert's south.
-///
-/// In SuhallaDesertSouth the stone pillar appears at 248, 712. Map cells and
-/// the Psynergy Stone's map object change, and a palette color pulses.
 static UNREAD_RESULT SuhallaDesert_RevealStarts(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_SuhallaDesertSouth) {
     Actor_Get(ACTOR_REVEALED_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -798,9 +750,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 /// Sets a scene up as the party enters.
-///
-/// A capture goes on spinning, Reveal's color is saved, and the first two
-/// scenes set up their storms.
 s32 Scene_Initialize(void) {
   struct MapGridScrollWork *grid;
 
@@ -830,10 +779,6 @@ s32 Scene_Initialize(void) {
 }
 
 /// The first scene's storms on entry.
-///
-/// A doused storm counts as risen. The others start small, unless the party
-/// is coming back to where it stood. The sand haze is faded in if a storm has
-/// risen before.
 static void SuhallaDesert_SetUpFirstMapStorms(void) {
   struct Actor *actor;
   s32 stormId;
@@ -876,9 +821,6 @@ static void SuhallaDesert_SetUpFirstMapStorms(void) {
 }
 
 /// The second scene's storms on entry, as the first scene's.
-///
-/// The fourth storm's first sprite part takes parameter 10, and once the
-/// chasing storm has been doused it is gone for good.
 static void SuhallaDesert_SetUpSecondMapStorms(void) {
   struct Actor *actor;
   struct Sprite *sprite;

@@ -219,19 +219,6 @@ s32 KolimaForestEntrance_Initialize(void) {
 /// been seen in Kolima (FLAG_KOLIMA_CURSE_WITNESSED clear), the party sees the
 /// curse fall. It is the same event as Kolima_WitnessForestCurse without the
 /// trees that were people.
-///
-/// - Ivan notices sparkly stuff on the ground.
-/// - Sparkles rain from the sky, the party sinks under them, and fields of
-///   Psynergy rise around each party member before the sparkles reach them.
-/// - They argue over whether it was their Psynergy.
-/// - The sparkles fall again and the Psynergy fields rise again.
-/// - Tret and Laurel speak. Tret turned Kolima's people into trees for cutting
-///   him. Laurel tells them to reawaken his gentle side and look for Tret deep
-///   within the forest.
-///
-/// Lines and choices for Mia are skipped when she is not in the party.
-///
-/// Sets FLAG_KOLIMA_CURSE_WITNESSED.
 static void KolimaForestEntrance_WitnessForestCurse(void) {
   s32 *party;
   const s32 *sparkleAction;

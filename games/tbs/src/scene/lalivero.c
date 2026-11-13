@@ -241,13 +241,6 @@ static void Lalivero_EnterDoorway(void) {
 
 /// In Lalivero, on the first visit, arriving from the World Map, the party and
 /// Iodem find more of Tolbi's soldiers beaten in the street.
-///
-/// Iodem asks whether they fought a group of six. There were seven, the same
-/// group the soldiers had been following, and one of them was Sheba, with the
-/// scholar Kraden protecting her. They headed for the ruins beneath Babi
-/// Lighthouse, and Faran, the master of Lalivero, followed them in.
-///
-/// The soldiers send the party on, and Iodem sets off for Babi Lighthouse.
 static void Lalivero_WatchWoundedSoldiers(void) {
   struct Actor *leader;
 
@@ -467,12 +460,6 @@ static void Lalivero_WatchWoundedSoldiers(void) {
 /// In Lalivero, at step trigger 50 after Venus Lighthouse, Garet stops the
 /// leader, for Iodem asked them to wait. This plays until Iodem has spoken
 /// (FLAG_IODEM_FAREWELL_SEEN).
-///
-/// Iodem comes out of Faran's house and tells the party that the misty island
-/// they saw from the lighthouse may be Lemuria, which could save Babi's life.
-/// The party promised Babi to find it, though it means first to find Jenna,
-/// whom it is searching for. Iodem gives it the Black Orb that sails Babi's
-/// ship. Garet is glad to see the ocean at last.
 static void Lalivero_IodemGivesBlackOrb(void) {
   struct Actor *leader;
 

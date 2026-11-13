@@ -320,10 +320,6 @@ static void TolbiShipMast_FindAnchorCharm(void) {
 /// The mast's setup sways the view while the ship is under way, puts the
 /// lookout to his spot once the charm is back, and plays what the entrance
 /// calls for.
-///
-/// That is the climb up from the deck (TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK) or
-/// an event (the entrances from
-/// TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR on).
 s32 TolbiShipMast_Initialize(void) {
   struct Actor *leader;
 
@@ -419,9 +415,6 @@ static void TolbiShipMast_SetupVisibleLeaderLookout(void) {
 
 /// On the mast at TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR, the
 /// lookout scans both sides and announces a clear course.
-///
-/// He leaves by TOLBI_SHIP_MAST_TO_SHIP_ROOMS_CAST_OFF, to the cast-off below
-/// decks.
 static void TolbiShipMast_AnnounceClearCourse(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);

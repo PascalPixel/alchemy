@@ -241,8 +241,6 @@ const struct ActorPlacement *ColosseumNavampaMatch_GetActorPlacements(void) {
 }
 
 /// The Wall Wedge's task cycles its pistons through their four patterns.
-///
-/// It raises the opening event (4 or 5) when the rider stands in an open gap.
 static void ColosseumNavampaMatch_UpdateWallWedge(void) {
   struct FieldWork *work = gFieldWork;
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
@@ -325,9 +323,6 @@ static void ColosseumNavampaMatch_WaitForWallWedgeOpening(void) {
 }
 
 /// The Moving Sidewalk Stage's belt carries the party west.
-///
-/// It's step trigger 11, and until FLAG_SIDEWALK_LOG_KNOCKED_OFF is set the
-/// belt carries the controlled actor and the camera west.
 static void ColosseumNavampaMatch_RideMovingSidewalk(void) {
   struct FieldWork *work = gFieldWork;
   struct MainRoutineWork *state = &gMainRoutineWork;
@@ -360,9 +355,6 @@ static inline void ColosseumNavampaMatch_MoveOnScales(struct Actor *ledge,
 }
 
 /// Frost on the target on the Scales of Justice's eastern ledge freezes it.
-///
-/// The scales tip, the western ledge down and the eastern ledge up
-/// (FLAG_SCALES_FROZEN).
 static void ColosseumNavampaMatch_FreezeOnScales(void) {
   struct Actor *actor;
 
@@ -381,8 +373,6 @@ static void ColosseumNavampaMatch_FreezeOnScales(void) {
 
 /// Stepping onto the Scales of Justice's western ledge sinks it, unless the
 /// scales are frozen.
-///
-/// It sinks with the rider as the eastern ledge rises (FLAG_ON_SCALES).
 static void ColosseumNavampaMatch_StepOnScales(void) {
   s32 actorId;
   s32 lowered;
@@ -440,9 +430,6 @@ static void ColosseumNavampaMatch_StepOffScales(void) {
 }
 
 /// Move on the weight by the Scales of Justice can set it on the scales.
-///
-/// When it reaches the western ledge, it sinks the ledge and the eastern ledge
-/// rises (FLAG_WEIGHT_ON_SCALES).
 static void ColosseumNavampaMatch_SetWeightOnScales(void) {
   struct Actor *probe;
   struct Actor *log;
@@ -482,9 +469,6 @@ static void ColosseumNavampaMatch_PushWeight(void) {
 
 /// Move on the stone on Colosseum Final 3's stages, and each push, keeps where
 /// it stands.
-///
-/// Its column is kept in the byte of flags from FLAG_STONE_COLUMN, and its
-/// cell is rebuilt.
 static void ColosseumNavampaMatch_MoveStone(void) {
   s32 x;
 
@@ -503,9 +487,6 @@ static void ColosseumNavampaMatch_PushRock(void) { Colosso_PushActorAhead(); }
 
 /// Move on one of the log-rolling area's three stones, and each push there,
 /// settles the stones.
-///
-/// A stone resting on the floor becomes a step
-/// (FLAG_FIRST_LOG_AREA_STONE_SETTLED and the two after it).
 static void ColosseumNavampaMatch_SettleStones(void) {
   struct Actor *actor;
   s32 slot;
@@ -532,9 +513,6 @@ static void ColosseumNavampaMatch_SettleStones(void) {
 }
 
 /// A task for Colosseum Final 3's eastern end.
-///
-/// The cell at column 81, row 12 lets the rider through only while facing
-/// south.
 static void ColosseumNavampaMatch_UpdateEastEndCollision(void) {
   struct Actor *actor;
   s32 x;
@@ -590,12 +568,6 @@ static s32 ColosseumNavampaMatch_CheckLongLogPath(s32 x, s32 z) {
 }
 
 /// The long log carries the leader until something stops it.
-///
-/// Walking into the log-rolling area's long log (step trigger 23) rolls it,
-/// with the leader, the way the pad is held. At the east end it drops into
-/// place and the path is made (FLAG_LONG_LOG_IN_PLACE).
-///
-/// Away from the log, a stone ahead is pushed instead.
 static void ColosseumNavampaMatch_RollLongLog(void) {
   struct Actor *rider;
   struct Actor *log;
@@ -723,8 +695,6 @@ ColosseumNavampaMatch_ShowActivatedSidewalkLayer(struct Actor *interpreter) {
 }
 
 /// Force on the Moving Sidewalk Stage's log makes it slide away.
-///
-/// The belt carries no one any more (FLAG_SIDEWALK_LOG_KNOCKED_OFF).
 static void ColosseumNavampaMatch_ForceSidewalkLog(void) {
   struct Actor *effect;
   s32 moveRate;
@@ -867,14 +837,6 @@ ColosseumNavampaMatch_UnusedAskToControlCharacter(s32 characterId) {
 
 /// Reaching Colosseum Final 3's arena, the leader takes a prize and fights
 /// Navampa.
-///
-/// The prize is the Claymore if he is first, the Hunter's Sword if second. He
-/// and Navampa face off and fight, and the battle's group follows who took the
-/// Claymore.
-///
-/// The arena's step trigger row waits on FLAG_COLOSSEUM_ARENA_CLOSED being
-/// clear, which nothing in the game sets (colosseum_azart_match.c's
-/// ColosseumNavampaMatch_ReachArena).
 static void ColosseumNavampaMatch_ReachArena(void) {
   s32 place;
   s32 i;
@@ -915,8 +877,6 @@ static void ColosseumNavampaMatch_ReachArena(void) {
 
 /// Walking into something on Colosseum Final 3's stages (step trigger 90)
 /// makes the leader jump forward where he can.
-///
-/// He does not jump when it is an actor (Field_TryJumpForward).
 static void ColosseumNavampaMatch_JumpAtLogAreaEnd(void) {
   if (Colosso_FindActorAhead() == 0) {
     Field_TryJumpForward();
@@ -938,15 +898,6 @@ const struct Trigger *ColosseumNavampaMatch_GetTriggers(void) {
 }
 
 /// Sets up Colosseum Final 3 for the visit its entrance stands for.
-///
-/// It restores obstacle progress, then goes by the arrival:
-///
-/// - the race (COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND),
-/// - the friends' turns to lend a hand
-///   (COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH),
-/// - the guide's tour (COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_NORTH),
-/// - the end of Colosso after a win (COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON),
-/// - or after a loss (COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_LOST).
 s32 ColosseumNavampaMatch_Initialize(void) {
   struct Actor *actor;
   s32 i;
@@ -1171,8 +1122,6 @@ s32 ColosseumNavampaMatch_Initialize(void) {
 
 /// Advances one of the particles that rise from the sleeping Isaac after the
 /// last match.
-///
-/// Its timer and work hold signed 1/256-pixel steps.
 static s32 ColosseumNavampaMatch_AdvanceParticleMotion(struct Actor *particle) {
   particle->x.fixed += particle->timer * 256;
   particle->y.fixed += (s16)particle->userValue * 256;
@@ -1237,9 +1186,6 @@ static void ColosseumNavampaMatch_SpawnPeriodicParticle(void) {
 
 /// After the last match, Garet, Ivan and Mia run to Isaac in the arena, but he
 /// falls asleep.
-///
-/// The entrance is COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON or _LOST. They call
-/// his name, but he falls asleep, exhausted, and they leave him to sleep.
 static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   const s32 *leaderScaleScript;
   TaskFunc particleFunc;
@@ -1429,9 +1375,6 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
 
 /// The guide gives the party the tour of Colosseum Final 3
 /// (COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_NORTH).
-///
-/// He welcomes the party to the third finals match's stages and leaves them
-/// to their attendants. Then Garet, Ivan and Mia walk back into Isaac.
 static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
   s32 guideZ;
   s32 guideX;
@@ -1499,13 +1442,6 @@ static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
 }
 
 /// The Scales of Justice's attendant explains stage 1 of Colosseum Final 3.
-///
-/// The first time, a pointer shows the two ledges and how one rises as the
-/// other falls. Then comes the objective, and a place for a friend to cheer.
-///
-/// With a friend alone on the stages
-/// (COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) he asks whether they are
-/// done cheering instead.
 static void ColosseumNavampaMatch_TalkToScalesAttendant(s32 guideId) {
   struct Actor *westPan;
   struct Actor *eastPan;
@@ -1574,9 +1510,6 @@ static void ColosseumNavampaMatch_TalkToScalesAttendant(s32 guideId) {
 }
 
 /// The Stepping-Stone Stage's attendant explains stage 2 of Colosseum Final 3.
-///
-/// The first time, Isaac appears and finds the way. Then comes the objective,
-/// and a place for a friend to cheer.
 static void ColosseumNavampaMatch_TalkToSteppingStoneAttendant(s32 guideId) {
   s32 promptResult;
 
@@ -1632,10 +1565,6 @@ static void ColosseumNavampaMatch_TalkToSteppingStoneAttendant(s32 guideId) {
 }
 
 /// The Wall Wedge's attendant explains stage 3 of Colosseum Final 3.
-///
-/// The first time, Isaac appears and times his way past the pistons. Then the
-/// attendant says that the walls' operator will cheer for him, and offers a
-/// place for a friend to cheer.
 static void ColosseumNavampaMatch_TalkToWallWedgeAttendant(s32 guideId) {
   struct FieldWork *work;
   s32 promptResult;
@@ -1692,9 +1621,6 @@ static void ColosseumNavampaMatch_TalkToWallWedgeAttendant(s32 guideId) {
 }
 
 /// The Free-Climb Area's attendant explains stage 4 of Colosseum Final 3.
-///
-/// The first time, Isaac appears and climbs across. Then comes the objective,
-/// and a place for a friend to cheer.
 static void ColosseumNavampaMatch_TalkToFreeClimbAttendant(s32 guideId) {
   s32 result;
   struct Actor *actor;
@@ -1792,9 +1718,6 @@ static void ColosseumNavampaMatch_PositionAndActivateActor(s32 selector, s32 x,
 
 /// The Moving Sidewalk Stage's attendant explains stage 5 of Colosseum Final
 /// 3.
-///
-/// The first time, Isaac appears and walks against the belt. Then comes the
-/// objective, and a place for a friend to cheer.
 static void ColosseumNavampaMatch_TalkToMovingSidewalkAttendant(s32 guideId) {
   s32 i;
   s32 result;
@@ -1861,9 +1784,6 @@ static void ColosseumNavampaMatch_TalkToMovingSidewalkAttendant(s32 guideId) {
 }
 
 /// The log-rolling area's attendant explains stage 6 of Colosseum Final 3.
-///
-/// The first time, a pointer traces the log's route. Then comes the
-/// objective, and a place for a friend to cheer.
 static void ColosseumNavampaMatch_TalkToLogRollingAttendant(s32 actorId) {
   s32 state;
 

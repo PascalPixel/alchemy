@@ -84,39 +84,7 @@ void Func_02003c00(s32 a, s32 b, s32 c);
 // One-field view: the shape store is memory of its own to sched2, which sinks
 // it past the cell read; a plain store keeps its order.
 
-void Func_02000270(void) {
-  struct Actor *held = HELD_OBJECT(Ram_HeapSlots->eventWork);
-  u8 *layer;
-  u8 *cells;
-  u8 *shapes;
-  s32 shape;
-  s32 level;
-  s32 index;
-  u8 newShape;
-
-  if (held == NULL)
-    return;
-  layer = &held->terrainId;
-  cells = (u8 *)Ram_HeapSlots->mapWork->layers[*layer].cells;
-  shapes = Ram_MapShapeGrid +
-           (((struct MapCell *)cells) - (struct MapCell *)Ram_MapCellBuffer);
-  shape = Func_020010ec(*layer, held->x, held->z);
-  level = Map_GetTerrainHeight(*layer, held->x, held->z);
-  index = Func_020011d4(held);
-  level >>= 19;
-  level += 4;
-  newShape = Func_020011f4(*layer, shape, level);
-  shapes += index;
-  index <<= 2;
-  /* FAKEMATCH(signature): the grid byte stored through a one-field struct
-   * view (struct ShapeCell), whose alias set lets sched2 sink it past the
-   * cell read; as *shapes = newShape, 6 of 76 instructions differ in tla-en. */
-  ((struct ShapeCell *)shapes)->shape = newShape;
-  cells += index;
-  ((struct MapCell *)cells)->attributeB |= 192;
-  cells += 0x200;
-  ((struct MapCell *)cells)->attributeB |= 64;
-}
+DEFINE_FUNC_02000270(Func_02000270, Func_020010ec, Func_020011d4, Func_020011f4)
 
 struct SceneWork {
   u8 unk000[0x1ac];

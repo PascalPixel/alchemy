@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x65d, in ROM order.
 
+#include "shared/routines.h"
 #include "shared/tables.h"
 #include "battle.h"
 #include "field.h"
@@ -237,20 +238,7 @@ void Func_02000514(void) {
   Func_02000438();
 }
 
-void Func_02000544(void) {
-  s32 id, a;
-
-  Event_Start();
-  Event_ResolvePendingActions(0);
-  a = 192;
-  id = 4;
-  /* FAKEMATCH(barrier): the id held at an empty asm, so it comes between the
-   * angle byte and its shift; as no asm, 2 of 11 instructions differ in
-   * tla-en. */
-  __asm__ volatile("" : "+r"(id));
-  Actor_ArmCallback(id, a << 8, 0);
-  Func_02000438();
-}
+DEFINE_FUNC_02000544(Func_02000544, Func_02000438)
 
 void Func_02000564(void) {
   s32 x = ((s16 *)&Actor_GetById(4)->x)[1];

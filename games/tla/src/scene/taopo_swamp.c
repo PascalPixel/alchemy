@@ -791,59 +791,9 @@ void Func_02001304(void) {
   Func_0200273c(480);
 }
 
-void Func_02001424(void) {
-  s32 timer = Func_02002730();
+DEFINE_FUNC_02001424(Func_02001424, Func_02000810, 8, Func_020008d8)
 
-  /* FAKEMATCH(signature): Func_0200271c called as returning s32, as in
-   * Func_02001304; as a call to the void setter, 4 of 50 instructions differ in
-   * tla-en. */
-  switch (timer) {
-  case 0:
-    Vent_SetActive(0, 1);
-    Vent_SetActive(1, 1);
-    Func_02002978(170);
-    break;
-  case 120:
-    Vent_SetActive(0, 0);
-    Vent_SetActive(1, 0);
-    Func_02002978(-1);
-    break;
-  }
-  if ((u32)(timer - 11) <= 118) {
-    if (Event_GetFlag(0x221))
-      Func_02000810(8);
-    else if (Event_GetFlag(0x220))
-      Func_020008d8(8);
-  }
-  Func_0200273c(480);
-}
-
-void Func_020014a0(void) {
-  s32 timer = Func_02002730();
-
-  /* FAKEMATCH(signature): Func_0200271c called as returning s32, as in
-   * Func_02001304; as a call to the void setter, 4 of 50 instructions differ in
-   * tla-en. */
-  switch (timer) {
-  case 0:
-    Vent_SetActive(0, 1);
-    Vent_SetActive(1, 1);
-    Func_02002978(170);
-    break;
-  case 120:
-    Vent_SetActive(0, 0);
-    Vent_SetActive(1, 0);
-    Func_02002978(-1);
-    break;
-  }
-  if ((u32)(timer - 11) <= 118) {
-    if (Event_GetFlag(0x221))
-      Func_020009c0(10);
-    else if (Event_GetFlag(0x220))
-      Func_02000a94(10);
-  }
-  Func_0200273c(480);
-}
+DEFINE_FUNC_02001424(Func_020014a0, Func_020009c0, 10, Func_02000a94)
 
 void Func_0200151c(void) {
   /* FAKEMATCH(signature): Func_0200271c called as returning s32, as in

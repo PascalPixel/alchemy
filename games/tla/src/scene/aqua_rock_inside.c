@@ -809,34 +809,7 @@ void Func_02001364(struct Actor *object) {
 // overlay 681's Func_0200136c. The first push goes through Call3 (directly, its
 // offset pointer is set after the angle's load).
 
-s32 Func_020013bc(struct Orbiter *orbiter) {
-  struct Actor *anchor = orbiter->anchor;
-  s16 *angle;
-
-  orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
-  orbiter->x = anchor->x;
-  orbiter->y = anchor->y + 0x80000;
-  orbiter->z = anchor->z;
-  FieldVector_AddPolarOffset(orbiter->radius, orbiter->angle, &orbiter->x);
-  /* FAKEMATCH(temporary): the angle's address, taken after the first push,
-   * sets r2 from r8 before the second push reads it; as orbiter->angle,
-   * 2 of 89 instructions differ in tla-en. */
-  angle = &orbiter->angle;
-  if (--orbiter->countdown == 0)
-    return 0;
-  if (orbiter->radius == 0x20000)
-    return 1;
-  Func_02001364(orbiter);
-  orbiter->radius -= 0x40000;
-  orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
-  orbiter->x = anchor->x;
-  orbiter->y = anchor->y + 0x80000;
-  orbiter->z = anchor->z;
-  FieldVector_AddPolarOffset(orbiter->radius, *angle, &orbiter->x);
-  Func_02001364(orbiter);
-  orbiter->radius -= 0x40000;
-  return 1;
-}
+DEFINE_FUNC_0200136C(Func_020013bc, Func_02001364)
 
 // Moves around in a circle.
 DEFINE_FUNC_0200147C(Func_0200147c)

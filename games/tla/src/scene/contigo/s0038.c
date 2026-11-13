@@ -1,3 +1,4 @@
+#include "../shared/routines.h"
 #include "types.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
@@ -16,49 +17,12 @@ extern u16 *gData_02006004;
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
-void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b) {
-  u8 *saved = Ram_HeapSlots->block32;
+DEFINE_FUNC_02000038_4(Func_02000038, gData_02006010, gData_02006014,
+    Data_02006018, gData_02006004, Func_02000328)
 
-  gData_02006010 = slots;
-  gData_02006014 = colours;
-  Data_02006018 = a;
-  gData_02006004 = b;
-  if (*slots != 0xffff && *colours != 0xffff) {
-  next:
-    {
-      int red = *colours++;
-      int index = *slots++;
-      int green = *colours++;
-      int blue = *colours++;
-      int value;
-
-      /* FAKEMATCH(dead): the colour's build and store in a once-only
-       * block, so both lists are stepped right after their loads and the
-       * next entry's marker loads before 0xffff is built; as plain
-       * statements, 22 of 80 instructions differ in tla-en. */
-      do {
-        value = (blue << 10) | (green << 5) | red;
-        ((u16 *)BG_PLTT)[index] = value;
-      } while (0);
-    }
-    if (*slots != 0xffff && *colours != 0xffff)
-      goto next;
-  }
-  Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
-  Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  if ((s8)gMainRoutineWork.unk2c2 == 2)
-    Func_02000328();
-}
-
-void Func_020000f4(void) {
-  gData_02006020 = 0;
-  gData_0200601c = Func_020001d4(gData_02006010);
-  gData_0200600c = 15;
-  gData_02006008 = 16;
-  gData_02006000 = 1;
-  Task_Add(Func_020001f8, TASK_PASS_VBLANK);
-}
+DEFINE_FUNC_020000F4_2(Func_020000f4, gData_02006020, gData_0200601c,
+    Func_020001d4, gData_02006010, gData_0200600c, 15, gData_02006008, 16,
+    gData_02006000, Func_020001f8)
 
 void Func_02000158(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -67,14 +31,9 @@ void Func_02000158(void) {
   Task_RemoveFar(Func_020001f8);
 }
 
-void Func_02000178(void) {
-  gData_02006020 = 0;
-  gData_0200601c = Func_020001d4(gData_02006010);
-  gData_0200600c = 2;
-  gData_02006008 = 2;
-  gData_02006000 = 1;
-  Task_Add(Func_020001f8, TASK_PASS_VBLANK);
-}
+DEFINE_FUNC_020000F4_2(Func_02000178, gData_02006020, gData_0200601c,
+    Func_020001d4, gData_02006010, gData_0200600c, 2, gData_02006008, 2,
+    gData_02006000, Func_020001f8)
 
 s32 Func_020001d4(u16 *list) {
   s32 count = 0;

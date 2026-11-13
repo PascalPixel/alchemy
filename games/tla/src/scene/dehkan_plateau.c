@@ -321,107 +321,17 @@ loop:
   }
 }
 
-void Func_02001820(void) {
-  const u16 *cell = &gData_02004066[0].present;
-  s32 flag = 0x240;
-  u32 i;
-  const u16 *dest;
-
-  for (i = 0; i <= 13; i++) {
-    if (GameFlag_Test(0x109) != 0) {
-      if (GameFlag_Test(flag) != 0) {
-        s32 x;
-        s32 y;
-
-        cell = &gData_02004066[i].x;
-        x = *cell++;
-        y = *cell++;
-        /* FAKEMATCH(temporary): the destination table through a local set here,
-         * which loads its first halfword before the 1 is built; as
-         * gData_02003fd2[0], 2 of 56 instructions differ in tla-en. */
-        dest = gData_02003fd2;
-        Map_CopyCellPictureIndicesRect(dest[0], dest[1], x, y, 1, 1);
-      }
-    } else {
-      if (*cell != 0)
-        GameFlag_SetBit(flag);
-      cell += 6;
-    }
-    flag++;
-  }
-  if (GameFlag_Test(0x109) == 0)
-    Func_02001804();
-}
+DEFINE_FUNC_02001820(Func_02001820, gData_02004066, 13, gData_02003fd2)
 
 extern const u16 gData_02003fda[];
 extern const struct CellRecord gData_0200410e[];
 
-void Func_020018a8(void) {
-  const u16 *cell = &gData_0200410e[0].present;
-  s32 flag = 0x240;
-  u32 i;
-  const u16 *dest;
-
-  for (i = 0; i <= 7; i++) {
-    if (GameFlag_Test(0x109) != 0) {
-      if (GameFlag_Test(flag) != 0) {
-        s32 x;
-        s32 y;
-
-        cell = &gData_0200410e[i].x;
-        x = *cell++;
-        y = *cell++;
-        /* FAKEMATCH(temporary): the destination table through a local set here,
-         * which loads its first halfword before the 1 is built; as
-         * gData_02003fda[0], 2 of 56 instructions differ in tla-en. */
-        dest = gData_02003fda;
-        Map_CopyCellPictureIndicesRect(dest[0], dest[1], x, y, 1, 1);
-      }
-    } else {
-      if (*cell != 0)
-        GameFlag_SetBit(flag);
-      cell += 6;
-    }
-    flag++;
-  }
-  if (GameFlag_Test(0x109) == 0)
-    Func_02001804();
-}
+DEFINE_FUNC_02001820(Func_020018a8, gData_0200410e, 7, gData_02003fda)
 
 extern const u16 gData_02003fe2[];
 extern const struct CellRecord gData_0200416e[];
 
-void Func_02001930(void) {
-  const u16 *cell = &gData_0200416e[0].present;
-  s32 flag = 0x240;
-  u32 i;
-  const u16 *dest;
-
-  for (i = 0; i <= 5; i++) {
-    if (GameFlag_Test(0x109) != 0) {
-      if (GameFlag_Test(flag) != 0) {
-        s32 x;
-        s32 y;
-
-        cell = &gData_0200416e[i].x;
-        x = *cell++;
-        y = *cell++;
-        /* FAKEMATCH(temporary): the destination table through a local set here,
-         * which loads its first halfword before the 1 is built; as
-         * gData_02003fe2[0], 2 of 56 instructions differ in tla-en. */
-        dest = gData_02003fe2;
-        Map_CopyCellPictureIndicesRect(dest[0], dest[1], x, y, 1, 1);
-      }
-    } else {
-      if (*cell != 0)
-        GameFlag_SetBit(flag);
-      cell += 6;
-    }
-    flag++;
-  }
-  if (GameFlag_Test(0x109) == 0)
-    Func_02001804();
-}
+DEFINE_FUNC_02001820(Func_02001930, gData_0200416e, 5, gData_02003fe2)
 
 void Func_020019b8(void) {
   u16 *record = gData_020041b6;

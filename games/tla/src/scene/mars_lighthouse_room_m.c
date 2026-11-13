@@ -817,40 +817,8 @@ void Func_0200183c(void);
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
-void Func_0200154c(u16 *slots, u16 *colours, u16 *a, u16 *b) {
-  u8 *saved = Ram_HeapSlots->block32;
-
-  gData_02003928 = slots;
-  Data_0200392c = colours;
-  Data_02003930 = a;
-  Data_0200391c = b;
-  if (*slots != 0xffff && *colours != 0xffff) {
-  next:
-    {
-      int red = *colours++;
-      int index = *slots++;
-      int green = *colours++;
-      int blue = *colours++;
-      int value;
-
-      /* FAKEMATCH(dead): the colour's build and store in a once-only
-       * block, so both lists are stepped right after their loads and the
-       * next entry's marker loads before 0xffff is built; as plain
-       * statements, 22 of 80 instructions differ in tla-en. */
-      do {
-        value = (blue << 10) | (green << 5) | red;
-        ((u16 *)BG_PLTT)[index] = value;
-      } while (0);
-    }
-    if (*slots != 0xffff && *colours != 0xffff)
-      goto next;
-  }
-  Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
-  Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
-  PaletteFade_ApplyTarget(0x10000, 0);
-  if ((s8)gMainRoutineWork.unk2c2 == 2)
-    Func_0200183c();
-}
+DEFINE_FUNC_0200154C(Func_0200154c, gData_02003928, Data_0200392c,
+    Data_02003930, Data_0200391c, Func_0200183c)
 
 DEFINE_FUNC_02001608(Func_02001608, 15, 16)
 
@@ -1271,92 +1239,6 @@ typedef struct IwramGlobals {
 
 #define IWRAM ((IwramGlobals *)Ram_HeapSlots)
 
-void Func_02001f94(void) {
-  s32 saved[2];
-  State *state;
-  Entry *entry;
-  Camera *camera;
-  Position *position;
-  s32 cameraX, cameraZ;
-  s32 v;
-  s32 i;
-
-  state = (State *)(gData_020023c4 + 0x188);
-  camera = IWRAM->camera;
-  entry = state->entries;
-  position = &camera->position;
-  cameraX = position->x;
-  cameraX &= 0xffff0000;
-  cameraZ = position->z & 0xffff0000;
-  saved[1] = (*(s32 **)camera)[1];
-  saved[0] = IWRAM->unk_6c.word;
-  if (state->unk_6 != 0 && state->unk_8 == 0 && state->callback != 0)
-    state->callback();
-  v = (u16)state->unk_6;
-  state->unk_8 = v;
-  state->unk_6 = 0;
-  for (i = 3; i >= 0; i--, entry++) {
-    Actor *actor;
-    s32 flag, x, y, unk6, value, dx, dz;
-    u8 *mark;
-
-    if (entry->active == 0)
-      continue;
-    actor = entry->actor;
-    if (actor == 0)
-      continue;
-    flag = GameFlag_Test(0x106);
-    if (*(s16 *)(saved[0] + 358) != 0)
-      flag |= 1;
-    mark = &actor->flag5b;
-    *mark = flag;
-    if (state->unk_e != 0)
-      *mark = GameFlag_Test(0x106);
-    dx = actor->x;
-    dz = actor->z;
-    dx -= cameraX;
-    /* FAKEMATCH(barrier): the empty asm on dx changes its allocation rank; as
-     * no asm, 94 of 182 instructions differ in tla-en. */
-    asm("" : : "r"(dx));
-    y = actor->y;
-    dz -= cameraZ;
-    y = dz - y;
-    unk6 = entry->unk_6;
-    x = dx >> 16;
-    y = (y >> 16) - 8;
-    if (unk6 == 0) {
-      if ((u32)(x + 7) > 334)
-        continue;
-      if (y <= -48)
-        continue;
-      if (y > 239)
-        continue;
-    }
-    y = (u16)entry->timer;
-    if (entry->timer <= 0) {
-      y = entry->flags & 240;
-      switch (y) {
-      case 128:
-        Func_02001f14__s1f94(&entry->actor->x, entry->unk_c, unk6);
-        break;
-      case 48:
-        Func_02001d08(&entry->actor->x, entry->unk_c, unk6);
-        break;
-      case 32:
-        Func_02001d98(&entry->actor->x, entry->unk_c, unk6);
-        break;
-      case 16:
-        Func_02001d50(&entry->actor->x, entry->unk_c, unk6);
-        break;
-      case 0:
-        Func_02001b1c(&entry->actor->x, entry->unk_c, unk6);
-        break;
-      }
-      value = 8;
-    } else {
-      value = y - 1;
-    }
-    entry->timer = value;
-  }
-}
+DEFINE_FUNC_02001BF8(Func_02001f94, Func_02001f14__s1f94, Func_02001d08,
+    Func_02001d98, Func_02001d50, Func_02001b1c)
 #undef IWRAM

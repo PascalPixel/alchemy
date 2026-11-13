@@ -4645,4 +4645,1630 @@
     Func_02000e2c();                                                           \
   }
 
+/// 5 scenes: jupiter_lighthouse_basement/s1094,
+/// jupiter_lighthouse_entrance/s0eac, jupiter_lighthouse_room_1/s0f3c,
+/// jupiter_lighthouse_room_2/s165c, jupiter_lighthouse_room_3/s1a7c.
+#define DEFINE_FUNC_020011A0(name, data1, call1)                               \
+  s32 name(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {                   \
+    struct CellTarget *table = &data1;                                         \
+    struct CellTargetEntry *entry = table->entries;                            \
+    struct CellMapWork *map;                                                   \
+    struct CellMapLayer *layer;                                                \
+    struct CellMapCell *rows;                                                  \
+    struct CellMapCell *cell;                                                  \
+    s32 x0, z0, width, height, i, j;                                           \
+    u32 *buffer;                                                               \
+    u32 event, last;                                                           \
+    s32 cz, cx;                                                                \
+                                                                               \
+    Iwram_ClearWords(table, 4);                                                \
+    table->kind = kind;                                                        \
+    table->firstFlag = flag;                                                   \
+    table->flagByte = flagByte;                                                \
+    table->x = x;                                                              \
+    table->z = z;                                                              \
+    table->current = -1;                                                       \
+    table->count = 0;                                                          \
+    map = (struct CellMapWork *)Ram_HeapSlots->mapWork;                        \
+    layer = &map->layers[0];                                                   \
+    rows = layer->cells;                                                       \
+    x0 = (layer->originX + map->minX) >> 20;                                   \
+    z0 = (layer->originZ + map->minZ) >> 20;                                   \
+    width = (map->maxX - map->minX) >> 20;                                     \
+    height = (map->maxZ - map->minZ) >> 20;                                    \
+    rows += ((map->minZ >> 20) << 7) + (map->minX >> 20);                      \
+    /* Goto loops: as for loops (either one) loop.c moves the 64 of the cell   \
+     */                                                                        \
+    /* copy's masks out of them and 321 of 268 instructions differ. */         \
+    j = 0;                                                                     \
+    if (j < height) {                                                          \
+    row:                                                                       \
+      cell = rows + (j << 7);                                                  \
+      i = 0;                                                                   \
+      if (i < width) {                                                         \
+      column:                                                                  \
+        event = cell->event;                                                   \
+        if (event != 0 && event >= kind) {                                     \
+          last = kind + 1;                                                     \
+          if (event <= last) {                                                 \
+            cx = i + x0;                                                       \
+            entry->x = cx;                                                     \
+            cz = j + z0;                                                       \
+            entry->z = cz;                                                     \
+            entry->flag = flag;                                                \
+            flag++;                                                            \
+            if (!Event_GetFlag(0x109)) {                                       \
+              if (event == last)                                               \
+                Event_SetFlag(entry->flag);                                    \
+            } else if (Event_GetFlag(entry->flag)) {                           \
+              s32 sourceX = table->x;                                          \
+              s32 sourceZ = table->z;                                          \
+                                                                               \
+              cx |= (s16)(table->x & 64);                                      \
+              cz |= (s16)(table->z & 64);                                      \
+              MapGrid_CopyCells(sourceX, sourceZ + 1, 1, 1, cx, cz);           \
+            }                                                                  \
+            entry++;                                                           \
+            table->count++;                                                    \
+            /* FAKEMATCH(barrier): an empty asm on the stored count; as no     \
+             * asm, 2 of 268 instructions differ in tla-en. */                                      \
+            asm("" : "=m"(table->count) : "m"(table->count) : "r3");           \
+            /* FAKEMATCH(barrier): an empty asm on the word over the count; as \
+             * no asm, 2 of 268 instructions differ in tla-en. */                               \
+            asm("" : "=m"(*(s32 *)&table->z));                                 \
+          }                                                                    \
+        }                                                                      \
+      columnNext:                                                              \
+        /* FAKEMATCH(barrier): an empty asm lengthening the table's life; as   \
+         * no asm, 224 of 268 instructions differ in tla-en. */                             \
+        asm("");                                                               \
+        /* FAKEMATCH(barrier): an empty asm lengthening the table's life; as   \
+         * no asm, 224 of 268 instructions differ in tla-en. */                             \
+        asm("");                                                               \
+        /* FAKEMATCH(barrier): an empty asm lengthening the table's life; as   \
+         * no asm, 224 of 268 instructions differ in tla-en. */                             \
+        asm("");                                                               \
+        i++;                                                                   \
+        cell++;                                                                \
+        if (i < width)                                                         \
+          goto column;                                                         \
+      }                                                                        \
+    rowNext:                                                                   \
+      j++;                                                                     \
+      if (j < height)                                                          \
+        goto row;                                                              \
+    }                                                                          \
+    if (Event_GetFlag(0x109)) {                                                \
+      struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);         \
+      s32 leaderX = leader->x >> 20;                                           \
+      s32 leaderZ = leader->z >> 20;                                           \
+      s32 k;                                                                   \
+                                                                               \
+      entry = table->entries;                                                  \
+      k = 0;                                                                   \
+      if (k < table->count) {                                                  \
+      leaderRow:                                                               \
+        do {                                                                   \
+          if (entry->x == leaderX && entry->z == leaderZ)                      \
+            table->current = k;                                                \
+        leaderNext:                                                            \
+          k++;                                                                 \
+          entry++;                                                             \
+          /* A cast read: gcse keeps it in the loop. */                        \
+        } while (k < *(s16 *)&table->count);                                   \
+      }                                                                        \
+    }                                                                          \
+    buffer = Heap_Alloc(0x100);                                                \
+    {                                                                          \
+      u32 *word = buffer;                                                      \
+      s32 count = 63;                                                          \
+                                                                               \
+    fill:                                                                      \
+      *word++ = 0x11111111;                                                    \
+    fillNext:                                                                  \
+      if (--count >= 0)                                                        \
+        goto fill;                                                             \
+    }                                                                          \
+    table->tile = Resource_FindFreeEntry();                                    \
+    Vram_Load(table->tile, 0x100, buffer);                                     \
+    Heap_Release(buffer);                                                      \
+    Task_AddFrame(call1, 0x480);                                               \
+    return table->count;                                                       \
+  }
+
+/// 7 scenes: jupiter_lighthouse_room_4, jupiter_lighthouse_room_6,
+/// jupiter_lighthouse_room_7, jupiter_lighthouse_room_8,
+/// jupiter_lighthouse_room_9, jupiter_lighthouse_room_m,
+/// mars_lighthouse_room_f.
+#define DEFINE_FUNC_02000628(name, call1, call2, data1, data2)                 \
+  void name(struct Actor *self) {                                              \
+    u8 *work = Ram_HeapSlots->eventWork;                                       \
+    struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
+    s32 position[3];                                                           \
+    s32 distance;                                                              \
+    s32 near;                                                                  \
+                                                                               \
+    if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||              \
+        *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {              \
+      Actor_SetAnimationSpeed(self, 0);                                        \
+      return;                                                                  \
+    }                                                                          \
+    Actor_SetAnimationSpeed(self, 16);                                         \
+    if ((++*(u16 *)&self->timer & 31) == 31)                                   \
+      Event_PlaySound(231);                                                    \
+    {                                                                          \
+      s8 *to = self->sprite;                                                   \
+      s8 *from = leader->sprite;                                               \
+      u32 a = from[9] & 12;                                                    \
+      to[9] = (s8)((to[9] & ~12) | a);                                         \
+    }                                                                          \
+    if (call1(self->x, self->z, 2) != 255) {                                   \
+      position[0] = self->x;                                                   \
+      position[1] = self->y;                                                   \
+      position[2] = self->z;                                                   \
+      Camera_WorldToScreen(position);                                          \
+      distance = position[0];                                                  \
+      if (distance > 0x1100000)                                                \
+        goto stop;                                                             \
+      if (distance < -0x200000)                                                \
+        goto stop;                                                             \
+      {                                                                        \
+        if (*((u8 *)self + 0x62) == 0) {                                       \
+          distance = leader->y - self->y;                                      \
+          if (distance < 0)                                                    \
+            distance = self->y - leader->y;                                    \
+          near = 0;                                                            \
+          if (call2(&leader->x, &self->x) <= 12 && distance < 0xc0000)         \
+            near = 1;                                                          \
+          if (near && !Event_GetFlag(260)) {                                   \
+            leader->facing = self->facing;                                     \
+            leader->watchedObject = self;                                      \
+            leader->priorityFlags &= ~1;                                       \
+            {                                                                  \
+              s32 delay = 200;                                                 \
+              *(u16 *)(work + 362) = delay;                                    \
+            }                                                                  \
+            gMainRoutineWork.renderMode = 0;                                   \
+            *((u8 *)self + 0x62) = 1;                                          \
+            *((u8 *)self + 0x63) = 1;                                          \
+          }                                                                    \
+        }                                                                      \
+        {                                                                      \
+          s32 (*multiply)(s32, s32);                                           \
+          s32 cosine = Math_Cosine(self->facing);                              \
+          s32 speed = self->speedLimit;                                        \
+          /* FAKEMATCH(dead): the routine address taken inside a once-only     \
+           * block, so the speed loads first; as a plain call, 2 of 197        \
+           * instructions differ in tla-en. */                                 \
+          do {                                                                 \
+            multiply = Iwram_MulQ16;                                           \
+          } while (0);                                                         \
+          self->x += multiply(cosine, speed);                                  \
+        }                                                                      \
+        self->z += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);     \
+        return;                                                                \
+      }                                                                        \
+    }                                                                          \
+  stop:                                                                        \
+    {                                                                          \
+      s32 zero = 0;                                                            \
+      *((u8 *)self + 0x63) = zero;                                             \
+      self->update = zero;                                                     \
+      Actor_StartScript(self, data1);                                          \
+      Event_PlaySound(228);                                                    \
+      data2 = zero;                                                            \
+    }                                                                          \
+  }
+
+/// 4 scenes: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s3d80,
+/// mars_lighthouse_star_room/s2148, prox.
+#define DEFINE_FUNC_02002DC4(name, call1, data1, call2, call3, call4)          \
+  void name(void) {                                                            \
+    struct Position probe;                                                     \
+    s32 startBehavior;                                                         \
+    s32 x;                                                                     \
+    s32 z;                                                                     \
+    s32 startX;                                                                \
+    s32 startZ;                                                                \
+    u8 *layer;                                                                 \
+    s32 radius;                                                                \
+    struct Actor *actor;                                                       \
+    struct Position *position;                                                 \
+    struct Position *next;                                                     \
+    s32 heading;                                                               \
+    s32 nextBehavior;                                                          \
+    s32 distance;                                                              \
+    struct Actor *other;                                                       \
+    u8 *flags;                                                                 \
+    s32 i;                                                                     \
+    s32 dx;                                                                    \
+    s32 dz;                                                                    \
+                                                                               \
+    actor = ObjectTable_Get(gMainRoutineWork.currentOwner);                    \
+                                                                               \
+  top:                                                                         \
+    call1();                                                                   \
+    actor->speedLimit = PIXELS(1);                                             \
+    actor->acceleration = PIXELS(1) / 2;                                       \
+    actor->targetX = 0x80000000;                                               \
+    actor->targetZ = 0x80000000;                                               \
+    actor->velocityX = 0;                                                      \
+    actor->velocityZ = 0;                                                      \
+    position = &probe;                                                         \
+    position->x = startX = (actor->x & 0xfff00000) + PIXELS(8);                \
+    position->y = actor->y;                                                    \
+    position->z = startZ = (actor->z & 0xfff00000) + PIXELS(8);                \
+    x = startX;                                                                \
+    z = startZ;                                                                \
+    layer = &actor->terrainId;                                                 \
+    startBehavior = MapGrid_GetCellBehaviorAt(*layer, x, z);                   \
+    dz = z - actor->z;                                                         \
+    dx = x - actor->x;                                                         \
+    distance = Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz);                    \
+    if (distance < PIXELS(4)) {                                                \
+      heading = data1[(gInput.held >> 4) & 15];                                \
+      if ((heading << 16) == -0x10000) {                                       \
+        return;                                                                \
+      }                                                                        \
+    } else {                                                                   \
+      heading = (s16)ArcTan2(z - actor->z, x - actor->x);                      \
+      heading = (s16)((heading + 0x2000) & -0x4000);                           \
+    }                                                                          \
+    FieldVector_AddPolarOffset(PIXELS(16), heading, &probe);                   \
+    nextBehavior =                                                             \
+        MapGrid_GetCellBehaviorAt(*layer, position->x, position->z);           \
+    if (nextBehavior == 255 ||                                                 \
+        Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y >    \
+            PIXELS(8)) {                                                       \
+      actor->facing = heading;                                                 \
+      actor->velocityX = 0;                                                    \
+      actor->velocityZ = 0;                                                    \
+      actor->x = startX;                                                       \
+      actor->z = startZ;                                                       \
+      goto done;                                                               \
+    }                                                                          \
+    position->x = startX;                                                      \
+    position->z = startZ;                                                      \
+    actor->speedLimit = PIXELS(2);                                             \
+    actor->acceleration = 0x1999;                                              \
+    actor->timer = 0;                                                          \
+    FieldActor_SetMoveTarget(actor, startX, actor->y, startZ);                 \
+    call2(actor, 2);                                                           \
+    Actor_SetAnimationSpeed(actor, 48);                                        \
+    Actor_WaitForMove(actor);                                                  \
+    actor->update = call3;                                                     \
+    goto test;                                                                 \
+  body:                                                                        \
+    if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y >            \
+        PIXELS(8)) {                                                           \
+      goto stop;                                                               \
+    }                                                                          \
+    radius = actor->radius - 2;                                                \
+    other = Ram_HeapSlots->scriptObjects;                                      \
+    flags = &other->collisionFlags;                                            \
+    for (i = 0; i < 64; i++, flags += 128, other++) {                          \
+      if (other->script != NULL && (*flags & 1) && other != actor) {           \
+        /* FAKEMATCH(barrier): the empty asm clobbering sfp and r4 and reading \
+         * next and actor; as no asm, 85 of 304 instructions differ in tla-en. \
+         */                                                                    \
+        asm(""                                                                 \
+            :                                                                  \
+            : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),        \
+              "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor)       \
+            : SFP_CLOBBER, "r4");                                              \
+        if (call4(&other->x, radius, &probe, other->radius - 2) >= 0) {        \
+          goto stop;                                                           \
+        }                                                                      \
+      }                                                                        \
+    }                                                                          \
+    x = next->x;                                                               \
+    z = next->z;                                                               \
+    actor->speedLimit = PIXELS(2);                                             \
+    actor->acceleration = 0x1999;                                              \
+    FieldActor_SetMoveTarget(actor, next->x, next->y, next->z);                \
+    Actor_WaitForMove(actor);                                                  \
+    if (nextBehavior != startBehavior) {                                       \
+      goto blocked;                                                            \
+    }                                                                          \
+  test:                                                                        \
+    {                                                                          \
+      struct Position *step;                                                   \
+                                                                               \
+      step = &probe;                                                           \
+      FieldVector_AddPolarOffset(PIXELS(16), heading, step);                   \
+      /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the         \
+       * address, so next rebuilds it; as no store, 59 of 304 instructions                         \
+       * differ in tla-en.                                                     \
+       */                                                                      \
+      step = NULL;                                                             \
+    }                                                                          \
+    next = &probe;                                                             \
+    nextBehavior = MapGrid_GetCellBehaviorAt(*layer, next->x, next->z);        \
+    if (nextBehavior != 255) {                                                 \
+      goto body;                                                               \
+    }                                                                          \
+  stop:                                                                        \
+    actor->speedLimit = PIXELS(2);                                             \
+    actor->acceleration = PIXELS(1);                                           \
+    FieldActor_SetMoveTarget(actor, x, actor->y, z);                           \
+    Actor_WaitForMove(actor);                                                  \
+    System_Wait(2);                                                            \
+    goto top;                                                                  \
+                                                                               \
+  blocked:                                                                     \
+    System_Wait(10);                                                           \
+  done:                                                                        \
+    actor->update = NULL;                                                      \
+    actor->actionFlags |= 1;                                                   \
+    actor->acceleration = PIXELS(1) / 4;                                       \
+    call2(actor, 1);                                                           \
+  }
+
+/// 4 scenes: mars_lighthouse_entrance/s3884, mars_lighthouse_room_f/s3d80,
+/// mars_lighthouse_star_room/set_data, prox.
+#define DEFINE_FUNC_02003390(name, call1, call2, call3, call4)                 \
+  void name(void) {                                                            \
+    struct Position probe;                                                     \
+    s32 heading;                                                               \
+    s32 startBehavior;                                                         \
+    s32 x;                                                                     \
+    s32 z;                                                                     \
+    s32 radius;                                                                \
+    struct Actor *actor;                                                       \
+    struct Position *next;                                                     \
+    s32 nextBehavior;                                                          \
+    u8 *layer;                                                                 \
+    struct Actor *other;                                                       \
+    struct Position *position;                                                 \
+    u8 *flags;                                                                 \
+    s32 i;                                                                     \
+    s32 cell;                                                                  \
+    s32 angle;                                                                 \
+    s32 zero;                                                                  \
+    struct Position *step;                                                     \
+    s32 startX;                                                                \
+    s32 startZ;                                                                \
+                                                                               \
+    actor = ObjectTable_Get(gMainRoutineWork.currentOwner);                    \
+    heading = (s16)((actor->facing + 0x2000) & -0x4000);                       \
+                                                                               \
+  top:                                                                         \
+    call1();                                                                   \
+    actor->speedLimit = PIXELS(1);                                             \
+    actor->acceleration = PIXELS(1) / 2;                                       \
+    actor->targetX = 0x80000000;                                               \
+    actor->targetZ = 0x80000000;                                               \
+    /* Default: one zero, spilled and reloaded at each use. */                 \
+    zero = 0;                                                                  \
+    actor->velocityX = zero;                                                   \
+    actor->velocityZ = zero;                                                   \
+    /* FAKEMATCH(temporary): cell holds the masked x; as one expression, 2 of  \
+     * 246 instructions differ in tla-en. */                                             \
+    cell = actor->x & 0xfff00000;                                              \
+    /* FAKEMATCH(temporary): i holds half a cell here and the search's count   \
+     * later; as a separate PIXELS(8), 18 of 246 instructions differ in        \
+     * tla-en. */                                                              \
+    i = PIXELS(8);                                                             \
+    position = &probe;                                                         \
+    position->x = startX = cell + i;                                           \
+    position->y = actor->y;                                                    \
+    position->z = startZ = (actor->z & 0xfff00000) + i;                        \
+    x = startX;                                                                \
+    z = startZ;                                                                \
+    startBehavior = MapGrid_GetCellBehaviorAt(*(layer = &actor->terrainId),    \
+                                              startX, startZ);                 \
+    FieldVector_AddPolarOffset(PIXELS(16), heading, position);                 \
+    nextBehavior =                                                             \
+        MapGrid_GetCellBehaviorAt(*layer, position->x, position->z);           \
+    if (nextBehavior == 255 ||                                                 \
+        Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y >    \
+            i) {                                                               \
+      actor->facing = heading;                                                 \
+      actor->velocityX = 0;                                                    \
+      actor->velocityZ = 0;                                                    \
+      actor->x = startX;                                                       \
+      actor->z = startZ;                                                       \
+      goto done;                                                               \
+    }                                                                          \
+    position->x = x;                                                           \
+    position->z = z;                                                           \
+    actor->speedLimit = PIXELS(2);                                             \
+    actor->acceleration = 0x1999;                                              \
+    actor->timer = zero;                                                       \
+    call2(actor, 2);                                                           \
+    Actor_SetAnimationSpeed(actor, 48);                                        \
+    actor->update = call3;                                                     \
+    /* FAKEMATCH(barrier): the empty asm clobbering sfp and reading            \
+     * nextBehavior twice; as no asm, 18 of 246 instructions differ in tla-en.                    \
+     */                                                                        \
+    asm("" : : "r"(nextBehavior), "r"(nextBehavior) : SFP_CLOBBER);            \
+    goto test;                                                                 \
+  body:                                                                        \
+    if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y >            \
+        PIXELS(8)) {                                                           \
+      goto stop;                                                               \
+    }                                                                          \
+    radius = actor->radius - 2;                                                \
+    other = Ram_HeapSlots->scriptObjects;                                      \
+    flags = &other->collisionFlags;                                            \
+    for (i = 0; i < 64; i++, flags += 128, other++) {                          \
+      if (other->script != NULL && (*flags & 1) && other != actor) {           \
+        /* FAKEMATCH(barrier): the empty asm clobbering sfp and r4 and reading \
+         * next and actor; as no asm, 170 of 246 instructions differ in        \
+         * tla-en. */                                                          \
+        asm(""                                                                 \
+            :                                                                  \
+            : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),        \
+              "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor)       \
+            : SFP_CLOBBER, "r4");                                              \
+        if (call4(&other->x, radius, &probe, other->radius - 2) >= 0) {        \
+          goto stop;                                                           \
+        }                                                                      \
+      }                                                                        \
+    }                                                                          \
+    x = next->x;                                                               \
+    z = next->z;                                                               \
+    actor->speedLimit = PIXELS(2);                                             \
+    actor->acceleration = 0x1999;                                              \
+    FieldActor_SetMoveTarget(actor, next->x, next->y, next->z);                \
+    Actor_WaitForMove(actor);                                                  \
+    if (nextBehavior != startBehavior) {                                       \
+      goto blocked;                                                            \
+    }                                                                          \
+  test:                                                                        \
+    /* FAKEMATCH(barrier): the asm tied to heading, with an r4 clobber so PRE  \
+     * leaves it, loads the angle ahead of the address; as heading in the      \
+     * call, 44 of 246 instructions differ in tla-en. */                                      \
+    asm("" : "=r"(angle) : "0"(heading) : "r4");                               \
+    step = &probe;                                                             \
+    FieldVector_AddPolarOffset(PIXELS(16), angle, step);                       \
+    /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the address,  \
+     * so next rebuilds it; as &probe in the call, 97 of 246 instructions               \
+     * differ in tla-en. */                                                                    \
+    step = NULL;                                                               \
+    next = &probe;                                                             \
+    nextBehavior = MapGrid_GetCellBehaviorAt(*layer, next->x, next->z);        \
+    if (nextBehavior != 255) {                                                 \
+      goto body;                                                               \
+    }                                                                          \
+  stop:                                                                        \
+    actor->speedLimit = PIXELS(2);                                             \
+    actor->acceleration = PIXELS(1);                                           \
+    FieldActor_SetMoveTarget(actor, x, actor->y, z);                           \
+    Actor_WaitForMove(actor);                                                  \
+    System_Wait(2);                                                            \
+    goto top;                                                                  \
+                                                                               \
+  blocked:                                                                     \
+    System_Wait(10);                                                           \
+  done:                                                                        \
+    actor->update = NULL;                                                      \
+    actor->actionFlags |= 1;                                                   \
+    actor->acceleration = PIXELS(1) / 4;                                       \
+    call2(actor, 1);                                                           \
+  }
+
+/// 18 scenes: anemos_inner_sanctum/move, jupiter_lighthouse_aerie/s1e78,
+/// jupiter_lighthouse_aerie_beacon/s4ec8, jupiter_lighthouse_basement/s1094,
+/// jupiter_lighthouse_entrance/s0eac, jupiter_lighthouse_room_1/s0f3c,
+/// jupiter_lighthouse_room_2/s165c, jupiter_lighthouse_room_3/s1a7c,
+/// jupiter_lighthouse_room_4/s1258, jupiter_lighthouse_room_5/s1c88,
+/// jupiter_lighthouse_room_6/s0f5c, jupiter_lighthouse_room_7/s1f74,
+/// jupiter_lighthouse_room_8/s1600, jupiter_lighthouse_room_9/s1018,
+/// jupiter_lighthouse_room_m/s3b7c, mars_lighthouse_entrance/s3cf8,
+/// mars_lighthouse_room_f/s35b8, mars_lighthouse_star_room/s3804.
+#define DEFINE_FUNC_0200146C(name, call1)                                      \
+  void name(struct CellTarget *table, struct CellTargetEntry *entry) {         \
+    struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
+    s16 sourceX;                                                               \
+    s32 leaderX = leader->x;                                                   \
+    s32 x;                                                                     \
+    s32 z;                                                                     \
+                                                                               \
+    /* FAKEMATCH(barrier): passes the source column through an asm reading the \
+     * leader's x, so the x load ties the 64 mask's copy and wins on order; as \
+     * (leader->x >> 20) | (s16)(table->x & 64), 2 of 49 instructions differ   \
+     * in tla-en. */                                                                    \
+    asm("" : "=r"(sourceX) : "0"(table->x), "r"(leaderX));                     \
+    x = (leaderX >> 20) | (s16)(sourceX & 64);                                 \
+    z = CellTarget_CellWithBit(leader->z, table->z & 64);                      \
+    call1();                                                                   \
+    Event_PlaySound(161);                                                      \
+    MapGrid_CopyCells(table->x, table->z + 1, 1, 1, x, z);                     \
+    FieldEvent_Wait(12);                                                       \
+  }
+
+/// 5 scenes: jupiter_lighthouse_basement, jupiter_lighthouse_entrance/dist,
+/// jupiter_lighthouse_room_1/s0674, jupiter_lighthouse_room_2/s0d94,
+/// jupiter_lighthouse_room_3/s07b0.
+#define DEFINE_FUNC_020005E4(name, call1, call2, data1, data2)                 \
+  void name(struct Actor *self) {                                              \
+    struct EventWork *work = Ram_HeapSlots->eventWork;                         \
+    struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
+    s32 position[3];                                                           \
+    s32 distance;                                                              \
+    s32 near;                                                                  \
+                                                                               \
+    if (work->unk166 != 0 || *(s16 *)&work->unk15a != 0 ||                     \
+        *(s16 *)&work->unk15c[2] != 0 || *(s16 *)work->unk168 != 0) {          \
+      Actor_SetAnimationSpeed(self, 0);                                        \
+      return;                                                                  \
+    }                                                                          \
+    Actor_SetAnimationSpeed(self, 16);                                         \
+    if ((++*(u16 *)&self->timer & 31) == 31)                                   \
+      Event_PlaySound(231);                                                    \
+    ((struct FieldSprite *)self->sprite)->priority =                           \
+        ((struct FieldSprite *)leader->sprite)->priority;                      \
+    if (call1(self->x, self->z, 2) != 255) {                                   \
+      position[0] = self->x;                                                   \
+      position[1] = self->y;                                                   \
+      position[2] = self->z;                                                   \
+      Camera_WorldToScreen(position);                                          \
+      distance = position[0];                                                  \
+      if (distance > 0x1100000)                                                \
+        goto stop;                                                             \
+      if (distance < -0x200000)                                                \
+        goto stop;                                                             \
+      {                                                                        \
+        if (*((u8 *)self + 0x62) == 0) {                                       \
+          distance = leader->y - self->y;                                      \
+          if (distance < 0)                                                    \
+            distance = self->y - leader->y;                                    \
+          near = 0;                                                            \
+          if (call2(&leader->x, &self->x) <= 12 && distance < 0xc0000)         \
+            near = 1;                                                          \
+          if (near && !Event_GetFlag(260)) {                                   \
+            leader->facing = self->facing;                                     \
+            leader->watchedObject = self;                                      \
+            leader->priorityFlags &= ~1;                                       \
+            work->unk16a = 200;                                                \
+            gMainRoutineWork.renderMode = 0;                                   \
+            *((u8 *)self + 0x62) = 1;                                          \
+            *((u8 *)self + 0x63) = 1;                                          \
+          }                                                                    \
+        }                                                                      \
+        /* IwramMulQ16 reached from IwramIrqMain rather than at its fixed      \
+         * address: */                                                         \
+        /* the address is a linked word read after the cosine, as the native   \
+         */                                                                    \
+        /* reads it after the speed (at Iwram_MulQ16 it is built before). */   \
+        self->x += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulQ16Offset))(   \
+            Math_Cosine(self->facing), self->speedLimit);                      \
+        self->z += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulQ16Offset))(   \
+            Math_Sin(self->facing), self->speedLimit);                         \
+        return;                                                                \
+      }                                                                        \
+    }                                                                          \
+  stop:                                                                        \
+    {                                                                          \
+      s32 zero = 0;                                                            \
+                                                                               \
+      /* FAKEMATCH(temporary): one word zero clears the ride byte, then the    \
+       * update; as self->update = 0; *((u8 *)self + 0x63) = 0;, 4 of 197      \
+       * instructions differ in tla-en (byte first, 15). */                    \
+      *((u8 *)self + 0x63) = zero;                                             \
+      self->update = (void *)zero;                                             \
+    }                                                                          \
+    Actor_StartScript(self, data1);                                            \
+    Event_PlaySound(228);                                                      \
+    data2 = 0;                                                                 \
+  }
+
+/// 4 scenes: mars_lighthouse_entrance, mars_lighthouse_room_f,
+/// mars_lighthouse_room_m, mars_lighthouse_star_room.
+#define DEFINE_FUNC_02001BF8(name, call1, call2, call3, call4, call5)          \
+  void name(void) {                                                            \
+    s32 saved[2];                                                              \
+    State *state;                                                              \
+    Entry *entry;                                                              \
+    Camera *camera;                                                            \
+    Position *position;                                                        \
+    s32 cameraX, cameraZ;                                                      \
+    s32 v;                                                                     \
+    s32 i;                                                                     \
+                                                                               \
+    state = (State *)(gData_020023c4 + 0x188);                                 \
+    camera = IWRAM->camera;                                                    \
+    entry = state->entries;                                                    \
+    position = &camera->position;                                              \
+    cameraX = position->x;                                                     \
+    cameraX &= 0xffff0000;                                                     \
+    cameraZ = position->z & 0xffff0000;                                        \
+    saved[1] = (*(s32 **)camera)[1];                                           \
+    saved[0] = IWRAM->unk_6c.word;                                             \
+    if (state->unk_6 != 0 && state->unk_8 == 0 && state->callback != 0)        \
+      state->callback();                                                       \
+    v = (u16)state->unk_6;                                                     \
+    state->unk_8 = v;                                                          \
+    state->unk_6 = 0;                                                          \
+    for (i = 3; i >= 0; i--, entry++) {                                        \
+      Actor *actor;                                                            \
+      s32 flag, x, y, unk6, value, dx, dz;                                     \
+      u8 *mark;                                                                \
+                                                                               \
+      if (entry->active == 0)                                                  \
+        continue;                                                              \
+      actor = entry->actor;                                                    \
+      if (actor == 0)                                                          \
+        continue;                                                              \
+      flag = GameFlag_Test(0x106);                                             \
+      if (*(s16 *)(saved[0] + 358) != 0)                                       \
+        flag |= 1;                                                             \
+      mark = &actor->flag5b;                                                   \
+      *mark = flag;                                                            \
+      if (state->unk_e != 0)                                                   \
+        *mark = GameFlag_Test(0x106);                                          \
+      dx = actor->x;                                                           \
+      dz = actor->z;                                                           \
+      dx -= cameraX;                                                           \
+      /* FAKEMATCH(barrier): the empty asm on dx changes its allocation rank;  \
+       * as no asm, 94 of 182 instructions differ in tla-en. */                           \
+      asm("" : : "r"(dx));                                                     \
+      y = actor->y;                                                            \
+      dz -= cameraZ;                                                           \
+      y = dz - y;                                                              \
+      unk6 = entry->unk_6;                                                     \
+      x = dx >> 16;                                                            \
+      y = (y >> 16) - 8;                                                       \
+      if (unk6 == 0) {                                                         \
+        if ((u32)(x + 7) > 334)                                                \
+          continue;                                                            \
+        if (y <= -48)                                                          \
+          continue;                                                            \
+        if (y > 239)                                                           \
+          continue;                                                            \
+      }                                                                        \
+      y = (u16)entry->timer;                                                   \
+      if (entry->timer <= 0) {                                                 \
+        y = entry->flags & 240;                                                \
+        switch (y) {                                                           \
+        case 128:                                                              \
+          call1(&entry->actor->x, entry->unk_c, unk6);                         \
+          break;                                                               \
+        case 48:                                                               \
+          call2(&entry->actor->x, entry->unk_c, unk6);                         \
+          break;                                                               \
+        case 32:                                                               \
+          call3(&entry->actor->x, entry->unk_c, unk6);                         \
+          break;                                                               \
+        case 16:                                                               \
+          call4(&entry->actor->x, entry->unk_c, unk6);                         \
+          break;                                                               \
+        case 0:                                                                \
+          call5(&entry->actor->x, entry->unk_c, unk6);                         \
+          break;                                                               \
+        }                                                                      \
+        value = 8;                                                             \
+      } else {                                                                 \
+        value = y - 1;                                                         \
+      }                                                                        \
+      entry->timer = value;                                                    \
+    }                                                                          \
+  }
+
+/// 3 scenes: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/flash,
+/// mars_lighthouse_star_room/s2148.
+#define DEFINE_FUNC_0200274C(name, id1, call1, call2, call3)                   \
+  void name(struct Actor *actor) {                                             \
+    struct Vector3 position;                                                   \
+    struct WorkEvent *work = Ram_HeapSlots->eventWork;                         \
+    s32 state = actor->timer;                                                  \
+                                                                               \
+    if (state == 0) {                                                          \
+      s32 dz;                                                                  \
+      s32 dx;                                                                  \
+      s32 tileX;                                                               \
+      struct MapCell *cellsA;                                                  \
+      struct MapCell *cellsB;                                                  \
+      s32 widthA;                                                              \
+      s32 widthB;                                                              \
+      s32 offset;                                                              \
+      s32 zB;                                                                  \
+      s32 tileZ;                                                               \
+      s32 heightA;                                                             \
+      s32 heightB;                                                             \
+      s32 x;                                                                   \
+      s32 z;                                                                   \
+      s32 xA;                                                                  \
+      s32 xB;                                                                  \
+      s32 zA;                                                                  \
+      s32 flag;                                                                \
+      struct MapWork *map;                                                     \
+      struct MapCell *cell;                                                    \
+      struct WorkEvent *work2;                                                 \
+      struct id1 *other;                                                       \
+      struct Actor *target;                                                    \
+                                                                               \
+      flag = Event_GetFlag(0x106);                                             \
+      if (work->unk166 != 0)                                                   \
+        flag |= 1;                                                             \
+      actor->movementState = flag;                                             \
+                                                                               \
+      position.x = actor->x;                                                   \
+      position.y = actor->y;                                                   \
+      position.z = actor->z;                                                   \
+      FieldVector_AddPolarOffset(0x80000, actor->facing, &position);           \
+      if (call1(0, position.x, position.z) == 7) {                             \
+        actor->targetZ = 0x80000000;                                           \
+        actor->targetY = 0x80000000;                                           \
+        actor->targetX = 0x80000000;                                           \
+        actor->acceleration = 0x4000;                                          \
+        actor->timer = 1;                                                      \
+        Event_PlaySound(145);                                                  \
+        /* FAKEMATCH(wrapper): forwarded, so each argument builds its own      \
+         * 0x50000; as a direct call, 6 of 362 instructions differ in tla-en.                     \
+         */                                                                    \
+        MapGrid_SetShake(0x50000, 0x50000, 0x10000);                           \
+        /* FAKEMATCH(wrapper): forwarded, so each argument builds its own -1;  \
+         * as a direct call, 17 of 362 instructions differ in tla-en. */                      \
+        MapGrid_SetShake(-1, -1, 0xe666);                                      \
+        if (actor->watchedObject != NULL)                                      \
+          ((void (*)(struct Actor *))actor->watchedObject)(actor);             \
+      }                                                                        \
+                                                                               \
+      map = Ram_HeapSlots->mapWork;                                            \
+      tileX = actor->x >> 20;                                                  \
+      tileZ = actor->z >> 20;                                                  \
+      cellsA = &map->layers[1].cells[tileX + (tileZ << 7)];                    \
+      cellsB = &map->layers[2].cells[tileX + (tileZ << 7)];                    \
+      widthA = *(s32 *)&map->layers[1].unk08[0] >> 20;                         \
+      heightA = *(s32 *)&map->layers[1].unk08[4] >> 20;                        \
+      widthB = *(s32 *)&map->layers[2].unk08[0] >> 20;                         \
+      heightB = *(s32 *)&map->layers[2].unk08[4] >> 20;                        \
+                                                                               \
+      for (dz = -1, zB = tileZ + heightB - 2, z = tileZ - 1,                   \
+          zA = tileZ + heightA - 1;                                            \
+           dz <= 1; zB++, z++, zA++, dz++) {                                   \
+        for (dx = -1, xB = tileX + widthB - 1, x = tileX - 1,                  \
+            xA = tileX + widthA - 1;                                           \
+             dx <= 1; xB++, x++, xA++, dx++) {                                 \
+          offset = ((dz << 7) + dx) * 4;                                       \
+          cell = (struct MapCell *)(offset + (s32)cellsA);                     \
+          if (cell->collisionCode == 77) {                                     \
+            cell->collisionCode = 0;                                           \
+            MapGrid_CopyCellsLayered(64, 64, 1, 1, xA, zA);                    \
+            MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);                    \
+            Event_PlaySound(0x23d);                                            \
+            call2((x << 20) + 0x80000, actor->y, (z << 20) + 0x80000,          \
+                  actor->facing);                                              \
+          }                                                                    \
+          cell = (struct MapCell *)(offset + (s32)cellsB);                     \
+          if (cell->collisionCode == 77) {                                     \
+            cell->collisionCode = 0;                                           \
+            MapGrid_CopyCellsLayered(64, 64, 1, 2, xB, zB);                    \
+            MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);                    \
+            Event_PlaySound(0x23c);                                            \
+            call2((x << 20) + 0x80000, actor->y, (z << 20) + 0x80000,          \
+                  actor->facing);                                              \
+          }                                                                    \
+        }                                                                      \
+      }                                                                        \
+                                                                               \
+      if (actor->scaleX < 0x10000) {                                           \
+        actor->scaleX += 0x1000;                                               \
+        actor->scaleY += 0x1000;                                               \
+      }                                                                        \
+      FieldActor_SetMoveTarget(actor, position.x, position.y, position.z);     \
+                                                                               \
+      work2 = Ram_HeapSlots->eventWork;                                        \
+      other = (struct id1 *)(gData_020023c4 + 0x188);                          \
+      target = Actor_Get(gMainRoutineWork.currentOwner);                       \
+      if (ABS(actor->x - target->x) < 0x140000 &&                              \
+          (u32)(actor->y - target->y + 0x7ffff) <= 0x1ffffe &&                 \
+          ABS(actor->z - target->z) < 0x140000) {                              \
+        other->unk04 = 2;                                                      \
+        other->unk6c = actor;                                                  \
+        work2->unk154 = other->unk0a + 2;                                      \
+      }                                                                        \
+    } else if (state == 1) {                                                   \
+      actor->movementState = 0;                                                \
+      if (actor->scaleX > 0) {                                                 \
+        actor->scaleX -= 0x1000;                                               \
+        actor->scaleY -= 0x1000;                                               \
+        call3(actor);                                                          \
+      } else {                                                                 \
+        actor->z = 0;                                                          \
+        actor->y = 0;                                                          \
+        actor->x = 0;                                                          \
+        actor->velocityZ = 0;                                                  \
+        actor->velocityY = 0;                                                  \
+        actor->velocityX = 0;                                                  \
+        actor->update = NULL;                                                  \
+      }                                                                        \
+    }                                                                          \
+  }
+
+/// 3 scenes: jupiter_lighthouse_basement/s185c,
+/// jupiter_lighthouse_entrance/s1674, jupiter_lighthouse_room_1/s1704.
+#define DEFINE_FUNC_02001674(name, call1)                                      \
+  void name(void) {                                                            \
+    struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);            \
+    u32 i;                                                                     \
+    struct EffectOptions options;                                              \
+    s32 spawn = 1;                                                             \
+                                                                               \
+    Event_Start();                                                             \
+    FieldEvent_ResolvePendingActions(0);                                       \
+    CamBounds(-1, -1, -1, 0);                                                  \
+    Map_CenterOnFollowedPoint();                                               \
+    System_Wait(1);                                                            \
+    actor->y = 0x820000;                                                       \
+    actor->gravity = 0x8000;                                                   \
+    actor->bounce = 0;                                                         \
+    actor->motionFlags = 0;                                                    \
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;                  \
+    Event_StartScreenTransition();                                             \
+    Event_WaitTransitionFrames();                                              \
+    Event_PlaySound(204);                                                      \
+    actor->motionFlags = 3;                                                    \
+    FieldEvent_Wait(24);                                                       \
+    options.palette = 7;                                                       \
+    options.update = Effect_AdvanceMotion;                                     \
+    options.startScaleX = 0xa3d7;                                              \
+    options.startScaleY = 0xa3d7;                                              \
+    i = 0;                                                                     \
+    /* A goto loop carries no loop notes: as a do, for or while loop, loop.c   \
+     */                                                                        \
+    /* moves the velocity array's address out of the loop. */                  \
+  loop:                                                                        \
+    {                                                                          \
+      s32 angle;                                                               \
+      s32 velocity[3];                                                         \
+      s32 cosine;                                                              \
+                                                                               \
+      angle = i << 12;                                                         \
+      cosine = Math_Cosine(angle);                                             \
+      /* FAKEMATCH(dead): spawn is always 1, a constant GCSE only folds after  \
+       * its partial redundancy pass, so that pass leaves the velocity array's             \
+       * address in the loop, built after the cosine call as the native has    \
+       * it; as the plain body, 4 of 169 instructions differ in tla-en. */                 \
+      if (spawn) {                                                             \
+        velocity[0] = cosine;                                                  \
+        velocity[1] = 0;                                                       \
+        velocity[2] = Math_Sin(angle);                                         \
+        velocity[0] += velocity[0] >> 1;                                       \
+        velocity[0] += (Random16Far() * 0xc000 >> 16) - 0x6000;                \
+        velocity[2] += (Random16Far() * 0x6000 >> 16) - 0x3000;                \
+        call1(actor->x, actor->y, actor->z, velocity[0], velocity[1],          \
+              velocity[2], 0x1090001, &options);                               \
+      }                                                                        \
+      i++;                                                                     \
+    }                                                                          \
+    if (i <= 16)                                                               \
+      goto loop;                                                               \
+    Event_PlaySound(188);                                                      \
+    Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);             \
+    Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);                     \
+    SetWorkTriple(0x50000, 0x50000, 0x10000);                                  \
+    SetWorkTriple(-1, -1, 0xe666);                                             \
+    MapGrid_WaitForShakeToSettle();                                            \
+    Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);             \
+    actor->gravity = 0x10000;                                                  \
+    actor->bounce = 0x4000;                                                    \
+    FieldEvent_Wait(10);                                                       \
+    Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);                      \
+    Event_End();                                                               \
+  }
+
+/// 3 scenes: jupiter_lighthouse_room_3/s0dcc, jupiter_lighthouse_room_8/s0c44,
+/// mars_lighthouse_room_f/s3d80.
+#define DEFINE_FUNC_02000C44(name, call1, data1, data2, call2)                 \
+  s32 name(struct PushTarget *target) {                                        \
+    struct Actor *object;                                                      \
+    s32 direction;                                                             \
+    s32 position[3];                                                           \
+    s32 footprint;                                                             \
+    s32 width;                                                                 \
+    s32 height;                                                                \
+    s32 dx;                                                                    \
+    s32 dz;                                                                    \
+    s32 count;                                                                 \
+    s32 row;                                                                   \
+    s32 col;                                                                   \
+    u8 *layer;                                                                 \
+                                                                               \
+    object = call1(&direction, &target->id, &target->footprint);               \
+    if (object != 0) {                                                         \
+      footprint = target->footprint;                                           \
+      width = (ABS(data1[footprint][0]) + ABS(data1[footprint][2])) >> 4;      \
+      height = (ABS(data1[footprint][1]) + ABS(data1[footprint][3])) >> 4;     \
+      dx = data2[direction] & 0xffff0000;                                      \
+      dz = data2[direction] << 16;                                             \
+      target->callback = 0;                                                    \
+      count = 0;                                                               \
+      layer = &object->terrainId;                                              \
+      *layer = 2;                                                              \
+      target->x = object->x + dx;                                              \
+      target->z = object->z + dz;                                              \
+      position[1] = object->y;                                                 \
+      for (;;) {                                                               \
+        position[2] = target->z + (data1[footprint][1] << 16);                 \
+        for (row = 0; row < height; row++) {                                   \
+          position[0] = target->x + (data1[footprint][0] << 16);               \
+          for (col = 0; col < width; col++) {                                  \
+            /* FAKEMATCH(wrapper): the call through Func_02002338_; as         \
+             * Func_02002338(object, position), 2 of 171 instructions differ   \
+             * in tla-en. */                                                                    \
+            if (call2(object, position) == 2)                                  \
+              goto blocked;                                                    \
+            position[0] += 0x100000;                                           \
+          }                                                                    \
+          position[2] += 0x100000;                                             \
+        }                                                                      \
+        target->x += dx;                                                       \
+        count++;                                                               \
+        target->z += dz;                                                       \
+      }                                                                        \
+    blocked:                                                                   \
+      *layer = 0;                                                              \
+      if (count == 0)                                                          \
+        return 0;                                                              \
+      target->x = object->x + dx * count;                                      \
+      target->y = object->y;                                                   \
+      target->z = object->z + dz * count;                                      \
+      return 1;                                                                \
+    }                                                                          \
+    return 0;                                                                  \
+  }
+
+/// 2 scenes: staff_credit, world_map/s3b38.
+#define DEFINE_FUNC_02001BE0(name, data1, data2, data3, data4)                 \
+  void name(s32 progress) {                                                    \
+    s32 level = ((progress * 30 + 0x8000) >> 16) + 1;                          \
+    s32 kind = 0;                                                              \
+    s32 count, base, i;                                                        \
+                                                                               \
+    if (progress != 0)                                                         \
+      kind = 100;                                                              \
+    if (level <= 15 && (gFrameCount & 15) <= 1)                                \
+      kind = 200;                                                              \
+    if (level <= 7 && (gFrameCount & 7) <= 1)                                  \
+      kind = 200;                                                              \
+    if (kind + level == data1)                                                 \
+      return;                                                                  \
+    data1 = kind + level;                                                      \
+    Call2((void (*)())Iwram_ClearWords, (s32)(data2), (s32)(0x100));           \
+    {                                                                          \
+      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;                \
+                                                                               \
+      if (kind == 0) {                                                         \
+        copy(data2, data3[8], 0x80);                                           \
+        goto done;                                                             \
+      }                                                                        \
+      if (kind == 100)                                                         \
+        copy(data2, data3[4], 0x80);                                           \
+      else                                                                     \
+        copy(data2, data3[8], 0x80);                                           \
+    }                                                                          \
+    base = 0;                                                                  \
+    count = level;                                                             \
+    if (count > 7) {                                                           \
+      Iwram_CopyWords(data2, data3, 32);                                       \
+      base = 8;                                                                \
+      count -= 8;                                                              \
+    }                                                                          \
+    if (level > 15) {                                                          \
+      Iwram_CopyWords(data2[1], data3[1], 32);                                 \
+      count = level;                                                           \
+      base = 16;                                                               \
+      count -= 16;                                                             \
+    }                                                                          \
+    if (level > 23) {                                                          \
+      Iwram_CopyWords(data2[2], data3[2], 32);                                 \
+      count = level;                                                           \
+      base = 24;                                                               \
+      count -= 24;                                                             \
+    }                                                                          \
+    if (level > 30) {                                                          \
+      Iwram_CopyWords(data2[3], data3[3], 32);                                 \
+      base = 0;                                                                \
+      count = 0;                                                               \
+    }                                                                          \
+    if (count != 0) {                                                          \
+      i = 0;                                                                   \
+      if (i >= count)                                                          \
+        goto done;                                                             \
+    loop:                                                                      \
+      {                                                                        \
+        s32 j;                                                                 \
+        u8 *source = &data3[base / 8][4] + i / 2;                              \
+        u8 *dest = &data2[base / 8][4] + i / 2;                                \
+        /* FAKEMATCH(barrier): the empty asm on dest changes its allocation    \
+         * rank; as no asm, 22 of 181 instructions differ in tla-en. */                        \
+        asm("" : "=r"(dest) : "0"(dest));                                      \
+                                                                               \
+        j = 2;                                                                 \
+        if ((i & 1) == 0) {                                                    \
+          j = 1;                                                               \
+        even:                                                                  \
+          *dest = (*dest & 240) | (*source & 15);                              \
+          j++;                                                                 \
+          source += 4;                                                         \
+          dest += 4;                                                           \
+          if (j > 3)                                                           \
+            goto next;                                                         \
+          goto even;                                                           \
+        } else {                                                               \
+        oddLoop:                                                               \
+          *dest = (*dest & 15) | (*source & 240);                              \
+          j--;                                                                 \
+          source += 4;                                                         \
+          dest += 4;                                                           \
+          if (j >= 0)                                                          \
+            goto oddLoop;                                                      \
+        }                                                                      \
+      }                                                                        \
+    next:                                                                      \
+      i++;                                                                     \
+      if (i < count)                                                           \
+        goto loop;                                                             \
+    }                                                                          \
+  done:                                                                        \
+    Vram_Load(data4, 0x100, data2);                                            \
+  }
+
+/// 2 scenes: magma_rock_inside, venus_lighthouse.
+#define DEFINE_FUNC_0200038C(name, data1, call1, call2)                        \
+  void name(void) {                                                            \
+    struct FieldPosition dst;                                                  \
+    struct StagedActor *lead;                                                  \
+    struct StagedActor *next;                                                  \
+    struct StagedActor *blocker;                                               \
+    s32 dir;                                                                   \
+    u32 step;                                                                  \
+    s32 rate;                                                                  \
+                                                                               \
+    lead = (struct StagedActor *)Actor_GetById(gMainRoutineWork.currentOwner); \
+    dir = lead->facing >> 12;                                                  \
+    step = data1[dir];                                                         \
+    dst.x = lead->x.fixed + (step & 0xffff0000);                               \
+    dst.y = lead->y.fixed;                                                     \
+    step <<= 16;                                                               \
+    dst.z = lead->z.fixed + step;                                              \
+    next = Actor_FindInCell(&dst, lead);                                       \
+    if (next == 0)                                                             \
+      return;                                                                  \
+                                                                               \
+    step = data1[dir];                                                         \
+    dst.x = next->x.fixed + (step & 0xffff0000);                               \
+    dst.y = next->y.fixed;                                                     \
+    step <<= 16;                                                               \
+    dst.z = next->z.fixed + step;                                              \
+    blocker = Actor_FindInCell(&dst, next);                                    \
+    if (blocker != 0 && (blocker->collisionFlags & 1) != 0)                    \
+      return;                                                                  \
+                                                                               \
+    dst.x = next->x.fixed;                                                     \
+    dst.y = next->y.fixed + 0x100000;                                          \
+    dst.z = next->z.fixed;                                                     \
+    blocker = Actor_FindInCell(&dst, next);                                    \
+    if (blocker != 0 && (blocker->collisionFlags & 1) != 0)                    \
+      return;                                                                  \
+                                                                               \
+    next->transitionMode = 2;                                                  \
+    step = data1[dir];                                                         \
+    dst.x = next->x.fixed + (step & 0xffff0000);                               \
+    dst.y = next->y.fixed;                                                     \
+    step <<= 16;                                                               \
+    dst.z = next->z.fixed + step;                                              \
+    if (call1(next, &dst) > 0)                                                 \
+      return;                                                                  \
+                                                                               \
+    if (next->transitionBusy != 0)                                             \
+      return;                                                                  \
+                                                                               \
+    call2(lead, 8);                                                            \
+    rate = 0x3333;                                                             \
+    System_Wait(15);                                                           \
+    Event_PlaySound(185);                                                      \
+    next->moveRateX = rate;                                                    \
+    next->moveRateZ = rate;                                                    \
+    FieldActor_SetMoveTarget(next, dst.x, dst.y, dst.z);                       \
+    lead->moveRateX = rate;                                                    \
+    lead->moveRateZ = rate;                                                    \
+    FieldActor_SetMoveTarget(lead, dst.x, dst.y, dst.z);                       \
+    Actor_WaitForMove(next);                                                   \
+    Event_NoOp();                                                              \
+    next->x.fixed = dst.x;                                                     \
+    {                                                                          \
+      /* FAKEMATCH(temporary): z read ahead of velocityX's store; as dst.z at  \
+       * its store, 4 of 175 instructions differ in tla-en. */                             \
+      s32 z = dst.z;                                                           \
+                                                                               \
+      next->velocityX = 0;                                                     \
+      next->z.fixed = z;                                                       \
+      next->velocityZ = 0;                                                     \
+    }                                                                          \
+    lead->targetX = 0x80000000;                                                \
+    lead->targetZ = 0x80000000;                                                \
+    lead->velocityX = 0;                                                       \
+    lead->velocityZ = 0;                                                       \
+    lead->x.fixed = lead->x.part.pixel << 16;                                  \
+    lead->z.fixed = lead->z.part.pixel << 16;                                  \
+    call2(lead, 1);                                                            \
+  }
+
+/// 3 scenes: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/flash,
+/// mars_lighthouse_room_m/s2708.
+#define DEFINE_FUNC_020029F4(name, data1)                                      \
+  void name(s32 x, s32 y, s32 z, s32 speed) {                                  \
+    s32 i;                                                                     \
+                                                                               \
+    i = 1;                                                                     \
+  next:                                                                        \
+    {                                                                          \
+      struct Actor *object = FieldActor_Create(325, x, y, z);                  \
+                                                                               \
+      if (object != NULL) {                                                    \
+        s32 angle;                                                             \
+        s32 rise;                                                              \
+        s32 radius;                                                            \
+        u32 size;                                                              \
+        s32 scale;                                                             \
+                                                                               \
+        rise = speed + (Random16Far() >> 4) - (Random16Far() >> 4);            \
+        angle = 0x4000 + rise;                                                 \
+        radius = Random16Far() * 8;                                            \
+        size = Random16Far();                                                  \
+        Actor_StartScript(object, data1);                                      \
+        Actor_SetSingleChildFlags(object, 0);                                  \
+        /* FAKEMATCH(temporary): the scale is taken before the velocity        \
+         * stores, as in the native; as object->scaleX = (size >> 1) + 0x4000,                      \
+         * 14 of 98 instructions differ in tla-en. */                                             \
+        scale = (size >> 1) + 0x4000;                                          \
+        object->velocityY = rise + 0x14000;                                    \
+        object->velocityZ = Iwram_MulQ16(radius, Math_Cosine(angle));          \
+        object->velocityX = Iwram_MulQ16(radius, Math_Sin(angle));             \
+        object->acceleration = 0;                                              \
+        object->gravity = 0x547a;                                              \
+        object->scaleX = scale;                                                \
+        object->scaleY = object->scaleX;                                       \
+        object->bounce = 0x8000;                                               \
+        Animation_ApplyChildValues(object, 1);                                 \
+      }                                                                        \
+    }                                                                          \
+    if (--i >= 0)                                                              \
+      goto next;                                                               \
+  }
+
+/// 3 scenes: eastern_alhafra, magma_rock_inside/s46e8, prox.
+#define DEFINE_FUNC_02003F48(name)                                             \
+  void name(s32 x, s32 y, s32 z, s32 count) {                                  \
+    struct RockWork *work;                                                     \
+    s32 i;                                                                     \
+                                                                               \
+    /* FAKEMATCH(barrier): an empty asm before the work is read keeps the      \
+     * spills of x and y at the entry; as an initializer, 4 of 88 instructions              \
+     * differ in tla-en. */                                                                    \
+    asm("");                                                                   \
+    work = Ram_HeapSlots->menuRuntime;                                         \
+    /* A goto loop carries no loop notes, so the offsets are rebuilt on every  \
+     */                                                                        \
+    /* pass, as the bytes have them; a for loop hoists them. */                \
+    if (count > 0) {                                                           \
+      i = count;                                                               \
+    loop:;                                                                     \
+      {                                                                        \
+        s32 angle = Random16Far();                                             \
+        struct Rock *rock = &work->rocks[work->next];                          \
+                                                                               \
+        rock->timer = 0;                                                       \
+        rock->position[0] = x;                                                 \
+        rock->position[1] = y;                                                 \
+        rock->position[2] = z;                                                 \
+        FieldVector_AddPolarOffset((Random16Far() << 3) + 0x80000, angle,      \
+                                   rock->position);                            \
+        rock->velocity[0] = 0;                                                 \
+        rock->velocity[1] = 0x50000;                                           \
+        rock->velocity[2] = 0;                                                 \
+        FieldVector_AddPolarOffset((Random16Far() << 1) + 0x20000, angle,      \
+                                   rock->velocity);                            \
+        work->next++;                                                          \
+        work->next &= 63;                                                      \
+      }                                                                        \
+      i--;                                                                     \
+      if (i != 0)                                                              \
+        goto loop;                                                             \
+    }                                                                          \
+  }
+
+/// 3 scenes: contigo/s0038, islet_cave, yampi_desert_cave.
+#define DEFINE_FUNC_02000038_4(name, data1, data2, data3, data4, call1)        \
+  void name(u16 *slots, u16 *colours, u16 *a, u16 *b) {                        \
+    u8 *saved = Ram_HeapSlots->block32;                                        \
+                                                                               \
+    data1 = slots;                                                             \
+    data2 = colours;                                                           \
+    data3 = a;                                                                 \
+    data4 = b;                                                                 \
+    if (*slots != 0xffff && *colours != 0xffff) {                              \
+    next:                                                                      \
+      {                                                                        \
+        int red = *colours++;                                                  \
+        int index = *slots++;                                                  \
+        int green = *colours++;                                                \
+        int blue = *colours++;                                                 \
+        int value;                                                             \
+                                                                               \
+        /* FAKEMATCH(dead): the colour's build and store in a once-only        \
+         * block, so both lists are stepped right after their loads and the    \
+         * next entry's marker loads before 0xffff is built; as plain          \
+         * statements, 22 of 80 instructions differ in tla-en. */              \
+        do {                                                                   \
+          value = (blue << 10) | (green << 5) | red;                           \
+          ((u16 *)BG_PLTT)[index] = value;                                     \
+        } while (0);                                                           \
+      }                                                                        \
+      if (*slots != 0xffff && *colours != 0xffff)                              \
+        goto next;                                                             \
+    }                                                                          \
+    Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);      \
+    Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112),          \
+            REG_DMA3);                                                         \
+    BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);                         \
+    if ((s8)gMainRoutineWork.unk2c2 == 2)                                      \
+      call1();                                                                 \
+  }
+
+/// 3 scenes: mars_lighthouse_aerie/s3370, mars_lighthouse_entrance/s42f8,
+/// mars_lighthouse_room_m.
+#define DEFINE_FUNC_0200154C(name, data1, data2, data3, data4, call1)          \
+  void name(u16 *slots, u16 *colours, u16 *a, u16 *b) {                        \
+    u8 *saved = Ram_HeapSlots->block32;                                        \
+                                                                               \
+    data1 = slots;                                                             \
+    data2 = colours;                                                           \
+    data3 = a;                                                                 \
+    data4 = b;                                                                 \
+    if (*slots != 0xffff && *colours != 0xffff) {                              \
+    next:                                                                      \
+      {                                                                        \
+        int red = *colours++;                                                  \
+        int index = *slots++;                                                  \
+        int green = *colours++;                                                \
+        int blue = *colours++;                                                 \
+        int value;                                                             \
+                                                                               \
+        /* FAKEMATCH(dead): the colour's build and store in a once-only        \
+         * block, so both lists are stepped right after their loads and the    \
+         * next entry's marker loads before 0xffff is built; as plain          \
+         * statements, 22 of 80 instructions differ in tla-en. */              \
+        do {                                                                   \
+          value = (blue << 10) | (green << 5) | red;                           \
+          ((u16 *)BG_PLTT)[index] = value;                                     \
+        } while (0);                                                           \
+      }                                                                        \
+      if (*slots != 0xffff && *colours != 0xffff)                              \
+        goto next;                                                             \
+    }                                                                          \
+    Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);      \
+    Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112),          \
+            REG_DMA3);                                                         \
+    PaletteFade_ApplyTarget(0x10000, 0);                                       \
+    if ((s8)gMainRoutineWork.unk2c2 == 2)                                      \
+      call1();                                                                 \
+  }
+
+/// 1 scenes: dehkan_plateau.
+#define DEFINE_FUNC_02001820(name, data1, n1, data2)                           \
+  void name(void) {                                                            \
+    const u16 *cell = &data1[0].present;                                       \
+    s32 flag = 0x240;                                                          \
+    u32 i;                                                                     \
+    const u16 *dest;                                                           \
+                                                                               \
+    for (i = 0; i <= n1; i++) {                                                \
+      if (GameFlag_Test(0x109) != 0) {                                         \
+        if (GameFlag_Test(flag) != 0) {                                        \
+          s32 x;                                                               \
+          s32 y;                                                               \
+                                                                               \
+          cell = &data1[i].x;                                                  \
+          x = *cell++;                                                         \
+          y = *cell++;                                                         \
+          /* FAKEMATCH(temporary): the destination table through a local set   \
+           * here, which loads its first halfword before the 1 is built; as                      \
+           * gData_02003fd2[0], 2 of 56 instructions differ in tla-en. */      \
+          dest = data2;                                                        \
+          Map_CopyCellPictureIndicesRect(dest[0], dest[1], x, y, 1, 1);        \
+        }                                                                      \
+      } else {                                                                 \
+        if (*cell != 0)                                                        \
+          GameFlag_SetBit(flag);                                               \
+        cell += 6;                                                             \
+      }                                                                        \
+      flag++;                                                                  \
+    }                                                                          \
+    if (GameFlag_Test(0x109) == 0)                                             \
+      Func_02001804();                                                         \
+  }
+
+/// 3 scenes: anemos_inner_sanctum/s0038, mars_lighthouse_aerie/s3370,
+/// mars_lighthouse_entrance/s42f8.
+#define DEFINE_FUNC_020000F4(name, data1, data2, call1, data3, data4, n1,      \
+                             data5, n2, data6, call2)                          \
+  void name(void) {                                                            \
+    data1 = 0;                                                                 \
+    data2 = call1(data3);                                                      \
+    data4 = n1;                                                                \
+    data5 = n2;                                                                \
+    data6 = 1;                                                                 \
+    Task_AddFrame(call2, TASK_PASS_VBLANK);                                    \
+  }
+
+/// 3 scenes: contigo/s0038, islet_cave, yampi_desert_cave.
+#define DEFINE_FUNC_020000F4_2(name, data1, data2, call1, data3, data4, n1,    \
+                               data5, n2, data6, call2)                        \
+  void name(void) {                                                            \
+    data1 = 0;                                                                 \
+    data2 = call1(data3);                                                      \
+    data4 = n1;                                                                \
+    data5 = n2;                                                                \
+    data6 = 1;                                                                 \
+    Task_Add(call2, TASK_PASS_VBLANK);                                         \
+  }
+
+/// 1 scenes: apojii_islands.
+#define DEFINE_FUNC_02000A68(name, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10)    \
+  void name(void) {                                                            \
+    struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
+                                                                               \
+    Func_02001e0c_(n1, 38, n2, n3, n1, n4, 1);                                 \
+    if (Event_GetFlag(n5) == 0) {                                              \
+      Func_02001d04_(n6, PIXELS(n7), PIXELS(n8));                              \
+      if (leader->x >> 20 == n9 && leader->z >> 20 == n10) {                   \
+        Event_Start();                                                         \
+        FieldEvent_ResolvePendingActions(0);                                   \
+        Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);         \
+        Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);      \
+        leader->velocityY = 0x60000;                                           \
+        FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);             \
+        Event_End();                                                           \
+      }                                                                        \
+    }                                                                          \
+  }
+
+/// 1 scenes: dehkan_plateau/s2698.
+#define DEFINE_FUNC_0200353C(name, n1, n2, n3, n4, n5, n6)                     \
+  void name(void) {                                                            \
+    /* FAKEMATCH(pin): flag in r5, which leaves r6 to the entry; as a plain    \
+     * local, 61 of 79 instructions differ in tla-en. */                       \
+    register s32 flag asm("r5") = 800;                                         \
+    s32 offset = 0;                                                            \
+                                                                               \
+    while (1) {                                                                \
+      if (GameFlag_Test(flag)) {                                               \
+        u16 *entry = (u16 *)((u8 *)gData_02004276 + offset);                   \
+        s32 y;                                                                 \
+        s32 x;                                                                 \
+        s32 one;                                                               \
+                                                                               \
+        flag -= 800;                                                           \
+        x = *entry++;                                                          \
+        y = *entry++;                                                          \
+        one = 1;                                                               \
+        MapGrid_CopyCellsTo(n1, n2, x, y, one, one);                           \
+        x = entry[0];                                                          \
+        y = entry[1];                                                          \
+        MapGrid_CopyCellsTo(n3, n4, x, y, one, 5);                             \
+        if (flag == 1)                                                         \
+          MapGrid_CopyCellsTo(67, 4, 69, 3, one, one);                         \
+        x -= 64;                                                               \
+        y += n5;                                                               \
+        MapGrid_CopyCellsTo(n1, n6, x, y, one, 4);                             \
+        return;                                                                \
+      }                                                                        \
+      if (flag == 863)                                                         \
+        return;                                                                \
+      offset += 8;                                                             \
+      flag++;                                                                  \
+    }                                                                          \
+  }
+
+/// 2 scenes: dehkan_plateau/s0bc0, madra_catacombs.
+#define DEFINE_FUNC_02000270(name, call1, call2, call3)                        \
+  void name(void) {                                                            \
+    struct Actor *held = HELD_OBJECT(Ram_HeapSlots->eventWork);                \
+    u8 *layer;                                                                 \
+    u8 *cells;                                                                 \
+    u8 *shapes;                                                                \
+    s32 shape;                                                                 \
+    s32 level;                                                                 \
+    s32 index;                                                                 \
+    u8 newShape;                                                               \
+                                                                               \
+    if (held == NULL)                                                          \
+      return;                                                                  \
+    layer = &held->terrainId;                                                  \
+    cells = (u8 *)Ram_HeapSlots->mapWork->layers[*layer].cells;                \
+    shapes = Ram_MapShapeGrid + (((struct MapCell *)cells) -                   \
+                                 (struct MapCell *)Ram_MapCellBuffer);         \
+    shape = call1(*layer, held->x, held->z);                                   \
+    level = Map_GetTerrainHeight(*layer, held->x, held->z);                    \
+    index = call2(held);                                                       \
+    level >>= 19;                                                              \
+    level += 4;                                                                \
+    newShape = call3(*layer, shape, level);                                    \
+    shapes += index;                                                           \
+    index <<= 2;                                                               \
+    /* FAKEMATCH(signature): the grid byte stored through a one-field struct   \
+     * view (struct ShapeCell), whose alias set lets sched2 sink it past the   \
+     * cell read; as *shapes = newShape, 6 of 76 instructions differ in        \
+     * tla-en. */                                                              \
+    ((struct ShapeCell *)shapes)->shape = newShape;                            \
+    cells += index;                                                            \
+    ((struct MapCell *)cells)->attributeB |= 192;                              \
+    cells += 0x200;                                                            \
+    ((struct MapCell *)cells)->attributeB |= 64;                               \
+  }
+
+/// 1 scenes: gabomba_statue_chamber.
+#define DEFINE_FUNC_02000F00(name, n1)                                         \
+  void name(void) {                                                            \
+    struct GabombaStatueChamberObject *leader =                                \
+        ((struct GabombaStatueChamberObject *)Actor_GetById(8));               \
+    s32 x = leader->x;                                                         \
+    s32 z = leader->z;                                                         \
+    /* FAKEMATCH(temporary): a local holding the 0 for the three byte stores,  \
+     * set before the null test, so it takes r7; as the constant 0 in each               \
+     * store, 20 of 58 instructions differ in tla-en. */                                       \
+    s32 zero = 0;                                                              \
+    struct GabombaStatueChamberObject *object;                                 \
+                                                                               \
+    if ((gData_02002058 = object =                                             \
+             ((struct GabombaStatueChamberObject *)Import_ActorCreate(         \
+                 489, x, 0x120000, z))) != NULL) {                             \
+      struct FieldSprite *sprite = object->sprite;                             \
+      u8 *block;                                                               \
+                                                                               \
+      sprite->fullColor = 0;                                                   \
+      sprite->palette = 0;                                                     \
+      sprite->priority = 2;                                                    \
+      object->motionFlags = zero;                                              \
+      object->field5c = 1;                                                     \
+      object->update = Func_02000ef0;                                          \
+      sprite->nextFrame = zero;                                                \
+      sprite->unk1b[0] = zero;                                                 \
+      block = HeapSlot_AllocFar(68, 0x608);                                    \
+      Icon_DrawItem(n1);                                                       \
+      VramCache_Load(sprite->vramBlock, 128, block + 0x400);                   \
+      HeapSlot_Release(68);                                                    \
+    }                                                                          \
+  }
+
+/// 2 scenes: aqua_rock_inside, gaia_rock_inside/s07f4.
+#define DEFINE_FUNC_0200136C(name, call1)                                      \
+  s32 name(struct Orbiter *orbiter) {                                          \
+    struct Actor *anchor = orbiter->anchor;                                    \
+    s16 *angle;                                                                \
+                                                                               \
+    orbiter->angle += (s32)(orbiter->speed << 16) >> 17;                       \
+    orbiter->x = anchor->x;                                                    \
+    orbiter->y = anchor->y + 0x80000;                                          \
+    orbiter->z = anchor->z;                                                    \
+    FieldVector_AddPolarOffset(orbiter->radius, orbiter->angle, &orbiter->x);  \
+    /* FAKEMATCH(temporary): the angle's address, taken after the first push,  \
+     * sets r2 from r8 before the second push reads it; as orbiter->angle,     \
+     * 2 of 89 instructions differ in tla-en. */                               \
+    angle = &orbiter->angle;                                                   \
+    if (--orbiter->countdown == 0)                                             \
+      return 0;                                                                \
+    if (orbiter->radius == 0x20000)                                            \
+      return 1;                                                                \
+    call1(orbiter);                                                            \
+    orbiter->radius -= 0x40000;                                                \
+    orbiter->angle += (s32)(orbiter->speed << 16) >> 17;                       \
+    orbiter->x = anchor->x;                                                    \
+    orbiter->y = anchor->y + 0x80000;                                          \
+    orbiter->z = anchor->z;                                                    \
+    FieldVector_AddPolarOffset(orbiter->radius, *angle, &orbiter->x);          \
+    call1(orbiter);                                                            \
+    orbiter->radius -= 0x40000;                                                \
+    return 1;                                                                  \
+  }
+
+/// 1 scenes: taopo_swamp.
+#define DEFINE_FUNC_02001424(name, call1, n1, call2)                           \
+  void name(void) {                                                            \
+    s32 timer = Func_02002730();                                               \
+                                                                               \
+    /* FAKEMATCH(signature): Func_0200271c called as returning s32, as in      \
+     * Func_02001304; as a call to the void setter, 4 of 50 instructions       \
+     * differ in tla-en. */                                                                    \
+    switch (timer) {                                                           \
+    case 0:                                                                    \
+      Vent_SetActive(0, 1);                                                    \
+      Vent_SetActive(1, 1);                                                    \
+      Func_02002978(170);                                                      \
+      break;                                                                   \
+    case 120:                                                                  \
+      Vent_SetActive(0, 0);                                                    \
+      Vent_SetActive(1, 0);                                                    \
+      Func_02002978(-1);                                                       \
+      break;                                                                   \
+    }                                                                          \
+    if ((u32)(timer - 11) <= 118) {                                            \
+      if (Event_GetFlag(0x221))                                                \
+        call1(n1);                                                             \
+      else if (Event_GetFlag(0x220))                                           \
+        call2(n1);                                                             \
+    }                                                                          \
+    Func_0200273c(480);                                                        \
+  }
+
+/// 2 scenes: jupiter_lighthouse_aerie, jupiter_lighthouse_room_3.
+#define DEFINE_FUNC_020004C0(name, data1, data2, data3, data4, call1, data5)   \
+  void name(s32 mode) {                                                        \
+    data1 = 1;                                                                 \
+    if (mode != 2) {                                                           \
+      Iwram_CopyWords(data2, (void *)&BG_PLTT_COLOR(12, 0), 32);               \
+      Iwram_CopyWords(data3, (void *)&BG_PLTT_COLOR(13, 0), 32);               \
+    }                                                                          \
+    if (Event_GetFlag(0xa00) || mode == 1) {                                   \
+      /* FAKEMATCH(temporary): a local holding 0, so the zero is built in r2   \
+       * and the counter's address in r3; as the 0 stored directly, 6 of 44    \
+       * instructions differ in tla-en. */                                     \
+      s32 zero = 0;                                                            \
+                                                                               \
+      data4 = zero;                                                            \
+      Task_Add(call1, 1152);                                                   \
+    } else {                                                                   \
+      Dma_Set(data5, (void *)&BG_PLTT_COLOR(12, 2), DMA_COPY_WORDS(2),         \
+              REG_DMA3);                                                       \
+    }                                                                          \
+  }
+
+/// 2 scenes: madra, mikasalla.
+#define DEFINE_FUNC_02000544(name, call1)                                      \
+  void name(void) {                                                            \
+    s32 id, a;                                                                 \
+                                                                               \
+    Event_Start();                                                             \
+    Event_ResolvePendingActions(0);                                            \
+    a = 192;                                                                   \
+    id = 4;                                                                    \
+    /* FAKEMATCH(barrier): the id held at an empty asm, so it comes between    \
+     * the angle byte and its shift; as no asm, 2 of 11 instructions differ in           \
+     * tla-en. */                                                              \
+    __asm__ volatile("" : "+r"(id));                                           \
+    Actor_ArmCallback(id, a << 8, 0);                                          \
+    call1();                                                                   \
+  }
+
+/// 1 scenes: loho.
+#define DEFINE_FUNC_02000C64(name, n1, n2)                                     \
+  void name(s32 id) {                                                          \
+    s32 value = 768;                                                           \
+    s32 kind = n1;                                                             \
+                                                                               \
+    /* FAKEMATCH(barrier): the empty asm on the value and kind, so the kind is \
+     * set between the value's halves; as constant arguments, 2 of 7                     \
+     * instructions differ in tla-en. */                                                          \
+    asm("" : "+l"(value), "+l"(kind));                                         \
+    Actor_ReturnHome(id, kind, value + n2);                                    \
+  }
+
+/// 2 scenes: jupiter_lighthouse_room_6, jupiter_lighthouse_room_7.
+#define DEFINE_FUNC_02000060(name, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10,    \
+                             n11)                                              \
+  void name(s32 mode) {                                                        \
+    if (mode == 1) {                                                           \
+      Event_PlaySound(133);                                                    \
+      MapGrid_CopyCellsLayered(n1, n2, n3, 3, n4, n5);                         \
+      System_Wait(6);                                                          \
+    }                                                                          \
+    MapGrid_CopyCellsLayered(n6, n7, n3, 3, n4, n5);                           \
+    MapGrid_CopyCellAttributes(n8, n9, n3, 1, n10, n11);                       \
+  }
+
+/// 2 scenes: jupiter_lighthouse_room_6, jupiter_lighthouse_room_7.
+#define DEFINE_FUNC_020000B4(name, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10)    \
+  void name(void) {                                                            \
+    Event_PlaySound(134);                                                      \
+    MapGrid_CopyCellsLayered(n1, n2, n3, 3, n4, n5);                           \
+    System_Wait(6);                                                            \
+    MapGrid_CopyCellsLayered(n6, 42, n3, 3, n4, n5);                           \
+    MapGrid_CopyCellAttributes(n7, n8, n3, 1, n9, n10);                        \
+  }
+
 #endif

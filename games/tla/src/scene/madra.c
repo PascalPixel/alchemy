@@ -3,6 +3,7 @@
 
 // ---- games/tla/src/scene/madra.c ----
 
+#include "shared/routines.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -1617,20 +1618,7 @@ void Func_02002a80(void) {
   Func_020029c8();
 }
 
-void Func_02002ab0(void) {
-  s32 id, a;
-
-  Event_Start();
-  Event_ResolvePendingActions(0);
-  a = 192;
-  id = 4;
-  /* FAKEMATCH(barrier): the id held at an empty asm, so it comes between the
-   * angle byte and its shift; as no asm, 2 of 11 instructions differ in
-   * tla-en. */
-  __asm__ volatile("" : "+r"(id));
-  Actor_ArmCallback(id, a << 8, 0);
-  Func_020029c8();
-}
+DEFINE_FUNC_02000544(Func_02002ab0, Func_020029c8)
 
 void Func_0200006c(void);
 void Func_020002bc(void);

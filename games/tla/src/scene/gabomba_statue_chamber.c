@@ -3,6 +3,7 @@
 
 // ---- games/tla/src/scene/gabomba_statue_chamber.c ----
 
+#include "shared/routines.h"
 #include "text/msg_ids.h"
 
 #include "battle.h"
@@ -538,69 +539,9 @@ void Func_02000ef0(struct Actor *object) {
 // Scene code of overlay 0x672, in ROM order, from s0f00's offset up to the next object the overlay links.
 
 
-void Func_02000f00(void) {
-  struct GabombaStatueChamberObject *leader =
-      ((struct GabombaStatueChamberObject *)Actor_GetById(8));
-  s32 x = leader->x;
-  s32 z = leader->z;
-  /* FAKEMATCH(temporary): a local holding the 0 for the three byte stores, set
-   * before the null test, so it takes r7; as the constant 0 in each store, 20
-   * of 58 instructions differ in tla-en. */
-  s32 zero = 0;
-  struct GabombaStatueChamberObject *object;
+DEFINE_FUNC_02000F00(Func_02000f00, 230)
 
-  if ((gData_02002058 = object =
-           ((struct GabombaStatueChamberObject *)Import_ActorCreate(
-               489, x, 0x120000, z))) != NULL) {
-    struct FieldSprite *sprite = object->sprite;
-    u8 *block;
-
-    sprite->fullColor = 0;
-    sprite->palette = 0;
-    sprite->priority = 2;
-    object->motionFlags = zero;
-    object->field5c = 1;
-    object->update = Func_02000ef0;
-    sprite->nextFrame = zero;
-    sprite->unk1b[0] = zero;
-    block = HeapSlot_AllocFar(68, 0x608);
-    Icon_DrawItem(230);
-    VramCache_Load(sprite->vramBlock, 128, block + 0x400);
-    HeapSlot_Release(68);
-  }
-}
-
-void Func_02000f88(void) {
-  struct GabombaStatueChamberObject *leader =
-      ((struct GabombaStatueChamberObject *)Actor_GetById(8));
-  s32 x = leader->x;
-  s32 z = leader->z;
-  /* FAKEMATCH(temporary): a local holding the 0 for the three byte stores, set
-   * before the null test, so it takes r7; as the constant 0 in each store, 20
-   * of 58 instructions differ in tla-en. */
-  s32 zero = 0;
-  struct GabombaStatueChamberObject *object;
-
-  if ((gData_02002058 = object =
-           ((struct GabombaStatueChamberObject *)Import_ActorCreate(
-               489, x, 0x120000, z))) != NULL) {
-    struct FieldSprite *sprite = object->sprite;
-    u8 *block;
-
-    sprite->fullColor = 0;
-    sprite->palette = 0;
-    sprite->priority = 2;
-    object->motionFlags = zero;
-    object->field5c = 1;
-    object->update = Func_02000ef0;
-    sprite->nextFrame = zero;
-    sprite->unk1b[0] = zero;
-    block = HeapSlot_AllocFar(68, 0x608);
-    Icon_DrawItem(242);
-    VramCache_Load(sprite->vramBlock, 128, block + 0x400);
-    HeapSlot_Release(68);
-  }
-}
+DEFINE_FUNC_02000F00(Func_02000f88, 242)
 
 void Func_02001010(void) {
   Map_CopyCellPictureIndicesRect(85, 78, 22, 79, 5, 11);

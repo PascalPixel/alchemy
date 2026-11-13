@@ -1151,4 +1151,39 @@
       {SCENE_TABLE_END},                                                       \
   };
 
+/// 1 scenes: alhafra/data.
+#define DEFINE_G_DATA_02003434(name, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10)  \
+  u32 name[] = {                                                               \
+      39,        2, 4,  n1, 0,   n2, 1,  4,         n3, 0, n4,     1,  4,      \
+      0x1980000, 0, n5, 1,  4,   n6, 0,  0x2a80000, 1,  4, n7,     0,  n8,     \
+      1,         4, n9, 0,  n10, 1,  39, 1,         22, 3, 0xd000, 17,         \
+  };
+
+/// 1 scenes: atteka_inlet.
+#define DEFINE_G_DATA_020011AC(name, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10)  \
+  u32 name[] = {                                                               \
+      0xffff014d, 7,  0x580000,  0, 0x1780000, 0x24000,                        \
+      0xffff014d, 7,  0xd80000,  0, 0x1480000, 0x1024000,                      \
+      0xffff014d, 7,  0xa80000,  0, 0xb80000,  0x1024000,                      \
+      0xffff014d, 7,  0x1e80000, 0, 0x1980000, 0x1024000,                      \
+      0xffff014d, 7,  0x2280000, 0, 0x1a80000, 0x1024000,                      \
+      0xffff0073, 1,  n1,        0, n2,        0x12000,                        \
+      0xffff0073, 1,  n3,        0, n4,        0x1c000,                        \
+      0xffff0074, 1,  n5,        0, n6,        0x18000,                        \
+      0xffff006a, n7, n8,        0, n9,        n10,                            \
+      0x190a01a4, 1,  0x1d00000, 0, 0x1080000, 0x20000,                        \
+      0xffff0038, 1,  0,         0, 0,         0x4000,                         \
+      0xffff,     0,  0,         0, 0,         0,                              \
+  };
+
+/// 2 scenes: jupiter_lighthouse_room_5/s2450, jupiter_lighthouse_room_m/data2.
+#define DEFINE_G_SCENE_EXITS_6(n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11,   \
+                               n12)                                            \
+  u32 gSceneExits[] = {                                                        \
+      SCENE_EXITS(n1),         SCENE_EXIT(1, n2, 1),    SCENE_EXIT(n3, n4, 3), \
+      SCENE_EXIT(n5, n4, n6),  SCENE_EXIT(5, n7, 5),    SCENE_EXIT(6, n7, 6),  \
+      SCENE_EXIT(7, n8, n9),   SCENE_EXIT(8, n10, n11), SCENE_EXIT(9, n12, 9), \
+      SCENE_EXIT(10, n12, 10), SCENE_EXITS_END,                                \
+  };
+
 #endif

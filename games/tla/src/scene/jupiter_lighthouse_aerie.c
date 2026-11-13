@@ -330,25 +330,8 @@ next:
   gData_02003314++;
 }
 
-void Func_02000858(s32 mode) {
-  gData_02003318 = 1;
-  if (mode != 2) {
-    Iwram_CopyWords(gData_02003340, (void *)&BG_PLTT_COLOR(12, 0), 32);
-    Iwram_CopyWords(gData_02003360, (void *)&BG_PLTT_COLOR(13, 0), 32);
-  }
-  if (Event_GetFlag(0xa00) || mode == 1) {
-    /* FAKEMATCH(temporary): a local holding 0, so the zero is built in r2
-     * and the counter's address in r3; as the 0 stored directly, 6 of 44
-     * instructions differ in tla-en. */
-    s32 zero = 0;
-
-    gData_02003314 = zero;
-    Task_Add(Func_0200079c, 1152);
-  } else {
-    Dma_Set(gData_02003364, (void *)&BG_PLTT_COLOR(12, 2), DMA_COPY_WORDS(2),
-            REG_DMA3);
-  }
-}
+DEFINE_FUNC_020004C0(Func_02000858, gData_02003318, gData_02003340,
+    gData_02003360, gData_02003314, Func_0200079c, gData_02003364)
 
 DEFINE_FUNC_02000378(Func_020008dc, Func_02002a78, Func_02002b58)
 

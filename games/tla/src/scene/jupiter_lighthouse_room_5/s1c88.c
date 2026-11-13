@@ -111,22 +111,4 @@ DEFINE_FUNC_020013E4(Func_020021c0)
 /// the table's source cell over the leader's, keeping the source column's and
 /// row's 64 bit; Func_020025e8 calls it the first time the leader steps on
 /// one of the table's cells.
-void Func_02002248(struct CellTarget *table, struct CellTargetEntry *entry) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s16 sourceX;
-  s32 leaderX = leader->x;
-  s32 x;
-  s32 z;
-
-  /* FAKEMATCH(barrier): passes the source column through an asm reading the
-   * leader's x, so the x load ties the 64 mask's copy and wins on order; as
-   * (leader->x >> 20) | (s16)(table->x & 64), 2 of 49 instructions differ in
-   * tla-en. */
-  asm("" : "=r"(sourceX) : "0"(table->x), "r"(leaderX));
-  x = (leaderX >> 20) | (s16)(sourceX & 64);
-  z = CellTarget_CellWithBit(leader->z, table->z & 64);
-  Func_020021c0();
-  Event_PlaySound(161);
-  MapGrid_CopyCells(table->x, table->z + 1, 1, 1, x, z);
-  FieldEvent_Wait(12);
-}
+DEFINE_FUNC_0200146C(Func_02002248, Func_020021c0)

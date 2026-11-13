@@ -48,23 +48,9 @@ void Func_02000084(s32 value) {
 
 #include "jupiter_lighthouse_room_6/jupiter_lighthouse_room_6.h"
 
-void Func_020000b4(s32 mode) {
-  if (mode == 1) {
-    Event_PlaySound(133);
-    MapGrid_CopyCellsLayered(84, 36, 2, 3, 78, 40);
-    System_Wait(6);
-  }
-  MapGrid_CopyCellsLayered(84, 39, 2, 3, 78, 40);
-  MapGrid_CopyCellAttributes(20, 38, 2, 1, 14, 42);
-}
+DEFINE_FUNC_02000060(Func_020000b4, 84, 36, 2, 78, 40, 84, 39, 20, 38, 14, 42)
 
-void Func_02000108(void) {
-  Event_PlaySound(134);
-  MapGrid_CopyCellsLayered(84, 36, 2, 3, 78, 40);
-  System_Wait(6);
-  MapGrid_CopyCellsLayered(84, 42, 2, 3, 78, 40);
-  MapGrid_CopyCellAttributes(20, 44, 2, 1, 14, 42);
-}
+DEFINE_FUNC_020000B4(Func_02000108, 84, 36, 2, 78, 40, 84, 20, 44, 14, 42)
 
 void Func_02000154(void) {
   struct JupiterLighthouseRoom6Object *object =
@@ -206,81 +192,5 @@ extern const s32 gData_0200a3c4[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-void Func_02000694(struct Actor *self) {
-  u8 *work = Ram_HeapSlots->eventWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 position[3];
-  s32 distance;
-  s32 near;
-
-  if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
-      *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
-    Actor_SetAnimationSpeed(self, 0);
-    return;
-  }
-  Actor_SetAnimationSpeed(self, 16);
-  if ((++*(u16 *)&self->timer & 31) == 31)
-    Event_PlaySound(231);
-  {
-    s8 *to = self->sprite;
-    s8 *from = leader->sprite;
-    u32 a = from[9] & 12;
-    to[9] = (s8)((to[9] & ~12) | a);
-  }
-  if (Func_02001bdc(self->x, self->z, 2) != 255) {
-    position[0] = self->x;
-    position[1] = self->y;
-    position[2] = self->z;
-    Camera_WorldToScreen(position);
-    distance = position[0];
-    if (distance > 0x1100000)
-      goto stop;
-    if (distance < -0x200000)
-      goto stop;
-    {
-      if (*((u8 *)self + 0x62) == 0) {
-        distance = leader->y - self->y;
-        if (distance < 0)
-          distance = self->y - leader->y;
-        near = 0;
-        if (Func_02000668(&leader->x, &self->x) <= 12 && distance < 0xc0000)
-          near = 1;
-        if (near && !Event_GetFlag(260)) {
-          leader->facing = self->facing;
-          leader->watchedObject = self;
-          leader->priorityFlags &= ~1;
-          {
-            s32 delay = 200;
-            *(u16 *)(work + 362) = delay;
-          }
-          gMainRoutineWork.renderMode = 0;
-          *((u8 *)self + 0x62) = 1;
-          *((u8 *)self + 0x63) = 1;
-        }
-      }
-      {
-        s32 (*multiply)(s32, s32);
-        s32 cosine = Math_Cosine(self->facing);
-        s32 speed = self->speedLimit;
-        /* FAKEMATCH(dead): the routine address taken inside a once-only
-         * block, so the speed loads first; as a plain call, 2 of 197
-         * instructions differ in tla-en. */
-        do {
-          multiply = Iwram_MulQ16;
-        } while (0);
-        self->x += multiply(cosine, speed);
-      }
-      self->z += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);
-      return;
-    }
-  }
-stop:
-  {
-    s32 zero = 0;
-    *((u8 *)self + 0x63) = zero;
-    self->update = zero;
-    Actor_StartScript(self, gData_0200a3c4);
-    Event_PlaySound(228);
-    Data_020023e4 = zero;
-  }
-}
+DEFINE_FUNC_02000628(Func_02000694, Func_02001bdc, Func_02000668,
+    gData_0200a3c4, Data_020023e4)

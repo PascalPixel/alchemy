@@ -51,14 +51,9 @@ void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b) {
     Func_02000328();
 }
 
-void Func_020000f4(void) {
-  gData_02004454 = 0;
-  gData_02004450 = Func_020001d4(gData_02004444);
-  gData_02004440 = 15;
-  gData_0200443c = 16;
-  gData_02004434 = 1;
-  Task_AddFrame(Func_020001f8, TASK_PASS_VBLANK);
-}
+DEFINE_FUNC_020000F4(Func_020000f4, gData_02004454, gData_02004450,
+    Func_020001d4, gData_02004444, gData_02004440, 15, gData_0200443c, 16,
+    gData_02004434, Func_020001f8)
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -72,14 +67,9 @@ void Func_02000158(void) {
   FieldTask_Remove((s32)Func_020001f8);
 }
 
-void Func_02000178(void) {
-  gData_02004454 = 0;
-  gData_02004450 = Func_020001d4(gData_02004444);
-  gData_02004440 = 2;
-  gData_0200443c = 2;
-  gData_02004434 = 1;
-  Task_AddFrame(Func_020001f8, TASK_PASS_VBLANK);
-}
+DEFINE_FUNC_020000F4(Func_02000178, gData_02004454, gData_02004450,
+    Func_020001d4, gData_02004444, gData_02004440, 2, gData_0200443c, 2,
+    gData_02004434, Func_020001f8)
 
 DEFINE_FUNC_020001D4(Func_020001d4)
 

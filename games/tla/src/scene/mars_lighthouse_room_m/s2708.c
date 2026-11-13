@@ -255,45 +255,7 @@ void Func_02002870(struct Actor *actor) {
 
 /// Throws two sparks (object kind 325) from (x, y, z), each upward at about
 /// speed plus 0x14000 with a random spread, at a random angle and size.
-void Func_020029f4(s32 x, s32 y, s32 z, s32 speed) {
-  s32 i;
-
-  i = 1;
-next:
-  {
-    struct Actor *object = FieldActor_Create(325, x, y, z);
-
-    if (object != NULL) {
-      s32 angle;
-      s32 rise;
-      s32 radius;
-      u32 size;
-      s32 scale;
-
-      rise = speed + (Random16Far() >> 4) - (Random16Far() >> 4);
-      angle = 0x4000 + rise;
-      radius = Random16Far() * 8;
-      size = Random16Far();
-      Actor_StartScript(object, gData_02003348);
-      Actor_SetSingleChildFlags(object, 0);
-      /* FAKEMATCH(temporary): the scale is taken before the velocity stores, as
-       * in the native; as object->scaleX = (size >> 1) + 0x4000, 14 of 98
-       * instructions differ in tla-en. */
-      scale = (size >> 1) + 0x4000;
-      object->velocityY = rise + 0x14000;
-      object->velocityZ = Iwram_MulQ16(radius, Math_Cosine(angle));
-      object->velocityX = Iwram_MulQ16(radius, Math_Sin(angle));
-      object->acceleration = 0;
-      object->gravity = 0x547a;
-      object->scaleX = scale;
-      object->scaleY = object->scaleX;
-      object->bounce = 0x8000;
-      Animation_ApplyChildValues(object, 1);
-    }
-  }
-  if (--i >= 0)
-    goto next;
-}
+DEFINE_FUNC_020029F4(Func_020029f4, gData_02003348)
 
 void Func_02002ad4(struct Actor *object) {
   object->movementState = Event_GetFlag(260);

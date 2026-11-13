@@ -101,38 +101,6 @@ void Func_02000d78(u16 *list) {
 // One-field view: the shape store is memory of its own to sched2, which sinks
 // it past the cell read; a plain store keeps its order.
 
-void Func_02000e9c(void) {
-  struct Actor *held = HELD_OBJECT(Ram_HeapSlots->eventWork);
-  u8 *layer;
-  u8 *cells;
-  u8 *shapes;
-  s32 shape;
-  s32 level;
-  s32 index;
-  u8 newShape;
-
-  if (held == NULL)
-    return;
-  layer = &held->terrainId;
-  cells = (u8 *)Ram_HeapSlots->mapWork->layers[*layer].cells;
-  shapes = Ram_MapShapeGrid +
-           (((struct MapCell *)cells) - (struct MapCell *)Ram_MapCellBuffer);
-  shape = Func_02003c10(*layer, held->x, held->z);
-  level = Map_GetTerrainHeight(*layer, held->x, held->z);
-  index = Func_02003db0(held);
-  level >>= 19;
-  level += 4;
-  newShape = Func_02003dd0(*layer, shape, level);
-  shapes += index;
-  index <<= 2;
-  /* FAKEMATCH(signature): the grid byte stored through a one-field struct
-   * view (struct ShapeCell), whose alias set lets sched2 sink it past the
-   * cell read; as *shapes = newShape, 6 of 76 instructions differ in tla-en. */
-  ((struct ShapeCell *)shapes)->shape = newShape;
-  cells += index;
-  ((struct MapCell *)cells)->attributeB |= 192;
-  cells += 0x200;
-  ((struct MapCell *)cells)->attributeB |= 64;
-}
+DEFINE_FUNC_02000270(Func_02000e9c, Func_02003c10, Func_02003db0, Func_02003dd0)
 
 #include "../../field/object/set_sprite_priority.c"

@@ -284,61 +284,13 @@ void Func_02000974(void) {
 
 void Func_02000a48(void) { Func_02001e0c_(68, 38, 39, 24, 68, 4, 1); }
 
-void Func_02000a68(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+DEFINE_FUNC_02000A68(Func_02000a68, 68, 38, 21, 4, 0xf9b, 65, 376, 376, 23, 23)
 
-  Func_02001e0c_(68, 38, 38, 21, 68, 4, 1);
-  if (Event_GetFlag(0xf9b) == 0) {
-    Func_02001d04_(65, PIXELS(376), PIXELS(376));
-    if (leader->x >> 20 == 23 && leader->z >> 20 == 23) {
-      Event_Start();
-      FieldEvent_ResolvePendingActions(0);
-      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
-      Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);
-      leader->velocityY = 0x60000;
-      FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-      Event_End();
-    }
-  }
-}
-
-void Func_02000af8(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-
-  Func_02001e0c_(68, 38, 38, 21, 68, 4, 1);
-  if (Event_GetFlag(0xf9a) == 0) {
-    Func_02001d04_(64, PIXELS(600), PIXELS(408));
-    if (leader->x >> 20 == 37 && leader->z >> 20 == 25) {
-      Event_Start();
-      FieldEvent_ResolvePendingActions(0);
-      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
-      Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);
-      leader->velocityY = 0x60000;
-      FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-      Event_End();
-    }
-  }
-}
+DEFINE_FUNC_02000A68(Func_02000af8, 68, 38, 21, 4, 0xf9a, 64, 600, 408, 37, 25)
 
 void Func_02000b88(void) { Func_02001e0c_(67, 38, 11, 6, 67, 8, 1); }
 
-void Func_02000ba8(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-
-  Func_02001e0c_(67, 38, 11, 6, 67, 8, 1);
-  if (Event_GetFlag(0xf9e) == 0) {
-    Func_02001d04_(64, PIXELS(200), PIXELS(152));
-    if (leader->x >> 20 == 12 && leader->z >> 20 == 9) {
-      Event_Start();
-      FieldEvent_ResolvePendingActions(0);
-      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
-      Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);
-      leader->velocityY = 0x60000;
-      FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-      Event_End();
-    }
-  }
-}
+DEFINE_FUNC_02000A68(Func_02000ba8, 67, 11, 6, 8, 0xf9e, 64, 200, 152, 12, 9)
 
 void Func_02000c38(void) {
   u8 *work = Ram_HeapSlots->eventWork;

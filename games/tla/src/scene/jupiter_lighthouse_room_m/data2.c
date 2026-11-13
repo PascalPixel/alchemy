@@ -32,19 +32,7 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gSceneExits[] = {
-    SCENE_EXITS(263),
-    SCENE_EXIT(1, 256, 1),
-    SCENE_EXIT(3, 256, 3),
-    SCENE_EXIT(4, 256, 4),
-    SCENE_EXIT(5, 258, 5),
-    SCENE_EXIT(6, 258, 6),
-    SCENE_EXIT(7, 261, 7),
-    SCENE_EXIT(8, 260, 8),
-    SCENE_EXIT(9, 257, 9),
-    SCENE_EXIT(10, 257, 10),
-    SCENE_EXITS_END,
-};
+DEFINE_G_SCENE_EXITS_6(263, 256, 3, 256, 4, 4, 258, 261, 7, 260, 8, 257)
 
 struct ActorPlacement gActorPlacements[] = {
     {373, CONDITION_ALWAYS, 1, PIXELS(24), 0, PIXELS(280), FACING_SOUTH, 2, 0},

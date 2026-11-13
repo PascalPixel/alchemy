@@ -1,6 +1,7 @@
 /// @file
 /// Overlay 0x6a6's scene: its code, then its tables, in ROM order.
 
+#include "shared/routines.h"
 #include "shared/tables.h"
 #include "types.h"
 #include "ram_buffer.h"
@@ -475,27 +476,9 @@ void Func_02000c54(s32 id) {
   Actor_ReturnHome(id, kind, high << 2);
 }
 
-void Func_02000c64(s32 id) {
-  s32 value = 768;
-  s32 kind = 65;
+DEFINE_FUNC_02000C64(Func_02000c64, 65, 1)
 
-  /* FAKEMATCH(barrier): the empty asm on the value and kind, so the kind is set
-   * between the value's halves; as constant arguments, 2 of 7 instructions
-   * differ in tla-en. */
-  asm("" : "+l"(value), "+l"(kind));
-  Actor_ReturnHome(id, kind, value + 1);
-}
-
-void Func_02000c74(s32 id) {
-  s32 value = 768;
-  s32 kind = 66;
-
-  /* FAKEMATCH(barrier): the empty asm on the value and kind, so the kind is set
-   * between the value's halves; as constant arguments, 2 of 7 instructions
-   * differ in tla-en. */
-  asm("" : "+l"(value), "+l"(kind));
-  Actor_ReturnHome(id, kind, value + 2);
-}
+DEFINE_FUNC_02000C64(Func_02000c74, 66, 2)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

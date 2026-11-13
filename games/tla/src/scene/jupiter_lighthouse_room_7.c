@@ -47,23 +47,9 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 #include "main_routine_work.h"
 #include "call.h"
 
-void Func_02000060(s32 mode) {
-  if (mode == 1) {
-    Event_PlaySound(133);
-    MapGrid_CopyCellsLayered(76, 42, 4, 3, 76, 35);
-    System_Wait(6);
-  }
-  MapGrid_CopyCellsLayered(81, 42, 4, 3, 76, 35);
-  MapGrid_CopyCellAttributes(12, 41, 4, 1, 12, 35);
-}
+DEFINE_FUNC_02000060(Func_02000060, 76, 42, 4, 76, 35, 81, 42, 12, 41, 12, 35)
 
-void Func_020000b4(void) {
-  Event_PlaySound(134);
-  MapGrid_CopyCellsLayered(76, 42, 4, 3, 76, 35);
-  System_Wait(6);
-  MapGrid_CopyCellsLayered(71, 42, 4, 3, 76, 35);
-  MapGrid_CopyCellAttributes(12, 36, 4, 1, 12, 35);
-}
+DEFINE_FUNC_020000B4(Func_020000b4, 76, 42, 4, 76, 35, 71, 12, 36, 12, 35)
 
 DEFINE_FUNC_02000100(Func_02000100, 16, 0xa1b, 8, 37)
 
@@ -768,81 +754,5 @@ s32 Func_02002c34(s32 x, s32 z, s32 layer);
 s32 Math_Cosine(s32 angle);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-void Func_02001514(struct Actor *self) {
-  u8 *work = Ram_HeapSlots->eventWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 position[3];
-  s32 distance;
-  s32 near;
-
-  if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
-      *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
-    Actor_SetAnimationSpeed(self, 0);
-    return;
-  }
-  Actor_SetAnimationSpeed(self, 16);
-  if ((++*(u16 *)&self->timer & 31) == 31)
-    Event_PlaySound(231);
-  {
-    s8 *to = self->sprite;
-    s8 *from = leader->sprite;
-    u32 a = from[9] & 12;
-    to[9] = (s8)((to[9] & ~12) | a);
-  }
-  if (Func_02002c34(self->x, self->z, 2) != 255) {
-    position[0] = self->x;
-    position[1] = self->y;
-    position[2] = self->z;
-    Camera_WorldToScreen(position);
-    distance = position[0];
-    if (distance > 0x1100000)
-      goto stop;
-    if (distance < -0x200000)
-      goto stop;
-    {
-      if (*((u8 *)self + 0x62) == 0) {
-        distance = leader->y - self->y;
-        if (distance < 0)
-          distance = self->y - leader->y;
-        near = 0;
-        if (Func_020014e8(&leader->x, &self->x) <= 12 && distance < 0xc0000)
-          near = 1;
-        if (near && !Event_GetFlag(260)) {
-          leader->facing = self->facing;
-          leader->watchedObject = self;
-          leader->priorityFlags &= ~1;
-          {
-            s32 delay = 200;
-            *(u16 *)(work + 362) = delay;
-          }
-          gMainRoutineWork.renderMode = 0;
-          *((u8 *)self + 0x62) = 1;
-          *((u8 *)self + 0x63) = 1;
-        }
-      }
-      {
-        s32 (*multiply)(s32, s32);
-        s32 cosine = Math_Cosine(self->facing);
-        s32 speed = self->speedLimit;
-        /* FAKEMATCH(dead): the routine address taken inside a once-only
-         * block, so the speed loads first; as a plain call, 2 of 197
-         * instructions differ in tla-en. */
-        do {
-          multiply = Iwram_MulQ16;
-        } while (0);
-        self->x += multiply(cosine, speed);
-      }
-      self->z += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);
-      return;
-    }
-  }
-stop:
-  {
-    s32 zero = 0;
-    *((u8 *)self + 0x63) = zero;
-    self->update = zero;
-    Actor_StartScript(self, gData_02003598);
-    Event_PlaySound(228);
-    Data_020035b8 = zero;
-  }
-}
+DEFINE_FUNC_02000628(Func_02001514, Func_02002c34, Func_020014e8,
+    gData_02003598, Data_020035b8)

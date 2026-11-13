@@ -329,65 +329,23 @@ void Func_02000754(struct Actor *object) {
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
-void Func_020007dc(u16 *slots, u16 *colours, u16 *a, u16 *b) {
-  u8 *saved = Ram_HeapSlots->block32;
-
-  gData_02001fd8 = slots;
-  gData_02001fdc = colours;
-  gData_02001fe0 = a;
-  gData_02001fcc = b;
-  if (*slots != 0xffff && *colours != 0xffff) {
-  next:
-    {
-      int red = *colours++;
-      int index = *slots++;
-      int green = *colours++;
-      int blue = *colours++;
-      int value;
-
-      /* FAKEMATCH(dead): the colour's build and store in a once-only block, so
-       * both lists are stepped right after their loads and the next entry's
-       * marker loads before 0xffff is built; as plain statements, 22 of 80
-       * instructions differ in tla-en. */
-      do {
-        value = (blue << 10) | (green << 5) | red;
-        ((u16 *)BG_PLTT)[index] = value;
-      } while (0);
-    }
-    if (*slots != 0xffff && *colours != 0xffff)
-      goto next;
-  }
-  Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
-  Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  if ((s8)gMainRoutineWork.unk2c2 == 2)
-    Func_02000acc();
-}
+DEFINE_FUNC_02000038_4(Func_020007dc, gData_02001fd8, gData_02001fdc,
+    gData_02001fe0, gData_02001fcc, Func_02000acc)
 
 #include "task.h"
 
-void Func_02000898(void) {
-  gData_02001fe8 = 0;
-  gData_02001fe4 = Func_02000978(gData_02001fd8);
-  gData_02001fd4 = 15;
-  gData_02001fd0 = 16;
-  gData_02001fc8 = 1;
-  Task_Add(Func_0200099c, TASK_PASS_VBLANK);
-}
+DEFINE_FUNC_020000F4_2(Func_02000898, gData_02001fe8, gData_02001fe4,
+    Func_02000978, gData_02001fd8, gData_02001fd4, 15, gData_02001fd0, 16,
+    gData_02001fc8, Func_0200099c)
 
 void Func_020008fc(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 256;
   Task_RemoveFar(Func_0200099c);
 }
 
-void Func_0200091c(void) {
-  gData_02001fe8 = 0;
-  gData_02001fe4 = Func_02000978(gData_02001fd8);
-  gData_02001fd4 = 2;
-  gData_02001fd0 = 2;
-  gData_02001fc8 = 1;
-  Task_Add(Func_0200099c, TASK_PASS_VBLANK);
-}
+DEFINE_FUNC_020000F4_2(Func_0200091c, gData_02001fe8, gData_02001fe4,
+    Func_02000978, gData_02001fd8, gData_02001fd4, 2, gData_02001fd0, 2,
+    gData_02001fc8, Func_0200099c)
 
 DEFINE_FUNC_020001D4(Func_02000978)
 

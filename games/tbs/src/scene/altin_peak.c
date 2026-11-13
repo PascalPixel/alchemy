@@ -560,8 +560,6 @@ static void AltinPeak_FreezeSpritzRoomThirdPuddle(void) {
 /// Interrupt handler while the water layer vanishes.
 static void AltinPeak_FlickerWaterOut(void) {
   s16 control = REG_DISPCNT & ~DISPCNT_BG1_ON;
-  /* FAKEMATCH(temporary): the BG1 bit held in a local; as control |=
-   * DISPCNT_BG1_ON, 2 of 22 instructions differ in tbs-en. */
   s32 bg1 = DISPCNT_BG1_ON;
   /* FAKEMATCH(temporary): the new control widened into a word before its
    * store; as REG_DISPCNT = control, 2 of 22 instructions differ in tbs-en. */

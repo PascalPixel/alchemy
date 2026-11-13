@@ -241,8 +241,6 @@ void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z) {
 
   if (actor != 0) {
     s32 speed = px(2);
-    /* FAKEMATCH(temporary): a local holds the 0 that unpauses the actor; as
-     * paused = 0, 8 of 28 instructions differ in tbs-en. */
     s32 unpaused = 0;
 
     actor->speedLimit = speed;
@@ -261,8 +259,6 @@ void Colosso_WalkActorToAndStand(s32 actorId, s32 x, s32 z) {
 
   if (actor != 0) {
     s32 speed = px(5) / 4;
-    /* FAKEMATCH(temporary): a local holds the 0 that unpauses the actor; as
-     * paused = 0, 8 of 33 instructions differ in tbs-en. */
     s32 unpaused = 0;
 
     actor->speedLimit = speed;

@@ -611,8 +611,6 @@ static void LamakanDesert_BatheInOasis(void) {
   revealFrames = &work->revealFrames;
   heat = &gMainRoutineWork.hazardSteps;
   {
-    /* FAKEMATCH(temporary): the drained gauge's 0 is held from before the
-     * loop; as 0 in its store, the constant is loaded from the pool. */
     s32 drained = 0;
 
     do {

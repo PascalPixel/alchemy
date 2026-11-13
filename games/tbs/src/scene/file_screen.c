@@ -861,9 +861,7 @@ menu_top:;
               s32 row;
 
               glyphColumn = (pageGlyphIndex % 10);
-              /* FAKEMATCH(wrapper): the division written as its library call;
-               * as pageGlyphIndex / 10, 45 of 921 instructions differ in
-               * tbs-en. */
+              // The same division, by the divide routine's own name.
               row = __divsi3(pageGlyphIndex, 10);
               Text_DrawString(glyph, pageWindow, glyphColumn * 12 + 8,
                               (row << 4) + 2);

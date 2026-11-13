@@ -681,9 +681,6 @@ static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
       MapGrid_CopyCellsTo(sourceColumn, 32, destinationColumn, 32, 3 - step,
                           height);
       {
-        /* FAKEMATCH(temporary): the picture strip's width and height held in
-         * block locals; as 2 and 4 at the call, 10 of 90 instructions differ
-         * in tbs-en. */
         s32 width = 2;
 
         MapGrid_CopyCellsTo(39, 51, sourceColumn, 32, 1, height);

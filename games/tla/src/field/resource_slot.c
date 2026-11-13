@@ -18,4 +18,4 @@
 #include "resource_slot/f02a6b8.c"
 #include "resource_slot/map_layers.c"
 #include "resource_slot/f02b998.c"
-#include "resource_slot/f02be4c.c"
+#include "resource_slot/world_map.c"

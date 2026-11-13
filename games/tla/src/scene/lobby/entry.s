@@ -2,7 +2,7 @@
 	.thumb
 	.include "games/tla/src/system/overlay/imports.inc"
 	.balign 4
-	overlay_veneer Func_0200145c
+	overlay_veneer LinkLobby_RunRoundResult
 	overlay_veneer Scene_GetEntrances
 	overlay_veneer Scene_GetExits
 	overlay_veneer Scene_GetPlacements

@@ -42,9 +42,9 @@ Heap_Release:
 	.thumb_func
 Func_02001454:
 	overlay_veneer Window_LoadGraphicsFar
-	.global Func_0200145c
+	.global LinkLobby_RunRoundResult
 	.thumb_func
-Func_0200145c:
+LinkLobby_RunRoundResult:
 	overlay_veneer Actor_SetMode
 	.global Func_02001464
 	.thumb_func

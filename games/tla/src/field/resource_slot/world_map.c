@@ -16,8 +16,8 @@ struct Data02020000 {
 
 extern const u32 gData_0802ed34[4][9];
 extern u8 gData_02028000[];
-/* VIEW(f02be4c): variable gWorldMapWork as extern u8 gWorldMapWork[]; battle.h has extern struct WorldMapWork gWorldMapWork; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:8903: `gWorldMapWork' has an incomplete type. */
-extern u8 gWorldMapWork__f02be4c[] __asm__("gWorldMapWork");
+/* VIEW(world_map): variable gWorldMapWork as extern u8 gWorldMapWork[]; battle.h has extern struct WorldMapWork gWorldMapWork; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:8903: `gWorldMapWork' has an incomplete type. */
+extern u8 gWorldMapWork__world_map[] __asm__("gWorldMapWork");
 
 void Func_0802d088(s32 region, s32 mode);
 void Func_080c8970(void *palette);
@@ -85,7 +85,7 @@ void Func_0802be4c(s32 x, s32 z) {
   Dma_Set(Ram_BgTileBuffer + 0x6000, BG_CHAR_BLOCK(3) + 0x2000,
           DMA_COPY_WORDS(2048), REG_DMA3);
   Resource_DecodeType01(Resource_GetTableEntry(resources[7]), gData_02028000);
-  Resource_DecodeType01(Resource_GetTableEntry(resources[8]), gWorldMapWork__f02be4c);
+  Resource_DecodeType01(Resource_GetTableEntry(resources[8]), gWorldMapWork__world_map);
   Dma_Fill32(0xf07ff07f, BG_SCREEN_BLOCK(5), 1536);
   screenTiles = (u32 *)BG_SCREEN_BLOCK(6);
   tilePair = 0x01810180;
@@ -183,8 +183,8 @@ void Func_0802c088(void) {
   perspective->windowPending = 0;
 }
 
-/* VIEW(f02be4c): variable gMapBlocks as extern u8 gMapBlocks[]; f0298c0 has extern u32 gMapBlocks[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:9021: `gMapBlocks__f02be4c' undeclared (first use in this function). */
-extern u8 gMapBlocks__f02be4c[] __asm__("gMapBlocks");
+/* VIEW(world_map): variable gMapBlocks as extern u8 gMapBlocks[]; f0298c0 has extern u32 gMapBlocks[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:9021: `gMapBlocks__world_map' undeclared (first use in this function). */
+extern u8 gMapBlocks__world_map[] __asm__("gMapBlocks");
 
 /// Copies one world map cell's two tile entries (top and bottom) to a BG map.
 static __inline__ void CopyWorldMapTileColumn(u8 *cellBytes, u8 *screenTile) {
@@ -203,7 +203,7 @@ void Map_RenderPaletteMappedRow(u32 tileRow) {
   u8 *screenTile;
   u32 column;
 
-  cellBytes = gMapBlocks__f02be4c + ((((s32)tileRow / 2) & 31) << 7);
+  cellBytes = gMapBlocks__world_map + ((((s32)tileRow / 2) & 31) << 7);
   {
     /* FAKEMATCH(pin): the BG map address held in r5, loaded right after the
      * cell address is formed; as a plain local, 4 of 57 instructions differ in
@@ -255,7 +255,7 @@ void Map_RenderPaletteMappedColumn(u32 tileColumn) {
    * tla-en. */
   register u32 screenBase asm("r5") = 0x06004000;
 
-  cellBytes = gMapBlocks__f02be4c + ((((s32)tileColumn / 2) & 31) << 2);
+  cellBytes = gMapBlocks__world_map + ((((s32)tileColumn / 2) & 31) << 2);
   /* FAKEMATCH(barrier): the empty asm holding the pin above after the cell
    * address; without it, 4 of 32 instructions differ in tla-en. */
   __asm__ volatile("" : "+l"(screenBase));

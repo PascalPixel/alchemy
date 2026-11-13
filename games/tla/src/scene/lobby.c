@@ -169,7 +169,7 @@ extern s32 gData_020022bc;
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Test(flag); }
 
-s32 Func_020002d8(void) {
+s32 LinkLobby_PromptToParticipate(void) {
   s32 set;
 
   set = GameFlag_Test(0x203);
@@ -509,7 +509,7 @@ static __inline__ void Lobby_ResetTransferState(void) {
   ime = &REG_IME;
   /* FAKEMATCH(dead): the IME exchange in a once-only block, which keeps it
    * before the zero and status constants; as plain statements, the constants
-   * come first, 8 of 62 instructions of Func_020007b8 differ in tla-en. */
+   * come first, 8 of 62 instructions of LinkLobby_ExchangePartyRecords differ in tla-en. */
   do {
     saved = *ime;
     *ime = (u16)ime;
@@ -526,7 +526,13 @@ static __inline__ void Lobby_ResetTransferState(void) {
   *ime = saved;
 }
 
-s32 Func_020007b8(void) {
+/// Exchanges the two parties. The parent sends first, and the child (area flag
+/// FLAG_BATTLE_ARENA_LINK_CHILD) receives first.
+///
+/// On success stores the partner's party member count in FLAG_LINK_PARTY_COUNT
+/// and returns it. On failure resets the transfer state and returns a negative
+/// result.
+s32 LinkLobby_ExchangePartyRecords(void) {
   s32 result;
   s32 first;
   s32 flag;
@@ -662,7 +668,7 @@ s32 Func_02000864(void) {
       Actor_WaitForMoveById(4);
       Actor_SetSpeed(4, 0x1999, 0xccc);
       Actor_ResetAndSetPositionInMode2(4, 216, 168);
-      if (Func_020007b8() < 0) {
+      if (LinkLobby_ExchangePartyRecords() < 0) {
         Actor_SetSpeed(4, 0x10000, 0x8000);
         Actor_ResetAndSetPositionInMode2(4, 216, 200);
         Func_0200198c(5);
@@ -862,7 +868,7 @@ void WindowSprite_PrepareForRedraw();
 void Text_DrawNumber();
 s32 DebugParty_LoadPreset();
 
-s32 Func_02000e4c(s32 id) {
+s32 LinkLobby_ChooseDebugParameterSet(s32 id) {
   s32 window;
   s32 choice;
   s32 shown;
@@ -1113,7 +1119,9 @@ s32 Func_02001130(s32 actor) {
   Func_02001a1c();
 }
 
-s32 Func_02001210(void) {
+/// Step trigger 1, the way out: stops the link, loads the normal reverb code
+/// and goes back to the File Screen (its entrance FILE_SCREEN_FROM_SANCTUM).
+s32 LinkLobby_LeaveArena(void) {
   Func_0200191c();
   Sound_LoadPresetParameters(2);
   /* FAKEMATCH(dead): the return in a once-only block, which loads the scene
@@ -1299,7 +1307,7 @@ static inline void Map_CopyCells(s32 x, s32 y, s32 width, s32 height, s32 destX,
   Map_CopyCellAttributeRect(x, y, width, height, destX, destY);
 }
 
-s32 Func_0200145c(void) {
+s32 LinkLobby_RunRoundResult(void) {
   s32 i;
   s32 wins;
   u32 score;
@@ -1621,7 +1629,7 @@ struct Trigger gSceneEvents[] = {
     {0, 12, CONDITION_ALWAYS, MSGNO(MsgHmItComes)},
     {0, 13, CONDITION_ALWAYS, EVENT(Func_0200122c)},
     {0, 14, CONDITION_ALWAYS, EVENT(Func_0200122c)},
-    {0, 15, CONDITION_ALWAYS, EVENT(Func_02000e4c)},
+    {0, 15, CONDITION_ALWAYS, EVENT(LinkLobby_ChooseDebugParameterSet)},
     {0, 16, CONDITION_ALWAYS, EVENT(Func_02001304)},
     {0, 17, CONDITION_ALWAYS, MSGNO(MsgInTheLinked)},
     {0, 18, CONDITION_ALWAYS, MSGNO(MsgSoYouWin)},
@@ -1633,8 +1641,8 @@ struct Trigger gSceneEvents[] = {
     {0, 24, CONDITION_ALWAYS, EVENT(Func_02000fbc)},
     {0, 25, CONDITION_ALWAYS, MSGNO(MsgIDonTHaveThe)},
     {2, 10, CONDITION_ALWAYS, EVENT(Func_02000864)},
-    {2, 1, CONDITION_ALWAYS, EVENT(Func_02001210)},
-    {6, 1, CONDITION_ALWAYS, EVENT(Func_020002d8)},
+    {2, 1, CONDITION_ALWAYS, EVENT(LinkLobby_LeaveArena)},
+    {6, 1, CONDITION_ALWAYS, EVENT(LinkLobby_PromptToParticipate)},
     {6, 2, CONDITION_ALWAYS, EVENT(Func_02000344)},
     {TRIGGERS_END},
 };

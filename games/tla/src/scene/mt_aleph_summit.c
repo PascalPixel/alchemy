@@ -19,7 +19,7 @@
 #include "objcmd.h"
 #include "frame.h"
 
-extern void Func_0200145c(struct FieldEffect *effect, s32 mode);
+extern void LinkLobby_RunRoundResult(struct FieldEffect *effect, s32 mode);
 extern void Func_02001464(struct FieldEffect *effect, const s32 *script);
 extern s32 gData_02001650[];
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -39,7 +39,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Func_0200145c(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  LinkLobby_RunRoundResult(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Func_02001464(effect, gData_02001650[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags(effect, 0);
@@ -81,7 +81,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Func_0200145c(effect, 1);
+    LinkLobby_RunRoundResult(effect, 1);
     Func_02001464(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)

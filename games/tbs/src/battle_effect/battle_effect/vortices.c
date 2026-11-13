@@ -7,16 +7,13 @@
 /// The bubble picture, after the three 16x64 vortex halves.
 #define FROTH_BUBBLE_PICTURE (3 * 16 * 64)
 
-/// The tornado pictures follow the six glint pictures
-/// (gBattleEffect_GlintPictures) in the sheet: 40x32 sections, the top and
-/// bottom ones' three frames interleaved, then the middle one's.
+/// The tornado pictures, after the six glint pictures in the sheet.
 #define WHIRLWIND_TORNADO_PICTURES GLINT_SET_BYTES
 #define WHIRLWIND_SECTION_BYTES (40 * 32)
 
-/// Bubbles fly out of the top of the user, hang, and from 48 frames after each
-/// appears home in on the targets in turn; each that reaches the ground bursts
-/// into a swirling vortex, flashing and knocking back its target, while the
-/// camera swings round over frames 17 to 63.
+/// Bubbles fly out of the top of the user, hang, and home in on the targets;
+/// each that lands bursts into a swirling vortex, knocking back its target,
+/// while the camera swings round.
 ///
 /// Abilities: Froth, Froth Sphere, Froth Spiral.
 void BattleEffect_RunFroth(struct BattleEffectParams *args) {
@@ -55,8 +52,6 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   source = GetBattleObjectSlotFar(work->args->user)->actor;
   y = source->y.fixed + BattleUnit_GetEffectHeightFar(work->args->user);
-  // The bubbles start at the top of the user, flying out up to 4 pixels a
-  // frame across and up to 2 up; variant -1 means no vortex yet.
   for (i = 0; i != 30; i++) {
     point = &work->particles[i];
     SET_POSITION(point, source->x.fixed, y, source->z.fixed);
@@ -66,7 +61,6 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
     point->variant = -1;
     flags[i] = 0;
   }
-  // Where each target stands, on the ground.
   EFFECT_FOR_EACH_TARGET(i, work->args) {
     seat = &work->particles[32 + i];
     actor = GetBattleObjectSlotFar(work->args->targets[i])->actor;
@@ -75,19 +69,16 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   work->cameraDelta = 0;
   work->cameraPhase = CAMERA_PHASE_IDLE;
   Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PASS_VBLANK);
-  // Trails keep 75% of each pixel a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_SCATTER);
 
   for (frame = 0; frame != gVortices_Counts[work->args->variant][FROTH_FRAMES];
        frame++) {
-    // The camera swings 3/512 of a turn of yaw a frame over frames 17 to 63.
     camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
     if (frame >= 17 && frame < 64)
       work->cameraDelta = TRIG_TURN * 3 / 512;
     else
       work->cameraDelta = 0;
-    // 16 frames before the end the battle shows the damage.
     if (frame == gVortices_Counts[work->args->variant][FROTH_FRAMES] - 16)
       EFFECT_SHOW_DAMAGE(SE_WATER);
     EFFECT_VIEW_FROM_CAMERA(camera);
@@ -104,7 +95,6 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
         point->y += point->velocityY;
         point->z += point->velocityZ;
       }
-      // Bubble i appears after frame 2i.
       if (frame > i * 2 + 48 && flags[i] == 0) {
         target = &work->particles[32 + i % work->args->targetCount];
         point->velocityX += (target->x - point->x) >> 9;
@@ -130,8 +120,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
           Sound_PlayFar(SE_WATER);
         }
       }
-      // The vortex where a bubble struck: two mirrored 16x64 halves cycling
-      // three pictures, for 16 frames.
+      // The vortex where a bubble landed.
       if (point->variant >= 0 && point->variant < 16) {
         draw[0](canvas, work->sheet + (point->variant / 2) % 3 * (16 * 64),
                 point->x - 16, point->y - 56, 16, 64);
@@ -142,7 +131,6 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
     }
     BattleCamera_Shake(work->args->variant * 2 + 2,
                        work->args->variant * 2 + 2);
-    // Tell BattleCamera_ApplyPhasedDelta a frame has ended.
     if (work->cameraPhase == CAMERA_PHASE_IDLE)
       work->cameraPhase = CAMERA_PHASE_FRAME_DONE;
     EFFECT_END_FRAME(work);
@@ -152,9 +140,8 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// Tornadoes sweep across the targets for 80 frames, sparkling with glints; the
-/// canvas flashes and the targets reel seven times, 8 frames apart, from frame
-/// 16, and the battle shows the damage on frame 32.
+/// Tornadoes sweep across the targets, sparkling with glints, and the targets
+/// reel again and again.
 ///
 /// Abilities: Whirlwind, Tornado, Tempest, Gale, Typhoon, Hurricane.
 void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
@@ -188,15 +175,12 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
 
-  // The glints: each waits up to 15 frames, then plays at a random spot on
-  // its tornado.
   for (j = 0; j != 16; j++) {
     point = &work->particles[j];
     point->x = Random16() & 31;
     point->y = (Random16() & 63) + 16;
     point->variant = -(Random16() & 15);
   }
-  // Trails keep half a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BLDALPHA = BLEND_ALPHA(0, 16); // invisible to start with
   wait(1);
@@ -206,24 +190,20 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
     wave = (Trig_Sin(frame << 10) * 16);
     if (frame == 32)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
-    // Seven flashes of the canvas, 8 frames apart: it is filled with level 8.
+    // The canvas flashes.
     for (i = 0; i != 7; i++) {
       if (frame == i * 8 + 16)
         Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(8));
     }
-    // The sweep sways 16 pixels each way, once every 64 frames, about a
-    // point 32 pixels right of the canvas's x 40 when the targets are the
-    // party, left otherwise.
+    // The sweep sways from side to side.
     if (work->args->side == EFFECT_SIDE_PARTY)
       wave += px(32);
     else
       wave -= px(32);
-    // Fade in over 16 frames and out over the last 16.
     if (frame <= 16)
       REG_BLDALPHA = BLEND_ALPHA(frame, 16);
     if (frame > 63)
       REG_BLDALPHA = BLEND_ALPHA(79 - frame, 16);
-    // Each tornado.
     for (i = 0; i != gVortices_Shapes[work->args->variant][WHIRLWIND_TORNADOES];
          i++) {
       x = ((gVortices_Shapes[work->args->variant][WHIRLWIND_SWAY] *
@@ -247,7 +227,6 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
               x, y + 80, 40, 32);
       for (j = 0; j != 4; j++) {
         point = &work->particles[i * 4 + j];
-        // A glint plays three pictures, two frames each.
         if (point->variant >= 0) {
           picture = point->variant / 2 + (j / 2) * 3;
           draw[j & 1](canvas,
@@ -264,7 +243,6 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
         }
       }
     }
-    // Target j reels 3j frames after each flash.
     EFFECT_FOR_EACH_TARGET(j, work->args) {
       for (i = 0; i != 7; i++) {
         if (frame == i * 8 + j * 3 + 16) {

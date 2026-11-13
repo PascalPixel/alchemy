@@ -4,28 +4,18 @@
 
 #include "../battle_effect_internal.h"
 
-// Bind and Luff spin a shrinking triangle onto the first target for 64 frames
-// and then stand a rune there; BattleEffect_RunUnusedTriangleStrike runs the
-// same frame loop. The triangle is drawn as the ring and star effects draw
-// their outlines: its corners are projected onto the canvas and stored in the
-// velocity fields of Particles, then each edge is sampled at evenly
-// spaced points and a flare is stamped at each. Both runners write the same
-// frame loop; only the prelude, the step towards the target, the canvas's
-// priority and the vertex table differ. The blue-ramp helper here, which
-// nothing calls, converts a full-screen tiled picture in place.
+// Bind and Luff spin a shrinking triangle onto the first target and stand a
+// rune there. The triangle's corners are projected onto the canvas and each
+// edge is stamped with flares.
 
-/// Turns the screen into shades of blue, top down, with a ragged edge. Works
-/// on a copy of the screen in Ram_MapGridCellBuffer. Each column starts up to
-/// 63 lines late, and the edge speeds up a little every frame; after 27 frames
-/// the picture moves onto a second blue ramp at colours 96 to 127. Takes 256
-/// random numbers, one a column.
+/// Turns the screen into shades of blue, top down, with a ragged edge; nothing
+/// calls it.
 UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
   s32 i, x, y, row, end, speed;
   s32 red, green, blue;
   u16 color;
   u8 *delays, *pixel;
   u16 *palette;
-  // A 32-colour blue ramp at colours 32 to 63, red and green at half the blue.
   palette = (u16 *)&BG_PLTT_COLOR(2, 0);
   for (i = 0; i != 32; i++) {
     s32 half;
@@ -33,8 +23,6 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
     *palette++ = RGB(half, half, i);
   }
   delays = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
-  // The edge moves speed / 4 lines a frame, speed rising by one a frame
-  // from 16.
   end = 0;
   speed = 16;
   Iwram_CopyWords(BLUE_RAMP_PIXELS, (void *)BG_CHAR_BLOCK(2),
@@ -53,7 +41,6 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
           if (y <= 119) {
             pixel = BLUE_RAMP_PIXELS + ((x & 7) + ((x / 8) << 6) +
                                         ((y & 7) << 3) + ((y / 8) << 11));
-            // Column x reaches line row - delays[x].
             color = ((s16 *)BG_PLTT)[*pixel];
             red = color & 31;
             green = (color >> 5) & 31;
@@ -71,12 +58,10 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
     Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), BLUE_RAMP_PIXELS,
                     BATTLE_BACKGROUND_BYTES);
     wait(1);
-    // Every column (120 lines, at most 63 late) is done once the edge passes
-    // line 182.
     if (end > 248)
       break;
   }
-  // Then move every pixel up 64 colours, onto a second ramp at 96 to 127.
+  // Then onto a second blue ramp.
   palette = (u16 *)&BG_PLTT_COLOR(6, 0);
   for (i = 0; i != 32; i++) {
     s32 half;
@@ -91,9 +76,8 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
   wait(1);
 }
 
-/// A triangle of light spins and shrinks onto the first target for 64 frames,
-/// changing colour and leaving a fading trail, then a rune stands on the
-/// target; the battle shows the result on frame 64.
+/// A triangle of light spins and shrinks onto the first target, changing colour
+/// and leaving a fading trail, then a rune stands on the target.
 ///
 /// Abilities: Bind; Luff.
 void BattleEffect_RunBind(struct BattleEffectParams *args) {
@@ -148,7 +132,6 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   palette = Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet);
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet + 8192);
-  // 4 off every pixel each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
   Projection_ScaledUnit(work->args->targets[0], &anchor);
   shift = 64 - anchor.x;
@@ -156,16 +139,13 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != work->args->targetCount * 20 + 72; frame++) {
-    // Frame loop: 20 frames a target and 72 more, though only the first
-    // target is drawn.
     if (frame == 64)
       EFFECT_SHOW_DAMAGE(0);
-    // Red, green and blue sway a third of a turn apart.
+    // The colours cycle through the hues.
     BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - TRIG_TURN / 3,
                                     TRIG_TURN / 3, 0);
 
-    // The Djinni sways 20 pixels either way, once every 32 frames, and from
-    // frame 33 rises 2 pixels a frame.
+    // The Djinni sways, then rises away.
     if (work->args->prelude == 1) {
       s32 x;
       s32 y;
@@ -180,8 +160,6 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
         draw[1](canvas, work->sheet + 8192, x, y, 40, 40);
       EFFECT_RELEASE_BLITTERS();
     }
-    // The blitters, plain and mirrored, keeping the brighter pixel; from
-    // frame 32 the canvas darkens one level faster every 16 frames.
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
     draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
@@ -192,7 +170,6 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += CANVAS_FILL_WORD(1);
 
-    // Only the first target is drawn.
     for (member = 0; member != 1; member++) {
       memberFrame = frame - member * 8;
       actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
@@ -202,8 +179,6 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
         position.world.y = actor->y.fixed;
         position.world.z = actor->z.fixed;
         Projection_Point(&position.world, &screen);
-        // Always canvas x 64, where BG2X puts the target; only the
-        // projected y is kept.
         screen.x = anchor.x + shift;
         screen.y -= 24;
         // The triangle.
@@ -228,7 +203,6 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
             struct Particle *from = &work->particles[j + member * 32];
             struct Particle *to = &work->particles[(j + 1) % 3 + member * 32];
 
-            // Flares shrink from size 5 to 1, a size every 16 frames.
             size = 5 - memberFrame / 16;
             for (k = 0; k != 24; k++) {
               s32 x =
@@ -254,7 +228,6 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(work);
   }
 
-  // Finish: the blitters were freed each frame.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
@@ -298,7 +271,6 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   work->args = args;
   EFFECT_START_NARROW_CANVAS(0);
 
-  // Setup, as for Bind: the rune, and the flares at 4096.
   palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
@@ -307,7 +279,6 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
                       graphics);
   palette = Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD);
   Decompress_TaggedLz(palette, work->sheet + 4096);
-  // 4 off every pixel each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
   Projection_ScaledUnit(work->args->targets[0], &anchor);
   shift = 64 - anchor.x;
@@ -315,11 +286,9 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != work->args->targetCount * 20 + 72; frame++) {
-    // Frame loop, as in BattleEffect_RunBind.
     if (frame == 64)
       EFFECT_SHOW_DAMAGE(0);
-    // The user sets off three quarters of the way to the target, arriving
-    // in 16 steps.
+    // The user sets off towards the target.
     if (frame == 46)
       BattleMotion_ApproachTargetFar(work->args->user, work->args->targets[0],
                                      16, 0);
@@ -335,7 +304,6 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += CANVAS_FILL_WORD(1);
 
-    // Only the first target is drawn.
     for (member = 0; member != 1; member++) {
       memberFrame = frame - member * 8;
       actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;

@@ -4,14 +4,11 @@
 
 #include "../battle_effect_internal.h"
 
-/// The trail particles' random rotations, 48 bytes each, after the 384
-/// particles in PARTICLES (28 bytes each, so they end at 10752).
+/// The trail particles' random rotations, after the particles in PARTICLES.
 #define ATALANTA_MATRICES (Ram_MapGridCellBuffer + 14336)
 
 /// The pictures in the slash sheet: five flash pictures, then the shaft in
-/// three parts. Each starts where the one before ends; the notes give the
-/// sizes the draws use. A flash picture's number is the frame of the flash it
-/// is drawn on.
+/// three parts, with the sizes the draws use.
 enum SlashSheetPicture {
   /// 14x28
   ATALANTA_SHAFT_FLASH_1 = 0,
@@ -68,8 +65,6 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   s32 row;
   s32 column;
 
-  // The slots are read from the background's: the effect work, the canvas
-  // and the sheet come before it.
   slots = &gHeapSlots[HEAP_SLOT_BATTLE_BACKGROUND];
   view = slots[0];
   canvas = HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_BACKGROUND,
@@ -80,8 +75,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
                          HEAP_SLOT_BATTLE_SHEET);
   scrollX = gBgScroll[1].x;
   work->args = args;
-  // Setup: the canvas, with colours 0 and 1 black, is wiped to colour 1 from
-  // the top, so the screen goes black before Atalanta is spawned.
+  // The screen wipes to black before Atalanta appears.
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
   BattleEffect_ConfigureEffectDisplay();
   BG_PLTT[0] = 0;
@@ -90,7 +84,6 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleEffect_SelectLivingTargets(work->args);
-  // Atalanta: nine sprites of SPRITE_ATALANTA, sprite priority 1.
   BattleEffect_SpawnObjects(9, SPRITE_ATALANTA, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SlashSheet, work->sheet, 1, 1);
   Iwram_CopyWords((void *)BG_PLTT,
@@ -103,10 +96,9 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
                       COMPOSITE_ADDITIVE);
   draw[0] = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE];
   draw[1] = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2];
-  // The projection centre moves down to line 240 for the gathering.
   gProjection.centerY = 240;
   wait(1);
-  // The violet sky scrolls one pixel left every four frames.
+  // The violet sky scrolls.
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            (s32)&ResourceId_VioletSkyBackdrop, 0);
   work->scrollTimer = 0;
@@ -119,9 +111,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   EFFECT_SHOW_WIDE_CANVAS(16);
   pathX = 0;
   pathY = 0;
-  // Each shaft starts at a random spot on the canvas, x 12 to 107 and y 32
-  // to 95, with 24 trail particles, each on a random rotation kept in
-  // ATALANTA_MATRICES.
+  // Each shaft starts at a random spot with its trail of motes.
   for (i = 0; i != 16; i++) {
     struct Particle *shaft = &work->particles[i];
 
@@ -139,14 +129,12 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
       Transform_Store(ATALANTA_MATRICES + (i * 24 + j) * 48);
     }
   }
-  // Trails: each transfer keeps half of every canvas level.
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
-  // The gathering: 220 frames, or until A or B is pressed.
+  // The gathering (A or B ends it).
   for (frame = 0; frame != 220 && !(gKeysRepeat & (KEY_A | KEY_B)); frame++) {
-    // Atalanta follows the path through frame 209: two 16-bit coordinates, then
-    // a signed byte step for each axis every frame.
+    // Atalanta flies along her path.
     if (frame <= 209) {
       if (frame == 0) {
         pathX = (path[0] << 8) + (u8)path[1];
@@ -170,13 +158,11 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
     }
     point[1] = 0;
     point[2] = 0;
-    // From frame 48 the battle background darkens over 24 frames
-    // (Palette_StepFadeTransfer, which the canvas layer added as a task).
     if (frame == 48) {
       work->fadeFrames = 24;
       work->fadeStep = 0;
     }
-    // Shaft i appears at frame i * 8 + 64.
+    // The shafts appear one after another.
     for (i = 0; i != 16; i++) {
       s32 start = i * 8 + 64;
 
@@ -199,7 +185,6 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
           draw[0](canvas, work->sheet + ATALANTA_SHAFT_BOTTOM, x - 20, y + 16,
                   21, 24);
         } else if (frame >= i * 8 + 80) {
-          // The flash: five pictures, one a frame, the later ones in parts.
           switch (frame - start - 16) {
           case 0:
             draw[0](canvas, work->sheet + ATALANTA_SHAFT_FLASH_1, x - 7, y - 14,
@@ -233,7 +218,6 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
             break;
           }
         } else {
-          // The trails.
           for (j = 0; j != 24; j++) {
             struct Particle *trail = &PARTICLES[i * 24 + j];
 
@@ -267,7 +251,6 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
     }
     EFFECT_PRESENT_CANVAS(work);
   }
-  // Between the parts.
   Task_Remove(BattleEffect_AdvanceScrollOnInterval);
   view->busy = 0;
   gBgScroll[1].x = scrollX;
@@ -292,15 +275,13 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
     }
     shaft->variant = -1;
   }
-  // 88 frames: 24 shafts fall, shaft i from frame 2i (all of them from frame
-  // 41), the lower part cut short near the ground.
+  // The shafts rain down on the targets.
   for (frame = 0; frame != 88; frame++) {
     for (i = 0; i != 24; i++) {
       struct Particle *shaft = &work->particles[i];
 
       if (frame >= i * 2 || frame > 40) {
-        // Landed (variant counts the frames since): the burst's six
-        // pictures, 4 frames each, the two blitters alternating by shaft.
+        // A landed shaft bursts in light.
         if (shaft->variant >= 0) {
           if (shaft->variant <= 23) {
             s32 picture = shaft->variant / 4;
@@ -337,7 +318,6 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
         } else {
           s32 height = 24;
 
-          // Falling: the shaft's lower part is cut off below row 96.
           if (shaft->y > 56)
             height = height - shaft->y + 56;
           draw[0](canvas, work->sheet + ATALANTA_SHAFT_TOP, shaft->x + 4,

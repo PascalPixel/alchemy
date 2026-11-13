@@ -2,42 +2,41 @@
 #include "scene_tables.h"
 #include "module/scene/trial_road.h"
 
-void Func_02000038(void);
-void Func_02000138(void);
+void TrialRoad_FightGasp(void);
+void TrialRoad_TakeStairs(void);
 void TrialRoad_OfferToGiveUp(void);
 void TrialRoad_OpenChests(void);
 void TrialRoad_PutItemInChest(void);
 void TrialRoad_ExamineChest(void);
-void Func_02000728(void);
-void Func_02000748(void);
-void Func_02000784(void);
-void Func_02000818(void);
-void Func_0200082c(void);
-void Func_020008d0(void);
-void Func_02000904(void);
-void Func_02000990(void);
-void Func_020009ac(void);
-void Func_02000b3c(void);
-void Func_02000b4c(void);
-void Func_02000b5c(void);
-void Func_02000b6c(void);
-void Func_02000cd0(void);
-void Func_02000ce4(void);
-void Func_02001148(void);
-void Func_02001158(void);
-void Func_02001168(void);
-void Func_02001178(void);
-void Func_02001754(s32 sound);
-void Func_0200185c(void);
-void Func_02000628(void);
+void TrialRoad_UnblockMovedPillar(void);
+void TrialRoad_BlockMovedPillar(void);
+void TrialRoad_JumpForward(void);
+void TrialRoad_UnblockTorch(void);
+void TrialRoad_MeltIceBesideTorch(void);
+void TrialRoad_FreezePuddle(void);
+void TrialRoad_BlowBushOffPillar(void);
+void TrialRoad_BlowBushOffPoundPillar(void);
+void TrialRoad_PoundPillar18(void);
+void TrialRoad_PoundPillar19(void);
+void TrialRoad_PoundPillar20(void);
+void TrialRoad_PoundPillar21(void);
+void TrialRoad_CrumblePillar15(void);
+void TrialRoad_CrumblePillar16(void);
+void TrialRoad_UncoverSpout16(void);
+void TrialRoad_UncoverSpout17(void);
+void TrialRoad_UncoverSpout18(void);
+void TrialRoad_StandOnBlock(void);
+void TrialRoad_OpenSummitGate(s32 sound);
+void TrialRoad_SetSummitPillar(void);
+void TrialRoad_StepPastChests(void);
 
-extern u8 gData_02005a70[];
-extern u8 gData_02005a8c[];
-extern u8 gData_02005ac8[];
-extern u8 gData_02005b04[];
+extern u8 gTrialRoad_SettleScript[];
+extern u8 gFieldEffect_ShortScript[];
+extern u8 gFieldEffect_MediumScript[];
+extern u8 gFieldEffect_LongScript[];
 
 // clang-format off
-u32 gData_020063ac[] = {
+u32 gTrialRoad_HexDigits[] = {
     0x33323130, 0x37363534, 0x42413938, 0x46454443, 0,
 };
 
@@ -79,7 +78,7 @@ struct ActorPlacement gTrialRoad_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02006484[] = {
+struct ActorPlacement gTrialRoad_PillarStagePlacements[] = {
     {41, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_EAST, 2, 0},
     {487, CONDITION_ALWAYS, 1, PIXELS(344), 0, PIXELS(152), FACING_EAST, 2, 0},
     {487, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(152), FACING_EAST, 2, 0},
@@ -92,12 +91,12 @@ struct ActorPlacement gData_02006484[] = {
     {312, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(392), FACING_EAST, 2, 1},
     {312, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(456), FACING_EAST, 2, 1},
     {312, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(392), FACING_EAST, 2, 1},
-    {307, CONDITION_ALWAYS, (s32)gData_02005a70, PIXELS(248), 0, PIXELS(400),
+    {307, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, PIXELS(248), 0, PIXELS(400),
      FACING_EAST, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020065d4[] = {
+struct ActorPlacement gTrialRoad_TorchStagePlacements[] = {
     {41, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_EAST, 2, 0},
     {487, CONDITION_ALWAYS, 1, PIXELS(344), 0, PIXELS(152), FACING_EAST, 2, 0},
     {487, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(152), FACING_EAST, 2, 0},
@@ -116,7 +115,7 @@ struct ActorPlacement gData_020065d4[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02006754[] = {
+struct ActorPlacement gTrialRoad_BushPillarStagePlacements[] = {
     {41, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_EAST, 2, 0},
     {487, CONDITION_ALWAYS, 1, PIXELS(344), 0, PIXELS(152), FACING_EAST, 2, 0},
     {487, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(152), FACING_EAST, 2, 0},
@@ -129,14 +128,14 @@ struct ActorPlacement gData_02006754[] = {
     {312, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(440), FACING_EAST, 2, 1},
     {312, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(456), FACING_EAST, 2, 1},
     {312, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(456), FACING_EAST, 2, 1},
-    {307, CONDITION_ALWAYS, (s32)gData_02005a70, PIXELS(232), 0, PIXELS(432),
+    {307, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, PIXELS(232), 0, PIXELS(432),
      FACING_EAST, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02005a70, PIXELS(296), 0, PIXELS(432),
+    {307, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, PIXELS(296), 0, PIXELS(432),
      FACING_EAST, 2, 1},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020068bc[] = {
+struct ActorPlacement gTrialRoad_PoundStagePlacements[] = {
     {41, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_EAST, 2, 0},
     {487, CONDITION_ALWAYS, 1, PIXELS(344), 0, PIXELS(152), FACING_EAST, 2, 0},
     {487, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(152), FACING_EAST, 2, 0},
@@ -151,12 +150,12 @@ struct ActorPlacement gData_020068bc[] = {
     {406, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(424), FACING_EAST, 2, 0},
     {406, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(424), FACING_EAST, 2, 0},
     {406, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(424), FACING_EAST, 2, 0},
-    {307, CONDITION_ALWAYS, (s32)gData_02005a70, PIXELS(264), 0, PIXELS(464),
+    {307, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, PIXELS(264), 0, PIXELS(464),
      FACING_EAST, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02006a3c[] = {
+struct ActorPlacement gTrialRoad_CrumblingStagePlacements[] = {
     {41, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_EAST, 2, 0},
     {487, CONDITION_ALWAYS, 1, PIXELS(344), 0, PIXELS(152), FACING_EAST, 2, 0},
     {487, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(152), FACING_EAST, 2, 0},
@@ -169,7 +168,7 @@ struct ActorPlacement gData_02006a3c[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02006b2c[] = {
+struct ActorPlacement gTrialRoad_LogStagePlacements[] = {
     {41, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_EAST, 2, 0},
     {487, CONDITION_ALWAYS, 1, PIXELS(344), 0, PIXELS(152), FACING_EAST, 2, 0},
     {487, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(152), FACING_EAST, 2, 0},
@@ -184,7 +183,7 @@ struct ActorPlacement gData_02006b2c[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02006c4c[] = {
+struct ActorPlacement gTrialRoad_FountainStagePlacements[] = {
     {41, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_EAST, 2, 0},
     {487, CONDITION_ALWAYS, 1, PIXELS(344), 0, PIXELS(152), FACING_EAST, 2, 0},
     {487, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(152), FACING_EAST, 2, 0},
@@ -201,7 +200,7 @@ struct ActorPlacement gData_02006c4c[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02006d9c[] = {
+struct ActorPlacement gTrialRoad_SandStagePlacements[] = {
     {41, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_EAST, 2, 0},
     {487, CONDITION_ALWAYS, 1, PIXELS(344), 0, PIXELS(152), FACING_EAST, 2, 0},
     {487, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(152), FACING_EAST, 2, 0},
@@ -211,7 +210,7 @@ struct ActorPlacement gData_02006d9c[] = {
     {40, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_EAST, 2, 0},
     {407, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(408), FACING_EAST, 2, 0},
     {407, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(408), FACING_EAST, 2, 1},
-    {307, CONDITION_ALWAYS, (s32)gData_02005a70, PIXELS(312), 0, PIXELS(336),
+    {307, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, PIXELS(312), 0, PIXELS(336),
      FACING_EAST, 2, 0},
     {SCENE_TABLE_END},
 };
@@ -242,32 +241,32 @@ struct ActorPlacement gTrialRoad_Room2Placements[] = {
 };
 
 s32 gTrialRoad_Room1Placements[] = {
-    (s32)gData_02006484,
-    (s32)gData_020065d4,
-    (s32)gData_02006754,
-    (s32)gData_020068bc,
-    (s32)gData_02006a3c,
-    (s32)gData_02006b2c,
-    (s32)gData_02006c4c,
-    (s32)gData_02006d9c,
+    (s32)gTrialRoad_PillarStagePlacements,
+    (s32)gTrialRoad_TorchStagePlacements,
+    (s32)gTrialRoad_BushPillarStagePlacements,
+    (s32)gTrialRoad_PoundStagePlacements,
+    (s32)gTrialRoad_CrumblingStagePlacements,
+    (s32)gTrialRoad_LogStagePlacements,
+    (s32)gTrialRoad_FountainStagePlacements,
+    (s32)gTrialRoad_SandStagePlacements,
 };
 
 struct Trigger gTrialRoad_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02007050[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(0x281), EVENT(Func_02000418)},
+struct Trigger gTrialRoad_PillarStageTriggers[] = {
+    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 10, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
     {TRIGGER_STEP, 11, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(0x281), EVENT(Func_02000418)},
+    {TRIGGER_STEP, 20, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
     {TRIGGER_STEP, 21, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 30, IF_FLAG_SET(0x284), EVENT(Func_02000628)},
+    {TRIGGER_STEP, 30, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
     {TRIGGER_STEP, 31, 0x284, EVENT(TrialRoad_OpenChests)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(0x284), EVENT(Func_02000628)},
+    {TRIGGER_STEP, 40, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
     {TRIGGER_STEP, 41, 0x284, EVENT(TrialRoad_OpenChests)},
     {0x1fe14, 0x409, IF_FLAG_SET(0x285), EVENT(TrialRoad_PutItemInChest)},
     {0x1fe14, 0x40a, IF_FLAG_SET(0x286), EVENT(TrialRoad_PutItemInChest)},
@@ -277,36 +276,36 @@ struct Trigger gData_02007050[] = {
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
-    {0x4602, 51, IF_FLAG_SET(0x208), EVENT(Func_020007e8)},
-    {0x4602, 52, IF_FLAG_SET(0x208), EVENT(Func_02000784)},
-    {8, 0, CONDITION_ALWAYS, EVENT(Func_02000728)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, CONDITION_ALWAYS, EVENT(Func_02000728)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, CONDITION_ALWAYS, EVENT(Func_02000728)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 17, IF_FLAG_SET(0x307), EVENT(Func_02000728)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 18, CONDITION_ALWAYS, EVENT(Func_02000728)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 19, CONDITION_ALWAYS, EVENT(Func_02000728)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000748)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT(Func_02000748)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, CONDITION_ALWAYS, EVENT(Func_02000748)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, IF_FLAG_SET(0x307), EVENT(Func_02000748)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, CONDITION_ALWAYS, EVENT(Func_02000748)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, CONDITION_ALWAYS, EVENT(Func_02000748)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 20, 0x307, EVENT(Func_02000768)},
+    {0x4602, 51, IF_FLAG_SET(0x208), EVENT(TrialRoad_JumpAcrossGap)},
+    {0x4602, 52, IF_FLAG_SET(0x208), EVENT(TrialRoad_JumpForward)},
+    {8, 0, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 17, IF_FLAG_SET(0x307), EVENT(TrialRoad_UnblockMovedPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 18, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 19, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
+    {9, 0, CONDITION_ALWAYS, EVENT(TrialRoad_BlockMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT(TrialRoad_BlockMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, CONDITION_ALWAYS, EVENT(TrialRoad_BlockMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, IF_FLAG_SET(0x307), EVENT(TrialRoad_BlockMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, CONDITION_ALWAYS, EVENT(TrialRoad_BlockMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, CONDITION_ALWAYS, EVENT(TrialRoad_BlockMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 20, 0x307, EVENT(TrialRoad_BlowBushOffLonePillar)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02007200[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(0x281), EVENT(Func_02000418)},
+struct Trigger gTrialRoad_TorchStageTriggers[] = {
+    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 10, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
     {TRIGGER_STEP, 11, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(0x281), EVENT(Func_02000418)},
+    {TRIGGER_STEP, 20, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
     {TRIGGER_STEP, 21, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 30, IF_FLAG_SET(0x284), EVENT(Func_02000628)},
+    {TRIGGER_STEP, 30, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
     {TRIGGER_STEP, 31, 0x284, EVENT(TrialRoad_OpenChests)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(0x284), EVENT(Func_02000628)},
+    {TRIGGER_STEP, 40, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
     {TRIGGER_STEP, 41, 0x284, EVENT(TrialRoad_OpenChests)},
     {0x1fe14, 0x409, IF_FLAG_SET(0x285), EVENT(TrialRoad_PutItemInChest)},
     {0x1fe14, 0x40a, IF_FLAG_SET(0x286), EVENT(TrialRoad_PutItemInChest)},
@@ -316,37 +315,37 @@ struct Trigger gData_02007200[] = {
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
-    {0xc602, 33, CONDITION_ALWAYS, EVENT(Func_020008a4)},
-    {0x4602, 33, CONDITION_ALWAYS, EVENT(Func_020008a4)},
-    {8, 0, CONDITION_ALWAYS, EVENT(Func_02000818)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, CONDITION_ALWAYS, EVENT(Func_02000818)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, CONDITION_ALWAYS, EVENT(Func_02000818)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 21, CONDITION_ALWAYS, EVENT(Func_02000818)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 22, CONDITION_ALWAYS, EVENT(Func_02000818)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_0200082c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT(Func_0200082c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, CONDITION_ALWAYS, EVENT(Func_0200082c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 21, CONDITION_ALWAYS, EVENT(Func_0200082c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 22, CONDITION_ALWAYS, EVENT(Func_0200082c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 17, IF_FLAG_SET(0x214), EVENT(Func_020008d0)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 18, IF_FLAG_SET(0x215), EVENT(Func_020008d0)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 19, IF_FLAG_SET(0x216), EVENT(Func_020008d0)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 20, IF_FLAG_SET(0x217), EVENT(Func_020008d0)},
+    {0xc602, 33, CONDITION_ALWAYS, EVENT(TrialRoad_JumpMeltedPuddle)},
+    {0x4602, 33, CONDITION_ALWAYS, EVENT(TrialRoad_JumpMeltedPuddle)},
+    {8, 0, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockTorch)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockTorch)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockTorch)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 21, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockTorch)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 22, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockTorch)},
+    {9, 0, CONDITION_ALWAYS, EVENT(TrialRoad_MeltIceBesideTorch)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT(TrialRoad_MeltIceBesideTorch)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, CONDITION_ALWAYS, EVENT(TrialRoad_MeltIceBesideTorch)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 21, CONDITION_ALWAYS, EVENT(TrialRoad_MeltIceBesideTorch)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 22, CONDITION_ALWAYS, EVENT(TrialRoad_MeltIceBesideTorch)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 17, IF_FLAG_SET(0x214), EVENT(TrialRoad_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 18, IF_FLAG_SET(0x215), EVENT(TrialRoad_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 19, IF_FLAG_SET(0x216), EVENT(TrialRoad_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 20, IF_FLAG_SET(0x217), EVENT(TrialRoad_FreezePuddle)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020073bc[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(0x281), EVENT(Func_02000418)},
+struct Trigger gTrialRoad_BushPillarStageTriggers[] = {
+    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 10, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
     {TRIGGER_STEP, 11, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(0x281), EVENT(Func_02000418)},
+    {TRIGGER_STEP, 20, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
     {TRIGGER_STEP, 21, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 30, IF_FLAG_SET(0x284), EVENT(Func_02000628)},
+    {TRIGGER_STEP, 30, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
     {TRIGGER_STEP, 31, 0x284, EVENT(TrialRoad_OpenChests)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(0x284), EVENT(Func_02000628)},
+    {TRIGGER_STEP, 40, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
     {TRIGGER_STEP, 41, 0x284, EVENT(TrialRoad_OpenChests)},
     {0x1fe14, 0x409, IF_FLAG_SET(0x285), EVENT(TrialRoad_PutItemInChest)},
     {0x1fe14, 0x40a, IF_FLAG_SET(0x286), EVENT(TrialRoad_PutItemInChest)},
@@ -356,36 +355,36 @@ struct Trigger gData_020073bc[] = {
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
-    {0x4602, 33, CONDITION_ALWAYS, EVENT(Func_02000784)},
-    {8, 0, CONDITION_ALWAYS, EVENT(Func_02000728)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, IF_FLAG_SET(0x327), EVENT(Func_02000728)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, IF_FLAG_SET(0x328), EVENT(Func_02000728)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 17, CONDITION_ALWAYS, EVENT(Func_02000728)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 18, CONDITION_ALWAYS, EVENT(Func_02000728)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 19, CONDITION_ALWAYS, EVENT(Func_02000728)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000748)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, IF_FLAG_SET(0x327), EVENT(Func_02000748)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, IF_FLAG_SET(0x328), EVENT(Func_02000748)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, EVENT(Func_02000748)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, CONDITION_ALWAYS, EVENT(Func_02000748)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, CONDITION_ALWAYS, EVENT(Func_02000748)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 20, 0x327, EVENT(Func_02000904)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 21, 0x328, EVENT(Func_02000904)},
+    {0x4602, 33, CONDITION_ALWAYS, EVENT(TrialRoad_JumpForward)},
+    {8, 0, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, IF_FLAG_SET(0x327), EVENT(TrialRoad_UnblockMovedPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, IF_FLAG_SET(0x328), EVENT(TrialRoad_UnblockMovedPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 17, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 18, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 19, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
+    {9, 0, CONDITION_ALWAYS, EVENT(TrialRoad_BlockMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, IF_FLAG_SET(0x327), EVENT(TrialRoad_BlockMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, IF_FLAG_SET(0x328), EVENT(TrialRoad_BlockMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, EVENT(TrialRoad_BlockMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, CONDITION_ALWAYS, EVENT(TrialRoad_BlockMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, CONDITION_ALWAYS, EVENT(TrialRoad_BlockMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 20, 0x327, EVENT(TrialRoad_BlowBushOffPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 21, 0x328, EVENT(TrialRoad_BlowBushOffPillar)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_0200756c[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(0x281), EVENT(Func_02000418)},
+struct Trigger gTrialRoad_PoundStageTriggers[] = {
+    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 10, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
     {TRIGGER_STEP, 11, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(0x281), EVENT(Func_02000418)},
+    {TRIGGER_STEP, 20, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
     {TRIGGER_STEP, 21, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 30, IF_FLAG_SET(0x284), EVENT(Func_02000628)},
+    {TRIGGER_STEP, 30, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
     {TRIGGER_STEP, 31, 0x284, EVENT(TrialRoad_OpenChests)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(0x284), EVENT(Func_02000628)},
+    {TRIGGER_STEP, 40, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
     {TRIGGER_STEP, 41, 0x284, EVENT(TrialRoad_OpenChests)},
     {0x1fe14, 0x409, IF_FLAG_SET(0x285), EVENT(TrialRoad_PutItemInChest)},
     {0x1fe14, 0x40a, IF_FLAG_SET(0x286), EVENT(TrialRoad_PutItemInChest)},
@@ -395,43 +394,43 @@ struct Trigger gData_0200756c[] = {
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
-    {0x202, 50, CONDITION_ALWAYS, EVENT(Func_02000c84)},
-    {0x202, 51, CONDITION_ALWAYS, EVENT(Func_02000c84)},
-    {0x202, 52, CONDITION_ALWAYS, EVENT(Func_02000c84)},
-    {0x202, 53, CONDITION_ALWAYS, EVENT(Func_02000c84)},
-    {TRIGGER_STEP, 50, 0x335, EVENT(Func_02000c34)},
-    {TRIGGER_STEP, 51, IF_FLAG_SET(0x335), EVENT(Func_02000c48)},
-    {TRIGGER_STEP, 52, 0x337, EVENT(Func_02000c5c)},
-    {TRIGGER_STEP, 53, IF_FLAG_SET(0x337), EVENT(Func_02000c70)},
-    {0x202, 60, CONDITION_ALWAYS, EVENT(Func_02000c84)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT(Func_020009ac)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, IF_FLAG_SET(0x339), EVENT(Func_020009ac)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, EVENT(Func_020009ac)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 22, 0x339, EVENT(Func_02000990)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 18, 0x335, EVENT(Func_02000b3c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 19, IF_FLAG_SET(0x335), EVENT(Func_02000b4c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 20, 0x337, EVENT(Func_02000b5c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 21, IF_FLAG_SET(0x337), EVENT(Func_02000b6c)},
+    {0x202, 50, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
+    {0x202, 51, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
+    {0x202, 52, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
+    {0x202, 53, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
+    {TRIGGER_STEP, 50, 0x335, EVENT(TrialRoad_StepOnPillar18)},
+    {TRIGGER_STEP, 51, IF_FLAG_SET(0x335), EVENT(TrialRoad_StepOnPillar19)},
+    {TRIGGER_STEP, 52, 0x337, EVENT(TrialRoad_StepOnPillar20)},
+    {TRIGGER_STEP, 53, IF_FLAG_SET(0x337), EVENT(TrialRoad_StepOnPillar21)},
+    {0x202, 60, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT(TrialRoad_CheckPoundedPillarsCovered)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, IF_FLAG_SET(0x339), EVENT(TrialRoad_CheckPoundedPillarsCovered)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, EVENT(TrialRoad_CheckPoundedPillarsCovered)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 22, 0x339, EVENT(TrialRoad_BlowBushOffPoundPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 18, 0x335, EVENT(TrialRoad_PoundPillar18)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 19, IF_FLAG_SET(0x335), EVENT(TrialRoad_PoundPillar19)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 20, 0x337, EVENT(TrialRoad_PoundPillar20)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 21, IF_FLAG_SET(0x337), EVENT(TrialRoad_PoundPillar21)},
     {TRIGGER_TABLE_END},
 };
 
-s16 gData_02007734[] = {
+s16 gTrialRoad_CrumblingPillars[] = {
     15, 834, 16, 836, -1, 0,
 };
 // clang-format on
 
-struct Trigger gData_02007740[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(0x281), EVENT(Func_02000418)},
+struct Trigger gTrialRoad_CrumblingStageTriggers[] = {
+    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 10, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
     {TRIGGER_STEP, 11, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(0x281), EVENT(Func_02000418)},
+    {TRIGGER_STEP, 20, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
     {TRIGGER_STEP, 21, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 30, IF_FLAG_SET(0x284), EVENT(Func_02000628)},
+    {TRIGGER_STEP, 30, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
     {TRIGGER_STEP, 31, 0x284, EVENT(TrialRoad_OpenChests)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(0x284), EVENT(Func_02000628)},
+    {TRIGGER_STEP, 40, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
     {TRIGGER_STEP, 41, 0x284, EVENT(TrialRoad_OpenChests)},
     {0x1fe14, 0x409, IF_FLAG_SET(0x285), EVENT(TrialRoad_PutItemInChest)},
     {0x1fe14, 0x40a, IF_FLAG_SET(0x286), EVENT(TrialRoad_PutItemInChest)},
@@ -441,29 +440,29 @@ struct Trigger gData_02007740[] = {
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
-    {0x4602, 33, CONDITION_ALWAYS, EVENT(Func_02000784)},
-    {0xc602, 33, CONDITION_ALWAYS, EVENT(Func_02000784)},
-    {0xc602, 50, CONDITION_ALWAYS, EVENT(Func_02000784)},
-    {0xc602, 51, CONDITION_ALWAYS, EVENT(Func_02000784)},
-    {0x602, 34, CONDITION_ALWAYS, EVENT(Func_02000cc0)},
-    {0x8602, 34, CONDITION_ALWAYS, EVENT(Func_02000cc0)},
-    {0x50009705, 50, 0x343, EVENT(Func_02000cd0)},
-    {0x50009705, 51, 0x345, EVENT(Func_02000ce4)},
+    {0x4602, 33, CONDITION_ALWAYS, EVENT(TrialRoad_JumpForward)},
+    {0xc602, 33, CONDITION_ALWAYS, EVENT(TrialRoad_JumpForward)},
+    {0xc602, 50, CONDITION_ALWAYS, EVENT(TrialRoad_JumpForward)},
+    {0xc602, 51, CONDITION_ALWAYS, EVENT(TrialRoad_JumpForward)},
+    {0x602, 34, CONDITION_ALWAYS, EVENT(TrialRoad_CheckCrumblingPillars)},
+    {0x8602, 34, CONDITION_ALWAYS, EVENT(TrialRoad_CheckCrumblingPillars)},
+    {0x50009705, 50, 0x343, EVENT(TrialRoad_CrumblePillar15)},
+    {0x50009705, 51, 0x345, EVENT(TrialRoad_CrumblePillar16)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_0200789c[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(0x281), EVENT(Func_02000418)},
+struct Trigger gTrialRoad_LogStageTriggers[] = {
+    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 10, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
     {TRIGGER_STEP, 11, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(0x281), EVENT(Func_02000418)},
+    {TRIGGER_STEP, 20, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
     {TRIGGER_STEP, 21, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 30, IF_FLAG_SET(0x284), EVENT(Func_02000628)},
+    {TRIGGER_STEP, 30, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
     {TRIGGER_STEP, 31, 0x284, EVENT(TrialRoad_OpenChests)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(0x284), EVENT(Func_02000628)},
+    {TRIGGER_STEP, 40, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
     {TRIGGER_STEP, 41, 0x284, EVENT(TrialRoad_OpenChests)},
     {0x1fe14, 0x409, IF_FLAG_SET(0x285), EVENT(TrialRoad_PutItemInChest)},
     {0x1fe14, 0x40a, IF_FLAG_SET(0x286), EVENT(TrialRoad_PutItemInChest)},
@@ -473,40 +472,40 @@ struct Trigger gData_0200789c[] = {
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
-    {0x602, 33, CONDITION_ALWAYS, EVENT(Func_02000784)},
-    {0x8602, 50, CONDITION_ALWAYS, EVENT(Func_0200106c)},
-    {0x602, 50, CONDITION_ALWAYS, EVENT(Func_02001080)},
-    {0x8602, 51, CONDITION_ALWAYS, EVENT(Func_02001090)},
-    {0x602, 51, CONDITION_ALWAYS, EVENT(Func_020010a4)},
-    {0xc602, 50, CONDITION_ALWAYS, EVENT(Func_020010b4)},
-    {0x4602, 50, CONDITION_ALWAYS, EVENT(Func_020010c8)},
-    {0xc602, 51, CONDITION_ALWAYS, EVENT(Func_020010b4)},
-    {0x4602, 51, CONDITION_ALWAYS, EVENT(Func_020010c8)},
-    {0xc602, 52, CONDITION_ALWAYS, EVENT(Func_020010b4)},
-    {0x4602, 52, CONDITION_ALWAYS, EVENT(Func_020010d8)},
-    {0xc602, 53, CONDITION_ALWAYS, EVENT(Func_020010b4)},
-    {0x4602, 53, CONDITION_ALWAYS, EVENT(Func_020010c8)},
-    {8, 0, CONDITION_ALWAYS, EVENT(Func_02000728)},
+    {0x602, 33, CONDITION_ALWAYS, EVENT(TrialRoad_JumpForward)},
+    {0x8602, 50, CONDITION_ALWAYS, EVENT(TrialRoad_PushLog16West)},
+    {0x602, 50, CONDITION_ALWAYS, EVENT(TrialRoad_PushLog16East)},
+    {0x8602, 51, CONDITION_ALWAYS, EVENT(TrialRoad_PushLog17West)},
+    {0x602, 51, CONDITION_ALWAYS, EVENT(TrialRoad_PushLog17East)},
+    {0xc602, 50, CONDITION_ALWAYS, EVENT(TrialRoad_PushLog18North)},
+    {0x4602, 50, CONDITION_ALWAYS, EVENT(TrialRoad_PushLog18South)},
+    {0xc602, 51, CONDITION_ALWAYS, EVENT(TrialRoad_PushLog18North)},
+    {0x4602, 51, CONDITION_ALWAYS, EVENT(TrialRoad_PushLog18South)},
+    {0xc602, 52, CONDITION_ALWAYS, EVENT(TrialRoad_PushLog18North)},
+    {0x4602, 52, CONDITION_ALWAYS, EVENT(TrialRoad_PushLog18SouthFromRow52)},
+    {0xc602, 53, CONDITION_ALWAYS, EVENT(TrialRoad_PushLog18North)},
+    {0x4602, 53, CONDITION_ALWAYS, EVENT(TrialRoad_PushLog18South)},
+    {8, 0, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15,
-     CONDITION_ALWAYS, EVENT(Func_02000728)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000748)},
+     CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
+    {9, 0, CONDITION_ALWAYS, EVENT(TrialRoad_BlockMovedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS,
-     EVENT(Func_02000748)},
+     EVENT(TrialRoad_BlockMovedPillar)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02007a64[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(0x281), EVENT(Func_02000418)},
+struct Trigger gTrialRoad_FountainStageTriggers[] = {
+    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 10, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
     {TRIGGER_STEP, 11, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(0x281), EVENT(Func_02000418)},
+    {TRIGGER_STEP, 20, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
     {TRIGGER_STEP, 21, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 30, IF_FLAG_SET(0x284), EVENT(Func_02000628)},
+    {TRIGGER_STEP, 30, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
     {TRIGGER_STEP, 31, 0x284, EVENT(TrialRoad_OpenChests)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(0x284), EVENT(Func_02000628)},
+    {TRIGGER_STEP, 40, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
     {TRIGGER_STEP, 41, 0x284, EVENT(TrialRoad_OpenChests)},
     {0x1fe14, 0x409, IF_FLAG_SET(0x285), EVENT(TrialRoad_PutItemInChest)},
     {0x1fe14, 0x40a, IF_FLAG_SET(0x286), EVENT(TrialRoad_PutItemInChest)},
@@ -516,37 +515,37 @@ struct Trigger gData_02007a64[] = {
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
-    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(Func_02001178)},
-    {8, 0, CONDITION_ALWAYS, EVENT(Func_02000728)},
+    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(TrialRoad_StandOnBlock)},
+    {8, 0, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15,
-     CONDITION_ALWAYS, EVENT(Func_02000728)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000748)},
+     CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
+    {9, 0, CONDITION_ALWAYS, EVENT(TrialRoad_BlockMovedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS,
-     EVENT(Func_02000748)},
-    {0x50008805, 50, 0x363, EVENT(Func_02001148)},
-    {0x50008805, 51, 0x364, EVENT(Func_02001158)},
-    {0x50008805, 52, 0x365, EVENT(Func_02001168)},
+     EVENT(TrialRoad_BlockMovedPillar)},
+    {0x50008805, 50, 0x363, EVENT(TrialRoad_UncoverSpout16)},
+    {0x50008805, 51, 0x364, EVENT(TrialRoad_UncoverSpout17)},
+    {0x50008805, 52, 0x365, EVENT(TrialRoad_UncoverSpout18)},
     {TRIGGER_TABLE_END},
 };
 
-s32 gData_02007bc0[] = {
-    (s32)gData_02005a8c,
-    (s32)gData_02005ac8,
-    (s32)gData_02005b04,
+s32 gFieldEffect_DurationScripts[] = {
+    (s32)gFieldEffect_ShortScript,
+    (s32)gFieldEffect_MediumScript,
+    (s32)gFieldEffect_LongScript,
 };
 
-struct Trigger gData_02007bcc[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Func_02000138)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(0x281), EVENT(Func_02000418)},
+struct Trigger gTrialRoad_SandStageTriggers[] = {
+    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, 10, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
     {TRIGGER_STEP, 11, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(0x281), EVENT(Func_02000418)},
+    {TRIGGER_STEP, 20, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
     {TRIGGER_STEP, 21, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 30, IF_FLAG_SET(0x284), EVENT(Func_02000628)},
+    {TRIGGER_STEP, 30, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
     {TRIGGER_STEP, 31, 0x284, EVENT(TrialRoad_OpenChests)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(0x284), EVENT(Func_02000628)},
+    {TRIGGER_STEP, 40, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
     {TRIGGER_STEP, 41, 0x284, EVENT(TrialRoad_OpenChests)},
     {0x1fe14, 0x409, IF_FLAG_SET(0x285), EVENT(TrialRoad_PutItemInChest)},
     {0x1fe14, 0x40a, IF_FLAG_SET(0x286), EVENT(TrialRoad_PutItemInChest)},
@@ -556,12 +555,13 @@ struct Trigger gData_02007bcc[] = {
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
-    {TRIGGER_STEP, 50, CONDITION_ALWAYS, EVENT(Func_020014e4)},
+    {TRIGGER_STEP, 50, CONDITION_ALWAYS, EVENT(TrialRoad_DriftWithStream)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0,
-     CONDITION_ALWAYS, EVENT(Func_020011c0)},
+     CONDITION_ALWAYS, EVENT(TrialRoad_StartSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
-     EVENT(Func_020011dc)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 17, 0x374, EVENT(Func_020011f8)},
+     EVENT(TrialRoad_EndSand)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 17, 0x374,
+     EVENT(TrialRoad_RevealVine)},
     {TRIGGER_TABLE_END},
 };
 
@@ -570,44 +570,46 @@ struct Trigger gTrialRoad_Room3Triggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 8, 0x289, EVENT(Func_020015a8)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 8, 0x289, EVENT(TrialRoad_LiftCaveRock)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gTrialRoad_Room4Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0x50008905, 33, CONDITION_ALWAYS, EVENT(Func_020015b8)},
-    {0x50008905, 34, CONDITION_ALWAYS, EVENT(Func_020015d8)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000038)},
+    {0x50008905, 33, CONDITION_ALWAYS, EVENT(TrialRoad_CutBushes)},
+    {0x50008905, 34, CONDITION_ALWAYS, EVENT(TrialRoad_CutMadPlantBushes)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(TrialRoad_FightGasp)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
-     CONDITION_ALWAYS, EVENT(Func_0200163c)},
+     CONDITION_ALWAYS, EVENT(TrialRoad_RevealPoolTiles)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
-     CONDITION_ALWAYS, EVENT(Func_020016c8)},
+     CONDITION_ALWAYS, EVENT(TrialRoad_HidePoolTiles)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gTrialRoad_Room2Triggers[] = {
-    {TRIGGER_STEP, 33, 0x283, EVENT(Func_02001754)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(0x9ff), EVENT(Func_020017e0)},
-    {TRIGGER_STEP, 41, IF_FLAG_SET(0x9ff), EVENT(Func_020017e0)},
+    {TRIGGER_STEP, 33, 0x283, EVENT(TrialRoad_OpenSummitGate)},
+    {TRIGGER_STEP, 40, IF_FLAG_SET(0x9ff), EVENT(TrialRoad_ChallengeMoapa)},
+    {TRIGGER_STEP, 41, IF_FLAG_SET(0x9ff), EVENT(TrialRoad_ChallengeMoapa)},
     {49, 1, CONDITION_ALWAYS, 1},
     {49, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x9fc, EVENT(Func_0200185c)},
-    {9, 0, 0x9fc, EVENT(Func_0200185c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x9fc,
+     EVENT(TrialRoad_SetSummitPillar)},
+    {9, 0, 0x9fc, EVENT(TrialRoad_SetSummitPillar)},
     {TRIGGER_TABLE_END},
 };
 
 s32 gTrialRoad_Room1Triggers[] = {
-    (s32)gData_02007050, (s32)gData_02007200, (s32)gData_020073bc,
-    (s32)gData_0200756c, (s32)gData_02007740, (s32)gData_0200789c,
-    (s32)gData_02007a64, (s32)gData_02007bcc,
+    (s32)gTrialRoad_PillarStageTriggers,     (s32)gTrialRoad_TorchStageTriggers,
+    (s32)gTrialRoad_BushPillarStageTriggers, (s32)gTrialRoad_PoundStageTriggers,
+    (s32)gTrialRoad_CrumblingStageTriggers,  (s32)gTrialRoad_LogStageTriggers,
+    (s32)gTrialRoad_FountainStageTriggers,   (s32)gTrialRoad_SandStageTriggers,
 };
 
-s32 gData_02007e20[] = {
+s32 gTrialRoad_PaletteCycleFrame[] = {
     -1,
 };
 
-u32 gData_02007e24[] = {
+u32 gTrialRoad_PaletteCycleRunning[] = {
     1,
 };

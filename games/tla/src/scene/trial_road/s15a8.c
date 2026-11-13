@@ -1,5 +1,6 @@
 /// @file
-/// Scene code of overlay 0x697, in ROM order.
+/// Trial Road's rooms set up, the rival Moapa's race, the peak, the
+/// fountains and crumbling pillars, the race's progress display and the tables.
 
 #include "../shared/map_cells.h"
 #include "../shared/effects.h"
@@ -18,11 +19,11 @@
 #include "task.h"
 #include "heap_slots.h"
 
-void Func_020015a8(void) { GameFlag_SetBit(0x289); }
+void TrialRoad_LiftCaveRock(void) { GameFlag_SetBit(0x289); }
 
-void Func_020015b8(void) { Func_02005a50_(68, 6, 1, 21, 13, 64, 64); }
+void TrialRoad_CutBushes(void) { Func_02005a50_(68, 6, 1, 21, 13, 64, 64); }
 
-void Func_020015d8(void) {
+void TrialRoad_CutMadPlantBushes(void) {
   Func_02005a50_(68, 6, 1, 21, 13, 64, 64);
   if (!Event_GetFlag(0x9b9)) {
     Func_02005a60(249, 72, 152);
@@ -32,9 +33,9 @@ void Func_020015d8(void) {
   }
 }
 
-s32 Func_02001638(void) { return 1; }
+s32 TrialRoad_ReturnTrue(void) { return 1; }
 
-#define DEFINE_FUNC_0200163C(name, n1, n2)                                     \
+#define DEFINE_TRIAL_ROAD_SET_POOL_TILES(name, n1, n2)                         \
   void name(void) {                                                            \
     MapGrid_CopyCells(n1, 30, 1, 1, 10, 11);                                   \
     Map_CopyCellsRect(n1, 30, 1, 1, 18, 7);                                    \
@@ -44,11 +45,11 @@ s32 Func_02001638(void) { return 1; }
     Map_CopyCellsRect(n2, 30, 1, 1, 82, 15);                                   \
   }
 
-DEFINE_FUNC_0200163C(Func_0200163c, 33, 35)
+DEFINE_TRIAL_ROAD_SET_POOL_TILES(TrialRoad_RevealPoolTiles, 33, 35)
 
-DEFINE_FUNC_0200163C(Func_020016c8, 34, 36)
+DEFINE_TRIAL_ROAD_SET_POOL_TILES(TrialRoad_HidePoolTiles, 34, 36)
 
-void Func_02001754(s32 sound) {
+void TrialRoad_OpenSummitGate(s32 sound) {
   if (Event_GetFlag(0x9ff)) {
     if (gTrialRoadState->mirrored == 0) {
       MapGrid_CopyCellsLayered(26, 79, 1, 2, 13, 79);
@@ -63,7 +64,7 @@ void Func_02001754(s32 sound) {
   Event_SetFlag(0x283);
 }
 
-void Func_020017e0(void) {
+void TrialRoad_ChallengeMoapa(void) {
   struct MainRoutineWork *party;
   s32 count = Event_GetFlag(0x381);
 
@@ -85,7 +86,7 @@ void Func_020017e0(void) {
 
 /// When the object stands in column 8, sets flag 0x9fc, stops its motion and
 /// lifts it one pixel.
-void Func_0200185c(s32 a, s32 id) {
+void TrialRoad_SetSummitPillar(s32 a, s32 id) {
   struct Actor *object = Actor_GetById(id);
 
   if (object->x >> 20 == 8) {
@@ -119,36 +120,36 @@ const u8 *Scene_GetEvents(void) {
   return gTrialRoad_Triggers;
 }
 
-void Func_02001904(void) {
+void TrialRoad_SetUpPillarStage(void) {
   if (!Event_GetFlag(0x307))
     OBJECT_BYTE(Actor_GetById(17), 98) = 1;
   else
     Actor_SetPosition(20, 0, 0);
-  Func_020006b4(15);
-  Func_020006b4(16);
-  Func_020006b4(17);
-  Func_020006b4(18);
-  Func_020006b4(19);
-  Func_0200062c(16);
-  Func_0200062c(17);
-  Func_0200062c(18);
-  Func_0200062c(19);
-  Task_Add(Func_020007b4, 0x480);
+  TrialRoad_AddPillarTop(15);
+  TrialRoad_AddPillarTop(16);
+  TrialRoad_AddPillarTop(17);
+  TrialRoad_AddPillarTop(18);
+  TrialRoad_AddPillarTop(19);
+  TrialRoad_BlockCellUnder(16);
+  TrialRoad_BlockCellUnder(17);
+  TrialRoad_BlockCellUnder(18);
+  TrialRoad_BlockCellUnder(19);
+  Task_Add(TrialRoad_TrackLeaderOnPillars, 0x480);
 }
 
-void Func_02001974(void) {
-  Func_020006b4(15);
-  Func_020006b4(16);
-  Func_020006b4(17);
-  Func_020006b4(18);
-  Func_020006b4(19);
-  Func_020006b4(20);
-  Func_0200062c(15);
-  Func_0200062c(16);
-  Func_0200062c(17);
-  Func_0200062c(18);
-  Func_0200062c(19);
-  Func_0200062c(20);
+void TrialRoad_SetUpTorchStage(void) {
+  TrialRoad_AddPillarTop(15);
+  TrialRoad_AddPillarTop(16);
+  TrialRoad_AddPillarTop(17);
+  TrialRoad_AddPillarTop(18);
+  TrialRoad_AddPillarTop(19);
+  TrialRoad_AddPillarTop(20);
+  TrialRoad_BlockCellUnder(15);
+  TrialRoad_BlockCellUnder(16);
+  TrialRoad_BlockCellUnder(17);
+  TrialRoad_BlockCellUnder(18);
+  TrialRoad_BlockCellUnder(19);
+  TrialRoad_BlockCellUnder(20);
   OBJECT_BYTE(Actor_GetById(17), 98) = 1;
   OBJECT_BYTE(Actor_GetById(18), 98) = 1;
   OBJECT_BYTE(Actor_GetById(19), 98) = 1;
@@ -156,22 +157,22 @@ void Func_02001974(void) {
   if (!Event_GetFlag(0x214))
     Actor_SetAnimation(17, 5);
   else
-    Func_0200070c(17, -16);
+    TrialRoad_SetPillarTopLift(17, -16);
   if (!Event_GetFlag(0x215))
     Actor_SetAnimation(18, 5);
   else
-    Func_0200070c(18, -16);
+    TrialRoad_SetPillarTopLift(18, -16);
   if (!Event_GetFlag(0x216))
     Actor_SetAnimation(19, 5);
   else
-    Func_0200070c(19, -16);
+    TrialRoad_SetPillarTopLift(19, -16);
   if (!Event_GetFlag(0x217))
     Actor_SetAnimation(20, 5);
   else
-    Func_0200070c(20, -16);
+    TrialRoad_SetPillarTopLift(20, -16);
 }
 
-void Func_02001a70(void) {
+void TrialRoad_SetUpBushPillarStage(void) {
   if (!Event_GetFlag(0x327))
     OBJECT_BYTE(Actor_GetById(15), 98) = 1;
   else
@@ -180,19 +181,19 @@ void Func_02001a70(void) {
     OBJECT_BYTE(Actor_GetById(16), 98) = 1;
   else
     Actor_SetPosition(21, 0, 0);
-  Func_020006b4(15);
-  Func_020006b4(16);
-  Func_020006b4(17);
-  Func_020006b4(18);
-  Func_020006b4(19);
-  Func_0200062c(15);
-  Func_0200062c(16);
-  Func_0200062c(17);
-  Func_0200062c(18);
-  Func_0200062c(19);
+  TrialRoad_AddPillarTop(15);
+  TrialRoad_AddPillarTop(16);
+  TrialRoad_AddPillarTop(17);
+  TrialRoad_AddPillarTop(18);
+  TrialRoad_AddPillarTop(19);
+  TrialRoad_BlockCellUnder(15);
+  TrialRoad_BlockCellUnder(16);
+  TrialRoad_BlockCellUnder(17);
+  TrialRoad_BlockCellUnder(18);
+  TrialRoad_BlockCellUnder(19);
 }
 
-void Func_02001afc(void) {
+void TrialRoad_SetUpPoundStage(void) {
   OBJECT_BYTE(Actor_GetById(18), 98) = 1;
   OBJECT_BYTE(Actor_GetById(19), 98) = 1;
   OBJECT_BYTE(Actor_GetById(20), 98) = 1;
@@ -201,38 +202,40 @@ void Func_02001afc(void) {
     OBJECT_BYTE(Actor_GetById(16), 98) = 1;
   else
     Actor_SetPosition(22, 0, 0);
-  Func_020006b4(15);
-  Func_020006b4(16);
-  Func_020006b4(17);
-  Func_020006b4(18);
-  Func_020006b4(19);
-  Func_020006b4(20);
-  Func_020006b4(21);
-  Func_0200062c(15);
-  Func_0200062c(16);
-  Func_0200062c(17);
+  TrialRoad_AddPillarTop(15);
+  TrialRoad_AddPillarTop(16);
+  TrialRoad_AddPillarTop(17);
+  TrialRoad_AddPillarTop(18);
+  TrialRoad_AddPillarTop(19);
+  TrialRoad_AddPillarTop(20);
+  TrialRoad_AddPillarTop(21);
+  TrialRoad_BlockCellUnder(15);
+  TrialRoad_BlockCellUnder(16);
+  TrialRoad_BlockCellUnder(17);
   if (!Event_GetFlag(0x335)) {
-    Func_0200095c(18);
-    Func_02000924(19);
+    TrialRoad_RaisePillar(18);
+    TrialRoad_LowerPillar(19);
   } else {
-    Func_0200095c(19);
-    Func_02000924(18);
+    TrialRoad_RaisePillar(19);
+    TrialRoad_LowerPillar(18);
   }
   if (!Event_GetFlag(0x337)) {
-    Func_0200095c(20);
-    Func_02000924(21);
+    TrialRoad_RaisePillar(20);
+    TrialRoad_LowerPillar(21);
   } else {
-    Func_0200095c(21);
-    Func_02000924(20);
+    TrialRoad_RaisePillar(21);
+    TrialRoad_LowerPillar(20);
   }
 }
 
-void Func_02001bdc(void) { Func_020042f0(gData_02007734); }
+void TrialRoad_SetUpCrumblingStage(void) {
+  TrialRoad_RestoreCrumblingPillars(gTrialRoad_CrumblingPillars);
+}
 
 /// Copies two blocks of map cells, sets byte 98 of objects 16 to 18 and clears
-/// their collision flags; then runs Func_02000d70, and Func_020006b4 and
-/// Func_0200062c for object 15.
-void Func_02001bec(void) {
+/// their collision flags; then runs TrialRoad_BlockLogs, and
+/// TrialRoad_AddPillarTop and TrialRoad_BlockCellUnder for object 15.
+void TrialRoad_SetUpLogStage(void) {
   MapGrid_CopyCellAttributes(11, 22, 11, 8, 11, 64);
   MapGrid_CopyCellAttributes(79, 22, 11, 8, 79, 64);
   OBJECT_BYTE(Actor_GetById(16), 98) = 1;
@@ -247,68 +250,86 @@ void Func_02001bec(void) {
     Actor_GetById(17)->collisionFlags = clear;
     Actor_GetById(18)->collisionFlags = clear;
   }
-  Func_02000d70();
-  Func_020006b4(15);
-  Func_0200062c(15);
+  TrialRoad_BlockLogs();
+  TrialRoad_AddPillarTop(15);
+  TrialRoad_BlockCellUnder(15);
 }
 
-/* VIEW(s15a8): routine Func_02004224 as struct TrialRoadMover
- * *Func_02004224(s32 index, s32 id, s32 value, s32 low, s32 high); the
- * definition has struct RideEntry *Func_02004224(s32 slot, s32 id, s32 timer,
- * s32 low, s32 high); tried as the definition's s32 Func_02004224(s32 row, s32
- * column, s32 direction), it does not compile in tla-ja:
- * games/tla/src/scene/trial_road/s15a8.c:265: too many arguments to function
- * `Func_02004224'. */
-extern struct TrialRoadMover *
-Func_02004224__s15a8(s32 index, s32 id, s32 value, s32 low,
-                     s32 high) __asm__("Func_02004224");
+/// One of the fountain stage's fountains and the spout drawn over it.
+struct TrialRoadFountain {
+  s16 id;     ///< its actor; 0 for an empty slot
+  s16 phase;  ///< frames into its period
+  s16 height; ///< how far it has risen, in pixels
+  s16 period; ///< frames in one rise and fall
+  s16 riseAt; ///< the phase it starts to rise at
+  s16 fallAt; ///< the phase it starts to fall at
+  s16 high;
+  s16 low;
+  s16 unk10;
+  s16 speed; ///< pixels a frame, 4 rising and -8 falling
+  s16 unk14;
+  s16 bob;             ///< the spout's sine phase
+  struct Actor *spout; ///< drawn over it
+};
+
+/// The fountain stage's work, kept in the inventory snapshot's spare room.
+struct TrialRoadFountains {
+  s16 vramEntry;
+  s16 shape; ///< the first of the shape grid's values for the fountains
+  struct TrialRoadFountain fountains[16];
+  u32 *sprites;
+};
+
+struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
+                                                s32 low, s32 high);
 
 /// Sets up the Trial Road room with five movers: objects 16 to 20 in slots 0
 /// to 4, the first three over a range of 64 and the last two over 32, each
-/// with 240, 120 and 150; objects 16 to 18 are put away (Func_0200078c) once
-/// flags 0x363 to 0x365 are set and placed otherwise; then object 15.
-void Func_02001c6c(void) {
-  struct TrialRoadMover *mover;
+/// with 240, 120 and 150; objects 16 to 18 are put away
+/// (TrialRoad_OpenSpoutCell) once flags 0x363 to 0x365 are set and placed
+/// otherwise; then object 15.
+void TrialRoad_SetUpFountainStage(void) {
+  struct TrialRoadFountain *fountain;
 
-  Func_02004188(0, 240);
-  mover = Func_02004224__s15a8(0, 16, 0, 0, 64);
-  mover->unk06 = 240;
-  mover->unk08 = 120;
-  mover->unk0a = 150;
-  mover = Func_02004224__s15a8(1, 17, 0, 0, 64);
-  mover->unk06 = 240;
-  mover->unk08 = 120;
-  mover->unk0a = 150;
-  mover = Func_02004224__s15a8(2, 18, 0, 0, 64);
-  mover->unk06 = 240;
-  mover->unk08 = 120;
-  mover->unk0a = 150;
-  mover = Func_02004224__s15a8(3, 19, 0, 0, 32);
-  mover->unk06 = 240;
-  mover->unk08 = 120;
-  mover->unk0a = 150;
-  mover = Func_02004224__s15a8(4, 20, 0, 0, 32);
-  mover->unk06 = 240;
-  mover->unk08 = 120;
-  mover->unk0a = 150;
+  TrialRoad_StartFountains(0, 240);
+  fountain = TrialRoad_AddFountain(0, 16, 0, 0, 64);
+  fountain->period = 240;
+  fountain->riseAt = 120;
+  fountain->fallAt = 150;
+  fountain = TrialRoad_AddFountain(1, 17, 0, 0, 64);
+  fountain->period = 240;
+  fountain->riseAt = 120;
+  fountain->fallAt = 150;
+  fountain = TrialRoad_AddFountain(2, 18, 0, 0, 64);
+  fountain->period = 240;
+  fountain->riseAt = 120;
+  fountain->fallAt = 150;
+  fountain = TrialRoad_AddFountain(3, 19, 0, 0, 32);
+  fountain->period = 240;
+  fountain->riseAt = 120;
+  fountain->fallAt = 150;
+  fountain = TrialRoad_AddFountain(4, 20, 0, 0, 32);
+  fountain->period = 240;
+  fountain->riseAt = 120;
+  fountain->fallAt = 150;
   if (!Event_GetFlag(0x363))
     Actor_SetPosition(16, 0, 0);
   else
-    Func_0200078c(16);
+    TrialRoad_OpenSpoutCell(16);
   if (!Event_GetFlag(0x364))
     Actor_SetPosition(17, 0, 0);
   else
-    Func_0200078c(17);
+    TrialRoad_OpenSpoutCell(17);
   if (!Event_GetFlag(0x365))
     Actor_SetPosition(18, 0, 0);
   else
-    Func_0200078c(18);
+    TrialRoad_OpenSpoutCell(18);
   ((struct MapWorkByte23 *)Ram_HeapSlots->mapWork)->bits2 = 1;
-  Func_020006b4(15);
-  Func_0200062c(15);
+  TrialRoad_AddPillarTop(15);
+  TrialRoad_BlockCellUnder(15);
 }
 
-void Func_02001d8c(void) {
+void TrialRoad_SetUpSandStage(void) {
   Func_02005a08();
   Func_02005a10(0, 15, 16);
   if (!Event_GetFlag(0x374))
@@ -317,9 +338,9 @@ void Func_02001d8c(void) {
     Actor_SetPosition(17, 0, 0);
 }
 
-void Func_02001dd0(void) {}
+void TrialRoad_SetUpCave(void) {}
 
-void Func_02001dd4(void) {
+void TrialRoad_GaspFlees(void) {
   struct Actor *partner = Actor_GetById(8);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 dx;
@@ -349,18 +370,18 @@ void Func_02001dd4(void) {
   partner->terrainHeight = 0;
   partner->collisionFlags = 1;
   partner->velocityY = 0xa0000;
-  Actor_SetScript(8, gData_02005b44);
+  Actor_SetScript(8, gTrialRoad_GaspHopScript);
   y = partner->y;
   Actor_SetMoveTarget(partner, 344 << 16, y, 264 << 16);
   Event_SetFlag(648);
 }
 
-extern s32 gData_02007e24;
+extern s32 gTrialRoad_PaletteCycleRunning;
 
 /// Unless flag 123 is set, readies object 8: before flag 0x288 it raises it
 /// 0x88000 with motion 5, after it grounds it with motion 3; then schedules
-/// Func_02001dd4.
-void Func_02001eb0(void) {
+/// TrialRoad_GaspFlees.
+void TrialRoad_SetUpPoolRoom(void) {
   if (!Event_GetFlag(123)) {
     struct Actor *object = Actor_GetById(8);
     s32 started = Event_GetFlag(0x288);
@@ -373,33 +394,37 @@ void Func_02001eb0(void) {
       *flags = 3;
       object->y = 0;
     }
-    Task_Add(Func_02001dd4, 0x480);
+    Task_Add(TrialRoad_GaspFlees, 0x480);
   }
 }
 
-void Func_02001efc(s32 value) { gData_02007e24 = value; }
+void TrialRoad_SetPaletteCycleRunning(s32 value) {
+  gTrialRoad_PaletteCycleRunning = value;
+}
 
-extern s32 gData_02007e20;
+extern s32 gTrialRoad_PaletteCycleFrame;
 
-DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gData_02007e20,
-                             gData_02007e24, gData_02007e28, 0x050000a4)
+DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gTrialRoad_PaletteCycleFrame,
+                             gTrialRoad_PaletteCycleRunning,
+                             gTrialRoad_PaletteCycleColors, 0x050000a4)
 
 #include "system.h"
 
-extern s32 gData_02007e20;
-extern s32 gData_02007e24;
+extern s32 gTrialRoad_PaletteCycleFrame;
+extern s32 gTrialRoad_PaletteCycleRunning;
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 
-void Func_02001fc4(s32 mode) {
-  gData_02007e24 = 1;
+void TrialRoad_StartPaletteCycle(s32 mode) {
+  gTrialRoad_PaletteCycleRunning = 1;
   if (mode != 2)
-    Iwram_CopyWords(gData_02007e28, (void *)&BG_PLTT_COLOR(5, 0), 32);
+    Iwram_CopyWords(gTrialRoad_PaletteCycleColors, (void *)&BG_PLTT_COLOR(5, 0),
+                    32);
   if (mode == 1) {
     s32 zero = 0;
 
-    gData_02007e20 = zero;
+    gTrialRoad_PaletteCycleFrame = zero;
     Task_Add(PaletteCycle_StepAt, 0x480);
   }
 }
@@ -420,63 +445,43 @@ void Func_02001fc4(s32 mode) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_02002db0(void);
+void TrialRoad_LeaveMoapaWaiting(void);
 
 /// The mountain's peak: after the battle, the victory or the defeat; on
 /// arrival, Moapa and his knights wait.
 void TrialRoad_SetUpPeak(void) {
-  s32 t7, t8, t10, t13, t16, p3;
+  s32 entrance = gMainRoutineWork.entrance;
 
-  if (FIELD_AT(&gMainRoutineWork, s16, 482) != 4) {
-    p3 = FIELD_AT(&gMainRoutineWork, s16, 482);
-    goto L_0200a02e;
+  if (entrance == 4) {
+    InventorySnapshot_Restore();
+    TrialRoad_BeatMoapa();
+    Import_EventSetExitRequest(4);
+  } else if (entrance == 5) {
+    InventorySnapshot_Restore();
+    TrialRoad_LoseToMoapa();
+    Import_EventSetExitRequest(5);
+  } else if (Event_GetFlag(0x9ff)) {
+    if (Event_GetFlag(0x283))
+      TrialRoad_OpenSummitGate(0);
+    if (Event_GetFlag(0x385))
+      TrialRoad_LeaveMoapaWaiting();
+    else
+      TrialRoad_PlaceMoapaAtPeak();
   }
-  InventorySnapshot_Restore();
-  TrialRoad_BeatMoapa();
-  Import_EventSetExitRequest(4);
-  goto L_0200a07c;
-L_0200a02e:
-  if (p3 != 5)
-    goto L_0200a042;
-  InventorySnapshot_Restore();
-  TrialRoad_LoseToMoapa();
-  Import_EventSetExitRequest(5);
-  goto L_0200a07c;
-L_0200a042:
-  t7 = Event_GetFlag(0x9ff);
-  if (t7 == 0)
-    goto L_0200a07c;
-  t8 = Event_GetFlag(0x283);
-  if (t8 == 0)
-    goto L_0200a064;
-  Func_02001754(0);
-L_0200a064:
-  t10 = Event_GetFlag(0x385);
-  if (t10 == 0)
-    goto L_0200a078;
-  Func_02002db0();
-  goto L_0200a07c;
-L_0200a078:
-  TrialRoad_PlaceMoapaAtPeak();
-L_0200a07c:
-  t13 = ((s32)Actor_GetById(gMainRoutineWork.currentOwner));
-  FIELD_AT(t13, u8, 35) = (64 | FIELD_AT(t13, u8, 35));
-  Func_02001fc4(1);
-  Func_020006b4(10);
-  t16 = Event_GetFlag(0x9fc);
-  if (t16 == 0)
-    goto L_0200a0bc;
-  Actor_SetPosition(10, PIXELS(136), PIXELS(328));
-L_0200a0bc:
+  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
+  TrialRoad_StartPaletteCycle(1);
+  TrialRoad_AddPillarTop(10);
+  if (Event_GetFlag(0x9fc))
+    Actor_SetPosition(10, PIXELS(136), PIXELS(328));
 }
 
-/* VIEW(s1fc4): variable gData_02005b64 as extern s32(*const gData_02005b64[])
- * (void); the definition has void(*gData_02005b64[]) (void) = { Func_02001904,
- * Func_02001974, Func_02001a70, Func_02001afc, Func_02001bdc, Func_02001bec,
- * Func_02001c6c, ...; tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:517:
- * `gData_02005b64' undeclared (first use in this function). */
-extern s32 (*const gData_02005b64__s1fc4[])(void) __asm__("gData_02005b64");
+/* VIEW(s1fc4): variable gTrialRoad_StageSetUps as extern s32 (*const
+ * gTrialRoad_StageSetUps[])(void); the definition has void
+ * (*gTrialRoad_StageSetUps[])(void); called through the void type, the
+ * call's result register moves 2 of 84 instructions of Scene_Initialize in
+ * tla-en. */
+extern s32 (*const gTrialRoad_StageSetUps__s1fc4[])(void) __asm__(
+    "gTrialRoad_StageSetUps");
 
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -489,15 +494,15 @@ s32 Scene_Initialize(void) {
     if (entrance <= 7) {
       Event_SetFlag(324);
       Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
-      gData_02005b64__s1fc4[pattern & 7]();
+      gTrialRoad_StageSetUps__s1fc4[pattern & 7]();
     } else if (entrance == 55) {
       TrialRoad_ShowTraps();
     }
   }
   if (scene == (s32)&SceneId_Ov697Room3)
-    Func_02001dd0();
+    TrialRoad_SetUpCave();
   if (scene == (s32)&SceneId_Ov697Room4)
-    Func_02001eb0();
+    TrialRoad_SetUpPoolRoom();
   if (scene == (s32)&SceneId_Ov697Room2) {
     Event_SetFlag(324);
     TrialRoad_SetUpPeak();
@@ -505,8 +510,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-void Func_0200217c(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
-                   s32 dstY) {
+void TrialRoad_CopyCellsBackward(s32 srcX, s32 srcY, s32 width, s32 height,
+                                 s32 dstX, s32 dstY) {
   u32 *cells = (u32 *)Ram_MapCellBuffer;
   s32 dst = (dstY << 7) + dstX;
   u8 *dstShapes = gMapShapeGrid + dst;
@@ -532,19 +537,19 @@ void Func_0200217c(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
   }
 }
 
-void Func_020002a4(s32 mirrored, s32 stage);
+void TrialRoad_OpenRivalDoor(s32 mirrored, s32 stage);
 
-void Func_0200223c(void) {
+void TrialRoad_UpdateRival(void) {
   struct TrialRoadStage *state = (struct TrialRoadStage *)gTrialRoadState;
   struct TrialRoadState *road = gTrialRoadState;
   s32 side;
 
   if (state->stage > 3)
     return;
-  if (Func_020056e8() != 0) {
+  if (TrialRoad_RivalIsWaiting() != 0) {
     if (state->timer == 0) {
-      side = Func_020000fc(1) ^ 1;
-      Func_020056c4(gData_02005b84[side + 8]);
+      side = TrialRoad_RivalIsAhead(1) ^ 1;
+      TrialRoad_PlayRivalRecording(gTrialRoad_RivalRecordings[side + 8]);
       state->timer = side * 5 * 120 + 1;
     } else {
       if (state->stage >= state->best)
@@ -553,7 +558,7 @@ void Func_0200223c(void) {
         s32 pattern =
             state->order[state->stage * 2 + (s16)(state->mirrored ^ 1)];
 
-        Func_020056c4(gData_02005b84[pattern & 7]);
+        TrialRoad_PlayRivalRecording(gTrialRoad_RivalRecordings[pattern & 7]);
         Actor_GetById(8)->terrainHeight = 0;
         Actor_GetById(8)->y = 0;
       } else {
@@ -610,7 +615,7 @@ void Func_0200223c(void) {
       break;
     case 70:
     case 730:
-      Func_020002a4(state->mirrored, state->stage);
+      TrialRoad_OpenRivalDoor(state->mirrored, state->stage);
       Sound_Play(138);
       break;
     }
@@ -618,27 +623,12 @@ void Func_0200223c(void) {
   road->field14++;
 }
 
-/* VIEW(s1fc4): variable gData_02005bac as extern const s16 gData_02005bac[][2];
- * the definition has u16 gData_02005bac[] = { 1, 48, 15, 48, 29, 48, 1, 70, 15,
- * 70, 29, 70, 1, 92, 15, 92, }; tried as the definition's extern u32
- * gData_02005bac[], it does not compile in tla-ja:
- * games/tla/src/scene/trial_road/s15a8.c:781: subscripted value is neither
- * array nor pointer. */
-extern const s16 gData_02005bac__s1fc4[][2] __asm__("gData_02005bac");
-/* VIEW(s1fc4): variable gData_02005bcc as extern const s8 gData_02005bcc[]; the
- * definition has u8 gData_02005bcc[] = { 0, 1, 2, 3, 4, 4, 4, 5, 6, 7, }; tried
- * as the definition's extern struct ActorPlacement gData_02005bcc[], it does
- * not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:790: invalid
- * operands to binary !=. */
-extern const s8 gData_02005bcc__s1fc4[] __asm__("gData_02005bcc");
-/* VIEW(s1fc4): variable gData_02005bd6 as extern const s8 gData_02005bd6[]; the
- * definition has u8 gData_02005bd6[] = { 0, 1, 2, 3, 4, 4, 4, 5, 6, 7, }; tried
- * as the definition's extern u8 gData_02005bd6[], Scene_PrepareMap moves: 1 of
- * 868 instructions in tla-ja. */
-extern const s8 gData_02005bd6__s1fc4[] __asm__("gData_02005bd6");
+extern s16 gTrialRoad_StageMapCells[][2];
+extern s8 gTrialRoad_DemoSceneryStages[];
+extern s8 gTrialRoad_SceneryStages[];
 
 void *Unit_Get(s32 owner);
-void Func_02005688(s32 a);
+void TrialRoad_StartRival(s32 a);
 
 // Places `layer` `column` cells into the map: its offset (column << 20), its
 // cells and terrain from that column on, and its position from the view. The
@@ -686,7 +676,7 @@ s32 Scene_PrepareMap(void) {
       state->field1a = 0;
       state->field1c = 0;
       value = state->order[state->mirrored ^ 1];
-      Func_020056c4((s32)gData_02005b84[value & 7]);
+      TrialRoad_PlayRivalRecording((s32)gTrialRoad_RivalRecordings[value & 7]);
       state->pattern = state->order[state->field16[0] * 2 + state->mirrored];
       n = entrance % 10;
       Event_SetDestination((s32)&SceneId_Ov697Room1, n);
@@ -719,7 +709,7 @@ s32 Scene_PrepareMap(void) {
           value = state->order[index];
         }
       }
-      Func_020056c4((s32)gData_02005b84[value & 7]);
+      TrialRoad_PlayRivalRecording((s32)gTrialRoad_RivalRecordings[value & 7]);
       state->pattern = state->order[state->field16[0] * 2 + state->mirrored];
       n = entrance % 10;
       Event_SetDestination((s32)&SceneId_Ov697Room1, n);
@@ -764,8 +754,8 @@ s32 Scene_PrepareMap(void) {
         Func_02005828(x1, 13, 33, 21, x1 + 1, 13);
         Func_02005828(x2, 13, 33, 21, x2 + 1, 13);
         value = state->pattern;
-        px = gData_02005bac__s1fc4[value][0];
-        row = gData_02005bac__s1fc4[value][1];
+        px = gTrialRoad_StageMapCells[value][0];
+        row = gTrialRoad_StageMapCells[value][1];
         Func_02005828(px, row, 13, 21, 1, 13);
         Func_02005828(px + 42, row, 13, 21, x1 + 1, 13);
         Func_02005828(px + 84, row, 13, 21, x2 + 1, 13);
@@ -773,7 +763,7 @@ s32 Scene_PrepareMap(void) {
         // the index; as a for loop, 10 more instructions differ (376).
         i = 0;
       hideUnused55:
-        if (gData_02005bcc__s1fc4[i] != value)
+        if (gTrialRoad_DemoSceneryStages[i] != value)
           Actor_SetHorizontalPositionWithTerrain(i + 64, 0, 0);
         i++;
         if (i <= 9)
@@ -791,12 +781,12 @@ s32 Scene_PrepareMap(void) {
         SET_LAYER(68, x2);
         value = 1;
         if (entrance & value) {
-          Func_0200217c(0, 0, 102, 13, 9, 0);
+          TrialRoad_CopyCellsBackward(0, 0, 102, 13, 9, 0);
           Func_02005828(0, 0, 10, 1, 1, 0);
           Func_02005828(0, 0, 10, 12, 0, 1);
           Func_02005828(x1, 0, 10, 12, x1, 1);
           Func_02005828(x2, 0, 10, 12, x2, 1);
-          Func_0200217c(0, 34, 102, 10, 9, 34);
+          TrialRoad_CopyCellsBackward(0, 34, 102, 10, 9, 34);
           Func_02005828(0, 33, 10, 10, 0, 34);
           Func_02005828(x1, 33, 10, 10, x1, 34);
           Func_02005828(x2, 33, 10, 10, x2, 34);
@@ -821,15 +811,15 @@ s32 Scene_PrepareMap(void) {
         Actor_SetSpriteColor(Actor_GetById(12), 3);
         destinationY = 13;
         value = state->pattern;
-        px = gData_02005bac__s1fc4[value][0];
-        row = gData_02005bac__s1fc4[value][1];
+        px = gTrialRoad_StageMapCells[value][0];
+        row = gTrialRoad_StageMapCells[value][1];
         Func_02005828(px, row, 13, 21, 10, destinationY);
         Func_02005828(px + 42, row, 13, 21, 44, destinationY);
         Func_02005828(px + 84, row, 13, 21, 78, destinationY);
         // A goto loop for the same reason as the one above.
         i = 0;
       hideUnused:
-        if (gData_02005bd6__s1fc4[i] != value)
+        if (gTrialRoad_SceneryStages[i] != value)
           Actor_SetHorizontalPositionWithTerrain(i + 64, 0, 0);
         i++;
         if (i <= 9)
@@ -850,21 +840,21 @@ s32 Scene_PrepareMap(void) {
           // same one GCSE moves the load into both predecessors (11 more of
           // gap).
           if (road->field16[0] < road->field1a || GameFlag_Test(642)) {
-            Func_02000218(road->mirrored,
-                          ((struct TrialRoadDeal *)road)->field16[0]);
+            TrialRoad_OpenLeaderDoor(
+                road->mirrored, ((struct TrialRoadDeal *)road)->field16[0]);
             GameFlag_SetBit(642);
             GameFlag_SetBit(644);
           }
           if (road->field16[0] < road->field1c)
-            Func_020002a4(road->mirrored, road->field16[0]);
-          Func_020055c4(gMainRoutineWork.currentOwner, 8);
-          Func_02005688((s16)(state->mirrored ^ 1));
-          Task_Add(Func_0200223c, 0x480);
+            TrialRoad_OpenRivalDoor(road->mirrored, road->field16[0]);
+          TrialRoad_ShowProgress(gMainRoutineWork.currentOwner, 8);
+          TrialRoad_StartRival((s16)(state->mirrored ^ 1));
+          Task_Add(TrialRoad_UpdateRival, 0x480);
         } else {
-          Func_02000218(state->mirrored, state->field16[0]);
+          TrialRoad_OpenLeaderDoor(state->mirrored, state->field16[0]);
           GameFlag_SetBit(642);
           GameFlag_SetBit(644);
-          Func_020002a4(state->mirrored, state->field16[0]);
+          TrialRoad_OpenRivalDoor(state->mirrored, state->field16[0]);
         }
       }
     }
@@ -882,21 +872,15 @@ s32 Scene_PrepareMap(void) {
 
 // Deals the Trial Road's stage order from a seed: shuffles 0 to 7 into the
 // eight slots at the start of the stage state, again until both the even and
-// the odd slots hold at least one of the four values in gData_02005be0; the
-// random state is restored after.
+// the odd slots hold at least one of the four values in gTrialRoad_KeyStages;
+// the random state is restored after.
 
-/* VIEW(s1fc4): variable gData_02005be0 as extern const s8 gData_02005be0[4];
- * the definition has u32 gData_02005be0[] = { 0x7030200, 0x6050401, }; tried as
- * the definition's extern struct ActorPlacement gData_02005be0[], which the
- * object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/trial_road/s15a8.c:931: `gData_02005be0' undeclared
- * (first use in this function). */
-extern const s8 gData_02005be0__s1fc4[4] __asm__("gData_02005be0");
+extern s8 gTrialRoad_KeyStages[];
 
 /// Deals the Trial Road's stage order from a seed: shuffles 0 to 7 into the
 /// eight slots at the start of the stage state, again until both the even and
-/// the odd slots hold at least one of the four values in gData_02005be0; the
-/// random state is restored after.
+/// the odd slots hold at least one of the four values in gTrialRoad_KeyStages;
+/// the random state is restored after.
 void TrialRoad_DealStageOrder(u32 seed) {
   s16 *order = (s16 *)gTrialRoadState;
   u32 saved = gRandomState;
@@ -920,7 +904,7 @@ void TrialRoad_DealStageOrder(u32 seed) {
     counts[0] = 0;
     for (i = 0; i <= 7; i++) {
       for (k = 0; k <= 3; k++) {
-        value = gData_02005be0__s1fc4[k];
+        value = gTrialRoad_KeyStages[k];
         if (order[i] == value)
           counts[i & 1]++;
       }
@@ -929,7 +913,7 @@ void TrialRoad_DealStageOrder(u32 seed) {
   gRandomState = saved;
 }
 
-s32 Func_02002ce8(s32 side) {
+s32 TrialRoad_GetStage(s32 side) {
   struct TrialRoadState *state;
 
   state = gTrialRoadState;
@@ -971,7 +955,7 @@ void TrialRoad_PlaceActor(s32 id, s32 x, s32 z, s32 angle) {
                              (u16)TrialRoad_MirrorAngle(angle));
 }
 
-void Func_02002db0(void) {}
+void TrialRoad_LeaveMoapaWaiting(void) {}
 
 void TrialRoad_PlaceMoapaAtPeak(void) {
   TrialRoad_PlaceActor(8, 288, 264, 0x8000);
@@ -1282,14 +1266,7 @@ void TrialRoad_LoseToMoapa(void) {
 
 /// The byte at 0x5a of an actor, as the field its bit 0 is set through.
 
-/* VIEW(s1fc4): variable gData_02005dc8 as extern const u8 gData_02005dc8[]; the
- * definition has u32 gData_02005dc8[] = { 22, 15, 0x18000, 22, 16, 0x10000, 39,
- * 5, 4, 0xd80000, 0, 0xa80000, 1, 4, 0xe80000, 0, 0x980000, 1, 4, 0xe80000, 0,
- * ...; tried as the definition's extern s16 gData_02005dc8[], which the object
- * already declares, it does not compile in tla-ja:
- * games/tla/src/scene/trial_road/s15a8.c:1370: `gData_02005dc8' undeclared
- * (first use in this function). */
-extern const u8 gData_02005dc8__s1fc4[] __asm__("gData_02005dc8");
+extern u32 gTrialRoad_LeftKnightLeavesScript[];
 
 /// ★ Named from the game: "The room is filled with traps and snares. Use the
 /// power of Contigo to avoid them." (MsgTrialRoadTrapInstructions)
@@ -1307,8 +1284,8 @@ void TrialRoad_ShowTraps(void) {
       object->x -= 0x900000;
   }
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Actor_SetMovementTypeById(13, gData_02005c88);
-  Actor_SetMovementTypeById(14, gData_02005be8);
+  Actor_SetMovementTypeById(13, gTrialRoad_LeftKnightEntersScript);
+  Actor_SetMovementTypeById(14, gTrialRoad_RightKnightEntersScript);
   Event_StartScreenTransition();
   Event_Wait(20);
   FieldCamera_SetSpeed(0x20000, 0x4000);
@@ -1326,7 +1303,7 @@ void TrialRoad_ShowTraps(void) {
   Import_FieldCameraWaitForArrival();
   Event_ShowMessageAndWait(8, 0);
   Event_ShowMessageAndWait(4, 0);
-  Actor_SetMovementTypeById(13, gData_02005d28);
+  Actor_SetMovementTypeById(13, gTrialRoad_LeftKnightToChestScript);
   Actor_RefreshSelectorById(13);
   Actor_SetModeById(13, 1);
   Event_Wait(10);
@@ -1373,11 +1350,11 @@ void TrialRoad_ShowTraps(void) {
   MapGrid_CopyCellsLayered(127, 3, 1, 2, 48, 3);
   Map_CopyCellAttributeRect(0, 127, 1, 1, 14, 8);
   Event_Wait(20);
-  Actor_SetMovementTypeById(13, gData_02005dc8__s1fc4);
+  Actor_SetMovementTypeById(13, gTrialRoad_LeftKnightLeavesScript);
   Actor_RefreshSelectorById(13);
   Sound_Play(123);
   Event_ShowMessageAndWait(8, 0);
-  Actor_SetMovementTypeById(14, gData_02005e40);
+  Actor_SetMovementTypeById(14, gTrialRoad_RightKnightToChestsScript);
   FieldCamera_MoveTo(328 << 16, -1, 120 << 16, 1);
   Import_FieldCameraWaitForArrival();
   Event_ShowMessageAndWait(8, 0);
@@ -1415,7 +1392,7 @@ void TrialRoad_ShowTraps(void) {
   FieldCamera_MoveWithinMapBounds(408 << 16, -1, 120 << 16, 1);
   Import_FieldCameraWaitForArrival();
   Event_ShowMessageAndWait(8, 0);
-  Actor_SetMovementTypeById(14, gData_02005ed4);
+  Actor_SetMovementTypeById(14, gTrialRoad_RightKnightLeavesScript);
   Actor_RefreshSelectorById(14);
   Event_ShowMessageAndWait(8, 0);
   Import_EventSetExitRequest(10);
@@ -1428,43 +1405,16 @@ void TrialRoad_ShowTraps(void) {
 // height and cell attribute byte follow its actor and offset, and its marker
 // actor is placed over it, bobbing on a sine while the offset is not 0.
 
-/* VIEW(s1fc4): tag struct TrialRoadMover as struct TrialRoadMover__s1fc4;
- * s15a8.c has another definition; tried with the definition the rest of the
- * object has, it does not compile in tla-ja:
- * games/tla/src/scene/trial_road/s15a8.c:1463: structure has no member named
- * `phase'. */
-struct TrialRoadMover__s1fc4 {
-  s16 id;
-  s16 phase;
-  s16 offset;
-  s16 period;
-  s16 upAt;
-  s16 downAt;
-  s16 high;
-  s16 low;
-  s16 unk10;
-  s16 speed;
-  s16 unk14;
-  s16 bob;
-  struct Actor *marker;
-};
-
-struct TrialRoadMovers {
-  u8 unk00[2];
-  s16 shape;
-  struct TrialRoadMover__s1fc4 movers[16];
-};
-
 /// Updates the sixteen movers at gInventorySnapshot + 0x188 each frame: at its
 /// upAt and downAt phases a mover calls Sound_Play (206 or 395) and moves by 4
 /// or -8 a frame until it reaches its high or low offset; its phase counts
 /// round its period unless flag 260 is set. Each mover's shape, collision
 /// height and cell attribute byte follow its actor and offset, and its marker
 /// actor is placed over it, bobbing on a sine while the offset is not 0.
-void Func_02003da0(void) {
-  struct TrialRoadMovers *work =
-      (struct TrialRoadMovers *)(gInventorySnapshot + 0x188);
-  struct TrialRoadMover__s1fc4 *mover = work->movers;
+void TrialRoad_UpdateFountains(void) {
+  struct TrialRoadFountains *work =
+      (struct TrialRoadFountains *)(gInventorySnapshot + 0x188);
+  struct TrialRoadFountain *mover = work->fountains;
   struct TrialRoadMapWork *map = Ram_HeapSlots->mapWork;
   s32 shape = work->shape;
   u8 *shapes = *(u8 **)((u8 *)map + 316);
@@ -1484,23 +1434,23 @@ void Func_02003da0(void) {
     actor = Actor_GetById(mover->id);
     if (actor->x == 0 && actor->z == 0)
       continue;
-    if (mover->phase == mover->upAt) {
+    if (mover->phase == mover->riseAt) {
       Sound_Play(206);
       mover->speed = 4;
     }
-    if (mover->phase == mover->downAt) {
+    if (mover->phase == mover->fallAt) {
       Sound_Play(395);
       mover->speed = -8;
     }
     if (mover->speed != 0) {
-      mover->offset += mover->speed;
-      if (mover->offset >= mover->high) {
-        mover->offset = mover->high;
+      mover->height += mover->speed;
+      if (mover->height >= mover->high) {
+        mover->height = mover->high;
         mover->speed = 0;
         mover->bob = 0;
       }
-      if (mover->offset <= mover->low) {
-        mover->offset = mover->low;
+      if (mover->height <= mover->low) {
+        mover->height = mover->low;
         mover->speed = 0;
         mover->bob = 0;
       }
@@ -1511,7 +1461,7 @@ void Func_02003da0(void) {
     }
     cell = (actor->x >> 20) + ((actor->z >> 20) << 7);
     shapes[cell] = (u8)work->shape + i;
-    *collision = ((((s16 *)&actor->y)[1] + mover->offset) / 8) << 8;
+    *collision = ((((s16 *)&actor->y)[1] + mover->height) / 8) << 8;
     attributes = cells + cell * 4;
     if (mover->speed != 0)
       attributes[3] = 0;
@@ -1520,21 +1470,21 @@ void Func_02003da0(void) {
       bits |= attributes[3];
       attributes[3] = bits;
     }
-    if (mover->offset != 0) {
+    if (mover->height != 0) {
       s32 bits = 16;
       bits |= attributes[3];
       attributes[3] = bits;
     } else
       attributes[3] = 0;
-    marker = mover->marker;
+    marker = mover->spout;
     if (marker != 0) {
-      if (mover->offset == 0) {
+      if (mover->height == 0) {
         marker->y = actor->y - 0x100000;
       } else {
         s32 wave;
         mover->bob += 0x1000;
         wave = Iwram_MulQ16(0x20000, Trig_Sin(mover->bob)) - 0xe0000;
-        marker->y = actor->y + (mover->offset << 16) + wave;
+        marker->y = actor->y + (mover->height << 16) + wave;
       }
       marker->x = actor->x;
       marker->z = actor->z;
@@ -1545,42 +1495,16 @@ void Func_02003da0(void) {
 #undef SET_LAYER
 
 // Trial Road's movers' sprites, the setup of its gauge, a rising platform's
-// entry, the trap table's setup, Func_02004418, the placing of actors 8, 9
-// and 10, Func_02004828 and a second copy of
+// entry, the trap table's setup, TrialRoad_CheckCrumblingStep, the placing of
+// actors 8, 9 and 10, TrialRoad_StepOnTrap and a second copy of
 // Effect_AdvanceMotionAtLeaderPriority, in ROM order.
 #include "frame.h"
 
-/* VIEW(s3f68): tag struct TrialRoadMover as struct TrialRoadMover__s3f68;
- * s15a8.c has another definition; tried with the definition the rest of the
- * object has, it does not compile in tla-ja:
- * games/tla/src/scene/trial_road/s15a8.c:1596: structure has no member named
- * `offset'. */
-struct TrialRoadMover__s3f68 {
-  s16 id;
-  s16 phase;
-  s16 offset;
-  s16 unk06[8];
-  s16 bob;
-  struct Actor *marker;
-};
-
-/* VIEW(s3f68): tag struct TrialRoadMovers as struct TrialRoadMovers__s3f68;
- * s15a8.c has another definition; tried with the definition the rest of the
- * object has, it does not compile in tla-ja:
- * games/tla/src/scene/trial_road/s15a8.c:1587: structure has no member named
- * `vramEntry'. */
-struct TrialRoadMovers__s3f68 {
-  s16 vramEntry;
-  s16 shape;
-  struct TrialRoadMover__s3f68 movers[16];
-  u32 *entries;
-};
-
 /// Queues the Trial Road movers' sprites.
-void Func_02003f68(void) {
-  struct TrialRoadMovers__s3f68 *base =
-      (struct TrialRoadMovers__s3f68 *)(gInventorySnapshot + 0x188);
-  struct TrialRoadMover__s3f68 *mover = base->movers;
+void TrialRoad_DrawFountains(void) {
+  struct TrialRoadFountains *base =
+      (struct TrialRoadFountains *)(gInventorySnapshot + 0x188);
+  struct TrialRoadFountain *mover = base->fountains;
   s32 i;
   s32 tile;
   s32 frame;
@@ -1603,7 +1527,7 @@ void Func_02003f68(void) {
   s32 bob;
 
   tile = gResourceTableEntries[base->vramEntry].offset >> 5;
-  entry = base->entries;
+  entry = base->sprites;
   count = 0;
   rise = -0x20000;
   map = Ram_HeapSlots->mapWork;
@@ -1613,12 +1537,12 @@ void Func_02003f68(void) {
   viewY = map->origin[1];
 
   for (i = 0; i < 16; i++, mover++) {
-    if (mover->id == 0 || mover->offset == 0)
+    if (mover->id == 0 || mover->height == 0)
       continue;
     object = Actor_GetById(mover->id);
     frame = ((gFrameCount % 12) / 3) * 8 + 32;
     lift = 0;
-    if (lift < mover->offset) {
+    if (lift < mover->height) {
     next:
       if (count > 79)
         goto skip;
@@ -1642,13 +1566,13 @@ void Func_02003f68(void) {
       count++;
     skip:
       lift += 16;
-      if (lift < mover->offset)
+      if (lift < mover->height)
         goto next;
     }
     if (count > 79)
       continue;
     x = object->x - viewX;
-    height = object->y + (mover->offset << 16) - viewY;
+    height = object->y + (mover->height << 16) - viewY;
     z = object->z - viewZ - viewY;
     x = (x >> 16) - 8;
     sy = z - height;
@@ -1675,55 +1599,32 @@ void Func_02003f68(void) {
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void *Pool_Alloc(s32 size) { return Heap_AllocEwram(size); }
 
-void Func_02004188(s32 a, s32 b) {
-  struct TrialRoadGauge *gauge =
-      (struct TrialRoadGauge *)(gInventorySnapshot + 0x188);
+void TrialRoad_StartFountains(s32 unused, s32 shape) {
+  struct TrialRoadFountains *work =
+      (struct TrialRoadFountains *)(gInventorySnapshot + 0x188);
   void *buffer;
 
   if (!Event_GetFlag(0x109))
-    Iwram_ClearWords(gauge, 0x1c8);
+    Iwram_ClearWords(work, 0x1c8);
   buffer = Pool_Alloc(0x800);
   Import_DecompressTaggedLz(gField_Tiles64D, buffer);
-  gauge->handle = VramCache_FindFreeEntry();
-  VramCache_Load((s16)gauge->handle, 0x800, buffer);
+  work->vramEntry = VramCache_FindFreeEntry();
+  VramCache_Load(work->vramEntry, 0x800, buffer);
   Heap_Release(buffer);
-  gauge->buffer = Heap_AllocEwram(0x3c0);
-  gauge->field02 = b;
-  Task_Add(Func_02003da0, 0x48d);
-  Task_Add(Func_02003f68, 0x480);
+  work->sprites = Heap_AllocEwram(0x3c0);
+  work->shape = shape;
+  Task_Add(TrialRoad_UpdateFountains, 0x48d);
+  Task_Add(TrialRoad_DrawFountains, 0x480);
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 0x40;
 }
 
-/// One rising platform and what rides it.
-struct RideEntry {
-  s16 id;
-  s16 timer;
-  s16 height;
-  s16 period;
-  s16 riseAt;
-  s16 fallAt;
-  s16 max;
-  s16 min;
-  s16 unk10;
-  s16 step;
-  s16 unk14;
-  s16 phase;
-  struct Actor *rider;
-};
-
-struct RideWork {
-  s16 entry;
-  s16 value;
-  struct RideEntry entries[16];
-  void *block;
-};
-
-struct RideEntry *Func_02004224(s32 slot, s32 id, s32 timer, s32 low,
-                                s32 high) {
-  struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
-  struct RideEntry *entry = &work->entries[slot];
+struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
+                                                s32 low, s32 high) {
+  struct TrialRoadFountains *work =
+      (struct TrialRoadFountains *)(gInventorySnapshot + 0x188);
+  struct TrialRoadFountain *fountain = &work->fountains[slot];
   struct Actor *object = Actor_GetById(id);
-  struct Actor *rider;
+  struct Actor *spout;
 
   Actor_GetById(id);
   Actor_SetSpriteFlags(object, 0);
@@ -1734,29 +1635,29 @@ struct RideEntry *Func_02004224(s32 slot, s32 id, s32 timer, s32 low,
       low = high;
       high = swap;
     }
-    entry->id = id;
-    entry->height = 0;
-    entry->timer = timer;
-    entry->period = 360;
-    entry->max = high;
-    entry->riseAt = 60;
-    entry->fallAt = 240;
-    entry->min = low;
-    entry->unk10 = 1;
+    fountain->id = id;
+    fountain->height = 0;
+    fountain->phase = timer;
+    fountain->period = 360;
+    fountain->high = high;
+    fountain->riseAt = 60;
+    fountain->fallAt = 240;
+    fountain->low = low;
+    fountain->unk10 = 1;
     object->motionFlags = 0;
     object->collisionFlags = 8;
-    entry->step = 0;
-    entry->phase = 0;
-    entry->unk14 = 0;
+    fountain->speed = 0;
+    fountain->bob = 0;
+    fountain->unk14 = 0;
     object->priorityFlags |= 2;
   }
-  rider = ((struct Actor *)Import_ActorCreate(0x8000, object->x, object->y,
+  spout = ((struct Actor *)Import_ActorCreate(0x8000, object->x, object->y,
                                               object->z));
-  rider->collisionFlags = 0;
-  rider->motionFlags = 0;
-  rider->priorityFlags |= 128;
-  entry->rider = rider;
-  return entry;
+  spout->collisionFlags = 0;
+  spout->motionFlags = 0;
+  spout->priorityFlags |= 128;
+  fountain->spout = spout;
+  return fountain;
 }
 
 // The trap table's setup: a trap whose second flag is set is put away; any
@@ -1768,15 +1669,15 @@ struct RideEntry *Func_02004224(s32 slot, s32 id, s32 timer, s32 low,
 /// other marks its cell, writes a shape for its height into the shape grid, and
 /// takes mode 0 when its first flag is set. Then the leader is lifted onto the
 /// ground if it stands below it.
-DEFINE_PILLARS_RESTORE_RAISED(Func_020042f0, Func_02005a18,
+DEFINE_PILLARS_RESTORE_RAISED(TrialRoad_RestoreCrumblingPillars, Func_02005a18,
                               MapGrid_GetTerrainKind, Func_02005958,
                               Func_02005a20, Actor_SelectAnimation)
 
-DEFINE_TRAPS_CHECK(Func_02004418, Import_FieldTryJumpForward, Func_02005a28,
-                   Actor_SelectAnimation, Func_02004a94, Func_02004d6c,
-                   Func_02004bc8)
+DEFINE_TRAPS_CHECK(TrialRoad_CheckCrumblingStep, Import_FieldTryJumpForward,
+                   Func_02005a28, Actor_SelectAnimation, TrialRoad_SpawnRubble,
+                   TrialRoad_SetLeaderCellShape, TrialRoad_SpawnDustRing)
 
-void Func_020045ac(const void *data, s32 id) {
+void TrialRoad_CrumblePillar(const void *data, s32 id) {
   const struct TrapEntry *entry = data;
   struct Actor *object = Actor_GetById(id);
   s32 flag;
@@ -1792,18 +1693,18 @@ void Func_020045ac(const void *data, s32 id) {
       if (!Event_GetFlag(flag + 1)) {
         Event_PlaySound(185);
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
-        Func_02004a94(0);
+        TrialRoad_SpawnRubble(0);
         wait(8);
         Actor_SelectAnimation(object, 2);
-        Func_02004ce0(-4, OBJECT_BYTE(object, 34), id);
-        Func_02004a94(1);
+        TrialRoad_SetActorCellShape(-4, OBJECT_BYTE(object, 34), id);
+        TrialRoad_SpawnRubble(1);
         wait(16);
         MapGrid_SetShake(-1, -1, 0xe666);
         wait(8);
         Actor_SetPositionAndResetMotion(object, 0, 0, 0);
         wait(2);
         Event_PlaySound(188);
-        Func_02004bc8();
+        TrialRoad_SpawnDustRing();
         wait(20);
         Event_SetFlag(flag);
         Event_SetFlag(flag + 1);
@@ -1814,7 +1715,7 @@ void Func_020045ac(const void *data, s32 id) {
   }
 }
 
-void Func_0200468c(s32 id) {
+void TrialRoad_SetPillarMode3(s32 id) {
   Actor_GetById(id)->unk5c[0] = 3;
   Func_02005958(id);
 }
@@ -1824,17 +1725,18 @@ void Actor_MoveToObject(s32 id, s32 owner);
 /// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
 /// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
 /// it copy actor 9's visual attributes.
-DEFINE_PILLARS_RESTORE(Func_020046a4, Func_0200468c, Func_02005a18,
-                       MapGrid_GetTerrainKind, Func_02005958, Func_02005a20)
+DEFINE_PILLARS_RESTORE(TrialRoad_RestorePillars, TrialRoad_SetPillarMode3,
+                       Func_02005a18, MapGrid_GetTerrainKind, Func_02005958,
+                       Func_02005a20)
 
-void Func_0200480c(struct Actor *object, struct Actor *target) {
+void TrialRoad_TakePlaceOf(struct Actor *object, struct Actor *target) {
   Actor_SetPositionAndResetMotion(object, target->x, target->y, target->z);
   Actor_SetPositionAndResetMotion(target, 0, 0, 0);
 }
 
 #include "field_effect.h"
 
-void Func_02004828(const u16 *table) {
+void TrialRoad_StepOnTrap(const u16 *table) {
   struct Actor *leader;
   struct Actor *partner;
   struct Actor *trap;
@@ -1864,7 +1766,7 @@ void Func_02004828(const u16 *table) {
     Event_Start();
     if (!GameFlag_Test(flag)) {
       Actor_SelectAnimation(partner, 1);
-      Func_0200480c(partner, trap);
+      TrialRoad_TakePlaceOf(partner, trap);
       wait(1);
       Sound_Play(125);
       Actor_SetSpriteColor(Actor_GetById(8), 7);
@@ -1876,27 +1778,27 @@ void Func_02004828(const u16 *table) {
       Actor_SetSpriteColor(Actor_GetById(8), 7);
       wait(4);
       Actor_SetSpriteColor(Actor_GetById(8), 0);
-      Func_02004a94(0);
-      Func_0200480c(trap, partner);
+      TrialRoad_SpawnRubble(0);
+      TrialRoad_TakePlaceOf(trap, partner);
       wait(1);
       GameFlag_SetBit(flag);
     } else {
       second = flag + 1;
       if (!GameFlag_Test(second)) {
         Actor_SelectAnimation(partner, 0);
-        Func_0200480c(partner, trap);
+        TrialRoad_TakePlaceOf(partner, trap);
         motion = &leader->motionFlags;
         wait(1);
         *motion = 0;
         Sound_Play(185);
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
-        Func_02004a94(0);
+        TrialRoad_SpawnRubble(0);
         wait(8);
         Actor_SelectAnimation(partner, 2);
-        Func_02004d6c(-2, trap->terrainId);
-        Func_02004a94(1);
+        TrialRoad_SetLeaderCellShape(-2, trap->terrainId);
+        TrialRoad_SpawnRubble(1);
         wait(16);
-        Func_02004d6c(-2, trap->terrainId);
+        TrialRoad_SetLeaderCellShape(-2, trap->terrainId);
         wait(4);
         MapGrid_SetShake(-1, -1, 0xe666);
         wait(8);
@@ -1905,7 +1807,7 @@ void Func_02004828(const u16 *table) {
         Actor_SetPositionAndResetMotion(partner, 0, 0, 0);
         wait(2);
         Sound_Play(188);
-        Func_02004bc8();
+        TrialRoad_SpawnDustRing();
         wait(20);
         GameFlag_SetBit(second);
       }
@@ -1920,7 +1822,7 @@ void Func_02004828(const u16 *table) {
 
 /// A second copy of Effect_AdvanceMotionAtLeaderPriority in this overlay:
 /// FieldEffect_AdvanceMotion, then the leader's sprite priority for the effect.
-void Func_02004a14(union FieldObject *object) {
+void TrialRoad_DriftRubble(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
   s32 velocityX = effect->velocity.x;
   s32 velocityZ;
@@ -1963,17 +1865,9 @@ void Func_02004a14(union FieldObject *object) {
 
 #include "field_sprite.h"
 
-extern const s32 gData_02006254[];
+extern const s32 gTrialRoad_RubbleScript[];
 
-/* VIEW(s4a94): routine Actor_StartScript as void Actor_StartScript(struct
- * FieldEffect *effect, const s32 *script); trial_road.h has void
- * Actor_StartScript(struct Actor *object, const void *script); not tried:
- * Actor_StartScript's bound declaration was not found. */
-extern void
-Func_020057d0__s4a94(struct FieldEffect *effect,
-                     const s32 *script) __asm__("Actor_StartScript");
-
-void Func_02004a94(s32 spread) {
+void TrialRoad_SpawnRubble(s32 spread) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   u32 frame = 0;
@@ -1994,7 +1888,7 @@ void Func_02004a94(s32 spread) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags(effect, 0);
       Actor_SelectAnimation(effect, 2);
-      Func_020057d0__s4a94(effect, gData_02006254);
+      Actor_StartScript((struct Actor *)effect, gTrialRoad_RubbleScript);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
       if (spread != 0) {
@@ -2008,15 +1902,15 @@ void Func_02004a94(s32 spread) {
       effect->spin = ((Random16Far() << 9) >> 16) - 0x100;
       effect->scaleRateX = -0x800;
       effect->scaleRateY = -0x600;
-      effect->update = Func_02004a14;
+      effect->update = TrialRoad_DriftRubble;
     }
     i++;
   } while (i <= 7);
 }
 
-extern const s32 gData_02006284[];
+extern const s32 gTrialRoad_DustScript[];
 
-void Func_02004bc8(void) {
+void TrialRoad_SpawnDustRing(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   u32 frame;
@@ -2035,7 +1929,7 @@ void Func_02004bc8(void) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags(effect, 0);
       Actor_SelectAnimation(effect, 2);
-      Func_020057d0__s4a94(effect, gData_02006284);
+      Actor_StartScript((struct Actor *)effect, gTrialRoad_DustScript);
       effect->velocity.x = Trig_Cos(i << 12);
       effect->velocity.y = 0;
       effect->velocity.z = Trig_Sin(i << 12);
@@ -2045,7 +1939,7 @@ void Func_02004bc8(void) {
       effect->spin = ((Random16Far() << 12) >> 16) - 0x800;
       effect->scaleRateX = 0;
       effect->scaleRateY = 0;
-      effect->update = Func_02004a14;
+      effect->update = TrialRoad_DriftRubble;
       effect->sprite->priority =
           ((struct FieldSprite *)leader->sprite)->priority;
     }
@@ -2053,21 +1947,19 @@ void Func_02004bc8(void) {
   } while (i <= 16);
 }
 
-#include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
-
-DEFINE_ACTOR_SET_CELL_SHAPE(Func_02004ce0, MapGrid_GetTerrainKind,
+DEFINE_ACTOR_SET_CELL_SHAPE(TrialRoad_SetActorCellShape, MapGrid_GetTerrainKind,
                             Func_02005a20)
 
-void Func_02004d6c(s32 a, s32 b) {
-  Func_02004ce0(a, b, gMainRoutineWork.currentOwner);
+void TrialRoad_SetLeaderCellShape(s32 a, s32 b) {
+  TrialRoad_SetActorCellShape(a, b, gMainRoutineWork.currentOwner);
 }
 
-extern const u8 gData_020063ac[];
+extern const u8 gTrialRoad_HexDigits[];
 
 /// Writes value as eight hexadecimal digits and a terminating null.
 UNUSED void String_WriteU32AsHex(u8 *buf, u32 value) {
   s32 i;
-  const u8 *digits = gData_020063ac;
+  const u8 *digits = gTrialRoad_HexDigits;
 
   buf += 8;
   *buf = 0;
@@ -2113,7 +2005,7 @@ void TrialRoad_WaitForBalanceState(void) {
 /// leader's position mirrored across the course; 3 places the rival and its
 /// partner from the linked player's record; 1 replays the recorded path; 2
 /// records the actor's position.
-void Func_02004ddc(void) {
+void TrialRoad_MoveRival(void) {
   struct TrialRoadLinkWork *work =
       *(struct TrialRoadLinkWork **)((u8 *)Ram_HeapSlots + 236);
   struct TrialRoadReplay *state = &gSceneState;
@@ -2294,9 +2186,9 @@ struct TrialRoadLinkWork__s51a0 {
   s32 originZ;
 };
 
-extern const u8 gData_020062d4[];
+extern const u8 gTrialRoad_ProgressPicture[];
 
-s32 Func_02002ce8(s32 side);
+s32 TrialRoad_GetStage(s32 side);
 
 // The picture's buffer: 576 bytes of EWRAM, the size VramCache_Load copies.
 static inline void *TrialRoadLink_AllocPicture(void) {
@@ -2326,7 +2218,7 @@ static inline void *TrialRoadLink_AllocPicture(void) {
       arg = which;                                                             \
     }                                                                          \
     originZ = &work->originZ;                                                  \
-    lift = Func_02002ce8(arg);                                                 \
+    lift = TrialRoad_GetStage(arg);                                            \
     y = (actor->z - *originZ) / PIXELS(16) + work->scrollY - lift * 36 + 4;    \
     /* Once-only: ends the block, so y + 4 is scheduled before x & 511. */     \
     do {                                                                       \
@@ -2341,16 +2233,16 @@ static inline void *TrialRoadLink_AllocPicture(void) {
     Oam_AddSpriteAtDepth(entry++, 255);                                        \
   } while (0)
 
-/// The Trial Road link display's scheduled callback, which Func_020055c4
-/// starts. Its fade state falls during events or while flag 262 is set and
-/// otherwise rises to 2 (unke0 holds it at 2); rising from 0 to 1 it loads
-/// the palette and picture again, and at 0 it frees its VRAM. Otherwise it
-/// queues two rows of sprites, each up to four pairs 36 pixels apart down from
-/// the scrolled offset, sliding in 6 pixels per fade step (the right row
-/// mirrored), and on frames 5 to 15 of every 16 a marker over each of the two
-/// watched actors, projected at 1/16 scale from their positions and the
+/// The Trial Road link display's scheduled callback, which
+/// TrialRoad_ShowProgress starts. Its fade state falls during events or while
+/// flag 262 is set and otherwise rises to 2 (unke0 holds it at 2); rising from
+/// 0 to 1 it loads the palette and picture again, and at 0 it frees its VRAM.
+/// Otherwise it queues two rows of sprites, each up to four pairs 36 pixels
+/// apart down from the scrolled offset, sliding in 6 pixels per fade step (the
+/// right row mirrored), and on frames 5 to 15 of every 16 a marker over each of
+/// the two watched actors, projected at 1/16 scale from their positions and the
 /// course side.
-void Func_020051a0(void) {
+void TrialRoad_DrawProgress(void) {
   struct TrialRoadLinkWork__s51a0 *work = Ram_HeapSlots->unkec[0];
   u32 *cursor = (u32 *)work;
   struct TrialRoadSprite *entry = (struct TrialRoadSprite *)work;
@@ -2373,9 +2265,10 @@ void Func_020051a0(void) {
   } else if (work->fade <= 1) {
     if (++work->fade == 1) {
       void *buffer;
-      Dma_Set(Data_020062b4, (void *)0x050003c0, 0x80000010, REG_DMA3);
+      Dma_Set(gTrialRoad_ProgressPalette, (void *)0x050003c0, 0x80000010,
+              REG_DMA3);
       buffer = TrialRoadLink_AllocPicture();
-      Import_DecompressTaggedLz(gData_020062d4, buffer);
+      Import_DecompressTaggedLz(gTrialRoad_ProgressPicture, buffer);
       VramCache_Load(*vramEntry, 576, buffer);
       Heap_Release(buffer);
     }
@@ -2428,7 +2321,7 @@ void Func_020051a0(void) {
   }
 }
 
-void Func_020055c4(s32 a, s32 b) {
+void TrialRoad_ShowProgress(s32 a, s32 b) {
   struct TrialRoadLink *link = HeapSlot_AllocEwram(236, 0x3934);
   void *buffer = Heap_AllocEwram(576);
   s32 zero;
@@ -2459,16 +2352,16 @@ void Func_020055c4(s32 a, s32 b) {
   zero = 0;
   *unkda = zero;
   *unke0 = zero;
-  Import_DecompressTaggedLz(gData_020062d4, buffer);
+  Import_DecompressTaggedLz(gTrialRoad_ProgressPicture, buffer);
   *vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(*vramEntry, 576, buffer);
-  Task_Add(Func_020051a0, 0x476);
+  Task_Add(TrialRoad_DrawProgress, 0x476);
   Heap_Release(buffer);
 }
 
 extern u8 gSceneState[];
 
-void Func_02005688(s32 a) {
+void TrialRoad_StartRival(s32 a) {
   u8 *work = Ram_HeapSlots->unkec[0];
   struct TrialRoadControl *control = (struct TrialRoadControl *)gSceneState;
 
@@ -2482,10 +2375,10 @@ void Func_02005688(s32 a) {
     control->field04 = value;
     control->field08 = 0;
   }
-  Task_Add(Func_02004ddc, 0x485);
+  Task_Add(TrialRoad_MoveRival, 0x485);
 }
 
-void Func_020056c4(s32 a) {
+void TrialRoad_PlayRivalRecording(s32 a) {
   struct TrialRoadControl *control = (struct TrialRoadControl *)gSceneState;
   s32 zero = 0;
 
@@ -2493,96 +2386,96 @@ void Func_020056c4(s32 a) {
   control->field0a = a;
   control->field06 = zero;
   control->state = 1;
-  Func_02004ddc();
+  TrialRoad_MoveRival();
 }
 
-s32 Func_020056e8(void) {
+s32 TrialRoad_RivalIsWaiting(void) {
   s32 state = *(s16 *)gSceneState;
 
   return IsZero(state ^ 9);
 }
 
-void Func_02005704(void) {}
+void TrialRoad_DoNothing(void) {}
 
-void Func_02000058(void);
-void Func_02000694(void);
+void TrialRoad_SettleOnGround(void);
+void TrialRoad_FollowPillar(void);
 
-s32 gData_02005a70[] = {
+s32 gTrialRoad_SettleScript[] = {
     46,
-    (s32)Func_02000058,
+    (s32)TrialRoad_SettleOnGround,
     17,
 };
 
-s32 gData_02005a7c[] = {
+s32 gTrialRoad_PillarTopScript[] = {
     46,
-    (s32)Func_02000694,
+    (s32)TrialRoad_FollowPillar,
     17,
 };
 
-u32 gData_02005a88[] = {
+u32 gTrialRoad_PoundPartners[] = {
     0x14151213,
 };
 
 // clang-format off
-u32 gData_02005a8c[] = {
+u32 gFieldEffect_ShortScript[] = {
     0, 1, 13, 22, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02005ac8[] = {
+u32 gFieldEffect_MediumScript[] = {
     0, 1, 13, 44, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02005b04[] = {
+u32 gFieldEffect_LongScript[] = {
     0, 1, 13, 126, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17, 17,
 };
 
-u32 gData_02005b44[] = {
+u32 gTrialRoad_GaspHopScript[] = {
     23, 3, 0x1000, 0, 1, 13,
     0xffff, 0,
 };
 
-void (*gData_02005b64[])(void) = {
-    Func_02001904,
-    Func_02001974,
-    Func_02001a70,
-    Func_02001afc,
-    Func_02001bdc,
-    Func_02001bec,
-    Func_02001c6c,
-    Func_02001d8c,
+void (*gTrialRoad_StageSetUps[])(void) = {
+    TrialRoad_SetUpPillarStage,
+    TrialRoad_SetUpTorchStage,
+    TrialRoad_SetUpBushPillarStage,
+    TrialRoad_SetUpPoundStage,
+    TrialRoad_SetUpCrumblingStage,
+    TrialRoad_SetUpLogStage,
+    TrialRoad_SetUpFountainStage,
+    TrialRoad_SetUpSandStage,
 };
 
-u32 gData_02005b84[] = {
+u32 gTrialRoad_RivalRecordings[] = {
     450, 451, 452, 453, 454, 455,
     456, 457, 458, 459,
 };
 
-u16 gData_02005bac[] = {
-    1, 48, 15, 48, 29, 48, 1, 70,
-    15, 70, 29, 70, 1, 92, 15, 92,
+s16 gTrialRoad_StageMapCells[][2] = {
+    {1, 48}, {15, 48}, {29, 48}, {1, 70},
+    {15, 70}, {29, 70}, {1, 92}, {15, 92},
 };
 
-u8 gData_02005bcc[] = {
+s8 gTrialRoad_DemoSceneryStages[] = {
     0, 1, 2, 3, 4, 4, 4, 5,
     6, 7,
 };
 
-u8 gData_02005bd6[] = {
+s8 gTrialRoad_SceneryStages[] = {
     0, 1, 2, 3, 4, 4, 4, 5,
     6, 7,
 };
 
-u32 gData_02005be0[] = {
-    0x7030200, 0x6050401,
+s8 gTrialRoad_KeyStages[] = {
+    0, 2, 3, 7, 1, 4, 5, 6,
 };
 
-u32 gData_02005be8[] = {
+u32 gTrialRoad_RightKnightEntersScript[] = {
     22, 15, 0x18000, 22, 16, 0x10000,
     22, 5, 0x1380000, 22, 7, 0x2a80000,
     39, 5, 4, 0x1380000, 0, 0x2780000,
@@ -2592,7 +2485,7 @@ u32 gData_02005be8[] = {
     0, 0x1c80000, 1, 17,
 };
 
-u32 gData_02005c88[] = {
+u32 gTrialRoad_LeftKnightEntersScript[] = {
     22, 15, 0x18000, 22, 16, 0x10000,
     22, 5, 0xe80000, 22, 7, 0x2a80000,
     39, 5, 4, 0xe80000, 0, 0x2780000,
@@ -2602,7 +2495,7 @@ u32 gData_02005c88[] = {
     0, 0x1c80000, 1, 17,
 };
 
-u32 gData_02005d28[] = {
+u32 gTrialRoad_LeftKnightToChestScript[] = {
     22, 15, 0x18000, 22, 16, 0x10000,
     22, 5, 0x780000, 22, 7, 0x1280000,
     39, 5, 4, 0x780000, 0, 0xd80000,
@@ -2612,7 +2505,7 @@ u32 gData_02005d28[] = {
     22, 3, 0xc000, 17,
 };
 
-u32 gData_02005dc8[] = {
+u32 gTrialRoad_LeftKnightLeavesScript[] = {
     22, 15, 0x18000, 22, 16, 0x10000,
     39, 5, 4, 0xd80000, 0, 0xa80000,
     1, 4, 0xe80000, 0, 0x980000, 1,
@@ -2620,7 +2513,7 @@ u32 gData_02005dc8[] = {
     5, 0, 22, 7, 0, 17,
 };
 
-u32 gData_02005e40[] = {
+u32 gTrialRoad_RightKnightToChestsScript[] = {
     22, 15, 0x10000, 22, 16, 0x8000,
     22, 5, 0x1580000, 22, 7, 0xb80000,
     39, 2, 4, 0x1380000, 0, 0xa80000,
@@ -2630,7 +2523,7 @@ u32 gData_02005e40[] = {
     17,
 };
 
-u32 gData_02005ed4[] = {
+u32 gTrialRoad_RightKnightLeavesScript[] = {
     22, 15, 0x18000, 22, 16, 0x10000,
     39, 5, 4, 0x1780000, 0, 0xc80000,
     1, 4, 0x1d80000, 0, 0xc80000, 1,

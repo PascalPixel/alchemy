@@ -35,7 +35,7 @@ extern const s32 gData_0802ec94[];
 
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
-s32 Func_0802db64(struct Actor *object, struct FieldPosition *position);
+s32 WorldMap_IsWalkable(struct Actor *object, struct FieldPosition *position);
 s32 GameFlag_Test(s32 flag);
 void Actor_SelectAnimation(struct Actor *object, s32 argument);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
@@ -100,9 +100,9 @@ s32 Func_080279b0(struct Actor *object) {
       rightPosition.y = object->y;
       rightPosition.z = object->z;
       Vector_AddPolarOffset(0x80000, direction - 0x1555, &rightPosition);
-      if ((Func_0802db64(object, &position) |
-           Func_0802db64(object, &leftPosition) |
-           Func_0802db64(object, &rightPosition)) != 0) {
+      if ((WorldMap_IsWalkable(object, &position) |
+           WorldMap_IsWalkable(object, &leftPosition) |
+           WorldMap_IsWalkable(object, &rightPosition)) != 0) {
         angleOffsets[count++] = direction + 0x1000;
         angleOffsets[count++] = direction - 0x1000;
         angleOffsets[count++] = direction + 0x2000;
@@ -123,9 +123,9 @@ s32 Func_080279b0(struct Actor *object) {
           rightPosition.y = object->y;
           rightPosition.z = object->z;
           Vector_AddPolarOffset(0x80000, direction - 0x1555, &rightPosition);
-          if ((Func_0802db64(object, &position) |
-               Func_0802db64(object, &leftPosition) |
-               Func_0802db64(object, &rightPosition)) != 0)
+          if ((WorldMap_IsWalkable(object, &position) |
+               WorldMap_IsWalkable(object, &leftPosition) |
+               WorldMap_IsWalkable(object, &rightPosition)) != 0)
             continue;
           angle = (s16)direction;
           goto update_object;
@@ -231,7 +231,7 @@ s32 Field_CheckConfiguredKeysAndCount(struct ActorScriptView *interpreter) {
   return 1;
 }
 
-s32 Func_0802d87c(struct Actor *object, struct FieldPosition *position);
+s32 MapGrid_CheckCollision(struct Actor *object, struct FieldPosition *position);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values);
 
@@ -330,7 +330,7 @@ s32 Func_08027e20(struct Actor *interpreter) {
         goto counted;
       }
     }
-    if (onObject && !Func_0802d87c(object, &position)) {
+    if (onObject && !MapGrid_CheckCollision(object, &position)) {
       collision = 0;
       heading = angle;
       goto counted;
@@ -341,27 +341,27 @@ s32 Func_08027e20(struct Actor *interpreter) {
     heading = angle;
     goto counted;
   }
-  if (!Func_0802d87c(object, &position)) {
+  if (!MapGrid_CheckCollision(object, &position)) {
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
     Vector_AddPolarOffset(0x130000, (u16)angle + 0x1000, &testPosition);
-    if (!Func_0802d87c(object, &testPosition)) {
+    if (!MapGrid_CheckCollision(object, &testPosition)) {
       testPosition.x = object->x;
       testPosition.y = object->y;
       testPosition.z = object->z;
       Vector_AddPolarOffset(0x130000, (u16)angle - 0x1000, &testPosition);
-      if (!Func_0802d87c(object, &testPosition)) {
+      if (!MapGrid_CheckCollision(object, &testPosition)) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(0x130000, (u16)angle + 0x2000, &testPosition);
-        if (!Func_0802d87c(object, &testPosition)) {
+        if (!MapGrid_CheckCollision(object, &testPosition)) {
           testPosition.x = object->x;
           testPosition.y = object->y;
           testPosition.z = object->z;
           Vector_AddPolarOffset(0x130000, (u16)angle - 0x2000, &testPosition);
-          if (!Func_0802d87c(object, &testPosition)) {
+          if (!MapGrid_CheckCollision(object, &testPosition)) {
             heading = angle;
             goto push_objects;
           }
@@ -388,31 +388,31 @@ s32 Func_08027e20(struct Actor *interpreter) {
     position.y = object->y;
     position.z = object->z;
     Vector_AddPolarOffset(0x130000, (u16)heading, &position);
-    if (Func_0802d87c(object, &position))
+    if (MapGrid_CheckCollision(object, &position))
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
     Vector_AddPolarOffset(0x130000, (u16)heading + 0x1000, &testPosition);
-    if (Func_0802d87c(object, &testPosition))
+    if (MapGrid_CheckCollision(object, &testPosition))
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
     Vector_AddPolarOffset(0x130000, (u16)heading - 0x1000, &testPosition);
-    if (Func_0802d87c(object, &testPosition))
+    if (MapGrid_CheckCollision(object, &testPosition))
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
     Vector_AddPolarOffset(0x130000, (u16)heading + 0x2000, &testPosition);
-    if (Func_0802d87c(object, &testPosition))
+    if (MapGrid_CheckCollision(object, &testPosition))
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
     Vector_AddPolarOffset(0x130000, (u16)heading - 0x2000, &testPosition);
-    if (!Func_0802d87c(object, &testPosition))
+    if (!MapGrid_CheckCollision(object, &testPosition))
       goto push_objects;
   }
   position.x = object->x;
@@ -451,19 +451,19 @@ push_objects:
         testPosition.y = other->y;
         testPosition.z = other->z;
         Vector_AddPolarOffset(0x150000, direction, &testPosition);
-        if (!Func_0802d87c(other, &testPosition)) {
+        if (!MapGrid_CheckCollision(other, &testPosition)) {
           testPosition.x = other->x;
           testPosition.y = other->y;
           testPosition.z = other->z;
           Vector_AddPolarOffset(0x150000, direction + 0x1000, &testPosition);
           // The same probe is tested twice.
-          if (!Func_0802d87c(other, &testPosition) &&
-              !Func_0802d87c(other, &testPosition)) {
+          if (!MapGrid_CheckCollision(other, &testPosition) &&
+              !MapGrid_CheckCollision(other, &testPosition)) {
             testPosition.x = other->x;
             testPosition.y = other->y;
             testPosition.z = other->z;
             Vector_AddPolarOffset(0x150000, direction - 0x1000, &testPosition);
-            if (!Func_0802d87c(other, &testPosition)) {
+            if (!MapGrid_CheckCollision(other, &testPosition)) {
               Vector_AddPolarOffset(0x4000, direction,
                                     (struct FieldPosition *)&other->x);
               other->targetX = 0x80000000;

@@ -746,7 +746,7 @@ extern u8 Render_DecodePictureCode[];
 extern u8 Render_DecodePictureCopyEnd[];
 extern u8 Render_DecodePictureBlockSize[];
 
-s32 Func_0802d45c(s32 terrainId, s32 x, s32 z);
+s32 MapGrid_GetTerrainHeight(s32 terrainId, s32 x, s32 z);
 void Func_08022318(struct PlacedSprite *sprite, struct SpritePlacement *point,
                    s32 *scale, s32 facing, s32 depth);
 void Func_08021a84(struct PlacedSprite *sprite, s32 facing);
@@ -858,22 +858,22 @@ void Func_0802386c(void) {
              * instructions differ in tla-en. */
             basePriority = &BASE_PRIORITY(map);
             priority = *basePriority;
-            if (Func_0802d45c(layer, probeX, feetZ) == object->terrainHeight) {
+            if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) == object->terrainHeight) {
               leftPriority = CELL_PRIORITY(cells, probeX, feetZ);
-              height = Func_0802d45c(layer, probeX, feetZ + 0x100000) >> 16;
+              height = MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x100000) >> 16;
               rise =
-                  (Func_0802d45c(layer, probeX, feetZ + 0x200000) >> 16) - 16;
+                  (MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x200000) >> 16) - 16;
               if (rise > height)
                 height = rise;
               if (height > objectHeight)
                 priority = BASE_PRIORITY(map) + 1;
             }
             probeX += 0xd0000;
-            if (Func_0802d45c(layer, probeX, feetZ) == object->terrainHeight) {
+            if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) == object->terrainHeight) {
               middlePriority = CELL_PRIORITY(cells, probeX, feetZ);
-              height = Func_0802d45c(layer, probeX, feetZ + 0x100000) >> 16;
+              height = MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x100000) >> 16;
               rise =
-                  (Func_0802d45c(layer, probeX, feetZ + 0x200000) >> 16) - 16;
+                  (MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x200000) >> 16) - 16;
               if (rise > height)
                 height = rise;
               if (height > objectHeight)
@@ -881,17 +881,17 @@ void Func_0802386c(void) {
             }
             probeX -= 0x60000;
             rightPriority = CELL_PRIORITY(cells, probeX, feetZ);
-            height = Func_0802d45c(layer, probeX, feetZ + 0x100000) >> 16;
-            rise = (Func_0802d45c(layer, probeX, feetZ + 0x200000) >> 16) - 16;
+            height = MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x100000) >> 16;
+            rise = (MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x200000) >> 16) - 16;
             if (rise > height)
               height = rise;
             if (height > objectHeight)
               priority = BASE_PRIORITY(map) + 1;
           } else {
-            if (object->terrainHeight == Func_0802d45c(layer, probeX, feetZ))
+            if (object->terrainHeight == MapGrid_GetTerrainHeight(layer, probeX, feetZ))
               leftPriority = CELL_PRIORITY(cells, probeX, feetZ);
             probeX += 0xd0000;
-            if (object->terrainHeight == Func_0802d45c(layer, probeX, feetZ))
+            if (object->terrainHeight == MapGrid_GetTerrainHeight(layer, probeX, feetZ))
               middlePriority = CELL_PRIORITY(cells, probeX, feetZ);
             probeX -= 0x60000;
             rightPriority = CELL_PRIORITY(cells, probeX, feetZ);

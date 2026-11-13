@@ -40,7 +40,7 @@ ScriptObject_FindOverlappingEntryFar:
 	.global Func_080202f0
 	.thumb_func
 Func_080202f0:
-	overlay_veneer Func_0802d658
+	overlay_veneer MapGrid_GetTerrainKind
 	.global Func_080202f8
 	.thumb_func
 Func_080202f8:

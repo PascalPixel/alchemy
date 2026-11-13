@@ -626,11 +626,11 @@ void Func_0802d088(s32 region, s32 gradual) {
 
 #include "curve.h"
 
-s32 Curve_GetFirstSampleA(const s8 *samples) {
+s32 Terrain_GetFlatHeight(const s8 *samples) {
   return samples[0] << CURVE_VALUE_SHIFT;
 }
 
-s32 Curve_LerpTwoSamples(const s8 *samples, s32 position) {
+s32 Terrain_GetSlopeXHeight(const s8 *samples, s32 position) {
   s32 start;
   s32 delta;
 
@@ -642,7 +642,7 @@ s32 Curve_LerpTwoSamples(const s8 *samples, s32 position) {
   return start + (delta >> 4);
 }
 
-s32 Curve_LerpTwoSamplesB(const s8 *samples, s32 unused, s32 position) {
+s32 Terrain_GetSlopeYHeight(const s8 *samples, s32 unused, s32 position) {
   s32 base;
   s32 offset;
 
@@ -654,7 +654,7 @@ s32 Curve_LerpTwoSamplesB(const s8 *samples, s32 unused, s32 position) {
   return base + (offset >> 4);
 }
 
-s32 Curve_StepAtSummedPosition(const s8 *samples, s32 start, s32 end) {
+s32 Terrain_GetStepSumDiagonalHeight(const s8 *samples, s32 start, s32 end) {
   s32 first;
   s32 second;
   s32 maximum;
@@ -676,7 +676,8 @@ s32 Curve_StepAtSummedPosition(const s8 *samples, s32 start, s32 end) {
   return second;
 }
 
-s32 Curve_StepAtDifferencePosition(const s8 *samples, s32 start, s32 end) {
+s32 Terrain_GetStepDifferenceDiagonalHeight(const s8 *samples, s32 start,
+                                            s32 end) {
   s32 first;
   s32 second;
   s32 maximum;
@@ -700,7 +701,7 @@ s32 Curve_StepAtDifferencePosition(const s8 *samples, s32 start, s32 end) {
   return second;
 }
 
-s32 Curve_LerpThreeSamplesByRatio(const s8 *samples, s32 start, s32 end) {
+s32 Terrain_GetBendSumDiagonalHeight(const s8 *samples, s32 start, s32 end) {
   s32 first;
   s32 middle;
   s32 last;
@@ -723,7 +724,8 @@ s32 Curve_LerpThreeSamplesByRatio(const s8 *samples, s32 start, s32 end) {
 
 #include "fixed_math.h"
 
-s32 Curve_LerpThreeSamplesAtDifference(const s8 *samples, s32 start, s32 end) {
+s32 Terrain_GetBendDifferenceDiagonalHeight(const s8 *samples, s32 start,
+                                            s32 end) {
   s32 first;
   s32 second;
   s32 third;
@@ -756,7 +758,7 @@ s32 Curve_LerpThreeSamplesAtDifference(const s8 *samples, s32 start, s32 end) {
   }
 }
 
-s32 Curve_LerpTwoSamplesByTable(const s8 *samples, s32 position, s32 row) {
+s32 Terrain_GetRoundedSquareHeight(const s8 *samples, s32 position, s32 row) {
   s32 start;
   s32 end;
   s32 weight;
@@ -764,7 +766,7 @@ s32 Curve_LerpTwoSamplesByTable(const s8 *samples, s32 position, s32 row) {
 
   start = samples[0];
   end = samples[1];
-  table = gCurve_LerpWeightTable;
+  table = gTerrain_LerpWeightTable;
   /* FAKEMATCH(barrier): an empty asm reading the table's address keeps its
    * load after both samples' and before the row's scaling; without it, 15 of
    * 15 instructions differ in tla-en. */
@@ -775,7 +777,7 @@ s32 Curve_LerpTwoSamplesByTable(const s8 *samples, s32 position, s32 row) {
   return start + (((end << CURVE_VALUE_SHIFT) - start) * weight);
 }
 
-s32 Curve_StepAtHalf(const s8 *samples, u32 position) {
+s32 Terrain_GetStepXHeight(const s8 *samples, u32 position) {
   s32 value;
   if (position < CURVE_HALF_STEPS)
     value = samples[0];
@@ -784,7 +786,7 @@ s32 Curve_StepAtHalf(const s8 *samples, u32 position) {
   return value << CURVE_VALUE_SHIFT;
 }
 
-s32 Curve_StepAtHalfB(const s8 *samples, u32 unused, u32 position) {
+s32 Terrain_GetStepYHeight(const s8 *samples, u32 unused, u32 position) {
   s32 value;
   if (position < CURVE_HALF_STEPS)
     value = samples[0];
@@ -793,13 +795,17 @@ s32 Curve_StepAtHalfB(const s8 *samples, u32 unused, u32 position) {
   return value << CURVE_VALUE_SHIFT;
 }
 
-s32 Func_0802d3c4(const s8 *samples, u32 row, u32 position) {
-  return samples[gCurve_SampleIndexTable[position + (row << 4)]]
+/// As Terrain_GetSampleTableHeight with x and y swapped.
+s32 Terrain_GetSampleTableTransposedHeight(const s8 *samples, u32 pixelX,
+                                           u32 pixelY) {
+  return samples[gTerrain_SampleIndexTable[pixelY + (pixelX << 4)]]
          << CURVE_VALUE_SHIFT;
 }
 
-s32 Func_0802d3d8(const s8 *samples, u32 row, u32 position) {
-  const u8 *table = gCurve_SampleIndexTable;
+/// As Terrain_GetSampleTableMirroredHeight with x and y swapped.
+s32 Terrain_GetSampleTableTransposedMirroredHeight(const s8 *samples, u32 row,
+                                                   u32 position) {
+  const u8 *table = gTerrain_SampleIndexTable;
   u32 index;
 
   index = (row << 4) - position;
@@ -807,14 +813,17 @@ s32 Func_0802d3d8(const s8 *samples, u32 row, u32 position) {
   return samples[table[index]] << CURVE_VALUE_SHIFT;
 }
 
-s32 Curve_LookupSampleByTable(const s8 *samples, u32 position, u32 row) {
-  return samples[gCurve_SampleIndexTable[position + (row << 4)]]
+/// The sample gTerrain_SampleIndexTable picks for (x, y): a byte per pixel
+/// of the cell, row by row.
+s32 Terrain_GetSampleTableHeight(const s8 *samples, u32 position, u32 row) {
+  return samples[gTerrain_SampleIndexTable[position + (row << 4)]]
          << CURVE_VALUE_SHIFT;
 }
 
-s32 Curve_LookupSampleByTableReversed(const s8 *samples, u32 position,
-                                      u32 row) {
-  const u8 *table = gCurve_SampleIndexTable;
+/// The same, with the table mirrored left to right.
+s32 Terrain_GetSampleTableMirroredHeight(const s8 *samples, u32 position,
+                                         u32 row) {
+  const u8 *table = gTerrain_SampleIndexTable;
   u32 index;
 
   index = (row << 4) - position;
@@ -822,7 +831,9 @@ s32 Curve_LookupSampleByTableReversed(const s8 *samples, u32 position,
   return samples[table[index]] << CURVE_VALUE_SHIFT;
 }
 
-s32 Func_0802d414(const s8 *samples, u32 column, u32 row) {
+/// Above y 8 a step along x from the first sample to the second; below, the
+/// third.
+s32 Terrain_GetSplitTopStepHeight(const s8 *samples, u32 column, u32 row) {
   s32 value;
 
   if (row < CURVE_HALF_STEPS) {
@@ -836,7 +847,9 @@ s32 Func_0802d414(const s8 *samples, u32 column, u32 row) {
   return value << CURVE_VALUE_SHIFT;
 }
 
-s32 Func_0802d438(const s8 *samples, u32 column, u32 row) {
+/// Above y 8 the first sample; below, a step along x from the second to the
+/// third.
+s32 Terrain_GetSplitBottomStepHeight(const s8 *samples, u32 column, u32 row) {
   s32 value;
 
   if (row < CURVE_HALF_STEPS)
@@ -852,9 +865,12 @@ extern u8 gMapShapeGrid[];
 
 typedef s32 (*TerrainHeightFn)(u8 *heights, s32 x, s32 z);
 
-extern TerrainHeightFn gMap_TerrainHeightHandlers[16];
+extern TerrainHeightFn gMapGrid_TerrainHeightFunctions[16];
 
-s32 Func_0802d45c(s32 layer, s32 x, s32 z) {
+/// Returns the ground height of a layer at (x, z) in 16.16 pixels, as The
+/// Broken Seal's: the height function of the cell's terrain kind applied to
+/// its samples.
+s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 z) {
   struct MapWork *work = Ram_HeapSlots->mapWork;
   u8 *grid;
   u8 *code;
@@ -867,7 +883,7 @@ s32 Func_0802d45c(s32 layer, s32 x, s32 z) {
     grid = gMapShapeGrid;
   grid += x / 16 + (z / 16 << 7);
   code = Ram_MapCollision + *grid * 4;
-  return gMap_TerrainHeightHandlers[*code++ & 15](code, x & 15, z & 15);
+  return gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15);
 }
 
 #include "edition.h"
@@ -877,7 +893,9 @@ extern u8 gMapCellBuffer[];
 s32 Func_080c8730(s32 layer, s32 unused, s32 value);
 s32 Func_080c8720(s32 layer, s32 unused, s32 value);
 
-s32 Func_0802d4d8(s32 layer, s32 x, s32 z) {
+/// Returns the terrain kind of a layer's cell at (x, z) in 16.16 pixels, as
+/// The Broken Seal's.
+s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 z) {
   struct MapWork *work = Ram_HeapSlots->mapWork;
   u8 *grid;
 
@@ -890,6 +908,8 @@ s32 Func_0802d4d8(s32 layer, s32 x, s32 z) {
   return Ram_MapCollision[grid[x / 16 + ((z / 16) << 7)] * 4] & 15;
 }
 
+/// As MapGrid_GetCellAttributeLowNibble, but a rounded square whose two
+/// samples differ (a real bump or hollow, not a flat cell) reads as 99.
 s32 Func_0802d530(s32 layer, s32 x, s32 z) {
   struct MapWork *work = Ram_HeapSlots->mapWork;
   u8 *grid;
@@ -909,21 +929,23 @@ s32 Func_0802d530(s32 layer, s32 x, s32 z) {
   return kind;
 }
 
-s32 Func_0802d594(s32 layer, s32 x, s32 z, s32 reach) {
+/// The highest ground at (x, z) and at the four points `reach` away from it
+/// along x and z, all in 16.16 pixels.
+s32 MapGrid_GetHighestTerrainHeightAround(s32 layer, s32 x, s32 z, s32 reach) {
   s32 best;
   s32 height;
 
-  best = Func_0802d45c(layer, x, z);
-  height = Func_0802d45c(layer, x - reach, z);
+  best = MapGrid_GetTerrainHeight(layer, x, z);
+  height = MapGrid_GetTerrainHeight(layer, x - reach, z);
   if (best < height)
     best = height;
-  height = Func_0802d45c(layer, x + reach, z);
+  height = MapGrid_GetTerrainHeight(layer, x + reach, z);
   if (best < height)
     best = height;
-  height = Func_0802d45c(layer, x, z - reach);
+  height = MapGrid_GetTerrainHeight(layer, x, z - reach);
   if (best < height)
     best = height;
-  height = Func_0802d45c(layer, x, z + reach);
+  height = MapGrid_GetTerrainHeight(layer, x, z + reach);
   if (best < height)
     best = height;
   return best;
@@ -939,9 +961,12 @@ void Func_0802d600(s32 x, s32 z, s32 layer, s32 value) {
   *shape = Func_080c8730(layer, 0, value);
 }
 
-s32 Func_0802d644(s32 a, s32 b, s32 c) { return Func_0802d45c(c, a, b) >> 19; }
+s32 Func_0802d644(s32 a, s32 b, s32 c) {
+  return MapGrid_GetTerrainHeight(c, a, b) >> 19;
+}
 
-s32 Func_0802d658(s32 layer, s32 x, s32 z) {
+/// As MapGrid_GetCellAttributeLowNibble, a second copy.
+s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z) {
   struct MapWork *work = Ram_HeapSlots->mapWork;
   u8 *grid;
 
@@ -985,7 +1010,7 @@ void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collisionCode) {
 /// The height of the ground at (px, pz) (16.16 pixels) on the given layer,
 /// less base; a layer past 2 reads the shape grid. With no map, or while the
 /// event mode is 3, it is 0.
-s32 Func_0802d71c(s32 px, s32 pz, s32 layer, s32 base) {
+s32 MapGrid_GetTerrainHeightAbove(s32 px, s32 pz, s32 layer, s32 base) {
   s32 x = px >> 16;
   s32 z = pz >> 16;
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -1002,7 +1027,8 @@ s32 Func_0802d71c(s32 px, s32 pz, s32 layer, s32 base) {
   else
     shapes = gMapShapeGrid;
   code = Ram_MapCollision + shapes[x / 16 + ((z / 16) << 7)] * 4;
-  return gMap_TerrainHeightHandlers[*code++ & 15](code, x & 15, z & 15) - base;
+  return gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
+         base;
 }
 
 /// How the ground at (px, pz) (16.16 pixels) on the given layer stands to
@@ -1010,7 +1036,7 @@ s32 Func_0802d71c(s32 px, s32 pz, s32 layer, s32 base) {
 /// pixels above it, -1 when it falls more than 12 below, else 0. A layer past
 /// 2 reads the cell buffer and shape grid. With no map, or while the event
 /// mode is 3, every point is level (0).
-s32 Func_0802d7b0(s32 px, s32 pz, s32 layer, s32 height) {
+s32 MapGrid_CheckCollisionAt(s32 px, s32 pz, s32 layer, s32 height) {
   s32 x = px >> 16;
   s32 z = pz >> 16;
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -1038,8 +1064,8 @@ s32 Func_0802d7b0(s32 px, s32 pz, s32 layer, s32 height) {
   if (cells[2] == 255)
     return 2;
   code = Ram_MapCollision + *shapes * 4;
-  rise =
-      gMap_TerrainHeightHandlers[*code++ & 15](code, x & 15, z & 15) - height;
+  rise = gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
+         height;
   if (rise > 8 << 16)
     return 1;
   if (rise < -(12 << 16))
@@ -1047,10 +1073,10 @@ s32 Func_0802d7b0(s32 px, s32 pz, s32 layer, s32 height) {
   return 0;
 }
 
-/// As Func_0802d7b0 for the point position (16.16 pixels, read as its
-/// whole-pixel halves) on the object's layer (the byte at 34), against the
+/// As MapGrid_CheckCollisionAt for the point position (16.16 pixels, read as
+/// its whole-pixel halves) on the object's layer (the byte at 34), against the
 /// object's height (the word at 20).
-s32 Func_0802d87c(u8 *object, s16 *position) {
+s32 MapGrid_CheckCollision(u8 *object, s16 *position) {
   s32 x = position[1];
   s32 z = position[5];
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -1078,7 +1104,7 @@ s32 Func_0802d87c(u8 *object, s16 *position) {
   if (cells[2] == 255)
     return 2;
   code = Ram_MapCollision + *shapes * 4;
-  rise = gMap_TerrainHeightHandlers[*code++ & 15](code, x & 15, z & 15) -
+  rise = gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
          *(s32 *)(object + 20);
   if (rise > 8 << 16)
     return 1;
@@ -1087,10 +1113,10 @@ s32 Func_0802d87c(u8 *object, s16 *position) {
   return 0;
 }
 
-/// As Func_0802d87c, against the object's word at 12 and with no -1: 2 when
-/// the cell has no tile, 1 when the ground rises more than 8 pixels above
+/// As MapGrid_CheckCollision, against the object's word at 12 and with no -1: 2
+/// when the cell has no tile, 1 when the ground rises more than 8 pixels above
 /// it, else 0.
-s32 Func_0802d958(u8 *object, s16 *position) {
+s32 MapGrid_CheckCollisionAbove(u8 *object, s16 *position) {
   s32 x = position[1];
   s32 z = position[5];
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -1117,7 +1143,7 @@ s32 Func_0802d958(u8 *object, s16 *position) {
   if (cells[2] == 255)
     return 2;
   code = Ram_MapCollision + *shapes * 4;
-  if (gMap_TerrainHeightHandlers[*code++ & 15](code, x & 15, z & 15) -
+  if (gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
           *(s32 *)(object + 12) >
       8 << 16)
     return 1;
@@ -1198,7 +1224,7 @@ s32 GetWorldMapCollision(struct WorldPosition *position) {
   return 7;
 }
 
-s32 Func_0802db64(void *object, struct WorldPosition *position) {
+s32 WorldMap_IsWalkable(void *object, struct WorldPosition *position) {
   if (Func_0802da88(position) != 255) {
     if ((u32)(GetWorldMapCollision(position) - 5) <= 7)
       return 0;

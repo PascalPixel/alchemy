@@ -1,7 +1,7 @@
 	.section .rodata
-@ A copy of The Broken Seal's gCurve_LerpWeightTable
-	.global gCurve_LerpWeightTable
-gCurve_LerpWeightTable:
+@ A copy of The Broken Seal's gTerrain_LerpWeightTable
+	.global gTerrain_LerpWeightTable
+gTerrain_LerpWeightTable:
 	.byte 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0
 	.byte 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0
 	.byte 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0
@@ -18,9 +18,9 @@ gCurve_LerpWeightTable:
 	.byte 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0
 	.byte 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0
 	.byte 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0
-@ A copy of The Broken Seal's gCurve_SampleIndexTable
-	.global gCurve_SampleIndexTable
-gCurve_SampleIndexTable:
+@ A copy of The Broken Seal's gTerrain_SampleIndexTable
+	.global gTerrain_SampleIndexTable
+gTerrain_SampleIndexTable:
 	.byte 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 	.byte 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 	.byte 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0

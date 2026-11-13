@@ -455,7 +455,7 @@ struct Actor *ScriptObject_FindOverlappingEntry(struct Actor *object,
 extern void Actor_SetMoveTarget__apply_relative_position(void *, s32, s32, s32) __asm__("Actor_SetMoveTarget");
 /* VIEW(apply_relative_position): routine Actor_SetPositionAndResetMotion as void Actor_SetPositionAndResetMotion(void *, s32, s32, s32); the definition has void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z). */
 extern void Actor_SetPositionAndResetMotion__apply_relative_position(void *, s32, s32, s32) __asm__("Actor_SetPositionAndResetMotion");
-s32 Func_0802d45c(s32 terrainId, s32 x, s32 z);
+s32 MapGrid_GetTerrainHeight(s32 terrainId, s32 x, s32 z);
 
 s32 Func_08024fe0(struct ActorScriptView *object) {
   const s32 *argument = object->script + (s16)object->scriptCursor + 1;
@@ -466,7 +466,7 @@ s32 Func_08024fe0(struct ActorScriptView *object) {
 
   Actor_SetPositionAndResetMotion__apply_relative_position(object, x, y, z);
   if (y == -1 && (object->flags & 1)) {
-    height = Func_0802d45c(object->terrainId, object->x, object->z);
+    height = MapGrid_GetTerrainHeight(object->terrainId, object->x, object->z);
     object->y = object->y - object->terrainHeight + height;
     object->terrainHeight = height;
   }
@@ -479,7 +479,7 @@ s32 Func_08025038(struct ActorScriptView *object) {
 
   Actor_SetPositionAndResetMotion__apply_relative_position(object, 0, object->y, 0);
   if (object->flags & 1) {
-    height = Func_0802d45c(object->terrainId, object->x, object->z);
+    height = MapGrid_GetTerrainHeight(object->terrainId, object->x, object->z);
     object->y = object->y - object->terrainHeight + height;
     object->terrainHeight = height;
   }
@@ -826,7 +826,7 @@ retry:
     if (ScriptObject_CheckOverlap__offset((struct ScriptObjectEntry *)object,
                                   (s32 *)&pos) != 0)
       goto retry;
-    if (Func_0802d87c((struct Actor *)object, &pos) != 0)
+    if (MapGrid_CheckCollision((struct Actor *)object, &pos) != 0)
       goto retry;
     radius += 0x80000;
     probe.x = object->x;
@@ -837,13 +837,13 @@ retry:
     probe.y = object->y;
     probe.z = object->z;
     Vector_AddPolarOffset(radius, heading + 0x2000, &probe);
-    if (Func_0802d87c((struct Actor *)object, &probe) != 0)
+    if (MapGrid_CheckCollision((struct Actor *)object, &probe) != 0)
       goto retry;
     probe.x = object->x;
     probe.y = object->y;
     probe.z = object->z;
     Vector_AddPolarOffset(radius, heading - 0x2000, &probe);
-    if (Func_0802d87c((struct Actor *)object, &probe) != 0)
+    if (MapGrid_CheckCollision((struct Actor *)object, &probe) != 0)
       goto retry;
     // The offsets in a once-only block keep the division on the loaded x; as
     // plain statements, 16 of 188 instructions differ in tla-en.
@@ -878,7 +878,7 @@ found:
 
 struct ScriptObjectEntry;
 
-s32 Func_0802d87c(struct Actor *object, struct FieldPosition *position);
+s32 MapGrid_CheckCollision(struct Actor *object, struct FieldPosition *position);
 
 /// Moves the object to a random spot within its home radius, as The Broken
 /// Seal's ActorScript_WanderNearHome does: up to seven tries at a point a
@@ -928,38 +928,38 @@ s32 Func_08025830(struct ActorScriptView *object) {
       candidatePosition.y = object->y;
       candidatePosition.z = object->z;
       Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
-      if (Func_0802d87c((struct Actor *)object, &candidatePosition) != 0)
+      if (MapGrid_CheckCollision((struct Actor *)object, &candidatePosition) != 0)
         goto roam;
       probePosition.x = object->x;
       probePosition.y = object->y;
       travelDistance += 0x80000;
       probePosition.z = object->z;
       Vector_AddPolarOffset(travelDistance, heading, &probePosition);
-      if (Func_0802d87c((struct Actor *)object, &probePosition) != 0)
+      if (MapGrid_CheckCollision((struct Actor *)object, &probePosition) != 0)
         goto roam;
       probePosition.x = object->x;
       probePosition.y = object->y;
       probePosition.z = object->z;
       Vector_AddPolarOffset(travelDistance, heading + 0x2000, &probePosition);
-      if (Func_0802d87c((struct Actor *)object, &probePosition) != 0)
+      if (MapGrid_CheckCollision((struct Actor *)object, &probePosition) != 0)
         goto roam;
       probePosition.x = object->x;
       probePosition.y = object->y;
       probePosition.z = object->z;
       Vector_AddPolarOffset(travelDistance, heading - 0x2000, &probePosition);
-      if (Func_0802d87c((struct Actor *)object, &probePosition) != 0)
+      if (MapGrid_CheckCollision((struct Actor *)object, &probePosition) != 0)
         goto roam;
       probePosition.x = object->x;
       probePosition.y = object->y;
       probePosition.z = object->z;
       Vector_AddPolarOffset(travelDistance, heading + 0x4000, &probePosition);
-      if (Func_0802d87c((struct Actor *)object, &probePosition) != 0)
+      if (MapGrid_CheckCollision((struct Actor *)object, &probePosition) != 0)
         goto roam;
       probePosition.x = object->x;
       probePosition.y = object->y;
       probePosition.z = object->z;
       Vector_AddPolarOffset(travelDistance, heading - 0x4000, &probePosition);
-      if (Func_0802d87c((struct Actor *)object, &probePosition) != 0)
+      if (MapGrid_CheckCollision((struct Actor *)object, &probePosition) != 0)
         goto roam;
       dx = candidatePosition.x / 0x10000 - object->homeX;
       dz = candidatePosition.z / 0x10000 - object->homeZ;
@@ -989,7 +989,7 @@ back:
     candidatePosition.y = object->y;
     candidatePosition.z = object->z;
     Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
-    if (Func_0802d87c((struct Actor *)object, &candidatePosition) != 0)
+    if (MapGrid_CheckCollision((struct Actor *)object, &candidatePosition) != 0)
       goto back;
     object->flags59 &= ~2;
     Actor_SetMoveTarget((struct Actor *)object, candidatePosition.x,
@@ -1693,9 +1693,9 @@ struct UnitHp {
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gData_0802ec5c[16];
 
-s32 Func_0802d958(struct Actor *object, struct FieldPosition *position);
+s32 MapGrid_CheckCollisionAbove(struct Actor *object, struct FieldPosition *position);
 void *Unit_Get(s32 owner);
-s32 Func_0802d45c(s32 terrainId, s32 x, s32 z);
+s32 MapGrid_GetTerrainHeight(s32 terrainId, s32 x, s32 z);
 
 s32 Func_0802632c(struct Actor *object) {
   struct FieldPosition position;
@@ -1736,28 +1736,28 @@ s32 Func_0802632c(struct Actor *object) {
     if (gDebugMode != 0 && (gInput.held & 0x200)) {
       heading = angle;
     } else {
-      if (Func_0802d958(object, &position) == 0) {
+      if (MapGrid_CheckCollisionAbove(object, &position) == 0) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &testPosition);
-        if (Func_0802d958(object, &testPosition) == 0) {
+        if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0) {
           testPosition.x = object->x;
           testPosition.y = object->y;
           testPosition.z = object->z;
           Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &testPosition);
-          if (Func_0802d958(object, &testPosition) == 0) {
+          if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0) {
             testPosition.x = object->x;
             testPosition.y = object->y;
             testPosition.z = object->z;
             Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &testPosition);
-            if (Func_0802d958(object, &testPosition) == 0) {
+            if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0) {
               testPosition.x = object->x;
               testPosition.y = object->y;
               testPosition.z = object->z;
               Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000,
                                     &testPosition);
-              if (Func_0802d958(object, &testPosition) == 0) {
+              if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0) {
                 heading = angle;
                 goto check_objects;
               }
@@ -1779,31 +1779,31 @@ s32 Func_0802632c(struct Actor *object) {
         position.y = object->y;
         position.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)heading, &position);
-        if (Func_0802d958(object, &position) != 0)
+        if (MapGrid_CheckCollisionAbove(object, &position) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)heading + 0x1000, &testPosition);
-        if (Func_0802d958(object, &testPosition) != 0)
+        if (MapGrid_CheckCollisionAbove(object, &testPosition) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)heading - 0x1000, &testPosition);
-        if (Func_0802d958(object, &testPosition) != 0)
+        if (MapGrid_CheckCollisionAbove(object, &testPosition) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)heading + 0x2000, &testPosition);
-        if (Func_0802d958(object, &testPosition) != 0)
+        if (MapGrid_CheckCollisionAbove(object, &testPosition) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)heading - 0x2000, &testPosition);
-        if (Func_0802d958(object, &testPosition) == 0)
+        if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0)
           goto check_objects;
       }
       position.x = object->x;
@@ -1890,7 +1890,7 @@ s32 Func_0802632c(struct Actor *object) {
     Sound_PlayFar(113);
   } else {
     object->terrainHeight =
-        Func_0802d45c(object->terrainId, object->x, object->z);
+        MapGrid_GetTerrainHeight(object->terrainId, object->x, object->z);
     object->step++;
   }
   return 1;

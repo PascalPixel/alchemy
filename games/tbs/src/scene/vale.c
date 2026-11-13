@@ -118,6 +118,8 @@
 #include "map_grid_scroll.h"
 #include "flags.h"
 #include "shared/walk_into_leader.h"
+#include "shared/catch_nut.h"
+#include "shared/actor_polar_target.h"
 
 // Where Garet lands after his jump once Dora has gone in, at the roof's end
 // (Vale_RoofMended): two pixels further south in the TBS_PATCH_2
@@ -352,7 +354,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gVale_ActorPlacements;
 }
 
-#include "shared/catch_nut.h"
 
 /// Catch on the Nut in Vale gives it to the party.
 static void Vale_CatchNut(void) {
@@ -3022,7 +3023,6 @@ static void Vale_VanishMoveHand(struct Actor *emitter) {
   SET_VELOCITY(emitter, 0, 0, 0);
 }
 
-#include "shared/actor_polar_target.h"
 
 DEFINE_SET_TARGET_POSITION_FROM_MAGNITUDE_ANGLE(static,
                                                 FieldActor_SetMoveTargetFixed)

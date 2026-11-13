@@ -104,6 +104,7 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "flags.h"
+#include "shared/catch_nut.h"
 
 /// A chest searched while facing the given way.
 #define EXAMINE_CHEST_FACING(facing)                                           \
@@ -322,7 +323,6 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gCrossboneIsle_CorridorTriggers;
 }
 
-#include "shared/catch_nut.h"
 
 /// Catch on the Nut circling on Crossbone Isle: the party gets it
 /// (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).

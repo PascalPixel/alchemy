@@ -82,6 +82,7 @@
 #include "display_transition.h"
 #include "flags.h"
 #include "sound_driver_symbols.h"
+#include "shared/walk_into_leader.h"
 
 /// The palace's actors are placed by one of three tables, as the story goes on.
 ///
@@ -232,7 +233,6 @@ enum BabiPalaceCellBehavior {
   CELL_BEHAVIOR_BABI_PALACE_WELL = 90
 };
 
-#include "shared/walk_into_leader.h"
 
 static inline void BabiPalace_CloseDoors(void) {
   TilesetAnim_Pause(BABI_PALACE_MEETING_ROOM_DOOR_ANIMATION);

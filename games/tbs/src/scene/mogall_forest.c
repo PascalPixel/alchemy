@@ -86,6 +86,7 @@
 #include "ability_ids.h"
 #include "flags.h"
 #include "item_ids.h"
+#include "shared/catch_nut.h"
 
 /// Actors of the first area (SceneId_MogallForestSign), numbered in the
 /// order of gMogallForestSign_ActorPlacements.
@@ -565,7 +566,6 @@ static void MogallForest_FirstArea_EastApeShowsWay(void) {
   Event_End();
 }
 
-#include "shared/catch_nut.h"
 
 /// Mogall Forest, the first area: Catch on the Nut floating over the river
 /// brings it to the party.

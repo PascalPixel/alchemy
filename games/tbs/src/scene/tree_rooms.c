@@ -106,6 +106,8 @@
 #include "flags.h"
 #include "map_grid_scroll.h"
 #include "sound_driver_symbols.h"
+#include "ability_ids.h"
+#include "item_ids.h"
 
 /// Tret's face (SPRITE_TRET), the first actor placed after the party, and a
 /// second Tret actor (SPRITE_TRET_RAISED) placed at the same spot.
@@ -164,8 +166,6 @@ static s16 *sLastCocoon;
 #include "shared/field_effect_create.c"
 
 #include "shared/field_effect_spawn.c"
-#include "ability_ids.h"
-#include "item_ids.h"
 
 /// Cocoon 21 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.

@@ -39,6 +39,7 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "macros.h"
+#include "shared/catch_nut.h"
 
 /// Kolima Forest's actors, numbering the rows of
 /// gKolimaForestGlade_ActorPlacements.
@@ -78,7 +79,6 @@ static void KolimaForestGlade_PushLog(void) {
   Event_End();
 }
 
-#include "shared/catch_nut.h"
 
 /// In Kolima Forest (SceneId_KolimaForestGlade), Catch on the floating Nut
 /// makes it vanish, and the party finds a Nut.

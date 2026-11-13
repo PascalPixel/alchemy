@@ -3,6 +3,7 @@
 // Part of event_commands.c.
 
 #include "../event_commands_internal.h"
+#include "../../scene/shared/actor_polar_target.h"
 
 // The dispatchers use the shared field effect.
 
@@ -254,7 +255,6 @@ void Actor_CycleSpriteColors(struct Actor *actor) {
   }
 }
 
-#include "../../scene/shared/actor_polar_target.h"
 
 /// Carry, Lift, Douse, Move and the Djinni's hop into battle throw things this
 /// way.

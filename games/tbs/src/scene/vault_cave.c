@@ -91,13 +91,15 @@
 #include "actor_script.h"
 #include "map_grid_scroll.h"
 #include "item_ids.h"
+#include "io_write_queue.h"
+#include "shared/actor_step.h"
+#include "pushed_actor.h"
 
 static void VaultCave_ApplySouthernSwitchCells(void);
 static void VaultCave_UseUnderfootFrostPriorities(void);
 static void VaultCave_UseAutomaticFrostPriorities(void);
 static void VaultCave_SpawnPuffs(struct Actor *source);
 
-#include "io_write_queue.h"
 
 #define TILE(position) ((position) / px(16))
 
@@ -256,8 +258,6 @@ static struct Actor *VaultCave_FindCollidableActorAtCell(s32 column, s32 row) {
   return NULL;
 }
 
-#include "shared/actor_step.h"
-#include "pushed_actor.h"
 
 /// Pushes the faced pillar one cell unless another actor or terrain
 /// blocks it.

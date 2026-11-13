@@ -77,6 +77,8 @@
 #include "field_effect.h"
 #include "text/msg_ids.h"
 #include "flags.h"
+#include "ability_ids.h"
+#include "item_ids.h"
 
 /// Gondowan Passage's placed actors, numbered in the order of
 /// gGondowanPassageActorPlacements and
@@ -135,8 +137,6 @@ static void GondowanCave_RunSpinningLeap(s32 actorId);
 
 #include "shared/field_effect_spawn.c"
 #include "shared/staged_actor.c"
-#include "ability_ids.h"
-#include "item_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;

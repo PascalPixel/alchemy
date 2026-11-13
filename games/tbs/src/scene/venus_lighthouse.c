@@ -107,6 +107,8 @@
 #include "flags.h"
 #include "sound_driver_symbols.h"
 #include "item_ids.h"
+#include "ability_ids.h"
+#include "shared/actor_step.h"
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for
@@ -447,7 +449,6 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 }
 
 #include "shared/field_effect_spawn.c"
-#include "ability_ids.h"
 
 /// The scene's names for the bytes Actor keeps for scene code. A statue
 /// with SW_VENUS_IMMOVABLE set cannot be pushed
@@ -460,7 +461,6 @@ enum {
 
 #include "shared/actor_distance.c"
 #include "shared/actor_find_at_position.c"
-#include "shared/actor_step.h"
 
 /// Pushing a pillar moves the pillar ahead of the leader one cell on with him,
 /// leaning into it (ANIM_PUSH).

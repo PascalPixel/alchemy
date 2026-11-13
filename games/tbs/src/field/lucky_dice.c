@@ -13,6 +13,14 @@
 #include "system_call.h"
 #include "oam_words.h"
 #include "macros.h"
+#include "dma.h"
+#include "ram_buffer.h"
+#include "main_routine_work.h"
+#include "map_grid_scroll.h"
+#include "battle_effect_work.h"
+#include "transform.h"
+#include "resource_ids.h"
+#include "text/msg_ids.h"
 
 /// Starts the Lucky Dice minigame: leaves only the backdrop on screen, starts
 /// song MUS_DJINN_LESSON and plays until the player quits. Returns 0.
@@ -87,14 +95,6 @@ UNUSED s16 Math_ScaleByRatio(s16 numerator, s16 denominator) {
 /// Unused: the reciprocal of an 8.8 fixed-point value.
 UNUSED s16 FixedPoint_Reciprocal(s16 value) { return Q16_ONE / value; }
 
-#include "dma.h"
-#include "ram_buffer.h"
-#include "main_routine_work.h"
-#include "map_grid_scroll.h"
-#include "battle_effect_work.h"
-#include "transform.h"
-#include "resource_ids.h"
-#include "text/msg_ids.h"
 
 // Lucky Dice window layout, in tiles (and pixels for text), by edition: the
 // coins window at the top, the help window (Throw / Quit) and the winnings

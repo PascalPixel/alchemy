@@ -143,6 +143,7 @@
 #include "flags.h"
 #include "djinn_ids.h"
 #include "sound_driver_symbols.h"
+#include "shared/catch_nut.h"
 
 /// Kalay's actors (Kalay), numbering the rows of
 /// gKalay_TownActorPlacements from ACTOR_FIRST_PLACED, then the tour
@@ -379,7 +380,6 @@ static void Kalay_SearchWell(void) {
   Event_End();
 }
 
-#include "shared/catch_nut.h"
 
 /// Catch at the Kalay Tunnel Entrance pulls in the Nut floating there, until it
 /// is caught (FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT).

@@ -56,6 +56,7 @@
 #include "scene.h"
 #include "lunpa.h"
 #include "macros.h"
+#include "shared/catch_nut.h"
 
 static void Lunpa_WatchForUncloakedParty(void);
 
@@ -128,7 +129,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gLunpaActorPlacements;
 }
 
-#include "shared/catch_nut.h"
 
 /// Lunpa: Catch on the Nut floating over the town gives it to the party.
 static void Lunpa_CatchFloatingNut(void) {

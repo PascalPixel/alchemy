@@ -65,6 +65,8 @@
 #include "inventory.h"
 #include "text/msg_ids.h"
 #include "flags.h"
+#include "ability_ids.h"
+#include "item_ids.h"
 
 /// The townspeople, the dog and Sap, numbering
 /// gVaultRevisit_ActorPlacements' rows from ACTOR_FIRST_PLACED.
@@ -458,8 +460,6 @@ static void VaultRevisit_EnterMayorsHouse(void) {
 }
 
 #include "shared/vault_map_cells.c"
-#include "ability_ids.h"
-#include "item_ids.h"
 
 /// The jail door opens and the party walks in.
 static void VaultRevisit_EnterJail(void) {

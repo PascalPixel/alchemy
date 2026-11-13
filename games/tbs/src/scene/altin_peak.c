@@ -123,6 +123,7 @@
 #include "item_ids.h"
 #include "map_grid_scroll.h"
 #include "sound_driver_symbols.h"
+#include "shared/frost_glint.h"
 
 // The rooms' floor switches, each set once flipped from its first position;
 // they are area temp flags, kept until the party leaves the mine.
@@ -1822,7 +1823,6 @@ static void AltinPeak_SpawnDebris(void) {
   }
 }
 
-#include "shared/frost_glint.h"
 
 /// The frozen second puddle's glint.
 DEFINE_FROST_GLINT(static, Actor_SetSpriteColor)

@@ -121,6 +121,7 @@
 #include "ability_ids.h"
 #include "sound_driver_symbols.h"
 #include "item_ids.h"
+#include "shared/walk_into_leader.h"
 
 // Vale's area flags, kept while the party stays in Vale's scenes.
 /// Back from Kalay, a young man has welcomed Isaac home.
@@ -891,7 +892,6 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "shared/walk_into_leader.h"
 
 /// The mayor sends help to the elders and the boys back to the river.
 static void ValePlaza_SentToAidElders(void) {

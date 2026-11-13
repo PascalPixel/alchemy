@@ -55,6 +55,7 @@
 #include "ability_ids.h"
 #include "actor_script.h"
 #include "flags.h"
+#include "shared/catch_nut.h"
 
 // UB: this calls a void function through an s32 function type, the call the
 // bytes show; UBFIX calls it as declared.
@@ -128,7 +129,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gMcCoyPalaceGroundsNoActorPlacements;
 }
 
-#include "shared/catch_nut.h"
 
 /// McCoy's Palace, outside: Catch on the Nut floating over the grounds gives
 /// it to the party.

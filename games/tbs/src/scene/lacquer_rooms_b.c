@@ -48,6 +48,8 @@
 #include "field_effect.h"
 #include "text/msg_ids.h"
 #include "flags.h"
+#include "ability_ids.h"
+#include "item_ids.h"
 
 /// The actors of the houses, shops and inn, numbered by the rows of
 /// gLacquerRoomsB_ActorPlacements. Each villager is named by what they
@@ -96,8 +98,6 @@ enum { ANIM_HSU_IN_BED = 6 };
 
 #include "shared/field_effect_create.c"
 #include "shared/field_effect_spawn.c"
-#include "ability_ids.h"
-#include "item_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gLacquerRoomsB_Entrances;

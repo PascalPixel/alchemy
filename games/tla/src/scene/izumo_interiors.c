@@ -1,5 +1,6 @@
 /// @file
-/// The scene code of overlay 0x67d, in ROM order.
+/// Izumo's houses, inn and Sanctum, with Susa's house when entered by entrance
+/// 7, and other tables once the Great Serpent is slain (FLAG_SERPENT_SLAIN).
 
 #include "shared/tables.h"
 #include "types.h"
@@ -20,10 +21,28 @@
 #include "text/msg_ids.h"
 #include "event_work.h"
 #include "module/field/event_commands.h"
-#include "module/scene/izumo_interiors.h"
+
+extern struct ActorPlacement gIzumoInteriors_ActorPlacements[];
+extern struct ActorPlacement gIzumoInteriors_SusasHouseActorPlacements[];
+extern struct ActorPlacement
+    gIzumoInteriors_ActorPlacementsOnceTheSerpentIsSlain[];
+extern struct Trigger gIzumoInteriors_Triggers[];
+extern struct Trigger gIzumoInteriors_SusasHouseTriggers[];
+extern struct Trigger gIzumoInteriors_TriggersOnceTheSerpentIsSlain[];
+
+void Inn_CheckIn(s32 slot, s32 actor);
+
+void IzumoInteriors_RecognizeTheHeroes(s32 mode);
+
+void IzumoInteriors_ShowMove(void);
+extern s32 gIzumoInteriors_FirstPacerScript[];
+extern s32 gIzumoInteriors_SecondPacerScript[];
+extern s32 gIzumoInteriors_RockingScript[];
 #include "module/scene/scene.h"
 
-#define DEFINE_IZUMO_INTERIORS_IS_AWAY(name, n1, n2)                           \
+/// Whether the other of the two men pacing in Susa's house is clear of the
+/// spot by the doorway this one walks to; their scripts wait on it.
+#define DEFINE_IZUMO_INTERIORS_IS_CLEAR(name, n1, n2)                          \
   s32 name(void) {                                                             \
     struct Actor *object = Actor_GetById(n1);                                  \
                                                                                \
@@ -38,9 +57,9 @@
     return 1;                                                                  \
   }
 
-DEFINE_IZUMO_INTERIORS_IS_AWAY(Func_02000038, 10, 0x940000)
+DEFINE_IZUMO_INTERIORS_IS_CLEAR(IzumoInteriors_IsFirstPacerClear, 10, 0x940000)
 
-DEFINE_IZUMO_INTERIORS_IS_AWAY(Func_0200006c, 9, 0x840000)
+DEFINE_IZUMO_INTERIORS_IS_CLEAR(IzumoInteriors_IsSecondPacerClear, 9, 0x840000)
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -456,7 +475,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   FieldEvent_Wait(60);
   Actor_FaceDirection(15, FACING_EAST, 0);
   FieldEvent_Wait(30);
-  Func_02001d8c();
+  IzumoInteriors_ShowMove();
   FieldEvent_Wait(30);
   Actor_FaceDirection(15, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
@@ -975,12 +994,15 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_End();
 }
 
-s32 Func_02001d84(void) { return -1; }
+/// The Move cast below has nothing to move.
+s32 IzumoInteriors_FindNoMoveTarget(void) { return -1; }
 
-void Func_02001d8c(void) {
+/// Actor 15 casts Move, with no target.
+void IzumoInteriors_ShowMove(void) {
   BattleEffect_LoadActionEffectResources(140, 1);
   FieldPsynergy_SetupActorPair(15, -1);
-  FIELD_AT(Ram_HeapSlots->effectWork, HandlerFn, 36) = Func_02001d84;
+  FIELD_AT(Ram_HeapSlots->effectWork, HandlerFn, 36) =
+      IzumoInteriors_FindNoMoveTarget;
   FIELD_AT(Ram_HeapSlots->effectWork, u8, 32) = 1;
   EventObject_Initialize();
   Event_Wait(10);
@@ -1113,16 +1135,18 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 #include "objcmd.h"
 
-extern s32 gData_020028dc[];
+extern s32 gIzumoInteriors_BounceScript[];
 
-DEFINE_G_DATA_02002324(gData_02002324, Func_02000038, 0x700000, 0x880000,
+DEFINE_G_DATA_02002324(gIzumoInteriors_FirstPacerScript,
+                       IzumoInteriors_IsFirstPacerClear, 0x700000, 0x880000,
                        0x8000, 0)
 
-DEFINE_G_DATA_02002324(gData_020024f0, Func_0200006c, 0xb00000, 0x980000, 0,
+DEFINE_G_DATA_02002324(gIzumoInteriors_SecondPacerScript,
+                       IzumoInteriors_IsSecondPacerClear, 0xb00000, 0x980000, 0,
                        0x8000)
 
 // clang-format off
-s32 gData_020026bc[] = {
+s32 gIzumoInteriors_RockingScript[] = {
     22, 30, 129, 39, 0, (s32)0x80010000,
     23, 9, -0x4000, 23, 10, 0x2000,
     0, 2, 23, 9, 0x2000, 23,
@@ -1148,7 +1172,7 @@ s32 gData_020026bc[] = {
     13, 0xffff, (s32)0xc0010000, -1,
 };
 
-s32 gData_020028dc[] = {
+s32 gIzumoInteriors_BounceScript[] = {
     SC_SET(SW_COLLISION, 131),
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, -0x4000),
@@ -1229,13 +1253,13 @@ struct ActorPlacement gIzumoInteriors_ActorPlacements[] = {
     {124, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(84), FACING_SOUTHEAST, 1, 0},
     {125, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(136), FACING_NORTHWEST, 1, 0},
     {125, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(120), FACING_SOUTHEAST, 1, 0},
-    {32, CONDITION_ALWAYS, (s32)gData_020028dc, PIXELS(352), 0, PIXELS(328), FACING_SOUTH, 1, 0},
+    {32, CONDITION_ALWAYS, (s32)gIzumoInteriors_BounceScript, PIXELS(352), 0, PIXELS(328), FACING_SOUTH, 1, 0},
     {121, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(362), FACING_SOUTH, 1, 0},
     {118, CONDITION_ALWAYS, 1, PIXELS(108), 0, PIXELS(320), FACING_SOUTHEAST, 1, 0},
     {119, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(104), FACING_SOUTH, 1, 0},
     {123, CONDITION_ALWAYS, 2, PIXELS(632), 0, PIXELS(88), FACING_EAST, 1, 0},
     {201, CONDITION_ALWAYS, 1, PIXELS(560), 0, PIXELS(328), FACING_SOUTH, 0, 0},
-    {127, CONDITION_ALWAYS, (s32)gData_020026bc, PIXELS(504), 0, PIXELS(360), FACING_SOUTHWEST, 2, 0},
+    {127, CONDITION_ALWAYS, (s32)gIzumoInteriors_RockingScript, PIXELS(504), 0, PIXELS(360), FACING_SOUTHWEST, 2, 0},
     {127, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(392), FACING_NORTHWEST, 1, 0},
     {SCENE_TABLE_END},
 };
@@ -1244,8 +1268,8 @@ struct ActorPlacement gIzumoInteriors_ActorPlacements[] = {
 // clang-format off
 struct ActorPlacement gIzumoInteriors_SusasHouseActorPlacements[] = {
     {30, CONDITION_ALWAYS, 1, PIXELS(144), 0, PIXELS(520), FACING_SOUTH, 1, 0},
-    {120, CONDITION_ALWAYS, (s32)gData_02002324, PIXELS(136), 0, PIXELS(624), FACING_EAST, 1, 0},
-    {120, CONDITION_ALWAYS, (s32)gData_020024f0, PIXELS(152), 0, PIXELS(624), FACING_WEST, 1, 0},
+    {120, CONDITION_ALWAYS, (s32)gIzumoInteriors_FirstPacerScript, PIXELS(136), 0, PIXELS(624), FACING_EAST, 1, 0},
+    {120, CONDITION_ALWAYS, (s32)gIzumoInteriors_SecondPacerScript, PIXELS(152), 0, PIXELS(624), FACING_WEST, 1, 0},
     {124, CONDITION_ALWAYS, 1, PIXELS(90), 0, PIXELS(622), FACING_WEST, 1, 0},
     {124, CONDITION_ALWAYS, 1, PIXELS(198), 0, PIXELS(622), FACING_EAST, 1, 0},
     {SCENE_TABLE_END},
@@ -1259,7 +1283,7 @@ struct ActorPlacement gIzumoInteriors_ActorPlacementsOnceTheSerpentIsSlain[] = {
     {119, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(104), FACING_SOUTH, 1, 0},
     {123, CONDITION_ALWAYS, 2, PIXELS(632), 0, PIXELS(88), FACING_EAST, 1, 0},
     {201, CONDITION_ALWAYS, 1, PIXELS(560), 0, PIXELS(328), FACING_SOUTH, 0, 0},
-    {127, CONDITION_ALWAYS, (s32)gData_020026bc, PIXELS(600), 0, PIXELS(360), FACING_WEST, 2, 0},
+    {127, CONDITION_ALWAYS, (s32)gIzumoInteriors_RockingScript, PIXELS(600), 0, PIXELS(360), FACING_WEST, 2, 0},
     {127, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(376), FACING_NORTHEAST, 1, 0},
     {30, CONDITION_ALWAYS, 1, PIXELS(144), 0, PIXELS(520), FACING_SOUTH, 2, 0},
     {120, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(624), FACING_EAST, 1, 0},

@@ -1,5 +1,6 @@
 /// @file
-/// The scene code of overlay 0x684, in ROM order.
+/// Champa's Sanctum, whose healer serves the party across the counter and,
+/// until Briggs sails from Alhafra, talks of the village's last hope.
 
 #include "battle.h"
 #include "field.h"
@@ -29,7 +30,9 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 void Sanctum_Run(void);
 
-void Func_02000054(void) { Sanctum_Run(); }
+/// Talking to the healer from across the counter, facing north.
+
+void ChampaSanctum_ServeAcrossTheCounter(void) { Sanctum_Run(); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
@@ -65,7 +68,7 @@ struct ActorPlacement gActorPlacements[] = {
 
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0xc400, 8, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {0xc400, 8, CONDITION_ALWAYS, EVENT(ChampaSanctum_ServeAcrossTheCounter)},
     {TRIGGER_TALK, 8, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
      MSGNO(MsgChampaTreasureEncouragesLaziness)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8,

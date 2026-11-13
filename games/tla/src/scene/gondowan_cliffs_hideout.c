@@ -1,5 +1,6 @@
 /// @file
-/// The scene code of overlay 0x66c, in ROM order.
+/// The hideout in the Gondowan Cliffs where four warriors from Kibombo camp,
+/// until flag 2219 is set.
 
 #include "field/field.h"
 
@@ -13,8 +14,20 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "event_work.h"
-#include "module/scene/gondowan_cliffs_hideout.h"
 #include "module/scene/scene.h"
+
+/// The hideout's placed actors: two not yet understood, then the four
+/// Kibombo warriors, named for what each says when spoken to.
+enum GondowanCliffsHideoutActorId {
+  ACTOR_WARRIOR_FROM_KIBOMBO = ACTOR_FIRST_PLACED + 2,
+  ACTOR_WARRIOR_BLAMING_THE_COLLISION,
+  ACTOR_WARRIOR_CLAIMING_TO_CAMP,
+  ACTOR_WARRIOR_AWAITING_FRIENDS
+};
+
+extern struct ActorPlacement gPlacementsWithoutWarriors[];
+extern struct ActorPlacement gPlacementsWithWarriors[];
+extern u32 gGondowanCliffsHideout_StandScript[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -93,7 +106,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-u32 gData_02000224[] = {
+u32 gGondowanCliffsHideout_StandScript[] = {
     39,
     0,
     17,
@@ -112,7 +125,7 @@ u32 gSceneExits[] = {
 
 // clang-format off
 struct ActorPlacement gPlacementsWithWarriors[] = {
-    {410, CONDITION_ALWAYS, (s32)gData_02000224, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
+    {410, CONDITION_ALWAYS, (s32)gGondowanCliffsHideout_StandScript, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
     {306, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
     {83, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_WEST, 0, 2},
     {83, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_NORTH, 0, 2},
@@ -124,7 +137,7 @@ struct ActorPlacement gPlacementsWithWarriors[] = {
 
 // clang-format off
 struct ActorPlacement gPlacementsWithoutWarriors[] = {
-    {410, CONDITION_ALWAYS, (s32)gData_02000224, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
+    {410, CONDITION_ALWAYS, (s32)gGondowanCliffsHideout_StandScript, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
     {306, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
     {SCENE_TABLE_END},
 };

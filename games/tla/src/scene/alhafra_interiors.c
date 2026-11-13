@@ -19,8 +19,8 @@
 #include "flags.h"
 #include "scene_tables.h"
 #include "module/scene/scene.h"
-extern u8 gData_02001c90[];
-extern u8 gData_02001c60[];
+extern u8 gAlhafraInteriors_FirstGuestSprite[];
+extern u8 gAlhafraInteriors_SecondGuestSprite[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -67,8 +67,8 @@ void Event_StartScreenTransition(void);
 // ---- this overlay
 
 extern struct ActorPlacement gActorPlacements[];
-extern u8 gAlhafraInteriors_ActorPlacementsOnceBriggsIsCaught[];
-extern u8 gAlhafraInteriors_ActorPlacementsOnceTheMastIsCleared[];
+extern s16 gAlhafraInteriors_ActorPlacementsOnceBriggsIsCaught[];
+extern s16 gAlhafraInteriors_ActorPlacementsOnceTheMastIsCleared[];
 extern struct Trigger gAlhafraInteriors_Triggers[];
 extern struct Trigger gAlhafraInteriors_TriggersOnceBriggsIsCaught[];
 extern struct Trigger gAlhafraInteriors_TriggersOnceTheMastIsCleared[];
@@ -277,16 +277,16 @@ const struct Trigger *Scene_GetEvents(void) {
 
 s32 BattleEffect_DrawSpriteAtWorldPosition();
 
-s32 Func_02000578(s32 a0) {
+s32 AlhafraInteriors_DrawFirstGuestSprite(s32 a0) {
   BattleEffect_DrawSpriteAtWorldPosition(
-      (s32)gData_02001c90, FIELD_AT(a0, s32, 8),
+      (s32)gAlhafraInteriors_FirstGuestSprite, FIELD_AT(a0, s32, 8),
       (FIELD_AT(a0, s32, 12) + 0xc0000), FIELD_AT(a0, s32, 16));
   return 0;
 }
 
-s32 Func_02000598(s32 a0) {
+s32 AlhafraInteriors_DrawSecondGuestSprite(s32 a0) {
   BattleEffect_DrawSpriteAtWorldPosition(
-      (s32)gData_02001c60, FIELD_AT(a0, s32, 8),
+      (s32)gAlhafraInteriors_SecondGuestSprite, FIELD_AT(a0, s32, 8),
       (FIELD_AT(a0, s32, 12) + 0x80000), FIELD_AT(a0, s32, 16));
   return 0;
 }
@@ -311,11 +311,13 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpritePriority(14, 3);
   FieldActor_SetSpritePriority(15, 3);
   BattleEffect_FillOverlayTiles(0);
-  Call4(Func_02000bb4, (s32)gData_02001c90, 8, 15, 0x40000000);
-  Call4(Func_02000bb4, (s32)gData_02001c60, 8, 15, 0x40000000);
-  *(s32 *)(gData_02001c60 + 24) = 0x18000;
-  Actor_Get(14)->update = Func_02000578;
-  Actor_Get(15)->update = Func_02000598;
+  Call4(Func_02000bb4, (s32)gAlhafraInteriors_FirstGuestSprite, 8, 15,
+        0x40000000);
+  Call4(Func_02000bb4, (s32)gAlhafraInteriors_SecondGuestSprite, 8, 15,
+        0x40000000);
+  *(s32 *)(gAlhafraInteriors_SecondGuestSprite + 24) = 0x18000;
+  Actor_Get(14)->update = AlhafraInteriors_DrawFirstGuestSprite;
+  Actor_Get(15)->update = AlhafraInteriors_DrawSecondGuestSprite;
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     if (Actor_Get(gMainRoutineWork.currentOwner)->x >= 0x2000000)
       Event_SetFlag(0x200);
@@ -354,11 +356,13 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpritePriority(14, 3);
   FieldActor_SetSpritePriority(15, 3);
   BattleEffect_FillOverlayTiles(0);
-  Call4(Func_02000bb4, (s32)gData_02001c90, 8, 15, 0x40000000);
-  Call4(Func_02000bb4, (s32)gData_02001c60, 8, 15, 0x40000000);
-  *(s32 *)(gData_02001c60 + 24) = 0x18000;
-  Actor_Get(14)->update = Func_02000578;
-  Actor_Get(15)->update = Func_02000598;
+  Call4(Func_02000bb4, (s32)gAlhafraInteriors_FirstGuestSprite, 8, 15,
+        0x40000000);
+  Call4(Func_02000bb4, (s32)gAlhafraInteriors_SecondGuestSprite, 8, 15,
+        0x40000000);
+  *(s32 *)(gAlhafraInteriors_SecondGuestSprite + 24) = 0x18000;
+  Actor_Get(14)->update = AlhafraInteriors_DrawFirstGuestSprite;
+  Actor_Get(15)->update = AlhafraInteriors_DrawSecondGuestSprite;
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     if (!Event_GetFlag(FLAG_ISAAC_CLEARED_CROSSBONE_ISLE) ||
         Event_GetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE)) {
@@ -380,7 +384,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-extern u8 gData_02000be4[];
+extern u32 gAlhafraInteriors_TravelersWalkOffScript[];
 
 /// Two guests of the inn tell that Isaac picked Crossbone Isle clean, once
 /// (FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE), while
@@ -470,9 +474,9 @@ void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
       Actor_WalkByAndWait(4, 0, -16);
       Actor_FaceDirectionAndWait(4, FACING_SOUTH);
       FieldEvent_Wait(10);
-      Actor_SetScript(32, (s32)gData_02000be4);
+      Actor_SetScript(32, (s32)gAlhafraInteriors_TravelersWalkOffScript);
       FieldEvent_Wait(10);
-      Actor_SetScript(31, (s32)gData_02000be4);
+      Actor_SetScript(31, (s32)gAlhafraInteriors_TravelersWalkOffScript);
       FieldEvent_Wait(10);
       FieldActor_WatchAndSetScript(4, 32);
       FieldEvent_Wait(60);
@@ -491,3 +495,396 @@ void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
     }
   }
 }
+
+// clang-format off
+u32 gAlhafraInteriors_TravelersWalkOffScript[] = {
+    39, 2, 4, 0x2080000, 0, 0x1480000,
+    1, 4, 0x2080000, 0, 0x1380000, 1,
+    4, 0x2280000, 0, 0x1380000, 1, 17,
+};
+
+struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+u32 gSceneExits[] = {
+    SCENE_EXITS(96),
+    SCENE_EXIT_IF(1, 95, 1, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(2, 95, 2, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(5, 95, 5, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(6, 95, 6, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(7, 95, 7, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(20, 96, 20, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(21, 96, 21, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(22, 96, 22, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(23, 96, 23, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(24, 96, 24, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(25, 96, 25, CONDITION_ALWAYS),
+    SCENE_EXITS_END,
+};
+
+struct ActorPlacement gActorPlacements[] = {
+    {110, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(88), FACING_SOUTH, 1, 0},
+    {202, CONDITION_ALWAYS, 1, PIXELS(160), 0, PIXELS(544), FACING_SOUTH, 1, 0},
+    {115, CONDITION_ALWAYS, 2, PIXELS(184), 0, PIXELS(104), FACING_SOUTH, 0, 0},
+    {116, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(104), FACING_WEST, 0, 0},
+    {114, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(344), FACING_NORTHEAST, 1, 0},
+    {128, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(312), FACING_NORTHWEST + FACING_STEP, 2, 0},
+    {112, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(312), FACING_SOUTHEAST, 2, 0},
+    {113, CONDITION_ALWAYS, 1, PIXELS(176), 0, PIXELS(312), FACING_SOUTH, 1, 0},
+    {199, CONDITION_ALWAYS, 1, PIXELS(664), 0, PIXELS(84), FACING_SOUTH, 1, 0},
+    {209, CONDITION_ALWAYS, 1, PIXELS(648), 0, PIXELS(152), FACING_EAST, 0, 0},
+    {115, CONDITION_ALWAYS, 1, PIXELS(648), 0, PIXELS(120), FACING_NORTHWEST, 0, 0},
+    {116, CONDITION_ALWAYS, 1, PIXELS(840), 0, PIXELS(280), FACING_SOUTHWEST, 0, 0},
+    {211, CONDITION_ALWAYS, 1, PIXELS(762), 0, PIXELS(84), FACING_NORTH, 1, 0},
+    {115, CONDITION_ALWAYS, 2, PIXELS(864), 0, PIXELS(120), FACING_SOUTH, 0, 0},
+    {116, CONDITION_ALWAYS, 1, PIXELS(712), 0, PIXELS(136), FACING_EAST, 0, 0},
+    {191, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(152), FACING_NORTH, 1, 0},
+    {186, CONDITION_ALWAYS, 1, PIXELS(728), 0, PIXELS(112), FACING_SOUTH, 1, 0},
+    {114, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(520), FACING_SOUTHEAST, 1, 0},
+    {128, CONDITION_ALWAYS, 1, PIXELS(584), 0, PIXELS(536), FACING_NORTHWEST, 0, 0},
+    {191, CONDITION_ALWAYS, 1, PIXELS(504), 0, PIXELS(552), FACING_NORTHEAST, 0, 0},
+    {186, CONDITION_ALWAYS, 1, PIXELS(544), 0, PIXELS(544), FACING_SOUTH, 0, 0},
+    {112, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(344), FACING_SOUTH + FACING_STEP, 0, 0},
+    {113, CONDITION_ALWAYS, 1, PIXELS(552), 0, PIXELS(360), FACING_WEST, 0, 0},
+    {57, CONDITION_ALWAYS, 1, PIXELS(376), 0, PIXELS(312), FACING_NORTHEAST, 1, 0},
+    {SCENE_TABLE_END},
+};
+
+s16 gAlhafraInteriors_ActorPlacementsOnceBriggsIsCaught[] = {
+    110, -1, 1, 0, 0, 488, 0, 0,
+    0, 88, FACING_SOUTH, 1, 202, -1, 1, 0,
+    0, 160, 0, 0, 0, 544, FACING_SOUTH, 1,
+    115, -1, 2, 0, 0, 184, 0, 0,
+    0, 104, FACING_SOUTH, 0, 116, -1, 1, 0,
+    0, 72, 0, 0, 0, 104, FACING_WEST, 0,
+    114, -1, 1, 0, 0, 72, 0, 0,
+    0, 344, FACING_NORTHEAST, 0, 128, -1, 1, 0,
+    0, 88, 0, 0, 0, 312, 0xb000, 1,
+    112, -1, 1, 0, 0, 152, 0, 0,
+    0, 312, FACING_SOUTHEAST, 1, 113, -1, 1, 0,
+    0, 176, 0, 0, 0, 312, FACING_SOUTH, 1,
+    199, -1, 1, 0, 0, 664, 0, 0,
+    0, 84, FACING_SOUTH, 1, 209, -1, 1, 0,
+    0, 648, 0, 0, 0, 152, 0, 0,
+    115, -1, 1, 0, 0, 648, 0, 0,
+    0, 120, FACING_NORTHWEST, 0, 116, -1, 2, 0,
+    0, 864, 0, 0, 0, 120, FACING_SOUTH, 0,
+    211, -1, 1, 0, 0, 762, 0, 0,
+    0, 84, FACING_NORTH, 1, 115, -1, 2, 0,
+    0, -56, 0, 0, 0, -56, FACING_SOUTH, 1,
+    116, -1, 1, 0, 0, -56, 0, 0,
+    0, -56, 0, 1, 191, -1, 1, 0,
+    0, -56, 0, 0, 0, -56, FACING_NORTH, 1,
+    186, -1, 1, 0, 0, 712, 0, 0,
+    0, 136, 0, 1, 114, -1, 1, 0,
+    0, -56, 0, 0, 0, -56, FACING_SOUTHEAST, 1,
+    128, -1, 1, 0, 0, -56, 0, 0,
+    0, -56, FACING_NORTHWEST, 0, 191, -1, 1, 0,
+    0, -56, 0, 0, 0, -56, FACING_NORTHEAST, 0,
+    186, -1, 1, 0, 0, -56, 0, 0,
+    0, -56, FACING_SOUTH, 1, 112, -1, 1, 0,
+    0, 512, 0, 0, 0, 536, 0x5000, 0,
+    113, -1, 1, 0, 0, 504, 0, 0,
+    0, 552, FACING_NORTHWEST, 0, 57, -1, 1, 0,
+    0, 376, 0, 0, 0, 312, FACING_NORTHEAST, 1,
+    -1, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0,
+};
+
+s16 gAlhafraInteriors_ActorPlacementsOnceTheMastIsCleared[] = {
+    110, -1, 1, 0, 0, 488, 0, 0,
+    0, 88, FACING_SOUTH, 1, 202, -1, 1, 0,
+    0, 160, 0, 0, 0, 544, FACING_SOUTH, 1,
+    115, -1, 2, 0, 0, 184, 0, 0,
+    0, 104, FACING_SOUTH, 0, 116, -1, 1, 0,
+    0, 72, 0, 0, 0, 104, FACING_WEST, 0,
+    114, -1, 1, 0, 0, 72, 0, 0,
+    0, 344, FACING_NORTHEAST, 0, 128, -1, 1, 0,
+    0, 88, 0, 0, 0, 312, 0xb000, 0,
+    112, -1, 1, 0, 0, 152, 0, 0,
+    0, 312, FACING_SOUTHEAST, 0, 113, -1, 1, 0,
+    0, 176, 0, 0, 0, 312, FACING_SOUTH, 0,
+    199, -1, 1, 0, 0, 664, 0, 0,
+    0, 84, FACING_SOUTH, 1, 209, -1, 1, 0,
+    0, 648, 0, 0, 0, 152, 0, 0,
+    115, -1, 1, 0, 0, 648, 0, 0,
+    0, 120, FACING_NORTHWEST, 0, 116, -1, 2, 0,
+    0, 864, 0, 0, 0, 120, FACING_SOUTH, 0,
+    211, -1, 1, 0, 0, 762, 0, 0,
+    0, 84, FACING_NORTH, 1, 115, -1, 2, 0,
+    0, -56, 0, 0, 0, -56, FACING_SOUTH, 1,
+    116, -1, 1, 0, 0, -56, 0, 0,
+    0, -56, 0, 1, 191, -1, 1, 0,
+    0, -56, 0, 0, 0, -56, FACING_NORTH, 1,
+    186, -1, 1, 0, 0, 712, 0, 0,
+    0, 136, 0, 0, 114, -1, 1, 0,
+    0, -56, 0, 0, 0, -56, FACING_SOUTHEAST, 1,
+    128, -1, 1, 0, 0, -56, 0, 0,
+    0, -56, FACING_NORTHWEST, 0, 191, -1, 1, 0,
+    0, -56, 0, 0, 0, -56, FACING_NORTHEAST, 0,
+    186, -1, 1, 0, 0, -56, 0, 0,
+    0, -56, FACING_SOUTH, 1, 112, -1, 1, 0,
+    0, 512, 0, 0, 0, 536, 0x5000, 0,
+    113, -1, 1, 0, 0, 504, 0, 0,
+    0, 552, FACING_NORTHWEST, 0, 224, -1, 1, 0,
+    0, 376, 0, 0, 0, 316, 0x3000, 0,
+    225, -1, 1, 0, 0, 392, 0, 0,
+    0, 344, 0xb000, 0, -1, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+};
+// clang-format on
+
+struct Trigger gAlhafraInteriors_Triggers[] = {
+    {0x4401, 1, CONDITION_ALWAYS, 1},
+    {0x4401, 2, CONDITION_ALWAYS, 2},
+    {0x4401, 5, CONDITION_ALWAYS, 5},
+    {0x4401, 6, CONDITION_ALWAYS, 6},
+    {0x4401, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 20, CONDITION_ALWAYS, 20},
+    {TRIGGER_EXIT, 21, CONDITION_ALWAYS, 21},
+    {TRIGGER_EXIT, 22, CONDITION_ALWAYS, 22},
+    {TRIGGER_EXIT, 23, CONDITION_ALWAYS, 23},
+    {TRIGGER_EXIT, 24, CONDITION_ALWAYS, 24},
+    {TRIGGER_EXIT, 25, CONDITION_ALWAYS, 25},
+    {0xc400, 8, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToItemMerchant)},
+    {0xc400, 16, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToInnkeeper)},
+    {0xc400, 9, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToHealer)},
+    {0x173, 214, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors121)},
+    {0x173, 215, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors122)},
+    {0x173, 216, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors123)},
+    {0x173, 217, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors124)},
+    {0x173, 200, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors125)},
+    {TRIGGER_STEP, 30, FLAG_ALHAFRA_MET_ALEX, EVENT(AlhafraInteriors_MeetAlex)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors01)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors02)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors03)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors04)},
+    {TRIGGER_TALK, 14, 0x8b1, EVENT(AlhafraInteriors_GuestsAskForTea)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1038, 0x8b1,
+     EVENT(AlhafraInteriors_GuestsAskForTea)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors05)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToHostess)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS,
+     EVENT(AlhafraInteriors_TalkToDemandingGuest)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors09)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors10)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors11)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors12)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors13)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors14)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors15)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors16)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors17)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors18)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors19)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors20)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors21)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors22)},
+    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors23)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors24)},
+    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors25)},
+    {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors26)},
+    {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors27)},
+    {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors28)},
+    {TRIGGER_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors29)},
+    {TRIGGER_TALK, 30, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors30)},
+    {TRIGGER_TALK, 31, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors32)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors33)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors34)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors35)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors36)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors37)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors38)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors39)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors40)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors41)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors42)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors43)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors44)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors45)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors46)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors47)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1055, CONDITION_ALWAYS,
+     EVENT(AlhafraInteriors_ReadAlexsMind)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors49)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors50)},
+    {TRIGGER_TABLE_END},
+};
+
+struct Trigger gAlhafraInteriors_TriggersOnceBriggsIsCaught[] = {
+    {0x4401, 1, CONDITION_ALWAYS, 1},
+    {0x4401, 2, CONDITION_ALWAYS, 2},
+    {0x4401, 5, CONDITION_ALWAYS, 5},
+    {0x4401, 6, CONDITION_ALWAYS, 6},
+    {0x4401, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 20, CONDITION_ALWAYS, 20},
+    {TRIGGER_EXIT, 21, CONDITION_ALWAYS, 21},
+    {TRIGGER_EXIT, 22, CONDITION_ALWAYS, 22},
+    {TRIGGER_EXIT, 23, CONDITION_ALWAYS, 23},
+    {TRIGGER_EXIT, 24, CONDITION_ALWAYS, 24},
+    {TRIGGER_EXIT, 25, CONDITION_ALWAYS, 25},
+    {0xc400, 8, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToItemMerchant)},
+    {0xc400, 16, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToInnkeeper)},
+    {0xc400, 9, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToHealer)},
+    {0x173, 214, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors121)},
+    {0x173, 215, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors122)},
+    {0x173, 216, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors123)},
+    {0x173, 217, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors124)},
+    {0x173, 200, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors125)},
+    {TRIGGER_TALK, 30, IF_FLAG_SET(FLAG_ALEX_LEFT_ALHAFRA),
+     MSGNO(MsgAlhafraInteriors84)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30,
+     IF_FLAG_SET(FLAG_ALEX_LEFT_ALHAFRA), MSGNO(MsgAlhafraInteriors85)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors51)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors52)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors53)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors54)},
+    {TRIGGER_TALK, 12, 0x8b8, EVENT(AlhafraInteriors_HostTellsOfRepairs)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors56)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors57)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors58)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors59)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors60)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors61)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors62)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors63)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors64)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors65)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors66)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors67)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors68)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors69)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors70)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors71)},
+    {TRIGGER_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors72)},
+    {TRIGGER_TALK, 30, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors73)},
+    {TRIGGER_TALK, 31, CONDITION_ALWAYS,
+     EVENT(AlhafraInteriors_AlexHearsOfBriggs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors75)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors76)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors77)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors78)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors79)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors80)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors81)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors82)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors83)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors86)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors87)},
+    {TRIGGER_TABLE_END},
+};
+
+struct Trigger gAlhafraInteriors_TriggersOnceTheMastIsCleared[] = {
+    {0x4401, 1, CONDITION_ALWAYS, 1},
+    {0x4401, 2, CONDITION_ALWAYS, 2},
+    {0x4401, 5, CONDITION_ALWAYS, 5},
+    {0x4401, 6, CONDITION_ALWAYS, 6},
+    {0x4401, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 20, CONDITION_ALWAYS, 20},
+    {TRIGGER_EXIT, 21, CONDITION_ALWAYS, 21},
+    {TRIGGER_EXIT, 22, CONDITION_ALWAYS, 22},
+    {TRIGGER_EXIT, 23, CONDITION_ALWAYS, 23},
+    {TRIGGER_EXIT, 24, CONDITION_ALWAYS, 24},
+    {TRIGGER_EXIT, 25, CONDITION_ALWAYS, 25},
+    {0xc400, 8, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToItemMerchant)},
+    {0xc400, 16, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToInnkeeper)},
+    {0xc400, 9, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToHealer)},
+    {0x173, 214, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors121)},
+    {0x173, 215, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors122)},
+    {0x173, 216, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors123)},
+    {0x173, 217, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors124)},
+    {0x173, 200, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors125)},
+    {TRIGGER_STEP, 31, IF_FLAG_SET(FLAG_ISAAC_CLEARED_CROSSBONE_ISLE),
+     EVENT(AlhafraInteriors_OverhearCrossboneIsleTale)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors88)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors89)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors90)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors91)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors92)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors93)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors94)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors95)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors96)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors97)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors98)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors99)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors100)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors101)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors102)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors103)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors104)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors105)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors106)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors107)},
+    {TRIGGER_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors108)},
+    {TRIGGER_TALK, 30, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors109)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors110)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors111)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors112)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors113)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors114)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors115)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors116)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors117)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors118)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors119)},
+    {TRIGGER_TABLE_END},
+};

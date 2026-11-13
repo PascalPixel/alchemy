@@ -17,7 +17,28 @@
 #include "scene_tables.h"
 #include "frame.h"
 #include "item_icon.h"
-#include "module/scene/epilogue.h"
+
+struct EpilogueSprite;
+
+void Func_0200083c(struct EpilogueSprite *sprite);
+
+s32 Import_EventSetDestination();
+
+s32 Func_02000864();
+
+extern s32 gEpilogueMessage; ///< the next line to show
+/// Nonzero while a speaker's name is shown on the green panel.
+extern s8 gEpilogueNameShown;
+extern s16 gEpilogueNameX; ///< the name's left edge, in pixels
+extern s16 gEpilogueNameY; ///< the name's line, in pixels
+extern struct EpilogueSprite gEpilogueNamePanel;
+extern s32 gEpilogueNamePanelEntry; ///< the panel's VRAM cache entry
+extern s32 gEpilogueNamePanelTile;  ///< the panel's first tile
+
+extern const u16 gEpilogueNamePanelPalette[];
+extern char ResourceId_GreenPanel;
+
+s32 Func_0200084c();
 #include "module/scene/scene.h"
 #include "module/window/window.h"
 #include "resource.h"
@@ -96,7 +117,7 @@ void Epilogue_LoadNamePanel(void) {
   s32 priority;
   s32 value;
 
-  Dma_Set(Data_02000874, (void *)0x050003c0, 0x80000010, REG_DMA3);
+  Dma_Set(gEpilogueNamePanelPalette, (void *)0x050003c0, 0x80000010, REG_DMA3);
   sprite = &gEpilogueNamePanel;
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_GreenPanel),
                       buffer);

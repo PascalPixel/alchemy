@@ -55,6 +55,10 @@
 /// Idejima_CatchUpWithFelix, so the next one to catch up finds him there.
 #define FLAG_IDEJIMA_LEADER_WALKED_BACK 0x200
 
+/// The shore of the new continent, where Felix wakes; the second is taken after
+/// a load.
+enum IdejimaEntrance { ENTRANCE_WAKE = 2, ENTRANCE_WAKE_AGAIN = 4 };
+
 /// The scene's placed actors, numbering the rows of gIdejimaPlacements; its
 /// rows of Jenna's and Sheba's sprites place ACTOR_JENNA and ACTOR_SHEBA.
 enum IdejimaActorId {

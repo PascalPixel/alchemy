@@ -528,17 +528,6 @@ struct TileSprite {
   u8 frame;
 };
 
-/// The hideout's placed actors: two not yet understood, then the four
-/// Kibombo warriors, named for what each says when spoken to.
-enum GondowanCliffsHideoutActorId {
-  ACTOR_WARRIOR_FROM_KIBOMBO = ACTOR_FIRST_PLACED + 2,
-  ACTOR_WARRIOR_BLAMING_THE_COLLISION,
-  ACTOR_WARRIOR_CLAIMING_TO_CAMP,
-  ACTOR_WARRIOR_AWAITING_FRIENDS
-};
-
-enum { ENTRANCE_WAKE = 2, ENTRANCE_WAKE_AGAIN = 4 };
-
 struct ActorSprite {
   u8 unk00[18];
   u16 rotation;

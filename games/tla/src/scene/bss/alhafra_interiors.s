@@ -2,8 +2,8 @@
 	.thumb
 	.section .bss,"aw",%nobits
 	.balign 16
-	.global gData_02001c60
-gData_02001c60:
+	.global gAlhafraInteriors_SecondGuestSprite
+gAlhafraInteriors_SecondGuestSprite:
 	.space 0x00000030
-	.global gData_02001c90
-gData_02001c90:
+	.global gAlhafraInteriors_FirstGuestSprite
+gAlhafraInteriors_FirstGuestSprite:

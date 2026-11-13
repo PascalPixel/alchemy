@@ -1,7 +1,11 @@
 /// @file
-/// The scene code of overlay 0x667, in ROM order.
+/// The mayor of Alhafra's manor, where the party stays as his guests once
+/// Briggs is caught and hears in the night that Briggs has escaped
+/// (AlhafraManor_BriggsEscapes), with other people about once the boat's mast
+/// is cleared (FLAG_ALHAFRA_MAST_CLEARED).
 
 #include "text/msg_ids.h"
+#include "flags.h"
 
 #include "battle.h"
 #include "field.h"
@@ -14,7 +18,14 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "event_work.h"
-#include "module/scene/alhafra_manor.h"
+
+void AlhafraManor_BriggsEscapes(void);
+void AlhafraManor_KeepToTheLeadersLayer(void);
+
+void AlhafraManor_GrumbleAboutTheMayor(void);
+
+void AlhafraManor_DefendTheMayor(void);
+void AlhafraManor_TellOfTheEasternSea(void);
 #include "module/system/system.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -24,11 +35,11 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gActorPlacements[];
-extern const u8 gData_02001840[];
+extern s16 gAlhafraManor_ActorPlacementsOnceTheMastIsCleared[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (GameFlag_Test(0x8a7))
-    return gData_02001840;
+  if (GameFlag_Test(FLAG_ALHAFRA_MAST_CLEARED))
+    return gAlhafraManor_ActorPlacementsOnceTheMastIsCleared;
   return gActorPlacements;
 }
 
@@ -39,7 +50,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 #include "scene_ids.h"
 #include "event_inline.h"
 
-void Func_0200006c(s32 actor) {
+void AlhafraManor_AskAboutAlhafra(s32 actor) {
   s32 msg = (s32)&MsgAlhafraManor02;
 
   Event_SetMessageId(msg);
@@ -54,7 +65,7 @@ void Func_0200006c(s32 actor) {
   Event_ShowMessageAndWait(actor, 0);
 }
 
-void Func_020000b8(s32 actor) {
+void AlhafraManor_PointOutAirsRock(s32 actor) {
   s32 msg = (s32)&MsgAlhafraManor09;
 
   Event_Start();
@@ -76,7 +87,7 @@ void Func_020000b8(s32 actor) {
   Event_End();
 }
 
-void Func_02000150(s32 actor) {
+void AlhafraManor_AskIfTheHeroes(s32 actor) {
   s32 msg = (s32)&MsgAlhafraManor14;
 
   Event_SetMessageId(msg);
@@ -91,7 +102,7 @@ void Func_02000150(s32 actor) {
   Event_ShowMessageAndWait(actor, 0);
 }
 
-void Func_0200019c(void) {
+void AlhafraManor_GrumbleAboutTheMayor(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   GameFlag_SetBit(0x8ba);
@@ -111,7 +122,7 @@ void Func_0200019c(void) {
   Event_End();
 }
 
-void Func_02000238(void) {
+void AlhafraManor_DefendTheMayor(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   GameFlag_SetBit(0x8bb);
@@ -147,7 +158,7 @@ void Func_02000238(void) {
   Event_End();
 }
 
-void Func_02000370(void) {
+void AlhafraManor_TellOfTheEasternSea(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   if (*(s16 *)((u8 *)work + 0x166) != 0) {
@@ -207,7 +218,7 @@ s32 Scene_Initialize(void) {
   s16 *entrance;
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
-  Actor_GetById(15)->update = Func_02001488;
+  Actor_GetById(15)->update = AlhafraManor_KeepToTheLeadersLayer;
   if (gMainRoutineWork.entrance == 80) {
     gMainRoutineWork.entrance = gMainRoutineWork.secondary = 14;
     Actor_ArmCallback(14, 0x5000, 0);
@@ -221,9 +232,9 @@ s32 Scene_Initialize(void) {
   entrance = &gMainRoutineWork.entrance;
   if (*entrance == 81) {
     gMainRoutineWork.entrance = gMainRoutineWork.secondary = 8;
-    Func_02000658();
+    AlhafraManor_BriggsEscapes();
   }
-  if (!GameFlag_Test(0x8a7) && GameFlag_Test(0x8ff)) {
+  if (!GameFlag_Test(FLAG_ALHAFRA_MAST_CLEARED) && GameFlag_Test(0x8ff)) {
     Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
   }
@@ -278,7 +289,7 @@ void Func_020015f0(void);
 /// 6 and 13 walk to the controlled character, the camera follows it again
 /// and flag 303 is cleared. Each call goes through the call layer
 /// (call.h), which builds its constants at the call.
-void Func_02000658(void) {
+void AlhafraManor_BriggsEscapes(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId(MsgAlhafraManor29);
@@ -634,4 +645,249 @@ void Func_02000658(void) {
 
 void Func_020015e8(void);
 
-void Func_02001488(void) { Func_020015e8(); }
+void AlhafraManor_KeepToTheLeadersLayer(void) { Func_020015e8(); }
+
+struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {80, CONDITION_ALWAYS, 760, 0, 320, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {81, CONDITION_ALWAYS, 312, 0, 120, FACING_NORTHEAST, 0, 224, 16, 464, 192,
+     0},
+    {99, CONDITION_ALWAYS, 520, 0, 520, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+u32 gSceneExits[] = {
+    SCENE_EXITS(97),
+    SCENE_EXIT_IF(1, 95, 14, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(2, 97, 7, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(3, 97, 8, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(4, 97, 9, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(5, 97, 10, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(6, 97, 15, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(7, 97, 2, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(8, 97, 3, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(9, 97, 4, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(10, 97, 5, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(11, 97, 12, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(12, 97, 11, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(13, 97, 14, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(14, 97, 13, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(15, 97, 6, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(16, 97, 17, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(17, 97, 16, CONDITION_ALWAYS),
+    SCENE_EXITS_END,
+};
+
+struct ActorPlacement gActorPlacements[] = {
+    {112, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(152), FACING_EAST, 1, 0},
+    {24, CONDITION_ALWAYS, 1, PIXELS(372), 0, PIXELS(92), FACING_NORTH, 1, 0},
+    {115, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(344), FACING_NORTHEAST, 0,
+     0},
+    {116, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(328), FACING_SOUTHEAST, 0,
+     0},
+    {128, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(104), FACING_NORTH, 1, 0},
+    {113, CONDITION_ALWAYS, 1, PIXELS(616), 0, PIXELS(120), FACING_EAST, 0, 0},
+    {114, CONDITION_ALWAYS, 1, PIXELS(808), 0, PIXELS(296), FACING_NORTHWEST, 0,
+     0},
+    {112, CONDITION_ALWAYS, 1, PIXELS(728), 0, PIXELS(248), FACING_NORTHWEST, 1,
+     0},
+    {209, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(680), FACING_EAST, 0, 0},
+    {186, CONDITION_ALWAYS, 2, PIXELS(104), 0, PIXELS(504), FACING_SOUTH, 0, 0},
+    {20, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(120), FACING_WEST, 0, 0},
+    {19, CONDITION_ALWAYS, 1, PIXELS(128), 0, PIXELS(112), FACING_SOUTH, 0, 0},
+    {SCENE_TABLE_END},
+};
+
+s16 gAlhafraManor_ActorPlacementsOnceTheMastIsCleared[] = {
+    112,
+    -1,
+    1,
+    0,
+    0,
+    -56,
+    0,
+    0,
+    0,
+    -56,
+    FACING_WEST,
+    1,
+    24,
+    -1,
+    1,
+    0,
+    0,
+    -56,
+    0,
+    0,
+    0,
+    -56,
+    FACING_WEST,
+    1,
+    115,
+    -1,
+    1,
+    0,
+    0,
+    344,
+    0,
+    0,
+    0,
+    320,
+    0,
+    1,
+    231,
+    -1,
+    2,
+    0,
+    0,
+    -56,
+    0,
+    0,
+    0,
+    -56,
+    FACING_NORTH,
+    1,
+    195,
+    -1,
+    1,
+    0,
+    0,
+    -56,
+    0,
+    0,
+    0,
+    -56,
+    FACING_NORTH,
+    1,
+    56,
+    -1,
+    1,
+    0,
+    0,
+    -56,
+    0,
+    0,
+    0,
+    -56,
+    0,
+    2,
+    5,
+    -1,
+    1,
+    0,
+    0,
+    -56,
+    0,
+    0,
+    0,
+    -56,
+    FACING_NORTHEAST,
+    2,
+    6,
+    -1,
+    1,
+    0,
+    0,
+    -56,
+    0,
+    0,
+    0,
+    -56,
+    FACING_NORTHEAST,
+    2,
+    7,
+    -1,
+    1,
+    0,
+    0,
+    -56,
+    0,
+    0,
+    0,
+    -56,
+    FACING_NORTHEAST,
+    2,
+    -1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+};
+// clang-format on
+
+struct Trigger gSceneEvents[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
+    {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
+    {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
+    {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
+    {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
+    {TRIGGER_TALK, 10, IF_FLAG_SET(0x8a7), MSGNO(MsgAlhafraManor30)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x8a7),
+     MSGNO(MsgAlhafraManor31)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor01)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(AlhafraManor_AskAboutAlhafra)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor03)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor04)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManor05)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManor06)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManor07)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManor08)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(AlhafraManor_PointOutAirsRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManor11)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor12)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManor13)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(AlhafraManor_AskIfTheHeroes)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor15)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManor16)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManor17)},
+    {TRIGGER_TALK, 18, 0x8ba, EVENT(AlhafraManor_GrumbleAboutTheMayor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1042, 0x8ba,
+     EVENT(AlhafraManor_GrumbleAboutTheMayor)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor19)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor20)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManor21)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManor22)},
+    {TRIGGER_TALK, 8, 0x8bb, EVENT(AlhafraManor_DefendTheMayor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1032, 0x8bb,
+     EVENT(AlhafraManor_DefendTheMayor)},
+    {TRIGGER_TALK, 9, 0x8bc, EVENT(AlhafraManor_TellOfTheEasternSea)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1033, 0x8bc,
+     EVENT(AlhafraManor_TellOfTheEasternSea)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor25)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor26)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManor27)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManor28)},
+    {371, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgAlhafraInteriors125))},
+    {TRIGGER_TABLE_END},
+};

@@ -447,7 +447,7 @@ SECTIONS
         "*/games/tla/src/scene/entry/alhafra_interiors.o"(.text)
         "*/games/tla/src/scene/alhafra_interiors.o"(.text)
         "*/games/tla/src/scene/import/alhafra_interiors.o"(.text)
-        "*/games/tla/src/scene/data/alhafra_interiors.o"(.data)
+        "*/games/tla/src/scene/alhafra_interiors.o"(.data)
     }
     .bss :
     {
@@ -462,7 +462,7 @@ SECTIONS
         "*/games/tla/src/scene/entry/alhafra_manor.o"(.text)
         "*/games/tla/src/scene/alhafra_manor.o"(.text)
         "*/games/tla/src/scene/import/alhafra_manor.o"(.text)
-        "*/games/tla/src/scene/data/alhafra_manor.o"(.data)
+        "*/games/tla/src/scene/alhafra_manor.o"(.data)
     }
 }
 #elif OVERLAY == 0x668

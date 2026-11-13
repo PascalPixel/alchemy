@@ -3034,12 +3034,7 @@ void Func_02004eb0(void) {
   } while (i != 8);
 }
 
-/* VIEW(s2cf0): routine gData_020073d8 as this part declared it; the joined file
- * has another; tried as the definition's extern s32 gData_020073d8[], it does
- * not compile in tla-ja: games/tla/src/scene/airs_rock_inside.c:3044:
- * `gData_020073d8' undeclared (first use in this function). */
-extern s32 gData_020073d8__s2cf0 __asm__("gData_020073d8");
-#define gData_020073d8 gData_020073d8__s2cf0
+extern s32 gData_020073d8;
 
 void Func_02004f3c(void) {
   struct Actor *actor = Actor_GetById(Party_GetLeaderActor());
@@ -3096,7 +3091,6 @@ void Func_02004f3c(void) {
 #undef TARGET
 #undef PICK_UP
 #undef SHAKE
-#undef gData_020073d8
 // @file
 // Scene code of overlay 0x664, in ROM order.
 
@@ -3934,7 +3928,5 @@ struct Trigger gAirsRockInside_Room10Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-s32 gData_020073d8[] = {
-    -1,
-};
+s32 gData_020073d8 = -1;
 #undef Actor_SetHorizontalPositionWithTerrain

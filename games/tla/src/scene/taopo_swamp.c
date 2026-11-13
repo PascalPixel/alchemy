@@ -54,27 +54,9 @@ void FieldItem_JumpToLeader(s32 a, s32 b, s32 c);
 void Actor_StartScript(struct Actor *object, const void *data);
 void Actor_SetBlendMode(struct Actor *object, u32 value);
 
-/* VIEW(first): routine gTaopoSwamp_SteamPuffs as this part declared it; the
- * joined file has another; tried as the definition's extern u32
- * gTaopoSwamp_SteamPuffs[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:712: `gTaopoSwamp_SteamPuffs' undeclared
- * (first use in this function). */
-extern s32 gTaopoSwamp_SteamPuffs__first __asm__("gTaopoSwamp_SteamPuffs");
-#define gTaopoSwamp_SteamPuffs gTaopoSwamp_SteamPuffs__first
-/* VIEW(first): routine gTaopoSwamp_PassageRows as this part declared it; the
- * joined file has another; tried as the definition's extern u32
- * gTaopoSwamp_PassageRows[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:726: `gTaopoSwamp_PassageRows' undeclared
- * (first use in this function). */
-extern s32 gTaopoSwamp_PassageRows__first __asm__("gTaopoSwamp_PassageRows");
-#define gTaopoSwamp_PassageRows gTaopoSwamp_PassageRows__first
-/* VIEW(first): routine gTaopoSwamp_PoolFrames as this part declared it; the
- * joined file has another; tried as the definition's extern u32
- * gTaopoSwamp_PoolFrames[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:736: `gTaopoSwamp_PoolFrames' undeclared
- * (first use in this function). */
-extern s32 gTaopoSwamp_PoolFrames__first __asm__("gTaopoSwamp_PoolFrames");
-#define gTaopoSwamp_PoolFrames gTaopoSwamp_PoolFrames__first
+extern s32 gTaopoSwamp_SteamPuffs;
+extern s32 gTaopoSwamp_PassageRows;
+extern s32 gTaopoSwamp_PoolFrames;
 extern u32 gTaopoSwamp_PuffSteamScript[];
 void Field_TryJumpForward(void);
 void TaopoSwamp_DarkenRoom(s32 a);
@@ -141,13 +123,7 @@ extern u8 gInventorySnapshot[];
 s32 Trig_Cos(s32 angle);
 void Vent_Bounce(struct Actor *object);
 extern u32 gTaopoSwamp_PuffRises[];
-/* VIEW(first): routine gTaopoSwamp_SparkleFrame as this part declared it; the
- * joined file has another; tried as the definition's extern u32
- * gTaopoSwamp_SparkleFrame[], it does not compile in tla-ja:
- * games/tla/src/scene/taopo_swamp.c:1640: `gTaopoSwamp_SparkleFrame' undeclared
- * (first use in this function). */
-extern s32 gTaopoSwamp_SparkleFrame__first __asm__("gTaopoSwamp_SparkleFrame");
-#define gTaopoSwamp_SparkleFrame gTaopoSwamp_SparkleFrame__first
+extern s32 gTaopoSwamp_SparkleFrame;
 extern u8 gMapShapeGrid[];
 void Map_CenterOnFollowedPoint(void);
 void BlendScript_Suspend(void);
@@ -2005,10 +1981,6 @@ DEFINE_VENTS_SET_ID(Vents_SetId)
 #undef VENT_TOUCHING
 #undef VENT_BOUNCE
 #undef VENT_AT
-#undef gTaopoSwamp_SteamPuffs
-#undef gTaopoSwamp_PassageRows
-#undef gTaopoSwamp_PoolFrames
-#undef gTaopoSwamp_SparkleFrame
 #undef gTaopoSwamp_DripFromCeilingScript
 #undef gTaopoSwamp_Room7Vents
 #undef gTaopoSwamp_RockRoomVents
@@ -2358,17 +2330,11 @@ struct Trigger gTaopoSwamp_Room8Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-u32 gTaopoSwamp_SteamPuffs[] = {
-    112,
-};
+s32 gTaopoSwamp_SteamPuffs = 112;
 
-u32 gTaopoSwamp_PassageRows[] = {
-    120,
-};
+s32 gTaopoSwamp_PassageRows = 120;
 
-u32 gTaopoSwamp_PoolFrames[] = {
-    24,
-};
+s32 gTaopoSwamp_PoolFrames = 24;
 
 struct Trigger gTaopoSwamp_Room10Triggers[] = {
     {33, 1, CONDITION_ALWAYS, 1},
@@ -2442,6 +2408,4 @@ struct Trigger gTaopoSwamp_Room11Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-u32 gTaopoSwamp_SparkleFrame[] = {
-    0,
-};
+s32 gTaopoSwamp_SparkleFrame = 0;

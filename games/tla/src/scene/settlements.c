@@ -672,14 +672,7 @@ void Settlements_LashRope(void) {
   Event_SetFlag(0x203);
 }
 
-/* VIEW(first): routine gSettlements_WaterColorFrame as this part declared it;
- * the joined file has another; tried as the definition's extern s32
- * gSettlements_WaterColorFrame[], it does not compile in tla-ja:
- * games/tla/src/scene/settlements.c:684: `gSettlements_WaterColorFrame'
- * undeclared (first use in this function). */
-extern s32
-    gSettlements_WaterColorFrame__first __asm__("gSettlements_WaterColorFrame");
-#define gSettlements_WaterColorFrame gSettlements_WaterColorFrame__first
+extern s32 gSettlements_WaterColorFrame;
 
 void Settlements_CycleWaterColors(void) {
   struct PaletteCycleWork *work =
@@ -1009,7 +1002,6 @@ void Settlements_SplashCrate(s32 id) {
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 #undef SINK
-#undef gSettlements_WaterColorFrame
 // @file
 // The settlements' events, continued; settlements.c says which places these
 // are.
@@ -1457,6 +1449,4 @@ struct Trigger gSettlements_Room10Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-s32 gSettlements_WaterColorFrame[] = {
-    -1,
-};
+s32 gSettlements_WaterColorFrame = -1;

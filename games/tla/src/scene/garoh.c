@@ -428,12 +428,7 @@ extern struct Trigger gGaroh_Room2Triggers[];
 extern struct Trigger gGaroh_Room4Triggers[];
 extern struct Trigger gGaroh_Room5Triggers[];
 
-/* VIEW(first): routine gData_0200632c as this part declared it; the joined file
- * has another; tried as the definition's extern u32 gData_0200632c[], it does
- * not compile in tla-ja: games/tla/src/scene/garoh.c:474: `gData_0200632c'
- * undeclared (first use in this function). */
-extern s32 gData_0200632c__first __asm__("gData_0200632c");
-#define gData_0200632c gData_0200632c__first
+extern s32 gData_0200632c;
 
 void Func_02000960(void) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
@@ -800,7 +795,6 @@ void Func_020011c8(void) {
 #undef EFFECT_SCRIPTS
 #undef DEFINE_GAROH_LOAD_PALETTE
 #undef DEFINE_GAROH_TRIGGER_AT_CELL
-#undef gData_0200632c
 // @file
 // Scene code of overlay 0x65f, in ROM order.
 
@@ -3430,9 +3424,7 @@ struct Trigger gGaroh_Room5Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-u32 gData_0200632c[] = {
-    0,
-};
+s32 gData_0200632c = 0;
 
 u32 gData_02006330[] = {
     38,

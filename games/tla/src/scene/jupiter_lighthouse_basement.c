@@ -269,26 +269,13 @@ s32 Scene_PrepareMap(void) {
 
 #include "shared/scene_set_arrival_flags.c"
 
-/* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it;
- * the joined file has another; tried as the definition's extern s32
- * gPaletteCyclePausesInEvents, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_basement.c:274:
- * `gPaletteCyclePausesInEvents' undeclared (first use in this function). */
-extern s32
-    gPaletteCyclePausesInEvents__first __asm__("gPaletteCyclePausesInEvents");
-#define gPaletteCyclePausesInEvents gPaletteCyclePausesInEvents__first
+extern s32 gPaletteCyclePausesInEvents;
 
 void PaletteCycle_SetPausesInEvents(s32 value) {
   gPaletteCyclePausesInEvents = value;
 }
 
-/* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined
- * file has another; tried as the definition's extern s32 gPaletteCycleFrame, it
- * does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_basement.c:283: `gPaletteCycleFrame'
- * undeclared (first use in this function). */
-extern s32 gPaletteCycleFrame__first __asm__("gPaletteCycleFrame");
-#define gPaletteCycleFrame gPaletteCycleFrame__first
+extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
@@ -451,8 +438,6 @@ void Func_02001008(s32 value) { gData_020024f6 = value; }
 #include "../field/field_effect/move.c"
 
 #undef OBJECT_BYTE
-#undef gPaletteCyclePausesInEvents
-#undef gPaletteCycleFrame
 // @file
 // Scene code of overlay 0x699, in ROM order.
 
@@ -672,13 +657,9 @@ struct Trigger gJupiterLighthouseBasement_Room2Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-s32 gPaletteCycleFrame[] = {
-    -1,
-};
+s32 gPaletteCycleFrame = -1;
 
-u32 gPaletteCyclePausesInEvents[] = {
-    1,
-};
+s32 gPaletteCyclePausesInEvents = 1;
 
 s32 gWhirlwindEndScript[] = {
     39, 5, 0, 12, 38,

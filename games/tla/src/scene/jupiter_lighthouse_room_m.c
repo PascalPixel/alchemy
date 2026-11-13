@@ -1706,26 +1706,13 @@ s32 Scene_PrepareMap(void) {
 
 #include "shared/scene_set_arrival_flags.c"
 
-/* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it;
- * the joined file has another; tried as the definition's extern s32
- * gPaletteCyclePausesInEvents, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:1714:
- * `gPaletteCyclePausesInEvents' undeclared (first use in this function). */
-extern s32
-    gPaletteCyclePausesInEvents__first __asm__("gPaletteCyclePausesInEvents");
-#define gPaletteCyclePausesInEvents gPaletteCyclePausesInEvents__first
+extern s32 gPaletteCyclePausesInEvents;
 
 void PaletteCycle_SetPausesInEvents(s32 value) {
   gPaletteCyclePausesInEvents = value;
 }
 
-/* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined
- * file has another; tried as the definition's extern s32 gPaletteCycleFrame, it
- * does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:1723: `gPaletteCycleFrame'
- * undeclared (first use in this function). */
-extern s32 gPaletteCycleFrame__first __asm__("gPaletteCycleFrame");
-#define gPaletteCycleFrame gPaletteCycleFrame__first
+extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
@@ -1818,8 +1805,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #undef PLACE
 #undef EVENT_WORK
 #undef ACTOR_SET_MODE_AND_WAIT
-#undef gPaletteCyclePausesInEvents
-#undef gPaletteCycleFrame
 // @file
 // Scene code of overlay 0x6a3, in ROM order.
 
@@ -2302,13 +2287,9 @@ LATE_DATA u32 gData_02005a00[] = {
     SC_FREE,
 };
 
-LATE_DATA s32 gPaletteCycleFrame[] = {
-    -1,
-};
+LATE_DATA s32 gPaletteCycleFrame = -1;
 
-LATE_DATA u32 gPaletteCyclePausesInEvents[] = {
-    1,
-};
+LATE_DATA s32 gPaletteCyclePausesInEvents = 1;
 
 LATE_DATA s32 gWhirlwindEndScript[] = {
     39, 5, 0, 12, 38,

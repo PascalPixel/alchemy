@@ -106,21 +106,8 @@ extern s16 gLightSpritePriority;
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 void PaletteCycle_StepAt(void);
 
-/* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined
- * file has another; tried as the definition's extern s32 gPaletteCycleFrame, it
- * does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_3.c:266: `gPaletteCycleFrame'
- * undeclared (first use in this function). */
-extern s32 gPaletteCycleFrame__first __asm__("gPaletteCycleFrame");
-#define gPaletteCycleFrame gPaletteCycleFrame__first
-/* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it;
- * the joined file has another; tried as the definition's extern s32
- * gPaletteCyclePausesInEvents, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_3.c:260:
- * `gPaletteCyclePausesInEvents' undeclared (first use in this function). */
-extern s32
-    gPaletteCyclePausesInEvents__first __asm__("gPaletteCyclePausesInEvents");
-#define gPaletteCyclePausesInEvents gPaletteCyclePausesInEvents__first
+extern s32 gPaletteCycleFrame;
+extern s32 gPaletteCyclePausesInEvents;
 extern const u16 gPaletteCycleColors[];
 extern const u16 gPaletteCycleUnlitPalette[];
 extern const u16 gPaletteCycleUnlitColors[];
@@ -503,8 +490,6 @@ DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 #undef PIXELS
 #define PIXELS(value) ((value) << 16)
-#undef gPaletteCycleFrame
-#undef gPaletteCyclePausesInEvents
 // @file
 // The room of gaps and logs in Jupiter Lighthouse: its copy of the effect
 // spawner, and the cracked tiles, found, cracked and fallen through.
@@ -734,13 +719,9 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA s32 gPaletteCycleFrame[] = {
-    -1,
-};
+LATE_DATA s32 gPaletteCycleFrame = -1;
 
-LATE_DATA u32 gPaletteCyclePausesInEvents[] = {
-    1,
-};
+LATE_DATA s32 gPaletteCyclePausesInEvents = 1;
 
 LATE_DATA s32 gWhirlwindEndScript[] = {
     39, 5, 0, 12, 38,

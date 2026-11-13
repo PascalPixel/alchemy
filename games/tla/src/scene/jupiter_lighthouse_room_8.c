@@ -225,26 +225,13 @@ s32 Scene_PrepareMap(void) {
 void GameFlag_SetByte(s32 flag, s32 value);
 void Map_CenterOnFollowedPoint(void);
 
-/* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it;
- * the joined file has another; tried as the definition's extern s32
- * gPaletteCyclePausesInEvents, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_8.c:230:
- * `gPaletteCyclePausesInEvents' undeclared (first use in this function). */
-extern s32
-    gPaletteCyclePausesInEvents__first __asm__("gPaletteCyclePausesInEvents");
-#define gPaletteCyclePausesInEvents gPaletteCyclePausesInEvents__first
+extern s32 gPaletteCyclePausesInEvents;
 
 void PaletteCycle_SetPausesInEvents(s32 value) {
   gPaletteCyclePausesInEvents = value;
 }
 
-/* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined
- * file has another; tried as the definition's extern s32 gPaletteCycleFrame, it
- * does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_8.c:239: `gPaletteCycleFrame'
- * undeclared (first use in this function). */
-extern s32 gPaletteCycleFrame__first __asm__("gPaletteCycleFrame");
-#define gPaletteCycleFrame gPaletteCycleFrame__first
+extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
@@ -453,8 +440,6 @@ DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 #undef PIXELS
 #define PIXELS(value) ((value) << 16)
-#undef gPaletteCyclePausesInEvents
-#undef gPaletteCycleFrame
 // @file
 // The first room of Jupiter Lighthouse's left tower: its copy of the effect
 // spawner, and the cracked tiles, found, cracked and fallen through.
@@ -680,13 +665,9 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA s32 gPaletteCycleFrame[] = {
-    -1,
-};
+LATE_DATA s32 gPaletteCycleFrame = -1;
 
-LATE_DATA u32 gPaletteCyclePausesInEvents[] = {
-    1,
-};
+LATE_DATA s32 gPaletteCyclePausesInEvents = 1;
 
 LATE_DATA s32 gWhirlwindEndScript[] = {
     39, 5, 0, 12, 38,

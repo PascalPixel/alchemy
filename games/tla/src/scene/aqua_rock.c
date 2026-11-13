@@ -395,34 +395,10 @@ void Func_02000580(void) {
   }
 }
 
-/* VIEW(aqua_rock): routine gData_02003204 as this part declared it; the joined
- * file has another; tried as the definition's extern LATE_DATA u32
- * gData_02003204[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock.c:411: `gData_02003204' undeclared (first use
- * in this function). */
-extern s32 gData_02003204__aqua_rock __asm__("gData_02003204");
-#define gData_02003204 gData_02003204__aqua_rock
-/* VIEW(aqua_rock): routine gData_02003208 as this part declared it; the joined
- * file has another; tried as the definition's extern LATE_DATA u32
- * gData_02003208[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock.c:421: `gData_02003208' undeclared (first use
- * in this function). */
-extern s32 gData_02003208__aqua_rock __asm__("gData_02003208");
-#define gData_02003208 gData_02003208__aqua_rock
-/* VIEW(aqua_rock): routine gData_0200320c as this part declared it; the joined
- * file has another; tried as the definition's extern LATE_DATA u32
- * gData_0200320c[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock.c:431: `gData_0200320c' undeclared (first use
- * in this function). */
-extern s32 gData_0200320c__aqua_rock __asm__("gData_0200320c");
-#define gData_0200320c gData_0200320c__aqua_rock
-/* VIEW(aqua_rock): routine gData_02003210 as this part declared it; the joined
- * file has another; tried as the definition's extern LATE_DATA u32
- * gData_02003210[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock.c:437: `gData_02003210' undeclared (first use
- * in this function). */
-extern s32 gData_02003210__aqua_rock __asm__("gData_02003210");
-#define gData_02003210 gData_02003210__aqua_rock
+extern s32 gData_02003204;
+extern s32 gData_02003208;
+extern s32 gData_0200320c;
+extern s32 gData_02003210;
 
 // Unless flag 0x104 is set, runs four 240-frame timers (gData_02003204 to
 // gData_02003210) that hold flags 0x200 to 0x203 set for their last 90
@@ -1721,10 +1697,6 @@ u32 gWaterDropScript[] = {
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 #undef EFFECT_SPRITE_PRIORITY
-#undef gData_02003204
-#undef gData_02003208
-#undef gData_0200320c
-#undef gData_02003210
 
 // clang-format off
 LATE_DATA DEFINE_G_DATA_02001F18(gGroundParticleFrames)
@@ -1814,21 +1786,13 @@ LATE_DATA struct ActorPlacement gAquaRock_Room2Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA u32 gData_02003204[] = {
-    0,
-};
+LATE_DATA s32 gData_02003204 = 0;
 
-LATE_DATA u32 gData_02003208[] = {
-    0,
-};
+LATE_DATA s32 gData_02003208 = 0;
 
-LATE_DATA u32 gData_0200320c[] = {
-    0,
-};
+LATE_DATA s32 gData_0200320c = 0;
 
-LATE_DATA u32 gData_02003210[] = {
-    0,
-};
+LATE_DATA s32 gData_02003210 = 0;
 
 LATE_DATA struct Trigger gAquaRock_Triggers[] = {
     {TRIGGER_TABLE_END},

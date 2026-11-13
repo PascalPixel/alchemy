@@ -2480,13 +2480,7 @@ extern s32
 
 void Func_02003f54(s32 a0) { gPaletteCyclePausesInEvents = a0; }
 
-/* VIEW(s3f54): routine gPaletteCycleFrame as this part declared it; the joined
- * file has another; tried as the definition's extern s32 gPaletteCycleFrame, it
- * does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2467:
- * `gPaletteCycleFrame' undeclared (first use in this function). */
-extern s32 gPaletteCycleFrame__s3f54 __asm__("gPaletteCycleFrame");
-#define gPaletteCycleFrame gPaletteCycleFrame__s3f54
+extern s32 gPaletteCycleFrame;
 
 // Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
@@ -2761,7 +2755,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #undef gData_02006088
 #undef gData_020061e0
 #undef gPaletteCyclePausesInEvents
-#undef gPaletteCycleFrame
 // @file
 // Scene code of overlay 0x6a5, in ROM order.
 
@@ -3163,9 +3156,7 @@ LATE_DATA s32 gData_020069dc[] = {
     17, 18, 19, 20, 21, 22,
 };
 
-LATE_DATA s32 gPaletteCycleFrame[] = {
-    -1,
-};
+LATE_DATA s32 gPaletteCycleFrame = -1;
 
 LATE_DATA u32 gPaletteCyclePausesInEvents[] = {
     1,

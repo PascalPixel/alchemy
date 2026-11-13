@@ -232,13 +232,7 @@ struct Orbiter__gabomba_statue {
   void *link;
 };
 
-/* VIEW(gabomba_statue): routine gData_02005af0 as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA u32
- * gData_02005af0[], it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:240: `gData_02005af0' undeclared (first
- * use in this function). */
-extern s32 gData_02005af0__gabomba_statue __asm__("gData_02005af0");
-#define gData_02005af0 gData_02005af0__gabomba_statue
+extern s32 gData_02005af0;
 s32 __divsi3(s32 numerator, s32 denominator);
 
 void Func_02000398(struct Orbiter__gabomba_statue *actor, s32 *x, s32 *z) {
@@ -1491,7 +1485,6 @@ void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
 #undef REG_BLDALPHA
 #undef REG_BLDALPHA
 #undef OBJECT_BYTE
-#undef gData_02005af0
 /* VIEW(s2394): tags Wanderer and SceneState as this part has them; the scene
  * before has its own. */
 #define Wanderer Wanderer__s2394
@@ -3619,9 +3612,7 @@ LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-LATE_DATA u32 gData_02005af0[] = {
-    0,
-};
+LATE_DATA s32 gData_02005af0 = 0;
 
 LATE_DATA DEFINE_G_DATA_02002F1C(gData_02005af4, 472, 184)
 

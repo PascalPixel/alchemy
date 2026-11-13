@@ -2334,12 +2334,7 @@ void Func_0200367c(void) {
 // layers there is filled with 255 (Func_02003790). Returns 1, or 0 for a shape
 // with no footprint. The twin of overlay 668's Func_020040ec.
 
-/* VIEW(s3410): routine gPushFootprints as this part declared it; the joined
- * file has another; tried as the definition's extern u32 gPushFootprints[], it
- * does not compile in tla-ja: games/tla/src/scene/islets.c:2356:
- * `gPushFootprints' undeclared (first use in this function). */
-extern s8 gPushFootprints__s3410[][4] __asm__("gPushFootprints");
-#define gPushFootprints gPushFootprints__s3410
+extern s8 gPushFootprints[][4];
 
 static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 
@@ -2595,7 +2590,6 @@ void Actor_StopAtPushTarget(struct Actor *object) {
 #undef ABS
 #undef gData_020046bc
 #undef gData_02004004
-#undef gPushFootprints
 #include "text/msg_ids.h"
 
 void Func_0200030c(void);
@@ -2622,8 +2616,9 @@ u16 gData_02004070[] = {
     258, 259, 293, 294, 332, 331,
 };
 
-u32 gPushFootprints[] = {
-    0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8,
+s8 gPushFootprints[][4] = {
+    {-32, -8, 32, 8}, {-8, -32, 8, 32}, {-32, -16, 32, 0}, {-8, -32, 8, 32},
+    {-32, -8, 32, 8}, {-8, -32, 8, 32},
 };
 
 DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)

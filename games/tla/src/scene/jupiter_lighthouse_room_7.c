@@ -67,14 +67,7 @@ void Leader_CenterInCell(void);
 #include "objcmd.h"
 
 extern s16 gData_020031c4[];
-/* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it;
- * the joined file has another; tried as the definition's extern s32
- * gPaletteCyclePausesInEvents, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_7.c:715:
- * `gPaletteCyclePausesInEvents' undeclared (first use in this function). */
-extern s32
-    gPaletteCyclePausesInEvents__first __asm__("gPaletteCyclePausesInEvents");
-#define gPaletteCyclePausesInEvents gPaletteCyclePausesInEvents__first
+extern s32 gPaletteCyclePausesInEvents;
 extern s16 gLightSpriteCount;
 void JupiterLighthouse_OpenDoor(s32 value);
 void JupiterLighthouse_CloseDoor(void);
@@ -722,13 +715,7 @@ void PaletteCycle_SetPausesInEvents(s32 value) {
   gPaletteCyclePausesInEvents = value;
 }
 
-/* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined
- * file has another; tried as the definition's extern s32 gPaletteCycleFrame, it
- * does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_7.c:724: `gPaletteCycleFrame'
- * undeclared (first use in this function). */
-extern s32 gPaletteCycleFrame__first __asm__("gPaletteCycleFrame");
-#define gPaletteCycleFrame gPaletteCycleFrame__first
+extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
@@ -923,8 +910,6 @@ void LightSprites_SetPriority(u16 value) { gLightSpritePriority = value; }
 #include "../field/field_effect/move.c"
 
 #undef FIELD_AT
-#undef gPaletteCyclePausesInEvents
-#undef gPaletteCycleFrame
 // @file
 // Scene code of overlay 0x6a0, in ROM order.
 
@@ -1233,13 +1218,9 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA s32 gPaletteCycleFrame[] = {
-    -1,
-};
+LATE_DATA s32 gPaletteCycleFrame = -1;
 
-LATE_DATA u32 gPaletteCyclePausesInEvents[] = {
-    1,
-};
+LATE_DATA s32 gPaletteCyclePausesInEvents = 1;
 
 LATE_DATA s32 gWhirlwindEndScript[] = {
     39, 5, 0, 12, 38,

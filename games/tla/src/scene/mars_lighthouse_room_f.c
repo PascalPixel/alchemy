@@ -1104,21 +1104,11 @@ void Func_02001490(void) { Actor_Attach(14, 15, 16, 0x4000, gData_02005d3c); }
 
 #include "shared/scene_set_arrival_flags.c"
 
-/* VIEW(first): routine gData_02007040 as this part declared it; the joined file
- * has another; tried as the one declaration extern s32 gData_02007040, it does
- * not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f.c:1107:
- * `gData_02007040' undeclared (first use in this function). */
-extern s32 gData_02007040__first __asm__("gData_02007040");
-#define gData_02007040 gData_02007040__first
+extern s32 gData_02007040;
 
 void Func_020014dc(s32 value) { gData_02007040 = value; }
 
-/* VIEW(first): routine gData_0200703c as this part declared it; the joined file
- * has another; tried as the one declaration extern s32 gData_0200703c, it does
- * not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f.c:1115:
- * `gData_0200703c' undeclared (first use in this function). */
-extern s32 gData_0200703c__first __asm__("gData_0200703c");
-#define gData_0200703c gData_0200703c__first
+extern s32 gData_0200703c;
 extern u16 gData_02007068[];
 
 DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gData_0200703c, gData_02007040,
@@ -2175,8 +2165,6 @@ DEFINE_ACTOR_PARK(Actor_Park, Func_02003304)
 #undef position
 #undef WORK
 #undef ABS
-#undef gData_02007040
-#undef gData_0200703c
 #undef MapLayer
 #undef SceneWork
 #undef Camera_SetBounds
@@ -2759,14 +2747,20 @@ DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
 
 DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
 
-s16 gData_02005ef8[] = {-1, 0, -32768, -1, -16384, -8192, -24576, -16384, 16384, 8192, 24576, 16384, -1, 0, -32768, -1};
+s16 gData_02005ef8[] = {
+    -1, 0, -32768, -1, -16384, -8192, -24576, -16384, 16384, 8192, 24576, 16384,
+    -1, 0, -32768, -1,
+};
 
 s16 gData_02005f18[] = {
     -1, 0, -0x8000, -1, -0x4000, -1, -1, -0x4000,
     0x4000, -1, -1, 0x4000, -1, 0, -0x8000, -1,
 };
 
-s16 gData_02005f38[] = {-1, 0, -32768, -1, -16384, 0, -32768, -16384, 16384, 0, -32768, 16384, -1, 0, -32768, -1};
+s16 gData_02005f38[] = {
+    -1, 0, -32768, -1, -16384, 0, -32768, -16384, 16384, 0, -32768, 16384, -1,
+    0, -32768, -1,
+};
 
 u16 gData_02005f58[] = {
     258, 259, 293, 294, 332, 331,
@@ -3041,13 +3035,9 @@ LATE_DATA struct Trigger gMarsLighthouseRoomF_Room2Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA s32 gData_0200703c[] = {
-    -1,
-};
+LATE_DATA s32 gData_0200703c = -1;
 
-LATE_DATA u32 gData_02007040[] = {
-    1,
-};
+LATE_DATA s32 gData_02007040 = 1;
 
 LATE_DATA s32 gData_02007044[] = {
     39, 5, 0, 12, 38,

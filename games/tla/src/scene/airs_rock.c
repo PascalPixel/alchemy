@@ -351,12 +351,7 @@ void Func_0200092c(struct Actor *object) {
 
 // The Whirlwind gust in Air's Rock.
 
-/* VIEW(airs_rock): routine gData_02004674 as this part declared it; the joined
- * file has another; tried as the definition's extern u32 gData_02004674[], it
- * does not compile in tla-ja: games/tla/src/scene/airs_rock.c:486:
- * `gData_02004674' undeclared (first use in this function). */
-extern s16 gData_02004674__airs_rock[][4] __asm__("gData_02004674");
-#define gData_02004674 gData_02004674__airs_rock
+extern s16 gData_02004674[][4];
 void Actor_StartScript(struct Actor *object, const s32 *script);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -1516,12 +1511,7 @@ void Func_020026b8(void) {
   Event_End();
 }
 
-/* VIEW(airs_rock): routine gData_02004698 as this part declared it; the joined
- * file has another; tried as the definition's extern s32 gData_02004698[], it
- * does not compile in tla-ja: games/tla/src/scene/airs_rock.c:1518:
- * `gData_02004698' undeclared (first use in this function). */
-extern s32 gData_02004698__airs_rock __asm__("gData_02004698");
-#define gData_02004698 gData_02004698__airs_rock
+extern s32 gData_02004698;
 
 void Func_02002b88(void) {
   struct Actor *actor = Actor_Get(FieldParty_GetLeaderActor());
@@ -1866,8 +1856,6 @@ s32 Scene_PrepareMap(void) {
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 #undef EFFECT_SPRITE_PRIORITY
-#undef gData_02004674
-#undef gData_02004698
 
 void Func_02000620(void);
 
@@ -2109,9 +2097,8 @@ struct Trigger gAirsRock_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-u32 gData_02004674[] = {
-    64, 64, 64, 64, 64, 64,
-    64, 64,
+s16 gData_02004674[][4] = {
+    {64, 0, 64, 0}, {64, 0, 64, 0}, {64, 0, 64, 0}, {64, 0, 64, 0},
 };
 // clang-format on
 
@@ -2121,6 +2108,4 @@ s8 gData_02004695 = 1;
 s8 gData_02004696 = 6;
 s8 gData_02004697 = 1;
 
-s32 gData_02004698[] = {
-    -1,
-};
+s32 gData_02004698 = -1;

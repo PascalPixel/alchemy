@@ -158,36 +158,15 @@ void Func_02000138(u8 *grid, s32 count, s32 scale) {
   } while (i != count - 1);
 }
 
-/* VIEW(first): routine gData_02003d20 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA u32 gData_02003d20[],
- * it does not compile in tla-ja: games/tla/src/scene/staff_credit.c:202:
- * `gData_02003d20' undeclared (first use in this function). */
-extern s16 gData_02003d20__first[][2] __asm__("gData_02003d20");
-#define gData_02003d20 gData_02003d20__first
-/* VIEW(first): routine gData_02003d34 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA u32 gData_02003d34[],
- * it does not compile in tla-ja: games/tla/src/scene/staff_credit.c:213:
- * `gData_02003d34' undeclared (first use in this function). */
-extern s16 gData_02003d34__first[][2] __asm__("gData_02003d34");
-#define gData_02003d34 gData_02003d34__first
-/* VIEW(first): routine gData_02003d48 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA u32 gData_02003d48[],
- * it does not compile in tla-ja: games/tla/src/scene/staff_credit.c:449:
- * `gData_02003d48' undeclared (first use in this function). */
-extern s16 gData_02003d48__first[][2] __asm__("gData_02003d48");
-#define gData_02003d48 gData_02003d48__first
+extern s16 gData_02003d20[][2];
+extern s16 gData_02003d34[][2];
+extern s16 gData_02003d48[][2];
 extern s32 gData_02003d5c[];
 extern s32 gData_02003d70[];
 extern u8 gData_02003d84[];
 extern u8 gData_02003d88[];
 extern u16 gData_02003d8e[];
-/* VIEW(first): routine gData_02003d9c as this part declared it; the joined file
- * has another; tried as the definition's extern struct Trigger
- * gData_02003d9c[], it does not compile in tla-ja:
- * games/tla/src/scene/staff_credit.c:286: `gData_02003d9c' undeclared (first
- * use in this function). */
-extern s8 gData_02003d9c__first[][2] __asm__("gData_02003d9c");
-#define gData_02003d9c gData_02003d9c__first
+extern s8 gData_02003d9c[][2];
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 z, s32 mode) {
   FieldCamera_MoveTo(x, -1, z, mode);
@@ -916,10 +895,6 @@ u32 gData_02002eac[] = {
 #undef gData_02004f90
 #undef gData_02004f9c
 #undef PUSH_PICTURE
-#undef gData_02003d20
-#undef gData_02003d34
-#undef gData_02003d48
-#undef gData_02003d9c
 #undef gData_02003db8
 
 LATE_DATA struct SceneEntrance gSceneEntrances[] = {
@@ -1028,16 +1003,16 @@ LATE_DATA struct Trigger gSceneEvents[] = {
 };
 
 // clang-format off
-LATE_DATA u32 gData_02003d20[] = {
-    0x6f6243c, 0xc412a02, 0x187c27b0, 0x1ca62033, 0x13ec22de,
+LATE_DATA s16 gData_02003d20[][2] = {
+    {9276, 1782}, {10754, 3137}, {10160, 6268}, {8243, 7334}, {8926, 5100},
 };
 
-LATE_DATA u32 gData_02003d34[] = {
-    0x30e233c, 0x10bc2775, 0x1c6627c3, 0x1c891c57, 0x13ec2649,
+LATE_DATA s16 gData_02003d34[][2] = {
+    {9020, 782}, {10101, 4284}, {10179, 7270}, {7255, 7305}, {9801, 5100},
 };
 
-LATE_DATA u32 gData_02003d48[] = {
-    0xa0d2562, 0x121f2f93, 0x1c952217, 0x1aad2617, 0x14642617,
+LATE_DATA s16 gData_02003d48[][2] = {
+    {9570, 2573}, {12179, 4639}, {8727, 7317}, {9751, 6829}, {9751, 5220},
 };
 
 LATE_DATA s32 gData_02003d5c[] = {
@@ -1061,10 +1036,8 @@ LATE_DATA u16 gData_02003d8e[] = {
 };
 // clang-format on
 
-LATE_DATA u32 gData_02003d9c[] = {
-    0xf808fc16,
-    0xc0ee402,
-    0x808,
+LATE_DATA s8 gData_02003d9c[][2] = {
+    {22, -4}, {8, -8}, {2, -28}, {14, 12}, {8, 8}, {0, 0},
 };
 
 LATE_DATA DEFINE_G_DATA_02003584(gData_02003da8, TileSprite_Reset, 17, 0)

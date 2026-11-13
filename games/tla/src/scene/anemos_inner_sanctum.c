@@ -580,12 +580,7 @@ void Func_02000a78__s0ac8() __asm__("Func_02000a78");
 void BlendScript_Resume(void);
 extern u32 gData_020035cc[];
 extern s32 gData_02003620[];
-/* VIEW(s0ac8): routine gData_020036fc as this part declared it; the joined file
- * has another; tried as the definition's extern s32 gData_020036fc[], it does
- * not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum.c:702:
- * `gData_020036fc' undeclared (first use in this function). */
-extern s32 gData_020036fc__s0ac8[][2] __asm__("gData_020036fc");
-#define gData_020036fc gData_020036fc__s0ac8
+extern s32 gData_020036fc[][2];
 
 void Func_02000ac8(void) {
   struct Work__s0ac8 *work = ((struct Globals *)Ram_HeapSlots)->work;
@@ -1935,7 +1930,6 @@ void CrackedTile_Fall(struct PushEvent *event) {
 #undef Func_0200088c
 #undef Func_020009b8
 #undef Func_02000a78
-#undef gData_020036fc
 #undef Func_02000038
 #undef CrackedTile_PlaceLanding
 // @file
@@ -2120,13 +2114,10 @@ s16 gData_020036f6[] = {
     9, 10, -1,
 };
 
-s32 gData_020036fc[] = {
-    -48, -32, 48, -32, -64, -16,
-    64, -16, -32, -16, 32, -16,
-    -48, 0, 48, 0, -32, 0,
-    32, 0, -64, 16, 64, 16,
-    -32, 16, 32, 16, -48, 32,
-    48, 32, -16, 32, 16, 32,
+s32 gData_020036fc[][2] = {
+    {-48, -32}, {48, -32}, {-64, -16}, {64, -16}, {-32, -16}, {32, -16},
+    {-48, 0}, {48, 0}, {-32, 0}, {32, 0}, {-64, 16}, {64, 16}, {-32, 16},
+    {32, 16}, {-48, 32}, {48, 32}, {-16, 32}, {16, 32},
 };
 
 u32 gData_0200378c[] = {

@@ -168,7 +168,7 @@ void Func_02000334(void) {
       Func_02002898();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
-      Actor_OffsetPositionAndResetMotion_(gMainRoutineWork.currentOwner, 0,
+      Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0,
                                                  -16);
       leader->velocityY = 0x60000;
       FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
@@ -488,7 +488,7 @@ void Func_02000b90(s32 a, s32 id) {
     object->priorityFlags |= 2;
     Event_SetFlag(0x335);
     Event_SetFlag(0x336);
-    Actor_SetSpeedParameters_(id, 0x8000, 0x4000);
+    Actor_SetSpeed(id, 0x8000, 0x4000);
     Actor_SetDestinationOffset(id, -32, 0);
     FieldActor_WaitForMoveById(id);
     Actor_SetAnimation(id, 3);
@@ -654,7 +654,7 @@ void Func_02001038(s32 a, s32 id) {
     object->priorityFlags |= 2;
     Event_SetFlag(0x33c);
     Event_SetFlag(0x33d);
-    Actor_SetSpeedParameters_(id, 0x8000, 0x4000);
+    Actor_SetSpeed(id, 0x8000, 0x4000);
     Actor_SetDestinationOffset(id, 0, -32);
     FieldActor_WaitForMoveById(id);
     Actor_SetAnimation(id, 3);

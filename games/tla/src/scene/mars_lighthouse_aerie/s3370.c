@@ -25,12 +25,6 @@ void SceneActor_ParkRecord(struct Actor *object);
 void Func_0200556c(struct Actor *object, const u8 *script);
 void Func_020000e4(void);
 
-static __inline__ void SetScale(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 41 of 207
-   * instructions differ in tla-en. */
-  Map_SetScreenShake(a, b, c);
-}
-
 void Func_02003370(void) {
   struct Actor *anchor = Actor_GetById(8);
   s32 spawn = 0;
@@ -40,7 +34,7 @@ void Func_02003370(void) {
   switch (Data_02006ccc) {
   case 0:
     Event_PlaySound(220);
-    SetScale(0x60000, 0x60000, 0x10000);
+    MapGrid_SetShake(0x60000, 0x60000, 0x10000);
     PaletteFade_ApplyTarget(0x2063ff, 1);
     PaletteFade_Interpolate(8);
     break;
@@ -49,7 +43,7 @@ void Func_02003370(void) {
     PaletteFade_Interpolate(8);
     break;
   case 16:
-    SetScale(0x10000, 0x10000, 0x10000);
+    MapGrid_SetShake(0x10000, 0x10000, 0x10000);
     break;
   case 24:
     anchor->x = 0x2000000;
@@ -530,12 +524,6 @@ void Func_020004a4(void);
 extern u8 MsgWhatCouldHe[];
 extern s32 gData_020061d4[];
 
-static __inline__ void W_Func_02005714(s32 a0, s32 a1, s32 a2) {
-  /* FAKEMATCH(wrapper): W_Func_02005714 forwarded inline; as direct calls to
-   * Func_080d47b4, 195 of 1176 instructions differ in tla-en. */
-  Func_080d47b4(a0, a1, a2);
-}
-
 void Func_02003ff4(void) {
   s32 owner, i, ownerInLoop, ownerAfterLoop, quarterTurn;
   s32 threeSixteenthsTurn, actor, t2, t3;
@@ -657,7 +645,7 @@ void Func_02003ff4(void) {
   Actor_FaceDirection(1, quarterTurn, 0);
   Actor_FaceDirection(3, quarterTurn, 0);
   Actor_FaceDirectionAndWait(0, quarterTurn);
-  W_Func_02005714(0, 0x109, 20);
+  FieldActor_ShowEmote(0, 0x109, 20);
   Event_ShowMessage(0, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
   Event_ShowMessage(28, 0);
@@ -685,7 +673,7 @@ void Func_02003ff4(void) {
   Func_02005794();
   ((struct Actor *)actor)->facing = quarterTurn;
   Actor_SetAnimation(5, 1);
-  W_Func_02005714(5, 0x100, 20);
+  FieldActor_ShowEmote(5, 0x100, 20);
   Event_ShowMessage(5, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
   Event_ShowMessage(28, 0);
@@ -694,7 +682,7 @@ void Func_02003ff4(void) {
   FieldPsynergy_StartMindReadWave(23, 24);
   Event_ShowMessage(28, 0);
   Func_02005794();
-  W_Func_02005714(1, 0x100, 20);
+  FieldActor_ShowEmote(1, 0x100, 20);
   Event_ShowMessage(1, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
   Event_ShowMessage(28, 0);
@@ -770,14 +758,14 @@ L_0200c66c:
     ownerInLoop = (s32)&party->currentOwner;
   }
   t195 = *(s32 *)ownerInLoop;
-  W_Func_02005714(t195, 0x100, 0);
-  W_Func_02005714(5, 0x100, 0);
-  W_Func_02005714(6, 0x100, 0);
-  W_Func_02005714(7, 0x100, 0);
-  W_Func_02005714(19, 0x100, 0);
-  W_Func_02005714(0, 0x100, 0);
-  W_Func_02005714(1, 0x100, 0);
-  W_Func_02005714(2, 0x100, 0);
+  FieldActor_ShowEmote(t195, 0x100, 0);
+  FieldActor_ShowEmote(5, 0x100, 0);
+  FieldActor_ShowEmote(6, 0x100, 0);
+  FieldActor_ShowEmote(7, 0x100, 0);
+  FieldActor_ShowEmote(19, 0x100, 0);
+  FieldActor_ShowEmote(0, 0x100, 0);
+  FieldActor_ShowEmote(1, 0x100, 0);
+  FieldActor_ShowEmote(2, 0x100, 0);
   Actor_ShowEmote(3, 0x100, 0);
   t205 = *(s32 *)ownerInLoop;
   Func_02000640(t205);

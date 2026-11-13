@@ -101,7 +101,7 @@ void Func_0200016c(const struct WarpTarget *warp, s32 door, s32 mode) {
   if (mode == 0)
     Actor_CenterOnColumn_(id, 2, -8);
   else
-    Actor_OffsetPositionAndResetMotion_(id, 0, -8);
+    Actor_SetDestinationOffset(id, 0, -8);
   Event_Wait(10);
   Import_EventSetExitRequest(door);
   Event_FinishScreenTransition();
@@ -123,13 +123,6 @@ static __inline__ void Actor_SetSpeedParameters_(s32 actor, s32 speed,
   Actor_SetSpeedParameters(actor, speed, acceleration);
 }
 
-static __inline__ void Func_020034d4_(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants, as ☀️'s scene layer does; as a direct call, 4 of 112
-   * instructions differ in tla-en (Func_020004d4). */
-  Actor_SetHorizontalPositionWithTerrain(actor, x, z);
-}
-
 void Func_02000208(void) {
   const struct WarpTarget *warp;
   s32 msg;
@@ -140,7 +133,7 @@ void Func_02000208(void) {
   Sound_Play(158);
   Map_PlayMapEdit(warp->scene, warp->x, warp->z);
   Actor_GetById(8)->motionFlags = 0;
-  Func_020034d4_(8, 184 << 16, 204 << 17);
+  Actor_SetPosition(8, 184 << 16, 204 << 17);
   Actor_SetSpeedParameters_(8, 0x1cccc, 0xe666);
   Actor_CommitPositionAndActivate(8, 0, 16);
   Actor_ArmCallbackAndRefresh(8, FACING_WEST);
@@ -247,13 +240,6 @@ void Func_02001774(void);
 void Func_02001868(void);
 void Func_020035ac(s32 a);
 
-static __inline__ void Func_0200361c_(s32 a, s32 b) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants, as ☀️'s scene layer does; as a direct call, 2 of 112
-   * instructions differ in tla-en (Func_020004d4). */
-  Func_080d3b28(a, b);
-}
-
 s32 Func_020004d4(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -274,12 +260,12 @@ s32 Func_020004d4(void) {
       Func_02001868();
     }
     if (GameFlag_Test(0x977) && !GameFlag_Test(0x978)) {
-      Func_0200361c_(10, 326);
-      Func_020034d4_(10, 0x2980000, 0xe80000);
+      Actor_ShowItemIconById(10, 326);
+      Actor_SetPosition(10, 0x2980000, 0xe80000);
       Actor_GetById(10)->motionFlags = 4;
     }
     if (GameFlag_Test(0x977))
-      Func_020034d4_(8, 0x2980000, 0xc80000);
+      Actor_SetPosition(8, 0x2980000, 0xc80000);
   } else if (party->scene == (s32)&SceneId_Ov685Room3) {
     if (GameFlag_Test(0x97e)) {
       Actor_SetModeById(8, 11);
@@ -803,45 +789,6 @@ void Func_0200357c(s32 actor, s32 value);
 /* VIEW(s0a34): routine Func_02002f58 as void Func_02002f58(struct Position *position); the definition has void Func_02002f58(const s32 *position). */
 extern void Func_02002f58__s0a34(struct Position *position) __asm__("Func_02002f58");
 
-static __inline__ void Func_0200351c_(s32 actor, s32 value, s32 frames) {
-  /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 44 of
-   * 613 instructions differ in tla-en. */
-  Event_ShowMessageThenWait(actor, value, frames);
-}
-
-static __inline__ void Func_02003544_(s32 actor, s32 value, s32 frames) {
-  /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 41 of
-   * 613 instructions differ in tla-en. */
-  Func_080d47b4(actor, value, frames);
-}
-
-/* VIEW(s0a34): static Func_020034d4_ as Func_020034d4___s0a34; champa_cliff_caves has static __inline__ void Func_020034d4_(s32 actor, s32 x, s32 z) { Actor_SetHorizontalPositionWithTerrain(actor, x, z); }; not tried: Func_020034d4_'s definition holds a FAKEMATCH tag. */
-static __inline__ void Func_020034d4___s0a34(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 2 of
-   * 613 instructions differ in tla-en. */
-  Actor_SetHorizontalPositionWithTerrain(actor, x, z);
-}
-
-static __inline__ void Func_02003434_(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 58 of
-   * 613 instructions differ in tla-en. */
-  Map_SetScreenShake(a, b, c);
-}
-
-static __inline__ void Actor_SetPositionAndReset_(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 2 of
-   * 613 instructions differ in tla-en. */
-  Actor_SetPositionAndReset(actor, x, z);
-}
-
-/* VIEW(s0a34): static Actor_SetSpeedParameters_ as Actor_SetSpeedParameters___s0a34; champa_cliff_caves has static __inline__ void Actor_SetSpeedParameters_(s32 actor, s32 speed, s32 acceleration) { Actor_SetSpeedParameters(actor, speed, accelerati...; not tried: Actor_SetSpeedParameters_'s definition holds a FAKEMATCH tag. */
-static __inline__ void Actor_SetSpeedParameters___s0a34(s32 id, s32 speed,
-                                                 s32 acceleration) {
-  /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 6 of
-   * 613 instructions differ in tla-en. */
-  Actor_SetSpeedParameters(id, speed, acceleration);
-}
-
 static __inline__ void FieldMessage_ShowAtActor_(s32 speaker, s32 flags) {
   /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 35 of
    * 613 instructions differ in tla-en. */
@@ -864,19 +811,19 @@ void Func_0200115c(void) {
   if (Flag_IsSet(0x974)) {
     Func_02003534_(gMainRoutineWork.currentOwner, 0);
     Event_SetMessageId((s32)MsgBackForMore);
-    Func_0200351c_(11, 0, 5);
+    FieldEvent_ShowMessageThenWait(11, 0, 5);
     Sound_Play(36);
     Camera_MoveWithinMapBounds(664 << 16, -1, 0x1000000, 1);
     Func_02003564();
     Event_Wait(5);
     Motion_SetModeAndWaitAnimation(8, 4);
-    Func_0200351c_(0x2008, 0, 5);
-    Func_02003544_(8, 265, 30);
-    Func_0200351c_(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldActor_ShowEmote(8, 265, 30);
+    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
   } else {
     Flag_Set(0x974);
     Event_SetMessageId((s32)MsgHoldItRight);
-    Func_0200351c_(11, 0, 5);
+    FieldEvent_ShowMessageThenWait(11, 0, 5);
     Sound_Play(36);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
     Camera_MoveWithinMapBounds(664 << 16, -1, 0x1000000, 1);
@@ -884,60 +831,60 @@ void Func_0200115c(void) {
     Event_Wait(5);
     Actor_Jump(11, 6, 15);
     Actor_Jump(11, 6, 23);
-    Func_0200351c_(11, 0, 5);
-    Func_02003544_(11, 263, 30);
-    Func_0200351c_(11, 0, 5);
-    Func_02003544_(8, 257, 30);
+    FieldEvent_ShowMessageThenWait(11, 0, 5);
+    FieldActor_ShowEmote(11, 263, 30);
+    FieldEvent_ShowMessageThenWait(11, 0, 5);
+    FieldActor_ShowEmote(8, 257, 30);
     Func_02003534_(8, 0x3000);
     Event_Wait(10);
-    Func_0200351c_(8, 0, 5);
-    Func_02003544_(11, 256, 30);
+    FieldEvent_ShowMessageThenWait(8, 0, 5);
+    FieldActor_ShowEmote(11, 256, 30);
     Func_02003534_(11, 0xb000);
     Event_Wait(10);
-    Func_0200351c_(11, 0, 5);
-    Func_02003544_(11, 263, 30);
-    Func_0200351c_(11, 0, 5);
+    FieldEvent_ShowMessageThenWait(11, 0, 5);
+    FieldActor_ShowEmote(11, 263, 30);
+    FieldEvent_ShowMessageThenWait(11, 0, 5);
     Motion_SetModeAndWaitAnimation(8, 3);
-    Func_0200351c_(8, 0, 5);
+    FieldEvent_ShowMessageThenWait(8, 0, 5);
     Func_02003534_(8, 0x8000);
     Event_Wait(5);
     Motion_SetModeAndWaitAnimation(8, 4);
-    Func_0200351c_(8, 0, 5);
+    FieldEvent_ShowMessageThenWait(8, 0, 5);
     Func_02003534_(11, 0x8000);
     Event_Wait(30);
     Func_02003534_(11, 0xb000);
     Event_Wait(10);
-    Func_02003544_(11, 258, 30);
-    Func_0200351c_(11, 0, 5);
+    FieldActor_ShowEmote(11, 258, 30);
+    FieldEvent_ShowMessageThenWait(11, 0, 5);
     Func_02003534_(11, 0x8000);
     Event_Wait(20);
     Motion_SetVarCbAndRefresh(11, 2);
     Event_Wait(5);
-    Func_0200351c_(11, 0, 5);
-    Func_02003544_(8, 257, 30);
-    Func_0200351c_(8, 0, 5);
+    FieldEvent_ShowMessageThenWait(11, 0, 5);
+    FieldActor_ShowEmote(8, 257, 30);
+    FieldEvent_ShowMessageThenWait(8, 0, 5);
     Func_02003534_(11, 0xb000);
     Event_Wait(10);
-    Func_02003544_(11, 265, 45);
+    FieldActor_ShowEmote(11, 265, 45);
     Func_02003534_(11, 0x300a);
     Event_Wait(10);
-    Func_0200351c_(11, 0, 5);
-    Func_02003544_(8, 258, 30);
+    FieldEvent_ShowMessageThenWait(11, 0, 5);
+    FieldActor_ShowEmote(8, 258, 30);
     Func_02003534_(8, 0x3000);
     Event_Wait(10);
-    Func_0200351c_(8, 0, 5);
+    FieldEvent_ShowMessageThenWait(8, 0, 5);
     Func_02003534_(11, 0xb000);
     Event_Wait(10);
     Motion_SetModeAndWaitAnimation(8, 4);
     Event_Wait(5);
     Func_02003534_(8, 0x8000);
     Event_Wait(5);
-    Func_0200351c_(8, 0, 5);
+    FieldEvent_ShowMessageThenWait(8, 0, 5);
     Motion_SetModeAndWaitAnimation(11, 3);
     Event_Wait(10);
     Motion_SetModeAndWaitAnimation(11, 3);
     Event_Wait(5);
-    Func_0200351c_(11, 0, 5);
+    FieldEvent_ShowMessageThenWait(11, 0, 5);
     Func_02003534_(11, 0x8000);
     Event_Wait(5);
   }
@@ -948,7 +895,7 @@ void Func_0200115c(void) {
   Actor_SetModeById(8, 5);
   Event_Wait(30);
   Actor_SetModeById(8, 6);
-  Func_020034d4___s0a34(12, 724 << 16, 252 << 16);
+  Actor_SetPosition(12, 724 << 16, 252 << 16);
   WORD_AT(Actor_GetById(12), 24) = 0x13333;
   WORD_AT(Actor_GetById(12), 28) = 0x13333;
   Actor_SetSingleChildFlags(Actor_GetById(12), 0);
@@ -956,19 +903,19 @@ void Func_0200115c(void) {
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Func_020035bc();
     Event_Wait(15);
-    Func_020034d4___s0a34(12, 0, 0);
+    Actor_SetPosition(12, 0, 0);
     Actor_SetModeById(8, 1);
     Actor_GetById(8)->facing = 0x8000;
-    Func_0200351c_(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
     ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
     Actor_CommitPositionAndActivate(4, -16, 0);
     Event_Wait(5);
   } else {
     Event_Wait(25);
     ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
-    Func_0200351c_(0x2008, 0, 5);
-    Func_02003544_(8, 263, 30);
-    Func_0200351c_(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldActor_ShowEmote(8, 263, 30);
+    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
     Sound_Play(78);
     Func_0200343c_(656 << 16, 208 << 16, 0, -4);
     Func_0200343c_(656 << 16, 224 << 16, 0, -4);
@@ -980,12 +927,12 @@ void Func_0200115c(void) {
     Actor_Jump(12, 10, 0);
     Sound_Play(146);
     Actor_SetSpritePriority(12, 1);
-    Actor_SetSpeedParameters___s0a34(12, 0x30000, 0x18000);
+    Actor_SetSpeed(12, 0x30000, 0x18000);
     Actor_ResetAndSetPositionInMode2(12, 644, 248);
     Event_Wait(21);
-    Func_020034d4___s0a34(12, 0, 0);
+    Actor_SetPosition(12, 0, 0);
     Event_Wait(50);
-    Func_02003434_(0x20000, 0x20000, 0x10000);
+    MapGrid_SetShake(0x20000, 0x20000, 0x10000);
     Event_Wait(70);
     Sound_Play(148);
     Event_Wait(25);
@@ -1009,7 +956,7 @@ void Func_0200115c(void) {
     position.z = 0xee0000;
     Func_02002f58__s0a34(&position);
     Sound_Play(147);
-    Func_020034d4___s0a34(13, 664 << 16, 248 << 16);
+    Actor_SetPosition(13, 664 << 16, 248 << 16);
     WORD_AT(object, 72) = 0x10000;
     object->motionFlags = 2;
     object->terrainHeight = 0;
@@ -1019,8 +966,8 @@ void Func_0200115c(void) {
     WORD_AT(object, 28) = 0x4000;
     Actor_Jump(13, 11, 0);
     Sound_Play(147);
-    Actor_SetSpeedParameters___s0a34(13, 0x33333, 0x19999);
-    Actor_SetPositionAndReset_(13, 584, 248);
+    Actor_SetSpeed(13, 0x33333, 0x19999);
+    Actor_WalkToAndWait(13, 584, 248);
     Party_SetFields1f2And1f4((s32)&SceneId_Ov685Room4, 98);
     Party_SetFields1eeAnd1f0((s32)&SceneId_Ov685Room4, 99);
     party = &gMainRoutineWork;
@@ -1056,9 +1003,9 @@ void Func_02001774(void) {
   Event_SetMessageId((s32)MsgHaveYouLearned);
   Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
                                          568 << 16, 248 << 16);
-  Func_020034d4___s0a34(8, 584 << 16, 224 << 16);
-  Func_020034d4___s0a34(13, 600 << 16, 240 << 16);
-  Func_020034d4___s0a34(11, 584 << 16, 264 << 16);
+  Actor_SetPosition(8, 584 << 16, 224 << 16);
+  Actor_SetPosition(13, 600 << 16, 240 << 16);
+  Actor_SetPosition(11, 584 << 16, 264 << 16);
   Actor_ArmCallback_(8, 0x5000, 0);
   Actor_ArmCallback_(11, 0xb000, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 41);
@@ -1132,7 +1079,7 @@ void Func_02001868(void) {
   Event_Wait(5);
   Motion_SetModeAndWaitAnimation(8, 4);
   Call3((void (*)())Event_ShowMessageThenWait, 0x2008, 0, 5);
-  Func_02003544_(11, 0x102, 40);
+  FieldActor_ShowEmote(11, 0x102, 40);
   Call3((void (*)())Actor_SetSpeedParameters, 11, 0x1b333, 0xd999);
   Call3((void (*)())Actor_CommitPositionAndActivate, 11, -16, 0);
   Event_Wait(5);
@@ -1164,7 +1111,7 @@ void Func_02001868(void) {
   Event_Wait(30);
   Func_080d47b4(11, 0x106, 30);
   Event_ShowMessageThenWait(11, 0, 10);
-  Func_02003544_(8, 0x102, 40);
+  FieldActor_ShowEmote(8, 0x102, 40);
   Event_ShowMessageThenWait(8, 0, 0);
   Event_ShowMessageThenWait(15, 0, 5);
   Actor_ArmCallbackAndRefresh(8, 0x7ff6);
@@ -1246,7 +1193,7 @@ void Func_02001868(void) {
   Event_ShowMessageThenWait(11, 0, 5);
   Motion_SetModeAndWaitAnimation(8, 4);
   Event_ShowMessageThenWait(8, 0, 5);
-  Func_02003544_(11, 0x102, 30);
+  FieldActor_ShowEmote(11, 0x102, 30);
   Event_ShowMessageThenWait(11, 0, 5);
   Func_080d47b4(8, 0x103, 30);
   Event_ShowMessageThenWait(8, 0, 5);
@@ -1371,7 +1318,7 @@ void Func_02001868(void) {
   Motion_SetVarCbAndRefresh(14, 2);
   Event_Wait(5);
   Call3((void (*)())Event_ShowMessageThenWait, 0x200e, 0, 5);
-  Func_02003544_(8, 0x102, 30);
+  FieldActor_ShowEmote(8, 0x102, 30);
   Event_ShowMessageThenWait(8, 0, 5);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 11, 0xb000);
   Event_Wait(10);
@@ -1382,7 +1329,7 @@ void Func_02001868(void) {
   Actor_ArmCallbackAndRefresh(14, FACING_EAST);
   Event_Wait(5);
   Event_ShowMessageThenWait(14, 0, 5);
-  Func_02003544_(11, 0x105, 60);
+  FieldActor_ShowEmote(11, 0x105, 60);
   Func_080d47b4(14, 0x101, 30);
   Event_ShowMessageThenWait(14, 0, 5);
   Actor_StartRepeatedMotion(11, 3);
@@ -1438,7 +1385,7 @@ void Func_02001868(void) {
   Motion_SetModeAndWaitAnimation(11, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(11, 0, 5);
-  Func_02003544_(14, 0x101, 30);
+  FieldActor_ShowEmote(14, 0x101, 30);
   Event_ShowMessageThenWait(14, 0, 5);
   Func_080d47b4(11, 0x105, 30);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 11, 0x5000);
@@ -1446,7 +1393,7 @@ void Func_02001868(void) {
   Event_ShowMessageThenWait(11, 0, 15);
   Func_080d47b4(14, 0x106, 30);
   Event_ShowMessageThenWait(14, 0, 5);
-  Func_02003544_(11, 0x101, 35);
+  FieldActor_ShowEmote(11, 0x101, 35);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 11, FACING_WEST);
   Event_Wait(5);
   Event_ShowMessageThenWait(11, 0, 5);
@@ -1463,7 +1410,7 @@ void Func_02001868(void) {
   Func_080d47b4(11, 0x102, 0);
   Call3((void (*)())Actor_CommitPositionAndActivate, 14, -56, 0);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 14, 0xb000);
-  Func_02003544_(14, 0x101, 30);
+  FieldActor_ShowEmote(14, 0x101, 30);
   Actor_ArmCallbackAndRefresh(14, FACING_EAST);
   Event_Wait(10);
   Event_ShowMessageThenWait(14, 0, 5);
@@ -1497,10 +1444,10 @@ void Func_02001868(void) {
   Actor_CommitPositionAndActivate(8, 0, 16);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 8, FACING_WEST);
   Event_ShowMessageThenWait(8, 0, 5);
-  Func_02003544_(4, 0x101, 0);
-  Func_02003544_(7, 0x101, 0);
-  Func_02003544_(5, 0x101, 0);
-  Func_02003544_(6, 0x101, 0);
+  FieldActor_ShowEmote(4, 0x101, 0);
+  FieldActor_ShowEmote(7, 0x101, 0);
+  FieldActor_ShowEmote(5, 0x101, 0);
+  FieldActor_ShowEmote(6, 0x101, 0);
   Func_080d47b4(15, 0x101, 30);
   Actor_ArmCallback(4, FACING_EAST, 0);
   Actor_ArmCallback(7, FACING_EAST, 0);

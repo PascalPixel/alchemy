@@ -789,7 +789,7 @@ void Func_02001500(void) {
   if (flag == 0) {
     Func_02001cc4();
     FieldEvent_ResolvePendingActions(0);
-    Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
+    FieldCamera_MoveTo(-1, -1, -1, 0);
     leader->motionFlags = flag;
     Actor_SetPosition(*owner, ((s16 *)&leader->x)[1] << 16,
                                            (((s16 *)&leader->z)[1] << 16) -

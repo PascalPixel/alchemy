@@ -623,12 +623,6 @@ void Func_020042c4(s32 owner, s32 slot);
 void Func_020041ec(struct Actor *object);
 void Func_020043d4(void);
 
-static __inline__ void Func_0200440c_(s32 a, s32 b) {
-  /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 10 of 155
-   * instructions differ in tla-en. */
-  BattleEffect_ApplyColorToSourceBuffer(a, b);
-}
-
 void Func_02000bd8(void) {
   struct Actor *leader;
   struct Actor *object;
@@ -672,7 +666,7 @@ void Func_02000bd8(void) {
     FieldCamera_SetSpeed(0x4cccc, 0x9999);
     FieldCamera_MoveTo(170 << 18, -1, 146 << 16, 1);
     Func_020043d4();
-    Func_0200440c_(0x10000, 0);
+    PaletteFade_ApplySource(0x10000, 0);
     PaletteFade_ApplyTarget(0x10003, 0);
     PaletteFade_Interpolate(20);
     System_Wait(20);

@@ -168,12 +168,6 @@ void Script_WaitForEventTimeout(struct Actor *actor);
 s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
 void Actor_ArmCallback(s32 id, s32 angle, s32 a);
 
-static __inline__ void MoveTo(struct Actor *object, s32 x, s32 y, s32 z) {
-  /* FAKEMATCH(wrapper): MoveTo forwarded inline; as direct calls to
-   * Actor_SetMoveTarget, 6 of 157 instructions differ in tla-en. */
-  Actor_SetMoveTarget(object, x, y, z);
-}
-
 void Func_02000588(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 shift = 0x1300000;
@@ -188,7 +182,7 @@ void Func_02000588(void) {
     return;
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
 #if TLA_PATCH_1
-  MoveTo(object, (object->x & 0xfff00000) + 0x80000, object->y,
+  FieldActor_SetMoveTarget(object, (object->x & 0xfff00000) + 0x80000, object->y,
          (object->z & 0xfff00000) + 0x80000);
 #endif
   {

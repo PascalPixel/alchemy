@@ -76,31 +76,6 @@ void Func_020046b4(void);
 void Func_020046a4(void);
 void Func_0200354c(void);
 
-static __inline__ void Func_0200474c_(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                      s32 f) {
-  /* FAKEMATCH(wrapper): forwarded inline; as direct calls, 8 of 281
-   * instructions differ in tla-en. */
-  Func_0802b450(a, b, c, d, e, f);
-}
-
-static __inline__ void Func_0200475c_(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH(wrapper): forwarded inline; as direct calls, 21 of 281
-   * instructions differ in tla-en. */
-  Map_SetScreenShake(a, b, c);
-}
-
-static __inline__ void Func_0200491c_(s32 a, s32 b) {
-  /* FAKEMATCH(wrapper): forwarded inline; as direct calls, 21 of 281
-   * instructions differ in tla-en. */
-  BattleEffect_ApplyColorToTargetBuffer(a, b);
-}
-
-static __inline__ void Func_02004924_(s32 a, s32 b) {
-  /* FAKEMATCH(wrapper): forwarded inline; as direct calls, 21 of 281
-   * instructions differ in tla-en. */
-  BattleEffect_ApplyColorToSourceBuffer(a, b);
-}
-
 void Func_020000c4(void) {
 
   u16 *buffer;
@@ -136,17 +111,17 @@ void Func_020000c4(void) {
   gBgScroll[0] = -104;
   gBgScroll[1] = 16;
   System_Wait(30);
-  Func_02004924_(0x10003, 0);
-  Func_0200491c_(0x7fff, 0);
+  PaletteFade_ApplySource(0x10003, 0);
+  PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
   System_Wait(1);
-  Func_02004924_(0x7fff, 0);
-  Func_0200491c_(0x10003, 0);
+  PaletteFade_ApplySource(0x7fff, 0);
+  PaletteFade_ApplyTarget(0x10003, 0);
   PaletteFade_Interpolate(8);
   REG_DISPCNT |= 0x100;
   Event_PlaySound(144);
-  Func_0200475c_(0x50000, 0x70000, 0x10000);
-  Func_0200475c_(-1, -1, 0xe666);
+  MapGrid_SetShake(0x50000, 0x70000, 0x10000);
+  MapGrid_SetShake(-1, -1, 0xe666);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
   FieldActor_Jump(4, 6, 0);
   Actor_Get(4)->actionFlags &= ~1;
@@ -156,11 +131,11 @@ void Func_020000c4(void) {
     REG_BLDALPHA = (16 - (i >> 1)) | 0x1000;
     System_Wait(1);
   }
-  Func_0200474c_(104, 42, 5, 11, 61, 42);
-  Func_0200474c_(106, 52, 1, 1, 63, 84);
+  MapGrid_CopyCellsLayered(104, 42, 5, 11, 61, 42);
+  MapGrid_CopyCellsLayered(106, 52, 1, 1, 63, 84);
   MapGrid_SetCellBehavior(130 << 19, 160 << 16, 2, 236);
-  Func_02004924_(0x10003, 0);
-  Func_0200491c_(0x10000, 0);
+  PaletteFade_ApplySource(0x10003, 0);
+  PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(60);
   Func_020046b4();
   Func_020046a4();
@@ -173,7 +148,7 @@ void Func_020000c4(void) {
   gBgScroll[1] = 0;
   System_Wait(1);
   gCpuLoadDisplayEnabled = 1;
-  Func_0200475c_(0, 0, 0);
+  MapGrid_SetShake(0, 0, 0);
 }
 
 void Func_02004774(s32 x, s32 z, s32 a, s32 b);
@@ -282,34 +257,6 @@ void Func_020003b8(s32 unused, s32 id) {
   Func_02004774_(object->x, object->z, 0, -6);
 }
 
-static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
-                                                           s32 dz) {
-  /* FAKEMATCH(wrapper): forwarded inline; as a plain call, 2 of 292
-   * instructions differ in tla-en. */
-  Actor_OffsetPositionAndResetMotion(id, dx, dz);
-}
-
-static __inline__ void Func_020048e4_(s32 a, s32 b) {
-  /* FAKEMATCH(wrapper): forwarded inline; as a plain call, 26 of 292
-   * instructions differ in tla-en. */
-  Camera_SetSpeedParameters(a, b);
-}
-
-static __inline__ s32 GameFlag_Test_(s32 flag) {
-  /* FAKEMATCH(wrapper): forwarded inline; as a plain call, 21 of 292
-   * instructions differ in tla-en. */
-  /* FAKEMATCH(wrapper): forwarded inline; as plain calls, 58 of 203
-   * instructions of Func_02002c54 differ in tla-en. */
-  return GameFlag_Test(flag);
-}
-
-static __inline__ void Actor_SetSpeedParameters_(s32 actor, s32 speed,
-                                                 s32 acceleration) {
-  /* FAKEMATCH(wrapper): forwarded inline; as a plain call, 2 of 292
-   * instructions differ in tla-en. */
-  Actor_SetSpeedParameters(actor, speed, acceleration);
-}
-
 /// Opens the floor under (49, 103) and (49, 106) once (flag 514, until 2591).
 /// Object 23, standing on the ground at x cell 49 to 52 with flag 2573 clear,
 /// falls through and sets 2573: from cells 50 and 51 it drops, lands with the
@@ -320,7 +267,7 @@ void Func_0200060c(void) {
   s32 x;
   s32 i;
 
-  if (GameFlag_Test_(2591))
+  if (Event_GetFlag(2591))
     return;
   GameFlag_SetBit(514);
   Func_020047d4();
@@ -332,11 +279,9 @@ void Func_0200060c(void) {
   Func_020048f4();
   Event_Wait(6);
   Sound_Play(217);
-  /* FAKEMATCH(wrapper): forwarded through Func_0200474c_ above; as plain
-   * calls, 12 of 292 instructions differ in tla-en. */
-  Func_0200474c_(49, 103, 4, 3, 49, 76);
+  MapGrid_CopyCellsLayered(49, 103, 4, 3, 49, 76);
   Event_Wait(6);
-  Func_0200474c_(49, 106, 4, 3, 49, 76);
+  MapGrid_CopyCellsLayered(49, 106, 4, 3, 49, 76);
   x = object->x >> 20;
   if (x == 49)
     spot = 1;
@@ -348,12 +293,12 @@ void Func_0200060c(void) {
     spot = 4;
   if (object->y != 0)
     spot = 0;
-  if (GameFlag_Test_(2573))
+  if (Event_GetFlag(2573))
     spot = 0;
   if (spot != 0)
     GameFlag_SetBit(2573);
   if ((u32)(spot - 2) <= 1) {
-    Func_020048e4_(0x40000, 0x8000);
+    FieldCamera_SetSpeed(0x40000, 0x8000);
     FieldCamera_FollowActor(23, 1);
     Func_020048f4();
     Sound_Play(310);
@@ -369,15 +314,13 @@ void Func_0200060c(void) {
           break;
       } while (object->y > object->terrainHeight);
     }
-    /* FAKEMATCH(wrapper): forwarded through Func_0200475c_ above; as plain
-     * calls, 46 of 292 instructions differ in tla-en. */
-    Func_0200475c_(0x30000, 0x30000, 0xf333);
+    MapGrid_SetShake(0x30000, 0x30000, 0xf333);
     Sound_Play(134);
     object->gravity = 0x10000;
     object->velocityY = PIXELS(6);
-    Actor_SetSpeedParameters_(23, 0x18000, 0xc000);
+    Actor_SetSpeed(23, 0x18000, 0xc000);
     if (spot == 2)
-      Actor_OffsetPositionAndResetMotion_(23, -32, 0);
+      Actor_SetDestinationOffset(23, -32, 0);
     else
       Actor_SetDestinationOffset(23, 32, 0);
     Event_Wait(7);
@@ -385,15 +328,15 @@ void Func_0200060c(void) {
     object->gravity = 0x8000;
     object->terrainHeight = PIXELS(-240);
     Event_Wait(80);
-    Func_0200475c_(0x50000, 0x50000, 0x10000);
+    MapGrid_SetShake(0x50000, 0x50000, 0x10000);
     Sound_Play(144);
     Event_Wait(20);
-    Func_0200475c_(-1, -1, 0xe666);
+    MapGrid_SetShake(-1, -1, 0xe666);
     Actor_SetPosition(23, 0, 0);
     Event_Wait(10);
   } else if (spot == 1 || spot == 4) {
     FieldActor_SetSpritePriority(23, 1);
-    Func_020048e4_(0x40000, 0x8000);
+    FieldCamera_SetSpeed(0x40000, 0x8000);
     FieldCamera_FollowActor(23, 1);
     Func_020048f4();
     Sound_Play(310);
@@ -403,10 +346,10 @@ void Func_0200060c(void) {
     Event_Wait(20);
     Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
     Event_Wait(60);
-    Func_0200475c_(0x50000, 0x50000, 0x10000);
+    MapGrid_SetShake(0x50000, 0x50000, 0x10000);
     Sound_Play(144);
     Event_Wait(20);
-    Func_0200475c_(-1, -1, 0xe666);
+    MapGrid_SetShake(-1, -1, 0xe666);
     Actor_SetPosition(23, 0, 0);
     Event_Wait(10);
   }
@@ -426,10 +369,7 @@ void Func_020008c8(void) {
   FieldCamera_MoveTo(PIXELS(776), -1, PIXELS(208), 1);
   Func_020048f4();
   FieldEvent_Wait(6);
-  /* FAKEMATCH(wrapper): forwarding through Func_0200474c_ above keeps each
-   * call's own constants, as ☀️'s scene layer does; as a direct call, 12 of
-   * 61 instructions differ in tla-en. */
-  Func_0200474c_(49, 103, 4, 3, 49, 76);
+  MapGrid_CopyCellsLayered(49, 103, 4, 3, 49, 76);
   FieldEvent_Wait(6);
   Event_PlaySound(133);
   MapGrid_CopyCellsLayered(49, 100, 4, 3, 49, 76);
@@ -480,12 +420,6 @@ void Func_02000970(s32 actor) {
   Func_020047dc();
 }
 
-static __inline__ void I_Func_020048d4(s32 actor, s32 a) {
-  /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; as
-   * direct calls at its one site, 2 of 37 instructions differ in tla-en. */
-  Func_080d489c(actor, a);
-}
-
 s32 Func_02000a78(void) {
   struct Actor *object = Actor_Get(1);
 
@@ -493,7 +427,7 @@ s32 Func_02000a78(void) {
     struct FieldSprite *sprite = object->sprite;
 
     if ((gFrameCount & 127) == 0)
-      I_Func_020048d4(29, 258);
+      Actor_SetAttachedEffect(29, 258);
     if (sprite != NULL) {
       // As sprite->unk14[n], the frame count's reload passes these stores.
       *(sprite->unk14 + 3) = 30;
@@ -541,24 +475,6 @@ extern u32 gData_020055ec[];
 extern u32 gData_02005644[];
 extern u32 gData_0200569c[];
 
-static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants, as ☀️'s scene layer does; as direct calls, 30 of 57
-   * instructions of Func_02000c08 differ in tla-en, and 25 of 69 of
-   * Func_02000b48. */
-  /* FAKEMATCH(wrapper): the same forwarding; as direct calls, 35 of 160
-   * instructions of Func_02001c7c differ in tla-en. */
-  Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle);
-}
-
-static __inline__ void ObjSpeed(s32 id, s32 speed, s32 acceleration) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants, as ☀️'s scene layer does; as direct calls, 32 of 69
-   * instructions of Func_02000b48 differ in tla-en, the speeds held in r5 and
-   * r6 across the calls. */
-  Actor_SetSpeedParameters(id, speed, acceleration);
-}
-
 #define PLACE(id, x, z, angle)                                                 \
   {                                                                            \
     /* FAKEMATCH(temporary): the angle passes through a block local, so each   \
@@ -567,15 +483,15 @@ static __inline__ void ObjSpeed(s32 id, s32 speed, s32 acceleration) {
      * argument, 31 of 57 instructions of Func_02000c08 differ in tla-en, and  \
      * 16 of 69 of Func_02000b48. */                                           \
     s32 angle_ = (angle);                                                      \
-    ObjPlace(id, (x) << 16, (z) << 16, angle_);                                \
+    Actor_SetPositionAndFacing(id, (x) << 16, (z) << 16, angle_);                                \
   }
 
 /// Sets four actors' speeds, places them and starts their action scripts.
 void Func_02000b48(void) {
-  ObjSpeed(26, 0x30000, 0x18000);
-  ObjSpeed(27, 0x30000, 0x18000);
-  ObjSpeed(0, 0x30000, 0x18000);
-  ObjSpeed(2, 0x30000, 0x18000);
+  Actor_SetSpeed(26, 0x30000, 0x18000);
+  Actor_SetSpeed(27, 0x30000, 0x18000);
+  Actor_SetSpeed(0, 0x30000, 0x18000);
+  Actor_SetSpeed(2, 0x30000, 0x18000);
   PLACE(0, 776, 202, FACING_WEST);
   PLACE(2, 731, 232, FACING_NORTH);
   PLACE(27, 731, 213, FACING_SOUTH);
@@ -631,75 +547,11 @@ extern u32 gData_02004a34[];
 extern u32 gData_02004a50[];
 extern u32 gData_0200599c[];
 
-static __inline__ void I_Func_020048bc(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
-                                       s32 g, s32 h, s32 i, s32 j, s32 k) {
-  /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; as
-   * direct calls at its 7 sites, 152 of 1568 instructions differ in tla-en. */
-  Battle_ShowPairedUnitWorkAndWait(a, b, c, d, e, f, g, h, i, j, k);
-}
-
-static __inline__ void I_Actor_ArmCallback(s32 id, s32 angle, s32 flags) {
-  /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; as
-   * direct calls at its 15 sites, 73 of 1568 instructions differ in tla-en. */
-  Actor_ArmCallback(id, angle, flags);
-}
-
-static __inline__ void I_Func_02004964(s32 actor, s32 x, s32 z, s32 angle) {
-  /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; as
-   * direct calls at its 4 sites, 16 of 1568 instructions differ in tla-en. */
-  Func_080d3070(actor, x, z, angle);
-}
-
 static __inline__ struct Actor *I_Func_020048cc(s32 actor, s32 emote,
                                                 s32 frames) {
   /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; as
    * direct calls at its 42 sites, 171 of 1568 instructions differ in tla-en. */
   return (struct Actor *)Func_080d47b4(actor, emote, frames);
-}
-
-static __inline__ void I_Actor_SetSpeedParameters(s32 actor, s32 speed,
-                                                  s32 acceleration) {
-  /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; as
-   * direct calls at its 14 sites, 78 of 1568 instructions differ in tla-en. */
-  Actor_SetSpeedParameters(actor, speed, acceleration);
-}
-
-static __inline__ void I_Motion_CamBounds(s32 x, s32 y, s32 z, s32 d) {
-  /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; as
-   * direct calls at its 6 sites, 25 of 1568 instructions differ in tla-en. */
-  Camera_MoveWithinMapBounds(x, y, z, d);
-}
-
-static __inline__ void I_Func_0200484c(s32 id, s32 x, s32 z, s32 angle) {
-  /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; as
-   * direct calls at its 3 sites, 14 of 1568 instructions differ in tla-en. */
-  Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle);
-}
-
-static __inline__ void I_Func_020048b4(s32 actor, s32 a) {
-  /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; as
-   * direct calls at its 20 sites, 85 of 1568 instructions differ in tla-en. */
-  Actor_ArmCallbackAndRefresh(actor, a);
-}
-
-static __inline__ void I_Actor_OffsetPositionAndResetMotion(s32 id, s32 dx,
-                                                            s32 dz) {
-  /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; as
-   * direct calls at its 6 sites, 26 of 1568 instructions differ in tla-en. */
-  Actor_OffsetPositionAndResetMotion(id, dx, dz);
-}
-
-static __inline__ void I_Actor_ResetAndSetPositionInMode2(s32 id, s32 x,
-                                                          s32 z) {
-  /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; as
-   * direct calls at its 6 sites, 25 of 1568 instructions differ in tla-en. */
-  Actor_ResetAndSetPositionInMode2(id, x, z);
-}
-
-static __inline__ void I_Actor_CommitPositionAndActivate(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; as
-   * direct calls at its one site, 7 of 1568 instructions differ in tla-en. */
-  Actor_CommitPositionAndActivate(id, x, z);
 }
 
 /// The scene in which actor 4 meets 5, 6, 7 and 28 and the group is placed for
@@ -718,14 +570,14 @@ void Func_02000cac(s32 arg) {
   Event_PlaySound(217);
   Actor_SetScript(4, gData_020056ec);
   if (arg != 0) {
-    I_Func_020048bc(3, 20, 9, 15, 8, 1, 20, 2, 15, 1, 25);
+    FieldEvent_ShowTwoMessagesAndWait(3, 20, 9, 15, 8, 1, 20, 2, 15, 1, 25);
     Event_PlaySound(310);
     FieldEvent_Wait(30);
     Event_PlaySound(144);
-    I_Func_020048bc(3, 21, 9, 16, 8, 1, 21, 2, 16, 1, 0);
+    FieldEvent_ShowTwoMessagesAndWait(3, 21, 9, 16, 8, 1, 21, 2, 16, 1, 0);
     FieldEvent_ShowTwoMessagesAndWait(0, 20, 9, 15, 8, 2, 20, 2, 15, 1, 0);
   } else {
-    I_Func_020048bc(3, 5, 9, 0, 8, 1, 5, 2, 0, 1, 25);
+    FieldEvent_ShowTwoMessagesAndWait(3, 5, 9, 0, 8, 1, 5, 2, 0, 1, 25);
     Event_PlaySound(310);
     FieldEvent_Wait(30);
     Event_PlaySound(144);
@@ -733,19 +585,19 @@ void Func_02000cac(s32 arg) {
     FieldEvent_ShowTwoMessagesAndWait(0, 5, 9, 0, 8, 2, 5, 2, 0, 1, 0);
   }
   FieldActor_Stop(4);
-  I_Actor_ArmCallback(4, FACING_SOUTH, 0);
-  I_Func_02004964(7, 16, 0, FACING_WEST);
-  I_Func_02004964(28, -16, 0, FACING_EAST);
-  I_Func_02004964(6, 16, 24, FACING_WEST);
-  I_Func_02004964(5, -16, 24, FACING_EAST);
+  Actor_FaceDirection(4, FACING_SOUTH, 0);
+  FieldActor_LaunchFromLeader(7, 16, 0, FACING_WEST);
+  FieldActor_LaunchFromLeader(28, -16, 0, FACING_EAST);
+  FieldActor_LaunchFromLeader(6, 16, 24, FACING_WEST);
+  FieldActor_LaunchFromLeader(5, -16, 24, FACING_EAST);
   FieldCamera_FollowActor(5, 1);
   FieldActor_WaitForMoveById(5);
   (struct Actor *)Actor_ShowEmote(28, 0x102, 30);
   FieldEvent_ShowMessageThenWait(28, 0, 5);
-  I_Actor_ArmCallback(5, FACING_NORTH, 0);
-  I_Actor_ArmCallback(6, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(5, FACING_NORTH, 0);
+  Actor_FaceDirection(6, FACING_NORTHWEST + FACING_STEP, 0);
   (struct Actor *)Actor_ShowEmote(7, 0x101, 30);
-  I_Actor_ArmCallback(5, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(5, FACING_NORTH + FACING_STEP, 0);
   Event_OpenMessage(7, 0);
   Actor_FaceDirection(4, FACING_EAST, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
@@ -767,23 +619,23 @@ void Func_02000cac(s32 arg) {
   (struct Actor *)Actor_ShowEmote(6, 0x101, 30);
   FieldEvent_ShowMessageThenWait(6, 0, 5);
   (struct Actor *)Actor_ShowEmote(4, 0x102, 30);
-  I_Actor_SetSpeedParameters(4, 0x00013333, 0x9999);
+  Actor_SetSpeed(4, 0x00013333, 0x9999);
   Actor_SetScript(4, arg != 0 ? gData_02005748 : gData_0200578c);
   FieldEvent_Wait(30);
-  I_Actor_ArmCallback(6, FACING_WEST, 0);
+  Actor_FaceDirection(6, FACING_WEST, 0);
   Actor_FaceDirection(5, FACING_EAST, 0);
   Actor_FaceDirection(28, FACING_EAST, 0);
-  I_Actor_ArmCallback(7, FACING_WEST, 0);
+  Actor_FaceDirection(7, FACING_WEST, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimation(6, 3);
   Actor_SetAnimation(7, 3);
   Actor_SetAnimation(5, 3);
   Actor_SetAnimation(28, 3);
   FieldEvent_Wait(30);
-  I_Actor_SetSpeedParameters(5, 0x10000, 0x8000);
-  I_Actor_SetSpeedParameters(7, 0x10000, 0x8000);
-  I_Actor_SetSpeedParameters(6, 0x10000, 0x8000);
-  I_Actor_SetSpeedParameters(28, 0xcccc, 0x6666);
+  Actor_SetSpeed(5, 0x10000, 0x8000);
+  Actor_SetSpeed(7, 0x10000, 0x8000);
+  Actor_SetSpeed(6, 0x10000, 0x8000);
+  Actor_SetSpeed(28, 0xcccc, 0x6666);
   Actor_SetScript(28, arg != 0 ? gData_020057d0 : gData_02005800);
   Actor_SetScript(7, arg != 0 ? gData_0200d830 : gData_02005860);
   Actor_SetScript(5, arg != 0 ? gData_02005890 : gData_020058d8);
@@ -803,7 +655,7 @@ void Func_02000cac(s32 arg) {
   FieldActor_RefreshSelectorById(28);
   FieldEvent_Wait(20);
   angle = 0x2000;
-  I_Func_0200484c(2, PIXELS(741), PIXELS(232), angle);
+  Actor_SetPositionAndFacing(2, PIXELS(741), PIXELS(232), angle);
   FieldCamera_SetSpeed(0x40000, 0x8000);
   FieldCamera_MoveTo(PIXELS(800), 0, PIXELS(270), 1);
   Func_020048f4();
@@ -812,7 +664,7 @@ void Func_02000cac(s32 arg) {
   Actor_RunRepeatedMotion(0, 2);
   FieldEvent_ShowMessageThenWait(0, 0, 5);
   Actor_SetAnimation(3, 0);
-  I_Func_020048b4(3, FACING_NORTHWEST);
+  Actor_FaceDirectionAndWait(3, FACING_NORTHWEST);
   FieldEvent_ShowMessageThenWait(3, 0, 5);
   Actor_FaceDirectionAndWait(3, angle);
   Actor_SetAnimation(3, 9);
@@ -821,22 +673,19 @@ void Func_02000cac(s32 arg) {
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(1, 0, 5);
   FieldActor_StartRepeatedMotion(3, 3);
-  /* FAKEMATCH(wrapper): forwarding through I_Func_020048d4 above keeps the
-   * call's own constants; as a direct call, 16 of 1568 instructions differ in
-   * tla-en. */
-  I_Func_020048d4(3, 258);
+  Actor_SetAttachedEffect(3, 258);
   FieldEvent_Wait(40);
   FieldEvent_ShowMessageThenWait(3, 0, 5);
   Actor_RunRepeatedMotion(1, 2);
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(1, 0, 5);
   Actor_Get(3)->actionFlags &= 0xfe;
-  I_Actor_SetSpeedParameters(3, 0x1999, 0xccc);
+  Actor_SetSpeed(3, 0x1999, 0xccc);
   Actor_SetDestinationOffset(3, 4, 2);
   FieldActor_WaitForMoveById(3);
   Actor_SetAnimation(3, 9);
   Actor_RunRepeatedMotion(3, 2);
-  I_Actor_OffsetPositionAndResetMotion(3, -2, 2);
+  Actor_SetDestinationOffset(3, -2, 2);
   FieldActor_WaitForMoveById(3);
   Actor_SetAnimation(3, 9);
   Actor_RunRepeatedMotion(3, 2);
@@ -844,14 +693,14 @@ void Func_02000cac(s32 arg) {
   FieldActor_WaitForMoveById(3);
   Actor_SetAnimation(3, 9);
   Actor_RunRepeatedMotion(3, 2);
-  I_Actor_OffsetPositionAndResetMotion(3, -2, -1);
+  Actor_SetDestinationOffset(3, -2, -1);
   FieldActor_WaitForMoveById(3);
   Actor_SetAnimation(3, 9);
   Actor_RunRepeatedMotion(3, 2);
   FieldEvent_Wait(40);
-  I_Actor_OffsetPositionAndResetMotion(3, 0, -2);
+  Actor_SetDestinationOffset(3, 0, -2);
   FieldActor_WaitForMoveById(3);
-  I_Actor_SetSpeedParameters(3, 0x20000, 0x10000);
+  Actor_SetSpeed(3, 0x20000, 0x10000);
   /* FAKEMATCH(dead): the statement kept in a once-only block, whose
    * loop note starts a scheduling region here as in the native; as plain
    * statements, 2 of 1568 instructions differ in tla-en. */
@@ -869,7 +718,7 @@ void Func_02000cac(s32 arg) {
   Actor_SetDestinationOffset(3, -2, -8);
   FieldActor_WaitForMoveById(3);
   Actor_SetAnimation(3, 1);
-  I_Func_020048b4(3, FACING_NORTHWEST);
+  Actor_FaceDirectionAndWait(3, FACING_NORTHWEST);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(3, 0, 5);
   Actor_SetAnimation(0, 1);
@@ -887,21 +736,21 @@ void Func_02000cac(s32 arg) {
   FieldEvent_Wait(20);
   FieldEvent_Wait(10);
   Actor_SetScript(3, gData_02005548);
-  I_Func_0200484c(26, PIXELS(665), PIXELS(128), angle);
+  Actor_SetPositionAndFacing(26, PIXELS(665), PIXELS(128), angle);
   Actor_SetPositionAndFacing(27, PIXELS(641), PIXELS(128),
                                                  angle);
   Event_PlaySound(78);
   FieldEvent_ShowMessageThenWait(26, 0, 5);
   I_Func_020048cc(0, 0x100, 0);
   I_Func_020048cc(2, 0x100, 30);
-  I_Actor_ArmCallback(0, FACING_NORTHWEST, 0);
-  I_Func_020048b4(2, FACING_NORTHWEST);
+  Actor_FaceDirection(0, FACING_NORTHWEST, 0);
+  Actor_FaceDirectionAndWait(2, FACING_NORTHWEST);
   FieldEvent_Wait(10);
-  I_Motion_CamBounds(PIXELS(720), 0, PIXELS(210), 1);
-  I_Actor_SetSpeedParameters(26, 0x4000, angle);
-  I_Actor_SetSpeedParameters(27, 0x4000, angle);
-  I_Actor_ResetAndSetPositionInMode2(26, 714, 193);
-  I_Actor_ResetAndSetPositionInMode2(27, 698, 209);
+  FieldCamera_MoveTo(PIXELS(720), 0, PIXELS(210), 1);
+  Actor_SetSpeed(26, 0x4000, angle);
+  Actor_SetSpeed(27, 0x4000, angle);
+  Actor_WalkTo(26, 714, 193);
+  Actor_WalkTo(27, 698, 209);
   Actor_SetScript(26, gData_020049cc);
   Actor_SetScript(27, gData_020049dc);
   FieldEvent_Wait(20);
@@ -933,8 +782,8 @@ void Func_02000cac(s32 arg) {
   Actor_FaceEachOther(0, 2, 0);
   FieldEvent_Wait(10);
   (struct Actor *)Actor_ShowEmote(0, 0x106, 30);
-  I_Actor_ArmCallback(2, FACING_NORTHWEST, 0);
-  I_Func_020048b4(0, FACING_NORTHWEST);
+  Actor_FaceDirection(2, FACING_NORTHWEST, 0);
+  Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
   /* FAKEMATCH(dead): the statement kept in a once-only block, whose
    * loop note starts a scheduling region here as in the native; as plain
    * statements, 4 of 1568 instructions differ in tla-en. */
@@ -947,7 +796,7 @@ void Func_02000cac(s32 arg) {
   FieldEvent_ShowMessageThenWait(27, 0, 5);
   (struct Actor *)Actor_ShowEmote(2, 0x102, 30);
   FieldEvent_ShowMessageThenWait(2, 0, 5);
-  I_Func_020048b4(26, FACING_NORTHWEST);
+  Actor_FaceDirectionAndWait(26, FACING_NORTHWEST);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(26, 0, 5);
   Actor_RunRepeatedMotion(26, 2);
@@ -998,7 +847,7 @@ void Func_02000cac(s32 arg) {
   (struct Actor *)Actor_ShowEmote(0, 0x100, 30);
   Actor_FaceDirectionAndWait(0, angle);
   Actor_SetAnimation(0, 38);
-  I_Motion_CamBounds(PIXELS(784), 0, PIXELS(274), 1);
+  FieldCamera_MoveTo(PIXELS(784), 0, PIXELS(274), 1);
   Func_020048f4();
   FieldEvent_Wait(60);
   FieldCamera_MoveTo(PIXELS(720), 0, PIXELS(210), 1);
@@ -1069,15 +918,15 @@ void Func_02000cac(s32 arg) {
     FieldEvent_Wait(33);
   } while (0);
   FieldEvent_ShowMessageThenWait(27, 0, 5);
-  I_Func_020048b4(27, FACING_NORTHWEST);
+  Actor_FaceDirectionAndWait(27, FACING_NORTHWEST);
   FieldEvent_Wait(20);
   (struct Actor *)Actor_ShowEmote(27, 0x101, 30);
-  I_Actor_SetSpeedParameters(27, 0x20000, 0x10000);
-  I_Actor_CommitPositionAndActivate(27, -24, -24);
+  Actor_SetSpeed(27, 0x20000, 0x10000);
+  Actor_WalkByAndWait(27, -24, -24);
   FieldEvent_Wait(5);
   Actor_FaceDirectionAndWait(27, FACING_WEST);
   FieldEvent_Wait(10);
-  I_Func_020048b4(27, FACING_NORTH);
+  Actor_FaceDirectionAndWait(27, FACING_NORTH);
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(27, FACING_EAST);
   FieldEvent_Wait(10);
@@ -1089,14 +938,14 @@ void Func_02000cac(s32 arg) {
   Actor_FaceDirectionAndWait(27, angle);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(27, 0, 5);
-  I_Func_020048b4(26, FACING_NORTHWEST);
+  Actor_FaceDirectionAndWait(26, FACING_NORTHWEST);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(26, 0, 5);
   Actor_FaceEachOther(0, 2, 0);
   FieldEvent_Wait(10);
-  I_Func_020048bc(0, 20, 7, 15, 6, 2, 17, 13, 12, 12, 0);
-  I_Actor_ArmCallback(0, FACING_NORTHWEST, 0);
-  I_Actor_ArmCallback(2, FACING_NORTHWEST, 0);
+  FieldEvent_ShowTwoMessagesAndWait(0, 20, 7, 15, 6, 2, 17, 13, 12, 12, 0);
+  Actor_FaceDirection(0, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(2, FACING_NORTHWEST, 0);
   (struct Actor *)Actor_ShowEmote(27, 0x103, 30);
   FieldEvent_ShowMessageThenWait(27, 0, 5);
   I_Func_020048cc(26, 0x107, 30);
@@ -1120,17 +969,17 @@ void Func_02000cac(s32 arg) {
   } while (0);
   FieldEvent_Wait(20);
   FieldEvent_Wait(30);
-  I_Actor_SetSpeedParameters(26, 0x30000, 0x18000);
-  I_Actor_SetSpeedParameters(27, 0x30000, 0x18000);
-  I_Actor_SetSpeedParameters(0, 0x30000, 0x18000);
-  I_Actor_SetSpeedParameters(2, 0x30000, 0x18000);
-  I_Actor_ResetAndSetPositionInMode2(26, 737, 202);
-  I_Actor_ResetAndSetPositionInMode2(27, 731, 213);
+  Actor_SetSpeed(26, 0x30000, 0x18000);
+  Actor_SetSpeed(27, 0x30000, 0x18000);
+  Actor_SetSpeed(0, 0x30000, 0x18000);
+  Actor_SetSpeed(2, 0x30000, 0x18000);
+  Actor_WalkTo(26, 737, 202);
+  Actor_WalkTo(27, 731, 213);
   Actor_SetScript(27, gData_020049fc);
   Actor_SetScript(26, gData_02004a18);
   FieldEvent_Wait(5);
-  I_Actor_ResetAndSetPositionInMode2(0, 776, 202);
-  I_Actor_ResetAndSetPositionInMode2(2, 731, 232);
+  Actor_WalkTo(0, 776, 202);
+  Actor_WalkTo(2, 731, 232);
   Actor_SetScript(0, gData_02004a34);
   Actor_SetScript(2, gData_02004a50);
   FieldActor_RefreshSelectorById(0);
@@ -1237,20 +1086,13 @@ static __inline__ void JupiterLighthouseRoomM_AddPp(s32 owner, s32 delta) {
   Unit_AddPp(owner, delta);
 }
 
-static __inline__ void JupiterLighthouseRoomM_Func_020048b4(s32 actor, s32 a) {
-  /* FAKEMATCH(wrapper): forwarding through the inline builds the second
-   * argument around the first, as the native does; as a direct call, 2 of 160
-   * instructions of Func_02001c7c differ in tla-en. */
-  Actor_ArmCallbackAndRefresh(actor, a);
-}
-
 #define PLACE(id, x, z, angle)                                                 \
   {                                                                            \
     /* FAKEMATCH(temporary): the angle passes through a block local, so it is  \
      * built before x and z, as the native does; as a plain argument, 12 of    \
      * 160 instructions of Func_02001c7c differ in tla-en. */                  \
     s32 angle_ = (angle);                                                      \
-    ObjPlace(id, (x) << 16, (z) << 16, angle_);                                \
+    Actor_SetPositionAndFacing(id, (x) << 16, (z) << 16, angle_);                                \
   }
 
 /// Places actors 0, 2, 27 and 26 and shows an apology; then the party is left
@@ -1277,7 +1119,7 @@ void Func_02001c7c(void) {
   Actor_SetSingleChildFlags(Actor_Get(2), 0);
   Actor_SetAnimation(2, 32);
   FieldEvent_Wait(10);
-  JupiterLighthouseRoomM_Func_020048b4(0, FACING_SOUTHWEST);
+  Actor_FaceDirectionAndWait(0, FACING_SOUTHWEST);
   FieldEvent_ShowMessageThenWait(0, 0, 5);
   (struct Actor *)Actor_ShowEmote(26, 0x107, 30);
   FieldEvent_ShowMessageThenWait(26, 0, 5);
@@ -1323,7 +1165,7 @@ void Func_02001c7c(void) {
      * as the native does; as a plain argument, 24 of 53 instructions differ   \
      * in tla-en (as one function-wide angle local, 10 to 16). */              \
     s32 angle_ = (angle);                                                      \
-    ObjPlace(id, (x) << 16, (z) << 16, angle_);                                \
+    Actor_SetPositionAndFacing(id, (x) << 16, (z) << 16, angle_);                                \
   }
 
 void Func_02001e38(void) {
@@ -1789,12 +1631,12 @@ s32 Func_02002c54(void) {
     MapGrid_CopyCellsLayered(49, 106, 4, 3, 49, 76);
     MapGrid_CopyCellAttributes(49, 45, 4, 1, 49, 44);
     Actor_SetPosition(23, 0, 0);
-    if (GameFlag_Test_(2595)) {
+    if (Event_GetFlag(2595)) {
       if (!Event_GetFlag(2593)) {
         Func_02000c08();
         Func_02001e38();
       }
-    } else if (!GameFlag_Test_(2596)) {
+    } else if (!Event_GetFlag(2596)) {
       if (gMainRoutineWork.entrance == 3) {
         Func_02000c08();
         Event_SetFlag(2596);

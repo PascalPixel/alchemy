@@ -93,15 +93,6 @@ void Func_020019a8(void) {
 
 void Func_02003380(s32 x, s32 z, s32 a, s32 b);
 
-static __inline__ void Func_02003328_(s32 srcX, s32 srcY, s32 dstX, s32 dstY,
-                                      s32 width, s32 height) {
-  /* FAKEMATCH(wrapper): the call forwarded through an inline, which sets the
-   * width before the height as the ROM allocates them (1 in r5, 2 in r6); as a
-   * direct call, the two constants swap registers, 12 of 98 instructions of
-   * Func_02001a94 differ in tla-en. */
-  Map_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width, height);
-}
-
 /// By the entrance taken, sets that entrance's flag, moves its actor to the
 /// middle of its cell and copies a cell picture column twice beside it.
 void Func_02001a94(void) {
@@ -133,7 +124,7 @@ void Func_02001a94(void) {
   FieldActor_SetMoveTarget(object, target[0], 0, target[2]);
   Actor_WaitForMove(object);
   Event_PlaySound(188);
-  Func_02003328_(18, 4, column, 4, 1, 2);
+  MapGrid_CopyCellsTo(18, 4, column, 4, 1, 2);
   System_Wait(5);
   MapGrid_CopyCellsTo(18, 7, column, 4, 1, 2);
   System_Wait(5);

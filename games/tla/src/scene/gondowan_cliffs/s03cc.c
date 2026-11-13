@@ -225,13 +225,6 @@ void Func_02000768(void) {
 
 void Func_02001254(s32 actor, s32 target);
 
-static inline void GondowanCliffs_ObjWalk(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): the call through this inline; as direct calls to
-   * Actor_SetPositionAndReset, 78 of 165 instructions of Func_020007d8 differ
-   * in tla-en. */
-  Actor_SetPositionAndReset(actor, x, z);
-}
-
 static inline void GondowanCliffs_Jump(s32 actor, s32 height, s32 frames) {
   Func_080d47b4(actor, height, frames);
 }
@@ -243,16 +236,16 @@ void Func_020007d8(void) {
   FieldEvent_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 552, 488);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 552, 488);
   Func_02001254(5, gMainRoutineWork.currentOwner);
   FieldActor_WatchAndSetScript(5, gMainRoutineWork.currentOwner);
-  GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 568, 480);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 568, 480);
   FieldActor_WatchAndSetScript(6, gMainRoutineWork.currentOwner);
   Func_02001254(6, gMainRoutineWork.currentOwner);
-  GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 584, 472);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 584, 472);
   FieldActor_WatchAndSetScript(22, gMainRoutineWork.currentOwner);
   Func_02001254(22, gMainRoutineWork.currentOwner);
-  GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 608, 472);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 608, 472);
   FieldEvent_SetMessageId((s32)MsgWhereDoYou);
   GondowanCliffs_Jump(22, 258, 20);
   Event_ShowMessage(22, 0);
@@ -277,9 +270,9 @@ void Func_020007d8(void) {
   Actor_SetPosition(22, 0, 0);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 568, 480);
   Actor_SetPosition(6, 0, 0);
-  GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 552, 488);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 552, 488);
   Actor_SetPosition(5, 0, 0);
-  GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 528, 488);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 528, 488);
   Event_FinishScreenTransition();
   Event_PlaySound(123);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 512, 488);

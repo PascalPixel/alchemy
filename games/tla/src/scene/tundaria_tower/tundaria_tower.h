@@ -82,13 +82,6 @@ static inline void TundariaTower_FadeFrom(s32 color, s32 b) {
   BattleEffect_ApplyColorToSourceBuffer(color, b);
 }
 
-static inline void TundariaTower_ObjPlace(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): scene calls reach the main image through this inline;
-   * as a direct call, which loads the actor before the coordinates, 2 of 89
-   * instructions differ in tla-en (Func_02000964). */
-  Actor_ResetAndSetPosition(actor, x, z);
-}
-
 static inline void TundariaTower_SetWork(s32 a, s32 b, s32 c) {
   Map_SetScreenShake(a, b, c);
 }

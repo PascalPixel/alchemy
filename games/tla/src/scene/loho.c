@@ -113,12 +113,6 @@ extern u32 gData_020015e0[];
 extern u32 gData_02001638[];
 extern s32 gData_0200166c[];
 
-static __inline__ void W_Func_020013a8(s32 a0, s32 a1, s32 a2) {
-  /* FAKEMATCH(wrapper): W_Func_020013a8 forwarded inline; as direct calls to
-   * Func_080d47b4, 70 of 1050 instructions differ in tla-en. */
-  Func_080d47b4(a0, a1, a2);
-}
-
 struct Unk16 {
   u8 unk00[4];
   union {
@@ -307,7 +301,7 @@ L_02008474:
   Actor_SetAnimation(17, 3);
   Actor_SetModeById(16, 3);
   Event_Wait(30);
-  W_Func_020013a8(17, 0x102, 35);
+  FieldActor_ShowEmote(17, 0x102, 35);
   Event_ShowMessage(17, 0);
   Func_080d47b4(16, 0x107, 35);
   Actor_WalkByAndWait(16, -12, 24);
@@ -316,17 +310,17 @@ L_02008474:
   Actor_SetAnimation(4, 3);
   Actor_FaceDirectionAndWait(18, 0xb000);
   Event_Wait(30);
-  W_Func_020013a8(18, 0x100, 35);
+  FieldActor_ShowEmote(18, 0x100, 35);
   Event_ShowMessage(18, 0);
-  W_Func_020013a8(16, 0x101, 0);
+  FieldActor_ShowEmote(16, 0x101, 0);
   Func_080d47b4(17, 0x101, 35);
   Actor_FaceActor(16, 18, 0);
   Actor_FaceDirection(17, 0x2000, 0);
   Event_Wait(60);
   Actor_FaceDirection(18, 0x8000, 0);
   Event_Wait(60);
-  W_Func_020013a8(18, 0x105, 50);
-  W_Func_020013a8(18, 0x102, 35);
+  FieldActor_ShowEmote(18, 0x105, 50);
+  FieldActor_ShowEmote(18, 0x102, 35);
   Event_ShowMessage(18, 0);
   Actor_TurnToFaceEachOther(16, 17, 0);
   Event_Wait(40);
@@ -335,9 +329,9 @@ L_02008474:
   Actor_FaceDirection(18, 0xb000, 0);
   FieldCamera_MoveTo(0x1e80000, -1, 0x1460000, 1);
   Event_Wait(60);
-  W_Func_020013a8(16, 0x100, 0);
+  FieldActor_ShowEmote(16, 0x100, 0);
   Func_080d47b4(17, 0x100, 50);
-  W_Func_020013a8(17, 0x102, 35);
+  FieldActor_ShowEmote(17, 0x102, 35);
   Event_ShowMessage(17, 0);
   Actor_SetAnimation(16, 3);
   Event_ShowMessage(16, 0);
@@ -365,10 +359,10 @@ L_02008474:
   Event_Wait(20);
   Actor_RunRepeatedMotion(16, 2);
   Event_ShowMessage(16, 0);
-  W_Func_020013a8(18, 0x105, 0);
-  W_Func_020013a8(17, 0x105, 0);
+  FieldActor_ShowEmote(18, 0x105, 0);
+  FieldActor_ShowEmote(17, 0x105, 0);
   Func_080d47b4(16, 0x105, 60);
-  W_Func_020013a8(18, 0x106, 35);
+  FieldActor_ShowEmote(18, 0x106, 35);
   Event_ShowMessage(18, 0);
   Actor_SetModeById(17, 3);
   Event_Wait(40);

@@ -172,7 +172,7 @@ void Func_020005cc(void) {
 
   Func_02002068();
   FieldEvent_ResolvePendingActions(0);
-  CommitPos(4, 0, -14);
+  Actor_WalkByAndWait(4, 0, -14);
   id = 4;
   Actor_WalkByAndWait(id, 16, 0);
   Func_0200052c();
@@ -183,7 +183,7 @@ void Func_020005f4(void) {
 
   Func_02002068();
   FieldEvent_ResolvePendingActions(0);
-  CommitPos(4, -2, -6);
+  Actor_WalkByAndWait(4, -2, -6);
   x = 14;
   z = 8;
   id = 4;
@@ -514,14 +514,6 @@ void Func_02000c2c(void) { GameFlag_ClearBit(0x201); }
 
 void Func_02000c3c(void) { Func_02001770(); }
 
-static __inline__ void CenterOn(s32 id, s32 column, s32 offset) {
-  /* FAKEMATCH(wrapper): the call forwarded through the inline, which sets the
-   * arguments up in their own order; as a direct Actor_CenterOnColumn call,
-   * 2 of 74 instructions differ in tla-en (the offset is negated after the
-   * column). */
-  Actor_CenterOnColumn(id, column, offset);
-}
-
 void Func_02000c44(void) {
   u32 i;
 
@@ -547,7 +539,7 @@ loop:
   Event_PlaySound(158);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
-  CenterOn(gMainRoutineWork.currentOwner, 2, -4);
+  Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -4);
   FieldEvent_Wait(6);
   FieldEvent_SetExitRequest(2);
   Event_FinishScreenTransition();
@@ -691,13 +683,6 @@ void Func_02000f2c(void) {
   }
 }
 
-static __inline__ void Speed(s32 id, s32 speed, s32 acceleration) {
-  /* FAKEMATCH(wrapper): the call forwarded through the inline, which keeps
-   * each call's own constants; as direct Actor_SetSpeedParameters calls, 38
-   * of 199 instructions differ in tla-en. */
-  Actor_SetSpeedParameters(id, speed, acceleration);
-}
-
 void Func_02000fd0(void) {
   struct Actor *object = Actor_GetById(10);
   s32 column = object->x >> 20;
@@ -719,21 +704,21 @@ void Func_02000fd0(void) {
     Func_0200156c(10);
     FieldEvent_Wait(20);
     FieldCamera_MoveTo(0xc00000, -1, 0xe00000, 1);
-    Speed(10, 0xcccc, 0x6666);
+    Actor_SetSpeed(10, 0xcccc, 0x6666);
     Actor_SetDestinationOffset(10, 0, 8);
     FieldActor_WaitForMoveById(10);
     FieldEvent_Wait(10);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x4000, 0);
-    Speed(10, 0x26666, 0x13333);
+    Actor_SetSpeed(10, 0x26666, 0x13333);
     Actor_SetDestinationOffset(10, 0, 80);
     FieldActor_WaitForMoveById(10);
     Func_0200156c(10);
     if (!Event_GetFlag(0x204)) {
       FieldEvent_Wait(10);
-      Speed(10, 0xcccc, 0x6666);
+      Actor_SetSpeed(10, 0xcccc, 0x6666);
       Actor_SetDestinationOffset(10, 0, 80);
       FieldActor_WaitForMoveById(10);
-      Speed(10, 0x28000, 0x14000);
+      Actor_SetSpeed(10, 0x28000, 0x14000);
       Actor_SetDestinationOffset(10, 0, 80);
       FieldEvent_Wait(5);
       Actor_SetPosition(10, 0, 0);

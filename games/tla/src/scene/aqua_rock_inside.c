@@ -264,14 +264,6 @@ extern const u8 gData_02003fb8[];
 void Sound_WaitForBgmRestore(void);
 void Func_02003ebc(void);
 
-static __inline__ void Func_02003d44_(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH(wrapper): the call forwarded through an inline, which keeps each
-   * call's own constants, as The Broken Seal's scene layer does; as direct
-   * calls to Map_SetScreenShake, 36 of 154 instructions of Func_020007d4 differ
-   * in tla-en. */
-  Map_SetScreenShake(a, b, c);
-}
-
 void Func_020007d4(void) {
   s32 priority;
   s32 i;
@@ -284,11 +276,11 @@ void Func_020007d4(void) {
   Event_PlaySound(78);
   FieldEvent_Wait(60);
   Event_PlaySound(162);
-  Func_02003d44_(0x10000, 0x10000, 0x10000);
+  MapGrid_SetShake(0x10000, 0x10000, 0x10000);
   FieldEvent_Wait(20);
-  Func_02003d44_(0x10000, 0x20000, 0x10000);
+  MapGrid_SetShake(0x10000, 0x20000, 0x10000);
   FieldEvent_Wait(20);
-  Func_02003d44_(0x10000, 0x30000, 0x10000);
+  MapGrid_SetShake(0x10000, 0x30000, 0x10000);
   FieldEvent_Wait(40);
   priority = 0x480;
   FieldTask_AddFrame(Func_020006d0, priority);
@@ -319,7 +311,7 @@ cell:
   if (i <= 14)
     goto row;
   Func_02003e54();
-  Func_02003d44_(-1, -1, 0xe666);
+  MapGrid_SetShake(-1, -1, 0xe666);
   Event_PlaySound(390);
   FieldEvent_Wait(30);
   Event_PlaySound(80);
@@ -760,7 +752,7 @@ void Func_0200124c(void) {
   FieldEvent_ResolvePendingActions(0);
   layer[3] -= 0x200000;
   Func_02003cdc();
-  Func_02003d44_(0x10000, 0x10000, 0x10000);
+  MapGrid_SetShake(0x10000, 0x10000, 0x10000);
   // A goto loop: the ROM sets the column and the row on every pass, which a for
   // loop hoists (differ 44).
   i = 14;
@@ -782,7 +774,7 @@ shake:
     layer[3] += 0x4000;
     System_Wait(1);
   }
-  Func_02003d44_(-1, -1, 0xe666);
+  MapGrid_SetShake(-1, -1, 0xe666);
   Func_02003d84();
   Func_02003d1c_(38, 9, 7, 6, 13, 9);
   Event_SetFlag(0x349);
@@ -2018,7 +2010,7 @@ void Func_02002ffc(void) {
   if (flag == 0) {
     Func_02003d7c();
     FieldEvent_ResolvePendingActions(0);
-    Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
+    FieldCamera_MoveTo(-1, -1, -1, 0);
     leader->motionFlags = flag;
     Actor_SetPosition(*owner, ((s16 *)&leader->x)[1] << 16,
                       (((s16 *)&leader->z)[1] << 16) - 0x100000);

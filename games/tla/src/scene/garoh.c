@@ -194,28 +194,6 @@ const void *Func_02000440(void) {
   return gData_020056dc;
 }
 
-static __inline__ void Func_0200517c_(const void *data, s32 a, s32 b) {
-  /* FAKEMATCH(wrapper): the call through this inline, so each call keeps its
-   * own argument order; as a direct call to Map_PlayMapEdit, 12 of 72
-   * instructions of Func_020004cc differ in tla-en. */
-  Map_PlayMapEdit(data, a, b);
-}
-
-static __inline__ void OffsetPosition_(s32 id, s32 dx, s32 dz) {
-  /* FAKEMATCH(wrapper): the call through this inline, so the second argument is
-   * set before the third's split constant is finished; as a direct call to
-   * Actor_OffsetPositionAndResetMotion, 2 of 72 instructions of Func_020004cc
-   * differ in tla-en. */
-  Actor_OffsetPositionAndResetMotion(id, dx, dz);
-}
-
-static __inline__ void CenterOnColumn_(s32 id, s32 column, s32 dz) {
-  /* FAKEMATCH(wrapper): the call through this inline, for the same order as
-   * OffsetPosition_; as a direct call to Actor_CenterOnColumn, 2 of 72
-   * instructions of Func_020004cc differ in tla-en. */
-  Actor_CenterOnColumn(id, column, dz);
-}
-
 /// 6A6's Func_02000e54 for this overlay: clears the motion of every object
 /// from 8 to 63, shows the picture the event work's index names and moves the
 /// party's current owner to it.
@@ -242,7 +220,7 @@ loop:
   index = *(s16 *)(work + 0x154);
   Event_PlaySound(158);
   index--;
-  Func_0200517c_(gData_02005de0[index].data, gData_02005de0[index].a,
+  MapGrid_AnimateCells(gData_02005de0[index].data, gData_02005de0[index].a,
                  gData_02005de0[index].b);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
@@ -250,9 +228,9 @@ loop:
     s32 owner = gMainRoutineWork.currentOwner;
 
     if (index == 5)
-      OffsetPosition_(owner, 0, -4);
+      Actor_SetDestinationOffset(owner, 0, -4);
     else
-      CenterOnColumn_(owner, 2, -4);
+      Actor_CenterAndWalk(owner, 2, -4);
   }
   FieldEvent_Wait(6);
   FieldEvent_SetExitRequest(*(s16 *)(work + 0x154));
@@ -462,19 +440,12 @@ extern s32 gData_0200632c;
 void Func_02002694(void);
 void Func_02003878(void);
 
-static inline void CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH(wrapper): the call through this inline, so each -1 is built on
-   * its own; as a direct call to Camera_MoveWithinMapBounds, 6 of 30
-   * instructions of Func_02000960 differ in tla-en. */
-  Camera_MoveWithinMapBounds(x, y, z, mode);
-}
-
 void Func_02000960(void) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
 
   Event_PlaySound(123);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
-  CamMove(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Flag_Set(0x121);
   FieldEvent_SetExitRequest(event->exit);
 }

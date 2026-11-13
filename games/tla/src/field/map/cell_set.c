@@ -374,7 +374,7 @@ void Func_02000964(void) {
   BattleEffect_StartBufferInterpolation(2);
   object->actionFlags = 0;
   object->update = 0;
-  TundariaTower_ObjPlace(8, 424, 536);
+  Actor_SetDestination(8, 424, 536);
   Func_02002f90(object, gData_02003370);
   Actor_WaitForMoveById(8);
   GameFlag_SetBit(0x200);

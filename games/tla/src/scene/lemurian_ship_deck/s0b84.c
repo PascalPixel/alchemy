@@ -356,20 +356,11 @@ s32 Func_02000be0(void) {
 
 void Func_02001f64(void);
 
-static __inline__ void Func_02001f2c_(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                      s32 f) {
-  /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
-   * scene layer, so the arguments are set up in their own order and each call
-   * keeps its constants; as a direct call, the costly constant is built first
-   * or shared, 15 of 40 instructions of Func_02000c80 differ in tla-en. */
-  Map_CopyCellPictureIndicesRect(a, b, c, d, e, f);
-}
-
 s32 Func_02000c80(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov657Room1) {
-    Func_02001f2c_(2, 2, 10, 24, 18, 10);
-    Func_02001f2c_(0, 62, 26, 62, 3, 8);
-    Func_02001f2c_(50, 65, 25, 61, 6, 1);
+    MapGrid_CopyCellsTo(2, 2, 10, 24, 18, 10);
+    MapGrid_CopyCellsTo(0, 62, 26, 62, 3, 8);
+    MapGrid_CopyCellsTo(50, 65, 25, 61, 6, 1);
   }
   return 0;
 }
@@ -487,22 +478,6 @@ void Func_02001064(void) { Func_020020cc(gData_020020dc); }
 
 void Func_02001fd4(s32 id, s32 target);
 
-static __inline__ void SetSpeed(s32 id, s32 speed, s32 acceleration) {
-  /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
-   * scene layer, so the arguments are set up in their own order and each call
-   * keeps its constants; as a direct call, the costly constant is built first
-   * or shared, 2 of 101 instructions differ in tla-en. */
-  Actor_SetSpeedParameters(id, speed, acceleration);
-}
-
-static __inline__ void SetPosition(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
-   * scene layer, so the arguments are set up in their own order and each call
-   * keeps its constants; as a direct call, the costly constant is built first
-   * or shared, 2 of 101 instructions differ in tla-en. */
-  Actor_SetPositionAndReset(id, x, z);
-}
-
 void Func_02001074(void) {
   struct Actor *object;
 
@@ -517,8 +492,8 @@ void Func_02001074(void) {
     Func_02001fd4(9, gMainRoutineWork.currentOwner);
     System_Wait(1);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-    SetSpeed(9, 0xcccc, 0x6666);
-    SetPosition(9, 416, 428);
+    Actor_SetSpeed(9, 0xcccc, 0x6666);
+    Actor_WalkToAndWait(9, 416, 428);
     Actor_FaceDirectionAndWait(9, FACING_WEST);
     FieldEvent_SetMessageId(MsgWellThereS);
     Event_ShowMessage(9, 0);
@@ -901,14 +876,6 @@ void Func_02001d60(struct Actor *object) {
   }
 }
 
-static __inline__ void Func_020020b4_(s32 id, s32 a, s32 b, s32 c) {
-  /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
-   * scene layer, so the arguments are set up in their own order and each call
-   * keeps its constants; as a direct call, the costly constant is built first
-   * or shared, 2 of 93 instructions differ in tla-en. */
-  Func_080d3070(id, a, b, c);
-}
-
 void Func_02001da0(void) {
   if (Event_GetFlag(7)) {
     struct Actor *object;
@@ -917,7 +884,7 @@ void Func_02001da0(void) {
     FieldEvent_ResolvePendingActions(0);
     Actor_SetSpeed(4, 0xcccc, 0x6666);
     Actor_Get(7)->update = (void (*)(void))Func_02001d60;
-    Func_020020b4_(7, 16, 0, FACING_WEST);
+    FieldActor_LaunchFromLeader(7, 16, 0, FACING_WEST);
     Actor_SetSingleChildFlags(Actor_Get(7), 0);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
     FieldEvent_SetMessageId(MsgThenLetS);

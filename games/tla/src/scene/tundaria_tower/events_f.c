@@ -300,12 +300,6 @@ void Func_020029d0(s32 value);
 void Func_02002ca8(s32 offset, s32 layer);
 void Func_02002b04(void);
 
-static __inline__ void Shake(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 28 of 158
-   * instructions differ in tla-en. */
-  Map_SetScreenShake(a, b, c);
-}
-
 void Func_02002354(const u16 *table) {
   struct Actor *leader;
   struct Actor *trap;
@@ -350,7 +344,7 @@ next:
       if (!GameFlag_Test(second)) {
         leader->motionFlags = 0;
         Sound_Play(185);
-        Shake(0x10000, 0x40000, 0x10000);
+        MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_020029d0(0);
         wait(8);
         Func_02002f80(trap, 2);
@@ -359,7 +353,7 @@ next:
         wait(16);
         Func_02002ca8(-2, trap->terrainId);
         wait(4);
-        Shake(-1, -1, 0xe666);
+        MapGrid_SetShake(-1, -1, 0xe666);
         wait(8);
         leader->motionFlags = 3;
         wait(5);
@@ -553,7 +547,7 @@ void Func_02002764(const u16 *table) {
         wait(1);
         *motion = 0;
         Sound_Play(185);
-        Shake(0x10000, 0x40000, 0x10000);
+        MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_020029d0(0);
         wait(8);
         Func_02002f80(partner, 2);
@@ -562,7 +556,7 @@ void Func_02002764(const u16 *table) {
         wait(16);
         Func_02002ca8(-2, trap->terrainId);
         wait(4);
-        Shake(-1, -1, 0xe666);
+        MapGrid_SetShake(-1, -1, 0xe666);
         wait(8);
         *motion = 3;
         wait(5);

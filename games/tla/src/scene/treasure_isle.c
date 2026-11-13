@@ -98,24 +98,6 @@ void Func_02001014(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-static __inline__ void CameraBounds(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as a direct call, 13
-   * of 163 instructions differ in tla-en. */
-  Camera_MoveWithinMapBounds(x, y, z, mode);
-}
-
-static __inline__ void SetFade(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as direct calls, 11
-   * of 163 instructions differ in tla-en. */
-  Map_SetScreenShake(a, b, c);
-}
-
-static __inline__ void SetCells(s32 a, s32 b, s32 c, s32 d, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as direct calls, 24
-   * of 163 instructions differ in tla-en. */
-  Func_0802b450(a, b, c, d, x, z);
-}
-
 /// Called by Func_020005ac for each listed cell whose flag is still clear:
 /// points the camera at the cell, bursts three effects there, changes its
 /// cell pictures twice and hands over to Func_020003fc, which sets its flag.
@@ -126,10 +108,10 @@ void Func_0200043c(struct TreasureIsleCell *cells, s16 index) {
   FieldCamera_SetSpeed(0x60000, 0xc000);
   // As &cells[index], the sum takes its operands the other way round.
   cell = (struct TreasureIsleCell *)((index << 4) + (s32)cells);
-  CameraBounds((cell->x << 20) + 0x80000, -1, (cell->z << 20) + 0x80000, 1);
+  FieldCamera_MoveTo((cell->x << 20) + 0x80000, -1, (cell->z << 20) + 0x80000, 1);
   Func_02001014();
-  SetFade(0, 0x100000, 0x10000);
-  SetFade(-1, -1, 0xe666);
+  MapGrid_SetShake(0, 0x100000, 0x10000);
+  MapGrid_SetShake(-1, -1, 0xe666);
   Event_PlaySound(567);
   options.startScaleX = 0x13333;
   options.startScaleY = 0x18000;
@@ -144,9 +126,9 @@ void Func_0200043c(struct TreasureIsleCell *cells, s16 index) {
   Func_0200015c((cell->x << 20) + 0x120000, 0, (cell->z << 20) + 0x80000, 0, 0,
                 0, 0x3a0000, &options);
   FieldEvent_Wait(10);
-  SetCells(6, 100, 3, 4, cell->x + 63, cell->z - 2);
+  MapGrid_CopyCellsLayered(6, 100, 3, 4, cell->x + 63, cell->z - 2);
   FieldEvent_Wait(10);
-  SetCells(3, 100, 3, 4, cell->x + 63, cell->z - 2);
+  MapGrid_CopyCellsLayered(3, 100, 3, 4, cell->x + 63, cell->z - 2);
   FieldEvent_Wait(10);
   Func_020003fc(cells, index);
 }
@@ -520,12 +502,6 @@ void Func_02000ba0(void);
 void Func_0200105c(void);
 s32 Func_02001064(s32 a, s32 b, s32 c);
 
-static __inline__ void PlaceObject(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as direct calls, 12
-   * of 241 instructions differ in tla-en. */
-  Actor_SetHorizontalPositionWithTerrain(id, x, z);
-}
-
 /// Treasure Isle's setup for each of its four rooms: places the objects whose
 /// flags are set, schedules Func_02000ba0 in rooms 2 and 3 and opens again
 /// the cells already opened there (Func_020003fc), and in room 4 raises the
@@ -540,17 +516,17 @@ s32 Func_02000cf4(void) {
     Event_SetFlag(0x301);
     Event_SetFlag(0x302);
     if (Event_GetFlag(0x300))
-      PlaceObject(8, PIXELS(264), PIXELS(440));
+      Actor_SetPosition(8, PIXELS(264), PIXELS(440));
     if (Event_GetFlag(0x301))
-      PlaceObject(9, PIXELS(328), PIXELS(440));
+      Actor_SetPosition(9, PIXELS(328), PIXELS(440));
     if (Event_GetFlag(0x302))
-      PlaceObject(10, PIXELS(440), PIXELS(344));
+      Actor_SetPosition(10, PIXELS(440), PIXELS(344));
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom2) {
     Task_AddFrame(Func_02000ba0, TASK_PASS_VBLANK);
     Func_02001064(0, 8, 9);
     if (Event_GetFlag(0x308))
-      PlaceObject(10, PIXELS(264), PIXELS(184));
+      Actor_SetPosition(10, PIXELS(264), PIXELS(184));
     if (Event_GetFlag(0x303))
       Func_020003fc(gData_0200117c, 0);
     if (Event_GetFlag(0x304))
@@ -566,7 +542,7 @@ s32 Func_02000cf4(void) {
     Task_AddFrame(Func_02000ba0, TASK_PASS_VBLANK);
     Func_02001064(0, 8, 9);
     if (Event_GetFlag(0x309))
-      PlaceObject(10, PIXELS(664), PIXELS(248));
+      Actor_SetPosition(10, PIXELS(664), PIXELS(248));
     if (Event_GetFlag(0x30a))
       Func_020003fc(gData_020011cc, 0);
     if (Event_GetFlag(0x30b))
@@ -576,7 +552,7 @@ s32 Func_02000cf4(void) {
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom4) {
     if (Event_GetFlag(0x30d))
-      PlaceObject(8, PIXELS(696), PIXELS(600));
+      Actor_SetPosition(8, PIXELS(696), PIXELS(600));
     /* FAKEMATCH(signature): Func_02001064 declared returning s32, though it
      * reaches Func_080d9e98, whose draft returns nothing; as void, which sets
      * r0 first for these calls, 4 of 241 instructions differ in tla-en. */

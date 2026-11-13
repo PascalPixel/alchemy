@@ -1280,23 +1280,10 @@ void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void GameFlag_SetByte(s32 flag, s32 value);
 
-static inline s32 Flag_GetByte(s32 flag) {
-  /* FAKEMATCH(wrapper): Flag_GetByte forwarded inline; as direct calls to
-   * GameFlag_GetByte, 60 of 438 instructions differ in tla-en. */
-  return GameFlag_GetByte(flag);
-}
-
 static inline void Flag_SetByte(s32 flag, s32 value) {
   /* FAKEMATCH(wrapper): Flag_SetByte forwarded inline; as direct calls to
    * GameFlag_SetByte, 17 of 438 instructions differ in tla-en. */
   GameFlag_SetByte(flag, value);
-}
-
-static inline void Map_CopyCells(s32 x, s32 y, s32 width, s32 height, s32 destX,
-                                 s32 destY) {
-  /* FAKEMATCH(wrapper): Map_CopyCells forwarded inline; as direct calls to
-   * Map_CopyCellAttributeRect, 6 of 438 instructions differ in tla-en. */
-  Map_CopyCellAttributeRect(x, y, width, height, destX, destY);
 }
 
 s32 Func_0200145c(void) {
@@ -1314,7 +1301,7 @@ s32 Func_0200145c(void) {
   ((struct LobbyEventWork__scene_events *)Ram_HeapSlots->eventWork)->startTransition = 0x201;
   Sound_LoadPresetParameters(2);
   Func_02001414(gMainRoutineWork.linkTallies[6]);
-  Map_CopyCells(11, 11, 1, 1, 13, 10);
+  MapGrid_CopyCellAttributes(11, 11, 1, 1, 13, 10);
   LinkLobby_WriteSlotValue(4);
   wait(1);
   Func_02001994(5);
@@ -1348,7 +1335,7 @@ s32 Func_0200145c(void) {
     msg = wins * 2 + 2;
     if (msg > 14)
       msg = 14;
-    v = Flag_GetByte(1000);
+    v = FieldGameFlag_GetByte(1000);
     if (v == 2) {
       GameFlag_SetByte(1000, 0);
       wins++;

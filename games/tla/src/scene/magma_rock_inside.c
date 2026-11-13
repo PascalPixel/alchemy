@@ -994,12 +994,6 @@ void Func_020034bc(void);
 void Func_020034f0(void);
 void Func_02003548(void);
 
-static __inline__ void Func_02004d10_(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH(wrapper): Func_02004d10_ forwarded inline; as direct calls to
-   * Map_SetScreenShake, 110 of 537 instructions differ in tla-en. */
-  Map_SetScreenShake(a, b, c);
-}
-
 static __inline__ void Func_02004cd8_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
   /* FAKEMATCH(wrapper): Func_02004cd8_ forwarded inline; as direct calls to
@@ -1086,8 +1080,8 @@ burst:
   Sound_Play(145);
   Func_0200015c(burstPosition[0], burstPosition[1], burstPosition[2], 0,
                 (Random16Far() & mask) << 12, 0, 0x3a0001, effectOptions);
-  Func_02004d10_(0x50000, 0x50000, 0x10000);
-  Func_02004d10_(-1, -1, 0xe666);
+  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
+  MapGrid_SetShake(-1, -1, 0xe666);
   i++;
   Event_Wait(8);
   if (i != 16)
@@ -1110,8 +1104,8 @@ rise:
   if (i != 8)
     goto rise;
   Func_02004cd8_(68, 70, srcX, srcZ, 3, 6);
-  Func_02004d10_(0x50000, 0x70000, 0x10000);
-  Func_02004d10_(-1, -1, 0xe666);
+  MapGrid_SetShake(0x50000, 0x70000, 0x10000);
+  MapGrid_SetShake(-1, -1, 0xe666);
   Event_Wait(30);
   Map_CopyCellPictureIndicesRect(71, 70, srcX, srcZ, 3, 6);
   effectOptions->type = 403;
@@ -1123,7 +1117,7 @@ rise:
     Event_Wait(30);
     burstPosition[2] -= 0x280000;
   } else {
-    Func_02004d10_(0x20000, 0x10000, 0x10000);
+    MapGrid_SetShake(0x20000, 0x10000, 0x10000);
     Sound_Play(107);
     row = 0;
   row:
@@ -1174,7 +1168,7 @@ rise:
       roomPosition[2] -= 0x8000;
       Func_02004cd8_(71, 76, srcX, srcZ - ((t - 47) >> 5) + 8, 3, 1);
     } else if (t == 128) {
-      Func_02004d10_(-1, -1, 0xe666);
+      MapGrid_SetShake(-1, -1, 0xe666);
     }
     t++;
     wait(1);
@@ -1200,7 +1194,7 @@ last:
   if (i != 6)
     goto last;
   MapGrid_SetShake(0x50000, 0x70000, 0x10000);
-  Func_02004d10_(-1, -1, 0xe666);
+  MapGrid_SetShake(-1, -1, 0xe666);
   Map_CopyCellPictureIndicesRect(68, 64, srcX, srcZ, 3, 6);
   MapGrid_WaitForShakeToSettle();
   Event_Wait(30);
@@ -1653,7 +1647,7 @@ void Func_020023e8(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->speedLimit =
       Actor_Get(gMainRoutineWork.currentOwner)->acceleration = 0x8000;
   Event_PlaySound(123);
-  Actor_ResetAndSetPositionInMode2_(gMainRoutineWork.currentOwner, 248, 328);
+  Actor_WalkTo(gMainRoutineWork.currentOwner, 248, 328);
   FieldEvent_Wait(5);
   FieldEvent_SetExitRequest(1);
   Func_02004d48();

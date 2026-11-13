@@ -301,18 +301,6 @@ extern char SceneId_Ov6B0Room4;
 
 void Func_020034a0(void);
 
-static __inline__ void MoveObject(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as a direct call, 2
-   * of 243 instructions differ in tla-en. */
-  Actor_SetHorizontalPositionWithTerrain(id, x, z);
-}
-
-static __inline__ void SetCell(s32 a, s32 x, s32 z, s32 b) {
-  /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as direct calls, 36
-   * of 243 instructions differ in tla-en. */
-  SetMapCellCollision(a, x, z, b);
-}
-
 /// An event handler from the sanctum's event table (in s2f48.c),
 /// reading the leader's place in 8-pixel cells: sets the cells of rooms 3 and
 /// 4, and sets flags 0xa80 to 0xa86 where the leader stands on given cells,
@@ -330,15 +318,15 @@ void Func_02001160(void) {
   x = leader->x >> 19;
   z = leader->z >> 19;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room3) {
-    SetCell(2, 0x480000, 0x1b80000, 232);
+    Field_SetCellBehaviorAt(2, 0x480000, 0x1b80000, 232);
     if (x != 8)
-      SetCell(2, 0x480000, 0x1a80000, 232);
+      Field_SetCellBehaviorAt(2, 0x480000, 0x1a80000, 232);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4) {
-    SetCell(2, 0x1180000, 0x1580000, 0);
-    SetCell(2, 0x1180000, 0x1780000, 232);
-    SetCell(2, 0x1280000, 0x1680000, 0);
-    SetCell(2, 0x2080000, 0x2780000, 232);
+    Field_SetCellBehaviorAt(2, 0x1180000, 0x1580000, 0);
+    Field_SetCellBehaviorAt(2, 0x1180000, 0x1780000, 232);
+    Field_SetCellBehaviorAt(2, 0x1280000, 0x1680000, 0);
+    Field_SetCellBehaviorAt(2, 0x2080000, 0x2780000, 232);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room2) {
     if (x == 37 && z == 31) {
@@ -370,7 +358,7 @@ void Func_02001160(void) {
         s32 fromX = (Actor_Get(12)->x >> 16) << 16;
 
         Actor_SetPosition(13, fromX, (Actor_Get(12)->z >> 16) << 16);
-        MoveObject(12, PIXELS(728), PIXELS(472));
+        Actor_SetPosition(12, PIXELS(728), PIXELS(472));
       }
       GameFlag_SetBit(0xa85);
     }
@@ -572,12 +560,6 @@ void Func_020017a0(void) {
 
 extern const s32 gData_02003594[];
 
-static __inline__ void AddPolar(s32 length, s32 angle, s32 *position) {
-  /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as a direct call, 4
-   * of 171 instructions differ in tla-en. */
-  Vector_AddPolarOffsetFar(length, angle, position);
-}
-
 /// The update of an object that moves with the leader: once the leader is past
 /// z 248 it settles on its cell and clears flag 0x200; otherwise it repeats the
 /// leader's step, raising an effect of type 0x2a0 on each step, and stops where
@@ -617,7 +599,7 @@ void Func_020017b4(struct Actor *self) {
   }
   if (ahead[2] >> 16 > 248)
     return;
-  AddPolar(0x70000, 0x8000 - leader->facing, ahead);
+  FieldVector_AddPolarOffset(0x70000, 0x8000 - leader->facing, ahead);
   if (MapGrid_GetCellBehaviorAt(self->terrainId, ahead[0], ahead[2]) == 255)
     return;
   {

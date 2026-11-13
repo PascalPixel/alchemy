@@ -562,149 +562,91 @@ static s32 TolbiShipDeck_LookAround(struct Actor *actor) {
   return 1;
 }
 
-/// The update of a monster on deck that, at random, leaps at Ouranos.
+/// Defines `name`, the update of a monster on deck that, at random, leaps at
+/// a warrior.
 ///
-/// It jumps to him, he turns and jumps back (sometimes with an emote), and it
-/// lands on one of two spots chosen by riseEnabled.
+/// It jumps to him at (atX, atZ), he turns and jumps back (sometimes with
+/// an emote), and it lands. While riseEnabled is set he turns to setFacing and
+/// it lands on (setX, setZ), else clearFacing and (clearX, clearZ).
 ///
 /// The actor's timer holds the step. Returns 1.
-static s32 TolbiShipDeck_LeapAtOuranos(struct Actor *actor) {
-  switch (actor->timer) {
-  case 0:
-    if ((((u32)Import_RandomNext() * 40) >> 16) == 0) {
-      actor->timer++;
-    }
-    break;
-  case 1:
-    actor->timer++;
-    break;
-  case 2:
-    actor->velocityY = px(4);
-    actor->speedLimit = px(4);
-    actor->acceleration = px(2);
-    FieldActor_SetMoveTarget(actor, 264, 0, 662);
-    actor->timer++;
-    break;
-  case 3:
-    actor->timer++;
-    break;
-  case 4:
-    if (actor->targetX == ACTOR_NO_TARGET && actor->targetY == actor->targetX &&
-        actor->targetZ == actor->targetY) {
-      actor->timer++;
-      Sound_Play(SE_JUMP);
-      if (actor->riseEnabled != 0) {
-        Actor_FaceDirection(ACTOR_SEA_OURANOS, FACING_NORTH_NORTHWEST, 0);
-      } else {
-        Actor_FaceDirection(ACTOR_SEA_OURANOS, FACING_SOUTH_SOUTHWEST, 0);
-      }
-      if (((u32)Import_RandomNext() << 2) >> 16 != 0) {
-        Actor_Get(ACTOR_SEA_OURANOS)->velocityY = px(2);
-      } else {
-        Actor_ShowEmote(ACTOR_SEA_OURANOS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
-                        0);
-        Actor_Get(ACTOR_SEA_OURANOS)->velocityY = px(6);
-      }
-    }
-    break;
-  case 5:
-    actor->timer++;
-    break;
-  case 6:
-    actor->timer++;
-    actor->velocityY = px(4);
-    actor->speedLimit = px(2);
-    actor->acceleration = px(1);
-    if (actor->riseEnabled != 0) {
-      FieldActor_SetMoveTarget(actor, 252, 0, 646);
-    } else {
-      FieldActor_SetMoveTarget(actor, 256, 0, 686);
-    }
-    break;
-  case 7:
-    actor->timer++;
-    break;
-  case 8:
-    if (actor->targetX == ACTOR_NO_TARGET && actor->targetY == actor->targetX &&
-        actor->targetZ == actor->targetY) {
-      actor->timer++;
-    }
-    break;
-  case 9:
-    actor->timer = 0;
-    break;
+#define TOLBI_SHIP_DECK_LEAP_AT(name, warrior, atX, atZ, setFacing,            \
+                                clearFacing, setX, setZ, clearX, clearZ)       \
+  static s32 name(struct Actor *actor) {                                       \
+    switch (actor->timer) {                                                    \
+    case 0:                                                                    \
+      if ((((u32)Import_RandomNext() * 40) >> 16) == 0) {                      \
+        actor->timer++;                                                        \
+      }                                                                        \
+      break;                                                                   \
+    case 1:                                                                    \
+      actor->timer++;                                                          \
+      break;                                                                   \
+    case 2:                                                                    \
+      actor->velocityY = px(4);                                                \
+      actor->speedLimit = px(4);                                               \
+      actor->acceleration = px(2);                                             \
+      FieldActor_SetMoveTarget(actor, atX, 0, atZ);                            \
+      actor->timer++;                                                          \
+      break;                                                                   \
+    case 3:                                                                    \
+      actor->timer++;                                                          \
+      break;                                                                   \
+    case 4:                                                                    \
+      if (actor->targetX == ACTOR_NO_TARGET &&                                 \
+          actor->targetY == actor->targetX &&                                  \
+          actor->targetZ == actor->targetY) {                                  \
+        actor->timer++;                                                        \
+        Sound_Play(SE_JUMP);                                                   \
+        if (actor->riseEnabled != 0) {                                         \
+          Actor_FaceDirection(warrior, setFacing, 0);                          \
+        } else {                                                               \
+          Actor_FaceDirection(warrior, clearFacing, 0);                        \
+        }                                                                      \
+        if (((u32)Import_RandomNext() << 2) >> 16 != 0) {                      \
+          Actor_Get(warrior)->velocityY = px(2);                               \
+        } else {                                                               \
+          Actor_ShowEmote(warrior, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);      \
+          Actor_Get(warrior)->velocityY = px(6);                               \
+        }                                                                      \
+      }                                                                        \
+      break;                                                                   \
+    case 5:                                                                    \
+      actor->timer++;                                                          \
+      break;                                                                   \
+    case 6:                                                                    \
+      actor->timer++;                                                          \
+      actor->velocityY = px(4);                                                \
+      actor->speedLimit = px(2);                                               \
+      actor->acceleration = px(1);                                             \
+      if (actor->riseEnabled != 0) {                                           \
+        FieldActor_SetMoveTarget(actor, setX, 0, setZ);                        \
+      } else {                                                                 \
+        FieldActor_SetMoveTarget(actor, clearX, 0, clearZ);                    \
+      }                                                                        \
+      break;                                                                   \
+    case 7:                                                                    \
+      actor->timer++;                                                          \
+      break;                                                                   \
+    case 8:                                                                    \
+      if (actor->targetX == ACTOR_NO_TARGET &&                                 \
+          actor->targetY == actor->targetX &&                                  \
+          actor->targetZ == actor->targetY) {                                  \
+        actor->timer++;                                                        \
+      }                                                                        \
+      break;                                                                   \
+    case 9:                                                                    \
+      actor->timer = 0;                                                        \
+      break;                                                                   \
+    }                                                                          \
+    return 1;                                                                  \
   }
-  return 1;
-}
 
-/// The same for the monster that leaps at Sean.
-static s32 TolbiShipDeck_LeapAtSean(struct Actor *actor) {
-  switch (actor->timer) {
-  case 0:
-    if ((((u32)Import_RandomNext() * 40) >> 16) == 0) {
-      actor->timer++;
-    }
-    break;
-  case 1:
-    actor->timer++;
-    break;
-  case 2:
-    actor->velocityY = px(4);
-    actor->speedLimit = px(4);
-    actor->acceleration = px(2);
-    FieldActor_SetMoveTarget(actor, 176, 0, 696);
-    actor->timer++;
-    break;
-  case 3:
-    actor->timer++;
-    break;
-  case 4:
-    if (actor->targetX == ACTOR_NO_TARGET && actor->targetY == actor->targetX &&
-        actor->targetZ == actor->targetY) {
-      actor->timer++;
-      Sound_Play(SE_JUMP);
-      if (actor->riseEnabled != 0) {
-        Actor_FaceDirection(ACTOR_SEA_SEAN, FACING_NORTH_NORTHEAST, 0);
-      } else {
-        Actor_FaceDirection(ACTOR_SEA_SEAN, FACING_EAST, 0);
-      }
-      if (((u32)Import_RandomNext() << 2) >> 16 != 0) {
-        Actor_Get(ACTOR_SEA_SEAN)->velocityY = px(2);
-      } else {
-        Actor_ShowEmote(ACTOR_SEA_SEAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-        Actor_Get(ACTOR_SEA_SEAN)->velocityY = px(6);
-      }
-    }
-    break;
-  case 5:
-    actor->timer++;
-    break;
-  case 6:
-    actor->timer++;
-    actor->velocityY = px(4);
-    actor->speedLimit = px(2);
-    actor->acceleration = px(1);
-    if (actor->riseEnabled != 0) {
-      FieldActor_SetMoveTarget(actor, 184, 0, 672);
-    } else {
-      FieldActor_SetMoveTarget(actor, 202, 0, 692);
-    }
-    break;
-  case 7:
-    actor->timer++;
-    break;
-  case 8:
-    if (actor->targetX == ACTOR_NO_TARGET && actor->targetY == actor->targetX &&
-        actor->targetZ == actor->targetY) {
-      actor->timer++;
-    }
-    break;
-  case 9:
-    actor->timer = 0;
-    break;
-  }
-  return 1;
-}
+TOLBI_SHIP_DECK_LEAP_AT(TolbiShipDeck_LeapAtOuranos, ACTOR_SEA_OURANOS, 264,
+                        662, FACING_NORTH_NORTHWEST, FACING_SOUTH_SOUTHWEST,
+                        252, 646, 256, 686)
+TOLBI_SHIP_DECK_LEAP_AT(TolbiShipDeck_LeapAtSean, ACTOR_SEA_SEAN, 176, 696,
+                        FACING_NORTH_NORTHEAST, FACING_EAST, 184, 672, 202, 692)
 
 /// Makes the actor hop at random, one frame in 40 on average.
 ///

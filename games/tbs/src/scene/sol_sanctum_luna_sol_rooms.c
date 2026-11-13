@@ -780,107 +780,55 @@ static void SolSanctumLunaSolRooms_UpdateFirstFallingLight(void) {
   }
 }
 
-/// Animates the second falling light with its own random restart delay, as
-/// the first.
-static void SolSanctumLunaSolRooms_UpdateSecondFallingLight(void) {
-  if ((Import_RandomNext() & 3) != 0) {
-    switch (gSolSanctumLunaSolRooms_Light2Timer) {
-    case 0:
-      Sound_Play(SE_FALLING_LIGHT);
-      DRAW_LIGHT(47, 42, 33);
-      break;
-    case 1:
-      MOVE_LIGHT_DOWN(47, 42, 34);
-      break;
-    case 2:
-      MOVE_LIGHT_DOWN(47, 42, 35);
-      break;
-    case 3:
-      MOVE_LIGHT_DOWN(47, 42, 36);
-      break;
-    case 4:
-      gSolSanctumLunaSolRooms_FlashState = 2;
-      MOVE_LIGHT_DOWN(47, 42, 37);
-      break;
-    case 90:
-      CLEAR_LIGHT_PATH(47, 42, 33);
-      break;
-    }
-    gSolSanctumLunaSolRooms_Light2Timer++;
-    if (gSolSanctumLunaSolRooms_Light2Timer >
-        ((u32)(Import_RandomNext() * 40) >> 16) + 100) {
-      gSolSanctumLunaSolRooms_Light2Timer = 0;
-    }
+/// Defines `name`, the task of one more falling light in the Luna room, with
+/// its own random restart delay, as the first.
+///
+/// Three frames in four it advances its timer: the light appears at (column,
+/// top) from its staging column, falls four rows and flashes, and on frame
+/// `cleared` its path is put back. It starts again after `restart` frames and
+/// up to 40 more.
+#define SOL_SANCTUM_FALLING_LIGHT(name, timer, staging, column, top, cleared,  \
+                                  restart)                                     \
+  static void name(void) {                                                     \
+    if ((Import_RandomNext() & 3) != 0) {                                      \
+      switch (timer) {                                                         \
+      case 0:                                                                  \
+        Sound_Play(SE_FALLING_LIGHT);                                          \
+        DRAW_LIGHT(staging, column, top);                                      \
+        break;                                                                 \
+      case 1:                                                                  \
+        MOVE_LIGHT_DOWN(staging, column, (top) + 1);                           \
+        break;                                                                 \
+      case 2:                                                                  \
+        MOVE_LIGHT_DOWN(staging, column, (top) + 2);                           \
+        break;                                                                 \
+      case 3:                                                                  \
+        MOVE_LIGHT_DOWN(staging, column, (top) + 3);                           \
+        break;                                                                 \
+      case 4:                                                                  \
+        gSolSanctumLunaSolRooms_FlashState = 2;                                \
+        MOVE_LIGHT_DOWN(staging, column, (top) + 4);                           \
+        break;                                                                 \
+      case cleared:                                                            \
+        CLEAR_LIGHT_PATH(staging, column, top);                                \
+        break;                                                                 \
+      }                                                                        \
+      timer++;                                                                 \
+      if (timer > ((u32)(Import_RandomNext() * 40) >> 16) + (restart)) {       \
+        timer = 0;                                                             \
+      }                                                                        \
+    }                                                                          \
   }
-}
 
-/// Animates the third falling light with its own random restart delay, as the
-/// first.
-static void SolSanctumLunaSolRooms_UpdateThirdFallingLight(void) {
-  if ((Import_RandomNext() & 3) != 0) {
-    switch (gSolSanctumLunaSolRooms_Light3Timer) {
-    case 0:
-      Sound_Play(SE_FALLING_LIGHT);
-      DRAW_LIGHT(48, 31, 36);
-      break;
-    case 1:
-      MOVE_LIGHT_DOWN(48, 31, 37);
-      break;
-    case 2:
-      MOVE_LIGHT_DOWN(48, 31, 38);
-      break;
-    case 3:
-      MOVE_LIGHT_DOWN(48, 31, 39);
-      break;
-    case 4:
-      gSolSanctumLunaSolRooms_FlashState = 2;
-      MOVE_LIGHT_DOWN(48, 31, 40);
-      break;
-    case 95:
-      CLEAR_LIGHT_PATH(48, 31, 36);
-      break;
-    }
-    gSolSanctumLunaSolRooms_Light3Timer++;
-    if (gSolSanctumLunaSolRooms_Light3Timer >
-        ((u32)(Import_RandomNext() * 40) >> 16) + 105) {
-      gSolSanctumLunaSolRooms_Light3Timer = 0;
-    }
-  }
-}
-
-/// Animates the fourth falling light with its own random restart delay, as
-/// the first.
-static void SolSanctumLunaSolRooms_UpdateFourthFallingLight(void) {
-  if ((Import_RandomNext() & 3) != 0) {
-    switch (gSolSanctumLunaSolRooms_Light4Timer) {
-    case 0:
-      Sound_Play(SE_FALLING_LIGHT);
-      DRAW_LIGHT(46, 41, 36);
-      break;
-    case 1:
-      MOVE_LIGHT_DOWN(46, 41, 37);
-      break;
-    case 2:
-      MOVE_LIGHT_DOWN(46, 41, 38);
-      break;
-    case 3:
-      MOVE_LIGHT_DOWN(46, 41, 39);
-      break;
-    case 4:
-      gSolSanctumLunaSolRooms_FlashState = 2;
-      MOVE_LIGHT_DOWN(46, 41, 40);
-      break;
-    case 85:
-      CLEAR_LIGHT_PATH(46, 41, 36);
-      break;
-    }
-    gSolSanctumLunaSolRooms_Light4Timer++;
-    if (gSolSanctumLunaSolRooms_Light4Timer >
-        ((u32)(Import_RandomNext() * 40) >> 16) + 95) {
-      gSolSanctumLunaSolRooms_Light4Timer = 0;
-    }
-  }
-}
+SOL_SANCTUM_FALLING_LIGHT(SolSanctumLunaSolRooms_UpdateSecondFallingLight,
+                          gSolSanctumLunaSolRooms_Light2Timer, 47, 42, 33, 90,
+                          100)
+SOL_SANCTUM_FALLING_LIGHT(SolSanctumLunaSolRooms_UpdateThirdFallingLight,
+                          gSolSanctumLunaSolRooms_Light3Timer, 48, 31, 36, 95,
+                          105)
+SOL_SANCTUM_FALLING_LIGHT(SolSanctumLunaSolRooms_UpdateFourthFallingLight,
+                          gSolSanctumLunaSolRooms_Light4Timer, 46, 41, 36, 85,
+                          95)
 
 /// Opens on Kraden in the Luna room in SOL_SANCTUM_BLUE_TINT, as a flash
 /// crosses it.

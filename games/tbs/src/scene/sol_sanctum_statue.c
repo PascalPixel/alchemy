@@ -160,8 +160,6 @@ static void SolSanctumStatue_ShineLeftBeam(void);
 static void SolSanctumStatue_ShineRightBeam(void);
 static void SolSanctumStatue_SayThenWait(s32 speaker, s32 frames);
 
-#define NULL ((void *)0)
-
 /// A block of cells copied from one place in the map grid to another.
 struct CellCopy {
   s32 sourceX;      ///< map cells
@@ -171,6 +169,12 @@ struct CellCopy {
   s32 width;        ///< map cells
   s32 height;       ///< map cells
 };
+
+/// Sets a cell copy: columns by rows cells from (x, y) to (toX, toY).
+#define CELL_COPY_SET(copy, x, y, toX, toY, columns, rows)                     \
+  ((copy).sourceX = (x), (copy).sourceY = (y), (copy).destinationX = (toX),    \
+   (copy).destinationY = (toY), (copy).width = (columns),                      \
+   (copy).height = (rows))
 
 /// The seal being opened.
 ///
@@ -1419,52 +1423,17 @@ static s32 SolSanctumStatue_IsActorAtCell(s32 actorId, s32 column, s32 row) {
 /// Configures the northwest seal animation and statue return position.
 static void SolSanctumStatue_OpenNorthwestSeal(void) {
   struct SealOpening *seal = &sSealOpening;
-  seal->open.sourceX = 0;
-  seal->open.sourceY = 55;
-  seal->open.destinationX = 32;
-  seal->open.destinationY = 40;
-  seal->open.width = 4;
-  seal->open.height = 3;
-  seal->pulseA.sourceX = 2;
-  seal->pulseA.sourceY = 30;
-  seal->pulseA.destinationX = 34;
-  seal->pulseA.destinationY = 10;
-  seal->pulseA.width = 2;
-  seal->pulseA.height = 1;
-  seal->pulseB.sourceX = 2;
-  seal->pulseB.sourceY = 28;
-  seal->pulseB.destinationX = 34;
-  seal->pulseB.destinationY = 10;
-  seal->pulseB.width = 2;
-  seal->pulseB.height = 1;
-  seal->opened.sourceX = 2;
-  seal->opened.sourceY = 30;
-  seal->opened.destinationX = 16;
-  seal->opened.destinationY = 10;
-  seal->opened.width = 2;
-  seal->opened.height = 1;
+  CELL_COPY_SET(seal->open, 0, 55, 32, 40, 4, 3);
+  CELL_COPY_SET(seal->pulseA, 2, 30, 34, 10, 2, 1);
+  CELL_COPY_SET(seal->pulseB, 2, 28, 34, 10, 2, 1);
+  CELL_COPY_SET(seal->opened, 2, 30, 16, 10, 2, 1);
   seal->flag = FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN;
   seal->facing = FACING_SOUTH;
   seal->destinationX = 500;
   seal->destinationZ = 132;
-  seal->closed[0].sourceX = 8;
-  seal->closed[0].sourceY = 55;
-  seal->closed[0].destinationX = 32;
-  seal->closed[0].destinationY = 40;
-  seal->closed[0].width = 4;
-  seal->closed[0].height = 3;
-  seal->closed[1].sourceX = 2;
-  seal->closed[1].sourceY = 30;
-  seal->closed[1].destinationX = 34;
-  seal->closed[1].destinationY = 10;
-  seal->closed[1].width = 2;
-  seal->closed[1].height = 1;
-  seal->closed[2].sourceX = 2;
-  seal->closed[2].sourceY = 28;
-  seal->closed[2].destinationX = 16;
-  seal->closed[2].destinationY = 10;
-  seal->closed[2].width = 2;
-  seal->closed[2].height = 1;
+  CELL_COPY_SET(seal->closed[0], 8, 55, 32, 40, 4, 3);
+  CELL_COPY_SET(seal->closed[1], 2, 30, 34, 10, 2, 1);
+  CELL_COPY_SET(seal->closed[2], 2, 28, 16, 10, 2, 1);
   seal->actorId = ACTOR_NORTHWEST_STATUE;
   seal->actorX = 488;
   seal->actorZ = 152;
@@ -1474,52 +1443,17 @@ static void SolSanctumStatue_OpenNorthwestSeal(void) {
 /// Configures the northeast seal animation and statue return position.
 static void SolSanctumStatue_OpenNortheastSeal(void) {
   struct SealOpening *seal = &sSealOpening;
-  seal->open.sourceX = 4;
-  seal->open.sourceY = 55;
-  seal->open.destinationX = 36;
-  seal->open.destinationY = 40;
-  seal->open.width = 4;
-  seal->open.height = 3;
-  seal->pulseA.sourceX = 4;
-  seal->pulseA.sourceY = 30;
-  seal->pulseA.destinationX = 36;
-  seal->pulseA.destinationY = 10;
-  seal->pulseA.width = 2;
-  seal->pulseA.height = 1;
-  seal->pulseB.sourceX = 4;
-  seal->pulseB.sourceY = 28;
-  seal->pulseB.destinationX = 36;
-  seal->pulseB.destinationY = 10;
-  seal->pulseB.width = 2;
-  seal->pulseB.height = 1;
-  seal->opened.sourceX = 4;
-  seal->opened.sourceY = 30;
-  seal->opened.destinationX = 18;
-  seal->opened.destinationY = 10;
-  seal->opened.width = 2;
-  seal->opened.height = 1;
+  CELL_COPY_SET(seal->open, 4, 55, 36, 40, 4, 3);
+  CELL_COPY_SET(seal->pulseA, 4, 30, 36, 10, 2, 1);
+  CELL_COPY_SET(seal->pulseB, 4, 28, 36, 10, 2, 1);
+  CELL_COPY_SET(seal->opened, 4, 30, 18, 10, 2, 1);
   seal->flag = FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN;
   seal->facing = FACING_SOUTH;
   seal->destinationX = 654;
   seal->destinationZ = 132;
-  seal->closed[0].sourceX = 12;
-  seal->closed[0].sourceY = 55;
-  seal->closed[0].destinationX = 36;
-  seal->closed[0].destinationY = 40;
-  seal->closed[0].width = 4;
-  seal->closed[0].height = 3;
-  seal->closed[1].sourceX = 4;
-  seal->closed[1].sourceY = 30;
-  seal->closed[1].destinationX = 36;
-  seal->closed[1].destinationY = 10;
-  seal->closed[1].width = 2;
-  seal->closed[1].height = 1;
-  seal->closed[2].sourceX = 4;
-  seal->closed[2].sourceY = 28;
-  seal->closed[2].destinationX = 18;
-  seal->closed[2].destinationY = 10;
-  seal->closed[2].width = 2;
-  seal->closed[2].height = 1;
+  CELL_COPY_SET(seal->closed[0], 12, 55, 36, 40, 4, 3);
+  CELL_COPY_SET(seal->closed[1], 4, 30, 36, 10, 2, 1);
+  CELL_COPY_SET(seal->closed[2], 4, 28, 18, 10, 2, 1);
   seal->actorId = ACTOR_NORTHEAST_STATUE;
   seal->actorX = 664;
   seal->actorZ = 152;
@@ -1529,52 +1463,17 @@ static void SolSanctumStatue_OpenNortheastSeal(void) {
 /// Configures the southwest seal animation and statue return position.
 static void SolSanctumStatue_OpenSouthwestSeal(void) {
   struct SealOpening *seal = &sSealOpening;
-  seal->open.sourceX = 0;
-  seal->open.sourceY = 58;
-  seal->open.destinationX = 32;
-  seal->open.destinationY = 43;
-  seal->open.width = 4;
-  seal->open.height = 1;
-  seal->pulseA.sourceX = 2;
-  seal->pulseA.sourceY = 31;
-  seal->pulseA.destinationX = 34;
-  seal->pulseA.destinationY = 11;
-  seal->pulseA.width = 2;
-  seal->pulseA.height = 1;
-  seal->pulseB.sourceX = 2;
-  seal->pulseB.sourceY = 29;
-  seal->pulseB.destinationX = 34;
-  seal->pulseB.destinationY = 11;
-  seal->pulseB.width = 2;
-  seal->pulseB.height = 1;
-  seal->opened.sourceX = 2;
-  seal->opened.sourceY = 31;
-  seal->opened.destinationX = 16;
-  seal->opened.destinationY = 11;
-  seal->opened.width = 2;
-  seal->opened.height = 1;
+  CELL_COPY_SET(seal->open, 0, 58, 32, 43, 4, 1);
+  CELL_COPY_SET(seal->pulseA, 2, 31, 34, 11, 2, 1);
+  CELL_COPY_SET(seal->pulseB, 2, 29, 34, 11, 2, 1);
+  CELL_COPY_SET(seal->opened, 2, 31, 16, 11, 2, 1);
   seal->flag = FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN;
   seal->facing = FACING_NORTH;
   seal->destinationX = 500;
   seal->destinationZ = 216;
-  seal->closed[0].sourceX = 8;
-  seal->closed[0].sourceY = 58;
-  seal->closed[0].destinationX = 32;
-  seal->closed[0].destinationY = 43;
-  seal->closed[0].width = 4;
-  seal->closed[0].height = 1;
-  seal->closed[1].sourceX = 2;
-  seal->closed[1].sourceY = 31;
-  seal->closed[1].destinationX = 34;
-  seal->closed[1].destinationY = 11;
-  seal->closed[1].width = 2;
-  seal->closed[1].height = 1;
-  seal->closed[2].sourceX = 2;
-  seal->closed[2].sourceY = 29;
-  seal->closed[2].destinationX = 16;
-  seal->closed[2].destinationY = 11;
-  seal->closed[2].width = 2;
-  seal->closed[2].height = 1;
+  CELL_COPY_SET(seal->closed[0], 8, 58, 32, 43, 4, 1);
+  CELL_COPY_SET(seal->closed[1], 2, 31, 34, 11, 2, 1);
+  CELL_COPY_SET(seal->closed[2], 2, 29, 16, 11, 2, 1);
   seal->actorId = ACTOR_SOUTHWEST_STATUE;
   seal->actorX = 488;
   seal->actorZ = 200;
@@ -1584,52 +1483,17 @@ static void SolSanctumStatue_OpenSouthwestSeal(void) {
 /// Configures the southeast seal animation and statue return position.
 static void SolSanctumStatue_OpenSoutheastSeal(void) {
   struct SealOpening *seal = &sSealOpening;
-  seal->open.sourceX = 4;
-  seal->open.sourceY = 58;
-  seal->open.destinationX = 36;
-  seal->open.destinationY = 43;
-  seal->open.width = 4;
-  seal->open.height = 1;
-  seal->pulseA.sourceX = 4;
-  seal->pulseA.sourceY = 31;
-  seal->pulseA.destinationX = 36;
-  seal->pulseA.destinationY = 11;
-  seal->pulseA.width = 2;
-  seal->pulseA.height = 1;
-  seal->pulseB.sourceX = 4;
-  seal->pulseB.sourceY = 29;
-  seal->pulseB.destinationX = 36;
-  seal->pulseB.destinationY = 11;
-  seal->pulseB.width = 2;
-  seal->pulseB.height = 1;
-  seal->opened.sourceX = 4;
-  seal->opened.sourceY = 31;
-  seal->opened.destinationX = 18;
-  seal->opened.destinationY = 11;
-  seal->opened.width = 2;
-  seal->opened.height = 1;
+  CELL_COPY_SET(seal->open, 4, 58, 36, 43, 4, 1);
+  CELL_COPY_SET(seal->pulseA, 4, 31, 36, 11, 2, 1);
+  CELL_COPY_SET(seal->pulseB, 4, 29, 36, 11, 2, 1);
+  CELL_COPY_SET(seal->opened, 4, 31, 18, 11, 2, 1);
   seal->flag = FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN;
   seal->facing = FACING_NORTH;
   seal->destinationX = 654;
   seal->destinationZ = 216;
-  seal->closed[0].sourceX = 12;
-  seal->closed[0].sourceY = 58;
-  seal->closed[0].destinationX = 36;
-  seal->closed[0].destinationY = 43;
-  seal->closed[0].width = 4;
-  seal->closed[0].height = 1;
-  seal->closed[1].sourceX = 4;
-  seal->closed[1].sourceY = 31;
-  seal->closed[1].destinationX = 36;
-  seal->closed[1].destinationY = 11;
-  seal->closed[1].width = 2;
-  seal->closed[1].height = 1;
-  seal->closed[2].sourceX = 4;
-  seal->closed[2].sourceY = 29;
-  seal->closed[2].destinationX = 18;
-  seal->closed[2].destinationY = 11;
-  seal->closed[2].width = 2;
-  seal->closed[2].height = 1;
+  CELL_COPY_SET(seal->closed[0], 12, 58, 36, 43, 4, 1);
+  CELL_COPY_SET(seal->closed[1], 4, 31, 36, 11, 2, 1);
+  CELL_COPY_SET(seal->closed[2], 4, 29, 18, 11, 2, 1);
   seal->actorId = ACTOR_SOUTHEAST_STATUE;
   seal->actorX = 664;
   seal->actorZ = 200;

@@ -975,13 +975,13 @@ static s32 TolbiSpring_SelectLuckyWheelsPrize(s32 category) {
   }
 
   if (category == 5) {
-    category = ((unsigned int)(Import_RandomNext() * 5) >> 16);
+    category = ((unsigned int)(Random_Next() * 5) >> 16);
   }
 
   previousVariant = gMainRoutineWork.wonPrizes[8 + category];
 
   variant = (previousVariant +
-             (s32)((unsigned int)(Import_RandomNext() * 2) >> 16) + 4) %
+             (s32)((unsigned int)(Random_Next() * 2) >> 16) + 4) %
             3;
 
   gMainRoutineWork.wonPrizes[8 + category] = variant;

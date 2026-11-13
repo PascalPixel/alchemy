@@ -894,7 +894,7 @@ static void MercuryLighthouse_StopFountainSpray(void) {
     particleIndex = 1;
     do {
       if ((particleIndex & 1) != 0) {
-        random = Import_RandomNext();
+        random = Random_Next();
         particleZ = ((584 - ((u32)((random << 2) + random) >> 16)) & 0xffff)
                     << 16;
         particleX = (offsetX - (row << 19)) + px(728);
@@ -1077,7 +1077,7 @@ enum { STONE_DOOR_WEST = 0, STONE_DOOR_SOUTH = 1, STONE_DOOR_NORTH = 2 };
 
 /// Chooses the random speed component used by stone-door particles.
 static __inline__ s32 MercuryLighthouse_RandomDoorParticleSpeed(void) {
-  u32 drift = Import_RandomNext();
+  u32 drift = Random_Next();
 
   return ((drift << 3) >> 16) * (px(1) / 5);
 }
@@ -1157,19 +1157,19 @@ static void MercuryLighthouse_CloseStoneDoor(s32 side) {
       if ((particleIndex & 1) != 0) {
         if (side == STONE_DOOR_WEST) {
           FieldEffect_Spawn(
-              (793 - (((u32)Import_RandomNext() * 5) >> 16)) << 16, 0,
+              (793 - (((u32)Random_Next() * 5) >> 16)) << 16, 0,
               (((row << 2) + particleIndex) << 17) + px(695), 0, side,
               px(1) / 4, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         } else if (side == STONE_DOOR_SOUTH) {
           FieldEffect_Spawn(
               (((row << 2) + particleIndex) << 17) + px(786), 0,
-              ((((u32)Import_RandomNext() * 5) >> 16) << 16) + px(744),
+              ((((u32)Random_Next() * 5) >> 16) << 16) + px(744),
               px(1) / 4, 0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
               &options);
         } else {
           FieldEffect_Spawn(
               px(824) - (particleIndex << 17) - (row << 19), 0,
-              ((((u32)Import_RandomNext() * 5) >> 16) << 16) + px(712),
+              ((((u32)Random_Next() * 5) >> 16) << 16) + px(712),
               px(1) / 4, 0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
               &options);
         }
@@ -1225,7 +1225,7 @@ static s32 MercuryLighthouse_StartStatueSlide(void) {
 /// Sparkles rise from the sliding statue as it moves.
 static void MercuryLighthouse_SprayAboveStatue(void) {
   struct Actor *statue = Actor_Get(ACTOR_SLIDING_STATUE);
-  u32 random = Import_RandomNext();
+  u32 random = Random_Next();
 
   s32 particleY = statue->y.fixed + (((random << 2) >> 16) << 16);
   s32 particleZ = statue->z.fixed;
@@ -1805,10 +1805,10 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
     if (frame & 1) {
       Sound_Play(SE_GLITTER);
       particleX = actor->x.fixed +
-                  ((((u32)Import_RandomNext() * 24) >> 16) << 16) + -px(12);
+                  ((((u32)Random_Next() * 24) >> 16) << 16) + -px(12);
       particleY = actor->y.fixed +
-                  ((((u32)Import_RandomNext() << 5) >> 16) << 16) + -px(16);
-      riseSpeed = ((((u32)Import_RandomNext() << 2) >> 16) << 15) + px(1) / 2;
+                  (((u32)Random_Next() * 32 >> 16) << 16) + -px(16);
+      riseSpeed = (((u32)Random_Next() * 4 >> 16) << 15) + px(1) / 2;
       FieldEffect_Spawn(particleX, particleY, actor->z.fixed, 0, riseSpeed, 0,
                         EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                             EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
@@ -1858,12 +1858,12 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     if ((1 & wave) != 0) {
       Sound_Play(SE_GLITTER);
     }
-    random = Import_RandomNext();
+    random = Random_Next();
     particleX = random * 48;
     particleX >>= 16;
     particleX <<= 16;
     particleX += px(768);
-    random = Import_RandomNext();
+    random = Random_Next();
     z = random * 56;
     z >>= 16;
     z <<= 16;
@@ -1885,17 +1885,17 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     if ((1 & wave) != 0) {
       Sound_Play(SE_GLITTER);
     }
-    random = Import_RandomNext();
+    random = Random_Next();
     particleX = random * 48;
     particleX >>= 16;
     particleX <<= 16;
     particleX += px(768);
-    random = Import_RandomNext();
+    random = Random_Next();
     z = random * 56;
     z >>= 16;
     z <<= 16;
     z += px(152);
-    random = Import_RandomNext();
+    random = Random_Next();
     particleSpeed = -((random * 10 >> 16) * (px(1) / 5)) - px(1) / 5;
     FieldEffect_Spawn(particleX, 0, z, 0, 0, particleSpeed,
                       EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
@@ -1923,12 +1923,12 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     particleIndex = 0;
     rowOffset = (wave << 4);
     do {
-      random = Import_RandomNext();
+      random = Random_Next();
       particleX = ((((((random << 1) + random) << 4) >> 16) << 16) + px(768));
       particleVelocityX =
-          ((px(1) / 10) * ((u32)(Import_RandomNext() << 3) >> 16)) -
+          ((px(1) / 10) * ((u32)Random_Next() * 8 >> 16)) -
           4 * (px(1) / 10);
-      particleSpeed = (px(1) / 10) * ((u32)(Import_RandomNext() << 3) >> 16);
+      particleSpeed = (px(1) / 10) * ((u32)Random_Next() * 8 >> 16);
       FieldEffect_Spawn(particleX, 0,
                         ((-((u32)particleIndex >> 1) - rowOffset) << 16) +
                             px(192),
@@ -2157,9 +2157,9 @@ static void MercuryLighthouse_RaiseStairsWithSparkles(void) {
     for (particleIndex = 0; particleIndex <= 7; particleIndex++) {
       if ((particleIndex & 1) != 0) {
         s32 velocityX =
-            (((u32)Import_RandomNext() << 3) >> 16) * (px(1) / 5) - px(4) / 5;
+            ((u32)Random_Next() * 8 >> 16) * (px(1) / 5) - px(4) / 5;
         s32 velocityZ =
-            (((u32)Import_RandomNext() << 3) >> 16) * (px(1) / 5) - px(4) / 5;
+            ((u32)Random_Next() * 8 >> 16) * (px(1) / 5) - px(4) / 5;
 
         FieldEffect_Spawn(
             px(105), 0, ((-particleIndex - (row << 4)) << 16) + px(544),
@@ -2191,13 +2191,13 @@ static void MercuryLighthouse_LowerStairsWithSparkles(void) {
       if (particleIndex & 1) {
         if (particleIndex & 2) {
           FieldEffect_Spawn(
-              (105 - (((u32)Import_RandomNext() * 5) >> 16)) << 16, 0,
+              (105 - (((u32)Random_Next() * 5) >> 16)) << 16, 0,
               offsetZ - (row << 19) + px(558), 0, 0, -px(1) / 4,
               EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         } else {
           FieldEffect_Spawn(
               (((row << 2) + particleIndex) << 17) + px(183), 0,
-              (620 - (((u32)Import_RandomNext() * 5) >> 16)) << 16, px(1) / 4,
+              (620 - (((u32)Random_Next() * 5) >> 16)) << 16, px(1) / 4,
               0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         }
         Event_Wait(1);
@@ -2218,16 +2218,16 @@ static void MercuryLighthouse_SparkleAroundLeader(void) {
 
   if (framePhase == 0) {
     options.palette = 7;
-    if (((((u32)Import_RandomNext() << 1) >> 16) & 1) == 0)
+    if ((((u32)Random_Next() * 2 >> 16) & 1) == 0)
       options.palette = 5;
     options.startScaleX = 7 * Q16_ONE / 10;
     options.startScaleY = 7 * Q16_ONE / 10;
     {
-      s32 y = leader->y.fixed + ((((u32)Import_RandomNext() << 2) >> 16) << 16);
+      s32 y = leader->y.fixed + (((u32)Random_Next() * 4 >> 16) << 16);
       s32 velocityX =
-          (((u32)Import_RandomNext() << 3) >> 16) * (px(1) / 5) - px(4) / 5;
+          ((u32)Random_Next() * 8 >> 16) * (px(1) / 5) - px(4) / 5;
       s32 velocityY =
-          (((u32)Import_RandomNext() << 3) >> 16) * (px(1) / 5) - px(4) / 5;
+          ((u32)Random_Next() * 8 >> 16) * (px(1) / 5) - px(4) / 5;
 
       FieldEffect_Spawn(leader->x.fixed, y, leader->z.fixed, velocityX,
                         velocityY, framePhase,
@@ -2243,15 +2243,15 @@ static void MercuryLighthouse_SparkleAt(s32 x, s32 y, s32 z) {
 
   if (framePhase == 0) {
     options.palette = 7;
-    if (((((u32)Import_RandomNext() << 1) >> 16) & 1) == 0)
+    if ((((u32)Random_Next() * 2 >> 16) & 1) == 0)
       options.palette = 5;
     options.startScaleX = 7 * Q16_ONE / 10;
     options.startScaleY = 7 * Q16_ONE / 10;
     {
       s32 velocityX =
-          (((u32)Import_RandomNext() << 3) >> 16) * (px(1) / 5) - px(4) / 5;
+          ((u32)Random_Next() * 8 >> 16) * (px(1) / 5) - px(4) / 5;
       s32 velocityY =
-          (((u32)Import_RandomNext() << 3) >> 16) * (px(1) / 5) - px(4) / 5;
+          ((u32)Random_Next() * 8 >> 16) * (px(1) / 5) - px(4) / 5;
 
       FieldEffect_Spawn(x, y, z, velocityX, velocityY, framePhase,
                         EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
@@ -2270,8 +2270,8 @@ static void MercuryLighthouse_SparkleNear(s32 x, s32 y, s32 z) {
   options.priority = 1;
   options.startScaleX = 7 * Q16_ONE / 10;
   options.startScaleY = 7 * Q16_ONE / 10;
-  particleX = x + ((((u32)Import_RandomNext() << 4) >> 16) << 16) - px(8);
-  particleZ = z + ((((u32)Import_RandomNext() << 3) >> 16) << 16) - px(4);
+  particleX = x + (((u32)Random_Next() * 16 >> 16) << 16) - px(8);
+  particleZ = z + (((u32)Random_Next() * 8 >> 16) << 16) - px(4);
 
   FieldEffect_Spawn(particleX, y, particleZ, 0, 0, 0,
                     EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
@@ -2301,9 +2301,9 @@ static void MercuryLighthouse_SpawnRandomizedBurst(s32 x, s32 y, s32 z,
                             velocity);
       {
         s32 particleX =
-            x + ((6 - (((u32)Import_RandomNext() * 6) >> 16)) << 16);
+            x + ((6 - (((u32)Random_Next() * 6) >> 16)) << 16);
         s32 particleZ =
-            z + ((6 - (((u32)Import_RandomNext() * 6) >> 16)) << 16);
+            z + ((6 - (((u32)Random_Next() * 6) >> 16)) << 16);
 
         FieldEffect_Spawn(
             particleX, y, particleZ, velocity[0], velocity[1], velocity[2],

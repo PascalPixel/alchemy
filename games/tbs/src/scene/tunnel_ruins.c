@@ -387,8 +387,8 @@ static UNREAD_RESULT TunnelRuins_SplashDousedPillar(struct Actor *actor) {
   options.startScaleX = 3 * Q16_ONE / 10;
   options.startScaleY = 3 * Q16_ONE / 10;
   options.palette = 5;
-  x = actor->x.fixed + ((((u32)(Import_RandomNext() * 7) >> 16) - 3) << 16);
-  z = actor->z.fixed + ((((u32)(Import_RandomNext() * 7) >> 16) - 3) << 16);
+  x = actor->x.fixed + ((((u32)(Random_Next() * 7) >> 16) - 3) << 16);
+  z = actor->z.fixed + ((((u32)(Random_Next() * 7) >> 16) - 3) << 16);
   FieldEffect_Spawn(x, actor->y.fixed + px(16), z, 0, 0, 0,
                     EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
                         EFFECT_SCRIPT_MEDIUM,
@@ -475,12 +475,12 @@ static void TunnelRuins_HopDownStep(void) {
     leader->targetY = leader->y.fixed;
     wait(1);
     if (i & 1) {
-      s32 horizontalRoll = (u32)Import_RandomNext() % 10 - 5;
+      s32 horizontalRoll = (u32)Random_Next() % 10 - 5;
       s32 velocityX = horizontalRoll * 0x3332;
       s32 velocityZ;
 
       velocityZ =
-          (u32)Import_RandomNext() % 10 * -(px(1) / 10) - 5 * (px(1) / 10);
+          (u32)Random_Next() % 10 * -(px(1) / 10) - 5 * (px(1) / 10);
       FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                         velocityX, 0, velocityZ,
                         EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM, &options);
@@ -749,7 +749,7 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
       Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->y.fixed -= px(1);
       randomX = Random_Next();
       randomX = ((((u32)(randomX << 4) >> 16) << 16) + px(736));
-      randomZ = Import_RandomNext();
+      randomZ = Random_Next();
       FieldEffect_Spawn(
           randomX, 0,
           ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) + px(128)), 0,
@@ -830,9 +830,9 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
       for (i = 0; i < 16; i++) {
         wait(3);
         Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->y.fixed -= px(1);
-        randomX = Import_RandomNext();
+        randomX = Random_Next();
         effectX = ((((u32)(randomX << 4) >> 16) << 16) + px(768));
-        randomZ = Import_RandomNext();
+        randomZ = Random_Next();
         effectZ =
             ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) + px(224));
         FieldEffect_Spawn(effectX, 0, effectZ, 0, 0, 0,

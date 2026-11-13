@@ -999,7 +999,7 @@ static void TretPalette_UpdateMapTint(void) {
       blue = 0;
     *destinationColors++ = (blue << 10) | (green << 5) | red;
   }
-  gTreeRooms_TintIndex += (Import_RandomNext() & 7) * 3;
+  gTreeRooms_TintIndex += (Random_Next() & 7) * 3;
   if (gTreeRooms_TintSteps[gTreeRooms_TintIndex] == TRET_TINT_END)
     gTreeRooms_TintIndex = 0;
 }

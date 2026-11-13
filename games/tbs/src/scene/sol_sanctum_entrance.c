@@ -1324,7 +1324,7 @@ static void SolSanctumEntrance_UpdateEruptionRumbles(void) {
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     }
   } else {
-    randomValue = Import_RandomNext();
+    randomValue = Random_Next();
     if (((u32)(((randomValue << 4) - randomValue) << 3) >> 16) == 0) {
       Sound_Play(SE_ITEM_BREAK);
       MapGrid_SetShake(1, 2, 1);

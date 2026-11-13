@@ -229,7 +229,7 @@ static s32 VenusLighthouseAerie_PulseActorScale(struct Actor *actor) {
   case 0:
     actor->scaleX += Q16_ONE / 32;
     actor->scaleY -= Q16_ONE / 64;
-    actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 80) + 80;
+    actor->timer = Math_RemainderUnsigned(Random_Next(), 80) + 80;
     break;
   }
   {
@@ -1912,12 +1912,12 @@ static void VenusLighthouseAerie_SpawnUpperOrbitParticles(void) {
   center = Actor_Get(ACTOR_BEAM_BOTTOM);
   if (GameFlag_Get(FLAG_VENUS_AERIE_BEACON_ERUPTED) != 0) {
     effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
-                               (s32)((u32)(Random_Next() << 8) >> 16 << 16) +
+                               (s32)((u32)Random_Next() * 256 >> 16 << 16) +
                                    center->y.fixed - px(28),
                                center->z.fixed);
   } else {
     effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
-                               (s32)((u32)(Random_Next() << 6) >> 16 << 16) +
+                               (s32)((u32)Random_Next() * 64 >> 16 << 16) +
                                    center->y.fixed - px(28),
                                center->z.fixed);
   }

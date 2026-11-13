@@ -278,8 +278,8 @@ static s32 ValePrologue_RerollHeadingOnCountdown(struct Actor *actor) {
   s32 countdown = (s16)timer;
 
   if (timer == 0) {
-    actor->facing = Import_RandomNext();
-    countdown = Math_RemainderUnsigned(Import_RandomNext(), 20) + 20;
+    actor->facing = Random_Next();
+    countdown = Math_RemainderUnsigned(Random_Next(), 20) + 20;
     actor->timer = countdown;
   }
   actor->timer = countdown - 1;
@@ -603,7 +603,7 @@ s32 ValePrologue_Initialize(void) {
 
       actor = Actor_Get(ACTOR_DORA);
       actor->facing = FACING_NORTHEAST;
-      actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
       table = gValePrologue_SquashAndStretchScript;
       actor->userValue = 1;
       Actor_SetScript(ACTOR_DORA, table);
@@ -614,7 +614,7 @@ s32 ValePrologue_Initialize(void) {
 
       actor = Actor_Get(ACTOR_JENNA_CHILD);
       actor->facing = FACING_NORTHEAST;
-      actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
       actor->userValue = 2;
       Actor_SetScript(ACTOR_JENNA_CHILD, table);
     }
@@ -624,7 +624,7 @@ s32 ValePrologue_Initialize(void) {
 
       actor = Actor_Get(ACTOR_GARET_CHILD);
       actor->facing = FACING_NORTHEAST;
-      actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
       actor->userValue = 3;
       Actor_SetScript(ACTOR_GARET_CHILD, table);
     }
@@ -634,7 +634,7 @@ s32 ValePrologue_Initialize(void) {
 
       actor = Actor_Get(ACTOR_EXHAUSTED_STRONGMAN);
       actor->facing = FACING_NORTHEAST;
-      actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
       actor->userValue = 4;
       Actor_SetScript(ACTOR_EXHAUSTED_STRONGMAN, table);
     }
@@ -661,7 +661,7 @@ s32 ValePrologue_Initialize(void) {
       struct Actor *actor;
 
       actor = Actor_Get(ACTOR_KYLE);
-      actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
     }
     table = gValePrologue_SquashAndStretchScript;
     Actor_SetScript(ACTOR_KYLE, table);
@@ -672,7 +672,7 @@ s32 ValePrologue_Initialize(void) {
       struct Actor *actor;
 
       actor = Actor_Get(ACTOR_JENNAS_FATHER);
-      actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
     }
     Actor_SetScript(ACTOR_JENNAS_FATHER, table);
     Actor_SetPosition(ACTOR_JENNAS_MOTHER, 247, 1214);
@@ -682,7 +682,7 @@ s32 ValePrologue_Initialize(void) {
       struct Actor *actor;
 
       actor = Actor_Get(ACTOR_JENNAS_MOTHER);
-      actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
     }
     Actor_SetScript(ACTOR_JENNAS_MOTHER, table);
     Actor_SetPosition(ACTOR_FELIX_CHILD, 243, 1277);
@@ -1753,7 +1753,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
     struct Actor *actor;
     s32 pulseDelay;
     actor = Actor_Get(ACTOR_KYLE);
-    pulseDelay = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+    pulseDelay = Math_RemainderUnsigned(Random_Next(), 90) + 60;
     pulseScript = gValePrologue_SquashAndStretchScript;
     actor->timer = pulseDelay;
     Actor_SetScript(ACTOR_KYLE, pulseScript);
@@ -1767,7 +1767,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
     struct Actor *actor;
     s32 pulseDelay;
     actor = Actor_Get(ACTOR_JENNAS_FATHER);
-    pulseDelay = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+    pulseDelay = Math_RemainderUnsigned(Random_Next(), 90) + 60;
     actor->timer = pulseDelay;
     Actor_SetScript(ACTOR_JENNAS_FATHER, pulseScript);
   }
@@ -1778,7 +1778,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
     struct Actor *actor;
     s32 pulseDelay;
     actor = Actor_Get(ACTOR_JENNAS_MOTHER);
-    pulseDelay = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+    pulseDelay = Math_RemainderUnsigned(Random_Next(), 90) + 60;
     actor->timer = pulseDelay;
     Actor_SetScript(ACTOR_JENNAS_MOTHER, pulseScript);
   }
@@ -2026,13 +2026,13 @@ static void ValePrologue_DoraGoesForHelp(void) {
   Actor_SetAnimation(ACTOR_JENNAS_FATHER, ANIM_PARENT_REACH_OUT);
   Actor_SetAnimation(ACTOR_JENNAS_MOTHER, ANIM_PARENT_REACH_OUT);
   villager = Actor_Get(ACTOR_KYLE);
-  random = Import_RandomNext();
+  random = Random_Next();
   villager->timer = (Math_RemainderUnsigned(random, 90) + 60);
   villager = Actor_Get(ACTOR_JENNAS_FATHER);
-  random = Import_RandomNext();
+  random = Random_Next();
   villager->timer = (Math_RemainderUnsigned(random, 90) + 60);
   villager = Actor_Get(ACTOR_JENNAS_MOTHER);
-  random = Import_RandomNext();
+  random = Random_Next();
   villager->timer = (Math_RemainderUnsigned(random, 90) + 60);
   script = gValePrologue_SquashAndStretchScript;
   Actor_SetScript(ACTOR_KYLE, script);
@@ -2161,7 +2161,7 @@ static void ValePrologue_TalkAboutSavingFelix(void) {
     struct Actor *villager;
     s32 pulseDelay;
     villager = Actor_Get(ACTOR_KYLE);
-    pulseDelay = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+    pulseDelay = Math_RemainderUnsigned(Random_Next(), 90) + 60;
     pulseScript = gValePrologue_SquashAndStretchScript;
     villager->timer = pulseDelay;
     Actor_SetScript(ACTOR_KYLE, pulseScript);

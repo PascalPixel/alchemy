@@ -675,16 +675,16 @@ static UNREAD_RESULT VenusLighthouse_EmitRisingParticles(struct Actor *actor) {
   s32 framePhase, particleX, particleY, riseSpeed;
   framePhase = gFrameCount & 7;
   if (framePhase == 0) {
-    options.priority = 3 - ((u32)(Import_RandomNext() * 2) >> 16);
+    options.priority = 3 - ((u32)(Random_Next() * 2) >> 16);
     options.startScaleX = 2 * Q16_ONE / 5;
     options.startScaleY = 2 * Q16_ONE / 5;
     options.palette = 14;
     particleX =
-        actor->x.fixed + ((((u32)(Import_RandomNext() * 9) >> 16) - 4) << 16);
+        actor->x.fixed + ((((u32)(Random_Next() * 9) >> 16) - 4) << 16);
     particleY =
-        actor->y.fixed + ((32 - ((u32)(Import_RandomNext() * 32) >> 16)) << 16);
+        actor->y.fixed + ((32 - ((u32)(Random_Next() * 32) >> 16)) << 16);
     riseSpeed =
-        Math_Divide((((u32)(Import_RandomNext() * 5) >> 16) << 16) + px(5), 10);
+        Math_Divide((((u32)(Random_Next() * 5) >> 16) << 16) + px(5), 10);
     FieldEffect_Spawn(
         particleX, particleY, actor->z.fixed, 0, riseSpeed, framePhase,
         EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE,
@@ -711,7 +711,7 @@ VenusLighthouse_EmitPassageSparkTrail(struct Actor *actor) {
   options.startScaleY = 4 * Q16_ONE / 5;
   options.priority = 0;
 
-  fallSpeed = ((u32)(Import_RandomNext() * 8) >> 16) * (px(1) / 5);
+  fallSpeed = ((u32)(Random_Next() * 8) >> 16) * (px(1) / 5);
   framePhase = gFrameCount & 15;
 
   FieldEffect_Spawn(actor->x.fixed +
@@ -724,7 +724,7 @@ VenusLighthouse_EmitPassageSparkTrail(struct Actor *actor) {
     options.startScaleX = Q16_ONE / 2;
     options.startScaleY = Q16_ONE / 2;
     FieldEffect_Spawn(actor->x.fixed +
-                          ((((u32)(Import_RandomNext() * 9) >> 16) - 4) << 16),
+                          ((((u32)(Random_Next() * 9) >> 16) - 4) << 16),
                       actor->y.fixed, actor->z.fixed, 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE, &options);
   }
@@ -884,7 +884,7 @@ static UNREAD_RESULT VenusLighthouse_TrailLight(struct Actor *actor) {
   if ((gFrameCount & 3) != 0) {
     RETURN_UNREAD(0);
   }
-  if ((u32)(Import_RandomNext() * 6) >> 16 == 0) {
+  if ((u32)(Random_Next() * 6) >> 16 == 0) {
     if (actor->targetX != ACTOR_NO_TARGET ||
         actor->targetZ != ACTOR_NO_TARGET) {
       Sound_Play(SE_GLITTER);
@@ -895,9 +895,9 @@ static UNREAD_RESULT VenusLighthouse_TrailLight(struct Actor *actor) {
   options.startScaleY = Q16_ONE;
   options.targetScaleX = -327;
   options.targetScaleY = -327;
-  random = Import_RandomNext();
+  random = Random_Next();
   velocityX = Math_Divide(((((u32)(random * 9)) >> 16) - 4) << 16, 10);
-  random = Import_RandomNext();
+  random = Random_Next();
   velocityZ = Math_Divide(((((u32)(random * 9)) >> 16) - 4) << 16, 10);
   FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed - px(1),
                     velocityX, 0, velocityZ,
@@ -1736,12 +1736,12 @@ static void VenusLighthouse_StepOnWallSwitch(void) {
         dustX -= px(1) / 5;
         options.priority = 2;
         options.startScaleX =
-            ((u32)(Import_RandomNext() * 3) >> 16) * (Q16_ONE / 5) +
+            ((u32)(Random_Next() * 3) >> 16) * (Q16_ONE / 5) +
             4 * Q16_ONE / 5;
         options.startScaleY =
-            ((u32)(Import_RandomNext() * 3) >> 16) * (Q16_ONE / 5) +
+            ((u32)(Random_Next() * 3) >> 16) * (Q16_ONE / 5) +
             4 * Q16_ONE / 5;
-        options.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
+        options.spin = ((u32)Random_Next() * 4096 >> 16) + 0xf800;
         FieldEffect_Spawn(dustX, 0, px(528), 0, -px((gFrameCount & 1) * 3), 0,
                           EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE |
                               EFFECT_USE_SPIN,
@@ -2259,12 +2259,12 @@ static void VenusLighthouse_StepOnWestWallSwitch(void) {
           dustX -= px(1) / 5;
           options.priority = 2;
           options.startScaleX =
-              ((u32)(Import_RandomNext() * 3) >> 16) * (Q16_ONE / 5) +
+              ((u32)(Random_Next() * 3) >> 16) * (Q16_ONE / 5) +
               4 * Q16_ONE / 5;
           options.startScaleY =
-              ((u32)(Import_RandomNext() * 3) >> 16) * (Q16_ONE / 5) +
+              ((u32)(Random_Next() * 3) >> 16) * (Q16_ONE / 5) +
               4 * Q16_ONE / 5;
-          options.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
+          options.spin = ((u32)Random_Next() * 4096 >> 16) + 0xf800;
           FieldEffect_Spawn(dustX, 0, px(288), 0, -px((gFrameCount & 1) * 3), 0,
                             EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE |
                                 EFFECT_USE_SPIN,
@@ -2335,12 +2335,12 @@ static void VenusLighthouse_StepOnEastWallSwitch(void) {
         if (dustX >= px(712) && dustX < px(752)) {
           options.priority = 2;
           options.startScaleX =
-              ((u32)(Import_RandomNext() * 3) >> 16) * (Q16_ONE / 5) +
+              ((u32)(Random_Next() * 3) >> 16) * (Q16_ONE / 5) +
               4 * Q16_ONE / 5;
           options.startScaleY =
-              ((u32)(Import_RandomNext() * 3) >> 16) * (Q16_ONE / 5) +
+              ((u32)(Random_Next() * 3) >> 16) * (Q16_ONE / 5) +
               4 * Q16_ONE / 5;
-          options.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
+          options.spin = ((u32)Random_Next() * 4096 >> 16) + 0xf800;
           FieldEffect_Spawn(dustX, 0, px(288), 0, -px((gFrameCount & 1) * 3), 0,
                             EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE |
                                 EFFECT_USE_SPIN,
@@ -3174,16 +3174,16 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
   collision = FieldActor_CheckMovementCollision(actor, &nextPosition);
   framePhase = gFrameCount & 4;
   if (framePhase == 0) {
-    options.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
+    options.spin = ((u32)Random_Next() * 4096 >> 16) + 0xf800;
     particleX = actor->x.fixed +
-                (((u32)(Import_RandomNext() * 12) >> 16) << 16) - px(6);
+                (((u32)(Random_Next() * 12) >> 16) << 16) - px(6);
     FieldEffect_Spawn(
         particleX, actor->y.fixed, actor->z.fixed,
-        (((u32)(Import_RandomNext() * 5) >> 16) * (px(1) / 10) +
+        (((u32)(Random_Next() * 5) >> 16) * (px(1) / 10) +
          5 * (px(1) / 10)) *
             direction->x,
         framePhase,
-        direction->z * (((u32)(Import_RandomNext() * 5) >> 16) * (px(1) / 10) +
+        direction->z * (((u32)(Random_Next() * 5) >> 16) * (px(1) / 10) +
                         5 * (px(1) / 10)),
         EFFECT_USE_SPIN, &options);
   }
@@ -3244,10 +3244,10 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
 static __inline__ void
 VenusLighthouse_RubbleSetScaleAndSpin(struct EffectOptions *options) {
   options->startScaleX =
-      ((u32)(Import_RandomNext() << 1) >> 16) * (Q16_ONE * 3 / 10) + 0x17ffc;
+      ((u32)Random_Next() * 2 >> 16) * (Q16_ONE * 3 / 10) + 0x17ffc;
   options->startScaleY =
-      ((u32)(Import_RandomNext() << 1) >> 16) * (Q16_ONE * 3 / 10) + 0x17ffc;
-  options->spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
+      ((u32)Random_Next() * 2 >> 16) * (Q16_ONE * 3 / 10) + 0x17ffc;
+  options->spin = ((u32)Random_Next() * 4096 >> 16) + 0xf800;
 }
 
 /// Animates the two tile waves VenusLighthouse_StepOnWallSwitch sets off in
@@ -3276,7 +3276,7 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
     for (;;) {
       for (particleIndex = 0; particleIndex < 4 && row < 8; particleIndex++) {
         FieldEffect_Spawn(
-            (((u32)(Import_RandomNext() * 7) >> 16) << 19) + px(864), 0,
+            (((u32)(Random_Next() * 7) >> 16) << 19) + px(864), 0,
             px(48) + row * px(16) + particleIndex * px(4), 0, 0, 0,
             EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
       }
@@ -3295,7 +3295,7 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
   for (row = 0; row < 10; row++) {
     VenusLighthouse_RubbleSetScaleAndSpin(&options);
     for (particleIndex = 0; particleIndex < 4 && row < 8; particleIndex++) {
-      FieldEffect_Spawn((((u32)(Import_RandomNext() * 7) >> 16) << 19) +
+      FieldEffect_Spawn((((u32)(Random_Next() * 7) >> 16) << 19) +
                             px(768),
                         0, px(48) + row * px(16) + particleIndex * px(4), 0, 0,
                         0, EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
@@ -3316,16 +3316,16 @@ static void VenusLighthouse_SpawnRandomParticles(s32 x, s32 z) {
 
   options.startScaleX = 7 * Q16_ONE / 10;
   options.startScaleY = 7 * Q16_ONE / 10;
-  options.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
+  options.spin = ((u32)Random_Next() * 4096 >> 16) + 0xf800;
   if ((gFrameCount & 3) == 0) {
-    if (((u32)(Import_RandomNext() << 1) >> 16) != 0) {
+    if (((u32)Random_Next() * 2 >> 16) != 0) {
       FieldEffect_Spawn(
-          (x + (((u32)(Import_RandomNext() << 1) >> 16) << 4)) << 16, 0,
+          (x + (((u32)Random_Next() * 2 >> 16) << 4)) << 16, 0,
           z << 19, 0, 0,
-          (s32)((((u32)(Import_RandomNext() * 5) >> 16) << 16) + px(7)) / 10,
+          (s32)((((u32)(Random_Next() * 5) >> 16) << 16) + px(7)) / 10,
           EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
     } else {
-      FieldEffect_Spawn((x + ((u32)(Import_RandomNext() * 17) >> 16)) << 16, 0,
+      FieldEffect_Spawn((x + ((u32)(Random_Next() * 17) >> 16)) << 16, 0,
                         (x << 19) - px(4), 0, 0, 0,
                         EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
     }
@@ -3383,7 +3383,7 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
     particleZ = px(192);
     for (particleIndex = 0, zero = 0, particleZ += rowOffset;
          particleIndex <= 3; particleIndex++) {
-      FieldEffect_Spawn((((u32)(Import_RandomNext() * 7) >> 16) << 19) +
+      FieldEffect_Spawn((((u32)(Random_Next() * 7) >> 16) << 19) +
                             px(416),
                         0, particleZ, 0, zero, zero,
                         EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, options);
@@ -3455,7 +3455,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
     particleZ = px(192);
     for (particleIndex = 0, zero = 0, particleZ += rowOffset;
          particleIndex <= 3; particleIndex++) {
-      FieldEffect_Spawn((((u32)(Import_RandomNext() * 7) >> 16) << 19) +
+      FieldEffect_Spawn((((u32)(Random_Next() * 7) >> 16) << 19) +
                             px(544),
                         0, particleZ, 0, zero, zero,
                         EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, options);
@@ -3497,12 +3497,12 @@ static UNREAD_RESULT VenusLighthouse_UpdateRisingSpray(struct Actor *actor) {
       Sound_Play(SE_GLITTER);
     }
     particleX =
-        actor->x.fixed + ((((u32)(Import_RandomNext() * 49) >> 16) - 24) << 16);
+        actor->x.fixed + ((((u32)(Random_Next() * 49) >> 16) - 24) << 16);
     particleY =
-        actor->y.fixed + ((((u32)(Import_RandomNext() * 49) >> 16) - 24) << 16);
+        actor->y.fixed + ((((u32)(Random_Next() * 49) >> 16) - 24) << 16);
     particleZ =
-        actor->z.fixed + ((((u32)(Import_RandomNext() * 49) >> 16) - 24) << 16);
-    riseSpeed = (((u32)(Import_RandomNext() * 4) >> 16) << 15) + px(1) / 2;
+        actor->z.fixed + ((((u32)(Random_Next() * 49) >> 16) - 24) << 16);
+    riseSpeed = (((u32)(Random_Next() * 4) >> 16) << 15) + px(1) / 2;
     FieldEffect_Spawn(particleX, particleY, particleZ, 0, riseSpeed, framePhase,
                       EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_TYPE | EFFECT_USE_SCRIPT,

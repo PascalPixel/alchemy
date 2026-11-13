@@ -1027,8 +1027,8 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   if (anchor == NULL)
     return;
   // Pick a small offset around the anchor and create the drifting sprite there.
-  x = Import_RandomNext();
-  z = Import_RandomNext();
+  x = Random_Next();
+  z = Random_Next();
   x <<= 3;
   x = (u32)x >> 16;
   z <<= 3;
@@ -1052,7 +1052,7 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   if (sprite == NULL)
     return;
 #endif
-  switch (Import_RandomNext() & 1) {
+  switch (Random_Next() & 1) {
   case 1:
     Actor_SelectAnimation(effect, 3);
     Actor_StartScript(effect, gVault_DriftScriptA);
@@ -1068,7 +1068,7 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     s32 driftMultiplier;
     s32 directionBias;
 
-    driftMultiplier = (u32)Import_RandomNext() % 10 + 5;
+    driftMultiplier = (u32)Random_Next() % 10 + 5;
     // x, done with once the effect is placed, carries the 1.
     x = 1;
     flags &= x;
@@ -1077,16 +1077,16 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     driftMultiplier += directionBias;
     effect->acceleration =
         (2 * VAULT_DRIFT_RATE * flags - VAULT_DRIFT_RATE) * driftMultiplier;
-    driftMultiplier = (u32)Import_RandomNext() % 15 - 7;
+    driftMultiplier = (u32)Random_Next() % 15 - 7;
     effect->speedLimit = VAULT_DRIFT_RATE * driftMultiplier;
     effect->timer = 0;
   } else {
     s32 driftMultiplier;
 
-    driftMultiplier = (u32)Import_RandomNext() % 10 + 8;
+    driftMultiplier = (u32)Random_Next() % 10 + 8;
     effect->speedLimit =
         (2 * VAULT_DRIFT_RATE * flags - VAULT_DRIFT_RATE) * driftMultiplier;
-    driftMultiplier = (u32)Import_RandomNext() % 14 + 1;
+    driftMultiplier = (u32)Random_Next() % 14 + 1;
     effect->acceleration = VAULT_DRIFT_RATE * driftMultiplier;
     effect->timer = 1;
   }

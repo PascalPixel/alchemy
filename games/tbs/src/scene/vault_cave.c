@@ -695,7 +695,7 @@ static void VaultCave_RunRumble(void) {
   Sound_Play(SE_RUSH);
   // Scroll and shake for 480 frames before the final fade.
   for (frame = 0; frame < 480; frame++) {
-    u32 scrollDrift = (u32)(Random_Next() << 11) >> 16;
+    u32 scrollDrift = (u32)Random_Next() * 2048 >> 16;
 
     layer->phaseY = (double)layer->phaseY - (4718.592 - (double)scrollDrift);
     Event_Wait(1);
@@ -849,7 +849,7 @@ static void VaultCave_UpdateFrostControlledFallingActors(void) {
     // Preserve one random selection per 64 frames.
     if ((++gVaultCave_DropFrames & 63) == 0) {
       selectedIndex = &gVaultCave_SelectedDrop;
-      stateValue = Import_RandomNext();
+      stateValue = Random_Next();
       stateValue = Math_RemainderUnsigned(stateValue, 6);
       *selectedIndex = stateValue;
       fallingActor = Actor_Get((stateValue + ACTOR_FIRST_WATER_DROP));
@@ -913,9 +913,9 @@ static void VaultCave_SpawnPuffs(struct Actor *source) {
     puff->scaleX = 11 * Q16_ONE / 20;
     puff->motionFlags = ACTOR_FALLS;
     puff->velocityY = -px(1);
-    puff->speedLimit = Import_RandomNext() + px(4) / 5;
+    puff->speedLimit = Random_Next() + px(4) / 5;
     puff->collisionFlags = ACTOR_SOLID;
-    VaultCave_OffsetActorRadially(puff, px(32), Import_RandomNext());
+    VaultCave_OffsetActorRadially(puff, px(32), Random_Next());
     puff->wait = 8;
     Actor_StartScript(puff, gVaultCave_PuffScript);
   }

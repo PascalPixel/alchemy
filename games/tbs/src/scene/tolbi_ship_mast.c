@@ -206,7 +206,7 @@ static s32 TolbiShipMast_FollowCameraAndRotate(struct Actor *actor) {
 
 /// A random sample of 6 or 9 turns the lookout to either side of north.
 static s32 TolbiShipMast_RandomizeLookoutFacing(struct Actor *actor) {
-  u32 sample = (u32)(Import_RandomNext() << 6) >> 16;
+  u32 sample = (u32)Random_Next() * 64 >> 16;
 
   if (sample == 6) {
     actor->facing = FACING_NORTH_NORTHEAST;
@@ -239,12 +239,12 @@ static s32 TolbiShipMast_SwayActor(struct Actor *actor) {
   if (actor->timer == SWAY_HELD) {
     actor->riseBaseY = 0;
   } else if (actor->timer != SWAY_INCREASING) {
-    actor->riseBaseY -= (u32)(Import_RandomNext() << 11) >> 16;
+    actor->riseBaseY -= (u32)Random_Next() * 2048 >> 16;
     if (actor->riseBaseY < -px(3) / 4) {
       actor->timer = SWAY_INCREASING;
     }
   } else {
-    actor->riseBaseY += (u32)(Import_RandomNext() << 11) >> 16;
+    actor->riseBaseY += (u32)Random_Next() * 2048 >> 16;
     if (actor->riseBaseY > px(3) / 4) {
       actor->timer = SWAY_DECREASING;
     }
@@ -257,12 +257,12 @@ static s32 TolbiShipMast_SwayActor(struct Actor *actor) {
   if ((s16)actor->userValue == SWAY_HELD) {
     actor->y.fixed = 0;
   } else if ((s16)actor->userValue != SWAY_INCREASING) {
-    actor->y.fixed -= ((u32)Import_RandomNext() * 3 << 14) >> 16;
+    actor->y.fixed -= ((u32)Random_Next() * 3 << 14) >> 16;
     if (actor->y.fixed < 0) {
       actor->userValue = SWAY_INCREASING;
     }
   } else {
-    actor->y.fixed += ((u32)Import_RandomNext() * 3 << 14) >> 16;
+    actor->y.fixed += ((u32)Random_Next() * 3 << 14) >> 16;
     if (actor->y.fixed > px(16)) {
       actor->userValue = SWAY_DECREASING;
     }
@@ -348,8 +348,8 @@ s32 TolbiShipMast_Initialize(void) {
        GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) &&
       GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0 &&
       GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND) == 0) {
-    gTolbiShipMast_SwayX = (u16)Import_RandomNext();
-    gTolbiShipMast_SwayY = (u16)Import_RandomNext();
+    gTolbiShipMast_SwayX = (u16)Random_Next();
+    gTolbiShipMast_SwayY = (u16)Random_Next();
     Task_AddFrame(TolbiShipMast_UpdateSway, TASK_PASS_FRAME);
   }
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0 &&
@@ -677,15 +677,15 @@ static void TolbiShipMast_InitializeDriftingActor(s32 actorId) {
   actor = Actor_Get(actorId);
   Actor_SetSpritePriority(actorId, 1);
   actor->motionFlags = 0;
-  actor->timer = (u32)Import_RandomNext() >> 15;
-  actor->userValue = (u32)Import_RandomNext() >> 15;
-  randomValue = Import_RandomNext();
+  actor->timer = (u32)Random_Next() >> 15;
+  actor->userValue = (u32)Random_Next() >> 15;
+  randomValue = Random_Next();
   randomValue <<= 2;
   randomValue >>= 16;
   randomValue <<= 16;
   randomValue += px(6);
   actor->y.fixed = randomValue;
-  randomValue = Import_RandomNext();
+  randomValue = Random_Next();
   actor->riseBaseY = ((randomValue * 3 << 13) >> 16) - px(3) / 16;
   actor->scaleX = 5 * Q16_ONE / 4;
   actor->scaleY = 5 * Q16_ONE / 4;
@@ -866,8 +866,8 @@ static void TolbiShipMast_UpdateSway(void) {
   *camera += swayY;
   gTolbiShipMast_DriftX += swayX;
   gTolbiShipMast_DriftY += swayY;
-  gTolbiShipMast_SwayX += (u32)(Import_RandomNext() * 3 << 7) >> 16;
-  gTolbiShipMast_SwayY += (u32)(Import_RandomNext() << 9) >> 16;
+  gTolbiShipMast_SwayX += (u32)(Random_Next() * 3 << 7) >> 16;
+  gTolbiShipMast_SwayY += (u32)Random_Next() * 512 >> 16;
   gTolbiShipMast_SwayX &= 0xffff;
   gTolbiShipMast_SwayY &= 0xffff;
 }

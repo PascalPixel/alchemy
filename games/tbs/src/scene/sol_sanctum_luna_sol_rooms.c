@@ -790,7 +790,7 @@ static void SolSanctumLunaSolRooms_UpdateFirstFallingLight(void) {
 #define SOL_SANCTUM_FALLING_LIGHT(name, timer, staging, column, top, cleared,  \
                                   restart)                                     \
   static void name(void) {                                                     \
-    if ((Import_RandomNext() & 3) != 0) {                                      \
+    if ((Random_Next() & 3) != 0) {                                      \
       switch (timer) {                                                         \
       case 0:                                                                  \
         Sound_Play(SE_FALLING_LIGHT);                                          \
@@ -814,7 +814,7 @@ static void SolSanctumLunaSolRooms_UpdateFirstFallingLight(void) {
         break;                                                                 \
       }                                                                        \
       timer++;                                                                 \
-      if (timer > ((u32)(Import_RandomNext() * 40) >> 16) + (restart)) {       \
+      if (timer > ((u32)(Random_Next() * 40) >> 16) + (restart)) {       \
         timer = 0;                                                             \
       }                                                                        \
     }                                                                          \
@@ -969,13 +969,13 @@ static void SolSanctumLunaSolRooms_SpringTrap(void) {
                                             6);
   // Each light starts falling after 20 to 79 frames.
   gSolSanctumLunaSolRooms_Light1Timer =
-      (((u32)Import_RandomNext() * 60) >> 16) + 20;
+      (((u32)Random_Next() * 60) >> 16) + 20;
   gSolSanctumLunaSolRooms_Light2Timer =
-      (((u32)Import_RandomNext() * 60) >> 16) + 20;
+      (((u32)Random_Next() * 60) >> 16) + 20;
   gSolSanctumLunaSolRooms_Light3Timer =
-      (((u32)Import_RandomNext() * 60) >> 16) + 20;
+      (((u32)Random_Next() * 60) >> 16) + 20;
   gSolSanctumLunaSolRooms_Light4Timer =
-      (((u32)Import_RandomNext() * 60) >> 16) + 20;
+      (((u32)Random_Next() * 60) >> 16) + 20;
   gSolSanctumLunaSolRooms_FlashState = 0;
   // Run the falling lights independently while the quarters keep flashing.
   Task_AddFrame(SolSanctumLunaSolRooms_UpdateFirstFallingLight,

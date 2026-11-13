@@ -3117,11 +3117,11 @@ static void Vale_TrailSparkles(struct Actor *source) {
   s32 randomDistance;
   struct Actor *particle;
   SET_VECTOR(spawnPosition, source->x.fixed,
-             source->y.fixed - (Import_RandomNext() << 4) - px(8),
+             source->y.fixed - (Random_Next() << 4) - px(8),
              source->z.fixed);
-  randomDistance = Import_RandomNext();
+  randomDistance = Random_Next();
   Vector_AddPolarOffset(((randomDistance << 1) + randomDistance) << 4,
-                        Import_RandomNext(), spawnPosition);
+                        Random_Next(), spawnPosition);
   particle = FieldActor_Create(SPRITE_SPARKLE, spawnPosition[0],
                                spawnPosition[1], spawnPosition[2]);
   if (particle != 0) {
@@ -3161,17 +3161,17 @@ static void Vale_VanishMoveHand(struct Actor *emitter) {
       Actor_SetSpriteFlags(particle, 0);
       Actor_StartScript(particle, (const void *)&gVale_SparkleScript[1]);
 
-      verticalSpeed = Import_RandomNext() + px(1);
+      verticalSpeed = Random_Next() + px(1);
       particle->acceleration = Q16_ONE;
       particle->speedLimit = verticalSpeed;
       particle->motionFlags = ACTOR_FALLS;
       particle->gravity = px(1) / 25;
 
-      particle->velocityY = Import_RandomNext() - Import_RandomNext();
+      particle->velocityY = Random_Next() - Random_Next();
 
       Actor_SetTargetPositionFromMagnitudeAngle(
-          particle, ((Import_RandomNext() * 3) << 3) + px(8),
-          Import_RandomNext());
+          particle, ((Random_Next() * 3) << 3) + px(8),
+          Random_Next());
     }
   }
 

@@ -2047,20 +2047,20 @@ static void Sanctum_SpawnActorSpark(s32 id) {
   actor = Actor_Get(id);
   if (actor == 0)
     return;
-  randomOffset = Math_RemainderUnsigned(Import_RandomNext(), 20);
+  randomOffset = Math_RemainderUnsigned(Random_Next(), 20);
   x = actor->x.fixed;
   x += randomOffset << 16;
   x -= px(10);
   spark = FieldActor_Create(SPRITE_GLINT, x,
                             actor->y.fixed +
-                                ((Import_RandomNext() & 15) << 16) + -px(8),
+                                ((Random_Next() & 15) << 16) + -px(8),
                             actor->z.fixed);
   if (spark == 0)
     return;
   sprite = spark->sprite;
   spark->motionFlags = 0;
-  spark->timer = Math_RemainderUnsigned(Import_RandomNext(), 10) + 5;
-  spark->userValue = Math_RemainderUnsigned(Import_RandomNext(), 60) + 30;
+  spark->timer = Math_RemainderUnsigned(Random_Next(), 10) + 5;
+  spark->userValue = Math_RemainderUnsigned(Random_Next(), 60) + 30;
   spark->update = Sanctum_UpdateRisingSpark;
   sprite->flags = 0;
   sprite->image.priority = actor->sprite->image.priority;

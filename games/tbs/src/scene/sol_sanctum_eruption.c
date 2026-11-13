@@ -789,7 +789,7 @@ static void SolSanctumEruption_StepEmbers(void) {
   if (gEmberMask & gFrameCount)
     return;
   for (emberIndex = 0; emberIndex < 16; emberIndex++) {
-    angle = Math_RemainderUnsigned(Import_RandomNext(), 0xffff);
+    angle = Math_RemainderUnsigned(Random_Next(), 0xffff);
     ember = Actor_Get(emberIndex + 16);
     if (gEmberState[emberIndex] == 0) {
       if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING) == 0)
@@ -804,19 +804,19 @@ static void SolSanctumEruption_StepEmbers(void) {
       Actor_StartScript(ember, gEruption_EmberScript);
       ember->x.fixed =
           Iwram_MulQ16(Trig_Cos((u16)angle),
-                       (((u32)(Import_RandomNext() << 8) >> 16) << 16) +
+                       (((u32)Random_Next() * 256 >> 16) << 16) +
                            px(256)) +
           px(325);
       ember->y.fixed = 0;
       ember->z.fixed =
           Iwram_MulQ16(Trig_Sin((u16)angle),
-                       (((u32)(Import_RandomNext() << 8) >> 16) << 16) +
+                       (((u32)Random_Next() * 256 >> 16) << 16) +
                            px(256)) +
           px(302);
       x = Iwram_MulQ16(Trig_Cos((u16)angle),
-                       ((Import_RandomNext() & 63) << 16) + px(8));
+                       ((Random_Next() & 63) << 16) + px(8));
       z = Iwram_MulQ16(Trig_Sin((u16)angle),
-                       ((Import_RandomNext() & 63) << 16) + px(8));
+                       ((Random_Next() & 63) << 16) + px(8));
       FieldActor_SetMoveTargetFixed(ember, x + px(325), 0, z + px(286));
       Actor_SetSpriteColor(ember, SPRITE_COLOR_NORMAL);
       gEmberTimer = 30;
@@ -838,25 +838,25 @@ static void SolSanctumEruption_UpdateEmberFrequency(void) {
   if (gEmberLevel != 0) {
     gEmberLevel--;
   } else {
-    gEmberLevel = (u32)(Import_RandomNext() << 2) >> 16;
+    gEmberLevel = (u32)Random_Next() * 4 >> 16;
   }
   emissionLevel = gEmberLevel;
   switch (emissionLevel) {
   case 3:
     gEmberMask = emissionLevel;
-    gEmberLevelTimer = ((u32)(Import_RandomNext() * 20) >> 16) + 40;
+    gEmberLevelTimer = ((u32)(Random_Next() * 20) >> 16) + 40;
     break;
   case 2:
     gEmberMask = 15;
-    gEmberLevelTimer = ((u32)(Import_RandomNext() * 40) >> 16) + 80;
+    gEmberLevelTimer = ((u32)(Random_Next() * 40) >> 16) + 80;
     break;
   case 1:
     gEmberMask = 63;
-    gEmberLevelTimer = ((u32)(Import_RandomNext() * 80) >> 16) + 160;
+    gEmberLevelTimer = ((u32)(Random_Next() * 80) >> 16) + 160;
     break;
   default:
     gEmberMask = 127;
-    gEmberLevelTimer = ((u32)(Import_RandomNext() * 160) >> 16) + 320;
+    gEmberLevelTimer = ((u32)(Random_Next() * 160) >> 16) + 320;
     break;
   }
 }
@@ -1597,7 +1597,7 @@ static void SolSanctumEruption_DrawSecondCollapseTiles(s32 alternate) {
 /// it.
 static void SolSanctumEruption_FlickerFirstCollapseTiles(void) {
   if ((gFrameCount & 1) == 0) {
-    if ((u32)Math_RemainderUnsigned(Import_RandomNext(), 100) > 50) {
+    if ((u32)Math_RemainderUnsigned(Random_Next(), 100) > 50) {
       SolSanctumEruption_DrawFirstCollapseTiles(1);
     } else {
       SolSanctumEruption_DrawFirstCollapseTiles(0);
@@ -1608,7 +1608,7 @@ static void SolSanctumEruption_FlickerFirstCollapseTiles(void) {
 /// Randomly alternates the second tile patch on even frames, as the first.
 static void SolSanctumEruption_FlickerSecondCollapseTiles(void) {
   if ((gFrameCount & 1) == 0) {
-    if ((u32)Math_RemainderUnsigned(Import_RandomNext(), 100) > 50) {
+    if ((u32)Math_RemainderUnsigned(Random_Next(), 100) > 50) {
       SolSanctumEruption_DrawSecondCollapseTiles(1);
     } else {
       SolSanctumEruption_DrawSecondCollapseTiles(0);

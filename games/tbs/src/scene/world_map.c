@@ -466,7 +466,7 @@ static void WorldMap_MeetVine(void) {
 
   if (gMainRoutineWork.encounterSteps >=
       Math_Divide(work->encounterThreshold * 9, 10)) {
-    if ((u32)Import_RandomNext() < 32768) {
+    if ((u32)Random_Next() < 32768) {
       Field_RequestDjinnBattle(DJINN_NO_HOP | ACTOR_VENUS_DJINNI, DJINNI_VINE);
       work->encounterBias = 0;
     } else {
@@ -2500,15 +2500,15 @@ static void WorldMap_ShakeVenusLighthouse(void) {
 /// spot in the QUAKE_DUST box, and every third frame moves the camera a pixel
 /// to one of four points around the lighthouse.
 static void WorldMap_UpdateLighthouseQuake(void) {
-  u32 x = (u32)Import_RandomNext() * QUAKE_DUST_WIDTH >> 16;
-  u32 z = (u32)Import_RandomNext() * QUAKE_DUST_DEPTH >> 16;
+  u32 x = (u32)Random_Next() * QUAKE_DUST_WIDTH >> 16;
+  u32 z = (u32)Random_Next() * QUAKE_DUST_DEPTH >> 16;
   struct Actor *actor;
 
   actor = FieldActor_Create(SPRITE_DUST_PUFF, px(x) + px(QUAKE_DUST_LEFT), 0,
                             px(z) + px(QUAKE_DUST_TOP));
   if (actor != NULL) {
     struct Sprite *sprite = actor->sprite;
-    s32 scale = (((u32)Import_RandomNext() << 15) >> 16) + 6 * Q16_ONE / 5;
+    s32 scale = ((u32)Random_Next() * 32768 >> 16) + 6 * Q16_ONE / 5;
 
     sprite->flags = 0;
     sprite->image.priority = 2;
@@ -2519,7 +2519,7 @@ static void WorldMap_UpdateLighthouseQuake(void) {
     Actor_StartScript(actor, gQuakeDustScript);
   }
   if (gFrameCount % 3 == 0) {
-    switch (((u32)Import_RandomNext() << 2) >> 16) {
+    switch ((u32)Random_Next() * 4 >> 16) {
     case 0:
       FieldCamera_MoveTo(6087, CAMERA_KEEP, 3177, 1);
       break;
@@ -2638,13 +2638,13 @@ static void WorldMap_SpawnIslandWake(void) {
   puff->scaleY = Q16_ONE / 2;
   sprite = puff->sprite;
   // Up to 48 pixels behind the island, or up to 32 to the side.
-  if (((u32)Import_RandomNext() * 2 >> 16) != 0) {
-    s32 behind = px(((u32)Import_RandomNext() * 48) >> 16);
+  if (((u32)Random_Next() * 2 >> 16) != 0) {
+    s32 behind = px(((u32)Random_Next() * 48) >> 16);
 
     puff->x.fixed -= behind / 2;
     puff->z.fixed -= behind;
   } else {
-    distance = px(((u32)Import_RandomNext() << 5) >> 16);
+    distance = px((u32)Random_Next() * 32 >> 16);
     puff->x.fixed += distance;
     distance /= 2;
     puff->z.fixed += distance;
@@ -2865,7 +2865,7 @@ static void WorldMap_JitterTransitionCamera(void) {
   sx = actor->x.part.pixel;
   sy = actor->z.part.pixel;
   if (gFrameCount % 3 == 0) {
-    mode = (u32)(Random_Next() << 2) >> 16;
+    mode = (u32)Random_Next() * 4 >> 16;
     switch (mode) {
     case 0:
       FieldCamera_MoveToFixed(px(sx) - px(1), CAMERA_KEEP, px(sy) + px(1), 1);

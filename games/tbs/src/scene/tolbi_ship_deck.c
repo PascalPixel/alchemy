@@ -434,7 +434,7 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
             Actor_FaceDirection(warrior, FACING_NORTH_NORTHEAST, 0);           \
           else                                                                 \
             Actor_FaceDirection(warrior, FACING_NORTH_NORTHWEST, 0);           \
-          if (((u32)Import_RandomNext() << 2) >> 16 != 0) {                    \
+          if ((u32)Random_Next() * 4 >> 16 != 0) {                    \
             Actor_Get(warrior)->velocityY = px(2);                             \
           } else {                                                             \
             Actor_ShowEmote(warrior, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);    \
@@ -473,11 +473,11 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
       }                                                                        \
     } else {                                                                   \
       if (actor->timer != 0) {                                                 \
-        actor->riseBaseY -= ((u32)Import_RandomNext() << 12) >> 16;            \
+        actor->riseBaseY -= (u32)Random_Next() * 4096 >> 16;            \
         if (actor->riseBaseY < -px(1) / 4)                                     \
           actor->timer = 0;                                                    \
       } else {                                                                 \
-        actor->riseBaseY += ((u32)Import_RandomNext() << 12) >> 16;            \
+        actor->riseBaseY += (u32)Random_Next() * 4096 >> 16;            \
         if (actor->riseBaseY > px(1) / 4)                                      \
           actor->timer = 1;                                                    \
       }                                                                        \
@@ -485,17 +485,17 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
         actor->x.fixed += actor->riseBaseY;                                    \
       if ((s16)actor->userValue != 0) {                                        \
         actor->y.fixed = actor->y.fixed -                                      \
-                         (((u32)Import_RandomNext() << 15) >> 16) - px(1) / 2; \
+                         ((u32)Random_Next() * 32768 >> 16) - px(1) / 2; \
         if (actor->y.fixed < 0)                                                \
           actor->userValue = 0;                                                \
       } else {                                                                 \
         actor->y.fixed = actor->y.fixed +                                      \
-                         (((u32)Import_RandomNext() << 15) >> 16) + px(1) / 2; \
+                         ((u32)Random_Next() * 32768 >> 16) + px(1) / 2; \
         if (actor->y.fixed > px(8))                                            \
           actor->userValue = 1;                                                \
       }                                                                        \
     }                                                                          \
-    if (((u32)Import_RandomNext() * 100) >> 16 == 0)                           \
+    if (((u32)Random_Next() * 100) >> 16 == 0)                           \
       actor->riseCounter = 1;                                                  \
     return 1;                                                                  \
   }
@@ -535,12 +535,12 @@ static s32 sOarDepth[8];
 /// Returns 1.
 static s32 TolbiShipDeck_Bob(struct Actor *actor) {
   if ((s16)actor->userValue != 0) {
-    actor->y.fixed -= ((u32)(Import_RandomNext() << 15) >> 16) + px(1) / 2;
+    actor->y.fixed -= ((u32)Random_Next() * 32768 >> 16) + px(1) / 2;
     if (actor->y.fixed < px(4)) {
       actor->userValue = 0;
     }
   } else {
-    actor->y.fixed += ((u32)(Import_RandomNext() << 15) >> 16) + px(1) / 2;
+    actor->y.fixed += ((u32)Random_Next() * 32768 >> 16) + px(1) / 2;
     if (actor->y.fixed > px(12)) {
       actor->userValue = 1;
     }
@@ -553,7 +553,7 @@ static s32 TolbiShipDeck_Bob(struct Actor *actor) {
 ///
 /// Returns 1.
 static s32 TolbiShipDeck_LookAround(struct Actor *actor) {
-  u32 roll = ((u32)(Import_RandomNext() << 5)) >> 16;
+  u32 roll = (u32)Random_Next() * 32 >> 16;
 
   if (roll == 6)
     actor->facing = FACING_NORTH_NORTHEAST;
@@ -575,7 +575,7 @@ static s32 TolbiShipDeck_LookAround(struct Actor *actor) {
   static s32 name(struct Actor *actor) {                                       \
     switch (actor->timer) {                                                    \
     case 0:                                                                    \
-      if ((((u32)Import_RandomNext() * 40) >> 16) == 0) {                      \
+      if ((((u32)Random_Next() * 40) >> 16) == 0) {                      \
         actor->timer++;                                                        \
       }                                                                        \
       break;                                                                   \
@@ -603,7 +603,7 @@ static s32 TolbiShipDeck_LookAround(struct Actor *actor) {
         } else {                                                               \
           Actor_FaceDirection(warrior, clearFacing, 0);                        \
         }                                                                      \
-        if (((u32)Import_RandomNext() << 2) >> 16 != 0) {                      \
+        if ((u32)Random_Next() * 4 >> 16 != 0) {                      \
           Actor_Get(warrior)->velocityY = px(2);                               \
         } else {                                                               \
           Actor_ShowEmote(warrior, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);      \
@@ -652,7 +652,7 @@ TOLBI_SHIP_DECK_LEAP_AT(TolbiShipDeck_LeapAtSean, ACTOR_SEA_SEAN, 176, 696,
 ///
 /// Returns 1.
 static s32 TolbiShipDeck_RandomlyStartActorHop(struct Actor *actor) {
-  if ((((u32)(Import_RandomNext() * 40)) >> 16) == 0)
+  if ((((u32)(Random_Next() * 40)) >> 16) == 0)
     actor->velocityY = px(4);
   return 1;
 }
@@ -674,7 +674,7 @@ static s32 TolbiShipDeck_IdleTurn(struct Actor *actor) {
   if (actor->riseCounter != 0) {
     actor->riseCounter--;
   } else {
-    u32 roll = (u32)(Import_RandomNext() * 300) >> 16;
+    u32 roll = (u32)(Random_Next() * 300) >> 16;
 
     if (roll > 200) {
       actor->facing = FACING_NORTH_NORTHEAST;
@@ -683,7 +683,7 @@ static s32 TolbiShipDeck_IdleTurn(struct Actor *actor) {
     } else {
       actor->facing = FACING_EAST;
     }
-    actor->riseCounter = ((u32)(Import_RandomNext() * 80) >> 16) + 80;
+    actor->riseCounter = ((u32)(Random_Next() * 80) >> 16) + 80;
   }
   return 1;
 }
@@ -1147,8 +1147,8 @@ s32 TolbiShipDeck_Initialize(void) {
       ->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   sea->speedY = 0;
-  sSwayAngleX = (u16)Import_RandomNext();
-  sSwayAngleY = (u16)Import_RandomNext();
+  sSwayAngleX = (u16)Random_Next();
+  sSwayAngleY = (u16)Random_Next();
   sSeaScroll[0] = 0;
   sSeaScroll[1] = 0;
   sSeaSpeed[0] = 0;
@@ -1278,12 +1278,12 @@ static void TolbiShipDeck_PlaceWaitingPassengers(void) {
     Actor_SetPosition(ACTOR_KALAY_CREW_MEMBER, 264, 702);
     Actor_Get(ACTOR_KALAY_CREW_MEMBER)->facing = FACING_SOUTH_SOUTHWEST;
     actor = Actor_Get(ACTOR_KALAY_CREW_MEMBER);
-    actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+    actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
     Actor_SetScript(ACTOR_KALAY_CREW_MEMBER,
                     gTolbiShipDeck_SquashAndStretchActions);
     Actor_SetPosition(ACTOR_KALAY_TOUR_GUIDE, 248, 680);
     actor = Actor_Get(ACTOR_KALAY_TOUR_GUIDE);
-    actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
+    actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
     Actor_SetScript(ACTOR_KALAY_TOUR_GUIDE,
                     gTolbiShipDeck_SquashAndStretchActions);
     Actor_SetPosition(ACTOR_KALAY_CAPTAIN, 0, 0);
@@ -2289,8 +2289,8 @@ static void TolbiShipDeck_RockDeck(void) {
 
   *origin++ += dx >> 1;
   *origin += dy;
-  sSwayAngleX += (u32)(Import_RandomNext() * 3 << 7) >> 16;
-  sSwayAngleY += (u32)(Import_RandomNext() << 9) >> 16;
+  sSwayAngleX += (u32)(Random_Next() * 3 << 7) >> 16;
+  sSwayAngleY += (u32)Random_Next() * 512 >> 16;
   sSwayAngleX &= 0xffff;
   sSwayAngleY &= 0xffff;
   layer = &grid->layers[MAPGRID_LAYER_GROUND];

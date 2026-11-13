@@ -220,7 +220,7 @@ struct BattleSpriteSlots {
 };
 
 struct ActionTargets {
-  u8 side;
+  u8 actorId;
   u8 count;
   u8 unk02;
   u8 ids[14];
@@ -229,10 +229,10 @@ struct ActionTargets {
   u8 stateC[14];
   u8 stateD[14];
   u16 value4a;
-  s32 message;
+  s32 abilityId;
   s32 value50;
   s32 value54;
-  s32 cue;
+  s32 presentationFlags;
   s32 unk5c;
   s32 extra;
   s32 unk64;

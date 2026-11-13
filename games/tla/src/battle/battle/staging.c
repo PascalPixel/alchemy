@@ -43,7 +43,11 @@ void Battle_TurnStartNoOp(void) {}
  * BattleAI_ChooseRandomTarget(s32 party). */
 extern s32 Func_0811f4d4__battle() __asm__("BattleAI_ChooseRandomTarget");
 
-void Func_0811d7e8(u16 *source, struct ActionTargets *targets) {
+/// The plan of an extra action queued for the turn's end (command 10): ability
+/// 403, Daedalus, from a random unit of the queuing side against every unit
+/// of the other, staged as a summon (0x8000 | 26).
+/// ★ Named from the game: "Daedalus" (MsgAbilityName + 403)
+void BattleStaging_PlanDaedalus(u16 *source, struct ActionTargets *targets) {
   u16 ids[10];
   s32 count;
   s32 i;
@@ -65,7 +69,7 @@ void Func_0811d7e8(u16 *source, struct ActionTargets *targets) {
     u16 *value;
 
     value = &targets->value4a;
-    targets->side = own;
+    targets->actorId = own;
     *value = half;
   }
   for (i = 0; i < count; i++) {
@@ -76,17 +80,20 @@ void Func_0811d7e8(u16 *source, struct ActionTargets *targets) {
     targets->stateD[i] = 1;
   }
   targets->count = count;
-  targets->message = 403;
-  targets->cue = 0x801a;
+  targets->abilityId = 403;
+  targets->presentationFlags = 0x801a;
 }
 
-void Func_0811d89c(struct ActionTargets *targets) {
+/// The plan of command 12: ability 103, High Impact, from the acting unit
+/// on every living unit of its own side.
+/// ★ Named from the game: "High Impact" (MsgAbilityName + 103)
+void BattleStaging_PlanHighImpact(struct ActionTargets *targets) {
   u16 ids[10];
   s32 count;
   s32 i;
   s32 side = 1;
 
-  if (targets->side > 7)
+  if (targets->actorId > 7)
     side = 2;
   count = BattleUnit_ListIds(side, ids);
   for (i = 0; i < count; i++) {
@@ -97,16 +104,19 @@ void Func_0811d89c(struct ActionTargets *targets) {
     targets->stateD[i] = 1;
   }
   targets->count = count;
-  targets->message = 103;
-  targets->cue = 0x10b5;
+  targets->abilityId = 103;
+  targets->presentationFlags = 0x10b5;
 }
 
-void Func_0811d914(struct ActionTargets *targets) {
+/// The plan of command 13: ability 298, Aurora Field, over the acting unit's
+/// whole side, reserves included for the party.
+/// ★ Named from the game: "Aurora Field" (MsgAbilityName + 298)
+void BattleStaging_PlanAuroraField(struct ActionTargets *targets) {
   u16 ids[10];
   s32 count;
   s32 i;
 
-  if (targets->side <= 7) {
+  if (targets->actorId <= 7) {
     count = BattleParty_PrepareMembers(ids);
     count += BattleParty_PrepareReserveOwners(&ids[count]);
   } else {
@@ -124,9 +134,9 @@ void Func_0811d914(struct ActionTargets *targets) {
     // constants; as a plain 0, 18 of 69 instructions differ in tla-en.
     s32 zero = 0;
 
-    targets->message = 298;
+    targets->abilityId = 298;
     targets->count = count;
-    targets->cue = 0x120b6;
+    targets->presentationFlags = 0x120b6;
     targets->extra = zero;
   }
 }
@@ -193,7 +203,8 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
     wait(delay);
   }
   if (request->command == 10) {
-    Func_0811d7e8((u16 *)request, (struct ActionTargets *)&battle->plan);
+    BattleStaging_PlanDaedalus((u16 *)request,
+                               (struct ActionTargets *)&battle->plan);
     /* FAKEMATCH(dead): an empty once-only block after the call, so the plan's
      * address is finished before request is copied to r0; without it, 2 of 421
      * instructions differ in tla-en. */
@@ -290,12 +301,12 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
         break;
       if (BattleParty_ListLivingUnits(2, 0) == 0)
         break;
-      Func_0811d89c((struct ActionTargets *)&battle->plan);
+      BattleStaging_PlanHighImpact((struct ActionTargets *)&battle->plan);
       BattleStaging_RunPsynergyCast(&battle->plan, 1);
       break;
     case 13:
       BattleStaging_HideField(&battle->plan, 1);
-      Func_0811d914((struct ActionTargets *)&battle->plan);
+      BattleStaging_PlanAuroraField((struct ActionTargets *)&battle->plan);
       BattleStaging_RunPsynergyCast(&battle->plan, 1);
       break;
     case 7:

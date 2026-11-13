@@ -31,7 +31,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 void Func_020001a0(s32 a, s32 b, s32 c);
 
-void Func_02000054(void) {
+void Test_ReceiveFlint(void) {
   s32 a1 = 13;
   s32 a2 = 14;
 
@@ -145,9 +145,12 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgMadraChampaBoat)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMadraSailorNotChampa)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgMadraWaveDamage)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMadraCannotEscapeBySea)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMadraBriggsNewShip)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgMadraPirateAttackParties)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 13, 0x203, EVENT(Func_02000054)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgMadraCannotEscapeBySea)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgMadraBriggsNewShip)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgMadraPirateAttackParties)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 13, 0x203, EVENT(Test_ReceiveFlint)},
     {TRIGGERS_END},
 };

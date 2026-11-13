@@ -45,8 +45,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 #include "field_event.h"
 
-
-void Func_02000090(struct Actor *self) {
+void Test_ReceiveGust(struct Actor *self) {
   struct Actor *centre = Actor_Get(31);
   u16 angle = self->timer;
   s32 sine;

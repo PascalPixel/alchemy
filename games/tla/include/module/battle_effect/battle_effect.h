@@ -280,7 +280,7 @@ extern u8 gPrism_ShardStarts[]; // ☀️ gPrism_ShardStarts: x, y for each shar
 
 void BattleEffect_SetupBlendedDisplay(void);
 
-void Func_08147aec(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode);
 
 void BattleEffect_PlaceFormationObjects(s32 formation, s32 x,
                                         s32 y); // ..PlaceFormationObjects

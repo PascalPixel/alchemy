@@ -15,7 +15,6 @@
 #include "module/scene/jupiter_lighthouse_entrance.h"
 #include "module/scene/scene.h"
 
-
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
@@ -30,7 +29,7 @@ void Func_0200146c();
 void Func_020014dc();
 
 DEFINE_FUNC_0200180C(Func_0200180c, gData_02002308, Func_0200146c,
-    Func_020014dc)
+                     Func_020014dc)
 
 #include "cell_target.h"
 
@@ -39,7 +38,7 @@ DEFINE_FUNC_020018BC(Func_020018bc, gData_02002308, Func_02001674)
 #include "scene_tables.h"
 #include "objcmd.h"
 
-void Func_02000054(void);
+void Test_ReceiveFlint(void);
 void Func_02000094(void);
 
 // clang-format off
@@ -67,7 +66,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {0x50008905, 30, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {0x50008905, 30, CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
     {0x50008905, 31, CONDITION_ALWAYS, EVENT(Func_02000074)},
     {0x50008905, 32, CONDITION_ALWAYS, EVENT(Func_02000094)},
     {0x50008905, 33, CONDITION_ALWAYS, EVENT(Func_020000b4)},

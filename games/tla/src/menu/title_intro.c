@@ -1047,12 +1047,9 @@ col:
   return result;
 }
 
-// Twin of The Broken Seal's Title_ShowCamelotLogo: the same resource, BG2
-// set-up, DMA copies, 120-frame tile cycle and A or Start exit. Ported from its
-// C: the `result` local (zero, stored to gBgScroll[2].y and returned), the one
-// buffer local and `* 1024 + buffer`.
-
-s32 Func_081a76f8(void) {
+/// As The Broken Seal's: the same resource, BG2 set-up, DMA copies, 120-frame
+/// tile cycle and A or Start exit.
+s32 Title_ShowCamelotLogo(void) {
   s32 result;
   u32 i;
   u8 *buffer;

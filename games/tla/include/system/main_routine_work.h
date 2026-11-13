@@ -32,8 +32,9 @@ struct MainRoutineWork {
   /// and entrance stand in for either.
   u16 pair1ee[2];
   u16 pair1f2[2]; ///< the defeat destination (scene, entrance); -1 for none
-  s16 special;    ///< the battle backdrop chosen for the scene or terrain
-  u8 unk1f8[2];   ///< not named by ⚓️ code
+  s16 battleBackground; ///< the battle background chosen for the scene or
+                        ///< terrain
+  u8 unk1f8[2];         ///< not named by ⚓️ code
   s16 map;
   s32 x; ///< the party's position on entering, as ☀️'s gMainRoutineWork
   s32 y;

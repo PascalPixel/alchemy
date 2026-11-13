@@ -418,31 +418,31 @@ gProcne_CellBiasY:
 	.global gProcne_Cells
 gProcne_Cells:
 	.2byte 13824, 14020, 14476
-@ The Broken Seal's table of this name; read by Func_08147aec
+@ The Broken Seal's table of this name; read by BattleEffect_RunDragonFire
 	.global gTiamat_DropSpeeds
 gTiamat_DropSpeeds:
 	.byte 0, 8, 12, 16
-@ read by Func_08147aec
+@ read by BattleEffect_RunDragonFire
 	.global Data_0819796c
 Data_0819796c:
 	.byte 32, 32
-@ The Broken Seal's table of this name; read by Func_08147aec
+@ The Broken Seal's table of this name; read by BattleEffect_RunDragonFire
 	.global gTiamat_DropSizes
 gTiamat_DropSizes:
 	.byte 1, 1, 2, 3
-@ The Broken Seal's gBattleEffect_PuffArcCellWidths; read by Func_08147aec
+@ The Broken Seal's gBattleEffect_PuffArcCellWidths; read by BattleEffect_RunDragonFire
 	.global Data_08197972
 Data_08197972:
 	.byte 24, 29, 30, 27, 24, 16
-@ The Broken Seal's gBattleEffect_PuffArcCellHeights; read by Func_08147aec
+@ The Broken Seal's gBattleEffect_PuffArcCellHeights; read by BattleEffect_RunDragonFire
 	.global Data_08197978
 Data_08197978:
 	.byte 23, 32, 37, 49, 53, 52
-@ The Broken Seal's table of this name; read by Func_08147aec
+@ The Broken Seal's table of this name; read by BattleEffect_RunDragonFire
 	.global gTiamat_StreakDrops
 gTiamat_StreakDrops:
 	.byte 41, 32, 26, 11, 4, 2
-@ The Broken Seal's gBattleEffect_PuffArcCells; read by Func_08147aec
+@ The Broken Seal's gBattleEffect_PuffArcCells; read by BattleEffect_RunDragonFire
 	.global Data_08197984
 Data_08197984:
 	.2byte 0, 552, 1480, 2590, 3913, 5185

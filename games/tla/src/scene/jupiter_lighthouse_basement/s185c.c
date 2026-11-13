@@ -30,7 +30,7 @@ void Func_02001654();
 void Func_020016c4();
 
 DEFINE_FUNC_0200180C(Func_020019f4, gData_020024f8, Func_02001654,
-    Func_020016c4)
+                     Func_020016c4)
 
 #include "cell_target.h"
 
@@ -39,7 +39,7 @@ DEFINE_FUNC_020018BC(Func_02001aa4, gData_020024f8, Func_0200185c)
 #include "scene_tables.h"
 #include "objcmd.h"
 
-void Func_02000054(void);
+void Test_ReceiveFlint(void);
 void Func_02000094(void);
 void Func_02000124(void);
 
@@ -76,7 +76,7 @@ struct Trigger gData_020022e8[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {0x50008905, 30, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {0x50008905, 30, CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
     {0x50008905, 31, CONDITION_ALWAYS, EVENT(Func_02000074)},
     {0x50008905, 32, CONDITION_ALWAYS, EVENT(Func_020000f8)},
     {0x50008905, 33, CONDITION_ALWAYS, EVENT(Func_02000118)},

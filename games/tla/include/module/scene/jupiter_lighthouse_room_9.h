@@ -28,7 +28,7 @@ extern struct CellTarget Data_02002764;
 
 void Func_020015d8(struct CellTarget *table, struct CellTargetEntry *entry);
 
-void Func_0200007c(void);
+void Test_ReceiveForge(void);
 
 void Func_02000538(void);
 

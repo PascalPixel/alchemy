@@ -22,7 +22,7 @@ void Func_02000038(struct Actor *object) {
   }
 }
 
-void Func_02000068(struct Actor *object) {
+void Test_ReceiveFizz(struct Actor *object) {
   if ((gFrameCount >> 1) & 1)
     Actor_SetSpriteColor(object, 15);
   else
@@ -927,7 +927,7 @@ L_02009638:
   Actor_SetAnimation(2, 3);
   FieldActor_SetAnimationAndWait(3, 3);
   Event_PlaySound(78);
-  FIELD_AT(actor, s32, 108) = (s32)Func_02000068;
+  FIELD_AT(actor, s32, 108) = (s32)Test_ReceiveFizz;
   Actor_SetScript(18, (s32)gData_02005c70);
   PaletteFade_ApplyTarget(0x10001, 1);
   PaletteFade_Interpolate(20);

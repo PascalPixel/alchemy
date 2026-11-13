@@ -7,5 +7,5 @@ Resource_FarCall00B:
 	export Data_081a786cFar, Data_081a786c
 	export Title_NoOpPaletteFar, Title_NoOpPalette
 	export Title_ShowSplashScreenFar, Title_ShowSplashScreen
-	export Func_081a6020, Func_081a76f8
+	export Func_081a6020, Title_ShowCamelotLogo
 	export Func_081a6028, Func_081a71c8

@@ -213,7 +213,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   do {
     Iwram_FillWordsEntry(Ram_HeapSlots->unk84[4], 12, 0);
   } while (0);
-  battle->background = Event_GetSpecialValueFar();
+  battle->background = BattleBackground_GetSelectedFar();
   HeapSlot_AllocEwram(16, 0xe00);
   HeapSlot_AllocEwram(12, 0x600);
   ObjectSystem_InitializeFar(4);

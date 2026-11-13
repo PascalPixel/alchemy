@@ -118,5 +118,5 @@ Resource_FarCall003:
 	export VramBlock_Reset93Far, VramBlock_Reset93
 	export VramBlock_Load93Far, VramBlock_Load93
 	export Func_08020390, Func_0802a650
-	export Func_08020398, Func_0802de8c
+	export SpriteViewer_RunFar, SpriteViewer_Run
 	export Func_080203a0, Func_08026fc8

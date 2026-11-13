@@ -28,7 +28,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 void Func_020000b8(void);
 
-void Func_02000054(void) { Func_020000b8(); }
+void Test_ReceiveFlint(void) { Func_020000b8(); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
@@ -64,10 +64,12 @@ struct ActorPlacement gActorPlacements[] = {
 
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0xc400, 8, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {0xc400, 8, CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
     {TRIGGER_TALK, 8, 0x197f, MSGNO(MsgChampaTreasureEncouragesLaziness)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x197f, MSGNO(MsgChampaVillagersStoppedWorking)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x197f,
+     MSGNO(MsgChampaVillagersStoppedWorking)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgChampaCaptainLastHope)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgChampaNeedsCaptainTreasure)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgChampaNeedsCaptainTreasure)},
     {TRIGGERS_END},
 };

@@ -6,8 +6,8 @@
 
 #include "types.h"
 
-void Func_02000068(void);
+void Test_ReceiveFizz(void);
 
-void Func_0200007c(void);
+void Test_ReceiveForge(void);
 
 #endif

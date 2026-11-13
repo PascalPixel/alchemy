@@ -195,10 +195,10 @@ void Func_0200045c(void) {
 
 extern const u8 gData_020068b0[];
 
-void Func_02000090(void);
+void Test_ReceiveGust(void);
 
 /// Every third frame, or every frame once flag 0x201 is set, spawns a particle
-/// at a random height above object 31 that circles it (Func_02000090).
+/// at a random height above object 31 that circles it (Test_ReceiveGust).
 void Func_020004c8(void) {
   struct Actor *center;
   struct Actor *effect;
@@ -236,7 +236,7 @@ void Func_020004c8(void) {
     angle = Random16Far() & 0xffff000;
     effect->timer = angle;
     effect->unk66 = 0;
-    effect->update = Func_02000090;
+    effect->update = Test_ReceiveGust;
     effect->speedLimit =
         Math_Sin((u32)(Random16Far() * 0xffff) >> 20) * 24 >> 16;
     sprite->nextFrame = 0;

@@ -1154,7 +1154,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
 struct ArcObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 void Animation_ApplyChildArgumentFar(struct ArcSprite *sprite, s32 animation);
 
-void Func_080e1024(struct ArcObject *source) {
+void FieldEffect_SpawnDescendingArcParticles(struct ArcObject *source) {
   u8 *work = Ram_HeapSlots->effectWork;
   struct ArcObject *leader = *(struct ArcObject **)(work + 16);
   struct ArcObject *objects[2];
@@ -1232,9 +1232,9 @@ void BattleEffect_UpdatePairedArcSpawner(
 
   if (party->map == (s32)&SceneId_Ov64a) {
     if (elapsedFrames % 7 == 0)
-      Func_080e1024(caster);
+      FieldEffect_SpawnDescendingArcParticles(caster);
   } else if (elapsedFrames % 5 == 0) {
-    Func_080e1024(caster);
+    FieldEffect_SpawnDescendingArcParticles(caster);
   }
 
   if (phase == 1)

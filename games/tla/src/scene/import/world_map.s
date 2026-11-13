@@ -473,7 +473,7 @@ WorldMap_StartZoom:
 	.global Func_02004e00
 	.thumb_func
 Func_02004e00:
-	overlay_veneer Func_080c8640
+	overlay_veneer Event_WaitForZoomTransitionFar
 	.global Func_02004e08
 	.thumb_func
 Func_02004e08:

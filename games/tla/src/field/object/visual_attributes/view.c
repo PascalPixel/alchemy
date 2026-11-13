@@ -61,7 +61,7 @@ void WorldMap_StartZoom(s32 zoom, s32 frames) {
   Task_Add(WorldMap_StepZoom, TASK_PASS_VBLANK + 20);
 }
 
-void Func_080d4714(void) {
+void Event_WaitForZoomTransition(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 frames;
 

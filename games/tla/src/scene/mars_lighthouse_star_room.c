@@ -84,7 +84,7 @@ void Func_02000060(void) {
 
 void Func_02000074(void) { Func_020014f4(); }
 
-void Func_0200007c(void) {}
+void Test_ReceiveForge(void) {}
 
 #include "mars_lighthouse_star_room.h"
 #include "iwram_call.h"
@@ -361,7 +361,7 @@ void Func_020005b0(void) {
   FieldEvent_Wait(60);
   gMainRoutineWork.battleRule24b = 2;
   Event_SetAfterBattleDestination((s32)&SceneId_Ov6abRoom1, 20);
-  gMainRoutineWork.special = (s32)&SceneId_Ov66c;
+  gMainRoutineWork.battleBackground = (s32)&SceneId_Ov66c;
   Field_RequestBattleFromEncounterTable(102, 0);
 }
 
@@ -850,7 +850,7 @@ void Func_02000e80(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->actionFlags |= 1;
   Party_PlaySavedMusic();
   Event_SetFlag(0xa30);
-  gMainRoutineWork.special = (s32)&SceneId_Ov66d;
+  gMainRoutineWork.battleBackground = (s32)&SceneId_Ov66d;
   Event_End();
 }
 
@@ -1026,7 +1026,7 @@ L_0200905c:
   Party_PlaySavedMusic();
   Event_SetFlag(0xa30);
   Event_SetFlag(0xa9e);
-  gMainRoutineWork.special = (s32)&SceneId_Ov66d;
+  gMainRoutineWork.battleBackground = (s32)&SceneId_Ov66d;
   Event_End();
 L_020093b0:
   return;

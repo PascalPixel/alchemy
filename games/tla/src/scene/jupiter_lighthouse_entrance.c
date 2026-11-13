@@ -38,7 +38,9 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 #include "event_inline.h"
 s32 Func_02001b1c();
 
-void Func_02000054(void) { Call7(Func_02001b1c, 0x38, 0, 4, 2, 0x46, 0x13, 1); }
+void Test_ReceiveFlint(void) {
+  Call7(Func_02001b1c, 0x38, 0, 4, 2, 0x46, 0x13, 1);
+}
 
 void Func_02000074(void) { Call7(Func_02001b1c, 0x38, 0, 4, 2, 0x45, 0x16, 1); }
 
@@ -81,7 +83,6 @@ void Func_02000184(void) { Import_EventSetExitRequest(4); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-
 s32 Scene_Initialize(void) {
   s32 clear;
 
@@ -118,14 +119,14 @@ extern s32 gData_02002194;
 static inline void Counter_Set(s32 value) { gData_02002194 = value; }
 
 DEFINE_FUNC_02000238(Func_02000238, gData_02002194, gData_02002198,
-    gData_020021c0, 0x05000184)
+                     gData_020021c0, 0x05000184)
 
 #include "field_event.h"
 
 void Func_02001a6c();
 
 DEFINE_FUNC_020002F4(Func_020002f4, gData_02002198, gData_020021c0,
-    gData_020021e0, Func_02000238, gData_020021e4)
+                     gData_020021e0, Func_02000238, gData_020021e4)
 
 DEFINE_FUNC_02000378(Func_02000378, Func_02001a6c, Func_02001b34)
 

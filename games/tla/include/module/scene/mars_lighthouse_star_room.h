@@ -47,7 +47,7 @@ void Func_02000bd8(void);
 
 void Func_02000e80(void);
 
-void Func_0200007c(void);
+void Test_ReceiveForge(void);
 
 extern u32 gData_0200485c[];
 extern u32 gData_02004898[];

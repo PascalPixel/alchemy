@@ -363,7 +363,7 @@ extern const s16 gParty_PairResolveRules[];
 
 extern u8 Data_020004b8[];
 
-extern s32 gData_080ef984[];
+extern s32 gScene_BattleBackgroundRules[];
 
 extern char ResourceId_DragonHallABackdrop;
 extern char ResourceId_DragonHallBBackdrop;

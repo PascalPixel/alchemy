@@ -1801,7 +1801,7 @@ void Func_02005994(void) { Func_02005bcc(); }
 
 void Func_02000038(void);
 void Func_02000048(void);
-void Func_02000054(void);
+void Test_ReceiveFlint(void);
 void Func_020000c4(void);
 void Func_02000228(void);
 void Func_0200024c(void);
@@ -1922,7 +1922,7 @@ s32 gData_0200613c[] = {
     46,
     (s32)Func_02000048,
     46,
-    (s32)Func_02000054,
+    (s32)Test_ReceiveFlint,
 };
 
 s32 gData_0200614c[] = {

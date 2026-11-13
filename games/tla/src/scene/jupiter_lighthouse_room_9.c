@@ -35,16 +35,16 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 s32 Func_02001978();
 struct Actor *Func_02000910();
 
-void Func_02000054(void) {
+void Test_ReceiveFlint(void) {
   if (gMainRoutineWork.renderMode == 10)
     FieldMapGrid_SetCellBehavior(0x2200000, 0x1100000, 0, 255);
 }
 
-void Func_0200007c(void) {
+void Test_ReceiveForge(void) {
   MapGrid_SetCellBehavior(0x2200000, 0x1100000, 0, 6);
 }
 
-void Func_02000090(s32 id) {
+void Test_ReceiveGust(s32 id) {
   struct Actor *object;
 
   if (gData_02002618 == 0) {

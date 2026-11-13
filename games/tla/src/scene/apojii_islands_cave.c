@@ -34,7 +34,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 #include "event_inline.h"
 
-void Func_02000054(s32 a0, s32 a1) { GameFlag_SetBit((a1 + 0x8e1)); }
+void Test_ReceiveFlint(s32 a0, s32 a1) { GameFlag_SetBit((a1 + 0x8e1)); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
@@ -78,9 +78,9 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, 0x8e9, EVENT(Func_02000054)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 9, 0x8ea, EVENT(Func_02000054)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, 0x8eb, EVENT(Func_02000054)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, 0x8ec, EVENT(Func_02000054)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, 0x8e9, EVENT(Test_ReceiveFlint)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 9, 0x8ea, EVENT(Test_ReceiveFlint)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, 0x8eb, EVENT(Test_ReceiveFlint)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, 0x8ec, EVENT(Test_ReceiveFlint)},
     {TRIGGERS_END},
 };

@@ -39,7 +39,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_02000054(void) {
+void Test_ReceiveFlint(void) {
   s32 t0;
 
   t0 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
@@ -119,7 +119,7 @@ void Func_020000d0(s32 kind) {
   leader->terrainId = 0;
   leader->motionFlags = 3;
   FieldTask_Remove(Func_020000b4);
-  Func_02000054();
+  Test_ReceiveFlint();
   Event_End();
 }
 
@@ -199,7 +199,7 @@ spin:
   leader->y = 0x900000;
   leader->terrainHeight = 0x900000;
   FieldTask_Remove(Func_020000b4);
-  Func_02000054();
+  Test_ReceiveFlint();
   Event_End();
 }
 
@@ -396,7 +396,7 @@ s32 Scene_Initialize(void) {
   Io_Write16(0x1000, &REG_BLDALPHA);
   Func_02002314(0);
   Call4((void (*)())Func_02002324, (s32)gData_02002b60, 0, 0, 0x80000000);
-  Func_02000054();
+  Test_ReceiveFlint();
   Func_020007d0();
   if (Event_GetFlag(0xa02)) {
     Actor_SetPosition(17, 0, 0);

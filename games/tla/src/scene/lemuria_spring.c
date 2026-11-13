@@ -43,13 +43,16 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_02000054(void) {
+void Test_ReceiveFlint(void) {
   Message_ShowCentered((s32)MsgAndTheOthers, 1);
   Event_PlaySound(0x7e);
   Func_02001358(1);
 }
 
-/* VIEW(lemuria_spring): variable gData_02001678 as extern const u16 gData_02001678[]; the definition has u32 gData_02001678[] = { 0xa08090a, 0xc040b06, 0xe020d03, 0x10000f01, }; tried as the definition's extern u32 gData_02001678[], Func_02000070 moves: 2 of 40 instructions in tla-ja. */
+/* VIEW(lemuria_spring): variable gData_02001678 as extern const u16
+ * gData_02001678[]; the definition has u32 gData_02001678[] = { 0xa08090a,
+ * 0xc040b06, 0xe020d03, 0x10000f01, }; tried as the definition's extern u32
+ * gData_02001678[], Func_02000070 moves: 2 of 40 instructions in tla-ja. */
 extern const u16 gData_02001678__lemuria_spring[] __asm__("gData_02001678");
 
 static inline void RegSet(s32 value, s32 reg) {
@@ -943,9 +946,17 @@ void Func_02000904(void) {
 // ---- games/tla/src/scene/lemuria_spring/ride.c ----
 #include "task.h"
 
-/* VIEW(ride): variable gData_02001760 as extern struct SpringRide gData_02001760; lemuria_spring has extern struct SpringTossMotion gData_02001760; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_spring.c:958: `gData_02001760__ride' undeclared (first use in this function). */
+/* VIEW(ride): variable gData_02001760 as extern struct SpringRide
+ * gData_02001760; lemuria_spring has extern struct SpringTossMotion
+ * gData_02001760; tried as the rest of the object declares it, it does not
+ * compile in tla-ja: games/tla/src/scene/lemuria_spring.c:958:
+ * `gData_02001760__ride' undeclared (first use in this function). */
 extern struct SpringRide gData_02001760__ride __asm__("gData_02001760");
-/* VIEW(ride): variable gData_020017c0 as extern struct SpringObstacle__ride gData_020017c0[]; lemuria_spring has extern struct SpringObstacle gData_020017c0[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_spring.c:969: `gData_020017c0__ride' undeclared (first use in this function). */
+/* VIEW(ride): variable gData_020017c0 as extern struct SpringObstacle__ride
+ * gData_020017c0[]; lemuria_spring has extern struct SpringObstacle
+ * gData_020017c0[]; tried as the rest of the object declares it, it does not
+ * compile in tla-ja: games/tla/src/scene/lemuria_spring.c:969:
+ * `gData_020017c0__ride' undeclared (first use in this function). */
 extern struct SpringObstacle gData_020017c0__ride[] __asm__("gData_020017c0");
 
 void Func_02000904(void);
@@ -1014,40 +1025,40 @@ s32 Func_02001184(s32 side) {
   gData_02001824 = 0;
   ride->hold = 0xffff;
   for (gData_02001820 = 0;; gData_02001820++) {
-  if (gData_02001820 == 50)
-    Event_PlaySound(300);
-  if (gData_02001820 == 16) {
-    Actor_SetAnimation(gMainRoutineWork.currentOwner, 39);
-    ride->hold = 0;
-    ride->velocity.x = 0x14ccc;
-    ride->velocity.y = 0x40000;
-    ride->velocity.z = -0x20000;
-    ride->trail[0].x = 0x780000;
-    ride->trail[0].y = 0x100000;
-    ride->trail[0].z = 0x980000;
-    ride->frames = 300;
-    if (gData_020017b0 == 1) {
-      Func_020012e8(Actor_Get(16), 3);
-      Func_020012e8(Actor_Get(17), 0);
-      Func_020008f0(15, 1);
-      Func_020008f0(14, 1);
-      Func_020008f0(13, 1);
-    } else {
-      Func_020012e8(Actor_Get(11), 3);
-      Func_020012e8(Actor_Get(12), 0);
-      Func_020008f0(10, 1);
-      Func_020008f0(9, 1);
-      Func_020008f0(8, 1);
+    if (gData_02001820 == 50)
+      Event_PlaySound(300);
+    if (gData_02001820 == 16) {
+      Actor_SetAnimation(gMainRoutineWork.currentOwner, 39);
+      ride->hold = 0;
+      ride->velocity.x = 0x14ccc;
+      ride->velocity.y = 0x40000;
+      ride->velocity.z = -0x20000;
+      ride->trail[0].x = 0x780000;
+      ride->trail[0].y = 0x100000;
+      ride->trail[0].z = 0x980000;
+      ride->frames = 300;
+      if (gData_020017b0 == 1) {
+        Func_020012e8(Actor_Get(16), 3);
+        Func_020012e8(Actor_Get(17), 0);
+        Func_020008f0(15, 1);
+        Func_020008f0(14, 1);
+        Func_020008f0(13, 1);
+      } else {
+        Func_020012e8(Actor_Get(11), 3);
+        Func_020012e8(Actor_Get(12), 0);
+        Func_020008f0(10, 1);
+        Func_020008f0(9, 1);
+        Func_020008f0(8, 1);
+      }
     }
-  }
-  System_Wait(1);
-  if (gData_02001824 == 1)
-    break;
+    System_Wait(1);
+    if (gData_02001824 == 1)
+      break;
   }
   return gData_02001828;
 }
 
-void Func_02000054(void);
+void Test_ReceiveFlint(void);
 void Func_020000d0(void);
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -1100,7 +1111,7 @@ struct Trigger gSceneEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgIDLove)},
     {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgIRememberAn)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgHeHadSuch)},
-    {TRIGGER_EXAMINE, 25, 0x200, EVENT(Func_02000054)},
+    {TRIGGER_EXAMINE, 25, 0x200, EVENT(Test_ReceiveFlint)},
     {TRIGGER_EXAMINE, 80, CONDITION_ALWAYS, EVENT(Func_020000d0)},
     {TRIGGERS_END},
 };

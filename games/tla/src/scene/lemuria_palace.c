@@ -45,7 +45,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-void Func_02000054(struct DoorStep *step, s32 countdown, s32 unused) {
+void Test_ReceiveFlint(struct DoorStep *step, s32 countdown, s32 unused) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(158);
@@ -68,7 +68,7 @@ void Func_020000c8(s32 kind) {
     data += 8;
   if (kind == 16)
     data = gData_02002378;
-  Func_02000054(data, kind, 0);
+  Test_ReceiveFlint(data, kind, 0);
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }

@@ -104,7 +104,7 @@ s32 Resource_FarCall00E(s32 entrance);
 
 s32 Resource_FarCall00F(s32 entrance);
 
-void Func_080c9c38(s32 unused, s32 keep);
+void Scene_Arrive(s32 unused, s32 keep);
 void BattleEffect_LoadResourceGroup(s32 unused);
 
 extern const u8 gText_HexDigits[];

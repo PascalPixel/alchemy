@@ -26,7 +26,7 @@ void Func_02002248(s32 id);
 
 void Func_02002010(s32 x, s32 z, s32 effect);
 
-void Func_02000068(void);
+void Test_ReceiveFizz(void);
 
 extern u32 gData_020027a8[];
 extern u32 gData_020027e4[];

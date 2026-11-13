@@ -28,14 +28,14 @@ void Func_0200151c(struct CellTarget *work, struct CellTargetEntry *entry);
 void Func_0200158c(struct CellTarget *work, struct CellTargetEntry *entry);
 
 DEFINE_FUNC_0200180C(Func_020018bc, gData_02002530, Func_0200151c,
-    Func_0200158c)
+                     Func_0200158c)
 
 DEFINE_FUNC_0200196C(Func_0200196c, gData_02002530, Func_02001724)
 
 #include "scene_tables.h"
 #include "objcmd.h"
 
-void Func_02000054(void);
+void Test_ReceiveFlint(void);
 void Func_02000084(void);
 void Func_02000190(void);
 
@@ -103,9 +103,9 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_STEP, 20, 0xa19, EVENT(Func_02000190)},
     {TRIGGER_STEP, 21, 0xa19, EVENT(Func_020001b0)},
-    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
+    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
+    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
     {TRIGGER_STEP, 43, CONDITION_ALWAYS, EVENT(Func_02000084)},
     {TRIGGER_STEP, 44, CONDITION_ALWAYS, EVENT(Func_02000084)},
     {TRIGGER_STEP, 45, CONDITION_ALWAYS, EVENT(Func_02000084)},

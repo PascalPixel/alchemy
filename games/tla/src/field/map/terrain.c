@@ -192,7 +192,7 @@ s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id);
 
 /// The debug sprite viewer, in The Broken Seal's form with this game's
 /// changes; it never returns.
-void Func_0802de8c(void) {
+void SpriteViewer_Run(void) {
   struct SpriteViewerLayer layers[4];
   volatile u32 zero;
   s32 x;

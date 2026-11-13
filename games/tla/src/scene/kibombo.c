@@ -29,7 +29,7 @@ struct KibomboWork90 {
   struct KibomboObject *leader;
 };
 
-s32 Func_02000054(struct KibomboObject *object) {
+s32 Test_ReceiveFlint(struct KibomboObject *object) {
   if (gFrameCount & 1) {
     s32 dx;
     s32 dy;

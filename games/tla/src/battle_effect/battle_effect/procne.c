@@ -553,10 +553,10 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 }
 
 /// Abilities: Dragon Driver (kind 385).
-DEFINE_EFFECT_KIND(BattleEffect_RunDragonDriver, Func_08147aec, 1)
+DEFINE_EFFECT_KIND(BattleEffect_RunDragonDriver, BattleEffect_RunDragonFire, 1)
 
 /// Abilities: Tiamat (scene kind 7).
-DEFINE_EFFECT_KIND(BattleEffect_RunTiamat, Func_08147aec, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunTiamat, BattleEffect_RunDragonFire, 0)
 
 #undef FORMATION_RESOURCE
 
@@ -574,7 +574,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunTiamat, Func_08147aec, 0)
 // then the screen whitens and the canvas fades away. In mode 0 a formation
 // of eight drops in at frame 40 and bursts at the end. A or B skips frames
 // 49 to 159.
-void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition origin;
   DrawRectangle draw[2];
   void *canvas;

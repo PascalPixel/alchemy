@@ -61,7 +61,7 @@ static __inline__ void Func_02001d44_(s32 a, s32 b, s32 c) {
   Func_02001d44(a, b, c);
 }
 
-void Func_02000054(void) { Func_02001d1c_(69, 0, 4, 4, 67, 24, 1); }
+void Test_ReceiveFlint(void) { Func_02001d1c_(69, 0, 4, 4, 67, 24, 1); }
 
 void Func_02000074(void) { Func_02001d1c_(64, 0, 4, 3, 89, 28, 1); }
 
@@ -223,10 +223,10 @@ extern s32 gData_02002384;
 static inline void Counter_Set(s32 value) { gData_02002384 = value; }
 
 DEFINE_FUNC_02000238(Func_02000420, gData_02002384, gData_02002388,
-    gData_020023b0, 0x05000184)
+                     gData_020023b0, 0x05000184)
 
 DEFINE_FUNC_020002F4(Func_020004dc, gData_02002388, gData_020023b0,
-    gData_020023d0, Func_02000420, gData_020023d4)
+                     gData_020023d0, Func_02000420, gData_020023d4)
 
 DEFINE_FUNC_02000378(Func_02000560, Func_02001c74, Func_02001d34)
 
@@ -243,4 +243,4 @@ extern const s32 gData_0200238c[];
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_FUNC_020005E4(Func_020007cc, Func_02001d2c, Func_020007a0,
-    gData_0200238c, Data_020023ac)
+                     gData_0200238c, Data_020023ac)

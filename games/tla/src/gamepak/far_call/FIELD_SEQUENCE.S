@@ -167,7 +167,7 @@ Resource_FarCall006:
 	export BattleEffect_HasMatchingEvent5Far, BattleEffect_HasMatchingEvent5
 	export BattleEffect_HasTriggerFar, BattleEffect_HasTrigger
 	export Sprite_ShareVramCacheEntryFar, Sprite_ShareVramCacheEntry
-	export Event_GetSpecialValueFar, Event_GetSpecialValue
+	export BattleBackground_GetSelectedFar, BattleBackground_GetSelected
 	export BattleEffect_StartItemBreakFar, BattleEffect_StartItemBreak
 	export BattleEffect_SnapScaleToFullFar, BattleEffect_SnapScaleToFull
 	export UpdateRisingParticleBurstFar, UpdateRisingParticleBurst
@@ -203,7 +203,7 @@ Resource_FarCall006:
 	export ObjectTable_SnapshotFar, ObjectTable_Snapshot
 	export ObjectTable_RestoreFar, ObjectTable_Restore
 	export WorldMap_StartZoomFar, WorldMap_StartZoom
-	export Func_080c8640, Func_080d4714
+	export Event_WaitForZoomTransitionFar, Event_WaitForZoomTransition
 	export Area_GetNameIndexFar, Area_GetNameIndex
 	export Func_080c8650, Func_080d1ee8
 	export Func_080c8658, Func_080d1f0c

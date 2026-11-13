@@ -79,7 +79,7 @@ void Func_080c9e48(s32 search) {
     *out++ = 0;
   work->unk194 = 0;
   work->unk198 = 0x100000;
-  Func_080ca4a8();
+  BattleBackground_SelectForMap();
 }
 
 /// Returns the world map encounter zone for the terrain at position (0 for
@@ -354,15 +354,17 @@ void Func_080ca3f4(s32 scene, s32 entrance) {
   }
 }
 
-s16 Event_GetSpecialValue(void) { return gMainRoutineWork.special; }
+s16 BattleBackground_GetSelected(void) {
+  return gMainRoutineWork.battleBackground;
+}
 
-/// The Broken Seal's BattleEffect_SetSpecialFromTable, with this game's
-/// dragon hall check after the loop: looks the scene up in gData_080ef984 and
-/// keeps the last marked backdrop before it; with flag 0xa30 set, the second
-/// dragon hall backdrop becomes the first.
-void Func_080ca4a8(void) {
+/// As The Broken Seal's, with this game's dragon hall check after the loop:
+/// looks the scene up in gScene_BattleBackgroundRules and keeps the last marked
+/// backdrop before it; with flag 0xa30 set, the second dragon hall backdrop
+/// becomes the first.
+void BattleBackground_SelectForMap(void) {
   s32 target = gMainRoutineWork.scene;
-  s32 *table = gData_080ef984;
+  s32 *table = gScene_BattleBackgroundRules;
   s32 entry = *table++;
   s32 result; // not initialised: with no marked row before the scene it keeps
               // whatever it held
@@ -377,7 +379,7 @@ void Func_080ca4a8(void) {
   }
   if (result == (s32)&ResourceId_DragonHallBBackdrop && GameFlag_Test(0xa30))
     result = (s32)&ResourceId_DragonHallABackdrop;
-  gMainRoutineWork.special = result;
+  gMainRoutineWork.battleBackground = result;
 }
 
 /// Chooses the battle backdrop for a terrain; the ship deck's is the default.
@@ -410,7 +412,7 @@ void BattleBackground_SelectForEnvironment(s32 behavior) {
     value = (u32)&ResourceId_ShipDeckBackdrop;
     break;
   }
-  gMainRoutineWork.special = value;
+  gMainRoutineWork.battleBackground = value;
 }
 
 s32 Func_080ca5a0(s32 owner) {

@@ -33,7 +33,7 @@ void Func_020014fc();
 void Func_0200156c();
 
 DEFINE_FUNC_0200180C(Func_0200189c, gData_020023a0, Func_020014fc,
-    Func_0200156c)
+                     Func_0200156c)
 
 #include "cell_target.h"
 
@@ -42,7 +42,7 @@ DEFINE_FUNC_020018BC(Func_0200194c, gData_020023a0, Func_02001704)
 #include "scene_tables.h"
 #include "objcmd.h"
 
-void Func_02000054(void);
+void Test_ReceiveFlint(void);
 void Func_020001f4(void);
 
 // clang-format off
@@ -83,7 +83,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_STEP, 20, 0xa01, EVENT(Func_020001b4)},
     {TRIGGER_STEP, 21, 0xa01, EVENT(Func_020001d4)},
-    {0x50008905, 30, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {0x50008905, 30, CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0xa01, EVENT(Func_020001f4)},
     {TRIGGERS_END},
 };

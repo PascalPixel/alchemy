@@ -34,7 +34,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-void Func_02000054(s32 mode) {
+void Test_ReceiveFlint(s32 mode) {
   struct Actor *left = Actor_Get(9);
   struct Actor *right = Actor_Get(10);
   struct Actor *rider = Actor_Get(23);
@@ -93,10 +93,10 @@ void Func_020001b4(void) {
   Func_020017a8(11, 9, 0);
   FieldEvent_Wait(40);
   if (Event_GetFlag(0xa0b) == 0) {
-    Func_02000054(0);
+    Test_ReceiveFlint(0);
     FieldEvent_Wait(40);
   } else {
-    Func_02000054(2);
+    Test_ReceiveFlint(2);
   }
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldEvent_Wait(40);
@@ -117,10 +117,10 @@ void Func_02000264(void) {
   Func_020017a8(12, 10, 1);
   FieldEvent_Wait(40);
   if (Event_GetFlag(0xa0a) == 0) {
-    Func_02000054(1);
+    Test_ReceiveFlint(1);
     FieldEvent_Wait(40);
   } else {
-    Func_02000054(3);
+    Test_ReceiveFlint(3);
   }
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldEvent_Wait(40);
@@ -331,7 +331,8 @@ next:
 }
 
 DEFINE_FUNC_020004C0(Func_02000858, gData_02003318, gData_02003340,
-    gData_02003360, gData_02003314, Func_0200079c, gData_02003364)
+                     gData_02003360, gData_02003314, Func_0200079c,
+                     gData_02003364)
 
 DEFINE_FUNC_02000378(Func_020008dc, Func_02002a78, Func_02002b58)
 
@@ -409,8 +410,14 @@ extern const s32 gData_0200331c[];
 extern s32 gData_0200333c;
 
 s32 Func_02002b50(s32 x, s32 z, s32 layer);
-/* VIEW(jupiter_lighthouse_aerie): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position); tried as the definition's void Camera_WorldToScreen(struct EffectVector *position), which the object already declares, Func_02001080 moves: 1 of 856 instructions in tla-ja. */
-extern void Camera_WorldToScreen__jupiter_lighthouse_aerie(s32 *position) __asm__("Camera_WorldToScreen");
+/* VIEW(jupiter_lighthouse_aerie): routine Camera_WorldToScreen as void
+ * Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void
+ * Camera_WorldToScreen(struct EffectVector *position); tried as the
+ * definition's void Camera_WorldToScreen(struct EffectVector *position), which
+ * the object already declares, Func_02001080 moves: 1 of 856 instructions in
+ * tla-ja. */
+extern void Camera_WorldToScreen__jupiter_lighthouse_aerie(
+    s32 *position) __asm__("Camera_WorldToScreen");
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_02000b48(struct Actor *self) {

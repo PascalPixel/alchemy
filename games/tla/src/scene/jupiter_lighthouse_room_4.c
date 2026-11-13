@@ -41,11 +41,11 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 static inline void SetCollisionCode(s32 x, s32 z, s32 layer, s32 value) {
   /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
    * scene layer, so each call keeps its own constants; as a direct call, 12
-   * of 47 instructions of Func_02000054 differ in tla-en. */
+   * of 47 instructions of Test_ReceiveFlint differ in tla-en. */
   ((u8)MapGrid_SetCellBehavior(x, z, layer, value));
 }
 
-void Func_02000054(void) {
+void Test_ReceiveFlint(void) {
   MapGrid_CopyCellsLayered(17, 10, 1, 4, 19, 10);
   MapGrid_CopyCellAttributes(17, 10, 1, 1, 19, 10);
   SetCollisionCode(0x1300000, 0xa00000, 0, 254);

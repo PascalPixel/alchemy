@@ -979,7 +979,7 @@ extern u8 gData_0202e000[];
 
 void Event_ClearValidPackedIds(void);
 
-void Func_080ca4a8(void);
+void BattleBackground_SelectForMap(void);
 
 s32 Func_080ca9cc(s32 id, s32 *position);
 void ObjectTable_Clear(void);

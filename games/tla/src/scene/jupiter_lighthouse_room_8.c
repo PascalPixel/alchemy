@@ -36,19 +36,19 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 s32 Func_02000c44(struct Probe *probe);
 void Func_02000ec8(struct Probe probe);
 
-void Func_02000054(void) {
+void Test_ReceiveFlint(void) {
   if (Func_02001f60())
     FieldEvent_SetExitRequest(13);
 }
 
-void Func_02000068(void) {
+void Test_ReceiveFizz(void) {
   struct Probe probe;
 
   if (Func_02000c44(&probe))
     Func_02000ec8(probe);
 }
 
-void Func_02000090(void) {}
+void Test_ReceiveGust(void) {}
 
 /// On cell (6, 14), sets flag 0xa18, waits until the object finishes falling
 /// and stops (at most 30 frames), then releases it.
@@ -91,13 +91,12 @@ void Func_02000094(s32 unused, s32 id) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-
 void Func_02000af0(s32 id);
 void Func_020018f4(s32 a, s32 b, s32 c, s32 d, s32 e);
 
 s32 Scene_Initialize(void) {
-  ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)->screenEffect =
-      0x204;
+  ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
+      ->screenEffect = 0x204;
   Actor_Get(8)->scaleX = 0xc000;
   Actor_Get(8)->scaleY = 0xc000;
   FieldActor_SetSpritePriority(12, 3);
@@ -154,12 +153,12 @@ extern s32 gData_02002a84;
 static inline void Counter_Set(s32 value) { gData_02002a84 = value; }
 
 DEFINE_FUNC_0200027C(Func_0200027c, gData_02002a84, gData_02002a88,
-    gData_02002ab0)
+                     gData_02002ab0)
 
 extern u16 gData_02002ad0[];
 
 DEFINE_FUNC_020002F4(Func_02000338, gData_02002a88, gData_02002ab0,
-    gData_02002ad0, Func_0200027c, gData_02002ad4)
+                     gData_02002ad0, Func_0200027c, gData_02002ad4)
 
 DEFINE_FUNC_02000378(Func_020003bc, Func_020021e0, Func_020022c0)
 
@@ -177,4 +176,4 @@ s32 Func_020022b8(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_FUNC_02000628(Func_02000628, Func_020022b8, Func_020005fc,
-    gData_02002a8c, Data_02002aac)
+                     gData_02002a8c, Data_02002aac)

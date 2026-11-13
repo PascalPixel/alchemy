@@ -16,7 +16,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-void Func_02000054(struct Actor *object) {
+void Test_ReceiveFlint(struct Actor *object) {
   if (object->x >> 20 == 14 && object->z >> 20 == 12)
     Actor_SetSpritePriorityDirect(object, 2);
 }
@@ -27,7 +27,7 @@ void Func_02000070(void) {
   s32 i;
   s32 x;
 
-  object->update = (void (*)(void))Func_02000054;
+  object->update = (void (*)(void))Test_ReceiveFlint;
   if (Func_02000dcc(&block))
     Func_02001050(block);
   if (object->x >> 20 == 16 && object->z >> 20 == 12 &&
@@ -158,10 +158,11 @@ void Func_020003c4(void) { Func_02002400(); }
 void Func_020003f8(s32 value) { gData_02002cc4 = value; }
 
 DEFINE_FUNC_02000238(Func_02000404, gData_02002cc0, gData_02002cc4,
-    gData_02002cec, 0x05000184)
+                     gData_02002cec, 0x05000184)
 
 DEFINE_FUNC_020004C0(Func_020004c0, gData_02002cc4, gData_02002cec,
-    gData_02002d0c, gData_02002cc0, Func_02000404, gData_02002d10)
+                     gData_02002d0c, gData_02002cc0, Func_02000404,
+                     gData_02002d10)
 
 DEFINE_FUNC_02000378(Func_02000544, Func_02002368, Func_02002460)
 

@@ -36,7 +36,7 @@ s32 Func_020018bc(s32 value);
 void Func_02000108(void);
 void Func_020003a4(s32 value);
 
-void Func_02000054(s32 value) {
+void Test_ReceiveFlint(s32 value) {
   if (Actor_Get(gMainRoutineWork.currentOwner)->y == 0 && Func_020018bc(value))
     FieldEvent_SetExitRequest(13);
 }
@@ -124,10 +124,10 @@ s32 Scene_PrepareMap(void) {
 void Func_020002dc(s32 value) { gData_020023c0 = value; }
 
 DEFINE_FUNC_0200027C(Func_020002e8, gData_020023bc, gData_020023c0,
-    gData_020023e8)
+                     gData_020023e8)
 
 DEFINE_FUNC_020002F4(Func_020003a4, gData_020023c0, gData_020023e8,
-    gData_02002408, Func_020002e8, gData_0200240c)
+                     gData_02002408, Func_020002e8, gData_0200240c)
 
 void Func_02000428(s32 id) {
   struct JupiterLighthouseRoom6Object *object;
@@ -157,4 +157,4 @@ extern const s32 gData_0200a3c4[];
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_FUNC_02000628(Func_02000694, Func_02001bdc, Func_02000668,
-    gData_0200a3c4, Data_020023e4)
+                     gData_0200a3c4, Data_020023e4)

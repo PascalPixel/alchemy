@@ -1,5 +1,6 @@
 /// @file
-/// Overlay 0x6ba's scene: its code up to Func_02000520, then its tables, in ROM order.
+/// Overlay 0x6ba's scene: its code up to Func_02000520, then its tables, in ROM
+/// order.
 
 // ---- games/tla/src/debug/shop_test.c ----
 
@@ -38,7 +39,7 @@ s32 Message_AllTyped(void);
 
 #define INPUT_HELD (gInput.held)
 
-void Func_02000054(s32 message, s32 count) {
+void Test_ReceiveFlint(s32 message, s32 count) {
   s32 i;
   s32 frames;
   void *window;
@@ -113,26 +114,26 @@ void Func_02000d38(s32 value);
 void Func_02000dd0(s32 value);
 void Func_02000d28(void);
 void Func_02000d30(void);
-void Func_02000054(s32 message, s32 count);
+void Test_ReceiveFlint(s32 message, s32 count);
 
 void Func_0200012c(void) {
-  Func_02000054((s32)MsgWeaponShopWelcome,
-                MsgArmorShopWelcome - MsgWeaponShopWelcome);
+  Test_ReceiveFlint((s32)MsgWeaponShopWelcome,
+                    MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
 void MenuTest_BrowseWeaponShopMessages(void) {
-  Func_02000054((s32)MsgArmorShopWelcome,
-                MsgArmorShopWelcome - MsgWeaponShopWelcome);
+  Test_ReceiveFlint((s32)MsgArmorShopWelcome,
+                    MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
 void Func_0200015c(void) {
-  Func_02000054((s32)MsgItemShopWelcome,
-                MsgArmorShopWelcome - MsgWeaponShopWelcome);
+  Test_ReceiveFlint((s32)MsgItemShopWelcome,
+                    MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
 void Func_02000178(void) {
-  Func_02000054((s32)MsgWelcomeWearyWanderers,
-                MsgRightWhenI - MsgWelcomeWearyWanderers);
+  Test_ReceiveFlint((s32)MsgWelcomeWearyWanderers,
+                    MsgRightWhenI - MsgWelcomeWearyWanderers);
 }
 
 void Func_02000190(s32 value) { Func_02000e40(1, value); }
@@ -435,8 +436,13 @@ struct Trigger gSceneEvents[] = {
 
 void Unit_AddPp(s32 owner, s32 amount);
 void Inventory_Break(s32 owner, s32 slot);
-/* VIEW(s0520): routine Func_02000d48 as struct ItemDefinition *Func_02000d48(s32 item); shop_test has u16 *Func_02000d48(s32 item); tried as the definition's void Func_02000d48(struct Actor *shot), it does not compile in tla-ja: games/tla/src/debug/shop_test.c:438: conflicting types for `Func_02000d48'. */
-extern struct ItemDefinition *Func_02000d48__s0520(s32 item) __asm__("Func_02000d48");
+/* VIEW(s0520): routine Func_02000d48 as struct ItemDefinition
+ * *Func_02000d48(s32 item); shop_test has u16 *Func_02000d48(s32 item); tried
+ * as the definition's void Func_02000d48(struct Actor *shot), it does not
+ * compile in tla-ja: games/tla/src/debug/shop_test.c:438: conflicting types for
+ * `Func_02000d48'. */
+extern struct ItemDefinition *
+Func_02000d48__s0520(s32 item) __asm__("Func_02000d48");
 void Func_02000dc0(void);
 
 void Func_02000520(void) {
@@ -459,7 +465,8 @@ void Func_02000520(void) {
   unit[0x131] = 2;
   unit = Unit_Get(4);
   for (i = 0; i <= 14; i++) {
-    item = Func_02000d48__s0520(((struct OwnerInventoryState *)unit)->inventory[i]);
+    item = Func_02000d48__s0520(
+        ((struct OwnerInventoryState *)unit)->inventory[i]);
     if (((struct OwnerInventoryState *)unit)->inventory[i] == 0)
       break;
     if (item[12] == 2) {
@@ -469,7 +476,8 @@ void Func_02000520(void) {
   }
   unit = Unit_Get(5);
   for (i = 0; i <= 14; i++) {
-    item = Func_02000d48__s0520(((struct OwnerInventoryState *)unit)->inventory[i]);
+    item = Func_02000d48__s0520(
+        ((struct OwnerInventoryState *)unit)->inventory[i]);
     if (((struct OwnerInventoryState *)unit)->inventory[i] == 0)
       break;
     if (item[12] == 2) {

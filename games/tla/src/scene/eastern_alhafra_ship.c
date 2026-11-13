@@ -32,7 +32,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 s32 Scene_GetPlacements(void) { return (s32)gData_0200345c; }
 
-void Func_02000054(void) {}
+void Test_ReceiveFlint(void) {}
 
 #include "event_inline.h"
 
@@ -1484,7 +1484,7 @@ L_0200b0b8:
   return;
 }
 
-void Func_02000054(void);
+void Test_ReceiveFlint(void);
 void Func_0200013c(s32 actor);
 
 // clang-format off
@@ -1570,10 +1570,10 @@ struct Trigger gSceneEvents[] = {
      MSGNO(MsgIfEoleoGets)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_02000128)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13,
-     CONDITION_ALWAYS, EVENT(Func_02000054)},
+     CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS,
      EVENT(Func_02000058)},
-    {8, 30, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {8, 30, CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
     {9, 30, CONDITION_ALWAYS, EVENT(Func_02000058)},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 14, 0x901, EVENT(Func_0200008c)},
     {TRIGGERS_END},

@@ -1,5 +1,6 @@
 /// @file
-/// Overlay 0x6b8's scene: its code up to Func_02000c4c, then its tables, in ROM order.
+/// Overlay 0x6b8's scene: its code up to Func_02000c4c, then its tables, in ROM
+/// order.
 
 // ---- games/tla/src/debug/psynergy_test.c ----
 
@@ -34,7 +35,10 @@
 #include "module/window/window.h"
 
 void Func_02000e04(s32);
-/* VIEW(psynergy_test): routine Func_02000df4 as void Func_02000df4(s32, s32); module/tla.h has s32 Func_02000df4(s32 *member, s32 *slot); tried as the rest of the object declares it, MenuTest_BrowseMessageRange moves: 2 of 67 instructions in tla-ja. */
+/* VIEW(psynergy_test): routine Func_02000df4 as void Func_02000df4(s32, s32);
+ * module/tla.h has s32 Func_02000df4(s32 *member, s32 *slot); tried as the rest
+ * of the object declares it, MenuTest_BrowseMessageRange moves: 2 of 67
+ * instructions in tla-ja. */
 extern void Func_02000df4__psynergy_test(s32, s32) __asm__("Func_02000df4");
 void Func_02000f1c(s32, s32);
 void Func_02000ecc(s32, s32, s32, s32, s32, s32, s32);
@@ -50,7 +54,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 void *Func_0200004c(void) { return gData_02001300; }
 
-void Func_02000054(void) {}
+void Test_ReceiveFlint(void) {}
 
 void Func_02000058(void) {
   s32 pos[2];
@@ -58,7 +62,7 @@ void Func_02000058(void) {
   Func_02000f34(&pos[1], &pos[0]);
 }
 
-void Func_02000068(void) { Func_02000e04(0); }
+void Test_ReceiveFizz(void) { Func_02000e04(0); }
 
 void Func_02000074(void) {}
 
@@ -104,22 +108,22 @@ done:
 
 void Func_02000140(void) {
   MenuTest_BrowseMessageRange((s32)MsgWeaponShopWelcome,
-                MsgArmorShopWelcome - MsgWeaponShopWelcome);
+                              MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
 void Func_02000158(void) {
   MenuTest_BrowseMessageRange((s32)MsgArmorShopWelcome,
-                MsgArmorShopWelcome - MsgWeaponShopWelcome);
+                              MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
 void Func_02000170(void) {
   MenuTest_BrowseMessageRange((s32)MsgItemShopWelcome,
-                MsgArmorShopWelcome - MsgWeaponShopWelcome);
+                              MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
 void Func_0200018c(void) {
   MenuTest_BrowseMessageRange((s32)MsgWelcomeWearyWanderers,
-                MsgRightWhenI - MsgWelcomeWearyWanderers);
+                              MsgRightWhenI - MsgWelcomeWearyWanderers);
 }
 
 void Func_020001a4(s32 value) { Func_02000f1c(1, value); }
@@ -316,9 +320,10 @@ void Func_02000624(void) {
 
 void Func_02000650(void) { Func_02000eb4((s32)&SceneId_Ov6b8Room1, 8); }
 
-/* VIEW(psynergy_test): variable gData_020017b0 as u8 gData_020017b0[]; module/tla.h has s32 gData_020017b0; tried as the rest of the object declares it, Func_02000748 moves: 2 of 22 instructions in tla-ja. */
+/* VIEW(psynergy_test): variable gData_020017b0 as u8 gData_020017b0[];
+ * module/tla.h has s32 gData_020017b0; tried as the rest of the object declares
+ * it, Func_02000748 moves: 2 of 22 instructions in tla-ja. */
 extern u8 gData_020017b0__psynergy_test[] __asm__("gData_020017b0");
-
 
 void Func_02000660(void) {
   Func_02000f14(249, 40, 168);
@@ -365,7 +370,8 @@ void Func_02000744(void) {}
 
 void Func_02000748(s32 actor) {
   Func_02000c4c(Actor_Get(actor), gData_02001860);
-  Func_02000c4c(Actor_Get(gMainRoutineWork.currentOwner), gData_020017b0__psynergy_test);
+  Func_02000c4c(Actor_Get(gMainRoutineWork.currentOwner),
+                gData_020017b0__psynergy_test);
   System_Wait(100);
   Func_02000d4c(Actor_Get(actor));
   Func_02000d4c(Actor_Get(gMainRoutineWork.currentOwner));
@@ -677,8 +683,8 @@ s16 gData_02001300[] = {
 // clang-format on
 
 struct Trigger gSceneEvents[] = {
-    {0, 5, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {0, 2, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {0, 5, CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
+    {0, 2, CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
     {0, 3, CONDITION_ALWAYS, EVENT(Func_02000748)},
     {0xc400, 8, CONDITION_ALWAYS, EVENT(Func_020001a4)},
     {0x8400, 8, CONDITION_ALWAYS, EVENT(Func_020001b0)},
@@ -691,13 +697,14 @@ struct Trigger gSceneEvents[] = {
     {0x8400, 11, CONDITION_ALWAYS, EVENT(Func_02000158)},
     {0x400, 11, CONDITION_ALWAYS, EVENT(Func_02000170)},
     {0x4400, 11, CONDITION_ALWAYS, EVENT(Func_0200018c)},
-    {0, 12, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {0, 12, CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
     {0, 13, CONDITION_ALWAYS, EVENT(Func_0200091c)},
-    {0, 14, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {0xc400, 15, CONDITION_ALWAYS, EVENT(Func_02000068)},
+    {0, 14, CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
+    {0xc400, 15, CONDITION_ALWAYS, EVENT(Test_ReceiveFizz)},
     {0, 15, CONDITION_ALWAYS, EVENT(Func_02000058)},
     {0, 19, CONDITION_ALWAYS, EVENT(Func_0200070c)},
-#if (LANGUAGE == LANGUAGE_JAPANESE) /* Rows exclusive to the Japanese edition. */
+#if (LANGUAGE ==                                                               \
+     LANGUAGE_JAPANESE) /* Rows exclusive to the Japanese edition. */
     {0x8d15, 10, CONDITION_ALWAYS, 5618},
 #endif
     {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgOooogOw2)},
@@ -715,14 +722,14 @@ struct Trigger gSceneEvents[] = {
     {0x8e15, 15, CONDITION_ALWAYS, EVENT(Func_02000074)},
     {0x4e15, 15, CONDITION_ALWAYS, EVENT(Func_02000074)},
     {0x9415, 15, CONDITION_ALWAYS, EVENT(Func_02000074)},
-    {0x1815, 18, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {0x1815, 18, CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
     {0x50008615, 21, CONDITION_ALWAYS, EVENT(Func_020005dc)},
     {0x8b85, 0, CONDITION_ALWAYS, EVENT(Func_02000444)},
     {0x40008b85, 0, CONDITION_ALWAYS, EVENT(Func_02000454)},
-    {0x10009a15, 16, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {0x10009a15, 16, CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
     {0x60009a15, 17, CONDITION_ALWAYS, EVENT(Func_02000464)},
     {0x20009a15, 17, CONDITION_ALWAYS, EVENT(Func_02000508)},
-    {0x10009a15, 17, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {0x10009a15, 17, CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
     {0x20009d15, 17, CONDITION_ALWAYS, EVENT(Func_0200055c)},
     {0x20009d15, 21, CONDITION_ALWAYS, EVENT(Func_020005b0)},
     {0x50008805, 50, 0x300, EVENT(Func_02000688)},
@@ -745,7 +752,11 @@ struct Trigger gSceneEvents[] = {
 // ---- games/tla/src/debug/psynergy_test/s0c4c.c ----
 // Overlay 0x6b8's code from Func_02000c4c on, in ROM order.
 
-/* VIEW(s0c4c): tag struct SparkleSprite as struct SparkleSprite__s0c4c; psynergy_test.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/debug/psynergy_test.c:802: structure has no member named `flag'. */
+/* VIEW(s0c4c): tag struct SparkleSprite as struct SparkleSprite__s0c4c;
+ * psynergy_test.c has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/debug/psynergy_test.c:802: structure has no member named
+ * `flag'. */
 struct SparkleSprite__s0c4c {
   u8 unk00[5];
   u8 attr5Low : 5;
@@ -759,7 +770,10 @@ struct SparkleSprite__s0c4c {
   u8 unk0a[0x1e];
 };
 
-/* VIEW(s0c4c): tag struct SparkleWork as struct SparkleWork__s0c4c; psynergy_test.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/debug/psynergy_test.c:792: incompatible types in assignment. */
+/* VIEW(s0c4c): tag struct SparkleWork as struct SparkleWork__s0c4c;
+ * psynergy_test.c has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/debug/psynergy_test.c:792: incompatible types in assignment. */
 struct SparkleWork__s0c4c {
   struct SparkleSprite__s0c4c sprites[4];
   u16 unka0;
@@ -768,7 +782,6 @@ struct SparkleWork__s0c4c {
   u16 unka6;
   struct Actor *object;
 };
-
 
 void Func_02000ee4(struct SparkleSprite__s0c4c *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);

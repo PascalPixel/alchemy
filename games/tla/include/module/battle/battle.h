@@ -267,7 +267,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds);
 
 void Func_08138050(struct BattleFxRequest *request, s32 value);
 
-s32 Event_GetSpecialValueFar(void);
+s32 BattleBackground_GetSelectedFar(void);
 
 void BattleUnit_RefreshPlacement(void);
 

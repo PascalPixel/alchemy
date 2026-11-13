@@ -29,7 +29,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-void Func_02000054(void) {
+void Test_ReceiveFlint(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgMadraGoingToOsenia);
@@ -126,7 +126,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 10, 0x913, EVENT(Func_020000c8)},
     {TRIGGER_STEP, 10, 0x916, EVENT(Func_02000224)},
-    {TRIGGER_TALK, 8, 0x913, EVENT(Func_02000054)},
+    {TRIGGER_TALK, 8, 0x913, EVENT(Test_ReceiveFlint)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgMadraMikasallaVillage)},
     {TRIGGER_TALK, 9, 0x913, MSGNO(MsgMadraCanCrossWithPermission)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMadraAvoidYampiDesert)},

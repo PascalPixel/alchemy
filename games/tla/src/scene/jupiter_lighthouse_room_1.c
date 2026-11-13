@@ -32,7 +32,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-void Func_02000054(void) { Import_EventSetExitRequest(6); }
+void Test_ReceiveFlint(void) { Import_EventSetExitRequest(6); }
 
 void Func_02000060(s32 animate) {
   if (animate == 1) {
@@ -106,13 +106,13 @@ extern s32 gData_0200222c;
 static inline void Counter_Set(s32 value) { gData_0200222c = value; }
 
 DEFINE_FUNC_02000238(Func_020002c8, gData_0200222c, gData_02002230,
-    gData_02002258, 0x05000184)
+                     gData_02002258, 0x05000184)
 
 void Func_02001b14();
 void Func_02001bc4();
 
 DEFINE_FUNC_020002F4(Func_02000384, gData_02002230, gData_02002258,
-    gData_02002278, Func_020002c8, gData_0200227c)
+                     gData_02002278, Func_020002c8, gData_0200227c)
 
 DEFINE_FUNC_02000378(Func_02000408, Func_02001b14, Func_02001bc4)
 

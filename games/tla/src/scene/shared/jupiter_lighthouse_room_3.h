@@ -30,7 +30,7 @@ void Func_02002400(void);
 void Func_02002440(s32 id, s32 a);
 void Func_02002460(s32 x, s32 z, s32 a, s32 b);
 void Func_02002468(s32 id);
-void Func_02000054(struct Actor *object);
+void Test_ReceiveFlint(struct Actor *object);
 void Func_02000404(void);
 void Func_02000c78(s32 id);
 s32 Func_02000dcc(struct PushedBlock *block);

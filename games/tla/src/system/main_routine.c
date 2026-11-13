@@ -263,7 +263,7 @@ void MainRoutine_Run(s32 mode) {
       continue;
     }
 
-    Func_080c9c38(gMainRoutineWork.scene, GameFlag_Test(0x109));
+    Scene_Arrive(gMainRoutineWork.scene, GameFlag_Test(0x109));
     Scene_ChooseMusic();
     if (!GameFlag_Test(0x109)) {
       if (GameFlag_Test(0x11a) || GameFlag_Test(0x11b))
@@ -291,9 +291,9 @@ void BattleEffect_LoadResourceGroup(s32 unused) {
 
 #define SCENE_RECORD(id) (&gScenes[id])
 
-/// The Broken Seal's Scene_ResetFlagsOnEnter with this game's flags, and
-/// Func_080c9de0 in place of the group's visited flag.
-void Func_080c9c38(s32 unused, s32 keep) {
+/// As The Broken Seal's, with this game's flags, and Func_080c9de0 in place of
+/// the area's visited flag.
+void Scene_Arrive(s32 unused, s32 keep) {
   s32 group = SCENE_RECORD(gMainRoutineWork.scene)->group;
   s32 flag;
 

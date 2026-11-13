@@ -322,7 +322,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     cellX = (position.x & 0xfff00000) + 0x80000;
     cellZ = (position.z & 0xfff00000) + 0xfff80000;
 
-    if (Func_080c8770(cellX, cellZ, 2)) {
+    if (MapGrid_IsClimbableCellFar(cellX, cellZ, 2)) {
       actor->motionFlags = 0;
       actor->y += 0x10000;
       actor->unk66 = 1;
@@ -339,7 +339,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     cellZ = (actor->z & 0xfff00000) + 0x180000;
 
     if (MapGrid_GetTerrainHeight(*terrainId, cellX, cellZ) < y &&
-        Func_080c8770(cellX, cellZ, 2)) {
+        MapGrid_IsClimbableCellFar(cellX, cellZ, 2)) {
       actor->motionFlags = 0;
       Actor_SetMoveTarget(actor, actor->x, groundHere + 0xfffe0000, cellZ);
       actor->timer = 1;

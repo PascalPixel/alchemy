@@ -41,7 +41,6 @@ s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
@@ -368,10 +367,10 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     if (frame == 108) {
       REG_BG2PA = 0x80;
       REG_BG2X = 0;
-      Func_0815b434(source, 8, 0x10000);
-      Func_0815b434(Data_02010020, 16, 0xc000);
-      Func_0815b434(Data_020100a0, 32, 0xc000);
-      Func_0815b434(Data_020102a0, 48, 0xc000);
+      BattleEffect_DrawShadedCircles(source, 8, 0x10000);
+      BattleEffect_DrawShadedCircles(Data_02010020, 16, 0xc000);
+      BattleEffect_DrawShadedCircles(Data_020100a0, 32, 0xc000);
+      BattleEffect_DrawShadedCircles(Data_020102a0, 48, 0xc000);
     }
     if ((u32)(frame - 223) <= 29) {
       s32 k = Random16() & 3;

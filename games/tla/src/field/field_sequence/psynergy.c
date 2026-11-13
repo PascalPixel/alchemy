@@ -116,7 +116,7 @@ s32 Field_UsePsynergy(u32 code) {
   }
   if (group == 23) {
     object = ObjectTable_Get(Party_GetLeaderActor());
-    if (Func_080dbcd8(object->x, object->z, object->terrainId) == 0) {
+    if (MapGrid_IsSandCell(object->x, object->z, object->terrainId) == 0) {
       before = NULL;
       after = NULL;
       during = NULL;

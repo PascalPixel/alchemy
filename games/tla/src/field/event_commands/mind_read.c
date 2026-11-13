@@ -1843,7 +1843,7 @@ struct EventWork__f0de21c {
   u16 state;
 };
 
-s32 Func_080dbca8(s32 x, s32 z, s32 layer);
+s32 MapGrid_IsCloakCell(s32 x, s32 z, s32 layer);
 
 /// A task of Cloak: when the controlled character does not
 /// stand on a tile Cloak can hide on, requests CLOAK_END (0x2092).
@@ -1851,7 +1851,7 @@ void FieldEffect_CheckCloakTile(void) {
   struct EventWork__f0de21c *event = Ram_HeapSlots->eventWork;
   struct OwnerObject *owner = ObjectTable_Get(Party_GetLeaderActor());
 
-  if (Func_080dbca8(owner->x, owner->z, owner->layer) == 0)
+  if (MapGrid_IsCloakCell(owner->x, owner->z, owner->layer) == 0)
     event->state = 0x2092;
 }
 

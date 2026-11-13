@@ -30,7 +30,6 @@ s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
@@ -1102,7 +1101,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         y = 64;
       }
       if (r <= 38) {
-        Func_0815b434(cellBuffer, r, 95536);
+        BattleEffect_DrawShadedCircles(cellBuffer, r, 95536);
       } else {
         r = 38;
       }
@@ -1242,7 +1241,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           r += Trig_Sin(frame << 11) * 2 >> 16;
         }
         if (r <= 64) {
-          Func_0815b434(work->sheet, r, 95536);
+          BattleEffect_DrawShadedCircles(work->sheet, r, 95536);
         } else {
           r = 64;
         }

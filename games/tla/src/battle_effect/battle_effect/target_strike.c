@@ -966,9 +966,9 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
 
 #define BACKGROUND(battle) (((union BattleBackgroundId *)(battle)->unk670)->id)
 
-// Shows the battle background fading in, until A (unused).
-
-void Func_0813e7e0(struct BattleEffectArgument *effect) {
+/// Unused: nothing refers to it. Shows the cloud swirl
+/// (BattleEffect_RunCloudSwirl), then the battle background fading in, until A.
+void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   struct BattleWork *battle;
@@ -984,7 +984,7 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
   view = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
   work->effect = effect;
   work->vblanksSinceTransfer = 1;
-  Func_08191530(effect);
+  BattleEffect_RunCloudSwirl(effect);
 
   // Make BG2 a 128x128 canvas, as BattleEffect_StartCanvasLayer does.
   BattleEffect_ClearActorTimers();

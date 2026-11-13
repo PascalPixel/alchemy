@@ -149,7 +149,7 @@ Data_08196f20:
 	.global Data_08196f28
 Data_08196f28:
 	.byte 2, 3, 5, 8, 7, 6, 4, 0
-@ read by Func_0819273c
+@ read by Iris_DrawPillar
 	.global Data_08196f30
 Data_08196f30:
 	.4byte 0xf0f0, 0xf010, 3312, 3088

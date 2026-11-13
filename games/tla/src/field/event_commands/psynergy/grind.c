@@ -166,8 +166,8 @@ void FieldPsynergy_GrindOnTarget(void) {
   }
   if (child != NULL && animation != NULL && isWaterObject == 1) {
     Animation_ApplyChildValueFar(animation, 0);
-    Func_080e43a4(animation->tiles, picture,
-                  animation->width * animation->height);
+    FieldPsynergy_DecodePicture(animation->tiles, picture,
+                                animation->width * animation->height);
   }
   ViewMove_Start(2);
   wait(1);
@@ -434,12 +434,12 @@ struct GlowEvent {
   s16 glowHeld;
 };
 
-s32 Func_080dbcc0(s32 x, s32 z, s32 layer);
+s32 MapGrid_IsHoverCell(s32 x, s32 z, s32 layer);
 void Camera_WorldToScreen(s32 *position);
 
 // Kind 24's frame callback: keeps the glow's strength full while the player
-// stands where Func_080dbcc0 allows, and runs it down otherwise (once it is
-// fading, the glow shrinks with it and the event takes its cue when it is
+// stands where MapGrid_IsHoverCell allows, and runs it down otherwise (once it
+// is fading, the glow shrinks with it and the event takes its cue when it is
 // spent). It cycles OBJ palette 14 through HoverGlow_GetColor's colours,
 // flickers between two pictures every other frame, and draws the glow under the
 // player, flattened to three quarters of its height.
@@ -456,7 +456,7 @@ void HoverGlow_Update(void) {
   struct EffectSprite *sprite;
 
   // The glow's strength.
-  if (Func_080dbcc0(player->x, player->z, player->terrainId) == 0) {
+  if (MapGrid_IsHoverCell(player->x, player->z, player->terrainId) == 0) {
     if (event->glowHeld != 0)
       event->glow--;
   } else {

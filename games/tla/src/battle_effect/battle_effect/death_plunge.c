@@ -855,7 +855,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
     if (size > 96) {
       size = 96;
     }
-    Func_0815b434(work->sheet, size, 0x10000);
+    BattleEffect_DrawShadedCircles(work->sheet, size, 0x10000);
     Canvas_BlitAtFoot(work->sheet, pos.x / 2, pos.y - 16, size);
     if (frame > 15) {
       actor[3] += 0x100000;
@@ -889,7 +889,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   for (i = 0; i != 10; i++) {
     s32 size = i * 2 + 2;
 
-    Func_0815b510(work->sheet + 0x3a48 + Data_08197438[i], size, 0x10000);
+    BattleEffect_DrawShadedCirclesMirrored(
+        work->sheet + 0x3a48 + Data_08197438[i], size, 0x10000);
   }
   Graphics_LoadGreyRamp();
   work->transferMode = 2;
@@ -1031,7 +1032,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           if (frame > 67) {
             size += (frame - 68) / 6;
           }
-          Func_0815b434(work->sheet, size, scale);
+          BattleEffect_DrawShadedCircles(work->sheet, size, scale);
           Canvas_BlitAtFoot(work->sheet, 60, y, size);
         }
         if (frame > 127) {
@@ -1185,7 +1186,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             if (frame <= 171) {
               q->x += -0x80000;
               q->y += 0x100000;
-              Func_0815b434(work->sheet, r, 0x10000);
+              BattleEffect_DrawShadedCircles(work->sheet, r, 0x10000);
               Canvas_BlitAtFoot(work->sheet, HI(q->x), HI(q->y), r);
             }
             model->kind = 6;
@@ -1397,7 +1398,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
               s32 y = gProcne_Pictures[i];
               s32 half;
 
-              Func_0815b434(work->sheet, r, 0x10000);
+              BattleEffect_DrawShadedCircles(work->sheet, r, 0x10000);
               /* FAKEMATCH(dead): a test that is always true here (the block is
                * entered only when r > 1); its two arms end common subexpression
                * elimination's path at their join, so the circle's work->sheet
@@ -1453,7 +1454,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           scale = size * 9400;
           SceneTransform_ApplyScale3(scale, 0x20000, 0x8000);
           Render_TransformVertices(Data_081976e0, verts, 4);
-          Func_0815b434(work->sheet, size, 0x10000);
+          BattleEffect_DrawShadedCircles(work->sheet, size, 0x10000);
           Canvas_BlitAtFoot(work->sheet, HI(p->x) - 1, HI(p->y), size);
           Render_DrawModelList(model);
         }
@@ -1753,7 +1754,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           if (frame <= 43) {
             q->x += -0x80000;
             q->y += 0x100000;
-            Func_0815b434(work->sheet + 0x38c0, r, 0x10000);
+            BattleEffect_DrawShadedCircles(work->sheet + 0x38c0, r, 0x10000);
             Canvas_BlitAtFoot(work->sheet + 0x38c0, HI(q->x), HI(q->y), r);
           }
           Transform_Reset();

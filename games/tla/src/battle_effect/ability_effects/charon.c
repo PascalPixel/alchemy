@@ -241,7 +241,6 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 extern void Render_DrawModelList__f175f74(struct Model__f175f74 *) __asm__(
     "Render_DrawModelList");
 void Graphics_LoadGreyRamp(void);
-void Func_0815b434(u8 *map, s32 size, s32 scale);
 void Canvas_BlitAtFoot(void *, s32, s32, s32);
 s32 BattleEffect_LoadBlitter(s32, s32);
 void ColorBuffer_ScaleFar(void *, void *, s32, s32);
@@ -1095,7 +1094,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           work->transferMode = 0;
         }
         if (frame <= 371) {
-          Func_0815b434(work->buffer + 0x1000, t, 0x10000);
+          BattleEffect_DrawShadedCircles(work->buffer + 0x1000, t, 0x10000);
         } else {
           t = 104;
         }
@@ -1423,8 +1422,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   }
   arg->actors[arg->count] = 0xff;
   BattleActor_SpawnObjectsForListFar((struct Local264 *)arg->actors, 0);
-  Func_0815b434(work->buffer, 56, 0x10000);
-  Func_0815b434(work->buffer + 0x1000, 16, 0x10000);
+  BattleEffect_DrawShadedCircles(work->buffer, 56, 0x10000);
+  BattleEffect_DrawShadedCircles(work->buffer + 0x1000, 16, 0x10000);
   Iwram_FillWords(work->buffer + 0x2000, 0x1000, 0x3f3f3f3f);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C3, work->buffer + 0x3000, 0,
                              0);
@@ -1640,7 +1639,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
 
         work->wave = wave - step;
         if (wave > 0) {
-          Func_0815b434(work->buffer, wave, 0x10000);
+          BattleEffect_DrawShadedCircles(work->buffer, wave, 0x10000);
           Canvas_BlitAtFoot(work->buffer, 60, 60, wave);
         }
       }

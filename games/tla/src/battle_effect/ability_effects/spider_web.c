@@ -83,11 +83,7 @@ next:
     goto next;
 }
 
-// Shaded circles of growing radius, drawn into a half-width byte map.
-
-/// Fills a size by size/2 byte map with circles of growing radius, each
-/// shaded by the cosine of its radius (0 to 63).
-void Func_0815b434(u8 *map, s32 size, s32 scale) {
+void BattleEffect_DrawShadedCircles(u8 *map, s32 size, s32 scale) {
   s32 half = size / 2;
   s32 center = half - 1;
   s32 last = size - 1;
@@ -121,12 +117,7 @@ void Func_0815b434(u8 *map, s32 size, s32 scale) {
   }
 }
 
-// Shaded circles of growing radius, mirrored into all four quarters of a
-// byte map.
-
-/// Func_0815b434 for a size by size map: each circle is drawn in all four
-/// quarters, mirrored about the centre row and column.
-void Func_0815b510(u8 *map, s32 size, s32 scale) {
+void BattleEffect_DrawShadedCirclesMirrored(u8 *map, s32 size, s32 scale) {
   s32 center = size / 2 - 1;
   s32 last = size - 1;
   s32 radius;

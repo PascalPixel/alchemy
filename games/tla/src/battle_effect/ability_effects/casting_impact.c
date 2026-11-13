@@ -220,7 +220,6 @@ void SummonEffect_RunCanvasMode3(void *action);
 void SummonEffect_RunCanvasMode1(void *action);
 void SummonEffect_RunCanvasMode2(void *action);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void Func_0815b434(u8 *map, s32 size, s32 scale);
 
 /* VIEW(fxdisp): routine BattleEffect_PackTileRows as void
  * BattleEffect_PackTileRows(void *, void *, s32, s32); the definition has void
@@ -402,7 +401,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
     s32 i;
     s32 k;
 
-    Func_0815b434(buffer, 48, 0x10000);
+    BattleEffect_DrawShadedCircles(buffer, 48, 0x10000);
     for (i = 0; i != 48; i++) {
       for (k = 0; k != 24; k++) {
         buffer[0x800 + i * 48 + k] = buffer[i * 24 + k];
@@ -2024,7 +2023,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           if (frame > 39)
             fade = 0x38000 - (frame << 12);
           if (two > 1 && fade > 0) {
-            Func_0815b434(work->frames, m * 4, fade);
+            BattleEffect_DrawShadedCircles(work->frames, m * 4, fade);
             HeapSlot_Release(188);
             Canvas_BlitAtFoot(work->frames, target[0] / 2, target[1], m * 4);
             BattleEffect_LoadBlitter(188, 15);

@@ -12,7 +12,7 @@ gFieldEffect_ArcSparkTiles:
 @ bytes of the shared effect scene's sprite canvas (battle_fx_work[1]),
 @ which BattleEffect_StartCanvasSprite copies to OBJ video memory. FieldPsynergy_Burst, 080e5d5c,
 @ 080e7844 and overlay 685 unpack it there. In FieldPsynergy_Burst the callback
-@ Func_080e4d9c writes 32 colours it computes from the sine table to OBJ
+@ FieldPsynergy_UpdateBurst writes 32 colours it computes from the sine table to OBJ
 @ palettes 14 and 15 each frame, from a counter the scene starts at 0; the
 @ picture carries the shared OBJ palette and those colours of the first
 @ frame.
@@ -91,7 +91,7 @@ FieldEffect_BowDraw:
 @ Eight pictures of a 16x16 explosion of 16 colours, one under another.
 @ FieldPsynergy_Burst unpacks them into one block of OBJ video memory and makes 32
 @ sprites of them, each with the 256-colour bit cleared and OBJ palette 15;
-@ its callback Func_080e4d9c copies the 16 colours of Data_080f0fa0 to OBJ
+@ its callback FieldPsynergy_UpdateBurst copies the 16 colours of Data_080f0fa0 to OBJ
 @ palette 15, and the picture carries them. Overlays 685, 6a6 and 6a7 load
 @ the sheet too.
 	.global FieldEffect_Explosion

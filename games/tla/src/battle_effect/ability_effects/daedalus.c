@@ -1544,7 +1544,6 @@ struct RenderModel__f17e698 {
   u8 scrollV;
 };
 
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
@@ -1780,7 +1779,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
       if (grow <= 64) {
         size = grow * 2;
         cells = gMapCellBuffer;
-        Func_0815b434(cells, size, 0x10000);
+        BattleEffect_DrawShadedCircles(cells, size, 0x10000);
       }
       cells = gMapCellBuffer;
       Canvas_BlitAtFoot(cells, i >> 16, discY >> 16, size);

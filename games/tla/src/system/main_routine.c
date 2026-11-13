@@ -289,8 +289,8 @@ void Scene_LoadOverlay(s32 unused) {
 
 #define SCENE_RECORD(id) (&gScenes[id])
 
-/// As The Broken Seal's, with this game's flags, and Func_080c9de0 in place of
-/// the area's visited flag.
+/// As The Broken Seal's, with this game's flags, and WorldMap_MarkPlaceVisited
+/// in place of the area's visited flag.
 void Scene_Arrive(s32 unused, s32 keep) {
   s32 group = SCENE_RECORD(gMainRoutineWork.scene)->group;
   s32 flag;
@@ -329,7 +329,7 @@ void Scene_Arrive(s32 unused, s32 keep) {
     gMainRoutineWork.returnCue = -1;
   }
   gMainRoutineWork.sceneGroup = group;
-  Func_080c9de0(gMainRoutineWork.scene, gMainRoutineWork.entrance);
+  WorldMap_MarkPlaceVisited(gMainRoutineWork.scene, gMainRoutineWork.entrance);
   gMainRoutineWork.sceneVariant = SCENE_RECORD(gMainRoutineWork.scene)->variant;
   if (gMainRoutineWork.sceneVariant == 2)
     GameFlag_SetBit(0x123);

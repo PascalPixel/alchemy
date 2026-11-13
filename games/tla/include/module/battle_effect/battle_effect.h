@@ -85,7 +85,7 @@ s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
-void Func_0815b434(u8 *map, s32 size, s32 scale);
+void BattleEffect_DrawShadedCircles(u8 *map, s32 size, s32 scale);
 void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
@@ -146,7 +146,7 @@ void BattleEffect_SetupCanvasWindows(void); // the BG2 canvas's registers
 extern u8 gData_02014000[];
 extern const u8 Data_081991e0[];
 extern const u8 gData_08199364[];
-void Func_0815b510(u8 *map, s32 size, s32 scale);
+void BattleEffect_DrawShadedCirclesMirrored(u8 *map, s32 size, s32 scale);
 void BattleEffect_RunRamses(struct BattleEffectArgument *effect);
 void BattleEffect_RunNereid(struct BattleEffectArgument *effect);
 void BattleEffect_RunKirin(struct BattleEffectArgument *effect);
@@ -213,7 +213,7 @@ void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
                                     s32 percent);
 extern char ResourceId_StarCrossSheet;
 extern char ResourceId_CrossedDaggersSheet;
-void Func_08191530(struct BattleEffectArgument *effect);
+void BattleEffect_RunCloudSwirl(struct BattleEffectArgument *effect);
 void BattleCamera_ApplyPhasedDelta(void);
 typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
 typedef struct {

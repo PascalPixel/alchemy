@@ -240,8 +240,8 @@ Resource_FarCall006:
 	export Func_080c8750, Leader_FindActorAhead
 	export Actor_SpawnFar, Actor_Spawn
 	export Func_080c8760, TileCopies_CopyTouchedCells
-	export Func_080c8768, Func_080dbcd8
-	export Func_080c8770, Func_080dbd48
+	export MapGrid_IsSandCellFar, MapGrid_IsSandCell
+	export MapGrid_IsClimbableCellFar, MapGrid_IsClimbableCell
 	export Party_GetLeaderActorFar, Party_GetLeaderActor
 	export Func_080c8780, HangingVine_Place
 	export HangingVine_HangFar, HangingVine_Hang

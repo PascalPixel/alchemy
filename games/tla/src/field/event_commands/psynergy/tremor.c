@@ -123,8 +123,8 @@ void FieldPsynergy_TremorOnTarget(void) {
   BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
   if (target != NULL && targetSprite != NULL) {
     Animation_ApplyChildValueFar(targetSprite, 0);
-    Func_080e43a4(targetSprite->pictures, work->picture,
-                  targetSprite->width * targetSprite->height);
+    FieldPsynergy_DecodePicture(targetSprite->pictures, work->picture,
+                                targetSprite->width * targetSprite->height);
   }
   ViewMove_Start(VIEW_MOVE_X);
   ViewMove_SaveNearbySprites();

@@ -1196,7 +1196,7 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(1);
   if (mode == 2)
-    Func_0815b510(sheet, 10, 0x10000);
+    BattleEffect_DrawShadedCirclesMirrored(sheet, 10, 0x10000);
   else
     Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   if (mode == 0)

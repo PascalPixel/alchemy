@@ -276,12 +276,13 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
           work->particles[16].variant = 4;
           work->particles[16].x = 0;
           work->particles[16].z = 0;
-          Func_0815b434(work->sheet, work->particles[16].variant * 2, 0x10000);
+          BattleEffect_DrawShadedCircles(
+              work->sheet, work->particles[16].variant * 2, 0x10000);
         }
         if (frame > 171) {
           if (frame == 172) {
             work->particles[16].variant = 64;
-            Func_0815b434(work->sheet, 128, 0x10000);
+            BattleEffect_DrawShadedCircles(work->sheet, 128, 0x10000);
             velX = 0x30000;
             velY = -0x30000;
           }
@@ -290,15 +291,15 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
             if (work->particles[16].variant <= 1) {
               work->particles[16].variant = 2;
             }
-            Func_0815b434(work->sheet, work->particles[16].variant * 2,
-                          0x10000);
+            BattleEffect_DrawShadedCircles(
+                work->sheet, work->particles[16].variant * 2, 0x10000);
           }
         } else if (frame > 135) {
           velX += -0x800;
           velY += 0x800;
           if (++work->particles[16].variant <= 32) {
-            Func_0815b434(work->sheet, work->particles[16].variant * 2,
-                          0x10000);
+            BattleEffect_DrawShadedCircles(
+                work->sheet, work->particles[16].variant * 2, 0x10000);
           } else {
             work->particles[16].variant = 32;
           }
@@ -532,7 +533,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         }
         if (frame <= 27) {
           cells = work->sheet + 0x38c0;
-          Func_0815b434(cells, 96, 0x10000);
+          BattleEffect_DrawShadedCircles(cells, 96, 0x10000);
           Canvas_BlitAtFoot(cells, q->x >> 16, q->y >> 16, 96);
         }
         Transform_Reset();
@@ -985,7 +986,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
 
         if (width <= 64) {
           size = width * 2;
-          Func_0815b434(Ram_MapCellBuffer, size, 0x10000);
+          BattleEffect_DrawShadedCircles(Ram_MapCellBuffer, size, 0x10000);
         }
         Canvas_BlitAtFoot(Ram_MapCellBuffer, cx >> 16, cy >> 16, size);
       }

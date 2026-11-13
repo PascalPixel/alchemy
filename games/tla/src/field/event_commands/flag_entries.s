@@ -9,7 +9,7 @@ gWorldMap_CursorDirectionAngles:
 	.2byte 0xffff, 0x0000, 0x8000, 0xffff
 
 @ 20-byte entries keyed by a flag (0x180 + flag), which FlagEntries_GetTable
-@ returns: Func_080c9de0 sets the flag of the entry whose id matches (and
+@ returns: WorldMap_MarkPlaceVisited sets the flag of the entry whose id matches (and
 @ whose variant does, unless it is -1), Func_080c9e1c returns an entry's
 @ value by its flag; Func_080ec2b8, WorldPicture_UpdateMarkers and WorldPicture_Show read
 @ them too. A zero flag ends the list.

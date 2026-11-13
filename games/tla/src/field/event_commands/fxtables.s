@@ -78,7 +78,7 @@ Data_080f0f64:
 Data_080f0f90:
 	.4byte 0x1090, 0x304c, 0x098c, 0x2942
 
-@ The 16 colours Func_080e4d9c writes to OBJ palettes 14 and 15
+@ The 16 colours FieldPsynergy_UpdateBurst writes to OBJ palettes 14 and 15
 	.global Data_080f0fa0
 Data_080f0fa0:
 	.incbin "games/tla/src/field/event_commands/fxpal.gbapal"

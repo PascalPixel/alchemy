@@ -512,13 +512,13 @@ static inline s32 Swirl_Draw(DrawRectangle draw, void *buffer,
   return draw(buffer, canvas, x, 0, size, size);
 }
 
-// A turning cloud swirl on BG2, shown from Func_0813e7e0. The cloud sheet
-// is drawn once into the canvas (its colours moved to palette entries 96
-// on) and copied twice across the map buffer; then BG2 turns about the
-// screen's centre while BG1 scrolls, the palette flashes white at the start,
-// steps toward the swirl's own colours every fourth frame and from frame
-// 120 dims. B starts it over and A ends it.
-void Func_08191530(struct BattleEffectArgument *effect) {
+/// A turning cloud swirl on BG2, shown from BattleEffect_RunBackgroundFadeIn.
+/// The cloud sheet is drawn once into the canvas (its colours moved to palette
+/// entries 96 on) and copied twice across the map buffer; then BG2 turns about
+/// the screen's centre while BG1 scrolls, the palette flashes white at the
+/// start, steps toward the swirl's own colours every fourth frame and from
+/// frame 120 dims. B starts it over and A ends it.
+void BattleEffect_RunCloudSwirl(struct BattleEffectArgument *effect) {
   BlitterPair sheetDraw;
   s32 savedScrollX;
   u8 *canvas;
@@ -637,12 +637,12 @@ void Func_08191530(struct BattleEffectArgument *effect) {
 s32 BattleEffect_BuildBlitterFar(s32 slot, s32 widthShift, s32 heightShift,
                                  s32 flags, u32 mode);
 
-// Summon 25's screen wipe: a soft-edged grey band, drawn once into the
-// canvas, slides across the screen on BG2 at speed pixels per frame, from
-// the left or (when the low bit of side is set) from the right. Halfway
-// through, while the band covers the screen, it calls midpoint to change
-// the scene behind it.
-void Func_08191958(u8 side, u8 speed, void (*midpoint)(void)) {
+/// Iris's screen wipe: a soft-edged grey band, drawn once into the
+/// canvas, slides across the screen on BG2 at speed pixels per frame, from
+/// the left or (when the low bit of side is set) from the right. Halfway
+/// through, while the band covers the screen, it calls midpoint to change
+/// the scene behind it.
+void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
   s32 scrollX;
   u8 *canvas;
   struct BattleEffectWork *work;
@@ -830,12 +830,12 @@ void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
 void BattleMotion_ApplyKnockbackFar(s32 actor, s32 mode);
 void Palette_LoadBasicSpriteColors(void);
 
-// Summon 25's teardown: sets each target back on the ground at the battle
-// origin with the usual bounce (The Broken Seal's 0xab85 motion strength)
-// and restarts its idle motion, ends the presentation transition, centres the
-// camera at (120, 120), reloads the battle palette and redraws the battle's
-// own backdrop over the summon's.
-void Func_08191cc4(void) {
+/// Iris's teardown: sets each target back on the ground at the battle
+/// origin with the usual bounce (The Broken Seal's 0xab85 motion strength)
+/// and restarts its idle motion, ends the presentation transition, centres the
+/// camera at (120, 120), reloads the battle palette and redraws the battle's
+/// own backdrop over the summon's.
+void Iris_RestoreBattle(void) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   struct BattlePresentationTransition *transition =

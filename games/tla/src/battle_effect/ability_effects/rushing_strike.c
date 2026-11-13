@@ -288,7 +288,6 @@ struct RenderModel__f17d174 {
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);

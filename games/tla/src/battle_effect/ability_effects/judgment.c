@@ -211,7 +211,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       if (n > 80) {
         n = 80;
       } else {
-        Func_0815b434(work->sheet + 0x1256, n, 0x10000);
+        BattleEffect_DrawShadedCircles(work->sheet + 0x1256, n, 0x10000);
       }
       Canvas_BlitAtFoot(work->sheet + 0x1256, 60, 80, n);
       /* FAKEMATCH(dead): the test of the block it stands in, made again; as a

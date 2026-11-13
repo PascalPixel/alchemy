@@ -383,12 +383,12 @@ extern char ResourceId_VioletSkyBackdrop;
 void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
 void BattleBackground_LoadFar(s32 mode, s32 background, s32 level);
 
-// Summon 25's backdrop change: clears the targets' ground motion and drops
-// each a little above the ground at a random height, empties the actor
-// list, loads the violet sky and recolours its 128 BG palette entries from
-// 96 on: each channel is darkened and the three are rotated (red to green,
-// green to blue, blue to red).
-void Func_0819253c(void) {
+/// Iris's backdrop change: clears the targets' ground motion and drops
+/// each a little above the ground at a random height, empties the actor
+/// list, loads the violet sky and recolours its 128 BG palette entries from
+/// 96 on: each channel is darkened and the three are rotated (red to green,
+/// green to blue, blue to red).
+void Iris_ChangeBackdrop(void) {
   struct BattlePresentationTransition *transition =
       Ram_HeapSlots->transitionWork;
   struct BattleEffectWork *work =
@@ -440,10 +440,10 @@ void Func_0819253c(void) {
   gBgScroll[1].x = 0;
 }
 
-// Summon 25: draws one falling drop at (x, y), large (20x40) when small is 0
-// and small (12x24) otherwise, its animation picture chosen by frame / 2, and
-// under it a trail of particles every half size down to row 112.
-void Func_08192648(u32 frame, s32 x, s32 y, s32 small) {
+/// Iris: draws one falling drop at (x, y), large (20x40) when small is 0
+/// and small (12x24) otherwise, its animation picture chosen by frame / 2, and
+/// under it a trail of particles every half size down to row 112.
+void Iris_DrawDrop(u32 frame, s32 x, s32 y, s32 small) {
   DrawRectangle draw[2];
   struct BattleEffectWork *work;
   void *canvas;
@@ -495,11 +495,11 @@ extern const u16 Data_08199f4c[];
 
 void SceneTransform_ApplyPosition(const s32 *pos);
 
-// Summon 25: draws one rising pillar, a textured strip of six vertices whose
-// two lower rows come from Data_08196f30 and whose top row is raised to
-// height. x is the pillar's screen column (63 is the centre); the base sits
-// height pixels below row 63, so the pillar grows upward from there.
-void Func_0819273c(s32 halfWidth, s32 x, s32 height) {
+/// Iris: draws one rising pillar, a textured strip of six vertices whose
+/// two lower rows come from Data_08196f30 and whose top row is raised to
+/// height. x is the pillar's screen column (63 is the centre); the base sits
+/// height pixels below row 63, so the pillar grows upward from there.
+void Iris_DrawPillar(s32 halfWidth, s32 x, s32 height) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
   void *projected;
   struct RenderModel *model;
@@ -564,8 +564,7 @@ void BattleEffect_DrawDiagonalCanvasLine(s32 x, s32 y, s32 w, u8 color) {
 struct StripQuad;
 
 s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags);   // BattleEffect_BuildBlitter
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
+                             s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
@@ -737,10 +736,9 @@ struct IrisSprite *EffectSprite_Acquire(s32 width, s32 height, u32 shape,
 void BattleEffect_ConfigureEffectDisplay(void);
 
 void Palette_LoadBasicSpriteColors(void);
-void Func_0815b510(u8 *map, s32 size, s32 scale);
 void Palette_BrightenSavedBattleBg(s32 red, s32 green, s32 blue);
-void Func_08191958(u8 side, u8 speed, void (*midpoint)(void));
-void Func_08191cc4(void);
+void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void));
+void Iris_RestoreBattle(void);
 void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
                                           s32 scale);
 void Transform_ResetMatrix(void);
@@ -1135,7 +1133,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   REG_BG2PA = 0x80;
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0x3f44;
-  Func_08191958(0, 4, Func_0819253c);
+  Iris_WipeScreen(0, 4, Iris_ChangeBackdrop);
   Iwram_FillWords(canvas, 0x4000, 0);
   while (((volatile struct DmaRegisters *)REG_DMA3)->control & 0x80000000) {
   }
@@ -1166,7 +1164,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   for (i = 0; i != 0x302; i++)
     sprites[i] >>= 1;
-  Func_0815b434(work->sheet, 32, 0x10000);
+  BattleEffect_DrawShadedCircles(work->sheet, 32, 0x10000);
   Graphics_LoadGreyRamp();
   frame = 0;
   HeapSlot_Release(SLOT_ALT);
@@ -1331,7 +1329,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       {
         s32 size = scene->radiusPixels * 2;
 
-        Func_0815b434(work->sheet, size, 0x10000);
+        BattleEffect_DrawShadedCircles(work->sheet, size, 0x10000);
         Canvas_BlitAtFoot(work->sheet, scene->xPixels, scene->yPixels, size);
       }
       if (frame == 175) {
@@ -1554,8 +1552,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         }
       }
       for (i = 0; i != 8; i++) {
-        Func_0815b510(work->sheet + 0x1b12 + i * 800, 20, 0x10000 - i * 0x2000);
-        Func_0815b510(work->sheet + 0x4c12 + i * 288, 12, 0x10000 - i * 0x2000);
+        BattleEffect_DrawShadedCirclesMirrored(work->sheet + 0x1b12 + i * 800,
+                                               20, 0x10000 - i * 0x2000);
+        BattleEffect_DrawShadedCirclesMirrored(work->sheet + 0x4c12 + i * 288,
+                                               12, 0x10000 - i * 0x2000);
       }
       for (i = 0; i != 36; i++)
         sparks->life[i] = 0;
@@ -1619,7 +1619,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         } else if (frame < Data_0819a054[j] + Data_0819a078[j]) {
           s32 t = frame - Data_0819a054[j];
 
-          Func_08192648(t / Data_0819a07e[j], Data_0819a060[j],
+          Iris_DrawDrop(t / Data_0819a07e[j], Data_0819a060[j],
                         Data_0819a066[j] - Data_0819a072[j] * t / 2,
                         Data_0819a06c[j]);
         }
@@ -1631,7 +1631,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
     // The pillars of light.
     if (frame == 370) {
-      Func_0815b434(work->sheet + 0x3e8, 16, 0x10000);
+      BattleEffect_DrawShadedCircles(work->sheet + 0x3e8, 16, 0x10000);
       for (i = 0; i != 16; i++) {
         Dma_Set(work->sheet + 0x3e8 + (i << 3), work->sheet + 0x302 + (i << 4),
                 0x80000008, REG_DMA3);
@@ -1655,7 +1655,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
         if (h > 127)
           h = 127;
-        Func_0819273c(3, 34, h);
+        Iris_DrawPillar(3, 34, h);
       }
       if (frame > 375) {
         struct Widths5 widths = Data_08196f50;
@@ -1663,7 +1663,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
         if (h > 127)
           h = 127;
-        Func_0819273c(widths.w[h >> 5], (h >> 5) * 2 + 94, h);
+        Iris_DrawPillar(widths.w[h >> 5], (h >> 5) * 2 + 94, h);
       }
       if (frame > 380) {
         struct Widths7 widths = Data_08196f64;
@@ -1673,7 +1673,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         if (h > 127)
           h = 127;
         q = h / 19;
-        Func_0819273c(widths.w[q], q + 12, h);
+        Iris_DrawPillar(widths.w[q], q + 12, h);
       }
       if (frame > 382) {
         struct Widths7 widths = Data_08196f80;
@@ -1683,14 +1683,14 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         if (h > 127)
           h = 127;
         q = h / 21;
-        Func_0819273c(widths.w[q], q * 2 + 70, h);
+        Iris_DrawPillar(widths.w[q], q * 2 + 70, h);
       }
       if (frame > 385) {
         s32 h = (frame - 385) << 2;
 
         if (h > 127)
           h = 127;
-        Func_0819273c(14, (h >> 3) + 48, h);
+        Iris_DrawPillar(14, (h >> 3) + 48, h);
       }
       if (frame == 422) {
         work->transferMode = 0;
@@ -1789,7 +1789,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         s32 n = i + 14;
         s32 w = n * 2;
 
-        Func_0815b434(work->sheet + off, n, 0x10000);
+        BattleEffect_DrawShadedCircles(work->sheet + off, n, 0x10000);
         off += n * w;
       }
       Iwram_FillWords(work->sheet + 0x1810, 0x1000, 0);
@@ -2036,7 +2036,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       s32 white;
       BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x5810, 16, 32,
                                            0x10000);
-      Func_0815b434(work->sheet + 0x1c10, 32, 0x10000);
+      BattleEffect_DrawShadedCircles(work->sheet + 0x1c10, 32, 0x10000);
       for (i = 0; i != 32; i++) {
         Dma_Set(work->sheet + (i << 4) + 0x1c10,
                 work->sheet + (i << 5) + 0x1810, 0x84000008, REG_DMA3);
@@ -2203,7 +2203,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
   camera[27] = savedZoom;
   HeapSlot_Release(SLOT_BLITTER);
-  Func_08191cc4();
+  Iris_RestoreBattle();
   Iwram_FillWords(canvas, 0x4000, 0);
   while (((volatile struct DmaRegisters *)REG_DMA3)->control & 0x80000000) {
   }

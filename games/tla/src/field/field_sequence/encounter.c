@@ -27,7 +27,11 @@ struct EventWorkView {
   s32 unk198;
 };
 
-void Func_080c9de0(s32 id, s32 variant) {
+/// Marks the world map place the party has just entered as visited: sets game
+/// flag 0x180 + flag of the first place whose scene is `id` and whose entrance
+/// is `variant` (or any, for -1). The main routine calls it at every scene
+/// entry; WorldPicture_Show offers the marked places.
+void WorldMap_MarkPlaceVisited(s32 id, s32 variant) {
   const struct FlagEntry *entry = FlagEntries_GetTable();
 
   for (; entry->flag != 0; entry++) {

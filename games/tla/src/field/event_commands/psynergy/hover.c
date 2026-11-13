@@ -47,7 +47,7 @@ struct GlowEvent__f0e9af4 {
 
 extern char ResourceId_RingOrb;
 
-s32 Func_080dbcc0(s32 x, s32 z, s32 layer);
+s32 MapGrid_IsHoverCell(s32 x, s32 z, s32 layer);
 s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 void HoverGlow_Update(void);
 
@@ -90,7 +90,7 @@ void FieldPsynergy_Hover(void) {
   Task_Add(HoverGlow_Update, TASK_PASS_VBLANK);
 
   found = 0;
-  if (Func_080dbcc0(player->x, player->z, player->terrainId) == 0) {
+  if (MapGrid_IsHoverCell(player->x, player->z, player->terrainId) == 0) {
     found = 1;
   } else {
     for (n = 0; n < 80; n++) {

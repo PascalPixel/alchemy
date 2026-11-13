@@ -2909,7 +2909,7 @@ Data_08199f40:
 	.global Data_08199f48
 Data_08199f48:
 	.byte 7, 5, 0, 0
-@ read by Func_0819273c
+@ read by Iris_DrawPillar
 	.global Data_08199f4c
 Data_08199f4c:
 	.2byte 256, 2, 0, 15, 3840, 0, 258, 3

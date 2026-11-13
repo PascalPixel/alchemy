@@ -42,7 +42,6 @@ s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
@@ -106,7 +105,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
   cells = (s32)gMapCellBuffer;
   Iwram_ClearWords((void *)cells, 0x8000);
   for (offset = 0, i = 0, size = 2; i != 16; size += 2, i++) {
-    Func_0815b434((u8 *)(offset + cells), size, 0x10000);
+    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, 0x10000);
     discOffsets[i] = offset;
     offset += (i * 2 + 3) * size / 2;
   }

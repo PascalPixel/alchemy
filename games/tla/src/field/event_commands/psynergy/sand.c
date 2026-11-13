@@ -21,9 +21,9 @@ struct GrabEventWork {
 void Func_080dc954(void);
 void Actor_SetOthersPaused(struct Actor *excludedActor, s32 groupMode,
                            s32 action);
-s32 Func_080dbcd8(s32 x, s32 z, s32 terrain);
+s32 MapGrid_IsSandCell(s32 x, s32 z, s32 terrain);
 void BattleEffect_SetObjectUpdateMode(struct Actor *actor, s32 mode);
-void Func_080e42d4(void);
+void FieldPsynergy_WatchSandGround(void);
 void FieldPsynergy_EndSand(void);
 /* VIEW(f0e4a34): routine Func_080e45a8 as void Func_080e45a8(void *sprite, void
  * *particle, s32 index, s32 tiles, s32 high); the definition has void
@@ -46,11 +46,13 @@ void Func_080e45a0(void *sprite);
 extern void
 GrowingParticle_Update__f0e4a34(void *sprite, void *particle, s32 index,
                                 s32 tiles) __asm__("GrowingParticle_Update");
-/* VIEW(f0e4a34): routine Func_080e43a4 as void Func_080e43a4(void *source, void
- * *buffer, s32 size); the definition has void Func_080e43a4(struct
- * PictureSource *source, void *buffer, s32 size). */
-extern void Func_080e43a4__f0e4a34(void *source, void *buffer,
-                                   s32 size) __asm__("Func_080e43a4");
+/* VIEW(f0e4a34): routine FieldPsynergy_DecodePicture as void
+ * FieldPsynergy_DecodePicture(void *source, void *buffer, s32 size); the
+ * definition has void FieldPsynergy_DecodePicture(struct PictureSource *source,
+ * void *buffer, s32 size). */
+extern void
+Func_080e43a4__f0e4a34(void *source, void *buffer,
+                       s32 size) __asm__("FieldPsynergy_DecodePicture");
 void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Actor_SetPositionAndResetMotionFar(struct Actor *actor, s32 x, s32 y,
                                         s32 z);
@@ -84,7 +86,7 @@ void FieldPsynergy_Sand(void) {
     goto end;
   Func_080dc954();
   Actor_SetOthersPaused(owner, 1, 0);
-  if (Func_080dbcd8(owner->x, owner->z, owner->terrainId) == 0)
+  if (MapGrid_IsSandCell(owner->x, owner->z, owner->terrainId) == 0)
     event->standing = 1;
   else
     event->standing = 0;
@@ -163,7 +165,7 @@ void FieldPsynergy_Sand(void) {
   event->phase = 3;
   gMainRoutineWork.pendingThird = 1;
   if (event->standing == 0)
-    Task_Add(Func_080e42d4, 0x480);
+    Task_Add(FieldPsynergy_WatchSandGround, 0x480);
   Actor_SetOthersPaused(owner, 0, 16);
   VramCache_FreeEntry(pictureEntry);
   VramCache_FreeEntry(particleEntry);
@@ -215,7 +217,8 @@ void MapGrid_SetScreenShakeFar(s32 x, s32 y, s32 decay);
 
 #define GLOW_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 
-void Func_080e4d9c(void) {
+/// Task of the Burst: cycles its particles' colours and draws them.
+void FieldPsynergy_UpdateBurst(void) {
   struct GlowWork *work = (struct GlowWork *)Ram_HeapSlots->battleFxWork[0];
   struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct CanvasSpriteWork *canvas = Ram_HeapSlots->unkec[1];

@@ -33,8 +33,9 @@ STATIC_ASSERT(offsetof(struct WorldMapWork, cursor) == 0x62c);
 STATIC_ASSERT(offsetof(struct WorldMapWork, mode) == 0x642);
 STATIC_ASSERT(offsetof(struct WorldMapWork, unk648) == 0x648);
 
-/// A world map destination, keyed by its flag (Func_080c9de0 sets game flag
-/// 0x180 + flag); FlagEntries_GetTable returns them, ended by a zero flag.
+/// A world map destination, keyed by its flag (WorldMap_MarkPlaceVisited sets
+/// game flag 0x180 + flag); FlagEntries_GetTable returns them, ended by a zero
+/// flag.
 struct FlagEntry {
   u8 flag;
   u8 value;

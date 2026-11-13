@@ -45,26 +45,33 @@ s32 Func_080dbc04(s32 x, s32 z, s32 layer) {
   u8 *event = Ram_HeapSlots->eventWork;
 
   if (*(s8 *)(event + 394) == 3)
-    return Func_080dbcd8(x, z, layer);
+    return MapGrid_IsSandCell(x, z, layer);
   if (Func_080dbda8(x, z, layer) != 0 || Func_080dbd5c(x, z, layer) != 0 ||
       MapGrid_GetCellAttributeLowNibbleFar(layer, x, z) != 0)
     return 0;
-  if (Func_080dbcd8(x, z, layer) != 0)
+  if (MapGrid_IsSandCell(x, z, layer) != 0)
     return 1;
   if (*(s8 *)(event + 0xd36) == 0)
     return MapGrid_GetCellAt(x, z, layer)->attributeB & 1;
   return ~MapGrid_GetCellAt(x, z, layer)->attributeB & 1;
 }
 
-s32 Func_080dbca8(s32 x, s32 z) {
+/// Whether Cloak can hide the leader on the cell at (x, z): layer 2's
+/// collision code 231.
+s32 MapGrid_IsCloakCell(s32 x, s32 z) {
   return MapGrid_GetCellAt(x, z, 2)->collisionCode == 231;
 }
 
-s32 Func_080dbcc0(s32 x, s32 z) {
+/// Whether Hover holds up over the cell at (x, z): layer 2's collision code
+/// 236.
+s32 MapGrid_IsHoverCell(s32 x, s32 z) {
   return MapGrid_GetCellAt(x, z, 2)->collisionCode == 236;
 }
 
-s32 Func_080dbcd8(s32 x, s32 z, s32 layer) {
+/// Whether the leader can move as sand on the cell at (x, z): layer 2's
+/// collision code 232, or on the world map collision 5 or 6; the event work's
+/// byte 0xd37 turns the answer round.
+s32 MapGrid_IsSandCell(s32 x, s32 z, s32 layer) {
   u8 *event = Ram_HeapSlots->eventWork;
   s32 column = x;
   if (*(s8 *)(event + 394) == 3) {
@@ -84,7 +91,9 @@ s32 Func_080dbcd8(s32 x, s32 z, s32 layer) {
   return column;
 }
 
-u8 Func_080dbd48(s32 x, s32 z, s32 layer) {
+/// Whether the cell at (x, z) can be climbed (attribute bit 0x40), as the
+/// climbing control (mode 2) and the Sand's climb test read it.
+u8 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer) {
   return MapGrid_GetCellAt(x, z, layer)->attributeB & 0x40;
 }
 

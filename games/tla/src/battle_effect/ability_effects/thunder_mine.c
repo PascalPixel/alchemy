@@ -15,7 +15,6 @@ s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
                                     u32 packed, s32 *screen, s32 *world);
@@ -256,7 +255,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
       if (radius > largest) {
         radius = largest;
       } else {
-        Func_0815b434(buffer, radius, 85536);
+        BattleEffect_DrawShadedCircles(buffer, radius, 85536);
         if (mode == 1) {
           for (i = 0; i != radius * radius / 2; i++) {
             if (buffer[i] != 0) {

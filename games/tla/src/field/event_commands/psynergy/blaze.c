@@ -328,10 +328,13 @@ struct CueEvent {
  * for `gMainRoutineWork'. */
 extern u8 gMainRoutineWork__f0e3d04[] __asm__("gMainRoutineWork");
 
-s32 Func_080dbcd8(s32 x, s32 z, s32 layer);
-s32 Func_080dbd48(s32 x, s32 z, s32 layer);
+s32 MapGrid_IsSandCell(s32 x, s32 z, s32 layer);
+s32 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer);
 
-void Func_080e42d4(void) {
+/// Task of the Sand: ends it (cue 0x208b) when the leader, not blocked, stands
+/// off sand or gMainRoutineWork's byte 707 is set, or while it climbs as sand
+/// it leaves a climbable cell or faces one that is not.
+void FieldPsynergy_WatchSandGround(void) {
   struct CueEvent *event = Ram_HeapSlots->eventWork;
   u8 *party = gMainRoutineWork__f0e3d04;
   struct Actor *object = ObjectTable_Get(*(s32 *)(party + 532));
@@ -339,7 +342,7 @@ void Func_080e42d4(void) {
 
   if (*(s8 *)(party + 707) != 0)
     reason = 1;
-  if (Func_080dbcd8(object->x, object->z, object->terrainId) == 0)
+  if (MapGrid_IsSandCell(object->x, object->z, object->terrainId) == 0)
     reason = 2;
   if (party[530] == 5 && *(s16 *)((u8 *)object + 102) != 0 &&
       object->timer == 0) {
@@ -347,7 +350,7 @@ void Func_080e42d4(void) {
     s32 z;
     s32 back;
 
-    if (Func_080dbd48(object->x, object->z, 2) == 0)
+    if (MapGrid_IsClimbableCell(object->x, object->z, 2) == 0)
       reason = 3;
     x = object->x & 0xfff00000;
     z = object->z & 0xfff00000;
@@ -361,7 +364,7 @@ void Func_080e42d4(void) {
      */
     do {
     } while (0);
-    if (Func_080dbd48(x + 0x80000, z + back, 2) == 0)
+    if (MapGrid_IsClimbableCell(x + 0x80000, z + back, 2) == 0)
       reason = 4;
   }
   if (reason != 0 && (Actor_CheckBlocked(object) & 2) == 0)
@@ -398,7 +401,8 @@ extern u8 BattleEffect_DecodePictureBlockSize[];
 /// Draws the current picture into a cleared buffer of the given
 /// size. The ARM picture decoder runs from RAM: when no copy is loaded yet,
 /// this loads one for the call and releases it afterwards.
-void Func_080e43a4(struct PictureSource *source, void *buffer, s32 size) {
+void FieldPsynergy_DecodePicture(struct PictureSource *source, void *buffer,
+                                 s32 size) {
   s32 decoderLoaded = 1;
   PictureDecoder decode = Ram_HeapSlots->unk4c[1];
 

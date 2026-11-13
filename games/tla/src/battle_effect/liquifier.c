@@ -488,7 +488,7 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
   for (i = 0; i != 32; i++) {
     s32 size = i * 2 + 2;
 
-    Func_0815b434((u8 *)(offset + cells), size, 0x14e20);
+    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, 0x14e20);
     discs[i] = offset;
     offset += (i * 2 + 3) * size / 2;
   }

@@ -98,7 +98,6 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 packed);
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
                                     s32 percent);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
-void Func_0815b510(u8 *map, s32 size, s32 scale);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 struct PoolEntry *Render_AllocateModelList(s32 count);
@@ -269,7 +268,8 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
         if (size > Data_08199d9f[effect->variant])
           size = Data_08199d9f[effect->variant];
         if (size > 0) {
-          Func_0815b510(work->sheet + 0x4000, size, 0x10000);
+          BattleEffect_DrawShadedCirclesMirrored(work->sheet + 0x4000, size,
+                                                 0x10000);
           draw[1](canvas, work->sheet + 0x4000, mouthX - size / 2,
                   mouthY - size, size, size * 2);
         }
@@ -284,7 +284,8 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
           size = 104 - frame * 2;
         half = size >> 1;
         size = half * 2;
-        Func_0815b510(work->sheet + 0x4000, size, 0x10000);
+        BattleEffect_DrawShadedCirclesMirrored(work->sheet + 0x4000, size,
+                                               0x10000);
         draw[1](canvas, work->sheet + 0x4000, mouthX - (size >> 1),
                 mouthY - size, size, half * 4);
       }

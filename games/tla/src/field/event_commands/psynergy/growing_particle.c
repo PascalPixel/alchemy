@@ -55,7 +55,7 @@ extern u8 Data_02000452;
 void Func_080dc954(void);
 void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
                            s32 action);
-void Func_080e42d4(void);
+void FieldPsynergy_WatchSandGround(void);
 extern char ResourceId_DustPuffA;
 /* VIEW(growing_particle): routine Func_080e45a8 as void Func_080e45a8(void
  * *sprite, void *particle, s32 index, s32 tiles, s32 high); the definition has
@@ -110,7 +110,7 @@ void FieldPsynergy_EndSand(void) {
   Func_080dc954();
   gMainRoutineWork__growing_particle[620] = 0;
   Actor_SetOthersPaused(owner, 1, 0);
-  Task_Remove(Func_080e42d4);
+  Task_Remove(FieldPsynergy_WatchSandGround);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DustPuffA), work);
   particleEntry = VramCache_FindFreeEntry();
   particleTiles = VramCache_Load(particleEntry, 0x800, work);
@@ -152,11 +152,11 @@ void FieldPsynergy_EndSand(void) {
     sprite = 0x400;
     {
       /* FAKEMATCH(pin): the copy's size pinned to r2, so it is set before
-       * work's copy to r1; as Func_080e43a4(source, work, sprite), 2 of 332
-       * instructions differ in tla-en. */
+       * work's copy to r1; as FieldPsynergy_DecodePicture(source, work,
+       * sprite), 2 of 332 instructions differ in tla-en. */
       register s32 size asm("r2") = sprite;
 
-      Func_080e43a4(source, work, size);
+      FieldPsynergy_DecodePicture(source, work, size);
     }
   }
   Animation_ApplyChildValueToFirstFar(owner->sprite, 15);

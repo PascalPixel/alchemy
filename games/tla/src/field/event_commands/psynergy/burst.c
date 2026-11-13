@@ -30,7 +30,7 @@ extern char ResourceId_FieldEffectExplosion, ResourceId_GlowDisc;
 void Camera_WorldToScreen(s32 *position);
 s32 Func_080db9a8(struct Actor *object, s32 facing);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
-void Func_080e4d9c(void);
+void FieldPsynergy_UpdateBurst(void);
 
 void FieldPsynergy_Burst(void) {
   struct GlowWork *work = HeapSlot_Alloc(92, sizeof(struct GlowWork));
@@ -122,7 +122,7 @@ void FieldPsynergy_Burst(void) {
   work->paletteMode = 1;
   work->nextBurst = 0;
   work->newBursts = 0;
-  Task_Add(Func_080e4d9c, 0x480);
+  Task_Add(FieldPsynergy_UpdateBurst, 0x480);
   kind = scene->fieldKind;
   pending = Scene_FindPsynergyTrigger(0x50000005, kind, Func_080ce31c(kind));
   frame = 0;
@@ -133,7 +133,7 @@ void FieldPsynergy_Burst(void) {
     Field_RunPsynergyEvent(pending, work->shake, frame);
     frame++;
   }
-  Task_Remove(Func_080e4d9c);
+  Task_Remove(FieldPsynergy_UpdateBurst);
   VramCache_FreeEntry(sparkEntry);
   VramCache_FreeEntry(burstEntry);
   FieldPsynergy_FadeFromCastColor();

@@ -1243,7 +1243,7 @@ void Actor_ResetTargetsAndVelocity(u32 objectId);
 void Actor_SetFirstSpriteAnimation(struct Actor *object, s32 index);
 
 void Scene_ChooseMusic(void);
-void Func_080c9de0(s32 id, s32 variant);
+void WorldMap_MarkPlaceVisited(s32 id, s32 variant);
 void Func_080ca3f4(s32 scene, s32 entrance);
 
 #endif

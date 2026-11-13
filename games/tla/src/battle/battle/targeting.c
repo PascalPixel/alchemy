@@ -182,32 +182,32 @@
     if ((unit)->hp == 0 && Battle_IsReviveEffectFar((action)->effect) == 0)    \
       (applies) = 0;                                                           \
     if ((applies) == 0) {                                                      \
-      (kindIndex) = ((action)->flags & ABILITY_KIND_MASK) - 1;                 \
+      (kindIndex) = ((action)->flags & ABILITY_FORMULA_MASK) - 1;              \
       switch (kindIndex) {                                                     \
-      case ABILITY_KIND_ATTACK - 1:                                            \
-      case ABILITY_KIND_ATTACK_MULTIPLIED - 1:                                 \
+      case ABILITY_FORMULA_ATTACK - 1:                                         \
+      case ABILITY_FORMULA_ATTACK_MULTIPLIED - 1:                              \
         if ((unit)->hp != 0)                                                   \
           (applies)++;                                                         \
         break;                                                                 \
-      case ABILITY_KIND_DAMAGE - 1:                                            \
-      case ABILITY_KIND_UNLEASHED_DAMAGE - 1:                                  \
-      case ABILITY_KIND_SUMMON - 1:                                            \
+      case ABILITY_FORMULA_DAMAGE - 1:                                         \
+      case ABILITY_FORMULA_ENEMY_DAMAGE - 1:                                   \
+      case ABILITY_FORMULA_SUMMON - 1:                                         \
         if ((action)->power != 0 && (unit)->hp != 0)                           \
           (applies)++;                                                         \
         break;                                                                 \
-      case ABILITY_KIND_PP_DAMAGE - 1:                                         \
+      case ABILITY_FORMULA_PP_DAMAGE - 1:                                      \
         if ((unit)->pp != 0)                                                   \
           (applies)++;                                                         \
         break;                                                                 \
-      case ABILITY_KIND_HEAL_HP - 1:                                           \
+      case ABILITY_FORMULA_HEAL_HP - 1:                                        \
         if ((unit)->hp != 0 && (unit)->hp < (unit)->maxHp)                     \
           (applies)++;                                                         \
         break;                                                                 \
-      case ABILITY_KIND_HEAL_PP - 1:                                           \
+      case ABILITY_FORMULA_HEAL_PP - 1:                                        \
         if ((unit)->pp < (unit)->maxPp)                                        \
           (applies)++;                                                         \
         break;                                                                 \
-      case ABILITY_KIND_EFFECT - 1:                                            \
+      case ABILITY_FORMULA_EFFECT - 1:                                         \
       case 9 - 1:                                                              \
         if ((action)->power != 0 && (unit)->hp != 0)                           \
           (applies)++;                                                         \
@@ -308,7 +308,8 @@ s32 BattleAI_ChooseTarget(s32 actorId, struct BattleAct *action) {
   if (action->targetMode == TARGET_MODE_FOES && action->range == 1 &&
       Enemy_GetDefinitionFar(((struct BattleUnit *)Unit_Get(actorId))->enemyId)
               ->targetStrategy != STRATEGY_RANDOM &&
-      (u32)((action->flags & ABILITY_KIND_MASK) - ABILITY_KIND_ATTACK) <= 2) {
+      (u32)((action->flags & ABILITY_FORMULA_MASK) - ABILITY_FORMULA_ATTACK) <=
+          2) {
     selected = -1;
     for (targetIndex = 0; targetIndex < targetCount; targetIndex++) {
       for (innerIndex = targetIndex; innerIndex < targetCount - 1;
@@ -911,7 +912,7 @@ power_end:
     Battle_ApplyActionExtras(tid, 1, 0);
   if (abilityId == 728)
     Battle_ApplyActionExtras(tid, 1, 1);
-  type = action->flags & 15;
+  type = action->flags & ABILITY_FORMULA_MASK;
   {
     s32 res;
 

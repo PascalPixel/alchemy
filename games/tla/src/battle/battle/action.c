@@ -396,7 +396,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       return -1;
     MessageArgument_PushFar(request->unitId, 1);
     MessageArgument_PushFar(abilityId, 4);
-    if ((Ability_Get(abilityId)->flags & 15) == 6)
+    if ((Ability_Get(abilityId)->flags & ABILITY_FORMULA_MASK) ==
+        ABILITY_FORMULA_ENEMY_DAMAGE)
       message = (s32)&MsgActorUnleashesAbility;
     else
       message = (s32)&MsgActorUsesAbility;

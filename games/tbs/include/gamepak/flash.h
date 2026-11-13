@@ -9,8 +9,54 @@
 /// Where the flash chip appears in the cartridge's save area, as pret names it.
 #define FLASH_BASE 0x0E000000
 /// Writes `data` to the flash chip at offset `addr`, as pret writes the chip's
-/// command sequences (0x5555 and 0x2AAA are its command addresses).
+/// command sequences.
 #define FLASH_WRITE(addr, data) (*(volatile u8 *)(FLASH_BASE + (addr)) = (data))
+
+// A command reaches the chip as GBATEK lists it: FLASH_UNLOCK_1 written to
+// FLASH_COMMAND_ADDRESS, FLASH_UNLOCK_2 to FLASH_UNLOCK_ADDRESS, then the
+// command to FLASH_COMMAND_ADDRESS. An erase is two such sequences, its
+// FLASH_COMMAND_ERASE and then what to erase.
+#define FLASH_COMMAND_ADDRESS 0x5555 ///< where the chip takes its commands
+#define FLASH_UNLOCK_ADDRESS 0x2AAA  ///< the second unlock write's address
+#define FLASH_UNLOCK_1 0xAA          ///< the first unlock byte
+#define FLASH_UNLOCK_2 0x55          ///< the second unlock byte
+/// The chip answers with its maker and device ids at offsets 0 and 1.
+#define FLASH_COMMAND_ENTER_ID_MODE 0x90
+/// Leaves ID mode; also resets a Macronix chip after a timeout.
+#define FLASH_COMMAND_RESET 0xF0
+#define FLASH_COMMAND_ERASE 0x80 ///< prepares an erase
+/// After FLASH_COMMAND_ERASE: erases the whole chip.
+#define FLASH_COMMAND_ERASE_CHIP 0x10
+/// After FLASH_COMMAND_ERASE, written to the sector itself: erases it.
+#define FLASH_COMMAND_ERASE_SECTOR 0x30
+/// The next byte written is programmed (on Atmel, the next 128 bytes).
+#define FLASH_COMMAND_PROGRAM 0xA0
+/// What every byte of an erased chip reads.
+#define FLASH_ERASED_BYTE 0xFF
+
+/// Writes one command to the chip, after its two unlock writes.
+#define FLASH_SEND_COMMAND(command)                                            \
+  (FLASH_WRITE(FLASH_COMMAND_ADDRESS, FLASH_UNLOCK_1),                         \
+   FLASH_WRITE(FLASH_UNLOCK_ADDRESS, FLASH_UNLOCK_2),                          \
+   FLASH_WRITE(FLASH_COMMAND_ADDRESS, (command)))
+
+/// The phase of a write the library waits on (WaitForFlashWrite): it picks the
+/// row of the chip's max-time table and is the low byte of a timeout's error.
+enum FlashPhase {
+  FLASH_PHASE_PROGRAM = 1,
+  FLASH_PHASE_ERASE_SECTOR = 2,
+  FLASH_PHASE_ERASE_CHIP = 3
+};
+
+// What the erase and program routines return: 0 when the work was done.
+/// A wait ran out of time: the error's low byte is its enum FlashPhase.
+#define FLASH_ERROR_TIMEOUT 0xC000
+/// A sector past the last of the chip's sixteen standard sectors.
+#define FLASH_ERROR_NO_SECTOR 0x80FF
+/// A sector that still read other than erased after every erase tried.
+#define FLASH_ERROR_NOT_ERASED 0x8004
+/// The last of the sixteen 4 KB sectors every chip is addressed by.
+#define FLASH_LAST_SECTOR 15
 
 u16 EraseFlashSector(u16 sector);
 u16 ProgramFlashByte(u8 *source, u8 *destination);

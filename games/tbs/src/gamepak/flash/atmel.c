@@ -9,9 +9,9 @@
 extern FlashWaitProc gWaitForFlashWrite;
 
 /// Erases the Atmel chip and waits for completion with its configured timing.
-/// Returns 0, or 0xc003 when byte 0 has not read 0xff within the chip-erase
-/// time. Atmel's erase-chip routine (gEraseFlashChip); nothing in the game
-/// calls through that cell.
+/// Returns 0, or a chip-erase timeout when byte 0 has not read erased within
+/// the chip-erase time. Atmel's erase-chip routine (gEraseFlashChip); nothing
+/// in the game calls through that cell.
 u16 EraseAtmelFlashChip(void) {
   u8 savedCode[64];
   u16 result;
@@ -22,26 +22,27 @@ u16 EraseAtmelFlashChip(void) {
 
   REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | gFlash_ChipAtmelLayout.type.wait[0];
 
-  command = (volatile u8 *)(FLASH_BASE + 0x5555);
-  *command = 0xAA;
-  unlock = (volatile u8 *)(FLASH_BASE + 0x2AAA);
-  *unlock = 0x55;
-  *command = 0x80;
-  *command = 0xAA;
-  *unlock = 0x55;
-  *command = 0x10;
+  command = (volatile u8 *)(FLASH_BASE + FLASH_COMMAND_ADDRESS);
+  *command = FLASH_UNLOCK_1;
+  unlock = (volatile u8 *)(FLASH_BASE + FLASH_UNLOCK_ADDRESS);
+  *unlock = FLASH_UNLOCK_2;
+  *command = FLASH_COMMAND_ERASE;
+  *command = FLASH_UNLOCK_1;
+  *unlock = FLASH_UNLOCK_2;
+  *command = FLASH_COMMAND_ERASE_CHIP;
 
-  result = gWaitForFlashWrite(3, (u8 *)FLASH_BASE, 255);
+  result = gWaitForFlashWrite(FLASH_PHASE_ERASE_CHIP, (u8 *)FLASH_BASE,
+                              FLASH_ERASED_BYTE);
 
   REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | WAITCNT_SRAM_8;
 
   return result;
 }
 
-/// Erases one small Atmel sector by programming every byte to 0xff: one of
-/// gFlash_ChipAtmelLayout's 512 sectors of 128 bytes, written with interrupts
-/// off. Returns 0, or the wait's error with its phase made 2, 0xc002, so that
-/// it reads as an erase error.
+/// Erases one small Atmel sector by programming every byte to
+/// FLASH_ERASED_BYTE: one of gFlash_ChipAtmelLayout's 512 sectors of 128 bytes,
+/// written with interrupts off. Returns 0, or the wait's error with its phase
+/// made FLASH_PHASE_ERASE_SECTOR, so that it reads as an erase error.
 u16 EraseAtmelFlashSector(u16 sector) {
   struct FlashSetupInfo *info = &gFlash_ChipAtmelLayout;
   u8 *cursor;
@@ -52,29 +53,27 @@ u16 EraseAtmelFlashSector(u16 sector) {
   cursor = (u8 *)(FLASH_BASE + (sector << info->type.sector.shift));
   savedIme = REG_IME;
   REG_IME = 0;
-  FLASH_WRITE(0x5555, 0xAA);
-  FLASH_WRITE(0x2AAA, 0x55);
-  FLASH_WRITE(0x5555, 0xA0);
+  FLASH_SEND_COMMAND(FLASH_COMMAND_PROGRAM);
   bytesRemaining = info->type.sector.size;
   while (bytesRemaining != 0) {
-    *cursor = 0xFF;
+    *cursor = FLASH_ERASED_BYTE;
     cursor++;
     bytesRemaining--;
   }
   cursor--;
   REG_IME = savedIme;
-  result = gWaitForFlashWrite(1, cursor, 0xFF);
+  result = gWaitForFlashWrite(FLASH_PHASE_PROGRAM, cursor, FLASH_ERASED_BYTE);
   if (result != 0) {
-    result = (result & 0xFF00) | 2;
+    result = (result & 0xFF00) | FLASH_PHASE_ERASE_SECTOR;
   }
   return result;
 }
 
 /// Erases thirty-two small sectors, trying each sector at most twice: the
 /// 4 KB of standard sector `sector`. Atmel's erase-sector routine
-/// (gEraseFlashSector). Returns 0, 0x80ff for a sector above 15, or the error
-/// of a small sector's second failed try, the sectors after it left as they
-/// were.
+/// (gEraseFlashSector). Returns 0, FLASH_ERROR_NO_SECTOR for a sector above 15,
+/// or the error of a small sector's second failed try, the sectors after it
+/// left as they were.
 u16 EraseAtmelFlashBlock(u16 sector) {
   // Both structured retry-loop trials add four bytes to the native EN body.
   u8 savedCode[64];
@@ -83,8 +82,8 @@ u16 EraseAtmelFlashBlock(u16 sector) {
   u16 attemptsRemaining;
   u16 sectorsErased;
 
-  if ((u32)sector > 15)
-    return 0x80ff;
+  if ((u32)sector > FLASH_LAST_SECTOR)
+    return FLASH_ERROR_NO_SECTOR;
 
   CopyFlashReadRoutineToRam(savedCode);
   REG_WAITCNT = (REG_WAITCNT & 0xfffc) | gFlash_ChipAtmelLayout.type.wait[0];
@@ -116,8 +115,8 @@ advanceSector:
 
 /// Programs a small Atmel sector with interrupts disabled, then polls its last
 /// byte. Writes 128 bytes from `source` after one program command, with no
-/// erase first. Returns 0, or 0xc001 when the last byte does not read back
-/// in time.
+/// erase first. Returns 0, or a program timeout when the last byte does not
+/// read back in time.
 u16 ProgramAtmelFlashSector(u32 sector, const u8 *source) {
   const u8 *input;
   volatile u8 *destination;
@@ -131,9 +130,7 @@ u16 ProgramAtmelFlashSector(u32 sector, const u8 *source) {
                       (sector << gFlash_ChipAtmelLayout.type.sector.shift));
   savedIme = REG_IME;
   REG_IME = 0;
-  FLASH_WRITE(0x5555, 0xaa);
-  FLASH_WRITE(0x2AAA, 0x55);
-  FLASH_WRITE(0x5555, 0xa0);
+  FLASH_SEND_COMMAND(FLASH_COMMAND_PROGRAM);
 
   remaining = gFlash_ChipAtmelLayout.type.sector.size;
   if (remaining != 0) {
@@ -146,15 +143,15 @@ u16 ProgramAtmelFlashSector(u32 sector, const u8 *source) {
   destination--;
   input--;
   REG_IME = savedIme;
-  return gWaitForFlashWrite(1, destination, *input);
+  return gWaitForFlashWrite(FLASH_PHASE_PROGRAM, destination, *input);
 }
 
 /// Programs an Atmel block in small sectors, trying each sector at most twice.
 /// Writes standard sector `sector` (4 KB) from `source` 128 bytes at a time,
 /// gFlashNumRemainingBytes counting what is left. Atmel's program routine
 /// (gProgramFlashSector), which Save_WriteSector calls. Returns 0,
-/// 0x80ff for a sector above 15, or the error of the small sector that failed
-/// twice.
+/// FLASH_ERROR_NO_SECTOR for a sector above 15, or the error of the small
+/// sector that failed twice.
 u16 ProgramAtmelFlashBlock(u16 sector, u8 *source) {
   // The ordinary decrementing retry loop shortens the native EN body by 16
   // bytes.
@@ -163,8 +160,8 @@ u16 ProgramAtmelFlashBlock(u16 sector, u8 *source) {
   u16 smallSector;
   u16 attemptsRemaining;
 
-  if ((u32)sector > 15)
-    return 0x80ff;
+  if ((u32)sector > FLASH_LAST_SECTOR)
+    return FLASH_ERROR_NO_SECTOR;
 
   CopyFlashReadRoutineToRam(savedCode);
   REG_WAITCNT = (REG_WAITCNT & 0xfffc) | gFlash_ChipAtmelLayout.type.wait[0];

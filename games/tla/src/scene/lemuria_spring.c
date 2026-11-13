@@ -155,8 +155,6 @@ s32 Scene_Initialize(void) {
   FIELD_AT((t0 + 0x23), u8, 0) = (0x20 | FIELD_AT((t0 + 0x23), u8, 0));
   blend = 0x3f42;
   FIELD_AT(0x4000050, u16, 0) = blend;
-  // A once-only block: its end holds the order around it (as the plain
-  // statements, 8 of 80 differ in tla-en).
   do {
   } while (0);
   alpha = 0x80c;

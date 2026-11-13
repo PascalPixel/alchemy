@@ -551,7 +551,6 @@ s32 NaribweInteriors_ProngsHeld(void) {
       FieldPartyInventory_FindMember(440) != -1 &&
       FieldPartyInventory_FindMember(441) != -1)
     return 17;
-  // No remaining combinations: the native falls off the end without a value.
 }
 
 /// One past the last Djinni of an element group found, skipping the ones never

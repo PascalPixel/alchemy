@@ -804,8 +804,6 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
     chest->motionFlags = 3;
     chest->gravity = 0x170a;
     wait(50);
-    // Through an s32 and a pointer the 17 is built with a move; as a halfword
-    // constant it comes from the pool.
     {
       s16 *counter = (s16 *)(work + 0x160);
       s32 value = 17;

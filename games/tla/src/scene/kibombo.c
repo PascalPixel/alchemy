@@ -2047,8 +2047,6 @@ void Func_02003c14(void) {
   Event_WaitTransitionFrames();
   KIBOMBO_TASK_ADD(Func_02002d64, 0x480);
   Event_Wait(20);
-  // As a for loop, loop.c keeps gInput's address and the mask in registers
-  // across the wait; the native builds both again each frame (differ 18).
   i = 0;
   goto test;
 next:
@@ -2548,8 +2546,6 @@ void Kibombo_GabombaRespondsToGift(void) {
     struct Actor *gift = gData_02007950;
 
     gift->motionFlags = 0;
-    // As a while loop, which moves the global's address out of the loop, 24
-    // of 288 instructions differ in tla-en.
     if (gift->y > 0x240000) {
     lower:
       gData_02007950->y -= 0x8000;
@@ -2561,8 +2557,6 @@ void Kibombo_GabombaRespondsToGift(void) {
   Sound_Play(SE_CRUNCH);
   if (gData_02007950 != 0) {
     gData_02007950->motionFlags = 0;
-    // As a for loop, which moves the global's address out of the loop, 25 of
-    // 288 instructions differ in tla-en.
     i = 0;
   rise:
     gData_02007950->y += 0x60000;

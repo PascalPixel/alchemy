@@ -38,7 +38,6 @@ struct Bubble {
   s32 x;
   s32 y;
   s32 z;
-  // volatile: the listing reads age again after the OAM stores.
   volatile s32 age;
   u32 oam[3];
 };
@@ -81,8 +80,6 @@ extern struct Trigger gAquaRock_Triggers[];
 extern struct Trigger gAquaRock_Room1Triggers[];
 extern struct Trigger gAquaRock_Room2Triggers[];
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
 
 static __inline__ void GameFlag_ClearBit_(s32 flag) { GameFlag_Clear(flag); }
@@ -967,8 +964,6 @@ void Func_0200169c(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(SE_184);
-  // Two goto loops: the ROM loads the zero and the update address on each pass,
-  // which loop.c hoists out of for loops (differ 18).
   i = 17;
 scatter:
   {
@@ -1495,8 +1490,6 @@ void Func_02002550(void) {
   work->vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(work->vramEntry, 0x100, buffer);
   Heap_Release(buffer);
-  // Use a value-returning call; a void declaration changes argument order
-  // (differ 2).
   ((s32 (*)(void *, s32))Task_Add)(Func_02002534, 0x480);
 }
 

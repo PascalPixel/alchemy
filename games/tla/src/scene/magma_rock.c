@@ -929,8 +929,6 @@ void MagmaRock_RaiseFlameTop(union FieldObject *object) {
 #undef PART_Y
 #undef EFFECT_Y
 
-// The native reads these event work halfwords signed (ldrsh).
-
 void Event_PlayCueNearFocus(struct Actor *object, s32 a);
 
 struct AnimationEntry;
@@ -959,10 +957,6 @@ struct ResourceSprite {
 
 void MagmaRock_BurnStatue(struct Actor *object) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  // The parts' actor type, held from the top: global allocation leaves it in
-  // no register and reload rebuilds 0x15f in r0 at each call, as the native
-  // does; as the literal, its pseudo takes r0 before the first call's
-  // arguments are built (differ 155).
   s32 type = 0x15f;
 
   if ((gFrameCount & 15) == 0)
@@ -1012,9 +1006,7 @@ void MagmaRock_BurnStatue(struct Actor *object) {
       Actor_SelectAnimation(parts[i], 3);
       /* FAKEMATCH(dead): part set again to parts[i], which it holds. */
       part = parts[i];
-      // Byte 98 lies in actor.h's callback. Written as a field, the value is
-      // computed before its address, as the native does (through a u8 *,
-      // differ 34).
+      // Byte 98 lies in actor.h's callback.
       part->unk5c[6] = 3 - i;
       part->watchedObject = object;
       part->update = MagmaRock_RaiseFlamePart;
@@ -1039,7 +1031,6 @@ void MagmaRock_BurnStatue(struct Actor *object) {
       id = MagmaRock_LookUpCellStatue(object->x, object->z,
                                       gMagmaRock_Room1Statues);
     } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
-      // The native loads x and z once, ahead of the entrance tests.
       s16 entrance = gMainRoutineWork.entrance;
       s32 x = object->x;
       s32 z = object->z;
@@ -1062,8 +1053,6 @@ void MagmaRock_BurnStatue(struct Actor *object) {
     FieldActor_SetSpriteColor(object, 0);
     object->update = NULL;
   }
-  // screenStatus read unsigned: as work->screenStatus, 39 of 294 instructions
-  // differ in tla-en.
   if (work->unk166 == 0 && *(s16 *)&work->unk15a == 0 &&
       *(s16 *)&work->unk15c[2] == 0 && *(s16 *)work->unk168 == 0 &&
       (u16)work->screenStatus != 0)
@@ -2137,7 +2126,6 @@ void MagmaRock_SpawnDustRing(void) {
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader == 0)
     return;
-  // Default: without it loop.c lifts the set of zero out of the loop.
   zero = 0;
   state = 0;
   for (i = 0; i <= 16; i++) {

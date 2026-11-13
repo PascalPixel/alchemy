@@ -359,10 +359,7 @@ void WorldMap_SetUpFlyingShip(void) {
 }
 
 /// Sets render mode 7, clears object 8's child flags, then adds up the PP of
-/// the active party; when it is 0, the current owner gets 1 PP back. The loop
-/// is the listing's goto loop, which the loop pass leaves alone
-/// (gMainRoutineWork reloaded each pass); its first test reads pp, which still
-/// holds the index's 0.
+/// the active party; when it is 0, the current owner gets 1 PP back.
 void WorldMap_SetUpShip(void) {
   s32 count;
   s32 pp;
@@ -1497,9 +1494,6 @@ refused:
   Actor_Jump(9, 2, 20);
   Event_ShowMessageAndWait(9, 0);
   WorldMap_ReloadPendingAreaGraphics();
-  // The constant local: with a plain 0 here, the zero that motionFlags = 2
-  // leaves is shared by the first visit's stores of 0 and its reloads take
-  // other registers (differ 26).
   FieldDjinn_JoinParty(9, zero, 7);
   Scene_PlayMusic();
   Event_End();
@@ -1528,7 +1522,6 @@ void Func_02002594(void) {
     scale = ((Random16() << 15) >> 16) + 0x13333;
     sprite->nextFrame = 0;
     sprite->priority = 2;
-    // The flags byte's address in a local: stored directly, 2 of 53 differ.
     motionFlags = &obj->motionFlags;
     *motionFlags = 0;
     obj->scaleX = scale;
@@ -1807,8 +1800,6 @@ void Func_02002e00(void) {
 
     FieldCamera_MoveTo(11890 << 16, -1, 10090 << 16, mode);
   }
-  // Entered at its test: as a while loop the test is copied ahead of it and
-  // gInput hoisted (differ 17).
   goto wait;
   do {
     wait(1);
@@ -2311,8 +2302,6 @@ void Func_02004634(struct Actor *parent) {
         sprite->nextFrame = 0;
         VramCache_FreeEntry(sprite->vramBlock);
         sprite->vramBlock = work->vramBlock;
-        // A one-bit field: as a byte `|= 1` its zero mask moves the
-        // motionFlags address out of r3 (differ 15).
         ((struct SpriteCacheBits *)&sprite->unk11)->retainCacheEntry = 1;
         sprite->tile =
             (gResourceTableEntries[sprite->vramBlock].offset >> 5) & 0x3ff;

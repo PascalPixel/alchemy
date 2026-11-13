@@ -133,7 +133,6 @@ void Func_02000138(u8 *grid, s32 count, s32 scale) {
       s32 column = cornerColumn - x;
       s32 row = cornerRow - y;
       u8 *cell;
-      // row << 6 is row * 64, spelled as the shift it matches with.
       cell = &grid[(row << 6) + column];
       cell[0] = level;
       if (column < lastColumn)
@@ -213,10 +212,7 @@ void Func_0200020c(s32 stage) {
       if (frame == length - 59)
         FieldEffect_ScheduleRatioTransition(gData_02003d70[stage], 60);
     }
-    if (frame >= gData_02003d84[stage] - 64)
-    // Pointer arithmetic folds gData_02003d88 + 1 into one literal, as the
-    // native does; indexed as [stage + 1] the 1 is added at run time.
-    {
+    if (frame >= gData_02003d84[stage] - 64) {
       u16 *turn = (u16 *)&map->unk11c;
       u8 *step = gData_02003d88 + 1;
 
@@ -364,9 +360,6 @@ void Func_0200020c(s32 stage) {
         u8 *fill;
 
         Func_02000138(grid, frame + 8, 0x10000);
-        // goto loops: the native jumps to the block-row and block tests and
-        // recomputes grid + x * 2 + base + i in every pass; with the pair loop
-        // as a for, differ 623 and gap 169.
         by = 0;
         rowBase = 0;
         goto blockRowTest;

@@ -55,17 +55,12 @@ void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void Func_02005a50(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Func_02005a60(s32 a, s32 b, s32 c);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02005a50_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
   Func_02005a50(a, b, c, d, e, f, g);
 }
 
 /// The store-flag form of a logical not.
-// The equality tests of this stage return 1 - (difference != 0) with no
-// branch, which the compiler emits only for !value on a register (as plain
-// comparisons they compile to a compare and branch).
 static __inline__ s32 IsZero(s32 value) { return !value; }
 
 #endif

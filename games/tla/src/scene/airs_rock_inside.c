@@ -1162,8 +1162,6 @@ void Func_02001828(void) {
   struct EffectOptions leaves, dust;
   struct Cell dir, cell;
   s32 i, steps = 0, carried;
-  // Default: nothing reads this 0 before the loop sets hit (without it, 261
-  // of 1527 instructions differ in tla-en).
   s32 hit = 0;
 
   /* FAKEMATCH(wrapper): calls forwarded through call.h's Call2, Call3, Call4
@@ -1692,8 +1690,6 @@ void Func_02002b58(s32 x, s32 z) {
   spawn.mode = 1;
   spawn.scaleX = 0xcccc;
   spawn.scaleY = 0x30000;
-  // A goto loop: the ROM rebuilds the height and the position's address on
-  // every pass, which a for loop hoists (differ 55).
   i = 0;
 next:
   position.x = x + ((Random16() & 31) << 16) - 0x100000;
@@ -1814,8 +1810,6 @@ row:
         cell = spark->sprite;
         ((struct SpriteAttr2High *)cell)->priority = priority >> 2;
       }
-      // Through the bit-field views the flags' load is issued before the
-      // priority store, as the native does; as plain bytes it waits for it.
       ((struct ObjectPriorityByte *)spark)->priorityFlags |= 1;
       spark->motionFlags = 0;
       spark->bounce = spark->x;
@@ -2119,8 +2113,6 @@ row:
         cell = spark->sprite;
         ((struct SpriteAttr2High *)cell)->priority = priority >> 2;
       }
-      // Through the bit-field views the flags' load is issued before the
-      // priority store, as the native does; as plain bytes it waits for it.
       ((struct ObjectPriorityByte *)spark)->priorityFlags |= 1;
       spark->motionFlags = 0;
       spark->bounce = spark->x;
@@ -3301,8 +3293,6 @@ s32 Scene_Initialize(void) {
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room7) {
     Func_02002770();
-    // one holds the constant 1 for the stores and calls below; written as
-    // 1 at each site, 54 of 1091 differ.
     one = 1;
     ((u8 *)Actor_GetById(12))[98] = one;
     ((u8 *)Actor_GetById(13))[98] = one;

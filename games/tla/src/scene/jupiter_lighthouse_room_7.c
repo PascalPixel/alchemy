@@ -259,8 +259,6 @@ void Func_020005e8(s32 mode) {
   struct Actor *object;
   s32 i, frame;
 
-  // Goto loops: as for loops, the stored constants (3, 4, 0x208000) are hoisted
-  // out of the loops and 42 of 181 instructions differ in tla-en.
   if (!Event_GetFlag(0xa1a)) {
     MapGrid_CopyCellsLayered(80, 46, 1, 7, 72, 9);
     MapGrid_CopyCellsLayered(80, 53, 8, 5, 72, 16);
@@ -347,8 +345,6 @@ void Func_02000778(s32 unused, s32 id) {
 // that flag and shows object 17 changing (sound 151) from the camera at (664,
 // 136). Object 20 on cell (8, 12) sets flag 2586, plays sound 167 and with flag
 // 2583 shows object 9 changing; off that cell it marks the cell it stands on.
-// The landing wait is the rotated loop (an if around a do-while), and the flag
-// and sound calls go through the call layer, each as the native has it.
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void MapGrid_SetAttributeBBitsAt(s32 x, s32 z, s32 a, s32 b);
@@ -814,7 +810,6 @@ void Func_02001a48(u16 *list, s32 mode, s32 count) {
 
   if (*list == 0xffff)
     return;
-  // A goto loop: as a do-while loop, 42 of 61 instructions differ in tla-en.
 top:
   {
     u32 entry = *list;
@@ -862,8 +857,6 @@ DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
                           BattleEffect_GetObjectPriority,
                           Oam_AddSpriteAtDepthClamped)
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
@@ -1055,7 +1048,6 @@ void CrackedTile_DropIn(void) {
   options.startScaleY = 0xa3d7;
   always = 1;
   i = 0;
-  // A goto loop: as a do-while loop, 4 of 169 instructions differ in tla-en.
 loop:
   /* FAKEMATCH(dead): the body tested on a flag that is always set. */
   if (always) {

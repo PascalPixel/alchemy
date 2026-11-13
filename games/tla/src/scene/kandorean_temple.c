@@ -115,8 +115,6 @@ extern u32 gKandoreanTemple_LookAroundScript[];
 extern s16 gKandoreanTemple_BlockActors[];
 extern s16 gKandoreanTemple_PillarActors[];
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_SetSingleChildFlags_(struct Actor *object,
                                                   s32 flags) {
   Actor_SetSpriteFlags(object, flags);
@@ -1109,8 +1107,6 @@ void KandoreanTemple_RunWestLift(void) {
   } else if ((u32)(*timer - 301) <= 1698) {
     lift->y += PIXELS(4);
     KandoreanTemple_GrowColumn(15, 0x4ccc, 0x4ccc);
-    // y read as long, another alias set than the reads around it: GCSE then
-    // keeps the reload after this call; as lift->y, 2 instructions move.
     if (*(long *)&lift->y > -0x50000)
       Actor_SetSpritePriority(13, 2);
     if (lift->y >= 0) {
@@ -1172,8 +1168,6 @@ void KandoreanTemple_RunEastLift(void) {
   } else if ((u32)(*timer - 301) <= 1698) {
     lift->y += PIXELS(4);
     KandoreanTemple_GrowColumn(16, 0x4ccc, 0x4ccc);
-    // y read as long, another alias set than the reads around it: GCSE then
-    // keeps the reload after this call; as lift->y, 2 instructions move.
     if (*(long *)&lift->y > -0x50000)
       Actor_SetSpritePriority(14, 2);
     if (lift->y >= 0) {
@@ -2296,8 +2290,6 @@ void KandoreanTemple_RideWestLiftUp(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  // A goto loop: as a do-while, loop.c hoists the scale constant into r6
-  // (differ 19).
 rise:
   object->y -= PIXELS(4);
   KandoreanTemple_ShrinkColumn(15, 0x4ccc, 0x4ccc);
@@ -2317,7 +2309,6 @@ void KandoreanTemple_RideEastLiftUp(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  // A goto loop, as in KandoreanTemple_RideWestLiftUp.
 rise:
   object->y -= PIXELS(4);
   KandoreanTemple_ShrinkColumn(16, 0x4ccc, 0x4ccc);

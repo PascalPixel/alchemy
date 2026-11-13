@@ -1747,8 +1747,6 @@ void Func_02002a08(void) {
   FieldActor_Jump(22, 7, 0);
   i = 15;
 turn:
-  // The angle, through s16: as the u16 field its halfword zero is shared with
-  // the motion-flag stores below and loads from the pool (differ 19 more).
   ((s16 *)Actor_GetById(22))[3] -= 0x1000;
   i--;
   System_Wait(1);
@@ -2206,7 +2204,6 @@ s32 Func_020040ec(s32 id) {
   s32 fromX, fromZ;
   s32 width, height, x, z;
 
-  // A goto loop: a C loop is strength-reduced, which the original's is not.
   if ((u16)kind != gPushKinds[(u16)i]) {
   again:
     next = (i + 1) * 65536;

@@ -1170,7 +1170,6 @@ void Func_0200167c(void) {
   actor->x = (x + facing - 1) << 19;
   actor->z = (((linked->z >> 19) & ~1) - (facing & 2) + 1) << 19;
   actor->velocityY = 0x60000;
-  // Through a pointer: the native loads this 1 from the pool.
   *(u8 *)&actor->priorityFlags = 1;
   *motion = 3;
   Actor_SetSpriteFlags(actor, 1);
@@ -1178,7 +1177,6 @@ void Func_0200167c(void) {
   shadow = FieldCamera_GetActor();
   shadow->speedLimit = 0x80000;
   shadow->acceleration = 0x10000;
-  // Through a pointer: the native loads this 0 from the pool.
   *(u8 *)&shadow->motionFlags = 0;
   FieldActor_SetMoveTarget(
       shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z), actor->z);
@@ -1765,18 +1763,12 @@ s32 Func_0200297c(void) {
           }
         }
 #endif
-        // A once-only block: its end holds the order around it (as the plain
-        // statement, 6 of 236 instructions differ in tla-en; tla-ja matches
-        // either way).
         do {
           x = actor->x += work->unk68 << 17;
         } while (0);
 #if TLA_PATCH_1
         z = actor->z + (work->unk6a << 17);
 #else
-        // The old z read in a once-only block, whose end keeps the read ahead
-        // of the step's (as a plain statement, 2 of 186 instructions differ
-        // in tla-ja; as the patch-1 sum, 4).
         do {
           oldZ = actor->z;
         } while (0);
@@ -1828,8 +1820,6 @@ s32 MarsLighthouseRoomF_SlideOnIce(void) {
   // Unused: gives the stack frame its 12 bytes.
   UNUSED s32 unused[3];
 
-  // Read unsigned: as event->screenStatus, 18 of 138 instructions differ in
-  // tla-en.
   if (*(u16 *)&event->screenStatus == 0) {
     ScreenTransition_Start(event->screenEffect, event->delay);
     event->screenStatus = 1;
@@ -1930,7 +1920,6 @@ void Func_02002d08(struct Actor *actor) {
 
   if (work->owner == NULL)
     return;
-  // A once-only loop, as the original runs it.
   for (i = 0; i >= 0; i--) {
     struct Actor *object;
     s32 a, b, c, d, e;
@@ -2055,8 +2044,6 @@ void Func_02003304(struct Actor *self) {
   struct Actor *actor = Actor_Get(((u8 *)self)[0x62]);
   s32 angle = (s16)self->unk66;
   struct FieldSprite *sprite = actor->sprite;
-  // volatile: the call reads position[0] before [1] and [2] (as a plain
-  // array, 2 of 86 differ in tla-en).
   volatile s32 position[3];
 
   position[0] = self->x;
@@ -2073,8 +2060,6 @@ void Func_02003304(struct Actor *self) {
   actor->acceleration = 0x2000;
   sprite->rotation = angle - 0x4000;
   actor->scaleX = 0;
-  // A once-only block: its end holds the order around it (as the plain
-  // statement, 4 of 86 differ in tla-en).
   do {
     actor->scaleY = 0;
   } while (0);
@@ -2483,8 +2468,6 @@ DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gData_020074cc, Data_0200f510,
                           gData_020075d2, BattleEffect_GetObjectPriority,
                           Oam_AddSpriteAtDepthClamped)
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_020074d0, gData_020074cc,

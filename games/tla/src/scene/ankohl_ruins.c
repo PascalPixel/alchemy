@@ -28,8 +28,6 @@ void AnkohlRuins_RaiseFirstSand(void);
 void AnkohlRuins_RaiseSecondSand(void);
 void Func_02001f7c(void);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline s32 AnkohlRuins_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
 
 static inline void AnkohlRuins_Call2e24(s32 a, s32 b, s32 c) {
@@ -130,8 +128,6 @@ const struct ActorPlacement *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_Start(s32 id, s32 a, s32 b) {
   Actor_JumpDownLedge(id, a, b);
 }
@@ -154,7 +150,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-// The Japanese form is the older revision and is still on its listing.
 #if TLA_PATCH_1
 
 struct LandingEventWork {
@@ -496,8 +491,6 @@ void Func_02000c24(s32 unused, s32 id) {
   MapGrid_CopyCells(16, 27, 3, 2, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 2, toColumn, highRow);
   rise = -40;
-  // The last argument is also kept for the later calls, as the native keeps
-  // the 3 it stores.
   Func_02000b78(3, 15, 200, rise, 0x2e8, kind = 3);
   MapGrid_CopyCells(16, 27, 3, 3, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 3, toColumn, highRow);
@@ -1176,8 +1169,6 @@ extern struct Trigger gAnkohlRuins_Room5Triggers[];
 extern struct Trigger gAnkohlRuins_Room6Triggers[];
 extern struct Trigger gAnkohlRuins_Room8Triggers[];
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Map_CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
   Map_CopyCellsRect(a, b, c, d, e, f);
 }

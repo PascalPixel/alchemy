@@ -120,8 +120,6 @@ void YampiDesert_ReadyStake(s32 id);
 void YampiDesert_TrackUpperLevelFromBelow(void);
 void YampiDesert_SetStakeCell(s32 id, u32 kind, s32 flag, s32 layer);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void Scene_TaskAdd(void (*func)(void), s32 priority) {
   Task_Add(func, priority);
 }
@@ -637,9 +635,6 @@ void YampiDesert_WatchScorpionStop(void) {
     FieldCamera_FollowActor(21, 1);
     Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 21);
   }
-  // Entered at its test, which keeps the test single and the address load
-  // inside the loop: as a while loop the test is copied above it and the
-  // address kept in r5.
   goto test;
   do {
     wait(1);
@@ -2076,9 +2071,6 @@ void YampiDesert_SetUpRoom2(void) {
     Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
   } else if (GameFlag_Get(0x8f0)) {
-    // The angles go through locals, as overlay 695 writes them (with
-    // every angle a constant, differ 38; with the single-use ones
-    // constants, they are built after the positions, differ 12).
     angleA = 0xb000;
     Scene_Call4098(8, 520 << 16, 242 << 16, angleA);
     angle = 0x8000;
@@ -2461,8 +2453,6 @@ void YampiDesert_DrawRisingSand(void) {
       continue;
     object = Actor_GetById(entry->id);
     frame = (gFrameCount % 12) / 3 * 8 + 32;
-    // A goto loop: the ROM moves nothing out of it; as a for loop, 272 of 252
-    // instructions differ in tla-en (the sprite's third word moves out).
     h = 0;
     if (h >= entry->height)
       goto top;

@@ -997,8 +997,6 @@ void Madra_StopPartyAfterRaid(void) {
   Event_End();
 }
 
-// The macro's do-while starts each mode change's own scheduling region; as
-// plain calls, 88 of 1565 instructions differ in tla-en.
 #define SET_MODE(id, mode)                                                     \
   do {                                                                         \
     Actor_SetAnimation(id, mode);                                              \

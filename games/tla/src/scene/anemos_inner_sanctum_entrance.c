@@ -302,8 +302,6 @@ const struct Trigger *Scene_GetEvents(void) {
   return gAnemosInnerSanctumEntrance_Triggers;
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Get(flag); }
 
 static __inline__ void SetObjectValue(s32 id, s32 value) {
@@ -434,8 +432,6 @@ void LightSprites_Draw(void) {
   }
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,

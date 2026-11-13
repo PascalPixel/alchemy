@@ -64,8 +64,6 @@ s32 Position_FlatDistance(s32 *a, s32 *b);
 void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor);
 void SeaOfTime_PlaceRock(s32 x, s32 z, s32 actor);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline s32 SeaOfTime_Cos(s32 angle) { return Trig_Cos(angle); }
 #include "event_work.h"
 #include "module/field/event_commands.h"
@@ -497,7 +495,6 @@ void SeaOfTime_CountLaps(void) {
   now = *(s16 *)(work + 340);
   nowRaw = *(u16 *)(work + 340);
   if (last != now) {
-    // Each read below takes its own expression: the native reloads for each.
     s16 *delta = &gSeaOfTime_LapTurn;
     s32 raw;
     s32 diff;
@@ -720,8 +717,6 @@ void SeaOfTime_SinkIntoWhirlpool(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetMoveTarget(actor, actor->x, actor->y, actor->z + 0x80000);
-  // A goto loop: as while (Actor_HasArrived(actor) == 0), loop.c moves 0xb0000
-  // out of the loop and 191 of 165 instructions differ.
   while (Actor_HasArrived(actor) == 0) {
     if ((gFrameCount & 3) == 0) {
       options.priority = 2;
@@ -878,10 +873,8 @@ fade:
   if (changed)
     goto fade;
   Event_Wait(30);
-  // For 360 frames, spawns an effect every 16 frames, then every 8, then
-  // every other frame, and plays sound 164 every 64 frames. As a C loop,
-  // loop.c moves the mask, the palette and the options address out of it,
-  // which the native does not (differ 252).
+  // For 360 frames, spawns an effect every 16 frames, then every 8, then every
+  // other frame, and plays sound 164 every 64 frames.
   i = 0;
 sparks:
   if ((i & 63) == 0)
@@ -908,9 +901,7 @@ next:
   i++;
   if (i != 360)
     goto sparks;
-  // Then 16 larger effects, one a frame. As a C loop, loop.c also moves the
-  // mask and the options address out, which the native does not (differ 228).
-  // Entered at its test so that PRE leaves the address in the body.
+  // Then 16 larger effects, one a frame.
   i = 0;
   while (i != 16) {
     {

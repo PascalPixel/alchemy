@@ -346,8 +346,6 @@ void MarsLighthouseEntrance_GrindIce(void) {
   Event_PlaySound(SE_572);
   x = 32;
   count = 6;
-  // A goto loop, which GCC does not treat as a loop, so the stack arguments
-  // are built inside it.
 step:
   Func_02004c30_(x, 125, 3, 3, 39, 85);
   Func_02000414(10);
@@ -660,7 +658,6 @@ void Func_02000df0(void) {
   u32 *word = buffer;
   s32 count = 63;
 
-  // A goto loop: as a for loop loop.c moves the fill word out of it.
 fill:
   *word++ = 0x11111111;
   if (--count >= 0)
@@ -671,8 +668,6 @@ fill:
   Task_AddFrame(Func_02000d18, TASK_PASS_VBLANK);
 }
 
-// A once-only block with a local that holds one constant, as the native
-// builds the value.
 #define SET_SPRITE_WINDOW_LAYERS()                                             \
   do {                                                                         \
     u16 winout = 0xf1f;                                                        \
@@ -778,8 +773,6 @@ void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02000fe0(const struct MapCell *cell) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 z = leader->z;
-  // The leader's map column and, later, the frame count share one variable,
-  // as the native's register shows.
   s32 i = leader->x >> 20;
 
   GameFlag_SetByte(0x340, i);
@@ -879,8 +872,6 @@ void Func_02001254(void) {
       *state = 1;
     }
   } else {
-    // Read through a struct, so PRE does not merge it with the first arm's
-    // read.
     if (((struct HalfwordField *)state)->value == 1) {
       Func_0200246c(0, 67);
       *state = 0;

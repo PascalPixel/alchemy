@@ -161,8 +161,6 @@ extern const u8 gData_0200414c[];
 extern const u8 gData_02004351[];
 extern u32 gData_020044c8[];
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
                                                     s32 z) {
   return Import_ActorCreate(kind, x, y, z);
@@ -570,8 +568,6 @@ void Func_020007d4(void) {
   MapGrid_CopyCellsLayered(91, 96, 7, 10, 16, 31);
   MapGrid_CopyCellsLayered(99, 96, 7, 14, 16, 91);
   MapGrid_CopyCellAttributes(43, 0, 5, 9, 17, 31);
-  // Both loops are goto loops: the ROM builds the two stack arguments and the
-  // table address on every pass, which for loops hoist (differ 38).
   i = 0;
 row:
   j = 0;
@@ -869,8 +865,6 @@ void Func_02000ecc(s32 unused, s32 id) {
       layer[3] -= 0x10000;
       System_Wait(4);
     }
-    // A goto loop: the ROM rebuilds the zero and the depth on every pass, which
-    // a for loop hoists.
     i = 13;
   place:
     object = Actor_GetById(i);
@@ -884,8 +878,6 @@ void Func_02000ecc(s32 unused, s32 id) {
     if (i <= 15)
       goto place;
     BlendScript_Suspend();
-    // A goto loop too: here a for loop hoists the queue's and the register's
-    // addresses (differ 24).
     i = 12;
   blend:
     IO_WRITE_QUEUE_PUSH(0x04000052, 0x1000 | i, 0x20000);
@@ -1007,9 +999,6 @@ void Func_020011d4(s32 unused, s32 id) {
   Event_SetFlag(0x24b);
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-
 void Func_0200124c(void) {
   s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x140);
   s32 i;
@@ -1019,8 +1008,6 @@ void Func_0200124c(void) {
   layer[3] -= 0x200000;
   Map_CenterOnFollowedPoint();
   MapGrid_SetShake(0x10000, 0x10000, 0x10000);
-  // A goto loop: the ROM sets the column and the row on every pass, which a for
-  // loop hoists (differ 44).
   i = 14;
 shake:
   {
@@ -1460,8 +1447,6 @@ void Func_02001f04(void) {
   *flags = 0;
   object->y = 0x500000;
   speed = 0x30000;
-  // A goto loop: the ROM rebuilds the turn step on every pass, which a for loop
-  // hoists (differ 43).
   i = 31;
 fall:
   object->y -= speed;
@@ -1505,7 +1490,6 @@ extern u16 gData_02004102[];
 extern u16 gData_02004106[];
 extern u32 gData_02004114[];
 
-// Returns what its closing Task_Add call leaves in r0.
 s32 Func_02003ab0(const u8 *a, const u8 *b, void (*handler)(void));
 
 // Aqua Rock's entry setup: in each room it shows the statues already filled by
@@ -1615,8 +1599,6 @@ s32 Scene_Initialize(void) {
 
 #include "text/msg_ids.h"
 
-// The original keeps the masked BG1CNT in a stack slot it never reads again:
-// control is volatile, and the register is written in a once-only block.
 #define BG1_SET_PRIORITY_1()                                                   \
   {                                                                            \
     u16 value;                                                                 \
@@ -2088,8 +2070,7 @@ void Func_02003278(void) {
 
 // Adds a water spout on every map cell of the given layer whose spout kind lies
 // in [first, first + 8), at the given heights, and marks those cells as spout
-// cells (120). The loops are built from labels: both 0x80000 loads stay in the
-// body and neither counter is strength-reduced.
+// cells (120).
 void Func_020032d4(u32 first, s32 level, s32 baseLevel) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct MapLayer *layer = map->layers;

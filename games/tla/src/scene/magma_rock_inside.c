@@ -44,8 +44,6 @@ void Actor_SelectAnimation(struct Actor *object, s32 a);
 void Actor_StartScript(struct Actor *object, const void *data);
 void Actor_DisableById(s32 id);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
   return Import_ActorCreate(kind, x, y, z);
 }
@@ -595,9 +593,7 @@ DEFINE_ACTOR_FLASH_COLOR(MagmaRockInside_FlashStatue, 10)
 // The cell watch's table lookup over (id, cell, value) rows ended by 0xffff:
 // for the row of the cell under the watch, sets the watch's object to the row's
 // object and returns its value; otherwise returns the value of the last row
-// passed (0 for none). The loop is spelled with gotos in the native's rotated
-// layout, which rebuilds 0xffff on every pass, where loop.c would hoist it out
-// of a C loop.
+// passed (0 for none).
 
 s32 MagmaRockInside_FindStatue(u16 *table) {
   struct CellWatch *watch = Ram_HeapSlots->effectWork;
@@ -949,9 +945,6 @@ void MagmaRockInside_DrainLava(void) {
     if (Event_GetFlag(770))
       t = 212;
   }
-  // The loops are written with goto: they carry no loop notes, so the masks,
-  // the shake constants and the counters' shifts stay in each pass, as in the
-  // native; as for loops, 431 of 537 instructions differ in tla-en.
   i = 0;
 burst:
   /* FAKEMATCH(temporary): burstRandom holding the first call's value. */
@@ -1116,8 +1109,6 @@ void MagmaRockInside_FloodWithLava(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  // One local reused for the position's address, the loop counters and the
-  // owner's address: the native keeps all of them in r6.
   j = (u32)position;
   ((s32 *)j)[0] = (leader->x & 0xfff00000) + 0x80000;
   ((s32 *)j)[2] = (leader->z & 0xfff00000) + 0x80000;
@@ -1131,8 +1122,6 @@ void MagmaRockInside_FloodWithLava(void) {
   MapGrid_SetShake(0x10000, 0x20000, 0x10000);
   Event_PlaySound(SE_TREMOR);
   FieldEvent_Wait(30);
-  // Each test reads the scene again: the native reloads gMainRoutineWork for
-  // room 3's test and reuses that load for room 5's.
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room2) {
     srcX = 20;
     i = 89;
@@ -1164,7 +1153,6 @@ void MagmaRockInside_FloodWithLava(void) {
     ((s32 (*)())MagmaRockInside_SwapCells)(0, 9, 16, 64);
     Actor_SetAnimation(11, 4);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room5) {
-    // The native tests and clears flag 770 in both arms.
     if (gMainRoutineWork.entrance <= 8) {
       srcX = 49;
       /* FAKEMATCH(dead): j set again to the position's address, which it

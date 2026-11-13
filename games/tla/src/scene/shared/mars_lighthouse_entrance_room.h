@@ -53,8 +53,6 @@ s32 Trig_Cos(s32 angle);
 
 void Func_02001e1c(struct Actor *object, s32 part);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void Func_02004c28_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
                                   s32 a5) {
   Map_CopyCellAttributeRect(a0, a1, a2, a3, a4, a5);

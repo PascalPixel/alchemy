@@ -134,8 +134,6 @@ s32 Trig_Cos(s32 angle);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_SetupScriptedPart(struct Actor *object, s32 priority);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ struct Actor *ObjectCreate_(s32 kind, s32 x, s32 y, s32 z) {
   return Import_ActorCreate(kind, x, y, z);
 }
@@ -848,7 +846,6 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   TileMap_ConvertBuffer(gMainRoutineWork.map + ((s32)&SceneId_Ov6ACRoom3 -
                                                 (s32)&SceneId_Ov6a8Room2),
                         screen);
-  // The zero sits in a local: as a plain `*screen = 0` 21 instructions differ.
   zero = 0;
   *screen = zero;
   PaletteFade_ApplyTarget(0x10000, 0);

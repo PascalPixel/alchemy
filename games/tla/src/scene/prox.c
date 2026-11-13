@@ -278,8 +278,6 @@ s32 Func_020002d8(struct Actor *object, struct Actor *target, s32 range,
   return result;
 }
 
-// The Japanese form of this function, the older revision without the test
-// that the leader stands within 11 of the actor, is still on its listing.
 #if TLA_PATCH_1
 
 /// Once the leader is within 11 of the actor, stops it
@@ -1600,8 +1598,7 @@ void Func_02002a08(void) {
 }
 
 // Unless flag 0x109 is set, calls Func_02001c24 with 0 for entrance 6 and with
-// 1 for entrances 7 and 8, then schedules Func_02002a08. The entrance is read
-// unsigned first and tested signed against 6, as the native reads it twice.
+// 1 for entrances 7 and 8, then schedules Func_02002a08.
 
 void Func_02002a38(void) {
   s32 priority;

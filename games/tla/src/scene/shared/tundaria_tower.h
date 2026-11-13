@@ -71,8 +71,6 @@ void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 b);
 void BattleEffect_ApplyColorToSourceBuffer(s32 color, s32 b);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void TundariaTower_FadeFrom(s32 color, s32 b) {
   BattleEffect_ApplyColorToSourceBuffer(color, b);
 }

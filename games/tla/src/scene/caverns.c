@@ -376,8 +376,6 @@ void Func_0200087c(void) {
       options.startScaleX = 0xcccc;
       options.startScaleY = 0xcccc;
       i = 0;
-      // A goto loop carries no loop notes: as a do loop, GCSE moves the
-      // array's address out of the loop.
     loop:
       {
         angle = i << 12;

@@ -130,8 +130,6 @@ extern struct Trigger gAlhafranCave_CaveTriggers[];
 extern struct Trigger gAlhafranCave_JailTriggers[];
 extern u8 gAlhafranCave_CrateSprite[];
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void MapGrid_SetCellHeight_(s32 x, s32 z, s32 a, s32 b) {
   MapGrid_SetCellHeight(x, z, a, b);
 }

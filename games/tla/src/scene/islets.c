@@ -522,11 +522,6 @@ void Func_02000568(void) {
 // halfword 0x1c4 the first time; a no sets flag 513. Without the item, object
 // 10 says MsgYupANice after the trade or MsgIVeBeenFeeling before it.
 
-// zero is set only inside the first spawn check: set where CSE can see it, the
-// store reuses the second answer, which then stays in r7. HAND_BACK is a plain
-// block: a do-while(0) ends CSE's block and loses the owner address and
-// message bases in the refusals.
-
 #define STEP(actor, x, z)                                                      \
   (Actor_GetById(actor)->actionFlags &= ~1, Actor_WalkToAndWait(actor, x, z),  \
    Event_Wait(1), Actor_GetById(actor)->actionFlags |= 1)
@@ -1994,7 +1989,6 @@ void Islets_InitializeRoom4(void) {
   Actor_DisableById(14);
   last = Actor_Get(14);
   {
-    // A local that holds 0, as the native keeps its own register for it.
     s32 still = 0;
 
     ((u8 *)last)[0x62] = 1;
@@ -2203,9 +2197,6 @@ inner:
   queue->count = 0;
 }
 
-// Overlay 674 keeps its own palette queue between its allocation and step
-// functions; its PaletteCycle_Add is the main image's.
-
 #define gPaletteWork ((struct PaletteSnapshotWork *)Ram_HeapSlots->unk70[0])
 
 #include "../field/palqueue_add.c"
@@ -2320,7 +2311,6 @@ s32 Func_02003684(s32 id) {
   s32 fromX, fromZ;
   s32 width, height, x, z;
 
-  // A goto loop: a C loop is strength-reduced, which the original's is not.
   if ((u16)kind != gData_02004070[(u16)i]) {
   again:
     next = (i + 1) * 65536;

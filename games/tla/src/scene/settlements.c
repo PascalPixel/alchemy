@@ -50,9 +50,6 @@ void Leader_StopMoving(void);
 void Event_ResolveAllPendingActions(void);
 void Scene_QueueMusic(s32 a);
 #ifdef MODERN
-// The rope routine is called with no prototype in scope, as its bytes need:
-// called as returning int, the two post ids load before the first argument.
-// A current GCC gets it here.
 void Rope_Lash(s32 a, s32 b, s32 c);
 #endif
 void Actor_LiftTargetBlock(const void *data);
@@ -633,8 +630,6 @@ void Settlements_EnterCave(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  // A goto loop carries no loop notes: the bytes rebuild the zero on every
-  // pass, and a for loop hoists it.
   i = 8;
 loop:
   {
@@ -780,8 +775,6 @@ void Settlements_SlideCrateDownFalls(void) {
 
   if (column == 11 && row == 9) {
     object->motionFlags = 0;
-    // A goto loop carries no loop notes: as a for loop its two uses of the
-    // object count double and the object takes the row's register.
     i = 8;
   sink:
     FieldEvent_Wait(1);

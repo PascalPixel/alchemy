@@ -61,8 +61,6 @@ void ChampaCliffCaves_OpenDoorAndEnter(const struct WarpTarget *warp, s32 door,
 void Event_PickUpItem(s32 a, s32 b, s32 c);
 void Actor_WatchActor(struct Actor *object, struct Actor *target);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column, s32 offset) {
   Actor_CenterOnColumn(id, column, offset);
 }
@@ -368,9 +366,6 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
-
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 
 void Func_020005e8(s32 actor) {
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 648, 200);
@@ -694,8 +689,6 @@ void Func_02000a34(s32 value) {
 
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
 
 static __inline__ void Func_0200343c_(s32 x, s32 z, s32 a, s32 b) {
@@ -981,9 +974,6 @@ struct EventTransition__s0a34 {
   u8 unk1b0[4];
   s32 frames;
 };
-
-// The scene's own event inline: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 
 void Func_02001774(void) {
   struct EventTransition__s0a34 *work;

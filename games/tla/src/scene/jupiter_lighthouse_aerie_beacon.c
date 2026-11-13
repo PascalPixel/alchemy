@@ -135,8 +135,7 @@ void Event_End(void);
 
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
-/// The halves of a 16.16 coordinate. Read through an s16 pointer instead, the
-/// high half's offset folds into the coordinate's (differ 11).
+/// The halves of a 16.16 coordinate.
 struct FixedHalves {
   u16 fraction;
   s16 whole;
@@ -1672,9 +1671,6 @@ static __inline__ void W_Actor_EnableActionAndSetCallback(s32 a0, s32 a1) {
   Actor_SetMovementTypeById(a0, a1);
 }
 
-// Every Actor_SetModeById of mode 3 or 4 that is followed by its wait goes
-// through this macro: its loop notes put the argument loads in the listing's
-// order, and all 20 uses match through it.
 #define SET_MODE_AND_WAIT(id, mode, frames)                                    \
   do {                                                                         \
     Actor_SetAnimation(id, mode);                                              \
@@ -2668,8 +2664,6 @@ DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
                           BattleEffect_GetObjectPriority,
                           Oam_AddSpriteAtDepthClamped)
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,

@@ -144,8 +144,6 @@ static inline void ShrineOfTheSeaGod_Jump(s32 actor, s32 height, s32 frames) {
   Actor_ShowEmoteById(actor, h, f);
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void ShrineOfTheSeaGod_ObjSpeed(s32 actor, s32 speed,
                                               s32 acceleration) {
   Actor_SetSpeedParameters(actor, speed, acceleration);
@@ -694,8 +692,6 @@ void Func_02000ce8(void) {
       ->screenEffect = 515;
   Event_StartScreenTransition();
   Call3((void (*)())MapGrid_SetScreenShake, 0x10000, 0x10000, 0x10000);
-  // A goto loop: as a for, while or do loop, loop.c hoists the 0x8000 the
-  // bytes rebuild on every pass (differ 64).
   i = 0;
 loop:
   leader->y += 0x8000;
@@ -743,8 +739,6 @@ void Func_02000e38(void) {
   object->motionFlags = 0;
   Sound_Play(SE_245);
   Call3((void (*)())MapGrid_SetScreenShake, 0x10000, 0x10000, 0x10000);
-  // A goto loop: the bytes reload the step on every pass, and a for loop
-  // hoists it (differ 30).
   i = 0;
 loop:
   object->y -= 0x8000;
@@ -1332,8 +1326,6 @@ void ShrineOfTheSeaGod_LashRope(void) {
   /* FAKEMATCH(wrapper): Actor_SetMoveTarget called through Call4. */
   Call4((void (*)())Actor_SetMoveTarget, (s32)object, 164 << 17, 152 << 14,
         168 << 16);
-  // A once-only block: its end holds the order around it (as the plain
-  // statement, 2 of 656 differ in tla-en).
   do {
     Actor_WaitForMoveById(13);
   } while (0);

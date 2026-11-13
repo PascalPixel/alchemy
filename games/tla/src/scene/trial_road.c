@@ -781,8 +781,6 @@ void TrialRoad_CheckPoundedPillarsCovered(s32 a, s32 b) {
   s32 id;
 
   id = 18;
-  // Goto loops: as for or do-while loops, the table address and the 1 are moved
-  // out of them (differ 29).
 next:
   {
     struct Actor *object = Actor_GetById(id);
@@ -1674,9 +1672,6 @@ DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gTrialRoad_PaletteCycleFrame,
                              gTrialRoad_PaletteCycleRunning,
                              gTrialRoad_PaletteCycleColors, 0x050000a4)
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-
 void TrialRoad_StartPaletteCycle(s32 mode) {
   gTrialRoad_PaletteCycleRunning = 1;
   if (mode != 2)
@@ -1887,11 +1882,7 @@ void *Unit_Get(s32 owner);
 void TrialRoad_StartRival(s32 a);
 
 // Places `layer` `column` cells into the map: its offset (column << 20), its
-// cells and terrain from that column on, and its position from the view. The
-// offset takes the literal, the cells and terrain the column's variable:
-// with the variable in the offset too, CSE keeps a shift of the register;
-// with the literal in the cells, the buffer and offset fold into one literal;
-// through gMapCellBuffer's name, the address stays in a register across calls.
+// cells and terrain from that column on, and its position from the view.
 #define SET_LAYER(column, x)                                                   \
   words = (s32 *)layer;                                                        \
   words[2] = (column) << 20;                                                   \
@@ -2013,8 +2004,6 @@ s32 Scene_PrepareMap(void) {
         Map_CopyRawCellsRect(px, row, 13, 21, 1, 13);
         Map_CopyRawCellsRect(px + 42, row, 13, 21, x1 + 1, 13);
         Map_CopyRawCellsRect(px + 84, row, 13, 21, x2 + 1, 13);
-        // The native neither hoists the table's address nor strength-reduces
-        // the index; as a for loop, 10 more instructions differ (376).
         i = 0;
       hideUnused55:
         if (gTrialRoad_DemoSceneryStages[i] != value)
@@ -2070,7 +2059,6 @@ s32 Scene_PrepareMap(void) {
         Map_CopyRawCellsRect(px, row, 13, 21, 10, destinationY);
         Map_CopyRawCellsRect(px + 42, row, 13, 21, 44, destinationY);
         Map_CopyRawCellsRect(px + 84, row, 13, 21, 78, destinationY);
-        // A goto loop for the same reason as the one above.
         i = 0;
       hideUnused:
         if (gTrialRoad_SceneryStages[i] != value)
@@ -2087,12 +2075,7 @@ s32 Scene_PrepareMap(void) {
           struct TrialRoadState *road;
 
           GameFlag_Set(324);
-          // A pointer of its own keeps the state's address in r5 across the
-          // calls; through gTrialRoadState each test reloads it (5 more).
           road = gTrialRoadState;
-          // The call's argument reads through the other struct: through the
-          // same one GCSE moves the load into both predecessors (11 more of
-          // gap).
           if (road->stage[0] < road->leaderBest || GameFlag_Get(642)) {
             TrialRoad_OpenLeaderDoor(road->mirrored, road->stage[0]);
             GameFlag_Set(642);
@@ -2833,8 +2816,6 @@ void TrialRoad_DrawFountains(void) {
   }
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void *Pool_Alloc(s32 size) { return Heap_AllocEwram(size); }
 
 void TrialRoad_StartFountains(s32 unused, s32 shape) {
@@ -3198,8 +3179,6 @@ UNUSED void String_WriteU32AsHex(u8 *buf, u32 value) {
   *buf = 0;
   buf--;
   i = 7;
-  // A goto loop, which builds the 15 on every pass: as a for loop, the 15 is
-  // moved out of it (differ 13).
 next:
   *buf = digits[value & 15];
   value >>= 4;
@@ -3376,8 +3355,6 @@ void TrialRoad_MoveRival(void) {
     if (!GameFlag_Get(260))
       state->point += 2;
     if (state->point == 7198) {
-      // A u16 read back as s16 at its use: the same value, the spelling that
-      // matches.
       u16 next = state->point + 1;
 
       work->path[state->point] = 0;
@@ -3417,8 +3394,6 @@ static inline void *TrialRoadLink_AllocPicture(void) {
   return Heap_AllocEwram(576);
 }
 
-// left and right are the arms' offsets, each opening with its sign, so the
-// subtractions compile in the order the native has them.
 #define MARKER(left, right, which, tileAdd)                                    \
   do {                                                                         \
     s32 lift;                                                                  \

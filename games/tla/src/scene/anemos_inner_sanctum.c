@@ -159,8 +159,6 @@ extern s16 gData_020043fa[];
 extern s32 gData_02003584[];
 
 /// Writes one background palette entry from its red, green and blue.
-// A statement macro, written do { } while (0): this store matches through that
-// shape (see the header).
 #define BG_PLTT_SET_RGB(index, r, g, b)                                        \
   do {                                                                         \
     int value = RGB(r, g, b);                                                  \
@@ -220,8 +218,6 @@ DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gPaletteCycleTimer,
                           gPaletteCycleIndex, gPaletteSlots,
                           gPaletteCycleBright, gPaletteColors)
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02003458_(s32 a, s32 b) {
   BattleEffect_ApplyColorToTargetBuffer(a, b);
 }
@@ -378,9 +374,6 @@ s32 Func_020006f8(struct Mover *mover) {
   mover->x = mover->originX;
   mover->y = mover->height;
   mover->z = mover->originZ;
-  // Read through a pointer of its own type, an access alchemy-gcc keeps apart
-  // from the s32 stores before it: as mover->angle, the angle loads before
-  // the radius (2 of 73 instructions differ).
   FieldVector_AddPolarOffset(mover->radius, *(s16 *)&mover->angle, &mover->x);
   Func_020006a4(mover);
   mover->radius -= mover->step >> 1;
@@ -1298,8 +1291,6 @@ struct EventWork154__s1938 {
 extern s16 gData_020043e4[];
 extern struct MapGridCellAnimation gData_02004410[];
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02003320_(const void *data, s32 a, s32 b) {
   MapGrid_PlayMapEdit(data, a, b);
 }
@@ -1312,8 +1303,6 @@ void Func_02001c94(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  // A goto loop, as in overlay 6a6's Func_02000e54 (its twin): it carries no
-  // loop notes.
   i = 8;
 loop:
   {
@@ -1344,8 +1333,6 @@ loop:
   Event_End();
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_020033e0_(s32 id, s32 x, s32 z) {
   Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
@@ -1926,9 +1913,6 @@ void CrackedTile_DropIn(void) {
   options.startScaleX = 0xa3d7;
   options.startScaleY = 0xa3d7;
   i = 0;
-  // A goto loop carries no loop notes: as a do-while loop, loop.c moves the
-  // velocity array's address out of the loop and 4 of 169 instructions differ
-  // in tla-en (10 as a for or while loop).
 loop:
   {
     s32 angle;

@@ -43,8 +43,6 @@ void Actor_ShowEmoteById(s32 actor, s32 jump, s32 frames);
 void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                        s32 height);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline s32 Daila_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
 
 static inline void Daila_ObjWalk(s32 actor, s32 x, s32 z) {

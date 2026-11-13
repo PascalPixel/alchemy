@@ -573,8 +573,6 @@ void Geysers_Draw(void) {
       continue;
     actor = Actor_GetById(swing->id);
     frame = (gFrameCount % 12) / 3 * 8 + 32;
-    // A goto loop: the native moves nothing out of it; as a for loop, loop.c
-    // hoists the sprite's third word (skeleton gap 64).
     h = 0;
     if (h >= swing->height)
       goto top;

@@ -80,8 +80,6 @@ void Champa_ShrinkIntoDoorway(struct Actor *object) {
   object->scaleY += -1536;
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column, s32 offset) {
   Actor_CenterOnColumn(id, column, offset);
 }
@@ -635,8 +633,6 @@ void Champa_CloseTwoMessages(s32 a0, s32 a1) {
 
 void Champa_ApproachTheCliff(void) { GameFlag_Set(FLAG_NEAR_THE_CLIFF); }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Champa_MessageOpen(s32 speaker, s32 flags) {
   FieldMessage_ShowAtActor(speaker, flags);
 }

@@ -706,8 +706,6 @@ extern void Func_02003150__mars_lighthouse_room_m(s32 value) __asm__(
     "Map_ClearLayerEntryFlag");
 void Weather_StartRain(s32 a);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void SetBlend(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                 s32 g) {
   LineScroll_InitWave(a, b, c, d, e, f, g);
@@ -784,8 +782,6 @@ s32 Scene_PrepareMap(void) {
     }
   }
   if (Event_GetFlag(0xa30)) {
-    // A second name of the one scene id: the ROM keeps a literal for each
-    // use, and with one name they share one.
     extern char SceneId_Ov6ACRoom3Second __asm__("SceneId_Ov6ACRoom3");
 
     TileMap_ConvertBuffer(

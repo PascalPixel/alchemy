@@ -720,9 +720,6 @@ void LemuriaInteriors_EmitNote(s32 x, s32 y, s32 z, s16 rotation, s32 timer) {
   }
 }
 
-// The notes' emitter is called without its prototype, as the calls below
-// were compiled in a file of their own: with it, the rotation would be
-// narrowed to an s16 at each call.
 #ifndef MODERN
 void LemuriaInteriors_EmitNote();
 #endif

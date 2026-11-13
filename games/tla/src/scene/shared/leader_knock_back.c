@@ -107,8 +107,6 @@ void KNOCK_BACK(void) {
             goto done;
           }
         }
-        // A once-only block: its end holds the order around it (as the plain
-        // statement, 6 of 236 instructions differ in tla-en).
         do {
           x = actor->x += work->unk68 << 17;
         } while (0);

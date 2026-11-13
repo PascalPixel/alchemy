@@ -375,8 +375,6 @@ void Func_0200095c(void) {
   Actor_SetSpriteFlags(gust, 0);
   gust->scaleX = 0x1b333;
   gust->scaleY = 0x3333;
-  // Stored through a bit field view: its alias set frees the load after it, as
-  // the native orders it (as gust->motionFlags, 2 of 632 differ in tla-en).
   ((struct MotionView *)gust)->flags = flag;
   ((struct FieldSprite *)gust->sprite)->priority =
       ((struct FieldSprite *)effect->target->sprite)->priority;
@@ -405,7 +403,6 @@ void Func_0200095c(void) {
       spark->update = Func_02000840;
     }
     if (gFrameCount & 1) {
-      // 655, not 455: 200 << 1 + 255 in the listing.
       gust->scaleX += 655;
       gust->scaleY += 655;
       Actor_SetSpriteColor(effect->target, 15);
@@ -1184,8 +1181,6 @@ row:
         cell = spark->sprite;
         ((struct SpriteAttr2High *)cell)->priority = priority >> 2;
       }
-      // Through the bit-field views the flags' load is issued before the
-      // priority store, as the native does; as plain bytes it waits for it.
       ((struct ObjectPriorityByte *)spark)->priorityFlags |= 1;
       spark->motionFlags = 0;
       spark->bounce = spark->x;

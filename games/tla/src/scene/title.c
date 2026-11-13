@@ -250,9 +250,6 @@ void Title_RevealScreen(void) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16, IO_WRITE_16);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 16), IO_WRITE_16);
   Event_Wait(120);
-  // A goto loop: it carries no loop notes, so each pass reloads the queue and
-  // interrupt register addresses; as a for or do-while loop, 90 instructions
-  // differ in tla-en.
   i = 0;
 fade:
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16 - i, IO_WRITE_16);
@@ -300,8 +297,6 @@ void Title_LoadBackground(void) {
   // Fill the visible 30 columns and pad each 32-entry tilemap row.
   tilemap = (u16 *)0x06003000;
   tileIndex = 0x1a0;
-  // Written with goto: as for loops, the pinned column counter keeps its exit
-  // test ahead of the loop (differ 17).
   screenY = 0;
 row:
   screenX = 0;

@@ -25,9 +25,6 @@
 extern u32 gOseniaCliffs_PaletteCycleStep[];
 
 #ifdef MODERN
-// The rope routine is called with no prototype in scope, as its bytes need:
-// called as returning int, the two post ids load before the first argument.
-// A current GCC gets it here.
 void Rope_Tie(s32 a, s32 b, s32 c);
 #endif
 
@@ -63,9 +60,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 #ifdef MODERN
-// The rope routine is called with no prototype in scope, as its bytes need:
-// called as returning int, the two post ids load before the first argument.
-// A current GCC gets it here.
 void Rope_Lash(s32 a, s32 b, s32 c);
 #endif
 

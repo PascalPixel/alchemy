@@ -619,9 +619,6 @@ void Func_02000d78(u16 *list) {
   }
 }
 
-// One-field view: the shape store is memory of its own to sched2, which sinks
-// it past the cell read; a plain store keeps its order.
-
 DEFINE_HELD_ACTOR_RAISE_CELL(HeldActor_RaiseCell, MapGrid_GetTerrainKind,
                              Actor_GetCellIndex, MapCollision_FindOrAddTag)
 
@@ -718,8 +715,6 @@ const struct Trigger *Scene_GetEvents(void) {
   return gDehkanPlateau_Triggers;
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
                                           s32 f) {
   Map_CopyCellAttributeRect(a, b, c, d, e, f);
@@ -749,9 +744,6 @@ void Func_02001368(void) {
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   }
 }
-
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 
 void Func_020013b0(void) {
   if (GameFlag_Get(0x213) == 0)
@@ -806,9 +798,6 @@ void DehkanPlateau_ShowActors(void) {
 }
 
 DEFINE_ACTORS_SET_HIDDEN(Actors_SetHidden)
-
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 
 void Func_02001554(s32 a, s32 b) { Pillars_Pound(gData_02003f98, a, b); }
 
@@ -1197,8 +1186,6 @@ void DehkanPlateau_StepOnCrack(void) {
   }
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Get(flag); }
 
 void DehkanPlateau_ForgetCrackOnLeaving(void) {
@@ -1294,9 +1281,6 @@ void Func_02002124(void) {
     Func_0200200c(active);
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-
 void Func_02002140(void) {
   s32 set = GameFlag_Get(0x207);
 
@@ -1356,8 +1340,6 @@ void Actor_WatchAndSetScript(s32 id, s32 target);
 extern void Task_Add__events_g(void (*func)(void),
                                s32 priority) __asm__("Task_Add");
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
   FieldCamera_MoveWithinMapBounds(a, b, c, d);
 }
@@ -1463,9 +1445,6 @@ void DehkanPlateau_CannonPoundsPillar(void) {
   GameFlag_Set(0x86f);
   Event_End();
 }
-
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 
 void DehkanPlateau_SinkPoundedPillar(void) {
   struct EffectWork7c4 *work = Ram_HeapSlots->effectWork;
@@ -1822,8 +1801,6 @@ void DehkanPlateau_CannonCrumblesLastPillar(void) {
   Event_End();
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_SetAngle(s32 id, s32 angle) {
   Actor_FaceDirectionById(id, angle);
 }
@@ -1907,9 +1884,6 @@ void Func_020030c0__s2698(void) {
                                   ->facing);
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-
 void DehkanPlateau_RestoreRoom1Cracks(void);
 
 void DehkanPlateau_InitializeRoom1(void) {
@@ -1937,9 +1911,6 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);
-
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 
 // Places an actor and resets its motion (Actor_SetPositionAndResetMotion).
 static __inline__ void Actor_PlaceAndResetMotion(struct Actor *object, s32 x,

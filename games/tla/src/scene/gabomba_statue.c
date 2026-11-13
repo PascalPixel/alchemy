@@ -1985,8 +1985,6 @@ s32 Scene_PrepareMap(void) {
 
 void GabombaStatue_InitializeRoom1(void) { Func_02001b38(); }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Exit_Set(s32 index, s32 flag, s32 a, s32 b) {
   Func_0200583c(index, flag, a, b);
 }
@@ -2191,8 +2189,6 @@ void GabombaStatue_InitializeRoom7(void) {
   }
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void *Mem_Alloc(s32 size) { return Heap_Alloc(size); }
 
 void Func_020038ac(void) {
@@ -2702,8 +2698,6 @@ nextColumn:
       } else {
         object->x = 0;
         object->z = 0;
-        // A byte store of the cell's last byte: sched2 orders it behind the
-        // next load's constant only as a char access.
         ((u8 *)cell)[3] = 1;
         /* FAKEMATCH(temporary): kind and the origins read before the column and
          * row are added. */

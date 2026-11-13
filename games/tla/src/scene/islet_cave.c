@@ -296,8 +296,6 @@ void Func_020005fc(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  // A goto loop carries no loop notes: the bytes rebuild the zero on every
-  // pass; as a for loop, loop.c hoists it and 20 of 63 instructions differ.
   i = 8;
 loop:
   {

@@ -81,8 +81,6 @@ s32 PushTarget_FillFootprint(s32 id);
 s32 PushTarget_FindSlide(struct PushTarget *target);
 void PushTarget_PushFill(struct PushTarget target);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Lift_(s32 x, s32 z, s32 a, s32 b) {
   MapGrid_SetCellHeight(x, z, a, b);
 }
@@ -441,8 +439,6 @@ DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
                           BattleEffect_GetObjectPriority,
                           Oam_AddSpriteAtDepthClamped)
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,

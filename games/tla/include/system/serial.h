@@ -168,9 +168,6 @@ static __inline__ void Serial_ResetTransferState(void) {
   zero = 0;
   /* FAKEMATCH(dead): state set again. */
   state = &gSerialTransfer;
-  // An empty once-only loop ends CSE's block, so the stores take zero's
-  // register rather than the constant; without it, 29 of 62 instructions differ
-  // in tbs-en (BattleArena_ExchangePartyRecords).
   do {
   } while (0);
   state->status = 0x80;

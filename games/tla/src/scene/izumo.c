@@ -345,9 +345,6 @@ void Izumo_RotateWaterColors(void) {
   s16 saved;
   s32 index;
 
-  // The three rotations are goto loops, which loop.c leaves alone, as the
-  // native's are; as do-while, while or for loops, 90 instructions differ in
-  // tla-en.
   if ((gFrameCount & 3) == 0) {
     saved = *(volatile u16 *)&BG_PLTT_COLOR(3, 14);
     index = 14;

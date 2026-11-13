@@ -65,9 +65,6 @@ void Actor_SelectAnimation(struct Actor *object, s32 a);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 a);
 s32 Vents_GetCounter(void);
 #ifdef MODERN
-// The vent cycles call Vent_SetActive with no prototype in scope, as their
-// bytes need: the implicit int return sets its flag before its index. A
-// current GCC gets it here.
 void Vent_SetActive(s32 index, s32 active);
 #endif
 s32 Vents_AdvanceCounter(s32 a);

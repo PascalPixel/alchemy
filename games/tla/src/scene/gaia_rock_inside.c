@@ -270,8 +270,6 @@ const u8 *Scene_GetRegions(void) {
   return 0;
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02004eec_(s32 id, s32 a, s32 b) {
   Actor_JumpDownLedge(id, a, b);
 }
@@ -326,8 +324,6 @@ s32 Func_0200042c(void) {
   options.startScaleX = 0xa3d7;
   options.startScaleY = 0xa3d7;
   i = 0;
-  // A goto loop carries no loop notes: as a do, for or while loop, loop.c
-  // moves the velocity array's address out of the loop.
 loop:
   {
     s32 angle;
@@ -681,8 +677,6 @@ void Func_02000b6c(void) {
   }
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
 
 static __inline__ void Func_0200500c_(s32 a, s32 b, s32 c) {
@@ -1395,8 +1389,7 @@ void Func_02001d14(void) {
 
 // Leaving Gaia Rock: after FLAG_SERPENT_SLAIN a message; otherwise sets the
 // next destinations (scene 0xb1, entrance 10, and 11 or 12 by the item 0x1c3
-// and the four flags 0x9bc to 0x9bf) and leaves. The destination setters take
-// s32: as u16 the scene symbol loads through ldrh and the pools break up.
+// and the four flags 0x9bc to 0x9bf) and leaves.
 #include "text/msg_ids.h"
 
 void GaiaRockInside_ChallengeSerpent(void) {

@@ -72,8 +72,6 @@ extern struct CellMarkers gData_02002aa0;
 extern u32 gData_02001ee8[];
 extern u32 gWaterDropScript[];
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
                                                     s32 z) {
   return Import_ActorCreate(kind, x, y, z);
@@ -730,8 +728,6 @@ DEFINE_LEADER_RISE_FROM_WATER(Leader_RiseFromWater, Actor_EmitMist)
 
 void Func_020015f8(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  // viewZ read through a pointer to viewX, its neighbour; as map->viewZ, 30
-  // of 189 instructions differ in tla-en.
   s32 *view = &map->viewX;
   s32 viewX = view[0] & 0xffff0000;
   s32 viewZ = view[1] & 0xffff0000;
@@ -850,14 +846,11 @@ void Func_020017f8(u32 base, s32 a, s32 b) {
           terrain[(u16)x + ((u16)z << 7)] = 120;
         }
       }
-      // The step spelled as a halfword sum (as x++, 40 of 159 instructions
-      // differ in tla-en).
       x = ((x << 16) + 0x10000) >> 16;
       cell++;
       if ((u16)x < width)
         goto inner;
     }
-    // The same halfword-sum spelling (as z++, 16 of 159 differ).
     z = ((z << 16) + 0x10000) >> 16;
     if ((u16)z < height)
       goto outer;

@@ -160,7 +160,6 @@ void Pillars_Pound(u16 *list, s32 mode, s32 count) {
 
   if (*list == 0xffff)
     return;
-  // A goto loop: as a do-while loop, 42 of 61 instructions differ in tla-en.
 top:
   {
     u32 entry = *list;
@@ -395,8 +394,6 @@ void CrumblingPillars_PlaceWithStandIns(u16 *list) {
 
       Actor_DisableById(id);
       cell->attributeB = 128;
-      // Read through the actor, not actor->terrainId: the native reloads it
-      // after the cell store.
       *shape =
           MapCollision_FindOrAddTag(actor->terrainId, kind, (ground >> 19) + 4);
       if (Event_GetFlag(flag))

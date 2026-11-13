@@ -16,9 +16,6 @@
 #include "flag_call.h"
 
 #ifdef MODERN
-// The rope routine is called with no prototype in scope, as its bytes need:
-// called as returning int, the two post ids load before the first argument.
-// A current GCC gets it here.
 void Rope_Lash(s32 a, s32 b, s32 c);
 #endif
 void Actor_PlaceBlocks(const void *data);
@@ -76,7 +73,6 @@ void Func_02000280(void) {
 }
 
 void Func_020002a4(void) {
-  // Declared first: x then wins its allocation tie with sine.
   s32 x;
   // Trig_Sin is an 8-byte far-call veneer: its target address is the word
   // after its first instruction.
@@ -207,8 +203,6 @@ void Func_020004cc(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  // A goto loop: the bytes rebuild the zero on every pass, which a for
-  // loop hoists (differ 12).
   i = 8;
 loop:
   {
@@ -681,8 +675,6 @@ void Func_02000fa4(void) {
   Func_02000f3c();
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void CopyRect(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) {
   MapGrid_CopyCellPictureIndicesRect(a0, a1, a2, a3, a4, a5);
 }
@@ -800,8 +792,6 @@ void Func_020012a8(s32 objectId) {
 
   object = Actor_Get(objectId);
   params.update = FieldEffect_AdvanceMotion;
-  // A goto loop: the vector's address is formed after the cosine call on every
-  // pass, where a for loop hoists it.
   angleStep = 0;
 burst:
   angle = angleStep << 12;
@@ -854,8 +844,6 @@ void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer) {
 
 #include "text/msg_ids.h"
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void BlendBack(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) {
   MapGrid_CopyCellPictureCellsRect(a0, a1, a2, a3, a4, a5);
 }

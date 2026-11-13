@@ -63,9 +63,6 @@ void LemurianShipDeck_EnterCabin(void) {
 
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    // The loop is written with goto so that it carries no loop notes: the bytes
-    // rebuild the zero and the height on every pass, and a for loop hoists both
-    // (differ 39).
     i = 8;
   loop:
     {

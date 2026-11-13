@@ -184,8 +184,6 @@ const struct Trigger *Func_020004c8(void) {
   return (const struct Trigger *)gData_02003618;
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void TundariaTower_02002fe8(s32 a0, s32 a1, s32 a2, s32 a3,
                                           s32 a4, s32 a5) {
   Map_CopyCellAttributeRect(a0, a1, a2, a3, a4, a5);
@@ -299,7 +297,6 @@ void Func_02000708(struct TundariaTowerPosition *position, s32 count,
 
     options.rotation = (Random16() & 15) << 12;
     velocityX = Random16();
-    // One constant for the loop's life: the listing keeps 15 in a register.
     mask = 15;
     velocityX &= mask;
     velocityX -= 8;
@@ -1069,7 +1066,6 @@ void Func_02002100(u16 *list, s32 mode, s32 count) {
 
   if (*list == 0xffff)
     return;
-  // A goto loop: as a do-while loop, 42 of 61 instructions differ in tla-en.
 top:
   {
     u32 entry = *list;
@@ -1487,7 +1483,6 @@ void Func_02002b04(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 state;
   u32 i;
-  // Default: without it the set in the loop is hoisted.
   s32 zero = 0;
 
   if (leader != NULL) {

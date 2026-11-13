@@ -140,8 +140,6 @@ void Func_0200005c(void) {
 
   map = (u16 *)0x06003000;
   tile = 0x1a0;
-  // Written with goto: as for loops, the pinned column counter keeps its exit
-  // test ahead of the loop, and the scroll loop's zero leaves it.
   y = 0;
 row:
   x = 0;
@@ -1192,7 +1190,6 @@ s32 Func_02000e44(void) {
           if (code <= 63) {
             Sound_Play(SE_MENU_CONFIRM);
             Data_0200274a[cursor] = code;
-            // The native calls the remainder and reads nothing back.
             __modsi3(cursor, 10);
             if (cursor < length - 1) {
               if (cursor % 50 == 49)
@@ -1341,8 +1338,7 @@ s32 Func_02000e44(void) {
 /// Unpacks source into a scratch block, then writes a 16 by 8 block of tiles
 /// at the panel's cell into the BG map at 0x06002000 and into the window
 /// tilemap's shadow: palette 15, the tile of each cell the row times the
-/// panel's stride plus the column. The loops are the listing's: no loop pass
-/// touches them, so the tile is rebuilt and the mask reloaded on every pass.
+/// panel's stride plus the column.
 void Func_02001804(struct Panel_02001804 *panel, const void *source) {
   /* FAKEMATCH(pin): the shadow pointer in r5. */
   register u16 *shadow asm("r5") = (u16 *)Ram_HeapSlots->windowTiles;
@@ -1492,8 +1488,6 @@ void Func_020018e0(s32 mode, u8 *in) {
   for (i = 0; i != 4; i++) {
     struct BattleUnit *unit = Unit_Get(gData_020026a0[i]);
 
-    // The native clears the same 40 bytes, djinnAvailable through
-    // djinnActiveCounts, four times.
     for (n = 0; n != 4; n++)
       Iwram_ClearWordsEntry(unit->djinnAvailable, 40);
   }
@@ -1816,8 +1810,7 @@ s32 Func_02002068(u8 *src, s32 length, u8 *dst) {
 
 /// The CRC-16 of length bytes at p (polynomial 0x1021, seed 0xffff, the
 /// result inverted): the clear screen checks each decoded block with it,
-/// over all but the block's last two bytes. The loops are the listing's,
-/// counted up and tested at the bottom.
+/// over all but the block's last two bytes.
 u16 Func_0200217c(u32 length, u8 *p) {
   u32 crc;
   u32 i;

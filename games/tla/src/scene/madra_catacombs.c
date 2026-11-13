@@ -103,10 +103,6 @@ DEFINE_PILLARS_RAISE(MadraCatacombs_RaisePillarCells, MapGrid_GetTerrainKind,
 
 #define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
 
-// A one-field view: the shape store is memory of its own to sched2, which sinks
-// it past the cell's first read (as a plain store, 4 of 131 instructions differ
-// in tla-en). A struct is padded to 4 bytes here, so the pointer stays plain.
-
 /// Lowers the cells under the held actor, or the one the leader carries, for
 /// each listed actor it is: the shape grid takes the shape for its new height
 /// and the cell flags under it are cleared; the actor is kept at 0xcbc of the
@@ -151,9 +147,6 @@ void MadraCatacombs_LowerHeldPillarCells(u16 *list) {
       goto loop;
   }
 }
-
-// One-field view: the shape store is memory of its own to sched2, which sinks
-// it past the cell read; a plain store keeps its order.
 
 DEFINE_HELD_ACTOR_RAISE_CELL(HeldActor_RaiseCell, MapGrid_GetTerrainKind,
                              Actor_GetCellIndex, MapCollision_FindOrAddTag)

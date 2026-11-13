@@ -38,8 +38,6 @@ static inline void Contigo_Jump(s32 actor, s32 height, s32 frames) {
   Actor_ShowEmoteById(a, h, f);
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void Contigo_Tiles(s32 srcX, s32 srcY, s32 width, s32 height,
                                  s32 destX, s32 destY, s32 mode) {
   TileCopies_CopyTouchedCells(srcX, srcY, width, height, destX, destY, mode);
@@ -910,8 +908,6 @@ void Func_02001284(void) { Contigo_Tiles(3, 50, 1, 1, 8, 54, 0); }
 
 void Func_020012a4(void) { Contigo_Tiles(4, 43, 2, 1, 2, 43, 0); }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
                                                            s32 dz) {
   Actor_SetDestinationOffsetById(id, dx, dz);

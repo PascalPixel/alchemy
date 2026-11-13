@@ -209,9 +209,6 @@ s32 Scene_PrepareMap(void) {
 
   object = Actor_GetById(16);
   flags = object->priorityFlags & ~1;
-  // Once-only: the once-only block holds the store below gMainRoutineWork's
-  // address load, which sched2 otherwise puts above the ands (differ 2 with the
-  // plain statement).
   do {
     party = &gMainRoutineWork;
   } while (0);

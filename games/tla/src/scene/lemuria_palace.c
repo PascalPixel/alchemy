@@ -308,14 +308,8 @@ void LemuriaPalace_FreeMaps(void) {
   VramCache_FreeEntry(gLemuriaPalace_SecondMapVram);
 }
 
-static __inline__ void Blend_WriteAlpha(s32 value) {
-  // The s32 parameter keeps each constant a word built with shifts; a u16 store
-  // loads it from the literal pool.
-  REG_BLDALPHA = value;
-}
+static __inline__ void Blend_WriteAlpha(s32 value) { REG_BLDALPHA = value; }
 
-// Each alpha write is the macro's own once-only block; with the plain inline
-// the fades differ 4 and 2.
 #define BLEND_SET_ALPHA(value)                                                 \
   do {                                                                         \
     Blend_WriteAlpha(value);                                                   \
@@ -325,8 +319,6 @@ static __inline__ void Blend_WriteAlpha(s32 value) {
 void LemuriaPalace_FadeMapsIn(void) {
   s32 i;
 
-  // The loop is written with goto: a for, do-while or while (1) loop differs
-  // 39, as the loop pass hoists the register address and 16 out of it.
   BLEND_SET_ALPHA(0x1000);
   gLemuriaPalace_MapMode = 0;
   i = 0;

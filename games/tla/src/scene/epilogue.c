@@ -186,12 +186,6 @@ void Epilogue_ShowLineAt(s32 message, s32 x, s32 y, s32 left, s32 line,
 /// Shows the epilogue's next line, spoken by speaker (its portrait and name),
 /// centred on the screen's top (position 0), its middle (1) or its foot (2),
 /// then holds it frames more.
-// The listing keeps x and y in their stack
-// slots (it stores y in every branch and loads both once before the call),
-// where this draft forwards y as a constant and reloads x in each branch, and
-// the listing builds x's and y's zero in r4 apart from the mode's zero in r3.
-// Tried: integer-cast addresses, "y = x = 0", and the four values as one
-// struct (the stores then stay, but through a base register: 75 differ).
 
 void Text_GetMessageSize();
 

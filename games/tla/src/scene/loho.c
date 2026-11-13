@@ -277,7 +277,6 @@ spark:
   t51 |= 240;
   p->sprite.bytes[5] = t51 & -13;
 drawSpark:
-  // Through long: read as s32, PRE merges this with the read after the call.
   value = *(long *)&p->age;
   if (value < 0)
     goto ageSpark;
@@ -630,9 +629,6 @@ void Loho_OpenDoorAndEnter(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  // The loop is written with goto so that it carries no loop notes: the bytes
-  // rebuild the zero on every pass, and a for loop hoists it and moves the work
-  // pointer (differ 4).
   i = 8;
 loop:
   {

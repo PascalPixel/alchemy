@@ -517,7 +517,6 @@ s32 Func_02000a78(void) {
     if ((gFrameCount & 127) == 0)
       Actor_SetAttachedEffect(29, 258);
     if (sprite != NULL) {
-      // As sprite->unk14[n], the frame count's reload passes these stores.
       *(sprite->unk14 + 3) = 30;
       *(sprite->unk14 + 2) = 252;
       sprite->rotation = Math_Sin(gFrameCount * 728) / 128 - 0x800;
@@ -1176,8 +1175,6 @@ s32 Inventory_Equip();
     FieldEvent_Wait(frames);                                                   \
   } while (0)
 
-// The Japanese form differs and is still on its listing.
-
 static __inline__ void Walk(s32 id, s32 speed, s32 frames) {
   /* FAKEMATCH(wrapper): the walk forwarded inline. */
   ((struct Actor *)Actor_ShowEmoteById(id, speed, frames));
@@ -1725,8 +1722,6 @@ DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
                           BattleEffect_GetObjectPriority,
                           Oam_AddSpriteAtDepthClamped)
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,

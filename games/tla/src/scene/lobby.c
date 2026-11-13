@@ -124,9 +124,6 @@ s32 LinkLobby_PollPeerReady(void) {
       if (++gLinkLobby_WaitFrames > 25) {
         s32 offset = 0;
 
-        // A goto loop counting down with the stride stepped by hand; as ☀️'s
-        // for loop, loop.c also keeps the table and the routine's addresses
-        // in registers (differ 76).
         i = 3;
       clear:
         Iwram_ClearWordsEntry((u8 *)gLinkPeerSignatures + offset, 20);
@@ -327,8 +324,6 @@ s32 LinkLobby_CopyPartyOwnerIds(u16 *out) {
   if (count > 3)
     count = 3;
   i = 0;
-  // A goto loop; as a for, while or do loop, loop.c strength-reduces the owner
-  // index (differ 24).
   if (i >= count)
     goto done;
   party = &gMainRoutineWork;
@@ -766,9 +761,6 @@ s32 LinkLobby_ChooseBattleMode(void) {
     }
     if (Event_GetFlag(0x202)) {
       line = msg + 3;
-      // The first branch's answers jump into this block's message tail, and an
-      // accepted challenge back into its opening: the native keeps one copy of
-      // each, as ☀️'s lobby does.
     message:
       Event_SetMessageId(line);
     open_message:
@@ -1053,9 +1045,6 @@ s32 Import_EventSetDestination(s32 scene, s32 entrance);
 void Actor_FaceActorById(s32 actor, s32 target, s32 frames);
 void FieldMessage_Show(s32 no, s32 flags);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-
 s32 LinkLobby_TalkByProgress(s32 actor) {
   s32 base = (s32)MsgItSOur;
   s32 lead = LinkLobby_PartyContains(4);
@@ -1223,8 +1212,6 @@ void LinkLobby_DrawThreeDigitValue(s32 value) {
   if (value > 999)
     value = 999;
   i = 0;
-  // A goto loop; as ☀️'s for loop, loop.c keeps the stacked 1 in r7 (differ
-  // 12).
 next:
   MapGrid_CopyCellsTo(27, value % 10, 16 - i, 8, 1, 1);
   value /= 10;

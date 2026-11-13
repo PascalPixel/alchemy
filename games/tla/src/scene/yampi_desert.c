@@ -576,7 +576,8 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Event_End();
 }
 
-/// The Scoop Gem (item 209's icon) as an actor, after the King Scorpion's battle (flag 0x88c).
+/// The Scoop Gem (item 209's icon) as an actor, after the King Scorpion's
+/// battle (flag 0x88c).
 /// ★ Named from the game: "Scoop Gem" (item 209's name)
 struct Actor *YampiDesert_CreateScoopGem(void) {
   struct Actor *object =

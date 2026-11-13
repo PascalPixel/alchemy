@@ -594,7 +594,6 @@ s32 ValePrologue_Initialize(void) {
   }
   // Restore the riverbank cast at the saved stage of the storm.
   if (GameFlag_Get(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0) {
-    s32 facing;
     const s32 *table;
     ValePrologue_RebuildRiverbank();
     Actor_SetPosition(ACTOR_DORA, 165, 1229);
@@ -602,8 +601,7 @@ s32 ValePrologue_Initialize(void) {
       struct Actor *actor;
 
       actor = Actor_Get(ACTOR_DORA);
-      facing = FACING_NORTHEAST;
-      actor->facing = facing;
+      actor->facing = FACING_NORTHEAST;
       actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
       table = gValePrologue_SquashAndStretchScript;
       actor->userValue = 1;
@@ -614,7 +612,7 @@ s32 ValePrologue_Initialize(void) {
       struct Actor *actor;
 
       actor = Actor_Get(ACTOR_JENNA_CHILD);
-      actor->facing = facing;
+      actor->facing = FACING_NORTHEAST;
       actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
       actor->userValue = 2;
       Actor_SetScript(ACTOR_JENNA_CHILD, table);
@@ -624,7 +622,7 @@ s32 ValePrologue_Initialize(void) {
       struct Actor *actor;
 
       actor = Actor_Get(ACTOR_GARET_CHILD);
-      actor->facing = facing;
+      actor->facing = FACING_NORTHEAST;
       actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
       actor->userValue = 3;
       Actor_SetScript(ACTOR_GARET_CHILD, table);
@@ -634,7 +632,7 @@ s32 ValePrologue_Initialize(void) {
       struct Actor *actor;
 
       actor = Actor_Get(ACTOR_EXHAUSTED_STRONGMAN);
-      actor->facing = facing;
+      actor->facing = FACING_NORTHEAST;
       actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
       actor->userValue = 4;
       Actor_SetScript(ACTOR_EXHAUSTED_STRONGMAN, table);

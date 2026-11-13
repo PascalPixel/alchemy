@@ -1054,7 +1054,6 @@ static void HeatGauge_Draw(void) {
   struct MenuSprite *sprite;
   s32 counter;
   u32 i;
-  u32 fill;
   u32 *palette;
   u32 red;
   u32 green;
@@ -1146,12 +1145,15 @@ static void HeatGauge_Draw(void) {
   Dma_Set(gHeatGauge_TileBuffer, buffer, DMA_COPY_WORDS(576), REG_DMA3);
   if (gHeatGaugeFlash <= 118) {
     column = (u32 *)(buffer + 80);
-    fill = 0xeeeeeeee;
-    for (i = 12; i < 128 - gHeatGaugeLevel; i++) {
-      column[8] = fill;
-      *column++ = fill;
-      if ((i & 7) == 7) {
-        column += 8;
+    {
+      u32 fill = 0xeeeeeeee;
+
+      for (i = 12; i < 128 - gHeatGaugeLevel; i++) {
+        column[8] = fill;
+        *column++ = fill;
+        if ((i & 7) == 7) {
+          column += 8;
+        }
       }
     }
     column[0] = ((u32 *)buffer)[0];

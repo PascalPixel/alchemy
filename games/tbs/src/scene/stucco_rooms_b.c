@@ -341,7 +341,6 @@ static void StuccoRoomsB_WatchPassengersArgue(void) {
 ///   ACTOR_STUCCO_ROOMS_B_COLOSSO_FAN have left once the party has seen the
 ///   tour guide on the Tolbi docks tell a passenger his ticket was refunded.
 s32 StuccoRoomsB_ApplyEntryState(void) {
-  s32 clearedPriorityFlags;
   struct Actor *actor;
 
   gFieldWork->transition =
@@ -350,11 +349,10 @@ s32 StuccoRoomsB_ApplyEntryState(void) {
     // Restore the room's changed cells and the passengers' fixed draw priority.
     MapGrid_CopyCellAttributes(51, 47, 3, 1, 51, 45);
     actor = Actor_Get(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER);
-    // Stored as a plain byte: the field store allocates the zero differently.
-    *(u8 *)&actor->priorityFlags = clearedPriorityFlags = 0;
+    actor->priorityFlags = 0;
     actor->sprite->image.priority = 2;
     actor = Actor_Get(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE);
-    actor->priorityFlags = clearedPriorityFlags;
+    actor->priorityFlags = 0;
     actor->sprite->image.priority = 2;
     if (Event_GetFlag(FLAG_STUCCO_ROOMS_B_MEDAL_HIDDEN) != 0) {
       Actor_SetPosition(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 560, 680);

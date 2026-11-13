@@ -288,7 +288,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
   if (x > (win->width - 2))
     return;
   if (mode == GLYPH_DRAW_PAGE_ARROW) {
-    s32 column;
+    s32 column = 0xfffe;
     u16 left;
     out = (struct WindowSpriteCellView *)WindowSprite_AcquireFree();
     if (out == NULL)
@@ -300,7 +300,6 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     slot = &((struct WindowWork *)base)->glyphResource;
     if (*slot == NO_GLYPH_RESOURCE)
       *slot = VramCache_FindFreeEntry();
-    column = 0xfffe;
     left = win->x;
     attr->x = (left + (column + *(u16 *)&win->width)) * 8 + 4;
 #ifdef UBFIX

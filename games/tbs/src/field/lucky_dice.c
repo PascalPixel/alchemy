@@ -221,18 +221,16 @@ enum LuckyDiceState {
 s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
                                 s32 count) {
   s32 remaining;
-  u32 redMask;
-  u32 greenMask;
-  u32 blueMask;
   u32 pixel;
   u32 red;
   u32 green;
   u32 blue;
 
   if (count > 0) {
-    redMask = RGB(31, 0, 0);
-    greenMask = RGB(0, 31, 0);
-    blueMask = RGB(0, 0, 31);
+    u32 redMask = RGB(31, 0, 0);
+    u32 greenMask = RGB(0, 31, 0);
+    u32 blueMask = RGB(0, 0, 31);
+
     remaining = count;
     do {
       pixel = *source;

@@ -225,3 +225,26 @@ its map separately, with one more number The Broken Seal leaves zero,
 whose meaning is still an open question. Two scenes can share any of them.
 Daila is one overlay and one area on two maps, which is how it can be the
 same village twice, with different people about.
+
+## Where the files are
+
+- Each overlay is one C file here, named for its place, such as
+  [`daila.c`](daila.c). The debug rooms are scenes too, kept in
+  [`../debug/`](../debug/README.md).
+- [`shared/`](shared) is the code several overlays keep a copy of: the
+  macro headers above, and routines a scene includes as text where its
+  copy sits, such as the ice slide six scenes share
+  ([`slide_on_ice_from_edge.c`](shared/slide_on_ice_from_edge.c)), the
+  flames' knock-back in three Mars Lighthouse rooms
+  ([`leader_knock_back.c`](shared/leader_knock_back.c)) and the World
+  Map's placed objects, which the staff credits keep too
+  ([`world_map_objects.c`](shared/world_map_objects.c)). A few small field
+  routines are included the same way from `../field/`.
+- [`entry.s`](entry.s) is the entry table every overlay links; a scene
+  whose entry routines are named otherwise has its own in
+  [`entry/`](entry).
+- [`bss/`](bss) holds an overlay's globals that are still written in
+  assembly, one file a scene.
+- An overlay's import table is not here: the build writes it from
+  [`imports.inc`](../system/overlay/imports.inc), the far-call stubs the
+  overlay's code calls, in the list's order.

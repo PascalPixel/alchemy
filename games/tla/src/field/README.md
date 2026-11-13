@@ -205,20 +205,31 @@ those few routines into the console's fast memory and runs them there.
 
 ## Where the code is
 
-- `field_sequence/` is the sequence itself: set-up, the walk, requests,
-  the screen transitions, the event commands,
-  triggers, encounters and the treasure spots.
-- `field/` holds the field object's parts: decompression and sprite drawing,
-  the actors' motion, the player's control orders and
-  the other script commands, and the map and the World Map on screen.
-- `object/` is the actors' placement, stock behaviours and screen
-  transitions, and the choice of which field Psynergy cast plays.
-- `map/` is the map's cells and ground heights, tile animation and the map
-  table, `gMaps`.
+- [`field.c`](field.c) is the field object, as The Broken Seal's is: its
+  parts in [`field/`](field), in ROM order, are decompression and sprite
+  drawing, the actors' motion and scripts, the player's control orders, the
+  map grid and layers, the World Map on screen, the tile animation (with
+  the ground heights and collision still in the same part), the view and
+  the debug sprite viewer.
+- [`field_sequence.c`](field_sequence.c) is the sequence itself, its parts
+  in [`field_sequence/`](field_sequence): set-up, the walk, requests, the
+  screen transitions, the event commands, triggers, encounters and the
+  treasure spots.
+- [`object/visual_attributes.c`](object/visual_attributes.c) is the actors'
+  stock behaviours and field Psynergy, its parts in
+  [`object/visual_attributes/`](object/visual_attributes): the ropes,
+  tightropes and hanging vines (`chains.c`), each element's casts and the
+  choice of which plays (`psynergy_dispatch.c`). The rest of `object/` is
+  the placement, its scripts and tables.
+- [`event_commands/radial.c`](event_commands/radial.c) is most of the
+  Psynergy the sequel adds, its parts in
+  [`event_commands/radial/`](event_commands/radial), and the event
+  commands' tables are the assembly rows beside it.
 - `field_effect/` is the field's small effects: particles, sparkles and
   the like.
-- `event_commands/` is the orders an event gives, such as showing a
-  message or moving an actor, and field Psynergy, with most of the new
-  kinds in `event_commands/radial/`.
-- The three games of chance and the scene table, `gScenes`, sit in this
-  folder itself.
+- Some small field routines are compiled again into each scene that uses
+  them, as the ROM keeps a copy in each overlay: the scenes include them
+  from `field_effect/`, `object/` and `map/` (`map/cell_get.c`,
+  `object/set_sprite_priority.c`), and `map/` holds nothing else.
+- The three games of chance, the map table `gMaps` (`map_grid_data.c`) and
+  the scene table `gScenes` (`scenes.s`) sit in this folder itself.

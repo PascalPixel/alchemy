@@ -4,12 +4,13 @@
 /// floor (JupiterLighthouse_StartHovering), and stone faces blow whirlwinds
 /// across the floor and the upper ledges as the party passes their cells
 /// (JupiterLighthouse_RaiseWhirlwind, JupiterLighthouse_RaiseUpperWhirlwind).
-/// Teleporter cells drop the party within the hall
+/// Cracked tiles give way under a second step
 /// (JupiterLighthouse_StepOnLowerTeleporter,
 /// JupiterLighthouse_StepOnUpperTeleporter); the way on leads out to the aerie.
 ///
-/// The teleporters' code is in jupiter_lighthouse_room_9/, in two parts the
-/// shared field effect objects link between.
+/// The cracked tiles' code, the Teleporter routines, is in
+/// jupiter_lighthouse_room_9/, in two parts the shared field effect objects
+/// link between.
 
 #include "shared/whirlwind.h"
 #include "shared/tables.h"

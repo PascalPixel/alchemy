@@ -3,13 +3,14 @@
 /// the aerie (later to the beacon's floor) and down to rooms 5 and 8. Standing
 /// on the button by its door holds the door open; the pillar pushed onto it
 /// (JupiterLighthouse_CheckBlockOnCell) keeps it open, a shortcut through the
-/// tower. Teleporter cells, uncovered on the floor and on the upper ledge
-/// (JupiterLighthouse_StepOnLowerTeleporter,
-/// JupiterLighthouse_StepOnUpperTeleporter), drop the party within the hall or
-/// to room 8.
+/// tower. Cracked tiles on the floor and on the upper ledge give way under a
+/// second step (JupiterLighthouse_StepOnLowerTeleporter,
+/// JupiterLighthouse_StepOnUpperTeleporter), dropping the party to the floor
+/// below or to room 8.
 ///
-/// The teleporters' code is in jupiter_lighthouse_room_6/, in two parts the
-/// shared field effect objects link between.
+/// The cracked tiles' code, the Teleporter routines, is in
+/// jupiter_lighthouse_room_6/, in two parts the shared field effect objects
+/// link between.
 
 #include "shared/whirlwind.h"
 #include "shared/tables.h"

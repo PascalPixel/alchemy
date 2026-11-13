@@ -7,8 +7,9 @@
 /// (JupiterLighthouse_LeaveByCyclone). The gates lead into the ground floor,
 /// once they are opened from within.
 ///
-/// The teleporters' code is in jupiter_lighthouse_entrance/, in two parts the
-/// shared field effect objects link between.
+/// The cracked tiles' code, the Teleporter routines, is in
+/// jupiter_lighthouse_entrance/, in two parts the shared field effect objects
+/// link between.
 
 #include "shared/whirlwind.h"
 #include "shared/tables.h"

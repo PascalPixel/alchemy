@@ -8,8 +8,9 @@
 /// open. A Cyclone on the teleporter here leads back down
 /// (JupiterLighthouse_LeaveByCyclone).
 ///
-/// The teleporters' code is in jupiter_lighthouse_room_1/, in two parts the
-/// shared field effect objects link between.
+/// The cracked tiles' code, the Teleporter routines, is in
+/// jupiter_lighthouse_room_1/, in two parts the shared field effect objects
+/// link between.
 
 #include "shared/whirlwind.h"
 #include "shared/tables.h"

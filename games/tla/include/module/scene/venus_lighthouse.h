@@ -44,7 +44,7 @@ struct SetupWork {
   s32 (*idle)(void);
 };
 
-extern s16 gData_02001d8c[];
+extern s32 gData_02001d8c[];
 
 void Func_02000b2c(void);
 

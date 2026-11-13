@@ -1,7 +1,19 @@
 /// @file
-/// The scene code of overlay 0x6a1, in ROM order.
+/// The first room of Jupiter Lighthouse's left tower, behind its archer statue.
+/// The leader pushes five blue logs about (JupiterLighthouse_PushBlock), Move
+/// drops the pillar into a gap in the floor
+/// (JupiterLighthouse_DropBlockIntoHole), and cracked tiles give way under a
+/// second step (JupiterLighthouse_StepOnTeleporter) to the floor below. Stairs
+/// lead on to room m and back to the hall below the aerie.
+///
+/// The cracked tiles' code is in jupiter_lighthouse_room_8/, in two parts the
+/// shared field effect objects link between, and the tables the scene's getters
+/// return are in data/jupiter_lighthouse_room_8.c, which the overlay links
+/// after the field's cached pictures.
 
 #include "shared/whirlwind.h"
+#include "shared/tables.h"
+#include "flags.h"
 #include "shared/jupiter_lighthouse.h"
 #include "shared/actors.h"
 #include "shared/effects.h"
@@ -22,9 +34,42 @@
 #include "field_event.h"
 #include "event_work.h"
 #include "module/field/field.h"
-#include "module/scene/jupiter_lighthouse_room_8.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
+#include "map.h"
+#include "call.h"
+#include "field_effect.h"
+#include "field_coordinate.h"
+#include "shared/push.h"
+#include "vram_tab.h"
+#include "task.h"
+#include "heap_release.h"
+#include "item_icon.h"
+
+#include "field/cell_target.h"
+
+#include "jupiter_lighthouse_room_8.h"
+struct Actor;
+struct IsletsVector {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+s32 Teleporters_Step(void);
+void Func_020022c0(s32 x, s32 z, s32 a, s32 b);
+void Func_02002248(s32 id);
+void Teleporter_PlaceArrival(s32 x, s32 z, s32 effect);
+void JupiterLighthouse_PushBlock(void);
+struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind);
+extern u16 gPushKinds[];
+extern s16 gLightSpriteCount;
+extern s16 gLightSpritesLarge;
+extern s16 gLightSpritePriority;
+void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
+void Func_020021e0(s32 x, s32 z, s32 a, s32 b);
+extern u16 gPaletteCycleColors[];
+extern u16 gPaletteCycleUnlitColors[];
+extern s32 gWhirlwindRiding;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -36,8 +81,18 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-s32 PushTarget_FindSlide(struct Probe *probe);
-void PushTarget_PushFill(struct Probe probe);
+/// Where a pushed object comes to rest, read by the push that follows.
+struct PushTarget {
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y;
+  s32 z;
+  s32 footprint; ///< index into the footprint table
+  s32 id;
+  void (*callback)(void);
+};
+
+s32 PushTarget_FindSlide(struct PushTarget *target);
+void PushTarget_PushFill(struct PushTarget target);
 
 void JupiterLighthouse_StepOnTeleporter(void) {
   if (Teleporters_Step())
@@ -45,16 +100,16 @@ void JupiterLighthouse_StepOnTeleporter(void) {
 }
 
 void JupiterLighthouse_PushBlock(void) {
-  struct Probe probe;
+  struct PushTarget target;
 
-  if (PushTarget_FindSlide(&probe))
-    PushTarget_PushFill(probe);
+  if (PushTarget_FindSlide(&target))
+    PushTarget_PushFill(target);
 }
 
 void JupiterLighthouse_StartMovingBlock(void) {}
 
-/// On cell (6, 14), sets flag 0xa18, waits until the object finishes falling
-/// and stops (at most 30 frames), then releases it.
+/// On cell (6, 14), sets flag FLAG_PILLAR_DROPPED, waits until the object
+/// finishes falling and stops (at most 30 frames), then releases it.
 void JupiterLighthouse_DropBlockIntoHole(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
   s32 i;
@@ -62,7 +117,7 @@ void JupiterLighthouse_DropBlockIntoHole(s32 unused, s32 id) {
   s32 floor;
 
   if (object->x >> 20 == 6 && object->z >> 20 == 14) {
-    Event_SetFlag(0xa18);
+    Event_SetFlag(FLAG_PILLAR_DROPPED);
     System_Wait(10);
     Event_PlaySound(134);
     y = object->y;
@@ -94,26 +149,25 @@ void JupiterLighthouse_DropBlockIntoHole(s32 unused, s32 id) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-void PushTarget_FillFootprint(s32 id);
+s32 PushTarget_FillFootprint(s32 id);
 void Teleporters_Find(s32 a, s32 b, s32 c, s32 d, s32 e);
 
 s32 Scene_Initialize(void) {
-  ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
-      ->screenEffect = 0x204;
-  Actor_Get(8)->scaleX = 0xc000;
-  Actor_Get(8)->scaleY = 0xc000;
-  FieldActor_SetSpritePriority(12, 3);
-  FieldActor_SetSpritePriority(14, 3);
-  Func_02002248(11);
-  Func_02002248(12);
-  Func_02002248(13);
-  Func_02002248(14);
-  Func_02002248(15);
-  PushTarget_FillFootprint(11);
-  PushTarget_FillFootprint(12);
-  PushTarget_FillFootprint(13);
-  PushTarget_FillFootprint(14);
-  PushTarget_FillFootprint(15);
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  Actor_Get(ACTOR_ARCHER_STATUE)->scaleX = 0xc000;
+  Actor_Get(ACTOR_ARCHER_STATUE)->scaleY = 0xc000;
+  FieldActor_SetSpritePriority(ACTOR_FIRST_LOG + 1, 3);
+  FieldActor_SetSpritePriority(ACTOR_FIRST_LOG + 3, 3);
+  Func_02002248(ACTOR_FIRST_LOG);
+  Func_02002248(ACTOR_FIRST_LOG + 1);
+  Func_02002248(ACTOR_FIRST_LOG + 2);
+  Func_02002248(ACTOR_FIRST_LOG + 3);
+  Func_02002248(ACTOR_FIRST_LOG + 4);
+  PushTarget_FillFootprint(ACTOR_FIRST_LOG);
+  PushTarget_FillFootprint(ACTOR_FIRST_LOG + 1);
+  PushTarget_FillFootprint(ACTOR_FIRST_LOG + 2);
+  PushTarget_FillFootprint(ACTOR_FIRST_LOG + 3);
+  PushTarget_FillFootprint(ACTOR_FIRST_LOG + 4);
   Teleporters_Find(33, 0x280, 0x380, 0, 1);
   if (gMainRoutineWork.entrance == 13)
     Teleporter_PlaceArrival(19, 0, 0x204);
@@ -125,14 +179,14 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   if (Event_GetFlag(0x109) == 0)
-    Event_ClearFlag(0xa18);
-  if (Event_GetFlag(0xa18)) {
-    struct Actor *object = Actor_Get(10);
+    Event_ClearFlag(FLAG_PILLAR_DROPPED);
+  if (Event_GetFlag(FLAG_PILLAR_DROPPED)) {
+    struct Actor *object = Actor_Get(ACTOR_PILLAR);
 
     object->motionFlags = 0;
     object->terrainHeight = -0x200000;
     object->y = -0x200000;
-    Actor_SetPosition(10, PIXELS(104), PIXELS(232));
+    Actor_SetPosition(ACTOR_PILLAR, PIXELS(104), PIXELS(232));
     Func_020021e0(object->x, object->z, 0, 0);
     Func_020022c0(object->x, object->z, 0, 128);
   }
@@ -172,16 +226,187 @@ DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_020021e0, Func_020022c0)
 
 #include "frame.h"
 #include "field_sprite.h"
-#include "event_work.h"
 
 DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-extern const s32 gWhirlwindEndScript[];
+extern s32 gWhirlwindEndScript[];
 
 s32 Func_020022b8(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_020022b8, Position_FlatDistance,
                         gWhirlwindEndScript, gWhirlwindRiding)
+
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options);
+
+DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Import_ActorSelectAnimation,
+                       Whirlwind_Update, FieldEffect_Spawn)
+
+DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, FieldEffect_Spawn)
+
+DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
+    JupiterLighthouse_PlaceRaisedActors)
+
+extern s8 gPushFootprints[][4];
+
+#define ABS(x) ((x) < 0 ? -(x) : (x))
+
+s32 PushTarget_FillFootprint(s32 id) {
+  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  struct Actor *object = Actor_Get(id);
+  s16 shape = *(s16 *)((struct FieldSprite *)object->sprite)->record;
+  s16 i = 0;
+  u32 j;
+  s32 width;
+  s32 height;
+  s32 x;
+  s32 z;
+  s32 mapX;
+  s32 mapZ;
+  s32 toX;
+  s32 toZ;
+
+  if ((u16)shape != gPushKinds[(u16)i]) {
+  next:
+    j = (u16)((i << 16) + 0x10000 >> 16);
+    i = j;
+    if (j <= 5 && (u16)shape != gPushKinds[j])
+      goto next;
+  }
+  j = (u16)i;
+  if (j == 6)
+    return 0;
+  width = (ABS(gPushFootprints[j][0]) + ABS(gPushFootprints[j][2])) >> 4;
+  height = (ABS(gPushFootprints[j][1]) + ABS(gPushFootprints[j][3])) >> 4;
+  x = (object->x + (gPushFootprints[j][0] << 16)) >> 20;
+  z = (object->z + (gPushFootprints[j][1] << 16)) >> 20;
+  mapX = *(s32 *)(map + 328) >> 20;
+  i = mapX;
+  mapZ = *(s32 *)(map + 332) >> 20;
+  toX = x + (u16)i;
+  toZ = z + (u16)mapZ;
+  MapGrid_CopyCellAttributes(x, z, width, height, toX, toZ);
+  Map_FillCellRectByte2(0, x, z, width, height, 255);
+  Map_FillCellRectByte2(2, x, z, width, height, 255);
+  return 1;
+}
+
+#include "../field/map/cellfill.c"
+
+extern s32 gPushLeaderSteps[];
+
+#define ABS(x) ((x) < 0 ? -(x) : (x))
+
+static inline s32 PushTarget_CheckCollision(struct Actor *object,
+                                            s32 *position) {
+  return MapGrid_CheckCollision(object, position);
+}
+
+/// Finds the object the leader is pushing and steps its footprint, one cell
+/// at a time in the leader's direction, until a cell of it is blocked
+/// (MapGrid_CheckCollision returns 2). Leaves the object's resting place in
+/// target and returns 1, or 0 when nothing is pushed or it cannot move at all.
+DEFINE_PUSH_TARGET_FIND_SLIDE(PushTarget_FindSlide, PushTarget_FindAhead,
+                              gPushFootprints, gPushLeaderSteps,
+                              PushTarget_CheckCollision)
+
+/// The whole-pixel half of a 16.16 coordinate.
+#define PIXELS(v) (((s16 *)&(v))[1])
+
+DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gPushKinds,
+                              gPushLeaderSteps, gPushFootprints)
+
+void PushTarget_UpdatePusher(struct Actor *object);
+
+DEFINE_PUSH_TARGET_PUSH_FILL(PushTarget_PushFill, gPushFootprints,
+                             PushTarget_UpdatePusher,
+                             Import_ActorSelectAnimation, gPushLeaderSteps)
+
+void PushTarget_UpdatePusher(struct Actor *object) {
+  struct IsletsVector position;
+  struct Actor *hit;
+  u32 i;
+  s32 angle = object->facing >> 12;
+
+  angle = ((angle + 2) & 12) << 12;
+  position.x = object->x;
+  position.y = object->y;
+  position.z = object->z;
+  FieldVector_AddPolarOffset(0x100000, angle, &position);
+  hit = Func_020022a8(&position, 1);
+  if (hit != 0) {
+    i = 0;
+  next:
+    if (*((struct ObjectAnimationState *)hit->sprite)->value28 == gPushKinds[i])
+      return;
+    i++;
+    if (i <= 5)
+      goto next;
+    FieldActor_SetPositionAndResetMotion(object, object->x, object->y,
+                                         object->z);
+  }
+  position.x = object->x;
+  position.y = object->y;
+  position.z = object->z;
+  if (MapGrid_CheckCollision(object, &position) > 0)
+    FieldActor_SetPositionAndResetMotion(object, object->x, object->y,
+                                         object->z);
+}
+
+extern s16 gLightSpriteTile;
+extern struct Actor *gLightSpriteActors[];
+extern struct LightOam gLightSpriteOams[];
+
+void Import_OamAddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
+
+/// Queues the lit actors' sprites: for each listed actor with a position,
+/// projects it from the map's view, skips it off screen, and writes a 16 by 16
+/// sprite, or a 32 by 64 one when the big switch is set, at its animation
+/// picture and depth.
+DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
+                          gLightSpriteCount, gLightSpriteActors,
+                          gLightSpritesLarge, gLightSpritePriority,
+                          BattleEffect_GetObjectPriority,
+                          Import_OamAddSpriteAtDepthClamped)
+
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
+
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
+                            gLightSpriteTile, LightSprites_Draw,
+                            gLightSpriteCount, gLightSpritesLarge,
+                            gLightSpritePriority)
+
+DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gLightSpriteActors,
+                            gLightSpriteTile, LightSprites_Draw,
+                            gLightSpriteCount, gLightSpritesLarge,
+                            gLightSpritePriority)
+
+DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gLightSpriteActors,
+                            gLightSpriteTile, LightSprites_Draw,
+                            gLightSpriteCount, gLightSpritesLarge,
+                            gLightSpritePriority)
+
+DEFINE_LIGHT_SPRITES_ADD(LightSprites_Add, gLightSpriteCount,
+                         gLightSpriteActors)
+
+void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
+
+#include "../field/object/set_sprite_priority.c"
+
+// clang-format off
+u16 gPushKinds[] = {
+    258, 259, 293, 294, 332, 331,
+};
+
+s8 gPushFootprints[][4] = {
+    {-32, -8, 32, 8}, {-8, -32, 8, 32}, {-32, -16, 32, 0},
+    {-8, -32, 8, 32}, {-32, -8, 32, 8}, {-8, -32, 8, 32},
+};
+
+DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
+// clang-format on

@@ -1,8 +1,18 @@
+/// @file
+/// The tables of Jupiter Lighthouse's left-tower room that the scene's getters
+/// return.
+
 #include "../shared/tables.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "objcmd.h"
-#include "module/scene/jupiter_lighthouse_room_8.h"
+#include "../jupiter_lighthouse_room_8.h"
+
+#include "field/cell_target.h"
+void JupiterLighthouse_PushBlock(void);
+extern u32 gFieldEffect_ShortLifeScript[];
+extern u32 gFieldEffect_MediumLifeScript[];
+extern u32 gFieldEffect_LongLifeScript[];
 
 void JupiterLighthouse_StepOnTeleporter(void);
 void JupiterLighthouse_DropBlockIntoHole(void);
@@ -68,8 +78,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnTeleporter)},
     {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnTeleporter)},
     {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnTeleporter)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(JupiterLighthouse_DropBlockIntoHole)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, CONDITION_ALWAYS, EVENT(JupiterLighthouse_DropBlockIntoHole)},
     {TRIGGER_TABLE_END},
 };
 

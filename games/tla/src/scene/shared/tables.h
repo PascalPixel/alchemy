@@ -5,11 +5,20 @@
 #ifndef ALCHEMY_SCENE_SHARED_TABLES_H
 #define ALCHEMY_SCENE_SHARED_TABLES_H
 
-/// The leader's step as he pushes, 16 pixels on one axis for each direction.
+/// One step of the leader as he pushes: x pixels in the high half, z in the
+/// low half, as the push routines read it.
+#define PUSH_STEP(x, z) ((x) * 0x10000 + ((z) & 0xffff))
+
+/// The leader's step as he pushes, 16 pixels on one axis, for each of the 16
+/// directions he can face.
 #define DEFINE_PUSH_LEADER_STEPS(name)                                         \
-  s16 name[] = {                                                               \
-      0, 16,  0, 16,  0, 16,  16,  0, 16,  0, 16,  0, 16,  0, 0, -16,          \
-      0, -16, 0, -16, 0, -16, -16, 0, -16, 0, -16, 0, -16, 0, 0, 16,           \
+  s32 name[] = {                                                               \
+      PUSH_STEP(16, 0),  PUSH_STEP(16, 0),  PUSH_STEP(16, 0),                  \
+      PUSH_STEP(0, 16),  PUSH_STEP(0, 16),  PUSH_STEP(0, 16),                  \
+      PUSH_STEP(0, 16),  PUSH_STEP(-16, 0), PUSH_STEP(-16, 0),                 \
+      PUSH_STEP(-16, 0), PUSH_STEP(-16, 0), PUSH_STEP(0, -16),                 \
+      PUSH_STEP(0, -16), PUSH_STEP(0, -16), PUSH_STEP(0, -16),                 \
+      PUSH_STEP(16, 0),                                                        \
   };
 
 #define DEFINE_G_DATA_020016CC(name)                                           \

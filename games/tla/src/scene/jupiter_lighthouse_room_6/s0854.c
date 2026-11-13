@@ -43,22 +43,22 @@ void Func_02001a84(struct LightOam *oam, s32 depth);
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
 /// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
 /// 64 one when the big switch is set, at its animation picture and depth.
-DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gData_02002428, Data_0200246c,
-    gData_0200242a, gData_0200242c, gData_0200252c, gData_0200252e__s0854,
+DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, Data_0200246c,
+    gData_0200242a, gData_0200242c, gLightSpritesLarge, gData_0200252e__s0854,
     Func_02001bd4, Func_02001a84)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_0200242c, gData_02002428,
-    LightSprites_Draw, gData_0200242a, gData_0200252c, gData_0200252e__s0854)
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_0200242c, gLightSpriteTile,
+    LightSprites_Draw, gData_0200242a, gLightSpritesLarge, gData_0200252e__s0854)
 
-DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_0200242c, gData_02002428,
-    LightSprites_Draw, gData_0200242a, gData_0200252c, gData_0200252e__s0854)
+DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_0200242c, gLightSpriteTile,
+    LightSprites_Draw, gData_0200242a, gLightSpritesLarge, gData_0200252e__s0854)
 
-DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_0200242c, gData_02002428,
-    LightSprites_Draw, gData_0200242a, gData_0200252c, gData_0200252e__s0854)
+DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_0200242c, gLightSpriteTile,
+    LightSprites_Draw, gData_0200242a, gLightSpritesLarge, gData_0200252e__s0854)
 
 extern s32 gData_020023c0;
 

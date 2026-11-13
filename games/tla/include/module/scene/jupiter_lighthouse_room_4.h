@@ -13,15 +13,15 @@ struct CellTargetEntry;
 
 void Actor_RaiseFromCell(s32 id);
 
-extern s16 gData_0200275c;
-extern s16 gData_0200275e;
-extern struct LightOam gData_020027a0[];
-extern s16 gData_02002860;
-extern s16 gData_02002862;
+extern s16 gLightSpriteTile;
+extern s16 gLightSpriteCount;
+extern struct LightOam gLightSpriteOam[];
+extern s16 gLightSpritesLarge;
+extern s16 gLightSpritePriority;
 
 void Func_02001790(void);
 
-extern struct CellTarget gData_02002864;
+extern struct CellTarget gTeleporters;
 
 void Teleporter_Uncover(struct CellTarget *table,
                         struct CellTargetEntry *entry);

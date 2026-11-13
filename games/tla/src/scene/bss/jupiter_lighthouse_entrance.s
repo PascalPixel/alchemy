@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
 	.section .bss,"aw",%nobits
-	.global gData_020021bc
-gData_020021bc:
+	.global gWhirlwindRiding
+gWhirlwindRiding:
 	.space 0x00000004
 	.global gData_020021c0
 gData_020021c0:
@@ -10,14 +10,14 @@ gData_020021c0:
 	.global gData_020021e0
 gData_020021e0:
 	.space 0x00000004
-	.global gData_020021e4
-gData_020021e4:
+	.global gLighthouseUnlitColors
+gLighthouseUnlitColors:
 	.space 0x0000001c
-	.global gData_02002200
-gData_02002200:
+	.global gLightSpriteTile
+gLightSpriteTile:
 	.space 0x00000002
-	.global gData_02002202
-gData_02002202:
+	.global gLightSpriteCount
+gLightSpriteCount:
 	.space 0x00000002
 	.global gData_02002204
 gData_02002204:
@@ -25,11 +25,11 @@ gData_02002204:
 	.global Data_02002244
 Data_02002244:
 	.space 0x000000c0
-	.global gData_02002304
-gData_02002304:
+	.global gLightSpritesLarge
+gLightSpritesLarge:
 	.space 0x00000002
-	.global gData_02002306
-gData_02002306:
+	.global gLightSpritePriority
+gLightSpritePriority:
 	.space 0x00000002
-	.global gData_02002308
-gData_02002308:
+	.global gTeleporters
+gTeleporters:

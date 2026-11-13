@@ -19,9 +19,9 @@
 #include "module/scene/jupiter_lighthouse_aerie_beacon.h"
 #include "module/scene/scene.h"
 
-void Func_02004d9c(void);
+void Teleporters_Update(void);
 
-DEFINE_TELEPORTERS_FIND(Teleporters_Find, Data_02006b74, Func_02004d9c)
+DEFINE_TELEPORTERS_FIND(Teleporters_Find, gTeleporters, Teleporters_Update)
 
 DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 

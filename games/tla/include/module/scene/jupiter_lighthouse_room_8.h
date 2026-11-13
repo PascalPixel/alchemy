@@ -36,15 +36,15 @@ struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind);
 
 extern u16 gData_020022d0[];
 
-extern s16 gData_02002af2;
-extern s16 gData_02002bf4;
-extern s16 gData_02002bf6;
+extern s16 gLightSpriteCount;
+extern s16 gLightSpritesLarge;
+extern s16 gLightSpritePriority;
 
 void Func_02002160(struct FieldEffect *effect, s32 mode);
 
 void Leader_CenterInCell(void);
 
-extern struct CellTarget gData_02002bf8;
+extern struct CellTarget gTeleporters;
 
 void Teleporter_Uncover(struct CellTarget *table,
                         struct CellTargetEntry *entry);

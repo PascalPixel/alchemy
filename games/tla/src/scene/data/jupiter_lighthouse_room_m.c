@@ -266,7 +266,7 @@ u32 gData_02005a00[] = {
     SC_FREE,
 };
 
-s32 gData_02005a14[] = {
+s32 gPaletteCycleFrame[] = {
     -1,
 };
 
@@ -274,7 +274,7 @@ u32 gData_02005a18[] = {
     1,
 };
 
-u32 gData_02005a1c[] = {
+u32 gWhirlwindEndScript[] = {
     39, 5, 0, 12, 38,
 };
 // clang-format on

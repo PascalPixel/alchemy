@@ -28,7 +28,7 @@ s32 Func_02001bb8(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
-  struct CellTarget *puzzle = &gData_02002864;
+  struct CellTarget *puzzle = &gTeleporters;
   struct CellTargetEntry *tile = puzzle->entries;
   s32 i;
 
@@ -55,7 +55,7 @@ s32 Func_02001bb8(void) {
 void Func_02001c68(s32 dx, s32 dz, s32 value) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   u8 *event = Ram_HeapSlots->eventWork;
-  struct CellTarget *work = &gData_02002864;
+  struct CellTarget *work = &gTeleporters;
   s32 x = ((s32)FieldGameFlag_GetByte(work->flagByte));
   s32 z = ((s32)FieldGameFlag_GetByte(work->flagByte + 8));
 
@@ -159,7 +159,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGERS_END},
 };
 
-s32 gData_020026f0[] = {
+s32 gPaletteCycleFrame[] = {
     -1,
 };
 
@@ -167,7 +167,7 @@ u32 gData_020026f4[] = {
     1,
 };
 
-u32 gData_020026f8[] = {
+u32 gWhirlwindEndScript[] = {
     39, 5, 0, 12, 38,
 };
 // clang-format on

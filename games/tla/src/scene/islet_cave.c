@@ -16,14 +16,14 @@
 #include "module/scene/islet_cave.h"
 #include "module/scene/scene.h"
 
-extern u16 *gData_02001a28;
-extern u16 *gData_02001a18;
+extern u16 *gPaletteColors;
+extern u16 *gPaletteCycleSlots;
 
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
-DEFINE_PALETTE_SET_COLORS(Palette_SetColors, gData_02001a24, gData_02001a28,
-    Data_02001a2c, gData_02001a18, Func_02000328)
+DEFINE_PALETTE_SET_COLORS(Palette_SetColors, gData_02001a24, gPaletteColors,
+    Data_02001a2c, gPaletteCycleSlots, Func_02000328)
 
 #include "task.h"
 
@@ -45,8 +45,8 @@ DEFINE_PALETTE_CYCLE_START_VBLANK(IsletCave_StartFastPaletteCycle, gData_02001a3
 DEFINE_LIST_COUNT_ENTRIES(List_CountEntries)
 
 DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gData_02001a1c, gData_02001a20,
-    Data_02001a2c, gData_02001a30, gData_02001a18, gData_02001a34,
-    gData_02001a24, gData_02001a14, gData_02001a28)
+    Data_02001a2c, gData_02001a30, gPaletteCycleSlots, gData_02001a34,
+    gData_02001a24, gData_02001a14, gPaletteColors)
 
 #include "actor.h"
 

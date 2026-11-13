@@ -2272,19 +2272,19 @@ void Func_02003f54(s32 a0) { gData_020069f8 = a0; }
 #include "io_reg.h"
 #include "field_event.h"
 
-extern s32 gData_020069f4;
+extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
-static inline void Counter_Set(s32 value) { gData_020069f4 = value; }
+static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
-DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gData_020069f4, gData_020069f8,
+DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame, gData_020069f8,
     gData_02006a2c)
 
 /* VIEW(s0198): routine Func_020057c4 as void Func_020057c4(); module/scene/scene.h has void Func_020057c4(void); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2369: too many arguments to function `Func_020057c4'. */
 extern void Func_020057c4__s0198() __asm__("Func_020057c4");
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_020069f8, gData_02006a2c,
-    gData_02006a4c, PaletteCycle_Step, gData_02006a50)
+    gLighthousePalette13, PaletteCycle_Step, gLighthouseUnlitColors)
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_020057c4__s0198, Func_020059ec)
 
@@ -2368,7 +2368,7 @@ DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 extern void Func_02005764__s3f54(struct Object6a5 *object, const void *script) __asm__("Actor_StartScript");
 extern u8 gData_020069fc[];
 
-void Func_0200430c(struct Object6a5 *object) {
+void Whirlwind_Update(struct Object6a5 *object) {
   struct EventWork6a5 *work = Ram_HeapSlots->eventWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct Vector3 position;

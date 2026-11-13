@@ -174,7 +174,7 @@ DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02002368, Func_02002460)
 
 DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Whirlwind_CarryLeaderLower)
 
-s32 Func_02000784(s32 *a, s32 *b) {
+s32 Position_FlatDistance(s32 *a, s32 *b) {
   s32 dx = (a[0] - b[0]) >> 16;
   s32 dz = (a[2] - b[2]) >> 16;
   s32 dxsq = dx * dx;

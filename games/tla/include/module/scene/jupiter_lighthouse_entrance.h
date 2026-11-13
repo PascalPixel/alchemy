@@ -10,22 +10,22 @@
 
 struct EffectOptions;
 
-extern u16 gData_020021e4[];
+extern u16 gLighthouseUnlitColors[];
 
 void Func_02000eac(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 
-extern s16 gData_02002202;
+extern s16 gLightSpriteCount;
 extern struct LightOam Data_02002244[];
-extern s16 gData_02002304;
-extern s16 gData_02002306;
+extern s16 gLightSpritesLarge;
+extern s16 gLightSpritePriority;
 
 void Func_020019fc(struct FieldEffect *effect, s32 mode);
 
 void Leader_CenterInCell(void);
 
-extern struct CellTarget gData_02002308;
+extern struct CellTarget gTeleporters;
 
 void Func_02000074(void);
 

@@ -8,23 +8,23 @@ gData_02002b60:
 	.global gData_02002b88
 gData_02002b88:
 	.space 0x0000000c
-	.global Data_02002b94
-Data_02002b94:
+	.global gWhirlwindRiding
+gWhirlwindRiding:
 	.space 0x00000004
 	.global gData_02002b98
 gData_02002b98:
 	.space 0x00000020
-	.global gData_02002bb8
-gData_02002bb8:
+	.global gLighthousePalette13
+gLighthousePalette13:
 	.space 0x00000004
 	.global gData_02002bbc
 gData_02002bbc:
 	.space 0x0000001c
-	.global gData_02002bd8
-gData_02002bd8:
+	.global gLightSpriteTile
+gLightSpriteTile:
 	.space 0x00000002
-	.global gData_02002bda
-gData_02002bda:
+	.global gLightSpriteCount
+gLightSpriteCount:
 	.space 0x00000002
 	.global gData_02002bdc
 gData_02002bdc:
@@ -32,11 +32,11 @@ gData_02002bdc:
 	.global Data_02002c1c
 Data_02002c1c:
 	.space 0x000000c0
-	.global gData_02002cdc
-gData_02002cdc:
+	.global gLightSpritesLarge
+gLightSpritesLarge:
 	.space 0x00000002
-	.global gData_02002cde
-gData_02002cde:
+	.global gLightSpritePriority
+gLightSpritePriority:
 	.space 0x00000002
-	.global gData_02002ce0
-gData_02002ce0:
+	.global gTeleporters
+gTeleporters:

@@ -220,12 +220,12 @@ extern s32 gData_02002388;
 
 void Func_02000414(s32 value) { gData_02002388 = value; }
 
-extern s32 gData_02002384;
+extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
-static inline void Counter_Set(s32 value) { gData_02002384 = value; }
+static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
-DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gData_02002384, gData_02002388,
+DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gPaletteCycleFrame, gData_02002388,
     gData_020023b0, 0x05000184)
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_02002388, gData_020023b0,
@@ -241,9 +241,9 @@ DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Whirlwind_CarryLeaderLower)
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-extern const s32 gData_0200238c[];
+extern const s32 gWhirlwindEndScript[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, Func_02001d2c, Position_FlatDistance,
-    gData_0200238c, Data_020023ac)
+    gWhirlwindEndScript, Data_020023ac)

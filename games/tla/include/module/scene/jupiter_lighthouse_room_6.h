@@ -13,9 +13,9 @@ void Func_02000154(void);
 
 void Teleporter_PlaceArrival(s32 x, s32 z, s32 effect);
 
-extern s16 gData_02002428;
+extern s16 gLightSpriteTile;
 extern struct LightOam Data_0200246c[];
-extern s16 gData_0200252c;
+extern s16 gLightSpritesLarge;
 
 s32 Func_02001bd4(struct Actor *actor);
 

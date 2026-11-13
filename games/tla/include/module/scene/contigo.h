@@ -93,8 +93,8 @@ extern u32 gData_02004758[];
 extern u32 gData_020047fc[];
 extern s32 gData_02004b54[];
 
-extern u16 *gData_02006010;
-extern u16 *Data_02006018;
+extern u16 *gPaletteSlots;
+extern u16 *gPaletteCycleColors;
 
 void Func_02000328(void);
 

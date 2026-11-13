@@ -32,11 +32,11 @@ void Func_02002b30(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
 
 void Func_02001080(void);
 
-extern s16 gData_02003382;
+extern s16 gLightSpriteCount;
 extern struct Actor *gData_02003384[];
 extern struct LightOam Data_020033c4[];
-extern s16 gData_02003484;
-extern s16 gData_02003486;
+extern s16 gLightSpritesLarge;
+extern s16 gLightSpritePriority;
 
 s32 Func_02002b48(struct Actor *actor);
 void Func_020029c0(struct LightOam *oam, s32 depth);

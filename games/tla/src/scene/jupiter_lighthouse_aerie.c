@@ -293,7 +293,7 @@ s32 Scene_PrepareMap(void) {
 
 void Func_02000790(s32 value) { gData_02003318 = value; }
 
-void Func_0200079c(void) {
+void PaletteCycle_Step(void) {
   u16 colors[16];
   s32 phase = (gData_02003314 / 4) % 5;
   s32 i;
@@ -333,7 +333,7 @@ next:
 }
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(JupiterLighthouse_LoadPalettesZero, gData_02003318, gData_02003340,
-    gData_02003360, gData_02003314, Func_0200079c, gData_02003364)
+    gData_02003360, gData_02003314, PaletteCycle_Step, gData_02003364)
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02002a78, Func_02002b58)
 
@@ -415,7 +415,7 @@ s32 Func_02002b50(s32 x, s32 z, s32 layer);
 extern void Camera_WorldToScreen__jupiter_lighthouse_aerie(s32 *position) __asm__("Camera_WorldToScreen");
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-void Func_02000b48(struct Actor *self) {
+void Whirlwind_Update(struct Actor *self) {
   u8 *work = Ram_HeapSlots->eventWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 position[3];
@@ -498,7 +498,7 @@ stop:
 #include "call.h"
 #include "field_effect.h"
 
-DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Func_020029f0, Func_02000b48, Func_02001e78)
+DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Func_020029f0, Whirlwind_Update, Func_02001e78)
 
 #include "field_coordinate.h"
 

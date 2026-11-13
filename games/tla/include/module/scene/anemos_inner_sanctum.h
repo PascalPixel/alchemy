@@ -98,7 +98,7 @@ void Func_020034b0(void);
 
 void Func_02002cb8(void);
 
-extern struct CellTarget Data_02004458;
+extern struct CellTarget gTeleporters;
 
 void Teleporter_Uncover(struct CellTarget *table,
                         struct CellTargetEntry *entry);

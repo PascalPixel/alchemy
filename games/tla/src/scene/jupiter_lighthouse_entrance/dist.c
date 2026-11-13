@@ -27,14 +27,14 @@
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-extern const s32 gData_0200219c[];
-extern s32 gData_020021bc;
+extern const s32 gWhirlwindEndScript[];
+extern s32 gWhirlwindRiding;
 
 s32 Func_02001b2c(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, Func_02001b2c, Position_FlatDistance,
-    gData_0200219c, gData_020021bc)
+    gWhirlwindEndScript, gWhirlwindRiding)
 
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 
@@ -68,30 +68,30 @@ DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(JupiterLighthouse_PlaceRaisedActor
 #include "map.h"
 #include "vram_tab.h"
 
-extern s16 gData_02002200;
+extern s16 gLightSpriteTile;
 extern u32 gData_02002204[];
 
 void Func_020019d4(struct LightOam *oam, s32 depth);
 
-DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gData_02002200, Data_02002244,
-    gData_02002202, gData_02002204, gData_02002304, gData_02002306,
+DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, Data_02002244,
+    gLightSpriteCount, gData_02002204, gLightSpritesLarge, gLightSpritePriority,
     Func_02001b24, Func_020019d4)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_02002204, gData_02002200,
-    LightSprites_Draw, gData_02002202, gData_02002304, gData_02002306)
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_02002204, gLightSpriteTile,
+    LightSprites_Draw, gLightSpriteCount, gLightSpritesLarge, gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_02002204, gData_02002200,
-    LightSprites_Draw, gData_02002202, gData_02002304, gData_02002306)
+DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_02002204, gLightSpriteTile,
+    LightSprites_Draw, gLightSpriteCount, gLightSpritesLarge, gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_02002204, gData_02002200,
-    LightSprites_Draw, gData_02002202, gData_02002304, gData_02002306)
+DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_02002204, gLightSpriteTile,
+    LightSprites_Draw, gLightSpriteCount, gLightSpritesLarge, gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_ADD(LightSprites_Add, gData_02002202, gData_02002204)
+DEFINE_LIGHT_SPRITES_ADD(LightSprites_Add, gLightSpriteCount, gData_02002204)
 
-void Func_02000e20(s32 value) { gData_02002306 = value; }
+void Func_02000e20(s32 value) { gLightSpritePriority = value; }
 
 #include "../../field/object/set_sprite_priority.c"

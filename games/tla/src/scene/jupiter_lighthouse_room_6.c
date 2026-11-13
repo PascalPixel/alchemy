@@ -83,10 +83,10 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 #define HALF_AT(base, offset) (*(u16 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-extern s32 gData_020023bc;
+extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
-static inline void Counter_Set(s32 value) { gData_020023bc = value; }
+static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
 s32 __modsi3();
 void Teleporters_Find(s32 a, s32 b, s32 c, s32 d, s32 e);
@@ -126,7 +126,7 @@ s32 Scene_PrepareMap(void) {
 
 void Func_020002dc(s32 value) { gData_020023c0 = value; }
 
-DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gData_020023bc, gData_020023c0,
+DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame, gData_020023c0,
     gData_020023e8)
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_020023c0, gData_020023e8,
@@ -155,9 +155,9 @@ DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-extern const s32 gData_0200a3c4[];
+extern const s32 gWhirlwindEndScript[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_02001bdc, Position_FlatDistance,
-    gData_0200a3c4, Data_020023e4)
+    gWhirlwindEndScript, Data_020023e4)

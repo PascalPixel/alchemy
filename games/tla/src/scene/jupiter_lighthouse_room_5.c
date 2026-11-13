@@ -523,12 +523,12 @@ extern s32 gData_020033dc;
 
 void Func_02000cb8(s32 value) { gData_020033dc = value; }
 
-extern s32 gData_020033d8;
+extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
-static inline void Counter_Set(s32 value) { gData_020033d8 = value; }
+static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
-DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gData_020033d8, gData_020033dc,
+DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame, gData_020033dc,
     gData_02003404)
 
 void Func_02002888();

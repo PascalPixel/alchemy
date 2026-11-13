@@ -26,7 +26,7 @@ static __inline__ void Func_020057ac_(s32 a, s32 b, s32 c) {
   Map_SetScreenShake(a, b, c);
 }
 
-void Func_0200539c(void) {
+void Teleporter_DropIn(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct EffectOptions options;
   struct Vector3 velocity;
@@ -80,9 +80,9 @@ void Func_0200539c(void) {
 void GameFlag_SetByte(s32 flag, s32 value);
 void Teleporter_SinkEvent(struct CellTarget *work, struct CellTargetEntry *entry);
 
-DEFINE_TELEPORTERS_STEP(Teleporters_Step, Data_02006b74, Teleporter_Uncover, Teleporter_SinkEvent)
+DEFINE_TELEPORTERS_STEP(Teleporters_Step, gTeleporters, Teleporter_Uncover, Teleporter_SinkEvent)
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, Data_02006b74, Func_0200539c)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gTeleporters, Teleporter_DropIn)
 
 #include "scene_tables.h"
 

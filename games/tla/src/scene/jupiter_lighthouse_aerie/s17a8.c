@@ -139,30 +139,30 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   HeapSlot_Release(220);
 }
 
-extern s16 gData_02003380;
+extern s16 gLightSpriteTile;
 
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
 /// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
 /// 64 one when the big switch is set, at its animation picture and depth.
-DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gData_02003380, Data_020033c4,
-    gData_02003382, gData_02003384, gData_02003484, gData_02003486,
+DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, Data_020033c4,
+    gLightSpriteCount, gData_02003384, gLightSpritesLarge, gLightSpritePriority,
     Func_02002b48, Func_020029c0)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_02003384, gData_02003380,
-    LightSprites_Draw, gData_02003382, gData_02003484, gData_02003486)
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_02003384, gLightSpriteTile,
+    LightSprites_Draw, gLightSpriteCount, gLightSpritesLarge, gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_02003384, gData_02003380,
-    LightSprites_Draw, gData_02003382, gData_02003484, gData_02003486)
+DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_02003384, gLightSpriteTile,
+    LightSprites_Draw, gLightSpriteCount, gLightSpritesLarge, gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_02003384, gData_02003380,
-    LightSprites_Draw, gData_02003382, gData_02003484, gData_02003486)
+DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_02003384, gLightSpriteTile,
+    LightSprites_Draw, gLightSpriteCount, gLightSpritesLarge, gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_ADD(LightSprites_Add, gData_02003382, gData_02003384)
+DEFINE_LIGHT_SPRITES_ADD(LightSprites_Add, gLightSpriteCount, gData_02003384)
 
-void Func_02001dec(s32 value) { gData_02003486 = value; }
+void Func_02001dec(s32 value) { gLightSpritePriority = value; }
 
 #include "../../field/object/set_sprite_priority.c"

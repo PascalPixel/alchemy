@@ -26,12 +26,12 @@
 #include "module/scene/jupiter_lighthouse_room_2.h"
 #include "module/scene/scene.h"
 
-extern const s32 gData_02002b3c[];
+extern const s32 gWhirlwindEndScript[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, Func_020022fc, Position_FlatDistance,
-    gData_02002b3c, Data_02002b94)
+    gWhirlwindEndScript, gWhirlwindRiding)
 
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 
@@ -44,7 +44,7 @@ DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, Func_0200165c)
 
 DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(JupiterLighthouse_PlaceRaisedActors)
 
-extern s16 gData_02002cdc;
+extern s16 gLightSpritesLarge;
 
 void Func_0200218c(struct LightOam *oam, s32 depth);
 
@@ -52,22 +52,22 @@ void Func_0200218c(struct LightOam *oam, s32 depth);
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
 /// sprite, or a 32 by 64 one when the big switch is set, at its animation
 /// picture and depth.
-DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gData_02002bd8, Data_02002c1c,
-    gData_02002bda, gData_02002bdc, gData_02002cdc, gData_02002cde,
+DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, Data_02002c1c,
+    gLightSpriteCount, gData_02002bdc, gLightSpritesLarge, gLightSpritePriority,
     Func_020022f4, Func_0200218c)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_02002bdc, gData_02002bd8,
-    LightSprites_Draw, gData_02002bda, gData_02002cdc, gData_02002cde)
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_02002bdc, gLightSpriteTile,
+    LightSprites_Draw, gLightSpriteCount, gLightSpritesLarge, gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_02002bdc, gData_02002bd8,
-    LightSprites_Draw, gData_02002bda, gData_02002cdc, gData_02002cde)
+DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_02002bdc, gLightSpriteTile,
+    LightSprites_Draw, gLightSpriteCount, gLightSpritesLarge, gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_02002bdc, gData_02002bd8,
-    LightSprites_Draw, gData_02002bda, gData_02002cdc, gData_02002cde)
+DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_02002bdc, gLightSpriteTile,
+    LightSprites_Draw, gLightSpriteCount, gLightSpritesLarge, gLightSpritePriority)
 
 void Func_020015a0(s32 id, s32 value) {
   struct Actor *object = Actor_Get(id);
@@ -77,13 +77,13 @@ void Func_020015a0(s32 id, s32 value) {
     {
       s16 *count;
 
-      count = &gData_02002bda;
+      count = &gLightSpriteCount;
       gData_02002bdc[*count] = object;
       (*count)++;
     }
   }
 }
 
-void Func_020015d0(s32 a0) { gData_02002cde = a0; }
+void Func_020015d0(s32 a0) { gLightSpritePriority = a0; }
 
 #include "../../field/object/set_sprite_priority.c"

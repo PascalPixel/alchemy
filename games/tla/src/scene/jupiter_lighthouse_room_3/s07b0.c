@@ -22,14 +22,14 @@
 #include "module/scene/jupiter_lighthouse_room_3.h"
 #include "module/scene/scene.h"
 
-extern const s32 gData_02002cc8[];
+extern const s32 gWhirlwindEndScript[];
 
 s32 Func_02002450(s32 x, s32 z, s32 layer);
-s32 Func_02000784(s32 *from, s32 *to);
+s32 Position_FlatDistance(s32 *from, s32 *to);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, Func_02002450, Func_02000784,
-    gData_02002cc8, gData_02002ce8)
+DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, Func_02002450, Position_FlatDistance,
+    gWhirlwindEndScript, gWhirlwindRiding)
 
 void Func_020022e0(struct GustObject *object, s32 mode);
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);

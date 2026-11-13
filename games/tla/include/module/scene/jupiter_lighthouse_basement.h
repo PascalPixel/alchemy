@@ -17,8 +17,8 @@ void Func_02001094(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 
-extern s16 gData_020023f0;
-extern s16 gData_020023f2;
+extern s16 gLightSpriteTile;
+extern s16 gLightSpriteCount;
 extern struct Actor *gData_020023f4[];
 extern struct LightOam Data_02002434[];
 

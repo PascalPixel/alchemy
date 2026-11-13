@@ -15,18 +15,18 @@ void Func_0200045c(void);
 
 void SceneActor_ParkRecord(struct Actor *actor);
 
-extern s16 gData_02006a6c;
-extern s16 gData_02006a6e;
+extern s16 gLightSpriteTile;
+extern s16 gLightSpriteCount;
 extern struct Actor *gData_02006a70[];
 extern struct LightOam Data_02006ab0[];
-extern s16 gData_02006b72;
+extern s16 gLightSpritePriority;
 
 s32 Func_020059bc(struct Actor *actor);
 extern void Func_02005754(struct FieldEffect *effect, s32 mode);
 
 /// The cells Teleporters_Step watches, and the cell it copies over the one the
 /// leader steps on.
-extern struct CellTarget Data_02006b74;
+extern struct CellTarget gTeleporters;
 
 void Func_0200581c(void);
 
@@ -114,8 +114,8 @@ extern s32 Data_02006a1c;
 s32 Func_020059b4();
 
 extern u16 gData_02006a2c[];
-extern u16 gData_02006a4c[];
-extern u16 gData_02006a50[];
+extern u16 gLighthousePalette13[];
+extern u16 gLighthouseUnlitColors[];
 
 void Func_020059ec();
 s32 Func_020059e4();

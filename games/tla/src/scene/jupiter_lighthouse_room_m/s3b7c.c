@@ -87,7 +87,7 @@ void Func_02003b7c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 // The cells Teleporters_Step watches, and the cell it copies over the one the
 // leader steps on.
-#define CELL_TABLE Data_02005b88
+#define CELL_TABLE gTeleporters
 #define CELL_SPRITE_DRAW Func_02003d44
 #define CELL_PUSH_SLOT_ENTRY Func_020046ac
 #include "../../field/map/cell_sprite.c"
@@ -99,7 +99,7 @@ void Func_02003b7c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "scene_tables.h"
 #include "cell_target.h"
 
-DEFINE_TELEPORTERS_FIND(Teleporters_Find, Data_02005b88, Func_02003d44)
+DEFINE_TELEPORTERS_FIND(Teleporters_Find, gTeleporters, Func_02003d44)
 
 DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 

@@ -27,14 +27,14 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
 DEFINE_TELEPORTER_DROP_IN_LOWER(Teleporter_DropInLower, Func_02000eac)
 
 void Teleporter_Uncover();
-void Func_020014dc();
+void Teleporter_Sink();
 
-DEFINE_TELEPORTERS_STEP(Teleporters_Step, gData_02002308, Teleporter_Uncover,
-    Func_020014dc)
+DEFINE_TELEPORTERS_STEP(Teleporters_Step, gTeleporters, Teleporter_Uncover,
+    Teleporter_Sink)
 
 #include "cell_target.h"
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gData_02002308, Teleporter_DropInLower)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gTeleporters, Teleporter_DropInLower)
 
 #include "scene_tables.h"
 #include "objcmd.h"
@@ -77,7 +77,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGERS_END},
 };
 
-s32 gData_02002194[] = {
+s32 gPaletteCycleFrame[] = {
     -1,
 };
 
@@ -85,7 +85,7 @@ u32 gData_02002198[] = {
     1,
 };
 
-u32 gData_0200219c[] = {
+u32 gWhirlwindEndScript[] = {
     39, 5, 0, 12, 38,
 };
 // clang-format on

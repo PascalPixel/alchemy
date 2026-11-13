@@ -55,16 +55,16 @@ void Whirlwind_CarryLeader(void);
 extern u32 gData_02004fc4[];
 extern u32 gData_02005000[];
 
-extern s16 gData_02005a80;
-extern s16 gData_02005a82;
+extern s16 gLightSpriteTile;
+extern s16 gLightSpriteCount;
 extern struct Actor *gData_02005a84[];
 extern struct LightOam Data_02005ac4[];
-extern s16 gData_02005b86;
+extern s16 gLightSpritePriority;
 
 s32 Func_0200499c(struct Actor *actor);
 void Func_020046f4(struct FieldEffect *effect, s32 mode);
 
-extern struct CellTarget Data_02005b88;
+extern struct CellTarget gTeleporters;
 
 void Teleporter_Uncover(struct CellTarget *table,
                         struct CellTargetEntry *entry);

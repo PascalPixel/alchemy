@@ -18,7 +18,7 @@ extern u32 gData_02002950[];
 extern u32 gData_0200298c[];
 extern u32 gData_020029c8[];
 
-extern s32 gData_02002ce8;
+extern s32 gWhirlwindRiding;
 
 struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind);
 
@@ -26,21 +26,21 @@ s32 Func_02002338(struct Actor *object, s32 *position);
 
 extern u16 gData_02002478[];
 
-extern s16 gData_02002d2e;
+extern s16 gLightSpriteCount;
 extern struct Actor *gData_02002d30[];
 extern struct LightOam Data_02002d70[];
 
-extern s16 gData_02002e30;
+extern s16 gLightSpritesLarge;
 
-extern s16 gData_02002e32;
+extern s16 gLightSpritePriority;
 
 s32 Func_02002448(struct Actor *actor);
 
 /// The cells Teleporters_Step watches, and the cell it copies over the one the
 /// leader steps on.
-extern struct CellTarget gData_02002e34;
+extern struct CellTarget gTeleporters;
 
-void Func_02001950(void);
+void Teleporters_Update(void);
 
 void PaletteCycle_StepAt(void);
 

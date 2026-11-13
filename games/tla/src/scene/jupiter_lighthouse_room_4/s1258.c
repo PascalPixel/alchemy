@@ -91,7 +91,7 @@ void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 // The cells Func_02001bb8 watches, and the cell it copies over the one the
 // leader steps on.
-#define CELL_TABLE gData_02002864
+#define CELL_TABLE gTeleporters
 #define CELL_SPRITE_DRAW Func_02001420
 #define CELL_PUSH_SLOT_ENTRY Func_02001d80
 #include "../../field/map/cell_sprite.c"
@@ -103,7 +103,7 @@ void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "scene_tables.h"
 #include "cell_target.h"
 
-DEFINE_TELEPORTERS_FIND(Teleporters_Find, gData_02002864, Func_02001420)
+DEFINE_TELEPORTERS_FIND(Teleporters_Find, gTeleporters, Func_02001420)
 
 void Func_02001790(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);

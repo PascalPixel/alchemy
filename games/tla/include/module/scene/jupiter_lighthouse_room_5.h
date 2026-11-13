@@ -32,15 +32,15 @@ void Func_020029c8(void *data);
 void Func_020029e0(struct SparkSprite *sprite, s32 width, s32 height,
                    s32 attributes, s32 tile);
 
-extern s16 gData_02003444;
-extern s16 gData_02003446;
+extern s16 gLightSpriteTile;
+extern s16 gLightSpriteCount;
 extern struct Actor *gData_02003448[];
-extern s16 gData_02003548;
-extern s16 gData_0200354a;
+extern s16 gLightSpritesLarge;
+extern s16 gLightSpritePriority;
 
 void Leader_CenterInCell(void);
 
-extern struct CellTarget Data_0200354c;
+extern struct CellTarget gTeleporters;
 
 void Teleporter_Uncover(struct CellTarget *table,
                         struct CellTargetEntry *entry);

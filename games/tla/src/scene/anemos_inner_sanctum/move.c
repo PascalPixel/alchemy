@@ -105,7 +105,7 @@ void Func_02002780(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-#define CELL_TABLE Data_02004458
+#define CELL_TABLE gTeleporters
 #define CELL_SPRITE_DRAW Func_02002948
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepth
 #include "../../field/map/cell_sprite.c"
@@ -115,7 +115,7 @@ void Func_02002780(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "iwram_call.h"
 #include "cell_target.h"
 
-DEFINE_TELEPORTERS_FIND(Teleporters_Find, Data_02004458, Func_02002948)
+DEFINE_TELEPORTERS_FIND(Teleporters_Find, gTeleporters, Func_02002948)
 
 void Func_02002cb8(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);

@@ -16,7 +16,7 @@ void Teleporter_PlaceArrival(s32 x, s32 z, s32 effect);
 
 void JupiterLighthouse_LoadPalettes(s32 mode);
 
-extern s16 gData_0200265c;
+extern s16 gLightSpriteTile;
 extern struct Actor *gData_02002660[];
 
 s32 Func_02001c80(struct Actor *actor);
@@ -24,7 +24,7 @@ void Func_02001b40(struct LightOam *oam, s32 depth);
 
 void Leader_CenterInCell(void);
 
-extern struct CellTarget Data_02002764;
+extern struct CellTarget gTeleporters;
 
 void Teleporter_Uncover(struct CellTarget *table,
                         struct CellTargetEntry *entry);

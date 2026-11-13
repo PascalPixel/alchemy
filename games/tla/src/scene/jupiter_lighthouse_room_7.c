@@ -24,7 +24,7 @@
 extern const u8 gData_020031c4[];
 extern s32 gData_02003594;
 extern s16 gData_020035fe;
-extern u16 gData_02003702;
+extern u16 gLightSpritePriority;
 void JupiterLighthouse_OpenDoor(s32 value);
 void JupiterLighthouse_CloseDoor(void);
 void JupiterLighthouse_CheckBlockOnCell(void);
@@ -678,22 +678,22 @@ s32 Scene_PrepareMap(void) {
 
 void Func_0200115c(s32 value) { gData_02003594 = value; }
 
-extern s32 gData_02003590;
+extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
-static inline void Counter_Set(s32 value) { gData_02003590 = value; }
+static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 extern u32 gData_020035bc[];
 
-DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gData_02003590, gData_02003594,
+DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame, gData_02003594,
     gData_020035bc)
 
-extern u16 gData_020035dc[];
-extern u16 gData_020035e0[];
+extern u16 gLighthousePalette13[];
+extern u16 gLighthouseUnlitColors[];
 
 void Func_02002c44();
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_02003594, gData_020035bc,
-    gData_020035dc, PaletteCycle_Step, gData_020035e0)
+    gLighthousePalette13, PaletteCycle_Step, gLighthouseUnlitColors)
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02002b54, Func_02002c44)
 
@@ -710,12 +710,12 @@ DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-extern const s32 gData_02003598[];
-extern s32 Data_020035b8;
+extern const s32 gWhirlwindEndScript[];
+extern s32 gWhirlwindRiding;
 
 s32 Func_02002c34(s32 x, s32 z, s32 layer);
 s32 Math_Cosine(s32 angle);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_02002c34, Position_FlatDistance,
-    gData_02003598, Data_020035b8)
+    gWhirlwindEndScript, gWhirlwindRiding)

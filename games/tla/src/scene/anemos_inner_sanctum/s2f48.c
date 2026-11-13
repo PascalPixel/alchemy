@@ -18,7 +18,7 @@
 void Func_02002780(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-void Func_02002f48(void) {
+void Teleporter_DropIn(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   u32 i;
   struct EffectOptions options;
@@ -90,11 +90,11 @@ loop:
 #include "cell_target.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Func_02002db0(struct CellTarget *work, struct CellTargetEntry *entry);
+void Teleporter_Sink(struct CellTarget *work, struct CellTargetEntry *entry);
 
-DEFINE_TELEPORTERS_STEP(Teleporters_Step, Data_02004458, Teleporter_Uncover, Func_02002db0)
+DEFINE_TELEPORTERS_STEP(Teleporters_Step, gTeleporters, Teleporter_Uncover, Teleporter_Sink)
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, Data_02004458, Func_02002f48)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gTeleporters, Teleporter_DropIn)
 
 #include "scene_tables.h"
 

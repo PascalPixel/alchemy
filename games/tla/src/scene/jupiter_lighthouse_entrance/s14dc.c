@@ -13,7 +13,7 @@
 
 struct CellTargetEntry;
 
-/* VIEW(s14dc): tag struct CellTarget as struct CellTarget__s14dc; cell_target.h has another definition; tried with the definition the rest of the object has, Func_020014dc moves: 2 of 131 instructions in tla-ja. */
+/* VIEW(s14dc): tag struct CellTarget as struct CellTarget__s14dc; cell_target.h has another definition; tried with the definition the rest of the object has, Teleporter_Sink moves: 2 of 131 instructions in tla-ja. */
 struct CellTarget__s14dc {
   s16 firstFlag;
   s16 flagByte;
@@ -28,7 +28,7 @@ struct CellTarget__s14dc {
 
 #include "io_write.h"
 
-void Func_020014dc(struct CellTarget__s14dc *table, struct CellTargetEntry *entry) {
+void Teleporter_Sink(struct CellTarget__s14dc *table, struct CellTargetEntry *entry) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = (leader->x >> 20) | (s16)(table->x & 64);
   s32 z = (leader->z >> 20) | (s16)(table->z & 64);

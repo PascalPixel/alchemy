@@ -73,7 +73,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGERS_END},
 };
 
-s32 gData_02002a84[] = {
+s32 gPaletteCycleFrame[] = {
     -1,
 };
 
@@ -81,7 +81,7 @@ u32 gData_02002a88[] = {
     1,
 };
 
-u32 gData_02002a8c[] = {
+u32 gWhirlwindEndScript[] = {
     39, 5, 0, 12, 38,
 };
 // clang-format on

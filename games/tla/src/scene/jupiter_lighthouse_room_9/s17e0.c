@@ -24,9 +24,9 @@ DEFINE_TELEPORTER_DROP_IN(Teleporter_DropIn, Func_02001018)
 void GameFlag_SetByte(s32 flag, s32 value);
 void Teleporter_Sink(struct CellTarget *work, struct CellTargetEntry *entry);
 
-DEFINE_TELEPORTERS_STEP(Teleporters_Step, Data_02002764, Teleporter_Uncover, Teleporter_Sink)
+DEFINE_TELEPORTERS_STEP(Teleporters_Step, gTeleporters, Teleporter_Uncover, Teleporter_Sink)
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, Data_02002764, Teleporter_DropIn)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gTeleporters, Teleporter_DropIn)
 
 #include "scene_tables.h"
 #include "objcmd.h"
@@ -127,7 +127,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGERS_END},
 };
 
-s32 gData_020025f0[] = {
+s32 gPaletteCycleFrame[] = {
     -1,
 };
 
@@ -135,7 +135,7 @@ u32 gData_020025f4[] = {
     1,
 };
 
-u32 gData_020025f8[] = {
+u32 gWhirlwindEndScript[] = {
     39, 5, 0, 12, 38,
 };
 // clang-format on

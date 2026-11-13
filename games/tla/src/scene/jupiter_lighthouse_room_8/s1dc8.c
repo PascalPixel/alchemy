@@ -24,10 +24,10 @@ DEFINE_TELEPORTER_DROP_IN(Teleporter_DropIn, Func_02001600)
 void GameFlag_SetByte(s32 flag, s32 value);
 void Teleporter_Sink(struct CellTarget *work, struct CellTargetEntry *entry);
 
-DEFINE_TELEPORTERS_STEP(Teleporters_Step, gData_02002bf8, Teleporter_Uncover,
+DEFINE_TELEPORTERS_STEP(Teleporters_Step, gTeleporters, Teleporter_Uncover,
     Teleporter_Sink)
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gData_02002bf8, Teleporter_DropIn)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gTeleporters, Teleporter_DropIn)
 
 #include "scene_tables.h"
 

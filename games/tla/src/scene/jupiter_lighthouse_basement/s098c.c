@@ -63,7 +63,7 @@ extern s16 gData_020024f4__s098c __asm__("gData_020024f4");
 
 void Func_02001bc4(struct LightOam *oam, s32 depth);
 
-void Func_02000c94(void) {
+void LightSprites_Draw(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 *view = &map->viewX;
   s32 viewX, viewZ, tile, viewY;
@@ -71,11 +71,11 @@ void Func_02000c94(void) {
   s32 i;
   viewX = view[0] & 0xffff0000;
   viewZ = view[1] & 0xffff0000;
-  tile = gResourceTableEntries[gData_020023f0].offset >> 5;
+  tile = gResourceTableEntries[gLightSpriteTile].offset >> 5;
   viewY = map->origin[1];
   oam = Data_02002434;
 
-  for (i = 0; i < gData_020023f2; i++) {
+  for (i = 0; i < gLightSpriteCount; i++) {
     struct Actor *actor = gData_020023f4[i];
     if (actor != 0 && actor->x != 0) {
       s32 big, ox, y, z, oy, depth;
@@ -139,16 +139,16 @@ void Func_02000c94(void) {
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_020023f4, gData_020023f0,
-    Func_02000c94, gData_020023f2, gData_020024f4__s098c, gData_020024f6)
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_020023f4, gLightSpriteTile,
+    LightSprites_Draw, gLightSpriteCount, gData_020024f4__s098c, gData_020024f6)
 
-DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_020023f4, gData_020023f0,
-    Func_02000c94, gData_020023f2, gData_020024f4__s098c, gData_020024f6)
+DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_020023f4, gLightSpriteTile,
+    LightSprites_Draw, gLightSpriteCount, gData_020024f4__s098c, gData_020024f6)
 
-DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_020023f4, gData_020023f0,
-    Func_02000c94, gData_020023f2, gData_020024f4__s098c, gData_020024f6)
+DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_020023f4, gLightSpriteTile,
+    LightSprites_Draw, gLightSpriteCount, gData_020024f4__s098c, gData_020024f6)
 
-DEFINE_LIGHT_SPRITES_ADD(LightSprites_Add, gData_020023f2, gData_020023f4)
+DEFINE_LIGHT_SPRITES_ADD(LightSprites_Add, gLightSpriteCount, gData_020023f4)
 
 void Func_02001008(s32 value) { gData_020024f6 = value; }
 

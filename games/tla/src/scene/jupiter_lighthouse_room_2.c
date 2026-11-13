@@ -451,18 +451,18 @@ void Func_020009dc(s32 a0) { gData_02002b38 = a0; }
 #include "shared/jupiter_lighthouse_aerie.h"
 #include "dma.h"
 
-extern s32 gData_02002b34;
+extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
-static inline void Counter_Set(s32 value) { gData_02002b34 = value; }
+static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
-DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gData_02002b34, gData_02002b38,
+DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gPaletteCycleFrame, gData_02002b38,
     gData_02002b98, 0x05000184)
 
-extern u16 gData_02002bb8[];
+extern u16 gLighthousePalette13[];
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_02002b38, gData_02002b98,
-    gData_02002bb8, PaletteCycle_StepAt, gData_02002bbc)
+    gLighthousePalette13, PaletteCycle_StepAt, gData_02002bbc)
 
 void Func_0200223c();
 /* VIEW(jupiter_lighthouse_room_2): routine Func_0200230c as void Func_0200230c(); module/scene/scene.h has void Func_0200230c(s32 actor); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_2.c:525: too many arguments to function `Func_0200230c'. */

@@ -5,8 +5,8 @@
 	.global gData_02006000
 gData_02006000:
 	.space 0x00000004
-	.global gData_02006004
-gData_02006004:
+	.global gPaletteCycleSlots
+gPaletteCycleSlots:
 	.space 0x00000004
 	.global gData_02006008
 gData_02006008:
@@ -14,14 +14,14 @@ gData_02006008:
 	.global gData_0200600c
 gData_0200600c:
 	.space 0x00000004
-	.global gData_02006010
-gData_02006010:
+	.global gPaletteSlots
+gPaletteSlots:
 	.space 0x00000004
-	.global gData_02006014
-gData_02006014:
+	.global gPaletteColors
+gPaletteColors:
 	.space 0x00000004
-	.global Data_02006018
-Data_02006018:
+	.global gPaletteCycleColors
+gPaletteCycleColors:
 	.space 0x00000004
 	.global gData_0200601c
 gData_0200601c:

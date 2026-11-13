@@ -114,12 +114,12 @@ void Func_0200022c(s32 a0) { gData_02002198 = a0; }
 #include "dma.h"
 #include "io_reg.h"
 
-extern s32 gData_02002194;
+extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
-static inline void Counter_Set(s32 value) { gData_02002194 = value; }
+static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
-DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gData_02002194, gData_02002198,
+DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gPaletteCycleFrame, gData_02002198,
     gData_020021c0, 0x05000184)
 
 #include "field_event.h"
@@ -127,7 +127,7 @@ DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gData_02002194, gData_02002198
 void Func_02001a6c();
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_02002198, gData_020021c0,
-    gData_020021e0, PaletteCycle_StepAt, gData_020021e4)
+    gData_020021e0, PaletteCycle_StepAt, gLighthouseUnlitColors)
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02001a6c, Func_02001b34)
 

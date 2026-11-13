@@ -20,23 +20,23 @@ void Func_02002314(s32 a);
 
 void JupiterLighthouse_LoadPalettes(s32 mode);
 
-extern s32 Data_02002b94;
+extern s32 gWhirlwindRiding;
 
 s32 Func_020022fc(s32 x, s32 z, s32 layer);
 
 s32 Position_FlatDistance(s32 *a, s32 *b);
 
-extern s16 gData_02002bd8;
-extern s16 gData_02002bda;
+extern s16 gLightSpriteTile;
+extern s16 gLightSpriteCount;
 extern struct Actor *gData_02002bdc[];
 extern struct LightOam Data_02002c1c[];
-extern s16 gData_02002cde;
+extern s16 gLightSpritePriority;
 
 s32 Func_020022f4(struct Actor *actor);
 
 void Leader_CenterInCell(void);
 
-extern struct CellTarget gData_02002ce0;
+extern struct CellTarget gTeleporters;
 
 void Func_020003f4(void);
 void Func_02000410(void);

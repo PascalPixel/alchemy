@@ -13,17 +13,17 @@ Data_02006a28:
 	.global gData_02006a2c
 gData_02006a2c:
 	.space 0x00000020
-	.global gData_02006a4c
-gData_02006a4c:
+	.global gLighthousePalette13
+gLighthousePalette13:
 	.space 0x00000004
-	.global gData_02006a50
-gData_02006a50:
+	.global gLighthouseUnlitColors
+gLighthouseUnlitColors:
 	.space 0x0000001c
-	.global gData_02006a6c
-gData_02006a6c:
+	.global gLightSpriteTile
+gLightSpriteTile:
 	.space 0x00000002
-	.global gData_02006a6e
-gData_02006a6e:
+	.global gLightSpriteCount
+gLightSpriteCount:
 	.space 0x00000002
 	.global gData_02006a70
 gData_02006a70:
@@ -34,8 +34,8 @@ Data_02006ab0:
 	.global gData_02006b70
 gData_02006b70:
 	.space 0x00000002
-	.global gData_02006b72
-gData_02006b72:
+	.global gLightSpritePriority
+gLightSpritePriority:
 	.space 0x00000002
-	.global Data_02006b74
-Data_02006b74:
+	.global gTeleporters
+gTeleporters:

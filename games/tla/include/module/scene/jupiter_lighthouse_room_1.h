@@ -11,15 +11,15 @@ struct LightOam;
 
 void Func_02001bcc(s32 owner);
 
-extern s32 Data_02002254;
+extern s32 gWhirlwindRiding;
 
 s32 Func_02001bbc(s32 x, s32 z, s32 layer);
 
-extern s16 gData_02002298;
-extern s16 gData_0200229a;
+extern s16 gLightSpriteTile;
+extern s16 gLightSpriteCount;
 extern struct Actor *gData_0200229c[];
-extern s16 gData_0200239c;
-extern s16 gData_0200239e;
+extern s16 gLightSpritesLarge;
+extern s16 gLightSpritePriority;
 
 void Func_02001a64(struct LightOam *oam, s32 depth);
 

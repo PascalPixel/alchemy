@@ -38,9 +38,9 @@ void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer);
 
 s32 Func_02002c1c(struct Actor *object);
 
-extern s16 gData_020035fc;
+extern s16 gLightSpriteTile;
 extern struct LightOam Data_02003640[];
-extern s16 gData_02003700;
+extern s16 gLightSpritesLarge;
 
 void Func_02002aa4(struct LightOam *oam, s32 depth);
 

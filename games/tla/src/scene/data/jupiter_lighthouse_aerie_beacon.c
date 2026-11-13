@@ -201,7 +201,7 @@ u32 gData_020069dc[] = {
     17, 18, 19, 20, 21, 22,
 };
 
-s32 gData_020069f4[] = {
+s32 gPaletteCycleFrame[] = {
     -1,
 };
 

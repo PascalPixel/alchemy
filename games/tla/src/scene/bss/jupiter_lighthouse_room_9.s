@@ -13,8 +13,8 @@ gData_0200263c:
 	.global gData_02002640
 gData_02002640:
 	.space 0x0000001c
-	.global gData_0200265c
-gData_0200265c:
+	.global gLightSpriteTile
+gLightSpriteTile:
 	.space 0x00000002
 	.global gData_0200265e
 gData_0200265e:
@@ -25,11 +25,11 @@ gData_02002660:
 	.global gData_020026a0
 gData_020026a0:
 	.space 0x000000c0
-	.global gData_02002760
-gData_02002760:
+	.global gLightSpritesLarge
+gLightSpritesLarge:
 	.space 0x00000002
-	.global gData_02002762
-gData_02002762:
+	.global gLightSpritePriority
+gLightSpritePriority:
 	.space 0x00000002
-	.global Data_02002764
-Data_02002764:
+	.global gTeleporters
+gTeleporters:

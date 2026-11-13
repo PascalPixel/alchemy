@@ -54,19 +54,19 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-extern s32 gData_02005a3c;
+extern s32 gWhirlwindRiding;
 
 void Whirlwind_SpawnUpper();
 
 void Func_02000060(void) {
-  if (gData_02005a3c == 0) {
+  if (gWhirlwindRiding == 0) {
     Whirlwind_SpawnUpper(Actor_Get(24));
-    gData_02005a3c = 1;
+    gWhirlwindRiding = 1;
   }
 }
 
 void Func_02000080(void) {
-  if (gData_02005a3c == 0) {
+  if (gWhirlwindRiding == 0) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
     if (party->renderMode == 10) {
@@ -76,7 +76,7 @@ void Func_02000080(void) {
       WORD_AT(object, 48) = 0;
       WORD_AT(object, 52) = 0;
       Whirlwind_SpawnUpper(Actor_Get(25));
-      gData_02005a3c = 1;
+      gWhirlwindRiding = 1;
     }
   }
 }
@@ -1570,7 +1570,7 @@ s32 Scene_Initialize(void) {
   Func_02004994(15, 1);
   Func_02004984();
   Func_0200498c(0, 512, 21, 22);
-  gData_02005a3c = 0;
+  gWhirlwindRiding = 0;
   object = Actor_Get(24);
   object->motionFlags = 0;
   object->y = 0;
@@ -1658,13 +1658,13 @@ extern s32 gData_02005a18;
 
 void Func_02002efc(s32 value) { gData_02005a18 = value; }
 
-extern s32 gData_02005a14;
+extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
-static inline void Counter_Set(s32 value) { gData_02005a14 = value; }
+static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 extern u16 gData_02005a40[];
 
-DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gData_02005a14, gData_02005a18,
+DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame, gData_02005a18,
     gData_02005a40)
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_02005a18, gData_02005a40,
@@ -1677,9 +1677,9 @@ DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-extern const s32 gData_02005a1c[];
+extern const s32 gWhirlwindEndScript[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_020049a4, Position_FlatDistance,
-    gData_02005a1c, gData_02005a3c)
+    gWhirlwindEndScript, gWhirlwindRiding)

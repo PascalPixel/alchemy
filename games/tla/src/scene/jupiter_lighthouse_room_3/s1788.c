@@ -81,7 +81,7 @@ void Func_02001788(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-#define CELL_TABLE gData_02002e34
-#define CELL_SPRITE_DRAW Func_02001950
+#define CELL_TABLE gTeleporters
+#define CELL_SPRITE_DRAW Teleporters_Update
 #define CELL_PUSH_SLOT_ENTRY Func_020022b8
 #include "../../field/map/cell_sprite.c"

@@ -13,11 +13,11 @@ gData_020023d0:
 	.global gData_020023d4
 gData_020023d4:
 	.space 0x0000001c
-	.global gData_020023f0
-gData_020023f0:
+	.global gLightSpriteTile
+gLightSpriteTile:
 	.space 0x00000002
-	.global gData_020023f2
-gData_020023f2:
+	.global gLightSpriteCount
+gLightSpriteCount:
 	.space 0x00000002
 	.global gData_020023f4
 gData_020023f4:
@@ -31,5 +31,5 @@ gData_020024f4:
 	.global gData_020024f6
 gData_020024f6:
 	.space 0x00000002
-	.global gData_020024f8
-gData_020024f8:
+	.global gTeleporters
+gTeleporters:

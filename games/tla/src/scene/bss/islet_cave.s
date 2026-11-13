@@ -4,8 +4,8 @@
 	.global gData_02001a14
 gData_02001a14:
 	.space 0x00000004
-	.global gData_02001a18
-gData_02001a18:
+	.global gPaletteCycleSlots
+gPaletteCycleSlots:
 	.space 0x00000004
 	.global gData_02001a1c
 gData_02001a1c:
@@ -16,8 +16,8 @@ gData_02001a20:
 	.global gData_02001a24
 gData_02001a24:
 	.space 0x00000004
-	.global gData_02001a28
-gData_02001a28:
+	.global gPaletteColors
+gPaletteColors:
 	.space 0x00000004
 	.global Data_02001a2c
 Data_02001a2c:

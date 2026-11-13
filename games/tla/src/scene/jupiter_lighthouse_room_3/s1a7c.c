@@ -18,7 +18,7 @@
 #include "module/scene/jupiter_lighthouse_room_3.h"
 #include "module/scene/scene.h"
 
-DEFINE_TELEPORTERS_FIND_LOWER(Teleporters_FindLower, gData_02002e34, Func_02001950)
+DEFINE_TELEPORTERS_FIND_LOWER(Teleporters_FindLower, gTeleporters, Teleporters_Update)
 
 DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 

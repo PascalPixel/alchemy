@@ -28,5 +28,5 @@ gData_02004450:
 	.global gData_02004454
 gData_02004454:
 	.space 0x00000004
-	.global Data_02004458
-Data_02004458:
+	.global gTeleporters
+gTeleporters:

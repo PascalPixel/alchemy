@@ -13,11 +13,11 @@ gData_02003360:
 	.global gData_02003364
 gData_02003364:
 	.space 0x0000001c
-	.global gData_02003380
-gData_02003380:
+	.global gLightSpriteTile
+gLightSpriteTile:
 	.space 0x00000002
-	.global gData_02003382
-gData_02003382:
+	.global gLightSpriteCount
+gLightSpriteCount:
 	.space 0x00000002
 	.global gData_02003384
 gData_02003384:
@@ -25,11 +25,11 @@ gData_02003384:
 	.global Data_020033c4
 Data_020033c4:
 	.space 0x000000c0
-	.global gData_02003484
-gData_02003484:
+	.global gLightSpritesLarge
+gLightSpritesLarge:
 	.space 0x00000002
-	.global gData_02003486
-gData_02003486:
+	.global gLightSpritePriority
+gLightSpritePriority:
 	.space 0x00000002
 	.global gData_02003488
 gData_02003488:

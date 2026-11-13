@@ -313,12 +313,12 @@ s32 Scene_PrepareMap(void) { return 0; }
 #include "frame.h"
 
 extern struct LightOam gData_02001d20[];
-/* VIEW(s0588): variable gData_02001de2 as extern s16 gData_02001de2; hide has extern u16 gData_02001de2; tried as the rest of the object declares it, Func_02000858 moves: 149 of 260 instructions, LightSprites_InitA moves: 0 of 36 instructions, Func_02000b18 moves: 0 of 39 instructions in tla-ja. */
+/* VIEW(s0588): variable gData_02001de2 as extern s16 gData_02001de2; hide has extern u16 gData_02001de2; tried as the rest of the object declares it, LightSprites_Draw moves: 149 of 260 instructions, LightSprites_InitA moves: 0 of 36 instructions, Func_02000b18 moves: 0 of 39 instructions in tla-ja. */
 extern s16 gData_02001de2__s0588 __asm__("gData_02001de2");
-/* VIEW(s0588): variable gData_02001de4 as extern s16 gData_02001de4; hide has extern u16 gData_02001de4; tried as the rest of the object declares it, Func_02000858 moves: 2 of 260 instructions in tla-ja. */
+/* VIEW(s0588): variable gData_02001de4 as extern s16 gData_02001de4; hide has extern u16 gData_02001de4; tried as the rest of the object declares it, LightSprites_Draw moves: 2 of 260 instructions in tla-ja. */
 extern s16 gData_02001de4__s0588 __asm__("gData_02001de4");
 
-void Func_02000858(void) {
+void LightSprites_Draw(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 *view = &map->viewX;
   s32 viewX, viewZ, picture, tile, viewY;
@@ -397,7 +397,7 @@ void Func_02000858(void) {
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_02001ce0, gData_02001cdc,
-    Func_02000858, gData_02001cde, gData_02001de0, gData_02001de2__s0588)
+    LightSprites_Draw, gData_02001cde, gData_02001de0, gData_02001de2__s0588)
 
 void Func_02000b18(void) {
   u8 *buffer = BumpAlloc(0x1800);
@@ -407,7 +407,7 @@ void Func_02000b18(void) {
   gData_02001cdc = Resource_FindFreeEntry();
   VramCache_Load(gData_02001cdc, 0x1800, buffer);
   Heap_Release(buffer);
-  Task_Add(Func_02000858, TASK_PASS_VBLANK);
+  Task_Add(LightSprites_Draw, TASK_PASS_VBLANK);
   gData_02001cde = 0;
   gData_02001de0 = 0;
   gData_02001de2__s0588 = -1;

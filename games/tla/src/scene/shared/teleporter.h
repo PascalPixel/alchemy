@@ -10,12 +10,6 @@
 /// Finds the room's teleporters: every cell whose event is `kind` (covered) or
 /// `kind + 1` (uncovered), each given the next flag from `flag`; returns how
 /// many.
-/// 12 copies: anemos_inner_sanctum/move, jupiter_lighthouse_aerie/s1e78,
-/// jupiter_lighthouse_aerie_beacon/s4ec8, jupiter_lighthouse_room_4/s1258,
-/// jupiter_lighthouse_room_5/s1c88, jupiter_lighthouse_room_6/s0f5c,
-/// jupiter_lighthouse_room_7/s1f74, jupiter_lighthouse_room_8/s1600,
-/// jupiter_lighthouse_room_9/s1018, jupiter_lighthouse_room_m/s3b7c,
-/// mars_lighthouse_entrance/s3cf8, mars_lighthouse_star_room/s3804.
 #define DEFINE_TELEPORTERS_FIND(name, data1, call1)                            \
   s32 name(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {                   \
     struct CellTarget *table = &data1;                                         \
@@ -126,14 +120,6 @@
 /// Run each frame: when the leader steps onto a covered teleporter it is
 /// uncovered, and onto an uncovered one other than the last used, the leader is
 /// sent through it; 1 when sent.
-/// 16 copies: anemos_inner_sanctum/s2f48, jupiter_lighthouse_aerie/s2640,
-/// jupiter_lighthouse_aerie_beacon/s539c, jupiter_lighthouse_basement/s185c,
-/// jupiter_lighthouse_entrance/s1674, jupiter_lighthouse_room_1/s1704,
-/// jupiter_lighthouse_room_2/s1e24, jupiter_lighthouse_room_3/s1f50,
-/// jupiter_lighthouse_room_5/s2450, jupiter_lighthouse_room_6/s1724,
-/// jupiter_lighthouse_room_7/s273c, jupiter_lighthouse_room_8/s1dc8,
-/// jupiter_lighthouse_room_9/s17e0, jupiter_lighthouse_room_m/s4344,
-/// mars_lighthouse_entrance/s42f8, mars_lighthouse_star_room/s3e04.
 #define DEFINE_TELEPORTERS_STEP(name, data1, call1, call2)                     \
   s32 name(void) {                                                             \
     struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);           \
@@ -164,14 +150,6 @@
   }
 
 /// Stops the leader in the middle of its cell and raises the camera.
-/// 15 copies: jupiter_lighthouse_aerie/s1e78,
-/// jupiter_lighthouse_aerie_beacon/s4ec8, jupiter_lighthouse_entrance/s0eac,
-/// jupiter_lighthouse_room_1/s0f3c, jupiter_lighthouse_room_2/s165c,
-/// jupiter_lighthouse_room_3/s1a7c, jupiter_lighthouse_room_5/s1c88,
-/// jupiter_lighthouse_room_6/s0f5c, jupiter_lighthouse_room_7/s1f74,
-/// jupiter_lighthouse_room_8/s1600, jupiter_lighthouse_room_9/s1018,
-/// jupiter_lighthouse_room_m/s3b7c, mars_lighthouse_entrance/s3cf8,
-/// mars_lighthouse_room_f/s35b8, mars_lighthouse_star_room/s3804.
 #define DEFINE_LEADER_CENTER_IN_CELL(name)                                     \
   void name(void) {                                                            \
     struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);           \
@@ -193,12 +171,6 @@
 
 /// On arriving through a teleporter, puts the leader on the cell the flag bytes
 /// saved, offset from (x, z), and starts the screen effect.
-/// 11 copies: anemos_inner_sanctum/s2f48,
-/// jupiter_lighthouse_aerie_beacon/s539c, jupiter_lighthouse_basement/s185c,
-/// jupiter_lighthouse_entrance/s1674, jupiter_lighthouse_room_1/s1704,
-/// jupiter_lighthouse_room_2/s1e24, jupiter_lighthouse_room_3/s1f50,
-/// jupiter_lighthouse_room_7/s273c, jupiter_lighthouse_room_m/s4344,
-/// mars_lighthouse_entrance/s42f8, mars_lighthouse_star_room/s3e04.
 #define DEFINE_TELEPORTER_PLACE_ARRIVAL(name, data1, call1)                    \
   void name(s32 x, s32 z, s32 effect) {                                        \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
@@ -225,9 +197,6 @@
 
 /// The leader drops in from above after a teleporter, lands with a burst of
 /// dust and a shake.
-/// 5 copies: jupiter_lighthouse_room_4/s1a20, jupiter_lighthouse_room_5/s2450,
-/// jupiter_lighthouse_room_6/s1724, jupiter_lighthouse_room_8/s1dc8,
-/// jupiter_lighthouse_room_9/s17e0.
 #define DEFINE_TELEPORTER_DROP_IN(name, call1)                                 \
   void name(void) {                                                            \
     struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);            \
@@ -285,10 +254,6 @@
 
 /// Sends the leader through a teleporter: it lights up and the leader spins
 /// down into it while the screen fades.
-/// 7 copies: jupiter_lighthouse_basement/s16c4,
-/// jupiter_lighthouse_room_1/s156c, jupiter_lighthouse_room_2/s1c8c,
-/// jupiter_lighthouse_room_4/s1888, jupiter_lighthouse_room_5/s22b8,
-/// jupiter_lighthouse_room_6/s158c, jupiter_lighthouse_room_7/s25a4.
 #define DEFINE_TELEPORTER_SINK(name, id1, call1)                               \
   void name(struct id1 *table, struct CellTargetEntry *entry) {                \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
@@ -325,9 +290,6 @@
   }
 
 /// Teleporters_Find as the lower floors' copies compile it.
-/// 5 copies: jupiter_lighthouse_basement/s1094,
-/// jupiter_lighthouse_entrance/s0eac, jupiter_lighthouse_room_1/s0f3c,
-/// jupiter_lighthouse_room_2/s165c, jupiter_lighthouse_room_3/s1a7c.
 #define DEFINE_TELEPORTERS_FIND_LOWER(name, data1, call1)                      \
   s32 name(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {                   \
     struct CellTarget *table = &data1;                                         \
@@ -457,15 +419,6 @@
   }
 
 /// Uncovers the teleporter under the leader, swapping in its picture.
-/// 18 copies: anemos_inner_sanctum/move, jupiter_lighthouse_aerie/s1e78,
-/// jupiter_lighthouse_aerie_beacon/s4ec8, jupiter_lighthouse_basement/s1094,
-/// jupiter_lighthouse_entrance/s0eac, jupiter_lighthouse_room_1/s0f3c,
-/// jupiter_lighthouse_room_2/s165c, jupiter_lighthouse_room_3/s1a7c,
-/// jupiter_lighthouse_room_4/s1258, jupiter_lighthouse_room_5/s1c88,
-/// jupiter_lighthouse_room_6/s0f5c, jupiter_lighthouse_room_7/s1f74,
-/// jupiter_lighthouse_room_8/s1600, jupiter_lighthouse_room_9/s1018,
-/// jupiter_lighthouse_room_m/s3b7c, mars_lighthouse_entrance/s3cf8,
-/// mars_lighthouse_room_f/s35b8, mars_lighthouse_star_room/s3804.
 #define DEFINE_TELEPORTER_UNCOVER(name, call1)                                 \
   void name(struct CellTarget *table, struct CellTargetEntry *entry) {         \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
@@ -481,8 +434,6 @@
   }
 
 /// Teleporter_DropIn as the lower floors' copies compile it.
-/// 3 copies: jupiter_lighthouse_basement/s185c,
-/// jupiter_lighthouse_entrance/s1674, jupiter_lighthouse_room_1/s1704.
 #define DEFINE_TELEPORTER_DROP_IN_LOWER(name, call1)                           \
   void name(void) {                                                            \
     struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);            \
@@ -554,8 +505,6 @@
   }
 
 /// Teleporter_Sink for a push event's teleporter.
-/// 2 copies: jupiter_lighthouse_aerie_beacon/s4ec8,
-/// jupiter_lighthouse_room_3/s1a7c.
 #define DEFINE_TELEPORTER_SINK_EVENT(name, call1)                              \
   void name(struct PushEvent *event) {                                         \
     struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);           \

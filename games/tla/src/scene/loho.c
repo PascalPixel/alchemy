@@ -481,7 +481,6 @@ void Func_02000c54(s32 id) {
   Actor_ReturnHome(id, kind, high << 2);
 }
 
-/// 2 copies: loho, loho.
 #define DEFINE_FUNC_02000C64(name, n1, n2)                                     \
   void name(s32 id) {                                                          \
     s32 value = 768;                                                           \

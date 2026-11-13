@@ -9,8 +9,6 @@
 
 /// A ridden object's update: it drifts and slows, and lands the leader where it
 /// touches down.
-/// 3 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
-/// mars_lighthouse_room_m, mars_lighthouse_star_room.
 #define DEFINE_RIDE_UPDATE_CARRIED(name, id1, call1, call2)                    \
   void name(struct Actor *object) {                                            \
     struct id1 *work = (struct id1 *)(gInventorySnapshot + 0x188);                 \
@@ -78,8 +76,6 @@
   }
 
 /// Starts the beam over its targets and stops.
-/// 3 copies: mars_lighthouse_entrance/s2270, mars_lighthouse_room_f,
-/// mars_lighthouse_room_m/s2118.
 #define DEFINE_BEAM_START(name, call1)                                         \
   void name(u16 *targets, u16 *stops, s32 a2, s32 a3) {                        \
     struct MarsLighthouseBeam *beam =                                          \
@@ -137,8 +133,6 @@
   }
 
 /// Ride_UpdateCarried for the rides that set the direction through their work.
-/// 3 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
-/// mars_lighthouse_room_f, mars_lighthouse_room_m.
 #define DEFINE_RIDE_UPDATE_LANDING(name, id1, call1, call2)                    \
   void name(struct Actor *object) {                                            \
     struct id1 *work = (struct id1 *)(gInventorySnapshot + 0x188);                 \
@@ -195,8 +189,6 @@
   }
 
 /// An actor pops up out of the ground, holds and settles back.
-/// 4 copies: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s328c,
-/// mars_lighthouse_room_m/s2708, mars_lighthouse_star_room/s2148.
 #define DEFINE_ACTOR_POP_UP_SLOW(name, call1)                                  \
   s32 name(struct Actor *object) {                                             \
     s32 frame = object->timer;                                                 \
@@ -233,8 +225,6 @@
   }
 
 /// Actor_PopUpSlow without the wait before it rises.
-/// 4 copies: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s328c,
-/// mars_lighthouse_room_m/s2708, mars_lighthouse_star_room/s2148.
 #define DEFINE_ACTOR_POP_UP(name, call1)                                       \
   s32 name(struct Actor *object) {                                             \
     s32 frame = object->timer;                                                 \
@@ -268,8 +258,6 @@
   }
 
 /// The party takes 10 damage from a fall; who goes down is noted.
-/// 4 copies: mars_lighthouse_entrance/s2270, mars_lighthouse_room_f/ride,
-/// mars_lighthouse_room_m/s2118, mars_lighthouse_star_room/ride_handle.
 #define DEFINE_PARTY_TAKE_FALL_DAMAGE(name)                                    \
   void name(void) {                                                            \
     struct MarsLighthouseEventWork *work = Ram_HeapSlots->eventWork;           \
@@ -302,8 +290,6 @@
 
 /// Turns an actor toward the direction pad, at most a sixteenth of a turn a
 /// frame.
-/// 4 copies: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s3d80,
-/// mars_lighthouse_star_room/s2148, prox/prox.
 #define DEFINE_ACTOR_STEER_BY_PAD(name, data1, call1)                          \
   void name(struct Actor *object) {                                            \
     s32 angle;                                                                 \
@@ -333,8 +319,6 @@
   }
 
 /// Launches an actor ahead of another, 32 pixels out.
-/// 3 copies: mars_lighthouse_entrance/s263c, mars_lighthouse_room_m/s2708,
-/// mars_lighthouse_star_room/s2148.
 #define DEFINE_ACTOR_LAUNCH_AHEAD(name, call1)                                 \
   void name(struct Actor *self) {                                              \
     struct Actor *actor = Actor_Get(((u8 *)self)[0x62]);                       \
@@ -369,8 +353,6 @@
   }
 
 /// A drifting object's update, stopping against the leader.
-/// 3 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
-/// mars_lighthouse_room_f, mars_lighthouse_star_room.
 #define DEFINE_RIDE_UPDATE_DRIFT(name, call1)                                  \
   void name(struct Actor *object) {                                            \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
@@ -400,9 +382,6 @@
   }
 
 /// Spawns a ride object moving back at `speed`.
-/// 4 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
-/// mars_lighthouse_entrance/mars_lighthouse_entrance, mars_lighthouse_room_f,
-/// mars_lighthouse_room_f.
 #define DEFINE_RIDE_SPAWN_BACK(name, call1, call2, call3, call4)               \
   void name(s32 *position, s32 speed, s32 mode) {                              \
     struct Actor *object = call1(366, position[0], position[1], position[2]);  \
@@ -420,8 +399,6 @@
   }
 
 /// Runs `call1`, then parks an actor out of the way.
-/// 4 copies: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s328c,
-/// mars_lighthouse_room_m/s2708, mars_lighthouse_star_room/s2148.
 #define DEFINE_ACTOR_PARK(name, call1)                                         \
   s32 name(struct Actor *object) {                                             \
     call1(object);                                                             \
@@ -431,8 +408,6 @@
   }
 
 /// Steps the ride's counter, wrapping at `limit`.
-/// 3 copies: mars_lighthouse_room_f/ride, mars_lighthouse_room_m/s2118,
-/// mars_lighthouse_star_room/ride_handle.
 #define DEFINE_RIDE_ADVANCE_COUNTER(name)                                      \
   s32 name(s32 limit) {                                                        \
     struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);       \
@@ -445,8 +420,6 @@
   }
 
 /// Spawns a spark thrown up at `speed`.
-/// 2 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
-/// mars_lighthouse_room_f.
 #define DEFINE_RIDE_SPAWN_SPARK(name, call1, call2, call3)                     \
   void name(s32 *position, s32 speed) {                                        \
     struct Actor *object =                                                     \
@@ -466,7 +439,6 @@
   }
 
 /// Attaches an actor to another with a script and an update.
-/// 2 copies: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s328c.
 #define DEFINE_ACTOR_ATTACH(name, call1, call2)                                \
   void name(s32 id, s32 target, s32 kind, s32 a3, const void *script) {        \
     struct Actor *source = Actor_Get(id);                                      \
@@ -486,8 +458,6 @@
   }
 
 /// Runs `call1` while the ride is active; 1 when it ran.
-/// 3 copies: mars_lighthouse_room_f/flash, mars_lighthouse_room_m/s2708,
-/// mars_lighthouse_star_room/s2148.
 #define DEFINE_RIDE_IF_ACTIVE(name, call1)                                     \
   s32 name(void) {                                                             \
     if (((struct RideWork *)(gInventorySnapshot + 0x188))->active) {               \
@@ -498,8 +468,6 @@
   }
 
 /// Sets a ride entry's height and flags from a packed value.
-/// 3 copies: mars_lighthouse_room_f/ride, mars_lighthouse_room_m/s2118,
-/// mars_lighthouse_star_room/ride_handle.
 #define DEFINE_RIDE_SET_ENTRY(name)                                            \
   void name(s32 index, s32 value) {                                            \
     struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);       \
@@ -510,8 +478,6 @@
   }
 
 /// Sets a ride slot's value.
-/// 3 copies: mars_lighthouse_room_f/ride, mars_lighthouse_room_m/s2118,
-/// mars_lighthouse_star_room/ride_handle.
 #define DEFINE_RIDE_SET_SLOT(name)                                             \
   void name(u32 index, s32 value) {                                            \
     struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);       \
@@ -521,8 +487,6 @@
   }
 
 /// Actor_SetupScripted as a two-argument callback.
-/// 2 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
-/// mars_lighthouse_room_f.
 #define DEFINE_ACTOR_SETUP_SCRIPTED_FOR(name, call1, data1)                    \
   void name(struct Actor *object, s32 unused) {                                \
     object->motionFlags = 0;                                                   \
@@ -537,7 +501,6 @@
   }
 
 /// Stops an actor and starts its script, part 2 and colour 10.
-/// 2 copies: mars_lighthouse_room_m, mars_lighthouse_star_room.
 #define DEFINE_ACTOR_SETUP_SCRIPTED(name, call1, data1)                        \
   void name(struct Actor *object) {                                            \
     object->motionFlags = 0;                                                   \
@@ -552,8 +515,6 @@
   }
 
 /// 1 when two actors stand side by side.
-/// 2 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
-/// mars_lighthouse_room_f.
 #define DEFINE_ACTOR_IS_BESIDE(name)                                           \
   s32 name(struct Actor *a, struct Actor *b) {                                 \
     s32 dy;                                                                    \
@@ -567,8 +528,6 @@
   }
 
 /// 1 when the first actor stands just above the second.
-/// 2 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
-/// mars_lighthouse_room_f.
 #define DEFINE_ACTOR_IS_ABOVE(name)                                            \
   s32 name(struct Actor *a, struct Actor *b) {                                 \
     s32 dy;                                                                    \
@@ -582,7 +541,6 @@
   }
 
 /// Stops the leader while an action waits.
-/// 2 copies: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s3d80.
 #define DEFINE_LEADER_STOP_IF_PENDING(name)                                    \
   void name(void) {                                                            \
     u8 *event = Ram_HeapSlots->eventWork;                                      \
@@ -596,8 +554,6 @@
   }
 
 /// Actor_ResetScripted as a two-argument callback.
-/// 2 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
-/// mars_lighthouse_room_f.
 #define DEFINE_ACTOR_RESET_SCRIPTED_FOR(name, data1)                           \
   void name(struct Actor *object, s32 unused) {                                \
     object->motionFlags = 0;                                                   \
@@ -610,7 +566,6 @@
   }
 
 /// Stops an actor and starts its script.
-/// 2 copies: mars_lighthouse_room_m, mars_lighthouse_star_room.
 #define DEFINE_ACTOR_RESET_SCRIPTED(name, data1)                               \
   void name(struct Actor *object) {                                            \
     object->motionFlags = 0;                                                   \
@@ -623,8 +578,6 @@
   }
 
 /// 1 when two actors touch.
-/// 2 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
-/// mars_lighthouse_room_f.
 #define DEFINE_ACTOR_IS_TOUCHING(name)                                         \
   s32 name(struct Actor *a, struct Actor *b) {                                 \
     if (ABS(a->x - b->x) < 0x80000 && ABS(a->y - b->y) < 0x80000 &&            \
@@ -634,8 +587,6 @@
   }
 
 /// Releases the ride's handle.
-/// 2 copies: mars_lighthouse_room_m/s2118,
-/// mars_lighthouse_star_room/ride_handle.
 #define DEFINE_RIDE_RELEASE_HANDLE(name, call1)                                \
   void name(void) {                                                            \
     struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);       \
@@ -645,12 +596,6 @@
   }
 
 /// Leaves by exit `n1` after `call1` and `call2`, then runs `call3`.
-/// 6 copies: mars_lighthouse_aerie,
-/// mars_lighthouse_entrance/mars_lighthouse_entrance,
-/// mars_lighthouse_entrance/mars_lighthouse_entrance,
-/// mars_lighthouse_entrance/mars_lighthouse_entrance,
-/// mars_lighthouse_entrance/mars_lighthouse_entrance,
-/// mars_lighthouse_entrance/mars_lighthouse_entrance.
 #define DEFINE_SCENE_LEAVE_BY_EXIT(name, call1, call2, n1, call3)              \
   void name(void) {                                                            \
     call1();                                                                   \
@@ -666,9 +611,6 @@
   }
 
 /// Spawns a ride object moving forward at `speed`.
-/// 4 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
-/// mars_lighthouse_entrance/mars_lighthouse_entrance, mars_lighthouse_room_f,
-/// mars_lighthouse_room_f.
 #define DEFINE_RIDE_SPAWN_FRONT(name, call1, call2, n1, call3, call4)          \
   void name(s32 *position, s32 speed, s32 mode) {                              \
     struct Actor *object = call1(366, position[0], position[1], position[2]);  \
@@ -686,9 +628,6 @@
   }
 
 /// Blinks an actor's child between two values.
-/// 5 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
-/// mars_lighthouse_entrance/s2270, mars_lighthouse_room_f/flash,
-/// mars_lighthouse_room_m/s2118, mars_lighthouse_star_room/ride_handle.
 #define DEFINE_ACTOR_BLINK(name, n1, n2, n3)                                   \
   void name(struct Actor *object) {                                            \
     switch (gFrameCount & 7) {                                                 \
@@ -702,8 +641,6 @@
   }
 
 /// The leader slides cell by cell over ice until something stops it.
-/// 4 copies: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s3d80,
-/// mars_lighthouse_star_room/s2148, prox/prox.
 #define DEFINE_LEADER_SLIDE_ON_ICE(name, call1, data1, call2, call3, call4)    \
   void name(void) {                                                            \
     struct Position probe;                                                     \
@@ -847,8 +784,6 @@
   }
 
 /// Leader_SlideOnIce in the direction the leader faces.
-/// 4 copies: mars_lighthouse_entrance/s3884, mars_lighthouse_room_f/s3d80,
-/// mars_lighthouse_star_room/set_data, prox/prox.
 #define DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(name, call1, call2, call3, call4)     \
   void name(void) {                                                            \
     struct Position probe;                                                     \
@@ -989,8 +924,6 @@
   }
 
 /// Draws the beam's targets, firing each in turn.
-/// 4 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
-/// mars_lighthouse_room_f, mars_lighthouse_room_m, mars_lighthouse_star_room.
 #define DEFINE_BEAM_DRAW_TARGETS(name, call1, call2, call3, call4, call5)      \
   void name(void) {                                                            \
     s32 saved[2];                                                              \
@@ -1082,8 +1015,6 @@
   }
 
 /// An actor rolls forward, crumbling the cells it passes.
-/// 3 copies: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/flash,
-/// mars_lighthouse_star_room/s2148.
 #define DEFINE_ACTOR_ROLL_AND_CRUMBLE(name, id1, call1, call2, call3)          \
   void name(struct Actor *actor) {                                             \
     struct Vector3 position;                                                   \
@@ -1215,8 +1146,6 @@
   }
 
 /// Two embers fly up from a point.
-/// 3 copies: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/flash,
-/// mars_lighthouse_room_m/s2708.
 #define DEFINE_EMBERS_SPAWN(name, data1)                                       \
   void name(s32 x, s32 y, s32 z, s32 speed) {                                  \
     s32 i;                                                                     \
@@ -1259,8 +1188,6 @@
   }
 
 /// Stops an actor and starts its script with sprite part `part`.
-/// 3 copies: mars_lighthouse_room_f, mars_lighthouse_room_m,
-/// mars_lighthouse_star_room.
 #define DEFINE_ACTOR_SETUP_SCRIPTED_PART(name, data1)                          \
   void name(struct Actor *object, s32 part) {                                  \
     s32 zero = 0;                                                              \

@@ -140,7 +140,6 @@ void Func_020013b0(s32 id) {
   FieldEvent_Wait(20);
 }
 
-/// 2 copies: garoh/s12a8, garoh/s12a8.
 #define DEFINE_GAROH_PLAY_EFFECT(name, n1, n2)                                 \
   void name(s32 actor) {                                                       \
     BattleEffect_LoadActionEffectResources(144, 1);                            \

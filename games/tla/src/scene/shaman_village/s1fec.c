@@ -1323,7 +1323,6 @@ void Func_02004394(void) {
   }
 }
 
-/// 2 copies: shaman_village/s1fec, shaman_village/s1fec.
 #define DEFINE_FUNC_020043C8(name, n1, n2)                                     \
   void name(void) {                                                            \
     s32 variant = ((struct ShamanVillageObject *)Actor_GetById(                \

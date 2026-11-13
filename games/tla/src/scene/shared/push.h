@@ -8,8 +8,6 @@
 
 /// Finds the pushable object in front of the leader: its slot, kind and the
 /// direction pushed.
-/// 4 copies: eastern_alhafra/s4004, jupiter_lighthouse_room_3/s0dcc,
-/// jupiter_lighthouse_room_8/s0c44, mars_lighthouse_room_f/s3d80.
 #define DEFINE_PUSH_TARGET_FIND_AHEAD(name, data1, data2, data3)               \
   struct Actor *name(s32 *direction, s32 *slot, s32 *kind) {                   \
     struct EventWork *work = Ram_HeapSlots->eventWork;                         \
@@ -61,7 +59,6 @@
 
 /// Pushes an object to its target, the leader following, and moves its cells
 /// with it.
-/// 2 copies: islets/s3410, mars_lighthouse_room_f/s3d80.
 #define DEFINE_PUSH_TARGET_PUSH(name, data1, call1, call2, call3, data2)       \
   void name(struct PushTarget target) {                                        \
     u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;          \
@@ -149,7 +146,6 @@
 
 /// PushTarget_Push for the rooms that fill the cells with
 /// Map_FillCellRectByte2.
-/// 2 copies: jupiter_lighthouse_room_3/s0dcc, jupiter_lighthouse_room_8/s0c44.
 #define DEFINE_PUSH_TARGET_PUSH_FILL(name, data1, call1, call2, data2)         \
   void name(struct PushTarget target) {                                        \
     u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;          \
@@ -236,7 +232,6 @@
   }
 
 /// Stops an object at its push target, or at what blocks it.
-/// 2 copies: eastern_alhafra/s44c4, mars_lighthouse_room_f/s3d80.
 #define DEFINE_ACTOR_STOP_AT_PUSH_TARGET(name, call1, data1, call2)            \
   void name(struct Actor *object) {                                            \
     s32 position[3];                                                           \
@@ -271,8 +266,6 @@
 
 /// Finds how far the object ahead slides before something blocks it; 1 when it
 /// moves.
-/// 3 copies: jupiter_lighthouse_room_3/s0dcc, jupiter_lighthouse_room_8/s0c44,
-/// mars_lighthouse_room_f/s3d80.
 #define DEFINE_PUSH_TARGET_FIND_SLIDE(name, call1, data1, data2, call2)        \
   s32 name(struct PushTarget *target) {                                        \
     struct Actor *object;                                                      \
@@ -333,7 +326,6 @@
   }
 
 /// Pushes the block ahead onto another, if nothing blocks the way.
-/// 2 copies: magma_rock_inside/magma_rock_inside, venus_lighthouse.
 #define DEFINE_BLOCK_PUSH_ONTO(name, data1, call1, call2)                      \
   void name(void) {                                                            \
     struct FieldPosition dst;                                                  \

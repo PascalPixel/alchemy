@@ -199,7 +199,6 @@ spin:
   Event_End();
 }
 
-/// 2 copies: jupiter_lighthouse_room_2, jupiter_lighthouse_room_2.
 #define DEFINE_JUPITER_LIGHTHOUSE_ROOM_2_SET_STATE(name, n1)                   \
   void name(void) {                                                            \
     struct EventWork *event = Ram_HeapSlots->eventWork;                        \

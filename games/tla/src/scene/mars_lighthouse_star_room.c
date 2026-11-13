@@ -1257,7 +1257,6 @@ void Func_02001928(struct Actor *object, s32 priority);
 /// function.
 DEFINE_ACTOR_SETUP_SCRIPTED_PART(Func_02001928, gData_02004744)
 
-/// 2 copies: mars_lighthouse_star_room, mars_lighthouse_star_room.
 #define DEFINE_FUNC_0200196C_97(name, call1)                                   \
   void name(s32 *position, s32 speed, s32 flag) {                              \
     struct Actor *object =                                                     \

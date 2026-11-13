@@ -6,7 +6,6 @@
 #define ALCHEMY_SCENE_SHARED_VENTS_H
 
 /// Steps the vents: each active one puffs every ten frames.
-/// 2 copies: aqua_rock_inside/s3844, taopo_swamp.
 #define DEFINE_VENTS_UPDATE(name, call1)                                       \
   void name(void) {                                                            \
     struct VentWork *work = VENT_WORK;                                         \
@@ -27,7 +26,6 @@
   }
 
 /// Stops an actor and starts its scripted puff.
-/// 2 copies: aqua_rock_inside/s3844, taopo_swamp.
 #define DEFINE_ACTOR_START_SCRIPTED(name, call1, data1)                        \
   void name(struct Actor *object, s32 priority) {                              \
     object->motionFlags = 0;                                                   \
@@ -44,7 +42,6 @@
   }
 
 /// Steps the vents' counter, wrapping at `limit`.
-/// 2 copies: aqua_rock_inside/s3844, taopo_swamp.
 #define DEFINE_VENTS_ADVANCE_COUNTER(name)                                     \
   s32 name(s32 limit) {                                                        \
     struct VentWork *work = VENT_WORK;                                         \
@@ -57,7 +54,6 @@
   }
 
 /// Sets a vent's actor.
-/// 2 copies: aqua_rock_inside/s3844, taopo_swamp.
 #define DEFINE_VENTS_SET_ID(name)                                              \
   void name(s32 i, s32 id) {                                                   \
     struct VentWork *work = VENT_WORK;                                         \

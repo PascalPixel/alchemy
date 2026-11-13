@@ -6,10 +6,6 @@
 #define ALCHEMY_SCENE_SHARED_EFFECTS_H
 
 /// Sparks rising from an actor, every eighth frame.
-/// 7 copies: jupiter_lighthouse_room_2/s0d94, jupiter_lighthouse_room_3/s07b0,
-/// jupiter_lighthouse_room_6/s0854, jupiter_lighthouse_room_7/s16d4,
-/// jupiter_lighthouse_room_8/s07e8, jupiter_lighthouse_room_9/s0910,
-/// jupiter_lighthouse_room_m/s3474.
 #define DEFINE_ACTOR_EMIT_RISING_SPARKS(name, call1)                           \
   s32 name(struct Actor *object) {                                             \
     struct JupiterLighthouseAerieSpark spark;                                  \
@@ -33,8 +29,6 @@
   }
 
 /// Updates the falling particles and their sprites.
-/// 4 copies: eastern_alhafra, magma_rock/s34ac, magma_rock_inside/s46e8,
-/// prox/prox.
 #define DEFINE_PARTICLES_UPDATE_FALLING(name, call1)                           \
   void name(void) {                                                            \
     struct ParticleWork *work = Ram_HeapSlots->menuRuntime;                    \
@@ -64,7 +58,6 @@
   }
 
 /// Draws the dust around the leader.
-/// 2 copies: apojii_islands/apojii_islands, aqua_rock/aqua_rock.
 #define DEFINE_GROUND_PARTICLES_DRAW(name, data1)                              \
   void name(void) {                                                            \
     struct MapWork *view = Ram_HeapSlots->mapWork;                             \
@@ -118,8 +111,6 @@
   }
 
 /// A drop falls from an actor every sixteenth frame.
-/// 3 copies: apojii_islands/apojii_islands, aqua_rock/aqua_rock,
-/// aqua_rock_inside/aqua_rock_inside.
 #define DEFINE_ACTOR_EMIT_WATER_DROP(name, data1)                              \
   void name(struct Actor *object) {                                            \
     s32 phase = gFrameCount & 15;                                              \
@@ -145,8 +136,6 @@
   }
 
 /// Mist rises from an actor every other frame.
-/// 3 copies: apojii_islands/apojii_islands, aqua_rock/aqua_rock,
-/// aqua_rock_inside/aqua_rock_inside.
 #define DEFINE_ACTOR_EMIT_MIST(name)                                           \
   s32 name(struct Actor *object) {                                             \
     s32 params[10];                                                            \
@@ -172,8 +161,6 @@
   }
 
 /// Actor_EmitRisingSparks with the spark settings in a plain array.
-/// 3 copies: jupiter_lighthouse_aerie_beacon/s44cc,
-/// jupiter_lighthouse_room_1/s0674, mars_lighthouse_room_f.
 #define DEFINE_ACTOR_EMIT_RISING_SPARKS_B(name, call1)                         \
   s32 name(struct Actor *object) {                                             \
     s32 params[10];                                                            \
@@ -196,8 +183,6 @@
   }
 
 /// Bubbles rise from an actor every eighth frame.
-/// 3 copies: airs_rock_inside/s2770, aqua_rock_inside/aqua_rock_inside,
-/// gaia_rock_inside/s07f4.
 #define DEFINE_ACTOR_EMIT_BUBBLES(name, call1)                                 \
   void name(struct Actor *object) {                                            \
     s32 phase = gFrameCount & 7;                                               \
@@ -219,7 +204,6 @@
   }
 
 /// The leader rises out of the water, unless the party keeps its place.
-/// 2 copies: apojii_islands/apojii_islands, aqua_rock_inside/aqua_rock_inside.
 #define DEFINE_LEADER_RISE_FROM_WATER(name, call1)                             \
   void name(void) {                                                            \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
@@ -255,7 +239,6 @@
   }
 
 /// The leader spins up and away to `entrance`.
-/// 2 copies: apojii_islands/apojii_islands, aqua_rock_inside/aqua_rock_inside.
 #define DEFINE_LEADER_SPIN_AWAY(name, call1, call2)                            \
   void name(s32 entrance) {                                                    \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
@@ -286,8 +269,6 @@
   }
 
 /// Aims an actor at the actor it watches, to reach it in ten steps.
-/// 3 copies: airs_rock_inside/s2770, aqua_rock_inside/aqua_rock_inside,
-/// gaia_rock_inside/s07f4.
 #define DEFINE_ACTOR_AIM_AT_WATCHED(name)                                      \
   s32 name(struct Actor *object) {                                             \
     struct Actor *target = object->watchedObject;                              \
@@ -303,7 +284,6 @@
   }
 
 /// The leader sinks away to `entrance`.
-/// 2 copies: apojii_islands/apojii_islands, aqua_rock_inside/aqua_rock_inside.
 #define DEFINE_LEADER_SINK_AWAY(name, call1)                                   \
   void name(s32 entrance) {                                                    \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
@@ -328,7 +308,6 @@
   }
 
 /// Four notes rise from an actor, one each quarter of a second.
-/// 2 copies: eastern_alhafra_ship, lemuria_interiors/s12dc.
 #define DEFINE_ACTOR_EMIT_NOTES(name, call1)                                   \
   void name(s32 id) {                                                          \
     struct Actor *object = Actor_GetById(id);                                  \
@@ -348,8 +327,6 @@
   }
 
 /// Steps an actor toward its target; 0 when it gets there.
-/// 3 copies: airs_rock_inside/s2770, aqua_rock_inside/aqua_rock_inside,
-/// gaia_rock_inside/s07f4.
 #define DEFINE_ACTOR_STEP_TO_WATCHED(name)                                     \
   s32 name(struct Actor *object) {                                             \
     u8 left;                                                                   \
@@ -362,8 +339,6 @@
   }
 
 /// Moves an orbiting actor round its centre as its circle grows.
-/// 2 copies: aqua_rock_inside/aqua_rock_inside,
-/// magma_rock_inside/magma_rock_inside.
 #define DEFINE_ORBIT_UPDATE(name)                                              \
   s32 name(struct Orbit *object) {                                             \
     s32 z;                                                                     \
@@ -385,7 +360,6 @@
   }
 
 /// Shows an actor's parts.
-/// 2 copies: apojii_islands/apojii_islands, aqua_rock_inside/aqua_rock_inside.
 #define DEFINE_ACTOR_SHOW_PARTS(name, call1)                                   \
   void name(s32 id) {                                                          \
     struct Actor *object = Actor_Get(id);                                      \
@@ -401,7 +375,6 @@
   }
 
 /// Follows the third map layer's scroll.
-/// 2 copies: apojii_islands/apojii_islands, settlements/s0280.
 #define DEFINE_LAYER_TRACK_SCROLL(name, data1, data2, data3)                   \
   void name(void) {                                                            \
     struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[2];               \
@@ -413,7 +386,6 @@
   }
 
 /// Starts the HBlank scroll handler and its task.
-/// 2 copies: apojii_islands/apojii_islands, settlements/s0280.
 #define DEFINE_SCROLL_START_HBLANK(name, call1, call2)                         \
   void name(void) {                                                            \
     s32 priority;                                                              \
@@ -424,7 +396,6 @@
   }
 
 /// Orbs rise round actor 23, faster once flag `n1` is set.
-/// 2 copies: jupiter_lighthouse_room_5, mars_lighthouse_aerie.
 #define DEFINE_ORBS_SPAWN_RISING(name, n1, data1, call1, n2)                   \
   void name(void) {                                                            \
     struct Actor *center;                                                      \
@@ -469,7 +440,6 @@
   }
 
 /// Smoke rises from an actor on the frames `n1` picks.
-/// 2 copies: islets, lemurian_ship_deck/s0b84.
 #define DEFINE_ACTOR_EMIT_SMOKE(name, n1, call1, data1)                        \
   void name(struct Actor *object) {                                            \
     struct Actor *spawned;                                                     \
@@ -485,7 +455,6 @@
   }
 
 /// Throws `count` rocks out from a point.
-/// 3 copies: eastern_alhafra, magma_rock_inside/s46e8, prox/prox.
 #define DEFINE_ROCKS_SPAWN(name)                                               \
   void name(s32 x, s32 y, s32 z, s32 count) {                                  \
     struct RockWork *work;                                                     \
@@ -527,7 +496,6 @@
   }
 
 /// Sets palette colours from a list and saves both palettes.
-/// 3 copies: contigo, islet_cave, yampi_desert_cave.
 #define DEFINE_PALETTE_SET_COLORS(name, data1, data2, data3, data4, call1)     \
   void name(u16 *slots, u16 *colours, u16 *a, u16 *b) {                        \
     u8 *saved = Ram_HeapSlots->block32;                                        \
@@ -557,8 +525,6 @@
   }
 
 /// Palette_SetColors, then applies the palette fade.
-/// 3 copies: mars_lighthouse_aerie/s3370, mars_lighthouse_entrance/s42f8,
-/// mars_lighthouse_room_m.
 #define DEFINE_PALETTE_SET_COLORS_FADE(name, data1, data2, data3, data4, call1) \
   void name(u16 *slots, u16 *colours, u16 *a, u16 *b) {                        \
     u8 *saved = Ram_HeapSlots->block32;                                        \
@@ -588,9 +554,6 @@
   }
 
 /// Starts a palette cycle's task.
-/// 6 copies: anemos_inner_sanctum, anemos_inner_sanctum,
-/// mars_lighthouse_aerie/s3370, mars_lighthouse_aerie/s3370,
-/// mars_lighthouse_entrance/s42f8, mars_lighthouse_entrance/s42f8.
 #define DEFINE_PALETTE_CYCLE_START(name, data1, data2, call1, data3, data4, n1, \
                              data5, n2, data6, call2)                          \
   void name(void) {                                                            \
@@ -603,8 +566,6 @@
   }
 
 /// PaletteCycle_Start with a VBlank task.
-/// 6 copies: contigo, contigo, islet_cave, islet_cave, yampi_desert_cave,
-/// yampi_desert_cave.
 #define DEFINE_PALETTE_CYCLE_START_VBLANK(name, data1, data2, call1, data3, data4, n1, \
                                data5, n2, data6, call2)                        \
   void name(void) {                                                            \
@@ -617,7 +578,6 @@
   }
 
 /// Moves an orbiter two steps inward round its anchor.
-/// 2 copies: aqua_rock_inside/aqua_rock_inside, gaia_rock_inside/s07f4.
 #define DEFINE_ORBITER_SPIRAL(name, call1)                                     \
   s32 name(struct Orbiter *orbiter) {                                          \
     struct Actor *anchor = orbiter->anchor;                                    \
@@ -649,11 +609,6 @@
   }
 
 /// Steps a five-colour palette cycle, unless an event holds the field.
-/// 9 copies: jupiter_lighthouse_aerie_beacon/s0198, jupiter_lighthouse_room_4,
-/// jupiter_lighthouse_room_5, jupiter_lighthouse_room_6,
-/// jupiter_lighthouse_room_7, jupiter_lighthouse_room_8,
-/// jupiter_lighthouse_room_9, jupiter_lighthouse_room_m,
-/// mars_lighthouse_room_f.
 #define DEFINE_PALETTE_CYCLE_STEP(name, data1, data2, data3)                   \
   void name(void) {                                                            \
     u16 colors[16];                                                            \
@@ -695,9 +650,6 @@
   }
 
 /// PaletteCycle_Step at a colour address given.
-/// 6 copies: jupiter_lighthouse_basement, jupiter_lighthouse_entrance,
-/// jupiter_lighthouse_room_1, jupiter_lighthouse_room_2,
-/// jupiter_lighthouse_room_3, trial_road/s15a8.
 #define DEFINE_PALETTE_CYCLE_STEP_AT(name, data1, data2, data3, n1)            \
   void name(void) {                                                            \
     u16 colors[16];                                                            \
@@ -736,8 +688,6 @@
   }
 
 /// Steps a palette cycle that fades as it slows.
-/// 4 copies: anemos_inner_sanctum, mars_lighthouse_aerie/s3370,
-/// mars_lighthouse_entrance/s42f8, mars_lighthouse_room_m.
 #define DEFINE_PALETTE_CYCLE_FADE(name, data1, data2, data3, data4, data5, data6, \
                              data7, data8, data9)                              \
   void name(void) {                                                            \

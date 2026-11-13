@@ -102,7 +102,6 @@ void Func_020001ac(void) {
   MapGrid_CopyCellAttributes(40, 9, 1, 1, 40, 20);
 }
 
-/// 2 copies: jupiter_lighthouse_room_4, jupiter_lighthouse_room_4.
 #define DEFINE_JUPITER_LIGHTHOUSE_ROOM_4_USE_KEY(name, n1, call1)              \
   void name(s32 item) {                                                        \
     Event_SetFlag(n1);                                                         \

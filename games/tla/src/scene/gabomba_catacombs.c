@@ -117,8 +117,6 @@ void Func_020001b0(void) {
 
 void Func_020001d4(void) { Import_EventSetExitRequest(5); }
 
-/// 6 copies: gabomba_catacombs, gabomba_catacombs, gabomba_catacombs,
-/// gabomba_catacombs, gabomba_catacombs, gabomba_catacombs.
 #define DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(name, n1, n2, n3, n4, n5, \
                                                      n6, n7, n8, n9)           \
   void name(void) {                                                            \
@@ -208,9 +206,6 @@ void Func_0200069c(void) {
   Map_CopyCellAttributeRect(2, 5, 1, 1, 7, 14);
 }
 
-/// 8 copies: gabomba_catacombs, gabomba_catacombs, gabomba_catacombs,
-/// gabomba_catacombs, gabomba_catacombs, gabomba_catacombs, gabomba_catacombs,
-/// gabomba_catacombs.
 #define DEFINE_GABOMBA_CATACOMBS_SET_MOVED(name, n1, n2, n3, n4, n5, n6)       \
   void name(void) {                                                            \
     struct Actor *object = Actor_GetById(n1);                                  \

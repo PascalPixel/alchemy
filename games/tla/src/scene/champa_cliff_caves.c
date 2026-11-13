@@ -60,7 +60,6 @@ static __inline__ void Func_02003534_(s32 actor, s32 angle) {
 #include "scene_call.h"
 #include "system.h"
 
-/// 2 copies: champa_cliff_caves, champa_cliff_caves.
 #define DEFINE_CHAMPA_CLIFF_CAVES_GROW(name, n1)                               \
   void name(struct RiseObject *object) {                                       \
     object->scale += n1;                                                       \

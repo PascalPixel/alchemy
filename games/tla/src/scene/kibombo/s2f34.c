@@ -178,7 +178,6 @@ void Func_02003288(void) {
   Scene_RunUnlessFlag();
 }
 
-/// 2 copies: kibombo/s2f34, kibombo/s2f34.
 #define DEFINE_KIBOMBO_SET_CROWD_MODE(name, n1)                                \
   void name(void) {                                                            \
     u32 i;                                                                     \
@@ -672,7 +671,6 @@ void Func_02003ac8(void) {
   Func_02003a08(680, 352);
 }
 
-/// 2 copies: kibombo/s2f34, kibombo/s2f34.
 #define DEFINE_KIBOMBO_STEP_WHEN_HELD(name, n1, n2, n3, n4, n5, n6, n7)        \
   void name(void) {                                                            \
     struct KibomboObject *leader =                                             \

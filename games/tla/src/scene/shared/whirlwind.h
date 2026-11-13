@@ -8,9 +8,6 @@
 
 /// The leader spins in the whirlwind that caught it, then drops beside it and
 /// the camera follows again.
-/// 5 copies: jupiter_lighthouse_room_4, jupiter_lighthouse_room_5,
-/// jupiter_lighthouse_room_6, jupiter_lighthouse_room_8,
-/// jupiter_lighthouse_room_9.
 #define DEFINE_WHIRLWIND_CARRY_LEADER(name)                                    \
   void name(void) {                                                            \
     struct EventWork *work = Ram_HeapSlots->eventWork;                         \
@@ -85,9 +82,6 @@
   }
 
 /// Whirlwind_CarryLeader as the lower floors' copies compile it.
-/// 5 copies: jupiter_lighthouse_basement, jupiter_lighthouse_entrance,
-/// jupiter_lighthouse_room_1, jupiter_lighthouse_room_2,
-/// jupiter_lighthouse_room_3.
 #define DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(name)                              \
   void name(void) {                                                            \
     struct EventWork *work = Ram_HeapSlots->eventWork;                         \
@@ -150,11 +144,6 @@
   }
 
 /// A whirlwind blows out of the stone face at `source`.
-/// 9 copies: jupiter_lighthouse_aerie, jupiter_lighthouse_basement/s098c,
-/// jupiter_lighthouse_room_1/s0674, jupiter_lighthouse_room_2/s0d94,
-/// jupiter_lighthouse_room_3/s07b0, jupiter_lighthouse_room_4/s0b50,
-/// jupiter_lighthouse_room_6/s0854, jupiter_lighthouse_room_7/s16d4,
-/// jupiter_lighthouse_room_8/s07e8.
 #define DEFINE_WHIRLWIND_SPAWN(name, call1, call2, call3)                      \
   struct GustObject *name(struct GustObject *source) {                         \
     struct Vector3 position;                                                   \
@@ -186,9 +175,6 @@
   }
 
 /// Whirlwind_Spawn as the upper floors' copies compile it.
-/// 4 copies: jupiter_lighthouse_aerie_beacon/s44cc,
-/// jupiter_lighthouse_entrance/dist, jupiter_lighthouse_room_9/s0910,
-/// jupiter_lighthouse_room_m/s3474.
 #define DEFINE_WHIRLWIND_SPAWN_UPPER(name, call1, call2, call3)                \
   struct GustObject *name(struct GustObject *source) {                         \
     struct Vector3 position;                                                   \
@@ -220,10 +206,6 @@
 
 /// A whirlwind's update: it travels forward, catches the leader it reaches and
 /// ends off screen or at a wall.
-/// 7 copies: jupiter_lighthouse_room_4, jupiter_lighthouse_room_6,
-/// jupiter_lighthouse_room_7, jupiter_lighthouse_room_8,
-/// jupiter_lighthouse_room_9, jupiter_lighthouse_room_m,
-/// mars_lighthouse_room_f.
 #define DEFINE_WHIRLWIND_UPDATE(name, call1, call2, data1, data2)              \
   void name(struct Actor *self) {                                              \
     u8 *work = Ram_HeapSlots->eventWork;                                       \
@@ -305,9 +287,6 @@
   }
 
 /// Whirlwind_Update as the lower floors' copies compile it.
-/// 5 copies: jupiter_lighthouse_basement, jupiter_lighthouse_entrance/dist,
-/// jupiter_lighthouse_room_1/s0674, jupiter_lighthouse_room_2/s0d94,
-/// jupiter_lighthouse_room_3/s07b0.
 #define DEFINE_WHIRLWIND_UPDATE_LOWER(name, call1, call2, data1, data2)        \
   void name(struct Actor *self) {                                              \
     struct EventWork *work = Ram_HeapSlots->eventWork;                         \

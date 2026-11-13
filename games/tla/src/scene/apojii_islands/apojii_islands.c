@@ -301,8 +301,6 @@ void Func_02000974(void) {
 
 void Func_02000a48(void) { Func_02001e0c_(68, 38, 39, 24, 68, 4, 1); }
 
-/// 3 copies: apojii_islands/apojii_islands, apojii_islands/apojii_islands,
-/// apojii_islands/apojii_islands.
 #define DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(name, n1, n2, n3, n4, n5,    \
                                                   n6, n7, n8, n9, n10)         \
   void name(void) {                                                            \

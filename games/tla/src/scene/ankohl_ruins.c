@@ -953,7 +953,6 @@ void Func_02001d34(void) {
   }
 }
 
-/// 2 copies: ankohl_ruins, ankohl_ruins.
 #define DEFINE_ANKOHL_RUINS_OPEN_ONCE(name, n1, n2, n3, n4, n5)                \
   void name(void) {                                                            \
     if (AnkohlRuins_FlagCheck(n1) == 0) {                                      \

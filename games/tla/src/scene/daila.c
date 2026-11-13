@@ -359,7 +359,6 @@ void Func_020003a0(void) {
   GameFlag_SetBit(0x84b);
 }
 
-/// 6 copies: daila, daila, daila, daila, daila, daila.
 #define DEFINE_DAILA_CLEAR_OBSTACLE(name, n1, n2, n3, n4, n5)                  \
   void name(void) {                                                            \
     Import_EventStart();                                                       \

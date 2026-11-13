@@ -1535,7 +1535,6 @@ void Func_02002ba4(s32 index, s32 entry, s32 delta) {
   }
 }
 
-/// 2 copies: kibombo, kibombo.
 #define DEFINE_KIBOMBO_WOBBLE(name, n1, n2, n3, n4, call1, n5, n6, n7)         \
   void name(void) {                                                            \
     struct KibomboEventWork *work = Ram_HeapSlots->eventWork;                  \

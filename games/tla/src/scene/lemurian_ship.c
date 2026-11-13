@@ -605,7 +605,6 @@ void Func_02000af4(void) {
   }
 }
 
-/// 3 copies: lemurian_ship, lemurian_ship, lemurian_ship.
 #define DEFINE_FUNC_02000BF0(name, n1)                                         \
   void name(s32 id) {                                                          \
     Event_Start();                                                             \
@@ -770,7 +769,6 @@ void Func_020010cc(void) {
   Func_02000e2c();
 }
 
-/// 2 copies: lemurian_ship, lemurian_ship.
 #define DEFINE_FUNC_020010D8(name, n1, n2)                                     \
   void name(void) {                                                            \
     Sound_Play(106);                                                           \
@@ -791,7 +789,6 @@ void Func_02001128(void) {
   FieldActor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(11)), 0);
 }
 
-/// 2 copies: lemurian_ship, lemurian_ship.
 #define DEFINE_FUNC_02001138(name, n1, n2, n3, n4)                             \
   void name(void) {                                                            \
     struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;             \
@@ -857,7 +854,6 @@ void Func_02001368(void) {
   Event_End();
 }
 
-/// 2 copies: lemurian_ship, lemurian_ship.
 #define DEFINE_FUNC_02001380(name, n1)                                         \
   void name(s32 id) {                                                          \
     struct LemurianShipObject *object =                                        \

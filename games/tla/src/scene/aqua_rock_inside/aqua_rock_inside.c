@@ -1102,8 +1102,6 @@ void Func_02001c68(void) {
   }
 }
 
-/// 2 copies: aqua_rock_inside/aqua_rock_inside,
-/// aqua_rock_inside/aqua_rock_inside.
 #define DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(name, n1)                          \
   void name(void) {                                                            \
     if (Event_GetFlag(0x9ae)) {                                                \

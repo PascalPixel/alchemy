@@ -546,7 +546,6 @@ void Func_02000d84(void) {
     Func_02000458(rect);
 }
 
-/// 2 copies: yampi_desert_cave, yampi_desert_cave.
 #define DEFINE_FUNC_02000DAC_2(name, n1)                                       \
   void name(void) {                                                            \
     Func_02000898();                                                           \
@@ -565,7 +564,6 @@ DEFINE_FUNC_02000DAC_2(Func_02000dac, 10)
 
 DEFINE_FUNC_02000DAC_2(Func_02000de0, 9)
 
-/// 2 copies: yampi_desert_cave, yampi_desert_cave.
 #define DEFINE_FUNC_02000E14(name, n1, id1, n2)                                \
   void name(s32 arg0) {                                                        \
     s32 result0;                                                               \

@@ -92,7 +92,6 @@ void Func_02002898(void) {
 
 /// When the controlled object steps onto a new cell, saves the 1 by 3 cells
 /// below it at (73, 72) and stamps the cells kept at (72, 72) in their place.
-/// 2 copies: airs_rock_inside/s2770, airs_rock_inside/s2770.
 #define DEFINE_AIRS_ROCK_INSIDE_TRACK_LEADER_CELL(name, n1)                    \
   void name(void) {                                                            \
     struct Actor *object = Actor_GetById(Party_GetLeaderActor());              \
@@ -824,7 +823,6 @@ void Func_02003d40(void) {
 
 extern const u8 gData_02006084[];
 
-/// 2 copies: airs_rock_inside/s2770, airs_rock_inside/s2770.
 #define DEFINE_AIRS_ROCK_INSIDE_SET_DOORS(name, n1, n2)                        \
   void name(void) {                                                            \
     Map_CopyCellAttributeRect(n1, 17, 1, 1, 8, 19);                            \
@@ -1175,7 +1173,6 @@ void Func_02004740(void) {
   }
 }
 
-/// 2 copies: airs_rock_inside/s2770, airs_rock_inside/s2770.
 #define DEFINE_AIRS_ROCK_INSIDE_READ_TABLET(name, n1)                          \
   void name(void) {                                                            \
     if (GameFlag_Test(0x8d4)) {                                                \

@@ -7,8 +7,6 @@
 #define ALCHEMY_SCENE_SHARED_MAP_CELLS_H
 
 /// Opens or closes the cell under an actor by flag, setting its pose by `kind`.
-/// 4 copies: airs_rock_inside, tundaria_tower/events_f, yampi_desert,
-/// yampi_desert_cave.
 #define DEFINE_ACTOR_SET_CELL_OPEN(name, call1, call2)                         \
   void name(s32 id, u32 kind, s32 flag, s32 layer) {                           \
     struct Actor *object = Actor_GetById(id);                                  \
@@ -47,7 +45,6 @@
 
 /// Checks the trap under the leader: the first step sets it off, the second
 /// drops it.
-/// 2 copies: magma_rock_inside/s3678, trial_road/s15a8.
 #define DEFINE_TRAPS_CHECK(name, call1, call2, call3, call4, call5, call6)     \
   void name(const u16 *table) {                                                \
     struct Actor *leader;                                                      \
@@ -123,7 +120,6 @@
   }
 
 /// Puts the pillars of a list back where their flags left them.
-/// 2 copies: magma_rock/s22ac, magma_rock_inside/s3678.
 #define DEFINE_PILLARS_RESTORE(name, call1, call2, call3, call4, call5)        \
   void name(u16 *list) {                                                       \
     struct MapWork *map = Ram_HeapSlots->mapWork;                              \
@@ -186,7 +182,6 @@
   }
 
 /// Pillars_Restore without the reset, lifting the leader onto the ground.
-/// 2 copies: magma_rock/s22ac, magma_rock_inside/s3678.
 #define DEFINE_PILLARS_RESTORE_RAISED(name, call1, call2, call3, call4, call5) \
   void name(const u16 *table) {                                                \
     struct MapWork *map = Ram_HeapSlots->mapWork;                              \
@@ -241,7 +236,6 @@
   }
 
 /// Raises the pillars of a list out of the ground, making their cells solid.
-/// 2 copies: dehkan_plateau/s0bc0, madra_catacombs.
 #define DEFINE_PILLARS_RAISE(name, call1, call2, call3)                        \
   void name(u16 *list) {                                                       \
     struct MapWork *map = Ram_HeapSlots->mapWork;                              \
@@ -288,8 +282,6 @@
   }
 
 /// Sets the shape of the cell under an actor `level` steps above its ground.
-/// 4 copies: dehkan_plateau/s0bc0, magma_rock_inside/s46e8, trial_road/s15a8,
-/// tundaria_tower/s29d0.
 #define DEFINE_ACTOR_SET_CELL_SHAPE(name, call1, call2)                        \
   void name(s32 level, s32 layer, s32 owner) {                                 \
     struct Actor *object = Actor_GetById(owner);                               \
@@ -308,8 +300,6 @@
 
 /// Swaps a map cell's collision code and attribute for `value`, returning the
 /// old.
-/// 3 copies: magma_rock_inside/magma_rock_inside, mars_lighthouse_entrance,
-/// treasure_isle/treasure_isle.
 #define DEFINE_MAP_CELL_SWAP(name)                                             \
   s32 name(u32 layer, s32 x, s32 y, s32 value) {                               \
     struct MapWork *map = Ram_HeapSlots->mapWork;                              \
@@ -330,7 +320,6 @@
   }
 
 /// Marks the cells around each block of a list that stands on a raised cell.
-/// 2 copies: airs_rock/airs_rock, magma_rock_inside/magma_rock_inside.
 #define DEFINE_BLOCKS_MARK_CELLS(name, call1)                                  \
   void name(u16 *ids) {                                                        \
     struct Actor *object;                                                      \
@@ -364,7 +353,6 @@
   }
 
 /// Actor_SetCellOpen for each actor of a list ended by 0xffff.
-/// 2 copies: jupiter_lighthouse_room_7/s16d4, mars_lighthouse_entrance/s42f8.
 #define DEFINE_ACTORS_SET_CELLS_OPEN(name, call1)                              \
   void name(const u16 *list) {                                                 \
     const u16 *spec;                                                           \
@@ -394,7 +382,6 @@
     } while (first != ((limit << 8) + 0xff));                                  \
   }
 
-/// 2 copies: yampi_desert, yampi_desert_cave.
 #define DEFINE_STATUE_SINK(name, call1)                                        \
   void name(u16 *list, s32 mode, s32 count) {                                  \
     struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;          \
@@ -425,7 +412,6 @@
   }
 
 /// Clears the cells a block marked.
-/// 2 copies: magma_rock, magma_rock_inside/magma_rock_inside.
 #define DEFINE_BLOCK_CLEAR_CELLS(name)                                         \
   void name(struct Object0200074c *object) {                                   \
     struct MapWork *map;                                                       \
@@ -452,7 +438,6 @@
   }
 
 /// Actor_SetCellShape as Izumo's ruins and Magma Rock compile it.
-/// 2 copies: izumo_ruins/s0974, magma_rock/s34ac.
 #define DEFINE_ACTOR_SET_CELL_SHAPE_AT(name, call1, call2)                     \
   void name(s32 heightOffset, s32 layer, s32 id) {                             \
     struct Actor *actor = Actor_Get(id);                                       \
@@ -471,7 +456,6 @@
   }
 
 /// A map cell's collision code and attribute.
-/// 2 copies: magma_rock_inside/magma_rock_inside, mars_lighthouse_entrance.
 #define DEFINE_MAP_CELL_GET(name)                                              \
   s32 name(u32 layer, s32 x, s32 y) {                                          \
     struct MapWork *map = Ram_HeapSlots->mapWork;                              \
@@ -488,7 +472,6 @@
   }
 
 /// Raises the cells of a list's actors.
-/// 2 copies: magma_rock, magma_rock_inside/magma_rock_inside.
 #define DEFINE_ACTORS_RAISE_CELLS(name, call1)                                 \
   void name(u16 *list) {                                                       \
     for (; *list != 0xffff; list += 3) {                                       \
@@ -505,7 +488,6 @@
   }
 
 /// Runs a chain of calls on the held actor when there is one.
-/// 2 copies: dehkan_plateau/dehkan_plateau, madra_catacombs.
 #define DEFINE_SCENE_RUN_IF_HELD(name, call1, call2, call3, data1, call4, call5) \
   void name(void) {                                                            \
     struct Actor *object;                                                      \
@@ -519,7 +501,6 @@
   }
 
 /// Sets the shape of a cell to the height given.
-/// 2 copies: magma_rock, magma_rock_inside/magma_rock_inside.
 #define DEFINE_MAP_CELL_SET_SHAPE(name, call1, call2)                          \
   s32 name(s32 layer, s32 x, s32 z, s32 height) {                              \
     struct MapWork *map = Ram_HeapSlots->mapWork;                              \
@@ -533,8 +514,6 @@
   }
 
 /// Marks a pillar moved: it stops and its cell moves.
-/// 4 copies: gondowan_cliffs/s03cc, kibombo_mountains, kibombo_mountains,
-/// kibombo_mountains.
 #define DEFINE_PILLAR_SET_MOVED(name, n1, n2, n3, n4, n5)                      \
   void name(void) {                                                            \
     struct Actor *object = Actor_Get(n1);                                      \
@@ -546,7 +525,6 @@
   }
 
 /// Raises the cell under the held actor.
-/// 2 copies: dehkan_plateau/s0bc0, madra_catacombs.
 #define DEFINE_HELD_ACTOR_RAISE_CELL(name, call1, call2, call3)                \
   void name(void) {                                                            \
     struct Actor *held = HELD_OBJECT(Ram_HeapSlots->eventWork);                \

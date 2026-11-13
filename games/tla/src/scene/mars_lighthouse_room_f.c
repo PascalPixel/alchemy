@@ -257,8 +257,6 @@ void Func_02000418(void) {
   }
 }
 
-/// 3 copies: mars_lighthouse_room_f, mars_lighthouse_room_f,
-/// mars_lighthouse_room_f.
 #define DEFINE_FUNC_02000444(name, n1, n2, n3)                                 \
   void name(s32 state, s32 unused) {                                           \
     if (state == 1) {                                                          \
@@ -608,7 +606,6 @@ void Func_02000cb8(s32 id) {
   }
 }
 
-/// 2 copies: mars_lighthouse_room_f, mars_lighthouse_room_f.
 #define DEFINE_FUNC_02000CF4(name, n1, n2)                                     \
   void name(s32 unused, s32 id) {                                              \
     Func_02000c80(id);                                                         \

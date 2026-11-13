@@ -667,9 +667,6 @@ void Func_020027d4(void) {
   Event_End();
 }
 
-/// 6 copies: shrine_of_the_sea_god/s1340, shrine_of_the_sea_god/s1340,
-/// shrine_of_the_sea_god/s1340, shrine_of_the_sea_god/s1340,
-/// shrine_of_the_sea_god/s1340, shrine_of_the_sea_god/s1340.
 #define DEFINE_FUNC_020027F8(name, n1, n2, n3)                                 \
   void name(void) {                                                            \
     Func_0200279c();                                                           \
@@ -681,7 +678,6 @@ void Func_020027d4(void) {
 
 DEFINE_FUNC_020027F8(Func_020027f8, 392, 216, 1)
 
-/// 2 copies: shrine_of_the_sea_god/s1340, shrine_of_the_sea_god/s1340.
 #define DEFINE_FUNC_02002830(name, n1, n2, n3, n4, n5, n6)                     \
   void name(void) {                                                            \
     struct ShrineOfTheSeaGodObject *block = Actor_GetById(14);                 \
@@ -718,7 +714,6 @@ DEFINE_FUNC_020027F8(Func_020027f8, 392, 216, 1)
 
 DEFINE_FUNC_02002830(Func_02002830, 360, 0x8000, 4, 296, 328, 2)
 
-/// 2 copies: shrine_of_the_sea_god/s1340, shrine_of_the_sea_god/s1340.
 #define DEFINE_FUNC_0200291C(name, n1, n2, n3, n4)                             \
   void name(void) {                                                            \
     Func_0200279c();                                                           \
@@ -742,7 +737,6 @@ DEFINE_FUNC_02002830(Func_02002a2c, 328, 0, 5, 392, 360, 1)
 
 DEFINE_FUNC_020027F8(Func_02002b18, 392, 296, 0)
 
-/// 2 copies: shrine_of_the_sea_god/s1340, shrine_of_the_sea_god/s1340.
 #define DEFINE_FUNC_02002B50(name, n1, n2, n3, n4, n5)                         \
   void name(void) {                                                            \
     struct ShrineOfTheSeaGodObject *block = Actor_GetById(14);                 \

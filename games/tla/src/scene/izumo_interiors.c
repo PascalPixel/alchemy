@@ -23,7 +23,6 @@
 #include "module/scene/izumo_interiors.h"
 #include "module/scene/scene.h"
 
-/// 2 copies: izumo_interiors, izumo_interiors.
 #define DEFINE_IZUMO_INTERIORS_IS_AWAY(name, n1, n2)                           \
   s32 name(void) {                                                             \
     struct Actor *object = Actor_GetById(n1);                                  \

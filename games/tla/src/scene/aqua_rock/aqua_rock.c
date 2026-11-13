@@ -565,7 +565,6 @@ void Func_0200106c(void) {
   Event_End();
 }
 
-/// 3 copies: aqua_rock/aqua_rock, aqua_rock/aqua_rock, aqua_rock/aqua_rock.
 #define DEFINE_AQUA_ROCK_SET_MOVED(name, n1, n2, n3, n4)                       \
   void name(s32 unused, s32 id) {                                              \
     struct Actor *object = Actor_GetById(id);                                  \
@@ -582,7 +581,6 @@ DEFINE_AQUA_ROCK_SET_MOVED(Func_0200112c, 48, 32, 46, 0x222)
 
 DEFINE_AQUA_ROCK_SET_MOVED(Func_02001164, 44, 44, 46, 0x223)
 
-/// 2 copies: aqua_rock/aqua_rock, aqua_rock/aqua_rock.
 #define DEFINE_AQUA_ROCK_DROP_AT_COLUMN(name, n1, n2)                          \
   void name(s32 unused, s32 id) {                                              \
     struct Actor *object = Actor_GetById(id);                                  \

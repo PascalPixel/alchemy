@@ -328,8 +328,6 @@ void Func_02000808(void) {
   }
 }
 
-/// 2 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
-/// mars_lighthouse_entrance/mars_lighthouse_entrance.
 #define DEFINE_FUNC_0200085C(name, n1, n2, n3, n4, n5, n6, n7, n8, n9)         \
   void name(s32 state, s32 frame) {                                            \
     if (state == 1) {                                                          \

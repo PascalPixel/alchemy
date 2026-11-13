@@ -563,7 +563,6 @@ void Func_02001738(struct Actor *object) {
 
 /// In room 1 or 2, targets actor 15 or 14, runs Func_020014bc and sets flag
 /// 0x200.
-/// 2 copies: magma_rock/s0ff4, magma_rock/s0ff4.
 #define DEFINE_FUNC_020019E8(name, n1, n2, n3)                                 \
   void name(s32 mode, s32 cue) {                                               \
     struct MagmaRockWork *work = Ram_HeapSlots->effectWork;                    \
@@ -587,7 +586,6 @@ DEFINE_FUNC_020019E8(Func_020019e8, 15, 14, 0x200)
 /// 0x201.
 DEFINE_FUNC_020019E8(Func_02001a38, 16, 10, 0x201)
 
-/// 3 copies: magma_rock/s0ff4, magma_rock/s0ff4, magma_rock/s0ff4.
 #define DEFINE_FUNC_02001A8C(name, n1, n2)                                     \
   void name(s32 mode, s32 cue) {                                               \
     struct MagmaRockWork *work = Ram_HeapSlots->effectWork;                    \

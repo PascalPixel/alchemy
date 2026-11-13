@@ -88,7 +88,6 @@ extern const u16 gData_020054ee[];
 extern const u16 gData_020054b8[];
 
 // Build BG palette 1 colors 8-15 from the table.
-/// 2 copies: garoh/garoh, garoh/garoh.
 #define DEFINE_GAROH_LOAD_PALETTE(name, data1, n1, n2)                         \
   void name(void) {                                                            \
     struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;              \
@@ -597,7 +596,6 @@ void Func_02000e78(s32 id, struct Actor *object) {
   Func_020012a8(saved);
 }
 
-/// 2 copies: garoh/garoh, garoh/garoh.
 #define DEFINE_GAROH_TRIGGER_AT_CELL(name, n1, n2, n3, n4)                     \
   void name(void) {                                                            \
     struct Actor *object = Actor_Get(n1);                                      \

@@ -917,7 +917,6 @@ void Func_020011bc(s32 x, s32 z) {
   FieldEvent_SetExitRequest(work->exit);
 }
 
-/// 3 copies: gabomba_statue, gabomba_statue, gabomba_statue.
 #define DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(name, n1, n2, n3, n4, n5, n6, n7) \
   void name(void) {                                                            \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
@@ -938,7 +937,6 @@ void Func_020011bc(s32 x, s32 z) {
 DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(Func_02001284, 11, 18, 20, 19, 12, 312,
                                      180)
 
-/// 2 copies: gabomba_statue, gabomba_statue.
 #define DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(name, n1, n2, n3, n4, n5,    \
                                                   n6, n7, n8)                  \
   void name(void) {                                                            \
@@ -1074,8 +1072,6 @@ void Func_02001630(void) {
   FieldEvent_SetExitRequest(work->exit);
 }
 
-/// 5 copies: gabomba_statue, gabomba_statue, gabomba_statue, gabomba_statue,
-/// gabomba_statue.
 #define DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(name, n1, n2)                     \
   void name(struct Actor *actor) {                                             \
     Event_Start();                                                             \
@@ -1222,7 +1218,6 @@ void Func_02001b0c(void) {
     Event_SetFlag(512);
   }
 }
-/// 2 copies: gabomba_statue, gabomba_statue.
 #define DEFINE_GABOMBA_STATUE_RAISE_ACTORS(name, n1, n2)                       \
   void name(void) {                                                            \
     u32 i = 0;                                                                 \

@@ -841,7 +841,6 @@ void Func_0200183c(void);
 DEFINE_PALETTE_SET_COLORS_FADE(Func_0200154c, gData_02003928, Data_0200392c,
     Data_02003930, Data_0200391c, Func_0200183c)
 
-/// 2 copies: mars_lighthouse_room_m, mars_lighthouse_room_m.
 #define DEFINE_FUNC_02001608(name, n1, n2)                                     \
   void name(void) {                                                            \
     gData_02003938 = 0;                                                        \

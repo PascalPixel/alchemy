@@ -1141,7 +1141,6 @@ s32 Func_0200166c(struct Actor *object) {
   return 1;
 }
 
-/// 2 copies: taopo_swamp, taopo_swamp.
 #define DEFINE_FUNC_02001684(name, n1, n2)                                     \
   void name(void) {                                                            \
     if ((gFrameCount & 7) == 0 && (u32)Random16Far() < 0x4000) {               \

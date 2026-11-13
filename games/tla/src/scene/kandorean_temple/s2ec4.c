@@ -114,7 +114,6 @@ void Func_0200306c(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
-/// 2 copies: kandorean_temple/s2ec4, kandorean_temple/s2ec4.
 #define DEFINE_KANDOREAN_TEMPLE_SINK_STEP(n1, n2, n3, n4, n5)                  \
   do {                                                                         \
     leader->y += -0x6c000;                                                     \
@@ -277,7 +276,6 @@ void Func_02003584(void) {
 }
 
 /// The leader and actor 13 rise into view while actor 15 scales.
-/// 2 copies: kandorean_temple/s2ec4, kandorean_temple/s2ec4.
 #define DEFINE_KANDOREAN_TEMPLE_RISE(name, n1, n2, n3, n4, n5, n6, n7, data1)  \
   void name(void) {                                                            \
     struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);       \

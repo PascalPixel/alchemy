@@ -35,7 +35,6 @@ void Func_020015d8(void) {
 
 s32 Func_02001638(void) { return 1; }
 
-/// 2 copies: trial_road/s15a8, trial_road/s15a8.
 #define DEFINE_FUNC_0200163C(name, n1, n2)                                     \
   void name(void) {                                                            \
     MapGrid_CopyCells(n1, 30, 1, 1, 10, 11);                                   \

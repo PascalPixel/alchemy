@@ -7,14 +7,6 @@
 #define ALCHEMY_SCENE_SHARED_JUPITER_LIGHTHOUSE_H
 
 /// Draws a glow sprite over each listed actor.
-/// 14 copies: jupiter_lighthouse_aerie/s17a8,
-/// jupiter_lighthouse_aerie_beacon/s44cc, jupiter_lighthouse_entrance/dist,
-/// jupiter_lighthouse_room_1/s0674, jupiter_lighthouse_room_2/s0d94,
-/// jupiter_lighthouse_room_3/s1300, jupiter_lighthouse_room_4/s0b50,
-/// jupiter_lighthouse_room_5/s1650, jupiter_lighthouse_room_6/s0854,
-/// jupiter_lighthouse_room_7/s16d4, jupiter_lighthouse_room_8/s1178,
-/// jupiter_lighthouse_room_9/s0910, jupiter_lighthouse_room_m/s3474,
-/// mars_lighthouse_room_f/s3d80.
 #define DEFINE_LIGHT_SPRITES_DRAW(name, data1, data2, data3, data4, data5, data6, \
                              call1, call2)                                     \
   void name(void) {                                                            \
@@ -89,12 +81,6 @@
   }
 
 /// Puts actors 9, 10, 23 and 24 where flags 0xa0a and 0xa0b leave them.
-/// 12 copies: jupiter_lighthouse_aerie, jupiter_lighthouse_basement/s098c,
-/// jupiter_lighthouse_entrance/dist, jupiter_lighthouse_room_1/s0674,
-/// jupiter_lighthouse_room_2/s0d94, jupiter_lighthouse_room_3/s07b0,
-/// jupiter_lighthouse_room_5, jupiter_lighthouse_room_6/s0854,
-/// jupiter_lighthouse_room_7/s16d4, jupiter_lighthouse_room_8/s07e8,
-/// jupiter_lighthouse_room_9/s0910, jupiter_lighthouse_room_m/s3474.
 #define DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(name)                    \
   void name(void) {                                                            \
     struct PositionedActor *actor9 = ((struct PositionedActor *)Actor_Get(9)); \
@@ -157,14 +143,6 @@
   }
 
 /// Sets up the glow sprites from the field's cached tiles A.
-/// 16 copies: anemos_inner_sanctum_entrance, jupiter_lighthouse_aerie/s17a8,
-/// jupiter_lighthouse_aerie_beacon/s44cc, jupiter_lighthouse_basement/s098c,
-/// jupiter_lighthouse_entrance/dist, jupiter_lighthouse_room_1/s0674,
-/// jupiter_lighthouse_room_2/s0d94, jupiter_lighthouse_room_3/s1300,
-/// jupiter_lighthouse_room_4/s0b50, jupiter_lighthouse_room_5/s1650,
-/// jupiter_lighthouse_room_6/s0854, jupiter_lighthouse_room_7/s16d4,
-/// jupiter_lighthouse_room_8/s1178, jupiter_lighthouse_room_9/s0910,
-/// jupiter_lighthouse_room_m/s3474, mars_lighthouse_room_f/s3d80.
 #define DEFINE_LIGHT_SPRITES_INIT_A(name, data1, data2, call1, data3, data4, data5) \
   void name(void) {                                                            \
     u8 *buffer = BumpAlloc(0xc00);                                             \
@@ -181,13 +159,6 @@
   }
 
 /// Lifts an actor out of its cell and opens the cells it stood on.
-/// 14 copies: jupiter_lighthouse_aerie, jupiter_lighthouse_aerie_beacon/s0198,
-/// jupiter_lighthouse_basement, jupiter_lighthouse_entrance,
-/// jupiter_lighthouse_room_1, jupiter_lighthouse_room_2,
-/// jupiter_lighthouse_room_3, jupiter_lighthouse_room_4,
-/// jupiter_lighthouse_room_5, jupiter_lighthouse_room_7,
-/// jupiter_lighthouse_room_8, jupiter_lighthouse_room_9,
-/// jupiter_lighthouse_room_m, mars_lighthouse_room_f.
 #define DEFINE_ACTOR_RAISE_FROM_CELL(name, call1, call2)                       \
   void name(s32 id) {                                                          \
     struct Actor *object;                                                      \
@@ -205,14 +176,6 @@
   }
 
 /// Sets up the glow sprites from the field's cached tiles B.
-/// 15 copies: jupiter_lighthouse_aerie/s17a8,
-/// jupiter_lighthouse_aerie_beacon/s44cc, jupiter_lighthouse_basement/s098c,
-/// jupiter_lighthouse_entrance/dist, jupiter_lighthouse_room_1/s0674,
-/// jupiter_lighthouse_room_2/s0d94, jupiter_lighthouse_room_3/s1300,
-/// jupiter_lighthouse_room_4/s0b50, jupiter_lighthouse_room_5/s1650,
-/// jupiter_lighthouse_room_6/s0854, jupiter_lighthouse_room_7/s16d4,
-/// jupiter_lighthouse_room_8/s1178, jupiter_lighthouse_room_9/s0910,
-/// jupiter_lighthouse_room_m/s3474, mars_lighthouse_room_f/s3d80.
 #define DEFINE_LIGHT_SPRITES_INIT_B(name, data1, data2, call1, data3, data4, data5) \
   void name(void) {                                                            \
     u8 *buffer = Heap_Alloc(0xc00);                                            \
@@ -229,14 +192,6 @@
   }
 
 /// Sets up the large glow sprites from the field's cached tiles C.
-/// 15 copies: jupiter_lighthouse_aerie/s17a8,
-/// jupiter_lighthouse_aerie_beacon/s44cc, jupiter_lighthouse_basement/s098c,
-/// jupiter_lighthouse_entrance/dist, jupiter_lighthouse_room_1/s0674,
-/// jupiter_lighthouse_room_2/s0d94, jupiter_lighthouse_room_3/s1300,
-/// jupiter_lighthouse_room_4/s0b50, jupiter_lighthouse_room_5/s1650,
-/// jupiter_lighthouse_room_6/s0854, jupiter_lighthouse_room_7/s16d4,
-/// jupiter_lighthouse_room_8/s1178, jupiter_lighthouse_room_9/s0910,
-/// jupiter_lighthouse_room_m/s3474, mars_lighthouse_room_f/s3d80.
 #define DEFINE_LIGHT_SPRITES_INIT_C(name, data1, data2, call1, data3, data4, data5) \
   void name(void) {                                                            \
     u8 *buffer = BumpAlloc(0x800);                                             \
@@ -254,13 +209,6 @@
 
 /// Loads the room's two palettes and starts their cycle once the lighthouse is
 /// lit (flag 0xa00).
-/// 12 copies: jupiter_lighthouse_aerie_beacon/s0198,
-/// jupiter_lighthouse_basement, jupiter_lighthouse_entrance,
-/// jupiter_lighthouse_room_1, jupiter_lighthouse_room_2,
-/// jupiter_lighthouse_room_4, jupiter_lighthouse_room_5,
-/// jupiter_lighthouse_room_6, jupiter_lighthouse_room_7,
-/// jupiter_lighthouse_room_8, jupiter_lighthouse_room_9,
-/// jupiter_lighthouse_room_m.
 #define DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(name, data1, data2, data3, call1, data4) \
   void name(s32 mode) {                                                        \
     data1 = 1;                                                                 \
@@ -278,12 +226,6 @@
   }
 
 /// Adds an actor to the glow list, its frame in `value`.
-/// 11 copies: jupiter_lighthouse_aerie/s17a8,
-/// jupiter_lighthouse_basement/s098c, jupiter_lighthouse_entrance/dist,
-/// jupiter_lighthouse_room_1/s0674, jupiter_lighthouse_room_3/s1300,
-/// jupiter_lighthouse_room_4/s0b50, jupiter_lighthouse_room_5/s1650,
-/// jupiter_lighthouse_room_8/s1178, jupiter_lighthouse_room_9/s0910,
-/// jupiter_lighthouse_room_m/s3474, mars_lighthouse_room_f/s3d80.
 #define DEFINE_LIGHT_SPRITES_ADD(name, data1, data2)                           \
   void name(s32 id, s32 value) {                                               \
     struct Actor *object = Actor_Get(id);                                      \
@@ -299,8 +241,6 @@
   }
 
 /// LightSprites_Add with the count kept in a plain global.
-/// 3 copies: jupiter_lighthouse_aerie_beacon/s44cc,
-/// jupiter_lighthouse_room_6/s0854, jupiter_lighthouse_room_7/s16d4.
 #define DEFINE_LIGHT_SPRITES_ADD_COUNTED(name, data1, data2)                   \
   void name(s32 id, s32 value) {                                               \
     struct Actor *object = Actor_Get(id);                                      \
@@ -313,8 +253,6 @@
   }
 
 /// Runs `call1` once when flag `n1` is set, clearing it, then `call2`.
-/// 3 copies: jupiter_lighthouse_room_1, jupiter_lighthouse_room_6,
-/// jupiter_lighthouse_room_7.
 #define DEFINE_SCENE_RUN_IF_FLAG_CLEARED(name, n1, call1, call2)               \
   void name(void) {                                                            \
     if (Event_GetFlag(n1) == 1) {                                              \
@@ -325,8 +263,6 @@
   }
 
 /// Runs `call1(1)` the first time, setting flag `n1`.
-/// 3 copies: jupiter_lighthouse_room_1, jupiter_lighthouse_room_6,
-/// jupiter_lighthouse_room_7.
 #define DEFINE_SCENE_RUN_ONCE(name, n1, call1)                                 \
   void name(void) {                                                            \
     if (!Event_GetFlag(n1)) {                                                  \
@@ -337,7 +273,6 @@
 
 /// Sets flag `n2` and opens the way once actor `n1` stands on cell (`n3`,
 /// `n4`).
-/// 2 copies: jupiter_lighthouse_room_1, jupiter_lighthouse_room_7.
 #define DEFINE_JUPITER_LIGHTHOUSE_CHECK_BLOCK_ON_CELL(name, n1, n2, n3, n4, call1) \
   void name(void) {                                                            \
     struct Actor *object = Actor_Get(n1);                                      \
@@ -350,7 +285,6 @@
   }
 
 /// JupiterLighthouse_LoadPalettes as the aerie and room 3 compile it.
-/// 2 copies: jupiter_lighthouse_aerie, jupiter_lighthouse_room_3.
 #define DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(name, data1, data2, data3, data4, call1, data5) \
   void name(s32 mode) {                                                        \
     data1 = 1;                                                                 \
@@ -373,7 +307,6 @@
   }
 
 /// Opens a door three cells high, with its sound when `mode` is 1.
-/// 2 copies: jupiter_lighthouse_room_6, jupiter_lighthouse_room_7.
 #define DEFINE_JUPITER_LIGHTHOUSE_OPEN_DOOR(name, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, \
                              n11)                                              \
   void name(s32 mode) {                                                        \
@@ -387,7 +320,6 @@
   }
 
 /// Closes a door three cells high.
-/// 2 copies: jupiter_lighthouse_room_6, jupiter_lighthouse_room_7.
 #define DEFINE_JUPITER_LIGHTHOUSE_CLOSE_DOOR(name, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10) \
   void name(void) {                                                            \
     Event_PlaySound(134);                                                      \

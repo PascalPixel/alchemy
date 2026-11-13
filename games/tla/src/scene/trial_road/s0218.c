@@ -15,7 +15,6 @@
 #include "module/scene/trial_road.h"
 #include "module/window/window.h"
 
-/// 2 copies: trial_road/s0218, trial_road/s0218.
 #define DEFINE_FUNC_02000218(name, n1, n2, n3, n4, n5, n6)                     \
   void name(s32 side, s32 phase) {                                             \
     if (side == 0) {                                                           \
@@ -254,7 +253,6 @@ void Func_0200070c(s32 id, s32 value) {
 
 /// While the party's render mode is 0, clears the map cell flag under the
 /// object.
-/// 2 copies: trial_road/s0218, trial_road/s0218.
 #define DEFINE_FUNC_02000728(name, call1)                                      \
   void name(s32 a, s32 id) {                                                   \
     struct MainRoutineWork *party = &gMainRoutineWork;                         \

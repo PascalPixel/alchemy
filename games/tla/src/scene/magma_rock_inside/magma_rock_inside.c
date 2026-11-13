@@ -1080,8 +1080,6 @@ void Func_02001828(void) {
 }
 
 // ---- games/tla/src/scene/magma_rock_inside/s1ca0.c ----
-/// 2 copies: magma_rock_inside/magma_rock_inside,
-/// magma_rock_inside/magma_rock_inside.
 #define DEFINE_FUNC_02001CA0(name, n1, n2)                                     \
   void name(s32 a, s32 b) {                                                    \
     struct Actor **work = Ram_HeapSlots->effectWork;                           \
@@ -1201,8 +1199,6 @@ void Func_02002128(void) {
   }
 }
 
-/// 2 copies: magma_rock_inside/magma_rock_inside,
-/// magma_rock_inside/magma_rock_inside.
 #define DEFINE_FUNC_0200217C(name, n1, n2, n3, n4)                             \
   void name(void) {                                                            \
     if (!Event_GetFlag(n1)) {                                                  \
@@ -1898,8 +1894,6 @@ void Func_020032d8(void) {
   }
 }
 
-/// 2 copies: magma_rock_inside/magma_rock_inside,
-/// magma_rock_inside/magma_rock_inside.
 #define DEFINE_FUNC_02003348(name, n1)                                         \
   void name(void) {                                                            \
     if (Event_GetFlag(0x9fa)) {                                                \

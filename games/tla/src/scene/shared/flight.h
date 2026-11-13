@@ -7,7 +7,6 @@
 #define ALCHEMY_SCENE_SHARED_FLIGHT_H
 
 /// Flickers an actor, running `call1` every sixteenth frame.
-/// 4 copies: staff_credit, staff_credit, world_map/s3b38, world_map/s3b38.
 #define DEFINE_ACTOR_FLICKER(name, call1)                                      \
   void name(struct Actor *object) {                                            \
     if ((gFrameCount & 2) != 0) {                                              \
@@ -21,7 +20,6 @@
   }
 
 /// Jitters the camera round the leader.
-/// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_CAMERA_JITTER(name)                                             \
   void name(void) {                                                            \
     struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);           \
@@ -49,7 +47,6 @@
   }
 
 /// Grows an actor upward over 32 frames.
-/// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_ACTOR_GROW_UP(name, call1)                                      \
   void name(struct Actor *object) {                                            \
     struct Actor *parent = object->watchedObject;                              \
@@ -72,7 +69,6 @@
   }
 
 /// Grows an actor downward over 32 frames.
-/// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_ACTOR_GROW_DOWN(name, call1)                                    \
   void name(struct Actor *object) {                                            \
     struct Actor *parent = object->watchedObject;                              \
@@ -95,7 +91,6 @@
   }
 
 /// Searches round the leader for an event, for up to 20 frames.
-/// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_LEADER_SEARCH(name, call1, call2)                               \
   void name(void) {                                                            \
     struct Actor *object = Actor_Get(FieldParty_GetLeaderActor());             \
@@ -114,7 +109,6 @@
   }
 
 /// Sets an actor's update by mode.
-/// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_ACTOR_SET_FLIGHT_MODE(name, call1, call2)                       \
   void name(struct Actor *object, s32 mode) {                                  \
     if (mode == 0) {                                                           \
@@ -130,7 +124,6 @@
   }
 
 /// Cycles an actor's child values, running `call1` every fourth frame.
-/// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_ACTOR_CYCLE_CHILD_VALUES(name, data1, data2, call1)             \
   void name(struct Actor *object) {                                            \
     if (gFrameCount & 1) {                                                     \
@@ -143,7 +136,6 @@
   }
 
 /// Animates an actor, running `call1` every sixteenth frame.
-/// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_ACTOR_ANIMATE_AND_EMIT(name, call1)                             \
   void name(struct Actor *object) {                                            \
     u32 frame = gFrameCount;                                                   \
@@ -155,7 +147,6 @@
   }
 
 /// Sets up the gauge.
-/// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_GAUGE_INIT(name, data1, data2, data3, data4, call1)             \
   void name(void) {                                                            \
     Decompress_TaggedLz(gWorldMapPackedTilesC, data1);                       \
@@ -167,7 +158,6 @@
   }
 
 /// Animates an actor over six frames.
-/// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_ACTOR_ANIMATE(name)                                             \
   void name(struct Actor *object) {                                            \
     u32 frame = gFrameCount;                                                   \
@@ -177,7 +167,6 @@
   }
 
 /// Takes the gauge down.
-/// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_GAUGE_END(name, data1, data2, data3, call1)                     \
   void name(void) {                                                            \
     Decompress_TaggedLz(gWorldMapPackedTilesC, data1);                       \
@@ -187,7 +176,6 @@
   }
 
 /// Redraws the gauge for `progress`.
-/// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_GAUGE_DRAW(name, data1, data2, data3, data4)                    \
   void name(s32 progress) {                                                    \
     s32 level = ((progress * 30 + 0x8000) >> 16) + 1;                          \

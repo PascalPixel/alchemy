@@ -175,7 +175,6 @@ void Func_020004ac(void) {
   work->screenEffect = effect;
 }
 
-/// 2 copies: islet_cave, islet_cave.
 #define DEFINE_ISLET_CAVE_ARRIVE_AT(name, n1, n2)                              \
   void name(void) {                                                            \
     IsletCave_StartSlowPaletteCycle();                                         \

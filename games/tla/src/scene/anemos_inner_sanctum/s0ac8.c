@@ -512,7 +512,6 @@ void Func_020016fc(void) {
 
 s32 Teleporters_Step();
 
-/// 2 copies: anemos_inner_sanctum/s0ac8, anemos_inner_sanctum/s0ac8.
 #define DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(name, n1)                          \
   void name(void) {                                                            \
     s32 t0;                                                                    \

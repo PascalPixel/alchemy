@@ -197,7 +197,6 @@ void Func_02000620(s32 a, s32 b) { Func_0200388c(gData_02004768, a, b); }
 
 void Func_02000634(s32 a, s32 b) { Func_0200388c(gData_0200478e, a, b); }
 
-/// 2 copies: yampi_desert/placements, yampi_desert/placements.
 #define DEFINE_FUNC_02000648(name, data1)                                      \
   void name(s32 a, s32 b) {                                                    \
     Func_0200388c(data1, a, b);                                                \

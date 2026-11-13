@@ -536,7 +536,6 @@ void Func_02000ef0(struct Actor *object) { object->x = Actor_GetById(8)->x; }
 // Scene code of overlay 0x672, in ROM order, from s0f00's offset up to the next
 // object the overlay links.
 
-/// 2 copies: gabomba_statue_chamber, gabomba_statue_chamber.
 #define DEFINE_GABOMBA_STATUE_CHAMBER_SHOW_ITEM(name, n1)                      \
   void name(void) {                                                            \
     struct GabombaStatueChamberObject *leader =                                \

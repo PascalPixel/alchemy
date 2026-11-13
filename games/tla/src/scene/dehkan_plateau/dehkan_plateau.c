@@ -320,8 +320,6 @@ loop:
   }
 }
 
-/// 3 copies: dehkan_plateau/dehkan_plateau, dehkan_plateau/dehkan_plateau,
-/// dehkan_plateau/dehkan_plateau.
 #define DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(name, data1, n1, data2)            \
   void name(void) {                                                            \
     const u16 *cell = &data1[0].present;                                       \

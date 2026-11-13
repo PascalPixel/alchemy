@@ -886,8 +886,6 @@ void Func_0200141c(s32 x, s32 z, s32 actor) {
   Actor_SetPosition(actor, 0, 0);
 }
 
-/// 6 copies: sea_of_time, sea_of_time, sea_of_time, sea_of_time, sea_of_time,
-/// sea_of_time.
 #define DEFINE_FUNC_02001480(name, n1, n2)                                     \
   void name(void) {                                                            \
     struct Actor *object;                                                      \
@@ -912,7 +910,6 @@ DEFINE_FUNC_02001480(Func_0200155c, 13, 0xa94)
 
 DEFINE_FUNC_02001480(Func_02001594, 9, 0xa95)
 
-/// 2 copies: sea_of_time, sea_of_time.
 #define DEFINE_FUNC_020015CC(name, n1)                                         \
   void name(void) {                                                            \
     Event_Start();                                                             \

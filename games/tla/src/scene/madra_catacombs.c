@@ -475,7 +475,6 @@ void Func_02000c5c(void) { Func_02000b38(118, 1, 118, 3, 1, 2); }
 
 void Func_02000c78(void) { Func_02000b38(92, 29, 92, 31, 1, 2); }
 
-/// 2 copies: madra_catacombs, madra_catacombs.
 #define DEFINE_FUNC_02000C94(name, n1)                                         \
   void name(void) {                                                            \
     Event_Start();                                                             \

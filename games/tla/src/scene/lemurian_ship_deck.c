@@ -104,7 +104,6 @@ void LemurianShipDeck_TryHeldDoor(void) {
 
 #define OBJ_PALETTE ((volatile u16 *)&BG_PLTT_COLOR(11, 0))
 
-/// 2 copies: lemurian_ship_deck, lemurian_ship_deck.
 #define DEFINE_FUNC_02000188(name, n1, n2)                                     \
   void name(void) {                                                            \
     if ((gFrameCount & 7) == 0) {                                              \

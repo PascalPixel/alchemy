@@ -253,10 +253,6 @@ void Func_02000880(s32 unused, s32 frame, s32 id) {
   }
 }
 
-/// 8 copies: treasure_isle/treasure_isle, treasure_isle/treasure_isle,
-/// treasure_isle/treasure_isle, treasure_isle/treasure_isle,
-/// treasure_isle/treasure_isle, treasure_isle/treasure_isle,
-/// treasure_isle/treasure_isle, treasure_isle/treasure_isle.
 #define DEFINE_FUNC_02000914(name, n1, n2)                                     \
   void name(void) {                                                            \
     s32 t0;                                                                    \

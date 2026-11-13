@@ -661,7 +661,6 @@ void Func_02003284(void) {
 
 extern const u16 gData_02004276[];
 
-/// 2 copies: dehkan_plateau/s2698, dehkan_plateau/s2698.
 #define DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(name, n1, n2, n3, n4, n5, n6)      \
   void name(void) {                                                            \
     /* FAKEMATCH(pin): flag in r5, which leaves r6 to the entry; as a plain    \

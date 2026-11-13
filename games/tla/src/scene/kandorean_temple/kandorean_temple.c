@@ -482,8 +482,6 @@ void Func_02000bcc(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
-/// 2 copies: kandorean_temple/kandorean_temple,
-/// kandorean_temple/kandorean_temple.
 #define DEFINE_KANDOREAN_TEMPLE_SPAWN_EVERY(name, data1, n1, n2, n3, n4)       \
   void name(void) {                                                            \
     s32 position[3];                                                           \

@@ -226,8 +226,7 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   gBattleBackgroundWork->mode = BATTLE_BACKGROUND_FIXED;
   work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 128 * 128);
-  /* FAKEMATCH(dead): an empty once-only loop keeps the multiply routine's
-   * address ahead of the spark cursor; without it, 2 of 246 instructions
+  /* FAKEMATCH(dead): an empty once-only loop; without it, 2 of 246 instructions
    * differ in tbs-en. */
   do {
   } while (0);

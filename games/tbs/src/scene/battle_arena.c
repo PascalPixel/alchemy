@@ -760,9 +760,8 @@ padNext:
   // Then the recovery table.
   size = LOBBY_RECOVERY_RECORD_BYTES;
   buffer = Heap_AllocEwram(size);
-  /* FAKEMATCH(dead): the recovery table's copy in a once-only block gives the
-   * copy's argument order and keeps the list base's copy first after the call;
-   * as a plain call, 6 of 254 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): the recovery table's copy in a once-only block; as a plain
+   * call, 6 of 254 instructions differ in tbs-en. */
   do {
     Iwram_CopyWords(buffer, Djinn_GetRecoveryTable(0), size);
   } while (0);
@@ -802,9 +801,8 @@ padNext:
     wait(1);
     wait(2);
   }
-  /* FAKEMATCH(dead): the shared exit in a once-only block, so loop.c finds no
-   * barrier at done to move the record loop's two failures to; as a plain
-   * label, 62 of 254 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): the shared exit in a once-only block; as a plain label, 62
+   * of 254 instructions differ in tbs-en. */
   do {
   done:
     Heap_Release(buffer);

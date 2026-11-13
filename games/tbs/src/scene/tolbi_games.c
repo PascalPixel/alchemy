@@ -867,9 +867,8 @@ prompt:
       if (prizeIndex < result * 3 + 3) {
         do {
           /* FAKEMATCH(temporary): the weight read as a byte from the work's
-           * start leaves the weights' address free for the halving below; as
-           * routine->prizeWeights[prizeIndex], 6 of 280 instructions differ in
-           * tbs-en. */
+           * start; as routine->prizeWeights[prizeIndex], 6 of 280 instructions
+           * differ in tbs-en. */
           u8 weight =
               ((u8 *)routine)[prizeIndex +
                               offsetof(struct MainRoutineWork, prizeWeights)];
@@ -890,8 +889,7 @@ prompt:
       }
       // Reveal the selected item, then reduce its chance on later tosses.
       TolbiSpring_RevealPrize(gTolbiSpring_PrizeItems[prizeIndex]);
-      /* FAKEMATCH(dead): stepping routine away and back makes the weights'
-       * address be worked out again after the call; without it, 6 of 280
+      /* FAKEMATCH(dead): stepping routine away and back; without it, 6 of 280
        * instructions differ in tbs-en. */
       routine++;
       routine--;
@@ -901,9 +899,8 @@ prompt:
         s8 *weights = (s8 *)routine + 1;
 
         if (weights[slot] > 1) {
-          /* FAKEMATCH(dead): the halving in both arms of a test of slot puts
-           * slot and the address in the original's registers; as one halving,
-           * 10 of 280 instructions differ in tbs-en. */
+          /* FAKEMATCH(dead): the halving in both arms of a test of slot; as one
+           * halving, 10 of 280 instructions differ in tbs-en. */
           if (slot)
             weights[slot] /= 2;
           else

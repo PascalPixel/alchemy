@@ -135,9 +135,8 @@ s32 PartyMemberChooser_Run(void) {
   struct StatusScreenWork *work = gMenuWork;
   s32 result = 0;
 
-  /* FAKEMATCH(dead): the slot's clearing in both arms of a test, which ends
-   * the scheduling block before the slot's offset is built until jump2 merges
-   * the arms; as a plain statement, 4 of 22 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): the slot's clearing in both arms of a test; as a plain
+   * statement, 4 of 22 instructions differ in tbs-en. */
   if ((s32)work < 0)
     work->selectedSlots[0] = result;
   else

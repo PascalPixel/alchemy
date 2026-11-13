@@ -452,8 +452,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     EFFECT_PRESENT_CANVAS(work);
     frame++;
   } while (frame != CASTING_IMPACT_GATHER_FRAMES);
-  /* FAKEMATCH(dead): position set again to the &djinnPos it holds, so the
-   * gathering's projection takes the address from sp, not a spill; as one
+  /* FAKEMATCH(dead): position set again to the &djinnPos it holds; as one
    * assignment, 150 of 3070 instructions differ in tbs-en. */
   position = &djinnPos;
 

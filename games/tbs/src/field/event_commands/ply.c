@@ -162,8 +162,7 @@ void FieldPsynergy_Ply(void) {
   if (target != 0) {
     // Switch its sprite param every 2 frames (10 one time in 4).
     for (i = 0; i < 30; i++) {
-      /* FAKEMATCH(dead): target set again to actor, which it already holds,
-       * keeping a second register copy of the figure; without it, 129 of 177
+      /* FAKEMATCH(dead): target set again to actor; without it, 129 of 177
        * instructions differ in tbs-en. */
       target = actor;
       if (i & 3)

@@ -616,9 +616,8 @@ struct Sprite *Sprite_Create(s32 id) {
   // DEAD: a test of the call's result for -1 that does nothing either way; the
   // ROM keeps the -1 it builds after the call.
   if (Sprite_AddAnimation(sprite, id) == -1) {
-    /* FAKEMATCH(dead): a store of the byte it reloads keeps the test until its
-     * -1 is built; with the call alone, 32 of 152 instructions differ in
-     * tbs-en. */
+    /* FAKEMATCH(dead): a store of the byte it reloads; with the call alone, 32
+     * of 152 instructions differ in tbs-en. */
     freeSprite->dirty = freeSprite->dirty;
   }
   return freeSprite;

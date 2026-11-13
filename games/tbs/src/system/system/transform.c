@@ -268,9 +268,8 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   t = Iwram_Sqrt(dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
   scale = Iwram_UnsignedDivide(num, t) >> 15;
   scale = -scale;
-  /* FAKEMATCH(dead): the normalization in a once-only block, so the axis is
-   * negated before the third product spills; as plain statements, 4 of 215
-   * instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): the normalization in a once-only block; as plain
+   * statements, 4 of 215 instructions differ in tbs-en. */
   do {
     dx = Iwram_MulQ16(dx, scale);
     dy = Iwram_MulQ16(dy, scale);

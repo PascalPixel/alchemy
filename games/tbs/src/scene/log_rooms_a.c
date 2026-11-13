@@ -3179,9 +3179,8 @@ LogRoomsA_SnapToNearestStop(struct LogRoomsAStop *node, s16 *requestedFacing) {
     angleDifference = (s16)(connectionFacing - *requestedFacing);
     if (angleDifference < 0)
       angleDifference = -angleDifference;
-    /* FAKEMATCH(volatile): the stop is tested through a volatile read, so it is
-     * read again when kept; as a plain test, 9 of 49 instructions differ in
-     * tbs-en. */
+    /* FAKEMATCH(volatile): the stop is tested through a volatile read; as a
+     * plain test, 9 of 49 instructions differ in tbs-en. */
     if (*(volatile u8 *)&connection->stopIndex != 0xff &&
         angleDifference < nearestDifference) {
       nearestDifference = angleDifference;
@@ -3306,9 +3305,8 @@ static void LogRoomsA_UpdateActorStops(void) {
         (facingDifference = (u16)facing - angle) > -FACING_STEP &&
         facingDifference < FACING_STEP) {
       // Pushed toward from close by, he takes the leader's way.
-      /* FAKEMATCH(dead): a dead store keeps this branch through jump
-       * optimization; as an empty branch, 1 of 269 instructions differ in
-       * tbs-en. */
+      /* FAKEMATCH(dead): a dead store; as an empty branch, 1 of 269
+       * instructions differ in tbs-en. */
       facingDifference = 0;
 #if TBS_PATCH_1
     } else if (dx * dx + dz * dz > 64) {

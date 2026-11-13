@@ -156,9 +156,8 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
     xOffset = 0;
   else
     xOffset = -112;
-  /* FAKEMATCH(dead): the scroll's store in a once-only block, so the loop's
-   * i = 0 comes before the particles' address; as the plain store, 2 of 265
-   * instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): the scroll's store in a once-only block; as the plain
+   * store, 2 of 265 instructions differ in tbs-en. */
   do {
     REG_BG2X = xOffset << 8;
   } while (0);
@@ -193,9 +192,8 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
         SET_VECTOR(rec, actor->x.fixed, actor->y.fixed, actor->z.fixed);
         Projection_Point(rec, &center);
         center.x += xOffset;
-        /* FAKEMATCH(dead): an empty once-only loop keeps the store before the
-         * spark loop's i = 0; without it, 2 of 265 instructions differ in
-         * tbs-en. */
+        /* FAKEMATCH(dead): an empty once-only loop; without it, 2 of 265
+         * instructions differ in tbs-en. */
         do {
         } while (0);
         // Three skulls a third of a turn apart, each turning 1/128 of a turn

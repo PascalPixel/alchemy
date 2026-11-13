@@ -798,9 +798,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
             half = radius / 2;
             dx = (half * sx) / 8;
             right = cx + dx;
-            /* FAKEMATCH(dead): a branch whose store the next line overwrites
-             * restores the label CSE and reload saw between the edges; without
-             * it, 67 of 2455 instructions differ in tbs-en. */
+            /* FAKEMATCH(dead): a branch whose store the next line overwrites;
+             * without it, 67 of 2455 instructions differ in tbs-en. */
             if (dx > cx)
               left = 0;
             left = cx - dx;
@@ -828,9 +827,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
             halfSlope = slope / 2;
             dx = (halfSlope * sx) / 8;
             right = cx + dx;
-            /* FAKEMATCH(dead): a branch whose store the next line overwrites
-             * restores the label CSE and reload saw between the edges; without
-             * it, 1954 of 2455 instructions differ in tbs-en. */
+            /* FAKEMATCH(dead): a branch whose store the next line overwrites;
+             * without it, 1954 of 2455 instructions differ in tbs-en. */
             if (dx > cx)
               left = 0;
             left = cx - dx;

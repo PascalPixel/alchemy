@@ -272,10 +272,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
 
           Iwram_CopyWords(saved, work, size);
           window = Message_OpenWindowFar(MsgDjinnTutorialSetChanges, 8, 0, 1);
-          /* FAKEMATCH(dead): the cursor, message and step in a once-only
-           * block keep the window copy and the step's store ahead of the
-           * cursor's stores; as plain statements, 12 of 1276 instructions
-           * differ in tbs-en. */
+          /* FAKEMATCH(dead): the cursor, message and step in a once-only block;
+           * as plain statements, 12 of 1276 instructions differ in tbs-en. */
           do {
             menu->cursor->motion = ICON_SHOWN;
             MenuCursor_Slide(2, 96);

@@ -232,9 +232,8 @@ void Debug_SelectShortcuts(void) {
         Sound_PlayFar(SE_MENU_CANCEL);
       else
         continue;
-      /* FAKEMATCH(dead): an unread flag, which forces fresh zeros for both
-       * entries and the cursor argument instead of reusing the row register;
-       * without the flag, 5 of 362 instructions differ in tbs-en. */
+      /* FAKEMATCH(dead): an unread flag; without the flag, 5 of 362
+       * instructions differ in tbs-en. */
       done = 1;
       break;
     }

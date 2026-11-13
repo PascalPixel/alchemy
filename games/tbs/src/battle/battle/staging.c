@@ -456,8 +456,7 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
   {
     struct BattleActionRun *savedPlan = plan;
 
-    /* FAKEMATCH(dead): plan cleared and restored under tests that emit
-     * nothing, ending a CSE block so the first read of plan reloads it;
+    /* FAKEMATCH(dead): plan cleared and restored under tests that emit nothing;
      * without them, 17 of 289 instructions differ in tbs-en. */
     if (view)
       plan = NULL;
@@ -1006,9 +1005,8 @@ void BattleObject_RemoveFromLists(s32 unitId) {
   }
 
   // The enemies' list.
-  /* FAKEMATCH(dead): a once-only block round the label loop keeps the party
-   * loop's first test from being peeled ahead of it; as the plain loop, 26 of
-   * 53 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): a once-only block round the label loop; as the plain loop,
+   * 26 of 53 instructions differ in tbs-en. */
   do {
     i = 0;
   again:

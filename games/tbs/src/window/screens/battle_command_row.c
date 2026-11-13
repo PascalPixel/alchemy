@@ -329,8 +329,7 @@ s32 BattleCommandRow_Run(s32 mode) {
       for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
         s32 col;
         /* FAKEMATCH(volatile): the window tilemap, in RAM, stored through a
-         * volatile pointer, which keeps the add of 0x44a apart from the store
-         * it addresses; as a plain store, 33 of 1037 instructions differ in
+         * volatile pointer; as a plain store, 33 of 1037 instructions differ in
          * tbs-en. */
         for (col = 0; col <= 2; col++)
           *(volatile u16 *)(work->tilemap + (entryIndex + 17) * 32 + panel * 3 +

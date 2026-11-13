@@ -152,9 +152,9 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
       ItemMenu_DrawMessage(0, MsgPsynergyChooseOwner);
       chosen = PsynergyMenu_SelectPartySlot(0);
       cancelled = -1;
-      /* FAKEMATCH(dead): a redundant copy of -1 and an XOR test give -1 and 1
-       * the ROM's registers; as if (chosen == -1) setting done and useResult,
-       * 12 of 316 instructions differ in tbs-en. */
+      /* FAKEMATCH(dead): a redundant copy of -1 and an XOR test; as if (chosen
+       * == -1) setting done and useResult, 12 of 316 instructions differ in
+       * tbs-en. */
       if (chosen == -1)
         cancelled = chosen;
       if (((u32)chosen ^ (u32)cancelled) == 0) {

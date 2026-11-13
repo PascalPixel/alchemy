@@ -454,9 +454,8 @@ s32 NameEntry_EditMemberName(s32 member) {
           u8 *dstSave = dst;
           u8 *srcSave = src;
 
-          /* FAKEMATCH(dead): no-op saves and restores keep destination,
-           * source and index in r2, r1 and r0; without them, 9 of 506
-           * instructions differ in tbs-en. */
+          /* FAKEMATCH(dead): no-op saves; without them, 9 of 506 instructions
+           * differ in tbs-en. */
           if (originalName)
             src = NULL;
           if (originalName)
@@ -765,9 +764,8 @@ s32 NameEntry_EditMemberName(s32 member) {
           dst = originalName;
           src = editedName;
           i = 0;
-          /* FAKEMATCH(dead): no-op saves and restores keep destination,
-           * source and index in r1, r2 and r0; without them, 11 of 663
-           * instructions differ in tbs-ja. */
+          /* FAKEMATCH(dead): no-op saves; without them, 11 of 663 instructions
+           * differ in tbs-ja. */
           dstSave = dst;
           srcSave = src;
           if (keyboardWindow->height)

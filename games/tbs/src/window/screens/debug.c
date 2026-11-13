@@ -465,8 +465,8 @@ s32 DebugBrowser_Portraits(void) {
   }
   entryCount = characterCount + i;
 
-  /* FAKEMATCH(dead): a zero from the count keeps the mask in r9 and work in
-   * fp; as cancelKey = KEY_B, 7 of 179 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): a zero from the count; as cancelKey = KEY_B, 7 of 179
+   * instructions differ in tbs-en. */
   cancelKey = ((u32)(u16)characterCount >> 16) | KEY_B;
   while (1) {
     if (gKeysRepeat & KEY_LEFT) {

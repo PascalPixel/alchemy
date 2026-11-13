@@ -141,8 +141,8 @@ MapGrid_CopyCellPictureHalfColumn(u32 *cell, u8 *screenMap, u32 screenRowOffset,
   u32 index = ((*cell << 20) >> 18) + tileHalf;
 
   /* FAKEMATCH(register): entry starts at each row's table and steps to the
-   * picture, which keeps the table's address inside the caller's loop; as
-   * one expression, about 30 of 81 instructions differ in tbs-en. */
+   * picture; as one expression, about 30 of 81 instructions differ in tbs-en.
+   */
   entry = (u16 *)Ram_CellPictures;
   entry += index;
   screenTile =
@@ -645,9 +645,8 @@ struct MapGridTilePosition {
 // cell 4.
 //
 // FAKEMATCH(register): each copy builds the addresses as numbers, a step at a
-// time, and reuses bytes for the step to the next BG map, which keeps every
-// constant inside the loop; as plain pointer expressions or a shared inline
-// helper, about 75 of 150 instructions differ in each in tbs-en.
+// time; as plain pointer expressions, about 75 of 150 instructions differ in
+// each in tbs-en.
 
 /// Copies the cell picture numbers of a rectangle of cells from (sourceX,
 /// sourceY) to (dstX, dstY), width by height cells, keeping each destination's
@@ -746,9 +745,8 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
   struct MapGridCellAnimationStep *step =
       (struct MapGridCellAnimationStep *)steps;
   u32 source = step->source;
-  /* FAKEMATCH(temporary): the end test reads a copy of source, and the
-   * updates that cancel out end CSE's knowledge of it, so source stays in r0
-   * and the test keeps its ip copy; with the plain loop, 23 of 54
+  /* FAKEMATCH(temporary): the end test reads a copy of source, and the updates
+   * that cancel out end CSE's knowledge of it; with the plain loop, 23 of 54
    * instructions differ in tbs-en. */
   u32 test = source;
 

@@ -142,9 +142,8 @@ UNREAD_RESULT LinkBattle_SendParty(void) {
     size = LINK_PARTY_OFFER_BYTES;
     Heap_Release(buffer);
     buffer = (u8 *)Heap_AllocEwram(size);
-    /* FAKEMATCH(dead): the copy in a once-only block keeps the list pointer's
-     * copy ahead of the count's load; as the plain call, 2 of 152 instructions
-     * differ in tbs-en. */
+    /* FAKEMATCH(dead): the copy in a once-only block; as the plain call, 2 of
+     * 152 instructions differ in tbs-en. */
     do {
       Iwram_CopyWords(buffer, Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY),
                       size);

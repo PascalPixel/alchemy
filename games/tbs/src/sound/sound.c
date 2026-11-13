@@ -188,8 +188,8 @@ void SoundTest_Run(void) {
 
   row = 0;
   reverbCode = SOUND_REVERB_NORMAL;
-  /* FAKEMATCH(dead): a once-only block keeps the store between the two
-   * setups; as a plain store, 4 of 145 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): a once-only block; as a plain store, 4 of 145 instructions
+   * differ in tbs-en. */
   do {
     gBuildStamp[0] = 0;
   } while (0);

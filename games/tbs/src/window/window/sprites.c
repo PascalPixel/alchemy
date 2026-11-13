@@ -262,9 +262,8 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
 /// The Japanese Window_PutGlyph, which also places the kana marks.
 void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
   u8 *work = gWindowWork[0];
-  /* FAKEMATCH(dead): two XORs with tile that cancel keep work and base apart,
-   * with the native ip to r8 copy; as base = work, 2 of 141 instructions
-   * differ in tbs-ja. */
+  /* FAKEMATCH(dead): two XORs with tile that cancel; as base = work, 2 of 141
+   * instructions differ in tbs-ja. */
   u8 *base = (u8 *)((unsigned long)work ^ tile);
   struct WindowSpriteCellView *out;
   s32 idx;

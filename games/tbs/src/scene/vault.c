@@ -1051,9 +1051,8 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     u8 *spriteFlags = &sprite->flags;
 
     effect->update = Vault_UpdateDriftingEffect;
-    /* FAKEMATCH(dead): the flags store in both arms of a test, which ends the
-     * scheduling block after the update store; as one store, 2 of 141
-     * instructions differ in tbs-en. */
+    /* FAKEMATCH(dead): the flags store in both arms of a test; as one store, 2
+     * of 141 instructions differ in tbs-en. */
     if (flags < 0)
       *spriteFlags = 0;
     else

@@ -97,9 +97,8 @@ void IconMenu_DrawIcons(void) {
       u32 tileOffset;
 
       word = entry->sprite;
-      /* FAKEMATCH(cast): y read as halfword 7 from the word pointer, which
-       * keeps the copy before the load; as entry->y, 1 of 401 instructions
-       * moves in tbs-en. */
+      /* FAKEMATCH(cast): y read as halfword 7 from the word pointer; as
+       * entry->y, 1 of 401 instructions moves in tbs-en. */
       spriteY = ((s16 *)word)[7];
       *word++ = 0;
       attributes = spriteY | (x << 16) | OBJ_SIZE_32X32 | OBJ_256_COLORS;

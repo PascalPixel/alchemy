@@ -615,9 +615,8 @@ retry:
         travelDistance, heading - SCRIPT_WANDER_DIAGONAL_ANGLE, &probePosition);
     if (MapGrid_CheckCollision(actor, &probePosition) != COLLISION_NONE)
       goto retry;
-    /* FAKEMATCH(dead): the offsets in both arms of a test of actor, which
-     * keeps the test through cse2 so the division works on the loaded x; as
-     * plain statements, 8 of 184 instructions differ in tbs-en. */
+    /* FAKEMATCH(dead): the offsets in both arms of a test of actor; as plain
+     * statements, 8 of 184 instructions differ in tbs-en. */
     if (actor != 0) {
       dx = candidatePosition.x / Q16_ONE - actor->homeX;
       dz = candidatePosition.z / Q16_ONE - actor->homeZ;

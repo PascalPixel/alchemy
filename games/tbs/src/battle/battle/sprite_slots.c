@@ -73,9 +73,8 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
   struct BattleWork *battle = gBattleWork;
   struct Unit *unit = Unit_GetFar(unitId);
   s32 needsSingleSlot = BattleSprite_IsSmall(unit->id);
-  /* FAKEMATCH(temporary): result cleared a halfword at a time, which keeps
-   * spritePart a copy of its register (mov r4, r10); as an s32 set to 0, 2 of
-   * 114 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): result cleared a halfword at a time; as an s32 set to
+   * 0, 2 of 114 instructions differ in tbs-en. */
   union {
     s32 value;
     u16 halves[2];

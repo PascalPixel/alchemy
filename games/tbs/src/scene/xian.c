@@ -164,9 +164,8 @@ static void Xian_RotateTrainingTree(void) {
 
 /// Emits particles beside the student every fourth frame.
 static void Xian_SpawnTrainingParticles(void) {
-  /* FAKEMATCH(temporary): the student read through a byte pointer, which
-   * lets the z load go ahead of the options' script store; as the actor's
-   * fields, 1 of 37 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): the student read through a byte pointer; as the
+   * actor's fields, 1 of 37 instructions differ in tbs-en. */
   u8 *student = (u8 *)Actor_Get(ACTOR_KUNG_FU_STUDENT);
 
   if ((gFrameCount & 3) == 0) {

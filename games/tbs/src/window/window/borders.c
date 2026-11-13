@@ -43,9 +43,8 @@ loop:
                              (s16)window->previousHeight);
       Window_DrawZoomBorder(window, 1);
       window->zoomStage++;
-      /* FAKEMATCH(temporary): the flag through a local keeps this store apart
-       * from the else arm's; as a plain store, 4 of 101 instructions differ
-       * in tbs-en. */
+      /* FAKEMATCH(temporary): the flag through a local; as a plain store, 4 of
+       * 101 instructions differ in tbs-en. */
       {
         u8 dirty = 1;
 

@@ -304,9 +304,8 @@ void FieldPsynergy_Move(void) {
   effectWork = gFieldEffectWork;
   caster = effectWork->mainActor;
 
-  /* FAKEMATCH(dead): an empty once-only loop before the call keeps the
-   * mainActor load below the stack frame's sub sp; without it, 2 of 24
-   * instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): an empty once-only loop before the call; without it, 2 of
+   * 24 instructions differ in tbs-en. */
   do {
   } while (0);
   FieldPsynergy_FadeToCastColor();

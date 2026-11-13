@@ -175,9 +175,8 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
         pictureRow = 0;
       } else {
         pictureColumn = 1;
-        /* FAKEMATCH(dead): i is 160 here, so i >> 31 folds to 0 and only
-         * changes allocation; as pictureRow = 0, 452 of 580 instructions differ
-         * in tbs-en. */
+        /* FAKEMATCH(dead): i is 160 here; as pictureRow = 0, 452 of 580
+         * instructions differ in tbs-en. */
         pictureRow = i >> 31;
       }
       // The reaper with its scythe raised until frame 91, and swung from

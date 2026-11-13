@@ -228,10 +228,9 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
           if (shot->variant >= 0) {
             s32 step;
 
-            /* FAKEMATCH(dead): an empty once-only loop ends CSE's block, so
-             * k * 8 is computed again; without it (the call's argument
-             * spelled out or as shot), 449 of 670 instructions differ in
-             * tbs-en. */
+            /* FAKEMATCH(dead): an empty once-only loop ends CSE's block;
+             * without it (the call's argument spelled out or as shot), 449 of
+             * 670 instructions differ in tbs-en. */
             do {
             } while (0);
             // The shell tumbles through ten images, three frames each; the

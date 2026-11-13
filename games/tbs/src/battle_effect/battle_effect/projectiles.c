@@ -723,8 +723,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               if (target->x.fixed < 0) {
                 hit = x < 0;
                 /* FAKEMATCH(dead): two updates that cancel, under a test that
-                 * emits nothing, make hit a 0 or 1 value before it is tested;
-                 * without them, 55 of 1605 instructions differ in tbs-en. */
+                 * emits nothing; without them, 55 of 1605 instructions differ
+                 * in tbs-en. */
                 if (target) {
                   hit ^= x;
                   hit ^= x;

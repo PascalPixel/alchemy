@@ -350,13 +350,11 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       s32 x;
       s32 y;
 
-      /* FAKEMATCH(temporary): the division written out on a copy of count,
-       * which it tests and biases; as glow = dividend / 4, 27 of 1532
-       * instructions differ in tbs-en. */
+      /* FAKEMATCH(temporary): the division written out on a copy of count; as
+       * glow = dividend / 4, 27 of 1532 instructions differ in tbs-en. */
       dividend = count;
-      /* FAKEMATCH(dead): updates that cancel out end CSE's knowledge of count,
-       * so the test reads the copy; without them, 4 of 1532 instructions
-       * differ in tbs-en. */
+      /* FAKEMATCH(dead): updates that cancel out end CSE's knowledge of count;
+       * without them, 4 of 1532 instructions differ in tbs-en. */
       if (sheet) {
         count++;
         count--;
@@ -365,9 +363,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         dividend += 3;
       glow = dividend >> 2;
       /* FAKEMATCH(barrier): count and sheet through an empty asm clobbering r1
-       * and r3, so count keeps r2 and sheet takes r0; as line = (u16 *)
-       * (work->sheet + PARTICLE_STREAMS_BACKDROP_LINES), 69 of 1532
-       * instructions differ in tbs-en. */
+       * and r3; as line = (u16 *) (work->sheet +
+       * PARTICLE_STREAMS_BACKDROP_LINES), 69 of 1532 instructions differ in
+       * tbs-en. */
       __asm__("" : "=r"(sheet) : "0"(sheet), "r"(count) : "r1", "r3");
       line = (u16 *)(sheet + PARTICLE_STREAMS_BACKDROP_LINES);
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
@@ -381,8 +379,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         s32 hold;
 
         /* FAKEMATCH(barrier): hold set by an empty asm takes r7 across the
-         * call, so glow takes r4 and its sp+8 save; without hold, 354 of 1532
-         * instructions differ in tbs-en. */
+         * call; without hold, 354 of 1532 instructions differ in tbs-en. */
         __asm__("" : "=r"(hold));
         /* FAKEMATCH(barrier): an empty asm that clobbers r6 before the call;
          * without it, 354 of 1532 instructions differ in tbs-en. */
@@ -390,8 +387,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         if (frame == 0)
           Sound_PlayFar(SE_RUMBLE);
         /* FAKEMATCH(dead): updates of hold that cancel out, under a test of
-         * hold, keep it live across the call; without them, 354 of 1532
-         * instructions differ in tbs-en. */
+         * hold; without them, 354 of 1532 instructions differ in tbs-en. */
         if (hold) {
           hold++;
           hold--;
@@ -412,8 +408,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         s32 blue;
 
         /* FAKEMATCH(dead): updates of quarter that cancel out, under a test of
-         * quarter, keep it live past level's sum, so level takes r2; as level =
-         * quarter + glow alone, 18 of 1532 instructions differ in tbs-en. */
+         * quarter, keep it live past level's sum; as level = quarter + glow
+         * alone, 18 of 1532 instructions differ in tbs-en. */
         if (quarter) {
           quarter++;
           quarter--;

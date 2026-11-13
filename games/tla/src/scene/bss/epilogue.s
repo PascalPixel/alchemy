@@ -2,23 +2,23 @@
 	.thumb
 	.section .bss,"aw",%nobits
 	.balign 16
-	.global Data_020008f0
-Data_020008f0:
+	.global gEpilogueNamePanelEntry
+gEpilogueNamePanelEntry:
 	.space 0x00000110
-	.global gData_02000a00
-gData_02000a00:
+	.global gEpilogueNamePanel
+gEpilogueNamePanel:
 	.space 0x00000028
-	.global gData_02000a28
-gData_02000a28:
+	.global gEpilogueMessage
+gEpilogueMessage:
 	.space 0x00000004
-	.global gData_02000a2c
-gData_02000a2c:
+	.global gEpilogueNameY
+gEpilogueNameY:
 	.space 0x00000004
-	.global Data_02000a30
-Data_02000a30:
+	.global gEpilogueNamePanelTile
+gEpilogueNamePanelTile:
 	.space 0x00000004
-	.global gData_02000a34
-gData_02000a34:
+	.global gEpilogueNameShown
+gEpilogueNameShown:
 	.space 0x00000004
-	.global gData_02000a38
-gData_02000a38:
+	.global gEpilogueNameX
+gEpilogueNameX:

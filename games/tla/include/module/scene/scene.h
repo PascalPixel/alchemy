@@ -1462,20 +1462,6 @@ void Func_02003268();
 void Func_02003218();
 void Func_020032a0();
 
-extern s8 gData_02000a34;
-extern s16 gData_02000a38;
-extern s16 gData_02000a2c;
-extern struct EpilogueSprite gData_02000a00;
-
-extern const u16 Data_02000874[];
-
-extern s32 Data_020008f0;
-extern s32 Data_02000a30;
-
-extern char ResourceId_GreenPanel;
-
-extern s32 gData_02000a28;
-
 s32 Func_0200084c();
 
 void Func_0200126c(s32 id);

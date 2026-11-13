@@ -1,5 +1,8 @@
 /// @file
-/// The scene code of overlay 0x6b3, in ROM order.
+/// The epilogue: the party's last words, line after line in a message window
+/// with the speaker's name on a green panel beside it, over the ending's
+/// pictures, from "Finally, we've..." (MsgFinallyWeVe) to The End; then it
+/// waits for a button, or three minutes, and returns to the title.
 
 #include "battle.h"
 #include "field.h"
@@ -34,11 +37,12 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-void Func_0200005c(void) {
-  if (gData_02000a34 != 0) {
-    gData_02000a00.unk0c = gData_02000a38 << 16;
-    gData_02000a00.unk10 = gData_02000a2c << 16;
-    Func_0200083c(&gData_02000a00);
+/// Each frame while a name is shown, keeps the green panel under it.
+void Epilogue_PlaceNamePanel(void) {
+  if (gEpilogueNameShown != 0) {
+    gEpilogueNamePanel.unk0c = gEpilogueNameX << 16;
+    gEpilogueNamePanel.unk10 = gEpilogueNameY << 16;
+    Func_0200083c(&gEpilogueNamePanel);
   }
 }
 
@@ -79,7 +83,9 @@ static __inline__ void Set(struct EpilogueSprite *sprite, s32 a, s32 b, u32 c,
   Func_02000834(sprite, a, b, c, tile);
 }
 
-void Func_02000098(void) {
+/// Loads the green panel the speakers' names are written on, and starts
+/// Epilogue_PlaceNamePanel.
+void Epilogue_LoadNamePanel(void) {
   /* FAKEMATCH(wrapper): the size through Value1; as a direct call, 21 of 69
    * instructions differ in tla-en. */
   void *buffer = (void *)Value1((s32 (*)())Heap_Alloc, 0x800);
@@ -91,13 +97,13 @@ void Func_02000098(void) {
   s32 value;
 
   Dma_Set(Data_02000874, (void *)0x050003c0, 0x80000010, REG_DMA3);
-  sprite = &gData_02000a00;
+  sprite = &gEpilogueNamePanel;
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_GreenPanel),
                         buffer);
-  slot = &Data_020008f0;
+  slot = &gEpilogueNamePanelEntry;
   value = Resource_FindFreeEntry();
   *slot = value;
-  tileSlot = &Data_02000a30;
+  tileSlot = &gEpilogueNamePanelTile;
   value = Vram_Load(value, 0x800, buffer);
   *tileSlot = value;
   Set(sprite, 0, 0, 0xc0000000, value);
@@ -107,19 +113,19 @@ void Func_02000098(void) {
   sprite->unk09_4 = 14;
   Heap_Release(buffer);
   zero = 0;
-  gData_02000a34 = zero;
+  gEpilogueNameShown = zero;
   priority = 0x480;
-  FieldTask_AddFrame(Func_0200005c, priority);
+  FieldTask_AddFrame(Epilogue_PlaceNamePanel, priority);
 }
 
 struct EpilogueWindow *Message_OpenWindow(s32 id, s32 x, s32 y, s32 resource);
 
 /// Opens the epilogue's message window at x and y and, unless bit 15 of the
-/// message is set, a name window at left and line that Func_0200005c follows;
-/// in mode 2 it restarts the window's text. Then it waits for the text, closes
-/// both windows and waits the given frames.
-void Func_02000158(s32 message, s32 x, s32 y, s32 left, s32 line, s32 frames,
-                   s32 mode) {
+/// message is set, a name window at left and line that Epilogue_PlaceNamePanel
+/// follows; in mode 2 it restarts the window's text. Then it waits for the
+/// text, closes both windows and waits the given frames.
+void Epilogue_ShowLineAt(s32 message, s32 x, s32 y, s32 left, s32 line,
+                         s32 frames, s32 mode) {
   s32 wide;
   struct EpilogueWindow *window;
   struct EpilogueWindow *name;
@@ -127,7 +133,7 @@ void Func_02000158(s32 message, s32 x, s32 y, s32 left, s32 line, s32 frames,
   name = 0;
   wide = 0x8000 & message;
   message &= 0x7fff;
-  window = Message_OpenWindow(gData_02000a28, x, y,
+  window = Message_OpenWindow(gEpilogueMessage, x, y,
                               (BattleEffect_GetResourceId(message) << 16) | 4);
   if (!wide) {
     /* FAKEMATCH(temporary): the name window held in a temporary until after
@@ -135,9 +141,9 @@ void Func_02000158(s32 message, s32 x, s32 y, s32 left, s32 line, s32 frames,
      * differ in tla-en. */
     struct EpilogueWindow *opened = Portrait_OpenWindow(message, 0, left, line);
 
-    gData_02000a34 = 1;
-    gData_02000a38 = left << 3;
-    gData_02000a2c = line << 3;
+    gEpilogueNameShown = 1;
+    gEpilogueNameX = left << 3;
+    gEpilogueNameY = line << 3;
     name = opened;
   }
   if (mode == 2) {
@@ -151,7 +157,7 @@ void Func_02000158(s32 message, s32 x, s32 y, s32 left, s32 line, s32 frames,
   Window_Close(window, 2);
   if (!wide) {
     Window_Close(name, 2);
-    gData_02000a34 = wide;
+    gEpilogueNameShown = wide;
   }
   if (frames > 0) {
     s32 i = frames;
@@ -160,11 +166,13 @@ void Func_02000158(s32 message, s32 x, s32 y, s32 left, s32 line, s32 frames,
       System_Wait(1);
     } while (--i != 0);
   }
-  gData_02000a28++;
+  gEpilogueMessage++;
 }
 
-// Draft of overlay 6b3 Func_02000244: centres a message and hands it to
-// Func_02000158. The logic is right; the listing keeps x and y in their stack
+/// Shows the epilogue's next line, spoken by speaker (its portrait and name),
+/// centred on the screen's top (position 0), its middle (1) or its foot (2),
+/// then holds it frames more.
+// The listing keeps x and y in their stack
 // slots (it stores y in every branch and loads both once before the call),
 // where this draft forwards y as a constant and reloads x in each branch, and
 // the listing builds x's and y's zero in r4 apart from the mode's zero in r3.
@@ -173,7 +181,7 @@ void Func_02000158(s32 message, s32 x, s32 y, s32 left, s32 line, s32 frames,
 
 void Text_GetMessageSize();
 
-void Func_02000244(s32 message, s32 position, s32 frames) {
+void Epilogue_ShowLine(s32 message, s32 position, s32 frames) {
   s32 x;
   s32 y;
   s32 width;
@@ -189,7 +197,7 @@ void Func_02000244(s32 message, s32 position, s32 frames) {
   x = left;
   y = left;
   wide = message & 0x8000;
-  Text_GetMessageSize(gData_02000a28, &x, &y, &width, &height);
+  Text_GetMessageSize(gEpilogueMessage, &x, &y, &width, &height);
   if (width <= 24) {
     if (!wide)
       x = (25 - width) / 2 + 5;
@@ -217,7 +225,7 @@ void Func_02000244(s32 message, s32 position, s32 frames) {
       line = 15;
     }
   }
-  Func_02000158(message, x, y, left, line, frames, mode);
+  Epilogue_ShowLineAt(message, x, y, left, line, frames, mode);
 }
 
 s32 SceneState_SetScrollTarget();
@@ -258,28 +266,28 @@ s32 Scene_Initialize(void) {
   tiles = Ram_HeapSlots->windowTiles;
   tiles[6] = one;
   tiles[TILES_FLAG_OFFSET] = one;
-  gData_02000a28 = (s32)MsgFinallyWeVe;
-  Func_02000098();
+  gEpilogueMessage = (s32)MsgFinallyWeVe;
+  Epilogue_LoadNamePanel();
   FieldEvent_Wait(30);
-  Call3((void (*)())Func_02000244, 5, 0, 40);
-  Call3((void (*)())Func_02000244, 1, 1, 40);
-  Call3((void (*)())Func_02000244, 6, 0, 40);
-  Call3((void (*)())Func_02000244, 2, 1, 40);
+  Call3((void (*)())Epilogue_ShowLine, 5, 0, 40);
+  Call3((void (*)())Epilogue_ShowLine, 1, 1, 40);
+  Call3((void (*)())Epilogue_ShowLine, 6, 0, 40);
+  Call3((void (*)())Epilogue_ShowLine, 2, 1, 40);
 #if LANGUAGE == LANGUAGE_GERMAN
-  Call3((void (*)())Func_02000244, 2, 1, 40);
+  Call3((void (*)())Epilogue_ShowLine, 2, 1, 40);
 #endif
-  Call3((void (*)())Func_02000244, 3, 0, 30);
-  Call3((void (*)())Func_02000244, 7, 1, 30);
-  Call3((void (*)())Func_02000244, 56, 0, 40);
-  Call3((void (*)())Func_02000244, 60, 1, 30);
-  Call3((void (*)())Func_02000244, 61, 1, 40);
-  Call3((void (*)())Func_02000244, 0, 0, 40);
-  Call3((void (*)())Func_02000244, 62, 1, 30);
-  Call3((void (*)())Func_02000244, 0, 0, 30);
-  Call3((void (*)())Func_02000244, 0, 0, 30);
-  Call3((void (*)())Func_02000244, 5, 1, 40);
-  Call3((void (*)())Func_02000244, 4, 0, 30);
-  Func_02000244(1, 1, 30);
+  Call3((void (*)())Epilogue_ShowLine, 3, 0, 30);
+  Call3((void (*)())Epilogue_ShowLine, 7, 1, 30);
+  Call3((void (*)())Epilogue_ShowLine, 56, 0, 40);
+  Call3((void (*)())Epilogue_ShowLine, 60, 1, 30);
+  Call3((void (*)())Epilogue_ShowLine, 61, 1, 40);
+  Call3((void (*)())Epilogue_ShowLine, 0, 0, 40);
+  Call3((void (*)())Epilogue_ShowLine, 62, 1, 30);
+  Call3((void (*)())Epilogue_ShowLine, 0, 0, 30);
+  Call3((void (*)())Epilogue_ShowLine, 0, 0, 30);
+  Call3((void (*)())Epilogue_ShowLine, 5, 1, 40);
+  Call3((void (*)())Epilogue_ShowLine, 4, 0, 30);
+  Epilogue_ShowLine(1, 1, 30);
   Event_PlaySound(67);
   scroll = gBgScroll;
   scroll[3].y = 16;
@@ -287,15 +295,15 @@ s32 Scene_Initialize(void) {
   Call3((void (*)())Func_0200084c, (s32)&ResourceId_EndingCliffDayPicture,
         (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(100);
-  Call3((void (*)())Func_02000244, 60, 2, 30);
-  Call3((void (*)())Func_02000244, 61, 2, 40);
-  Call3((void (*)())Func_02000244, 0, 2, 30);
-  Call3((void (*)())Func_02000244, 62, 2, 30);
-  Call3((void (*)())Func_02000244, 1, 2, 40);
+  Call3((void (*)())Epilogue_ShowLine, 60, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 61, 2, 40);
+  Call3((void (*)())Epilogue_ShowLine, 0, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 62, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 1, 2, 40);
 #if LANGUAGE == LANGUAGE_GERMAN
-  Call3((void (*)())Func_02000244, 5, 2, 40);
+  Call3((void (*)())Epilogue_ShowLine, 5, 2, 40);
 #endif
-  Func_02000244(5, 2, 40);
+  Epilogue_ShowLine(5, 2, 40);
   SceneState_SetScrollTarget(120);
   System_Wait(1);
   Func_0200085c();
@@ -303,64 +311,64 @@ s32 Scene_Initialize(void) {
   Call3((void (*)())Func_0200084c, (s32)&ResourceId_EndingCliffSunsetPicture,
         (s32)Ram_MapCellBuffer, 120);
   FieldEvent_Wait(120);
-  Call3((void (*)())Func_02000244, 5, 2, 30);
-  Call3((void (*)())Func_02000244, 7, 2, 30);
-  Call3((void (*)())Func_02000244, 56, 2, 40);
-  Call3((void (*)())Func_02000244, 4, 2, 40);
-  Call3((void (*)())Func_02000244, 4, 2, 40);
-  Call3((void (*)())Func_02000244, 4, 2, 40);
-  Call3((void (*)())Func_02000244, 4, 2, 40);
-  Call3((void (*)())Func_02000244, 4, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 5, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 7, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 56, 2, 40);
+  Call3((void (*)())Epilogue_ShowLine, 4, 2, 40);
+  Call3((void (*)())Epilogue_ShowLine, 4, 2, 40);
+  Call3((void (*)())Epilogue_ShowLine, 4, 2, 40);
+  Call3((void (*)())Epilogue_ShowLine, 4, 2, 40);
+  Call3((void (*)())Epilogue_ShowLine, 4, 2, 30);
 #if LANGUAGE == LANGUAGE_GERMAN
-  Call3((void (*)())Func_02000244, 4, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 4, 2, 30);
 #endif
-  Call3((void (*)())Func_02000244, 0, 2, 30);
-  Call3((void (*)())Func_02000244, 62, 2, 30);
-  Call3((void (*)())Func_02000244, 1, 2, 40);
-  Call3((void (*)())Func_02000244, 1, 2, 40);
-  Call3((void (*)())Func_02000244, 6, 2, 30);
-  Call3((void (*)())Func_02000244, 5, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 0, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 62, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 1, 2, 40);
+  Call3((void (*)())Epilogue_ShowLine, 1, 2, 40);
+  Call3((void (*)())Epilogue_ShowLine, 6, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 5, 2, 30);
 #if LANGUAGE == LANGUAGE_GERMAN
-  Call3((void (*)())Func_02000244, 5, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 5, 2, 30);
 #endif
-  Call3((void (*)())Func_02000244, 3, 2, 40);
+  Call3((void (*)())Epilogue_ShowLine, 3, 2, 40);
 #if LANGUAGE == LANGUAGE_GERMAN
-  Call3((void (*)())Func_02000244, 1, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 1, 2, 30);
 #endif
-  Func_02000244(1, 2, 30);
+  Epilogue_ShowLine(1, 2, 30);
   Event_PlaySound(78);
-  Call3((void (*)())Func_02000244, 0x8040, 2, 30);
-  Call3((void (*)())Func_02000244, 0, 2, 30);
-  Call3((void (*)())Func_02000244, 0x8041, 2, 30);
-  Call3((void (*)())Func_02000244, 0, 2, 30);
-  Call3((void (*)())Func_02000244, 0x8045, 2, 30);
-  Call3((void (*)())Func_02000244, 1, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 0x8040, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 0, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 0x8041, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 0, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 0x8045, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 1, 2, 30);
   Call3((void (*)())Func_0200084c, (s32)&ResourceId_EndingVillagersPictureA,
         (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
   Event_PlaySound(73);
   FieldEvent_Wait(30);
-  Call3((void (*)())Func_02000244, 64, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 64, 2, 30);
 #if LANGUAGE == LANGUAGE_GERMAN
-  Call3((void (*)())Func_02000244, 64, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 64, 2, 30);
 #endif
-  Call3((void (*)())Func_02000244, 65, 2, 30);
-  Call3((void (*)())Func_02000244, 67, 2, 30);
-  Call3((void (*)())Func_02000244, 62, 2, 30);
-  Call3((void (*)())Func_02000244, 70, 2, 30);
-  Call3((void (*)())Func_02000244, 68, 2, 30);
-  Call3((void (*)())Func_02000244, 56, 2, 30);
-  Call3((void (*)())Func_02000244, 1, 2, 40);
-  Func_02000244(56, 2, 40);
+  Call3((void (*)())Epilogue_ShowLine, 65, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 67, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 62, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 70, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 68, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 56, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 1, 2, 40);
+  Epilogue_ShowLine(56, 2, 40);
   SceneState_SetScrollTarget(200);
   System_Wait(1);
   Func_0200085c();
   FieldEvent_Wait(30);
-  Call3((void (*)())Func_02000244, 62, 2, 20);
-  Call3((void (*)())Func_02000244, 0, 2, 40);
-  Call3((void (*)())Func_02000244, 66, 2, 20);
-  Call3((void (*)())Func_02000244, 62, 2, 30);
-  Call3((void (*)())Func_02000244, 66, 2, 40);
+  Call3((void (*)())Epilogue_ShowLine, 62, 2, 20);
+  Call3((void (*)())Epilogue_ShowLine, 0, 2, 40);
+  Call3((void (*)())Epilogue_ShowLine, 66, 2, 20);
+  Call3((void (*)())Epilogue_ShowLine, 62, 2, 30);
+  Call3((void (*)())Epilogue_ShowLine, 66, 2, 40);
   Call3((void (*)())Func_0200084c, 0, (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
   scroll[3].y = zero;

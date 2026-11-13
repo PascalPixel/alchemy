@@ -57,7 +57,7 @@ s32 ColossoMenu_Choose(s32 unused) {
   // HIGHLIGHT_PALETTE, a copy of it with WINDOW_BACKGROUND_COLOR grey.
   palette = (u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
-          DMA_COPY32(8), REG_DMA3);
+          DMA_COPY_WORDS(8), REG_DMA3);
   palette[WINDOW_BACKGROUND_COLOR] = RGB(24, 24, 24);
   while (1) {
     Window_SetTextTileRect(window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1,

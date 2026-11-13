@@ -321,8 +321,8 @@ void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
     *slot = VramCache_FindFreeEntry();
   *tile = VramCache_Load(*slot, 4 * 4 * TILE_SIZE_4BPP, work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
-  Dma_Set(encodedEntry, (void *)&OBJ_PLTT_COLOR(palette, 0), DMA_COPY16(16),
-          REG_DMA3);
+  Dma_Set(encodedEntry, (void *)&OBJ_PLTT_COLOR(palette, 0),
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
 }
 
 /// An empty function. Nothing in the tree names it but its prototype.

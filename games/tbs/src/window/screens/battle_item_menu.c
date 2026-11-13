@@ -46,7 +46,7 @@ void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
   Dma_Set(BG_CHAR_BLOCK(0) + (sourceTile & TILE_NUMBER_MASK) * TILE_SIZE_4BPP,
           BG_CHAR_BLOCK(0) +
               (destinationTile & TILE_NUMBER_MASK) * TILE_SIZE_4BPP,
-          DMA_COPY32(8), REG_DMA3);
+          DMA_COPY_WORDS(8), REG_DMA3);
 }
 
 /// The battle item list for unit `member`: `count` inventory entries (ended by

@@ -942,7 +942,7 @@ void ScreenTransition_UpdateDissolve(void) {
   }
 
   IO_WRITE_QUEUE_PUSH((u32)BG_CHAR_BLOCK(0), (u32)state->paletteNibbles,
-                      (DMA_ENABLE | DMA_32BIT) << 16 | TILE_SIZE_4BPP / 4);
+                      DMA_COPY_WORDS(TILE_SIZE_4BPP / 4));
 }
 
 /// Fills background screen block 4 with tile 0 in WINDOW_PALETTE and, unless
@@ -964,7 +964,7 @@ void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
     for (remainingWords = 7; remainingWords >= 0; --remainingWords)
       *tile++ = pattern;
     Dma_Set(work->solidTile, BG_CHAR_BLOCK(0),
-            (DMA_ENABLE | DMA_32BIT) << 16 | TILE_SIZE_4BPP / 4, REG_DMA3);
+            DMA_COPY_WORDS(TILE_SIZE_4BPP / 4), REG_DMA3);
   }
 }
 

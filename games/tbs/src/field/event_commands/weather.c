@@ -98,8 +98,7 @@ void Weather_UpdateLightning(void) {
     // A frame after each flash: fade back to the dark colours over 12 frames.
     PaletteFade_SetTarget((s32)work, 1);
     Dma_Set(work->delta, target->delta,
-            (DMA_ENABLE | DMA_32BIT) << 16 | sizeof target->delta / 4,
-            REG_DMA3);
+            DMA_COPY_WORDS(sizeof target->delta / 4), REG_DMA3);
     target->duration = 12;
     target->step = 0;
     break;

@@ -184,10 +184,6 @@ enum {
 /// The DMA control word that fills count words from one fixed source word.
 #define DMA_FILL32(count)                                                      \
   ((DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (count))
-/// The DMA control word that copies count words.
-#define DMA_COPY32(count) ((DMA_ENABLE | DMA_32BIT) << 16 | (count))
-/// The DMA control word that copies count halfwords.
-#define DMA_COPY16(count) ((DMA_ENABLE << 16) | (count))
 
 /// How a window sprite moves (struct WindowSprite.motion), run each frame
 /// by WindowSprite_UpdateAll. 0 is a free window sprite.

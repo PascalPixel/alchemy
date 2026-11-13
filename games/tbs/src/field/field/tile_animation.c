@@ -345,7 +345,7 @@ UNUSED s32 PaletteCycle_Add(s16 paletteNumber, s16 firstColor, s16 delay,
   cycle->count = colorCount16;
   cycle->source = paletteColors;
   cycle->delay = delay;
-  Dma_Set(paletteColors, cycle->colors, DMA_ENABLE << 16 | colorCount16,
+  Dma_Set(paletteColors, cycle->colors, DMA_COPY_HALFWORDS(colorCount16),
           REG_DMA3);
   paletteQueue->count++;
   return 0;

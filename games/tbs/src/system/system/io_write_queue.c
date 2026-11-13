@@ -47,23 +47,15 @@ void IoWriteQueue_FlushPending(void) {
   queue = &gIoWriteQueue;
   count = queue->count;
   if (count != 0) {
-    QueueFlushRoutine routine;
-    u32 size = (u32)TransferCommandExecutor_Size;
-    u32 wordCount = size >> 2;
-    // (DMA_ENABLE | DMA_32BIT) << 16: copy the routine a word at a time
-    u32 control = 0x84;
+    u32 wordCount = (u32)TransferCommandExecutor_Size / 4;
+    u8 routineBytes[wordCount * 4];
+    QueueFlushRoutine routine = (QueueFlushRoutine)routineBytes;
 
-    control <<= 24;
-    {
-      u8 routineBytes[wordCount << 2];
-
-      // The executor must finish before this stack buffer goes out of scope.
-      routine = (QueueFlushRoutine)routineBytes;
-      Dma_Set(Resource_ExecuteTransfer, (void *)routine, wordCount | control,
-              REG_DMA3);
-      routine(queue, count);
-      queue->count = 0;
-    }
+    // The routine runs from its copy on the stack, which lasts until it ends.
+    Dma_Set(Resource_ExecuteTransfer, routine, DMA_COPY_WORDS(wordCount),
+            REG_DMA3);
+    routine(queue, count);
+    queue->count = 0;
   }
 }
 

@@ -548,8 +548,7 @@ void Actor_Snapshot(void) {
     if (actor == NULL)
       continue;
     *indices++ = actorIndex;
-    Dma_Set(actor, snapshot,
-            (DMA_ENABLE | DMA_32BIT) << 16 | (sizeof(struct Actor) / 4),
+    Dma_Set(actor, snapshot, DMA_COPY_WORDS(sizeof(struct Actor) / 4),
             REG_DMA3);
     if (actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
       struct Sprite *sprite = actor->sprite;
@@ -610,8 +609,7 @@ void Actor_Restore(void) {
       // pointer; the priorities go to the sprite the actor has now,
       // which is then put back.
       sprite = actor->sprite;
-      Dma_Set(snapshot, actor,
-              (DMA_ENABLE | DMA_32BIT) << 16 | (sizeof(struct Actor) / 4),
+      Dma_Set(snapshot, actor, DMA_COPY_WORDS(sizeof(struct Actor) / 4),
               REG_DMA3);
       animation = *animations;
       if (animation != 0)

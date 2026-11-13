@@ -85,12 +85,11 @@ void PaletteFade_Update(void) {
     u16 *packed = work->packed[work->page];
 
     IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, (u32)packed,
-                        (DMA_ENABLE | DMA_32BIT) << 16 | (COLOR_HALF / 2));
+                        DMA_COPY_WORDS(COLOR_HALF / 2));
     IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(packed + COLOR_HALF),
-                        (DMA_ENABLE | DMA_32BIT) << 16 | (COLOR_HALF / 2));
+                        DMA_COPY_WORDS(COLOR_HALF / 2));
   }
 }
-
 
 /// Builds colours for the palette fade from the palette src into dst, which
 /// holds each colour as B, G and R channels shifted up 10 bits. mode below
@@ -125,7 +124,7 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
     *dst++ = mode & 0x7c00;
     *dst++ = (mode & 0x03e0) << 5;
     *dst++ = (mode & 0x001f) << 10;
-    Dma_Set(dst - 3, dst, (((colorCount - 1) * 6) >> 1) | (DMA_ENABLE << 16),
+    Dma_Set(dst - 3, dst, DMA_COPY_HALFWORDS(((colorCount - 1) * 6) >> 1),
             REG_DMA3);
   } else if (mode < PALETTE_TINT_FLAGS) {
     switch (mode) {
@@ -357,8 +356,8 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
     // colours of three halfwords in.
     if (half == 2)
       mode += COLOR_HALF * 3 * sizeof(u16);
-    Dma_Set((const void *)mode, dst,
-            ((colorCount * 6) >> 2) | (DMA_ENABLE | DMA_32BIT) << 16, REG_DMA3);
+    Dma_Set((const void *)mode, dst, DMA_COPY_WORDS((colorCount * 6) >> 2),
+            REG_DMA3);
   }
 }
 
@@ -370,10 +369,10 @@ void PaletteFade_Initialize(void) {
 
   work = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_FADE, sizeof(*work));
   Dma_Fill32(0, work, sizeof(*work));
-  Dma_Set((void *)BG_PLTT, &work->palette[0],
-          (DMA_ENABLE | DMA_32BIT) << 16 | (COLOR_HALF / 2), REG_DMA3);
+  Dma_Set((void *)BG_PLTT, &work->palette[0], DMA_COPY_WORDS(COLOR_HALF / 2),
+          REG_DMA3);
   Dma_Set((void *)OBJ_PLTT, &work->palette[COLOR_HALF],
-          (DMA_ENABLE | DMA_32BIT) << 16 | (COLOR_HALF / 2), REG_DMA3);
+          DMA_COPY_WORDS(COLOR_HALF / 2), REG_DMA3);
   PaletteFade_Build(PALETTE_TINT_NONE, work->palette, work->target, 0);
   Task_Add(PaletteFade_Update, TASK_PASS_FRAME + 15);
 }

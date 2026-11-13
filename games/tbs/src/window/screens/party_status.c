@@ -160,8 +160,8 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
 
   if (work->battleMode == WINDOW_FIELD) {
     Dma_Set((const void *)Palette_GetBasicSpriteColors(),
-            (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0), DMA_COPY16(16),
-            REG_DMA3);
+            (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
+            DMA_COPY_HALFWORDS(16), REG_DMA3);
     BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR) =
         BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   }

@@ -113,7 +113,7 @@ that step is called building. Nothing is tidied on the way, so the game's
 bugs are all still there ([BUG, BUGFIX and UBFIX](#bug-bugfix-and-ubfix)
 shows one). Sometimes a line is written in an unusual way where a plainer
 one would do the same, because only that way builds the same bytes
-([Introduction](../README.md)).
+([Welcome](../README.md)).
 
 Evidence: plain English; the project's own words.
 

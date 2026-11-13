@@ -266,7 +266,7 @@ static s32 FuchinTemple_FaceLeader(struct Actor *updated) {
 #endif
 }
 
-/// Chooses the outside entrance table or the shared interior
+/// Chooses the outside entrance table or the shared rooms'
 /// entrances.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;

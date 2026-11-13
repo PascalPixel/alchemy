@@ -33,7 +33,7 @@
 /// party's battle state, sets gMainRoutineWork.battleType back to
 /// BATTLE_TYPE_NORMAL and releases heap block 10. A broken link also sets flag
 /// FLAG_AREA_TEMP_E8, which the Battle Arena reads
-/// (BattleArena_RunRoundResult).
+/// (BattleArena_Initialize).
 s32 Battle_Run(s32 enemyGroup) {
   struct BattleCamera *camera;
   s32 *focus;
@@ -337,7 +337,7 @@ won:
 
 aborted:
   // The link broke, or no actions could be gathered. Flag FLAG_AREA_TEMP_E8
-  // tells the Battle Arena (BattleArena_RunRoundResult) the battle did not
+  // tells the Battle Arena (BattleArena_Initialize) the battle did not
   // finish.
   Battle_ClearSerialTransferPayload();
   Task_SuspendAll(0);

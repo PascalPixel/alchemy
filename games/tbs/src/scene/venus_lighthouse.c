@@ -2784,7 +2784,7 @@ s32 VenusLighthouse_Initialize(void) {
   GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_LIT);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   sceneId = gMainRoutineWork.next;
-  // Restore the scholars and soldiers outside and each interior puzzle by its
+  // Restore the scholars and soldiers outside and each room's puzzle by its
   // entrance.
   if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);

@@ -75,7 +75,7 @@
 /// (MsgLobbyLinkDisconnected)
 #define FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED FLAG_SCENE_TEMP_05
 /// The first of eight flags, one per character from Isaac, each set while that
-/// character is in the battle party (BattleArena_RunRoundResult).
+/// character is in the battle party (BattleArena_Initialize).
 #define FLAG_BATTLE_ARENA_IN_PARTY_FIRST FLAG_SCENE_TEMP_F0
 /// The attendant has explained the Battle Arena once. Talking to her again
 /// offers to apply.
@@ -411,7 +411,7 @@ static void BattleArena_WriteSlotValue(s32 slot) {
 /// - It raises LOBBY_EVENT_DISCONNECTED when the link is lost while a battle is
 ///   being arranged.
 ///
-/// BattleArena_RunRoundResult schedules it on every arrival, and
+/// BattleArena_Initialize schedules it on every arrival, and
 /// BattleArena_EnterBattle removes it.
 static void BattleArena_PollPeerReady(void) {
 #else
@@ -1527,7 +1527,7 @@ u8 *BattleArena_GetTriggers(void) { return (u8 *)gBattleArenaTriggers; }
 ///
 /// It saves through Save_ProcessSelectedFile, which writes the first 16 bytes
 /// of the save stamp (gBattleArenaRecord) into the current file.
-/// BattleArena_RunRoundResult calls it after each linked battle won or lost.
+/// BattleArena_Initialize calls it after each linked battle won or lost.
 static s32 BattleArena_SaveBattleResults(void) {
   // A shared inline message-pair helper grows each save routine from 108 to
   // 112 bytes in the native build, so retain the two copies.
@@ -1574,7 +1574,7 @@ static s32 BattleArena_SaveMonsterBattleResults(void) {
 /// Shows value, at most 999, on the wall board.
 ///
 /// The board is three map cells at row 8, columns 14 to 16, each copied from
-/// column 27 at the row of its digit. BattleArena_RunRoundResult shows the most
+/// column 27 at the row of its digit. BattleArena_Initialize shows the most
 /// linked battles won in a row.
 static s32 BattleArena_DrawThreeDigitValue(s32 value) {
   s32 digit;
@@ -1602,7 +1602,7 @@ static s32 BattleArena_DrawThreeDigitValue(s32 value) {
 /// Updates gMainRoutineWork.linkTallies, saves after linked battles and new
 /// monster records, and restores the party's HP, PP and Djinn unless a monster
 /// series goes on. Returns 0.
-s32 BattleArena_RunRoundResult(void) {
+s32 BattleArena_Initialize(void) {
   s32 i;
   struct FieldWork *work;
   void (*func)(void);

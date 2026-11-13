@@ -900,7 +900,7 @@ s32 Imil_Initialize(void) {
       Imil_ArriveFromFallsCave();
     }
   } else if (gMainRoutineWork.next == (s32)&SceneId_IceRooms) {
-    // Restore each interior's occupants before running its arrival event.
+    // Restore each room's occupants before running its arrival event.
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     entrance = gMainRoutineWork.entrance;

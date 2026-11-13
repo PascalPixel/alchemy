@@ -2556,7 +2556,7 @@ static void WorldMap_UpdateLighthouseQuake(void) {
 /// A leg of the Tolbi-bound Ship's crossing, in which the ship sails north to
 /// its anchorage off the island.
 ///
-/// The party comes out of the ship's interior (SHIP_ROOMS_TO_WORLD_MAP). The
+/// The party comes out of the ship's rooms (SHIP_ROOMS_TO_WORLD_MAP). The
 /// ship sails to where ACTOR_TOLBI_SHIP stands, and the party goes back into
 /// it (WORLD_MAP_TO_SHIP_ROOMS_ROWING_DECK_ISLAND).
 ///

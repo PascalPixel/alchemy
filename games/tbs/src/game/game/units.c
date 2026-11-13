@@ -299,33 +299,30 @@ void Unit_Calculate(s32 unitId) {
         effectKind = stats->item->effects[effectIndex].kind;
         effectAmount = stats->item->effects[effectIndex].amount;
         stats->kind = effectKind;
-        effectKind -= EQUIP_EFFECT_SCALE_HP;
         stats->amount = effectAmount;
-        // The kind less EQUIP_EFFECT_SCALE_HP, as the switch table begins
-        // there.
-        switch (effectKind) {
-        case EQUIP_EFFECT_SCALE_HP - EQUIP_EFFECT_SCALE_HP:
+        switch (stats->kind) {
+        case EQUIP_EFFECT_SCALE_HP:
           stats->hp = stats->hp * stats->amount / STAT_SCALE_ONE;
           break;
-        case EQUIP_EFFECT_SCALE_HP_REGEN - EQUIP_EFFECT_SCALE_HP:
+        case EQUIP_EFFECT_SCALE_HP_REGEN:
           stats->hpRegen = stats->hpRegen * stats->amount / STAT_SCALE_ONE;
           break;
-        case EQUIP_EFFECT_SCALE_PP - EQUIP_EFFECT_SCALE_HP:
+        case EQUIP_EFFECT_SCALE_PP:
           stats->pp = stats->pp * stats->amount / STAT_SCALE_ONE;
           break;
-        case EQUIP_EFFECT_SCALE_PP_REGEN - EQUIP_EFFECT_SCALE_HP:
+        case EQUIP_EFFECT_SCALE_PP_REGEN:
           stats->ppRegen = stats->ppRegen * stats->amount / STAT_SCALE_ONE;
           break;
-        case EQUIP_EFFECT_SCALE_ATTACK - EQUIP_EFFECT_SCALE_HP:
+        case EQUIP_EFFECT_SCALE_ATTACK:
           stats->atk = stats->atk * stats->amount / STAT_SCALE_ONE;
           break;
-        case EQUIP_EFFECT_SCALE_DEFENSE - EQUIP_EFFECT_SCALE_HP:
+        case EQUIP_EFFECT_SCALE_DEFENSE:
           stats->def = stats->def * stats->amount / STAT_SCALE_ONE;
           break;
-        case EQUIP_EFFECT_SCALE_AGILITY - EQUIP_EFFECT_SCALE_HP:
+        case EQUIP_EFFECT_SCALE_AGILITY:
           stats->agi = stats->agi * stats->amount / STAT_SCALE_ONE;
           break;
-        case EQUIP_EFFECT_SCALE_LUCK - EQUIP_EFFECT_SCALE_HP:
+        case EQUIP_EFFECT_SCALE_LUCK:
           stats->luck = stats->luck * stats->amount / STAT_SCALE_ONE;
           break;
         }
@@ -428,31 +425,24 @@ void Unit_Calculate(s32 unitId) {
 /// entering a scene (Scene_Arrive, FieldSequence_Run) and at the end of
 /// an event, so the encounter rate follows the cap.
 void GameFlag_RefreshLureCap(void) {
-  s32 partySize;
-  s32 partyIndex;
+  s32 partySize = Party_CountMembers();
+  s32 member;
 
   GameFlag_Clear(FLAG_LURE_CAP);
-  partySize = Party_CountMembers();
-  for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    struct Unit *unit;
-    s32 inventorySlot;
+  for (member = 0; member < partySize; member++) {
+    struct Unit *unit = Unit_Get(gMainRoutineWork.party[member]);
+    s32 slot;
 
-    unit = Unit_Get(gMainRoutineWork.party[partyIndex]);
-    for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
-      if (unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
-        struct EquipEffect *effect;
-        s32 effectIndex;
+    for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+      struct ItemDefinition *item;
+      s32 effect;
 
-        effect = Item_GetDirect(unit->inventory[inventorySlot])->effects;
-        for (effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS; effectIndex++) {
-          u8 effectKind;
-
-          effectKind = effect->kind;
-          effect++;
-          if (effectKind == EQUIP_EFFECT_LURE) {
-            GameFlag_Set(FLAG_LURE_CAP);
-          }
-        }
+      if (!(unit->inventory[slot] & INVENTORY_EQUIPPED))
+        continue;
+      item = Item_GetDirect(unit->inventory[slot]);
+      for (effect = 0; effect < EQUIP_EFFECT_SLOTS; effect++) {
+        if (item->effects[effect].kind == EQUIP_EFFECT_LURE)
+          GameFlag_Set(FLAG_LURE_CAP);
       }
     }
   }
@@ -464,46 +454,16 @@ void GameFlag_RefreshLureCap(void) {
 /// and the file list (FileList_SelectFile, Save_BuildFileSummary) and the main
 /// menu compare saves with it.
 u32 BuildStamp_GetTime(void) {
-  u8 *digits;
-  s32 hourTens;
-  s32 hourUnits;
-  s32 minuteTens;
-  s32 minuteUnits;
-  s32 secondTens;
-  s32 secondUnits;
-  s32 hours;
-  s32 minutes;
-  s32 seconds;
-  s32 packed;
-  s32 shifted;
-  s32 result;
-
   // The stamp is six ASCII digits, hhmmss.
-  digits = Resource_GetTableEntry((s32)&ResourceId_BuildStamp);
-  hourTens = *digits;
-  hours = (hourTens - '0') * 10;
-  digits++;
-  hourUnits = *digits;
-  digits++;
-  hours += hourUnits - '0';
-  minuteTens = *digits;
-  minutes = (minuteTens - '0') * 10;
-  digits++;
-  minuteUnits = *digits;
-  digits++;
-  minutes += minuteUnits - '0';
-  secondTens = digits[0];
-  seconds = (secondTens - '0') * 10;
-  secondUnits = digits[1];
-  seconds += secondUnits - '0';
-  packed = (((hours << 4) + minutes) << 6) + seconds;
-  shifted = 0x80 << 21;
-  shifted |= packed << 16;
-  result = shifted >> 16;
-  if (gDebugMode != 0) {
-    result |= 0xffff8000;
-  }
-  return (u16)result;
+  const u8 *digits = Resource_GetTableEntry((s32)&ResourceId_BuildStamp);
+  s32 hours = (digits[0] - '0') * 10 + digits[1] - '0';
+  s32 minutes = (digits[2] - '0') * 10 + digits[3] - '0';
+  s32 seconds = (digits[4] - '0') * 10 + digits[5] - '0';
+  u32 stamp = (((hours * 16 + minutes) * 64 + seconds) | 0x1000) & 0xffff;
+
+  if (gDebugMode != 0)
+    stamp |= 0x8000;
+  return stamp;
 }
 
 /// Clears the game-state header, the scene state with the Colosso's inventory

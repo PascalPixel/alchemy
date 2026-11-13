@@ -86,11 +86,6 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x,
                                  s32 y); // BattleEffect_RunImpactBurst
 void BattleEffect_EndCanvasLayer(void);
 
-struct Point2D {
-  s32 x;
-  s32 y;
-};
-
 /// Unused: nothing reaches it (no handler, summon case or call). A second
 /// copy of The Broken Seal's BattleEffect_RunNereid, which this game keeps
 /// for summon 2 as BattleEffect_RunNereid. As written:
@@ -730,11 +725,6 @@ struct FxAnimObject {
   u8 unk09_4 : 4;
   u8 unk0a[16];
   u8 flags;
-};
-
-struct EffectCamera {
-  s32 eye[3];
-  s32 pos[3];
 };
 
 extern char ResourceId_FlameSheetB;

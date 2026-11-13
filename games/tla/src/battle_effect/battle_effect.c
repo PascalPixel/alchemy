@@ -115,41 +115,6 @@
 // The effects of abilities and summons from the opening every Djinn effect
 // shares to Meteor Blow.
 
-/* VIEW(ability_effects): tag struct Scale as struct Scale__ability_effects;
- * module/battle_effect/battle_effect.h has the same members, but
- * battle_effect_internal.h declares it before that header defines it, so of a
- * smaller alignment; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:21102: redefinition of `struct
- * Scale'. */
-#define Scale Scale__ability_effects
-/* VIEW(ability_effects): tag struct WordPair as struct
- * WordPair__ability_effects; module/battle_effect/battle_effect.h has the same
- * members, but battle_effect_internal.h declares it before that header defines
- * it, so of a smaller alignment; tried with the definition the rest of the
- * object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:43815: redefinition of `struct
- * WordPair'. */
-#define WordPair WordPair__ability_effects
-/* VIEW(ability_effects): tag struct Point2D as struct Point2D__ability_effects;
- * module/battle_effect/battle_effect.h has the same, which the part repeats as
- * it stood alone; tried with the definition the rest of the object has, it does
- * not compile in tla-ja: games/tla/src/battle_effect/battle_effect.c:27342:
- * redefinition of `struct Point2D'. */
-#define Point2D Point2D__ability_effects
-/* VIEW(ability_effects): tag struct EffectCamera as struct
- * EffectCamera__ability_effects; module/battle_effect/battle_effect.h has the
- * same, which the part repeats as it stood alone; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:27988: redefinition of `struct
- * EffectCamera'. */
-#define EffectCamera EffectCamera__ability_effects
-/* VIEW(ability_effects): typedef BlitterPair as BlitterPair__ability_effects;
- * module/battle_effect/battle_effect.h has the same, which the part repeats as
- * it stood alone; tried with the definition the rest of the object has, it does
- * not compile in tla-ja: games/tla/src/battle_effect/battle_effect.c:19636:
- * redefinition of `BlitterPair'. */
-#define BlitterPair BlitterPair__ability_effects
 #define SpriteAttributes SpriteAttributes__ability_effects
 #define FxSlot FxSlot__ability_effects
 #define SpriteObject SpriteObject__ability_effects
@@ -223,13 +188,6 @@
 #undef Render_ProjectVertices
 #undef Render_DrawModelList
 
-#undef Scale
-#undef WordPair
-
-#undef Point2D
-#undef EffectCamera
-#undef BlitterPair
-
 #include "battle_effect/liquifier.c"
 
 #undef HI
@@ -238,34 +196,6 @@
 // The Megiddo, Moloch and Iris summons, Odyssey, and the model renderers the
 // effects draw with.
 
-/* VIEW(summon_effects): tag struct Scale as struct Scale__summon_effects;
- * module/battle_effect/battle_effect.h has the same members, but
- * battle_effect_internal.h declares it before that header defines it, so of a
- * smaller alignment; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:62377: redefinition of `struct
- * Scale'. */
-#define Scale Scale__summon_effects
-/* VIEW(summon_effects): tag struct WordPair as struct WordPair__summon_effects;
- * module/battle_effect/battle_effect.h has the same members, but
- * battle_effect_internal.h declares it before that header defines it, so of a
- * smaller alignment; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:62372: redefinition of `struct
- * WordPair'. */
-#define WordPair WordPair__summon_effects
-/* VIEW(summon_effects): tag struct Point2D as struct Point2D__summon_effects;
- * module/battle_effect/battle_effect.h has the same, which the part repeats as
- * it stood alone; tried with the definition the rest of the object has, it does
- * not compile in tla-ja: games/tla/src/battle_effect/battle_effect.c:61784:
- * redefinition of `struct Point2D'. */
-#define Point2D Point2D__summon_effects
-/* VIEW(summon_effects): typedef BlitterPair as BlitterPair__summon_effects;
- * module/battle_effect/battle_effect.h has the same, which the part repeats as
- * it stood alone; tried with the definition the rest of the object has, it does
- * not compile in tla-ja: games/tla/src/battle_effect/battle_effect.c:61456:
- * redefinition of `BlitterPair'. */
-#define BlitterPair BlitterPair__summon_effects
 #define Model Model__summon_effects
 #define Texture Texture__summon_effects
 #define ResourceTableEntry ResourceTableEntry__summon_effects
@@ -284,8 +214,3 @@
 #undef EffectSprite_Acquire
 #undef Texture
 #undef Model
-#undef Scale
-#undef WordPair
-
-#undef Point2D
-#undef BlitterPair

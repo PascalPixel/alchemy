@@ -95,11 +95,6 @@ struct FloraWork {
   u16 palette[240];
 };
 
-struct WordPair {
-  s32 a;
-  s32 b;
-};
-
 /* VIEW(f179f18): variable gResourceTableEntries as extern struct
  * ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct
  * VramBlockCacheEntry gResourceTableEntries[]; tried as the 10 declarations'

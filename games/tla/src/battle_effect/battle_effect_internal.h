@@ -13,6 +13,7 @@
 #include "bg_scroll.h"
 #include "system/dma.h"
 #include "battle/battle_effect.h"
+#include "module/battle_effect/battle_effect.h"
 #include "battle_effect_work.h"
 #include "field/effect_step.h"
 #include "battle_display.h"

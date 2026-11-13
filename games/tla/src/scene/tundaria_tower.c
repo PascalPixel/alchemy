@@ -1808,7 +1808,7 @@ struct ActorPlacement gData_02003648[] = {
 };
 
 struct ActorPlacement gData_02003660[] = {
-    {245, 0x64, 7, PIXELS(424), 0, PIXELS(536), FACING_WEST, 0, 0},
+    ACTOR_PLACEMENT(245, 0x64, 7, 424, 0, 536, FACING_WEST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 

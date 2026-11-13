@@ -92,16 +92,54 @@ struct SceneEntrance {
 #define SCENE_EXITS_END 0x1ff
 
 /// Actor placements.
+/// An actor a scene places: its sprite, the condition for placing it,
+/// how it behaves, where it stands and which way it faces, and how it turns to
+/// talk.
 struct ActorPlacement {
   s16 sprite;    ///< the actor's sprite; -1 ends the table
   s16 condition; ///< CONDITION_ALWAYS (-1), or a flag condition
+  /// A movement type (enum MovementType) or an actor script, for
+  /// Actor_SetActionCallback.
   s32 behavior;
-  s32 x;      ///< 16.16 fixed-point pixels
-  s32 y;      ///< 16.16 fixed-point pixels
-  s32 z;      ///< 16.16 fixed-point pixels
-  u16 facing; ///< 1/65536 turns (enum Facing)
-  u8 talkFacing;
+  s32 x;         ///< 16.16 fixed-point pixels
+  s32 y;         ///< 16.16 fixed-point pixels
+  s32 z;         ///< 16.16 fixed-point pixels
+  u16 facing;    ///< 1/65536 turns (enum Facing)
+  u8 talkFacing; ///< enum ActorTalkFacing
   u8 flags;
+};
+
+/// One row of a scene's actor placements, its spot in plain pixels.
+#define ACTOR_PLACEMENT(sprite, condition, movement, x, y, z, facing,          \
+                        talkFacing, flags)                                     \
+  {sprite, condition, movement,   Q16(x), Q16(y),                              \
+   Q16(z), facing,    talkFacing, flags}
+
+/// The movement types an actor placement's behavior can name, which
+/// Actor_SetActionCallback turns into scripts: The Broken Seal's first six,
+/// and its reset script moved to 10. Types 7, 8, 9 and 11 are scripts of
+/// The Lost Age's own.
+enum MovementType {
+  MOVEMENT_TYPE_STAND = 1, ///< its script only ends
+  MOVEMENT_TYPE_WANDER = 2,
+  MOVEMENT_TYPE_WANDER_NEAR = 3,
+  MOVEMENT_TYPE_WANDER_CLOSE = 4,
+  MOVEMENT_TYPE_FOLLOW_WATCHED = 5, ///< moves toward the watched actor
+  MOVEMENT_TYPE_FACE_LEADER = 6,    ///< watches the leader and turns toward it
+  MOVEMENT_TYPE_RESET_ACTION = 10   ///< gMovementType_ResetActionScript
+};
+
+/// How a placed actor turns when the leader talks to it
+/// (Scene_TalkToActor), as The Broken Seal's. With all but TALK_FACING_KEEP
+/// the leader stops and each watches the other.
+enum ActorTalkFacing {
+  TALK_FACING_PARTY = 0,
+  /// Faces the party, then turns back to its old heading.
+  TALK_FACING_PARTY_AND_BACK = 1,
+  TALK_FACING_KEEP = 2,
+  /// Faces the party, then keeps turning to face the leader once the talk is
+  /// over (gActor_FaceWatchedScript).
+  TALK_FACING_PARTY_THEN_WATCH = 3
 };
 
 #define PIXELS(value) ((value) << 16)

@@ -62,7 +62,8 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    {202, CONDITION_ALWAYS, 1, PIXELS(720), 0, PIXELS(147), FACING_SOUTH, 1, 0},
+    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 720, 0, 147,
+                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 

@@ -909,8 +909,8 @@ LATE_DATA u32 gSceneExits[] = {
 };
 
 LATE_DATA struct ActorPlacement gActorPlacements[] = {
-    {666, CONDITION_ALWAYS, 1, PIXELS(9020), 0, PIXELS(882), FACING_NORTHWEST,
-     0, 0},
+    ACTOR_PLACEMENT(666, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 9020, 0, 882,
+                    FACING_NORTHWEST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 

@@ -307,8 +307,8 @@ void Naribwe_HideStone(void);
 // The village's placements, the same before and after the return with Piers.
 #define DEFINE_NARIBWE_PLACEMENTS(name)                                        \
   struct ActorPlacement name[] = {                                             \
-      {365, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(246), FACING_SOUTH, 0, \
-       0},                                                                     \
+      ACTOR_PLACEMENT(365, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 246, \
+                      FACING_SOUTH, TALK_FACING_PARTY, 0),                     \
       {304, CONDITION_ALWAYS, (s32)gNaribwe_BrazierBurns, PIXELS(316), 0,      \
        PIXELS(132), FACING_SOUTH, 0, 0},                                       \
       {304, CONDITION_ALWAYS, (s32)gNaribwe_BrazierBurns, PIXELS(372), 0,      \
@@ -317,36 +317,36 @@ void Naribwe_HideStone(void);
        PIXELS(132), FACING_SOUTH, 0, 0},                                       \
       {410, CONDITION_ALWAYS, (s32)gNaribwe_FlameRises, PIXELS(372), 0,        \
        PIXELS(132), FACING_SOUTH, 0, 0},                                       \
-      {115, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(344), FACING_SOUTH, 1, \
-       0},                                                                     \
-      {116, CONDITION_ALWAYS, 3, PIXELS(200), 0, PIXELS(296), FACING_EAST, 0,  \
-       0},                                                                     \
-      {114, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(152), FACING_SOUTH, 1, \
-       0},                                                                     \
-      {128, CONDITION_ALWAYS, 3, PIXELS(88), 0, PIXELS(376), FACING_NORTHEAST, \
-       0, 0},                                                                  \
-      {112, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(88), FACING_SOUTHEAST, \
-       1, 0},                                                                  \
-      {113, CONDITION_ALWAYS, 1, PIXELS(368), 0, PIXELS(224),                  \
-       FACING_SOUTHEAST, 1, 0},                                                \
-      {136, CONDITION_ALWAYS, 2, PIXELS(200), 0, PIXELS(200),                  \
-       FACING_NORTHEAST, 0, 0},                                                \
-      {147, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(232),                  \
-       FACING_SOUTHWEST, 1, 0},                                                \
-      {112, CONDITION_ALWAYS, 2, PIXELS(56), 0, PIXELS(232), FACING_EAST, 0,   \
-       0},                                                                     \
-      {110, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(360), FACING_EAST, 1,  \
-       0},                                                                     \
+      ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 344, \
+                      FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),            \
+      ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 200,   \
+                      0, 296, FACING_EAST, TALK_FACING_PARTY, 0),              \
+      ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 152, \
+                      FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),            \
+      ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 88, 0, \
+                      376, FACING_NORTHEAST, 0, 0),                            \
+      ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 88,  \
+                      FACING_SOUTHEAST, 1, 0),                                 \
+      ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 368, 0, 224, \
+                      FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),        \
+      ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 200, 0,     \
+                      200, FACING_NORTHEAST, TALK_FACING_PARTY, 0),            \
+      ACTOR_PLACEMENT(147, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 232, \
+                      FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),        \
+      ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 56, 0, 232, \
+                      FACING_EAST, TALK_FACING_PARTY, 0),                      \
+      ACTOR_PLACEMENT(110, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 360, \
+                      FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),             \
       {307, CONDITION_ALWAYS, (s32)gNaribwe_IvyAnimation, PIXELS(40), 0,       \
        PIXELS(168), FACING_SOUTH, 2, 0},                                       \
-      {407, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(376), FACING_SOUTH, 2, \
-       0},                                                                     \
-      {489, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(376), FACING_SOUTH, 2, \
-       0},                                                                     \
-      {201, CONDITION_ALWAYS, 1, PIXELS(376), 0, PIXELS(168), FACING_SOUTH, 1, \
-       0},                                                                     \
-      {328, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(104), FACING_SOUTH, 1, \
-       0},                                                                     \
+      ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 376, \
+                      FACING_SOUTH, TALK_FACING_KEEP, 0),                      \
+      ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 376, \
+                      FACING_SOUTH, TALK_FACING_KEEP, 0),                      \
+      ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 168, \
+                      FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),            \
+      ACTOR_PLACEMENT(328, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 104, \
+                      FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),            \
       {SCENE_TABLE_END},                                                       \
   };
 
@@ -398,11 +398,11 @@ u32 gSceneExits[] = {
 DEFINE_NARIBWE_PLACEMENTS(gNaribwe_Placements)
 
 struct ActorPlacement gNaribwe_Entrance10Placements[] = {
-    {364, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(246), FACING_SOUTH, 0, 0},
-    {305, CONDITION_ALWAYS, 1, PIXELS(316), 0, PIXELS(132), FACING_SOUTH, 0, 0},
-    {305, CONDITION_ALWAYS, 1, PIXELS(372), 0, PIXELS(132), FACING_SOUTH, 0, 0},
-    {410, CONDITION_ALWAYS, 1, PIXELS(316), 0, PIXELS(132), FACING_SOUTH, 0, 0},
-    {410, CONDITION_ALWAYS, 1, PIXELS(372), 0, PIXELS(132), FACING_SOUTH, 0, 0},
+    ACTOR_PLACEMENT(364, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 246, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(305, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 316, 0, 132, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(305, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 372, 0, 132, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(410, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 316, 0, 132, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(410, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 372, 0, 132, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on

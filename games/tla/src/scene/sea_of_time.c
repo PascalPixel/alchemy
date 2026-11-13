@@ -1394,19 +1394,24 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gSeaOfTime_Placements[] = {
-    {8, CONDITION_ALWAYS, (s32)gSeaOfTime_ShipRests, PIXELS(120), 0,
-     PIXELS(280), FACING_NORTH, 2, 0},
+    ACTOR_PLACEMENT(8, CONDITION_ALWAYS, (s32)gSeaOfTime_ShipRests, 120, 0, 280,
+                    FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gSeaOfTime_Room2Placements[] = {
-    {8, CONDITION_ALWAYS, (s32)gSeaOfTime_ShipRests, PIXELS(120), 0,
-     PIXELS(280), FACING_NORTH, 2, 0},
-    {424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH, 2, 0},
-    {424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH, 2, 0},
-    {424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH, 2, 0},
-    {424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH, 2, 0},
-    {424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH, 2, 0},
+    ACTOR_PLACEMENT(8, CONDITION_ALWAYS, (s32)gSeaOfTime_ShipRests, 120, 0, 280,
+                    FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH,
+                    TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 

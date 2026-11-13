@@ -530,8 +530,8 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    {8, CONDITION_ALWAYS, (s32)gNorthernReaches_ShipAtRest, PIXELS(120), 0,
-     PIXELS(280), FACING_SOUTH, 2, 0},
+    ACTOR_PLACEMENT(8, CONDITION_ALWAYS, (s32)gNorthernReaches_ShipAtRest, 120,
+                    0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {263, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_SOUTH, 2, 0},
     {285, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_SOUTH, 2, 0},
     {56, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_EAST, 2, 0},

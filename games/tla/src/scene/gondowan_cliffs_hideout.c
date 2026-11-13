@@ -123,8 +123,8 @@ u32 gSceneExits[] = {
 
 // clang-format off
 struct ActorPlacement gPlacementsWithWarriors[] = {
-    {410, CONDITION_ALWAYS, (s32)gGondowanCliffsHideout_StandScript, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
-    {306, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
+    ACTOR_PLACEMENT(410, CONDITION_ALWAYS, (s32)gGondowanCliffsHideout_StandScript, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {83, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_WEST, 0, 2},
     {83, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_NORTH, 0, 2},
     {83, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_SOUTH, 0, 2},
@@ -135,8 +135,8 @@ struct ActorPlacement gPlacementsWithWarriors[] = {
 
 // clang-format off
 struct ActorPlacement gPlacementsWithoutWarriors[] = {
-    {410, CONDITION_ALWAYS, (s32)gGondowanCliffsHideout_StandScript, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
-    {306, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
+    ACTOR_PLACEMENT(410, CONDITION_ALWAYS, (s32)gGondowanCliffsHideout_StandScript, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on

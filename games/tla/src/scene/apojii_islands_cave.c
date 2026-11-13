@@ -80,18 +80,18 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    {307, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_FIRST_FOLIAGE),
-     (s32)gApojiiIslandsCave_FoliageScript, PIXELS(120), 0, PIXELS(608),
-     FACING_NORTH, 2, 0},
-    {307, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_SECOND_FOLIAGE),
-     (s32)gApojiiIslandsCave_FoliageScript, PIXELS(184), 0, PIXELS(592),
-     FACING_NORTH, 2, 0},
-    {307, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_PASSAGE_FOLIAGE),
-     (s32)gApojiiIslandsCave_FoliageScript, PIXELS(216), 0, PIXELS(592),
-     FACING_NORTH, 2, 0},
-    {307, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_FOURTH_FOLIAGE),
-     (s32)gApojiiIslandsCave_FoliageScript, PIXELS(280), 0, PIXELS(640),
-     FACING_NORTH, 2, 0},
+    ACTOR_PLACEMENT(307, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_FIRST_FOLIAGE),
+                    (s32)gApojiiIslandsCave_FoliageScript, 120, 0, 608,
+                    FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_SECOND_FOLIAGE),
+                    (s32)gApojiiIslandsCave_FoliageScript, 184, 0, 592,
+                    FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_PASSAGE_FOLIAGE),
+                    (s32)gApojiiIslandsCave_FoliageScript, 216, 0, 592,
+                    FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(307, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_FOURTH_FOLIAGE),
+                    (s32)gApojiiIslandsCave_FoliageScript, 280, 0, 640,
+                    FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 

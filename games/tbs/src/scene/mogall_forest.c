@@ -580,9 +580,8 @@ static void MogallForest_FirstArea_NorthApeShowsWay(void) {
   MogallForest_ApeComesOut(ACTOR_FIRST_AREA_NORTH_APE, SPRITE_COLOR_GRB);
   MogallForest_HopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 88, 120, 6);
 
-  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed,
-                    ape->z.fixed + px(24), 0, 0, 0, EFFECT_SCRIPT_MEDIUM,
-                    0);
+  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed, ape->z.fixed + px(24), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
 
   MogallForest_ApePointsTheWay(ACTOR_FIRST_AREA_NORTH_APE);
 
@@ -619,9 +618,8 @@ static void MogallForest_FirstArea_ApeAttacks(void) {
   MogallForest_ApeComesOut(ACTOR_FIRST_AREA_ATTACKING_APE, SPRITE_COLOR_NORMAL);
   MogallForest_HopActorTo(ACTOR_FIRST_AREA_ATTACKING_APE, 408, 456, 6);
 
-  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed,
-                    ape->z.fixed + px(24), 0, 0, 0, EFFECT_SCRIPT_MEDIUM,
-                    0);
+  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed, ape->z.fixed + px(24), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
 
   FieldCamera_FollowActor(ACTOR_FIRST_AREA_ATTACKING_APE, 1);
   Actor_TurnToFaceEachOther(ACTOR_FIRST_AREA_ATTACKING_APE, ACTOR_PARTY_LEADER,
@@ -662,9 +660,8 @@ static void MogallForest_FirstArea_EastApeShowsWay(void) {
   MogallForest_ApeComesOut(ACTOR_FIRST_AREA_EAST_APE, SPRITE_COLOR_GRB);
   MogallForest_HopActorTo(ACTOR_FIRST_AREA_EAST_APE, 536, 344, 7);
 
-  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed,
-                    ape->z.fixed + px(16), 0, 0, 0, EFFECT_SCRIPT_MEDIUM,
-                    0);
+  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed, ape->z.fixed + px(16), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
 
   MogallForest_ApePointsTheWay(ACTOR_FIRST_AREA_EAST_APE);
 
@@ -792,9 +789,8 @@ static void MogallForest_SecondArea_NorthApeShowsWay(void) {
   MogallForest_ApeComesOut(ACTOR_SECOND_AREA_NORTH_APE, SPRITE_COLOR_GRB);
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_NORTH_APE, 392, 104, 7);
   Event_Wait(10);
-  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed,
-                    (ape->z.fixed + px(4)), 0, 0, 0, EFFECT_SCRIPT_MEDIUM,
-                    0);
+  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed, (ape->z.fixed + px(4)), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
   MogallForest_ApePointsTheWay(ACTOR_SECOND_AREA_NORTH_APE);
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_NORTH_APE, 424, 120, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_NORTH_APE, 0);
@@ -828,9 +824,8 @@ static void MogallForest_SecondArea_EastApeShowsWay(void) {
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_EAST_APE, 456, 104, 7);
   Event_Wait(10);
 
-  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed,
-                    ape->z.fixed + px(4), 0, 0, 0, EFFECT_SCRIPT_MEDIUM,
-                    0);
+  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed, ape->z.fixed + px(4), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
 
   MogallForest_ApePointsTheWay(ACTOR_SECOND_AREA_EAST_APE);
 
@@ -892,9 +887,8 @@ static void MogallForest_SecondArea_SouthApeShowsWay(void) {
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_SOUTH_APE, 392, 504, 6);
   Event_Wait(10);
 
-  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed,
-                    ape->z.fixed + px(4), 0, 0, 0, EFFECT_SCRIPT_MEDIUM,
-                    0);
+  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed, ape->z.fixed + px(4), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
 
   MogallForest_ApePointsTheWay(ACTOR_SECOND_AREA_SOUTH_APE);
 
@@ -1083,9 +1077,8 @@ static void MogallForest_ThirdArea_ApeAttacks(void) {
   MogallForest_ApeComesOut(ACTOR_THIRD_AREA_ATTACKING_APE, SPRITE_COLOR_NORMAL);
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_ATTACKING_APE, 472, 104, 8);
   Event_Wait(10);
-  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed,
-                    (ape->z.fixed + px(8)), 0, 0, 0, EFFECT_SCRIPT_MEDIUM,
-                    0);
+  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed, (ape->z.fixed + px(8)), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
   FieldCamera_FollowActor(ACTOR_THIRD_AREA_ATTACKING_APE, 1);
   Actor_TurnToFaceEachOther(ACTOR_THIRD_AREA_ATTACKING_APE, ACTOR_PARTY_LEADER,
                             0);
@@ -1122,9 +1115,8 @@ static void MogallForest_ThirdArea_MiddleApeShowsWay(void) {
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_MIDDLE_APE, 456, 152, 6);
   Event_Wait(10);
 
-  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed,
-                    ape->z.fixed + px(4), 0, 0, 0, EFFECT_SCRIPT_MEDIUM,
-                    0);
+  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed, ape->z.fixed + px(4), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
 
   MogallForest_ApePointsTheWay(ACTOR_THIRD_AREA_MIDDLE_APE);
 
@@ -1163,9 +1155,8 @@ static void MogallForest_ThirdArea_WestApeShowsWay(void) {
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_WEST_APE, 392, 104, 6);
   Event_Wait(10);
 
-  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed,
-                    ape->z.fixed + px(4), 0, 0, 0, EFFECT_SCRIPT_MEDIUM,
-                    0);
+  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed, ape->z.fixed + px(4), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
 
   MogallForest_ApePointsTheWay(ACTOR_THIRD_AREA_WEST_APE);
 
@@ -1225,9 +1216,8 @@ static void MogallForest_ThirdArea_EastApeShowsWay(void) {
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 712, 536, 6);
   Event_Wait(10);
 
-  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed,
-                    ape->z.fixed + px(4), 0, 0, 0, EFFECT_SCRIPT_MEDIUM,
-                    0);
+  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed, ape->z.fixed + px(4), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
 
   MogallForest_ApePointsTheWay(ACTOR_THIRD_AREA_EAST_APE);
 
@@ -1268,9 +1258,8 @@ static void MogallForest_ApeLeadsToKillerApe(void) {
   MogallForest_ApeComesOut(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_GRB);
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 136, 408, 8);
   Event_Wait(10);
-  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed,
-                    (ape->z.fixed + px(4)), 0, 0, 0, EFFECT_SCRIPT_MEDIUM,
-                    0);
+  FieldEffect_Spawn(ape->x.fixed, ape->y.fixed, (ape->z.fixed + px(4)), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
   Actor_FaceDirection(ACTOR_THIRD_AREA_EAST_APE, FACING_NORTH, 40);
   Actor_SetAttachedEffect(ACTOR_THIRD_AREA_EAST_APE,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);

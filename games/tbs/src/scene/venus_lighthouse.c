@@ -92,7 +92,6 @@
 #include "macros.h"
 #include "shared/walk_into_leader.h"
 
-#define NULL ((void *)0)
 #include "heap_slots.h"
 #include "types.h"
 #include "sprite.h"
@@ -658,8 +657,7 @@ static s32 VenusLighthouse_UpdateChildFromTimer(struct Actor *actor) {
 }
 
 // Pulse the child effect and play its timed sound.
-static UNREAD_RESULT VenusLighthouse_PulseChildEffect(struct Actor *updated) {
-  void *actor = (void *)updated;
+static UNREAD_RESULT VenusLighthouse_PulseChildEffect(struct Actor *actor) {
   if ((gFrameCount & 3) == 0)
     Actor_SetSpriteColor(actor, SPRITE_COLOR_WHITE);
   else

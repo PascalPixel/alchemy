@@ -102,7 +102,6 @@
 #include "io_write.h"
 #include "macros.h"
 
-#define NULL ((void *)0)
 #include "actor.h"
 #include "heap_release.h"
 #include "types.h"

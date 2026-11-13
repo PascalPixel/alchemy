@@ -177,8 +177,6 @@ static void MercuryLighthouse_RideLift(void);
 static void MercuryLighthouse_MiaCastsPlyOnEntrance(void);
 static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem);
 
-#define NULL ((void *)0)
-
 /// MercuryLighthouseLower: Mia, the statue that blocks her and the pipe pieces
 /// that join the channels.
 enum MercuryLighthouseLowerActorId {

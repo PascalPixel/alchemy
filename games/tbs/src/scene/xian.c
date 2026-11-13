@@ -62,7 +62,6 @@
 #include "module/system/system.h"
 #include "macros.h"
 
-#define NULL ((void *)0)
 #include "actor.h"
 #include "types.h"
 #include "event.h"

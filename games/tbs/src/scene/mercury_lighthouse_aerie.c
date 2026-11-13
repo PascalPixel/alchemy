@@ -180,8 +180,6 @@ static void MercuryLighthouseAerie_LowerLift(void);
 static void MercuryLighthouseAerie_RaiseLift(void);
 static void MercuryLighthouseAerie_FlickerBeacon(void);
 
-#define NULL ((void *)0)
-
 #include "shared/field_effect_create.h"
 
 #include "shared/field_effect_spawn.h"

@@ -168,7 +168,8 @@ static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay);
 // The woman wanting the roof fixed walks about looking for the man who should
 // be fixing it and stops to face the leader when near, or while a conversation
 // holds the field.
-static UNREAD_RESULT Vault_UpdateRoofComplainerProximity(struct Actor *complainer) {
+static UNREAD_RESULT
+Vault_UpdateRoofComplainerProximity(struct Actor *complainer) {
   struct WindowWork *window = (struct WindowWork *)gWindowWork[0];
   struct FieldWork *field =
       (struct FieldWork *)gWindowWork[HEAP_SLOT_FIELD - HEAP_SLOT_WINDOW];

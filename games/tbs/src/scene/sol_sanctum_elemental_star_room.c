@@ -189,8 +189,6 @@ enum SolSanctumElementalStarRoomCellBehavior {
   (MapGrid_CopyCellsTo(83, 40, RISEN_PILLAR_LEFT(column), row, 3, 4),          \
    OPEN_RISEN_PILLAR(column, row))
 
-#define NULL ((void *)0)
-
 struct Actor;
 
 #include "shared/field_effect_create.h"

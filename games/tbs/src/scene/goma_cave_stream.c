@@ -107,18 +107,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 ///
 /// From column 24 it spins, leaps away and lies where it lands.
 static void GomaCaveStream_MoveStump(void) {
-  struct Actor *stump;
-  struct Actor *landed;
-  s32 column;
-
-  stump = Actor_Get(ACTOR_STUMP);
-  column = stump->x.fixed / px(16);
-  if (column == 24) {
+  if (Actor_Get(ACTOR_STUMP)->x.fixed / px(16) == 24) {
     GomaCaveStream_LeapStump(ACTOR_STUMP);
     Actor_Get(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(19, 74, 9, 3, 19, 17);
-    landed = Actor_Get(ACTOR_STUMP);
-    Actor_SetSpriteFlags(landed, 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_STUMP), 0);
     GameFlag_Set(FLAG_GOMA_CAVE_STREAM_STUMP_MOVED);
   }
 }
@@ -137,8 +130,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// (GOMA_CAVE_STREAM_CHEST_CAVE_FROM_VALE_PLAZA) shows no area name.
 /// Otherwise the stump lies where the party moved it.
 s32 Scene_Initialize(void) {
-  struct Actor *stump;
-
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gMainRoutineWork.next == (s32)&SceneId_GomaCaveStream) {
@@ -149,8 +140,7 @@ s32 Scene_Initialize(void) {
       Actor_Get(ACTOR_STUMP)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
       if (GameFlag_Get(FLAG_GOMA_CAVE_STREAM_STUMP_MOVED) != 0) {
         Actor_SetPosition(ACTOR_STUMP, 346, 292);
-        stump = Actor_Get(ACTOR_STUMP);
-        Actor_SetSpriteFlags(stump, 0);
+        Actor_SetSpriteFlags(Actor_Get(ACTOR_STUMP), 0);
         Actor_Get(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
         Actor_SetAnimation(ACTOR_STUMP, STUMP_ANIMATION_SINK);
         MapGrid_CopyCellAttributes(19, 74, 9, 3, 19, 17);
@@ -185,7 +175,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
   stump->motionFlags = 0;
   for (i = 0; i < 18; i++) {
     wait(1);
-    stump->sprite->rotation -= 256;
+    stump->sprite->rotation -= TRIG_TURN / 256;
     stump->x.fixed -= Trig_Cos(stump->sprite->rotation) / 2;
     stump->targetX = ACTOR_NO_TARGET;
   }
@@ -201,10 +191,11 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
   MapGrid_SetShake(5, 5, 1);
   Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
+  // Seventeen puffs of dust, a sixteenth of a turn apart.
   for (i = 0; i < 17; i++) {
-    dir.x = Trig_Cos(i << 12);
+    dir.x = Trig_Cos(i * (TRIG_TURN / 16));
     dir.y = 0;
-    dir.z = Trig_Sin(i << 12);
+    dir.z = Trig_Sin(i * (TRIG_TURN / 16));
     dir.x -= dir.x / 4;
     dir.z -= dir.z / 2;
     FieldEffect_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, dir.x,

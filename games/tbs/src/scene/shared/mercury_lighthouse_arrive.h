@@ -12,12 +12,10 @@
 /// trail of sparks and is drawn again on the way.
 static void MercuryLighthouse_ArriveWithSparks(void) {
   struct Actor *actor;
-  s32 flag;
   struct Sprite *sprite;
 
   actor = Actor_GetById(ACTOR_PARTY_LEADER);
-  flag = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
-  if (flag == 0) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     Event_Start();
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     actor->motionFlags = 0;

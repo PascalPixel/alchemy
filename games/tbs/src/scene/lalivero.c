@@ -1,5 +1,6 @@
-/// @file Lalivero, the town by Babi Lighthouse, one scene with the area name
-/// Lalivero: SceneId_Lalivero. Its buildings are timber_rooms_bc.c.
+/// @file
+/// Lalivero (SceneId_Lalivero), the town by Babi Lighthouse. Its buildings are
+/// timber_rooms_bc.c.
 ///
 /// The story brings the party here twice. Lalivero_GetActorPlacements and
 /// Lalivero_GetTriggers choose the town's people and triggers for each visit by

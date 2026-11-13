@@ -1374,7 +1374,6 @@ static void Kalay_PrepareTunnelPassage(void) {
 /// set the man waits here and some of the cells are redrawn.
 static void Kalay_PrepareTunnelTreasureRoom(void) {
 #if TBS_PATCH_1
-  s32 resumed;
 #endif
   s32 following;
   struct FadeOverlayWork *overlay;
@@ -1386,8 +1385,7 @@ static void Kalay_PrepareTunnelTreasureRoom(void) {
   FieldEffect_StartFadeOverlay(0);
   // The overlay follows the leader except on the way down from the town.
 #if TBS_PATCH_1
-  resumed = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
-  if (resumed != 0) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
     overlay = slots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD];
     // The flag's own 0 is the overlay's want of an actor.
     following = GameFlag_Get(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);

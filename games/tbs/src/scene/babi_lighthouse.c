@@ -1,5 +1,6 @@
-/// @file Babi Lighthouse and the road up to it: four scenes in one overlay, in
-/// three of the game's areas.
+/// @file
+/// Babi Lighthouse and the road up to it: four scenes in one overlay, in three
+/// of the game's areas.
 ///
 /// SceneId_RoadToBabiLighthouse is the Road to Babi Lighthouse, entered from
 /// the World Map. SceneId_BabiLighthouseEntry is the Babi Lighthouse Entry.

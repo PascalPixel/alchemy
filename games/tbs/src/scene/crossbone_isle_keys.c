@@ -326,12 +326,10 @@ static void CrossboneIsleKeys_BaneFirstEscape(void) {
 /// the room, and is left squashing and stretching.
 static void CrossboneIsleKeys_BaneSecondEscape(void) {
   struct Actor *spinningDjinni;
-  s32 escapeComplete;
   struct Actor *jumpingDjinni;
 
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) != 0) {
-    escapeComplete = Event_GetFlag(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE);
-    if (escapeComplete == 0) {
+    if (Event_GetFlag(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) == 0) {
       GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE);
       Event_Start();
 

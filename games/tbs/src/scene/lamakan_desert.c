@@ -474,7 +474,6 @@ static void LamakanDesert_FightManticore(void) {
 static void LamakanDesert_ComplainAboutHeat(s32 mark) {
   s32 tries;
   s32 quarter;
-  s32 alreadySpoke;
   s32 random;
   s32 flag;
   s32 member;
@@ -484,8 +483,7 @@ static void LamakanDesert_ComplainAboutHeat(s32 mark) {
     random = Import_RandomNext();
     member = (u32)((random << 1) + random) >> 16; // 0 to 2
     flag = member + FLAG_GARET_COMPLAINED;
-    alreadySpoke = GameFlag_Get(flag);
-    if (alreadySpoke == 0) {
+    if (GameFlag_Get(flag) == 0) {
       GameFlag_Set(flag);
       break;
     }

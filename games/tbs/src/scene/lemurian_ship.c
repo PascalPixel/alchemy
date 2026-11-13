@@ -1,4 +1,5 @@
-/// @file The wharf at the edge of Lalivero where Babi's ship lies sunk.
+/// @file
+/// The wharf at the edge of Lalivero where Babi's ship lies sunk.
 ///
 /// This is the game's last scene: SceneId_LemurianShip, with the area name
 /// Lemurian ship. The party enters it from Faran's house (timber_rooms_bc.c)

@@ -14,29 +14,26 @@ void SelectionMenu_Create(void) {
   struct SelectionSprite *visual;
   const u8 *table;
   s32 i;
-  u16 clear = 0;
 
   screen = HeapSlot_AllocEwram(HEAP_SLOT_SELECTION_MENU,
                                sizeof(struct SelectionMenuWork));
   screen->head = NULL;
   screen->path = NULL;
   screen->window = NULL;
-  screen->unread = clear;
-  screen->top = clear;
+  screen->unread = 0;
+  screen->top = 0;
   // Bit 7: the first list starts from its first entry. Until the list is
   // first cleared the row is drawn 32 pixels lower and takes no input.
   screen->cursorIndex = 128;
   screen->verticalScroll = 32;
-  screen->count = clear;
+  screen->count = 0;
   screen->locked = 999;
   // The records: 0 and 1 the end arrows, 2 to 8 the row's icons, 9 to 13 the
   // chosen icons, 14 the pointing hand and 15 the large icon.
-  i = 0;
-  do {
+  for (i = 0; i != 5; i++) {
     screen->records[i + SELECTION_RECORD_ROW].kind = ICON_KIND_NONE;
     screen->records[i + SELECTION_RECORD_CHOSEN].kind = ICON_KIND_NONE;
-    i++;
-  } while (i != 5);
+  }
   // The row has two icons more than the chosen ones; i is 5.
   screen->records[i + SELECTION_RECORD_ROW].kind = ICON_KIND_NONE;
   screen->records[i + SELECTION_RECORD_ROW + 1].kind = ICON_KIND_NONE;

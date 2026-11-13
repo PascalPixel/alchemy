@@ -110,7 +110,7 @@ void UpdateLinkSessionCountdown(void) {
     // The window opens the first frame the Status screen is not up.
   timer_ready:
     if (state->timerWindow == 0 && state->timerHidden == 0) {
-      state->timerWindow = (s32)Link_CreateCountdownLabelWindow();
+      state->timerWindow = Link_CreateCountdownLabelWindow();
       timer = state->timer;
     }
 
@@ -128,8 +128,7 @@ void UpdateLinkSessionCountdown(void) {
       Sound_PlayFar(SE_TRIPLE_TONE_LOW);
 
     if (state->timerWindow != 0)
-      Text_DrawNumberInWindow(seconds, 2, (struct Window *)state->timerWindow,
-                              16, 8);
+      Text_DrawNumberInWindow(seconds, 2, state->timerWindow, 16, 8);
   }
 }
 

@@ -53,9 +53,6 @@ void ActorSystem_PlaceSprites(void) {
   struct ActorSystemWork *system;
   struct Actor *actor;
   struct Sprite *sprite;
-#ifndef UBFIX
-  s32 *viewCoordinates;
-#endif
   u32 kind;
   s32 dx;
   s32 dz;
@@ -67,25 +64,15 @@ void ActorSystem_PlaceSprites(void) {
   u32 layerPlusOne;
 
   // MapGridScrollWork owns all three layer cell pointers at their 48-byte
-  // stride. UB: map and system work are separate globals, beyond gActors.
-#ifdef UBFIX
+  // stride.
   grid = gMapGridWork[0];
-#else
-  grid = *(struct MapGridScrollWork **)(((u8 *)&gActors) + 12);
-#endif
-#ifdef UBFIX
-  viewX = grid->viewX & 0xffff0000;
-  viewZ = grid->viewY & 0xffff0000;
-#else
-  viewCoordinates = &grid->viewX;
-  viewX = viewCoordinates[0] & 0xffff0000;
-  viewZ = viewCoordinates[1] & 0xffff0000;
-#endif
-#ifdef UBFIX
+  {
+    s32 *view = grid->view;
+
+    viewX = view[0] & FIELD_PIXEL_MASK;
+    viewZ = view[1] & FIELD_PIXEL_MASK;
+  }
   system = gActorSystemWork;
-#else
-  system = *(struct ActorSystemWork **)(((u8 *)&gActors) + 4);
-#endif
   // Copy the picture decoder (Render_DecodePicture) into its heap slot.
   RamCode_LoadSlot(HEAP_SLOT_FRAME_SCRATCH, Render_DecodePicture,
                    Render_DecodePictureCodeSize);
@@ -217,14 +204,8 @@ void ActorSystem_ProjectSprites(void) {
    * 181 instructions differ in tbs-en. */
   UNUSED struct ActorCameraPoint unusedPoints[2];
 
-  // UB: camera and system work are separate globals, beyond gActors.
-#ifdef UBFIX
   camera = (struct ActorCameraFixed *)gBattleCamera;
   system = gActorSystemWork;
-#else
-  camera = *(struct ActorCameraFixed **)(((u8 *)&gActors) + 0x1c);
-  system = *(struct ActorSystemWork **)(((u8 *)&gActors) + 4);
-#endif
   RamCode_LoadSlot(HEAP_SLOT_FRAME_SCRATCH, Render_DecodePicture,
                    Render_DecodePictureCodeSize);
   eye = &camera->eye;

@@ -1070,9 +1070,9 @@ void Palette_LightenHighlight(s32 paletteNumber) {
   // Both transfers copy the same 32 bytes, first as 16 halfwords and then as
   // 8 words.
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
-          DMA_ENABLE << 16 | 16, REG_DMA3);
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+          DMA_COPY_WORDS(8), REG_DMA3);
   // BGR555: five bits a channel, 0 to 31, red lowest.
   blue = palette[WINDOW_BACKGROUND_COLOR] >> 10;
   green = (palette[WINDOW_BACKGROUND_COLOR] >> 5) & 31;
@@ -1190,10 +1190,10 @@ void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
 /// until Palette_LightenHighlight(HIGHLIGHT_PALETTE) makes it again.
 void Palette_LoadIconsIntoHighlight(void) {
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
-          DMA_ENABLE << 16 | 16, REG_DMA3);
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
-          DMA_ENABLE << 16 | 1, REG_DMA3);
+          DMA_COPY_HALFWORDS(1), REG_DMA3);
 }
 
 /// Shows the icons of one page of a list, one row of 16 pixels each from

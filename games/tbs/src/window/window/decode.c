@@ -381,8 +381,8 @@ s32 Message_Decode(s32 script, s32 clear) {
     RamCode_LoadSlot(HEAP_SLOT_MESSAGE_DECODER, Text_DecodeSymbol,
                      Text_DecodeSymbolCodeSize);
     // The decoder runs from a copy in RAM, one symbol at a time.
-    decode = (s32 (*)(struct MessageReader *))
-        gWindowWork[HEAP_SLOT_MESSAGE_DECODER - HEAP_SLOT_WINDOW];
+    decode = (s32 (*)(struct MessageReader *))HEAP_SLOT_BLOCK(
+        HEAP_SLOT_MESSAGE_DECODER);
     Message_Find(&reader, script);
     /* FAKEMATCH(temporary): messageReader holds &reader; as decode(&reader),
      * 2 of 706 instructions differ in tbs-en. */
@@ -914,8 +914,8 @@ s32 Message_Decode(s32 script, s32 clear) {
     RamCode_LoadSlot(HEAP_SLOT_MESSAGE_DECODER, Text_DecodeSymbol,
                      Text_DecodeSymbolCodeSize);
     // The decoder runs from a copy in RAM, one symbol at a time.
-    decode = (s32 (*)(struct MessageReader *))
-        gWindowWork[HEAP_SLOT_MESSAGE_DECODER - HEAP_SLOT_WINDOW];
+    decode = (s32 (*)(struct MessageReader *))HEAP_SLOT_BLOCK(
+        HEAP_SLOT_MESSAGE_DECODER);
     Message_Find(&reader, script);
     /* FAKEMATCH(temporary): messageReader holds &reader; as decode(&reader),
      * 2 of 895 instructions differ in tbs-ja. */

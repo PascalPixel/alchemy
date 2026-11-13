@@ -13,9 +13,9 @@
 /// Vale runs them with the lightning while FLAG_VALE_STORM is set
 /// (vale_plaza.c).
 void Weather_UpdateRain(void) {
-  struct MapGridScrollWork *view = gMapGridWork[0];
-  struct WeatherWork *work = gMapGridWork[21];
-  s32 *camera = &view->viewX;
+  struct MapGridScrollWork *grid = gMapGridWork[0];
+  struct WeatherWork *work = gWeatherWork;
+  s32 *camera = grid->view;
   s32 cameraX = camera[0];
   s32 cameraZ = camera[1];
   struct GroundParticle *particle = work->particles;
@@ -47,7 +47,7 @@ void Weather_UpdateRain(void) {
       Oam_AddSpriteAtDepth(particle, 240);
     }
     if (particle->timer == 0) {
-      s32 *leader = view->origin;
+      s32 *leader = grid->origin;
 
       // A new spot up to 128 pixels either way of the leader. The height
       // call passes pixels where MapGrid_GetTerrainHeight takes 16.16, as in
@@ -72,10 +72,7 @@ void Weather_UpdateRain(void) {
 /// 0 stops the lightning.
 void Weather_UpdateLightning(void) {
   struct FieldBlendWork *work = gFieldBlendWork[0];
-  // The palette fade is reached from the neighbouring lightning slot, the
-  // spelling this site matched with; gPaletteFadeWork is not measured here.
-  struct PaletteFade *target =
-      gFieldBlendWork[HEAP_SLOT_PALETTE_FADE - HEAP_SLOT_FIELD_BLEND];
+  struct PaletteFade *target = gPaletteFadeWork;
   s16 *timer = &work->timer;
 
   if (*timer < 0)
@@ -101,8 +98,7 @@ void Weather_UpdateLightning(void) {
     // A frame after each flash: fade back to the dark colours over 12 frames.
     PaletteFade_SetTarget((s32)work, 1);
     Dma_Set(work->delta, target->delta,
-            (DMA_ENABLE | DMA_32BIT) << 16 | sizeof target->delta / 4,
-            REG_DMA3);
+            DMA_COPY_WORDS(sizeof target->delta / 4), REG_DMA3);
     target->duration = 12;
     target->step = 0;
     break;
@@ -190,7 +186,7 @@ void FieldMotes_Update(void) {
     s32 y;
 
     if (--mote->timer != 0xffff) {
-      s32 *camera = &grid->viewX;
+      s32 *camera = grid->view;
       s32 cameraX = camera[0];
       s32 cameraZ = camera[1];
       u16 age = mote->timer;
@@ -323,7 +319,7 @@ void FieldEffect_UpdateSparkles(void) {
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_WEATHER);
   spawned = 0;
   grid = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
-  camera = &grid->viewX;
+  camera = grid->view;
   spawnX = 0;
   spawnZ = 0;
   i = 0;

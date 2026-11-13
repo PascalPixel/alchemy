@@ -216,7 +216,7 @@ enum TextStyle {
 /// HEAP_SLOT_GLYPH_TRANSFER's pointer, kept in IWRAM (system/iwram.s, after
 /// gWindowWork and gPartyStatusWork): the glyph transfer work icons are built
 /// in. Each icon builder allocates the slot for its build and frees it after.
-extern GlyphTransfer *gGlyphWork;
+#define gGlyphWork (*(GlyphTransfer **)&gHeapSlots[HEAP_SLOT_GLYPH_TRANSFER])
 
 /// Each message context bank's Huffman models and their offsets, which the
 /// message catalog built from games/tbs/text defines.

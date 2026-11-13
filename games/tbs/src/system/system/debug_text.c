@@ -10,43 +10,30 @@
 /// Writes `value` as eight hexadecimal digits to the number buffer. Called by
 /// DebugText_PrintHex.
 void String_FormatHex(u32 value) {
-  u8 *buffer = gNumberBuffer;
-  const u8 *digits = gString_HexDigits;
-  s32 index = 7;
+  s32 i;
 
-  do {
-    buffer[index] = digits[value & 0xF];
+  for (i = 7; i >= 0; i--) {
+    gNumberBuffer[i] = gString_HexDigits[value & 0xf];
     value >>= 4;
-    index--;
-  } while (index >= 0);
-
-  {
-    u8 *terminator = gNumberBuffer;
-    terminator[8] = 0;
   }
+  gNumberBuffer[8] = 0;
 }
 
 /// Writes `number` to the number buffer as eleven characters: spaces, a sign
 /// (a space or '-') and its decimal digits, right-aligned. Called by
 /// DebugText_PrintDecimal and the Djinn preview's number text.
 void String_FormatDecimal(s32 number) {
-  u32 *placeValues;
-  s8 *output;
-  s32 placesLeft;
-  u32 placeValue;
+  const u32 *placeValue = (const u32 *)gString_PowersOfTen;
+  u8 *output = gNumberBuffer;
+  s32 places;
   s32 digit;
 #ifdef UBFIX
-  u32 magnitude;
+  u32 magnitude = number;
 #else
-  s32 magnitude;
+  s32 magnitude = number;
 #endif
-  s8 sign;
+  s8 sign = ' ';
 
-  digit = number;
-  magnitude = digit;
-  placeValues = (u32 *)gString_PowersOfTen;
-  sign = ' ';
-  output = gNumberBuffer;
   if (number < 0) {
 #ifdef UBFIX
     magnitude = 0U - magnitude;
@@ -56,29 +43,18 @@ void String_FormatDecimal(s32 number) {
 #endif
     sign = '-';
   }
-  // Pad with a space for each power of ten above the number
-  placeValue = *placeValues++;
-  placesLeft = 9;
-  if (magnitude < placeValue) {
-    do {
-      placesLeft -= 1;
-      *output++ = ' ';
-      if (placesLeft == 0)
-        break;
-      placeValue = *placeValues++;
-    } while (magnitude < placeValue);
+  // A space for each power of ten above the number, then its sign, then a
+  // digit for each power of ten left and the units.
+  for (places = 9; places != 0 && magnitude < *placeValue; places--) {
+    *output++ = ' ';
+    placeValue++;
   }
   *output++ = sign;
-  // Then one digit for each remaining power of ten
-  placeValues -= 1;
-  if (placesLeft != 0) {
-    do {
-      placeValue = *placeValues++;
-      digit = magnitude / placeValue;
-      *output++ = digit + '0';
-      magnitude -= digit * placeValue;
-      placesLeft -= 1;
-    } while (placesLeft != 0);
+  for (; places != 0; places--) {
+    digit = magnitude / *placeValue;
+    *output++ = digit + '0';
+    magnitude -= digit * *placeValue;
+    placeValue++;
   }
   output[0] = magnitude + '0';
   output[1] = 0;
@@ -111,48 +87,38 @@ void *memcpy(void *destination, const void *source, unsigned long size) {
 }
 #endif
 
-/// Prints the string `src` (at most 32 characters) at the debug text cursor,
+/// Prints the string `text` (at most 32 characters) at the debug text cursor,
 /// wrapping from the end of the screen to its start, when debug text is on;
 /// the cursor moves past it. Called by the hex and decimal number routines and
 /// through the far-call table.
-void DebugText_Print(const u8 *src) {
+void DebugText_Print(const u8 *text) {
   if (gDebugTextEnabled != 0) {
-    u32 addr = ((u32)&gDebugTextCursor);
-    u32 c = *src;
-    u16 *dst = *(u16 **)addr;
-    u32 cnt = 0;
-    src++;
+    u16 *cursor = gDebugTextCursor;
+    u32 c = *text++;
+    u32 count = 0;
 
     if (c != 0) {
-      // the end of the 32x20-entry screen (1280 bytes) wraps to its start
-      u32 mask = WINDOW_PALETTE << 12;
-      addr = (u32)(BG_SCREEN_BLOCK(4) + 32 * 20 * 2);
+      // The end of the 32 by 20 entry screen wraps to its start.
       do {
-        *dst++ = c | mask;
-        if (dst == (u16 *)addr)
-          dst = (u16 *)BG_SCREEN_BLOCK(4);
-        cnt++;
-        if (cnt > 31)
+        *cursor++ = c | WINDOW_PALETTE << 12;
+        if (cursor == (u16 *)(BG_SCREEN_BLOCK(4) + 32 * 20 * 2))
+          cursor = (u16 *)BG_SCREEN_BLOCK(4);
+        if (++count > 31)
           break;
-        c = *src++;
+        c = *text++;
       } while (c != 0);
-      addr = ((u32)&gDebugTextCursor);
     }
-    *(u16 **)addr = dst;
+    gDebugTextCursor = cursor;
   }
 }
 
 /// Prints the last `digits` hexadecimal digits of `value` (1 to 8; anything
 /// else prints all 8). Reached through the far-call table.
 void DebugText_PrintHex(u32 value, s32 digits) {
-  s32 n;
-
-  n = digits;
-  if ((n - 1) > 7U) {
-    n = 8;
-  }
+  if (digits < 1 || digits > 8)
+    digits = 8;
   String_FormatHex(value);
-  DebugText_Print((const u8 *)(((u32)&gNumberBufferHexEnd) - n));
+  DebugText_Print(gNumberBufferHexEnd - digits);
 }
 
 /// Prints the last `digits` characters of `value` in signed decimal (1 to 10;
@@ -160,14 +126,10 @@ void DebugText_PrintHex(u32 value, s32 digits) {
 /// a '-' shows only when `digits` is more than the number's digit count.
 /// Reached through the far-call table.
 void DebugText_PrintDecimal(s32 value, s32 digits) {
-  s32 n;
-
-  n = digits;
-  if ((n - 1) > 9U) {
-    n = 10;
-  }
+  if (digits < 1 || digits > 10)
+    digits = 10;
   String_FormatDecimal(value);
-  DebugText_Print((const u8 *)(((u32)&gNumberBufferDecimalEnd) - n));
+  DebugText_Print(gNumberBufferDecimalEnd - digits);
 }
 
 /// Blanks the debug text screen, homes the cursor and points BG0 at it.
@@ -187,7 +149,7 @@ void Window_LoadGraphics(void) {
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles),
           BG_CHAR_BLOCK(0), DMA_COPY_WORDS(2048), REG_DMA3);
   Dma_Set(gWindow_Palette, (void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0),
-          DMA_ENABLE << 16 | 16, REG_DMA3);
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
   Io_Write16(0, &PLTT_BACKDROP);
   Io_Write16(RGB(0, 12, 16), &BG_PLTT_COLOR(WINDOW_PALETTE, 4));
   Io_Write16(RGB(0, 11, 14), &BG_PLTT_COLOR(WINDOW_PALETTE, 5));
@@ -197,13 +159,13 @@ void Window_LoadGraphics(void) {
   Io_Write16(RGB(0, 14, 20), &BG_PLTT_COLOR(WINDOW_PALETTE, 9));
   Io_Write16(RGB(0, 15, 22), &BG_PLTT_COLOR(WINDOW_PALETTE, 10));
   // 224 halfwords: 224 colours, sprite palettes 0 to 13
-  Dma_Set(gBasicSpritePalettes, (void *)OBJ_PLTT, DMA_ENABLE << 16 | 224,
+  Dma_Set(gBasicSpritePalettes, (void *)OBJ_PLTT, DMA_COPY_HALFWORDS(224),
           REG_DMA3);
 }
 
 /// Loads the basic sprite palettes (palettes 0 to 13). Called by
 /// Window_LoadGraphics and the actor setup.
 void Palette_LoadBasicSpriteColors(void) {
-  Dma_Set(gBasicSpritePalettes, (void *)OBJ_PLTT, DMA_ENABLE << 16 | 224,
+  Dma_Set(gBasicSpritePalettes, (void *)OBJ_PLTT, DMA_COPY_HALFWORDS(224),
           REG_DMA3);
 }

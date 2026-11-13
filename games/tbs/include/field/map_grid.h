@@ -8,6 +8,7 @@
 #include "module/field/field.h"
 #include "types.h"
 #include "static_assert.h"
+#include "heap.h"
 
 /// A map cell's cell behavior (`MapGridCell.behavior`): what stepping
 /// on, pushing against or searching the cell does.
@@ -113,7 +114,7 @@ struct MapGridScrollAnimView {
   /// MapGridScrollWork's view, bounds and shown layers; not named through this
   /// view.
   ///@{
-  s32 viewX, viewY;
+  s32 view[2];
   s32 minX, minY, maxX, maxY;
   s8 animationActive;
   u8 unused[3];
@@ -165,7 +166,7 @@ extern u8 gBgTileBuffer[];
 
 /// HEAP_SLOT_WORLD_MAP_AFFINE under its own name, which no code reads; the
 /// world map keeps its struct WorldMapAffineWork in the slot.
-extern u8 *gWorldMapAffineWork;
+#define gWorldMapAffineWork (*(u8 **)&gHeapSlots[HEAP_SLOT_WORLD_MAP_AFFINE])
 
 /// A row of gMaps: a layout's resources, counted from
 /// ResourceId_Map001: its header, palette, three tilesets and the tileset

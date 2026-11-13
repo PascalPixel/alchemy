@@ -112,8 +112,7 @@ void LuckyWheels_TransferCanvas(void) {
     case 1:
       // Then fill the canvas with transferValue.
       Dma_Set(buf, (void *)LUCKY_WHEELS_CANVAS_TILES,
-              (DMA_ENABLE | DMA_32BIT) << 16 | LUCKY_WHEELS_CANVAS_SIZE / 4,
-              REG_DMA3);
+              DMA_COPY_WORDS(LUCKY_WHEELS_CANVAS_SIZE / 4), REG_DMA3);
       Iwram_FillWords(buf, LUCKY_WHEELS_CANVAS_SIZE, work->transferValue);
       break;
     case 2:
@@ -184,8 +183,8 @@ void Palette_StepTowardResource(s32 resource) {
   u16 *col = (u16 *)BG_PLTT;
   s32 i;
 
-  Dma_Set(Resource_GetTableEntry(resource), dst,
-          (DMA_ENABLE | DMA_32BIT) << 16 | sizeof dst / 4, REG_DMA3);
+  Dma_Set(Resource_GetTableEntry(resource), dst, DMA_COPY_WORDS(sizeof dst / 4),
+          REG_DMA3);
   for (i = 0; i != 64; i++, col++) {
     s32 r = RGB_RED(*col);
     s32 g = RGB_GREEN(*col);
@@ -208,7 +207,7 @@ void Palette_StepTowardResource(s32 resource) {
       b--;
     dst[i] = RGB(r, g, b);
   }
-  Dma_Set(dst + 1, (void *)&BG_PLTT[1], (DMA_ENABLE << 16) | 63, REG_DMA3);
+  Dma_Set(dst + 1, (void *)&BG_PLTT[1], DMA_COPY_HALFWORDS(63), REG_DMA3);
 }
 
 /// Draws a line from (x0, y0) to (x1, y1) on the 256 x 128 8bpp canvas (32
@@ -954,8 +953,7 @@ void LuckyWheels_Update(void) {
     sprite++;
   }
 
-  Dma_Set(work->oam, OAM, (sprite * 2) | (DMA_ENABLE | DMA_32BIT) << 16,
-          REG_DMA3);
+  Dma_Set(work->oam, OAM, DMA_COPY_WORDS(sprite * 2), REG_DMA3);
 }
 
 /// Sets up the bouncing title letters of a win, the brightness wave of the
@@ -1071,8 +1069,7 @@ void LuckyWheels_Run(void) {
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD),
                       sheet);
   entry = Resource_GetTableEntry((s32)&ResourceId_LuckyWheelsMachinePicture);
-  Dma_Set(entry, (void *)&BG_PLTT_COLOR(10, 0),
-          (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+  Dma_Set(entry, (void *)&BG_PLTT_COLOR(10, 0), DMA_COPY_WORDS(8), REG_DMA3);
   entry += 32;
   Decompress_TaggedLz(entry, tiles);
   j = 0;
@@ -1080,8 +1077,8 @@ void LuckyWheels_Run(void) {
     for (i = 0; i != 30; i++) {
       if (!(i >= 5 && i <= 24 && k > 2 && k <= 13)) {
         Dma_Set(tiles + (k * 30 + i) * 32,
-                (void *)(BG_CHAR_BLOCK(2) + 0x3500 + j),
-                (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+                (void *)(BG_CHAR_BLOCK(2) + 0x3500 + j), DMA_COPY_WORDS(8),
+                REG_DMA3);
         j += 32;
       }
     }
@@ -1133,19 +1130,17 @@ void LuckyWheels_Run(void) {
     work->frame = 0;
     state->timer = 0;
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet),
-            (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 32, REG_DMA3);
+            (void *)BG_PLTT, DMA_COPY_WORDS(32), REG_DMA3);
     // The paylines' two greens, colours 64 and 65 on the canvas.
     BG_PLTT_COLOR(4, 0) = RGB(11, 28, 11);
     BG_PLTT_COLOR(4, 1) = RGB(22, 31, 22);
     entry = Resource_GetTableEntry((s32)&ResourceId_LuckyWheelsIcons);
-    Dma_Set(entry, (void *)OBJ_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 480 / 4,
-            REG_DMA3);
+    Dma_Set(entry, (void *)OBJ_PLTT, DMA_COPY_WORDS(480 / 4), REG_DMA3);
     entry += 480;
     Decompress_TaggedLz(entry, tiles);
     Dma_Set(tiles, (void *)OBJ_VRAM0, DMA_COPY_WORDS(6960), REG_DMA3);
     entry = Resource_GetTableEntry((s32)&ResourceId_LuckyWheelsJackpot);
-    Dma_Set(entry, (void *)&OBJ_PLTT_COLOR(15, 0),
-            (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+    Dma_Set(entry, (void *)&OBJ_PLTT_COLOR(15, 0), DMA_COPY_WORDS(8), REG_DMA3);
     entry += 32;
     Decompress_TaggedLz(entry, tiles);
     Dma_Set(tiles, (void *)LUCKY_WHEELS_JACKPOT_TILES,
@@ -1192,13 +1187,12 @@ void LuckyWheels_Run(void) {
     draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
     Iwram_FillWords(canvas, size, 0);
     Dma_Set(canvas, (void *)LUCKY_WHEELS_CANVAS_TILES,
-            (DMA_ENABLE | DMA_32BIT) << 16 | LUCKY_WHEELS_CANVAS_SIZE / 4,
-            REG_DMA3);
+            DMA_COPY_WORDS(LUCKY_WHEELS_CANVAS_SIZE / 4), REG_DMA3);
     // Each palette RAM half: 256 colours of two bytes, counted in words.
-    Dma_Set((void *)BG_PLTT, work,
-            (DMA_ENABLE | DMA_32BIT) << 16 | 256 * sizeof(u16) / 4, REG_DMA3);
-    Dma_Set((void *)OBJ_PLTT, shade,
-            (DMA_ENABLE | DMA_32BIT) << 16 | 256 * sizeof(u16) / 4, REG_DMA3);
+    Dma_Set((void *)BG_PLTT, work, DMA_COPY_WORDS(256 * sizeof(u16) / 4),
+            REG_DMA3);
+    Dma_Set((void *)OBJ_PLTT, shade, DMA_COPY_WORDS(256 * sizeof(u16) / 4),
+            REG_DMA3);
     LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, 0, 256);
     LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, 0, 256);
     REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |

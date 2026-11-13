@@ -14,15 +14,13 @@
 #include "types.h"
 #include "static_assert.h"
 
-/// The heap's 64 words in IWRAM (0x03001e50), seen as union HeapState. The
-/// work globals named in system/iwram.s (gBattleWork, gBattleCamera,
-/// gFieldWork and others) are single slots of this table.
+/// The heap's 64 words in IWRAM (0x03001e50), seen as union HeapState. Each
+/// part of the game names the slots it owns (gFieldWork, gWindowWork,
+/// gMapGridWork and the rest) as macros over this table, so the compiler sees
+/// one array and reaches neighbouring slots from whichever it loaded first.
 extern void *gHeapSlots[64];
 
 /// Slot n's block, or null before it is allocated.
-// Reached through the slot's own address, adjacent slots by offsets from it;
-// gHeapSlots[n] addresses from the table's start instead. Each site keeps the
-// form it matches with.
 #define HEAP_SLOT_BLOCK(n) (*(gHeapSlots + (n)))
 
 /// The heap's 64 slots, the first two holding the next free EWRAM and

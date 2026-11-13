@@ -676,10 +676,10 @@ static void MenuTest_SelectItem(void) {
   // HIGHLIGHT_PALETTE, and WINDOW_BACKGROUND_COLOR over its
   // TEXT_BACKGROUND_COLOR, as the Increase item and level scene's browser does.
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
-          DMA_ENABLE << 16 | 16, REG_DMA3);
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
-          DMA_ENABLE << 16 | 1, REG_DMA3);
+          DMA_COPY_HALFWORDS(1), REG_DMA3);
   wait(1);
   while (1) {
     if (redraw) {

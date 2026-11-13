@@ -497,7 +497,8 @@ void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
     }
     *destination++ = palette->slot[index];
   }
-  Dma_Set(remapped, BG_CHAR_BLOCK(1) + tile * 64, DMA_COPY32(256), REG_DMA3);
+  Dma_Set(remapped, BG_CHAR_BLOCK(1) + tile * 64, DMA_COPY_WORDS(256),
+          REG_DMA3);
   Heap_Release(remapped);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 }

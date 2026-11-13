@@ -261,12 +261,10 @@ enum {
     void *saved = Heap_Alloc(MINIGAME_PALETTE_BYTES);                          \
     s32 result;                                                                \
                                                                                \
-    Dma_Set(palette, saved,                                                    \
-            (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),     \
+    Dma_Set(palette, saved, DMA_COPY_WORDS(MINIGAME_PALETTE_BYTES / 4),        \
             REG_DMA3);                                                         \
     result = start(entrance);                                                  \
-    Dma_Set(saved, palette,                                                    \
-            (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),     \
+    Dma_Set(saved, palette, DMA_COPY_WORDS(MINIGAME_PALETTE_BYTES / 4),        \
             REG_DMA3);                                                         \
     Heap_Release(saved);                                                       \
     return result;                                                             \

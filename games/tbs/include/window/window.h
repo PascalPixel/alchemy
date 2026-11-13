@@ -11,6 +11,7 @@
 #include "tbs_edition.h"
 #include "static_assert.h"
 #include "render_input.h"
+#include "heap.h"
 
 /// Where the windows are drawn (WindowWork.battleMode). In battle, typing
 /// speeds up when a frame overruns, and the bottom rows of a cleared
@@ -225,6 +226,6 @@ STATIC_ASSERT(offsetof(struct WindowWork, spacingAfter) ==
 STATIC_ASSERT(sizeof(struct WindowWork) == WINDOW_WORK_SIZE);
 
 /// The window renderer's work, heap slot HEAP_SLOT_WINDOW under its own name.
-extern u8 *gWindowWork[];
+#define gWindowWork (*(u8 *(*)[])&gHeapSlots[HEAP_SLOT_WINDOW])
 
 #endif

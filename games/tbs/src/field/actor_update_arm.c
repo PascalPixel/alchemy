@@ -11,6 +11,7 @@
 #include "actor_arm_view.h"
 #include "macros.h"
 #include "fixed_math.h"
+#include "heap.h"
 
 #define ACTOR_SLOTS 8 ///< script-driven actors updated each frame
 #define TARGET_UNSET ((s32)0x80000000) ///< no movement target
@@ -22,8 +23,6 @@
 #define IwramSqrt IWRAM_ENTRY(s32 (*)(s32 value), Iwram_SqrtOffset)
 #define IwramRatioMulQ14                                                       \
   IWRAM_ENTRY(s32 (*)(s32 divisor, s32 value), Iwram_RatioMulQ14Offset)
-
-extern struct ActorArmView *gActors;
 
 // Far-call stubs copied to RAM together with this code (actor_update_far.s).
 s32 ArcTan2FarArm(s32 z, s32 x);
@@ -57,7 +56,7 @@ void Actor_UpdateAll(void) {
   s32 turnDelta;
   u16 travelAngle;
 
-  for (slot = 0, actor = gActors; slot < ACTOR_SLOTS;
+  for (slot = 0, actor = HEAP_SLOT_BLOCK(HEAP_SLOT_ACTORS); slot < ACTOR_SLOTS;
        slot = nextSlot, actor = nextActor) {
     nextSlot = slot + 1;
     nextActor = actor + 1;

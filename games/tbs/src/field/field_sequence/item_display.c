@@ -11,12 +11,7 @@ STATIC_ASSERT(offsetof(struct Actor, sprite) == 0x50);
 /// ActorSystem_Initialize allocates the 64 actors in
 /// HEAP_SLOT_ACTORS.
 #define EFFECT_OBJECT_COUNT 64
-#ifdef UBFIX
 #define EFFECT_OBJECT_POOL gActors
-#else
-// UB: gActors and gFieldWork are separate globals.
-#define EFFECT_OBJECT_POOL (*(struct Actor **)((u8 *)&gFieldWork - 88))
-#endif
 
 /// Keeps the party leader off the treasure spots: a leader within 16 pixels of
 /// a treasure spot's centre is moved 20 pixels from that centre, in the

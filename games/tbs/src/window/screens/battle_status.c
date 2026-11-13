@@ -172,11 +172,10 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   statusCount = 0;
   hasDjinn = Party_SumDjinnCountsFar(-1);
 
-  navigation = ((struct BattleMenuWork *)
-                    gWindowWork[HEAP_SLOT_BATTLE_MENU - HEAP_SLOT_WINDOW]);
+  navigation = gBattleMenuWork;
   navigation->timerHidden = 1;
   if (navigation->timerWindow != 0) {
-    Window_Close((struct Window *)navigation->timerWindow, 1);
+    Window_Close(navigation->timerWindow, 1);
     navigation->timerWindow = 0;
   }
   Sound_PlayFar(SE_MENU_CONFIRM);
@@ -814,15 +813,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   Window_Close(statusWindow, 1);
   Window_Close(helpWindow, 1);
   PartyStatus_Draw(gBattleWork->partyStatus);
-  // UB: the indexed scalar pointer steps outside gBattleWork to
-  // HEAP_SLOT_BATTLE_MENU.
-#ifdef UBFIX
   gBattleMenuWork->timerHidden = 0;
-#else
-  ((struct BattleMenuWork **)&gBattleWork)[HEAP_SLOT_BATTLE_MENU -
-                                           HEAP_SLOT_BATTLE]
-      ->timerHidden = 0;
-#endif
   wait(1);
   return 0;
 }

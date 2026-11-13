@@ -183,15 +183,15 @@ s32 StatusScreen_Run(void) {
   // takes HIGHLIGHT_PALETTE's WINDOW_BACKGROUND_COLOR as its
   // TEXT_BACKGROUND_COLOR, palette 1 WINDOW_PALETTE's
   // (PsynergyMenu_DrawRangePage).
-  Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_ENABLE << 16 | 16, REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(0, TEXT_BACKGROUND_COLOR),
-          DMA_ENABLE << 16 | 1, REG_DMA3);
-  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(1, 0), DMA_ENABLE << 16 | 16,
-          REG_DMA3);
+          DMA_COPY_HALFWORDS(1), REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(1, 0),
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(1, TEXT_BACKGROUND_COLOR),
-          DMA_ENABLE << 16 | 1, REG_DMA3);
+          DMA_COPY_HALFWORDS(1), REG_DMA3);
 #if TBS_PATCH_1
   Iwram_CopyWords(tiles, BG_CHAR_BLOCK(1), STATUS_SAVED_TILE_BYTES);
   Iwram_FillWords(BG_CHAR_BLOCK(1), STATUS_SAVED_TILE_BYTES, PIXELS_4BPP(3));
@@ -460,15 +460,15 @@ s32 PartyMemberChooser_RunRearrange(void) {
   // The highlight palette, and the first sprite palette into background
   // palettes 0 and 1, as StatusScreen_Run sets them.
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
-  Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_ENABLE << 16 | 16, REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(0, TEXT_BACKGROUND_COLOR),
-          DMA_ENABLE << 16 | 1, REG_DMA3);
-  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(1, 0), DMA_ENABLE << 16 | 16,
-          REG_DMA3);
+          DMA_COPY_HALFWORDS(1), REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(1, 0),
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(1, TEXT_BACKGROUND_COLOR),
-          DMA_ENABLE << 16 | 1, REG_DMA3);
+          DMA_COPY_HALFWORDS(1), REG_DMA3);
   while (!GameFlag_GetFar(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
       redraw = 0;
@@ -2054,15 +2054,13 @@ void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
   struct WindowSprite *icon;
   struct WindowSprite **icons;
 
-  entryIndex = 0;
   icons = ((struct ItemMenuWork *)gMenuWork)->entryIcons;
-  do {
+  for (entryIndex = 0; entryIndex <= 31; entryIndex++) {
     icon = *icons++;
     if (icon != NULL) {
       Menu_PlaceEntryActorInGrid(icon, entryIndex, originX, originY, columns);
     }
-    entryIndex += 1;
-  } while (entryIndex <= 31);
+  }
 }
 
 /// Places icon at cell index (an index above 31 is taken as 0) of a grid of
@@ -2179,10 +2177,9 @@ void StatusScreen_ShowStatusIcons(const u8 *flags) {
 
   menu = gMenuWork;
   ItemMenu_ResetCategory();
-  index = 0;
   slot = menu->categoryIcons;
   shown = 0;
-  do {
+  for (index = 0; index <= 4; index++) {
     entry = *slot++;
     if (entry != 0 && flags[index] != 0) {
       entry->x = 8;
@@ -2191,8 +2188,7 @@ void StatusScreen_ShowStatusIcons(const u8 *flags) {
       Icon_PrepareActor(entry);
       shown++;
     }
-    index++;
-  } while (index <= 4);
+  }
 }
 
 /// Moves the five status icons (the first category sprites) off screen,

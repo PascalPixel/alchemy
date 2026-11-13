@@ -30,15 +30,8 @@
 /// right-aligned on the 30-tile screen row at the top. It is four tiles high
 /// outside battle and three in battle, plus one with the PP row.
 void PartyStatus_BuildLayoutBounds(s32 flags) {
-  // UB: slot[-1] steps before the single party-status heap slot.
-#ifdef UBFIX
   struct PartyStatusWindow *layout = HEAP_SLOT_BLOCK(HEAP_SLOT_PARTY_STATUS);
   struct WindowWork *work = WINDOW_WORK;
-#else
-  void **slot = (void **)&gPartyStatusWork;
-  struct PartyStatusWindow *layout = *slot;
-  struct WindowWork *work = slot[-1];
-#endif
   s32 height = 4;
   s32 members;
   s32 width;
@@ -167,8 +160,8 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
 
   if (work->battleMode == WINDOW_FIELD) {
     Dma_Set((const void *)Palette_GetBasicSpriteColors(),
-            (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0), DMA_COPY16(16),
-            REG_DMA3);
+            (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
+            DMA_COPY_HALFWORDS(16), REG_DMA3);
     BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR) =
         BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   }
@@ -224,19 +217,10 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
 /// TEXT_COLOR_YELLOW at a quarter or less. When the flags change, the window is
 /// erased and laid out again first.
 void PartyStatus_Draw(s32 flags) {
-  // UB: the negative indices leave the single party-status heap slot.
-#ifdef UBFIX
   struct PartyStatusWindow *layout = HEAP_SLOT_BLOCK(HEAP_SLOT_PARTY_STATUS);
   struct BattleWork *battle = gBattleWork;
   struct Window *window = layout->window;
   struct WindowWork *work = WINDOW_WORK;
-#else
-  void **slot = (void **)gPartyStatusWork;
-  struct PartyStatusWindow *layout = slot[0];
-  struct BattleWork *battle = slot[-7];
-  struct Window *window = layout->window;
-  struct WindowWork *work = slot[-1];
-#endif
   s32 x = 0;
   u32 count;
   s32 y = 0;
@@ -368,13 +352,7 @@ void PartyStatus_Draw(s32 flags) {
 
 /// Closes the party status window and frees its heap block.
 void PartyStatus_Close(void) {
-  // UB: reads the heap slot's pointer through an s32 pointer; UBFIX reads
-  // the window through the block's own struct.
-#ifdef UBFIX
   Window_Close(((struct PartyStatusWindow *)gWindowWork[1])->window, 1);
-#else
-  Window_Close((struct Window *)**(s32 **)(u32)&gWindowWork[1], 1);
-#endif
   HeapSlot_Release(HEAP_SLOT_PARTY_STATUS);
 }
 

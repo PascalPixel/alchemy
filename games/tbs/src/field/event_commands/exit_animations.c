@@ -13,11 +13,8 @@
 /// window above or below the leader.
 s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   struct Actor *actor = Actor_Lookup(actorId);
-#ifdef UBFIX
   struct MapGridScrollWork *grid;
-#else
-  s32 *view; // the view's top left, x then y
-#endif
+  s32 *view;
   s32 cameraX;
   s32 cameraZ;
   s32 x;
@@ -25,16 +22,10 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
 
   if (actor == 0)
     return -1;
-  // UB: view[1] crosses the viewX scalar; UBFIX reads the named pair.
-#ifdef UBFIX
   grid = gMapGridWork[0];
-  cameraX = grid->viewX & FIELD_PIXEL_MASK;
-  cameraZ = grid->viewY & FIELD_PIXEL_MASK;
-#else
-  view = &((struct MapGridScrollWork *)gMapGridWork[0])->viewX;
+  view = grid->view;
   cameraX = view[0] & FIELD_PIXEL_MASK;
   cameraZ = view[1] & FIELD_PIXEL_MASK;
-#endif
   x = actor->x.fixed - cameraX;
   z = actor->z.fixed - cameraZ - actor->y.fixed;
   *position++ = x / Q16_ONE;
@@ -105,11 +96,10 @@ void Exit_PrepareAnimation(s32 animation) {
   effect =
       (struct SpriteAnimation *)Sprite_AddAnimationFar(context, SPRITE_DOORWAY);
   {
-    u32 cleared = 0;
     u8 colorMode = SPRITE_COLOR_HIDDEN;
 
     // No shadow as the leader leaves.
-    context->flags = cleared;
+    context->flags = 0;
     effect->colorMode = colorMode;
     // Positions are 16.16 fixed point and cells 16 pixels: keep the cell and
     // put the leader at its middle in x (8 pixels) and its south edge in z.
@@ -117,8 +107,8 @@ void Exit_PrepareAnimation(s32 animation) {
     // store.
     *(s32 *)&actor->x = (*(s32 *)&actor->x & FIELD_CELL_MASK) + px(8);
     *(s32 *)&actor->z = (*(s32 *)&actor->z & FIELD_CELL_MASK) + px(16);
-    actor->velocityX = cleared;
-    actor->velocityZ = cleared;
+    actor->velocityX = 0;
+    actor->velocityZ = 0;
     actor->targetX = ACTOR_NO_TARGET;
     actor->targetZ = ACTOR_NO_TARGET;
     Actor_SelectAnimationFar(actor, animation);

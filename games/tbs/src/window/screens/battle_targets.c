@@ -95,18 +95,10 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   conditionWindow = (struct Window *)((u32)(u16)selection >> 16);
   if (spread == 0)
     spread = 1;
-  // UB: slot 57 is outside the scalar gBattleWork pointer.
-#ifdef UBFIX
   if (mode == ABILITY_TARGET_ALLIES || mode == ABILITY_TARGET_SELF)
     gBattleMenuWork->targetViewOffset = -2;
   else
     gBattleMenuWork->targetViewOffset = 16;
-#else
-  if (mode == ABILITY_TARGET_ALLIES || mode == ABILITY_TARGET_SELF)
-    ((struct BattleMenuWork **)&gBattleWork)[48]->targetViewOffset = -2;
-  else
-    ((struct BattleMenuWork **)&gBattleWork)[48]->targetViewOffset = 16;
-#endif
   for (i = 0; i < 6; i++)
     cursorTracks[i].flags = 0;
   // The candidates: the party, the acting unit alone, or the enemies.

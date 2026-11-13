@@ -18,8 +18,7 @@ struct WorldMapView {
   u8 fadeStep; ///< MapGridScrollWork's wideTiles, 0x80 at load
   /// As MapGridScrollWork: footprints, tileset animations and blend script.
   u8 animationsAndBlend[0xe4 - 0x17];
-  s32 viewX;  ///< 16.16 fixed-point pixels
-  s32 viewY;  ///< 16.16 fixed-point pixels
+  s32 view[2]; ///< the view's top left, x then y, 16.16 fixed-point pixels
   s32 scaleX; ///< 32 in 16.16 at load
   s32 scaleY; ///< 64 in 16.16 at load
   s32 limitX; ///< 8160 in 16.16 at load
@@ -60,7 +59,7 @@ struct WorldMapView {
 };
 
 STATIC_ASSERT(sizeof(struct WorldMapView) == 0x35c);
-STATIC_ASSERT(offsetof(struct WorldMapView, viewX) == 0xe4);
+STATIC_ASSERT(offsetof(struct WorldMapView, view) == 0xe4);
 STATIC_ASSERT(offsetof(struct WorldMapView, pitch) == 0x118);
 STATIC_ASSERT(offsetof(struct WorldMapView, animationActive) == 0xfc);
 STATIC_ASSERT(offsetof(struct WorldMapView, resources) == 0x11c);

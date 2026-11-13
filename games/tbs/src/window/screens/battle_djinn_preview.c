@@ -153,19 +153,9 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
       sprite->sentinel = 240;
       sprite->x = 120;
       sprite->y = 120;
-      // UB: the two stores below write the attribute and tile words through
-      // pointer types, which keeps sched2's order of the stores around them;
-      // UBFIX writes the unions' words.
-#ifdef UBFIX
       entry->attributes.word =
           OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
       entry->tile.value = 0;
-#else
-      *(struct Window **)&entry->attributes =
-          (struct Window *)(OBJ_SIZE_16X16 |
-                            OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
-      *(void **)&entry->tile = (void *)0;
-#endif
       entry->attributes.bits.x = win->x * 8 + x;
       entry->attributes.bits.y = win->y * 8 + y;
       /* FAKEMATCH(dead): advancing and restoring the captured pointer keeps

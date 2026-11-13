@@ -260,8 +260,7 @@ void FieldPsynergy_FadeToCastColor(void) {
   Dma_Set(&work->target[672], field + 0x776, DMA_COPY_WORDS(336), REG_DMA3);
   if (((struct FieldWork *)field)->revealActive == 0)
     Dma_Set(work->target, field + 0x236, DMA_COPY_WORDS(336), REG_DMA3);
-  Dma_Set(work->target, work->current,
-          (DMA_ENABLE | DMA_32BIT) << 16 | (sizeof work->current / 4),
+  Dma_Set(work->target, work->current, DMA_COPY_WORDS(sizeof work->current / 4),
           REG_DMA3);
 
   // Of the forcing flags, the highest one set wins.
@@ -331,8 +330,8 @@ void Camera_WorldToScreen(struct Vector3 *position) {
     struct MapGridScrollWork *state =
         *(struct MapGridScrollWork **)((u8 *)eventCell - 76);
 #endif
-    s32 x = state->viewX & FIELD_PIXEL_MASK;
-    s32 z = state->viewY & FIELD_PIXEL_MASK;
+    s32 x = state->view[0] & FIELD_PIXEL_MASK;
+    s32 z = state->view[1] & FIELD_PIXEL_MASK;
 
     // Relative to the view's whole-pixel corner; height lifts a point up
     // the screen.

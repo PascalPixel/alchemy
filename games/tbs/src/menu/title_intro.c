@@ -217,9 +217,9 @@ void Title_LoadIntroBackgrounds(void) {
   resourceData += 512;
   Decompress_ByteLz(resourceData, Ram_MapGridCellBuffer);
   Dma_Set(Ram_MapGridCellBuffer + 10560, BG_CHAR_BLOCK(0),
-          DMA_ENABLE << 16 | 10080, REG_DMA3);
+          DMA_COPY_HALFWORDS(10080), REG_DMA3);
   Dma_Set(Ram_MapGridCellBuffer + 41280, (void *)0x06004ec0,
-          DMA_ENABLE << 16 | 20160, REG_DMA3);
+          DMA_COPY_HALFWORDS(20160), REG_DMA3);
 
   {
     s32 blankTile = 511;
@@ -392,7 +392,7 @@ s32 Title_ShowIntro(s32 prompt) {
           if (work->frontRows * 8 <= 24) {
             Dma_Set(Ram_MapGridCellBuffer + 39360 - work->frontRows * 1920,
                     (u8 *)0x0600e4c0 - work->frontRows * 1920,
-                    DMA_ENABLE << 16 | 960, REG_DMA3);
+                    DMA_COPY_HALFWORDS(960), REG_DMA3);
           } else {
             // Once the finite picture is exhausted, clear incoming bands
             // so wrapped tile memory cannot expose earlier picture rows.
@@ -433,8 +433,8 @@ s32 Title_ShowIntro(s32 prompt) {
       BG_PLTT[0] = 0;
       resourceData += 512;
       Decompress_ByteLz(resourceData, Ram_MapGridCellBuffer);
-      Dma_Set(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(1), DMA_ENABLE << 16 | 19200,
-              REG_DMA3);
+      Dma_Set(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(1),
+              DMA_COPY_HALFWORDS(19200), REG_DMA3);
       tilemap = (u16 *)BG_SCREEN_BLOCK(6);
       tile = 256;
       i = 0;
@@ -795,7 +795,7 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     *destination++ = (mode & 0x03e0) << 5;
     *destination++ = (mode & 0x001f) << 10;
     Dma_Set(destination - 3, destination,
-            DMA_ENABLE << 16 | (((colorCount - 1) * 6) >> 1), REG_DMA3);
+            DMA_COPY_HALFWORDS(((colorCount - 1) * 6) >> 1), REG_DMA3);
   } else if (mode < PALETTE_TINT_FLAGS) {
     switch (mode) {
     case PALETTE_TINT_GRAYSCALE:

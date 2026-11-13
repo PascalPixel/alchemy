@@ -51,14 +51,6 @@ void ScreenTransition_UpdateScanlineTable(void) {
   struct TransitionShape *shape;
   struct MapGridScrollWork *grid;
   u16 *scanlineData;
-#ifndef UBFIX
-  // UB: viewX is a scalar, so indexing its address cannot reach viewY. Modern
-  // code reads the actual members below.
-  s32 *viewInverse;
-  s32 *viewRipple;
-  s32 *viewLeader;
-  s32 *viewLeaderLow;
-#endif
   struct Actor *actor;
   u32 i;
   s32 k;
@@ -79,12 +71,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
   s32 oppositeEdges;
 
   grid = gMapGridWork[0];
-#ifdef UBFIX
   state = gScreenTransitionWork;
-#else
-  // UB: this indexes past gMapGridWork into the separate transition-work cell.
-  state = gMapGridWork[23];
-#endif
 
   // Finish or advance the timed phase before generating the hidden page.
   if (state->duration != 0) {
@@ -298,14 +285,12 @@ void ScreenTransition_UpdateScanlineTable(void) {
   case WINDOW_TRANSITION_LEADER_INVERSE: {
     s32 ax;
 
-#ifdef UBFIX
-    ax = grid->viewX & FIELD_PIXEL_MASK;
-    cameraY = grid->viewY & FIELD_PIXEL_MASK;
-#else
-    viewInverse = &grid->viewX;
-    ax = viewInverse[0] & FIELD_PIXEL_MASK;
-    cameraY = viewInverse[1] & FIELD_PIXEL_MASK;
-#endif
+    {
+      s32 *view = grid->view;
+
+      ax = view[0] & FIELD_PIXEL_MASK;
+      cameraY = view[1] & FIELD_PIXEL_MASK;
+    }
     // Centred on the leader's place on screen, 16 pixels above its feet.
     actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
     centerX = (actor->x.fixed - ax) / Q16_ONE;
@@ -354,15 +339,12 @@ void ScreenTransition_UpdateScanlineTable(void) {
     }
     break;
   }
-  case WINDOW_TRANSITION_RIPPLE:
-#ifdef UBFIX
-    cameraX = grid->viewX & FIELD_PIXEL_MASK;
-    cameraY8 = grid->viewY & FIELD_PIXEL_MASK;
-#else
-    viewRipple = &grid->viewX;
-    cameraX = viewRipple[0] & FIELD_PIXEL_MASK;
-    cameraY8 = viewRipple[1] & FIELD_PIXEL_MASK;
-#endif
+  case WINDOW_TRANSITION_RIPPLE: {
+    s32 *view = grid->view;
+
+    cameraX = view[0] & FIELD_PIXEL_MASK;
+    cameraY8 = view[1] & FIELD_PIXEL_MASK;
+  }
     // Centred on state->centreX and centreY; each line's edges move out by
     // gScreenTransition_EdgeOffsets, indexed two entries a line and one a
     // frame, so the outline ripples.
@@ -416,14 +398,12 @@ void ScreenTransition_UpdateScanlineTable(void) {
   case WINDOW_TRANSITION_LEADER: {
     s32 ax;
 
-#ifdef UBFIX
-    ax = grid->viewX & FIELD_PIXEL_MASK;
-    cameraY = grid->viewY & FIELD_PIXEL_MASK;
-#else
-    viewLeader = &grid->viewX;
-    ax = viewLeader[0] & FIELD_PIXEL_MASK;
-    cameraY = viewLeader[1] & FIELD_PIXEL_MASK;
-#endif
+    {
+      s32 *view = grid->view;
+
+      ax = view[0] & FIELD_PIXEL_MASK;
+      cameraY = view[1] & FIELD_PIXEL_MASK;
+    }
     actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
     centerX = (actor->x.fixed - ax) / Q16_ONE;
     centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / Q16_ONE - 16;
@@ -466,14 +446,12 @@ void ScreenTransition_UpdateScanlineTable(void) {
   case WINDOW_TRANSITION_LEADER_LOW: {
     s32 ax;
 
-#ifdef UBFIX
-    ax = grid->viewX & FIELD_PIXEL_MASK;
-    cameraY = grid->viewY & FIELD_PIXEL_MASK;
-#else
-    viewLeaderLow = &grid->viewX;
-    ax = viewLeaderLow[0] & FIELD_PIXEL_MASK;
-    cameraY = viewLeaderLow[1] & FIELD_PIXEL_MASK;
-#endif
+    {
+      s32 *view = grid->view;
+
+      ax = view[0] & FIELD_PIXEL_MASK;
+      cameraY = view[1] & FIELD_PIXEL_MASK;
+    }
     actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
     centerX = (actor->x.fixed - ax) / Q16_ONE;
     // Centred 8 pixels above the leader's feet, not 16 as in
@@ -964,7 +942,7 @@ void ScreenTransition_UpdateDissolve(void) {
   }
 
   IO_WRITE_QUEUE_PUSH((u32)BG_CHAR_BLOCK(0), (u32)state->paletteNibbles,
-                      (DMA_ENABLE | DMA_32BIT) << 16 | TILE_SIZE_4BPP / 4);
+                      DMA_COPY_WORDS(TILE_SIZE_4BPP / 4));
 }
 
 /// Fills background screen block 4 with tile 0 in WINDOW_PALETTE and, unless
@@ -986,7 +964,7 @@ void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
     for (remainingWords = 7; remainingWords >= 0; --remainingWords)
       *tile++ = pattern;
     Dma_Set(work->solidTile, BG_CHAR_BLOCK(0),
-            (DMA_ENABLE | DMA_32BIT) << 16 | TILE_SIZE_4BPP / 4, REG_DMA3);
+            DMA_COPY_WORDS(TILE_SIZE_4BPP / 4), REG_DMA3);
   }
 }
 

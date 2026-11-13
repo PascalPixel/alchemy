@@ -25,6 +25,7 @@
 #include "fixed_math.h"
 #include "edition.h"
 #include "types.h"
+#include "heap.h"
 
 #include "static_assert.h"
 
@@ -51,7 +52,7 @@ extern u8 gSceneLocalState[];
 /// slot's literal is gHeapSlots+236, the same address through another
 /// relocation, so no byte differs. Where only the gauge is read, a struct
 /// ColossoGaugeWork pointer (its first member) compiles as ->gauge does.
-extern u8 *gColossoWork;
+#define gColossoWork (*(u8 **)&gHeapSlots[HEAP_SLOT_COLOSSO_RACE])
 
 #include "frame.h"
 

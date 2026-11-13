@@ -426,8 +426,7 @@ void DjinnMenu_AdjustPalettes(s32 brightnessDelta) {
   s32 paletteIndex;
 
   paletteNumber = WINDOW_PALETTE;
-  copyIndex = 0;
-  do {
+  for (copyIndex = 0; copyIndex <= 2; copyIndex++) {
     for (colorIndex = 0; colorIndex <= 15; colorIndex++) {
       u32 color;
       s32 blue;
@@ -465,8 +464,7 @@ void DjinnMenu_AdjustPalettes(s32 brightnessDelta) {
       paletteNumber = 7;
       brightnessDelta = -12;
     }
-    copyIndex++;
-  } while (copyIndex <= 2);
+  }
 }
 
 /// PsynergyList_Diff' marks on an action id: Psynergy the change gives,
@@ -499,11 +497,11 @@ MenuBackdropResult Menu_OpenBackdropScreen(void) {
                   gMenu_BackdropBorderTile, TILE_SIZE_4BPP);
   Dma_Set((const void *)Palette_GetBasicSpriteColors(),
           (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
-          DMA_ENABLE << 16 | 16, REG_DMA3);
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
   BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
       BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0),
-          (void *)&BG_PLTT_COLOR(7, 0), DMA_ENABLE << 16 | 16, REG_DMA3);
+          (void *)&BG_PLTT_COLOR(7, 0), DMA_COPY_HALFWORDS(16), REG_DMA3);
   DjinnMenu_AdjustPalettes(8);
   BG_PLTT_COLOR(7, 4) = BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   BG_PLTT_COLOR(6, 4) = BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
@@ -781,12 +779,10 @@ s32 DjinnMenu_ShowHelp(void) {
   helpWindow = Window_CreateFar(8, 12, 22, 7, WINDOW_FLAG_INSTANT);
   statusWindow = Window_CreateFar(8, 9, 22, 3, WINDOW_FLAG_INSTANT);
   Window_MarkVisibleTextTilesFar();
-  helpIndex = 0;
   listMessage = MsgDjinnInfoTopic;
-  do {
+  for (helpIndex = 0; helpIndex <= 6; helpIndex++) {
     Text_DrawMessageAsTilesFar(helpIndex + listMessage, list, 0, helpIndex * 8);
-    helpIndex++;
-  } while (helpIndex <= 6);
+  }
   do {
     WindowSprite_PrepareForRedrawFar(statusWindow);
     Text_DrawMessageFar(selection + MsgDjinnInfoTopic, statusWindow, 0, 0);

@@ -124,8 +124,8 @@ void WindowSystem_InitBattle(s32 loadGlyphTiles) {
     sourceTile &= TILE_NUMBER_MASK;
     destinationTile &= TILE_NUMBER_MASK;
     Dma_Set(BG_CHAR_BLOCK(0) + sourceTile * TILE_SIZE_4BPP + 16,
-            BG_CHAR_BLOCK(0) + destinationTile * TILE_SIZE_4BPP, DMA_COPY16(8),
-            REG_DMA3);
+            BG_CHAR_BLOCK(0) + destinationTile * TILE_SIZE_4BPP,
+            DMA_COPY_HALFWORDS(8), REG_DMA3);
     return Iwram_ClearWords(
         BG_CHAR_BLOCK(0) + destinationTile * TILE_SIZE_4BPP + 12, 20);
   }
@@ -190,7 +190,7 @@ void WindowSystem_UploadTilemap(void) {
       bands >>= 1;
       do {
         if (bands & 1)
-          Dma_Set(src, dst, DMA_COPY32(64), REG_DMA3);
+          Dma_Set(src, dst, DMA_COPY_WORDS(64), REG_DMA3);
         bands >>= 1;
         src += 256;
         dst += 256;
@@ -242,12 +242,8 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
         else
           tile = WINDOW_TILE_BLANK;
       }
-      column = 0;
-      if (column < width) {
-        do {
-          *cursor++ = tile;
-          column++;
-        } while (column < width);
+      for (column = 0; column < width; column++) {
+        *cursor++ = tile;
       }
       row++;
       cursor += 32 - width;

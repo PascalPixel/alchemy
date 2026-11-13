@@ -344,8 +344,7 @@ void BattleMessage_Open(s32 argument) {
   struct BattleMessageWork *control;
 
   state = WINDOW_WORK;
-  control = (struct BattleMessageWork *)
-      gWindowWork[HEAP_SLOT_BATTLE_MESSAGE - HEAP_SLOT_WINDOW];
+  control = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_MESSAGE);
   // message starts as NULL, though it is assigned again before it is read; the
   // same zero clears marked below
   message = NULL;

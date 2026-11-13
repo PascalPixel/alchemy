@@ -280,10 +280,10 @@ void Func_020002b8(void) {
     System_Wait(1);
   }
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
-  MapGrid_SetShake(0x10000, 0x10000, 0x10000);
+  MapGrid_SetShake(1, 1, 1);
   gData_02003274 = 1;
   FieldEvent_Wait(90);
-  MapGrid_SetShake(0x30000, 0x30000, 0x10000);
+  MapGrid_SetShake(3, 3, 1);
   gData_02003274 = 3;
   gData_02003278 = 0;
   FieldEvent_Wait(40);
@@ -291,7 +291,7 @@ void Func_020002b8(void) {
   Bring(24);
   Task_AddFrame(Orbs_SpawnRising, 0x480);
   Event_PlaySound(SE_CLATTER);
-  MapGrid_SetShake(0x60000, 0x60000, 0x10000);
+  MapGrid_SetShake(6, 6, 1);
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0x4063ff, 0);
   PaletteFade_Interpolate(60);
@@ -325,9 +325,9 @@ void Func_020002b8(void) {
   Actor_GetById(24)->scaleX = 0;
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(30);
-  MapGrid_SetShake(0x20000, 0x20000, 0x10000);
+  MapGrid_SetShake(2, 2, 1);
   FieldEvent_Wait(30);
-  MapGrid_SetShake(0, 0, 0x10000);
+  MapGrid_SetShake(0, 0, 1);
   FieldTask_Remove(Func_02000294);
   Func_0200185c();
   FieldEvent_Wait(30);
@@ -495,7 +495,7 @@ void Func_020008a4(void) {
   Actor_SetPositionAndFacing(22, PIXELS(64), PIXELS(225), angle);
   Func_02000734();
   FieldEvent_Wait(40);
-  FieldCamera_MoveTo(PIXELS(68), -1, PIXELS(240), 1);
+  FieldCamera_MoveTo(68, CAMERA_KEEP, 240, 1);
   Event_OpenMessage(22, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     Actor_SetAnimationAndWait(22, 4);
@@ -517,7 +517,7 @@ void Func_020008a4(void) {
   FieldEvent_ShowMessageThenWait(22, 0, 5);
   Actor_SetAnimationAndWait(22, 3);
   FieldEvent_Wait(30);
-  FieldCamera_MoveTo(PIXELS(68), -1, PIXELS(256), 1);
+  FieldCamera_MoveTo(68, CAMERA_KEEP, 256, 1);
   Actor_WalkByAndWait(22, 0, 16);
   FieldEvent_Wait(30);
   Func_02000810(22, 4);
@@ -587,7 +587,7 @@ s32 Scene_PrepareMap(void) {
     Actor_RaiseFromCell(16);
   }
   if (Event_GetFlag(0xa09)) {
-    Actor_SetPosition(11, PIXELS(216), PIXELS(552));
+    Actor_SetPosition(11, 216, 552);
     Actor_RaiseFromCell(11);
   }
   return 0;

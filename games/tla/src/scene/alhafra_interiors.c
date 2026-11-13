@@ -186,7 +186,7 @@ void AlhafraInteriors_GuestsAskForTea(void) {
   Actor_SetAnimationAndWait(15, 3);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(0xf, 0, 0xa);
-  Actor_SetSpeed(14, 0x8000, 0x4000);
+  Actor_SetSpeed(14, 0.5);
   Actor_WalkByAndWait(14, -32, 0);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(0xe, 0, 0xa);
@@ -315,8 +315,8 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_00) &&
         Event_GetFlag(FLAG_ISAAC_CLEARED_CROSSBONE_ISLE) &&
         !Event_GetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE)) {
-      Actor_SetPosition(31, PIXELS(376), PIXELS(316));
-      Actor_SetPosition(32, PIXELS(392), PIXELS(344));
+      Actor_SetPosition(31, 376, 316);
+      Actor_SetPosition(32, 392, 344);
     } else {
       Actor_SetPosition(31, 0, 0);
       Actor_SetPosition(32, 0, 0);
@@ -393,7 +393,7 @@ void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
       FieldEvent_SetMessageId((s32)MsgAlhafraInteriors120);
       Actor_WalkToAndWait(4, 504, 328);
       Actor_FaceDirectionAndWait(4, FACING_WEST);
-      FieldCamera_MoveTo(PIXELS(408), -1, PIXELS(328), 1);
+      FieldCamera_MoveTo(408, CAMERA_KEEP, 328, 1);
       FieldCamera_WaitForArrival();
       FieldEvent_Wait(10);
       Actor_RunRepeatedMotion(31, 2);
@@ -434,8 +434,8 @@ void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
       FieldEvent_Wait(20);
       Actor_SetAnimationAndWait(32, 3);
       FieldEvent_Wait(20);
-      Actor_SetSpeed(31, 0x10000, 0x8000);
-      Actor_SetSpeed(32, 0x10000, 0x8000);
+      Actor_SetSpeed(31, 1);
+      Actor_SetSpeed(32, 1);
       FieldActor_SetSpritePriority(31, 2);
       FieldActor_SetSpritePriority(32, 2);
       EventCamera_FollowActor(32, 1);
@@ -469,7 +469,7 @@ void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
       FieldActor_SetSpritePriority(32, 3);
       FieldActor_RefreshSelectorById(32);
       FieldActor_Stop(4);
-      FieldCamera_MoveTo(-1, -1, -1, 0);
+      FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
       Actor_SetPosition(32, 0, 0);
       Event_PlaySound(SE_MAP_EXIT);
       FieldActor_RefreshSelectorById(31);

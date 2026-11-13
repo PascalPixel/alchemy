@@ -247,7 +247,7 @@ void Yallam_EnterDoor(void) {
   MapGrid_AnimateCells(gYallam_Doors[index].steps, gYallam_Doors[index].x,
                        gYallam_Doors[index].y);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   {
     s32 owner = gMainRoutineWork.currentOwner;
 
@@ -283,7 +283,7 @@ void Yallam_DigThirdHole(void) {
 
   Yallam_EditMap(26, 95, 2, 1, 26, 76, 2);
   if (Event_GetFlag(0xf62) == 0) {
-    Actor_SetPosition(66, PIXELS(424), PIXELS(232));
+    Actor_SetPosition(66, 424, 232);
     if (leader->x >> 20 == 26 && leader->z >> 20 == 14) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
@@ -303,7 +303,7 @@ void Yallam_DigFifthHole(void) {
 
   Yallam_EditMap(67, 25, 3, 3, 106, 20, 1);
   if (Event_GetFlag(0xf60) == 0) {
-    Actor_SetPosition(64, PIXELS(680), PIXELS(344));
+    Actor_SetPosition(64, 680, 344);
     if (leader->x >> 20 == 42 && leader->z >> 20 == 21) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
@@ -497,7 +497,7 @@ void Yallam_RunSongPath(s32 actor) {
     (*timer)++;
     return;
   case 34:
-    Actor_SetSpeed(actor, 0x1cccc, 0x1cccc);
+    Actor_SetSpeedAndAcceleration(actor, 1.8, 1.8);
     Actor_SetDestination(actor, 364, 820);
     (*timer)++;
     return;
@@ -514,7 +514,7 @@ void Yallam_RunSongPath(s32 actor) {
     (*timer)++;
     return;
   case 42:
-    Actor_SetSpeed(actor, 0x13333, 0x13333);
+    Actor_SetSpeedAndAcceleration(actor, 1.2, 1.2);
     Actor_SetDestination(actor, 372, 740);
     (*timer)++;
     return;
@@ -946,7 +946,7 @@ void Yallam_RunSongPath(s32 actor) {
     (*timer)++;
     return;
   case 254:
-    Actor_SetSpeed(actor, 0x1cccc, 0x1cccc);
+    Actor_SetSpeedAndAcceleration(actor, 1.8, 1.8);
     Actor_SetDestination(actor, 200, 856);
     (*timer)++;
     return;
@@ -955,7 +955,7 @@ void Yallam_RunSongPath(s32 actor) {
     (*timer)++;
     return;
   case 258:
-    Actor_SetSpeed(actor, 0x13333, 0x13333);
+    Actor_SetSpeedAndAcceleration(actor, 1.2, 1.2);
     Actor_SetDestination(actor, 180, 740);
     (*timer)++;
     return;
@@ -1365,7 +1365,7 @@ void Yallam_ResumeSongGame(void) {
 void Yallam_StartRunner(s32 id) {
   struct YallamActor *actor = ((struct YallamActor *)Actor_Get(id));
 
-  Actor_SetSpeed(id, 0x13333, 0x13333);
+  Actor_SetSpeedAndAcceleration(id, 1.2, 1.2);
   Actor_SetAnimation(id, 2);
   actor->timer = 0;
   actor->count = 0;
@@ -1397,14 +1397,14 @@ void Yallam_ShowSongGame(void) {
   (Actor_Get(9))->update = 0;
   (Actor_Get(10))->update = 0;
   System_Wait(1);
-  Actor_SetSpeed(9, 0x19999, 0xcccc);
-  Actor_SetSpeed(10, 0x19999, 0xcccc);
+  Actor_SetSpeed(9, 1.6);
+  Actor_SetSpeed(10, 1.6);
   Actor_SetScript(9, gYallam_SongGameGather9);
   Actor_SetScript(10, gYallam_SongGameGather10);
   (FieldCamera_GetActor())->motionFlags = 0;
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveTo(0x1300000, -1, 0x36e0000, 1);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(304, CAMERA_KEEP, 878, 1);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 296, 872);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
@@ -1413,16 +1413,16 @@ void Yallam_ShowSongGame(void) {
   FieldActor_Jump(8, 2, 10);
   FieldActor_Jump(8, 4, 10);
   Actor_SetAnimationAndWait(8, 3);
-  Actor_SetSpeed(8, 0x19999, 0xcccc);
-  Actor_SetSpeed(11, 0x19999, 0xcccc);
+  Actor_SetSpeed(8, 1.6);
+  Actor_SetSpeed(11, 1.6);
   Actor_SetScript(8, gYallam_SongGameForm8);
   Actor_SetScript(9, gYallam_SongGameForm9);
   Actor_SetScript(10, gYallam_SongGameForm10);
   Actor_RunScriptAndWait(11, gYallam_SongGameForm11);
-  Actor_SetPosition(5, 0x1280000, 0x3680000);
+  Actor_SetPosition(5, 296, 872);
   System_Wait(1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
-  Actor_SetSpeed(5, 0x13333, 0x9999);
+  Actor_SetSpeed(5, 1.2);
   Actor_WalkToAndWait(5, 312, 854);
   Actor_FaceDirectionAndWait(5, FACING_SOUTHWEST);
   Actor_SetAnimationAndWait(5, 3);
@@ -1434,7 +1434,7 @@ void Yallam_ShowSongGame(void) {
   }
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 316, 0x380);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 344, 0x390);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
@@ -1661,11 +1661,11 @@ waitFourthVerse:
   v6 = t25;
   v8 = FIELD_AT(v6, s32, 16);
   v7 = FIELD_AT(v6, s32, 8);
-  Actor_SetSpeed(8, 0x26666, 0x13333);
+  Actor_SetSpeed(8, 2.4);
   FieldActor_Jump(8, 6, 0);
   Actor_MoveToAndWait(8, 200, 0x29e);
   FieldActor_Jump(8, 4, 0);
-  FieldActor_SetMoveTarget(v6, v7, 0, v8);
+  FieldActor_SetMoveTargetFixed(v6, v7, 0, v8);
   FieldEvent_Wait(5);
   Actor_FaceDirectionAndWait(10, FACING_SOUTH_SOUTHWEST);
   t33 = ((s32)Actor_Get(10));
@@ -1674,11 +1674,11 @@ waitFourthVerse:
   v6 = t34;
   v8 = FIELD_AT(v6, s32, 16);
   v7 = FIELD_AT(v6, s32, 8);
-  Actor_SetSpeed(10, 0x26666, 0x13333);
+  Actor_SetSpeed(10, 2.4);
   FieldActor_Jump(10, 6, 0);
   Actor_MoveToAndWait(10, 200, 0x29e);
   FieldActor_Jump(10, 4, 0);
-  FieldActor_SetMoveTarget(v6, v7, 0, v8);
+  FieldActor_SetMoveTargetFixed(v6, v7, 0, v8);
   FieldEvent_Wait(5);
   Actor_FaceDirectionAndWait(9, FACING_WEST);
   t42 = ((s32)Actor_Get(9));
@@ -1687,11 +1687,11 @@ waitFourthVerse:
   v6 = t43;
   v8 = FIELD_AT(v6, s32, 16);
   v7 = FIELD_AT(v6, s32, 8);
-  Actor_SetSpeed(9, 0x26666, 0x13333);
+  Actor_SetSpeed(9, 2.4);
   FieldActor_Jump(9, 6, 0);
   Actor_MoveToAndWait(9, 200, 0x29e);
   FieldActor_Jump(9, 4, 0);
-  FieldActor_SetMoveTarget(v6, v7, 0, v8);
+  FieldActor_SetMoveTargetFixed(v6, v7, 0, v8);
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(11, FACING_NORTH_NORTHWEST);
   t51 = ((s32)Actor_Get(11));
@@ -1701,13 +1701,13 @@ waitFourthVerse:
   v6 = t52;
   v8 = FIELD_AT(v6, s32, 16);
   v7 = FIELD_AT(v6, s32, 8);
-  Actor_SetSpeed(11, 0x26666, 0x13333);
+  Actor_SetSpeed(11, 2.4);
   FieldActor_Jump(11, 6, 0);
   Actor_MoveToAndWait(11, 200, 0x29e);
   FieldActor_Jump(11, 4, 0);
-  FieldActor_SetMoveTarget(v6, v7, 0, v8);
+  FieldActor_SetMoveTargetFixed(v6, v7, 0, v8);
   FieldActor_WaitForMoveById(11);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 184, 686);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 186, 674);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
@@ -1770,14 +1770,14 @@ void Yallam_ForcePillarDown(void) {
   object->acceleration = 0x18000;
   object->speedLimit = 0x80000;
   Event_PlaySound(SE_TOPPLE);
-  FieldActor_SetMoveTarget(object, 0xb00000, 0x280000, 0xb80000);
+  FieldActor_SetMoveTarget(object, 176, 40, 184);
   step = 0;
   for (i = 15; i >= 0; i--) {
     sprite->tile -= step;
     System_Wait(1);
     step += 40;
   }
-  FieldActor_SetMoveTarget(object, 0xa80000, 0x100000, 0xb80000);
+  FieldActor_SetMoveTarget(object, 168, 16, 184);
   step = 400;
   for (i = 25; i >= 0; i--) {
     sprite->tile -= step;

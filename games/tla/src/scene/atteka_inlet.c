@@ -115,7 +115,7 @@ void AttekaInlet_AskPiersToSetSail(void) {
   } else {
     (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
     Event_ShowMessageAndWait(18, 0);
-    Actor_SetSpeed(18, 0x19999, 0xcccc);
+    Actor_SetSpeed(18, 1.6);
     Actor_SetModeById(18, 2);
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object != NULL)
@@ -142,7 +142,7 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
       Actor_SetPositionAndFacing(9, 60 << 16, 362 << 16, angle << 8);
     }
     wait(1);
-    Actor_SetSpeed(9, 0x20000, 0x10000);
+    Actor_SetSpeed(9, 2);
     Actor_Jump(9, 6, 0);
     Actor_MoveToAndWait(9, 64, 336);
     Actor_WalkToAndWait(9, 70, 308);
@@ -153,7 +153,7 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
       Actor_SetPositionAndFacing(10, 94 << 16, 272 << 16, angle << 7);
     }
     wait(1);
-    Actor_SetSpeed(10, 0x20000, 0x10000);
+    Actor_SetSpeed(10, 2);
     Actor_Jump(10, 6, 0);
     Actor_MoveToAndWait(10, 90, 288);
     Actor_WalkToAndWaitById(10, 80, 316);
@@ -190,9 +190,9 @@ void AttekaInlet_HammaShowsTheWings(void) {
   if (GameFlag_Get(0x9d0)) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    FieldCamera_MoveTo(-1, -1, -1, 0);
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     Camera_SetSpeedParameters(0x26666, 0x4ccc);
-    FieldCamera_MoveTo(PIXELS(520), -1, PIXELS(372), 1);
+    FieldCamera_MoveTo(520, CAMERA_KEEP, 372, 1);
     FieldCamera_WaitForArrival();
     Actor_ShowEmote(23, 264, 0);
     Actor_FaceDirection(23, FACING_SOUTH_SOUTHEAST, 20);
@@ -201,11 +201,11 @@ void AttekaInlet_HammaShowsTheWings(void) {
     Actor_FaceDirectionAndWait(23, FACING_NORTH_NORTHWEST);
     Event_ShowMessage(0x2017, 0);
     FieldCamera_GetActor()->motionFlags = 0;
-    FieldCamera_SetSpeed(0x4cccc, 0x9999);
-    FieldCamera_MoveTo(PIXELS(440), PIXELS(32), PIXELS(368), 1);
+    FieldCamera_SetSpeed(4.8);
+    FieldCamera_MoveTo(440, 32, 368, 1);
     FieldCamera_WaitForArrival();
     Event_Wait(40);
-    FieldCamera_MoveTo(PIXELS(432), PIXELS(32), PIXELS(232), 1);
+    FieldCamera_MoveTo(432, 32, 232, 1);
     FieldCamera_WaitForArrival();
     Event_Wait(40);
     Camera_SetSpeedParameters(0x4cccc, 0x9999);
@@ -260,7 +260,7 @@ void AttekaInlet_PiersAsksToSetSail(void) {
   Actor_MoveToObject(18, gMainRoutineWork.currentOwner);
   wait(1);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
-  Actor_SetSpeed(18, 0xcccc, 0x6666);
+  Actor_SetSpeed(18, 0.8);
   Actor_WalkToAndWaitById(18, 532, 248);
   Actor_FaceDirectionById(18, FACING_SOUTH_SOUTHEAST);
   Event_SetMessageId(MsgAreWeSetting);
@@ -277,7 +277,7 @@ void AttekaInlet_PiersAsksToSetSail(void) {
   } else {
     (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
     Event_ShowMessageAndWait(18, 0);
-    Actor_SetSpeed(18, 0x19999, 0xcccc);
+    Actor_SetSpeed(18, 1.6);
     Actor_SetModeById(18, 2);
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object != NULL)
@@ -363,10 +363,10 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Event_ShowMessageAndWait(24, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Actor_FaceDirection(23, FACING_SOUTH_SOUTHEAST, 0);
-  FieldCamera_SetSpeed(0x19999, 0x3333);
+  FieldCamera_SetSpeed(1.6);
   FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_MoveTo(PIXELS(512), -1, PIXELS(380), 1);
-  Actor_SetSpeed(24, 0x19999, 0xcccc);
+  FieldCamera_MoveTo(512, CAMERA_KEEP, 380, 1);
+  Actor_SetSpeed(24, 1.6);
   Actor_WalkToAndWait(24, 520, 432);
   Actor_WalkToAndWait(24, 520, 388);
   Actor_FaceDirection(23, FACING_SOUTH_SOUTHEAST, 0);
@@ -556,7 +556,7 @@ void AttekaInlet_SetUpTheShore(void) {
     wait(1);
   }
   if (GameFlag_Get(FLAG_AREA_TEMP_00))
-    Actor_SetPosition(14, 120 << 16, 376 << 16);
+    Actor_SetPosition(14, 120, 376);
   {
     s32 priority = 0x480;
 

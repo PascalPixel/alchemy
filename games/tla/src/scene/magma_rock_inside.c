@@ -740,9 +740,9 @@ end:
   flame->acceleration = 0x20000;
   flame->speedLimit = 0x20000;
   flame->update = (void (*)(void))MagmaRockInside_TrailEmbers;
-  FieldActor_SetMoveTarget(flame, position[0], position[1], position[2]);
-  FieldCamera_SetSpeed(0x20000, 0x4000);
-  FieldCamera_MoveTo(position[0], position[1], position[2], 1);
+  FieldActor_SetMoveTargetFixed(flame, position[0], position[1], position[2]);
+  FieldCamera_SetSpeed(2);
+  FieldCamera_MoveToFixed(position[0], position[1], position[2], 1);
   FieldActor_WaitForMove(flame);
   flame->update = 0;
   Actor_Release(flame);
@@ -779,9 +779,9 @@ hit:
   flame->acceleration = 0x20000;
   flame->speedLimit = 0x20000;
   flame->update = (void (*)(void))MagmaRockInside_TrailEmbers;
-  FieldActor_SetMoveTarget(flame, position[0], position[1], position[2]);
-  FieldCamera_SetSpeed(0x20000, 0x4000);
-  FieldCamera_MoveTo(position[0], position[1], position[2], 1);
+  FieldActor_SetMoveTargetFixed(flame, position[0], position[1], position[2]);
+  FieldCamera_SetSpeed(2);
+  FieldCamera_MoveToFixed(position[0], position[1], position[2], 1);
   FieldActor_WaitForMove(flame);
   flame->update = 0;
   Actor_Release(flame);
@@ -958,8 +958,8 @@ burst:
   Event_PlaySound(SE_CRASH);
   FieldEffect_Spawn(burstPosition[0], burstPosition[1], burstPosition[2], 0,
                     (Random16() & mask) << 12, 0, 0x3a0001, effectOptions);
-  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(5, 5, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   i++;
   Event_Wait(8);
   if (i != 16)
@@ -982,8 +982,8 @@ rise:
   if (i != 8)
     goto rise;
   MapGrid_CopyCellsTo(68, 70, srcX, srcZ, 3, 6);
-  MapGrid_SetShake(0x50000, 0x70000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(5, 7, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_Wait(30);
   MapGrid_CopyCellsTo(71, 70, srcX, srcZ, 3, 6);
   effectOptions->type = 403;
@@ -995,7 +995,7 @@ rise:
     Event_Wait(30);
     burstPosition[2] -= 0x280000;
   } else {
-    MapGrid_SetShake(0x20000, 0x10000, 0x10000);
+    MapGrid_SetShake(2, 1, 1);
     Event_PlaySound(SE_TREMOR);
     row = 0;
   row:
@@ -1045,7 +1045,7 @@ rise:
       roomPosition[2] -= 0x8000;
       MapGrid_CopyCellsTo(71, 76, srcX, srcZ - ((t - 47) >> 5) + 8, 3, 1);
     } else if (t == 128) {
-      MapGrid_SetShake(-1, -1, 0xe666);
+      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     }
     t++;
     wait(1);
@@ -1070,8 +1070,8 @@ last:
                     lastOptions);
   if (i != 6)
     goto last;
-  MapGrid_SetShake(0x50000, 0x70000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(5, 7, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_CopyCellsTo(68, 64, srcX, srcZ, 3, 6);
   FieldMapGrid_WaitForShakeToSettle();
   Event_Wait(30);
@@ -1120,7 +1120,7 @@ void MagmaRockInside_FloodWithLava(void) {
   flags = &leader->priorityFlags;
   *flags &= ~64;
   FieldEvent_Wait(20);
-  MapGrid_SetShake(0x10000, 0x20000, 0x10000);
+  MapGrid_SetShake(1, 2, 1);
   Event_PlaySound(SE_TREMOR);
   FieldEvent_Wait(30);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room2) {
@@ -1182,15 +1182,15 @@ void MagmaRockInside_FloodWithLava(void) {
     }
   }
   Event_PlaySound(SE_BOOM);
-  MapGrid_SetShake(0x50000, 0x70000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(5, 7, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   rowAbove = i - 1;
   MapGrid_CopyCellsTo(srcX, i, srcX, rowAbove, 3, 4);
   if (open == 0) {
     FieldMapGrid_WaitForShakeToSettle();
     FieldEvent_Wait(20);
   } else {
-    MapGrid_SetShake(0x20000, 0x10000, 0x10000);
+    MapGrid_SetShake(2, 1, 1);
     options.type = 403;
     options.priority = 2;
     options.palette = 10;
@@ -1218,8 +1218,8 @@ void MagmaRockInside_FloodWithLava(void) {
     Actor_Get(15)->priorityFlags |= 1;
   Event_PlaySound(SE_288);
   Event_PlaySound(SE_BOOM);
-  MapGrid_SetShake(0x50000, 0x70000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(5, 7, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_CopyCellsTo(72, 63, srcX, rowAbove, 3, 4);
   FieldMapGrid_WaitForShakeToSettle();
   Event_PlaySound(SE_584);
@@ -1276,7 +1276,7 @@ void MagmaRockInside_SmokeEmber(struct Actor *object) {
 extern u32 gMagmaRockInside_FlameEmberScript[];
 
 static __inline__ void Arrive(s32 id, s32 x, s32 z) {
-  Actor_SetPosition(id, 194 << 18, 248 << 16);
+  Actor_SetPosition(id, 776, 248);
   Actor_SetDestination(id, x, z);
   Actor_GetById(id)->velocityY = 0xc0000;
   Actor_GetById(id)->gravity = 0x8000;
@@ -1292,9 +1292,9 @@ void MagmaRockInside_ReleaseRocks(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_PlaySound(SE_TREMOR);
-  MapGrid_SetShake(0x30000, 0x30000, 0x10000);
+  MapGrid_SetShake(3, 3, 1);
   Event_Wait(30);
-  FieldCamera_MoveTo(194 << 18, -1, 136 << 17, 1);
+  FieldCamera_MoveTo(776, CAMERA_KEEP, 272, 1);
   FieldCamera_WaitForArrival();
   options.type = 403;
   options.priority = 2;
@@ -1328,14 +1328,14 @@ loop:
   } else if (i == 88) {
     Arrive(17, 776, 232);
   } else if (i == 112) {
-    Actor_SetPosition(12, 194 << 18, 248 << 16);
+    Actor_SetPosition(12, 776, 248);
     Actor_SetDestination(12, 696, 232);
-    FieldCamera_MoveTo(174 << 18, -1, 232 << 16, 1);
+    FieldCamera_MoveTo(696, CAMERA_KEEP, 232, 1);
     Actor_GetById(12)->velocityY = 0xd0000;
     Actor_GetById(12)->gravity = 0x8000;
     Actor_GetById(12)->timer = 0;
     Actor_GetById(12)->update = MagmaRockInside_SmokeEmber;
-    MapGrid_SetShake(-1, -1, 0xe666);
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   }
   wait(3);
   i++;
@@ -1358,7 +1358,7 @@ void MagmaRockInside_TakeFlame(void) {
   *(work + 0xd38) = 1;
   if (!Event_GetFlag(FLAG_AREA_TEMP_04)) {
     FieldActor_SetSpriteColor(Actor_Get(22), 15);
-    Actor_SetPosition(22, PIXELS(632), PIXELS(312));
+    Actor_SetPosition(22, 632, 312);
     Actor_Get(22)->scaleX = Actor_Get(22)->scaleY = 0x1000;
   }
 }
@@ -1367,7 +1367,7 @@ void MagmaRockInside_TakeFlame(void) {
   void name(void) {                                                            \
     if (!Event_GetFlag(n1)) {                                                  \
       FieldActor_SetSpriteColor(Actor_Get(n2), 15);                            \
-      Actor_SetPosition(n2, PIXELS(n3), PIXELS(n4));                           \
+      Actor_SetPosition(n2, n3, n4);                                           \
       Actor_Get(n2)->scaleX = Actor_Get(n2)->scaleY = 0x1000;                  \
     }                                                                          \
   }
@@ -1398,10 +1398,10 @@ void MagmaRockInside_GrowFlame(void) {
     other = Actor_GetById(11);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    MapGrid_SetShake(0x20000, 0x10000, 0x10000);
+    MapGrid_SetShake(2, 1, 1);
     Event_PlaySound(SE_RUMBLE);
     FieldEvent_Wait(30);
-    FieldCamera_MoveTo(0x2680000, -1, 0x1280000, 1);
+    FieldCamera_MoveTo(616, CAMERA_KEEP, 296, 1);
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(30);
     Event_PlaySound(SE_557);
@@ -1661,10 +1661,10 @@ void MagmaRockInside_GrowTabletFlame(void) {
   other = Actor_Get(9);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  MapGrid_SetShake(0x20000, 0x10000, 0x10000);
+  MapGrid_SetShake(2, 1, 1);
   Event_PlaySound(SE_RUMBLE);
   FieldEvent_Wait(30);
-  FieldCamera_MoveTo(0x780000, -1, 0x1580000, 1);
+  FieldCamera_MoveTo(120, CAMERA_KEEP, 344, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(30);
   Event_PlaySound(SE_557);
@@ -1848,11 +1848,12 @@ void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
   script = gMagmaRockInside_BlazeWatcherScript;
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_Wait(30);
-  FieldCamera_SetSpeed(0x8000, 0x1000);
-  FieldCamera_MoveTo(((s16 *)&first->x)[1] << 16, ((s16 *)&first->y)[1] << 16,
-                     ((s16 *)&first->z)[1] << 16, 1);
+  FieldCamera_SetSpeed(0.5);
+  FieldCamera_MoveToFixed(((s16 *)&first->x)[1] << 16,
+                          ((s16 *)&first->y)[1] << 16,
+                          ((s16 *)&first->z)[1] << 16, 1);
   Event_PlaySound(SE_RUMBLE);
-  MapGrid_SetShake(0x20000, 0x20000, 0x10000);
+  MapGrid_SetShake(2, 2, 1);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
   PaletteFade_StartInterpolation(60);
@@ -1999,8 +2000,8 @@ void MagmaRockInside_ReadBlazeTablet(void) {
   } else {
     FieldEvent_SetMessageId((s32)MsgBlazeTabletInscription);
     EVENT_WORK->messageId++;
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xb333, 0x5999);
-    Actor_SetSpeed(5, 0xb333, 0x5999);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.7);
+    Actor_SetSpeed(5, 0.7);
     Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
     FieldEvent_Wait(1);
     Actor_WalkTo(gMainRoutineWork.currentOwner, 256, 136);
@@ -2030,8 +2031,8 @@ void MagmaRockInside_ReadBlazeTablet(void) {
 #else
     Message_ShowCentered(MsgBlazeTabletInscription + 2, 1);
 #endif
-    MapGrid_SetShake(0x50000, 0x70000, 0x10000);
-    MapGrid_SetShake(-1, -1, 0xe666);
+    MapGrid_SetShake(5, 7, 1);
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     FieldMapGrid_WaitForShakeToSettle();
     Call2(MagmaRockInside_LearnBlaze, 8, 5);
     Party_LearnAbility(JENNA, ABILITY_BLAZE);
@@ -2041,7 +2042,7 @@ void MagmaRockInside_ReadBlazeTablet(void) {
     Actor_SetAnimation(5, 3);
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
     FieldEvent_Wait(20);
-    Actor_SetSpeed(5, 0x13333, 0x9999);
+    Actor_SetSpeed(5, 1.2);
     Actor_SetAnimation(5, 2);
     object = Actor_Get(gMainRoutineWork.currentOwner);
     if (object != 0)
@@ -2395,7 +2396,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(9)->x = 190 << 18;
     }
     if (Event_GetFlag(2550))
-      Actor_SetPosition(12, 230 << 18, 154 << 18);
+      Actor_SetPosition(12, 920, 616);
     Actor_PlaceBlocks(gMagmaRockInside_Room6Pillars);
     MagmaRockInside_StartLavaPlatform(8, gMagmaRockInside_PlatformPath10, 770);
     MagmaRockInside_StartLavaPlatform(10, gMagmaRockInside_PlatformPath11, 770);
@@ -2426,7 +2427,7 @@ s32 Scene_Initialize(void) {
       goto room7;
     if (Event_GetFlag(2551)) {
       Actor_SetAnimation(23, 4);
-      Actor_SetPosition(23, 174 << 18, 162 << 18);
+      Actor_SetPosition(23, 696, 648);
     }
     Actor_PlaceBlocks(gMagmaRockInside_Room7Pillars);
     FieldEffect_StartBlankOverlay(0);
@@ -2524,14 +2525,14 @@ void MagmaRockInside_CrumblePillar(const void *data, s32 id) {
     Event_Start();
     if (!Event_GetFlag(flag + 1)) {
       Event_PlaySound(SE_PUSH);
-      MapGrid_SetShake(0x10000, 0x40000, 0x10000);
+      MapGrid_SetShake(1, 4, 1);
       MagmaRockInside_SpawnRubble(0);
       System_Wait(8);
       Actor_SelectAnimation(object, 2);
       MagmaRockInside_SetActorCellShape(-4, OBJECT_BYTE(object, 34), id);
       MagmaRockInside_SpawnRubble(1);
       System_Wait(16);
-      MapGrid_SetShake(-1, -1, 0xe666);
+      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       System_Wait(8);
       FieldActor_SetPositionAndResetMotion(object, 0, 0, 0);
       System_Wait(2);
@@ -2623,7 +2624,7 @@ next:
         wait(1);
         leader->motionFlags = 0;
         Event_PlaySound(SE_PUSH);
-        MapGrid_SetShake(0x10000, 0x40000, 0x10000);
+        MapGrid_SetShake(1, 4, 1);
         MagmaRockInside_SpawnRubble(0);
         wait(8);
         Actor_SelectAnimation(partner, 2);
@@ -2632,7 +2633,7 @@ next:
         wait(16);
         MagmaRockInside_SetLeaderCellShape(-2, trap->terrainId);
         wait(4);
-        MapGrid_SetShake(-1, -1, 0xe666);
+        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
         leader->motionFlags = 3;
         wait(5);

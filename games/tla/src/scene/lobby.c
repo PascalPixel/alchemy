@@ -643,19 +643,19 @@ s32 LinkLobby_EnterBattle(void) {
       Event_SetMessageId((s32)MsgGoodLuck2);
       Event_OpenMessage(8, 0);
       wait(45);
-      Actor_SetSpeed(4, 0x10000, 0x8000);
+      Actor_SetSpeed(4, 1);
       Actor_WalkTo(4, 216, 184);
       Actor_WaitForMoveById(4);
       Actor_WalkTo(4, 216, 168);
       Actor_WaitForMoveById(4);
     } else {
-      Actor_SetSpeed(4, 0x10000, 0x8000);
+      Actor_SetSpeed(4, 1);
       Actor_WalkTo(4, 216, 200);
       Actor_WaitForMoveById(4);
-      Actor_SetSpeed(4, 0x1999, 0xccc);
+      Actor_SetSpeed(4, 0.1);
       Actor_WalkTo(4, 216, 168);
       if (LinkLobby_ExchangePartyRecords() < 0) {
-        Actor_SetSpeed(4, 0x10000, 0x8000);
+        Actor_SetSpeed(4, 1);
         Actor_WalkTo(4, 216, 200);
         Map_ClearLayerEntryFlag(5);
         wait(8);
@@ -675,7 +675,7 @@ s32 LinkLobby_EnterBattle(void) {
         Event_End();
         return;
       }
-      Actor_SetSpeed(4, 0x8000, 0x4000);
+      Actor_SetSpeed(4, 0.5);
       Actor_WaitForMoveById(4);
     }
     /* FAKEMATCH(temporary): the flag test's result kept while the scene symbol

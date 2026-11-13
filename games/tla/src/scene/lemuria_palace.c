@@ -74,7 +74,7 @@ void LemuriaPalace_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(step->script, step->x, step->z);
   Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 2;
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
   FieldEvent_Wait(10);
@@ -168,15 +168,15 @@ void LemuriaPalace_CastMapSparks(s32 actorId) {
   first->speedLimit = 0x20000;
   first->acceleration = 0x20000;
   first->motionFlags = 0;
-  FieldActor_SetMoveTarget(first, first->x + PIXELS(6), first->y + PIXELS(8),
-                           first->z);
+  FieldActor_SetMoveTargetFixed(first, first->x + PIXELS(6),
+                                first->y + PIXELS(8), first->z);
   second =
       Actor_Spawn(674, object->x + 0xa0000, object->y + 0x100000, object->z);
   second->speedLimit = 0x20000;
   second->acceleration = 0x20000;
   second->motionFlags = 0;
-  FieldActor_SetMoveTarget(second, first->x + PIXELS(8), first->y - PIXELS(4),
-                           first->z);
+  FieldActor_SetMoveTargetFixed(second, first->x + PIXELS(8),
+                                first->y - PIXELS(4), first->z);
   FieldActor_WaitForMove(first);
   Actor_Release(first);
   FieldActor_WaitForMove(second);
@@ -372,7 +372,7 @@ s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLemuriaPalace11);
-  Actor_SetSpeed(16, 0x13333, 0x9999);
+  Actor_SetSpeed(16, 1.2);
   Actor_WalkByAndWait(16, -24, 0);
   Actor_FaceDirectionAndWait(16, FACING_SOUTH + FACING_STEP);
   {
@@ -405,11 +405,11 @@ answeredNo:
   v3 = Actor_GetById(64);
   v3->scaleY = r7_1;
   Actor_FaceDirection(14, FACING_EAST, 0);
-  Actor_SetSpeed(13, 0xb333, 0x5999);
-  Actor_SetSpeed(14, 0xb333, 0x5999);
-  Actor_SetSpeed(7, 0xb333, 0x5999);
+  Actor_SetSpeed(13, 0.7);
+  Actor_SetSpeed(14, 0.7);
+  Actor_SetSpeed(7, 0.7);
   Actor_WalkToAndWait(4, 872, 528);
-  FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(408), 1);
+  FieldCamera_MoveTo(872, CAMERA_KEEP, 408, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
   Actor_FaceDirection(16, FACING_SOUTH + FACING_STEP, 0);
@@ -468,7 +468,7 @@ answeredNo:
   Actor_WaitForMoveById(7);
   Actor_SetAnimation(7, 1);
   Actor_FaceDirectionAndWait(7, FACING_SOUTH);
-  FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(496), 1);
+  FieldCamera_MoveTo(872, CAMERA_KEEP, 496, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(5);
   FieldActor_LaunchFromLeader(17, 16, 0, FACING_NORTHWEST + FACING_STEP);
@@ -645,11 +645,11 @@ answeredNo:
   Event_Wait(40);
   Event_ShowMessageThenWait(17, 0, 0);
   Event_ShowMessageThenWait(15, 0, 5);
-  Actor_SetSpeed(15, 0x10000, 0x8000);
+  Actor_SetSpeed(15, 1);
   Actor_WalkToAndWait(15, 888, 444);
   Actor_FaceDirectionAndWait(15, FACING_SOUTH + FACING_STEP);
   Event_Wait(5);
-  FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(472), 1);
+  FieldCamera_MoveTo(872, CAMERA_KEEP, 472, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
   Actor_FaceDirectionAndWait(15, FACING_WEST);
@@ -801,7 +801,7 @@ waitForCycle:
   Actor_ShowEmote(13, 0x109, 30);
   Event_ShowMessageThenWait(13, 0, 5);
   Actor_SetAnimationAndWait(15, 4);
-  Actor_SetSpeed(15, 0x8000, 0x4000);
+  Actor_SetSpeed(15, 0.5);
   v19 = Actor_GetById(15);
   v19->actionFlags &= ~1;
   Actor_WalkByAndWait(15, 32, 0);
@@ -837,7 +837,7 @@ waitForCycle:
   Actor_RunRepeatedMotion(15, 2);
   Event_Wait(5);
   Event_ShowMessageThenWait(15, 0, 5);
-  Actor_SetSpeed(15, 0x13333, 0x9999);
+  Actor_SetSpeed(15, 1.2);
   Actor_WalkByAndWait(15, -50, 24);
   Actor_WatchAndSetScript(13, 15);
   Actor_WatchAndSetScript(14, 15);
@@ -854,8 +854,8 @@ waitForCycle:
   Actor_StartRepeatedMotion(5, 3);
   Actor_SetAttachedEffect(5, 0x102);
   Event_Wait(37);
-  Actor_SetSpeed(4, 0x23333, 0x11999);
-  Actor_SetSpeed(5, 0x23333, 0x11999);
+  Actor_SetSpeed(4, 2.2);
+  Actor_SetSpeed(5, 2.2);
   Actor_WalkBy(5, -8, 16);
   Actor_WalkByAndWait(4, 8, 16);
   Actor_WaitForMoveById(5);
@@ -877,12 +877,12 @@ waitForCycle:
   Actor_FaceDirectionAndWait(16, FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(15);
   Actor_SetAnimation(16, 5);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_WalkByAndWait(15, 0, 96);
   Event_Wait(20);
   Actor_SetPosition(15, 0, 0);
-  Actor_SetSpeed(4, 0x10000, 0x8000);
-  Actor_SetSpeed(5, 0x10000, 0x8000);
+  Actor_SetSpeed(4, 1);
+  Actor_SetSpeed(5, 1);
   Actor_WalkBy(5, 8, -16);
   Actor_WalkByAndWait(4, -8, -16);
   Actor_WaitForMoveById(5);
@@ -892,7 +892,7 @@ waitForCycle:
   Actor_FaceDirection(4, FACING_NORTH, 0);
   Actor_FaceDirection(5, FACING_NORTH, 0);
   Actor_FaceDirection(6, FACING_NORTH, 0);
-  FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(480), 1);
+  FieldCamera_MoveTo(872, CAMERA_KEEP, 480, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
   Actor_Stop(16);
@@ -1057,7 +1057,7 @@ grow:
   Actor_SetAnimationAndWait(17, 3);
   Event_Wait(10);
   Actor_FaceDirection(4, FACING_NORTH, 0);
-  Actor_SetSpeed(17, 0x13333, 0x9999);
+  Actor_SetSpeed(17, 1.2);
   Actor_SetAnimation(17, 2);
   {
     s32 party = (s32)&gMainRoutineWork;
@@ -1070,7 +1070,7 @@ grow:
   }
   Actor_WaitForMoveById(17);
   Actor_SetPosition(17, 0, 0);
-  Actor_SetSpeed(5, 0x13333, 0x9999);
+  Actor_SetSpeed(5, 1.2);
   Actor_SetAnimation(5, 2);
   v25 = Actor_GetById(FIELD_AT(r5_5, s32, 0));
   if (v25 != 0) {
@@ -1078,7 +1078,7 @@ grow:
   }
   Actor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
-  Actor_SetSpeed(6, 0x13333, 0x9999);
+  Actor_SetSpeed(6, 1.2);
   Actor_SetAnimation(6, 2);
   v26 = Actor_GetById(FIELD_AT(r5_5, s32, 0));
   if (v26 != 0) {
@@ -1096,7 +1096,7 @@ grow:
   Event_Wait(20);
   Actor_SetAnimationAndWait(7, 3);
   Event_Wait(10);
-  Actor_SetSpeed(7, 0x13333, 0x9999);
+  Actor_SetSpeed(7, 1.2);
   Actor_SetAnimation(7, 2);
   v27 = Actor_GetById(FIELD_AT(r5_5, s32, 0));
   if (v27 != 0) {

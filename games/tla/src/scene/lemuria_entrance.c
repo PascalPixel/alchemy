@@ -216,7 +216,7 @@ void LemuriaEntrance_ShebaAsksPiersAge(void) {
   gMainRoutineWork.eventMode = 2;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetSpeed(8, 0x451e, 0x228f);
+  Actor_SetSpeed(8, 0.27);
   Actor_SetScript(8, gLemuriaEntrance_ShipSailsOut);
   FieldEvent_Wait(80);
   FieldEvent_SetMessageId((s32)&MsgFieldAddressCompanion);

@@ -638,8 +638,8 @@ s32 Scene_Initialize(void) {
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
         Event_PlaySound(SOUND_FADE_OUT_BGM);
-        FieldCamera_SetSpeed(0x20000, 0x4000);
-        FieldCamera_MoveTo(0xe00000, 0x400000, 0xd80000, 1);
+        FieldCamera_SetSpeed(2);
+        FieldCamera_MoveTo(224, 64, 216, 1);
         FieldCamera_WaitForArrival();
         FieldEvent_Wait(20);
         PaletteFade_ApplySource(0x10000, 0);
@@ -653,8 +653,8 @@ s32 Scene_Initialize(void) {
         PaletteFade_ApplyTarget(0x10000, 0);
         PaletteFade_Interpolate(20);
         System_Wait(20);
-        FieldCamera_SetSpeed(0x10000, 0x2000);
-        FieldCamera_MoveTo(0xe00000, 0x100000, 0xd80000, 1);
+        FieldCamera_SetSpeed(1);
+        FieldCamera_MoveTo(224, 16, 216, 1);
         FieldCamera_WaitForArrival();
         FieldEvent_Wait(40);
         actor = Actor_Get(16);
@@ -666,7 +666,7 @@ s32 Scene_Initialize(void) {
         actor->watchedObject = (struct Actor *)unset;
         Func_02002e6c__s0b64();
         System_Wait(40);
-        MapGrid_SetShake(0x20000, 0x20000, 0x10000);
+        MapGrid_SetShake(2, 2, 1);
         Func_02001324(216, 216, 65, 65, 13, 13);
         Func_02001324(232, 216, 66, 65, 14, 13);
         Func_02001324(232, 232, 66, 66, 14, 14);
@@ -679,7 +679,7 @@ s32 Scene_Initialize(void) {
         Func_02001324(248, 216, 67, 65, 15, 13);
         Func_02001324(200, 232, 64, 66, 12, 14);
         Func_02001324(200, 200, 64, 64, 12, 12);
-        MapGrid_SetShake(-1, -1, 0xe666);
+        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         MapGrid_CopyCellAttributes(30, 12, 4, 3, 12, 12);
         FieldEvent_Wait(40);
         Event_SetFlag(0xa31);
@@ -914,8 +914,8 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
 
       Event_Start();
       Event_ResolvePendingActions(0);
-      FieldCamera_SetSpeed(0x20000, 0x4000);
-      FieldCamera_MoveTo(PIXELS(224), PIXELS(64), PIXELS(216), 1);
+      FieldCamera_SetSpeed(2);
+      FieldCamera_MoveTo(224, 64, 216, 1);
       FieldCamera_WaitForArrival();
       FieldEvent_Wait(20);
       PaletteFade_ApplySource(0x10000, 0);
@@ -941,8 +941,8 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
 
     Event_Start();
     Event_ResolvePendingActions(0);
-    FieldCamera_SetSpeed(0x20000, 0x4000);
-    FieldCamera_MoveTo(PIXELS(224), PIXELS(64), PIXELS(216), 1);
+    FieldCamera_SetSpeed(2);
+    FieldCamera_MoveTo(224, 64, 216, 1);
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(20);
     PaletteFade_ApplySource(0x10000, 0);
@@ -954,7 +954,7 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
     EventMessage_ShowCentered((s32)MsgYouWhoHold, 0, 4);
     wait(10);
     EventMessage_ShowCentered((s32)MsgYouWhoHold + 1, 0, 3);
-    FieldCamera_MoveTo(PIXELS(224), PIXELS(88), PIXELS(216), 1);
+    FieldCamera_MoveTo(224, 88, 216, 1);
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(20);
     Event_PlaySound(SE_560);
@@ -1515,7 +1515,7 @@ s32 MarsLighthouseRoomM_SlideOnIce(void) {
   event->field15c = 0;
   event->field164 = 0;
   Party_TakeFallDamage(-10, 0);
-  FieldCamera_SetSpeed(0x70000, 0xe000);
+  FieldCamera_SetSpeed(7);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   ride = (struct RideState *)(gInventorySnapshot + 0x188);
   Event_SetFlag(FLAG_MENU_OPEN);

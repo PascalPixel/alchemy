@@ -243,7 +243,7 @@ void Func_020005d0(void) {
   FieldEvent_Wait(10);
   owner = (s32 *)&gMainRoutineWork;
   owner += 133;
-  Actor_SetSpeed(*owner, 0x8000, 0x4000);
+  Actor_SetSpeed(*owner, 0.5);
   ((struct Actor *)((s32)Actor_GetById(*owner)))->motionFlags = 0;
   cell = (((struct Actor *)((s32)Actor_GetById(*owner)))->x >> 19) | one;
   Actor_WalkToAndWait(*owner, cell << 3,
@@ -818,8 +818,8 @@ void Func_020011e0(void) {
   Sound_Play(SE_THUMP);
   FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
-  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(5, 5, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
@@ -872,7 +872,7 @@ s32 Scene_Initialize(void) {
         if (GameFlag_Get(0x944)) {
           MapGrid_CopyCellsTo(31, 85, 20, 85, 3, 4);
           MapGrid_CopyCellAttributes(11, 22, 3, 2, 20, 22);
-          Actor_SetPosition(68, PIXELS(344), PIXELS(372));
+          Actor_SetPosition(68, 344, 372);
           Actor_GetById(68)->update = (void (*)(void))Func_02000840;
           Actor_SetPosition(8, 0, 0);
         }
@@ -889,7 +889,7 @@ s32 Scene_Initialize(void) {
     case 7:
       if (!GameFlag_Get(100)) {
         if (!GameFlag_Get(FLAG_SCENE_TEMP_00)) {
-          Actor_SetPosition(8, PIXELS(344), PIXELS(536));
+          Actor_SetPosition(8, 344, 536);
           MapCell_SetAttributes(0, 21, 33, 0x3300);
           MapCell_SetAttributes(0, 22, 33, 0xff00);
         } else if (!GameFlag_Get(FLAG_SCENE_TEMP_01)) {
@@ -920,9 +920,9 @@ s32 Scene_Initialize(void) {
     case 2:
       Func_02000404(gData_0200335a);
       if (GameFlag_Get(0x947)) {
-        Actor_SetPosition(13, PIXELS(216), PIXELS(136));
+        Actor_SetPosition(13, 216, 136);
         if (GameFlag_Get(0x946))
-          Actor_SetPosition(12, PIXELS(200), PIXELS(136));
+          Actor_SetPosition(12, 200, 136);
       }
       Actor_PlaceBlocks(gData_02003264);
       Actor_SetSpritePriority(12, 2);
@@ -1203,7 +1203,7 @@ next:
       if (!GameFlag_Get(second)) {
         leader->motionFlags = 0;
         Sound_Play(SE_PUSH);
-        MapGrid_SetShake(0x10000, 0x40000, 0x10000);
+        MapGrid_SetShake(1, 4, 1);
         Func_020029d0(0);
         wait(8);
         Actor_SelectAnimation(trap, 2);
@@ -1212,7 +1212,7 @@ next:
         wait(16);
         Func_02002ca8(-2, trap->terrainId);
         wait(4);
-        MapGrid_SetShake(-1, -1, 0xe666);
+        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
         leader->motionFlags = 3;
         wait(5);
@@ -1405,7 +1405,7 @@ void Func_02002764(const u16 *table) {
         wait(1);
         *motion = 0;
         Sound_Play(SE_PUSH);
-        MapGrid_SetShake(0x10000, 0x40000, 0x10000);
+        MapGrid_SetShake(1, 4, 1);
         Func_020029d0(0);
         wait(8);
         Actor_SelectAnimation(partner, 2);
@@ -1414,7 +1414,7 @@ void Func_02002764(const u16 *table) {
         wait(16);
         Func_02002ca8(-2, trap->terrainId);
         wait(4);
-        MapGrid_SetShake(-1, -1, 0xe666);
+        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
         *motion = 3;
         wait(5);

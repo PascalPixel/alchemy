@@ -390,7 +390,7 @@ void LemuriaInteriors_PiersVisitsUncle(void) {
   Event_ShowMessageThenWait(10, 0, 10);
   Actor_SetAnimation(7, 1);
   Event_Wait(30);
-  Actor_SetSpeed(7, 0x4ccc, 0x2666);
+  Actor_SetSpeed(7, 0.3);
   object0 = Actor_GetById(7);
   object0->actionFlags &= 254;
   Actor_WalkByAndWait(7, 12, 0);
@@ -404,7 +404,7 @@ void LemuriaInteriors_PiersVisitsUncle(void) {
   Actor_WatchAndSetScript(4, 7);
   Actor_WatchAndSetScript(12, 7);
   Actor_WatchAndSetScript(10, 7);
-  Actor_SetSpeed(7, 0x23333, 0x11999);
+  Actor_SetSpeed(7, 2.2);
   Actor_WalkByAndWait(7, -8, 88);
   Actor_Stop(4);
   Actor_Stop(12);
@@ -432,7 +432,7 @@ answered:
   Event_Wait(10);
   Actor_SetAnimationAndWait(4, 3);
   Event_Wait(20);
-  Actor_SetSpeed(12, 0x13333, 0x9999);
+  Actor_SetSpeed(12, 1.2);
   Actor_SetAnimation(12, 2);
   object3 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object3 == 0)
@@ -475,7 +475,7 @@ visited:
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLemuriaInteriors10);
-  Actor_SetSpeed(10, 0xcccc, 0x6666);
+  Actor_SetSpeed(10, 0.8);
   Actor_ShowEmote(10, 0x100, 30);
   FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
   Actor_WalkToAndWait(4, 136, 152);
@@ -616,11 +616,11 @@ visited:
   FieldEvent_Wait(30);
   Actor_SetAnimation(11, 1);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(10, 0xcccc, 0x6666);
+  Actor_SetSpeed(10, 0.8);
   Actor_WalkToAndWait(10, 100, 112);
   Actor_FaceDirection(10, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(10, 0x6666, 0x3333);
+  Actor_SetSpeed(10, 0.4);
   Actor_WalkByAndWait(10, 8, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimation(11, 3);
@@ -744,21 +744,21 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLemuriaInteriors26);
   Actor_FaceDirection(4, FACING_SOUTH, 0);
-  Actor_SetSpeed(18, 0x10000, 0x8000);
+  Actor_SetSpeed(18, 1);
   Actor_WalkByAndWait(18, 32, 0);
   Actor_WalkByAndWait(18, 0, -32);
   Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(10);
   Event_ShowMessageThenWait(18, 0, 10);
   Actor_WalkToAndWait(4, 440, 352);
-  Actor_SetPosition(4, PIXELS(440), PIXELS(352));
+  Actor_SetPosition(4, 440, 352);
   FieldActor_LaunchFromLeader(12, 16, 0, FACING_SOUTH + FACING_STEP);
   FieldActor_LaunchFromLeader(5, -16, 0, FACING_SOUTH);
   FieldActor_LaunchFromLeader(6, -32, 0, FACING_SOUTH);
   Actor_FaceDirection(4, FACING_SOUTH, 0);
   Actor_WaitForMoveById(6);
   Event_Wait(10);
-  FieldCamera_MoveTo(PIXELS(432), -1, PIXELS(368), 1);
+  FieldCamera_MoveTo(432, CAMERA_KEEP, 368, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
   Actor_ShowEmote(18, 0x101, 30);
@@ -842,7 +842,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_RunRepeatedMotion(6, 2);
   Event_Wait(10);
   Event_ShowMessageThenWait(6, 0, 10);
-  Actor_SetSpeed(18, 0x20000, 0x10000);
+  Actor_SetSpeed(18, 2);
   Actor_WalkByAndWait(18, -12, 0);
   Actor_FaceDirection(18, FACING_NORTHWEST + FACING_STEP, 0);
   Event_Wait(10);
@@ -870,7 +870,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_ShowEmote(18, 0x101, 45);
   Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(10);
-  Actor_SetSpeed(18, 0xcccc, 0x6666);
+  Actor_SetSpeed(18, 0.8);
   Actor_WalkByAndWait(18, 12, 0);
   Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(20);
@@ -912,7 +912,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_ShowMessageThenWait(18, 0, 10);
   Actor_ShowEmote(12, 0x108, 30);
   Event_ShowMessageThenWait(12, 0, 10);
-  Actor_SetSpeed(18, 0x20000, 0x10000);
+  Actor_SetSpeed(18, 2);
   Actor_WalkByAndWait(18, 12, 0);
   Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(20);
@@ -1030,7 +1030,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_ShowMessageThenWait(12, 0, 10);
   Actor_FaceDirection(12, FACING_EAST, 0);
   Event_Wait(20);
-  Actor_SetSpeed(12, 0x9999, 0x4ccc);
+  Actor_SetSpeed(12, 0.6);
   Actor_WalkByAndWait(12, 12, 0);
   Actor_FaceDirection(4, FACING_EAST, 0);
   Event_Wait(20);
@@ -1069,7 +1069,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_Wait(20);
   Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(10);
-  Actor_SetSpeed(18, 0x10000, 0x8000);
+  Actor_SetSpeed(18, 1);
   Actor_WalkByAndWait(18, 12, 0);
   Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(10);
@@ -1161,12 +1161,12 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_SetAnimationAndWait(18, 3);
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
-  Actor_SetSpeed(18, 0x19999, 0xcccc);
+  Actor_SetSpeed(18, 1.6);
   Actor_WalkByAndWait(18, -8, 40);
   Actor_FaceDirection(6, FACING_SOUTH, 0);
   Actor_WalkByAndWait(18, 0, 20);
-  MapGrid_SetShake(0x10000, 0x10000, 0x10000);
-  Actor_SetSpeed(18, 0x1e666, 0xf333);
+  MapGrid_SetShake(1, 1, 1);
+  Actor_SetSpeed(18, 1.9);
   Event_PlaySound(SE_IMPACT);
   Actor_Jump(18, 2, 0);
   Actor_GetById(18)->actionFlags &= 0xfe;
@@ -1177,7 +1177,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_Wait(10);
   Actor_ShowEmote(18, 0x102, 30);
   FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
-  Actor_SetSpeed(18, 0x9999, 0x4ccc);
+  Actor_SetSpeed(18, 0.6);
   Actor_GetById(18)->actionFlags &= 0xfe;
   Actor_WalkByAndWait(18, 0, -24);
   Event_Wait(1);
@@ -1191,11 +1191,11 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   object->timer = 0;
   object->update = (void (*)(void))Actor_CyclePictures;
   FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
-  Actor_SetSpeed(18, 0x23333, 0x11999);
+  Actor_SetSpeed(18, 2.2);
   Actor_WalkByAndWait(18, 0, 32);
   target = Actor_GetById(18);
   Event_PlaySound(SE_HEAVY_IMPACT);
-  MapGrid_SetShake(0x40000, 0x40000, 0x10000);
+  MapGrid_SetShake(4, 4, 1);
   Actor_GetById(18)->actionFlags &= 0xfe;
   Actor_WalkByAndWait(18, 0, -16);
   Event_Wait(1);
@@ -1246,21 +1246,21 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(12, 3);
   Event_Wait(10);
-  Actor_SetSpeed(12, 0x13333, 0x9999);
+  Actor_SetSpeed(12, 1.2);
   Actor_SetAnimation(12, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_SetDestination(12, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(12);
   Actor_SetPosition(12, 0, 0);
-  Actor_SetSpeed(5, 0x13333, 0x9999);
+  Actor_SetSpeed(5, 1.2);
   Actor_SetAnimation(5, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_SetDestination(5, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
-  Actor_SetSpeed(6, 0x13333, 0x9999);
+  Actor_SetSpeed(6, 1.2);
   Actor_SetAnimation(6, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)

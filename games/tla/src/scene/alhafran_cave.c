@@ -309,8 +309,8 @@ void AlhafranCave_SetUpCave(void) {
   Actor_SetSpriteColorMode(Actor_Get(12), 6);
   Actor_SetSpriteColorMode(Actor_Get(13), 6);
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
-    Actor_SetPosition(14, 0xc80000, 0x880000);
-    Actor_SetPosition(15, 0x1880000, 0x1680000);
+    Actor_SetPosition(14, 200, 136);
+    Actor_SetPosition(15, 392, 360);
   }
   object = Actor_Get(14);
   object->motionFlags = 0;
@@ -393,8 +393,8 @@ void AlhafranCave_SetUpJail(void) {
     FieldActor_SetSpritePriority(19, 2);
     FieldActor_SetSpritePriority(20, 2);
     if (!Event_GetFlag(FLAG_FAMILY_VISITED_BRIGGS)) {
-      Actor_SetPosition(17, PIXELS(712), PIXELS(216));
-      Actor_SetPosition(19, PIXELS(744), PIXELS(216));
+      Actor_SetPosition(17, 712, 216);
+      Actor_SetPosition(19, 744, 216);
     } else {
       Actor_SetPosition(22, 0, 0);
       Actor_SetPosition(21, 0, 0);
@@ -414,7 +414,7 @@ void AlhafranCave_SetUpJail(void) {
       !Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Actor_SetSpeed(8, 0x4ccc, 0x2666);
+    Actor_SetSpeed(8, 0.3);
     Actor_SetDestinationOffset(8, 0, 16);
     FieldActor_WaitForMoveById(8);
   }
@@ -451,16 +451,16 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Event_SetFlag(FLAG_FAMILY_VISITED_BRIGGS);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetSpeed(ACTOR_CHAUCHA, 0x10000, 0x8000);
-  Actor_SetSpeed(ACTOR_EOLEO, 0x10000, 0x8000);
-  Actor_SetSpeed(17, 0x10000, 0x8000);
-  Actor_SetSpeed(19, 0x10000, 0x8000);
-  Actor_SetSpeed(20, 0x10000, 0x8000);
+  Actor_SetSpeed(ACTOR_CHAUCHA, 1);
+  Actor_SetSpeed(ACTOR_EOLEO, 1);
+  Actor_SetSpeed(17, 1);
+  Actor_SetSpeed(19, 1);
+  Actor_SetSpeed(20, 1);
   FieldEvent_SetMessageId((s32)MsgYouHereTo);
   FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);
   Actor_WalkToAndWait(4, 0x320, 0x120);
   Actor_FaceDirection(4, FACING_WEST, 0);
-  FieldCamera_MoveTo(0x2e80000, -1, 0x1080000, 1);
+  FieldCamera_MoveTo(744, CAMERA_KEEP, 264, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_BRIGGS, 3);
@@ -484,7 +484,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   (void *)Actor_ShowEmote(ACTOR_CHAUCHA, 0x107, 50);
-  FieldCamera_MoveTo(0x2e80000, -1, 0x1380000, 1);
+  FieldCamera_MoveTo(744, CAMERA_KEEP, 312, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetAnimation(ACTOR_EOLEO, 3);
@@ -493,7 +493,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_Wait(40);
   EventCamera_FollowActor(ACTOR_JAILER, 1);
   FieldCamera_WaitForArrival();
-  Actor_SetSpeed(ACTOR_JAILER, 0x18000, 0xc000);
+  Actor_SetSpeed(ACTOR_JAILER, 1.5);
   Actor_SetScript(ACTOR_JAILER, gAlhafranCave_GuardStepsAsideScript);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_EOLEO, 3);
@@ -501,7 +501,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_FaceDirection(ACTOR_EOLEO, FACING_SOUTH_SOUTHEAST, 0);
   FieldActor_RefreshSelectorById(ACTOR_JAILER);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_EAST, 0);
-  FieldCamera_MoveTo(0x2e80000, -1, 0x1100000, 1);
+  FieldCamera_MoveTo(744, CAMERA_KEEP, 272, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_JAILER, 0x102, 30);
@@ -526,7 +526,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   position[1] = actor15->y + 0x100000;
   position[2] = actor15->z;
   FieldVector_AddPolarOffset(0x100000, 0xc000, position);
-  FieldActor_SetMoveTarget(effect, position[0], position[1], position[2]);
+  FieldActor_SetMoveTargetFixed(effect, position[0], position[1], position[2]);
   FieldEffect_SnapScaleToFull(effect);
   Actor_SelectAnimation(effect, 4);
   actor15->update = AlhafranCave_ShakeUnderEoleosPower;
@@ -541,13 +541,13 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_SetAnimationAndWait(19, 3);
   Actor_FaceDirection(20, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(30);
-  FieldCamera_MoveTo(0x3280000, -1, 0x1200000, 1);
+  FieldCamera_MoveTo(808, CAMERA_KEEP, 288, 1);
   FieldCamera_WaitForArrival();
   FieldActor_StartRepeatedMotion(4, 3);
   Actor_SetAttachedEffect(4, 0x102);
   FieldEvent_Wait(50);
   Actor_ShowEmote(20, 0x102, 60);
-  FieldCamera_MoveTo(0x2e80000, -1, 0x1100000, 1);
+  FieldCamera_MoveTo(744, CAMERA_KEEP, 272, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(20, -16, 0);

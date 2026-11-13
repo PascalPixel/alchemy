@@ -299,7 +299,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(PIXELS(143), -1, PIXELS(560), 1);
+  FieldCamera_MoveTo(143, CAMERA_KEEP, 560, 1);
   party = (s32)&gMainRoutineWork;
   if (mode == 0) {
     Actor_WalkToAndWait(*(s32 *)(party + 532), 184, 568);
@@ -531,7 +531,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_ShowMessage(0x8014, 0);
   FieldEvent_Wait(90);
   Event_ShowMessage(21, 0);
-  Actor_SetPosition(21, PIXELS(144), PIXELS(680));
+  Actor_SetPosition(21, 144, 680);
   Actor_FaceActor(*(s32 *)owner, 21, 0);
   Actor_FaceActor(5, 21, 0);
   Actor_FaceActor(6, 21, 0);
@@ -543,7 +543,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   FieldEvent_Wait(30);
   EventCamera_FollowActor(21, 1);
   FieldEvent_Wait(120);
-  Actor_SetSpeed(21, 0x9999, 0x4ccc);
+  Actor_SetSpeed(21, 0.6);
   Actor_SetSpeedParameters(21, 0x9999, 0x4ccc);
   Actor_GetById(21)->priorityFlags &= ~1;
   Actor_WalkTo(21, 144, 648);
@@ -1041,7 +1041,7 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   BattleEffect_SetObjectUpdateMode(t21, 2);
   Sound_Play(SE_ASCEND);
   Event_Wait(60);
-  Actor_SetPosition(24, PIXELS(144), PIXELS(520));
+  Actor_SetPosition(24, 144, 520);
   Actor_Jump(24, 6, 0);
   Actor_SetDestination(24, 160, 520);
   Actor_WaitForMoveById(24);
@@ -1096,7 +1096,7 @@ s32 Scene_Initialize(void) {
       !GameFlag_Get(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
       gMainRoutineWork.entrance == 7) {
     Event_PlaySound(MUS_007);
-    Actor_SetPosition(22, 0x900000, 0x2380000);
+    Actor_SetPosition(22, 144, 568);
     Actor_SetPosition(21, 0, 0);
     Actor_SetPosition(16, 0, 0);
     Actor_SetPosition(17, 0, 0);

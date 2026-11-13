@@ -720,9 +720,9 @@ stop:
   object->acceleration = 0x20000;
   object->speedLimit = 0x20000;
   object->update = MagmaRock_TrailEmbers;
-  FieldActor_SetMoveTarget(object, position[0], position[1], position[2]);
-  FieldCamera_SetSpeed(0x20000, 0x4000);
-  FieldCamera_MoveTo(position[0], position[1], position[2], 1);
+  FieldActor_SetMoveTargetFixed(object, position[0], position[1], position[2]);
+  FieldCamera_SetSpeed(2);
+  FieldCamera_MoveToFixed(position[0], position[1], position[2], 1);
   FieldActor_WaitForMove(object);
   object->update = NULL;
   Actor_Release(object);
@@ -754,9 +754,9 @@ hit:
   object->acceleration = 0x20000;
   object->speedLimit = 0x20000;
   object->update = MagmaRock_TrailEmbers;
-  FieldActor_SetMoveTarget(object, position[0], position[1], position[2]);
-  FieldCamera_SetSpeed(0x20000, 0x4000);
-  FieldCamera_MoveTo(position[0], position[1], position[2], 1);
+  FieldActor_SetMoveTargetFixed(object, position[0], position[1], position[2]);
+  FieldCamera_SetSpeed(2);
+  FieldCamera_MoveToFixed(position[0], position[1], position[2], 1);
   FieldActor_WaitForMove(object);
   object->update = NULL;
   Actor_Release(object);
@@ -1184,7 +1184,7 @@ first:
   i++;
   if (i != 8)
     goto first;
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   gMainRoutineWork.renderMode = 0;
   leader->motionFlags = 3;
   leader->gravity = 0xcccc;
@@ -1209,8 +1209,8 @@ second:
   Event_PlaySound(SE_THUMP);
   Actor_SetSpriteFlags(leader, 1);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
-  MapGrid_SetShake(0x50000, 0x80000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(5, 8, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   Func_080d452c__s1c00(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
@@ -1456,7 +1456,7 @@ void MagmaRock_LaunchLeader(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
   leader->y += 0x820000;
@@ -1490,8 +1490,8 @@ loop:
   Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
-  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(5, 5, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
@@ -1623,9 +1623,9 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
       Call3((void (*)())MagmaRock_PlaceVolley, 21, 13, 0);
     if (Event_GetFlag(0x8d5))
-      Actor_SetPosition(8, 0x1080000, 0x1680000);
+      Actor_SetPosition(8, 264, 360);
     if (Event_GetFlag(0x8d6))
-      Actor_SetPosition(10, 0xf80000, 0x1980000);
+      Actor_SetPosition(10, 248, 408);
     other = (s32)gMagmaRock_Room1Pillars;
     value2 = 78;
     Actor_PlaceBlocks(other);
@@ -1660,7 +1660,7 @@ s32 Scene_Initialize(void) {
       Tightrope_Initialize();
       Call3((void (*)())Func_02003bf4, 0, 11, 12);
       if (Event_GetFlag(0x8d7))
-        Actor_SetPosition(15, 0x1b80000, 0x2180000);
+        Actor_SetPosition(15, 440, 536);
       Actor_PlaceBlocks(gMagmaRock_Room2LowerPillars);
       id = *entrance;
       if (id == 1) {
@@ -1701,7 +1701,7 @@ s32 Scene_Initialize(void) {
           Call3((void (*)())MagmaRock_PlaceVolley, 21, 12, 0);
         }
         if (Event_GetFlag(0x8d8))
-          Actor_SetPosition(16, 0x3780000, 0x2380000);
+          Actor_SetPosition(16, 888, 568);
         Actor_PlaceBlocks(gMagmaRock_Room2MiddlePillars);
         MagmaRock_RaiseActorCells(gMagmaRock_Room2MiddleStatues);
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
@@ -1740,7 +1740,7 @@ s32 Scene_Initialize(void) {
         }
       } else if (*entrance <= 12) {
         if (Event_GetFlag(0x8d9))
-          Actor_SetPosition(8, 0x1080000, 0x2480000);
+          Actor_SetPosition(8, 264, 584);
         rise = (s32)gMagmaRock_Room2UpperPillars;
         Actor_PlaceBlocks(rise);
         Blocks_MarkCells(rise);
@@ -1781,9 +1781,9 @@ s32 Scene_Initialize(void) {
         }
         Call1((void (*)())MagmaRock_RebuildFlameParts, 13);
         if (Event_GetFlag(0x8da))
-          Actor_SetPosition(8, 0x2880000, 0x2580000);
+          Actor_SetPosition(8, 648, 600);
         if (Event_GetFlag(0x8db))
-          Actor_SetPosition(9, 0x2380000, 0x2680000);
+          Actor_SetPosition(9, 568, 616);
         MagmaRock_SettleBlocks(gMagmaRock_Room2TopPillars);
         if (Event_GetFlag(FLAG_SCENE_TEMP_50))
           MapGrid_CopyCellAttributes(121, 48, 1, 3, 123, 48);
@@ -1889,7 +1889,7 @@ body:
       } else if (!Event_GetFlag(flag + 1)) {
         leader->motionFlags = 0;
         Event_PlaySound(SE_PUSH);
-        MapGrid_SetShake(0x10000, 0x40000, 0x10000);
+        MapGrid_SetShake(1, 4, 1);
         MagmaRock_SpawnRubble(0);
         wait(8);
         Actor_SelectAnimation(target, 2);
@@ -1898,7 +1898,7 @@ body:
         wait(16);
         MagmaRock_SetLeaderCellShape(-2, target->terrainId);
         wait(4);
-        MapGrid_SetShake(-1, -1, 0xe666);
+        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
         leader->motionFlags = 3;
         wait(5);
@@ -1936,14 +1936,14 @@ body:
   nextFlag = flag + 1;
   if (Event_GetFlag(nextFlag) == 0) {
     Event_PlaySound(SE_PUSH);
-    MapGrid_SetShake(0x10000, 0x40000, 0x10000);
+    MapGrid_SetShake(1, 4, 1);
     MagmaRock_SpawnRubble(0);
     System_Wait(8);
     Actor_SelectAnimation(target, 2);
     MagmaRock_SetActorCellShape(-4, target->terrainId, id);
     MagmaRock_SpawnRubble(1);
     System_Wait(16);
-    MapGrid_SetShake(-1, -1, 0xe666);
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     System_Wait(8);
     FieldActor_SetPositionAndResetMotion(target, 0, 0, 0);
     System_Wait(2);
@@ -2041,7 +2041,7 @@ body:
         flags = &leader->motionFlags;
         *flags = 0;
         Event_PlaySound(SE_PUSH);
-        MapGrid_SetShake(0x10000, 0x40000, 0x10000);
+        MapGrid_SetShake(1, 4, 1);
         MagmaRock_SpawnRubble(0);
         wait(8);
         Actor_SelectAnimation(actor8, 2);
@@ -2050,7 +2050,7 @@ body:
         wait(16);
         MagmaRock_SetLeaderCellShape(-2, target->terrainId);
         wait(4);
-        MapGrid_SetShake(-1, -1, 0xe666);
+        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
         *flags = 3;
         wait(5);

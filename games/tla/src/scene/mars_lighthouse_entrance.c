@@ -376,7 +376,7 @@ void MarsLighthouseEntrance_Teleport(void) {
     WORD_AT(Actor_Get(gMainRoutineWork.currentOwner), 108) = 0;
     FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
     Func_02004cd8_(gMainRoutineWork.currentOwner, PIXELS(688), PIXELS(360));
-    FieldCamera_MoveTo(PIXELS(688), -1, PIXELS(360), 1);
+    FieldCamera_MoveTo(688, CAMERA_KEEP, 360, 1);
     FieldCamera_WaitForArrival();
     Teleport_PlayWhirl();
     FieldEvent_Wait(40);
@@ -430,11 +430,11 @@ void Func_02000718(void) {
   Flag_Clear(0x104);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_SetSpeed(0x10000, 0x2000);
+  FieldCamera_SetSpeed(1);
   Camera_SetBounds(PIXELS(168), 0, PIXELS(664), 1);
   FieldCamera_WaitForArrival();
   System_Wait(10);
-  FieldCamera_SetSpeed(0x40000, 0x8000);
+  FieldCamera_SetSpeed(4);
   Camera_SetBounds(PIXELS(472), 0, PIXELS(664), 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(90);
@@ -535,8 +535,8 @@ void Func_0200096c(s32 unused, s32 id) {
 }
 
 void Func_020009c0(void) {
-  FieldCamera_SetSpeed(0x10000, 0x2000);
-  FieldCamera_MoveTo(PIXELS(88), -1, PIXELS(696), 1);
+  FieldCamera_SetSpeed(1);
+  FieldCamera_MoveTo(88, CAMERA_KEEP, 696, 1);
   Func_020019c4();
 }
 
@@ -571,11 +571,11 @@ void Func_02000a7c(void) {
   Flag_Clear(0x104);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_SetSpeed(0x10000, 0x2000);
+  FieldCamera_SetSpeed(1);
   Camera_SetBounds(PIXELS(872), -1, PIXELS(168), 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
-  FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(264), 1);
+  FieldCamera_MoveTo(872, CAMERA_KEEP, 264, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(120);
   Event_End();
@@ -1003,7 +1003,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(20, 0, 0);
     }
     if (Event_GetFlag(0xa4f)) {
-      Actor_SetPosition(8, 0x1480000, 0x780000);
+      Actor_SetPosition(8, 328, 120);
       ((u8 *)Actor_Get(8))[98] = 1;
     }
     if (Event_GetFlag(0xa30))
@@ -1013,15 +1013,15 @@ s32 Scene_Initialize(void) {
     if (entrance == 20) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
-      FieldCamera_MoveTo(-1, -1, -1, 0);
-      MapGrid_SetShake(0, 0x20000, 0x10000);
+      FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+      MapGrid_SetShake(0, 2, 1);
       Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
       Actor_SetPosition(18, 0, 0);
       Actor_Get(18)->priorityFlags |= 2;
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       object = Actor_Get(18);
-      Actor_SetPosition(18, object->timer << 16, object->unk66 << 16);
+      Actor_SetPosition(18, object->timer, object->unk66);
       Event_PlaySound(SE_573);
       i = 2;
       do {
@@ -1030,7 +1030,7 @@ s32 Scene_Initialize(void) {
         i--;
       } while (i >= 0);
       Event_SetFlag(0xa3e);
-      MapGrid_SetShake(-1, -1, 0xe666);
+      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       FieldEvent_Wait(120);
       FieldEvent_SetExitRequest(20);
       Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
@@ -1098,7 +1098,7 @@ s32 Scene_Initialize(void) {
     }
     Actor_Get(9)->priorityFlags |= 2;
     if (Event_GetFlag(0xa4e))
-      Actor_SetPosition(8, 0x580000, 0x2b80000);
+      Actor_SetPosition(8, 88, 696);
   } else if (scene == (s32)&SceneId_Ov6aaRoom7) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
   }
@@ -1544,7 +1544,7 @@ int MarsLighthouseEntrance_SlideOnIce(void) {
   /* FAKEMATCH(signature): Party_TakeFallDamage declared returning s32, though
    * it returns nothing. */
   Func_020024c0__s2860(-10, 0);
-  FieldCamera_SetSpeed(0x70000, 0xe000);
+  FieldCamera_SetSpeed(7);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   ride = (struct RideState *)(gInventorySnapshot + 0x188);
   Flag_Set(FLAG_MENU_OPEN);
@@ -2071,8 +2071,8 @@ next:
   Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
-  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(5, 5, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;

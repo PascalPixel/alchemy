@@ -577,10 +577,10 @@ void Prox_SearchForParents(void) {
     }
     t8 = ((s32)FieldCamera_GetActor());
     FIELD_AT((t8 + 0x55), u8, 0) = t0;
-    FieldCamera_SetSpeed(0x19999, 0x3333);
-    FieldCamera_MoveTo(PIXELS(552), -1, PIXELS(388), 1);
+    FieldCamera_SetSpeed(1.6);
+    FieldCamera_MoveTo(552, CAMERA_KEEP, 388, 1);
     FieldEvent_Wait(10);
-    Actor_SetSpeed(8, 0x13333, 0x9999);
+    Actor_SetSpeed(8, 1.2);
     Actor_WalkToAndWait(8, 526, 384);
     Actor_FaceDirection(9, FACING_WEST, 0);
     Actor_WalkToAndWait(8, 540, 388);
@@ -618,8 +618,8 @@ void FieldCamera_WaitForArrival(void);
 void Prox_DecideToGoToLighthouse(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_SetSpeed(0x4cccc, 0x9999);
-  FieldCamera_MoveTo(PIXELS(160), -1, PIXELS(160), 1);
+  FieldCamera_SetSpeed(4.8);
+  FieldCamera_MoveTo(160, CAMERA_KEEP, 160, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
   Actor_RunRepeatedMotion(0xa, 1);
@@ -703,9 +703,9 @@ void Prox_MeetPuelle(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveTo(PIXELS(160), -1, PIXELS(160), 1);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(160, CAMERA_KEEP, 160, 1);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 134, 156);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
   FieldActor_ShowEmote(11, 0x100, 20);
@@ -721,8 +721,8 @@ void Prox_MeetPuelle(void) {
   Actor_MoveToObject(0, gMainRoutineWork.currentOwner);
   System_Wait(1);
   Actor_FaceDirection(14, FACING_NORTH_NORTHWEST, 0);
-  Actor_SetSpeed(18, 0xcccc, 0x6666);
-  Actor_SetSpeed(0, 0xcccc, 0x6666);
+  Actor_SetSpeed(18, 0.8);
+  Actor_SetSpeed(0, 0.8);
   Actor_SetScript(0, (s32)gData_020049c4);
   Actor_RunScriptAndWait(18, (s32)gData_02004980);
   Actor_FaceDirection(11, FACING_SOUTH_SOUTHEAST, 0);
@@ -745,7 +745,7 @@ void Prox_MeetPuelle(void) {
   Actor_FaceDirection(16, FACING_WEST, 0);
   Actor_FaceDirection(17, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(0, FACING_SOUTH);
-  Actor_SetSpeed(0, 0x26666, 0x13333);
+  Actor_SetSpeed(0, 2.4);
   Actor_Get(0)->actionFlags &= 0xfe;
   Actor_WalkToAndWait(0, 160, 140);
   FieldEvent_Wait(1);
@@ -768,7 +768,7 @@ void Prox_MeetPuelle(void) {
   Actor_SetAnimation(18, 3);
   Event_ShowMessage(0x8012, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-  Actor_SetSpeed(0, 0xcccc, 0x6666);
+  Actor_SetSpeed(0, 0.8);
   Actor_WalkToAndWait(0, 160, 154);
   Actor_FaceDirection(0, FACING_NORTHWEST, 0);
   Actor_SetAnimationAndWait(18, 4);
@@ -923,8 +923,8 @@ void Func_020015d0(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
-  Actor_SetSpeed(20, 0x20000, 0x10000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 2);
+  Actor_SetSpeed(20, 2);
   object = Actor_Get(20);
   object->terrainId = 1;
   FieldActor_SetSpritePriority(20, 3);
@@ -946,9 +946,9 @@ void Func_020015d0(void) {
   object->actionFlags |= 1;
   Actor_SetPosition(20, 0, 0);
   Event_PlaySound(SE_KOLIMA_BRIDGE_HOP);
-  MapGrid_SetShake(0x10000, 0x20000, 0x10000);
+  MapGrid_SetShake(1, 2, 1);
   FieldEvent_Wait(30);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_PlaySound(SE_LANDING_THUD);
   FieldEvent_Wait(30);
   Event_PlaySound(SE_ENEMY_CRY);
@@ -1073,12 +1073,12 @@ void Prox_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     MapGrid_CopyCellsTo(a, b, c, d, mode, f);
     FieldEvent_Wait(20);
   }
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   if (mode == 1) {
     object = Actor_Get(gMainRoutineWork.currentOwner);
     cell = object->x >> 16;
-    FieldActor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x,
-                             object->y, object->z);
+    FieldActor_SetMoveTargetFixed(object, ((8 - cell % 16) << 16) + object->x,
+                                  object->y, object->z);
     FieldActor_WaitForMove(object);
     object->facing = 0xc000;
   }
@@ -1113,10 +1113,10 @@ void Func_02001b7c(void) {
   s32 cell;
   s32 id;
 
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   cell = object->x >> 16;
-  FieldActor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x,
-                           object->y, object->z - 0x40000);
+  FieldActor_SetMoveTargetFixed(object, ((8 - cell % 16) << 16) + object->x,
+                                object->y, object->z - 0x40000);
   FieldActor_WaitForMove(object);
   object->facing = 0xc000;
   Event_PlaySound(SE_STAIRS_UP);
@@ -1153,7 +1153,7 @@ void Func_02001c24(s32 a0) {
     Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 0x18);
   }
   Actor_SetSpriteFlags(((s32)Actor_Get(gMainRoutineWork.currentOwner)), 1);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, 8);
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
@@ -1185,10 +1185,10 @@ void Prox_GiveThanksForBeacon(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldActor_Stop(0x14);
   System_Wait(1);
-  Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(184), PIXELS(484));
+  Actor_SetPosition(gMainRoutineWork.currentOwner, 184, 484);
   /* FAKEMATCH(temporary): the three facings held in locals set before their
    * first placement, where as constants each placement rebuilds them and the
    * later turns cannot share them. */
@@ -1199,13 +1199,13 @@ void Prox_GiveThanksForBeacon(void) {
   angle3000 = 0x3000;
   Actor_SetPositionAndFacing(17, PIXELS(138), PIXELS(412), angle3000);
   Actor_SetPositionAndFacing(20, PIXELS(220), PIXELS(600), angleB000);
-  Actor_SetPosition(5, PIXELS(184), PIXELS(684));
+  Actor_SetPosition(5, 184, 684);
   System_Wait(1);
   EVENT_WORK->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(448), 1);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(184, CAMERA_KEEP, 448, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   FieldEvent_SetMessageId((s32)MsgProx80);
@@ -1342,36 +1342,36 @@ void Prox_GiveThanksForBeacon(void) {
   t144 =
       FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   if (t144 == 0) {
-    FieldCamera_SetSpeed(0x26666, 0x4ccc);
-    FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(512), 1);
+    FieldCamera_SetSpeed(2.4);
+    FieldCamera_MoveTo(184, CAMERA_KEEP, 512, 1);
     Actor_FaceDirectionAndWait(0, FACING_SOUTH);
-    Actor_SetSpeed(0, 0x19999, 0xcccc);
+    Actor_SetSpeed(0, 1.6);
     Actor_WalkToAndWait(0, 168, 520);
     Event_ShowMessage(0x4000, 0);
     Event_ShowMessage(0x2005, 0);
     EVENT_WORK->messageId += 2;
   } else {
     EVENT_WORK->messageId += 2;
-    FieldCamera_SetSpeed(0x26666, 0x4ccc);
-    FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(512), 1);
+    FieldCamera_SetSpeed(2.4);
+    FieldCamera_MoveTo(184, CAMERA_KEEP, 512, 1);
     Actor_FaceDirectionAndWait(0, FACING_SOUTH);
-    Actor_SetSpeed(0, 0x19999, 0xcccc);
+    Actor_SetSpeed(0, 1.6);
     Actor_WalkToAndWait(0, 168, 520);
     Event_ShowMessage(0x4000, 0);
     Event_ShowMessage(0x2005, 0);
   }
   t159 = ((s32)FieldCamera_GetActor());
   FIELD_AT((t159 + 0x55), u8, 0) = 0;
-  FieldCamera_MoveTo(PIXELS(158), -1, PIXELS(432), 1);
+  FieldCamera_MoveTo(158, CAMERA_KEEP, 432, 1);
   FieldCamera_WaitForArrival();
   FieldActor_Jump(17, 4, 10);
   Event_ShowMessage(17, 0);
-  FieldCamera_SetSpeed(0x13333, 0x2666);
-  FieldCamera_MoveTo(PIXELS(172), -1, PIXELS(520), 1);
+  FieldCamera_SetSpeed(1.2);
+  FieldCamera_MoveTo(172, CAMERA_KEEP, 520, 1);
   FieldActor_WatchAndSetScript(0, 0x11);
   FieldActor_WatchAndSetScript(gMainRoutineWork.currentOwner, 0x11);
   FieldActor_WatchAndSetScript(0x1b, 0x11);
-  Actor_SetSpeed(17, 0x19999, 0xcccc);
+  Actor_SetSpeed(17, 1.6);
   Actor_WalkToAndWait(17, 140, 478);
   Actor_WalkToAndWait(17, 150, 540);
   Actor_WalkToAndWait(17, 160, 560);
@@ -1382,8 +1382,8 @@ void Prox_GiveThanksForBeacon(void) {
   System_Wait(1);
   Actor_SetPosition(17, 0, 0);
   FieldEvent_Wait(10);
-  FieldCamera_SetSpeed(0x26666, 0x4ccc);
-  FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(448), 1);
+  FieldCamera_SetSpeed(2.4);
+  FieldCamera_MoveTo(184, CAMERA_KEEP, 448, 1);
   Actor_WalkToAndWait(0, 168, 484);
   Actor_FaceDirectionAndWait(0, FACING_EAST);
   Event_ShowMessage(0x4000, 0);
@@ -1401,8 +1401,8 @@ void Prox_GiveThanksForBeacon(void) {
   Actor_SetAnimation(0, 3);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
   Actor_SetAnimationAndWait(27, 3);
-  Actor_SetSpeed(0, 0x19999, 0xcccc);
-  Actor_SetSpeed(27, 0x19999, 0xcccc);
+  Actor_SetSpeed(0, 1.6);
+  Actor_SetSpeed(27, 1.6);
   Actor_SetAnimation(0, 2);
   t202 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
   if (t202 != 0) {
@@ -1513,7 +1513,7 @@ void Func_0200279c(s32 actor, s32 x, s32 z, s32 frames) {
   object->frames = frames;
   object->arrived = 0;
   object->update = Func_020003bc;
-  Actor_SetPosition(actor, x << 16, z << 16);
+  Actor_SetPosition(actor, x, z);
 }
 
 void Func_020027e4(void) {
@@ -1637,20 +1637,20 @@ void Prox_SayFarewell(void) {
     FieldActor_Jump(5, 4, 10);
     FieldEvent_SetMessageId((s32)MsgProx153);
     Event_ShowMessage(5, 0);
-    FieldCamera_SetSpeed(0x33333, 0x6666);
-    FieldCamera_MoveTo(PIXELS(144), -1, PIXELS(228), 1);
+    FieldCamera_SetSpeed(3.2);
+    FieldCamera_MoveTo(144, CAMERA_KEEP, 228, 1);
     FieldCamera_WaitForArrival();
     FieldActor_ShowEmote(10, 0x108, 0);
     Event_ShowMessage(0x200a, 0);
     Event_PlaySound(MUS_037);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 136, 196);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
     Actor_MoveToObject(0, gMainRoutineWork.currentOwner);
     Actor_MoveToObject(0xb, gMainRoutineWork.currentOwner);
     System_Wait(1);
-    Actor_SetSpeed(0, 0xcccc, 0x6666);
-    Actor_SetSpeed(11, 0xcccc, 0x6666);
+    Actor_SetSpeed(0, 0.8);
+    Actor_SetSpeed(11, 0.8);
     Actor_SetScript(0, (s32)gData_02005ee8);
     Actor_RunScriptAndWait(11, (s32)gData_02005f2c);
     Actor_SetAnimationAndWait(9, 3);
@@ -1745,18 +1745,18 @@ void Prox_SayFarewell(void) {
     Actor_SetAnimation(3, 3);
     Actor_SetAnimation(2, 3);
     Actor_SetAnimationAndWait(1, 3);
-    Actor_SetSpeed(0, 0xcccc, 0x6666);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-    Actor_SetSpeed(11, 0xcccc, 0x6666);
-    Actor_SetSpeed(5, 0xcccc, 0x6666);
-    Actor_SetSpeed(6, 0xcccc, 0x6666);
-    Actor_SetSpeed(7, 0xcccc, 0x6666);
-    Actor_SetSpeed(8, 0xcccc, 0x6666);
-    Actor_SetSpeed(9, 0xcccc, 0x6666);
-    Actor_SetSpeed(10, 0xcccc, 0x6666);
-    Actor_SetSpeed(3, 0xcccc, 0x6666);
-    Actor_SetSpeed(2, 0xcccc, 0x6666);
-    Actor_SetSpeed(1, 0xcccc, 0x6666);
+    Actor_SetSpeed(0, 0.8);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
+    Actor_SetSpeed(11, 0.8);
+    Actor_SetSpeed(5, 0.8);
+    Actor_SetSpeed(6, 0.8);
+    Actor_SetSpeed(7, 0.8);
+    Actor_SetSpeed(8, 0.8);
+    Actor_SetSpeed(9, 0.8);
+    Actor_SetSpeed(10, 0.8);
+    Actor_SetSpeed(3, 0.8);
+    Actor_SetSpeed(2, 0.8);
+    Actor_SetSpeed(1, 0.8);
     FieldActor_SetSpritePriority(0, 2);
     FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
     FieldActor_SetSpritePriority(11, 2);
@@ -1769,8 +1769,8 @@ void Prox_SayFarewell(void) {
     FieldActor_SetSpritePriority(3, 2);
     FieldActor_SetSpritePriority(2, 2);
     FieldActor_SetSpritePriority(1, 2);
-    FieldCamera_SetSpeed(0x6666, 0xccc);
-    FieldCamera_MoveTo(PIXELS(144), -1, PIXELS(246), 1);
+    FieldCamera_SetSpeed(0.4);
+    FieldCamera_MoveTo(144, CAMERA_KEEP, 246, 1);
     Actor_SetScript(9, (s32)gData_02005f70);
     Actor_SetScript(10, (s32)gData_02005fac);
     FieldEvent_Wait(10);
@@ -1884,8 +1884,8 @@ void Prox_SayFarewell(void) {
     Actor_SetAnimation(5, 3);
     Actor_SetAnimationAndWait(1, 3);
     FieldEvent_Wait(10);
-    Actor_SetSpeed(5, 0x19999, 0xcccc);
-    Actor_SetSpeed(1, 0x19999, 0xcccc);
+    Actor_SetSpeed(5, 1.6);
+    Actor_SetSpeed(1, 1.6);
     Actor_SetScript(5, (s32)gData_0200622c);
     Actor_RunScriptAndWait(1, (s32)gData_02006268);
     FieldEvent_Wait(20);

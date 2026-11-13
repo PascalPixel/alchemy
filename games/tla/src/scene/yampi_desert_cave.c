@@ -342,7 +342,7 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
        ABS(gYampiDesertCave_LogFootprints[kind * 4 + 3])) >>
       4;
   Map_FillCellRectByte2(0, cell[0], cell[2], w, h, 0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x1999);
+  Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.5, 0.1);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 8);
   wait(15);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner,
@@ -353,7 +353,7 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
   wait(4);
   Actor_SelectAnimation(object, 2);
   Event_PlaySound(SE_HEAVY_MOVE);
-  Actor_SetSpeed(rect.word[4], 0x8000, 0x1999);
+  Actor_SetSpeedAndAcceleration(rect.word[4], 0.5, 0.1);
   Actor_SetMoveTarget(object, rect.word[0], rect.word[1], rect.word[2]);
   /* FAKEMATCH(dead): a loop of one pass with an untaken two-test branch. */
   for (j = 0; j < 1; j++) {
@@ -362,7 +362,7 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
   }
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x4ccc, 0x1999);
+  Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.3, 0.1);
   offset = gPushLeaderSteps[i] << 16;
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, offset >> 31,
                              offset >> 17);
@@ -765,7 +765,7 @@ void YampiDesertCave_MoveSandRipple(void) {
   s32 row = gYampiDesertCave_RipplePath[index + 1];
 
   if (Actor_GetById(16)->movementState == 0) {
-    Actor_SetPosition(16, column << 19, row << 19);
+    Actor_SetPositionFixed(16, column << 19, row << 19);
     if (Event_GetFlag(0x104) == 0)
       step++;
     GameFlag_SetByte(0x278, step);
@@ -800,7 +800,7 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
   if (mode == 2) {
     struct Actor *chest = Actor_GetById(17);
 
-    Actor_SetPosition(17, column << 19, row << 19);
+    Actor_SetPositionFixed(17, column << 19, row << 19);
     chest->y = 0x200000;
     chest->motionFlags = 3;
     chest->gravity = 0x170a;
@@ -914,7 +914,7 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room2) {
     if (Event_GetFlag(FLAG_AREA_TEMP_03)) {
-      Actor_SetPosition(8, 138 << 18, 216 << 16);
+      Actor_SetPosition(8, 552, 216);
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, 13);
       MapGrid_CopyCellAttributes(95, 3, 3, 3, 98, 13);
     } else {
@@ -946,7 +946,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_AREA_TEMP_01))
       Actor_SetPosition(15, 0, 0);
     if (Event_GetFlag(FLAG_AREA_TEMP_04)) {
-      Actor_SetPosition(13, 168 << 16, 184 << 16);
+      Actor_SetPosition(13, 168, 184);
       MapGrid_CopyCellAttributes(12, 11, 1, 1, 10, 11);
     } else {
 #if TLA_PATCH_1
@@ -958,7 +958,7 @@ s32 Scene_Initialize(void) {
 #endif
     }
     if (Event_GetFlag(FLAG_AREA_TEMP_05)) {
-      Actor_SetPosition(12, 154 << 18, 132 << 17);
+      Actor_SetPosition(12, 616, 264);
       MapGrid_CopyCellAttributes(38, 15, 1, 1, 38, 16);
     } else {
       MapGrid_CopyCellAttributes(38, 15, 1, 1, 39, 16);
@@ -970,8 +970,8 @@ s32 Scene_Initialize(void) {
       if (placed) {
         step = step / 32 * 2;
         Actor_SetPosition(16, 0, 0);
-        Actor_SetPosition(17, gYampiDesertCave_RipplePath[step] << 19,
-                          gYampiDesertCave_RipplePath[step + 1] << 19);
+        Actor_SetPositionFixed(17, gYampiDesertCave_RipplePath[step] << 19,
+                               gYampiDesertCave_RipplePath[step + 1] << 19);
       } else {
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
           GameFlag_SetByte(0x278, 0);

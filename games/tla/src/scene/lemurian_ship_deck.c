@@ -82,7 +82,7 @@ void LemurianShipDeck_EnterCabin(void) {
       MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
     }
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
     Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -4);
     FieldEvent_Wait(8);
     Event_PlaySound(SE_MAP_EXIT);
@@ -247,9 +247,9 @@ void LemurianShipDeck_TakeTheTiller(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_MoveTo(PIXELS(342), PIXELS(48), PIXELS(408), 0);
+  FieldCamera_MoveTo(342, 48, 408, 0);
   System_Wait(1);
   MapGrid_CopyCellsTo(60, 53, 67, 16, 7, 3);
   LemurianShipDeck_PlaceFacing(gMainRoutineWork.currentOwner, PIXELS(552),
@@ -269,8 +269,8 @@ void LemurianShipDeck_TakeTheTiller(void) {
   Task_AddFrame(LemurianShipDeck_ScrollWaves, 0x480);
   gLemurianShipDeck_BobPhase = 0;
   Task_AddFrame(LemurianShipDeck_BobDeck, 0x480);
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveTo(PIXELS(542), PIXELS(44), PIXELS(396), 1);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(542, 44, 396, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(80);
   Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
@@ -353,7 +353,7 @@ void LemurianShipDeck_TakeTheTiller(void) {
 static inline void RunToActor4(s32 id) {
   struct Actor *target;
 
-  Actor_SetSpeed(id, 0x13333, 0x9999);
+  Actor_SetSpeed(id, 1.2);
   Actor_SetAnimation(id, 2);
   target = Actor_GetById(4);
   if (target != NULL)
@@ -375,9 +375,9 @@ void LemurianShipDeck_HoldOnToTiller(void) {
 #endif
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_MoveTo(PIXELS(458), PIXELS(48), PIXELS(408), 0);
+  FieldCamera_MoveTo(458, 48, 408, 0);
   FieldEvent_SetMessageId(MsgHoldOnTo);
   Actor_SetPositionAndFacing(4, PIXELS(470), PIXELS(392), FACING_EAST);
   FieldActor_LaunchFromLeader(6, 0, -24, FACING_SOUTH);
@@ -541,7 +541,7 @@ void LemurianShipDeck_SightMenardisShip(void) {
   }
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetSpeed(4, 0xcccc, 0x6666);
+  Actor_SetSpeed(4, 0.8);
   Actor_WalkToAndWait(4, 264, 136);
   FieldEvent_SetMessageId(MsgLookItS);
   FieldActor_LaunchFromLeader(5, 16, -16, FACING_SOUTH);
@@ -549,23 +549,23 @@ void LemurianShipDeck_SightMenardisShip(void) {
   FieldActor_LaunchFromLeader(6, -16, -16, FACING_SOUTH);
   FieldEvent_Wait(80);
   Actor_ShowEmote(9, 0x102, 20);
-  Actor_SetSpeed(9, 0x19999, 0xcccc);
+  Actor_SetSpeed(9, 1.6);
   Actor_WalkToAndWait(9, 300, 152);
   FieldEvent_Wait(10);
   Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 20);
   Actor_FaceDirection(9, FACING_SOUTHEAST + FACING_STEP, 20);
   Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 0);
   Event_ShowMessage(9, 0);
-  FieldCamera_SetSpeed(0x4cccc, 0x9999);
-  FieldCamera_MoveTo(PIXELS(200), -1, PIXELS(344), 1);
+  FieldCamera_SetSpeed(4.8);
+  FieldCamera_MoveTo(200, CAMERA_KEEP, 344, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  FieldCamera_SetSpeed(0x13333, 0x2666);
-  FieldCamera_MoveTo(PIXELS(600), -1, PIXELS(344), 1);
+  FieldCamera_SetSpeed(1.2);
+  FieldCamera_MoveTo(600, CAMERA_KEEP, 344, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
-  FieldCamera_SetSpeed(0x66666, 0xcccc);
-  FieldCamera_MoveTo(PIXELS(264), -1, PIXELS(128), 1);
+  FieldCamera_SetSpeed(6.4);
+  FieldCamera_MoveTo(264, CAMERA_KEEP, 128, 1);
   FieldCamera_WaitForArrival();
   Actor_SetAnimationAndWait(5, 4);
   Event_ShowMessage(0x2005, 0);
@@ -597,7 +597,7 @@ void LemurianShipDeck_SightMenardisShip(void) {
   Event_ShowMessage(6, 0);
   Actor_SetAnimation(9, 4);
   Event_ShowMessage(9, 0);
-  Actor_SetSpeed(9, 0xcccc, 0x6666);
+  Actor_SetSpeed(9, 0.8);
   Actor_Get(9)->actionFlags &= ~1;
   Actor_WalkToAndWait(9, 288, 144);
   FieldEvent_Wait(1);
@@ -607,9 +607,9 @@ void LemurianShipDeck_SightMenardisShip(void) {
   Actor_SetAnimation(5, 3);
   Actor_SetAnimation(4, 3);
   Actor_SetAnimationAndWait(9, 3);
-  Actor_SetSpeed(9, 0x13333, 0x9999);
-  Actor_SetSpeed(6, 0x13333, 0x9999);
-  Actor_SetSpeed(5, 0x13333, 0x9999);
+  Actor_SetSpeed(9, 1.2);
+  Actor_SetSpeed(6, 1.2);
+  Actor_SetSpeed(5, 1.2);
   {
     struct Actor *target;
 
@@ -655,7 +655,7 @@ void LemurianShipDeck_LeaveToFindCrew(void) {
     Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
     System_Wait(1);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-    Actor_SetSpeed(9, 0xcccc, 0x6666);
+    Actor_SetSpeed(9, 0.8);
     Actor_WalkToAndWait(9, 416, 428);
     Actor_FaceDirectionAndWait(9, FACING_WEST);
     FieldEvent_SetMessageId(MsgWellThereS);
@@ -700,7 +700,7 @@ void LemurianShipDeck_EmitSparkle(void) {
     *(s32 *)((u8 *)object + 0x34) = 0x8000;
     Actor_SetSpriteFlags(object, 0);
     Actor_SelectAnimation(object, 0);
-    FieldActor_SetMoveTarget(object, PIXELS(360), PIXELS(64), PIXELS(424));
+    FieldActor_SetMoveTarget(object, 360, 64, 424);
     Actor_StartScript(object, gLemurianShipDeck_SparkleFades);
   }
 }
@@ -745,7 +745,7 @@ void LemurianShipDeck_ReturnToShip(void) {
   Call2((void (*)())Actor_MoveToObject, 7, gMainRoutineWork.currentOwner);
   System_Wait(1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-  Actor_SetSpeed(7, 0x19999, 0xcccc);
+  Actor_SetSpeed(7, 1.6);
   Actor_WalkToAndWait(7, 412, 424);
   Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
   FieldEvent_SetMessageId((s32)MsgAtLastI);
@@ -757,10 +757,10 @@ void LemurianShipDeck_ReturnToShip(void) {
   Actor_FaceActor(7, gMainRoutineWork.currentOwner, 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
   Event_ShowMessage(7, 0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_SetScript(gMainRoutineWork.currentOwner,
                   gLemurianShipDeck_ReturnToShipScript);
-  Actor_SetSpeed(7, 0xcccc, 0x6666);
+  Actor_SetSpeed(7, 0.8);
   Actor_WalkToAndWait(7, 360, 424);
   Actor_FaceDirectionAndWait(7, FACING_NORTH);
   Event_PlaySound(SE_GEM_SET);
@@ -815,13 +815,13 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_WalkTo(4, 264, 176);
   FieldActor_WaitForMoveById(4);
   FieldActor_LaunchFromLeader(7, 16, 8, FACING_SOUTH);
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveTo(PIXELS(288), -1, PIXELS(208), 1);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(288, CAMERA_KEEP, 208, 1);
   FieldActor_LaunchFromLeader(9, 32, 0, FACING_SOUTH);
   FieldActor_LaunchFromLeader(6, 48, -8, FACING_SOUTH);
   FieldActor_LaunchFromLeader(5, -16, -8, FACING_SOUTH);
   FieldEvent_Wait(40);
-  Actor_SetSpeed(7, 0x26666, 0x13333);
+  Actor_SetSpeed(7, 2.4);
   Actor_WalkToAndWait(7, 280, 224);
   FieldEvent_Wait(20);
   Actor_ShowEmote(7, 264, 0);
@@ -830,9 +830,9 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Event_ShowMessage(7, 0);
   Actor_ShowEmote(9, 265, 20);
   Event_ShowMessage(9, 0);
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveTo(PIXELS(288), -1, PIXELS(184), 1);
-  Actor_SetSpeed(7, 0xcccc, 0x6666);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(288, CAMERA_KEEP, 184, 1);
+  Actor_SetSpeed(7, 0.8);
   Actor_WalkByAndWait(7, 0, -16);
   Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
   Actor_SetAnimationAndWait(7, 3);
@@ -1010,10 +1010,10 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_SetAnimation(6, 3);
   Actor_SetAnimation(4, 3);
   Actor_SetAnimationAndWait(7, 3);
-  Actor_SetSpeed(5, 0x13333, 0x9999);
-  Actor_SetSpeed(9, 0x13333, 0x9999);
-  Actor_SetSpeed(6, 0x13333, 0x9999);
-  Actor_SetSpeed(7, 0x13333, 0x9999);
+  Actor_SetSpeed(5, 1.2);
+  Actor_SetSpeed(9, 1.2);
+  Actor_SetSpeed(6, 1.2);
+  Actor_SetSpeed(7, 1.2);
   Actor_SetScript(5, gLemurianShipDeck_ReachPiersShipScript);
   Actor_SetScript(9, gLemurianShipDeck_ReachPiersShipScript);
   Actor_SetScript(6, gLemurianShipDeck_ReachPiersShipScript);
@@ -1032,7 +1032,7 @@ void LemurianShipDeck_SetOutForMadra(void) {
 
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Actor_SetSpeed(4, 0xcccc, 0x6666);
+    Actor_SetSpeed(4, 0.8);
     Actor_Get(7)->update = (void (*)(void))Actor_EmitSmoke;
     FieldActor_LaunchFromLeader(7, 16, 0, FACING_WEST);
     Actor_SetSpriteFlags(Actor_Get(7), 0);

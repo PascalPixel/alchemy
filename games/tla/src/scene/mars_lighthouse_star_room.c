@@ -387,7 +387,7 @@ void Func_020005b0(void) {
   FieldEvent_Wait(40);
   Actor_Get(gMainRoutineWork.currentOwner)->actionFlags &= ~1;
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, 8);
   FieldActor_Jump(gMainRoutineWork.currentOwner, 4, 10);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, 16);
@@ -396,17 +396,17 @@ void Func_020005b0(void) {
   Actor_SetAnimation(11, 2);
   Actor_SetAnimation(12, 2);
   FieldEvent_Wait(24);
-  Actor_SetPosition(11, PIXELS(696), PIXELS(232));
-  Actor_SetPosition(12, PIXELS(664), PIXELS(232));
+  Actor_SetPosition(11, 696, 232);
+  Actor_SetPosition(12, 664, 232);
   Actor_SetAnimation(11, 3);
   Actor_SetAnimation(12, 3);
   Event_PlaySound(SE_TREMOR);
-  MapGrid_SetShake(0x20000, 0x40000, 0x10000);
+  MapGrid_SetShake(2, 4, 1);
   FieldEvent_Wait(20);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
-  MapGrid_SetShake(0x10000, 0x20000, 0x10000);
+  MapGrid_SetShake(1, 2, 1);
   FieldEvent_Wait(20);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldEvent_Wait(20);
   Event_PlaySound(SE_BOSS_ROAR);
   Actor_SetAnimation(11, 4);
@@ -447,7 +447,7 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   v8 = t3;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Func_02000d88();
   t8 = Actor_Get(13);
   Actor_SetSpriteFlags(t8, 0);
@@ -470,8 +470,8 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   } while (0);
   FIELD_AT(v8, s32, 24) = 0x4000;
   FIELD_AT(v8, s32, 28) = 0x4000;
-  FieldCamera_MoveTo(PIXELS(680), -1, PIXELS(228), 0);
-  Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(680), PIXELS(264));
+  FieldCamera_MoveTo(680, CAMERA_KEEP, 228, 0);
+  Actor_SetPosition(gMainRoutineWork.currentOwner, 680, 264);
   System_Wait(1);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
@@ -682,8 +682,8 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
     object->motionFlags = 0;
     object->speedLimit = 0x40000;
     object->acceleration = 0x20000;
-    FieldActor_SetMoveTarget(object, leader->x, leader->y + 0x200000,
-                             leader->z);
+    FieldActor_SetMoveTargetFixed(object, leader->x, leader->y + 0x200000,
+                                  leader->z);
     FieldActor_WaitForMove(gMarsLighthouseStarRoom_MarsStar);
     Event_PlaySound(MUS_083);
     PartyInventory_Remove(224);
@@ -704,8 +704,8 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
     System_Wait(1);
     Actor_Release(gMarsLighthouseStarRoom_MarsStar);
     System_Wait(1);
-    FieldCamera_SetSpeed(0x4cccc, 0x9999);
-    FieldCamera_MoveTo(170 << 18, -1, 146 << 16, 1);
+    FieldCamera_SetSpeed(4.8);
+    FieldCamera_MoveTo(680, CAMERA_KEEP, 146, 1);
     FieldCamera_WaitForArrival();
     PaletteFade_ApplySource(0x10000, 0);
     PaletteFade_ApplyTarget(0x10003, 0);
@@ -745,11 +745,11 @@ void Func_02000db8(s32 id) {
   object->priorityFlags |= 2;
   object->collisionFlags = 0;
   if (id == 13) {
-    Actor_SetPosition(13, 175 << 18, PIXELS(224));
+    Actor_SetPosition(13, 700, 224);
     Actor_SetAnimation(13, 10);
     MapGrid_CopyCellAttributes(39, 22, 2, 1, 43, id);
   } else {
-    Actor_SetPosition(14, 165 << 18, PIXELS(216));
+    Actor_SetPosition(14, 660, 216);
     Actor_SetAnimation(14, 9);
     MapGrid_CopyCellAttributes(31, 21, 2, 2, 40, 12);
   }
@@ -812,26 +812,26 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     HeapSlot_Release(68);
   }
   FieldEvent_Wait(20);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x2a8, 186);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 40);
   Event_PlaySound(MUS_000);
   Event_PlaySound(SE_RUMBLE);
-  MapGrid_SetShake(0x20000, 0x20000, 0x10000);
+  MapGrid_SetShake(2, 2, 1);
   FieldEvent_Wait(20);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
-  MapGrid_SetShake(0x10000, 0x10000, 0x10000);
+  MapGrid_SetShake(1, 1, 1);
   FieldEvent_Wait(20);
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0x10006, 0);
   PaletteFade_Interpolate(80);
   FieldEvent_Wait(80);
   Task_AddFrame(Func_02001424, 0x480);
-  FieldCamera_SetSpeed(0x4cccc, 0x9999);
-  FieldCamera_MoveTo(0x2a80000, -1, 0x1e00000, 1);
+  FieldCamera_SetSpeed(4.8);
+  FieldCamera_MoveTo(680, CAMERA_KEEP, 480, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(80);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(80);
@@ -852,7 +852,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(120);
   System_Wait(160);
-  FieldCamera_MoveTo(0x2a80000, -1, 0xba0000, 1);
+  FieldCamera_MoveTo(680, CAMERA_KEEP, 186, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
   object = *slot;
@@ -861,18 +861,18 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     object->velocityY = 0x20000;
     object->speedLimit = 0x20000;
     object->acceleration = 0x10000;
-    FieldActor_SetMoveTarget(object, 0x2a00000, 0, 0xa00000);
+    FieldActor_SetMoveTarget(object, 672, 0, 160);
     FieldActor_WaitForMove((s32)*slot);
     Event_PlaySound(SE_CLICK);
     object = *slot;
     object->acceleration = 0x8000;
     object->velocityY = 0x40000;
     object->speedLimit = 0x10000;
-    FieldActor_SetMoveTarget(object, 0x2980000, 0, 0x9e0000);
+    FieldActor_SetMoveTarget(object, 664, 0, 158);
     FieldActor_WaitForMove((s32)*slot);
   }
   FieldEvent_Wait(20);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
   Actor_Get(gMainRoutineWork.currentOwner)->actionFlags &= 0xfe;
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x29e, 170);
   FieldEvent_Wait(1);
@@ -929,7 +929,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
       HeapSlot_Release(68);
     }
     FieldEvent_Wait(20);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x2a8, 186);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 80);
     Actor_ShowEmote(gMainRoutineWork.currentOwner, 0x101, 40);
@@ -939,18 +939,18 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
       object->velocityY = 0x20000;
       object->speedLimit = 0x20000;
       object->acceleration = 0x10000;
-      FieldActor_SetMoveTarget(object, 0x2a00000, 0, 0xa00000);
+      FieldActor_SetMoveTarget(object, 672, 0, 160);
       FieldActor_WaitForMove((s32)*slot);
       Event_PlaySound(SE_CLICK);
       object = *slot;
       object->acceleration = 0x8000;
       object->velocityY = 0x40000;
       object->speedLimit = 0x10000;
-      FieldActor_SetMoveTarget(object, 0x2980000, 0, 0x9e0000);
+      FieldActor_SetMoveTarget(object, 664, 0, 158);
       FieldActor_WaitForMove((s32)*slot);
     }
     FieldEvent_Wait(20);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
     Actor_Get(gMainRoutineWork.currentOwner)->actionFlags &= 0xfe;
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x29e, 170);
     FieldEvent_Wait(1);
@@ -989,26 +989,26 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     HeapSlot_Release(68);
   }
   FieldEvent_Wait(20);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x2a8, 186);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 40);
   Event_PlaySound(MUS_000);
   Event_PlaySound(SE_RUMBLE);
-  MapGrid_SetShake(0x20000, 0x20000, 0x10000);
+  MapGrid_SetShake(2, 2, 1);
   FieldEvent_Wait(20);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
-  MapGrid_SetShake(0x10000, 0x10000, 0x10000);
+  MapGrid_SetShake(1, 1, 1);
   FieldEvent_Wait(20);
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0x10006, 0);
   PaletteFade_Interpolate(80);
   FieldEvent_Wait(80);
   Task_AddFrame(Func_02001424, 0x480);
-  FieldCamera_SetSpeed(0x4cccc, 0x9999);
-  FieldCamera_MoveTo(0x2a80000, -1, 0x1e00000, 1);
+  FieldCamera_SetSpeed(4.8);
+  FieldCamera_MoveTo(680, CAMERA_KEEP, 480, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(80);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(80);
@@ -1028,7 +1028,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(120);
   System_Wait(160);
-  FieldCamera_MoveTo(0x2a80000, -1, 0xba0000, 1);
+  FieldCamera_MoveTo(680, CAMERA_KEEP, 186, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
   object2 = *slot2;
@@ -1037,18 +1037,18 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     object2->velocityY = 0x20000;
     object2->speedLimit = 0x20000;
     object2->acceleration = 0x10000;
-    FieldActor_SetMoveTarget(object2, 0x2a00000, 0, 0xa00000);
+    FieldActor_SetMoveTarget(object2, 672, 0, 160);
     FieldActor_WaitForMove((s32)*slot2);
     Event_PlaySound(SE_CLICK);
     object2 = *slot2;
     object2->acceleration = 0x8000;
     object2->velocityY = 0x40000;
     object2->speedLimit = 0x10000;
-    FieldActor_SetMoveTarget(object2, 0x2980000, 0, 0x9e0000);
+    FieldActor_SetMoveTarget(object2, 664, 0, 158);
     FieldActor_WaitForMove((s32)*slot2);
   }
   FieldEvent_Wait(20);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
   Actor_Get(gMainRoutineWork.currentOwner)->actionFlags &= 0xfe;
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x29e, 170);
   FieldEvent_Wait(1);
@@ -1715,7 +1715,7 @@ s32 MarsLighthouseStarRoom_SlideOnIce(void) {
   /* FAKEMATCH(wrapper): Party_TakeFallDamage called through a cast to s32. */
   ((s32 (*)(s32, s32))Party_TakeFallDamage)(-10, 0);
 #endif
-  FieldCamera_SetSpeed(0x70000, 0xe000);
+  FieldCamera_SetSpeed(7);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   ride = (struct RideState *)(gInventorySnapshot + 0x188);
   Event_SetFlag(FLAG_MENU_OPEN);
@@ -2113,11 +2113,11 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 #undef CELL_PUSH_SLOT_ENTRY
 // @file
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
-  FieldCamera_MoveTo(x, y, z, mode);
+  FieldCamera_MoveToFixed(x, y, z, mode);
 }
 
 static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
-  MapGrid_SetShake(a, b, c);
+  MapGrid_SetShakeFixed(a, b, c);
 }
 
 DEFINE_CRACKED_TILE_DROP_IN(CrackedTile_DropIn, FieldEffect_Spawn)

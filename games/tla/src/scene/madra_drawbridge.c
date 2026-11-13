@@ -79,8 +79,8 @@ void MadraDrawbridge_BlockBridge(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     if (Event_GetFlag(FLAG_GUARDS_ASKED_FOR_PERMISSION) == 0) {
-      FieldCamera_SetSpeed(0x18000, 0x3000);
-      FieldCamera_MoveTo(PIXELS(164), -1, PIXELS(260), 1);
+      FieldCamera_SetSpeed(1.5);
+      FieldCamera_MoveTo(164, CAMERA_KEEP, 260, 1);
       Actor_WalkTo(gMainRoutineWork.currentOwner, 158, 316);
     }
     Actor_GetById(ACTOR_EAST_GUARD)->actionFlags &= ~1;
@@ -116,7 +116,7 @@ void MadraDrawbridge_GreetPermittedParty(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgMadraHeardAboutYou);
-  FieldCamera_MoveTo(PIXELS(164), -1, PIXELS(260), 1);
+  FieldCamera_MoveTo(164, CAMERA_KEEP, 260, 1);
   FieldCamera_WaitForArrival();
   Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, 3);
   Event_ShowMessage(ACTOR_EAST_GUARD, 0);

@@ -240,7 +240,7 @@ void CrumblingPillars_Step(u16 *list) {
         if (result == 0) {
           leader->motionFlags = result;
           Sound_Play(SE_PUSH);
-          MapGrid_SetShake(0x10000, 0x40000, 0x10000);
+          MapGrid_SetShake(1, 4, 1);
           Rubble_Spray(0);
           wait(8);
           Actor_SelectAnimation(target, 2);
@@ -249,7 +249,7 @@ void CrumblingPillars_Step(u16 *list) {
           wait(16);
           Leader_SetCellShapeAt(-2, target->terrainId);
           wait(4);
-          MapGrid_SetShake(-1, -1, 0xe666);
+          MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
           wait(8);
           leader->motionFlags = 3;
           wait(5);
@@ -289,14 +289,14 @@ loop:
   Event_Start();
   if (!GameFlag_Get(flag + 1)) {
     Sound_Play(SE_PUSH);
-    MapGrid_SetShake(0x10000, 0x40000, 0x10000);
+    MapGrid_SetShake(1, 4, 1);
     Rubble_Spray(0);
     wait(8);
     Actor_SelectAnimation(object, 2);
     Actor_SetCellShape(-4, object->terrainId, id);
     Rubble_Spray(1);
     wait(16);
-    MapGrid_SetShake(-1, -1, 0xe666);
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     wait(8);
     Actor_SetPositionAndResetMotion(object, 0, 0, 0);
     wait(2);
@@ -446,7 +446,7 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
           wait(1);
           leader->motionFlags = result;
           Sound_Play(SE_PUSH);
-          MapGrid_SetShake(0x10000, 0x40000, 0x10000);
+          MapGrid_SetShake(1, 4, 1);
           Rubble_Spray(0);
           wait(8);
           Actor_SelectAnimation(helper, 2);
@@ -455,7 +455,7 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
           wait(16);
           Leader_SetCellShapeAt(-2, target->terrainId);
           wait(4);
-          MapGrid_SetShake(-1, -1, 0xe666);
+          MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
           wait(8);
           leader->motionFlags = 3;
           wait(5);
@@ -1360,7 +1360,7 @@ void DehkanPlateau_CannonFleesOverCracks(void) {
   FieldCamera_WaitForArrival();
   Actor_FaceActorById(24, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmoteById(24, 0x100, 40);
-  Actor_SetSpeed(24, 0x19999, 0xcccc);
+  Actor_SetSpeed(24, 1.6);
   Actor_MoveTo(24, 664, 136);
   MapGrid_CopyCellPictureIndicesRect(68, 33, 105, 6, 1, 1);
   Sound_Play(SE_RATTLE);
@@ -1387,7 +1387,7 @@ void DehkanPlateau_CannonFleesEast(void) {
   Actor_ShowEmoteById(24, 0x100, 40);
   Actor_GetById(24)->motionFlags = 0;
   Actor_SetSpritePriority(24, 1);
-  Actor_SetSpeed(24, 0x19999, 0xcccc);
+  Actor_SetSpeed(24, 1.6);
   Actor_MoveTo(24, 940, 168);
   Actor_MoveTo(24, 984, 152);
   Actor_MoveTo(24, 1040, 152);
@@ -1404,7 +1404,7 @@ void DehkanPlateau_CannonLeapsAway(void) {
   FieldCamera_WaitForArrival();
   Actor_FaceActorById(25, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmoteById(25, 0x100, 40);
-  Actor_SetSpeed(25, 0x19999, 0xcccc);
+  Actor_SetSpeed(25, 1.6);
   Actor_WalkToAndWaitById(25, 168, 104);
   Event_Wait(10);
   Sound_Play(SE_HIGH_JUMP);
@@ -1428,7 +1428,7 @@ void DehkanPlateau_CannonPoundsPillar(void) {
   Actor_FaceActorById(25, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmoteById(25, 0x100, 20);
   FieldCamera_MoveWithinMapBounds(212 << 17, -1, 152 << 16, 1);
-  Actor_SetSpeed(25, 0x19999, 0xcccc);
+  Actor_SetSpeed(25, 1.6);
   Actor_MoveTo(25, 424, 152);
   Actor_ArmCallback(25, FACING_EAST, 20);
   DehkanPlateau_CannonCastsPound();
@@ -1555,15 +1555,15 @@ void DehkanPlateau_CannonCrumblesPillars(void) {
   Event_ResolvePendingActions(0);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 25);
   FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_MoveTo(PIXELS(616), -1, PIXELS(280), 1);
+  FieldCamera_MoveTo(616, CAMERA_KEEP, 280, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceActorById(25, gMainRoutineWork.currentOwner, 0);
   // A direct call: as Call3 the actor id is loaded before the 0x100's shift.
   Actor_ShowEmoteById(25, 0x100, 40);
   Actor_SetSpritePriority(25, 1);
-  Actor_SetSpeed(25, 0x19999, 0xcccc);
+  Actor_SetSpeed(25, 1.6);
   Actor_WalkToAndWait(25, 632, 280);
-  Actor_SetSpeed(25, 0x20000, 0x10000);
+  Actor_SetSpeed(25, 2);
   Sound_Play(SE_HIGH_JUMP);
   actor->velocityY = 0x80000;
   Actor_SetSpriteFlags(Actor_GetById(25), 0);
@@ -1576,7 +1576,7 @@ void DehkanPlateau_CannonCrumblesPillars(void) {
   Actor_WalkToAndWait(25, 696, 280);
   Actor_SetSpriteFlags(Actor_GetById(25), 1);
   Event_Wait(10);
-  Actor_SetSpeed(25, 0x19999, 0xcccc);
+  Actor_SetSpeed(25, 1.6);
   Actor_WalkToAndWait(25, 712, 280);
   Camera_SetSpeedParameters(0x26666, 0x4ccc);
   FieldCamera_MoveWithinMapBounds(PIXELS(712), -1, PIXELS(136), 1);
@@ -1713,7 +1713,7 @@ void DehkanPlateau_CannonDropsPoundCube(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   wait(1);
   leader->y = 0x820000;
@@ -1736,14 +1736,14 @@ void DehkanPlateau_CannonDropsPoundCube(void) {
     gDehkanPlateau_PoundCube->acceleration = 0x19999;
     gDehkanPlateau_PoundCube->velocityY = 0x80000;
   }
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
-  Actor_SetSpeed(9, 0x19999, 0xcccc);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
+  Actor_SetSpeed(9, 1.6);
   leader->velocityY = 0x60000;
   helper->velocityY = 0x60000;
-  FieldActor_SetMoveTarget(leader, 0xd80000, 0, 0x780000);
-  FieldActor_SetMoveTarget(helper, 0x1180000, 0, 0x780000);
+  FieldActor_SetMoveTarget(leader, 216, 0, 120);
+  FieldActor_SetMoveTarget(helper, 280, 0, 120);
   if (gDehkanPlateau_PoundCube != NULL)
-    FieldActor_SetMoveTarget(gDehkanPlateau_PoundCube, 0xf80000, 0, 0x580000);
+    FieldActor_SetMoveTarget(gDehkanPlateau_PoundCube, 248, 0, 88);
   Actor_WaitForMove(leader);
   Event_Wait(20);
   Actor_ShowEmoteById(9, 0x103, 0);
@@ -2142,7 +2142,7 @@ void Func_02003764(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   wait(1);
   leader->y = 0x820000;
@@ -2189,8 +2189,8 @@ loop:
   Sound_Play(SE_THUMP);
   FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
-  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(5, 5, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;

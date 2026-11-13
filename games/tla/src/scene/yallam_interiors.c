@@ -417,7 +417,7 @@ void YallamInteriors_TalkToSunshine(void) {
       Actor_FaceActor(14, gMainRoutineWork.currentOwner, 0);
       Forge_Run(14);
       if (Forge_GetItem()) {
-        Actor_SetSpeed(14, 0x6666, 0x3333);
+        Actor_SetSpeed(14, 0.4);
         Actor_WalkTo(14, 568, 408);
         Actor_WaitForMoveById(14);
         Actor_WalkTo(14, 568, 360);
@@ -512,8 +512,8 @@ s32 Scene_Initialize(void) {
   }
   if (scene == (s32)&SceneId_Ov677Room1) {
     if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
-      Actor_SetPosition(14, PIXELS(600), PIXELS(360));
-      Actor_SetPosition(16, PIXELS(632), PIXELS(346));
+      Actor_SetPosition(14, 600, 360);
+      Actor_SetPosition(16, 632, 346);
       Actor_FaceDirection(16, FACING_SOUTH, 0);
 #if TLA_PATCH_1
       Actor_SetPosition(17, 0, 0);

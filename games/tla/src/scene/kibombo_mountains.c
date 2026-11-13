@@ -169,7 +169,7 @@ void Func_020001a0(s32 unused, s32 id) {
       if (dx >= 0 ? dx < 0x80000 : other->x - block->x < 0x80000) {
         other->motionFlags = 0;
         other->speedLimit = 0x10000;
-        FieldActor_SetMoveTarget(other, block->x, block->y, block->z);
+        FieldActor_SetMoveTargetFixed(other, block->x, block->y, block->z);
         FieldActor_WaitForMove(other);
         Actor_StartScript(block, gData_02001404);
         Actor_StartIdle(other);
@@ -365,7 +365,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(8, 30, 1, 1, 10, 30);
     if (GameFlag_Get(0x8e7)) {
       object = Actor_GetById(20);
-      Actor_SetPosition(20, 0x480000, 0x1c80000);
+      Actor_SetPosition(20, 72, 456);
       object->motionFlags = 0;
       height = Map_GetTerrainHeight(0, object->x, object->z);
       object->terrainHeight = height;
@@ -374,7 +374,7 @@ s32 Scene_Initialize(void) {
     }
     if (GameFlag_Get(0x8e8)) {
       object = Actor_GetById(13);
-      Actor_SetPosition(13, 0x1c80000, 0x1e80000);
+      Actor_SetPosition(13, 456, 488);
       object->motionFlags = 0;
       height = Map_GetTerrainHeight(0, object->x, object->z);
       object->terrainHeight = height;
@@ -400,9 +400,9 @@ void Func_02000960(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(MsgIsTheWay);
-  Actor_SetPosition(27, PIXELS(312), PIXELS(304));
+  Actor_SetPosition(27, 312, 304);
   Event_ShowMessage(27, 0);
-  FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(392), 1);
+  FieldCamera_MoveTo(256, CAMERA_KEEP, 392, 1);
   FieldCamera_WaitForArrival();
   Actor_ResetTargetsAndVelocity(11);
   Actor_FaceActor(11, 27, 0);
@@ -451,12 +451,12 @@ void Func_02000af0(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetPosition(23, PIXELS(248), PIXELS(472));
-  Actor_SetPosition(24, PIXELS(264), PIXELS(472));
-  Actor_SetPosition(25, PIXELS(235), PIXELS(483));
-  Actor_SetPosition(26, PIXELS(232), PIXELS(496));
-  Actor_SetPosition(27, PIXELS(277), PIXELS(483));
-  Actor_SetPosition(28, PIXELS(280), PIXELS(496));
+  Actor_SetPosition(23, 248, 472);
+  Actor_SetPosition(24, 264, 472);
+  Actor_SetPosition(25, 235, 483);
+  Actor_SetPosition(26, 232, 496);
+  Actor_SetPosition(27, 277, 483);
+  Actor_SetPosition(28, 280, 496);
   Func_02000ad4(owner);
   Func_02000ad4(23);
   Func_02000ad4(24);

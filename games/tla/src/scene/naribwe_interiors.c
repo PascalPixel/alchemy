@@ -240,7 +240,7 @@ ask:
   unitData = Unit_Get(unit);
   Item_GetDirect(unitData->items[slot]);
   Actor_SetItemIcon(Actor_Get(18), unitData->items[slot]);
-  Actor_SetPosition(18, 0x2a00000, 0x680000);
+  Actor_SetPosition(18, 672, 104);
   FieldEvent_Wait(60);
   MessageArgument_Push(unitData->items[slot], 2);
   Message_ShowCentered(MsgPlacedOnThe, 1);
@@ -288,13 +288,13 @@ read:
   Event_PlaySound(MUS_011);
   PaletteFade_ApplyTarget(0x10000, 1);
   PaletteFade_Interpolate(30);
-  Actor_SetPosition(20, 0x2a00000, 0x680000);
+  Actor_SetPosition(20, 672, 104);
   Event_PlaySound(SE_CLATTER);
   Actor_SetAnimation(20, 2);
   Actor_WaitForAnimationChange(20);
   Actor_SetPosition(20, 0, 0);
   FieldEvent_Wait(4);
-  Actor_SetPosition(19, 0x2a00000, 0x680000);
+  Actor_SetPosition(19, 672, 104);
   Actor_SetAnimation(19, 4);
   Actor_WaitForAnimationChange(19);
   FieldEvent_Wait(15);

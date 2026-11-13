@@ -711,7 +711,7 @@
     actor->speedLimit = PIXELS(2);                                             \
     actor->acceleration = 0x1999;                                              \
     actor->timer = 0;                                                          \
-    FieldActor_SetMoveTarget(actor, startX, actor->y, startZ);                 \
+    FieldActor_SetMoveTargetFixed(actor, startX, actor->y, startZ);            \
     call2(actor, 2);                                                           \
     Actor_SetAnimationSpeed(actor, 48);                                        \
     FieldActor_WaitForMove(actor);                                             \
@@ -743,7 +743,7 @@
     z = next->z;                                                               \
     actor->speedLimit = PIXELS(2);                                             \
     actor->acceleration = 0x1999;                                              \
-    FieldActor_SetMoveTarget(actor, next->x, next->y, next->z);                \
+    FieldActor_SetMoveTargetFixed(actor, next->x, next->y, next->z);           \
     FieldActor_WaitForMove(actor);                                             \
     if (nextBehavior != startBehavior) {                                       \
       goto blocked;                                                            \
@@ -766,7 +766,7 @@
   stop:                                                                        \
     actor->speedLimit = PIXELS(2);                                             \
     actor->acceleration = PIXELS(1);                                           \
-    FieldActor_SetMoveTarget(actor, x, actor->y, z);                           \
+    FieldActor_SetMoveTargetFixed(actor, x, actor->y, z);                      \
     FieldActor_WaitForMove(actor);                                             \
     System_Wait(2);                                                            \
     goto top;                                                                  \
@@ -879,7 +879,7 @@
     z = next->z;                                                               \
     actor->speedLimit = PIXELS(2);                                             \
     actor->acceleration = 0x1999;                                              \
-    FieldActor_SetMoveTarget(actor, next->x, next->y, next->z);                \
+    FieldActor_SetMoveTargetFixed(actor, next->x, next->y, next->z);           \
     FieldActor_WaitForMove(actor);                                             \
     if (nextBehavior != startBehavior) {                                       \
       goto blocked;                                                            \
@@ -900,7 +900,7 @@
   stop:                                                                        \
     actor->speedLimit = PIXELS(2);                                             \
     actor->acceleration = PIXELS(1);                                           \
-    FieldActor_SetMoveTarget(actor, x, actor->y, z);                           \
+    FieldActor_SetMoveTargetFixed(actor, x, actor->y, z);                      \
     FieldActor_WaitForMove(actor);                                             \
     System_Wait(2);                                                            \
     goto top;                                                                  \
@@ -1054,9 +1054,9 @@
         actor->timer = 1;                                                      \
         Event_PlaySound(SE_CRASH);                                             \
         /* FAKEMATCH(wrapper): forwarded. */                                   \
-        MapGrid_SetShake(0x50000, 0x50000, 0x10000);                           \
+        MapGrid_SetShake(5, 5, 1);                                             \
         /* FAKEMATCH(wrapper): forwarded. */                                   \
-        MapGrid_SetShake(-1, -1, 0xe666);                                      \
+        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);                         \
         if (actor->watchedObject != NULL)                                      \
           ((void (*)(struct Actor *))actor->watchedObject)(actor);             \
       }                                                                        \
@@ -1103,7 +1103,8 @@
         actor->scaleX += 0x1000;                                               \
         actor->scaleY += 0x1000;                                               \
       }                                                                        \
-      FieldActor_SetMoveTarget(actor, position.x, position.y, position.z);     \
+      FieldActor_SetMoveTargetFixed(actor, position.x, position.y,             \
+                                    position.z);                               \
                                                                                \
       work2 = Ram_HeapSlots->eventWork;                                        \
       other = (struct id1 *)(gInventorySnapshot + 0x188);                      \

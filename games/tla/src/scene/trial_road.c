@@ -1723,7 +1723,7 @@ void TrialRoad_SetUpPeak(void) {
   TrialRoad_StartPaletteCycle(1);
   TrialRoad_AddPillarTop(10);
   if (Event_GetFlag(0x9fc))
-    Actor_SetPosition(10, PIXELS(136), PIXELS(328));
+    Actor_SetPosition(10, 136, 328);
 }
 
 /* VIEW(s1fc4): variable gTrialRoad_StageSetUps as extern s32 (*const
@@ -2045,10 +2045,10 @@ s32 Scene_PrepareMap(void) {
           Map_CopyRawCellsRect(24, 33, 10, 10, 24, 34);
           Map_CopyRawCellsRect(58, 33, 10, 10, 58, 34);
           Map_CopyRawCellsRect(92, 33, 10, 10, 92, 34);
-          Actor_SetPosition(9, 160 << 14, 152 << 16);
-          Actor_SetPosition(10, 192 << 13, 152 << 16);
-          Actor_SetPosition(11, 184 << 16, 152 << 16);
-          Actor_SetPosition(12, 200 << 16, 152 << 16);
+          Actor_SetPosition(9, 40, 152);
+          Actor_SetPosition(10, 24, 152);
+          Actor_SetPosition(11, 184, 152);
+          Actor_SetPosition(12, 200, 152);
         }
         Actor_SetSpriteColor(Actor_GetById(9), 3);
         Actor_SetSpriteColor(Actor_GetById(10), 3);
@@ -2209,15 +2209,15 @@ void TrialRoad_ReachPeakFirst(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_SetSpeed(0x20000, 0x4000);
-  FieldCamera_MoveTo(0x1000000, -1, 0x1080000, 1);
+  FieldCamera_SetSpeed(2);
+  FieldCamera_MoveTo(256, CAMERA_KEEP, 264, 1);
   Actor_MoveToObject(5, 4);
   Actor_MoveToObject(6, 4);
   Actor_MoveToObject(7, 4);
-  Actor_SetSpeed(4, 0x10000, 0x8000);
-  Actor_SetSpeed(5, 0x10000, 0x8000);
-  Actor_SetSpeed(6, 0x10000, 0x8000);
-  Actor_SetSpeed(7, 0x10000, 0x8000);
+  Actor_SetSpeed(4, 1);
+  Actor_SetSpeed(5, 1);
+  Actor_SetSpeed(6, 1);
+  Actor_SetSpeed(7, 1);
   Actor_WalkTo(4, TrialRoad_MirrorCellX(28), 272);
   Actor_WalkTo(7, TrialRoad_MirrorCellX(28), 256);
   Actor_WalkTo(5, TrialRoad_MirrorCellX(27), 248);
@@ -2253,8 +2253,8 @@ void TrialRoad_ReachPeakFirst(void) {
   wait(12);
   object->speedLimit = 0x10000;
   object->acceleration = 0x8000;
-  FieldActor_SetMoveTarget(object, TrialRoad_MirrorCellX(41) << 16, object->y,
-                           264 << 16);
+  FieldActor_SetMoveTargetFixed(object, TrialRoad_MirrorCellX(41) << 16,
+                                object->y, 264 << 16);
   FieldActor_WaitForMove(object);
   wait(6);
   Event_PlaySound(SE_JUMP);
@@ -2267,9 +2267,9 @@ void TrialRoad_ReachPeakFirst(void) {
   wait(6);
   Actor_MoveToObject(13, 8);
   Actor_MoveToObject(14, 8);
-  Actor_SetSpeed(8, 0x10000, 0x8000);
-  Actor_SetSpeed(13, 0x10000, 0x8000);
-  Actor_SetSpeed(14, 0x10000, 0x8000);
+  Actor_SetSpeed(8, 1);
+  Actor_SetSpeed(13, 1);
+  Actor_SetSpeed(14, 1);
   Actor_WalkTo(8, TrialRoad_MirrorCellX(36), 264);
   Actor_WalkTo(13, TrialRoad_MirrorCellX(37), 248);
   Actor_WalkTo(14, TrialRoad_MirrorCellX(37), 280);
@@ -2291,13 +2291,13 @@ void TrialRoad_ReachPeakFirst(void) {
   Actor_SetAnimation(6, 3);
   Actor_SetAnimation(7, 3);
   Event_Wait(15);
-  Actor_SetSpeed(4, 0x20000, 0x10000);
-  Actor_SetSpeed(5, 0x1e666, 0xf333);
-  Actor_SetSpeed(6, 0x1b333, 0xd999);
-  Actor_SetSpeed(7, 0x1cccc, 0xe666);
-  Actor_SetSpeed(8, 0x20000, 0x10000);
-  Actor_SetSpeed(13, 0x1e666, 0xf333);
-  Actor_SetSpeed(14, 0x1b333, 0xd999);
+  Actor_SetSpeed(4, 2);
+  Actor_SetSpeed(5, 1.9);
+  Actor_SetSpeed(6, 1.7);
+  Actor_SetSpeed(7, 1.8);
+  Actor_SetSpeed(8, 2);
+  Actor_SetSpeed(13, 1.9);
+  Actor_SetSpeed(14, 1.7);
   Actor_WalkBy(4, TrialRoad_MirrorOffset(3), 0);
   Actor_WalkBy(8, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
@@ -2315,15 +2315,15 @@ void TrialRoad_ReachPeakFirst(void) {
 void TrialRoad_ReachPeakSecond(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_SetSpeed(0x20000, 0x4000);
-  FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(264), 1);
+  FieldCamera_SetSpeed(2);
+  FieldCamera_MoveTo(256, CAMERA_KEEP, 264, 1);
   Actor_MoveToObject(5, 4);
   Actor_MoveToObject(6, 4);
   Actor_MoveToObject(7, 4);
-  Actor_SetSpeed(4, 0x10000, 0x8000);
-  Actor_SetSpeed(5, 0x10000, 0x8000);
-  Actor_SetSpeed(6, 0x10000, 0x8000);
-  Actor_SetSpeed(7, 0x10000, 0x8000);
+  Actor_SetSpeed(4, 1);
+  Actor_SetSpeed(5, 1);
+  Actor_SetSpeed(6, 1);
+  Actor_SetSpeed(7, 1);
   Actor_WalkTo(4, TrialRoad_MirrorCellX(28), 272);
   Actor_WalkTo(7, TrialRoad_MirrorCellX(28), 256);
   Actor_WalkTo(5, TrialRoad_MirrorCellX(27), 248);
@@ -2349,13 +2349,13 @@ void TrialRoad_ReachPeakSecond(void) {
   Actor_SetAnimation(6, 3);
   Actor_SetAnimation(7, 3);
   Event_Wait(15);
-  Actor_SetSpeed(4, 0x20000, 0x10000);
-  Actor_SetSpeed(5, 0x1e666, 0xf333);
-  Actor_SetSpeed(6, 0x1b333, 0xd999);
-  Actor_SetSpeed(7, 0x1cccc, 0xe666);
-  Actor_SetSpeed(8, 0x20000, 0x10000);
-  Actor_SetSpeed(13, 0x1e666, 0xf333);
-  Actor_SetSpeed(14, 0x1b333, 0xd999);
+  Actor_SetSpeed(4, 2);
+  Actor_SetSpeed(5, 1.9);
+  Actor_SetSpeed(6, 1.7);
+  Actor_SetSpeed(7, 1.8);
+  Actor_SetSpeed(8, 2);
+  Actor_SetSpeed(13, 1.9);
+  Actor_SetSpeed(14, 1.7);
   Actor_WalkBy(4, TrialRoad_MirrorOffset(3), 0);
   Actor_WalkBy(8, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
@@ -2375,7 +2375,7 @@ void PartyInventory_Discard(s32 cue);
 void TrialRoad_BeatMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   TrialRoad_PlaceActor(4, 248, 272, 0);
   TrialRoad_PlaceActor(7, 224, 248, 0);
   TrialRoad_PlaceActor(5, 232, 264, 0);
@@ -2415,7 +2415,7 @@ void TrialRoad_BeatMoapa(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(8, 3);
   Event_ShowMessage(8, 0);
-  Actor_SetSpeed(8, 0x10000, 0x8000);
+  Actor_SetSpeed(8, 1);
   Actor_WalkTo(8, TrialRoad_MirrorCellX(32), 264);
   Actor_FaceEachOther(9, 7, 0);
   Actor_FaceEachOther(5, 6, 0);
@@ -2461,7 +2461,7 @@ void TrialRoad_BeatMoapa(void) {
 void TrialRoad_LoseToMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   TrialRoad_PlaceActor(8, 264, 264, 0x8000);
   TrialRoad_PlaceActor(13, 280, 248, 0x8000);
   TrialRoad_PlaceActor(14, 280, 280, 0x8000);
@@ -2502,31 +2502,31 @@ void TrialRoad_ShowTraps(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetPosition(gMainRoutineWork.currentOwner, 0, PIXELS(1016));
-  Actor_SetPosition(8, PIXELS(1016), PIXELS(1016));
+  Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 1016);
+  Actor_SetPosition(8, 1016, 1016);
   for (i = 9; i < 80; i++) {
     struct Actor *object = Actor_GetById(i);
 
     if (object->x != 0)
       object->x -= 0x900000;
   }
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetMovementTypeById(13, gTrialRoad_LeftKnightEntersScript);
   Actor_SetMovementTypeById(14, gTrialRoad_RightKnightEntersScript);
   Event_StartScreenTransition();
   Event_Wait(20);
-  FieldCamera_SetSpeed(0x20000, 0x4000);
-  FieldCamera_MoveTo(184 << 16, -1, 600 << 16, 1);
+  FieldCamera_SetSpeed(2);
+  FieldCamera_MoveTo(184, CAMERA_KEEP, 600, 1);
   FieldCamera_WaitForArrival();
-  FieldCamera_MoveTo(120 << 16, -1, 552 << 16, 1);
+  FieldCamera_MoveTo(120, CAMERA_KEEP, 552, 1);
   FieldCamera_WaitForArrival();
-  FieldCamera_MoveTo(120 << 16, -1, 408 << 16, 1);
+  FieldCamera_MoveTo(120, CAMERA_KEEP, 408, 1);
   FieldCamera_WaitForArrival();
-  FieldCamera_MoveTo(120 << 16, -1, 120 << 16, 1);
+  FieldCamera_MoveTo(120, CAMERA_KEEP, 120, 1);
   Event_SetMessageId((s32)MsgTrialRoadTrapInstructions);
   Event_ShowMessageAndWait(8, 0);
   FieldCamera_WaitForArrival();
-  FieldCamera_MoveTo(216 << 16, -1, 120 << 16, 1);
+  FieldCamera_MoveTo(216, CAMERA_KEEP, 120, 1);
   FieldCamera_WaitForArrival();
   Event_ShowMessageAndWait(8, 0);
   Event_ShowMessageAndWait(4, 0);
@@ -2534,20 +2534,20 @@ void TrialRoad_ShowTraps(void) {
   Actor_RefreshSelectorById(13);
   Actor_SetModeById(13, 1);
   Event_Wait(10);
-  Actor_SetSpeed(13, 0x4000, 0x2000);
+  Actor_SetSpeed(13, 0.25);
   OBJECT_BYTE(Actor_GetById(13), 0x5a) &= ~1;
   Actor_WalkByAndWaitById(13, 0, 8);
   Event_Wait(1);
   OBJECT_BYTE(Actor_GetById(13), 0x5a) |= 1;
   Event_Wait(20);
-  Actor_SetSpeed(13, 0x20000, 0x10000);
+  Actor_SetSpeed(13, 2);
   Actor_SetModeById(13, 5);
   Actor_SetDestinationOffset(13, 0, -40);
   Actor_WaitForMoveById(13);
   Sound_Play(SE_CURSE);
-  MapGrid_SetShake(0x20000, 0x40000, 0x10000);
+  MapGrid_SetShake(2, 4, 1);
   Actor_GetById(13)->velocityY = 0x40000;
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   OBJECT_BYTE(Actor_GetById(13), 0x5a) &= ~1;
   Actor_WalkByAndWaitById(13, 0, 16);
   Event_Wait(1);
@@ -2560,7 +2560,7 @@ void TrialRoad_ShowTraps(void) {
   Actor_FaceDirection(13, FACING_NORTHWEST, 0);
   Motion_SetModeAndWaitAnimation(13, 3);
   Event_Wait(10);
-  Actor_SetSpeed(13, 0x10000, 0x8000);
+  Actor_SetSpeed(13, 1);
   Actor_WalkByAndWait(13, -16, -16);
   Actor_FaceDirection(13, FACING_WEST, 0);
   Sound_Play(SE_CHEST_OPEN);
@@ -2582,14 +2582,14 @@ void TrialRoad_ShowTraps(void) {
   Sound_Play(SE_MAP_EXIT);
   Event_ShowMessageAndWait(8, 0);
   Actor_SetMovementTypeById(14, gTrialRoad_RightKnightToChestsScript);
-  FieldCamera_MoveTo(328 << 16, -1, 120 << 16, 1);
+  FieldCamera_MoveTo(328, CAMERA_KEEP, 120, 1);
   FieldCamera_WaitForArrival();
   Event_ShowMessageAndWait(8, 0);
   Event_ShowMessageAndWait(8, 0);
   Actor_FaceDirection(14, FACING_NORTHEAST, 0);
   Motion_SetModeAndWaitAnimation(14, 3);
   Event_Wait(10);
-  Actor_SetSpeed(14, 0x10000, 0x8000);
+  Actor_SetSpeed(14, 1);
   Actor_WalkByAndWait(14, 16, -16);
   Actor_ArmCallback(14, 0, 0);
   Sound_Play(SE_CHEST_OPEN);
@@ -2916,14 +2916,14 @@ void TrialRoad_CrumblePillar(const void *data, s32 id) {
       Event_Start();
       if (!Event_GetFlag(flag + 1)) {
         Event_PlaySound(SE_PUSH);
-        MapGrid_SetShake(0x10000, 0x40000, 0x10000);
+        MapGrid_SetShake(1, 4, 1);
         TrialRoad_SpawnRubble(0);
         wait(8);
         Actor_SelectAnimation(object, 2);
         TrialRoad_SetActorCellShape(-4, OBJECT_BYTE(object, 34), id);
         TrialRoad_SpawnRubble(1);
         wait(16);
-        MapGrid_SetShake(-1, -1, 0xe666);
+        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
         Actor_SetPositionAndResetMotion(object, 0, 0, 0);
         wait(2);
@@ -3013,7 +3013,7 @@ void TrialRoad_StepOnTrap(const u16 *table) {
         wait(1);
         *motion = 0;
         Sound_Play(SE_PUSH);
-        MapGrid_SetShake(0x10000, 0x40000, 0x10000);
+        MapGrid_SetShake(1, 4, 1);
         TrialRoad_SpawnRubble(0);
         wait(8);
         Actor_SelectAnimation(partner, 2);
@@ -3022,7 +3022,7 @@ void TrialRoad_StepOnTrap(const u16 *table) {
         wait(16);
         TrialRoad_SetLeaderCellShape(-2, trap->terrainId);
         wait(4);
-        MapGrid_SetShake(-1, -1, 0xe666);
+        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
         *motion = 3;
         wait(5);

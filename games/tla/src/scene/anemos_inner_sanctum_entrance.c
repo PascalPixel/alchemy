@@ -231,8 +231,8 @@ void Func_02000588(void) {
     return;
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
 #if TLA_PATCH_1
-  FieldActor_SetMoveTarget(object, (object->x & 0xfff00000) + 0x80000,
-                           object->y, (object->z & 0xfff00000) + 0x80000);
+  FieldActor_SetMoveTargetFixed(object, (object->x & 0xfff00000) + 0x80000,
+                                object->y, (object->z & 0xfff00000) + 0x80000);
 #endif
   {
     s32 id = gMainRoutineWork.currentOwner;

@@ -306,7 +306,7 @@ s32 Func_0200042c(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
   actor->y = 0x820000;
@@ -351,8 +351,8 @@ loop:
   Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
-  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(5, 5, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
   actor->gravity = 0x10000;
@@ -885,7 +885,7 @@ void GaiaRockInside_MeetSusa(void) {
   Event_ShowMessage(10, 0);
   Actor_FaceDirection(10, FACING_NORTH + FACING_STEP, 0);
   FieldEvent_Wait(30);
-  FieldCamera_MoveTo(PIXELS(488), -1, PIXELS(392), 1);
+  FieldCamera_MoveTo(488, CAMERA_KEEP, 392, 1);
   FieldCamera_WaitForArrival();
   Event_ShowMessage(10, 0);
   EventCamera_FollowActor(10, 1);
@@ -894,7 +894,7 @@ void GaiaRockInside_MeetSusa(void) {
   FieldEvent_Wait(10);
   Event_ShowMessage(10, 0);
   Actor_SetAnimationAndWait(10, 3);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Event_SetFlag(0x9de);
   if (object->script == gData_020056c4 || object->script == gData_02005728) {
     gData_0200646c__s1048[2] = gData_020064ec = gData_0200646c__s1048[14];
@@ -1069,12 +1069,12 @@ void Func_020015d0(s32 idA, s32 idB) {
 
   Sound_Play(SOUND_FADE_OUT_BGM);
   Event_Wait(30);
-  FieldCamera_SetSpeed(0x8000, 0x1000);
+  FieldCamera_SetSpeed(0.5);
   FieldCamera_MoveWithinMapBounds(((s16 *)&a->x)[1] << 16,
                                   ((s16 *)&a->y)[1] << 16,
                                   ((s16 *)&a->z)[1] << 16, 1);
   Sound_Play(SE_RUMBLE);
-  MapGrid_SetShake(0x20000, 0x20000, 0x10000);
+  MapGrid_SetShake(2, 2, 1);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
   PaletteFade_StartInterpolation(60);
@@ -1242,8 +1242,8 @@ s32 GaiaRockInside_ReadSandTablet(void) {
   Actor_WalkTo(gMainRoutineWork.currentOwner, 0x1d2, 0x156);
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Message_ShowCentered(message + 2, 1);
-  MapGrid_SetShake(0x50000, 0x70000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(5, 7, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
   BlendScript_Suspend();
   level = REG_BLDALPHA & 0xff;
@@ -1266,7 +1266,7 @@ s32 GaiaRockInside_ReadSandTablet(void) {
   Actor_SetPosition(12, 0, 0);
   Party_LearnAbility(FELIX, ABILITY_SAND);
   Event_SetFlag(0x9ba);
-  Actor_SetSpeed(11, 0x13333, 0x9999);
+  Actor_SetSpeed(11, 1.2);
   Actor_SetAnimation(11, 2);
   {
     struct Actor *owner = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1346,7 +1346,7 @@ void Func_02001d14(void) {
   level = REG_BLDALPHA;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  MapGrid_SetShake(Q16_ONE * 10, Q16_ONE * 10, Q16_ONE);
+  MapGrid_SetShakeFixed(Q16_ONE * 10, Q16_ONE * 10, Q16_ONE);
   Event_PlaySound(SE_TREMOR);
   BlendScript_Suspend();
   level &= 0xff;
@@ -1359,7 +1359,7 @@ void Func_02001d14(void) {
   FieldEvent_Wait(30);
   object =
       OverlayObject_PrepareObject(232 << 17, -Q16_ONE * 32, 174 << 17, 323);
-  Actor_SetPosition(12, 232 << 17, 174 << 17);
+  Actor_SetPosition(12, 464, 348);
   Func_02001c9c();
   for (i = 0; i <= 19; i++) {
     if (i == 10)
@@ -1368,7 +1368,7 @@ void Func_02001d14(void) {
     FieldEvent_Wait(2);
   }
   Event_SetFlag(0x9ee);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   object->x = 0;
   object->z = 0;
   FieldEvent_Wait(1);
@@ -1520,8 +1520,8 @@ L_0200a10a:
   System_Wait(1);
   if (v_r5 >= 0)
     goto L_0200a10a;
-  Actor_SetSpeed(8, 0x4000, 0xccc);
-  Actor_SetSpeed(9, 0x4000, 0xccc);
+  Actor_SetSpeedAndAcceleration(8, 0.25, 0.05);
+  Actor_SetSpeedAndAcceleration(9, 0.25, 0.05);
   Actor_SetDestinationOffset(8, 24, 0);
   Actor_SetDestinationOffset(9, -24, 0);
   v_r6 = v_r7;
@@ -1609,7 +1609,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
       object->velocityY = Random16();
       wait(1);
     }
-    Actor_SetSpeed(8, 0x4000, 0xccc);
+    Actor_SetSpeedAndAcceleration(8, 0.25, 0.05);
     Actor_SetDestinationOffsetById(8, 24, 0);
     MapGrid_CopyCellAttributes(27, 23, 1, 1, 28, 22);
     Map_CopyCellAttributeRect(32, 16, 2, 1, 29, 22);
@@ -1697,7 +1697,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
       object->velocityY = Random16();
       wait(1);
     }
-    Actor_SetSpeed(9, 0x4000, 0xccc);
+    Actor_SetSpeedAndAcceleration(9, 0.25, 0.05);
     Actor_SetDestination(9, 608, 352);
     MapGrid_CopyCellAttributes(35, 23, 1, 1, 36, 22);
     Map_CopyCellAttributeRect(32, 16, 2, 1, 37, 22);
@@ -1785,7 +1785,7 @@ void GaiaRockInside_PlaceDollOnRoom5Altar(void) {
       object->velocityY = Random16();
       wait(1);
     }
-    Actor_SetSpeed(8, 0x4000, 0xccc);
+    Actor_SetSpeedAndAcceleration(8, 0.25, 0.05);
     Actor_SetDestinationOffset(8, -16, 0);
     Map_CopyCellAttributeRect(27, 15, 2, 1, 23, 23);
     Map_CopyCellAttributeRect(25, 25, 1, 1, 25, 23);
@@ -2051,8 +2051,8 @@ void Func_02002cb4(u8 mode) {
     *pending = 0;
     Actor_Get(FieldParty_GetLeaderActor())->priorityFlags |= 0x40;
     for (i = 0, id = 8; id <= 16; i++, id++) {
-      Actor_SetPosition(id, gData_0200533c[i][0] << 19,
-                        gData_0200533c[i][1] << 19);
+      Actor_SetPositionFixed(id, gData_0200533c[i][0] << 19,
+                             gData_0200533c[i][1] << 19);
       Func_02002b04(id, mode);
     }
   }
@@ -3579,9 +3579,9 @@ s32 Scene_PrepareMap(void) {
       Func_020048a0();
       stage = (s32 *)(gInventorySnapshot + 0x288);
       if (*stage == 3 && !GameFlag_Get(FLAG_AREA_TEMP_F6))
-        Actor_SetPosition(64, 0x680000, 0x580000);
+        Actor_SetPosition(64, 104, 88);
       if (*stage == 9)
-        Actor_SetPosition(65, 0x680000, 0x480000);
+        Actor_SetPosition(65, 104, 72);
       if (GameFlag_Get(*stage + 0xa50)) {
         struct Actor *climber = Actor_GetById(8);
         u32 angle = Func_02004904();
@@ -4038,7 +4038,7 @@ void Func_02004af0(s32 id, s32 flag) {
   gravity = leader->gravity;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   object = Actor_Get(value);
   Func_02004a5c(value, leader->x, leader->y, leader->z);
   Actor_StartScript(object, gData_020062d4);
@@ -4068,7 +4068,7 @@ burst:
     goto burst;
   Event_PlaySound(SE_590);
   Event_PlaySound(SE_FLOOR_SWITCH);
-  MapGrid_SetShake(0x20000, 0x20000, 0xe666);
+  MapGrid_SetShake(2, 2, 0.9);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 257);
   Actor_SelectAnimation(leader, 40);
   FieldEvent_Wait(40);
@@ -4085,11 +4085,11 @@ burst:
   leader->gravity = gravity;
   Actor_SetAttachedEffect(work->currentOwner, 0);
   Actor_SelectAnimation(leader, 38);
-  MapGrid_SetShake(0x10000, 0x40000, 0x10000);
+  MapGrid_SetShake(1, 4, 1);
   System_Wait(10);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   System_Wait(20);
-  FieldCamera_MoveTo(leader->x, leader->y, leader->z, 1);
+  FieldCamera_MoveToFixed(leader->x, leader->y, leader->z, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetSpriteFlags(leader, 1);

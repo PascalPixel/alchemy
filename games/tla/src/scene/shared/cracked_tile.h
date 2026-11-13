@@ -156,7 +156,7 @@
     s32 x = object->x;                                                         \
     s32 z = object->z;                                                         \
                                                                                \
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x40000, 0x20000);           \
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 4);                          \
                                                                                \
     x >>= 20;                                                                  \
     z >>= 20;                                                                  \
@@ -205,7 +205,7 @@
                                                                                \
     Event_Start();                                                             \
     FieldEvent_ResolvePendingActions(0);                                       \
-    FieldCamera_MoveTo(-1, -1, -1, 0);                                         \
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);              \
     Map_CenterOnFollowedPoint();                                               \
     System_Wait(1);                                                            \
     actor->y = 0x820000;                                                       \
@@ -241,8 +241,8 @@
     Event_PlaySound(SE_THUMP);                                                 \
     Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);             \
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);                     \
-    MapGrid_SetShake(0x50000, 0x50000, 0x10000);                               \
-    MapGrid_SetShake(-1, -1, 0xe666);                                          \
+    MapGrid_SetShake(5, 5, 1);                                                 \
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);                             \
     FieldMapGrid_WaitForShakeToSettle();                                       \
     Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);             \
     actor->gravity = 0x10000;                                                  \

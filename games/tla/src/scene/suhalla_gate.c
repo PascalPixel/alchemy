@@ -91,7 +91,7 @@ void SuhallaGate_SetUpRoom1(void) {
   if (gMainRoutineWork.entrance == 99)
     Event_SetFlag(0x894);
   if (Event_GetFlag(0x894)) {
-    Actor_SetPosition(8, PIXELS(456), PIXELS(312));
+    Actor_SetPosition(8, 456, 312);
     Actor_FallOverWithAnimationById(8, 0x4000, 0);
     Actor_SetActionCallback(Actor_GetById(8), 8);
   }
@@ -103,9 +103,9 @@ void SuhallaGate_SetUpRoom2(void) {
   if (gMainRoutineWork.entrance == 99)
     Event_SetFlag(0x895);
   if (Event_GetFlag(0x895)) {
-    Actor_SetPosition(13, PIXELS(590), PIXELS(920));
-    Actor_SetPosition(14, PIXELS(624), PIXELS(939));
-    Actor_SetPosition(15, PIXELS(632), PIXELS(920));
+    Actor_SetPosition(13, 590, 920);
+    Actor_SetPosition(14, 624, 939);
+    Actor_SetPosition(15, 632, 920);
     Actor_GetById(13)->facing = 0x4000;
     Actor_FallOverById(13, 0x6000);
     Actor_GetById(14)->facing = 0;
@@ -186,7 +186,7 @@ void SuhallaGate_ThievesSpotParty(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWaahhhItS);
   Actor_WalkTo(gMainRoutineWork.currentOwner, 472, 320);
-  FieldCamera_MoveTo(PIXELS(456), -1, PIXELS(280), 1);
+  FieldCamera_MoveTo(456, CAMERA_KEEP, 280, 1);
   FieldCamera_WaitForArrival();
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
@@ -229,13 +229,13 @@ void SuhallaGate_ThievesAmbushParty(void) {
   FieldEvent_Wait(10);
   Actor_WalkByAndWait(*owner, 0, 16);
   FieldEvent_Wait(30);
-  Actor_SetPosition(13, 0x2680000, 0x3900000);
+  Actor_SetPosition(13, 616, 912);
   Actor_WalkToAndWait(13, 0x258, 0x398);
-  Actor_SetPosition(15, 0x2680000, 0x3900000);
+  Actor_SetPosition(15, 616, 912);
   Actor_FaceDirection(13, FACING_SOUTH, 0);
   Actor_WalkToAndWait(15, 0x278, 0x398);
   Actor_FaceDirection(15, FACING_SOUTH, 0);
-  Actor_SetPosition(14, 0x2680000, 0x3900000);
+  Actor_SetPosition(14, 616, 912);
   Actor_WalkToAndWait(14, 0x268, 0x398);
   Actor_RunRepeatedMotion(13, 2);
   FieldEvent_Wait(20);
@@ -275,7 +275,7 @@ void SuhallaGate_FightPunchAnt(void) {
 void SuhallaGate_PunchAntHopsFromWest(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetPosition(8, PIXELS(472), PIXELS(480));
+  Actor_SetPosition(8, 472, 480);
   Event_Wait(16);
   Actor_FaceActor(gMainRoutineWork.currentOwner, 8, 0);
   FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 0x100, 0);
@@ -300,7 +300,7 @@ void SuhallaGate_PunchAntHopsFromEast(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetPosition(8, PIXELS(472), PIXELS(480));
+  Actor_SetPosition(8, 472, 480);
   Event_Wait(16);
   Actor_FaceActor(gMainRoutineWork.currentOwner, 8, 0);
   x = 0x100;
@@ -332,8 +332,8 @@ void SuhallaGate_AfterThievesBattle(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgMyThatWas);
-  Actor_SetPosition(9, PIXELS(512), PIXELS(432));
-  Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(528), PIXELS(432));
+  Actor_SetPosition(9, 512, 432);
+  Actor_SetPosition(gMainRoutineWork.currentOwner, 528, 432);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_ShowMessageThenWait(9, 0, 10);

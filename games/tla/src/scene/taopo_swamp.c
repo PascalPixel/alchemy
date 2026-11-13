@@ -349,7 +349,7 @@ void TaopoSwamp_DigHoleUnderfoot(void) {
 
   Func_02002990_(76, 70, 14, 8, 14, 37, 0);
   if (Event_GetFlag(0xf99) == 0) {
-    Actor_SetPosition(64, PIXELS(264), PIXELS(664));
+    Actor_SetPosition(64, 264, 664);
     if (leader->x >> 20 == 16 && leader->z >> 20 == 41) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
@@ -487,7 +487,7 @@ void TaopoSwamp_BlowFlowerOffLedge(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceActor(gMainRoutineWork.currentOwner, 8, 0);
   FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 256, 30);
-  FieldCamera_MoveTo(PIXELS(408), -1, PIXELS(312), 1);
+  FieldCamera_MoveTo(408, CAMERA_KEEP, 312, 1);
   FieldCamera_WaitForArrival();
   Actor_SetAttachedEffect(8, 257);
   speed = 0x8000;
@@ -680,7 +680,7 @@ void TaopoSwamp_PushPillarRockIn(s32 a, s32 id) {
     object->priorityFlags |= 2;
     Event_SetFlag(FLAG_AREA_TEMP_35);
     Event_SetFlag(FLAG_AREA_TEMP_36);
-    Actor_SetSpeed(id, 0x8000, 0x4000);
+    Actor_SetSpeed(id, 0.5);
     Actor_SetDestinationOffset(id, -32, 0);
     FieldActor_WaitForMoveById(id);
     Actor_SetAnimation(id, 3);
@@ -752,7 +752,7 @@ void TaopoSwamp_TremorPillar(void) {
     rock->targetX = 0x80000000;
   }
   rock->update = TaopoSwamp_SpinBoulder;
-  Actor_SetSpeed(19, 0x20000, 0x10000);
+  Actor_SetSpeed(19, 2);
   Actor_SetDestination(19, 492, 246);
   rock->gravity = 0xcccc;
   rock->motionFlags = 3;
@@ -760,13 +760,13 @@ void TaopoSwamp_TremorPillar(void) {
   FieldActor_WaitForMoveById(19);
   rock->velocityY = 0;
   rock->y = rock->terrainHeight;
-  Actor_SetPosition(19, 0x1e00000, 0xf80000);
+  Actor_SetPosition(19, 480, 248);
   ((struct FieldSprite *)rock->sprite)->rotation = 0;
   Event_PlaySound(SE_THUMP);
-  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
+  MapGrid_SetShake(5, 5, 1);
   Event_PlaySound(SE_RUMBLE);
-  MapGrid_SetShake(-1, -1, 0xe666);
-  Actor_SetPosition(10, 0x1e00000, 0xf80000);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
+  Actor_SetPosition(10, 480, 248);
   Actor_SetDestination(10, 440, 232);
   Actor_Get(10)->velocityY = 0xa0000;
   rock->update = 0;
@@ -798,8 +798,8 @@ next:
   FieldMapGrid_WaitForShakeToSettle();
   Task_AddFrame(TaopoSwamp_OpenPassage, 0x480);
   System_Wait(40);
-  FieldCamera_SetSpeed(0xe666, 0x1ccc);
-  FieldCamera_MoveTo(0x1500000, -1, 0x1180000, 1);
+  FieldCamera_SetSpeed(0.9);
+  FieldCamera_MoveTo(336, CAMERA_KEEP, 280, 1);
   i = 11;
   row = 114;
 drain:
@@ -859,7 +859,7 @@ void TaopoSwamp_PushExitRockIn(s32 a, s32 id) {
     object->priorityFlags |= 2;
     Event_SetFlag(FLAG_AREA_TEMP_3C);
     Event_SetFlag(FLAG_AREA_TEMP_3D);
-    Actor_SetSpeed(id, 0x8000, 0x4000);
+    Actor_SetSpeed(id, 0.5);
     Actor_SetDestinationOffset(id, 0, -32);
     FieldActor_WaitForMoveById(id);
     Actor_SetAnimation(id, 3);
@@ -1519,7 +1519,7 @@ s32 Scene_Initialize(void) {
       Event_SetFlag(FLAG_AREA_TEMP_39);
     } else if (Event_GetFlag(FLAG_AREA_TEMP_3A)) {
       Actor_SetAnimation(8, 3);
-      Actor_SetPosition(8, PIXELS(184), PIXELS(344));
+      Actor_SetPosition(8, 184, 344);
       Actor_GetById(8)->collisionFlags = 0;
       Actor_GetById(8)->priorityFlags |= 2;
       Actor_SetSpritePriority(8, 3);
@@ -1529,7 +1529,7 @@ s32 Scene_Initialize(void) {
       Event_SetFlag(FLAG_AREA_TEMP_3C);
     } else if (Event_GetFlag(FLAG_AREA_TEMP_3D)) {
       Actor_SetAnimation(9, 3);
-      Actor_SetPosition(9, PIXELS(504), PIXELS(184));
+      Actor_SetPosition(9, 504, 184);
       Actor_GetById(9)->collisionFlags = 0;
       Actor_GetById(9)->priorityFlags |= 2;
       Call6(Map_CopyCellAttributeRect, 30, 13, 1, 1, 31, 11);
@@ -1538,7 +1538,7 @@ s32 Scene_Initialize(void) {
     *effect = 516;
     piece = Actor_GetById(19);
     if (Event_GetFlag(FLAG_AREA_TEMP_30)) {
-      Actor_SetPosition(19, PIXELS(480), PIXELS(248));
+      Actor_SetPosition(19, 480, 248);
       if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
         Call3(Actor_SetHorizontalPositionWithTerrain, 10, PIXELS(440),
               PIXELS(232));
@@ -1552,7 +1552,7 @@ s32 Scene_Initialize(void) {
       Event_SetFlag(FLAG_AREA_TEMP_32);
     } else if (Event_GetFlag(FLAG_AREA_TEMP_33)) {
       Actor_SetAnimation(9, 3);
-      Actor_SetPosition(9, PIXELS(120), PIXELS(248));
+      Actor_SetPosition(9, 120, 248);
       Actor_GetById(9)->collisionFlags = 0;
       Actor_GetById(9)->priorityFlags |= 2;
       Call6(Map_CopyCellAttributeRect, 7, 17, 1, 1, 7, 15);
@@ -1565,7 +1565,7 @@ s32 Scene_Initialize(void) {
       Call6(Map_CopyCellAttributeRect, 27, 14, 1, 1, 27, 13);
       if (Event_GetFlag(FLAG_AREA_TEMP_36)) {
         Actor_SetAnimation(10, 3);
-        Actor_SetPosition(10, PIXELS(408), PIXELS(264));
+        Actor_SetPosition(10, 408, 264);
         Actor_GetById(10)->collisionFlags = 0;
         Actor_GetById(10)->priorityFlags |= 2;
         Call6(Map_CopyCellAttributeRect, 25, 18, 1, 1, 25, 16);
@@ -1781,8 +1781,9 @@ void TaopoSwamp_RiseOnBubble(void) {
     sprite = object->sprite;
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    FieldActor_SetMoveTarget(object, (object->x & 0xfff00000) + 0x80000,
-                             object->y, (object->z & 0xfff00000) + 0x80000);
+    FieldActor_SetMoveTargetFixed(object, (object->x & 0xfff00000) + 0x80000,
+                                  object->y,
+                                  (object->z & 0xfff00000) + 0x80000);
     FieldActor_WaitForMove(object);
     while (sprite->level != 0) {
       sprite->level--;

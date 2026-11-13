@@ -280,7 +280,7 @@ body:
 
         *flags = 0;
         Sound_Play(SE_PUSH);
-        MapGrid_SetShake(0x10000, 0x40000, 0x10000);
+        MapGrid_SetShake(1, 4, 1);
         Rubble_Spray(0);
         wait(8);
         Actor_SelectAnimation(pillar, 2);
@@ -289,7 +289,7 @@ body:
         wait(16);
         Leader_SetCellShapeAt(-2, pillar->terrainId);
         wait(4);
-        MapGrid_SetShake(-1, -1, 0xe666);
+        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
         *flags = 3;
         wait(5);
@@ -324,14 +324,14 @@ void CrumblingPillar_Collapse(const void *data, s32 id) {
       Event_Start();
       if (!Event_GetFlag(flag + 1)) {
         Event_PlaySound(SE_PUSH);
-        MapGrid_SetShake(0x10000, 0x40000, 0x10000);
+        MapGrid_SetShake(1, 4, 1);
         Rubble_Spray(0);
         System_Wait(8);
         Actor_SelectAnimation(object, 2);
         Actor_SetCellShapeAt(-4, OBJECT_BYTE(object, 34), id);
         Rubble_Spray(1);
         System_Wait(16);
-        MapGrid_SetShake(-1, -1, 0xe666);
+        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         System_Wait(8);
         FieldActor_SetPositionAndResetMotion(object, 0, 0, 0);
         System_Wait(2);
@@ -465,7 +465,7 @@ body:
         flags = &leader->motionFlags;
         *flags = 0;
         Sound_Play(SE_PUSH);
-        MapGrid_SetShake(0x10000, 0x40000, 0x10000);
+        MapGrid_SetShake(1, 4, 1);
         Rubble_Spray(0);
         wait(8);
         Actor_SelectAnimation(helper, 2);
@@ -474,7 +474,7 @@ body:
         wait(16);
         Leader_SetCellShapeAt(-2, pillar->terrainId);
         wait(4);
-        MapGrid_SetShake(-1, -1, 0xe666);
+        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
         *flags = 3;
         wait(5);

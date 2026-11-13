@@ -423,8 +423,8 @@ void Func_02000280(s32 unused, s32 id) {
   s32 kind;
 
   kind = gData_02005b5c[id - 18];
-  Actor_SetPosition(kind, S16_AT(object, 100) << 16,
-                    (S16_AT(object, 102) << 16) - PIXELS(8));
+  Actor_SetPositionFixed(kind, S16_AT(object, 100) << 16,
+                         (S16_AT(object, 102) << 16) - PIXELS(8));
 }
 
 void Func_020002b8(s32 unused, s32 id) {
@@ -525,7 +525,7 @@ void Func_02000514(void) {
   struct Actor *object = Actor_Get(9);
 
   Actor_SetPosition(10, 0, 0);
-  Actor_SetPosition(9, S16_AT(object, 100) << 16, S16_AT(object, 102) << 16);
+  Actor_SetPosition(9, S16_AT(object, 100), S16_AT(object, 102));
   Event_SetFlag(0xa42);
   Event_PlaySound(SE_WHOOSH);
 }
@@ -584,12 +584,12 @@ void Func_02000670(void) {
   Event_ClearFlag(0x104);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_SetSpeed(0x20000, 0x4000);
-  FieldCamera_MoveTo(PIXELS(248), -1, PIXELS(712), 1);
+  FieldCamera_SetSpeed(2);
+  FieldCamera_MoveTo(248, CAMERA_KEEP, 712, 1);
   FieldCamera_WaitForArrival();
   System_Wait(20);
-  FieldCamera_SetSpeed(0x50000, 0xa000);
-  FieldCamera_MoveTo(PIXELS(248), -1, PIXELS(872), 1);
+  FieldCamera_SetSpeed(5);
+  FieldCamera_MoveTo(248, CAMERA_KEEP, 872, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(120);
   Event_End();
@@ -717,8 +717,8 @@ void Func_020009ec(void) {
   }
   Flag_Set(FLAG_AREA_TEMP_50);
   if (!Flag_IsSet(FLAG_AREA_TEMP_51)) {
-    FieldCamera_SetSpeed(0x20000, 0x4000);
-    FieldCamera_MoveTo(PIXELS(616), -1, PIXELS(24), 1);
+    FieldCamera_SetSpeed(2);
+    FieldCamera_MoveTo(616, CAMERA_KEEP, 24, 1);
     FieldEvent_Wait(60);
     ObjectTable_Snapshot();
     FieldEvent_SetExitRequest(9);
@@ -727,8 +727,8 @@ void Func_020009ec(void) {
 
 void Func_02000aac(void) {
   Ride_SetEntry(3, 3);
-  FieldCamera_SetSpeed(0x10000, 0x2000);
-  FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(560), 1);
+  FieldCamera_SetSpeed(1);
+  FieldCamera_MoveTo(184, CAMERA_KEEP, 560, 1);
 }
 
 void Func_02000ad8(void) {
@@ -741,8 +741,8 @@ void Func_02000ad8(void) {
   Flag_Clear(FLAG_MENU_OPEN);
   Flag_Clear(0x104);
   FieldEvent_Wait(60);
-  FieldCamera_SetSpeed(0x30000, 0x6000);
-  FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(744), 1);
+  FieldCamera_SetSpeed(3);
+  FieldCamera_MoveTo(184, CAMERA_KEEP, 744, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(60);
   Event_End();
@@ -961,23 +961,23 @@ s32 Scene_Initialize(void) {
       Flag_Set(FLAG_AREA_TEMP_51);
       Event_Start();
       Event_ResolvePendingActions(0);
-      FieldCamera_MoveTo(-1, -1, -1, 0);
+      FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
       Actor_SetPosition(work->currentOwner, 0, 0);
       Actor_SetPosition(17, 0, 0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       Event_Wait(30);
       Actor_SetPosition(18, 0, 0);
-      Actor_SetPosition(17, 0x1080000, 0x2080000);
+      Actor_SetPosition(17, 264, 520);
       Event_PlaySound(SE_WHOOSH);
       Event_Wait(60);
       Flag_Set(FLAG_KEEP_PARTY_POSITION);
       return ((s32 (*)())Import_EventSetExitRequest)(3);
     }
     if (Flag_IsSet(FLAG_AREA_TEMP_50)) {
-      Actor_SetPosition(8, 0x2580000, 0x900000);
-      Actor_SetPosition(9, 0x2200000, 0xd00000);
-      Actor_SetPosition(10, 0x2200000, 0xf00000);
+      Actor_SetPosition(8, 600, 144);
+      Actor_SetPosition(9, 544, 208);
+      Actor_SetPosition(10, 544, 240);
       Flag_Set(FLAG_SCENE_TEMP_20);
       Flag_Set(FLAG_SCENE_TEMP_21);
     }
@@ -1021,7 +1021,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(11, 0, 0);
     }
     if (Flag_IsSet(0xa37))
-      Actor_SetPosition(12, 0x780000, 0x1280000);
+      Actor_SetPosition(12, 120, 296);
     if (entrance - 14 <= 1U) {
       Beam_Start(gData_02005c2c, gData_02005c32, Func_02001490, 88);
       Func_020027cc(0, 1);
@@ -1056,13 +1056,13 @@ s32 Scene_Initialize(void) {
     }
     if (!Flag_IsSet(FLAG_KEEP_PARTY_POSITION)) {
       if (entrance == 15)
-        Actor_SetPosition(23, 0x2980000, 0x2c80000);
+        Actor_SetPosition(23, 664, 712);
       if (entrance == 11)
-        Actor_SetPosition(17, 0x2180000, 0x2280000);
+        Actor_SetPosition(17, 536, 552);
     }
     Actor_GetById(16)->motionFlags = 0;
     if (Flag_IsSet(0xa38)) {
-      Actor_SetPosition(16, 0x3280000, 0x1380000);
+      Actor_SetPosition(16, 808, 312);
       Actor_GetById(16)->y = 0;
       Actor_GetById(16)->terrainHeight = 0;
     }
@@ -1174,12 +1174,12 @@ void Func_0200167c(void) {
   *(u8 *)&actor->priorityFlags = 1;
   *motion = 3;
   Actor_SetSpriteFlags(actor, 1);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   shadow = FieldCamera_GetActor();
   shadow->speedLimit = 0x80000;
   shadow->acceleration = 0x10000;
   *(u8 *)&shadow->motionFlags = 0;
-  FieldActor_SetMoveTarget(
+  FieldActor_SetMoveTargetFixed(
       shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z), actor->z);
   i = 0;
   if (actor->y > actor->terrainHeight + 0x100000) {
@@ -1253,10 +1253,10 @@ void Func_02001bcc(void) {
   struct PositionedActor *actor23 = Actor_GetById(23);
   struct FieldSprite *sprite = actor23->animation;
 
-  Actor_SetPosition(24, 0x2000000, 0xf80000);
-  Actor_SetPosition(23, 0x2000000, 0xf80000);
-  Actor_SetPosition(9, 0x1d80000, 0x1000000);
-  Actor_SetPosition(10, 0x2280000, 0x1000000);
+  Actor_SetPosition(24, 512, 248);
+  Actor_SetPosition(23, 512, 248);
+  Actor_SetPosition(9, 472, 256);
+  Actor_SetPosition(10, 552, 256);
   Actor_GetById(24)->scaleX = 0;
   actor23->motionFlags = 0;
   actor23->y.fixed = actor23->terrainHeight;
@@ -1315,9 +1315,9 @@ DEFINE_ACTOR_IS_BESIDE(Actor_IsBeside)
 #include "shared/mars_lighthouse_entrance_room.h"
 #undef Camera_SetBounds
 /* VIEW(s1e20): static Camera_SetBounds as Camera_SetBounds__s1e20; room.h has
- * static inline void FieldCamera_MoveTo(s32 x, s32 y, s32 z, s32 use_setter) {
- * FieldCamera_MoveWithinMapBounds(x, y, z, use_setter); }; not tried:
- * Camera_SetBounds__s1e20 was not found. */
+ * static inline void FieldCamera_MoveToFixed(s32 x, s32 y, s32 z, s32
+ * use_setter) { FieldCamera_MoveWithinMapBounds(x, y, z, use_setter); }; not
+ * tried: Camera_SetBounds__s1e20 was not found. */
 #undef SceneWork
 /* VIEW(s1e20): tag struct SceneWork as struct SceneWork__s1e20; room.h has
  * another definition; not tried: struct SceneWork__s1e20 was not found. */
@@ -1841,7 +1841,7 @@ s32 MarsLighthouseRoomF_SlideOnIce(void) {
    * type. */
   ((s32 (*)(s32, s32))Party_TakeFallDamage)(-10, 0);
 #endif
-  FieldCamera_SetSpeed(0x70000, 0xe000);
+  FieldCamera_SetSpeed(7);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   ride = (struct RideWork *)(gInventorySnapshot + 0x188);
   Flag_Set(FLAG_MENU_OPEN);
@@ -2245,11 +2245,11 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 #include "field/event_inline.h"
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
-  FieldCamera_MoveTo(x, y, z, mode);
+  FieldCamera_MoveToFixed(x, y, z, mode);
 }
 
 static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
-  MapGrid_SetShake(a, b, c);
+  MapGrid_SetShakeFixed(a, b, c);
 }
 
 DEFINE_CRACKED_TILE_DROP_IN(CrackedTile_DropIn, FieldEffect_Spawn)

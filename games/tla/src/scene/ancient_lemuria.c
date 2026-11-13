@@ -115,7 +115,7 @@ void AncientLemuria_CycloneRevealsRime(void) {
   Event_SetFlag(0x96c);
   Event_SetFlag(0x96e);
   Actor_SetSpriteFlags(Actor_GetById(12), 0);
-  Actor_SetPosition(12, 176 << 15, 216 << 16);
+  Actor_SetPosition(12, 88, 216);
   Actor_Jump(12, 9, 0);
   object->scaleY = 0x8000;
   object->scaleX = 0x8000;
@@ -197,12 +197,12 @@ void AncientLemuria_TremorShakesOutRime(void) {
   GameFlag_Set(0x96d);
   GameFlag_Clear(0x96e);
   AncientLemuria_StillTheStatue(13);
-  Actor_SetPosition(12, 270 << 16, 184 << 16);
+  Actor_SetPosition(12, 270, 184);
   object->y = 22 << 16;
   Actor_Jump(12, 11, 0);
   object->scaleY = 0x8000;
   object->scaleX = 0x8000;
-  Actor_SetSpeed(12, 0x23333, 0x11999);
+  Actor_SetSpeed(12, 2.2);
   Actor_WalkTo(12, 312, 184);
   for (i = 23; i >= 0; i--) {
     {
@@ -243,7 +243,7 @@ void AncientLemuria_HeadForTheDock(void) {
       Event_SetMessageId(MsgLemuriaStayExploringAlternate);
       Event_ShowMessageThenWait(11, 0, 10);
     }
-    Actor_SetSpeed(11, 0x13333, 0x9999);
+    Actor_SetSpeed(11, 1.2);
     Actor_SetModeById(11, 2);
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object != NULL)
@@ -301,12 +301,12 @@ s32 Scene_Initialize(void) {
   else
     GameFlag_Set(FLAG_SHOW_AREA_NAME);
   if (GameFlag_Get(0x961)) {
-    Actor_SetPosition(8, 136 << 16, 584 << 16);
+    Actor_SetPosition(8, 136, 584);
     Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
   }
   if (Event_GetFlag(0x96d))
-    Actor_SetPosition(12, 312 << 16, 184 << 16);
+    Actor_SetPosition(12, 312, 184);
   if (gMainRoutineWork.entrance == 1 && !GameFlag_Get(0x96d) &&
       GameFlag_Get(0x96c)) {
     *(void (**)(void))(((u8 *)Actor_GetById(13)) + 108) =
@@ -368,20 +368,20 @@ void AncientLemuria_MeetTheLemurians(void) {
   Event_Wait(30);
   Actor_ArmCallback(4, FACING_NORTH, 0);
   Event_Wait(30);
-  Actor_SetSpeed(4, 0x10000, 0x8000);
+  Actor_SetSpeed(4, 1);
   Actor_WalkByAndWait(4, 0, -16);
   Event_Wait(10);
   FieldCamera_MoveWithinMapBounds(PIXELS(168), -1, PIXELS(536), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
-  Actor_SetSpeed(9, 0xcccc, 0x6666);
+  Actor_SetSpeed(9, 0.8);
   Actor_WalkByAndWaitById(9, 24, 0);
   Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(9, 2);
   Event_Wait(10);
   Event_ShowMessageThenWait(9, 0, 10);
-  Actor_SetSpeed(10, 0xcccc, 0x6666);
+  Actor_SetSpeed(10, 0.8);
   Actor_WalkByAndWait(10, -24, 0);
   Actor_ArmCallback(10, 0x5000, 0);
   Event_Wait(20);
@@ -495,7 +495,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_FaceDirection(7, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(30);
   Event_ShowMessageThenWait(7, 0, 10);
-  Actor_SetSpeed(7, 0x10000, 0x8000);
+  Actor_SetSpeed(7, 1);
   Actor_WalkByAndWait(7, 0, -16);
   Event_Wait(10);
   Event_ShowMessageThenWait(7, 0, 10);
@@ -726,7 +726,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_WalkByAndWaitById(9, 16, 0);
   Actor_WalkBy(9, 0, -32);
   Actor_WaitForMoveById(10);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
   Actor_WaitForMoveById(9);
   Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
@@ -773,8 +773,8 @@ void AncientLemuria_MeetTheLemurians(void) {
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(4, 3);
   Event_Wait(20);
-  Actor_SetSpeed(4, 0xcccc, 0x6666);
-  Actor_SetSpeed(11, 0xcccc, 0x6666);
+  Actor_SetSpeed(4, 0.8);
+  Actor_SetSpeed(11, 0.8);
   Actor_WalkByAndWait(4, -8, -16);
   Actor_WalkBy(11, 0, -10);
   Actor_WalkByAndWait(4, 0, -16);
@@ -786,14 +786,14 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_SetModeById(4, 3);
   Motion_SetModeAndWaitAnimation(11, 3);
   Event_Wait(20);
-  Actor_SetSpeed(7, 0x13333, 0x9999);
+  Actor_SetSpeed(7, 1.2);
   Actor_SetModeById(7, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_SetDestinationById(7, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(7);
   Actor_SetHorizontalPositionWithTerrain(7, 0, 0);
-  Actor_SetSpeed(11, 0x13333, 0x9999);
+  Actor_SetSpeed(11, 1.2);
   Actor_SetModeById(11, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)

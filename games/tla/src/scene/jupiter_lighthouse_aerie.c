@@ -470,7 +470,7 @@ void Func_02000930(void) {
   shadow->speedLimit = 0x80000;
   shadow->acceleration = 0x10000;
   shadow->motionFlags = 0;
-  FieldActor_SetMoveTarget(
+  FieldActor_SetMoveTargetFixed(
       shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z), actor->z);
   i = 0;
   while (i <= 59 && actor->y > actor->terrainHeight + 0x100000) {
@@ -929,8 +929,8 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   carrier->speedLimit = 0x8000;
   carrier->acceleration = 0x8000;
   Actor_StartIdle(carrier);
-  FieldActor_SetMoveTarget(carrier, work->start[0], work->start[1],
-                           work->start[2]);
+  FieldActor_SetMoveTargetFixed(carrier, work->start[0], work->start[1],
+                                work->start[2]);
   Event_PlaySound(SE_SWIRL);
   Func_0200105c(work->first);
   FieldEvent_Wait(40);

@@ -120,7 +120,7 @@ void Mikasalla_EnterDoor(void) {
   index--;
   MapGrid_AnimateCells(gMikasalla_Doors[index].map, gMikasalla_Doors[index].x,
                        gMikasalla_Doors[index].z);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
 
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);

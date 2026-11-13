@@ -959,7 +959,7 @@ void Func_0200169c(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, 0, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1318,7 +1318,7 @@ void Func_02002158(void) {
   if (flag == 0) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    FieldCamera_MoveTo(-1, -1, -1, 0);
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     leader->motionFlags = flag;
     Actor_SetHorizontalPositionWithTerrain(*owner, ((s16 *)&leader->x)[1] << 16,
                                            (((s16 *)&leader->z)[1] << 16) -

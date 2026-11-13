@@ -119,7 +119,7 @@ void Func_02000100(void) {
 
   Func_02001274_(22, 15, 0, 5, 5, 63, 52);
   if (GameFlag_Get(0xf53) == 0) {
-    Actor_SetPosition(64, PIXELS(392), PIXELS(344));
+    Actor_SetPosition(64, 392, 344);
     if (leader->x >> 20 == 24 && leader->z >> 20 == 21) {
       LEADER_HOP();
       Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, 16, 0);
@@ -148,7 +148,7 @@ void Func_020001d4(void) { Import_EventSetExitRequest(5); }
     struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);       \
                                                                                \
     Func_02001274_(n1, n2, 0, n3, 3, 56, n4);                                  \
-    Actor_SetPosition(n5, PIXELS(n6), PIXELS(n7));                             \
+    Actor_SetPosition(n5, n6, n7);                                             \
     if (leader->x >> 20 == n8 && leader->z >> 20 == n9) {                      \
       LEADER_HOP();                                                            \
       Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, 16, 0);    \
@@ -168,7 +168,7 @@ void Func_020002e0(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_02001274_(5, 13, 0, 5, 3, 56, 52);
-  Actor_SetPosition(10, PIXELS(152), PIXELS(264));
+  Actor_SetPosition(10, 152, 264);
   if (leader->x >> 20 == 9 && leader->z >> 20 == 16) {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -196,7 +196,7 @@ void Func_02000564(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_02001274_(16, 13, 0, 4, 8, 61, 52);
-  Actor_SetPosition(8, PIXELS(280), PIXELS(296));
+  Actor_SetPosition(8, 280, 296);
   if (leader->x >> 20 == 17 && leader->z >> 20 == 18) {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -327,7 +327,7 @@ void Func_020009d4(void) {
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0x403108, 1);
   PaletteFade_StartInterpolation(60);
-  FieldCamera_MoveTo(0xa80000, -1, 0x9e0000, 1);
+  FieldCamera_MoveTo(168, CAMERA_KEEP, 158, 1);
   Sound_Play(MUS_026);
   Event_Wait(60);
   Actor_SetModeById(8, 2);
@@ -336,7 +336,7 @@ void Func_020009d4(void) {
   Event_SetMessageId((s32)MsgByReachingThis);
   work += 0x1c4;
   TALK();
-  Actor_SetPosition(0x40, 0xa80000, 0x980000);
+  Actor_SetPosition(0x40, 168, 152);
   statue->motionFlags = 6;
   statue->terrainHeight += 0x100000;
   Sound_Play(SE_SHIMMER);
@@ -518,7 +518,7 @@ s32 Scene_Initialize(void) {
       GameFlag_Get(0x9ce) && !GameFlag_Get(0xf93) &&
       !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     statue = Actor_GetById(0x40);
-    Actor_SetPosition(0x40, 0xa80000, 0x980000);
+    Actor_SetPosition(0x40, 168, 152);
     statue->motionFlags = 6;
     statue->terrainHeight += 0x100000;
   }

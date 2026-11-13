@@ -86,7 +86,7 @@
     width = (ABS(data1[footprint][0]) + ABS(data1[footprint][2])) >> 4;        \
     height = (ABS(data1[footprint][1]) + ABS(data1[footprint][3])) >> 4;       \
     call1(0, cell[0], cell[2], width, height, 0);                              \
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x1999);             \
+    Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.5, 0.1);    \
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 8);                      \
     System_Wait(15);                                                           \
     {                                                                          \
@@ -103,11 +103,11 @@
     else                                                                       \
       call3(object, 2);                                                        \
     Event_PlaySound(SE_HEAVY_MOVE);                                            \
-    Actor_SetSpeed(target.id, 0x8000, 0x1999);                                 \
-    FieldActor_SetMoveTarget(object, target.x, target.y, target.z);            \
+    Actor_SetSpeedAndAcceleration(target.id, 0.5, 0.1);                        \
+    FieldActor_SetMoveTargetFixed(object, target.x, target.y, target.z);       \
     FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);                 \
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);                      \
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x4ccc, 0x1999);             \
+    Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.3, 0.1);    \
     Actor_SetDestinationOffset(gMainRoutineWork.currentOwner,                  \
                                (data2[direction] << 16) >> 31,                 \
                                (data2[direction] << 16) >> 17);                \
@@ -173,7 +173,7 @@
     width = (ABS(data1[footprint][0]) + ABS(data1[footprint][2])) >> 4;        \
     height = (ABS(data1[footprint][1]) + ABS(data1[footprint][3])) >> 4;       \
     Map_FillCellRectByte2(0, cell[0], cell[2], width, height, 0);              \
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x1999);             \
+    Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.5, 0.1);    \
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 8);                      \
     System_Wait(15);                                                           \
     {                                                                          \
@@ -190,11 +190,11 @@
     else                                                                       \
       call2(object, 2);                                                        \
     Event_PlaySound(SE_HEAVY_MOVE);                                            \
-    Actor_SetSpeed(target.id, 0x8000, 0x1999);                                 \
-    FieldActor_SetMoveTarget(object, target.x, target.y, target.z);            \
+    Actor_SetSpeedAndAcceleration(target.id, 0.5, 0.1);                        \
+    FieldActor_SetMoveTargetFixed(object, target.x, target.y, target.z);       \
     FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);                 \
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);                      \
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x4ccc, 0x1999);             \
+    Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.3, 0.1);    \
     Actor_SetDestinationOffset(gMainRoutineWork.currentOwner,                  \
                                (data2[direction] << 16) >> 31,                 \
                                (data2[direction] << 16) >> 17);                \
@@ -379,10 +379,10 @@
     Event_PlaySound(SE_PUSH);                                                  \
     next->moveRateX = rate;                                                    \
     next->moveRateZ = rate;                                                    \
-    FieldActor_SetMoveTarget(next, dst.x, dst.y, dst.z);                       \
+    FieldActor_SetMoveTargetFixed(next, dst.x, dst.y, dst.z);                  \
     lead->moveRateX = rate;                                                    \
     lead->moveRateZ = rate;                                                    \
-    FieldActor_SetMoveTarget(lead, dst.x, dst.y, dst.z);                       \
+    FieldActor_SetMoveTargetFixed(lead, dst.x, dst.y, dst.z);                  \
     FieldActor_WaitForMove(next);                                              \
     Event_NoOp();                                                              \
     next->x.fixed = dst.x;                                                     \

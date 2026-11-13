@@ -455,7 +455,7 @@ void ApojiiIslands_EnterDoor(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Event_PlaySound(SE_MAP_EXIT);
@@ -675,8 +675,8 @@ void Func_020011a8(void) {
       Func_020010d8(leader);
     if (result < 0) {
       Actor_SetAttachedEffect(owner, 0x102);
-      FieldActor_SetMoveTarget(leader, leader->x, leader->y,
-                               leader->z + 0x80000);
+      FieldActor_SetMoveTargetFixed(leader, leader->x, leader->y,
+                                    leader->z + 0x80000);
       Actor_SelectAnimation(leader, 49);
       FieldActor_WaitForMove(leader);
       do {

@@ -105,11 +105,11 @@ void JupiterLighthouse_RaiseWhirlwind(s32 id) {
   if (gWhirlwindRiding == 0) {
     object = Actor_Get(ACTOR_WHIRLWIND_SOURCE);
     if (id == 30) {
-      Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, PIXELS(296), PIXELS(600));
+      Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 296, 600);
       object->y = 0;
       object->facing = FACING_WEST;
     } else if (id == 31) {
-      Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, PIXELS(136), PIXELS(680));
+      Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 136, 680);
       object->y = 0;
       object->facing = 0;
     }
@@ -126,19 +126,19 @@ void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
       Actor_Get(gMainRoutineWork.currentOwner)->y > 0) {
     object = Actor_Get(ACTOR_WHIRLWIND_SOURCE);
     if (id == 50) {
-      Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, PIXELS(488), PIXELS(280));
+      Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 488, 280);
       object->y = PIXELS(32);
       object->facing = FACING_WEST;
     } else if (id == 51) {
-      Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, PIXELS(472), PIXELS(184));
+      Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 472, 184);
       object->y = PIXELS(32);
       object->facing = FACING_WEST;
     } else if (id == 52) {
-      Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, PIXELS(616), PIXELS(280));
+      Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 616, 280);
       object->y = PIXELS(32);
       object->facing = 0;
     } else if (id == 53) {
-      Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, PIXELS(632), PIXELS(184));
+      Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 632, 184);
       object->y = PIXELS(32);
       object->facing = 0;
     }

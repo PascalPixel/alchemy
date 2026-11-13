@@ -300,7 +300,7 @@ void ShamanVillageCave_MeetColossoFans(void) {
   Actor_ShowEmote(0, 256, 0);
   Actor_ShowEmote(18, 256, 0);
   Actor_ShowEmote(4, 256, 40);
-  FieldCamera_MoveTo(PIXELS(199), -1, PIXELS(177), 1);
+  FieldCamera_MoveTo(199, CAMERA_KEEP, 177, 1);
   FieldCamera_WaitForArrival();
   angle = 0x4000;
   Actor_SetPositionAndFacing(19, PIXELS(199), PIXELS(130), angle);
@@ -311,7 +311,7 @@ void ShamanVillageCave_MeetColossoFans(void) {
   FieldEvent_Wait(20);
   Actor_SetPositionAndFacing(21, PIXELS(199), PIXELS(130), angle);
   Actor_WalkTo(21, 204, 191);
-  FieldCamera_MoveTo(PIXELS(199), -1, PIXELS(225), 1);
+  FieldCamera_MoveTo(199, CAMERA_KEEP, 225, 1);
   FieldCamera_WaitForArrival();
   FieldActor_WaitForMoveById(19);
   Actor_FaceDirection(19, FACING_SOUTH_SOUTHWEST, 0);
@@ -418,7 +418,7 @@ void ShamanVillageCave_LoseToColossoFans(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(PIXELS(199), -1, PIXELS(273), 0);
+  FieldCamera_MoveTo(199, CAMERA_KEEP, 273, 0);
   FieldEvent_SetMessageId((s32)MsgHeyTheseGuys);
   Actor_SetPositionAndFacing(4, PIXELS(184), PIXELS(229), angle);
   Actor_SetPositionAndFacing(0, PIXELS(200), PIXELS(221), angle);
@@ -451,8 +451,8 @@ void ShamanVillageCave_LoseToColossoFans(void) {
   Actor_SetAnimationAndWait(19, 3);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(19, 0, 5);
-  FieldCamera_SetSpeed(0x8000, 0x1000);
-  FieldCamera_MoveTo(PIXELS(199), -1, PIXELS(373), 1);
+  FieldCamera_SetSpeed(0.5);
+  FieldCamera_MoveTo(199, CAMERA_KEEP, 373, 1);
   FieldEvent_Wait(100);
   Actor_ShowEmote(18, 261, 1);
   FieldEvent_Wait(20);
@@ -477,7 +477,7 @@ void ShamanVillageCave_BeatColossoFans(void) {
   Event_SetFlag(0xa72);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(PIXELS(199), -1, PIXELS(273), 0);
+  FieldCamera_MoveTo(199, CAMERA_KEEP, 273, 0);
   FieldEvent_SetMessageId((s32)MsgTheseGuysWere);
   Actor_SetPositionAndFacing(4, PIXELS(184), PIXELS(229), angle);
   Actor_SetPositionAndFacing(0, PIXELS(200), PIXELS(221), angle);
@@ -538,9 +538,9 @@ void ShamanVillageCave_BeatColossoFans(void) {
   Actor_SetAnimation(4, 3);
   Actor_SetAnimationAndWait(18, 3);
   FieldEvent_Wait(10);
-  Actor_SetSpeed(19, 0x10000, 0x8000);
-  Actor_SetSpeed(20, 0x10000, 0x8000);
-  Actor_SetSpeed(21, 0x10000, 0x8000);
+  Actor_SetSpeed(19, 1);
+  Actor_SetSpeed(20, 1);
+  Actor_SetSpeed(21, 1);
   Actor_SetScript(19, gShamanVillageCave_GladiatorLeaves);
   FieldEvent_Wait(20);
   Actor_SetScript(20, gShamanVillageCave_GladiatorFollowsOut);
@@ -629,7 +629,7 @@ s32 Scene_Initialize(void) {
     MapGrid_CopyCellAttributes(8, 42, 1, 1, 6, 42);
   }
   if (Event_GetFlag(FLAG_SCENE_TEMP_06))
-    Actor_SetPosition(17, PIXELS(328), PIXELS(792));
+    Actor_SetPosition(17, 328, 792);
   FieldActor_SetSpriteColor(Actor_Get(19), 1);
   FieldActor_SetSpriteColor(Actor_Get(20), 0);
   FieldActor_SetSpriteColor(Actor_Get(21), 2);

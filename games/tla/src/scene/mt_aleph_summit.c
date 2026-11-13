@@ -359,8 +359,8 @@ s32 Scene_Initialize(void) {
   if (mode == 10) {
     Event_SetDestination((s32)&SceneId_Ov64c, 72);
   } else if (mode == 2) {
-    FieldCamera_MoveTo(0x1000000, -1, 0x800000, 0);
-    FieldCamera_SetSpeed(0x10000, 0x2000);
+    FieldCamera_MoveTo(256, CAMERA_KEEP, 128, 0);
+    FieldCamera_SetSpeed(1);
     Call2((void (*)())Actor_SetSpriteFlags, (s32)(s32)Actor_Get(8), 0);
     Actor_SetAnimation(8, 12);
     Actor_SetAnimationSpeedById(8, 8);
@@ -372,15 +372,15 @@ s32 Scene_Initialize(void) {
     REG_BG3CNT |= 2;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    FieldCamera_MoveTo(0x1000000, -1, 0x13e0000, 1);
+    FieldCamera_MoveTo(256, CAMERA_KEEP, 318, 1);
     FieldCamera_WaitForArrival();
-    FieldCamera_MoveTo(0x13c0000, -1, 0x13e0000, 1);
+    FieldCamera_MoveTo(316, CAMERA_KEEP, 318, 1);
     FieldCamera_WaitForArrival();
     i = 0;
   L1:
     if (i == 3) {
-      FieldCamera_SetSpeed(0x1999, 0x333);
-      FieldCamera_MoveTo(0x13c0000, -1, 0x12c0000, 1);
+      FieldCamera_SetSpeed(0.1);
+      FieldCamera_MoveTo(316, CAMERA_KEEP, 300, 1);
     }
     ACTOR(8)->z -= 0x10000;
     System_Wait(30);
@@ -431,8 +431,8 @@ s32 Scene_Initialize(void) {
     i = 0;
   L4:
     if (i == 16) {
-      FieldCamera_MoveTo(0x13c0000, -1, 0x800000, 1);
-      FieldCamera_SetSpeed(0x20000, 0x4000);
+      FieldCamera_MoveTo(316, CAMERA_KEEP, 128, 1);
+      FieldCamera_SetSpeed(2);
     }
     if (i == 19)
       Event_FinishScreenTransition();
@@ -446,8 +446,8 @@ s32 Scene_Initialize(void) {
     slots = Ram_HeapSlots;
     block = slots->block32;
     Iwram_CopyWords(buffer, (void *)0x5000000, 0x1c0);
-    FieldCamera_MoveTo(0x1000000, -1, 0x900000, 0);
-    FieldCamera_SetSpeed(0x10000, 0x2000);
+    FieldCamera_MoveTo(256, CAMERA_KEEP, 144, 0);
+    FieldCamera_SetSpeed(1);
     Actor_SetAnimation(8, 14);
     object = ACTOR(8);
     scale = 0;
@@ -466,7 +466,7 @@ s32 Scene_Initialize(void) {
     REG_DISPCNT &= 0xfdff;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    MapGrid_SetShake(0x40000, 0x40000, 0x10000);
+    MapGrid_SetShake(4, 4, 1);
     i = 0;
   L5:
     gBgScroll[2].y += 8;
@@ -509,9 +509,9 @@ s32 Scene_Initialize(void) {
     if (j != 84)
       goto L6;
     FieldActor_SetSpritePriority(8, 3);
-    MapGrid_SetShake(-1, -1, 0xe666);
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
-    FieldCamera_MoveTo(0x1000000, -1, 0x13e0000, 0);
+    FieldCamera_MoveTo(256, CAMERA_KEEP, 318, 0);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, (REG_BG1CNT & ~3) | 3, 0x20000);
     Event_PlaySound(SE_POWER_UP);
     System_Wait(1);
@@ -525,10 +525,10 @@ s32 Scene_Initialize(void) {
       goto L7;
     FieldActor_SetSpritePriority(8, 1);
     Actor_SetAnimation(8, 1);
-    FieldCamera_MoveTo(0x1000000, -1, 0x800000, 1);
-    FieldCamera_SetSpeed(0x10000, 0x2000);
+    FieldCamera_MoveTo(256, CAMERA_KEEP, 128, 1);
+    FieldCamera_SetSpeed(1);
     FieldCamera_WaitForArrival();
-    Actor_SetSpeed(8, 0x4ccc, 0x2666);
+    Actor_SetSpeed(8, 0.3);
     Actor_WalkToAndWait(8, 248, 128);
     Actor_RunRepeatedMotion(8, 2);
     FieldEvent_Wait(5);
@@ -572,7 +572,7 @@ s32 Scene_Initialize(void) {
     Actor_ShowEmote(8, 0x100, 30);
     ACTOR(8)->actionFlags &= ~1;
     Actor_WalkTo(8, 0x100, 136);
-    Actor_SetSpeed(8, 0x9999, 0x4ccc);
+    Actor_SetSpeed(8, 0.6);
     FieldEvent_Wait(20);
     Actor_SetAnimation(8, 1);
     FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
@@ -600,7 +600,7 @@ s32 Scene_Initialize(void) {
     Field_StartColorTransition(8, 0x4084);
     FieldEvent_Wait(20);
     Actor_SetAnimation(9, 3);
-    Actor_SetSpeed(9, 0x1999, 0xccc);
+    Actor_SetSpeed(9, 0.1);
     j = 0;
   L8:
     if (j & 1) {
@@ -632,7 +632,7 @@ s32 Scene_Initialize(void) {
     BattleEffect_SetObjectUpdateMode((s32)Actor_Get(9), 2);
     System_Wait(30);
     Event_PlaySound(SE_POWER_UP);
-    MapGrid_SetShake(0x100000, 0x100000, 0x10000);
+    MapGrid_SetShake(16, 16, 1);
     i = 0;
   L10:
     PaletteFade_ApplyTarget(0x10005, 1);
@@ -649,7 +649,7 @@ s32 Scene_Initialize(void) {
     Field_StartPaletteTransition(1);
     Field_StartColorTransition(8, 0x1110);
     FieldEvent_Wait(20);
-    Actor_SetSpeed(8, 0x80000, 0x40000);
+    Actor_SetSpeed(8, 8);
     MtAlephSummit_ScatterDustRing(128, 8);
     ACTOR(8)->actionFlags &= ~1;
     Actor_WalkTo(8, 0x118, 160);
@@ -692,9 +692,9 @@ s32 Scene_Initialize(void) {
     MtAlephSummit_ScatterDustRing(0x100, 16);
     Actor_SetAnimation(8, 17);
     Event_PlaySound(SE_CRASH);
-    MapGrid_SetShake(0x100000, 0x100000, 0x10000);
+    MapGrid_SetShake(16, 16, 1);
     FieldEvent_Wait(10);
-    MapGrid_SetShake(-1, -1, 0xe666);
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     BattleEffect_SetObjectUpdateMode((s32)Actor_Get(9), 0);
     BattleEffect_WaitForArcGroups();
     BattleEffect_EndArcEffect();
@@ -715,7 +715,7 @@ s32 Scene_Initialize(void) {
     Event_PlaySound(SE_TREMOR);
     i = 0;
   L14:
-    MapGrid_SetShake((i << 16) + 0x10000, (i << 16) + 0x10000, 0x10000);
+    MapGrid_SetShakeFixed((i << 16) + 0x10000, (i << 16) + 0x10000, 0x10000);
     FieldEvent_Wait(8);
     i++;
     if (i != 2)
@@ -729,7 +729,7 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(9, 8);
     FieldEvent_ShowMessageThenWait(9, 0, 5);
     for (i = 0, j = 0x20000; i != 4; i++, j += 0x10000) {
-      MapGrid_SetShake(j, j, 0x10000);
+      MapGrid_SetShakeFixed(j, j, 0x10000);
       FieldEvent_Wait(8);
     }
     Actor_RunRepeatedMotion(8, 2);
@@ -743,7 +743,7 @@ s32 Scene_Initialize(void) {
     FieldEvent_ShowMessageThenWait(9, 0, 5);
     FieldEvent_Wait(10);
     slots = (struct HeapSlots *)Ram_HeapSlots->mapWork;
-    MapGrid_SetShake(0x100000, 0x100000, 0x10000);
+    MapGrid_SetShake(16, 16, 1);
     j = 0;
     scale = -0x1e000;
   L16:

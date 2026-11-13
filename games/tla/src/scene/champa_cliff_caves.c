@@ -237,7 +237,7 @@ void Func_02000208(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(warp->scene, warp->x, warp->z);
   Actor_GetById(8)->motionFlags = 0;
-  Actor_SetPosition(8, 184 << 16, 204 << 17);
+  Actor_SetPosition(8, 184, 408);
   Actor_SetSpeedParameters_(8, 0x1cccc, 0xe666);
   Actor_WalkByAndWaitById(8, 0, 16);
   Actor_FaceDirectionById(8, FACING_WEST);
@@ -351,11 +351,11 @@ s32 Scene_Initialize(void) {
     }
     if (GameFlag_Get(0x977) && !GameFlag_Get(0x978)) {
       FieldActor_ShowItemIconById(10, 326);
-      Actor_SetPosition(10, 0x2980000, 0xe80000);
+      Actor_SetPosition(10, 664, 232);
       Actor_GetById(10)->motionFlags = 4;
     }
     if (GameFlag_Get(0x977))
-      Actor_SetPosition(8, 0x2980000, 0xc80000);
+      Actor_SetPosition(8, 664, 200);
   } else if (party->scene == (s32)&SceneId_Ov685Room3) {
     if (GameFlag_Get(0x97e)) {
       Actor_SetModeById(8, 11);
@@ -878,7 +878,7 @@ void Func_0200115c(void) {
   Actor_SetModeById(8, 5);
   Event_Wait(30);
   Actor_SetModeById(8, 6);
-  Actor_SetPosition(12, 724 << 16, 252 << 16);
+  Actor_SetPosition(12, 724, 252);
   WORD_AT(Actor_GetById(12), 24) = 0x13333;
   WORD_AT(Actor_GetById(12), 28) = 0x13333;
   Actor_SetSpriteFlags(Actor_GetById(12), 0);
@@ -910,12 +910,12 @@ void Func_0200115c(void) {
     Actor_Jump(12, 10, 0);
     Sound_Play(SE_ENEMY_CRY);
     Actor_SetSpritePriority(12, 1);
-    Actor_SetSpeed(12, 0x30000, 0x18000);
+    Actor_SetSpeed(12, 3);
     Actor_WalkToById(12, 644, 248);
     Event_Wait(21);
     Actor_SetPosition(12, 0, 0);
     Event_Wait(50);
-    MapGrid_SetShake(0x20000, 0x20000, 0x10000);
+    MapGrid_SetShake(2, 2, 1);
     Event_Wait(70);
     Sound_Play(SE_BOSS_ROAR);
     Event_Wait(25);
@@ -939,7 +939,7 @@ void Func_0200115c(void) {
     position.z = 0xee0000;
     Func_02002f58(&position);
     Sound_Play(SE_BEAST_CRY);
-    Actor_SetPosition(13, 664 << 16, 248 << 16);
+    Actor_SetPosition(13, 664, 248);
     WORD_AT(object, 72) = 0x10000;
     object->motionFlags = 2;
     object->terrainHeight = 0;
@@ -949,7 +949,7 @@ void Func_0200115c(void) {
     WORD_AT(object, 28) = 0x4000;
     Actor_Jump(13, 11, 0);
     Sound_Play(SE_BEAST_CRY);
-    Actor_SetSpeed(13, 0x33333, 0x19999);
+    Actor_SetSpeed(13, 3.2);
     Actor_WalkToAndWait(13, 584, 248);
     Party_SetFields1f2And1f4((s32)&SceneId_Ov685Room4, 98);
     Event_SetAfterBattleDestination((s32)&SceneId_Ov685Room4, 99);
@@ -983,9 +983,9 @@ void Func_02001774(void) {
   Event_SetMessageId((s32)MsgHaveYouLearned);
   Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
                                          568 << 16, 248 << 16);
-  Actor_SetPosition(8, 584 << 16, 224 << 16);
-  Actor_SetPosition(13, 600 << 16, 240 << 16);
-  Actor_SetPosition(11, 584 << 16, 264 << 16);
+  Actor_SetPosition(8, 584, 224);
+  Actor_SetPosition(13, 600, 240);
+  Actor_SetPosition(11, 584, 264);
   Actor_ArmCallback_(8, 0x5000, 0);
   Actor_ArmCallback_(11, 0xb000, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 41);
@@ -1787,7 +1787,7 @@ void Func_02002f58(const s32 *position) {
 
     Task_Add(Func_02002de4, priority);
   }
-  MapGrid_SetShake(0x40000, 0x40000, 0x10000);
+  MapGrid_SetShake(4, 4, 1);
   state = 0;
   do {
     switch (state) {

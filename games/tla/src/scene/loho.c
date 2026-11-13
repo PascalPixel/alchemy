@@ -201,7 +201,7 @@ placed:
   if (v_r2 == 0)
     goto approach;
 inPlace:
-  FieldCamera_MoveTo(0x1e80000, -1, 0x1740000, 1);
+  FieldCamera_MoveTo(488, CAMERA_KEEP, 372, 1);
   Event_SetFlag(0xa5f);
   Actor_MoveToAndWait(4, 0x1e7, 0x179);
   Actor_FaceDirectionAndWait(4, FACING_NORTH);
@@ -221,15 +221,15 @@ inPlace:
   Event_Wait(30);
   Event_PlaySound(SE_CLATTER);
   FieldActor_ShowItemIconById(21, 0x1cc);
-  Actor_SetPosition(21, 0x1e80000, 0x14a0000);
+  Actor_SetPosition(21, 488, 330);
   Actor_SetDestinationOffset(20, 0, 8);
-  Actor_SetSpeed(21, 0x30000, 0x18000);
-  MapGrid_SetShake(0x20000, 0x20000, 0x10000);
+  Actor_SetSpeed(21, 3);
+  MapGrid_SetShake(2, 2, 1);
   Actor_SetDestination(21, 0x1e8, 0x12c);
-  FieldCamera_MoveTo(0x1e80000, -1, 0x1340000, 1);
+  FieldCamera_MoveTo(488, CAMERA_KEEP, 308, 1);
   Actor_WaitForMoveById(21);
   Actor_SetPosition(21, 0, 0);
-  MapGrid_SetShake(0x70000, 0x70000, 0x10000);
+  MapGrid_SetShake(7, 7, 1);
   table = (struct LohoSpark *)Heap_AllocEwram(0x600);
   p = (struct LohoSpark *)Heap_Alloc(0x1000);
   t38 = Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion);
@@ -300,10 +300,10 @@ nextSpark:
     goto frame;
   VramCache_FreeEntry(entry);
   Heap_Release(table);
-  FieldCamera_MoveTo(0x1e80000, -1, 0x1860000, 1);
+  FieldCamera_MoveTo(488, CAMERA_KEEP, 390, 1);
   Actor_SetPositionAndFacing(14, 0xf80000, 0x1e00000, FACING_EAST);
   Loho_DrawBrokenWall();
-  MapGrid_SetShake(0, 0, 0x10000);
+  MapGrid_SetShake(0, 0, 1);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Event_Wait(180);
   ScreenFade_FromWhite(120);
@@ -342,7 +342,7 @@ nextSpark:
   Actor_FaceDirection(16, FACING_NORTH, 0);
   Actor_FaceDirection(17, FACING_NORTH, 0);
   Actor_FaceDirection(18, FACING_NORTH_NORTHWEST, 0);
-  FieldCamera_MoveTo(0x1e80000, -1, 0x1460000, 1);
+  FieldCamera_MoveTo(488, CAMERA_KEEP, 326, 1);
   Event_Wait(60);
   FieldActor_ShowEmote(16, 0x100, 0);
   FieldActor_ShowEmote(17, 0x100, 50);
@@ -352,11 +352,11 @@ nextSpark:
   Event_ShowMessage(16, 0);
   Actor_FaceActor(18, 4, 0);
   FieldActor_ShowEmote(18, 0x109, 35);
-  FieldCamera_MoveTo(0x1e80000, -1, 0x16e0000, 1);
+  FieldCamera_MoveTo(488, CAMERA_KEEP, 366, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirection(18, FACING_SOUTH_SOUTHWEST, 0);
   Event_ShowMessage(18, 0);
-  Actor_SetSpeed(17, 0xcccc, 0x6666);
+  Actor_SetSpeed(17, 0.8);
   Actor_WalkBy(17, 0, 16);
   Actor_WaitForMoveById(17);
   Actor_FaceDirectionAndWait(17, FACING_SOUTHEAST);
@@ -385,16 +385,16 @@ nextSpark:
   Event_ShowMessage(17, 0);
   Actor_SetAnimation(16, 3);
   Event_Wait(30);
-  FieldCamera_SetSpeed(0x8000, 0x1000);
-  FieldCamera_MoveTo(0x21e0000, -1, 0x1000000, 1);
+  FieldCamera_SetSpeed(0.5);
+  FieldCamera_MoveTo(542, CAMERA_KEEP, 256, 1);
   zero = 0;
   t147 = Actor_GetById(16);
   t147->motionFlags = zero;
-  Actor_SetSpeed(16, 0x18000, 0xc000);
+  Actor_SetSpeed(16, 1.5);
   Actor_SetScript(16, (s32)gLoho_FirstMinerGoesToWall);
-  Actor_SetSpeed(18, 0x8000, 0x4000);
+  Actor_SetSpeed(18, 0.5);
   Actor_SetScript(18, (s32)gLoho_SecondMinerStepsUp);
-  Actor_SetSpeed(17, 0x6666, 0x3333);
+  Actor_SetSpeed(17, 0.4);
   Actor_SetScript(17, (s32)gLoho_ThirdMinerStepsUp);
   Actor_RefreshSelectorById(16);
   Actor_FaceDirectionAndWait(16, FACING_SOUTHWEST);
@@ -424,10 +424,10 @@ askCannon:
   Actor_SetAnimation(17, 3);
   Event_Wait(30);
   Actor_FaceActor(17, 4, 0);
-  Actor_SetSpeed(16, 0x10000, 0x8000);
+  Actor_SetSpeed(16, 1);
   Actor_SetScript(16, (s32)gLoho_FirstMinerWalksBack);
-  FieldCamera_SetSpeed(0x1cccc, 0x3999);
-  FieldCamera_MoveTo(0x21e0000, -1, 0x15e0000, 1);
+  FieldCamera_SetSpeed(1.8);
+  FieldCamera_MoveTo(542, CAMERA_KEEP, 350, 1);
   FieldCamera_WaitForArrival();
   Event_OpenMessage(17, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0))
@@ -473,18 +473,18 @@ crewLeaves:
   Actor_WaitForMoveById(18);
   Actor_RefreshSelectorById(16);
   Actor_FaceDirectionAndWait(16, FACING_EAST);
-  Actor_SetSpeed(16, 0x4ccc, 0x2666);
-  Actor_SetSpeed(17, 0x4ccc, 0x2666);
-  Actor_SetSpeed(18, 0x4ccc, 0x2666);
+  Actor_SetSpeed(16, 0.3);
+  Actor_SetSpeed(17, 0.3);
+  Actor_SetSpeed(18, 0.3);
   Event_Wait(40);
-  Actor_SetSpeed(20, 0x1999, 0xccc);
+  Actor_SetSpeed(20, 0.1);
   t226 = Actor_GetById(20);
   t226->motionFlags = 0;
   Actor_SetScript(20, (s32)gLoho_ForemanComes);
   Actor_RefreshSelectorById(20);
-  Actor_SetSpeed(20, 0x4ccc, 0x2666);
-  FieldCamera_SetSpeed(0x4ccc, 0x999);
-  FieldCamera_MoveTo(0x1cc0000, -1, 0x15e0000, 1);
+  Actor_SetSpeed(20, 0.3);
+  FieldCamera_SetSpeed(0.3);
+  FieldCamera_MoveTo(460, CAMERA_KEEP, 350, 1);
   Event_Wait(30);
   t233 = Actor_GetById(16);
   t233->actionFlags &= 254;
@@ -545,7 +545,7 @@ void Loho_LiftRock(void) {
   Event_SetFlag(FLAG_SCENE_TEMP_01);
   Actor_GetById(22)->collisionFlags &= 0xfe;
   if (Event_GetFlag(0xff7) == 0)
-    Actor_SetPosition(66, PIXELS(520), PIXELS(136));
+    Actor_SetPosition(66, 520, 136);
 }
 
 const struct Trigger *Scene_GetEvents(void) {
@@ -645,7 +645,7 @@ loop:
   Event_PlaySound(SE_DOOR_OPEN);
   Loho_AnimateCells(gLoho_HouseDoor.data, gLoho_HouseDoor.a, gLoho_HouseDoor.b);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
   Event_PlaySound(SE_MAP_EXIT);
   Event_Wait(6);
@@ -663,7 +663,7 @@ void Loho_EnterDoor(void) {
   do {
   } while (0);
   Actor_SetAnimation(party->currentOwner, 2);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Event_PlaySound(SE_MAP_EXIT);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
   Import_EventSetExitRequest(work->returnEntrance);
@@ -673,9 +673,9 @@ void Loho_ClimbDownLadder(void) {
   s32 value = ((struct EventWork154 *)Ram_HeapSlots->eventWork)->returnEntrance;
 
   if (value == 2)
-    Actor_SetPosition(8, PIXELS(144), PIXELS(224));
+    Actor_SetPosition(8, 144, 224);
   else
-    Actor_SetPosition(8, PIXELS(224), PIXELS(224));
+    Actor_SetPosition(8, 224, 224);
   Actor_FaceDirection(4, FACING_NORTH, 0);
   Event_Wait(10);
   Actor_GetById(4)->actionFlags &= 0xfe;

@@ -166,7 +166,7 @@ void Func_02000418(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
   leader->y = 0x820000;
@@ -200,8 +200,8 @@ loop:
   Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
-  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(5, 5, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
@@ -478,8 +478,8 @@ void Func_02000c24(s32 unused, s32 id) {
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  MapGrid_SetShake(0x20000, 0x20000, 0x10000);
-  FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(770), 1);
+  MapGrid_SetShake(2, 2, 1);
+  FieldCamera_MoveTo(216, CAMERA_KEEP, 770, 1);
   FieldEvent_Wait(15);
   Event_PlaySound(SE_FLAME_FLARE);
   toColumn = 12;
@@ -503,7 +503,7 @@ void Func_02000c24(s32 unused, s32 id) {
   Call6((void (*)())Func_02000b78, 3, 10, 200, rise, 0x318, kind);
   MapGrid_CopyCells(16, 27, 3, 6, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 6, toColumn, highRow);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Call6((void (*)())Func_02000b78, 3, 10, 200, rise, 0x328, kind);
   MapGrid_CopyCells(16, 27, 3, 13, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 13, toColumn, highRow);
@@ -1127,7 +1127,7 @@ void Func_020020fc(void) {
       Event_PlaySound(SE_RUSH);
       AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
       FieldEvent_Wait(10);
-      FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(392), 1);
+      FieldCamera_MoveTo(232, CAMERA_KEEP, 392, 1);
       FieldCamera_WaitForArrival();
       Task_AddFrame(Func_02001f7c, TASK_PASS_VBLANK);
       FieldEvent_Wait(40);
@@ -1335,7 +1335,7 @@ s32 Scene_Initialize(s32 a0) {
     if (GameFlag_Get(0x99d))
       Actor_SetPosition(30, 0, 0);
     if (GameFlag_Get(0x9c6)) {
-      Actor_SetPosition(8, 0x480000, 0x580000);
+      Actor_SetPosition(8, 72, 88);
       MapGrid_CopyCellAttributes(4, 68, 1, 1, 2, 69);
     }
   } else if (scene == (s32)&SceneId_Ov686Room2) {
@@ -1350,7 +1350,7 @@ s32 Scene_Initialize(s32 a0) {
 
       object = Actor_GetById(8);
       object->motionFlags = 3;
-      Actor_SetPosition(8, 0xc80000, 0x580000);
+      Actor_SetPosition(8, 200, 88);
       width = 10;
       MapGrid_CopyCells(35, 6, 7, 16, width, 7);
       MapGrid_CopyCells(35, 70, 7, 16, width, 71);
@@ -1359,7 +1359,7 @@ s32 Scene_Initialize(s32 a0) {
     }
   } else if (scene == (s32)&SceneId_Ov686Room3) {
     if (GameFlag_Get(0x9c7)) {
-      Actor_SetPosition(8, 0x2080000, 0x680000);
+      Actor_SetPosition(8, 520, 104);
       MapGrid_CopyCellAttributes(32, 69, 1, 1, 33, 69);
     }
     if (GameFlag_Get(0x9dd)) {
@@ -1389,24 +1389,24 @@ s32 Scene_Initialize(s32 a0) {
     if (GameFlag_Get(0x9a7))
       Actor_SetPosition(17, 0, 0);
     if (GameFlag_Get(0x9c8))
-      Actor_SetPosition(8, 0x280000, 0x3080000);
+      Actor_SetPosition(8, 40, 776);
     if (GameFlag_Get(0x9c9))
-      Actor_SetPosition(18, 0x2780000, 0x1c80000);
+      Actor_SetPosition(18, 632, 456);
     if (GameFlag_Get(0x9ca)) {
-      Actor_SetPosition(19, 0x2680000, 0x880000);
+      Actor_SetPosition(19, 616, 136);
       MapGrid_CopyCells(37, 70, 1, 1, 37, 71);
     }
     if (GameFlag_Get(0x9d9)) {
       object = Actor_GetById(9);
       object->motionFlags = 3;
-      Actor_SetPosition(9, 0xc80000, 0x2d80000);
+      Actor_SetPosition(9, 200, 728);
     }
     if (GameFlag_Get(0x9da)) {
       object = Actor_GetById(10);
-      Actor_SetPosition(10, 0xe80000, 0x2d80000);
+      Actor_SetPosition(10, 232, 728);
       object->motionFlags = 3;
     } else if (GameFlag_Get(0x9db) && !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-      Actor_SetPosition(10, 0x1480000, 0x2f80000);
+      Actor_SetPosition(10, 328, 760);
     }
     if (GameFlag_Get(0x9da) && GameFlag_Get(0x9d9)) {
       s32 width;
@@ -1432,13 +1432,13 @@ s32 Scene_Initialize(s32 a0) {
 
         Event_Start();
         FieldEvent_ResolvePendingActions(0);
-        FieldCamera_MoveTo(-1, -1, -1, 0);
+        FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
         Actor_SetPosition(late->currentOwner, 0, 0);
         Actor_SetPosition(10, 0, 0);
         Event_StartScreenTransition();
         FieldEvent_Wait(15);
         object = Actor_GetById(10);
-        Actor_SetPosition(10, 0x1480000, 0x2f80000);
+        Actor_SetPosition(10, 328, 760);
         object->y += 0x800000;
         frames = 60;
         object->motionFlags = 3;
@@ -1459,7 +1459,7 @@ s32 Scene_Initialize(s32 a0) {
     if (GameFlag_Get(0x9db))
       Actor_SetPosition(9, 0, 0);
     if (GameFlag_Get(0x9cb)) {
-      Actor_SetPosition(8, 0x1180000, 0x1380000);
+      Actor_SetPosition(8, 280, 312);
       MapGrid_CopyCellAttributes(16, 84, 1, 1, 18, 84);
     }
     if (work->entrance == 1 || work->entrance == 12) {
@@ -1608,7 +1608,7 @@ s32 Scene_Initialize(s32 a0) {
     if (GameFlag_Get(0x99d))
       Actor_SetPosition(30, 0, 0);
     if (GameFlag_Get(0x9c6)) {
-      Actor_SetPosition(8, 0x480000, 0x580000);
+      Actor_SetPosition(8, 72, 88);
       MapGrid_CopyCellAttributes(4, 68, 1, 1, 2, 69);
     }
   } else if (scene == (s32)&SceneId_Ov686Room2) {
@@ -1623,7 +1623,7 @@ s32 Scene_Initialize(s32 a0) {
 
       object = Actor_GetById(8);
       object->motionFlags = 3;
-      Actor_SetPosition(8, 0xc80000, 0x580000);
+      Actor_SetPosition(8, 200, 88);
       width = 10;
       MapGrid_CopyCells(35, 6, 7, 16, width, 7);
       MapGrid_CopyCells(35, 70, 7, 16, width, 71);
@@ -1632,7 +1632,7 @@ s32 Scene_Initialize(s32 a0) {
     }
   } else if (scene == (s32)&SceneId_Ov686Room3) {
     if (GameFlag_Get(0x9c7)) {
-      Actor_SetPosition(8, 0x2080000, 0x680000);
+      Actor_SetPosition(8, 520, 104);
       MapGrid_CopyCellAttributes(32, 69, 1, 1, 33, 69);
     }
     if (GameFlag_Get(0x9dd)) {
@@ -1662,24 +1662,24 @@ s32 Scene_Initialize(s32 a0) {
     if (GameFlag_Get(0x9a7))
       Actor_SetPosition(17, 0, 0);
     if (GameFlag_Get(0x9c8))
-      Actor_SetPosition(8, 0x280000, 0x3080000);
+      Actor_SetPosition(8, 40, 776);
     if (GameFlag_Get(0x9c9))
-      Actor_SetPosition(18, 0x2780000, 0x1c80000);
+      Actor_SetPosition(18, 632, 456);
     if (GameFlag_Get(0x9ca)) {
-      Actor_SetPosition(19, 0x2680000, 0x880000);
+      Actor_SetPosition(19, 616, 136);
       MapGrid_CopyCells(37, 70, 1, 1, 37, 71);
     }
     if (GameFlag_Get(0x9d9)) {
       object = Actor_GetById(9);
       object->motionFlags = 3;
-      Actor_SetPosition(9, 0xc80000, 0x2d80000);
+      Actor_SetPosition(9, 200, 728);
     }
     if (GameFlag_Get(0x9da)) {
       object = Actor_GetById(10);
-      Actor_SetPosition(10, 0xe80000, 0x2d80000);
+      Actor_SetPosition(10, 232, 728);
       object->motionFlags = 3;
     } else if (GameFlag_Get(0x9db) && !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-      Actor_SetPosition(10, 0x1480000, 0x2f80000);
+      Actor_SetPosition(10, 328, 760);
     }
     if (GameFlag_Get(0x9da) && GameFlag_Get(0x9d9)) {
       s32 width;
@@ -1698,13 +1698,13 @@ s32 Scene_Initialize(s32 a0) {
 
         Event_Start();
         FieldEvent_ResolvePendingActions(0);
-        FieldCamera_MoveTo(-1, -1, -1, 0);
+        FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
         Actor_SetPosition(late->currentOwner, 0, 0);
         Actor_SetPosition(10, 0, 0);
         Event_StartScreenTransition();
         FieldEvent_Wait(15);
         object = Actor_GetById(10);
-        Actor_SetPosition(10, 0x1480000, 0x2f80000);
+        Actor_SetPosition(10, 328, 760);
         object->y += 0x800000;
         frames = 60;
         object->motionFlags = 3;
@@ -1725,7 +1725,7 @@ s32 Scene_Initialize(s32 a0) {
     if (GameFlag_Get(0x9db))
       Actor_SetPosition(9, 0, 0);
     if (GameFlag_Get(0x9cb)) {
-      Actor_SetPosition(8, 0x1180000, 0x1380000);
+      Actor_SetPosition(8, 280, 312);
       MapGrid_CopyCellAttributes(16, 84, 1, 1, 18, 84);
     }
     if (work->entrance == 1 || work->entrance == 12) {

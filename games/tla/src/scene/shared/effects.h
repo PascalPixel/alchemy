@@ -218,14 +218,14 @@
       FieldEvent_ResolvePendingActions(0);                                     \
       Camera_MoveWithinMapBounds_(-1, -1, -1, 0);                              \
       leader->motionFlags = flag;                                              \
-      Actor_SetPosition(*owner, ((s16 *)&leader->x)[1] << 16,                  \
-                        (((s16 *)&leader->z)[1] << 16) - 0x100000);            \
+      Actor_SetPositionFixed(*owner, ((s16 *)&leader->x)[1] << 16,             \
+                             (((s16 *)&leader->z)[1] << 16) - 0x100000);       \
       FieldActor_SetSpriteColor(Actor_Get(*owner), 9);                         \
       Actor_SetSpriteFlags(Actor_Get(*owner), 0);                              \
       Event_StartScreenTransition();                                           \
       Event_PlaySound(SE_SPARKLING_PASSAGE);                                   \
       leader->update = (void (*)(void))call1;                                  \
-      Actor_SetSpeed(*owner, 0x6666, 0x3333);                                  \
+      Actor_SetSpeed(*owner, 0.4);                                             \
       Actor_WalkByAndWait(*owner, 0, 8);                                       \
       FieldActor_SetSpriteColor(Actor_Get(*owner), 0);                         \
       Actor_SetSpriteFlags(Actor_Get(*owner), 1);                              \

@@ -144,12 +144,12 @@ void Func_02000184(void) {
     gData_02002058->motionFlags = 4;
   }
   Actor_SetModeById(8, 1);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 358, 108);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
   Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
   wait(1);
-  Actor_SetSpeed(9, 0xcccc, 0x6666);
+  Actor_SetSpeed(9, 0.8);
   Actor_WalkToAndWait(9, 364, 124);
   Actor_FaceDirection(9, FACING_NORTH_NORTHEAST, 0);
   Event_SetMessageId(MsgOhYoungWitch);
@@ -199,7 +199,7 @@ void Func_02000184(void) {
   Event_ShowMessage(0x200e, 0);
   Actor_SetMovementTypeAndWaitById(14, gData_02001f78);
   Event_ShowMessageAndWait(0x200e, 0);
-  Actor_SetSpeed(14, 0x19999, 0xcccc);
+  Actor_SetSpeed(14, 1.6);
   Actor_WalkToAndWait(14, 392, 164);
   Actor_ShowEmoteById(14, 264, 0);
   Actor_Jump(14, 6, 20);
@@ -283,7 +283,7 @@ void Func_02000184(void) {
   Sound_Play(SE_SHIMMER);
   Actor_SetModeById(8, 3);
   Actor_SetSpriteColor(((s32)Actor_GetById(13)), 7);
-  Actor_SetPosition(13, 0x1a80000, 0x680000);
+  Actor_SetPosition(13, 424, 104);
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
   PaletteFade_StartInterpolation(40);
   wait(40);
@@ -624,7 +624,7 @@ void Func_020010d4(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldActor_SetPositionAndResetMotion(((s32)Actor_GetById(13)), PIXELS(392), 0,
                                        PIXELS(268));
   wait(1);
@@ -677,19 +677,19 @@ void Func_020010d4(void) {
   Actor_WatchAndSetScript(7, 13);
   Actor_WatchAndSetScript(11, 13);
   Event_Wait(10);
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveTo(PIXELS(392), -1, PIXELS(246), 1);
-  Actor_SetSpeed(13, 0xcccc, 0x6666);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(392, CAMERA_KEEP, 246, 1);
+  Actor_SetSpeed(13, 0.8);
   Actor_MoveToAndWait(13, 392, 246);
   Actor_SetModeById(9, 1);
   Actor_SetModeById(10, 1);
   statue->velocityY = PIXELS(3);
   statue->gravity = 0x8000;
-  Actor_SetSpeed(13, 0x19999, 0xcccc);
+  Actor_SetSpeed(13, 1.6);
   Actor_MoveToAndWait(13, 392, 234);
   Event_Wait(10);
-  FieldCamera_MoveTo(PIXELS(392), -1, PIXELS(168), 1);
-  Actor_SetSpeed(13, 0xcccc, 0x6666);
+  FieldCamera_MoveTo(392, CAMERA_KEEP, 168, 1);
+  Actor_SetSpeed(13, 0.8);
   Actor_MoveToAndWaitById(13, 392, 160);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Actor_Stop(5);
@@ -710,7 +710,7 @@ void Func_020010d4(void) {
   Actor_FaceDirectionById(5, turnA);
   Event_ShowMessageAndWait(0x1005, 0);
   Actor_ArmCallback(5, FACING_NORTHWEST, 0);
-  Actor_SetSpeed(6, 0xcccc, 0x6666);
+  Actor_SetSpeed(6, 0.8);
   Actor_WalkToAndWait(6, 400, 172);
   Actor_SetModeById(6, 9);
   Event_Wait(20);
@@ -740,7 +740,7 @@ void Func_020010d4(void) {
   Actor_FaceDirection(11, FACING_SOUTHEAST + FACING_STEP, 0);
   Camera_SetSpeedParameters(0x19999, 0x3333);
   FieldCamera_MoveWithinMapBounds(PIXELS(392), -1, PIXELS(200), 1);
-  Actor_SetSpeed(12, 0x13333, 0x9999);
+  Actor_SetSpeed(12, 1.2);
   Actor_WalkToAndWait(12, 404, 220);
   Actor_Jump(12, 4, 10);
   FieldMessage_ShowAtActor(12, 0);
@@ -771,14 +771,14 @@ void Func_020010d4(void) {
   Actor_SetModeById(12, 4);
   Event_ShowMessageAndWait(12, 0);
   Actor_ShowEmoteById(5, 261, 20);
-  Actor_SetSpeed(5, 0xcccc, 0x6666);
+  Actor_SetSpeed(5, 0.8);
   Actor_WalkToAndWait(5, 420, 228);
   Actor_FaceDirectionById(5, FACING_NORTHWEST);
   Event_Wait(10);
-  Actor_SetSpeed(5, 0x19999, 0xcccc);
+  Actor_SetSpeed(5, 1.6);
   Actor_WalkToAndWait(5, 412, 222);
-  Actor_SetSpeed(5, 0x10000, 0x8000);
-  Actor_SetSpeed(12, 0x10000, 0x8000);
+  Actor_SetSpeed(5, 1);
+  Actor_SetSpeed(12, 1);
   Actor_SetMovementTypeById(5, gData_02001f18);
   Event_Wait(10);
   Actor_SetMovementTypeById(12, gData_02001f18);
@@ -801,7 +801,7 @@ void Func_02001710(void) {
   struct HeapSlots *heap;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   System_Wait(1);
   Func_02001010();
   Map_CenterOnFollowedPoint();
@@ -843,7 +843,7 @@ void Func_02001710(void) {
   Actor_FaceDirection(5, FACING_NORTH, 0);
   Actor_FaceDirection(11, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(6, facing, 0);
-  Actor_SetSpeed(12, 0xcccc, 0x6666);
+  Actor_SetSpeed(12, 0.8);
   Actor_WalkToAndWait(12, 0x188, 168);
   Event_PlaySound(SE_HIDDEN_PASSAGE_OPEN);
   Func_02000f00();
@@ -855,7 +855,7 @@ void Func_02001710(void) {
     guard->motionFlags = zero;
   }
   Func_02001064();
-  Actor_SetSpeed(8, 0x6666, 0x3333);
+  Actor_SetSpeed(8, 0.4);
   Actor_MoveToAndWait(8, 0x1a8, 152);
   Actor_FaceDirectionAndWait(12, FACING_SOUTH_SOUTHWEST);
   FieldEvent_SetMessageId((s32)MsgIMightBe);
@@ -897,10 +897,10 @@ void Func_02001710(void) {
   Actor_SetAnimation(7, 3);
   Actor_SetAnimation(5, 3);
   Actor_SetAnimationAndWait(6, 3);
-  Actor_SetSpeed(11, 0xcccc, 0x6666);
-  Actor_SetSpeed(7, 0xcccc, 0x6666);
-  Actor_SetSpeed(5, 0x10000, 0x8000);
-  Actor_SetSpeed(6, 0x13333, 0x9999);
+  Actor_SetSpeed(11, 0.8);
+  Actor_SetSpeed(7, 0.8);
+  Actor_SetSpeed(5, 1);
+  Actor_SetSpeed(6, 1.2);
   {
     s32 path = (s32)gData_02001f4c;
 
@@ -941,7 +941,7 @@ void GabombaStatueChamber_InitializeRoom1(void) {
   if (GameFlag_Get(0x8fd)) {
     Func_02001010();
     Func_02001064();
-    Actor_SetPosition(8, PIXELS(424), PIXELS(152));
+    Actor_SetPosition(8, 424, 152);
     wait(1);
     Func_02000f00();
   } else {

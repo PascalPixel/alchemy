@@ -336,7 +336,7 @@ void Alhafra_FatherLetsPartyToCave(s32 actor) {
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 72, 344);
       Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
       Event_Wait(10);
-      Actor_SetSpeed(actor, 0x10000, 0x8000);
+      Actor_SetSpeed(actor, 1);
       Actor_WalkToAndWait(actor, 56, 328);
       Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
       Actor_ArmCallback(actor, FACING_SOUTHEAST, 0);
@@ -418,7 +418,7 @@ s32 Scene_Initialize(void) {
       Actor_SetModeById(31, 6);
     }
     if (GameFlag_Get(FLAG_LET_INTO_CAVE)) {
-      Actor_SetPosition(12, PIXELS(56), PIXELS(328));
+      Actor_SetPosition(12, 56, 328);
       Actor_ArmCallback(12, FACING_EAST, 0);
     }
   } else {
@@ -427,7 +427,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpritePriority(10, 3);
     Actor_GetById(24)->update = (void (*)(void))Alhafra_TakeLeadersLayer;
     if (GameFlag_Get(FLAG_ALHAFRA_MADRANS_ARRIVED))
-      Actor_SetPosition(14, PIXELS(536), PIXELS(760));
+      Actor_SetPosition(14, 536, 760);
     if (GameFlag_Get(FLAG_LOOKOUT_LEFT))
       Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
     FlagBlock_PlaceAllMarkingEdges((s32)&gAlhafra_Puddles);
@@ -493,20 +493,20 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAlhafra10);
-  Actor_SetSpeed(29, 0x10000, 0x8000);
-  Actor_SetSpeed(30, 0x10000, 0x8000);
-  Actor_SetSpeed(31, 0x10000, 0x8000);
-  Actor_SetSpeed(32, 0x10000, 0x8000);
-  Actor_SetSpeed(33, 0x10000, 0x8000);
-  Actor_SetSpeed(34, 0x10000, 0x8000);
-  Actor_SetSpeed(35, 0x10000, 0x8000);
-  Actor_SetSpeed(17, 0x8000, 0x4000);
-  Actor_SetSpeed(14, 0x8000, 0x4000);
+  Actor_SetSpeed(29, 1);
+  Actor_SetSpeed(30, 1);
+  Actor_SetSpeed(31, 1);
+  Actor_SetSpeed(32, 1);
+  Actor_SetSpeed(33, 1);
+  Actor_SetSpeed(34, 1);
+  Actor_SetSpeed(35, 1);
+  Actor_SetSpeed(17, 0.5);
+  Actor_SetSpeed(14, 0.5);
   if (a0 == 0x14) {
     Actor_WalkByAndWait(4, 0, -8);
   }
-  Actor_SetPosition(31, 0x1980000, 0x3680000);
-  Actor_SetPosition(32, 0x1880000, 0x3780000);
+  Actor_SetPosition(31, 408, 872);
+  Actor_SetPosition(32, 392, 888);
   Event_ShowMessageThenWait(0x1f, 0, 0xa);
   if (a0 == 0x14) {
     Actor_FaceDirection(4, FACING_SOUTH, 0);
@@ -514,7 +514,7 @@ void Alhafra_MadransArrive(s32 a0) {
     Actor_ArmCallback(4, 0, 0);
   }
   Event_Wait(20);
-  FieldCamera_MoveTo(0x1900000, -1, 0x3280000, 1);
+  FieldCamera_MoveTo(400, CAMERA_KEEP, 808, 1);
   FieldCamera_WaitForArrival();
   Actor_WalkBy(31, 0, -96);
   Actor_WalkByAndWait(32, 0, -96);
@@ -533,8 +533,8 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_FaceDirection(32, FACING_NORTHEAST, 0);
   Event_Wait(20);
   Actor_FaceDirection(31, FACING_EAST, 0);
-  Actor_SetPosition(33, 0x1880000, 0x3680000);
-  Actor_SetPosition(35, 0x1980000, 0x3680000);
+  Actor_SetPosition(33, 392, 872);
+  Actor_SetPosition(35, 408, 872);
   FieldEvent_ShowMessageThenWait(0x21, 0, 0xa);
   Actor_FaceDirection(31, FACING_SOUTH, 0);
   Actor_FaceDirection(32, FACING_SOUTH_SOUTHEAST, 0);
@@ -568,7 +568,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_FaceDirection(33, FACING_SOUTH, 0);
   Actor_SetSpritePriority(35, 3);
   Event_Wait(20);
-  Actor_SetPosition(34, 0x1900000, 0x3680000);
+  Actor_SetPosition(34, 400, 872);
   FieldEvent_ShowMessageThenWait(0x22, 0, 0xa);
   Actor_FaceDirection(31, FACING_SOUTH, 0);
   Actor_FaceDirection(32, FACING_SOUTH_SOUTHEAST, 0);
@@ -590,8 +590,8 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(1);
   Actor_SetModeById(34, 5);
   Event_Wait(30);
-  Actor_SetPosition(30, 0x1880000, 0x3680000);
-  Actor_SetPosition(29, 0x1980000, 0x3680000);
+  Actor_SetPosition(30, 392, 872);
+  Actor_SetPosition(29, 408, 872);
   Actor_WalkBy(30, 0, -32);
   Actor_WalkByAndWait(29, 0, -32);
   Actor_SetModeById(30, 1);
@@ -687,14 +687,14 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_FaceDirection(29, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(29, 4);
-  FieldCamera_SetSpeed(0x40000, 0x8000);
-  FieldCamera_MoveTo(0x2880000, -1, 0x2180000, 1);
+  FieldCamera_SetSpeed(4);
+  FieldCamera_MoveTo(648, CAMERA_KEEP, 536, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
-  FieldCamera_MoveTo(0x1b80000, -1, 0x3280000, 1);
+  FieldCamera_MoveTo(440, CAMERA_KEEP, 808, 1);
   FieldCamera_WaitForArrival();
-  FieldCamera_SetSpeed(0x10000, 0x2000);
+  FieldCamera_SetSpeed(1);
   Event_Wait(20);
   Actor_WalkByAndWait(33, 32, 36);
   Actor_WalkByAndWait(33, 32, 0);
@@ -741,7 +741,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Motion_SetModeAndWaitAnimation(30, 3);
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(0x1e, 0, 0xa);
-  Actor_SetPosition(17, 0x1980000, 0x2b80000);
+  Actor_SetPosition(17, 408, 696);
   Actor_WalkToAndWait(17, 408, 760);
   Actor_WalkToAndWait(17, 448, 792);
   Actor_WalkToAndWait(17, 448, 808);
@@ -758,14 +758,14 @@ void Alhafra_MadransArrive(s32 a0) {
   FieldEvent_ShowMessageThenWait(0x11, 0, 0xa);
   Motion_SetModeAndWaitAnimation(30, 3);
   Event_Wait(20);
-  Actor_SetSpeed(29, 0x8000, 0x4000);
-  Actor_SetSpeed(30, 0x8000, 0x4000);
-  Actor_SetSpeed(31, 0x8000, 0x4000);
-  Actor_SetSpeed(32, 0x8000, 0x4000);
-  Actor_SetSpeed(33, 0x8000, 0x4000);
-  Actor_SetSpeed(34, 0x8000, 0x4000);
-  Actor_SetSpeed(35, 0x8000, 0x4000);
-  Actor_SetSpeed(17, 0x8000, 0x4000);
+  Actor_SetSpeed(29, 0.5);
+  Actor_SetSpeed(30, 0.5);
+  Actor_SetSpeed(31, 0.5);
+  Actor_SetSpeed(32, 0.5);
+  Actor_SetSpeed(33, 0.5);
+  Actor_SetSpeed(34, 0.5);
+  Actor_SetSpeed(35, 0.5);
+  Actor_SetSpeed(17, 0.5);
   EventCamera_FollowActor(30, 1);
   FieldCamera_WaitForArrival();
   if (a0 == 0x15) {
@@ -836,7 +836,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(300);
   Actor_RefreshSelectorById(34);
   Event_Wait(50);
-  FieldCamera_MoveTo(0xf80000, -1, 0x2980000, 1);
+  FieldCamera_MoveTo(248, CAMERA_KEEP, 664, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_ShowMessageThenWait(0x11, 0, 0xa);
   Actor_ArmCallback(17, 0x3000, 0);
@@ -869,13 +869,13 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_FaceDirection(30, FACING_NORTH, 0);
   Actor_FaceDirection(33, FACING_NORTH, 0);
   Actor_FaceDirection(34, FACING_NORTH, 0);
-  Actor_SetSpeed(29, 0x1e666, 0xf333);
-  Actor_SetSpeed(30, 0x1e666, 0xf333);
-  Actor_SetSpeed(31, 0x1e666, 0xf333);
-  Actor_SetSpeed(32, 0x1e666, 0xf333);
-  Actor_SetSpeed(33, 0x1e666, 0xf333);
-  Actor_SetSpeed(34, 0x1e666, 0xf333);
-  Actor_SetSpeed(35, 0x1e666, 0xf333);
+  Actor_SetSpeed(29, 1.9);
+  Actor_SetSpeed(30, 1.9);
+  Actor_SetSpeed(31, 1.9);
+  Actor_SetSpeed(32, 1.9);
+  Actor_SetSpeed(33, 1.9);
+  Actor_SetSpeed(34, 1.9);
+  Actor_SetSpeed(35, 1.9);
   Actor_WalkBy(29, 0, -150);
   Actor_WalkBy(30, 0, -150);
   Actor_WalkBy(31, 0, -150);
@@ -962,7 +962,7 @@ void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
   Actor_WalkByAndWait(ACTOR_LOOKOUT, 0, -110);
   if (a0 == 0) {
     Event_Wait(50);
-    Actor_SetPosition(ACTOR_LOOKOUT, 0x1080000, 0x2880000);
+    Actor_SetPosition(ACTOR_LOOKOUT, 264, 648);
     Actor_WalkByAndWaitById(ACTOR_LOOKOUT, 0, 32);
     Actor_WalkByAndWaitById(ACTOR_LOOKOUT, 150, 0);
   }

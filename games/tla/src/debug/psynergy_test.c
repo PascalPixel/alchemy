@@ -447,9 +447,9 @@ s32 Func_0200079c(void) {
   if (Event_GetFlag(0x300))
     MapGrid_CopyCells(36, 28, 1, 1, 10, 10);
   if (Event_GetFlag(0x301))
-    Actor_SetPosition(18, 184 << 16, 184 << 16);
+    Actor_SetPositionFixed(18, 184 << 16, 184 << 16);
   if (Event_GetFlag(0x302) && !Event_GetFlag(0x310))
-    Actor_SetPosition(19, 200 << 16, 200 << 16);
+    Actor_SetPositionFixed(19, 200 << 16, 200 << 16);
   Actor_SetItemIcon(Actor_Get(19), 50);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
@@ -488,7 +488,7 @@ void Func_02000950(s32 mode, s32 id, s32 x, s32 z) {
 
   object = Actor_Get(id);
   if (mode == 1) {
-    Actor_SetPosition(id, x << 16, z << 16);
+    Actor_SetPositionFixed(id, x << 16, z << 16);
     object->scaleX = 0;
     object->scaleY = 0;
   }
@@ -511,7 +511,7 @@ void Func_020009c0(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
   object0 = Actor_Get(arg1);
   if (arg0 != 2)
     goto L_02008a06;
-  Actor_SetPosition(arg1, (arg2 << 16), (arg3 << 16));
+  Actor_SetPositionFixed(arg1, (arg2 << 16), (arg3 << 16));
   object0->y = 0x200000;
   object0->motionFlags = 3;
   object0->gravity = 0x170a;

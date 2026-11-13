@@ -446,7 +446,8 @@ void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity) {
   object->velocityY = velocity;
   *flags &= 0x7e;
   Actor_SetSpriteFlags(object, 0);
-  FieldActor_SetMoveTarget(object, object->x + dx, object->y, object->z + dz);
+  FieldActor_SetMoveTargetFixed(object, object->x + dx, object->y,
+                                object->z + dz);
   FieldActor_WaitForMove(object);
   *flags = saved;
   Actor_SelectAnimation(object, 6);
@@ -716,8 +717,8 @@ void Func_02000c8c(void) {
 void Func_02000cf0(struct Actor *object) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_SetSpeed(0x10000, 0x2000);
-  Actor_SetPosition(39, 164 << 17, 148 << 17);
+  FieldCamera_SetSpeed(1);
+  Actor_SetPosition(39, 328, 296);
   FieldEvent_Wait(30);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(15);
@@ -747,33 +748,33 @@ void Func_02000cf0(struct Actor *object) {
   FieldEvent_Wait(15);
   Event_PlaySound(SE_JUMP);
   Actor_Get(39)->velocityY = PIXELS(4);
-  Actor_SetSpeed(39, 0x40000, 0x20000);
+  Actor_SetSpeed(39, 4);
   Actor_WalkToAndWait(39, 312, 200);
   Event_PlaySound(SE_JUMP);
   Actor_Get(39)->velocityY = PIXELS(6);
-  Actor_SetSpeed(39, 0x40000, 0x20000);
+  Actor_SetSpeed(39, 4);
   Actor_WalkToAndWait(39, 312, 168);
-  Actor_SetSpeed(39, 0x20000, 0x10000);
+  Actor_SetSpeed(39, 2);
   Actor_WalkToAndWait(39, 328, 152);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldEvent_Wait(15);
   Event_PlaySound(SE_JUMP);
   Actor_Get(39)->velocityY = PIXELS(6);
-  Actor_SetSpeed(39, 0x40000, 0x20000);
+  Actor_SetSpeed(39, 4);
   Actor_WalkToAndWait(39, 360, 152);
   FieldEvent_Wait(15);
   Event_PlaySound(SE_JUMP);
   Actor_Get(39)->velocityY = PIXELS(6);
-  Actor_SetSpeed(39, 0x20000, 0x10000);
+  Actor_SetSpeed(39, 2);
   Actor_WalkToAndWait(39, 360, 184);
-  Actor_SetSpeed(39, 0x20000, 0x10000);
+  Actor_SetSpeed(39, 2);
   Actor_WalkToAndWait(39, 376, 184);
   Actor_WalkToAndWait(39, 392, 200);
   Actor_WalkToAndWait(39, 408, 184);
   FieldEvent_Wait(15);
   Event_PlaySound(SE_JUMP);
   Actor_Get(39)->velocityY = PIXELS(6);
-  Actor_SetSpeed(39, 0x40000, 0x20000);
+  Actor_SetSpeed(39, 4);
   Actor_WalkToAndWait(39, 440, 184);
   Actor_SetPosition(39, 0, 0);
   Event_SetFlag(0xa6c);
@@ -813,7 +814,7 @@ void GabombaStatue_HearTheOffering(void) {
   FieldEvent_Wait(40);
   FieldEvent_SetMessageId(MsgGabombaAcceptOffering);
   Event_ShowMessage(24, 0);
-  FieldCamera_MoveTo(PIXELS(392), -1, PIXELS(256), 1);
+  FieldCamera_MoveTo(392, CAMERA_KEEP, 256, 1);
   FieldCamera_WaitForArrival();
   Event_PlaySound(SE_SHIMMER);
   System_Wait(1);
@@ -895,13 +896,13 @@ void Func_020011bc(s32 x, s32 z) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object->motionFlags = 0;
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, x, z);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   FieldActor_RefreshSelectorById(gMainRoutineWork.currentOwner);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 13);
-  FieldActor_SetMoveTarget(object, x << 16, PIXELS(-12), z << 16);
+  FieldActor_SetMoveTargetFixed(object, x << 16, PIXELS(-12), z << 16);
   FieldActor_WaitForMove(object);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 10);
   Event_PlaySound(SE_MAP_EXIT);
@@ -1050,13 +1051,13 @@ void Func_02001630(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   leader->motionFlags = 0;
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 472, 144);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   FieldActor_RefreshSelectorById(gMainRoutineWork.currentOwner);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 13);
-  FieldActor_SetMoveTarget(leader, PIXELS(472), 0, PIXELS(156));
+  FieldActor_SetMoveTarget(leader, 472, 0, 156);
   FieldActor_WaitForMove(leader);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 10);
   Event_PlaySound(SE_MAP_EXIT);
@@ -1070,7 +1071,7 @@ void Func_02001630(void) {
     Event_Start();                                                             \
     FieldEvent_ResolvePendingActions(0);                                       \
     Event_PlaySound(SE_581);                                                   \
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0x19999);           \
+    Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 1.6, 1.6);    \
     Actor_MoveToAndWait(gMainRoutineWork.currentOwner, n1, n2);                \
     Event_End();                                                               \
   }
@@ -1088,7 +1089,7 @@ void Func_0200176c(void) {
   speed = 0x19999;
   /* FAKEMATCH(barrier): an empty asm on speed. */
   asm volatile("" : "+l"(speed));
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, speed, 0x19999);
+  Actor_SetSpeedFixed(gMainRoutineWork.currentOwner, speed, 0x19999);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 152, 488);
   actor->motionFlags = 3;
   FieldEvent_Wait(8);
@@ -1150,8 +1151,8 @@ void Func_020019d0(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   EventCamera_GetActor()->motionFlags = 0;
-  FieldCamera_SetSpeed(0x9999, 0x1333);
-  FieldCamera_MoveTo(180 << 17, 0, 248 << 17, 1);
+  FieldCamera_SetSpeed(0.6);
+  FieldCamera_MoveTo(360, 0, 496, 1);
   FieldCamera_WaitForArrival();
   Event_PlaySound(SE_586);
   Func_020020f0(0);
@@ -1485,7 +1486,7 @@ void Func_02002394(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
   actor->y = 0x820000;
@@ -1521,8 +1522,8 @@ void Func_02002394(void) {
   Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
-  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(5, 5, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
   actor->gravity = 0x10000;
@@ -1554,7 +1555,7 @@ static __inline__ void Func_0200578c_ArgsFirst(s32 id, s32 a, s32 b) {
 void GabombaStatue_FocusEnergies(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   EventCamera_GetActor()->motionFlags = 0;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1566,11 +1567,11 @@ void GabombaStatue_FocusEnergies(void) {
   Actor_MoveToObject(6, gMainRoutineWork.currentOwner);
   Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
   System_Wait(1);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-  Actor_SetSpeed(5, 0xcccc, 0x6666);
-  Actor_SetSpeed(6, 0xcccc, 0x6666);
-  Actor_SetSpeed(7, 0xcccc, 0x6666);
-  Actor_SetSpeed(23, 0xcccc, 0x6666);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
+  Actor_SetSpeed(5, 0.8);
+  Actor_SetSpeed(6, 0.8);
+  Actor_SetSpeed(7, 0.8);
+  Actor_SetSpeed(23, 0.8);
   Actor_SetScript(23, gData_02005ba4);
   System_Wait(10);
   Actor_SetScript(gMainRoutineWork.currentOwner, gData_02005af4);
@@ -1578,15 +1579,15 @@ void GabombaStatue_FocusEnergies(void) {
   Actor_SetScript(7, gData_02005b60);
   FieldActor_RefreshSelectorById(23);
   FieldEvent_Wait(20);
-  FieldCamera_SetSpeed(0x13333, 0x2666);
-  FieldCamera_MoveTo(PIXELS(434), -1, PIXELS(286), 1);
-  Actor_SetSpeed(23, 0x13333, 0x9999);
+  FieldCamera_SetSpeed(1.2);
+  FieldCamera_MoveTo(434, CAMERA_KEEP, 286, 1);
+  Actor_SetSpeed(23, 1.2);
   Actor_RunScriptAndWait(23, gData_02005be8);
   FieldEvent_Wait(40);
   Actor_FaceDirectionAndWait(23, FACING_NORTH + FACING_STEP);
   Event_ShowMessage(23, 0);
-  FieldCamera_SetSpeed(0x4cccc, 0x9999);
-  FieldCamera_MoveTo(PIXELS(434), -1, PIXELS(168), 1);
+  FieldCamera_SetSpeed(4.8);
+  FieldCamera_MoveTo(434, CAMERA_KEEP, 168, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
@@ -1618,7 +1619,7 @@ void Func_020027cc(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   speed = 0x4000;
   Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, PIXELS(348),
@@ -1693,7 +1694,7 @@ void GabombaStatue_SeeHowItWorks(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   {
     s32 leader = gMainRoutineWork.currentOwner;
 
@@ -1717,8 +1718,8 @@ void GabombaStatue_SeeHowItWorks(void) {
   FieldEvent_SetMessageId(MsgGabombaUnderstandsChannel);
   Event_ShowMessage(23, 0);
   EventCamera_GetActor()->motionFlags = 0;
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveTo(196 << 17, -1, 146 << 17, 1);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(392, CAMERA_KEEP, 292, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_FaceDirection(5, FACING_WEST, 0);
@@ -1730,7 +1731,7 @@ void GabombaStatue_SeeHowItWorks(void) {
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
       0) {
     Func_0200578c_ArgsFirst(7, 256, 20);
-    Actor_SetSpeed(7, 0x20000, 0x10000);
+    Actor_SetSpeed(7, 2);
     Actor_WalkToAndWait(7, 340, 296);
     Actor_WalkToAndWait(7, 354, 296);
     Actor_WalkToAndWait(7, 364, 308);
@@ -1740,7 +1741,7 @@ void GabombaStatue_SeeHowItWorks(void) {
     (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
   } else {
     (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
-    Actor_SetSpeed(7, 0x20000, 0x10000);
+    Actor_SetSpeed(7, 2);
     Actor_WalkToAndWait(7, 340, 296);
     Actor_WalkToAndWait(7, 354, 296);
     Actor_WalkToAndWait(7, 364, 308);
@@ -1765,7 +1766,7 @@ void GabombaStatue_SeeHowItWorks(void) {
   Event_ShowMessage(0x4017, 0);
   Func_0200578c_ArgsFirst(7, 265, 10);
   Event_ShowMessage(0x4007, 0);
-  Actor_SetSpeed(6, 0xcccc, 0x6666);
+  Actor_SetSpeed(6, 0.8);
   Actor_WalkToAndWait(6, 440, 296);
   Actor_FaceDirectionAndWait(6, FACING_WEST);
   Actor_SetAnimationAndWait(6, 3);
@@ -1791,24 +1792,24 @@ void GabombaStatue_SeeHowItWorks(void) {
   Actor_FaceDirection(23, FACING_NORTH_NORTHEAST, 20);
   Actor_FaceDirectionAndWait(23, FACING_NORTH_NORTHWEST);
   Event_ShowMessage(23, 0);
-  FieldCamera_SetSpeed(0x4cccc, 0x9999);
-  FieldCamera_MoveTo(196 << 17, -1, 176 << 16, 1);
+  FieldCamera_SetSpeed(4.8);
+  FieldCamera_MoveTo(392, CAMERA_KEEP, 176, 1);
   FieldCamera_WaitForArrival();
   Event_ShowMessage(23, 0);
   Event_ShowMessage(6, 0);
   Event_ShowMessage(23, 0);
   Event_ShowMessage(7, 0);
   Event_ShowMessage(0x2005, 0);
-  FieldCamera_MoveTo(196 << 17, -1, 146 << 17, 1);
+  FieldCamera_MoveTo(392, CAMERA_KEEP, 292, 1);
   FieldCamera_WaitForArrival();
   Actor_SetAnimation(23, 3);
   Event_ShowMessage(23, 0);
   Actor_FaceDirectionAndWait(23, FACING_WEST);
   Event_ShowMessage(23, 0);
-  Actor_SetSpeed(5, 0x19999, 0xcccc);
-  Actor_SetSpeed(6, 0x19999, 0xcccc);
-  Actor_SetSpeed(23, 0x19999, 0xcccc);
-  Actor_SetSpeed(7, 0xcccc, 0x6666);
+  Actor_SetSpeed(5, 1.6);
+  Actor_SetSpeed(6, 1.6);
+  Actor_SetSpeed(23, 1.6);
+  Actor_SetSpeed(7, 0.8);
   Actor_SetScript(7, gData_02005c40);
   Actor_SetScript(23, gData_02005c40);
   Actor_SetScript(6, gData_02005c40);
@@ -1831,7 +1832,7 @@ void GabombaStatue_SawEnergyFlow(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Func_020048a4(19, 11, gData_02005d8c[index], 16);
   Actor_SetAnimation(15, 5);
   Actor_SetPosition(11, 0, 0);
@@ -1846,7 +1847,7 @@ void GabombaStatue_SawEnergyFlow(void) {
   Actor_SetPosition(21, 0, 0);
   Actor_SetPosition(22, 0, 0);
   System_Wait(1);
-  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(182), 0);
+  FieldCamera_MoveTo(440, CAMERA_KEEP, 182, 0);
   Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
   south = FACING_SOUTH;
   Actor_SetPositionAndFacing(5, PIXELS(472), PIXELS(216), south);
@@ -1858,10 +1859,10 @@ void GabombaStatue_SawEnergyFlow(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x202;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldCamera_SetSpeed(0x13333, 0x2666);
-  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(312), 1);
-  Actor_SetSpeed(5, 0x10000, 0x8000);
-  Actor_SetSpeed(24, 0x10000, 0x8000);
+  FieldCamera_SetSpeed(1.2);
+  FieldCamera_MoveTo(440, CAMERA_KEEP, 312, 1);
+  Actor_SetSpeed(5, 1);
+  Actor_SetSpeed(24, 1);
   Actor_SetScript(5, gData_02005ccc);
   Actor_RunScriptAndWait(24, gData_02005d24);
   FieldEvent_SetMessageId(MsgGabombaSawEnergyFlow);
@@ -1871,7 +1872,7 @@ void GabombaStatue_SawEnergyFlow(void) {
   Actor_FaceDirectionAndWait(5, FACING_EAST);
   Event_ShowMessage(5, 0);
   Actor_FaceDirection(5, FACING_NORTHWEST, 0);
-  FieldCamera_MoveTo(PIXELS(414), -1, PIXELS(272), 1);
+  FieldCamera_MoveTo(414, CAMERA_KEEP, 272, 1);
   FieldCamera_WaitForArrival();
   Event_ShowMessage(5, 0);
   Func_02004f40(&x, &z);
@@ -1884,11 +1885,11 @@ void GabombaStatue_SawEnergyFlow(void) {
   System_Wait(1);
   actor = Actor_Get(5);
   actor->facing = ArcTan2(spark->z - actor->z, spark->x - actor->x);
-  FieldCamera_MoveTo(spark->x, -1, spark->z, 1);
+  FieldCamera_MoveToFixed(spark->x, -1, spark->z, 1);
   FieldCamera_WaitForArrival();
   Event_ShowMessage(5, 0);
   Actor_Release(spark);
-  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(304), 1);
+  FieldCamera_MoveTo(440, CAMERA_KEEP, 304, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
   Event_ShowMessage(5, 0);
@@ -1903,7 +1904,7 @@ void GabombaStatue_SawEnergyFlow(void) {
   System_Wait(1);
   Event_ShowMessage(23, 0);
   Actor_FaceDirection(24, FACING_NORTH + FACING_STEP, 0);
-  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(264), 1);
+  FieldCamera_MoveTo(440, CAMERA_KEEP, 264, 1);
   FieldCamera_WaitForArrival();
   FieldActor_Jump(24, 4, 10);
   Event_ShowMessage(0x4018, 0);
@@ -2092,7 +2093,8 @@ L_0200b6f2:
   Func_020053ac();
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(FIELD_AT(v_r5, s32, 8), -1, FIELD_AT(v_r5, s32, 16), 0);
+  FieldCamera_MoveToFixed(FIELD_AT(v_r5, s32, 8), -1, FIELD_AT(v_r5, s32, 16),
+                          0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
   Event_End();

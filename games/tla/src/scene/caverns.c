@@ -541,9 +541,9 @@ void Func_02000d68(void) {
   s32 value = HALF_AT(Ram_HeapSlots->eventWork, 340);
 
   if (value == 2)
-    Actor_SetPosition(8, PIXELS(144), PIXELS(224));
+    Actor_SetPosition(8, 144, 224);
   else
-    Actor_SetPosition(8, PIXELS(224), PIXELS(224));
+    Actor_SetPosition(8, 224, 224);
   Actor_ArmCallback(4, FACING_NORTH, 0);
   Event_Wait(10);
   BYTE_AT(Actor_GetById(4), 90) &= ~1;

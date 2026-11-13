@@ -192,7 +192,7 @@ void Idejima_WakeKraden(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 40);
   Actor_ShowEmote(ACTOR_KRADEN, 0x100, 20);
-  Actor_SetSpeed(ACTOR_KRADEN, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_WalkToAndWait(ACTOR_KRADEN, 416, 680);
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 20);
@@ -264,7 +264,7 @@ void Idejima_WakeJenna(void) {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
     Event_ShowMessage(ACTOR_JENNA, 0);
   }
-  Actor_SetSpeed(ACTOR_JENNA, 0x19999, 0xcccc);
+  Actor_SetSpeed(ACTOR_JENNA, 1.6);
   Actor_SetAnimation(ACTOR_JENNA, 2);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader != 0)
@@ -312,7 +312,7 @@ void Idejima_WakeSheba(void) {
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-  Actor_SetSpeed(ACTOR_SHEBA, 0x19999, 0xcccc);
+  Actor_SetSpeed(ACTOR_SHEBA, 1.6);
   Actor_WalkToAndWait(ACTOR_SHEBA, 212, 680);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 20);
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
@@ -342,7 +342,7 @@ void Idejima_EnterDoor(void) {
 /// Walks Felix back from the edge of the shore, once a visit.
 void Idejima_WalkLeaderBack(void) {
   if (!Event_GetFlag(FLAG_IDEJIMA_LEADER_WALKED_BACK)) {
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 152, 756);
     Event_SetFlag(FLAG_IDEJIMA_LEADER_WALKED_BACK);
   }
@@ -361,15 +361,15 @@ void Idejima_CatchUpWithFelix(void) {
     Event_ShowMessage(ACTOR_KRADEN, 0);
     Actor_SetPosition(ACTOR_JENNA, 0, 0);
     Actor_SetPosition(ACTOR_SHEBA, 0, 0);
-    FieldCamera_SetSpeed(0x9999, 0x1333);
-    FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(721), 1);
+    FieldCamera_SetSpeed(0.6);
+    FieldCamera_MoveTo(168, CAMERA_KEEP, 721, 1);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
     MapGrid_CopyCellAttributes(38, 31, 2, 1, 25, 42);
     Idejima_GetUp(8);
     Actor_SetHorizontalPositionWithTerrain(ACTOR_KRADEN, PIXELS(312),
                                            PIXELS(666));
     System_Wait(1);
-    Actor_SetSpeed(ACTOR_KRADEN, 0x19999, 0xcccc);
+    Actor_SetSpeed(ACTOR_KRADEN, 1.6);
     Actor_WalkToAndWait(ACTOR_KRADEN, 212, 680);
     Actor_WalkToAndWait(ACTOR_KRADEN, 192, 712);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 0);
@@ -414,14 +414,14 @@ void Idejima_CatchUpWithFelix(void) {
     FieldEvent_SetMessageId((s32)MsgIdejimaCantBelieveYouTwo);
     Event_ShowMessage(ACTOR_JENNA, 0);
     Actor_SetPosition(ACTOR_SHEBA, 0, 0);
-    FieldCamera_SetSpeed(0x9999, 0x1333);
-    FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(721), 1);
-    Actor_SetSpeed(ACTOR_KRADEN, 0x19999, 0xcccc);
+    FieldCamera_SetSpeed(0.6);
+    FieldCamera_MoveTo(168, CAMERA_KEEP, 721, 1);
+    Actor_SetSpeed(ACTOR_KRADEN, 1.6);
     Actor_SetScript(ACTOR_KRADEN, gIdejima_KradenStepsAsideScript);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
     MapGrid_CopyCellAttributes(38, 31, 2, 1, 17, 46);
     Idejima_GetUp(5);
-    Actor_SetSpeed(ACTOR_JENNA, 0x19999, 0xcccc);
+    Actor_SetSpeed(ACTOR_JENNA, 1.6);
     Actor_WalkToAndWait(ACTOR_JENNA, 212, 680);
     Actor_WalkToAndWait(ACTOR_JENNA, 192, 712);
     Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
@@ -468,9 +468,9 @@ void Idejima_CatchUpWithFelix(void) {
     System_Wait(1);
     Event_SetMessageId((s32)MsgIdejimaWaitForMe);
     Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-    FieldCamera_SetSpeed(0x9999, 0x1333);
-    FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(721), 1);
-    Actor_SetSpeed(ACTOR_KRADEN, 0x19999, 0xcccc);
+    FieldCamera_SetSpeed(0.6);
+    FieldCamera_MoveTo(168, CAMERA_KEEP, 721, 1);
+    Actor_SetSpeed(ACTOR_KRADEN, 1.6);
     Actor_SetScript(ACTOR_KRADEN, (s32)gIdejima_KradenStepsAsideScript);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
     MapGrid_CopyCellAttributes(38, 31, 2, 1, 14, 40);
@@ -479,7 +479,7 @@ void Idejima_CatchUpWithFelix(void) {
     Actor_SetModeById(ACTOR_SHEBA, 1);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_SHEBA), 1);
     Event_Wait(20);
-    Actor_SetSpeed(ACTOR_SHEBA, 0x19999, 0xcccc);
+    Actor_SetSpeed(ACTOR_SHEBA, 1.6);
     Actor_WalkToAndWait(ACTOR_SHEBA, 212, 680);
     Actor_WalkToAndWait(ACTOR_SHEBA, 192, 712);
     Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
@@ -527,13 +527,13 @@ void Idejima_RunAlexDeparture(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_SetSpeed(0x9999, 0x1333);
-  FieldCamera_MoveTo(PIXELS(108), -1, PIXELS(720), 1);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  FieldCamera_SetSpeed(0.6);
+  FieldCamera_MoveTo(108, CAMERA_KEEP, 720, 1);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 86, 712);
   Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.currentOwner);
   System_Wait(1);
-  Actor_SetSpeed(ACTOR_KRADEN, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_WalkToAndWait(ACTOR_KRADEN, 104, 712);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
@@ -556,8 +556,8 @@ void Idejima_RunAlexDeparture(void) {
   Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.currentOwner);
   Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.currentOwner);
   System_Wait(1);
-  Actor_SetSpeed(ACTOR_SHEBA, 0xcccc, 0x6666);
-  Actor_SetSpeed(ACTOR_JENNA, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_SHEBA, 0.8);
+  Actor_SetSpeed(ACTOR_JENNA, 0.8);
   Actor_WalkTo(ACTOR_JENNA, 86, 712);
   Actor_WalkToAndWait(ACTOR_SHEBA, 86, 728);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
@@ -650,7 +650,7 @@ void Idejima_RunAlexDeparture(void) {
   FieldActor_WatchAndSetScript(gMainRoutineWork.currentOwner, ACTOR_SHEBA);
   FieldActor_WatchAndSetScript(ACTOR_KRADEN, ACTOR_SHEBA);
   FieldActor_WatchAndSetScript(ACTOR_JENNA, ACTOR_SHEBA);
-  Actor_SetSpeed(ACTOR_SHEBA, 0x6666, 0x3333);
+  Actor_SetSpeed(ACTOR_SHEBA, 0.4);
   Actor_WalkToAndWait(ACTOR_SHEBA, 86, 748);
   FieldEvent_Wait(40);
   Actor_ShowEmote(ACTOR_SHEBA, 0x109, 80);
@@ -721,7 +721,7 @@ void Idejima_RunAlexDeparture(void) {
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   FieldActor_Jump(ACTOR_KRADEN, 4, 20);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
-  Actor_SetSpeed(ACTOR_SHEBA, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_SHEBA, 0.8);
   script = gIdejima_GoAfterAlexScript;
   Actor_SetScript(ACTOR_KRADEN, script);
   Actor_SetScript(ACTOR_JENNA, script);
@@ -803,9 +803,9 @@ void Idejima_BreakAwayFromGondowan(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   System_Wait(1);
-  FieldCamera_MoveTo(PIXELS(252), -1, PIXELS(216), 0);
+  FieldCamera_MoveTo(252, CAMERA_KEEP, 216, 0);
   System_Wait(1);
   Map_CenterOnFollowedPoint();
   Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
@@ -816,19 +816,19 @@ void Idejima_BreakAwayFromGondowan(void) {
 
     ship->facing = FACING_WEST;
   }
-  Actor_SetPosition(ACTOR_ALEX, PIXELS(186), PIXELS(164));
+  Actor_SetPosition(ACTOR_ALEX, 186, 164);
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_ALEX), 15);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), 0);
   System_Wait(1);
   Event_StartScreenTransition();
-  FieldCamera_SetSpeed(0x9999, 0x1333);
-  Actor_SetSpeed(ACTOR_JENNA, 0xcccc, 0x6666);
+  FieldCamera_SetSpeed(0.6);
+  Actor_SetSpeed(ACTOR_JENNA, 0.8);
   Actor_WalkToAndWait(ACTOR_JENNA, 204, 196);
   Actor_WalkToAndWait(ACTOR_JENNA, 208, 218);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
   Actor_MoveToObject(ACTOR_KRADEN, ACTOR_JENNA);
   System_Wait(1);
-  Actor_SetSpeed(ACTOR_KRADEN, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_WalkToAndWait(ACTOR_KRADEN, 186, 216);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 60);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 40);
@@ -852,8 +852,8 @@ void Idejima_BreakAwayFromGondowan(void) {
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_SetAnimationAndWait(ACTOR_JENNA, 3);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
-  Actor_SetSpeed(ACTOR_JENNA, 0xcccc, 0x6666);
-  Actor_SetSpeed(ACTOR_KRADEN, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_JENNA, 0.8);
+  Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_SetScript(ACTOR_KRADEN, gIdejima_KradenToTheShipScript);
   FieldEvent_Wait(40);
   Actor_RunScriptAndWait(ACTOR_JENNA, gIdejima_JennaToTheShipScript);
@@ -861,11 +861,11 @@ void Idejima_BreakAwayFromGondowan(void) {
   Actor_ShowEmote(ACTOR_KRADEN, 0x100, 20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 40);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
-  Actor_SetSpeed(ACTOR_KRADEN, 0x19999, 0xcccc);
+  Actor_SetSpeed(ACTOR_KRADEN, 1.6);
   Actor_WalkToAndWait(ACTOR_KRADEN, 258, 172);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_SetAnimationAndWait(ACTOR_JENNA, 3);
-  Actor_SetSpeed(ACTOR_JENNA, 0x6666, 0x3333);
+  Actor_SetSpeed(ACTOR_JENNA, 0.4);
   Actor_WalkToAndWait(ACTOR_JENNA, 242, 172);
   Actor_WalkToAndWait(ACTOR_KRADEN, 248, 156);
   Actor_WalkToAndWait(ACTOR_KRADEN, 226, 164);
@@ -895,9 +895,9 @@ void Idejima_BreakAwayFromGondowan(void) {
   FieldActor_Jump(ACTOR_JENNA, 2, 10);
   FieldActor_Jump(ACTOR_JENNA, 4, 20);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_JENNA, 0, 40);
-  FieldCamera_SetSpeed(0x9999, 0x1333);
-  FieldCamera_MoveTo(PIXELS(262), -1, PIXELS(180), 1);
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(256), PIXELS(198));
+  FieldCamera_SetSpeed(0.6);
+  FieldCamera_MoveTo(262, CAMERA_KEEP, 180, 1);
+  Actor_SetPosition(ACTOR_KRADEN, 256, 198);
   System_Wait(1);
   Actor_ShowEmote(ACTOR_JENNA, 0x100, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
@@ -921,7 +921,7 @@ void Idejima_BreakAwayFromGondowan(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 40);
   FieldEvent_ShowMessageThenWait(
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 20);
-  Actor_SetSpeed(ACTOR_JENNA, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_JENNA, 0.8);
   Actor_WalkToAndWait(ACTOR_JENNA, 248, 148);
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 0);
@@ -935,7 +935,7 @@ void Idejima_BreakAwayFromGondowan(void) {
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_JENNA, 0x100, 20);
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_SetSpeed(ACTOR_KRADEN, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_WalkToAndWait(ACTOR_KRADEN, 244, 170);
   FieldEvent_Wait(10);
   Actor_WalkToAndWait(ACTOR_KRADEN, 258, 170);
@@ -976,7 +976,7 @@ void Idejima_BreakAwayFromGondowan(void) {
   Actor_SetAnimation(ACTOR_ALEX, 3);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_ALEX,
                     0);
-  Actor_SetSpeed(ACTOR_ALEX, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_ALEX, 0.8);
   Actor_WalkToAndWait(ACTOR_ALEX, 216, 164);
   Actor_WalkToAndWait(ACTOR_ALEX, 234, 160);
   FieldEvent_Wait(40);
@@ -1014,23 +1014,23 @@ void Idejima_FindFelixAndSheba(void) {
   FieldEvent_ResolvePendingActions(0);
   Idejima_UseDriftPalette();
   DriftScene_Prepare();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
-  Actor_SetPosition(ACTOR_SHEBA, PIXELS(444), PIXELS(212));
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+  Actor_SetPosition(ACTOR_SHEBA, 444, 212);
   Actor_SetAnimation(ACTOR_SHEBA, 19);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SHEBA), 0);
-  Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(432), PIXELS(234));
+  Actor_SetPosition(gMainRoutineWork.currentOwner, 432, 234);
   Actor_Get(gMainRoutineWork.currentOwner)->scaleX = 0xffff0000;
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 41);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
-  Actor_SetPosition(ACTOR_ALEX, PIXELS(392), PIXELS(172));
+  Actor_SetPosition(ACTOR_ALEX, 392, 172);
   System_Wait(1);
-  FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(214), 0);
+  FieldCamera_MoveTo(192, CAMERA_KEEP, 214, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
-  Actor_SetPosition(ACTOR_JENNA, PIXELS(208), PIXELS(218));
+  Actor_SetPosition(ACTOR_JENNA, 208, 218);
   Actor_SetAnimation(ACTOR_JENNA, 19);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_JENNA), 0);
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(176), PIXELS(204));
+  Actor_SetPosition(ACTOR_KRADEN, 176, 204);
   Actor_SetAnimation(ACTOR_KRADEN, 5);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_KRADEN), 0);
   System_Wait(1);
@@ -1061,7 +1061,7 @@ void Idejima_FindFelixAndSheba(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 40);
   Actor_ShowEmote(ACTOR_JENNA, 261, 20);
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_SetSpeed(ACTOR_ALEX, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_ALEX, 0.8);
   Actor_WalkToAndWait(ACTOR_ALEX, 304, 172);
   Actor_WalkToAndWait(ACTOR_ALEX, 224, 172);
   Actor_WalkToAndWait(ACTOR_ALEX, 208, 192);
@@ -1079,12 +1079,12 @@ void Idejima_FindFelixAndSheba(void) {
   FieldActor_Jump(ACTOR_JENNA, 4, 20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 40);
-  Actor_SetSpeed(ACTOR_KRADEN, 0xcccc, 0x6666);
-  Actor_SetSpeed(ACTOR_JENNA, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_KRADEN, 0.8);
+  Actor_SetSpeed(ACTOR_JENNA, 0.8);
   Actor_SetScript(ACTOR_KRADEN, gIdejima_KradenFollowsAlexScript);
   FieldEvent_Wait(40);
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveTo(PIXELS(368), -1, PIXELS(210), 1);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(368, CAMERA_KEEP, 210, 1);
   actor->timer = 0;
   Actor_SetScript(ACTOR_JENNA, gIdejima_JennaFollowsAlexScript);
   do {
@@ -1096,8 +1096,8 @@ void Idejima_FindFelixAndSheba(void) {
   FieldEvent_ShowTwoMessagesAndWait(ACTOR_JENNA, 7, 13, 2, 12, 8, 9, 2, 4, 1,
                                     0);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_SetSpeed(ACTOR_KRADEN, 0x19999, 0xcccc);
-  Actor_SetSpeed(ACTOR_JENNA, 0x19999, 0xcccc);
+  Actor_SetSpeed(ACTOR_KRADEN, 1.6);
+  Actor_SetSpeed(ACTOR_JENNA, 1.6);
   Actor_SetScript(ACTOR_KRADEN, gIdejima_KradenRunsToFelixScript);
   Actor_RunScriptAndWait(ACTOR_JENNA, gIdejima_JennaRunsToFelixScript);
   FieldEvent_Wait(40);
@@ -1121,7 +1121,7 @@ void Idejima_RideTheTidalWave(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   DriftScene_Prepare();
   a3000 = 0x3000;
   Actor_SetPositionAndFacing(ACTOR_KRADEN, PIXELS(314), PIXELS(200), a3000);
@@ -1189,7 +1189,7 @@ void Idejima_RideTheTidalWave(void) {
   FieldActor_WatchAndSetScript(ACTOR_KRADEN, ACTOR_SHEBA);
   FieldActor_WatchAndSetScript(ACTOR_JENNA, ACTOR_SHEBA);
   FieldActor_WatchAndSetScript(ACTOR_ALEX, ACTOR_SHEBA);
-  Actor_SetSpeed(ACTOR_SHEBA, 0x6666, 0x3333);
+  Actor_SetSpeed(ACTOR_SHEBA, 0.4);
   Actor_WalkToAndWait(ACTOR_SHEBA, 358, 222);
   FieldEvent_Wait(40);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 80);
@@ -1209,14 +1209,14 @@ void Idejima_RideTheTidalWave(void) {
   Actor_FaceDirection(ACTOR_SHEBA, a8000, 20);
   Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_ALEX, 0);
-  Actor_SetSpeed(ACTOR_SHEBA, 0x19999, 0xcccc);
+  Actor_SetSpeed(ACTOR_SHEBA, 1.6);
   Actor_WalkToAndWait(ACTOR_SHEBA, 348, 222);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_SHEBA, 0);
   FieldActor_Stop(ACTOR_KRADEN);
   FieldActor_Stop(ACTOR_JENNA);
   FieldActor_Stop(ACTOR_ALEX);
-  Actor_SetSpeed(ACTOR_KRADEN, 0x6666, 0x3333);
+  Actor_SetSpeed(ACTOR_KRADEN, 0.4);
   Actor_WalkToAndWait(ACTOR_KRADEN, 320, 200);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 40);
   Actor_FaceDirection(ACTOR_SHEBA, a8000, 40);
@@ -1310,7 +1310,7 @@ void Idejima_RideTheTidalWave(void) {
   Actor_SetAnimation(ACTOR_JENNA, 3);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, 3);
-  Actor_SetSpeed(ACTOR_ALEX, 0x19999, 0xcccc);
+  Actor_SetSpeed(ACTOR_ALEX, 1.6);
   Actor_WalkToAndWait(ACTOR_ALEX, 368, 256);
   Actor_FaceDirection(ACTOR_ALEX, FACING_EAST, 0);
   Actor_ShowEmote(ACTOR_SHEBA, 0x100, 0);
@@ -1326,12 +1326,12 @@ void Idejima_RideTheTidalWave(void) {
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_ALEX, 0x108, 0);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_ALEX, 0);
-  FieldCamera_SetSpeed(0x9999, 0x1333);
-  FieldCamera_MoveTo(PIXELS(396), -1, PIXELS(234), 1);
-  Actor_SetSpeed(ACTOR_JENNA, 0xcccc, 0x6666);
-  Actor_SetSpeed(ACTOR_SHEBA, 0xcccc, 0x6666);
-  Actor_SetSpeed(ACTOR_KRADEN, 0xcccc, 0x6666);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  FieldCamera_SetSpeed(0.6);
+  FieldCamera_MoveTo(396, CAMERA_KEEP, 234, 1);
+  Actor_SetSpeed(ACTOR_JENNA, 0.8);
+  Actor_SetSpeed(ACTOR_SHEBA, 0.8);
+  Actor_SetSpeed(ACTOR_KRADEN, 0.8);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   leader->timer = 0;
   Actor_SetScript(ACTOR_KRADEN, gIdejima_KradenToTheShoreScript);
   Actor_SetScript(ACTOR_JENNA, gIdejima_JennaToTheShoreScript);
@@ -1377,16 +1377,16 @@ void Idejima_FelixWakes(void) {
   FelixWake_StartStep();
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   System_Wait(1);
-  FieldCamera_MoveTo(PIXELS(384), -1, PIXELS(728), 0);
+  FieldCamera_MoveTo(384, CAMERA_KEEP, 728, 0);
   System_Wait(1);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 41);
   System_Wait(1);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   System_Wait(1);
-  Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(384), PIXELS(728));
-  Actor_SetPosition(ACTOR_NARRATOR, PIXELS(384), PIXELS(702));
+  Actor_SetPosition(gMainRoutineWork.currentOwner, 384, 728);
+  Actor_SetPosition(ACTOR_NARRATOR, 384, 702);
   System_Wait(1);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
@@ -1450,7 +1450,7 @@ void Idejima_FelixWakes(void) {
   } else {
     Actor_WaitForAnimationChange(leader);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x6666, 0x3333);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.4);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 384, 746);
     FelixWake_EndStep();
     FieldEvent_Wait(20);
@@ -1527,7 +1527,7 @@ void Idejima_PlaceTheSleepers(void) {
   if (!Event_GetFlag(FLAG_IDEJIMA_KRADEN_JOINED)) {
     struct Actor *actor;
 
-    Actor_SetPosition(ACTOR_KRADEN, PIXELS(416), PIXELS(680));
+    Actor_SetPosition(ACTOR_KRADEN, 416, 680);
     MapGrid_CopyCellAttributes(38, 32, 2, 1, 25, 42);
     actor = Actor_Get(ACTOR_KRADEN);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_KRADEN), 0);
@@ -1540,7 +1540,7 @@ void Idejima_PlaceTheSleepers(void) {
   if (!Event_GetFlag(FLAG_IDEJIMA_JENNA_JOINED)) {
     struct Actor *actor;
 
-    Actor_SetPosition(ACTOR_JENNA, PIXELS(288), PIXELS(744));
+    Actor_SetPosition(ACTOR_JENNA, 288, 744);
     MapGrid_CopyCellAttributes(38, 33, 2, 1, 17, 46);
     actor = Actor_Get(ACTOR_JENNA);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_JENNA), 0);
@@ -1555,7 +1555,7 @@ void Idejima_PlaceTheSleepers(void) {
     struct Actor *actor;
 
     actor = Actor_Get(ACTOR_SHEBA);
-    Actor_SetPosition(ACTOR_SHEBA, PIXELS(240), PIXELS(648));
+    Actor_SetPosition(ACTOR_SHEBA, 240, 648);
     MapGrid_CopyCellAttributes(38, 34, 2, 1, 14, 40);
     Actor_SetAnimation(ACTOR_SHEBA, 19);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SHEBA), 0);

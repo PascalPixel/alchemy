@@ -218,8 +218,8 @@ void Func_020001d8(void) {
   }
   if (!Event_GetFlag(0xa3c))
     return;
-  Actor_SetPosition(8, 0x2000000, 0x1080000);
-  Actor_SetPosition(9, 0x2000000, 0x10f0000);
+  Actor_SetPosition(8, 512, 264);
+  Actor_SetPosition(9, 512, 271);
   System_Wait(1);
   FieldActor_SetSpritePriority(8, 1);
   object = Actor_Get(8);
@@ -263,13 +263,13 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(20, 8);
     Actor_SetAnimation(21, 8);
     Actor_SetAnimation(22, 7);
-    Actor_SetPosition(19, PIXELS(498), PIXELS(320));
-    Actor_SetPosition(1, PIXELS(538), PIXELS(320));
-    Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(506), PIXELS(280));
+    Actor_SetPosition(19, 498, 320);
+    Actor_SetPosition(1, 538, 320);
+    Actor_SetPosition(gMainRoutineWork.currentOwner, 506, 280);
     System_Wait(1);
-    FieldCamera_MoveTo(-1, -1, -1, 0);
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     EventCamera_GetActor()->motionFlags = 0;
-    FieldCamera_MoveTo(PIXELS(512), PIXELS(96), PIXELS(312), 1);
+    FieldCamera_MoveTo(512, 96, 312, 1);
     Map_CenterOnFollowedPoint();
     System_Wait(1);
     Event_StartScreenTransition();
@@ -421,7 +421,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldEvent_ResolvePendingActions(0);
   t4 = Actor_Get(18);
   FieldActor_SetSpriteColor(t4, 15);
-  Actor_SetPosition(18, 0x2000000, 0x1140000);
+  Actor_SetPosition(18, 512, 276);
   System_Wait(1);
   FieldActor_SetSpritePriority(6, 1);
   FieldActor_SetSpritePriority(5, 1);
@@ -435,10 +435,10 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_ShowEmote(t16, 0x100, 20);
   t18 = EventCamera_GetActor();
   FIELD_AT(t18, u8, 85) = 0;
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveTo(0x2000000, -1, 0x1300000, 1);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(512, CAMERA_KEEP, 304, 1);
   t21 = gMainRoutineWork.currentOwner;
-  Actor_SetSpeed(t21, 0x19999, 0xcccc);
+  Actor_SetSpeed(t21, 1.6);
   t23 = gMainRoutineWork.currentOwner;
   Actor_WalkToAndWait(t23, 0x1f8, 0x140);
   t25 = gMainRoutineWork.currentOwner;
@@ -446,12 +446,12 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   t27 = gMainRoutineWork.currentOwner;
   Actor_MoveToObject(0, t27);
   System_Wait(1);
-  Actor_SetSpeed(0, 0x19999, 0xcccc);
+  Actor_SetSpeed(0, 1.6);
   Actor_WalkToAndWait(0, 0x208, 0x140);
   Actor_FaceDirection(0, FACING_NORTH, 0);
   Actor_MoveToObject(1, 0);
   System_Wait(1);
-  Actor_SetSpeed(1, 0x19999, 0xcccc);
+  Actor_SetSpeed(1, 1.6);
   Actor_WalkToAndWait(1, 0x218, 0x140);
   Actor_FaceDirection(1, FACING_NORTHWEST, 20);
   Actor_FaceDirection(1, FACING_NORTHEAST, 20);
@@ -459,7 +459,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Event_ShowMessage(1, 0);
   Actor_MoveToObject(3, 1);
   System_Wait(1);
-  Actor_SetSpeed(3, 0x19999, 0xcccc);
+  Actor_SetSpeed(3, 1.6);
   Actor_WalkToAndWait(3, 0x220, 0x148);
   Actor_FaceDirectionAndWait(3, FACING_NORTHWEST);
   Actor_SetAnimation(3, 4);
@@ -482,11 +482,11 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   t61 = gMainRoutineWork.currentOwner;
   Actor_MoveToObject(19, t61);
   System_Wait(1);
-  Actor_SetSpeed(5, 0x19999, 0xcccc);
-  Actor_SetSpeed(6, 0x19999, 0xcccc);
-  Actor_SetSpeed(7, 0x19999, 0xcccc);
-  Actor_SetSpeed(2, 0x19999, 0xcccc);
-  Actor_SetSpeed(19, 0x19999, 0xcccc);
+  Actor_SetSpeed(5, 1.6);
+  Actor_SetSpeed(6, 1.6);
+  Actor_SetSpeed(7, 1.6);
+  Actor_SetSpeed(2, 1.6);
+  Actor_SetSpeed(19, 1.6);
   Actor_SetScript(5, (s32)gData_02005ba8);
   Actor_SetScript(6, (s32)gData_02005bd0);
   Actor_SetScript(7, (s32)gData_02005bf8);
@@ -535,7 +535,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_Interpolate(40);
   t112 = gMainRoutineWork.currentOwner;
-  Actor_SetSpeed(t112, 0xcccc, 0x6666);
+  Actor_SetSpeed(t112, 0.8);
   t114 = gMainRoutineWork.currentOwner;
   Actor_WalkToAndWait(t114, 0x1f8, 0x124);
   Event_PlaySound(SE_162);
@@ -551,7 +551,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
     *f &= 254;
   }
   t125 = gMainRoutineWork.currentOwner;
-  Actor_SetSpeed(t125, 0x3333, 0x1999);
+  Actor_SetSpeed(t125, 0.2);
   t127 = gMainRoutineWork.currentOwner;
   Actor_MoveToAndWait(t127, 0x1f8, 0x134);
   t129 = gMainRoutineWork.currentOwner;
@@ -624,12 +624,12 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   t194 = Actor_Get(18);
   FieldActor_SetPositionAndResetMotion(t194, 0x2000000, 0x780000, 0xd00000);
   FieldEvent_Wait(20);
-  FieldCamera_SetSpeed(0x4cccc, 0x9999);
-  FieldCamera_MoveTo(0x2000000, -1, 0xd80000, 1);
+  FieldCamera_SetSpeed(4.8);
+  FieldCamera_MoveTo(512, CAMERA_KEEP, 216, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
   FieldEvent_ShowMessageThenWait(1, 0, 20);
-  FieldCamera_MoveTo(0x2000000, -1, 0x1300000, 1);
+  FieldCamera_MoveTo(512, CAMERA_KEEP, 304, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetAttachedEffect(0, 0x102);
@@ -659,10 +659,10 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Event_ShowMessage(0x5001, 0);
   Actor_FaceDirectionAndWait(7, FACING_EAST);
   Event_ShowMessage(0x4007, 0);
-  FieldCamera_SetSpeed(0x6666, 0xccc);
-  FieldCamera_MoveTo(0x2000000, -1, 0x1280000, 1);
-  Actor_SetSpeed(18, 0xcccc, 0x6666);
-  FieldActor_SetMoveTarget(actor, 0x2000000, 0x600000, 0x1140000);
+  FieldCamera_SetSpeed(0.4);
+  FieldCamera_MoveTo(512, CAMERA_KEEP, 296, 1);
+  Actor_SetSpeed(18, 0.8);
+  FieldActor_SetMoveTarget(actor, 512, 96, 276);
   FieldActor_WaitForMoveById(18);
   FieldEvent_Wait(10);
   Event_ShowMessage(18, 0);
@@ -918,7 +918,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_FaceDirection(2, FACING_NORTH, 0);
   Actor_FaceDirection(3, FACING_NORTH, 0);
   t482 = work->currentOwner;
-  Actor_SetSpeed(t482, 0x6666, 0x3333);
+  Actor_SetSpeed(t482, 0.4);
   t484 = work->currentOwner;
   Actor_WalkToAndWait(t484, 0x1f8, 0x134);
   Event_PlaySound(SE_ASCEND);
@@ -928,7 +928,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   t490 = work->currentOwner;
   Actor_RunRepeatedMotion(t490, 2);
   t492 = work->currentOwner;
-  Actor_SetSpeed(t492, 0x19999, 0xcccc);
+  Actor_SetSpeed(t492, 1.6);
   t494 = work->currentOwner;
   FieldActor_Jump(t494, 4, 0);
   t496 = work->currentOwner;
@@ -1014,7 +1014,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   actor = Actor_Get(17);
   FIELD_AT(actor, s32, 24) = 0x1000;
   FIELD_AT(actor, s32, 28) = 0x1000;
-  Actor_SetPosition(17, 0x2000000, 0x1180000);
+  Actor_SetPosition(17, 512, 280);
   System_Wait(1);
   unk85 = (u8 *)actor + 85;
   *unk85 = 0;
@@ -1029,12 +1029,12 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   *dispcnt = *dispcnt & 0xf9ff;
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_Interpolate(40);
-  Actor_SetSpeed(17, 0x33333, 0x3333);
+  Actor_SetSpeedAndAcceleration(17, 3.2, 0.2);
   Event_PlaySound(SE_ITEM_BREAK);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
   System_Wait(1);
-  FieldActor_SetMoveTarget(actor, 0x2200000, 0x580000, 0x1180000);
+  FieldActor_SetMoveTarget(actor, 544, 88, 280);
   PaletteFade_ApplyTarget(0x10000, 2);
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_Interpolate(10);
@@ -1043,7 +1043,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
   System_Wait(1);
-  FieldActor_SetMoveTarget(actor, 0x1d00000, 0x580000, 0x1180000);
+  FieldActor_SetMoveTarget(actor, 464, 88, 280);
   PaletteFade_ApplyTarget(0x10000, 2);
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_Interpolate(10);
@@ -1052,17 +1052,17 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
   System_Wait(1);
-  FieldActor_SetMoveTarget(actor, 0x2400000, 0x580000, 0x1180000);
+  FieldActor_SetMoveTarget(actor, 576, 88, 280);
   PaletteFade_ApplyTarget(0x10000, 2);
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_Interpolate(10);
   FieldActor_WaitForMoveById(17);
-  Actor_SetSpeed(17, 0x66666, 0x33333);
+  Actor_SetSpeed(17, 6.4);
   Event_PlaySound(SE_ITEM_BREAK);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
   System_Wait(1);
-  FieldActor_SetMoveTarget(actor, 0x1fc0000, 0xd00000, 0x1200000);
+  FieldActor_SetMoveTarget(actor, 508, 208, 288);
   PaletteFade_ApplyTarget(0x10000, 2);
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_Interpolate(10);
@@ -1072,16 +1072,16 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   PaletteFade_Interpolate(1);
   System_Wait(1);
   *dispcnt |= 0x600;
-  Actor_SetPosition(7, 0x1e80000, 0x1400000);
+  Actor_SetPosition(7, 488, 320);
   t628 = work->currentOwner;
-  Actor_SetPosition(t628, 0x1f80000, 0x1400000);
-  Actor_SetPosition(0, 0x2080000, 0x1400000);
-  Actor_SetPosition(1, 0x2180000, 0x1400000);
-  Actor_SetPosition(6, 0x1e00000, 0x1480000);
-  Actor_SetPosition(5, 0x1f00000, 0x1480000);
-  Actor_SetPosition(19, 0x2000000, 0x1480000);
-  Actor_SetPosition(2, 0x2100000, 0x1480000);
-  Actor_SetPosition(3, 0x2200000, 0x1480000);
+  Actor_SetPosition(t628, 504, 320);
+  Actor_SetPosition(0, 520, 320);
+  Actor_SetPosition(1, 536, 320);
+  Actor_SetPosition(6, 480, 328);
+  Actor_SetPosition(5, 496, 328);
+  Actor_SetPosition(19, 512, 328);
+  Actor_SetPosition(2, 528, 328);
+  Actor_SetPosition(3, 544, 328);
   System_Wait(1);
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
@@ -1099,9 +1099,9 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   *unk85 = 3;
   FieldEvent_Wait(30);
   Event_PlaySound(SE_BANE_ESCAPE);
-  MapGrid_SetShake(0x20000, 0x40000, 0x10000);
+  MapGrid_SetShake(2, 4, 1);
   FieldEvent_Wait(10);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(17, 1);
@@ -1116,15 +1116,15 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Event_ShowMessage(3, 0);
   Actor_FaceDirectionAndWait(2, FACING_NORTHWEST);
   Event_ShowMessage(2, 0);
-  Actor_SetSpeed(7, 0x19999, 0xcccc);
+  Actor_SetSpeed(7, 1.6);
   t670 = work->currentOwner;
-  Actor_SetSpeed(t670, 0x19999, 0xcccc);
-  Actor_SetSpeed(0, 0x19999, 0xcccc);
-  Actor_SetSpeed(1, 0x19999, 0xcccc);
-  Actor_SetSpeed(6, 0x19999, 0xcccc);
-  Actor_SetSpeed(5, 0x19999, 0xcccc);
-  Actor_SetSpeed(2, 0x19999, 0xcccc);
-  Actor_SetSpeed(3, 0x19999, 0xcccc);
+  Actor_SetSpeed(t670, 1.6);
+  Actor_SetSpeed(0, 1.6);
+  Actor_SetSpeed(1, 1.6);
+  Actor_SetSpeed(6, 1.6);
+  Actor_SetSpeed(5, 1.6);
+  Actor_SetSpeed(2, 1.6);
+  Actor_SetSpeed(3, 1.6);
   Actor_SetScript(7, (s32)gData_02005df8);
   t679 = work->currentOwner;
   Actor_SetScript(t679, (s32)gData_02005ce8);
@@ -1195,7 +1195,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   FIELD_AT(actor, s32, 16) += 0x100000;
   Actor_SetAnimation(28, 2);
   Actor_SetAnimation(29, 3);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   System_Wait(1);
   Actor_SetAnimation(30, 7);
   Actor_SetAnimation(31, 7);
@@ -1298,9 +1298,9 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   Actor_FaceDirection(20, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(26, FACING_SOUTH, 0);
   Actor_FaceDirection(25, FACING_SOUTH, 0);
-  FieldCamera_SetSpeed(0x19999, 0x3333);
+  FieldCamera_SetSpeed(1.6);
   FIELD_AT((EventCamera_GetActor()), u8, 85) = 0;
-  FieldCamera_MoveTo(0x2000000, 0x500000, 0x1540000, 1);
+  FieldCamera_MoveTo(512, 80, 340, 1);
   FieldCamera_WaitForArrival();
   Actor_ShowEmote(19, 0x109, 20);
   Event_ShowMessage(19, 0);
@@ -1316,7 +1316,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   Actor_SetAnimation(19, 4);
   Event_ShowMessage(19, 0);
   Actor_ShowEmote(23, 0x103, 0);
-  Actor_SetSpeed(23, 0x19999, 0xcccc);
+  Actor_SetSpeed(23, 1.6);
   Actor_WalkToAndWait(23, 0x200, 0x148);
   Actor_FaceDirectionAndWait(23, FACING_SOUTHEAST);
   Event_ShowMessage(0x1017, 0);
@@ -1326,11 +1326,11 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   FieldActor_SetSpritePriority(21, 2);
   FIELD_AT((Actor_Get(20)), u8, 98) = 0;
   FIELD_AT((Actor_Get(21)), u8, 98) = 0;
-  Actor_SetSpeed(21, 0xcccc, 0x6666);
-  Actor_SetSpeed(20, 0xcccc, 0x6666);
+  Actor_SetSpeed(21, 0.8);
+  Actor_SetSpeed(20, 0.8);
   Actor_SetScript(21, (s32)gData_02005f08);
   Actor_SetScript(20, (s32)gData_02005f50);
-  Actor_SetSpeed(19, 0x26666, 0x13333);
+  Actor_SetSpeed(19, 2.4);
   Actor_WalkToAndWait(19, 0x21c, 0x154);
   FieldActor_Jump(19, 4, 10);
   Event_ShowMessage(19, 0);
@@ -1345,12 +1345,12 @@ L_0200a47a:
   FieldActor_SetSpritePriority(20, 2);
   FieldActor_SetSpritePriority(22, 2);
   FieldActor_ShowEmote(20, 0x100, 0);
-  Actor_SetSpeed(20, 0x19999, 0xcccc);
+  Actor_SetSpeed(20, 1.6);
   Actor_WalkToAndWait(20, 0x1ea, 0x128);
   Actor_FaceDirection(21, FACING_NORTHEAST, 20);
   Actor_FaceDirection(20, FACING_NORTHWEST, 20);
   Actor_FaceDirection(20, FACING_NORTHEAST, 20);
-  Actor_SetSpeed(20, 0x3333, 0x1999);
+  Actor_SetSpeed(20, 0.2);
   t158 = Actor_Get(20);
   FIELD_AT(t158, u8, 90) &= 254;
   Actor_WalkToAndWait(20, 0x1e8, 0x12c);
@@ -1365,8 +1365,8 @@ L_0200a47a:
   FieldEvent_Wait(1);
   t170 = Actor_Get(20);
   FIELD_AT(t170, u8, 90) |= 1;
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveTo(0x2000000, 0x600000, 0x1400000, 1);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(512, 96, 320, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirection(21, FACING_EAST, 40);
   Actor_FaceDirection(21, FACING_NORTHEAST, 20);
@@ -1425,25 +1425,25 @@ L_0200a47a:
   FieldActor_Jump(20, 2, 10);
   FieldActor_Jump(20, 4, 10);
   Event_ShowMessage(0x8014, 0);
-  Actor_SetSpeed(20, 0x26666, 0x13333);
-  Actor_SetSpeed((*(s32 *)owner2), 0x26666, 0x13333);
-  Actor_SetSpeed(23, 0x26666, 0x13333);
-  Actor_SetSpeed(24, 0x26666, 0x13333);
+  Actor_SetSpeed(20, 2.4);
+  Actor_SetSpeed((*(s32 *)owner2), 2.4);
+  Actor_SetSpeed(23, 2.4);
+  Actor_SetSpeed(24, 2.4);
   Actor_SetScript(20, (s32)gData_02005f98);
   Actor_SetScript((*(s32 *)owner2), (s32)gData_02005fdc);
   Actor_SetScript(23, (s32)gData_02006004);
   Actor_RunScriptAndWait(24, (s32)gData_0200602c);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(22, 0x19999, 0xcccc);
+  Actor_SetSpeed(22, 1.6);
   Actor_WalkToAndWait(22, 0x210, 0x140);
   Actor_FaceDirection(22, FACING_SOUTHEAST, 0);
   Actor_FaceDirectionAndWait(25, FACING_NORTHWEST);
   Event_ShowMessage(0x5016, 0);
-  Actor_SetSpeed(25, 0x19999, 0xcccc);
+  Actor_SetSpeed(25, 1.6);
   Actor_SetScript(25, (s32)gData_02006070);
   Actor_WalkToAndWait(22, 0x1e6, 0x134);
   Actor_FaceDirectionAndWait(22, FACING_NORTHWEST);
-  Actor_SetSpeed(21, 0x26666, 0x13333);
+  Actor_SetSpeed(21, 2.4);
   t244 = Actor_Get(21);
   FIELD_AT(t244, u8, 90) &= 254;
   Actor_WalkToAndWait(21, 0x1da, 0x13c);
@@ -1483,9 +1483,9 @@ void Func_0200298c(s32 id) {
 void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   System_Wait(1);
-  Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(506), PIXELS(280));
+  Actor_SetPosition(gMainRoutineWork.currentOwner, 506, 280);
   System_Wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1529,15 +1529,15 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_FaceDirectionAndWait(5, FACING_EAST);
   Actor_SetAnimationAndWait(5, 4);
   Event_ShowMessage(0x8005, 0);
-  Actor_SetSpeed(5, 0x19999, 0xcccc);
+  Actor_SetSpeed(5, 1.6);
   Actor_SetAnimation(5, 5);
   Actor_MoveToAndWait(5, 460, 288);
   Actor_SetAnimation(5, 0x16);
   Event_ShowMessage(5, 0);
   FieldActor_ShowEmote(0x13, 0x109, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
-  FieldCamera_SetSpeed(0x3333, 0x666);
-  FieldCamera_MoveTo(PIXELS(512), -1, PIXELS(320), 1);
+  FieldCamera_SetSpeed(0.2);
+  FieldCamera_MoveTo(512, CAMERA_KEEP, 320, 1);
   FieldCamera_WaitForArrival();
   Event_ShowMessage(0x2013, 0);
   Actor_FaceDirection(7, FACING_SOUTH, 0);
@@ -1560,14 +1560,14 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_FaceDirection(5, FACING_EAST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(0, FACING_EAST, 40);
-  Actor_SetSpeed(1, 0xcccc, 0x6666);
+  Actor_SetSpeed(1, 0.8);
   Actor_Get(1)->actionFlags &= 0xfe;
   Actor_WalkToAndWait(1, 542, 328);
   FieldEvent_Wait(1);
   Actor_Get(1)->actionFlags |= 1;
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
+  FieldCamera_SetSpeed(0.8);
   EventCamera_GetActor()->motionFlags = 0;
-  FieldCamera_MoveTo(PIXELS(540), PIXELS(76), PIXELS(340), 1);
+  FieldCamera_MoveTo(540, 76, 340, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirectionAndWait(1, FACING_SOUTH);
   Actor_WalkToAndWait(1, 542, 340);
@@ -1578,8 +1578,8 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_FaceDirection(1, FACING_SOUTHEAST, 20);
   FieldActor_Jump(1, 4, 0xa);
   Event_ShowMessage(0x5001, 0);
-  FieldCamera_SetSpeed(0x4cccc, 0x9999);
-  FieldCamera_MoveTo(PIXELS(478), PIXELS(96), PIXELS(312), 1);
+  FieldCamera_SetSpeed(4.8);
+  FieldCamera_MoveTo(478, 96, 312, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirection(6, FACING_SOUTH, 40);
   Actor_FaceDirectionAndWait(6, FACING_WEST);
@@ -1587,7 +1587,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_FaceDirectionAndWait(6, FACING_SOUTHWEST);
   FieldActor_Jump(6, 4, 0xa);
   Event_ShowMessage(0x6006, 0);
-  FieldCamera_MoveTo(PIXELS(480), -1, PIXELS(276), 1);
+  FieldCamera_MoveTo(480, CAMERA_KEEP, 276, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirection(7, FACING_NORTHEAST, 20);
   Actor_FaceDirection(7, FACING_NORTHWEST, 20);
@@ -1596,7 +1596,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_SetAnimationAndWait(7, 4);
   Event_ShowMessage(0x8007, 0);
   Event_ShowMessage(0x5000, 0);
-  FieldCamera_MoveTo(PIXELS(512), -1, PIXELS(312), 1);
+  FieldCamera_MoveTo(512, CAMERA_KEEP, 312, 1);
   Actor_FaceDirection(7, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(3, FACING_SOUTHWEST, 0);
@@ -1632,7 +1632,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     Event_ShowMessage(5, 0);
   }
-  Actor_SetSpeed(1, 0xcccc, 0x6666);
+  Actor_SetSpeed(1, 0.8);
   Actor_WalkToAndWait(1, 548, 320);
   Actor_FaceDirectionAndWait(1, FACING_NORTHWEST);
   Actor_SetAnimation(1, 3);
@@ -1647,7 +1647,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Event_ShowMessage(7, 0);
   Actor_SetAnimation(3, 4);
   Event_ShowMessage(3, 0);
-  Actor_SetSpeed(19, 0xcccc, 0x6666);
+  Actor_SetSpeed(19, 0.8);
   Actor_WalkToAndWait(19, 498, 320);
   Actor_SetAnimation(19, 3);
   Event_ShowMessage(0x2013, 0);
@@ -1655,7 +1655,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
   Event_SetFlag(0xa3d);
   Event_PlaySound(MUS_028);
-  Actor_SetSpeed(0, 0xcccc, 0x6666);
+  Actor_SetSpeed(0, 0.8);
   Actor_WalkToAndWait(0, 540, 286);
   Actor_FaceDirectionAndWait(0, FACING_SOUTHEAST);
   Func_0200298c(7);
@@ -1680,7 +1680,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_Get(20)->collisionFlags |= 8;
   Actor_Get(21)->collisionFlags |= 8;
   FieldActor_SetSpriteColor(Actor_Get(28), 0xf);
-  Actor_SetPosition(28, PIXELS(568), PIXELS(274));
+  Actor_SetPosition(28, 568, 274);
   Actor_Get(17)->motionFlags = 0;
   FieldActor_SetPositionAndResetMotion(Actor_Get(17), PIXELS(492), PIXELS(96),
                                        PIXELS(284));
@@ -1753,7 +1753,7 @@ void Func_02003370(void) {
   switch (Data_02006ccc) {
   case 0:
     Event_PlaySound(SE_SHIMMER);
-    MapGrid_SetShake(0x60000, 0x60000, 0x10000);
+    MapGrid_SetShake(6, 6, 1);
     PaletteFade_ApplyTarget(0x2063ff, 1);
     PaletteFade_Interpolate(8);
     break;
@@ -1762,7 +1762,7 @@ void Func_02003370(void) {
     PaletteFade_Interpolate(8);
     break;
   case 16:
-    MapGrid_SetShake(0x10000, 0x10000, 0x10000);
+    MapGrid_SetShake(1, 1, 1);
     break;
   case 24:
     anchor->x = 0x2000000;
@@ -1872,14 +1872,14 @@ void MarsLighthouseAerie_LightBeacon(void) {
   s32 piece2, piece3;
   s32 owner, actor;
 
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   System_Wait(1);
   Actor_SetPosition(28, 0, 0);
   Actor_SetPosition(29, 0, 0);
   Actor_SetPosition(30, 0, 0);
-  FieldCamera_SetSpeed(0x19999, 0x3333);
+  FieldCamera_SetSpeed(1.6);
   A(((s32)FieldCamera_GetActor()))->motionFlags = 0;
-  FieldCamera_MoveTo(0x2000000, 0x600000, 0x1380000, 1);
+  FieldCamera_MoveTo(512, 96, 312, 1);
   FieldCamera_WaitForArrival();
   System_Wait(1);
   *(u16 *)0x4000052 = 0xc08;
@@ -1896,7 +1896,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   Func_02003648(2);
   Func_02003648(1);
   Event_PrepareActorAndApplyValue(0, 0);
-  Actor_SetSpeed((OWNER), 0xcccc, 0x6666);
+  Actor_SetSpeed((OWNER), 0.8);
   Actor_WalkToAndWait((OWNER), 0x200, 0x118);
   Actor_FaceDirectionAndWait((OWNER), FACING_NORTH);
   Actor_RunRepeatedMotion((OWNER), 2);
@@ -1930,15 +1930,15 @@ void MarsLighthouseAerie_LightBeacon(void) {
     Vram_Load(sprite->vramBlock, 128, tiles);
     HeapSlot_Release(68);
     A(object)->motionFlags = zero;
-    FieldActor_SetMoveTarget(object, 0x2000000, 0x800000, 0x1180000);
+    FieldActor_SetMoveTarget(object, 512, 128, 280);
     FieldActor_WaitForMove(object);
     A(object)->motionFlags = 4;
     FieldEvent_Wait(60);
     A(object)->motionFlags = zero;
-    FieldActor_SetMoveTarget(object, 0x2000000, 0x800000, 0x1080000);
+    FieldActor_SetMoveTarget(object, 512, 128, 264);
     FieldActor_WaitForMove(object);
     FieldEvent_Wait(20);
-    FieldActor_SetMoveTarget(object, 0x2000000, 0x500000, 0xfc0000);
+    FieldActor_SetMoveTarget(object, 512, 80, 252);
     FieldActor_WaitForMove(object);
     FieldEvent_Wait(20);
     Actor_Release(object);
@@ -1950,7 +1950,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   FieldActor_SetSpritePriority(26, 2);
   FieldActor_SetSpritePriority(27, 2);
   Event_PlaySound(SE_RUMBLE);
-  MapGrid_SetShake(0x10000, 0x10000, 0x10000);
+  MapGrid_SetShake(1, 1, 1);
   FieldActor_SetSpriteColor(((s32)Actor_Get(23)), 7);
   beam = (s32)Actor_Get(23);
   A(beam)->scaleX = 0x1999;
@@ -1975,7 +1975,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   Actor_SetScript(23, gData_020060b4);
   Actor_SetScript(24, gData_020060b4);
   Event_PlaySound(SE_CRASH);
-  MapGrid_SetShake(0x60000, 0x60000, 0x10000);
+  MapGrid_SetShake(6, 6, 1);
   PaletteFade_ApplyTarget(0x4063ff, 0);
   PaletteFade_Interpolate(16);
   System_Wait(20);
@@ -2026,7 +2026,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   }
   FieldActor_SetSpritePriority((OWNER), 1);
   System_Wait(1);
-  MapGrid_SetShake(0x40000, 0x40000, 0x10000);
+  MapGrid_SetShake(4, 4, 1);
   PaletteFade_ApplyTarget(0x4063ff, 0);
   PaletteFade_Interpolate(120);
   Actor_SetScript(23, gData_020060fc);
@@ -2035,15 +2035,15 @@ void MarsLighthouseAerie_LightBeacon(void) {
   Actor_SetScript(26, gData_020060fc);
   Actor_SetScript(27, gData_020060fc);
   System_Wait(120);
-  MapGrid_SetShake(0x30000, 0x30000, 0x10000);
+  MapGrid_SetShake(3, 3, 1);
   PaletteFade_ApplyTarget(0x203210, 0);
   PaletteFade_Interpolate(120);
   System_Wait(120);
-  MapGrid_SetShake(0x20000, 0x20000, 0x10000);
+  MapGrid_SetShake(2, 2, 1);
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(120);
   System_Wait(120);
-  MapGrid_SetShake(0x10000, 0x10000, 0x10000);
+  MapGrid_SetShake(1, 1, 1);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   A(((s32)Actor_Get(23)))->scaleY = 0x51e;
   Actor_SetScript(24, gData_02006120);
@@ -2107,7 +2107,7 @@ L_0200bcea:
   Actor_FaceDirection(1, FACING_NORTHEAST, 0);
   Actor_FaceDirectionAndWait(0, FACING_EAST);
   FieldEvent_ShowMessageThenWait(0x4005, 0, 10);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
   FieldPsynergy_StartMindReadWave(23, 24);
   Message_ShowCentered(((s32)MsgTheBeaconIs + 6), 1);
@@ -2199,15 +2199,15 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Actor_SetAnimation(20, 8);
   Actor_SetAnimation(21, 8);
   Actor_SetAnimation(22, 7);
-  Actor_SetPosition(19, 0x1f20000, 0x1400000);
-  Actor_SetPosition(1, 0x21a0000, 0x1400000);
+  Actor_SetPosition(19, 498, 320);
+  Actor_SetPosition(1, 538, 320);
   t17 = *(s32 *)owner;
-  Actor_SetPosition(t17, 0x1fa0000, 0x1180000);
+  Actor_SetPosition(t17, 506, 280);
   System_Wait(1);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   t21 = FieldCamera_GetActor();
   ((struct Actor *)t21)->motionFlags = 0;
-  FieldCamera_MoveTo(0x2000000, 0x600000, 0x1200000, 0);
+  FieldCamera_MoveTo(512, 96, 288, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
   t25 = (s32)Ram_HeapSlots->eventWork;
@@ -2239,8 +2239,8 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Actor_FaceDirection(t49, quarterTurn, 0);
   Actor_FaceDirection(0, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(2, FACING_SOUTHWEST, 0);
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveTo(0x2000000, -1, 0x1400000, 1);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(512, CAMERA_KEEP, 320, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirectionAndWait(19, FACING_NORTH_NORTHEAST);
   Actor_SetAnimation(19, 3);
@@ -2264,7 +2264,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Event_ShowMessage(1, 0);
   t76 = Actor_Get(28);
   FieldActor_SetSpriteColor(t76, 15);
-  Actor_SetPosition(28, 0x2000000, 0x1680000);
+  Actor_SetPosition(28, 512, 360);
   System_Wait(1);
   PaletteFade_ApplySource(0x10000, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
@@ -2330,7 +2330,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Event_ShowMessage(28, 0);
   FieldPsynergy_StopMindReadWave();
   FieldEvent_Wait(40);
-  FieldCamera_MoveTo(0x2000000, -1, 0x1280000, 1);
+  FieldCamera_MoveTo(512, CAMERA_KEEP, 296, 1);
   Actor_FaceDirection(19, FACING_SOUTH_SOUTHWEST, 20);
   Actor_FaceDirection(19, threeSixteenthsTurn, 40);
   Actor_FaceDirectionAndWait(19, FACING_NORTH_NORTHEAST);
@@ -2354,7 +2354,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   PaletteFade_Interpolate(40);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_PlaySound(SE_RUMBLE);
-  MapGrid_SetShake(0x10000, 0x10000, 0x10000);
+  MapGrid_SetShake(1, 1, 1);
   FieldEvent_Wait(20);
   t168 = *(s32 *)owner;
   Func_02000610(t168);
@@ -2367,8 +2367,8 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Func_02000610(2);
   Func_02000610(3);
   FieldEvent_Wait(20);
-  FieldCamera_SetSpeed(0x19999, 0x3333);
-  FieldCamera_MoveTo(0x2000000, -1, 0x1200000, 1);
+  FieldCamera_SetSpeed(1.6);
+  FieldCamera_MoveTo(512, CAMERA_KEEP, 288, 1);
   FieldCamera_WaitForArrival();
   FieldTask_Remove((s32)Func_020004a4);
   Event_PlaySound(SE_SPIN);
@@ -2388,7 +2388,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   i = 0;
 L_0200c66c:
   if (i == 20) {
-    MapGrid_SetShake(0x20000, 0x20000, 0x10000);
+    MapGrid_SetShake(2, 2, 1);
     {
       struct MainRoutineWork *party = &gMainRoutineWork;
       ownerInLoop = (s32)&party->currentOwner;
@@ -2476,7 +2476,7 @@ L_0200c66c:
   Actor_SetAnimation(3, 3);
   Actor_SetAnimation(2, 3);
   Actor_SetAnimationAndWait(1, 3);
-  FieldCamera_MoveTo(0x2000000, -1, 0x1380000, 1);
+  FieldCamera_MoveTo(512, CAMERA_KEEP, 312, 1);
   Actor_SetPosition(8, 0, 0);
   t271 = Actor_Get(9);
   FieldActor_SetSpriteColor(t271, 7);
@@ -2484,7 +2484,7 @@ L_0200c66c:
   t274 = Actor_Get(9);
   ((struct Actor *)t274)->priorityFlags &= 253;
   Event_PlaySound(SE_SPIN);
-  MapGrid_SetShake(0x30000, 0x30000, 0x10000);
+  MapGrid_SetShake(3, 3, 1);
   PaletteFade_ApplyTarget(0x203210, 0);
   PaletteFade_Interpolate(40);
   Actor_FaceDirection(7, FACING_SOUTH, 0);
@@ -2498,7 +2498,7 @@ L_0200c66c:
   Actor_FaceDirection(0, FACING_EAST, 0);
   Actor_FaceDirection(1, FACING_NORTH, 80);
   FieldActor_Jump(1, 4, 0);
-  Actor_SetSpeed(1, 0x33333, 0x19999);
+  Actor_SetSpeed(1, 3.2);
   t292 = Actor_Get(1);
   FIELD_AT(t292, u8, 90) &= 254;
   Actor_WalkToAndWait(1, 0x21e, 0x148);
@@ -2552,7 +2552,7 @@ void MarsLighthouseAerie_HoldBackFromParents(void) {
   Actor_FaceDirectionAndWait(19, FACING_SOUTH + FACING_STEP);
   FieldEvent_SetMessageId(MsgDoNotLet);
   Event_ShowMessage(0x8013, 0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 480, 348);
   Actor_FaceDirectionAndWait(19, FACING_NORTHWEST + FACING_STEP);
   Event_End();
@@ -2564,7 +2564,7 @@ void MarsLighthouseAerie_HoldBackFromParentsAgain(void) {
   Actor_FaceDirectionAndWait(19, FACING_SOUTHEAST + FACING_STEP);
   FieldEvent_SetMessageId(MsgDoNotLet);
   Event_ShowMessage(0x8013, 0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 544, 348);
   Actor_FaceDirectionAndWait(19, FACING_NORTHWEST + FACING_STEP);
   Event_End();
@@ -2573,7 +2573,7 @@ void MarsLighthouseAerie_HoldBackFromParentsAgain(void) {
 void MarsLighthouseAerie_OfferToCastMarsStar(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetPosition(18, PIXELS(512), PIXELS(232));
+  Actor_SetPosition(18, 512, 232);
   System_Wait(1);
   FieldEvent_SetMessageId(MsgWillYouCast);
   Event_OpenMessage(18, 0);

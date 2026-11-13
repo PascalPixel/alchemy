@@ -167,7 +167,7 @@ extern u16 gData_02003d8e[];
 extern s8 gData_02003d9c[][2];
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 z, s32 mode) {
-  FieldCamera_MoveTo(x, -1, z, mode);
+  FieldCamera_MoveToFixed(x, -1, z, mode);
 }
 
 void Func_0200020c(s32 stage) {
@@ -295,7 +295,7 @@ void Func_0200020c(s32 stage) {
         z = -0x1e0000;
         x0 = -0x320000;
 
-        Actor_SetPosition(8, (top << 16) + x0, (left << 16) + z);
+        Actor_SetPositionFixed(8, (top << 16) + x0, (left << 16) + z);
       }
       Actor_SetBlendMode(Actor_GetById(8), 1);
       Actor_SetAnimation(8, 0);
@@ -431,7 +431,7 @@ void Func_0200020c(s32 stage) {
   }
   FieldTask_Remove(Func_0200005c);
   if (stage != 4) {
-    FieldCamera_SetSpeed(0x60000, 0xc000);
+    FieldCamera_SetSpeed(6);
     WorldMap_ReloadPendingAreaGraphics();
     Camera_MoveWithinMapBounds_(gData_02003d48[stage][0] << 16,
                                 gData_02003d48[stage][1] << 16, 1);
@@ -470,7 +470,7 @@ s32 Scene_Initialize(void) {
   work->screenEffect = 0;
   work->delay = 16;
   System_Wait(1);
-  FieldCamera_SetSpeed(0x80000, 0x10000);
+  FieldCamera_SetSpeed(8);
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   WorldMap_StartPlacedActors();
   switch (gMainRoutineWork.entrance) {
@@ -562,7 +562,7 @@ void Func_0200130c(void) {
 
 static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH(wrapper): the call forwarded through the inline. */
-  FieldCamera_MoveTo(x, y, z, mode);
+  FieldCamera_MoveToFixed(x, y, z, mode);
 }
 
 /// Shakes the camera diagonally by one pixel every three frames.
@@ -585,7 +585,7 @@ void Func_02001400(s32 mode) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   if (mode == 2) {
-    MapGrid_SetShake(0x20000, 0x30000, 0x10000);
+    MapGrid_SetShake(2, 3, 1);
     Event_PlaySound(SE_RUMBLE);
   }
   WorldMap_Freeze();
@@ -654,7 +654,7 @@ void Func_02001400(s32 mode) {
   gData_02003fc0 = 0xc00;
   PUSH_PICTURE(0x3a80);
   if (mode == 1) {
-    MapGrid_SetShake(0x20000, 0x20000, 0x10000);
+    MapGrid_SetShake(2, 2, 1);
     Event_PlaySound(SE_RUMBLE);
     gData_02003fc0 = 0xd00;
     FieldEvent_Wait(4);

@@ -278,34 +278,34 @@ void MadraCatacombs_UnlockWithRuinKey(void) {
     *(long *)&right->x += 0x1999;
     wait(1);
   }
-  FieldCamera_SetSpeed(0x33333, 0x6666);
-  FieldCamera_MoveTo(PIXELS(160), -1, PIXELS(240), 1);
+  FieldCamera_SetSpeed(3.2);
+  FieldCamera_MoveTo(160, CAMERA_KEEP, 240, 1);
   FieldCamera_WaitForArrival();
-  FieldCamera_SetSpeed(0x6666, 0xccc);
-  FieldCamera_MoveTo(PIXELS(160), -1, PIXELS(186), 1);
+  FieldCamera_SetSpeed(0.4);
+  FieldCamera_MoveTo(160, CAMERA_KEEP, 186, 1);
   Event_PlaySound(SE_168);
-  Actor_SetPosition(14, PIXELS(136), PIXELS(258));
-  Actor_SetPosition(19, PIXELS(184), PIXELS(258));
+  Actor_SetPosition(14, 136, 258);
+  Actor_SetPosition(19, 184, 258);
   Actor_SetScript(14, gMadraCatacombs_FlameFlaresUp);
   Actor_SetScript(19, gMadraCatacombs_FlameFlaresUp);
   Event_Wait(40);
   Event_PlaySound(SE_168);
-  Actor_SetPosition(13, PIXELS(120), PIXELS(226));
-  Actor_SetPosition(18, PIXELS(200), PIXELS(226));
+  Actor_SetPosition(13, 120, 226);
+  Actor_SetPosition(18, 200, 226);
   Actor_SetScript(13, gMadraCatacombs_FlameFlaresUp);
   Actor_SetScript(18, gMadraCatacombs_FlameFlaresUp);
   Event_Wait(40);
   Event_PlaySound(SE_168);
-  Actor_SetPosition(12, PIXELS(120), PIXELS(194));
-  Actor_SetPosition(17, PIXELS(200), PIXELS(194));
+  Actor_SetPosition(12, 120, 194);
+  Actor_SetPosition(17, 200, 194);
   Actor_SetScript(12, gMadraCatacombs_FlameFlaresUp);
   Actor_SetScript(17, gMadraCatacombs_FlameFlaresUp);
   Event_Wait(60);
   Event_PlaySound(SE_SPLASH);
-  Actor_SetPosition(11, PIXELS(136), PIXELS(162));
-  Actor_SetPosition(16, PIXELS(184), PIXELS(162));
-  Actor_SetPosition(10, PIXELS(136), PIXELS(138));
-  Actor_SetPosition(15, PIXELS(184), PIXELS(138));
+  Actor_SetPosition(11, 136, 162);
+  Actor_SetPosition(16, 184, 162);
+  Actor_SetPosition(10, 136, 138);
+  Actor_SetPosition(15, 184, 138);
   Actor_SetScript(11, gMadraCatacombs_GreatFlameFlaresUp);
   Actor_SetScript(16, gMadraCatacombs_GreatFlameFlaresUp);
   Actor_SetScript(10, gMadraCatacombs_GreatFlameFlaresUp);
@@ -429,16 +429,16 @@ void MadraCatacombs_LightFlames(void) {
   register s32 actor __asm__("r6");
   s32 target;
 
-  Actor_SetPosition(14, PIXELS(136), PIXELS(258));
-  Actor_SetPosition(19, PIXELS(184), PIXELS(258));
-  Actor_SetPosition(13, PIXELS(120), PIXELS(226));
-  Actor_SetPosition(18, PIXELS(200), PIXELS(226));
-  Actor_SetPosition(12, PIXELS(120), PIXELS(194));
-  Actor_SetPosition(17, PIXELS(200), PIXELS(194));
-  Actor_SetPosition(11, PIXELS(136), PIXELS(162));
-  Actor_SetPosition(16, PIXELS(184), PIXELS(162));
-  Actor_SetPosition(10, PIXELS(136), PIXELS(138));
-  Actor_SetPosition(15, PIXELS(184), PIXELS(138));
+  Actor_SetPosition(14, 136, 258);
+  Actor_SetPosition(19, 184, 258);
+  Actor_SetPosition(13, 120, 226);
+  Actor_SetPosition(18, 200, 226);
+  Actor_SetPosition(12, 120, 194);
+  Actor_SetPosition(17, 200, 194);
+  Actor_SetPosition(11, 136, 162);
+  Actor_SetPosition(16, 184, 162);
+  Actor_SetPosition(10, 136, 138);
+  Actor_SetPosition(15, 184, 138);
   target = 10;
   actor = 20;
   for (i = 0; i < 10; i++) {
@@ -480,9 +480,9 @@ void MadraCatacombs_EnterDoorway(void) {
   object = Actor_GetById(party->currentOwner);
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetAnimation(party->currentOwner, 2);
-  Actor_SetSpeed(party->currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(party->currentOwner, 0.5);
   cell = object->x >> 16;
   Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
                       object->z);
@@ -510,7 +510,7 @@ void MadraCatacombs_OpenDoorAndEnter(s32 a, s32 b, s32 c, s32 d, s32 mode,
     Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(a, b, c, d, mode, f);
   Event_Wait(20);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   if (mode == 1) {
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     cell = object->x >> 16;
@@ -550,7 +550,7 @@ void MadraCatacombs_OpenTabletRoomDoor(void) {
   void name(void) {                                                            \
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
-    FieldCamera_MoveTo(-1, -1, -1, 0);                                         \
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);              \
     Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);     \
     Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);    \
     wait(1);                                                                   \
@@ -611,10 +611,10 @@ void MadraCatacombs_SetUpVillage(void) {
     Actor_SetPositionAndResetMotion(object, x, y, z << 16);
   }
   if (Event_GetFlag(0x8ca) != 0)
-    Actor_SetPosition(12, PIXELS(712), PIXELS(424));
+    Actor_SetPosition(12, 712, 424);
   Actor_PlaceBlocks(gMadraCatacombs_PushedPillar);
   if (Event_GetFlag(0x9ef) != 0)
-    Actor_SetPosition(8, PIXELS(568), PIXELS(280));
+    Actor_SetPosition(8, 568, 280);
   Actor_GetById(8)->priorityFlags &= 0xfe;
   MadraCatacombs_RaisePillarCells(gMadraCatacombs_ClimbablePillar);
   FlagBlock_PlaceAll(gMadraCatacombs_Puddles);

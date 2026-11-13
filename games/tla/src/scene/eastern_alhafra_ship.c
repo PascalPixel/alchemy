@@ -174,7 +174,7 @@ s32 Scene_Initialize(void) {
     Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
   }
   if (GameFlag_Get(0x900))
-    Actor_SetPosition(13, 0x1880000, 0x2880000);
+    Actor_SetPosition(13, 392, 648);
   Actor_GetById(13)->priorityFlags |= 32;
   Actor_ShowItemIconById(15, 457);
   if (!GameFlag_Get(0x901)) {
@@ -188,7 +188,7 @@ s32 Scene_Initialize(void) {
   } else {
     Actor_SetHorizontalPositionWithTerrain(14, 0x880000, 0x1db0000);
     if (!GameFlag_Get(0x902))
-      Actor_SetPosition(15, 0x780000, 0x1d80000);
+      Actor_SetPosition(15, 120, 472);
     else
       Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
   }
@@ -242,7 +242,7 @@ void EasternAlhafraShip_MayorArrives(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgTheMayorOf);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   map = Ram_HeapSlots->mapWork;
   map->minX = 0;
   map->maxX = 0x4000000;
@@ -266,7 +266,7 @@ void EasternAlhafraShip_MayorArrives(void) {
   Actor_FaceDirection(5, FACING_SOUTHWEST, 0);
   Actor_ArmCallback(4, FACING_SOUTHWEST, 0);
   Event_Wait(20);
-  FieldCamera_MoveTo(PIXELS(376), -1, PIXELS(416), 1);
+  FieldCamera_MoveTo(376, CAMERA_KEEP, 416, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(8, 2);
@@ -353,8 +353,8 @@ void EasternAlhafraShip_MayorArrives(void) {
   Actor_ShowEmoteById(9, 0x100, 30);
   Event_Wait(20);
   Event_ShowMessageThenWait(8, 0, 10);
-  Actor_SetSpeed(8, 0x18000, 0xc000);
-  Actor_SetSpeed(9, 0x18000, 0xc000);
+  Actor_SetSpeed(8, 1.5);
+  Actor_SetSpeed(9, 1.5);
   Actor_SetMovementTypeById(9, (s32)gEasternAlhafraShip_SecondPirateRunsScript);
   Event_Wait(5);
   Actor_SetMovementTypeById(8, (s32)gEasternAlhafraShip_FirstPirateRunsScript);
@@ -472,54 +472,54 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWellThatTakes);
-  Actor_SetPosition(8, PIXELS(436), PIXELS(416));
+  Actor_SetPosition(8, 436, 416);
   FieldActor_SetSpriteRotationById(8, 0x4000);
   object0 = Actor_GetById(8);
   Actor_SetSpriteFlags((s32)object0, 0);
-  Actor_SetPosition(9, PIXELS(456), PIXELS(432));
+  Actor_SetPosition(9, 456, 432);
   FieldActor_SetSpriteRotationById(9, 0x8000);
   object1 = Actor_GetById(9);
   Actor_SetSpriteFlags((s32)object1, 0);
   object2 = Actor_GetById(9);
   object2->facing = FACING_SOUTH;
-  Actor_SetPosition(22, PIXELS(456), PIXELS(460));
+  Actor_SetPosition(22, 456, 460);
   FieldActor_SetSpriteRotationById(22, 0x8000);
   object3 = Actor_GetById(22);
   Actor_SetSpriteFlags((s32)object3, 0);
-  Actor_SetPosition(23, PIXELS(420), PIXELS(424));
+  Actor_SetPosition(23, 420, 424);
   Actor_SetSpriteRotationById(23, 0xc000);
   object4 = Actor_GetById(23);
   Actor_SetSpriteFlags((s32)object4, 0);
-  Actor_SetPosition(24, PIXELS(388), PIXELS(440));
+  Actor_SetPosition(24, 388, 440);
   Actor_SetSpriteRotationById(24, 0x4000);
   object5 = Actor_GetById(24);
   Actor_SetSpriteFlags((s32)object5, 0);
-  Actor_SetPosition(25, PIXELS(456), PIXELS(376));
-  Actor_SetPosition(5, PIXELS(472), PIXELS(392));
-  Actor_SetPosition(6, PIXELS(472), PIXELS(376));
-  Actor_SetPosition(10, PIXELS(456), PIXELS(552));
-  Actor_SetPosition(21, PIXELS(472), PIXELS(280));
-  Actor_SetPosition(20, PIXELS(440), PIXELS(280));
-  Actor_SetPosition(19, PIXELS(456), PIXELS(296));
-  Actor_SetPosition(17, PIXELS(472), PIXELS(296));
-  Actor_SetPosition(18, PIXELS(440), PIXELS(296));
-  Actor_SetPosition(16, PIXELS(456), PIXELS(304));
-  Actor_SetSpeed(21, 0x10000, 0x8000);
-  Actor_SetSpeed(20, 0x10000, 0x8000);
-  Actor_SetSpeed(19, 0x10000, 0x8000);
-  Actor_SetSpeed(17, 0x10000, 0x8000);
-  Actor_SetSpeed(18, 0x10000, 0x8000);
-  Actor_SetSpeed(16, 0x10000, 0x8000);
-  Actor_SetSpeed(4, 0x10000, 0x8000);
-  Actor_SetSpeed(25, 0x10000, 0x8000);
-  Actor_SetSpeed(5, 0x10000, 0x8000);
-  Actor_SetSpeed(6, 0x10000, 0x8000);
-  Actor_SetSpeed(10, 0x10000, 0x8000);
-  Actor_SetSpeed(8, 0x10000, 0x8000);
-  Actor_SetSpeed(9, 0x10000, 0x8000);
-  Actor_SetSpeed(22, 0x10000, 0x8000);
-  Actor_SetSpeed(23, 0x10000, 0x8000);
-  Actor_SetSpeed(24, 0x10000, 0x8000);
+  Actor_SetPosition(25, 456, 376);
+  Actor_SetPosition(5, 472, 392);
+  Actor_SetPosition(6, 472, 376);
+  Actor_SetPosition(10, 456, 552);
+  Actor_SetPosition(21, 472, 280);
+  Actor_SetPosition(20, 440, 280);
+  Actor_SetPosition(19, 456, 296);
+  Actor_SetPosition(17, 472, 296);
+  Actor_SetPosition(18, 440, 296);
+  Actor_SetPosition(16, 456, 304);
+  Actor_SetSpeed(21, 1);
+  Actor_SetSpeed(20, 1);
+  Actor_SetSpeed(19, 1);
+  Actor_SetSpeed(17, 1);
+  Actor_SetSpeed(18, 1);
+  Actor_SetSpeed(16, 1);
+  Actor_SetSpeed(4, 1);
+  Actor_SetSpeed(25, 1);
+  Actor_SetSpeed(5, 1);
+  Actor_SetSpeed(6, 1);
+  Actor_SetSpeed(10, 1);
+  Actor_SetSpeed(8, 1);
+  Actor_SetSpeed(9, 1);
+  Actor_SetSpeed(22, 1);
+  Actor_SetSpeed(23, 1);
+  Actor_SetSpeed(24, 1);
   FieldCamera_MoveWithinMapBounds(PIXELS(464), -1, PIXELS(408), 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -581,7 +581,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_WalkByAndWaitById(10, 16, 0);
   Actor_WalkToAndWaitById(10, 472, 424);
   Event_Wait(10);
-  FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(408), 1);
+  FieldCamera_MoveTo(464, CAMERA_KEEP, 408, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
   Event_ShowMessageThenWait(10, 0, 10);
@@ -695,7 +695,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_FaceDirection(6, FACING_NORTH, 0);
   Actor_FaceDirection(25, FACING_NORTH, 0);
   Event_Wait(20);
-  FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(304), 1);
+  FieldCamera_MoveTo(464, CAMERA_KEEP, 304, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(30);
   Actor_FaceDirection(16, FACING_NORTHWEST, 0);
@@ -863,7 +863,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_ShowMessageThenWait(17, 0, 10);
   Actor_ShowEmote(17, 0x107, 30);
   Event_ShowMessageThenWait(17, 0, 10);
-  FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(432), 1);
+  FieldCamera_MoveTo(464, CAMERA_KEEP, 432, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_ShowEmote(10, 0x102, 0);
@@ -876,7 +876,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
                                     result9->z);
   }
   Event_Wait(50);
-  FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(344), 1);
+  FieldCamera_MoveTo(464, CAMERA_KEEP, 344, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(16, 2);
@@ -887,7 +887,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_Jump(18, 6, 15);
   Actor_Jump(18, 6, 23);
   FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
-  FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(424), 1);
+  FieldCamera_MoveTo(464, CAMERA_KEEP, 424, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(8, 2);
@@ -900,27 +900,27 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Wait(30);
   FieldEvent_ShowMessageThenWait(0x1008, 0, 10);
   object10 = Actor_GetById(8);
-  Actor_SetPosition(8, ((*(s16 *)((u8 *)object10 + 10) << 16) + 0x140000),
-                    ((*(s16 *)((u8 *)object10 + 18) << 16) + 0x80000));
+  Actor_SetPositionFixed(8, ((*(s16 *)((u8 *)object10 + 10) << 16) + 0x140000),
+                         ((*(s16 *)((u8 *)object10 + 18) << 16) + 0x80000));
   Actor_SetSpriteRotationById(8, 0);
   object11 = Actor_GetById(8);
   Actor_SetSpriteFlags((s32)object11, 1);
   Actor_FaceDirection(8, FACING_NORTH, 0);
   Actor_Jump(8, 6, 40);
   Motion_SetModeAndWaitAnimation(8, 4);
-  Actor_SetPosition(9, PIXELS(456), PIXELS(440));
+  Actor_SetPosition(9, 456, 440);
   Actor_SetSpriteRotationById(9, 0);
   object12 = Actor_GetById(9);
   Actor_SetSpriteFlags((s32)object12, 1);
-  Actor_SetPosition(22, PIXELS(456), PIXELS(456));
+  Actor_SetPosition(22, 456, 456);
   Actor_SetSpriteRotationById(22, 0);
   object13 = Actor_GetById(22);
   Actor_SetSpriteFlags((s32)object13, 1);
-  Actor_SetPosition(23, PIXELS(424), PIXELS(424));
+  Actor_SetPosition(23, 424, 424);
   Actor_SetSpriteRotationById(23, 0);
   object14 = Actor_GetById(23);
   Actor_SetSpriteFlags((s32)object14, 1);
-  Actor_SetPosition(24, PIXELS(408), PIXELS(440));
+  Actor_SetPosition(24, 408, 440);
   Actor_SetSpriteRotationById(24, 0);
   object15 = Actor_GetById(24);
   Actor_SetSpriteFlags((s32)object15, 1);
@@ -937,7 +937,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_SetModeById(24, 4);
   Motion_SetModeAndWaitAnimation(9, 4);
   Event_Wait(10);
-  FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(368), 1);
+  FieldCamera_MoveTo(464, CAMERA_KEEP, 368, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(17, 2);
@@ -948,7 +948,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Motion_SetVarCbAndRefresh(18, 2);
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
-  FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(400), 1);
+  FieldCamera_MoveTo(464, CAMERA_KEEP, 400, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_ShowEmoteById(8, 0x105, 40);
@@ -1001,7 +1001,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_WalkByById(23, 16, 0);
   Actor_WalkByById(24, 16, 0);
   Actor_WalkByAndWait(8, 0, -16);
-  FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(384), 1);
+  FieldCamera_MoveTo(464, CAMERA_KEEP, 384, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_FaceDirection(9, FACING_NORTH, 0);
@@ -1029,7 +1029,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_WalkBy(23, 0, -16);
   Actor_WalkByById(24, 16, 0);
   Actor_WalkByAndWait(8, 0, -16);
-  FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(336), 1);
+  FieldCamera_MoveTo(464, CAMERA_KEEP, 336, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirection(25, FACING_NORTH, 0);
   Actor_FaceDirection(6, FACING_NORTH, 0);
@@ -1059,13 +1059,13 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_ShowMessageThenWait(8, 0, 10);
   Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(20);
-  FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(416), 1);
+  FieldCamera_MoveTo(464, CAMERA_KEEP, 416, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_StartRepeatedMotion(10, 3);
   Actor_SetAttachedEffect(10, 0x102);
   Event_Wait(50);
-  FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(336), 1);
+  FieldCamera_MoveTo(464, CAMERA_KEEP, 336, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_ArmCallback(8, 0xb000, 0);
@@ -1149,7 +1149,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_ShowMessageThenWait(19, 0, 10);
   Actor_SetModeById(17, 3);
   Motion_SetModeAndWaitAnimation(18, 3);
-  Actor_SetSpeed(19, 0x1cccc, 0xe666);
+  Actor_SetSpeed(19, 1.8);
   Actor_WalkByAndWait(19, 0, -32);
   Actor_WalkByAndWait(19, -16, 0);
   Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
@@ -1343,7 +1343,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_WalkByAndWait(17, -24, 0);
   Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
   Event_Wait(20);
-  FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(400), 1);
+  FieldCamera_MoveTo(464, CAMERA_KEEP, 400, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(30);
   Actor_ShowEmote(10, 0x106, 30);
@@ -1384,7 +1384,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_FaceDirection(25, FACING_NORTH, 0);
   Actor_FaceDirection(4, FACING_NORTH, 0);
   Actor_WalkToAndWait(10, 472, 264);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_FaceDirection(6, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(5, FACING_NORTH_NORTHWEST, 0);
   Actor_WalkToAndWait(10, 440, 264);
@@ -1439,7 +1439,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_SetModeById(6, 3);
   Motion_SetModeAndWaitAnimation(4, 3);
   Event_Wait(30);
-  Actor_SetSpeed(5, 0x13333, 0x9999);
+  Actor_SetSpeed(5, 1.2);
   Actor_SetModeById(5, 2);
   object20 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object20 != 0) {
@@ -1448,7 +1448,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   }
   Actor_WaitForMoveById(5);
   Actor_SetHorizontalPositionWithTerrain(5, 0, 0);
-  Actor_SetSpeed(6, 0x13333, 0x9999);
+  Actor_SetSpeed(6, 1.2);
   Actor_SetModeById(6, 2);
   object21 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object21 != 0) {
@@ -1457,7 +1457,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   }
   Actor_WaitForMoveById(6);
   Actor_SetHorizontalPositionWithTerrain(6, 0, 0);
-  Actor_SetSpeed(25, 0x13333, 0x9999);
+  Actor_SetSpeed(25, 1.2);
   Actor_SetModeById(25, 2);
   object22 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object22 != 0) {

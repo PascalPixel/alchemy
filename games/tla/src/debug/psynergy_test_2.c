@@ -295,7 +295,7 @@ void Func_020003a8(s32 mode, s32 id, s32 x, s32 z) {
 
   object = Actor_Get(id);
   if (mode == 1) {
-    Actor_SetPosition(id, x << 16, z << 16);
+    Actor_SetPositionFixed(id, x << 16, z << 16);
     object->scaleX = 0;
     object->scaleY = 0;
   }
@@ -317,7 +317,7 @@ void Func_02000418(s32 mode, s32 id, s32 x, s32 z) {
 
   object = Actor_Get(id);
   if (mode == 2) {
-    Actor_SetPosition(id, x << 16, z << 16);
+    Actor_SetPositionFixed(id, x << 16, z << 16);
     object->y = 0x200000;
     object->motionFlags = 3;
     object->gravity = 0x170a;

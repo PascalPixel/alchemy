@@ -529,11 +529,11 @@ void Func_02000568(void) {
 /// Object 10 walks round and hands item 454 back over the leader's head.
 #define HAND_BACK(leader, given, off)                                          \
   {                                                                            \
-    Actor_SetSpeed(10, 0xcccc, 0x6666);                                        \
+    Actor_SetSpeed(10, 0.8);                                                   \
     Actor_WalkToAndWait(10, 0x80, 164);                                        \
     Actor_FaceDirectionById(10, FACING_WEST);                                  \
     Event_Wait(20);                                                            \
-    Actor_SetSpeed(10, 0x19999, 0xcccc);                                       \
+    Actor_SetSpeed(10, 1.6);                                                   \
     STEP(10, 108, 168);                                                        \
     given =                                                                    \
         FieldActor_Create(489, leader->x, leader->y + 0x180000, leader->z);    \
@@ -576,9 +576,9 @@ void Func_020006f4(void) {
   Event_ResolvePendingActions(0);
   if (FieldPartyInventory_FindMember(453) != -1) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_01)) {
-      FieldCamera_MoveTo(-1, -1, -1, 0);
-      FieldCamera_SetSpeed(0xcccc, 0x1999);
-      FieldCamera_MoveTo(0x8c0000, -1, 0xbe0000, 1);
+      FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+      FieldCamera_SetSpeed(0.8);
+      FieldCamera_MoveTo(140, CAMERA_KEEP, 190, 1);
       Actor_FaceActorById(10, gMainRoutineWork.currentOwner, 0);
       asked = MsgAreYouGiving;
       Event_SetMessageId(asked);
@@ -589,7 +589,7 @@ void Func_020006f4(void) {
           0) {
         leader = Actor_GetById(gMainRoutineWork.currentOwner);
         Actor_WatchAndSetScript(10, gMainRoutineWork.currentOwner);
-        Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+        Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
         Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 98, 168);
         Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_NORTH);
         Actor_Jump(gMainRoutineWork.currentOwner, 4, 10);
@@ -620,11 +620,11 @@ void Func_020006f4(void) {
       noticed = MsgOhThatRed;
       Event_SetMessageId(noticed);
       Event_ShowMessageAndWait(10, 0);
-      FieldCamera_MoveTo(-1, -1, -1, 0);
-      FieldCamera_SetSpeed(0xcccc, 0x1999);
-      FieldCamera_MoveTo(0x8c0000, -1, 0xbe0000, 1);
+      FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+      FieldCamera_SetSpeed(0.8);
+      FieldCamera_MoveTo(140, CAMERA_KEEP, 190, 1);
       Actor_FaceDirection(10, FACING_SOUTH_SOUTHWEST, 0);
-      Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+      Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 120, 190);
       Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_EAST);
       STEP(gMainRoutineWork.currentOwner, 132, 190);
@@ -737,8 +737,8 @@ void Func_02000e38(void) {
     Event_ShowMessage(11, 0);
     if (leader->x > trader->x)
       right = 1;
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
-    Actor_SetSpeed(11, 0x19999, 0xcccc);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
+    Actor_SetSpeed(11, 1.6);
     if (right) {
       Actor_FaceDirection(11, FACING_EAST, 0);
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 296, 856);
@@ -852,7 +852,7 @@ void Func_0200129c(struct Actor *gift) {
   struct Actor *guide = Actor_Get(9);
   struct ActionScript script = gData_02004004;
 
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldPsynergy_GreyMindReadPalette();
   Actor_ShowEmote(9, 264, 20);
   guide->update = Actor_EmitSmoke;
@@ -862,7 +862,7 @@ void Func_0200129c(struct Actor *gift) {
   Event_ShowMessage(9, 0);
   Event_ShowMessage(9, 0);
   Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
-  Actor_SetSpeed(9, 0x19999, 0xcccc);
+  Actor_SetSpeed(9, 1.6);
   guide->update = Actor_EmitSmoke;
   Actor_WalkToAndWait(9, 296, 452);
   guide->update = 0;
@@ -871,7 +871,7 @@ void Func_0200129c(struct Actor *gift) {
   gift->acceleration = 0xcccc;
   gift->update = Actor_EmitSmoke;
   Actor_SelectAnimation(gift, 2);
-  FieldActor_SetMoveTarget(gift, 0x1160000, 0, 0x1c40000);
+  FieldActor_SetMoveTarget(gift, 278, 0, 452);
   FieldActor_WaitForMove(gift);
   Actor_SelectAnimation(gift, 1);
   gift->update = 0;
@@ -879,7 +879,7 @@ void Func_0200129c(struct Actor *gift) {
   Event_ShowMessage(9, 0);
   ((u8 *)HeapSlot_AllocEwram(88, 664))[661] = 99;
   Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
   leader->update = Actor_EmitSmoke;
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 312, 446);
   leader->update = 0;
@@ -890,7 +890,7 @@ void Func_0200129c(struct Actor *gift) {
   Actor_SetAnimation(9, 3);
   FieldEvent_Wait(20);
   Event_ShowMessage(9, 0);
-  Actor_SetSpeed(9, 0xcccc, 0x6666);
+  Actor_SetSpeed(9, 0.8);
   gift->speedLimit = 0xcccc;
   gift->acceleration = 0x6666;
   guide->update = Actor_EmitSmoke;
@@ -900,7 +900,7 @@ void Func_0200129c(struct Actor *gift) {
   Func_020034ec();
   gift->update = Actor_EmitSmoke;
   Actor_SelectAnimation(gift, 2);
-  FieldActor_SetMoveTarget(gift, 0x1200000, 0, 0x21a0000);
+  FieldActor_SetMoveTarget(gift, 288, 0, 538);
   FieldEvent_Wait(20);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect =
       ISLETS_GIFT_TRANSITION;
@@ -944,7 +944,7 @@ void Func_020014e0(void) {
   if (PartyInventory_FindMember(455) != -1) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     if (GameFlag_Get(FLAG_SCENE_TEMP_01) != 0) {
-      Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+      Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
       /* FAKEMATCH(temporary): the form kept. */
       a = (struct Actor *)Actor_EmitSmoke;
       leader->update = (void (*)(void))a;
@@ -960,7 +960,7 @@ void Func_020014e0(void) {
           Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
       if (answer == 0) {
         Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_WEST);
-        Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+        Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
         leader->update = (void (*)(void))a;
         STEP(gMainRoutineWork.currentOwner, 302, 424);
         SPAWN(a, b, answer)
@@ -977,14 +977,14 @@ void Func_020014e0(void) {
       Event_SetMessageId(MsgIMSoVery);
       Event_ShowMessage(9, 0);
       Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 262, 20);
-      Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+      Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
       leader->update = Actor_EmitSmoke;
       // Default: a is set for real when object 163 is made.
       a = 0;
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 318, 424);
       leader->update = 0;
       Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_WEST);
-      Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+      Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
       leader->update = Actor_EmitSmoke;
       STEP(gMainRoutineWork.currentOwner, 302, 424);
       SPAWN(a, b, 0)
@@ -1032,7 +1032,7 @@ void Func_020014e0(void) {
       ((u8 *)HeapSlot_AllocEwram(88, 664))[0x295] = 99;
       FieldActor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
       Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
-      Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+      Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
       FieldActor_Jump(gMainRoutineWork.currentOwner, 6, 0);
       Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 296, 452);
       leader->update = Func_02001278;
@@ -1042,8 +1042,8 @@ void Func_020014e0(void) {
       FieldEvent_Wait(20);
       Event_ShowMessage(9, 0);
       FieldPsynergy_RestoreMindReadPalette();
-      Actor_SetSpeed(9, 0xcccc, 0x6666);
-      Actor_SetSpeed(10, 0xcccc, 0x6666);
+      Actor_SetSpeed(9, 0.8);
+      Actor_SetSpeed(10, 0.8);
       Actor_GetById(9)->update = Actor_EmitSmoke;
       Actor_SetDestination(9, 288, 538);
       FieldEvent_Wait(40);
@@ -1099,15 +1099,15 @@ void Func_02001a68(void) {
     } *)HeapSlot_AllocEwram(88, 0x298))
         ->unk295 = 99;
     FieldActor_Jump(gMainRoutineWork.currentOwner, 6, 0);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
     Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 152, 768);
     leader->update = (void (*)(void))Func_02001278;
     FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
     Actor_SetAnimation(9, 3);
     FieldEvent_Wait(20);
     FieldPsynergy_RestoreMindReadPalette();
-    Actor_SetSpeed(9, 0x19999, 0xcccc);
-    Actor_SetSpeed(10, 0x19999, 0xcccc);
+    Actor_SetSpeed(9, 1.6);
+    Actor_SetSpeed(10, 1.6);
     update = (void (*)(void))Actor_EmitSmoke;
     done = (u8 *)object + 99;
     *done = 0;
@@ -1279,7 +1279,7 @@ void Func_02001f74(void) {
   FieldActor_Stop(10);
   System_Wait(1);
   object->motionFlags = 0;
-  Actor_SetSpeed(10, 0x19999, 0xcccc);
+  Actor_SetSpeed(10, 1.6);
   FieldActor_SetPositionAndResetMotion(object, PIXELS(268), PIXELS(64),
                                        PIXELS(390));
   System_Wait(1);
@@ -1288,7 +1288,7 @@ void Func_02001f74(void) {
   object->y = PIXELS(160);
   System_Wait(1);
   FieldTask_AddFrame(Func_02001f58, 0x480);
-  FieldActor_SetMoveTarget(object, PIXELS(132), PIXELS(128), PIXELS(320));
+  FieldActor_SetMoveTarget(object, 132, 128, 320);
   FieldActor_WaitForMove(object);
   FieldTask_Remove(Func_02001f58);
   Actor_SetAnimation(10, 5);
@@ -1553,12 +1553,12 @@ void Func_0200267c(void) {
   object = Actor_Get(party->currentOwner);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetAnimation(party->currentOwner, 2);
-  Actor_SetSpeed(party->currentOwner, 0x8000, 0x4000);
-  FieldActor_SetMoveTarget(object,
-                           ((8 - (object->x >> 16) % 16) << 16) + object->x,
-                           object->y, object->z);
+  Actor_SetSpeed(party->currentOwner, 0.5);
+  FieldActor_SetMoveTargetFixed(
+      object, ((8 - (object->x >> 16) % 16) << 16) + object->x, object->y,
+      object->z);
   FieldActor_WaitForMove(object);
   object->facing = FACING_NORTH;
   exit = &work->exit;
@@ -1596,12 +1596,12 @@ void Func_02002780(void) {
   object = Actor_Get(party->currentOwner);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetAnimation(party->currentOwner, 2);
-  Actor_SetSpeed(party->currentOwner, 0x8000, 0x4000);
-  FieldActor_SetMoveTarget(object,
-                           ((8 - (object->x >> 16) % 16) << 16) + object->x,
-                           object->y, object->z);
+  Actor_SetSpeed(party->currentOwner, 0.5);
+  FieldActor_SetMoveTargetFixed(
+      object, ((8 - (object->x >> 16) % 16) << 16) + object->x, object->y,
+      object->z);
   FieldActor_WaitForMove(object);
   object->facing = FACING_NORTH;
   Actor_SetScript(party->currentOwner, gData_02004028);
@@ -1618,7 +1618,7 @@ void Func_02002830(void) {
   struct Actor *object = Actor_Get(9);
 
   Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
-  Actor_SetPosition(10, PIXELS(273), PIXELS(520));
+  Actor_SetPosition(10, 273, 520);
   System_Wait(1);
   object->facing = FACING_NORTH;
   owner->update = (void (*)(void))Func_02001278;
@@ -1629,8 +1629,8 @@ void Func_02002830(void) {
   work->field1ac = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_SetSpeed(9, 0x9999, 0x4ccc);
-  Actor_SetSpeed(10, 0x9999, 0x4ccc);
+  Actor_SetSpeed(9, 0.6);
+  Actor_SetSpeed(10, 0.6);
   Actor_Get(10)->update = (void (*)(void))Actor_EmitSmoke;
   object->update = (void (*)(void))Actor_EmitSmoke;
   Actor_WalkTo(10, 280, 468);
@@ -1643,7 +1643,7 @@ void Func_02002830(void) {
   FieldEvent_SetMessageId((s32)MsgHereWeAre);
   Event_ShowMessage(9, 0);
   Actor_SetAnimation(9, 1);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
   FieldActor_Jump(gMainRoutineWork.currentOwner, 6, 0);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 312, 440);
@@ -1674,7 +1674,7 @@ void Func_020029c4(void) {
   u8 *done;
 
   Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
-  Actor_SetPosition(10, PIXELS(240), PIXELS(540));
+  Actor_SetPosition(10, 240, 540);
   System_Wait(1);
   guide->facing = FACING_SOUTH;
   leader->update = Func_02001278;
@@ -1687,8 +1687,8 @@ void Func_020029c4(void) {
 #endif
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_SetSpeed(9, 0xcccc, 0x6666);
-  Actor_SetSpeed(10, 0xcccc, 0x6666);
+  Actor_SetSpeed(9, 0.8);
+  Actor_SetSpeed(10, 0.8);
   OBJECT(10)->update = Actor_EmitSmoke;
   guide->update = Actor_EmitSmoke;
   done = (u8 *)guide + 0x63;
@@ -1706,7 +1706,7 @@ void Func_020029c4(void) {
   FieldEvent_SetMessageId(MsgWellHereWe);
   Event_ShowMessage(9, 0);
   Actor_SetAnimation(9, 1);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
   FieldActor_SetSpriteColor(((s32)Actor_Get(gMainRoutineWork.currentOwner)), 0);
   FieldActor_Jump(gMainRoutineWork.currentOwner, 6, 0);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 152, 742);
@@ -1757,7 +1757,7 @@ void Islets_InitializeRoom1(void) {
     Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   map->mode = 1;
   Actor_SetSpriteFlags(Actor_Get(11), 0);
-  Actor_SetSpeed(10, 0xcccc, 0x6666);
+  Actor_SetSpeed(10, 0.8);
   Actor_Get(10)->collisionFlags |= 0x80;
   if (Event_GetFlag(0xaa1)) {
     spawned = FieldActor_Create(489, 0x1180000, 0, 0x3480000);
@@ -1791,7 +1791,7 @@ void Func_02002d48(s32 id, s32 column, s32 row) {
   s32 x = (column * 32 + object->timer) << 16;
   s32 z = (row * 32 + (s16)object->unk66) << 16;
 
-  FieldActor_SetMoveTarget(object, x, object->y, z);
+  FieldActor_SetMoveTargetFixed(object, x, object->y, z);
 }
 
 // The Islets' marching guards (objects 11 to 18): while the event work is busy
@@ -1887,7 +1887,7 @@ void Islets_InitializeRoom2(void) {
   FieldTask_AddFrame(Func_02002d7c, 0x480);
   if (Event_GetFlag(0xa2c)) {
     object = Actor_Get(10);
-    Actor_SetPosition(10, PIXELS(176), PIXELS(168));
+    Actor_SetPosition(10, 176, 168);
     Actor_SetAnimation(10, 4);
     object->priorityFlags |= 2;
     object->motionFlags = 0;
@@ -1912,8 +1912,8 @@ void Islets_InitializeRoom2(void) {
       Actor_SetPositionAndFacing(19, PIXELS(234), PIXELS(204), facing);
     }
     Actor_Get(19)->collisionFlags |= 0x80;
-    Actor_SetSpeed(9, 0x20000, 0x10000);
-    Actor_SetSpeed(19, 0x19999, 0xcccc);
+    Actor_SetSpeed(9, 2);
+    Actor_SetSpeed(19, 1.6);
     Actor_SetScript(9, gData_02004274);
     Actor_SetScript(19, gData_02004274);
     Event_SetFlag(FLAG_SCENE_TEMP_00);
@@ -1935,7 +1935,7 @@ void Islets_InitializeRoom3(void) {
       Actor_SetSpriteFlags(spawned, 0);
       spawned->unk5c[0] = 1;
     }
-    Actor_SetPosition(10, PIXELS(104), PIXELS(204));
+    Actor_SetPosition(10, 104, 204);
   }
   FieldActor_SetSpritePriority(11, 1);
   FieldActor_SetSpriteColor(Actor_Get(11), 15);
@@ -2041,12 +2041,12 @@ void Islets_InitializeRoom5(void) {
   PaletteCycle_Add__islets(4, 12, 5, 4);
   if (Event_GetFlag(0xaa5) &&
       (done = Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) == 0) {
-    Actor_SetPosition(10, 0x1180000, 0x1d40000);
+    Actor_SetPosition(10, 280, 468);
     Actor_Get(10)->motionFlags = done;
     {
       s32 a1 = 0x1280000;
 
-      Actor_SetPosition(9, a1, 0x1c40000);
+      Actor_SetPositionFixed(9, a1, 0x1c40000);
     }
   }
   Actor_SetSpriteFlags(Actor_Get(9), 0);
@@ -2061,7 +2061,7 @@ void Islets_InitializeRoom5(void) {
 
         Actor_SetPositionAndFacing(9, 0x980000, 0x3000000, a3);
       }
-      Actor_SetPosition(10, 0xb00000, 0x3090000);
+      Actor_SetPosition(10, 176, 777);
       System_Wait(1);
     }
   }
@@ -2114,12 +2114,12 @@ void Islets_InitializeRoom5(void) {
   PaletteCycle_Add__islets(4, 12, 5, 4);
   if (Event_GetFlag(0xaa5) &&
       (done = Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) == 0) {
-    Actor_SetPosition(10, 0x1180000, 0x1d40000);
+    Actor_SetPosition(10, 280, 468);
     Actor_Get(10)->motionFlags = done;
     {
       s32 a1 = 0x1280000;
 
-      Actor_SetPosition(9, a1, 0x1c40000);
+      Actor_SetPositionFixed(9, a1, 0x1c40000);
     }
   }
   Actor_SetSpriteFlags(Actor_Get(9), 0);
@@ -2134,7 +2134,7 @@ void Islets_InitializeRoom5(void) {
 
         Actor_SetPositionAndFacing(9, 0x980000, 0x3000000, a3);
       }
-      Actor_SetPosition(10, 0xb00000, 0x3090000);
+      Actor_SetPosition(10, 176, 777);
       System_Wait(1);
     }
   }

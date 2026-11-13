@@ -46,14 +46,14 @@
     actor->priorityFlags = 1;                                                  \
     actor->motionFlags = 3;                                                    \
     Actor_SetSpriteFlags(actor, 1);                                            \
-    FieldCamera_MoveTo(-1, -1, -1, 0);                                         \
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);              \
     shadow = EventCamera_GetActor();                                           \
     shadow->speedLimit = 0x80000;                                              \
     shadow->acceleration = 0x10000;                                            \
     shadow->motionFlags = 0;                                                   \
-    FieldActor_SetMoveTarget(shadow, actor->x,                                 \
-                             Map_GetTerrainHeight(0, actor->x, actor->z),      \
-                             actor->z);                                        \
+    FieldActor_SetMoveTargetFixed(shadow, actor->x,                            \
+                                  Map_GetTerrainHeight(0, actor->x, actor->z), \
+                                  actor->z);                                   \
     i = 0;                                                                     \
     if (actor->y > actor->terrainHeight + 0x100000) {                          \
       do {                                                                     \
@@ -116,14 +116,14 @@
     actor->priorityFlags = 1;                                                  \
     actor->motionFlags = 3;                                                    \
     Actor_SetSpriteFlags(actor, 1);                                            \
-    FieldCamera_MoveTo(-1, -1, -1, 0);                                         \
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);              \
     shadow = EventCamera_GetActor();                                           \
     shadow->speedLimit = 0x80000;                                              \
     shadow->acceleration = 0x10000;                                            \
     shadow->motionFlags = 0;                                                   \
-    FieldActor_SetMoveTarget(shadow, actor->x,                                 \
-                             Map_GetTerrainHeight(0, actor->x, actor->z),      \
-                             actor->z);                                        \
+    FieldActor_SetMoveTargetFixed(shadow, actor->x,                            \
+                                  Map_GetTerrainHeight(0, actor->x, actor->z), \
+                                  actor->z);                                   \
     i = 0;                                                                     \
     while (i <= 59 && actor->y > actor->terrainHeight + 0x100000) {            \
       i++;                                                                     \

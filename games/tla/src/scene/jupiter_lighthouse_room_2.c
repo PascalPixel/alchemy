@@ -300,7 +300,7 @@ void Func_02000454(void) {
 
   y = object->y;
   if (y >= 0x200000) {
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 2);
     FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
     Actor_WalkTo(gMainRoutineWork.currentOwner, 216, 680);
     Actor_SetAnimationSpeed(object, 64);
@@ -483,7 +483,7 @@ s32 Scene_Initialize(void) {
     Actor_RaiseFromCell(11);
   }
   if (Event_GetFlag(0xa03)) {
-    Actor_SetPosition(12, 148 << 17, 208 << 15);
+    Actor_SetPosition(12, 296, 104);
     Actor_RaiseFromCell(12);
   }
   return 0;

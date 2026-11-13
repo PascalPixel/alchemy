@@ -220,7 +220,7 @@ loop:
   MapGrid_AnimateCells(gData_02005de0[index].steps, gData_02005de0[index].x,
                        gData_02005de0[index].y);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   {
     s32 owner = gMainRoutineWork.currentOwner;
 
@@ -379,7 +379,7 @@ void Func_02000808(void) {
     Actor_SetSpriteFlags(Actor_Get(22), 0);
     speed = 0x4000;
     Actor_SetPositionAndFacing(22, PIXELS(360), PIXELS(199), speed);
-    FieldCamera_MoveTo(PIXELS(359), -1, PIXELS(220), 1);
+    FieldCamera_MoveTo(359, CAMERA_KEEP, 220, 1);
     FieldCamera_WaitForArrival();
     Func_020007a0(22);
     FieldEvent_Wait(30);
@@ -424,7 +424,7 @@ void Func_02000960(void) {
 
   Event_PlaySound(SE_MAP_EXIT);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Flag_Set(0x121);
   FieldEvent_SetExitRequest(event->exit);
 }
@@ -894,7 +894,7 @@ DEFINE_GAROH_PLAY_EFFECT(Func_02001454, 3, 39)
   {                                                                            \
     struct Actor *leader_;                                                     \
                                                                                \
-    Actor_SetSpeed(id, 0x13333, 0x9999);                                       \
+    Actor_SetSpeed(id, 1.2);                                                   \
     Actor_SetAnimation(id, 2);                                                 \
     leader_ = Actor_Get(gMainRoutineWork.currentOwner);                        \
     if (leader_ != NULL)                                                       \
@@ -919,11 +919,11 @@ void Func_02001490(void) {
   Event_SetFlag(0x91c);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetPosition(8, 0x600000, 0x80000);
+  Actor_SetPosition(8, 96, 8);
   FieldEvent_SetMessageId((s32)MsgGaroh01);
   FieldEvent_ShowMessageThenWait(8, 0, 0);
   Actor_ShowEmote(4, 0x100, 40);
-  Actor_SetSpeed(4, 0xcccc, 0x6666);
+  Actor_SetSpeed(4, 0.8);
   Actor_WalkToAndWait(4, 152, 304);
   FieldActor_LaunchFromLeader(9, 32, -16, 0xb000);
   FieldActor_LaunchFromLeader(5, 0, 0, 0xc000);
@@ -959,7 +959,7 @@ void Func_02001490(void) {
   Actor_FaceDirection(6, FACING_NORTH, 0);
   Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
-  FieldCamera_MoveTo(0x900000, -1, 0x800000, 1);
+  FieldCamera_MoveTo(144, CAMERA_KEEP, 128, 1);
   FieldCamera_WaitForArrival();
   bird = Actor_Get(8);
   Actor_SetAnimation(8, 2);
@@ -976,7 +976,7 @@ loop1:
     position[2] = Garoh_PathStep(0x200000, 0x780000, i) - wave * 7;
     position[1] = 0;
     r = ((Random16() * 10) >> 16) + 4;
-    Actor_SetSpeed(8, r * 0x1999, r * 0xccc);
+    Actor_SetSpeedFixed(8, r * 0x1999, r * 0xccc);
     Actor_WalkToAndWait(8, position[0] / 0x10000, position[2] / 0x10000);
     i++;
     if (i <= 7)
@@ -1009,7 +1009,7 @@ loop2:
     position[2] = Garoh_PathStep(z, toZ, i);
     position[1] = 0;
     r = ((Random16() * 10) >> 16) + 4;
-    Actor_SetSpeed(8, r * 0x1999, r * 0xccc);
+    Actor_SetSpeedFixed(8, r * 0x1999, r * 0xccc);
     Actor_WalkToAndWait(8, position[0] / 0x10000, position[2] / 0x10000);
     i++;
     if (i <= 7)
@@ -1027,15 +1027,15 @@ loop2:
   Actor_FaceDirection(8, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   Actor_ShowEmote(8, 0x102, 50);
-  Actor_SetSpeed(8, 0x9999, 0x4ccc);
+  Actor_SetSpeed(8, 0.6);
   Actor_Get(8)->actionFlags &= 254;
   Actor_WalkToAndWait(8, 128, 148);
   FieldEvent_Wait(1);
   Actor_Get(8)->actionFlags |= 1;
-  Actor_SetSpeed(8, 0x28000, 0x14000);
+  Actor_SetSpeed(8, 2.5);
   Actor_WalkByAndWait(8, 0, 4);
   FieldEvent_Wait(20);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_FaceDirection(8, FACING_NORTH, 0);
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(8, 3);
@@ -1043,12 +1043,12 @@ loop2:
   FieldEvent_Wait(40);
   Actor_FaceDirection(8, FACING_WEST, 0);
   FieldEvent_Wait(10);
-  Actor_SetSpeed(8, 0x26666, 0x13333);
+  Actor_SetSpeed(8, 2.4);
   Actor_WalkByAndWait(8, -24, -8);
   Actor_WalkByAndWait(8, -8, -100);
   FieldEvent_Wait(30);
   Actor_SetPosition(8, 0, 0);
-  FieldCamera_MoveTo(0xa80000, -1, 0x1180000, 1);
+  FieldCamera_MoveTo(168, CAMERA_KEEP, 280, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   Actor_ShowEmote(4, 0x102, 0);
@@ -1180,7 +1180,7 @@ loop2:
   FieldEvent_ShowMessageThenWait(0x2006, 0, 0);
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_Wait(10);
-  Actor_SetSpeed(9, 0x6666, 0x3333);
+  Actor_SetSpeed(9, 0.4);
   Actor_Get(9)->actionFlags &= 254;
   Actor_WalkByAndWait(9, 0, -16);
   FieldEvent_Wait(1);
@@ -1210,7 +1210,7 @@ loop2:
   FieldEvent_Wait(25);
   Actor_ShowEmote(9, 0x109, 30);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(9, 0x10000, 0x8000);
+  Actor_SetSpeed(9, 1);
   Actor_WalkByAndWait(9, 0, 16);
   FieldEvent_Wait(20);
   Actor_ShowEmote(9, 0x103, 30);
@@ -1223,7 +1223,7 @@ loop2:
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
-  Actor_SetSpeed(9, 0x20000, 0x10000);
+  Actor_SetSpeed(9, 2);
   Actor_WalkByAndWait(9, -16, 0);
   Actor_FaceDirection(5, FACING_NORTHWEST, 0);
   Actor_FaceDirection(6, FACING_NORTHWEST, 0);
@@ -1273,7 +1273,7 @@ void Func_020022f4(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(((s32)MsgGaroh13));
-  Actor_SetPosition(8, PIXELS(144), PIXELS(752));
+  Actor_SetPosition(8, 144, 752);
   Actor_WalkToAndWait(4, 280, 776);
   Actor_FaceDirection(4, FACING_NORTH, 0);
   FieldEvent_Wait(10);
@@ -1293,24 +1293,24 @@ void Func_020022f4(void) {
   Actor_FaceDirection(9, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(4, FACING_NORTH, 0);
   FieldEvent_Wait(20);
-  FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(752), 1);
+  FieldCamera_MoveTo(280, CAMERA_KEEP, 752, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Actor_SetPosition(8, PIXELS(144), PIXELS(720));
-  Actor_SetSpeed(8, 0xcccc, 0x6666);
+  Actor_SetPosition(8, 144, 720);
+  Actor_SetSpeed(8, 0.8);
   Actor_WalkToAndWait(8, 168, 720);
   FieldEvent_Wait(10);
-  Actor_SetSpeed(8, 0x20000, 0x10000);
+  Actor_SetSpeed(8, 2);
   FieldActor_Jump(8, 6, 0);
   Actor_WalkToAndWait(8, 200, 720);
   FieldEvent_Wait(10);
-  Actor_SetSpeed(8, 0xcccc, 0x6666);
+  Actor_SetSpeed(8, 0.8);
   Actor_WalkToAndWait(8, 216, 712);
   Actor_WalkToAndWait(8, 320, 712);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   Actor_RunRepeatedMotion(8, 2);
   FieldEvent_Wait(10);
-  Actor_SetSpeed(8, 0x9999, 0x4ccc);
+  Actor_SetSpeed(8, 0.6);
   Actor_Get(8)->actionFlags &= 254;
   Actor_WalkToAndWait(8, 296, 712);
   FieldEvent_Wait(1);
@@ -1331,14 +1331,14 @@ void Func_020022f4(void) {
   Actor_ShowEmote(8, 0x102, 45);
   FieldActor_Jump(8, 6, 15);
   FieldActor_Jump(8, 6, 23);
-  Actor_SetSpeed(8, 0x26666, 0x13333);
+  Actor_SetSpeed(8, 2.4);
   Actor_WalkToAndWait(8, 200, 712);
   FieldEvent_Wait(3);
-  Actor_SetSpeed(8, 0x20000, 0x10000);
+  Actor_SetSpeed(8, 2);
   FieldActor_Jump(8, 6, 0);
   Actor_WalkToAndWait(8, 168, 712);
   FieldEvent_Wait(3);
-  Actor_SetSpeed(8, 0x26666, 0x13333);
+  Actor_SetSpeed(8, 2.4);
   Actor_WalkToAndWait(8, 144, 712);
   Actor_SetPosition(8, 0, 0);
   FieldEvent_Wait(30);
@@ -1366,7 +1366,7 @@ void Func_020022f4(void) {
   }
   FieldEvent_Wait(20);
   FieldEvent_Wait(10);
-  Actor_SetSpeed(9, 0x13333, 0x9999);
+  Actor_SetSpeed(9, 1.2);
   Actor_SetAnimation(9, 2);
   t3 = ((s32)Actor_Get(*(s32 *)(v5)));
   if (t3 != 0) {
@@ -1395,8 +1395,8 @@ void Func_02002694(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(((s32)MsgGaroh14));
-  Actor_SetPosition(10, PIXELS(328), PIXELS(40));
-  Actor_SetPosition(8, PIXELS(328), PIXELS(40));
+  Actor_SetPosition(10, 328, 40);
+  Actor_SetPosition(8, 328, 40);
   Actor_FaceDirection(10, FACING_SOUTH, 0);
   Actor_FaceDirection(8, FACING_SOUTH, 0);
   Actor_WalkToAndWait(4, 320, 224);
@@ -1406,8 +1406,8 @@ void Func_02002694(void) {
   FieldActor_LaunchFromLeader(9, -16, -8, FACING_NORTH);
   FieldActor_WaitForMoveById(9);
   FieldEvent_Wait(30);
-  FieldCamera_SetSpeed(0x10000, 0x2000);
-  FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(152), 1);
+  FieldCamera_SetSpeed(1);
+  FieldCamera_MoveTo(328, CAMERA_KEEP, 152, 1);
   Actor_FaceDirection(9, FACING_NORTHWEST, 0);
   FieldEvent_Wait(25);
   Actor_FaceDirection(9, FACING_NORTHEAST, 0);
@@ -1427,7 +1427,7 @@ void Func_02002694(void) {
   }
   FieldCamera_MoveToActorById(4, 1);
   FieldCamera_WaitForArrival();
-  FieldCamera_SetSpeed(0x18000, 0x3000);
+  FieldCamera_SetSpeed(1.5);
   Event_OpenMessage(9, 0);
   if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
     FieldEvent_Wait(20);
@@ -1499,21 +1499,21 @@ void Func_02002694(void) {
   Actor_FaceDirection(6, FACING_NORTH, 0);
   Actor_FaceDirection(4, FACING_NORTH, 0);
   Actor_FaceDirection(9, FACING_NORTHEAST, 0);
-  FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(144), 1);
+  FieldCamera_MoveTo(328, CAMERA_KEEP, 144, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Actor_SetPosition(11, PIXELS(328), PIXELS(136));
+  Actor_SetPosition(11, 328, 136);
   t3 = Actor_Get(11);
   Actor_SetSpriteFlags(t3, 0);
   Func_02001418(11);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(5, 0, 0);
-  Actor_SetSpeed(8, 0xb333, 0x5999);
-  Actor_SetSpeed(10, 0xb333, 0x5999);
-  Actor_SetPosition(10, PIXELS(328), PIXELS(128));
+  Actor_SetSpeed(8, 0.7);
+  Actor_SetSpeed(10, 0.7);
+  Actor_SetPosition(10, 328, 128);
   FieldEvent_Wait(10);
   Actor_WalkByAndWait(10, 0, 16);
-  Actor_SetPosition(8, PIXELS(328), PIXELS(128));
+  Actor_SetPosition(8, 328, 128);
   FieldEvent_Wait(10);
   Actor_WalkBy(8, 0, 16);
   Actor_WalkByAndWait(10, 0, 16);
@@ -1527,7 +1527,7 @@ void Func_02002694(void) {
   Actor_WalkByAndWait(8, 16, 8);
   Actor_FaceDirection(8, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
-  FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(208), 1);
+  FieldCamera_MoveTo(328, CAMERA_KEEP, 208, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(8, 2);
@@ -1783,8 +1783,8 @@ void Func_02002694(void) {
   FieldActor_Jump(8, 6, 23);
   Actor_ShowEmote(6, 0x102, 30);
   FieldEvent_ShowMessageThenWait(6, 0, 0);
-  Actor_SetSpeed(10, 0x28000, 0x14000);
-  Actor_SetSpeed(8, 0x28000, 0x14000);
+  Actor_SetSpeed(10, 2.5);
+  Actor_SetSpeed(8, 2.5);
   Actor_FaceDirection(10, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(10, 8, 0);
@@ -1805,8 +1805,8 @@ void Func_02002694(void) {
   *(u8 *)((t14 + 90)) = b1;
   FieldActor_SetAnimation(8, 5);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(8, 0x14ccc, 0xa666);
-  Actor_SetSpeed(10, 0xb333, 0x5999);
+  Actor_SetSpeed(8, 1.3);
+  Actor_SetSpeed(10, 0.7);
   {
     s32 a0 = 10;
     /* FAKEMATCH(barrier): an empty asm on a0. */
@@ -2029,7 +2029,7 @@ void Func_02002694(void) {
   }
   FieldEvent_Wait(20);
   FieldEvent_Wait(10);
-  Actor_SetSpeed(9, 0x13333, 0x9999);
+  Actor_SetSpeed(9, 1.2);
   FieldActor_SetAnimation(9, 2);
   p1 = (s32)&gMainRoutineWork;
   v5 = (p1 + 0x214);
@@ -2039,7 +2039,7 @@ void Func_02002694(void) {
   }
   FieldActor_WaitForMoveById(9);
   Actor_SetPosition(9, 0, 0);
-  Actor_SetSpeed(5, 0x13333, 0x9999);
+  Actor_SetSpeed(5, 1.2);
   FieldActor_SetAnimation(5, 2);
   t21 = Actor_Get(*(s32 *)(v5));
   if (t21 != 0) {
@@ -2047,7 +2047,7 @@ void Func_02002694(void) {
   }
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
-  Actor_SetSpeed(6, 0x13333, 0x9999);
+  Actor_SetSpeed(6, 1.2);
   FieldActor_SetAnimation(6, 2);
   t22 = Actor_Get(*(s32 *)(v5));
   if (t22 != 0) {
@@ -2056,7 +2056,7 @@ void Func_02002694(void) {
   FieldActor_WaitForMoveById(6);
   Actor_SetPosition(6, 0, 0);
   if (Event_GetFlag(7)) {
-    Actor_SetSpeed(7, 0x13333, 0x9999);
+    Actor_SetSpeed(7, 1.2);
     FieldActor_SetAnimation(7, 2);
     t24 = Actor_Get(*(s32 *)(v5));
     if (t24 != 0) {
@@ -2105,10 +2105,10 @@ void Func_02003878(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(((s32)MsgGaroh28));
-  Actor_SetPosition(10, 0x1480000, 0x280000);
+  Actor_SetPosition(10, 328, 40);
   Actor_FaceDirection(10, FACING_SOUTH, 0);
   FieldEvent_ShowMessageThenWait(10, 0, 0);
-  Actor_SetSpeed(4, 0xcccc, 0x6666);
+  Actor_SetSpeed(4, 0.8);
   Actor_WalkToAndWait(4, 0x140, 224);
   FieldActor_LaunchFromLeader(9, -16, 0, 0xc000);
   FieldActor_LaunchFromLeader(5, 16, 0, 0xc000);
@@ -2119,16 +2119,16 @@ void Func_02003878(void) {
   Actor_FaceDirection(4, FACING_NORTH, 0);
   FieldActor_WaitForMoveById(6);
   FieldEvent_Wait(20);
-  FieldCamera_MoveTo(0x1480000, -1, 0x900000, 1);
+  FieldCamera_MoveTo(328, CAMERA_KEEP, 144, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Actor_SetPosition(11, 0x1480000, 0x880000);
+  Actor_SetPosition(11, 328, 136);
   t2 = Actor_Get(11);
   Actor_SetSpriteFlags(t2, 0);
   Func_02001418(11);
   FieldEvent_Wait(30);
-  Actor_SetSpeed(10, 0xb333, 0x5999);
-  Actor_SetPosition(10, 0x1480000, 0x800000);
+  Actor_SetSpeed(10, 0.7);
+  Actor_SetPosition(10, 328, 128);
   FieldEvent_Wait(10);
   Actor_WalkByAndWait(10, 0, 16);
   FieldEvent_Wait(20);
@@ -2144,7 +2144,7 @@ void Func_02003878(void) {
   if (Event_GetFlag(7)) {
     Actor_FaceDirection(7, FACING_NORTHWEST, 0);
   }
-  FieldCamera_MoveTo(0x1480000, -1, 0xb80000, 1);
+  FieldCamera_MoveTo(328, CAMERA_KEEP, 184, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   ACTOR_MODE_THEN_WAIT(10, 3, 20);
@@ -2357,13 +2357,13 @@ L_0200c216:;
   Actor_WalkByAndWait(9, 16, 0);
   Actor_FaceDirection(6, FACING_NORTHEAST, 0);
   FieldEvent_Wait(20);
-  FieldCamera_MoveTo(0x1580000, -1, 0xd00000, 1);
+  FieldCamera_MoveTo(344, CAMERA_KEEP, 208, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
-  Actor_SetSpeed(10, 0x13333, 0x9999);
+  Actor_SetSpeed(10, 1.2);
   Actor_WalkByAndWait(10, 16, 16);
-  Actor_SetSpeed(10, 0xb333, 0x5999);
+  Actor_SetSpeed(10, 0.7);
   FieldEvent_ShowMessageThenWait(10, 0, 0);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
   FieldEvent_Wait(10);
@@ -2612,7 +2612,7 @@ L_0200c694:;
   FieldActor_SetSpritePriority(12, 1);
   t16 = Actor_Get(12);
   Actor_SetSpriteFlags(t16, 0);
-  Actor_SetPosition(12, 0x1480000, 0xa00000);
+  Actor_SetPosition(12, 328, 160);
   FieldActor_Jump(12, 9, 0);
   v7 = 0;
   v6 = 20;
@@ -2697,7 +2697,7 @@ L_0200ccdc:;
   Actor_RunRepeatedMotion(10, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
-  Actor_SetSpeed(10, 0x26666, 0x13333);
+  Actor_SetSpeed(10, 2.4);
   t22 = Actor_Get(10);
   *(u8 *)(((u8 *)t22 + 90)) = (254 & *(u8 *)(((u8 *)t22 + 90)));
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHWEST, 0);
@@ -2711,7 +2711,7 @@ L_0200ccdc:;
   b1 |= *(u8 *)(((u8 *)t23 + 90));
   *(u8 *)(((u8 *)t23 + 90)) = b1;
   FieldEvent_Wait(1);
-  Actor_SetSpeed(10, 0xb333, 0x5999);
+  Actor_SetSpeed(10, 0.7);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(5, FACING_WEST, 0);
@@ -2721,7 +2721,7 @@ L_0200ccdc:;
 L_0200cda2:;
   Actor_FaceDirection(6, FACING_WEST, 0);
   Djinn_JoinParty(12, 3, 9);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetAnimation(4, 1);
   FieldEvent_Wait(20);
   Actor_FaceDirection(4, FACING_NORTH, 0);
@@ -2794,7 +2794,7 @@ L_0200cfbc:;
   Actor_SetAnimation(6, 3);
   ACTOR_MODE_THEN_WAIT(4, 3, 20);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(9, 0x13333, 0x9999);
+  Actor_SetSpeed(9, 1.2);
   Actor_SetAnimation(9, 2);
   p1 = (s32)&gMainRoutineWork;
   v5 = (p1 + 0x214);
@@ -2805,7 +2805,7 @@ L_0200cfbc:;
 L_0200d016:;
   FieldActor_WaitForMoveById(9);
   Actor_SetPosition(9, 0, 0);
-  Actor_SetSpeed(5, 0x13333, 0x9999);
+  Actor_SetSpeed(5, 1.2);
   Actor_SetAnimation(5, 2);
   t28 = Actor_Get(*(s32 *)(v5));
   if (t28 == 0)
@@ -2814,7 +2814,7 @@ L_0200d016:;
 L_0200d054:;
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
-  Actor_SetSpeed(6, 0x13333, 0x9999);
+  Actor_SetSpeed(6, 1.2);
   Actor_SetAnimation(6, 2);
   t29 = Actor_Get(*(s32 *)(v5));
   if (t29 == 0)
@@ -2825,7 +2825,7 @@ L_0200d092:;
   Actor_SetPosition(6, 0, 0);
   if (!Event_GetFlag(7))
     goto L_0200d0fa;
-  Actor_SetSpeed(7, 0x13333, 0x9999);
+  Actor_SetSpeed(7, 1.2);
   Actor_SetAnimation(7, 2);
   t31 = Actor_Get(*(s32 *)(v5));
   if (t31 == 0)

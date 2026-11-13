@@ -641,10 +641,10 @@ void Func_02000ac8(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
+  FieldCamera_SetSpeed(0.8);
   Actor_WalkTo(gMainRoutineWork.currentOwner, x, z);
-  FieldCamera_MoveTo(x << 16, -1, z << 16, 1);
+  FieldCamera_MoveToFixed(x << 16, -1, z << 16, 1);
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
@@ -733,8 +733,8 @@ void Func_02000ac8(void) {
     Event_SetFlag((s16)work->room + 0xa55);
     Actor_StartScript(actor, gData_02003620);
     FieldEvent_Wait(60);
-    FieldCamera_SetSpeed(0x40000, 0x8000);
-    FieldCamera_MoveTo(0x2180000, -1, 0x780000, 1);
+    FieldCamera_SetSpeed(4);
+    FieldCamera_MoveTo(536, CAMERA_KEEP, 120, 1);
     FieldCamera_WaitForArrival();
     Event_PlaySound(SE_SHIMMER);
     {
@@ -867,8 +867,8 @@ void Func_02001160(void) {
       if (!Event_GetFlag(0xa84)) {
         s32 fromX = (Actor_Get(12)->x >> 16) << 16;
 
-        Actor_SetPosition(13, fromX, (Actor_Get(12)->z >> 16) << 16);
-        Actor_SetPosition(12, PIXELS(728), PIXELS(472));
+        Actor_SetPositionFixed(13, fromX, (Actor_Get(12)->z >> 16) << 16);
+        Actor_SetPosition(12, 728, 472);
       }
       GameFlag_Set(0xa85);
     }
@@ -917,7 +917,7 @@ void Func_02001398(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_Wait(10);
-    FieldCamera_SetSpeed(0xcccc, 0x1999);
+    FieldCamera_SetSpeed(0.8);
     id = 9;
     if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4)
       id = 8;
@@ -958,15 +958,17 @@ void Func_02001518(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 10);
   FieldEvent_Wait(30);
   object->motionFlags = 0;
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   object->speedLimit = 0x20000;
   object->acceleration = 0x800;
   Event_PlaySound(SE_KOLIMA_BRIDGE_POST);
-  FieldActor_SetMoveTarget(object, object->x, object->y + 0x40000, object->z);
+  FieldActor_SetMoveTargetFixed(object, object->x, object->y + 0x40000,
+                                object->z);
   FieldActor_WaitForMove(object);
   Scene_SetActorSpritePriority(leader, 1);
   Scene_SetActorSpritePriority(object, 1);
-  FieldActor_SetMoveTarget(object, object->x, object->y + 0x800000, object->z);
+  FieldActor_SetMoveTargetFixed(object, object->x, object->y + 0x800000,
+                                object->z);
   FieldEvent_Wait(80);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1161,7 +1163,7 @@ void Func_020019a8(void) {
   object->speedLimit = 0x10000;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldActor_SetMoveTarget(object, position[0], 0, position[2]);
+  FieldActor_SetMoveTargetFixed(object, position[0], 0, position[2]);
   effect =
       OverlayObject_PrepareObject(object->x, 0, position[2] + 0x3b0000, 286);
   effect->scaleX = 0x18000;
@@ -1210,7 +1212,7 @@ void Func_02001a94(void) {
   object->speedLimit = 0x10000;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldActor_SetMoveTarget(object, target[0], 0, target[2]);
+  FieldActor_SetMoveTargetFixed(object, target[0], 0, target[2]);
   FieldActor_WaitForMove(object);
   Event_PlaySound(SE_THUMP);
   MapGrid_CopyCellsTo(18, 4, column, 4, 1, 2);
@@ -1324,7 +1326,7 @@ loop:
                    gData_02004410[index].y);
   }
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
   FieldEvent_Wait(6);
   FieldEvent_SetExitRequest(work->value);
@@ -1345,12 +1347,13 @@ void Func_02001d68(void) {
   Actor_SetAnimation(9, 2);
   object->y = -0x400000;
   Func_020033e0_(9, PIXELS(728), PIXELS(120));
-  Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(728), PIXELS(120));
+  Actor_SetPosition(gMainRoutineWork.currentOwner, 728, 120);
   Actor_Get(gMainRoutineWork.currentOwner)->y = -0x300000;
   Event_StartScreenTransition();
   object->acceleration = 0x10000;
   object->speedLimit = 0x10000;
-  FieldActor_SetMoveTarget(object, object->x, object->y + 0x300000, object->z);
+  FieldActor_SetMoveTargetFixed(object, object->x, object->y + 0x300000,
+                                object->z);
   FieldActor_WaitForMove(object);
   Event_SetFlag(FLAG_AREA_TEMP_00);
   Event_End();
@@ -1367,7 +1370,8 @@ void Func_02001df4(void) {
   Event_StartScreenTransition();
   object->acceleration = 0x10000;
   object->speedLimit = 0x10000;
-  FieldActor_SetMoveTarget(object, object->x, object->y + 0x300000, object->z);
+  FieldActor_SetMoveTargetFixed(object, object->x, object->y + 0x300000,
+                                object->z);
   FieldActor_WaitForMove(object);
   Event_SetFlag(FLAG_AREA_TEMP_04);
   Event_End();
@@ -1425,11 +1429,11 @@ s32 Scene_Initialize(void) {
     goto L_0200a1b4;
   FieldActor_SetSpritePriority(8, 1);
   if ((Event_GetFlag(0xa80)) != 0) {
-    Actor_SetPosition(8, 0x1280000, 0xf80000);
+    Actor_SetPosition(8, 296, 248);
     FieldActor_SetSpritePriority(8, 2);
   }
   if ((Event_GetFlag(0xa81)) != 0) {
-    Actor_SetPosition(10, 0x1b80000, 0x2f80000);
+    Actor_SetPosition(10, 440, 760);
   }
   Call1((void (*)())Actor_PlaceBlocks, (s32)gData_020036e4);
   FIELD_AT(((s32)Actor_Get((FIELD_AT(v_r6, s32, 532)))), u8, 35) |= 64;
@@ -1440,7 +1444,7 @@ s32 Scene_Initialize(void) {
   if ((Event_GetFlag(FLAG_AREA_TEMP_00)) == 0)
     goto L_0200a03c;
   Actor_SetAnimation(9, 2);
-  Actor_SetPosition(9, 0x2d80000, 0x780000);
+  Actor_SetPosition(9, 728, 120);
 L_0200a03c:
   if (gMainRoutineWork.entrance == 18 && GameFlag_Get(FLAG_AREA_TEMP_00) == 0)
     Func_02001d68();
@@ -1492,15 +1496,15 @@ L_0200a1b4:
   FIELD_AT(((s32)Actor_Get((FIELD_AT(v_r6, s32, 532)))), u8, 35) |= 64;
   FIELD_AT(((s32)Actor_Get(9)), u8, 98) = v_r5;
   if ((Event_GetFlag(0xa82)) != 0) {
-    Actor_SetPosition(8, 0x380000, 0x1a80000);
+    Actor_SetPosition(8, 56, 424);
   }
   if ((Event_GetFlag(0xa83)) != 0) {
-    Actor_SetPosition(10, 0x2180000, 0x1680000);
+    Actor_SetPosition(10, 536, 360);
     MapGrid_CopyCellsTo(51, 20, 31, 20, v_r5, v_two);
     MapGrid_SetCellHeight(0x1f00000, 0x1500000, 0, 0);
   }
   if ((Event_GetFlag(0xa84)) != 0) {
-    Actor_SetPosition(13, 0x2e80000, 0x1c80000);
+    Actor_SetPosition(13, 744, 456);
   }
   if ((Event_GetFlag(0xa85)) == 0)
     goto L_0200a2c6;
@@ -1511,9 +1515,9 @@ L_0200a1b4:
   t78 = FIELD_AT(((s32)Actor_Get(12)), s16, 10);
   t80 = FIELD_AT(((s32)Actor_Get(12)), s16, 18);
   v_r5 = (t78 << 16);
-  Actor_SetPosition(13, v_r5, (t80 << 16));
+  Actor_SetPositionFixed(13, v_r5, (t80 << 16));
 L_0200a2b8:
-  Actor_SetPosition(12, 0x2d80000, 0x1d80000);
+  Actor_SetPosition(12, 728, 472);
 L_0200a2c6:
   Call1((void (*)())Actor_PlaceBlocks, (s32)gData_020036ea);
   goto L_0200a6e6;
@@ -1521,7 +1525,7 @@ L_0200a2ce:
   if (v_r1 != (s32)&SceneId_Ov6B0Room4)
     goto L_0200a52c;
   if ((Event_GetFlag(0xa86)) != 0) {
-    Actor_SetPosition(9, 0x1080000, 0x1680000);
+    Actor_SetPosition(9, 264, 360);
   }
   Call1((void (*)())Actor_PlaceBlocks, (s32)gData_020036f6);
   v_r3 = (FIELD_AT(v_r6, u16, 482));
@@ -1665,7 +1669,7 @@ L_0200a63a:
   v_r0 = 9;
   v_r1 = 0x2280000;
 L_0200a650:
-  Actor_SetPosition(v_r0, v_r1, (v_r2 << 15));
+  Actor_SetPositionFixed(v_r0, v_r1, (v_r2 << 15));
   Event_SetFlag(FLAG_SCENE_TEMP_00);
   goto L_0200a6e6;
 L_0200a660:
@@ -1677,7 +1681,7 @@ L_0200a67a:
   goto L_0200a6e6;
 L_0200a686:
   if ((Event_GetFlag(FLAG_AREA_TEMP_03)) != 0) {
-    Actor_SetPosition(10, 0x3180000, 0x780000);
+    Actor_SetPosition(10, 792, 120);
     Event_SetFlag(FLAG_SCENE_TEMP_00);
     goto L_0200a6d0;
   }
@@ -1798,7 +1802,7 @@ void Leader_CenterInCell(void) {
   s32 x = object->x;
   s32 z = object->z;
 
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 4);
 
   x >>= 20;
   z >>= 20;
@@ -1895,7 +1899,7 @@ void CrackedTile_DropIn(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
   actor->y = 0x820000;
@@ -1940,8 +1944,8 @@ loop:
   Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
-  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(5, 5, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
   actor->gravity = 0x10000;

@@ -199,7 +199,7 @@ next2:
   MapGrid_AnimateCells(gData_02003904[found].value, gData_02003904[found].x,
                        gData_02003904[found].z + 60);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   {
     s32 owner = gMainRoutineWork.currentOwner;
 
@@ -250,7 +250,7 @@ next2:
   MapGrid_AnimateCells(gData_0200397c[found].value, gData_0200397c[found].x,
                        gData_0200397c[found].z + 60);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_CenterOnColumn(gMainRoutineWork.currentOwner, 2, -4);
   Event_Wait(4);
   Import_EventSetExitRequest(work->exit);
@@ -267,9 +267,9 @@ void Func_02000438(void) {
     leader = ((struct Actor *)Actor_GetById(party->currentOwner));
     Event_Start();
     Event_ResolvePendingActions(0);
-    FieldCamera_MoveTo(-1, -1, -1, 0);
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     Actor_SetAnimation(party->currentOwner, 2);
-    Actor_SetSpeed(party->currentOwner, 0x8000, 0x4000);
+    Actor_SetSpeed(party->currentOwner, 0.5);
     x = leader->x;
     cell = x >> 16;
     Actor_SetMoveTarget(leader, ((8 - cell % 16) << 16) + x, leader->y,
@@ -427,21 +427,21 @@ void Func_02000870(void) {
     leader = ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner));
     Event_Start();
     Event_ResolvePendingActions(0);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 840, 72);
     opened = Event_GetFlag(0x932);
     state = &leader->terrainId;
     if (opened) {
       Event_PlaySound(SE_243);
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
-      MapGrid_SetShake(0, 0x20000, 0x10000);
+      MapGrid_SetShake(0, 2, 1);
       Event_Wait(20);
       MapGrid_SetShake(0, 0, 0);
       MapGrid_CopyCellsTo(68, 68, 50, 64, 3, 3);
       *state = 2;
       Event_Wait(20);
       Actor_Jump(gMainRoutineWork.currentOwner, 4, 0);
-      Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+      Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
       Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 840, 88);
       Event_Wait(20);
       Event_PlaySound(SE_CRUNCH);
@@ -451,7 +451,7 @@ void Func_02000870(void) {
     } else {
       helper = ((struct Actor *)Actor_GetById(9));
       Actor_SetSpritePriority(9, 2);
-      Actor_SetSpeed(9, 0x26666, 0x13333);
+      Actor_SetSpeed(9, 2.4);
       ((struct Actor *)Actor_GetById(9))->actionFlags &= ~1;
       Actor_WalkToAndWait(9, 824, 88);
       Event_Wait(1);
@@ -465,7 +465,7 @@ void Func_02000870(void) {
       }
       Event_PlaySound(SE_243);
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
-      MapGrid_SetShake(0, 0x20000, 0x10000);
+      MapGrid_SetShake(0, 2, 1);
       Event_Wait(20);
       MapGrid_SetShake(0, 0, 0);
       MapGrid_CopyCellsTo(68, 68, 50, 64, 3, 3);
@@ -476,7 +476,7 @@ void Func_02000870(void) {
         Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHWEST,
                             20);
         Actor_Jump(gMainRoutineWork.currentOwner, 4, 0);
-        Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+        Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
         Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 840, 88);
         Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_WEST);
         Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 9);
@@ -509,18 +509,18 @@ void Func_02000af4(void) {
     leader = ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner));
     Event_Start();
     Event_ResolvePendingActions(0);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 812, 72);
     Event_PlaySound(SE_243);
     Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
-    MapGrid_SetShake(0, 0x20000, 0x10000);
+    MapGrid_SetShake(0, 2, 1);
     Event_Wait(20);
     MapGrid_SetShake(0, 0, 0);
     MapGrid_CopyCellsTo(68, 68, 50, 64, 3, 3);
     leader->terrainId = 2;
     Event_Wait(20);
     Actor_Jump(gMainRoutineWork.currentOwner, 4, 0);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x33333, 0x19999);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 3.2);
     Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 812, 88);
     Event_Wait(20);
     Event_PlaySound(SE_CRUNCH);
@@ -552,7 +552,7 @@ DEFINE_FUNC_02000BF0(Func_02000cb0, 0x2ff)
 void Func_02000d10(s32 id) {
   struct Actor *object = ((struct Actor *)Actor_GetById(id));
 
-  Actor_SetSpeed(id, 0x33333, 0x19999);
+  Actor_SetSpeed(id, 3.2);
   object->gravity = 0x8000;
   object->velocityY = 0x80000;
   Actor_SetDestination(id, 120, 120);
@@ -624,7 +624,7 @@ void Func_02000e2c(void) {
           wait(1);
         }
         Actor_SetAnimation(8, 3);
-        Actor_SetPosition(10, PIXELS(568), PIXELS(152));
+        Actor_SetPosition(10, 568, 152);
         Event_Wait(20);
         Event_SetFlag(FLAG_SCENE_TEMP_02);
         if (object->z > leader->z) {
@@ -659,7 +659,7 @@ void Func_02000e2c(void) {
           wait(1);
         }
         Actor_SetAnimation(9, 3);
-        Actor_SetPosition(11, PIXELS(472), PIXELS(152));
+        Actor_SetPosition(11, 472, 152);
         Event_Wait(20);
         Event_SetFlag(FLAG_SCENE_TEMP_03);
         if (object->z > leader->z) {
@@ -751,10 +751,10 @@ void Func_020012b4(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Field_SetCameraBounds(0x80000, 0x100000, 0xf80000, 0x1000000);
-  Actor_SetPosition(gMainRoutineWork.currentOwner, leader->x,
-                    leader->z + 0xfed00000);
+  Actor_SetPositionFixed(gMainRoutineWork.currentOwner, leader->x,
+                         leader->z + 0xfed00000);
   object = ((struct Actor *)Actor_GetById(64));
-  Actor_SetPosition(64, object->x, object->z + 0xfed00000);
+  Actor_SetPositionFixed(64, object->x, object->z + 0xfed00000);
   FieldActor_SetSpriteColor(((struct Actor *)Actor_GetById(64)), 0);
   wait(10);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
@@ -897,19 +897,19 @@ void LemurianShip_FindMonstersAboard(void) {
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 808, 208);
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveTo(PIXELS(808), -1, PIXELS(176), 1);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(808, CAMERA_KEEP, 176, 1);
   Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
   Actor_MoveToObject(6, gMainRoutineWork.currentOwner);
   Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
   Actor_MoveToObject(8, gMainRoutineWork.currentOwner);
   wait(1);
-  Actor_SetSpeed(7, 0xcccc, 0x6666);
-  Actor_SetSpeed(6, 0xcccc, 0x6666);
-  Actor_SetSpeed(5, 0xcccc, 0x6666);
-  Actor_SetSpeed(8, 0xcccc, 0x6666);
+  Actor_SetSpeed(7, 0.8);
+  Actor_SetSpeed(6, 0.8);
+  Actor_SetSpeed(5, 0.8);
+  Actor_SetSpeed(8, 0.8);
   Actor_SetScript(6, gData_02002f44);
   Actor_SetScript(5, gData_02002f88);
   Actor_SetScript(8, gData_02002fcc);
@@ -932,12 +932,12 @@ void LemurianShip_FindMonstersAboard(void) {
   Task_Remove(Func_020015c8);
   Event_PlaySound(SE_251);
   Field_SetCameraBounds(0x2b00000, 0, 0x3a00000, 0x2200000);
-  FieldCamera_MoveTo(PIXELS(808), -1, PIXELS(448), 0);
-  Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(808), PIXELS(480));
-  Actor_SetPosition(7, PIXELS(808), PIXELS(420));
-  Actor_SetPosition(6, PIXELS(784), PIXELS(468));
-  Actor_SetPosition(5, PIXELS(832), PIXELS(468));
-  Actor_SetPosition(8, PIXELS(792), PIXELS(488));
+  FieldCamera_MoveTo(808, CAMERA_KEEP, 448, 0);
+  Actor_SetPosition(gMainRoutineWork.currentOwner, 808, 480);
+  Actor_SetPosition(7, 808, 420);
+  Actor_SetPosition(6, 784, 468);
+  Actor_SetPosition(5, 832, 468);
+  Actor_SetPosition(8, 792, 488);
   Map_CenterOnFollowedPoint();
   Event_Wait(20);
   Event_PlaySound(SE_GLITTER);
@@ -1013,11 +1013,11 @@ void Func_02001a04(void) {
   Actor_RunRepeatedMotion(9, 2);
   object->gravity = 0x8000;
   Actor_SetSpritePriority(9, 1);
-  Actor_SetSpeed(9, 0xcccc, 0x6666);
+  Actor_SetSpeed(9, 0.8);
   Actor_Jump(9, 6, 0);
   Actor_MoveToAndWait(9, 832, 88);
   Event_Wait(20);
-  Actor_SetSpeed(9, 0x19999, 0xcccc);
+  Actor_SetSpeed(9, 1.6);
   Actor_SetSpritePriority(9, 3);
   Actor_MoveToAndWait(9, 824, 72);
   Actor_FaceDirection(9, FACING_SOUTHEAST + FACING_STEP, 40);
@@ -1454,7 +1454,7 @@ void Func_02002820(void) {
   if (Event_GetFlag(0x9e4)) {
     struct Actor *marker = ((struct Actor *)Actor_GetById(64));
 
-    Actor_SetPosition(64, marker->x, marker->z + 0xfed00000);
+    Actor_SetPositionFixed(64, marker->x, marker->z + 0xfed00000);
     FieldActor_SetSpriteColor(((struct Actor *)Actor_GetById(64)), 0);
     MapGrid_CopyCellAttributes(6, 0, 1, 2, 6, 4);
     MapGrid_SetCameraBounds(0x80000, 0x100000, 0xf80000, 0x1000000);
@@ -1491,7 +1491,7 @@ void Func_02002970(void) {
                                          PIXELS(152));
     Actor_SetSpritePriority(8, 3);
     Event_SetFlag(FLAG_SCENE_TEMP_04);
-    Actor_SetPosition(10, PIXELS(568), PIXELS(152));
+    Actor_SetPosition(10, 568, 152);
   }
   if (Event_GetFlag(FLAG_SCENE_TEMP_04)) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_02))
@@ -1510,7 +1510,7 @@ void Func_02002970(void) {
     object->y = 0xfff00000;
     Actor_SetSpritePriority(9, 3);
     Event_SetFlag(FLAG_SCENE_TEMP_05);
-    Actor_SetPosition(11, PIXELS(472), PIXELS(152));
+    Actor_SetPosition(11, 472, 152);
   }
   if (Event_GetFlag(FLAG_SCENE_TEMP_05)) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_03))

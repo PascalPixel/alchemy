@@ -309,7 +309,7 @@ const struct Trigger *Scene_GetEvents(void) {
 /// (flag 0x8ab), after which its actor is put out of sight.
 void MadraInteriors_PlaceBlackCrystal(void) {
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
-    Actor_SetPosition(26, PIXELS(888), PIXELS(8));
+    Actor_SetPosition(26, 888, 8);
   } else {
     Actor_SetItemIcon(Actor_Get(26), 242);
     Actor_SetSpriteFlags(Actor_Get(26), 0);
@@ -444,11 +444,11 @@ void MadraInteriors_InterrogatePiers(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(8, 1);
-  Actor_SetPosition(4, PIXELS(400), PIXELS(888));
-  FieldCamera_MoveTo(PIXELS(408), -1, PIXELS(848), 1);
+  Actor_SetPosition(4, 400, 888);
+  FieldCamera_MoveTo(408, CAMERA_KEEP, 848, 1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_SetSpeed(7, 0xcccc, 0x6666);
+  Actor_SetSpeed(7, 0.8);
   FieldEvent_SetMessageId((s32)MsgMadraInteriors28);
   FieldEvent_ShowMessageThenWait(10, 0, 10);
   Actor_WalkToAndWait(4, 396, 869);
@@ -460,7 +460,7 @@ void MadraInteriors_InterrogatePiers(void) {
   Actor_FaceDirection(4, FACING_NORTHEAST, 0);
   Actor_FaceDirection(11, FACING_NORTHEAST, 0);
   FieldEvent_Wait(10);
-  FieldCamera_MoveTo(PIXELS(488), -1, PIXELS(820), 1);
+  FieldCamera_MoveTo(488, CAMERA_KEEP, 820, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(7, 2);
@@ -727,7 +727,7 @@ void MadraInteriors_GiveHealingFungus(void) {
   PartyInventory_Remove(0x1c0);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetSpeed(11, 0x6666, 0x3333);
+  Actor_SetSpeed(11, 0.4);
   Actor_WalkTo(11, 410, 109);
   object = Actor_Get(4);
   if (object->z > 0x5f0000)
@@ -772,9 +772,9 @@ void MadraInteriors_GiveHealingFungus(void) {
   FieldEvent_Wait(10);
   Actor_ShowEmote(11, 0x106, 30);
   FieldActor_Stop(25);
-  Actor_SetSpeed(10, 0x8000, 0x4000);
-  Actor_SetSpeed(11, 0x8000, 0x4000);
-  Actor_SetSpeed(25, 0x8000, 0x4000);
+  Actor_SetSpeed(10, 0.5);
+  Actor_SetSpeed(11, 0.5);
+  Actor_SetSpeed(25, 0.5);
   Actor_SetScript(11, (s32)gMadraInteriors_WifeWalksToBackRoom);
   Actor_SetScript(4, (s32)gMadraInteriors_LeaderStepsAside);
   FieldEvent_Wait(60);
@@ -856,7 +856,7 @@ void MadraInteriors_GiveLaughingFungus(void) {
 static inline void MadraInteriors_WalkIntoLeader(s32 actorId) {
   struct Actor *leader;
 
-  Actor_SetSpeed(actorId, 0x13333, 0x9999);
+  Actor_SetSpeed(actorId, 1.2);
   Actor_SetAnimation(actorId, 2);
   leader = Actor_Get(4);
   if (leader != NULL)

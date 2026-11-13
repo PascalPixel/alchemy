@@ -267,7 +267,7 @@ void Func_020015f0(void);
 #define WALK_TO_LEADER(id)                                                     \
   {                                                                            \
     struct Actor *leader_;                                                     \
-    Actor_SetSpeed((id), 0x13333, 0x9999);                                     \
+    Actor_SetSpeed((id), 1.2);                                                 \
     Actor_SetModeById((id), 2);                                                \
     leader_ = Actor_GetById(gMainRoutineWork.currentOwner);                    \
     if (leader_ != 0)                                                          \
@@ -288,15 +288,15 @@ void AlhafraManor_BriggsEscapes(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId(MsgAlhafraManor29);
-  Actor_SetPosition(9, PIXELS(344), PIXELS(96));
-  Actor_SetPosition(8, PIXELS(408), PIXELS(136));
-  Actor_SetPosition(13, PIXELS(312), PIXELS(104));
-  Actor_SetPosition(7, PIXELS(296), PIXELS(120));
-  Actor_SetPosition(6, PIXELS(296), PIXELS(136));
-  Actor_SetPosition(5, PIXELS(312), PIXELS(136));
+  Actor_SetPosition(9, 344, 96);
+  Actor_SetPosition(8, 408, 136);
+  Actor_SetPosition(13, 312, 104);
+  Actor_SetPosition(7, 296, 120);
+  Actor_SetPosition(6, 296, 136);
+  Actor_SetPosition(5, 312, 136);
   Actor_ArmCallback(7, FACING_EAST, 0);
   Event_Wait(30);
-  FieldCamera_MoveTo(PIXELS(344), -1, PIXELS(120), 0);
+  FieldCamera_MoveTo(344, CAMERA_KEEP, 120, 0);
   EVENT_WORD(0x1b4) = 60;
   EVENT_WORD(0x1ac) = 0x100;
   Event_StartScreenTransition();
@@ -395,10 +395,10 @@ void AlhafraManor_BriggsEscapes(void) {
   Event_WaitTransitionFrames();
   Event_Wait(20);
   Scene_PlayMusic();
-  Actor_SetSpeed(9, 0xcccc, 0x6666);
-  Actor_SetSpeed(8, 0xcccc, 0x6666);
-  Actor_SetSpeed(11, 0x19999, 0xcccc);
-  Actor_SetSpeed(12, 0x19999, 0xcccc);
+  Actor_SetSpeed(9, 0.8);
+  Actor_SetSpeed(8, 0.8);
+  Actor_SetSpeed(11, 1.6);
+  Actor_SetSpeed(12, 1.6);
   Actor_WalkByAndWaitById(9, 16, 0);
   Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
   Event_Wait(20);
@@ -410,7 +410,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Event_Wait(10);
   Event_ShowMessageThenWait(8, 0, 20);
   Sound_Play(SOUND_FADE_OUT_BGM);
-  Actor_SetPosition(11, PIXELS(344), PIXELS(176));
+  Actor_SetPosition(11, 344, 176);
   Actor_WalkByAndWait(11, 0, -16);
   Event_ShowMessageThenWait(11, 0, 10);
   Actor_ShowEmote(9, 257, 30);
@@ -423,7 +423,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_FaceDirection(8, FACING_WEST, 0);
   Event_Wait(20);
   Event_ShowMessageThenWait(9, 0, 10);
-  Actor_SetSpeed(11, 0x1cccc, 0xe666);
+  Actor_SetSpeed(11, 1.8);
   Actor_WalkByAndWait(11, 16, -24);
   Actor_FaceDirection(4, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(7, FACING_SOUTHEAST, 0);
@@ -451,7 +451,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_ArmCallback(11, FACING_EAST, 0);
   Event_Wait(10);
   Event_ShowMessageThenWait(11, 0, 20);
-  Actor_SetPosition(12, PIXELS(344), PIXELS(176));
+  Actor_SetPosition(12, 344, 176);
   Actor_WalkByAndWait(12, 0, -16);
   Event_Wait(10);
   Actor_ShowEmoteById(12, 264, 30);
@@ -526,8 +526,8 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_ArmCallback(13, FACING_EAST, 0);
   Event_Wait(20);
   Event_ShowMessageThenWait(9, 0, 10);
-  Actor_SetSpeed(9, 0x10000, 0x8000);
-  Actor_SetSpeed(8, 0x10000, 0x8000);
+  Actor_SetSpeed(9, 1);
+  Actor_SetSpeed(8, 1);
   Actor_WatchAndSetScript(4, 9);
   Actor_WatchAndSetScript(13, 9);
   Actor_WatchAndSetScript(7, 9);

@@ -192,7 +192,7 @@ void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
       actor->targetX = 0x80000000;
     }
     actor->update = GondowanCliffs_RollPillar;
-    Actor_SetSpeed(id, 0x30000, 0x18000);
+    Actor_SetSpeed(id, 3);
     Actor_SetDestination(id, 1193, 530);
     actor->gravity = 0xcccc;
     actor->motionFlags = 3;
@@ -200,9 +200,9 @@ void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
     FieldActor_WaitForMoveById(id);
     GondowanCliffs_WaitToLand(actor, 0);
     Event_PlaySound(SE_THUMP);
-    MapGrid_SetShake(0x50000, 0x50000, 0x10000);
+    MapGrid_SetShake(5, 5, 1);
     Event_PlaySound(SE_RUMBLE);
-    MapGrid_SetShake(-1, -1, 0xe666);
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     ((struct FieldSprite *)actor->sprite)->rotation = 0x1000;
     // Cleared through a word: as a function pointer the store sinks below the
     // effect options.
@@ -249,7 +249,7 @@ void GondowanCliffs_ScoopUpGeyser(s32 unused, s32 cell) {
   if (cell == 30) {
     object = Actor_Get(17);
     MapGrid_CopyCellsLayered(124, 1, 1, 1, 119, 43);
-    Actor_SetPosition(17, PIXELS(1912), PIXELS(728));
+    Actor_SetPosition(17, 1912, 728);
     object->terrainHeight = object->y =
         Map_GetTerrainHeight(0, object->x, object->z);
     Event_SetFlag(FLAG_GONDOWAN_CLIFFS_GEYSER_DUG);
@@ -430,7 +430,7 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_GEYSER_DUG)) {
     actor = Actor_GetById(17);
     MapGrid_CopyCellsLayered(124, 1, 1, 1, 119, 43);
-    Actor_SetPosition(17, PIXELS(1912), PIXELS(728));
+    Actor_SetPosition(17, 1912, 728);
     height = Map_GetTerrainHeight(0, actor->x, actor->z);
     actor->y = height;
     actor->terrainHeight = height;
@@ -438,7 +438,7 @@ s32 Scene_Initialize(void) {
   Actor_SetAnimation(16, 4);
   if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_PILLAR_IN_WATER)) {
     MapGrid_CopyCellAttributes(74, 31, 1, 1, 74, 33);
-    Actor_SetPosition(15, PIXELS(1193), PIXELS(530));
+    Actor_SetPosition(15, 1193, 530);
     Actor_GetById(15)->priorityFlags |= 2;
     Actor_GetById(15)->collisionFlags = 0;
     Actor_SetAnimation(15, 2);

@@ -537,15 +537,15 @@ row:
   }
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
-  FieldCamera_SetSpeed(0x10000, 0x2000);
-  FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(424), 1);
+  FieldCamera_SetSpeed(1);
+  FieldCamera_MoveTo(168, CAMERA_KEEP, 424, 1);
   FieldCamera_WaitForArrival();
   Task_Add(ShamanVillage_WaveWhirlwindLines, 0xc80);
   Event_PlaySound(SE_RUSH);
   REG_BLDALPHA = 0xf00;
   REG_BLDCNT = 0x3f41;
   REG_DISPCNT |= DISPCNT_BG0_ON;
-  MapGrid_SetShake(0x10000, 0x10000, 0x10000);
+  MapGrid_SetShake(1, 1, 1);
   i = 0;
 rise:
   REG_BLDALPHA = ((15 - (i >> 2)) << 8) | (i >> 2);
@@ -555,7 +555,7 @@ rise:
   if (i != 64)
     goto rise;
   Event_Wait(60);
-  MapGrid_SetShake(0x30000, 0x30000, 0x10000);
+  MapGrid_SetShake(3, 3, 1);
   REG_BLDALPHA = 0x1000;
   REG_BLDCNT = 0x3f42;
   MapGrid_CopyCellsTo(2, 83, 36, 64, 16, 16);
@@ -649,7 +649,7 @@ clear:
   MapGrid_CopyCellsTo(36, 64, 2, 83, 16, 16);
   REG_BLDCNT = 0x3f41;
   REG_BLDALPHA = 15;
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   OBJ14_BYTE(98) = 6;
   i = 0;
@@ -747,9 +747,9 @@ void ShamanVillage_TalkToGuard(void) {
   Event_OpenMessage(17, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Actor_SetAnimationAndWait(15, 3);
-    FieldCamera_SetSpeed(0x19999, 0x3333);
-    FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(280), 1);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+    FieldCamera_SetSpeed(1.6);
+    FieldCamera_MoveTo(224, CAMERA_KEEP, 280, 1);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 246, 292);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 204, 292);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 182, 280);
@@ -772,9 +772,9 @@ void ShamanVillage_TalkToOtherGuard(void) {
   Event_OpenMessage(16, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Actor_SetAnimationAndWait(15, 3);
-    FieldCamera_SetSpeed(0x19999, 0x3333);
-    FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(280), 1);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+    FieldCamera_SetSpeed(1.6);
+    FieldCamera_MoveTo(224, CAMERA_KEEP, 280, 1);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 182, 280);
     Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
     Event_ShowMessage(0x200f, 0);
@@ -1010,9 +1010,9 @@ void ShamanVillage_ExplainTrialRules(void) {
     Event_PlaySound(SOUND_FADE_OUT_BGM);
     Event_Start();
     Event_ResolvePendingActions(0);
-    FieldCamera_SetSpeed(0x19999, 0x3333);
-    FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(280), 1);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x13333, 0x9999);
+    FieldCamera_SetSpeed(1.6);
+    FieldCamera_MoveTo(224, CAMERA_KEEP, 280, 1);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.2);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 182, 280);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
     Event_PlaySound(MUS_076);
@@ -1023,24 +1023,24 @@ void ShamanVillage_ExplainTrialRules(void) {
     Event_SetMessageId((s32)MsgShamanListenCarefully);
     Event_ShowMessage(0x200f, 0);
     Actor_FaceDirectionAndWait(15, FACING_NORTH);
-    FieldCamera_SetSpeed(0x33333, 0x6666);
-    FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(182), 1);
+    FieldCamera_SetSpeed(3.2);
+    FieldCamera_MoveTo(224, CAMERA_KEEP, 182, 1);
     FieldCamera_WaitForArrival();
     Event_ShowMessage(0x200f, 0);
     Actor_SetAttachedEffect(15, 0x102);
     Event_ShowMessage(0x200f, 0);
-    FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(280), 1);
+    FieldCamera_MoveTo(224, CAMERA_KEEP, 280, 1);
     FieldCamera_WaitForArrival();
     Actor_FaceDirectionAndWait(15, FACING_WEST);
     Event_ShowMessage(0x200f, 0);
-    FieldCamera_MoveTo(PIXELS(178), -1, PIXELS(220), 1);
+    FieldCamera_MoveTo(178, CAMERA_KEEP, 220, 1);
     FieldCamera_WaitForArrival();
     Event_Wait(10);
-    FieldCamera_MoveTo(PIXELS(270), -1, PIXELS(220), 1);
+    FieldCamera_MoveTo(270, CAMERA_KEEP, 220, 1);
     FieldCamera_WaitForArrival();
     Event_Wait(20);
     Event_ShowMessage(15, 0);
-    FieldCamera_MoveTo(PIXELS(226), -1, PIXELS(280), 1);
+    FieldCamera_MoveTo(226, CAMERA_KEEP, 280, 1);
     FieldCamera_WaitForArrival();
     Actor_FaceDirectionAndWait(15, FACING_WEST);
     Event_ShowMessage(0x200f, 0);
@@ -1052,14 +1052,14 @@ void ShamanVillage_ExplainTrialRules(void) {
   Actor_FaceDirectionAndWait(17, FACING_SOUTHWEST);
   Actor_SetAnimation(16, 3);
   Actor_SetAnimationAndWait(17, 3);
-  Actor_SetSpeed(16, 0x19999, 0xcccc);
-  Actor_SetSpeed(17, 0x19999, 0xcccc);
+  Actor_SetSpeed(16, 1.6);
+  Actor_SetSpeed(17, 1.6);
   Actor_WalkTo(16, 184, 256);
   Actor_WalkToAndWait(17, 264, 256);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_FaceDirection(15, FACING_NORTH, 0);
-  FieldCamera_SetSpeed(0x26666, 0x4ccc);
-  FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(182), 1);
+  FieldCamera_SetSpeed(2.4);
+  FieldCamera_MoveTo(224, CAMERA_KEEP, 182, 1);
   Actor_WalkTo(16, 184, 128);
   Actor_WalkToAndWait(17, 264, 128);
   Actor_SetAnimation(16, 1);
@@ -1076,8 +1076,8 @@ void ShamanVillage_ExplainTrialRules(void) {
 void ShamanVillage_OfferToGiveUp(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_SetSpeed(0x33333, 0x6666);
-  FieldCamera_MoveTo(PIXELS(182), -1, PIXELS(304), 1);
+  FieldCamera_SetSpeed(3.2);
+  FieldCamera_MoveTo(182, CAMERA_KEEP, 304, 1);
   FieldCamera_WaitForArrival();
   Event_SetMessageId((s32)MsgShamanGiveUpTrialPrompt);
   Event_OpenMessage(15, 0);
@@ -1085,17 +1085,17 @@ void ShamanVillage_OfferToGiveUp(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Event_ShowMessage(15, 0);
-    FieldCamera_SetSpeed(0x4cccc, 0x9999);
-    FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(368), 1);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+    FieldCamera_SetSpeed(4.8);
+    FieldCamera_MoveTo(168, CAMERA_KEEP, 368, 1);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 168, 368);
     Event_ClearFlag(FLAG_SCENE_TEMP_01);
   } else {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
     Event_ShowMessage(15, 0);
-    FieldCamera_SetSpeed(0x13333, 0x2666);
-    FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(280), 1);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+    FieldCamera_SetSpeed(1.2);
+    FieldCamera_MoveTo(168, CAMERA_KEEP, 280, 1);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 168, 280);
   }
   Event_End();
@@ -1104,9 +1104,9 @@ void ShamanVillage_OfferToGiveUp(void) {
 void ShamanVillage_ChallengeMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_SetSpeed(0x26666, 0x4ccc);
-  FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(280), 1);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x1cccc, 0xe666);
+  FieldCamera_SetSpeed(2.4);
+  FieldCamera_MoveTo(224, CAMERA_KEEP, 280, 1);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 182, 280);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_FaceDirection(16, FACING_WEST, 0);
@@ -1153,7 +1153,7 @@ void ShamanVillage_TakeLeftPath(void) {
   Actor_FaceDirection(15, FACING_NORTHWEST, 0);
   Actor_FaceDirectionAndWait(16, FACING_SOUTHEAST);
   Actor_SetAnimationAndWait(16, 3);
-  Actor_SetSpeed(16, 0x19999, 0xcccc);
+  Actor_SetSpeed(16, 1.6);
   Actor_SetAnimation(16, 2);
   target = ((struct Actor *)Actor_GetById(15));
   if (target != NULL)
@@ -1175,9 +1175,9 @@ void ShamanVillage_TakeLeftPath(void) {
   Actor_SetPosition(17, 0, 0);
   Actor_FaceDirectionAndWait(15, FACING_NORTHWEST);
   Event_ShowMessage(15, 0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
-  FieldCamera_SetSpeed(0x19999, 0x3333);
-  FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(200), 1);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+  FieldCamera_SetSpeed(1.6);
+  FieldCamera_MoveTo(224, CAMERA_KEEP, 200, 1);
   owner->blockMarked = 0;
   shaman->blockMarked = 0;
   Actor_SetScript(gMainRoutineWork.currentOwner,
@@ -1187,10 +1187,10 @@ void ShamanVillage_TakeLeftPath(void) {
     wait(1);
   } while (owner->blockMarked == 0 || shaman->blockMarked == 0);
   ShamanVillage_CountDownToStart();
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(168), 1);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
-  Actor_SetSpeed(15, 0x19999, 0xcccc);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(224, CAMERA_KEEP, 168, 1);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
+  Actor_SetSpeed(15, 1.6);
   Actor_WalkTo(gMainRoutineWork.currentOwner, 184, 128);
   Actor_WalkToAndWait(15, 264, 128);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
@@ -1219,7 +1219,7 @@ void ShamanVillage_TakeRightPath(void) {
   Actor_FaceDirection(15, FACING_NORTHEAST, 0);
   Actor_FaceDirectionAndWait(17, FACING_SOUTHWEST);
   Actor_SetAnimationAndWait(17, 3);
-  Actor_SetSpeed(17, 0x19999, 0xcccc);
+  Actor_SetSpeed(17, 1.6);
   Actor_SetAnimation(17, 2);
   target = ((struct Actor *)Actor_GetById(15));
   if (target != NULL)
@@ -1241,9 +1241,9 @@ void ShamanVillage_TakeRightPath(void) {
   Actor_SetPosition(16, 0, 0);
   Actor_FaceDirectionAndWait(15, FACING_NORTHEAST);
   Event_ShowMessage(15, 0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
-  FieldCamera_SetSpeed(0x19999, 0x3333);
-  FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(200), 1);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+  FieldCamera_SetSpeed(1.6);
+  FieldCamera_MoveTo(224, CAMERA_KEEP, 200, 1);
   owner->blockMarked = 0;
   shaman->blockMarked = 0;
   Actor_SetScript(15, gShamanVillage_WalkToLeftStartScript);
@@ -1253,10 +1253,10 @@ void ShamanVillage_TakeRightPath(void) {
     wait(1);
   } while (owner->blockMarked == 0 || shaman->blockMarked == 0);
   ShamanVillage_CountDownToStart();
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(168), 1);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
-  Actor_SetSpeed(15, 0x19999, 0xcccc);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(224, CAMERA_KEEP, 168, 1);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
+  Actor_SetSpeed(15, 1.6);
   Actor_WalkTo(15, 184, 128);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 264, 128);
   Actor_SetAnimation(15, 1);
@@ -1297,8 +1297,8 @@ void ShamanVillage_MeetMoapa(void) {
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(43, 40, 7, 6, 1, 2);
   Event_Wait(20);
-  Actor_SetPosition(15, PIXELS(120), PIXELS(194));
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x26666, 0x13333);
+  Actor_SetPosition(15, 120, 194);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 2.4);
   Actor_Jump(gMainRoutineWork.currentOwner, 4, 0);
   ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner))->actionFlags &=
       ~1;
@@ -1310,13 +1310,13 @@ void ShamanVillage_MeetMoapa(void) {
 
     *flags |= 1;
   }
-  Actor_SetSpeed(15, 0x6666, 0x3333);
+  Actor_SetSpeed(15, 0.4);
   Actor_WalkToAndWait(15, 120, 208);
   Actor_MoveToObject(16, 15);
   Actor_MoveToObject(17, 15);
   wait(1);
-  Actor_SetSpeed(16, 0xcccc, 0x6666);
-  Actor_SetSpeed(17, 0xcccc, 0x6666);
+  Actor_SetSpeed(16, 0.8);
+  Actor_SetSpeed(17, 0.8);
   Actor_WalkTo(16, 104, 212);
   Actor_WalkToAndWait(17, 136, 212);
   Actor_SetAnimation(16, 1);
@@ -1325,13 +1325,13 @@ void ShamanVillage_MeetMoapa(void) {
   Actor_StartRepeatedMotion(15, 1);
   Event_SetMessageId((s32)MsgShamanMoapaGiveMeRoom);
   Event_ShowMessage(15, 0);
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
+  FieldCamera_SetSpeed(0.8);
   ((struct Actor *)FieldCamera_GetActor())->motionFlags = 0;
-  FieldCamera_MoveTo(PIXELS(120), 0x320000, PIXELS(224), 1);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+  FieldCamera_MoveTo(120, 50, 224, 1);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 120, 256);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x6666, 0x3333);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.4);
   ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner))->actionFlags &=
       ~1;
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 120, 264);
@@ -1405,17 +1405,17 @@ void ShamanVillage_ShowShamansRod(void) {
   ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner))->facing =
       angle;
   wait(1);
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
+  FieldCamera_SetSpeed(0.8);
   ((struct Actor *)FieldCamera_GetActor())->motionFlags = 0;
-  FieldCamera_MoveTo(PIXELS(120), 0x280000, PIXELS(246), 1);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x13333, 0x9999);
+  FieldCamera_MoveTo(120, 40, 246, 1);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.2);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 120, 264);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
   rod = ShamanVillage_CreateRodIcon();
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
    * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(15, 256, 20)
-  Actor_SetSpeed(15, 0x26666, 0x13333);
+  Actor_SetSpeed(15, 2.4);
   Actor_WalkToAndWait(15, 120, 242);
   Event_PlaySound(MUS_029);
   Event_SetMessageId((s32)MsgShamanRecognizeShamanRod);
@@ -1430,10 +1430,10 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
   Actor_MoveToObject(6, gMainRoutineWork.currentOwner);
   wait(1);
-  Actor_SetSpeed(18, 0x19999, 0xcccc);
-  Actor_SetSpeed(7, 0x19999, 0xcccc);
-  Actor_SetSpeed(5, 0x19999, 0xcccc);
-  Actor_SetSpeed(6, 0x19999, 0xcccc);
+  Actor_SetSpeed(18, 1.6);
+  Actor_SetSpeed(7, 1.6);
+  Actor_SetSpeed(5, 1.6);
+  Actor_SetSpeed(6, 1.6);
   Actor_SetScript(18, gShamanVillage_KradenStandsByRodScript);
   Actor_SetScript(7, gShamanVillage_PiersStandsByRodScript);
   Actor_SetScript(5, gShamanVillage_JennaStandsByRodScript);
@@ -1441,10 +1441,10 @@ void ShamanVillage_ShowShamansRod(void) {
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
    * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(17, 256, 0)
-  Actor_SetSpeed(17, 0x13333, 0x9999);
+  Actor_SetSpeed(17, 1.2);
   Actor_WalkToAndWait(17, 136, 232);
   Event_ShowMessage(17, 0);
-  Actor_SetSpeed(16, 0x13333, 0x9999);
+  Actor_SetSpeed(16, 1.2);
   Actor_WalkToAndWait(16, 104, 232);
   Event_ShowMessage(16, 0);
   Actor_SetAnimationAndWait(15, 3);
@@ -1456,7 +1456,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_SetAttachedEffect(18, 258);
   Event_Wait(20);
   Event_ShowMessage(18, 0);
-  Actor_SetSpeed(15, 0xcccc, 0x6666);
+  Actor_SetSpeed(15, 0.8);
   Actor_WalkToAndWait(15, 120, 252);
   Event_Wait(40);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
@@ -1553,8 +1553,8 @@ void ShamanVillage_ShowShamansRod(void) {
     Event_ShowMessage(15, 0);
     Actor_SetAnimation(15, 3);
     Event_ShowMessage(15, 0);
-    FieldCamera_SetSpeed(0x6666, 0xccc);
-    FieldCamera_MoveTo(PIXELS(180), 0x200000, z, 1);
+    FieldCamera_SetSpeed(0.4);
+    FieldCamera_MoveToFixed(PIXELS(180), 0x200000, z, 1);
   }
   object = ((struct Actor *)Actor_GetById(16));
   object->blockMarked = 0;
@@ -1563,9 +1563,9 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_WatchAndSetScript(6, 15);
   Actor_WatchAndSetScript(7, 15);
   Actor_WatchAndSetScript(18, 15);
-  Actor_SetSpeed(15, 0x19999, 0xcccc);
-  Actor_SetSpeed(16, 0x19999, 0xcccc);
-  Actor_SetSpeed(17, 0x19999, 0xcccc);
+  Actor_SetSpeed(15, 1.6);
+  Actor_SetSpeed(16, 1.6);
+  Actor_SetSpeed(17, 1.6);
   Actor_SetScript(15, gShamanVillage_MoapaLeavesHouseScript);
   Event_Wait(20);
   Actor_SetScript(17, gShamanVillage_GuardLeavesHouseScript);
@@ -1581,8 +1581,8 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_Stop(6);
   wait(1);
   Scene_PlayMusic();
-  FieldCamera_SetSpeed(0x33333, 0x6666);
-  FieldCamera_MoveTo(PIXELS(120), -1, PIXELS(260), 1);
+  FieldCamera_SetSpeed(3.2);
+  FieldCamera_MoveTo(120, CAMERA_KEEP, 260, 1);
   FieldCamera_WaitForArrival();
   Actor_SetPosition(15, 0, 0);
   Actor_SetPosition(17, 0, 0);
@@ -1598,10 +1598,10 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_FaceDirection(5, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
   Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
-  Actor_SetSpeed(6, 0x10000, 0x8000);
-  Actor_SetSpeed(5, 0x10000, 0x8000);
-  Actor_SetSpeed(7, 0x10000, 0x8000);
-  Actor_SetSpeed(18, 0x10000, 0x8000);
+  Actor_SetSpeed(6, 1);
+  Actor_SetSpeed(5, 1);
+  Actor_SetSpeed(7, 1);
+  Actor_SetSpeed(18, 1);
   Actor_SetScript(6, gShamanVillage_RejoinLeaderAtHouseScript);
   Actor_SetScript(5, gShamanVillage_RejoinLeaderAtHouseScript);
   Actor_SetScript(7, gShamanVillage_RejoinLeaderAtHouseScript);
@@ -1660,7 +1660,7 @@ void ShamanVillage_GrowVine(void) {
 }
 
 void ShamanVillage_StepBackFromTrial(void) {
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 168, 304);
   Actor_FaceDirection(16, FACING_SOUTH, 0);
@@ -2047,10 +2047,10 @@ void ShamanVillage_ShebaClearsSand(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_PlaySound(MUS_000);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
-  FieldCamera_SetSpeed(0x6666, 0xccc);
-  FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(528), 1);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+  FieldCamera_SetSpeed(0.4);
+  FieldCamera_MoveTo(168, CAMERA_KEEP, 528, 1);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 168, 536);
   Actor_MoveToObject(18, gMainRoutineWork.currentOwner);
   Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
@@ -2059,10 +2059,10 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_MoveToObject(6, gMainRoutineWork.currentOwner);
   wait(1);
   Actor_FaceDirection(6, FACING_NORTH, 0);
-  Actor_SetSpeed(18, 0x10000, 0x8000);
-  Actor_SetSpeed(7, 0x10000, 0x8000);
-  Actor_SetSpeed(5, 0x10000, 0x8000);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
+  Actor_SetSpeed(18, 1);
+  Actor_SetSpeed(7, 1);
+  Actor_SetSpeed(5, 1);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1);
   Actor_SetScript(gMainRoutineWork.currentOwner,
                   gShamanVillage_LeaderWatchesShebaScript);
   Actor_SetScript(5, gShamanVillage_JennaWatchesShebaScript);
@@ -2077,16 +2077,16 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_FaceDirectionAndWait(6, FACING_NORTH);
   Actor_FaceDirectionAndWait(6, FACING_EAST);
   Actor_SetAnimationAndWait(6, 3);
-  Actor_SetSpeed(6, 0x6666, 0x3333);
+  Actor_SetSpeed(6, 0.4);
   Actor_WalkToAndWait(6, 168, 524);
   Actor_FaceDirection(15, FACING_NORTH, 0);
   Actor_FaceDirection(17, FACING_NORTH, 0);
   Actor_FaceDirection(16, FACING_NORTH, 0);
-  FieldCamera_SetSpeed(0x19999, 0x3333);
+  FieldCamera_SetSpeed(1.6);
   ShamanVillage_CastWhirlwindOnSand();
   Event_PlaySound(MUS_029);
-  FieldCamera_SetSpeed(0x4cccc, 0x9999);
-  FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(540), 1);
+  FieldCamera_SetSpeed(4.8);
+  FieldCamera_MoveTo(168, CAMERA_KEEP, 540, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_SetAttachedEffect(15, 258);
@@ -2164,12 +2164,12 @@ void ShamanVillage_ShebaClearsSand(void) {
   Event_Wait(10);
   Actor_SetAnimation(16, 3);
   Actor_SetAnimationAndWait(17, 3);
-  FieldCamera_SetSpeed(0x6666, 0xccc);
-  FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(560), 1);
+  FieldCamera_SetSpeed(0.4);
+  FieldCamera_MoveTo(168, CAMERA_KEEP, 560, 1);
   Actor_FaceDirection(17, FACING_SOUTH, 0);
   Actor_FaceDirectionAndWait(16, FACING_SOUTH);
-  Actor_SetSpeed(17, 0x10000, 0x8000);
-  Actor_SetSpeed(16, 0x10000, 0x8000);
+  Actor_SetSpeed(17, 1);
+  Actor_SetSpeed(16, 1);
   Actor_WalkTo(16, 120, 560);
   Actor_WalkToAndWait(17, 216, 560);
   Actor_SetAnimation(17, 1);
@@ -2181,7 +2181,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_FaceDirection(17, FACING_SOUTH, 0);
   Actor_FaceDirection(16, FACING_SOUTH, 0);
   Actor_FaceDirectionAndWait(15, FACING_SOUTH);
-  Actor_SetSpeed(15, 0x10000, 0x8000);
+  Actor_SetSpeed(15, 1);
   Actor_SetAnimation(15, 2);
   Actor_SetAnimation(17, 2);
   Actor_SetAnimation(16, 2);
@@ -2278,7 +2278,7 @@ void ShamanVillage_ShebaClearsSand(void) {
     Event_ShowMessage(15, 0);
   }
   Actor_WalkToAndWait(15, 212, 582);
-  FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(500), 1);
+  FieldCamera_MoveTo(168, CAMERA_KEEP, 500, 1);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 15);
   Actor_WatchAndSetScript(18, 15);
   Actor_WatchAndSetScript(5, 15);
@@ -2299,8 +2299,8 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_Stop(7);
   Actor_Stop(6);
   Scene_PlayMusic();
-  FieldCamera_SetSpeed(0x4cccc, 0x9999);
-  FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(540), 1);
+  FieldCamera_SetSpeed(4.8);
+  FieldCamera_MoveTo(168, CAMERA_KEEP, 540, 1);
   Event_Wait(20);
   angle = 0x4000;
   Actor_SetPositionAndFacing(15, PIXELS(224), PIXELS(280), angle);
@@ -2327,7 +2327,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   ((struct Actor *)Actor_GetById(7))->update = NULL;
   ((struct Actor *)Actor_GetById(6))->update = NULL;
   wait(1);
-  Actor_SetSpeed(6, 0x10000, 0x8000);
+  Actor_SetSpeed(6, 1);
   Actor_SetScript(7, gShamanVillage_RejoinLeaderAtSandScript);
   Actor_SetScript(6, gShamanVillage_RejoinLeaderAtSandScript);
   Actor_SetScript(5, gShamanVillage_RejoinLeaderAtSandScript);
@@ -2362,7 +2362,7 @@ void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(a, b, c, d, mode, f);
   Event_Wait(20);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   if (mode == 1) {
     object = ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner));
     cell = object->x >> 16;
@@ -2423,7 +2423,7 @@ void ShamanVillage_RestartTrial(void) {
   Actor_SetPosition(16, 0, 0);
   Actor_SetPosition(17, 0, 0);
   ((struct Actor *)Actor_GetById(15))->facing = 0xc000;
-  FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(182), 0);
+  FieldCamera_MoveTo(224, CAMERA_KEEP, 182, 0);
   wait(1);
   Map_CenterOnFollowedPoint();
   wait(1);
@@ -2432,10 +2432,10 @@ void ShamanVillage_RestartTrial(void) {
   Event_WaitTransitionFrames();
   Actor_SetPositionAndFacing(16, PIXELS(184), PIXELS(128), angle);
   Actor_SetPositionAndFacing(17, PIXELS(264), PIXELS(128), angle);
-  Actor_SetSpeed(16, 0x19999, 0xcccc);
-  Actor_SetSpeed(17, 0x19999, 0xcccc);
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(280), 1);
+  Actor_SetSpeed(16, 1.6);
+  Actor_SetSpeed(17, 1.6);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(224, CAMERA_KEEP, 280, 1);
   Actor_WalkTo(16, 184, 256);
   Actor_WalkToAndWait(17, 264, 256);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
@@ -2488,7 +2488,7 @@ void ShamanVillage_AdviseQuitting(void) {
   ((struct Actor *)Actor_GetById(15))->facing = 0x8000;
   ((struct Actor *)Actor_GetById(16))->facing = 0x8000;
   ((struct Actor *)Actor_GetById(17))->facing = 0x8000;
-  FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(280), 0);
+  FieldCamera_MoveTo(224, CAMERA_KEEP, 280, 0);
   wait(1);
   Map_CenterOnFollowedPoint();
   wait(1);
@@ -2650,12 +2650,12 @@ struct IoReg16 {
 void ShamanVillage_SetUpRoom2(void) {
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     if (Event_GetFlag(0x9fe)) {
-      Actor_SetPosition(16, PIXELS(104), PIXELS(200));
-      Actor_SetPosition(17, PIXELS(136), PIXELS(200));
+      Actor_SetPosition(16, 104, 200);
+      Actor_SetPosition(17, 136, 200);
     } else if (Event_GetFlag(0x94f) && !Event_GetFlag(0x9e1)) {
-      Actor_SetPosition(15, PIXELS(120), PIXELS(208));
-      Actor_SetPosition(16, PIXELS(104), PIXELS(212));
-      Actor_SetPosition(17, PIXELS(136), PIXELS(212));
+      Actor_SetPosition(15, 120, 208);
+      Actor_SetPosition(16, 104, 212);
+      Actor_SetPosition(17, 136, 212);
       wait(1);
     }
   }
@@ -2698,7 +2698,7 @@ void ShamanVillage_SetUpRoom4(void) {
     s32 angle = 0x3000;
 
     Actor_SetPositionAndFacing(8, PIXELS(88), PIXELS(92), angle);
-    Actor_SetPosition(11, PIXELS(156), PIXELS(72));
+    Actor_SetPosition(11, 156, 72);
   } else {
     Actor_SetPosition(17, 0, 0);
     Actor_SetPosition(18, 0, 0);
@@ -2740,7 +2740,7 @@ void ShamanVillage_SetUpRoom4(void) {
     }
     Actor_Jump(gMainRoutineWork.currentOwner, 4, 0);
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
     Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 813, 120);
     Actor_SetSpriteFlags(
         ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner)), 1);

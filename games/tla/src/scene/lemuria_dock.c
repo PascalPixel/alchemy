@@ -83,16 +83,16 @@ void LemuriaDock_MovePiers(void) {
       Actor_WalkByAndWait(4, 0, -16);
       FieldActor_LaunchFromLeader(8, 0, -16, FACING_SOUTHEAST + FACING_STEP);
       Actor_WaitForMoveById(8);
-      Actor_SetSpeed(8, 0x13333, 0x9999);
+      Actor_SetSpeed(8, 1.2);
       Actor_WalkToAndWait(8, 472, 392);
       Actor_FaceDirectionAndWait(8, FACING_SOUTH + FACING_STEP);
     } else {
       struct Actor *leader;
 
       Actor_WalkByAndWait(4, 0, 16);
-      Actor_SetSpeed(8, 0x20000, 0x10000);
+      Actor_SetSpeed(8, 2);
       Actor_WalkToAndWait(8, 440, 440);
-      Actor_SetSpeed(8, 0x13333, 0x9999);
+      Actor_SetSpeed(8, 1.2);
       Actor_SetAnimation(8, 2);
       leader = Actor_GetById(party->currentOwner);
       if (leader != NULL)
@@ -158,7 +158,7 @@ void LemuriaDock_EnterDoor(const struct WarpTarget *warp, s32 door, s32 mode) {
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(warp->scene, warp->x, warp->z);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   id = gMainRoutineWork.currentOwner;
   if (mode == 0)

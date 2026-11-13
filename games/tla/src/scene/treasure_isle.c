@@ -160,14 +160,14 @@ void TreasureIsle_RaiseSpikyRock(struct TreasureIsleCell *cells, s16 index) {
   struct TreasureIsleCell *cell;
   struct EffectOptions options;
 
-  FieldCamera_SetSpeed(0x60000, 0xc000);
+  FieldCamera_SetSpeed(6);
   // As &cells[index], the sum takes its operands the other way round.
   cell = (struct TreasureIsleCell *)((index << 4) + (s32)cells);
-  FieldCamera_MoveTo((cell->x << 20) + 0x80000, -1, (cell->z << 20) + 0x80000,
-                     1);
+  FieldCamera_MoveToFixed((cell->x << 20) + 0x80000, -1,
+                          (cell->z << 20) + 0x80000, 1);
   FieldCamera_WaitForArrival();
-  MapGrid_SetShake(0, 0x100000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(0, 16, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_PlaySound(SE_567);
   options.startScaleX = 0x13333;
   options.startScaleY = 0x18000;
@@ -483,17 +483,17 @@ s32 Scene_Initialize(void) {
     Event_SetFlag(FLAG_AREA_TEMP_01);
     Event_SetFlag(FLAG_AREA_TEMP_02);
     if (Event_GetFlag(FLAG_AREA_TEMP_00))
-      Actor_SetPosition(8, PIXELS(264), PIXELS(440));
+      Actor_SetPosition(8, 264, 440);
     if (Event_GetFlag(FLAG_AREA_TEMP_01))
-      Actor_SetPosition(9, PIXELS(328), PIXELS(440));
+      Actor_SetPosition(9, 328, 440);
     if (Event_GetFlag(FLAG_AREA_TEMP_02))
-      Actor_SetPosition(10, PIXELS(440), PIXELS(344));
+      Actor_SetPosition(10, 440, 344);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom2) {
     Task_AddFrame(TreasureIsle_CycleWaterColors, TASK_PASS_VBLANK);
     Tightrope_Place(0, 8, 9);
     if (Event_GetFlag(FLAG_AREA_TEMP_08))
-      Actor_SetPosition(10, PIXELS(264), PIXELS(184));
+      Actor_SetPosition(10, 264, 184);
     if (Event_GetFlag(FLAG_AREA_TEMP_03))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room2SpikyRocks, 0);
     if (Event_GetFlag(FLAG_AREA_TEMP_04))
@@ -509,7 +509,7 @@ s32 Scene_Initialize(void) {
     Task_AddFrame(TreasureIsle_CycleWaterColors, TASK_PASS_VBLANK);
     Tightrope_Place(0, 8, 9);
     if (Event_GetFlag(FLAG_AREA_TEMP_09))
-      Actor_SetPosition(10, PIXELS(664), PIXELS(248));
+      Actor_SetPosition(10, 664, 248);
     if (Event_GetFlag(FLAG_AREA_TEMP_0A))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room3SpikyRocks, 0);
     if (Event_GetFlag(FLAG_AREA_TEMP_0B))
@@ -519,7 +519,7 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom4) {
     if (Event_GetFlag(FLAG_AREA_TEMP_0D))
-      Actor_SetPosition(8, PIXELS(696), PIXELS(600));
+      Actor_SetPosition(8, 696, 600);
     Tightrope_Place(0, 17, 18);
     Tightrope_Place(1, 19, 20);
     Tightrope_Place(2, 21, 22);

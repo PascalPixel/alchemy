@@ -582,17 +582,17 @@ static inline void Venus_ObjEffectSet(s32 actor, s32 value) {
 void VenusLighthouse_FelixLeaves(void) {
   struct EventWork *work;
 
-  Actor_SetPosition(4, PIXELS(712), PIXELS(816));
-  Actor_SetPosition(5, PIXELS(696), PIXELS(840));
-  Actor_SetPosition(8, PIXELS(728), PIXELS(840));
+  Actor_SetPosition(4, 712, 816);
+  Actor_SetPosition(5, 696, 840);
+  Actor_SetPosition(8, 728, 840);
   Actor_FaceDirection(4, FACING_SOUTH, 0);
   Actor_FaceDirection(5, FACING_NORTH, 0);
   Actor_FaceDirection(8, FACING_NORTH, 0);
-  Actor_SetSpeed(4, 0x10000, 0x8000);
-  Actor_SetSpeed(5, 0x10000, 0x8000);
-  Actor_SetSpeed(8, 0x10000, 0x8000);
-  Actor_SetSpeed(9, 0x10000, 0x8000);
-  FieldCamera_MoveTo(PIXELS(664), -1, PIXELS(824), 0);
+  Actor_SetSpeed(4, 1);
+  Actor_SetSpeed(5, 1);
+  Actor_SetSpeed(8, 1);
+  Actor_SetSpeed(9, 1);
+  FieldCamera_MoveTo(664, CAMERA_KEEP, 824, 0);
   work = Ram_HeapSlots->eventWork;
   work->screenEffect = 256;
   work->delay = 60;
@@ -663,7 +663,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   Actor_FaceDirection(5, FACING_EAST, 0);
   Actor_FaceDirection(8, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  FieldCamera_MoveTo(PIXELS(696), -1, PIXELS(920), 1);
+  FieldCamera_MoveTo(696, CAMERA_KEEP, 920, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(5, 2);
@@ -694,7 +694,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(30);
   Event_PlaySound(SE_KOLIMA_BRIDGE_POST);
-  Actor_SetPosition(9, PIXELS(680), PIXELS(920));
+  Actor_SetPosition(9, 680, 920);
   Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
   Actor_VanishInSparks(9);
   Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
@@ -731,7 +731,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(5, 2);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(5, 0x8000, 0x4000);
+  Actor_SetSpeed(5, 0.5);
   FieldActor_WatchAndSetScript(8, 5);
   Actor_WalkByAndWait(5, 0, -32);
   FieldEvent_Wait(10);
@@ -784,7 +784,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(5, 4);
   FieldEvent_Wait(10);
-  Actor_SetSpeed(5, 0x10000, 0x8000);
+  Actor_SetSpeed(5, 1);
   Actor_WalkByAndWait(5, 0, 16);
   Actor_FaceDirection(5, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(10);
@@ -1013,14 +1013,14 @@ void VenusLighthouse_DoubtLeaving(void) {
   Actor_SetAnimation(9, 3);
   Actor_SetAnimationAndWait(8, 3);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(8, 0x13333, 0x9999);
+  Actor_SetSpeed(8, 1.2);
   Actor_SetAnimation(8, 2);
   actor = (struct VenusActor *)Actor_Get(5);
   if (actor != NULL)
     Actor_SetDestination(8, actor->xPixel, actor->zPixel);
   FieldActor_WaitForMoveById(8);
   Actor_SetPosition(8, 0, 0);
-  Actor_SetSpeed(9, 0x13333, 0x9999);
+  Actor_SetSpeed(9, 1.2);
   Actor_SetAnimation(9, 2);
   actor = (struct VenusActor *)Actor_Get(5);
   if (actor != NULL)
@@ -1037,15 +1037,15 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(15);
   Actor_WalkToAndWait(5, 728, 944);
   Actor_WalkToAndWait(5, 728, 928);
-  Actor_SetPosition(5, PIXELS(728), PIXELS(912));
+  Actor_SetPosition(5, 728, 912);
   Event_PlaySound(SE_STAIRS_DOWN);
   Venus_ObjEffectSet(5, -1);
   FieldEvent_Wait(40);
   MapGrid_CopyCellsTo(53, 50, 42, 49, 1, 1);
   MapGrid_CopyCellsTo(55, 117, 41, 117, 3, 5);
   Event_ClearFlag(FLAG_SCENE_TEMP_01);
-  Actor_SetPosition(10, PIXELS(664), PIXELS(792));
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  Actor_SetPosition(10, 664, 792);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   gMainRoutineWork.currentOwner = 5;
   Party_RemoveMember(4);
   FieldEvent_Wait(50);

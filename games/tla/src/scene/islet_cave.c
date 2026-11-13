@@ -702,7 +702,7 @@ void Func_0200115c(void) {
     struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
 
     Event_SetFlag(FLAG_SCENE_TEMP_30);
-    Actor_SetPosition(9, PIXELS(296), PIXELS(160));
+    Actor_SetPosition(9, 296, 160);
     object->speedLimit = 0x18000;
     object->velocityY = PIXELS(15);
     Actor_MoveToAndWait(9, 344, ((owner->z >> 19) << 3) + 24);

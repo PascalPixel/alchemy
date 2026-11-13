@@ -331,7 +331,7 @@ void Madra_WorkerBlocksHole(void) {
     Event_ResolvePendingActions(0);
     Madra_PlaceFacing(26, PIXELS(744), PIXELS(257), FACING_SOUTH);
     Actor_GetById(4)->velocityY = PIXELS(5);
-    Actor_SetSpeed(4, 0x20000, 0x10000);
+    Actor_SetSpeed(4, 2);
     Actor_WalkToAndWait(4, 720, 244);
     Actor_FaceDirectionAndWait(4, FACING_SOUTHEAST);
     Madra_PlaceFacing(4, PIXELS(720), PIXELS(244), FACING_SOUTHEAST);
@@ -348,7 +348,7 @@ void Madra_WorkerBlocksSealedHole(void) {
     Event_ResolvePendingActions(0);
     Madra_PlaceFacing(26, PIXELS(744), PIXELS(256), FACING_SOUTH);
     Actor_GetById(4)->velocityY = PIXELS(5);
-    Actor_SetSpeed(4, 0x20000, 0x10000);
+    Actor_SetSpeed(4, 2);
     Actor_WalkToAndWait(4, 720, 244);
     Actor_FaceDirectionAndWait(4, FACING_SOUTHEAST);
     Madra_PlaceFacing(4, PIXELS(720), PIXELS(244), FACING_SOUTHEAST);
@@ -574,7 +574,7 @@ void Madra_InspectPartyAtGate(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId(MsgYouThereHold);
   Event_ShowMessageThenWait(24, 0, 2);
-  FieldCamera_MoveTo(238 << 17, -1, 210 << 17, 1);
+  FieldCamera_MoveTo(476, CAMERA_KEEP, 420, 1);
   Actor_WalkBy(25, 3, 8);
   Actor_WalkByAndWait(24, -3, 8);
   Actor_WaitForMoveById(25);
@@ -641,7 +641,7 @@ void Madra_InspectPartyAtGate(void) {
   Actor_WalkToAndWait(25, 475, 400);
   Actor_WalkByAndWait(25, -16, 0);
   Actor_GetById(25)->priorityFlags |= 1;
-  FieldCamera_MoveTo(238 << 17, -1, 198 << 17, 1);
+  FieldCamera_MoveTo(476, CAMERA_KEEP, 396, 1);
   Actor_WalkToAndWait(25, 459, 416);
   Actor_FaceDirection(25, FACING_SOUTHEAST, 0);
   Event_Wait(10);
@@ -674,8 +674,8 @@ void Madra_InspectPartyAtGate(void) {
   Event_Wait(30);
   Actor_FaceDirection(32, FACING_NORTH + FACING_STEP, 0);
   Event_ShowMessageThenWait(24, 0, 2);
-  Actor_SetSpeed(24, 0x4ccc, 0x2666);
-  Actor_SetSpeed(25, 0x4ccc, 0x2666);
+  Actor_SetSpeed(24, 0.3);
+  Actor_SetSpeed(25, 0.3);
   Actor_WalkBy(24, 3, -8);
   Actor_WalkBy(25, -3, -8);
   Actor_WaitForMoveById(24);
@@ -708,10 +708,10 @@ void Madra_GrantPassageToOsenia(void) {
   Event_ResolvePendingActions(0);
   FieldCamera_MoveWithinMapBounds(PIXELS(124), -1, PIXELS(420), 1);
   FieldCamera_WaitForArrival();
-  Actor_SetSpeed(33, 0xcccc, 0x6666);
-  Actor_SetSpeed(34, 0xcccc, 0x6666);
+  Actor_SetSpeed(33, 0.8);
+  Actor_SetSpeed(34, 0.8);
   Event_StartScreenTransition();
-  Actor_SetPosition(33, PIXELS(172), PIXELS(332));
+  Actor_SetPosition(33, 172, 332);
   Actor_SetHorizontalPositionWithTerrain(34, PIXELS(172), PIXELS(324));
   Event_SetMessageId(MsgHasEscaped2);
   Event_WaitTransitionFrames();
@@ -743,16 +743,16 @@ void Madra_GrantPassageToOsenia(void) {
   Event_Wait(20);
   Actor_WalkTo(34, 102, 340);
   Actor_WaitForMoveById(33);
-  Actor_SetPosition(33, PIXELS(4), PIXELS(4));
+  Actor_SetPosition(33, 4, 4);
   Actor_WaitForMoveById(34);
-  Actor_SetPosition(34, PIXELS(4), PIXELS(4));
+  Actor_SetPosition(34, 4, 4);
   Actor_ArmCallback(4, FACING_NORTHEAST, 0);
   Event_Wait(40);
   FieldActor_ShowEmote(4, 258, 30);
   Event_Wait(40);
   Event_Wait(120);
-  Actor_SetPosition(33, PIXELS(102), PIXELS(340));
-  Actor_SetPosition(34, PIXELS(102), PIXELS(340));
+  Actor_SetPosition(33, 102, 340);
+  Actor_SetPosition(34, 102, 340);
   Actor_WalkToAndWait(34, 100, 364);
   Actor_WalkTo(34, 124, 380);
   Actor_WalkToAndWait(33, 100, 380);
@@ -869,7 +869,7 @@ void Madra_StopPartyAfterRaid(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId(MsgHeyYouLot);
   Event_ShowMessageThenWait(24, 0, 2);
-  FieldCamera_MoveTo(PIXELS(476), -1, PIXELS(400), 1);
+  FieldCamera_MoveTo(476, CAMERA_KEEP, 400, 1);
   Actor_WalkByAndWait(24, -3, 8);
   Actor_WalkToAndWait(4, 472, 426);
   Event_Wait(10);
@@ -972,8 +972,8 @@ void Madra_StopPartyAfterRaid(void) {
   Actor_SetAnimationAndWait(25, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(25, 0, 10);
-  Actor_SetSpeed(24, 0x4ccc, 0x2666);
-  Actor_SetSpeed(25, 0x4ccc, 0x2666);
+  Actor_SetSpeed(24, 0.3);
+  Actor_SetSpeed(25, 0.3);
   Actor_WalkBy(24, 3, -8);
   Actor_WalkBy(25, -3, -8);
   Actor_WaitForMoveById(24);
@@ -1111,7 +1111,7 @@ void Madra_MeetKarst(void) {
     FieldMessage_Show((*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++, 5);
     Actor_WalkByAndWait(34, -16, 0);
     Actor_FaceDirectionAndWait(34, FACING_SOUTH);
-    Actor_SetPosition(66, PIXELS(192), PIXELS(256));
+    Actor_SetPosition(66, 192, 256);
     *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4) = count;
   }
   Actor_WalkByAndWait(34, -16, -8);
@@ -1333,7 +1333,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   Event_ShowMessageAndWait(33, 0);
   Sound_Play(SOUND_FADE_OUT_BGM);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_WalkByAndWaitById(33, 24, 24);
   Actor_WalkByAndWaitById(33, 132, 0);
   Actor_SetHorizontalPositionWithTerrain(33, 0, 0);
@@ -1452,7 +1452,7 @@ void Madra_MeetKarst(void) {
   do {
     Event_Wait(20);
   } while (0);
-  Actor_SetSpeed(32, 0x00013333, 0x9999);
+  Actor_SetSpeed(32, 1.2);
   SET_MODE(32, 2);
   object = Actor_GetById(4);
   if (object != NULL)
@@ -1460,21 +1460,21 @@ void Madra_MeetKarst(void) {
                              ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(32);
   Actor_SetHorizontalPositionWithTerrain(32, 0, 0);
-  Actor_SetSpeed(5, 0x00013333, 0x9999);
+  Actor_SetSpeed(5, 1.2);
   SET_MODE(5, 2);
   object = Actor_GetById(4);
   if (object != NULL)
     Actor_SetDestinationById(5, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(5);
   Actor_SetHorizontalPositionWithTerrain(5, 0, 0);
-  Actor_SetSpeed(6, 0x00013333, 0x9999);
+  Actor_SetSpeed(6, 1.2);
   SET_MODE(6, 2);
   object = Actor_GetById(4);
   if (object != NULL)
     Actor_SetDestinationById(6, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(6);
   Actor_SetHorizontalPositionWithTerrain(6, 0, 0);
-  Actor_SetSpeed(7, 0x00013333, 0x9999);
+  Actor_SetSpeed(7, 1.2);
   SET_MODE(7, 2);
   object = Actor_GetById(4);
   if (object != NULL)

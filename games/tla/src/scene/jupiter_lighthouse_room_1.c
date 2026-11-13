@@ -143,7 +143,7 @@ s32 Scene_Initialize(void) {
       gMainRoutineWork.entrance == 6)
     Actor_ArriveInRing(gMainRoutineWork.currentOwner);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED)) {
-    Actor_SetPosition(ACTOR_GATES_PILLAR, PIXELS(280), PIXELS(536));
+    Actor_SetPosition(ACTOR_GATES_PILLAR, 280, 536);
     JupiterLighthouse_OpenDoor(0);
   }
   if (Event_GetFlag(FLAG_GATES_BUTTON_HELD))

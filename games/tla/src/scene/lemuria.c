@@ -119,7 +119,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void Lemuria_PoseActor12(void) {
-  Actor_SetPosition(12, PIXELS(488), PIXELS(1256));
+  Actor_SetPosition(12, 488, 1256);
   Actor_SetFirstSpriteAnimation(Actor_Get(12), 157);
   Actor_SetAnimation(12, 3);
   Actor_FaceDirection(12, FACING_WEST, 0);
@@ -134,7 +134,7 @@ void Lemuria_OpenDoorAndEnter(const struct WarpTarget *warp, s32 door,
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(warp->scene, warp->x, warp->z);
   Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 2;
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   id = gMainRoutineWork.currentOwner;
   if (mode == 0)
@@ -258,7 +258,7 @@ void Lemuria_DigFifthSpot(void) {
 
   Func_02001d44_(59, 64, 4, 3, 49, 71, 2);
   if (Event_GetFlag(0xfbb) == 0) {
-    Actor_SetPosition(69, PIXELS(808), PIXELS(1176));
+    Actor_SetPosition(69, 808, 1176);
     if (leader->x >> 20 == 50 && leader->z >> 20 == 73) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
@@ -359,24 +359,24 @@ void Lemuria_KnockAtBrokenDoor(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)&MsgAreYouKids);
-  Actor_SetPosition(12, PIXELS(872), PIXELS(880));
+  Actor_SetPosition(12, 872, 880);
   object = Actor_Get(12);
   Actor_SetFirstSpriteAnimation(object, 43);
   Actor_SetAnimation(12, 3);
   Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 0);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
-  FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(776), 1);
+  FieldCamera_MoveTo(872, CAMERA_KEEP, 776, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_ShowEmote(12, 0x109, 30);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   Actor_SetAnimationAndWait(12, 4);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
-  FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(856), 1);
+  FieldCamera_MoveTo(872, CAMERA_KEEP, 856, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
-  FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(928), 1);
+  FieldCamera_MoveTo(872, CAMERA_KEEP, 928, 1);
   FieldCamera_WaitForArrival();
   v5 = Party_FindOwnerWithAction(133);
   if (v5 != -1 || Event_GetFlag(0x962))
@@ -387,24 +387,24 @@ void Lemuria_KnockAtBrokenDoor(void) {
   Actor_FaceDirectionAndWait(4, FACING_NORTH);
   FieldEvent_Wait(10);
   Actor_ShowEmote(4, 0x105, 60);
-  FieldCamera_MoveTo(PIXELS(872), v5, PIXELS(792), 1);
+  FieldCamera_MoveToFixed(PIXELS(872), v5, PIXELS(792), 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_ShowEmote(12, 0x101, 30);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
-  FieldCamera_MoveTo(PIXELS(872), v5, PIXELS(856), 1);
+  FieldCamera_MoveToFixed(PIXELS(872), v5, PIXELS(856), 1);
   FieldActor_Jump(12, 4, 0);
   Actor_WalkToAndWait(12, 872, 912);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(12, 0x10000, 0x8000);
+  Actor_SetSpeed(12, 1);
   Actor_WalkByAndWait(12, -32, 0);
   Actor_FaceDirectionAndWait(12, FACING_SOUTHEAST + FACING_STEP);
-  FieldCamera_MoveTo(PIXELS(848), v5, PIXELS(904), 1);
+  FieldCamera_MoveToFixed(PIXELS(848), v5, PIXELS(904), 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(15);
   FieldEvent_ShowMessageThenWait(12, 0, 5);
-  Actor_SetPosition(28, PIXELS(840), PIXELS(920));
-  Actor_SetPosition(27, PIXELS(840), PIXELS(936));
+  Actor_SetPosition(28, 840, 920);
+  Actor_SetPosition(27, 840, 936);
   Value3((s32 (*)())Rope_Coil, 1, 28, 27);
   Rope_Lash(1, 28, 27);
   FieldEvent_Wait(30);
@@ -464,7 +464,7 @@ void Lemuria_OfferSpringLuck(void) {
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 464, 1040);
     Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
     FieldEvent_Wait(5);
-    Actor_SetSpeed(30, 0x13333, 0x9999);
+    Actor_SetSpeed(30, 1.2);
     Actor_WalkToAndWait(30, 440, 1048);
     Event_SetFlag(0x908);
   }
@@ -570,22 +570,22 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpritePriority(29, 3);
   Actor_Get(21)->update = Lemuria_TakeLeaderLayer;
   Actor_SetAnimation(22, 3);
-  Actor_SetPosition(18, PIXELS(40), PIXELS(952));
+  Actor_SetPosition(18, 40, 952);
   Actor_SetScript(18, (s32)&gLemuria_FirstWalkerPaces);
   actor = Actor_Get(18);
   actor->watchedObject = Actor_Get(19);
   actor->update = Lemuria_NoticeLeader;
-  Actor_SetPosition(19, PIXELS(88), PIXELS(904));
+  Actor_SetPosition(19, 88, 904);
   Actor_SetScript(19, (s32)&gLemuria_SecondWalkerPaces);
   actor = Actor_Get(19);
   actor->watchedObject = Actor_Get(18);
   actor->update = Lemuria_NoticeLeader;
   if (Event_GetFlag(0x908)) {
-    Actor_SetPosition(30, PIXELS(440), PIXELS(1048));
+    Actor_SetPosition(30, 440, 1048);
   }
   if (Event_GetFlag(0x964) && !Event_GetFlag(0x969)) {
-    Actor_SetPosition(24, PIXELS(456), PIXELS(520));
-    Actor_SetPosition(25, PIXELS(472), PIXELS(520));
+    Actor_SetPosition(24, 456, 520);
+    Actor_SetPosition(25, 472, 520);
   }
   if (!Event_GetFlag(0x969)) {
     Actor_SetPosition(26, 0, 0);
@@ -593,7 +593,7 @@ s32 Scene_Initialize(void) {
     Actor_Get(26)->update = Lemuria_TakeLeaderLayer;
   }
   if (Event_GetFlag(0x966) && !Event_GetFlag(0x969)) {
-    Actor_SetPosition(7, PIXELS(56), PIXELS(1016));
+    Actor_SetPosition(7, 56, 1016);
     Actor_SetAnimation(7, 9);
   }
   Rope_Initialize();
@@ -603,8 +603,8 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(0x96f)) {
     FieldActor_SetSpritePriority(28, 2);
     FieldActor_SetSpritePriority(27, 2);
-    Actor_SetPosition(28, PIXELS(840), PIXELS(920));
-    Actor_SetPosition(27, PIXELS(840), PIXELS(936));
+    Actor_SetPosition(28, 840, 920);
+    Actor_SetPosition(27, 840, 936);
     Call4(Rope_Place, 1, 0x96f, 28, 27);
   }
   Actor_SetSpriteFlags(Actor_Get(28), 0);
@@ -664,7 +664,7 @@ void Lemuria_AdmirePalace(s32 id) {
   }
   FieldActor_WaitForMoveById(12);
   FieldActor_WatchAndSetScript(4, 12);
-  Actor_SetSpeed(12, 0x10000, 0x8000);
+  Actor_SetSpeed(12, 1);
   EventCamera_FollowActor(12, 1);
   Actor_WalkToAndWait(12, 464, 952);
   Actor_FaceDirectionAndWait(12, a);
@@ -677,7 +677,7 @@ void Lemuria_AdmirePalace(s32 id) {
   FieldEvent_ShowMessageThenWait(12, 0, 5);
   Actor_WalkToAndWait(12, 464, 784);
   FieldEvent_Wait(10);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldActor_Jump(12, 6, 15);
   FieldActor_Jump(12, 6, 23);
   FieldEvent_Wait(10);
@@ -686,12 +686,12 @@ void Lemuria_AdmirePalace(s32 id) {
   FieldEvent_ShowMessageThenWait(12, 0, 5);
   FieldEvent_Wait(20);
   FieldActor_SetSpritePriority(4, 1);
-  Actor_SetPosition(4, PIXELS(464), PIXELS(856));
+  Actor_SetPosition(4, 464, 856);
   Actor_WalkToAndWait(4, 464, 796);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(12, 3);
   FieldEvent_Wait(10);
-  Actor_SetSpeed(12, 0x13333, 0x9999);
+  Actor_SetSpeed(12, 1.2);
   Actor_SetAnimation(12, 2);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader != 0)
@@ -719,7 +719,7 @@ void Lemuria_KeepLookingAround(void) {
   FieldActor_WaitForMoveById(12);
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(12, 0, 5);
-  Actor_SetSpeed(12, 0x13333, 0x9999);
+  Actor_SetSpeed(12, 1.2);
   Actor_SetAnimation(12, 2);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader != 0)
@@ -748,14 +748,14 @@ void Lemuria_MarvelAtCity(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgThisPlaceIs);
-  Actor_SetSpeed(24, 0x10000, 0x8000);
-  Actor_SetSpeed(25, 0x10000, 0x8000);
+  Actor_SetSpeed(24, 1);
+  Actor_SetSpeed(25, 1);
   Actor_SetFirstSpriteAnimation((s32)Actor_Get(12), 56);
   Actor_WalkToAndWait(4, 472, 568);
   FieldActor_LaunchFromLeader(12, -16, 0, FACING_NORTH + FACING_STEP);
   Actor_FaceDirection(4, FACING_NORTH, 0);
   FieldActor_WaitForMoveById(12);
-  FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(544), 1);
+  FieldCamera_MoveTo(464, CAMERA_KEEP, 544, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   FieldActor_Jump(12, 6, 15);
@@ -847,11 +847,11 @@ void Lemuria_MarvelAtCity(void) {
   FieldActor_WatchAndSetScript(7, 12);
   FieldActor_WatchAndSetScript(24, 12);
   FieldActor_WatchAndSetScript(25, 12);
-  Actor_SetSpeed(12, 0x10000, 0x8000);
+  Actor_SetSpeed(12, 1);
   EventCamera_FollowActor(12, 1);
   Actor_WalkToAndWait(12, 424, 600);
   FieldEvent_Wait(20);
-  FieldCamera_MoveTo(PIXELS(400), -1, PIXELS(648), 1);
+  FieldCamera_MoveTo(400, CAMERA_KEEP, 648, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_FaceDirection(12, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -873,17 +873,17 @@ void Lemuria_MarvelAtCity(void) {
   FieldEvent_Wait(40);
   Actor_FaceDirection(12, FACING_NORTH + FACING_STEP, 0);
   FieldEvent_Wait(40);
-  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(288), 1);
+  FieldCamera_MoveTo(440, CAMERA_KEEP, 288, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(60);
-  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(528), 1);
+  FieldCamera_MoveTo(440, CAMERA_KEEP, 528, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(12, 3);
   FieldEvent_Wait(10);
   EventCamera_FollowActor(12, 1);
   Actor_WalkToAndWait(12, 456, 568);
-  FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(544), 1);
+  FieldCamera_MoveTo(464, CAMERA_KEEP, 544, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirection(4, FACING_WEST, 0);
   Actor_FaceDirection(7, FACING_SOUTH, 0);
@@ -892,7 +892,7 @@ void Lemuria_MarvelAtCity(void) {
   Actor_FaceDirection(12, FACING_NORTH + FACING_STEP, 0);
   FieldEvent_Wait(30);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
-  Actor_SetSpeed(7, 0xb333, 0x5999);
+  Actor_SetSpeed(7, 0.7);
   Actor_WalkByAndWait(7, 8, 0);
   Actor_FaceDirection(7, FACING_SOUTH, 0);
   FieldEvent_Wait(10);
@@ -999,14 +999,14 @@ void Lemuria_MarvelAtCity(void) {
   Actor_SetAnimationAndWait(4, 3);
   FieldEvent_Wait(10);
   Actor_FaceDirection(4, FACING_NORTH, 0);
-  Actor_SetSpeed(7, 0x13333, 0x9999);
+  Actor_SetSpeed(7, 1.2);
   Actor_SetAnimation(7, 2);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_SetDestination(7, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   FieldActor_WaitForMoveById(7);
   Actor_SetPosition(7, 0, 0);
-  Actor_SetSpeed(12, 0x13333, 0x9999);
+  Actor_SetSpeed(12, 1.2);
   Actor_SetAnimation(12, 2);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader != 0)

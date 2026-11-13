@@ -518,7 +518,7 @@ void Leader_CenterInCell(void) {
   s32 x = leader->x;
   s32 z = leader->z;
 
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 4);
 
   x >>= 20;
   z >>= 20;

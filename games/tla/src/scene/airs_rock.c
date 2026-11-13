@@ -183,7 +183,7 @@ void Func_02000568(void) {
   MapGrid_CopyCellsTo(64, 64, 83, 35, 1, 2);
   Map_ClearLayerEntryFlag(0);
   FieldEvent_Wait(45);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_WalkTo(gMainRoutineWork.currentOwner, 312, 680);
   FieldEvent_Wait(5);
   Event_FinishScreenTransition();
@@ -264,7 +264,7 @@ void Func_02000700(void) {
   Actor_SetSpriteFlags(leader, 0);
   leader->motionFlags |= 2;
   leader->velocityY = 0x40000;
-  FieldActor_SetMoveTarget(leader, leader->x, leader->y, z + 0xc0000);
+  FieldActor_SetMoveTargetFixed(leader, leader->x, leader->y, z + 0xc0000);
   System_Wait(6);
   Event_PlaySound(SE_FLOOR_SWITCH);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH_SOUTHWEST, 0);
@@ -276,7 +276,7 @@ void Func_02000700(void) {
   }
   leader->motionFlags = 3;
   leader->velocityY = 0x30000;
-  FieldActor_SetMoveTarget(leader, leader->x, leader->y, z + 0x100000);
+  FieldActor_SetMoveTargetFixed(leader, leader->x, leader->y, z + 0x100000);
   FieldActor_WaitForMove(leader);
   Actor_SetSpriteFlags(leader, 1);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
@@ -437,8 +437,9 @@ void Func_0200095c(void) {
   gust->speedLimit = 0x40000;
   gust->acceleration = 0x40000;
   Actor_SetMoveTarget(gust, cell.x << 16, gust->y, cell.z << 16);
-  FieldCamera_SetSpeed(0x50000, 0x50000);
-  FieldCamera_MoveTo((s32)(newX << 16), (s32)(-1), (s32)(newZ << 16), (s32)(1));
+  FieldCamera_SetSpeedAndAcceleration(5, 5);
+  FieldCamera_MoveToFixed((s32)(newX << 16), (s32)(-1), (s32)(newZ << 16),
+                          (s32)(1));
   while (Actor_HasArrived(gust) == 0) {
     if ((gFrameCount & 1) == 0) {
       leaves.priority = 1;
@@ -645,15 +646,15 @@ row:
   }
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
-  FieldCamera_SetSpeed(0x10000, 0x2000);
-  FieldCamera_MoveTo(0x14a0000, -1, 0x490000, 1);
+  FieldCamera_SetSpeed(1);
+  FieldCamera_MoveTo(330, CAMERA_KEEP, 73, 1);
   FieldCamera_WaitForArrival();
   Task_AddFrame(Func_02000ef4, 0xc80);
   Event_PlaySound(SE_163);
   REG_BLDALPHA = 0xf00;
   REG_BLDCNT = 0x3f41;
   REG_DISPCNT |= 0x100;
-  MapGrid_SetShake(0x10000, 0x10000, 0x10000);
+  MapGrid_SetShake(1, 1, 1);
   i = 0;
 glow:
   REG_BLDALPHA = ((15 - (i >> 2)) << 8) | (i >> 2);
@@ -665,7 +666,7 @@ glow:
   FieldEvent_Wait(60);
   REG_BLDALPHA = 15;
   REG_BLDCNT = 0xc42;
-  MapGrid_SetShake(0x30000, 0x30000, 0x10000);
+  MapGrid_SetShake(3, 3, 1);
   {
     u32 j = 0;
 
@@ -698,7 +699,7 @@ glow:
   FieldEvent_Wait(1);
   REG_BLDCNT = 0x3f41;
   REG_BLDALPHA = 15;
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   ((u8 *)Actor_Get(8))[98] = 6;
   i = 0;
@@ -845,7 +846,8 @@ void Func_02001560(void) {
     *motion = 2;
     leader->priorityFlags = 1;
     leader->terrainId = ((u8 *)rider)[98];
-    FieldActor_SetMoveTarget(leader, leader->x + dx, leader->y, leader->z + dz);
+    FieldActor_SetMoveTargetFixed(leader, leader->x + dx, leader->y,
+                                  leader->z + dz);
     OverlayObject_WaitUntilIdle(leader);
     FieldActor_WaitForMove(leader);
     Actor_SetSpriteFlags(leader, 1);
@@ -859,14 +861,14 @@ void Func_02001560(void) {
     leader->velocityY = 0x60000;
     leader->priorityFlags = 1;
     *motion = 3;
-    FieldCamera_MoveTo(-1, -1, -1, 0);
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     dust = FieldCamera_GetActor();
     dust->speedLimit = 0x80000;
     dust->acceleration = 0x10000;
     dust->motionFlags = still;
-    FieldActor_SetMoveTarget(dust, leader->x,
-                             Map_GetTerrainHeight(0, leader->x, leader->z),
-                             leader->z);
+    FieldActor_SetMoveTargetFixed(dust, leader->x,
+                                  Map_GetTerrainHeight(0, leader->x, leader->z),
+                                  leader->z);
     OverlayObject_WaitUntilIdle(leader);
     FieldActor_WaitForMove(dust);
   }
@@ -1111,11 +1113,11 @@ void Func_02001dc4(s32 x, s32 z) {
     scatter.x = Iwram_MulQ16(Trig_Cos(scatter.y << 12), radius);
     scatter.z = Iwram_MulQ16(Math_Sin(scatter.y << 12), radius);
     ((struct FieldSprite *)rock->sprite)->priority = 1;
-    FieldActor_SetMoveTarget(rock, rock->x + scatter.x, rock->y,
-                             rock->z + scatter.z);
+    FieldActor_SetMoveTargetFixed(rock, rock->x + scatter.x, rock->y,
+                                  rock->z + scatter.z);
   }
-  MapGrid_SetShake(0x50000, 0x70000, 0x10000);
-  MapGrid_SetShake(shakeA, shakeA, shakeC);
+  MapGrid_SetShake(5, 7, 1);
+  MapGrid_SetShakeFixed(shakeA, shakeA, shakeC);
 }
 
 // The pillar of light in Air's Rock, overlay 664's Func_02003654 with object
@@ -1200,8 +1202,8 @@ row:
   PaletteFade_Interpolate(60);
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
-  FieldCamera_SetSpeed(0x10000, 0x2000);
-  FieldCamera_MoveTo(PIXELS(536), -1, PIXELS(216), 1);
+  FieldCamera_SetSpeed(1);
+  FieldCamera_MoveTo(536, CAMERA_KEEP, 216, 1);
   FieldCamera_WaitForArrival();
   Actor_Get(14)->update = 0;
   FieldActor_SetSpriteColor(Actor_Get(14), 6);
@@ -1424,8 +1426,8 @@ void Func_020026b8(void) {
   }
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
-  FieldCamera_SetSpeed(0x10000, 0x2000);
-  FieldCamera_MoveTo(0x980000, -1, 0x900000, 1);
+  FieldCamera_SetSpeed(1);
+  FieldCamera_MoveTo(152, CAMERA_KEEP, 144, 1);
   FieldCamera_WaitForArrival();
   FieldTask_Remove(Func_020024b0);
   REG_BG1CNT &= ~3;
@@ -1440,7 +1442,7 @@ void Func_020026b8(void) {
   Task_AddFrame(Func_0200257c, 0xc80);
   Event_PlaySound(SE_163);
   REG_DISPCNT |= 0x100;
-  MapGrid_SetShake(0x30000, 0x30000, 0x10000);
+  MapGrid_SetShake(3, 3, 1);
   z = 0xffff8000;
   for (i = 0x4000; i != 0x48000; i += 0x400, z += 0xfffffc00) {
     beam[6] = i;
@@ -1462,7 +1464,7 @@ void Func_020026b8(void) {
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   REG_BLDALPHA = 0x10;
   REG_BLDCNT = 0x3f41;
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   ((u8 *)Actor_Get(12))[98] = 6;
   for (i = 0; i != 129; i++) {
     REG_BLDALPHA = ((i >> 3) << 8) | (0x10 - (i >> 3));
@@ -1628,13 +1630,13 @@ s32 Scene_Initialize(void) {
       SWAY(10, 0);
       SWAY(11, 60);
       if (GameFlag_Get(0x85f))
-        Actor_SetPosition(12, 0x1080000, 0x2b80000);
+        Actor_SetPosition(12, 264, 696);
       if (GameFlag_Get(0x860))
-        Actor_SetPosition(13, 0x2d80000, 0x2d80000);
+        Actor_SetPosition(13, 728, 728);
       if (GameFlag_Get(0x861))
-        Actor_SetPosition(15, 0x1580000, 0x3080000);
+        Actor_SetPosition(15, 344, 776);
       if (GameFlag_Get(0x862))
-        Actor_SetPosition(0x10, 0x2780000, 0x3180000);
+        Actor_SetPosition(0x10, 632, 792);
       Actor_PlaceBlocks(gData_02003d94);
       Blocks_MarkCells(gData_02003d94);
       FlagBlock_PlaceAll(gData_02003e4c);
@@ -1650,7 +1652,7 @@ s32 Scene_Initialize(void) {
       Leader_Lift(0xffc80000);
     case 12:
       if (GameFlag_Get(0x887))
-        Actor_SetPosition(22, 0x3180000, 0x1280000);
+        Actor_SetPosition(22, 792, 296);
       Actor_PlaceBlocks(gData_02003d94);
       Blocks_MarkCells(gData_02003d94);
       HANG(17, 0x100000, 60);
@@ -1697,9 +1699,9 @@ s32 Scene_Initialize(void) {
       Actor_GetById(11)->y = 0xd00000;
       Actor_GetById(11)->terrainHeight = Actor_GetById(11)->y;
       if (GameFlag_Get(FLAG_AREA_TEMP_10))
-        Actor_SetPosition(10, 0x1f80000, 0x3680000);
+        Actor_SetPosition(10, 504, 872);
       if (GameFlag_Get(FLAG_AREA_TEMP_11))
-        Actor_SetPosition(11, 0x2080000, 0x3680000);
+        Actor_SetPosition(11, 520, 872);
       Func_02000620();
       beam = (s32 *)Ram_HeapSlots->mapWork;
       beam = (s32 *)((u8 *)beam + 0x178);
@@ -1740,7 +1742,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(12)->priorityFlags |= 2;
       FieldEffect_StartBlankOverlay(0);
       if (GameFlag_Get(0x879))
-        Actor_SetPosition(13, 0xb80000, 0x1180000);
+        Actor_SetPosition(13, 184, 280);
       if (!GameFlag_Get(0x87a)) {
         ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
         REG_BLDALPHA = 0x1008;

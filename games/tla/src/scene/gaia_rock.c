@@ -215,7 +215,7 @@ void Func_020002c0(void) {
     return;
   done = Event_GetFlag(0xf74);
   if (done == 0) {
-    Actor_SetPosition(64, PIXELS(657), PIXELS(246));
+    Actor_SetPosition(64, 657, 246);
     object->motionFlags = done;
     object->y = PIXELS(80);
   }
@@ -420,8 +420,8 @@ void Func_02000670(void) {
       object->scaleY = 0x1999;
       object->priorityFlags = phase;
       Actor_SelectAnimation(object, 2);
-      FieldActor_SetMoveTarget(object, object->x - PIXELS(32), object->y,
-                               object->z);
+      FieldActor_SetMoveTargetFixed(object, object->x - PIXELS(32), object->y,
+                                    object->z);
       Actor_StartScript(object, gData_020015c4);
       Actor_SetSpritePriorityDirect(object, 2);
     }
@@ -481,7 +481,7 @@ s32 Scene_Initialize(void) {
       }
     }
     if (GameFlag_Get(FLAG_SERPENT_SLAIN) && !GameFlag_Get(0x9ab)) {
-      Actor_SetPosition(20, 0x31e0000, 0x3200000);
+      Actor_SetPosition(20, 798, 800);
       Map_CopyCellAttributeRect(53, 52, 1, 1, 49, 49);
       Map_CopyCellAttributeRect(53, 52, 1, 1, 50, 49);
       Actor_SetModeById(20, 5);
@@ -585,7 +585,7 @@ void Func_02000bc0(s32 id, s32 flag) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   pillar = Actor_Get(id);
   Func_02000b2c(id, leader->x, leader->y, leader->z);
   Actor_StartScript(pillar, gData_020016cc);
@@ -619,7 +619,7 @@ dust:
     goto dust;
   Event_PlaySound(SE_590);
   Event_PlaySound(SE_FLOOR_SWITCH);
-  MapGrid_SetShake(0x20000, 0x20000, 0xe666);
+  MapGrid_SetShake(2, 2, 0.9);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
   Actor_SelectAnimation(leader, 40);
   FieldEvent_Wait(40);
@@ -640,11 +640,11 @@ fall:
   leader->gravity = gravity;
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0);
   Actor_SelectAnimation(leader, 38);
-  MapGrid_SetShake(0x10000, 0x40000, 0x10000);
+  MapGrid_SetShake(1, 4, 1);
   System_Wait(10);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   System_Wait(20);
-  FieldCamera_MoveTo(leader->x, leader->y, leader->z, 1);
+  FieldCamera_MoveToFixed(leader->x, leader->y, leader->z, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetSpriteFlags(leader, 1);

@@ -209,7 +209,7 @@ s32 Scene_PrepareMap(void) {
     object->motionFlags = 0;
     object->terrainHeight = -0x200000;
     object->y = -0x200000;
-    Actor_SetPosition(ACTOR_PILLAR, PIXELS(104), PIXELS(232));
+    Actor_SetPosition(ACTOR_PILLAR, 104, 232);
     MapGrid_SetCellHeight(object->x, object->z, 0, 0);
     MapGrid_SetAttributeBAt(object->x, object->z, 0, 128);
   }

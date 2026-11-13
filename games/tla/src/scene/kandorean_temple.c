@@ -379,7 +379,7 @@ void KandoreanTemple_KradenSuspectsTheWall(void) {
     Actor_SetModeById(14, 3);
     Motion_SetModeAndWaitAnimation(4, 3);
     Event_Wait(20);
-    Actor_SetSpeed(14, 0x13333, 0x9999);
+    Actor_SetSpeed(14, 1.2);
     Actor_SetModeById(14, 2);
     object = Actor_GetById(4);
     if (object)
@@ -1445,7 +1445,7 @@ void KandoreanTemple_OpenTheTrapdoor(void) {
 void KandoreanTemple_DropThroughTheTrapdoor(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 400, 648);
   Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_NORTH);
   if (GameFlag_Get(FLAG_SCENE_TEMP_12) == 0) {
@@ -1595,7 +1595,7 @@ void KandoreanTemple_FindTheHiddenPassage(void) {
   Actor_SetModeById(14, 3);
   Motion_SetModeAndWaitAnimation(4, 3);
   Event_Wait(20);
-  Actor_SetSpeed(14, 0x13333, 0x9999);
+  Actor_SetSpeed(14, 1.2);
   Actor_SetModeById(14, 2);
   object = Actor_GetById(4);
   if (object)
@@ -1635,14 +1635,14 @@ void KandoreanTemple_ReceiveLash(void) {
     Actor_Release(gKandoreanTemple_LashPebble);
   Actor_SetAnimation(12, 4);
   Event_ShowMessage(0x800c, 0);
-  FieldCamera_SetSpeed(0x6666, 0xccc);
-  FieldCamera_MoveTo(0x1a80000, 0, 0x1900000, 1);
+  FieldCamera_SetSpeed(0.4);
+  FieldCamera_MoveTo(424, 0, 400, 1);
   object = Actor_GetById(12);
   sprite = object->sprite;
-  Actor_SetSpeed(12, 0xcccc, 0x6666);
+  Actor_SetSpeed(12, 0.8);
   Actor_WalkToAndWait(12, 424, 376);
   FieldActor_SetSpritePriority(12, 1);
-  Actor_SetSpeed(12, 0x19999, 0xcccc);
+  Actor_SetSpeed(12, 1.6);
   FieldActor_Jump(12, 4, 0);
   Actor_MoveToAndWait(12, 444, 376);
   Actor_SetAnimation(12, 7);
@@ -1651,8 +1651,8 @@ void KandoreanTemple_ReceiveLash(void) {
   object->motionFlags = 0;
   object->y += 0x40000;
   Actor_SetSpriteFlags(Actor_GetById(12), 0);
-  Actor_SetSpeed(12, 0x6666, 0x3333);
-  FieldActor_SetMoveTarget(object, 0x1ec0000, 0x80000, 0x1780000);
+  Actor_SetSpeed(12, 0.4);
+  FieldActor_SetMoveTarget(object, 492, 8, 376);
   FieldActor_WaitForMoveById(12);
   object->motionFlags = 3;
   object->terrainHeight = 0;
@@ -1660,10 +1660,10 @@ void KandoreanTemple_ReceiveLash(void) {
   sprite->rotation = 0;
   Actor_SetAnimation(12, 1);
   Actor_SetSpriteFlags(Actor_GetById(12), 1);
-  Actor_SetSpeed(12, 0x19999, 0xcccc);
+  Actor_SetSpeed(12, 1.6);
   FieldActor_Jump(12, 4, 0);
   Actor_MoveToAndWait(12, 504, 376);
-  Actor_SetSpeed(12, 0xcccc, 0x6666);
+  Actor_SetSpeed(12, 0.8);
   Actor_WalkToAndWait(12, 496, 394);
   Actor_WalkToAndWait(12, 432, 394);
   FieldActor_WatchAndSetScript(12, gMainRoutineWork.currentOwner);
@@ -1884,12 +1884,12 @@ void KandoreanTemple_StartVentRoom(void) {
     GameFlag_Clear(FLAG_SCENE_TEMP_0D);
   }
   if (GameFlag_Get(FLAG_AREA_TEMP_00)) {
-    Actor_SetPosition(8, PIXELS(216), PIXELS(216));
+    Actor_SetPosition(8, 216, 216);
     goto L_0200ad0a;
   }
   if (!GameFlag_Get(FLAG_AREA_TEMP_01))
     goto L_0200ad0a;
-  Actor_SetPosition(8, PIXELS(376), PIXELS(248));
+  Actor_SetPosition(8, 376, 248);
 L_0200ad0a:
   (*(s16 *)0x4000052) = 0xc08;
   (*(s16 *)0x4000050) = 0x3f10;
@@ -1980,7 +1980,7 @@ void KandoreanTemple_LandFromAbove(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   wait(1);
   leader->y = 0x820000;
@@ -2013,8 +2013,8 @@ void KandoreanTemple_LandFromAbove(void) {
   Sound_Play(SE_THUMP);
   FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
-  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(5, 5, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
@@ -2037,7 +2037,7 @@ void KandoreanTemple_RiseOnLeftVent(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   leader->motionFlags = 0;
   wait(1);
@@ -2114,7 +2114,7 @@ void KandoreanTemple_RiseOnRightVent(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   leader->motionFlags = 0;
   wait(1);
@@ -2239,7 +2239,7 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
     Scene_QueueMusic(SE_162);                                                  \
-    FieldCamera_MoveTo(-1, -1, -1, 0);                                         \
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);              \
     wait(1);                                                                   \
     leader->motionFlags = 0;                                                   \
     Actor_SetPositionAndResetMotion_(                                          \
@@ -2501,7 +2501,7 @@ void KandoreanTemple_TestTheStudents(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   wait(1);
   Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
@@ -2548,9 +2548,9 @@ rise13:
   sprite->rotation = 0;
   Event_Wait(60);
   Event_ShowMessageAndWait(13, 0);
-  FieldCamera_MoveTo(0x1b40000, 0x480000, 0x2980000, 1);
+  FieldCamera_MoveTo(436, 72, 664, 1);
   FieldCamera_WaitForArrival();
-  Actor_SetSpeed(12, 0xcccc, 0x6666);
+  Actor_SetSpeed(12, 0.8);
   Actor_WalkToAndWait(12, 476, 664);
   Actor_FaceDirection(12, FACING_SOUTH_SOUTHEAST, 0);
   Actor_SetModeById(12, 4);
@@ -2663,9 +2663,9 @@ fall15:
   Actor_WalkToAndWaitById(12, 328, 648);
   Actor_SetSpriteFlags(Actor_GetById(12), 0);
   Actor_SetSpriteColor(Actor_GetById(12), 15);
-  Actor_SetPosition(12, 0x1b80000, 0x2580000);
-  FieldCamera_MoveTo(0x1900000, 0, 0x2b00000, 1);
-  Actor_SetSpeed(15, 0xcccc, 0x6666);
+  Actor_SetPosition(12, 440, 600);
+  FieldCamera_MoveTo(400, 0, 688, 1);
+  Actor_SetSpeed(15, 0.8);
   Actor_WalkToAndWait(15, 400, 644);
   Event_Wait(20);
   Sound_Play(SE_THUMP);
@@ -2687,7 +2687,7 @@ fall15:
 void KandoreanTemple_PraiseTheLevitator(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
                                          PIXELS(328), PIXELS(360));
@@ -2699,9 +2699,9 @@ void KandoreanTemple_PraiseTheLevitator(void) {
   Actor_GetById(16)->facing = 0xc000;
   wait(1);
   Event_StartScreenTransition();
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 328, 392);
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
+  FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveWithinMapBounds(PIXELS(408), -1, PIXELS(400), 1);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 376, 408);
   Event_Wait(20);
@@ -2710,12 +2710,12 @@ void KandoreanTemple_PraiseTheLevitator(void) {
   Event_ShowMessageAndWait(12, 0);
   Actor_FaceDirection(12, FACING_WEST, 20);
   Actor_ShowEmoteById(12, 256, 0);
-  Actor_SetSpeed(12, 0x19999, 0xcccc);
+  Actor_SetSpeed(12, 1.6);
   Actor_WalkToAndWait(12, 456, 408);
   Event_ShowMessageAndWait(12, 0);
   Actor_MoveToObject(16, gMainRoutineWork.currentOwner);
   wait(1);
-  Actor_SetSpeed(16, 0xcccc, 0x6666);
+  Actor_SetSpeed(16, 0.8);
   Actor_WalkToAndWait(16, 376, 392);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_FaceDirection(16, FACING_SOUTHEAST + FACING_STEP, 40);
@@ -2744,7 +2744,7 @@ void KandoreanTemple_FindTheRopeOnTheFloor(void) {
   Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   wait(1);
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 514;
@@ -2769,7 +2769,7 @@ void KandoreanTemple_FindTheRopeOnTheFloor(void) {
 }
 
 void KandoreanTemple_StudentWalksUp(void) {
-  Actor_SetSpeed(12, 0x19999, 0xcccc);
+  Actor_SetSpeed(12, 1.6);
   Actor_WalkToAndWait(12, 496, 392);
   Actor_FaceDirection(12, FACING_WEST, 0);
   Event_ShowMessageAndWait(0x400c, 0);
@@ -2784,7 +2784,7 @@ void KandoreanTemple_MeetPoi(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   wait(1);
   Actor_SetPositionAndFacing(16, 0x1780000, 0x1880000, FACING_EAST);
@@ -2796,7 +2796,7 @@ void KandoreanTemple_MeetPoi(void) {
   }
   WORK->screenEffect = 0x202;
   Event_StartScreenTransition();
-  Actor_SetSpeed(12, 0x13333, 0x9999);
+  Actor_SetSpeed(12, 1.2);
   Actor_WalkToAndWait(12, 464, 428);
   Actor_WalkToAndWait(12, 432, 408);
   Actor_FaceDirection(12, FACING_WEST, 0);
@@ -2845,11 +2845,11 @@ void KandoreanTemple_MeetPoi(void) {
   Event_ShowMessageAndWait(16, 0);
   Actor_SetModeById(12, 3);
   Event_ShowMessageAndWait(12, 0);
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
+  FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveWithinMapBounds(0x1a80000, 0x100000, 0x1800000, 1);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-  Actor_SetSpeed(16, 0xcccc, 0x6666);
-  Actor_SetSpeed(12, 0xcccc, 0x6666);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
+  Actor_SetSpeed(16, 0.8);
+  Actor_SetSpeed(12, 0.8);
   Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
                             gKandoreanTemple_PoiWalksOutScript);
   Actor_SetMovementTypeById(16, gKandoreanTemple_StudentWalksAsideScript);
@@ -2896,9 +2896,9 @@ void KandoreanTemple_MeetPoi(void) {
     Event_ShowMessageAndWait(0x5010, 0);
   }
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
-  FieldCamera_MoveTo(0x1a80000, 0, 0x1900000, 1);
-  FieldCamera_SetSpeed(0x9999, 0x1333);
-  Actor_SetSpeed(12, 0x9999, 0x4ccc);
+  FieldCamera_MoveTo(424, 0, 400, 1);
+  FieldCamera_SetSpeed(0.6);
+  Actor_SetSpeed(12, 0.6);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 12);
   Actor_WatchAndSetScript(16, 12);
   Actor_WalkToAndWait(12, 488, 416);
@@ -2911,15 +2911,15 @@ void KandoreanTemple_MeetPoi(void) {
   Event_ShowMessage(0x400c, 0);
   Actor_SetModeById(12, 3);
   Event_ShowMessageAndWait(0x400c, 0);
-  FieldCamera_MoveTo(0x1a80000, 0x100000, 0x1800000, 1);
-  Actor_SetSpeed(12, 0x13333, 0x9999);
+  FieldCamera_MoveTo(424, 16, 384, 1);
+  Actor_SetSpeed(12, 1.2);
   Actor_WalkToAndWait(12, 488, 416);
   Actor_WalkToAndWait(12, 504, 376);
   Actor_ArmCallback(12, 0x8000, 20);
   object = Actor_GetById(12);
   sprite = object->sprite;
   Actor_SetSpritePriority(12, 1);
-  Actor_SetSpeed(12, 0x19999, 0xcccc);
+  Actor_SetSpeed(12, 1.6);
   Actor_Jump(12, 4, 0);
   Actor_MoveToAndWait(12, 492, 376);
   Actor_SetModeById(12, 7);
@@ -2930,7 +2930,7 @@ void KandoreanTemple_MeetPoi(void) {
   *flags = 0;
   object->y += 0x40000;
   Actor_SetSpriteFlags(Actor_GetById(12), 0);
-  Actor_SetSpeed(12, 0x6666, 0x3333);
+  Actor_SetSpeed(12, 0.4);
   Actor_SetMoveTarget((s32)object, 0x1bc0000, 0x280000, 0x1780000);
   Actor_WaitForMoveById(12);
   *flags = 3;
@@ -2939,11 +2939,11 @@ void KandoreanTemple_MeetPoi(void) {
   object->scaleX = 0x10000;
   object->terrainHeight = 0x200000;
   Actor_SetModeById(12, 1);
-  Actor_SetSpeed(12, 0x19999, 0xcccc);
+  Actor_SetSpeed(12, 1.6);
   Actor_Jump(12, 4, 0);
   Actor_MoveToAndWait(12, 424, 376);
   FieldCamera_MoveWithinMapBounds(0x1980000, 0x100000, 0x1900000, 1);
-  Actor_SetSpeed(12, 0xcccc, 0x6666);
+  Actor_SetSpeed(12, 0.8);
   Actor_WalkToAndWait(12, 392, 360);
   Actor_FaceDirection(12, FACING_SOUTH_SOUTHEAST, 0);
   Actor_SetSpritePriority(12, 2);

@@ -567,7 +567,7 @@ s32 Scene_Initialize(void) {
 #if TLA_PATCH_1
     if (Event_GetFlag(FLAG_SCENE_TEMP_04)) {
       Actor_SetPosition(9, 0, 0);
-      Actor_SetPosition(21, PIXELS(184), PIXELS(184));
+      Actor_SetPosition(21, 184, 184);
       Actor_GetById(21)->motionFlags = 0;
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
     }
@@ -605,7 +605,7 @@ s32 Scene_PrepareMap(void) {
 #else
     if (Event_GetFlag(FLAG_SCENE_TEMP_04)) {
       Actor_SetPosition(9, 0, 0);
-      Actor_SetPosition(21, PIXELS(184), PIXELS(184));
+      Actor_SetPosition(21, 184, 184);
       Actor_GetById(21)->motionFlags = 0;
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
     }
@@ -649,7 +649,7 @@ loop:
     MapGrid_CopyCellsTo(27, 29, 40, 16, 1, 2);
   Event_PlaySound(SE_DOOR_OPEN);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -4);
   FieldEvent_Wait(6);
   FieldEvent_SetExitRequest(2);
@@ -760,7 +760,7 @@ void Settlements_SinkPillar(void) {
     }
     Settlements_SplashCrate(9);
     Actor_SetPosition(9, 0, 0);
-    Actor_SetPosition(21, PIXELS(184), PIXELS(184));
+    Actor_SetPosition(21, 184, 184);
     Actor_GetById(21)->motionFlags = 0;
     Actor_GetById(21)->y -= 0x400000;
     MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
@@ -786,22 +786,22 @@ void Settlements_SlideCrateDownFalls(void) {
       goto sink;
     Settlements_SplashCrate(10);
     FieldEvent_Wait(20);
-    FieldCamera_MoveTo(0xc00000, -1, 0xe00000, 1);
-    Actor_SetSpeed(10, 0xcccc, 0x6666);
+    FieldCamera_MoveTo(192, CAMERA_KEEP, 224, 1);
+    Actor_SetSpeed(10, 0.8);
     Actor_SetDestinationOffset(10, 0, 8);
     FieldActor_WaitForMoveById(10);
     FieldEvent_Wait(10);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-    Actor_SetSpeed(10, 0x26666, 0x13333);
+    Actor_SetSpeed(10, 2.4);
     Actor_SetDestinationOffset(10, 0, 80);
     FieldActor_WaitForMoveById(10);
     Settlements_SplashCrate(10);
     if (!Event_GetFlag(FLAG_SCENE_TEMP_04)) {
       FieldEvent_Wait(10);
-      Actor_SetSpeed(10, 0xcccc, 0x6666);
+      Actor_SetSpeed(10, 0.8);
       Actor_SetDestinationOffset(10, 0, 80);
       FieldActor_WaitForMoveById(10);
-      Actor_SetSpeed(10, 0x28000, 0x14000);
+      Actor_SetSpeed(10, 2.5);
       Actor_SetDestinationOffset(10, 0, 80);
       FieldEvent_Wait(5);
       Actor_SetPosition(10, 0, 0);

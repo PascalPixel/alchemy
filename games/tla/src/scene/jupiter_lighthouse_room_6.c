@@ -146,7 +146,7 @@ s32 Scene_Initialize(void) {
 
   work->screenEffect = 0x204;
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED)) {
-    Actor_SetPosition(ACTOR_SHORTCUT_PILLAR, PIXELS(72), PIXELS(600));
+    Actor_SetPosition(ACTOR_SHORTCUT_PILLAR, 72, 600);
     JupiterLighthouse_OpenDoor(0);
   }
   if (Event_GetFlag(FLAG_DOOR_BUTTON_HELD))

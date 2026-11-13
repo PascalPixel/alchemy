@@ -90,7 +90,7 @@
         if (!GameFlag_Get(second)) {                                           \
           leader->motionFlags = 0;                                             \
           Sound_Play(SE_PUSH);                                                 \
-          MapGrid_SetShake(0x10000, 0x40000, 0x10000);                         \
+          MapGrid_SetShake(1, 4, 1);                                           \
           call4(0);                                                            \
           wait(8);                                                             \
           call3(trap, 2);                                                      \
@@ -99,7 +99,7 @@
           wait(16);                                                            \
           call5(-2, trap->terrainId);                                          \
           wait(4);                                                             \
-          MapGrid_SetShake(-1, -1, 0xe666);                                    \
+          MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);                       \
           wait(8);                                                             \
           leader->motionFlags = 3;                                             \
           wait(5);                                                             \

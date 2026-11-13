@@ -518,8 +518,8 @@ void Func_0200071c(void) {
   Event_PlaySound(SE_557);
   priority = 0x480;
   FieldTask_AddFrame(Func_020006d0, priority);
-  FieldCamera_SetSpeed(0x28000, 0x4000);
-  FieldCamera_MoveTo(PIXELS(776), -1, PIXELS(648), 1);
+  FieldCamera_SetSpeedAndAcceleration(2.5, 0.25);
+  FieldCamera_MoveTo(776, CAMERA_KEEP, 648, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(30);
   Event_End();
@@ -553,16 +553,16 @@ void Func_020007d4(void) {
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldEvent_Wait(60);
   Event_PlaySound(SE_162);
-  MapGrid_SetShake(0x10000, 0x10000, 0x10000);
+  MapGrid_SetShake(1, 1, 1);
   FieldEvent_Wait(20);
-  MapGrid_SetShake(0x10000, 0x20000, 0x10000);
+  MapGrid_SetShake(1, 2, 1);
   FieldEvent_Wait(20);
-  MapGrid_SetShake(0x10000, 0x30000, 0x10000);
+  MapGrid_SetShake(1, 3, 1);
   FieldEvent_Wait(40);
   priority = 0x480;
   FieldTask_AddFrame(Func_020006d0, priority);
-  FieldCamera_SetSpeed(0x28000, 0x4000);
-  FieldCamera_MoveTo(0x1380000, -1, 0x1f80000, 1);
+  FieldCamera_SetSpeedAndAcceleration(2.5, 0.25);
+  FieldCamera_MoveTo(312, CAMERA_KEEP, 504, 1);
   Event_PlaySound(SE_SCATTER);
   Func_02003d24_(75, 96, 7, 13, 80, 27);
   MapGrid_CopyCellsLayered(91, 96, 7, 10, 16, 31);
@@ -586,7 +586,7 @@ cell:
   if (i <= 14)
     goto row;
   FieldCamera_WaitForArrival();
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   FieldEvent_Wait(30);
   Event_PlaySound(MUS_080);
@@ -1007,7 +1007,7 @@ void Func_0200124c(void) {
   FieldEvent_ResolvePendingActions(0);
   layer[3] -= 0x200000;
   Map_CenterOnFollowedPoint();
-  MapGrid_SetShake(0x10000, 0x10000, 0x10000);
+  MapGrid_SetShake(1, 1, 1);
   i = 14;
 shake:
   {
@@ -1027,7 +1027,7 @@ shake:
     layer[3] += 0x4000;
     System_Wait(1);
   }
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_End();
   Func_02003d1c_(38, 9, 7, 6, 13, 9);
   Event_SetFlag(FLAG_AREA_TEMP_49);
@@ -1111,12 +1111,12 @@ void Func_02001620(s32 firstId, s32 secondId) {
   script = gData_02004058;
   Sound_Play(SOUND_FADE_OUT_BGM);
   Event_Wait(30);
-  FieldCamera_SetSpeed(0x8000, 0x1000);
+  FieldCamera_SetSpeed(0.5);
   FieldCamera_MoveWithinMapBounds((first->x >> 16) << 16,
                                   (first->y >> 16) << 16,
                                   (first->z >> 16) << 16, 1);
   Sound_Play(SE_RUMBLE);
-  MapGrid_SetShake(0x20000, 0x20000, 0x10000);
+  MapGrid_SetShake(2, 2, 1);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
   PaletteFade_StartInterpolation(60);
@@ -1282,7 +1282,7 @@ void AquaRockInside_ReadParchTablet(void) {
   FieldEvent_Wait(30);
   Actor_FaceDirection(7, FACING_NORTH, 0);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(7, 0x10000, 0x8000);
+  Actor_SetSpeed(7, 1);
   Actor_WalkToAndWait(7, 264, 168);
   Actor_FaceDirection(7, FACING_NORTH, 0);
   FieldEvent_Wait(20);
@@ -1311,7 +1311,7 @@ void AquaRockInside_ReadParchTablet(void) {
   Actor_SetAnimation(7, 3);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(7, 0x13333, 0x9999);
+  Actor_SetSpeed(7, 1.2);
   Actor_SetAnimation(7, 2);
   object = Actor_Get(gMainRoutineWork.currentOwner);
   if (object != 0) {
@@ -1459,7 +1459,7 @@ fall:
     goto fall;
   Func_02002bd4(object);
   Actor_SetSpriteColorMode(object, 0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 2);
   *flags = saved;
   object->velocityY = 0x80000;
   Event_PlaySound(SE_SPLASH_SMALL);
@@ -1526,7 +1526,7 @@ s32 Scene_Initialize(void) {
     object = Actor_GetById(9);
     object->motionFlags = 0;
     if (GameFlag_Get(0x95c)) {
-      Actor_SetPosition(9, PIXELS(632), PIXELS(152));
+      Actor_SetPosition(9, 632, 152);
       MapGrid_CopyCellAttributes(41, 9, 1, 1, 39, 9);
       object->y = 0;
       object->terrainHeight = 0;
@@ -1673,13 +1673,13 @@ s32 Scene_PrepareMap(void) {
       }
     }
     if (GameFlag_Get(0x95a)) {
-      Actor_SetPosition(10, PIXELS(184), PIXELS(200));
+      Actor_SetPosition(10, 184, 200);
       i4 = 12;
       MapGrid_CopyCellAttributes(0, 12, 1, 1, 9, i4);
       MapGrid_CopyCellAttributes(0, 12, 1, 1, 13, i4);
     }
     if (GameFlag_Get(0x95b)) {
-      Actor_SetPosition(11, PIXELS(824), PIXELS(216));
+      Actor_SetPosition(11, 824, 216);
     }
   } else if (scene == (s32)&SceneId_Ov67cRoom2) {
     if ((u32)(entrance - 1) <= 1) {
@@ -1735,7 +1735,7 @@ s32 Scene_PrepareMap(void) {
         BG1_SET_PRIORITY_1();
       } else if (Event_GetFlag(0xa64) || GameFlag_Get(FLAG_SCENE_TEMP_48)) {
         if (Event_GetFlag(0xa64)) {
-          Actor_SetPosition(12, PIXELS(280), PIXELS(712));
+          Actor_SetPosition(12, 280, 712);
         }
         Func_02000b24(12, 38);
         Func_02003628();
@@ -1830,9 +1830,9 @@ s32 Scene_PrepareMap(void) {
         BG1_SET_PRIORITY_1();
       } else if (Event_GetFlag(0xa65) || GameFlag_Get(FLAG_SCENE_TEMP_4A)) {
         if (Event_GetFlag(0xa65)) {
-          Actor_SetPosition(12, PIXELS(808), PIXELS(296));
-          Actor_SetPosition(13, PIXELS(680), PIXELS(360));
-          Actor_SetPosition(15, PIXELS(744), PIXELS(424));
+          Actor_SetPosition(12, 808, 296);
+          Actor_SetPosition(13, 680, 360);
+          Actor_SetPosition(15, 744, 424);
         }
         Call2((void (*)())Func_02000b24, 12, 38);
         Call2((void (*)())Func_02000b24, 13, 39);
@@ -1921,7 +1921,8 @@ void Func_02002ca4(void) {
     Func_02002bd4(actor);
   if (hit < 0) {
     Actor_SetAttachedEffect(id, 258);
-    FieldActor_SetMoveTarget(actor, actor->x, actor->y, actor->z + 0x80000);
+    FieldActor_SetMoveTargetFixed(actor, actor->x, actor->y,
+                                  actor->z + 0x80000);
     Actor_SelectAnimation(actor, 49);
     FieldActor_WaitForMove(actor);
     do {

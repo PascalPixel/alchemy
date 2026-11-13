@@ -394,7 +394,7 @@ void Func_020007a4(s32 unused, s32 id) {
     Event_Wait(10);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    FieldCamera_MoveTo(166 << 18, -1, PIXELS(136), 1);
+    FieldCamera_MoveTo(664, CAMERA_KEEP, 136, 1);
     FieldCamera_WaitForArrival();
     Event_Wait(20);
     Event_PlaySound(SE_LIGHT_APPEAR);
@@ -437,12 +437,12 @@ void Func_020009e4(s32 a, s32 b) { Func_02001a48(gData_020031c4, a, b); }
 void Func_020009f8(s32 id, s32 x, s32 z, s32 dx, s32 dz) {
   struct Actor *object = Actor_Get(id);
 
-  Actor_SetPosition(id, (x << 20) + PIXELS(8), (z << 20) + PIXELS(8));
+  Actor_SetPositionFixed(id, (x << 20) + PIXELS(8), (z << 20) + PIXELS(8));
   object->motionFlags = 3;
   object->terrainHeight = PIXELS(-16);
   object->y = PIXELS(-16);
   object->velocityY = PIXELS(8);
-  Actor_SetSpeed(id, 0x19999, 0xcccc);
+  Actor_SetSpeed(id, 1.6);
   Actor_SetDestinationOffset(id, dx, dz);
   Event_PlaySound(SE_222);
 }
@@ -460,7 +460,7 @@ void Func_02000a74(void) {
           Event_GetFlag(2577) + Event_GetFlag(2579) + Event_GetFlag(2581) ==
       0)
     return;
-  FieldCamera_MoveTo(148 << 18, -1, PIXELS(248), 1);
+  FieldCamera_MoveTo(592, CAMERA_KEEP, 248, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   if (Event_GetFlag(2576))
@@ -592,7 +592,7 @@ L_02008e6e:
   Actors_SetCellsOpen((s32)&gData_020031c4);
   t5 = Event_GetFlag(0xa1b);
   if (t5 != 0) {
-    Actor_SetPosition(16, PIXELS(136), PIXELS(600));
+    Actor_SetPosition(16, 136, 600);
     JupiterLighthouse_OpenDoor(0);
   }
   t8 = Event_GetFlag(FLAG_SCENE_TEMP_02);
@@ -656,12 +656,12 @@ s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   JupiterLighthouse_LoadPalettes(1);
   if (gMainRoutineWork.entrance == 12) {
-    Actor_SetPosition(10, PIXELS(168), PIXELS(264));
-    Actor_SetPosition(11, PIXELS(200), PIXELS(264));
-    Actor_SetPosition(12, PIXELS(232), PIXELS(264));
-    Actor_SetPosition(13, PIXELS(168), PIXELS(296));
-    Actor_SetPosition(14, PIXELS(136), PIXELS(328));
-    Actor_SetPosition(15, PIXELS(168), PIXELS(328));
+    Actor_SetPosition(10, 168, 264);
+    Actor_SetPosition(11, 200, 264);
+    Actor_SetPosition(12, 232, 264);
+    Actor_SetPosition(13, 168, 296);
+    Actor_SetPosition(14, 136, 328);
+    Actor_SetPosition(15, 168, 328);
   }
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) && Func_02000290() != 2) {
     Event_ClearFlag(0xa10);
@@ -1029,7 +1029,7 @@ void CrackedTile_DropIn(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
   actor->y = 0x820000;
@@ -1070,8 +1070,8 @@ loop:
   Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
-  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(5, 5, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
   actor->gravity = 0x10000;

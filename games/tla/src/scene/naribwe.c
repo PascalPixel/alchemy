@@ -218,7 +218,7 @@ void Naribwe_EnterDoor(void) {
   index -= 4;
   MapGrid_AnimateCells(gNaribwe_Doors[index].script, gNaribwe_Doors[index].x,
                        gNaribwe_Doors[index].z);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Import_EventSetExitRequest(*(s16 *)work);
@@ -254,7 +254,7 @@ void Naribwe_RevealStone(void) {
 
 void Naribwe_HideStone(void) {
   ObjectEvent_PlaceOnGround(65, 0, 0);
-  Actor_SetPosition(27, PIXELS(104), PIXELS(104));
+  Actor_SetPosition(27, 104, 104);
 }
 
 s32 Scene_Initialize(void) {

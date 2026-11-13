@@ -923,7 +923,7 @@ void Func_020012c4(void) {
 
   Func_0200423c_(16, 37, 1, 1, 17, 37, 0);
   if (GameFlag_Get(0xfc7) == 0) {
-    Actor_SetPosition(66, PIXELS(280), PIXELS(664));
+    Actor_SetPosition(66, 280, 664);
     if (leader->x >> 20 == 17 && leader->z >> 20 == 41) {
       Event_Start();
       Event_ResolvePendingActions(0);
@@ -1007,7 +1007,7 @@ void Func_020015ac(void) {
   wait(1);
   options.priority = 2;
   Sound_Play(SE_THUMP);
-  MapGrid_SetShake(0x10000, 0x20000, 0x10000);
+  MapGrid_SetShake(1, 2, 1);
   for (i = 0; i <= 16; i++) {
     angle = i << 12;
     velocity[0] = Trig_Cos(angle);
@@ -1019,7 +1019,7 @@ void Func_020015ac(void) {
   }
   Actor_SetSpriteColor(Actor_GetById(17), 0);
   Actor_SetSpriteFlags(Actor_GetById(17), 1);
-  Actor_SetSpeed(17, 0x30000, 0x18000);
+  Actor_SetSpeed(17, 3);
   object->velocityY = 0xc0000;
   Actor_MoveToAndWait(17, 40, 680);
   Event_Wait(10);
@@ -1027,7 +1027,7 @@ void Func_020015ac(void) {
   if (object->x >> 20 == leader->x >> 20 &&
       object->z >> 20 == leader->z >> 20) {
     Actor_Jump(gMainRoutineWork.currentOwner, 6, 0);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 2);
     Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 68, 680);
   }
   MapGrid_SetScreenShake(0, 0, 0);
@@ -1327,7 +1327,7 @@ void Func_02001d50(void) {
   Actor_WatchAndSetScript(2, gMainRoutineWork.currentOwner);
   Actor_WatchAndSetScript(8, gMainRoutineWork.currentOwner);
   Event_Wait(10);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 160, 382);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
@@ -1335,10 +1335,10 @@ void Func_02001d50(void) {
   Actor_MoveToObject(6, gMainRoutineWork.currentOwner);
   Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
   wait(1);
-  Actor_SetSpeed(5, 0xcccc, 0x6666);
-  Actor_SetSpeed(7, 0xcccc, 0x6666);
-  Actor_SetSpeed(9, 0xcccc, 0x6666);
-  Actor_SetSpeed(6, 0xcccc, 0x6666);
+  Actor_SetSpeed(5, 0.8);
+  Actor_SetSpeed(7, 0.8);
+  Actor_SetSpeed(9, 0.8);
+  Actor_SetSpeed(6, 0.8);
   Actor_SetMovementTypeById(5, gData_020048a0);
   Actor_SetMovementTypeById(9, gData_02004980);
   Actor_SetMovementTypeById(6, gData_0200493c);
@@ -1348,7 +1348,7 @@ void Func_02001d50(void) {
   Actor_Stop(3);
   Actor_Stop(2);
   Actor_Stop(8);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Sound_Play(MUS_043);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(0, 3);
@@ -1547,12 +1547,12 @@ void Func_02001d50(void) {
   Actor_WatchAndSetScript(3, 8);
   Actor_WatchAndSetScript(2, 8);
   Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(8)), 0);
-  FieldCamera_SetSpeed(0x26666, 0x4ccc);
-  FieldCamera_MoveTo(PIXELS(180), -1, PIXELS(410), 1);
+  FieldCamera_SetSpeed(2.4);
+  FieldCamera_MoveTo(180, CAMERA_KEEP, 410, 1);
   FieldCamera_WaitForArrival();
-  FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_MoveTo(PIXELS(148), -1, PIXELS(368), 1);
-  Actor_SetSpeed(8, 0xcccc, 0x6666);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(148, CAMERA_KEEP, 368, 1);
+  Actor_SetSpeed(8, 0.8);
   Actor_WalkToAndWait(8, 146, 406);
   Contigo_Jump(3, 264, 20);
   Event_ShowMessageAndWait(3, 0);
@@ -1607,7 +1607,7 @@ void Func_02001d50(void) {
   Contigo_Jump(8, 265, 0);
   Actor_FaceDirectionById(8, FACING_EAST);
   Event_ShowMessageAndWait(0x1008, 0);
-  Actor_SetSpeed(2, 0xcccc, 0x6666);
+  Actor_SetSpeed(2, 0.8);
   Actor_WalkToAndWait(2, 130, 400);
   Actor_ArmCallback(2, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(8, FACING_WEST);
@@ -1683,7 +1683,7 @@ void Func_02001d50(void) {
   Actor_SetModeById(8, 3);
   Event_ShowMessageAndWait(8, 0);
   Sound_Play(SOUND_FADE_OUT_BGM);
-  FieldCamera_MoveTo(PIXELS(180), -1, PIXELS(410), 1);
+  FieldCamera_MoveTo(180, CAMERA_KEEP, 410, 1);
   Actor_WalkToAndWait(8, 160, 466);
   Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
   Camera_SetSpeedParameters(0x26666, 0x4ccc);
@@ -1763,14 +1763,14 @@ void Func_02002e18(void) {
   if (GameFlag_Get(0x9b2)) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    FieldCamera_SetSpeed(0xcccc, 0x1999);
+    FieldCamera_SetSpeed(0.8);
     FieldCamera_MoveWithinMapBounds(PIXELS(160), -1, PIXELS(368), 1);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 158, 394);
     Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
     Actor_MoveToObject(2, gMainRoutineWork.currentOwner);
     wait(1);
-    Actor_SetSpeed(2, 0xcccc, 0x6666);
+    Actor_SetSpeed(2, 0.8);
     Actor_WalkToAndWaitById(2, 144, 374);
     Actor_FaceDirectionAndWait(2, FACING_NORTHEAST);
     Contigo_Jump(8, 265, 20);
@@ -1806,7 +1806,7 @@ void Func_02002e18(void) {
     Actor_MoveToObject(0, gMainRoutineWork.currentOwner);
     wait(1);
     Contigo_Jump(0, 256, 0);
-    Actor_SetSpeed(0, 0x13333, 0x9999);
+    Actor_SetSpeed(0, 1.2);
     Actor_WalkToAndWaitById(0, 168, 380);
     Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
     Event_ShowMessageAndWait(0, 0);
@@ -1814,9 +1814,9 @@ void Func_02002e18(void) {
     Actor_FaceDirection(8, FACING_SOUTH_SOUTHEAST, 0);
     Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
     wait(1);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
     Actor_SetMovementTypeById(gMainRoutineWork.currentOwner, gData_02004ac0);
-    Actor_SetSpeed(9, 0xcccc, 0x6666);
+    Actor_SetSpeed(9, 0.8);
     Actor_WalkToAndWait(9, 182, 378);
     Actor_WalkToAndWaitById(9, 182, 360);
     Actor_FaceDirectionAndWait(9, FACING_WEST);
@@ -1958,9 +1958,9 @@ void Func_02002e18(void) {
     Actor_SetModeById(9, 3);
     Event_ShowMessageAndWait(9, 0);
     Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
-    Actor_SetSpeed(2, 0x13333, 0x9999);
-    Actor_SetSpeed(0, 0x13333, 0x9999);
-    Actor_SetSpeed(9, 0x13333, 0x9999);
+    Actor_SetSpeed(2, 1.2);
+    Actor_SetSpeed(0, 1.2);
+    Actor_SetSpeed(9, 1.2);
     Actor_SetMovementTypeById(2, gData_02004b18);
     Actor_SetMovementTypeById(0, gData_02004b18);
     Actor_SetMovementTypeAndWaitById(9, gData_02004b18);
@@ -2031,7 +2031,7 @@ void Contigo_InitializeRoom1(void) {
     *(void **)((u8 *)object + 108) = Func_020006d0;
   }
   if (GameFlag_Get(0x9e7) != 0 && GameFlag_Get(0x9e6) == 0) {
-    Actor_SetPosition(17, PIXELS(32), PIXELS(708));
+    Actor_SetPosition(17, 32, 708);
   } else {
     Actor_SetSpriteColor(Actor_GetById(17), 15);
     Actor_SetSpriteFlags(Actor_GetById(17), 0);

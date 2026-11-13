@@ -813,7 +813,7 @@ void SeaOfTime_CrossToLemuria(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   GameFlag_Set(0x8dd);
-  Actor_SetSpeed(8, 0x10000, 0x8000);
+  Actor_SetSpeed(8, 1);
   Actor_GetById(8)->facing = FACING_NORTH;
   Actor_WalkTo(8, 352, 264);
   Camera_SetSpeedParameters(0x10000, 0x2000);
@@ -1090,7 +1090,7 @@ void SeaOfTime_AnimateSea(void) {
 
 void SeaOfTime_PlaceRock(s32 x, s32 z, s32 actor) {
   Actor_GetById(actor)->collisionFlags |= 16;
-  Actor_SetPosition(actor, (x << 19) + 0x80000, (z << 19) + 0x80000);
+  Actor_SetPositionFixed(actor, (x << 19) + 0x80000, (z << 19) + 0x80000);
   x >>= 1;
   z >>= 1;
   SeaOfTime_SetCellCode(1, x, z, 0xff00);
@@ -1105,14 +1105,14 @@ void SeaOfTime_RaiseRock(s32 x, s32 z, s32 actor) {
   s32 pz;
   s32 i;
 
-  FieldCamera_SetSpeed(0x60000, 0xc000);
+  FieldCamera_SetSpeed(6);
   px = (x << 19) + 0x80000;
   pz = (z << 19) + 0x80000;
-  FieldCamera_MoveTo(px, -1, pz, 1);
+  FieldCamera_MoveToFixed(px, -1, pz, 1);
   FieldCamera_WaitForArrival();
   Event_PlaySound(SE_CLATTER);
-  MapGrid_SetShake(0, 0x100000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(0, 16, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   spark.startScaleX = 0x13333;
   spark.startScaleY = 0x18000;
   spark.priority = 1;
@@ -1145,7 +1145,7 @@ void SeaOfTime_Open(void) {
   MapGrid_CopyCellsTo(49, 70, 19, 73, 6, 6);
   actor = FieldActor_Create(159, 0x15c0000, 0, 0xb80000);
   actor->update = (void (*)(void))SeaOfTime_UpdateSpray;
-  FieldCamera_MoveTo(0x1600000, -1, 0xc40000, 0);
+  FieldCamera_MoveTo(352, CAMERA_KEEP, 196, 0);
   Event_StartScreenTransition();
   wait(1);
   Task_Add(SeaOfTime_AnimateSea, 0xc80);
@@ -1156,7 +1156,7 @@ void SeaOfTime_Open(void) {
   SeaOfTime_RaiseRock(47, 27, 12);
   SeaOfTime_RaiseRock(59, 19, 13);
   MapGrid_WaitForShakeToSettle();
-  FieldCamera_MoveTo(0x1600000, -1, 0xc40000, 1);
+  FieldCamera_MoveTo(352, CAMERA_KEEP, 196, 1);
   FieldCamera_WaitForArrival();
   Event_SetFlag(FLAG_SCENE_TEMP_00);
   ((struct EventWork687 *)Ram_HeapSlots->eventWork)->unk16a = 200;

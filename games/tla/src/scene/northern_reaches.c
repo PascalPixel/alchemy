@@ -135,12 +135,12 @@ void NorthernReaches_DiscussIceWall(void) {
   FieldActor_WaitForMove((s32)object1);
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(5, 0, 5);
-  FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(176), 1);
+  FieldCamera_MoveTo(464, CAMERA_KEEP, 176, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(5);
-  Actor_SetPosition(11, PIXELS(408), PIXELS(288));
-  Actor_SetPosition(5, PIXELS(408), PIXELS(288));
-  Actor_SetPosition(6, PIXELS(408), PIXELS(288));
+  Actor_SetPosition(11, 408, 288);
+  Actor_SetPosition(5, 408, 288);
+  Actor_SetPosition(6, 408, 288);
   FieldEvent_ShowMessageThenWait(11, 0, 5);
   FieldEvent_ShowMessageThenWait(6, 0, 5);
   FieldEvent_ShowMessageThenWait(11, 0, 5);
@@ -222,10 +222,10 @@ fire:
   Actor_SetSpriteFlags(t18, 0);
   t20 = Actor_Get(6);
   Actor_SetSpriteFlags(t20, 0);
-  Actor_SetPosition(11, 0x1d00000, 0xd80000);
-  Actor_SetPosition(7, 0x1d00000, 0xd80000);
-  Actor_SetPosition(5, 0x1d00000, 0xd80000);
-  Actor_SetPosition(6, 0x1d00000, 0xd80000);
+  Actor_SetPosition(11, 464, 216);
+  Actor_SetPosition(7, 464, 216);
+  Actor_SetPosition(5, 464, 216);
+  Actor_SetPosition(6, 464, 216);
   t26 = Event_GetFlag(0x90d);
   v_r10 = (s32)MsgShipSafeFiringDistance;
   if (t26 != 0)
@@ -247,7 +247,7 @@ ready:
   t37 = FIELD_AT(t36, u16, 452);
   FIELD_AT(t36, u16, 452) = (t37 + 1);
   FieldEvent_ShowMessageThenWait(11, 0, 5);
-  Actor_SetSpeed(8, 0x30000, 0x18000);
+  Actor_SetSpeed(8, 3);
   t40 = Actor_Get(8);
   t40->actionFlags &= 254;
   Actor_WalkBy(8, 0, 16);
@@ -257,12 +257,12 @@ ready:
   v_r8->scaleY = 0x18000;
   t45 = Actor_Get(10);
   Actor_SetSpriteColorMode(t45, 6);
-  Actor_SetPosition(10, 0x1d00000, 0xc80000);
+  Actor_SetPosition(10, 464, 200);
   Actor_SetAnimation(10, 1);
   v_r6->scaleX = 0x8000;
   v_r6->scaleY = 0x8000;
-  Actor_SetSpeed(9, 0x20000, 0x10000);
-  Actor_SetPosition(9, 0x1d00000, 0xd80000);
+  Actor_SetSpeed(9, 2);
+  Actor_SetPosition(9, 464, 216);
   Actor_WalkTo(9, 0x1d0, 144);
   v_r5 = 15;
 growBall:
@@ -274,7 +274,7 @@ growBall:
   v_r5 = (v_r5 - 1);
   if (v_r5 >= 0)
     goto growBall;
-  FieldCamera_MoveTo(0x1d80000, -1, 0xb00000, 1);
+  FieldCamera_MoveTo(472, CAMERA_KEEP, 176, 1);
   FieldCamera_WaitForArrival();
   FieldActor_WaitForMoveById(9);
   Event_PlaySound(SE_CRASH);
@@ -301,11 +301,11 @@ growBall:
   FieldEvent_ShowMessageThenWait(0x2005, 0, 5);
   FieldEvent_ShowMessageThenWait(11, 0, 5);
   FieldEvent_ShowMessageThenWait(0x2006, 0, 5);
-  Actor_SetSpeed(8, 0xcccc, 0x6666);
+  Actor_SetSpeed(8, 0.8);
   Actor_MoveToAndWait(8, 0x1d0, 176);
   EventCamera_FollowActor(8, 1);
   Actor_MoveToAndWait(8, 0x1d0, 152);
-  Actor_SetSpeed(8, 0x9999, 0x4ccc);
+  Actor_SetSpeed(8, 0.6);
   t79 = v_r7->scaleY;
   v_r7->scaleY = (t79 - 0x1000);
   v_r7->scaleX = (t79 - 0x1000);
@@ -331,7 +331,7 @@ growBall:
   v_r7->scaleX = (t91 - 0x1000);
   Actor_SetDestinationOffset(8, 0, -16);
   FieldActor_WaitForMoveById(8);
-  Actor_SetSpeed(8, 0x3333, 0x1999);
+  Actor_SetSpeed(8, 0.2);
   Actor_SetDestinationOffset(8, 0, -12);
   v_r5 = 19;
 settle:
@@ -462,7 +462,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
     if (frame == 105) {
       callback();
       flying = 1;
-      MapGrid_SetShake(0x60000, 0x60000, 0x10000);
+      MapGrid_SetShake(6, 6, 1);
       Event_PlaySound(SE_SPARKLING_PASSAGE);
     }
     if (frame == 130) {

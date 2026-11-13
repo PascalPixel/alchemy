@@ -121,7 +121,7 @@ void JupiterLighthouse_RevealThePassage(void) {
   MapGrid_CopyCellsLayered(17, 10, 1, 4, 19, 10);
   MapGrid_CopyCellAttributes(17, 10, 1, 1, 19, 10);
   SetCollisionCode(0x1300000, 0xa00000, 0, 254);
-  Actor_SetPosition(ACTOR_HIDDEN_BLOCK, PIXELS(504), PIXELS(168));
+  Actor_SetPosition(ACTOR_HIDDEN_BLOCK, 504, 168);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     Actor_RaiseFromCell(ACTOR_HIDDEN_BLOCK);
     ((u8)FieldMapGrid_SetCellBehavior(0x1f00000, 0xa00000, 0, 254));
@@ -311,7 +311,7 @@ s32 Scene_PrepareMap(void) {
   }
   Actor_SetSpriteFlags(Actor_Get(ACTOR_UNSEEN), 0);
   if (Event_GetFlag(FLAG_BRIDGE_BLOCK_RAISED)) {
-    Actor_SetPosition(ACTOR_BRIDGE_BLOCK, PIXELS(168), PIXELS(520));
+    Actor_SetPosition(ACTOR_BRIDGE_BLOCK, 168, 520);
     Actor_RaiseFromCell(ACTOR_BRIDGE_BLOCK);
   }
   return 0;
@@ -402,10 +402,10 @@ UNUSED void JupiterLighthouse_PlaceAngelsAndLid(void) {
   struct Actor *rider = Actor_Get(23);
   struct FieldSprite *sprite = rider->sprite;
 
-  Actor_SetPosition(24, 0x2000000, 0xf80000);
-  Actor_SetPosition(23, 0x2000000, 0xf80000);
-  Actor_SetPosition(9, 0x1d80000, 0x1000000);
-  Actor_SetPosition(10, 0x2280000, 0x1000000);
+  Actor_SetPosition(24, 512, 248);
+  Actor_SetPosition(23, 512, 248);
+  Actor_SetPosition(9, 472, 256);
+  Actor_SetPosition(10, 552, 256);
   Actor_Get(24)->scaleX = 0;
   rider->motionFlags = 0;
   rider->y = rider->terrainHeight;
@@ -673,7 +673,7 @@ void Leader_CenterInCell(void) {
   s32 x = object->x;
   s32 z = object->z;
 
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 4);
 
   x >>= 20;
   z >>= 20;

@@ -90,10 +90,10 @@
         ((struct PositionedActor *)Actor_Get(23));                             \
     struct FieldSprite *sprite = actor23->animation;                           \
                                                                                \
-    Actor_SetPosition(24, 0x2000000, 0xf80000);                                \
-    Actor_SetPosition(23, 0x2000000, 0xf80000);                                \
-    Actor_SetPosition(9, 0x1d80000, 0x1000000);                                \
-    Actor_SetPosition(10, 0x2280000, 0x1000000);                               \
+    Actor_SetPosition(24, 512, 248);                                           \
+    Actor_SetPosition(23, 512, 248);                                           \
+    Actor_SetPosition(9, 472, 256);                                            \
+    Actor_SetPosition(10, 552, 256);                                           \
     ((struct PositionedActor *)Actor_Get(24))->scaleX = 0;                     \
     actor23->motionFlags = 0;                                                  \
     actor23->y.fixed = actor23->terrainHeight;                                 \

@@ -132,6 +132,7 @@ static void Colosso_NoOp(void);
 static void Colosso_WaitForOpponentToFinish(void);
 static s32 Colosso_TakePrize(s32 firstItem, s32 secondItem);
 static void ColosseumSatrageMatch_StartOpponentPath(s32 pathResource);
+static void Colosso_PushActorAhead(void);
 
 /// The second finals match's actors, numbered in the order of
 /// gColosseumSatrageMatchActorPlacements from ACTOR_FIRST_PLACED.

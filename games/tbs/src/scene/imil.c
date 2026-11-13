@@ -218,6 +218,7 @@ static void Imil_UpdateFootprints(void);
 static void Imil_PlaceMovedSnowman(void);
 static void Imil_ArriveFromFallsCave(void);
 static void Imil_MiaSaysFarewellToApprentices(void);
+static void Imil_RunIceSlide(void);
 
 /// A sick person shivers: a quick squash, then a pause.
 static s32 Imil_UpdateShiver(struct Actor *actor) {

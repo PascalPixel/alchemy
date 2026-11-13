@@ -16,11 +16,11 @@ enum {
   BOLT_STRIKES       ///< bolts drawn over each other
 };
 
-/// Where the bolt pictures start in the sheet: after the six glints that open
-/// the tornado sheet (gBattleEffect_GlintPictures), over its tornado strips.
+/// Where the bolt pictures start in the sheet, after the six glints.
 #define BOLT_PICTURES GLINT_SET_BYTES
 
-/// A bolt of lightning strikes each target in turn, 8 frames apart.
+/// A bolt of lightning strikes each target in turn, and sparks fly up from
+/// where it lands while glints flicker there.
 ///
 /// Abilities: Bolt, Flash Bolt, Blue Bolt.
 void BattleEffect_RunBolt(struct BattleEffectParams *args) {
@@ -52,8 +52,6 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
                              work->sheet + BOLT_PICTURES, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  // A spark's variant is its life left, 0 when free. work->particles is marked
-  // free too, though nothing here uses it.
   for (j = 0; j != 1024; j++)
     PARTICLES[j].variant = 0;
   EFFECT_FREE_PARTICLES(j, work->particles, 64);
@@ -62,12 +60,11 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   for (frame = 0; frame != work->args->targetCount * 8 + 40; frame++) {
     if (frame == 24)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
-    // The flash at each turn's start: the whole canvas set to level 16.
+    // The canvas flashes as each target's turn starts.
     EFFECT_FOR_EACH_TARGET(i, work->args) {
       if (frame == i * 8)
         Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
     }
-    // Each target's turn, 8 frames after the one before.
     EFFECT_FOR_EACH_TARGET(i, work->args) {
       s32 start = i * 8;
 
@@ -82,7 +79,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
                                        KNOCKBACK_BOUNCE);
       }
 
-      // The bolt (24 wide) grows 64 pixels a frame and stops at 104.
+      // The bolt drops from the top.
       if (frame >= start && frame < start + 16) {
         s32 height = (frame - start) << 6;
 
@@ -97,8 +94,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
                   screen.x - 12, 0, 24, height);
         }
 
-        // Throw sparks up from the foot (y = 104), within a quarter turn either
-        // side of straight up.
+        // Sparks fly up from its foot.
         if (frame == start + 2) {
           for (j = 0; j != gBolt_Counts[work->args->variant][BOLT_SPARKS];
                j++) {
@@ -115,7 +111,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
         }
       }
 
-      // Glints for 22 frames.
+      // Glints flicker at the foot.
       if (frame >= start + 2 && frame < start + 24) {
         for (j = 0; j != gBolt_Counts[work->args->variant][BOLT_GLINTS]; j++) {
           s32 kind = j & 3;
@@ -145,8 +141,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
       }
     }
 
-    // Sparks fall at 1/16 pixel a frame per frame, bounce off the ground at
-    // half speed and shrink from mote size 3 to 1 as they die out.
+    // Sparks fall, bounce and shrink as they die.
     for (j = 0; j != 1024; j++) {
       struct Particle *spark = &PARTICLES[j];
 

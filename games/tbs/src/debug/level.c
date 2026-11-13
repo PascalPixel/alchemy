@@ -41,39 +41,30 @@
 
 /// The scene's actors, numbering the rows of
 /// gIncreaseItemAndLevel_ActorPlacements; the game names none of them, so
-/// each is named for what talking to it opens (gIncreaseItemAndLevel_Triggers),
-/// as a render of each talk shows it.
+/// each is named for what talking to it opens (gIncreaseItemAndLevel_Triggers).
 enum IncreaseItemAndLevelActorId {
-  /// IncreaseItemAndLevel_SelectItem.
-  /// ★ Named from what the player sees: `Item No:` over an item's name and
-  /// what equipping it does, with `A:Get Item  B:Return` (its render)
+  /// IncreaseItemAndLevel_SelectItem: `Item No:` over an item's name and what
+  /// equipping it does, with `A:Get Item  B:Return`.
   ACTOR_ITEM_BROWSER = ACTOR_FIRST_PLACED,
-  /// IncreaseItemAndLevel_OpenIconBrowser.
-  /// ★ Named from what the player sees: a page of 32 item icons headed
-  /// `ITEM PAGE:0` (its render)
+  /// IncreaseItemAndLevel_OpenIconBrowser: pages of 32 item icons headed
+  /// `ITEM PAGE:0`.
   ACTOR_ICON_BROWSER,
-  /// IncreaseItemAndLevel_OpenPortraitBrowser; Force cast at it runs the Force
+  /// IncreaseItemAndLevel_OpenPortraitBrowser: the portraits, Isaac's first,
+  /// stepped through with Left and Right; Force cast at it runs the Force
   /// tests.
-  /// ★ Named from what the player sees: Isaac's portrait over `0 Isaac`, the
-  /// first of the portraits Left and Right step through (its render)
   ACTOR_PORTRAIT_BROWSER,
-  /// IncreaseItemAndLevel_RunLevelEditor, drawn larger than the others.
-  /// ★ Named from what the player sees: `Raise everyone's level.` over the
-  /// leader's name and level, A raising it one and Start five (its render)
+  /// IncreaseItemAndLevel_RunLevelEditor: `Raise everyone's level.` over the
+  /// leader's name and level, A raising it one and Start five. Drawn larger
+  /// than the others.
   ACTOR_LEVEL_EDITOR,
-  /// IncreaseItemAndLevel_SelectAbility; placed outside Japanese only, like the
-  /// two
-  /// emote testers after it.
-  /// ★ Named from what the player sees: `Psy No:` over an ability's name,
-  /// with `B:Return` (its render)
+  /// IncreaseItemAndLevel_SelectAbility: `Psy No:` over an ability's name, with
+  /// `B:Return`. Placed outside Japanese only, like the two emote testers after
+  /// it.
   ACTOR_ABILITY_BROWSER,
-  /// IncreaseItemAndLevel_ShowMessageThenEmote.
-  /// ★ Named from what the player sees: a wince over the actor, then its
-  /// message (its render)
+  /// IncreaseItemAndLevel_ShowMessageThenEmote: its message, then a wince.
   ACTOR_FIRST_EMOTE_TESTER,
-  /// IncreaseItemAndLevel_ShowEmoteThenMessage.
-  /// ★ Named from what the player sees: an ellipsis over the first tester,
-  /// then the first tester's message (its render)
+  /// IncreaseItemAndLevel_ShowEmoteThenMessage: an ellipsis over the first
+  /// tester, then its message.
   ACTOR_SECOND_EMOTE_TESTER
 };
 

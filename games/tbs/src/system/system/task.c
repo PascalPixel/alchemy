@@ -107,10 +107,7 @@ s32 Task_Add(TaskFunc func, s32 order) {
   s32 i;
 
   // Adding re-sorts the table, which would shift the tasks after the new one
-  // if it came during a pass; it never does. In a call graph of the English
-  // build, main image and overlays, no task reaches Task_Add, and neither does
-  // any function whose address is taken except main-thread entries (far-call
-  // entries, a scene's entry table and events, start-up).
+  // if it came during a pass; no task adds one.
   index = -1;
   task = gTasks;
   // DEAD: nothing uses the status read here; the ROM keeps the load, as The
@@ -299,17 +296,17 @@ s32 Task_ResumeOverlayTasks(void) {
 /// gTasksInitialized.
 void Task_RunPass(s32 pass) {
   struct Task *task = gTasks;
-  s32 remaining;
+  s32 i;
 
   // A pass matches the high byte only; the low byte has already ranked the
   // tasks through the sort, and a suspended task's odd high byte matches no
   // pass
   pass >>= 8;
   if (gTasksInitialized == 1) {
-    remaining = TASK_COUNT + 1;
+    i = TASK_COUNT + 1;
     task--;
     for (;;) {
-      if (--remaining == 0)
+      if (--i == 0)
         return;
       task++;
       if (TASK_STATE_HIGH(task) == pass) {

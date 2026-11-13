@@ -371,28 +371,22 @@ static void CrossboneIsleKeys_BaneLastEscape(void) {
 static void CrossboneIsleKeys_BaneKeepsAway(void) {
   struct Actor *djinni;
   struct Actor *leader;
-  s32 targetByteOffset;
-  const u8 *targets;
-  s32 zByteOffset;
+  s32 target;
   struct FieldWork *work;
 
   work = gFieldWork;
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
     if (gMainRoutineWork.haltedActor != ACTOR_BANE) {
-      targetByteOffset = work->stepTrigger;
+      target = work->stepTrigger;
       djinni = Actor_Get(ACTOR_BANE);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       djinni->speedLimit = leader->speedLimit;
       djinni = Actor_Get(ACTOR_BANE);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       djinni->acceleration = leader->speedLimit;
-      targetByteOffset -= 30;
-      targets = (const u8 *)gCrossboneIsleKeys_BaneWalkTargets;
-      // The table stores consecutive signed X/Z pixel pairs.
-      targetByteOffset *= 2 * sizeof(s32);
-      zByteOffset = targetByteOffset + sizeof(s32);
-      Actor_WalkTo(ACTOR_BANE, *(const s32 *)(targets + targetByteOffset),
-                   *(const s32 *)(targets + zByteOffset));
+      target -= 30;
+      Actor_WalkTo(ACTOR_BANE, gCrossboneIsleKeys_BaneWalkTargets[target][0],
+                   gCrossboneIsleKeys_BaneWalkTargets[target][1]);
     }
   }
 }
@@ -1399,19 +1393,21 @@ s32 gCrossboneIsleKeys_BaneSquashScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gCrossboneIsleKeys_BaneWalkTargets[] = {
-    888, 856,
-    872, 856,
-    856, 856,
-    840, 856,
-    824, 856,
-    824, 840,
-    824, 824,
-    840, 824,
-    856, 824,
-    872, 824,
-    888, 824,
-    888, 840,
+/// Where Bane runs from each step trigger round its corner, 30 to 41, in
+/// pixels.
+s32 gCrossboneIsleKeys_BaneWalkTargets[][2] = {
+    { 888, 856 },
+    { 872, 856 },
+    { 856, 856 },
+    { 840, 856 },
+    { 824, 856 },
+    { 824, 840 },
+    { 824, 824 },
+    { 840, 824 },
+    { 856, 824 },
+    { 872, 824 },
+    { 888, 824 },
+    { 888, 840 },
 };
 
 struct SceneEntrance gCrossboneIsleKeysEntrancesOther[] = {

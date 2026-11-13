@@ -1164,7 +1164,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   struct Actor *leader;
   s32 jumpSpeed;
 
-  beast = (struct Actor *)Actor_Get(ACTOR_FIRST_WATER_BEAST);
+  beast = Actor_Get(ACTOR_FIRST_WATER_BEAST);
   Event_Start();
   FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveTo(298, CAMERA_KEEP, 337, 1);
@@ -1282,7 +1282,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   struct Actor *movingActor;
   u32 waitedFrames;
 
-  actor = (struct Actor *)Actor_Get(ACTOR_FIRST_WATER_BEAST);
+  actor = Actor_Get(ACTOR_FIRST_WATER_BEAST);
   Event_Start();
   Actor_Stop(ACTOR_FIRST_WATER_BEAST);
   FieldCamera_SetSpeed(2.4);
@@ -1352,7 +1352,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
        waitedFrames++) {
     Event_Wait(1);
   }
-  actor = (struct Actor *)Actor_Get(ACTOR_PARTY_LEADER);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
   FieldCamera_SetSpeed(4.8);
   FieldCamera_MoveWithinMapBounds(actor->x.fixed, actor->y.fixed,
                                   actor->z.fixed, 1);

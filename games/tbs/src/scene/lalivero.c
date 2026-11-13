@@ -880,7 +880,7 @@ s32 Lalivero_Initialize(void) {
 
   // The Black Orb Iodem hands over is drawn from its item icon, floating
   // 10 pixels up.
-  actor = (struct Actor *)Actor_Get(ACTOR_BLACK_ORB);
+  actor = Actor_Get(ACTOR_BLACK_ORB);
   actor->retainSpriteCache = 1;
   actor->motionFlags = 0;
   sprite = actor->sprite;
@@ -909,12 +909,12 @@ s32 Lalivero_Initialize(void) {
     // party with their own collision off, and the two cells each covers
     // become wall instead. The third cell copied, at x 78, lies outside the
     // town's 32 columns, where the camera never goes, and changes nothing.
-    actor = (struct Actor *)Actor_Get(ACTOR_WEST_SOLDIER);
+    actor = Actor_Get(ACTOR_WEST_SOLDIER);
     actor->collisionFlags = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     actor->sprite->flags = 0;
     actor->sprite->rotation = FACING_NORTH;
-    actor = (struct Actor *)Actor_Get(ACTOR_EAST_SOLDIER);
+    actor = Actor_Get(ACTOR_EAST_SOLDIER);
     actor->collisionFlags = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     actor->sprite->flags = 0;
@@ -930,14 +930,14 @@ s32 Lalivero_Initialize(void) {
       GameFlag_Set(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN);
       // The woman and the girl who wander nearest the soldiers stay put during
       // the event.
-      actor = (struct Actor *)Actor_Get(ACTOR_WOMAN_OUR_ONLY_HOPE);
+      actor = Actor_Get(ACTOR_WOMAN_OUR_ONLY_HOPE);
       actor->paused = 1;
-      actor = (struct Actor *)Actor_Get(ACTOR_GIRL_SHEBAS_POWERS);
+      actor = Actor_Get(ACTOR_GIRL_SHEBAS_POWERS);
       actor->paused = 1;
       Lalivero_WatchWoundedSoldiers();
-      actor = (struct Actor *)Actor_Get(ACTOR_WOMAN_OUR_ONLY_HOPE);
+      actor = Actor_Get(ACTOR_WOMAN_OUR_ONLY_HOPE);
       actor->paused = 0;
-      actor = (struct Actor *)Actor_Get(ACTOR_GIRL_SHEBAS_POWERS);
+      actor = Actor_Get(ACTOR_GIRL_SHEBAS_POWERS);
       actor->paused = 0;
     }
   }

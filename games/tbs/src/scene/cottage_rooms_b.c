@@ -1164,12 +1164,12 @@ static void CottageRoomsB_SpawnEffectPair(struct Actor *parent) {
 
 /// Cycles Dora's palette and gives off pairs of effects.
 UNUSED static void CottageRoomsB_CyclePaletteWithParticles(void) {
-  CottageRoomsB_CyclePaletteAndSpawnPair((struct Actor *)Actor_Get(ACTOR_DORA));
+  CottageRoomsB_CyclePaletteAndSpawnPair(Actor_Get(ACTOR_DORA));
 }
 
 /// Cycles the tunic's palette, with no effects.
 UNUSED static void CottageRoomsB_CyclePaletteWithoutParticles(void) {
-  Scene_CycleColorModesOnOddFrames((struct Actor *)Actor_Get(ACTOR_TUNIC));
+  Scene_CycleColorModesOnOddFrames(Actor_Get(ACTOR_TUNIC));
 }
 
 /// Catch plays from Dora on the tunic, then its actors are released.

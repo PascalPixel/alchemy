@@ -376,7 +376,7 @@ blend:
   i++;
   if (i <= 6)
     goto blend;
-  GameFlag_Set(0x95f);
+  GameFlag_Set(FLAG_APOJII_AQUA_STONE_DOUSED);
   GameFlag_Set(0x95e);
   FieldCamera_SetSpeed(1);
   /* FAKEMATCH(wrapper): the camera moves forwarded through

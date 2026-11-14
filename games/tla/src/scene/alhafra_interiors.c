@@ -108,22 +108,27 @@ void AlhafraInteriors_MeetAlex(void) {
   FieldCamera_WaitForArrival();
   Actor_FaceDirection(31, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
+  // "So, you've finally come."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 31, 0, 10);
   FieldActor_StartRepeatedMotion(4, 3);
   Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
   Actor_SetAnimationAndWait(31, 3);
   FieldEvent_Wait(10);
+  // "I had suspected we might run into each other again, since we both..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 31, 0, 10);
   Actor_SetAnimationAndWait(4, 3);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(31, 4);
+  // "Unfortunately, the only boat this town possesses has already been sold."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 31, 0, 10);
   Actor_RunRepeatedMotion(31, 2);
   FieldEvent_Wait(10);
+  // "I will be resting here in Alhafra a bit longer. I have traveled long..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 31, 0, 10);
   Actor_SetAnimationAndWait(31, 3);
   FieldEvent_Wait(10);
+  // "Perhaps we can get along at least until we both depart."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 31, 0, 10);
   Actor_FaceDirection(31, FACING_NORTH, 0);
   FieldEvent_Wait(20);
@@ -172,6 +177,7 @@ void AlhafraInteriors_TalkToHealer(s32 actor) {
 void AlhafraInteriors_TalkToHostess(s32 a0) {
   Actor_ShowEmote(a0, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors06);
+  // "Augh! With all these demanding houseguests, I feel like I've lost..."
   Event_ShowMessage(a0, 0);
 }
 
@@ -186,21 +192,25 @@ void AlhafraInteriors_GuestsAskForTea(void) {
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors07);
   Actor_FaceDirection(14, FACING_EAST, 0);
   FieldEvent_Wait(20);
+  // "Aren't you thirsty, my dear?"
   FieldEvent_ShowMessageThenWait(14, 0, 10);
   Actor_FaceDirection(15, FACING_WEST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(15, 3);
   FieldEvent_Wait(10);
+  // "Oh, you're right, dear. I am!"
   FieldEvent_ShowMessageThenWait(15, 0, 10);
   Actor_SetSpeed(14, 0.5);
   Actor_WalkByAndWait(14, -32, 0);
   FieldEvent_Wait(10);
+  // "Sorry to bother you, but we'd like some tea."
   FieldEvent_ShowMessageThenWait(14, 0, 10);
   Actor_RunRepeatedMotion(13, 2);
   FieldEvent_Wait(10);
   Actor_FaceDirection(13, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_ShowEmote(13, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "Are you talking to me?!"
   FieldEvent_ShowMessageThenWait(13, 0, 10);
   FieldActor_StartRepeatedMotion(14, 3);
   Actor_SetAttachedEffect(14, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -211,6 +221,7 @@ void AlhafraInteriors_GuestsAskForTea(void) {
   FieldEvent_Wait(20);
   Actor_FaceDirection(13, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(10);
+  // "If you want tea, you can go right ahead and fix it yourself!"
   FieldEvent_ShowMessageThenWait(13, 0, 10);
   FieldEvent_Wait(10);
   Actor_WalkToAndWait(14, 152, 312);
@@ -227,6 +238,7 @@ void AlhafraInteriors_GuestsAskForTea(void) {
 void AlhafraInteriors_TalkToDemandingGuest(s32 a0) {
   Actor_FaceEachOther(a0, gMainRoutineWork.currentOwner, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors08);
+  // "Well! I say! It seems the lady of the house is no lady at all!"
   Event_ShowMessage(a0, 0);
   Actor_FaceDirection(14, FACING_SOUTH_SOUTHEAST, 0);
 }
@@ -235,6 +247,7 @@ void AlhafraInteriors_TalkToDemandingGuest(s32 a0) {
 void AlhafraInteriors_ReadAlexsMind(s32 a0, s32 a1) {
   Actor_FaceEachOther(a1, gMainRoutineWork.currentOwner, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors48);
+  // "Really, I do wish you would quit using your Mind Read on me... Trust..."
   Event_ShowMessage(a1, 0);
   Actor_FaceDirection(a1, FACING_NORTHEAST, 0);
 }
@@ -244,9 +257,11 @@ void AlhafraInteriors_ReadAlexsMind(s32 a0, s32 a1) {
 void AlhafraInteriors_HostTellsOfRepairs(s32 a0) {
   Event_SetFlag(FLAG_HOST_TOLD_OF_REPAIRS);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors55);
+  // "We've all started working together to repair the houses!"
   Event_ShowMessage(a0, 0);
   FieldEvent_Wait(10);
   Actor_ShowEmote(a0, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "Oooh... Not much longer, and then I can kick these folks out of my..."
   Event_ShowMessage(a0, 0);
 }
 

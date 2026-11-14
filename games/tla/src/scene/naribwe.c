@@ -148,6 +148,7 @@ void Naribwe_PraiseFortuneTeller(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgNaribwe21);
+  // "No one can see the future. Absolutely no one. Except for our..."
   Event_ShowMessage(actor, 0);
   Event_End();
 }
@@ -161,6 +162,7 @@ void Naribwe_PraiseFortuneTellerOnReturn(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgNaribwe43);
+  // "Strangers to our town would do well to visit the fortune-teller's hut."
   Event_ShowMessage(actor, 0);
   Event_End();
 }
@@ -176,6 +178,7 @@ void Naribwe_TalkToPilgrim(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgNaribwe23);
+  // "I am but a humble pilgrim, serving the greater good in the heart of..."
   Event_ShowMessage(26, 0);
   Event_End();
 }
@@ -189,6 +192,7 @@ void Naribwe_TalkToPilgrimOnReturn(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgNaribwe45);
+  // "It's strange. As hot as it is here in Gondowan, if you head south..."
   Event_ShowMessage(26, 0);
   Event_End();
 }

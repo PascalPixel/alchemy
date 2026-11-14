@@ -456,6 +456,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldActor_SetSpritePriority(3, 1);
   Event_PlaySound(MUS_000);
   FieldEvent_SetMessageId((s32)MsgBetrayersYouHave);
+  // "Betrayers, you have arrived!"
   Event_ShowMessage(18, 0);
   t16 = gMainRoutineWork.currentOwner;
   Actor_ShowEmote(t16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
@@ -482,6 +483,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_FaceDirection(1, FACING_NORTHWEST, 20);
   Actor_FaceDirection(1, FACING_NORTHEAST, 20);
   Actor_FaceDirection(1, FACING_NORTH, 0);
+  // "Who said that!?"
   Event_ShowMessage(1, 0);
   Actor_MoveToObject(3, 1);
   System_Wait(1);
@@ -489,6 +491,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_WalkToAndWait(3, 544, 328);
   Actor_FaceDirectionAndWait(3, FACING_NORTHWEST);
   Actor_SetAnimation(3, 4);
+  // "The wind's too strong! I can't see anything!"
   Event_ShowMessage(3, 0);
   t48 = gMainRoutineWork.currentOwner;
   FieldActor_Stop(t48);
@@ -535,6 +538,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   t88 = Actor_Get(6);
   FIELD_AT(t88, void *, 108) = 0;
   Actor_FaceDirectionAndWait(6, FACING_EAST);
+  // "I heard it too, but I don't see anyone else up here!"
   Event_ShowMessage(6, 0);
   t91 = Actor_Get(5);
   FIELD_AT(t91, void *, 108) = 0;
@@ -544,6 +548,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FIELD_AT(t94, void *, 108) = 0;
   Actor_FaceDirectionAndWait(7, FACING_EAST);
   FieldActor_Jump(7, 4, 10);
+  // "Felix! Quick! Cast the Mars Star in before anything has a chance to..."
   Event_ShowMessage(7, 0);
   t98 = gMainRoutineWork.currentOwner;
   t99 = Actor_Get(t98);
@@ -594,6 +599,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FIELD_AT(t137, u8, 90) |= 1;
   *palette = 0x7fff;
   System_Wait(1);
+  // "So, you are still intent on lighting the beacon of Mars Lighthouse?"
   Event_ShowMessage(18, 0);
   t141 = gMainRoutineWork.currentOwner;
   Actor_FaceDirection(t141, FACING_EAST, 0);
@@ -605,18 +611,22 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_FaceDirection(0, FACING_NORTHWEST, 20);
   Actor_FaceDirection(0, FACING_NORTHEAST, 20);
   Actor_FaceDirection(0, FACING_NORTH, 0);
+  // "Who said that!?"
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 0, 0, 20);
+  // "Have you forgotten me so soon, Isaac? And you, Garet?"
   Event_ShowMessage(18, 0);
   Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_FaceDirection(0, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(1, FACING_NORTHWEST, 40);
+  // "It seems to know you, Isaac... Do you have any idea what it is?"
   Event_ShowMessage(2, 0);
   Actor_FaceDirection(0, FACING_SOUTH, 0);
   Actor_FaceDirectionAndWait(1, FACING_SOUTH);
   Actor_SetAnimation(0, 4);
   FieldActor_SetAnimationAndWait(1, 4);
   Event_PlaySound(MUS_036);
+  // "Then search your heart, boy!"
   Event_ShowMessage(18, 0);
   Actor_FaceDirection(0, FACING_NORTH, 0);
   Actor_FaceDirectionAndWait(1, FACING_NORTH);
@@ -635,6 +645,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldActor_Jump(19, 4, 10);
   FieldActor_Jump(19, 6, 10);
+  // "That voice..."
   Event_ShowMessage(19, 0);
   t182 = gMainRoutineWork.currentOwner;
   MarsLighthouseAerie_StopLookingAround(t182);
@@ -656,6 +667,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldCamera_MoveTo(512, CAMERA_KEEP, 216, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
+  // "It's...the Wise One!"
   FieldEvent_ShowMessageThenWait(1, 0, 20);
   FieldCamera_MoveTo(512, CAMERA_KEEP, 304, 1);
   FieldCamera_WaitForArrival();
@@ -668,25 +680,34 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_SetAttachedEffect(5, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(19, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
+  // "Isaac, since when are you on a first-name basis with the Wise One?"
   Event_ShowMessage(19, 0);
   Actor_SetAnimation(0, 3);
   Actor_SetAnimationAndWait(0, 3);
   Actor_FaceDirectionAndWait(5, FACING_NORTHEAST);
+  // "It must have been... Isaac, what happened in Sol Sanctum after we..."
   Event_ShowMessage(5, 0);
   Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+  // "When Saturos and Menardi stole the Elemental Stars, they also..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 0, 0);
   Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  // "But...wait, Mt. Aleph did erupt! There was a huge explosion! We saw..."
   Event_ShowMessage(2, 0);
   Actor_FaceDirectionAndWait(1, FACING_SOUTH);
+  // "But it would have erupted with us still inside... There was no way..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 1, 0);
   Actor_FaceDirectionAndWait(0, FACING_SOUTH);
+  // "The Wise One held off the eruption until we could escape... He even..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 0, 0);
   Actor_ShowEmote(3, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  // "I can't believe it... Nobody has enough power to do that..."
   Event_ShowMessage(3, 0);
   Actor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Actor_FaceDirectionAndWait(1, FACING_SOUTHEAST);
+  // "I know it sounds weird, but I was there, and it happened, so you'll..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 1, 0);
   Actor_FaceDirectionAndWait(7, FACING_EAST);
+  // "If it can do all that, this Wise One seems more like a god than an..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
   FieldCamera_SetSpeed(0.4);
   FieldCamera_MoveTo(512, CAMERA_KEEP, 296, 1);
@@ -694,6 +715,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldActor_SetMoveTarget(actor, 512, 96, 276);
   FieldActor_WaitForMoveById(18);
   FieldEvent_Wait(10);
+  // "I did not just save you. I also tasked you with recovering the four..."
   Event_ShowMessage(18, 0);
   Actor_FaceDirection(7, FACING_NORTH, 0);
   Actor_FaceDirection(5, FACING_NORTH, 0);
@@ -703,29 +725,41 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_FaceDirectionAndWait(0, FACING_NORTH);
   FieldActor_SetAnimation(18, 9);
   FieldEvent_Wait(20);
+  // "Why have you disobeyed my command? Why have you come to light the..."
   Event_ShowMessage(18, 0);
+  // "Because Prox will be destroyed if we don't! We can't let that happen..."
   Event_ShowMessage(5, 0);
   FieldActor_SetAnimation(18, 1);
   FieldEvent_Wait(10);
+  // "Prox? They have brought this disaster upon themselves."
   Event_ShowMessage(18, 0);
   Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "Are you saying we should just abandon them to die? What did they do..."
   Event_ShowMessage(6, 0);
   FieldActor_SetAnimation(18, 9);
   FieldEvent_Wait(20);
+  // "The people of Prox have committed an unforgivable sin. They must pay..."
   Event_ShowMessage(18, 0);
+  // "For lighting the lighthouses? Is that their sin? Does that warrant..."
   Event_ShowMessage(0, 0);
+  // "If we don't light the beacon, Gaia Falls will eventually erode away..."
   Event_ShowMessage(3, 0);
+  // "We have fought for so long to save all the people of our world, and..."
   Event_ShowMessage(7, 0);
   FieldActor_Jump(6, 4, 10);
+  // "Gaia Falls is growing. It's consuming more and more with each..."
   Event_ShowMessage(6, 0);
   Actor_SetAnimation(5, 4);
+  // "How can you just allow the world to crumble into nothingness?"
   Event_ShowMessage(5, 0);
   FieldActor_SetAnimation(18, 11);
   FieldEvent_Wait(20);
+  // "The seal needs to be broken! The world will be destroyed if it's not!"
   Event_ShowMessage(6, 0);
   FieldActor_SetAnimation(18, 12);
   Actor_WaitForAnimationChange(18);
   FieldEvent_Wait(20);
+  // "You have learned far too much."
   Event_ShowMessage(18, 0);
   Actor_FaceDirection(0, FACING_EAST, 0);
   Actor_FaceDirection(1, FACING_WEST, 0);
@@ -737,6 +771,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   t278 = gMainRoutineWork.currentOwner;
   Actor_FaceDirection(t278, FACING_WEST, 20);
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "Wise One! You can't continue to protect the lighthouses! You know..."
   Event_ShowMessage(19, 0);
   FieldActor_SetAnimation(18, 10);
   FieldEvent_Wait(20);
@@ -746,6 +781,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldEvent_Wait(5);
   FieldActor_SetAnimation(18, 1);
   FieldEvent_Wait(20);
+  // "It is your duty to protect all of Weyard! If Weyard is destroyed..."
   Event_ShowMessage(19, 0);
   Actor_FaceDirection(0, FACING_NORTH, 0);
   Actor_FaceDirection(1, FACING_NORTH, 0);
@@ -758,14 +794,18 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_FaceDirection(t298, FACING_NORTH, 0);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   Actor_SetAnimation(5, 4);
+  // "Why won't you answer us, Wise One?"
   Event_ShowMessage(5, 0);
   FieldActor_SetAnimation(18, 9);
   FieldEvent_Wait(20);
+  // "If Alchemy is unleashed, mankind may well destroy all of Weyard itself."
   Event_ShowMessage(18, 0);
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+  // "But we can combine our strengths, ensure that Alchemy not be used..."
   Event_ShowMessage(19, 0);
   FieldActor_SetAnimation(18, 10);
   FieldEvent_Wait(20);
+  // "It is inevitable. In time, one man will seek to rule over all. It is..."
   Event_ShowMessage(18, 0);
   FieldActor_SetAnimation(18, 9);
   FieldEvent_Wait(20);
@@ -778,11 +818,14 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldEvent_Wait(80);
   FieldActor_SetAnimation(18, 3);
   FieldEvent_Wait(10);
+  // "And it shall come sooner than any of you think."
   Event_ShowMessage(18, 0);
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  // "Why do you say that?"
   Event_ShowMessage(19, 0);
   FieldActor_SetAnimation(18, 3);
   FieldEvent_Wait(20);
+  // "The Water Adept who climbs toward the peak of Mt. Aleph even as we..."
   Event_ShowMessage(18, 0);
   Actor_FaceDirection(0, FACING_EAST, 0);
   Actor_FaceDirection(1, FACING_WEST, 0);
@@ -805,6 +848,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldEvent_Wait(40);
   FieldActor_SetAnimation(18, 3);
   FieldEvent_Wait(20);
+  // "Alex is his name. Surely, you have not forgotten him?"
   Event_ShowMessage(18, 0);
   Actor_FaceDirection(0, FACING_NORTH, 0);
   Actor_FaceDirection(1, FACING_NORTH, 0);
@@ -815,21 +859,28 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_FaceDirection(7, FACING_NORTH, 0);
   t356 = gMainRoutineWork.currentOwner;
   Actor_FaceDirectionAndWait(t356, FACING_NORTH);
+  // "Alex!? What would he be doing on Mt. Aleph?"
   Event_ShowMessage(5, 0);
   FieldActor_SetAnimation(18, 4);
   FieldEvent_Wait(20);
+  // "He understands far more than you do. He knows that when the four..."
   Event_ShowMessage(18, 0);
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  // "But what would he gain from being there?"
   Event_ShowMessage(19, 0);
   FieldEvent_Wait(20);
   FieldActor_SetAnimation(18, 13);
   FieldEvent_Wait(20);
+  // "When the final beam of light reaches the peak of Mt. Aleph, the..."
   FieldEvent_ShowMessageThenWait(18, 0, 20);
+  // "The Golden Sun!? What is that? And what would Alex want with it?"
   Event_ShowMessage(19, 0);
   FieldActor_SetAnimation(18, 8);
   FieldEvent_Wait(180);
+  // "When the four beams merge into one, they form a golden light..."
   Event_ShowMessage(18, 0);
   Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
+  // "Is... Is that Alchemy? I mean, pure Alchemy made real, at the heart..."
   Event_ShowMessage(2, 0);
   Actor_FaceDirection(19, FACING_EAST, 0);
   FieldActor_SetAnimation(18, 1);
@@ -837,14 +888,17 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_SetAnimation(18, 9);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "And it's that light that gives shape to the Stone of Sages?"
   Event_ShowMessage(19, 0);
   MarsLighthouseAerie_EndRisingRings(actor);
   FieldActor_SetAnimation(18, 1);
   FieldEvent_Wait(20);
+  // "This has been Alex's one true desire from the very start."
   Event_ShowMessage(18, 0);
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Actor_FaceDirection(7, FACING_SOUTHEAST, 0);
   FieldActor_Jump(7, 4, 10);
+  // "Alex planned all of this? Then he must have been after this power..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
   FieldActor_SetAnimation(18, 10);
   FieldEvent_Wait(20);
@@ -854,11 +908,14 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldEvent_Wait(20);
   Actor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   Actor_FaceDirectionAndWait(1, FACING_SOUTHEAST);
+  // "We've been duped! He used us all! Oh, you'd better believe he's not..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 1, 0);
   Actor_ShowEmote(3, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Actor_SetAnimation(3, 4);
+  // "Alex... How could he do this? He's... He's one of my own people! I..."
   Event_ShowMessage(3, 0);
   Actor_SetAnimation(0, 4);
+  // "None of that matters right now. We still have to light the beacon...."
   Event_ShowMessage(0, 0);
   Actor_FaceDirection(7, FACING_EAST, 0);
   Actor_FaceDirection(6, FACING_NORTHEAST, 0);
@@ -870,6 +927,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_FaceDirection(1, FACING_WEST, 20);
   Actor_FaceDirectionAndWait(0, FACING_WEST);
   Actor_SetAnimation(0, 4);
+  // "If we don't do it now, Prox will be destroyed! Felix... We have to..."
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | 0, 0);
   t414 = gMainRoutineWork.currentOwner;
   if (!FieldEvent_AskYesNoWithActorAnimation(t414, 0)) {
@@ -1322,7 +1380,9 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   System_Wait(80);
   FieldEvent_SetMessageId((s32)MsgWhoAreThey);
   Actor_FaceDirectionAndWait(26, FACING_WEST);
+  // "...Who are they?"
   Event_ShowMessage(26, 0);
+  // "That's what I was trying to warn you about!"
   Event_ShowMessage(19, 0);
   Actor_FaceDirection(22, FACING_SOUTHEAST, 0);
   Actor_FaceDirection((*(s32 *)owner), FACING_SOUTHEAST, 0);
@@ -1337,24 +1397,32 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   FieldCamera_MoveTo(512, 80, 340, 1);
   FieldCamera_WaitForArrival();
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "It wasn't just the dragon you killed..."
   Event_ShowMessage(19, 0);
   Event_PlaySound(MUS_008);
   Actor_SetAttachedEffect(24, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
+  // "I remember you warning us, but it was too late for us to stop..."
   Event_ShowMessage(24, 0);
+  // "Kraden, what do you know? Why were you trying to stop us from..."
   Event_ShowMessage(25, 0);
   Actor_SetAnimationAndWait(19, 3);
+  // "It was the Wise One's final trap..."
   Event_ShowMessage(19, 0);
   Actor_SetAttachedEffect(26, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "Trap? What do you mean?"
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
   Actor_SetAnimation(19, 4);
+  // "The Wise One knew he couldn't stop you, so he played a cruel..."
   Event_ShowMessage(19, 0);
   Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Actor_SetSpeed(23, 1.6);
   Actor_WalkToAndWait(23, 512, 328);
   Actor_FaceDirectionAndWait(23, FACING_SOUTHEAST);
+  // "Kraden, I don't understand... What are you trying to tell us?"
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 23, 0);
   Actor_FaceDirectionAndWait(20, FACING_WEST);
+  // "Sheba, let's see who those people are while they try to sort this out."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 20, 0);
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldActor_SetSpritePriority(21, 2);
@@ -1367,6 +1435,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   Actor_SetSpeed(19, 2.4);
   Actor_WalkToAndWait(19, 540, 340);
   FieldActor_Jump(19, 4, 10);
+  // "No, Jenna! Don't look! You mustn't look! It will only bring you pain..."
   Event_ShowMessage(19, 0);
   actor = Actor_Get(21);
 L_0200a47a:
@@ -1538,20 +1607,25 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_SetAnimationAndWait(7, 4);
   Actor_FaceDirectionAndWait(6, FACING_NORTH);
   FieldEvent_SetMessageId(MsgWhatSTheMatter);
+  // "What's the matter, Piers? Why did you stop? Jenna's parents need you..."
   Event_ShowMessage(6, 0);
   Actor_FaceDirectionAndWait(2, FACING_NORTHWEST);
+  // "Don't give up, Mia. You can't! You have to save them..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 2, 0);
   Actor_FaceDirection(3, FACING_SOUTHEAST, 20);
   FieldActor_ShowEmote(3, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "It's no use, Ivan... I'm tapped..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 3, 0);
   Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
   Actor_SetAnimationAndWait(7, 4);
+  // "I am, too... And even if I weren't, it's just too late..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(5, FACING_NORTHEAST);
   FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   FieldActor_Jump(5, 2, 10);
   FieldActor_Jump(5, 4, 10);
+  // "What are you saying!?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 5, 0);
   Actor_FaceDirection(7, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(6, FACING_NORTHWEST, 0);
@@ -1559,25 +1633,32 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_FaceDirection(1, FACING_WEST, 0);
   Actor_FaceDirection(2, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(3, FACING_WEST);
+  // "They're not... They can't be..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 5, 0);
   Actor_SetAnimation(7, 4);
+  // "That's not what I'm saying, Jenna... I..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
   FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "I finally found them... I was going to be with them again... For the..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 5, 0, 40);
+  // "Jenna..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 6, 0);
   Actor_FaceDirectionAndWait(5, FACING_EAST);
   Actor_SetAnimationAndWait(5, 4);
+  // "Please... It can't be..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 5, 0);
   Actor_SetSpeed(5, 1.6);
   Actor_SetAnimation(5, 5);
   Actor_MoveToAndWait(5, 460, 288);
   Actor_SetAnimation(5, 0x16);
+  // "Mom... Wake up! It's me... It's Jenna! ...Don't leave me..."
   Event_ShowMessage(5, 0);
   FieldActor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldCamera_SetSpeed(0.2);
   FieldCamera_MoveTo(512, CAMERA_KEEP, 320, 1);
   FieldCamera_WaitForArrival();
+  // "Jenna, you must prepare yourself for what comes next..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 19, 0);
   Actor_FaceDirection(7, FACING_SOUTH, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
@@ -1587,14 +1668,19 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_FaceDirection(2, FACING_SOUTHWEST, 0);
   Actor_FaceDirectionAndWait(3, FACING_SOUTHWEST);
   Actor_SetAnimationAndWait(19, 4);
+  // "Being transformed into a dragon, fighting in that form... This..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 19, 0, 20);
   Actor_SetAnimation(5, 1);
   FieldEvent_Wait(20);
   Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
+  // "What are you saying, Kraden?"
   Event_ShowMessage(5, 0);
+  // "In fighting you, your parents were forced to use every last ounce of..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 19, 0, 20);
+  // "They don't have the strength to..."
   Event_ShowMessage(5, 0);
   Actor_SetAnimationAndWait(19, 3);
+  // "Even if they had won the battle, they would not have survived. You..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 19, 0);
   Actor_FaceDirection(5, FACING_EAST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHWEST, 0);
@@ -1612,10 +1698,12 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_WalkToAndWait(1, 542, 340);
   FieldActor_Jump(1, 2, 10);
   FieldActor_Jump(1, 4, 10);
+  // "You monster!!!"
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 1, 0);
   Actor_FaceDirection(1, FACING_SOUTHWEST, 40);
   Actor_FaceDirection(1, FACING_SOUTHEAST, 20);
   FieldActor_Jump(1, 4, 10);
+  // "Why did you do this? Why did you make us fight Jenna's parents?"
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 1, 0);
   FieldCamera_SetSpeed(4.8);
   FieldCamera_MoveTo(478, 96, 312, 1);
@@ -1625,15 +1713,19 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   Actor_FaceDirectionAndWait(6, FACING_SOUTHWEST);
   FieldActor_Jump(6, 4, 10);
+  // "You're no god! You're no protector! You're evil!"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 6, 0);
   FieldCamera_MoveTo(480, CAMERA_KEEP, 276, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirection(7, FACING_NORTHEAST, 20);
   Actor_FaceDirection(7, FACING_NORTHWEST, 20);
   Actor_FaceDirectionAndWait(7, FACING_NORTH);
+  // "You don't understand the pain you have caused, Wise One."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 7, 0);
   Actor_SetAnimationAndWait(7, 4);
+  // "You have no idea the damage done to a child who learns she has..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 7, 0);
+  // "That's enough..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 0, 0);
   FieldCamera_MoveTo(512, CAMERA_KEEP, 312, 1);
   Actor_FaceDirection(7, FACING_SOUTHEAST, 0);
@@ -1643,6 +1735,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_FaceDirection(7, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(1, FACING_NORTH, 40);
   Actor_FaceDirectionAndWait(0, FACING_NORTH);
+  // "I knew what I was doing the moment I raised my sword."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 0, 0, 20);
   {
     s32 third = 0x28;
@@ -1654,6 +1747,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   }
   Actor_FaceDirectionAndWait(0, FACING_EAST);
   FieldActor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "We defied the Wise One in order to save the world. Our parents would..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_BELOW | 0, 0);
   Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
   {
@@ -2148,13 +2242,18 @@ L_0200bcea:
   FieldEvent_Wait(120);
   Actor_ShowEmote(3, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
   FieldEvent_SetMessageId((s32)MsgTheBeaconIs);
+  // "The beacon is lit!"
   Event_ShowMessage(3, 0);
   FieldActor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  // "And to think, I joined this quest hoping to prevent exactly this..."
   Event_ShowMessage(2, 0);
+  // "And I began this quest as a prisoner, taken against my will."
   Event_ShowMessage(6, 0);
   FieldActor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "And if that tidal wave hadn't sent me far off course, I wouldn't..."
   Event_ShowMessage(7, 0);
   FieldActor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
+  // "How many lives have been taken and changed forever just to light..."
   Event_ShowMessage(1, 0);
   Actor_FaceDirection(7, FACING_EAST, 0);
   Actor_FaceDirection((OWNER), FACING_EAST, 0);
@@ -2183,6 +2282,7 @@ L_0200bcea:
   Actor_FaceDirection(3, FACING_SOUTH, 0);
   Actor_FaceDirection(1, FACING_NORTHEAST, 0);
   Actor_FaceDirectionAndWait(0, FACING_EAST);
+  // "Mom... Dad... Weyard is safe now."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 5, 0, 10);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
@@ -2305,10 +2405,12 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Actor_FaceDirection(2, FACING_WEST, 40);
   Actor_FaceDirectionAndWait(6, FACING_NORTHEAST);
   FieldEvent_SetMessageId((s32)MsgWhatCouldHe);
+  // "What could he be doing?"
   Event_ShowMessage(6, 0);
   Actor_FaceDirection(3, FACING_SOUTHWEST, 20);
   Actor_SetAnimationAndWait(3, 4);
   FieldActor_Jump(19, 4, 10);
+  // "Of course! I understand..."
   Event_ShowMessage(19, 0);
   Actor_FaceDirection(6, FACING_EAST, 0);
   Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
@@ -2322,6 +2424,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   FieldCamera_WaitForArrival();
   Actor_FaceDirectionAndWait(19, FACING_NORTH_NORTHEAST);
   Actor_SetAnimation(19, 3);
+  // "The Wise One said that when all four lighthouses have been lit, the..."
   Event_ShowMessage(19, 0);
   Actor_SetAnimation(7, 3);
   Actor_SetAnimation(5, 3);
@@ -2334,11 +2437,14 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Actor_SetAnimationAndWait(1, 3);
   Actor_SetAttachedEffect(19, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
+  // "When that happens, Mt. Aleph and the lighthouses will probably..."
   Event_ShowMessage(19, 0);
+  // "So, the Wise One is warning people in dreams, telling them to seek..."
   Event_ShowMessage(7, 0);
   Actor_FaceDirectionAndWait(19, FACING_NORTH_NORTHWEST);
   Actor_SetAnimationAndWait(19, 3);
   Actor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+  // "Why would he do that!? You saw what he did to us... He can't be up..."
   Event_ShowMessage(1, 0);
   t76 = Actor_Get(28);
   FieldActor_SetSpriteColor(t76, 15);
@@ -2346,10 +2452,12 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   System_Wait(1);
   PaletteFade_ApplySource(0x10000, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
+  // "Have you not learned? One's actions do not always reveal one's true..."
   Event_ShowMessage(28, 0);
   FieldPsynergy_StopMindReadWave();
   Actor_FaceDirection(2, quarterTurn, 0);
   FieldActor_Jump(2, 4, 10);
+  // "Hamma... Sister..."
   Event_ShowMessage(2, 0);
   t87 = *(s32 *)owner;
   Actor_FaceDirection(t87, quarterTurn, 0);
@@ -2361,8 +2469,10 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Actor_FaceDirection(3, quarterTurn, 0);
   Actor_FaceDirectionAndWait(0, quarterTurn);
   FieldActor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "Master Hamma! Did you receive a message, too?"
   Event_ShowMessage(0, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
+  // "Yes. I was called to Jupiter Lighthouse in a dream."
   Event_ShowMessage(28, 0);
   FieldPsynergy_StopMindReadWave();
   t101 = *(s32 *)owner;
@@ -2375,6 +2485,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Actor_FaceDirection(t107, quarterTurn, 0);
   Actor_FaceDirectionAndWait(0, quarterTurn);
   FieldPsynergy_StartMindReadWave(23, 24);
+  // "You have completed your quest, but I see it comes with great loss......"
   Event_ShowMessage(28, 0);
   FieldPsynergy_StopMindReadWave();
   actor = Actor_Get(5);
@@ -2382,29 +2493,39 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Actor_SetAnimation(5, 22);
   FieldEvent_Wait(10);
   FieldActor_StartRepeatedMotion(5, 2);
+  // "Master Hamma... My parents..."
   Event_ShowMessage(5, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
+  // "I know, Jenna, and I am sorry. But do not give up hope for them just..."
   Event_ShowMessage(28, 0);
   FieldPsynergy_StopMindReadWave();
   ((struct Actor *)actor)->facing = quarterTurn;
   Actor_SetAnimation(5, 1);
   FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "What do you mean, Master Hamma?"
   Event_ShowMessage(5, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
+  // "Appearances can be an illusion... The Wise One has a caring heart."
   Event_ShowMessage(28, 0);
   FieldPsynergy_StopMindReadWave();
+  // "He forced us to fight Isaac's and Jenna's parents! What's so..."
   Event_ShowMessage(1, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
+  // "If the Wise One were truly evil, he would not be warning me of..."
   Event_ShowMessage(28, 0);
   FieldPsynergy_StopMindReadWave();
   FieldActor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "Well, I... I guess not... But then, what's he up to?"
   Event_ShowMessage(1, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
+  // "We do not have time to discuss it right now."
   Event_ShowMessage(28, 0);
   FieldPsynergy_StopMindReadWave();
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "She's right. If the Wise One said it's not safe to be near the..."
   Event_ShowMessage(19, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
+  // "I am heading for safety, too. All of you must get away from the..."
   Event_ShowMessage(28, 0);
   FieldPsynergy_StopMindReadWave();
   FieldEvent_Wait(40);
@@ -2412,15 +2533,20 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Actor_FaceDirection(19, FACING_SOUTH_SOUTHWEST, 20);
   Actor_FaceDirection(19, threeSixteenthsTurn, 40);
   Actor_FaceDirectionAndWait(19, FACING_NORTH_NORTHEAST);
+  // "Hurry, everyone! Let's go!"
   Event_ShowMessage(19, 0);
   Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
+  // "What about our parents?"
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 5, 0);
   Actor_FaceDirectionAndWait(0, FACING_WEST);
+  // "We can't leave them behind..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 0, 0);
   Actor_FaceDirectionAndWait(7, FACING_EAST);
+  // "I understand how you feel, but we won't make it if we have to take..."
   Event_ShowMessage(7, 0);
   Actor_FaceDirectionAndWait(2, FACING_WEST);
   Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
+  // "Make the decision, Felix! Should we take them with us?"
   Event_OpenMessage(2, 0);
   t156 = *(s32 *)owner;
   Actor_FaceDirectionAndWait(t156, FACING_EAST);
@@ -2629,6 +2755,7 @@ void MarsLighthouseAerie_HoldBackFromParents(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP);
   FieldEvent_SetMessageId(MsgDoNotLet);
+  // "Do not let your sadness overwhelm you, Felix! Go! Once the beacon..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 480, 348);
@@ -2641,6 +2768,7 @@ void MarsLighthouseAerie_HoldBackFromParentsAgain(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP);
   FieldEvent_SetMessageId(MsgDoNotLet);
+  // "Do not let your sadness overwhelm you, Felix! Go! Once the beacon..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 544, 348);
@@ -2654,6 +2782,7 @@ void MarsLighthouseAerie_OfferToCastMarsStar(void) {
   Actor_SetPosition(ACTOR_VOICE, 512, 232);
   System_Wait(1);
   FieldEvent_SetMessageId(MsgWillYouCast);
+  // "Will you cast in the Mars Star?"
   Event_OpenMessage(ACTOR_VOICE, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
       0) {
@@ -2723,6 +2852,7 @@ void MarsLighthouseAerie_TalkToConsoler(void) {
 #endif
   Actor_FaceActor(2, gMainRoutineWork.currentOwner, 0);
   FieldEvent_SetMessageId(MsgIUnderstandYour);
+  // "Felix, I understand your loss... But remember, you and Jenna still..."
   Event_ShowMessage(2, 0);
 #if TLA_PATCH_1
   Actor_FaceDirectionAndWait(2, FACING_WEST);
@@ -2740,6 +2870,7 @@ void MarsLighthouseAerie_TalkToBlindedParent(void) {
   MarsLighthouseAerie_BeginTalkWhileHalted(20);
 #endif
   FieldEvent_SetMessageId(MsgUhhhhnnnICan);
+  // "Uhhhhnnn... Felix... I...can't see you, but I sense that you're..."
   Event_ShowMessage(20, 0);
 #if TLA_PATCH_1
   MarsLighthouseAerie_EndTalkWhileHalted(20);
@@ -2754,6 +2885,7 @@ void MarsLighthouseAerie_TalkToCoughingParent(void) {
   MarsLighthouseAerie_BeginTalkWhileHalted(22);
 #endif
   FieldEvent_SetMessageId(MsgKoffKoffYou);
+  // "*Koff! Koff!* Felix... You made it back...alive... Please, I must..."
   Event_ShowMessage(22, 0);
 #if TLA_PATCH_1
   MarsLighthouseAerie_EndTalkWhileHalted(22);
@@ -2768,6 +2900,7 @@ void MarsLighthouseAerie_TalkToGladParent(void) {
   MarsLighthouseAerie_BeginTalkWhileHalted(21);
 #endif
   FieldEvent_SetMessageId(MsgUnnnnIAm);
+  // "Unnnn... Felix? ...Jenna? I am so happy...to have one last chance to..."
   Event_ShowMessage(21, 0);
 #if TLA_PATCH_1
   MarsLighthouseAerie_EndTalkWhileHalted(21);

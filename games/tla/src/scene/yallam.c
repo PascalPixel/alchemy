@@ -340,6 +340,7 @@ void Yallam_OfferYeppSong(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(MsgDoYouWant);
+  // "Do you want to hear one of the songs Yepp wrote?"
   Event_OpenMessage(8, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(0, 0) == 0)
     Yallam_ShowSongGame();
@@ -364,6 +365,7 @@ void Yallam_TalkAboutSongCircles(void) {
   } else {
     FieldEvent_SetMessageId(MsgThereSALot);
   }
+  // "There's a lot of stuff to remember for each song. It's tough to play..."
   Event_ShowMessage(9, 0);
   if (work->psynergy == 0)
     object->angle = angle;
@@ -387,6 +389,7 @@ void Yallam_TalkAboutSongGame(void) {
   } else {
     FieldEvent_SetMessageId(MsgIOnceHeard);
   }
+  // "I once heard that children's songs and stories have hidden meanings...."
   Event_ShowMessage(10, 0);
   if (work->psynergy == 0)
     object->angle = angle;
@@ -1393,6 +1396,7 @@ void Yallam_ShowSongGame(void) {
   struct Actor *actor = Actor_Get(8);
   struct Actor *leader;
   FieldEvent_SetMessageId(MsgHereLetMe);
+  // "Here, let me show you!"
   Event_ShowMessage(8, 0);
   FieldActor_Stop(9);
   FieldActor_Stop(10);
@@ -1538,6 +1542,7 @@ void Yallam_SingMoonSong(void) {
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
   FieldEvent_SetMessageId((s32)&MsgIfYouWant);
   v5 = object;
+  // "If you want to go to the moon, if you want to go to the moon."
   Event_ShowMessage(8, 0);
   v5 = (v5 + 102);
   Yallam_ResumeSongGame();
@@ -1618,6 +1623,7 @@ void Yallam_SingSunSong(void) {
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTHWEST);
   FieldEvent_SetMessageId((s32)&MsgIfYouWantTo);
   v5 = v6;
+  // "If you want to go to the sun, if you want to go to the sun."
   Event_ShowMessage(8, 0);
   v5 = (v5 + 102);
   Yallam_ResumeSongGame();

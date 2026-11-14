@@ -393,9 +393,12 @@ void ShrineOfTheSeaGod_StartleCompanion(void) {
   ShrineOfTheSeaGod_Jump(11, 256, 20);
   Actor_FaceActorById(11, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgFieldStartledCompanion);
+  // "Wah! You scared me!"
   Event_ShowMessageAndWait(11, 0);
+  // "I thought you were one of the grown-ups from Daila... So, who are you?"
   Event_ShowMessageAndWait(11, 0);
   Actor_SetModeById(11, 4);
+  // "Look, I'm kinda busy trying to help my pal Tavi right now, OK?"
   Event_ShowMessageThenWait(11, 0, 20);
   Actor_SetMovementTypeById(11, gShrineOfTheSeaGod_RikiLooksAround);
   Event_End();
@@ -1210,6 +1213,7 @@ void ShrineOfTheSeaGod_ThrowRopeAgain(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgFieldRopeThrownAgain);
+  // "All right! I'm gonna throw the rope again!"
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 12, 0);
   ShrineOfTheSeaGod_ObjSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   ShrineOfTheSeaGod_ObjSpeed(14, 0xcccc, 0x6666);

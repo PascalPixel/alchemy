@@ -176,6 +176,7 @@ void IzumoInteriors_AskAfterSusa(void) {
   Actor_SetModeById(8, 4);
   Event_Wait(60);
   Event_SetMessageId((s32)MsgIfTheSerpent);
+  // "If the serpent defeats Susa, I'll...be alone."
   Event_ShowMessageAndWait(8, 0);
   Event_End();
 }
@@ -183,6 +184,7 @@ void IzumoInteriors_AskAfterSusa(void) {
 void IzumoInteriors_ReadPrayerForSusa(void) {
   GameFlag_Set(0x923);
   Event_SetMessageId((s32)MsgIPrayThat);
+  // "I pray that our guardian's anger is not aroused and that Susa will..."
   Event_ShowMessageAndWait(8, 0);
 }
 
@@ -309,33 +311,42 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   }
   FieldEvent_Wait(15);
   FieldEvent_SetMessageId((s32)MsgWarriorsAppearedFrom);
+  // "Warriors appeared from within Mt. Mikage?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   Actor_SetAnimation(22, 3);
+  // "Yes... After the serpent's roar, these warriors appeared."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 22, 0);
   Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "So, it wasn't Susa who defeated the serpent, but those heroes..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimation(22, 3);
   FieldEvent_Wait(15);
+  // "It might have been..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 22, 0);
   Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   FieldActor_StartRepeatedMotion(22, 3);
   Actor_SetAttachedEffect(22, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(30);
+  // "Lady Kushinada, please forgive me..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 22, 0);
   Actor_FaceDirection(20, FACING_EAST, 30);
   Actor_SetAnimation(20, 4);
+  // "I don't care who defeated the serpent... I'm more worried about what..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
   FieldEvent_Wait(30);
   Actor_FaceDirection(15, FACING_WEST, 30);
   Actor_SetAnimation(15, 3);
   FieldEvent_Wait(30);
+  // "So, Susa never came down from Mt. Mikage?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   Actor_SetAnimation(22, 3);
   FieldEvent_Wait(15);
+  // "He returned to the village after the heroes appeared, and he knew..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 22, 0);
   FieldActor_StartRepeatedMotion(20, 2);
   FieldEvent_Wait(15);
+  // "Oh, Susa..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
   Actor_FaceActor(15, gMainRoutineWork.currentOwner, 0);
   FieldEvent_Wait(30);
@@ -518,6 +529,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   FieldEvent_SetMessageId((s32)MsgSoYouCall);
   Actor_SetAnimation(20, 3);
   FieldEvent_Wait(30);
+  // "So, you call what we do "Psynergy," and you can do it, too?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
   Actor_SetAnimation(*(s32 *)owner, 3);
   Actor_SetAnimation(5, 3);
@@ -531,8 +543,10 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceActor(20, *(s32 *)owner, 0);
   FieldEvent_Wait(30);
+  // "If you already have Psynergy, why do you need more of this power?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
   FieldEvent_Wait(90);
+  // "Their powers are different from our own. There seem to be many forms..."
   Event_ShowMessage(21, 0);
   Actor_SetPosition(21, 144, 680);
   Actor_FaceActor(*(s32 *)owner, 21, 0);
@@ -542,6 +556,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_FaceActor(23, 21, 0);
   Actor_FaceActor(22, 21, 0);
   FieldEvent_Wait(120);
+  // "Susa!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   FieldEvent_Wait(30);
   EventCamera_FollowActor(21, 1);
@@ -876,6 +891,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_SetMessageId((s32)MsgAsYouCanSee);
   Actor_FaceActorById(23, 15, 0);
   Event_Wait(30);
+  // "As you can see."
   Event_ShowMessageAndWait(23, 0);
   Actor_TurnToFaceEachOther(15, 20, 0);
   Event_Wait(30);
@@ -891,6 +907,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
   Actor_FaceActorById(23, *(s32 *)owner, 0);
   Event_Wait(30);
+  // "Now, it's about time for us to leave Izumo Village."
   Event_ShowMessageAndWait(23, 0);
   Actor_FaceActorById(*(s32 *)owner, 23, 0);
   Event_Wait(15);
@@ -898,6 +915,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_Wait(30);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
+  // "Yes, indeed! We're on our way to Lemuria."
   Event_ShowMessageAndWait(23, 0);
   Actor_FaceActorById(5, 23, 0);
   Actor_FaceActorById(6, 23, 0);
@@ -911,6 +929,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmoteById(21, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Event_Wait(30);
+  // "You're leaving so soon?"
   Event_ShowMessageAndWait(20, 0);
   Actor_FaceActorById(*(s32 *)owner, 15, 0);
   Actor_FaceActorById(5, 15, 0);
@@ -918,23 +937,30 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_FaceActorById(7, 15, 0);
   Actor_FaceActorById(23, 15, 0);
   Event_Wait(30);
+  // "We are in a great hurry."
   Event_ShowMessageAndWait(23, 0);
   Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "Then you must return to Izumo someday."
   Event_ShowMessageAndWait(15, 0);
   Actor_SetModeById(5, 3);
   Event_Wait(30);
+  // "I'm sure we'll be back once our mission is completed."
   Event_ShowMessageAndWait(5, 0);
   Actor_SetModeById(20, 3);
   Event_Wait(30);
+  // "Excellent! I shall accept that as your oath!"
   Event_ShowMessageAndWait(20, 0);
   Actor_ShowEmoteById(6, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Event_Wait(30);
+  // "...Oath?"
   Event_ShowMessageAndWait(6, 0);
   Actor_FaceActorById(6, 5, 0);
   Event_Wait(30);
+  // "Oh, by promising to return, we'll be ensuring that our quest will..."
   Event_ShowMessageAndWait(6, 0);
   Actor_StartRepeatedMotion(7, 1);
   Event_Wait(30);
+  // "I understand... We must vow to return, everyone."
   Event_ShowMessageAndWait(7, 0);
   Actor_TurnToFaceEachOther(*(s32 *)owner, 7, 0);
   Actor_SetModeById(*(s32 *)owner, 3);
@@ -957,6 +983,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_FaceActorById(23, 15, 0);
   Actor_SetModeById(15, 3);
   Event_Wait(30);
+  // "We'll be waiting."
   Event_ShowMessageAndWait(15, 0);
   Actor_SetModeById(*(s32 *)owner, 3);
   Actor_SetModeById(7, 3);
@@ -1025,6 +1052,7 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Event_Wait(15);
   Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  // "Ah... Could it be? Is this the dancing doll of Mt. Mikage?"
   Event_OpenMessage(15, 0);
   if (!Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0)) {
     Event_SetMessageId(((s32)&MsgAhCouldIt + 1));
@@ -1035,9 +1063,11 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   }
   Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 60);
   Event_SetMessageId((s32)&MsgAgainYouHave);
+  // "Again, you have done more for me than I can properly reward you for..."
   Event_ShowMessageAndWait(15, 0);
   Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 120);
   Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
+  // "I think I may have something that might please you."
   Event_ShowMessageAndWait(15, 0);
   BattleEffect_StartArcEffect();
   t21 = ((s32)Actor_GetById(15));
@@ -1058,15 +1088,19 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   Event_Wait(30);
   Actor_FaceActorById(15, 24, 0);
   Event_Wait(30);
+  // "This is my pet. It's very dear to me."
   Event_ShowMessageAndWait(15, 0);
   Actor_FaceActorById(15, gMainRoutineWork.currentOwner, 0);
   Event_Wait(60);
+  // "I am unsure how it works, but this fellow seems to magnify our power..."
   Event_ShowMessageAndWait(15, 0);
   Event_Wait(30);
   Actor_SetModeById(15, 4);
   Event_Wait(60);
+  // "Though it saddens me to part with it, I would have you take him, as..."
   Event_ShowMessageAndWait(15, 0);
   Actor_TurnToFaceEachOther(15, 24, 0);
+  // "Felix and his friends have agreed to care for you from now on."
   Event_ShowMessageAndWait(15, 0);
   Event_Wait(60);
   Actor_Jump(24, 4, 20);
@@ -1074,6 +1108,7 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   Actor_FaceActorById(15, gMainRoutineWork.currentOwner, 0);
   Actor_FaceActorById(24, gMainRoutineWork.currentOwner, 0);
   Event_Wait(60);
+  // "Please, accept this gift."
   Event_ShowMessageAndWait(15, 0);
   Actor_Jump(24, 2, 20);
   Djinn_JoinParty(24, 2, 11);
@@ -1084,6 +1119,7 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   Event_Wait(60);
   Actor_StartRepeatedMotion(15, 2);
   Event_Wait(30);
+  // "With this dancing doll, I can explore Mt. Mikage on my own. Take..."
   Event_ShowMessageAndWait(15, 0);
   Event_Wait(60);
   GameFlag_Set(FLAG_UZUME_HAS_THE_DOLL);

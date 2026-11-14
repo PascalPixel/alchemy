@@ -1281,8 +1281,10 @@ void AquaRockInside_ReadParchTablet(void) {
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   Actor_FaceEachOther(gMainRoutineWork.currentOwner, 7, 0);
   FieldEvent_Wait(10);
+  // "What went wrong? What are we going to do, Felix?"
   Event_ShowMessage(7, 0);
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "Maybe our power is being tested."
   Event_ShowMessage(7, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimation(7, 3);

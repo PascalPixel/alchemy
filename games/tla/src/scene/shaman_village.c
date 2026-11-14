@@ -730,6 +730,8 @@ void ShamanVillage_TalkToGuard(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanGuardRepeatRulesBeforeTrial);
+  // "Do you need to hear Moapa's explanation again?" Yes: "Thick-witted
+  // outsiders." No: "Then you must leave Shaman Village and forget..."
   Event_OpenMessage(17, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Actor_SetAnimationAndWait(15, 3);
@@ -740,11 +742,13 @@ void ShamanVillage_TalkToGuard(void) {
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 204, 292);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 182, 280);
     Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
+    // "Thick-witted outsiders."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     Event_SetFlag(FLAG_SCENE_TEMP_00);
     ShamanVillage_ExplainTrialRules();
   } else {
     gFieldWork->message++;
+    // "Then you must leave Shaman Village and forget about the Hover Jade."
     Event_ShowMessage(17, 0);
   }
   Event_End();
@@ -755,6 +759,8 @@ void ShamanVillage_TalkToOtherGuard(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanOtherGuardRepeatRulesBeforeTrial);
+  // "Do you need to hear Moapa's explanation again?" Yes: "Thick-witted
+  // outsiders." No: "As long as you remain in our village, my..."
   Event_OpenMessage(16, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Actor_SetAnimationAndWait(15, 3);
@@ -763,11 +769,13 @@ void ShamanVillage_TalkToOtherGuard(void) {
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 182, 280);
     Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
+    // "Thick-witted outsiders."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     Event_SetFlag(FLAG_SCENE_TEMP_00);
     ShamanVillage_ExplainTrialRules();
   } else {
     gFieldWork->message++;
+    // "As long as you remain in our village, my people are not free to do..."
     Event_ShowMessage(16, 0);
   }
   Event_End();
@@ -779,6 +787,7 @@ void ShamanVillage_TellOutsidersToLeave(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanOutsidersLeaveTown);
+  // "What's wrong? Nothing to say? Then what are you standing around for?..."
   Event_ShowMessage(15, 0);
   work->fieldMenu = 1;
   Event_End();
@@ -790,6 +799,7 @@ void ShamanVillage_WarnOfMoapasPower(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanFearMoapaPower);
+  // "If you anger Moapa, you'll be in for a little taste of his awesome..."
   Event_ShowMessage(17, 0);
   work->fieldMenu = 1;
   Event_End();
@@ -801,6 +811,7 @@ void ShamanVillage_SendToMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanSpeakToMoapa);
+  // "If there's something you want to say, say it to Moapa, not to us. We..."
   Event_ShowMessage(16, 0);
   work->fieldMenu = 1;
   Event_End();
@@ -1068,10 +1079,14 @@ void ShamanVillage_OfferToGiveUp(void) {
   FieldCamera_MoveTo(182, CAMERA_KEEP, 304, 1);
   FieldCamera_WaitForArrival();
   Event_SetMessageId((s32)MsgShamanGiveUpTrialPrompt);
+  // "Have you decided to give up this foolishness once and for all?" Yes: "You
+  // have chosen wisely, and for your wisdom..." No: "Choose the road of your
+  // liking. It matters..."
   Event_OpenMessage(15, 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+    // "You have chosen wisely, and for your wisdom, you must leave Shaman..."
     Event_ShowMessage(15, 0);
     FieldCamera_SetSpeed(4.8);
     FieldCamera_MoveTo(168, CAMERA_KEEP, 368, 1);
@@ -1080,6 +1095,7 @@ void ShamanVillage_OfferToGiveUp(void) {
     Event_ClearFlag(FLAG_SCENE_TEMP_01);
   } else {
     gFieldWork->message++;
+    // "Choose the road of your liking. It matters not to us."
     Event_ShowMessage(15, 0);
     FieldCamera_SetSpeed(1.2);
     FieldCamera_MoveTo(168, CAMERA_KEEP, 280, 1);
@@ -1101,12 +1117,15 @@ void ShamanVillage_ChallengeMoapa(void) {
   Actor_FaceDirection(17, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(15, FACING_WEST);
   Event_SetMessageId((s32)MsgShamanChallengeTrialRoadPrompt);
+  // "Do you want to challenge me on Trial Road?"
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
+    // "You have chosen wisely, and for your wisdom, you must leave Shaman..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     ShamanVillage_StepBackFromTrial();
   } else {
     gFieldWork->message++;
+    // "Do you need to hear Moapa's explanation again?"
     Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
@@ -1150,6 +1169,7 @@ void ShamanVillage_TakeLeftPath(void) {
   Actor_SetPosition(16, 0, 0);
   Actor_SetAnimation(15, 3);
   Event_SetMessageId((s32)MsgShamanGuardsTakeOtherPath);
+  // "If you have chosen, then we shall take the other path."
   Event_ShowMessage(15, 0);
   Actor_FaceActor(gMainRoutineWork.currentOwner, 15, 0);
   Actor_FaceDirection(17, FACING_SOUTHWEST, 0);
@@ -1216,6 +1236,7 @@ void ShamanVillage_TakeRightPath(void) {
   Actor_SetPosition(17, 0, 0);
   Actor_SetAnimation(15, 3);
   Event_SetMessageId((s32)MsgShamanGuardsTakeOtherPath);
+  // "If you have chosen, then we shall take the other path."
   Event_ShowMessage(15, 0);
   Actor_FaceActor(gMainRoutineWork.currentOwner, 15, 0);
   Actor_FaceDirection(16, FACING_SOUTHEAST, 0);
@@ -1312,6 +1333,7 @@ void ShamanVillage_MeetMoapa(void) {
   Actor_FaceDirection(17, FACING_SOUTH, 0);
   Actor_StartRepeatedMotion(15, 1);
   Event_SetMessageId((s32)MsgShamanMoapaGiveMeRoom);
+  // "This is my house. If you're looking for Moapa, here I am. Back up...."
   Event_ShowMessage(15, 0);
   FieldCamera_SetSpeed(0.8);
   ((struct Actor *)FieldCamera_GetActor())->motionFlags = 0;
@@ -1399,6 +1421,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_WalkToAndWait(15, 120, 242);
   Event_PlaySound(MUS_029);
   Event_SetMessageId((s32)MsgShamanRecognizeShamanRod);
+  // "That's the Shaman's Rod!"
   Event_ShowMessage(15, 0);
   Event_Wait(20);
   if (rod != NULL)
@@ -1574,6 +1597,7 @@ void ShamanVillage_ShowItemToMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanShowMeSomething);
+  // "If you're here offering charity, I won't have it... Or did you want..."
   Event_ShowMessage(15, 0);
   Event_End();
 }
@@ -1582,6 +1606,7 @@ void ShamanVillage_ShowItemToGuard(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanCannotBuyGift);
+  // "Yes, yes. That's very nice. Did you want to sell it? Because I don't..."
   Event_ShowMessage(16, 0);
   Event_End();
 }
@@ -1590,6 +1615,7 @@ void ShamanVillage_ShowItemToOtherGuard(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanShowItToMoapa);
+  // "What makes you think I would be interested in this? Show it to Moapa..."
   Event_ShowMessage(17, 0);
   Event_End();
 }
@@ -2027,9 +2053,11 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_RunScriptAndWait(7, gShamanVillage_PiersWatchesShebaScript);
   Actor_FaceDirectionAndWait(5, FACING_EAST);
   Event_SetMessageId((s32)MsgShamanCheerForCompanion);
+  // "You can do it, Sheba!"
   Event_ShowMessage(5, 0);
   Actor_FaceDirectionAndWait(6, FACING_WEST);
   Actor_SetAnimation(6, 3);
+  // "Leave it to me, Jenna. This will be a breeze."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 6, 0);
   Actor_FaceDirectionAndWait(6, FACING_NORTH);
   Actor_FaceDirectionAndWait(6, FACING_EAST);
@@ -2048,61 +2076,80 @@ void ShamanVillage_ShebaClearsSand(void) {
   Event_Wait(20);
   Actor_SetAttachedEffect(15, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
+  // "I don't believe it. They did it! The sand vanished!"
   Event_ShowMessage(15, 0);
   Actor_SetAttachedEffect(17, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "The legends... They were all true!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 17, 0);
   Actor_SetAttachedEffect(16, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "She's the one! She must have come from Contigo!"
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 16, 0, 20);
   Actor_RunRepeatedMotion(15, 1);
   Actor_FaceDirectionAndWait(15, FACING_NORTHWEST);
+  // "Her?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0)
   Actor_FaceDirectionAndWait(15, FACING_NORTH);
+  // "She's the one that did it? But she's...just a girl!"
   Event_ShowMessage(15, 0);
   Actor_Jump(6, 4, 0);
   Actor_FaceDirectionAndWait(6, FACING_SOUTH);
   Actor_SetAnimation(6, 3);
+  // "Well, you wanted the sand to vanish, so..."
   Event_ShowMessage(6, 0);
   Actor_FaceDirectionAndWait(7, FACING_SOUTHWEST);
+  // "Can we have the Hover Jade now?"
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
   Actor_FaceDirectionAndWait(15, FACING_NORTHEAST);
   Actor_SetAnimation(15, 4);
+  // "Nope, you still can't have it."
   Event_ShowMessage(15, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Actor_FaceDirection(18, FACING_EAST, 0);
   SHAMAN_VILLAGE_EMOTE(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20)
   Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
+  // "What? Why not?"
   Event_ShowMessage(5, 0);
   Actor_FaceDirectionAndWait(15, FACING_NORTHWEST);
+  // "This was just a test to see if you earned the right to take the test..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   SHAMAN_VILLAGE_EMOTE(18, EMOTE_IN_FRONT | EMOTE_QUESTION, 40)
+  // "So, there's more that they have to do before you'll give them the stone?"
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 18, 0);
   Actor_SetAnimationAndWait(15, 3);
   Actor_FaceDirectionAndWait(15, FACING_NORTH);
+  // "You will have to reach the end of Trial Road."
   Event_ShowMessage(15, 0);
   SHAMAN_VILLAGE_EMOTE(17, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0)
   FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(16, FACING_SOUTHEAST, 0);
   Actor_FaceDirectionAndWait(17, FACING_SOUTHWEST);
   Actor_StartRepeatedMotion(17, 1);
+  // "The girls, too? Surely you can't make them..."
   Event_ShowMessage(17, 0);
   Actor_StartRepeatedMotion(16, 1);
+  // "I thought that only the chosen hero could travel the road..."
   Event_ShowMessage(16, 0);
   SHAMAN_VILLAGE_EMOTE(6, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0)
   Actor_FaceDirection(6, FACING_SOUTHWEST, 20);
   Actor_FaceDirectionAndWait(6, FACING_SOUTH);
+  // "What, are you saying I can't be the chosen hero?"
   Event_ShowMessage(6, 0);
   Actor_SetAttachedEffect(15, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "The heroes have always been men, ever since the time of Hoabna. It..."
   Event_ShowMessage(15, 0);
   SHAMAN_VILLAGE_EMOTE(6, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0)
   Actor_Jump(6, 2, 10);
   Actor_Jump(6, 4, 10);
+  // "I don't like your attitude, mister! I can be every bit as heroic as..."
   Event_ShowMessage(6, 0);
   Actor_FaceDirectionAndWait(17, FACING_NORTHWEST);
   Actor_SetAnimation(17, 4);
+  // "That may be true, but you must respect our customs."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 17, 0);
   Actor_FaceDirectionAndWait(16, FACING_NORTHEAST);
   Actor_SetAnimation(16, 4);
+  // "It's the same in Contigo, you know. If you don't like it, take it up..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 16, 0);
   Actor_FaceDirection(16, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(17, FACING_WEST);
@@ -2138,49 +2185,60 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_SetAnimation(17, 1);
   Actor_SetAnimation(16, 1);
   Actor_FaceDirectionAndWait(18, FACING_SOUTH_SOUTHEAST);
+  // "Hold it, hold it... Moapa, what were you just saying about Trial Road?"
   Event_ShowMessage(18, 0);
   Actor_FaceDirection(15, FACING_NORTHWEST, 0);
   Actor_FaceDirection(17, FACING_NORTHWEST, 0);
   Actor_FaceDirection(16, FACING_NORTHWEST, 0);
   SHAMAN_VILLAGE_EMOTE(18, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20)
+  // "If we reach the end of Trial Road, won't our names join the ranks of..."
   Event_ShowMessage(18, 0);
   SHAMAN_VILLAGE_EMOTE(17, EMOTE_IN_FRONT | EMOTE_QUESTION, 0)
   FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
+  // "Kraden's right... It shouldn't matter if a girl does it... All that..."
   Event_ShowMessage(5, 0);
   Actor_FaceDirection(16, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(17, FACING_WEST);
   Actor_SetAnimationAndWait(7, 3);
+  // "If you give us the chance, we will prove it to you."
   Event_ShowMessage(7, 0);
   Actor_FaceDirection(15, FACING_NORTHEAST, 0);
   SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20)
   FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+  // "Unless you're afraid that a girl like me might become your town's..."
   Event_ShowMessage(6, 0);
   Actor_FaceDirection(15, FACING_NORTH, 20);
   Actor_SetAnimationAndWait(15, 4);
   Event_Wait(20);
   FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
   Actor_FaceDirectionAndWait(17, FACING_SOUTHWEST);
+  // "Have they earned the right? Shall we let them onto Trial Road?"
   Event_ShowMessage(17, 0);
   Actor_FaceDirectionAndWait(15, FACING_NORTHEAST);
   Actor_FaceDirectionAndWait(16, FACING_SOUTHEAST);
+  // "I don't like the way these outsiders were talking to me."
   Event_ShowMessage(16, 0);
   Actor_SetAttachedEffect(15, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirection(15, FACING_NORTHWEST, 20);
   Actor_FaceDirectionAndWait(17, FACING_WEST);
   Actor_Jump(17, 4, 10);
+  // "I think they need to learn exactly what it takes to be a hero around..."
   Event_ShowMessage(17, 0);
   Actor_FaceDirectionAndWait(16, FACING_EAST);
   Actor_SetAnimationAndWait(16, 3);
   Event_Wait(10);
   Actor_FaceDirectionAndWait(16, FACING_SOUTHEAST);
+  // "Yeah, if these guys are so stubborn, let's give them a shot! They'll..."
   Event_ShowMessage(16, 0);
   Actor_FaceDirection(6, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(5, FACING_NORTHEAST, 40);
   Actor_FaceDirection(6, FACING_SOUTH, 0);
   Actor_FaceDirectionAndWait(5, FACING_SOUTH);
+  // "You said it yourselves. We're too stubborn to quit."
   Event_ShowMessage(5, 0);
   Actor_SetAnimation(6, 3);
+  // "Yeah. If you want us "outlanders" to leave, you'd better give us a..."
   Event_ShowMessage(6, 0);
   Actor_SetAttachedEffect(15, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirection(15, FACING_NORTH, 40);
@@ -2194,8 +2252,10 @@ void ShamanVillage_ShebaClearsSand(void) {
   Event_Wait(20);
   Actor_FaceDirectionAndWait(15, FACING_NORTH);
   FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
+  // "Trial Road is a difficult one... When you reach the top, a terrible..."
   Event_ShowMessage(15, 0);
   Actor_SetAnimation(15, 4);
+  // "It's difficult enough for me. I expect you will find it quite..."
   Event_OpenMessage(15, 0);
   Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(5, FACING_EAST, 0);
@@ -2388,10 +2448,13 @@ void ShamanVillage_RestartTrial(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   FieldCamera_WaitForArrival();
   Event_SetMessageId((s32)MsgShamanMustFinishTrialRoad);
+  // "In order to reach the battle at the summit, you cannot fail on Trial..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   Actor_SetAnimation(15, 3);
+  // "Do you understand?"
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
+    // "Would you like me to explain it to you again?"
     Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
@@ -2406,12 +2469,15 @@ void ShamanVillage_RestartTrial(void) {
   } else {
     EVENT_WORK->message += 2;
   }
+  // "Then you understand the treacherous path of Trial Road. Will you..."
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
+    // "You have chosen wisely, and for your wisdom, you must leave Shaman..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     ShamanVillage_StepBackFromTrial();
   } else {
     EVENT_WORK->message++;
+    // "You have heard the rules, and you wish to continue. You have been..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     ShamanVillage_CheckTrialEntry();
   }
@@ -2434,6 +2500,7 @@ void ShamanVillage_AdviseQuitting(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
+  // "It would be wise of you to quit. Even if you reach the top, you..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   ShamanVillage_StepBackFromTrial();
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);

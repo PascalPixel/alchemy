@@ -319,7 +319,9 @@ void Garoh_HowlOutLoud(s32 actor) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgGaroh17);
+  // "Awoooooh!"
   FieldEvent_ShowMessageThenWait(actor, 0, 10);
+  // "Heh heh... Sorry about that! I'm so happy I don't have to hide that..."
   FieldEvent_ShowMessageThenWait(actor, 0, 10);
   Event_End();
 }
@@ -962,6 +964,7 @@ void Garoh_WerewolfProwls(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(8, 96, 8);
   FieldEvent_SetMessageId((s32)MsgGaroh01);
+  // "Gaaaroooooo!"
   FieldEvent_ShowMessageThenWait(8, 0, 0);
   Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_SetSpeed(4, 0.8);

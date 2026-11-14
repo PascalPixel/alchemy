@@ -407,12 +407,16 @@ void ApojiiIslands_FatherSeesTheStone(void) {
   Actor_FaceDirection(16, FACING_NORTHEAST, 0);
   Actor_SetAnimationAndWait(16, 3);
   FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
+  // "What... What just happened?"
   Event_ShowMessage(16, 0);
   FieldActor_Jump(16, 2, 25);
+  // "That rock couldn't have heard my wishes... That's impossible!"
   Event_ShowMessage(16, 0);
   Actor_RunRepeatedMotion(16, 1);
+  // "It's got to be."
   Event_ShowMessage(16, 0);
   Actor_SetAnimationAndWait(16, 3);
+  // "Well, OK then... Maybe we should try putting some more of our wishes..."
   Event_ShowMessage(16, 0);
   Event_End();
   Event_ClearFlag(0x95e);
@@ -534,6 +538,7 @@ void ApojiiIslands_TalkToInnkeeper(s32 actor) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)&MsgWowYouLook);
+  // "Wow! You look just like the guy who showed up in the fancy boat. He..."
   Event_ShowMessage(actor, 0);
   Event_End();
 }
@@ -567,6 +572,7 @@ void ApojiiIslands_TalkToMerchant(s32 actor) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)&MsgItDBe);
+  // "It'd be nice if we could import some items that our visitors would like."
   Event_ShowMessage(actor, 0);
   Event_End();
 }

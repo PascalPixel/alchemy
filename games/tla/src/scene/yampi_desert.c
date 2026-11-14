@@ -359,14 +359,17 @@ void YampiDesert_TalkToTraveler(void) {
 void YampiDesert_ElderRefusesToQuit(void) {
   Event_SetMessageId((s32)MsgCanTWe);
   Actor_SetModeById(12, 4);
+  // "Can't we just forget about Briggs?"
   Event_ShowMessageAndWait(12, 0);
   Scene_ArmCallback(13, FACING_WEST, 20);
   Actor_SetModeById(13, 4);
+  // "No. I'm not about to quit looking for him."
   Event_ShowMessageAndWait(13, 0);
   Actor_ArmCallback(13, 0, 20);
   Scene_ArmCallback(13, 0x3000, 20);
   Actor_ArmCallback(13, 0, 20);
   Scene_ArmCallback(13, 0x3000, 0);
+  // "There must be some way through this desert! We must press onward!"
   Event_ShowMessageAndWait(13, 0);
 }
 
@@ -377,6 +380,7 @@ void YampiDesert_TalkToElderAboutWay(void) {
     YampiDesert_ElderRefusesToQuit();
   Actor_FaceActorById(12, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgAsYouCan);
+  // "As you can see, the elder is quite insistent on finding a way..."
   Event_ShowMessageAndWait(12, 0);
   GameFlag_Set(0x88f);
   Event_End();
@@ -389,6 +393,7 @@ void YampiDesert_TalkToElder(void) {
     YampiDesert_ElderRefusesToQuit();
   Actor_FaceActorById(13, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgThisIsWhere);
+  // "This is where my son must prove himself as mayor... So, Son. How are..."
   Event_ShowMessageAndWait(13, 0);
   GameFlag_Set(0x88f);
   Event_End();
@@ -1042,6 +1047,7 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   wait(1);
   Actor_ShowEmote(9, 0x100, 0);
   Actor_FaceDirection(9, 0, 20);
+  // "Hey! Look! Up there!"
   Event_ShowMessageAndWait(9, 0);
   Actor_Stop(8);
   wait(1);
@@ -1059,8 +1065,10 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   FieldCamera_SetSpeedFixed(0x19999, 0x3333);
   FieldCamera_MoveToFixed(0xd40000, 0, 0xd40000, 1);
   FieldCamera_WaitForArrival();
+  // "How did those guys get up there?"
   Event_ShowMessageAndWait(12, 0);
   Actor_FaceDirection(11, 0, 10);
+  // "Maybe there's a path up ahead that we missed..."
   Event_ShowMessageAndWait(11, 0);
   Actor_FaceDirection(13, 0xb000, 0);
   Actor_FaceDirection(14, 0x5000, 20);
@@ -1090,17 +1098,21 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   FieldEvent_Wait(20);
   Actor_FaceDirection(8, 0xd000, 0);
   Actor_FaceDirection(9, 0x5000, 20);
+  // "Maybe... Maybe we can get through the desert after all!"
   Event_ShowMessageAndWait(9, 0);
   Motion_SetModeAndWaitAnimation(8, 3);
+  // "We can find a way through to Alhafra!"
   Event_ShowMessageAndWait(8, 0);
   Actor_Jump(10, 4, 0);
   Actor_FaceDirection(10, 0, 0);
   Actor_SetModeById(10, 4);
+  // "I don't care where we go, as long as it's cool."
   Event_ShowMessageAndWait(10, 0);
   Actor_FaceDirection(8, 0x8000, 0);
   Actor_FaceDirection(9, 0x8000, 0);
   Actor_ShowEmote(8, 0x102, 0);
   Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
+  // "Hey! I found it! I found a way through!"
   Event_ShowMessageAndWait(14, 0);
   Actor_FaceDirection(8, 0xd000, 0);
   Actor_FaceDirection(10, 0x3000, 0);

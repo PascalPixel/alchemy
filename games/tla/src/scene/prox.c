@@ -538,6 +538,7 @@ void Prox_TalkToPlayingChild(void) {
   } else {
     FieldEvent_SetMessageId((s32)MsgProx117);
   }
+  // "Now that the lighthouse is lit, we don't have to play in that stupid..."
   Event_ShowMessage(16, 0);
   if (work->psynergy == 0)
     object->angle = angle;
@@ -559,6 +560,7 @@ void Prox_TalkToRestlessChild(void) {
   } else {
     FieldEvent_SetMessageId((s32)MsgProx118);
   }
+  // "That blizzard was unreal, but it's gone now, and the weather's..."
   Event_ShowMessage(17, 0);
   if (work->psynergy == 0)
     object->angle = angle;
@@ -580,6 +582,7 @@ void Prox_TalkToTrainingChild(void) {
   } else {
     FieldEvent_SetMessageId((s32)MsgProx119);
   }
+  // "You get more exercise running in the snow, because it's a lot harder..."
   Event_ShowMessage(18, 0);
   if (work->psynergy == 0)
     object->angle = angle;
@@ -654,6 +657,7 @@ void Prox_DecideToGoToLighthouse(void) {
   Actor_RunRepeatedMotion(10, 1);
   Actor_FaceDirectionAndWait(10, FACING_NORTH_NORTHWEST);
   FieldEvent_SetMessageId((s32)MsgProx62);
+  // "We can't wait for Agatio and his men any longer..."
   Event_ShowMessage(10, 0);
   Actor_SetAttachedEffect(12, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(13, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -663,7 +667,9 @@ void Prox_DecideToGoToLighthouse(void) {
   Actor_SetAttachedEffect(17, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Actor_FaceDirectionAndWait(10, FACING_SOUTH_SOUTHWEST);
+  // "If we wait much longer, this wind and snow will make it impossible..."
   Event_ShowMessage(10, 0);
+  // "I'm going to the lighthouse... Will any of you come with me?"
   Event_ShowMessage(10, 0);
   Actor_SetAttachedEffect(12, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(13, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -673,31 +679,41 @@ void Prox_DecideToGoToLighthouse(void) {
   Actor_SetAttachedEffect(17, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Actor_SetAnimation(12, 4);
+  // "Puelle, I can't let you go on your own..."
   Event_ShowMessage(12, 0);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHEAST, 0);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_SetAnimationAndWait(13, 4);
+  // "If something were to happen to you, who would lead our village?"
   Event_ShowMessage(13, 0);
   FieldActor_Jump(15, 4, 10);
+  // "Please, you must let us go in your stead."
   Event_ShowMessage(15, 0);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHWEST, 0);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  // "How can you expect to accomplish what Agatio and Karst could not?"
   Event_ShowMessage(10, 0);
   Actor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
+  // "They may have been more powerful than any of us, but we can't just..."
   Event_ShowMessage(16, 0);
   FieldActor_Jump(14, 2, 0);
   Actor_SetAnimation(14, 3);
+  // "They're not coming back, just like Saturos... You have to let us try."
   Event_ShowMessage(14, 0);
+  // "I can't. I can't allow it."
   Event_ShowMessage(11, 0);
   Actor_FaceDirectionAndWait(10, FACING_WEST);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Actor_FaceDirectionAndWait(10, FACING_SOUTH_SOUTHWEST);
+  // "Listen to your elder... He speaks wisely."
   Event_ShowMessage(10, 0);
   Actor_FaceDirectionAndWait(11, FACING_EAST);
+  // "I'm speaking to you too, Puelle."
   Event_ShowMessage(11, 0);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_FaceDirectionAndWait(10, FACING_WEST);
   Actor_SetAnimation(11, 4);
+  // "If Agatio and Karst cannot do the task, how can you, a single man..."
   Event_ShowMessage(11, 0);
   Actor_SetAttachedEffect(10, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirection(12, FACING_WEST, 0);
@@ -712,11 +728,14 @@ void Prox_DecideToGoToLighthouse(void) {
   Actor_FaceDirection(15, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(16, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(17, FACING_NORTH_NORTHEAST, 20);
+  // "What are you saying? If we stand around debating, our town is doomed..."
   Event_ShowMessage(10, 0);
   Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
+  // "We can't risk sacrificing any more lives."
   Event_ShowMessage(11, 0);
   Actor_FaceDirection(10, FACING_NORTH_NORTHWEST, 80);
   Actor_SetAnimationAndWait(10, 4);
+  // "So, we must sit here and wait for a miracle to come."
   Event_ShowMessage(10, 0);
   Event_SetFlag(FLAG_CLAN_SPOKE_OF_LIGHTHOUSE);
   Prox_EndEvent();
@@ -740,9 +759,11 @@ void Prox_MeetPuelle(void) {
   FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_FaceDirectionAndWait(11, FACING_SOUTH_SOUTHWEST);
   FieldEvent_SetMessageId((s32)MsgProx75);
+  // "You... Felix, it's you..."
   Event_ShowMessage(11, 0);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(10, FACING_WEST, 40);
+  // "I'd heard that you had returned to us... You look so much stronger..."
   Event_ShowMessage(10, 0);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 144, 154);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
@@ -756,16 +777,21 @@ void Prox_MeetPuelle(void) {
   Actor_RunScriptAndWait(18, (s32)gProx_KradenStepsUpToPuelle);
   Actor_FaceDirection(11, FACING_SOUTH_SOUTHEAST, 0);
   Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  // "It seems he has brought some allies with him."
   Event_ShowMessage(11, 0);
   Actor_SetAnimation(18, 3);
+  // "Yes... I am Kraden."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 18, 0);
   Actor_SetAnimation(0, 3);
+  // "My name is Isaac."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 0, 0);
   Actor_FaceDirection(11, FACING_EAST, 0);
   Actor_FaceDirection(10, FACING_WEST, 40);
   Actor_FaceDirectionAndWait(11, FACING_SOUTH_SOUTHEAST);
+  // "Isaac... Isn't that..."
   Event_ShowMessage(11, 0);
   Actor_FaceDirectionAndWait(10, FACING_SOUTH_SOUTHWEST);
+  // "That is the name of the one Agatio said had killed Saturos and Menardi."
   Event_ShowMessage(10, 0);
   Actor_FaceDirection(12, FACING_WEST, 0);
   Actor_FaceDirection(13, FACING_EAST, 0);
@@ -788,6 +814,7 @@ void Prox_MeetPuelle(void) {
   Actor_FaceDirection(17, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
   Actor_FaceDirectionAndWait(18, FACING_NORTH_NORTHWEST);
+  // "Isaac, stop that..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 18, 0);
   Actor_SetAnimation(0, 0);
   FieldEvent_Wait(10);
@@ -795,22 +822,27 @@ void Prox_MeetPuelle(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(0, FACING_SOUTHEAST);
   Actor_SetAnimation(18, 3);
+  // "You are correct, but Isaac had reasons for fighting them."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 18, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_SetSpeed(0, 0.8);
   Actor_WalkToAndWait(0, 160, 154);
   Actor_FaceDirection(0, FACING_NORTHWEST, 0);
   Actor_SetAnimationAndWait(18, 4);
+  // "Saturos and Menardi had invaded Vale, stolen its sacred treasure..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 18, 0);
   FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "You cannot blame Isaac for pursuing them and fighting to regain what..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 18, 0);
   FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "We only wanted to stop them... We didn't think they'd fight us to..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 0, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_FaceDirection(18, FACING_WEST, 40);
   Actor_SetAnimationAndWait(0, 4);
+  // "They flung themselves into the opening of Venus Lighthouse's beacon..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 0, 0);
   // Waits up to 80 frames, or until a key is held.
   i = 0;
@@ -1235,12 +1267,14 @@ void Prox_GiveThanksForBeacon(void) {
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   FieldEvent_SetMessageId((s32)MsgProx80);
+  // "Thank you, Felix. And you, too, Isaac and Kraden."
   Event_ShowMessage(26, 0);
   Actor_SetAnimation(0, 3);
   Actor_SetAnimation(27, 3);
   Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
   Actor_FaceDirection(26, FACING_SOUTH_SOUTHWEST, 0);
   FieldActor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  // "By igniting Mars Lighthouse, you stopped Gaia Falls from devouring..."
   Event_ShowMessage(26, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   Actor_FaceDirection(0, FACING_EAST, 20);
@@ -1249,84 +1283,114 @@ void Prox_GiveThanksForBeacon(void) {
   FieldActor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Actor_FaceDirection(0, FACING_NORTH, 0);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
+  // "We're just glad to have helped save Weyard..."
   Event_ShowMessage(0, 0);
   Actor_SetAttachedEffect(25, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
+  // "You've been through many trials, more than any of us can ever know..."
   Event_ShowMessage(25, 0);
   Actor_SetAnimation(27, 4);
+  // "We had no idea what to expect when we lit the final beacon..."
   Event_ShowMessage(27, 0);
   Actor_SetAnimation(19, 4);
+  // "When we saw the flash of the beacon, we had no idea what you..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 19, 0);
   FieldActor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "I thought we were done for... There was no way we could escape with..."
   Event_ShowMessage(0, 0);
   Actor_FaceDirection(27, FACING_WEST, 20);
   FieldActor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+  // "Well, at least, not if we hadn't pulled together and overcome our..."
   Event_ShowMessage(27, 0);
+  // "That light was brilliant!"
   Event_ShowMessage(17, 0);
   Actor_FaceDirection(27, FACING_NORTH_NORTHWEST, 0);
   FieldActor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "You know, I shall always regret that I didn't get to look upon the..."
   Event_ShowMessage(27, 0);
   Actor_FaceDirectionAndWait(26, FACING_SOUTH_SOUTHEAST);
   Actor_SetAnimation(26, 4);
+  // "I understand your regret... As a scholar of Alchemy, you would have..."
   Event_ShowMessage(26, 0);
+  // "I saw the beams of blue, red, and purple streaming out toward the..."
   Event_ShowMessage(0, 0);
   Actor_SetAttachedEffect(19, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
+  // "That's the direction in which Vale lies, is it not? Was the light..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 19, 0);
   Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
   Actor_SetAnimationAndWait(0, 3);
+  // "Indeed it was. The Wise One said the beams were going to merge into..."
   Event_ShowMessage(0, 0);
   Actor_FaceDirection(26, FACING_SOUTH_SOUTHWEST, 0);
   Actor_SetAttachedEffect(26, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
+  // "The orb of golden light we saw... That was shining directly over Vale?"
   Event_ShowMessage(26, 0);
   Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "Yes. That was the Golden Sun forming over Mt. Aleph."
   Event_ShowMessage(27, 0);
   Actor_FaceDirection(25, FACING_SOUTH_SOUTHEAST, 0);
   Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+  // "If I remember the tales correctly... The Golden Sun is the blast of..."
   Event_ShowMessage(25, 0);
   Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "Such legends exist even here? I wish that I'd known that sooner!"
   Event_ShowMessage(27, 0);
   Actor_FaceDirection(26, FACING_SOUTH_SOUTHEAST, 0);
+  // "I fear for Vale, to think that all this energy is being released..."
   Event_ShowMessage(26, 0);
   Actor_FaceDirection(0, FACING_NORTH, 0);
+  // "We're all worried about that. We're hoping we can return to Vale as..."
   Event_ShowMessage(0, 0);
   Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
   Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
+  // "Oh... Is there nothing we can do to convince you to stay?"
   Event_ShowMessage(25, 0);
   Actor_SetAnimation(26, 4);
+  // "We had hoped you might stay in Prox a while, but that sounds unlikely..."
   FieldEvent_ShowMessageThenWait(26, 0, 20);
   Actor_FaceDirectionAndWait(0, FACING_EAST);
   Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+  // "Don't worry... We plan on returning as soon as things quiet down..." Yes:
+  // "You have just completed a long and difficult..." No: "Our village will not
+  // soon forget that you..."
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | 0, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   if (!FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner,
                                              0)) {
     Actor_SetAnimationAndWait(26, 3);
+    // "Our village will not soon forget that you saved us from the edge of..."
     Event_ShowMessage(26, 0);
     EVENT_WORK->message++;
   } else {
     EVENT_WORK->message++;
     Actor_SetAnimationAndWait(26, 4);
+    // "You have just completed a long and difficult journey. Perhaps when..."
     Event_ShowMessage(26, 0);
   }
   Actor_FaceDirectionAndWait(27, FACING_WEST);
   Actor_SetAnimation(27, 4);
+  // "When that time comes, I may no longer be in this world."
   Event_ShowMessage(27, 0);
   Actor_FaceDirection(25, FACING_SOUTH_SOUTHEAST, 0);
   FieldActor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  // "Don't say such things... I'm sure a long life awaits you."
   Event_ShowMessage(25, 0);
   Actor_FaceDirection(27, FACING_NORTH_NORTHWEST, 20);
   Actor_SetAnimationAndWait(27, 3);
   Actor_FaceDirectionAndWait(27, FACING_WEST);
+  // "Well, I suppose we should be departing for Vale soon."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 27, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(0, FACING_EAST);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
   Actor_SetAnimationAndWait(0, 3);
+  // "You're right, Kraden... If we don't, you-know-who might start..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 0, 0);
   Actor_SetAttachedEffect(26, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
+  // "At least some of your cares have been remedied... You must be glad..."
   Event_ShowMessage(26, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_FaceDirection(0, FACING_NORTH, 0);
@@ -1334,10 +1398,13 @@ void Prox_GiveThanksForBeacon(void) {
   Actor_FaceDirectionAndWait(25, FACING_WEST);
   Actor_SetAnimationAndWait(25, 3);
   Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHWEST);
+  // "I would not have thought it possible had I not seen it."
   Event_ShowMessage(25, 0);
   FieldActor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "Even I do not fully understand it..."
   Event_ShowMessage(27, 0);
   Actor_SetAnimation(27, 4);
+  // "But their can be no doubt. The fire Psynergy released by the beacon..."
   Event_ShowMessage(27, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_FaceDirection(0, FACING_EAST, 0);
@@ -1348,6 +1415,7 @@ void Prox_GiveThanksForBeacon(void) {
   FieldActor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_SetAnimationAndWait(27, 3);
+  // "I hadn't expected so much Psynergy to be released by the..."
   Event_ShowMessage(27, 0);
   Actor_SetAnimation(0, 3);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
@@ -1355,16 +1423,21 @@ void Prox_GiveThanksForBeacon(void) {
   Actor_SetAnimation(25, 3);
   Actor_FaceDirection(27, FACING_WEST, 0);
   Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  // "I have no real explanation, other than that their life force had not..."
   Event_ShowMessage(27, 0);
   Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "And had your parents not been Adepts, the wave of Psynergy would..."
   FieldEvent_ShowMessageThenWait(26, 0, 20);
+  // "Isaac! What's taking you two so long? Don't keep me waiting!"
   Event_ShowMessage(5, 0);
   Actor_SetAttachedEffect(27, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Actor_FaceDirection(0, FACING_SOUTH, 0);
   Actor_FaceDirectionAndWait(27, FACING_SOUTH_SOUTHWEST);
+  // "Uh-oh! It's Jenna... We're late, and she looks rather displeased..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 27, 0);
   Actor_FaceDirectionAndWait(0, FACING_EAST);
+  // "Should I let her know we're leaving now?"
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | 0, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   t144 =

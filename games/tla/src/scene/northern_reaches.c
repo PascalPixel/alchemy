@@ -113,7 +113,9 @@ void NorthernReaches_SightIceWall(void) {
   FieldActor_WaitForMove((s32)object1);
   Actor_FaceDirectionAndWait(8, FACING_NORTH);
   FieldEvent_Wait(5);
+  // "Kraden, come look at this... There's a huge ice wall blocking our..."
   FieldEvent_ShowMessageThenWait(5, 0, 5);
+  // "Hm... If we can't do something about that wall, we're not going any..."
   FieldEvent_ShowMessageThenWait(11, 0, 5);
   Event_End();
 done:
@@ -135,6 +137,7 @@ void NorthernReaches_DiscussIceWall(void) {
   object1 = Actor_Get(8);
   FieldActor_WaitForMove((s32)object1);
   FieldEvent_Wait(5);
+  // "Kraden, come look at this... There's a huge ice wall blocking our..."
   FieldEvent_ShowMessageThenWait(5, 0, 5);
   FieldCamera_MoveTo(464, CAMERA_KEEP, 176, 1);
   FieldCamera_WaitForArrival();
@@ -142,8 +145,11 @@ void NorthernReaches_DiscussIceWall(void) {
   Actor_SetPosition(11, 408, 288);
   Actor_SetPosition(5, 408, 288);
   Actor_SetPosition(6, 408, 288);
+  // "Nothing to worry about, Jenna. We'll just have to use that cannon we..."
   FieldEvent_ShowMessageThenWait(11, 0, 5);
+  // "That's right! If the cannon can blast away a stone wall, think what..."
   FieldEvent_ShowMessageThenWait(6, 0, 5);
+  // "Felix, take us between those two blocks of ice for shelter when you..."
   FieldEvent_ShowMessageThenWait(11, 0, 5);
   Actor_SetPosition(11, 0, 0);
   Actor_SetPosition(5, 0, 0);

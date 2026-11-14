@@ -1221,9 +1221,11 @@ void WorldMap_DeliverLohoCannon(void) {
   FieldEvent_SetMessageId((s32)MsgYouDonT);
   Actor_FaceDirection(17, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(18, FACING_NORTH_NORTHEAST, 0);
+  // "You don't have anything to worry about. We got the cannon onto your..."
   Event_ShowMessage(16, 0);
   Actor_SetAnimationAndWait(4, 3);
   FieldEvent_Wait(30);
+  // "Now, we're going to start excavating the ground north of the wall..."
   Event_ShowMessage(16, 0);
   Actor_SetAnimation(16, 3);
   Actor_SetAnimation(4, 3);
@@ -1557,9 +1559,11 @@ void Func_02002640(s32 a, s32 b, s32 dx, s32 dz) {
 void WorldMap_WatchVenusLighthouseCollapse(void) {
   Func_02003d44(1);
   FieldEvent_SetMessageId((s32)MsgTheyVeDone);
+  // "They've done it, Jenna! They've lit the beacon!"
   Event_ShowMessage(8, 0);
   MapGrid_SetShake(4, 4, 1);
   FieldEvent_Wait(30);
+  // "What's happening, Kraden!? Why won't the ground stop shaking?"
   Event_ShowMessage(5, 0);
   WorldMap_ReloadPendingAreaGraphics();
   Event_PlaySound(SE_CRASH);
@@ -1573,6 +1577,7 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   FieldEvent_Wait(30);
   WorldMap_Freeze();
   MapGrid_SetShake(3, 3, 1);
+  // "Strange... I think it might actually be getting worse!"
   Event_ShowMessage(9, 0);
   WorldMap_ReloadPendingAreaGraphics();
   MapGrid_SetShake(7, 7, 1);
@@ -1581,7 +1586,9 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(30);
   WorldMap_Freeze();
+  // "I think the lighthouse is collapsing! Look! The ground around it is..."
   Event_ShowMessage(5, 0);
+  // "Mercury Lighthouse didn't react this way... What makes Venus different?"
   Event_ShowMessage(8, 0);
   WorldMap_ReloadPendingAreaGraphics();
   Event_PlaySound(SE_CRASH);
@@ -1599,7 +1606,9 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   FieldCamera_WaitForArrival();
   WorldMap_Freeze();
   MapGrid_SetShake(3, 3, 1);
+  // "That last tremor tore a rift in the Suhalla Range!"
   Event_ShowMessage(9, 0);
+  // "How are we going to get back to Gondowan now!?"
   Event_ShowMessage(5, 0);
   WorldMap_ReloadPendingAreaGraphics();
   MapGrid_SetShake(3, 3, 1);
@@ -1611,7 +1620,9 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   FieldCamera_MoveTo(2148, CAMERA_KEEP, 7553, 1);
   FieldCamera_WaitForArrival();
   WorldMap_Freeze();
+  // "Idejima... It's drifting away from the mainland!"
   Event_ShowMessage(8, 0);
+  // "But...what will happen to us?"
   Event_ShowMessage(5, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
@@ -1719,18 +1730,28 @@ void WorldMap_DriftNorthOfContinent(void) {
   Event_WaitTransitionFrames();
   WorldMap_Freeze();
   FieldEvent_SetMessageId((s32)MsgWeReSaved);
+  // "We're saved!"
   Event_ShowMessage(5, 0);
+  // "So it would seem..."
   Event_ShowMessage(8, 0);
   FieldActor_SetMoveTargetFixed(boat, px(10255), boat->y, px(7868));
+  // "Wait..."
   Event_ShowMessage(6, 0);
+  // "What is it?"
   Event_ShowMessage(5, 0);
+  // "We're going to pass north of the continent..."
   Event_ShowMessage(6, 0);
+  // "She's right!"
   Event_ShowMessage(8, 0);
+  // "I don't think we're going to make it!"
   Event_ShowMessage(6, 0);
+  // "Oh, Kraden... Felix... What are we going to do?"
   Event_ShowMessage(5, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_PlaySound(SE_162);
+  // "???"
   Event_ShowMessage(gMainRoutineWork.currentOwner, 0);
+  // "Oh... This can't be good."
   Event_ShowMessage(8, 0);
   Event_PlaySound(MUS_061);
   WorldMap_ReloadPendingAreaGraphics();
@@ -1915,60 +1936,96 @@ void WorldMap_TakeOff(void) {
   WorldMap_Freeze();
   FieldEvent_SetMessageId((s32)MsgWeDidIt);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
+  // "We did it! The ship took off without a hitch!"
   Event_ShowMessage(2, 0);
   Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "Yeah, but...shouldn't it be flying a little higher than this?"
   Event_ShowMessage(1, 0);
+  // "Hamma told us that we wouldn't be able to fly very high until we..."
   Event_ShowMessage(3, 0);
+  // "Let's see how far we can take this thing!"
   Event_ShowMessage(0, 0);
   FieldEvent_Wait(30);
+  // "Sheba, what's wrong? You don't look happy..."
   Event_ShowMessage(5, 0);
+  // "Do you remember on Idejima, when I told you I had my own reasons for..."
   Event_ShowMessage(6, 0);
+  // "You were so secretive! Are you going to tell us now?"
   Event_ShowMessage(23, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldEvent_Wait(50);
+  // "... ..."
   Event_ShowMessage(6, 0);
+  // "You've gone quiet again... It's OK... You don't have to tell us if..."
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(30);
   Event_PlaySound(MUS_038);
+  // "I thought that if I went to Jupiter Lighthouse, I would learn who I..."
   Event_ShowMessage(6, 0);
   FieldEvent_Wait(20);
+  // "I remember the people of Lalivero talking about how Sheba fell from..."
   Event_ShowMessage(0, 0);
   FieldEvent_Wait(20);
+  // "All my life, I've been looking for the answer... Where was I born..."
   Event_ShowMessage(6, 0);
+  // "You knew Felix was going to Jupiter Lighthouse eventually, and so..."
   Event_ShowMessage(7, 0);
   FieldEvent_Wait(20);
+  // "But you didn't find any answers, did you, Sheba?"
   Event_ShowMessage(3, 0);
   FieldEvent_Wait(30);
+  // "I'm sorry, Sheba... I was so excited to find Contigo that I didn't..."
   Event_ShowMessage(2, 0);
   FieldEvent_Wait(20);
+  // "What? Why is everyone so down all of a sudden?"
   Event_ShowMessage(1, 0);
+  // "... ..."
   Event_ShowMessage(6, 0);
+  // "Faran raised Sheba like his own daughter. He's cared for her ever..."
   Event_ShowMessage(1, 0);
+  // "Yes, that's true, but..."
   Event_ShowMessage(6, 0);
+  // "But you can never be his real daughter, is that it?"
   Event_ShowMessage(1, 0);
+  // "Garet! You don't have to be so blunt about it!"
   Event_ShowMessage(5, 0);
+  // "No, he's right... I'd want to know my real parents, no matter how..."
   Event_ShowMessage(3, 0);
+  // "You think so? If it were me, I doubt it'd bother me at all..."
   Event_ShowMessage(1, 0);
   FieldEvent_Wait(40);
+  // "Sheba, you may not know this, but you and I are very similar..."
   Event_ShowMessage(23, 0);
+  // "What do you mean?"
   Event_ShowMessage(6, 0);
+  // "Well, it's not exactly the same situation, but..."
   Event_ShowMessage(23, 0);
   FieldEvent_Wait(20);
+  // "I was born in a poor village. My memories are hazy, but I still..."
   Event_ShowMessage(23, 0);
   FieldEvent_Wait(20);
+  // "I was only four when Babi took me under his wing."
   Event_ShowMessage(23, 0);
   FieldEvent_Wait(20);
+  // "You see, even though I was young, I was quite intelligent. Babi had..."
   Event_ShowMessage(23, 0);
+  // "And Babi took you to Tolbi to further your education, to raise you..."
   Event_ShowMessage(0, 0);
   FieldEvent_Wait(20);
+  // "I was separated from my parents so early in life... I've never known..."
   Event_ShowMessage(23, 0);
+  // "Faran has always been like a father to me... I must have been very..."
   Event_ShowMessage(6, 0);
+  // "I should say so."
   Event_ShowMessage(23, 0);
   FieldEvent_Wait(60);
+  // "Thank you, Kraden... I feel better now..."
   Event_ShowMessage(6, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
+  // "I'm glad I could help."
   Event_ShowMessage(23, 0);
   FieldEvent_Wait(40);
+  // "Well, we should be going... Let's hurry on, Felix!"
   Event_ShowMessage(23, 0);
   Scene_PlayMusic();
   WorldMap_ReloadPendingAreaGraphics();

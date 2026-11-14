@@ -311,21 +311,25 @@ nextSpark:
   Event_Wait(120);
   Actor_RunRepeatedMotion(18, 2);
   Actor_FaceDirectionAndWait(18, FACING_WEST);
+  // "Is everyone all right?"
   Event_ShowMessage(18, 0);
   Actor_FaceDirection(17, FACING_SOUTHEAST, 0);
   Actor_SetAnimation(17, 3);
   Actor_SetAnimation(16, 3);
   Event_Wait(30);
   FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_WINCE, 35);
+  // "Did you hear that? That sound was incredible!"
   Event_ShowMessage(17, 0);
   FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_SCOWL, 35);
   Actor_WalkByAndWait(16, -12, 24);
   Actor_RunRepeatedMotion(16, 2);
+  // "What do you think you're doing, making all that noise?"
   Event_ShowMessage(16, 0);
   Actor_SetAnimation(4, 3);
   Actor_FaceDirectionAndWait(18, FACING_NORTH_NORTHWEST);
   Event_Wait(30);
   FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 35);
+  // "Hey, look at that!"
   Event_ShowMessage(18, 0);
   FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_QUESTION, 35);
@@ -336,6 +340,7 @@ nextSpark:
   Event_Wait(60);
   FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
   FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_WINCE, 35);
+  // "What are you looking at? It wasn't me! It was the wall! Look at the..."
   Event_ShowMessage(18, 0);
   Actor_FaceEachOther(16, 17, 0);
   Event_Wait(40);
@@ -347,25 +352,31 @@ nextSpark:
   FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_WINCE, 35);
+  // "The wall... It's gone!"
   Event_ShowMessage(17, 0);
   Actor_SetAnimation(16, 3);
+  // "Well, it's mostly gone, yeah... You can get through to the other..."
   Event_ShowMessage(16, 0);
   Actor_FaceActor(18, 4, 0);
   FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 35);
   FieldCamera_MoveTo(488, CAMERA_KEEP, 366, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirection(18, FACING_SOUTH_SOUTHWEST, 0);
+  // "How did you manage to break down the wall?"
   Event_ShowMessage(18, 0);
   Actor_SetSpeed(17, 0.8);
   Actor_WalkBy(17, 0, 16);
   Actor_WaitForMoveById(17);
   Actor_FaceDirectionAndWait(17, FACING_SOUTHEAST);
   Actor_SetAnimation(17, 4);
+  // "Ah, never mind... What's important here is that we can dig on the..."
   Event_ShowMessage(17, 0);
   Actor_SetAnimation(16, 3);
+  // "Yeah, who cares how it happened? We can dig again!"
   Event_ShowMessage(16, 0);
   Actor_SetAnimation(18, 3);
   Actor_FaceDirection(17, FACING_SOUTH_SOUTHEAST, 0);
+  // "Well, you did what we asked, so the cannon's all yours!"
   Event_ShowMessage(17, 0);
   FieldActor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_WINCE, 35);
   Event_Wait(60);
@@ -373,15 +384,18 @@ nextSpark:
   Actor_FaceDirectionAndWait(16, FACING_SOUTH);
   Event_Wait(20);
   Actor_RunRepeatedMotion(16, 2);
+  // "Hmmm... It's gonna be tough carrying that thing around..."
   Event_ShowMessage(16, 0);
   FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 35);
+  // "Those guys are new in town, aren't they? Do you think they came from..."
   Event_ShowMessage(18, 0);
   Actor_SetAnimation(17, 3);
   Event_Wait(40);
   FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 35);
+  // "I don't know, but I can tell you they came by boat..."
   Event_ShowMessage(17, 0);
   Actor_SetAnimation(16, 3);
   Event_Wait(30);
@@ -413,6 +427,7 @@ nextSpark:
   Event_Wait(40);
   Actor_SetAnimation(16, 3);
   Event_Wait(60);
+  // "Yeah, I saw one anchored off the beach!"
   Event_ShowMessage(16, 0);
   Actor_RefreshSelectorById(17);
   Actor_RefreshSelectorById(18);
@@ -429,6 +444,7 @@ askCannon:
   FieldCamera_SetSpeed(1.8);
   FieldCamera_MoveTo(542, CAMERA_KEEP, 350, 1);
   FieldCamera_WaitForArrival();
+  // "That boat's yours, isn't it?"
   Event_OpenMessage(17, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0))
     goto answeredNo;

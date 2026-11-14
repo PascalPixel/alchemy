@@ -68,6 +68,7 @@ void LemuriaInteriors_TalkToPiersUncle(s32 arg0) {
   if (result0 == 0)
     goto notMourning;
   Event_SetMessageId((s32)MsgLemuriaInteriors11);
+  // "Go to Lunpa's tower. He will see you."
   Event_ShowMessage(arg0, 0);
   Actor_WatchAndSetScript(10, 4);
   goto done;
@@ -78,12 +79,14 @@ notMourning:
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLemuriaInteriors08);
+  // "I am so relieved that Piers has returned to me alive. He is the last..."
   Event_ShowMessage(arg0, 0);
   Actor_FaceDirection(arg0, FACING_SOUTHEAST + FACING_STEP, 0);
   Event_End();
   goto done;
 notVisited:
   Event_SetMessageId((s32)MsgLemuriaInteriors05);
+  // "Are you the travelers that came here with Piers?"
   Event_OpenMessage(arg0, 0);
   result2 = FieldParty_GetLeaderActor();
   result3 = FieldEvent_AskYesNoWithActorAnimation(result2, 0);
@@ -118,6 +121,7 @@ void LemuriaInteriors_AskFromBeyondSeaOfTime(s32 arg0) {
   s32 result1;
 
   Event_SetMessageId((s32)MsgLemuriaInteriors13);
+  // "Are you the warriors from beyond the Sea of Time who returned with..."
   Event_OpenMessage(arg0, 0);
   result0 = FieldParty_GetLeaderActor();
   result1 = FieldEvent_AskYesNoWithActorAnimation(result0, 0);
@@ -141,6 +145,7 @@ void LemuriaInteriors_AskAboutDraughts(s32 arg0) {
   s32 result1;
 
   Event_SetMessageId((s32)MsgLemuriaInteriors18);
+  // "Do you seek to know more about the draughts that provide us with..."
   Event_OpenMessage(arg0, 0);
   result0 = FieldParty_GetLeaderActor();
   result1 = FieldEvent_AskYesNoWithActorAnimation(result0, 0);
@@ -172,6 +177,7 @@ void LemuriaInteriors_ScoffAtMindRead(s32 arg0, s32 arg1) {
   Actor_ShowEmote(arg1, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceActor(arg1, 4, 20);
   Event_SetMessageId((s32)MsgLemuriaInteriors19);
+  // "Was that some form of Psynergy?"
   Event_OpenMessage(arg1, 0);
   result2 = FieldParty_GetLeaderActor();
   result3 = FieldEvent_AskYesNoWithActorAnimation(result2, 0);
@@ -247,19 +253,23 @@ void LemuriaInteriors_PiersVisitsUncle(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(7, 3);
   Event_Wait(10);
+  // "I am sorry it has taken me so long to visit, Uncle."
   Event_ShowMessageThenWait(7, 0, 10);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceDirection(10, FACING_EAST, 0);
   Event_Wait(20);
   Actor_Jump(10, 6, 15);
   Actor_Jump(10, 6, 23);
+  // "Piers! You are alive!"
   Event_ShowMessageThenWait(10, 0, 10);
   Actor_SetAnimationAndWait(7, 3);
   Event_Wait(10);
+  // "Yes, I've managed to survive against a great many trials."
   Event_ShowMessageThenWait(7, 0, 10);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 45);
   Actor_FaceDirection(12, FACING_WEST, 0);
   Event_Wait(20);
+  // "What a fascinating coincidence! We've stumbled across Piers's..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 12, 0, 10);
   Actor_FaceDirection(4, FACING_EAST, 0);
   Event_Wait(30);
@@ -271,6 +281,7 @@ void LemuriaInteriors_PiersVisitsUncle(void) {
   Actor_FaceDirection(10, FACING_SOUTHEAST, 0);
   Event_Wait(20);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "I must thank you all for looking after my nephew."
   Event_ShowMessageThenWait(10, 0, 10);
   Actor_FaceDirection(12, FACING_WEST, 0);
   Actor_FaceDirection(4, FACING_EAST, 0);
@@ -285,10 +296,12 @@ void LemuriaInteriors_PiersVisitsUncle(void) {
   Event_Wait(45);
   Actor_FaceDirection(7, FACING_WEST, 0);
   Event_Wait(20);
+  // "This is Felix and Kraden. They are my friends, and have aided me..."
   Event_ShowMessageThenWait(7, 0, 10);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Actor_FaceDirection(10, FACING_EAST, 0);
   Event_Wait(20);
+  // "If my sister could only hear how timid young Piers has become a..."
   Event_ShowMessageThenWait(10, 0, 10);
   Actor_RunRepeatedMotion(10, 2);
   Event_Wait(10);
@@ -303,6 +316,7 @@ void LemuriaInteriors_PiersVisitsUncle(void) {
   Event_Wait(35);
   Actor_FaceDirection(7, FACING_WEST, 0);
   Event_Wait(35);
+  // "Where is my mother? We've been so busy since we arrived that I..."
   Event_ShowMessageThenWait(7, 0, 10);
   Actor_RunRepeatedMotion(10, 2);
   Event_Wait(20);
@@ -328,23 +342,28 @@ void LemuriaInteriors_PiersVisitsUncle(void) {
   Actor_FaceDirection(7, FACING_SOUTH, 0);
   Event_Wait(40);
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Now that I think about it, this place is a mess. What happened?..."
   Event_ShowMessageThenWait(7, 0, 10);
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "...No! She hasn't...fallen ill again, has she?"
   Event_ShowMessageThenWait(7, 0, 10);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceDirection(4, FACING_NORTHEAST, 0);
   Actor_FaceDirection(12, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(20);
+  // "There is still illness in Lemuria?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 12, 0, 10);
   Actor_RunRepeatedMotion(7, 2);
   Event_Wait(20);
   Actor_FaceDirection(7, FACING_SOUTHWEST, 0);
   Event_Wait(20);
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "My mother was born with a weak heart..."
   Event_ShowMessageThenWait(7, 0, 10);
   Actor_FaceDirection(10, FACING_EAST, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(10, 4);
+  // "Piers... I'm sorry... Your return comes too late..."
   Event_ShowMessageThenWait(10, 0, 10);
   Actor_FaceDirection(12, FACING_WEST, 0);
   Actor_FaceDirection(4, FACING_EAST, 0);
@@ -360,21 +379,26 @@ void LemuriaInteriors_PiersVisitsUncle(void) {
   Actor_WalkByAndWait(7, -12, 0);
   Event_Wait(10);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "After the tidal wave washed you to sea, your mother suddenly fell ill..."
   Event_ShowMessageThenWait(10, 0, 10);
   Actor_RunRepeatedMotion(7, 2);
   Event_Wait(20);
   Actor_SetAnimationAndWait(10, 3);
   Event_Wait(10);
+  // "The shock of losing you was too great for her poor heart."
   Event_ShowMessageThenWait(10, 0, 10);
   Actor_SetAnimationAndWait(7, 4);
   Event_Wait(20);
   Actor_SetAnimationAndWait(10, 4);
+  // "She held out hope for your safe return until the very end."
   Event_ShowMessageThenWait(10, 0, 10);
   Actor_FaceDirection(10, FACING_NORTHWEST + FACING_STEP, 0);
   Event_Wait(30);
+  // "Perhaps your mother gave herself up to ensure your survival..."
   Event_ShowMessageThenWait(10, 0, 20);
   Actor_SetAnimationAndWait(10, 3);
   Event_Wait(10);
+  // "Does that not sound like your mother?"
   Event_ShowMessageThenWait(10, 0, 10);
   Event_Wait(10);
   Actor_SetAnimation(7, 9);
@@ -382,9 +406,11 @@ void LemuriaInteriors_PiersVisitsUncle(void) {
   Actor_FaceDirection(4, FACING_NORTHEAST, 0);
   Actor_FaceDirection(12, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(20);
+  // "Where is she now?"
   Event_ShowMessageThenWait(7, 0, 10);
   Actor_FaceDirection(10, FACING_EAST, 0);
   Event_Wait(20);
+  // "She rests in the cemetery now. Check the headstones... You will find..."
   Event_ShowMessageThenWait(10, 0, 10);
   Actor_SetAnimation(7, 1);
   Event_Wait(30);
@@ -413,6 +439,7 @@ void LemuriaInteriors_PiersVisitsUncle(void) {
   Actor_FaceDirection(12, FACING_WEST, 0);
   Actor_FaceDirection(4, FACING_EAST, 0);
   Event_Wait(20);
+  // "What should we do, Felix? Should we follow Piers?"
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 12, 0);
   result2 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (result2 != 0)
@@ -475,13 +502,16 @@ visited:
   Event_SetMessageId((s32)MsgLemuriaInteriors10);
   Actor_SetSpeed(10, 0.8);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "Wait..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   Actor_WalkToAndWait(4, 136, 152);
   Actor_FaceDirection(4, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(10, 4);
+  // "I ask that you leave Piers to his mourning for now..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "Now he is struggling with the loss of his mother. He needs time."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   Actor_SetAnimationAndWait(4, 3);
   FieldEvent_Wait(20);
@@ -490,6 +520,7 @@ visited:
   Actor_WalkByAndWait(4, 8, 16);
   Actor_FaceDirection(4, FACING_SOUTH, 0);
   Actor_RunRepeatedMotion(10, 2);
+  // "You came to Lemuria to learn more of Alchemy, did you not?"
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceDirection(4, FACING_NORTHWEST, 0);
@@ -498,11 +529,14 @@ visited:
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(10, 3);
   FieldEvent_Wait(10);
+  // "I suspected as much. Piers was right to bring you here."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   Actor_SetAnimationAndWait(10, 4);
+  // "Piers told me his secret... The mission he was given by His Highness..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   Actor_SetAnimationAndWait(10, 3);
   FieldEvent_Wait(10);
+  // "Even had the tidal wave not carried Piers off, he would have left..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   FieldActor_StartRepeatedMotion(4, 3);
   Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -510,6 +544,7 @@ visited:
   Actor_WalkByAndWait(10, 12, 12);
   FieldEvent_Wait(10);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "You look confused... Piers told you about this, did he not?"
   Event_OpenMessage(10, 0);
   answer = Event_AskYesNoWithActorAnimation(4, 0);
   if (answer == 0) {
@@ -743,6 +778,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_WalkByAndWait(18, 0, -32);
   Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(10);
+  // "Honestly, I'm amazed that anyone can travel so far across the world..."
   Event_ShowMessageThenWait(18, 0, 10);
   Actor_WalkToAndWait(4, 440, 352);
   Actor_SetPosition(4, 440, 352);
@@ -756,12 +792,15 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   FieldCamera_WaitForArrival();
   Event_Wait(10);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Say, Piers isn't with you! Er...why not?"
   Event_ShowMessageThenWait(18, 0, 10);
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  // "His mother passed away... He's gone to visit her grave."
   Event_ShowMessageThenWait(6, 0, 10);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
   Actor_FaceDirection(18, FACING_SOUTH + FACING_STEP, 0);
   Event_Wait(30);
+  // "Of course... His mother... He loved her dearly. A terrible loss......"
   Event_ShowMessageThenWait(18, 0, 10);
   Actor_SetAnimation(4, 3);
   Actor_SetAnimation(5, 3);
@@ -771,8 +810,10 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_Wait(10);
   Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(30);
+  // "Well, Piers may not be here, but we still have much to discuss."
   Event_ShowMessageThenWait(18, 0, 10);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "If Piers brought you, you must be working to break the seal on..."
   Event_OpenMessage(18, 0);
   result = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (result == 0) {

@@ -843,6 +843,7 @@ void GabombaStatue_HearTheOffering(void) {
   GabombaStatue_StopClock();
   FieldEvent_Wait(40);
   FieldEvent_SetMessageId(MsgGabombaAcceptOffering);
+  // "O Great Gabomba! Please accept this, our humble gift!"
   Event_ShowMessage(24, 0);
   FieldCamera_MoveTo(392, CAMERA_KEEP, 256, 1);
   FieldCamera_WaitForArrival();
@@ -1599,6 +1600,7 @@ void GabombaStatue_FocusEnergies(void) {
   Event_WaitTransitionFrames();
   FieldEvent_Wait(40);
   FieldEvent_SetMessageId(MsgGabombaFocusEnergies);
+  // "Focus your energies!"
   Event_ShowMessage(24, 0);
   Actor_MoveToObject(23, gMainRoutineWork.currentOwner);
   Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
@@ -1624,6 +1626,7 @@ void GabombaStatue_FocusEnergies(void) {
   Actor_RunScriptAndWait(23, gGabombaStatue_KradenPointsScript);
   FieldEvent_Wait(40);
   Actor_FaceDirectionAndWait(23, FACING_NORTH + FACING_STEP);
+  // "Everyone! Look over here!"
   Event_ShowMessage(23, 0);
   FieldCamera_SetSpeed(4.8);
   FieldCamera_MoveTo(434, CAMERA_KEEP, 168, 1);
@@ -1757,6 +1760,7 @@ void GabombaStatue_SeeHowItWorks(void) {
   FieldEvent_Wait(40);
   GabombaStatue_ShowEmote(23, 256, 20);
   FieldEvent_SetMessageId(MsgGabombaUnderstandsChannel);
+  // "Ah! So that's how it works!"
   Event_ShowMessage(23, 0);
   EventCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeed(0.8);
@@ -1767,7 +1771,9 @@ void GabombaStatue_SeeHowItWorks(void) {
   Actor_FaceDirection(7, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(6, FACING_WEST);
   Actor_SetAnimation(6, 3);
+  // "He's been failing because the conduit that channels his Psynergy is..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 6, 0);
+  // "Should we reconnect the conduit so he can complete the ceremony?"
   ((void *)Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 5,
                              0));
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
@@ -1909,14 +1915,17 @@ void GabombaStatue_SawEnergyFlow(void) {
   Actor_SetScript(5, gGabombaStatue_JennaWatchesScript);
   Actor_RunScriptAndWait(24, gGabombaStatue_ShebaWatchesScript);
   FieldEvent_SetMessageId(MsgGabombaSawEnergyFlow);
+  // "Yeah, we know... We saw your magic energy flowing past us."
   Event_ShowMessage(5, 0);
   Actor_FaceDirection(24, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_WalkToAndWait(5, 440, 296);
   Actor_FaceDirectionAndWait(5, FACING_EAST);
+  // "See how this channel runs along the floor?"
   Event_ShowMessage(5, 0);
   Actor_FaceDirection(5, FACING_NORTHWEST, 0);
   FieldCamera_MoveTo(414, CAMERA_KEEP, 272, 1);
   FieldCamera_WaitForArrival();
+  // "Here, look... It runs all the way over there!"
   Event_ShowMessage(5, 0);
   GabombaStatue_FindFreeTileCell(&x, &z);
   x = (x << 20) + (156 << 17);
@@ -1930,14 +1939,17 @@ void GabombaStatue_SawEnergyFlow(void) {
   actor->facing = ArcTan2(spark->z - actor->z, spark->x - actor->x);
   FieldCamera_MoveToFixed(spark->x, -1, spark->z, 1);
   FieldCamera_WaitForArrival();
+  // "But the thing is, the circuit was broken right there."
   Event_ShowMessage(5, 0);
   Actor_Release(spark);
   FieldCamera_MoveTo(440, CAMERA_KEEP, 304, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
+  // "So we completed the circuit so that your magic energy could go where..."
   Event_ShowMessage(5, 0);
   Actor_SetAttachedEffect(24, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
+  // "But...if you truly did this, then why? Why did you help me?"
   Event_ShowMessage(24, 0);
   Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, px(472), px(204),
                              south);
@@ -1945,17 +1957,22 @@ void GabombaStatue_SawEnergyFlow(void) {
   Actor_SetPositionAndFacing(23, px(456), px(204), facing);
   Actor_SetPositionAndFacing(6, px(488), px(204), south);
   System_Wait(1);
+  // "We were sort of hoping that we could take the orb if your ceremony..."
   Event_ShowMessage(23, 0);
   Actor_FaceDirection(24, FACING_NORTH + FACING_STEP, 0);
   FieldCamera_MoveTo(440, CAMERA_KEEP, 264, 1);
   FieldCamera_WaitForArrival();
   FieldActor_Jump(24, 4, 10);
+  // "Ah, so you have taken the orb? Then begone! You have no further..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 24, 0);
   Actor_SetAnimationAndWait(7, 4);
+  // "But...we didn't get the orb."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 7, 0);
   Actor_ShowEmote(24, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "It rolled through this groove and right through this hole."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 6, 0);
   Actor_SetAnimation(23, 4);
+  // "We saw a light through there, so we suspect there must be another..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_BELOW | 23, 0);
   FieldEvent_Wait(20);
   PaletteFade_ApplySource(0x10000, 0);
@@ -1972,6 +1989,7 @@ void GabombaStatue_FixTheChannel(void) {
   FieldActor_SetSpriteColor(Actor_Get(23), 15);
   System_Wait(10);
   FieldEvent_SetMessageId(MsgGabombaChannelTiming);
+  // "It looks like just fixing the channel should do the trick... Maybe..."
   Event_ShowMessage(23, 0);
   Actor_SetPosition(23, 0, 0);
   System_Wait(1);

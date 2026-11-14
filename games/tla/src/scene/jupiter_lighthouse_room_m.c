@@ -1124,6 +1124,7 @@ void JupiterLighthouse_IsaacAndIvanAreHurt(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetMessageId(MsgIMSorry);
+  // "Isaac... I'm sorry... I can't take any more..."
   FieldEvent_ShowMessageThenWait(2, 0, 5);
   (struct Actor *)Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldCamera_MoveTo(705, 0, 177, 1);
@@ -1133,8 +1134,10 @@ void JupiterLighthouse_IsaacAndIvanAreHurt(void) {
   Actor_SetAnimation(2, 32);
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(0, FACING_SOUTHWEST);
+  // "Keep it together, Ivan!"
   FieldEvent_ShowMessageThenWait(0, 0, 5);
   (struct Actor *)Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "Ha! You're a fool! Never let concern distract you in battle!"
   FieldEvent_ShowMessageThenWait(26, 0, 5);
   Actor_WalkBy(26, 24, 0);
   FieldEvent_Wait(20);
@@ -1238,20 +1241,25 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetMessageId((s32)MsgWeDidItAgatio);
+  // "We did it, Agatio!"
   FieldEvent_ShowMessageThenWait(27, 0, 5);
   Actor_SetAnimation(26, 8);
   FieldEvent_Wait(40);
+  // "It was close, but we did it."
   FieldEvent_ShowMessageThenWait(26, 0, 5);
   Actor_FaceDirectionAndWait(27, FACING_EAST);
   FieldEvent_Wait(10);
+  // "Heh... He's no warrior. His concern for his friend gave us the..."
   FieldEvent_ShowMessageThenWait(27, 0, 5);
   FieldActor_StartRepeatedMotion(0, 2);
   Actor_RunRepeatedMotion(2, 2);
   FieldEvent_Wait(5);
   Walk(26, 0x100, 30);
+  // "What's this? He's still alive!? Even after that blow?"
   FieldEvent_ShowMessageThenWait(26, 0, 5);
   Actor_FaceDirectionAndWait(27, FACING_NORTHEAST);
   FieldEvent_Wait(10);
+  // "It would be a shame if you and I ever had to regret letting him live..."
   FieldEvent_ShowMessageThenWait(27, 0, 5);
   Actor_SetAnimation(26, 1);
   FieldEvent_Wait(30);
@@ -1270,10 +1278,12 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   Actor_WalkByAndWait(4, 16, 24);
   Actor_FaceDirection(4, FACING_SOUTH, 0);
   ((struct Actor *)Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30));
+  // "Isaac! Watch out!"
   FieldEvent_ShowMessageThenWait(28, 0, 5);
   Actor_FaceDirectionAndWait(28, FACING_EAST);
   FieldEvent_Wait(10);
   Actor_FaceDirection(4, FACING_WEST, 0);
+  // "He's still alive! If we're going to act, Felix, we have to act now!"
   FieldEvent_ShowMessageThenWait(28, 0, 35);
   Actor_SetAnimation(4, 3);
   ACTOR_SET_MODE_AND_WAIT(28, 3, 20);
@@ -1285,14 +1295,17 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   Actor_FaceDirection(26, FACING_WEST, 0);
   Actor_FaceDirection(27, FACING_WEST, 0);
   Walk(6, 0x102, 30);
+  // "They're going to kill Isaac!"
   FieldEvent_ShowMessageThenWait(6, 0, 5);
   ACTOR_SET_MODE_AND_WAIT(5, 4, 33);
+  // "No, they aren't! I'm not about to let that happen!"
   FieldEvent_ShowMessageThenWait(5, 0, 5);
   ACTOR_SET_MODE_AND_WAIT(7, 3, 20);
   FieldEvent_Wait(10);
   Actor_FaceActor(5, 7, 0);
   Actor_FaceActor(6, 7, 0);
   Actor_FaceActor(7, 5, 0);
+  // "None of us are, Jenna!"
   FieldEvent_ShowMessageThenWait(7, 0, 5);
   Actor_SetAnimation(6, 3);
   Actor_SetAnimation(5, 3);
@@ -1308,8 +1321,10 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Walk(26, 0x107, 30);
+  // "Felix? What's going on?"
   FieldEvent_ShowMessageThenWait(26, 0, 5);
   Walk(27, 0x107, 30);
+  // "Be grateful! We just did you a favor!"
   FieldEvent_ShowMessageThenWait(27, 0, 5);
   Actor_FaceDirectionAndWait(26, FACING_NORTH);
   FieldEvent_Wait(10);
@@ -1322,17 +1337,23 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   Actor_FaceDirectionAndWait(26, FACING_NORTH);
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(26, FACING_WEST);
+  // "I understand that when Venus was lit, the ground shook so fiercely..."
   FieldEvent_ShowMessageThenWait(26, 0, 5);
   ACTOR_SET_MODE_AND_WAIT(27, 4, 33);
+  // "You haven't lit the beacon yet, have you? And after all we've done..."
   FieldEvent_ShowMessageThenWait(27, 0, 5);
   Actor_RunRepeatedMotion(28, 2);
   FieldEvent_Wait(5);
+  // "We're going to light the beacon right now..."
   FieldEvent_ShowMessageThenWait(28, 0, 5);
   ((struct Actor *)Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30));
+  // "If that's true, then you'd better go do it!"
   FieldEvent_ShowMessageThenWait(26, 0, 5);
   ACTOR_SET_MODE_AND_WAIT(6, 4, 33);
+  // "But we're not leaving Isaac behind."
   FieldEvent_ShowMessageThenWait(6, 0, 5);
   ((struct Actor *)Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SCOWL, 30));
+  // "Oh, great... Are you going to betray us now?"
   Event_OpenMessage(27, 0);
   Actor_FaceActor(28, 4, 0);
   Actor_FaceActor(5, 4, 0);

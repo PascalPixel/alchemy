@@ -108,9 +108,12 @@ void LemuriaDock_AskSettingOff(void) {
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   }
   Event_SetMessageId((s32)MsgAreWeSetting);
+  // "Felix, are we setting off now?" Yes: "Then, to sea we go!" No: "Please
+  // don't rush on my account. Let's enjoy..."
   Event_OpenMessage(8, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(15);
+    // "Then, to sea we go!"
     Event_ShowMessage(8, 0);
     Event_Wait(5);
     Actor_Jump(8, 4, 0);
@@ -133,6 +136,7 @@ void LemuriaDock_AskSettingOff(void) {
   } else {
     Event_Wait(20);
     gFieldWork->message++;
+    // "Please don't rush on my account. Let's enjoy our stay."
     Event_ShowMessage(8, 0);
   }
 }

@@ -118,6 +118,7 @@ s32 YallamInteriors_MindReadSunshine(void) {
   } else {
     Event_SetMessageId((s32)MsgYallamInteriors33);
   }
+  // "If it's not raining, I can't get into Taopo Swamp. And if I can't..."
   Event_ShowMessage(14, 0);
   Event_End();
   return 0;
@@ -132,6 +133,7 @@ s32 YallamInteriors_MindReadSunshinesWife(void) {
   } else {
     Event_SetMessageId((s32)MsgYallamInteriors34);
   }
+  // "Sunshine's a pretty stubborn guy. If he says he isn't going to work..."
   Event_ShowMessage(15, 0);
   Event_End();
   return 0;
@@ -146,6 +148,7 @@ s32 YallamInteriors_MindReadSunshinesChild(void) {
   } else {
     Event_SetMessageId((s32)MsgYallamInteriors35);
   }
+  // "Everyone thinks Dad is stubborn, but he's not... He's a true artist..."
   Event_ShowMessage(16, 0);
   Event_End();
   return 0;
@@ -162,6 +165,7 @@ s32 YallamInteriors_TalkToSunshinesChild(void) {
   } else {
     Event_SetMessageId((s32)MsgYallamInteriors32);
   }
+  // "Dad's not doing any work right now, but I'm making some basic things..."
   Event_ShowMessage(16, 0);
   Event_End();
   return 0;
@@ -171,6 +175,7 @@ s32 YallamInteriors_MindReadWeaponMerchant(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgYallamInteriors22);
+  // "If Sunshine set his mind to it, he could make a lot of money! What a..."
   Event_ShowMessage(10, 0);
   Event_End();
   return 0;
@@ -180,6 +185,7 @@ s32 YallamInteriors_MindReadArmorMerchant(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgYallamInteriors24);
+  // "I shouldn't tell him how boring all this stuff is. I wish Sunshine..."
   Event_ShowMessage(11, 0);
   Event_End();
   return 0;
@@ -189,6 +195,7 @@ s32 YallamInteriors_MindReadItemMerchant(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgYallamInteriors26);
+  // "What does Sunshine want in Taopo Swamp? There's nothing up there but..."
   Event_ShowMessage(12, 0);
   Event_End();
   return 0;

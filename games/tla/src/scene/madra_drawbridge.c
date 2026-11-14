@@ -59,12 +59,16 @@ void MadraDrawbridge_AskGoingToOsenia(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgMadraGoingToOsenia);
+  // "You goin' to Osenia?" Yes: "You'll have to head back to town and get..."
+  // No: "Then get lost, pal. These parts can be dangerous..."
   Event_OpenMessage(ACTOR_EAST_GUARD, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, 3);
+    // "You'll have to head back to town and get a permit! Just go to the..."
     Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 2);
   } else {
     (gFieldWork->message)++;
+    // "Then get lost, pal. These parts can be dangerous..."
     Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 2);
   }
   Event_End();
@@ -119,8 +123,10 @@ void MadraDrawbridge_GreetPermittedParty(void) {
   FieldCamera_MoveTo(164, CAMERA_KEEP, 260, 1);
   FieldCamera_WaitForArrival();
   Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, 3);
+  // "Yeah, we heard about you already. If you're going to Osenia, you'd..."
   Event_ShowMessage(ACTOR_EAST_GUARD, 0);
   Actor_SetAnimationAndWait(ACTOR_WEST_GUARD, 3);
+  // "Alhafra is up along the northeast of Osenia... You'll see it eventually."
   Event_ShowMessage(ACTOR_WEST_GUARD, 0);
   Event_SetFlag(0x916);
   Event_End();

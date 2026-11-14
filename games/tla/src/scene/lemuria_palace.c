@@ -380,6 +380,7 @@ s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
     r5_1 = party + 532;
   }
   Actor_FaceActor(16, FIELD_AT(r5_1, s32, 0), 0);
+  // "You are Lord Felix, correct?"
   Event_OpenMessage(16, 0);
   r7_1 = Event_AskYesNoWithActorAnimation(4, 0);
   if (r7_1 == 0)

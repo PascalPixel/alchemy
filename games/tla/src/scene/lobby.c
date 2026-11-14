@@ -189,6 +189,7 @@ s32 LinkLobby_PromptToParticipate(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgIfYouWantToParticipate);
+  // "If you want to participate, please step into the circle!"
   Event_OpenMessage(8, 0);
   wait(5);
   Event_SetFlag(FLAG_SCENE_TEMP_00);
@@ -205,6 +206,7 @@ s32 LinkLobby_ReportDisconnection(void) {
   Event_ResolvePendingActions(0);
   work->raisedTrigger = 0;
   Event_SetMessageId((s32)MsgTheLinkWas);
+  // "The link was disconnected."
   Event_OpenMessage(8, 0);
   Event_ClearFlag(FLAG_SCENE_TEMP_05);
   Event_End();
@@ -855,6 +857,7 @@ s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
   Event_ResolvePendingActions(0);
   Actor_FaceActor(actorId, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgChooseYourParameters);
+  // "Choose your parameters here."
   Event_ShowMessage(actorId, 0);
   window = Window_Create(0, 0, 6, 4, 2);
   choice = 0;
@@ -970,6 +973,7 @@ void LinkLobby_TakeSongRequest(s32 actor) {
   Event_ResolvePendingActions(0);
   Actor_FaceActor(actor, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgYouHaveA);
+  // "You have a song request?"
   Event_ShowMessage(actor, 0);
   song = 0;
   all = 0;
@@ -1022,6 +1026,7 @@ void LinkLobby_TakeSongRequest(s32 actor) {
   do {
     Event_SetMessageId((s32)MsgComeBackWhen);
   } while (0);
+  // "Come back when you're ready to rock!"
   Event_ShowMessage(actor, 0);
   wait(10);
   Event_End();
@@ -1182,6 +1187,7 @@ s32 LinkLobby_ReportMonsterRecord(s32 id) {
   } else {
     Event_SetMessageId((s32)MsgICanTWaitTo);
   }
+  // "I can't wait to see how many Monster Battles you win. I'll be..."
   Event_OpenMessage(id, 0);
   Event_End();
 }

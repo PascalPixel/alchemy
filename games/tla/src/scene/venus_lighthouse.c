@@ -725,29 +725,36 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(5, 2);
   FieldEvent_Wait(10);
+  // "Are you sure we should be leaving like this?"
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
+  // "Once we go down those stairs, we can't get back into the lighthouse."
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(8, 3);
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(5, 2);
   FieldEvent_Wait(10);
+  // "Maybe I should have stopped my brother..."
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Jenna, is something troubling you?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(5, FACING_NORTHEAST, 0);
   FieldEvent_Wait(30);
+  // "I just..."
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "What is it? What's wrong?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(5, 3);
   FieldEvent_Wait(10);
+  // "I have a bad feeling... Like something terrible is going to happen."
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(30);
   Event_PlaySound(SE_KOLIMA_BRIDGE_POST);
@@ -761,6 +768,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(9, 4);
+  // "How unlike you, Jenna."
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   FieldActor_StartRepeatedMotion(5, 2);
@@ -768,12 +776,14 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(20);
   Actor_FaceEachOther(5, 8, 40);
   FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "Surprised to see me?"
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   Actor_FaceDirection(8, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
   FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "A-Alex... Were you listening?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
@@ -784,6 +794,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(30);
   Actor_FaceDirection(9, FACING_NORTH, 0);
   FieldEvent_Wait(30);
+  // "Where's Felix? Why isn't he here with you?"
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(5, 2);
@@ -792,51 +803,62 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldActor_WatchAndSetScript(8, 5);
   Actor_WalkByAndWait(5, 0, -32);
   FieldEvent_Wait(10);
+  // "My brother? He left us."
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
   Actor_WalkByAndWait(9, -8, -8);
+  // "What can Felix possibly be thinking?"
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(8, 2);
   FieldEvent_Wait(10);
   Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
+  // "He was worried about Sheba. He went to check on her."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceDirection(9, FACING_NORTHEAST, 0);
   FieldEvent_Wait(30);
+  // "He was supposed to be leading you out of here! I thought you would..."
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Why are you still here?"
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "We tried to stop Felix from going back up to the aerie."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Actor_FaceDirection(9, FACING_EAST_NORTHEAST, 0);
   FieldEvent_Wait(30);
+  // "How like him. Once Felix gets an idea into his head, he rarely..."
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(20);
   FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
+  // "Alex, what were you talking about just now?"
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
   Actor_FaceDirection(5, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(30);
+  // "What did you mean when you said... "How unlike you"?"
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_Wait(10);
+  // "I was merely surprised to hear you expressing such concern, Jenna."
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(9, 4);
+  // "Nevertheless, I'm impressed Felix went back..."
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(5, 4);
@@ -845,13 +867,16 @@ void VenusLighthouse_DoubtLeaving(void) {
   Actor_WalkByAndWait(5, 0, 16);
   Actor_FaceDirection(5, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(10);
+  // "Don't change the subject, Alex! What did you mean!?"
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "Are you saying that I'm insensitive!?"
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_Wait(10);
+  // "If that's what you heard, then I must have misspoken. Accept my..."
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(9, 7);
@@ -859,11 +884,13 @@ void VenusLighthouse_DoubtLeaving(void) {
   Actor_FaceDirection(8, FACING_WEST_NORTHWEST, 0);
   FieldEvent_Wait(20);
   FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "Well, Jenna, I think Alex has said his piece on the matter..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(5, FACING_EAST_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(5, 4);
+  // "I'm not sure he has, Kraden."
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(5, FACING_SOUTH, 0);
@@ -871,22 +898,27 @@ void VenusLighthouse_DoubtLeaving(void) {
   Actor_WalkByAndWait(5, 0, 16);
   Actor_FaceDirection(5, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(10);
+  // "Who do you think you are, talking to me like that!?"
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(9, 4);
+  // "I retract my statement, my dear. Forget all about it, Jenna."
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_Wait(10);
+  // "So tell me about this "feeling," Jenna..."
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(5, 3);
   FieldEvent_Wait(10);
+  // "I'm just... I'm not sure we should be leaving Venus Lighthouse yet..."
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(8, 2);
   FieldEvent_Wait(10);
+  // "What are you saying?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(5, FACING_EAST, 0);
@@ -895,6 +927,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_Wait(10);
+  // "You can't really mean to remain here..."
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(5, FACING_SOUTH_SOUTHEAST, 0);
@@ -902,39 +935,49 @@ void VenusLighthouse_DoubtLeaving(void) {
   Actor_SetAnimationAndWait(5, 3);
   FieldEvent_Wait(30);
   FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "Alex is right. It's far too dangerous, Jenna. We would only hinder..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(5, FACING_EAST, 0);
   FieldEvent_Wait(20);
+  // "The others? Did Isaac follow us to the lighthouse?"
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "It would seem so."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(5, 2);
   FieldEvent_Wait(10);
+  // "He must be trying to stop Saturos and Menardi!"
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "If my brother goes back and finds Isaac, they're going to end up..."
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(9, 4);
+  // "If the Venus Lighthouse has not yet been lit, yes. They will fight."
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  // "Felix is a terribly rash young man, is he not?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "Why are boys such fools?"
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(8, FACING_NORTHEAST, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(8, 3);
   FieldEvent_Wait(10);
+  // "He may be rash, but Felix is no fool. His good qualities outweigh..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(5, 2);
   FieldEvent_Wait(10);
+  // "That's why I think Isaac would understand if we just talked to him."
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(8, FACING_WEST, 0);
@@ -945,6 +988,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(5, 3);
   FieldEvent_Wait(20);
+  // "Why didn't I think of this before now?"
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(9, FACING_NORTHEAST, 0);
@@ -955,51 +999,62 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(20);
   Actor_FaceDirection(5, FACING_EAST_SOUTHEAST, 0);
   FieldEvent_Wait(30);
+  // "Please... Can't we go back up and talk to Isaac?"
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(9, 4);
+  // "I'm afraid that's not possible."
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceDirection(5, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
+  // "Alex, why?"
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(9, 4);
+  // "He is an enemy."
   Event_ShowMessage(9, 0);
   Actor_RunRepeatedMotion(5, 2);
   FieldEvent_Wait(20);
+  // "Isaac? An enemy?"
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(9, FACING_EAST_NORTHEAST, 0);
   FieldEvent_Wait(25);
+  // "Our methods may differ, but you and I ultimately want the same thing..."
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(8, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(8, 3);
   FieldEvent_Wait(10);
+  // "To light the elemental lighthouses..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_Wait(10);
+  // "Isaac and his friends would prevent this from happening."
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "So that makes them enemies?"
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(9, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(9, 3);
   FieldEvent_Wait(10);
+  // "But fear not... They won't be able to defeat Saturos and Menardi."
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   Actor_FaceEachOther(5, 8, 50);
   Actor_FaceDirection(9, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
   FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "So... Felix went back to the top of the lighthouse?"
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(9, 6);
@@ -1008,54 +1063,66 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
+  // "Why do you seem so pleased, Alex?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceDirection(9, FACING_EAST_NORTHEAST, 0);
   FieldEvent_Wait(20);
+  // "Why shouldn't I be? After all, the lighthouse will soon shine..."
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
+  // "Alex, why do you want to see the beacon lit so badly?"
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(30);
+  // "Oh, so it's my turn to answer questions, is it?"
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_Wait(10);
+  // "Once, Alchemy was commonplace throughout this world..."
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(9, FACING_EAST_NORTHEAST, 0);
   FieldEvent_Wait(10);
+  // "With its power, mankind worked wonders across the land..."
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(8, 3);
   FieldEvent_Wait(10);
+  // "The lost age of man..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
+  // "I want to see that world restored once again, and..."
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(5, 3);
   FieldEvent_Wait(10);
+  // "And what, Alex?"
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(9, 4);
+  // "We've spoken long enough already. Let us continue this another time."
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_Wait(10);
+  // "We should leave the lighthouse now, before the beacon is fired..."
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(8, 3);
   FieldEvent_Wait(20);
   Actor_FaceDirection(8, FACING_WEST, 0);
   FieldEvent_Wait(20);
+  // "I concur... Let's meet at the location we agreed on and wait for Felix."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(5, 2);
@@ -1063,6 +1130,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   Actor_FaceDirection(5, FACING_EAST_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  // "All right, Kraden, let's go."
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(5, 3);

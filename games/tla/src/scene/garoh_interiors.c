@@ -447,6 +447,7 @@ void GarohInteriors_WakeAtInn(void) {
   Event_WaitTransitionFrames();
   // "You folks didn't sleep much last night..."
   Event_SetMessageId((s32)MsgGarohInteriors34);
+  // "You folks didn't sleep much last night... You don't look like you..."
   Event_ShowMessageThenWait(ACTOR_INN_ATTENDANT, 0, 10);
   Motion_SetVarCbAndRefresh(ACTOR_INNKEEPER, 2);
   Event_Wait(20);

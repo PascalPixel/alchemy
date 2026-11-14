@@ -115,6 +115,7 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgGooGooGa);
+  // "Goo goo ga ga!"
   Event_ShowMessageAndWait(11, 0);
   Field_StartColorTransition(8, 0x1210);
   BattleEffect_StartArcEffect();
@@ -272,6 +273,7 @@ void EasternAlhafraShip_MayorArrives(void) {
   map->maxX = 0x4000000;
   map->minZ = 0;
   map->maxZ = 0x4000000;
+  // "The mayor of Madra? Here?"
   Event_ShowMessageThenWait(8, 0, 10);
   Actor_WalkToAndWait(4, 456, 408);
   FieldActor_LaunchFromLeader(25, 0, -16, 0x4000);
@@ -295,49 +297,65 @@ void EasternAlhafraShip_MayorArrives(void) {
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(8, 2);
   Event_Wait(10);
+  // "You're certain?"
   Event_ShowMessageThenWait(8, 0, 10);
   Motion_SetModeAndWaitAnimation(9, 3);
   Event_Wait(20);
   Actor_FaceDirection(8, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(30);
+  // "How did he know we came to Alhafra?"
   Event_ShowMessageThenWait(8, 0, 10);
   Actor_Jump(9, 6, 15);
   Actor_Jump(9, 6, 23);
+  // "He knew we needed a ship, and he knew we went east. It seems pretty..."
   Event_ShowMessageThenWait(9, 0, 10);
   Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_FaceDirection(8, FACING_SOUTH, 0);
   Event_Wait(20);
+  // "Arr... Well, yeah... When you put it that way, it does make sense..."
   Event_ShowMessageThenWait(8, 0, 10);
   Motion_SetModeAndWaitAnimation(9, 3);
   Event_Wait(10);
+  // "He was looking to find the mayor of Alhafra..."
   Event_ShowMessageThenWait(9, 0, 10);
   Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "He must be hoping the mayor will tell him where we are..."
   Event_ShowMessageThenWait(8, 0, 10);
   Motion_SetVarCbAndRefresh(9, 2);
   Event_Wait(10);
+  // "He'll probably tell the Alhafrans we're pirates, too, huh?"
   Event_ShowMessageThenWait(9, 0, 10);
   Actor_FaceDirection(8, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(30);
+  // "Pirates!? That seems a little unfair!"
   Event_ShowMessageThenWait(8, 0, 10);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "What do you mean? We...are pirates, aren't we? I mean, we've taken..."
   Event_ShowMessageThenWait(9, 0, 10);
   Actor_FaceDirection(8, FACING_SOUTH, 0);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(8, 2);
   Event_Wait(10);
+  // "That's only because everyone in Champa would starve otherwise! We..."
   Event_ShowMessageThenWait(8, 0, 10);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "Ah..."
   Event_ShowMessageThenWait(9, 0, 10);
   Motion_SetModeAndWaitAnimation(8, 3);
   Event_Wait(10);
+  // "And even then, it's never a lot."
   Event_ShowMessageThenWait(8, 0, 10);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  // "Wha-What's not?"
   Event_ShowMessageThenWait(9, 0, 10);
+  // "The stuff we take. We never take too much from any one town."
   Event_ShowMessageThenWait(8, 0, 10);
   Motion_SetModeAndWaitAnimation(9, 3);
   Event_Wait(10);
+  // "Yeah, I guess not..."
   Event_ShowMessageThenWait(9, 0, 10);
   Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "And why do you think that is?"
   Event_ShowMessageThenWait(8, 0, 10);
   Actor_StartRepeatedMotion(9, 3);
   Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -349,19 +367,25 @@ void EasternAlhafraShip_MayorArrives(void) {
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_ArmCallback(9, 0xd000, 0);
   Event_Wait(30);
+  // "Er... Why?"
   Event_ShowMessageThenWait(9, 0, 10);
   Motion_SetModeAndWaitAnimation(8, 3);
   Event_Wait(10);
+  // "Because you never can tell how these wealthy towns will react. It's..."
   Event_ShowMessageThenWait(8, 0, 10);
   Motion_SetVarCbAndRefresh(9, 2);
   Event_Wait(10);
+  // "Hey, yeah! Which is why we didn't steal anything from Alhafra..."
   Event_ShowMessageThenWait(9, 0, 10);
   Motion_SetModeAndWaitAnimation(8, 3);
   Event_Wait(10);
+  // "Right! That's why we avoid the risky towns and just take what we..."
   Event_ShowMessageThenWait(8, 0, 10);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "See? That's why you're our captain, Briggs! You've got brains coming..."
   Event_ShowMessageThenWait(9, 0, 10);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
+  // "Hmph! There's nothing brainy about that!"
   Event_ShowMessageThenWait(5, 0, 10);
   Actor_FaceDirection(25, FACING_SOUTHEAST, 0);
   Actor_ArmCallback(4, FACING_EAST, 0);
@@ -376,6 +400,7 @@ void EasternAlhafraShip_MayorArrives(void) {
   Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_Wait(20);
+  // "Did you hear that? It sounded like a girl! Who's out there!?"
   Event_ShowMessageThenWait(8, 0, 10);
   Actor_SetSpeed(8, 1.5);
   Actor_SetSpeed(9, 1.5);
@@ -392,14 +417,18 @@ void EasternAlhafraShip_MayorArrives(void) {
   Event_Wait(20);
   Actor_Jump(9, 6, 15);
   Actor_Jump(9, 6, 23);
+  // "What do you think you're doing?"
   Event_ShowMessageThenWait(9, 0, 10);
   Motion_SetModeAndWaitAnimation(6, 3);
   Event_Wait(20);
+  // "Don't you know that someone has been falsely imprisoned for your crimes?"
   Event_ShowMessageThenWait(6, 0, 10);
   Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Er... What's your point?"
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 8, 0, 10);
   Motion_SetVarCbAndRefresh(5, 2);
   Event_Wait(10);
+  // "You have to come with us and attest to that man's innocence!"
   Event_ShowMessageThenWait(5, 0, 10);
   Actor_ArmCallback(8, FACING_EAST, 0);
   Actor_FaceDirection(9, FACING_WEST, 0);
@@ -407,6 +436,7 @@ void EasternAlhafraShip_MayorArrives(void) {
   Actor_FaceDirection(8, FACING_NORTH, 0);
   Actor_ArmCallback(9, 0xb000, 0);
   Event_Wait(20);
+  // "And...why would I want to do something like that?"
   Event_ShowMessageThenWait(8, 0, 10);
   Actor_FaceDirection(6, FACING_WEST, 0);
   Event_Wait(30);
@@ -424,6 +454,7 @@ void EasternAlhafraShip_MayorArrives(void) {
   Actor_ArmCallback(25, FACING_SOUTHEAST, 0);
   Event_Wait(20);
   Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "Oh-ho! I was hoping we could avoid any ugliness, but you leave us no..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   Actor_FaceDirection(25, FACING_SOUTH, 0);
   Actor_FaceDirection(5, FACING_SOUTH, 0);
@@ -431,10 +462,12 @@ void EasternAlhafraShip_MayorArrives(void) {
   Event_Wait(20);
   Actor_Jump(25, 6, 15);
   Actor_Jump(25, 6, 23);
+  // "We'll bring you in against your will if we must, but either way..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
   Event_Wait(10);
   Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 50);
+  // "Isn't that right, Felix?"
   Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | 25, 0);
   result = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (result == 0) {
@@ -550,15 +583,19 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(5, 3);
   Event_Wait(10);
+  // "Well, that takes care of that!"
   Event_ShowMessageThenWait(5, 0, 10);
   Motion_SetModeAndWaitAnimation(6, 3);
   Event_Wait(10);
+  // "And I'm willing to bet everyone Briggs has been harassing will be..."
   Event_ShowMessageThenWait(6, 0, 10);
   Motion_SetModeAndWaitAnimation(25, 3);
   Event_Wait(10);
+  // "This should set everyone in Indra at ease... They all seemed to fear..."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   Motion_SetVarCbAndRefresh(8, 2);
   Event_Wait(10);
+  // "We lost..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 8, 0, 10);
   Actor_FaceDirection(4, 0xbfff, 0);
   Actor_ArmCallback(5, 0xc001, 0);
@@ -567,15 +604,19 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_ArmCallback(5, FACING_SOUTH, 0);
   Event_Wait(40);
   Motion_SetModeAndWaitAnimation(8, 4);
+  // "Even pirates have honor... I'll go quietly. I won't make a scene..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 8, 0, 10);
   Motion_SetVarCbAndRefresh(8, 2);
   Event_Wait(10);
+  // "Go on... Hand us over to Madra or Alhafra or whoever..."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 8, 0, 10);
   Motion_SetVarCbAndRefresh(5, 2);
   Event_Wait(10);
+  // "Good... First off, you can tell the Madrans that the man called..."
   Event_ShowMessageThenWait(5, 0, 10);
   Motion_SetModeAndWaitAnimation(8, 3);
   Event_Wait(10);
+  // "Fine. So, what, I just have to say that Piers isn't one of my men?"
   Event_OpenMessage(8, 0);
   result6 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (result6 == 0) {

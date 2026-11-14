@@ -910,6 +910,7 @@ void JupiterLighthouse_FightKarstAndAgatio(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetMessageId((s32)MsgBlank5);
+  // "Felix!"
   FieldEvent_ShowMessageThenWait(5, 0, 0);
   FieldActor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldActor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -947,18 +948,23 @@ void JupiterLighthouse_FightKarstAndAgatio(void) {
   EventCamera_FollowActor(4, 1);
   Actor_WalkToAndWait(5, 552, 344);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "I thought you were taking too long, so I came to check on you...."
   FieldEvent_ShowMessageThenWait(5, 0, 0);
   Actor_FaceDirectionAndWait(7, FACING_SOUTH);
   FieldEvent_Wait(10);
+  // "They say they don't need us anymore..."
   FieldEvent_ShowMessageThenWait(7, 0, 0);
   Actor_FaceDirectionAndWait(28, FACING_SOUTHWEST);
   Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "Agatio! Felix's sister isn't supposed to be here..."
   FieldEvent_ShowMessageThenWait(28, 0, 0);
+  // "What do you want me to do? We can't just leave now! We have to..."
   FieldEvent_ShowMessageThenWait(27, 0, 0);
   Actor_FaceDirection(28, slow, 0);
   Actor_FaceDirectionAndWait(27, slow);
   Actor_FaceDirectionAndWait(5, fast);
   FieldEvent_Wait(10);
+  // "Don't worry, Felix! I'm here to help!"
   Event_ShowMessage(5, 0);
   Actor_WalkBy(5, -8, -24);
   Actor_FaceDirectionAndWait(4, slow);
@@ -1022,6 +1028,7 @@ void JupiterLighthouse_AfterTheFight(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetMessageId((s32)MsgBlank6);
+  // "Jenna!"
   FieldEvent_ShowMessageThenWait(6, 0, 0);
   Actor_SetAnimation(27, 9);
   Actor_SetAnimation(28, 8);
@@ -1057,18 +1064,23 @@ void JupiterLighthouse_AfterTheFight(void) {
   EventCamera_FollowActor(4, 1);
   Actor_WalkToAndWait(6, 552, 344);
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "I got the feeling something was wrong, so I rushed up here. Just in..."
   FieldEvent_ShowMessageThenWait(6, 0, 0);
   Actor_RunRepeatedMotion(5, 2);
   FieldEvent_Wait(5);
+  // "Thank you, Sheba! I'm not looking forward to fighting, but I'm glad..."
   FieldEvent_ShowMessageThenWait(5, 0, 0);
   ((void *)Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_WINCE, 30));
+  // "Another one? Agatio, we're rapidly being outnumbered!"
   FieldEvent_ShowMessageThenWait(28, 0, 0);
   Actor_RunRepeatedMotion(27, 2);
   FieldEvent_Wait(5);
+  // "It's too late to flee now! We have to keep fighting!"
   FieldEvent_ShowMessageThenWait(27, 0, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(6, north);
   FieldEvent_Wait(10);
+  // "Isaac and the others are safe! Now let's take care of these two rats!"
   FieldEvent_ShowMessageThenWait(6, 0, 0);
   Actor_WalkBy(6, 0, -24);
   FieldActor_WaitForMoveById(6);
@@ -1215,9 +1227,11 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   Actor_SetAnimation(28, 8);
   Actor_RunRepeatedMotion(28, 2);
   FieldEvent_Wait(5);
+  // "Isaac wasn't the only surprise. They were all far more powerful than..."
   FieldEvent_ShowMessageThenWait(28, 0, 0);
   Actor_FaceDirectionAndWait(27, FACING_NORTHEAST);
   FieldActor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "Don't worry, Karst! We'll win in the end..."
   FieldEvent_ShowMessageThenWait(27, 0, 0);
   Actor_RunRepeatedMotion(4, 2);
   FieldEvent_Wait(5);
@@ -1227,11 +1241,15 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   FieldActor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldActor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_RunRepeatedMotion(28, 2);
+  // "This one moved... I can't believe they're still alive! The pests!"
   FieldEvent_ShowMessageThenWait(28, 0, 0);
   ACTOR_SET_MODE_AND_WAIT(27, 4, 33);
+  // "If we stay here much longer, Isaac and the others will come! We..."
   FieldEvent_ShowMessageThenWait(27, 0, 0);
   FieldActor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "I know... But treason deserves death! We must finish them!"
   FieldEvent_ShowMessageThenWait(28, 0, 0);
+  // "There's no time for petty grudges!"
   FieldEvent_ShowMessageThenWait(29, 0, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Actor_FaceDirection(27, FACING_SOUTH, 0);
@@ -1242,21 +1260,28 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   FieldEvent_Wait(10);
   Event_PlaySound(MUS_039);
   FieldActor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "Alex! You..."
   FieldEvent_ShowMessageThenWait(27, 0, 0);
   ACTOR_SET_MODE_AND_WAIT(29, 4, 33);
+  // "You no longer consider me a friend? I do not care."
   FieldEvent_ShowMessageThenWait(29, 0, 0);
   FieldActor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "It goes beyond that, Alex! You've betrayed us, and treason deserves..."
   FieldEvent_ShowMessageThenWait(28, 0, 0);
   Actor_ShowEmote(29, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "Yes, I heard you the first time. But shouldn't you heal yourselves..."
   FieldEvent_ShowMessageThenWait(29, 0, 0);
   Actor_SetAnimation(28, 1);
   Actor_FaceDirection(28, FACING_SOUTHWEST, 0);
   Actor_FaceDirectionAndWait(27, FACING_NORTHEAST);
   FieldEvent_Wait(10);
   ACTOR_SET_MODE_AND_WAIT(29, 4, 33);
+  // "After fighting both Isaac and Felix, you're in no condition to fight me."
   FieldEvent_ShowMessageThenWait(29, 0, 0);
   Actor_FaceDirectionAndWait(29, FACING_EAST);
+  // "And if Isaac and the others come, what chance will you have?"
   FieldEvent_ShowMessageThenWait(29, 0, 0);
+  // "What's keeping Felix and the others?"
   FieldEvent_ShowMessageThenWait(30, 0, 0);
   FieldActor_StartRepeatedMotion(28, 2);
   Actor_RunRepeatedMotion(27, 2);
@@ -1265,19 +1290,24 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   FieldEvent_Wait(5);
   ACTOR_SET_MODE_AND_WAIT(29, 4, 33);
   Actor_FaceDirectionAndWait(29, mid);
+  // "There's no time to talk!"
   FieldEvent_ShowMessageThenWait(29, 0, 0);
   FieldActor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_FaceDirection(28, FACING_SOUTH, 0);
+  // "Then what should we do?"
   FieldEvent_ShowMessageThenWait(28, 0, 0);
   ACTOR_SET_MODE_AND_WAIT(29, 3, 20);
+  // "We take the elevator! With the beacon lit, it should be fully..."
   FieldEvent_ShowMessageThenWait(29, 0, 0);
   Actor_FaceDirectionAndWait(28, FACING_SOUTHWEST);
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(27, FACING_NORTHEAST);
   ACTOR_SET_MODE_AND_WAIT(27, 3, 20);
+  // "We have no choice. Let's go."
   FieldEvent_ShowMessageThenWait(27, 0, 0);
   ACTOR_SET_MODE_AND_WAIT(29, 3, 20);
   FieldEvent_Wait(10);
+  // "Good! You're listening to reason! Now follow me!"
   FieldEvent_ShowMessageThenWait(29, 0, 0);
   Actor_SetAnimation(27, 3);
   ACTOR_SET_MODE_AND_WAIT(28, 3, 20);
@@ -1311,6 +1341,7 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   Actor_Get(28)->priorityFlags |= 32;
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
+  // "Felix! Jenna!"
   FieldEvent_ShowMessageThenWait(30, 0, 0);
   Actor_SetPositionAndFacing(30, px(512), px(328), mid);
   JupiterLighthouse_LiftObjectsInBeam(0);
@@ -1320,6 +1351,7 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   Actor_SetPositionAndFacing(1, px(536), px(384), mid);
   Actor_SetPositionAndFacing(2, px(552), px(368), mid);
   Actor_SetPositionAndFacing(3, px(552), px(352), mid);
+  // "What's happened?"
   FieldEvent_ShowMessageThenWait(0, 0, 0);
   EventCamera_FollowActor(0, 1);
   Actor_WalkTo(0, 536, 336);
@@ -1333,34 +1365,42 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   Actor_FaceDirectionAndWait(30, FACING_SOUTH_SOUTHEAST);
   FieldEvent_Wait(10);
   ACTOR_SET_MODE_AND_WAIT(30, 4, 33);
+  // "It seems they fought with Agatio and Karst..."
   FieldEvent_ShowMessageThenWait(30, 0, 0);
   ACTOR_SET_MODE_AND_WAIT(2, 4, 33);
+  // "I had a really bad feeling after Sheba left. I hate it when I'm right..."
   FieldEvent_ShowMessageThenWait(2, 0, 0);
   Actor_FaceDirectionAndWait(3, FACING_SOUTH);
   FieldEvent_Wait(10);
+  // "Your power of prediction must be even stronger than you'd thought..."
   FieldEvent_ShowMessageThenWait(3, 0, 0);
   Actor_FaceDirectionAndWait(0, fast);
   FieldCamera_MoveTo(320, 96, 360, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
+  // "Blast! They must have taken the elevator to escape!"
   FieldEvent_ShowMessageThenWait(0, 0, 0);
   FieldCamera_MoveTo(512, 96, 352, 1);
   FieldCamera_WaitForArrival();
   JupiterLighthouse_ScrollBeam(0);
   ACTOR_SET_MODE_AND_WAIT(1, 4, 33);
+  // "How could they have done that to Jenna? Those monsters!"
   FieldEvent_ShowMessageThenWait(1, 0, 0);
   Actor_FaceDirectionAndWait(2, fast);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(2, 2);
   FieldEvent_Wait(5);
+  // "Felix tried to help us... They must have attacked him because he..."
   FieldEvent_ShowMessageThenWait(2, 0, 0);
   Actor_ShowEmote(3, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "So, does that mean Felix isn't really our enemy?"
   FieldEvent_ShowMessageThenWait(3, 0, 0);
   Actor_RunRepeatedMotion(4, 2);
   FieldEvent_Wait(5);
   Actor_FaceDirectionAndWait(30, mid);
   Actor_RunRepeatedMotion(30, 2);
   FieldEvent_Wait(5);
+  // "Felix! You're alive!"
   FieldEvent_ShowMessageThenWait(30, 0, 0);
   FieldEvent_Wait(10);
   FieldActor_StartRepeatedMotion(5, 2);
@@ -1370,13 +1410,16 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   Actor_RunRepeatedMotion(6, 2);
   FieldEvent_Wait(30);
   Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
+  // "Mia, he needs healing, quickly! There's still time!"
   FieldEvent_ShowMessageThenWait(0, 0, 0);
   ACTOR_SET_MODE_AND_WAIT(3, 3, 20);
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(1, fast);
+  // "Don't let 'em die! Felix still has a lot of questions to answer..."
   FieldEvent_ShowMessageThenWait(1, 0, 0);
   Actor_FaceDirectionAndWait(30, slow);
   FieldEvent_Wait(10);
+  // "If you save Felix, we'll tell you everything..."
   FieldEvent_ShowMessageThenWait(30, 0, 0);
   Actor_FaceDirectionAndWait(30, mid);
   Actor_WalkByAndWait(3, -48, 0);
@@ -1400,11 +1443,14 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   Actor_RunRepeatedMotion(0, 2);
   Actor_FaceDirectionAndWait(0, fast);
+  // "All right, Felix! We want to know what's going on!"
   FieldEvent_ShowMessageThenWait(0, 0, 0);
   Actor_FaceDirection(30, slow, 0);
   FieldActor_ShowEmote(30, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "It's all quite complicated, Isaac. There are a number of extenuating..."
   FieldEvent_ShowMessageThenWait(30, 0, 0);
   Actor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "What are you talking about, Kraden?"
   FieldEvent_ShowMessageThenWait(1, 0, 0);
   Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   Actor_WalkTo(2, 552, 320);
@@ -1412,14 +1458,17 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   Actor_FaceDirection(1, mid, 0);
   ACTOR_SET_MODE_AND_WAIT(2, 4, 33);
   Actor_RunRepeatedMotion(2, 2);
+  // "Look, I don't think any of us are in any shape for another fight..."
   FieldEvent_ShowMessageThenWait(2, 0, 0);
   Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
   Actor_RunRepeatedMotion(0, 2);
   FieldEvent_Wait(5);
+  // "What do you mean, Ivan?"
   FieldEvent_ShowMessageThenWait(0, 0, 0);
   Actor_FaceDirectionAndWait(2, FACING_SOUTHWEST);
   Actor_RunRepeatedMotion(2, 2);
   FieldEvent_Wait(5);
+  // "I'm just saying we should get ourselves back to Contigo and sort..."
   FieldEvent_ShowMessageThenWait(2, 0, 0);
   Actor_FaceEachOther(5, 6, 0);
   Actor_FaceEachOther(7, 4, 0);
@@ -1428,6 +1477,7 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   ACTOR_SET_MODE_AND_WAIT(30, 3, 20);
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(30, FACING_EAST);
+  // "That's a sound plan, Ivan... I fully agree."
   FieldEvent_ShowMessageThenWait(30, 0, 0);
   Actor_FaceDirection(4, FACING_SOUTH, 0);
   Actor_FaceDirection(5, FACING_SOUTH, 0);
@@ -1684,18 +1734,23 @@ void JupiterLighthouse_WeBeatThem(void) {
   Event_WaitTransitionFrames();
   FieldEvent_SetMessageId((s32)MsgWeDidItWe);
   SET_MODE_AND_WAIT(7, 4, 33);
+  // "We did it... We beat them..."
   FieldEvent_ShowMessageThenWait(7, 0, 0);
   SET_MODE_AND_WAIT(5, 3, 20);
   FieldEvent_Wait(10);
+  // "Barely..."
   FieldEvent_ShowMessageThenWait(5, 0, 0);
   Actor_FaceDirectionAndWait(6, FACING_SOUTHWEST);
   FieldEvent_Wait(10);
+  // "What should we do with them?"
   FieldEvent_ShowMessageThenWait(6, 0, 0);
   Actor_RunRepeatedMotion(27, 2);
   FieldEvent_Wait(5);
+  // "Finish us!"
   FieldEvent_ShowMessageThenWait(27, 0, 0);
   Actor_RunRepeatedMotion(28, 2);
   FieldEvent_Wait(5);
+  // "But think: what happens to your parents if neither we nor Saturos..."
   FieldEvent_ShowMessageThenWait(28, 0, 0);
   Actor_FaceDirection(4, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(5, FACING_WEST);
@@ -1704,9 +1759,11 @@ void JupiterLighthouse_WeBeatThem(void) {
   Actor_FaceDirectionAndWait(5, fast);
   FieldEvent_Wait(20);
   SET_MODE_AND_WAIT(5, 4, 33);
+  // "Are you saying your people will kill our parents if you don't return..."
   FieldEvent_ShowMessageThenWait(5, 0, 0);
   Actor_RunRepeatedMotion(27, 2);
   FieldEvent_Wait(5);
+  // "Well then, I suppose you'd better finish us off, like I said."
   FieldEvent_ShowMessageThenWait(27, 0, 0);
   Actor_FaceDirection(4, FACING_NORTHEAST, 0);
   Actor_FaceDirection(7, FACING_SOUTHWEST, 0);
@@ -1714,6 +1771,7 @@ void JupiterLighthouse_WeBeatThem(void) {
   Actor_FaceDirectionAndWait(6, FACING_SOUTHWEST);
   FieldEvent_Wait(30);
   Actor_RunRepeatedMotion(28, 2);
+  // "What's the matter? Are you going to do it or not?"
   Event_OpenMessage(28, 0);
   Actor_FaceDirection(6, FACING_SOUTHWEST, 0);
   Actor_FaceDirectionAndWait(5, FACING_WEST);

@@ -147,26 +147,32 @@ void MercuryLighthouse_HearVoices(void) {
   Event_Wait(40);
   FieldPsynergy_StartMindReadWave(13, 14);
   Event_SetMessageId(MsgImilVoicesDisbeliefReply);
+  // "You... You can't be!"
   Event_ShowMessage(3, 0);
   FieldPsynergy_StopMindReadWave();
   Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_Jump(8, 4, 10);
+  // "Hey! I know that voice! It's Mia, I just know it! Mia!!!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 8, 0);
   Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(11, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(12, FACING_NORTHWEST + FACING_STEP, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
+  // "It's you!"
   Event_ShowMessage(3, 0);
   FieldPsynergy_StopMindReadWave();
   Actor_SetAnimation(9, 3);
+  // "Of course it's us! We can hear you, Mia! You're all right! I'm so happy!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
   Actor_FaceDirectionAndWait(12, FACING_EAST);
+  // "Who are those two kids talking to?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 12, 0);
   Actor_FaceDirectionAndWait(11, FACING_WEST);
   Actor_SetAnimation(11, 4);
+  // "I don't know. They've been standing here telling everyone to leave..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 11, 0);
   actor = Actor_GetById(11);
   *((u8 *)actor + 98) = ((Random16() * 80) >> 16) + 40;
@@ -182,39 +188,54 @@ void MercuryLighthouse_HearVoices(void) {
   *((u8 *)actor + 99) = 2;
   actor->update = (void (*)(void))MercuryLighthouse_LookAround;
   FieldPsynergy_StartMindReadWave(13, 14);
+  // "How is it that we can hear you?"
   Event_ShowMessage(3, 0);
   FieldPsynergy_StopMindReadWave();
   Actor_SetAnimation(8, 4);
+  // "I don't know, but he told us we'd be able to talk to you if we came..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 8, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
+  // "He? Who's "he"?"
   Event_ShowMessage(3, 0);
   FieldPsynergy_StopMindReadWave();
+  // "I don't know... We were sleeping, and he came to us in a dream... He..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
+  // "The lighthouse? Why?"
   Event_ShowMessage(3, 0);
   FieldPsynergy_StopMindReadWave();
+  // "He said that we have to deliver a message... He was too busy to do..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 8, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
+  // "What message?"
   Event_ShowMessage(3, 0);
   FieldPsynergy_StopMindReadWave();
+  // "We have to warn everyone to stay clear of the lighthouses!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
+  // "What's going to happen?"
   Event_ShowMessage(3, 0);
   FieldPsynergy_StopMindReadWave();
   Actor_SetAnimationAndWait(8, 3);
+  // "I don't know, but he told us to warn people away from Mt. Aleph as well!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 8, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
+  // "But who is "he"!? You still haven't told us!!!"
   Event_ShowMessage(1, 0);
   FieldPsynergy_StopMindReadWave();
   Actor_Jump(9, 2, 0);
   FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
+  // "You're a meanie! I don't tell meanies anything!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
+  // "Don't pay any attention to him... It's me, Mia... Can you tell me..."
   Event_ShowMessage(3, 0);
   FieldPsynergy_StopMindReadWave();
   Actor_SetAnimationAndWait(8, 3);
+  // "I told you, I don't know, but he looked like a big rock... with a..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 8, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
+  // "The... The Wise One!"
   Event_ShowMessage(6, 0);
   FieldPsynergy_StopMindReadWave();
   Event_Wait(20);

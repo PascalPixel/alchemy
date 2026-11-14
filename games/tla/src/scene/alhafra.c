@@ -194,15 +194,18 @@ void Alhafra_FreezePuddle(s32 a0, s32 a1) {
 
 void Alhafra_SailorToldToWork(void) {
   Event_SetMessageId((s32)MsgAlhafra50);
+  // "What does a sailor like me know about building houses, anyway?"
   FieldEvent_ShowMessageThenWait(24, 0, 10);
   Actor_ArmCallback(19, -256, 0);
   Event_Wait(10);
   Actor_ShowEmoteById(19, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "Hey! You there! Sailor boy! Get back to work!"
   FieldEvent_ShowMessageThenWait(19, 0, 10);
   FieldActor_StartRepeatedMotion(24, 3);
   FieldEffect_SetAttached(24, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Actor_FaceDirection(19, FACING_WEST, 0);
+  // "Hey! Give me a break! I'm on it!"
   FieldEvent_ShowMessageThenWait(24, 0, 0);
 }
 
@@ -215,11 +218,14 @@ void Alhafra_GiveBreadToHungryBoy(void) {
   Event_Wait(10);
   Actor_FaceActorById(ACTOR_HUNGRY_BOY, gMainRoutineWork.currentOwner, 0);
   Event_Wait(10);
+  // "Thanks, mister."
   Event_ShowMessageThenWait(ACTOR_HUNGRY_BOY, 0, 10);
+  // "The kid ate the bread."
   Event_ShowMessageThenWait(-1, 0, 10);
   Actor_SetModeById(ACTOR_HUNGRY_BOY, 1);
   Actor_Jump(ACTOR_HUNGRY_BOY, 6, 15);
   Actor_Jump(ACTOR_HUNGRY_BOY, 6, 23);
+  // "Oh, wow, I feel so much better! Look at how much energy I've got now!"
   Event_ShowMessageThenWait(ACTOR_HUNGRY_BOY, 0, 0);
   Alhafra_TalkToHungryBoy(ACTOR_HUNGRY_BOY);
   Actor_FaceDirection(ACTOR_HUNGRY_BOY, FACING_SOUTH, 0);
@@ -265,6 +271,7 @@ void Alhafra_FindGoldCoins(void) {
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(29, 2);
   Event_Wait(10);
+  // "Why, look at this!"
   FieldEvent_ShowMessageThenWait(29, 0, 10);
   Actor_FaceDirection(28, FACING_EAST, 0);
   Actor_FaceDirection(31, FACING_SOUTHWEST, 0);
@@ -277,21 +284,25 @@ void Alhafra_FindGoldCoins(void) {
   Event_Wait(50);
   FieldActor_Jump(28, 6, 15);
   FieldActor_Jump(28, 6, 23);
+  // "Wow, honey! You found some gold coins!"
   FieldEvent_ShowMessageThenWait(28, 0, 10);
   Actor_ArmCallback(29, 0x8000, 0);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(29, 3);
   Event_Wait(20);
   Actor_ShowEmoteById(30, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "Way to go, Mom! So... How much did you find?"
   FieldEvent_ShowMessageThenWait(30, 0, 10);
   Actor_ShowEmoteById(29, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Actor_FaceDirection(29, FACING_SOUTH, 0);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(29, 2);
   Event_Wait(10);
+  // "Oh! Well, it's not too much... It's only 5 coins."
   FieldEvent_ShowMessageThenWait(29, 0, 10);
   Motion_SetVarCbAndRefresh(30, 2);
   Event_Wait(10);
+  // "That's great, though! We can use it to buy some food!"
   FieldEvent_ShowMessageThenWait(30, 0, 10);
   Actor_ArmCallback(29, 0, 0);
   Event_Wait(20);
@@ -299,6 +310,7 @@ void Alhafra_FindGoldCoins(void) {
   Event_Wait(20);
   FieldActor_Jump(31, 6, 15);
   FieldActor_Jump(31, 6, 23);
+  // "I'm going to start looking, too!"
   FieldEvent_ShowMessageThenWait(31, 0, 10);
   Actor_FaceDirection(30, FACING_EAST, 0);
   Motion_SetModeAndWaitAnimation(30, 3);

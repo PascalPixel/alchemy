@@ -104,9 +104,12 @@ void AttekaInlet_AskPiersToSetSail(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId(MsgAreWeSetting);
+  // "Felix, are we setting off now?" Yes: "Then, to sea we go!" No: "Please
+  // don't rush on my account. Let's enjoy..."
   FieldMessage_ShowAtActor(18, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Actor_SetModeById(18, 3);
+    // "Then, to sea we go!"
     Event_ShowMessageAndWait(18, 0);
     gMainRoutineWork.ownerOverride = 1;
     if (Event_GetFlag(FLAG_REUNITED_AT_CONTIGO)) {
@@ -116,6 +119,7 @@ void AttekaInlet_AskPiersToSetSail(void) {
     Import_EventSetExitRequest(4);
   } else {
     (gFieldWork->message)++;
+    // "Please don't rush on my account. Let's enjoy our stay."
     Event_ShowMessageAndWait(18, 0);
     Actor_SetSpeed(18, 1.6);
     Actor_SetModeById(18, 2);
@@ -265,9 +269,12 @@ void AttekaInlet_PiersAsksToSetSail(void) {
   Actor_WalkToAndWaitById(18, 532, 248);
   Actor_FaceDirectionById(18, FACING_SOUTH_SOUTHEAST);
   Event_SetMessageId(MsgAreWeSetting);
+  // "Felix, are we setting off now?" Yes: "Then, to sea we go!" No: "Please
+  // don't rush on my account. Let's enjoy..."
   FieldMessage_ShowAtActor(18, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Actor_SetModeById(18, 3);
+    // "Then, to sea we go!"
     Event_ShowMessageAndWait(18, 0);
     gMainRoutineWork.ownerOverride = 1;
     if (Event_GetFlag(FLAG_REUNITED_AT_CONTIGO)) {
@@ -277,6 +284,7 @@ void AttekaInlet_PiersAsksToSetSail(void) {
     Import_EventSetExitRequest(4);
   } else {
     (gFieldWork->message)++;
+    // "Please don't rush on my account. Let's enjoy our stay."
     Event_ShowMessageAndWait(18, 0);
     Actor_SetSpeed(18, 1.6);
     Actor_SetModeById(18, 2);
@@ -360,6 +368,7 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Actor_SetHorizontalPositionAndAngleWithTerrain(24, px(504), px(460), angle);
   wait(1);
   Event_SetMessageId((s32)MsgHeyWait2);
+  // "Hey, wait!"
   Event_ShowMessageAndWait(24, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Actor_FaceDirection(23, FACING_SOUTH_SOUTHEAST, 0);
@@ -370,10 +379,13 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Actor_WalkToAndWait(24, 520, 432);
   Actor_WalkToAndWait(24, 520, 388);
   Actor_FaceDirection(23, FACING_SOUTH_SOUTHEAST, 0);
+  // "Master Hammet requested that I deliver this to Isaac, and I totally..."
   Event_ShowMessageAndWait(24, 0);
   Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
+  // "Well, you'd better hurry."
   Event_ShowMessageAndWait(23, 0);
   Actor_ShowEmote(24, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+  // "I'm supposed to deliver this to Isaac... It's not too late, is it?"
   Event_ShowMessageAndWait(24, 0);
   Motion_SetModeAndWaitAnimation(23, 3);
   Actor_FaceDirectionById(24, angle);
@@ -396,13 +408,17 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Actor_WalkToAndWait(24, 504, 460);
   Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
   Actor_FaceDirectionById(23, angle);
+  // "On my way here, I stopped in Kalay briefly to speak with Master Hammet."
   Event_ShowMessageAndWait(23, 0);
   Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+  // "He was quite upset that you hadn't returned to visit him so that he..."
   Event_ShowMessageAndWait(23, 0);
   Actor_SetModeById(23, 3);
+  // "So he requested that I take this with me to Atteka."
   Event_ShowMessageAndWait(23, 0);
   Motion_SetModeAndWaitAnimation(23, 3);
   Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+  // "It is a gift of thanks from Master Hammet. Take it, please."
   Event_ShowMessageAndWait(23, 0);
   GameFlag_Set(FLAG_HAMMETS_GIFT_DELIVERED);
   Event_End();

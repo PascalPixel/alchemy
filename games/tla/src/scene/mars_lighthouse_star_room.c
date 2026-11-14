@@ -550,33 +550,47 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   Actor_SetAnimation(ACTOR_AGATIO, 5);
   FieldEvent_Wait(20);
   FieldEvent_SetMessageId((s32)&MsgMarsStar01);
+  // "Why... Why am I lying here?"
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 80);
   Actor_RunRepeatedMotion(ACTOR_AGATIO, 1);
   FieldEvent_Wait(20);
   Event_PlaySound(MUS_034);
+  // "Wait, I think I remember... We were going to light the beacon..."
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_KARST, 1);
   Actor_SetAnimation(ACTOR_KARST, 5);
   FieldEvent_Wait(20);
+  // "But the lighthouse was frozen. We wandered lost inside, trying to..."
   FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 20);
+  // "We must hurry... If we delay, Prox is destroyed."
   Event_ShowMessage(ACTOR_KARST, 0);
   Actor_RunRepeatedMotion(ACTOR_AGATIO, 2);
   Actor_SetAnimation(ACTOR_AGATIO, 6);
+  // "It's no use... I'm absolutely drained... I can't even stand."
   Event_ShowMessage(ACTOR_AGATIO, 0);
   Actor_SetAnimation(ACTOR_KARST, 6);
+  // "And the cold... Why am I so cold? We of the Fire Clan are meant to..."
   FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 20);
   Actor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  // "I feel the cold too, Karst... I... I'm afraid we're going to die up..."
   Event_ShowMessage(ACTOR_AGATIO, 0);
   FieldActor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
+  // "I can feel it now... The long, dark sleep creeping into my soul..."
   Event_ShowMessage(ACTOR_KARST, 0);
   Actor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  // "Wait... I think I remember..."
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 20);
+  // "The eye... It told us that we lack the will to go any farther."
   Event_ShowMessage(ACTOR_AGATIO, 0);
   Actor_SetAnimation(ACTOR_KARST, 7);
+  // "The eye... I remember now... I felt its gaze pierce me to the core..."
   Event_ShowMessage(ACTOR_KARST, 0);
+  // "That's right... And I remember fighting against Felix..."
   Event_ShowMessage(ACTOR_AGATIO, 0);
+  // "I do, too... Was it a dream? An illusion?"
   FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 40);
   Actor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "Felix? Is that you?"
   Event_OpenMessage(ACTOR_AGATIO, 0);
   t87 = FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   if (t87 == 0) {
@@ -685,6 +699,7 @@ void MarsLighthouseStarRoom_HoldWarmHand(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(ACTOR_KARST, 5);
   FieldEvent_SetMessageId((s32)MsgMarsStar03);
+  // "Your hand...so warm... People have such warm hands... I had forgotten..."
   Event_ShowMessage(ACTOR_KARST, 0);
   Actor_SetAnimation(ACTOR_KARST, 9);
   Event_End();
@@ -709,6 +724,7 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
   Event_ResolvePendingActions(0);
   Actor_SetAnimation(ACTOR_AGATIO, 5);
   Event_SetMessageId((s32)MsgMarsStar02);
+  // "It's too late for us now... Hurry, light the beacon."
   Event_ShowMessage(ACTOR_AGATIO, 0);
   Actor_SetAnimation(ACTOR_AGATIO, 10);
   if (!Event_GetFlag(FLAG_MARS_STAR_TAKEN)) {

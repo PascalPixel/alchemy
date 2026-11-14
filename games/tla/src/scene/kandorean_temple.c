@@ -1355,6 +1355,7 @@ void KandoreanTemple_TellOfTheMeditation(void) {
   Event_ResolvePendingActions(0);
   Actor_FaceActorById(10, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)&MsgKandoreanTemple03);
+  // "Once the period of meditation has begun, none may enter the temple..."
   Event_ShowMessageAndWait(10, 0);
   Actor_GetById(10)->facing = FACING_SOUTH + FACING_STEP;
   wait(1);
@@ -1575,6 +1576,7 @@ void KandoreanTemple_FindTheHiddenPassage(void) {
   Actor_WaitForMoveById(14);
   Event_Wait(20);
   Event_SetMessageId((s32)&MsgKandoreanTemple12);
+  // "Fantastic work, Felix! Keep a watchful eye for any strange-looking..."
   Event_ShowMessageAndWait(14, 0);
   Event_Wait(30);
   Actor_SetModeById(14, 3);
@@ -1601,16 +1603,21 @@ void KandoreanTemple_ReceiveLash(void) {
   FieldCamera_GetActor()->motionFlags = 0;
   ((void (*)())Actor_ArmCallback)(12, 0);
   Event_SetMessageId((s32)&MsgKandoreanTemple08);
+  // "This is the power and the secret of our temple!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 12, 0);
   Actor_FaceActor(gMainRoutineWork.currentOwner, 12, 0);
   Actor_SetAnimation(12, 3);
+  // "If you are worthy, you will use it with ease!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 12, 0);
   Actor_SetAnimation(12, 3);
+  // "When you see a rope, use Lash on it..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 12, 0);
   Actor_SetAnimation(12, 4);
+  // "Perhaps you will find this useful on your travels."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 12, 0);
   Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
   Actor_SetAnimationAndWait(12, 3);
+  // "Take this power with you, and do good."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 12, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, (u16)angle, 10);
   if (gKandoreanTemple_LashPebble != 0)
@@ -2492,6 +2499,7 @@ void KandoreanTemple_TestTheStudents(void) {
   FieldCamera_WaitForArrival();
   Actor_Jump(12, 4, 0);
   Event_SetMessageId((s32)&MsgKandoreanTemple04);
+  // "You there! Focus your mind!"
   Event_ShowMessageAndWait(12, 0);
   FieldCamera_MoveWithinMapBounds(px(456), 0, px(688), 1);
   FieldCamera_WaitForArrival();
@@ -2687,11 +2695,13 @@ void KandoreanTemple_PraiseTheLevitator(void) {
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(12, 1);
   Event_SetMessageId((s32)&MsgKandoreanTemple05);
+  // "You have passed a very difficult test. You have pleased your teacher!"
   Event_ShowMessageAndWait(12, 0);
   Actor_FaceDirection(12, FACING_WEST, 20);
   Actor_ShowEmoteById(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_SetSpeed(12, 1.6);
   Actor_WalkToAndWait(12, 456, 408);
+  // "Wait... You're not one of my students! Who are you!?"
   Event_ShowMessageAndWait(12, 0);
   Actor_MoveToObject(16, gMainRoutineWork.currentOwner);
   wait(1);
@@ -2702,10 +2712,12 @@ void KandoreanTemple_PraiseTheLevitator(void) {
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_ArmCallback(16, FACING_EAST, 20);
   Actor_SetAttachedEffect(12, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "How did you... come this far?"
   Event_ShowMessageAndWait(12, 0);
   Actor_ShowEmoteById(16, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Actor_FaceDirection(16, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 20);
+  // "Ah, yes... How indeed?"
   Event_ShowMessageAndWait(16, 0);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
@@ -2741,6 +2753,7 @@ void KandoreanTemple_FindTheRopeOnTheFloor(void) {
   FieldCamera_WaitForArrival();
   Event_Wait(40);
   Event_SetMessageId((s32)&MsgKandoreanTemple06);
+  // "The rope is still on the floor."
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 12, 0);
   Actor_WalkToAndWait(12, 472, 648);
   Event_FinishScreenTransition();
@@ -2782,48 +2795,66 @@ void KandoreanTemple_MeetPoi(void) {
   Actor_FaceDirection(12, FACING_WEST, 0);
   FieldEffect_SetAttached(12, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_SetMessageId((s32)&MsgKandoreanTemple07);
+  // "You must have come through the cave..."
   Event_ShowMessageAndWait(12, 0);
   Actor_ShowEmoteById(12, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  // "That means..."
   Event_ShowMessageAndWait(12, 0);
   Actor_ArmCallback(12, 0, 40);
+  // "I must give you... the secret of Lash!"
   Event_ShowMessageAndWait(12, 0);
+  // "Master Poi... You seem perturbed."
   Event_ShowMessageAndWait(16, 0);
   Motion_SetVarCbAndRefresh(12, 2);
   Actor_FaceDirection(12, FACING_WEST, 20);
   Actor_SetModeById(12, 4);
+  // "Oh, no... Not at all..."
   Event_ShowMessageAndWait(12, 0);
   Actor_FaceDirection(16, FACING_SOUTH_SOUTHEAST, 10);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
+  // "Felix, am I imagining it, or does he seem perturbed?" Yes: "I am not
+  // perturbed. Merely...surprised." No: "No one from outside the temple has
+  // ever passed..."
   Event_OpenMessage(16, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Actor_SetModeById(12, 4);
+    // "I am not perturbed. Merely...surprised."
     Event_ShowMessageAndWait(12, 0);
     WORK->message++;
   } else {
     WORK->message++;
     Actor_SetModeById(12, 3);
+    // "No one from outside the temple has ever passed the test. It's
+    // amazing..."
     Event_ShowMessageAndWait(12, 0);
   }
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
   Actor_ArmCallback(16, 0, 0);
   Actor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  // "What is this "Lash" you mentioned a moment ago?"
   Event_ShowMessageAndWait(16, 0);
   Actor_SetAttachedEffect(12, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "Lash is a sacred power, passed down for years to the followers of..."
   Event_ShowMessageAndWait(12, 0);
   Actor_SetModeById(16, 3);
+  // "A sacred power? And it's called Lash, you say?"
   Event_ShowMessageThenWait(16, 0, 40);
   Actor_FaceDirection(12, FACING_SOUTH_SOUTHWEST, 40);
+  // "And now, I must pass it on to you. It is our way."
   Event_ShowMessageAndWait(12, 0);
   Actor_FaceDirection(16, FACING_SOUTH_SOUTHEAST, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 40);
   Actor_FaceDirection(12, FACING_WEST, 20);
   Actor_SetModeById(12, 3);
+  // "It is a gift given to all those who pass the test, as it has been..."
   Event_ShowMessageAndWait(12, 0);
   Actor_ArmCallback(16, 0, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
   Actor_ShowEmoteById(16, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  // "What type of power is this Lash?"
   Event_ShowMessageAndWait(16, 0);
   Actor_SetModeById(12, 3);
+  // "Allow me to show you."
   Event_ShowMessageAndWait(12, 0);
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveWithinMapBounds(px(424), px(16), px(384), 1);
@@ -2838,6 +2869,7 @@ void KandoreanTemple_MeetPoi(void) {
   KandoreanTemple_CastLash();
   Actor_FaceDirection(16, FACING_SOUTH_SOUTHEAST, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xa000, 20);
+  // "Lash looks quite a bit like Psynergy, doesn't it?"
   Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 16, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     KandoreanTemple_StudentWalksUp();

@@ -1162,6 +1162,7 @@ void Contigo_SendToLuckyWheels(s32 spoken) {
     if (room <= 6 && Event_AskYesNoWithActorAnimation(
                          gMainRoutineWork.currentOwner, 0) == 1) {
       Event_SetMessageId((s32)MsgContigo12);
+      // "Then get rid of some items and come again."
       Event_ShowMessageAndWait(18, 0);
       return;
     }
@@ -1175,11 +1176,13 @@ void Contigo_SendToLuckyWheels(s32 spoken) {
     FieldMessage_ShowAtActor(18, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
       Event_SetMessageId((s32)MsgContigo17);
+      // "Come again!"
       Event_ShowMessageAndWait(18, 0);
       return;
     }
   }
   Event_SetMessageId((s32)MsgContigo13);
+  // "Step right up and enjoy yourself."
   Event_ShowMessageAndWait(18, 0);
   GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   GameFlag_Set(0x9e5);
@@ -1227,6 +1230,8 @@ void Contigo_SendToLuckyDice(void) {
   }
   Event_SetMessageId((s32)MsgContigo01);
   MessageArgument_Push(price, 5);
+  // "Hey, buddy, wanna try yer luck at the dice? It's coin to play." Yes: "OK!
+  // Then take the dice." No: "No? Oh, well. Who's next?"
   FieldMessage_ShowAtActor(14, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     /* FAKEMATCH(pin): the scene state's address pinned to r3. */
@@ -1234,6 +1239,7 @@ void Contigo_SendToLuckyDice(void) {
 
     *state = gMainRoutineWork.coins;
     ObjectTable_Snapshot();
+    // "OK! Then take the dice."
     Event_ShowMessageAndWait(14, 0);
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
     GameFlag_Set(0x9e5);
@@ -1242,6 +1248,7 @@ void Contigo_SendToLuckyDice(void) {
     Event_SetAfterBattleDestination((s32)&SceneId_Contigo3, 19);
   } else {
     gFieldWork->message++;
+    // "No? Oh, well. Who's next?"
     Event_ShowMessageAndWait(14, 0);
   }
   Event_End();
@@ -1259,6 +1266,8 @@ void Contigo_SendToSuperLuckyDice(void) {
     return;
   }
   Event_SetMessageId((s32)MsgContigo23);
+  // "Welcome, welcome, step right up! Care for a round of Super Lucky Dice?"
+  // Yes: "OK, then let 'em roll!" No: "Oh really? That's a shame!"
   FieldMessage_ShowAtActor(8, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     /* FAKEMATCH(pin): the scene state's address pinned to r3. */
@@ -1266,6 +1275,7 @@ void Contigo_SendToSuperLuckyDice(void) {
 
     *state = gMainRoutineWork.coins;
     ObjectTable_Snapshot();
+    // "OK, then let 'em roll!"
     Event_ShowMessageAndWait(8, 0);
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
     GameFlag_Set(0x9e5);
@@ -1274,6 +1284,7 @@ void Contigo_SendToSuperLuckyDice(void) {
     Event_SetAfterBattleDestination((s32)&SceneId_Contigo3, 18);
   } else {
     gFieldWork->message++;
+    // "Oh really? That's a shame!"
     Event_ShowMessageAndWait(8, 0);
   }
   Event_End();
@@ -1377,23 +1388,32 @@ void Contigo_TheReunion(void) {
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(0, 3);
   Event_SetMessageId((s32)MsgGladYouKeptYourPromise);
+  // "I'm glad you kept your promise, Felix."
   Event_ShowMessageAndWait(0, 0);
   Actor_SetModeById(1, 3);
+  // "All right, let's hear what he has to say for himself!"
   Event_ShowMessageAndWait(1, 0);
   Actor_SetAttachedEffect(5, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
+  // "What can we say, Isaac? Has Felix ever harmed you? Have we ever..."
   Event_ShowMessageAndWait(5, 0);
   Actor_SetModeById(6, 3);
+  // "Felix's been avoiding you, but he never had any intention of..."
   Event_ShowMessageAndWait(6, 0);
   Motion_SetModeAndWaitAnimation(3, 3);
+  // "And he definitely helped us out back at Jupiter Lighthouse."
   Event_ShowMessageAndWait(3, 0);
   Actor_SetModeById(2, 4);
+  // "Isaac's been worrying about Jenna nonstop since this nightmare..."
   Event_ShowMessageAndWait(2, 0);
   Actor_SetAttachedEffect(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "She was afraid that if we met, we would be forced to fight... She..."
   Event_ShowMessageAndWait(7, 0);
   FieldActor_ShowEmote(0, 259, 0);
+  // "I know that, now... But it doesn't explain why you're doing this..."
   Event_ShowMessageAndWait(0, 0);
   Motion_SetModeAndWaitAnimation(9, 3);
+  // "Felix betrayed his hometown, Vale... That's why he hasn't been able..."
   Event_ShowMessageAndWait(9, 0);
   Actor_FaceDirection(0, FACING_NORTH, 0);
   Actor_FaceDirectionAndWait(1, FACING_SOUTH);
@@ -1409,60 +1429,78 @@ void Contigo_TheReunion(void) {
   Actor_WalkToAndWaitById(9, 146, 342);
   Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
   Actor_SetModeById(9, 4);
+  // "Felix had hoped to play the villain alone, without getting Jenna or..."
   Event_ShowMessageAndWait(9, 0);
   Actor_Jump(1, 2, 10);
+  // "He betrayed Vale? Kraden, what are you talking about?"
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 1, 0);
+  // "He conspired to steal the Elemental Stars and fire the beacons of..."
   Event_ShowMessageAndWait(9, 0);
   Actor_SetModeById(3, 4);
+  // "That's what Saturos and Menardi were trying to do..."
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 3, 0);
+  // "Why were you helping them?"
   Event_ShowMessageAndWait(2, 0);
   FieldActor_ShowEmote(5, 261, 20);
   Actor_FaceDirectionAndWait(5, FACING_SOUTHWEST);
+  // "Our parents' lives were at stake! We had to help!"
   Event_ShowMessageAndWait(5, 0);
   Actor_ArmCallback(1, FACING_EAST, 0);
   Actor_ArmCallback(0, FACING_EAST, 0);
   FieldActor_ShowEmote(0, 256, 0);
   FieldActor_ShowEmote(1, 256, 40);
+  // "Parents? But...your parents died three years ago, in that storm..."
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 1, 0);
   Motion_SetModeAndWaitAnimation(9, 4);
+  // "That night, Saturos and his men had raided Sol Sanctum... The storm..."
   Event_ShowMessageAndWait(9, 0);
   Actor_FaceDirection(0, FACING_NORTH, 0);
   Actor_FaceDirectionAndWait(1, FACING_SOUTH);
   Actor_FaceDirectionAndWait(5, FACING_WEST);
   Actor_SetModeById(5, 4);
+  // "Garet, you saw two strangers that night°Saturos and Menardi. They..."
   Event_ShowMessageAndWait(5, 0);
   Actor_ArmCallback(1, FACING_EAST, 0);
   Actor_ArmCallback(0, FACING_EAST, 0);
   FieldActor_ShowEmote(1, 256, 0);
   FieldActor_ShowEmote(0, 256, 40);
+  // "They had failed to solve the mystery of Sol Sanctum. In doing so..."
   Event_ShowMessageAndWait(9, 0);
   Motion_SetModeAndWaitAnimation(5, 3);
+  // "Everyone thought that you were killed by that boulder, Felix. I..."
   Event_ShowMessageAndWait(5, 0);
   Actor_SetModeById(1, 3);
   Motion_SetModeAndWaitAnimation(0, 3);
   Actor_SetModeById(9, 4);
+  // "In fact, nobody was killed by the boulder that day!"
   Event_ShowMessageAndWait(9, 0);
   FieldActor_ShowEmote(0, 265, 20);
   Actor_FaceDirection(0, FACING_NORTHEAST, 0);
+  // "So that means..."
   Event_ShowMessageThenWait(0, 0, 40);
   FieldActor_ShowEmote(2, 257, 20);
+  // "Wait a minute, Kraden... Did you just say that nobody was killed by..."
   Event_ShowMessageAndWait(2, 0);
   FieldActor_ShowEmote(3, 256, 0);
   Actor_FaceDirectionAndWait(3, FACING_SOUTH);
+  // "But what about Isaac's dad? And Jenna and Felix's parents? I thought..."
   Event_ShowMessageAndWait(3, 0);
   Actor_FaceDirectionAndWait(2, FACING_NORTH);
   Motion_SetModeAndWaitAnimation(2, 3);
   Actor_FaceDirectionAndWait(2, FACING_NORTHEAST);
   Actor_ArmCallback(0, FACING_EAST, 0);
   FieldActor_ShowEmote(0, 256, 20);
+  // "I'm not so sure now..."
   Event_ShowMessageAndWait(0, 0);
   Actor_ArmCallback(3, FACING_EAST, 0);
   FieldActor_ShowEmote(1, 257, 0);
   Actor_FaceDirectionAndWait(1, FACING_NORTHEAST);
   Motion_SetModeAndWaitAnimation(9, 3);
+  // "Yes! If Felix survived, Kyle and the others may have as well..."
   Event_ShowMessageAndWait(9, 0);
   FieldActor_ShowEmote(3, 257, 20);
   Actor_FaceDirectionAndWait(3, FACING_SOUTHEAST);
+  // "Why didn't you tell us? We could have worked together to save your..."
   FieldMessage_ShowAtActor(3, 0);
   Actor_FaceDirection(1, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(5, FACING_SOUTH, 0);

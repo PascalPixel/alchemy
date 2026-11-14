@@ -365,8 +365,10 @@ void AncientLemuria_MeetTheLemurians(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLemuriaRecognizePsynergy);
+  // "Why, that was Psynergy, wasn't it?"
   Event_ShowMessageThenWait(9, 0, 10);
   Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "Are they Adepts?"
   Event_ShowMessageThenWait(10, 0, 10);
   Field_TryJumpForward();
   Event_Start();
@@ -396,6 +398,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(9, 2);
   Event_Wait(10);
+  // "Who are you!?"
   Event_ShowMessageThenWait(9, 0, 10);
   Actor_SetSpeed(10, 0.8);
   Actor_WalkByAndWait(10, -24, 0);
@@ -403,6 +406,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(10, 2);
   Event_Wait(10);
+  // "Are you the ones who defeated Poseidon?"
   Event_OpenMessage(10, 0);
   result = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (result == 0) {

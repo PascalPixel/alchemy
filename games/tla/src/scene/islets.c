@@ -426,6 +426,7 @@ void Islets_TalkToTreasureHunters(void) {
   }
   Actor_FaceActor(8, gMainRoutineWork.currentOwner, 0);
   FieldEvent_SetMessageId((s32)MsgLookWeRe);
+  // "Look, we're busy... We can't talk now... Catch us some other time..."
   Event_ShowMessage(8, 0);
   Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 0);
   Event_End();
@@ -436,7 +437,9 @@ void Islets_TalkToSailor(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgTheEasternSea);
+  // "The Eastern Sea is huge, even if you don't add the Sea of Time..."
   Event_ShowMessage(9, 0);
+  // "You don't look like much of a sailor. You're not a treasure hunter..."
   Event_ShowMessage(9, 0);
   Event_End();
   return;
@@ -452,6 +455,7 @@ void Islets_TalkToBird(void) {
     FieldActor_WatchAndSetScript(10, gMainRoutineWork.currentOwner);
   }
   FieldEvent_SetMessageId((s32)MsgChirpChirp2);
+  // "Chirp chirp!"
   Event_ShowMessage(10, 0);
   Event_End();
   return;
@@ -867,7 +871,9 @@ void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
   Actor_RunScriptAndWait(9, &script);
   guide->update = 0;
   FieldEvent_SetMessageId(MsgAtLongLast);
+  // "At long last, I have a friend! Lonesome George I am no more! I'm so..."
   Event_ShowMessage(9, 0);
+  // "I don't have much to offer in return, but I can show you... my..."
   Event_ShowMessage(9, 0);
   Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
   Actor_SetSpeed(9, 1.6);
@@ -884,6 +890,7 @@ void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
   Actor_SelectAnimation(gift, 1);
   gift->update = 0;
   PartyInventory_Remove(455);
+  // "Hop on my back!"
   Event_ShowMessage(9, 0);
   ((u8 *)HeapSlot_AllocEwram(88, 664))[661] = 99;
   Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
@@ -897,6 +904,7 @@ void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
   Actor_SetAnimation(9, 3);
   FieldEvent_Wait(20);
+  // "And we're off!"
   Event_ShowMessage(9, 0);
   Actor_SetSpeed(9, 0.8);
   gift->speedLimit = 0xcccc;
@@ -1096,6 +1104,7 @@ void Islets_RideBackToIsland(void) {
   Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
   FieldEvent_Wait(10);
   FieldEvent_SetMessageId((s32)MsgYouAllSet);
+  // "You all set to go back to the island?"
   Event_ShowMessage(9, 0);
   FieldPsynergy_RestoreMindReadPalette();
   result =
@@ -1150,6 +1159,7 @@ void Islets_TalkToSailorsSon(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
   FieldEvent_SetMessageId((s32)MsgMyPopS);
+  // "My pop's the best sailor in all the Eastern Sea! That's why he can..."
   Event_ShowMessage(9, 0);
   Actor_FaceDirectionAndWait(9, FACING_NORTHWEST + FACING_STEP);
   Event_End();
@@ -1249,6 +1259,7 @@ void Islets_PengusGivesPrettyStone(void) {
   FieldActor_Jump(9, 4, 10);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_FaceDirection(9, FACING_WEST, 10);
+  // "Thank you so much for saving my sweet Pengulina. Allow me to give..."
   Event_ShowMessage(9, 0);
   Actor_GetById(9)->actionFlags &= ~1;
   Actor_WalkToAndWait(9, 222, 186);
@@ -1666,6 +1677,7 @@ void Islets_ArriveAtSecretSpot(void) {
   Actor_Get(10)->update = 0;
   FieldPsynergy_StartMindReadWave(gMainRoutineWork.currentOwner, 9);
   FieldEvent_SetMessageId((s32)MsgHereWeAre);
+  // "Here we are!"
   Event_ShowMessage(9, 0);
   Actor_SetAnimation(9, 1);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
@@ -1673,6 +1685,7 @@ void Islets_ArriveAtSecretSpot(void) {
   FieldActor_Jump(gMainRoutineWork.currentOwner, 6, 0);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 312, 440);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTHWEST);
+  // "If you want to go to my secret spot again, just let me know."
   Event_ShowMessage(9, 0);
   FieldPsynergy_StopMindReadWave();
   Actor_FaceDirectionAndWait(9, FACING_SOUTH);
@@ -1726,6 +1739,7 @@ void Islets_ArriveBackAtIsland(void) {
   Actor_FaceDirectionAndWait(9, FACING_NORTH);
   FieldPsynergy_StartMindReadWave(gMainRoutineWork.currentOwner, 9);
   FieldEvent_SetMessageId(MsgWellHereWe);
+  // "Well, here we are."
   Event_ShowMessage(9, 0);
   Actor_SetAnimation(9, 1);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
@@ -1733,6 +1747,7 @@ void Islets_ArriveBackAtIsland(void) {
   FieldActor_Jump(gMainRoutineWork.currentOwner, 6, 0);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 152, 742);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
+  // "When you want to go back to the island, just let me know."
   Event_ShowMessage(9, 0);
   FieldPsynergy_StopMindReadWave();
   Actor_FaceDirectionAndWait(9, FACING_SOUTH);

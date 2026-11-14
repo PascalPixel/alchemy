@@ -391,6 +391,7 @@ void Izumo_StopThePartyToThankThem(void) {
   Event_SetMessageId(MsgWait2);
   Actor_WalkToById(gMainRoutineWork.currentOwner, 200, 264);
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
+  // "Felix, wait!"
   Event_ShowMessageAndWait(32, 0);
   FieldEvent_Wait(15);
   Value3((s32 (*)())Actor_ShowEmoteById, gMainRoutineWork.currentOwner, 256,
@@ -400,18 +401,22 @@ void Izumo_StopThePartyToThankThem(void) {
   Actor_WalkToById(32, 200, 248);
   Actor_WaitForMoveById(32);
   FieldEvent_Wait(30);
+  // "It troubled me to let you leave like this..."
   Event_ShowMessageAndWait(32, 0);
   Actor_FaceActorById(gMainRoutineWork.currentOwner, 32, 0);
   FieldEvent_Wait(30);
   Actor_SetModeById(32, 4);
   FieldEvent_Wait(30);
+  // "I owe you much for your help, but I didn't have any way to thank you..."
   Event_ShowMessageAndWait(32, 0);
   Value3((s32 (*)())Actor_ShowEmoteById, gMainRoutineWork.currentOwner, 261,
          60);
   Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
+  // "And then I thought of something."
   Event_ShowMessageAndWait(32, 0);
   Actor_SetModeById(32, 3);
   FieldEvent_Wait(15);
+  // "You're a warrior, and warriors need weapons. Wouldn't you agree?"
   Value2((s32 (*)())FieldMessage_ShowAtActor, 32, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
     FieldEvent_Wait(90);
@@ -422,6 +427,7 @@ void Izumo_StopThePartyToThankThem(void) {
     FieldEvent_Wait(60);
     Call3((void (*)())Actor_ArmCallback, 32, FACING_SOUTH, 0);
     Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    // "Are you sure about that? I was only hoping to show you my appreciation."
     Event_ShowMessageAndWait(32, 0);
     Actor_SetSpritePriority(32, 3);
     Actor_GetById(32)->motionFlags |= 2;
@@ -435,26 +441,33 @@ void Izumo_StopThePartyToThankThem(void) {
 void Izumo_TellTheCloudBrandLegend(void) {
   Event_SetMessageId(MsgThisTokenIsn);
   Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "This token isn't something I possess. It's a legend, one that might..."
   Event_ShowMessageAndWait(32, 0);
   Actor_ArmCallback(32, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(30);
+  // "Long ago, the Great Serpent of Mikage would sleep with its body..."
   Event_ShowMessageAndWait(32, 0);
   Actor_FaceActorById(32, gMainRoutineWork.currentOwner, 0);
   Actor_SetModeById(32, 3);
   FieldEvent_Wait(30);
+  // "Where its tail fell, the Cloud Brand lay hidden. That's the legend..."
   Event_ShowMessageAndWait(32, 0);
   Actor_StartRepeatedMotion(32, 1);
   FieldEvent_Wait(30);
+  // "The serpent was once the sword's protector, but it lost the sword..."
   Event_ShowMessageAndWait(32, 0);
   Actor_SetModeById(32, 4);
   FieldEvent_Wait(30);
+  // "Anyway, maybe you want to go check out the dragon again... I left..."
   Event_ShowMessageAndWait(32, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
   FieldEvent_Wait(15);
   Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "Well, I've said what I came to say. I'm going back to Kushinada."
   Event_ShowMessageAndWait(32, 0);
   Actor_FaceActorById(32, gMainRoutineWork.currentOwner, 0);
   FieldEvent_Wait(15);
+  // "I hope you are successful in your quest."
   Event_ShowMessageAndWait(32, 0);
   Actor_SetModeById(32, 3);
   FieldEvent_Wait(15);

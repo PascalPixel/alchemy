@@ -142,6 +142,7 @@ void AlhafranCave_FinishMovingCrate(void) {}
 
 void AlhafranCave_TalkToBriggs(s32 id) {
   FieldEvent_SetMessageId((s32)MsgOhStoppedBy);
+  // "Oh, stopped by for a visit, did you?"
   Event_OpenMessage(id, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
       0) {
@@ -427,6 +428,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_SetSpeed(19, 1);
   Actor_SetSpeed(20, 1);
   FieldEvent_SetMessageId((s32)MsgYouHereTo);
+  // "You here to see Briggs?"
   FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);
   Actor_WalkToAndWait(4, 800, 288);
   Actor_FaceDirection(4, FACING_WEST, 0);
@@ -435,21 +437,27 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_BRIGGS, 3);
   FieldEvent_Wait(20);
+  // "Chaucha... It's good to see you."
   FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_CHAUCHA, 3);
   FieldEvent_Wait(30);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
+  // "And you, too, Eoleo."
   FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
   FieldActor_Jump(ACTOR_EOLEO, 6, 15);
   FieldActor_Jump(ACTOR_EOLEO, 6, 23);
+  // "Goo. Goo goo ga."
   FieldEvent_ShowMessageThenWait(ACTOR_EOLEO, 0, 10);
   Actor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "How...is your cell? Is there anything I can do to make this easier..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 22, 0, 10);
   Actor_RunRepeatedMotion(16, 2);
   FieldEvent_Wait(10);
+  // "I'm fine, Chaucha. My only complaint is that the food here is terrible."
   FieldEvent_ShowMessageThenWait(16, 0, 10);
   Actor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "What!? Are they forcing you to eat this disgusting gruel?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 22, 0, 10);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(30);
@@ -476,13 +484,16 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_JAILER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "Now, wait a second..."
   FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_JAILER, 4);
   FieldEvent_Wait(10);
+  // "First of all, it's not disgusting. It's nutritious! And besides..."
   FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);
   Actor_FaceDirection(ACTOR_JAILER, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
   (void *)Actor_ShowEmote(ACTOR_JAILER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
+  // "You're IN JAIL! What did you expect, gourmet cuisine?"
   FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);
   actor21 = Actor_Get(ACTOR_EOLEO);
   actor15 = Actor_Get(15);
@@ -532,6 +543,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_Wait(40);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
+  // "Eoleo!"
   FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 20);
   Actor_ShowEmote(ACTOR_EOLEO, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   actor15->update = 0;
@@ -576,6 +588,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), 2);
   Event_PlaySound(SE_ASCEND);
   FieldEvent_Wait(40);
+  // "Eoleo!"
   FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
   BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), 0);
   BattleEffect_WaitForArcGroups();
@@ -590,6 +603,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_Wait(40);
   Actor_FaceDirection(ACTOR_EOLEO, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(20);
+  // "Hooo..."
   FieldEvent_ShowMessageThenWait(ACTOR_EOLEO, 0, 10);
   (void *)Actor_ShowEmote(ACTOR_EOLEO, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 50);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_SOUTH_SOUTHWEST, 0);
@@ -597,6 +611,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_RunRepeatedMotion(ACTOR_EOLEO, 2);
   FieldEvent_Wait(20);
+  // "Ahhh waaah..."
   FieldEvent_ShowMessageThenWait(ACTOR_EOLEO, 0, 10);
   Actor_FaceDirection(16, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(17, FACING_SOUTH_SOUTHEAST, 0);
@@ -608,10 +623,12 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_Wait(20);
   Actor_SetAttachedEffect(ACTOR_EOLEO,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
+  // "WAHHH!"
   FieldEvent_ShowMessageThenWait(ACTOR_EOLEO, 0, 20);
   gAlhafranCave_ClearedWord = 0;
   Task_AddFrame(AlhafranCave_IdleTask, 0x480);
   Actor_ShowEmote(ACTOR_JAILER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "I don't know why he's crying! You're his mother! Can't you do..."
   FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(30);
@@ -624,34 +641,43 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_WalkByAndWait(ACTOR_CHAUCHA, 0, 8);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_WEST, 0);
   FieldEvent_Wait(20);
+  // "There there, Eoleo... What's the matter?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 22, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_EOLEO, 2);
   FieldEvent_Wait(10);
   Actor_SetAttachedEffect(ACTOR_EOLEO,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
+  // "Waa waa waa!"
   FieldEvent_ShowMessageThenWait(ACTOR_EOLEO, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_CHAUCHA, 3);
   FieldEvent_Wait(10);
+  // "Did the mean old guard frighten you?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 22, 0, 10);
   Actor_FaceDirection(ACTOR_EOLEO, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_EOLEO, 3);
   FieldEvent_Wait(10);
+  // "Waa waa..."
   FieldEvent_ShowMessageThenWait(ACTOR_EOLEO, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_CHAUCHA, 3);
   FieldEvent_Wait(10);
+  // "Don't let him bother you... He's just a big bully! Come on! Let's..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 22, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_EOLEO, 3);
   FieldEvent_Wait(10);
+  // "Waa waa..."
   FieldEvent_ShowMessageThenWait(ACTOR_EOLEO, 0, 10);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_EAST_NORTHEAST, 0);
   FieldEvent_Wait(30);
+  // "We'll be back again later. Will that be all right?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 22, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_JAILER, 3);
   FieldEvent_Wait(10);
+  // "Yeah, yeah. That's fine."
   FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
+  // "We'll come back soon, dear."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 22, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_BRIGGS, 3);
   FieldEvent_Wait(30);

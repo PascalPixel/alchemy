@@ -147,6 +147,7 @@ UNUSED void DailaInteriors_StartleAtTheLeader(s32 unused, s32 actor) {
   Actor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
   Event_SetMessageId((s32)MsgDailaInteriorsWhatAreYouDoing);
+  // "What are you doing???"
   Event_ShowMessageAndWait(actor, 0);
   FieldEvent_Wait(10);
 }
@@ -155,6 +156,7 @@ s32 DailaInteriors_TalkScamps(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgDailaInteriorsScamps);
+  // "If those two scamps knew there were travelers in town, they'd have a..."
   Event_ShowMessageAndWait(19, 0);
   Event_End();
   return 0;
@@ -164,6 +166,7 @@ s32 DailaInteriors_TalkMazeTreasure(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgDailaInteriorsMazeTreasure);
+  // "Maybe they hid treasure here because this town is so mazelike..."
   Event_ShowMessageAndWait(19, 0);
   Event_End();
   return 0;
@@ -381,10 +384,12 @@ void DailaInteriors_TalkCaughtPracticing(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgDailaInteriorsWatchingPractice);
+  // "Er... Aheh heh... You... weren't watching, were you?"
   Event_ShowMessageAndWait(26, 0);
   FieldEvent_Wait(30);
   Actor_SetModeById(26, 3);
   FieldEvent_Wait(30);
+  // "I was just practicing for the show we're putting on tonight."
   Event_ShowMessageAndWait(26, 0);
   Event_End();
 }

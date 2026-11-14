@@ -942,10 +942,13 @@ void LemurianShip_SetBlackCrystal(void) {
   Actor_SetScript(8, gLemurianShip_KradenStepsUp);
   Actor_RunScriptAndWait(7, gLemurianShip_PiersToPedestal);
   Event_Wait(20);
+  // "How did all these monsters get on board? I could swear I locked the..."
   Event_ShowMessage(7, 0);
   Actor_FaceDirectionAndWait(7, FACING_SOUTH);
+  // "It doesn't matter. Once we get this ship moving, I'm sure they'll..."
   Event_ShowMessage(7, 0);
   Actor_SetAnimation(7, 3);
+  // "OK, now, I must set the black orb in this pedestal."
   Event_ShowMessage(7, 0);
   Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
   Actor_WalkToAndWait(7, 808, 148);

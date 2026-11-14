@@ -226,6 +226,7 @@ void Lemuria_TalkToSpoiledChild(void) {
     FieldEvent_SetMessageId((s32)&MsgEveryoneSpoilsMe);
   }
   Actor_SetAnimation(18, 0);
+  // "Everyone spoils me so much... I don't ever want to grow up! But in..."
   FieldEvent_ShowMessageThenWait(18, 0, 10);
   Event_End();
   object->timer = 0;
@@ -249,6 +250,7 @@ void Lemuria_TalkToLonelyChild(void) {
     FieldEvent_SetMessageId((s32)&MsgAreThereOther);
   }
   Actor_SetAnimation(19, 0);
+  // "Are there other children in the lands beyond the Sea of Time? Are..."
   FieldEvent_ShowMessageThenWait(19, 0, 10);
   Event_End();
   object->timer = 0;
@@ -382,17 +384,21 @@ void Lemuria_KnockAtBrokenDoor(void) {
   Actor_SetFirstSpriteAnimation(object, 43);
   Actor_SetAnimation(12, 3);
   Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 0);
+  // "Are you kids Piers's traveling companions?"
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   FieldCamera_MoveTo(872, CAMERA_KEEP, 776, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "The door's broken, I'm afraid."
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   Actor_SetAnimationAndWait(12, 4);
+  // "But I opened up a window just above the door."
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   FieldCamera_MoveTo(872, CAMERA_KEEP, 856, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
+  // "Sorry about this, but you'll have to climb through there."
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   FieldCamera_MoveTo(872, CAMERA_KEEP, 928, 1);
   FieldCamera_WaitForArrival();
@@ -409,6 +415,7 @@ void Lemuria_KnockAtBrokenDoor(void) {
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "What's the matter? Can't you climb up? ...Fine. Just a moment."
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   FieldCamera_MoveToFixed(px(872), v5, px(856), 1);
   FieldActor_Jump(12, 4, 0);
@@ -420,12 +427,14 @@ void Lemuria_KnockAtBrokenDoor(void) {
   FieldCamera_MoveToFixed(px(848), v5, px(904), 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(15);
+  // "You came all this way and then got stuck here? You can't be very bright."
   FieldEvent_ShowMessageThenWait(12, 0, 5);
   Actor_SetPosition(28, 840, 920);
   Actor_SetPosition(27, 840, 936);
   Value3((s32 (*)())Rope_Coil, 1, 28, 27);
   Rope_Lash(1, 28, 27);
   FieldEvent_Wait(30);
+  // "There! Is that better? Now climb up here."
   FieldEvent_ShowMessageThenWait(12, 0, 5);
   Actor_WalkByAndWait(12, 32, 0);
   EventCamera_FollowActor(4, 1);
@@ -470,6 +479,7 @@ void Lemuria_OfferSpringLuck(void) {
   Actor_FaceActor(30, gMainRoutineWork.currentOwner, 0);
   FieldActor_RefreshSelectorById(30);
   FieldEvent_Wait(5);
+  // "Do you wish to test your luck at the Spring of Lemuria?"
   Event_OpenMessage(30, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
     FieldEvent_Wait(30);
@@ -736,6 +746,7 @@ void Lemuria_KeepLookingAround(void) {
   FieldActor_LaunchFromLeader(12, 0, 16, FACING_NORTH + FACING_STEP);
   FieldActor_WaitForMoveById(12);
   FieldEvent_Wait(5);
+  // "Where are you going, Felix? Let's take a longer look around!"
   FieldEvent_ShowMessageThenWait(12, 0, 5);
   Actor_SetSpeed(12, 1.2);
   Actor_SetAnimation(12, 2);
@@ -773,11 +784,13 @@ void Lemuria_MarvelAtCity(void) {
   FieldEvent_Wait(20);
   FieldActor_Jump(12, 6, 15);
   FieldActor_Jump(12, 6, 23);
+  // "This place is remarkable... Truly remarkable..."
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   Actor_ShowEmote(24, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_WalkByAndWait(24, 16, 0);
   Actor_FaceDirection(24, FACING_SOUTHEAST + FACING_STEP, 0);
   FieldEvent_Wait(20);
+  // "Who goes there! I've not seen you in Lemuria before!"
   FieldEvent_ShowMessageThenWait(24, 0, 10);
   Actor_FaceDirection(12, FACING_EAST, 0);
   Actor_FaceDirection(4, FACING_WEST, 0);
@@ -786,6 +799,7 @@ void Lemuria_MarvelAtCity(void) {
   Actor_FaceDirection(4, FACING_NORTH, 0);
   FieldEvent_Wait(10);
   Actor_WalkByAndWait(25, -16, 0);
+  // "Wait a moment..."
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_WalkToAndWait(25, 464, 552);
   Actor_FaceDirection(25, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -808,6 +822,7 @@ void Lemuria_MarvelAtCity(void) {
   Actor_WalkToAndWait(25, 472, 520);
   Actor_FaceDirection(25, FACING_WEST, 0);
   FieldEvent_Wait(20);
+  // "You must be the travelers who arrived with Piers. Is your name..."
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_SetAnimation(4, 3);
   Actor_SetAnimationAndWait(12, 3);
@@ -815,12 +830,14 @@ void Lemuria_MarvelAtCity(void) {
   Actor_FaceDirection(24, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_ShowEmote(24, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Piers? You mean Piers, the Lost One?"
   FieldEvent_ShowMessageThenWait(24, 0, 10);
   FieldActor_LaunchFromLeader(7, -8, -16, FACING_NORTH);
   FieldActor_WaitForMoveById(7);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(7, 3);
   FieldEvent_Wait(10);
+  // "Have I earned a title in my absence? Well, worry not! Piers is lost..."
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   FieldActor_StartRepeatedMotion(24, 3);
   Actor_SetAttachedEffect(24, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -832,6 +849,7 @@ void Lemuria_MarvelAtCity(void) {
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(7, 3);
   FieldEvent_Wait(10);
+  // "I seek counsel with King Hydros. Has His Highness been told of my..."
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Actor_FaceDirection(24, FACING_EAST, 0);
   Actor_FaceDirection(25, FACING_WEST, 0);
@@ -840,20 +858,26 @@ void Lemuria_MarvelAtCity(void) {
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(10);
+  // "Word was sent, but I do not know if it has reached the king."
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "What do you mean?"
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Actor_FaceDirection(24, FACING_SOUTHEAST + FACING_STEP, 0);
   FieldEvent_Wait(20);
+  // "Lord Conservato is meeting with His Highness as we speak."
   FieldEvent_ShowMessageThenWait(24, 0, 10);
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "Not Conservato..."
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "What's wrong, Piers? You don't look pleased to hear that name..."
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   Actor_RunRepeatedMotion(7, 2);
   FieldEvent_Wait(20);
   Actor_FaceDirection(7, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
+  // "Kraden... What do you think of what you have seen of Lemuria?"
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   FieldActor_WatchAndSetScript(4, 12);
@@ -904,6 +928,7 @@ void Lemuria_MarvelAtCity(void) {
   Actor_FaceDirection(25, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(12, FACING_NORTH + FACING_STEP, 0);
   FieldEvent_Wait(30);
+  // "It is a magnificent city! Or do you mean the castle? Both are..."
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   Actor_SetSpeed(7, 0.7);
   Actor_WalkByAndWait(7, 8, 0);
@@ -911,6 +936,7 @@ void Lemuria_MarvelAtCity(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirection(4, FACING_NORTH, 0);
   FieldEvent_Wait(20);
+  // "And you, Felix? Do you agree?"
   Event_OpenMessage(7, 0);
   result = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (result == 0) {

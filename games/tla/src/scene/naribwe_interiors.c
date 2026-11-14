@@ -55,6 +55,7 @@ s32 NaribweInteriors_MindReadFortuneTeller(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgTheItemsThat);
+  // "The items that one carries are filled with one's hopes and desires...."
   Event_ShowMessage(10, 0);
   Event_End();
   return 0;
@@ -64,6 +65,7 @@ s32 NaribweInteriors_MindReadFortuneTellerOnReturn(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgItemsPlacedBefore);
+  // "Items placed before me are filled with the desires of those who..."
   Event_ShowMessage(10, 0);
   Event_End();
   return 0;
@@ -188,6 +190,7 @@ void NaribweInteriors_TalkToFortuneTeller(void) {
     }
   }
   FieldEvent_SetMessageId((s32)MsgThenStandBack);
+  // "Then stand back."
   Event_ShowMessage(10, 0);
   Event_End();
 }
@@ -216,6 +219,7 @@ void NaribweInteriors_ReadFortune(void) {
   s32 rawKind;
 
   FieldEvent_SetMessageId(MsgVeryWellShow);
+  // "Very well. Show me one of your items."
   Event_ShowMessage(10, 0);
   FieldEvent_Wait(30);
 ask:
@@ -428,6 +432,7 @@ void NaribweInteriors_ReadArmor(void) {
 /// "Beyond the item before me, I see a path for you to follow."
 void NaribweInteriors_ReadOtherItem(void) {
   FieldEvent_SetMessageId((s32)MsgBeyondTheItem);
+  // "Beyond the item before me, I see a path for you to follow."
   Event_ShowMessage(10, 0);
   switch (NaribweInteriors_NextPath()) {
   case 0:

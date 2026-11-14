@@ -2299,10 +2299,13 @@ void TrialRoad_ReachPeakFirst(void) {
   Actor_FaceDirection(14, TrialRoad_MirrorAngle(0x8000), 0);
   Event_SetMessageId((s32)MsgTrialRoadSwiftChallenge);
   FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
+  // "You were quite swift! You may prove a challenge yet!"
   Event_ShowMessage(8, 0);
   Actor_SetAnimationAndWait(8, 3);
+  // "However, just because you're fast doesn't mean you're strong...."
   Event_ShowMessage(8, 0);
   Actor_RunRepeatedMotion(8, 2);
+  // "Let the battle begin!"
   Event_ShowMessage(8, 0);
   Actor_SetAnimation(4, 3);
   Actor_SetAnimation(5, 3);
@@ -2357,10 +2360,13 @@ void TrialRoad_ReachPeakSecond(void) {
   FieldCamera_WaitForArrival();
   Event_SetMessageId((s32)MsgTrialRoadSlowArrival);
   FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
+  // "You may have been slow, but you made it through Trial Road to the..."
   Event_ShowMessage(8, 0);
   Actor_SetAnimationAndWait(8, 3);
+  // "Well, then... The time is nigh for us to decide who is stronger!"
   Event_ShowMessage(8, 0);
   Actor_RunRepeatedMotion(8, 2);
+  // "Let the battle begin!"
   Event_ShowMessage(8, 0);
   Actor_SetAnimation(4, 3);
   Actor_SetAnimation(5, 3);
@@ -2414,6 +2420,7 @@ void TrialRoad_BeatMoapa(void) {
   Actor_StartRepeatedMotion(14, 2);
   wait(10);
   Actor_RunRepeatedMotion(8, 2);
+  // "All right, all right. You've proven your strength, and you are..."
   Event_ShowMessage(8, 0);
   Actor_SetAnimation(8, 7);
   Event_Wait(15);
@@ -2432,6 +2439,7 @@ void TrialRoad_BeatMoapa(void) {
   Actor_FaceDirection(14, TrialRoad_MirrorAngle(0x8000), 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(8, 3);
+  // "As we promised, you will receive the Hover Jade, and we will take..."
   Event_ShowMessage(8, 0);
   Actor_SetSpeed(8, 1);
   Actor_WalkTo(8, TrialRoad_MirrorCellX(32), 264);
@@ -2453,11 +2461,13 @@ void TrialRoad_BeatMoapa(void) {
   ((struct ActorSolid *)Actor_GetById(8))->solid |= 1;
   Event_Wait(20);
   FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 10);
+  // "After many years, the vow that Hoabna made to Yegelos has at last..."
   Event_ShowMessage(8, 0);
   Actor_FaceDirectionAndWait(8, TrialRoad_MirrorAngle(0));
   Actor_FaceActor(13, 8, 0);
   Actor_FaceActor(14, 8, 0);
   Actor_SetAnimationAndWait(8, 3);
+  // "I'm tired now. I'll be back in the Shaman Village resting."
   Event_ShowMessage(8, 0);
   Actor_SetAnimation(13, 3);
   wait(3);
@@ -2466,6 +2476,7 @@ void TrialRoad_BeatMoapa(void) {
   Actor_FaceActor(7, 9, 0);
   Actor_FaceActor(5, 9, 0);
   Actor_FaceActor(6, 9, 0);
+  // "I'm sure you must be exhausted as well. Let's go back to the village..."
   Event_ShowMessage(9, 0);
   Actor_SetAnimation(4, 3);
   wait(2);
@@ -2501,6 +2512,7 @@ void TrialRoad_LoseToMoapa(void) {
   Event_Wait(30);
   Event_SetMessageId((s32)MsgTrialRoadLeaveVillage);
   Actor_SetAnimationAndWait(8, 3);
+  // "You've lost. Now leave Shaman village."
   Event_ShowMessage(8, 0);
   Actor_StartRepeatedMotion(4, 2);
   wait(1);
@@ -2542,11 +2554,14 @@ void TrialRoad_ShowTraps(void) {
   FieldCamera_WaitForArrival();
   FieldCamera_MoveTo(120, CAMERA_KEEP, 120, 1);
   Event_SetMessageId((s32)MsgTrialRoadTrapInstructions);
+  // "The room is filled with traps and snares. Use the power of Contigo..."
   Event_ShowMessageAndWait(8, 0);
   FieldCamera_WaitForArrival();
   FieldCamera_MoveTo(216, CAMERA_KEEP, 120, 1);
   FieldCamera_WaitForArrival();
+  // "This road has four doors. To open them, you will need to place items..."
   Event_ShowMessageAndWait(8, 0);
+  // "Why?"
   Event_ShowMessageAndWait(4, 0);
   Actor_SetMovementTypeById(13, gTrialRoad_LeftKnightToChestScript);
   Actor_RefreshSelectorById(13);
@@ -2574,6 +2589,7 @@ void TrialRoad_ShowTraps(void) {
   Actor_ArmCallback(13, FACING_SOUTH, 0);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(13, 4);
+  // "The door is triggered only when the treasure chests are filled to..."
   Event_ShowMessageAndWait(8, 0);
   Actor_FaceDirection(13, FACING_NORTHWEST, 0);
   Motion_SetModeAndWaitAnimation(13, 3);
@@ -2584,6 +2600,7 @@ void TrialRoad_ShowTraps(void) {
   Sound_Play(SE_CHEST_OPEN);
   Actor_SetModeById(9, 6);
   Event_Wait(30);
+  // "Try putting heavier items, like weapons and tools, into the chests..."
   Event_ShowMessageAndWait(8, 0);
   Actor_WalkToAndWaitById(13, 200, 168);
   Actor_FaceDirection(13, FACING_NORTH, 0);
@@ -2598,11 +2615,14 @@ void TrialRoad_ShowTraps(void) {
   Actor_SetMovementTypeById(13, gTrialRoad_LeftKnightLeavesScript);
   Actor_RefreshSelectorById(13);
   Sound_Play(SE_MAP_EXIT);
+  // "If you reach the door after your opponents do, you will be at a..."
   Event_ShowMessageAndWait(8, 0);
   Actor_SetMovementTypeById(14, gTrialRoad_RightKnightToChestsScript);
   FieldCamera_MoveTo(328, CAMERA_KEEP, 120, 1);
   FieldCamera_WaitForArrival();
+  // "You see, it will take twice the weight to open the doors."
   Event_ShowMessageAndWait(8, 0);
+  // "Stand on the switch, and the number of chests you need to fill will..."
   Event_ShowMessageAndWait(8, 0);
   Actor_FaceDirection(14, FACING_NORTHEAST, 0);
   Motion_SetModeAndWaitAnimation(14, 3);
@@ -2633,12 +2653,15 @@ void TrialRoad_ShowTraps(void) {
   Actor_ArmCallback(14, FACING_NORTHWEST, 0);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(14, 3);
+  // "If you are last to each of the four doors, you will lose eight items..."
   Event_ShowMessageAndWait(8, 0);
   FieldCamera_MoveWithinMapBounds(408 << 16, -1, 120 << 16, 1);
   FieldCamera_WaitForArrival();
+  // "If Trial Road proves too much for you, press this button."
   Event_ShowMessageAndWait(8, 0);
   Actor_SetMovementTypeById(14, gTrialRoad_RightKnightLeavesScript);
   Actor_RefreshSelectorById(14);
+  // "This ends the battle, though. A true hero would not surrender so easily."
   Event_ShowMessageAndWait(8, 0);
   Import_EventSetExitRequest(10);
 }

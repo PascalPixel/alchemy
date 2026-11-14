@@ -139,6 +139,7 @@ void Champa_SailorsSpotFelix(void) {
   FieldEvent_SetMessageId((s32)MsgChampa49);
   Actor_FaceDirection(32, FACING_SOUTH_SOUTHEAST, 0);
   FieldActor_Jump(32, 6, 20);
+  // "Whoa! You... You're Felix!"
   FieldEvent_ShowMessageThenWait(32, 0, 5);
   FieldCamera_MoveTo(176, CAMERA_KEEP, 256, 1);
   FieldCamera_WaitForArrival();
@@ -152,6 +153,7 @@ void Champa_SailorsSpotFelix(void) {
   Actor_FaceDirectionAndWait(33, FACING_SOUTH_SOUTHEAST);
   FieldEvent_Wait(10);
   Actor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "What? Really? It's Felix?"
   FieldEvent_ShowMessageThenWait(33, 0, 5);
   FieldActor_Jump(32, 6, 0);
   FieldActor_Jump(33, 6, 0);
@@ -165,11 +167,14 @@ void Champa_SailorsSpotFelix(void) {
   Actor_Get(33)->actionFlags |= 1;
   FieldEvent_Wait(15);
   Actor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "You're awfully persistent, aren't you?"
   FieldEvent_ShowMessageThenWait(32, 0, 5);
   Actor_FaceDirection(32, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirectionAndWait(33, FACING_NORTH_NORTHEAST);
   FieldEvent_Wait(5);
+  // "Briggs, get outta here! Felix is here to finish you off!"
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 33, 0, 5);
+  // "What was that!? Felix? Here?"
   FieldEvent_ShowMessageThenWait(34, 0, 5);
   FieldActor_WatchAndSetScript(32, 34);
   FieldActor_WatchAndSetScript(33, 34);
@@ -181,6 +186,7 @@ void Champa_SailorsSpotFelix(void) {
   FieldEvent_Wait(15);
   FieldActor_Jump(34, 6, 15);
   FieldActor_Jump(34, 6, 23);
+  // "Oh no! It's really him! I've got to get out of here!!!"
   FieldEvent_ShowMessageThenWait(34, 0, 5);
   FieldActor_Jump(34, 6, 20);
   Actor_SetSpeed(34, 2);
@@ -205,6 +211,7 @@ void Champa_TalkToPracticingBoy(s32 actor) {
   object->scaleY = Q16_ONE;
   object->scaleX = Q16_ONE;
   FieldEvent_SetMessageId((s32)MsgChampa07);
+  // "Eoleo, Briggs's son, has a really strange ability... I'll bet if I..."
   Event_ShowMessage(actor, 0);
   Actor_FaceDirectionAndWait(actor, FACING_EAST);
   Actor_SetActionCallback(object, 8);
@@ -262,6 +269,7 @@ void Champa_TellOfObaba(s32 a0) {
   } else {
     FieldEvent_SetMessageId((s32)MsgChampa36);
   }
+  // "You'd think Obaba would be glad that Briggs was back. She acts like..."
   Event_ShowMessage(a0, 0);
 }
 
@@ -641,6 +649,7 @@ void Champa_MeetAlex(void) {
   Actor_SetPosition(26, 456, 616);
   Actor_SetPosition(27, 168, 616);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
+  // "I see you've caught up with me again, Felix."
   Event_ShowMessage(25, 0);
   Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_WalkToAndWait(4, 312, 616);
@@ -656,17 +665,21 @@ void Champa_MeetAlex(void) {
   FieldActor_LaunchFromLeader(28, -32, 0, 0xd000);
   FieldActor_WaitForMoveById(28);
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "Alex!"
   Event_ShowMessage(6, 0);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(20);
   Actor_FaceDirectionAndWait(7, FACING_EAST);
+  // "Alex? Who is Alex?"
   Event_ShowMessage(7, 0);
   Actor_FaceDirectionAndWait(28, FACING_EAST);
   FieldEvent_Wait(10);
+  // "Alex is a Water Adept. We had been traveling together, but he left..."
   Event_ShowMessage(28, 0);
   Actor_FaceDirection(28, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirectionAndWait(7, FACING_NORTH);
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "A Water Adept?"
   Event_ShowMessage(7, 0);
   Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Champa_MessageOpen(0x2019, 0);

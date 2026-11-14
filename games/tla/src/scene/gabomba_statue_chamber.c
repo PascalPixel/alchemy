@@ -552,13 +552,17 @@ void GabombaStatueChamber_AkafubuReachesChamber(void) {
   Event_Wait(20);
   Event_SetMessageId((s32)MsgIHaveFollowed);
   Actor_SetAttachedEffect(10, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "I have followed Oeia's instructions and entered the final chamber!"
   Event_ShowMessageAndWait(10, 0);
   Actor_FaceDirectionAndWait(10, FACING_WEST);
+  // "He told me that if I reached this chamber, I would become Kibombo's..."
   Event_ShowMessageAndWait(10, 0);
   Actor_FaceDirectionById(10, FACING_EAST);
+  // "But what must I do here to become a witch doctor?"
   Event_ShowMessageAndWait(10, 0);
   Actor_FaceDirectionAndWait(10, FACING_NORTH + FACING_STEP);
   Motion_SetModeAndWaitAnimation(10, 4);
+  // "I do not know..."
   Event_ShowMessageAndWait(10, 0);
   GameFlag_Set(FLAG_AKAFUBU_REACHED_CHAMBER);
   Event_End();
@@ -672,11 +676,14 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Event_Wait(40);
   Actor_Jump(7, 4, 10);
   Event_SetMessageId(MsgTheBlackOrb);
+  // "The black orb... Where is it?"
   Event_ShowMessageAndWait(7, 0);
   Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirectionAndWait(6, FACING_WEST);
+  // "I saw it roll in there..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 6, 0);
   Actor_ShowEmoteById(5, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "It came in through there and rolled along this groove in the floor..."
   Event_ShowMessageAndWait(5, 0);
   FieldActor_SetPositionAndResetMotion(((s32)Actor_GetById(13)), px(392), 0,
                                        px(340));
@@ -719,23 +726,31 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   wait(40);
   Scene_PlayMusic();
   Actor_ShowEmoteById(11, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "It vanished into that hole!"
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 11, 0);
   Actor_ShowEmoteById(6, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
+  // "It looks pretty deep..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 6, 0);
   Actor_FaceDirectionById(5, turnA);
+  // "Can you see it? Do you think you can reach it?"
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 5, 0);
   Actor_ArmCallback(5, FACING_NORTHWEST, 0);
   Actor_SetSpeed(6, 0.8);
   Actor_WalkToAndWait(6, 400, 172);
   Actor_SetModeById(6, 9);
   Event_Wait(20);
+  // "Hm... No, I can't even see it."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 6, 0);
   Actor_SetModeById(7, 4);
+  // "It's no use... Now, I'll never see Lemuria again... I am lost..."
   Event_ShowMessageAndWait(7, 0);
+  // "Wait, hold on... I can see light on the other side of this hole..."
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 6, 0);
   Actor_ShowEmoteById(11, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  // "A light?"
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 11, 0);
   Actor_FaceDirectionAndWait(11, FACING_SOUTHEAST + FACING_STEP);
+  // "There must be a room on the other side of this statue..."
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 11, 0);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   Sound_Play(MUS_000);
@@ -744,6 +759,7 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
     Actor_SetHorizontalPositionAndAngleWithTerrain(12, px(400), px(320), turn);
   }
   wait(1);
+  // "Who... Who are you!?"
   Event_ShowMessageAndWait(12, 0);
   Actor_SetModeById(6, 1);
   wait(1);
@@ -757,26 +773,34 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Actor_SetSpeed(12, 1.2);
   Actor_WalkToAndWait(12, 404, 220);
   Actor_Jump(12, 4, 10);
+  // "What are you doing here? Are you Kibombo!?" Yes: "What? Do you take me for
+  // a naive fool!?" No: "Then what are you doing inside the Great..."
   FieldMessage_ShowAtActor(12, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     FieldEffect_SetAttached(12,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(20);
+    // "What? Do you take me for a naive fool!?"
     Event_ShowMessageAndWait(12, 0);
     ((struct FieldWork *)EVENT_WORK)->message += 1;
   } else {
     ((struct FieldWork *)EVENT_WORK)->message += 1;
     Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+    // "Then what are you doing inside the Great Gabomba!?"
     Event_ShowMessageAndWait(12, 0);
   }
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
+  // "We've come to reclaim the black orb you stole!"
   Event_ShowMessageAndWait(7, 0);
   Actor_ShowEmoteById(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "Do you really believe I would permit you to take it!?"
   Event_ShowMessageAndWait(12, 0);
   Actor_ShowEmoteById(6, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
+  // "Hey, watch it! You wouldn't even be in here if it weren't for us!"
   Event_ShowMessageAndWait(6, 0);
   FieldEffect_SetAttached(12, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
+  // "What is that supposed to mean?"
   Event_ShowMessageAndWait(12, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
   Actor_SetModeById(5, 3);
@@ -784,6 +808,7 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Actor_SetModeById(7, 3);
   Motion_SetModeAndWaitAnimation(11, 3);
   Actor_SetModeById(12, 4);
+  // "Why should I believe you? I am Akafubu, the chosen witch doctor of..."
   Event_ShowMessageAndWait(12, 0);
   Actor_ShowEmoteById(5, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   Actor_SetSpeed(5, 0.8);
@@ -874,6 +899,7 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
   Actor_MoveToAndWait(8, 424, 152);
   Actor_FaceDirectionAndWait(12, FACING_SOUTH_SOUTHWEST);
   FieldEvent_SetMessageId((s32)MsgIMightBe);
+  // "I might be able to retrieve the orb."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 12, 0);
   Actor_SetAnimationAndWait(12, 3);
   Actor_WalkToAndWait(12, 392, 140);
@@ -882,29 +908,37 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
   System_Wait(1);
   Actor_ShowEmoteById(5, turn, 20);
   Actor_FaceDirection(5, angleC, 0);
+  // "Do you think Akafubu will really return the orb to us?" Yes: "Maybe we had
+  // him all wrong..." No: "I think Jenna is right. It sounds like he's..."
   FieldMessage_ShowAtActor(SPEAKER_WINDOW_ABOVE | 5, 0);
   if (Event_AskYesNoWithActorAnimation(*owner, 0) == 0) {
     Actor_FaceDirectionAndWait(7, FACING_EAST);
     Actor_SetAnimation(7, 3);
+    // "Maybe we had him all wrong..."
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
     ((struct FieldWork *)heap->fieldWork)->message++;
   } else {
     ((struct FieldWork *)heap->fieldWork)->message++;
     Actor_FaceDirectionAndWait(7, angleC);
+    // "I think Jenna is right. It sounds like he's going to return what he..."
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
     GabombaStatueChamber_CountAnswer();
   }
   Actor_FaceDirection(6, FACING_WEST, 0);
   Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
+  // "I thought Akafubu was an evil man, but I guess we were wrong..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 6, 0);
   Actor_FaceDirectionAndWait(11, FACING_EAST);
   Actor_SetAnimation(11, 4);
+  // "You never can tell, Sheba..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 11, 0);
   Actor_FaceDirectionAndWait(11, FACING_NORTH_NORTHEAST);
+  // "We have little choice but to trust that he will return it. Come on!"
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 11, 0);
   Actor_FaceDirectionAndWait(11, FACING_SOUTH_SOUTHEAST);
   Actor_SetAnimationAndWait(11, 3);
+  // "Let's go, Felix!"
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 11, 0);
   Actor_FaceDirection(7, FACING_WEST, 0);
   Actor_FaceDirection(7, FACING_WEST, 20);

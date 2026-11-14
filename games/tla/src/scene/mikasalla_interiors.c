@@ -56,6 +56,7 @@ s32 MikasallaInteriors_MindReadWerewolfWonder(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriors18);
+  // "I wonder if there are werewolves beyond those in Garoh... I also..."
   Event_ShowMessage(8, 0);
   Event_End();
   return 0;
@@ -67,6 +68,7 @@ s32 MikasallaInteriors_MindReadIslanderComplaints(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriors32);
+  // "Whenever visitors come out, the islanders start to complain about..."
   Event_ShowMessage(9, 0);
   Event_End();
   return 0;
@@ -85,6 +87,7 @@ void MikasallaInteriors_AskAreYouExplorer(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriors03);
+  // "Hey, mister! Are you an explorer?"
   Event_OpenMessage(10, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
       0) {
@@ -261,13 +264,16 @@ void MikasallaInteriors_MeetGalahad(void) {
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriors19);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_FaceActor(18, gMainRoutineWork.currentOwner, 0);
+  // "Forgive my manners..."
   Event_ShowMessage(18, 0);
   Actor_ShowEmote(gMainRoutineWork.currentOwner,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_SetAnimation(18, 4);
   FieldEvent_Wait(15);
+  // "No, please... Do not fear me."
   Event_ShowMessage(18, 0);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
+  // "I am the warrior Galahad. I am looking for someone, and I need your..."
   Event_OpenMessage(18, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
       0) {

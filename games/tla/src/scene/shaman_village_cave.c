@@ -279,6 +279,7 @@ void ShamanVillageCave_MeetColossoFans(void) {
   Event_SetFlag(0xa70);
   FieldEvent_SetMessageId((s32)MsgIFound2);
   Actor_SetAnimation(4, 1);
+  // "I found Isaac!"
   FieldEvent_ShowMessageThenWait(19, 0, 1);
   Actor_WalkToAndWait(4, 200, 221);
   Actor_RunRepeatedMotion(4, 2);
@@ -317,28 +318,37 @@ void ShamanVillageCave_MeetColossoFans(void) {
   FieldActor_WaitForMoveById(21);
   Actor_FaceDirectionAndWait(21, FACING_SOUTH_SOUTHWEST);
   Actor_RunRepeatedMotion(21, 2);
+  // "We've been looking for you, Isaac!"
   FieldEvent_ShowMessageThenWait(21, 0, 5);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "Who are you guys?"
   FieldEvent_ShowMessageThenWait(18, 0, 5);
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "The name's Satrage. You took me out in the last round at Colosso."
   FieldEvent_ShowMessageThenWait(19, 0, 5);
   Actor_RunRepeatedMotion(20, 2);
   FieldEvent_Wait(5);
+  // "And I'm Azart!"
   FieldEvent_ShowMessageThenWait(20, 0, 5);
   Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "And don't forget Navampa!"
   FieldEvent_ShowMessageThenWait(21, 0, 5);
   Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
   Actor_SetAnimationAndWait(0, 3);
   FieldEvent_Wait(10);
+  // "Oh. It's you guys."
   FieldEvent_ShowMessageThenWait(0, 0, 5);
   Actor_RunRepeatedMotion(19, 2);
   FieldEvent_Wait(5);
+  // "Is that any way to say hello to some old friends?"
   FieldEvent_ShowMessageThenWait(19, 0, 5);
   Actor_FaceEachOther(18, 4, 0);
   FieldEvent_Wait(10);
   Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "What's your problem?"
   FieldEvent_ShowMessageThenWait(0, 0, 5);
   Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "We want to talk to you about your fighting style at Colosso."
   FieldEvent_ShowMessageThenWait(20, 0, 5);
   Actor_FaceDirection(4, FACING_NORTHEAST, 0);
   Actor_FaceDirectionAndWait(18, FACING_NORTHEAST);
@@ -346,28 +356,35 @@ void ShamanVillageCave_MeetColossoFans(void) {
   Actor_SetAnimationAndWait(4, 3);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(21, 4);
+  // "Yeah. And we think you shouldn't have won, Isaac. We think you..."
   FieldEvent_ShowMessageThenWait(21, 0, 5);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "It sounds like you resent the fact that Isaac beat you..."
   FieldEvent_ShowMessageThenWait(18, 0, 5);
   Actor_SetAnimation(21, 4);
   Actor_SetAnimation(19, 4);
   Actor_SetAnimationAndWait(20, 4);
+  // "We've just been thinking about it, and there's no way that Isaac..."
   FieldEvent_ShowMessageThenWait(19, 0, 5);
   Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "Right. So you think I cheated just because I used my Pynergy..."
   FieldEvent_ShowMessageThenWait(0, 0, 5);
   Actor_FaceEachOther(20, 21, 0);
   FieldEvent_Wait(10);
   Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "I don't know how you did it. I'm just sayin' I think you cheated is..."
   FieldEvent_ShowMessageThenWait(20, 0, 5);
   Actor_FaceDirection(20, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(21, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirectionAndWait(18, FACING_NORTHEAST);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(18, 4);
+  // "Ah, but Psynergy is a warrior's skill, every bit as much as your..."
   FieldEvent_ShowMessageThenWait(18, 0, 5);
   Actor_SetAnimationAndWait(21, 4);
+  // "You're not listening, are you, old man? That fight was fixed, and..."
   FieldEvent_ShowMessageThenWait(21, 0, 5);
   Actor_SetDestinationOffset(20, -16, 24);
   Actor_SetDestinationOffset(21, -16, 24);
@@ -431,8 +448,10 @@ void ShamanVillageCave_LoseToColossoFans(void) {
   Actor_RunRepeatedMotion(21, 2);
   FieldEvent_Wait(5);
   Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "Hey, these guys aren't very strong at all!"
   FieldEvent_ShowMessageThenWait(21, 0, 5);
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "Ha! We were right! They were cheating at Colosso!"
   Event_OpenMessage(19, 0);
   if (EventYesNo_Ask(1) == 0) {
     Message_CloseFinishedWindows();
@@ -486,17 +505,23 @@ void ShamanVillageCave_BeatColossoFans(void) {
   Event_WaitTransitionFrames();
   Actor_RunRepeatedMotion(20, 2);
   FieldEvent_Wait(5);
+  // "These guys were phenomenal!"
   FieldEvent_ShowMessageThenWait(21, 0, 5);
+  // "Which one of you didn't think they won Colosso fair and square?"
   FieldEvent_ShowMessageThenWait(19, 0, 5);
+  // "It wasn't me! I think both you and Navampa were saying something..."
   FieldEvent_ShowMessageThenWait(20, 0, 5);
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "So. You don't still think our victory at Colosso was fixed, do you?"
   FieldEvent_ShowMessageThenWait(0, 0, 5);
   Actor_SetAnimationAndWait(21, 3);
   FieldEvent_Wait(10);
+  // "No way, Isaac! We've seen the error of our ways!"
   FieldEvent_ShowMessageThenWait(21, 0, 5);
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "We promise we won't badmouth you or call you a fraud ever again...."
   Event_OpenMessage(19, 0);
   while (FieldEvent_AskYesNoWithActorAnimation(0, 0) != 0) {
     Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_WINCE, 30);

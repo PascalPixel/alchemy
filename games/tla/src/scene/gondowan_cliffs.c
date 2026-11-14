@@ -356,19 +356,23 @@ void GondowanCliffs_TurnBackToHelpPiers(void) {
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 608, 472);
   FieldEvent_SetMessageId((s32)MsgWhereDoYou);
   FieldActor_ShowEmote(22, 258, 20);
+  // "Felix! Where do you intend to go? We should try to help Piers..."
   Event_ShowMessage(22, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 10);
   FieldActor_Jump(5, 6, 15);
   FieldActor_Jump(5, 6, 23);
+  // "Kraden's right. I think we should try to help Piers, too."
   Event_ShowMessage(5, 0);
   FieldActor_Stop(6);
   Actor_FaceActor(6, 5, 0);
+  // "I completely agree with Kraden and Jenna."
   Event_ShowMessage(6, 0);
   FieldActor_WatchAndSetScript(6, gMainRoutineWork.currentOwner);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(22, 3);
+  // "It looks like the majority wins! Let's go back to Kibombo and help..."
   Event_ShowMessage(22, 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
   Actor_SetAnimation(6, 3);

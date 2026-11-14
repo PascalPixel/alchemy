@@ -275,11 +275,13 @@ void LemurianShipDeck_TakeTheTiller(void) {
   FieldEvent_Wait(80);
   Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
   FieldEvent_SetMessageId((s32)MsgTakeTheTiller);
+  // "Take the tiller, Felix!"
   Event_ShowMessage(7, 0);
   Actor_ShowEmote(gMainRoutineWork.currentOwner,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   gFieldWork->message++;
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHWEST, 20);
+  // "If you hope to reach Lemuria, you'll have to learn a few things..."
   Event_ShowMessage(7, 0);
   FieldActor_Stop(5);
   FieldActor_Stop(9);
@@ -289,11 +291,15 @@ void LemurianShipDeck_TakeTheTiller(void) {
   Actor_FaceDirection(6, FACING_NORTH, 0);
   Actor_FaceDirection(5, FACING_NORTH, 0);
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  // "Kraden, shouldn't we be heading straight for Lemuria?"
   Event_ShowMessage(6, 0);
   Actor_FaceDirectionAndWait(9, turn);
+  // "Well, I suppose if we have to learn to sail, it's better to do it..."
   Event_ShowMessage(9, 0);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  // "Then I want to go to Lalivero! And Tolbi! Oh! And Vale! Can we go to..."
   Event_ShowMessage(5, 0);
+  // "I'd love to see your hometown, Jenna! Shall we? Let's do it! To Vale..."
   Event_OpenMessage(7, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
       0) {
@@ -397,38 +403,46 @@ void LemurianShipDeck_HoldOnToTiller(void) {
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_FaceDirectionAndWait(6, FACING_SOUTH);
   FieldEvent_Wait(10);
+  // "Hold on to that tiller! Do you want us to get swallowed by the waves!?"
   FieldEvent_ShowMessageThenWait(6, 0, 5);
   Actor_FaceDirectionAndWait(5, FACING_NORTHEAST);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(5, 4);
+  // "I know you're worried, Sheba, but he's doing the best he can..."
   FieldEvent_ShowMessageThenWait(5, 0, 5);
   Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_FaceDirectionAndWait(4, FACING_SOUTH);
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(7, FACING_NORTH);
   FieldEvent_Wait(10);
+  // "That was an incredibly strong whirlpool, but I doubt it could sink..."
   FieldEvent_ShowMessageThenWait(7, 0, 5);
   Actor_FaceDirection(6, FACING_SOUTH, 0);
   Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
   FieldEvent_Wait(30);
   Actor_FaceDirectionAndWait(5, FACING_NORTHEAST);
   FieldEvent_Wait(10);
+  // "See, Sheba? There's nothing to worry about. Even if we hit a..."
   FieldEvent_ShowMessageThenWait(5, 0, 5);
   Actor_FaceDirectionAndWait(6, FACING_SOUTHWEST);
   Actor_SetAnimationAndWait(6, 3);
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(6, FACING_SOUTH);
+  // "But still... Piers, can't you show Felix how to get past the..."
   FieldEvent_ShowMessageThenWait(6, 0, 5);
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   Actor_FaceDirectionAndWait(7, FACING_NORTH);
   FieldEvent_Wait(10);
+  // "Er, yes, well..."
   FieldEvent_ShowMessageThenWait(7, 0, 5);
   Actor_FaceDirectionAndWait(9, FACING_SOUTHEAST);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "What's wrong, Piers? Lemuria's just beyond these whirlpools, isn't it?"
   FieldEvent_ShowMessageThenWait(9, 0, 5);
   Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
   FieldEvent_Wait(10);
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "Yeah, I...think so..."
   FieldEvent_ShowMessageThenWait(7, 0, 5);
   Actor_FaceEachOther(6, 5, 0);
   FieldEvent_Wait(30);
@@ -436,30 +450,39 @@ void LemurianShipDeck_HoldOnToTiller(void) {
   Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
   FieldEvent_Wait(10);
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "You..."think so"!?"
   FieldEvent_ShowMessageThenWait(6, 0, 5);
   Actor_RunRepeatedMotion(5, 2);
   FieldEvent_Wait(5);
+  // "Aren't you...from Lemuria? Shouldn't you know exactly where it is?"
   FieldEvent_ShowMessageThenWait(5, 0, 5);
   Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
   Actor_SetAnimationAndWait(7, 3);
   FieldEvent_Wait(10);
+  // "Yes, I'm from Lemuria... I've never had to get back into it before!..."
   FieldEvent_ShowMessageThenWait(7, 0, 5);
+  // "Oh, I see. So that must mean... You don't actually know which..."
   FieldEvent_ShowMessageThenWait(9, 0, 5);
   Actor_SetAnimationAndWait(7, 3);
   FieldEvent_Wait(10);
+  // "Don't be silly! I mean... I just need to get my bearings."
   FieldEvent_ShowMessageThenWait(7, 0, 5);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "Hm... That doesn't sound good."
   FieldEvent_ShowMessageThenWait(9, 0, 5);
   Actor_FaceDirectionAndWait(9, FACING_NORTH);
   FieldEvent_Wait(10);
+  // "If Lemuria really is beyond those currents, then we'll need to find..."
   FieldEvent_ShowMessageThenWait(9, 0, 5);
   Actor_FaceDirection(4, FACING_SOUTHWEST, 0);
   Actor_FaceDirectionAndWait(9, FACING_NORTHEAST);
   FieldEvent_Wait(10);
+  // "And until we do..."
   FieldEvent_ShowMessageThenWait(9, 0, 5);
   Actor_FaceDirectionAndWait(9, FACING_NORTH);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(9, 4);
+  // "We won't be getting into Lemuria."
   FieldEvent_ShowMessageThenWait(9, 0, 5);
   Actor_SetAnimationAndWait(4, 3);
   FieldEvent_Wait(10);
@@ -556,6 +579,7 @@ void LemurianShipDeck_SightMenardisShip(void) {
   Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 20);
   Actor_FaceDirection(9, FACING_SOUTHEAST + FACING_STEP, 20);
   Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 0);
+  // "Look... It's Menardi's ship!"
   Event_ShowMessage(9, 0);
   FieldCamera_SetSpeed(4.8);
   FieldCamera_MoveTo(200, CAMERA_KEEP, 344, 1);
@@ -569,12 +593,15 @@ void LemurianShipDeck_SightMenardisShip(void) {
   FieldCamera_MoveTo(264, CAMERA_KEEP, 128, 1);
   FieldCamera_WaitForArrival();
   Actor_SetAnimationAndWait(5, 4);
+  // "It doesn't look like they sailed here, though..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
   Actor_FaceDirectionAndWait(6, FACING_EAST);
   Actor_SetAnimation(6, 4);
+  // "Of course not... They were killed at the lighthouse, weren't they?"
   Event_ShowMessage(6, 0);
   Actor_FaceDirectionAndWait(9, FACING_NORTHWEST + FACING_STEP);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  // "Do you think it could have drifted here?"
   Event_OpenMessage(9, 0);
   Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
@@ -751,12 +778,15 @@ void LemurianShipDeck_ReturnToShip(void) {
   Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
   FieldEvent_SetMessageId((s32)MsgAtLastI);
   FieldActor_Jump(7, 4, 10);
+  // "At last, I'm back on my ship."
   Event_ShowMessage(7, 0);
   Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
+  // "Finally, I can return to my beloved Lemuria."
   Event_ShowMessage(7, 0);
   Actor_WalkToAndWait(7, 386, 424);
   Actor_FaceActor(7, gMainRoutineWork.currentOwner, 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
+  // "Wait there a moment."
   Event_ShowMessage(7, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_SetScript(gMainRoutineWork.currentOwner,
@@ -828,8 +858,10 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   FieldActor_Jump(7, 4, 10);
   FieldActor_Jump(7, 4, 20);
+  // "My ship! At long last... I have returned to my ship."
   Event_ShowMessage(7, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "Well, Piers?"
   Event_ShowMessage(9, 0);
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(288, CAMERA_KEEP, 184, 1);
@@ -837,62 +869,80 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_WalkByAndWait(7, 0, -16);
   Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
   Actor_SetAnimationAndWait(7, 3);
+  // "I'm thrilled... I'm just happy to be back with my ship."
   Event_ShowMessage(7, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
   Actor_FaceDirectionAndWait(6, FACING_SOUTHWEST);
   Actor_SetAnimation(6, 4);
+  // "Uh, that's not what Kraden's asking..."
   Event_ShowMessage(6, 0);
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
+  // "You forgot, didn't you, Piers? When we talked in Kibombo? Remember..."
   Event_ShowMessage(5, 0);
   Actor_FaceDirection(7, FACING_NORTHWEST, 0);
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   Actor_SetAnimation(6, 4);
+  // "He wanted you to take us to your home... To Lemuria."
   Event_ShowMessage(6, 0);
   Actor_FaceDirection(7, FACING_NORTHEAST, 0);
   Actor_SetAnimationAndWait(5, 3);
+  // "Remember how we said we'd talk about it later? Well, it's later now..."
   Event_ShowMessage(5, 0);
   Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
   Actor_SetAttachedEffect(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
+  // "Oh... Is it? I suppose we have to talk about it sooner or later. You..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
   Actor_SetAnimation(5, 3);
   Actor_SetAnimationAndWait(6, 3);
   Actor_SetAnimation(9, 4);
+  // "Piers...if you do not wish to take us, you do not have to. Just tell..."
   Event_ShowMessage(9, 0);
   Actor_FaceDirection(7, FACING_NORTHEAST, 0);
+  // "And if not, well, we'll just have to get ourselves a boat and find..."
   Event_ShowMessage(9, 0);
   Actor_FaceDirectionAndWait(9, FACING_WEST);
+  // "Right, Felix?" Yes: "What's with the guilt trip? Piers hasn't..." No:
+  // "Sheba is right! You guys just let Piers give..."
   Event_OpenMessage(9, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
+    // "What's with the guilt trip? Piers hasn't even given us his answer yet!"
     Event_ShowMessage(5, 0);
+    // "Kraden! Felix! Stop trying to pressure Piers!"
     Event_ShowMessage(6, 0);
     gFieldWork->message += 2;
   } else {
     gFieldWork->message += 2;
     Actor_FaceDirection(7, FACING_NORTHWEST, 0);
     Actor_SetAnimationAndWait(5, 3);
+    // "Sheba is right! You guys just let Piers give us his answer!"
     Event_ShowMessage(5, 0);
     Actor_FaceDirection(7, FACING_NORTHEAST, 0);
     Actor_SetAnimation(6, 3);
+    // "I agree with Felix. We shouldn't try to pressure Piers, Kraden."
     Event_ShowMessage(6, 0);
   }
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Actor_FaceDirectionAndWait(9, FACING_NORTHEAST);
+  // "But that's not what I was°"
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_BELOW | 9, 0);
   Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
   Actor_SetAnimation(7, 4);
+  // "Don't worry, Sheba... I've actually been thinking about this quite a..."
   Event_ShowMessage(7, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 0);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirectionAndWait(7, FACING_NORTH);
+  // "I just never got the opportunity to mention it before."
   Event_ShowMessage(7, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "Well? Well!?"
   Event_ShowMessage(9, 0);
   Actor_FaceDirection(5, FACING_EAST, 0);
   Actor_FaceDirection(6, FACING_WEST, 40);
@@ -902,13 +952,16 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
+  // "It's not nice to test the patience of an old man. Will you take us..."
   Event_ShowMessage(9, 0);
   Actor_FaceDirection(7, FACING_NORTHEAST, 0);
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  // "We will go to Lemuria, Kraden."
   Event_ShowMessage(7, 0);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
+  // "I figured it was too much to..."
   Event_ShowMessage(9, 0);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -916,8 +969,10 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
   Actor_FaceDirection(9, FACING_WEST, 40);
   Actor_FaceDirectionAndWait(9, FACING_SOUTH);
+  // "What did you just say!?"
   Event_ShowMessage(9, 0);
   Actor_SetAnimationAndWait(7, 3);
+  // "I will take you to Lemuria."
   Event_ShowMessage(7, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
@@ -925,49 +980,64 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_SetAttachedEffect(5, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
+  // "Kraden? Are you OK?"
   Event_ShowMessage(5, 0);
   Actor_FaceDirectionAndWait(9, FACING_WEST);
   FieldActor_StartRepeatedMotion(9, 2);
   Actor_SetAnimationAndWait(9, 3);
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+  // "Is he OK!?"
   Event_ShowMessage(7, 0);
   Actor_FaceDirectionAndWait(9, FACING_SOUTH + FACING_STEP);
   FieldActor_StartRepeatedMotion(9, 2);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Actor_SetAnimationAndWait(9, 3);
+  // "Piers! Are you... Are you serious?"
   Event_ShowMessage(9, 0);
   Actor_SetAnimation(7, 3);
+  // "After what we've been through, it would be wrong to deny you. That's..."
   Event_ShowMessage(7, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  // "What's what made up your mind?"
   Event_ShowMessage(6, 0);
+  // "The fact that you are truly good people."
   Event_ShowMessage(7, 0);
   Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
+  // "You have gone to great trouble to help one whose problems needn't..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
   Actor_FaceDirectionAndWait(7, FACING_NORTH);
   Actor_SetAnimation(7, 3);
+  // "Witnessing that kindness... It made me want to help, too."
   Event_ShowMessage(7, 0);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
+  // "Piers, you..."
   Event_ShowMessage(5, 0);
   Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
   Actor_SetAnimation(7, 4);
+  // "No, Jenna. Please, don't say a word. I've made up my mind."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
   Actor_SetAnimationAndWait(5, 3);
   Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
+  // "I shall be leaving immediately, but I want you to come, Kraden."
   Event_ShowMessage(7, 0);
   Actor_SetAnimationAndWait(9, 3);
   Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
+  // "Let us set sail, Felix! To my ship! And the Eastern Sea!"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
   Actor_FaceDirection(9, FACING_WEST, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  // "So at long last, I will finally reach Lemuria..."
   Event_ShowMessage(9, 0);
   Actor_FaceDirection(5, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(6, FACING_WEST);
   Actor_SetAnimation(6, 3);
+  // "I wonder what kind of advanced civilization we'll find in Lemuria..."
   Event_ShowMessage(6, 0);
   Actor_SetAnimation(5, 3);
+  // "I'm actually excited to find out!"
   Event_ShowMessage(5, 0);
   Actor_WalkByAndWait(7, -16, 0);
   FieldEvent_Wait(40);
@@ -976,33 +1046,42 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_WalkByAndWait(5, 0, 16);
+  // "What's wrong, Piers?"
   Event_ShowMessage(5, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Actor_FaceDirection(6, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 0);
   Actor_SetAnimationAndWait(7, 3);
+  // "It just occurred to me... The mayor of Madra and his wife must be..."
   FieldEvent_ShowMessageThenWait(7, 0, 20);
+  // "We should go tell them that I've retrieved my orb. Then they..."
   Event_ShowMessage(7, 0);
   Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
+  // "Is that acceptable, Felix? Can we stop by Madra briefly before we..."
   Event_ShowMessage(7, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(9, FACING_WEST);
   Actor_SetAnimation(9, 3);
+  // "What do you say, Felix? Shall we go see the mayor?"
   Event_OpenMessage(9, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 1) {
     Actor_SetAnimationAndWait(9, 4);
+    // "Don't worry about me. I've waited this long. I can wait a little..."
     Event_ShowMessage(9, 0);
     gFieldWork->message += 1;
   } else {
     Actor_SetAnimationAndWait(9, 3);
     gFieldWork->message += 1;
+    // "I have no objection, so why not? Let's go."
     Event_ShowMessage(9, 0);
   }
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Actor_FaceDirectionAndWait(9, FACING_SOUTH + FACING_STEP);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  // "But we must depart as soon as we're done at the mayor's house, Piers."
   Event_ShowMessage(9, 0);
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+  // "Oh, thank you!"
   Event_ShowMessage(7, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(9, FACING_WEST);

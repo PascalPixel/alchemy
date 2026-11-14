@@ -429,30 +429,44 @@ void EasternAlhafra_TalkToSailor(void) {
   Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceActor(22, gMainRoutineWork.currentOwner, 0);
   FieldEvent_Wait(20);
+  // "What's your problem?"
   FieldEvent_ShowMessageThenWait(22, 0, 10);
   Actor_RunRepeatedMotion(22, 2);
   FieldEvent_Wait(10);
+  // "You're new in town, aren't you?" Yes: "You're probably curious about this
+  // here ship..." No: "Well, I've never seen you before, but whatever..."
   Event_OpenMessage(22, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) != 0) {
     FieldEvent_Wait(30);
+    // "Well, I've never seen you before, but whatever..."
     FieldEvent_ShowMessageThenWait(22, 0, 0);
   } else {
     FieldEvent_Wait(20);
     gFieldWork->message += 1;
+    // "You're probably curious about this here ship, huh?" Yes: "They call this
+    // a "sailing" ship... Wind is..." No: "Masted ships like this were
+    // originally built..."
     Event_OpenMessage(22, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(4, 0) != 0) {
       FieldEvent_Wait(30);
+      // "Masted ships like this were originally built by the Champa... Oh..."
       FieldEvent_ShowMessageThenWait(22, 0, 0);
     } else {
       FieldEvent_Wait(20);
       gFieldWork->message += 1;
+      // "They call this a "sailing" ship... Wind is the only thing that'll..."
+      // Yes: "Yeah, well, think how surprised we were to..." No: "You kids
+      // today, with your "been there, done..."
       Event_OpenMessage(22, 0);
       if (FieldEvent_AskYesNoWithActorAnimation(4, 0) != 0) {
         FieldEvent_Wait(30);
+        // "You kids today, with your "been there, done that" attitudes...
+        // It's..."
         FieldEvent_ShowMessageThenWait(22, 0, 0);
       } else {
         FieldEvent_Wait(20);
         gFieldWork->message += 1;
+        // "Yeah, well, think how surprised we were to find that Alhafra had..."
         FieldEvent_ShowMessageThenWait(22, 0, 0);
       }
     }
@@ -522,6 +536,7 @@ run:
   Actor_FaceDirectionAndWait(4, FACING_WEST);
   FieldEvent_Wait(20);
   FieldEvent_SetMessageId(MsgIDonTKnowWhatWe);
+  // "I don't know what we're going to do about this rock... I think we've..."
   FieldEvent_ShowMessageThenWait(5, 0, 5);
   Actor_SetAnimation(5, 2);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -780,6 +795,7 @@ void EasternAlhafra_OverhearWorkers(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgItSIt);
   FieldCamera_SetSpeed(4);
+  // "It's... It's no use!"
   FieldEvent_ShowMessageThenWait(22, 0, 10);
   Actor_WalkToAndWait(4, 232, 392);
   FieldActor_LaunchFromLeader(26, 0, -16, 0x2000);
@@ -793,12 +809,14 @@ void EasternAlhafra_OverhearWorkers(void) {
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(22, 2);
   FieldEvent_Wait(10);
+  // "The mast just won't budge, no matter how many people we get to help us!"
   FieldEvent_ShowMessageThenWait(22, 0, 10);
   EventCamera_MoveToActor(23, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   FieldActor_Jump(23, 6, 15);
   FieldActor_Jump(23, 6, 23);
+  // "We're going to have to get all this junk off the mast first."
   FieldEvent_ShowMessageThenWait(23, 0, 10);
   Actor_FaceDirection(22, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(24, FACING_SOUTHEAST, 0);
@@ -807,11 +825,13 @@ void EasternAlhafra_OverhearWorkers(void) {
   EventCamera_MoveToActor(11, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
+  // "If we could just get some decent footing, we could have this thing..."
   FieldEvent_ShowMessageThenWait(23, 0, 10);
   EventCamera_MoveToActor(24, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(24, 4);
+  // "There's more to it than that, though..."
   FieldEvent_ShowMessageThenWait(24, 0, 10);
   Actor_FaceDirection(24, FACING_NORTHEAST, 0);
   FieldEvent_Wait(20);
@@ -822,6 +842,7 @@ void EasternAlhafra_OverhearWorkers(void) {
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(10);
+  // "We still have to do something about that rope over there."
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_FaceDirection(22, FACING_EAST, 0);
   Actor_FaceDirection(23, FACING_NORTH_NORTHEAST, 0);
@@ -829,11 +850,13 @@ void EasternAlhafra_OverhearWorkers(void) {
   EventCamera_MoveToActor(14, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
+  // "Untangling that'll be a piece of cake, once we get a boat we can use..."
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   EventCamera_MoveToActor(22, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
+  // "Oh, yeah... A piece of cake... Except for that huge rock over there!"
   FieldEvent_ShowMessageThenWait(22, 0, 10);
   FieldCamera_MoveTo(488, 0, 416, 1);
   FieldCamera_WaitForArrival();
@@ -841,6 +864,7 @@ void EasternAlhafra_OverhearWorkers(void) {
   Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_FaceDirection(23, FACING_EAST, 0);
   FieldEvent_Wait(20);
+  // "Oh yeah... The rock..."
   FieldEvent_ShowMessageThenWait(23, 0, 10);
   Actor_FaceDirection(24, FACING_EAST, 0);
   Actor_FaceDirection(25, FACING_SOUTHEAST, 0);
@@ -848,11 +872,13 @@ void EasternAlhafra_OverhearWorkers(void) {
   FieldActor_StartRepeatedMotion(25, 3);
   Actor_SetAttachedEffect(25, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
+  // "How are we supposed to get the mast out from under that thing? It's..."
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   FieldCamera_MoveTo(392, 16, 416, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(24, 4);
+  // "There's no way we're gonna move it by ourselves..."
   FieldEvent_ShowMessageThenWait(24, 0, 10);
   Actor_FaceDirection(23, FACING_WEST, 0);
   FieldEvent_Wait(30);
@@ -864,6 +890,7 @@ void EasternAlhafra_OverhearWorkers(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
+  // "Well, either way, we can't do anything until Zack finishes the canoe."
   FieldEvent_ShowMessageThenWait(25, 0, 20);
   Actor_SetAnimation(22, 3);
   Actor_SetAnimation(23, 3);
@@ -1084,6 +1111,7 @@ void EasternAlhafra_AskIfFinished(void) {
   FieldEvent_SetMessageId((s32)MsgSoIThink);
   Actor_SetAnimationAndWait(26, 3);
   FieldEvent_Wait(10);
+  // "So I think maybe we should just forget about that and start on our..."
   FieldEvent_ShowMessageThenWait(26, 0, 10);
   Actor_SetAnimation(7, 3);
   Actor_SetAnimation(5, 3);
@@ -1216,6 +1244,7 @@ void EasternAlhafra_WorkersSeeBlockGone(void) {
   Actor_FaceDirection(28, FACING_NORTHEAST, 0);
   Actor_SetPosition(29, 296, 616);
   Actor_FaceDirection(29, FACING_NORTHEAST, 0);
+  // "Hey! That block on the mast has disappeared!"
   FieldEvent_ShowMessageThenWait(28, 0, 10);
   Actor_FaceDirection(4, FACING_SOUTH, 0);
   {
@@ -1229,16 +1258,19 @@ void EasternAlhafra_WorkersSeeBlockGone(void) {
   Actor_SetAttachedEffect(28, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
   FieldActor_ShowEmote(0x1d, 0x102, 0x1e);
+  // "Hey! Now, we can raise the mast and use the sail again!"
   FieldEvent_ShowMessageThenWait(28, 0, 10);
   Actor_FaceDirection(28, FACING_WEST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(28, 3);
   FieldEvent_Wait(10);
+  // "Hey, mate, let's go tell the mayor the good news!"
   FieldEvent_ShowMessageThenWait(28, 0, 10);
   Actor_FaceDirection(29, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(29, 3);
   FieldEvent_Wait(10);
+  // "Yeah, let's do that!"
   FieldEvent_ShowMessageThenWait(28, 0, 10);
   Actor_FaceDirection(29, FACING_WEST, 0);
   FieldEvent_Wait(10);
@@ -1253,9 +1285,13 @@ void EasternAlhafra_WorkersSeeBlockGone(void) {
   Actor_FaceDirection(24, FACING_EAST, 0);
   Actor_SetPosition(4, 232, 384);
   Actor_FaceDirection(4, FACING_EAST, 0);
+  // "Baba babubu!!"
   FieldEvent_ShowMessageThenWait(24, 0, 10);
+  // "What is it, Eoleo? What are you so excited about?"
   FieldEvent_ShowMessageThenWait(23, 0, 10);
+  // "Baba babubu!"
   FieldEvent_ShowMessageThenWait(24, 0, 10);
+  // "It's true! The block that was pinning the mast down is gone!"
   FieldEvent_ShowMessageThenWait(23, 0, 10);
   FieldCamera_MoveTo(264, CAMERA_KEEP, 392, 1);
   FieldCamera_WaitForArrival();
@@ -1327,6 +1363,7 @@ void EasternAlhafra_WorkersTellMayor(void) {
   Actor_SetPosition(29, 32, 608);
   Actor_FaceDirection(29, FACING_EAST, 0);
   FieldEvent_Wait(10);
+  // "I still just can't quite believe that the stone block on top of the..."
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   FieldCamera_MoveTo(144, CAMERA_KEEP, 664, 1);
   FieldEvent_Wait(10);
@@ -1354,9 +1391,11 @@ void EasternAlhafra_WorkersTellMayor(void) {
   FieldActor_RefreshSelectorById(29);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(28, 2);
+  // "I'm telling you, Mayor, I saw it with my own eyes! ...I mean, I..."
   FieldEvent_ShowMessageThenWait(28, 0, 10);
   FieldActor_Jump(29, 6, 15);
   FieldActor_Jump(29, 6, 23);
+  // "If you don't believe us, you can go see for yourself!"
   FieldEvent_ShowMessageThenWait(29, 0, 10);
   Actor_SetSpeed(28, 1.6);
   Actor_SetSpeed(29, 1.6);
@@ -1391,16 +1430,19 @@ void EasternAlhafra_WorkersTellMayor(void) {
   FieldCamera_MoveTo(384, CAMERA_KEEP, 480, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
+  // "Huh?"
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   FieldCamera_SetSpeed(6);
   FieldCamera_MoveTo(480, CAMERA_KEEP, 344, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
+  // "What?"
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   FieldCamera_SetSpeed(6);
   FieldCamera_MoveTo(488, CAMERA_KEEP, 456, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
+  // "Whoa, hey!!!"
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   FieldCamera_SetSpeed(6);
   FieldCamera_MoveTo(192, CAMERA_KEEP, 616, 1);
@@ -1409,6 +1451,7 @@ void EasternAlhafra_WorkersTellMayor(void) {
   FieldActor_ShowEmote(0x19, 0x102, 0x1e);
   Actor_FaceDirection(25, FACING_NORTH, 0);
   FieldEvent_Wait(20);
+  // "It's gone! That huge block is really gone!"
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_FaceDirection(28, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(29, FACING_SOUTH_SOUTHWEST, 0);
@@ -1419,11 +1462,13 @@ void EasternAlhafra_WorkersTellMayor(void) {
   Actor_FaceDirection(27, FACING_WEST, 0);
   FieldEvent_Wait(30);
   FieldActor_ShowEmote(0x1b, 0x108, 0x1e);
+  // "Excellent news, Mayor!"
   FieldEvent_ShowMessageThenWait(27, 0, 10);
   Actor_FaceDirection(25, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(10);
+  // "Unfortunately, the mayor of Madra will probably try to take it from..."
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_SetAnimation(28, 3);
   Actor_SetAnimationAndWait(29, 3);
@@ -1432,6 +1477,7 @@ void EasternAlhafra_WorkersTellMayor(void) {
   Actor_FaceDirection(27, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(40);
   FieldActor_ShowEmote(0x19, 0x101, 0x1e);
+  // "But that can wait. Who was able to move the block?"
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   FieldActor_StartRepeatedMotion(28, 3);
   Actor_SetAttachedEffect(28, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1449,6 +1495,7 @@ void EasternAlhafra_WorkersTellMayor(void) {
   FieldCamera_MoveTo(144, CAMERA_KEEP, 544, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
+  // "Felix!"
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   FieldActor_ShowEmote(4, 0x102, 0x1e);
   Actor_SetSpeed(25, 1.5);
@@ -1462,6 +1509,7 @@ void EasternAlhafra_WorkersTellMayor(void) {
   Actor_FaceDirection(27, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
   FieldActor_ShowEmote(0x19, 0x100, 0x1e);
+  // "Felix, did you do this?"
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_WalkToAndWait(4, 136, 520);
   FieldActor_LaunchFromLeader(26, 16, 0, 0x5000);
@@ -1470,43 +1518,54 @@ void EasternAlhafra_WorkersTellMayor(void) {
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(26, 3);
   FieldEvent_Wait(10);
+  // "Surprised to see us, Mayor?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 26, 0, 10);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(10);
+  // "Did you do this?"
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_SetAnimationAndWait(26, 4);
+  // "We left Alhafra some time ago, but we just returned and destroyed..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 26, 0, 10);
   FieldActor_ShowEmote(0x19, 0x109, 0x1e);
+  // "Exploring? What brought you back to Alhafra right now?"
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_FaceDirection(26, FACING_WEST, 0);
   FieldEvent_Wait(20);
+  // "Felix had a hunch that we might be needed here."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 26, 0, 10);
   Actor_RunRepeatedMotion(27, 2);
   FieldEvent_Wait(20);
   Actor_FaceDirection(26, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(27, FACING_WEST, 0);
   FieldEvent_Wait(20);
+  // "Mayor, not to interrupt, but shouldn't we begin repairs on your ship..."
   FieldEvent_ShowMessageThenWait(27, 0, 10);
   FieldActor_ShowEmote(0x19, 0x100, 0x1e);
   Actor_FaceDirection(25, FACING_EAST, 0);
   FieldEvent_Wait(20);
+  // "Yes, yes... You're right, of course."
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_FaceDirection(27, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(25, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   FieldActor_Jump(25, 6, 15);
   FieldActor_Jump(25, 6, 23);
+  // "Gather the townspeople and get them to work on the mast."
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_RunRepeatedMotion(28, 2);
   FieldEvent_Wait(10);
+  // "Yes, sir! We're on our way!"
   FieldEvent_ShowMessageThenWait(28, 0, 10);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(29, 2);
   FieldEvent_Wait(10);
+  // "We shouldn't need too many people to raise the mast!"
   FieldEvent_ShowMessageThenWait(29, 0, 10);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(10);
+  // "All right. I'm counting on you."
   FieldEvent_ShowMessageThenWait(25, 0, 20);
   Actor_WalkBy(28, 0, 64);
   Actor_WalkBy(29, 0, 64);
@@ -1516,6 +1575,7 @@ void EasternAlhafra_WorkersTellMayor(void) {
   Actor_FaceDirection(27, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(25, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(20);
+  // "Destroying that stone must have been quite a challenge."
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(10);
@@ -1587,6 +1647,7 @@ void EasternAlhafra_BriggsStealsShip(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgBriggs2);
+  // "Briggs!!!"
   FieldEvent_ShowMessageThenWait(29, 0, 10);
   Actor_WalkToAndWait(4, 136, 552);
   FieldActor_LaunchFromLeader(26, -16, 0, 0xa000);
@@ -1599,11 +1660,14 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(25, 2);
   FieldEvent_Wait(10);
+  // "Briggs, where are you taking my boat?"
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_RunRepeatedMotion(27, 2);
   FieldEvent_Wait(10);
+  // "He's attempting to steal it! Thief! Thief!"
   FieldEvent_ShowMessageThenWait(27, 0, 10);
   Actor_SetPosition(22, 224, 8);
+  // "Did you call me a thief?"
   FieldEvent_ShowMessageThenWait(22, 0, 10);
   Ram_HeapSlots->mapWork->minX = 0;
   Ram_HeapSlots->mapWork->maxX = 0x4000000;
@@ -1645,10 +1709,13 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_Wait(20);
   FieldActor_Jump(22, 6, 15);
   FieldActor_Jump(22, 6, 23);
+  // "I paid for this boat, fair and square. I'm no thief."
   FieldEvent_ShowMessageThenWait(22, 0, 10);
   Actor_SetAnimationAndWait(23, 3);
   FieldEvent_Wait(10);
+  // "You're the thieves! You tried to take our boat away, after we paid..."
   FieldEvent_ShowMessageThenWait(23, 0, 10);
+  // "... ..."
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_ArmCallback(22, FACING_EAST, 0);
   Actor_FaceDirection(23, FACING_WEST, 0);
@@ -1660,7 +1727,9 @@ void EasternAlhafra_BriggsStealsShip(void) {
   Actor_FaceDirection(22, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(23, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
+  // "You're the one who stole OUR boat!"
   FieldEvent_ShowMessageThenWait(22, 0, 10);
+  // "Ahoy, Briggs!"
   FieldEvent_ShowMessageThenWait(26, 0, 10);
   FieldActor_ShowEmote(0x17, 0x100, 0);
   FieldActor_ShowEmote(0x16, 0x100, 0x32);
@@ -1670,16 +1739,19 @@ void EasternAlhafra_BriggsStealsShip(void) {
   Actor_WalkByAndWait(22, 0, 16);
   FieldEvent_Wait(20);
   FieldActor_ShowEmote(0x16, 0x102, 0x1e);
+  // "Uh-oh... It's Felix!"
   FieldEvent_ShowMessageThenWait(22, 0, 10);
   Actor_WalkByAndWait(23, 0, 16);
   Actor_FaceDirection(23, FACING_WEST, 0);
   FieldEvent_Wait(20);
   FieldActor_ShowEmote(0x17, 0x109, 0x1e);
+  // "You're not afraid of them, are you?"
   FieldEvent_ShowMessageThenWait(23, 0, 10);
   Actor_FaceDirection(23, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(50);
   Actor_FaceDirection(23, FACING_WEST, 0);
   FieldEvent_Wait(20);
+  // "Look how far away they are... There's no way they can catch us now!"
   FieldEvent_ShowMessageThenWait(23, 0, 10);
   Actor_ArmCallback(22, FACING_EAST, 0);
   FieldEvent_Wait(20);
@@ -1692,12 +1764,14 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(22, 3);
   FieldEvent_Wait(10);
+  // "You're right... They're stuck on the land, and we've got this boat!"
   FieldEvent_ShowMessageThenWait(22, 0, 10);
   Actor_FaceDirection(23, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(50);
   Actor_ArmCallback(23, FACING_WEST, 0);
   FieldEvent_Wait(20);
   FieldActor_ShowEmote(0x17, 0x108, 0x1e);
+  // "They can't catch us... What would they do, swim?"
   FieldEvent_ShowMessageThenWait(23, 0, 10);
   FieldActor_ShowEmote(0x16, 0x101, 0x32);
   Actor_WalkByAndWait(22, 0, 32);
@@ -1708,8 +1782,10 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(22, 3);
   FieldEvent_Wait(10);
+  // "Hah! You're right! They can't board us from way over there!"
   FieldEvent_ShowMessageThenWait(22, 0, 10);
   FieldActor_ShowEmote(0x17, 0x109, 0x1e);
+  // "Wasn't there something you wanted to do the next time you saw Felix?"
   FieldEvent_ShowMessageThenWait(23, 0, 10);
   Actor_FaceDirection(22, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
@@ -1719,6 +1795,7 @@ void EasternAlhafra_BriggsStealsShip(void) {
   Actor_ArmCallback(22, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(23, 4);
+  // "Don't tell me you forgot... It's all you ever talked about when you..."
   FieldEvent_ShowMessageThenWait(23, 0, 10);
   Actor_FaceDirection(22, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
@@ -1728,8 +1805,10 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(22, 3);
   FieldEvent_Wait(10);
+  // "Oh yeah... I almost forgot."
   FieldEvent_ShowMessageThenWait(22, 0, 10);
   FieldActor_ShowEmote(0x17, 0x109, 0x1e);
+  // "So now's your chance! Do what you swore to do!"
   FieldEvent_ShowMessageThenWait(23, 0, 10);
   Actor_RunRepeatedMotion(22, 2);
   FieldEvent_Wait(20);
@@ -1740,9 +1819,11 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_Wait(20);
   Actor_SetAnimation(22, 6);
   FieldEvent_Wait(5);
+  // "Bleah!"
   FieldEvent_ShowMessageThenWait(22, 0, 10);
   FieldActor_Jump(23, 6, 15);
   FieldActor_Jump(23, 6, 23);
+  // "Is that the best you could come up with?"
   FieldEvent_ShowMessageThenWait(23, 0, 10);
   FieldActor_ShowEmote(0x16, 0x102, 0x32);
   Actor_SetAnimation(22, 7);
@@ -1750,10 +1831,13 @@ void EasternAlhafra_BriggsStealsShip(void) {
   Actor_SetAnimation(22, 1);
   Actor_ArmCallback(22, FACING_EAST, 0);
   FieldEvent_Wait(15);
+  // "But, Chaucha, they're an awfully tough bunch..."
   FieldEvent_ShowMessageThenWait(22, 0, 10);
   FieldActor_ShowEmote(0x17, 0x103, 0x1e);
+  // "See? It's that attitude right there! That's why you'll never amount..."
   FieldEvent_ShowMessageThenWait(23, 0, 10);
   FieldActor_ShowEmote(0x16, 0x106, 0x28);
+  // "You know what? You're right!"
   FieldEvent_ShowMessageThenWait(22, 0, 10);
   Actor_WalkByAndWait(22, 0, 8);
   Actor_WalkByAndWait(22, 10, 16);
@@ -1763,12 +1847,16 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_Wait(10);
   FieldActor_Jump(22, 6, 15);
   FieldActor_Jump(22, 6, 23);
+  // "Hey! Felix! You guys take care! And keep Alhafra safe from thieves..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 22, 0, 10);
+  // "What!?!"
   FieldEvent_ShowMessageThenWait(26, 0, 10);
   FieldActor_ShowEmote(0x16, 0x108, 0x1e);
+  // "I doubt we'll ever meet again, but if we do, remember this!"
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 22, 0, 20);
   Actor_SetAnimation(22, 8);
   FieldEvent_Wait(10);
+  // "Neener neener neener! Neener neener neener!"
   FieldEvent_ShowMessageThenWait(22, 0, 10);
   FieldActor_Jump(22, 7, 0);
   i = 15;
@@ -1837,19 +1925,23 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(15);
+  // "What!!! You let Briggs get away!"
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   FieldCamera_MoveTo(152, CAMERA_KEEP, 392, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   FieldActor_ShowEmote(0x19, 0x103, 0x1e);
+  // "You and your friends talk a good game, but when trouble happens..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
+  // "Well, isn't this a fine mess!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   FieldActor_Jump(25, 6, 15);
   FieldActor_Jump(25, 6, 23);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(0x19, 0x109, 0x1e);
+  // "My prize ship, stolen by a bunch of filthy pirate scum!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   Actor_FaceDirection(25, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(30);
@@ -1898,6 +1990,7 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_GetById(29)->facing = 0x3000;
   FieldEvent_Wait(20);
   Actor_GetById(25)->actionFlags |= 1;
+  // "Get up!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   Actor_SetPosition(29, 168, 368);
   FieldActor_SetSpriteRotationById(29, 0);
@@ -1946,6 +2039,7 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_GetById(27)->actionFlags |= 1;
   Actor_GetById(27)->facing = 0x5000;
   FieldEvent_Wait(20);
+  // "They're gone, and you let them escape!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   Actor_SetPosition(27, 168, 424);
   FieldActor_SetSpriteRotationById(27, 0);
@@ -1956,15 +2050,18 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_ArmCallback(25, 0xd000, 0);
   FieldEvent_Wait(30);
   FieldActor_ShowEmote(0x19, 0x107, 0x1e);
+  // "You guys have royally botched this one. This ruins everything!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   FieldActor_ShowEmote(0x1d, 0x109, 0x32);
   Actor_ArmCallback(25, 0x3000, 0);
   FieldEvent_Wait(30);
   FieldActor_ShowEmote(0x19, 0x107, 0x1e);
+  // "You all ought to be ashamed! All of you were cowering, while I was..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   FieldActor_ShowEmote(0x1b, 0x102, 0x32);
   Actor_SetAnimation(25, 5);
   FieldEvent_Wait(30);
+  // "All of you!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   Actor_ArmCallback(29, 0x3000, 0);
   Actor_ArmCallback(27, 0xd000, 0);
@@ -1983,6 +2080,7 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   FieldEvent_Wait(30);
   Actor_ArmCallback(29, 0xb000, 0);
   Actor_ArmCallback(27, 0xb000, 0);
+  // "I'm going back to my manor!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   Actor_SetAnimation(27, 3);
   Actor_SetAnimationAndWait(29, 3);
@@ -2010,6 +2108,7 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_ArmCallback(25, 0x5000, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(25, 4);
+  // "And you, Felix. I am extremely disappointed in you."
   FieldEvent_ShowMessageThenWait(
       SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 25, 0, 10);
   FieldActor_StartRepeatedMotion(4, 3);
@@ -2021,17 +2120,20 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_WalkBy(29, 0, 64);
   Actor_WalkByAndWait(25, 0, 64);
   FieldActor_ShowEmote(0x19, 0x106, 0x28);
+  // "There will be no reward for you, Felix!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 25, 0, 10);
   Actor_ArmCallback(26, 0x3000, 0);
   Actor_ArmCallback(4, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(20);
+  // "You let that Briggs steal MY ship! You're lucky I don't lock you up..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 25, 0, 10);
   Actor_WalkByAndWait(25, 0, 16);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(25, 2);
   FieldEvent_Wait(10);
+  // "Bah! I've had enough of this! Don't just stand there with your..."
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   FieldActor_StartRepeatedMotion(30, 2);
   FieldActor_StartRepeatedMotion(31, 2);
@@ -2054,6 +2156,7 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_ArmCallback(30, 0xb000, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(25, 4);
+  // "We don't have a boat, so there's no reason for anyone to be here at..."
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_SetAnimation(30, 3);
   Actor_SetAnimation(31, 3);

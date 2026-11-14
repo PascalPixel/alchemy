@@ -181,9 +181,11 @@ void Kibombo_TalkPathToPeace(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgNowThatAkafubu);
+  // "Now that Akafubu is our new witch doctor, we shall embark on a path..."
   Event_ShowMessageAndWait(24, 0);
   Actor_FaceActorById(24, gMainRoutineWork.currentOwner, 0);
   Event_Wait(20);
+  // "This is a signal fire. We use these to send messages to neighboring..."
   Event_ShowMessageAndWait(24, 0);
   Kibombo_ObjTurn(24, FACING_SOUTHEAST + FACING_STEP);
   Event_End();
@@ -287,6 +289,7 @@ void Kibombo_TalkAchingBack(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgOhMyBack);
+  // "Oh, my back... It's been aching ever since that ceremony. I guess I..."
   Event_ShowMessageAndWait(16, 0);
   Event_End();
 }
@@ -295,6 +298,7 @@ void Kibombo_ReadMindNeverAgain(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgISwearThat);
+  // "I swear, that's the last time I'll ever let loose like that again!"
   Event_ShowMessageAndWait(16, 0);
   Event_End();
 }
@@ -427,6 +431,7 @@ void Kibombo_MeetPiers(void) {
   Kibombo_ObjWalk(gMainRoutineWork.currentOwner, 88, 392);
   Actor_ArmCallback(7, FACING_SOUTHWEST, 10);
   Event_SetMessageId((s32)MsgWhWhoAre);
+  // "Wh-Who are you?!?"
   Event_ShowMessageAndWait(7, 0);
   Actor_MoveToObject(26, gMainRoutineWork.currentOwner);
   Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
@@ -441,6 +446,7 @@ void Kibombo_MeetPiers(void) {
   Actor_SetMovementTypeById(26, gKibombo_KradenMeetsPiersScript);
   Actor_SetMovementTypeById(5, gKibombo_JennaMeetsPiersScript);
   Actor_SetMovementTypeAndWaitById(6, gKibombo_ShebaMeetsPiersScript);
+  // "What... What are your intentions?"
   Event_ShowMessageAndWait(7, 0);
   if (GameFlag_Get(0x911))
     Kibombo_PiersHasForgottenParty();
@@ -460,19 +466,25 @@ void Kibombo_MeetPiers(void) {
 void Kibombo_PiersHasForgottenParty(void) {
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_WEST, 20);
   Event_SetMessageId((s32)MsgItLooksLikeHas);
+  // "It looks like Piers has already forgotten us, huh?" Yes: "I know! We met
+  // Piers when he was in JAIL!" No: "What, is he so obsessed with his black
+  // orb..."
   FieldMessage_ShowAtActor(6, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Kibombo_ObjArm(5, FACING_SOUTH, 10);
     Actor_SetModeById(5, 3);
+    // "I know! We met Piers when he was in JAIL! And it's not like he had..."
     Event_ShowMessageAndWait(5, 0);
     gFieldWork->message++;
   } else {
     Kibombo_ObjArm(5, FACING_SOUTH, 10);
     Actor_SetModeById(5, 4);
     gFieldWork->message++;
+    // "What, is he so obsessed with his black orb that he can't even..."
     Event_ShowMessageAndWait(5, 0);
   }
   Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  // "Wait a second... I know you..."
   Event_ShowMessageAndWait(7, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
   Kibombo_ObjArm(26, FACING_NORTHWEST + FACING_STEP, 0);
@@ -482,32 +494,44 @@ void Kibombo_PiersHasForgottenParty(void) {
   Kibombo_ObjArm(26, FACING_NORTH + FACING_STEP, 0);
   Actor_ArmCallback(5, FACING_EAST, 0);
   Kibombo_ObjArm(6, FACING_NORTHEAST, 20);
+  // "You're the travelers who came seeking me when I was in jail."
   Event_ShowMessageAndWait(7, 0);
   Actor_ShowEmoteById(26, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  // "So, you do remember!"
   Event_ShowMessageAndWait(26, 0);
+  // "What are you doing in this place?"
   Event_ShowMessageAndWait(7, 0);
+  // "Actually, that's what we wanted to ask you..."
   Event_ShowMessageAndWait(6, 0);
   Kibombo_ObjArm(5, FACING_SOUTH, 40);
   Actor_ArmCallback(5, FACING_EAST, 0);
+  // "We were worried about you, Piers, so we followed you here..."
   Event_ShowMessageAndWait(5, 0);
+  // "And that's what brings you to this dangerous place?"
   Event_ShowMessageAndWait(7, 0);
   Kibombo_ObjEmote(6, 259, 0);
   Actor_Jump(6, 2, 10);
   Actor_Jump(6, 4, 10);
+  // "What's that supposed to mean?"
   Event_ShowMessageAndWait(6, 0);
   Kibombo_ObjEmote(5, 259, 10);
+  // "We came here to help you, Piers. Why are you being like that about it?"
   Event_ShowMessageAndWait(5, 0);
   Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 10);
+  // "Tell me something... Exactly when did I ask you for your help?"
   Event_ShowMessageAndWait(7, 0);
 }
 
 void Kibombo_PiersTakesPartyForEnemies(void) {
   Event_SetMessageId((s32)MsgHeSeemsTo);
+  // "He seems to believe we are enemies..."
   Event_ShowMessageAndWait(6, 0);
   Kibombo_ObjArm(5, FACING_SOUTH, 10);
   Actor_SetModeById(5, 4);
+  // "I hope he doesn't think we're with the Kibombo."
   Event_ShowMessageAndWait(5, 0);
   Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  // "I must admit, you don't look much like Kibombo..."
   Event_ShowMessageAndWait(7, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
   Kibombo_ObjArm(26, FACING_NORTHWEST + FACING_STEP, 0);
@@ -519,22 +543,31 @@ void Kibombo_PiersTakesPartyForEnemies(void) {
   Kibombo_ObjArm(6, FACING_NORTHEAST, 0);
   FieldEffect_SetAttached(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
+  // "But that begs the question, if you're not Kibombo, then who are you..."
   Event_ShowMessageAndWait(7, 0);
+  // "They are...warriors. But how did you get in here?"
   Event_ShowMessageThenWait(26, 0, 20);
+  // "Why are these warriors in a place like this?"
   Event_ShowMessageAndWait(7, 0);
   Actor_ShowEmoteById(6, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+  // "I'm not sure how to answer that..."
   Event_ShowMessageAndWait(6, 0);
   Kibombo_ObjArm(5, FACING_SOUTHWEST, 40);
   Actor_ArmCallback(5, FACING_EAST, 0);
+  // "Actually, we've been looking for a boat... We kinda need one."
   Event_ShowMessageAndWait(5, 0);
+  // "You're looking for a boat... in the middle of the continent? That..."
   Event_ShowMessageAndWait(7, 0);
   Kibombo_ObjEmote(6, 259, 0);
   Actor_Jump(6, 2, 10);
   Actor_Jump(6, 4, 10);
+  // "Hey, this wasn't exactly our first choice, you know?"
   Event_ShowMessageAndWait(6, 0);
   Kibombo_ObjEmote(5, 259, 10);
+  // "A tidal wave destroyed all the boats in the coastal towns."
   Event_ShowMessageAndWait(5, 0);
   Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 10);
+  // "You're asking me to believe rather a lot, don't you think?"
   Event_ShowMessageAndWait(7, 0);
 }
 
@@ -549,6 +582,7 @@ void Kibombo_PiersThanksParty(void) {
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Event_SetMessageId((s32)MsgYouVeCome);
+  // "You've come to help me get my orb back? Thank you, all of you!"
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 7, 0);
   Kibombo_ObjTurn(7, FACING_WEST);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
@@ -715,6 +749,7 @@ void Kibombo_PiersRefusesToLeave(void) {
   Actor_WalkToAndWaitById(7, 62, 444);
   Actor_FaceDirectionById(7, FACING_SOUTHEAST);
   Event_SetMessageId((s32)MsgNowThatIKnow);
+  // "Now that I know the orb is here, I won't leave this village without..."
   Event_ShowMessageAndWait(7, 0);
   Actor_GetById(7)->priorityFlags |= 1;
   Kibombo_ObjWalk(7, 56, 420);
@@ -750,6 +785,7 @@ extern u32 gKibombo_PartyFollowsScript[];
 void Kibombo_PiersJoinsParty(void) {
   Actor_ArmCallback(7, FACING_NORTH, 0);
   Event_SetMessageId(MsgBlank7);
+  // "?!?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   ((struct Actor *)((s32)FieldCamera_GetActor()))->motionFlags = 0;
@@ -1099,6 +1135,7 @@ void Kibombo_DeadEndByTheStatue(void) {
   Event_Wait(20);
   Actor_FaceDirection(7, FACING_WEST, 0);
   Event_SetMessageId(MsgItSADead);
+  // "It's a dead end..."
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 7, 0);
   FieldCamera_SetSpeed(2.4);
   ((struct Actor *)((s32)FieldCamera_GetActor()))->motionFlags = done;
@@ -1114,8 +1151,10 @@ void Kibombo_DeadEndByTheStatue(void) {
   FieldCamera_MoveTo(272, CAMERA_KEEP, 180, 1);
   FieldCamera_WaitForArrival();
   Actor_SetModeById(6, 4);
+  // "But this was the only path..."
   Event_ShowMessageAndWait(6, 0);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  // "Isn't it a little strange that there would be a path that just goes..."
   Event_ShowMessageAndWait(5, 0);
   Actor_ShowEmoteById(26, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 20);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 26);
@@ -1130,6 +1169,7 @@ void Kibombo_DeadEndByTheStatue(void) {
   Actor_FaceDirection(26, FACING_SOUTH + FACING_STEP, 20);
   Actor_FaceDirection(26, FACING_SOUTHEAST + FACING_STEP, 20);
   Actor_FaceDirection(26, FACING_SOUTH + FACING_STEP, 40);
+  // "Hmm..."
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 26, 0);
   FieldCamera_MoveWithinMapBounds(px(268), -1, px(188), 1);
   Actor_WalkToAndWaitById(26, 218, 156);
@@ -1138,6 +1178,7 @@ void Kibombo_DeadEndByTheStatue(void) {
   Actor_Stop(5);
   Actor_Stop(6);
   Actor_Stop(7);
+  // "I see..."
   Event_ShowMessageAndWait(26, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   Actor_ArmCallback(7, FACING_EAST, 0);
@@ -1147,6 +1188,7 @@ void Kibombo_DeadEndByTheStatue(void) {
   Actor_WalkToAndWaitById(26, 248, 156);
   Event_Wait(40);
   Motion_SetModeAndWaitAnimation(26, 3);
+  // "So that's how it works..."
   Event_ShowMessageAndWait(26, 0);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 26);
   Actor_WatchAndSetScript(5, 26);
@@ -1169,6 +1211,7 @@ void Kibombo_DeadEndByTheStatue(void) {
   Actor_Stop(5);
   Actor_Stop(6);
   Actor_Stop(7);
+  // "Listen up, Felix..."
   Event_ShowMessageAndWait(26, 0);
   Actor_FaceDirection(5, FACING_NORTHEAST, 0);
   Actor_FaceDirection(6, FACING_SOUTHWEST, 0);
@@ -1183,6 +1226,7 @@ void Kibombo_DeadEndByTheStatue(void) {
   Actor_WalkToAndWaitById(26, 238, 188);
   Event_Wait(1);
   Actor_GetById(26)->actionFlags |= 1;
+  // "Dig there!"
   FieldMessage_ShowAtActor(26, 0);
   Actor_ShowEmoteById(gMainRoutineWork.currentOwner,
                       EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -1192,8 +1236,10 @@ ask:
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     ((struct FieldWork *)EVENT_WORK)->message += 1;
   } else {
+    // "Don't worry. Just use Scoop... You'll see why in just a few seconds..."
     Event_ShowMessageAndWait(26, 0);
     *(s16 *)(EVENT_WORK + 0x1c4) -= 2;
+    // "I see..."
     FieldMessage_ShowAtActor(26, 0);
     goto ask;
   }
@@ -2180,6 +2226,7 @@ void Kibombo_CeremonyBegins(void) {
   Kibombo_CamMove(-1, -1, -1, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   Event_SetMessageId((s32)MsgAtLastThe);
+  // "At last, the sacred night has come!"
   Event_ShowMessageAndWait(17, 0);
   Sound_Play(SOUND_FADE_OUT_BGM);
   Kibombo_ObjSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
@@ -2201,12 +2248,14 @@ void Kibombo_CeremonyBegins(void) {
   FieldCamera_WaitForArrival();
   Event_Wait(80);
   Actor_Jump(17, 4, 40);
+  // "Tonight, Akafubu becomes the Kibombo's new witch doctor!"
   Event_ShowMessageAndWait(17, 0);
   Kibombo_CamSpeed(0x4cccc, 0x9999);
   Kibombo_CamMove(px(264), px(32), px(400), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Kibombo_ObjArm(17, FACING_SOUTHEAST + FACING_STEP, 20);
+  // "All of you, pray in the depths of your hearts for my success!"
   Event_ShowMessageAndWait(0x4000 + 17, 0);
   Sound_Play(MUS_011);
   GameFlag_Set(FLAG_GABOMBA_CEREMONY_UNDER_WAY);
@@ -2238,10 +2287,12 @@ void Kibombo_CeremonyBegins(void) {
   FieldCamera_MoveWithinMapBounds(px(111), px(32), px(456), 1);
   FieldCamera_WaitForArrival();
   Actor_ArmCallback(26, FACING_EAST, 0);
+  // "It looks like the initiation ceremony is beginning."
   Event_ShowMessageAndWait(26, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_WEST, 20);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   Actor_SetModeById(26, 4);
+  // "I'm not sure what will happen, but we'd better hurry, Felix."
   Event_ShowMessageAndWait(26, 0);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   Motion_SetModeAndWaitAnimation(26, 3);
@@ -2273,6 +2324,7 @@ void Kibombo_PresentOrbToGabomba(void) {
   Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
   Motion_SetModeAndWaitAnimation(17, 3);
   Event_SetMessageId((s32)MsgLetUsNow);
+  // "Let us now present our jewel to the Great Gabomba!"
   Event_ShowMessageAndWait(0x4000 + 17, 0);
   Sound_Play(MUS_026);
   Actor_SetSpriteFlags(Actor_GetById(27), 0);
@@ -2288,14 +2340,17 @@ void Kibombo_PresentOrbToGabomba(void) {
   Task_Remove(Kibombo_FlickerCeremonyFires);
   Kibombo_AkafubuCastsOnCrystal();
   Kibombo_TaskAdd(Kibombo_FlickerCeremonyFires, 0x480);
+  // "O Great Gabomba! Please accept this, our humble gift!"
   Event_ShowMessageAndWait(17, 0);
   Sound_Play(MUS_011);
   Kibombo_EndOffering();
   Event_Wait(160);
+  // "Please, Great Gabomba! Accept this jewel!"
   Event_ShowMessageThenWait(17, 0, 80);
   Sound_Play(SE_576);
   Kibombo_SetStatueMouth(1, 1);
   Event_Wait(20);
+  // "Look! The Great Gabomba has noticed the light of the jewel!"
   Event_ShowMessageThenWait(17, 0, 40);
   Task_Remove(Kibombo_FlickerCeremonyFires);
   wait(1);
@@ -2334,6 +2389,7 @@ void Kibombo_GabombaNotPleased(void) {
   FieldEffect_SetAttached(17, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
   Event_SetMessageId((s32)MsgYouAreStill);
+  // "You are still not pleased?"
   Event_ShowMessageAndWait(17, 0);
   slot = &gKibombo_BlackCrystal;
   object = *slot;
@@ -2383,6 +2439,7 @@ void Kibombo_WitchDoctorFeelsPower(void) {
   Event_WaitTransitionFrames();
   Event_Wait(40);
   Event_SetMessageId((s32)MsgOhTheMagic);
+  // "Oh! The magic, the power of the witch doctor fills my body!"
   Event_ShowMessageAndWait(17, 0);
   Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
   Kibombo_MessagePut(0x4011, 0);
@@ -2495,6 +2552,7 @@ void Kibombo_GabombaStillNotPleased(void) {
   Kibombo_SetStatueMouth(0, 1);
   Event_Wait(20);
   Event_SetMessageId((s32)MsgYouAreStillNot);
+  // "You are still not pleased?"
   Event_ShowMessageAndWait(17, 0);
   object = gKibombo_BlackCrystal;
   if (object != 0) {
@@ -2530,6 +2588,7 @@ void Kibombo_GabombaSeesOrb(void) {
   wait(8);
   Actor_ShowEmoteById(17, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_SetMessageId((s32)MsgLookLookThe);
+  // "Look! Look! The Great Gabomba has seen our jewel!"
   Event_ShowMessageAndWait(17, 0);
   Sound_Play(SE_577);
   Actor_SetMovementTypeById(12, gKibombo_JawsOpenScript);
@@ -2555,6 +2614,7 @@ void Kibombo_GabombaResponds(void) {
   Actor_GetById(13)->update = (void (*)(void))Kibombo_FlashSprite;
   Actor_ShowEmoteById(17, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_SetMessageId((s32)MsgLookTheGreat);
+  // "Look! The Great Gabomba has responded to our gift!"
   Event_ShowMessageThenWait(17, 0, 20);
   Sound_Play(SE_576);
   Kibombo_SetStatueTongue(1, 0);
@@ -2584,6 +2644,7 @@ void Kibombo_GabombaRespondsToGift(void) {
   wait(8);
   Actor_ShowEmoteById(17, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_SetMessageId((s32)MsgLookTheGreatGabomba);
+  // "Look! The Great Gabomba has responded to our gift!"
   Event_ShowMessageThenWait(17, 0, 20);
   Kibombo_SePlay(0x240);
   Kibombo_SetStatueTongue(1, 0);
@@ -2703,8 +2764,10 @@ void Kibombo_CeremonyEnds(void) {
   wait(60);
   Motion_SetModeAndWaitAnimation(10, 3);
   Event_SetMessageId((s32)MsgRightWellI);
+  // "Right... Well, I guess that's that!"
   Event_ShowMessageAndWait(10, 0);
   Motion_SetModeAndWaitAnimation(9, 3);
+  // "You are virtuous men, coming here to deliver this message. My son..."
   Event_ShowMessageAndWait(9, 0);
   Actor_ArmCallback(10, FACING_EAST, 0);
   Kibombo_ObjArm(gMainRoutineWork.currentOwner, FACING_WEST, 40);

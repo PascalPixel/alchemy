@@ -783,6 +783,7 @@ void GaiaRockInside_SusaSaysMoveAside(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgGaiaRockInside05);
+  // "Move out of the way there."
   Event_ShowMessage(10, 0);
   Event_End();
 }

@@ -176,6 +176,7 @@ void MadraInteriors_GuardElderGem(void) {
   FieldActor_Jump(14, 6, 20);
   Actor_FaceActor(4, 14, 0);
   FieldEvent_SetMessageId((s32)MsgMadraInteriors18);
+  // "Don't touch that gem! The elder gave us strict orders to protect it!"
   Event_ShowMessage(14, 0);
   Actor_FaceDirection(14, FACING_SOUTHEAST, 0);
   Event_End();
@@ -451,6 +452,7 @@ void MadraInteriors_InterrogatePiers(void) {
   Event_WaitTransitionFrames();
   Actor_SetSpeed(7, 0.8);
   FieldEvent_SetMessageId((s32)MsgMadraInteriors28);
+  // "Admit it! You're one of the Champa, aren't you, Piers?"
   FieldEvent_ShowMessageThenWait(10, 0, 10);
   Actor_WalkToAndWait(4, 396, 869);
   FieldActor_LaunchFromLeader(11, 25, 19, FACING_NORTH);
@@ -467,16 +469,20 @@ void MadraInteriors_InterrogatePiers(void) {
   Actor_RunRepeatedMotion(7, 2);
   FieldEvent_Wait(20);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "Speak! Or let your silence condemn you!"
   FieldEvent_ShowMessageThenWait(9, 0, 10);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(7, 4);
+  // "I told you already... I'm not a Champa."
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Actor_RunRepeatedMotion(9, 2);
+  // "Then where did you come from?"
   FieldEvent_ShowMessageThenWait(9, 0, 10);
   Actor_FaceDirectionAndWait(7, FACING_NORTH);
   Actor_WalkByAndWait(7, 0, -16);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(7, 4);
+  // "The heart of the Eastern Sea... If I told you where, you'd never..."
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   object0 = Actor_Get(9);
@@ -666,6 +672,7 @@ void MadraInteriors_TalkToPiers(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMadraInteriors29);
   Actor_FaceDirection(11, FACING_SOUTH, 0);
+  // "Ah... When will that kindly elder return and end my imprisonment? I..."
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Event_End();
   return;
@@ -677,11 +684,13 @@ void MadraInteriors_MindReadPiers(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMadraInteriors30);
+  // "Why did I use my Psynergy in anger? I must maintain control... My..."
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Actor_RunRepeatedMotion(7, 2);
   FieldEvent_Wait(20);
   Actor_FaceDirection(7, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
+  // "I...sense someone... using Psynergy..."
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   FieldEvent_Wait(10);
   Actor_FaceDirection(7, FACING_SOUTH, 0);
@@ -694,9 +703,11 @@ void MadraInteriors_MindReadPiers(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirection(7, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
+  // "That person... Could he be°no, he is not of my people..."
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Actor_FaceDirection(7, FACING_NORTH, 0);
   FieldEvent_Wait(20);
+  // "When will I be freed?"
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Event_End();
   return;
@@ -740,30 +751,36 @@ void MadraInteriors_GiveHealingFungus(void) {
   Actor_FaceActor(10, 4, 0);
   FieldEvent_Wait(20);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "Oh, my... Is... Is that..."
   FieldEvent_ShowMessageThenWait(10, 0, 10);
   Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 3);
   Actor_WalkToAndWait(11, 378, 109);
   Actor_FaceDirection(11, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
+  // "Is that one of his most favorite mushrooms!?"
   FieldEvent_ShowMessageThenWait(11, 0, 10);
   Actor_FaceEachOther(10, 11, 0);
   FieldEvent_Wait(20);
   Actor_FaceActor(10, 4, 0);
   FieldEvent_Wait(20);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "Did you climb all the way up those cliffs just to get that mushroom..."
   FieldEvent_ShowMessageThenWait(10, 0, 10);
   Actor_SetAnimationAndWait(4, 3);
   FieldEvent_Wait(20);
   Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "That's the nicest thing anyone has ever done for me. I have to thank..."
   FieldEvent_ShowMessageThenWait(11, 0, 10);
   Actor_FaceActor(10, 11, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(10, 3);
   FieldEvent_Wait(30);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "But what could I have that a warrior like you would want?"
   FieldEvent_ShowMessageThenWait(10, 0, 10);
   Actor_RunRepeatedMotion(11, 2);
   FieldEvent_Wait(20);
+  // "That's a tricky one..."
   FieldEvent_ShowMessageThenWait(11, 0, 10);
   Actor_FaceDirectionAndWait(11, FACING_SOUTH);
   FieldEvent_Wait(10);
@@ -792,6 +809,7 @@ void MadraInteriors_GiveHealingFungus(void) {
   FieldActor_RefreshSelectorById(25);
   Actor_RunRepeatedMotion(11, 2);
   FieldEvent_Wait(20);
+  // "I don't know if you want a pet, but this is all we can offer. Take..."
   FieldEvent_ShowMessageThenWait(11, 0, 10);
   Djinn_JoinParty(25, 2, 10);
   gFieldWork->message += 1;
@@ -801,9 +819,11 @@ void MadraInteriors_GiveHealingFungus(void) {
   Actor_SetAnimationAndWait(10, 3);
   FieldEvent_Wait(20);
   Actor_FaceDirection(4, FACING_EAST, 0);
+  // "I can't wait for dinner tonight. Batter-fried mushrooms! Mmm!"
   FieldEvent_ShowMessageThenWait(10, 0, 10);
   Actor_SetAnimationAndWait(11, 3);
   FieldEvent_Wait(20);
+  // "This here's enough of a mushroom that we'll be eating it for days!"
   FieldEvent_ShowMessageThenWait(11, 0, 10);
   Event_End();
 }
@@ -826,15 +846,18 @@ void MadraInteriors_GiveLaughingFungus(void) {
   Actor_FaceActor(10, 4, 0);
   FieldEvent_Wait(30);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "Oh, my... Is... Is that..."
   FieldEvent_ShowMessageThenWait(10, 0, 5);
   Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 3);
   Actor_FaceActor(11, 4, 0);
   FieldEvent_Wait(20);
+  // "Is that one of his most favorite mushrooms!?"
   FieldEvent_ShowMessageThenWait(11, 0, 5);
   FieldEvent_SetMessageId((s32)MsgMadraInteriors115);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceDirectionAndWait(10, FACING_EAST);
   FieldEvent_Wait(10);
+  // "No, dear... They look similar, but these aren't quite right."
   FieldEvent_ShowMessageThenWait(10, 0, 5);
   Actor_FaceEachOther(10, 11, 0);
   FieldEvent_Wait(20);
@@ -842,11 +865,13 @@ void MadraInteriors_GiveLaughingFungus(void) {
   FieldEvent_Wait(20);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   FieldEvent_Wait(20);
+  // "Thanks for bringing this by, but it's just not the type of mushroom..."
   FieldEvent_ShowMessageThenWait(10, 0, 5);
   Actor_FaceActor(11, 4, 0);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(11, 2);
   FieldEvent_Wait(5);
+  // "Please... Won't you please try to find the mushrooms my husband..."
   FieldEvent_ShowMessageThenWait(11, 0, 5);
   Event_End();
   return;
@@ -878,6 +903,7 @@ void MadraInteriors_WelcomePiersHome(void) {
   FieldEvent_SetMessageId((s32)MsgMadraInteriors126);
   Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceActor(28, 4, 0);
+  // "Felix! You're back!"
   FieldEvent_ShowMessageThenWait(28, 0, 10);
   Actor_FaceActor(15, 4, 0);
   Actor_FaceDirection(17, FACING_NORTHWEST + FACING_STEP, 0);
@@ -894,6 +920,7 @@ void MadraInteriors_WelcomePiersHome(void) {
   FieldActor_LaunchFromLeader(7, -24, 16, FACING_SOUTHWEST);
   FieldEvent_Wait(30);
   Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "And you've brought Piers with you!"
   FieldEvent_ShowMessageThenWait(15, 0, 10);
   Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldEvent_Wait(20);
@@ -901,25 +928,31 @@ void MadraInteriors_WelcomePiersHome(void) {
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(27, 2);
   FieldEvent_Wait(20);
+  // "Oh! Piers!"
   FieldEvent_ShowMessageThenWait(27, 0, 10);
   Actor_SetAnimationAndWait(7, 3);
   FieldEvent_Wait(20);
   Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "Piers, I must apologize for the trouble we've caused you. I'm sorry..."
   FieldEvent_ShowMessageThenWait(27, 0, 10);
   Actor_FaceEachOther(7, 4, 0);
   FieldEvent_Wait(30);
   Actor_FaceDirection(7, FACING_WEST, 0);
   Actor_FaceDirection(4, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(20);
+  // "Don't be. Everything worked out for the best."
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   FieldActor_Jump(18, 6, 20);
   FieldEvent_Wait(20);
+  // "Piers, you said you were going to go to Gondowan. Did you make it?"
   FieldEvent_ShowMessageThenWait(18, 0, 10);
   Actor_FaceDirectionAndWait(7, FACING_SOUTHEAST + FACING_STEP);
   Actor_SetAnimationAndWait(7, 3);
   FieldEvent_Wait(20);
+  // "Yes. In fact, we have just returned."
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "And your jewel..."
   Event_OpenMessage(28, 0);
   result0 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (result0 != 0)
@@ -996,6 +1029,7 @@ saidGoodbye:
 /// "Ah, so you'll be leaving again, will you?"
 void MadraInteriors_SayGoodbyeAgain(void) {
   FieldEvent_SetMessageId((s32)MsgMadraInteriors127);
+  // "Ah, so you'll be leaving again, will you?"
   FieldEvent_ShowMessageThenWait(28, 0, 10);
   Actor_FaceEachOther(4, 31, 0);
   FieldEvent_Wait(40);
@@ -1005,25 +1039,32 @@ void MadraInteriors_SayGoodbyeAgain(void) {
   Actor_SetAnimationAndWait(4, 3);
   FieldEvent_Wait(20);
   Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "Are you sure you must leave so soon, Piers?"
   FieldEvent_ShowMessageThenWait(15, 0, 10);
   Actor_SetAnimationAndWait(7, 3);
   FieldEvent_Wait(20);
+  // "I may yet return here again, but I'm afraid I must be going soon."
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "You seem to be quite busy."
   FieldEvent_ShowMessageThenWait(27, 0, 10);
   Actor_SetAnimationAndWait(31, 3);
   FieldEvent_Wait(20);
+  // "It is their youth that allows them to be so busy."
   FieldEvent_ShowMessageThenWait(31, 0, 10);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "But we'll be back, I promise. Maybe we'll be able to visit at a more..."
   FieldEvent_ShowMessageThenWait(5, 0, 10);
   Actor_SetAnimationAndWait(17, 3);
   FieldEvent_Wait(20);
+  // "I'd like that..."
   FieldEvent_ShowMessageThenWait(17, 0, 10);
   Actor_FaceDirectionAndWait(5, FACING_SOUTH);
   Actor_SetAnimationAndWait(5, 3);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(18, 3);
   FieldEvent_Wait(20);
+  // "So would I!"
   FieldEvent_ShowMessageThenWait(18, 0, 10);
   return;
 }
@@ -1036,13 +1077,16 @@ void MadraInteriors_AskToStayLonger(void) {
   FieldEvent_SetMessageId((s32)MsgMadraInteriors128);
   Actor_SetAnimationAndWait(17, 3);
   FieldEvent_Wait(20);
+  // "If you've already recovered your jewel, why don't you stay here for..."
   FieldEvent_ShowMessageThenWait(17, 0, 10);
   Actor_FaceDirectionAndWait(5, FACING_SOUTH);
   Actor_SetAnimationAndWait(5, 4);
   FieldEvent_Wait(20);
+  // "Unfortunately, we can't..."
   FieldEvent_ShowMessageThenWait(5, 0, 10);
   Actor_FaceActor(6, 5, 0);
   FieldEvent_Wait(20);
+  // "Hey, have you seen the girl out front?"
   FieldEvent_ShowMessageThenWait(6, 0, 10);
   Actor_FaceDirectionAndWait(5, FACING_NORTH);
   Actor_SetAnimationAndWait(5, 3);
@@ -1050,71 +1094,89 @@ void MadraInteriors_AskToStayLonger(void) {
   Actor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceActor(7, 17, 0);
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "We must go...to the island that is my home."
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Actor_ShowEmote(31, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_FaceActor(31, 7, 0);
+  // "Piers, are you... Are you sure?"
   FieldEvent_ShowMessageThenWait(31, 0, 10);
   Actor_FaceActor(7, 31, 0);
   FieldEvent_Wait(60);
   Actor_SetAnimationAndWait(7, 3);
   FieldEvent_Wait(20);
+  // "After what we've been through, I feel I've learned a few things."
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Actor_FaceActor(4, 7, 0);
   Actor_FaceActor(6, 7, 0);
   Actor_FaceActor(5, 7, 0);
   FieldEvent_Wait(20);
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Like what!?"
   FieldEvent_ShowMessageThenWait(6, 0, 10);
   Actor_FaceActor(7, 6, 0);
   FieldEvent_Wait(20);
+  // "Like...the fact that you truly are good people."
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceActor(7, 4, 0);
   FieldEvent_Wait(20);
+  // "And that you have gone to great lengths for no other reason than to..."
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Actor_SetAnimationAndWait(7, 3);
   FieldEvent_Wait(20);
+  // "I have come to realize that I, too, must do something to help where..."
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "Piers..."
   FieldEvent_ShowMessageThenWait(5, 0, 10);
   Actor_SetAnimationAndWait(7, 4);
   FieldEvent_Wait(20);
   Actor_FaceDirectionAndWait(7, FACING_SOUTHEAST);
+  // "I have made my decision."
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Actor_SetAnimationAndWait(5, 3);
   FieldEvent_Wait(20);
   Actor_FaceActor(7, 31, 0);
   FieldEvent_Wait(20);
+  // "And the sooner we depart, the better, right, Kraden?"
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Actor_SetAnimationAndWait(31, 3);
   FieldEvent_Wait(20);
   Actor_FaceActor(7, 4, 0);
   FieldEvent_Wait(20);
+  // "We shall set sail, Felix! To my ship! To the Eastern Sea!"
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Event_SetFlag(0x981);
   Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "Do you truly mean to leave so soon, Piers?"
   FieldEvent_ShowMessageThenWait(15, 0, 10);
   Actor_FaceDirectionAndWait(7, FACING_SOUTHWEST);
   Actor_SetAnimationAndWait(7, 3);
   FieldEvent_Wait(20);
+  // "I may yet again have reason to visit your town, but... yes, I must go."
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   Actor_FaceDirection(4, FACING_SOUTHWEST, 0);
   Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "You seem quite busy."
   FieldEvent_ShowMessageThenWait(27, 0, 10);
   Actor_SetAnimationAndWait(31, 3);
   FieldEvent_Wait(20);
+  // "It is their youth that allows them to be so busy."
   FieldEvent_ShowMessageThenWait(31, 0, 10);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Actor_FaceDirection(5, FACING_WEST, 0);
+  // "But we'll be back, I promise. Maybe we'll be able to visit at a more..."
   FieldEvent_ShowMessageThenWait(5, 0, 10);
   Actor_SetAnimationAndWait(17, 3);
   FieldEvent_Wait(20);
+  // "I'd like that..."
   FieldEvent_ShowMessageThenWait(17, 0, 10);
   Actor_FaceDirectionAndWait(5, FACING_SOUTH);
   Actor_SetAnimationAndWait(5, 3);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(18, 3);
   FieldEvent_Wait(20);
+  // "So would I!"
   FieldEvent_ShowMessageThenWait(18, 0, 10);
   return;
 }

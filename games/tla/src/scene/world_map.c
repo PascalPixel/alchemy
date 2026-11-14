@@ -1793,18 +1793,9 @@ void Func_02002e00(void) {
   Event_WaitTransitionFrames();
   Event_Wait(20);
   FieldCamera_SetSpeed(4);
-  {
-    /* FAKEMATCH(pin): the mode pinned to r3 starts right after the 1 negated
-     * for y, before x loads. */
-    register s32 mode asm("r3") = 1;
-
-    FieldCamera_MoveTo(11890, CAMERA_KEEP, 10090, mode);
-  }
-  goto wait;
-  do {
+  FieldCamera_MoveTo(11890, CAMERA_KEEP, 10090, 1);
+  while (gInput.held == 0)
     wait(1);
-  wait:;
-  } while (gInput.held == 0);
   Event_SetDestination((s32)&SceneId_AlhafraManor, 80);
 }
 

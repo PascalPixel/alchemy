@@ -242,17 +242,9 @@ s32 Scene_Initialize(void) {
     Event_WaitTransitionFrames();
     Event_Wait(10);
     FieldCamera_SetSpeed(2);
-    {
-      /* FAKEMATCH(pin): the mode in r3 ahead of the other arguments. */
-      register s32 mode asm("r3") = 1;
-
-      FieldCamera_MoveWithinMapBounds(144 << 16, cameraY, cameraZ, mode);
-    }
-    goto check;
-    do {
+    FieldCamera_MoveWithinMapBounds(144 << 16, cameraY, cameraZ, 1);
+    while (gInput.held == 0)
       wait(1);
-    check:;
-    } while (gInput.held == 0);
     Event_SetDestination((s32)&SceneId_AlhafraManor, 80);
   }
   return 0;

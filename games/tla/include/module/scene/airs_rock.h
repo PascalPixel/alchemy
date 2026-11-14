@@ -7,7 +7,7 @@
 #include "types.h"
 #include "scene_tables.h"
 
-struct Unk_02000468 {
+struct MarkedBlock {
   u8 unk00[8];
   s32 x;
   s32 y;
@@ -27,10 +27,10 @@ struct AirsRockMapWork {
   struct AirsRockMapLayer layers[3];
 };
 
-s32 Func_02000348(u32 layer, s32 x, s32 y);
+s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y);
 
-extern s16 gData_02003e84[];
-extern s16 gData_02003ec4[];
+extern s16 gAirsRock_Room1Regions[];
+extern s16 gAirsRock_Room2Regions[];
 extern struct ActorPlacement gAirsRock_Room1Placements[];
 extern struct ActorPlacement gAirsRock_Room2Placements[];
 extern struct ActorPlacement gAirsRock_Placements[];
@@ -38,46 +38,46 @@ extern struct Trigger gAirsRock_Room1Triggers[];
 extern struct Trigger gAirsRock_Room2Triggers[];
 extern struct Trigger gAirsRock_Triggers[];
 
-void Func_020024b0(void);
-void Func_0200257c(void);
+void AirsRock_DriftFog(void);
+void AirsRock_LiftFog(void);
 
-void Func_02000ef4(void);
+void AirsRock_ScrollWave(void);
 
-extern s16 gData_02003d94[];
-extern s16 gData_02003e4c[];
+extern s16 gAirsRock_Room2Pillars[];
+extern s16 gAirsRock_FrozenPuddle[];
 
-extern s8 gData_02004694;
-extern s8 gData_02004695;
-extern s8 gData_02004696;
-extern s8 gData_02004697;
+extern s8 gAirsRock_FogAlpha;
+extern s8 gAirsRock_FogAlphaStep;
+extern s8 gAirsRock_LiftingFogAlpha;
+extern s8 gAirsRock_LiftingFogAlphaStep;
 
-void Func_02000548(void);
+void AirsRock_ExamineWindStone(void);
 
-void Func_02000568(void);
-void Func_020005ec(void);
+void AirsRock_EnterTheRock(void);
+void AirsRock_MoveFirstPillar(void);
 
-void Func_020006d4(void);
+void AirsRock_MoveThirdPillar(void);
 
-void Func_02000700(void);
-void Func_02000824(void);
-void Func_02000830(void);
+void AirsRock_ClimbLedge(void);
+void AirsRock_StartWhirlwind(void);
+void AirsRock_TakeOverWhirlwind(void);
 
-void Func_0200095c(void);
+void AirsRock_BlowGust(void);
 
-void Func_02001010(void);
-void Func_02001560(void);
-void Func_02001ca4(void);
-void Func_02001cc8(void);
-void Func_02001da8(void);
-void Func_02001f7c(void);
-void Func_020026b8(void);
+void AirsRock_WhirlwindClearsWall(void);
+void AirsRock_RideWhirlwind(void);
+void AirsRock_LiftPillar(void);
+void AirsRock_PlacePillar(void);
+void AirsRock_FreezePuddle(void);
+void AirsRock_WhirlwindOpensTheTop(void);
+void AirsRock_WhirlwindClearsFog(void);
 
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
-extern s32 gData_02003dac[];
+extern s32 gAirsRock_WindStoneScript[];
 
-void Func_02002b88(void);
+void AirsRock_SetLedgeCellsByLevel(void);
 
 struct Actor;
 

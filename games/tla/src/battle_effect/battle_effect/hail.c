@@ -455,10 +455,3 @@ void SceneTransform_ApplyScale(s32 *scale);
 
 void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
 
-// The Broken Seal's iwram_call.h forwards these through static inlines; here
-// that form keeps a constant from being carried across the call.
-
-static inline s32 RatioMulQ14(s32 divisor, s32 value) {
-  /* FAKEMATCH(wrapper): the call through this inline. */
-  return Iwram_RatioMulQ14(divisor, value);
-}

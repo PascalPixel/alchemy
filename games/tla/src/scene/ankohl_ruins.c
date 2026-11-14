@@ -988,7 +988,7 @@ void AnkohlRuins_PressFirstSandSwitch(void) {
     gAnkohlRuins_SandTime = 200;
     gAnkohlRuins_SandStep = 0x8000;
     gAnkohlRuins_SandRoom = 1;
-    Event_SetFlag(381);
+    Event_SetFlag(FLAG_NO_PLACE_TO_SAVE);
     AnkohlRuins_RaiseFirstSand();
     Event_SetFlag(FLAG_SCENE_TEMP_02);
   }
@@ -1029,7 +1029,7 @@ void AnkohlRuins_PressSecondSandSwitch(void) {
     gAnkohlRuins_SandTime = 100;
     gAnkohlRuins_SandStep = 0x8000;
     gAnkohlRuins_SandRoom = 2;
-    Event_SetFlag(381);
+    Event_SetFlag(FLAG_NO_PLACE_TO_SAVE);
     AnkohlRuins_RaiseSecondSand();
     Event_SetFlag(FLAG_SCENE_TEMP_03);
   }
@@ -1109,7 +1109,7 @@ void AnkohlRuins_BoardRaft(void) {
       FieldCamera_WaitForArrival();
       MapGrid_CopyCellAttributes(13, 30, 3, 2, 13, z);
       MapGrid_CopyCellAttributes(14, 87, 1, 1, 14, 88);
-      Event_SetFlag(381);
+      Event_SetFlag(FLAG_NO_PLACE_TO_SAVE);
       Event_SetFlag(FLAG_NO_ENCOUNTERS_IN_AREA);
       Event_End();
     }
@@ -1127,7 +1127,7 @@ void AnkohlRuins_BoardRaftAgain(void) {
       Task_AddFrame(func, TASK_PASS_VBLANK);
       MapGrid_CopyCellAttributes(13, 30, 3, 2, 13, z);
       MapGrid_CopyCellAttributes(14, 87, 1, 1, 14, 88);
-      Event_SetFlag(381);
+      Event_SetFlag(FLAG_NO_PLACE_TO_SAVE);
       Event_SetFlag(FLAG_NO_ENCOUNTERS_IN_AREA);
       Event_End();
     }

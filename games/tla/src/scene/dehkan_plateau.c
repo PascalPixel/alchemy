@@ -55,8 +55,7 @@
 #define FLAG_CANNON_FLED_EAST 0x86d        ///< room 2, out to the east
 #define FLAG_CANNON_LEAPT_AWAY 0x86e       ///< room 3, over the first gap
 #define FLAG_CANNON_POUNDED_PILLAR 0x86f   ///< room 3, Pounding a pillar down
-#define FLAG_CANNON_CRUMBLED_PILLARS                                           \
-  0x870 ///< room 3, over the crumbling pillars
+#define FLAG_CANNON_CRUMBLED_PILLARS 0x870 ///< room 3, the crumbling pillars
 /// Room 5: Cannon drops the Pound Cube, and the party takes it.
 #define FLAG_CANNON_DROPPED_POUND_CUBE 0x871
 #define FLAG_POUND_CUBE_TAKEN 0x878
@@ -2350,7 +2349,7 @@ struct Trigger gDehkanPlateau_Room3Triggers[] = {
     {TRIGGER_EXIT, 25, CONDITION_ALWAYS, 8},
     {TRIGGER_STEP, 30, FLAG_CANNON_LEAPT_AWAY, EVENT(DehkanPlateau_CannonLeapsAway)},
     {TRIGGER_STEP, 31, FLAG_CANNON_POUNDED_PILLAR, EVENT(DehkanPlateau_CannonPoundsPillar)},
-    {TRIGGER_STEP, 32, 0x870, EVENT(DehkanPlateau_CannonCrumblesPillars)},
+    {TRIGGER_STEP, 32, FLAG_CANNON_CRUMBLED_PILLARS, EVENT(DehkanPlateau_CannonCrumblesPillars)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 12, FLAG_ROOM3_ROPE_LASHED, 0},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 18, FLAG_ROOM3_PILLAR_POUNDED, EVENT(DehkanPlateau_PoundRoom3Pillar)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(DehkanPlateau_LiftRoom3Pillar)},

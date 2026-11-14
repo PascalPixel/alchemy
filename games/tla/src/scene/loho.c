@@ -81,8 +81,6 @@ struct LohoSpark {
   s32 age;
 };
 
-void Actor_ReturnHome(s32 a, s32 b, s32 c);
-
 /// Lull, the Jupiter Djinni behind the wall the cannon breaks, joins the party
 /// when spoken to.
 void Loho_MeetLull(void) { Djinn_JoinParty(19, 3, 16); }
@@ -524,18 +522,11 @@ void Loho_MindReadMiner(void) {
   Event_ShowMessage(11, 0);
 }
 
-/// Scoop digs up a buried treasure: its actor comes up out of the ground and
-/// its flag is set (Actor_ReturnHome). The helper, our name, is the forward
-/// the Scoop spots of Loho, Taopo Swamp and the Yampi Desert Cave all
-/// make.
-static inline void Loho_DigUpTreasure(s32 id, s32 kind, s32 flag) {
-  Actor_ReturnHome(id, kind, flag);
-}
-
-void Loho_ScoopFirstTreasure(s32 id) { Loho_DigUpTreasure(id, 64, 0x300); }
+/// The Scoop spots: each digs up its treasure actor and sets its flag.
+void Loho_ScoopFirstTreasure(s32 id) { Event_DigUpTreasure(id, 64, 0x300); }
 
 #define DEFINE_SCOOP_TREASURE(name, n1, n2)                                    \
-  void name(s32 id) { Loho_DigUpTreasure(id, n1, 0x300 + n2); }
+  void name(s32 id) { Event_DigUpTreasure(id, n1, 0x300 + n2); }
 
 DEFINE_SCOOP_TREASURE(Loho_ScoopSecondTreasure, 65, 1)
 

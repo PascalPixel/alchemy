@@ -392,9 +392,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
    } *)(base))                                                                 \
        ->v)
 
-s32 Actor_ReturnHome();
-
-void Func_02000588(s32 a0) { Call3(Actor_ReturnHome, a0, 0x40, 0x300); }
+void Func_02000588(s32 a0) { Event_DigUpTreasure(a0, 64, 0x300); }
 
 extern struct Trigger gData_02005a20[];
 

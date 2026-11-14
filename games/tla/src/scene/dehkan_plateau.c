@@ -1428,17 +1428,6 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);
 
-// Places an actor and resets its motion (Actor_SetPositionAndResetMotion).
-/* VIEW(s2698): routine Actor_PlaceFacing as this part has it; dehkan_plateau
- * has its own; tried as the rest of the object declares it, it does not compile
- * in tla-ja (dehkan_plateau.c): games/tla/src/scene/dehkan_plateau.c:1964:
- * redefinition of `Actor_PlaceFacing'. */
-#define Actor_PlaceFacing Actor_PlaceFacing__s2698
-
-static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
-  Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle);
-}
-
 void DehkanPlateau_InitializeRoom2(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
@@ -1811,7 +1800,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 #undef Pillars_Place
 #undef CrumblingPillars_PlaceWithStandIns
 #undef Pillars_Raise
-#undef Actor_PlaceFacing
 
 void Func_020016b0(void);
 void Func_02001788(void);

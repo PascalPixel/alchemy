@@ -112,7 +112,6 @@ struct WarpTarget {
   u16 z;
 };
 
-void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                  s32 g);
 s32 MapGrid_GetAttributeBAt(s32 x, s32 z, s32 layer);
@@ -322,29 +321,22 @@ void Lemuria_GrowVine(void) {
   MapGrid_SetAttributeBAt(x, z, 0, MapGrid_GetAttributeBAt(x, z, 0) | 64);
 }
 
-/// Scoop digs up a buried treasure (Actor_ReturnHome): the helper, our name,
-/// Loho's, Taopo Swamp's and the Yampi Desert Cave's Scoop spots use too.
-static __inline__ void Lemuria_DigUpTreasure(s32 a, s32 b, s32 c) {
-  Actor_ReturnHome(a, b, c);
-}
+/// The Scoop spots: each digs up its treasure actor and sets its flag.
+void Lemuria_ScoopFirstTreasure(s32 a) { Event_DigUpTreasure(a, 64, 0x300); }
 
-void Lemuria_ScoopFirstTreasure(s32 a) { Lemuria_DigUpTreasure(a, 64, 0x300); }
+void Lemuria_ScoopSecondTreasure(s32 a) { Event_DigUpTreasure(a, 65, 0x301); }
 
-void Lemuria_ScoopSecondTreasure(s32 a) { Lemuria_DigUpTreasure(a, 65, 0x301); }
+void Lemuria_ScoopThirdTreasure(s32 a) { Event_DigUpTreasure(a, 66, 0x302); }
 
-void Lemuria_ScoopThirdTreasure(s32 a) { Lemuria_DigUpTreasure(a, 66, 0x302); }
+void Lemuria_ScoopFourthTreasure(s32 a) { Event_DigUpTreasure(a, 67, 0x303); }
 
-void Lemuria_ScoopFourthTreasure(s32 a) { Lemuria_DigUpTreasure(a, 67, 0x303); }
+void Lemuria_ScoopFifthTreasure(s32 a) { Event_DigUpTreasure(a, 68, 0x304); }
 
-void Lemuria_ScoopFifthTreasure(s32 a) { Lemuria_DigUpTreasure(a, 68, 0x304); }
+void Lemuria_ScoopSixthTreasure(s32 a) { Event_DigUpTreasure(a, 70, 0x306); }
 
-void Lemuria_ScoopSixthTreasure(s32 a) { Lemuria_DigUpTreasure(a, 70, 0x306); }
+void Lemuria_ScoopSeventhTreasure(s32 a) { Event_DigUpTreasure(a, 71, 0x307); }
 
-void Lemuria_ScoopSeventhTreasure(s32 a) {
-  Lemuria_DigUpTreasure(a, 71, 0x307);
-}
-
-void Lemuria_ScoopEighthTreasure(s32 a) { Lemuria_DigUpTreasure(a, 72, 0x308); }
+void Lemuria_ScoopEighthTreasure(s32 a) { Event_DigUpTreasure(a, 72, 0x308); }
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \

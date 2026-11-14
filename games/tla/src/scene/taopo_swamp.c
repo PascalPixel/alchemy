@@ -46,7 +46,6 @@ void Event_End(void);
 void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
 void FieldCamera_WaitForArrival(void);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
-void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                  s32 g);
 void FieldItem_JumpToLeader(s32 a, s32 b, s32 c);
@@ -146,10 +145,6 @@ static __inline__ void TaopoSwamp_CopyCellAttributes(s32 a, s32 b, s32 c, s32 d,
 
 static __inline__ void TaopoSwamp_JumpDownLedge(s32 id, s32 a, s32 b) {
   Actor_JumpDownLedge(id, a, b);
-}
-
-static __inline__ void TaopoSwamp_ReturnHome(s32 a, s32 b, s32 c) {
-  Actor_ReturnHome(a, b, c);
 }
 
 static __inline__ void Func_02002990_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
@@ -330,11 +325,11 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
 }
 
 /// Scoop on the spot under actor 65 digs up its item (flag 0x301).
-void TaopoSwamp_ScoopHiddenItem(s32 a) { TaopoSwamp_ReturnHome(a, 65, 0x301); }
+void TaopoSwamp_ScoopHiddenItem(s32 a) { Event_DigUpTreasure(a, 65, 0x301); }
 
 /// Scoop on the spot under actor 64 digs up its item (flag 0x300).
 void TaopoSwamp_ScoopOtherHiddenItem(s32 a) {
-  TaopoSwamp_ReturnHome(a, 64, 0x300);
+  Event_DigUpTreasure(a, 64, 0x300);
 }
 
 /// Scoop digs into the mud at one of the two spots of the lowest level.
@@ -893,7 +888,7 @@ void TaopoSwamp_CoolLastRock(s32 a, s32 id) {
 }
 
 /// Scoop on the sparkle in the dark chamber digs up the Star Dust (flag 0x348).
-void TaopoSwamp_ScoopStarDust(s32 a) { TaopoSwamp_ReturnHome(a, 64, 0x348); }
+void TaopoSwamp_ScoopStarDust(s32 a) { Event_DigUpTreasure(a, 64, 0x348); }
 
 void TaopoSwamp_ShowSparkleMessage(void) { Func_020029a0((s32)&MsgIThoughtI); }
 

@@ -74,7 +74,6 @@ void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z,
 s32 Event_AskYesNoAndShowResponse(s32 speaker, s32 flags);
 void Actor_DisableById(s32 actor);
 void Field_RequestDjinnBattle(s32 a, s32 b);
-void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void FieldEffect_StartBlankOverlay(s32 value);
 void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
 void FieldPsynergy_SetupActorPair(s32 a, s32 b);

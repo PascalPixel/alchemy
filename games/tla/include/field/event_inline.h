@@ -331,4 +331,10 @@ static inline s32 FieldMapGrid_SetCellBehavior(s32 x, s32 z, s32 layer,
   return MapGrid_SetCellBehavior(x, z, layer, behavior);
 }
 
+/// Scoop digs up a buried treasure: with `mode` 2, the treasure actor comes up
+/// at its home and its flag is set (Actor_ReturnHome).
+static inline void Event_DigUpTreasure(s32 mode, s32 actorId, s32 flag) {
+  Actor_ReturnHome(mode, actorId, flag);
+}
+
 #endif

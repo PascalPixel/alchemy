@@ -304,12 +304,7 @@ void YampiDesertCave_StopMarkGlow(void);
 s32 List_CountEntries(u16 *list);
 void PaletteCycle_Fade(void);
 void Statue_Sink(u16 *list, s32 mode, s32 count);
-void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void Teleport_PlaySparks(void);
-
-static inline void YampiDesertCave_Call1920(s32 a, s32 b, s32 c) {
-  Actor_ReturnHome(a, b, c);
-}
 
 void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
   // Read as s32: the load then keeps its place after the argument stores.
@@ -909,9 +904,7 @@ void YampiDesertCave_MeetGuardianOfFire(void) {
   Field_RequestBattleFromEncounterTable(103, 1);
 }
 
-void YampiDesertCave_ScoopTreasure(s32 a) {
-  YampiDesertCave_Call1920(a, 64, 0x302);
-}
+void YampiDesertCave_ScoopTreasure(s32 a) { Event_DigUpTreasure(a, 64, 0x302); }
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_YampiDesertCave2)

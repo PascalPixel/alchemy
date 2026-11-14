@@ -1198,7 +1198,8 @@ struct Trigger gGabombaStatueChamber_Room1Triggers[] = {
 struct Trigger gGabombaStatueChamber_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 3, 0x206, EVENT(GabombaStatueChamber_RideLiftUp)},
+    {TRIGGER_STEP, 3, FLAG_SCENE_TEMP_06,
+     EVENT(GabombaStatueChamber_RideLiftUp)},
     {TRIGGER_STEP, 4, CONDITION_ALWAYS,
      EVENT(GabombaStatueChamber_StepOffLift)},
     {TRIGGER_TABLE_END},
@@ -1208,7 +1209,7 @@ struct Trigger gGabombaStatueChamber_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_WALKING, 2, CONDITION_ALWAYS,
      EVENT(GabombaStatueChamber_StepIntoSecondHole)},
-    {TRIGGER_STEP, 10, 0x8fe,
+    {TRIGGER_STEP, 10, FLAG_AKAFUBU_REACHED_CHAMBER,
      EVENT(GabombaStatueChamber_AkafubuReachesChamber)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgYourBlackOrb)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,

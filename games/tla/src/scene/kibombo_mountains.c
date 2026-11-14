@@ -124,7 +124,7 @@ void Pillar_SetMoved(void) {
   object->priorityFlags = 0;
   object->motionFlags = 0;
   MapGrid_CopyCellAttributes(24, 32, 1, 1, 22, 32);
-  Event_SetFlag(0x221);
+  Event_SetFlag(FLAG_SCENE_TEMP_21);
 }
 
 // Growth on the plant: it grows into a vine to climb to Waft.
@@ -262,7 +262,7 @@ void KibomboMountains_FreezeFirstPuddle(void) {
   object->priorityFlags = 0;
   object->motionFlags = 0;
   MapGrid_CopyCellAttributes(6, 16, 1, 1, 4, 16);
-  Event_SetFlag(0x210);
+  Event_SetFlag(FLAG_SCENE_TEMP_10);
 }
 
 void KibomboMountains_FreezeSecondPuddle(void) {
@@ -271,7 +271,7 @@ void KibomboMountains_FreezeSecondPuddle(void) {
   object->priorityFlags = 0;
   object->motionFlags = 0;
   MapGrid_CopyCellAttributes(8, 30, 1, 1, 10, 30);
-  Event_SetFlag(0x211);
+  Event_SetFlag(FLAG_SCENE_TEMP_11);
 }
 
 void KibomboMountains_StartPushingRoom2Crate(s32 unused, s32 cell) {
@@ -967,8 +967,8 @@ struct Trigger gKibomboMountains_Room1Triggers[] = {
     {TRIGGER_TALK, 15, IF_FLAG_SET(FLAG_GUARD_KNOCKED_OUT), MSGNO(MsgHeyWhoS)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, IF_FLAG_SET(FLAG_GUARD_KNOCKED_OUT), MSGNO(MsgItSDark)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(KibomboMountains_FightWaft)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x221, EVENT(Pillar_SetMoved)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 12, 0x222, EVENT(KibomboMountains_GrowVine)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, FLAG_SCENE_TEMP_21, EVENT(Pillar_SetMoved)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 12, FLAG_SCENE_TEMP_22, EVENT(KibomboMountains_GrowVine)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 13, CONDITION_ALWAYS, EVENT(KibomboMountains_WhirlwindClearsOvergrowth)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT(KibomboMountains_DropCrate)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, FLAG_GUARD_KNOCKED_OUT, EVENT(KibomboMountains_StartPushingCrate)},
@@ -993,8 +993,8 @@ struct Trigger gKibomboMountains_Room2Triggers[] = {
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(KibomboMountains_StartPushingRoom2Crate)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(KibomboMountains_FinishPushingRoom2Crate)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x9e8, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 18, 0x210, EVENT(KibomboMountains_FreezeFirstPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 19, 0x211, EVENT(KibomboMountains_FreezeSecondPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 18, FLAG_SCENE_TEMP_10, EVENT(KibomboMountains_FreezeFirstPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 19, FLAG_SCENE_TEMP_11, EVENT(KibomboMountains_FreezeSecondPuddle)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 21, CONDITION_ALWAYS, 0},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 22, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, EVENT(KibomboMountains_FinishPushingRoom2Crate)},

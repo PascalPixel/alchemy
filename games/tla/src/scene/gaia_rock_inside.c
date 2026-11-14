@@ -4628,7 +4628,7 @@ struct Trigger gGaiaRockInside_Triggers[] = {
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(GaiaRockInside_TakeMazeExit)},
     {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(GaiaRockInside_TakeMazeExit)},
     {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(GaiaRockInside_TakeMazeExit)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 8, 0x200, EVENT(GaiaRockInside_PlantPointsTheWay)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 8, FLAG_SCENE_TEMP_00, EVENT(GaiaRockInside_PlantPointsTheWay)},
     {TRIGGER_TABLE_END},
 };
 
@@ -4708,9 +4708,9 @@ struct Trigger gGaiaRockInside_Room5Triggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, 7},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 43, CONDITION_ALWAYS, EVENT(GaiaRockInside_JumpDownByAltar)},
-    {TRIGGER_STEP, 30, 0x303, EVENT(GaiaRockInside_StepOnFirstStatueSpot)},
-    {TRIGGER_STEP, 31, 0x304, EVENT(GaiaRockInside_StepOnSecondStatueSpot)},
-    {TRIGGER_STEP, 32, 0x305, EVENT(GaiaRockInside_StepOnThirdStatueSpot)},
+    {TRIGGER_STEP, 30, FLAG_AREA_TEMP_03, EVENT(GaiaRockInside_StepOnFirstStatueSpot)},
+    {TRIGGER_STEP, 31, FLAG_AREA_TEMP_04, EVENT(GaiaRockInside_StepOnSecondStatueSpot)},
+    {TRIGGER_STEP, 32, FLAG_AREA_TEMP_05, EVENT(GaiaRockInside_StepOnThirdStatueSpot)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(GaiaRockInside_CheckAltar)},
     {USE_ITEM_ON_ACTOR(ITEM_DANCING_IDOL), 0x409, CONDITION_ALWAYS, EVENT(GaiaRockInside_PlaceDollOnRoom5Altar)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, 0},

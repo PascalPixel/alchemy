@@ -3033,7 +3033,8 @@ void JupiterLighthouse_CastTheJupiterStar(void);
 LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 12},
-    {TRIGGER_STEP, 100, 0x200, EVENT(JupiterLighthouse_KarstAndAgatioWait)},
+    {TRIGGER_STEP, 100, FLAG_SCENE_TEMP_00,
+     EVENT(JupiterLighthouse_KarstAndAgatioWait)},
     {TRIGGER_STEP, 101, 0xa21, EVENT(JupiterLighthouse_CastTheJupiterStar)},
     {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgOnceYouVe)},
     {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgOnceJupiterIs)},

@@ -773,7 +773,7 @@ struct Trigger gCaverns_OseniaTriggers[] = {
 struct Trigger gCaverns_IndraTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT(Caverns_JumpEastAcrossGap)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x200, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, FLAG_SCENE_TEMP_00, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(Caverns_MoveIndraPillar)},
     {TRIGGER_TABLE_END},
 };

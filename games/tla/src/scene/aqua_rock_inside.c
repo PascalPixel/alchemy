@@ -2820,10 +2820,10 @@ LATE_DATA struct Trigger gAquaRockInside_Room1Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x95a, EVENT(AquaRockInside_PlacePillarOverVent)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x95b, EVENT(AquaRockInside_PlacePillarOverVent)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_PlacePillarOverVent)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0x230, EVENT(AquaRockInside_DouseFirstMoai)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0x231, EVENT(AquaRockInside_DouseFirstWaterStone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, FLAG_SCENE_TEMP_30, EVENT(AquaRockInside_DouseFirstMoai)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, FLAG_SCENE_TEMP_31, EVENT(AquaRockInside_DouseFirstWaterStone)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, (s32)((u8 *)AquaRockInside_DoNothing + 1)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x250, EVENT(AquaRockInside_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, FLAG_SCENE_TEMP_50, EVENT(AquaRockInside_FreezePuddle)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2843,8 +2843,8 @@ LATE_DATA struct Trigger gAquaRockInside_Room2Triggers[] = {
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(AquaRockInside_FightSteam)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x95c, EVENT(AquaRockInside_MovePillarBeforeMoai)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_MovePillarBeforeMoai)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 88, 0x240, EVENT(AquaRockInside_ParchSpring)},
-    {TRIGGER_RAISED, 88, 0x240, EVENT(AquaRockInside_SpringDries)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 88, FLAG_SCENE_TEMP_40, EVENT(AquaRockInside_ParchSpring)},
+    {TRIGGER_RAISED, 88, FLAG_SCENE_TEMP_40, EVENT(AquaRockInside_SpringDries)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2880,7 +2880,7 @@ LATE_DATA struct Trigger gAquaRockInside_Room4Triggers[] = {
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_SetPillarCellMiddle)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 50, 0xa6a, EVENT(AquaRockInside_ParchPool)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0xa64, EVENT(AquaRockInside_DouseThirdMoai)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0x249, EVENT(AquaRockInside_DouseSecondWaterStone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, FLAG_SCENE_TEMP_49, EVENT(AquaRockInside_DouseSecondWaterStone)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2920,10 +2920,10 @@ LATE_DATA struct Trigger gAquaRockInside_Room6Triggers[] = {
     {TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(AquaRockInside_RideFalls)},
     {TRIGGER_STEP, 77, CONDITION_ALWAYS, EVENT(AquaRockInside_StepIntoRapids)},
     {TRIGGER_STEP, 78, CONDITION_ALWAYS, EVENT(AquaRockInside_StepIntoRapids)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x238, EVENT(AquaRockInside_MovePillarByFalls)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x251, EVENT(AquaRockInside_FreezeRoomPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 14, 0x252, EVENT(AquaRockInside_FreezeRoomPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 15, 0x253, EVENT(AquaRockInside_FreezeRoomPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, FLAG_SCENE_TEMP_38, EVENT(AquaRockInside_MovePillarByFalls)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, FLAG_SCENE_TEMP_51, EVENT(AquaRockInside_FreezeRoomPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 14, FLAG_SCENE_TEMP_52, EVENT(AquaRockInside_FreezeRoomPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 15, FLAG_SCENE_TEMP_53, EVENT(AquaRockInside_FreezeRoomPuddle)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, CONDITION_ALWAYS, EVENT(AquaRockInside_StartPushingRock)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 11, CONDITION_ALWAYS, EVENT(AquaRockInside_StartPushingRock)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_StartPushingRock)},
@@ -2963,7 +2963,7 @@ LATE_DATA struct Trigger gAquaRockInside_Room9Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0xa65, EVENT(AquaRockInside_DouseFourthMoai)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0x24b, EVENT(AquaRockInside_DouseFourthWaterStone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, FLAG_SCENE_TEMP_4B, EVENT(AquaRockInside_DouseFourthWaterStone)},
     {TRIGGER_TABLE_END},
 };
 

@@ -2034,7 +2034,7 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RideUpperWhirlwind)},
     {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RideWhirlwind)},
-    {TRIGGER_STEP, 32, 0x202, EVENT(JupiterLighthouse_OpenFloor)},
+    {TRIGGER_STEP, 32, FLAG_SCENE_TEMP_02, EVENT(JupiterLighthouse_OpenFloor)},
     {TRIGGER_STEP, 33, IF_FLAG_SET(0x202), EVENT(JupiterLighthouse_CloseFloor)},
     {TRIGGER_TALK, 0, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkToReunitedParty)},
     {TRIGGER_TALK, 2, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkToReunitedParty)},
@@ -2046,7 +2046,7 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_PUSH, -1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingBlock)},
     {TRIGGER_PUSHED, -1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FinishMovingBlock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 23, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 21, 0x200, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 21, FLAG_SCENE_TEMP_00, 0},
     {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Whirlwind_CarryLeader)},
     {TRIGGER_TABLE_END},
 };

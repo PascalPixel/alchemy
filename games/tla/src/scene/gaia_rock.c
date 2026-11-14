@@ -791,9 +791,9 @@ struct Trigger gGaiaRock_Room1Triggers[] = {
 struct Trigger gGaiaRock_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_STEP, 20, 0x300, EVENT(GaiaRock_StepOnFirstStatueSpot)},
-    {TRIGGER_STEP, 21, 0x301, EVENT(GaiaRock_StepOnSecondStatueSpot)},
-    {TRIGGER_STEP, 22, 0x302, EVENT(GaiaRock_StepOnThirdStatueSpot)},
+    {TRIGGER_STEP, 20, FLAG_AREA_TEMP_00, EVENT(GaiaRock_StepOnFirstStatueSpot)},
+    {TRIGGER_STEP, 21, FLAG_AREA_TEMP_01, EVENT(GaiaRock_StepOnSecondStatueSpot)},
+    {TRIGGER_STEP, 22, FLAG_AREA_TEMP_02, EVENT(GaiaRock_StepOnThirdStatueSpot)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 9, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, 0},

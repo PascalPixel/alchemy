@@ -92,13 +92,10 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
   BattleEffect_TransposeCopy(cells, work->sheet + 0x2a8, 17, 104);
   BattleEffect_TransposeCopy(cells + 0x6e8, work->sheet + 0x990, 34, 65);
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // No flame and no dot is alive yet.
-  for (i = 0; i != 8; i++)
-    work->particles[i].variant = -1;
+  EFFECT_FREE_PARTICLES(i, work->particles, 8);
   for (i = 0; i != 512; i++)
     DOTS[i].variant = -1;
 
@@ -181,9 +178,7 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
     }
 
     BattleCamera_Shake(4, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
     frame++;
   } while (frame != 96);
 
@@ -227,9 +222,7 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlameballSheet,
                              work->sheet + 0x320, 1, 0);
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The balls start above the canvas to the right; no dot is alive yet.
   for (i = 0; i != 32; i++) {
@@ -304,9 +297,7 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
     }
 
     BattleCamera_Shake(4, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
     angle -= TRIG_TURN / 32;
     frame++;
   } while (frame != 96);
@@ -376,9 +367,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet,
                              work->sheet + 0x2f8, 1, 0);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Each column starts somewhere in the canvas's 64 pixels, on the ground.
   for (i = 0; i != 32; i++) {
@@ -453,9 +442,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
     }
 
     BattleCamera_Shake(4, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
     angle -= TRIG_TURN / 32;
     frame++;
   } while (frame != 96);
@@ -497,9 +484,7 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
                              1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet + 0x320,
                              1, 1);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The puffs sit on an oval, alternately left and right of the middle,
   // each two frames behind the last; sixteen sparks wait under each one.
@@ -612,9 +597,7 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
     }
 
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
     diveY += 8;
     frame++;
   } while (frame != 112);

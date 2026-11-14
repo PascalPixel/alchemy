@@ -40,7 +40,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   dots = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, dots, 0, 0);
   BattleEffect_FetchRectangleBlitters(0, draw = pair);
@@ -54,9 +54,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
     seed->y = ((Random16() & 31) - 64) << 16;
   }
 
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   if (effect->side == 1)
     REG_BG2X = -0x7000;
 
@@ -229,8 +227,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
         }
       }
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
   HeapSlot_Release(188);

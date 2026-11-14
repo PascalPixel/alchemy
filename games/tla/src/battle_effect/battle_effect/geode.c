@@ -83,10 +83,9 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = 0;
-  work->transferMode = 1;
-  work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc8f);
-  Task_Add(Display_ApplyBg2Affine, 0xcff);
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME + 15);
+  Task_Add(Display_ApplyBg2Affine, TASK_PASS_FRAME + 127);
   projected = work->sheet;
   vertices = (struct ModelVertex *)(work->sheet + 0x800);
   mesh = work->sheet + 0xc00;
@@ -162,7 +161,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
     }
     if (frame == 34) {
       Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-      Task_Add(BattleEffect_ProcessPendingBlock2Transfer, 0xc8f);
+      Task_Add(BattleEffect_ProcessPendingBlock2Transfer, TASK_PASS_FRAME + 15);
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7341, 0x20000);
       Iwram_ClearWordsEntry(canvas, 0x3c00);
       gBgScroll[1].y = 78;
@@ -174,7 +173,8 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
     if (frame == 35) {
       Task_Remove(Display_ApplyBg2Affine);
       Task_Remove(BattleEffect_ProcessPendingBlock2Transfer);
-      Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc8f);
+      Task_Add(BattleEffect_ProcessPendingGraphicsTransfer,
+               TASK_PASS_FRAME + 15);
       IO_WRITE_QUEUE_PUSH(0x04000028, 0, 0x30000);
       IO_WRITE_QUEUE_PUSH(0x0400002c, -0x1000, 0x30000);
       IO_WRITE_QUEUE_PUSH(0x04000020, 128, 0x20000);
@@ -184,21 +184,20 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
       BattleEffect_TintBattler(effect->actor, -1, 2, 0, -1);
     }
     if (frame == 36) {
-      work->transferMode = 2;
-      work->transferValue = 50;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
     }
     if ((u32)(frame - 34) <= 5) {
       if (effect->side == 0) {
-        REG_WIN0H = 0x20f0;
-        REG_WIN1H = 0x20f0;
+        REG_WIN0H = WIN_RANGE(32, 240);
+        REG_WIN1H = WIN_RANGE(32, 240);
       } else {
-        REG_WIN0H = 0xd0;
-        REG_WIN1H = 0xd0;
+        REG_WIN0H = WIN_RANGE(0, 208);
+        REG_WIN1H = WIN_RANGE(0, 208);
       }
     } else if (frame == 40) {
-      REG_WIN0H = 0xf0;
-      REG_WIN1H = 0xf0;
+      REG_WIN0H = WIN_RANGE(0, 240);
+      REG_WIN1H = WIN_RANGE(0, 240);
     }
 
     // The Djinni flies to the target.
@@ -373,9 +372,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
     if (frame > 47) {
       BattleCamera_Shake(8, 8);
     }
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
   Actor_SetAnimationSpeedFar(caster, 16);
   HeapSlot_Release(SLOT_BLITTER);

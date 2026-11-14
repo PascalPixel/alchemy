@@ -232,7 +232,8 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
       shift = 0;
   }
   REG_BG2X = shift << 8;
-  work->transferMode = 2;   // each transfer fades the canvas: a trail
+  work->transferMode =
+      CANVAS_COPY_AND_FADE; // each transfer fades the canvas: a trail
   work->transferValue = 50; // to 1/2
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   if (effect->side == 1)
@@ -430,9 +431,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
         }
       }
     }
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -499,7 +498,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectArgument *effect,
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(0);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   if (mode == STAT_REDUCTION_UNUSED || mode == STAT_REDUCTION_DULL)
     Resource_LoadAndDecompress((s32)&ResourceId_DaggerSheet, work->sheet, 1, 1);
   else
@@ -565,9 +564,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectArgument *effect,
   }
 
   BattleEffect_FetchRectangleBlitters(effect->side, draw = callbacks);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != effect->count * 4 + 64; frame++) {
     camera = Ram_HeapSlots->cameraWork;
@@ -640,8 +637,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectArgument *effect,
         }
       }
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

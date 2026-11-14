@@ -159,9 +159,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // A rock's x is its column, y counts down from 128 by z, velocityX cycles
   // 1 to 12 as its animation step, and variant is its wait before it flies.
@@ -351,9 +349,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
       BattleCamera_Shake(2, 2);
     else
       BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   // Teardown.

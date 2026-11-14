@@ -57,9 +57,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Graphics_LoadGreyRamp();
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   {
     struct Point2D focus;
     s32 frame;
@@ -78,8 +76,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
       }
 
       if (frame == 0) {
-        for (i = 0; i != 64; i++)
-          work->particles[i].variant = -1;
+        EFFECT_FREE_PARTICLES(i, work->particles, 64);
 
         // The motes start along the top, each after its own delay.
         motes = gMapCellBuffer;
@@ -311,22 +308,19 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
       // phase resumes and the canvas fades back.
       if (frame == 272) {
         BattlePlayback_StartFar(134);
-        work->transferMode = 3;
-        work->transferValue = 0x02020202;
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
         Graphics_LoadGreyRamp();
       } else if ((u32)(frame - 256) <= 15) {
-        work->transferMode = 1;
-        work->transferValue = 0x10101010;
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
         if (frame > 269)
-          work->transferValue = 0x3f3f3f3f;
+          work->transferValue = CANVAS_FILL_WORD(63);
         Palette_BrightenBgEntries(2, 2, 2);
       }
 
       BattleCamera_Shake(4, 8);
       BattleEffect_CountDownBattlerTints();
       frame++;
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_PRESENT_CANVAS(work);
     } while (frame != SUMMON16_FRAMES);
 
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -969,28 +963,22 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   BattleEffect_ConfigureEffectDisplay();
   *(u16 *)PLTT = 0;
   *(u16 *)(PLTT + 2) = 0;
-  work->transferMode = 0;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
-                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
+  EFFECT_START_TRANSFER(work, CANVAS_COPY, 75);
+  REG_DISPCNT = EFFECT_DISPCNT;
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   Iris_WipeScreen(0, 4, Iris_ChangeBackdrop);
   Iwram_FillWords(canvas, CANVAS_BYTES, 0);
   while (((volatile struct DmaRegisters *)REG_DMA3)->control & 0x80000000) {
   }
-  work->transferPending = 1;
-  wait(1);
-  REG_BG2PA = 0x80;
+  EFFECT_PRESENT_CANVAS(work);
+  REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  work->transferMode = 2;
-  work->transferValue = 75;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   savedZoom = camera[27];
   if (effect->side == 0) {
     s32 yaw = TRIG_TURN / 4;
@@ -1025,8 +1013,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       } else if ((u32)(frame - 177) <= 268) {
         REG_BLDALPHA = BLEND_ALPHA(16, 16);
         Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
-        work->transferPending = 1;
-        wait(1);
+        EFFECT_PRESENT_CANVAS(work);
         if (frame <= 386) {
           for (i = 0; i != 16; i++)
             Sprite_DestroyFar(work->objects[i]);
@@ -1038,8 +1025,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         frame = 446;
       } else {
         Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
-        work->transferPending = 1;
-        wait(1);
+        EFFECT_PRESENT_CANVAS(work);
         break;
       }
     }
@@ -1090,8 +1076,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           STREAK(i, j).y = px(150);
         }
       }
-      work->transferMode = 2;
-      work->transferValue = 50;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     if (frame <= 175) {
       BattleEffect_LoadBlitter(SLOT_ALT, 3);
@@ -1191,8 +1176,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       struct VramBlockCacheEntry *table;
 
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_PRESENT_CANVAS(work);
       battle[0x867] = 1;
       BattleBackground_LoadFar(1, (s32)&ResourceId_SunsetBackdrop, 0);
       colors = Resource_GetTableEntry((s32)&ResourceId_RobedGoddessTiles);
@@ -1258,8 +1242,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         work->particles[i].y = (Random16() % 15 << 16) + 0x390000;
         work->particles[i].velocityX = (Random16() & motesMask) << 12;
       }
-      work->transferMode = 2;
-      work->transferValue = 70;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 70);
     }
     if ((u32)(frame - 177) <= 216) {
       scale = gIris_UnitScale;
@@ -1538,8 +1521,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         Iris_DrawPillar(14, (h >> 3) + 48, h);
       }
       if (frame == 422) {
-        work->transferMode = 0;
-        work->transferValue = 0;
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY, 0);
         REG_BLDALPHA = BLEND_ALPHA(16, 16);
       }
     }
@@ -1674,8 +1656,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           }
         }
       }
-      work->transferMode = 2;
-      work->transferValue = 70;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 70);
     }
     if ((u32)(frame - 447) <= 15) {
       s32 step = frame - 446;
@@ -2038,8 +2019,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       }
     }
     frame++;
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
   camera[27] = savedZoom;
@@ -2048,9 +2028,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   Iwram_FillWords(canvas, CANVAS_BYTES, 0);
   while (((volatile struct DmaRegisters *)REG_DMA3)->control & 0x80000000) {
   }
-  work->transferPending = 1;
-  wait(1);
-  REG_BG2PA = 0x80;
+  EFFECT_PRESENT_CANVAS(work);
+  REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
   gBgScroll[1].x = savedScroll;
   for (i = 0; i != 36; i++)

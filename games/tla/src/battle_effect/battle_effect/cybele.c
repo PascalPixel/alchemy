@@ -107,7 +107,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
   // The canvas, unscaled and moved 32 pixels left, the vine sheet and two
   // transparent blitters, the second mirrored.
   BattleEffect_StartCanvasLayer(0);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_ThornVineSheet, work->sheet, 1,
                              1);
@@ -119,9 +119,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
                            BLITTER_TRANSPARENT << 4 | COMPOSITE_CLIP_X |
                                COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-  work->transferMode = 1;
-  work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   REG_BG2X = -0x2000;
 
   // The vines (particles 0-15): x, the root's y, growth speed and delay.
@@ -169,7 +167,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
       frame = 286;
     }
     if (frame == 224)
-      work->transferMode = 0;
+      work->transferMode = CANVAS_COPY;
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
     if (frame == 31) {
@@ -461,11 +459,10 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
       draw[1] = (DrawRectangle) * (Ram_HeapSlots->unkb8 + 1);
       REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND |
                    BLDCNT_TGT2_ALL;
-      REG_BG2PA = 0x80;
+      REG_BG2PA = Q_8_8(0.5);
       REG_BG2X = 0;
-      work->transferMode = 2;
-      work->transferValue = 75;
-      Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+      EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                            CANVAS_FADE_THREE_QUARTERS);
       for (i = 0; i != effect->count; i++) {
         struct MotionObject *object =
             BattleObject_GetFar(effect->actors[i])->object;
@@ -529,9 +526,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
       BattleCamera_Shake(4, 4);
     else
       BattleCamera_Shake(4, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

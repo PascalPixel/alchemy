@@ -70,9 +70,10 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                        128);
-  work->transferMode = 2; // keeps 50 or 75 percent (see transferMode)
+  work->transferMode =
+      CANVAS_COPY_AND_FADE; // keeps 50 or 75 percent (see transferMode)
   work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   for (frame = 0; frame != STAR_MINE_FRAMES; frame++) {
     camera = Ram_HeapSlots->cameraWork;
@@ -207,9 +208,7 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
       }
     }
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(188);
@@ -313,9 +312,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   victim = BattleObject_GetFar(effect->actors[0])->object;
   camera = Ram_HeapSlots->cameraWork;
   savedYaw = camera->yaw;
@@ -332,7 +329,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_ClawSlashSheet,
                              work->sheet + 0x4000, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   Render_BuildQuadStrip(strip, 4, 32, 32);
 
   for (frame = 0; frame != 186; frame++) {
@@ -390,8 +387,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       work->shakeFrames = 8;
     }
     if (frame > 165) {
-      work->transferMode = 3;
-      work->transferValue = 0x04040404;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
       goto next;
     }
 
@@ -483,10 +479,9 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       EffectPosition_ProjectBattler(effect->actors[0], &target);
     }
     if ((u32)(frame - 152) <= 15) {
-      work->transferMode = 1;
-      work->transferValue = 0x20202020;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(32));
       if (frame > 162) {
-        work->transferValue = 0x3f3f3f3f;
+        work->transferValue = CANVAS_FILL_WORD(63);
       }
       Palette_BrightenBgEntries(2, 2, 2);
     }
@@ -660,8 +655,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
     if ((u32)(frame - 32) > 133) {
       BattleCamera_Shake(8, 8);
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
   HeapSlot_Release(104);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

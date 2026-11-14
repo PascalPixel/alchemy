@@ -27,7 +27,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (effect->variant == 0) {
-    REG_BG2PA = 0x100;
+    REG_BG2PA = Q_8_8(1);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_FireSwirlSheet, work->sheet, 1,
                              1);
@@ -54,7 +54,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
         Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
     work->transferValue = 75;
   }
-  work->transferMode = 2;
+  work->transferMode = CANVAS_COPY_AND_FADE;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   BattleEffect_FetchRectangleBlitters(effect->side, draw);
 
@@ -167,9 +167,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
     }
 
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

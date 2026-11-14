@@ -413,19 +413,15 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
 
   // The trail: none for the rock modes, else halved or to 3/4.
   if (mode == 13 || mode == 15 || mode == 20) {
-    work->transferMode = 1;
-    work->transferValue = 0;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   } else if (mode == 7 || mode == 9 || mode == 17 || mode == 18 || mode == 19 ||
              mode == 24) {
-    work->transferMode = 2;
-    work->transferValue = 50;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
-    work->transferMode = 2;
-    work->transferValue = 75;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  for (i = 0; i != 64; i++)
-    work->particles[i].variant = -1;
+  EFFECT_FREE_PARTICLES(i, work->particles, 64);
   {
     s32 shots;
     struct EffectPosition *user;
@@ -830,8 +826,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       BattleCamera_Shake(4, 4);
       if (mode != 6)
         BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_PRESENT_CANVAS(work);
     }
 
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

@@ -70,8 +70,9 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
   work->cameraDelta = 0;
   work->cameraPhase = 0;
   Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PASS_FRAME);
-  work->transferMode = 2;
-  work->transferValue = 75; // each transfer fades the canvas to 3/4: a trail
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                      CANVAS_FADE_THREE_QUARTERS); // each transfer fades the
+                                                   // canvas to 3/4: a trail
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   for (frame = 0; frame != (gFire_Counts[effect->variant] >> 1) + 132;
@@ -166,9 +167,7 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
     if (work->cameraPhase == 0)
       work->cameraPhase = 1;
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

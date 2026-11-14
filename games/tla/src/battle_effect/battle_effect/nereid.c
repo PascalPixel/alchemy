@@ -53,9 +53,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA,
                              work->sheet + COLUMN_SHEET, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   {
     struct Point2D focus;
     struct Point2D velocity;
@@ -73,8 +71,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
     focus.y = px(88);
     velocity.x = -px(16);
     velocity.y = -px(4);
-    for (k = 0; k != 64; k++)
-      work->particles[k].variant = -1;
+    EFFECT_FREE_PARTICLES(k, work->particles, 64);
     for (k = 0; k != 16; k++) {
       point = &work->particles[24 + k];
       point->x = Random16() & 127;
@@ -237,8 +234,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
           }
         }
       }
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_PRESENT_CANVAS(work);
     }
 
     // Tear down: the formation bursts where it stands and is released.

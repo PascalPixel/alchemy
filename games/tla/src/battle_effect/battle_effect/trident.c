@@ -63,17 +63,16 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
               WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
               WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL;
-  REG_WIN0V = 0x107c;
-  REG_WIN1V = 0x1088;
+  REG_WIN0V = WIN_RANGE(16, 124);
+  REG_WIN1V = WIN_RANGE(16, 136);
   BattleEffect_LoadBlitter(
       SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  work->transferMode = 2;
-  work->transferValue = 50;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   blit[0] = draw;
   /* FAKEMATCH(temporary): the orange palette's id in a local. */
   orangeBase = (s32)&ResourceId_OrangePaletteB - 4;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   circles = (s16 *)(work->sheet + 0x4c56);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   // offset first holds the cell buffer's address, for the FlashBurst load.
@@ -426,9 +425,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
       }
     }
     BattleCamera_Shake(16, 16);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(104);
@@ -503,12 +500,12 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
   else
     BattleEffect_LoadBlitter(104, 1 << 4 | 7);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  work->transferMode = 2;
+  work->transferMode = CANVAS_COPY_AND_FADE;
   if (mode == 0)
     work->transferValue = 75;
   else
     work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   for (i = 0; i != 256; i++)
     SPARKS[i].variant = 0;
 
@@ -776,9 +773,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
     }
 
     BattleCamera_Shake(12, 12);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

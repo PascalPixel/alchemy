@@ -54,9 +54,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectArgument *effect) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
                        128);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EffectPosition_ProjectBattler(effect->actors[0], &target);
 
   {
@@ -211,9 +209,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectArgument *effect) {
       } else {
         BattleCamera_Shake(8, 8);
       }
-      BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_END_FRAME(work);
     }
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

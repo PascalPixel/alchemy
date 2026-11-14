@@ -46,7 +46,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   // panels into the map buffer, two transparent blitters (the second
   // flipped), the wave's HBlank DMA and a transfer that clears the canvas.
   BattleEffect_StartTiledCanvas(0x2000);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   cells = gMapCellBuffer;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_CounterRevealSheet, work->sheet,
@@ -57,10 +57,8 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                            BLITTER(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP_X));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, 0xc80);
-  work->transferMode = 1;
-  work->transferValue = zero;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, zero);
 
   // The image starts off to the side, above the field.
   visible = 1;
@@ -197,9 +195,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
       BattlePlayback_StartFar(144);
     }
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

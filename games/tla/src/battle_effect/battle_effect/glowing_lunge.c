@@ -116,8 +116,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
     break;
   }
   Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
-  work->transferMode = 2;
-  work->transferValue = 50;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The caster lunges at the target.
@@ -284,9 +283,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
     }
 
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);

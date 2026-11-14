@@ -86,9 +86,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
     Resource_LoadAndDecompress((s32)&ResourceId_WhirlwindSheet, work->sheet, 1,
                                1);
     Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
-    work->transferMode = 2;
-    work->transferValue = 50;
-    Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+    EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     wave.x = px(128);
     wave.y = px(40);
     drift.x = 0;
@@ -513,9 +511,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
         }
       }
 
-      BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_END_FRAME(work);
       frame++;
     } while (frame != 400);
 
@@ -603,9 +599,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
 
     copy((void *)BG_PLTT, lightning, 128);
   }
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   {
     struct Point2D focus;
     s32 dir;
@@ -645,8 +639,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
       focus.x = px(212);
       focus.y = -px(60);
     }
-    for (i = 0; i != 64; i++)
-      work->particles[i].variant = -1;
+    EFFECT_FREE_PARTICLES(i, work->particles, 64);
     for (i = 0; i != 16; i++) {
       struct EffectStep *streak = &work->particles[24 + i];
 
@@ -689,16 +682,14 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 128)
         work->transferValue = 50;
       if (frame == 176) {
-        work->transferMode = 3;
-        work->transferValue = 0x02020202;
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
         Iwram_CopyWordsEntry(
             (void *)BG_PLTT,
             Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet), 128);
       } else if (frame >= 160 && frame <= 175) {
-        work->transferMode = 1;
-        work->transferValue = 0x10101010;
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
         if (frame > 173)
-          work->transferValue = 0x3f3f3f3f;
+          work->transferValue = CANVAS_FILL_WORD(63);
         Palette_BrightenBgEntries(2, 2, 2);
       }
 
@@ -931,9 +922,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
       BattleCamera_Shake(8, 8);
-      BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_END_FRAME(work);
     }
 
     // Tear down: the formation bursts where it stands and is released.

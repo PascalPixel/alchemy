@@ -128,7 +128,8 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
     break;
   }
   Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
-  work->transferMode = 2;   // each transfer halves the old picture,
+  work->transferMode =
+      CANVAS_COPY_AND_FADE; // each transfer halves the old picture,
   work->transferValue = 50; // leaving a trail
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
@@ -243,9 +244,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
         }
       }
       BattleCamera_Shake(8, 8);
-      BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_END_FRAME(work);
     }
   }
 
@@ -328,9 +327,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
   else
     resource = (s32)&ResourceId_GreenPalette;
   Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Launch every mote from the user in 16.16 fixed point, with a speed and
   // a direction of its own. Slaver throws them up, faster, in a half-circle
@@ -435,9 +432,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
         }
       }
     }
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

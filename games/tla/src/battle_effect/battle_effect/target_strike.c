@@ -300,7 +300,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
     }
   }
 
-  work->transferMode = 2;
+  work->transferMode = CANVAS_COPY_AND_FADE;
   if (RECORD(mode, RECORD_FLAGS) & FLAG_STAR)
     work->transferValue = 50;
   else
@@ -668,9 +668,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
       BattleCamera_Shake(8, 8);
     else
       BattleCamera_Shake(2, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -698,7 +696,7 @@ void BattleEffect_RunBladeRain(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
 
   // [0] as drawn, [1] mirrored left to right; both skip clear pixels.
@@ -710,7 +708,7 @@ void BattleEffect_RunBladeRain(struct BattleEffectArgument *effect) {
   blit = draw;
   Resource_LoadAndDecompress((s32)&ResourceId_CrossedDaggersSheet, work->sheet,
                              1, 1);
-  work->transferMode = 1; // each transfer clears the canvas
+  work->transferMode = CANVAS_COPY_AND_CLEAR; // each transfer clears the canvas
   work->transferValue = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
@@ -796,9 +794,7 @@ void BattleEffect_RunBladeRain(struct BattleEffectArgument *effect) {
         Sound_PlayFar(SE_IMPACT);
     }
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -852,7 +848,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
   work->fadeFrames = 24;
   work->fadeStep = 0;
   REG_BLDALPHA = BLEND_ALPHA(12, 16);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_IceTileSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
   switch (effect->kind) {
@@ -879,7 +875,8 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
     gFlecks[i].z = (Random16() & 0x1ff) + i * 2;
     gFlecks[i].variant = -i;
   }
-  work->transferMode = 2;   // each transfer leaves 3/4 of the old picture,
+  work->transferMode =
+      CANVAS_COPY_AND_FADE; // each transfer leaves 3/4 of the old picture,
   work->transferValue = 75; // a trail
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_ADDITIVE, CLIP));
@@ -951,9 +948,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
       }
       fleck->variant++;
     }
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   HeapSlot_Release(SLOT_BLITTER);
@@ -996,14 +991,14 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
   view->secondMode = 0;
   REG_BG2X = 0;
   REG_BG2Y = 0xfffff000;
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   REG_BG2PB = 0;
   REG_BG2PC = 0;
-  REG_BG2PD = 0x100;
-  REG_WIN0H = 0xf0;
-  REG_WIN0V = 0x1088;
-  REG_WIN1H = 0xf0;
-  REG_WIN1V = 0x1088;
+  REG_BG2PD = Q_8_8(1);
+  REG_WIN0H = WIN_RANGE(0, 240);
+  REG_WIN0V = WIN_RANGE(16, 136);
+  REG_WIN1H = WIN_RANGE(0, 240);
+  REG_WIN1V = WIN_RANGE(16, 136);
   REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
               WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
               WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
@@ -1024,9 +1019,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = 0;
-  work->transferMode = 1;
-  work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_TRANSPARENT, CLIP));
   BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
 
@@ -1049,9 +1042,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
     if (frame <= 63)
       Palette_BrightenSavedBattleBg(frame / 2 - 31, frame / 2 - 31,
                                     frame / 2 - 31);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   // Put the background and the display back.

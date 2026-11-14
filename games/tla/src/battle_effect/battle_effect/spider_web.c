@@ -329,8 +329,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
     }
   }
   BattleEffect_SpawnObjects(8, 0x28f, 3);
-  REG_BG2PA = 0x80;
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(0.5);
+  REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -338,9 +338,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   wait(1);
   blit = blits;
   BattleEffect_FetchRectangleBlitters(0, (void **)blit);
-  work->transferMode = 1;
-  work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   cells = work->sheet + 0x1781;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0B1, cells, 0, 0);
   for (i = 0; i != 0x2300; i++, cells++) {
@@ -350,8 +348,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   }
   picture = work->sheet + 0x1781;
   blits[0](canvas, picture, 24, 8, 80, 112);
-  work->transferPending = 1;
-  wait(1);
+  EFFECT_PRESENT_CANVAS(work);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
                              0);
@@ -378,21 +375,20 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       struct EffectStep *p;
 
       if (!loaded) {
-        Task_Add(BattleEffect_ProcessPendingBlock2Transfer, 0xc8f);
-        Task_Add(Display_ApplyBg2Affine, 0xcff);
+        Task_Add(BattleEffect_ProcessPendingBlock2Transfer,
+                 TASK_PASS_FRAME + 15);
+        Task_Add(Display_ApplyBg2Affine, TASK_PASS_FRAME + 127);
         Resource_LoadAndDecompress((s32)&ResourceId_RuneCircleSheet,
                                    work->sheet + 0x2781, 1, 0);
         loaded = 1;
       }
       gBgScroll[1].x = 0xff90;
       REG_BLDALPHA = BLEND_ALPHA(16, 16);
-      REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-                    DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
-                    DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
+      REG_DISPCNT = EFFECT_DISPCNT;
       REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
       REG_BG1CNT = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
-      work->transferMode = 2;
-      work->transferValue = 75;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                          CANVAS_FADE_THREE_QUARTERS);
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
           Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
@@ -500,7 +496,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       if (loaded == 1) {
         Task_Remove(BattleEffect_ProcessPendingBlock2Transfer);
         Task_Remove(Display_ApplyBg2Affine);
-        Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc8f);
+        Task_Add(BattleEffect_ProcessPendingGraphicsTransfer,
+                 TASK_PASS_FRAME + 15);
         Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet,
                                    work->sheet + 0x1e97, 1, 0);
         loaded = 0;
@@ -510,7 +507,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       REG_BG2X = -0x800;
       REG_BG2Y = -0x1000;
       REG_BG2PA = 0xcc;
-      REG_BG2PD = 0x100;
+      REG_BG2PD = Q_8_8(1);
       REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
       REG_BLDALPHA = BLEND_ALPHA(16, 16);
       Iwram_CopyWordsEntry((void *)BG_PLTT,
@@ -722,8 +719,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
        * read. */
       j = frame * 3 + 1;
       model->shade = 0;
-      work->transferMode = 2;
-      work->transferValue = 50;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
       quadTexture.logWidth = 7;
       quadTexture.logHeight = 7;
       model->texture = &quadTexture;
@@ -794,8 +790,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
         struct EffectStep *p;
 
         REG_BG2X = -0x7000;
-        REG_BG2PA = 0x100;
-        REG_BG2PD = 0x100;
+        REG_BG2PA = Q_8_8(1);
+        REG_BG2PD = Q_8_8(1);
         for (i = 0, p = work->particles; i != 32; i++, p++) {
           p->x = Random16() % 48 + 40;
           p->y = Random16() % 96 + 16;
@@ -816,7 +812,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 288) {
-      Task_Add(Ulysses_MoveLastParticle, 1152);
+      Task_Add(Ulysses_MoveLastParticle, TASK_PASS_VBLANK);
       work->particles[63].x = px(188);
       work->particles[63].y = px(96);
       work->particles[63].velocityX = 0;
@@ -825,9 +821,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       dmaArmed = 1;
     }
     if (draw) {
-      BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_END_FRAME(work);
     }
   }
 
@@ -846,9 +840,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
-                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
+  REG_DISPCNT = EFFECT_DISPCNT;
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(188);
   HeapSlot_Release(SLOT_BLITTER);
@@ -948,7 +940,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   work = (struct BattleEffectWork *)slots->battleFxWork[0];
   canvas = slots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(0);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   if (effect->side == 1) {
     BattleEffect_LoadBlitter(
         HEAP_BLITTER,
@@ -970,9 +962,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
     copy((void *)BG_PLTT, palette, 128);
   }
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // BG2 is placed on the first target.
   object = BattleObject_GetFar(effect->actors[0])->object;
@@ -1024,9 +1014,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   // Teardown.
@@ -1068,15 +1056,13 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   BattleEffect_StartCanvasLayer(2);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
   BattleEffect_GetTargetsMidpoint(&middle);
   REG_BG2X = (64 - middle.x) << 8;
   Resource_LoadAndDecompress((s32)&ResourceId_SpiderWebSheet, work->sheet, 1,
                              1);
-  work->transferMode = 1;
-  work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Sound_PlayFar(SE_CRACK);
   blend = &REG_BLDALPHA;
 
@@ -1119,9 +1105,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
       if (frame == 10)
         BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 8);
     }
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
     frame++;
   } while (frame != 63);
 

@@ -100,9 +100,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
                        128);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   camera = Ram_HeapSlots->cameraWork;
   savedYaw = camera->yaw;
   target = BattleObject_GetFar(effect->actors[0])->object;
@@ -345,9 +343,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
     Heap_Release(vertices);
     /* FAKEMATCH(dead): a read of shade the compiler folds to nothing. */
     BattleCamera_Shake(4 + ((shade & 255) >> 8), 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(104);

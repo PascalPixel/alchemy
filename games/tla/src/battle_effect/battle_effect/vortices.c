@@ -78,9 +78,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
   work->cameraDelta = 0;
   work->cameraPhase = 0;
   Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PASS_FRAME);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_SCATTER);
 
   for (frame = 0; frame != gVortices_Counts[effect->variant * 2 + 1]; frame++) {
@@ -150,9 +148,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
     BattleCamera_Shake(effect->variant * 2 + 2, effect->variant * 2 + 2);
     if (work->cameraPhase == 0)
       work->cameraPhase = 1;
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   // Tear down.
@@ -206,9 +202,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
     glint->y = (Random16() & 63) + 16;
     glint->variant = -(Random16() & 15);
   }
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
   wait(1);
   Sound_PlayFar(SE_RUMBLE);
@@ -284,9 +278,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
     work->shakeFrames = 1;
     BattleCamera_Shake(gVortices_Shapes[effect->variant * 3 + 2],
                        gVortices_Shapes[effect->variant * 3 + 2] * 2);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   // Tear down.

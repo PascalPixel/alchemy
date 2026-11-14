@@ -529,12 +529,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       kind == CASTING_IMPACT_IMPACT_QUICK_SLASH ||
       kind == CASTING_IMPACT_IMPACT_BOSCA_HIT)
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, buffer, 0, 0);
-  work->transferMode = 2;
+  work->transferMode = CANVAS_COPY_AND_FADE;
   if (kind == CASTING_IMPACT_IMPACT_BAD_OMEN)
     work->transferValue = 75;
   else
     work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   EffectPosition_ProjectScaledBattler(action->actors[0], target);
   EffectPosition_ProjectScaledBattler(action->actor, base);
   BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
@@ -649,24 +649,23 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         /* FAKEMATCH(barrier): an empty asm reading origin. */
         __asm__("" : : "X"(origin));
       }
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_PRESENT_CANVAS(work);
     }
 
     if (kind == CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
-      REG_BG2PA = 0x100;
+      REG_BG2PA = Q_8_8(1);
       if (action->side == 0)
         REG_BG2X = (frame - target[0]) << 8;
       else
         REG_BG2X = (96 - target[0]) << 8;
     } else if (kind == CASTING_IMPACT_IMPACT_SARCOPHAGUS) {
-      REG_BG2PA = 0x100;
+      REG_BG2PA = Q_8_8(1);
       if (action->side == 0)
         REG_BG2X = (64 - target[0]) << 8;
       else
         REG_BG2X = (64 - target[0]) << 8;
     } else if (kind == CASTING_IMPACT_IMPACT_APOCALYPSE) {
-      REG_BG2PA = 0x100;
+      REG_BG2PA = Q_8_8(1);
       if (action->side == 0) {
         scrollA = 0xffc00000;
         scrollB = 0x20000;
@@ -677,7 +676,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       REG_BG2X = (scrollA >> 16) << 8;
     } else if (kind == CASTING_IMPACT_IMPACT_ASURA ||
                kind == CASTING_IMPACT_IMPACT_RAIDENS_WRATH) {
-      REG_BG2PA = 0x100;
+      REG_BG2PA = Q_8_8(1);
       if (action->side == 0) {
         scrollA = 0xff800000;
         scrollB = 0xc0000;
@@ -688,16 +687,15 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       REG_BG2X = (scrollA >> 16) << 8;
     }
     if (kind == CASTING_IMPACT_IMPACT_TERRA_STRIKE) {
-      REG_BG2PA = 0x100;
+      REG_BG2PA = Q_8_8(1);
       REG_BG2X = (64 - target[0]) << 8;
-      work->transferMode = 1;
-      work->transferValue = 0;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
       Iwram_ClearWords(BG_VRAM, 0x3c00);
       Iwram_ClearWords(screen, 0x3c00);
       REG_BLDCNT = 0;
     }
     if (kind == CASTING_IMPACT_IMPACT_PSYPHON_SEAL) {
-      REG_BG2PA = 0x100;
+      REG_BG2PA = Q_8_8(1);
       if (action->side == 0)
         REG_BG2X = (32 - target[0]) << 8;
       else
@@ -888,7 +886,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         kind == CASTING_IMPACT_IMPACT_BLINDING_SMOG ||
         kind == CASTING_IMPACT_IMPACT_SEARING_FOG ||
         kind == CASTING_IMPACT_IMPACT_FLASH_PUNCH)
-      Task_Add(BattleEffect_ArmBg2AffineHBlankDma, 3200);
+      Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
 
     if (kind == CASTING_IMPACT_IMPACT_FLINT ||
         kind == CASTING_IMPACT_IMPACT_SCORCH ||
@@ -1495,8 +1493,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         s32 h;
         s32 y;
         REG_BLDCNT = 0;
-        work->transferMode = 1;
-        work->transferValue = 0;
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
         HeapSlot_Release(188);
         HeapSlot_Release(104);
         BattleEffect_LoadBlitter(104, 35);
@@ -1615,8 +1612,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         }
       } else if (kind == CASTING_IMPACT_IMPACT_RAIDENS_WRATH) {
         s32 m;
-        work->transferMode = 1;
-        work->transferValue = 0;
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
         HeapSlot_Release(188);
         HeapSlot_Release(104);
         if (action->side == 0)
@@ -1661,8 +1657,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
       } else if (kind == CASTING_IMPACT_IMPACT_APOCALYPSE) {
         s32 m;
-        work->transferMode = 1;
-        work->transferValue = 0;
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
         if (frame == 7) {
           work->shakeFrames = 16;
           Sound_PlayFar(SE_HEAVY_IMPACT);
@@ -1858,11 +1853,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         }
         if (frame <= 150) {
           REG_BLDCNT = 0;
-          work->transferMode = 1;
-          work->transferValue = 0;
+          EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
         } else {
-          work->transferMode = 2;
-          work->transferValue = 50;
+          EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
           REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
         }
         if (frame < 32) {
@@ -1952,9 +1945,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           Resource_LoadAndDecompress((s32)&ResourceId_BoulderPicture,
                                      buffer + 0x2000, 1, 1);
           REG_BLDALPHA = BLEND_ALPHA(16, 4);
-          work->transferMode = 1;
-          work->transferValue = 0;
-          REG_BG2PA = 0x100;
+          EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+          REG_BG2PA = Q_8_8(1);
           p = work->particle;
           for (i = 0; i != 32; i++, p++) {
             SET_POSITION(p, ((Random16() & 31) + 48) << 16,
@@ -2454,8 +2446,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           Sound_PlayFar(SE_CURSE);
       } else if (kind == CASTING_IMPACT_IMPACT_CHILL) {
         if (frame == 0) {
-          work->transferMode = 1;
-          work->transferValue = 0;
+          EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
           REG_BLDALPHA = BLEND_ALPHA(16, 6);
         }
         p = SPARKS;
@@ -2667,9 +2658,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       if (frame == 14)
         BattleEffect_TintBattler(action->actors[0], 7, 5, 0, 4);
       BattleCamera_Shake(8, 8);
-      BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_END_FRAME(work);
     }
 
     if (kind == CASTING_IMPACT_IMPACT_MELTDOWN ||

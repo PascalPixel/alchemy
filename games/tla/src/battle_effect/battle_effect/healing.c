@@ -130,7 +130,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
     EffectPosition_ProjectScaledBattler(effect->actors[0], &base);
     shift = 64 - base.x;
     REG_BG2X = shift << 8;
-    REG_BG2PA = 0x100;
+    REG_BG2PA = Q_8_8(1);
     narrow = 0;
   } else {
     narrow = 1;
@@ -294,7 +294,8 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
     limit = 128;
   if (mode == 12)
     limit = 16;
-  work->transferMode = 2;   // each transfer fades the canvas: a trail
+  work->transferMode =
+      CANVAS_COPY_AND_FADE; // each transfer fades the canvas: a trail
   work->transferValue = 75; // to 3/4
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
@@ -450,9 +451,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
         }
       }
     }
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

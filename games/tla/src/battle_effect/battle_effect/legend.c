@@ -87,9 +87,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0E9, work->sheet + 0x5000, 0,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, cells, 0, 0);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != effect->variant * 16 + 86; frame++) {
     // Frame 0: the swords set out from 80 pixels above and beside the
@@ -285,9 +283,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
       Heap_Release(vertices);
     }
     BattleCamera_Shake(4, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -386,17 +382,14 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
                                0);
   }
   REG_BLDCNT = 0;
-  work->transferMode = 1;
-  work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 
   for (frame = 0; frame != gElementCards_Frames[mode]; frame++) {
     // Frame 0: clear the particles, give each member a strike countdown, and
     // find the user and every target.
     if (frame == 0) {
       Sound_PlayFar(SE_WARP);
-      for (i = 0; i != 56; i++)
-        work->particles[i].variant = -1;
+      EFFECT_FREE_PARTICLES(i, work->particles, 56);
       for (i = 0; i != effect->count; i++)
         work->particles[56 + i].variant = (Random16() & 3) + 2;
       for (i = 0; i != SPARK_COUNT; i++)
@@ -405,8 +398,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
       for (i = 0; i != effect->count; i++)
         EffectPosition_ProjectScaledBattler(effect->actors[i], &targets[i]);
       REG_BLDCNT = 0;
-      work->transferMode = 1;
-      work->transferValue = 0;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
       scale = Q16_ONE / 4;
     }
 
@@ -434,8 +426,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
       if (mode == CARD_THUNDER)
         Sound_PlayFar(SE_RISE_WITH_SPARKS);
       if (mode != CARD_BRAMBLE) {
-        work->transferMode = 2;
-        work->transferValue = 50;
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
         REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
       }
     }
@@ -721,9 +712,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
       }
     }
     BattleCamera_Shake(4, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

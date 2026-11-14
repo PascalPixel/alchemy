@@ -71,9 +71,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
                              work->sheet + 0x4000, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, buffer, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, TEXTURE_PIXELS, 0, 0);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != RAGING_HEAT_FRAMES; frame++) {
     if (frame == 0) {
@@ -232,9 +230,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
       Heap_Release(vertices);
     }
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(188);
@@ -304,8 +300,7 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
   }
   blitters = draw;
   BattleEffect_FetchRectangleBlitters(0, blitters);
-  work->transferMode = 2;
-  work->transferValue = 50;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   lift = 0;
   {
@@ -422,9 +417,7 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
     }
 
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   HeapSlot_Release(HEAP_SLOT_BLITTER_ALTERNATE);

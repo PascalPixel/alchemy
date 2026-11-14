@@ -138,9 +138,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskB, Ram_MapCellBuffer,
                                1, 1);
   }
-  work->transferMode = 1;
-  work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 
   // The user closes on the target in 16 frames (variant 3 jumps in place,
   // variant 4 strikes a pose instead and waits 8).
@@ -234,9 +232,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
     }
     BattleCamera_Shake(16, 16);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   HeapSlot_Release(HEAP_BLITTER);

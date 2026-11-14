@@ -149,9 +149,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
       HEAP_SLOT_BLITTER_ALTERNATE,
       BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_ADDITIVE));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // The pikes lunge; Blast Breath comes from 32 pixels in front of the user.
   if (mode == BREATH_PIKE)
@@ -496,9 +494,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
         Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       }
       BattleCamera_Shake(8, 8);
-      BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_END_FRAME(work);
     }
   }
 
@@ -562,12 +558,10 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
         (void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
     REG_BLDALPHA = BLEND_ALPHA(16, 8);
-    work->transferMode = 2;
-    work->transferValue = 50;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
     REG_BLDALPHA = BLEND_ALPHA(16, 16);
-    work->transferMode = 2;
-    work->transferValue = 75;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
@@ -642,9 +636,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
     }
 
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

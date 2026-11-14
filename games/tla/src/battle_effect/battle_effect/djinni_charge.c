@@ -90,9 +90,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
     }
     blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
     REG_BLDALPHA = BLEND_ALPHA(16, 16);
-    work->transferMode = 2;
-    work->transferValue = 50;
-    Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+    EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     target = BattleObject_GetFar(effect->actors[0])->object;
     savedYaw = (s16)camera->yaw;
     caster = BattleObject_GetFar(effect->actor)->object;
@@ -123,7 +121,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
                                  work->sheet + 0x2000, 1, 0);
       frames = 50;
     }
-    REG_BG2PA = 0x80;
+    REG_BG2PA = Q_8_8(0.5);
     Actor_SetAnimationSpeedFar(caster, 240);
 
     for (frame = 0; frame != frames; frame++) {
@@ -404,9 +402,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
         Heap_Release(model);
       }
       BattleCamera_Shake(8, 8);
-      BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_END_FRAME(work);
     }
     Actor_SetAnimationSpeedFar(caster, 16);
     HeapSlot_Release(SLOT_BLITTER);

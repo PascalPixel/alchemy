@@ -49,10 +49,9 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_LoadBlitter(
       SLOT_BLITTER,
       BLITTER(BLIT_TRANSPARENT, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-  work->transferMode = 1;
-  work->transferValue = 0;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   caster = BattleObject_GetFar(effect->actor)->object;
   if (mode == 0) {
     frames = 80;
@@ -251,9 +250,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *effect, s32 mode) {
     } else {
       BattleCamera_Shake(8, 8);
     }
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
   Actor_SetAnimationSpeedFar(caster, 16);
   HeapSlot_Release(104);
@@ -293,7 +290,7 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0CE, work->sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
@@ -301,9 +298,7 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
                        128);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   {
     s32 stagger;
 
@@ -435,9 +430,7 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
       HeapSlot_Release(104);
 
       BattleCamera_Shake(4, 4);
-      BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_END_FRAME(work);
       if (++frame != stagger + 54)
         goto top;
     }
@@ -500,11 +493,8 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
                              BLIT_MODE(BLIT_MAX, BLIT_CLIP | COMPOSITE_FLIP_X));
   }
   draw[0] = BLITTER;
-  work->transferMode = 2;
-  work->transferValue = 50;
-  work->transferMode = 1;
-  work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   width = 32;
   palette = (u16 *)BG_PLTT + 1;
   caster = BattleObject_GetFar(effect->actor)->object;
@@ -699,9 +689,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
       }
     }
     BattleCamera_Shake(4, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
   Actor_SetAnimationSpeedFar(caster, 16);
   HeapSlot_Release(104);
@@ -760,9 +748,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                        128);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   camera = Ram_HeapSlots->cameraWork;
   offset = 0;
   savedYaw = (s16)camera->yaw;
@@ -881,9 +867,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
     }
 
     BattleCamera_Shake(4, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -934,9 +918,7 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_CyanPalette),
                        128);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EffectPosition_ProjectBattler(effect->actors[0], &position);
   {
     /* FAKEMATCH(temporary): x computed before the register's address is built.
@@ -957,7 +939,7 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
   }
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
                              work->sheet + SPLASH_OFFSET, 1, 0);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
 
   for (frame = 0; frame != 68; frame++) {
     // Frame 0: the streaks wait above the screen, drifting with the wind.
@@ -1044,9 +1026,7 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
     }
 
     BattleCamera_Shake(4, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   // Clear the canvas and its characters and hand the layer over.

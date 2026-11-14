@@ -70,9 +70,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
   // Set up the canvas, then let the caster lunge.
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 8, 80);
   wait(8);
 
@@ -188,9 +186,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
     Heap_Release(model);
     Heap_Release(vertices);
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   HeapSlot_Release(HEAP_SLOT_BLITTER);

@@ -126,9 +126,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
   }
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   target = BattleObject_GetFar(effect->actors[0])->object;
   work->particles[63].x = target[2];
   work->particles[63].y = target[3];
@@ -560,9 +558,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
       } else {
         BattleCamera_Shake(4, 4);
       }
-      BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_END_FRAME(work);
       frame++;
     } while (frame != frames);
   }

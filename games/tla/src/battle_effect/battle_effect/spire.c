@@ -36,7 +36,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
   BattleEffect_LoadBlitter(
@@ -50,9 +50,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
                                       &final);
   first.x += (final.x - first.x) / 2;
   REG_BG2X = (64 - first.x) << 8;
-  work->transferMode = 1;
-  work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 
   // Each boulder waits 64 pixels above the canvas; each shard sits at its
   // place in its boulder, ready to fly up at random.
@@ -123,9 +121,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
       }
     }
     BattleCamera_Shake(2, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   // Teardown.

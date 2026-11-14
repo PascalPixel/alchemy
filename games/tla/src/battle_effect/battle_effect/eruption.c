@@ -88,9 +88,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_LoadBlitter(
       104, BLIT_MODE(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != gEruption_Counts[variant][FIELD_FRAMES]; frame++) {
     struct BattleCamera *camera;
@@ -168,9 +166,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == 2)
       work->shakeFrames = 6;
     BattleCamera_Shake(16, 16);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

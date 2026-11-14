@@ -42,9 +42,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
   orb->variant = 0;
   BattleEffect_LoadBlitter(104, 19);
   blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != 80; frame++) {
@@ -106,9 +104,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
           orb->variant = -1;
       }
     }
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(104);
@@ -157,15 +153,13 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
   BattleEffect_LoadBlitter(
       104, BLITTER(BLIT_TRANSPARENT, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  work->transferMode = 1;
-  work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   scroll = 0;
   scrollSpeed = 0;
   cueTimer = 0;
@@ -270,9 +264,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
     }
 
     BattleCamera_Shake(2, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Actor_SetAnimationSpeedFar(user, 16);
@@ -329,9 +321,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                        128);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   target = BattleObject_GetFar(effect->actors[0])->object;
   EffectPosition_ProjectBattler(effect->actors[0], &position);
   position.x /= 2;
@@ -515,9 +505,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
       BattleCamera_Shake(4, 4);
     else
       BattleCamera_Shake(16, 16);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -602,11 +590,9 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
   Iwram_ClearWordsEntry(canvas, 0x3c00);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   mistSheet = gData_02014000;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, mistSheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet, work->sheet, 1, 1);
@@ -640,7 +626,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
     camera = (struct BattleCamera *)Ram_HeapSlots->cameraWork;
     savedYaw = camera->yaw;
     target = BattleObject_GetFar(effect->actors[0])->object;
-    REG_BG2PA = 0x100;
+    REG_BG2PA = Q_8_8(1);
     REG_BG2X = 0;
 
     for (frame = 0; frame != 88; frame++) {
@@ -975,9 +961,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
       gCameraSceneParameters[3] = savedScrollX;
       gCameraSceneParameters[4] = savedScrollY;
       BattleCamera_Shake(8, 8);
-      BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_END_FRAME(work);
     }
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

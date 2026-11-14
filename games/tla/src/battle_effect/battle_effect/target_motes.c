@@ -127,9 +127,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
     total = effect->count * 8 + 32;
   if (!(mode <= 1 || mode == 3))
     Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != total; frame++) {
@@ -291,9 +289,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
     }
 
     BattleCamera_Shake(16, 16);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   // Tear down.
@@ -333,7 +329,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   scroll = 0;
   BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = scroll;
   Resource_LoadAndDecompress((s32)&ResourceId_SheepCardSheet, work->sheet, 1,
                              1);
@@ -367,9 +363,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
     middle.x = 112;
   }
   REG_BG2X = -middle.x << 8;
-  work->transferMode = 1;
-  work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != SHEEP_FRAMES; frame++) {
@@ -420,8 +414,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
         }
       }
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
   // Tear down.
@@ -455,7 +448,7 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work->sheet, 1,
                              1);
@@ -465,7 +458,7 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
   BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_TRANSPARENT << 4 |
                                              COMPOSITE_CLIP_X |
                                              COMPOSITE_CLIP_Y);
-  work->transferMode = 1;
+  work->transferMode = CANVAS_COPY_AND_CLEAR;
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferValue = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -507,8 +500,7 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
         i++;
       } while (i != effect->count);
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
     frame += 1;
   }
 
@@ -565,9 +557,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
     spark->velocityZ = (Trig_Cos(heading) * speed) >> 5;
     spark->variant = 0;
   }
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The Djinn travels from the caster to above the first target in 40
   // frames.
@@ -659,8 +649,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
       screen.x >>= 1;
       draw[1](canvas, work->sheet, screen.x - 10, screen.y - 17, 20, 34);
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
   // The second part: 64 puffs of sparkle for each target.
@@ -748,8 +737,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
         }
       }
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
   // Tear down.

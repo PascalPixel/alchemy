@@ -164,11 +164,9 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
 
   EffectPosition_ProjectScaledBattler(effect->actors[0], &targetPos);
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   if (RECORD(RECORD_EXTRA) == EXTRA_RIPPLE)
-    Task_Add(BattleEffect_ArmBg2AffineHBlankDma, 0xc80);
+    Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
 
   // The motes wait 25 pixels above the target, aimed away from the
   // caster; none is out yet.
@@ -367,9 +365,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
       }
     }
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   // Teardown.

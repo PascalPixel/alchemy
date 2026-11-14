@@ -235,11 +235,10 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
     LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
-  work->transferMode = 2;
-  work->transferValue = 50;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   if (mode == 0 || mode == 6)
-    Task_Add(BattleEffect_ArmBg2AffineHBlankDma, 0xc80);
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+    Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   if (mode == 2 || mode == 7 || mode == 4) {
     if (effect->side == 0)
       BattleEffect_LoadBlitter(SLOT_BLITTER, 7);
@@ -744,8 +743,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         EffectPosition_ProjectScaledBattler(effect->actors[0], &to);
         ball->x = to.x;
         ball->y = to.y;
-        for (i = 0; i != 32; i++)
-          work->particles[i].variant = -1;
+        EFFECT_FREE_PARTICLES(i, work->particles, 32);
         for (i = 0, q = EXTRA_PARTICLES; i != 256; i++, q++) {
           s32 s = 511;
           s32 a;
@@ -1069,8 +1067,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       texture.logHeight = 7;
       model->mesh = gBattleEffect_LargeSquareMesh;
       model->kind = 6;
-      work->transferMode = 1;
-      work->transferValue = 0;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
       texture.pixels = work->sheet;
       EffectPosition_ProjectScaledBattler(effect->actor, &pos);
       if (frame <= 15) {
@@ -1315,8 +1312,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
     BattleEffect_CountDownBattlerTints();
     if (mode == 1)
       WAIT_TRANSFER(work) {}
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
   HeapSlot_Release(SLOT_BLITTER);
   if (mode == 0 || mode == 6)

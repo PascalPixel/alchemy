@@ -50,7 +50,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
 
   // Set up the canvas, the shard pictures in the sheet and the puffs.
   BattleEffect_StartCanvasLayer(0x2001);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, graphics, 0, 0);
   BattleEffect_ConfigureEffectDisplay();
@@ -123,7 +123,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
   }
 
   Task_Add(BattleEffect_ArmWin0HBlankDma, TASK_PASS_FRAME);
-  work->transferMode = 2;
+  work->transferMode = CANVAS_COPY_AND_FADE;
   if (effect->variant == 1)
     work->transferValue = 75;
   else
@@ -210,8 +210,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
 
     BattleEffect_CountDownBattlerTints();
     BattleCamera_Shake(4, 4);
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -262,7 +261,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
 
   // Set up the canvas, the drop pictures and the droplets.
   BattleEffect_StartCanvasLayer(0x2001);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet,
                              work->sheet + 0x604, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet, 0,
@@ -328,14 +327,11 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
   // Douse copies the canvas plainly; Drench and Deluge blend it in.
   Task_Add(BattleEffect_ArmWin0HBlankDma, TASK_PASS_FRAME);
   if (effect->variant == 0) {
-    work->transferMode = 1;
-    work->transferValue = 0;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   } else if (effect->variant == 1) {
-    work->transferMode = 2;
-    work->transferValue = 50;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
-    work->transferMode = 2;
-    work->transferValue = 75;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
@@ -407,9 +403,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
       }
     }
 
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ArmWin0HBlankDma);

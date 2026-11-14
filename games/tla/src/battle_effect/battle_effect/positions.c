@@ -189,9 +189,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, Ram_MapCellBuffer,
                              1, 0);
   // Each transfer leaves half the last frame behind.
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // The layer is centred on the first target, kept within 128 pixels.
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
@@ -317,8 +315,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
         }
       }
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
   // Teardown.
@@ -410,9 +407,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
   BattleCamera_SetViewAtPairMidpointFar(effect->actor, effect->firstTarget,
                                         130);
   wait(1);
-  work->transferMode = 1;
-  work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 
   // The gathering ring, for the larger kinds: the caster holds still while
   // 64 sparks spin in towards it on random axes.
@@ -443,7 +438,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
     gBgScroll[1].y = 80;
     work->fadeFrames = 24;
     work->fadeStep = 0;
-    Task_Add(Palette_StepFadeTransfer, 0x480);
+    Task_Add(Palette_StepFadeTransfer, TASK_PASS_VBLANK);
     Sound_PlayFar(SE_POWER_UP);
     for (frame = 0; frame != 32; frame++) {
       BattleCamera_SetViewAtPairMidpointFar(effect->actor, effect->firstTarget,
@@ -473,8 +468,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
           mote->x -= 4;
         }
       }
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_PRESENT_CANVAS(work);
     }
     Task_Remove(Palette_StepFadeTransfer);
     Actor_SetAnimationSpeedFar(object, 16);
@@ -489,8 +483,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
   // first target, kept within 128 pixels.
   Iwram_ClearWordsEntry(canvas, words);
   Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), words);
-  work->transferMode = 2;
-  work->transferValue = 75;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   EffectPosition_ProjectScaledBattler(effect->actors[0], &anchor);
   if (effect->side == 0)
@@ -561,8 +554,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
         }
       }
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
   // Teardown: the background palette steps back over seven frames.

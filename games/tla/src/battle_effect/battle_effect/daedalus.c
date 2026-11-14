@@ -87,11 +87,10 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
 
   // Centre the canvas's x 64 on the target.
   EffectPosition_ProjectBattler(effect->actors[0], &target);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   REG_BG2X = (64 - target.x) << 8;
   BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_MAX, CLIP_XY));
-  work->transferMode = 2;
-  work->transferValue = 50;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   if (mode == 2) {
     work->shakeFrames = 0;
@@ -146,9 +145,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
       BattleCamera_Shake(4, 4);
     else
       BattleCamera_Shake(16, 16);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
@@ -360,8 +357,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
   RagingHeat_FillGradientCanvas();
   BattleEffect_LoadBlitter(104, 3);
   blit[0] = SYSTEM->blit;
-  work->transferMode = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  work->transferMode = CANVAS_COPY;
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   camera = 0;
   waveScroll = 0;
   shipY = -0x1d0000;
@@ -414,7 +411,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       work->scrollInterval = 5;
       work->scrollStepX = -1;
       work->scrollStepY = 0;
-      Task_Add(BattleEffect_AdvanceScrollOnInterval, 0x480);
+      Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_VBLANK);
       ctl[4] = 1;
       Resource_LoadAndDecompress((s32)&ResourceId_Data134, work->frames, 0, 0);
       off = 0x700;
@@ -552,8 +549,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     }
     bgX += 4;
     *(s32 *)0x04000028 = bgX << 8;
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
   {
@@ -589,8 +585,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     Iwram_CopyWords(
         (void *)BG_PLTT,
         (const void *)Resource_GetTableEntry((s32)&ResourceId_SmokeSheet), 128);
-    work->transferMode = 2;
-    work->transferValue = 50;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     *(vu16 *)0x04000052 = 0x1010;
     *(vu16 *)0x04000050 = 0x3f44;
     for (i = 0; i != 224; i++) {
@@ -708,10 +703,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         *(vu16 *)0x0400000c = 0x785;
       }
       if (frame == 0) {
-        work->transferMode = 1;
-        work->transferValue = 0;
-        work->transferMode = 2;
-        work->transferValue = 50;
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
         for (i = 0; i != 10; i++) {
           Particle *p;
 
@@ -1256,9 +1249,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         if (*shake > 0)
           *shake -= 1;
       }
-      BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_END_FRAME(work);
       frame++;
       if (frame != 800 && !(gInput.held & KEY_B) && !(gInput.repeat & KEY_A))
         goto phase2;
@@ -1275,8 +1266,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     Dma_Set((void *)OBJ_PLTT, (void *)(BG_PLTT + 5 * 16), 0x80000010,
             (vu32 *)0x040000d4);
     *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
-    work->transferMode = 2;
-    work->transferValue = 50;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     *(s32 *)0x04000028 = 0;
     *(vu16 *)0x04000050 = 0x3f44;
     *(vu16 *)0x04000020 = 0x80;
@@ -1417,9 +1407,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         }
       }
       BattleCamera_Shake(8, 8);
-      BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_END_FRAME(work);
     }
     for (i = 0; i != 16; i++)
       Sprite_DestroyFar(work->sprites[i]);
@@ -1509,7 +1497,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   BattleEffect_ConfigureEffectDisplay();
-  REG_WIN0V = 0x1080;
+  REG_WIN0V = WIN_RANGE(16, 128);
   REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
               WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
               WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_CLR;
@@ -1521,9 +1509,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
   draw[0] = BLITTER;
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   work->fadeFrames = 24;
   work->fadeStep = 0;
 
@@ -1535,8 +1521,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
       ringOffset = -0x400000;
       ringX = 0x420000;
       discY = 0x500000;
-      work->transferMode = 2;
-      work->transferValue = 50;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
           Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
@@ -1709,9 +1694,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
       Heap_Release(vertices);
     }
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
     burst += 8;
     frame++;
   } while (frame != DAEDALUS_FRAMES);

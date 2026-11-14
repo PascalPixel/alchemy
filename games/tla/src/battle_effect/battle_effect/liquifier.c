@@ -86,9 +86,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                        128);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EffectPosition_ProjectBattler(effect->actor, &from);
   EffectPosition_ProjectBattler(effect->actors[0], &to);
 
@@ -106,16 +104,13 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 0) {
-      work->transferMode = 2;
-      work->transferValue = 50;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     if (frame == 12) {
-      work->transferMode = 3;
-      work->transferValue = 0x04040404;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
     }
     if (frame == 54) {
-      work->transferMode = 2;
-      work->transferValue = 50;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     if (frame == 0)
       Sound_PlayFar(SE_139);
@@ -351,9 +346,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
     }
 
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -477,9 +470,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
     frames = 58;
   else
     frames = 66;
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
 
   // Discs of sizes 2 to 64 one after another in the map cell buffer, with
@@ -691,9 +682,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
     }
 
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

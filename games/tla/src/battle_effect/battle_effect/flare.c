@@ -65,7 +65,7 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
     puff++;
   } while (i != FLAME_COUNT);
 
-  work->transferMode = 2;
+  work->transferMode = CANVAS_COPY_AND_FADE;
   if (effect->variant == 2)
     work->transferValue = 75;
   else
@@ -111,9 +111,7 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
         BattleEffect_TintBattler(effect->actors[i], 10, 5, i, 12);
       i += 1;
     }
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
     frame += 1;
   } while (frame != 60);
   HeapSlot_Release(104);

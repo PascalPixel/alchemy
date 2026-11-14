@@ -133,9 +133,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
     spark->velocityZ = (Trig_Cos(angle) * speed) >> 5;
     spark->variant = 0;
   }
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The spin's centre moves from the caster to the anchor over frames 6-45.
   base[0] = actor->x;
@@ -319,8 +317,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
         }
       }
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(188);
@@ -552,14 +549,12 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
 
       copy((void *)BG_PLTT, palette, 128);
     }
-    work->transferMode = 2;
-    work->transferValue = 75;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   } else if (mode >= 15 && mode <= 17) {
     for (i = 0; i != 8; i++)
       work->sheet[i] = 60;
     Resource_LoadAndDecompress((s32)&ResourceId_Data0FF, work->sheet, 1, 1);
-    work->transferMode = 1;
-    work->transferValue = 0;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
     if (mode == 15) {
       REG_BLDCNT = 0;
     } else if (mode == 16) {
@@ -579,31 +574,26 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
     Resource_LoadAndDecompress((s32)&ResourceId_ShurikenSheet, work->sheet, 1,
                                1);
     REG_BLDCNT = 0;
-    work->transferMode = 1;
-    work->transferValue = 0;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   } else if (mode == 2) {
     Iwram_CopyWordsEntry((void *)BG_PLTT,
                          Resource_GetTableEntry((s32)&ResourceId_CometSheetA),
                          128);
     Resource_LoadAndDecompress((s32)&ResourceId_ProjectileVolleyImage,
                                work->sheet, 0, 0);
-    work->transferMode = 2;
-    work->transferValue = 50;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else if (mode == 3 || mode == 4 || mode == 11) {
     Resource_LoadAndDecompress((s32)&ResourceId_YellowSparkSheet, work->sheet,
                                1, 1);
-    work->transferMode = 2;
-    work->transferValue = 50;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else if (mode == 6 || mode == 12) {
     Resource_LoadAndDecompress((s32)&ResourceId_FireballSheet, work->sheet, 1,
                                1);
-    work->transferMode = 2;
-    work->transferValue = 50;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else if (mode == 14) {
     Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1,
                                1);
-    work->transferMode = 1;
-    work->transferValue = 0;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   } else if (mode == 13) {
     // The beam is unpacked once and then halved, every second byte, into
     // place at 0x1000.
@@ -615,17 +605,15 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
       work->sheet[0x1000 + i] = *beam;
       beam += 2;
     }
-    work->transferMode = 2;
-    work->transferValue = 50;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1,
                                1);
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                                work->sheet + 0x65c0, 1, 0);
-    work->transferMode = 2;
-    work->transferValue = 50;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // Where each shot starts and how fast it flies.
   user = BattleObject_GetFar(effect->actor)->object;
@@ -1138,9 +1126,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
         }
       }
       BattleCamera_Shake(4, 4);
-      BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_END_FRAME(work);
     }
   }
 

@@ -103,9 +103,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
       SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   blit.draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   endX = 0;
   endY = 0;
   EffectPosition_ProjectBattler(effect->actor, &caster);
@@ -116,7 +114,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
                              work->sheet + 0x800, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ClawSlashSheet,
                              work->sheet + 0x4000, 1, 0);
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   Render_BuildQuadStrip(Data_02012000, 4, 32, 32);
 
   for (frame = 0; frame != FUME_FRAMES; frame++) {
@@ -273,8 +271,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
     }
     BattleEffect_CountDownBattlerTints();
     BattleCamera_Shake(effect->variant * 2 + 2, effect->variant * 2 + 2);
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
   HeapSlot_Release(SLOT_BLITTER);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

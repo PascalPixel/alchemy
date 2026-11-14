@@ -87,9 +87,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data102, work->sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet,
                              work->sheet + 0x2f10, 1, 0);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   // The blitter faces the caster's side.
   if (effect->side == 0)
     BattleEffect_LoadBlitter(104, 1 << 4 | 3);
@@ -112,8 +110,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
                                  0);
       Graphics_LoadGreyRamp();
       REG_BLDALPHA = BLEND_ALPHA(16, 16);
-      for (i = 0; i != 64; i++)
-        work->particles[i].variant = -1;
+      EFFECT_FREE_PARTICLES(i, work->particles, 64);
     }
 
     // Frame 2: only the caster and the target over the red haze, whose
@@ -399,8 +396,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       model->mesh = gBattleEffect_TriangleMesh;
       model->kind = flatKind;
       if (frame > 99) {
-        work->transferMode = fillMode;
-        work->transferValue = 0x02020202;
+        EFFECT_SET_TRANSFER(work, fillMode, CANVAS_FILL_WORD(2));
         Palette_BrightenBgEntries(2, 2, 2);
       }
       for (i = 0, step = Data_02016000; i != 128; i++) {
@@ -425,9 +421,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
     Heap_Release(projected);
 
     Camera_ApplyVerticalShake(8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   // The battle's own scene again.
@@ -477,17 +471,14 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectArgument *effect) {
   savedScrollX = gBgScroll[1].x;
   transition = Ram_HeapSlots->transitionWork;
   BattleEffect_StartCanvasLayer(3);
-  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
-                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
+  REG_DISPCNT = EFFECT_DISPCNT;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 0;
-  work->transferMode = 2;
-  work->transferValue = 50;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // The cloud sheet, recoloured to palette entries 96 on, drawn into the
   // canvas through the copy blitter.
@@ -502,10 +493,9 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectArgument *effect) {
   Iwram_CopyWordsEntry((void *)&BG_PLTT[96], palette, 128);
   for (i = 0; i != 0x4000; i++)
     work->sheet[i] += 96;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   sheetDraw[0](canvas, work->sheet, 0, 0, 128, 128);
-  work->transferPending = 1;
-  wait(1);
+  EFFECT_PRESENT_CANVAS(work);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(104);
 
@@ -523,7 +513,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectArgument *effect) {
     BattleEffect_BuildBlitter(104, 8, 7, mode, mode);
   }
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Task_Add(BattleEffect_FlushPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_FlushPendingGraphicsTransfer, TASK_PASS_FRAME);
   transition->active = enabled;
   /* FAKEMATCH(wrapper): the blit through Swirl_Draw with the constant buffer.
    */
@@ -596,8 +586,7 @@ void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
   if (0)
     BattleEffect_BuildBlitterFar(104, 7, 7, 3, 3);
   BattleEffect_LoadBlitter(104, 3);
-  work->transferMode = 0;
-  work->transferValue = 75;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY, 75);
   REG_BG2PA = 0x48;
 
   // The band: colours 0 to 62 rising over the first 32 rows, 63 through the
@@ -635,8 +624,7 @@ void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
   for (i = 0; i != x; i++) {
     scrollX += (s8)speed;
     REG_BG2X = scrollX << 8;
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
     if (i == half && midpoint != NULL)
       midpoint();
   }

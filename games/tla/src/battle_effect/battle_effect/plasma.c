@@ -64,9 +64,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
     variant += 7;
   }
   sparks = (struct EffectStep *)Ram_MapCellBuffer;
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   count = gPlasma_Counts[effect->variant];
 
   for (frame = 0; frame != count * 8 - count + 42; frame++) {
@@ -165,9 +163,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
     }
 
     BattleCamera_Shake(8, 16);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   // Tear down.
@@ -293,9 +289,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
       spark->variant = (Random16() & 7) + 32;
     }
   }
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != GROUP_COUNT * 8 + 40; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
@@ -402,9 +396,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
     }
 
     BattleCamera_Shake(16, 16);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   // Tear down.

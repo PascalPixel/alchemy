@@ -58,10 +58,9 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
   Actor_SetAnimationSpeedFar(caster, 48);
   BattleEffect_LoadBlitter(
       HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-  work->transferMode = 2;
-  work->transferValue = 75;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // The rings leave from above the caster and reach the target in twelve
   // frames; the second and third aim past it.
@@ -181,9 +180,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
       }
     }
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -237,9 +234,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
   BattleEffect_LoadBlitter(
       HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // Each star leaves from above the caster on its own course to the target,
   // the later ones after a longer delay (held in variant).
@@ -324,9 +319,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
       }
     }
     BattleCamera_Shake(4, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

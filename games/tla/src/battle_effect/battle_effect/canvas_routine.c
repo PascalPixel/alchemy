@@ -49,8 +49,7 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
                   1 - fill;
         }
       }
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_PRESENT_CANVAS(work);
     } while (front <= 256);
   } else if (direction != 3) {
     s32 front;
@@ -71,8 +70,7 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
                   1 - fill;
         }
       }
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_PRESENT_CANVAS(work);
     } while (front <= 191);
   }
 }

@@ -87,18 +87,17 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   BattleEffect_ConfigureEffectDisplay();
   BG_PLTT[0] = 0;
   BG_PLTT[1] = 0;
-  work->transferMode = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
-  BattleEffect_WipeCanvas(1, 0);
+  work->transferMode = CANVAS_COPY;
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2X = 0x400;
   gCameraSceneParameters[4] = 240;
   BattleEffect_SelectLivingTargets(work->effect);
   transition[4] = 1;
   gBgScroll[1].x = 0;
-  work->transferMode = 1;
-  work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingStampTransfer, 3200);
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  Task_Add(BattleEffect_ProcessPendingStampTransfer, TASK_PASS_FRAME);
   morph = 0;
   morphStep = 0;
   dived = 0;
@@ -533,8 +532,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           Iwram_CopyWordsEntry(
               (void *)BG_PLTT,
               Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
-          work->transferMode = 1;
-          work->transferValue = 0x01010101;
+          EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(1));
         }
         verts = Heap_AllocEwram(32);
         model = Render_AllocateModelList(1);
@@ -590,8 +588,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         if (frame == 277) {
           const u8 *q;
 
-          work->transferMode = 1;
-          work->transferValue = 0;
+          EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
           dived = 1;
           Sprite_DestroyFar(work->objects[0]);
           Sprite_DestroyFar(work->objects[1]);
@@ -786,8 +783,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeBandSheet, work->sheet, 1,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
-  work->transferMode = 2;
-  work->transferValue = 50;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
   draw[0] = Ram_HeapSlots->unk64[1];
@@ -998,9 +994,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     Heap_Release(model);
     Heap_Release(verts);
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
   for (i = 0; i != 11; i++) {
     Sprite_DestroyFar(work->objects[i]);

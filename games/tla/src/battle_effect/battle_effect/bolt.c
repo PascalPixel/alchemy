@@ -44,11 +44,8 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   for (j = 0; j != SPARK_COUNT; j++)
     SPARKS[j].variant = 0;
-  for (j = 0; j != 64; j++)
-    work->particles[j].variant = -1;
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_FREE_PARTICLES(j, work->particles, 64);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(CUE_THUNDER);
 
   for (frame = 0; frame != effect->count * BOLT_INTERVAL + 40; frame++) {
@@ -155,9 +152,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
       }
     }
     BattleCamera_Shake(2, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   // Tear down: stop the transfer, free the blitter, close the layer.

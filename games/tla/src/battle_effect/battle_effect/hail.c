@@ -35,9 +35,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
   BattleEffect_FetchRectangleBlitters(effect->side, blit);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
                              1);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The chips start in a 16-pixel spread at the first target and fly up
   // at random, each to live 32 to 47 frames.
@@ -126,9 +124,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
     }
 
     BattleCamera_Shake(4, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   // Teardown.
@@ -196,9 +192,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                              work->sheet + 0x65c0, 1, 1);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The rocks start at the caster, 66 high, flung out to the side away
   // from the caster with a random lift and drift.
@@ -343,9 +337,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
         }
       }
       BattleCamera_Shake(16, 16);
-      BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_END_FRAME(work);
     }
   }
 

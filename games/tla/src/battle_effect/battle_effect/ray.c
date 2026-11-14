@@ -44,9 +44,9 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
   else
     BattleEffect_StartTiledCanvas(0x2001);
   if (effect->variant == 2)
-    REG_BG2PA = 0x80; // twice as wide
+    REG_BG2PA = Q_8_8(0.5); // twice as wide
   else
-    REG_BG2PA = 0x100;
+    REG_BG2PA = Q_8_8(1);
   BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_MAX, CLIP));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   BattleEffect_LoadBlitter(188,
@@ -89,9 +89,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
     spark->variant = 0;
   }
 
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_ITEM_BREAK);
 
   for (frame = 0; frame != 64; frame++) {
@@ -172,9 +170,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
       }
     }
     BattleCamera_Shake(2, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

@@ -92,9 +92,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
                                             COMPOSITE_FLIP_X));
   }
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   target = BattleObject_GetFar(effect->actors[0])->object;
   // Default: set for real below, when j reaches 32.
   endX = 0;
@@ -111,7 +109,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
   Iwram_CopyWordsEntry(
       (void *)BG_PLTT,
       Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet), 128);
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   Render_BuildQuadStrip(buffer, 4, 32, 32);
 
   for (frame = 0; frame != FIRE_PUPPET_FRAMES; frame++) {
@@ -227,8 +225,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
     }
     BattleEffect_CountDownBattlerTints();
     BattleCamera_Shake(4, 4);
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
   HeapSlot_Release(SLOT_BLITTER);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -288,9 +285,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
                        128);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != SWING_FRAMES; frame++) {
     // The slash, its cels anchored to the caster's front.
@@ -385,9 +380,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
     }
 
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

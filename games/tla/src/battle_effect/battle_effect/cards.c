@@ -161,12 +161,10 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
                                Ram_MapCellBuffer, 1, 0);
     length = 88;
   }
-  work->transferMode = 1;
-  work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   if (mode == CARD_BAFFLE)
     Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
 
   for (frame = 0; frame != length; frame++) {
     // Frame 0: find the user and the targets' middle (the Death Card's 32
@@ -184,8 +182,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
       REG_BG2X = (56 - card.x) << 8;
       scroll = 56 - card.x;
       scale = 0;
-      for (i = 0; i != 64; i++)
-        work->particles[i].variant = -1;
+      EFFECT_FREE_PARTICLES(i, work->particles, 64);
     }
 
     // The last eight frames: the screen fades.
@@ -315,8 +312,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
       // each flutters to the ground and skims along it.
       if (frame == 48) {
         BattlePlayback_StartFar(136);
-        work->transferMode = 2;
-        work->transferValue = 50;
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
         REG_BLDALPHA = BLEND_ALPHA(16, 16);
       }
       if (frame >= 48 && frame <= 79) {
@@ -406,8 +402,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
           step->velocityY = (Trig_Sin(angle) * (force + 64)) >> 6;
           step->variant = Random16() & 255;
         }
-        work->transferMode = 2;
-        work->transferValue = 50;
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
         REG_BLDALPHA = BLEND_ALPHA(16, 16);
       }
 
@@ -488,9 +483,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
     BattleCamera_Shake(4, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   if (mode == CARD_BAFFLE)

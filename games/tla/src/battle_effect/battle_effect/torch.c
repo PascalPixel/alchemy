@@ -61,9 +61,7 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
   REG_BG2PA = 0xaa;
   BattleEffect_FetchRectangleBlitters(effect->side, draw);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The distance map, one quarter at a time mirrored into the other three,
   // the centre an eighth lower than the middle so the disc leans back.

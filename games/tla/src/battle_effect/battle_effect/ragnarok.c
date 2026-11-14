@@ -106,9 +106,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
     col++;
   } while (col != 3);
 
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   frame = 0;
   do {
@@ -247,9 +245,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
     } while (col != 2);
 
     BattleCamera_Shake(16, 16);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
     frame++;
   } while (frame != BLADE_FRAMES);
 
@@ -344,9 +340,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectArgument *effect,
     }
   }
 
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // 32 flashes on rings, two pixels apart.
   i = 0;
@@ -618,9 +612,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectArgument *effect,
       Iwram_FillWordsEntry(canvas, 128 << 7, 0x3F3F3F3F);
 
     BattleCamera_Shake(16, 16);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
     frame++;
   } while (frame != 102);
 

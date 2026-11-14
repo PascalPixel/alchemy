@@ -114,7 +114,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   // With one target, BG2 is shifted so that it stands at x = 64.
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   if (effect->count == 1) {
     EffectPosition_ProjectScaledBattler(effect->actors[0], &one);
     offsetX = 64 - one.x;
@@ -125,9 +125,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
       offsetX = 0;
   }
   REG_BG2X = offsetX << 8;
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != effect->count * 16 + 116; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
@@ -247,8 +245,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
     }
     HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
     HeapSlot_Release(HEAP_BLITTER);
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -396,14 +393,12 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
   // each frame and turn blending off, the others fade it to three quarters.
   BattleEffect_FetchRectangleBlitters(effect->side, draw);
   if (mode == 4 || mode == 7) {
-    work->transferMode = 1;
-    work->transferValue = 0;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
     REG_BLDCNT = 0;
   } else {
-    work->transferMode = 2;
-    work->transferValue = 75;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   total = gLobbedShells_Styles[mode * 4 + RECORD_FRAMES] + effect->count * 8;
   Sound_PlayFar(SE_CURSE);
 
@@ -508,9 +503,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
       }
     }
     BattleCamera_Shake(4, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

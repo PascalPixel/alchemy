@@ -44,8 +44,8 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = 0x100; // no horizontal stretch
-  REG_BLDCNT = 0;    // no blending
+  REG_BG2PA = Q_8_8(1); // no horizontal stretch
+  REG_BLDCNT = 0;       // no blending
   Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet,
                              work->sheet + ROCK_OFFSET, 1, 1);
 
@@ -73,7 +73,8 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   for (member = 0; member != effect->count; member++)
     work->particles[member].variant = 0; // 1 once landed
-  work->transferMode = 1;                // clear the canvas on each transfer
+  work->transferMode =
+      CANVAS_COPY_AND_CLEAR; // clear the canvas on each transfer
   work->transferValue = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   heights = gRockWall_Heights;
@@ -145,9 +146,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
     }
     BattleCamera_Shake(gQuake_Timings[effect->variant][TIMING_SHAKE],
                        gQuake_Timings[effect->variant][TIMING_SHAKE]);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

@@ -144,16 +144,14 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
   if (effect->prelude == 1)
     BattleEffect_RunDjinniEntrance(effect, effect->side << 4 | 3, origin,
                                    originSize);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,
                              work->sheet + FLARE_SHEET, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSheet,
                              work->sheet + DJINN_SHEET, 1, 0);
-  work->transferMode = 3;
-  work->transferValue = 0x04040404;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 
   // The background is shifted so that the target stands at x = 64.
   EffectPosition_ProjectScaledBattler(effect->actors[0], &anchor);
@@ -255,8 +253,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
     }
     HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
     HeapSlot_Release(HEAP_BLITTER);
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -298,14 +295,12 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
   // Set up: the rune picture with its palette, the dots, the flares, and a
   // transfer that fades the canvas by 4 each frame.
   BattleEffect_StartCanvasLayer(0);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,
                              work->sheet + FLARE_SHEET, 0, 0);
-  work->transferMode = 3;
-  work->transferValue = 0x04040404;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 
   // The background is shifted so that the target stands at x = 64.
   EffectPosition_ProjectScaledBattler(effect->actors[0], &anchor);
@@ -390,8 +385,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
     }
     HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
     HeapSlot_Release(HEAP_BLITTER);
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

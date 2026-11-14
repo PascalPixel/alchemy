@@ -230,13 +230,13 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   PLTT[0] = 0;
   PLTT[1] = 0;
-  work->transferMode = 0;
+  work->transferMode = CANVAS_COPY;
   {
     s32 order = 0xc80;
 
     Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, order);
   }
-  BattleEffect_WipeCanvas(1, 0);
+  BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   gCameraSceneParameters[4] = 240;
   lineScroll->unk10 = 1;
   gBgScroll[1].x = 0;
@@ -251,10 +251,10 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   battle->unk867 = 1;
   BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
   Palette_BrightenSavedBattleBg(0, -20, -20);
-  BattleEffect_WipeCanvas(1, 1);
+  BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
   blit = routine;
   BattleEffect_FetchRectangleBlitters(0, blit);
@@ -370,8 +370,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       Sound_PlayFar(SE_104);
     }
     if (frame == 0) {
-      work->transferMode = 2;
-      work->transferValue = 75;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                          CANVAS_FADE_THREE_QUARTERS);
       REG_BLDALPHA = BLEND_ALPHA(16, 16);
       {
         u32 hidden;
@@ -749,8 +749,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           depth = 0;
         }
         model->depth = depth;
-        work->transferMode = 2;
-        work->transferValue = 75;
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                            CANVAS_FADE_THREE_QUARTERS);
         lateTexture.a = 7;
         lateTexture.b = 7;
         lateTexture.tiles = work->buffer + 0x1000;
@@ -981,8 +981,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
                                           finaleScale.v, 0);
       }
       if (frame == 347) {
-        work->transferMode = 1;
-        work->transferValue = 0;
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
         REG_BLDCNT = 0;
         {
           u16 *entry = PLTT + 1;
@@ -1008,7 +1007,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           height = ((-(Trig_Sin((frame << 10) - 0x57800) * 54)) >> 16) + 54;
         }
         if (frame == 360) {
-          work->transferMode = 0;
+          work->transferMode = CANVAS_COPY;
         }
         if (frame <= 371) {
           BattleEffect_DrawShadedCircles(work->buffer + 0x1000, t, 0x10000);
@@ -1127,8 +1126,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         s32 x;
         s32 y;
 
-        work->transferMode = 3;
-        work->transferValue = 0x04040404;
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
         source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_Data0B5);
         source += 32;
         Decompress_TaggedLz(source, work->buffer + 0x2400);
@@ -1189,8 +1187,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       void *texture = Heap_AllocEwram(32);
       struct Model__f175f74 *model = Render_AllocateModelList(1);
 
-      work->transferMode = 2;
-      work->transferValue = 50;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
       twice = frame * 2;
       quarter = frame * 381;
       depth = twice - 64;
@@ -1311,10 +1308,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   shake = 0;
   savedYaw = camera->yaw;
   camera->yaw = shake;
-  work->transferMode = 1;
-  work->transferValue = 0;
-  work->transferMode = 2;
-  work->transferValue = 50;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BLDALPHA = BLEND_ALPHA(16, 4);
   REG_BG2X = 0;
   REG_BG2CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
@@ -1400,8 +1395,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       }
     }
     if (frame == 120) {
-      work->transferMode = 1;
-      work->transferValue = 0;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
       ColorBuffer_ScaleFar(battle->palette, PLTT + 0x60, 0x99a0, 128);
       for (i = 0; i != arg->count; i++) {
         struct ActorPos *actor = BattleObject_GetFar(arg->actors[i])->object;
@@ -1441,8 +1435,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
         REG_BG2CNT =
             BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-        work->transferMode = 2;
-        work->transferValue = 50;
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
         for (i = 0; i != arg->count; i++) {
           struct ActorPos *actor = BattleObject_GetFar(arg->actors[i])->object;
 

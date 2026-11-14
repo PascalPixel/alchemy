@@ -83,9 +83,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   meshA = work->sheet + 0x5f40;
@@ -277,8 +275,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       target = BattleObject_GetFar(effect->actors[0])->object;
       target[2] = zero;
       target[4] = zero;
-      work->transferMode = 2;
-      work->transferValue = 50;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
           Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
@@ -315,8 +312,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       }
       Actor_SetAnimationSpeedFar(caster, 128);
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
-      work->transferMode = 3;
-      work->transferValue = 0x06060606;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(6));
     }
     if (frame == 171) {
       work->shakeFrames = 8;
@@ -324,8 +320,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
-      work->transferMode = 1;
-      work->transferValue = 0x10101010;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
     }
     /* FAKEMATCH(temporary): f, a copy of frame tested below. */
     f = frame;
@@ -596,9 +591,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         (void)*vblanks;
       } while (*vblanks <= 1);
     }
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Sprite_DestroyFar(work->objects[0]);

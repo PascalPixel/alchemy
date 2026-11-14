@@ -80,12 +80,10 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
     Resource_LoadAndDecompress((s32)&ResourceId_FeatherSheet,
                                work->sheet + SHEET_TEXTURE, 1, 1);
   }
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // Centre the canvas on the anchor; the blitter mirrors for side 0.
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   REG_BG2X = (64 - anchor[0]) << 8;
   if (effect->side == 0)
     BattleEffect_LoadBlitter(HEAP_BLITTER,
@@ -221,9 +219,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
     }
     gCameraSceneParameters[3] = 120;
     gCameraSceneParameters[4] = 120;
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   // Tear down.
@@ -322,13 +318,11 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
     }
     scroll += 4;
     REG_BG2X = scroll << 8;
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
   blit = blitters;
   BattleEffect_FetchRectangleBlitters(0, (void **)blit);
-  work->transferMode = 2;
-  work->transferValue = 50;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   skip = 0;
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
@@ -337,7 +331,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
   wait(1);
   BattleEffect_SpawnObjects(ZAGAN_PARTS, 658, 1);
   REG_BG2X = skip;
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
 
   for (frame = 0; frame != 200; frame++) {
     if (gInput.repeat & (KEY_A | KEY_B)) {
@@ -386,8 +380,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
           Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
-      work->transferMode = 2;
-      work->transferValue = 50;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     gCameraSceneParameters[3] -= work->scrollStepX;
     gBgScroll[1].x += work->scrollStepX;
@@ -450,8 +443,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
       for (i = 0; i != ZAGAN_PARTS - 1; i++) {
         Animation_ApplyChildArgumentFar(work->objects[i], i + 24);
       }
-      work->transferMode = 2;
-      work->transferValue = 50;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     if ((u32)(frame - 156) <= 7) {
       blitters[0](canvas, work->sheet, 12, 0, 58, 120);
@@ -626,8 +618,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
   next:
     BattleEffect_CountDownBattlerTints();
     if (!(frame & 1) || !skip) {
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_PRESENT_CANVAS(work);
     }
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

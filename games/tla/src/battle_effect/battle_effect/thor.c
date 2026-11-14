@@ -54,7 +54,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0x2000);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesC,
                              work->sheet + 0x1800, 0, 0);
@@ -91,24 +91,18 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
   work->scrollStepX = 1;
   work->scrollStepY = 0;
   view->busy = 1;
-  Task_Add(BattleEffect_AdvanceScrollOnInterval, 0xc80);
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  work->transferMode = 0;
-  BattleEffect_WipeCanvas(0, 0);
+  Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  work->transferMode = CANVAS_COPY;
+  BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
   gCameraSceneParameters[4] = 240;
-  BattleEffect_WipeCanvas(0, 1);
-  REG_BG2PA = 0x80;
+  BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
+  REG_BG2PA = Q_8_8(0.5);
   BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_ADDITIVE, BLIT_CLIP));
   blit[0] = BLITTER;
-  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
-                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
-  REG_BG2PA = 0x80;
-  REG_BLDALPHA = BLEND_ALPHA(15, 16);
-  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  work->transferMode = 2;
-  work->transferValue = 75;
+  EFFECT_SHOW_WIDE_CANVAS(15);
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // One row of the beam: brightest in the middle, darker to each side.
   for (i = 0; i != 16; i++) {
@@ -152,11 +146,10 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 150) {
-      work->transferMode = 1;
-      work->transferValue = 0x1a1a1a1a;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(26));
     } else {
-      work->transferMode = 2;
-      work->transferValue = 75;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE,
+                          CANVAS_FADE_THREE_QUARTERS);
     }
     Projection_Set(0x1fe0000, Iwram_RatioMulQ14(0x1fe0000, 0xc000), 0x7fff0000);
     Transform_Reset();
@@ -297,8 +290,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
                         96);
       HeapSlot_Release(188);
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
   // The lightning part.
@@ -334,8 +326,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       work->particles[i].y = Random16() & 63;
       work->particles[i].variant = -(Random16() & 15);
     }
-    work->transferMode = 2;
-    work->transferValue = 50;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     Sound_PlayFar(SE_CRASH);
 
     for (frame = 0; frame != STORM_LIGHTNING_FRAMES; frame++) {
@@ -545,9 +536,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       } else {
         BattleCamera_Shake(4, 4);
       }
-      BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_END_FRAME(work);
     }
 
     HeapSlot_Release(104);

@@ -107,10 +107,9 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   blit = Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   BattleEffect_SelectLivingTargets(work->effect);
-  work->transferMode = 1;
-  work->transferValue = 0;
-  Task_Add(BattleEffect_ArmPaletteHBlankDma, 0xcfe);
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_FRAME + 126);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   battle = (u8 *)Ram_HeapSlots->battleWork;
   verts = (struct AzulVertex *)work->sheet;
   faces = (struct AzulFace *)(work->sheet + 0x1f0);
@@ -155,8 +154,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 228; frame++) {
     if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 15 && frame <= 185) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_PRESENT_CANVAS(work);
       frame = 186;
       REG_BLDALPHA = BLEND_ALPHA(16, 16);
       for (i = 0; i != 28; i++) {
@@ -177,8 +175,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
     }
     if (frame == 0) {
       REG_BLDALPHA = BLEND_ALPHA(16, 0);
-      work->transferMode = 1;
-      work->transferValue = frame;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, frame);
       for (i = 0; i != 28; i++) {
         ((struct AzulObject *)work->objects[i])->shape = 0xc000;
       }
@@ -571,8 +568,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       Picture_MirrorIntoQuadrants(gData_02014000, gMapCellBuffer, 64, 64);
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0,
                                  0);
-      work->transferMode = 2;
-      work->transferValue = 50;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     if (frame == 152) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, gData_02014000, 0,
@@ -731,8 +727,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
     if (frame > 185) {
       BattleEffect_CountDownBattlerTints();
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleEffect_ArmPaletteHBlankDma);

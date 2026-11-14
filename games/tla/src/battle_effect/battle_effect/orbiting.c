@@ -39,9 +39,7 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
     star->velocityZ = 0;
     star->variant = 0;
   }
-  work->transferMode = 1;
-  work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   record[0] = 0;
   record[1] = 160 << 15;
   record[2] = 0;
@@ -102,8 +100,7 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
         }
       }
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(188);
@@ -163,9 +160,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
     step->variant = 0;
   }
 
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != 96; frame++) {
     s32 member;
@@ -209,8 +204,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
         }
       }
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(188);

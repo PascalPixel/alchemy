@@ -96,9 +96,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
   }
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   {
     s32 endX[2] = {0, 0};
     s32 endY[2] = {0, 0};
@@ -115,7 +113,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
     Iwram_CopyWordsEntry(
         (void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
-    REG_BG2PA = 0x80;
+    REG_BG2PA = Q_8_8(0.5);
     Render_BuildQuadStrip(Data_02012000, 4, 32, 32);
 
     for (frame = 0; frame != effect->variant * 10 + 60; frame++) {
@@ -325,8 +323,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
       }
       BattleEffect_CountDownBattlerTints();
       BattleCamera_Shake(2, 2);
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_PRESENT_CANVAS(work);
     }
     Actor_SetAnimationSpeedFar(caster, 16);
     HeapSlot_Release(104);
@@ -381,7 +378,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
   canvas = heap->battleFxWork[1];
   parts = Ram_MapCellBuffer;
   BattleEffect_StartTiledCanvas(0x2001);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DC, parts, 1, 1);
   BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,
                            BLITTER(BLITTER_TRANSPARENT, CLIP_XY));
@@ -389,8 +386,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
   BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER_ALTERNATE,
                            BLITTER(BLITTER_TRANSPARENT, CLIP_XY | FLIP_X));
   draw[1] = ((DrawRectangle *)heap)[47];
-  work->transferMode = 1;
-  work->transferValue = 0;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   EffectPosition_ProjectScaledBattler(effect->actors[0], &target);
 
@@ -518,9 +514,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
     }
 
     BattleCamera_Shake(4, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);

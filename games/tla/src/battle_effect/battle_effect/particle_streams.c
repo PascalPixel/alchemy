@@ -103,9 +103,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *effect) {
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet + PILLAR_SHEET);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Data134), cells);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   {
     struct Point2D focus;
     struct Point2D velocity;
@@ -123,8 +121,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *effect) {
     focus.y = px(88);
     velocity.x = -px(16);
     velocity.y = -px(4);
-    for (k = 0; k != 64; k++)
-      work->particles[k].variant = -1;
+    EFFECT_FREE_PARTICLES(k, work->particles, 64);
     for (k = 0; k != 16; k++) {
       point = &work->particles[24 + k];
       point->x = Random16() & 127;
@@ -283,8 +280,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *effect) {
           }
         }
       }
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_PRESENT_CANVAS(work);
     }
 
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -392,7 +388,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   orgX = x;
   x += px(40);
   x /= 2;
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -404,9 +400,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlareSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlareImage, work->sheet + SHARD_E,
                              0, 0);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (i = 0; i != 64; i++) {
     s32 speed = (Random16() & 255) + 256;
@@ -511,8 +505,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
 
     if (frame <= 35)
       BattleEffect_PlaceFormationObjects(formation, orgX, y);
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -745,7 +738,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   BattleEffect_StartCanvasLayer(0x2000);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
 
   // Mode 1: the user leaps and flashes; the streams lean the user's way.
   /* FAKEMATCH(temporary): mode tested through its copy in direction. */
@@ -766,9 +759,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   BattleEffect_ConfigureEffectDisplay();
   *(u16 *)BG_PLTT = 0;
   *(u16 *)(BG_PLTT + 1) = 0;
-  work->transferMode = 0;
+  work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  BattleEffect_WipeCanvas(0, 0);
+  BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
 
   // Mode 1's two flames, or mode 0's sun.
@@ -800,7 +793,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   } while (0);
   wait(1);
   REG_BLDCNT = 0;
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   REG_BG1CNT = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
@@ -860,8 +853,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
                                 (x & 7)] = 0;
         }
       }
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_PRESENT_CANVAS(work);
     } while (limit <= 191);
   }
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -880,11 +872,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     BattleEffect_BuildBlitter(HEAP_BLITTER, 8, 7,
                               COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_MAX);
     draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    work->transferMode = transferMode;
-    work->transferValue = 0x02020202;
+    EFFECT_SET_TRANSFER(work, transferMode, CANVAS_FILL_WORD(2));
     Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_FRAME + 126);
-    for (i = 0; i != 64; i++)
-      work->particles[i].variant = -1;
+    EFFECT_FREE_PARTICLES(i, work->particles, 64);
     transition->active = 1;
     work->frame = 0;
     frame = 0;
@@ -1063,8 +1053,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
             mote->variant = -1;
         }
       }
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_PRESENT_CANVAS(work);
       frame++;
       work->frame++;
     } while (frame != STREAM_FRAMES);
@@ -1080,7 +1069,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   // Act two: the blast.
   HeapSlot_Release(HEAP_BLITTER);
   BattleEffect_SetupBlendedDisplay();
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
   REG_BG2Y = 0xfffff000;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -1114,9 +1103,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     ember->velocityZ = ((Random16() & 255) - 128) << 13;
     ember->variant = 0;
   }
-  work->transferMode = 1;
-  work->transferValue = 0x10101010;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
 
   for (frame = 0; frame != BLAST_FRAMES; frame++) {
     s32 size = (frame + 0x1d0) << 8;
@@ -1246,8 +1233,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     }
     work->shakeFrames = 1;
     BattleCamera_Shake(8, 8);
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

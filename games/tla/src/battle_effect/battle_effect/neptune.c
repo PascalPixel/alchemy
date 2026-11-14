@@ -58,12 +58,12 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   *(u16 *)(BG_PLTT + 1) = 0;
   Task_Add(BattleEffect_ResetBg2Pa, TASK_PASS_FRAME);
   Irq_SetHandler(2, 0, BattleEffect_SetBg2AffineScaleHalf);
-  work->transferMode = 0;
+  work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
               WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 | WININ_WIN1_CLR;
-  BattleEffect_WipeCanvas(1, 0);
-  REG_WIN0H = 0xf0f0;
+  BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
+  REG_WIN0H = WIN_RANGE(240, 240);
   BattleEffect_SelectLivingTargets(work->effect);
   // Build the serpent: its palette, its tiles, and eight sprites.
   ((u8 *)Ram_HeapSlots->battleWork)[0x867] = 1;
@@ -91,10 +91,8 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,
                              work->sheet + 0x4e20, 0, 0);
-  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
-                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
-  REG_BG2PA = 0x80;
+  REG_DISPCNT = EFFECT_DISPCNT;
+  REG_BG2PA = Q_8_8(0.5);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   // The serpent starts low on the right, rising to the left.
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -105,8 +103,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   serpentVY = -0x80000;
   savedScrollX = gBgScroll[1].x;
   transition = (s32 *)Ram_HeapSlots->transitionWork;
-  work->transferMode = 2;
-  work->transferValue = 75;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   transition[4] = 1;
   BattleEffect_LoadBlitter(104, 3);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
@@ -394,8 +391,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     for (i = 0; i != 5; i++)
       draw[1](canvas, work->sheet, i * 32 + ((frame / 4) & 31) - 32, 88, 32,
               32);
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   } while (++frame != 244 &&
            (frame <= 16 || !(gInput.repeat & (KEY_A | KEY_B))));
 
@@ -409,9 +405,8 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
           (volatile u32 *)0x040000d4);
   *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
   Task_Remove(BattleEffect_ResetBg2Pa);
-  REG_WIN0H = 0xf0;
-  work->transferMode = 2;
-  work->transferValue = 75;
+  REG_WIN0H = WIN_RANGE(0, 240);
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   for (i = 0; i != 1024; i++)
     PARTICLES[i].variant = 0;
   for (i = 0; i != 16; i++) {
@@ -427,7 +422,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work->sheet, 1,
                              1);
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   frame = 0;
@@ -505,9 +500,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
       }
     }
     BattleCamera_Shake(4, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   } while (++frame != 144);
 
   for (i = 0; i != 8; i++)

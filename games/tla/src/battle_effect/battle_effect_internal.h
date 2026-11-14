@@ -491,6 +491,75 @@ extern u8 gVortices_Counts[];
 // Funnels, sway radius and shake, for each variant.
 extern u8 gVortices_Shapes[];
 
+/// The battle screen's display mode while an effect plays: background mode 1
+/// with BG0 to BG2, sprites and both windows on.
+#define EFFECT_DISPCNT                                                         \
+  (DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |     \
+   DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON)
+
+// The canvas life cycle, shared by every canvas effect.
+
+/// How the canvas transfer task treats the canvas after each copy
+/// (work->transferMode); work->transferValue is its argument.
+enum CanvasTransferMode {
+  CANVAS_COPY,             ///< copy as drawn
+  CANVAS_COPY_AND_CLEAR,   ///< copy, then fill the canvas with transferValue (0
+                           ///< clears it)
+  CANVAS_COPY_AND_FADE,    ///< copy, keeping half of each pixel's level for the
+                           ///< next frame when transferValue is
+                           ///< CANVAS_FADE_HALF, and three quarters for any
+                           ///< other value
+  CANVAS_COPY_AND_DARKEN,  ///< copy, then lower each level by a byte of
+                           ///< transferValue, stopping at 0
+  CANVAS_COPY_AND_BRIGHTEN ///< copy, then raise each level by a byte of
+                           ///< transferValue
+};
+
+/// CANVAS_COPY_AND_FADE's transferValue: the percentage of each pixel's level
+/// kept for the next frame.
+enum CanvasFadeShare { CANVAS_FADE_HALF = 50, CANVAS_FADE_THREE_QUARTERS = 75 };
+
+/// Sets what the canvas transfer leaves in the canvas after each copy.
+#define EFFECT_SET_TRANSFER(work, mode, value)                                 \
+  ((work)->transferMode = (mode), (work)->transferValue = (value))
+
+/// Sets the transfer, then starts copying the canvas to VRAM once a frame.
+#define EFFECT_START_TRANSFER(work, mode, value)                               \
+  (EFFECT_SET_TRANSFER(work, mode, value),                                     \
+   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME))
+
+/// Presents the canvas and waits for the next frame.
+#define EFFECT_PRESENT_CANVAS(work) ((work)->transferPending = 1, wait(1))
+
+/// The usual end of an effect's frame: counts down the targets' flash timers,
+/// then presents the canvas.
+#define EFFECT_END_FRAME(work)                                                 \
+  (BattleEffect_CountDownBattlerTints(), EFFECT_PRESENT_CANVAS(work))
+
+/// Marks particles[0] to particles[count - 1] free: a particle whose variant
+/// is -1 is not drawn or moved until an effect gives it a life.
+#define EFFECT_FREE_PARTICLES(i, particles, count)                             \
+  for ((i) = 0; (i) != (count); (i)++)                                         \
+  (particles)[i].variant = -1
+
+/// Shows the canvas stretched to twice its width, `top` sixteenths of its
+/// colour added over what lies under it.
+#define EFFECT_SHOW_WIDE_CANVAS(top)                                           \
+  (REG_DISPCNT = EFFECT_DISPCNT, REG_BG2PA = Q_8_8(0.5),                       \
+   REG_BLDALPHA = BLEND_ALPHA(top, 16),                                        \
+   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
+
+/// Which way BattleEffect_WipeCanvas sweeps.
+enum CanvasWipeDirection {
+  CANVAS_WIPE_DOWN,  ///< top to bottom
+  CANVAS_WIPE_ACROSS ///< left to right
+};
+/// What BattleEffect_WipeCanvas leaves behind it.
+enum CanvasWipeFill {
+  CANVAS_WIPE_FILL, ///< colour 1, which its callers make black first
+  CANVAS_WIPE_CLEAR ///< colour 0: the canvas cleared
+};
+
 // The declarations the parts share.
 
 struct Vec2;

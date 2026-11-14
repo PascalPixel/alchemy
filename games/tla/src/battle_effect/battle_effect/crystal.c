@@ -85,8 +85,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
     void *camera;
     struct BattleObjectPosition *target;
 
-    work->transferMode = 2;
-    work->transferValue = 75;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
     Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
     camera = Ram_HeapSlots->cameraWork;
     target = BattleObject_GetFar(effect->actors[0])->object;
@@ -199,9 +198,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
       }
       gCameraSceneParameters[3] = 120;
       gCameraSceneParameters[4] = 120;
-      BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_END_FRAME(work);
     }
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

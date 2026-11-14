@@ -42,9 +42,7 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 1);
   BattleEffect_FetchRectangleBlitters(effect->side, draw);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // The crystals wait above the screen, each eight frames behind the last,
   // and drift sideways so that they land over the targets.
@@ -85,8 +83,7 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
 
     // Darken over the last eight frames.
     if (frame == gPrism_Counts[effect->variant * 3 + 1] - 8) {
-      work->transferMode = 3;
-      work->transferValue = 0x06060606;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(6));
     }
 
     if (frame <= gPrism_Counts[effect->variant * 3 + 1] - 8) {
@@ -138,9 +135,7 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
     }
 
     BattleCamera_Shake(effect->variant * 2 + 4, effect->variant * 4 + 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   // Tear down.

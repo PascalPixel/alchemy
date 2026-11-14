@@ -93,14 +93,14 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0x2000);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   BattleEffect_ConfigureEffectDisplay();
   ((volatile u16 *)BG_PLTT)[0] = 0;
   ((volatile u16 *)BG_PLTT)[1] = 0;
-  work->transferMode = 0;
+  work->transferMode = CANVAS_COPY;
   blank = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
-  BattleEffect_WipeCanvas(0, 0);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSetSheet, work->sheet, 1,
                              1);
@@ -118,13 +118,13 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   BattleEffect_SelectLivingTargets(work->effect);
   BattleEffect_SpawnObjects(1, 0x28a, 1);
   REG_BLDCNT = blank;
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
   Iwram_CopyWordsEntry((void *)BG_CHAR_BLOCK(1), canvas, 0x4000);
-  Task_Add(BattleEffect_FlushPendingGraphicsTransfer, 3200);
+  Task_Add(BattleEffect_FlushPendingGraphicsTransfer, TASK_PASS_FRAME);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -166,11 +166,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   BattleEffect_BuildBlitter(SLOT_BLITTER, 8, 7, mode, 1);
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   // DEAD: both fields are set again before anything reads them.
-  work->transferMode = mode;
-  work->transferValue = 0x04040404;
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ArmMeteorBlowPaletteDma, 0xcfe);
+  EFFECT_SET_TRANSFER(work, mode, CANVAS_FILL_WORD(4));
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  Task_Add(BattleEffect_ArmMeteorBlowPaletteDma, TASK_PASS_FRAME + 126);
   gBgScroll[1].x = 0;
   transition[4] = 1;
   starKind = &stars->kind;
@@ -220,7 +218,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
     }
     if (frame == 116) {
       Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
-      Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
+      Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
       IO_WRITE_QUEUE_PUSH(0x04000020, 128, 0x20000);
       IO_WRITE_QUEUE_PUSH(0x0400000c, 0x784, 0x20000);
     }
@@ -401,8 +399,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
     } else if (size > 0x10000) {
       size = 0x10000;
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
   wait(1);
@@ -418,7 +415,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   // DEAD: frame 0 sets hx and hz again before any read.
   hx = 200;
   hz = 0;
-  REG_BG2PA = 0x80;
+  REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
   REG_BG2Y = -0x1000;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -428,13 +425,11 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
               WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_BG0 |
                WINOUT_WINOBJ_BG1 | WINOUT_WINOBJ_BG2;
-  REG_WIN0V = 0x107c;
-  REG_WIN1V = 0x88;
+  REG_WIN0V = WIN_RANGE(16, 124);
+  REG_WIN1V = WIN_RANGE(0, 136);
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
@@ -610,9 +605,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       }
     }
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

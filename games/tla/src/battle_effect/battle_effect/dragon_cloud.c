@@ -70,9 +70,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
         (void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   BattleEffect_FetchRectangleBlitters(effect->side, draw);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The 56 embers wait at the target: sparks first, then flashes, which rise
   // more slowly.
@@ -388,9 +386,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
       }
     }
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

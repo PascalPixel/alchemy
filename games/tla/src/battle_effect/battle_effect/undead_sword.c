@@ -55,16 +55,14 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
   // Open the canvas and load the pictures.
   BattleEffect_StartCanvasLayer(0);
   {
-    REG_BG2PA = 0x100;
+    REG_BG2PA = Q_8_8(1);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LimeColumnSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
                              work->sheet + BLAST_SHEET_OFFSET, 1, 0);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Slide the canvas so that its x = 64 is under the target.
   EffectPosition_ProjectBattler(effect->actors[0], &target);
@@ -150,9 +148,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
       BattleCamera_Shake(4, 4);
     else
       BattleCamera_Shake(16, 16);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -186,9 +182,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_FetchRectangleBlitters(0, draw);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   target = BattleObject_GetFar(effect->actors[0])->object;
   pillarY = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, work->sheet + 0x4710, 0,
@@ -301,9 +295,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
               34, scroll);
     }
 
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   HeapSlot_Release(104);
@@ -402,9 +394,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
   } else {
     REG_BLDALPHA = BLEND_ALPHA(16, 16);
   }
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   BattleEffect_LoadBlitter(
       SLOT_BLITTER,
       BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
@@ -720,9 +710,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
     Heap_Release(model);
     Heap_Release(vertices);
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
   HeapSlot_Release(104);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -791,8 +779,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
   }
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  work->transferMode = 2;
-  work->transferValue = 50;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   transfer = BattleEffect_ProcessPendingGraphicsTransfer;
   Task_Add(transfer, TASK_PASS_FRAME);
   yaw = 0; // Default: set again at frame 0 before it is read.
@@ -979,9 +966,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
     gCameraSceneParameters[4] = 120;
     Heap_Release(model);
     BattleCamera_Shake(4, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
   HeapSlot_Release(SLOT_BLITTER);
   Task_Remove(transfer);
@@ -1032,9 +1017,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, work->sheet + 0x3080, 0,
                              0);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   // DEAD: frame 0 sets top to -104 before anything reads it.
   top = -128;
 
@@ -1241,9 +1224,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
       Heap_Release(vertices);
     }
     BattleCamera_Shake(4, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(SLOT_BLITTER);

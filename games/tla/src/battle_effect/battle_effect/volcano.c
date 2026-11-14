@@ -76,9 +76,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
       base->x = -x;
   }
 
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != PILLAR_FRAMES; frame++) {
     // The strongest variant turns the camera for 64 frames.
@@ -199,9 +197,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
     }
 
     BattleCamera_Shake(16, 16);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   // Tear down.

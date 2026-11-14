@@ -94,8 +94,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
             work->sheet[row * 24 + column];
       }
     }
-    work->transferMode = 2;
-    work->transferValue = 50;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
     s32 haze[3];
 
@@ -105,11 +104,10 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
                                work->sheet + DJINNI_OFFSET, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_StarCrossSheet, work->sheet, 1,
                                0);
-    work->transferMode = 2;
-    work->transferValue = 75;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   REG_BG2X = (64 - center[0]) << 8;
   if (effect->side == 0)
     BattleEffect_LoadBlitter(104, BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
@@ -231,9 +229,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
     gCameraSceneParameters[3] = 120;
     gCameraSceneParameters[4] = 120;
 
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   HeapSlot_Release(104);

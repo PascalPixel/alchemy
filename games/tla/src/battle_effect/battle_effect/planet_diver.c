@@ -45,10 +45,8 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
                        Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet),
                        128);
   BattleEffect_FetchRectangleBlitters(0, draw);
-  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, 0xc80);
-  work->transferMode = 3;
-  work->transferValue = 0x04040404;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 
   // Scatter every skull up to 64 pixels from its centre.
   for (i = 0; i != 512; i++) {
@@ -117,9 +115,7 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
         }
       }
     }
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -157,17 +153,15 @@ void BattleEffect_RunUnusedOrbitingSpirals(
   // Set up: the spiral sheet with its palette, the two blitters, the wave's
   // HBlank DMA and the transfer at half strength.
   BattleEffect_StartCanvasLayer(0);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_SpiralSheet, work->sheet, 1, 1);
   BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_MAX, CLIP));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                            BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, 0xc80);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // On the far side the background and the spirals move 112 pixels left.
   if (effect->side == 1) {
@@ -241,8 +235,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(
         member++;
       }
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -330,10 +323,8 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
     }
   }
 
-  Task_Add(BattleEffect_ArmBg1HBlankDma, 0xc80);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ArmBg1HBlankDma, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_ENEMY_CRY);
 
   for (frame = 0;
@@ -434,9 +425,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
         }
       }
     }
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

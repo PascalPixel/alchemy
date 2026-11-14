@@ -82,8 +82,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
 
   EffectPosition_ProjectScaledBattler(effect->actors[0], &origin);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  work->transferMode = 2;
-  work->transferValue = 75;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != SHARDS_FRAMES; frame++) {
     if (frame == HIT_FRAME)
@@ -173,9 +172,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
     if (frame == FLASH_FRAME)
       BattleEffect_TintBattler(effect->actors[0], 10, -1, -1, 0);
     BattleCamera_Shake(16, 16);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

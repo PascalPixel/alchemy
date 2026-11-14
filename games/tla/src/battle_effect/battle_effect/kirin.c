@@ -72,27 +72,22 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   *(u16 *)BG_PLTT = 0;
   *(u16 *)(BG_PLTT + 1) = 0x18;
-  work->transferMode = 0;
+  work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  BattleEffect_WipeCanvas(1, 0);
+  BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   BattleEffect_SpawnObjects(9, 644, 1);
   gCameraSceneParameters[4] = 240;
   BattleEffect_SelectLivingTargets(work->effect);
   REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
               WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
               WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_CLR;
-  REG_WIN0H = 0xca;
+  REG_WIN0H = WIN_RANGE(0, 202);
   wait(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
-  BattleEffect_WipeCanvas(1, 1);
+  BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireBlobSheet, work->sheet, 1, 1);
-  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
-                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
-  REG_BG2PA = 0x80;
-  REG_BLDALPHA = BLEND_ALPHA(14, 16);
-  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  EFFECT_SHOW_WIDE_CANVAS(14);
 
   // The fire trail's 64 flames wait at the left, each with its own delay.
   baseX = 0;
@@ -100,8 +95,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   savedX = gBgScroll[1].x;
   control = (struct FxControl *)Ram_HeapSlots->transitionWork;
   shift = 0;
-  work->transferMode = 1;
-  work->transferValue = baseX;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, baseX);
   control->busy = 1;
 
   i = 0;
@@ -203,8 +197,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
     }
 
     if (frame == 24) {
-      work->transferMode = 2;
-      work->transferValue = 50;
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     if (frame == 28)
       REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
@@ -259,15 +252,14 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
     } else {
       gBgScroll[1].y = 32;
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
   // Act two: the charge.
   gBgScroll[1].x = savedX;
   control->busy = 0;
   BattleEffect_SetupBlendedDisplay();
-  REG_WIN0H = 0xf0;
+  REG_WIN0H = WIN_RANGE(0, 240);
 
   i = 0;
   do {
@@ -299,8 +291,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
       i++;
     } while (i != 160 << 1);
 
-    work->transferMode = 2;
-    work->transferValue = 75;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
     REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
     REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
@@ -397,8 +388,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
         s32 slide = (frame - 40) * 12;
         s32 y;
 
-        work->transferMode = 0;
-        work->transferValue = 75;
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY, 75);
         i = 0;
         y = -8;
         do {
@@ -409,16 +399,14 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
         } while (i != 16);
       }
       if (frame > 64)
-        work->transferMode = 2;
+        work->transferMode = CANVAS_COPY_AND_FADE;
       if (frame == 58) {
         for (i = 0; i != effect->count; i++)
           BattleEffect_TintBattler(effect->actors[i], 14, 5, -1, 0);
       }
 
       BattleCamera_Shake(8, 8);
-      BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      wait(1);
+      EFFECT_END_FRAME(work);
       frame++;
     } while (frame != 96);
   }

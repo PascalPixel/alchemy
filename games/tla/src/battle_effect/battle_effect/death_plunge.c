@@ -99,13 +99,12 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
         BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_MAX));
     REG_BLDALPHA = BLEND_ALPHA(16, 16);
   } else {
-    work->transferMode = 2;
-    work->transferValue = 75;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
     BattleEffect_LoadBlitter(
         HEAP_SLOT_BLITTER,
         BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_MAX));
   }
-  work->transferMode = 2;
+  work->transferMode = CANVAS_COPY_AND_FADE;
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
@@ -278,8 +277,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
     if (frame == 53)
       work->shakeFrames = 6;
     BattleCamera_Shake(16, 16);
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

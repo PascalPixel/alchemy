@@ -51,13 +51,13 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   sheet = Ram_HeapSlots->unk64[0];
   scrollX = gBgScroll[1].x;
   BattleEffect_StartCanvasLayer(0x2000);
-  REG_BG2PA = 0x100;
+  REG_BG2PA = Q_8_8(1);
   BattleEffect_ConfigureEffectDisplay();
   BG_PLTT[0] = 0;
   BG_PLTT[1] = 0;
-  work->transferMode = 0;
+  work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  BattleEffect_WipeCanvas(0, 0);
+  BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleEffect_SelectLivingTargets(work->effect);
 
   // The giant: eleven sprite objects with their tiles.
@@ -97,13 +97,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   work->scrollStepY = 0;
   Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_FRAME);
   presentation->active = 1;
-  BattleEffect_WipeCanvas(0, 1);
-  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
-                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
-  REG_BG2PA = 0x80;
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
+  EFFECT_SHOW_WIDE_CANVAS(16);
   pathX = 0;
   pathY = 0;
 
@@ -125,8 +120,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
       Transform_Store(MATRICES + (i * 24 + j) * 48);
     }
   }
-  work->transferMode = 2;
-  work->transferValue = 50;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 
   for (frame = 0; frame != 220 && !(gInput.repeat & (KEY_A | KEY_B)); frame++) {
@@ -234,8 +228,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
         }
       }
     }
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_PRESENT_CANVAS(work);
   }
 
   // The giant leaves: the sky stops, the palette is restored and the
@@ -250,10 +243,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   BG_PLTT[94] = BG_PLTT[244];
   for (i = 0; i != GIANT_PIECES; i++)
     Sprite_DestroyFar(work->objects[i]);
-  REG_BG2PA = 0x80;
-  REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-                DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
-                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
+  REG_BG2PA = Q_8_8(0.5);
+  REG_DISPCNT = EFFECT_DISPCNT;
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,
                              Ram_MapCellBuffer, 1, 0);
 
@@ -330,9 +321,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
       }
     }
     BattleCamera_Shake(4, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(188);

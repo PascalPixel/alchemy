@@ -83,13 +83,11 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
     }
   }
   if (mode == 0) {
-    work->transferMode = 2;
-    work->transferValue = 50;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
-    work->transferMode = 1;
-    work->transferValue = 0;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   if (mode == 0) {
     frames = 24;
     /* FAKEMATCH(barrier): an empty asm after Thunder Mine's 24. */
@@ -296,9 +294,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
       Heap_Release(vertices);
     }
     BattleCamera_Shake(4, 4);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(SLOT_BLITTER);
@@ -356,9 +352,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
                              pictures + 0xc56, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, pictures + 0x2e16, 0,
                              0);
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   for (i = 0; i != 64; i++) {
     work->particles[i].variant = -1;
   }
@@ -652,9 +646,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
       }
     }
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(188);
@@ -759,10 +751,8 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   work->cameraDelta = 0;
   work->cameraPhase = 0;
-  Task_Add(BattleCamera_ApplyPhasedDelta, 0x480);
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PASS_VBLANK);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Sound_PlayFar(SE_SPIN);
   size = 4;
 
@@ -913,9 +903,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
       work->cameraPhase = 1;
     }
     BattleCamera_Shake(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
   HeapSlot_Release(188);
   HeapSlot_Release(104);

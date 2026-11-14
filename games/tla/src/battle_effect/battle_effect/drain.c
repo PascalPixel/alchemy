@@ -91,9 +91,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
     }
   }
 
-  work->transferMode = 2;
-  work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != effect->count * 20 + 56; frame++) {
     if (frame == 32)
@@ -129,9 +127,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
         }
       }
     }
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -232,12 +228,10 @@ void BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode) {
       *color++ = ((21 - i / 3) << 10) | blue;
     }
     REG_BLDALPHA = BLEND_ALPHA(16, 6);
-    work->transferMode = 2;
-    work->transferValue = 50;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
     // Each transfer lowers the canvas's pixels by 4: an afterimage.
-    work->transferMode = 3;
-    work->transferValue = 0x04040404;
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   Sound_PlayFar(SE_SWIRL);
@@ -299,9 +293,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
     }
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

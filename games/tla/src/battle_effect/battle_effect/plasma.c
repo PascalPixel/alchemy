@@ -16,7 +16,7 @@
 // Pillars of lightning strike the targets' row one after another, eight
 // frames apart; each flashes the screen, throws a fan of sparks up from its
 // base and shakes the camera, and the sparks bounce on the ground.
-void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
+void BattleEffect_RunPlasma(struct BattleEffectArgument *args) {
   DrawRectangle draw[2];
   struct BattleEffectWork *work;
   void *canvas;
@@ -46,7 +46,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet,
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
-  if (effect->variant != 2) {
+  if (args->variant != 2) {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteB);
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
@@ -62,11 +62,11 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
   }
   sparks = (struct EffectStep *)Ram_MapCellBuffer;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  count = gPlasma_Counts[effect->variant];
+  count = gPlasma_Counts[args->variant];
 
   for (frame = 0; frame != count * 8 - count + 42; frame++) {
     // The strongest variant pans the camera over the first 64 frames.
-    if (effect->variant == 2 && frame <= 63) {
+    if (args->variant == 2 && frame <= 63) {
       struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
       s32 speed;
 
@@ -74,7 +74,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
         speed = 256;
       else
         speed = 704 - frame * 8;
-      if (effect->side == 1)
+      if (args->side == 1)
         camera->yaw -= speed;
       else
         camera->yaw += speed;
@@ -92,11 +92,11 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
       }
       if (frame >= start && frame < start + 9) {
         if (frame >= start + 1 && frame < start + 2)
-          draw[0](canvas, work->sheet,
-                  gPlasma_Columns[i + effect->side * 7] - 24, 0, 48, 112);
+          draw[0](canvas, work->sheet, gPlasma_Columns[i + args->side * 7] - 24,
+                  0, 48, 112);
         if (frame >= start + 2 && frame < start + 4)
           draw[0](canvas, work->sheet + 0x1500,
-                  gPlasma_Columns[i + effect->side * 7] - 24, 0, 48, 112);
+                  gPlasma_Columns[i + args->side * 7] - 24, 0, 48, 112);
 
         // Throw sparks up from the pillar's base, within 90 degrees of
         // straight up, and shake the camera.
@@ -112,25 +112,25 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
               speed = (Random16() & 0x3ff) + 32;
               angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
 
-              spark->x = gPlasma_Columns[i + effect->side * 7] << 16;
+              spark->x = gPlasma_Columns[i + args->side * 7] << 16;
               spark->y = PILLAR_BASE_Y << 16;
               spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
               spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
               spark->variant = (Random16() & 7) + 32;
               thrown++;
-              if (thrown == gPlasma_Sparks[effect->variant * 2])
+              if (thrown == gPlasma_Sparks[args->variant * 2])
                 break;
             }
           }
-          work->shakeFrames = gPlasma_Sparks[effect->variant * 2 + 1];
+          work->shakeFrames = gPlasma_Sparks[args->variant * 2 + 1];
         }
       }
 
       // Four frames after each strike the targets recoil and flash.
       if (frame == start + 4) {
-        for (k = 0; k != effect->count; k++) {
-          BattleMotion_ApplyKnockbackFar(effect->actors[k], 1);
-          BattleEffect_TintBattler(effect->actors[k], 7, 5, k, 8);
+        for (k = 0; k != args->count; k++) {
+          BattleMotion_ApplyKnockbackFar(args->actors[k], 1);
+          BattleEffect_TintBattler(args->actors[k], 7, 5, k, 8);
         }
       }
     }
@@ -182,7 +182,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunDynamite, BattleEffect_RunSparkGroups, 1)
 #define FLASH_FRAMES 18 // six cels of three frames
 #define GROUND_Y px(108)
 
-#define SHAPE(n) gPlasma_Shapes[effect->variant][n]
+#define SHAPE(n) gPlasma_Shapes[args->variant][n]
 #define SPARK_COUNT SHAPE(0)
 #define GROUP_COUNT SHAPE(1)
 #define GROUP_X(i) SHAPE((i) + 2)
@@ -191,8 +191,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunDynamite, BattleEffect_RunSparkGroups, 1)
 // apart: each opens with a big flash, a ring of small flashes and a spray
 // of sparks that fall (or, from the caster, rise) and bounce; six frames
 // after each burst the targets flash and recoil.
-void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
-                                 s32 kind) {
+void BattleEffect_RunSparkGroups(struct BattleEffectArgument *args, s32 kind) {
   struct EffectPosition pos;
   DrawRectangle draw[2];
   struct BattleEffectWork *work;
@@ -223,7 +222,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
     work->fadeStep = 0;
   } else {
     BattleEffect_StartCanvasLayer(0);
-    EffectPosition_ProjectScaledBattler(effect->actor, &pos);
+    EffectPosition_ProjectScaledBattler(args->actor, &pos);
     originX = pos.x / 2;
     originY = pos.y + 48;
   }
@@ -276,7 +275,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
       spark = sparks + i * SPARK_COUNT + j;
       speed = (Random16() & 0x3ff) + 32;
       angle = Random16() & 0xffff;
-      if (effect->side == 1)
+      if (args->side == 1)
         spark->x = (originX - GROUP_X(i) + 28) << 16;
       else
         spark->x = (originX + GROUP_X(i) - 28) << 16;
@@ -293,13 +292,13 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
 
     // The strongest variant pans the camera; the next one wipes the canvas
     // at frame 4.
-    if (effect->variant == 2 && frame <= 51) {
-      if (effect->side == 0)
+    if (args->variant == 2 && frame <= 51) {
+      if (args->side == 0)
         camera->yaw += 256;
       else
         camera->yaw -= 256;
     }
-    if (effect->variant == 3 && frame == 4)
+    if (args->variant == 3 && frame == 4)
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
 
     if (kind == SPARKS_ORANGE || kind == SPARKS_FROM_ACTOR) {
@@ -321,7 +320,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
 
       // The big flash, for two frames.
       if (frame >= start && frame < start + 2) {
-        if (effect->side == 1)
+        if (args->side == 1)
           draw[0](canvas, work->sheet, originX - GROUP_X(i) + 12, originY - 32,
                   32, 64);
         else
@@ -338,7 +337,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
 
           point = &work->particles[i * FLASH_POINTS + j];
           y = Q_16_16_UPPER_HALF(point->y) + originY;
-          if (effect->side == 1)
+          if (args->side == 1)
             x = Q_16_16_UPPER_HALF(point->x) + originX - GROUP_X(i) + 28;
           else
             x = Q_16_16_UPPER_HALF(point->x) + originX + GROUP_X(i) - 28;
@@ -384,10 +383,10 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
       }
 
       // The targets flash and recoil six frames after the burst.
-      for (j = 0; j != effect->count; j++) {
+      for (j = 0; j != args->count; j++) {
         if (frame == start + 6) {
-          BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 10);
-          BattleMotion_ApplyKnockbackFar(effect->actors[j], 4);
+          BattleEffect_TintBattler(args->actors[j], 7, 5, j, 10);
+          BattleMotion_ApplyKnockbackFar(args->actors[j], 4);
         }
       }
     }

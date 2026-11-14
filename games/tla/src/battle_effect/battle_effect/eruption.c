@@ -26,7 +26,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunBlast, BattleEffect_RunEruption, 0)
 // through seven pictures. The targets are hit from frame 6, a frame apart;
 // in mode 0 they also recoil. The variant chooses the number of motes and
 // puffs and the length.
-void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunEruption(struct BattleEffectArgument *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   // Unused: draw[1] gives the stack frame its 4 bytes.
@@ -52,14 +52,14 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     Iwram_CopyWordsEntry(
         (void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_FireStreakSheet), 128);
-    variant = effect->variant;
+    variant = args->variant;
   }
 
   // Everything starts 100 pixels out on the user's side.
   for (i = 0; i != 32; i++) {
     struct EffectStep *puff = &work->particles[i];
 
-    if (effect->side == 1)
+    if (args->side == 1)
       puff->x = 200 << 14;
     else
       puff->x = -(200 << 14);
@@ -73,7 +73,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
   for (i = 0; i != 1024; i++) {
     struct EffectStep *mote = &MOTES[i];
 
-    if (effect->side == 1)
+    if (args->side == 1)
       mote->x = 200 << 14;
     else
       mote->x = -(200 << 14);
@@ -109,7 +109,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
 
         EffectPosition_ProjectPoint((s32 *)mote, &screen);
         screen.x >>= 1;
-        screen.x += effect->side * 32 - 16;
+        screen.x += args->side * 32 - 16;
         if (screen.depth < 160)
           screen.depth = 160;
         if (screen.depth > 799)
@@ -132,7 +132,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
         if (i < frame && puff->y >= 0) {
           EffectPosition_ProjectPoint((s32 *)puff, &screen);
           screen.x >>= 1;
-          screen.x += effect->side * 32 - 16;
+          screen.x += args->side * 32 - 16;
           if (puff->variant >= 0 && puff->variant <= 20) {
             s32 cel = puff->variant / 3;
             u32 width;
@@ -150,16 +150,16 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
 
     // Hit the targets a frame apart; in mode 0 they recoil too.
     if (mode == 0) {
-      for (i = 0; i != effect->count; i++) {
+      for (i = 0; i != args->count; i++) {
         if (frame == i + 6) {
-          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 10);
-          BattleMotion_ApplyKnockbackFar(effect->actors[i], 2);
+          BattleEffect_TintBattler(args->actors[i], 7, 5, i, 10);
+          BattleMotion_ApplyKnockbackFar(args->actors[i], 2);
         }
       }
     } else {
-      for (i = 0; i != effect->count; i++) {
+      for (i = 0; i != args->count; i++) {
         if (frame == i + 6)
-          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 10);
+          BattleEffect_TintBattler(args->actors[i], 7, 5, i, 10);
       }
     }
     if (frame == 2)

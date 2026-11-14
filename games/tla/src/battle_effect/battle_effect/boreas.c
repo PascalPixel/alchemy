@@ -11,7 +11,7 @@
 // and spray (A or B skips to the second half). Then ice blocks rain on the
 // targets, boulders pile up and burst, and their pieces bounce on the
 // ground among puffs of smoke.
-void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
+void BattleEffect_RunBoreas(struct BattleEffectArgument *args) {
   s32 pts[32][2];
   s32 pos[4];
   void *canvas;
@@ -403,9 +403,9 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
       }
     }
 
-    for (i = 0; i != effect->count; i++) {
+    for (i = 0; i != args->count; i++) {
       if (frame == i * 8 + 32)
-        BattleEffect_TintBattler(effect->actors[i], 9, 5, -1, 0);
+        BattleEffect_TintBattler(args->actors[i], 9, 5, -1, 0);
     }
 
     // Puffs of smoke, sent up again until frame 127.

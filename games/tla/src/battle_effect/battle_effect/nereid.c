@@ -32,7 +32,7 @@
 /// copies a palette and decodes two sheets; takes its blitter pair from
 /// BattleEffect_FetchRectangleBlitters and its formation from resource 649; and
 /// reads the effect argument in the hit loop.
-void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
+void BattleEffect_RunNereid(struct BattleEffectArgument *args) {
   DrawRectangle draw[2];
   void *canvas;
   struct BattleEffectWork *work;
@@ -218,20 +218,20 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
       // From frame 30 to 79 the targets flash and are knocked upward every
       // twelve frames, and stop flashing six frames later.
       if (frame <= 79) {
-        for (k = 0; k != effect->count; k++) {
+        for (k = 0; k != args->count; k++) {
           if (frame > 29) {
             s32 phase = frame % 12;
 
             if (phase == 0) {
               struct MotionObject *target =
-                  BattleObject_GetFar(effect->actors[k])->object;
+                  BattleObject_GetFar(args->actors[k])->object;
 
-              BattleEffect_TintBattler(effect->actors[k], 7, 5, -1, 0);
+              BattleEffect_TintBattler(args->actors[k], 7, 5, -1, 0);
               target->velocityY = px(9) / 2;
               target->verticalMotionStrength = 0xab85;
             }
             if (phase == 6)
-              BattleEffect_TintBattler(effect->actors[k], 0, 5, -1, 0);
+              BattleEffect_TintBattler(args->actors[k], 0, 5, -1, 0);
           }
         }
       }

@@ -49,8 +49,7 @@ struct BurstTexture {
 // frame 28 and is gone, while the screen shakes for all 48 frames. The
 // mode picks the palette (Mars Djinn, Mars Djinn, fireball, orange), the
 // scale, how hard the screen shakes and the target's flash colour.
-void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
-                                  s32 mode) {
+void BattleEffect_RunMirroredWall(struct BattleEffectArgument *args, s32 mode) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   struct BurstTexture texture;
@@ -84,7 +83,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
                     128);
 
   // Centre the canvas's x 64 on the target.
-  EffectPosition_ProjectBattler(effect->actors[0], &target);
+  EffectPosition_ProjectBattler(args->actors[0], &target);
   REG_BG2PA = Q_8_8(1);
   REG_BG2X = (64 - target.x) << 8;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -103,9 +102,9 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
   for (frame = 0; frame != BURST_FRAMES; frame++) {
     if (frame == 0) {
       if (mode == 2)
-        BattleEffect_TintBattler(effect->actors[0], 7, -1, 0, 32);
+        BattleEffect_TintBattler(args->actors[0], 7, -1, 0, 32);
       else
-        BattleEffect_TintBattler(effect->actors[0], 10, -1, 0, 32);
+        BattleEffect_TintBattler(args->actors[0], 10, -1, 0, 32);
     }
     if (frame == 24)
       BattlePlayback_StartFar(0);
@@ -1467,7 +1466,7 @@ struct SummonObject {
 // light spin out from it. At the seven frames of gDaedalusAlt_StrikeFrames
 // every target is knocked back and flashes; from frame 80 eight bursts of eight
 // sparks, one a frame, scatter over the canvas.
-void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
+void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle draw[2];
@@ -1524,10 +1523,10 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
     }
     for (i = 0; i != 7; i++) {
       if (frame == gDaedalusAlt_StrikeFrames[i]) {
-        for (j = 0; j != effect->count; j++) {
-          BattleEffect_StartActorMotion(effect->actors[j], 1, 0x20000, 0x80000,
+        for (j = 0; j != args->count; j++) {
+          BattleEffect_StartActorMotion(args->actors[j], 1, 0x20000, 0x80000,
                                         0x20000, 120);
-          BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 7);
+          BattleEffect_TintBattler(args->actors[j], 7, 5, j, 7);
         }
         work->shakeFrames = 4;
         Sound_PlayFar(SE_CRASH);

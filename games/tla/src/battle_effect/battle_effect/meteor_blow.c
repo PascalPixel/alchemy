@@ -43,7 +43,7 @@ struct MeteorStar {
 extern const struct PointPair gMeteorBlow_DoubleScale;
 
 /// Meteor Blow.
-void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
+void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *args) {
   u8 *canvas;
   struct BattleEffectWork *work;
   u8 *map;
@@ -90,7 +90,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   map = gMapCellBuffer;
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   sprites = Ram_HeapSlots->unk64[0];
-  work->effect = effect;
+  work->effect = args;
   BattleEffect_StartCanvasLayer(0x2000);
   REG_BG2PA = Q_8_8(1);
   BattleEffect_ConfigureEffectDisplay();
@@ -507,9 +507,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       }
       work->shakeFrames = 4;
       Sound_PlayFar(SE_CRASH);
-      for (i = 0; i != effect->count; i++) {
-        BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
-        BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 8);
+      for (i = 0; i != args->count; i++) {
+        BattleMotion_ApplyKnockbackFar(args->actors[i], 4);
+        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 8);
       }
     }
 

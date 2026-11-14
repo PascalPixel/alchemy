@@ -9,7 +9,7 @@
 // Judgment: the sky gathers sixteen tiles of light that fold into a sigil,
 // then the sigil's beam strikes and the ground erupts in a ring of
 // shockwaves and debris.
-void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
+void BattleEffect_RunJudgment(struct BattleEffectArgument *args) {
   s32 anchor[3];
   struct EffectPosition pos;
   s32 place[4];
@@ -395,9 +395,9 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       Sound_PlayFar(SE_GATE_MOVE);
     }
     if (frame == 300) {
-      for (i = 0; i != effect->count; i++) {
-        BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 8);
-        BattleMotion_ApplyKnockbackFar(effect->actors[i], 1);
+      for (i = 0; i != args->count; i++) {
+        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 8);
+        BattleMotion_ApplyKnockbackFar(args->actors[i], 1);
       }
       BattlePlayback_StartFar(145);
     }

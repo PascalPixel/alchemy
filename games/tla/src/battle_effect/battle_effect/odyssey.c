@@ -53,7 +53,7 @@ void Render_DrawModelList(struct Model *model);
 // a great slash crosses the screen and at 90 the target is struck and 128
 // flat shards scatter, tumbling; from frame 100 everything fades to white,
 // and at the end the battle backdrop returns.
-void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
+void BattleEffect_RunOdyssey(struct BattleEffectArgument *args) {
   struct EffectPosition to;
   struct EffectPosition from;
   s16 list[14];
@@ -86,19 +86,19 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
                              work->sheet + 0x2f10, 1, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   // The blitter faces the caster's side.
-  if (effect->side == 0)
+  if (args->side == 0)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  caster = BattleObject_GetFar(effect->actor)->object;
+  caster = BattleObject_GetFar(args->actor)->object;
   transition = Ram_HeapSlots->transitionWork;
   savedScrollX = gBgScroll[1].x;
 
   for (frame = 0; frame != KIND125_FRAMES; frame++) {
-    EffectPosition_ProjectScaledBattler(effect->actor, &from);
-    EffectPosition_ProjectScaledBattler(effect->actors[0], &to);
+    EffectPosition_ProjectScaledBattler(args->actor, &from);
+    EffectPosition_ProjectScaledBattler(args->actors[0], &to);
 
     if (frame == 0) {
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
@@ -116,8 +116,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
     if (frame == 2) {
       u16 *palette;
 
-      list[0] = effect->actor;
-      list[1] = effect->actors[0];
+      list[0] = args->actor;
+      list[1] = args->actors[0];
       list[2] = 0xff;
       BattleActor_SpawnObjectsForListFar(list, 0);
       BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
@@ -164,7 +164,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       Sound_PlayFar(SE_POWER_UP);
       Actor_SelectAnimationFar(caster, 2);
       Actor_SetAnimationSpeedFar(caster, 48);
-      BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 7, 80);
+      BattleEffect_SetApproachMotion(args->actor, args->actors[0], 7, 80);
     }
 
     // Frame 90: the hit, and 128 shards scatter away from the caster.
@@ -173,14 +173,14 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
 
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       Sound_PlayFar(SE_CLATTER);
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
+      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 16);
       work->shakeFrames = 8;
       shard = Data_02016000;
       for (i = 0; i != 128; i++) {
         s32 speed = (Random16() & 0x1ff) + 32;
         s32 angle = Random16() & 0x7fff;
 
-        if (effect->side == 1)
+        if (args->side == 1)
           angle += TRIG_TURN / 2;
         shard->x = (to.x / 2) << 16;
         shard->y = to.y << 16;
@@ -197,7 +197,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
     if (frame > 85) {
       s32 x;
 
-      if (effect->side == 0) {
+      if (args->side == 0) {
         x = 2872 - frame * 32;
         if (x < -38)
           x = -38;
@@ -207,7 +207,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
           x = 0;
       }
       draw[0](canvas, work->sheet + 0xc80, x, 8, 158, 56);
-      if (effect->side == 0)
+      if (args->side == 0)
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
       else
@@ -247,7 +247,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
           s32 speed = (Random16() & 255) + 128;
           s32 angle = Random16() & 0x3fff;
 
-          if (effect->side == 0) {
+          if (args->side == 0) {
             if (i != 0)
               angle += TRIG_TURN / 4;
           } else if (i == 0) {
@@ -263,7 +263,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
           spark->variant = (Random16() & 7) + 17;
         }
         Sound_PlayFar(SE_IMPACT);
-        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 64);
+        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 64);
         work->shakeFrames = 4;
       }
       if (frame >= start && frame <= 89) {
@@ -272,7 +272,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         s32 y;
 
         if (age <= 8) {
-          if (effect->side == 0)
+          if (args->side == 0)
             x = to.x / 2 - age * 10 + 80;
           else
             x = to.x / 2 + age * 10 - 80;
@@ -282,14 +282,14 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
             y = 168 - age * 16;
         } else {
           // DEAD: both arms alike; the ROM keeps the test of effect->side.
-          if (effect->side == 0)
+          if (args->side == 0)
             x = to.x / 2;
           else
             x = to.x / 2;
           y = i == 0 ? 8 : 40;
         }
         if (i == 1) {
-          if (effect->side == 0)
+          if (args->side == 0)
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                 EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                                 BLITTER_MAX);
@@ -349,9 +349,9 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       if (frame == i * 8 + 72) {
         s32 none = 0;
 
-        BattleEffect_TintBattler(effect->actor, 7, -1, 0, none);
+        BattleEffect_TintBattler(args->actor, 7, -1, 0, none);
       } else if (frame == i * 8 + 76)
-        BattleEffect_TintBattler(effect->actor, 0, -1, 0, 0);
+        BattleEffect_TintBattler(args->actor, 0, -1, 0, 0);
       if (frame >= start && frame < start + 11) {
         s32 scale = Q16_ONE * 3 - ((frame - start) << 14);
 
@@ -457,7 +457,7 @@ static inline s32 Swirl_Draw(DrawRectangle draw, void *buffer,
 /// the screen's centre while BG1 scrolls, the palette flashes white at the
 /// start, steps toward the swirl's own colours every fourth frame and from
 /// frame 120 dims. B starts it over and A ends it.
-void BattleEffect_RunCloudSwirl(struct BattleEffectArgument *effect) {
+void BattleEffect_RunCloudSwirl(struct BattleEffectArgument *args) {
   BlitterPair sheetDraw;
   s32 savedScrollX;
   u8 *canvas;

@@ -32,7 +32,7 @@
 // knocked back); the burst's three pictures (two frames each, then held) on
 // the target from frame 16 to 47; from frame 4 the shards in 3D, their
 // picture shrinking with their life.
-void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
+void BattleEffect_RunAnnihilation(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -60,9 +60,9 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_FireBurstSheet, burst, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, cells, 0, 0);
-  BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 4, 0);
+  BattleMotion_ApproachTargetFar(args->actor, args->actors[0], 4, 0);
   wait(1);
-  target = BattleObject_GetFar(effect->actors[0])->object;
+  target = BattleObject_GetFar(args->actors[0])->object;
 
   // The shards start inside the target; each group of four lives two frames
   // longer than the one before.
@@ -80,20 +80,20 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
     i++;
   } while (i != SHARD_COUNT);
 
-  EffectPosition_ProjectScaledBattler(effect->actors[0], &origin);
+  EffectPosition_ProjectScaledBattler(args->actors[0], &origin);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != SHARDS_FRAMES; frame++) {
     if (frame == HIT_FRAME)
       BattlePlayback_StartFar(PHASE_RESULTS);
-    if (effect->variant != 0 && frame == HIT_FRAME)
+    if (args->variant != 0 && frame == HIT_FRAME)
       Sound_PlayFar(SE_POWER_UP);
 
     // The streak, drawn from the user toward the target.
-    EffectPosition_ProjectScaledBattler(effect->actor, &user);
+    EffectPosition_ProjectScaledBattler(args->actor, &user);
     if (frame >= STREAK_FRAME && frame <= STREAK_FRAME + 5) {
-      if (effect->side == 0)
+      if (args->side == 0)
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                             BLITTER_ADDITIVE);
       else
@@ -101,7 +101,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             BLITTER_ADDITIVE);
       draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-      if (effect->side == 0)
+      if (args->side == 0)
         draw[0](canvas,
                 work->sheet + (frame - STREAK_FRAME) * STREAK_PICTURE_BYTES,
                 user.x / 2 - 24, user.y - 24, 48, 72);
@@ -121,7 +121,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
       draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
       if (step > 2)
         step = 2;
-      if (effect->variant == 0)
+      if (args->variant == 0)
         strip = 0;
       else
         strip = BURST_STRIP_BYTES;
@@ -137,7 +137,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
     Transform_Reset();
     Transform_SetLookAt(view->eye, view->pos);
     if (frame > 3) {
-      BattleEffect_FetchRectangleBlitters(effect->side, draw);
+      BattleEffect_FetchRectangleBlitters(args->side, draw);
       for (i = 0; i != SHARD_COUNT; i++) {
         s32 life;
 
@@ -161,13 +161,13 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
 
     // The hit's knock-back, and the target's flashes.
     if (frame == HIT_FRAME) {
-      BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
+      BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
       work->shakeFrames = 4;
     }
     if (frame == STREAK_FRAME)
-      BattleEffect_TintBattler(effect->actors[0], 10, -1, -1, 0);
+      BattleEffect_TintBattler(args->actors[0], 10, -1, -1, 0);
     if (frame == FLASH_FRAME)
-      BattleEffect_TintBattler(effect->actors[0], 10, -1, -1, 0);
+      BattleEffect_TintBattler(args->actors[0], 10, -1, -1, 0);
     BattleCamera_Shake(16, 16);
     EFFECT_END_FRAME(work);
   }

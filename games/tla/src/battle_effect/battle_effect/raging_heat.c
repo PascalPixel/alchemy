@@ -27,7 +27,7 @@ struct StripQuad;
 // sparks and embers when it lands, under a second, fading ring.
 /// Raging Heat: a spinning ring of heat over the targets, and a pillar of
 /// flame that falls onto them and bursts into sparks and embers.
-void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
+void BattleEffect_RunRagingHeat(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -55,10 +55,10 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-  for (i = 0; i != effect->count; i++) {
-    EffectPosition_ProjectScaledBattler(effect->actors[i], &targets[i]);
+  for (i = 0; i != args->count; i++) {
+    EffectPosition_ProjectScaledBattler(args->actors[i], &targets[i]);
   }
-  centerX = targets[0].x + (targets[effect->count - 1].x - targets[0].x) / 2;
+  centerX = targets[0].x + (targets[args->count - 1].x - targets[0].x) / 2;
   baseY = targets[0].y - 48;
   Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneBSheet, buffer, 1, 1);
   Picture_MirrorIntoQuadrants(buffer, work->sheet, 64, 64);
@@ -99,11 +99,11 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
           spark->x = (centerX / 2) << 16;
           spark->y = ((Random16() & 15) + y + 16) << 16;
           random = Random16();
-          spread = gRagingHeat_Styles[effect->variant][1];
+          spread = gRagingHeat_Styles[args->variant][1];
           spark->velocityX = ((random % spread) - (spread >> 1)) << 12;
           spark->velocityY = (192 - (Random16() & 255)) << 10;
         }
-        for (i = 0; i != gRagingHeat_Styles[effect->variant][3]; i++) {
+        for (i = 0; i != gRagingHeat_Styles[args->variant][3]; i++) {
           s32 angle;
           s32 speed;
 
@@ -116,9 +116,9 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
           EMBERS[i].variant = (Random16() & 15) + 16;
         }
         BattlePlayback_StartFar(145);
-        for (i = 0; i != effect->count; i++) {
-          BattleMotion_ApplyKnockbackFar(effect->actors[i], 0);
-          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
+        for (i = 0; i != args->count; i++) {
+          BattleMotion_ApplyKnockbackFar(args->actors[i], 0);
+          BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
         }
         work->shakeFrames = 16;
       }
@@ -128,9 +128,9 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
       }
       i = 0;
       /* FAKEMATCH(dead): the test repeats the loop's own. */
-      if (i != gRagingHeat_Styles[effect->variant][0]) {
+      if (i != gRagingHeat_Styles[args->variant][0]) {
         for (particle = work->particles;
-             i != gRagingHeat_Styles[effect->variant][0]; i++, particle++) {
+             i != gRagingHeat_Styles[args->variant][0]; i++, particle++) {
           if ((u32)particle->variant <= 23) {
             if (particle->variant > 1) {
               draw[0](canvas,
@@ -144,7 +144,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
         }
       }
       i = 0;
-      if (i != gRagingHeat_Styles[effect->variant][3]) {
+      if (i != gRagingHeat_Styles[args->variant][3]) {
         particle = EMBERS;
         do {
           if (particle->variant >= 0) {
@@ -158,7 +158,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
           }
           i++;
           particle++;
-        } while (i != gRagingHeat_Styles[effect->variant][3]);
+        } while (i != gRagingHeat_Styles[args->variant][3]);
       }
     }
 
@@ -178,7 +178,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
       texture.logWidth = 7;
       texture.logHeight = 7;
       for (i = 0; i != 2; i++) {
-        s32 size = gRagingHeat_Styles[effect->variant][2];
+        s32 size = gRagingHeat_Styles[args->variant][2];
         s32 largest = size << 10;
         s32 step = size << 5;
         s32 scale;
@@ -266,7 +266,7 @@ enum {
 // sparks burst from each, and the screen shakes. The variant sets the
 // ring's rise, its flames and sparks and the shake; variant 2 also takes
 // the orange palette.
-void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
+void BattleEffect_RunJuggle(struct BattleEffectArgument *args) {
   struct EffectPosition caster;
   struct EffectPosition midpoint;
   s32 vector[3];
@@ -288,7 +288,7 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_SmallFlameSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
-  if (effect->variant == 2) {
+  if (args->variant == 2) {
     void *source = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
@@ -315,11 +315,11 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
       lift = 0;
 
     // The ring rises over the caster, and follows it until it is thrown.
-    EffectPosition_ProjectBattler(effect->actor, &caster);
+    EffectPosition_ProjectBattler(args->actor, &caster);
     if (frame >= RING_RISE_FRAME)
-      lift += gJuggle_Styles[effect->variant][RING_LIFT_STEP];
-    if (lift > gJuggle_Styles[effect->variant][RING_LIFT_MAX])
-      lift = gJuggle_Styles[effect->variant][RING_LIFT_MAX];
+      lift += gJuggle_Styles[args->variant][RING_LIFT_STEP];
+    if (lift > gJuggle_Styles[args->variant][RING_LIFT_MAX])
+      lift = gJuggle_Styles[args->variant][RING_LIFT_MAX];
     if (frame < RING_THROW_FRAME) {
       ring->x = caster.x << 16;
       ring->y = (caster.y - lift - 32) << 16;
@@ -345,7 +345,7 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
 
     // The flames: each one's place on the ring turned into the canvas, the
     // second eight on a ring tipped on its side.
-    for (i = 0; i != gJuggle_Styles[effect->variant][RING_FLAMES]; i++) {
+    for (i = 0; i != gJuggle_Styles[args->variant][RING_FLAMES]; i++) {
       s32 cel = (frame / 2 + i * 4) & 3;
       s32 *place;
       s32 x;
@@ -358,7 +358,7 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
       if (i > 7)
         Transform_ApplyPitch(TRIG_TURN / 4);
       Transform_ApplyYaw(
-          (frame * 4 + i * gJuggle_Styles[effect->variant][RING_SPACING]) << 8);
+          (frame * 4 + i * gJuggle_Styles[args->variant][RING_SPACING]) << 8);
       place = vector;
       place[0] = 0;
       place[1] = 0;
@@ -368,18 +368,18 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
       place[0] = x + 64;
       y = ((s16 *)place)[3];
       place[1] = y + 64;
-      blitters[gJuggle_Styles[effect->variant][RING_BLITTER]](
+      blitters[gJuggle_Styles[args->variant][RING_BLITTER]](
           canvas, work->sheet + cel * 1024, x + 56, y + 16, 16, 64);
     }
 
     // The strike: sparks burst from every target.
     if (frame == RING_HIT_FRAME) {
       BattlePlayback_StartFar(134);
-      for (i = 0; i != effect->count; i++) {
-        EffectPosition_ProjectSprite(effect->actors[i], &target);
-        BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
-        BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
-        for (j = 0; j != gJuggle_Styles[effect->variant][RING_SPARKS]; j++) {
+      for (i = 0; i != args->count; i++) {
+        EffectPosition_ProjectSprite(args->actors[i], &target);
+        BattleMotion_ApplyKnockbackFar(args->actors[i], 4);
+        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
+        for (j = 0; j != gJuggle_Styles[args->variant][RING_SPARKS]; j++) {
           struct EffectStep *spark =
               &((struct EffectStep *)Ram_MapCellBuffer)[i * 128 + j];
           s32 angle;
@@ -394,7 +394,7 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
           spark->variant = (Random16() & 15) + 24;
         }
       }
-      work->shakeFrames = gJuggle_Styles[effect->variant][RING_SHAKE];
+      work->shakeFrames = gJuggle_Styles[args->variant][RING_SHAKE];
     }
 
     // The sparks fly and burn down, drawn by turns with the two blitters.

@@ -44,7 +44,7 @@ struct Model__f189b14 {
 // at 59 frames plus its delay, throwing 128 sparks that bounce on the ground,
 // while a flash grows and fades where it lands. The effect lasts 86 frames
 // and 16 more for each further sword.
-void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
+void BattleEffect_RunLegend(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -67,7 +67,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
   // sword and the flash.
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  if (effect->side == 0)
+  if (args->side == 0)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
   else
@@ -85,12 +85,12 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, cells, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  for (frame = 0; frame != effect->variant * 16 + 86; frame++) {
+  for (frame = 0; frame != args->variant * 16 + 86; frame++) {
     // Frame 0: the swords set out from 80 pixels above and beside the
     // target, on the user's side, toward it.
     if (frame == 0) {
-      EffectPosition_ProjectBattler(effect->actors[0], &target);
-      if (effect->side == 0)
+      EffectPosition_ProjectBattler(args->actors[0], &target);
+      if (args->side == 0)
         start.x = target.x + 80;
       else
         start.x = target.x - 80;
@@ -108,7 +108,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
     }
 
     // The swords, 16 frames apart.
-    for (i = 0; i != effect->variant + 1; i++) {
+    for (i = 0; i != args->variant + 1; i++) {
       step = &work->particles[i];
       if (frame == i * 16 + 54)
         Sound_PlayFar(SE_POWER_UP);
@@ -116,12 +116,12 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
       // The strike: the target reels and flashes, and 128 sparks fly up
       // from it. The last sword ends the action.
       if (frame == i * 16 + 59) {
-        if (i == effect->variant)
+        if (i == args->variant)
           BattlePlayback_StartFar(144);
         else
           Sound_PlayFar(SE_CLATTER);
-        BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 0, 100);
-        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
+        BattleEffect_StartActorMotion(args->actors[0], 1, 0, 0, 0, 100);
+        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
         work->shakeFrames = 4;
         for (j = 0; j != 128; j++) {
           struct EffectStep *spark = &SPARKS[i * 128 + j];
@@ -201,10 +201,10 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
         scale = (frame << 13) - Q16_ONE * 2;
         if (height > -48)
           height = -48;
-        if (frame >= effect->variant * 16 + 60)
+        if (frame >= args->variant * 16 + 60)
           // Spelled with + -240 so that the negation is not folded into 240 -
           // x.
-          alpha = -((frame - effect->variant * 16) * 4 + -240);
+          alpha = -((frame - args->variant * 16) * 4 + -240);
         if (scale > Q16_ONE * 2)
           scale = Q16_ONE * 2;
         model->alpha = alpha;
@@ -212,7 +212,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         SceneTransform_ApplyPosition3((start.x - 128) << 16, height << 16, 0);
         Transform_ApplyPitch(0x5900);
-        if (effect->side == 0)
+        if (args->side == 0)
           Transform_ApplyYaw(0x1900);
         else
           Transform_ApplyYaw(-0x1900);
@@ -225,7 +225,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
 
       // Each sword's flash grows where it lands and fades over 16 frames.
       texture.pixels = cells;
-      for (i = 0; i != effect->variant + 1; i++) {
+      for (i = 0; i != args->variant + 1; i++) {
         if (frame >= i * 16 + 50) {
           s32 age = frame - i * 16 - 50;
           s32 alpha = 64 - age * 8;
@@ -239,7 +239,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
             SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
             SceneTransform_ApplyPosition3((start.x - 128) << 16, -px(48), 0);
             Transform_ApplyPitch(0x5900);
-            if (effect->side == 0)
+            if (args->side == 0)
               Transform_ApplyYaw(0x1900);
             else
               Transform_ApplyYaw(-0x1900);
@@ -325,8 +325,7 @@ extern struct SparkMotion gElementCards_SparkMotions[];
 // Thunder cards spread four pictures over the field. Each target is struck
 // every five frames for a while, reeling, flashing and throwing up sparks.
 // From frame 96 the card shrinks away.
-void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
-                                  s32 mode) {
+void BattleEffect_RunElementCards(struct BattleEffectArgument *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -385,13 +384,13 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
     if (frame == 0) {
       Sound_PlayFar(SE_WARP);
       EFFECT_FREE_PARTICLES(i, work->particles, 56);
-      for (i = 0; i != effect->count; i++)
+      for (i = 0; i != args->count; i++)
         work->particles[56 + i].variant = (Random16() & 3) + 2;
       for (i = 0; i != SPARK_COUNT; i++)
         SPARKS[i].variant = -1;
-      EffectPosition_ProjectSprite(effect->actor, &card);
-      for (i = 0; i != effect->count; i++)
-        EffectPosition_ProjectScaledBattler(effect->actors[i], &targets[i]);
+      EffectPosition_ProjectSprite(args->actor, &card);
+      for (i = 0; i != args->count; i++)
+        EffectPosition_ProjectScaledBattler(args->actors[i], &targets[i]);
       REG_BLDCNT = 0;
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
       scale = Q16_ONE / 4;
@@ -440,7 +439,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
       // The Frost and Flame cards throw one particle a frame at a target in
       // turn, until frame 95.
       if (mode == CARD_FROST || mode == CARD_FLAME) {
-        s32 member = frame % effect->count;
+        s32 member = frame % args->count;
 
         aim.x = targets[member].x + (Random16() & 63) - 32;
         if (mode == CARD_FROST)
@@ -518,7 +517,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
     if (frame >= firstHit && frame < lastHit) {
       s32 speed = (frame - 68) * 3;
 
-      for (i = 0; i != effect->count; i++) {
+      for (i = 0; i != args->count; i++) {
         struct EffectStep *step = &work->particles[56 + i];
 
         if (--step->variant == 0) {
@@ -535,11 +534,11 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
             Sound_PlayFar(SE_IMPACT);
           if (i == 0)
             BattlePlayback_StartFar(134);
-          BattleEffect_StartActorMotion(effect->actors[i], 1, 0x20000, 0x80000,
+          BattleEffect_StartActorMotion(args->actors[i], 1, 0x20000, 0x80000,
                                         0x10000, 100 + speed);
-          BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 8);
+          BattleEffect_TintBattler(args->actors[i], 7, -1, i, 8);
           burst = 0;
-          EffectPosition_ProjectScaledBattler(effect->actors[i], &aim);
+          EffectPosition_ProjectScaledBattler(args->actors[i], &aim);
           for (j = 0; j != 64; j++) {
             struct EffectStep *spark = &SPARKS[i * 64 + j];
 
@@ -584,7 +583,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
                                     (card.y << 16) - px(64), 0);
       if (frame <= 47) {
         Transform_ApplyPitch((48 - frame) << 10);
-        if (effect->side == 0)
+        if (args->side == 0)
           SceneTransform_ApplyPosition3(-Trig_Sin(frame * 682) << 7, 0, 0);
         else
           SceneTransform_ApplyPosition3(Trig_Sin(frame * 682) << 7, 0, 0);
@@ -660,7 +659,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
         SceneTransform_ApplyPosition3((step->x - 60) << 16,
                                       (step->y - 64) << 16, 0);
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-        if (effect->side == 1)
+        if (args->side == 1)
           Transform_ApplyYaw(TRIG_TURN / 2);
         Transform_ApplyRoll(step->velocityZ);
         if (mode == CARD_BRAMBLE) {

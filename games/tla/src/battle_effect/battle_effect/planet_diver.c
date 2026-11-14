@@ -22,7 +22,7 @@
 // appear one every four frames from all around, up to 64 pixels away, and
 // close in on a point 20 pixels above the target while the view of them
 // turns; the background waves line by line throughout.
-void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
+void BattleEffect_RunHaunt(struct BattleEffectArgument *args) {
   s32 k;
   struct EffectPosition pos;
   s32 point[3];
@@ -56,7 +56,7 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
   }
   Sound_PlayFar(SE_SWIRL);
 
-  for (frame = 0; frame != effect->count * 32 + 64; frame++) {
+  for (frame = 0; frame != args->count * 32 + 64; frame++) {
     s32 *row;
 
     camera = Ram_HeapSlots->cameraWork;
@@ -65,7 +65,7 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
 
     // The background waves sideways, one sine step per line.
     row = work->bg2xLines;
-    if (effect->side == 0) {
+    if (args->side == 0) {
       for (i = 0; i != 160; i++)
         *row++ = (0x60000 - Trig_Sin((frame + i) << 11) * 6) >> 10;
     } else {
@@ -73,9 +73,9 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
         *row++ = Trig_Sin((frame + i) << 11) * 6 >> 10;
     }
 
-    for (k = 0; k != effect->count; k++) {
+    for (k = 0; k != args->count; k++) {
       struct MotionObject *target =
-          BattleObject_GetFar(effect->actors[k])->object;
+          BattleObject_GetFar(args->actors[k])->object;
 
       // Each target's skulls turn about a point 20 pixels above it.
       Transform_Reset();
@@ -87,7 +87,7 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
       if (frame > k * 32) {
         Transform_ApplyPitch(frame << 9);
         if (frame == k * 32 + 32)
-          BattleEffect_TintBattler(effect->actors[k], 7, 5, k, 32);
+          BattleEffect_TintBattler(args->actors[k], 7, 5, k, 32);
 
         // A skull moves one part in its distance toward the centre each
         // frame, and is gone once it arrives.
@@ -136,8 +136,7 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
 // Member orbit: over each target in turn, sixteen frames apart, four
 // spirals circle a point 40 pixels above it for 60 frames, the blitter
 // flipping every sixteen frames; the background waves line by line.
-void BattleEffect_RunUnusedOrbitingSpirals(
-    struct BattleEffectArgument *effect) {
+void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle draw[2];
@@ -164,14 +163,14 @@ void BattleEffect_RunUnusedOrbitingSpirals(
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // On the far side the background and the spirals move 112 pixels left.
-  if (effect->side == 1) {
+  if (args->side == 1) {
     REG_BG2X = -0x6800;
     offsetX = -112;
   } else {
     offsetX = 0;
   }
 
-  for (frame = 0; frame != (effect->count * 16) + 48; frame++) {
+  for (frame = 0; frame != (args->count * 16) + 48; frame++) {
     s32 *camera;
     s32 *row;
     s32 i;
@@ -179,7 +178,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(
     // The background waves sideways line by line.
     camera = Ram_HeapSlots->cameraWork;
     row = work->bg2xLines;
-    if (effect->side == 0) {
+    if (args->side == 0) {
       s32 angle;
       s32 base;
 
@@ -199,17 +198,17 @@ void BattleEffect_RunUnusedOrbitingSpirals(
     Transform_Reset();
     Transform_SetLookAt(camera, camera + 3);
     member = 0;
-    if (effect->count != 0) {
-      while (member != effect->count) {
+    if (args->count != 0) {
+      while (member != args->count) {
         struct MotionObject *target;
 
-        target = BattleObject_GetFar(effect->actors[member])->object;
+        target = BattleObject_GetFar(args->actors[member])->object;
         if (frame > member * 16 && frame < (member * 16) + 60) {
           s32 spin;
 
           // Halfway through, the target's flash stops.
           if (frame == (member * 16) + 32)
-            BattleEffect_TintBattler(effect->actors[member], 0, 5, -1, 0);
+            BattleEffect_TintBattler(args->actors[member], 0, 5, -1, 0);
           point[0] = target->x;
           point[1] = px(40);
           point[2] = target->z;
@@ -268,7 +267,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunThornyGrave, BattleEffect_RunGatheringLights,
 // once it has crossed it. The background sways sideways, swelling and dying
 // away over the effect. In mode 3 every mote that arrives also pushes its
 // target back.
-void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
+void BattleEffect_RunGatheringLights(struct BattleEffectArgument *args,
                                      s32 mode) {
   struct EffectPosition pos;
   DrawRectangle draw[2];
@@ -302,15 +301,15 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
   }
   if (mode == 3)
     Palette_MirrorBgColors();
-  BattleEffect_FetchRectangleBlitters(effect->side, draw);
+  BattleEffect_FetchRectangleBlitters(args->side, draw);
 
   // The motes start at the caster's body height and scatter every way at up
   // to two pixels a frame.
   for (i = 0; i != 1024; i++)
     PARTICLES[i].variant = -1;
-  for (k = 0; k != effect->count; k++) {
-    struct MotionObject *source = BattleObject_GetFar(effect->actor)->object;
-    s32 height = BattleUnit_GetEffectHeightFar(effect->actor);
+  for (k = 0; k != args->count; k++) {
+    struct MotionObject *source = BattleObject_GetFar(args->actor)->object;
+    s32 height = BattleUnit_GetEffectHeightFar(args->actor);
 
     for (i = 0; i != MOTES_PER_TARGET; i++) {
       struct EffectStep *mote = &PARTICLES[k * 128 + i];
@@ -328,7 +327,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
   Sound_PlayFar(SE_ENEMY_CRY);
 
   for (frame = 0;
-       frame != gGatheringLights_Counts[mode * 2 + 1] + effect->count * 20;
+       frame != gGatheringLights_Counts[mode * 2 + 1] + args->count * 20;
        frame++) {
     s32 *row;
     s32 sway;
@@ -349,7 +348,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
     // A negative scroll wraps into the halfword one short of 0x10000.
     row = work->bg2xLines;
     sway = Trig_Sin((frame << 15) / (gGatheringLights_Counts[mode * 2 + 1] +
-                                     effect->count * 20)) *
+                                     args->count * 20)) *
                16 >>
            16;
     scrollX = gBgScroll[1].x;
@@ -361,10 +360,10 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
       *row++ = x | 32 << 16;
     }
 
-    for (k = 0; k != effect->count; k++) {
+    for (k = 0; k != args->count; k++) {
       struct MotionObject *target =
-          BattleObject_GetFar(effect->actors[k])->object;
-      s32 half = BattleUnit_GetEffectHeightFar(effect->actors[k]) / 2;
+          BattleObject_GetFar(args->actors[k])->object;
+      s32 half = BattleUnit_GetEffectHeightFar(args->actors[k]) / 2;
 
       if (frame == k * 20 + 71) {
         if (mode == 0)
@@ -373,7 +372,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
           Sound_PlayFar(SE_IMPACT);
       }
       if (frame == k * 20 + 70)
-        BattleEffect_TintBattler(effect->actors[k], 7, 5, k, 26);
+        BattleEffect_TintBattler(args->actors[k], 7, 5, k, 26);
       if (frame > k * 20) {
         for (i = 0; i != gGatheringLights_Counts[mode * 2]; i++) {
           struct EffectStep *mote = &PARTICLES[k * 128 + i];
@@ -414,7 +413,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
                    (x >= 0 && (crossed = target->x >= 0)))) {
                 mote->variant = -1;
                 if (mode == 3) {
-                  BattleEffect_StartActorMotion(effect->actors[k], 1, 0x20000,
+                  BattleEffect_StartActorMotion(args->actors[k], 1, 0x20000,
                                                 0x20000, 0x20000, i * 8 + 100);
                   if ((i & 1) && frame != 80)
                     Sound_PlayFar(SE_HEAVY_IMPACT);

@@ -43,7 +43,7 @@ extern struct FxPair gKirin_ChargeScale;
 // frames; the fire trail from frame 18; the flames from 32. Act two (96
 // frames): the row sweeps left 16 pixels a frame, rising; each target it
 // passes takes a burst of 32 sparks; the flames slide across from frame 41.
-void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
+void BattleEffect_RunKirin(struct BattleEffectArgument *args) {
   struct FxPlacement place;
   struct EffectPosition unit;
   u8 jitterRow[16];
@@ -334,9 +334,9 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
         Sound_PlayFar(SE_137);
 
       // Each target the row passes is struck once, in a burst of sparks.
-      for (i = 0; i != effect->count; i++) {
+      for (i = 0; i != args->count; i++) {
         if (hit[i] == 0) {
-          EffectPosition_ProjectBattler(effect->actors[i], &unit);
+          EffectPosition_ProjectBattler(args->actors[i], &unit);
           if (unit.x > rowX) {
             s32 k;
 
@@ -356,7 +356,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
               burst->variant = (Random16() & 15) + 8;
               k++;
             } while (k != 32);
-            BattleMotion_ApplyKnockbackFar(effect->actors[i], 1);
+            BattleMotion_ApplyKnockbackFar(args->actors[i], 1);
             Sound_PlayFar(SE_HEAVY_IMPACT);
           }
         }
@@ -400,8 +400,8 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
       if (frame > 64)
         work->transferMode = CANVAS_COPY_AND_FADE;
       if (frame == 58) {
-        for (i = 0; i != effect->count; i++)
-          BattleEffect_TintBattler(effect->actors[i], 14, 5, -1, 0);
+        for (i = 0; i != args->count; i++)
+          BattleEffect_TintBattler(args->actors[i], 14, 5, -1, 0);
       }
 
       BattleCamera_Shake(8, 8);

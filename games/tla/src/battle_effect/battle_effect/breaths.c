@@ -65,7 +65,7 @@ struct Model__f18bc98 {
 /// The breaths (Beam, Rolling Flame, Ghost Soldier, Pike Assault and Blast
 /// Breath): motes gather at the user's mouth and burst out of it, then each
 /// breath fires its own way.
-void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunBreaths(struct BattleEffectArgument *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -111,7 +111,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
         s32 shade;
         s32 k;
 
-        if (effect->variant == 0)
+        if (args->variant == 0)
           shade = ((Trig_Sin(j << 10) << 7) >> 16) - i * 4 - 64;
         else
           shade = ((Trig_Sin(j << 10) * 63) >> 16) - i * 4;
@@ -132,7 +132,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
 
   // A clipped MAX blitter facing the targets, and a clipped additive one.
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  if (effect->side == 0)
+  if (args->side == 0)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   else
@@ -145,16 +145,16 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
 
   // The pikes lunge; Blast Breath comes from 32 pixels in front of the user.
   if (mode == BREATH_PIKE)
-    BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 10, 80);
-  EffectPosition_ProjectBattler(effect->actor, &user);
+    BattleEffect_SetApproachMotion(args->actor, args->actors[0], 10, 80);
+  EffectPosition_ProjectBattler(args->actor, &user);
   if (mode == BREATH_BLAST) {
-    if (effect->side == 0)
+    if (args->side == 0)
       user.x -= 32;
     else
       user.x += 32;
     user.y -= 8;
   }
-  EffectPosition_ProjectBattler(effect->actors[0], &target);
+  EffectPosition_ProjectBattler(args->actors[0], &target);
 
   for (frame = 0; frame != gBreaths_Frames[mode]; frame++) {
     // Frame 0: 32 motes wait around the mouth, each a frame later; the
@@ -180,7 +180,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
       s32 mouthY;
 
       mouthY = user.y - 32;
-      if (effect->side == 0)
+      if (args->side == 0)
         mouthX = user.x / 2 - 8;
       else
         mouthX = user.x / 2 + 8;
@@ -190,10 +190,10 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
         s32 size = frame - 16;
 
         if (frame > 63)
-          size = gBreaths_MaxSizes[effect->variant] - frame + 64;
+          size = gBreaths_MaxSizes[args->variant] - frame + 64;
         size = size / 2 * 2;
-        if (size > gBreaths_MaxSizes[effect->variant])
-          size = gBreaths_MaxSizes[effect->variant];
+        if (size > gBreaths_MaxSizes[args->variant])
+          size = gBreaths_MaxSizes[args->variant];
         if (size > 0) {
           BattleEffect_DrawShadedCirclesMirrored(work->sheet + 0x4000, size,
                                                  0x10000);
@@ -225,7 +225,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
             step->x = mouthX << 16;
             step->y = mouthY << 16;
             step->velocityY = ((Random16() & 63) - 32) << 14;
-            if (effect->side == 0)
+            if (args->side == 0)
               step->velocityX = -(Random16() & 63) << 13;
             else
               step->velocityX = (Random16() & 63) << 13;
@@ -237,9 +237,9 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
           if (step->variant >= 0) {
             s32 size = (i & 3) + 1;
 
-            if (effect->variant == 1)
+            if (args->variant == 1)
               size++;
-            else if (effect->variant == 2)
+            else if (args->variant == 2)
               size = (i & 3) + 3;
             draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                         Q_16_16_UPPER_HALF(step->x) - size / 2,
@@ -279,7 +279,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
           if (ring > 15)
             ring = 15;
           for (i = 0; i != 4; i++) {
-            if (effect->side == 0) {
+            if (args->side == 0) {
               draw[0](canvas, work->sheet + (ring << 10), x - 40, y - 48, 32,
                       32);
               x -= 32;
@@ -324,9 +324,9 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
           s32 scale = age * growth + Q16_ONE / 2;
           s32 alpha = 128 - age * 8;
 
-          if (effect->variant == 0)
+          if (args->variant == 0)
             scale /= 2;
-          else if (effect->variant == 1)
+          else if (args->variant == 1)
             scale = scale * 3 / 2;
           if (alpha > 0)
             alpha = 0;
@@ -343,7 +343,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
                 Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
                 Transform_ApplyPitch(-TRIG_TURN / 16);
               } else {
-                if (effect->side == 0)
+                if (args->side == 0)
                   SceneTransform_ApplyPosition3((mouthX - 72) << 16,
                                                 (mouthY - 64) << 16, 0);
                 else
@@ -363,7 +363,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
         }
 
         // Variant 2: four jaws open one after another.
-        if (effect->variant == 2) {
+        if (args->variant == 2) {
           texture.pixels = JAW_TEXTURE;
           model->kind = 7;
           model->mesh = gBattleEffect_CylinderMesh;
@@ -383,7 +383,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
                 Transform_Reset();
                 if (mode == BREATH_PIKE) {
                   scale /= 2;
-                  if (effect->side == 0)
+                  if (args->side == 0)
                     SceneTransform_ApplyPosition3(
                         (mouthX + gBreaths_RingX[mode * 4 + i] - 48) << 16,
                         (mouthY - 64) << 16, 0);
@@ -392,7 +392,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
                         (mouthX - gBreaths_RingX[mode * 4 + i] - 80) << 16,
                         (mouthY - 64) << 16, 0);
                 } else {
-                  if (effect->side == 0)
+                  if (args->side == 0)
                     SceneTransform_ApplyPosition3(
                         (mouthX + gBreaths_RingX[mode * 4 + i] - 64) << 16,
                         (mouthY - 64) << 16, 0);
@@ -433,7 +433,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
           if (frame > 7)
             angle = (frame << 7) + 0x2c60;
-          if (effect->side == 1)
+          if (args->side == 1)
             angle = -angle;
           Transform_ApplyRoll(angle);
           SceneTransform_ApplyScale3(Q16_ONE * 4, Q16_ONE * 2, Q16_ONE);
@@ -462,24 +462,24 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
           Sound_PlayFar(SE_HEAVY_IMPACT);
           BattlePlayback_StartFar(134);
         }
-        for (i = 0; i != effect->count; i++) {
+        for (i = 0; i != args->count; i++) {
           if (frame >= i * 4 + gBreaths_BurstFrames[mode] &&
               frame < gBreaths_Frames[mode] - 8 && (frame & 3) == i) {
             work->shakeFrames = 8;
             // DEAD: never true inside Blast Breath; the source keeps the test.
             if (mode == 6)
-              BattleEffect_TintBattler(effect->actors[i], 14, 5, i, 3);
+              BattleEffect_TintBattler(args->actors[i], 14, 5, i, 3);
             else
-              BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 3);
-            BattleEffect_StartActorMotion(effect->actors[i], 1, 0x10000,
-                                          0x40000, 0x20000, frame + 100);
+              BattleEffect_TintBattler(args->actors[i], 7, 5, i, 3);
+            BattleEffect_StartActorMotion(args->actors[i], 1, 0x10000, 0x40000,
+                                          0x20000, frame + 100);
           }
         }
       } else if (frame == gBreaths_FlashFrames[mode]) {
         // The others hit every target at once, and the screen flashes.
-        for (i = 0; i != effect->count; i++) {
-          BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
-          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
+        for (i = 0; i != args->count; i++) {
+          BattleMotion_ApplyKnockbackFar(args->actors[i], 4);
+          BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
         }
         work->shakeFrames = 8;
         BattlePlayback_StartFar(144);
@@ -513,7 +513,7 @@ static inline s32 Nothing(void) {}
 // cuts it upside down and higher, and throws the target into the air at
 // frame 12. Human Hunt loads the Mars Djinn's colours into the background
 // palette and blends its slash more faintly.
-void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
+void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *args,
                                    s32 mode) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -529,11 +529,11 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
   BattleEffect_StartTiledCanvas(0);
   if (mode == 0) {
     flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y;
-    if (effect->side != 0)
+    if (args->side != 0)
       flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X;
   } else {
     flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_Y;
-    if (effect->side != 0)
+    if (args->side != 0)
       flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP;
   }
   /* FAKEMATCH(signature): Nothing() typed s32 though it returns nothing. */
@@ -558,11 +558,11 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // The caster closes in on the target.
-  BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 8, px(4));
+  BattleMotion_ApproachTargetFar(args->actor, args->actors[0], 8, px(4));
 
   for (frame = 0; frame != 32; frame++) {
     if (frame == 0)
-      EffectPosition_ProjectBattler(effect->actors[0],
+      EffectPosition_ProjectBattler(args->actors[0],
                                     (struct EffectPosition *)position);
     if (frame == 8)
       Sound_PlayFar(SE_POWER_UP);
@@ -573,7 +573,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
         BattlePlayback_StartFar(144);
       else
         BattlePlayback_StartFar(134);
-      BattleEffect_StartActorMotion(effect->actors[0], 1, 0x40000, 0x100000,
+      BattleEffect_StartActorMotion(args->actors[0], 1, 0x40000, 0x100000,
                                     0x40000, 250);
       work->shakeFrames = 4;
     }
@@ -584,7 +584,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
       s32 y = mode != 0 ? 16 : 0;
       s32 x;
 
-      if (effect->side == 0)
+      if (args->side == 0)
         x = position[0] / 2 - 48;
       else
         x = position[0] / 2 - 80;

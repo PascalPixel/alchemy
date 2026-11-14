@@ -66,7 +66,7 @@ static inline u8 *SheetOf(struct BattleEffectWork *owner) {
 /// Flora: petals swirl in on the wind, the blossom spirit rises among them,
 /// her spiral of light and its rings sweep the field, and a storm of petals
 /// strikes the foes.
-void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
+void BattleEffect_RunFlora(struct BattleEffectArgument *args) {
   u8 *canvas;
   struct BattleEffectWork *work;
   DrawRectangle draw[2];
@@ -793,7 +793,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         p->velocityY = ((Random16() & 255) + 128) << 9;
         p->variant = Random16() & 31;
       }
-      for (i = 0; i != effect->count; i++) {
+      for (i = 0; i != args->count; i++) {
         work->particles[i].variant = (Random16() & 15) + 1;
       }
     }
@@ -811,15 +811,15 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       BattlePlayback_StartFar(134);
     }
     if ((u32)(frame - 57) <= 50) {
-      for (i = 0; i != effect->count; i++) {
+      for (i = 0; i != args->count; i++) {
         struct EffectStep *s = &work->particles[i];
 
         if (--s->variant == 0) {
           s->variant = 15;
           work->shakeFrames = 4;
           Sound_PlayFar(SE_IMPACT);
-          BattleMotion_ApplyKnockbackFar(effect->actors[i], 0);
-          BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 8);
+          BattleMotion_ApplyKnockbackFar(args->actors[i], 0);
+          BattleEffect_TintBattler(args->actors[i], 7, -1, i, 8);
         }
       }
     }
@@ -890,7 +890,7 @@ struct RenderPrimitive {
 // knocks it up. At frame 80 the daggers turn point down in a fan above the
 // target and plunge into it; the last strike, at frame 90, starts the
 // result phase.
-void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
+void BattleEffect_RunSabreDance(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   struct DaggerTexture texture;
@@ -910,8 +910,8 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // Centre the canvas's x 64 on the target.
-  BattleObject_GetFar(effect->actors[0]);
-  EffectPosition_ProjectBattler(effect->actors[0], &target);
+  BattleObject_GetFar(args->actors[0]);
+  EffectPosition_ProjectBattler(args->actors[0], &target);
   REG_BG2PA = Q_8_8(1);
   REG_BG2X = (64 - target.x) << 8;
 
@@ -942,15 +942,15 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
       if (frame == strikeFrame) {
         work->shakeFrames = 4;
         Sound_PlayFar(SE_IMPACT);
-        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 6);
-        BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, px(3), 100);
+        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 6);
+        BattleEffect_StartActorMotion(args->actors[0], 1, 0, 0, px(3), 100);
       }
     }
     if (frame == DAGGER_LAST_HIT) {
       work->shakeFrames = 4;
       BattlePlayback_StartFar(134);
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 10);
-      BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, px(3), 100);
+      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 10);
+      BattleEffect_StartActorMotion(args->actors[0], 1, 0, 0, px(3), 100);
     }
 
     // One textured quad, drawn once for each dagger.
@@ -1051,7 +1051,7 @@ void BattleObject_SetRecordPriority(s32 objectId, s32 priority) {
 // beside the target, which is knocked back and flashes, and sixteen pink
 // stars burst from it for 24 frames. Battle work byte 0x866 is set for the
 // whole effect.
-void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
+void BattleEffect_RunBackstab(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   u8 *canvas;
   struct EffectPosition caster;
@@ -1076,17 +1076,17 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  targetObject = BattleObject_GetFar(effect->actors[0])->object;
-  casterObject = BattleObject_GetFar(effect->actor)->object;
+  targetObject = BattleObject_GetFar(args->actors[0])->object;
+  casterObject = BattleObject_GetFar(args->actor)->object;
   battle = (u8 *)Ram_HeapSlots->battleWork;
   battle[0x866] = 1;
 
   for (frame = 0; frame != STAR_FRAMES; frame++) {
-    BattleObject_SetRecordPriority(effect->actor, 3);
+    BattleObject_SetRecordPriority(args->actor, 3);
 
     // The first frame sends the smoke out from the caster's feet.
     if (frame == 0) {
-      EffectPosition_ProjectBattler(effect->actor, &caster);
+      EffectPosition_ProjectBattler(args->actor, &caster);
       for (i = 0; i != SMOKE_COUNT; i++) {
         s32 angle;
         s32 speed;
@@ -1126,7 +1126,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
     }
 
     if (frame == STAR_LEAP_FRAME) {
-      BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 16, 120);
+      BattleEffect_SetApproachMotion(args->actor, args->actors[0], 16, 120);
       casterObject->velocityY = px(7);
     }
 
@@ -1140,7 +1140,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
       casterObject->x = targetObject->x * 120 / 100;
       targetObject->x = targetObject->x * 80 / 100;
       casterObject->angle = targetObject->angle;
-      EffectPosition_ProjectScaledBattler(effect->actors[0], &target);
+      EffectPosition_ProjectScaledBattler(args->actors[0], &target);
       for (i = 0, step = &work->particles[SMOKE_COUNT]; i != STAR_COUNT;
            i++, step++) {
         s32 angle;
@@ -1156,8 +1156,8 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
       }
       work->shakeFrames = 4;
       BattlePlayback_StartFar(134);
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
-      BattleEffect_StartActorMotion(effect->actors[0], 1, px(8), px(20), px(6),
+      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 16);
+      BattleEffect_StartActorMotion(args->actors[0], 1, px(8), px(20), px(6),
                                     10);
     }
 

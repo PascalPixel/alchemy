@@ -32,7 +32,6 @@
 #include "battle/battle.h"
 #include "graphics/vram_tab.h"
 #include "item_icon.h"
-#include "battle_fx_work.h"
 #include "lib.h"
 #include "sound/sound.h"
 #include "battle/battle_effect_argument.h"
@@ -83,24 +82,6 @@ struct EclipseVertex {
 // The three kinds the scenes ask for.
 enum { KIND_RIGHT = 78, KIND_LEFT = 79, KIND_FINALE = 80 };
 
-/// The battle effect work, as far as the canvas transfer and the canvas layer
-/// read it.
-struct CanvasWork {
-  u8 unk0000[0x7780];
-  s32 transferMode;
-  s32 transferValue;
-  u8 unk7788[0x18];
-  s32 savedBg1X;
-  s32 savedBg1Y;
-  s32 shakeFrames;
-  u8 unk77ac[8];
-  s32 fadeFrames;
-  s32 fadeStep;
-  u8 unk77bc[0x128];
-  s32 vblanksSinceTransfer;
-  s32 transferPending;
-};
-
 struct BattleFxFadeWork {
   s32 unk00;
   s32 halvePending;
@@ -149,13 +130,6 @@ struct RuinObject {
   u8 resource;
 };
 
-struct FxRunWork {
-  u8 unk0000[0x78e4];
-  s32 active;
-  u8 unk78e8[8];
-  s32 *script;
-};
-
 struct FxUnit {
   u8 unk00[56];
   s16 hp;
@@ -164,25 +138,6 @@ struct FxUnit {
 struct FxBgScroll {
   u8 unk00[6];
   u16 y;
-};
-
-struct ScrollStepWork {
-  u8 unk0000[0x7790];
-  s32 counter;
-  s32 period;
-  s32 stepX;
-  s32 stepY;
-};
-
-struct AffineStepWork {
-  u8 unk0000[0x7790];
-  s32 counter;
-  s32 period;
-  s32 stepX;
-  s32 stepY;
-  u8 unk77a0[0x30];
-  s32 x;
-  s32 y;
 };
 
 // The kinds this body draws, chosen by the effect's entry.
@@ -205,11 +160,6 @@ struct RenderJob {
 
 struct RequestPair {
   s32 x, y;
-};
-
-struct FxTimerWork {
-  u8 unk0000[0x78dc];
-  u8 actorTimers[8];
 };
 
 // The map cell buffer holds WIN0's line table and then the splashes.
@@ -352,7 +302,7 @@ extern const u8 gCruelRuin_StreakEndY[];
 
 extern const s32 gCruelRuin_StreakRolls[];
 
-extern void (*gBattleEffect_Handlers[])(s32 *script);
+extern void (*gBattleEffect_Handlers[])(struct BattleEffectArgument *args);
 
 extern char ResourceId_Data0D0; // directory row 0xd0
 
@@ -509,6 +459,19 @@ extern u8 gVortices_Shapes[];
 #endif
 
 // The canvas life cycle, shared by every canvas effect.
+
+/// The heap slots an effect is lent, as HeapSlot_Alloc and HeapSlot_Release
+/// take a slot: byte offsets into Ram_HeapSlots. The canvas is
+/// HEAP_SLOT_CANVAS.
+#define HEAP_SLOT_BATTLE_EFFECT 92 // Ram_HeapSlots->battleFxWork[0]
+#define HEAP_SLOT_BATTLE_SHEET 100 // Ram_HeapSlots->unk64[0]
+
+/// The bytes an effect's work block is lent: more than struct
+/// BattleEffectWork holds.
+#define BATTLE_EFFECT_WORK_SIZE 0x7b7c
+
+/// The bytes of one set of the ten mote pictures: 2 * (1 + 4 + ... + 100).
+#define MOTE_SET_BYTES 770
 
 /// The heap slots the effects build their blitters in, as
 /// BattleEffect_LoadBlitter and HeapSlot_Release take a slot: a byte offset

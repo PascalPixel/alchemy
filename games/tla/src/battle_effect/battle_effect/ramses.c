@@ -53,7 +53,7 @@ extern struct FxScale gRamses_UnitScale; // one to one
 // dust; the orb draws back at frame 244 and flies left from 252; at frame 260
 // the targets are struck and the sparks burst. At the end the results phase
 // begins and every object is released.
-void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
+void BattleEffect_RunRamses(struct BattleEffectArgument *args) {
   struct SpritePlacement position;
   DrawRectangle draw[2];
   struct FxScale scale;
@@ -260,9 +260,9 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
     // The blow: every target struck and flashed, and the sparks burst from
     // (32, 92).
     if (frame == HIT_FRAME) {
-      for (i = 0; i != effect->count; i++) {
-        BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
-        BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 8);
+      for (i = 0; i != args->count; i++) {
+        BattleMotion_ApplyKnockbackFar(args->actors[i], 4);
+        BattleEffect_TintBattler(args->actors[i], 7, -1, i, 8);
       }
       work->shakeFrames = 8;
     }

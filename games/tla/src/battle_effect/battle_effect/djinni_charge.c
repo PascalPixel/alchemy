@@ -38,8 +38,7 @@ void Render_ProjectVertices__ability_effects(struct ModelVertex *vertices,
 // first frame) swells over the target and bursts; for Cannon it shoots
 // straight in and strikes once, behind a gust of petals.
 
-void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
-                                  s32 mode) {
+void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *args, s32 mode) {
   u8 *mesh;
   u8 *projected;
   u8 *cells;
@@ -68,8 +67,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(
-      effect,
-      (effect->side << 4) | (gDjinniCharge_EntranceFlags[mode] << 5) | 2,
+      args, (args->side << 4) | (gDjinniCharge_EntranceFlags[mode] << 5) | 2,
       (s32 *)&screen, focus);
   {
     s32 *target;
@@ -78,7 +76,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
     s32 frames;
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
-    if (effect->side == 0) {
+    if (args->side == 0) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           BLITTER_ADDITIVE);
     } else {
@@ -89,9 +87,9 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
     blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
     REG_BLDALPHA = BLEND_ALPHA(16, 16);
     EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-    target = BattleObject_GetFar(effect->actors[0])->object;
+    target = BattleObject_GetFar(args->actors[0])->object;
     savedYaw = (s16)camera->yaw;
-    caster = BattleObject_GetFar(effect->actor)->object;
+    caster = BattleObject_GetFar(args->actor)->object;
 
     // The last two particles keep the Djinni's start and its step.
     work->particles[62].x = focus[0];
@@ -160,7 +158,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
           } else {
             turn = 2560 - (frame << 5);
           }
-          if (effect->side == 0) {
+          if (args->side == 0) {
             camera->yaw -= turn;
           } else {
             camera->yaw += turn;
@@ -204,14 +202,14 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
             Sound_PlayFar(SE_ITEM_BREAK);
             work->shakeFrames = 2;
           }
-          BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 6);
+          BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 6);
           for (i = 0, p = work->particles; i != 63; i++, p++) {
             if (p->variant != -1) {
               continue;
             }
             SET_POSITION(p, target[2], target[3] + 0x50000, target[4]);
             p->velocityX = ((Random16() & 511) + 256) << 10;
-            if (effect->side == 1) {
+            if (args->side == 1) {
               p->velocityX = -p->velocityX;
             }
             p->velocityY = ((Random16() & 511) + 256) << 9;
@@ -234,8 +232,8 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
         if (frame == 15) {
           work->shakeFrames = 6;
           BattlePlayback_StartFar(134);
-          BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 6);
-          BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
+          BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 6);
+          BattleMotion_ApplyKnockbackFar(args->actors[0], 0);
           for (i = 0; i != 63; i++) {
             s32 angle;
             s32 speed;
@@ -274,7 +272,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
           s32 picture = (frame / 4) & 3;
           s32 x;
 
-          if (effect->side == 0) {
+          if (args->side == 0) {
             x = screen.x / 2 - 14;
           } else {
             x = screen.x / 2 - 46;
@@ -328,10 +326,10 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
       }
       if (mode == 0) {
         if (frame == 24) {
-          BattleEffect_TintBattler(effect->actor, -1, 2, 0, -1);
+          BattleEffect_TintBattler(args->actor, -1, 2, 0, -1);
         }
       } else if (frame == 0) {
-        BattleEffect_TintBattler(effect->actor, -1, 2, 0, -1);
+        BattleEffect_TintBattler(args->actor, -1, 2, 0, -1);
       }
 
       // Core's glowing orb.
@@ -366,7 +364,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
         gCameraSceneParameters[3] = 60;
         SceneTransform_ApplyPosition(focus);
         SceneTransform_ApplyPosition3(0, 0x100000, 0);
-        if (effect->side == 0) {
+        if (args->side == 0) {
           Transform_ApplyRoll(20576);
         } else {
           Transform_ApplyRoll(44960);

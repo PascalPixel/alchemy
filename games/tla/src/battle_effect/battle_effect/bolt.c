@@ -17,7 +17,7 @@
 // The second blitter, loaded again for each glint.
 #define DRAW_GLINT ((DrawRectangle)Ram_HeapSlots->unkb8[1])
 
-void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
+void BattleEffect_RunBolt(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 i;
@@ -46,26 +46,26 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(CUE_THUNDER);
 
-  for (frame = 0; frame != effect->count * BOLT_INTERVAL + 40; frame++) {
+  for (frame = 0; frame != args->count * BOLT_INTERVAL + 40; frame++) {
     if (frame == 24)
       BattlePlayback_StartFar(PHASE_RESULTS);
 
     // The sky flashes as each bolt starts.
-    for (i = 0; i != effect->count; i++) {
+    for (i = 0; i != args->count; i++) {
       if (frame == i * BOLT_INTERVAL)
         Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
     }
 
-    for (i = 0; i != effect->count; i++) {
+    for (i = 0; i != args->count; i++) {
       s32 start = i * BOLT_INTERVAL;
 
-      EffectPosition_ProjectBattler(effect->actors[i], &pos);
+      EffectPosition_ProjectBattler(args->actors[i], &pos);
       pos.x /= 2;
       if (frame == start + 1)
         work->shakeFrames = 4;
       if (frame == start + 4) {
-        BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 6);
-        BattleMotion_ApplyKnockbackFar(effect->actors[i], 6);
+        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 6);
+        BattleMotion_ApplyKnockbackFar(args->actors[i], 6);
       }
 
       // The bolt, 24 wide, grows 64 pixels a frame down to the ground.
@@ -74,7 +74,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
 
         if (height > GROUND_Y)
           height = GROUND_Y;
-        for (j = 0; j != gBolt_Counts[effect->variant * 4 + 3]; j++) {
+        for (j = 0; j != gBolt_Counts[args->variant * 4 + 3]; j++) {
           draw[0](canvas,
                   work->sheet + (((i + frame + j) / 2) & 3) * 2880 + 0xc56,
                   pos.x - 12, 0, 24, height);
@@ -82,7 +82,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
 
         // Sparks fly up from the ground within 90 degrees of straight up.
         if (frame == start + 2) {
-          for (j = 0; j != gBolt_Counts[effect->variant * 4]; j++) {
+          for (j = 0; j != gBolt_Counts[args->variant * 4]; j++) {
             struct EffectStep *spark = &SPARKS[i * SPARKS_PER_TARGET + j];
             s32 speed = (Random16() & 0x1ff) + 64;
             s32 angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
@@ -99,10 +99,10 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
       // Glints: at random places above the target's feet, each with a
       // random palette and flip.
       if (frame >= start + 2 && frame < start + 24) {
-        for (j = 0; j != gBolt_Counts[effect->variant * 4 + 1]; j++) {
+        for (j = 0; j != gBolt_Counts[args->variant * 4 + 1]; j++) {
           s32 kind = j & 3;
-          s32 drop = Random16() % gBolt_Counts[effect->variant * 4 + 2];
-          s32 spread = gBolt_Counts[effect->variant * 4 + 2] - drop + 1;
+          s32 drop = Random16() % gBolt_Counts[args->variant * 4 + 2];
+          s32 spread = gBolt_Counts[args->variant * 4 + 2] - drop + 1;
           s32 y =
               pos.y - drop - (gBattleEffect_GlintPictureHeights[kind] >> 1) + 8;
           u32 r = Random16();
@@ -120,7 +120,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
           BattleEffect_BuildBlitter(188, 7, 7,
                                     gBolt_GlintFlips[flip & 3] |
                                         COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                                    gBolt_GlintModes[effect->variant]);
+                                    gBolt_GlintModes[args->variant]);
           DRAW_GLINT(canvas, work->sheet + gBattleEffect_GlintPictures[kind], x,
                      y, gBattleEffect_GlintPictureWidths[kind],
                      gBattleEffect_GlintPictureHeights[kind]);

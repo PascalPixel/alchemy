@@ -28,7 +28,7 @@ void Render_DrawModelList(struct Model *model);
 // retires the column), particles 24-39 the embers of the closing glow; the
 // map cell buffer holds the motes (variant counts down the frames before a
 // mote appears, 0 is a live mote).
-void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
+void BattleEffect_RunMoloch(struct BattleEffectArgument *args) {
   DrawRectangle draw[2];
   struct ModelTexture texture;
   void *canvas;
@@ -284,8 +284,8 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
         if (frame == i * 8 + 212) {
           for (k = 0; k != work->effect->count; k++) {
             BattleEffect_TintBattler(work->effect->actors[k], 7, 5, k, 8);
-            BattleEffect_StartActorMotion(effect->actors[k], 1, 0x10000,
-                                          0x40000, 0x10000, i * 16 + 100);
+            BattleEffect_StartActorMotion(args->actors[k], 1, 0x10000, 0x40000,
+                                          0x10000, i * 16 + 100);
           }
         }
       }
@@ -423,8 +423,8 @@ void Iris_DrawDrop(u32 frame, s32 x, s32 y, s32 small) {
     return;
 next:
   draw[0](canvas,
-          work->sheet +
-              (gBattleEffect_MotePictures[size - 1] + frame / 2 * 0x302),
+          work->sheet + (gBattleEffect_MotePictures[size - 1] +
+                         frame / 2 * MOTE_SET_BYTES),
           x - size / 2, trailY, size, size * 2);
   i++;
   trailY = y + i * half;
@@ -635,7 +635,7 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
     r = *(gIris_SplashRadii + small) * 2 - t;
     cel = r / 6;
     cel8 = cel * 8;
-    sheetOffset = cel * 0x302;
+    sheetOffset = cel * MOTE_SET_BYTES;
     for (point = 0; point != 64; point++) {
       s32 px;
       s32 a;
@@ -764,7 +764,7 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
 // of sprites and bursts into sparks; drops fall and splash in rings; pillars
 // of light climb, the scene fills with rising motes, rays turn about the
 // centre, and the screen whitens as she heals the party.
-void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
+void BattleEffect_RunIris(struct BattleEffectArgument *args) {
   typeof(SCENE) scene = SCENE;
   struct IrisPoint(*streaks)[10] = Data_02012ef4;
   u8 *canvas = Ram_HeapSlots->battleFxWork[1];
@@ -867,7 +867,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           s32 age = frame - work->particles[i].z;
 
           if (age > 32)
-            offset = (age - 32) * 0x302;
+            offset = (age - 32) * MOTE_SET_BYTES;
           if (offset == 0x1810) {
             work->particles[i].variant = 0;
             continue;
@@ -957,7 +957,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       z260, z261, z262, z263, z264, z265, z266, z267, z268, z269, z270, z271,
       z272, z273, z274, z275, z276, z277, z278, z279, z280, z281, z282, z283;
 
-  work->effect = effect;
+  work->effect = args;
   BattleEffect_StartCanvasLayer(0x2000);
   BattleEffect_ConfigureEffectDisplay();
   *(u16 *)PLTT = 0;
@@ -979,7 +979,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   savedZoom = camera[27];
-  if (effect->side == 0) {
+  if (args->side == 0) {
     s32 yaw = TRIG_TURN / 4;
 
     camera[27] = yaw;
@@ -1365,7 +1365,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
         for (j = 0; j != 10; j = next) {
           u8 *src = work->sheet + gBattleEffect_MotePictures[j];
-          u8 *out = work->sheet + (gBattleEffect_MotePictures[j] + i * 0x302);
+          u8 *out = work->sheet +
+                    (gBattleEffect_MotePictures[j] + i * MOTE_SET_BYTES);
           s32 off = 0;
 
           next = j + 1;
@@ -1642,7 +1643,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
         for (j = 0; j != 10; j = next) {
           u8 *src = work->sheet + gBattleEffect_MotePictures[j];
-          u8 *out = work->sheet + (gBattleEffect_MotePictures[j] + i * 0x302);
+          u8 *out = work->sheet +
+                    (gBattleEffect_MotePictures[j] + i * MOTE_SET_BYTES);
           s32 off = 0;
 
           next = j + 1;
@@ -1837,7 +1839,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         if (638 + j < frame && frame < 670 + j) {
           s32 t = frame - j - 638;
           s32 ry = t >> 1;
-          s32 tile = gBattleEffect_MotePictures[0] + t / 4 * 0x302;
+          s32 tile = gBattleEffect_MotePictures[0] + t / 4 * MOTE_SET_BYTES;
 
           for (i = 0; i != 128; i++) {
             s32 a = i << 9;
@@ -1893,7 +1895,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       s32 sinT = Trig_Sin(0x5800);
       s32 cosT = Trig_Cos(0x5800);
       s32 t = frame - 758;
-      s32 tile = gBattleEffect_MotePictures[5] + t / 4 * 0x302;
+      s32 tile = gBattleEffect_MotePictures[5] + t / 4 * MOTE_SET_BYTES;
 
       for (i = 0; i != 96; i++) {
         s32 a = i * 384;
@@ -1910,7 +1912,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       s32 sinT = Trig_Sin(0xe800);
       s32 cosT = Trig_Cos(0xe000);
       s32 t = frame - 782;
-      s32 tile = gBattleEffect_MotePictures[5] + t / 6 * 0x302;
+      s32 tile = gBattleEffect_MotePictures[5] + t / 6 * MOTE_SET_BYTES;
 
       for (i = 0; i != 197; i++) {
         s32 a = i * 384;

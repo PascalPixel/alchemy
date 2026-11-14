@@ -109,23 +109,23 @@ DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode19,
 DEFINE_EFFECT_KIND(BattleEffect_RunGravelBlow,
                    BattleEffect_RunProjectileVolleyB, 20)
 
-void BattleEffect_RunAgingGas(struct BattleEffectArgument *effect) {
+void BattleEffect_RunAgingGas(struct BattleEffectArgument *args) {
   struct Actor *object;
 
-  object = (struct Actor *)BattleObject_GetFar(effect->actor)->object;
+  object = (struct Actor *)BattleObject_GetFar(args->actor)->object;
   Actor_SelectAnimationFar(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x30);
-  BattleEffect_RunProjectileVolleyB(effect, 10);
+  BattleEffect_RunProjectileVolleyB(args, 10);
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
-void BattleEffect_RunFireDance(struct BattleEffectArgument *effect) {
+void BattleEffect_RunFireDance(struct BattleEffectArgument *args) {
   struct Actor *object;
 
-  object = (struct Actor *)BattleObject_GetFar(effect->actor)->object;
+  object = (struct Actor *)BattleObject_GetFar(args->actor)->object;
   Actor_SelectAnimationFar(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x30);
-  BattleEffect_RunProjectileVolleyB(effect, 11);
+  BattleEffect_RunProjectileVolleyB(args, 11);
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
@@ -167,7 +167,7 @@ void BattleEffect_RunFireDance(struct BattleEffectArgument *effect) {
 // out after 24 frames (32 in modes 9 and 17); from frame 16 the targets
 // are hit four frames apart and recoil; the blend fades out over the last
 // eight frames.
-void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
+void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *args,
                                        u32 mode) {
   void *canvas;
   struct BattleEffectWork *work;
@@ -202,17 +202,17 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
 
   // The prelude: a Djinni behind the user, Mars for modes 9, 22 and 24 and
   // Venus otherwise.
-  if (effect->prelude == 1) {
+  if (args->prelude == 1) {
     if (mode == 9 || mode == 22 || mode == 24) {
       BattleEffect_RunDjinniEntrance(
-          effect, DJINNI_MARS | DJINNI_SIDE(effect->side) | DJINNI_BEHIND,
-          origin, djinniTarget);
+          args, DJINNI_MARS | DJINNI_SIDE(args->side) | DJINNI_BEHIND, origin,
+          djinniTarget);
       Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet,
                                  work->sheet + VOLLEY_B_DJINNI, 1, 0);
     } else {
       BattleEffect_RunDjinniEntrance(
-          effect, DJINNI_VENUS | DJINNI_SIDE(effect->side) | DJINNI_BEHIND,
-          origin, djinniTarget);
+          args, DJINNI_VENUS | DJINNI_SIDE(args->side) | DJINNI_BEHIND, origin,
+          djinniTarget);
       Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                                  work->sheet + VOLLEY_B_DJINNI, 1, 0);
     }
@@ -223,8 +223,8 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // The blitters: [0] MAX and [1] ADDITIVE, mirrored for the far side.
-  if (effect->prelude == 1) {
-    if (effect->side == 0) {
+  if (args->prelude == 1) {
+    if (args->side == 0) {
       BattleEffect_FetchRectangleBlitters(0, pair);
     } else {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
@@ -254,7 +254,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
 
     pair[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   } else {
-    BattleEffect_FetchRectangleBlitters(effect->side, pair);
+    BattleEffect_FetchRectangleBlitters(args->side, pair);
   }
 
   // The pictures and the colors.
@@ -440,31 +440,31 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       shots = 56;
 
     // Where the shots leave from, and where the targets are.
-    EffectPosition_ProjectSprite(effect->actor, user = &userPosition);
-    for (i = 0; i != effect->count; i++)
-      EffectPosition_ProjectScaledBattler(effect->actors[i],
+    EffectPosition_ProjectSprite(args->actor, user = &userPosition);
+    for (i = 0; i != args->count; i++)
+      EffectPosition_ProjectScaledBattler(args->actors[i],
                                           (struct EffectPosition *)targets[i]);
     if (mode == 12 || mode == 15) {
-      if (effect->side == 0)
+      if (args->side == 0)
         user->x -= 24;
       else
         user->x += 24;
     }
     if (mode == 20) {
-      if (effect->side == 0)
+      if (args->side == 0)
         user->x -= 48;
       else
         user->x += 48;
     }
     if (mode == 21) {
-      if (effect->side == 0)
+      if (args->side == 0)
         user->x -= 16;
       else
         user->x += 16;
       user->y -= 40;
     }
     if (mode == 16) {
-      if (effect->side == 0)
+      if (args->side == 0)
         user->x -= 32;
       else
         user->x += 32;
@@ -485,17 +485,17 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       user->y -= 16;
     if (mode == 10) {
       user->y -= 24;
-      for (i = 0; i != effect->count; i++)
+      for (i = 0; i != args->count; i++)
         targets[i][1] += 80;
     }
     if (mode == 4) {
-      if (effect->side == 1)
+      if (args->side == 1)
         user->x += 28;
       else
         user->x -= 28;
     }
     if (mode == 7) {
-      if (effect->side == 1)
+      if (args->side == 1)
         user->x += 16;
       else
         user->x -= 16;
@@ -512,8 +512,8 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       struct MotionObject *object;
       s32 half;
 
-      object = BattleObject_GetFar(effect->actors[0])->object;
-      half = BattleUnit_GetEffectHeightFar(effect->actors[0]) / 2;
+      object = BattleObject_GetFar(args->actors[0])->object;
+      half = BattleUnit_GetEffectHeightFar(args->actors[0]) / 2;
       for (i = 0; i != 128; i++) {
         struct EffectStep *mote = &MOTES[i];
 
@@ -526,7 +526,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     }
 
     for (frame = 0; frame != shots; frame++) {
-      target = frame % effect->count;
+      target = frame % args->count;
 
       // Fade out over the last eight frames.
       if (frame >= shots - 8)
@@ -553,7 +553,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       }
 
       // The Djinni sways, and after frame 56 rises two pixels a frame.
-      if (effect->prelude == 1) {
+      if (args->prelude == 1) {
         s32 x = ((-Trig_Sin(frame << 11) * 4) >> 16) + origin[0] / 2 - 10;
         s32 y = ((Trig_Cos(frame << 11) * 2) >> 16) + origin[1] - 24;
 
@@ -566,7 +566,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
 
       if (mode == 5 || mode == 23) {
         // One big picture at the user, three frames a cel.
-        if (effect->side == 1)
+        if (args->side == 1)
           pair[0](canvas,
                   work->sheet + VOLLEY_B_PICTURE + frame / 3 % 3 * 0x1200,
                   user->x - 2, user->y - 32, 72, 62);
@@ -625,9 +625,9 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
           if (mode == 22 && (i & 1))
             continue;
           if (age > 7)
-            pair[effect->side](canvas, work->sheet + VOLLEY_B_PICTURE,
-                               Q_16_16_UPPER_HALF(shot->x) - 16,
-                               Q_16_16_UPPER_HALF(shot->y) - 32, 32, 64);
+            pair[args->side](canvas, work->sheet + VOLLEY_B_PICTURE,
+                             Q_16_16_UPPER_HALF(shot->x) - 16,
+                             Q_16_16_UPPER_HALF(shot->y) - 32, 32, 64);
         } else if (mode == 22) {
           if (i & 1)
             continue;
@@ -708,7 +708,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
 
       // Mode 24: three glints a frame around each target being hit.
       if (mode == 24) {
-        for (i = 0; i != effect->count; i++) {
+        for (i = 0; i != args->count; i++) {
           if (frame >= i * 4 + 16 && frame < shots - 8) {
             // Default: set for real below.
             widths = NULL;
@@ -742,7 +742,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
                   canvas, work->sheet + gBattleEffect_GlintPictures[cel], x, y,
                   widths[cel], heights[cel]);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-              BattleEffect_FetchRectangleBlitters(effect->side, pair);
+              BattleEffect_FetchRectangleBlitters(args->side, pair);
             }
           }
         }
@@ -751,36 +751,36 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       // The hits.
       if (mode == 9 || mode == 17) {
       } else if (mode == 5 || mode == 23) {
-        for (i = 0; i != effect->count; i++) {
+        for (i = 0; i != args->count; i++) {
           if (frame >= i * 4 + 2 && (frame & 7) == i) {
             work->shakeFrames = 8;
-            BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 4);
+            BattleEffect_TintBattler(args->actors[i], 7, 5, i, 4);
           }
         }
       } else if (mode == 10) {
         if (frame == 18) {
           work->shakeFrames = 4;
-          BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 4);
+          BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 4);
         }
         if (frame == 46)
-          BattleEffect_TintBattler(effect->actor, 7, -1, -1, 0);
+          BattleEffect_TintBattler(args->actor, 7, -1, -1, 0);
         if (frame == 54)
-          BattleEffect_TintBattler(effect->actor, 0, -1, -1, 0);
+          BattleEffect_TintBattler(args->actor, 0, -1, -1, 0);
       } else if (mode == 8) {
         if (frame == 20) {
-          for (i = 0; i != effect->count; i++)
-            BattleEffect_TintBattler(effect->actors[i], 6, 5, i, 60);
+          for (i = 0; i != args->count; i++)
+            BattleEffect_TintBattler(args->actors[i], 6, 5, i, 60);
         }
       } else {
-        for (i = 0; i != effect->count; i++) {
+        for (i = 0; i != args->count; i++) {
           if (frame >= i * 4 + 16 && frame < shots - 8 && (frame & 3) == i) {
             work->shakeFrames = 8;
             if (mode == 6)
-              BattleEffect_TintBattler(effect->actors[i], 14, 5, i, 3);
+              BattleEffect_TintBattler(args->actors[i], 14, 5, i, 3);
             else
-              BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 3);
+              BattleEffect_TintBattler(args->actors[i], 7, 5, i, 3);
             if (mode != 11 && mode != 14)
-              BattleEffect_StartActorMotion(effect->actors[i], 1, 0x10000,
+              BattleEffect_StartActorMotion(args->actors[i], 1, 0x10000,
                                             0x40000, 0x20000, frame + 100);
           }
         }
@@ -793,8 +793,8 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         s32 half;
         s32 *camera;
 
-        object = BattleObject_GetFar(effect->actor)->object;
-        half = BattleUnit_GetEffectHeightFar(effect->actor) / 2;
+        object = BattleObject_GetFar(args->actor)->object;
+        half = BattleUnit_GetEffectHeightFar(args->actor) / 2;
         camera = Ram_HeapSlots->cameraWork;
         Transform_Reset();
         Transform_SetLookAt(camera, camera + 3);
@@ -846,12 +846,12 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       // Hand over to the canvas effect: clear both canvases first.
       Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
       Iwram_ClearWords(canvas, 0x3c00);
-      effect->prelude = 0;
+      args->prelude = 0;
       Task_Remove(Palette_StepFadeTransfer);
       if (mode == 14)
-        BattleEffect_RunImpair(effect);
+        BattleEffect_RunImpair(args);
       else
-        BattleEffect_RunDull(effect);
+        BattleEffect_RunDull(args);
     } else {
       BattleEffect_EndCanvasLayer();
     }

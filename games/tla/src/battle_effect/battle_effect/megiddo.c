@@ -30,7 +30,7 @@ void Render_DrawModelList(struct Model *model);
 
 // Megiddo: the caster rises in a column of light, a winged figure gathers
 // above and dives in a storm of feathers and rings onto the target.
-void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
+void BattleEffect_RunMegiddo(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   u8 *canvas;
   s32 frame;
@@ -78,7 +78,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   transformed = Data_02011000;
   strip = Data_02012000;
   scratchSheet = gData_02014000;
-  BattleMotion_ApproachTargetFar(effect->actor, effect->actor, 150, px(5));
+  BattleMotion_ApproachTargetFar(args->actor, args->actor, 150, px(5));
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
@@ -87,7 +87,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   meshA = work->sheet + 0x5f40;
   meshB = work->sheet + 0x6340;
-  caster = BattleObject_GetFar(effect->actor)->object;
+  caster = BattleObject_GetFar(args->actor)->object;
   x = 0;
   z = 0;
   scale = Q16_ONE;
@@ -146,7 +146,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
                                  work->sheet + 0x2400, 1, 0);
       Graphics_LoadGreyRamp();
       REG_BLDALPHA = BLEND_ALPHA(16, 16);
-      if (!effect->side) {
+      if (!args->side) {
         x = 0xa00000;
       } else {
         x = 0x500000;
@@ -176,7 +176,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     }
     if (frame == 1) {
       transition[4] = 1;
-      list[0] = effect->actor;
+      list[0] = args->actor;
       list[1] = 255;
       BattleActor_SpawnObjectsForListFar(list, 0);
       BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
@@ -184,12 +184,12 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       Palette_BrightenBattleBg(8, 2, 2);
       BattleEffect_SpawnObjects(1, 0x299, 2);
     }
-    EffectPosition_ProjectScaledBattler(effect->actor, &pos);
+    EffectPosition_ProjectScaledBattler(args->actor, &pos);
     if (frame == 3) {
       savedYaw = camera[27];
     }
     if ((u32)(frame - 16) <= 61) {
-      if (!effect->side) {
+      if (!args->side) {
         camera[27] -= 256;
       } else {
         camera[27] += 256;
@@ -253,7 +253,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
     }
     if ((u32)(frame - 84) <= 58) {
-      if (!effect->side) {
+      if (!args->side) {
         x -= 0x20000;
       } else {
         x += 0x20000;
@@ -267,11 +267,11 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       camera[27] = savedYaw;
       x = 0x780000;
       z = 0x300000;
-      targetList[0] = effect->actors[0];
+      targetList[0] = args->actors[0];
       targetList[1] = 255;
       BattleActor_SpawnObjectsForListFar(targetList, 0);
       gCameraSceneParameters[4] = 556;
-      target = BattleObject_GetFar(effect->actors[0])->object;
+      target = BattleObject_GetFar(args->actors[0])->object;
       target[2] = zero;
       target[4] = zero;
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -317,8 +317,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       work->shakeFrames = 8;
       Sound_PlayFar(SE_CRASH);
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
-      BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
+      BattleMotion_ApplyKnockbackFar(args->actors[0], 0);
+      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 16);
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
     }
     /* FAKEMATCH(temporary): f, a copy of frame tested below. */
@@ -558,7 +558,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         }
         model->shade = shade;
         Transform_Reset();
-        if (!effect->side) {
+        if (!args->side) {
           SceneTransform_ApplyPosition3(
               (pos.x / 2 + gMegiddo_RayX[i] - 64) << 16,
               (gMegiddo_RayY[i] + pos.y - 54) << 16, 0);
@@ -568,7 +568,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
               (gMegiddo_RayY[i] + pos.y - 54) << 16, 0);
         }
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-        if (!effect->side) {
+        if (!args->side) {
           Transform_ApplyRoll(gMegiddo_RayRolls[i]);
         } else {
           Transform_ApplyRoll(-gMegiddo_RayRolls[i]);

@@ -11,8 +11,8 @@
 
 /// A mote leaves the first target and is drawn as a ring of 24 sparks
 /// turning about it while it is pulled back to the user.
-void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
-  struct BattleFxWork *work;
+void BattleEffect_RunNirvana(struct BattleEffectArgument *args) {
+  struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle blit;
   struct BattleCamera *view;
@@ -23,7 +23,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   view = Ram_HeapSlots->cameraWork;
   sheet = Ram_HeapSlots->unk64[0];
@@ -32,8 +32,8 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet),
                        128);
-  object = BattleObject_GetFar(effect->actors[0])->object;
-  half = BattleUnit_GetEffectHeightFar(effect->actors[0]) / 2;
+  object = BattleObject_GetFar(args->actors[0])->object;
+  half = BattleUnit_GetEffectHeightFar(args->actors[0]) / 2;
   orb = work->particles;
   SET_POSITION(orb, object->x, object->y + half, object->z);
   orb->velocityX = 0;
@@ -46,19 +46,19 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
   Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != 80; frame++) {
-    struct MotionObject *user = BattleObject_GetFar(effect->actor)->object;
-    s32 userHalf = BattleUnit_GetEffectHeightFar(effect->actor) / 2;
+    struct MotionObject *user = BattleObject_GetFar(args->actor)->object;
+    s32 userHalf = BattleUnit_GetEffectHeightFar(args->actor) / 2;
 
     if (frame == 64)
       BattlePlayback_StartFar(134);
     Transform_Reset();
     Transform_SetLookAt(view->eye, view->pos);
     if (frame == 72)
-      BattleEffect_TintBattler(effect->actor, 7, -1, -1, 0);
+      BattleEffect_TintBattler(args->actor, 7, -1, -1, 0);
     if (frame == 79)
-      BattleEffect_TintBattler(effect->actor, 0, -1, -1, 0);
+      BattleEffect_TintBattler(args->actor, 0, -1, -1, 0);
     if (frame == 0)
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 42);
+      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 42);
     if (orb->variant == 0) {
       s32 size = 6;
 
@@ -133,7 +133,7 @@ static inline s16 *Fixed_Halves(s32 *value) {
 // they fly; from frame 64 the background scrolls after them and each
 // boulder turns toward the target; every boulder that reaches the target
 // shakes the screen and knocks the target back.
-void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
+void BattleEffect_RunStoneJustice(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle blit;
@@ -162,12 +162,12 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
   scroll = 0;
   scrollSpeed = 0;
   cueTimer = 0;
-  user = BattleObject_GetFar(effect->actor)->object;
+  user = BattleObject_GetFar(args->actor)->object;
   Actor_SetAnimationSpeedFar(user, 48);
 
   for (frame = 0; frame != 107; frame++) {
-    EffectPosition_ProjectScaledBattler(effect->actor, &userPosition);
-    EffectPosition_ProjectScaledBattler(effect->actors[0], &targetPosition);
+    EffectPosition_ProjectScaledBattler(args->actor, &userPosition);
+    EffectPosition_ProjectScaledBattler(args->actors[0], &targetPosition);
     if (frame == 0)
       Sound_PlayFar(SE_GATE_MOVE);
     if (frame == 64)
@@ -178,7 +178,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
     if (frame == 0) {
       for (i = 0; i != ROCKS; i++) {
         rock = &work->particles[i];
-        if (effect->side == 0)
+        if (args->side == 0)
           rock->x = (Random16() % 40 + 8) << 16;
         else
           rock->x = (120 - Random16() % 40) << 16;
@@ -196,7 +196,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
 
     // From frame 64 the background follows the boulders, ever faster.
     if (frame > 64) {
-      if (effect->side == 0)
+      if (args->side == 0)
         scroll += scrollSpeed;
       else
         scroll -= scrollSpeed;
@@ -223,7 +223,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
            Fixed_Halves(&rock->y)[1] - gSpire_ShardHeights[cell] / 2, width,
            gSpire_ShardHeights[cell]);
       if (rock->variant == 0) {
-        if (effect->side == 0) {
+        if (args->side == 0) {
           if (targetPosition.x >
               Fixed_Halves(&rock->x)[1] + userPosition.x - 64) {
             rock->variant = 1;
@@ -240,7 +240,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
       BattleEffectKernels_IntegrateVector2(rock, 60, 0);
       rock->velocityZ += rock->z;
       if (frame > i / 2 + 64) {
-        if (effect->side == 0)
+        if (args->side == 0)
           rock->velocityX -= px(1) / 2;
         else
           rock->velocityX += px(1) / 2;
@@ -258,9 +258,9 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
         cueTimer = 8;
         Sound_PlayFar(SE_HEAVY_IMPACT);
       }
-      BattleEffect_StartActorMotion(effect->actors[0], 1, px(2), px(4), px(2),
+      BattleEffect_StartActorMotion(args->actors[0], 1, px(2), px(4), px(2),
                                     150);
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 4);
+      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 4);
       work->shakeFrames = 2;
     }
 
@@ -293,7 +293,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
 /// reworked it: the same two mirrored halves of a column and sixteen sparks,
 /// over a longer effect in which the target is thrown up and 32 motes of its
 /// soul drift back into the user.
-void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
+void BattleEffect_RunSoulShatter(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sheet;
@@ -318,8 +318,8 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                        128);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  target = BattleObject_GetFar(effect->actors[0])->object;
-  EffectPosition_ProjectBattler(effect->actors[0], &position);
+  target = BattleObject_GetFar(args->actors[0])->object;
+  EffectPosition_ProjectBattler(args->actors[0], &position);
   position.x /= 2;
   work->shakeFrames = 8;
 
@@ -366,22 +366,22 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
     if (frame == 10) {
       work->shakeFrames = 8;
       Sound_PlayFar(SE_CLATTER);
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 80);
+      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 80);
       target->verticalMotionStrength = 0;
       target->y = px(32);
     }
     if (frame == 80)
       target->verticalMotionStrength = 0xab85;
     if (frame == 24)
-      BattleEffect_TintBattler(effect->actor, -1, 3, -1, 0);
+      BattleEffect_TintBattler(args->actor, -1, 3, -1, 0);
     if (frame == 40)
       Sound_PlayFar(SE_SWIRL);
     if (frame == 32)
       BattlePlayback_StartFar(134);
     if (frame == 64)
-      BattleEffect_TintBattler(effect->actor, 7, -1, -1, 0);
+      BattleEffect_TintBattler(args->actor, 7, -1, -1, 0);
     if (frame == 88)
-      BattleEffect_TintBattler(effect->actor, 0, -1, -1, 0);
+      BattleEffect_TintBattler(args->actor, 0, -1, -1, 0);
 
     // The column: two 14-pixel halves, the right one mirrored.
     if (frame > 7) {
@@ -419,7 +419,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
 
     // The sparks: from frame 8, two more each frame, through seven
     // pictures three frames apiece; one in four is drawn mirrored.
-    BattleEffect_FetchRectangleBlitters(effect->side, draw);
+    BattleEffect_FetchRectangleBlitters(args->side, draw);
     {
       struct EffectStep *spark;
 
@@ -450,8 +450,8 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
       s32 userHalfHeight;
       struct BattleCamera *camera;
 
-      user = BattleObject_GetFar(effect->actor)->object;
-      userHalfHeight = BattleUnit_GetEffectHeightFar(effect->actor) / 2;
+      user = BattleObject_GetFar(args->actor)->object;
+      userHalfHeight = BattleUnit_GetEffectHeightFar(args->actor) / 2;
       camera = Ram_HeapSlots->cameraWork;
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->pos);
@@ -564,7 +564,7 @@ void Render_ProjectVertices__ability_effects(
 // first frame) grows up around the target in rings of mist while the
 // camera circles, the caster closes in at frame 56, and at 64 the spire
 // shatters into 64 tumbling shards.
-void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
+void BattleEffect_RunSerac(struct BattleEffectArgument *args) {
   void *canvas;
   struct BattleEffectWork *work;
   s32 frame;
@@ -576,12 +576,12 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   BattleEffect_ConfigureEffectDisplay();
-  if (effect->side == 0) {
+  if (args->side == 0) {
     BattleEffect_StartTiledCanvasFilled(0x2000);
   } else {
     BattleEffect_StartTiledCanvas(0x2000);
   }
-  BattleEffect_RunDjinniEntrance(effect, (effect->side << 4) | 0x101, screenA,
+  BattleEffect_RunDjinniEntrance(args, (args->side << 4) | 0x101, screenA,
                                  screenB);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
   Iwram_ClearWordsEntry(canvas, 0x3c00);
@@ -621,7 +621,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
 
     camera = (struct BattleCamera *)Ram_HeapSlots->cameraWork;
     savedYaw = camera->yaw;
-    target = BattleObject_GetFar(effect->actors[0])->object;
+    target = BattleObject_GetFar(args->actors[0])->object;
     REG_BG2PA = Q_8_8(1);
     REG_BG2X = 0;
 
@@ -692,12 +692,12 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
         } else {
           turn = 1600 - frame * 20;
         }
-        if (effect->side == 0) {
+        if (args->side == 0) {
           camera->yaw -= turn;
         } else {
           camera->yaw += turn;
         }
-        if (effect->side == 0) {
+        if (args->side == 0) {
           if ((s16)camera->yaw < -14000) {
             camera->yaw = -14000;
           }
@@ -782,24 +782,24 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
         BattlePlayback_StartFar(-1);
       }
       if (frame == 30) {
-        BattleEffect_TintBattler(effect->actors[0], 9, 5, -1, 0);
+        BattleEffect_TintBattler(args->actors[0], 9, 5, -1, 0);
       }
       if (frame == 26) {
         work->shakeFrames = 8;
       }
       if (frame == 64) {
         work->shakeFrames = 4;
-        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 4);
+        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 4);
       }
       if (frame == 70) {
-        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 4);
+        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 4);
       }
       if (frame == 56) {
         // The caster closes four fifths of the way.
         struct Actor *caster =
-            (struct Actor *)BattleObject_GetFar(effect->actor)->object;
+            (struct Actor *)BattleObject_GetFar(args->actor)->object;
         struct Actor *to =
-            (struct Actor *)BattleObject_GetFar(effect->actors[0])->object;
+            (struct Actor *)BattleObject_GetFar(args->actors[0])->object;
         s32 x = caster->x;
         s32 z;
         s32 dx = (to->x - x) * 80 / 100;

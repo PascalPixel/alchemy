@@ -163,8 +163,7 @@ void Render_DrawModelList__battle_effect(struct Model *model) __asm__(
 /// starts eight wisps of smoke and a burst of sparks, and the battle moves on
 /// at the first. Around them the mode's flags add rising wisps, motes that
 /// stream back to the user, glints, sparks, a flash or a star.
-void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
-                                  s32 mode) {
+void BattleEffect_RunTargetStrike(struct BattleEffectArgument *args, s32 mode) {
   struct EffectPosition ground;
   struct EffectPosition targetPosition;
   struct EffectPosition alternate;
@@ -244,8 +243,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
 
   for (k = 0; k != 1; k++) {
     // The wisps start at the target's feet, waiting (-1) until a hit.
-    target = BattleObject_GetFar(effect->actors[k])->object;
-    EffectPosition_ProjectBattler(effect->actors[k], &ground);
+    target = BattleObject_GetFar(args->actors[k])->object;
+    EffectPosition_ProjectBattler(args->actors[k], &ground);
     for (i = 0; i != 64; i++) {
       struct EffectStep *step = &work->particles[i];
 
@@ -276,7 +275,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
         s32 speed = Random16() & 255;
 
         gSparks[i].velocityX = (Random16() & 0x1ff) << 11;
-        if (effect->side == 1)
+        if (args->side == 1)
           gSparks[i].velocityX = -gSparks[i].velocityX;
         gSparks[i].velocityY = Trig_Sin(angle) * speed >> 4;
         gSparks[i].velocityZ = Trig_Cos(angle) * speed >> 4;
@@ -305,8 +304,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // Aim at the middle of the first target.
-  EffectPosition_ProjectScaledBattler(effect->actors[0], &targetPosition);
-  EffectPosition_ProjectBattler(effect->actors[0], &alternate);
+  EffectPosition_ProjectScaledBattler(args->actors[0], &targetPosition);
+  EffectPosition_ProjectBattler(args->actors[0], &alternate);
   targetPosition.y += (alternate.y - targetPosition.y) / 2;
 
   for (frame = 0; frame != RECORD(mode, RECORD_FRAMES); frame++) {
@@ -322,13 +321,12 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
 
         if (frame % (RECORD(mode, RECORD_RATE) * 6) == 0 &&
             (u32)(mode - 12) <= 1) {
-          EffectPosition_ProjectScaledBattler(effect->actors[0],
-                                              &targetPosition);
-          EffectPosition_ProjectBattler(effect->actors[0], &alternate);
+          EffectPosition_ProjectScaledBattler(args->actors[0], &targetPosition);
+          EffectPosition_ProjectBattler(args->actors[0], &alternate);
           targetPosition.y += (alternate.y - targetPosition.y) / 2;
           targetPosition.y += (Random16() & 15) - 8;
         }
-        if (effect->side == 1) {
+        if (args->side == 1) {
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               BLITTER_MAX);
@@ -384,19 +382,19 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
 
           if (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH) {
             work->shakeFrames = 8;
-            BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 12);
-            BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
+            BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 12);
+            BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
             for (i = 0; i != 32; i++)
               gSparks[i].variant = (Random16() & 15) + 15;
           } else if (RECORD(mode, RECORD_FLAGS) & FLAG_HEAVY) {
             work->shakeFrames = 8;
-            BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 12);
-            BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
+            BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 12);
+            BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
             for (i = 0; i != 256; i++)
               gSparks[i].variant = (Random16() & 15) + 15;
           } else {
             work->shakeFrames = 4;
-            BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
+            BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
             for (i = 0; i != 32; i++) {
               struct EffectStep *step =
                   &gSparks[frame / (RECORD(mode, RECORD_RATE) * 6) * 32 + i];
@@ -456,7 +454,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
       // The hit, on each column's fourth picture.
       if (frame % (RECORD(mode, RECORD_RATE) * 4) ==
           RECORD(mode, RECORD_RATE) * 3) {
-        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
+        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
         work->shakeFrames = 4;
         if ((RECORD(mode, RECORD_FLAGS) & FLAG_FLASH) ||
             (RECORD(mode, RECORD_FLAGS) & FLAG_HEAVY))
@@ -468,14 +466,14 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
           Sound_PlayFar(SE_IMPACT);
         if (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH) {
           work->shakeFrames = 8;
-          BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 12);
-          BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
+          BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 12);
+          BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
           for (i = 0; i != 32; i++)
             gSparks[i].variant = (Random16() & 15) + 15;
         } else if (RECORD(mode, RECORD_FLAGS) & FLAG_HEAVY) {
           work->shakeFrames = 8;
-          BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 12);
-          BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
+          BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 12);
+          BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
           for (i = 0; i != 256; i++)
             gSparks[i].variant = (Random16() & 15) + 15;
         }
@@ -501,8 +499,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
 
     // Three glints a frame around the target's middle.
     if ((RECORD(mode, RECORD_FLAGS) & FLAG_GLINTS) && glint) {
-      EffectPosition_ProjectScaledBattler(effect->actors[0], &center);
-      EffectPosition_ProjectBattler(effect->actors[0], &alternate);
+      EffectPosition_ProjectScaledBattler(args->actors[0], &center);
+      EffectPosition_ProjectBattler(args->actors[0], &alternate);
       center.y += (alternate.y - center.y) / 2;
       for (i = 0; i != 3; i++) {
         s32 image = frame & 3;
@@ -539,7 +537,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
                         BLITTER_ADDITIVE);
     draw[1] = gBlitterAlternate;
     for (k = 0; k != 1; k++) {
-      source = BattleObject_GetFar(effect->actor)->object;
+      source = BattleObject_GetFar(args->actor)->object;
 
       // Wisps of smoke rise and spread for 24 frames.
       if (RECORD(mode, RECORD_FLAGS) & FLAG_WISPS) {
@@ -581,9 +579,9 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
         if (mode == 11)
           size = 8;
         if (frame == 55)
-          BattleEffect_TintBattler(effect->actor, 7, -1, -1, 0);
+          BattleEffect_TintBattler(args->actor, 7, -1, -1, 0);
         if (frame == 90)
-          BattleEffect_TintBattler(effect->actor, 0, -1, -1, 0);
+          BattleEffect_TintBattler(args->actor, 0, -1, -1, 0);
         for (i = 0; i != 64; i++) {
           struct EffectStep *step = &gMotes[i];
 
@@ -685,7 +683,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
 // frames and out from frame 104; from frame 24 to 84 the target flashes and
 // the screen shakes every 4 frames, with a sound every 8.
 
-void BattleEffect_RunBladeRain(struct BattleEffectArgument *effect) {
+void BattleEffect_RunBladeRain(struct BattleEffectArgument *args) {
   struct EffectPosition pos;
   BlitterPair draw;
   struct BattleEffectWork *work;
@@ -717,7 +715,7 @@ void BattleEffect_RunBladeRain(struct BattleEffectArgument *effect) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // Centre BG2 on the first target.
-  EffectPosition_ProjectScaledBattler(effect->actors[0], &pos);
+  EffectPosition_ProjectScaledBattler(args->actors[0], &pos);
   REG_BG2X = (64 - pos.x) << 8;
 
   // Daggers start in columns 16 to 111; the further from the middle, the
@@ -792,7 +790,7 @@ void BattleEffect_RunBladeRain(struct BattleEffectArgument *effect) {
     // From frame 24 to 84, every 4 frames: flash the target for 2 frames
     // and shake the screen; every 8, a sound.
     if (frame >= 23 && frame <= 87 && (frame & 3) == 0) {
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 2);
+      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 2);
       work->shakeFrames = 1;
       if ((frame & 7) == 0)
         Sound_PlayFar(SE_IMPACT);
@@ -808,12 +806,9 @@ void BattleEffect_RunBladeRain(struct BattleEffectArgument *effect) {
 }
 
 // Heap slots, as byte offsets into Ram_HeapSlots.
-#define SLOT_BATTLE_EFFECT 92 // battleFxWork[0]
-#define SLOT_BATTLE_SHEET 100 // unk64[0]
 
 // The whole effect work block: struct BattleEffectWork names only its first
 // 0x78f4 bytes.
-#define BATTLE_EFFECT_WORK_SIZE 0x7b7c
 
 // The flecks live in the map cell buffer.
 #define gFlecks ((struct EffectStep *)Ram_MapCellBuffer)
@@ -829,7 +824,7 @@ void BattleEffect_RunBladeRain(struct BattleEffectArgument *effect) {
 // effect->variant + 1, from 1 to 4, the flecks' size. At frame 16 the first
 // target flashes; the last 6 frames fade out.
 
-void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
+void BattleEffect_RunElementPillar(struct BattleEffectArgument *args) {
   struct EffectPosition ground;
   struct EffectPosition pos;
   s32 point[3];
@@ -842,12 +837,12 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
   void *palette;
   s32 i;
 
-  work = HeapSlot_Alloc(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
+  work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
   canvas = HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
-  sheet = HeapSlot_Alloc(SLOT_BATTLE_SHEET, 0x60e);
+  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 1550);
   camera = Ram_HeapSlots->cameraWork;
   work->vblanksSinceTransfer = 1;
-  work->effect = effect;
+  work->effect = args;
   BattleEffect_StartCanvasLayer(0);
   work->fadeFrames = 24;
   work->fadeStep = 0;
@@ -855,7 +850,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
   REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_IceTileSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
-  switch (effect->kind) {
+  switch (args->kind) {
   case 0:
     palette = Resource_GetTableEntry((s32)&ResourceId_YellowPaletteA);
     break;
@@ -885,20 +880,20 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  effect->variant++;
-  if (effect->variant <= 0)
-    effect->variant = 1;
-  if (effect->variant > 4)
-    effect->variant = 4;
+  args->variant++;
+  if (args->variant <= 0)
+    args->variant = 1;
+  if (args->variant > 4)
+    args->variant = 4;
   Sound_PlayFar(SE_POWER_UP);
 
   for (frame = 0; frame != 56; frame++) {
-    EffectPosition_ProjectBattler(effect->actor, &ground);
+    EffectPosition_ProjectBattler(args->actor, &ground);
     REG_BG2X = (64 - ground.x) << 8;
     if (frame > 49)
       REG_BLDALPHA = (112 - frame * 2) | 0x1000;
     if (frame == 16)
-      BattleEffect_TintBattler(effect->actors[0], 7, -1, 0, 20);
+      BattleEffect_TintBattler(args->actors[0], 7, -1, 0, 20);
 
     // The pillar: the left half at x 47, then the right half mirrored at
     // x 64, each with its glow.
@@ -947,7 +942,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
         fleck->z += 64;
         EffectPosition_ProjectPoint(point, &pos);
         pos.x /= 2;
-        size = (i & 1) + effect->variant;
+        size = (i & 1) + args->variant;
         draw[0](canvas, sheet + gBattleEffect_FlarePictures[size - 1],
                 pos.x - size, pos.y - size, size * 2, size * 2);
       }
@@ -959,16 +954,16 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
-  HeapSlot_Release(SLOT_BATTLE_SHEET);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
   HeapSlot_Release(HEAP_SLOT_CANVAS);
-  HeapSlot_Release(SLOT_BATTLE_EFFECT);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 #define BACKGROUND(battle) (((union BattleBackgroundId *)(battle)->unk670)->id)
 
 /// Unused: nothing refers to it. Shows the cloud swirl
 /// (BattleEffect_RunCloudSwirl), then the battle background fading in, until A.
-void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
+void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   struct BattleWork *battle;
@@ -978,13 +973,13 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
   s32 j;
   s32 k;
 
-  work = HeapSlot_Alloc(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
+  work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
   canvas = HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
   battle = Ram_HeapSlots->battleWork;
   view = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
-  work->effect = effect;
+  work->effect = args;
   work->vblanksSinceTransfer = 1;
-  BattleEffect_RunCloudSwirl(effect);
+  BattleEffect_RunCloudSwirl(args);
 
   // Make BG2 a 128x128 canvas, as BattleEffect_StartCanvasLayer does.
   BattleEffect_ClearActorTimers();
@@ -1037,7 +1032,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
   work->savedBg1Y = gBgScroll[1].y;
   BattleBackground_LoadFar(1, BACKGROUND(battle), -1);
   Palette_BrightenSavedBattleBg(-31, -31, -31);
-  BattleEffect_TintBattler(effect->actors[0], 7, 3, 0, 30);
+  BattleEffect_TintBattler(args->actors[0], 7, 3, 0, 30);
 
   // Fade the colours up a shade every two frames; B starts again, A ends.
   for (frame = 0; frame != 32096; frame++) {
@@ -1055,15 +1050,15 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  BattleEffect_TintBattler(effect->actors[0], -1, 1, -1, 0);
+  BattleEffect_TintBattler(args->actors[0], -1, 1, -1, 0);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = 32;
   BattleBackground_SetModeFar(2, BACKGROUND(battle), 0);
   wait(1);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
-  HeapSlot_Release(SLOT_BATTLE_SHEET);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
   HeapSlot_Release(HEAP_SLOT_CANVAS);
-  HeapSlot_Release(SLOT_BATTLE_EFFECT);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 #undef SLOT_BLITTER
 #undef SLOT_BLITTER_ALTERNATE
@@ -1089,8 +1084,5 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
 #undef gMotes
 #undef gSparks
 #undef BUILD_BLITTER
-#undef SLOT_BATTLE_EFFECT
-#undef SLOT_BATTLE_SHEET
-#undef BATTLE_EFFECT_WORK_SIZE
 #undef gFlecks
 #undef BACKGROUND

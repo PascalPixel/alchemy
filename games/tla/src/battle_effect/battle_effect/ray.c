@@ -23,7 +23,7 @@
 // canvas wiped every five frames, and each bolt throws the variant's
 // number of sparks; the sparks fall and bounce off y = 120 until frame 64.
 // The targets are hit from frame 4, four frames apart.
-void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
+void BattleEffect_RunRay(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -39,11 +39,11 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
   xOffset = 0;
-  if (effect->side == 0)
+  if (args->side == 0)
     BattleEffect_StartTiledCanvasFilled(0x2001);
   else
     BattleEffect_StartTiledCanvas(0x2001);
-  if (effect->variant == 2)
+  if (args->variant == 2)
     REG_BG2PA = Q_8_8(0.5); // twice as wide
   else
     REG_BG2PA = Q_8_8(1);
@@ -58,7 +58,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
 
   // Scroll the canvas: a fixed offset for the wide variant, else onto the
   // targets' midpoint.
-  if (effect->variant == 2) {
+  if (args->variant == 2) {
     if (work->effect->side == 1)
       REG_BG2X = -0x1000;
     else
@@ -109,7 +109,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
         angle = ((frame << 11) + TRIG_TURN / 4) * bolt;
         x = (((32 - frame) * Trig_Sin(angle)) >> 16) + 64;
         y = -((Trig_Cos(angle) << 3) >> 16) - 8;
-        if (effect->variant == 0)
+        if (args->variant == 0)
           draw[0](canvas,
                   work->sheet + (Random16() & 3) * BOLT_SIZE + BOLT_SHEET,
                   xOffset + x + (Random16() & 7) - 16, y, 24, 120);
@@ -134,7 +134,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
             spark->velocityY = -(Trig_Cos(spread) * speed * 2) >> 7;
             spark->variant = (Random16() & 7) + 32;
             count++;
-            if (count == gRay_Sparks[effect->variant][1])
+            if (count == gRay_Sparks[args->variant][1])
               break;
           }
         }
@@ -164,9 +164,9 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
 
     // The targets are hit four frames apart.
     if (frame >= 4 && frame < 96) {
-      for (i = 0; i != effect->count; i++) {
+      for (i = 0; i != args->count; i++) {
         if (frame == i * 4 + 4)
-          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 10);
+          BattleEffect_TintBattler(args->actors[i], 7, 5, i, 10);
       }
     }
     BattleCamera_Shake(2, 4);

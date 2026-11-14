@@ -32,7 +32,7 @@
 // Particles 0-31 are the shards and 32-63 the puffs. A particle's variant is
 // its age: -1 is a shard still falling or a free puff.
 
-void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
+void BattleEffect_RunIce(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -70,7 +70,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
 
       shard = &work->particles[i];
       x = (Random16() & 63) + (Random16() & 7) + 24;
-      if (effect->side == 1)
+      if (args->side == 1)
         x = x + slant + 24;
       else
         x = x - slant + 80;
@@ -84,7 +84,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
 
   // Falling shards draw at their maximum; the puffs add their light. Both
   // mirror for the other side.
-  if (effect->side == 0) {
+  if (args->side == 0) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, COMPOSITE_CLIP_Y, BLITTER_MAX);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, COMPOSITE_CLIP_Y,
                         BLITTER_ADDITIVE);
@@ -99,7 +99,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
 
   // Window 0's left and right edge for each line: a band slanting with the
   // shards' fall, then the targets' full width, then nothing.
-  if (effect->side == 0) {
+  if (args->side == 0) {
     line = gMapCellBuffer;
     for (i = 0; i != 160; i++) {
       if (i >= 8 && i <= 103)
@@ -123,17 +123,17 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
 
   Task_Add(BattleEffect_ArmWin0HBlankDma, TASK_PASS_FRAME);
   work->transferMode = CANVAS_COPY_AND_FADE;
-  if (effect->variant == 1)
+  if (args->variant == 1)
     work->transferValue = 75;
   else
     work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
-  for (frame = 0; frame != FRAME_COUNT(effect->variant); frame++) {
-    if (frame == FRAME_COUNT(effect->variant) - 16)
+  for (frame = 0; frame != FRAME_COUNT(args->variant); frame++) {
+    if (frame == FRAME_COUNT(args->variant) - 16)
       BattlePlayback_StartFar(PHASE_RESULTS);
 
-    for (i = 0; i != SHARD_COUNT(effect->variant); i++) {
+    for (i = 0; i != SHARD_COUNT(args->variant); i++) {
       shard = &work->particles[i];
 
       // A falling shard moves 8 pixels down and 8 across; at the ground
@@ -142,10 +142,10 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
         s32 x = shard->x / 8;
         s32 y = shard->y / 8;
 
-        ((DrawRectangle)draw[effect->variant == 2 ? 1 : 0])(canvas, work->sheet,
-                                                            x, y, 32, 32);
+        ((DrawRectangle)draw[args->variant == 2 ? 1 : 0])(canvas, work->sheet,
+                                                          x, y, 32, 32);
         if (shard->y <= 0x27f) {
-          if (effect->side == 0)
+          if (args->side == 0)
             shard->x -= 64;
           else
             shard->x += 64;
@@ -155,8 +155,8 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
             Sound_PlayFar(SE_ICE);
           work->shakeFrames = 2;
           shard->variant = 0;
-          for (k = 0; k != effect->count; k++)
-            BattleEffect_TintBattler(effect->actors[k], 9, 5, k, 8);
+          for (k = 0; k != args->count; k++)
+            BattleEffect_TintBattler(args->actors[k], 9, 5, k, 8);
         }
       }
 
@@ -167,7 +167,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
         s32 y = shard->y / 8;
 
         if (shard->variant >= 1 && shard->variant <= 14) {
-          ((DrawRectangle)draw[effect->variant == 2 ? 1 : 0])(
+          ((DrawRectangle)draw[args->variant == 2 ? 1 : 0])(
               canvas, work->sheet + 0x400 + ((shard->variant / 3) << 10), x, y,
               32, 32);
         }
@@ -197,7 +197,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
           s32 x = puff->x / 8 - (gBattleEffect_SparkleSizes[image] >> 1);
           s32 y = puff->y / 8 - (gBattleEffect_SparkleSizes[image] >> 1);
 
-          ((DrawRectangle)draw[effect->variant == 2 ? 1 : 0])(
+          ((DrawRectangle)draw[args->variant == 2 ? 1 : 0])(
               canvas, graphics + gBattleEffect_SparklePictures[image], x, y,
               gBattleEffect_SparkleSizes[image],
               gBattleEffect_SparkleSizes[image]);
@@ -242,7 +242,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
 // after the line table. A variant of -1 is a drop still falling or a free
 // droplet.
 
-void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
+void BattleEffect_RunDouse(struct BattleEffectArgument *args) {
   void **heapCache;
   struct BattleEffectWork *work;
   void *canvas;
@@ -288,8 +288,8 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
 
     drop = &work->particles[i];
     x = Random16() & 63;
-    y = -(i * DROP_SPACING(effect->variant) + 16);
-    if (effect->side == 1)
+    y = -(i * DROP_SPACING(args->variant) + 16);
+    if (args->side == 1)
       x = x + y / 2 - 48;
     else
       x = x - y / 2 + 72;
@@ -300,7 +300,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
 
   // Window 0's left and right edge for each line: a band slanting with the
   // drops' fall, then the targets' width, then nothing.
-  if (effect->side == 0) {
+  if (args->side == 0) {
     line = gMapCellBuffer;
     for (i = 0; i != 160; i++) {
       if (i >= 8 && i <= 103)
@@ -324,20 +324,20 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
 
   // Douse copies the canvas plainly; Drench and Deluge blend it in.
   Task_Add(BattleEffect_ArmWin0HBlankDma, TASK_PASS_FRAME);
-  if (effect->variant == 0) {
+  if (args->variant == 0) {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  } else if (effect->variant == 1) {
+  } else if (args->variant == 1) {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
-  for (frame = 0; frame != FRAME_COUNT(effect->variant); frame++) {
-    if (frame == FRAME_COUNT(effect->variant) - 64)
+  for (frame = 0; frame != FRAME_COUNT(args->variant); frame++) {
+    if (frame == FRAME_COUNT(args->variant) - 64)
       BattlePlayback_StartFar(PHASE_RESULTS);
 
-    for (i = 0; i != DROP_COUNT(effect->variant); i++) {
+    for (i = 0; i != DROP_COUNT(args->variant); i++) {
       s32 x;
       s32 y;
 
@@ -348,7 +348,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
         // Falling: draw the drop and move it on, or land it.
         draw[0](canvas, work->sheet + 0x604, x, y, 24, 24);
         if (drop->y <= 0x27f) {
-          if (effect->side == 0)
+          if (args->side == 0)
             drop->x -= 32;
           else
             drop->x += 32;
@@ -357,13 +357,13 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
           // Landed: throw this drop's droplets up from its middle in 16.16
           // fixed point, sound every fourth landing and flash the targets.
           drop->variant = 0;
-          for (k = 0; k != SPLASH_COUNT(effect->variant); k++) {
+          for (k = 0; k != SPLASH_COUNT(args->variant); k++) {
             splash =
-                &gDropSplashes->splashes[i * SPLASH_COUNT(effect->variant) + k];
+                &gDropSplashes->splashes[i * SPLASH_COUNT(args->variant) + k];
             splash->x = (x + 12) << 16;
             splash->y = y << 16;
             splash->velocityX = ((Random16() & 255) - 128) << 9;
-            if (effect->variant == 2)
+            if (args->variant == 2)
               splash->velocityY = ((Random16() & 0x1ff) - 0x180) << 10;
             else
               splash->velocityY = ((Random16() & 255) - 255) << 10;
@@ -371,8 +371,8 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
           }
           if ((i & 3) == 0)
             Sound_PlayFar(SE_WATER);
-          for (k = 0; k != effect->count; k++)
-            BattleEffect_TintBattler(effect->actors[k], 7, 5, k, 2);
+          for (k = 0; k != args->count; k++)
+            BattleEffect_TintBattler(args->actors[k], 7, 5, k, 2);
         }
       } else {
         // Landed: four frames of the small splash, four of the large one.

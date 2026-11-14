@@ -24,7 +24,7 @@
 // fall into it; a small Djinn (the kind) appears there at frame 54 and
 // bursts into motes at frame 64. The anchor's screen point goes to screen
 // and its world point to world.
-void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
+void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *args,
                                     u32 packed, s32 *screen, s32 *world) {
   s32 base[3];
   s32 goal[3];
@@ -122,8 +122,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
   }
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-  actor = BattleObject_GetFar(effect->actor)->object;
-  target = BattleObject_GetFar(effect->actors[0])->object;
+  actor = BattleObject_GetFar(args->actor)->object;
+  target = BattleObject_GetFar(args->actors[0])->object;
 
   // 64 sparks start on the ground around the caster, flying outward.
   for (i = 0; i != 64; i++) {
@@ -218,9 +218,9 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
     }
     SceneTransform_ApplyPosition(base);
     if (frame == 0)
-      BattleEffect_TintBattler(effect->actor, 7, -1, -1, 0);
+      BattleEffect_TintBattler(args->actor, 7, -1, -1, 0);
     if (frame == 24)
-      BattleEffect_TintBattler(effect->actor, 0, -1, -1, 0);
+      BattleEffect_TintBattler(args->actor, 0, -1, -1, 0);
 
     // The 32 sparks spin about the centre, each on its own axis, and from
     // their 24th frame fall into it; a spark that has arrived stops.
@@ -351,65 +351,65 @@ DEFINE_EFFECT_KIND(BattleEffect_RunWingStroke, BattleEffect_RunProjectileVolley,
 DEFINE_EFFECT_KIND(BattleEffect_RunWingBeat, BattleEffect_RunProjectileVolley,
                    4)
 
-void BattleEffect_RunCuttingEdge(struct BattleEffectArgument *effect) {
+void BattleEffect_RunCuttingEdge(struct BattleEffectArgument *args) {
   struct Actor *object;
 
-  object = (struct Actor *)BattleObject_GetFar(effect->actor)->object;
+  object = (struct Actor *)BattleObject_GetFar(args->actor)->object;
   Actor_SelectAnimationFar(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x30);
-  BattleEffect_RunProjectileVolley(effect, 5);
+  BattleEffect_RunProjectileVolley(args, 5);
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
-void BattleEffect_RunHeatWave(struct BattleEffectArgument *effect) {
+void BattleEffect_RunHeatWave(struct BattleEffectArgument *args) {
   struct Actor *object;
 
-  object = (struct Actor *)BattleObject_GetFar(effect->actor)->object;
+  object = (struct Actor *)BattleObject_GetFar(args->actor)->object;
   Actor_SelectAnimationFar(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x30);
-  BattleEffect_RunProjectileVolley(effect, 6);
+  BattleEffect_RunProjectileVolley(args, 6);
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
 DEFINE_EFFECT_KIND(BattleEffect_RunSleet, BattleEffect_RunProjectileVolley, 7)
 
-void BattleEffect_RunBlizzard(struct BattleEffectArgument *effect) {
+void BattleEffect_RunBlizzard(struct BattleEffectArgument *args) {
   struct Actor *object;
 
-  object = (struct Actor *)BattleObject_GetFar(effect->actor)->object;
+  object = (struct Actor *)BattleObject_GetFar(args->actor)->object;
   Actor_SelectAnimationFar(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x30);
-  BattleEffect_RunProjectileVolley(effect, 9);
+  BattleEffect_RunProjectileVolley(args, 9);
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
-void BattleEffect_RunBlazeRush(struct BattleEffectArgument *effect) {
+void BattleEffect_RunBlazeRush(struct BattleEffectArgument *args) {
   struct Actor *object;
 
-  object = (struct Actor *)BattleObject_GetFar(effect->actor)->object;
+  object = (struct Actor *)BattleObject_GetFar(args->actor)->object;
   Actor_SelectAnimationFar(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x30);
-  BattleEffect_RunProjectileVolley(effect, 12);
+  BattleEffect_RunProjectileVolley(args, 12);
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
-void BattleEffect_RunHydroSlash(struct BattleEffectArgument *effect) {
+void BattleEffect_RunHydroSlash(struct BattleEffectArgument *args) {
   struct Actor *object;
 
-  object = (struct Actor *)BattleObject_GetFar(effect->actor)->object;
+  object = (struct Actor *)BattleObject_GetFar(args->actor)->object;
   Actor_SelectAnimationFar(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x30);
-  BattleEffect_RunProjectileVolley(effect, 13);
+  BattleEffect_RunProjectileVolley(args, 13);
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
-void BattleEffect_RunDiamondDust(struct BattleEffectArgument *effect) {
+void BattleEffect_RunDiamondDust(struct BattleEffectArgument *args) {
   struct Actor *object;
 
-  object = (struct Actor *)BattleObject_GetFar(effect->actor)->object;
+  object = (struct Actor *)BattleObject_GetFar(args->actor)->object;
   Actor_SelectAnimationFar(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x30);
-  BattleEffect_RunProjectileVolley(effect, 14);
+  BattleEffect_RunProjectileVolley(args, 14);
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
@@ -465,7 +465,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunChillBreath,
 #define PHASE_RESULTS 133 // BattlePlayback_StartFar: the results phase begins
 #define PHASE_LATE_RESULTS 134
 
-void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
+void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *args,
                                       s32 mode) {
   struct EffectPosition screen;
   struct EffectPosition world;
@@ -497,22 +497,22 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
   camera = Ram_HeapSlots->cameraWork;
   sheet = Ram_HeapSlots->unk64[0];
   seWait = 0;
-  kind = effect->variant;
+  kind = args->variant;
   BattleEffect_StartCanvasLayer(1);
-  if (effect->prelude == 1)
-    BattleEffect_RunDjinniEntrance(effect, 1 | effect->side << 4 | 2 << 5,
-                                   &screen, &world);
+  if (args->prelude == 1)
+    BattleEffect_RunDjinniEntrance(args, 1 | args->side << 4 | 2 << 5, &screen,
+                                   &world);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // A 128x128 blitter, mirrored for the other side.
   if (mode == 5 || mode == 12 || mode == 13) {
-    if (effect->side == 1)
+    if (args->side == 1)
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     else
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   } else {
-    if (effect->side == 1)
+    if (args->side == 1)
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           BLITTER_ADDITIVE);
@@ -619,21 +619,21 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // Where each shot starts and how fast it flies.
-  user = BattleObject_GetFar(effect->actor)->object;
+  user = BattleObject_GetFar(args->actor)->object;
   shots = gProjectileVolley_Modes[mode][VOLLEY_SHOTS];
   steps = gProjectileVolley_Modes[mode][VOLLEY_STEPS];
   {
     s32 stagger = gProjectileVolley_Modes[mode][VOLLEY_STAGGER];
     s32 delay = gProjectileVolley_Modes[mode][VOLLEY_DELAY];
-    s32 height = BattleUnit_GetEffectHeightFar(effect->actor);
+    s32 height = BattleUnit_GetEffectHeightFar(args->actor);
 
-    if (shots * effect->count > 63) // the shots must fit particles[64]
-      effect->count = 1;
+    if (shots * args->count > 63) // the shots must fit particles[64]
+      args->count = 1;
 
-    for (i = 0; i != effect->count; i++) {
+    for (i = 0; i != args->count; i++) {
       struct MotionObject *target =
-          BattleObject_GetFar(effect->actors[i])->object;
-      s32 targetHeight = BattleUnit_GetEffectHeightFar(effect->actors[i]);
+          BattleObject_GetFar(args->actors[i])->object;
+      s32 targetHeight = BattleUnit_GetEffectHeightFar(args->actors[i]);
 
       for (j = 0; j != shots; j++) {
         struct EffectStep *shot = &work->particles[i * shots + j];
@@ -719,7 +719,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
       PARTICLES[i].variant = 0;
 
     // The falling-streak particles start on the first target, held.
-    EffectPosition_ProjectBattler(effect->actors[0], &origin);
+    EffectPosition_ProjectBattler(args->actors[0], &origin);
     for (i = 0; i != 64; i++) {
       struct EffectStep *p = &PARTICLES[PTCL_STREAKS + i];
 
@@ -731,11 +731,11 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
     }
 
     if (mode == 6 || mode == 7)
-      total = (effect->count - 1) * delay + shots * stagger + 52;
+      total = (args->count - 1) * delay + shots * stagger + 52;
     else if (mode == 2 || mode == 12 || mode == 13 || mode == 14 || mode == 16)
-      total = (effect->count - 1) * delay + shots * stagger + 48;
+      total = (args->count - 1) * delay + shots * stagger + 48;
     else
-      total = (effect->count - 1) * delay + shots * stagger + 32;
+      total = (args->count - 1) * delay + shots * stagger + 32;
 
     // Each frame: the cues, the Djinn, the shots and their impacts, then
     // the flashes, sparks, smoke and streaks.
@@ -762,13 +762,13 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
 
       // The prelude: a small Mercury Djinn circles, then from frame 70
       // flies off upwards.
-      if (effect->prelude == 1) {
+      if (args->prelude == 1) {
         s32 djinnX = (-Trig_Sin(frame << 11) << 2 >> 16) + screen.x / 2 - 10;
         s32 djinnY = (Trig_Cos(frame << 11) << 1 >> 16) + screen.y - 24;
 
         if (frame > 69)
           djinnY = djinnY - frame * 2 + 138;
-        if (effect->side == 1)
+        if (args->side == 1)
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               BLITTER_ADDITIVE);
@@ -786,9 +786,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->pos);
       index = 0;
-      for (i = 0; i != effect->count; i++) {
+      for (i = 0; i != args->count; i++) {
         struct MotionObject *target =
-            BattleObject_GetFar(effect->actors[i])->object;
+            BattleObject_GetFar(args->actors[i])->object;
 
         for (j = 0; j != shots; j++, index++) {
           struct EffectStep *shot;
@@ -877,13 +877,13 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
               SET_POSITION(flash, pos->x, pos->y, 0);
               if (mode != 7)
                 work->shakeFrames = 2;
-              BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 8);
+              BattleEffect_TintBattler(args->actors[i], 7, 5, i, 8);
               if (mode != 7 && mode != 9 && mode != 10 && mode != 18 &&
                   mode != 14 && mode != 15 && mode != 16 && mode != 17) {
                 if (mode == 5)
-                  BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
+                  BattleMotion_ApplyKnockbackFar(args->actors[i], 4);
                 else
-                  BattleMotion_ApplyKnockbackFar(effect->actors[i], 5);
+                  BattleMotion_ApplyKnockbackFar(args->actors[i], 5);
               }
               if (mode == 16 || mode == 17) {
                 // The streak lets its particle loose.
@@ -919,7 +919,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
           if (mode == 0 || mode == 5 || mode == 8) {
             // Only the comet's upper half is drawn; the lower half is the
             // same picture flipped.
-            if (effect->side == 1)
+            if (args->side == 1)
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                                   BLITTER_MAX);
@@ -930,7 +930,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                            pos->y - gProjectileVolley_CometHeights[kind], 32,
                            gProjectileVolley_CometHeights[kind]);
             HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-            if (effect->side == 1)
+            if (args->side == 1)
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                   BLITTER_MAX);
@@ -986,7 +986,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
       // The comets' flashes, 12 frames: half the picture, then the same
       // half flipped (odd flashes use the picture turned on its side).
       if (mode == 0 || mode == 5 || mode == 8) {
-        for (i = 0; i != effect->count * shots; i++) {
+        for (i = 0; i != args->count * shots; i++) {
           struct EffectStep *flash = &PARTICLES[i];
 
           if (flash->variant == 1) {

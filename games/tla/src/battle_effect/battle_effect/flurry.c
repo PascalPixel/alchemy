@@ -80,7 +80,7 @@ enum {
 };
 enum { EXTRA_NONE, EXTRA_GLINTS, EXTRA_RIPPLE };
 
-void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
+void BattleEffect_RunBurstScene(struct BattleEffectArgument *args,
                                 s32 variant) {
   struct EffectPosition actorPos;
   struct EffectPosition targetPos;
@@ -108,8 +108,8 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  if (effect->prelude == 1)
-    BattleEffect_RunDjinniEntrance(effect, PREPARE(7, effect->side, 2), screen,
+  if (args->prelude == 1)
+    BattleEffect_RunDjinniEntrance(args, PREPARE(7, args->side, 2), screen,
                                    otherPoint);
 
   // The pictures and the palette.
@@ -155,14 +155,14 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
 
   // The caster closes in; variant 12 lunges further and waits.
   if (variant == 12) {
-    BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 8, px(6));
+    BattleMotion_ApproachTargetFar(args->actor, args->actors[0], 8, px(6));
     wait(7);
   } else {
-    BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 4, 0);
+    BattleMotion_ApproachTargetFar(args->actor, args->actors[0], 4, 0);
   }
   wait(1);
 
-  EffectPosition_ProjectScaledBattler(effect->actors[0], &targetPos);
+  EffectPosition_ProjectScaledBattler(args->actors[0], &targetPos);
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   if (RECORD(RECORD_EXTRA) == EXTRA_RIPPLE)
@@ -170,7 +170,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
 
   // The motes wait 25 pixels above the target, aimed away from the
   // caster; none is out yet.
-  target = BattleObject_GetFar(effect->actors[0])->object;
+  target = BattleObject_GetFar(args->actors[0])->object;
   for (i = 0; i != MOTE_COUNT; i++) {
     struct EffectStep *mote = &MOTES[i];
 
@@ -204,11 +204,11 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
     if (variant == 10 && frame == 8)
       Sound_PlayFar(SE_RISE_WITH_SPARKS);
     blows = RECORD(RECORD_BLOWS);
-    EffectPosition_ProjectScaledBattler(effect->actor, &actorPos);
+    EffectPosition_ProjectScaledBattler(args->actor, &actorPos);
     actorPos.x /= 2;
 
     // The arcs and waves, mirrored on odd blows.
-    if (effect->side == 0) {
+    if (args->side == 0) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
@@ -232,7 +232,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
 
         if ((i & 3) <= 1 || RECORD(RECORD_ARC_SHEET) == 1) {
           // The arc: six 48x72 cels.
-          if (effect->side == 0)
+          if (args->side == 0)
             draw[i & 1](canvas, work->sheet + 0xc80 + step * 3456,
                         targetPos.x / 2 - 16, targetPos.y - 40, 48, 72);
           else
@@ -240,7 +240,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
                         targetPos.x / 2 - 32, targetPos.y - 40, 48, 72);
         } else {
           // The wave: six 48x16 cels.
-          if (effect->side == 0)
+          if (args->side == 0)
             draw[i & 1](canvas, WAVE_CELS + step * 768, targetPos.x / 2 - 16,
                         actorPos.y - 8, 48, 16);
           else
@@ -252,14 +252,14 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
       if (frame == start + 2) {
         if (RECORD(RECORD_FILL) == 1)
           Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(47));
-        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 4);
+        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 4);
         if (i == blows - 1) {
-          BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
+          BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
           work->shakeFrames = 8;
           BattlePlayback_StartFar(134);
         } else {
           if (i & 1)
-            BattleMotion_ApplyKnockbackFar(effect->actors[0], 7);
+            BattleMotion_ApplyKnockbackFar(args->actors[0], 7);
           work->shakeFrames = 4;
           Sound_PlayFar(SE_HEAVY_IMPACT);
         }
@@ -310,7 +310,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
       // The glints: three a frame around the target, each with its own
       // random flip, until frame 31.
       if (RECORD(RECORD_EXTRA) == EXTRA_GLINTS && frame <= 31) {
-        EffectPosition_ProjectScaledBattler(effect->actors[0], &spot);
+        EffectPosition_ProjectScaledBattler(args->actors[0], &spot);
         for (i = 0; i != 3; i++) {
           s32 angle = Random16() & 0xffff;
           s32 cel = frame & 3;

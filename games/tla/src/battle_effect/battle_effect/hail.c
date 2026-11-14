@@ -14,7 +14,7 @@
 #define CHIPS ((struct EffectStep *)Ram_MapCellBuffer)
 #define CHIP_COUNT 64
 
-void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
+void BattleEffect_RunHail(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 screen[3];
@@ -30,16 +30,16 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(0);
-  BattleEffect_RunDjinniEntrance(effect, PREPARE(1, effect->side, 2), screen,
+  BattleEffect_RunDjinniEntrance(args, PREPARE(1, args->side, 2), screen,
                                  otherPoint);
-  BattleEffect_FetchRectangleBlitters(effect->side, blit);
+  BattleEffect_FetchRectangleBlitters(args->side, blit);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
                              1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The chips start in a 16-pixel spread at the first target and fly up
   // at random, each to live 32 to 47 frames.
-  EffectPosition_ProjectBattler(effect->actors[0], spawn);
+  EffectPosition_ProjectBattler(args->actors[0], spawn);
   for (i = 0; i != CHIP_COUNT; i++) {
     s32 angle;
     s32 speed;
@@ -67,7 +67,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
     }
 
     // With its Djinn prelude, the Djinn hovers over the anchor.
-    if (effect->prelude == 1) {
+    if (args->prelude == 1) {
       s32 orbit;
       s32 x;
       s32 y;
@@ -106,8 +106,8 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
     if (frame == 8) {
       work->shakeFrames = frame;
       BattlePlayback_StartFar(0x86);
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
-      BattleMotion_ApplyKnockbackFar(effect->actors[0], 3);
+      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 16);
+      BattleMotion_ApplyKnockbackFar(args->actors[0], 3);
     }
 
     // The water rises 4 pixels a frame to 32 and drifts away from the
@@ -115,7 +115,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
     rise = frame * 4;
     if (rise > 32)
       rise = 32;
-    if (effect->side == 0) {
+    if (args->side == 0) {
       for (i = 0; i != 5; i++)
         blit[0](canvas, work->sheet, (i << 5) - (frame / 4 & 31), 120 - rise,
                 32, 32);
@@ -162,7 +162,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
 // The chips' shapes and flips live in particles[32..63].
 #define FIRST_CHIP 32
 
-void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
+void BattleEffect_RunGround(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 i;
@@ -180,10 +180,10 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(0);
-  BattleEffect_RunDjinniEntrance(effect, PREPARE(0, effect->side, 2), screen,
+  BattleEffect_RunDjinniEntrance(args, PREPARE(0, args->side, 2), screen,
                                  otherPoint);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  if (effect->side == 1)
+  if (args->side == 1)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   else
@@ -196,10 +196,9 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
 
   // The rocks start at the caster, 66 high, flung out to the side away
   // from the caster with a random lift and drift.
-  actor = BattleObject_GetFar(effect->actor)->object;
+  actor = BattleObject_GetFar(args->actor)->object;
   {
-    struct MotionObject *target =
-        BattleObject_GetFar(effect->actors[0])->object;
+    struct MotionObject *target = BattleObject_GetFar(args->actors[0])->object;
 
     for (i = 0; i != 8; i++) {
       struct EffectStep *rock = &work->particles[i];
@@ -220,14 +219,14 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
 
       // With its Djinn prelude, the Djinn hovers over the anchor and rises
       // off from frame 17; the first four frames add a bright copy.
-      if (effect->prelude == 1) {
+      if (args->prelude == 1) {
         s32 angle = frame << 11;
         s32 x = ((-Trig_Sin(angle) << 2) >> 16) + screen[0] / 2 - 10;
         s32 y = ((Trig_Cos(angle) << 1) >> 16) + screen[1] - 22;
 
         if (frame > 16)
           y = y - frame * 2 + 32;
-        if (effect->side == 1)
+        if (args->side == 1)
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               BLITTER_ADDITIVE);
@@ -328,8 +327,8 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
               work->shakeFrames = 8;
               rock->variant = 0;
               Sound_PlayFar(SE_HEAVY_IMPACT);
-              BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 4);
-              BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
+              BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 4);
+              BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
             }
           }
         }

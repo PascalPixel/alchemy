@@ -27,7 +27,7 @@ void BattleEffect_RunPunji(void *object) {
 // BattleEffect_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap
 // slot.
 
-void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
+void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *args,
                                     s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -69,7 +69,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_VineSheet, work->sheet, 1, 1);
   }
-  if (effect->side == 1) {
+  if (args->side == 1) {
     REG_BG2X = -0x7000;
   }
   // Odd columns draw mirrored.
@@ -85,7 +85,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
   draw = rectangle;
   draw[1] = secondSlot;
 
-  duration = gGrowth_ColumnCounts[effect->variant] * COLUMN_INTERVAL + 56;
+  duration = gGrowth_ColumnCounts[args->variant] * COLUMN_INTERVAL + 56;
 
   // Every puff starts free.
   for (i = 0; i != 1024; i++) {
@@ -136,7 +136,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
       // columns are mirrored.
       if (frame < fadeEnd) {
         i = 0;
-        if (gGrowth_ColumnCounts[effect->variant] != 0) {
+        if (gGrowth_ColumnCounts[args->variant] != 0) {
           do {
             column = (struct DualColumn *)((u8 *)work->particles +
                                            i * sizeof(struct DualColumn));
@@ -190,17 +190,17 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
             // The targets flinch four frames after the column starts; even
             // columns sound the cue.
             n = 0;
-            if (effect->count != 0) {
+            if (args->count != 0) {
               reactFrame = start + 4;
               do {
                 if (frame == reactFrame) {
                   if (!(i & 1)) {
                     Sound_PlayFar(CUE_COLUMN);
                   }
-                  BattleEffect_TintBattler(effect->actors[n], 7, 5, n, 3);
+                  BattleEffect_TintBattler(args->actors[n], 7, 5, n, 3);
                 }
                 n++;
-              } while (n != effect->count);
+              } while (n != args->count);
             } else {
               reactFrame = start + 4;
             }
@@ -221,7 +221,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
               }
             }
             i++;
-          } while (i != gGrowth_ColumnCounts[effect->variant]);
+          } while (i != gGrowth_ColumnCounts[args->variant]);
         }
       }
 
@@ -276,7 +276,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
 #define PREPARE_KIND 4
 #define PREPARE_ANCHOR 4
 
-void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
+void BattleEffect_RunVine(struct BattleEffectArgument *args) {
   struct HeapSlots *heap;
   struct BattleEffectWork *work;
   void *canvas;
@@ -300,7 +300,7 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
   canvas = heap->battleFxWork[1];
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(
-      effect, PREPARE_KIND | effect->side << 4 | PREPARE_ANCHOR << 5, &screen,
+      args, PREPARE_KIND | args->side << 4 | PREPARE_ANCHOR << 5, &screen,
       &world);
   REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
@@ -309,8 +309,8 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_GreenVineSheet, work->sheet, 1,
                              1);
 
-  EffectPosition_ProjectScaledBattler(effect->actors[0], &first);
-  EffectPosition_ProjectScaledBattler(effect->actors[effect->count - 1], &last);
+  EffectPosition_ProjectScaledBattler(args->actors[0], &first);
+  EffectPosition_ProjectScaledBattler(args->actors[args->count - 1], &last);
   middle = first.x;
   middle += (last.x - middle) / 2;
   first.x = middle;
@@ -343,8 +343,8 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
   do {
     if (frame == CUE_FRAME) {
       Sound_PlayFar(CUE_VINES);
-      for (i = 0; i != effect->count; i++)
-        BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
+      for (i = 0; i != args->count; i++)
+        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
     }
     i = 0;
     vine = work->particles;
@@ -391,7 +391,7 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
 
 #define CUE_THORN 133
 
-void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
+void BattleEffect_RunThorn(struct BattleEffectArgument *args) {
   void *canvas;
   s32 frame;
   DrawRectangle drawFlip;
@@ -417,7 +417,7 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
   REG_BLDCNT = 0;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_ThornSheet, work->sheet, 1, 1);
-  if (effect->side == 1) {
+  if (args->side == 1) {
     REG_BG2X = -0x7000;
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -431,7 +431,7 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
       CANVAS_COPY_AND_CLEAR; // clear the canvas to 0 every frame
   work->transferValue = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  total = gGrowth_Counts[effect->variant] * THORN_INTERVAL + 56;
+  total = gGrowth_Counts[args->variant] * THORN_INTERVAL + 56;
 
   for (i = 0; i != PUFF_COUNT; i++) {
     PUFFS[i].variant = -1; // free
@@ -450,7 +450,7 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
     // Thorn i starts at frame i * 8 + 8. A large one grows 16 pixels a
     // frame to 80 and leans up to 30 pixels; a small one grows 8 pixels a
     // frame to 64 and leans up to 8.
-    for (i = 0; i != gGrowth_Counts[effect->variant]; i++) {
+    for (i = 0; i != gGrowth_Counts[args->variant]; i++) {
       start = i * THORN_INTERVAL + THORN_INTERVAL;
       age = frame - start;
       if (frame > start) {
@@ -516,10 +516,10 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
       }
 
       // The targets flinch as the thorn reaches them.
-      for (j = 0; j != effect->count; j++) {
+      for (j = 0; j != args->count; j++) {
         if (frame == start + 4) {
           Sound_PlayFar(CUE_THORN);
-          BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 3);
+          BattleEffect_TintBattler(args->actors[j], 7, 5, j, 3);
         }
       }
     }

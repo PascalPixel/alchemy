@@ -38,7 +38,7 @@ struct RockObject {
   u8 flags;
 };
 
-void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
+void BattleEffect_RunGaia(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -62,15 +62,15 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(0);
 
   // The larger variants stretch the wall wider: BG2 at 1.25 and 1.5.
-  if (effect->variant == 0)
+  if (args->variant == 0)
     REG_BG2PA = 204;
-  else if (effect->variant == 1)
+  else if (args->variant == 1)
     REG_BG2PA = 170;
-  if (effect->side == 1) {
+  if (args->side == 1) {
     wallX = 8;
-    if (effect->variant == 0)
+    if (args->variant == 0)
       rockX = 40;
-    else if (effect->variant == 1)
+    else if (args->variant == 1)
       rockX = 36;
     else
       rockX = 40;
@@ -78,7 +78,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
     wallX = -16;
     rockX = -12;
   }
-  REG_BG2X = gGaia_Bg2Shifts[effect->side][effect->variant] << 8;
+  REG_BG2X = gGaia_Bg2Shifts[args->side][args->variant] << 8;
 
   // The palette: BG colours 1-63 darkened eight steps in each channel.
   Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet, Ram_MapCellBuffer,
@@ -288,7 +288,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
           scale = gGaia_UnitScale;
           if (frame > 71) {
             scale.x = (k << 12) + Q16_ONE / 2;
-            scale.x += effect->variant << 14;
+            scale.x += args->variant << 14;
           } else {
             scale.x = Q16_ONE / 2;
           }
@@ -313,9 +313,9 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
             } else {
               if (frame > 87) {
                 rock->z = (Random16() & 7) + 8;
-                if (effect->variant == 0)
+                if (args->variant == 0)
                   rock->x = Random16() % 96 + 42;
-                else if (effect->variant == 1)
+                else if (args->variant == 1)
                   rock->x = Random16() % 112 + 34;
                 else
                   rock->x = Random16() % 160 + 10;
@@ -333,12 +333,12 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
     // The targets (frames 86-158): a flash every 12 frames, a recoil
     // every 4.
     if (frame <= 158) {
-      for (i = 0; i != effect->count; i++) {
+      for (i = 0; i != args->count; i++) {
         if (frame > 85) {
           if (frame % 12 == 0)
-            BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 6);
+            BattleEffect_TintBattler(args->actors[i], 7, 5, i, 6);
           if ((frame & 3) == 0)
-            BattleMotion_ApplyKnockbackFar(effect->actors[i], 5);
+            BattleMotion_ApplyKnockbackFar(args->actors[i], 5);
         }
       }
     }

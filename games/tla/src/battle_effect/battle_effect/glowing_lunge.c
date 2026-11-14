@@ -53,7 +53,7 @@ struct RenderPrimitive__f17e0c0 {
 // frames, and 64 sparks fly out of it to the caster's side and burn down.
 // Mode 5 adds sixteen rising flame bursts. The mode also picks the palette:
 // fire pillar, ice block, pink burst, blast (modes 3 and 5) or orange.
-void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
+void BattleEffect_RunRushingStrike(struct BattleEffectArgument *args,
                                    s32 mode) {
   struct Texture__f17e0c0 texture;
   DrawRectangle draw[2];
@@ -116,10 +116,10 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The caster lunges at the target.
-  BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 10, 80);
-  Actor_SetAnimationSpeedFar(BattleObject_GetFar(effect->actor)->object, 48);
-  targetObject = BattleObject_GetFar(effect->actors[0])->object;
-  EffectPosition_ProjectBattler(effect->actors[0], &target);
+  BattleEffect_SetApproachMotion(args->actor, args->actors[0], 10, 80);
+  Actor_SetAnimationSpeedFar(BattleObject_GetFar(args->actor)->object, 48);
+  targetObject = BattleObject_GetFar(args->actors[0])->object;
+  EffectPosition_ProjectBattler(args->actors[0], &target);
 
   for (frame = 0; frame != LUNGE_FRAMES; frame++) {
     // The first frame readies the sparks and mode 5's bursts at the
@@ -161,7 +161,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
     }
 
     // The streak, on the caster for its first 15 frames.
-    EffectPosition_ProjectBattler(effect->actor, &caster);
+    EffectPosition_ProjectBattler(args->actor, &caster);
     vertices = Heap_AllocEwram(32);
     quad = Render_AllocateModelList(1);
     *(u32 *)&texture = (*(u32 *)&texture & ~0xff) | 5;
@@ -181,7 +181,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
       SceneTransform_ApplyScale3(gRushingStrike_Scales[mode] << 1,
                                  gRushingStrike_Scales[mode] << 1,
                                  gRushingStrike_Scales[mode]);
-      if (effect->side == 1)
+      if (args->side == 1)
         Transform_ApplyYaw(TRIG_TURN / 2);
       Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
       Render_DrawModelList(quad);
@@ -207,7 +207,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
       quad->faces = gBattleEffect_LargeSquareMesh;
       Transform_Reset();
       SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-      if (effect->side == 0)
+      if (args->side == 0)
         SceneTransform_ApplyPosition3((target.x - 144) << 16,
                                       (target.y - 84) << 16, 0);
       else
@@ -222,8 +222,8 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
 
     // The hit.
     if (frame == LUNGE_HIT_FRAME) {
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, LUNGE_HIT_FRAME);
-      BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
+      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, LUNGE_HIT_FRAME);
+      BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
       if (mode == 5)
         BattlePlayback_StartFar(145);
       else

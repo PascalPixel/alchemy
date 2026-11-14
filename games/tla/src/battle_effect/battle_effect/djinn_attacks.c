@@ -60,7 +60,7 @@ void BattleEffect_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 /// each throw every target flashes and recoils. The dots shrink with age and
 /// fall back under gravity. The effect runs 96 frames; at frame 56 the battle
 /// resumes and resolves the targets (hit cue 133).
-void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
+void BattleEffect_RunMercury(struct BattleEffectArgument *args) {
   struct HeapSlots *slots;
   struct BattleEffectWork *work;
   void *canvas;
@@ -156,9 +156,9 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
         }
         // Six frames later every target flashes and recoils.
         if (frame == gDjinnAttacks_LaunchFrames[i] + 6) {
-          for (j = 0; j != effect->count; j++) {
-            BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 6);
-            BattleMotion_ApplyKnockbackFar(effect->actors[j], 6);
+          for (j = 0; j != args->count; j++) {
+            BattleEffect_TintBattler(args->actors[j], 7, 5, j, 6);
+            BattleMotion_ApplyKnockbackFar(args->actors[j], 6);
           }
         }
       }
@@ -196,7 +196,7 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
 #define DOTS_PER_BALL 32
 #define BALL_COUNT 8
 
-void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
+void BattleEffect_RunJupiter(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -276,9 +276,9 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
           Sound_PlayFar(SE_IMPACT);
           work->shakeFrames = 4;
           // Every target flashes for six frames and recoils.
-          for (j = 0; j != effect->count; j++) {
-            BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 6);
-            BattleMotion_ApplyKnockbackFar(effect->actors[j], 6);
+          for (j = 0; j != args->count; j++) {
+            BattleEffect_TintBattler(args->actors[j], 7, 5, j, 6);
+            BattleMotion_ApplyKnockbackFar(args->actors[j], 6);
           }
         }
       }
@@ -335,7 +335,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal) {
 #define DOTS_PER_COLUMN 32
 #define COLUMN_COUNT 10
 
-void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
+void BattleEffect_RunVenus(struct BattleEffectArgument *args) {
   struct HeapSlots *slots;
   struct BattleEffectWork *work;
   void *canvas;
@@ -419,9 +419,9 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
             Sound_PlayFar(SE_IMPACT);
           work->shakeFrames = 4;
           // Every target flashes for six frames and recoils.
-          for (j = 0; j != effect->count; j++) {
-            BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 6);
-            BattleMotion_ApplyKnockbackFar(effect->actors[j], 6);
+          for (j = 0; j != args->count; j++) {
+            BattleEffect_TintBattler(args->actors[j], 7, 5, j, 6);
+            BattleMotion_ApplyKnockbackFar(args->actors[j], 6);
           }
         }
         column->y -= 12;
@@ -460,7 +460,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
 #define PUFF_COUNT 9
 #define SPARKS_PER_PUFF 16
 
-void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
+void BattleEffect_RunMars(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sheet;
@@ -592,9 +592,9 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
 
     // Every target flashes for sixteen frames and recoils.
     if (frame == 38) {
-      for (member = 0; member != effect->count; member++) {
-        BattleEffect_TintBattler(effect->actors[member], 7, 5, member, 16);
-        BattleMotion_ApplyKnockbackFar(effect->actors[member], 6);
+      for (member = 0; member != args->count; member++) {
+        BattleEffect_TintBattler(args->actors[member], 7, 5, member, 16);
+        BattleMotion_ApplyKnockbackFar(args->actors[member], 6);
       }
     }
 

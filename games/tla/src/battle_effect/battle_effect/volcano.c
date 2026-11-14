@@ -16,7 +16,7 @@
 // another; each burns for the rest of the first 64 frames, scrolling its
 // flames upward, throws a burst of sparks when it starts and a few more
 // every frame after its sixteenth, and strikes every target as it starts.
-void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
+void BattleEffect_RunVolcano(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -38,13 +38,13 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
-  if (effect->variant == 0) {
+  if (args->variant == 0) {
     const void *palette = Resource_GetTableEntry((s32)&ResourceId_RedPaletteB);
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
     copy((void *)BG_PLTT, palette, 128);
-  } else if (effect->variant == 2) {
+  } else if (args->variant == 2) {
     const void *palette =
         Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
     s32 (*copy)(void *destination, const void *source, s32 size) =
@@ -63,13 +63,13 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
 
   // The pillars stand in front of the first target, on its side of the
   // field, at the variant's depths.
-  object = BattleObject_GetFar(effect->actors[0])->object;
+  object = BattleObject_GetFar(args->actors[0])->object;
   for (i = 0; i != 4; i++) {
     struct EffectStep *base = &work->particles[i];
     s32 x;
 
     x = ((Random16() & 15) + 72) << 16;
-    SET_POSITION(base, x, 0, gVolcano_Depths[effect->variant][i] << 16);
+    SET_POSITION(base, x, 0, gVolcano_Depths[args->variant][i] << 16);
     if (object->x < 0)
       base->x = -x;
   }
@@ -79,8 +79,8 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != PILLAR_FRAMES; frame++) {
     // The strongest variant turns the camera for 64 frames.
     camera = Ram_HeapSlots->cameraWork;
-    if (effect->variant == 2 && frame < 64) {
-      if (effect->side == 0)
+    if (args->variant == 2 && frame < 64) {
+      if (args->side == 0)
         camera->yaw = camera->yaw + 192;
       else
         camera->yaw = (s16)camera->yaw - 192;
@@ -91,7 +91,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
     Transform_SetLookAt(camera->eye, camera->pos);
 
     if (frame < 64) {
-      for (pillar = 0; pillar != gVolcano_Counts[effect->variant]; pillar++) {
+      for (pillar = 0; pillar != gVolcano_Counts[args->variant]; pillar++) {
         EffectPosition_ProjectPoint((s32 *)&work->particles[pillar], &screen);
         screen.x /= 2;
         screen.y -= 8;
@@ -155,9 +155,9 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
         // The pillar strikes every target as it starts.
         if (frame == gVolcano_StartFrames[pillar]) {
           work->shakeFrames = 2;
-          for (i = 0; i != effect->count; i++) {
-            BattleEffect_TintBattler(effect->actors[i], 10, 5, i, 8);
-            BattleMotion_ApplyKnockbackFar(effect->actors[i], 1);
+          for (i = 0; i != args->count; i++) {
+            BattleEffect_TintBattler(args->actors[i], 10, 5, i, 8);
+            BattleMotion_ApplyKnockbackFar(args->actors[i], 1);
           }
         }
       }

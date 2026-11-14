@@ -45,7 +45,7 @@ static __inline__ void PLACE(s32 x, s32 y) {
 }
 /// Haures: shadowed wings unfold over a dark pool, the demon climbs out of a
 /// vortex and dives through the foes, scattering into black feathers.
-void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
+void BattleEffect_RunHaures(struct BattleEffectArgument *args) {
   u8 *battle;
   u8 *canvas;
   struct BattleEffectWork *work;
@@ -890,10 +890,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     }
     if (frame == 14) {
       Sound_PlayFar(SE_CLATTER);
-      for (i = 0; i != effect->count; i++) {
-        BattleEffect_StartActorMotion(effect->actors[i], 1, 0x40000, 0x80000,
+      for (i = 0; i != args->count; i++) {
+        BattleEffect_StartActorMotion(args->actors[i], 1, 0x40000, 0x80000,
                                       0x40000, 150);
-        BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
+        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
         work->shakeFrames = 8;
       }
     }
@@ -902,19 +902,19 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     }
     if (frame == 34) {
       Sound_PlayFar(SE_CLATTER);
-      for (i = 0; i != effect->count; i++) {
-        BattleEffect_StartActorMotion(effect->actors[i], 1, 0x40000, 0x80000,
+      for (i = 0; i != args->count; i++) {
+        BattleEffect_StartActorMotion(args->actors[i], 1, 0x40000, 0x80000,
                                       0x40000, 50);
-        BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
+        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
         work->shakeFrames = 8;
       }
     }
     if (frame == 58) {
       Sound_PlayFar(SE_CRASH);
-      for (i = 0; i != effect->count; i++) {
-        BattleEffect_StartActorMotion(effect->actors[i], 1, 0x40000, 0x80000,
+      for (i = 0; i != args->count; i++) {
+        BattleEffect_StartActorMotion(args->actors[i], 1, 0x40000, 0x80000,
                                       0x40000, 200);
-        BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
+        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
         work->shakeFrames = 8;
       }
     }

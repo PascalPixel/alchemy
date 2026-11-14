@@ -16,7 +16,7 @@
 // A boulder shatters this many frames after it starts to fall.
 #define FALL_FRAMES 18
 
-void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
+void BattleEffect_RunSpire(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle blit;
@@ -44,16 +44,15 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
   blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
   // The canvas is centred between the first and the last target.
-  EffectPosition_ProjectScaledBattler(effect->actors[0], &first);
-  EffectPosition_ProjectScaledBattler(effect->actors[effect->count - 1],
-                                      &final);
+  EffectPosition_ProjectScaledBattler(args->actors[0], &first);
+  EffectPosition_ProjectScaledBattler(args->actors[args->count - 1], &final);
   first.x += (final.x - first.x) / 2;
   REG_BG2X = (64 - first.x) << 8;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 
   // Each boulder waits 64 pixels above the canvas; each shard sits at its
   // place in its boulder, ready to fly up at random.
-  rocks = gSpire_RockCounts[effect->variant];
+  rocks = gSpire_RockCounts[args->variant];
   for (i = 0; i != rocks; i++) {
     rock = &work->particles[i];
     rock->y = -px(64);
@@ -118,8 +117,8 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
       }
       // Every target flashes for eight frames at each crash.
       if (frame == gSpire_DropFrames[i] + FALL_FRAMES) {
-        for (j = 0; j != effect->count; j++)
-          BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 8);
+        for (j = 0; j != args->count; j++)
+          BattleEffect_TintBattler(args->actors[j], 7, 5, j, 8);
       }
     }
     BattleCamera_Shake(2, 4);

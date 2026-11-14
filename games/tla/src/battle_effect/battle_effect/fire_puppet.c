@@ -62,7 +62,7 @@ struct PuppetTarget {
 // hand at its end; at frame 54 it strikes, hitting every target, and from
 // frame 74 it shrinks back. The target's position is kept in the work's
 // last particle.
-void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
+void BattleEffect_RunFirePuppet(struct BattleEffectArgument *args) {
   u8 *buffer;
   struct BattleEffectWork *work;
   void *canvas;
@@ -83,7 +83,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
   camera = Ram_HeapSlots->cameraWork;
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
-  if (effect->side == 0) {
+  if (args->side == 0) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   } else {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
@@ -91,7 +91,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
   }
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  target = BattleObject_GetFar(effect->actors[0])->object;
+  target = BattleObject_GetFar(args->actors[0])->object;
   // Default: set for real below, when j reaches 32.
   endX = 0;
   endY = 0;
@@ -114,23 +114,23 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
     Transform_Reset();
     Transform_SetLookAt(camera, camera + 3);
     if (frame == 0) {
-      BattleEffect_TintBattler(effect->actor, 6, 4, 0, -1);
+      BattleEffect_TintBattler(args->actor, 6, 4, 0, -1);
     }
     if (frame == 8) {
       Sound_PlayFar(SE_CURSE);
     }
     if (frame == 100) {
-      BattleEffect_TintBattler(effect->actor, 0, 0, 0, -1);
+      BattleEffect_TintBattler(args->actor, 0, 0, 0, -1);
     }
     if (frame == 54) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       Sound_PlayFar(SE_POWER_UP);
       BattlePlayback_StartFar(212);
       work->shakeFrames = 8;
-      for (i = 0; i != effect->count; i++) {
-        BattleEffect_StartActorMotion(effect->actors[i], 1, 0x20000, 0x40000,
+      for (i = 0; i != args->count; i++) {
+        BattleEffect_StartActorMotion(args->actors[i], 1, 0x20000, 0x40000,
                                       0x40000, 150);
-        BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 8);
+        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 8);
       }
     }
     if (frame > 15) {
@@ -187,14 +187,14 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       model->vertices = projected;
       model->shade = shade;
       model->texture = &texture;
-      EffectPosition_ProjectScaledBattler(effect->actor, &pos);
+      EffectPosition_ProjectScaledBattler(args->actor, &pos);
       model->scrollV = 0;
       model->scrollU = 127 & ~(frame << 2);
       Transform_Reset();
       SceneTransform_ApplyPosition3((pos.x / 2 - 64) << 16,
                                     (pos.y << 16) + 0xffd60000, 0);
       SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-      if (effect->side == 1) {
+      if (args->side == 1) {
         Transform_ApplyYaw(TRIG_TURN / 2);
       }
       Transform_ApplyRoll(TRIG_TURN / 4);
@@ -245,7 +245,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
 // flashes, the result phase starts, and 256 sparks spray from the slash's
 // end toward the target, half of them falling and half rising as they burn
 // down.
-void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
+void BattleEffect_RunWhiplash(struct BattleEffectArgument *args) {
   struct HeapSlots *heap;
   struct BattleEffectWork *work;
   u8 *canvas;
@@ -263,7 +263,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
   sparkCels = heap->unk64[0];
 
   BattleEffect_StartCanvasLayer(1);
-  if (effect->side == 0) {
+  if (args->side == 0) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     draw[0] = (DrawRectangle)heap->unk64[1];
   } else {
@@ -280,8 +280,8 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != SWING_FRAMES; frame++) {
     // The slash, its cels anchored to the caster's front.
-    EffectPosition_ProjectBattler(effect->actor, &caster);
-    if (effect->side == 0) {
+    EffectPosition_ProjectBattler(args->actor, &caster);
+    if (args->side == 0) {
       switch (frame / 6) {
       case 0:
         draw[0](canvas, work->sheet, caster.x / 2 - 48, caster.y - 120, 48, 96);
@@ -329,8 +329,8 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
 
     // The hit, and the sparks sprayed from 48 pixels out.
     if (frame == SWING_HIT_FRAME) {
-      BattleMotion_ApplyKnockbackFar(effect->actors[0], 1);
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
+      BattleMotion_ApplyKnockbackFar(args->actors[0], 1);
+      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 16);
       BattlePlayback_StartFar(134);
       work->shakeFrames = 8;
       for (i = 0; i != SPARK_COUNT; i++) {
@@ -338,14 +338,14 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
         s32 speed;
 
         spark = &((struct EffectStep *)Ram_MapCellBuffer)[i];
-        if (effect->side == 0)
+        if (args->side == 0)
           spark->x = (caster.x / 2 - 48) << 16;
         else
           spark->x = (caster.x / 2 + 48) << 16;
         spark->y = (caster.y - (Random16() & 7)) << 16;
         angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
         speed = Random16() & 255;
-        if (effect->side == 0)
+        if (args->side == 0)
           spark->velocityX = ((Trig_Sin(angle) * speed) >> 4) - (8 << 16);
         else
           spark->velocityX = ((Trig_Sin(angle) * speed) >> 4) + (8 << 16);

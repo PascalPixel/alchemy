@@ -47,7 +47,7 @@ struct SurgeTarget {
 // it, four frames apart; each lands with a flash and a ring of light (two
 // rings of shaded circles), and four pillars of light rise and sway over
 // the target.
-void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
+void BattleEffect_RunLightSurge(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -101,7 +101,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   camera = Ram_HeapSlots->cameraWork;
   savedYaw = camera->yaw;
-  target = BattleObject_GetFar(effect->actors[0])->object;
+  target = BattleObject_GetFar(args->actors[0])->object;
 
   // Shaded circles of 2 to 64 pixels, packed in the map buffer.
   cells = (s32)gMapCellBuffer;
@@ -164,7 +164,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
       } else {
         turn = 0xa00 - (frame << 5);
       }
-      if (effect->side == 0) {
+      if (args->side == 0) {
         camera->yaw += turn;
       } else {
         camera->yaw -= turn;
@@ -281,8 +281,8 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
         flash->variant = 0;
         work->shakeFrames = 4;
         Sound_PlayFar(SE_CRASH);
-        BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
-        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 2);
+        BattleMotion_ApplyKnockbackFar(args->actors[0], 0);
+        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 2);
       }
       EffectPosition_ProjectPoint((struct EffectStep *)head, out);
       vertices[8] = out->x / 2 - 2;
@@ -294,7 +294,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
 
     // The pillars.
     if ((u32)(frame - 16) <= 63) {
-      EffectPosition_ProjectBattler(effect->actors[0], &center);
+      EffectPosition_ProjectBattler(args->actors[0], &center);
       texture.logWidth = 5;
       texture.logHeight = 5;
       texture.pixels = work->sheet + 0x1000;

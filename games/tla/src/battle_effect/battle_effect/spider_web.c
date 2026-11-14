@@ -244,7 +244,7 @@ extern const struct PlacementSource gUlysses_ShipScale;
 // Ulysses: the hero's ship sails out of a whirlpool, its crew of six
 // warriors leap at the foe and the ship's broadside lands as a storm of
 // explosions.
-void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
+void BattleEffect_RunUlysses(struct BattleEffectArgument *args) {
   u8 *canvas;
   s32 *transition;
   struct BattleEffectWork *work;
@@ -675,13 +675,12 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
             q->velocityX = (Trig_Sin(a) * sp) / 4;
             q->velocityY = (Trig_Cos(a) * sp) / 4;
           }
-          for (j = 0; j != effect->count; j++) {
+          for (j = 0; j != args->count; j++) {
             s32 m = (Random16() << 2) + 0x10000;
 
-            BattleEffect_StartActorMotion(effect->actors[j], 1, 0x20000,
-                                          0x80000, m,
-                                          delay + (Random16() & 31) + 52);
-            BattleEffect_TintBattler(effect->actors[j], 7, -1, j, 4);
+            BattleEffect_StartActorMotion(args->actors[j], 1, 0x20000, 0x80000,
+                                          m, delay + (Random16() & 31) + 52);
+            BattleEffect_TintBattler(args->actors[j], 7, -1, j, 4);
           }
         }
         if (draw && (u32)(step->variant - 64) <= 11) {
@@ -923,7 +922,7 @@ void BattleEffect_RunSpinningBeat(void *object) {
 // Byte offset of the blitter slot in gHeapSlots (unk64[1]).
 #define HEAP_BLITTER 104
 
-void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *args, s32 mode) {
   struct HeapSlots *slots;
   struct BattleEffectWork *work;
   void *canvas;
@@ -942,7 +941,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   canvas = slots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(0);
   REG_BG2PA = Q_8_8(1);
-  if (effect->side == 1) {
+  if (args->side == 1) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_TRANSPARENT);
     draw[0] = (DrawRectangle)slots->unk64[1];
@@ -964,9 +963,9 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // BG2 is placed on the first target.
-  object = BattleObject_GetFar(effect->actors[0])->object;
-  EffectPosition_ProjectScaledBattler(effect->actors[0], &position);
-  if (effect->side == 0)
+  object = BattleObject_GetFar(args->actors[0])->object;
+  EffectPosition_ProjectScaledBattler(args->actors[0], &position);
+  if (args->side == 0)
     REG_BG2X = (16 - position.x) << 8;
   else
     REG_BG2X = (112 - position.x) << 8;
@@ -980,12 +979,12 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
     if (cel <= 5) {
       if (cel <= 3)
         draw[0](canvas, work->sheet + gSpiderWeb_Pictures[cel],
-                gSpiderWeb_PictureX[cel + effect->side * 6],
+                gSpiderWeb_PictureX[cel + args->side * 6],
                 gSpiderWeb_PictureBiasY[cel] + 32,
                 gSpiderWeb_PictureWidths[cel], gSpiderWeb_PictureHeights[cel]);
       else
         draw[0](canvas, Ram_MapCellBuffer + gSpiderWeb_Pictures[cel],
-                gSpiderWeb_PictureX[cel + effect->side * 6],
+                gSpiderWeb_PictureX[cel + args->side * 6],
                 gSpiderWeb_PictureBiasY[cel] + 32,
                 gSpiderWeb_PictureWidths[cel], gSpiderWeb_PictureHeights[cel]);
     }
@@ -993,10 +992,10 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == 8) {
       if (mode == 0) {
         BattlePlayback_StartFar(0x85);
-        BattleMotion_ApplyKnockbackFar(effect->actors[0], 1);
+        BattleMotion_ApplyKnockbackFar(args->actors[0], 1);
       } else {
         Sound_PlayFar(SE_HEAVY_IMPACT);
-        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 4);
+        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 4);
       }
       work->shakeFrames = 8;
     }
@@ -1042,7 +1041,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
 #define RELEASE_QUARTER() ((s64 (*)(s32))HeapSlot_Release)(HEAP_BLITTER)
 #endif
 
-void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
+void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *args) {
   struct EffectPosition middle;
   void *canvas;
   struct BattleEffectWork *work;
@@ -1100,9 +1099,9 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
     // The battle resumes, hit cue 143; every target flashes at frame 10.
     if (frame == 32)
       BattlePlayback_StartFar(143);
-    for (i = 0; i != effect->count; i++) {
+    for (i = 0; i != args->count; i++) {
       if (frame == 10)
-        BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 8);
+        BattleEffect_TintBattler(args->actors[i], 7, -1, i, 8);
     }
     EFFECT_END_FRAME(work);
     frame++;
@@ -1112,9 +1111,9 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
   Iwram_ClearWords(canvas, 0x3c00);
-  effect->prelude = 0;
+  args->prelude = 0;
   Task_Remove(Palette_StepFadeTransfer);
-  BattleEffect_RunImpair(effect);
+  BattleEffect_RunImpair(args);
 }
 
 #undef LOAD_QUARTER

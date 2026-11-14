@@ -24,42 +24,42 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
 }
 
 void BattleEffect_ProbeKeysForExtendedActor(void) {
-  struct BattleFxWorkTail *work;
-  struct BattleEffectArgument *effect;
+  struct BattleEffectWork *work;
+  struct BattleEffectArgument *args;
 
-  work = (struct BattleFxWorkTail *)Ram_HeapSlots->battleFxWork[0];
-  effect = work->effect;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  args = work->effect;
 
   // DEAD: nothing uses the held keys read here; their load is in the ROM.
-  if (effect->actors[0] > 0x7f)
+  if (args->actors[0] > 0x7f)
     (void)gInput.held;
 }
 
-void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
-  struct BattleFxWorkTail *work;
+void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *args) {
+  struct BattleEffectWork *work;
   s32 kind;
   s32 value;
 
-  HeapSlot_AllocEwram(100, 0x60e);
-  HeapSlot_Alloc(92, 0x7b7c);
+  HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SHEET, 1550);
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
   HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
-  work = (struct BattleFxWorkTail *)Ram_HeapSlots->battleFxWork[0];
-  work->effect = effect;
-  work->active = 1;
-  kind = effect->kind;
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  work->effect = args;
+  work->vblanksSinceTransfer = 1;
+  kind = args->kind;
   value = kind - 100;
   if ((u32)value <= 100) {
-    BattleEffect_RunCastingImpact(effect, value);
+    BattleEffect_RunCastingImpact(args, value);
   } else if (kind == 210 || kind == 10) {
-    BattleEffect_RunCanvasModeByCount(effect);
+    BattleEffect_RunCanvasModeByCount(args);
   } else if (kind > 199) {
-    BattleEffect_RunCriticalHit(effect);
+    BattleEffect_RunCriticalHit(args);
   } else {
-    BattleEffect_RunAttackSlash(effect);
+    BattleEffect_RunAttackSlash(args);
   }
-  HeapSlot_Release(96);
-  HeapSlot_Release(92);
-  HeapSlot_Release(100);
+  HeapSlot_Release(HEAP_SLOT_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
 }
 
 // The blitter slots read as what they hold, a drawing routine.
@@ -85,7 +85,7 @@ void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
 
 #define SPARK_COUNT 64
 
-void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
+void BattleEffect_RunAttackSlash(struct BattleEffectArgument *args) {
   struct EffectPosition pos;
   struct EffectPosition anchor;
   struct EffectPosition point;
@@ -106,8 +106,8 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
   camera = Ram_HeapSlots->cameraWork;
-  kind = effect->kind;
-  unit = Unit_Get(effect->actor);
+  kind = args->kind;
+  unit = Unit_Get(args->actor);
 
   // Setup: the display, the tile map on BG1, the blitters for the side.
   wait(1);
@@ -116,7 +116,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
   REG_BG1CNT = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   wait(1);
   if (kind == 5 || kind == 6) {
-    if (effect->side == 0) {
+    if (args->side == 0) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                           BLITTER_ADDITIVE);
@@ -130,7 +130,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
     }
   } else {
-    if (effect->side == 0) {
+    if (args->side == 0) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           BLITTER_ADDITIVE);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
@@ -169,7 +169,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
   }
   // An enemy's sparks take the Mars Djinn's colours, a party member's the
   // star crescent's.
-  Dma_Set(Resource_GetTableEntry(effect->actor > 7
+  Dma_Set(Resource_GetTableEntry(args->actor > 7
                                      ? (s32)&ResourceId_MarsDjinnSmallSheet
                                      : (s32)&ResourceId_StarCrescentSheet),
           (void *)BG_PLTT, 0x84000020, REG_DMA3);
@@ -182,8 +182,8 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
 
   // The layer is centred on the first target, kept within 128 pixels.
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
-  EffectPosition_ProjectSprite(effect->actors[0], &anchor);
-  if (effect->side == 0)
+  EffectPosition_ProjectSprite(args->actors[0], &anchor);
+  if (args->side == 0)
     shake = 96 - anchor.x;
   else
     shake = 32 - anchor.x;
@@ -198,8 +198,8 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
 
   // The sparks leave the middle of the target, away from the caster, each
   // living 16 frames more than the last.
-  target = BattleObject_GetFar(effect->actors[0])->object;
-  half = BattleUnit_GetEffectHeightFar(effect->actors[0]) / 2;
+  target = BattleObject_GetFar(args->actors[0])->object;
+  half = BattleUnit_GetEffectHeightFar(args->actors[0]) / 2;
   for (i = 0; i != SPARK_COUNT; i++) {
     struct EffectStep *spark = &work->particles[i];
 
@@ -224,16 +224,16 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
     // The target recoils, harder for some kinds.
     if (frame == 4) {
       if (kind == 7)
-        BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
+        BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
       else if (kind == 5 || kind == 6)
-        BattleMotion_ApplyKnockbackFar(effect->actors[0], 1);
+        BattleMotion_ApplyKnockbackFar(args->actors[0], 1);
       else if (kind == 8)
-        BattleEffect_StartActorMotion(effect->actors[0], 1, 0x10000, 0x40000,
+        BattleEffect_StartActorMotion(args->actors[0], 1, 0x10000, 0x40000,
                                       0x30000, 150);
       else
-        BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
+        BattleMotion_ApplyKnockbackFar(args->actors[0], 0);
     }
-    EffectPosition_ProjectScaledBattler(effect->actor, &pos);
+    EffectPosition_ProjectScaledBattler(args->actor, &pos);
     pos.y += 16;
     if (kind == 6)
       pos.y += 16;
@@ -242,7 +242,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
     if (kind == 4) {
       // The wave: six cels, two frames each, played backwards.
       if (frame <= 11) {
-        if (effect->side == 0)
+        if (args->side == 0)
           draw[0](canvas, work->sheet + (5 - frame / 2) * 0x300,
                   pos.x + shake - 48, pos.y - 8, 48, 16);
         else
@@ -252,7 +252,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
     } else if ((u32)kind <= 2 || kind == 5 || kind == 6) {
       // The arc: six cels, two frames each.
       if (frame <= 11) {
-        if (effect->side == 0)
+        if (args->side == 0)
           draw[0](canvas, work->sheet + frame / 2 * 0xd80, pos.x + shake - 48,
                   pos.y - 40, 48, 72);
         else
@@ -264,7 +264,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
       if (frame <= 17) {
         s32 cel = frame / 3;
 
-        if (effect->side == 0)
+        if (args->side == 0)
           draw[0](canvas, work->sheet + gBeam_Pictures[cel],
                   pos.x + gBeam_PictureReaches[cel] + shake - 58,
                   pos.y - gBeam_PictureHeights[cel] / 2,
@@ -315,7 +315,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
   BattleEffect_HideBg1AndRestoreBackdrop();
 }
 
-void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
+void BattleEffect_RunCriticalHit(struct BattleEffectArgument *args) {
   struct EffectPosition pos;
   struct EffectPosition anchor;
   struct EffectPosition point;
@@ -346,16 +346,15 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
   sheet = Ram_HeapSlots->unk64[0];
   camera = Ram_HeapSlots->cameraWork;
   big = 1;
-  if (effect->kind <= 199)
+  if (args->kind <= 199)
     big = 0;
 
   // Setup, one step of the view's swing between each load.
-  BattleCamera_SetViewAtPairMidpointFar(effect->actor, effect->firstTarget,
-                                        130);
+  BattleCamera_SetViewAtPairMidpointFar(args->actor, args->firstTarget, 130);
   wait(1);
   BattleEffect_SetupCanvasTileMap();
   REG_BG1CNT = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
-  if (effect->side == 0) {
+  if (args->side == 0) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -369,33 +368,29 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
   slots = (DrawRectangle *)Ram_HeapSlots;
   draw[0] = slots[HEAP_BLITTER / 4];
   draw[1] = slots[HEAP_BLITTER_ALTERNATE / 4];
-  BattleCamera_SetViewAtPairMidpointFar(effect->actor, effect->firstTarget,
-                                        130);
+  BattleCamera_SetViewAtPairMidpointFar(args->actor, args->firstTarget, 130);
   wait(1);
   Resource_LoadAndDecompress((s32)&ResourceId_StarCrescentSheet, work->sheet, 1,
                              0);
-  BattleCamera_SetViewAtPairMidpointFar(effect->actor, effect->firstTarget,
-                                        130);
+  BattleCamera_SetViewAtPairMidpointFar(args->actor, args->firstTarget, 130);
   wait(1);
   Resource_LoadAndDecompress((s32)&ResourceId_GreyCrescentSheet,
                              Ram_MapCellBuffer, 1, 1);
   // An enemy caster's sparks take the Mars Djinn's colours.
-  if (effect->actor > 7)
+  if (args->actor > 7)
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
             (void *)BG_PLTT, 0x84000020, REG_DMA3);
-  BattleCamera_SetViewAtPairMidpointFar(effect->actor, effect->firstTarget,
-                                        130);
+  BattleCamera_SetViewAtPairMidpointFar(args->actor, args->firstTarget, 130);
   wait(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
-  BattleCamera_SetViewAtPairMidpointFar(effect->actor, effect->firstTarget,
-                                        130);
+  BattleCamera_SetViewAtPairMidpointFar(args->actor, args->firstTarget, 130);
   wait(1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 
   // The gathering ring, for the larger kinds: the caster holds still while
   // 64 sparks spin in towards it on random axes.
   if (big == 1) {
-    object = BattleObject_GetFar(effect->actor)->object;
+    object = BattleObject_GetFar(args->actor)->object;
     for (i = 0; i != SPARK_COUNT; i++) {
       struct EffectStep *mote = &work->particles[i];
 
@@ -415,7 +410,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
     object->velocityZ = 0;
     object->acceleration = 0;
     object->verticalMotionStrength = 0;
-    EffectPosition_ProjectScaledBattler(effect->actor, &pos);
+    EffectPosition_ProjectScaledBattler(args->actor, &pos);
     shake = 64 - pos.x;
     gBgScroll[1].x = shake;
     gBgScroll[1].y = 80;
@@ -424,7 +419,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
     Task_Add(Palette_StepFadeTransfer, TASK_PASS_VBLANK);
     Sound_PlayFar(SE_POWER_UP);
     for (frame = 0; frame != 32; frame++) {
-      BattleCamera_SetViewAtPairMidpointFar(effect->actor, effect->firstTarget,
+      BattleCamera_SetViewAtPairMidpointFar(args->actor, args->firstTarget,
                                             130);
       // Spark i starts at frame i / 4, 16 to 79 pixels out, and moves in
       // 4 pixels a frame until it reaches the caster.
@@ -468,8 +463,8 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
   Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), words);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
-  EffectPosition_ProjectScaledBattler(effect->actors[0], &anchor);
-  if (effect->side == 0)
+  EffectPosition_ProjectScaledBattler(args->actors[0], &anchor);
+  if (args->side == 0)
     shake = 32 - anchor.x;
   else
     shake = 96 - anchor.x;
@@ -483,8 +478,8 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
 
   // The sparks leave the middle of the target, away from the caster, each
   // living 16 frames more than the last.
-  target = BattleObject_GetFar(effect->actors[0])->object;
-  half = BattleUnit_GetEffectHeightFar(effect->actors[0]) / 2;
+  target = BattleObject_GetFar(args->actors[0])->object;
+  half = BattleUnit_GetEffectHeightFar(args->actors[0]) / 2;
   for (i = 0; i != SPARK_COUNT; i++) {
     struct EffectStep *spark = &work->particles[i];
 
@@ -502,8 +497,8 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
     if (frame == 5)
       BattlePlayback_StartFar(134);
     if (frame == 4)
-      BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
-    EffectPosition_ProjectScaledBattler(effect->actor, &pos);
+      BattleMotion_ApplyKnockbackFar(args->actors[0], 0);
+    EffectPosition_ProjectScaledBattler(args->actor, &pos);
     pos.y += 16;
     // The flash: four cels, two frames each.
     if (frame <= 1)

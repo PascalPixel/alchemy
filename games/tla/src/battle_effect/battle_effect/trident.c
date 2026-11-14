@@ -24,7 +24,7 @@ extern const struct PlacementSource gTrident_UnitScale;
 // Poseidon (four objects) rises behind the targets as rings of foam
 // spread across the water; seven spinning tridents fly in from frame 18,
 // spray bursts up around them, and at 64 the waters strike every target.
-void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
+void BattleEffect_RunTrident(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle blit[2]; // Unused: [1] is the rest of its two-word pseudo.
@@ -130,8 +130,8 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
     }
     if (frame == 8) {
       work->shakeFrames = frame;
-      for (i = 0; i != effect->count; i++) {
-        BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
+      for (i = 0; i != args->count; i++) {
+        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
       }
     }
     if (frame == 48) {
@@ -140,8 +140,8 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
     if (frame == 64) {
       work->shakeFrames = 16;
       BattlePlayback_StartFar(144);
-      for (i = 0; i != effect->count; i++) {
-        BattleEffect_StartActorMotion(effect->actors[i], 1, 0x20000, 0x80000,
+      for (i = 0; i != args->count; i++) {
+        BattleEffect_StartActorMotion(args->actors[i], 1, 0x20000, 0x80000,
                                       0x80000, 120);
       }
     }
@@ -451,7 +451,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunPlanetary, BattleEffect_RunLeapingStrike, 1)
 // landing 256 sparks burst from it. In mode 0 the caster then shows a fireball
 // and one target is struck; in mode 1 a claw slashes in 3D, three rings and two
 // pillars spread, every target is struck and at frame 50 all are thrown back.
-void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
+void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *args,
                                    s32 mode) {
   struct EffectPosition pos;
   struct ModelTexture texture;
@@ -494,7 +494,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                        128);
   // The blitter faces the caster's side.
-  if (effect->side == 0)
+  if (args->side == 0)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
@@ -509,8 +509,8 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
   for (i = 0; i != 256; i++)
     SPARKS[i].variant = 0;
 
-  caster = BattleObject_GetFar(effect->actor)->object;
-  target = BattleObject_GetFar(effect->actors[0])->object;
+  caster = BattleObject_GetFar(args->actor)->object;
+  target = BattleObject_GetFar(args->actors[0])->object;
   stepX = 0;
   stepY = 0;
   homeX = caster->x;
@@ -523,7 +523,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
       landed = 0;
     }
     if (frame > 17 || frame == 0) {
-      EffectPosition_ProjectBattler(effect->actor, &pos);
+      EffectPosition_ProjectBattler(args->actor, &pos);
       pos.x /= 2;
     }
 
@@ -606,13 +606,13 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
           work->shakeFrames = 4;
           if (mode == 0) {
             BattlePlayback_StartFar(145);
-            BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
-            BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
+            BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
+            BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
           } else {
             Sound_PlayFar(SE_CRASH);
-            for (i = 0; i != effect->count; i++) {
-              BattleMotion_ApplyKnockbackFar(effect->actors[i], 3);
-              BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
+            for (i = 0; i != args->count; i++) {
+              BattleMotion_ApplyKnockbackFar(args->actors[i], 3);
+              BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
             }
           }
         }
@@ -650,7 +650,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
           SceneTransform_ApplyPosition3((pos.x - 60) << 16, (pos.y - 80) << 16,
                                         0);
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          if (effect->side == 0) {
+          if (args->side == 0) {
             Transform_ApplyRoll(-0x3388);
           } else {
             Transform_ApplyYaw(TRIG_TURN / 2);
@@ -748,8 +748,8 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
 
     if (mode == 1 && frame == 50) {
       BattlePlayback_StartFar(134);
-      for (i = 0; i != effect->count; i++)
-        BattleEffect_StartActorMotion(effect->actors[i], 1, 0x40000, 0x100000,
+      for (i = 0; i != args->count; i++)
+        BattleEffect_StartActorMotion(args->actors[i], 1, 0x40000, 0x100000,
                                       0x10000, 250);
     }
 

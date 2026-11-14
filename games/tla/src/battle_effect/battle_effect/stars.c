@@ -19,7 +19,7 @@
 // Three rings of light fly one after another from the caster to the target,
 // each growing as it spins, while the camera swings round; each ring that
 // lands throws the target back, and the last begins the results.
-void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
+void BattleEffect_RunAstralBlast(struct BattleEffectArgument *args) {
   struct EffectPosition pos;
   struct EffectPosition base;
   s32 scale[3];
@@ -46,7 +46,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   graphics = Ram_HeapSlots->unk64[0];
   camera = Ram_HeapSlots->cameraWork;
-  caster = ACTOR(effect->actor);
+  caster = ACTOR(args->actor);
 
   // Set up: the rune palette, the dot sheet, the caster's casting pose, one
   // max blitter and the transfer.
@@ -64,8 +64,8 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
 
   // The rings leave from above the caster and reach the target in twelve
   // frames; the second and third aim past it.
-  source = ACTOR(effect->actor);
-  target = ACTOR(effect->actors[0]);
+  source = ACTOR(args->actor);
+  target = ACTOR(args->actors[0]);
   for (i = 0, point = work->particles; i != BOLT_COUNT; i++) {
     SET_POSITION(point, source->x, source->y + 0x280000, source->z);
     if (i == 0)
@@ -89,7 +89,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
         speed = 128;
       else
         speed = 0x300 - frame * 16;
-      if (effect->side == 0)
+      if (args->side == 0)
         view->yaw -= speed;
       else
         view->yaw += speed;
@@ -173,7 +173,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
             BattlePlayback_StartFar(134);
           } else {
             Sound_PlayFar(SE_HEAVY_IMPACT);
-            BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
+            BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
           }
           work->shakeFrames = 4;
         }
@@ -202,7 +202,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
 /// Eight rings of stars fly from the caster to the target, one every eight
 /// frames and spinning as they go; each bounces where it meets the ground,
 /// shaking the screen and flashing the targets.
-void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
+void BattleEffect_RunShiningStar(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -238,8 +238,8 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
 
   // Each star leaves from above the caster on its own course to the target,
   // the later ones after a longer delay (held in variant).
-  source = BattleObject_GetFar(effect->actor)->object;
-  target = BattleObject_GetFar(effect->actors[0])->object;
+  source = BattleObject_GetFar(args->actor)->object;
+  target = BattleObject_GetFar(args->actors[0])->object;
   for (i = 0, point = work->particles; i != STAR_COUNT; i++) {
     s32 delay = i * 8;
 
@@ -310,8 +310,8 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
           star->velocityZ /= 2;
           work->shakeFrames = 4;
           Sound_PlayFar(SE_HEAVY_IMPACT);
-          for (j = 0; j != effect->count; j++)
-            BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 8);
+          for (j = 0; j != args->count; j++)
+            BattleEffect_TintBattler(args->actors[j], 7, 5, j, 8);
         }
         star->x += star->velocityX;
         star->y += star->velocityY;

@@ -40,8 +40,7 @@ void Render_ProjectVertices__ability_effects(struct ModelVertex *vertices,
 // The water-column scene shared by Whorl (0), Gale (1), Lethe Albion (2),
 // Poison Flow (3) and Raging Flood (4): a twisting funnel of water (or wind)
 // rises around the target, with spray, bubbles and a burst.
-void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
-                                 u32 mode) {
+void BattleEffect_RunWaterColumn(struct BattleEffectArgument *args, u32 mode) {
   struct BattleEffectWork *work;
   u8 *canvas;
   // Unused: the second of The Broken Seal's blitter pair gives the stack frame
@@ -76,16 +75,16 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
   canvas = Ram_HeapSlots->battleFxWork[1];
   camera = Ram_HeapSlots->cameraWork;
   sprites = Ram_HeapSlots->unk64[0];
-  unit = Unit_Get(effect->actors[0]);
+  unit = Unit_Get(args->actors[0]);
   BattleEffect_StartCanvasLayer(0);
   if (mode <= 1) {
     frames = 38;
-    BattleEffect_RunDjinniEntrance(effect, (effect->side << 4) | 163, screen,
+    BattleEffect_RunDjinniEntrance(args, (args->side << 4) | 163, screen,
                                    point);
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
   } else if (mode == 2 || mode == 4) {
-    s32 *caster = BattleObject_GetFar(effect->actor)->object;
+    s32 *caster = BattleObject_GetFar(args->actor)->object;
 
     if (mode == 2) {
       s32 row;
@@ -119,7 +118,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
                  BGCNT_SCREEN_BASE(7);
     frames = 52;
   }
-  if (!effect->side) {
+  if (!args->side) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   } else {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
@@ -128,7 +127,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  target = BattleObject_GetFar(effect->actors[0])->object;
+  target = BattleObject_GetFar(args->actors[0])->object;
   work->particles[63].x = target[2];
   work->particles[63].y = target[3];
   work->particles[63].z = target[4];
@@ -172,7 +171,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
           for (i = 0; i != 63; i++) {
             struct EffectStep *q = &work->particles[i];
 
-            if (effect->side == 1) {
+            if (args->side == 1) {
               q->x = px(200);
             } else {
               q->x = -px(200);
@@ -229,14 +228,14 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
         }
         if (mode == 0) {
           if (frame == 32) {
-            if (effect->variant == 1) {
+            if (args->variant == 1) {
               target[3] = 0x7c0000;
             } else {
               work->shakeFrames = 8;
               BattlePlayback_StartFar(134);
               target[6] = work->particles[63].velocityX;
               target[7] = work->particles[63].velocityY;
-              BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000,
+              BattleEffect_StartActorMotion(args->actors[0], 1, 0x20000,
                                             0x80000, 0x40000, 150);
             }
           } else if (frame <= 19) {
@@ -244,7 +243,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
             target[2] += (pos[0] - work->particles[63].x) / 128;
             target[3] += (pos[1] - work->particles[63].y) / 128;
             target[4] += (pos[2] - work->particles[63].z) / 128;
-          } else if (frame <= 31 && (effect->variant == 1 || frame <= 23)) {
+          } else if (frame <= 31 && (args->variant == 1 || frame <= 23)) {
             target[2] += (pos[0] - work->particles[63].x) / 16;
             target[3] += (pos[1] - work->particles[63].y) / 16;
             target[4] += (pos[2] - work->particles[63].z) / 16;
@@ -384,13 +383,12 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
       model->vertices = vertices;
       model->shade = shade;
       if (mode == 2 || mode == 4) {
-        EffectPosition_ProjectBattler(effect->actors[0], &apos);
+        EffectPosition_ProjectBattler(args->actors[0], &apos);
         if (frame == 16) {
           BattlePlayback_StartFar(144);
-          BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 0x70000,
-                                        100);
+          BattleEffect_StartActorMotion(args->actors[0], 1, 0, 0, 0x70000, 100);
           work->shakeFrames = 8;
-          BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
+          BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
         }
         if (frame == 0) {
           {
@@ -430,7 +428,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
 
           Transform_Push();
           SceneTransform_ApplyPosition3(0, ((y - i * 8) << 16) + 0x300000, 0);
-          if (effect->side == 1) {
+          if (args->side == 1) {
             Transform_ApplyYaw(TRIG_TURN / 2);
           }
           Transform_ApplyRoll((i << 10) + 256);
@@ -475,19 +473,19 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
           }
         }
       } else if (mode == 3) {
-        EffectPosition_ProjectScaledBattler(effect->actor, &spos);
+        EffectPosition_ProjectScaledBattler(args->actor, &spos);
         if (frame == 8) {
           Sound_PlayFar(SE_CLATTER);
         }
         if (frame == 16) {
           BattlePlayback_StartFar(134);
         }
-        for (i = 0; i != effect->count; i++) {
+        for (i = 0; i != args->count; i++) {
           if (frame == i * 4 + 16) {
             Sound_PlayFar(SE_HEAVY_IMPACT);
-            BattleEffect_StartActorMotion(effect->actors[i], 1, 0, 0, 0x70000,
+            BattleEffect_StartActorMotion(args->actors[i], 1, 0, 0, 0x70000,
                                           100);
-            BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 8);
+            BattleEffect_TintBattler(args->actors[i], 7, 5, i, 8);
             work->shakeFrames = 8;
           }
         }
@@ -504,7 +502,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
           Transform_Reset();
           SceneTransform_ApplyPosition3((spos.x / 2 - 64) << 16,
                                         (spos.y << 16) - 0x340000, 0);
-          if (effect->side == 1) {
+          if (args->side == 1) {
             Transform_ApplyYaw(TRIG_TURN / 2);
           }
           Transform_ApplyPitch(i << 15);
@@ -536,7 +534,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
           SceneTransform_ApplyPosition3(0, 0x100000, 0);
           for (i = 0; i != 3; i++) {
             Transform_Push();
-            if (effect->side == 1) {
+            if (args->side == 1) {
               Transform_ApplyYaw(TRIG_TURN / 2);
             }
             Transform_ApplyRoll((i << 10) + 3096);
@@ -564,7 +562,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
     } while (frame != frames);
   }
 
-  if (unit[0x129] && mode == 0 && effect->variant == 1) {
+  if (unit[0x129] && mode == 0 && args->variant == 1) {
     target[2] = work->particles[63].x;
     target[3] = work->particles[63].y;
     target[4] = work->particles[63].z;

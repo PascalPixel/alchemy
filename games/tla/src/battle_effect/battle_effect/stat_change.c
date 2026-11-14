@@ -45,13 +45,13 @@ DEFINE_EFFECT_KIND(BattleEffect_RunCoal, BattleEffect_RunStatBoost, 9)
 
 /// Effect kind 182: the stat boost's mode 10 (a burst with no gathering
 /// lights), with no prelude Djinni and the fade step cleared.
-void BattleEffect_RunCrucibleFire(struct BattleEffectArgument *effect) {
+void BattleEffect_RunCrucibleFire(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
 
   work->fadeStep = 0;
-  effect->prelude = 0;
-  BattleEffect_RunStatBoost(effect, 10);
+  args->prelude = 0;
+  BattleEffect_RunStatBoost(args, 10);
 }
 
 // The two blitters' heap slots, byte offsets into Ram_HeapSlots (The Broken
@@ -82,7 +82,7 @@ static inline CopyWordsFn CopyWordsRoutine(void) {
 // frame and close in two pixels a frame; from frame 52 of a target its
 // burst plays, six pictures four frames apart, and from frame 80 the
 // mode's picture.
-void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
+void BattleEffect_RunStatBoost(struct BattleEffectArgument *args, u32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle draw[2];
@@ -113,25 +113,22 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   BattleEffect_StartCanvasLayer(0);
 
   // The prelude: the Djinni appears on the far side; origin receives where.
-  if (effect->prelude == 1) {
+  if (args->prelude == 1) {
     if (mode == 3 || mode == 6)
       BattleEffect_RunDjinniEntrance(
-          effect,
-          DJINNI_VENUS | DJINNI_SIDE(effect->side ^ 1) | DJINNI_ANCHORED,
+          args, DJINNI_VENUS | DJINNI_SIDE(args->side ^ 1) | DJINNI_ANCHORED,
           origin, target);
     else if (mode == 7 || mode == 8 || mode == 11)
       BattleEffect_RunDjinniEntrance(
-          effect,
-          DJINNI_MERCURY | DJINNI_SIDE(effect->side ^ 1) | DJINNI_ANCHORED,
+          args, DJINNI_MERCURY | DJINNI_SIDE(args->side ^ 1) | DJINNI_ANCHORED,
           origin, target);
     else if (mode == 2 || mode == 4)
       BattleEffect_RunDjinniEntrance(
-          effect,
-          DJINNI_JUPITER | DJINNI_SIDE(effect->side ^ 1) | DJINNI_ANCHORED,
+          args, DJINNI_JUPITER | DJINNI_SIDE(args->side ^ 1) | DJINNI_ANCHORED,
           origin, target);
     else if (mode != 10)
       BattleEffect_RunDjinniEntrance(
-          effect, DJINNI_MARS | DJINNI_SIDE(effect->side ^ 1) | DJINNI_ANCHORED,
+          args, DJINNI_MARS | DJINNI_SIDE(args->side ^ 1) | DJINNI_ANCHORED,
           origin, target);
     origin[0] = origin[0] * 4 / 5;
   }
@@ -222,11 +219,11 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   }
 
   // A lone target is moved to the canvas's middle (64).
-  if (effect->count == 1) {
-    EffectPosition_ProjectScaledBattler(effect->actors[0], &base);
+  if (args->count == 1) {
+    EffectPosition_ProjectScaledBattler(args->actors[0], &base);
     shift = -base.x * 4 / 5 + 64;
   } else {
-    if (effect->side == 1)
+    if (args->side == 1)
       shift = -64;
     else
       shift = 0;
@@ -236,12 +233,12 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
       CANVAS_COPY_AND_FADE; // each transfer fades the canvas: a trail
   work->transferValue = 50; // to 1/2
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  if (effect->side == 1)
+  if (args->side == 1)
     flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X;
   else
     flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y;
 
-  for (frame = start; frame != effect->count * 8 + 108; frame++) {
+  for (frame = start; frame != args->count * 8 + 108; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
     s32 prelude;
 
@@ -256,7 +253,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 
     // The Djinni sways, and after frame 32 rises two pixels a frame; for
     // the first four frames it is drawn ADDITIVE as well.
-    prelude = effect->prelude;
+    prelude = args->prelude;
     if (prelude == 1) {
       s32 x = ((Trig_Sin(frame << 11) * 20) >> 16) + origin[0] + shift - 20;
       s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin[1] - 24;
@@ -277,11 +274,10 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     }
 
-    for (member = 0; member != effect->count; member++) {
+    for (member = 0; member != args->count; member++) {
       struct MotionObject *object =
-          BattleObject_GetFar(effect->actors[member])->object;
-      s32 height =
-          BattleUnit_GetEffectHeightFar(effect->actors[member]) * 2 / 3;
+          BattleObject_GetFar(args->actors[member])->object;
+      s32 height = BattleUnit_GetEffectHeightFar(args->actors[member]) * 2 / 3;
 
       if (frame == member * 8 + 80)
         Sound_PlayFar(SE_POWER_UP);
@@ -294,10 +290,10 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
       SceneTransform_ApplyPosition(point);
       if (start != 0) {
         if (frame == member * 8 + 53)
-          BattleEffect_TintBattler(effect->actors[member], 7, -1, member, 16);
+          BattleEffect_TintBattler(args->actors[member], 7, -1, member, 16);
       } else {
         if (frame == member * 8 + 48)
-          BattleEffect_TintBattler(effect->actors[member], 7, -1, member, 16);
+          BattleEffect_TintBattler(args->actors[member], 7, -1, member, 16);
 
         // The lights turn and close in two pixels a frame.
         if (frame > member * 8) {
@@ -479,7 +475,7 @@ void BattleEffect_RunWeaken(void *action) {
 /// scatter with random headings toward the user's side. Frame loop: a
 /// target's picture plays for 24 frames; at frame 24 a chime sounds and the
 /// shards fly for 36 frames, one shade darker every four frames.
-void BattleEffect_RunStatReduction(struct BattleEffectArgument *effect,
+void BattleEffect_RunStatReduction(struct BattleEffectArgument *args,
                                    s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -530,7 +526,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectArgument *effect,
     }
   }
 
-  if (effect->side == 1) {
+  if (args->side == 1) {
     REG_BG2X = -0x7000;
     xOffset = -112;
   } else {
@@ -554,7 +550,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectArgument *effect,
       shard->y = ((i & 31) / 4 * 6 - 10) << 16;
       shard->z = (i % 4 * 8 - 16) << 16;
     }
-    if (effect->side == 1)
+    if (args->side == 1)
       shard->velocityX = Q16_ONE * 2;
     else
       shard->velocityX = -Q16_ONE * 2;
@@ -563,21 +559,21 @@ void BattleEffect_RunStatReduction(struct BattleEffectArgument *effect,
     shard->variant = Random16() & 0xff;
   }
 
-  BattleEffect_FetchRectangleBlitters(effect->side, draw = callbacks);
+  BattleEffect_FetchRectangleBlitters(args->side, draw = callbacks);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  for (frame = 0; frame != effect->count * 4 + 64; frame++) {
+  for (frame = 0; frame != args->count * 4 + 64; frame++) {
     camera = Ram_HeapSlots->cameraWork;
     if (frame == 72)
       BattlePlayback_StartFar(0);
-    for (j = 0; j != effect->count; j++) {
+    for (j = 0; j != args->count; j++) {
       struct MotionObject *object;
       s32 time;
       s32 x;
       s32 y;
 
       time = frame - j * 4;
-      object = BattleObject_GetFar(effect->actors[j])->object;
+      object = BattleObject_GetFar(args->actors[j])->object;
       if (time > 0) {
         // The picture stands 40 pixels above the target.
         Transform_Reset();

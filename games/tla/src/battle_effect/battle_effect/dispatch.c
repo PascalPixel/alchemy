@@ -5,7 +5,6 @@
 #include "../battle_effect_internal.h"
 #include "gamepak/far_call/battle.h"
 #include "module/battle_effect/battle_effect.h"
-#include "module/battle_effect/battle_effect.h"
 
 // Battle effects: repeat an empty effect.
 
@@ -23,130 +22,131 @@ void BattleEffect_CallDoNothing(s32 cnt) {
   }
 }
 
-/// Runs the battle effect of mode *arg (1 to 29; 0 and 11 the default one)
-/// with the effect's three work blocks taken.
-void BattleEffect_RunSceneEffect(s32 *arg) {
-  struct FxRunWork *work;
+/// Runs one of the large battle effects, the summons and the scenes of a few
+/// abilities: takes the effect's sheet, work and canvas, runs the effect of
+/// args->kind (enum SummonEffectId) and frees them again.
+void BattleEffect_RunSceneEffect(struct BattleEffectArgument *args) {
+  struct BattleEffectWork *work;
 
-  HeapSlot_Alloc(100, 0x302);
-  HeapSlot_Alloc(92, 0x7b7c);
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
   HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
-  work = (struct FxRunWork *)Ram_HeapSlots->battleFxWork[0];
-  work->script = arg;
-  work->active = 1;
-  if (*arg == 0) {
-    BattleEffect_RunMeteor((struct BattleEffectArgument *)arg);
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  work->effect = args;
+  work->vblanksSinceTransfer = 1;
+  if (args->kind == SUMMON_EFFECT_NONE) {
+    BattleEffect_RunMeteor(args);
   } else {
-    switch (*arg) {
-    case 1:
-      BattleEffect_RunRamses(arg);
+    switch (args->kind) {
+    case SUMMON_EFFECT_RAMSES:
+      BattleEffect_RunRamses(args);
       break;
-    case 2:
-      BattleEffect_RunNereid(arg);
+    case SUMMON_EFFECT_NEREID:
+      BattleEffect_RunNereid(args);
       break;
-    case 3:
-      BattleEffect_RunKirin(arg);
+    case SUMMON_EFFECT_KIRIN:
+      BattleEffect_RunKirin(args);
       break;
-    case 4:
-      BattleEffect_RunAtalanta(arg);
+    case SUMMON_EFFECT_ATALANTA:
+      BattleEffect_RunAtalanta(args);
       break;
-    case 5:
-      BattleEffect_RunCybele(arg);
+    case SUMMON_EFFECT_CYBELE:
+      BattleEffect_RunCybele(args);
       break;
-    case 6:
-      BattleEffect_RunNeptune(arg);
+    case SUMMON_EFFECT_NEPTUNE:
+      BattleEffect_RunNeptune(args);
       break;
-    case 7:
-      BattleEffect_RunTiamat(arg);
+    case SUMMON_EFFECT_TIAMAT:
+      BattleEffect_RunTiamat(args);
       break;
-    case 8:
-      BattleEffect_RunProcne(arg);
+    case SUMMON_EFFECT_PROCNE:
+      BattleEffect_RunProcne(args);
       break;
-    case 9:
-      BattleEffect_RunJudgment(arg);
+    case SUMMON_EFFECT_JUDGMENT:
+      BattleEffect_RunJudgment(args);
       break;
-    case 10:
-      BattleEffect_RunBoreas(arg);
+    case SUMMON_EFFECT_BOREAS:
+      BattleEffect_RunBoreas(args);
       break;
-    case 11:
-      BattleEffect_RunMeteor((struct BattleEffectArgument *)arg);
+    case SUMMON_EFFECT_METEOR:
+      BattleEffect_RunMeteor(args);
       break;
-    case 12:
-      BattleEffect_RunThor(arg);
+    case SUMMON_EFFECT_THOR:
+      BattleEffect_RunThor(args);
       break;
-    case 13:
-      BattleEffect_RunZagan(arg);
+    case SUMMON_EFFECT_ZAGAN:
+      BattleEffect_RunZagan(args);
       break;
-    case 14:
-      BattleEffect_RunMegaera(arg);
+    case SUMMON_EFFECT_MEGAERA:
+      BattleEffect_RunMegaera(args);
       break;
-    case 15:
-      BattleEffect_RunFlora(arg);
+    case SUMMON_EFFECT_FLORA:
+      BattleEffect_RunFlora(args);
       break;
-    case 16:
-      BattleEffect_RunMoloch(arg);
+    case SUMMON_EFFECT_MOLOCH:
+      BattleEffect_RunMoloch(args);
       break;
-    case 17:
-      BattleEffect_RunUlysses(arg);
+    case SUMMON_EFFECT_ULYSSES:
+      BattleEffect_RunUlysses(args);
       break;
-    case 18:
-      BattleEffect_RunHaures(arg);
+    case SUMMON_EFFECT_HAURES:
+      BattleEffect_RunHaures(args);
       break;
-    case 19:
-      BattleEffect_RunEclipse(arg);
+    case SUMMON_EFFECT_ECLIPSE:
+      BattleEffect_RunEclipse(args);
       break;
-    case 20:
-      BattleEffect_RunCoatlicue(arg);
+    case SUMMON_EFFECT_COATLICUE:
+      BattleEffect_RunCoatlicue(args);
       break;
-    case 21:
-      BattleEffect_RunDaedalus(arg);
+    case SUMMON_EFFECT_DAEDALUS:
+      BattleEffect_RunDaedalus(args);
       break;
-    case 22:
-      BattleEffect_RunAzul(arg);
+    case SUMMON_EFFECT_AZUL:
+      BattleEffect_RunAzul(args);
       break;
-    case 23:
-      BattleEffect_RunCatastrophe(arg);
+    case SUMMON_EFFECT_CATASTROPHE:
+      BattleEffect_RunCatastrophe(args);
       break;
-    case 24:
-      BattleEffect_RunCharon(arg);
+    case SUMMON_EFFECT_CHARON:
+      BattleEffect_RunCharon(args);
       break;
-    case 25:
-      BattleEffect_RunIris(arg);
+    case SUMMON_EFFECT_IRIS:
+      BattleEffect_RunIris(args);
       break;
-    case 26:
-      BattleEffect_RunDaedalusAlt(arg);
+    case SUMMON_EFFECT_DAEDALUS_ALT:
+      BattleEffect_RunDaedalusAlt(args);
       break;
-    case 27:
-      BattleEffect_RunTrident(arg);
+    case SUMMON_EFFECT_TRIDENT:
+      BattleEffect_RunTrident(args);
       break;
-    case 28:
-      BattleEffect_RunCruelRuin(arg);
+    case SUMMON_EFFECT_CRUEL_RUIN:
+      BattleEffect_RunCruelRuin(args);
       break;
-    case 29:
-      BattleEffect_RunMeteorBlow(arg);
+    case SUMMON_EFFECT_METEOR_BLOW:
+      BattleEffect_RunMeteorBlow(args);
       break;
     }
   }
-  HeapSlot_Release(96);
-  HeapSlot_Release(92);
-  HeapSlot_Release(100);
+  HeapSlot_Release(HEAP_SLOT_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
 }
 
-/// Runs one battle effect script: takes the effect's three work blocks, calls
-/// the handler its first word selects, then gives the blocks back.
-void BattleEffect_RunFromTable(s32 *script) {
-  struct FxRunWork *work;
+/// Runs an ordinary battle effect from gBattleEffect_Handlers, with the sheet,
+/// work and canvas it lends.
+void BattleEffect_RunFromTable(struct BattleEffectArgument *args) {
+  struct BattleEffectWork *work;
 
-  HeapSlot_Alloc(100, 0x302);
-  HeapSlot_Alloc(92, 0x7b7c);
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
   HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
-  work = (struct FxRunWork *)Ram_HeapSlots->battleFxWork[0];
-  work->script = script;
-  work->active = 1;
-  gBattleEffect_Handlers[*script - 1](script);
-  HeapSlot_Release(96);
-  HeapSlot_Release(92);
-  HeapSlot_Release(100);
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  work->effect = args;
+  work->vblanksSinceTransfer = 1;
+  gBattleEffect_Handlers[args->kind - 1](args);
+  HeapSlot_Release(HEAP_SLOT_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
 }
 
 void BattleEffect_BuildWindowEdgeTable(void) {

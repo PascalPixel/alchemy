@@ -42,7 +42,7 @@
 // in; a cloud of sparks gathers on its centre, and from frame 330 four
 // comets strike one after another, each with a burst of sparks, throwing
 // the enemies down. A or B skips frames 161 to 394.
-void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
+void BattleEffect_RunProcne(struct BattleEffectArgument *args) {
   void *canvas;
   void *camera;
   struct BattleEffectWork *work;
@@ -94,8 +94,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 
     // Each enemy's place, heading, distance and facing, to restore at the
     // end; its bobbing stops.
-    for (index = 0; index != effect->count; index++) {
-      context = BattleObject_GetFar(effect->actors[index]);
+    for (index = 0; index != args->count; index++) {
+      context = BattleObject_GetFar(args->actors[index]);
       object = context->object;
       home[index].x = object->x;
       home[index].y = object->z;
@@ -148,9 +148,9 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 
       // The enemies, one every 16 frames, spiral in toward the centre and
       // rise, spinning faster; each comet strike knocks them down.
-      for (index = 0; index != effect->count; index++) {
+      for (index = 0; index != args->count; index++) {
         if (frame > index * 16) {
-          context = BattleObject_GetFar(effect->actors[index]);
+          context = BattleObject_GetFar(args->actors[index]);
           object = context->object;
           object->x = (radius[index] * Trig_Sin(heading[index])) >> 1;
           object->z = (radius[index] * Trig_Cos(heading[index])) >> 1;
@@ -180,7 +180,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
           do {
             if (frame == gProcne_Frames[slot]) {
               object->velocityY = 0;
-              BattleEffect_TintBattler(effect->actors[index], 7, 5, index, 8);
+              BattleEffect_TintBattler(args->actors[index], 7, 5, index, 8);
             }
             slot++;
           } while (slot != 4);
@@ -274,8 +274,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
           index++;
         } while (index != 512);
 
-        for (index = 0; index != effect->count; index++) {
-          context = BattleObject_GetFar(effect->actors[index]);
+        for (index = 0; index != args->count; index++) {
+          context = BattleObject_GetFar(args->actors[index]);
           object = context->object;
           object->y = ((Random16() & 15) + 8) << 16;
         }
@@ -293,7 +293,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
           index++;
         } while (index != 32);
 
-        for (index = 0; index != effect->count; index++) {
+        for (index = 0; index != args->count; index++) {
           radius[index] = 16;
           spin[index] = 6000;
         }
@@ -517,10 +517,10 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 
     // The results; the enemies go back where they stood, facing as before.
     BattlePlayback_StartFar(134);
-    for (index = 0; index != effect->count; index++) {
+    for (index = 0; index != args->count; index++) {
       struct MotionObject *enemy;
 
-      context = BattleObject_GetFar(effect->actors[index]);
+      context = BattleObject_GetFar(args->actors[index]);
       enemy = context->object;
       enemy->x = home[index].x;
       enemy->z = home[index].y;
@@ -561,7 +561,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunTiamat, BattleEffect_RunDragonFire, 0)
 // then the screen whitens and the canvas fades away. In mode 0 a formation
 // of eight drops in at frame 40 and bursts at the end. A or B skips frames
 // 49 to 159.
-void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunDragonFire(struct BattleEffectArgument *args, s32 mode) {
   struct EffectPosition origin;
   DrawRectangle draw[2];
   void *canvas;
@@ -606,7 +606,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
     // pixels further right and lower, with its sparks and flashes.
     alternate = 0;
 
-    if (((struct Actor *)BattleObject_GetFar(effect->actors[0])->object)
+    if (((struct Actor *)BattleObject_GetFar(args->actors[0])->object)
             ->animationKind == 2)
       alternate = 1;
 
@@ -614,15 +614,15 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
     // the caster.
     if (mode == 0)
       dir = 1;
-    else if (effect->side == 1)
+    else if (args->side == 1)
       dir = -1;
     else
       dir = 1;
     if (mode == 1) {
-      EffectPosition_ProjectScaledBattler(effect->actor, &origin);
+      EffectPosition_ProjectScaledBattler(args->actor, &origin);
       origin.x /= 2;
       origin.y = 66;
-      if (effect->side == 1)
+      if (args->side == 1)
         origin.x = 76;
       else
         origin.x = 44;
@@ -663,9 +663,9 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
           Animation_ApplyChildArgumentFar(work->objects[3], 10);
           Animation_ApplyChildArgumentFar(work->objects[4], 11);
         }
-        for (i = 0; i != effect->count; i++) {
-          BattleEffect_TintBattler(effect->actors[i], 10, 5, -1, 0);
-          BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
+        for (i = 0; i != args->count; i++) {
+          BattleEffect_TintBattler(args->actors[i], 10, 5, -1, 0);
+          BattleMotion_ApplyKnockbackFar(args->actors[i], 4);
         }
         frame = 160;
       }
@@ -881,9 +881,9 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
           BattleEffect_PlaceFormationObjects(3, focus.x, focus.y);
       }
       if (frame == 138) {
-        for (i = 0; i != effect->count; i++) {
-          BattleEffect_TintBattler(effect->actors[i], 10, 5, -1, 0);
-          BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
+        for (i = 0; i != args->count; i++) {
+          BattleEffect_TintBattler(args->actors[i], 10, 5, -1, 0);
+          BattleMotion_ApplyKnockbackFar(args->actors[i], 4);
         }
       }
 

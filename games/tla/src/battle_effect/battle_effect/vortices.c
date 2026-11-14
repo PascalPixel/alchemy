@@ -23,7 +23,7 @@
 // Thirty motes rise from the caster, swirl, and home in on the targets; each
 // one that reaches the ground flashes and knocks back its target and plays a
 // three-cel splash where it landed.
-void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
+void BattleEffect_RunFroth(struct BattleEffectArgument *args) {
   struct EffectPosition pos;
   struct BattleEffectWork *work;
   void *canvas;
@@ -54,8 +54,8 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
 
   // The motes start at the caster's chest with random velocities.
-  source = BattleObject_GetFar(effect->actor)->object;
-  y = source->y + BattleUnit_GetEffectHeightFar(effect->actor);
+  source = BattleObject_GetFar(args->actor)->object;
+  y = source->y + BattleUnit_GetEffectHeightFar(args->actor);
   for (i = 0; i != MOTE_COUNT; i++) {
     point = &work->particles[i];
     SET_POSITION(point, source->x, y, source->z);
@@ -67,9 +67,9 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
   }
 
   // Each target's seat on the ground.
-  for (i = 0; i != effect->count; i++) {
+  for (i = 0; i != args->count; i++) {
     seat = &work->particles[SEAT_FIRST + i];
-    object = BattleObject_GetFar(effect->actors[i])->object;
+    object = BattleObject_GetFar(args->actors[i])->object;
     SET_POSITION(seat, object->x, 0, object->z);
   }
 
@@ -79,19 +79,19 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_SCATTER);
 
-  for (frame = 0; frame != gVortices_Counts[effect->variant * 2 + 1]; frame++) {
+  for (frame = 0; frame != gVortices_Counts[args->variant * 2 + 1]; frame++) {
     // The camera turns between frames 17 and 63.
     camera = Ram_HeapSlots->cameraWork;
     if (frame >= 17 && frame < 64)
       work->cameraDelta = 0x180;
     else
       work->cameraDelta = 0;
-    if (frame == gVortices_Counts[effect->variant * 2 + 1] - 16)
+    if (frame == gVortices_Counts[args->variant * 2 + 1] - 16)
       BattlePlayback_StartFar(133);
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
 
-    for (i = 0; i != gVortices_Counts[effect->variant * 2]; i++) {
+    for (i = 0; i != gVortices_Counts[args->variant * 2]; i++) {
       point = &work->particles[i];
 
       // A mote leaves the caster two frames after the one before it.
@@ -111,7 +111,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
       // After 48 frames it steers toward its target's seat, damped for the
       // first 37 of them, and lands.
       if (frame > i * 2 + 48 && landed[i] == 0) {
-        target = &work->particles[SEAT_FIRST + i % effect->count];
+        target = &work->particles[SEAT_FIRST + i % args->count];
         point->velocityX += (target->x - point->x) >> 9;
         point->velocityY += (target->y - point->y) >> 9;
         point->velocityZ += (target->z - point->z) >> 9;
@@ -125,9 +125,9 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
           point->variant = 0;
           point->x = pos.x;
           point->y = pos.y + (Random16() & 31) - 16;
-          BattleEffect_TintBattler(effect->actors[i % effect->count], 7, 5,
-                                   i % effect->count, 4);
-          BattleMotion_ApplyKnockbackFar(effect->actors[i % effect->count], 0);
+          BattleEffect_TintBattler(args->actors[i % args->count], 7, 5,
+                                   i % args->count, 4);
+          BattleMotion_ApplyKnockbackFar(args->actors[i % args->count], 0);
           work->shakeFrames = 4;
           Sound_PlayFar(SE_WATER);
         }
@@ -143,7 +143,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
       }
     }
 
-    BattleCamera_Shake(effect->variant * 2 + 2, effect->variant * 2 + 2);
+    BattleCamera_Shake(args->variant * 2 + 2, args->variant * 2 + 2);
     if (work->cameraPhase == 0)
       work->cameraPhase = 1;
     EFFECT_END_FRAME(work);
@@ -164,7 +164,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
 // One to four funnels of wind sway across the targets for 80 frames, each
 // drawn as three stacked segments with glints swirling around it; the canvas
 // is wiped every eight frames, and each target is struck seven times.
-void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
+void BattleEffect_RunWhirlwind(struct BattleEffectArgument *args) {
   DrawRectangle draw[2];
   struct BattleEffectWork *work;
   void *canvas;
@@ -216,7 +216,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
 
     // Sway toward the targets' side; fade in over 16 frames and out over the
     // last 16.
-    if (effect->side == 1)
+    if (args->side == 1)
       wave += 0x200000;
     else
       wave -= 0x200000;
@@ -225,9 +225,9 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
     if (frame > 63)
       REG_BLDALPHA = (0x4f - frame) | 0x1000;
 
-    for (i = 0; i != gVortices_Shapes[effect->variant * 3]; i++) {
+    for (i = 0; i != gVortices_Shapes[args->variant * 3]; i++) {
       // Each funnel circles its own phase, a quarter turn from the next.
-      x = ((gVortices_Shapes[effect->variant * 3 + 1] *
+      x = ((gVortices_Shapes[args->variant * 3 + 1] *
                 Trig_Sin((frame << 11) + i * (TRIG_TURN / 4)) +
             wave) >>
            16) +
@@ -262,18 +262,18 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
 
     // Strike each target seven times, every eight frames, three frames
     // after the target before it.
-    for (j = 0; j != effect->count; j++) {
+    for (j = 0; j != args->count; j++) {
       for (i = 0; i != 7; i++) {
         if (frame == i * 8 + j * 3 + 16) {
-          BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 4);
-          BattleMotion_ApplyKnockbackFar(effect->actors[j], 6);
+          BattleEffect_TintBattler(args->actors[j], 7, 5, j, 4);
+          BattleMotion_ApplyKnockbackFar(args->actors[j], 6);
         }
       }
     }
 
     work->shakeFrames = 1;
-    BattleCamera_Shake(gVortices_Shapes[effect->variant * 3 + 2],
-                       gVortices_Shapes[effect->variant * 3 + 2] * 2);
+    BattleCamera_Shake(gVortices_Shapes[args->variant * 3 + 2],
+                       gVortices_Shapes[args->variant * 3 + 2] * 2);
     EFFECT_END_FRAME(work);
   }
 

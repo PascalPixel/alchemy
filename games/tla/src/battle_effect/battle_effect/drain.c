@@ -22,7 +22,7 @@
 /// and thrown sideways and up. Frame loop: from its cue a target flashes, and
 /// its shards fall under one of four gravities until they drop below y = 112.
 /// The effect runs 20 frames per target plus 56.
-void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
+void BattleEffect_RunBreak(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle draw;
@@ -53,7 +53,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
   Transform_SetLookAt(camera, camera + 3);
 
   // Scatter each target's shards around the middle of its body.
-  for (member = 0; member != effect->count; member++) {
+  for (member = 0; member != args->count; member++) {
     struct MotionObject *object;
     s32 offset;
     s32 height;
@@ -63,8 +63,8 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
     offset = member * SHARDS_PER_MEMBER * sizeof(struct EffectStep);
     /* FAKEMATCH(temporary): position holds &screen. */
     position = &screen;
-    object = BattleObject_GetFar(effect->actors[member])->object;
-    height = BattleUnit_GetEffectHeightFar(effect->actors[member]) / 2;
+    object = BattleObject_GetFar(args->actors[member])->object;
+    height = BattleUnit_GetEffectHeightFar(args->actors[member]) / 2;
     point[0] = object->x;
     point[1] = height;
     point[2] = object->z;
@@ -90,17 +90,17 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  for (frame = 0; frame != effect->count * 20 + 56; frame++) {
+  for (frame = 0; frame != args->count * 20 + 56; frame++) {
     if (frame == 32)
       BattlePlayback_StartFar(0);
-    for (member = 0; member != effect->count; member++) {
+    for (member = 0; member != args->count; member++) {
       s32 offset;
 
       offset = member * SHARDS_PER_MEMBER * sizeof(struct EffectStep);
       // The target's cue: a chime and a flash.
       if (frame == member * 20) {
         Sound_PlayFar(SE_CRACK);
-        BattleEffect_TintBattler(effect->actors[member], 7, -1, member, 20);
+        BattleEffect_TintBattler(args->actors[member], 7, -1, member, 20);
       }
       // Its shards fly, and go out once they fall past y = 112.
       if (frame > member * 20) {
@@ -134,15 +134,15 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
 }
 
 /// Abilities: Drain, Psy Drain (kind 42).
-void BattleEffect_RunDrain(u8 *effect) {
-  s32 value = *(s32 *)(effect + 24);
+void BattleEffect_RunDrain(u8 *args) {
+  s32 value = *(s32 *)(args + 24);
 
-  BattleEffect_RunDrainMotes(effect, (u32)(-value | value) >> 31);
+  BattleEffect_RunDrainMotes(args, (u32)(-value | value) >> 31);
 }
 
 /// Abilities: True Collide (kind 451).
-void BattleEffect_RunTrueCollide(u8 *effect) {
-  BattleEffect_RunDrainMotes(effect, 2);
+void BattleEffect_RunTrueCollide(u8 *args) {
+  BattleEffect_RunDrainMotes(args, 2);
 }
 
 #define MOTES_PER_MEMBER 128
@@ -157,7 +157,7 @@ void BattleEffect_RunTrueCollide(u8 *effect) {
 /// toward the middle of the user by 1/256 of the distance a frame and goes
 /// out within 16 pixels of it across. The user glows from frame 40 until 20
 /// frames before the end.
-void BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunDrainMotes(struct BattleEffectArgument *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -190,12 +190,12 @@ void BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode) {
   for (i = 0; i != 8 * MOTES_PER_MEMBER; i++)
     MOTES[i].variant = -1;
 
-  for (member = 0; member != effect->count; member++) {
+  for (member = 0; member != args->count; member++) {
     struct MotionObject *object;
     s32 half;
 
-    object = BattleObject_GetFar(effect->actors[member])->object;
-    half = BattleUnit_GetEffectHeightFar(effect->actors[member]) / 2;
+    object = BattleObject_GetFar(args->actors[member])->object;
+    half = BattleUnit_GetEffectHeightFar(args->actors[member]) / 2;
     for (i = 0; i != MOTES_PER_MEMBER; i++) {
       struct EffectStep *mote = &MOTES[member * MOTES_PER_MEMBER + i];
       s32 speed;
@@ -233,23 +233,23 @@ void BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   Sound_PlayFar(SE_SWIRL);
 
-  for (frame = 0; frame != effect->count * 20 + 72; frame++) {
+  for (frame = 0; frame != args->count * 20 + 72; frame++) {
     struct MotionObject *user;
     s32 half;
 
-    user = BattleObject_GetFar(effect->actor)->object;
-    half = BattleUnit_GetEffectHeightFar(effect->actor) / 2;
+    user = BattleObject_GetFar(args->actor)->object;
+    half = BattleUnit_GetEffectHeightFar(args->actor) / 2;
     if (frame == 64)
       BattlePlayback_StartFar(133);
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
     if (frame == 40)
-      BattleEffect_TintBattler(effect->actor, 7, -1, -1, 0);
-    if (frame == effect->count * 20 + 52)
-      BattleEffect_TintBattler(effect->actor, 0, -1, -1, 0);
-    for (member = 0; member != effect->count; member++) {
+      BattleEffect_TintBattler(args->actor, 7, -1, -1, 0);
+    if (frame == args->count * 20 + 52)
+      BattleEffect_TintBattler(args->actor, 0, -1, -1, 0);
+    for (member = 0; member != args->count; member++) {
       if (frame == member * 20)
-        BattleEffect_TintBattler(effect->actors[member], 7, 5, member, 42);
+        BattleEffect_TintBattler(args->actors[member], 7, 5, member, 42);
       if (frame > member * 20) {
         for (i = 0; i != 32; i++) {
           struct EffectStep *mote = &MOTES[member * MOTES_PER_MEMBER + i];

@@ -37,7 +37,7 @@ struct BattleObjectPosition {
 /// shards, one every two frames, drift up from around the target, pulsing in
 /// size and jittering until they settle, and the targets flash at frames 64,
 /// 68, ... before the scene fades out from frame 96.
-void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
+void BattleEffect_RunCrystal(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   // Unused: draw[1] gives the stack frame its 4 bytes.
@@ -66,7 +66,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FB, work->sheet, 0, 0);
   Picture_MirrorIntoQuadrants(work->sheet, gData_02014000, 64, 64);
   BattleEffect_StartCanvasLayer(0);
-  BattleEffect_RunDjinniEntrance(effect, ((effect->side ^ 1) << 4) | 32, center,
+  BattleEffect_RunDjinniEntrance(args, ((args->side ^ 1) << 4) | 32, center,
                                  other);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                              work->sheet + 0x65c0, 1, 0);
@@ -74,7 +74,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
                        Resource_GetTableEntry((s32)&ResourceId_BlastSheet),
                        128);
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
-  if (effect->side == 1) {
+  if (args->side == 1) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
   } else {
@@ -90,7 +90,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
     Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
     camera = Ram_HeapSlots->cameraWork;
-    target = BattleObject_GetFar(effect->actors[0])->object;
+    target = BattleObject_GetFar(args->actors[0])->object;
 
     for (frame = 0; frame != CRYSTAL_FRAMES; frame++) {
       if (frame == 0) {
@@ -158,10 +158,10 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
         }
       }
 
-      for (i = 0; i != effect->count; i++) {
+      for (i = 0; i != args->count; i++) {
         if (frame == i * 4 + 64) {
           Sound_PlayFar(SE_RECOVERY);
-          BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 24);
+          BattleEffect_TintBattler(args->actors[i], 7, -1, i, 24);
         }
       }
 

@@ -56,7 +56,7 @@ struct RenderModel__liquifier {
 //
 // The work's particles 0-31 are the sparks, 32-47 the shards (z holds each
 // shard's roll); the map cell buffer is cleared but not drawn.
-void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
+void BattleEffect_RunLiquifier(struct BattleEffectArgument *args) {
   struct EffectPosition from;
   struct EffectPosition to;
   DrawRectangle draw[2];
@@ -84,8 +84,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                        128);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  EffectPosition_ProjectBattler(effect->actor, &from);
-  EffectPosition_ProjectBattler(effect->actors[0], &to);
+  EffectPosition_ProjectBattler(args->actor, &from);
+  EffectPosition_ProjectBattler(args->actors[0], &to);
 
   for (frame = 0; frame != KIND123_FRAMES; frame++) {
     if (frame == 0) {
@@ -335,8 +335,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
             BattlePlayback_StartFar(144);
           else
             Sound_PlayFar(SE_CLATTER);
-          BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 0, 100);
-          BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 5);
+          BattleEffect_StartActorMotion(args->actors[0], 1, 0, 0, 0, 100);
+          BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 5);
           work->shakeFrames = 4;
         }
       }
@@ -370,22 +370,22 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
 #define Actor_SetAnimationSpeedFar                                             \
   ((s32 (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
-void BattleEffect_RunCanvasModeByCount(struct BattleEffectArgument *effect) {
-  if (effect->kind > 199)
-    BattleEffect_RunCanvasBurst(effect, 2);
+void BattleEffect_RunCanvasModeByCount(struct BattleEffectArgument *args) {
+  if (args->kind > 199)
+    BattleEffect_RunCanvasBurst(args, 2);
   else
-    BattleEffect_RunCanvasBurst(effect, 1);
+    BattleEffect_RunCanvasBurst(args, 1);
 }
 
 DEFINE_EFFECT_KIND(BattleEffect_RunShred, BattleEffect_RunCanvasBurst, 0)
 
-void BattleEffect_RunMineBall(struct BattleEffectArgument *effect) {
+void BattleEffect_RunMineBall(struct BattleEffectArgument *args) {
   struct Actor *object;
 
-  object = (struct Actor *)BattleObject_GetFar(effect->actor)->object;
+  object = (struct Actor *)BattleObject_GetFar(args->actor)->object;
   Actor_SelectAnimationFar(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x1c);
-  BattleEffect_RunCanvasBurst(effect, 3);
+  BattleEffect_RunCanvasBurst(args, 3);
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
@@ -438,8 +438,7 @@ static inline void DrawDisc(void *canvas, s16 *discs, s32 cells, s32 x, s32 y,
 //   the
 //      midpoint of the targets, its own palette, hit at 24.
 // Modes 1 and 2 close by restoring the battle display themselves.
-void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
-                                 u32 mode) {
+void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *args, u32 mode) {
   struct EffectPosition from;
   struct EffectPosition to;
   struct BattleEffectWork *work;
@@ -497,11 +496,11 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
                              work->sheet + 0x800, 1, 0);
 
   for (frame = 0; frame != frames; frame++) {
-    EffectPosition_ProjectBattler(effect->actor, &from);
+    EffectPosition_ProjectBattler(args->actor, &from);
     if (mode == 3)
       BattleEffect_GetTargetsMidpoint(&to);
     else
-      EffectPosition_ProjectBattler(effect->actors[0], &to);
+      EffectPosition_ProjectBattler(args->actors[0], &to);
     if (mode == 0 && frame == 0)
       Sound_PlayFar(SE_SPIN);
 
@@ -604,15 +603,15 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
         // The hit: the targets recoil (mode 1 keeps them still) and flash.
         if (mode == 0 || mode == 2 || mode == 3) {
           BattlePlayback_StartFar(145);
-          for (i = 0; i != effect->count; i++)
-            BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
+          for (i = 0; i != args->count; i++)
+            BattleMotion_ApplyKnockbackFar(args->actors[i], 4);
         } else {
           BattlePlayback_StartFar(133);
-          for (i = 0; i != effect->count; i++)
-            BattleMotion_ApplyKnockbackFar(effect->actors[i], 0);
+          for (i = 0; i != args->count; i++)
+            BattleMotion_ApplyKnockbackFar(args->actors[i], 0);
         }
-        for (i = 0; i != effect->count; i++)
-          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 8);
+        for (i = 0; i != args->count; i++)
+          BattleEffect_TintBattler(args->actors[i], 7, 5, i, 8);
         work->shakeFrames = 8;
 
         // Sixteen flames, faster one by one.
@@ -694,7 +693,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
     Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
     Task_Remove(Palette_StepFadeTransfer);
-    BattleEffect_RunImpair(effect);
+    BattleEffect_RunImpair(args);
   } else if (mode == 3) {
     BattleEffect_EndCanvasLayer();
   } else {

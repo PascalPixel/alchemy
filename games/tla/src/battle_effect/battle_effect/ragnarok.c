@@ -35,7 +35,7 @@
 // colours; each column strikes 8 frames after the last (shake, its flash, its
 // targets flashed) and 6 frames later throws its sparks and knocks the
 // targets back.
-void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
+void BattleEffect_RunRagnarok(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 col;
@@ -52,14 +52,14 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
   cells = Ram_HeapSlots->unk64[0];
 
   // Open the canvas, pose the user and place the columns.
-  user = BattleObject_GetFar(effect->actor)->object;
+  user = BattleObject_GetFar(args->actor)->object;
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  BattleEffect_FetchRectangleBlitters(effect->side, draw);
+  BattleEffect_FetchRectangleBlitters(args->side, draw);
   Actor_SelectAnimationFar(user, 2);
   Actor_SetAnimationSpeedFar(user, 48);
-  EffectPosition_ProjectBattler(effect->actors[0], &target);
-  if (effect->side == 0)
+  EffectPosition_ProjectBattler(args->actors[0], &target);
+  if (args->side == 0)
     baseX = target.x / 2 - 24;
   else
     baseX = target.x / 2 - 92;
@@ -94,8 +94,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
 
       speed = (Random16() & 0x1ff) + 32;
       angle = Random16() & 0xffff;
-      spark->x = (gRagnarok_StrikeColumns[col + effect->side * 3] + baseX)
-                 << 16;
+      spark->x = (gRagnarok_StrikeColumns[col + args->side * 3] + baseX) << 16;
       spark->y = px(88);
       spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
       spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 6;
@@ -126,7 +125,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
       s32 top;
 
       height = 128;
-      if (effect->side == 1) {
+      if (args->side == 1) {
         if (frame < BLADE_SWING_FRAMES) {
           x = frame * 10 - 8;
           top = frame * 16 - 128;
@@ -168,7 +167,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
       if (frame >= start) {
         if (frame < start + 2)
           draw[0](canvas, work->sheet + FLASH_SHEET,
-                  gRagnarok_StrikeColumns[col + effect->side * 3] + baseX - 16,
+                  gRagnarok_StrikeColumns[col + args->side * 3] + baseX - 16,
                   56, 32, 64);
         i = 0;
         do {
@@ -180,7 +179,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
 
           y = Q_16_16_UPPER_HALF(flash->y);
           x = Q_16_16_UPPER_HALF(flash->x) +
-              gRagnarok_StrikeColumns[col + effect->side * 3] + baseX;
+              gRagnarok_StrikeColumns[col + args->side * 3] + baseX;
           life = flash->variant;
           if (life >= 0 && life <= 17)
             draw[0](canvas,
@@ -232,12 +231,12 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
 
       // The column's targets flash at the strike and are struck by its
       // sparks.
-      for (i = 0; i != effect->count; i++) {
+      for (i = 0; i != args->count; i++) {
         if (frame == start)
-          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 10);
+          BattleEffect_TintBattler(args->actors[i], 7, 5, i, 10);
         if (frame == start + 6) {
-          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 10);
-          BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
+          BattleEffect_TintBattler(args->actors[i], 7, 5, i, 10);
+          BattleMotion_ApplyKnockbackFar(args->actors[i], 4);
         }
       }
       col++;
@@ -285,8 +284,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunAcheronsGrief, BattleEffect_RunFallingSword,
 // to 63, while the pillar rises; the flashes from 56 and the sparks from 60,
 // bouncing on the ground; the canvas floods at frames 9 and 60; every target
 // is struck at frame 68.
-void BattleEffect_RunFallingSword(struct BattleEffectArgument *effect,
-                                  s32 mode) {
+void BattleEffect_RunFallingSword(struct BattleEffectArgument *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -305,7 +303,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectArgument *effect,
   // Open the canvas on BG1 over the target and build the blitters.
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  EffectPosition_ProjectBattler(effect->actors[0], &target);
+  EffectPosition_ProjectBattler(args->actors[0], &target);
   centerX = target.x / 2;
 
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -596,14 +594,14 @@ void BattleEffect_RunFallingSword(struct BattleEffectArgument *effect,
 
     // The hit, and the canvas flooded at frames 9 and 60.
     if (frame == 68) {
-      for (i = 0; i != effect->count; i++) {
-        BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
-        BattleMotion_ApplyKnockbackFar(effect->actors[i], 7);
+      for (i = 0; i != args->count; i++) {
+        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
+        BattleMotion_ApplyKnockbackFar(args->actors[i], 7);
       }
     }
 
     if (frame == 9) {
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
+      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
       Iwram_FillWordsEntry(canvas, 128 << 7, 0x3F3F3F3F);
     }
     if (frame == 60)

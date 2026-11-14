@@ -19,7 +19,7 @@
 // halves) are thrown from the caster, each one at a target in turn; from
 // frame 8 * i + 11 each is drawn toward its target and bursts once it has
 // passed it, into four sparks and 32 drops, pushing the target back.
-void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
+void BattleEffect_RunStarMine(struct BattleEffectArgument *args) {
   void *canvas;
   struct BattleEffectWork *work;
   s32 frame;
@@ -80,8 +80,8 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
       struct EffectStep *thrown;
 
       for (i = 0, thrown = work->particles; i != STARS; i++, thrown++) {
-        struct StarTarget *caster = BattleObject_GetFar(effect->actor)->object;
-        s32 height = BattleUnit_GetEffectHeightFar(effect->actor) / 2;
+        struct StarTarget *caster = BattleObject_GetFar(args->actor)->object;
+        s32 height = BattleUnit_GetEffectHeightFar(args->actor) / 2;
         s32 velocity;
 
         SET_POSITION(thrown, caster->x, caster->y + height, caster->z);
@@ -118,9 +118,9 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
       s32 a;
       s32 b;
 
-      member = i % effect->count;
-      target = BattleObject_GetFar(effect->actors[member])->object;
-      height = BattleUnit_GetEffectHeightFar(effect->actors[member]) / 2;
+      member = i % args->count;
+      target = BattleObject_GetFar(args->actors[member])->object;
+      height = BattleUnit_GetEffectHeightFar(args->actors[member]) / 2;
       if (star->variant < 0) {
         continue;
       }
@@ -175,9 +175,9 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
       }
       BattlePlayback_StartFar(134);
       Sound_PlayFar(SE_CRASH);
-      BattleEffect_StartActorMotion(effect->actors[member], 1, 0x20000, 0x80000,
+      BattleEffect_StartActorMotion(args->actors[member], 1, 0x20000, 0x80000,
                                     0x20000, i * 5 + 110);
-      BattleEffect_TintBattler(effect->actors[member], 7, 5, member, 16);
+      BattleEffect_TintBattler(args->actors[member], 7, 5, member, 16);
       work->shakeFrames = 4;
       star->variant = -1;
     }
@@ -270,7 +270,7 @@ struct CornerRow {
 // The dragon bursts up under the target and carries it into the sky: the
 // backdrop changes to a red haze scrolling past as the target is lifted,
 // swaying, then is dropped back to the field at frame 166 and lands at 179.
-void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
+void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   u8 *vertices;
@@ -312,15 +312,15 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  victim = BattleObject_GetFar(effect->actors[0])->object;
+  victim = BattleObject_GetFar(args->actors[0])->object;
   camera = Ram_HeapSlots->cameraWork;
   savedYaw = camera->yaw;
   height = 0;
   savedMode = victim[18];
   savedX = victim[2];
   savedZ = victim[4];
-  EffectPosition_ProjectBattler(effect->actors[0], &source);
-  EffectPosition_ProjectBattler(effect->actors[0], &target);
+  EffectPosition_ProjectBattler(args->actors[0], &source);
+  EffectPosition_ProjectBattler(args->actors[0], &target);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeBandSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
@@ -356,7 +356,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 4) {
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 2);
+      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 2);
       work->shakeFrames = 8;
       Sound_PlayFar(SE_CRASH);
     }
@@ -379,7 +379,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       victim[3] = 200 << 15;
       victim[4] = savedZ;
       gBgScroll[1].y = 32;
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
+      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 16);
     }
     if (frame == 179) {
       BattlePlayback_StartFar(134);
@@ -423,7 +423,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       BattleEffect_BuildRepeatingTilemap();
       gBgScroll[1].y = 104;
       gCameraSceneParameters[4] = 240;
-      if (effect->side == 0) {
+      if (args->side == 0) {
         yaw = TRIG_TURN / 4;
         camera->yaw = yaw;
       } else {
@@ -473,9 +473,9 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       victim[3] = (294 - height) << 16;
       victim[4] = -(Trig_Sin(frame << 10) << 3);
       if (frame == 60) {
-        EffectPosition_ProjectBattler(effect->actors[0], &source);
+        EffectPosition_ProjectBattler(args->actors[0], &source);
       }
-      EffectPosition_ProjectBattler(effect->actors[0], &target);
+      EffectPosition_ProjectBattler(args->actors[0], &target);
     }
     if ((u32)(frame - 152) <= 15) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(32));
@@ -521,7 +521,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
     SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
     Transform_Push();
     SceneTransform_ApplyPosition3((source.x - 128) << 16, height << 16, 0);
-    if (effect->side == 1) {
+    if (args->side == 1) {
       Transform_ApplyYaw(TRIG_TURN / 2);
     }
     SceneTransform_ApplyUniformScale(0x21770);

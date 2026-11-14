@@ -30,7 +30,7 @@ struct ModelVertex {
 // into a texture and peeled up into a spinning dome over the target as the
 // palette fades, the Djinni flies across to it, and at frame 48 the dome
 // slams down in rings of dust before the backdrop fades back in.
-void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
+void BattleEffect_RunGeode(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   // Unused: blit[1], the second of The Broken Seal's pair of blitters, gives
@@ -61,7 +61,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   transition = (s32 *)Ram_HeapSlots->transitionWork;
   BattleEffect_StartCanvasLayer(2);
-  BattleEffect_RunDjinniEntrance(effect, (effect->side << 4) | 0xc0, screenA,
+  BattleEffect_RunDjinniEntrance(args, (args->side << 4) | 0xc0, screenA,
                                  screenB);
   BattleEffect_ConfigureEffectDisplay();
   REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
@@ -70,7 +70,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_OBJ | WINOUT_WIN01_CLR |
                WINOUT_WINOBJ_ALL;
   transition[4] = 1;
-  if (effect->side == 0) {
+  if (args->side == 0) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
   } else {
@@ -89,7 +89,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
   mesh = work->sheet + 0xc00;
   pitch = 0;
   battle = (u8 *)Ram_HeapSlots->battleWork;
-  caster = BattleObject_GetFar(effect->actor)->object;
+  caster = BattleObject_GetFar(args->actor)->object;
   gBgScroll[1].x = -56;
   // The battlefield's picture, later the dome's texture.
   picture = gMapCellBuffer;
@@ -119,8 +119,8 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
   Mesh_BuildGrid(mesh, DOME_COLUMNS, DOME_ROWS, 16, 8);
 
   for (frame = 0; frame != 74; frame++) {
-    EffectPosition_ProjectBattler(effect->actor, &source);
-    EffectPosition_ProjectBattler(effect->actors[0], &target);
+    EffectPosition_ProjectBattler(args->actor, &source);
+    EffectPosition_ProjectBattler(args->actors[0], &target);
 
     // The backdrop's palette fades toward the battle's.
     if (frame <= 11) {
@@ -179,14 +179,14 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
       IO_WRITE_QUEUE_PUSH(0x04000050, 0x3f44, 0x20000);
     }
     if (frame == 18) {
-      BattleEffect_TintBattler(effect->actor, -1, 2, 0, -1);
+      BattleEffect_TintBattler(args->actor, -1, 2, 0, -1);
     }
     if (frame == 36) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
     }
     if ((u32)(frame - 34) <= 5) {
-      if (effect->side == 0) {
+      if (args->side == 0) {
         REG_WIN0H = WIN_RANGE(32, 240);
         REG_WIN1H = WIN_RANGE(32, 240);
       } else {
@@ -211,7 +211,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
       y = (t << 6) / 12 + 16;
       gBgScroll[1].x = 64 - x;
       gBgScroll[1].y = t * -46 / 12 + 78;
-      if (effect->side == 0) {
+      if (args->side == 0) {
         x = x / 2 + 20;
       } else {
         x = x / 2 - 20;

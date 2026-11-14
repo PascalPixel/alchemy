@@ -30,30 +30,30 @@ void BattleEffect_ConfigureEffectDisplay(void) {
 }
 
 void BattleEffect_AdvanceScrollOnInterval(void) {
-  struct ScrollStepWork *work;
+  struct BattleEffectWork *work;
 
-  work = (struct ScrollStepWork *)Ram_HeapSlots->battleFxWork[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
 
-  if (++work->counter == work->period) {
-    gBgScroll[1].x += work->stepX;
-    gBgScroll[1].y += work->stepY;
-    work->counter = 0;
+  if (++work->scrollTimer == work->scrollInterval) {
+    gBgScroll[1].x += work->scrollStepX;
+    gBgScroll[1].y += work->scrollStepY;
+    work->scrollTimer = 0;
   }
 }
 
-/// A task: every period frames, writes the BG2 reference point to
-/// the hardware, then moves it by (stepX, stepY).
+/// A task: every scrollInterval frames, writes the BG2 reference point to the
+/// hardware, then moves it by (scrollStepX, scrollStepY).
 void BattleEffect_AdvanceBg2OnInterval(void) {
-  struct AffineStepWork *work;
+  struct BattleEffectWork *work;
 
-  work = (struct AffineStepWork *)Ram_HeapSlots->battleFxWork[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
 
-  if (++work->counter == work->period) {
-    REG_BG2X = work->x;
-    REG_BG2Y = work->y;
-    work->x += work->stepX;
-    work->y += work->stepY;
-    work->counter = 0;
+  if (++work->scrollTimer == work->scrollInterval) {
+    REG_BG2X = work->bg2x;
+    REG_BG2Y = work->bg2y;
+    work->bg2x += work->scrollStepX;
+    work->bg2y += work->scrollStepY;
+    work->scrollTimer = 0;
   }
 }
 

@@ -16,7 +16,7 @@
 // a ring of sparks; the sea rolls along the bottom all the while. Act two
 // (144 frames): a flame pillar falls on each target 16 frames apart, splashing
 // sparks where it lands and striking that target; results at frame 96.
-void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
+void BattleEffect_RunNeptune(struct BattleEffectArgument *args) {
   s32 position[4];
   s32 target[3];
   void *canvas;
@@ -415,8 +415,8 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     work->particles[i].y = 0;
     work->particles[i].variant = 0;
   }
-  for (i = 0; i != effect->count; i++) {
-    EffectPosition_ProjectScaledBattler(effect->actors[i],
+  for (i = 0; i != args->count; i++) {
+    EffectPosition_ProjectScaledBattler(args->actors[i],
                                         (struct EffectPosition *)target);
     work->particles[i].x = target[0] / 2;
   }
@@ -475,10 +475,10 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
         }
       }
     }
-    for (i = 0; i != effect->count; i++) {
+    for (i = 0; i != args->count; i++) {
       if (frame == i * 16 + 8) {
-        BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 8);
-        BattleMotion_ApplyKnockbackFar(effect->actors[i], 2);
+        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 8);
+        BattleMotion_ApplyKnockbackFar(args->actors[i], 2);
       }
     }
     for (i = 0; i != 1024; i++) {

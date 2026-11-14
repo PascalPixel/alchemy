@@ -69,7 +69,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunSpark, BattleEffect_RunDjinnBeams, 2)
 // rises away; for each target in turn, sixteen frames apart, eight motes
 // drift down swaying; from frame 72 a beam of light falls on each target,
 // flashing it, and narrows from frame 88.
-void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *args, s32 mode) {
   s32 djinn[3];
   s32 djinnSize[3];
   struct EffectPosition one;
@@ -93,9 +93,9 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
   // Set up: the canvas for the Djinn when there is a prelude, then the beam,
   // the motes and the mode's Djinn, each with its palette.
   BattleEffect_StartCanvasLayer(0);
-  if (effect->prelude == 1)
+  if (args->prelude == 1)
     BattleEffect_RunDjinniEntrance(
-        effect, (effect->side ^ effect->prelude) << 4 | mode, djinn, djinnSize);
+        args, (args->side ^ args->prelude) << 4 | mode, djinn, djinnSize);
   Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_CrescentMoonSheet,
@@ -118,11 +118,11 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
 
   // With one target, BG2 is shifted so that it stands at x = 64.
   REG_BG2PA = Q_8_8(1);
-  if (effect->count == 1) {
-    EffectPosition_ProjectScaledBattler(effect->actors[0], &one);
+  if (args->count == 1) {
+    EffectPosition_ProjectScaledBattler(args->actors[0], &one);
     offsetX = 64 - one.x;
   } else {
-    if (effect->side == 1)
+    if (args->side == 1)
       offsetX = -112;
     else
       offsetX = 0;
@@ -130,7 +130,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
   REG_BG2X = offsetX << 8;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  for (frame = 0; frame != effect->count * 16 + 116; frame++) {
+  for (frame = 0; frame != args->count * 16 + 116; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
     s32 prelude;
 
@@ -140,13 +140,13 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
       BattlePlayback_StartFar(0);
 
     // The Djinn sways 20 pixels either way and rises from frame 32.
-    prelude = effect->prelude;
+    prelude = args->prelude;
     if (prelude == 1) {
       s32 angle = frame << 11;
       s32 x = (-Trig_Sin(angle) * 20 >> 16) + djinn[0] + offsetX - 20;
       s32 y = (Trig_Cos(angle) * 4 >> 16) + djinn[1] - 24;
 
-      BattleEffect_FetchRectangleBlitters(effect->side ^ prelude, draw);
+      BattleEffect_FetchRectangleBlitters(args->side ^ prelude, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
       draw[1](canvas, work->sheet + PIC_DJINN, x, y, 40, 40);
@@ -163,9 +163,9 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
 
     // A mote every eight frames drifts down a pixel a frame, swaying 16
     // pixels, until it is 8 pixels from the ground.
-    for (k = 0; k != effect->count; k++) {
+    for (k = 0; k != args->count; k++) {
       struct MotionObject *target =
-          BattleObject_GetFar(effect->actors[k])->object;
+          BattleObject_GetFar(args->actors[k])->object;
       s32 start = k * 16;
 
       Transform_Reset();
@@ -204,19 +204,19 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
     // The beam: from the top of the screen to the target's feet, drawn in
     // two mirrored halves, six pixels wide until frame 88, then narrowing a
     // pixel every three frames; its head flickers at the feet.
-    for (i = 0; i != effect->count; i++) {
+    for (i = 0; i != args->count; i++) {
       s32 start = i * 16;
 
       if (frame >= start + 72) {
         struct MotionObject *target =
-            BattleObject_GetFar(effect->actors[i])->object;
+            BattleObject_GetFar(args->actors[i])->object;
 
         Transform_Reset();
         Transform_SetLookAt(camera->eye, camera->pos);
         if (frame == start + 72)
-          BattleEffect_TintBattler(effect->actors[i], 1, -1, -1, 0);
+          BattleEffect_TintBattler(args->actors[i], 1, -1, -1, 0);
         if (frame == start + 88)
-          BattleEffect_TintBattler(effect->actors[i], 0, -1, -1, 0);
+          BattleEffect_TintBattler(args->actors[i], 0, -1, -1, 0);
         ground[0] = target->x;
         ground[1] = 0;
         ground[2] = target->z;
@@ -305,8 +305,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunFormicAcid, BattleEffect_RunLobbedShells, 9)
 // it lands into smoke or shards, flashing the target. Mode 7 prepares a
 // canvas for its prelude first; modes 3 and 5 hand the canvas to a summon
 // canvas effect at the end.
-void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
-                                  s32 mode) {
+void BattleEffect_RunLobbedShells(struct BattleEffectArgument *args, s32 mode) {
   struct EffectPosition position;
   s32 preludeSize[3];
   s32 preludeOrigin[3];
@@ -330,8 +329,8 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
   // smoke with their palettes, then the mode's palette.
   if (mode == 7) {
     BattleEffect_StartCanvasLayer(0);
-    BattleEffect_RunDjinniEntrance(effect, effect->side << 4 | 0x44,
-                                   preludeOrigin, preludeSize);
+    BattleEffect_RunDjinniEntrance(args, args->side << 4 | 0x44, preludeOrigin,
+                                   preludeSize);
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
   } else {
@@ -366,16 +365,16 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
   // target with a little spread in depth.
   for (i = 0; i != 1024; i++)
     PARTICLES[i].variant = -1;
-  source = BattleObject_GetFar(effect->actor)->object;
+  source = BattleObject_GetFar(args->actor)->object;
   if (mode == 7)
     height = 0x280000;
   else if (mode == 8)
     height = 0x140000;
   else
     height = 0x40000;
-  for (k = 0; k != effect->count; k++) {
+  for (k = 0; k != args->count; k++) {
     struct MotionObject *target =
-        BattleObject_GetFar(effect->actors[k % effect->count])->object;
+        BattleObject_GetFar(args->actors[k % args->count])->object;
 
     for (i = 0; i != 16; i++) {
       struct EffectStep *shot = &PARTICLES[k * 16 + i];
@@ -394,7 +393,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
 
   // The blitter pair for the caster's side; modes 4 and 7 clear the canvas
   // each frame and turn blending off, the others fade it to three quarters.
-  BattleEffect_FetchRectangleBlitters(effect->side, draw);
+  BattleEffect_FetchRectangleBlitters(args->side, draw);
   if (mode == 4 || mode == 7) {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
     REG_BLDCNT = 0;
@@ -402,7 +401,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  total = gLobbedShells_Styles[mode * 4 + RECORD_FRAMES] + effect->count * 8;
+  total = gLobbedShells_Styles[mode * 4 + RECORD_FRAMES] + args->count * 8;
   Sound_PlayFar(SE_CURSE);
 
   for (frame = 0; frame != total; frame++) {
@@ -414,7 +413,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
 
     // The shots: each starts four frames after the last, flies under
     // gravity and turns through ten pictures; at the ground it bursts.
-    for (k = 0; k != effect->count; k++) {
+    for (k = 0; k != args->count; k++) {
       for (i = 0; i != gLobbedShells_Styles[mode * 4 + RECORD_SHOTS]; i++) {
         s32 start = k * 8 + i * 4;
 
@@ -422,7 +421,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
           struct EffectStep *shot = &PARTICLES[k * 16 + i];
 
           if (frame == start + 17) {
-            BattleEffect_TintBattler(effect->actors[k % effect->count], 7, 5, k,
+            BattleEffect_TintBattler(args->actors[k % args->count], 7, 5, k,
                                      16);
             BattlePlayback_StartFar(133);
           }
@@ -489,7 +488,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
 
           if (i & 1)
             picture += 9;
-          flip = effect->side;
+          flip = args->side;
           draw[burst->velocityX > 0 ? flip ^ 1 : flip](
               canvas,
               work->sheet + gLobbedShells_ShardPictures[picture] + SHARD_SHEET,
@@ -519,9 +518,9 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
     Iwram_ClearWords(canvas, 0x3c00);
     Task_Remove(Palette_StepFadeTransfer);
     if (mode == 3)
-      BattleEffect_RunImpair(effect);
+      BattleEffect_RunImpair(args);
     else
-      BattleEffect_RunDull(effect);
+      BattleEffect_RunDull(args);
   } else {
     BattleEffect_EndCanvasLayer();
   }

@@ -24,7 +24,7 @@
 /// pillar is launched upward, and a target that lands flashes; the camera
 /// shakes all the while. The variant chooses the length, the rise time and
 /// the shake.
-void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
+void BattleEffect_RunQuake(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -62,7 +62,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
 
   // On the far side the canvas moves 112 pixels right, and the targets'
   // screen positions with it.
-  if (effect->side == 1) {
+  if (args->side == 1) {
     REG_BG2X = -(112 << 8);
     xOffset = -112;
   } else {
@@ -71,7 +71,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  for (member = 0; member != effect->count; member++)
+  for (member = 0; member != args->count; member++)
     work->particles[member].variant = 0; // 1 once landed
   work->transferMode =
       CANVAS_COPY_AND_CLEAR; // clear the canvas on each transfer
@@ -81,12 +81,12 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   work->shakeFrames = 128;
   Sound_PlayFar(SE_RUMBLE);
 
-  for (frame = 0; frame != gQuake_Timings[effect->variant][TIMING_FRAMES];
+  for (frame = 0; frame != gQuake_Timings[args->variant][TIMING_FRAMES];
        frame++) {
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
     // The results begin 16 frames before the end.
-    if (frame == gQuake_Timings[effect->variant][TIMING_FRAMES] - 16)
+    if (frame == gQuake_Timings[args->variant][TIMING_FRAMES] - 16)
       BattlePlayback_StartFar(133);
 
     // The pillars rise from frames 16, 20 and 24.
@@ -96,7 +96,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
       if ((frame & 31) + 32 == start) // never true: the left side is >= 32
         heights.column[column] += 32;
       if (frame >= start &&
-          frame < start + gQuake_Timings[effect->variant][TIMING_RISE_FRAMES]) {
+          frame < start + gQuake_Timings[args->variant][TIMING_RISE_FRAMES]) {
         s32 height;
         s32 top;
 
@@ -112,10 +112,10 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
              16);
 
         // Launch the targets standing on the pillar.
-        for (member = 0; member != effect->count; member++) {
+        for (member = 0; member != args->count; member++) {
           struct MotionObject *object;
 
-          object = BattleObject_GetFar(effect->actors[member])->object;
+          object = BattleObject_GetFar(args->actors[member])->object;
           point[0] = object->x;
           point[1] = object->y;
           point[2] = object->z;
@@ -127,25 +127,25 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
             object->verticalMotionStrength = 0xab85;
           }
           if (object->y < 0)
-            BattleEffect_TintBattler(effect->actors[member], 0, 5, -1, 0);
+            BattleEffect_TintBattler(args->actors[member], 0, 5, -1, 0);
         }
       }
     }
 
     // A target that lands flashes in palette 7 for 5 frames.
-    for (member = 0; member != effect->count; member++) {
+    for (member = 0; member != args->count; member++) {
       struct MotionObject *object;
       struct EffectStep *state;
 
-      object = BattleObject_GetFar(effect->actors[member])->object;
+      object = BattleObject_GetFar(args->actors[member])->object;
       state = &work->particles[member];
       if (state->variant == 0 && object->y <= 0 && object->velocityY < 0) {
         state->variant = 1;
-        BattleEffect_TintBattler(effect->actors[member], 7, 5, member, 5);
+        BattleEffect_TintBattler(args->actors[member], 7, 5, member, 5);
       }
     }
-    BattleCamera_Shake(gQuake_Timings[effect->variant][TIMING_SHAKE],
-                       gQuake_Timings[effect->variant][TIMING_SHAKE]);
+    BattleCamera_Shake(gQuake_Timings[args->variant][TIMING_SHAKE],
+                       gQuake_Timings[args->variant][TIMING_SHAKE]);
     EFFECT_END_FRAME(work);
   }
 

@@ -32,7 +32,7 @@ struct Model;
 // circles over the canvas and a fan of light lines spreads from it. At
 // frame 56 every target flashes.
 // Balm, Tinder and Phoenix run it with modes 0, 1 and 2.
-void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
+void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *args,
                                    s32 mode) {
   s32 anchor[3];
   s32 size[3];
@@ -58,7 +58,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
 
   // The mode's canvas, sheets and palette.
   if (mode == QUADS_MERCURY) {
-    BattleEffect_RunDjinniEntrance(effect, (effect->side ^ 1) << 4 | 33, anchor,
+    BattleEffect_RunDjinniEntrance(args, (args->side ^ 1) << 4 | 33, anchor,
                                    size);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D0,
                                work->sheet + SHEET_TEXTURE, 0, 0);
@@ -68,14 +68,14 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
                     Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
                     128);
   } else if (mode == QUADS_MARS) {
-    BattleEffect_RunDjinniEntrance(effect, (effect->side ^ 1) << 4 | 2, anchor,
+    BattleEffect_RunDjinniEntrance(args, (args->side ^ 1) << 4 | 2, anchor,
                                    size);
     Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSheet,
                                work->sheet + SHEET_DJINN, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_FeatherSheet,
                                work->sheet + SHEET_TEXTURE, 1, 1);
   } else {
-    EffectPosition_ProjectBattler(effect->actors[0], &pos);
+    EffectPosition_ProjectBattler(args->actors[0], &pos);
     anchor[0] = pos.x;
     Resource_LoadAndDecompress((s32)&ResourceId_FeatherSheet,
                                work->sheet + SHEET_TEXTURE, 1, 1);
@@ -85,7 +85,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
   // Centre the canvas on the anchor; the blitter mirrors for side 0.
   REG_BG2PA = Q_8_8(1);
   REG_BG2X = (64 - anchor[0]) << 8;
-  if (effect->side == 0)
+  if (args->side == 0)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_ADDITIVE);
@@ -123,14 +123,14 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
     if (frame == 56) {
       Sound_PlayFar(SE_POWER_UP);
       BattlePlayback_StartFar(-1);
-      for (i = 0; i != effect->count; i++)
-        BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 8);
+      for (i = 0; i != args->count; i++)
+        BattleEffect_TintBattler(args->actors[i], 7, -1, i, 8);
     }
 
     // With a prelude the Djinn circles over the anchor and climbs away
     // after frame 32, and a fan of light lines spreads from the canvas's
     // middle while the canvas fades.
-    if (effect->prelude == 1) {
+    if (args->prelude == 1) {
       x = ((-Trig_Sin(frame << 11) * 20) >> 16) + 44;
       y = ((Trig_Cos(frame << 11) * 4) >> 16) + anchor[1] - 24;
       if (frame > 32)
@@ -241,7 +241,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
 // and at frame 157 swings its axe across the targets, striking four times
 // while the screen shakes and rings of dust spread. Holding A or B draws
 // only every other frame.
-void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
+void BattleEffect_RunZagan(struct BattleEffectArgument *args) {
   u8 *battle;
   void *canvas;
   struct BattleEffectWork *work;
@@ -353,9 +353,9 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
     }
     if (frame == 161 || frame == 165 || frame == 169) {
     strike:
-      for (i = 0; i != effect->count; i++) {
-        BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
-        BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 4);
+      for (i = 0; i != args->count; i++) {
+        BattleMotion_ApplyKnockbackFar(args->actors[i], 4);
+        BattleEffect_TintBattler(args->actors[i], 7, -1, i, 4);
       }
     }
     if (frame == 0) {
@@ -632,8 +632,8 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
 /// A task: turns the camera by the effect's delta, the whole
 /// delta on phase 1 and half of it on the frames in between.
 void BattleCamera_ApplyPhasedDelta(void) {
-  struct BattleFxWork *work =
-      (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
+  struct BattleEffectWork *work =
+      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
   if (work->cameraPhase == 1) {

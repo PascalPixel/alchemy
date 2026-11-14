@@ -18,7 +18,7 @@
 ///            bottom (enum CanvasWipeDirection).
 /// fill: what the wipe leaves (enum CanvasWipeFill).
 void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
-  struct BattleFxWork *work;
+  struct BattleEffectWork *work;
   u8 *canvas;
   u8 delay[128];
   s32 x;
@@ -26,7 +26,7 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
   s32 pos;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   for (x = 0; x != 128; x++)
     delay[x] = Random16() & 0x3f;
 

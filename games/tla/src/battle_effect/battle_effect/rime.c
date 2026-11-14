@@ -58,7 +58,7 @@ struct RenderModel__f173588 {
 // rune picture mirrored into a 48x48 crystal, Haze's star sheet; one additive
 // blitter, flipped on the player's side.
 // Frame loop (48 frames).
-void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunDjinniSign(struct BattleEffectArgument *args, s32 mode) {
   s32 center[3];
   s32 base[3];
   struct BattleEffectWork *work;
@@ -78,7 +78,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
     s32 row;
     s32 column;
 
-    BattleEffect_RunDjinniEntrance(effect, (effect->side ^ 1) << 4 | 1, center,
+    BattleEffect_RunDjinniEntrance(args, (args->side ^ 1) << 4 | 1, center,
                                    base);
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
                                work->sheet + DJINNI_OFFSET, 1, 1);
@@ -98,7 +98,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
   } else {
     s32 haze[3];
 
-    BattleEffect_RunDjinniEntrance(effect, (effect->side ^ 1) << 4 | 3, center,
+    BattleEffect_RunDjinniEntrance(args, (args->side ^ 1) << 4 | 3, center,
                                    haze);
     Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSheet,
                                work->sheet + DJINNI_OFFSET, 1, 1);
@@ -109,7 +109,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   REG_BG2PA = Q_8_8(1);
   REG_BG2X = (64 - center[0]) << 8;
-  if (effect->side == 0)
+  if (args->side == 0)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_ADDITIVE);
@@ -140,7 +140,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
       if (frame > 7)
         BattleEffect_StepPaletteToResource((s32)&ResourceId_StarCrossSheet);
       if (frame == 32)
-        BattleEffect_TintBattler(effect->actors[0], 7, -1, 0, 24);
+        BattleEffect_TintBattler(args->actors[0], 7, -1, 0, 24);
     }
 
     // The Djinni rises a pixel a frame, swaying, until it leaves the top.

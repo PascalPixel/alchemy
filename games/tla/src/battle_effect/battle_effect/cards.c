@@ -62,7 +62,7 @@ struct Model__f18ad40 {
 // card dissolves into the background's colours while a skeleton reaps the
 // target or a dagger strikes it and breaks into shards. The screen fades in
 // the last eight frames.
-void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunCards(struct BattleEffectArgument *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   u8 *graphics;
@@ -91,13 +91,13 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
   // Set up a tiled canvas, filled on the user's side, and a clipped MAX
   // blitter (additive for the Sword Card), mirrored to face the targets.
   BattleEffect_StartTiledCanvas(0x2001);
-  if (effect->side == 0)
+  if (args->side == 0)
     BattleEffect_StartTiledCanvasFilled(0x2001);
   else
     BattleEffect_StartTiledCanvas(0x2001);
   REG_BLDALPHA = BLEND_ALPHA(16, 2);
   if (mode == CARD_SWORD) {
-    if (effect->side == 0)
+    if (args->side == 0)
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           BLITTER_ADDITIVE);
     else
@@ -105,7 +105,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           BLITTER_ADDITIVE);
   } else {
-    if (effect->side == 0)
+    if (args->side == 0)
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     else
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
@@ -163,10 +163,10 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
     // pixels toward the user), and scroll the background to the user.
     if (frame == 0) {
       Sound_PlayFar(SE_WARP);
-      EffectPosition_ProjectSprite(effect->actor, &card);
+      EffectPosition_ProjectSprite(args->actor, &card);
       BattleEffect_GetTargetsMidpoint(&middle);
       if (mode == CARD_DEATH) {
-        if (effect->side == 0)
+        if (args->side == 0)
           middle.x += 32;
         else
           middle.x -= 32;
@@ -278,13 +278,13 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
       SceneTransform_ApplyScale3(Q16_ONE, Q16_ONE, Q16_ONE);
       SceneTransform_ApplyPosition3(overflow << 16, (card.y << 16) - px(64), 0);
       if (frame <= 47) {
-        if (effect->side == 0)
+        if (args->side == 0)
           Transform_ApplyRoll((frame << 10) - 0xd000);
         else
           Transform_ApplyRoll((52 - frame) << 10);
         Transform_ApplyPitch((52 - frame) << 10);
       } else {
-        if (effect->side == 0)
+        if (args->side == 0)
           Transform_ApplyRoll(-TRIG_TURN / 16);
         else
           Transform_ApplyRoll(TRIG_TURN / 16);
@@ -382,7 +382,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
         BattlePlayback_StartFar(-1);
         work->shakeFrames = 4;
         Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
-        BattleEffect_TintBattler(effect->actors[0], 7, -1, 0, 16);
+        BattleEffect_TintBattler(args->actors[0], 7, -1, 0, 16);
         for (i = 0; i != 64; i++) {
           s32 angle = Random16() & 0xffff;
           s32 force = 127; // The AND lands in the register holding 127.
@@ -434,45 +434,45 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 64) {
         Sound_PlayFar(SE_CLATTER);
         BattlePlayback_StartFar(-1);
-        BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x80000,
+        BattleEffect_StartActorMotion(args->actors[0], 1, 0x20000, 0x80000,
                                       0x20000, 110);
-        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
+        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
         work->shakeFrames = 4;
       }
       if (frame > 51) {
         if (frame <= 63) {
           draw[0](canvas, work->sheet,
-                  overflow + gCastingImpact_PictureX[effect->side * 7],
+                  overflow + gCastingImpact_PictureX[args->side * 7],
                   gCastingImpact_PictureY[0], 57, 98);
         } else {
           if (frame <= 67)
             draw[0](canvas, work->sheet,
-                    overflow + gCastingImpact_PictureX[effect->side * 7],
+                    overflow + gCastingImpact_PictureX[args->side * 7],
                     gCastingImpact_PictureY[0], 57, 98);
           draw[0](canvas, work->sheet + 0x15d2,
-                  overflow + gCastingImpact_PictureX[effect->side * 7 + 1],
+                  overflow + gCastingImpact_PictureX[args->side * 7 + 1],
                   gCastingImpact_PictureY[1], 99, 69);
           if (frame >= 64 && frame <= 65)
             Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
           if (frame >= 66 && frame <= 67)
             draw[0](canvas, work->sheet + 0x3081,
-                    overflow + gCastingImpact_PictureX[effect->side * 7 + 2],
+                    overflow + gCastingImpact_PictureX[args->side * 7 + 2],
                     gCastingImpact_PictureY[2], 128, 91);
           if (frame >= 68 && frame <= 69)
             draw[0](canvas, Ram_MapCellBuffer,
-                    overflow + gCastingImpact_PictureX[effect->side * 7 + 3],
+                    overflow + gCastingImpact_PictureX[args->side * 7 + 3],
                     gCastingImpact_PictureY[3], 128, 91);
           if (frame >= 70 && frame <= 71)
             draw[0](canvas, Ram_MapCellBuffer + 0x2d80,
-                    overflow + gCastingImpact_PictureX[effect->side * 7 + 4],
+                    overflow + gCastingImpact_PictureX[args->side * 7 + 4],
                     gCastingImpact_PictureY[4], 128, 59);
           if (frame >= 72 && frame <= 73)
             draw[0](canvas, Ram_MapCellBuffer + 0x4b00,
-                    overflow + gCastingImpact_PictureX[effect->side * 7 + 5],
+                    overflow + gCastingImpact_PictureX[args->side * 7 + 5],
                     gCastingImpact_PictureY[5], 122, 29);
           if (frame >= 74 && frame <= 75)
             draw[0](canvas, Ram_MapCellBuffer + 0x58d2,
-                    overflow + gCastingImpact_PictureX[effect->side * 7 + 6],
+                    overflow + gCastingImpact_PictureX[args->side * 7 + 6],
                     gCastingImpact_PictureY[6], 76, 25);
         }
       }

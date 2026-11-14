@@ -53,7 +53,7 @@ struct Model__f188714 {
 // 32 sparks burst from the target at frame 56 (of which the first 16 are
 // drawn), and Triple Chomp's jaw closes on the target twice, at 45 and 135
 // degrees, growing and fading from frame 56.
-void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
+void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -87,7 +87,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
                              1);
   pixels = Ram_MapCellBuffer;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, pixels, 0, 0);
-  if (effect->variant == 1) {
+  if (args->variant == 1) {
     Iwram_CopyWordsEntry(
         (void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_EffectPalette02), 128);
@@ -103,16 +103,16 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // The user runs nine tenths of the way to the target.
-  first = BattleObject_GetFar(effect->actor);
-  second = BattleObject_GetFar(effect->actors[0]);
+  first = BattleObject_GetFar(args->actor);
+  second = BattleObject_GetFar(args->actors[0]);
   user = first->object;
   target = second->object;
   percent = 90;
   x = user->x + percent * (target->x - user->x) / 100;
   z = user->z + percent * (target->z - user->z) / 100;
-  userHeight = BattleUnit_GetEffectHeightFar(effect->actor);
-  targetHeight = BattleUnit_GetEffectHeightFar(effect->actors[0]);
-  EffectPosition_ProjectBattler(effect->actors[0], &targetScreen);
+  userHeight = BattleUnit_GetEffectHeightFar(args->actor);
+  targetHeight = BattleUnit_GetEffectHeightFar(args->actors[0]);
+  EffectPosition_ProjectBattler(args->actors[0], &targetScreen);
   Actor_StartIdleFar(user);
   Actor_SetMoveTargetFar(user, x, 0, z);
   Actor_SelectAnimationFar(user, 2);
@@ -142,7 +142,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
     // Frame 54: the hit. The target flashes and both are thrown back, the
     // user to where he started.
     if (frame == 54) {
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 10);
+      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 10);
       target->velocityY = px(8);
       target->gravity = 0xab85;
       user->velocityY = px(5);
@@ -154,7 +154,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
       Actor_SetMoveTargetFar(user, 0, 0, user->z);
     }
 
-    if (effect->variant == 0) {
+    if (args->variant == 0) {
       // The flash, and the ring of flashes, at the user.
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->pos);
@@ -208,7 +208,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
       }
     }
 
-    if (effect->variant == 1) {
+    if (args->variant == 1) {
       // The jaw, twice, a quarter turn apart: it grows from frame 56 and
       // fades out from frame 64.
       vertices = Heap_AllocEwram(512);
@@ -257,7 +257,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
       Actor_SelectAnimationFar(user, 0);
     }
     if (frame == 54) {
-      if (effect->variant == 0)
+      if (args->variant == 0)
         BattlePlayback_StartFar(134);
       else
         BattlePlayback_StartFar(145);

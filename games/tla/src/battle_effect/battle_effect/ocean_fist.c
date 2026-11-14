@@ -20,7 +20,7 @@ struct Model;
 // buffer's 512 fly up from the target for the first 32 frames, with a
 // fountain of 256 at frame 28. The target is struck at frame 32 and pushed
 // back.
-void BattleEffect_RunOceanFist(struct BattleEffectArgument *effect) {
+void BattleEffect_RunOceanFist(struct BattleEffectArgument *args) {
   u8 *spraySheet = gData_02014000;
   void *canvas;
   struct BattleEffectWork *work;
@@ -52,7 +52,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectArgument *effect) {
                        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
                        128);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  EffectPosition_ProjectBattler(effect->actors[0], &target);
+  EffectPosition_ProjectBattler(args->actors[0], &target);
 
   {
     s32 scroll = 0;
@@ -73,8 +73,8 @@ void BattleEffect_RunOceanFist(struct BattleEffectArgument *effect) {
         sheet = gData_02014000;
       }
       if (frame == 32) {
-        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
-        BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 0xf0000, 100);
+        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
+        BattleEffect_StartActorMotion(args->actors[0], 1, 0, 0, 0xf0000, 100);
       }
       if (frame == 38) {
         BattlePlayback_StartFar(134);

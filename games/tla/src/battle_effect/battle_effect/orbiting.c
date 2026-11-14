@@ -14,7 +14,7 @@
 // (160 frames): four stars a frame join, each turning about one of four
 // axes as fast as its number, sized by depth; thirty frames after joining
 // a star accelerates toward the center by 1/256 of its distance a frame.
-void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
+void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 record[3];
@@ -28,7 +28,7 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_StarDotSheet, work->sheet, 1, 1);
-  BattleEffect_FetchRectangleBlitters(effect->side ^ 1, draw);
+  BattleEffect_FetchRectangleBlitters(args->side ^ 1, draw);
   for (i = 0; i != 256; i++) {
     star = &STARS[i];
     SET_POSITION(star, ((Random16() & 0xff) - 127) << 16,
@@ -116,7 +116,7 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
 // heading. Frame loop (96 frames): for 40 frames from its start a
 // target's puffs rise 40 pixels above it through six 24x48 pictures; the
 // sixth, drawn ADDITIVE, is the burst itself and falls faster.
-void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
+void BattleEffect_RunTargetBursts(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   void *palette;
@@ -167,11 +167,11 @@ void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
     s32 *camera;
 
     camera = Ram_HeapSlots->cameraWork;
-    for (member = 0; member != effect->count; member++) {
+    for (member = 0; member != args->count; member++) {
       struct MotionObject *memberObject;
 
       // The puffs rise from 40 pixels above the target.
-      memberObject = BattleObject_GetFar(effect->actors[member])->object;
+      memberObject = BattleObject_GetFar(args->actors[member])->object;
       Transform_Reset();
       Transform_SetLookAt(camera, camera + 3);
       record[0] = memberObject->x;

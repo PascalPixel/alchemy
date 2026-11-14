@@ -8,7 +8,7 @@
 
 #define CHIPS ((struct EffectStep *)Ram_MapCellBuffer)
 
-#define TIMING(field) gFrost_Timings[effect->variant * 3 + (field)]
+#define TIMING(field) gFrost_Timings[args->variant * 3 + (field)]
 
 // Motes swirl up around the targets while ice pillars rise one by one;
 // then everything bursts.
@@ -20,7 +20,7 @@
 // from below, and smoke rises half a pixel a frame through the height the
 // motes and chips cover. The variant chooses the number of motes and
 // pillars and the frame of the burst.
-void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
+void BattleEffect_RunFrost(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -55,7 +55,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
   }
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  if (effect->side == 1)
+  if (args->side == 1)
     REG_BG2X = -0x7000;
 
   for (frame = 0; frame != TIMING(RISE_FRAME) + 50; frame++) {
@@ -72,9 +72,9 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
       Sound_PlayFar(SE_ICE);
     if (frame == 85)
       Sound_PlayFar(SE_WHOOSH);
-    for (i = 0; i != effect->count; i++) {
+    for (i = 0; i != args->count; i++) {
       if (frame == i * 4 + 40)
-        BattleEffect_TintBattler(effect->actors[i], 9, 5, -1, 0);
+        BattleEffect_TintBattler(args->actors[i], 9, 5, -1, 0);
     }
 
     // The motes: before the burst they close in and climb to 48 pixels as

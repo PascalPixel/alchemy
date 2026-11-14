@@ -63,7 +63,7 @@ struct AzulObject {
 // and swallows the foes, then the wave breaks over them in a spray.
 /// Azul: the sea rises into a wall of water, a great serpent coils out of it
 /// and swallows the foes, then the wave breaks over them in a spray.
-void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
+void BattleEffect_RunAzul(struct BattleEffectArgument *args) {
   u8 *canvas;
   struct BattleEffectWork *work;
   u8 *sprites;
@@ -211,8 +211,8 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
               gAzul_PartPoints[n * 5 + faces[n * 3 + 1].corner[i] + 1][1];
         }
       }
-      for (i = 0; i != effect->count; i++) {
-        ((s32 *)BattleObject_GetFar(effect->actors[i])->object)[3] = 0;
+      for (i = 0; i != args->count; i++) {
+        ((s32 *)BattleObject_GetFar(args->actors[i])->object)[3] = 0;
       }
       REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                    BGCNT_SCREEN_BASE(7);
@@ -307,10 +307,10 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       for (i = 0; i != 28; i++) {
         ((struct AzulObject *)work->objects[i])->shape = 0x4000;
       }
-      for (i = 0; i != effect->count; i++) {
-        s32 *actor = BattleObject_GetFar(effect->actors[i])->object;
+      for (i = 0; i != args->count; i++) {
+        s32 *actor = BattleObject_GetFar(args->actors[i])->object;
 
-        BattleEffect_StartActorMotion(effect->actors[i], 1, 0, 0, 0x40000, 100);
+        BattleEffect_StartActorMotion(args->actors[i], 1, 0, 0, 0x40000, 100);
         actor[18] = 0;
       }
     }
@@ -455,34 +455,34 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
     }
     if (frame == 10 || frame == 186) {
-      for (i = 0; i != effect->count; i++) {
-        struct BattleObj *slot = BattleObject_GetFar(effect->actors[i]);
+      for (i = 0; i != args->count; i++) {
+        struct BattleObj *slot = BattleObject_GetFar(args->actors[i]);
         s32 *actor = slot->object;
         void *record;
 
         if (frame == 186) {
-          ReleaseBattleObjectRecordsFar(effect->actors[i]);
+          ReleaseBattleObjectRecordsFar(args->actors[i]);
         }
         if (frame == 10) {
           for (j = 0; (record = GetMotionRecordFar(slot->object, j)) != 0;
                j++) {
             Sprite_RemoveAnimationFar(record, (s32)slot->effectEntry);
           }
-          BattleEffect_TintBattler(effect->actors[i], 9, 5, i, 8);
-          BattleEffect_StartActorMotion(effect->actors[i], 1, 0, 0,
+          BattleEffect_TintBattler(args->actors[i], 9, 5, i, 8);
+          BattleEffect_StartActorMotion(args->actors[i], 1, 0, 0,
                                         (Random16() << 1) + 0x10000, 100);
           // record is 0 here; the store reuses its register.
           actor[18] = (s32)record;
         }
       }
       if (frame == 186) {
-        effect->actors[effect->count] = 0xff;
-        BattleObject_SpawnObjectsForListFar(effect->actors, 0, 0);
+        args->actors[args->count] = 0xff;
+        BattleObject_SpawnObjectsForListFar(args->actors, 0, 0);
       }
     }
     if (frame > 9) {
-      for (i = 0; i != effect->count; i++) {
-        s32 *actor = BattleObject_GetFar(effect->actors[i])->object;
+      for (i = 0; i != args->count; i++) {
+        s32 *actor = BattleObject_GetFar(args->actors[i])->object;
 
         actor[10] = actor[10] * 60 / 64;
       }
@@ -710,9 +710,9 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
-      for (i = 0; i != effect->count; i++) {
-        BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
-        BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
+      for (i = 0; i != args->count; i++) {
+        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
+        BattleMotion_ApplyKnockbackFar(args->actors[i], 4);
       }
       Sound_PlayFar(SE_CRASH);
       work->shakeFrames = 16;
@@ -788,21 +788,13 @@ void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position) {
   position->y -= 16;
 }
 
-struct BattleFxWorkTail {
-  u8 unk0000[0x78e4];
-  s32 active;
-  s32 unk78e8;
-  s32 unk78ec;
-  struct BattleEffectArgument *effect;
-};
-
 // Midpoint between the first and last targets.
 void BattleEffect_GetTargetsMidpoint(struct EffectPosition *position) {
-  struct BattleFxWorkTail *work;
+  struct BattleEffectWork *work;
   struct EffectPosition first;
   struct EffectPosition last;
 
-  work = (struct BattleFxWorkTail *)Ram_HeapSlots->battleFxWork[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   EffectPosition_ProjectBattler(work->effect->actors[0], &first);
   EffectPosition_ProjectBattler(work->effect->actors[work->effect->count - 1],
                                 &last);

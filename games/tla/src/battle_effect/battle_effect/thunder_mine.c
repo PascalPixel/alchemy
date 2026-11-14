@@ -22,7 +22,7 @@ struct StripQuad;
 // light (Thunder Mine) or a falling rock's glow (Earth Force) crosses to the
 // target, trailed by 40 spinning bolts, and grows; when it arrives the
 // target is hit, and in Thunder Mine 128 sparks scatter and bounce.
-void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
+void BattleEffect_RunBoltTrail(struct BattleEffectArgument *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -98,14 +98,14 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
   for (frame = 0; frame != 50; frame++) {
     ball = work->particles;
     if (frame == 0) {
-      EffectPosition_ProjectBattler(effect->actor, &source);
-      EffectPosition_ProjectBattler(effect->actors[0], &target);
+      EffectPosition_ProjectBattler(args->actor, &source);
+      EffectPosition_ProjectBattler(args->actors[0], &target);
       if (mode == 0) {
         ball->x = source.x << 16;
         ball->y = (source.y - 32) << 16;
         ball->velocityX = ((target.x << 16) - ball->x) / frames;
       } else {
-        if (effect->side == 0) {
+        if (args->side == 0) {
           ball->x = (source.x - 32) << 16;
         } else {
           ball->x = (source.x + 32) << 16;
@@ -158,8 +158,8 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
       }
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       work->shakeFrames = 16;
-      BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
-      BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
+      BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
+      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
       if (mode == 0) {
         BattlePlayback_StartFar(145);
       } else {
@@ -314,7 +314,7 @@ extern const struct Point gMegaera_UnitScale;
 // sparks; a whirl of flame turns over the field from 64 while smoke rises,
 // and at 108 Megaera (eleven objects) swoops in across the targets in a
 // trail of sparkles. Holding A or B after frame 10 skips to the swoop.
-void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
+void BattleEffect_RunMegaera(struct BattleEffectArgument *args) {
   void *canvas;
   struct BattleEffectWork *work;
   s32 frame;
@@ -516,8 +516,8 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
     }
     if (frame == 10) {
       work->shakeFrames = i;
-      for (i = 0; i != effect->count; i++) {
-        BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
+      for (i = 0; i != args->count; i++) {
+        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
       }
     }
     if (frame > 107) {
@@ -611,7 +611,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
               } while (0);
               BattleEffect_BuildBlitter(188, 7, 7,
                                         3 | gMegaera_GlintFlips[Random16() & 3],
-                                        gMegaera_GlintModes[effect->variant]);
+                                        gMegaera_GlintModes[args->variant]);
               ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
                   canvas, PICTURES + gBattleEffect_GlintPictures[k], gx - 4,
                   gy + 40, gBattleEffect_GlintPictureWidths[k],
@@ -671,7 +671,7 @@ struct StripQuad;
 // ring of 64 gathers behind; at frame 72 a beam (a 32-line gradient,
 // repeated ten times) shoots from the caster toward the targets' side,
 // fading out from frame 80 with the blend.
-void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
+void BattleEffect_RunVoidBeam(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -742,7 +742,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
   }
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   flip = 4;
-  if (effect->side != 0) {
+  if (args->side != 0) {
     flip = 0;
   }
   BattleEffect_BuildBlitter(SLOT_BLITTER, 7, 7, flip | 3, 1);
@@ -764,7 +764,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
     } else {
       work->cameraDelta = 0;
     }
-    if (effect->side == 1) {
+    if (args->side == 1) {
       work->cameraDelta = -work->cameraDelta;
     }
     if (frame > 79) {
@@ -779,7 +779,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
       struct MotionObject *caster;
       s32 traced;
 
-      caster = BattleObject_GetFar(effect->actor)->object;
+      caster = BattleObject_GetFar(args->actor)->object;
       if (caster->x > 0) {
         point[0] = caster->x - 0x80000;
       } else {
@@ -859,8 +859,8 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
         if (frame == 72) {
           work->shakeFrames = 8;
           BattlePlayback_StartFar(145);
-          BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
-          BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
+          BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
+          BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
         }
         for (i = 0; i != BEAM_SEGMENTS; i++) {
           point[0] = work->particles[0].x + work->particles[0].velocityX * i;
@@ -868,7 +868,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
           point[2] = caster->z;
           EffectPosition_ProjectPoint(point, &segment);
           segment.x >>= 1;
-          if (effect->side == 0) {
+          if (args->side == 0) {
             segment.x -= 32;
           }
           if (i > 0) {

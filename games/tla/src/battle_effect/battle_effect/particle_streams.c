@@ -77,7 +77,7 @@ struct FxPartyList;
 /// ember grows as it falls (the brighter blitter once it falls) and grows
 /// again toward the end; the targets flash and jump every 12 frames from 30 to
 /// 79. At the end the formation bursts and its objects are released.
-UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *effect) {
+UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *args) {
   DrawRectangle draw[2];
   void *canvas;
   struct BattleEffectWork *work;
@@ -261,20 +261,20 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *effect) {
 
       // The targets flash and jump every 12 frames while the embers spout.
       if (frame < SPOUT_END_FRAME) {
-        for (k = 0; k != effect->count; k++) {
+        for (k = 0; k != args->count; k++) {
           if (frame > 29) {
             s32 phase = frame % 12;
 
             if (phase == 0) {
               struct MotionObject *target =
-                  BattleObject_GetFar(effect->actors[k])->object;
+                  BattleObject_GetFar(args->actors[k])->object;
 
-              BattleEffect_TintBattler(effect->actors[k], 7, 5, -1, 0);
+              BattleEffect_TintBattler(args->actors[k], 7, 5, -1, 0);
               target->velocityY = px(9) / 2;
               target->verticalMotionStrength = 0xab85;
             }
             if (phase == 6)
-              BattleEffect_TintBattler(effect->actors[k], 0, 5, -1, 0);
+              BattleEffect_TintBattler(args->actors[k], 0, 5, -1, 0);
           }
         }
       }
@@ -303,8 +303,8 @@ extern const struct FormationScale gFormationObjects_LargeScale;
 /// three more formations (4: eleven objects from signed columns, 5: twelve in
 /// a 4x3 grid, 6: eight more), in the order 0, 5, 1, 2, 6, 3, 4.
 void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
-  struct BattleFxWork *work =
-      (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
+  struct BattleEffectWork *work =
+      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   struct FormationScale normal = gFormationObjects_Scale;
   struct FormationScale big = gFormationObjects_LargeScale;
   s32 pos[4];
@@ -370,7 +370,7 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 #define SHARD_E 0x59d8
 
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
-  struct BattleFxWork *work;
+  struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle additive;
   DrawRectangle maxBlend;
@@ -380,7 +380,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
   orgX = x;
@@ -683,7 +683,7 @@ struct FxAnimObject {
 // becomes a flame where it lands) and the motes. Act two (54 frames): the
 // blast pictures, 32 motes, 128 flashes and 512 embers; the palette
 // brightens from frame 36, the hit at 48.
-void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
+void BattleEffect_RunParticleStreams(struct BattleEffectArgument *args,
                                      s32 mode) {
   u8 offsets[128];
   void *canvas;
@@ -743,13 +743,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   /* FAKEMATCH(temporary): mode tested through its copy in direction. */
   direction = mode;
   if (direction == 1) {
-    struct MotionObject *user = BattleObject_GetFar(effect->actor)->object;
+    struct MotionObject *user = BattleObject_GetFar(args->actor)->object;
 
     user->velocityY = px(10);
     user->verticalMotionStrength = 0x91eb;
-    BattleEffect_TintBattler(effect->actor, -1, 2, -1, 0);
+    BattleEffect_TintBattler(args->actor, -1, 2, -1, 0);
     Sound_PlayFar(SE_CRASH);
-    direction = effect->side == 1 ? mode : -1;
+    direction = args->side == 1 ? mode : -1;
   } else {
     direction = -1;
   }

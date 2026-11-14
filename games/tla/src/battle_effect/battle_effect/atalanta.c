@@ -22,7 +22,7 @@
 // and flies off. Second loop (88 frames): 32 slashes fall from the sky, the
 // first 24 two frames apart, and burst into flame on the ground, each one
 // shaking the screen and flashing a target.
-void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
+void BattleEffect_RunAtalanta(struct BattleEffectArgument *args) {
   s32 point[3];
   struct EffectPosition screen;
   struct SpritePlacement position;
@@ -254,8 +254,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
     struct EffectStep *slash = &work->particles[i];
     s32 member = i % 6;
 
-    if (member < effect->count) {
-      EffectPosition_ProjectScaledBattler(effect->actors[member], &target);
+    if (member < args->count) {
+      EffectPosition_ProjectScaledBattler(args->actors[member], &target);
       slash->y = -((Random16() & 31) + 40);
       slash->x = target.x / 2 + (80 - slash->y) / 2;
     } else {
@@ -313,9 +313,9 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
             work->shakeFrames = 2;
             Sound_PlayFar(SE_HEAVY_IMPACT);
             member = i % 6;
-            if (member < effect->count) {
-              BattleEffect_TintBattler(effect->actors[member], 7, 5, member, 8);
-              BattleMotion_ApplyKnockbackFar(effect->actors[member], 1);
+            if (member < args->count) {
+              BattleEffect_TintBattler(args->actors[member], 7, 5, member, 8);
+              BattleMotion_ApplyKnockbackFar(args->actors[member], 1);
             }
           }
         }

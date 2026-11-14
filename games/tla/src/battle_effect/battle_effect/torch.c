@@ -25,7 +25,7 @@
 /// per-scanline BG2 offsets. Each frame: fade in over the first 8 frames,
 /// rebuild the 160 sway offsets, rotate the ramp by one colour, shake the
 /// camera. At frame 48 the target is struck; from frame 72 the disc fades.
-void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
+void BattleEffect_RunTorch(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 screenX[3];
@@ -54,13 +54,13 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
 
   // Open the canvas on BG2 over the target's side.
   BattleEffect_StartCanvasLayer(0x2000);
-  BattleEffect_RunDjinniEntrance(effect, 6 | effect->side << 4 | 2 << 5,
-                                 screenX, screenY);
+  BattleEffect_RunDjinniEntrance(args, 6 | args->side << 4 | 2 << 5, screenX,
+                                 screenY);
   REG_BG2CNT =
       BGCNT_WRAP | BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS | BGCNT_CHAR_BASE(1);
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
   REG_BG2PA = 0xaa;
-  BattleEffect_FetchRectangleBlitters(effect->side, draw);
+  BattleEffect_FetchRectangleBlitters(args->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The distance map, one quarter at a time mirrored into the other three,
@@ -135,7 +135,7 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
     if (frame == RIPPLE_HIT_FRAME) {
       BattlePlayback_StartFar(PHASE_RESULTS);
       work->shakeFrames = 8;
-      BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
+      BattleMotion_ApplyKnockbackFar(args->actors[0], 0);
     }
 
     // One BG2 X offset per scanline, a sine wave running down the screen.
@@ -169,11 +169,11 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
 }
 
 /// Abilities: Kite (kind 217).
-void BattleEffect_RunKite(struct BattleEffectArgument *effect) {
+void BattleEffect_RunKite(struct BattleEffectArgument *args) {
   s32 b[3];
   s32 a[3];
 
   BattleEffect_StartCanvasLayer(0);
-  BattleEffect_RunDjinniEntrance(effect, ((effect->side ^ 1) << 4) | 7, b, a);
+  BattleEffect_RunDjinniEntrance(args, ((args->side ^ 1) << 4) | 7, b, a);
   BattleEffect_EndCanvasLayer();
 }

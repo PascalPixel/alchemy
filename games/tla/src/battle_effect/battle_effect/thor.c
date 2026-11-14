@@ -26,7 +26,7 @@
 /// formation and throws sparks, STORM_BOLTS violet bolts follow while a violet
 /// mote sways above, and the formation is pushed back in smoke until an
 /// impact burst ends the effect.
-void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
+void BattleEffect_RunThor(struct BattleEffectArgument *args) {
   u8 ramp[32];
   s32 point[3];
   struct EffectPosition screen[11];
@@ -378,9 +378,9 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
         }
       }
       if (frame == 10) {
-        for (i = 0; i != effect->count; i++) {
-          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 8);
-          BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
+        for (i = 0; i != args->count; i++) {
+          BattleEffect_TintBattler(args->actors[i], 7, 5, i, 8);
+          BattleMotion_ApplyKnockbackFar(args->actors[i], 4);
         }
       }
       // Frames 80 to 143: the violet bolts, 2 frames apart, and the violet
@@ -425,11 +425,11 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
                 }
               }
               work->shakeFrames = 8;
-              for (j = 0; j != effect->count; j++) {
-                BattleEffect_TintBattler(effect->actors[j],
+              for (j = 0; j != args->count; j++) {
+                BattleEffect_TintBattler(args->actors[j],
                                          gThor_TargetPalettes[Random16() & 3],
                                          5, j, 4);
-                BattleMotion_ApplyKnockbackFar(effect->actors[j], 4);
+                BattleMotion_ApplyKnockbackFar(args->actors[j], 4);
               }
             }
           }

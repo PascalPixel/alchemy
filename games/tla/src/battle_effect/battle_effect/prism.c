@@ -18,7 +18,7 @@
 // Crystals fall one after another, eight frames apart, onto the targets'
 // ground and shatter into sixteen spinning shards each; the screen darkens
 // over the last eight frames.
-void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
+void BattleEffect_RunPrism(struct BattleEffectArgument *args) {
   DrawRectangle draw[2];
   struct BattleEffectWork *work;
   void *canvas;
@@ -41,16 +41,16 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 1);
-  BattleEffect_FetchRectangleBlitters(effect->side, draw);
+  BattleEffect_FetchRectangleBlitters(args->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // The crystals wait above the screen, each eight frames behind the last,
   // and drift sideways so that they land over the targets.
-  for (k = 0; k != gPrism_Counts[effect->variant * 3]; k++) {
+  for (k = 0; k != gPrism_Counts[args->variant * 3]; k++) {
     seed = &work->particles[k];
     x = Random16() & 31;
     seed->y = -px(64);
-    if (effect->side == 1) {
+    if (args->side == 1) {
       x = ((Random16() & 31) + 80) << 16;
       seed->velocityX = (Random16() & 63) << 12;
     } else {
@@ -63,9 +63,9 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
     seed->variant = k * 8;
   }
 
-  for (frame = 0; frame != gPrism_Counts[effect->variant * 3 + 1]; frame++) {
+  for (frame = 0; frame != gPrism_Counts[args->variant * 3 + 1]; frame++) {
     // The strongest variant turns the camera, slowing from frame 96.
-    if (effect->variant == 2 && frame <= 103) {
+    if (args->variant == 2 && frame <= 103) {
       struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
       s32 speed;
 
@@ -73,21 +73,21 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
         speed = 192;
       else
         speed = 2496 - frame * 24;
-      if (effect->side == 0)
+      if (args->side == 0)
         camera->yaw -= speed;
       else
         camera->yaw += speed;
     }
-    if (frame == gPrism_Counts[effect->variant * 3 + 2])
+    if (frame == gPrism_Counts[args->variant * 3 + 2])
       BattlePlayback_StartFar(134);
 
     // Darken over the last eight frames.
-    if (frame == gPrism_Counts[effect->variant * 3 + 1] - 8) {
+    if (frame == gPrism_Counts[args->variant * 3 + 1] - 8) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(6));
     }
 
-    if (frame <= gPrism_Counts[effect->variant * 3 + 1] - 8) {
-      for (i = 0; i != gPrism_Counts[effect->variant * 3]; i++) {
+    if (frame <= gPrism_Counts[args->variant * 3 + 1] - 8) {
+      for (i = 0; i != gPrism_Counts[args->variant * 3]; i++) {
         cry = &work->particles[i];
         if (cry->z == SHATTERED) {
           // A shattered crystal: its shards fly and spin, slowing down.
@@ -128,14 +128,14 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
             }
             work->shakeFrames = 8;
             Sound_PlayFar(SE_CLATTER);
-            for (j = 0; j != effect->count; j++)
-              BattleEffect_TintBattler(effect->actors[j], 7, 5, j, 4);
+            for (j = 0; j != args->count; j++)
+              BattleEffect_TintBattler(args->actors[j], 7, 5, j, 4);
           }
         }
       }
     }
 
-    BattleCamera_Shake(effect->variant * 2 + 4, effect->variant * 4 + 8);
+    BattleCamera_Shake(args->variant * 2 + 4, args->variant * 4 + 8);
     EFFECT_END_FRAME(work);
   }
 

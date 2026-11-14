@@ -64,7 +64,7 @@ static __inline__ void BurstAt_(s32 formation, s32 x, s32 y) {
 // and lift them while the ground throws up debris; the picture is erased
 // dot by dot, the targets are dropped from on high, and each lands in an
 // explosion with a ring of embers. A or B skips to the drop.
-void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
+void BattleEffect_RunCybele(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   u8 *canvas;
   s32 frame;
@@ -169,8 +169,8 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
     if (frame == 31) {
       work->shakeFrames = 8;
       Sound_PlayFar(SE_GATE_MOVE);
-      for (i = 0; i != effect->count; i++)
-        BattleMotion_ApplyKnockbackFar(effect->actors[i], 6);
+      for (i = 0; i != args->count; i++)
+        BattleMotion_ApplyKnockbackFar(args->actors[i], 6);
     }
     if (frame == 72)
       Sound_PlayFar(SE_WHOOSH);
@@ -343,9 +343,9 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
 
     // Six glints flash in turn around each target.
     if (phase >= 0 && phase <= 172) {
-      for (i = 0; i != effect->count; i++) {
+      for (i = 0; i != args->count; i++) {
         struct MotionObject *object =
-            BattleObject_GetFar(effect->actors[i])->object;
+            BattleObject_GetFar(args->actors[i])->object;
 
         point[0] = object->x;
         point[1] = object->y;
@@ -404,9 +404,9 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
 
     // Lift the targets to 128 pixels, eight frames apart.
     if (frame >= 161 && frame <= 223) {
-      for (i = 0; i != effect->count; i++) {
+      for (i = 0; i != args->count; i++) {
         if (frame > i * 8 + 160) {
-          struct BattleObj *slot = BattleObject_GetFar(effect->actors[i]);
+          struct BattleObj *slot = BattleObject_GetFar(args->actors[i]);
           struct MotionObject *object = slot->object;
           void *record;
           s32 n;
@@ -422,16 +422,16 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
     }
     // Drop the targets from 96 pixels, five frames apart, and strike each
     // 16 frames later.
-    for (i = 0; i != effect->count; i++) {
+    for (i = 0; i != args->count; i++) {
       if (frame == i * 5 + 286) {
         struct MotionObject *object =
-            BattleObject_GetFar(effect->actors[i])->object;
+            BattleObject_GetFar(args->actors[i])->object;
 
         object->y = px(96);
         object->verticalMotionStrength = 0xab85;
       }
       if (frame == i * 5 + 302) {
-        BattleEffect_TintBattler(effect->actors[i], 7, -1, i, 8);
+        BattleEffect_TintBattler(args->actors[i], 7, -1, i, 8);
         Sound_PlayFar(SE_HEAVY_IMPACT);
         work->shakeFrames = 8;
       }
@@ -457,9 +457,9 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
       REG_BG2X = 0;
       EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
                             CANVAS_FADE_THREE_QUARTERS);
-      for (i = 0; i != effect->count; i++) {
+      for (i = 0; i != args->count; i++) {
         struct MotionObject *object =
-            BattleObject_GetFar(effect->actors[i])->object;
+            BattleObject_GetFar(args->actors[i])->object;
 
         for (j = 0; j != 10; j++) {
           struct EffectStep *ember = &work->particles[i * 10 + j];
@@ -475,13 +475,13 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
     // The explosions (40x24 in two mirrored halves, six cels) and the five
     // embers after them.
     if (frame > 301) {
-      for (i = 0; i != effect->count; i++) {
+      for (i = 0; i != args->count; i++) {
         s32 start = i * 4 + 302;
 
         if (frame >= start && frame < i * 4 + 314) {
           s32 cel = (frame - start) / 2;
           struct MotionObject *object =
-              BattleObject_GetFar(effect->actors[i])->object;
+              BattleObject_GetFar(args->actors[i])->object;
 
           point[0] = object->x;
           point[1] = 0;

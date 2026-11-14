@@ -24,12 +24,12 @@ DEFINE_EFFECT_KIND(BattleEffect_RunSpring, BattleEffect_RunHealingMotes, 8)
 
 DEFINE_EFFECT_KIND(BattleEffect_RunBreath, BattleEffect_RunHealingMotes, 9)
 
-void BattleEffect_RunCurePoison(struct BattleEffectArgument *effect) {
-  if (effect->variant == 0) {
-    BattleEffect_RunHealingMotes(effect, 3);
+void BattleEffect_RunCurePoison(struct BattleEffectArgument *args) {
+  if (args->variant == 0) {
+    BattleEffect_RunHealingMotes(args, 3);
     return;
   }
-  BattleEffect_RunHealingMotes(effect, 4);
+  BattleEffect_RunHealingMotes(args, 4);
 }
 
 DEFINE_EFFECT_KIND(BattleEffect_RunHealingMotesMode4,
@@ -47,10 +47,10 @@ DEFINE_EFFECT_KIND(BattleEffect_RunAura, BattleEffect_RunHealingMotes, 11)
 
 DEFINE_EFFECT_KIND(BattleEffect_RunEddy, BattleEffect_RunHealingMotes, 12)
 
-void BattleEffect_RunReverseStar(struct BattleEffectArgument *effect) {
-  effect->prelude = 0;
-  effect->variant = 2;
-  BattleEffect_RunHealingMotes(effect, 13);
+void BattleEffect_RunReverseStar(struct BattleEffectArgument *args) {
+  args->prelude = 0;
+  args->variant = 2;
+  BattleEffect_RunHealingMotes(args, 13);
 }
 
 #define DJINNI_SIDE(side) ((side) << 4)
@@ -73,8 +73,7 @@ void BattleEffect_RunReverseStar(struct BattleEffectArgument *effect) {
 // 40 pixels above it, turn about it by the mode's axes, and close in two
 // pixels a frame (modes 3-5 let them fade instead, mode 7 throws them).
 // The variant chooses 32, 64 or 128 motes a target.
-void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
-                                  u32 mode) {
+void BattleEffect_RunHealingMotes(struct BattleEffectArgument *args, u32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 total;
@@ -103,7 +102,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
     work->fadeFrames = 24;
 
   // The prelude: the Djinni appears; origin receives where.
-  if (effect->prelude == 1) {
+  if (args->prelude == 1) {
     s32 djinni;
 
     if (mode == 6)
@@ -115,19 +114,19 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
     else
       djinni = DJINNI_MERCURY;
     if (mode == 6 || mode == 0 || mode == 8 || mode == 9 || mode == 10)
-      BattleEffect_RunDjinniEntrance(effect, djinni | DJINNI_SIDE(effect->side),
+      BattleEffect_RunDjinniEntrance(args, djinni | DJINNI_SIDE(args->side),
                                      origin, target);
     else
       BattleEffect_RunDjinniEntrance(
-          effect, djinni | DJINNI_SIDE(effect->side) | DJINNI_ANCHORED, origin,
+          args, djinni | DJINNI_SIDE(args->side) | DJINNI_ANCHORED, origin,
           target);
-    effect->variant = 0;
+    args->variant = 0;
   }
 
   // Modes 0, 8 and 9 show the canvas at full width, the first target at
   // the middle (64); the rest keep it twice as wide (narrow).
   if (mode == 0 || mode == 8 || mode == 9) {
-    EffectPosition_ProjectScaledBattler(effect->actors[0], &base);
+    EffectPosition_ProjectScaledBattler(args->actors[0], &base);
     shift = 64 - base.x;
     REG_BG2X = shift << 8;
     REG_BG2PA = Q_8_8(1);
@@ -145,7 +144,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
     work->sheet[BEAM_BYTES + i] = work->sheet[BEAM_SHEET + i * 2];
   if (mode <= 1 || mode == 3 || mode == 4 || mode == 5 || mode == 8 ||
       mode == 12) {
-    if (effect->variant == 0)
+    if (args->variant == 0)
       palette = Resource_GetTableEntry((s32)&ResourceId_IceShardSheet);
     else
       palette = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
@@ -180,7 +179,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
   }
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet + DJINNI_SHEET);
-  BattleEffect_FetchRectangleBlitters(effect->side,
+  BattleEffect_FetchRectangleBlitters(args->side,
                                       draw = blit); // [0] MAX, [1] ADDITIVE
 
   // Scatter the motes; the mode decides how, and how long the effect is.
@@ -199,7 +198,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
     else if (mode == 8)
       total = 76;
     else
-      total = effect->count * 8 + 58;
+      total = args->count * 8 + 58;
   } else if (mode == 7) {
     // From the feet, 48 pixels up, thrown out and up.
     for (i = 0; i != 512; i++) {
@@ -213,7 +212,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
       spark->velocityZ = ((Random16() & 0xff) - 127) << 8;
       spark->variant = 0;
     }
-    total = effect->count * 8 + 58;
+    total = args->count * 8 + 58;
   } else if (mode == 12) {
     for (i = 0; i != 512; i++) {
       struct EffectStep *spark = &SPARKS[i];
@@ -223,7 +222,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
                    ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
-    total = effect->count * 8 + 58;
+    total = args->count * 8 + 58;
   } else if (mode == 1 || mode == 13) {
     // 64 pixels each way.
     for (i = 0; i != 512; i++) {
@@ -234,7 +233,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
                    ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
-    total = effect->count * 8 + 58;
+    total = args->count * 8 + 58;
   } else if (mode == 11) {
     // A wide cloud, 100 pixels each way.
     for (i = 0; i != 512; i++) {
@@ -245,7 +244,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
                    (Random16() % 200 - 100) << 15);
       spark->variant = 0;
     }
-    total = effect->count * 8 + 46;
+    total = args->count * 8 + 46;
   } else if (mode == 2) {
     // A ring 32-95 pixels across, 50 pixels down, rising.
     for (i = 0; i != 512; i++) {
@@ -258,7 +257,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
       spark->velocityY = ((Random16() & 31) + 32) << 13;
       spark->variant = 0;
     }
-    total = effect->count * 8 + 58;
+    total = args->count * 8 + 58;
   } else if (mode == 3) {
     // 64 pixels across and deep, 32 up and down.
     for (i = 0; i != 512; i++) {
@@ -269,7 +268,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
                    ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
-    total = effect->count * 8 + 58;
+    total = args->count * 8 + 58;
   } else {
     // 64 pixels each way.
     for (i = 0; i != 512; i++) {
@@ -280,15 +279,15 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
                    ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
-    total = effect->count * 8 + 58;
+    total = args->count * 8 + 58;
   }
 
   // Motes a target: 32 for variant 0, 128 for variant 2, else 64; mode 8
   // takes 128 and mode 12 16.
   limit = 64;
-  if (effect->variant == 0)
+  if (args->variant == 0)
     limit = 32;
-  else if (effect->variant == 2)
+  else if (args->variant == 2)
     limit = 128;
   if (mode == 8)
     limit = 128;
@@ -309,7 +308,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
 
     // The Djinni sways, and after frame 32 rises two pixels a frame; for
     // the first four frames it is drawn ADDITIVE as well.
-    if (effect->prelude == 1) {
+    if (args->prelude == 1) {
       if (narrow == 0) {
         s32 x = ((Trig_Sin(frame << 11) * 20) >> 16) + origin[0] + shift - 20;
         s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin[1] - 24;
@@ -331,9 +330,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
       }
     }
 
-    for (member = 0; member != effect->count; member++) {
+    for (member = 0; member != args->count; member++) {
       struct MotionObject *object =
-          BattleObject_GetFar(effect->actors[member])->object;
+          BattleObject_GetFar(args->actors[member])->object;
       s32 start = member * 8;
 
       // The motes turn about a point 40 pixels above the target.
@@ -347,12 +346,12 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
         Sound_PlayFar(SE_RECOVERY);
       if (mode == 8) {
         if (frame == start + 41)
-          BattleEffect_TintBattler(effect->actors[member], 7, -1, member, 32);
+          BattleEffect_TintBattler(args->actors[member], 7, -1, member, 32);
       } else if (mode == 11) {
         if (frame == start + 24)
-          BattleEffect_TintBattler(effect->actors[member], 7, -1, member, 28);
+          BattleEffect_TintBattler(args->actors[member], 7, -1, member, 28);
       } else if (frame == start + 36) {
-        BattleEffect_TintBattler(effect->actors[member], 7, -1, member, 28);
+        BattleEffect_TintBattler(args->actors[member], 7, -1, member, 28);
       }
       if (frame > start) {
         if (mode == 0 || mode == 6 || mode == 7 || mode == 8 || mode == 10 ||

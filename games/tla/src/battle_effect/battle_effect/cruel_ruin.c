@@ -15,14 +15,11 @@
 #include "macros.h"
 
 // Heap slots, as byte offsets into Ram_HeapSlots.
-#define SLOT_BATTLE_EFFECT 92      // battleFxWork[0]
-#define SLOT_BATTLE_SHEET 100      // unk64[0]
 #define SLOT_BLITTER 104           // unk64[1]
 #define SLOT_BLITTER_ALTERNATE 188 // unkb8[1]
 
 // The whole effect work block: struct BattleEffectWork names only its first
 // 0x78f4 bytes.
-#define BATTLE_EFFECT_WORK_SIZE 0x7b7c
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
@@ -57,7 +54,7 @@ union BattleBackgroundId__f13eb70 {
 // pieces, and 32 flashes rise from x 32-63, y 80-111, one more every four
 // frames. At the end the background and the display are put back.
 
-void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
+void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -82,11 +79,11 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
   s32 cx;
   s32 cy;
 
-  work = HeapSlot_Alloc(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
+  work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
   canvas = HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
   battle = Ram_HeapSlots->battleWork;
   view = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
-  work->effect = effect;
+  work->effect = args;
   work->vblanksSinceTransfer = 1;
 
   // Make BG2 a 128x128 canvas, as BattleEffect_StartCanvasLayer does.
@@ -166,7 +163,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
   IO_WRITE_QUEUE_PUSH(0x0400000a, 0x1f81, 0x20000);
   Iwram_FillWords((void *)(BG_PLTT + 6 * 16), 0x100, 0x7fff7fff);
   Sound_PlayFar(SE_POWER_UP);
-  BattleEffect_TintBattler(effect->actors[0], 7, 3, 0, 30);
+  BattleEffect_TintBattler(args->actors[0], 7, 3, 0, 30);
 
   for (frame = 0; frame != 128; frame++) {
     if (frame == 2)
@@ -174,7 +171,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
     if (frame == 3)
       Sound_PlayFar(SE_POWER_UP);
     if (frame == 28)
-      BattleEffect_TintBattler(effect->actors[0], -1, 3, -1, 0);
+      BattleEffect_TintBattler(args->actors[0], -1, 3, -1, 0);
     if (frame == 32)
       Sound_PlayFar(SE_MONSTER_ROAR);
     if (frame == 5)
@@ -377,15 +374,15 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  BattleEffect_TintBattler(effect->actors[0], -1, 1, -1, 0);
+  BattleEffect_TintBattler(args->actors[0], -1, 1, -1, 0);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = 32;
   BattleBackground_SetModeFar(2, BACKGROUND(battle), 0);
   wait(1);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
-  HeapSlot_Release(SLOT_BATTLE_SHEET);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
   HeapSlot_Release(HEAP_SLOT_CANVAS);
-  HeapSlot_Release(SLOT_BATTLE_EFFECT);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 // Reached from the scenes through the far-call table (table_47.s). Like
@@ -407,7 +404,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
 // last 6 frames fade out. The 128 sparkles set up in the map cell buffer are
 // never drawn.
 
-void BattleEffect_RunElementBurst(struct BattleEffectArgument *effect) {
+void BattleEffect_RunElementBurst(struct BattleEffectArgument *args) {
   struct EffectPosition ground;
   struct BattleEffectWork *work;
   void *canvas;
@@ -417,11 +414,11 @@ void BattleEffect_RunElementBurst(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
 
-  work = HeapSlot_Alloc(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
+  work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
   canvas = HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
-  sheet = HeapSlot_Alloc(SLOT_BATTLE_SHEET, 0x60e);
+  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 1550);
   work->vblanksSinceTransfer = 1;
-  work->effect = effect;
+  work->effect = args;
   BattleEffect_StartCanvasLayer(0);
   work->fadeFrames = 24;
   work->fadeStep = 0;
@@ -430,7 +427,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_CyanSparkSheet, work->sheet, 1,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
-  switch (effect->kind) {
+  switch (args->kind) {
   case 0:
     palette = Resource_GetTableEntry((s32)&ResourceId_YellowPaletteA);
     break;
@@ -471,13 +468,13 @@ void BattleEffect_RunElementBurst(struct BattleEffectArgument *effect) {
   Sound_PlayFar(SE_SPIN);
 
   for (frame = 0; frame != 56; frame++) {
-    EffectPosition_ProjectScaledBattler(effect->actor, &ground);
+    EffectPosition_ProjectScaledBattler(args->actor, &ground);
     REG_BG2X = (64 - ground.x) << 8;
     if (frame > 49)
       REG_BLDALPHA = (0x70 - frame * 2) | 0x1000;
     if (frame == 26) {
       Sound_PlayFar(SE_POWER_UP);
-      BattleEffect_TintBattler(effect->actors[0], 7, -1, 0, 20);
+      BattleEffect_TintBattler(args->actors[0], 7, -1, 0, 20);
     }
 
     // The burst, a picture every three frames.
@@ -525,9 +522,9 @@ void BattleEffect_RunElementBurst(struct BattleEffectArgument *effect) {
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
-  HeapSlot_Release(SLOT_BATTLE_SHEET);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
   HeapSlot_Release(HEAP_SLOT_CANVAS);
-  HeapSlot_Release(SLOT_BATTLE_EFFECT);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 /// Frame callback: when a transfer is pending, writes the canvas to BG
@@ -644,7 +641,7 @@ void BattleEffect_StartElementStreaks(s32 kind) {
   s32 j;
   s32 k;
 
-  work = HeapSlot_Alloc(SLOT_BATTLE_EFFECT, sizeof *work);
+  work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
   canvas = HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
   battle = Ram_HeapSlots->battleWork;
   view = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
@@ -723,8 +720,8 @@ void BattleEffect_EndElementStreaks(void) {
   Task_Remove(BattleEffect_TransferHalvedCanvas);
   Task_Remove(BattleEffect_DimBackgroundStep);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
-  HeapSlot_Release(96);
-  HeapSlot_Release(92);
+  HeapSlot_Release(HEAP_SLOT_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 struct Model;
@@ -742,7 +739,7 @@ struct Model;
 // Cruel Ruin: a pillar of dark light swallows the caster, a shadowed sky
 // rains ruin in six blasts while the ground splits, then a black sphere
 // bursts over the foes.
-void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
+void BattleEffect_RunCruelRuin(struct BattleEffectArgument *args) {
   struct EffectPosition pos;
   s32 place[4];
   struct ModelTexture texture;
@@ -786,7 +783,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   savedScroll = gBgScroll[1].x;
   scrollX = 0;
   phase = 0;
-  actor = BattleObject_GetFar(effect->actor)->object;
+  actor = BattleObject_GetFar(args->actor)->object;
   actor[18] = phase;
   Graphics_LoadGreyRamp();
   Sound_PlayFar(SE_SPIN);
@@ -796,7 +793,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
     if (frame == 24) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_BRIGHTEN, CANVAS_FILL_WORD(6));
     }
-    EffectPosition_ProjectBattler(effect->actor, &pos);
+    EffectPosition_ProjectBattler(args->actor, &pos);
     size = frame * 6 + 2;
     if (size > 96) {
       size = 96;
@@ -1581,8 +1578,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
   Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-  effect->actors[effect->count] = 0xff;
-  BattleActor_SpawnObjectsForListFar(effect->actors, 0);
+  args->actors[args->count] = 0xff;
+  BattleActor_SpawnObjectsForListFar(args->actors, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0CA, work->sheet + 0x3840, 0,
                              0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -1605,8 +1602,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
       s32 green = grey * 32;
 
       if (frame == 0) {
-        for (i = 0; i != effect->count; i++) {
-          BattleEffect_TintBattler(effect->actors[i], 0, -1, i, 16);
+        for (i = 0; i != args->count; i++) {
+          BattleEffect_TintBattler(args->actors[i], 0, -1, i, 16);
         }
       }
       if (frame == 127) {
@@ -1719,11 +1716,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
-#undef SLOT_BATTLE_EFFECT
-#undef SLOT_BATTLE_SHEET
 #undef SLOT_BLITTER
 #undef SLOT_BLITTER_ALTERNATE
-#undef BATTLE_EFFECT_WORK_SIZE
 #undef BLITTER
 #undef CLIP
 #undef BACKGROUND

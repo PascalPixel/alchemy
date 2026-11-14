@@ -49,7 +49,7 @@ struct MeshVertex {
 
 // Catastrophe: a black moon rises over a burning city, its towers crack and
 // fall in fire, the sky tears open, and a meteor of shadow crushes the foes.
-void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
+void BattleEffect_RunCatastrophe(struct BattleEffectArgument *args) {
   u8 *canvas;
   struct BattleEffectWork *work;
   DrawRectangle blit[2];
@@ -955,9 +955,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   VramBlock_Load93Far();
   *(s32 *)(battle + 84) = VramCache_AllocEntry(128);
   BattleEffect_SelectLivingTargets(work->effect);
-  for (i = 0; i != effect->count; i++) {
-    BattleEffect_TintBattler(effect->actors[i], 1, -1, -1, 0);
-    BattleEffect_TintBattler(effect->actors[i], 0, -1, -1, 0);
+  for (i = 0; i != args->count; i++) {
+    BattleEffect_TintBattler(args->actors[i], 1, -1, -1, 0);
+    BattleEffect_TintBattler(args->actors[i], 0, -1, -1, 0);
   }
   Palette_LoadBasicSpriteColors();
   BattleEffect_SetupBlendedDisplay();
@@ -1372,12 +1372,12 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         BattleEffect_StepPaletteToResource((s32)&ResourceId_EffectPalette02);
       }
       if (frame == 66) {
-        for (i = 0; i != effect->count; i++) {
-          BattleEffect_StartActorMotion(effect->actors[i], 1, 0x40000, 0x80000,
+        for (i = 0; i != args->count; i++) {
+          BattleEffect_StartActorMotion(args->actors[i], 1, 0x40000, 0x80000,
                                         0x40000, 150);
-          BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);
+          BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
           {
-            s32 a = effect->actors[i];
+            s32 a = args->actors[i];
             s32 k = 448;
             EffectPosition_ProjectBattler(a, &pos);
             j = 0;

@@ -47,7 +47,7 @@ struct Model__f18b868 {
 // the target, and draws a jaw: a textured quad tilted back, turned a quarter
 // further each bite, that grows and fades over 16 frames.
 /// Triple Chomp's effect: the caster lunges, three bites close on the target.
-void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
+void BattleEffect_RunTripleChomp(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -70,7 +70,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 8, 80);
+  BattleEffect_SetApproachMotion(args->actor, args->actors[0], 8, 80);
   wait(8);
 
   // A clipped, mirrored MAX blitter for the sparks; the jaw's texture, the
@@ -94,7 +94,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
     // texture.
     vertices = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
-    EffectPosition_ProjectBattler(effect->actors[0], &position);
+    EffectPosition_ProjectBattler(args->actors[0], &position);
     texture.logWidth = 7;
     texture.logHeight = 7;
     texture.pixels = pixels;
@@ -118,7 +118,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
           force = (Random16() & 255) + 32;
           spark->velocityX = (Trig_Sin(angle) * force) >> 8;
           spark->velocityY = (Trig_Cos(angle) * force) >> 6;
-          if (effect->side == 0)
+          if (args->side == 0)
             spark->velocityX += -(px(1) / 2);
           else
             spark->velocityX += px(1) / 2;
@@ -130,9 +130,9 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
           BattlePlayback_StartFar(134);
         else
           Sound_PlayFar(SE_HEAVY_IMPACT);
-        BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x80000, 0,
+        BattleEffect_StartActorMotion(args->actors[0], 1, 0x20000, 0x80000, 0,
                                       i * 20 + 120);
-        BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
+        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
         work->shakeFrames = 8;
       }
 
@@ -197,15 +197,15 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
 DEFINE_EFFECT_KIND(BattleEffect_RunBeam, BattleEffect_RunBreaths, 0)
 
 /// Abilities: Rolling Flame (kind 434).
-void BattleEffect_RunRollingFlame(struct BattleEffectArgument *effect) {
-  effect->variant = 2;
-  BattleEffect_RunBreaths(effect, 1);
+void BattleEffect_RunRollingFlame(struct BattleEffectArgument *args) {
+  args->variant = 2;
+  BattleEffect_RunBreaths(args, 1);
 }
 
 /// Abilities: Ghost Soldier, Pike Assault (kind 449).
-void BattleEffect_RunGhostSoldier(struct BattleEffectArgument *effect) {
-  effect->variant = 2;
-  BattleEffect_RunBreaths(effect, 2);
+void BattleEffect_RunGhostSoldier(struct BattleEffectArgument *args) {
+  args->variant = 2;
+  BattleEffect_RunBreaths(args, 2);
 }
 
 /// Abilities: Blast Breath (kind 414).

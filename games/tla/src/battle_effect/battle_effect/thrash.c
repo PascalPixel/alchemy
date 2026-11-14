@@ -11,21 +11,20 @@
 /// Jumps the user toward the first target and emits type 4 sparks after 29
 /// frames.
 /// effect: effect arguments.
-void BattleEffect_RunThrash(struct BattleEffectArgument *effect) {
+void BattleEffect_RunThrash(struct BattleEffectArgument *args) {
   // Jump 3/4 of the distance at displacement / 24, with initial vertical
   // speed 12.2.
-  BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 24, 0xc3333);
+  BattleMotion_ApproachTargetFar(args->actor, args->actors[0], 24, 0xc3333);
   wait(29);
-  effect->variant = 4;
-  BattleEffect_RunSparkGroups(effect, 2); // 2: from the user's position.
+  args->variant = 4;
+  BattleEffect_RunSparkGroups(args, 2); // 2: from the user's position.
 }
 
-void BattleEffect_RunMightyPress(struct BattleEffectArgument *effect) {
-  BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 0x18,
-                                 0xc3333);
+void BattleEffect_RunMightyPress(struct BattleEffectArgument *args) {
+  BattleMotion_ApproachTargetFar(args->actor, args->actors[0], 0x18, 0xc3333);
   wait(26);
-  effect->variant = 5;
-  BattleEffect_RunSparkGroups(effect, 2);
+  args->variant = 5;
+  BattleEffect_RunSparkGroups(args, 2);
 }
 
 // Battle effects: sparks after approaching the target (type 3).
@@ -33,13 +32,13 @@ void BattleEffect_RunMightyPress(struct BattleEffectArgument *effect) {
 /// Jumps the user toward the first target and emits type 3 sparks after 12
 /// frames.
 /// effect: effect arguments.
-void BattleEffect_RunSevereBlow(struct BattleEffectArgument *effect) {
+void BattleEffect_RunSevereBlow(struct BattleEffectArgument *args) {
   // Jump 3/4 of the distance at displacement / 24, with initial vertical
   // speed 7.2.
-  BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 24, 0x73333);
+  BattleMotion_ApproachTargetFar(args->actor, args->actors[0], 24, 0x73333);
   wait(12);
-  effect->variant = 3;
-  BattleEffect_RunSparkGroups(effect, 2); // 2: from the user's position.
+  args->variant = 3;
+  BattleEffect_RunSparkGroups(args, 2); // 2: from the user's position.
 }
 
 /// Abilities: Quick Strike (kind 52).
@@ -88,7 +87,7 @@ void BattleEffect_RunTwinShear(s32 a0) {
 // build the blitters. Each frame shows the current picture for its time,
 // floods the canvas from frame 16 to 19, and shakes the camera; results at
 // frame 18, the hit at 20.
-void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
+void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *args,
                                     s32 variant) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -143,18 +142,18 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
   // The user closes on the target in 16 frames (variant 3 jumps in place,
   // variant 4 strikes a pose instead and waits 8).
   if (variant == 1 || variant == 5)
-    BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16, px(8));
+    BattleMotion_ApproachTargetFar(args->actor, args->actors[0], 16, px(8));
   else if (variant == 3)
     // The target is a whole word: the user, passed twice, is loaded once and
     // copied, where an s16 parameter would load it again halved.
-    BattleMotion_ApproachTargetFar(effect->actor, effect->actor, 16, px(10));
+    BattleMotion_ApproachTargetFar(args->actor, args->actor, 16, px(10));
   else if (variant == 4) {
-    struct MotionObject *user = BattleObject_GetFar(effect->actor)->object;
+    struct MotionObject *user = BattleObject_GetFar(args->actor)->object;
 
     Actor_SelectAnimationFar(user, 2);
     Actor_SetAnimationSpeedFar(user, 48);
   } else
-    BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16, 0);
+    BattleMotion_ApproachTargetFar(args->actor, args->actors[0], 16, 0);
   if (variant == 4)
     wait(8);
   else
@@ -162,7 +161,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
 
   // The blitters face the target: one for the picture, one flipped upside
   // down for its reflection.
-  if (effect->side == 1)
+  if (args->side == 1)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_ADDITIVE);
@@ -170,7 +169,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  if (effect->side == 1)
+  if (args->side == 1)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_ADDITIVE);
   else
@@ -224,7 +223,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
       BattlePlayback_StartFar(PHASE_RESULTS);
     if (frame == HIT_FRAME) {
       work->shakeFrames = 8;
-      BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
+      BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
     }
     BattleCamera_Shake(16, 16);
     EFFECT_END_FRAME(work);
@@ -238,11 +237,10 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
     Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
     Task_Remove(Palette_StepFadeTransfer);
-    BattleEffect_RunWeaken(effect);
+    BattleEffect_RunWeaken(args);
   } else {
     if (variant == 4)
-      Actor_SetAnimationSpeedFar(BattleObject_GetFar(effect->actor)->object,
-                                 16);
+      Actor_SetAnimationSpeedFar(BattleObject_GetFar(args->actor)->object, 16);
     BattleEffect_EndCanvasLayer();
   }
 }

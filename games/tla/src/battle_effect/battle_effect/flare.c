@@ -16,7 +16,7 @@
 // steps through six pictures, four frames each; variant 1 adds a copy 16
 // pixels higher, variant 2 another 32 higher and a brighter trail. The
 // targets are hit from frame 16, eight frames apart.
-void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
+void BattleEffect_RunFlare(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -43,7 +43,7 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
   // The arc: from -90 degrees in steps of 22.5.
-  if (effect->actors[0] > 127) {
+  if (args->actors[0] > 127) {
     org = 0;
     sign = 1;
   } else {
@@ -65,7 +65,7 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
   } while (i != FLAME_COUNT);
 
   work->transferMode = CANVAS_COPY_AND_FADE;
-  if (effect->variant == 2)
+  if (args->variant == 2)
     work->transferValue = 75;
   else
     work->transferValue = 50;
@@ -87,12 +87,12 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
              p->x - ((w = gBattleEffect_PuffArcPictureWidths[cell]) >> 1),
              p->y + gBattleEffect_PuffArcPictureBiasY[cell], w,
              gBattleEffect_PuffArcPictureHeights[cell]);
-        if (effect->variant != 0)
+        if (args->variant != 0)
           draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[cell],
                p->x - ((w = gBattleEffect_PuffArcPictureWidths[cell]) >> 1),
                (p->y + gBattleEffect_PuffArcPictureBiasY[cell]) - 16, w,
                gBattleEffect_PuffArcPictureHeights[cell]);
-        if (effect->variant == 2)
+        if (args->variant == 2)
           draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[cell],
                p->x - ((w = gBattleEffect_PuffArcPictureWidths[cell]) >> 1),
                (p->y + gBattleEffect_PuffArcPictureBiasY[cell]) - 32, w,
@@ -105,9 +105,9 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
 
     // Hit the targets, eight frames apart.
     i = 0;
-    while (i != effect->count) {
+    while (i != args->count) {
       if (frame == (i * 8) + 16)
-        BattleEffect_TintBattler(effect->actors[i], 10, 5, i, 12);
+        BattleEffect_TintBattler(args->actors[i], 10, 5, i, 12);
       i += 1;
     }
     EFFECT_END_FRAME(work);

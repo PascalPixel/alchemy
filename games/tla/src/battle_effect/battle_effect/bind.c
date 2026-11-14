@@ -107,7 +107,7 @@ void BattleEffect_ConvertBackgroundToBlueRamp(void) {
 // the target and leaves the rune picture where it lands; when the effect has a
 // prelude, the Jupiter Djinn also circles above its place for the first frames
 // and rises away after frame 32.
-void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
+void BattleEffect_RunBind(struct BattleEffectArgument *args) {
   s32 origin[3];
   s32 originSize[3];
   struct EffectPosition anchor;
@@ -141,8 +141,8 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
   // Djinn with its palette, and a transfer that fades the canvas by 4 each
   // frame.
   BattleEffect_StartCanvasLayer(1);
-  if (effect->prelude == 1)
-    BattleEffect_RunDjinniEntrance(effect, effect->side << 4 | 3, origin,
+  if (args->prelude == 1)
+    BattleEffect_RunDjinniEntrance(args, args->side << 4 | 3, origin,
                                    originSize);
   REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, work->sheet, 1, 1);
@@ -154,25 +154,25 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 
   // The background is shifted so that the target stands at x = 64.
-  EffectPosition_ProjectScaledBattler(effect->actors[0], &anchor);
+  EffectPosition_ProjectScaledBattler(args->actors[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
   Sound_PlayFar(SE_SWIRL);
 
-  for (frame = 0; frame != effect->count * 20 + 72; frame++) {
+  for (frame = 0; frame != args->count * 20 + 72; frame++) {
     if (frame == 64)
       BattlePlayback_StartFar(0);
     BattleEffect_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
 
     // The prelude: the Djinn circles where the effect was prepared, and
     // rises away after frame 32; its blitters live for this frame only.
-    if (effect->prelude == 1) {
+    if (args->prelude == 1) {
       s32 x;
       s32 y;
 
       x = ((Trig_Sin(frame << 11) * 20) >> 16) + origin[0] + shift - 20;
       y = ((Trig_Cos(frame << 11) << 2) >> 16) + origin[1] - 24;
-      BattleEffect_FetchRectangleBlitters(effect->side, draw);
+      BattleEffect_FetchRectangleBlitters(args->side, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
       draw[0](canvas, work->sheet + DJINN_SHEET, x, y, DJINN_SIZE, DJINN_SIZE);
@@ -193,7 +193,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
       work->transferValue += 0x01010101;
 
     for (member = 0; member != 1; member++) {
-      motion = BattleObject_GetFar(effect->actors[member])->object;
+      motion = BattleObject_GetFar(args->actors[member])->object;
       memberFrame = frame - member * 8;
       if (memberFrame >= 0 && memberFrame < 96) {
         Transform_Reset();
@@ -264,7 +264,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
 // target, shrinking, for 64 frames; then the rune picture is stamped in two
 // halves where it landed. The caster approaches the target at frame 46, the
 // palette pulses throughout and the trail fades a step every 16 frames.
-void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
+void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *args) {
   struct EffectPosition anchor;
   s32 vector[3];
   struct EffectPosition screen;
@@ -303,16 +303,16 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 
   // The background is shifted so that the target stands at x = 64.
-  EffectPosition_ProjectScaledBattler(effect->actors[0], &anchor);
+  EffectPosition_ProjectScaledBattler(args->actors[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
   Sound_PlayFar(SE_SWIRL);
 
-  for (frame = 0; frame != effect->count * 20 + 72; frame++) {
+  for (frame = 0; frame != args->count * 20 + 72; frame++) {
     if (frame == 64)
       BattlePlayback_StartFar(0);
     if (frame == 46)
-      BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16, 0);
+      BattleMotion_ApproachTargetFar(args->actor, args->actors[0], 16, 0);
     BattleEffect_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
 
     // A fresh pair of max blitters each frame, the second flipped.
@@ -325,7 +325,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
       work->transferValue += 0x01010101;
 
     for (member = 0; member != 1; member++) {
-      object = BattleObject_GetFar(effect->actors[member])->object;
+      object = BattleObject_GetFar(args->actors[member])->object;
       memberFrame = frame - member * 8;
       if (memberFrame >= 0 && memberFrame < 96) {
         Transform_Reset();

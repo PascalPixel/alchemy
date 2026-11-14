@@ -32,6 +32,7 @@
 #include "scene_tables.h"
 #include "objcmd.h"
 #include "flags.h"
+#include "djinn_ids.h"
 #include "map.h"
 #include "field/field_sequence_event.h"
 #include "system/heap_release.h"
@@ -51,7 +52,7 @@ extern struct ActorPlacement gGondowanCliffs_PassEntrances[];
 
 #include "shared/tile_sprite_reset.h"
 
-void GondowanCliffs_FightKindle(void) { Field_RequestDjinnBattle(21, 49); }
+void GondowanCliffs_FightKindle(void) { Field_RequestDjinnBattle(21, DJINNI_KINDLE); }
 
 const u8 *Scene_GetEntrances(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_GondowanCliffsPass)

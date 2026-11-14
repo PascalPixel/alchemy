@@ -13,6 +13,7 @@
 #include "../field/field_effect/move.c"
 
 #include "flags.h"
+#include "djinn_ids.h"
 
 // Story flags: both cone pillars Pounded and the cogs turned back, each cone
 // Pounded, and the mouse that shows the way seen.
@@ -150,7 +151,7 @@ struct Wanderer {
   u16 facingB;
 };
 
-void GabombaStatue_FightSteel(void) { Field_RequestDjinnBattle(33, 9); }
+void GabombaStatue_FightSteel(void) { Field_RequestDjinnBattle(33, DJINNI_STEEL); }
 // A wanderer's update: it turns between its two facings at random intervals.
 s32 GabombaStatue_LookAround(struct Wanderer *actor) {
   u8 *timer = &actor->timer;

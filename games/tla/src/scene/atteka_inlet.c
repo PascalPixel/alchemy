@@ -11,6 +11,7 @@
 /// uncovers Geode, a Venus Djinni (AttekaInlet_CycloneUncoversGeode).
 
 #include "flags.h"
+#include "djinn_ids.h"
 #include "system/io_reg.h"
 #include "shared/tables.h"
 #include "battle/battle.h"
@@ -312,7 +313,7 @@ void AttekaInlet_CycloneUncoversGeode(void) {
   s32 moved;
 
   MapCopy(9, 23, 1, 1, 7, 23, 0);
-  if (!GameFlag_Get(63)) {
+  if (!GameFlag_Get(FLAG_DJINNI(DJINNI_GEODE))) {
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     Event_Start();
     Event_ResolvePendingActions(0);

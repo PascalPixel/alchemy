@@ -32,6 +32,7 @@
 #include "shared/tundaria_tower.h"
 #include "module/field/field.h"
 #include "flags.h"
+#include "djinn_ids.h"
 #include "battle/battle.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -128,7 +129,7 @@ extern s16 gDehkanPlateau_Room3MovablePillars[];
 
 void DehkanPlateau_FightCannon(void) {
   GameFlag_Set(FLAG_CANNON_MET);
-  Field_RequestDjinnBattle(16, 47);
+  Field_RequestDjinnBattle(16, DJINNI_CANNON);
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -1767,7 +1768,7 @@ void DehkanPlateau_CreatePoundCube(void) {
 void DehkanPlateau_InitializeRoom6(void) {
   gFieldWork->transition = 0x204;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
-  if (GameFlag_Get(95) != 0)
+  if (GameFlag_Get(FLAG_DJINNI(DJINNI_CANNON)) != 0)
     GameFlag_Set(FLAG_CANNON_MET);
   Pillars_Place(gDehkanPlateau_Room6PoundPillars);
   CrumblingPillars_Place(gDehkanPlateau_Room6CrumblingPillar);

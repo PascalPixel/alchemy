@@ -6,6 +6,7 @@
 /// (KibomboMountains_FightWaft).
 
 #include "flags.h"
+#include "djinn_ids.h"
 
 // Set once the Kibombo let the party pass: the guards and the dog are gone.
 #define FLAG_KIBOMBO_LETS_PARTY_PASS 0x8ff
@@ -91,7 +92,7 @@ void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 
 void Field_TryJumpForward(void);
 
-void KibomboMountains_FightWaft(void) { Field_RequestDjinnBattle(18, 70); }
+void KibomboMountains_FightWaft(void) { Field_RequestDjinnBattle(18, DJINNI_WAFT); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

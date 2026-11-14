@@ -27,6 +27,7 @@
 /// lifts.
 
 #include "flags.h"
+#include "djinn_ids.h"
 #include "item_ids.h"
 #include "types.h"
 #include "system/system.h"
@@ -240,7 +241,7 @@ void Actor_PlaceBlocks(const void *data);
 
 extern s32 gKandoreanTemple_RightTimer;
 
-void KandoreanTemple_FightFog(void) { Field_RequestDjinnBattle(11, 27); }
+void KandoreanTemple_FightFog(void) { Field_RequestDjinnBattle(11, DJINNI_FOG); }
 
 u32 KandoreanTemple_CountDownSteam(struct Actor *object) {
   s32 left;

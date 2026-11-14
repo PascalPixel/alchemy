@@ -271,8 +271,8 @@ static inline void FieldWindowColor_Apply(s32 phase, s32 brightness) {
 }
 
 /// Requests a battle with a Djinni (Field_RequestDjinnBattle).
-static inline void Event_RequestDjinnBattle(s32 flag, s32 no) {
-  Field_RequestDjinnBattle(flag, no);
+static inline void Event_RequestDjinnBattle(s32 actorId, s32 djinni) {
+  Field_RequestDjinnBattle(actorId, djinni);
 }
 
 /// Event_PrepareObjectAndApplyValue, from an event.

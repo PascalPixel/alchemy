@@ -1,5 +1,6 @@
 /// @file
 #include "flags.h"
+#include "djinn_ids.h"
 #include "types.h"
 #include "system/iwram_call.h"
 #include "actor.h"
@@ -68,7 +69,7 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 void MapGrid_ClearAttributeBBitsAt(s32 x, s32 z, s32 a, s32 b);
 void Field_TryJumpForward(void);
 
-void JupiterLighthouse_FightWhorl(void) { Field_RequestDjinnBattle(21, 74); }
+void JupiterLighthouse_FightWhorl(void) { Field_RequestDjinnBattle(21, DJINNI_WHORL); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

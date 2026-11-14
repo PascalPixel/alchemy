@@ -5,6 +5,7 @@
 /// (GabombaCatacombs_FightMud).
 
 #include "flags.h"
+#include "djinn_ids.h"
 #include "shared/tables.h"
 #include "field/field_sequence_event.h"
 #include "types.h"
@@ -96,7 +97,7 @@ void Actor_DepartInRing(s32 id);
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);  \
   } while (0)
 
-void GabombaCatacombs_FightMud(void) { Field_RequestDjinnBattle(8, 10); }
+void GabombaCatacombs_FightMud(void) { Field_RequestDjinnBattle(8, DJINNI_MUD); }
 
 void GabombaCatacombs_ClearRoom1Bushes(void) {
   GabombaCatacombs_ClearBushes(7, 63, 1, 16, 16, 57, 63);

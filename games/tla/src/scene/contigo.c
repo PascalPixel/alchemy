@@ -38,6 +38,7 @@ static inline void Contigo_Tiles(s32 srcX, s32 srcY, s32 width, s32 height,
 #include "scene_tables.h"
 #include "module/scene/scene.h"
 #include "flags.h"
+#include "djinn_ids.h"
 #include "shared/tables.h"
 #include "system/field_effect.h"
 #include "field/field_sequence_event.h"
@@ -994,7 +995,7 @@ void Contigo_NarrowCameraBounds(void) {
 }
 
 void Contigo_ScoopForSalt(void) {
-  if (!GameFlag_Get(62)) {
+  if (!GameFlag_Get(FLAG_DJINNI(DJINNI_SALT))) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
     Event_Start();

@@ -165,6 +165,7 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
 
 static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "flags.h"
+#include "djinn_ids.h"
 #include "field/field_sequence_event.h"
 #include "field/field.h"
 #include "module/field/map.h"
@@ -277,7 +278,7 @@ void Tightrope_Place();
 
 extern u8 Data_0202c001[];
 
-void AquaRockInside_FightSteam(void) { Field_RequestDjinnBattle(10, 32); }
+void AquaRockInside_FightSteam(void) { Field_RequestDjinnBattle(10, DJINNI_STEAM); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

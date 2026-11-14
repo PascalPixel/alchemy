@@ -10,6 +10,7 @@
 /// (IsletCave_SentinelAwaits).
 
 #include "flags.h"
+#include "djinn_ids.h"
 #include "field/field.h"
 #include "system/main_routine_work.h"
 #include "types.h"
@@ -229,12 +230,12 @@ void IsletCave_TeleportIn(void) {
 #include "text/msg_ids.h"
 
 void IsletCave_FightMeld(void) {
-  Field_RequestDjinnBattle(15, 12);
+  Field_RequestDjinnBattle(15, DJINNI_MELD);
   return;
 }
 
 void IsletCave_FightSerac(void) {
-  Field_RequestDjinnBattle(9, 37);
+  Field_RequestDjinnBattle(9, DJINNI_SERAC);
   return;
 }
 
@@ -426,7 +427,7 @@ s32 Scene_Initialize(void) {
       GameFlag_Set(0x9cf);
     }
   } else if (scene == (s32)&SceneId_IsletCave2) {
-    if (GameFlag_Get(85) || GameFlag_Get(165)) {
+    if (GameFlag_Get(FLAG_DJINNI(DJINNI_SERAC)) || GameFlag_Get(FLAG_DJINNI_HIDING(DJINNI_SERAC))) {
       GameFlag_Set(FLAG_SCENE_TEMP_30);
     } else if (!GameFlag_Get(FLAG_SCENE_TEMP_30)) {
       Actor_SetHorizontalPositionWithTerrain(9, 0, 0);

@@ -159,9 +159,9 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Actor_FaceDirection(9, FACING_NORTH_NORTHEAST, 0);
   Event_SetMessageId(MsgOhYoungWitch);
   GabombaStatueChamber_StatueSpeaks();
-  Actor_ArmCallback(10, 0, 20);
+  Actor_ArmCallback(10, FACING_EAST, 20);
   Actor_FaceDirection(10, FACING_WEST, 40);
-  Actor_ArmCallback(10, 0, 20);
+  Actor_ArmCallback(10, FACING_EAST, 20);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 10, 0);
   Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessageAndWait(9, 0);
@@ -178,7 +178,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
   Actor_SetModeById(8, 3);
-  Actor_ArmCallback(10, 0x3000, 20);
+  Actor_ArmCallback(10, FACING_SOUTH_SOUTHEAST, 20);
   object = OBJECT(14);
   object->facing = OBJECT(10)->facing;
   wait(1);
@@ -213,8 +213,8 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
                            0);
   Actor_WalkToAndWait(14, 392, 220);
   Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
-  Actor_ArmCallback(9, 0, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+  Actor_ArmCallback(9, FACING_EAST, 0);
   OBJECT(12)->motionFlags = 0;
   Actor_SetMovementTypeAndWaitById(12,
                                    gGabombaStatueChamber_AkafubuStepsUpScript);
@@ -229,7 +229,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Event_Wait(20);
   GabombaStatueChamber_StatueSpeaks();
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 20);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x8000, 40);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_WEST, 40);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 20);
   Actor_SetModeById(8, 3);
   PaletteFade_ApplySource(0x10000, 2);
@@ -260,8 +260,8 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
                   EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   GabombaStatueChamber_StatueSpeaks();
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
-  Actor_ArmCallback(9, 0, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+  Actor_ArmCallback(9, FACING_EAST, 0);
   Actor_SetMovementTypeAndWaitById(12,
                                    gGabombaStatueChamber_AkafubuLeavesScript);
   GabombaStatueChamber_StatueSpeaks();
@@ -284,11 +284,11 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Actor_Jump(9, 4, 10);
   Event_ShowMessageAndWait(9, 0);
   GabombaStatueChamber_StatueSpeaks();
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x4000, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Actor_FaceDirectionAndWait(9, FACING_NORTH_NORTHWEST);
   Motion_SetModeAndWaitAnimation(9, 3);
   GabombaStatueChamber_StatueSpeaks();
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xe000, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
   Actor_FaceDirectionAndWait(9, FACING_NORTH_NORTHEAST);
   Actor_SetModeById(9, 4);
   Event_ShowMessageAndWait(9, 0);
@@ -318,7 +318,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Event_Wait(40);
   Sound_Play(MUS_025);
   Event_Wait(40);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x2000, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
   Actor_FaceDirectionAndWait(9, FACING_NORTH_NORTHWEST);
   Event_ShowMessageAndWait(9, 0);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
@@ -337,7 +337,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   if (gGabombaStatueChamber_ShownItem != 0)
     Actor_Release((s32)gGabombaStatueChamber_ShownItem);
   Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_STAND);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x6000, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(9, FACING_NORTH_NORTHEAST, 40);
   FieldMessage_ShowAtActor(9, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
@@ -560,7 +560,7 @@ void GabombaStatueChamber_AkafubuReachesChamber(void) {
   Actor_FaceDirectionById(10, FACING_EAST);
   // "But what must I do here to become a witch doctor?"
   Event_ShowMessageAndWait(10, 0);
-  Actor_FaceDirectionAndWait(10, FACING_NORTH + FACING_STEP);
+  Actor_FaceDirectionAndWait(10, FACING_NORTH_NORTHEAST);
   Motion_SetModeAndWaitAnimation(10, 4);
   // "I do not know..."
   Event_ShowMessageAndWait(10, 0);
@@ -652,10 +652,11 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   /* FAKEMATCH(temporary): the leader read before the first turn is built. */
   owner = gMainRoutineWork.currentOwner;
   Actor_SetPositionAndFacing(owner, px(360), px(184), turnA = FACING_NORTHEAST);
-  Actor_SetPositionAndFacing(7, px(376), px(184), turnA);
+  Actor_SetPositionAndFacing(ACTOR_PIERS, px(376), px(184), turnA);
   Actor_SetPositionAndFacing(11, px(360), px(168), turnA);
-  Actor_SetPositionAndFacing(6, px(423), px(168), turnB = FACING_NORTHWEST);
-  Actor_SetPositionAndFacing(5, px(408), px(184), turnB);
+  Actor_SetPositionAndFacing(ACTOR_SHEBA, px(423), px(168),
+                             turnB = FACING_NORTHWEST);
+  Actor_SetPositionAndFacing(ACTOR_JENNA, px(408), px(184), turnB);
   if (statue != 0) {
     sprite = statue->sprite;
     sprite->nextFrame = 0;
@@ -674,17 +675,18 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
-  Actor_Jump(7, 4, 10);
+  Actor_Jump(ACTOR_PIERS, 4, 10);
   Event_SetMessageId(MsgTheBlackOrb);
   // "The black orb... Where is it?"
-  Event_ShowMessageAndWait(7, 0);
-  Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_FaceDirectionAndWait(6, FACING_WEST);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
+  Actor_SetAttachedEffect(ACTOR_SHEBA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_WEST);
   // "I saw it roll in there..."
-  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 6, 0);
-  Actor_ShowEmoteById(5, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_SHEBA, 0);
+  Actor_ShowEmoteById(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   // "It came in through there and rolled along this groove in the floor..."
-  Event_ShowMessageAndWait(5, 0);
+  Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   FieldActor_SetPositionAndResetMotion(((s32)Actor_GetById(13)), px(392), 0,
                                        px(340));
   Sound_Play(SOUND_FADE_OUT_BGM);
@@ -694,9 +696,9 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Actor_SetModeById(9, 2);
   Actor_SetModeById(10, 2);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 13);
-  Actor_WatchAndSetScript(5, 13);
-  Actor_WatchAndSetScript(6, 13);
-  Actor_WatchAndSetScript(7, 13);
+  Actor_WatchAndSetScript(ACTOR_JENNA, 13);
+  Actor_WatchAndSetScript(ACTOR_SHEBA, 13);
+  Actor_WatchAndSetScript(ACTOR_PIERS, 13);
   Actor_WatchAndSetScript(11, 13);
   Event_Wait(10);
   FieldCamera_SetSpeed(0.8);
@@ -714,9 +716,9 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Actor_SetSpeed(13, 0.8);
   Actor_MoveToAndWaitById(13, 392, 160);
   Actor_Stop(gMainRoutineWork.currentOwner);
-  Actor_Stop(5);
-  Actor_Stop(6);
-  Actor_Stop(7);
+  Actor_Stop(ACTOR_JENNA);
+  Actor_Stop(ACTOR_SHEBA);
+  Actor_Stop(ACTOR_PIERS);
   Actor_Stop(11);
   wait(1);
   Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
@@ -728,28 +730,28 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Actor_ShowEmoteById(11, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   // "It vanished into that hole!"
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 11, 0);
-  Actor_ShowEmoteById(6, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
+  Actor_ShowEmoteById(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   // "It looks pretty deep..."
-  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 6, 0);
-  Actor_FaceDirectionById(5, turnA);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_SHEBA, 0);
+  Actor_FaceDirectionById(ACTOR_JENNA, turnA);
   // "Can you see it? Do you think you can reach it?"
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 5, 0);
-  Actor_ArmCallback(5, FACING_NORTHWEST, 0);
-  Actor_SetSpeed(6, 0.8);
-  Actor_WalkToAndWait(6, 400, 172);
-  Actor_SetModeById(6, 9);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0);
+  Actor_ArmCallback(ACTOR_JENNA, FACING_NORTHWEST, 0);
+  Actor_SetSpeed(ACTOR_SHEBA, 0.8);
+  Actor_WalkToAndWait(ACTOR_SHEBA, 400, 172);
+  Actor_SetModeById(ACTOR_SHEBA, 9);
   Event_Wait(20);
   // "Hm... No, I can't even see it."
-  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 6, 0);
-  Actor_SetModeById(7, 4);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_SHEBA, 0);
+  Actor_SetModeById(ACTOR_PIERS, ANIM_SHAKE_HEAD);
   // "It's no use... Now, I'll never see Lemuria again... I am lost..."
-  Event_ShowMessageAndWait(7, 0);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   // "Wait, hold on... I can see light on the other side of this hole..."
-  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 6, 0);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_SHEBA, 0);
   Actor_ShowEmoteById(11, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   // "A light?"
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 11, 0);
-  Actor_FaceDirectionAndWait(11, FACING_SOUTHEAST + FACING_STEP);
+  Actor_FaceDirectionAndWait(11, FACING_SOUTH_SOUTHEAST);
   // "There must be a room on the other side of this statue..."
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 11, 0);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
@@ -761,13 +763,13 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   wait(1);
   // "Who... Who are you!?"
   Event_ShowMessageAndWait(12, 0);
-  Actor_SetModeById(6, 1);
+  Actor_SetModeById(ACTOR_SHEBA, ANIM_STAND);
   wait(1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
-  Actor_FaceDirection(6, FACING_SOUTH, 0);
-  Actor_FaceDirection(7, FACING_SOUTH, 0);
-  Actor_FaceDirection(11, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
+  Actor_FaceDirection(11, FACING_SOUTH_SOUTHEAST, 0);
   FieldCamera_SetSpeed(1.6);
   FieldCamera_MoveWithinMapBounds(px(392), -1, px(200), 1);
   Actor_SetSpeed(12, 1.2);
@@ -789,37 +791,37 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
     // "Then what are you doing inside the Great Gabomba!?"
     Event_ShowMessageAndWait(12, 0);
   }
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
   // "We've come to reclaim the black orb you stole!"
-  Event_ShowMessageAndWait(7, 0);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_ShowEmoteById(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   // "Do you really believe I would permit you to take it!?"
   Event_ShowMessageAndWait(12, 0);
-  Actor_ShowEmoteById(6, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
+  Actor_ShowEmoteById(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
   // "Hey, watch it! You wouldn't even be in here if it weren't for us!"
-  Event_ShowMessageAndWait(6, 0);
+  Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   FieldEffect_SetAttached(12, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
   // "What is that supposed to mean?"
   Event_ShowMessageAndWait(12, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
-  Actor_SetModeById(5, 3);
-  Actor_SetModeById(6, 3);
-  Actor_SetModeById(7, 3);
+  Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetModeById(ACTOR_PIERS, ANIM_NOD);
   Motion_SetModeAndWaitAnimation(11, 3);
   Actor_SetModeById(12, 4);
   // "Why should I believe you? I am Akafubu, the chosen witch doctor of..."
   Event_ShowMessageAndWait(12, 0);
-  Actor_ShowEmoteById(5, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
-  Actor_SetSpeed(5, 0.8);
-  Actor_WalkToAndWait(5, 420, 228);
-  Actor_FaceDirectionById(5, FACING_NORTHWEST);
+  Actor_ShowEmoteById(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
+  Actor_SetSpeed(ACTOR_JENNA, 0.8);
+  Actor_WalkToAndWait(ACTOR_JENNA, 420, 228);
+  Actor_FaceDirectionById(ACTOR_JENNA, FACING_NORTHWEST);
   Event_Wait(10);
-  Actor_SetSpeed(5, 1.6);
-  Actor_WalkToAndWait(5, 412, 222);
-  Actor_SetSpeed(5, 1);
+  Actor_SetSpeed(ACTOR_JENNA, 1.6);
+  Actor_WalkToAndWait(ACTOR_JENNA, 412, 222);
+  Actor_SetSpeed(ACTOR_JENNA, 1);
   Actor_SetSpeed(12, 1);
-  Actor_SetMovementTypeById(5, gGabombaStatueChamber_WalkOffScript);
+  Actor_SetMovementTypeById(ACTOR_JENNA, gGabombaStatueChamber_WalkOffScript);
   Event_Wait(10);
   Actor_SetMovementTypeById(12, gGabombaStatueChamber_WalkOffScript);
   Event_Wait(60);
@@ -852,14 +854,14 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
     s32 angleA = 0xe000;
 
     Actor_SetPositionAndFacing(*owner, px(360), px(216), angleA);
-    Actor_SetPositionAndFacing(7, px(376), px(216), angleA);
+    Actor_SetPositionAndFacing(ACTOR_PIERS, px(376), px(216), angleA);
   }
   facing = 0xa000;
   zero = 0;
   Actor_SetPositionAndFacing(11, px(360), px(200), zero);
-  Actor_SetPositionAndFacing(5, px(408), px(216), facing);
+  Actor_SetPositionAndFacing(ACTOR_JENNA, px(408), px(216), facing);
   angleC = 0x8000;
-  Actor_SetPositionAndFacing(6, px(424), px(200), angleC);
+  Actor_SetPositionAndFacing(ACTOR_SHEBA, px(424), px(200), angleC);
   {
     s32 angleB = 0xb000;
 
@@ -879,10 +881,10 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
   Actor_FaceDirection(12, FACING_NORTH_NORTHEAST, 20);
   Actor_FaceDirectionAndWait(12, FACING_SOUTH_SOUTHWEST);
   Actor_ShowEmoteById(12, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
-  Actor_FaceDirection(7, FACING_NORTH, 0);
-  Actor_FaceDirection(5, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(11, FACING_NORTH_NORTHEAST, 0);
-  Actor_FaceDirection(6, facing, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, facing, 0);
   Actor_SetSpeed(12, 0.8);
   Actor_WalkToAndWait(12, 392, 168);
   Event_PlaySound(SE_HIDDEN_PASSAGE_OPEN);
@@ -906,29 +908,30 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
   System_Wait(1);
   Actor_SetPosition(12, 0, 0);
   System_Wait(1);
-  Actor_ShowEmoteById(5, turn, 20);
-  Actor_FaceDirection(5, angleC, 0);
+  Actor_ShowEmoteById(ACTOR_JENNA, turn, 20);
+  Actor_FaceDirection(ACTOR_JENNA, angleC, 0);
   // "Do you think Akafubu will really return the orb to us?" Yes: "Maybe we had
   // him all wrong..." No: "I think Jenna is right. It sounds like he's..."
-  FieldMessage_ShowAtActor(SPEAKER_WINDOW_ABOVE | 5, 0);
+  FieldMessage_ShowAtActor(SPEAKER_WINDOW_ABOVE | ACTOR_JENNA, 0);
   if (Event_AskYesNoWithActorAnimation(*owner, 0) == 0) {
-    Actor_FaceDirectionAndWait(7, FACING_EAST);
-    Actor_SetAnimation(7, 3);
+    Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_EAST);
+    Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
     // "Maybe we had him all wrong..."
-    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
+    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS, 0);
     ((struct FieldWork *)heap->fieldWork)->message++;
   } else {
     ((struct FieldWork *)heap->fieldWork)->message++;
-    Actor_FaceDirectionAndWait(7, angleC);
+    Actor_FaceDirectionAndWait(ACTOR_PIERS, angleC);
     // "I think Jenna is right. It sounds like he's going to return what he..."
-    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
+    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS, 0);
     GabombaStatueChamber_CountAnswer();
   }
-  Actor_FaceDirection(6, FACING_WEST, 0);
-  Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
+  Actor_SetAttachedEffect(ACTOR_SHEBA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   // "I thought Akafubu was an evil man, but I guess we were wrong..."
-  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 6, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_SHEBA, 0);
   Actor_FaceDirectionAndWait(11, FACING_EAST);
   Actor_SetAnimation(11, 4);
   // "You never can tell, Sheba..."
@@ -940,23 +943,23 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
   Actor_SetAnimationAndWait(11, 3);
   // "Let's go, Felix!"
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 11, 0);
-  Actor_FaceDirection(7, FACING_WEST, 0);
-  Actor_FaceDirection(7, FACING_WEST, 20);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 20);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
-  Actor_SetAnimation(7, 3);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimationAndWait(6, 3);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetSpeed(11, 0.8);
-  Actor_SetSpeed(7, 0.8);
-  Actor_SetSpeed(5, 1);
-  Actor_SetSpeed(6, 1.2);
+  Actor_SetSpeed(ACTOR_PIERS, 0.8);
+  Actor_SetSpeed(ACTOR_JENNA, 1);
+  Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   {
     s32 path = (s32)gGabombaStatueChamber_AkafubuPath;
 
     Actor_SetScript(11, path);
-    Actor_SetScript(7, path);
-    Actor_SetScript(5, path);
-    Actor_RunScriptAndWait(6, path);
+    Actor_SetScript(ACTOR_PIERS, path);
+    Actor_SetScript(ACTOR_JENNA, path);
+    Actor_RunScriptAndWait(ACTOR_SHEBA, path);
   }
   Event_SetFlag(FLAG_AKAFUBU_OFFERED_HELP);
   Event_End();
@@ -1189,11 +1192,11 @@ struct ActorPlacement gGabombaStatueChamber_Room1Placements[] = {
 struct ActorPlacement gGabombaStatueChamber_Room3Placements[] = {
     ACTOR_PLACEMENT(375, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(26, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 136, FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(26, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 136, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 392, 0, 84, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(487, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(337, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(27, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(27, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(330, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 336, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(330, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(330, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 368, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, 1),

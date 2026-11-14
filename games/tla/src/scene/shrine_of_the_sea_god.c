@@ -1222,7 +1222,7 @@ void ShrineOfTheSeaGod_ThrowRopeAgain(void) {
   Actor_SetHorizontalPositionWithTerrain(14, 272 << 16, 336 << 16);
   wait(1);
   ShrineOfTheSeaGod_ObjWalk(14, 256, 336);
-  Actor_ArmCallback(14, 0, 0);
+  Actor_ArmCallback(14, FACING_EAST, 0);
   ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.currentOwner, FACING_WEST, 40);
   ShrineOfTheSeaGod_ObjTurn(14, 0xd000, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
@@ -1243,7 +1243,7 @@ void ShrineOfTheSeaGod_ThrowRopeAgain(void) {
   ShrineOfTheSeaGod_Jump(13, 265, 20);
   ShrineOfTheSeaGod_MessagePut(0x800d, 0);
   ShrineOfTheSeaGod_MessagePut(0x400c, 0);
-  Actor_ArmCallback(13, 0, 0);
+  Actor_ArmCallback(13, FACING_EAST, 0);
   FieldEffect_SetAttached(13, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 13, 0);
@@ -1265,7 +1265,7 @@ void ShrineOfTheSeaGod_ThrowRopeAgain(void) {
   FieldCamera_MoveWithinMapBounds(264 << 16, -1, 320 << 16, 1);
   FieldCamera_WaitForArrival();
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_WEST, 0);
-  Actor_ArmCallback(14, 0, 20);
+  Actor_ArmCallback(14, FACING_EAST, 20);
   Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
   Motion_SetModeAndWaitAnimation(14, 3);
   Actor_SetModeById(14, 2);
@@ -1402,7 +1402,7 @@ void ShrineOfTheSeaGod_LashRope(void) {
   ShrineOfTheSeaGod_ObjTurn(12, 0xb000, 0);
   Actor_Stop(13);
   ShrineOfTheSeaGod_MessagePut(0x400d, 0);
-  Actor_ArmCallback(12, 0xd000, 0);
+  Actor_ArmCallback(12, FACING_NORTH_NORTHEAST, 0);
   ShrineOfTheSeaGod_MessagePut(12, 0);
   ShrineOfTheSeaGod_ObjAngle(12, 0xb000);
   Actor_Jump(12, 4, 20);

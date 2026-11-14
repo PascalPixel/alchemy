@@ -409,7 +409,7 @@ void JupiterLighthouse_HearTheVoice(void) {
     PaletteFade_ApplyTarget(0x10003, 1);
     PaletteFade_Interpolate(30);
     Event_WaitTransitionFrames();
-    Actor_SetAnimation(0, 1);
+    Actor_SetAnimation(ACTOR_ISAAC, ANIM_STAND);
     FieldEvent_Wait(30);
     FieldMessage_ShowCentered((s32)MsgFieldShowAnemosPower, 0, -2);
     PaletteFade_ApplyTarget(0x10000, 0);
@@ -511,7 +511,7 @@ void JupiterLighthouse_AlexHealsTheParty(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(MsgFieldWaitingForCompanion);
   // "Ah, Felix... I've been waiting for you."
-  FieldEvent_ShowMessageThenWait(22, 0, 5);
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 5);
   Actor_WalkToAndWait(ACTOR_FELIX, 68, 280);
   Actor_WalkToAndWait(ACTOR_FELIX, 68, 272);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_WEST);
@@ -535,27 +535,27 @@ void JupiterLighthouse_AlexHealsTheParty(void) {
   if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
     // "And you're sure that's all you're going to do?"
-    FieldEvent_ShowMessageThenWait(22, 0, 5);
+    FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 5);
     EVENT_WORK->message++;
   } else {
     Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
     FieldEvent_Wait(10);
     EVENT_WORK->message++;
     // "Hmph. They consider you their enemy, and yet you pity them."
-    FieldEvent_ShowMessageThenWait(22, 0, 5);
+    FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 5);
   }
   Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(10);
   // "I saw you watching when Isaac's friends fell into Karst's trap."
-  FieldEvent_ShowMessageThenWait(22, 0, 5);
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 5);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   // "I know you, Felix. I know that if you leave Isaac behind, you'll..."
-  FieldEvent_ShowMessageThenWait(22, 0, 5);
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 5);
   Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   // "You're not like me. You can't simply discard someone who is no..."
-  FieldEvent_ShowMessageThenWait(22, 0, 5);
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 5);
   // "Well, you'd better hurry if you still hope to save them."
-  FieldEvent_ShowMessageThenWait(22, 0, 5);
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 5);
   Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(30);
   FieldCamera_MoveTo(68, CAMERA_KEEP, 256, 1);
@@ -567,7 +567,7 @@ void JupiterLighthouse_AlexHealsTheParty(void) {
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(30);
-  FieldEvent_ShowMessageThenWait(22, 0, 5);
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 5);
   Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_ALEX_HEALED_THE_PARTY);
   Event_SetFlag(FLAG_NO_ENCOUNTERS_IN_AREA);
   Event_SetFlag(FLAG_RETREAT_BLOCKED);

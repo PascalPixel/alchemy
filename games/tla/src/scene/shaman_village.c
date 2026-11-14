@@ -1482,18 +1482,18 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, angle);
   Actor_MoveToObject(18, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(6, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.currentOwner);
   wait(1);
   Actor_SetSpeed(18, 1.6);
-  Actor_SetSpeed(7, 1.6);
-  Actor_SetSpeed(5, 1.6);
-  Actor_SetSpeed(6, 1.6);
+  Actor_SetSpeed(ACTOR_PIERS, 1.6);
+  Actor_SetSpeed(ACTOR_JENNA, 1.6);
+  Actor_SetSpeed(ACTOR_SHEBA, 1.6);
   Actor_SetScript(18, gShamanVillage_KradenStandsByRodScript);
-  Actor_SetScript(7, gShamanVillage_PiersStandsByRodScript);
-  Actor_SetScript(5, gShamanVillage_JennaStandsByRodScript);
-  Actor_SetScript(6, gShamanVillage_ShebaStandsByRodScript);
+  Actor_SetScript(ACTOR_PIERS, gShamanVillage_PiersStandsByRodScript);
+  Actor_SetScript(ACTOR_JENNA, gShamanVillage_JennaStandsByRodScript);
+  Actor_SetScript(ACTOR_SHEBA, gShamanVillage_ShebaStandsByRodScript);
   SHAMAN_VILLAGE_EMOTE(17, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0)
   Actor_SetSpeed(17, 1.2);
   Actor_WalkToAndWait(17, 136, 232);
@@ -1529,31 +1529,31 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_FaceDirectionAndWait(15, FACING_SOUTH);
   Actor_SetAnimation(15, 4);
   Event_ShowMessage(15, 0);
-  Actor_FaceDirection(6, FACING_EAST, 0);
-  Actor_FaceDirection(5, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-  Actor_FaceDirection(7, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_Jump(18, 4, 0);
   Event_ShowMessage(18, 0);
   Actor_FaceDirection(15, FACING_SOUTHEAST, 0);
   SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20)
   Event_ShowMessage(15, 0);
-  Actor_FaceDirection(6, FACING_NORTH, 0);
-  Actor_FaceDirection(5, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-  Actor_FaceDirection(7, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Actor_FaceDirectionAndWait(15, FACING_SOUTH);
   Actor_SetAnimationAndWait(15, 4);
   Event_ShowMessage(15, 0);
-  FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Event_ShowMessage(6, 0);
+  FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_FaceDirection(15, FACING_SOUTHWEST, 0);
   SHAMAN_VILLAGE_EMOTE(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0)
-  Event_ShowMessage(5, 0);
+  Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_SetAnimationAndWait(15, 3);
   SHAMAN_VILLAGE_EMOTE(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20)
-  Event_ShowMessage(7, 0);
+  Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_FaceDirection(15, FACING_SOUTHEAST, 0);
   Actor_SetAttachedEffect(18, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessage(18, 0);
@@ -1593,9 +1593,9 @@ void ShamanVillage_ShowShamansRod(void) {
   object = ((struct Actor *)Actor_GetById(16));
   object->blockMarked = 0;
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 15);
-  Actor_WatchAndSetScript(5, 15);
-  Actor_WatchAndSetScript(6, 15);
-  Actor_WatchAndSetScript(7, 15);
+  Actor_WatchAndSetScript(ACTOR_JENNA, 15);
+  Actor_WatchAndSetScript(ACTOR_SHEBA, 15);
+  Actor_WatchAndSetScript(ACTOR_PIERS, 15);
   Actor_WatchAndSetScript(18, 15);
   Actor_SetSpeed(15, 1.6);
   Actor_SetSpeed(16, 1.6);
@@ -1610,9 +1610,9 @@ void ShamanVillage_ShowShamansRod(void) {
   } while (object->blockMarked == 0);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Actor_Stop(18);
-  Actor_Stop(7);
-  Actor_Stop(5);
-  Actor_Stop(6);
+  Actor_Stop(ACTOR_PIERS);
+  Actor_Stop(ACTOR_JENNA);
+  Actor_Stop(ACTOR_SHEBA);
   wait(1);
   Scene_PlayMusic();
   FieldCamera_SetSpeed(3.2);
@@ -1621,24 +1621,24 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_SetPosition(15, 0, 0);
   Actor_SetPosition(17, 0, 0);
   Actor_SetPosition(16, 0, 0);
-  Actor_FaceDirectionAndWait(6, FACING_EAST);
-  Event_ShowMessage(6, 0);
-  Actor_FaceDirectionAndWait(5, FACING_WEST);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_EAST);
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_WEST);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
   Event_ShowMessage(18, 0);
   Actor_FaceDirectionAndWait(18, FACING_WEST);
   Event_ShowMessage(18, 0);
-  Actor_FaceDirection(7, FACING_EAST, 0);
-  Actor_FaceDirection(5, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
   Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
-  Actor_SetSpeed(6, 1);
-  Actor_SetSpeed(5, 1);
-  Actor_SetSpeed(7, 1);
+  Actor_SetSpeed(ACTOR_SHEBA, 1);
+  Actor_SetSpeed(ACTOR_JENNA, 1);
+  Actor_SetSpeed(ACTOR_PIERS, 1);
   Actor_SetSpeed(18, 1);
-  Actor_SetScript(6, gShamanVillage_RejoinLeaderAtHouseScript);
-  Actor_SetScript(5, gShamanVillage_RejoinLeaderAtHouseScript);
-  Actor_SetScript(7, gShamanVillage_RejoinLeaderAtHouseScript);
+  Actor_SetScript(ACTOR_SHEBA, gShamanVillage_RejoinLeaderAtHouseScript);
+  Actor_SetScript(ACTOR_JENNA, gShamanVillage_RejoinLeaderAtHouseScript);
+  Actor_SetScript(ACTOR_PIERS, gShamanVillage_RejoinLeaderAtHouseScript);
   Actor_RunScriptAndWait(18, gShamanVillage_RejoinLeaderAtHouseScript);
   Event_Wait(20);
   Event_SetFlag(FLAG_SCENE_TEMP_02);
@@ -2090,34 +2090,34 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 168, 536);
   Actor_MoveToObject(18, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(6, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.currentOwner);
   wait(1);
-  Actor_FaceDirection(6, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_SetSpeed(18, 1);
-  Actor_SetSpeed(7, 1);
-  Actor_SetSpeed(5, 1);
+  Actor_SetSpeed(ACTOR_PIERS, 1);
+  Actor_SetSpeed(ACTOR_JENNA, 1);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 1);
   Actor_SetScript(gMainRoutineWork.currentOwner,
                   gShamanVillage_LeaderWatchesShebaScript);
-  Actor_SetScript(5, gShamanVillage_JennaWatchesShebaScript);
+  Actor_SetScript(ACTOR_JENNA, gShamanVillage_JennaWatchesShebaScript);
   Actor_SetScript(18, gShamanVillage_KradenWatchesShebaScript);
-  Actor_RunScriptAndWait(7, gShamanVillage_PiersWatchesShebaScript);
-  Actor_FaceDirectionAndWait(5, FACING_EAST);
+  Actor_RunScriptAndWait(ACTOR_PIERS, gShamanVillage_PiersWatchesShebaScript);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_EAST);
   Event_SetMessageId((s32)MsgShamanCheerForCompanion);
   // "You can do it, Sheba!"
-  Event_ShowMessage(5, 0);
-  Actor_FaceDirectionAndWait(6, FACING_WEST);
-  Actor_SetAnimation(6, 3);
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_WEST);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   // "Leave it to me, Jenna. This will be a breeze."
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 6, 0);
-  Actor_FaceDirectionAndWait(6, FACING_NORTH);
-  Actor_FaceDirectionAndWait(6, FACING_EAST);
-  Actor_SetAnimationAndWait(6, 3);
-  Actor_SetSpeed(6, 0.4);
-  Actor_WalkToAndWait(6, 168, 524);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SHEBA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_NORTH);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_EAST);
+  Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetSpeed(ACTOR_SHEBA, 0.4);
+  Actor_WalkToAndWait(ACTOR_SHEBA, 168, 524);
   Actor_FaceDirection(15, FACING_NORTH, 0);
   Actor_FaceDirection(17, FACING_NORTH, 0);
   Actor_FaceDirection(16, FACING_NORTH, 0);
@@ -2146,14 +2146,14 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_FaceDirectionAndWait(15, FACING_NORTH);
   // "She's the one that did it? But she's...just a girl!"
   Event_ShowMessage(15, 0);
-  Actor_Jump(6, 4, 0);
-  Actor_FaceDirectionAndWait(6, FACING_SOUTH);
-  Actor_SetAnimation(6, 3);
+  Actor_Jump(ACTOR_SHEBA, 4, 0);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_SOUTH);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   // "Well, you wanted the sand to vanish, so..."
-  Event_ShowMessage(6, 0);
-  Actor_FaceDirectionAndWait(7, FACING_SOUTHWEST);
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
   // "Can we have the Hover Jade now?"
-  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS, 0);
   Actor_FaceDirectionAndWait(15, FACING_NORTHEAST);
   Actor_SetAnimation(15, 4);
   // "Nope, you still can't have it."
@@ -2161,9 +2161,9 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Actor_FaceDirection(18, FACING_EAST, 0);
   SHAMAN_VILLAGE_EMOTE(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20)
-  Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTHEAST);
   // "What? Why not?"
-  Event_ShowMessage(5, 0);
+  Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_FaceDirectionAndWait(15, FACING_NORTHWEST);
   // "This was just a test to see if you earned the right to take the test..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
@@ -2185,18 +2185,18 @@ void ShamanVillage_ShebaClearsSand(void) {
   // "I thought that only the chosen hero could travel the road..."
   Event_ShowMessage(16, 0);
   SHAMAN_VILLAGE_EMOTE(6, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0)
-  Actor_FaceDirection(6, FACING_SOUTHWEST, 20);
-  Actor_FaceDirectionAndWait(6, FACING_SOUTH);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 20);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_SOUTH);
   // "What, are you saying I can't be the chosen hero?"
-  Event_ShowMessage(6, 0);
+  Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_SetAttachedEffect(15, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   // "The heroes have always been men, ever since the time of Hoabna. It..."
   Event_ShowMessage(15, 0);
   SHAMAN_VILLAGE_EMOTE(6, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0)
-  Actor_Jump(6, 2, 10);
-  Actor_Jump(6, 4, 10);
+  Actor_Jump(ACTOR_SHEBA, 2, 10);
+  Actor_Jump(ACTOR_SHEBA, 4, 10);
   // "I don't like your attitude, mister! I can be every bit as heroic as..."
-  Event_ShowMessage(6, 0);
+  Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_FaceDirectionAndWait(17, FACING_NORTHWEST);
   Actor_SetAnimation(17, 4);
   // "That may be true, but you must respect our customs."
@@ -2249,19 +2249,19 @@ void ShamanVillage_ShebaClearsSand(void) {
   Event_ShowMessage(18, 0);
   SHAMAN_VILLAGE_EMOTE(17, EMOTE_IN_FRONT | EMOTE_QUESTION, 0)
   FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
+  FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   // "Kraden's right... It shouldn't matter if a girl does it... All that..."
-  Event_ShowMessage(5, 0);
+  Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_FaceDirection(16, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(17, FACING_WEST);
-  Actor_SetAnimationAndWait(7, 3);
+  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   // "If you give us the chance, we will prove it to you."
-  Event_ShowMessage(7, 0);
+  Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_FaceDirection(15, FACING_NORTHEAST, 0);
   SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20)
-  FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+  FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   // "Unless you're afraid that a girl like me might become your town's..."
-  Event_ShowMessage(6, 0);
+  Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_FaceDirection(15, FACING_NORTH, 20);
   Actor_SetAnimationAndWait(15, 4);
   Event_Wait(20);
@@ -2285,15 +2285,15 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_FaceDirectionAndWait(16, FACING_SOUTHEAST);
   // "Yeah, if these guys are so stubborn, let's give them a shot! They'll..."
   Event_ShowMessage(16, 0);
-  Actor_FaceDirection(6, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(5, FACING_NORTHEAST, 40);
-  Actor_FaceDirection(6, FACING_SOUTH, 0);
-  Actor_FaceDirectionAndWait(5, FACING_SOUTH);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 40);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTH);
   // "You said it yourselves. We're too stubborn to quit."
-  Event_ShowMessage(5, 0);
-  Actor_SetAnimation(6, 3);
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   // "Yeah. If you want us "outlanders" to leave, you'd better give us a..."
-  Event_ShowMessage(6, 0);
+  Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_SetAttachedEffect(15, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirection(15, FACING_NORTH, 40);
   Actor_FaceDirectionAndWait(15, FACING_NORTHEAST);
@@ -2311,10 +2311,10 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_SetAnimation(15, 4);
   // "It's difficult enough for me. I expect you will find it quite..."
   Event_OpenMessage(15, 0);
-  Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(5, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(18, FACING_EAST, 0);
-  Actor_FaceDirection(7, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
   result = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   done = &object->blockMarked;
   owner = gMainRoutineWork.currentOwner;
@@ -2334,9 +2334,9 @@ void ShamanVillage_ShebaClearsSand(void) {
   FieldCamera_MoveTo(168, CAMERA_KEEP, 500, 1);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 15);
   Actor_WatchAndSetScript(18, 15);
-  Actor_WatchAndSetScript(5, 15);
-  Actor_WatchAndSetScript(7, 15);
-  Actor_WatchAndSetScript(6, 15);
+  Actor_WatchAndSetScript(ACTOR_JENNA, 15);
+  Actor_WatchAndSetScript(ACTOR_PIERS, 15);
+  Actor_WatchAndSetScript(ACTOR_SHEBA, 15);
   *done = 0;
   Actor_SetScript(15, gShamanVillage_HeadForTrialRoadScript);
   Event_Wait(20);
@@ -2348,9 +2348,9 @@ void ShamanVillage_ShebaClearsSand(void) {
   } while (*done == 0);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Actor_Stop(18);
-  Actor_Stop(5);
-  Actor_Stop(7);
-  Actor_Stop(6);
+  Actor_Stop(ACTOR_JENNA);
+  Actor_Stop(ACTOR_PIERS);
+  Actor_Stop(ACTOR_SHEBA);
   Scene_PlayMusic();
   FieldCamera_SetSpeed(4.8);
   FieldCamera_MoveTo(168, CAMERA_KEEP, 540, 1);
@@ -2361,45 +2361,47 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_SetPositionAndFacing(17, px(240), px(264), angle);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   Actor_FaceDirection(18, FACING_EAST, 0);
-  Actor_FaceDirection(5, FACING_EAST, 0);
-  Actor_FaceDirection(7, FACING_NORTHWEST, 0);
-  Actor_FaceDirectionAndWait(6, FACING_SOUTHEAST);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_SOUTHEAST);
   Event_Wait(10);
   Actor_SetAnimation(18, 3);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimation(7, 3);
-  Actor_SetAnimationAndWait(6, 3);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Actor_Stop(18);
-  Actor_Stop(5);
-  Actor_Stop(7);
-  Actor_Stop(6);
+  Actor_Stop(ACTOR_JENNA);
+  Actor_Stop(ACTOR_PIERS);
+  Actor_Stop(ACTOR_SHEBA);
   ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner))->update = NULL;
   ((struct Actor *)Actor_GetById(18))->update = NULL;
-  ((struct Actor *)Actor_GetById(5))->update = NULL;
-  ((struct Actor *)Actor_GetById(7))->update = NULL;
-  ((struct Actor *)Actor_GetById(6))->update = NULL;
+  ((struct Actor *)Actor_GetById(ACTOR_JENNA))->update = NULL;
+  ((struct Actor *)Actor_GetById(ACTOR_PIERS))->update = NULL;
+  ((struct Actor *)Actor_GetById(ACTOR_SHEBA))->update = NULL;
   wait(1);
-  Actor_SetSpeed(6, 1);
-  Actor_SetScript(7, gShamanVillage_RejoinLeaderAtSandScript);
-  Actor_SetScript(6, gShamanVillage_RejoinLeaderAtSandScript);
-  Actor_SetScript(5, gShamanVillage_RejoinLeaderAtSandScript);
+  Actor_SetSpeed(ACTOR_SHEBA, 1);
+  Actor_SetScript(ACTOR_PIERS, gShamanVillage_RejoinLeaderAtSandScript);
+  Actor_SetScript(ACTOR_SHEBA, gShamanVillage_RejoinLeaderAtSandScript);
+  Actor_SetScript(ACTOR_JENNA, gShamanVillage_RejoinLeaderAtSandScript);
   Actor_RunScriptAndWait(18, gShamanVillage_RejoinLeaderAtSandScript);
   Event_SetFlag(FLAG_SHAMAN_VILLAGE_SAND_CLEARED);
   Event_End();
 }
 
 void ShamanVillage_CastWhirlwindOnSand(void) {
-  Actor_SetSpritePriority(6, 1);
+  Actor_SetSpritePriority(ACTOR_SHEBA, 1);
   Event_PlaySound(SE_PSYNERGY_SPARKLE);
   BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(((struct Actor *)Actor_GetById(6)), 2);
+  BattleEffect_SetObjectUpdateMode(((struct Actor *)Actor_GetById(ACTOR_SHEBA)),
+                                   2);
   Event_Wait(40);
-  BattleEffect_SetObjectUpdateMode(((struct Actor *)Actor_GetById(6)), 0);
+  BattleEffect_SetObjectUpdateMode(((struct Actor *)Actor_GetById(ACTOR_SHEBA)),
+                                   0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   ShamanVillage_BlowAwaySand();
-  Actor_SetSpritePriority(6, 2);
+  Actor_SetSpritePriority(ACTOR_SHEBA, 2);
 }
 
 void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {

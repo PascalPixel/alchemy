@@ -388,9 +388,9 @@ void YampiDesert_ElderRefusesToQuit(void) {
   Actor_SetModeById(13, 4);
   // "No. I'm not about to quit looking for him."
   Event_ShowMessageAndWait(13, 0);
-  Actor_ArmCallback(13, 0, 20);
+  Actor_ArmCallback(13, FACING_EAST, 20);
   Scene_ArmCallback(13, 0x3000, 20);
-  Actor_ArmCallback(13, 0, 20);
+  Actor_ArmCallback(13, FACING_EAST, 20);
   Scene_ArmCallback(13, 0x3000, 0);
   // "There must be some way through this desert! We must press onward!"
   Event_ShowMessageAndWait(13, 0);
@@ -1069,32 +1069,32 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Actor_Stop(9);
   wait(1);
   Actor_ShowEmote(9, 0x100, 0);
-  Actor_FaceDirection(9, 0, 20);
+  Actor_FaceDirection(9, FACING_EAST, 20);
   // "Hey! Look! Up there!"
   Event_ShowMessageAndWait(9, 0);
   Actor_Stop(8);
   wait(1);
-  Actor_FaceDirection(8, 0, 0);
-  Actor_FaceDirection(10, 0, 0);
-  Actor_FaceDirection(11, 0xd000, 0);
-  Actor_FaceDirection(12, 0xd000, 0);
-  Actor_FaceDirection(13, 0xd000, 0);
-  Actor_FaceDirection(14, 0xd000, 0);
+  Actor_FaceDirection(8, FACING_EAST, 0);
+  Actor_FaceDirection(10, FACING_EAST, 0);
+  Actor_FaceDirection(11, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(12, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(13, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(14, FACING_NORTH_NORTHEAST, 0);
   owner = (s32 *)&gMainRoutineWork;
   owner += 133;
   FieldActor_ShowEmote(*owner, 0x100, 0);
-  Actor_FaceDirection(*owner, 0x8000, 0);
+  Actor_FaceDirection(*owner, FACING_WEST, 0);
   ((struct Actor *)FieldCamera_GetActor())->motionFlags = 0;
   FieldCamera_SetSpeedFixed(0x19999, 0x3333);
   FieldCamera_MoveToFixed(0xd40000, 0, 0xd40000, 1);
   FieldCamera_WaitForArrival();
   // "How did those guys get up there?"
   Event_ShowMessageAndWait(12, 0);
-  Actor_FaceDirection(11, 0, 10);
+  Actor_FaceDirection(11, FACING_EAST, 10);
   // "Maybe there's a path up ahead that we missed..."
   Event_ShowMessageAndWait(11, 0);
-  Actor_FaceDirection(13, 0xb000, 0);
-  Actor_FaceDirection(14, 0x5000, 20);
+  Actor_FaceDirection(13, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(14, FACING_SOUTH_SOUTHWEST, 20);
   Actor_Jump(14, 4, 40);
   Motion_SetModeAndWaitAnimation(13, 3);
   Motion_SetModeAndWaitAnimation(14, 3);
@@ -1119,29 +1119,29 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   FieldCamera_MoveToFixed(0xd40000, -1, 0xd40000, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Actor_FaceDirection(8, 0xd000, 0);
-  Actor_FaceDirection(9, 0x5000, 20);
+  Actor_FaceDirection(8, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 20);
   // "Maybe... Maybe we can get through the desert after all!"
   Event_ShowMessageAndWait(9, 0);
   Motion_SetModeAndWaitAnimation(8, 3);
   // "We can find a way through to Alhafra!"
   Event_ShowMessageAndWait(8, 0);
   Actor_Jump(10, 4, 0);
-  Actor_FaceDirection(10, 0, 0);
+  Actor_FaceDirection(10, FACING_EAST, 0);
   Actor_SetModeById(10, 4);
   // "I don't care where we go, as long as it's cool."
   Event_ShowMessageAndWait(10, 0);
-  Actor_FaceDirection(8, 0x8000, 0);
-  Actor_FaceDirection(9, 0x8000, 0);
+  Actor_FaceDirection(8, FACING_WEST, 0);
+  Actor_FaceDirection(9, FACING_WEST, 0);
   Actor_ShowEmote(8, 0x102, 0);
   Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   // "Hey! I found it! I found a way through!"
   Event_ShowMessageAndWait(14, 0);
-  Actor_FaceDirection(8, 0xd000, 0);
-  Actor_FaceDirection(10, 0x3000, 0);
-  Actor_FaceDirection(11, 0xd000, 0);
-  Actor_FaceDirection(12, 0, 0);
-  Actor_FaceDirection(13, 0x8000, 20);
+  Actor_FaceDirection(8, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(10, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(11, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(12, FACING_EAST, 0);
+  Actor_FaceDirection(13, FACING_WEST, 20);
   Actor_SetModeById(8, 3);
   Actor_SetModeById(9, 3);
   Actor_SetModeById(10, 3);

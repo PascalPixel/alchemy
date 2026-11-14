@@ -178,7 +178,7 @@ void SuhallaGate_SetUpCliffs(void) {
     Actor_GetById(ACTOR_MIDDLE_RUFFIAN)->collisionFlags = 1;
     Actor_GetById(ACTOR_EAST_RUFFIAN)->collisionFlags = 1;
   }
-  Actor_SetAnimation(ACTOR_CLIFFS_SPRITE_299_FIRST, 4);
+  Actor_SetAnimation(ACTOR_CLIFFS_SPRITE_299_FIRST, ANIM_SHAKE_HEAD);
   Actor_SetAnimation(ACTOR_CLIFFS_SPRITE_299_FIRST + 1, 4);
   Actor_SetAnimation(ACTOR_CLIFFS_SPRITE_299_FIRST + 2, 3);
   Actor_SetAnimation(ACTOR_CLIFFS_SPRITE_299_FIRST + 3, 4);
@@ -446,7 +446,7 @@ void SuhallaGate_PointToMeetingSpot(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgNotThatWay);
-  Actor_LaunchFromLeader(ACTOR_CLIFFS_KRADEN, -16, 0, 0);
+  Actor_LaunchFromLeader(ACTOR_CLIFFS_KRADEN, -16, 0, FACING_EAST);
   Actor_WaitForMoveById(ACTOR_CLIFFS_KRADEN);
   // "Not that way, Jenna! The meeting spot is down this way." "We must climb
   // down here and go into that cave."

@@ -777,12 +777,12 @@ void Prox_MeetPuelle(void) {
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 144, 154);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_MoveToObject(0x12, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(0, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_ISAAC, gMainRoutineWork.currentOwner);
   System_Wait(1);
   Actor_FaceDirection(14, FACING_NORTH_NORTHWEST, 0);
   Actor_SetSpeed(18, 0.8);
-  Actor_SetSpeed(0, 0.8);
-  Actor_SetScript(0, (s32)gProx_IsaacStepsUpToPuelle);
+  Actor_SetSpeed(ACTOR_ISAAC, 0.8);
+  Actor_SetScript(ACTOR_ISAAC, (s32)gProx_IsaacStepsUpToPuelle);
   Actor_RunScriptAndWait(18, (s32)gProx_KradenStepsUpToPuelle);
   Actor_FaceDirection(11, FACING_SOUTH_SOUTHEAST, 0);
   Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
@@ -791,9 +791,10 @@ void Prox_MeetPuelle(void) {
   Actor_SetAnimation(18, 3);
   // "Yes... I am Kraden."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 18, 0);
-  Actor_SetAnimation(0, 3);
+  Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
   // "My name is Isaac."
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 0, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | ACTOR_ISAAC,
+                    0);
   Actor_FaceDirection(11, FACING_EAST, 0);
   Actor_FaceDirection(10, FACING_WEST, 40);
   Actor_FaceDirectionAndWait(11, FACING_SOUTH_SOUTHEAST);
@@ -808,13 +809,13 @@ void Prox_MeetPuelle(void) {
   Actor_FaceDirection(15, FACING_EAST, 0);
   Actor_FaceDirection(16, FACING_WEST, 0);
   Actor_FaceDirection(17, FACING_EAST, 0);
-  Actor_FaceDirectionAndWait(0, FACING_SOUTH);
-  Actor_SetSpeed(0, 2.4);
-  Actor_Get(0)->actionFlags &= 0xfe;
-  Actor_WalkToAndWait(0, 160, 140);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
+  Actor_SetSpeed(ACTOR_ISAAC, 2.4);
+  Actor_Get(ACTOR_ISAAC)->actionFlags &= 0xfe;
+  Actor_WalkToAndWait(ACTOR_ISAAC, 160, 140);
   FieldEvent_Wait(1);
-  Actor_Get(0)->actionFlags |= 1;
-  Actor_SetAnimationAndWait(0, 0x15);
+  Actor_Get(ACTOR_ISAAC)->actionFlags |= 1;
+  Actor_SetAnimationAndWait(ACTOR_ISAAC, 0x15);
   Actor_FaceDirection(12, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(13, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(14, FACING_NORTH_NORTHWEST, 0);
@@ -825,18 +826,18 @@ void Prox_MeetPuelle(void) {
   Actor_FaceDirectionAndWait(18, FACING_NORTH_NORTHWEST);
   // "Isaac, stop that..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 18, 0);
-  Actor_SetAnimation(0, 0);
+  Actor_SetAnimation(ACTOR_ISAAC, ANIM_STILL);
   FieldEvent_Wait(10);
-  Actor_SetAnimation(0, 1);
+  Actor_SetAnimation(ACTOR_ISAAC, ANIM_STAND);
   FieldEvent_Wait(10);
-  Actor_FaceDirectionAndWait(0, FACING_SOUTHEAST);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTHEAST);
   Actor_SetAnimation(18, 3);
   // "You are correct, but Isaac had reasons for fighting them."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 18, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-  Actor_SetSpeed(0, 0.8);
-  Actor_WalkToAndWait(0, 160, 154);
-  Actor_FaceDirection(0, FACING_NORTHWEST, 0);
+  Actor_SetSpeed(ACTOR_ISAAC, 0.8);
+  Actor_WalkToAndWait(ACTOR_ISAAC, 160, 154);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHWEST, 0);
   Actor_SetAnimationAndWait(18, 4);
   // "Saturos and Menardi had invaded Vale, stolen its sacred treasure..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 18, 0);
@@ -845,14 +846,16 @@ void Prox_MeetPuelle(void) {
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 18, 0);
   FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  Actor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   // "We only wanted to stop them... We didn't think they'd fight us to..."
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 0, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | ACTOR_ISAAC,
+                    0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_FaceDirection(18, FACING_WEST, 40);
-  Actor_SetAnimationAndWait(0, 4);
+  Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_SHAKE_HEAD);
   // "They flung themselves into the opening of Venus Lighthouse's beacon..."
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 0, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | ACTOR_ISAAC,
+                    0);
   // Waits up to 80 frames, or until a key is held.
   i = 0;
   goto test_wait;
@@ -866,37 +869,37 @@ test_wait:
   }
   Actor_RunRepeatedMotion(12, 1);
   Event_ShowMessage(12, 0);
-  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_FaceDirectionAndWait(0, FACING_SOUTHEAST);
-  Actor_SetAnimationAndWait(0, 3);
+  Actor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTHEAST);
+  Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
   FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   Event_ShowMessage(15, 0);
-  Actor_FaceDirectionAndWait(0, FACING_SOUTH);
-  Actor_SetAnimationAndWait(0, 3);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
+  Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
   Actor_FaceDirection(10, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(11, FACING_EAST);
   Actor_SetAnimation(13, 3);
   Event_ShowMessage(13, 0);
-  Actor_FaceDirectionAndWait(0, FACING_SOUTHEAST);
-  Actor_SetAnimationAndWait(0, 3);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTHEAST);
+  Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
   Actor_FaceDirection(11, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHWEST, 0);
   Actor_SetAnimationAndWait(16, 3);
   Event_ShowMessage(16, 0);
-  Actor_FaceDirectionAndWait(0, FACING_SOUTHWEST);
-  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTHWEST);
+  Actor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Actor_SetAnimation(14, 3);
   Event_ShowMessage(14, 0);
-  Actor_FaceDirectionAndWait(0, FACING_SOUTH);
-  Actor_SetAnimation(0, 3);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
+  Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
   Actor_SetAnimation(17, 4);
   Event_ShowMessage(17, 0);
-  Actor_FaceDirection(0, FACING_SOUTHWEST, 20);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTHWEST, 20);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_FaceDirection(18, FACING_NORTH_NORTHWEST, 20);
   Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
   Event_ShowMessage(11, 0);
-  Actor_FaceDirection(0, FACING_NORTH, 40);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 40);
   Actor_SetAnimationAndWait(10, 3);
   Event_ShowMessage(10, 0);
   Actor_FaceDirectionAndWait(18, FACING_NORTH_NORTHEAST);
@@ -904,14 +907,15 @@ test_wait:
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 18, 0);
   Actor_SetAnimation(11, 3);
   Event_ShowMessage(11, 0);
-  Actor_FaceDirectionAndWait(0, FACING_NORTH);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 0, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTH);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | ACTOR_ISAAC,
+                    0);
   Actor_SetAnimation(10, 3);
   Event_ShowMessage(10, 0);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 18, 0);
   Actor_SetAnimation(11, 4);
   Event_ShowMessage(11, 0);
-  Actor_FaceDirectionAndWait(0, FACING_WEST);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_WEST);
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 0, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   result =
@@ -919,12 +923,14 @@ test_wait:
   owner = gMainRoutineWork.currentOwner;
   if (result == 0) {
     Actor_WaitForAnimationChange(owner);
-    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 0, 0);
+    Event_ShowMessage(
+        SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0);
     EVENT_WORK->message++;
   } else {
     FieldActor_WaitForMoveById(owner);
     EVENT_WORK->message++;
-    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 0, 0);
+    Event_ShowMessage(
+        SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0);
   }
   FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   Actor_FaceDirectionAndWait(18, FACING_WEST);
@@ -940,10 +946,10 @@ test_wait:
   Actor_SetAnimation(11, 3);
   Event_ShowMessage(11, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-  Actor_FaceDirection(0, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHWEST, 0);
   Actor_FaceDirectionAndWait(18, FACING_NORTHWEST);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
-  Actor_SetAnimation(0, 3);
+  Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
   Actor_SetAnimationAndWait(18, 3);
   Actor_FaceDirection(12, FACING_WEST, 0);
   Actor_FaceDirection(13, FACING_EAST, 0);
@@ -960,10 +966,10 @@ test_wait:
   Actor_FaceDirectionAndWait(18, FACING_WEST);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 18, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-  Actor_FaceDirectionAndWait(0, FACING_EAST);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_EAST);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
-  Actor_SetAnimationAndWait(0, 3);
-  Actor_SetScript(0, (s32)gProx_StepBackFromPuelle);
+  Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
+  Actor_SetScript(ACTOR_ISAAC, (s32)gProx_StepBackFromPuelle);
   Actor_RunScriptAndWait(18, (s32)gProx_StepBackFromPuelle);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 160, 154);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
@@ -1261,12 +1267,12 @@ void Prox_GiveThanksForBeacon(void) {
    * later turns cannot share them. */
   angleC000 = 0xc000;
   angleB000 = 0xb000;
-  Actor_SetPositionAndFacing(0, px(168), px(484), angleC000);
+  Actor_SetPositionAndFacing(ACTOR_ISAAC, px(168), px(484), angleC000);
   Actor_SetPositionAndFacing(27, px(200), px(484), angleB000);
   angle3000 = 0x3000;
   Actor_SetPositionAndFacing(17, px(138), px(412), angle3000);
   Actor_SetPositionAndFacing(20, px(220), px(600), angleB000);
-  Actor_SetPosition(5, 184, 684);
+  Actor_SetPosition(ACTOR_JENNA, 184, 684);
   System_Wait(1);
   EVENT_WORK->transition = 0x100;
   Event_StartScreenTransition();
@@ -1278,7 +1284,7 @@ void Prox_GiveThanksForBeacon(void) {
   FieldEvent_SetMessageId((s32)MsgProx80);
   // "Thank you, Felix. And you, too, Isaac and Kraden."
   Event_ShowMessage(26, 0);
-  Actor_SetAnimation(0, 3);
+  Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
   Actor_SetAnimation(27, 3);
   Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_FaceDirection(26, FACING_SOUTH_SOUTHWEST, 0);
@@ -1286,14 +1292,14 @@ void Prox_GiveThanksForBeacon(void) {
   // "By igniting Mars Lighthouse, you stopped Gaia Falls from devouring..."
   Event_ShowMessage(26, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
-  Actor_FaceDirection(0, FACING_EAST, 20);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 20);
   FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
                        EMOTE_IN_FRONT | EMOTE_SMILE, 0);
-  FieldActor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
-  Actor_FaceDirection(0, FACING_NORTH, 0);
+  FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
   // "We're just glad to have helped save Weyard..."
-  Event_ShowMessage(0, 0);
+  Event_ShowMessage(ACTOR_ISAAC, 0);
   Actor_SetAttachedEffect(25, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   // "You've been through many trials, more than any of us can ever know..."
@@ -1304,9 +1310,9 @@ void Prox_GiveThanksForBeacon(void) {
   Actor_SetAnimation(19, 4);
   // "When we saw the flash of the beacon, we had no idea what you..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 19, 0);
-  FieldActor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   // "I thought we were done for... There was no way we could escape with..."
-  Event_ShowMessage(0, 0);
+  Event_ShowMessage(ACTOR_ISAAC, 0);
   Actor_FaceDirection(27, FACING_WEST, 20);
   FieldActor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   // "Well, at least, not if we hadn't pulled together and overcome our..."
@@ -1322,15 +1328,15 @@ void Prox_GiveThanksForBeacon(void) {
   // "I understand your regret... As a scholar of Alchemy, you would have..."
   Event_ShowMessage(26, 0);
   // "I saw the beams of blue, red, and purple streaming out toward the..."
-  Event_ShowMessage(0, 0);
+  Event_ShowMessage(ACTOR_ISAAC, 0);
   Actor_SetAttachedEffect(19, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   // "That's the direction in which Vale lies, is it not? Was the light..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 19, 0);
-  Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
-  Actor_SetAnimationAndWait(0, 3);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHEAST);
+  Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
   // "Indeed it was. The Wise One said the beams were going to merge into..."
-  Event_ShowMessage(0, 0);
+  Event_ShowMessage(ACTOR_ISAAC, 0);
   Actor_FaceDirection(26, FACING_SOUTH_SOUTHWEST, 0);
   Actor_SetAttachedEffect(26, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
@@ -1349,9 +1355,9 @@ void Prox_GiveThanksForBeacon(void) {
   Actor_FaceDirection(26, FACING_SOUTH_SOUTHEAST, 0);
   // "I fear for Vale, to think that all this energy is being released..."
   Event_ShowMessage(26, 0);
-  Actor_FaceDirection(0, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
   // "We're all worried about that. We're hoping we can return to Vale as..."
-  Event_ShowMessage(0, 0);
+  Event_ShowMessage(ACTOR_ISAAC, 0);
   Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
   Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   // "Oh... Is there nothing we can do to convince you to stay?"
@@ -1359,8 +1365,8 @@ void Prox_GiveThanksForBeacon(void) {
   Actor_SetAnimation(26, 4);
   // "We had hoped you might stay in Prox a while, but that sounds unlikely..."
   FieldEvent_ShowMessageThenWait(26, 0, 20);
-  Actor_FaceDirectionAndWait(0, FACING_EAST);
-  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_EAST);
+  Actor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   // "Don't worry... We plan on returning as soon as things quiet down..." Yes:
   // "You have just completed a long and difficult..." No: "Our village will not
   // soon forget that you..."
@@ -1392,17 +1398,17 @@ void Prox_GiveThanksForBeacon(void) {
   // "Well, I suppose we should be departing for Vale soon."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 27, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-  Actor_FaceDirectionAndWait(0, FACING_EAST);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_EAST);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
-  Actor_SetAnimationAndWait(0, 3);
+  Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
   // "You're right, Kraden... If we don't, you-know-who might start..."
-  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 0, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_ISAAC, 0);
   Actor_SetAttachedEffect(26, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   // "At least some of your cares have been remedied... You must be glad..."
   Event_ShowMessage(26, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-  Actor_FaceDirection(0, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
   Actor_FaceDirection(27, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirectionAndWait(25, FACING_WEST);
   Actor_SetAnimationAndWait(25, 3);
@@ -1416,17 +1422,17 @@ void Prox_GiveThanksForBeacon(void) {
   // "But their can be no doubt. The fire Psynergy released by the beacon..."
   Event_ShowMessage(27, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-  Actor_FaceDirection(0, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 0);
   Actor_FaceDirection(25, FACING_SOUTH_SOUTHEAST, 0);
   FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
                        EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  FieldActor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   FieldActor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_SetAnimationAndWait(27, 3);
   // "I hadn't expected so much Psynergy to be released by the..."
   Event_ShowMessage(27, 0);
-  Actor_SetAnimation(0, 3);
+  Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_SetAnimation(26, 3);
   Actor_SetAnimation(25, 3);
@@ -1438,14 +1444,14 @@ void Prox_GiveThanksForBeacon(void) {
   // "And had your parents not been Adepts, the wave of Psynergy would..."
   FieldEvent_ShowMessageThenWait(26, 0, 20);
   // "Isaac! What's taking you two so long? Don't keep me waiting!"
-  Event_ShowMessage(5, 0);
+  Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_SetAttachedEffect(27, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-  Actor_FaceDirection(0, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTH, 0);
   Actor_FaceDirectionAndWait(27, FACING_SOUTH_SOUTHWEST);
   // "Uh-oh! It's Jenna... We're late, and she looks rather displeased..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 27, 0);
-  Actor_FaceDirectionAndWait(0, FACING_EAST);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_EAST);
   // "Should I let her know we're leaving now?"
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | 0, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
@@ -1454,21 +1460,21 @@ void Prox_GiveThanksForBeacon(void) {
   if (t144 == 0) {
     FieldCamera_SetSpeed(2.4);
     FieldCamera_MoveTo(184, CAMERA_KEEP, 512, 1);
-    Actor_FaceDirectionAndWait(0, FACING_SOUTH);
-    Actor_SetSpeed(0, 1.6);
-    Actor_WalkToAndWait(0, 168, 520);
-    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 0, 0);
-    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
+    Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
+    Actor_SetSpeed(ACTOR_ISAAC, 1.6);
+    Actor_WalkToAndWait(ACTOR_ISAAC, 168, 520);
+    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_ISAAC, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
     EVENT_WORK->message += 2;
   } else {
     EVENT_WORK->message += 2;
     FieldCamera_SetSpeed(2.4);
     FieldCamera_MoveTo(184, CAMERA_KEEP, 512, 1);
-    Actor_FaceDirectionAndWait(0, FACING_SOUTH);
-    Actor_SetSpeed(0, 1.6);
-    Actor_WalkToAndWait(0, 168, 520);
-    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 0, 0);
-    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
+    Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
+    Actor_SetSpeed(ACTOR_ISAAC, 1.6);
+    Actor_WalkToAndWait(ACTOR_ISAAC, 168, 520);
+    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_ISAAC, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
   }
   t159 = ((s32)FieldCamera_GetActor());
   FIELD_AT((t159 + 0x55), u8, 0) = 0;
@@ -1478,7 +1484,7 @@ void Prox_GiveThanksForBeacon(void) {
   Event_ShowMessage(17, 0);
   FieldCamera_SetSpeed(1.2);
   FieldCamera_MoveTo(172, CAMERA_KEEP, 520, 1);
-  FieldActor_WatchAndSetScript(0, 0x11);
+  FieldActor_WatchAndSetScript(ACTOR_ISAAC, 0x11);
   FieldActor_WatchAndSetScript(gMainRoutineWork.currentOwner, 0x11);
   FieldActor_WatchAndSetScript(27, 0x11);
   Actor_SetSpeed(17, 1.6);
@@ -1486,7 +1492,7 @@ void Prox_GiveThanksForBeacon(void) {
   Actor_WalkToAndWait(17, 150, 540);
   Actor_WalkToAndWait(17, 160, 560);
   Actor_WalkToAndWait(17, 190, 640);
-  FieldActor_Stop(0);
+  FieldActor_Stop(ACTOR_ISAAC);
   FieldActor_Stop(gMainRoutineWork.currentOwner);
   FieldActor_Stop(27);
   System_Wait(1);
@@ -1494,32 +1500,33 @@ void Prox_GiveThanksForBeacon(void) {
   FieldEvent_Wait(10);
   FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveTo(184, CAMERA_KEEP, 448, 1);
-  Actor_WalkToAndWait(0, 168, 484);
-  Actor_FaceDirectionAndWait(0, FACING_EAST);
-  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 0, 0);
+  Actor_WalkToAndWait(ACTOR_ISAAC, 168, 484);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_EAST);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_ISAAC, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(27, FACING_WEST);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 27, 0);
   Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
   Actor_SetAnimationAndWait(25, 3);
   Event_ShowMessage(25, 0);
-  Actor_FaceDirection(0, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
   Actor_FaceDirection(27, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
   Actor_SetAnimationAndWait(26, 3);
   Event_ShowMessage(26, 0);
-  Actor_SetAnimation(0, 3);
+  Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_SetAnimationAndWait(27, 3);
-  Actor_SetSpeed(0, 1.6);
+  Actor_SetSpeed(ACTOR_ISAAC, 1.6);
   Actor_SetSpeed(27, 1.6);
-  Actor_SetAnimation(0, 2);
+  Actor_SetAnimation(ACTOR_ISAAC, ANIM_WALK);
   t202 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
   if (t202 != 0) {
-    Actor_SetDestination(0, FIELD_AT(t202, s16, 10), FIELD_AT(t202, s16, 18));
+    Actor_SetDestination(ACTOR_ISAAC, FIELD_AT(t202, s16, 10),
+                         FIELD_AT(t202, s16, 18));
   }
-  FieldActor_WaitForMoveById(0);
-  Actor_SetPosition(0, 0, 0);
+  FieldActor_WaitForMoveById(ACTOR_ISAAC);
+  Actor_SetPosition(ACTOR_ISAAC, 0, 0);
   Actor_SetAnimation(27, 2);
   t207 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
   if (t207 != 0) {
@@ -1735,11 +1742,11 @@ void Prox_SayFarewell(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Event_PlaySound(SOUND_FADE_OUT_BGM);
-    FieldActor_Jump(5, 2, 10);
-    FieldActor_Jump(5, 4, 10);
+    FieldActor_Jump(ACTOR_JENNA, 2, 10);
+    FieldActor_Jump(ACTOR_JENNA, 4, 10);
     FieldEvent_SetMessageId((s32)MsgProx153);
     // "What took you so long? Mom and Dad are tired of waiting for you..."
-    Event_ShowMessage(5, 0);
+    Event_ShowMessage(ACTOR_JENNA, 0);
     FieldCamera_SetSpeed(3.2);
     FieldCamera_MoveTo(144, CAMERA_KEEP, 228, 1);
     FieldCamera_WaitForArrival();
@@ -1750,62 +1757,62 @@ void Prox_SayFarewell(void) {
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 136, 196);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-    Actor_MoveToObject(0, gMainRoutineWork.currentOwner);
+    Actor_MoveToObject(ACTOR_ISAAC, gMainRoutineWork.currentOwner);
     Actor_MoveToObject(0xb, gMainRoutineWork.currentOwner);
     System_Wait(1);
-    Actor_SetSpeed(0, 0.8);
+    Actor_SetSpeed(ACTOR_ISAAC, 0.8);
     Actor_SetSpeed(11, 0.8);
-    Actor_SetScript(0, (s32)gProx_IsaacStepsForward);
+    Actor_SetScript(ACTOR_ISAAC, (s32)gProx_IsaacStepsForward);
     Actor_RunScriptAndWait(11, (s32)gProx_KradenStepsForward);
     Actor_SetAnimationAndWait(9, 3);
     // "Don't worry about us, Felix... Puelle and the others took good care..."
     Event_ShowMessage(9, 0);
-    Actor_FaceDirectionAndWait(5, FACING_SOUTHWEST);
-    Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+    Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTHWEST);
+    Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
     // "Don't tell him that! We'll be stuck here forever!"
-    Event_ShowMessage(5, 0);
-    Actor_FaceDirection(6, FACING_NORTHEAST, 0);
-    FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+    Event_ShowMessage(ACTOR_JENNA, 0);
+    Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
+    FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
     // "You look like you're feeling back to your old self, Jenna!"
-    Event_ShowMessage(6, 0);
-    Actor_FaceDirectionAndWait(7, FACING_WEST);
-    Actor_SetAnimationAndWait(7, 3);
-    Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
+    Event_ShowMessage(ACTOR_SHEBA, 0);
+    Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_WEST);
+    Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
+    Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTHEAST);
     // "You were weeping such mournful tears after the battle..."
-    Event_ShowMessage(7, 0);
-    Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
+    Event_ShowMessage(ACTOR_PIERS, 0);
+    Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
     // "What!? As if! You can't prove anything!"
-    Event_ShowMessage(5, 0);
-    Actor_SetAnimation(3, 4);
+    Event_ShowMessage(ACTOR_JENNA, 0);
+    Actor_SetAnimation(ACTOR_MIA, ANIM_SHAKE_HEAD);
     // "Go easy on her. You have to remember, she thought that both of her..."
-    Event_ShowMessage(3, 0);
+    Event_ShowMessage(ACTOR_MIA, 0);
     Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
     Actor_FaceDirectionAndWait(10, FACING_NORTH_NORTHEAST);
     // "Oh, were you crying, Jenna?"
     Event_ShowMessage(10, 0);
-    Actor_FaceDirectionAndWait(5, FACING_SOUTH);
-    FieldActor_Jump(5, 4, 10);
+    Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTH);
+    FieldActor_Jump(ACTOR_JENNA, 4, 10);
     // "No! I said... I said I wasn't!"
-    Event_ShowMessage(5, 0);
-    FieldActor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
-    Actor_FaceDirectionAndWait(1, FACING_NORTHWEST);
+    Event_ShowMessage(ACTOR_JENNA, 0);
+    FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+    Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_NORTHWEST);
     // "Now you've got me thinking about my family... I didn't think I'd..."
-    Event_ShowMessage(1, 0);
-    Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-    Actor_FaceDirectionAndWait(2, FACING_NORTHWEST);
+    Event_ShowMessage(ACTOR_GARET, 0);
+    Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+    Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHWEST);
     // "I only hope that they're all safe back in Vale..."
-    Event_ShowMessage(2, 0);
-    Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
-    Actor_FaceDirectionAndWait(0, FACING_EAST);
+    Event_ShowMessage(ACTOR_IVAN, 0);
+    Actor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
+    Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_EAST);
     // "I just want to be home again... I want to see how my mother is doing..."
-    FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 0, 0, 10);
+    FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0, 10);
     Actor_FaceDirection(8, FACING_SOUTH_SOUTHEAST, 20);
     // "Don't worry, Son. I'm sure Dora's doing fine. She's a strong woman."
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 20);
     if (Event_GetFlag(0x824) != 0) {
-      Actor_FaceDirectionAndWait(0, FACING_SOUTH);
-      Actor_SetAnimation(0, 4);
-      Event_ShowMessage(0, 0);
+      Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
+      Actor_SetAnimation(ACTOR_ISAAC, ANIM_SHAKE_HEAD);
+      Event_ShowMessage(ACTOR_ISAAC, 0);
       Actor_FaceDirectionAndWait(8, FACING_NORTH_NORTHEAST);
       Event_ShowMessage(8, 0);
       EVENT_WORK->message++;
@@ -1814,8 +1821,8 @@ void Prox_SayFarewell(void) {
       Actor_FaceDirectionAndWait(8, FACING_NORTH_NORTHEAST);
       Event_ShowMessage(8, 0);
     }
-    Actor_FaceDirectionAndWait(0, FACING_SOUTH);
-    Actor_SetAnimationAndWait(0, 3);
+    Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
+    Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
     Actor_SetAnimationAndWait(11, 3);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 11, 0);
     Actor_FaceDirection(11, FACING_SOUTH_SOUTHEAST, 20);
@@ -1831,90 +1838,90 @@ void Prox_SayFarewell(void) {
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 8, 0);
     Actor_SetAnimationAndWait(11, 3);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 11, 0);
-    Actor_FaceDirectionAndWait(0, FACING_EAST);
-    Actor_SetAnimation(0, 3);
+    Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_EAST);
+    Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
     Event_OpenMessage(SPEAKER_WINDOW_BELOW | 0, 0);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner,
                                               0) == 0) {
-      Actor_SetAnimationAndWait(0, 3);
-      Event_ShowMessage(SPEAKER_WINDOW_BELOW | 0, 0);
+      Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
+      Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0);
       EVENT_WORK->message++;
     } else {
       EVENT_WORK->message++;
-      Actor_SetAnimationAndWait(0, 4);
-      Event_ShowMessage(SPEAKER_WINDOW_BELOW | 0, 0);
+      Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_SHAKE_HEAD);
+      Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0);
     }
-    Actor_FaceDirectionAndWait(5, FACING_NORTHWEST);
-    FieldActor_Jump(5, 2, 10);
-    FieldActor_Jump(5, 4, 10);
-    Event_ShowMessage(SPEAKER_WINDOW_BELOW | 5, 0);
-    Actor_SetAnimation(0, 3);
+    Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_NORTHWEST);
+    FieldActor_Jump(ACTOR_JENNA, 2, 10);
+    FieldActor_Jump(ACTOR_JENNA, 4, 10);
+    Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_JENNA, 0);
+    Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
     Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
     Actor_SetAnimation(11, 3);
-    Actor_SetAnimation(5, 3);
-    Actor_SetAnimation(6, 3);
-    Actor_SetAnimation(7, 3);
+    Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
     Actor_SetAnimation(8, 3);
     Actor_SetAnimation(9, 3);
     Actor_SetAnimation(10, 3);
-    Actor_SetAnimation(3, 3);
-    Actor_SetAnimation(2, 3);
-    Actor_SetAnimationAndWait(1, 3);
-    Actor_SetSpeed(0, 0.8);
+    Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+    Actor_SetSpeed(ACTOR_ISAAC, 0.8);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
     Actor_SetSpeed(11, 0.8);
-    Actor_SetSpeed(5, 0.8);
-    Actor_SetSpeed(6, 0.8);
-    Actor_SetSpeed(7, 0.8);
+    Actor_SetSpeed(ACTOR_JENNA, 0.8);
+    Actor_SetSpeed(ACTOR_SHEBA, 0.8);
+    Actor_SetSpeed(ACTOR_PIERS, 0.8);
     Actor_SetSpeed(8, 0.8);
     Actor_SetSpeed(9, 0.8);
     Actor_SetSpeed(10, 0.8);
-    Actor_SetSpeed(3, 0.8);
-    Actor_SetSpeed(2, 0.8);
-    Actor_SetSpeed(1, 0.8);
-    FieldActor_SetSpritePriority(0, 2);
+    Actor_SetSpeed(ACTOR_MIA, 0.8);
+    Actor_SetSpeed(ACTOR_IVAN, 0.8);
+    Actor_SetSpeed(ACTOR_GARET, 0.8);
+    FieldActor_SetSpritePriority(ACTOR_ISAAC, 2);
     FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
     FieldActor_SetSpritePriority(11, 2);
-    FieldActor_SetSpritePriority(5, 2);
-    FieldActor_SetSpritePriority(6, 2);
-    FieldActor_SetSpritePriority(7, 2);
+    FieldActor_SetSpritePriority(ACTOR_JENNA, 2);
+    FieldActor_SetSpritePriority(ACTOR_SHEBA, 2);
+    FieldActor_SetSpritePriority(ACTOR_PIERS, 2);
     FieldActor_SetSpritePriority(8, 2);
     FieldActor_SetSpritePriority(9, 2);
     FieldActor_SetSpritePriority(10, 2);
-    FieldActor_SetSpritePriority(3, 2);
-    FieldActor_SetSpritePriority(2, 2);
-    FieldActor_SetSpritePriority(1, 2);
+    FieldActor_SetSpritePriority(ACTOR_MIA, 2);
+    FieldActor_SetSpritePriority(ACTOR_IVAN, 2);
+    FieldActor_SetSpritePriority(ACTOR_GARET, 2);
     FieldCamera_SetSpeed(0.4);
     FieldCamera_MoveTo(144, CAMERA_KEEP, 246, 1);
     Actor_SetScript(9, (s32)gProx_SecondParentWalksSouth);
     Actor_SetScript(10, (s32)gProx_ThirdParentWalksSouth);
     FieldEvent_Wait(10);
     Actor_SetScript(8, (s32)gProx_LeftFileWalksSouth);
-    Actor_SetScript(3, (s32)gProx_RightFileWalksSouth);
+    Actor_SetScript(ACTOR_MIA, (s32)gProx_RightFileWalksSouth);
     FieldEvent_Wait(10);
-    Actor_SetScript(6, gProx_LeftFileWalksSouth);
-    Actor_SetScript(7, (s32)gProx_LeftFileWalksSouth);
+    Actor_SetScript(ACTOR_SHEBA, gProx_LeftFileWalksSouth);
+    Actor_SetScript(ACTOR_PIERS, (s32)gProx_LeftFileWalksSouth);
     FieldEvent_Wait(10);
-    Actor_SetScript(2, gProx_RightFileWalksSouth);
-    Actor_SetScript(1, (s32)gProx_GaretWalksSouth);
+    Actor_SetScript(ACTOR_IVAN, gProx_RightFileWalksSouth);
+    Actor_SetScript(ACTOR_GARET, (s32)gProx_GaretWalksSouth);
     FieldEvent_Wait(30);
-    Actor_SetScript(5, (s32)gProx_JennaWalksSouth);
+    Actor_SetScript(ACTOR_JENNA, (s32)gProx_JennaWalksSouth);
     FieldEvent_Wait(20);
-    Actor_SetScript(0, (s32)gProx_IsaacWalksSouth);
+    Actor_SetScript(ACTOR_ISAAC, (s32)gProx_IsaacWalksSouth);
     Actor_SetScript(gMainRoutineWork.currentOwner, (s32)gProx_LeaderWalksSouth);
     FieldEvent_Wait(10);
     Actor_RunScriptAndWait(11, (s32)gProx_KradenWalksSouth);
     Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
     Actor_FaceDirection(11, FACING_NORTH_NORTHWEST, 0);
-    FieldActor_RefreshSelectorById(5);
-    Actor_FaceDirection(5, FACING_WEST, 0);
-    Actor_FaceDirection(1, FACING_EAST, 40);
-    Actor_FaceDirection(5, FACING_NORTHWEST, 0);
-    Actor_FaceDirection(1, FACING_NORTH, 0);
+    FieldActor_RefreshSelectorById(ACTOR_JENNA);
+    Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 40);
+    Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
+    Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
     Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
     Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
-    Actor_FaceDirection(0, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner,
                                               0) == 0) {
       Actor_SetAnimationAndWait(11, 3);
@@ -1925,30 +1932,30 @@ void Prox_SayFarewell(void) {
       Actor_SetAnimationAndWait(11, 4);
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
     }
-    Actor_FaceDirection(0, FACING_NORTH, 20);
-    Event_ShowMessage(0, 0);
+    Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 20);
+    Event_ShowMessage(ACTOR_ISAAC, 0);
     Actor_SetAnimation(11, 4);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
-    FieldActor_Jump(1, 2, 10);
-    Event_ShowMessage(1, 0);
+    FieldActor_Jump(ACTOR_GARET, 2, 10);
+    Event_ShowMessage(ACTOR_GARET, 0);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-    Actor_FaceDirection(0, FACING_SOUTHEAST, 0);
+    Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTHEAST, 0);
     Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_FaceDirection(11, FACING_SOUTH_SOUTHEAST, 20);
     Event_ShowMessage(11, 0);
-    Actor_SetAnimationAndWait(5, 3);
-    Event_ShowMessage(5, 0);
+    Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
+    Event_ShowMessage(ACTOR_JENNA, 0);
     Actor_SetAnimationAndWait(11, 4);
     Event_ShowMessage(11, 0);
-    FieldActor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-    FieldEvent_ShowMessageThenWait(1, 0, 20);
+    FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+    FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
     Actor_SetAnimation(11, 3);
     Event_ShowMessage(11, 0);
-    Actor_FaceDirection(0, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 0);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 40);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-    Actor_FaceDirectionAndWait(0, FACING_SOUTHEAST);
-    Event_ShowMessage(0, 0);
+    Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTHEAST);
+    Event_ShowMessage(ACTOR_ISAAC, 0);
     Actor_FaceDirectionAndWait(11, FACING_NORTH_NORTHWEST);
     Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
@@ -1962,62 +1969,63 @@ void Prox_SayFarewell(void) {
       Actor_SetAnimationAndWait(11, 3);
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
     }
-    FieldActor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-    Event_ShowMessage(1, 0);
+    FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+    Event_ShowMessage(ACTOR_GARET, 0);
     Actor_FaceDirectionAndWait(11, FACING_SOUTH_SOUTHEAST);
     Event_ShowMessage(11, 0);
-    Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-    Event_ShowMessage(5, 0);
+    Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    Event_ShowMessage(ACTOR_JENNA, 0);
     Actor_SetAnimationAndWait(11, 3);
-    Event_ShowMessage(0, 0);
+    Event_ShowMessage(ACTOR_ISAAC, 0);
     Actor_FaceDirectionAndWait(11, FACING_NORTH_NORTHWEST);
     Actor_SetAnimation(11, 3);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
     Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
-    Actor_SetAnimation(0, 3);
-    Actor_SetAnimation(1, 3);
-    Actor_SetAnimationAndWait(5, 3);
+    Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
     FieldEvent_Wait(20);
-    Event_ShowMessage(1, 0);
+    Event_ShowMessage(ACTOR_GARET, 0);
     Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     Actor_FaceDirectionAndWait(11, FACING_SOUTH_SOUTHEAST);
     Event_ShowMessage(11, 0);
-    Actor_SetAttachedEffect(1, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Actor_SetAnimationAndWait(1, 4);
+    Actor_SetAttachedEffect(ACTOR_GARET,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
     Actor_SetAnimation(11, 3);
     Event_ShowMessage(11, 0);
-    Actor_SetAnimationAndWait(5, 3);
-    Event_ShowMessage(5, 0);
-    FieldActor_Jump(1, 2, 10);
-    Event_ShowMessage(1, 0);
+    Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
+    Event_ShowMessage(ACTOR_JENNA, 0);
+    FieldActor_Jump(ACTOR_GARET, 2, 10);
+    Event_ShowMessage(ACTOR_GARET, 0);
     Actor_SetAnimationAndWait(11, 3);
-    Actor_FaceDirectionAndWait(0, FACING_SOUTH);
-    Event_ShowMessage(0, 0);
-    Actor_FaceDirectionAndWait(5, FACING_WEST);
-    Actor_SetAnimation(5, 3);
-    Event_ShowMessage(5, 0);
-    Actor_FaceDirectionAndWait(1, FACING_EAST);
-    Actor_SetAnimation(5, 3);
-    Actor_SetAnimationAndWait(1, 3);
+    Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
+    Event_ShowMessage(ACTOR_ISAAC, 0);
+    Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_WEST);
+    Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+    Event_ShowMessage(ACTOR_JENNA, 0);
+    Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_EAST);
+    Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     FieldEvent_Wait(10);
-    Actor_SetSpeed(5, 1.6);
-    Actor_SetSpeed(1, 1.6);
-    Actor_SetScript(5, (s32)gProx_JennaRunsAhead);
-    Actor_RunScriptAndWait(1, (s32)gProx_GaretRunsAhead);
+    Actor_SetSpeed(ACTOR_JENNA, 1.6);
+    Actor_SetSpeed(ACTOR_GARET, 1.6);
+    Actor_SetScript(ACTOR_JENNA, (s32)gProx_JennaRunsAhead);
+    Actor_RunScriptAndWait(ACTOR_GARET, (s32)gProx_GaretRunsAhead);
     FieldEvent_Wait(20);
     Actor_FaceDirectionAndWait(11, FACING_NORTH_NORTHWEST);
     Actor_SetAnimation(11, 3);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
     Actor_WalkToAndWait(11, 156, 256);
     Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    Event_ShowMessage(0, 0);
-    Actor_SetAnimation(0, 4);
-    Event_ShowMessage(0, 0);
+    Event_ShowMessage(ACTOR_ISAAC, 0);
+    Actor_SetAnimation(ACTOR_ISAAC, ANIM_SHAKE_HEAD);
+    Event_ShowMessage(ACTOR_ISAAC, 0);
     Actor_FaceDirectionAndWait(11, FACING_NORTH_NORTHWEST);
-    Event_ShowMessage(0, 0);
+    Event_ShowMessage(ACTOR_ISAAC, 0);
     Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
     Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
-    Actor_FaceDirection(0, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner,
                                               0) == 0) {
       Actor_SetAnimationAndWait(11, 3);
@@ -2028,31 +2036,31 @@ void Prox_SayFarewell(void) {
       Actor_SetAnimationAndWait(11, 4);
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
     }
-    Actor_FaceDirectionAndWait(0, FACING_SOUTHEAST);
+    Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTHEAST);
     Actor_SetAnimation(11, 4);
     FieldEvent_ShowMessageThenWait(
         SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0, 20);
-    Event_ShowMessage(0, 0);
+    Event_ShowMessage(ACTOR_ISAAC, 0);
     FieldEvent_Wait(20);
     Actor_SetAnimationAndWait(11, 3);
     FieldEvent_Wait(20);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
-    Actor_FaceDirection(0, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 0);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 40);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-    Actor_FaceDirectionAndWait(0, FACING_SOUTHEAST);
-    Event_ShowMessage(0, 0);
+    Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTHEAST);
+    Event_ShowMessage(ACTOR_ISAAC, 0);
     Actor_SetAnimation(11, 4);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
-    FieldActor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     Actor_ShowEmote(gMainRoutineWork.currentOwner,
                     EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
-    Actor_SetAnimation(0, 3);
+    Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
     Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
     Actor_SetAnimation(11, 3);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
-    Actor_SetAnimation(0, 3);
+    Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
     Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
     FieldEvent_Wait(20);
     Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -2065,20 +2073,20 @@ void Prox_SayFarewell(void) {
     FieldActor_Jump(11, 2, 10);
     FieldActor_Jump(11, 4, 10);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
-    Actor_FaceDirection(0, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 0);
     Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_WEST);
     Actor_FaceDirectionAndWait(11, FACING_NORTH_NORTHWEST);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
-    Actor_FaceDirection(0, FACING_SOUTHEAST, 0);
+    Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTHEAST, 0);
     Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
-    Actor_SetAnimation(0, 3);
+    Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
     Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
     Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
     Actor_FaceDirectionAndWait(11, FACING_SOUTH_SOUTHEAST);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0);
     Actor_SetAnimation(11, 9);
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 0x21);
-    Actor_SetAnimation(0, 0x28);
+    Actor_SetAnimation(ACTOR_ISAAC, 0x28);
     Map_SetLayerEntryFlag(2);
     Map_SetLayerEntryFlag(3);
     Map_SetLayerEntryFlag(4);

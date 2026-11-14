@@ -103,21 +103,22 @@ void AlhafraInteriors_MeetAlex(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors31);
   FieldCamera_MoveToActorById(31, 1);
-  Actor_WalkToAndWait(4, 452, 335);
-  Actor_FaceDirection(4, FACING_WEST, 0);
+  Actor_WalkToAndWait(ACTOR_FELIX, 452, 335);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   FieldCamera_WaitForArrival();
   Actor_FaceDirection(31, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   // "So, you've finally come."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 31, 0, 10);
-  FieldActor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldActor_StartRepeatedMotion(ACTOR_FELIX, 3);
+  Actor_SetAttachedEffect(ACTOR_FELIX,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
   Actor_SetAnimationAndWait(31, 3);
   FieldEvent_Wait(10);
   // "I had suspected we might run into each other again, since we both..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 31, 0, 10);
-  Actor_SetAnimationAndWait(4, 3);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(31, 4);
   // "Unfortunately, the only boat this town possesses has already been sold."
@@ -415,8 +416,8 @@ void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       FieldEvent_SetMessageId((s32)MsgAlhafraInteriors120);
-      Actor_WalkToAndWait(4, 504, 328);
-      Actor_FaceDirectionAndWait(4, FACING_WEST);
+      Actor_WalkToAndWait(ACTOR_FELIX, 504, 328);
+      Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_WEST);
       FieldCamera_MoveTo(408, CAMERA_KEEP, 328, 1);
       FieldCamera_WaitForArrival();
       FieldEvent_Wait(10);
@@ -492,19 +493,19 @@ void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
       FieldActor_WaitForMoveById(31);
       Actor_SetAnimation(31, 1);
       Actor_FaceDirectionAndWait(31, FACING_EAST);
-      Actor_WalkByAndWait(4, 0, -16);
-      Actor_FaceDirectionAndWait(4, FACING_SOUTH);
+      Actor_WalkByAndWait(ACTOR_FELIX, 0, -16);
+      Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
       FieldEvent_Wait(10);
       Actor_SetScript(32, (s32)gAlhafraInteriors_TravelersWalkOffScript);
       FieldEvent_Wait(10);
       Actor_SetScript(31, (s32)gAlhafraInteriors_TravelersWalkOffScript);
       FieldEvent_Wait(10);
-      FieldActor_WatchAndSetScript(4, 32);
+      FieldActor_WatchAndSetScript(ACTOR_FELIX, 32);
       FieldEvent_Wait(60);
       FieldActor_SetSpritePriority(31, 3);
       FieldActor_SetSpritePriority(32, 3);
       FieldActor_RefreshSelectorById(32);
-      FieldActor_Stop(4);
+      FieldActor_Stop(ACTOR_FELIX);
       FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
       Actor_SetPosition(32, 0, 0);
       Event_PlaySound(SE_MAP_EXIT);
@@ -551,7 +552,7 @@ struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 184, 0, 104, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 344, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 312, FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 312, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 312, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 312, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(199, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 84, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -567,7 +568,7 @@ struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 536, FACING_NORTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(191, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 552, FACING_NORTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(186, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 544, 0, 544, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 344, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 344, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 360, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(57, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 312, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},

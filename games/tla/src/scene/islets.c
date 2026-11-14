@@ -436,7 +436,7 @@ void Islets_TalkToTreasureHunters(void) {
   FieldEvent_SetMessageId((s32)MsgLookWeRe);
   // "Look, we're busy... We can't talk now... Catch us some other time..."
   Event_ShowMessage(8, 0);
-  Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
   Event_End();
   return;
 }
@@ -613,7 +613,7 @@ void Islets_TradeWithCow(void) {
         Event_Wait(10);
         FieldPsynergy_GreyMindReadPalette();
         Actor_Stop(10);
-        Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
+        Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
         Actor_ShowEmoteById(10, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
         Event_SetMessageId(asked + 1);
         Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 10, 0);
@@ -645,7 +645,7 @@ void Islets_TradeWithCow(void) {
         item->unk5c[0] = 1;
       }
       STEP(gMainRoutineWork.currentOwner, 120, 190);
-      Actor_ArmCallback(10, 0x3000, 0);
+      Actor_ArmCallback(10, FACING_SOUTH_SOUTHEAST, 0);
       Actor_Jump(10, 4, 10);
       Event_ShowMessageAndWait(10, 0);
       Actor_WatchAndSetScript(10, gMainRoutineWork.currentOwner);
@@ -1181,7 +1181,7 @@ void Islets_TalkToSailorsSon(void) {
   FieldEvent_SetMessageId((s32)MsgMyPopS);
   // "My pop's the best sailor in all the Eastern Sea! That's why he can..."
   Event_ShowMessage(9, 0);
-  Actor_FaceDirectionAndWait(9, FACING_NORTHWEST + FACING_STEP);
+  Actor_FaceDirectionAndWait(9, FACING_NORTH_NORTHWEST);
   Event_End();
 }
 
@@ -1304,7 +1304,7 @@ void Islets_PengusGivesPrettyStone(void) {
   Actor_SetPosition(20, 0, 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
   FieldPsynergy_StopMindReadWave();
-  Actor_FaceDirectionAndWait(9, FACING_NORTHWEST + FACING_STEP);
+  Actor_FaceDirectionAndWait(9, FACING_NORTH_NORTHWEST);
   Event_SetFlag(0xaa2);
   Event_End();
 }
@@ -1825,7 +1825,7 @@ void Islets_InitializeRoom1(void) {
       spawned->collisionFlags = 9;
       spawned->unk5c[0] = 1;
     }
-    Actor_Get(11)->facing = FACING_NORTH + FACING_STEP;
+    Actor_Get(11)->facing = FACING_NORTH_NORTHEAST;
   } else {
     Actor_SetAnimation(11, 5);
   }
@@ -1961,10 +1961,10 @@ void Islets_InitializeRoom2(void) {
     Actor_Get(19)->actionFlags &= ~1;
   } else if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     other = Actor_Get(9);
-    other->facing = FACING_SOUTH + FACING_STEP;
+    other->facing = FACING_SOUTH_SOUTHWEST;
     other->collisionFlags |= 0x80;
     {
-      s32 facing = FACING_SOUTHEAST + FACING_STEP;
+      s32 facing = FACING_SOUTH_SOUTHEAST;
 
       Actor_SetPositionAndFacing(19, px(234), px(204), facing);
     }
@@ -2879,7 +2879,7 @@ struct ActorPlacement gIslets_Room2Placements[] = {
     ACTOR_PLACEMENT(402, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(400, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 280, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 280, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 

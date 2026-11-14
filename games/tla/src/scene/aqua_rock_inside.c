@@ -1237,30 +1237,30 @@ void AquaRockInside_ReadParchTablet(void) {
   }
   FieldEvent_SetMessageId((s32)&MsgCheckedTheTabletIt);
   gFieldWork->message = (gFieldWork->message + 1);
-  Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.currentOwner);
   FieldEvent_Wait(1);
   Actor_WalkTo(gMainRoutineWork.currentOwner, 256, 184);
-  Actor_WalkTo(7, 274, 184);
+  Actor_WalkTo(ACTOR_PIERS, 274, 184);
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  FieldActor_WaitForMoveById(7);
+  FieldActor_WaitForMoveById(ACTOR_PIERS);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-  Actor_FaceDirection(7, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   FieldEvent_Wait(5);
-  Event_ShowMessage(7, 0);
+  Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   FieldEvent_Wait(30);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 248, 184);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(7, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimation(7, 3);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(30);
-  Actor_FaceDirection(7, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(7, 1);
-  Actor_WalkToAndWait(7, 264, 168);
-  Actor_FaceDirection(7, FACING_NORTH, 0);
+  Actor_SetSpeed(ACTOR_PIERS, 1);
+  Actor_WalkToAndWait(ACTOR_PIERS, 264, 168);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   FieldEvent_Wait(20);
   Message_ShowCentered(((s32)&MsgCheckedTheTabletIt + 2), 1);
   AquaRockInside_PiersLearnsParch(14, 7);
@@ -1269,36 +1269,36 @@ void AquaRockInside_ReadParchTablet(void) {
   Event_PlaySound(SE_TREMOR);
   FieldEvent_Wait(30);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-  Actor_FaceDirection(7, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   FieldEvent_Wait(10);
   Actor_ShowEmote(gMainRoutineWork.currentOwner,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   AquaRockInside_WaterSinks();
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   FieldEvent_Wait(30);
   FieldEvent_SetMessageId((s32)&MsgWhatWentWrong);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
-  Actor_FaceEachOther(gMainRoutineWork.currentOwner, 7, 0);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
+  Actor_FaceEachOther(gMainRoutineWork.currentOwner, ACTOR_PIERS, 0);
   FieldEvent_Wait(10);
   // "What went wrong? What are we going to do, Felix?"
-  Event_ShowMessage(7, 0);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  Event_ShowMessage(ACTOR_PIERS, 0);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   // "Maybe our power is being tested."
-  Event_ShowMessage(7, 0);
+  Event_ShowMessage(ACTOR_PIERS, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimation(7, 3);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(7, 1.2);
-  Actor_SetAnimation(7, 2);
+  Actor_SetSpeed(ACTOR_PIERS, 1.2);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
   object = Actor_Get(gMainRoutineWork.currentOwner);
   if (object != 0) {
-    Actor_SetDestination(7, FIELD_AT((u8 *)object, s16, 10),
+    Actor_SetDestination(ACTOR_PIERS, FIELD_AT((u8 *)object, s16, 10),
                          FIELD_AT((u8 *)object, s16, 18));
   }
-  FieldActor_WaitForMoveById(7);
-  Actor_SetPosition(7, 0, 0);
+  FieldActor_WaitForMoveById(ACTOR_PIERS);
+  Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Event_End();
 L_02009c56:
 }

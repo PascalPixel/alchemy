@@ -278,26 +278,26 @@ void ShamanVillageCave_MeetColossoFans(void) {
   FieldEvent_ResolvePendingActions(0);
   Event_SetFlag(0xa70);
   FieldEvent_SetMessageId((s32)MsgIFound2);
-  Actor_SetAnimation(4, 1);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_STAND);
   // "I found Isaac!"
   FieldEvent_ShowMessageThenWait(19, 0, 1);
-  Actor_WalkToAndWait(4, 200, 221);
-  Actor_RunRepeatedMotion(4, 2);
+  Actor_WalkToAndWait(ACTOR_FELIX, 200, 221);
+  Actor_RunRepeatedMotion(ACTOR_FELIX, 2);
   FieldEvent_Wait(5);
-  Actor_WalkBy(4, -16, 8);
-  FieldActor_LaunchFromLeader(0, 0, 0, 0xc000);
-  FieldActor_LaunchFromLeader(18, 8, 16, 0xc000);
-  FieldActor_WaitForMoveById(0);
+  Actor_WalkBy(ACTOR_FELIX, -16, 8);
+  FieldActor_LaunchFromLeader(ACTOR_ISAAC, 0, 0, FACING_NORTH);
+  FieldActor_LaunchFromLeader(18, 8, 16, FACING_NORTH);
+  FieldActor_WaitForMoveById(ACTOR_ISAAC);
   FieldActor_WaitForMoveById(18);
-  Actor_FaceDirection(0, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(0, FACING_NORTH, 0);
-  Actor_FaceDirection(4, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Actor_FaceDirection(18, FACING_NORTH, 0);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   FieldCamera_MoveTo(199, CAMERA_KEEP, 177, 1);
   FieldCamera_WaitForArrival();
   angle = 0x4000;
@@ -333,27 +333,27 @@ void ShamanVillageCave_MeetColossoFans(void) {
   Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   // "And don't forget Navampa!"
   FieldEvent_ShowMessageThenWait(21, 0, 5);
-  Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
-  Actor_SetAnimationAndWait(0, 3);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHEAST);
+  Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
   FieldEvent_Wait(10);
   // "Oh. It's you guys."
-  FieldEvent_ShowMessageThenWait(0, 0, 5);
+  FieldEvent_ShowMessageThenWait(ACTOR_ISAAC, 0, 5);
   Actor_RunRepeatedMotion(19, 2);
   FieldEvent_Wait(5);
   // "Is that any way to say hello to some old friends?"
   FieldEvent_ShowMessageThenWait(19, 0, 5);
-  Actor_FaceEachOther(18, 4, 0);
+  Actor_FaceEachOther(18, ACTOR_FELIX, 0);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Actor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "What's your problem?"
-  FieldEvent_ShowMessageThenWait(0, 0, 5);
+  FieldEvent_ShowMessageThenWait(ACTOR_ISAAC, 0, 5);
   Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   // "We want to talk to you about your fighting style at Colosso."
   FieldEvent_ShowMessageThenWait(20, 0, 5);
-  Actor_FaceDirection(4, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
   Actor_FaceDirectionAndWait(18, FACING_NORTHEAST);
   Actor_SetAnimation(18, 3);
-  Actor_SetAnimationAndWait(4, 3);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(21, 4);
   // "Yeah. And we think you shouldn't have won, Isaac. We think you..."
@@ -366,11 +366,11 @@ void ShamanVillageCave_MeetColossoFans(void) {
   Actor_SetAnimationAndWait(20, 4);
   // "We've just been thinking about it, and there's no way that Isaac..."
   FieldEvent_ShowMessageThenWait(19, 0, 5);
-  Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Actor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "Right. So you think I cheated just because I used my Pynergy..."
-  FieldEvent_ShowMessageThenWait(0, 0, 5);
+  FieldEvent_ShowMessageThenWait(ACTOR_ISAAC, 0, 5);
   Actor_FaceEachOther(20, 21, 0);
   FieldEvent_Wait(10);
   Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
@@ -434,15 +434,15 @@ void ShamanVillageCave_LoseToColossoFans(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(199, CAMERA_KEEP, 273, 0);
   FieldEvent_SetMessageId((s32)MsgHeyTheseGuys);
-  Actor_SetPositionAndFacing(4, px(184), px(229), angle);
-  Actor_SetPositionAndFacing(0, px(200), px(221), angle);
+  Actor_SetPositionAndFacing(ACTOR_FELIX, px(184), px(229), angle);
+  Actor_SetPositionAndFacing(ACTOR_ISAAC, px(200), px(221), angle);
   {
     s32 turn = 0xc000;
 
     Actor_SetPositionAndFacing(18, px(218), px(320), turn);
   }
-  Actor_SetAnimation(4, 19);
-  Actor_SetAnimation(0, 39);
+  Actor_SetAnimation(ACTOR_FELIX, 19);
+  Actor_SetAnimation(ACTOR_ISAAC, 39);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_RunRepeatedMotion(21, 2);
@@ -495,8 +495,8 @@ void ShamanVillageCave_BeatColossoFans(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(199, CAMERA_KEEP, 273, 0);
   FieldEvent_SetMessageId((s32)MsgTheseGuysWere);
-  Actor_SetPositionAndFacing(4, px(184), px(229), angle);
-  Actor_SetPositionAndFacing(0, px(200), px(221), angle);
+  Actor_SetPositionAndFacing(ACTOR_FELIX, px(184), px(229), angle);
+  Actor_SetPositionAndFacing(ACTOR_ISAAC, px(200), px(221), angle);
   Actor_SetPositionAndFacing(18, px(208), px(237), angle);
   Actor_SetAnimation(20, 8);
   Actor_SetAnimation(19, 8);
@@ -513,9 +513,9 @@ void ShamanVillageCave_BeatColossoFans(void) {
   FieldEvent_ShowMessageThenWait(20, 0, 5);
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  Actor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   // "So. You don't still think our victory at Colosso was fixed, do you?"
-  FieldEvent_ShowMessageThenWait(0, 0, 5);
+  FieldEvent_ShowMessageThenWait(ACTOR_ISAAC, 0, 5);
   Actor_SetAnimationAndWait(21, 3);
   FieldEvent_Wait(10);
   // "No way, Isaac! We've seen the error of our ways!"
@@ -539,14 +539,14 @@ void ShamanVillageCave_BeatColossoFans(void) {
   FieldEvent_ShowMessageThenWait(21, 0, 5);
   ShamanVillageCave_PlaceGoldenShirt();
   FieldEvent_Wait(60);
-  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Actor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_SetAnimationAndWait(19, 3);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(19, 0, 5);
-  Actor_FaceDirectionAndWait(0, FACING_SOUTH);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
   FieldEvent_Wait(10);
   Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  Actor_FaceDirection(0, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
   FieldEvent_ShowMessageThenWait(20, 0, 5);
   Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   FieldEvent_ShowMessageThenWait(21, 0, 5);
@@ -556,8 +556,8 @@ void ShamanVillageCave_BeatColossoFans(void) {
   Actor_SetAnimationAndWait(20, 3);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(20, 0, 5);
-  Actor_SetAnimation(0, 3);
-  Actor_SetAnimation(4, 3);
+  Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimationAndWait(18, 3);
   FieldEvent_Wait(10);
   Actor_SetSpeed(19, 1);
@@ -569,21 +569,21 @@ void ShamanVillageCave_BeatColossoFans(void) {
   FieldEvent_Wait(20);
   Actor_SetScript(21, gShamanVillageCave_GladiatorFollowsOut);
   FieldEvent_Wait(100);
-  Actor_FaceEachOther(0, 4, 0);
-  Actor_FaceActor(18, 4, 0);
+  Actor_FaceEachOther(ACTOR_ISAAC, ACTOR_FELIX, 0);
+  Actor_FaceActor(18, ACTOR_FELIX, 0);
   FieldEvent_Wait(40);
-  Actor_SetAnimation(0, 3);
-  Actor_SetAnimation(4, 3);
+  Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimationAndWait(18, 3);
   FieldEvent_Wait(10);
-  Actor_SetAnimation(0, 2);
-  target = (s16 *)Actor_Get(4);
+  Actor_SetAnimation(ACTOR_ISAAC, ANIM_WALK);
+  target = (s16 *)Actor_Get(ACTOR_FELIX);
   if (target != 0)
-    Actor_SetDestination(0, target[5], target[9]);
-  FieldActor_WaitForMoveById(0);
-  Actor_SetPosition(0, 0, 0);
+    Actor_SetDestination(ACTOR_ISAAC, target[5], target[9]);
+  FieldActor_WaitForMoveById(ACTOR_ISAAC);
+  Actor_SetPosition(ACTOR_ISAAC, 0, 0);
   Actor_SetAnimation(18, 2);
-  target = (s16 *)Actor_Get(4);
+  target = (s16 *)Actor_Get(ACTOR_FELIX);
   if (target != 0)
     Actor_SetDestination(18, target[5], target[9]);
   FieldActor_WaitForMoveById(18);

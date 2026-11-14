@@ -114,7 +114,7 @@ void NorthernReaches_SightIceWall(void) {
   Actor_FaceDirectionAndWait(8, FACING_NORTH);
   FieldEvent_Wait(5);
   // "Kraden, come look at this... There's a huge ice wall blocking our..."
-  FieldEvent_ShowMessageThenWait(5, 0, 5);
+  FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 5);
   // "Hm... If we can't do something about that wall, we're not going any..."
   FieldEvent_ShowMessageThenWait(11, 0, 5);
   Event_End();
@@ -138,22 +138,22 @@ void NorthernReaches_DiscussIceWall(void) {
   FieldActor_WaitForMove((s32)object1);
   FieldEvent_Wait(5);
   // "Kraden, come look at this... There's a huge ice wall blocking our..."
-  FieldEvent_ShowMessageThenWait(5, 0, 5);
+  FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 5);
   FieldCamera_MoveTo(464, CAMERA_KEEP, 176, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(5);
   Actor_SetPosition(11, 408, 288);
-  Actor_SetPosition(5, 408, 288);
-  Actor_SetPosition(6, 408, 288);
+  Actor_SetPosition(ACTOR_JENNA, 408, 288);
+  Actor_SetPosition(ACTOR_SHEBA, 408, 288);
   // "Nothing to worry about, Jenna. We'll just have to use that cannon we..."
   FieldEvent_ShowMessageThenWait(11, 0, 5);
   // "That's right! If the cannon can blast away a stone wall, think what..."
-  FieldEvent_ShowMessageThenWait(6, 0, 5);
+  FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 5);
   // "Felix, take us between those two blocks of ice for shelter when you..."
   FieldEvent_ShowMessageThenWait(11, 0, 5);
   Actor_SetPosition(11, 0, 0);
-  Actor_SetPosition(5, 0, 0);
-  Actor_SetPosition(6, 0, 0);
+  Actor_SetPosition(ACTOR_JENNA, 0, 0);
+  Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Event_End();
 done:
   return;
@@ -215,30 +215,30 @@ fire:
   FieldEvent_Wait(5);
   t10 = Actor_Get(11);
   t10->scaleX = v_r5;
-  t11 = Actor_Get(7);
+  t11 = Actor_Get(ACTOR_PIERS);
   t11->scaleX = v_r5;
-  t12 = Actor_Get(5);
+  t12 = Actor_Get(ACTOR_JENNA);
   t12->scaleX = v_r5;
-  t13 = Actor_Get(6);
+  t13 = Actor_Get(ACTOR_SHEBA);
   t13->scaleX = v_r5;
   t14 = Actor_Get(11);
   Actor_SetSpriteFlags(t14, 0);
-  t16 = Actor_Get(7);
+  t16 = Actor_Get(ACTOR_PIERS);
   Actor_SetSpriteFlags(t16, 0);
-  t18 = Actor_Get(5);
+  t18 = Actor_Get(ACTOR_JENNA);
   Actor_SetSpriteFlags(t18, 0);
-  t20 = Actor_Get(6);
+  t20 = Actor_Get(ACTOR_SHEBA);
   Actor_SetSpriteFlags(t20, 0);
   Actor_SetPosition(11, 464, 216);
-  Actor_SetPosition(7, 464, 216);
-  Actor_SetPosition(5, 464, 216);
-  Actor_SetPosition(6, 464, 216);
+  Actor_SetPosition(ACTOR_PIERS, 464, 216);
+  Actor_SetPosition(ACTOR_JENNA, 464, 216);
+  Actor_SetPosition(ACTOR_SHEBA, 464, 216);
   t26 = Event_GetFlag(0x90d);
   v_r10 = (s32)MsgShipSafeFiringDistance;
   if (t26 != 0)
     goto ask;
   Event_SetFlag(0x90d);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 7, 0, 5);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0, 5);
 ask:
   FieldEvent_SetMessageId((v_r10 + 1));
   Event_OpenMessage(11, 0);
@@ -305,9 +305,9 @@ growBall:
   Event_WaitTransitionFrames();
   t70 = (s32)Ram_HeapSlots->fieldWork;
   FIELD_AT(t70, s32, 436) = 8;
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 5, 0, 5);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0, 5);
   FieldEvent_ShowMessageThenWait(11, 0, 5);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 6, 0, 5);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SHEBA, 0, 5);
   Actor_SetSpeed(8, 0.8);
   Actor_MoveToAndWait(8, 464, 176);
   EventCamera_FollowActor(8, 1);
@@ -356,9 +356,9 @@ settle:
   FieldEvent_SetExitRequest(4);
 putAway:
   Actor_SetPosition(11, 0, 0);
-  Actor_SetPosition(5, 0, 0);
-  Actor_SetPosition(6, 0, 0);
-  Actor_SetPosition(7, 0, 0);
+  Actor_SetPosition(ACTOR_JENNA, 0, 0);
+  Actor_SetPosition(ACTOR_SHEBA, 0, 0);
+  Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Event_End();
 done:
   return;

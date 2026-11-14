@@ -112,7 +112,7 @@ s32 LinkLobby_PollPeerReady(void) {
 
   work = Ram_HeapSlots->fieldWork;
   result = 1;
-  z = Actor_GetById(4)->z;
+  z = Actor_GetById(ACTOR_FELIX)->z;
 
   if (z > 0xe00000)
     Event_ClearFlag(FLAG_AREA_TEMP_04);
@@ -643,24 +643,24 @@ s32 LinkLobby_EnterBattle(void) {
       // "Good luck!"
       Event_OpenMessage(8, 0);
       wait(45);
-      Actor_SetSpeed(4, 1);
-      Actor_WalkTo(4, 216, 184);
-      Actor_WaitForMoveById(4);
-      Actor_WalkTo(4, 216, 168);
-      Actor_WaitForMoveById(4);
+      Actor_SetSpeed(ACTOR_FELIX, 1);
+      Actor_WalkTo(ACTOR_FELIX, 216, 184);
+      Actor_WaitForMoveById(ACTOR_FELIX);
+      Actor_WalkTo(ACTOR_FELIX, 216, 168);
+      Actor_WaitForMoveById(ACTOR_FELIX);
     } else {
-      Actor_SetSpeed(4, 1);
-      Actor_WalkTo(4, 216, 200);
-      Actor_WaitForMoveById(4);
-      Actor_SetSpeed(4, 0.1);
-      Actor_WalkTo(4, 216, 168);
+      Actor_SetSpeed(ACTOR_FELIX, 1);
+      Actor_WalkTo(ACTOR_FELIX, 216, 200);
+      Actor_WaitForMoveById(ACTOR_FELIX);
+      Actor_SetSpeed(ACTOR_FELIX, 0.1);
+      Actor_WalkTo(ACTOR_FELIX, 216, 168);
       if (LinkLobby_ExchangePartyRecords() < 0) {
-        Actor_SetSpeed(4, 1);
-        Actor_WalkTo(4, 216, 200);
+        Actor_SetSpeed(ACTOR_FELIX, 1);
+        Actor_WalkTo(ACTOR_FELIX, 216, 200);
         Map_ClearLayerEntryFlag(5);
         wait(8);
         Map_SetLayerEntryFlag(5);
-        Actor_WaitForMoveById(4);
+        Actor_WaitForMoveById(ACTOR_FELIX);
         HeapSlot_Release(216);
         LinkLobby_WriteSlotValue(0);
         LinkLobby_WriteSlotValue(4);
@@ -675,8 +675,8 @@ s32 LinkLobby_EnterBattle(void) {
         Event_End();
         return;
       }
-      Actor_SetSpeed(4, 0.5);
-      Actor_WaitForMoveById(4);
+      Actor_SetSpeed(ACTOR_FELIX, 0.5);
+      Actor_WaitForMoveById(ACTOR_FELIX);
     }
     /* FAKEMATCH(temporary): the flag test's result kept while the scene symbol
      * is loaded once for both branches. */
@@ -815,7 +815,7 @@ void MessageArgument_Push(s32 value, s32 digits);
 
 // Tells the leader's win count, total or in a row by the way the lead faces.
 s32 LinkLobby_ReportWinTallies(s32 actor) {
-  u32 facing = Actor_GetById(4)->facing;
+  u32 facing = Actor_GetById(ACTOR_FELIX)->facing;
   u16 *count;
   s32 base;
 

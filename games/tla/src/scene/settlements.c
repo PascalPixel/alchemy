@@ -344,17 +344,17 @@ void Settlements_CutStairsBush(void) {
 void Settlements_EnterDoor(void) {
   s32 next = gFieldWork->stepTrigger;
 
-  Actor_FaceDirection(4, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   FieldEvent_Wait(10);
-  Actor_Get(4)->actionFlags &= 0xfe;
+  Actor_Get(ACTOR_FELIX)->actionFlags &= 0xfe;
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
-  Actor_SetDestinationOffset(4, 0, 4);
-  FieldActor_WaitForMoveById(4);
-  Actor_SetSpriteFlags(Actor_Get(4), 0);
-  Actor_SetAnimation(4, 13);
-  Actor_SetDestinationOffset(4, 0, 16);
-  FieldActor_WaitForMoveById(4);
-  Actor_SetAnimation(4, 10);
+  Actor_SetDestinationOffset(ACTOR_FELIX, 0, 4);
+  FieldActor_WaitForMoveById(ACTOR_FELIX);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FELIX), 0);
+  Actor_SetAnimation(ACTOR_FELIX, 13);
+  Actor_SetDestinationOffset(ACTOR_FELIX, 0, 16);
+  FieldActor_WaitForMoveById(ACTOR_FELIX);
+  Actor_SetAnimation(ACTOR_FELIX, 10);
   FieldEvent_Wait(10);
   Event_PlaySound(SE_MAP_EXIT);
   FieldEvent_SetExitRequest(next);
@@ -364,23 +364,23 @@ void Settlements_EnterDoor(void) {
 void Settlements_EnterDoor4(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_WalkByAndWait(4, 0, -14);
-  Actor_WalkByAndWait(4, 16, 0);
+  Actor_WalkByAndWait(ACTOR_FELIX, 0, -14);
+  Actor_WalkByAndWait(ACTOR_FELIX, 16, 0);
   Settlements_EnterDoor();
 }
 
 void Settlements_EnterDoor5(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_WalkByAndWait(4, -2, -6);
-  Actor_WalkByAndWait(4, -14, -8);
+  Actor_WalkByAndWait(ACTOR_FELIX, -2, -6);
+  Actor_WalkByAndWait(ACTOR_FELIX, -14, -8);
   Settlements_EnterDoor();
 }
 
 void Settlements_EnterDoor3(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_FaceDirection(4, 192 << 8, 0);
+  Actor_FaceDirection(ACTOR_FELIX, 192 << 8, 0);
   Settlements_EnterDoor();
 }
 

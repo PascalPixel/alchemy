@@ -2041,31 +2041,31 @@ void MagmaRockInside_ReadBlazeTablet(void) {
     FieldEvent_SetMessageId((s32)MsgBlazeTabletInscription);
     EVENT_WORK->message++;
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.7);
-    Actor_SetSpeed(5, 0.7);
-    Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
+    Actor_SetSpeed(ACTOR_JENNA, 0.7);
+    Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.currentOwner);
     FieldEvent_Wait(1);
     Actor_WalkTo(gMainRoutineWork.currentOwner, 256, 136);
-    Actor_WalkTo(5, 272, 136);
+    Actor_WalkTo(ACTOR_JENNA, 272, 136);
     FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-    FieldActor_WaitForMoveById(5);
+    FieldActor_WaitForMoveById(ACTOR_JENNA);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-    Actor_FaceDirection(5, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
     FieldEvent_Wait(10);
     // "Flame's strength? Hey, that must mean it's finally my turn!"
-    Event_ShowMessage(5, 0);
+    Event_ShowMessage(ACTOR_JENNA, 0);
     Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
     FieldEvent_Wait(30);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 256, 152);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     FieldEvent_Wait(20);
-    Actor_FaceDirection(5, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
     FieldEvent_Wait(20);
-    Actor_SetAnimation(5, 3);
+    Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
     FieldEvent_Wait(30);
-    Actor_FaceDirection(5, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
     FieldEvent_Wait(20);
-    Actor_WalkToAndWait(5, 264, 137);
-    Actor_FaceDirection(5, FACING_NORTH, 0);
+    Actor_WalkToAndWait(ACTOR_JENNA, 264, 137);
+    Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
     FieldEvent_Wait(20);
 #if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
     Message_ShowCentered(MsgBlazeTabletInscription + 3, 1);
@@ -2078,19 +2078,19 @@ void MagmaRockInside_ReadBlazeTablet(void) {
     MagmaRockInside_LearnBlaze(8, 5);
     Party_LearnAbility(JENNA, ABILITY_BLAZE);
     Event_SetFlag(0x9fa);
-    Actor_FaceEachOther(gMainRoutineWork.currentOwner, 5, 0);
+    Actor_FaceEachOther(gMainRoutineWork.currentOwner, ACTOR_JENNA, 0);
     FieldEvent_Wait(10);
-    Actor_SetAnimation(5, 3);
+    Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
     Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
     FieldEvent_Wait(20);
-    Actor_SetSpeed(5, 1.2);
-    Actor_SetAnimation(5, 2);
+    Actor_SetSpeed(ACTOR_JENNA, 1.2);
+    Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
     object = Actor_Get(gMainRoutineWork.currentOwner);
     if (object != 0)
-      Actor_SetDestination(5, FIELD_AT(object, s16, 10),
+      Actor_SetDestination(ACTOR_JENNA, FIELD_AT(object, s16, 10),
                            FIELD_AT(object, s16, 18));
-    FieldActor_WaitForMoveById(5);
-    Actor_SetPosition(5, 0, 0);
+    FieldActor_WaitForMoveById(ACTOR_JENNA);
+    Actor_SetPosition(ACTOR_JENNA, 0, 0);
     Actor_SetActionCallback(Actor_Get(8), 9);
     Event_End();
   }

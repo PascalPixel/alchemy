@@ -257,17 +257,17 @@ void Mikasalla_ClimbDownLadder(void) {
     exit = 3;
     drop = 9;
   }
-  Actor_FaceDirection(4, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);
-  Actor_GetById(4)->actionFlags &= ~1;
+  Actor_GetById(ACTOR_FELIX)->actionFlags &= ~1;
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
-  Actor_SetDestinationOffset(4, 0, 4);
-  Actor_WaitForMoveById(4);
-  Actor_SetSpriteFlags(Actor_GetById(4), 0);
-  Actor_SetAnimation(4, 13);
-  Actor_SetDestinationOffset(4, 0, drop);
-  Actor_WaitForMoveById(4);
-  Actor_SetAnimation(4, 10);
+  Actor_SetDestinationOffset(ACTOR_FELIX, 0, 4);
+  Actor_WaitForMoveById(ACTOR_FELIX);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FELIX), 0);
+  Actor_SetAnimation(ACTOR_FELIX, 13);
+  Actor_SetDestinationOffset(ACTOR_FELIX, 0, drop);
+  Actor_WaitForMoveById(ACTOR_FELIX);
+  Actor_SetAnimation(ACTOR_FELIX, 10);
   Event_Wait(10);
   Event_PlaySound(SE_MAP_EXIT);
   Import_EventSetExitRequest(exit);
@@ -277,16 +277,16 @@ void Mikasalla_ClimbDownLadder(void) {
 void Mikasalla_StepOntoLadderFacingEast(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_WalkByAndWait(4, 0, -14);
-  Actor_WalkByAndWait(4, 16, 0);
+  Actor_WalkByAndWait(ACTOR_FELIX, 0, -14);
+  Actor_WalkByAndWait(ACTOR_FELIX, 16, 0);
   Mikasalla_ClimbDownLadder();
 }
 
 void Mikasalla_StepOntoLadderFacingWest(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_WalkByAndWait(4, -2, -6);
-  Actor_WalkByAndWait(4, -14, -8);
+  Actor_WalkByAndWait(ACTOR_FELIX, -2, -6);
+  Actor_WalkByAndWait(ACTOR_FELIX, -14, -8);
   Mikasalla_ClimbDownLadder();
 }
 
@@ -294,26 +294,26 @@ void Mikasalla_StepOntoLadderFacingWest(void) {
 #include "shared/scene_turn_actor_and_run.h"
 
 void Mikasalla_StepOntoLadderFacingNorth(void) {
-  s32 x = ((s16 *)&Actor_GetById(4)->x)[1];
+  s32 x = ((s16 *)&Actor_GetById(ACTOR_FELIX)->x)[1];
 
   Event_Start();
   Event_ResolvePendingActions(0);
   if (x % 16 <= 7) {
-    Actor_WalkByAndWait(4, -4, -4);
-    Actor_WalkByAndWait(4, -4, -8);
+    Actor_WalkByAndWait(ACTOR_FELIX, -4, -4);
+    Actor_WalkByAndWait(ACTOR_FELIX, -4, -8);
   } else {
-    Actor_WalkByAndWait(4, 4, -4);
-    Actor_WalkByAndWait(4, 4, -8);
+    Actor_WalkByAndWait(ACTOR_FELIX, 4, -4);
+    Actor_WalkByAndWait(ACTOR_FELIX, 4, -8);
   }
-  Actor_WalkToAndWait(4, 424, 99);
+  Actor_WalkToAndWait(ACTOR_FELIX, 424, 99);
   Mikasalla_ClimbDownLadder();
 }
 
 void Mikasalla_StepOntoLadderAhead(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_WalkByAndWait(4, 0, -4);
-  Actor_WalkToAndWait(4, 424, 99);
+  Actor_WalkByAndWait(ACTOR_FELIX, 0, -4);
+  Actor_WalkToAndWait(ACTOR_FELIX, 424, 99);
   Mikasalla_ClimbDownLadder();
 }
 
@@ -570,7 +570,7 @@ struct ActorPlacement gMikasalla_VillagePlacements[] = {
     ACTOR_PLACEMENT(72, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 600, FACING_SOUTH, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(73, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 504, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(74, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 264, 0, 680, FACING_NORTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 664, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 664, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(76, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 680, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(77, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 632, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(78, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 616, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),

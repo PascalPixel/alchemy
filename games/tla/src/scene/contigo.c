@@ -1368,243 +1368,247 @@ void Contigo_TheReunion(void) {
   Sound_Play(SOUND_FADE_OUT_BGM);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_WatchAndSetScript(0, gMainRoutineWork.currentOwner);
-  Actor_WatchAndSetScript(1, gMainRoutineWork.currentOwner);
-  Actor_WatchAndSetScript(3, gMainRoutineWork.currentOwner);
-  Actor_WatchAndSetScript(2, gMainRoutineWork.currentOwner);
+  Actor_WatchAndSetScript(ACTOR_ISAAC, gMainRoutineWork.currentOwner);
+  Actor_WatchAndSetScript(ACTOR_GARET, gMainRoutineWork.currentOwner);
+  Actor_WatchAndSetScript(ACTOR_MIA, gMainRoutineWork.currentOwner);
+  Actor_WatchAndSetScript(ACTOR_IVAN, gMainRoutineWork.currentOwner);
   Actor_WatchAndSetScript(8, gMainRoutineWork.currentOwner);
   Event_Wait(10);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 160, 382);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
-  Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(6, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.currentOwner);
   Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
   wait(1);
-  Actor_SetSpeed(5, 0.8);
-  Actor_SetSpeed(7, 0.8);
+  Actor_SetSpeed(ACTOR_JENNA, 0.8);
+  Actor_SetSpeed(ACTOR_PIERS, 0.8);
   Actor_SetSpeed(9, 0.8);
-  Actor_SetSpeed(6, 0.8);
-  Actor_SetMovementTypeById(5, gContigo_JennaReunionScript);
+  Actor_SetSpeed(ACTOR_SHEBA, 0.8);
+  Actor_SetMovementTypeById(ACTOR_JENNA, gContigo_JennaReunionScript);
   Actor_SetMovementTypeById(9, gContigo_KradenReunionScript);
-  Actor_SetMovementTypeById(6, gContigo_ShebaReunionScript);
-  Actor_SetMovementTypeAndWaitById(7, gContigo_PiersReunionScript);
+  Actor_SetMovementTypeById(ACTOR_SHEBA, gContigo_ShebaReunionScript);
+  Actor_SetMovementTypeAndWaitById(ACTOR_PIERS, gContigo_PiersReunionScript);
   Actor_Stop(gMainRoutineWork.currentOwner);
-  Actor_Stop(1);
-  Actor_Stop(3);
-  Actor_Stop(2);
+  Actor_Stop(ACTOR_GARET);
+  Actor_Stop(ACTOR_MIA);
+  Actor_Stop(ACTOR_IVAN);
   Actor_Stop(8);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Sound_Play(MUS_043);
   Event_Wait(20);
-  Motion_SetModeAndWaitAnimation(0, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_ISAAC, ANIM_NOD);
   Event_SetMessageId((s32)MsgGladYouKeptYourPromise);
   // "I'm glad you kept your promise, Felix."
-  Event_ShowMessageAndWait(0, 0);
-  Actor_SetModeById(1, 3);
+  Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
+  Actor_SetModeById(ACTOR_GARET, ANIM_NOD);
   // "All right, let's hear what he has to say for himself!"
-  Event_ShowMessageAndWait(1, 0);
-  Actor_SetAttachedEffect(5, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Event_ShowMessageAndWait(ACTOR_GARET, 0);
+  Actor_SetAttachedEffect(ACTOR_JENNA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
   // "What can we say, Isaac? Has Felix ever harmed you? Have we ever..."
-  Event_ShowMessageAndWait(5, 0);
-  Actor_SetModeById(6, 3);
+  Event_ShowMessageAndWait(ACTOR_JENNA, 0);
+  Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
   // "Felix's been avoiding you, but he never had any intention of..."
-  Event_ShowMessageAndWait(6, 0);
-  Motion_SetModeAndWaitAnimation(3, 3);
+  Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
+  Motion_SetModeAndWaitAnimation(ACTOR_MIA, ANIM_NOD);
   // "And he definitely helped us out back at Jupiter Lighthouse."
-  Event_ShowMessageAndWait(3, 0);
-  Actor_SetModeById(2, 4);
+  Event_ShowMessageAndWait(ACTOR_MIA, 0);
+  Actor_SetModeById(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   // "Isaac's been worrying about Jenna nonstop since this nightmare..."
-  Event_ShowMessageAndWait(2, 0);
-  Actor_SetAttachedEffect(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Event_ShowMessageAndWait(ACTOR_IVAN, 0);
+  Actor_SetAttachedEffect(ACTOR_PIERS,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   // "She was afraid that if we met, we would be forced to fight... She..."
-  Event_ShowMessageAndWait(7, 0);
-  FieldActor_ShowEmote(0, 259, 0);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
+  FieldActor_ShowEmote(ACTOR_ISAAC, 259, 0);
   // "I know that, now... But it doesn't explain why you're doing this..."
-  Event_ShowMessageAndWait(0, 0);
+  Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
   Motion_SetModeAndWaitAnimation(9, 3);
   // "Felix betrayed his hometown, Vale... That's why he hasn't been able..."
   Event_ShowMessageAndWait(9, 0);
-  Actor_FaceDirection(0, FACING_NORTH, 0);
-  Actor_FaceDirectionAndWait(1, FACING_SOUTH);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
+  Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTH);
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveWithinMapBounds(px(148), -1, px(368), 1);
   Actor_WalkToAndWait(9, 172, 342);
-  Actor_FaceDirection(0, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(1, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(3, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(2, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(5, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(6, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
   Actor_WalkToAndWaitById(9, 146, 342);
   Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
   Actor_SetModeById(9, 4);
   // "Felix had hoped to play the villain alone, without getting Jenna or..."
   Event_ShowMessageAndWait(9, 0);
-  Actor_Jump(1, 2, 10);
+  Actor_Jump(ACTOR_GARET, 2, 10);
   // "He betrayed Vale? Kraden, what are you talking about?"
-  Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 1, 0);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_GARET, 0);
   // "He conspired to steal the Elemental Stars and fire the beacons of..."
   Event_ShowMessageAndWait(9, 0);
-  Actor_SetModeById(3, 4);
+  Actor_SetModeById(ACTOR_MIA, ANIM_SHAKE_HEAD);
   // "That's what Saturos and Menardi were trying to do..."
-  Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 3, 0);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_MIA, 0);
   // "Why were you helping them?"
-  Event_ShowMessageAndWait(2, 0);
-  FieldActor_ShowEmote(5, 261, 20);
-  Actor_FaceDirectionAndWait(5, FACING_SOUTHWEST);
+  Event_ShowMessageAndWait(ACTOR_IVAN, 0);
+  FieldActor_ShowEmote(ACTOR_JENNA, 261, 20);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTHWEST);
   // "Our parents' lives were at stake! We had to help!"
-  Event_ShowMessageAndWait(5, 0);
-  Actor_ArmCallback(1, FACING_EAST, 0);
-  Actor_ArmCallback(0, FACING_EAST, 0);
-  FieldActor_ShowEmote(0, 256, 0);
-  FieldActor_ShowEmote(1, 256, 40);
+  Event_ShowMessageAndWait(ACTOR_JENNA, 0);
+  Actor_ArmCallback(ACTOR_GARET, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_ISAAC, FACING_EAST, 0);
+  FieldActor_ShowEmote(ACTOR_ISAAC, 256, 0);
+  FieldActor_ShowEmote(ACTOR_GARET, 256, 40);
   // "Parents? But...your parents died three years ago, in that storm..."
-  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 1, 0);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
   Motion_SetModeAndWaitAnimation(9, 4);
   // "That night, Saturos and his men had raided Sol Sanctum... The storm..."
   Event_ShowMessageAndWait(9, 0);
-  Actor_FaceDirection(0, FACING_NORTH, 0);
-  Actor_FaceDirectionAndWait(1, FACING_SOUTH);
-  Actor_FaceDirectionAndWait(5, FACING_WEST);
-  Actor_SetModeById(5, 4);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
+  Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTH);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_WEST);
+  Actor_SetModeById(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   // "Garet, you saw two strangers that night°Saturos and Menardi. They..."
-  Event_ShowMessageAndWait(5, 0);
-  Actor_ArmCallback(1, FACING_EAST, 0);
-  Actor_ArmCallback(0, FACING_EAST, 0);
-  FieldActor_ShowEmote(1, 256, 0);
-  FieldActor_ShowEmote(0, 256, 40);
+  Event_ShowMessageAndWait(ACTOR_JENNA, 0);
+  Actor_ArmCallback(ACTOR_GARET, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_ISAAC, FACING_EAST, 0);
+  FieldActor_ShowEmote(ACTOR_GARET, 256, 0);
+  FieldActor_ShowEmote(ACTOR_ISAAC, 256, 40);
   // "They had failed to solve the mystery of Sol Sanctum. In doing so..."
   Event_ShowMessageAndWait(9, 0);
-  Motion_SetModeAndWaitAnimation(5, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_JENNA, ANIM_NOD);
   // "Everyone thought that you were killed by that boulder, Felix. I..."
-  Event_ShowMessageAndWait(5, 0);
-  Actor_SetModeById(1, 3);
-  Motion_SetModeAndWaitAnimation(0, 3);
+  Event_ShowMessageAndWait(ACTOR_JENNA, 0);
+  Actor_SetModeById(ACTOR_GARET, ANIM_NOD);
+  Motion_SetModeAndWaitAnimation(ACTOR_ISAAC, ANIM_NOD);
   Actor_SetModeById(9, 4);
   // "In fact, nobody was killed by the boulder that day!"
   Event_ShowMessageAndWait(9, 0);
-  FieldActor_ShowEmote(0, 265, 20);
-  Actor_FaceDirection(0, FACING_NORTHEAST, 0);
+  FieldActor_ShowEmote(ACTOR_ISAAC, 265, 20);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
   // "So that means..."
-  Event_ShowMessageThenWait(0, 0, 40);
-  FieldActor_ShowEmote(2, 257, 20);
+  Event_ShowMessageThenWait(ACTOR_ISAAC, 0, 40);
+  FieldActor_ShowEmote(ACTOR_IVAN, 257, 20);
   // "Wait a minute, Kraden... Did you just say that nobody was killed by..."
-  Event_ShowMessageAndWait(2, 0);
-  FieldActor_ShowEmote(3, 256, 0);
-  Actor_FaceDirectionAndWait(3, FACING_SOUTH);
+  Event_ShowMessageAndWait(ACTOR_IVAN, 0);
+  FieldActor_ShowEmote(ACTOR_MIA, 256, 0);
+  Actor_FaceDirectionAndWait(ACTOR_MIA, FACING_SOUTH);
   // "But what about Isaac's dad? And Jenna and Felix's parents? I thought..."
-  Event_ShowMessageAndWait(3, 0);
-  Actor_FaceDirectionAndWait(2, FACING_NORTH);
-  Motion_SetModeAndWaitAnimation(2, 3);
-  Actor_FaceDirectionAndWait(2, FACING_NORTHEAST);
-  Actor_ArmCallback(0, FACING_EAST, 0);
-  FieldActor_ShowEmote(0, 256, 20);
+  Event_ShowMessageAndWait(ACTOR_MIA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTH);
+  Motion_SetModeAndWaitAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHEAST);
+  Actor_ArmCallback(ACTOR_ISAAC, FACING_EAST, 0);
+  FieldActor_ShowEmote(ACTOR_ISAAC, 256, 20);
   // "I'm not so sure now..."
-  Event_ShowMessageAndWait(0, 0);
-  Actor_ArmCallback(3, FACING_EAST, 0);
-  FieldActor_ShowEmote(1, 257, 0);
-  Actor_FaceDirectionAndWait(1, FACING_NORTHEAST);
+  Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
+  Actor_ArmCallback(ACTOR_MIA, FACING_EAST, 0);
+  FieldActor_ShowEmote(ACTOR_GARET, 257, 0);
+  Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_NORTHEAST);
   Motion_SetModeAndWaitAnimation(9, 3);
   // "Yes! If Felix survived, Kyle and the others may have as well..."
   Event_ShowMessageAndWait(9, 0);
-  FieldActor_ShowEmote(3, 257, 20);
-  Actor_FaceDirectionAndWait(3, FACING_SOUTHEAST);
+  FieldActor_ShowEmote(ACTOR_MIA, 257, 20);
+  Actor_FaceDirectionAndWait(ACTOR_MIA, FACING_SOUTHEAST);
   // "Why didn't you tell us? We could have worked together to save your..."
-  FieldMessage_ShowAtActor(3, 0);
-  Actor_FaceDirection(1, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
-  Actor_FaceDirection(7, FACING_SOUTHWEST, 0);
+  FieldMessage_ShowAtActor(ACTOR_MIA, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
   answer = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   owner = gMainRoutineWork.currentOwner;
   if (answer == 0) {
     Actor_WaitForAnimationChange(owner);
-    Actor_SetModeById(2, 3);
-    Event_ShowMessageAndWait(2, 0);
+    Actor_SetModeById(ACTOR_IVAN, ANIM_NOD);
+    Event_ShowMessageAndWait(ACTOR_IVAN, 0);
     gFieldWork->message++;
   } else {
     Actor_WaitForAnimationChange(owner);
     gFieldWork->message++;
-    Actor_SetModeById(2, 4);
-    Event_ShowMessageAndWait(2, 0);
+    Actor_SetModeById(ACTOR_IVAN, ANIM_SHAKE_HEAD);
+    Event_ShowMessageAndWait(ACTOR_IVAN, 0);
   }
   Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
   Motion_SetModeAndWaitAnimation(9, 4);
   Event_ShowMessageAndWait(9, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
-  Actor_FaceDirection(5, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(7, FACING_WEST, 0);
-  Actor_ArmCallback(3, FACING_EAST, 0);
-  Actor_FaceDirection(0, FACING_NORTH, 0);
-  Actor_FaceDirectionAndWait(1, FACING_SOUTH);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
+  Actor_ArmCallback(ACTOR_MIA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
+  Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTH);
   FieldActor_ShowEmote(9, 265, 20);
   Event_ShowMessageAndWait(9, 0);
-  FieldActor_ShowEmote(0, 256, 0);
-  Actor_FaceDirection(1, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(0, FACING_NORTHEAST, 20);
-  Event_ShowMessageAndWait(0, 0);
-  Actor_FaceDirectionAndWait(7, FACING_SOUTHWEST);
-  Actor_SetModeById(7, 4);
-  Event_ShowMessageAndWait(7, 0);
-  Actor_ArmCallback(0, FACING_EAST, 0);
-  Actor_ArmCallback(1, FACING_EAST, 0);
-  Actor_ArmCallback(2, FACING_EAST, 0);
-  FieldActor_ShowEmote(0, 256, 0);
-  FieldActor_ShowEmote(1, 256, 0);
-  FieldActor_ShowEmote(3, 256, 0);
-  FieldActor_ShowEmote(2, 256, 20);
-  Actor_FaceDirectionAndWait(6, FACING_WEST);
-  Motion_SetModeAndWaitAnimation(6, 3);
-  Event_ShowMessageAndWait(6, 0);
-  Actor_FaceDirection(1, FACING_SOUTH, 0);
-  Actor_FaceDirection(0, FACING_NORTH, 20);
-  FieldActor_ShowEmote(3, 257, 20);
-  Event_ShowMessageAndWait(3, 0);
-  Actor_FaceDirection(1, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(0, FACING_NORTHEAST, 0);
+  FieldActor_ShowEmote(ACTOR_ISAAC, 256, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 20);
+  Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
+  Actor_SetModeById(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
+  Actor_ArmCallback(ACTOR_ISAAC, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_GARET, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_IVAN, FACING_EAST, 0);
+  FieldActor_ShowEmote(ACTOR_ISAAC, 256, 0);
+  FieldActor_ShowEmote(ACTOR_GARET, 256, 0);
+  FieldActor_ShowEmote(ACTOR_MIA, 256, 0);
+  FieldActor_ShowEmote(ACTOR_IVAN, 256, 20);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_WEST);
+  Motion_SetModeAndWaitAnimation(ACTOR_SHEBA, ANIM_NOD);
+  Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 20);
+  FieldActor_ShowEmote(ACTOR_MIA, 257, 20);
+  Event_ShowMessageAndWait(ACTOR_MIA, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
   FieldActor_ShowEmote(9, 265, 40);
   Event_ShowMessageAndWait(9, 0);
-  Actor_SetAttachedEffect(1, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
-  Event_ShowMessageAndWait(1, 0);
+  Event_ShowMessageAndWait(ACTOR_GARET, 0);
   Motion_SetModeAndWaitAnimation(9, 3);
   Event_ShowMessageThenWait(9, 0, 80);
-  Event_ShowMessageAndWait(0, 0);
+  Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
   Actor_SetModeById(9, 4);
   Event_ShowMessageAndWait(9, 0);
   Event_ShowMessageAndWait(9, 0);
-  Actor_FaceDirectionAndWait(1, FACING_SOUTHEAST);
+  Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTHEAST);
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | 1, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
   answer = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   owner = gMainRoutineWork.currentOwner;
   if (answer == 0) {
     Actor_WaitForAnimationChange(owner);
-    Actor_SetAttachedEffect(1, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 1, 0);
+    Actor_SetAttachedEffect(ACTOR_GARET,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
     gFieldWork->message++;
   } else {
     Actor_WaitForAnimationChange(owner);
-    FieldActor_ShowEmote(1, 264, 20);
+    FieldActor_ShowEmote(ACTOR_GARET, 264, 20);
     gFieldWork->message++;
-    Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 1, 0);
+    Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
   }
-  Actor_FaceDirection(5, FACING_WEST, 0);
-  Actor_ArmCallback(0, FACING_EAST, 0);
-  FieldActor_ShowEmote(0, 265, 20);
-  Event_ShowMessageAndWait(0, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
+  Actor_ArmCallback(ACTOR_ISAAC, FACING_EAST, 0);
+  FieldActor_ShowEmote(ACTOR_ISAAC, 265, 20);
+  Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
   Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
   Actor_SetModeById(9, 4);
   Event_ShowMessageAndWait(9, 0);
-  Actor_FaceDirection(0, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(1, FACING_NORTHEAST, 0);
-  FieldActor_ShowEmote(0, 261, 0);
-  FieldActor_ShowEmote(1, 261, 20);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
+  FieldActor_ShowEmote(ACTOR_ISAAC, 261, 0);
+  FieldActor_ShowEmote(ACTOR_GARET, 261, 20);
   Sound_Play(MUS_000);
   Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(8)), 15);
   angle = 0xb000;
@@ -1612,13 +1616,13 @@ void Contigo_TheReunion(void) {
   wait(1);
   Event_ShowMessageAndWait(8, 0);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 8);
-  Actor_WatchAndSetScript(5, 8);
-  Actor_WatchAndSetScript(7, 8);
-  Actor_WatchAndSetScript(6, 8);
-  Actor_WatchAndSetScript(0, 8);
-  Actor_WatchAndSetScript(1, 8);
-  Actor_WatchAndSetScript(3, 8);
-  Actor_WatchAndSetScript(2, 8);
+  Actor_WatchAndSetScript(ACTOR_JENNA, 8);
+  Actor_WatchAndSetScript(ACTOR_PIERS, 8);
+  Actor_WatchAndSetScript(ACTOR_SHEBA, 8);
+  Actor_WatchAndSetScript(ACTOR_ISAAC, 8);
+  Actor_WatchAndSetScript(ACTOR_GARET, 8);
+  Actor_WatchAndSetScript(ACTOR_MIA, 8);
+  Actor_WatchAndSetScript(ACTOR_IVAN, 8);
   Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(8)), 0);
   FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveTo(180, CAMERA_KEEP, 410, 1);
@@ -1627,130 +1631,141 @@ void Contigo_TheReunion(void) {
   FieldCamera_MoveTo(148, CAMERA_KEEP, 368, 1);
   Actor_SetSpeed(8, 0.8);
   Actor_WalkToAndWait(8, 146, 406);
-  FieldActor_ShowEmote(3, 264, 20);
-  Event_ShowMessageAndWait(3, 0);
+  FieldActor_ShowEmote(ACTOR_MIA, 264, 20);
+  Event_ShowMessageAndWait(ACTOR_MIA, 0);
   Actor_Stop(gMainRoutineWork.currentOwner);
-  Actor_Stop(5);
-  Actor_Stop(7);
-  Actor_Stop(6);
-  Actor_Stop(0);
-  Actor_Stop(1);
-  Actor_Stop(3);
-  Actor_Stop(2);
+  Actor_Stop(ACTOR_JENNA);
+  Actor_Stop(ACTOR_PIERS);
+  Actor_Stop(ACTOR_SHEBA);
+  Actor_Stop(ACTOR_ISAAC);
+  Actor_Stop(ACTOR_GARET);
+  Actor_Stop(ACTOR_MIA);
+  Actor_Stop(ACTOR_IVAN);
   Sound_Play(MUS_705);
   Motion_SetModeAndWaitAnimation(8, 3);
   Event_ShowMessageAndWait(8, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
-  Actor_SetModeById(5, 3);
-  Actor_SetModeById(7, 3);
-  Actor_SetModeById(6, 3);
-  Actor_SetModeById(0, 3);
-  Actor_SetModeById(1, 3);
-  Actor_SetModeById(3, 3);
-  Motion_SetModeAndWaitAnimation(2, 3);
+  Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetModeById(ACTOR_PIERS, ANIM_NOD);
+  Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetModeById(ACTOR_ISAAC, ANIM_NOD);
+  Actor_SetModeById(ACTOR_GARET, ANIM_NOD);
+  Actor_SetModeById(ACTOR_MIA, ANIM_NOD);
+  Motion_SetModeAndWaitAnimation(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(20);
   FieldActor_ShowEmote(9, 257, 20);
   Event_ShowMessageAndWait(9, 0);
-  Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
-  Actor_SetModeById(0, 3);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHEAST);
+  Actor_SetModeById(ACTOR_ISAAC, ANIM_NOD);
   Event_Wait(10);
 #if !TLA_PATCH_1
-  FieldEvent_ShowTwoMessagesAndWait(0, 5, 5, 8, 10, 8, 9, 20, 18, 12, 10);
+  FieldEvent_ShowTwoMessagesAndWait(ACTOR_ISAAC, 5, 5, 8, 10, 8, 9, 20, 18, 12,
+                                    10);
 #else
-  FieldEvent_ShowTwoMessagesAndWait(0, 5, 5, 8, 10, 8, 9, 20, 18, 10, 10);
+  FieldEvent_ShowTwoMessagesAndWait(ACTOR_ISAAC, 5, 5, 8, 10, 8, 9, 20, 18, 10,
+                                    10);
 #endif
-  Actor_FaceDirection(0, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTHEAST, 0);
   FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 256, 0);
-  FieldActor_ShowEmote(5, 256, 0);
-  FieldActor_ShowEmote(7, 256, 0);
-  FieldActor_ShowEmote(6, 256, 0);
-  FieldActor_ShowEmote(0, 256, 0);
-  FieldActor_ShowEmote(1, 256, 0);
-  FieldActor_ShowEmote(3, 256, 0);
-  FieldActor_ShowEmote(2, 256, 0);
+  FieldActor_ShowEmote(ACTOR_JENNA, 256, 0);
+  FieldActor_ShowEmote(ACTOR_PIERS, 256, 0);
+  FieldActor_ShowEmote(ACTOR_SHEBA, 256, 0);
+  FieldActor_ShowEmote(ACTOR_ISAAC, 256, 0);
+  FieldActor_ShowEmote(ACTOR_GARET, 256, 0);
+  FieldActor_ShowEmote(ACTOR_MIA, 256, 0);
+  FieldActor_ShowEmote(ACTOR_IVAN, 256, 0);
   FieldActor_ShowEmote(9, 256, 40);
   Actor_SetModeById(8, 3);
   Event_ShowMessageAndWait(8, 0);
-  Actor_SetAttachedEffect(1, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
-  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 1, 0);
-  Event_ShowMessageAndWait(3, 0);
-  Actor_FaceDirectionAndWait(6, FACING_WEST);
-  Event_ShowMessageAndWait(6, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
+  Event_ShowMessageAndWait(ACTOR_MIA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_WEST);
+  Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   FieldActor_ShowEmote(8, 265, 0);
   Actor_FaceDirectionById(8, FACING_EAST);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 8, 0);
-  Actor_SetSpeed(2, 0.8);
-  Actor_WalkToAndWait(2, 130, 400);
-  Actor_ArmCallback(2, FACING_EAST, 0);
+  Actor_SetSpeed(ACTOR_IVAN, 0.8);
+  Actor_WalkToAndWait(ACTOR_IVAN, 130, 400);
+  Actor_ArmCallback(ACTOR_IVAN, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(8, FACING_WEST);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 8, 0);
-  FieldActor_ShowEmote(2, 256, 20);
+  FieldActor_ShowEmote(ACTOR_IVAN, 256, 20);
   Actor_SetModeById(8, 4);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 8, 0);
-  Actor_FaceDirection(0, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(1, FACING_NORTHWEST, 0);
-  Actor_ArmCallback(3, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
+  Actor_ArmCallback(ACTOR_MIA, FACING_EAST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
-  Actor_FaceDirection(7, FACING_SOUTH, 0);
-  Actor_FaceDirection(6, FACING_NORTH, 40);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 40);
   Actor_FaceDirectionAndWait(8, FACING_NORTH_NORTHEAST);
   Event_ShowMessageAndWait(8, 0);
-  Actor_FaceDirection(0, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(1, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(3, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
-  Actor_FaceDirection(7, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(6, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
   Actor_SetModeById(8, 4);
   Event_ShowMessageAndWait(8, 0);
-  Event_ShowMessageThenWait(5, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Contigo_StartSparkle(object, gContigo_SparkleWork);
   Event_Wait(80);
   Contigo_StopSparkle(object);
   Motion_SetModeAndWaitAnimation(8, 4);
   Event_ShowMessageAndWait(8, 0);
-  Actor_SetAttachedEffect(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_ShowMessageThenWait(7, 0, 10);
+  Actor_SetAttachedEffect(ACTOR_PIERS,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Contigo_StartSparkle(object, gContigo_SparkleWork);
   Event_Wait(80);
   Contigo_StopSparkle(object);
   Actor_FaceDirectionAndWait(8, FACING_NORTH_NORTHEAST);
   Actor_SetModeById(8, 4);
   Event_ShowMessageAndWait(8, 0);
-  Actor_SetAttachedEffect(0, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(1, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(3, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_ISAAC,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_MIA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(5, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(2, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_JENNA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_PIERS,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_SHEBA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_IVAN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
   Actor_FaceDirectionById(8, angle);
   Actor_SetModeById(8, 4);
   Event_ShowMessageAndWait(8, 0);
-  Actor_ArmCallback(0, FACING_EAST, 0);
-  Actor_ArmCallback(1, FACING_EAST, 0);
-  Actor_ArmCallback(3, FACING_EAST, 0);
-  Actor_FaceDirection(2, FACING_NORTHEAST, 0);
+  Actor_ArmCallback(ACTOR_ISAAC, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_GARET, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_MIA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
-  Actor_FaceDirection(5, FACING_WEST, 0);
-  Actor_FaceDirection(6, FACING_WEST, 0);
-  Actor_FaceDirection(7, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   Actor_Jump(9, 4, 10);
   Event_ShowMessageAndWait(9, 0);
-  Actor_SetModeById(0, 3);
-  Actor_SetModeById(1, 3);
-  Actor_SetModeById(3, 3);
-  Actor_SetModeById(2, 3);
+  Actor_SetModeById(ACTOR_ISAAC, ANIM_NOD);
+  Actor_SetModeById(ACTOR_GARET, ANIM_NOD);
+  Actor_SetModeById(ACTOR_MIA, ANIM_NOD);
+  Actor_SetModeById(ACTOR_IVAN, ANIM_NOD);
   Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
-  Actor_SetModeById(5, 3);
-  Actor_SetModeById(6, 3);
-  Actor_SetModeById(7, 3);
+  Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetModeById(ACTOR_PIERS, ANIM_NOD);
   FieldActor_ShowEmote(8, 264, 20);
   Event_ShowMessageAndWait(8, 0);
   Event_ShowMessageAndWait(8, 0);
@@ -1764,35 +1779,36 @@ void Contigo_TheReunion(void) {
   FieldCamera_MoveWithinMapBounds(px(148), -1, px(368), 1);
   FieldCamera_WaitForArrival();
   Scene_PlayMusic();
-  FieldActor_ShowEmote(5, 265, 20);
-  Event_ShowMessageAndWait(5, 0);
-  Actor_FaceDirection(1, FACING_SOUTH, 0);
-  Actor_FaceDirection(0, FACING_NORTH, 20);
-  Actor_ArmCallback(1, FACING_EAST, 0);
-  Actor_FaceDirectionById(0, FACING_EAST);
-  Actor_SetModeById(1, 3);
-  Motion_SetModeAndWaitAnimation(0, 3);
-  Actor_Jump(5, 2, 0);
-  Actor_FaceDirectionAndWait(5, FACING_SOUTH);
-  Actor_SetModeById(5, 3);
-  Event_ShowMessageAndWait(5, 0);
-  Actor_FaceDirectionAndWait(6, FACING_NORTHWEST);
-  Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_ShowMessageAndWait(6, 0);
-  Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
-  FieldActor_ShowEmote(3, 264, 20);
-  Event_ShowMessageAndWait(3, 0);
-  Actor_FaceDirection(5, FACING_WEST, 0);
-  Actor_SetModeById(7, 3);
-  Event_ShowMessageAndWait(7, 0);
-  FieldActor_ShowEmote(1, 265, 20);
-  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 1, 0);
-  Actor_FaceDirectionAndWait(0, FACING_NORTH);
-  Actor_SetModeById(0, 3);
-  Event_ShowMessageAndWait(0, 0);
-  FieldActor_ShowEmote(5, 264, 0);
-  Actor_FaceDirection(5, FACING_SOUTH, 20);
-  FieldMessage_ShowAtActor(5, 0);
+  FieldActor_ShowEmote(ACTOR_JENNA, 265, 20);
+  Event_ShowMessageAndWait(ACTOR_JENNA, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 20);
+  Actor_ArmCallback(ACTOR_GARET, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_ISAAC, FACING_EAST);
+  Actor_SetModeById(ACTOR_GARET, ANIM_NOD);
+  Motion_SetModeAndWaitAnimation(ACTOR_ISAAC, ANIM_NOD);
+  Actor_Jump(ACTOR_JENNA, 2, 0);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTH);
+  Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
+  Event_ShowMessageAndWait(ACTOR_JENNA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_NORTHWEST);
+  Actor_SetAttachedEffect(ACTOR_SHEBA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
+  FieldActor_ShowEmote(ACTOR_MIA, 264, 20);
+  Event_ShowMessageAndWait(ACTOR_MIA, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
+  Actor_SetModeById(ACTOR_PIERS, ANIM_NOD);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
+  FieldActor_ShowEmote(ACTOR_GARET, 265, 20);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTH);
+  Actor_SetModeById(ACTOR_ISAAC, ANIM_NOD);
+  Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
+  FieldActor_ShowEmote(ACTOR_JENNA, 264, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 20);
+  FieldMessage_ShowAtActor(ACTOR_JENNA, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHEAST);
@@ -1811,22 +1827,22 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 9,
                            0);
-  Actor_SetModeById(0, 3);
-  Actor_SetModeById(1, 3);
-  Actor_SetModeById(3, 3);
-  Actor_SetModeById(2, 3);
+  Actor_SetModeById(ACTOR_ISAAC, ANIM_NOD);
+  Actor_SetModeById(ACTOR_GARET, ANIM_NOD);
+  Actor_SetModeById(ACTOR_MIA, ANIM_NOD);
+  Actor_SetModeById(ACTOR_IVAN, ANIM_NOD);
   Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
-  Actor_SetModeById(5, 3);
-  Actor_SetModeById(6, 3);
-  Motion_SetModeAndWaitAnimation(7, 3);
-  Actor_SetMovementTypeById(0, gContigo_IsaacLeavesScript);
-  Actor_SetMovementTypeById(1, gContigo_IsaacLeavesScript);
-  Actor_SetMovementTypeById(3, gContigo_IsaacLeavesScript);
-  Actor_SetMovementTypeById(2, gContigo_IsaacLeavesScript);
+  Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
+  Motion_SetModeAndWaitAnimation(ACTOR_PIERS, ANIM_NOD);
+  Actor_SetMovementTypeById(ACTOR_ISAAC, gContigo_IsaacLeavesScript);
+  Actor_SetMovementTypeById(ACTOR_GARET, gContigo_IsaacLeavesScript);
+  Actor_SetMovementTypeById(ACTOR_MIA, gContigo_IsaacLeavesScript);
+  Actor_SetMovementTypeById(ACTOR_IVAN, gContigo_IsaacLeavesScript);
   Actor_SetMovementTypeById(9, gContigo_IsaacLeavesScript);
-  Actor_SetMovementTypeById(5, gContigo_IsaacLeavesScript);
-  Actor_SetMovementTypeById(6, gContigo_IsaacLeavesScript);
-  Actor_SetMovementTypeAndWaitById(7, gContigo_IsaacLeavesScript);
+  Actor_SetMovementTypeById(ACTOR_JENNA, gContigo_IsaacLeavesScript);
+  Actor_SetMovementTypeById(ACTOR_SHEBA, gContigo_IsaacLeavesScript);
+  Actor_SetMovementTypeAndWaitById(ACTOR_PIERS, gContigo_IsaacLeavesScript);
   Party_AddIsaacsParty();
   GameFlag_Set(FLAG_REUNITED_AT_CONTIGO);
   Event_End();
@@ -1843,60 +1859,61 @@ void Contigo_ReturnToNewHome(void) {
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 158, 394);
     Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
-    Actor_MoveToObject(2, gMainRoutineWork.currentOwner);
+    Actor_MoveToObject(ACTOR_IVAN, gMainRoutineWork.currentOwner);
     wait(1);
-    Actor_SetSpeed(2, 0.8);
-    Actor_WalkToAndWaitById(2, 144, 374);
-    Actor_FaceDirectionAndWait(2, FACING_NORTHEAST);
+    Actor_SetSpeed(ACTOR_IVAN, 0.8);
+    Actor_WalkToAndWaitById(ACTOR_IVAN, 144, 374);
+    Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHEAST);
     FieldActor_ShowEmote(8, 265, 20);
     Event_SetMessageId((s32)MsgReturnedToMyNewHome);
     // "Ah, you've returned! What brings you to my new home?"
     Event_ShowMessageAndWait(8, 0);
-    Motion_SetModeAndWaitAnimation(2, 3);
+    Motion_SetModeAndWaitAnimation(ACTOR_IVAN, ANIM_NOD);
     // "Hamma..."
-    Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 2, 0);
-    Actor_SetModeById(2, 4);
+    Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
+    Actor_SetModeById(ACTOR_IVAN, ANIM_SHAKE_HEAD);
     // "You're my sister... Why didn't you tell me sooner? Why didn't you..."
-    Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 2, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
     Actor_SetModeById(8, 4);
     // "You play an important role in all this. If I'd told you, you would..."
     Event_ShowMessageAndWait(8, 0);
-    Actor_FaceDirection(2, FACING_NORTHWEST, 40);
-    Actor_WalkToAndWait(2, 180, 364);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 40);
+    Actor_WalkToAndWait(ACTOR_IVAN, 180, 364);
     Event_Wait(20);
-    Actor_WalkToAndWait(2, 186, 388);
+    Actor_WalkToAndWait(ACTOR_IVAN, 186, 388);
     Event_Wait(40);
-    Actor_WalkToAndWait(2, 146, 380);
-    FieldActor_ShowEmote(2, 265, 20);
+    Actor_WalkToAndWait(ACTOR_IVAN, 146, 380);
+    FieldActor_ShowEmote(ACTOR_IVAN, 265, 20);
     // "This place is so familiar... I feel like I've lived here my whole life."
-    Event_ShowMessageAndWait(2, 0);
+    Event_ShowMessageAndWait(ACTOR_IVAN, 0);
     FieldActor_ShowEmote(8, 259, 20);
     // "Look at me, Ivan."
     Event_ShowMessageAndWait(8, 0);
-    FieldActor_ShowEmote(2, 257, 0);
-    Actor_FaceDirection(2, FACING_NORTHEAST, 40);
+    FieldActor_ShowEmote(ACTOR_IVAN, 257, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 40);
     // "You're too sentimental. You would have given up your quest to find..."
     Event_ShowMessageAndWait(8, 0);
-    FieldActor_ShowEmote(2, 256, 0);
+    FieldActor_ShowEmote(ACTOR_IVAN, 256, 0);
     // "What are you saying, sister?"
-    Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 2, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
     Actor_SetModeById(8, 4);
     // "No, not sister... Do not think of me as your sister until you have..."
     Event_ShowMessageAndWait(8, 0);
-    Actor_SetAttachedEffect(2, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(ACTOR_IVAN,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     // "W-Why?"
-    Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 2, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
     FieldActor_ShowEmote(8, 265, 20);
     // "Our world is falling into ruin..."
     Event_ShowMessageAndWait(8, 0);
-    Actor_MoveToObject(0, gMainRoutineWork.currentOwner);
+    Actor_MoveToObject(ACTOR_ISAAC, gMainRoutineWork.currentOwner);
     wait(1);
-    FieldActor_ShowEmote(0, 256, 0);
-    Actor_SetSpeed(0, 1.2);
-    Actor_WalkToAndWaitById(0, 168, 380);
-    Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
+    FieldActor_ShowEmote(ACTOR_ISAAC, 256, 0);
+    Actor_SetSpeed(ACTOR_ISAAC, 1.2);
+    Actor_WalkToAndWaitById(ACTOR_ISAAC, 168, 380);
+    Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHWEST);
     // "What? Hamma, what do you mean? What's happening?"
-    Event_ShowMessageAndWait(0, 0);
+    Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
     FieldActor_ShowEmote(8, 256, 0);
     Actor_FaceDirection(8, FACING_SOUTH_SOUTHEAST, 0);
     Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
@@ -1920,8 +1937,8 @@ void Contigo_ReturnToNewHome(void) {
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 8, 0);
     FieldActor_ShowEmote(9, 257, 0);
     FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 257, 0);
-    FieldActor_ShowEmote(0, 257, 0);
-    FieldActor_ShowEmote(2, 257, 40);
+    FieldActor_ShowEmote(ACTOR_ISAAC, 257, 0);
+    FieldActor_ShowEmote(ACTOR_IVAN, 257, 40);
     Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
     // "Without that balance, one element might be lost beneath the others..."
     Event_ShowMessageAndWait(8, 0);
@@ -1929,114 +1946,114 @@ void Contigo_ReturnToNewHome(void) {
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
     Actor_FaceDirectionById(8, FACING_EAST);
     Motion_SetModeAndWaitAnimation(8, 3);
-    Actor_FaceDirection(2, FACING_NORTHWEST, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 40);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-    Actor_FaceDirectionAndWait(2, FACING_NORTHEAST);
+    Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHEAST);
     // "Isn't Agatio taking care of Mars Lighthouse? Everything should be..."
-    Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 2, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
     FieldActor_ShowEmote(8, 259, 0);
     Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 20);
     // "Agatio will not light Mars Lighthouse."
     Event_ShowMessageAndWait(8, 0);
-    Actor_FaceDirection(0, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
     Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 40);
     Actor_FaceDirection(9, FACING_WEST, 0);
-    Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
+    Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHWEST);
     // "You don't think he can do it?"
-    Event_ShowMessageAndWait(0, 0);
+    Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
     Actor_SetAttachedEffect(8, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHEAST);
     // "No. A great power stands ready to oppose them."
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 8, 0);
     FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 256, 0);
-    FieldActor_ShowEmote(0, 256, 0);
-    FieldActor_ShowEmote(2, 256, 0);
+    FieldActor_ShowEmote(ACTOR_ISAAC, 256, 0);
+    FieldActor_ShowEmote(ACTOR_IVAN, 256, 0);
     FieldActor_ShowEmote(9, 256, 40);
     Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
     Actor_SetModeById(8, 4);
     // "They lack the power to resist that force, and they will fall before it."
     Event_ShowMessageAndWait(8, 0);
-    Actor_FaceDirection(0, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
     Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
-    Actor_FaceDirection(2, FACING_NORTHWEST, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 40);
     FieldEffect_SetAttached(0, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(20);
-    Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
+    Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHWEST);
     // "But what will happen if Mars Lighthouse isn't lit quickly enough?"
-    Event_ShowMessageAndWait(0, 0);
+    Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
     Actor_FaceDirection(9, FACING_WEST, 0);
-    Actor_FaceDirection(2, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
     FieldActor_ShowEmote(8, 265, 0);
     Actor_FaceDirection(8, FACING_SOUTH_SOUTHEAST, 0);
     // "Our world will be plunged into ice."
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 8, 0);
-    Motion_SetVarCbAndRefresh(2, 1);
+    Motion_SetVarCbAndRefresh(ACTOR_IVAN, 1);
     // "But what would make that happen?"
-    Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 2, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
     Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
     // "Even I do not know the answer to that question."
     Event_ShowMessageAndWait(8, 0);
     FieldActor_ShowEmote(9, 261, 20);
-    Actor_FaceDirection(0, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
     Actor_ArmCallback(8, FACING_EAST, 80);
     FieldActor_ShowEmote(9, 261, 40);
-    FieldActor_ShowEmote(0, 257, 0);
+    FieldActor_ShowEmote(ACTOR_ISAAC, 257, 0);
     FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 257, 0);
-    FieldActor_ShowEmote(2, 257, 40);
+    FieldActor_ShowEmote(ACTOR_IVAN, 257, 40);
     FieldActor_ShowEmote(9, 262, 0);
     // "Ah... Yes, given the way that the elements interact, I see..."
     Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 9, 0);
     // "Kraden, you understand?"
-    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 0, 0);
+    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ISAAC, 0);
     FieldActor_ShowEmote(9, 264, 0);
     Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 20);
     // "Well, I'm only guessing... But I think it's a good guess."
     Event_ShowMessageAndWait(9, 0);
-    Actor_Jump(2, 2, 10);
+    Actor_Jump(ACTOR_IVAN, 2, 10);
     // "Quit fooling around and tell me!"
-    Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 2, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
     Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
     Motion_SetModeAndWaitAnimation(9, 3);
     // "The earth is nurturing and warm. Many creatures are reared in this..."
     FieldMessage_ShowAtActor(9, 0);
-    FieldActor_ShowEmote(2, 257, 0);
-    Actor_FaceDirection(2, FACING_NORTHWEST, 0);
+    FieldActor_ShowEmote(ACTOR_IVAN, 257, 0);
+    Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
-      Actor_FaceDirectionAndWait(2, FACING_NORTHEAST);
-      Actor_SetModeById(2, 3);
+      Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHEAST);
+      Actor_SetModeById(ACTOR_IVAN, ANIM_NOD);
       // "I follow you..."
-      Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 2, 0);
+      Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
       gFieldWork->message++;
     } else {
-      Actor_FaceDirectionAndWait(2, FACING_NORTHEAST);
+      Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHEAST);
       gFieldWork->message++;
-      Actor_SetModeById(2, 4);
+      Actor_SetModeById(ACTOR_IVAN, ANIM_SHAKE_HEAD);
       // "It's OK, Felix... I don't really get it either, but let's see..."
-      Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 2, 0);
+      Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
     }
     Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
     Actor_SetModeById(9, 4);
     // "Now, think about the ocean. It is a cold place, is it not?"
     FieldMessage_ShowAtActor(9, 0);
-    FieldActor_ShowEmote(0, 257, 0);
-    Actor_FaceDirection(0, FACING_NORTHWEST, 0);
+    FieldActor_ShowEmote(ACTOR_ISAAC, 257, 0);
+    Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHWEST, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
-      Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
-      Actor_SetModeById(0, 3);
+      Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHEAST);
+      Actor_SetModeById(ACTOR_ISAAC, ANIM_NOD);
       // "Yeah, it is awfully cold..."
-      Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 0, 0);
+      Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ISAAC, 0);
       gFieldWork->message++;
     } else {
-      Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
+      Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHEAST);
       gFieldWork->message++;
-      Actor_SetModeById(0, 4);
+      Actor_SetModeById(ACTOR_ISAAC, ANIM_SHAKE_HEAD);
       // "I don't know what point he's trying to make, but I have to agree..."
-      Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 0, 0);
+      Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ISAAC, 0);
     }
     Motion_SetModeAndWaitAnimation(9, 3);
     // "Both lighthouses were lit, and a balance was reached."
@@ -2045,16 +2062,17 @@ void Contigo_ReturnToNewHome(void) {
     Actor_FaceDirectionAndWait(9, FACING_WEST);
     // "But with only the lighthouse of wind lit, the balance has been..."
     Event_ShowMessageAndWait(9, 0);
-    Actor_SetAttachedEffect(2, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(ACTOR_IVAN,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     // "I get it... Wind cools things down, but it can't heat them up..."
-    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 2, 0);
+    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
     Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
     Actor_SetModeById(9, 3);
     // "When you burn your hand on something hot, you blow on it to cool it..."
     Event_ShowMessageAndWait(9, 0);
-    Actor_SetModeById(0, 3);
+    Actor_SetModeById(ACTOR_ISAAC, ANIM_NOD);
     // "Right, yeah... I've always done that without thinking about it, but..."
-    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 0, 0);
+    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ISAAC, 0);
     FieldActor_ShowEmote(8, 257, 20);
     // "When Mercury Lighthouse was lit, this didn't happen, though. I..."
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 8, 0);
@@ -2066,13 +2084,14 @@ void Contigo_ReturnToNewHome(void) {
     FieldActor_ShowEmote(9, 265, 0);
     // "Or maybe the combined power of water and wind is cooling things down..."
     Event_ShowMessageAndWait(9, 0);
-    Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
+    Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHWEST);
     // "If what Hamma's saying is true, we'd better get moving again, Felix."
-    Event_ShowMessageAndWait(0, 0);
-    Actor_SetAttachedEffect(2, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Actor_FaceDirectionAndWait(2, FACING_NORTHWEST);
+    Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
+    Actor_SetAttachedEffect(ACTOR_IVAN,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHWEST);
     // "I got too worked up about seeing my sister... Sorry."
-    Event_ShowMessageAndWait(2, 0);
+    Event_ShowMessageAndWait(ACTOR_IVAN, 0);
     Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
     Motion_SetModeAndWaitAnimation(8, 3);
     // "It's all right. I'm happy that you cared so much..."
@@ -2082,11 +2101,11 @@ void Contigo_ReturnToNewHome(void) {
     // "All right, Felix! Let's head to Mars Lighthouse!"
     Event_ShowMessageAndWait(9, 0);
     Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
-    Actor_SetSpeed(2, 1.2);
-    Actor_SetSpeed(0, 1.2);
+    Actor_SetSpeed(ACTOR_IVAN, 1.2);
+    Actor_SetSpeed(ACTOR_ISAAC, 1.2);
     Actor_SetSpeed(9, 1.2);
-    Actor_SetMovementTypeById(2, gContigo_HostScript);
-    Actor_SetMovementTypeById(0, gContigo_HostScript);
+    Actor_SetMovementTypeById(ACTOR_IVAN, gContigo_HostScript);
+    Actor_SetMovementTypeById(ACTOR_ISAAC, gContigo_HostScript);
     Actor_SetMovementTypeAndWaitById(9, gContigo_HostScript);
     GameFlag_Set(2513);
     Event_End();
@@ -2370,7 +2389,7 @@ void Contigo_InitializeRoom3(void) {
         Event_ShowMessageAndWait(18, 0);
         ItemDisplay_ShowItem(item, 3);
         PartyInventory_GiveItem(item, 0);
-        Actor_FaceDirectionAndWait(0, FACING_NORTH);
+        Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTH);
         prize++;
         if (*prize != -1)
           goto next;
@@ -2793,8 +2812,8 @@ struct ActorPlacement gContigo_Room1Placements[] = {
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 88, 0, 942, FACING_NORTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 808, FACING_EAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(107, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 116, 0, 680, FACING_NORTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 336, 0, 792, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 348, 0, 804, FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 336, 0, 792, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 348, 0, 804, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(136, CONDITION_ALWAYS, (s32)gContigo_WandererScript, 352, 0, 872, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(138, CONDITION_ALWAYS, (s32)gContigo_PacerScript, 304, 0, 872, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_SALT), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -2804,15 +2823,15 @@ struct ActorPlacement gContigo_Room1Placements[] = {
 
 struct ActorPlacement gContigo_Room4Placements[] = {
     ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 846, 0, 660, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 616, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 686, 0, 756, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 616, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 686, 0, 756, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(79, CONDITION_ALWAYS, (s32)gContigo_StatueScript, 774, 0, 664, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 588, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 806, 0, 596, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 832, 0, 310, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 312, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 346, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 343, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 806, 0, 596, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 832, 0, 310, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 312, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 346, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 343, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(450, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 720, 0, 360, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(422, CONDITION_ALWAYS, 7, 720, 0, 606, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(422, CONDITION_ALWAYS, 7, 752, 0, 606, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2833,27 +2852,27 @@ struct ActorPlacement gContigo_Room4Placements[] = {
 };
 
 struct ActorPlacement gContigo_Room2PlacementsBeforeReunion[] = {
-    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 84, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(107, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 88, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 84, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(107, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 88, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 112, 0, 130, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 94, FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 94, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 184, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(110, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 448, 0, 112, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 733, 0, 91, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 686, 0, 108, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(110, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 448, 0, 112, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 733, 0, 91, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 686, 0, 108, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 708, 0, 154, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(161, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 756, 0, 108, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(108, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 352, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(109, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 352, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(134, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 584, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(108, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 352, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(109, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 352, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(134, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 584, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(135, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 186, 0, 636, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 616, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(211, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 592, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 94, 0, 574, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 80, 0, 586, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 616, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(211, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 592, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 94, 0, 574, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 80, 0, 586, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 664, FACING_EAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 310, 0, 614, FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 688, 0, 344, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 688, 0, 344, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
@@ -2884,17 +2903,17 @@ struct ActorPlacement gContigo_Room2Placements[] = {
 };
 
 struct ActorPlacement gContigo_Room3Placements[] = {
-    ACTOR_PLACEMENT(236, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 840, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(236, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 840, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 92, 0, 902, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 872, FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(107, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 90, 0, 872, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(236, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 840, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(236, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 840, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 92, 0, 902, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 872, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(107, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 90, 0, 872, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(450, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 132, 0, 906, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(236, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 840, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(236, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 840, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(236, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 840, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(236, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 840, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(450, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 300, 0, 906, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(450, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 340, 0, 906, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(228, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 512, 0, 840, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(228, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 512, 0, 840, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(450, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 508, 0, 906, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(450, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 548, 0, 906, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},

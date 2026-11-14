@@ -242,9 +242,9 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
     s32 id = gMainRoutineWork.currentOwner;
 
     if (shift > 0)
-      Actor_ArmCallback(id, 0xc000, 0);
+      Actor_ArmCallback(id, FACING_NORTH, 0);
     else
-      Actor_ArmCallback(id, 0x4000, 0);
+      Actor_ArmCallback(id, FACING_SOUTH, 0);
   }
   wait(10);
   i = 0;

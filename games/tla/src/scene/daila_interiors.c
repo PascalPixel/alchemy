@@ -142,7 +142,7 @@ UNUSED void DailaInteriors_PracticeShout(s32 unused, s32 actor) {
 
 /// Unused: the practising man turns to the leader, startled.
 UNUSED void DailaInteriors_StartleAtTheLeader(s32 unused, s32 actor) {
-  Actor_FaceActorById(actor, 4, 0);
+  Actor_FaceActorById(actor, ACTOR_FELIX, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(actor, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
   Actor_Jump(actor, 6, 15);
@@ -566,7 +566,7 @@ s32 DailaInteriors_Start(void) {
         Actor_SetSpriteFlags(Actor_GetById(25), 0);
       }
       Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
-      Actor_GetById(13)->priorityFlags |= 32;
+      Actor_GetById(ACTOR_TEAR_SPOT)->priorityFlags |= 32;
       Actor_GetById(19)->priorityFlags |= 32;
       Actor_SetSpritePriority(19, 2);
       Actor_GetById(19)->collisionFlags |= 4;
@@ -683,15 +683,33 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 // clang-format off
-s32 gDailaInteriorsExits[] = {                                                               
-      11, 0x1010100a, -1, 0x1020200a,         -1, 0x1030300a, -1, 0x1040400a, -1,  0x1050500a,                         
-      -1, 0x1060600a, -1, 0x10703085, -1, 12, 0x1010700a, -1, 511,                             
-  };
+s32 gDailaInteriorsExits[] = {
+    SCENE_EXITS(DailaInteriors1),
+    SCENE_EXIT_UNLESS(1, Daila1, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Daila1, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Daila1, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Daila1, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Daila1, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, Daila1, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, Islets3, 3, EXIT_FLAG_NONE),
+    SCENE_EXITS(DailaInteriors2),
+    SCENE_EXIT_UNLESS(1, Daila1, 7, EXIT_FLAG_NONE),
+    SCENE_EXITS_END,
+};
 
-s32 gDailaInteriorsExitsOnceTaviIsRescued[] = {                                                               
-      11, 0x1010100d, -1, 0x1020200d,         -1, 0x1030300d, -1, 0x1040400d, -1,  0x1050500d,                         
-      -1, 0x1060600d, -1, 0x10703085, -1, 12, 0x1010700d, -1, 511,                             
-  };
+s32 gDailaInteriorsExitsOnceTaviIsRescued[] = {
+    SCENE_EXITS(DailaInteriors1),
+    SCENE_EXIT_UNLESS(1, Daila2, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Daila2, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Daila2, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Daila2, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Daila2, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, Daila2, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, Islets3, 3, EXIT_FLAG_NONE),
+    SCENE_EXITS(DailaInteriors2),
+    SCENE_EXIT_UNLESS(1, Daila2, 7, EXIT_FLAG_NONE),
+    SCENE_EXITS_END,
+};
 
 struct ActorPlacement gDailaInteriors1Placements[] = {
     ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),

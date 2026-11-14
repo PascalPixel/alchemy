@@ -2657,30 +2657,30 @@ void AirsRockInside_ReadRevealTablet(void) {
     Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0xb333,
           0x5999);
     Call3(Actor_SetSpeedParameters, 6, 0xb333, 0x5999);
-    Actor_MoveToObject(6, gMainRoutineWork.currentOwner);
+    Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.currentOwner);
     FieldEvent_Wait(1);
     Call3(Actor_WalkToById, gMainRoutineWork.currentOwner, 256, 136);
-    Actor_WalkToById(6, 272, 136);
+    Actor_WalkToById(ACTOR_SHEBA, 272, 136);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-    Actor_WaitForMoveById(6);
+    Actor_WaitForMoveById(ACTOR_SHEBA);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-    Actor_ArmCallback(6, FACING_WEST, 0);
+    Actor_ArmCallback(ACTOR_SHEBA, FACING_WEST, 0);
     FieldEvent_Wait(10);
     // "Do you think I ought to touch it?"
-    Event_ShowMessageAndWait(6, 0);
+    Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
     Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
     FieldEvent_Wait(30);
     Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 256, 152);
     Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     FieldEvent_Wait(20);
-    Actor_ArmCallback(6, FACING_SOUTH, 0);
+    Actor_ArmCallback(ACTOR_SHEBA, FACING_SOUTH, 0);
     FieldEvent_Wait(20);
-    Actor_SetModeById(6, 3);
+    Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
     FieldEvent_Wait(30);
     Call3(Actor_ArmCallback, 6, FACING_NORTH, 0);
     FieldEvent_Wait(20);
     Call3(Actor_WalkToAndWaitById, 6, 264, 137);
-    Actor_ArmCallback(6, FACING_NORTH, 0);
+    Actor_ArmCallback(ACTOR_SHEBA, FACING_NORTH, 0);
     FieldEvent_Wait(20);
     FieldMessage_Show(MsgCheckedTheTablet + 2, 1);
     Call3(MapGrid_SetScreenShake, 0x50000, 0x70000, 0x10000);
@@ -2690,19 +2690,19 @@ void AirsRockInside_ReadRevealTablet(void) {
     AirsRockInside_ShebaLearnsReveal(8, 6);
     Party_LearnAbility(SHEBA, ABILITY_REVEAL);
     GameFlag_Set(FLAG_REVEAL_TABLET_READ);
-    Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, 6, 0);
+    Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, ACTOR_SHEBA, 0);
     FieldEvent_Wait(10);
-    Actor_SetModeById(6, 3);
+    Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
     Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
     FieldEvent_Wait(20);
     Call3(Actor_SetSpeedParameters, 6, 0x13333, 0x9999);
-    Actor_SetModeById(6, 2);
+    Actor_SetModeById(ACTOR_SHEBA, ANIM_WALK);
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object != 0)
-      Actor_SetDestinationById(6, FIELD_AT(object, s16, 10),
+      Actor_SetDestinationById(ACTOR_SHEBA, FIELD_AT(object, s16, 10),
                                FIELD_AT(object, s16, 18));
-    Actor_WaitForMoveById(6);
-    Actor_SetHorizontalPositionWithTerrain(6, 0, 0);
+    Actor_WaitForMoveById(ACTOR_SHEBA);
+    Actor_SetHorizontalPositionWithTerrain(ACTOR_SHEBA, 0, 0);
     Actor_SetActionCallback(Actor_GetById(8), 9);
     Event_End();
   }
@@ -2975,7 +2975,7 @@ void AirsRockInside_RiseOnLift(void) {
   }
   Sound_Play(SE_288);
   FieldEvent_Wait(10);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   height = Map_GetTerrainHeight(0, lift->x, lift->z - px(16));
   leader->y = height;
   leader->terrainHeight = height;

@@ -346,11 +346,11 @@ void GondowanCliffs_TurnBackToHelpPiers(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 552, 488);
-  Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
-  FieldActor_WatchAndSetScript(5, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.currentOwner);
+  FieldActor_WatchAndSetScript(ACTOR_JENNA, gMainRoutineWork.currentOwner);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 568, 480);
-  FieldActor_WatchAndSetScript(6, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(6, gMainRoutineWork.currentOwner);
+  FieldActor_WatchAndSetScript(ACTOR_SHEBA, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.currentOwner);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 584, 472);
   FieldActor_WatchAndSetScript(22, gMainRoutineWork.currentOwner);
   Actor_MoveToObject(22, gMainRoutineWork.currentOwner);
@@ -360,15 +360,15 @@ void GondowanCliffs_TurnBackToHelpPiers(void) {
   // "Felix! Where do you intend to go? We should try to help Piers..."
   Event_ShowMessage(22, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 10);
-  FieldActor_Jump(5, 6, 15);
-  FieldActor_Jump(5, 6, 23);
+  FieldActor_Jump(ACTOR_JENNA, 6, 15);
+  FieldActor_Jump(ACTOR_JENNA, 6, 23);
   // "Kraden's right. I think we should try to help Piers, too."
-  Event_ShowMessage(5, 0);
-  FieldActor_Stop(6);
-  Actor_FaceActor(6, 5, 0);
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  FieldActor_Stop(ACTOR_SHEBA);
+  Actor_FaceActor(ACTOR_SHEBA, ACTOR_JENNA, 0);
   // "I completely agree with Kraden and Jenna."
-  Event_ShowMessage(6, 0);
-  FieldActor_WatchAndSetScript(6, gMainRoutineWork.currentOwner);
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  FieldActor_WatchAndSetScript(ACTOR_SHEBA, gMainRoutineWork.currentOwner);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(30);
@@ -376,16 +376,16 @@ void GondowanCliffs_TurnBackToHelpPiers(void) {
   // "It looks like the majority wins! Let's go back to Kibombo and help..."
   Event_ShowMessage(22, 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
-  Actor_SetAnimation(6, 3);
-  Actor_SetAnimation(5, 3);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(22, 3);
   FieldEvent_Wait(30);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 584, 472);
   Actor_SetPosition(22, 0, 0);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 568, 480);
-  Actor_SetPosition(6, 0, 0);
+  Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 552, 488);
-  Actor_SetPosition(5, 0, 0);
+  Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 528, 488);
   Event_FinishScreenTransition();
   Event_PlaySound(SE_MAP_EXIT);

@@ -356,7 +356,7 @@ s32 Scene_Initialize(void) {
   Window_LoadGraphics();
   WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                     gMainRoutineWork.paletteGlow[1]);
-  Actor_SetPosition(4, 0, 0);
+  Actor_SetPosition(ACTOR_FELIX, 0, 0);
   mode = gMainRoutineWork.entrance;
   if (mode == 10) {
     Event_SetDestination((s32)&SceneId_StaffCredit, 72);

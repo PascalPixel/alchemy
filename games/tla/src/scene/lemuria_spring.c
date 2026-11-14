@@ -438,7 +438,7 @@ void LemuriaSpring_GivePrize(s32 a0) {
   FieldEvent_Wait(30);
   Event_PlaySound(SE_BOSS_ROAR);
   FieldEvent_Wait(100);
-  Actor_FaceDirection(0, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
   FieldEvent_Wait(40);
   MapGrid_CopyCellsTo(82, 20, 70, 0, 3, 8);
   FieldEvent_Wait(3);

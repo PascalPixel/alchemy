@@ -419,7 +419,7 @@ void Lemuria_KnockAtBrokenDoor(void) {
   object = Actor_Get(12);
   Actor_SetFirstSpriteAnimation(object, 43);
   Actor_SetAnimation(12, 3);
-  Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(12, FACING_SOUTH_SOUTHWEST, 0);
   // "Are you kids Piers's traveling companions?"
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   FieldCamera_MoveTo(872, CAMERA_KEEP, 776, 1);
@@ -443,10 +443,10 @@ void Lemuria_KnockAtBrokenDoor(void) {
     goto done;
   FieldEvent_SetMessageId((s32)&MsgWhatSThe);
   FieldEvent_Wait(20);
-  Actor_WalkToAndWait(4, 856, 952);
-  Actor_FaceDirectionAndWait(4, FACING_NORTH);
+  Actor_WalkToAndWait(ACTOR_FELIX, 856, 952);
+  Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_NORTH);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   FieldCamera_MoveToFixed(px(872), v5, px(792), 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
@@ -459,7 +459,7 @@ void Lemuria_KnockAtBrokenDoor(void) {
   FieldEvent_Wait(20);
   Actor_SetSpeed(12, 1);
   Actor_WalkByAndWait(12, -32, 0);
-  Actor_FaceDirectionAndWait(12, FACING_SOUTHEAST + FACING_STEP);
+  Actor_FaceDirectionAndWait(12, FACING_SOUTH_SOUTHEAST);
   FieldCamera_MoveToFixed(px(848), v5, px(904), 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(15);
@@ -473,7 +473,7 @@ void Lemuria_KnockAtBrokenDoor(void) {
   // "There! Is that better? Now climb up here."
   FieldEvent_ShowMessageThenWait(12, 0, 5);
   Actor_WalkByAndWait(12, 32, 0);
-  EventCamera_FollowActor(4, 1);
+  EventCamera_FollowActor(ACTOR_FELIX, 1);
   Actor_WalkByAndWait(12, 0, -32);
   Event_SetFlag(FLAG_LEMURIA_ROPE_LET_DOWN);
 done:
@@ -505,7 +505,7 @@ void Lemuria_OfferSpringLuck(void) {
     FieldEvent_SetMessageId((s32)MsgYouLookLike);
     // "You look like you're in for a spell of good luck. After all, your..."
     Event_ShowMessage(30, 0);
-    Actor_FaceDirectionAndWait(30, FACING_NORTH + FACING_STEP);
+    Actor_FaceDirectionAndWait(30, FACING_NORTH_NORTHEAST);
     return;
   }
   Event_Start();
@@ -532,7 +532,7 @@ void Lemuria_OfferSpringLuck(void) {
     Actor_WalkToAndWait(30, 440, 1048);
     Event_SetFlag(FLAG_LEMURIA_SPRING_LUCK_TRIED);
   }
-  Actor_FaceDirectionAndWait(30, FACING_NORTH + FACING_STEP);
+  Actor_FaceDirectionAndWait(30, FACING_NORTH_NORTHEAST);
   Event_End();
 }
 
@@ -657,8 +657,8 @@ s32 Scene_Initialize(void) {
     Actor_Get(26)->update = Lemuria_TakeLeaderLayer;
   }
   if (Event_GetFlag(0x966) && !Event_GetFlag(0x969)) {
-    Actor_SetPosition(7, 56, 1016);
-    Actor_SetAnimation(7, 9);
+    Actor_SetPosition(ACTOR_PIERS, 56, 1016);
+    Actor_SetAnimation(ACTOR_PIERS, 9);
   }
   Rope_Initialize();
   Rope_Place(0, 0x962, 8, 9);
@@ -712,22 +712,22 @@ void Lemuria_AdmirePalace(s32 id) {
   FieldEvent_SetMessageId((s32)MsgOh2);
   Actor_SetFirstSpriteAnimation((s32)Actor_Get(12), 56);
   if (id == 21) {
-    Actor_WalkToAndWait(4, 376, 968);
-    Actor_FaceDirection(4, FACING_EAST, 0);
+    Actor_WalkToAndWait(ACTOR_FELIX, 376, 968);
+    Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
     FieldActor_LaunchFromLeader(12, 16, -16, FACING_EAST);
     a = 0;
     b = 0x800a;
     c = 0x5000;
   } else {
-    Actor_WalkToAndWait(4, 552, 968);
-    Actor_FaceDirection(4, FACING_WEST, 0);
+    Actor_WalkToAndWait(ACTOR_FELIX, 552, 968);
+    Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
     FieldActor_LaunchFromLeader(12, -16, -16, FACING_WEST);
     a = 0x8000;
     b = -10;
     c = 0x3000;
   }
   FieldActor_WaitForMoveById(12);
-  FieldActor_WatchAndSetScript(4, 12);
+  FieldActor_WatchAndSetScript(ACTOR_FELIX, 12);
   Actor_SetSpeed(12, 1);
   EventCamera_FollowActor(12, 1);
   Actor_WalkToAndWait(12, 464, 952);
@@ -749,9 +749,9 @@ void Lemuria_AdmirePalace(s32 id) {
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(12, 0, 5);
   FieldEvent_Wait(20);
-  FieldActor_SetSpritePriority(4, 1);
-  Actor_SetPosition(4, 464, 856);
-  Actor_WalkToAndWait(4, 464, 796);
+  FieldActor_SetSpritePriority(ACTOR_FELIX, 1);
+  Actor_SetPosition(ACTOR_FELIX, 464, 856);
+  Actor_WalkToAndWait(ACTOR_FELIX, 464, 796);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(12, 3);
   FieldEvent_Wait(10);
@@ -763,8 +763,8 @@ void Lemuria_AdmirePalace(s32 id) {
   FieldActor_WaitForMoveById(12);
   Actor_SetPosition(12, 0, 0);
   FieldEvent_Wait(10);
-  Actor_Get(4)->priorityFlags |= 1;
-  Actor_WalkToAndWait(4, 464, 776);
+  Actor_Get(ACTOR_FELIX)->priorityFlags |= 1;
+  Actor_WalkToAndWait(ACTOR_FELIX, 464, 776);
   Lemuria_PoseActor12();
   Event_End();
 }
@@ -777,9 +777,9 @@ void Lemuria_KeepLookingAround(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgWhereAreYou);
   Actor_SetFirstSpriteAnimation((s32)Actor_Get(12), 56);
-  Actor_FaceDirectionAndWait(4, FACING_SOUTH);
+  Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
   FieldActor_SetSpritePriority(12, 1);
-  FieldActor_LaunchFromLeader(12, 0, 16, FACING_NORTH + FACING_STEP);
+  FieldActor_LaunchFromLeader(12, 0, 16, FACING_NORTH_NORTHEAST);
   FieldActor_WaitForMoveById(12);
   FieldEvent_Wait(5);
   // "Where are you going, Felix? Let's take a longer look around!"
@@ -792,7 +792,7 @@ void Lemuria_KeepLookingAround(void) {
   FieldActor_WaitForMoveById(12);
   Actor_SetPosition(12, 0, 0);
   FieldEvent_Wait(10);
-  Actor_WalkByAndWait(4, 0, -16);
+  Actor_WalkByAndWait(ACTOR_FELIX, 0, -16);
   Lemuria_PoseActor12();
   Event_End();
 }
@@ -811,9 +811,9 @@ void Lemuria_MarvelAtCity(void) {
   Actor_SetSpeed(24, 1);
   Actor_SetSpeed(25, 1);
   Actor_SetFirstSpriteAnimation((s32)Actor_Get(12), 56);
-  Actor_WalkToAndWait(4, 472, 568);
-  FieldActor_LaunchFromLeader(12, -16, 0, FACING_NORTH + FACING_STEP);
-  Actor_FaceDirection(4, FACING_NORTH, 0);
+  Actor_WalkToAndWait(ACTOR_FELIX, 472, 568);
+  FieldActor_LaunchFromLeader(12, -16, 0, FACING_NORTH_NORTHEAST);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   FieldActor_WaitForMoveById(12);
   FieldCamera_MoveTo(464, CAMERA_KEEP, 544, 1);
   FieldCamera_WaitForArrival();
@@ -824,34 +824,36 @@ void Lemuria_MarvelAtCity(void) {
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   Actor_ShowEmote(24, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_WalkByAndWait(24, 16, 0);
-  Actor_FaceDirection(24, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(24, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   // "Who goes there! I've not seen you in Lemuria before!"
   FieldEvent_ShowMessageThenWait(24, 0, 10);
   Actor_FaceDirection(12, FACING_EAST, 0);
-  Actor_FaceDirection(4, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   FieldEvent_Wait(45);
-  Actor_FaceDirection(12, FACING_NORTH + FACING_STEP, 0);
-  Actor_FaceDirection(4, FACING_NORTH, 0);
+  Actor_FaceDirection(12, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   FieldEvent_Wait(10);
   Actor_WalkByAndWait(25, -16, 0);
   // "Wait a moment..."
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   Actor_WalkToAndWait(25, 464, 552);
-  Actor_FaceDirection(25, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(25, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(30);
-  FieldActor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldActor_StartRepeatedMotion(ACTOR_FELIX, 3);
+  Actor_SetAttachedEffect(ACTOR_FELIX,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   FieldActor_SetSpritePriority(25, 2);
   Actor_WalkByAndWait(25, 16, 0);
-  Actor_FaceDirection(25, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
-  FieldActor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldActor_StartRepeatedMotion(ACTOR_FELIX, 3);
+  Actor_SetAttachedEffect(ACTOR_FELIX,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Actor_WalkByAndWait(25, -8, 0);
-  Actor_FaceDirection(25, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(25, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(20);
@@ -860,7 +862,7 @@ void Lemuria_MarvelAtCity(void) {
   FieldEvent_Wait(20);
   // "You must be the travelers who arrived with Piers. Is your name..."
   FieldEvent_ShowMessageThenWait(25, 0, 10);
-  Actor_SetAnimation(4, 3);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimationAndWait(12, 3);
   FieldEvent_Wait(20);
   Actor_FaceDirection(24, FACING_EAST, 0);
@@ -868,56 +870,56 @@ void Lemuria_MarvelAtCity(void) {
   Actor_ShowEmote(24, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "Piers? You mean Piers, the Lost One?"
   FieldEvent_ShowMessageThenWait(24, 0, 10);
-  FieldActor_LaunchFromLeader(7, -8, -16, FACING_NORTH);
-  FieldActor_WaitForMoveById(7);
+  FieldActor_LaunchFromLeader(ACTOR_PIERS, -8, -16, FACING_NORTH);
+  FieldActor_WaitForMoveById(ACTOR_PIERS);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(7, 3);
+  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(10);
   // "Have I earned a title in my absence? Well, worry not! Piers is lost..."
-  FieldEvent_ShowMessageThenWait(7, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   FieldActor_StartRepeatedMotion(24, 3);
   Actor_SetAttachedEffect(24, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(25, 3);
   Actor_SetAttachedEffect(25, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(45);
-  Actor_FaceDirection(24, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(25, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(24, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
-  Actor_SetAnimationAndWait(7, 3);
+  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(10);
   // "I seek counsel with King Hydros. Has His Highness been told of my..."
-  FieldEvent_ShowMessageThenWait(7, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_FaceDirection(24, FACING_EAST, 0);
   Actor_FaceDirection(25, FACING_WEST, 0);
   FieldEvent_Wait(35);
-  Actor_FaceDirection(25, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(10);
   // "Word was sent, but I do not know if it has reached the king."
   FieldEvent_ShowMessageThenWait(25, 0, 10);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "What do you mean?"
-  FieldEvent_ShowMessageThenWait(7, 0, 10);
-  Actor_FaceDirection(24, FACING_SOUTHEAST + FACING_STEP, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
+  Actor_FaceDirection(24, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   // "Lord Conservato is meeting with His Highness as we speak."
   FieldEvent_ShowMessageThenWait(24, 0, 10);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   // "Not Conservato..."
-  FieldEvent_ShowMessageThenWait(7, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "What's wrong, Piers? You don't look pleased to hear that name..."
   FieldEvent_ShowMessageThenWait(12, 0, 10);
-  Actor_RunRepeatedMotion(7, 2);
+  Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(7, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
   // "Kraden... What do you think of what you have seen of Lemuria?"
-  FieldEvent_ShowMessageThenWait(7, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  FieldActor_WatchAndSetScript(4, 12);
-  FieldActor_WatchAndSetScript(7, 12);
+  FieldActor_WatchAndSetScript(ACTOR_FELIX, 12);
+  FieldActor_WatchAndSetScript(ACTOR_PIERS, 12);
   FieldActor_WatchAndSetScript(24, 12);
   FieldActor_WatchAndSetScript(25, 12);
   Actor_SetSpeed(12, 1);
@@ -927,24 +929,24 @@ void Lemuria_MarvelAtCity(void) {
   FieldCamera_MoveTo(400, CAMERA_KEEP, 648, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Actor_FaceDirection(12, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(12, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(40);
-  Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(12, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(40);
-  Actor_FaceDirection(12, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(12, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(40);
-  Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(12, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(40);
   EventCamera_FollowActor(12, 1);
   Actor_WalkToAndWait(12, 432, 536);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(12, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(12, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(40);
-  Actor_FaceDirection(12, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(12, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(40);
-  Actor_FaceDirection(12, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(12, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(40);
-  Actor_FaceDirection(12, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(12, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(40);
   FieldCamera_MoveTo(440, CAMERA_KEEP, 288, 1);
   FieldCamera_WaitForArrival();
@@ -958,129 +960,130 @@ void Lemuria_MarvelAtCity(void) {
   Actor_WalkToAndWait(12, 456, 568);
   FieldCamera_MoveTo(464, CAMERA_KEEP, 544, 1);
   FieldCamera_WaitForArrival();
-  Actor_FaceDirection(4, FACING_WEST, 0);
-  Actor_FaceDirection(7, FACING_SOUTH, 0);
-  Actor_FaceDirection(24, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(25, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(12, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
+  Actor_FaceDirection(24, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(12, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(30);
   // "It is a magnificent city! Or do you mean the castle? Both are..."
   FieldEvent_ShowMessageThenWait(12, 0, 10);
-  Actor_SetSpeed(7, 0.7);
-  Actor_WalkByAndWait(7, 8, 0);
-  Actor_FaceDirection(7, FACING_SOUTH, 0);
+  Actor_SetSpeed(ACTOR_PIERS, 0.7);
+  Actor_WalkByAndWait(ACTOR_PIERS, 8, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(4, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   FieldEvent_Wait(20);
   // "And you, Felix? Do you agree?"
   Event_OpenMessage(7, 0);
   result = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (result == 0) {
     FieldEvent_Wait(30);
-    Actor_SetAnimationAndWait(7, 4);
-    FieldEvent_ShowMessageThenWait(7, 0, 10);
+    Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+    FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
     gFieldWork->message++;
   } else {
     FieldEvent_Wait(40);
-    Actor_SetAnimationAndWait(7, 3);
+    Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
     FieldEvent_Wait(10);
     gFieldWork->message++;
-    FieldEvent_ShowMessageThenWait(7, 0, 10);
+    FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   }
-  FieldActor_WatchAndSetScript(4, 7);
+  FieldActor_WatchAndSetScript(ACTOR_FELIX, 7);
   FieldActor_WatchAndSetScript(12, 7);
   FieldActor_WatchAndSetScript(24, 7);
   FieldActor_WatchAndSetScript(25, 7);
-  FieldActor_SetSpritePriority(7, 2);
-  Actor_WalkByAndWait(7, 32, 0);
-  Actor_FaceDirection(24, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(25, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(7, FACING_SOUTH, 0);
+  FieldActor_SetSpritePriority(ACTOR_PIERS, 2);
+  Actor_WalkByAndWait(ACTOR_PIERS, 32, 0);
+  Actor_FaceDirection(24, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(25, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
-  Actor_SetAnimationAndWait(7, 4);
-  FieldEvent_ShowMessageThenWait(7, 0, 10);
-  Actor_RunRepeatedMotion(7, 2);
+  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(7, 0, 10);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  FieldEvent_ShowMessageThenWait(7, 0, 10);
-  Actor_FaceDirection(7, FACING_SOUTHWEST, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(7, 0, 10);
-  Actor_FaceDirection(4, FACING_WEST, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(12, FACING_EAST, 0);
   FieldEvent_Wait(50);
-  Actor_FaceDirection(4, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
   Actor_FaceDirection(12, FACING_EAST, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(12, 3);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-  FieldEvent_ShowMessageThenWait(7, 0, 10);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   FieldActor_Jump(12, 6, 15);
   FieldActor_Jump(12, 6, 23);
   FieldEvent_Wait(10);
-  Actor_RunRepeatedMotion(7, 2);
+  Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(7, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_RunRepeatedMotion(24, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(24, 0, 10);
   Actor_RunRepeatedMotion(25, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(25, 0, 10);
-  Actor_FaceDirection(4, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(12, FACING_EAST, 0);
   FieldEvent_Wait(50);
-  Actor_FaceDirection(25, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(4, FACING_NORTH, 0);
-  Actor_FaceDirection(12, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
+  Actor_FaceDirection(12, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(30);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   FieldEvent_ShowMessageThenWait(12, 0, 10);
-  Actor_SetAnimationAndWait(7, 4);
-  FieldEvent_ShowMessageThenWait(7, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_SetAnimationAndWait(24, 3);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(24, 0, 10);
   Actor_RunRepeatedMotion(25, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(25, 0, 10);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 45);
-  Actor_WalkByAndWait(7, -16, 0);
-  Actor_FaceDirection(7, FACING_SOUTHWEST, 0);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 45);
+  Actor_WalkByAndWait(ACTOR_PIERS, -16, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(7, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_SetAnimationAndWait(24, 3);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(24, 0, 10);
   Actor_SetAnimationAndWait(25, 4);
   FieldEvent_ShowMessageThenWait(25, 0, 10);
-  Actor_WalkByAndWait(7, -16, 0);
-  Actor_FaceDirection(7, FACING_SOUTH, 0);
+  Actor_WalkByAndWait(ACTOR_PIERS, -16, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(7, 3);
+  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(7, 0, 10);
-  Actor_FaceDirection(4, FACING_WEST, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(12, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(12, 3);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(4, 3);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(4, FACING_NORTH, 0);
-  Actor_SetSpeed(7, 1.2);
-  Actor_SetAnimation(7, 2);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
+  Actor_SetSpeed(ACTOR_PIERS, 1.2);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_SetDestination(7, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
-  FieldActor_WaitForMoveById(7);
-  Actor_SetPosition(7, 0, 0);
+    Actor_SetDestination(ACTOR_PIERS, ((s16 *)&leader->x)[1],
+                         ((s16 *)&leader->z)[1]);
+  FieldActor_WaitForMoveById(ACTOR_PIERS);
+  Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Actor_SetSpeed(12, 1.2);
   Actor_SetAnimation(12, 2);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1161,23 +1164,23 @@ struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(157, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 1256, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(156, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 1040, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(160, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 1064, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(165, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 856, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(165, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 856, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(164, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 920, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(166, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 920, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(166, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 920, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(167, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 952, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(168, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 904, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(216, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 80, 0, 1104, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(189, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 392, 0, 712, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(80, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 840, 0, 1080, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(203, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 864, 0, 984, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(231, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 520, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(231, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 520, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(231, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 520, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(231, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 520, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(166, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 552, 0, 440, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {7, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_NORTH, 2, 0},
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(157, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 1008, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(160, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 464, 0, 1016, FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(160, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 464, 0, 1016, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 488, 0, 984, FACING_WEST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };

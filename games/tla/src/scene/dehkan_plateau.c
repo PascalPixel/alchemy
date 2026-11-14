@@ -1289,8 +1289,8 @@ void DehkanPlateau_CannonDropsPoundCube(void) {
   Actor_WaitForMove(leader);
   Event_Wait(20);
   Actor_ShowEmoteById(ACTOR_ROOM5_CANNON, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
-  Actor_ArmCallback(ACTOR_ROOM5_CANNON, 0x8000, 60);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_ROOM5_CANNON, FACING_WEST, 60);
   Actor_WalkToAndWait(ACTOR_ROOM5_CANNON, 296, 104);
   Actor_WalkToAndWait(ACTOR_ROOM5_CANNON, 296, 80);
   Actor_SetHorizontalPositionWithTerrain(ACTOR_ROOM5_CANNON, 0, 0);
@@ -1351,7 +1351,7 @@ void DehkanPlateau_CannonCornered(void) {
                       40);
   Actor_FaceDirectionById(ACTOR_ROOM6_CANNON, FACING_EAST);
   Event_Wait(20);
-  Motion_SetVarCbAndRefresh(16, 3);
+  Motion_SetVarCbAndRefresh(ACTOR_ROOM6_CANNON, 3);
   Actor_FaceDirectionAndWait(ACTOR_ROOM6_CANNON, FACING_WEST);
   Actor_WatchAndSetScript(ACTOR_ROOM6_CANNON, gMainRoutineWork.currentOwner);
   FieldEffect_SetAttached(16, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1507,7 +1507,7 @@ void DehkanPlateau_InitializeRoom3(void) {
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   }
   Actor_SetSpritePriority(8, 1);
-  Actor_SetSpritePriority(9, 1);
+  Actor_SetSpritePriority(ACTOR_ROOM5_CANNON, 1);
   Actor_SetSpritePriority(10, 1);
   Actor_SetSpritePriority(11, 1);
   /* FAKEMATCH(dead): an empty once-only block ends the argument loads' tie. */
@@ -1516,7 +1516,7 @@ void DehkanPlateau_InitializeRoom3(void) {
   Tightrope_Initialize();
   Tightrope_Place(0, 8, 9);
   Tightrope_Place(1, 10, 11);
-  Actor_SetSpritePriority(12, 1);
+  Actor_SetSpritePriority(ACTOR_ROOM1_PILLAR, 1);
   Actor_SetSpritePriority(13, 1);
   DehkanPlateau_InitializeRopes();
   Rope_Place(0, 520, 12, 13);
@@ -1534,7 +1534,7 @@ void DehkanPlateau_InitializeRoom3(void) {
     MapGrid_CopyCellAttributes(38, 32, 1, 1, 38, 33);
   Actor_GetById(14)->priorityFlags &= ~1;
   Actor_GetById(15)->priorityFlags &= ~1;
-  Actor_GetById(16)->priorityFlags &= ~1;
+  Actor_GetById(ACTOR_ROOM6_CANNON)->priorityFlags &= ~1;
   Actor_GetById(17)->priorityFlags &= ~1;
   Pillars_Raise(gDehkanPlateau_Room3RaisedPillars);
   value = Actor_GetById(17)->x;

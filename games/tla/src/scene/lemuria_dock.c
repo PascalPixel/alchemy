@@ -71,16 +71,16 @@ void LemuriaDock_MovePiers(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     if (Actor_GetById(8)->x == 0) {
-      Actor_WalkByAndWait(4, 0, -16);
-      FieldActor_LaunchFromLeader(8, 0, -16, FACING_SOUTHEAST + FACING_STEP);
+      Actor_WalkByAndWait(ACTOR_FELIX, 0, -16);
+      FieldActor_LaunchFromLeader(8, 0, -16, FACING_SOUTH_SOUTHEAST);
       Actor_WaitForMoveById(8);
       Actor_SetSpeed(8, 1.2);
       Actor_WalkToAndWait(8, 472, 392);
-      Actor_FaceDirectionAndWait(8, FACING_SOUTH + FACING_STEP);
+      Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
     } else {
       struct Actor *leader;
 
-      Actor_WalkByAndWait(4, 0, 16);
+      Actor_WalkByAndWait(ACTOR_FELIX, 0, 16);
       Actor_SetSpeed(8, 2);
       Actor_WalkToAndWait(8, 440, 440);
       Actor_SetSpeed(8, 1.2);
@@ -242,13 +242,19 @@ struct SceneEntrance gSceneEntrances[] = {
 // XXX: what flag 0x960 records; Ancient Lemuria's entrances 1, 4 and 5
 // against 2 and 3 would settle it, read from that scene's map.
 s32 gLemuriaDock_Exits[] = {
-    200, 0x101030c7, -1, 0x102020c9, -1, 0x10301028,
-    -1, 511,
+    SCENE_EXITS(LemuriaDock),
+    SCENE_EXIT_UNLESS(1, LemuriaEntrance, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, AncientLemuria, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, LemurianShip1, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS_END,
 };
 
 s32 gLemuriaDock_ExitsWithFlag960[] = {
-    200, 0x101050c7, -1, 0x102050c9, -1, 0x10301028,
-    -1, 511,
+    SCENE_EXITS(LemuriaDock),
+    SCENE_EXIT_UNLESS(1, LemuriaEntrance, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, AncientLemuria, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, LemurianShip1, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS_END,
 };
 
 struct ActorPlacement gActorPlacements[] = {

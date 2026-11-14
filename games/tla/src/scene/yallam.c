@@ -1425,21 +1425,22 @@ void Yallam_ShowSongGame(void) {
   Actor_SetScript(9, gYallam_SongGameForm9);
   Actor_SetScript(10, gYallam_SongGameForm10);
   Actor_RunScriptAndWait(11, gYallam_SongGameForm11);
-  Actor_SetPosition(5, 296, 872);
+  Actor_SetPosition(ACTOR_JENNA, 296, 872);
   System_Wait(1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
-  Actor_SetSpeed(5, 1.2);
-  Actor_WalkToAndWait(5, 312, 854);
-  Actor_FaceDirectionAndWait(5, FACING_SOUTHWEST);
-  Actor_SetAnimationAndWait(5, 3);
+  Actor_SetSpeed(ACTOR_JENNA, 1.2);
+  Actor_WalkToAndWait(ACTOR_JENNA, 312, 854);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTHWEST);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
-  Actor_SetAnimation(5, 2);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader != 0) {
-    Actor_SetDestination(5, ((s16 *)(&leader->x))[1], ((s16 *)(&leader->z))[1]);
+    Actor_SetDestination(ACTOR_JENNA, ((s16 *)(&leader->x))[1],
+                         ((s16 *)(&leader->z))[1]);
   }
-  FieldActor_WaitForMoveById(5);
-  Actor_SetPosition(5, 0, 0);
+  FieldActor_WaitForMoveById(ACTOR_JENNA);
+  Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 316, 896);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 344, 912);

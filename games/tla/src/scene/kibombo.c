@@ -198,7 +198,7 @@ void Kibombo_TalkPathToPeace(void) {
   Event_Wait(20);
   // "This is a signal fire. We use these to send messages to neighboring..."
   Event_ShowMessageAndWait(24, 0);
-  Kibombo_ObjTurn(24, FACING_SOUTHEAST + FACING_STEP);
+  Kibombo_ObjTurn(24, FACING_SOUTH_SOUTHEAST);
   Event_End();
 }
 
@@ -284,7 +284,7 @@ void Kibombo_TalkForeignCeremony(void) {
     Actor_FaceActorById(36, gMainRoutineWork.currentOwner, 0);
     Event_Wait(10);
     Sanctum_Run(36);
-    Kibombo_ObjArm(36, FACING_NORTHWEST + FACING_STEP, 0);
+    Kibombo_ObjArm(36, FACING_NORTH_NORTHWEST, 0);
     Event_End();
   } else {
     Event_Start();
@@ -297,7 +297,7 @@ void Kibombo_TalkForeignCeremony(void) {
     Actor_FaceActorById(36, gMainRoutineWork.currentOwner, 0);
     Event_Wait(10);
     Sanctum_Run(36);
-    Kibombo_ObjArm(36, FACING_NORTHWEST + FACING_STEP, 0);
+    Kibombo_ObjArm(36, FACING_NORTH_NORTHWEST, 0);
     GameFlag_Set(FLAG_HEARD_OF_THE_FOREIGN_CEREMONY);
     Event_End();
   }
@@ -447,25 +447,25 @@ void Kibombo_MeetPiers(void) {
   Kibombo_ObjSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Kibombo_ObjWalk(gMainRoutineWork.currentOwner, 72, 392);
   Kibombo_ObjWalk(gMainRoutineWork.currentOwner, 88, 392);
-  Actor_ArmCallback(7, FACING_SOUTHWEST, 10);
+  Actor_ArmCallback(ACTOR_PIERS, FACING_SOUTHWEST, 10);
   Event_SetMessageId((s32)MsgWhWhoAre);
   // "Wh-Who are you?!?"
-  Event_ShowMessageAndWait(7, 0);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_MoveToObject(26, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(6, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.currentOwner);
   wait(1);
   Actor_SetSpritePriority(26, 2);
-  Actor_SetSpritePriority(5, 2);
-  Actor_SetSpritePriority(6, 2);
+  Actor_SetSpritePriority(ACTOR_JENNA, 2);
+  Actor_SetSpritePriority(ACTOR_SHEBA, 2);
   Kibombo_ObjSpeed(26, 0xcccc, 0x6666);
   Kibombo_ObjSpeed(5, 0xcccc, 0x6666);
   Kibombo_ObjSpeed(6, 0xcccc, 0x6666);
   Actor_SetMovementTypeById(26, gKibombo_KradenMeetsPiersScript);
-  Actor_SetMovementTypeById(5, gKibombo_JennaMeetsPiersScript);
-  Actor_SetMovementTypeAndWaitById(6, gKibombo_ShebaMeetsPiersScript);
+  Actor_SetMovementTypeById(ACTOR_JENNA, gKibombo_JennaMeetsPiersScript);
+  Actor_SetMovementTypeAndWaitById(ACTOR_SHEBA, gKibombo_ShebaMeetsPiersScript);
   // "What... What are your intentions?"
-  Event_ShowMessageAndWait(7, 0);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   if (GameFlag_Get(0x911))
     Kibombo_PiersHasForgottenParty();
   else
@@ -474,8 +474,8 @@ void Kibombo_MeetPiers(void) {
   Kibombo_ObjSpeed(26, 0x19999, 0xcccc);
   Kibombo_ObjSpeed(5, 0x19999, 0xcccc);
   Kibombo_ObjSpeed(6, 0x19999, 0xcccc);
-  Actor_SetMovementTypeById(5, gKibombo_PartyGathersScript);
-  Actor_SetMovementTypeById(6, gKibombo_PartyGathersScript);
+  Actor_SetMovementTypeById(ACTOR_JENNA, gKibombo_PartyGathersScript);
+  Actor_SetMovementTypeById(ACTOR_SHEBA, gKibombo_PartyGathersScript);
   Actor_SetMovementTypeAndWaitById(26, gKibombo_PartyGathersScript);
   GameFlag_Set(0x8f3);
   Event_End();
@@ -487,106 +487,106 @@ void Kibombo_PiersHasForgottenParty(void) {
   // "It looks like Piers has already forgotten us, huh?" Yes: "I know! We met
   // Piers when he was in JAIL!" No: "What, is he so obsessed with his black
   // orb..."
-  FieldMessage_ShowAtActor(6, 0);
+  FieldMessage_ShowAtActor(ACTOR_SHEBA, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Kibombo_ObjArm(5, FACING_SOUTH, 10);
-    Actor_SetModeById(5, 3);
+    Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
     // "I know! We met Piers when he was in JAIL! And it's not like he had..."
-    Event_ShowMessageAndWait(5, 0);
+    Event_ShowMessageAndWait(ACTOR_JENNA, 0);
     gFieldWork->message++;
   } else {
     Kibombo_ObjArm(5, FACING_SOUTH, 10);
-    Actor_SetModeById(5, 4);
+    Actor_SetModeById(ACTOR_JENNA, ANIM_SHAKE_HEAD);
     gFieldWork->message++;
     // "What, is he so obsessed with his black orb that he can't even..."
-    Event_ShowMessageAndWait(5, 0);
+    Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   }
-  Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   // "Wait a second... I know you..."
-  Event_ShowMessageAndWait(7, 0);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
-  Kibombo_ObjArm(26, FACING_NORTHWEST + FACING_STEP, 0);
+  Kibombo_ObjArm(26, FACING_NORTH_NORTHWEST, 0);
   Kibombo_ObjArm(5, FACING_SOUTHWEST, 0);
   Kibombo_ObjArm(6, FACING_NORTHEAST, 40);
   Kibombo_ObjArm(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
-  Kibombo_ObjArm(26, FACING_NORTH + FACING_STEP, 0);
-  Actor_ArmCallback(5, FACING_EAST, 0);
+  Kibombo_ObjArm(26, FACING_NORTH_NORTHEAST, 0);
+  Actor_ArmCallback(ACTOR_JENNA, FACING_EAST, 0);
   Kibombo_ObjArm(6, FACING_NORTHEAST, 20);
   // "You're the travelers who came seeking me when I was in jail."
-  Event_ShowMessageAndWait(7, 0);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_ShowEmoteById(26, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   // "So, you do remember!"
   Event_ShowMessageAndWait(26, 0);
   // "What are you doing in this place?"
-  Event_ShowMessageAndWait(7, 0);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   // "Actually, that's what we wanted to ask you..."
-  Event_ShowMessageAndWait(6, 0);
+  Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Kibombo_ObjArm(5, FACING_SOUTH, 40);
-  Actor_ArmCallback(5, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_JENNA, FACING_EAST, 0);
   // "We were worried about you, Piers, so we followed you here..."
-  Event_ShowMessageAndWait(5, 0);
+  Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   // "And that's what brings you to this dangerous place?"
-  Event_ShowMessageAndWait(7, 0);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Kibombo_ObjEmote(6, 259, 0);
-  Actor_Jump(6, 2, 10);
-  Actor_Jump(6, 4, 10);
+  Actor_Jump(ACTOR_SHEBA, 2, 10);
+  Actor_Jump(ACTOR_SHEBA, 4, 10);
   // "What's that supposed to mean?"
-  Event_ShowMessageAndWait(6, 0);
+  Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Kibombo_ObjEmote(5, 259, 10);
   // "We came here to help you, Piers. Why are you being like that about it?"
-  Event_ShowMessageAndWait(5, 0);
-  Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 10);
+  Event_ShowMessageAndWait(ACTOR_JENNA, 0);
+  Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 10);
   // "Tell me something... Exactly when did I ask you for your help?"
-  Event_ShowMessageAndWait(7, 0);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
 }
 
 void Kibombo_PiersTakesPartyForEnemies(void) {
   Event_SetMessageId((s32)MsgHeSeemsTo);
   // "He seems to believe we are enemies..."
-  Event_ShowMessageAndWait(6, 0);
+  Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Kibombo_ObjArm(5, FACING_SOUTH, 10);
-  Actor_SetModeById(5, 4);
+  Actor_SetModeById(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   // "I hope he doesn't think we're with the Kibombo."
-  Event_ShowMessageAndWait(5, 0);
-  Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  Event_ShowMessageAndWait(ACTOR_JENNA, 0);
+  Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   // "I must admit, you don't look much like Kibombo..."
-  Event_ShowMessageAndWait(7, 0);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
-  Kibombo_ObjArm(26, FACING_NORTHWEST + FACING_STEP, 0);
+  Kibombo_ObjArm(26, FACING_NORTH_NORTHWEST, 0);
   Kibombo_ObjArm(5, FACING_SOUTHWEST, 0);
   Kibombo_ObjArm(6, FACING_NORTHEAST, 40);
   Kibombo_ObjArm(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
-  Kibombo_ObjArm(26, FACING_NORTH + FACING_STEP, 0);
-  Actor_ArmCallback(5, FACING_EAST, 0);
+  Kibombo_ObjArm(26, FACING_NORTH_NORTHEAST, 0);
+  Actor_ArmCallback(ACTOR_JENNA, FACING_EAST, 0);
   Kibombo_ObjArm(6, FACING_NORTHEAST, 0);
   FieldEffect_SetAttached(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
   // "But that begs the question, if you're not Kibombo, then who are you..."
-  Event_ShowMessageAndWait(7, 0);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   // "They are...warriors. But how did you get in here?"
   Event_ShowMessageThenWait(26, 0, 20);
   // "Why are these warriors in a place like this?"
-  Event_ShowMessageAndWait(7, 0);
-  Actor_ShowEmoteById(6, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
+  Actor_ShowEmoteById(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   // "I'm not sure how to answer that..."
-  Event_ShowMessageAndWait(6, 0);
+  Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Kibombo_ObjArm(5, FACING_SOUTHWEST, 40);
-  Actor_ArmCallback(5, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_JENNA, FACING_EAST, 0);
   // "Actually, we've been looking for a boat... We kinda need one."
-  Event_ShowMessageAndWait(5, 0);
+  Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   // "You're looking for a boat... in the middle of the continent? That..."
-  Event_ShowMessageAndWait(7, 0);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Kibombo_ObjEmote(6, 259, 0);
-  Actor_Jump(6, 2, 10);
-  Actor_Jump(6, 4, 10);
+  Actor_Jump(ACTOR_SHEBA, 2, 10);
+  Actor_Jump(ACTOR_SHEBA, 4, 10);
   // "Hey, this wasn't exactly our first choice, you know?"
-  Event_ShowMessageAndWait(6, 0);
+  Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Kibombo_ObjEmote(5, 259, 10);
   // "A tidal wave destroyed all the boats in the coastal towns."
-  Event_ShowMessageAndWait(5, 0);
-  Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 10);
+  Event_ShowMessageAndWait(ACTOR_JENNA, 0);
+  Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 10);
   // "You're asking me to believe rather a lot, don't you think?"
-  Event_ShowMessageAndWait(7, 0);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
 }
 
 void Kibombo_PiersThanksParty(void) {
@@ -601,18 +601,18 @@ void Kibombo_PiersThanksParty(void) {
   Event_Wait(20);
   Event_SetMessageId((s32)MsgYouVeCome);
   // "You've come to help me get my orb back? Thank you, all of you!"
-  Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 7, 0);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_PIERS, 0);
   Kibombo_ObjTurn(7, FACING_WEST);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
-  Motion_SetModeAndWaitAnimation(7, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_PIERS, ANIM_NOD);
   Kibombo_ObjSpeed(7, 0x19999, 0xcccc);
-  Actor_SetModeById(7, 2);
+  Actor_SetModeById(ACTOR_PIERS, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_SetDestinationById(7, *(s16 *)((u8 *)leader + 10),
+    Actor_SetDestinationById(ACTOR_PIERS, *(s16 *)((u8 *)leader + 10),
                              *(s16 *)((u8 *)leader + 18));
-  Actor_WaitForMoveById(7);
-  Actor_SetHorizontalPositionWithTerrain(7, 0, 0);
+  Actor_WaitForMoveById(ACTOR_PIERS);
+  Actor_SetHorizontalPositionWithTerrain(ACTOR_PIERS, 0, 0);
   GameFlag_Clear(FLAG_KIBOMBO_PIERS_STAYED_BEHIND);
   GameFlag_Set(FLAG_KIBOMBO_PIERS_WITH_PARTY);
   Event_PrepareObjectAndApplyValue(7, 0);
@@ -631,16 +631,16 @@ void Kibombo_AkafubuOffersCrystal(void) {
   Kibombo_CrowdStands();
   Sound_Play(MUS_000);
   Event_ShowMessageAndWait(17, 0);
-  Actor_ArmCallback(7, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_PIERS, FACING_EAST, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_ArmCallback(26, FACING_EAST, 0);
-  Actor_ArmCallback(5, FACING_EAST, 0);
-  Actor_ArmCallback(6, FACING_EAST, 10);
+  Actor_ArmCallback(ACTOR_JENNA, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_SHEBA, FACING_EAST, 10);
   FieldCamera_SetSpeed(4.8);
   Kibombo_CamMove(px(264), -1, px(388), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(40);
-  Kibombo_ObjArm(17, FACING_SOUTHEAST + FACING_STEP, 20);
+  Kibombo_ObjArm(17, FACING_SOUTH_SOUTHEAST, 20);
   Motion_SetModeAndWaitAnimation(17, 3);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 17, 0);
   Sound_Play(MUS_026);
@@ -656,7 +656,7 @@ void Kibombo_AkafubuOffersCrystal(void) {
   Task_Remove(Kibombo_FlickerCeremonyFires);
   Kibombo_AkafubuCastsOnCrystal();
   KIBOMBO_TASK_ADD(Kibombo_FlickerCeremonyFires, 0x480);
-  Event_ShowMessageAndWait(7, 0);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Event_ShowMessageAndWait(17, 0);
   Sound_Play(MUS_011);
   Kibombo_EndOffering();
@@ -675,18 +675,18 @@ void Kibombo_AkafubuOffersCrystal(void) {
   Task_Remove(Kibombo_CarryBlackCrystal);
   wait(1);
   Actor_SetHorizontalPositionWithTerrain(27, 0, 0);
-  Kibombo_ObjArm(17, FACING_NORTH + FACING_STEP, 0);
+  Kibombo_ObjArm(17, FACING_NORTH_NORTHEAST, 0);
   if (gKibombo_BlackCrystal != 0) {
     if (gKibombo_BlackCrystal->y > px(36)) {
     wait:
-      Kibombo_ObjArm(17, FACING_NORTH + FACING_STEP, 0);
+      Kibombo_ObjArm(17, FACING_NORTH_NORTHEAST, 0);
       gKibombo_BlackCrystal->y += 0xffffc000;
       wait(1);
       if (gKibombo_BlackCrystal->y > px(36))
         goto wait;
     }
   }
-  Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
+  Kibombo_ObjTurn(17, FACING_SOUTH_SOUTHEAST);
   Event_ShowMessageAndWait(17, 0);
   FieldCamera_SetSpeed(4.8);
   FieldCamera_MoveWithinMapBounds(px(264), px(16), px(420), 1);
@@ -701,26 +701,26 @@ void Kibombo_AkafubuOffersCrystal(void) {
   FieldCamera_MoveWithinMapBounds(px(88), px(32), px(392), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(40);
-  Event_ShowMessageAndWait(7, 0);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Kibombo_ObjEmoteWait(7, 258);
-  Event_ShowMessageAndWait(7, 0);
-  Motion_SetModeAndWaitAnimation(7, 4);
-  Event_ShowMessageAndWait(7, 0);
-  Actor_SetSpritePriority(7, 2);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
+  Motion_SetModeAndWaitAnimation(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
+  Actor_SetSpritePriority(ACTOR_PIERS, 2);
   Kibombo_ObjSpeed(7, 0x19999, 0xcccc);
   Kibombo_ObjWalk(7, 152, 386);
   Kibombo_ObjArm(7, FACING_NORTHEAST, 40);
   Kibombo_ObjArm(7, FACING_SOUTHEAST, 20);
   Kibombo_ObjArm(7, FACING_NORTHEAST, 20);
   Kibombo_ObjArm(7, FACING_SOUTHEAST, 40);
-  Event_ShowMessageAndWait(7, 0);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Kibombo_ObjWalk(7, 124, 356);
   Kibombo_ObjArm(7, FACING_NORTHEAST, 20);
   Kibombo_ObjArm(7, FACING_NORTHWEST, 20);
   Kibombo_ObjArm(7, FACING_NORTHEAST, 20);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 7, 0);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Kibombo_ObjArm(5, FACING_SOUTHEAST, 0);
-  Event_ShowMessageAndWait(5, 0);
+  Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 40);
   Kibombo_ObjSpeed(26, 0xcccc, 0x6666);
   Actor_WalkToById(26, 104, 368);
@@ -729,13 +729,13 @@ void Kibombo_AkafubuOffersCrystal(void) {
   FieldCamera_MoveWithinMapBounds(px(111), -1, px(356), 1);
   Actor_WaitForMoveById(26);
   Actor_SetModeById(26, 1);
-  Kibombo_ObjArm(26, FACING_NORTH + FACING_STEP, 40);
+  Kibombo_ObjArm(26, FACING_NORTH_NORTHEAST, 40);
   Actor_ShowEmoteById(26, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessageAndWait(26, 0);
   Kibombo_ObjArm(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Kibombo_ObjArm(5, FACING_NORTH, 0);
   Kibombo_ObjArm(6, FACING_NORTH, 0);
-  Kibombo_ObjArm(26, FACING_SOUTH + FACING_STEP, 20);
+  Kibombo_ObjArm(26, FACING_SOUTH_SOUTHWEST, 20);
   Kibombo_MessageOpen(0x601a, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 26,
@@ -756,7 +756,7 @@ void Kibombo_PiersRefusesToLeave(void) {
   }
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.currentOwner);
   Actor_SetSpritePriority(
       7, ((struct FieldSprite *)Actor_GetById(gMainRoutineWork.currentOwner)
               ->sprite)
@@ -764,15 +764,15 @@ void Kibombo_PiersRefusesToLeave(void) {
   wait(1);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
   Kibombo_ObjSpeed(7, 0x19999, 0xcccc);
-  Actor_WalkToAndWaitById(7, 62, 444);
-  Actor_FaceDirectionById(7, FACING_SOUTHEAST);
+  Actor_WalkToAndWaitById(ACTOR_PIERS, 62, 444);
+  Actor_FaceDirectionById(ACTOR_PIERS, FACING_SOUTHEAST);
   Event_SetMessageId((s32)MsgNowThatIKnow);
   // "Now that I know the orb is here, I won't leave this village without..."
-  Event_ShowMessageAndWait(7, 0);
-  Actor_GetById(7)->priorityFlags |= 1;
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
+  Actor_GetById(ACTOR_PIERS)->priorityFlags |= 1;
   Kibombo_ObjWalk(7, 56, 420);
   Kibombo_ObjWalk(7, 40, 344);
-  Actor_SetHorizontalPositionWithTerrain(7, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(ACTOR_PIERS, 0, 0);
   Kibombo_ObjPlace(gMainRoutineWork.currentOwner, 80, 510);
   Event_Wait(10);
   Import_EventSetExitRequest(5);
@@ -801,16 +801,16 @@ extern u32 gKibombo_PartyFollowsScript[];
 /// Lemuria in the middle of the Eastern Sea, and joins the party with his
 /// Djinn; Felix's two answers are counted in the event work.
 void Kibombo_PiersJoinsParty(void) {
-  Actor_ArmCallback(7, FACING_NORTH, 0);
+  Actor_ArmCallback(ACTOR_PIERS, FACING_NORTH, 0);
   Event_SetMessageId(MsgBlank7);
   // "?!?"
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   ((struct Actor *)((s32)FieldCamera_GetActor()))->motionFlags = 0;
   FieldCamera_SetSpeed(3.2);
   FieldCamera_MoveTo(96, CAMERA_KEEP, 340, 1);
   FieldCamera_WaitForArrival();
-  Actor_FaceDirection(7, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
   FieldEffect_SetAttached(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
@@ -818,297 +818,300 @@ void Kibombo_PiersJoinsParty(void) {
   FieldCamera_SetSpeed(0.4);
   FieldCamera_MoveTo(96, CAMERA_KEEP, 372, 1);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.2);
-  Actor_SetSpeed(7, 1.2);
-  Actor_SetMovementTypeById(7, gKibombo_PiersStepsUpScript);
+  Actor_SetSpeed(ACTOR_PIERS, 1.2);
+  Actor_SetMovementTypeById(ACTOR_PIERS, gKibombo_PiersStepsUpScript);
   Actor_SetMovementTypeAndWaitById(gMainRoutineWork.currentOwner,
                                    gKibombo_LeaderStepsUpScript);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_SetSpeed(26, 0.8);
-  Actor_SetSpeed(5, 0.8);
-  Actor_SetSpeed(6, 0.8);
+  Actor_SetSpeed(ACTOR_JENNA, 0.8);
+  Actor_SetSpeed(ACTOR_SHEBA, 0.8);
   Actor_SetPosition(26, 56, 372);
-  Actor_SetPosition(5, 56, 372);
-  Actor_SetHorizontalPositionWithTerrain(6, px(56), px(372));
+  Actor_SetPosition(ACTOR_JENNA, 56, 372);
+  Actor_SetHorizontalPositionWithTerrain(ACTOR_SHEBA, px(56), px(372));
   wait(1);
   Actor_SetMovementTypeById(26, gKibombo_KradenJoinsPiersScript);
-  Actor_SetMovementTypeById(5, gKibombo_JennaJoinsPiersScript);
-  Actor_SetMovementTypeAndWaitById(6, gKibombo_ShebaJoinsPiersScript);
+  Actor_SetMovementTypeById(ACTOR_JENNA, gKibombo_JennaJoinsPiersScript);
+  Actor_SetMovementTypeAndWaitById(ACTOR_SHEBA, gKibombo_ShebaJoinsPiersScript);
   Event_Wait(20);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
-  Actor_ShowEmoteById(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 5, 0);
-  Motion_SetModeAndWaitAnimation(7, 3);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
+  Actor_ShowEmoteById(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0);
+  Motion_SetModeAndWaitAnimation(ACTOR_PIERS, ANIM_NOD);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_SetModeById(26, 3);
-  Actor_SetModeById(5, 3);
-  Motion_SetModeAndWaitAnimation(6, 3);
-  Actor_SetModeById(7, 3);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 6, 0);
-  Actor_FaceDirection(7, FACING_SOUTHWEST, 0);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
+  Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
+  Motion_SetModeAndWaitAnimation(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetModeById(ACTOR_PIERS, ANIM_NOD);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_SHEBA, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
-  Actor_FaceDirection(26, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_FaceDirection(26, FACING_SOUTH_SOUTHEAST, 20);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
-  Actor_FaceDirection(6, FACING_SOUTH, 40);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 40);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
   Actor_ShowEmote(gMainRoutineWork.currentOwner,
                   EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Actor_FaceDirection(26, FACING_NORTH + FACING_STEP, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Actor_FaceDirection(26, FACING_NORTH_NORTHEAST, 0);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
-  Actor_SetModeById(7, 3);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ArmCallback(5, FACING_EAST, 20);
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 5, 0);
+  Actor_SetModeById(ACTOR_PIERS, ANIM_NOD);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ArmCallback(ACTOR_JENNA, FACING_EAST, 20);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-  Actor_ArmCallback(6, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_ArmCallback(26, FACING_EAST, 0);
-  Actor_FaceDirectionAndWait(7, FACING_WEST);
-  Actor_SetModeById(7, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
-  Actor_FaceDirection(26, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_WEST);
+  Actor_SetModeById(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
+  Actor_FaceDirection(26, FACING_SOUTH_SOUTHEAST, 0);
   Actor_ShowEmote(gMainRoutineWork.currentOwner,
                   EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
-  Actor_SetModeById(6, 3);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 6, 0);
-  Actor_FaceDirectionAndWait(7, FACING_SOUTHEAST);
-  Actor_SetModeById(7, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 5, 0);
-  Actor_FaceDirection(7, FACING_WEST, 0);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
-  Actor_SetModeById(7, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
-  Actor_FaceDirectionAndWait(26, FACING_NORTHWEST + FACING_STEP);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
+  Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_SHEBA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHEAST);
+  Actor_SetModeById(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
+  Actor_SetModeById(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
+  Actor_FaceDirectionAndWait(26, FACING_NORTH_NORTHWEST);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
-  Actor_FaceDirectionAndWait(7, FACING_SOUTHWEST);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 7, 0);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_FaceDirectionById(26, FACING_EAST);
   Actor_SetModeById(26, 3);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
-  Motion_SetModeAndWaitAnimation(7, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_PIERS, ANIM_NOD);
   Actor_ShowEmoteById(26, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
-  Actor_FaceDirection(6, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
   Actor_ShowEmote(gMainRoutineWork.currentOwner,
                   EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmoteById(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Actor_FaceDirection(26, FACING_NORTH + FACING_STEP, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmoteById(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Actor_FaceDirection(26, FACING_NORTH_NORTHEAST, 0);
   Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 26, 0);
-    Motion_SetModeAndWaitAnimation(5, 4);
-    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 5, 0);
+    Motion_SetModeAndWaitAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0);
     ((struct FieldWork *)EVENT_WORK)->message += 1;
   } else {
     ((struct FieldWork *)EVENT_WORK)->message += 2;
     Motion_SetModeAndWaitAnimation(26, 3);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 26, 0);
   }
-  Actor_FaceDirection(26, FACING_NORTHWEST + FACING_STEP, 20);
+  Actor_FaceDirection(26, FACING_NORTH_NORTHWEST, 20);
   Actor_ArmCallback(26, FACING_EAST, 20);
   Motion_SetModeAndWaitAnimation(26, 3);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
-  Actor_FaceDirection(26, FACING_NORTHWEST + FACING_STEP, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
+  Actor_FaceDirection(26, FACING_NORTH_NORTHWEST, 0);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 6, 0);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_SHEBA, 0);
   Motion_SetModeAndWaitAnimation(26, 3);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
-  Actor_FaceDirection(7, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-  Actor_ArmCallback(5, FACING_EAST, 0);
-  Actor_ArmCallback(6, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_JENNA, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_ArmCallback(26, FACING_EAST, 20);
-  Motion_SetModeAndWaitAnimation(7, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_PIERS, ANIM_NOD);
   Actor_SetModeById(26, 4);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
-  Actor_FaceDirection(6, FACING_SOUTH, 0);
-  Actor_FaceDirection(7, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(26, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(26, FACING_NORTH_NORTHWEST, 0);
   Actor_ShowEmoteById(26, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
-  Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
+  Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-  Actor_ArmCallback(5, FACING_EAST, 0);
-  Actor_ArmCallback(6, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_JENNA, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_ArmCallback(26, FACING_EAST, 0);
   Actor_ShowEmote(gMainRoutineWork.currentOwner,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Actor_FaceDirection(7, FACING_WEST, 20);
-  Actor_SetModeById(7, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 20);
+  Actor_SetModeById(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Motion_SetModeAndWaitAnimation(26, 3);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
-  Actor_FaceDirection(6, FACING_SOUTH, 0);
-  Actor_FaceDirection(7, FACING_SOUTH + FACING_STEP, 20);
-  Motion_SetModeAndWaitAnimation(5, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 5, 0);
-  Actor_FaceDirection(7, FACING_WEST, 0);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Actor_ArmCallback(5, FACING_EAST, 0);
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 5, 0);
-  Actor_FaceDirectionAndWait(26, FACING_NORTHWEST + FACING_STEP);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH_SOUTHWEST, 20);
+  Motion_SetModeAndWaitAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Actor_ArmCallback(ACTOR_JENNA, FACING_EAST, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0);
+  Actor_FaceDirectionAndWait(26, FACING_NORTH_NORTHWEST);
   Actor_SetModeById(26, 4);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 6, 0);
-  Actor_FaceDirection(7, FACING_SOUTHWEST, 0);
-  Actor_SetModeById(7, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
-  Actor_ArmCallback(5, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_SHEBA, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
+  Actor_SetModeById(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
+  Actor_ArmCallback(ACTOR_JENNA, FACING_EAST, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-  Actor_ArmCallback(6, FACING_EAST, 0);
+  Actor_ArmCallback(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_ArmCallback(26, FACING_EAST, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 5, 0);
-  Actor_FaceDirection(7, FACING_WEST, 0);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_SetModeById(26, 3);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-  Actor_FaceDirection(6, FACING_SOUTH, 0);
-  Actor_FaceDirectionAndWait(7, FACING_SOUTHWEST);
-  Motion_SetModeAndWaitAnimation(7, 3);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
+  Motion_SetModeAndWaitAnimation(ACTOR_PIERS, ANIM_NOD);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
-  Actor_ArmCallback(6, FACING_EAST, 40);
+  Actor_ArmCallback(ACTOR_SHEBA, FACING_EAST, 40);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-  Actor_ArmCallback(6, FACING_EAST, 20);
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 6, 0);
-  Actor_ArmCallback(5, FACING_EAST, 0);
-  Actor_FaceDirection(7, FACING_WEST, 0);
-  Actor_FaceDirection(7, FACING_WEST, 0);
-  Actor_SetAttachedEffect(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_ArmCallback(ACTOR_SHEBA, FACING_EAST, 20);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_SHEBA, 0);
+  Actor_ArmCallback(ACTOR_JENNA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
+  Actor_SetAttachedEffect(ACTOR_PIERS,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 6, 0);
-  Actor_FaceDirection(26, FACING_NORTHWEST + FACING_STEP, 10);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_SHEBA, 0);
+  Actor_FaceDirection(26, FACING_NORTH_NORTHWEST, 10);
   Actor_SetModeById(26, 4);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
-  Motion_SetModeAndWaitAnimation(7, 3);
+  Motion_SetModeAndWaitAnimation(ACTOR_PIERS, ANIM_NOD);
   Actor_ArmCallback(26, FACING_EAST, 0);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
-  Actor_FaceDirection(7, FACING_NORTH, 20);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
-  Motion_SetModeAndWaitAnimation(7, 3);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 7, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 20);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
+  Motion_SetModeAndWaitAnimation(ACTOR_PIERS, ANIM_NOD);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 7);
-  Actor_WatchAndSetScript(5, 7);
-  Actor_WatchAndSetScript(6, 7);
+  Actor_WatchAndSetScript(ACTOR_JENNA, 7);
+  Actor_WatchAndSetScript(ACTOR_SHEBA, 7);
   Actor_WatchAndSetScript(26, 7);
-  Actor_SetSpeed(7, 1.6);
-  Actor_WalkToAndWaitById(7, 72, 368);
+  Actor_SetSpeed(ACTOR_PIERS, 1.6);
+  Actor_WalkToAndWaitById(ACTOR_PIERS, 72, 368);
   Actor_SetAttachedEffect(26, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_WalkToAndWait(7, 40, 348);
-  Actor_WalkToAndWait(7, 40, 332);
-  Actor_FaceDirection(7, FACING_NORTHEAST, 0);
+  Actor_WalkToAndWait(ACTOR_PIERS, 40, 348);
+  Actor_WalkToAndWait(ACTOR_PIERS, 40, 332);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
   Actor_Stop(gMainRoutineWork.currentOwner);
-  Actor_Stop(5);
-  Actor_Stop(6);
+  Actor_Stop(ACTOR_JENNA);
+  Actor_Stop(ACTOR_SHEBA);
   Actor_Stop(26);
-  Actor_FaceDirection(26, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(26, FACING_NORTH_NORTHWEST, 0);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
-  Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-  Actor_FaceDirection(7, FACING_SOUTH, 40);
-  Actor_FaceDirectionAndWait(26, FACING_NORTH + FACING_STEP);
+  Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 40);
+  Actor_FaceDirectionAndWait(26, FACING_NORTH_NORTHEAST);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
-  Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 7, 0);
-  Actor_FaceDirection(26, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_PIERS, 0);
+  Actor_FaceDirection(26, FACING_NORTH_NORTHWEST, 0);
   Motion_SetModeAndWaitAnimation(26, 4);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
-  Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 7, 0);
+  Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_PIERS, 0);
   Actor_SetAttachedEffect(26, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
-  Motion_SetModeAndWaitAnimation(7, 4);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 7, 0);
+  Motion_SetModeAndWaitAnimation(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_PIERS, 0);
   Actor_SetModeById(26, 4);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
-  Actor_FaceDirection(6, FACING_SOUTH, 40);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 40);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
-  Actor_FaceDirection(26, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(26, FACING_NORTH_NORTHEAST, 0);
   Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Actor_ShowEmoteById(26, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 26, 0);
-    Actor_FaceDirection(5, FACING_SOUTHWEST, 0);
-    Actor_FaceDirection(6, FACING_NORTHEAST, 20);
-    Actor_SetModeById(5, 3);
-    Motion_SetModeAndWaitAnimation(6, 3);
+    Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 20);
+    Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
+    Motion_SetModeAndWaitAnimation(ACTOR_SHEBA, ANIM_NOD);
     ((struct FieldWork *)EVENT_WORK)->message += 3;
   } else {
     ((struct FieldWork *)EVENT_WORK)->message += 1;
     Actor_ShowEmoteById(26, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 26, 0);
-    Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
-    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 5, 0);
-    Actor_FaceDirectionById(6, FACING_EAST);
-    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 6, 0);
+    Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTHEAST);
+    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0);
+    Actor_FaceDirectionById(ACTOR_SHEBA, FACING_EAST);
+    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_SHEBA, 0);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_WEST, 0);
     FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
     Kibombo_CountAnswer();
   }
-  Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 7, 0);
+  Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_PIERS, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-  Actor_FaceDirection(6, FACING_NORTH, 0);
-  Actor_FaceDirection(26, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirectionAndWait(5, FACING_NORTH);
-  Actor_SetModeById(5, 3);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_BELOW | 5, 0);
-  Motion_SetModeAndWaitAnimation(7, 3);
-  Actor_SetModeById(6, 3);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 6, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
+  Actor_FaceDirection(26, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_NORTH);
+  Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
+  Event_ShowMessageAndWait(
+      SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_BELOW | ACTOR_JENNA, 0);
+  Motion_SetModeAndWaitAnimation(ACTOR_PIERS, ANIM_NOD);
+  Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_SHEBA, 0);
   Actor_SetModeById(26, 3);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 26, 0);
-  Motion_SetModeAndWaitAnimation(7, 3);
-  Actor_SetSpeed(7, 0.4);
-  Actor_WalkToAndWaitById(7, 40, 350);
+  Motion_SetModeAndWaitAnimation(ACTOR_PIERS, ANIM_NOD);
+  Actor_SetSpeed(ACTOR_PIERS, 0.4);
+  Actor_WalkToAndWaitById(ACTOR_PIERS, 40, 350);
   Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
-  Actor_SetModeById(5, 3);
-  Actor_SetModeById(6, 3);
+  Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
   Motion_SetModeAndWaitAnimation(26, 3);
-  Motion_SetModeAndWaitAnimation(7, 3);
-  Actor_SetSpeed(7, 0.8);
-  Actor_SetMovementTypeById(5, gKibombo_PartyFollowsScript + 0);
-  Actor_SetMovementTypeById(6, gKibombo_PartyFollowsScript + 0);
+  Motion_SetModeAndWaitAnimation(ACTOR_PIERS, ANIM_NOD);
+  Actor_SetSpeed(ACTOR_PIERS, 0.8);
+  Actor_SetMovementTypeById(ACTOR_JENNA, gKibombo_PartyFollowsScript + 0);
+  Actor_SetMovementTypeById(ACTOR_SHEBA, gKibombo_PartyFollowsScript + 0);
   Actor_SetMovementTypeById(26, gKibombo_PartyFollowsScript + 0);
-  Actor_SetMovementTypeAndWaitById(7, gKibombo_PartyFollowsScript + 0);
+  Actor_SetMovementTypeAndWaitById(ACTOR_PIERS,
+                                   gKibombo_PartyFollowsScript + 0);
   GameFlag_Set(FLAG_PIERS_JOINED);
   GameFlag_Set(FLAG_KIBOMBO_PIERS_WITH_PARTY);
   Event_PrepareObjectAndApplyValue(7, 1);
@@ -1137,24 +1140,24 @@ void Kibombo_DeadEndByTheStatue(void) {
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 308, 200);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 290, 188);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
-  Actor_SetSpeed(5, 0.8);
-  Actor_SetSpeed(6, 0.8);
+  Actor_SetSpeed(ACTOR_JENNA, 0.8);
+  Actor_SetSpeed(ACTOR_SHEBA, 0.8);
   Actor_SetSpeed(26, 0.8);
-  Actor_SetSpeed(7, 0.8);
-  Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(6, gMainRoutineWork.currentOwner);
+  Actor_SetSpeed(ACTOR_PIERS, 0.8);
+  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.currentOwner);
   Actor_MoveToObject(26, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.currentOwner);
   wait(1);
-  Actor_SetMovementTypeById(5, gKibombo_JennaAtDeadEndScript);
-  Actor_SetMovementTypeById(6, gKibombo_ShebaAtDeadEndScript);
+  Actor_SetMovementTypeById(ACTOR_JENNA, gKibombo_JennaAtDeadEndScript);
+  Actor_SetMovementTypeById(ACTOR_SHEBA, gKibombo_ShebaAtDeadEndScript);
   Actor_SetMovementTypeById(26, gKibombo_KradenAtDeadEndScript);
-  Actor_SetMovementTypeAndWaitById(7, gKibombo_PiersAtDeadEndScript);
+  Actor_SetMovementTypeAndWaitById(ACTOR_PIERS, gKibombo_PiersAtDeadEndScript);
   Event_Wait(20);
-  Actor_FaceDirection(7, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   Event_SetMessageId(MsgItSADead);
   // "It's a dead end..."
-  Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 7, 0);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_PIERS, 0);
   FieldCamera_SetSpeed(2.4);
   ((struct Actor *)((s32)FieldCamera_GetActor()))->motionFlags = done;
   FieldCamera_MoveTo(200, CAMERA_KEEP, 180, 1);
@@ -1168,40 +1171,40 @@ void Kibombo_DeadEndByTheStatue(void) {
   Event_Wait(20);
   FieldCamera_MoveTo(272, CAMERA_KEEP, 180, 1);
   FieldCamera_WaitForArrival();
-  Actor_SetModeById(6, 4);
+  Actor_SetModeById(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
   // "But this was the only path..."
-  Event_ShowMessageAndWait(6, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   // "Isn't it a little strange that there would be a path that just goes..."
-  Event_ShowMessageAndWait(5, 0);
+  Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_ShowEmoteById(26, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 20);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 26);
-  Actor_WatchAndSetScript(5, 26);
-  Actor_WatchAndSetScript(6, 26);
-  Actor_WatchAndSetScript(7, 26);
+  Actor_WatchAndSetScript(ACTOR_JENNA, 26);
+  Actor_WatchAndSetScript(ACTOR_SHEBA, 26);
+  Actor_WatchAndSetScript(ACTOR_PIERS, 26);
   FieldCamera_SetSpeed(1.2);
   FieldCamera_MoveTo(268, CAMERA_KEEP, 146, 1);
   Actor_SetSpeed(26, 1.2);
   Actor_WalkToAndWait(26, 290, 116);
   Actor_WalkToAndWait(26, 268, 109);
-  Actor_FaceDirection(26, FACING_SOUTH + FACING_STEP, 20);
-  Actor_FaceDirection(26, FACING_SOUTHEAST + FACING_STEP, 20);
-  Actor_FaceDirection(26, FACING_SOUTH + FACING_STEP, 40);
+  Actor_FaceDirection(26, FACING_SOUTH_SOUTHWEST, 20);
+  Actor_FaceDirection(26, FACING_SOUTH_SOUTHEAST, 20);
+  Actor_FaceDirection(26, FACING_SOUTH_SOUTHWEST, 40);
   // "Hmm..."
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 26, 0);
   FieldCamera_MoveWithinMapBounds(px(268), -1, px(188), 1);
   Actor_WalkToAndWaitById(26, 218, 156);
   Actor_ArmCallback(26, FACING_EAST, 40);
   Actor_Stop(gMainRoutineWork.currentOwner);
-  Actor_Stop(5);
-  Actor_Stop(6);
-  Actor_Stop(7);
+  Actor_Stop(ACTOR_JENNA);
+  Actor_Stop(ACTOR_SHEBA);
+  Actor_Stop(ACTOR_PIERS);
   // "I see..."
   Event_ShowMessageAndWait(26, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
-  Actor_ArmCallback(7, FACING_EAST, 0);
-  Actor_FaceDirection(5, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(6, FACING_SOUTHWEST, 20);
+  Actor_ArmCallback(ACTOR_PIERS, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 20);
   Actor_SetSpeed(26, 0.4);
   Actor_WalkToAndWaitById(26, 248, 156);
   Event_Wait(40);
@@ -1209,9 +1212,9 @@ void Kibombo_DeadEndByTheStatue(void) {
   // "So that's how it works..."
   Event_ShowMessageAndWait(26, 0);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 26);
-  Actor_WatchAndSetScript(5, 26);
-  Actor_WatchAndSetScript(6, 26);
-  Actor_WatchAndSetScript(7, 26);
+  Actor_WatchAndSetScript(ACTOR_JENNA, 26);
+  Actor_WatchAndSetScript(ACTOR_SHEBA, 26);
+  Actor_WatchAndSetScript(ACTOR_PIERS, 26);
   Event_Wait(20);
   Actor_GetById(26)->actionFlags &= ~1;
   Actor_WalkToAndWaitById(26, 248, 188);
@@ -1222,19 +1225,19 @@ void Kibombo_DeadEndByTheStatue(void) {
   Event_Wait(20);
   Actor_ShowEmote(gMainRoutineWork.currentOwner,
                   EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_Stop(gMainRoutineWork.currentOwner);
-  Actor_Stop(5);
-  Actor_Stop(6);
-  Actor_Stop(7);
+  Actor_Stop(ACTOR_JENNA);
+  Actor_Stop(ACTOR_SHEBA);
+  Actor_Stop(ACTOR_PIERS);
   // "Listen up, Felix..."
   Event_ShowMessageAndWait(26, 0);
-  Actor_FaceDirection(5, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(6, FACING_SOUTHWEST, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.4);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 280, 188);
@@ -1248,8 +1251,8 @@ void Kibombo_DeadEndByTheStatue(void) {
   FieldMessage_ShowAtActor(26, 0);
   Actor_ShowEmoteById(gMainRoutineWork.currentOwner,
                       EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_FaceDirection(5, FACING_WEST, 0);
-  Actor_FaceDirection(6, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
 ask:
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     ((struct FieldWork *)EVENT_WORK)->message += 1;
@@ -1266,28 +1269,29 @@ ask:
   GameFlag_Clear(FLAG_SCOOPING_SECOND_MARKING);
   Actor_ShowEmote(gMainRoutineWork.currentOwner,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_SetModeById(26, 3);
   Event_ShowMessageAndWait(26, 0);
-  Actor_SetAttachedEffect(5, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_ShowMessageAndWait(5, 0);
+  Actor_SetAttachedEffect(ACTOR_JENNA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_SetModeById(26, 3);
   Event_ShowMessageAndWait(26, 0);
-  Actor_FaceDirection(6, FACING_SOUTH, 0);
-  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 6, 0);
-  Actor_FaceDirection(26, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_SHEBA, 0);
+  Actor_FaceDirection(26, FACING_SOUTH_SOUTHEAST, 20);
   Motion_SetModeAndWaitAnimation(26, 3);
-  Actor_FaceDirection(6, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   Actor_FaceDirectionById(26, FACING_EAST);
   Event_ShowMessageAndWait(26, 0);
   Event_ShowMessageAndWait(26, 0);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
-  Actor_WatchAndSetScript(5, gMainRoutineWork.currentOwner);
-  Actor_WatchAndSetScript(6, gMainRoutineWork.currentOwner);
+  Actor_WatchAndSetScript(ACTOR_JENNA, gMainRoutineWork.currentOwner);
+  Actor_WatchAndSetScript(ACTOR_SHEBA, gMainRoutineWork.currentOwner);
   Actor_WatchAndSetScript(26, gMainRoutineWork.currentOwner);
-  Actor_WatchAndSetScript(7, gMainRoutineWork.currentOwner);
+  Actor_WatchAndSetScript(ACTOR_PIERS, gMainRoutineWork.currentOwner);
   FieldCamera_MoveTo(268, CAMERA_KEEP, 164, 1);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 280, 120);
@@ -1308,97 +1312,99 @@ ask:
   FieldCamera_MoveTo(268, CAMERA_KEEP, 188, 1);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 284, 188);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 10);
-  Actor_Stop(5);
-  Actor_Stop(6);
+  Actor_Stop(ACTOR_JENNA);
+  Actor_Stop(ACTOR_SHEBA);
   Actor_Stop(26);
-  Actor_Stop(7);
+  Actor_Stop(ACTOR_PIERS);
   Motion_SetModeAndWaitAnimation(26, 3);
   Event_ShowMessageAndWait(26, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Event_ShowMessageAndWait(5, 0);
-  Actor_FaceDirection(26, FACING_NORTH + FACING_STEP, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Event_ShowMessageAndWait(ACTOR_JENNA, 0);
+  Actor_FaceDirection(26, FACING_NORTH_NORTHEAST, 0);
   Event_ShowMessageAndWait(26, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(5, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(6, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(7, FACING_NORTHEAST, 0);
-  Actor_SetAttachedEffect(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_ShowMessageAndWait(7, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
+  Actor_SetAttachedEffect(ACTOR_PIERS,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_ShowEmoteById(26, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Actor_FaceDirectionAndWait(26, FACING_WEST);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 26, 0);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-  Actor_FaceDirectionAndWait(26, FACING_NORTH + FACING_STEP);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  Actor_FaceDirectionAndWait(26, FACING_NORTH_NORTHEAST);
   Event_ShowMessageThenWait(26, 0, 20);
-  Actor_FaceDirection(5, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(6, FACING_SOUTHWEST, 20);
-  Event_ShowMessageAndWait(6, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 20);
+  Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Actor_ArmCallback(26, FACING_EAST, 10);
   Actor_SetModeById(26, 4);
   Event_ShowMessageAndWait(26, 0);
-  Actor_FaceDirection(6, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(26, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(26, FACING_NORTH_NORTHEAST, 0);
   FieldCamera_MoveTo(268, CAMERA_KEEP, 164, 1);
-  Actor_WalkToAndWait(5, 296, 168);
-  Actor_WalkToAndWait(5, 280, 154);
-  Actor_FaceDirection(5, FACING_WEST, 40);
-  Event_ShowMessageAndWait(5, 0);
+  Actor_WalkToAndWait(ACTOR_JENNA, 296, 168);
+  Actor_WalkToAndWait(ACTOR_JENNA, 280, 154);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 40);
+  Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_ShowMessageAndWait(26, 0);
-  Actor_FaceDirection(5, FACING_SOUTHWEST, 0);
-  Event_ShowMessageAndWait(5, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
+  Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessageAndWait(26, 0);
   FieldCamera_MoveWithinMapBounds(px(268), -1, px(188), 1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
-  Actor_FaceDirection(6, FACING_WEST, 0);
-  Actor_ArmCallback(7, FACING_EAST, 0);
-  Actor_FaceDirection(26, FACING_SOUTHEAST + FACING_STEP, 40);
-  Actor_FaceDirection(26, FACING_SOUTH + FACING_STEP, 20);
-  Actor_FaceDirection(26, FACING_NORTH + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
+  Actor_ArmCallback(ACTOR_PIERS, FACING_EAST, 0);
+  Actor_FaceDirection(26, FACING_SOUTH_SOUTHEAST, 40);
+  Actor_FaceDirection(26, FACING_SOUTH_SOUTHWEST, 20);
+  Actor_FaceDirection(26, FACING_NORTH_NORTHEAST, 40);
   Actor_FaceDirectionById(26, FACING_EAST);
   Event_ShowMessageAndWait(26, 0);
   Actor_SetAttachedEffect(26, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessageAndWait(26, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-  Actor_FaceDirection(5, FACING_SOUTH, 20);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 20);
   Actor_SetModeById(26, 4);
   Event_ShowMessageAndWait(26, 0);
-  Actor_FaceDirection(5, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
-  Actor_FaceDirection(26, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_FaceDirection(26, FACING_SOUTH_SOUTHEAST, 20);
   Event_ShowMessageAndWait(26, 0);
   Actor_ArmCallback(26, FACING_EAST, 10);
   Event_ShowMessageAndWait(26, 0);
-  Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
-  Event_ShowMessageAndWait(7, 0);
+  Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_FaceDirectionAndWait(26, FACING_WEST);
   Actor_SetModeById(26, 4);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 26, 0);
-  Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirectionById(26, FACING_EAST);
   Event_ShowMessageAndWait(26, 0);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(gMainRoutineWork.currentOwner,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmoteById(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmoteById(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_ShowEmoteById(26, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Event_ShowMessageAndWait(26, 0);
   Actor_SetModeById(26, 3);
   Event_ShowMessageAndWait(26, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
-  Actor_SetModeById(5, 3);
-  Actor_SetModeById(6, 3);
-  Motion_SetModeAndWaitAnimation(7, 3);
-  Actor_SetSpeed(5, 1.2);
-  Actor_SetSpeed(6, 1.2);
+  Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
+  Motion_SetModeAndWaitAnimation(ACTOR_PIERS, ANIM_NOD);
+  Actor_SetSpeed(ACTOR_JENNA, 1.2);
+  Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   Actor_SetSpeed(26, 1.2);
-  Actor_SetSpeed(7, 1.2);
-  Actor_SetMovementTypeById(5, gKibombo_PartyLeavesDeadEndScript);
-  Actor_SetMovementTypeById(6, gKibombo_PartyLeavesDeadEndScript);
+  Actor_SetSpeed(ACTOR_PIERS, 1.2);
+  Actor_SetMovementTypeById(ACTOR_JENNA, gKibombo_PartyLeavesDeadEndScript);
+  Actor_SetMovementTypeById(ACTOR_SHEBA, gKibombo_PartyLeavesDeadEndScript);
   Actor_SetMovementTypeById(26, gKibombo_PartyLeavesDeadEndScript);
-  Actor_SetMovementTypeAndWaitById(7, gKibombo_PartyLeavesDeadEndScript);
+  Actor_SetMovementTypeAndWaitById(ACTOR_PIERS,
+                                   gKibombo_PartyLeavesDeadEndScript);
   GameFlag_Set(FLAG_KIBOMBO_DEAD_END_SEEN);
   Event_End();
 }
@@ -2255,7 +2261,7 @@ void Kibombo_CeremonyBegins(void) {
   Kibombo_ObjWalk(26, 72, 455);
   Actor_ArmCallback(26, FACING_EAST, 0);
   Kibombo_ObjArm(gMainRoutineWork.currentOwner, FACING_WEST, 40);
-  Kibombo_ObjArm(26, FACING_NORTH + FACING_STEP, 0);
+  Kibombo_ObjArm(26, FACING_NORTH_NORTHEAST, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
   FieldCamera_SetSpeed(2.4);
   Kibombo_CamMove(px(264), px(16), px(420), 1);
@@ -2272,7 +2278,7 @@ void Kibombo_CeremonyBegins(void) {
   Kibombo_CamMove(px(264), px(32), px(400), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
-  Kibombo_ObjArm(17, FACING_SOUTHEAST + FACING_STEP, 20);
+  Kibombo_ObjArm(17, FACING_SOUTH_SOUTHEAST, 20);
   // "All of you, pray in the depths of your hearts for my success!"
   Event_ShowMessageAndWait(0x4000 + 17, 0);
   Sound_Play(MUS_011);
@@ -2294,7 +2300,7 @@ void Kibombo_CeremonyBegins(void) {
   wait(5);
   Actor_GetById(25)->velocityY = px(4);
   wait(20);
-  Actor_ArmCallback(17, FACING_NORTH + FACING_STEP, 20);
+  Actor_ArmCallback(17, FACING_NORTH_NORTHEAST, 20);
   Kibombo_CrowdBows();
   Event_Wait(40);
   FieldCamera_SetSpeed(0.2);
@@ -2339,7 +2345,7 @@ void Kibombo_PresentOrbToGabomba(void) {
   Kibombo_CamSpeed(0xcccc, 0x1999);
   Kibombo_CamMove(px(264), -1, px(388), 1);
   FieldCamera_WaitForArrival();
-  Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
+  Kibombo_ObjTurn(17, FACING_SOUTH_SOUTHEAST);
   Motion_SetModeAndWaitAnimation(17, 3);
   Event_SetMessageId((s32)MsgLetUsNow);
   // "Let us now present our jewel to the Great Gabomba!"
@@ -2417,7 +2423,7 @@ void Kibombo_GabombaNotPleased(void) {
     object->motionFlags = 0;
     goto test;
     do {
-      Kibombo_ObjArm(17, FACING_NORTH + FACING_STEP, 0);
+      Kibombo_ObjArm(17, FACING_NORTH_NORTHEAST, 0);
       slot = &gKibombo_BlackCrystal;
       (*slot)->y += 0xffffc000;
       wait(1);
@@ -2430,7 +2436,7 @@ void Kibombo_GabombaNotPleased(void) {
   }
   Motion_SetModeAndWaitAnimation(17, 4);
   Event_ShowMessageAndWait(17, 0);
-  Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
+  Kibombo_ObjTurn(17, FACING_SOUTH_SOUTHEAST);
   Event_ShowMessageAndWait(0x4000 + 17, 0);
   GameFlag_Clear(0x8f7);
   Sound_Play(MUS_011);
@@ -2459,12 +2465,12 @@ void Kibombo_WitchDoctorFeelsPower(void) {
   Event_SetMessageId((s32)MsgOhTheMagic);
   // "Oh! The magic, the power of the witch doctor fills my body!"
   Event_ShowMessageAndWait(17, 0);
-  Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
+  Kibombo_ObjTurn(17, FACING_SOUTH_SOUTHEAST);
   Kibombo_MessagePut(0x4011, 0);
-  Kibombo_ObjTurn(17, FACING_SOUTH + FACING_STEP);
+  Kibombo_ObjTurn(17, FACING_SOUTH_SOUTHWEST);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 17, 0);
   Task_Remove(Kibombo_FlickerCeremonyFires);
-  Kibombo_ObjTurn(17, FACING_NORTH + FACING_STEP);
+  Kibombo_ObjTurn(17, FACING_NORTH_NORTHEAST);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0, 0);
   gFieldWork->transition = effect;
@@ -2516,10 +2522,10 @@ void Kibombo_CrowdCheers(void) {
   Actor_Jump(23, 6, 0);
   Actor_Jump(24, 6, 0);
   Actor_Jump(25, 6, 40);
-  Kibombo_ObjTurn(20, FACING_SOUTH + FACING_STEP);
+  Kibombo_ObjTurn(20, FACING_SOUTH_SOUTHWEST);
   Actor_Jump(20, 2, 0);
   Event_ShowMessageAndWait(0x4000 + 20, 0);
-  Kibombo_ObjTurn(23, FACING_SOUTHEAST + FACING_STEP);
+  Kibombo_ObjTurn(23, FACING_SOUTH_SOUTHEAST);
   Actor_Jump(23, 2, 0);
   Event_ShowMessageAndWait(0x4000 + 23, 0);
   Actor_SetMovementTypeById(18, gKibombo_CrowdDanceScript);
@@ -2531,7 +2537,7 @@ void Kibombo_CrowdCheers(void) {
   Actor_SetMovementTypeById(24, gKibombo_CrowdDanceScript);
   Actor_SetMovementTypeById(25, gKibombo_CrowdDanceScript);
   Event_Wait(40);
-  Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
+  Kibombo_ObjTurn(17, FACING_SOUTH_SOUTHEAST);
   Actor_Jump(17, 2, 10);
   Actor_Jump(17, 4, 10);
   Event_ShowMessageAndWait(17, 0);
@@ -2544,14 +2550,14 @@ void Kibombo_CrowdCheers(void) {
   Actor_Stop(24);
   Actor_Stop(25);
   Event_Wait(40);
-  Kibombo_ObjArm(18, FACING_NORTH + FACING_STEP, 0);
-  Kibombo_ObjArm(19, FACING_NORTH + FACING_STEP, 0);
-  Kibombo_ObjArm(20, FACING_NORTH + FACING_STEP, 0);
-  Kibombo_ObjArm(21, FACING_NORTH + FACING_STEP, 0);
-  Kibombo_ObjArm(22, FACING_NORTHWEST + FACING_STEP, 0);
-  Kibombo_ObjArm(23, FACING_NORTHWEST + FACING_STEP, 0);
-  Kibombo_ObjArm(24, FACING_NORTHWEST + FACING_STEP, 0);
-  Kibombo_ObjArm(25, FACING_NORTHWEST + FACING_STEP, 0);
+  Kibombo_ObjArm(18, FACING_NORTH_NORTHEAST, 0);
+  Kibombo_ObjArm(19, FACING_NORTH_NORTHEAST, 0);
+  Kibombo_ObjArm(20, FACING_NORTH_NORTHEAST, 0);
+  Kibombo_ObjArm(21, FACING_NORTH_NORTHEAST, 0);
+  Kibombo_ObjArm(22, FACING_NORTH_NORTHWEST, 0);
+  Kibombo_ObjArm(23, FACING_NORTH_NORTHWEST, 0);
+  Kibombo_ObjArm(24, FACING_NORTH_NORTHWEST, 0);
+  Kibombo_ObjArm(25, FACING_NORTH_NORTHWEST, 0);
   Actor_ShowEmoteById(17, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   Kibombo_MessagePut(0x8000 + 17, 0);
   Kibombo_MessagePut(0x8000 + 17, 0);
@@ -2578,7 +2584,7 @@ void Kibombo_GabombaStillNotPleased(void) {
     object->motionFlags = 0;
     if (object->y > 144 << 14) {
       do {
-        Actor_ArmCallback(17, FACING_NORTH + FACING_STEP, 0);
+        Actor_ArmCallback(17, FACING_NORTH_NORTHEAST, 0);
         slot = &gKibombo_BlackCrystal;
         object = *slot;
         object->y += 0xffffc000;
@@ -2588,7 +2594,7 @@ void Kibombo_GabombaStillNotPleased(void) {
   }
   Motion_SetModeAndWaitAnimation(17, 4);
   Event_ShowMessageAndWait(17, 0);
-  Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
+  Kibombo_ObjTurn(17, FACING_SOUTH_SOUTHEAST);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 17, 0);
   GameFlag_Set(0x8fc);
   GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
@@ -2766,13 +2772,13 @@ void Kibombo_CeremonyEnds(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
-  Kibombo_ObjArm(10, FACING_NORTHWEST + FACING_STEP, 20);
-  Kibombo_ObjArm(10, FACING_NORTH + FACING_STEP, 20);
+  Kibombo_ObjArm(10, FACING_NORTH_NORTHWEST, 20);
+  Kibombo_ObjArm(10, FACING_NORTH_NORTHEAST, 20);
   Motion_SetModeAndWaitAnimation(10, 3);
   Actor_SetModeById(9, 3);
   Motion_SetModeAndWaitAnimation(8, 3);
-  Kibombo_ObjArm(10, FACING_NORTHWEST + FACING_STEP, 20);
-  Kibombo_ObjArm(10, FACING_NORTH + FACING_STEP, 20);
+  Kibombo_ObjArm(10, FACING_NORTH_NORTHWEST, 20);
+  Kibombo_ObjArm(10, FACING_NORTH_NORTHEAST, 20);
   Actor_GetById(10)->velocityY = px(3);
   Event_Wait(40);
   Actor_SetModeById(9, 3);
@@ -2789,7 +2795,7 @@ void Kibombo_CeremonyEnds(void) {
   Event_ShowMessageAndWait(9, 0);
   Actor_ArmCallback(10, FACING_EAST, 0);
   Kibombo_ObjArm(gMainRoutineWork.currentOwner, FACING_WEST, 40);
-  Kibombo_ObjArm(10, FACING_NORTH + FACING_STEP, 0);
+  Kibombo_ObjArm(10, FACING_NORTH_NORTHEAST, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 10);
   Actor_SetModeById(10, 3);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
@@ -2803,17 +2809,17 @@ void Kibombo_CeremonyEnds(void) {
   Kibombo_ObjTurn(8, FACING_WEST);
   Actor_SetModeById(8, 4);
   Kibombo_MessagePut(0x2008, 0);
-  Kibombo_ObjTurn(8, FACING_SOUTH + FACING_STEP);
+  Kibombo_ObjTurn(8, FACING_SOUTH_SOUTHWEST);
   Kibombo_MessagePut(0x2008, 0);
   Actor_SetModeById(8, 4);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 8, 0);
-  Kibombo_ObjArm(9, FACING_NORTH + FACING_STEP, 0);
+  Kibombo_ObjArm(9, FACING_NORTH_NORTHEAST, 0);
   Kibombo_ObjSpeed(8, 0x19999, 0xcccc);
   Kibombo_ObjWalk(8, 364, 576);
-  Kibombo_ObjArm(8, FACING_NORTHWEST + FACING_STEP, 0);
+  Kibombo_ObjArm(8, FACING_NORTH_NORTHWEST, 0);
   Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   Event_ShowMessageAndWait(9, 0);
-  Kibombo_ObjTurn(9, FACING_SOUTHEAST + FACING_STEP);
+  Kibombo_ObjTurn(9, FACING_SOUTH_SOUTHEAST);
   Event_ShowMessageAndWait(9, 0);
   Actor_SetModeById(9, 4);
   Event_ShowMessageAndWait(9, 0);
@@ -3104,12 +3110,12 @@ void Kibombo_InitializeRoom5(void) {
     return;
   }
   Actor_SetSpritePriority(17, 1);
-  Actor_SetSpritePriority(7, 2);
+  Actor_SetSpritePriority(ACTOR_PIERS, 2);
   Actor_SetSpritePriority(26, 2);
-  Actor_SetSpritePriority(5, 2);
-  Actor_SetSpritePriority(6, 2);
+  Actor_SetSpritePriority(ACTOR_JENNA, 2);
+  Actor_SetSpritePriority(ACTOR_SHEBA, 2);
   if (GameFlag_Get(FLAG_KIBOMBO_PIERS_WITH_PARTY))
-    Actor_SetHorizontalPositionWithTerrain(7, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(ACTOR_PIERS, 0, 0);
   else if (GameFlag_Get(FLAG_KIBOMBO_PIERS_STAYED_BEHIND)) {
     s32 angle = 0x2000;
 
@@ -3194,11 +3200,11 @@ void Kibombo_InitializeRoom3(void) {
     if (GameFlag_Get(FLAG_GABOMBA_CEREMONY_ENDED)) {
       Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
       if (GameFlag_Get(0x8ee)) {
-        s32 angle = FACING_NORTHWEST + FACING_STEP;
+        s32 angle = FACING_NORTH_NORTHWEST;
 
         Kibombo_ObjPlaceFacing(8, px(434), px(634), angle);
       } else {
-        s32 angle = FACING_NORTHWEST + FACING_STEP;
+        s32 angle = FACING_NORTH_NORTHWEST;
 
         Kibombo_ObjPlaceFacing(8, px(364), px(576), angle);
       }
@@ -3270,7 +3276,7 @@ s32 gKibombo_EnterDoorScript[] = {
 u32 gKibombo_KradenMeetsPiersScript[] = {                                                               
       SC_ARG(2),   SC_MOVE(px(98), 0, px(408)),                         
       SC_SYNC,     SC_ARG(1),                                                  
-      SC_WAIT(1), SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),              
+      SC_WAIT(1), SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),              
       SC_WAIT(1), SC_END,                                                     
   };
 
@@ -3598,17 +3604,17 @@ struct ActorPlacement gKibombo_Room1Placements[] = {
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 300, 0, 228, FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 248, 0, 288, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 248, 0, 288, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 208, 0, 176, FACING_EAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 288, 0, 364, FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(139, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 432, 0, 274, FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(140, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 58, 0, 298, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(146, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 102, 0, 328, FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(147, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 336, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 246, 0, 488, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 282, 0, 488, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(144, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 430, 0, 442, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(368, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 460, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(139, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 432, 0, 274, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(140, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 58, 0, 298, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(146, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 102, 0, 328, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(147, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 336, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 246, 0, 488, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 282, 0, 488, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(144, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 430, 0, 442, FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(368, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 460, FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -3619,21 +3625,21 @@ struct ActorPlacement gKibombo_Room4Placements[] = {
     ACTOR_PLACEMENT(365, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(144, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 104, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(141, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 114, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(139, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 208, 0, 152, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(145, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 292, 0, 128, FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(145, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 230, 0, 112, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(140, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 304, 0, 220, FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(146, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 278, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(147, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 320, 0, 158, FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(145, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 234, 0, 132, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(139, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 326, 0, 88, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(140, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 308, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(141, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 278, 0, 146, FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(143, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 138, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(144, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 196, 0, 142, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(144, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 234, 0, 224, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(144, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 104, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(141, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 114, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(139, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 208, 0, 152, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(145, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 292, 0, 128, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(145, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 230, 0, 112, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(140, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 304, 0, 220, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(146, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 278, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(147, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 320, 0, 158, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(145, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 234, 0, 132, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(139, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 326, 0, 88, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(140, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 308, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(141, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 278, 0, 146, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(143, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 138, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(144, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 196, 0, 142, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(144, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 234, 0, 224, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(337, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(386, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 181, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(386, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 194, FACING_SOUTH, TALK_FACING_KEEP, 1),
@@ -3641,7 +3647,7 @@ struct ActorPlacement gKibombo_Room4Placements[] = {
     ACTOR_PLACEMENT(386, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 274, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(386, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 338, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(386, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 370, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 412, 0, 60, FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 412, 0, 60, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -3668,15 +3674,15 @@ struct ActorPlacement gKibombo_Room5Placements[] = {
     ACTOR_PLACEMENT(396, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(337, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(337, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(26, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 392, FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 218, 0, 420, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 432, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 438, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 440, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 438, FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 432, FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 310, 0, 422, FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 406, FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(26, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 392, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 218, 0, 420, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 432, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 438, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 440, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 438, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 432, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 310, 0, 422, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 406, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 130, 0, 364, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3686,24 +3692,24 @@ struct ActorPlacement gKibombo_Room5Placements[] = {
 };
 
 struct ActorPlacement gKibombo_Room3Placements[] = {
-    ACTOR_PLACEMENT(27, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 366, 0, 586, FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(28, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 586, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 634, FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 108, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(145, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 124, 0, 120, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 100, 0, 132, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(27, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 366, 0, 586, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(28, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 586, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 634, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 108, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(145, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 124, 0, 120, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 100, 0, 132, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 710, 0, 134, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 108, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 432, 0, 120, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 448, 0, 108, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 108, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 432, 0, 120, FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 448, 0, 108, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 106, 0, 360, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 352, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(108, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 92, 0, 600, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(109, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 600, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(110, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 348, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(134, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 84, 0, 858, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(135, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 148, 0, 878, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 374, 0, 344, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(108, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 92, 0, 600, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(109, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 600, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(110, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 348, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(134, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 84, 0, 858, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(135, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 148, 0, 878, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 374, 0, 344, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(337, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 824, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(337, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 824, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 448, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),

@@ -148,7 +148,7 @@ void Daila_TalkBeenBefore(void) {
     msg = (s32)MsgDailaBeenBefore;
     Event_SetMessageId(msg);
     // "You don't look familiar. Have you been to Daila before?"
-    FieldMessage_ShowAtActor(8, 0);
+    FieldMessage_ShowAtActor(ACTOR_GREETER, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_Wait(10);
       Event_SetMessageId(msg + 1);
@@ -174,7 +174,7 @@ void Daila_TalkIndraMoved(void) {
   msg = (s32)MsgDailaIndraMoved;
   Event_SetMessageId(msg);
   // "Didn't it feel like all of Indra moved when that wave hit?"
-  FieldMessage_ShowAtActor(9, 0);
+  FieldMessage_ShowAtActor(ACTOR_INDRA_MOVED_MAN, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
     Event_SetMessageId(msg + 1);
@@ -194,7 +194,7 @@ void Daila_TalkBoat(void) {
   msg = (s32)MsgDailaWantBoat;
   Event_SetMessageId(msg);
   // "Hm? You want a boat?"
-  FieldMessage_ShowAtActor(9, 0);
+  FieldMessage_ShowAtActor(ACTOR_INDRA_MOVED_MAN, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
     Event_SetMessageId(msg + 1);
@@ -295,9 +295,9 @@ void Daila_MeetAlex(void) {
   Event_Wait(60);
   // "Felix..."
   Event_ShowMessageAndWait(ACTOR_ALEX, 0);
-  FieldActor_LaunchFromLeader(ACTOR_JENNA, 8, 16, 0xa000);
-  FieldActor_LaunchFromLeader(ACTOR_SHEBA, 16, 0, 0xa000);
-  Actor_LaunchFromLeader(ACTOR_KRADEN, 32, -8, 0x8000);
+  FieldActor_LaunchFromLeader(ACTOR_JENNA, 8, 16, FACING_NORTHWEST);
+  FieldActor_LaunchFromLeader(ACTOR_SHEBA, 16, 0, FACING_NORTHWEST);
+  Actor_LaunchFromLeader(ACTOR_KRADEN, 32, -8, FACING_WEST);
   Event_Wait(60);
   // "Well, well... Our happy little family is back together again."
   Event_ShowMessageAndWait(ACTOR_ALEX, 0);
@@ -357,7 +357,7 @@ void Daila_MeetAlex(void) {
   Event_Wait(30);
   Actor_FaceActorById(ACTOR_JENNA, gMainRoutineWork.currentOwner, 0);
   // "So what do yout think? Should we go to Madra with Alex?"
-  FieldMessage_ShowAtActor(5, 0);
+  FieldMessage_ShowAtActor(ACTOR_JENNA, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(30);
     Event_SetMessageId(msg + 11);
@@ -558,17 +558,24 @@ u32 gDaila_PuddleChildScript[] = {
 };
 
 struct SceneEntrance gDailaEntrances[] = {
-    {0, -1, 120, 0, 338, 0x4000, 0, -1, -1, -1, -1, 0},
-    {10, -1, 368, 0, 224, 0x4000, 0, -1, -1, -1, -1, 0},
-    {20, -1, 80, 0, 352, 0x4000, 0, -1, -1, -1, -1, 0},
-    {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, CONDITION_ALWAYS, 120, 0, 338, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {10, CONDITION_ALWAYS, 368, 0, 224, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {20, CONDITION_ALWAYS, 80, 0, 352, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
 };
 
 s32 gDaila1Exits[] = {
-    10, 0x1010100b, -1, 0x1020200b, -1, 0x1030300b,
-    -1, 0x1040400b, -1, 0x1050500b, -1, 0x1060600b,
-    -1, 0x1070100c, -1, 0x10802002, -1, 0x10903002,
-    -1, 511,
+    SCENE_EXITS(Daila1),
+    SCENE_EXIT_UNLESS(1, DailaInteriors1, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, DailaInteriors1, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, DailaInteriors1, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, DailaInteriors1, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, DailaInteriors1, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, DailaInteriors1, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, DailaInteriors2, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, WorldMap, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, WorldMap, 3, EXIT_FLAG_NONE),
+    SCENE_EXITS_END,
 };
 
 s32 gDaila2Exits[] = {
@@ -602,7 +609,7 @@ struct ActorPlacement gDaila1ActorPlacements[] = {
     ACTOR_PLACEMENT(224, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 312,
                     FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(187, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 184,
-                    FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+                    FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(146, CONDITION_ALWAYS, (s32)gDaila_PuddleChildScript, 584,
                     0, 384, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(147, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 328,

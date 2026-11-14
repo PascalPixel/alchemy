@@ -428,9 +428,9 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_WalkTo(*(s32 *)owner, 144, 560);
   FieldActor_WaitForMoveById(*(s32 *)owner);
   Actor_FaceDirection(*(s32 *)owner, FACING_NORTH, 0);
-  FieldActor_LaunchFromLeader(5, 8, 24, FACING_NORTH);
-  FieldActor_LaunchFromLeader(6, 24, 24, FACING_NORTH);
-  FieldActor_LaunchFromLeader(7, -8, 24, FACING_NORTH);
+  FieldActor_LaunchFromLeader(ACTOR_JENNA, 8, 24, FACING_NORTH);
+  FieldActor_LaunchFromLeader(ACTOR_SHEBA, 24, 24, FACING_NORTH);
+  FieldActor_LaunchFromLeader(ACTOR_PIERS, -8, 24, FACING_NORTH);
   FieldActor_LaunchFromLeader(23, -24, 24, FACING_NORTH);
   FieldEvent_Wait(60);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
@@ -442,33 +442,33 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetAnimation(15, 3);
   Actor_SetAnimation(20, 3);
   FieldEvent_Wait(30);
-  Actor_FaceActor(23, 7, 0);
+  Actor_FaceActor(23, ACTOR_PIERS, 0);
   FieldEvent_Wait(30);
   Event_ShowMessage(23, 0);
-  Actor_SetAnimation(7, 3);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(30);
-  Event_ShowMessage(7, 0);
+  Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_SetAnimation(15, 3);
   Actor_SetAnimation(20, 3);
   FieldEvent_Wait(30);
-  Actor_SetAnimation(5, 3);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(30);
-  Event_ShowMessage(5, 0);
-  Actor_SetAnimation(6, 3);
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   FieldEvent_Wait(30);
   Actor_SetAnimation(15, 3);
   Actor_SetAnimation(20, 3);
   FieldEvent_Wait(30);
-  Actor_FaceActor(5, 23, 0);
+  Actor_FaceActor(ACTOR_JENNA, 23, 0);
   Actor_SetAnimation(23, 3);
   FieldEvent_Wait(30);
   Event_ShowMessage(23, 0);
   Actor_SetAnimation(20, 3);
   FieldEvent_Wait(30);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
-  Actor_SetAnimation(6, 3);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   FieldEvent_Wait(30);
-  Event_ShowMessage(6, 0);
+  Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   Actor_FaceEachOther(15, 20, 0);
@@ -480,9 +480,9 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   FieldEvent_Wait(30);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
   Actor_FaceActor(*(s32 *)owner, 23, 0);
-  Actor_FaceActor(5, 23, 0);
-  Actor_FaceActor(6, 23, 0);
-  Actor_FaceActor(7, 23, 0);
+  Actor_FaceActor(ACTOR_JENNA, 23, 0);
+  Actor_FaceActor(ACTOR_SHEBA, 23, 0);
+  Actor_FaceActor(ACTOR_PIERS, 23, 0);
   FieldEvent_Wait(30);
   Actor_FaceActor(23, *(s32 *)owner, 0);
   FieldEvent_Wait(30);
@@ -494,14 +494,14 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   FieldEvent_Wait(30);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   Actor_FaceActor(*(s32 *)owner, 15, 0);
-  Actor_FaceActor(5, 15, 0);
-  Actor_FaceActor(6, 15, 0);
-  Actor_FaceActor(7, 15, 0);
+  Actor_FaceActor(ACTOR_JENNA, 15, 0);
+  Actor_FaceActor(ACTOR_SHEBA, 15, 0);
+  Actor_FaceActor(ACTOR_PIERS, 15, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimation(*(s32 *)owner, 3);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimation(6, 3);
-  Actor_SetAnimation(7, 3);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   Actor_SetAnimation(23, 3);
   FieldEvent_Wait(30);
   Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
@@ -515,14 +515,14 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   FieldEvent_Wait(30);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   Actor_ShowEmote(*(s32 *)owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldEvent_Wait(30);
-  FieldActor_StartRepeatedMotion(5, 1);
+  FieldActor_StartRepeatedMotion(ACTOR_JENNA, 1);
   FieldEvent_Wait(15);
-  Event_ShowMessage(5, 0);
+  Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_FaceActor(15, 20, 0);
   FieldEvent_Wait(30);
   Actor_FaceActor(15, *(s32 *)owner, 0);
@@ -537,15 +537,15 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
     Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     // "I thought so. Only those who can wield the power can see it. And you..."
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
-    Actor_SetAnimation(6, 3);
-    Actor_SetAnimation(5, 3);
+    Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
     FieldEvent_Wait(30);
-    Actor_FaceActor(7, *(s32 *)owner, 0);
+    Actor_FaceActor(ACTOR_PIERS, *(s32 *)owner, 0);
     FieldEvent_Wait(15);
-    Actor_SetAnimation(7, 4);
+    Actor_SetAnimation(ACTOR_PIERS, ANIM_SHAKE_HEAD);
     FieldEvent_Wait(30);
     // "Felix, there's no need to hide our abilities from them, is there?"
-    Event_ShowMessage(7, 0);
+    Event_ShowMessage(ACTOR_PIERS, 0);
   }
   FieldEvent_SetMessageId((s32)MsgSoYouCall);
   Actor_SetAnimation(20, 3);
@@ -553,9 +553,9 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   // "So, you call what we do "Psynergy," and you can do it, too?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
   Actor_SetAnimation(*(s32 *)owner, 3);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimation(6, 3);
-  Actor_SetAnimation(7, 3);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   Actor_SetAnimation(23, 3);
   FieldEvent_Wait(30);
   Actor_SetAnimation(15, 3);
@@ -571,9 +571,9 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_ShowMessage(21, 0);
   Actor_SetPosition(21, 144, 680);
   Actor_FaceActor(*(s32 *)owner, 21, 0);
-  Actor_FaceActor(5, 21, 0);
-  Actor_FaceActor(6, 21, 0);
-  Actor_FaceActor(7, 21, 0);
+  Actor_FaceActor(ACTOR_JENNA, 21, 0);
+  Actor_FaceActor(ACTOR_SHEBA, 21, 0);
+  Actor_FaceActor(ACTOR_PIERS, 21, 0);
   Actor_FaceActor(23, 21, 0);
   Actor_FaceActor(22, 21, 0);
   FieldEvent_Wait(120);
@@ -589,18 +589,18 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   if (mode == 0) {
     Actor_WalkToAndWait(21, 88, 648);
     Actor_FaceActorById(*(s32 *)owner, 21, 0);
-    Actor_FaceActorById(5, 21, 0);
-    Actor_FaceActorById(6, 21, 0);
-    Actor_FaceActorById(7, 21, 0);
+    Actor_FaceActorById(ACTOR_JENNA, 21, 0);
+    Actor_FaceActorById(ACTOR_SHEBA, 21, 0);
+    Actor_FaceActorById(ACTOR_PIERS, 21, 0);
     Actor_FaceActorById(23, 21, 0);
     Actor_FaceActorById(15, 21, 0);
     Actor_FaceActorById(20, 21, 0);
     Actor_FaceActorById(22, 21, 0);
     Actor_WalkToAndWait(21, 56, 616);
     Actor_FaceActorById(*(s32 *)owner, 21, 0);
-    Actor_FaceActorById(5, 21, 0);
-    Actor_FaceActorById(6, 21, 0);
-    Actor_FaceActorById(7, 21, 0);
+    Actor_FaceActorById(ACTOR_JENNA, 21, 0);
+    Actor_FaceActorById(ACTOR_SHEBA, 21, 0);
+    Actor_FaceActorById(ACTOR_PIERS, 21, 0);
     Actor_FaceActorById(23, 21, 0);
     Actor_FaceActorById(15, 21, 0);
     Actor_FaceActorById(20, 21, 0);
@@ -614,9 +614,9 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
     Actor_SetSpritePriority(21, 1);
     Actor_WalkToAndWait(21, 104, 568);
     Actor_FaceActorById(*(s32 *)owner, 21, 0);
-    Actor_FaceActorById(5, 21, 0);
-    Actor_FaceActorById(6, 21, 0);
-    Actor_FaceActorById(7, 21, 0);
+    Actor_FaceActorById(ACTOR_JENNA, 21, 0);
+    Actor_FaceActorById(ACTOR_SHEBA, 21, 0);
+    Actor_FaceActorById(ACTOR_PIERS, 21, 0);
     Actor_FaceActorById(23, 21, 0);
     Actor_FaceActorById(15, 21, 0);
     Actor_FaceActorById(20, 21, 0);
@@ -628,9 +628,9 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
     Actor_SetSpritePriority(23, 3);
     Actor_WalkToAndWait(21, 120, 536);
     Actor_FaceActorById(*(s32 *)owner, 21, 0);
-    Actor_FaceActorById(5, 21, 0);
-    Actor_FaceActorById(6, 21, 0);
-    Actor_FaceActorById(7, 21, 0);
+    Actor_FaceActorById(ACTOR_JENNA, 21, 0);
+    Actor_FaceActorById(ACTOR_SHEBA, 21, 0);
+    Actor_FaceActorById(ACTOR_PIERS, 21, 0);
     Actor_FaceActorById(23, 21, 0);
     Actor_FaceActorById(15, 21, 0);
     Actor_FaceActorById(20, 21, 0);
@@ -642,18 +642,18 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   } else {
     Actor_WalkToAndWait(21, 200, 648);
     Actor_FaceActorById(*(s32 *)owner, 21, 0);
-    Actor_FaceActorById(5, 21, 0);
-    Actor_FaceActorById(6, 21, 0);
-    Actor_FaceActorById(7, 21, 0);
+    Actor_FaceActorById(ACTOR_JENNA, 21, 0);
+    Actor_FaceActorById(ACTOR_SHEBA, 21, 0);
+    Actor_FaceActorById(ACTOR_PIERS, 21, 0);
     Actor_FaceActorById(23, 21, 0);
     Actor_FaceActorById(15, 21, 0);
     Actor_FaceActorById(20, 21, 0);
     Actor_FaceActorById(22, 21, 0);
     Actor_WalkToAndWait(21, 232, 616);
     Actor_FaceActorById(*(s32 *)owner, 21, 0);
-    Actor_FaceActorById(5, 21, 0);
-    Actor_FaceActorById(6, 21, 0);
-    Actor_FaceActorById(7, 21, 0);
+    Actor_FaceActorById(ACTOR_JENNA, 21, 0);
+    Actor_FaceActorById(ACTOR_SHEBA, 21, 0);
+    Actor_FaceActorById(ACTOR_PIERS, 21, 0);
     Actor_FaceActorById(23, 21, 0);
     Actor_FaceActorById(15, 21, 0);
     Actor_FaceActorById(20, 21, 0);
@@ -667,23 +667,23 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
     Actor_SetSpritePriority(21, 1);
     Actor_WalkToAndWait(21, 184, 568);
     Actor_FaceActorById(*(s32 *)owner, 21, 0);
-    Actor_FaceActorById(5, 21, 0);
-    Actor_FaceActorById(6, 21, 0);
-    Actor_FaceActorById(7, 21, 0);
+    Actor_FaceActorById(ACTOR_JENNA, 21, 0);
+    Actor_FaceActorById(ACTOR_SHEBA, 21, 0);
+    Actor_FaceActorById(ACTOR_PIERS, 21, 0);
     Actor_FaceActorById(23, 21, 0);
     Actor_FaceActorById(15, 21, 0);
     Actor_FaceActorById(20, 21, 0);
     Actor_FaceActorById(22, 21, 0);
     Actor_SetSpritePriority(21, 2);
-    Actor_SetSpritePriority(6, 1);
+    Actor_SetSpritePriority(ACTOR_SHEBA, 1);
     Actor_WalkToAndWaitById(21, 168, 568);
     Actor_SetSpritePriority(21, 3);
-    Actor_SetSpritePriority(6, 3);
+    Actor_SetSpritePriority(ACTOR_SHEBA, 3);
     Actor_WalkToAndWait(21, 168, 536);
     Actor_FaceActorById(*(s32 *)owner, 21, 0);
-    Actor_FaceActorById(5, 21, 0);
-    Actor_FaceActorById(6, 21, 0);
-    Actor_FaceActorById(7, 21, 0);
+    Actor_FaceActorById(ACTOR_JENNA, 21, 0);
+    Actor_FaceActorById(ACTOR_SHEBA, 21, 0);
+    Actor_FaceActorById(ACTOR_PIERS, 21, 0);
     Actor_FaceActorById(23, 21, 0);
     Actor_FaceActorById(15, 21, 0);
     Actor_FaceActorById(20, 21, 0);
@@ -703,9 +703,9 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   }
   owner = owner + 532;
   Actor_FaceDirection(*(s32 *)owner, FACING_NORTH, 0);
-  Actor_FaceDirection(5, FACING_NORTH, 0);
-  Actor_FaceDirection(6, FACING_NORTH, 0);
-  Actor_FaceDirection(7, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Actor_ArmCallback(23, FACING_NORTH, 0);
   Event_Wait(15);
   Event_ShowMessageAndWait(20, 0);
@@ -729,9 +729,9 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetModeById(20, 3);
   Event_Wait(30);
   Actor_SetModeById(*(s32 *)owner, 3);
-  Actor_SetModeById(5, 3);
-  Actor_SetModeById(6, 3);
-  Actor_SetModeById(7, 3);
+  Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetModeById(ACTOR_PIERS, ANIM_NOD);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
   Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
@@ -771,31 +771,31 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_ShowMessageAndWait(23, 0);
   Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessageAndWait(15, 0);
-  Actor_FaceActorById(7, 23, 0);
+  Actor_FaceActorById(ACTOR_PIERS, 23, 0);
   Event_Wait(30);
-  Event_ShowMessageAndWait(7, 0);
-  Actor_FaceActorById(23, 7, 0);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
+  Actor_FaceActorById(23, ACTOR_PIERS, 0);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
   Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceActorById(23, 15, 0);
-  Actor_FaceActorById(7, 15, 0);
+  Actor_FaceActorById(ACTOR_PIERS, 15, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(15, 0);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  Event_ShowMessageAndWait(6, 0);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Actor_ShowEmoteById(21, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessageAndWait(21, 0);
-  Actor_SetModeById(5, 3);
+  Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(30);
-  Event_ShowMessageAndWait(5, 0);
+  Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_SetModeById(20, 3);
   Event_Wait(30);
   Event_ShowMessageAndWait(20, 0);
   Actor_SetModeById(*(s32 *)owner, 3);
-  Actor_SetModeById(5, 3);
-  Actor_SetModeById(6, 3);
-  Actor_SetModeById(7, 3);
+  Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetModeById(ACTOR_PIERS, ANIM_NOD);
   Actor_SetModeById(23, 3);
   Event_Wait(90);
   Actor_SetModeById(15, 3);
@@ -831,20 +831,20 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_Wait(30);
   // "What... What are you°"
   Event_ShowMessageAndWait(21, 0);
-  Actor_SetModeById(7, 3);
+  Actor_SetModeById(ACTOR_PIERS, ANIM_NOD);
   Event_Wait(30);
   // "Susa had given the beast a lot of Dragonsbane in order to weaken it."
-  Event_ShowMessageAndWait(7, 0);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_FaceDirection(15, FACING_SOUTH, 0);
   Actor_ArmCallback(20, FACING_SOUTH, 0);
   Event_Wait(30);
-  Actor_SetModeById(6, 3);
+  Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(30);
   // "We could never have beaten the beast if it had not been in..."
-  Event_ShowMessageAndWait(6, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "We were victorious only because Susa risked everything to weaken the..."
-  Event_ShowMessageAndWait(5, 0);
+  Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_Wait(15);
   Actor_FaceActorById(15, 21, 0);
@@ -853,15 +853,15 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_ShowEmoteById(21, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "No, I didn't..."
   Event_ShowMessageAndWait(21, 0);
-  Actor_ShowEmoteById(6, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
+  Actor_ShowEmoteById(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   owner = (s32)&gMainRoutineWork;
   owner = owner + 532;
-  Actor_FaceActorById(6, *(s32 *)owner, 0);
+  Actor_FaceActorById(ACTOR_SHEBA, *(s32 *)owner, 0);
   // "Don't forget, Susa dealt the finishing blow, didn't he?"
   Event_OpenMessage(6, 0);
-  Actor_FaceActorById(5, *(s32 *)owner, 0);
-  Actor_FaceActorById(6, *(s32 *)owner, 0);
-  Actor_FaceActorById(7, *(s32 *)owner, 0);
+  Actor_FaceActorById(ACTOR_JENNA, *(s32 *)owner, 0);
+  Actor_FaceActorById(ACTOR_SHEBA, *(s32 *)owner, 0);
+  Actor_FaceActorById(ACTOR_PIERS, *(s32 *)owner, 0);
   Actor_FaceActorById(23, *(s32 *)owner, 0);
   Actor_FaceActorById(15, *(s32 *)owner, 0);
   Actor_FaceActorById(20, *(s32 *)owner, 0);
@@ -894,9 +894,9 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   owner = (s32)&gMainRoutineWork;
   owner = owner + 532;
   Actor_SetModeById(*(s32 *)owner, 3);
-  Actor_SetModeById(5, 3);
-  Actor_SetModeById(6, 3);
-  Actor_SetModeById(7, 3);
+  Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetModeById(ACTOR_PIERS, ANIM_NOD);
   Event_Wait(30);
   Actor_FaceActorById(23, 15, 0);
   Event_Wait(30);
@@ -910,28 +910,28 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   answer = Event_AskYesNoWithActorAnimation(*(s32 *)owner, 0);
   if (answer == 0) {
     Event_SetMessageId(message + 4);
-    Actor_SetModeById(5, 3);
-    Actor_SetModeById(6, 3);
-    Actor_SetModeById(7, 3);
+    Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
+    Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
+    Actor_SetModeById(ACTOR_PIERS, ANIM_NOD);
     Event_Wait(30);
     // "I do, too."
-    Event_ShowMessageAndWait(5, 0);
+    Event_ShowMessageAndWait(ACTOR_JENNA, 0);
     // "We weren't fighting in hopes of getting a reward, were we?"
-    Event_ShowMessageAndWait(6, 0);
+    Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
     // "We'll be satisfied just learning your Psynergy."
-    Event_ShowMessageAndWait(7, 0);
+    Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   } else {
     Event_SetMessageId(message + 7);
-    Actor_SetModeById(5, 4);
-    Actor_SetModeById(6, 4);
-    Actor_SetModeById(7, 4);
+    Actor_SetModeById(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+    Actor_SetModeById(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
+    Actor_SetModeById(ACTOR_PIERS, ANIM_SHAKE_HEAD);
     Event_Wait(30);
     // "Are you asking for a reward? That's just plain greedy!"
-    Event_ShowMessageAndWait(5, 0);
+    Event_ShowMessageAndWait(ACTOR_JENNA, 0);
     // "We couldn't possibly take any sort of reward."
-    Event_ShowMessageAndWait(6, 0);
+    Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
     // "Learning new Psynergy will be reward enough."
-    Event_ShowMessageAndWait(7, 0);
+    Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   }
   Event_SetMessageId((s32)MsgAsYouCanSee);
   Actor_FaceActorById(23, 15, 0);
@@ -962,12 +962,12 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Event_Wait(30);
   // "Yes, indeed! We're on our way to Lemuria."
   Event_ShowMessageAndWait(23, 0);
-  Actor_FaceActorById(5, 23, 0);
-  Actor_FaceActorById(6, 23, 0);
-  Actor_FaceActorById(7, 23, 0);
-  Actor_SetModeById(5, 3);
-  Actor_SetModeById(6, 3);
-  Actor_SetModeById(7, 3);
+  Actor_FaceActorById(ACTOR_JENNA, 23, 0);
+  Actor_FaceActorById(ACTOR_SHEBA, 23, 0);
+  Actor_FaceActorById(ACTOR_PIERS, 23, 0);
+  Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetModeById(ACTOR_PIERS, ANIM_NOD);
   Actor_SetModeById(*(s32 *)owner, 3);
   Event_Wait(30);
   Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -977,9 +977,9 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   // "You're leaving so soon?"
   Event_ShowMessageAndWait(20, 0);
   Actor_FaceActorById(*(s32 *)owner, 15, 0);
-  Actor_FaceActorById(5, 15, 0);
-  Actor_FaceActorById(6, 15, 0);
-  Actor_FaceActorById(7, 15, 0);
+  Actor_FaceActorById(ACTOR_JENNA, 15, 0);
+  Actor_FaceActorById(ACTOR_SHEBA, 15, 0);
+  Actor_FaceActorById(ACTOR_PIERS, 15, 0);
   Actor_FaceActorById(23, 15, 0);
   Event_Wait(30);
   // "We are in a great hurry."
@@ -987,77 +987,80 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   // "Then you must return to Izumo someday."
   Event_ShowMessageAndWait(15, 0);
-  Actor_SetModeById(5, 3);
+  Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(30);
   // "I'm sure we'll be back once our mission is completed."
-  Event_ShowMessageAndWait(5, 0);
+  Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_SetModeById(20, 3);
   Event_Wait(30);
   // "Excellent! I shall accept that as your oath!"
   Event_ShowMessageAndWait(20, 0);
-  Actor_ShowEmoteById(6, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmoteById(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Event_Wait(30);
   // "...Oath?"
-  Event_ShowMessageAndWait(6, 0);
-  Actor_FaceActorById(6, 5, 0);
+  Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
+  Actor_FaceActorById(ACTOR_SHEBA, ACTOR_JENNA, 0);
   Event_Wait(30);
   // "Oh, by promising to return, we'll be ensuring that our quest will..."
-  Event_ShowMessageAndWait(6, 0);
-  Actor_StartRepeatedMotion(7, 1);
+  Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
+  Actor_StartRepeatedMotion(ACTOR_PIERS, 1);
   Event_Wait(30);
   // "I understand... We must vow to return, everyone."
-  Event_ShowMessageAndWait(7, 0);
+  Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_TurnToFaceEachOther(*(s32 *)owner, 7, 0);
   Actor_SetModeById(*(s32 *)owner, 3);
-  Actor_SetModeById(7, 3);
-  Actor_TurnToFaceEachOther(5, 6, 0);
-  Actor_SetModeById(5, 3);
-  Actor_SetModeById(6, 3);
+  Actor_SetModeById(ACTOR_PIERS, ANIM_NOD);
+  Actor_TurnToFaceEachOther(ACTOR_JENNA, ACTOR_SHEBA, 0);
+  Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(15);
   Actor_TurnToFaceEachOther(*(s32 *)owner, 5, 0);
-  Actor_TurnToFaceEachOther(7, 6, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PIERS, ACTOR_SHEBA, 0);
   Actor_SetModeById(*(s32 *)owner, 3);
-  Actor_SetModeById(7, 3);
-  Actor_SetModeById(5, 3);
-  Actor_SetModeById(6, 3);
+  Actor_SetModeById(ACTOR_PIERS, ANIM_NOD);
+  Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(30);
   Actor_FaceActorById(*(s32 *)owner, 15, 0);
-  Actor_FaceActorById(5, 15, 0);
-  Actor_FaceActorById(6, 15, 0);
-  Actor_FaceActorById(7, 15, 0);
+  Actor_FaceActorById(ACTOR_JENNA, 15, 0);
+  Actor_FaceActorById(ACTOR_SHEBA, 15, 0);
+  Actor_FaceActorById(ACTOR_PIERS, 15, 0);
   Actor_FaceActorById(23, 15, 0);
   Actor_SetModeById(15, 3);
   Event_Wait(30);
   // "We'll be waiting."
   Event_ShowMessageAndWait(15, 0);
   Actor_SetModeById(*(s32 *)owner, 3);
-  Actor_SetModeById(7, 3);
-  Actor_SetModeById(5, 3);
-  Actor_SetModeById(6, 3);
+  Actor_SetModeById(ACTOR_PIERS, ANIM_NOD);
+  Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetModeById(23, 3);
   Event_Wait(15);
   Actor_SetModeById(15, 3);
   Actor_SetModeById(20, 3);
   Actor_SetModeById(21, 3);
   Event_Wait(60);
-  Actor_SetModeById(5, 2);
+  Actor_SetModeById(ACTOR_JENNA, ANIM_WALK);
   leader = Actor_GetById(*(s32 *)owner);
   if (leader != 0)
-    Actor_SetDestinationById(5, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
-  Actor_WaitForMoveById(5);
-  Actor_SetHorizontalPositionWithTerrain(5, 0, 0);
-  Actor_SetModeById(6, 2);
+    Actor_SetDestinationById(ACTOR_JENNA, ((s16 *)&leader->x)[1],
+                             ((s16 *)&leader->z)[1]);
+  Actor_WaitForMoveById(ACTOR_JENNA);
+  Actor_SetHorizontalPositionWithTerrain(ACTOR_JENNA, 0, 0);
+  Actor_SetModeById(ACTOR_SHEBA, ANIM_WALK);
   leader = Actor_GetById(*(s32 *)owner);
   if (leader != 0)
-    Actor_SetDestinationById(6, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
-  Actor_WaitForMoveById(6);
-  Actor_SetHorizontalPositionWithTerrain(6, 0, 0);
-  Actor_SetModeById(7, 2);
+    Actor_SetDestinationById(ACTOR_SHEBA, ((s16 *)&leader->x)[1],
+                             ((s16 *)&leader->z)[1]);
+  Actor_WaitForMoveById(ACTOR_SHEBA);
+  Actor_SetHorizontalPositionWithTerrain(ACTOR_SHEBA, 0, 0);
+  Actor_SetModeById(ACTOR_PIERS, ANIM_WALK);
   leader = Actor_GetById(*(s32 *)owner);
   if (leader != 0)
-    Actor_SetDestinationById(7, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
-  Actor_WaitForMoveById(7);
-  Actor_SetHorizontalPositionWithTerrain(7, 0, 0);
+    Actor_SetDestinationById(ACTOR_PIERS, ((s16 *)&leader->x)[1],
+                             ((s16 *)&leader->z)[1]);
+  Actor_WaitForMoveById(ACTOR_PIERS);
+  Actor_SetHorizontalPositionWithTerrain(ACTOR_PIERS, 0, 0);
   Actor_SetModeById(23, 2);
   leader = Actor_GetById(*(s32 *)owner);
   if (leader != 0)

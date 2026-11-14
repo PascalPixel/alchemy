@@ -486,7 +486,7 @@ void Caverns_InitializeIndra(void) {
   struct Actor *object;
   s32 arg;
 
-  Actor_GetById(4)->priorityFlags |= 0x20;
+  Actor_GetById(ACTOR_FELIX)->priorityFlags |= 0x20;
   Rope_Initialize();
   Rope_Place(0, 0x200, 8, 9);
   object = Actor_GetById(10);
@@ -577,39 +577,39 @@ void Caverns_WalkIntoPassage(void) {
     Actor_SetPosition(8, 144, 224);
   else
     Actor_SetPosition(8, 224, 224);
-  Actor_ArmCallback(4, FACING_NORTH, 0);
+  Actor_ArmCallback(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);
-  BYTE_AT(Actor_GetById(4), 90) &= ~1;
+  BYTE_AT(Actor_GetById(ACTOR_FELIX), 90) &= ~1;
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
-  Actor_SetDestinationOffsetById(4, 0, 4);
-  Actor_WaitForMoveById(4);
-  Actor_SetSpriteFlags(Actor_GetById(4), 0);
-  Actor_SetDestinationOffsetById(4, 0, 16);
-  Actor_WaitForMoveById(4);
-  Actor_SetModeById(4, 13);
+  Actor_SetDestinationOffsetById(ACTOR_FELIX, 0, 4);
+  Actor_WaitForMoveById(ACTOR_FELIX);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FELIX), 0);
+  Actor_SetDestinationOffsetById(ACTOR_FELIX, 0, 16);
+  Actor_WaitForMoveById(ACTOR_FELIX);
+  Actor_SetModeById(ACTOR_FELIX, 13);
   Sound_Play(SE_MAP_EXIT);
   Event_Wait(14);
   Import_EventSetExitRequest(value);
 }
 
 void Caverns_WalkEastIntoPassage(void) {
-  Actor_WalkByAndWait(4, 0, -14);
-  Actor_WalkByAndWaitById(4, 16, 0);
+  Actor_WalkByAndWait(ACTOR_FELIX, 0, -14);
+  Actor_WalkByAndWaitById(ACTOR_FELIX, 16, 0);
   Event_Wait(10);
   Caverns_WalkIntoPassage();
   return;
 }
 
 void Caverns_WalkWestIntoPassage(void) {
-  Actor_WalkByAndWait(4, 0, -14);
-  Actor_WalkByAndWaitById(4, -16, 0);
+  Actor_WalkByAndWait(ACTOR_FELIX, 0, -14);
+  Actor_WalkByAndWaitById(ACTOR_FELIX, -16, 0);
   Event_Wait(10);
   Caverns_WalkIntoPassage();
   return;
 }
 
 void Caverns_WalkSouthIntoPassage(void) {
-  Actor_ArmCallback(4, FACING_NORTH, 0);
+  Actor_ArmCallback(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);
   Caverns_WalkIntoPassage();
   return;

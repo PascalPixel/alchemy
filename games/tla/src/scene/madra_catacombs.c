@@ -743,21 +743,21 @@ s16 gMadraCatacombs_ClimbablePillar[] = {
 };
 
 struct SceneEntrance gMadraCatacombs_Entrances[] = {
-    {0, -1, 172, 0, 149, 0x4000, 0, -1, -1, -1, -1, 0},
-    {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gMadraCatacombs_Room4Entrances[] = {
-    {3, -1, 512, 0, 224, 0xc000, 0, 392, 40, 632, 280, 0},
-    {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {3, CONDITION_ALWAYS, 512, 0, 224, FACING_NORTH, 0, 392, 40, 632, 280, 0},
+    {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gMadraCatacombs_Room5Entrances[] = {
-    {5, -1, 728, 0, 88, 0x4000, 0, 680, 32, 920, 192, 0},
-    {6, -1, 872, 0, 88, 0x4000, 0, 680, 32, 920, 192, 0},
-    {7, -1, 872, 0, 120, 0, 0, 680, 32, 920, 192, 0},
-    {8, -1, 792, 0, 152, 0xc000, 0, 680, 32, 920, 192, 0},
-    {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {5, CONDITION_ALWAYS, 728, 0, 88, FACING_SOUTH, 0, 680, 32, 920, 192, 0},
+    {6, CONDITION_ALWAYS, 872, 0, 88, FACING_SOUTH, 0, 680, 32, 920, 192, 0},
+    {7, CONDITION_ALWAYS, 872, 0, 120, FACING_EAST, 0, 680, 32, 920, 192, 0},
+    {8, CONDITION_ALWAYS, 792, 0, 152, FACING_NORTH, 0, 680, 32, 920, 192, 0},
+    {SCENE_TABLE_END},
 };
 
 s16 gMadraCatacombs_LadderRoomRegions[] = {

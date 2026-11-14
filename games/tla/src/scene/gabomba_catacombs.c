@@ -395,7 +395,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   Actor_FaceDirection(9, FACING_WEST, 0);
   // "By reaching this place, you have proven your power."
   Event_ShowMessageAndWait(9, 0);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   TALK();
@@ -413,15 +413,15 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   // "I am grateful for your promise... But I am worried that we have done..."
   Event_ShowMessageAndWait(9, 0);
   TALK();
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
-  Actor_ArmCallback(9, 0x8000, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+  Actor_ArmCallback(9, FACING_WEST, 0);
   Event_Wait(10);
   Actor_ShowEmote(gMainRoutineWork.currentOwner,
                   EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_Wait(60);
   TALK();
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
   Actor_ShowEmote(gMainRoutineWork.currentOwner,
                   EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);

@@ -635,12 +635,7 @@ struct JudgmentObject {
   u8 unk1a;
 };
 
-struct JudgmentScale {
-  s32 x;
-  s32 y;
-};
-
-extern const struct JudgmentScale gJudgment_UnitScale;
+extern const struct Scale gJudgment_UnitScale;
 
 #define SLOT_ALT 188 // unkb8[1]
 /* VIEW(actor_move_random): static FILL as FILL__actor_move_random; fxdisp has

@@ -90,7 +90,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *args) {
   s32 dy;
   u32 u;
   s32 place[4];
-  struct WordPair req;
+  struct Scale req;
   struct ModelTexture__f179f18 texture;
   struct RenderModel *model;
   void *verts;

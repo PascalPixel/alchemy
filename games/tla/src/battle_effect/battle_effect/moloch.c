@@ -577,8 +577,13 @@ struct SevenWidths {
   s32 w[7];
 };
 
+/// Where a strip's sparks start across, by quarter of its rise: the left edge
+/// and the width they spread over.
 struct FourSpans {
-  struct WordPair p[4];
+  struct {
+    s32 left;
+    s32 width;
+  } p[4];
 };
 
 extern struct IrisSparks Data_02011f40;
@@ -1726,8 +1731,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *args) {
             s32 r = Random16() & 127;
 
             sparks->life[s] = -0x7c00;
-            sparks->x[s] = (leftSpans.p[(r + 1) >> 5].a +
-                            Random16() % leftSpans.p[(r + 1) >> 5].b)
+            sparks->x[s] = (leftSpans.p[(r + 1) >> 5].left +
+                            Random16() % leftSpans.p[(r + 1) >> 5].width)
                            << 16;
             sparks->y[s] = (r << 16) + 0x100000;
             sparks->vx[s] = (Random16() & 15) * 3 << 11;
@@ -1756,8 +1761,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *args) {
             s32 r = Random16() & 127;
 
             sparks->life[s] = -0x7c00;
-            sparks->x[s] = (rightSpans.p[(r + 1) >> 5].a +
-                            Random16() % rightSpans.p[(r + 1) >> 5].b)
+            sparks->x[s] = (rightSpans.p[(r + 1) >> 5].left +
+                            Random16() % rightSpans.p[(r + 1) >> 5].width)
                            << 16;
             sparks->y[s] = (r << 16) + 0x100000;
             sparks->vx[s] = (Random16() & 15) * 3 << 11;

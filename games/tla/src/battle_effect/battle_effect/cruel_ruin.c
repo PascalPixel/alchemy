@@ -745,7 +745,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *args) {
   s32 place[4];
   struct ModelTexture texture;
   struct ModelTexture texture2;
-  struct WordPair req;
+  struct Scale req;
   struct ModelTexture texture3;
   u8 *canvas;
   struct BattleEffectWork *work;

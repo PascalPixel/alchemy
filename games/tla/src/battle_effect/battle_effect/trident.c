@@ -17,7 +17,7 @@ struct StripQuad;
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-extern const struct PlacementSource gTrident_UnitScale;
+extern const struct Scale gTrident_UnitScale;
 
 // Abilities: Trident (Poseidon).
 //
@@ -33,7 +33,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *args) {
   s16 *circles;
   s32 center[3];
   s32 placement[4];
-  struct PlacementSource source;
+  struct Scale source;
   struct ModelTexture texture;
   struct RenderModel *model;
   void *vertices;

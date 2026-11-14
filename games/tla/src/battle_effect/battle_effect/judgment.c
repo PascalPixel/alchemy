@@ -14,7 +14,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *args) {
   struct EffectPosition pos;
   s32 place[4];
   s32 drift[4];
-  struct JudgmentScale req;
+  struct Scale req;
   struct ModelTexture texture;
   struct ModelTexture glare;
   s32 scale[2];

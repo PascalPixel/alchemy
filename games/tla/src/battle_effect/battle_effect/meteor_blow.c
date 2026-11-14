@@ -22,11 +22,6 @@ struct ModelTexture__f18df5c {
   const u8 *pixels;
 };
 
-struct PointPair {
-  s32 x;
-  s32 y;
-};
-
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
@@ -40,7 +35,7 @@ struct MeteorStar {
   s32 kind;
 };
 
-extern const struct PointPair gMeteorBlow_DoubleScale;
+extern const struct Scale gMeteorBlow_DoubleScale;
 
 /// Meteor Blow.
 void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *args) {
@@ -82,7 +77,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *args) {
   s32 place[4];
   s32 summonPlace[4];
   struct ModelTexture__f18df5c waveTexture;
-  struct PointPair summonScale;
+  struct Scale summonScale;
   s32 req[2];
   struct ModelTexture__f18df5c texture;
 

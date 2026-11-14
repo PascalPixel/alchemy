@@ -1243,7 +1243,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *args) {
   u8 *cellBuffer = gMapCellBuffer;
   // Only blit[0] is used; the array takes an 8-byte slot in the frame.
   DrawRectangle blit[2];
-  struct WordPair grid;
+  struct Point2D grid;
   s32 skip;
   u16 *table;
   s32 frame;
@@ -1260,7 +1260,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *args) {
   u8 *coilMesh = Data_02014800;
   s16 list[14];
   s32 place[4];
-  struct WordPair req;
+  struct Scale req;
   struct EffectPosition pos;
   struct ModelTexture texture;
   struct ModelTexture texture2;
@@ -1362,8 +1362,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *args) {
       for (i = 0; i != 64; i++) {
         work->particles[i].variant = -1;
       }
-      grid.a = 0x580000;
-      grid.b = 0x240000;
+      grid.x = 0x580000;
+      grid.y = 0x240000;
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     if (frame == 82) {
@@ -1554,17 +1554,17 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *args) {
       place[1] = 0xff0000;
       place[3] = zero;
       if (frame == 360) {
-        grid.b = 0x240000;
+        grid.y = 0x240000;
       }
       if ((u32)(frame - 396) <= 111) {
-        grid.b += 0x4000;
+        grid.y += 0x4000;
       }
       if (frame > 539) {
-        grid.b += 0x100000;
+        grid.y += 0x100000;
       }
       for (i = 0; i != 12; i++) {
-        place[0] = ((i % 3) << 21) + grid.a;
-        place[2] = ((i / 3) << 21) + grid.b;
+        place[0] = ((i % 3) << 21) + grid.x;
+        place[2] = ((i / 3) << 21) + grid.y;
         Render_ApplyProjectedPlacementFar(work->objects[i], place, (s32 *)&req,
                                           0);
       }

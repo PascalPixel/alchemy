@@ -53,17 +53,17 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *args) {
   s32 frame;
   u8 *sprites;
   s32 *transition;
-  struct WordPair position;
-  struct WordPair velocity;
+  struct Point2D position;
+  struct Point2D velocity;
   s32 morph;
   s32 morphStep;
   s32 dived;
   s32 i;
   s32 wingPlace[4];
   s32 bodyPlace[4];
-  struct WordPair req;
-  struct WordPair openingScale;
-  struct WordPair orbitScale;
+  struct Scale req;
+  struct Scale openingScale;
+  struct Scale orbitScale;
   struct ModelTexture texture;
   struct ModelTexture burstTexture;
   struct ModelTexture wideTexture;
@@ -224,10 +224,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *args) {
 
       if (frame == 0) {
         work->transferValue = frame;
-        position.a = 0x6c0000;
-        position.b = 0x780000;
-        velocity.a = 0;
-        velocity.b = 0;
+        position.x = 0x6c0000;
+        position.y = 0x780000;
+        velocity.x = 0;
+        velocity.y = 0;
         Iwram_CopyWordsEntry((void *)&BG_PLTT_COLOR(6, 0), battle + 0x56c, 256);
         {
           u8 *q = shades;
@@ -441,24 +441,24 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *args) {
         bodyPlace[3] = 0;
         if (frame > 149) {
 
-          position.a += velocity.a;
-          position.b += velocity.b;
+          position.x += velocity.x;
+          position.y += velocity.y;
           if (frame <= 159) {
-            velocity.b += -0x4000;
+            velocity.y += -0x4000;
           } else if ((u32)(frame - 210) <= 13) {
-            velocity.a += -0x800;
-            velocity.b += -0x1000;
+            velocity.x += -0x800;
+            velocity.y += -0x1000;
           } else if ((u32)(frame - 236) <= 3) {
-            velocity.a += 0x2000;
-            velocity.b += -0x4000;
+            velocity.x += 0x2000;
+            velocity.y += -0x4000;
           }
-          velocity.a = velocity.a * 60 / 64;
-          velocity.b = velocity.b * 60 / 64;
-          req.a = 0x10000;
-          req.b = 0x10000;
+          velocity.x = velocity.x * 60 / 64;
+          velocity.y = velocity.y * 60 / 64;
+          req.x = 0x10000;
+          req.y = 0x10000;
           for (i = 0; i != 2; i++) {
-            bodyPlace[0] = position.a;
-            bodyPlace[1] = 0x1100000 - (position.b + i * 0x200000);
+            bodyPlace[0] = position.x;
+            bodyPlace[1] = 0x1100000 - (position.y + i * 0x200000);
             bodyPlace[2] = 0x1000000;
             Render_ApplyProjectedPlacementFar(work->objects[i], bodyPlace,
                                               (s32 *)&req, 0);
@@ -485,16 +485,16 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *args) {
             }
             HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
           }
-          req.a = frame * 1128 - 103664;
-          if (req.a > 0x40000) {
-            req.a = 0x40000;
+          req.x = frame * 1128 - 103664;
+          if (req.x > 0x40000) {
+            req.x = 0x40000;
           }
-          req.b = frame * 564 - 19064;
-          if (req.b > 0x20000) {
-            req.b = 0x20000;
+          req.y = frame * 564 - 19064;
+          if (req.y > 0x20000) {
+            req.y = 0x20000;
           }
-          bodyPlace[0] = position.a;
-          bodyPlace[1] = 0x780000 - position.b;
+          bodyPlace[0] = position.x;
+          bodyPlace[1] = 0x780000 - position.y;
           bodyPlace[2] = 0x800000;
           Render_ApplyProjectedPlacementFar(work->objects[18], bodyPlace,
                                             (s32 *)&req, 0);
@@ -623,24 +623,24 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *args) {
               }
             }
           }
-          velocity.a = 0;
+          velocity.x = 0;
         }
         gBgScroll[1].x += 0xfff4;
         orbitScale = gHaures_OrbitScale;
         bodyPlace[3] = 0;
-        position.a = (Trig_Sin(frame << 9) << 3) + 0x6c0000;
-        position.b = 0x380000 - (Trig_Cos(frame << 9) << 3);
+        position.x = (Trig_Sin(frame << 9) << 3) + 0x6c0000;
+        position.y = 0x380000 - (Trig_Cos(frame << 9) << 3);
         if (frame > 396) {
-          velocity.a -= (frame - 397) << 14;
-          position.a += velocity.a;
-          velocity.b -= (frame - 397) << 13;
-          position.b +=
-              velocity.a; // velocity.a, not velocity.b, as the ROM has it
+          velocity.x -= (frame - 397) << 14;
+          position.x += velocity.x;
+          velocity.y -= (frame - 397) << 13;
+          position.y +=
+              velocity.x; // velocity.x, not velocity.y, as the ROM has it
         }
         for (i = 0; i != 11; i++) {
-          bodyPlace[0] = (gHaures_FeatherPoints[i].x << 16) + position.a;
+          bodyPlace[0] = (gHaures_FeatherPoints[i].x << 16) + position.x;
           bodyPlace[1] =
-              0x1100000 - ((gHaures_FeatherPoints[i].y << 16) + position.b);
+              0x1100000 - ((gHaures_FeatherPoints[i].y << 16) + position.y);
           bodyPlace[2] = 0x1000000;
           Render_ApplyProjectedPlacementFar(work->objects[i], bodyPlace,
                                             (s32 *)&orbitScale, 0);
@@ -790,10 +790,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *args) {
     void *verts;
 
     if (frame == 0) {
-      position.a = 0x10e0000;
-      position.b = -0x160000;
-      velocity.a = -0xc0000;
-      velocity.b = 0x60000;
+      position.x = 0x10e0000;
+      position.y = -0x160000;
+      velocity.x = -0xc0000;
+      velocity.y = 0x60000;
       {
         s32 *variant = &SPARKS->variant;
 
@@ -803,16 +803,16 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *args) {
       }
     }
     if (frame == 20) {
-      position.a = -0xa0000;
-      position.b = -0x160000;
-      velocity.a = 0xc0000;
-      velocity.b = 0x60000;
+      position.x = -0xa0000;
+      position.y = -0x160000;
+      velocity.x = 0xc0000;
+      velocity.y = 0x60000;
     }
     if (frame == 40) {
-      position.a = 0x1040000;
-      position.b = 0x400000;
-      velocity.a = -0x80000;
-      velocity.b = 0;
+      position.x = 0x1040000;
+      position.y = 0x400000;
+      velocity.x = -0x80000;
+      velocity.y = 0;
     }
     {
       for (i = 0; i != 512; i++) {
@@ -838,8 +838,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *args) {
         s32 angle;
         s32 speed;
 
-        p->x = (((Random16() & 63) - 16) << 16) + position.a / 2;
-        p->y = ((Random16() & 31) << 16) + position.b;
+        p->x = (((Random16() & 63) - 16) << 16) + position.x / 2;
+        p->y = ((Random16() & 31) << 16) + position.y;
         angle = Random16();
         speed = (Random16() & 127) + 128;
         p->velocityX = Trig_Sin(angle) * speed >> 7;
@@ -854,35 +854,35 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *args) {
       bodyPlace[3] = 0;
       t = frame - 20;
       if ((u32)t <= 19) {
-        openingScale.a = -0x10001;
+        openingScale.x = -0x10001;
         for (i = 0; i != 11; i++) {
-          bodyPlace[0] = position.a - (gHaures_FeatherPoints[i].x << 16);
+          bodyPlace[0] = position.x - (gHaures_FeatherPoints[i].x << 16);
           bodyPlace[1] =
-              0x1100000 - ((gHaures_FeatherPoints[i].y << 16) + position.b);
+              0x1100000 - ((gHaures_FeatherPoints[i].y << 16) + position.y);
           bodyPlace[2] = 0x1000000;
           Render_ApplyProjectedPlacementFar(work->objects[i], bodyPlace,
                                             (s32 *)&openingScale, 0);
         }
       } else {
         for (i = 0; i != 11; i++) {
-          bodyPlace[0] = (gHaures_FeatherPoints[i].x << 16) + position.a;
+          bodyPlace[0] = (gHaures_FeatherPoints[i].x << 16) + position.x;
           bodyPlace[1] =
-              0x1100000 - ((gHaures_FeatherPoints[i].y << 16) + position.b);
+              0x1100000 - ((gHaures_FeatherPoints[i].y << 16) + position.y);
           bodyPlace[2] = 0x1000000;
           Render_ApplyProjectedPlacementFar(work->objects[i], bodyPlace,
                                             (s32 *)&openingScale, 0);
         }
       }
-      position.a += velocity.a;
-      position.b += velocity.b;
+      position.x += velocity.x;
+      position.y += velocity.y;
       if ((u32)frame <= 19) {
-        velocity.a += -0x8000;
-        velocity.b += 0x8000;
+        velocity.x += -0x8000;
+        velocity.y += 0x8000;
       } else if ((u32)t <= 19) {
-        velocity.a += 0x8000;
-        velocity.b += 0x4000;
+        velocity.x += 0x8000;
+        velocity.y += 0x4000;
       } else if ((u32)(frame - 40) <= 19) {
-        velocity.a += -0x8000;
+        velocity.x += -0x8000;
       }
     }
     if (frame == 10) {

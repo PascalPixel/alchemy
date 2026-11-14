@@ -68,10 +68,6 @@ enum SummonEffectId {
 };
 
 typedef DrawRectangle BlitterPair[2];
-struct WordPair {
-  s32 a;
-  s32 b;
-};
 
 // A texture as the render jobs take it: 1 << logWidth by 1 << logHeight.
 struct Texture {
@@ -90,12 +86,14 @@ struct FxSlot {
   u8 fading;
 };
 
-// The camera work, as far as this effect reads it.
+/// A point or a velocity, 16.16 pixels.
 struct Point2D {
   s32 x;
   s32 y;
 };
 
+/// A sprite's scale across and down, 16.16, as an effect keeps it in a local
+/// (struct SpriteScale is the same pair as a union with an array).
 struct Scale {
   s32 x;
   s32 y;

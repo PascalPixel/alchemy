@@ -76,7 +76,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *args) {
   s32 fade;
   s16 list[14];
   s32 place[4];
-  struct WordPair req;
+  struct Scale req;
   struct ModelTexture__f14153c texture;
   struct ModelTexture__f14153c texture2;
   struct ModelTexture__f14153c texture3;

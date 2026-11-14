@@ -289,13 +289,8 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-struct FormationScale {
-  s32 x;
-  s32 y;
-};
-
-extern const struct FormationScale gFormationObjects_Scale;
-extern const struct FormationScale gFormationObjects_LargeScale;
+extern const struct Scale gFormationObjects_Scale;
+extern const struct Scale gFormationObjects_LargeScale;
 
 /// Places the summoned objects of one formation around (x, z): seven
 /// formations, the last three (4: eleven objects from signed columns, 5: twelve
@@ -303,8 +298,8 @@ extern const struct FormationScale gFormationObjects_LargeScale;
 void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  struct FormationScale normal = gFormationObjects_Scale;
-  struct FormationScale big = gFormationObjects_LargeScale;
+  struct Scale normal = gFormationObjects_Scale;
+  struct Scale big = gFormationObjects_LargeScale;
   s32 pos[4];
   s32 i;
   void **objects;

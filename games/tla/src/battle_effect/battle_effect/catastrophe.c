@@ -78,7 +78,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *args) {
   s16 list[14];
   s32 place[4];
   struct EffectPosition pos;
-  struct WordPair req;
+  struct Scale req;
   struct ModelTexture texture;
   struct ModelTexture texture3;
   struct EffectStep *p2;
@@ -541,7 +541,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *args) {
           }
         }
       }
-      req.a = -0x10001;
+      req.x = -0x10001;
       for (i = 0; i != 6; i++) {
         place[0] = (gCatastrophe_MirroredDemonX[i] << 16) + 0x80000;
         place[2] = (gCatastrophe_MirroredDemonZ[i] << 16) + camZ;

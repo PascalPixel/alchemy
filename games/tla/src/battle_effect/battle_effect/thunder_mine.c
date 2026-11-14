@@ -301,11 +301,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *args, s32 mode) {
 
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer) // 512 sparks
 #define PICTURES (Ram_MapCellBuffer + 0x4000)
-struct Point {
-  s32 x;
-  s32 y;
-};
-extern const struct Point gMegaera_UnitScale;
+extern const struct Scale gMegaera_UnitScale;
 
 // Abilities: Megaera.
 //
@@ -319,10 +315,10 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *args) {
   s32 frame;
   u8 *sprites;
   DrawRectangle *rects;
-  struct Point position;
-  struct Point velocity;
+  struct Point2D position;
+  struct Point2D velocity;
   DrawRectangle blitters[2];
-  struct Point request;
+  struct Scale request;
   s32 placement[4];
   struct EffectStep *p;
   u8 *pictures;

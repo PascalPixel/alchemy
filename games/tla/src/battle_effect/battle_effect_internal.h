@@ -158,10 +158,6 @@ struct RenderJob {
   s32 tail;
 };
 
-struct RequestPair {
-  s32 x, y;
-};
-
 // The map cell buffer holds WIN0's line table and then the splashes.
 struct DropSplashBuffer {
   u16 lines[160];
@@ -216,7 +212,7 @@ extern u8 Data_02010800[];
 
 extern u8 Data_02012800[];
 
-extern const struct WordPair gEclipse_Scales;
+extern const struct Scale gEclipse_Scales;
 
 extern const u8 gEclipse_GlintFlips[];
 
@@ -266,7 +262,7 @@ extern s8 gDeathPlunge_X[];
 
 extern s8 gDeathPlunge_Y[];
 
-extern const struct WordPair gCruelRuin_UnitScale;
+extern const struct Scale gCruelRuin_UnitScale;
 
 extern const u16 gCruelRuin_CirclePictures[];
 
@@ -310,7 +306,7 @@ extern char ResourceId_FeatherSheet; // directory row 0xd1
 
 extern char ResourceId_CrescentRowSheet;
 
-extern const struct RequestPair gZagan_UnitScale;
+extern const struct Scale gZagan_UnitScale;
 
 extern const u16 gZagan_ChargePoints[][2]; // the charging Zagan's parts
 
@@ -588,11 +584,10 @@ struct EffectStep;
 struct FxPartyList;
 struct MeshTriangle;
 struct PoolEntry;
-struct Scale;
+struct SpriteScale;
 struct ScaledSprite;
 struct SpriteScale;
 struct StripQuad;
-struct WordPair;
 
 // The parts' own routines, by the part that defines them.
 
@@ -1347,7 +1342,7 @@ extern s32 Data_02010018[];
 extern u8 gJuggle_Styles[][7];
 
 // flora.c
-extern const struct WordPair gFlora_UnitScale;
+extern const struct Scale gFlora_UnitScale;
 extern const u8 gFlora_PetalSizes[];
 extern const u16 gFlora_PetalPictures[];
 extern const u16 gFlora_BloomFrames[];
@@ -1442,7 +1437,7 @@ extern u8 gBubbleColumn_PictureHeights[];
 extern u16 gBubbleColumn_Pictures[];
 extern u8 Data_02014400[];
 extern u8 Data_02014800[];
-extern const struct WordPair gCoatlicue_UnitScale;
+extern const struct Scale gCoatlicue_UnitScale;
 extern u8 gCoatlicue_PictureWidths[];
 extern u8 gCoatlicue_PictureHeights[];
 extern u16 gCoatlicue_Pictures[];
@@ -1478,7 +1473,7 @@ extern char ResourceId_PurpleArmourTiles;
 extern char ResourceId_WhiteSpikesTiles;
 extern u8 Data_02016000[];
 extern struct EffectStep Data_02016d00[];
-extern const struct WordPair gCatastrophe_UnitScale;
+extern const struct Scale gCatastrophe_UnitScale;
 extern const u8 gCatastrophe_BurstMesh[];
 extern const u16 gCatastrophe_FlashFrames[];
 extern const u16 gCatastrophe_FlashLengths[];
@@ -1507,9 +1502,9 @@ extern const s16 gCatastrophe_ShardRolls[];
 extern u8 Data_02010ae8[];
 extern u8 Data_02010be0[];
 extern u8 Data_02010fa0[];
-extern const struct WordPair gHaures_ChargeScale;
-extern const struct WordPair gHaures_OrbitScale;
-extern const struct WordPair gHaures_OpeningScale;
+extern const struct Scale gHaures_ChargeScale;
+extern const struct Scale gHaures_OrbitScale;
+extern const struct Scale gHaures_OpeningScale;
 extern const u8 gHaures_BandMesh[];
 extern const u8 gHaures_BurstMesh[];
 extern const u8 gHaures_ParticleX[];

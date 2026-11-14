@@ -7,11 +7,6 @@
 #include "sounds.h"
 #include "macros.h"
 
-// A pair of 16.16 scales; the game keeps each start value in the rodata.
-struct ScalePair {
-  s32 v[2];
-};
-
 /* VIEW(f175f74): tag struct Particle as struct Particle__f175f74;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
@@ -166,10 +161,10 @@ struct RegisterQueue {
 #define BG_VRAM_A900 ((u8 *)0x0600a900)
 #define PLTT ((u16 *)BG_PLTT)
 
-extern const struct ScalePair gCharon_SwarmScale;
-extern const struct ScalePair gCharon_PulseScale;
-extern const struct ScalePair gCharon_RevealScale;
-extern const struct ScalePair gCharon_FinaleScale;
+extern const struct Scale gCharon_SwarmScale;
+extern const struct Scale gCharon_PulseScale;
+extern const struct Scale gCharon_RevealScale;
+extern const struct Scale gCharon_FinaleScale;
 
 void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   u16 tiles[16];
@@ -398,10 +393,10 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       }
     }
     if (frame >= 132 && frame < 240) {
-      struct ScalePair swarmScale = gCharon_SwarmScale;
+      struct Scale swarmScale = gCharon_SwarmScale;
 
-      swarmScale.v[1] = Q16_ONE * 5 / 4;
-      swarmScale.v[0] = Q16_ONE * 5 / 4;
+      swarmScale.y = Q16_ONE * 5 / 4;
+      swarmScale.x = Q16_ONE * 5 / 4;
       if (frame == 132) {
         for (i = 0; i != 128; i++) {
           PARTICLES[i].x = (Random16() % 160 + 40) << 16;
@@ -413,14 +408,14 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       }
       for (i = 0; i != 48; i++) {
         if (i == 10) {
-          swarmScale.v[1] = Q16_ONE;
-          swarmScale.v[0] = Q16_ONE;
+          swarmScale.y = Q16_ONE;
+          swarmScale.x = Q16_ONE;
         }
         swarmPlace[3] = 0;
         swarmPlace[1] = 0xff0000;
         swarmPlace[0] = PARTICLES[64 + i].x;
         swarmPlace[2] = PARTICLES[64 + i].y + 0x200000;
-        Render_ApplyProjectedPlacementFar(SPRITES[i], swarmPlace, swarmScale.v,
+        Render_ApplyProjectedPlacementFar(SPRITES[i], swarmPlace, &swarmScale.x,
                                           0);
         SPRITES[i]->tile = tiles[PARTICLES[64 + i].timer / 16];
       }
@@ -438,16 +433,15 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     }
     t56 = frame - 56;
     if (t56 >= 0 && t56 < 76) {
-      struct ScalePair pulseScale = gCharon_PulseScale;
+      struct Scale pulseScale = gCharon_PulseScale;
 
-      pulseScale.v[0] = pulseScale.v[1] =
-          Trig_Sin(t56 << 7) * 2 + TRIG_TURN / 4;
+      pulseScale.x = pulseScale.y = Trig_Sin(t56 << 7) * 2 + TRIG_TURN / 4;
       pulsePlace[3] = 0;
       pulsePlace[1] = 0xff0000;
       pulsePlace[0] = px(114);
       pulsePlace[2] = (t56 >= 0 ? 78 : 100) << 16;
       Render_ApplyProjectedPlacementFar(work->objects[0], pulsePlace,
-                                        pulseScale.v, 0);
+                                        &pulseScale.x, 0);
     }
     if (frame == 131) {
       BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
@@ -798,7 +792,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Heap_Release(texture);
       }
       if (frame >= 244 && frame < 310) {
-        struct ScalePair revealScale = gCharon_RevealScale;
+        struct Scale revealScale = gCharon_RevealScale;
 
         if (frame < 260) {
           u8 *low = REVEAL_BUFFER;
@@ -830,13 +824,13 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
                      column) = texel;
           }
         }
-        revealScale.v[1] = revealScale.v[0] = (155 << 12) - (frame << 11);
+        revealScale.y = revealScale.x = (155 << 12) - (frame << 11);
         revealPlace[3] = 0;
         revealPlace[1] = 0xff0000;
         revealPlace[0] = 184 << 15;
         revealPlace[2] = 144 << 15;
         Render_ApplyProjectedPlacementFar(work->objects[13], revealPlace,
-                                          revealScale.v, 0);
+                                          &revealScale.x, 0);
         {
           u16 *target =
               Resource_GetTableEntry((s32)&ResourceId_RedCrescentTiles);
@@ -962,7 +956,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Iwram_FillWords(PLTT + 0x1c0, 64, 0x7c1f7c1f);
       }
       if (frame >= 330 && frame < 351) {
-        struct ScalePair finaleScale = gCharon_FinaleScale;
+        struct Scale finaleScale = gCharon_FinaleScale;
         s32 dx = 0;
         s32 dz = 0;
 
@@ -970,13 +964,13 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           dx = 347 - frame;
           dz = (frame - 347) / 4;
         }
-        finaleScale.v[0] = finaleScale.v[1] = (frame << 11) - 0xa5000;
+        finaleScale.x = finaleScale.y = (frame << 11) - 0xa5000;
         finalePlace[3] = 0;
         finalePlace[1] = 0xff0000;
         finalePlace[0] = (dx << 16) + (184 << 15);
         finalePlace[2] = (dz << 16) + (144 << 15);
         Render_ApplyProjectedPlacementFar(work->objects[13], finalePlace,
-                                          finaleScale.v, 0);
+                                          &finaleScale.x, 0);
       }
       if (frame == 347) {
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);

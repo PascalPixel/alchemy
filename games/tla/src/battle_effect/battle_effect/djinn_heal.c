@@ -247,11 +247,11 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *args) {
   s32 *transition;
   s32 savedScroll;
   DrawRectangle *blit;
-  struct RequestPair position;
-  struct RequestPair velocity;
+  struct Point2D position;
+  struct Point2D velocity;
   s32 skip;
   DrawRectangle blitters[2];
-  struct RequestPair request;
+  struct Scale request;
   s32 placement[4];
   struct ModelTexture texture;
   struct RenderModel *model;

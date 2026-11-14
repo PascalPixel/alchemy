@@ -18,11 +18,6 @@ struct StripQuad;
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-struct AzulPoint {
-  s32 x;
-  s32 y;
-};
-
 struct AzulVertex {
   s8 x;
   s8 y;
@@ -71,9 +66,9 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *args) {
   DrawRectangle blit;
   s32 frame;
   u8 *battle;
-  struct AzulPoint base;
-  struct AzulPoint pos;
-  struct AzulPoint vel;
+  struct Point2D base;
+  struct Point2D pos;
+  struct Point2D vel;
   struct AzulVertex *verts;
   struct AzulFace *faces;
   u8 *sphere;

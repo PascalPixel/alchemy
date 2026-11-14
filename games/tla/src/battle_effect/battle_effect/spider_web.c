@@ -234,12 +234,7 @@ void Render_DrawModelList__ability_effects(struct Model *model) __asm__(
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-struct PlacementSource {
-  s32 unk00;
-  s32 unk04;
-};
-
-extern const struct PlacementSource gUlysses_ShipScale;
+extern const struct Scale gUlysses_ShipScale;
 
 // Ulysses: the hero's ship sails out of a whirlpool, its crew of six
 // warriors leap at the foe and the ship's broadside lands as a storm of
@@ -266,7 +261,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *args) {
   DrawRectangle blits[2];
   struct ModelTexture texture;
   struct ModelTexture quadTexture;
-  struct PlacementSource req;
+  struct Scale req;
   u8 *battle;
   s32 mask;
 

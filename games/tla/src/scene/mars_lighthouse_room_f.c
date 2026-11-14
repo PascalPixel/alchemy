@@ -2853,7 +2853,8 @@ s32 CrackedTiles_Find(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
-#include "shared/cracked_tile_fall_event.h"
+#include "system/io_write.h"
+#include "shared/cracked_tile_fall.h"
 
 #include "../field/field_effect/advance_motion.c"
 
@@ -2874,13 +2875,6 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
 #include "shared/cracked_tile_drop_in.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
-/* VIEW(s3d80): routine CrackedTile_FallEvent as this part declared it; the
- * joined file has another; not tried: CrackedTile_FallEvent's declaration holds
- * a FAKEMATCH tag. */
-void CrackedTile_FallEvent__s3d80(
-    struct WarpWork *work,
-    struct WarpEntry *entry) __asm__("CrackedTile_FallEvent");
-#define CrackedTile_FallEvent CrackedTile_FallEvent__s3d80
 
 s32 Func_02003f18(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
@@ -2904,7 +2898,7 @@ top:
     if (index == work->current)
       goto end;
     work->current = index;
-    CrackedTile_FallEvent(work, entry);
+    CrackedTile_Fall(work, entry);
     GameFlag_SetByte(work->positionFlag, x);
     GameFlag_SetByte(work->positionFlag + 8, z);
     return 1;
@@ -3891,7 +3885,6 @@ s32 gPushLeaderSteps[] = {
 #undef SLIDE_KEEP_SLIDING
 #undef SLIDE_SPHERES_OVERLAP
 #undef ABS
-#undef CrackedTile_FallEvent
 #undef MapLayer
 
 /* VIEW(data): routine Func_02001010 as module/scene/airs_rock.h declares it;

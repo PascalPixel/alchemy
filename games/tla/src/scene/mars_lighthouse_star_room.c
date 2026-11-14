@@ -2823,7 +2823,8 @@ s32 CrackedTiles_Find(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
-#include "shared/cracked_tile_fall_event.h"
+#include "system/io_write.h"
+#include "shared/cracked_tile_fall.h"
 
 #include "../field/field_effect/advance_motion.c"
 
@@ -2842,13 +2843,6 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
 #include "shared/cracked_tile_drop_in.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
-/* VIEW(s3e04): routine CrackedTile_FallEvent as this part declared it; the
- * joined file has another; not tried: CrackedTile_FallEvent's declaration holds
- * a FAKEMATCH tag. */
-void CrackedTile_FallEvent__s3e04(
-    struct CellTarget *work,
-    struct CellTargetEntry *entry) __asm__("CrackedTile_FallEvent");
-#define CrackedTile_FallEvent CrackedTile_FallEvent__s3e04
 
 s32 CrackedTiles_Step(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
@@ -2869,7 +2863,7 @@ s32 CrackedTiles_Step(void) {
       if (i == work->current)
         break;
       work->current = i;
-      CrackedTile_FallEvent(work, entry);
+      CrackedTile_Fall(work, entry);
       GameFlag_SetByte(work->flagByte, x);
       GameFlag_SetByte(work->flagByte + 8, z);
       return 1;
@@ -3255,5 +3249,4 @@ s32 gFieldEffect_DurationScripts[] = {
     (s32)gFieldEffect_MediumScript,
     (s32)gFieldEffect_LongScript,
 };
-#undef CrackedTile_FallEvent
 #undef MarsLighthouseRoomF_SlideOnIce

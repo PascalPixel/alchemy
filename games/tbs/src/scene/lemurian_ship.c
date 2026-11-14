@@ -6,7 +6,7 @@
 /// once Iodem has given it the Black Orb. Stepping back on cell behavior 1
 /// (LemurianShip_LeaveTheShip) returns there.
 ///
-/// LemurianShip_SetupMap prepares the map. It sinks the ship's two map layers
+/// Scene_Initialize prepares the map. It sinks the ship's two map layers
 /// 90 pixels, and puts the two pieces of the gangway and the party at sprite
 /// priority 1.
 ///
@@ -35,7 +35,7 @@
 #include "system/main_routine_work.h"
 #include "system/vram_cache.h"
 
-s32 LemurianShip_SetupMap(void);
+s32 Scene_Initialize(void);
 extern u16 gShipGlowPalettes[];
 extern s32 gSprayFallScript[];
 extern s16 gRippleSine[256];
@@ -114,17 +114,17 @@ enum {
 #define SET_SHADOW_PRIORITY(actor, level)                                      \
   ((void)(actor->sprite->shadow.priority = (level)))
 
-const struct SceneEntrance *LemurianShip_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gLemurianShipEntrances;
 }
 
-const struct SceneExitRegion *LemurianShip_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *LemurianShip_GetExits(void) { return gLemurianShipExits; }
+const u32 *Scene_GetExits(void) { return gLemurianShipExits; }
 
 /// The gangway's two pieces.
 /// The party's own actors fill the first three rows.
-const struct ActorPlacement *LemurianShip_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gLemurianShipActorPlacements;
 }
 
@@ -139,7 +139,7 @@ static void LemurianShip_LeaveTheShip(void) {
 static void Ripple_StopForReveal(void) { Ripple_Stop(); }
 
 /// Starts the two-axis ripple with its original frequencies and amplitudes.
-/// Called by LemurianShip_SetupMap, and reached by Reveal as the spell ends.
+/// Called by Scene_Initialize, and reached by Reveal as the spell ends.
 static void Ripple_Start(void) {
   LineScroll_InitWave(0, Q16_ONE * 4, Q16_ONE, Q16_ONE / 8, Q16_ONE,
                       Q16_ONE / 2, Q16_ONE / 4);
@@ -147,7 +147,7 @@ static void Ripple_Start(void) {
 
 /// The exit, Reveal and the Black Orb at the water's edge (cell behavior
 /// 10).
-const struct Trigger *LemurianShip_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gLemurianShipTriggers;
 }
 
@@ -676,7 +676,7 @@ static void LemurianShip_RaiseTheShip(void) {
 }
 
 /// Sets the Lemurian ship's map up.
-s32 LemurianShip_SetupMap(void) {
+s32 Scene_Initialize(void) {
   struct MapGridScrollWork *grid;
   /* FAKEMATCH(volatile): each control passes through a halfword on the stack.
    */

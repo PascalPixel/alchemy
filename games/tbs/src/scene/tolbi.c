@@ -6,8 +6,8 @@
 /// festival is on, and the town's talk follows the Colosso story in three
 /// stages.
 ///
-/// Tolbi_SelectTriggers gives each stage its own trigger table. One actor
-/// placement table serves all three, and Tolbi_ApplyEntryState moves the
+/// Scene_GetTriggers gives each stage its own trigger table. One actor
+/// placement table serves all three, and Scene_Initialize moves the
 /// actors whose places change.
 ///
 /// - The festival (neither story flag set). The trials have begun at the
@@ -63,8 +63,8 @@
 #include "field/event.h"
 #include "field/scene_tables.h"
 
-const struct Trigger *Tolbi_SelectTriggers(void);
-s32 Tolbi_ApplyEntryState(s32 unused);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(s32 unused);
 extern s32 gTolbiMirroredActor[];
 extern s32 gTolbiOlderBrotherRun[];
 extern s32 gTolbiYoungerSisterRun[];
@@ -290,13 +290,13 @@ static UNREAD_RESULT Tolbi_UpdateKid(struct Actor *updated) {
   RETURN_UNREAD(0);
 }
 
-const struct SceneEntrance *Tolbi_GetEntrances(void) { return gTolbiEntrances; }
+const struct SceneEntrance *Scene_GetEntrances(void) { return gTolbiEntrances; }
 
-const struct SceneExitRegion *Tolbi_GetRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-const u32 *Tolbi_GetExits(void) { return gTolbiExits; }
+const u32 *Scene_GetExits(void) { return gTolbiExits; }
 
-const struct ActorPlacement *Tolbi_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gTolbiActorPlacements;
 }
 
@@ -420,7 +420,7 @@ static void Tolbi_TalkToYoungerSister(void) {
 }
 
 /// Picks the trigger table for Tolbi's current mood.
-const struct Trigger *Tolbi_SelectTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
     return gTolbiTriggersAfterColosso;
   }
@@ -565,7 +565,7 @@ static void Tolbi_CopyLeaderPriority(struct Actor *updated) {
 }
 
 /// Sets up the scene on entry.
-s32 Tolbi_ApplyEntryState(s32 unused) {
+s32 Scene_Initialize(s32 unused) {
   struct Actor *actor;
   void (*kidUpdate)(struct Actor *);
 

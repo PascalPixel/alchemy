@@ -12,7 +12,7 @@
 /// (FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND), whose jewel opens the second
 /// minotaur relief.
 ///
-/// Its setup, SolSanctumRooms_Initialize (shared/sol_sanctum_init_zoom.c), is
+/// Its setup, Scene_Initialize (shared/sol_sanctum_init_zoom.c), is
 /// the one SceneId_SolSanctumCorridor shares. Once Mt. Aleph has erupted, the
 /// room rumbles and shakes.
 ///

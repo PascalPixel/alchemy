@@ -88,7 +88,7 @@ STATIC_ASSERT(offsetof(struct FieldEffect, countdown) == 0x68);
 STATIC_ASSERT(offsetof(struct FieldEffect, update) == 0x6c);
 
 /// An actor read as an actor and as a field effect at once, as
-/// BabiLighthouse_SetupMap writes one.
+/// Babi Lighthouse's Scene_Initialize writes one.
 union ActorOrEffect {
   struct Actor actor;
   struct FieldEffect effect;

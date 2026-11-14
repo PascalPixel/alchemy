@@ -4,7 +4,7 @@
 #include "flags.h"
 
 /// The scene opens in the window transition over 16 frames.
-s32 SolSanctumRooms_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct FieldWork *work;
 
   s32 shakeX = px(1);

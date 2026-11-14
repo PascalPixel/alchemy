@@ -38,7 +38,7 @@
 /// attendant offers a rest (BabiPalace_OfferRest).
 ///
 /// The finals send the party back here by two entrances.
-/// BabiPalace_ApplyEntryState answers them by restoring the party and its
+/// Scene_Initialize answers them by restoring the party and its
 /// inventory (BabiPalace_RestorePartyAndInventory) and playing a waking in the
 /// big bedroom. A lost first or second match comes in by
 /// BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH (BabiPalace_WakeFromFinalsDream). The
@@ -63,7 +63,7 @@
 #include "system/input.h"
 #include "system/main_routine_work.h"
 
-s32 BabiPalace_ApplyEntryState(void);
+s32 Scene_Initialize(void);
 extern u16 gBabiPalace_DoorCells[];
 extern s32 gBabiPalace_IndigestionScript[];
 extern struct SceneEntrance gBabiPalace_Entrances[];
@@ -288,12 +288,12 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 }
 
 /// The palace has no exit regions, so the table is empty.
-const struct SceneExitRegion *BabiPalace_GetRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return gBabiPalace_Regions;
 }
 
 /// Both scenes share one exit table.
-const u32 *BabiPalace_GetExits(void) { return gBabiPalace_Exits; }
+const u32 *Scene_GetExits(void) { return gBabiPalace_Exits; }
 
 /// Returns the actor placements for the scene and the story, which is before
 /// Babi's rescue, during the finals or after Colosso.
@@ -2612,7 +2612,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 /// Sets up the scene being entered. Returns 0.
-s32 BabiPalace_ApplyEntryState(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
   struct Sprite *sprite;
   u8 *buf;

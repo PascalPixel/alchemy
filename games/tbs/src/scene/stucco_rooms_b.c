@@ -24,7 +24,7 @@
 ///   is where a defeat returns the party while Iodem waits at Gondowan Passage.
 ///
 /// The rooms' talk follows Colosso in the same three stages as the town. Each
-/// stage has its own trigger table (StuccoRoomsB_SelectTriggers) and, after
+/// stage has its own trigger table (Scene_GetTriggers) and, after
 /// Colosso, an actor placement table of its own.
 ///
 /// - During the festival Babi is missing and the town is full of visitors,
@@ -36,7 +36,7 @@
 ///   party's help.
 ///
 /// After Colosso two short events play, each once, on entering their
-/// rooms (StuccoRoomsB_ApplyEntryState).
+/// rooms (Scene_Initialize).
 ///
 /// In the northeast guest room a woman finds something on the floor, starts
 /// at the sight of the party and hides it behind the trash pile
@@ -62,8 +62,8 @@
 #include "field/scene_tables.h"
 #include "system/main_routine_work.h"
 
-const struct Trigger *StuccoRoomsB_SelectTriggers(void);
-s32 StuccoRoomsB_ApplyEntryState(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern s32 gStuccoRoomsBSquashStretch[];
 extern struct SceneEntrance gStuccoRoomsBEntrances[];
 extern u32 gStuccoRoomsBExits[];
@@ -239,16 +239,16 @@ static inline void StuccoRoomsB_AskYesNo(s32 question, s32 speaker) {
   Event_ShowMessage(speaker, 0);
 }
 
-const struct SceneEntrance *StuccoRoomsB_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gStuccoRoomsBEntrances;
 }
 
-const struct SceneExitRegion *StuccoRoomsB_GetRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-const u32 *StuccoRoomsB_GetExits(void) { return gStuccoRoomsBExits; }
+const u32 *Scene_GetExits(void) { return gStuccoRoomsBExits; }
 
 /// After Colosso the rooms hold a different crowd.
-const struct ActorPlacement *StuccoRoomsB_SelectActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
     return gStuccoRoomsBActorPlacementsAfterColosso;
   }
@@ -264,7 +264,7 @@ static void StuccoRoomsB_AskWhetherBabiWasMissing(s32 speaker) {
 #endif
 
 /// Picks the trigger table for the current point in the Colosso story.
-const struct Trigger *StuccoRoomsB_SelectTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
     return gStuccoRoomsBTriggersAfterColosso;
   }
@@ -431,7 +431,7 @@ static void StuccoRoomsB_WatchPassengersArgue(void) {
 }
 
 /// Sets up the rooms on entry.
-s32 StuccoRoomsB_ApplyEntryState(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
 
   gFieldWork->transition =

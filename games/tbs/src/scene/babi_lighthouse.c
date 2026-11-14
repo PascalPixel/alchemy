@@ -9,7 +9,7 @@
 ///
 /// The four share one exit table. The other getters choose by
 /// gMainRoutineWork.next, with the road as the fallback.
-/// BabiLighthouse_SetupMap restores the scene being entered. Retreat anywhere
+/// Scene_Initialize restores the scene being entered. Retreat anywhere
 /// but on the road leads back to the Entry.
 ///
 /// The Road to Babi Lighthouse has four workers and a carved stone pillar. Move
@@ -44,7 +44,7 @@
 /// BabiLighthouse_FaranAsksPartyToOpenDoor
 /// (FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW). The door's first opening plays
 /// BabiLighthouse_ExplainTruthDoor (FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN).
-/// BabiLighthouse_SetupMap stands Iodem, Faran and the onlookers where each has
+/// Scene_Initialize stands Iodem, Faran and the onlookers where each has
 /// left them.
 ///
 /// The door's switch shows only under Reveal
@@ -65,7 +65,7 @@
 #include "system/heap_slots.h"
 #include "system/main_routine_work.h"
 
-s32 BabiLighthouse_SetupMap(void);
+s32 Scene_Initialize(void);
 extern s32 gBabiLighthouse_TrembleScript[];
 extern struct SceneEntrance gBabiLighthouse_EntryEntrances[];
 extern struct SceneEntrance gBabiLighthouse_LuffEntrances[];
@@ -306,7 +306,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) {
 }
 
 /// The four scenes share one exit table.
-const u32 *BabiLighthouse_GetExits(void) { return gBabiLighthouse_Exits; }
+const u32 *Scene_GetExits(void) { return gBabiLighthouse_Exits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
@@ -1293,7 +1293,7 @@ static void BabiLighthouse_MatchLeaderPriority(struct Actor *updated) {
 #endif
 
 /// Sets up the scene being entered. Returns 0.
-s32 BabiLighthouse_SetupMap(void) {
+s32 Scene_Initialize(void) {
   struct Actor *placedActor;
   s32 sceneId;
   s32 mapCopy;

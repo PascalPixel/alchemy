@@ -82,7 +82,7 @@
 /// clears it, and the Colosso's log sets it as it ends.
 #define FLAG_IN_TOWN 0x123
 // Set as a file continues from its last Sanctum by the player's choice
-// (FileScreen_Run); nothing in the game reads either, by name, by number or as
+// (the file screen's Scene_Initialize); nothing in the game reads either, by name, by number or as
 // part of a byte.
 /// The file was loaded with L and Start held, which restarts it at its last
 /// Sanctum.

@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-s32 SolSanctumRooms_Initialize(void);
+s32 Scene_Initialize(void);
 
 #endif

@@ -7,7 +7,7 @@
 /// the chest, and SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST into the
 /// room with the stepping stones.
 ///
-/// Its setup, SolSanctumRooms_Initialize (shared/sol_sanctum_init_zoom.c), is
+/// Its setup, Scene_Initialize (shared/sol_sanctum_init_zoom.c), is
 /// the one SceneId_SolSanctumMaze shares. Once Mt. Aleph has erupted
 /// (FLAG_SOL_SANCTUM_ERUPTED), the passage rumbles and shakes.
 

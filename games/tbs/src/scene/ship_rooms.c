@@ -631,19 +631,19 @@ static s32 ShipRooms_LayFlat(struct Actor *work) {
   return 1;
 }
 
-const struct SceneEntrance *ShipRooms_SelectEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   if (gMainRoutineWork.next == SCENE_SHIP_ROOMS) {
     return gShipRooms_Entrances;
   }
   return gShipRooms_EntrancesOther;
 }
 
-const struct SceneExitRegion *ShipRooms_GetRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-const u32 *ShipRooms_GetExits(void) { return gShipRooms_Exits; }
+const u32 *Scene_GetExits(void) { return gShipRooms_Exits; }
 
 /// Picks the actor placements for the room entered and the voyage's stage.
-const struct ActorPlacement *ShipRooms_SelectActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   switch (gMainRoutineWork.entrance) {
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK:
@@ -736,7 +736,7 @@ const struct ActorPlacement *ShipRooms_SelectActorPlacements(void) {
 }
 
 /// Chooses the room's interactions for the current stage of the voyage.
-const struct Trigger *ShipRooms_SelectTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s32 entrance = gMainRoutineWork.entrance;
 
   switch (entrance) {
@@ -2128,7 +2128,7 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
 }
 
 /// Restores the room or plays the event selected by this entrance.
-s32 ShipRooms_ApplyEntryState(void) {
+s32 Scene_Initialize(void) {
   wait(1);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   gFieldWork->transition =

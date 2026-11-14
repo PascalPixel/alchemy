@@ -3,14 +3,14 @@
 /// the ending, and the screens that lead from the prologue and the last event
 /// on to Vale and the File Screen.
 ///
-/// Title_Run chooses by entrance.
+/// Scene_Initialize chooses by entrance.
 
 #include "types.h"
 #include "field/scene_tables.h"
 #include "system/main_routine_work.h"
 #include "system/vram_cache.h"
 
-s32 Title_Run(void);
+s32 Scene_Initialize(void);
 extern struct SceneEntrance gTitleEntrances[];
 extern u32 gTitleExits[];
 extern struct ActorPlacement gTitleActorPlacements[];
@@ -45,24 +45,24 @@ static void Title_LoadBackground(void);
 
 /// The title overlay's scene tables, which FieldSequence_Run reads through
 /// entry/title.s.
-const struct SceneEntrance *Title_GetEntrances(void) { return gTitleEntrances; }
+const struct SceneEntrance *Scene_GetEntrances(void) { return gTitleEntrances; }
 
 /// The exit regions entry, which is empty because the title has no exit
 /// boxes.
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Title_GetExits(void) { return gTitleExits; }
+const u32 *Scene_GetExits(void) { return gTitleExits; }
 
 /// The title overlay has no actors.
-const struct ActorPlacement *Title_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gTitleActorPlacements;
 }
 
 /// The title overlay has no triggers.
-const struct Trigger *Title_GetTriggers(void) { return gTitleTriggers; }
+const struct Trigger *Scene_GetTriggers(void) { return gTitleTriggers; }
 
 /// The overlay's initialize entry, which plays what the entrance asks for.
-s32 Title_Run(void) {
+s32 Scene_Initialize(void) {
   s32 waitFrames;
 
   // After 120 frames, the logo waits up to 3600 frames (a minute) for a key
@@ -262,7 +262,7 @@ static void Title_UpdateSpriteReveal(void) {
   gTitleRevealFrame++;
 }
 
-/// Shows the Golden Sun logo for Title_Run's entrance 10.
+/// Shows the Golden Sun logo for Scene_Initialize's entrance 10.
 static void Title_RevealScreen(s32 unused) {
   s32 brightnessStep;
 

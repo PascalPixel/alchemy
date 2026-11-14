@@ -11,7 +11,7 @@
 
 extern const u16 gFileScreen_ButtonCode[];
 extern const u16 gFileScreen_ExtraButtonCode[];
-s32 FileScreen_Run(void);
+s32 Scene_Initialize(void);
 extern struct SceneEntrance gFileScreen_Entrances[];
 extern u32 gFileScreen_Exits[];
 extern struct ActorPlacement gFileScreen_ActorPlacements[];
@@ -78,7 +78,7 @@ extern u16 gFileScreen_PasswordStackItems[];
 #endif
 
 // The first letter of the greeting a cable transfer waits for, before V, T
-// and S (FileScreen_Run).
+// and S (Scene_Initialize).
 #if LANGUAGE == LANGUAGE_GERMAN
 #define FILE_SCREEN_LINK_LANGUAGE_TAG 'E'
 #elif LANGUAGE == LANGUAGE_FRENCH
@@ -145,18 +145,18 @@ static s32 FileScreen_EncodePassword(u8 *data, s32 size, u8 *out);
 static u16 FileScreen_CalculatePasswordCrc16(u32 byteCount, u8 *data);
 
 /// The File Screen overlay's scene tables, for the scene loader.
-u8 *FileScreen_GetEntrances(void) { return (u8 *)gFileScreen_Entrances; }
+u8 *Scene_GetEntrances(void) { return (u8 *)gFileScreen_Entrances; }
 
 /// The exit regions entry: the File Screen has no exit boxes.
 s32 Scene_GetExitRegions(void) { return 0; }
 
-u8 *FileScreen_GetExits(void) { return (u8 *)gFileScreen_Exits; }
+u8 *Scene_GetExits(void) { return (u8 *)gFileScreen_Exits; }
 
-u8 *FileScreen_GetActorPlacements(void) {
+u8 *Scene_GetActorPlacements(void) {
   return (u8 *)gFileScreen_ActorPlacements;
 }
 
-u8 *FileScreen_GetTriggers(void) { return (u8 *)gFileScreen_Triggers; }
+u8 *Scene_GetTriggers(void) { return (u8 *)gFileScreen_Triggers; }
 
 /// Loads the Golden Sun logo onto BG2 as Title_LoadBackground (title.c) does,
 /// and stops the leader's motion.
@@ -228,7 +228,7 @@ static void FileScreen_UpdateBlend(void) {
 /// The first hidden code, entered on the File Screen and ended by 0.
 ///
 /// It is Select three times. With it a new game names Garet, Ivan and Mia as
-/// well as Isaac (FileScreen_Run).
+/// well as Isaac (Scene_Initialize).
 const u16 gFileScreen_ButtonCode[] = {
     KEY_SELECT, KEY_SELECT, KEY_SELECT, 0,
 };
@@ -383,10 +383,10 @@ struct SaveMenuMapLocalState {
 /// A console's link payload as the cable transfer reads it from
 /// gLinkPeerSignatures.
 struct SaveLinkGreeting {
-  /// The greeting FileScreen_Run waits for: FILE_SCREEN_LINK_LANGUAGE_TAG, then
+  /// The greeting Scene_Initialize waits for: FILE_SCREEN_LINK_LANGUAGE_TAG, then
   /// V, T and S.
   ///
-  /// FileScreen_Run sets every console's to "0000" before it waits.
+  /// Scene_Initialize sets every console's to "0000" before it waits.
   u16 code[4];
   u8 reserved[16]; ///< the rest of the 24 bytes; not read
 };
@@ -394,7 +394,7 @@ struct SaveLinkGreeting {
 /// The overlay's initialize entry: the File Screen.
 ///
 /// Returns 0 once a destination is set.
-s32 FileScreen_Run(void) {
+s32 Scene_Initialize(void) {
   s32 pageCount;
   s32 encodedSize;
   struct Window *pageWindow;
@@ -424,7 +424,7 @@ s32 FileScreen_Run(void) {
   gFieldWork->transition = 0;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  // FILE_SCREEN_FROM_TITLE, after the credits (Title_Run): save the cleared
+  // FILE_SCREEN_FROM_TITLE, after the credits (the title): save the cleared
   // game, then WORLD_MAP_FROM_FILE_SCREEN. Cancelling the file choice asks
   // again.
   if (gMainRoutineWork.entrance == FILE_SCREEN_FROM_TITLE) {

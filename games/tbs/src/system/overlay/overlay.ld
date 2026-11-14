@@ -3,143 +3,151 @@
    block for that number is the overlay. The build finds the overlays from the
    lines that test OVERLAY, and each overlay's objects from its statements.
 
-   A scene's .text opens with its entry table, src/scene/entry.s, which most
-   scenes and the debug rooms link (each resolves its names against its own
-   code), or src/scene/entry/NAME.s for the few whose routines are named
-   otherwise. Its import table, imports.o, follows its code: the build
-   writes it for each overlay from imports.inc, a stub for each main-image
-   routine the overlay's code calls. libgcc's _call_via_rX follows where the
-   scene calls through a register. Each statement names the sections it
-   places, so the objects keep their order in each. Where its globals are
-   written in assembly, its .bss is src/scene/bss/NAME.s. */
+   An overlay's .text opens with the entry table every scene and debug room
+   links, src/scene/entry.s, which each resolves against its own code. Its
+   import table, imports.o, follows its code: the build writes it for each
+   overlay from imports.inc, a stub for each main-image routine the overlay's
+   code calls. The libgcc routines its code uses come next (register calls,
+   and double-precision arithmetic in two scenes), then a part kept in its
+   own object, where it has one. Each statement names the sections it places,
+   so the objects keep their order in each. Its globals follow in .bss; where
+   they are written in assembly, they are src/scene/bss/NAME.s. */
 
-/* Most scenes are one overlay of one shape: the entry table, the scene's
-   code, its import table and libgcc's register calls, then its globals.
-   SCENE_WITH_TABLE links the scene's own entry table, and SCENE_WITH_BSS
-   places the globals its bss/NAME.s defines. A scene of another shape
-   writes its block out. */
-#define SCENE_TEXT(name) \
+#define OVERLAY_TEXT(object) \
     .text 0x2008000 : \
     { \
         */games/tbs/src/scene/entry.o(.text .padding) \
-        */games/tbs/src/scene/name.o(.text .padding) \
+        */games/tbs/src/object.o(.text .padding) \
         */imports.o(.text .padding) \
         *libgcc.a:_call_via_rX.o(.text .padding) \
+        *libgcc.a:_addsub_df.o(.text .padding) \
+        *libgcc.a:_si_to_df.o(.text .padding) \
+        *libgcc.a:_df_to_si.o(.text .padding) \
+        *libgcc.a:_lshrdi3.o(.text .padding) \
+        *libgcc.a:_pack_df.o(.text .padding) \
+        *libgcc.a:_unpack_df.o(.text .padding) \
+        *libgcc.a:_thenan_df.o(.text .padding) \
         */games/tbs/src/scene/entry.o(.rodata) \
-        */games/tbs/src/scene/name.o(.rodata) \
+        */games/tbs/src/object.o(.rodata) \
         */imports.o(.rodata) \
         *libgcc.a:_call_via_rX.o(.rodata) \
+        *libgcc.a:_addsub_df.o(.rodata) \
+        *libgcc.a:_si_to_df.o(.rodata) \
+        *libgcc.a:_df_to_si.o(.rodata) \
+        *libgcc.a:_lshrdi3.o(.rodata) \
+        *libgcc.a:_pack_df.o(.rodata) \
+        *libgcc.a:_unpack_df.o(.rodata) \
+        *libgcc.a:_thenan_df.o(.rodata) \
         */games/tbs/src/scene/entry.o(.data .overlays) \
-        */games/tbs/src/scene/name.o(.data .overlays) \
+        */games/tbs/src/object.o(.data .overlays) \
         */imports.o(.data .overlays) \
         *libgcc.a:_call_via_rX.o(.data .overlays) \
+        *libgcc.a:_addsub_df.o(.data .overlays) \
+        *libgcc.a:_si_to_df.o(.data .overlays) \
+        *libgcc.a:_df_to_si.o(.data .overlays) \
+        *libgcc.a:_lshrdi3.o(.data .overlays) \
+        *libgcc.a:_pack_df.o(.data .overlays) \
+        *libgcc.a:_unpack_df.o(.data .overlays) \
+        *libgcc.a:_thenan_df.o(.data .overlays) \
     }
-#define SCENE_WITH_TABLE_TEXT(name) \
+#define OVERLAY_TEXT_AND(object, part) \
     .text 0x2008000 : \
     { \
-        */games/tbs/src/scene/entry/name.o(.text .padding) \
-        */games/tbs/src/scene/name.o(.text .padding) \
+        */games/tbs/src/scene/entry.o(.text .padding) \
+        */games/tbs/src/object.o(.text .padding) \
         */imports.o(.text .padding) \
         *libgcc.a:_call_via_rX.o(.text .padding) \
-        */games/tbs/src/scene/entry/name.o(.rodata) \
-        */games/tbs/src/scene/name.o(.rodata) \
+        *libgcc.a:_addsub_df.o(.text .padding) \
+        *libgcc.a:_si_to_df.o(.text .padding) \
+        *libgcc.a:_df_to_si.o(.text .padding) \
+        *libgcc.a:_lshrdi3.o(.text .padding) \
+        *libgcc.a:_pack_df.o(.text .padding) \
+        *libgcc.a:_unpack_df.o(.text .padding) \
+        *libgcc.a:_thenan_df.o(.text .padding) \
+        */games/tbs/src/part.o(.text .padding) \
+        */games/tbs/src/scene/entry.o(.rodata) \
+        */games/tbs/src/object.o(.rodata) \
         */imports.o(.rodata) \
         *libgcc.a:_call_via_rX.o(.rodata) \
-        */games/tbs/src/scene/entry/name.o(.data .overlays) \
-        */games/tbs/src/scene/name.o(.data .overlays) \
+        *libgcc.a:_addsub_df.o(.rodata) \
+        *libgcc.a:_si_to_df.o(.rodata) \
+        *libgcc.a:_df_to_si.o(.rodata) \
+        *libgcc.a:_lshrdi3.o(.rodata) \
+        *libgcc.a:_pack_df.o(.rodata) \
+        *libgcc.a:_unpack_df.o(.rodata) \
+        *libgcc.a:_thenan_df.o(.rodata) \
+        */games/tbs/src/part.o(.rodata) \
+        */games/tbs/src/scene/entry.o(.data .overlays) \
+        */games/tbs/src/object.o(.data .overlays) \
         */imports.o(.data .overlays) \
         *libgcc.a:_call_via_rX.o(.data .overlays) \
+        *libgcc.a:_addsub_df.o(.data .overlays) \
+        *libgcc.a:_si_to_df.o(.data .overlays) \
+        *libgcc.a:_df_to_si.o(.data .overlays) \
+        *libgcc.a:_lshrdi3.o(.data .overlays) \
+        *libgcc.a:_pack_df.o(.data .overlays) \
+        *libgcc.a:_unpack_df.o(.data .overlays) \
+        *libgcc.a:_thenan_df.o(.data .overlays) \
+        */games/tbs/src/part.o(.data .overlays) \
     }
+/* A scene: src/scene/NAME.c, its globals in its own .bss. */
 #define SCENE(name) \
 SECTIONS \
 { \
-    SCENE_TEXT(name) \
+    OVERLAY_TEXT(scene/name) \
     .bss : \
     { \
         */games/tbs/src/scene/name.o(.bss COMMON) \
     } \
 }
-#define SCENE_WITH_TABLE(name) \
-SECTIONS \
-{ \
-    SCENE_WITH_TABLE_TEXT(name) \
-    .bss : \
-    { \
-        */games/tbs/src/scene/name.o(.bss COMMON) \
-    } \
-}
+/* A scene whose globals, or some of them, are written in src/scene/bss/NAME.s. */
 #define SCENE_WITH_BSS(name) \
 SECTIONS \
 { \
-    SCENE_TEXT(name) \
+    OVERLAY_TEXT(scene/name) \
     .bss : \
     { \
+        */games/tbs/src/scene/name.o(.bss COMMON) \
         */games/tbs/src/scene/bss/name.o(.bss) \
+    } \
+}
+/* A scene with a part in an object of its own, linked after its code. */
+#define SCENE_AND(name, part) \
+SECTIONS \
+{ \
+    OVERLAY_TEXT_AND(scene/name, part) \
+    .bss : \
+    { \
+        */games/tbs/src/scene/name.o(.bss COMMON) \
+    } \
+}
+#define SCENE_AND_WITH_BSS(name, part) \
+SECTIONS \
+{ \
+    OVERLAY_TEXT_AND(scene/name, part) \
+    .bss : \
+    { \
+        */games/tbs/src/scene/name.o(.bss COMMON) \
+        */games/tbs/src/scene/bss/name.o(.bss) \
+    } \
+}
+/* A debug room: src/debug/NAME.c. */
+#define DEBUG_ROOM(name) \
+SECTIONS \
+{ \
+    OVERLAY_TEXT(debug/name) \
+    .bss : \
+    { \
+        */games/tbs/src/debug/name.o(.bss COMMON) \
     } \
 }
 
 #if OVERLAY == 0x36f
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tbs/src/scene/entry/title.o"(.text .padding)
-        "*/games/tbs/src/scene/title.o"(.text .padding)
-        "*/imports.o"(.text .padding)
-        "*/games/tbs/src/scene/entry/title.o"(.rodata)
-        "*/games/tbs/src/scene/title.o"(.rodata)
-        "*/imports.o"(.rodata)
-        "*/games/tbs/src/scene/entry/title.o"(.data .overlays)
-        "*/games/tbs/src/scene/title.o"(.data .overlays)
-        "*/imports.o"(.data .overlays)
-    }
-    .bss :
-    {
-        "*/games/tbs/src/scene/bss/title.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(title)
 #elif OVERLAY == 0x370
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tbs/src/scene/entry/file_screen.o"(.text .padding)
-        "*/games/tbs/src/scene/file_screen.o"(.text .padding)
-        "*/imports.o"(.text .padding)
-        "*/games/tbs/src/scene/file_screen_keyboard.o"(.text .padding)
-        "*/games/tbs/src/scene/entry/file_screen.o"(.rodata)
-        "*/games/tbs/src/scene/file_screen.o"(.rodata)
-        "*/imports.o"(.rodata)
-        "*/games/tbs/src/scene/file_screen_keyboard.o"(.rodata)
-        "*/games/tbs/src/scene/entry/file_screen.o"(.data .overlays)
-        "*/games/tbs/src/scene/file_screen.o"(.data .overlays)
-        "*/imports.o"(.data .overlays)
-        "*/games/tbs/src/scene/file_screen_keyboard.o"(.data .overlays)
-    }
-}
+SCENE_AND(file_screen, scene/file_screen_keyboard)
 #elif OVERLAY == 0x371
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tbs/src/scene/entry.o"(.text .padding)
-        "*/games/tbs/src/scene/world_map.o"(.text .padding)
-        "*/imports.o"(.text .padding)
-        "*/games/tbs/src/graphics/world_map/lighthouse_transition.o"(.text .padding)
-        "*/games/tbs/src/scene/entry.o"(.rodata)
-        "*/games/tbs/src/scene/world_map.o"(.rodata)
-        "*/imports.o"(.rodata)
-        "*/games/tbs/src/graphics/world_map/lighthouse_transition.o"(.rodata)
-        "*/games/tbs/src/scene/entry.o"(.data .overlays)
-        "*/games/tbs/src/scene/world_map.o"(.data .overlays)
-        "*/imports.o"(.data .overlays)
-        "*/games/tbs/src/graphics/world_map/lighthouse_transition.o"(.data .overlays)
-    }
-    .bss :
-    {
-        "*/games/tbs/src/scene/world_map.o"(.bss COMMON)
-    }
-}
+SCENE_AND(world_map, graphics/world_map/lighthouse_transition)
 #elif OVERLAY == 0x372
 SCENE(vale_prologue)
 #elif OVERLAY == 0x373
@@ -159,34 +167,13 @@ SCENE(vale_eruption)
 #elif OVERLAY == 0x37a
 SCENE_WITH_BSS(sol_sanctum_luna_sol_rooms)
 #elif OVERLAY == 0x37b
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tbs/src/scene/entry.o"(.text .padding)
-        "*/games/tbs/src/scene/sol_sanctum_statue.o"(.text .padding)
-        "*/imports.o"(.text .padding)
-        "*/games/tbs/src/graphics/sol_sanctum_statue/rows.o"(.text .padding)
-        "*/games/tbs/src/scene/entry.o"(.rodata)
-        "*/games/tbs/src/scene/sol_sanctum_statue.o"(.rodata)
-        "*/imports.o"(.rodata)
-        "*/games/tbs/src/graphics/sol_sanctum_statue/rows.o"(.rodata)
-        "*/games/tbs/src/scene/entry.o"(.data .overlays)
-        "*/games/tbs/src/scene/sol_sanctum_statue.o"(.data .overlays)
-        "*/imports.o"(.data .overlays)
-        "*/games/tbs/src/graphics/sol_sanctum_statue/rows.o"(.data .overlays)
-    }
-    .bss :
-    {
-        "*/games/tbs/src/scene/sol_sanctum_statue.o"(.bss COMMON)
-    }
-}
+SCENE_AND(sol_sanctum_statue, graphics/sol_sanctum_statue/rows)
 #elif OVERLAY == 0x37c
 SCENE(sol_sanctum_psynergy_stone)
 #elif OVERLAY == 0x37d
-SCENE_WITH_TABLE(sol_sanctum_maze)
+SCENE(sol_sanctum_maze)
 #elif OVERLAY == 0x37e
-SCENE_WITH_TABLE(sol_sanctum_corridor)
+SCENE(sol_sanctum_corridor)
 #elif OVERLAY == 0x37f
 SCENE(sol_sanctum_entrance)
 #elif OVERLAY == 0x380
@@ -232,28 +219,9 @@ SCENE(kolima_forest_cliff)
 #elif OVERLAY == 0x394
 SCENE_WITH_BSS(kolima_forest_floodgate)
 #elif OVERLAY == 0x395
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tbs/src/scene/entry.o"(.text .padding)
-        "*/games/tbs/src/scene/kolima_forest_tree.o"(.text .padding)
-        "*/imports.o"(.text .padding)
-        "*/games/tbs/src/scene/entry.o"(.rodata)
-        "*/games/tbs/src/scene/kolima_forest_tree.o"(.rodata)
-        "*/imports.o"(.rodata)
-        "*/games/tbs/src/scene/entry.o"(.data .overlays)
-        "*/games/tbs/src/scene/kolima_forest_tree.o"(.data .overlays)
-        "*/imports.o"(.data .overlays)
-    }
-    .bss :
-    {
-        "*/games/tbs/src/scene/kolima_forest_tree.o"(.bss)
-        "*/games/tbs/src/scene/bss/kolima_forest_tree.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(kolima_forest_tree)
 #elif OVERLAY == 0x396
-SCENE_WITH_TABLE(tree_rooms)
+SCENE(tree_rooms)
 #elif OVERLAY == 0x397
 SCENE(tret_tree_branch)
 #elif OVERLAY == 0x398
@@ -283,70 +251,11 @@ SCENE(altin)
 #elif OVERLAY == 0x3a4
 SCENE_WITH_BSS(altin_peak)
 #elif OVERLAY == 0x3a5
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tbs/src/scene/entry.o"(.text .padding)
-        "*/games/tbs/src/scene/lamakan_desert.o"(.text .padding)
-        "*/imports.o"(.text .padding)
-        "*libgcc.a:_call_via_rX.o"(.text .padding)
-        "*/games/tbs/src/graphics/lamakan_desert/heat_gauge.o"(.text .padding)
-        "*/games/tbs/src/scene/entry.o"(.rodata)
-        "*/games/tbs/src/scene/lamakan_desert.o"(.rodata)
-        "*/imports.o"(.rodata)
-        "*libgcc.a:_call_via_rX.o"(.rodata)
-        "*/games/tbs/src/graphics/lamakan_desert/heat_gauge.o"(.rodata)
-        "*/games/tbs/src/scene/entry.o"(.data .overlays)
-        "*/games/tbs/src/scene/lamakan_desert.o"(.data .overlays)
-        "*/imports.o"(.data .overlays)
-        "*libgcc.a:_call_via_rX.o"(.data .overlays)
-        "*/games/tbs/src/graphics/lamakan_desert/heat_gauge.o"(.data .overlays)
-    }
-    .bss :
-    {
-        "*/games/tbs/src/scene/bss/lamakan_desert.o"(.bss)
-    }
-}
+SCENE_AND_WITH_BSS(lamakan_desert, graphics/lamakan_desert/heat_gauge)
 #elif OVERLAY == 0x3a6
 SCENE(vale_cave)
 #elif OVERLAY == 0x3a7
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tbs/src/scene/entry.o"(.text .padding)
-        "*/games/tbs/src/scene/vault_cave.o"(.text .padding)
-        "*/imports.o"(.text .padding)
-        "*libgcc.a:_addsub_df.o"(.text .padding)
-        "*libgcc.a:_si_to_df.o"(.text .padding)
-        "*libgcc.a:_df_to_si.o"(.text .padding)
-        "*libgcc.a:_lshrdi3.o"(.text .padding)
-        "*libgcc.a:_pack_df.o"(.text .padding)
-        "*libgcc.a:_unpack_df.o"(.text .padding)
-        "*libgcc.a:_thenan_df.o"(.text .padding)
-        "*/games/tbs/src/scene/entry.o"(.rodata)
-        "*/games/tbs/src/scene/vault_cave.o"(.rodata)
-        "*/imports.o"(.rodata)
-        "*libgcc.a:_addsub_df.o"(.rodata)
-        "*libgcc.a:_si_to_df.o"(.rodata)
-        "*libgcc.a:_df_to_si.o"(.rodata)
-        "*libgcc.a:_lshrdi3.o"(.rodata)
-        "*libgcc.a:_pack_df.o"(.rodata)
-        "*libgcc.a:_unpack_df.o"(.rodata)
-        "*libgcc.a:_thenan_df.o"(.rodata)
-        "*/games/tbs/src/scene/entry.o"(.data .overlays)
-        "*/games/tbs/src/scene/vault_cave.o"(.data .overlays)
-        "*/imports.o"(.data .overlays)
-        "*libgcc.a:_addsub_df.o"(.data .overlays)
-        "*libgcc.a:_si_to_df.o"(.data .overlays)
-        "*libgcc.a:_df_to_si.o"(.data .overlays)
-        "*libgcc.a:_lshrdi3.o"(.data .overlays)
-        "*libgcc.a:_pack_df.o"(.data .overlays)
-        "*libgcc.a:_unpack_df.o"(.data .overlays)
-        "*libgcc.a:_thenan_df.o"(.data .overlays)
-    }
-}
+SCENE(vault_cave)
 #elif OVERLAY == 0x3a8
 SCENE_WITH_BSS(kalay)
 #elif OVERLAY == 0x3a9
@@ -366,7 +275,7 @@ SCENE(tolbi_ship_deck)
 #elif OVERLAY == 0x3b0
 SCENE(tolbi_ship_mast)
 #elif OVERLAY == 0x3b1
-SCENE_WITH_TABLE(ship_rooms)
+SCENE(ship_rooms)
 #elif OVERLAY == 0x3b2
 SCENE(crossbone_isle)
 #elif OVERLAY == 0x3b3
@@ -374,134 +283,27 @@ SCENE(crossbone_isle_stepping_stones)
 #elif OVERLAY == 0x3b4
 SCENE(crossbone_isle_keys)
 #elif OVERLAY == 0x3b5
-SCENE_WITH_TABLE(tolbi)
+SCENE(tolbi)
 #elif OVERLAY == 0x3b6
-SCENE_WITH_TABLE(stucco_rooms_b)
+SCENE(stucco_rooms_b)
 #elif OVERLAY == 0x3b7
 SCENE(tolbi_games)
 #elif OVERLAY == 0x3b8
-SCENE_WITH_TABLE(babi_palace)
+SCENE(babi_palace)
 #elif OVERLAY == 0x3b9
 SCENE(colosseum_entrance)
 #elif OVERLAY == 0x3ba
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tbs/src/scene/entry.o"(.text .padding)
-        "*/games/tbs/src/scene/colosseum_azart_match.o"(.text .padding)
-        "*/imports.o"(.text .padding)
-        "*libgcc.a:_call_via_rX.o"(.text .padding)
-        "*/games/tbs/src/graphics/colosso/gauge.o"(.text .padding)
-        "*/games/tbs/src/scene/entry.o"(.rodata)
-        "*/games/tbs/src/scene/colosseum_azart_match.o"(.rodata)
-        "*/imports.o"(.rodata)
-        "*libgcc.a:_call_via_rX.o"(.rodata)
-        "*/games/tbs/src/graphics/colosso/gauge.o"(.rodata)
-        "*/games/tbs/src/scene/entry.o"(.data .overlays)
-        "*/games/tbs/src/scene/colosseum_azart_match.o"(.data .overlays)
-        "*/imports.o"(.data .overlays)
-        "*libgcc.a:_call_via_rX.o"(.data .overlays)
-        "*/games/tbs/src/graphics/colosso/gauge.o"(.data .overlays)
-    }
-    .bss :
-    {
-        "*/games/tbs/src/scene/bss/colosseum_azart_match.o"(.bss)
-    }
-}
+SCENE_AND_WITH_BSS(colosseum_azart_match, graphics/colosso/gauge)
 #elif OVERLAY == 0x3bb
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tbs/src/scene/entry/colosseum_satrage_match.o"(.text .padding)
-        "*/games/tbs/src/scene/colosseum_satrage_match.o"(.text .padding)
-        "*/imports.o"(.text .padding)
-        "*/games/tbs/src/graphics/colosso/gauge.o"(.text .padding)
-        "*/games/tbs/src/scene/entry/colosseum_satrage_match.o"(.rodata)
-        "*/games/tbs/src/scene/colosseum_satrage_match.o"(.rodata)
-        "*/imports.o"(.rodata)
-        "*/games/tbs/src/graphics/colosso/gauge.o"(.rodata)
-        "*/games/tbs/src/scene/entry/colosseum_satrage_match.o"(.data .overlays)
-        "*/games/tbs/src/scene/colosseum_satrage_match.o"(.data .overlays)
-        "*/imports.o"(.data .overlays)
-        "*/games/tbs/src/graphics/colosso/gauge.o"(.data .overlays)
-    }
-    .bss :
-    {
-        "*/games/tbs/src/scene/bss/colosseum_satrage_match.o"(.bss)
-    }
-}
+SCENE_AND_WITH_BSS(colosseum_satrage_match, graphics/colosso/gauge)
 #elif OVERLAY == 0x3bc
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tbs/src/scene/entry.o"(.text .padding)
-        "*/games/tbs/src/scene/colosseum_navampa_match.o"(.text .padding)
-        "*/imports.o"(.text .padding)
-        "*libgcc.a:_call_via_rX.o"(.text .padding)
-        "*/games/tbs/src/graphics/colosso/gauge.o"(.text .padding)
-        "*/games/tbs/src/scene/entry.o"(.rodata)
-        "*/games/tbs/src/scene/colosseum_navampa_match.o"(.rodata)
-        "*/imports.o"(.rodata)
-        "*libgcc.a:_call_via_rX.o"(.rodata)
-        "*/games/tbs/src/graphics/colosso/gauge.o"(.rodata)
-        "*/games/tbs/src/scene/entry.o"(.data .overlays)
-        "*/games/tbs/src/scene/colosseum_navampa_match.o"(.data .overlays)
-        "*/imports.o"(.data .overlays)
-        "*libgcc.a:_call_via_rX.o"(.data .overlays)
-        "*/games/tbs/src/graphics/colosso/gauge.o"(.data .overlays)
-    }
-    .bss :
-    {
-        "*/games/tbs/src/scene/bss/colosseum_navampa_match.o"(.bss)
-    }
-}
+SCENE_AND_WITH_BSS(colosseum_navampa_match, graphics/colosso/gauge)
 #elif OVERLAY == 0x3bd
 SCENE(altmiller_cave)
 #elif OVERLAY == 0x3be
 SCENE(gondowan_cave)
 #elif OVERLAY == 0x3bf
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tbs/src/scene/entry.o"(.text .padding)
-        "*/games/tbs/src/scene/lunpa_fortress.o"(.text .padding)
-        "*/imports.o"(.text .padding)
-        "*libgcc.a:_call_via_rX.o"(.text .padding)
-        "*libgcc.a:_addsub_df.o"(.text .padding)
-        "*libgcc.a:_si_to_df.o"(.text .padding)
-        "*libgcc.a:_df_to_si.o"(.text .padding)
-        "*libgcc.a:_lshrdi3.o"(.text .padding)
-        "*libgcc.a:_pack_df.o"(.text .padding)
-        "*libgcc.a:_unpack_df.o"(.text .padding)
-        "*libgcc.a:_thenan_df.o"(.text .padding)
-        "*/games/tbs/src/scene/entry.o"(.rodata)
-        "*/games/tbs/src/scene/lunpa_fortress.o"(.rodata)
-        "*/imports.o"(.rodata)
-        "*libgcc.a:_call_via_rX.o"(.rodata)
-        "*libgcc.a:_addsub_df.o"(.rodata)
-        "*libgcc.a:_si_to_df.o"(.rodata)
-        "*libgcc.a:_df_to_si.o"(.rodata)
-        "*libgcc.a:_lshrdi3.o"(.rodata)
-        "*libgcc.a:_pack_df.o"(.rodata)
-        "*libgcc.a:_unpack_df.o"(.rodata)
-        "*libgcc.a:_thenan_df.o"(.rodata)
-        "*/games/tbs/src/scene/entry.o"(.data .overlays)
-        "*/games/tbs/src/scene/lunpa_fortress.o"(.data .overlays)
-        "*/imports.o"(.data .overlays)
-        "*libgcc.a:_call_via_rX.o"(.data .overlays)
-        "*libgcc.a:_addsub_df.o"(.data .overlays)
-        "*libgcc.a:_si_to_df.o"(.data .overlays)
-        "*libgcc.a:_df_to_si.o"(.data .overlays)
-        "*libgcc.a:_lshrdi3.o"(.data .overlays)
-        "*libgcc.a:_pack_df.o"(.data .overlays)
-        "*libgcc.a:_unpack_df.o"(.data .overlays)
-        "*libgcc.a:_thenan_df.o"(.data .overlays)
-    }
-}
+SCENE(lunpa_fortress)
 #elif OVERLAY == 0x3c0
 SCENE(suhalla_desert)
 #elif OVERLAY == 0x3c1
@@ -513,7 +315,7 @@ SCENE(suhalla_gate)
 #elif OVERLAY == 0x3c4
 SCENE(tunnel_ruins)
 #elif OVERLAY == 0x3c5
-SCENE_WITH_TABLE(babi_lighthouse)
+SCENE(babi_lighthouse)
 #elif OVERLAY == 0x3c6
 SCENE(lalivero)
 #elif OVERLAY == 0x3c7
@@ -523,57 +325,15 @@ SCENE(venus_lighthouse)
 #elif OVERLAY == 0x3c9
 SCENE(venus_lighthouse_aerie)
 #elif OVERLAY == 0x3ca
-SCENE_WITH_TABLE(lemurian_ship)
+SCENE(lemurian_ship)
 #elif OVERLAY == 0x3cb
-SCENE_WITH_TABLE(battle_arena)
+SCENE(battle_arena)
 #elif OVERLAY == 0x3cc
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tbs/src/scene/entry.o"(.text .padding)
-        "*/games/tbs/src/debug/test_scenes.o"(.text .padding)
-        "*/imports.o"(.text .padding)
-        "*/games/tbs/src/scene/entry.o"(.rodata)
-        "*/games/tbs/src/debug/test_scenes.o"(.rodata)
-        "*/imports.o"(.rodata)
-        "*/games/tbs/src/scene/entry.o"(.data .overlays)
-        "*/games/tbs/src/debug/test_scenes.o"(.data .overlays)
-        "*/imports.o"(.data .overlays)
-    }
-}
+DEBUG_ROOM(test_scenes)
 #elif OVERLAY == 0x3cd
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tbs/src/scene/entry.o"(.text .padding)
-        "*/games/tbs/src/debug/level.o"(.text .padding)
-        "*/imports.o"(.text .padding)
-        "*/games/tbs/src/scene/entry.o"(.rodata)
-        "*/games/tbs/src/debug/level.o"(.rodata)
-        "*/imports.o"(.rodata)
-        "*/games/tbs/src/scene/entry.o"(.data .overlays)
-        "*/games/tbs/src/debug/level.o"(.data .overlays)
-        "*/imports.o"(.data .overlays)
-    }
-}
+DEBUG_ROOM(level)
 #elif OVERLAY == 0x3ce
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tbs/src/scene/entry.o"(.text .padding)
-        "*/games/tbs/src/debug/test.o"(.text .padding)
-        "*/imports.o"(.text .padding)
-        "*/games/tbs/src/scene/entry.o"(.rodata)
-        "*/games/tbs/src/debug/test.o"(.rodata)
-        "*/imports.o"(.rodata)
-        "*/games/tbs/src/scene/entry.o"(.data .overlays)
-        "*/games/tbs/src/debug/test.o"(.data .overlays)
-        "*/imports.o"(.data .overlays)
-    }
-}
+DEBUG_ROOM(test)
 #endif
 
 SECTIONS

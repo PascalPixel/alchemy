@@ -756,7 +756,7 @@ static void TreeRooms_ApplyPostBattleState(s32 playRecoveryEvent) {
 /// Tret Tree's setup places or removes the Tret actors, starts the tint,
 /// redraws the torn cocoons after a battle, and sets the map grid by
 /// FLAG_TRET_DEFEATED.
-s32 TreeRooms_EnterRoom(void) {
+s32 Scene_Initialize(void) {
   struct Actor *tret;
   struct Actor *actor;
   struct MapGridScrollWork *grid;

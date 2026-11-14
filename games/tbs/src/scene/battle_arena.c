@@ -8,7 +8,7 @@
 
 extern const s32 gBattleArena_SlotValues[];
 extern u32 gBattleArenaCallFrames;
-s32 BattleArena_Initialize(void);
+s32 Scene_Initialize(void);
 extern u8 gBattleArena_SlotColumns[];
 extern struct SceneEntrance gBattleArenaEntrances[];
 extern u32 gBattleArenaExits[];
@@ -53,7 +53,7 @@ extern struct Trigger gBattleArenaTriggers[];
 /// The link was lost and the attendant has yet to say so.
 #define FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED FLAG_SCENE_TEMP_05
 /// The first of eight flags, one per character from Isaac, each set while that
-/// character is in the battle party (BattleArena_Initialize).
+/// character is in the battle party (Scene_Initialize).
 #define FLAG_BATTLE_ARENA_IN_PARTY_FIRST FLAG_SCENE_TEMP_F0
 /// The attendant has explained the Battle Arena once. Talking to her again
 /// offers to apply.
@@ -243,7 +243,7 @@ static s32 sBattleArenaWaitFrames;
 
 /// The Battle Arena's entrances, which FieldSequence_Run reads through
 /// entry/battle_arena.s.
-u8 *BattleArena_GetEntrances(void) { return (u8 *)gBattleArenaEntrances; }
+u8 *Scene_GetEntrances(void) { return (u8 *)gBattleArenaEntrances; }
 
 /// The exit regions entry: the Battle Arena has no exit boxes.
 s32 Scene_GetExitRegions(void) { return 0; }
@@ -261,10 +261,10 @@ static s32 BattleArena_InitializeSerial(void) {
 #endif
 }
 
-u8 *BattleArena_GetExits(void) { return (u8 *)gBattleArenaExits; }
+u8 *Scene_GetExits(void) { return (u8 *)gBattleArenaExits; }
 
 /// The actor placements entry.
-s32 BattleArena_SelectActorPlacements(void) {
+s32 Scene_GetActorPlacements(void) {
   s16 entrance = gMainRoutineWork.entrance;
 
   if (entrance == BATTLE_ARENA_AFTER_LINK_LOSS ||
@@ -1328,7 +1328,7 @@ static s32 BattleArena_ReportMonsterRecord(s32 actorId) {
 #endif
 }
 
-u8 *BattleArena_GetTriggers(void) { return (u8 *)gBattleArenaTriggers; }
+u8 *Scene_GetTriggers(void) { return (u8 *)gBattleArenaTriggers; }
 
 /// Saves the battle results between saving and saved messages.
 static s32 BattleArena_SaveBattleResults(void) {
@@ -1390,7 +1390,7 @@ static s32 BattleArena_DrawThreeDigitValue(s32 value) {
 
 /// The overlay's initialize entry, run on every arrival. It settles the battle
 /// that brought the party here and restarts the Battle Arena's polling.
-s32 BattleArena_Initialize(void) {
+s32 Scene_Initialize(void) {
   s32 i;
   struct FieldWork *work;
   void (*func)(void);

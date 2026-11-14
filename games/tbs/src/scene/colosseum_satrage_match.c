@@ -11,7 +11,7 @@
 /// the Board Walk.
 ///
 /// Isaac comes here three times, each at its own entrance.
-/// ColosseumSatrageMatch_Initialize restores the stages from their temporary
+/// Scene_Initialize restores the stages from their temporary
 /// flags (FLAG_OBSTACLE_KNOCKED_DOWN to FLAG_WALL_PILLAR_MOVED, and the
 /// Mini-Maze pillars' columns from FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN). Then
 /// it sets up the visit its entrance stands for.
@@ -64,7 +64,7 @@
 #include "system/main_routine_work.h"
 #include "system/vram_cache.h"
 
-s32 ColosseumSatrageMatch_Initialize(void);
+s32 Scene_Initialize(void);
 // UB: the scene calls this before its definition with no prototype, as a
 // function returning int.
 #ifdef UBFIX
@@ -181,7 +181,7 @@ enum ColosseumSatrageMatchActorId {
   /// The stone pillar by The Wall, pushed or moved with Move.
   ACTOR_WALL_PILLAR,
   /// The Mini-Maze's three stone pillars, pushed or moved with Move.
-  /// ColosseumSatrageMatch_Initialize stands them west to east, at columns 73,
+  /// Scene_Initialize stands them west to east, at columns 73,
   /// 76 and 79, until they have been moved.
   ACTOR_MINI_MAZE_FIRST_PILLAR,
   /// The Board Walk's two logs, the western and the eastern, in the room of its
@@ -209,7 +209,7 @@ enum ColosseumSatrageMatchActorId {
       3,
   /// Four platforms in the lifts' sprite laid across the water channel at the
   /// Board Walk's south edge, drawn underfoot. Nothing but
-  /// ColosseumSatrageMatch_Initialize touches them.
+  /// Scene_Initialize touches them.
   ACTOR_BOARD_WALK_FIRST_PLATFORM,
   /// Knocked down onto the Board Walk by Force on ACTOR_FORCE_TARGET.
   ACTOR_FALLING_LOG = ACTOR_BOARD_WALK_FIRST_PLATFORM + 4,
@@ -235,7 +235,7 @@ enum ColosseumSatrageMatchActorId {
 /// The temporary flags that keep what the friends changed on the stages, for
 /// the race.
 ///
-/// ColosseumSatrageMatch_Initialize restores them.
+/// Scene_Initialize restores them.
 enum {
   FLAG_OBSTACLE_KNOCKED_DOWN =
       FLAG_AREA_TEMP_30,                       ///< by Force, on the Board Walk
@@ -856,7 +856,7 @@ static void ColosseumSatrageMatch_StageBattleResult(s32 result) {
 }
 
 /// Sets up Colosseum Final 2 for the visit its entrance stands for.
-s32 ColosseumSatrageMatch_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 x;
   s32 obstacleId;

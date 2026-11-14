@@ -119,7 +119,7 @@ void BattleEffect_BuildWindowEdgeTable(void) {
     volatile u16 *channel = REG_DMA0;
 
     Dma_Stop(channel);
-    Dma_Set(Ram_MapGridCellBuffer + 130, (void *)&REG_WIN0H,
+    Dma_Set(Ram_MapGridCellBuffer + 130, &REG_WIN0H,
             DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)channel);
   }
 }

@@ -79,7 +79,7 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
 
   // The battle windows' second text palette takes the first sprite palette's
   // colours, over the window's background colour.
-  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
+  Dma_Set(OBJ_PLTT, &BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
       BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
@@ -160,7 +160,7 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
                                 battle->brightness =
                                     Q16_ONE - level * BACKGROUND_LEVEL_STEP,
                                 BATTLE_BG_PALETTE_COLORS);
-  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
+  Dma_Set(OBJ_PLTT, &BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
       BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);

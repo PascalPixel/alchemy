@@ -25,8 +25,7 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
   delays = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   end = 0;
   speed = 16;
-  Iwram_CopyWords(BLUE_RAMP_PIXELS, (void *)BG_CHAR_BLOCK(2),
-                  BATTLE_BACKGROUND_BYTES);
+  Iwram_CopyWords(BLUE_RAMP_PIXELS, BG_CHAR_BLOCK(2), BATTLE_BACKGROUND_BYTES);
   for (x = 0; x != 256; x++) {
     delays[x] = Random16() & 63;
   }

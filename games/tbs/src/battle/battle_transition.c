@@ -108,9 +108,8 @@ void BattleBackground_ShowZoomedPage(void) {
   scanlines = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SCANLINES);
   line = scanlines->lines[scanlines->page];
   Io_Write16(line[0], &REG_BG2CNT);
-  Dma_Set(line + 1, (void *)&REG_BG2CNT, DMA_HBLANK_HALFWORD_PER_LINE,
-          &REG_DMA0SAD);
-  Dma_Set(&scanlines->affine, (void *)&REG_BG2PA, DMA_COPY_WORDS(4), REG_DMA3);
+  Dma_Set(line + 1, &REG_BG2CNT, DMA_HBLANK_HALFWORD_PER_LINE, &REG_DMA0SAD);
+  Dma_Set(&scanlines->affine, &REG_BG2PA, DMA_COPY_WORDS(4), REG_DMA3);
 }
 
 /// Unused: steps the curtain's solid tile through eight variants, a new one

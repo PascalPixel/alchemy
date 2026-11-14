@@ -543,7 +543,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
     piece++;
   }
 
-  Iwram_CopyWords(Ram_MapGridCellBuffer, (void *)BG_CHAR_BLOCK(2),
+  Iwram_CopyWords(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(2),
                   BATTLE_BACKGROUND_BYTES);
   Iwram_FillWords(Ram_MapGridCellBuffer, BATTLE_BACKGROUND_BYTES,
                   CANVAS_FILL_WORD(1));

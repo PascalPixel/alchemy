@@ -26,7 +26,7 @@ void BattleEffect_ArmBg2AffineHBlankDma(void) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   volatile u16 *channel = REG_DMA0;
   Dma_Stop(channel);
-  Dma_Set(work->bg2xLines, (void *)&REG_BG2X, DMA_HBLANK_WORD_PER_LINE,
+  Dma_Set(work->bg2xLines, &REG_BG2X, DMA_HBLANK_WORD_PER_LINE,
           (volatile u32 *)channel);
 }
 

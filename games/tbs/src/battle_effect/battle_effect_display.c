@@ -52,6 +52,6 @@ void BattleEffect_ArmWin0HBlankDma(void) {
   volatile u16 *channel = REG_DMA0;
 
   Dma_Stop(channel);
-  Dma_Set(PARTICLES, (void *)&REG_WIN0H, DMA_HBLANK_HALFWORD_PER_LINE,
+  Dma_Set(PARTICLES, &REG_WIN0H, DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)channel);
 }

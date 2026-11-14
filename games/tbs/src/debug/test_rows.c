@@ -1,6 +1,6 @@
 /// @file
-/// The Menu test scene and the test scenes: a table both overlays keep, included
-/// at its place in each.
+/// The Menu test scene and the test scenes: a table both overlays keep,
+/// included at its place in each.
 
 #include "types.h"
 
@@ -16,4 +16,3 @@ u32 gTest_UnusedRows[] = {
     0x200020, 0, 0,   0,        0,       0, 0,
     0x800080, 0, 128, 0x800000, 0x20003, 1, 0,
 };
-

@@ -1,66 +1,64 @@
-#include "gamepak/flash.h"
-#include "gamepak/flash_data.h"
-#include "system/io_reg.h"
+/// @file
+/// Erasing and programming the Atmel chip, whose small 128-byte sectors are
+/// erased thirty-two to a standard sector.
 
-extern FlashWaitProc gFlash_Handler3;
+#include "../../../include/gamepak/flash.h"
+#include "../../../include/gamepak/flash_data.h"
+#include "../../../include/system/io_reg.h"
 
 /// Erases the Atmel chip and waits for completion with its configured timing.
 u16 EraseAtmelFlashChip(void) {
   u8 savedCode[64];
   u16 result;
-  volatile u8 *command;
-  volatile u8 *unlock;
 
   CopyFlashReadRoutineToRam(savedCode);
 
   REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | gFlash_ChipAtmelLayout.type.wait[0];
 
-  command = (volatile u8 *)0x0E005555;
-  *command = 0xAA;
-  unlock = (volatile u8 *)0x0E002AAA;
-  *unlock = 0x55;
-  *command = 0x80;
-  *command = 0xAA;
-  *unlock = 0x55;
-  *command = 0x10;
+  FLASH_SEND_COMMAND(FLASH_COMMAND_ERASE);
+  FLASH_SEND_COMMAND(FLASH_COMMAND_ERASE_CHIP);
 
-  result = gFlash_Handler3(3, (u8 *)0x0E000000, 255);
+  result = gWaitForFlashWrite(FLASH_PHASE_ERASE_CHIP, (u8 *)FLASH_BASE,
+                              FLASH_ERASED_BYTE);
 
-  REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | 3;
+  REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | WAITCNT_SRAM_8;
 
   return result;
 }
 
-/// Erases one small Atmel sector by programming every byte to 0xff.
+/// Erases one small Atmel sector by programming every byte to
+/// FLASH_ERASED_BYTE: one of gFlash_ChipAtmelLayout's 512 sectors of 128 bytes,
+/// written with interrupts off.
 u16 EraseAtmelFlashSector(u16 sector) {
   struct FlashSetupInfo *info = &gFlash_ChipAtmelLayout;
   u8 *cursor;
-  u16 savedIme;
   s32 bytesRemaining;
   u16 result;
 
-  cursor = (u8 *)(0x0E000000 + (sector << info->type.sector.shift));
-  savedIme = REG_IME;
-  REG_IME = 0;
-  *(volatile u8 *)0x0E005555 = 0xAA;
-  *(volatile u8 *)0x0E002AAA = 0x55;
-  *(volatile u8 *)0x0E005555 = 0xA0;
-  bytesRemaining = info->type.sector.size;
-  while (bytesRemaining != 0) {
-    *cursor = 0xFF;
-    cursor++;
-    bytesRemaining--;
+  cursor = (u8 *)(FLASH_BASE + (sector << info->type.sector.shift));
+  {
+    u16 savedIme = REG_IME;
+
+    REG_IME = 0;
+    FLASH_SEND_COMMAND(FLASH_COMMAND_PROGRAM);
+    bytesRemaining = info->type.sector.size;
+    while (bytesRemaining != 0) {
+      *cursor = FLASH_ERASED_BYTE;
+      cursor++;
+      bytesRemaining--;
+    }
+    cursor--;
+    REG_IME = savedIme;
+    result = gWaitForFlashWrite(FLASH_PHASE_PROGRAM, cursor, FLASH_ERASED_BYTE);
+    if (result != 0) {
+      result = (result & 0xFF00) | FLASH_PHASE_ERASE_SECTOR;
+    }
+    return result;
   }
-  cursor--;
-  REG_IME = savedIme;
-  result = gFlash_Handler3(1, cursor, 0xFF);
-  if (result != 0) {
-    result = (result & 0xFF00) | 2;
-  }
-  return result;
 }
 
-/// Erases thirty-two small sectors, trying each sector at most twice.
+/// Erases thirty-two small sectors, trying each sector at most twice: the 4 KB
+/// of standard sector `sector`.
 u16 EraseAtmelFlashBlock(u16 sector) {
   u8 savedCode[64];
   u16 result;
@@ -68,8 +66,8 @@ u16 EraseAtmelFlashBlock(u16 sector) {
   u16 attemptsRemaining;
   u16 sectorsErased;
 
-  if ((u32)sector > 15)
-    return 0x80ff;
+  if ((u32)sector > FLASH_LAST_SECTOR)
+    return FLASH_ERROR_NO_SECTOR;
 
   CopyFlashReadRoutineToRam(savedCode);
   REG_WAITCNT = (REG_WAITCNT & 0xfffc) | gFlash_ChipAtmelLayout.type.wait[0];
@@ -95,7 +93,7 @@ advanceSector:
     if ((u32)sectorsErased <= 31)
       goto nextSector;
   }
-  REG_WAITCNT = (REG_WAITCNT & 0xfffc) | 3;
+  REG_WAITCNT = (REG_WAITCNT & 0xfffc) | WAITCNT_SRAM_8;
   return result;
 }
 
@@ -104,35 +102,29 @@ advanceSector:
 u16 ProgramAtmelFlashSector(u32 sector, const u8 *source) {
   const u8 *input;
   volatile u8 *destination;
-  u32 savedIme;
   s32 remaining;
 
   input = source;
   sector = (u16)sector;
   destination =
-      (volatile u8 *)(0x0e000000 +
+      (volatile u8 *)(FLASH_BASE +
                       (sector << gFlash_ChipAtmelLayout.type.sector.shift));
-  savedIme = REG_IME;
-  REG_IME = 0;
-  *(volatile u8 *)0x0e005555 = 0xaa;
-  *(volatile u8 *)0x0e002aaa = 0x55;
-  *(volatile u8 *)0x0e005555 = 0xa0;
+  {
+    u32 savedIme = REG_IME;
 
-  remaining = gFlash_ChipAtmelLayout.type.sector.size;
-  if (remaining != 0) {
-    do {
+    REG_IME = 0;
+    FLASH_SEND_COMMAND(FLASH_COMMAND_PROGRAM);
+
+    for (remaining = gFlash_ChipAtmelLayout.type.sector.size; remaining != 0;
+         remaining--)
       *destination++ = *input++;
-      remaining--;
-    } while (remaining != 0);
+
+    destination--;
+    input--;
+    REG_IME = savedIme;
+    return gWaitForFlashWrite(FLASH_PHASE_PROGRAM, destination, *input);
   }
-
-  destination--;
-  input--;
-  REG_IME = savedIme;
-  return gFlash_Handler3(1, destination, *input);
 }
-
-extern u16 gFlashNumRemainingBytes;
 
 /// Programs an Atmel block in small sectors, trying each sector at most twice.
 u16 ProgramAtmelFlashBlock(u16 sector, u8 *source) {
@@ -141,8 +133,8 @@ u16 ProgramAtmelFlashBlock(u16 sector, u8 *source) {
   u16 smallSector;
   u16 attemptsRemaining;
 
-  if ((u32)sector > 15)
-    return 0x80ff;
+  if ((u32)sector > FLASH_LAST_SECTOR)
+    return FLASH_ERROR_NO_SECTOR;
 
   CopyFlashReadRoutineToRam(savedCode);
   REG_WAITCNT = (REG_WAITCNT & 0xfffc) | gFlash_ChipAtmelLayout.type.wait[0];
@@ -169,6 +161,6 @@ u16 ProgramAtmelFlashBlock(u16 sector, u8 *source) {
     smallSector += 1;
   }
 
-  REG_WAITCNT = (REG_WAITCNT & 0xfffc) | 3;
+  REG_WAITCNT = (REG_WAITCNT & 0xfffc) | WAITCNT_SRAM_8;
   return result;
 }

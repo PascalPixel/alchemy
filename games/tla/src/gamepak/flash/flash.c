@@ -1,6 +1,12 @@
-#include "gamepak/flash.h"
-#include "gamepak/flash_data.h"
-#include "system/io_reg.h"
+/// @file
+/// The flash chip: which chip the cartridge holds (IdentifyFlash), the timer
+/// that bounds each wait, and reading and verifying a sector. Erasing and
+/// programming are each chip's own: sst.c, atmel.c and
+/// program_flash_sector.c.
+
+#include "../../../include/gamepak/flash.h"
+#include "../../../include/gamepak/flash_data.h"
+#include "../../../include/system/io_reg.h"
 #include "types.h"
 
 typedef u8 (*FlashByteRead)(u8 *address);
@@ -19,10 +25,9 @@ s32 ReadFlashId(void) {
   readByte = (FlashByteRead)(locals.buffer + 1);
 
   // Unlock the chip and enter its manufacturer/device identification mode.
-  *(volatile u8 *)0x0e005555 = 0xaa;
-  *(volatile u8 *)0x0e002aaa = 0x55;
-  *(volatile u8 *)0x0e005555 = 0x90;
+  FLASH_SEND_COMMAND(FLASH_COMMAND_ENTER_ID_MODE);
 
+  // Give the chip time to answer.
   {
     volatile u16 *delay = &locals.delay;
 
@@ -32,12 +37,11 @@ s32 ReadFlashId(void) {
   }
 
   // The high byte identifies the device; the low byte identifies its maker.
-  result = (u16)readByte((u8 *)0x0e000001) << 8;
-  result |= readByte((u8 *)0x0e000000);
+  result = (u16)readByte((u8 *)(FLASH_BASE + 1)) << 8;
+  result |= readByte((u8 *)FLASH_BASE);
 
-  *(volatile u8 *)0x0e005555 = 0xaa;
-  *(volatile u8 *)0x0e002aaa = 0x55;
-  *(volatile u8 *)0x0e005555 = 0xf0;
+  // Leave ID mode and wait as long again.
+  FLASH_SEND_COMMAND(FLASH_COMMAND_RESET);
 
   {
     volatile u16 *delay = &locals.delay;
@@ -49,46 +53,34 @@ s32 ReadFlashId(void) {
   return result;
 }
 
-extern const struct FlashSetupInfo *const gFlash_Chips[];
-extern FlashWaitProc gFlash_Handler3;
-extern u32 gFlash_Handler0;
-extern u32 gFlash_Handler1;
-extern u32 gEraseFlashSector;
-extern u16 *gFlash_Handler4;
-
-/// Selects matching chip handlers, falling back to the final table entry when
+/// Installs the handlers of the chip the cartridge holds; returns 1 if it is
 /// unknown.
 s32 IdentifyFlash(void) {
   u16 missing;
   u16 id;
   const struct FlashSetupInfo *const *chip;
 
-  REG_WAITCNT = (REG_WAITCNT & ~3) | 3;
+  REG_WAITCNT = (REG_WAITCNT & ~3) | WAITCNT_SRAM_8;
   id = ReadFlashId();
   chip = gFlash_Chips;
   missing = 1;
-  while (((u8 *)&(*chip)->type.id)[0] != 0) {
-    if (id == (*chip)->type.id) {
+  // Only the last entry, gFlash_ChipDefault, has a maker byte of 0.
+  while ((*chip)->type.id.separate.maker != 0) {
+    if (id == (*chip)->type.id.joined) {
       missing = 0;
       break;
     }
     chip++;
   }
-  // Install the selected chip's handlers, including the fallback when no
-  // ID matched.
-  gFlash_Handler0 = (*chip)->handlers[0];
-  gFlash_Handler1 = (*chip)->handlers[1];
-  gEraseFlashSector = (*chip)->handlers[2];
-  gFlash_Handler3 = (*chip)->wait;
-  gFlash_Handler4 = (*chip)->maxTime;
+  // An unknown chip gets the last entry.
+  gProgramFlashSector = (*chip)->program;
+  gEraseFlashChip = (*chip)->eraseChip;
+  gEraseFlashSector = (*chip)->eraseSector;
+  gWaitForFlashWrite = (*chip)->wait;
+  gFlashMaxTime = (*chip)->maxTime;
   gFlash = &(*chip)->type;
   return missing;
 }
-
-extern volatile u16 gFlashTimerCount;
-extern u8 gFlashTimeoutFlag;
-extern u8 gFlashTimerNum;
-extern u16 *gFlashTimerReg;
 
 /// Counts down the active flash timeout and marks its expiration.
 void FlashTimerIntr(void) {
@@ -103,30 +95,37 @@ void FlashTimerIntr(void) {
   }
 }
 
-/// Selects a hardware timer and returns its timeout interrupt callback.
+/// Selects a hardware timer and returns its timeout interrupt callback:
+/// FlashTimerIntr goes to *callback, for the caller to install as timer
+/// timerIndex's interrupt handler.
 s32 SetFlashTimerIntr(u8 timerIndex, void (**callback)(void)) {
   if (timerIndex > 3)
     return 1;
   gFlashTimerNum = timerIndex;
-  gFlashTimerReg = (u16 *)(0x04000100 + gFlashTimerNum * 4);
+  // Each timer's counter, REG_TMnCNT_L, is 4 bytes after the one before
+  gFlashTimerReg = (u16 *)((u32)&REG_TM0CNT_L + gFlashTimerNum * 4);
   *callback = FlashTimerIntr;
   return 0;
 }
 
-extern u16 gFlashSavedIme;
-
 /// Starts the selected operation timeout, saving the interrupt-enable state.
+/// timingIndex is the operation's phase (WaitForFlashWrite).
 void StartFlashTimer(u8 timingIndex) {
-  u16 *timing = (u16 *)((u8 *)gFlash_Handler4 + timingIndex * 6);
+  // Row timingIndex of the chip's wait-time table: interrupts to count, the
+  // timer's reload and its control.
+  u16 *timing = gFlashMaxTime + timingIndex * 3;
   u16 *timerRegister;
 
   gFlashSavedIme = REG_IME;
+  // Timer n's interrupt is IE bit 3 + n.
   REG_IME = 0;
   REG_IE |= 8 << gFlashTimerNum;
   REG_IME = 1;
   gFlashTimeoutFlag = 0;
   gFlashTimerCount = *timing;
   timing++;
+  // The control halfword follows the counter's (TMnCNT_H after TMnCNT_L);
+  // gFlashTimerReg steps to it and back.
   timerRegister = gFlashTimerReg;
   *timerRegister = *timing;
   timerRegister++;
@@ -158,6 +157,9 @@ void StopFlashTimer(void) {
 u8 ReadFlashByte(u8 *source) { return *source; }
 
 /// Copies the byte reader to RAM and installs its Thumb entry point.
+/// `destination` takes the code from ReadFlashByte up to this function, and
+/// gFlashReadRoutine points into it: the callers pass a buffer in their own
+/// stack frame, so the reader is good only until that caller returns.
 void CopyFlashReadRoutineToRam(void *destination) {
   u16 *destinationCode = destination;
   u16 *sourceCode;
@@ -174,8 +176,6 @@ void CopyFlashReadRoutineToRam(void *destination) {
   }
 }
 
-void StartFlashTimer(u8 index);
-
 /// Polls for the expected byte until success or timeout, returning an operation
 /// error.
 u16 WaitForFlashWrite(u8 timingIndex, volatile u8 *address, u8 expected) {
@@ -184,12 +184,13 @@ u16 WaitForFlashWrite(u8 timingIndex, volatile u8 *address, u8 expected) {
   StartFlashTimer(timingIndex);
   while ((u8)gFlashReadRoutine((u8 *)address) != expected) {
     if (gFlashTimeoutFlag) {
-      // Allow a final successful read at the timeout boundary.
+      // One last read, in case the write finished as time ran out.
       if ((u8)gFlashReadRoutine((u8 *)address) == expected)
         break;
-      if (gFlash->id == 0x1cc2)
-        *(volatile u8 *)0x0e005555 = 0xf0;
-      result = timingIndex | 0xc000;
+      // A Macronix chip (0x1cc2) is sent FLASH_COMMAND_RESET.
+      if (gFlash->id.joined == 0x1cc2)
+        FLASH_WRITE(FLASH_COMMAND_ADDRESS, FLASH_COMMAND_RESET);
+      result = timingIndex | FLASH_ERROR_TIMEOUT;
       break;
     }
   }
@@ -218,7 +219,7 @@ void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size) {
   u16 halfwordsRemaining;
   FlashReadCore core;
 
-  REG_WAITCNT = (REG_WAITCNT & 0xfffc) | 3;
+  REG_WAITCNT = (REG_WAITCNT & 0xfffc) | WAITCNT_SRAM_8;
   sourceCode = (u16 *)ReadFlashCore;
   sourceCode = (u16 *)((u32)sourceCode ^ 1);
   destinationCode = code;
@@ -228,7 +229,7 @@ void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size) {
     halfwordsRemaining--;
   }
   core = (FlashReadCore)((u8 *)code + 1);
-  core((u8 *)0x0e000000 + (sector << gFlash_ChipDefault.type.sector.shift) +
+  core((u8 *)FLASH_BASE + (sector << gFlash_ChipDefault.type.sector.shift) +
            offset,
        destination, size);
 }
@@ -256,14 +257,14 @@ typedef u8 *(*FlashVerifyCore)(u8 *source, u8 *flash, u16 size);
 
 /// Copies the verifier to RAM and compares a standard flash sector with source
 /// data.
-s32 Flash_VerifySector(u16 sector, s32 source) {
+s32 Flash_VerifySector(u16 sector, u8 *source) {
   u16 code[128];
   u16 *sourceCode;
   u16 *destinationCode;
   u16 halfwordsRemaining;
   FlashVerifyCore core;
 
-  REG_WAITCNT = (REG_WAITCNT & 0xfffc) | 3;
+  REG_WAITCNT = (REG_WAITCNT & 0xfffc) | WAITCNT_SRAM_8;
   sourceCode = (u16 *)VerifyFlashCore;
   sourceCode = (u16 *)((u32)sourceCode ^ 1);
   destinationCode = code;
@@ -273,8 +274,8 @@ s32 Flash_VerifySector(u16 sector, s32 source) {
     halfwordsRemaining--;
   }
   core = (FlashVerifyCore)((u8 *)code + 1);
-  return (s32)core((u8 *)source,
-                   (u8 *)0x0e000000 +
+  return (s32)core(source,
+                   (u8 *)FLASH_BASE +
                        (sector << gFlash_ChipDefault.type.sector.shift),
                    (u16)gFlash_ChipDefault.type.sector.size);
 }

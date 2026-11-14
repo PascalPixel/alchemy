@@ -24,11 +24,6 @@ struct FlashType;
 struct FlashSetupInfo;
 extern struct FlashSetupInfo gFlash_ChipAtmel;
 extern const struct FlashSetupInfo gFlash_ChipDefault;
-extern u32 gFlash_Handler1;
-extern u32 gEraseFlashSector;
-#ifndef OWN_Flash_Handler4
-extern u16 *gFlash_Handler4;
-#endif
 #ifndef OWN_gFlash
 extern const struct FlashType *gFlash;
 #endif
@@ -52,7 +47,6 @@ s32 CountRemainingErasedFlashBytes(u8 *ptr);
 #endif
 s32 TilesetAnim_ResumeAllFar(void);
 s32 TilesetAnim_SuspendAllFar(void);
-s32 RunFlashEraseVerifier(u8 *, u8 *);
 void DebugText_Print(const u8 *src);
 #ifndef OWN_StartFlashTimer
 void StartFlashTimer(u8 index);

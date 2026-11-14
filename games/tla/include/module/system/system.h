@@ -132,7 +132,7 @@ extern u8 Resource_ExecuteTransferSize[];
 extern u8 gOamBucketMasks[];
 
 extern void *gOamBuckets[];
-extern u16 (*gFlash_Handler0)(u16 sector, u8 *source);
+extern u16 (*gProgramFlashSector)(u16 sector, u8 *source);
 
 s32 Save_CompareBytes(u8 *left, u8 *right, s32 count);
 s32 Save_ChecksumSector(void);

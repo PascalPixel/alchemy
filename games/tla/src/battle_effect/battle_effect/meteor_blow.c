@@ -162,9 +162,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   s32 screen[3];
   s32 point[3];
   s32 place[4];
-  s32 place2[4];
+  s32 summonPlace[4];
   struct ModelTexture__f18df5c waveTexture;
-  struct PointPair req2;
+  struct PointPair summonScale;
   s32 req[2];
   struct ModelTexture__f18df5c texture;
 
@@ -548,19 +548,19 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       hz = 0;
     }
     if (frame <= 33) {
-      req2 = gMeteorBlow_DoubleScale;
-      place2[3] = 0;
-      place2[1] = 0xff0000;
-      place2[0] = hx << 16;
-      place2[2] = hz << 16;
+      summonScale = gMeteorBlow_DoubleScale;
+      summonPlace[3] = 0;
+      summonPlace[1] = 0xff0000;
+      summonPlace[0] = hx << 16;
+      summonPlace[2] = hz << 16;
       if (frame <= 15) {
         hx -= 1;
         hz += 9;
       } else {
         hz += 2;
       }
-      Render_ApplyProjectedPlacementFar(work->objects[0], place2, (s32 *)&req2,
-                                        0);
+      Render_ApplyProjectedPlacementFar(work->objects[0], summonPlace,
+                                        (s32 *)&summonScale, 0);
     }
     if (frame == 34) {
       BattlePlayback_StartFar(134);

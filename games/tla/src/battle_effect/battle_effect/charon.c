@@ -94,7 +94,7 @@ struct SummonWork__f175f74 {
   s32 transferMode;
   s32 transferValue;
   u8 unk_7788[0x20];
-  s32 unk77a8;
+  s32 shakeFrames;
   u8 unk77ac[0x30];
   struct SpriteObject__f175f74 *objects[14];
   u8 unk7814[0xd0];
@@ -1513,7 +1513,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
                                         speed, delay);
           BattleEffect_TintBattler(arg->actors[i], 7, 5, i, 32);
         }
-        work->unk77a8 = 3;
+        work->shakeFrames = 3;
       }
       BattleEffect_LoadBlitter(104, 31);
       routine[0] = SYSTEM_WORK->blit;

@@ -167,7 +167,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   s32 petals; // the block's address as a number, see the header
   s32 i;
   s32 j;
-  s32 row2;
+  s32 quarter;
   s32 size;
   s32 dx;
   s32 dy;
@@ -184,10 +184,10 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   struct EffectPosition out;
   struct EffectPosition pos;
   u8 dot[2];
-  struct EffectPosition out2;
-  struct EffectPosition pos2;
-  struct EffectPosition out3;
-  struct EffectPosition pos3;
+  struct EffectPosition ringScreen;
+  struct EffectPosition ringPoint;
+  struct EffectPosition fadeRingScreen;
+  struct EffectPosition fadeRingPoint;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -690,9 +690,9 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         s32 y;
 
         size = 7;
-        for (row2 = 0; row2 != 4; row2++) {
-          if (frame >= 208 + row2 * 4 && i % 4 == 3 - row2) {
-            s32 late = frame - row2 * 4 - 208;
+        for (quarter = 0; quarter != 4; quarter++) {
+          if (frame >= 208 + quarter * 4 && i % 4 == 3 - quarter) {
+            s32 late = frame - quarter * 4 - 208;
 
             rr = r - late * 4;
             if (rr < 0) {
@@ -721,8 +721,8 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       s32 inner;
       s32 c;
       s32 ox;
-      s32 oy1;
-      s32 oy2;
+      s32 outerY;
+      s32 innerY;
       s32 sx;
       s32 sy;
       s32 x1;
@@ -752,18 +752,18 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         sy = 0;
       }
       ox = sx + 48;
-      oy1 = 92 - sy;
-      oy2 = 88 - sy;
+      outerY = 92 - sy;
+      innerY = 88 - sy;
       for (i = 0; i != 128; i++) {
-        pos2.x = Trig_Sin(i << 9) * inner >> 16;
-        pos2.y = Trig_Cos(i << 9) * inner >> 16;
-        pos2.depth = 0;
-        EffectPosition_ProjectPoint(&pos2, &out2);
-        out2.x >>= 1;
-        x1 = out2.x + ox;
-        y1 = out2.y + oy1;
-        x2 = out2.x * 3 / 4 + ox;
-        y2 = out2.y * 3 / 4 + oy2;
+        ringPoint.x = Trig_Sin(i << 9) * inner >> 16;
+        ringPoint.y = Trig_Cos(i << 9) * inner >> 16;
+        ringPoint.depth = 0;
+        EffectPosition_ProjectPoint(&ringPoint, &ringScreen);
+        ringScreen.x >>= 1;
+        x1 = ringScreen.x + ox;
+        y1 = ringScreen.y + outerY;
+        x2 = ringScreen.x * 3 / 4 + ox;
+        y2 = ringScreen.y * 3 / 4 + innerY;
         draw[0](canvas, dot, x1 - 1, y1 - 1, 1, 2);
         draw[0](canvas, dot, x2 - 1, y2 - 1, 1, 2);
         if ((i & 31) == 0) {
@@ -782,15 +782,15 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         dot[0] = c;
         dot[1] = c;
         for (i = 0; i != 128; i++) {
-          pos3.x = Trig_Sin(i << 9) * inner >> 16;
-          pos3.y = Trig_Cos(i << 9) * inner >> 16;
-          pos3.depth = 0;
-          EffectPosition_ProjectPoint(&pos3, &out3);
-          out3.x >>= 1;
-          x1b = ox + out3.x;
-          y1b = out3.y + oy1;
-          x2b = out3.x * 3 / 4 + ox;
-          y2b = out3.y * 3 / 4 + oy2;
+          fadeRingPoint.x = Trig_Sin(i << 9) * inner >> 16;
+          fadeRingPoint.y = Trig_Cos(i << 9) * inner >> 16;
+          fadeRingPoint.depth = 0;
+          EffectPosition_ProjectPoint(&fadeRingPoint, &fadeRingScreen);
+          fadeRingScreen.x >>= 1;
+          x1b = ox + fadeRingScreen.x;
+          y1b = fadeRingScreen.y + outerY;
+          x2b = fadeRingScreen.x * 3 / 4 + ox;
+          y2b = fadeRingScreen.y * 3 / 4 + innerY;
           draw[0](canvas, dot, x1b - 1, y1b - 1, 1, 2);
           draw[0](canvas, dot, x2b - 1, y2b - 1, 1, 2);
           if ((i & 31) == 0) {

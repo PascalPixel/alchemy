@@ -291,10 +291,10 @@ struct SummonWork__f17e698 {
   s32 transferMode;
   s32 transferValue;
   u8 unk_7788[8];
-  s32 unk7790;
-  s32 unk7794;
-  s32 unk7798;
-  s32 unk779c;
+  s32 scrollTimer;
+  s32 scrollInterval;
+  s32 scrollStepX;
+  s32 scrollStepY;
   u8 unk77a0[8];
   s32 shake;
   u8 unk77ac[0x30];
@@ -495,10 +495,10 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           b = 31;
         *col = (b << 10) | (r << 5) | g;
       }
-      work->unk7790 = 0;
-      work->unk7794 = 5;
-      work->unk7798 = -1;
-      work->unk779c = 0;
+      work->scrollTimer = 0;
+      work->scrollInterval = 5;
+      work->scrollStepX = -1;
+      work->scrollStepY = 0;
       Task_Add(BattleEffect_AdvanceScrollOnInterval, 0x480);
       ctl[4] = 1;
       Resource_LoadAndDecompress((s32)&ResourceId_Data134, work->frames, 0, 0);
@@ -659,10 +659,10 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     *(s32 *)0x04000028 = 0;
     blits = blit;
     BattleEffect_FetchRectangleBlitters(0, blits);
-    work->unk7790 = 0;
-    work->unk7794 = 5;
-    work->unk7798 = -1;
-    work->unk779c = 0;
+    work->scrollTimer = 0;
+    work->scrollInterval = 5;
+    work->scrollStepX = -1;
+    work->scrollStepY = 0;
     ctl[4] = 1;
     Resource_LoadAndDecompress((s32)&ResourceId_Data0BA, work->frames, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
@@ -786,7 +786,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       if (frame == 489) {
         *(vu16 *)0x04000020 = 0x80;
         *(vu16 *)0x0400000c = 0x784;
-        work->unk7798 = 0;
+        work->scrollStepX = 0;
       }
       if (frame == 528) {
         *(vu16 *)0x04000020 = 0x80;
@@ -922,11 +922,11 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         }
       }
       if (frame == 578) {
-        work->unk7794 = 1;
-        work->unk7790 = 0;
+        work->scrollInterval = 1;
+        work->scrollTimer = 0;
       }
       if (frame >= 578 && frame < 594)
-        work->unk7798 = ~((frame - 578) / 8);
+        work->scrollStepX = ~((frame - 578) / 8);
       {
         for (i = 0; i != 2; i++) {
           shipPlace.x = camera - swayX + bobX + 0x780000;

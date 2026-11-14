@@ -6,26 +6,6 @@
 #include "fixed_math.h"
 #include "sounds.h"
 
-/* VIEW(f0e572c): tag struct FxScene as struct FxScene__f0e572c; f0e2c38.c has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/burst.c:49: structure has no member
- * named `facing'. */
-struct FxScene__f0e572c {
-  u16 facing;
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  struct Actor *mainObject;
-  struct Actor *child;
-  s16 firstObjectId;
-  s16 secondObjectId;
-  u16 action;
-  s16 fieldKind;
-  s8 enabled;
-};
-
 extern const u8 Data_080f3984[];
 extern char ResourceId_FieldEffectExplosion, ResourceId_GlowDisc;
 
@@ -36,7 +16,7 @@ void FieldPsynergy_UpdateBurst(void);
 
 void FieldPsynergy_Burst(void) {
   struct GlowWork *work = HeapSlot_Alloc(92, sizeof(struct GlowWork));
-  struct FxScene__f0e572c *scene = Ram_HeapSlots->effectWork;
+  struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct CanvasSpriteWork *canvas;
   struct EffectSprite *sprite;
   struct GlowParticle *particle;

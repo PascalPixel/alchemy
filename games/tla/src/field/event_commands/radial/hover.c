@@ -7,23 +7,6 @@
 #include "fixed_math.h"
 #include "sounds.h"
 
-// Kind 24's work (battle_fx_work[0]), as HoverGlow_Update's draft has it.
-/* VIEW(f0e9af4): tag struct GlowWork as struct GlowWork__f0e9af4; f0e2c38.c has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/hover.c:62: structure has no member
- * named `resource'. */
-struct GlowWork__f0e9af4 {
-  u8 unk0000[0x1000];
-  struct EffectSprite sprite;
-  s32 scale;
-  s16 resource;
-  u16 tile;
-  u16 unk1030;
-  u16 phase;
-  s16 fading;
-};
-
 struct GlowScene {
   u8 unk00[0x10];
   struct Actor *mainObject;
@@ -54,7 +37,7 @@ s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 void HoverGlow_Update(void);
 
 void FieldPsynergy_Hover(void) {
-  struct GlowWork__f0e9af4 *work = HeapSlot_Alloc(92, 0x1038);
+  struct HoverGlowWork *work = HeapSlot_Alloc(92, 0x1038);
   struct GlowScene *scene = Ram_HeapSlots->effectWork;
   struct GlowEvent__f0e9af4 *event = Ram_HeapSlots->eventWork;
   struct Actor *player = scene->mainObject;
@@ -157,8 +140,8 @@ void FieldPsynergy_Hover(void) {
 struct Actor *Actor_GetById(u32 objectId);
 
 void FieldPsynergy_EndHover(void) {
-  struct GlowWork__f0e9af4 *work =
-      (struct GlowWork__f0e9af4 *)Ram_HeapSlots->battleFxWork[0];
+  struct HoverGlowWork *work =
+      (struct HoverGlowWork *)Ram_HeapSlots->battleFxWork[0];
   struct Actor *object = Actor_GetById(Party_GetLeaderActor());
   s32 i;
 

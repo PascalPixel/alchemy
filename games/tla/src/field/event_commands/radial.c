@@ -34,7 +34,6 @@
 #include "radial/mote_trail.c"
 #include "radial/collision_tags.c"
 
-#undef BurstWork
 #undef Camera_WorldToScreen
 #undef EffectSprite_DrawAtWorldPosition
 #undef ObjectAnimation

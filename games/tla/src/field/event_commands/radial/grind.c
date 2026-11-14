@@ -34,26 +34,6 @@ struct SplashAnimation {
   void *tiles;
 };
 
-/* VIEW(f0e92b4): tag struct FxScene as struct FxScene__f0e92b4; f0e2c38.c has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/grind.c:104: structure has no
- * member named `facing'. */
-struct FxScene__f0e92b4 {
-  u16 facing;
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  struct Actor *mainObject;
-  struct Actor *child;
-  s16 firstObjectId;
-  s16 secondObjectId;
-  u16 action;
-  s16 fieldKind;
-  s8 enabled;
-};
-
 /* VIEW(f0e92b4): tag struct PendingEvent as struct PendingEvent__f0e92b4;
  * event_work.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
@@ -75,7 +55,7 @@ void BattleEffect_ShiftRowsDown(u8 *base, s32 stride, s32 rows);
 
 void FieldPsynergy_GrindOnTarget(void) {
   struct SplashWork *work = HeapSlot_Alloc(92, 0x1920);
-  struct FxScene__f0e92b4 *scene = Ram_HeapSlots->effectWork;
+  struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct Actor *caster = scene->mainObject;
   struct Actor *child = scene->child;
   struct SplashAnimation *animation = child->sprite;
@@ -394,18 +374,13 @@ s32 HoverGlow_GetColor(s32 counter, s32 level) {
 #define GLOW_SPENT_CUE 0x2099
 
 // Kind 24's work (battle_fx_work[0]).
-/* VIEW(f0e92b4): tag struct GlowWork as struct GlowWork__f0e92b4; f0e2c38.c has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/grind.c:435: structure has no
- * member named `fading'. */
-struct GlowWork__f0e92b4 {
+struct HoverGlowWork {
   u8 unk0000[0x1000];
   struct EffectSprite sprite;
   s32 scale;
-  u8 unk102c[2];
+  s16 resource;
   u16 tile;
-  u8 unk1030[2];
+  u16 unk1030;
   u16 phase;
   s16 fading;
 };
@@ -428,7 +403,7 @@ void Camera_WorldToScreen(s32 *position);
 // flickers between two pictures every other frame, and draws the glow under the
 // player, flattened to three quarters of its height.
 void HoverGlow_Update(void) {
-  struct GlowWork__f0e92b4 *work = Ram_HeapSlots->battleFxWork[0];
+  struct HoverGlowWork *work = Ram_HeapSlots->battleFxWork[0];
   struct Actor *player = ObjectTable_Get(Party_GetLeaderActor());
   struct GlowEvent *event = Ram_HeapSlots->eventWork;
   u16 *palette;

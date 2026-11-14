@@ -9,33 +9,6 @@
 #include "sounds.h"
 #include "macros.h"
 
-struct BurstSprite {
-  u8 unk00[8];
-  u16 tile : 10;
-  u16 unk08_10 : 6;
-  u8 unk0a[2];
-  s32 x;
-  s32 y;
-  u8 unk14[20];
-};
-
-/* VIEW(psynergy): tag struct BurstWork as struct BurstWork__psynergy;
- * module/field/event_commands.h has another definition; tried with the
- * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/cyclone.c:22: redefinition of
- * `struct BurstWork'. */
-#define BurstWork BurstWork__psynergy
-struct BurstWork {
-  u8 tiles[384];
-  struct BurstSprite sprites[96];
-  struct BurstParticle particles[96];
-  s16 resource;
-  s16 vram;
-  s16 flash;
-  s16 frame;
-  s16 active;
-};
-
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 /* VIEW(psynergy): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32
  * *position); module/field/event_commands.h has void
@@ -58,7 +31,7 @@ void Camera_WorldToScreen__psynergy(s32 *position) __asm__(
 void ParticleBurst_Update(void) {
   struct BurstWork *work;
   struct BurstParticle *particle;
-  struct BurstSprite *sprite;
+  struct EffectSprite *sprite;
   s32 position[3];
   s32 i;
 
@@ -68,7 +41,7 @@ void ParticleBurst_Update(void) {
   for (i = 0; i < 96; i++, particle++) {
     sprite = &work->sprites[i];
     if ((u32)particle->delay < 64) {
-      sprite->tile = work->vram + (particle->delay >> 3) % 6 * 2;
+      sprite->oam.index = work->vram + (particle->delay >> 3) % 6 * 2;
       position[0] = particle->x;
       position[1] = particle->y;
       position[2] = particle->z;

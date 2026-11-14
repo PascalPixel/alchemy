@@ -142,7 +142,7 @@ struct BurstWork {
   struct BurstParticle particles[96];
   s16 resource;
   s16 vram;
-  u8 unk1b04[2];
+  s16 flash; ///< set on frame 30 only
   s16 frame;
   s16 active;
 };

@@ -38,29 +38,6 @@ struct ShineWork__f0e5d5c {
   s8 fading;
 };
 
-/* VIEW(f0e5d5c): tag struct FxScene as struct FxScene__f0e5d5c; f0e2c38.c has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/pound.c:88: structure has no member
- * named `facing'. */
-struct FxScene__f0e5d5c {
-  u16 facing;
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  struct Actor *mainObject;
-  struct Actor *child;
-  s16 firstObjectId;
-  s16 secondObjectId;
-  u16 action;
-  s16 fieldKind;
-  s8 enabled;
-  u8 unk21[0x7a3];
-  s16 fading;
-  s16 frame;
-};
-
 extern char ResourceId_GlowDisc, ResourceId_GoldStar;
 
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
@@ -78,7 +55,7 @@ void FieldPsynergy_UpdatePound(void);
 
 void FieldPsynergy_Pound(void) {
   struct ShineWork__f0e5d5c *work = HeapSlot_Alloc(92, 0x18b4);
-  struct FxScene__f0e5d5c *scene = Ram_HeapSlots->effectWork;
+  struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct FxEvent *event = Ram_HeapSlots->eventWork;
   struct Actor *child = scene->child;
   struct Actor *caster = scene->mainObject;
@@ -247,7 +224,7 @@ void FieldPsynergy_Pound(void) {
     frame = 0;
     while (work->state != 999) {
       wait(1);
-      scene->fading = work->fading;
+      scene->stage = work->fading;
       scene->frame = frame;
       if (((s8 *)event)[394] != 3 && !(*(u16 *)((u8 *)event + 0xd4c) & 1)) {
         glow = &work->glow;

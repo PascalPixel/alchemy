@@ -212,31 +212,6 @@ struct RiseWork__f0e6400 {
   s16 mode;
 };
 
-/* VIEW(f0e6400): tag struct FxScene as struct FxScene__f0e6400; f0e2c38.c has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/scoop.c:276: structure has no
- * member named `facing'. */
-struct FxScene__f0e6400 {
-  u16 facing;
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  struct Actor *mainObject;
-  struct Actor *child;
-  s16 firstObjectId;
-  s16 secondObjectId;
-  u16 action;
-  s16 fieldKind;
-  s8 enabled;
-  u8 unk21[0x20];
-  s8 alternate;
-  u8 unk42[0x782];
-  s16 stage;
-  s16 frame;
-};
-
 /* VIEW(f0e6400): tag struct FxEvent as struct FxEvent__f0e6400; f0e2c38.c has
  * another definition; tried with the definition the rest of the object has, it
  * does not compile in tla-ja:
@@ -273,7 +248,7 @@ void Scoop_DigUpItem(void);
 
 void FieldPsynergy_Scoop(void) {
   struct RiseWork__f0e6400 *work = HeapSlot_Alloc(92, 0x193c);
-  struct FxScene__f0e6400 *scene = Ram_HeapSlots->effectWork;
+  struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct FxEvent__f0e6400 *event = Ram_HeapSlots->eventWork;
   struct Actor *caster = scene->mainObject;
   struct Actor *other = NULL;
@@ -1008,7 +983,7 @@ void BattleEffect_FadeToSavedPalettes(s32 frames);
 void FieldPsynergy_Parch(void) {
   struct PuffWork *work = HeapSlot_Alloc(92, 0x2160);
   struct HeapSlots *slots;
-  struct FxScene__f0e6400 *scene = Ram_HeapSlots->effectWork;
+  struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct WindowWork *vramWork = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 offset; // byte offset of the event work's 80 object pointers
   struct Actor *caster;

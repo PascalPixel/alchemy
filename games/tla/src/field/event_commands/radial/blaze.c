@@ -10,7 +10,7 @@
 #include "system/input.h"
 
 struct FxScene {
-  u16 angleFraction;
+  u16 facing; ///< 1/65536 turns
   u16 angle;
   s32 x;
   s32 y;
@@ -22,6 +22,11 @@ struct FxScene {
   u16 action;
   s16 fieldKind;
   s8 enabled;
+  u8 unk21[0x20];
+  s8 alternate;
+  u8 unk42[0x782];
+  s16 stage;
+  s16 frame;
 };
 
 struct FxEvent {
